@@ -101,7 +101,6 @@ def main(config: dict) -> None:
             "#minecraft:flowers",
             "#minecraft:cave_vines",
             "#minecraft:replaceable",
-            "#minecraft:bamboo_plantable_on",
             "minecraft:short_grass",
             "minecraft:tall_grass",
             "minecraft:seagrass",

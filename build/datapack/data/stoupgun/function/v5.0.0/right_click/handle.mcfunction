@@ -8,6 +8,7 @@
 scoreboard players remove @s stoupgun.pending_clicks 1
 
 # If SelectedItem is not a gun, stop
+data remove storage stoupgun:gun stats
 data modify storage stoupgun:gun stats set from entity @s SelectedItem.components."minecraft:custom_data".stoupgun.stats
 execute unless data storage stoupgun:gun stats run return fail
 
@@ -25,12 +26,11 @@ data modify storage stoupgun:input with.on_targeted_block set value "function st
 data modify storage stoupgun:input with.on_targeted_entity set value "function stoupgun:v5.0.0/raycast/on_targeted_entity"
 
 # Run raycast with callbacks
+tag @s add stoupgun.attacker
 execute anchored eyes positioned ^ ^ ^ run function #bs.raycast:run with storage stoupgun:input
+tag @s remove stoupgun.attacker
 
 # TODO: Advanced Playsound
 playsound stoupgun:ak47/fire player @s ~ ~1000000 ~ 400000
 playsound stoupgun:ak47/fire player @a[distance=0.01..48] ~ ~ ~ 3
-
-# Remove storage
-data remove storage stoupgun:gun stats
 

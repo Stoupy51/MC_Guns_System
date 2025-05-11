@@ -29,3 +29,9 @@ execute as @a[sort=random] at @s run function {ns}:v{version}/player/tick
     # Add block tags
     write_block_tags(config)
 
+    ## Setup special damage type
+    write_damage_type(config, f"{ns}:bullet", stp.super_json_dump({"exhaustion": 0, "message_id": "player", "scaling": "when_caused_by_living_non_player"}))
+    write_tags(config, "damage_type/bypasses_cooldown", stp.super_json_dump({"values":[f"{ns}:bullet"]}))
+    write_tags(config, "damage_type/no_knockback",      stp.super_json_dump({"values":[f"{ns}:bullet"]}))
+    write_versioned_function(config, "utils/damage", f"$damage $(target) $(amount) {ns}:bullet by $(attacker)")
+
