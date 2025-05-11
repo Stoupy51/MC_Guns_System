@@ -1,7 +1,7 @@
 
 # ruff: noqa: E501
 # Imports
-from user.database._stats import AK47, get_data
+from user.config.stats import AK47, get_data
 
 
 # Main function should return a database

@@ -1,5 +1,6 @@
 {
 	"values": [
+		"#stoupgun:dependencies",
 		"stoupgun:v5.0.0/load/enumerate"
 	]
 }

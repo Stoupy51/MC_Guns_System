@@ -16,6 +16,7 @@ BUILD_COPY_DESTINATIONS: tuple[list, list] = (["D:/latest_snapshot/world/datapac
 # Dev constants
 DATABASE_DEBUG: str = f"{ROOT}/database_debug.json" # Dump of the database for debugging purposes
 ENABLE_TRANSLATIONS: bool = True                    # Will convert all the text components to translate and generate a lang file in the resource pack.
+MERGE_LIBS: bool = False                             # Make new zip of merged libraries with the datapack and resource pack using Smithed Weld
 
 
 # Project information
@@ -40,6 +41,7 @@ configuration = {
     "build_copy_destinations": BUILD_COPY_DESTINATIONS,
     "database_debug": DATABASE_DEBUG,
     "enable_translations": ENABLE_TRANSLATIONS,
+    "merge_libs": MERGE_LIBS,
     "author": AUTHOR,
     "project_name": PROJECT_NAME,
     "version": VERSION,

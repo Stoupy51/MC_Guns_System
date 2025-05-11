@@ -1,0 +1,24 @@
+{
+	"values": [
+		"#minecraft:dirt",
+		"#minecraft:sand",
+		"minecraft:gravel",
+		"minecraft:clay",
+		"minecraft:farmland",
+		"minecraft:dirt_path",
+		"minecraft:podzol",
+		"minecraft:mycelium",
+		"minecraft:rooted_dirt",
+		"minecraft:mud",
+		"minecraft:muddy_mangrove_roots",
+		"minecraft:packed_mud",
+		"minecraft:suspicious_sand",
+		"minecraft:suspicious_gravel",
+		"minecraft:soul_sand",
+		"minecraft:soul_soil",
+		"minecraft:crimson_nylium",
+		"minecraft:warped_nylium",
+		"minecraft:sculk_catalyst"
+	]
+}
+

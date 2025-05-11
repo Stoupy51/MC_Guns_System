@@ -1,0 +1,34 @@
+{
+	"values": [
+		"#minecraft:dragon_immune",
+		"#minecraft:beacon_base_blocks",
+		"#minecraft:campfires",
+		"#minecraft:climbable",
+		"#minecraft:infiniburn_overworld",
+		"#minecraft:gold_ores",
+		"#minecraft:iron_ores",
+		"minecraft:netherrack",
+		"minecraft:soul_sand",
+		"minecraft:soul_soil",
+		"minecraft:spawner",
+		"minecraft:crying_obsidian",
+		"minecraft:end_stone",
+		"minecraft:chorus_plant",
+		"minecraft:chorus_flower",
+		"minecraft:crafting_table",
+		"minecraft:enchanting_table",
+		"minecraft:brewing_stand",
+		"minecraft:chest",
+		"minecraft:ender_chest",
+		"minecraft:piston",
+		"minecraft:sticky_piston",
+		"minecraft:dispenser",
+		"minecraft:dropper",
+		"minecraft:hopper",
+		"minecraft:grindstone",
+		"minecraft:lectern",
+		"minecraft:respawn_anchor",
+		"minecraft:smoker"
+	]
+}
+
