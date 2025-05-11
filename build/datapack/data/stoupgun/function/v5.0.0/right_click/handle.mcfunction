@@ -19,6 +19,7 @@ data modify storage stoupgun:input with.entities set value true
 data modify storage stoupgun:input with.piercing set value 10
 data modify storage stoupgun:input with.max_distance set value 128
 data modify storage stoupgun:input with.hitbox_shape set value "interaction"
+data modify storage stoupgun:input with.ignored_blocks set value "#stoupgun:v5.0.0/air"
 data modify storage stoupgun:input with.on_hit_point set value "function stoupgun:v5.0.0/raycast/on_hit_point"
 data modify storage stoupgun:input with.on_targeted_block set value "function stoupgun:v5.0.0/raycast/on_targeted_block"
 data modify storage stoupgun:input with.on_targeted_entity set value "function stoupgun:v5.0.0/raycast/on_targeted_entity"
@@ -26,9 +27,9 @@ data modify storage stoupgun:input with.on_targeted_entity set value "function s
 # Run raycast with callbacks
 execute anchored eyes positioned ^ ^ ^ run function #bs.raycast:run with storage stoupgun:input
 
-# Playsound
-playsound stoupgun:ak47/fire player @s ~ ~1000000 ~ 10000000
-playsound stoupgun:common/med_crack player @s ~ ~ ~ 1.0
+# TODO: Advanced Playsound
+playsound stoupgun:ak47/fire player @s ~ ~1000000 ~ 400000
+playsound stoupgun:ak47/fire player @a[distance=0.01..48] ~ ~ ~ 3
 
 # Remove storage
 data remove storage stoupgun:gun stats

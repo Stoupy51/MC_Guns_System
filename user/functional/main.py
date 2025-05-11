@@ -12,14 +12,16 @@ def main(config: dict) -> None:
     pass
 
     # Write to load file
-    write_load_file(config, f"""
+    write_load_file(config,
+f"""
 # Define objectives
 scoreboard objectives add {ns}.right_click minecraft.used:minecraft.warped_fungus_on_a_stick
 scoreboard objectives add {ns}.pending_clicks dummy
 """, prepend=True)
 
     # Write to tick file
-    write_tick_file(config, f"""
+    write_tick_file(config,
+f"""
 # Player loop
 execute as @a[sort=random] at @s run function {ns}:v{version}/player/tick
 """)

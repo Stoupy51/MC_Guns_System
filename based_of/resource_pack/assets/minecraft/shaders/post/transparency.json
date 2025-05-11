@@ -114,9 +114,9 @@
                 },
                 { 
                     "name" : "SparkTex",
-                    "id" : "flash" , 
-                    "width" : 1536 , 
-                    "height" : 1536 , 
+                    "id" : "flash" ,
+                    "width" : 1536 ,
+                    "height" : 1536 ,
                     "bilinear" : true 
                 }
             ],

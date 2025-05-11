@@ -151,5 +151,5 @@ give @s minecraft:written_book{pages:[
 {"text":"\\n\\nIs there crafting?\\nYes, view the crafting book (press L) for recipes.\\n\\nWhere blueprint?\\nLoot chests. More common underground, nether, or end.","bold":false}
 ]',
 '{"text":"How to reduce damage?\\nadvanced users can configure stats in weapon_stat file.\\n\\nArmor and headshots work?\\nYes and yes. \\n\\nGuns don\'t work?\\nYou got this book so...\\nconflicting datapack.\\n\\nSomething is buggy?\\nLet me know asap. I will fix it."}',
-'{"text":"Can you add xxx gun?\\n If enough people want it I will make it. I have limited manpower so I can\'t make them all.\\n\\nIs this compatible with Forge?\\nThis is a datapack. Any version of MC with vanilla commands can run this."}'], 
+'{"text":"Can you add xxx gun?\\n If enough people want it I will make it. I have limited manpower so I can\'t make them all.\\n\\nIs this compatible with Forge?\\nThis is a datapack. Any version of MC with vanilla commands can run this."}'],
 title:"Gun Manual",author:"GUN MAGS",resolved:1b,CustomModelData:2}

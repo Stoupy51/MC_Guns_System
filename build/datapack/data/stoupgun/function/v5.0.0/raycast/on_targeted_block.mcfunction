@@ -4,7 +4,11 @@
 # @within	stoupgun:v5.0.0/right_click/handle
 #
 
-particle happy_villager ~ ~ ~ 0 0 0 0 10
+particle angry_villager ~ ~ ~ 0 0 0 0 10
+
+# Allow bullets to pierce 2 blocks at most
+execute if score $raycast.piercing bs.lambda matches 5.. run scoreboard players set $raycast.piercing bs.lambda 4
+execute if score $raycast.piercing bs.lambda matches 1..4 run scoreboard players remove $raycast.piercing bs.lambda 1
 
 execute if block ~ ~ ~ #stoupgun:v5.0.0/sounds/glass run playsound minecraft:block.glass.break block @a ~ ~ ~ 1
 execute if block ~ ~ ~ #stoupgun:v5.0.0/sounds/water run playsound minecraft:ambient.underwater.exit block @a ~ ~ ~ 0.25 1.5
