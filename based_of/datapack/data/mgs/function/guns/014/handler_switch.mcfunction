@@ -1,0 +1,1 @@
+scoreboard players operation @s cooldown = makarov_switch S

@@ -1,0 +1,2 @@
+execute unless entity @e[type=minecraft:area_effect_cloud,tag=load_list] run summon area_effect_cloud 0 -64 0 {Tags:[load_list],Duration:1,PersistenceRequired:1b}
+tag @e[type=minecraft:area_effect_cloud,tag=load_list] add mgs_4_2

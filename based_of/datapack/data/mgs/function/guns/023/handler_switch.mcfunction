@@ -1,0 +1,1 @@
+scoreboard players operation @s cooldown = mp7_switch S

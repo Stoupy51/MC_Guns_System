@@ -1,0 +1,1 @@
+function mgs:gamerule/player_headshots_disable

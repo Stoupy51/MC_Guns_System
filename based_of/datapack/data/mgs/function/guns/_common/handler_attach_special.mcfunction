@@ -1,0 +1,10 @@
+execute if score v2 V matches 510..519 run function mgs:guns/051/handler_attach
+execute if score v2 V matches 520..529 run function mgs:guns/052/handler_attach
+execute if score v2 V matches 530..539 run function mgs:guns/053/handler_attach
+execute if score v2 V matches 540..549 run function mgs:guns/054/handler_attach
+execute if score v2 V matches 550..559 run function mgs:guns/055/handler_attach
+execute if score v2 V matches 560..569 run function mgs:guns/056/handler_attach
+execute if score v2 V matches 570..579 run function mgs:guns/057/handler_attach
+execute if score v2 V matches 580..589 run function mgs:guns/058/handler_attach
+execute if score v2 V matches 590..599 run function mgs:guns/059/handler_attach
+execute if score v2 V matches 600..609 run function mgs:guns/060/handler_attach

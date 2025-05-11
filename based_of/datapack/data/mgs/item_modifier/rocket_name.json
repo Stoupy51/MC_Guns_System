@@ -1,0 +1,12 @@
+[
+    {
+      "function": "minecraft:set_lore",
+      "entity": "this",
+      "lore": [
+        {
+          "selector": "@p[tag=own]"
+        }
+      ],
+      "replace": true
+    }
+]

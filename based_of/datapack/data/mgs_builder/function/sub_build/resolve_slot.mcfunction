@@ -1,0 +1,12 @@
+execute if score builderSlot V matches 0 run function mgs:util/item/give
+execute if score builderSlot V matches 1 run function mgs:util/item/replace_0
+execute if score builderSlot V matches 2 run function mgs:util/item/replace_1
+execute if score builderSlot V matches 3 run function mgs:util/item/replace_2
+execute if score builderSlot V matches 4 run function mgs:util/item/replace_3
+execute if score builderSlot V matches 5 run function mgs:util/item/replace_4
+execute if score builderSlot V matches 6 run function mgs:util/item/replace_5
+execute if score builderSlot V matches 7 run function mgs:util/item/replace_6
+execute if score builderSlot V matches 8 run function mgs:util/item/replace_7
+execute if score builderSlot V matches 9 run function mgs:util/item/replace_8
+execute if score builderSlot V matches 10 run function mgs:util/item/replace_rh
+execute if score builderSlot V matches 11 run function mgs:util/item/replace_lh

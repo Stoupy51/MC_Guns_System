@@ -1,0 +1,1 @@
+scoreboard players set enableManualOnLoad V 0

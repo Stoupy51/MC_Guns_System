@@ -1,0 +1,13 @@
+{
+    "values": [
+        "minecraft:zombified_piglin",
+        "minecraft:enderman",
+        "minecraft:wolf",
+        "minecraft:iron_golem",
+        "minecraft:polar_bear",
+        "minecraft:bee",
+        "minecraft:villager",
+        "minecraft:piglin",
+        "minecraft:piglin_brute"
+    ]
+}

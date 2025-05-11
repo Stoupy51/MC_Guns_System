@@ -1,0 +1,6 @@
+{
+    "parent": "item/generated",
+    "textures": {
+        "layer0": "mgs:misc/add_optic_outline"
+    }
+}

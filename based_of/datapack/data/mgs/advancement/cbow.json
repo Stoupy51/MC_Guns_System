@@ -1,0 +1,15 @@
+{
+    "criteria": {
+        "cbow": {
+            "trigger": "minecraft:shot_crossbow",
+            "conditions": {
+                "item": {
+                    "nbt": "{Gun:1}"
+                }
+            }
+        }
+    },
+    "rewards": {
+        "function": "mgs:util/cbow_click"
+    }
+}

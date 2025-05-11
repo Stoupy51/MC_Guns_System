@@ -1,0 +1,77 @@
+[
+    {
+      "function": "minecraft:set_lore",
+      "entity": "this",
+      "lore": [
+        {
+          "text": ""
+        },
+        {
+          "text": "When in main hand:",
+          "color": "gray",
+          "italic": false
+        },
+        [
+          {
+            "score": {
+              "name": "v0",
+              "objective": "V"
+            },
+            "color": "dark_green",
+            "italic": false
+          },
+          {
+            "text": " Attack Damage",
+            "color": "dark_green",
+            "italic": false
+          }
+        ],
+        [
+          {
+            "score": {
+              "name": "v6",
+              "objective": "V"
+            },
+            "color": "dark_green",
+            "italic": false
+          },
+          {
+            "text": " Rounds Per Minute",
+            "color": "dark_green",
+            "italic": false
+          }
+        ],
+        [
+          {
+            "score": {
+              "name": "v5",
+              "objective": "V"
+            },
+            "color": "dark_green",
+            "italic": false
+          },
+          {
+            "text": " Arcminute Spread",
+            "color": "dark_green",
+            "italic": false
+          }
+        ],
+        [
+          {
+            "score": {
+              "name": "v3",
+              "objective": "V"
+            },
+            "color": "dark_green",
+            "italic": false
+          },
+          {
+            "text": " Round Capacity",
+            "color": "dark_green",
+            "italic": false
+          }
+        ]
+      ],
+      "replace": true
+    }
+]

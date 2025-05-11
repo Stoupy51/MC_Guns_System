@@ -1,0 +1,1 @@
+scoreboard players set enableTracer V 1

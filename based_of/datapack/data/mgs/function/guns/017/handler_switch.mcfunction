@@ -1,0 +1,1 @@
+scoreboard players operation @s cooldown = vz61_switch S

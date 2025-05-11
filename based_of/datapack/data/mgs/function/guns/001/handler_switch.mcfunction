@@ -1,0 +1,1 @@
+scoreboard players operation @s cooldown = m16_switch S

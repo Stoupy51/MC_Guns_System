@@ -1,0 +1,10 @@
+execute if score @s catalog_last matches 50 run function give:scarh_mag
+execute if score @s catalog_last matches 51 run function give:scarh
+execute if score @s catalog_last matches 52 run function give:vz61_mag
+execute if score @s catalog_last matches 53 run function give:vz61
+execute if score @s catalog_last matches 54 run function give:m590_mag
+execute if score @s catalog_last matches 55 run function give:m590
+execute if score @s catalog_last matches 56 run function give:m24_mag
+execute if score @s catalog_last matches 57 run function give:m24
+execute if score @s catalog_last matches 58 run function give:m249_mag
+execute if score @s catalog_last matches 59 run function give:m249

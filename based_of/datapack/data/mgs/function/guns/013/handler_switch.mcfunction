@@ -1,0 +1,1 @@
+scoreboard players operation @s cooldown = deagle_switch S

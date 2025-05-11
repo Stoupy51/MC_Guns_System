@@ -1,0 +1,10 @@
+execute if score builderGun V matches 21 run function mgs:guns/021/gen/gun
+execute if score builderGun V matches 22 run function mgs:guns/022/gen/gun
+execute if score builderGun V matches 23 run function mgs:guns/023/gen/gun
+execute if score builderGun V matches 24 run function mgs:guns/024/gen/gun
+execute if score builderGun V matches 25 run function mgs:guns/025/gen/gun
+execute if score builderGun V matches 26 run function mgs:guns/026/gen/gun
+execute if score builderGun V matches 27 run function mgs:guns/027/gen/gun
+execute if score builderGun V matches 28 run function mgs:guns/028/gen/gun
+execute if score builderGun V matches 29 run function mgs:guns/029/gen/gun
+execute if score builderGun V matches 30 run function mgs:guns/030/gen/gun

@@ -1,0 +1,35 @@
+[
+    {
+      "function": "minecraft:set_lore",
+      "entity": "this",
+      "lore": [[
+        {
+          "text": "Capacity: ",
+          "color": "white",
+          "italic": false
+        },
+        {
+          "score": {
+            "name": "v0",
+            "objective": "V"
+          },
+          "color": "white",
+          "italic": false
+        },
+        {
+          "text": " / ",
+          "color": "white",
+          "italic": false
+        },
+        {
+          "score": {
+            "name": "v1",
+            "objective": "V"
+          },
+          "color": "white",
+          "italic": false
+        }
+      ]],
+      "replace": true
+    }
+]

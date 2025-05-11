@@ -1,0 +1,1 @@
+scoreboard players set enableCasing V 1

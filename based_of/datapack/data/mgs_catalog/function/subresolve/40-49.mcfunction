@@ -1,0 +1,10 @@
+execute if score @s catalog_last matches 40 run function give:glock18_mag
+execute if score @s catalog_last matches 41 run function give:glock18
+execute if score @s catalog_last matches 42 run function give:mp7_mag
+execute if score @s catalog_last matches 43 run function give:mp7
+execute if score @s catalog_last matches 44 run function give:famas_mag
+execute if score @s catalog_last matches 45 run function give:famas
+execute if score @s catalog_last matches 46 run function give:ppsh41_mag
+execute if score @s catalog_last matches 47 run function give:ppsh41
+execute if score @s catalog_last matches 48 run function give:sten_mag
+execute if score @s catalog_last matches 49 run function give:sten

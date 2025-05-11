@@ -1,0 +1,13 @@
+execute as @a[distance=0..32] at @s run playsound mgs:common.explode_far player @s ~ ~ ~ 1.0
+execute as @a[distance=32..48] at @s run playsound mgs:common.explode_far player @s ~ ~ ~ 0.9
+execute as @a[distance=48..64] at @s run playsound mgs:common.explode_far player @s ~ ~ ~ 0.8
+execute as @a[distance=64..80] at @s run playsound mgs:common.explode_far player @s ~ ~ ~ 0.7
+execute as @a[distance=80..96] at @s run playsound mgs:common.explode_far player @s ~ ~ ~ 0.6
+execute as @a[distance=96..112] at @s run playsound mgs:common.explode_far player @s ~ ~ ~ 0.5
+execute as @a[distance=112..128] at @s run playsound mgs:common.explode_far player @s ~ ~ ~ 0.4
+execute as @a[distance=128..144] at @s run playsound mgs:common.explode_far player @s ~ ~ ~ 0.3
+execute as @a[distance=144..160] at @s run playsound mgs:common.explode_far player @s ~ ~ ~ 0.2
+execute as @a[distance=160..176] at @s run playsound mgs:common.explode_far player @s ~ ~ ~ 0.1
+execute as @a[distance=176..192] at @s run playsound mgs:common.explode_far player @s ~ ~ ~ 0.05
+execute as @a[distance=192..208] at @s run playsound mgs:common.explode_far player @s ~ ~ ~ 0.025 
+playsound minecraft:entity.generic.explode player @a[distance=..32] ~ ~ ~ 1.5

@@ -1,0 +1,10 @@
+{
+    "values": [
+    "#mgs:sounds/glass",
+    "#mgs:sounds/water",
+    "#mgs:sounds/cloth",
+    "#mgs:sounds/dirt",
+    "#mgs:sounds/mud",
+    "#mgs:sounds/wood"
+    ]
+}

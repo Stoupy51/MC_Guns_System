@@ -1,0 +1,1 @@
+scoreboard players operation @s cooldown = mp5_switch S

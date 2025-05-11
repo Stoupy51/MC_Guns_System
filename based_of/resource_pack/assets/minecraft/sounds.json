@@ -1,0 +1,3 @@
+{
+    "item.armor.equip_generic":   {"sounds": ["mgs:common/silence"], "replace":true}
+}

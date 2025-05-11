@@ -1,0 +1,11 @@
+{
+    "function": "minecraft:copy_nbt",
+    "source": "this",
+    "ops": [
+      {
+        "source": "Item.tag",
+        "target": "{}",
+        "op": "merge"
+      }
+    ]
+}

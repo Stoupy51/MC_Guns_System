@@ -1,0 +1,18 @@
+{
+"values": [
+"#minecraft:wool",
+"#minecraft:anvil",
+"#minecraft:coral_blocks",
+"#minecraft:logs",
+"#minecraft:planks",
+"#minecraft:bamboo_blocks",
+"#mgs:concrete",
+"#mgs:concrete_powder",
+"#mgs:terracotta",
+"#mgs:stones",
+"#mgs:ores",
+"#mgs:dirt",
+"#mgs:mud",
+"#mgs:misc"
+]
+}

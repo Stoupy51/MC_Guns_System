@@ -1,0 +1,1 @@
+scoreboard players set enableMagazines V 0

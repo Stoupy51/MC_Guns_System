@@ -1,0 +1,7 @@
+{
+    "values": [
+    "mgs:core/init/setup",
+    "mgs_catalog:setup",
+    "mgs_builder:setup"
+    ]
+}

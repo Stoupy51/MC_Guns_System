@@ -1,0 +1,10 @@
+execute if score @s weapon matches 410..419 run function mgs:guns/041/handler_switch
+execute if score @s weapon matches 420..429 run function mgs:guns/042/handler_switch
+execute if score @s weapon matches 430..439 run function mgs:guns/043/handler_switch
+execute if score @s weapon matches 440..449 run function mgs:guns/044/handler_switch
+execute if score @s weapon matches 450..459 run function mgs:guns/045/handler_switch
+execute if score @s weapon matches 460..469 run function mgs:guns/046/handler_switch
+execute if score @s weapon matches 470..479 run function mgs:guns/047/handler_switch
+execute if score @s weapon matches 480..489 run function mgs:guns/048/handler_switch
+execute if score @s weapon matches 490..499 run function mgs:guns/049/handler_switch
+execute if score @s weapon matches 500..509 run function mgs:guns/050/handler_switch

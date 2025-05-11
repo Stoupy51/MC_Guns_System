@@ -1,0 +1,20 @@
+
+tellraw @a {"text":"~~~~~~~~~~~~VARS~~~~~~~~~~~~","color":"red"}
+tellraw @a [{"text":"v0:"},{"score":{"name":"v0","objective":"V"}}]
+tellraw @a [{"text":"v1:"},{"score":{"name":"v1","objective":"V"}}]
+tellraw @a [{"text":"v2:"},{"score":{"name":"v2","objective":"V"}}]
+tellraw @a [{"text":"v3:"},{"score":{"name":"v3","objective":"V"}}]
+tellraw @a [{"text":"v4:"},{"score":{"name":"v4","objective":"V"}}]
+tellraw @a [{"text":"v5:"},{"score":{"name":"v5","objective":"V"}}]
+tellraw @a [{"text":"v6:"},{"score":{"name":"v6","objective":"V"}}]
+tellraw @a [{"text":"v7:"},{"score":{"name":"v7","objective":"V"}}]
+tellraw @a [{"text":"v8:"},{"score":{"name":"v8","objective":"V"}}]
+tellraw @a [{"text":"v9:"},{"score":{"name":"v9","objective":"V"}}]
+tellraw @a [{"text":"v10:"},{"score":{"name":"v10","objective":"V"}}]
+tellraw @a [{"text":"v11:"},{"score":{"name":"v11","objective":"V"}}]
+tellraw @a [{"text":"v12:"},{"score":{"name":"v12","objective":"V"}}]
+tellraw @a [{"text":"v13:"},{"score":{"name":"v13","objective":"V"}}]
+tellraw @a [{"text":"v14:"},{"score":{"name":"v14","objective":"V"}}]
+tellraw @a [{"text":"v15:"},{"score":{"name":"v15","objective":"V"}}]
+tellraw @a [{"text":"rand:"},{"score":{"name":"rand","objective":"V"}}]
+tellraw @a {"text":"~~~~~~~~~~~~~~~~~~~~~~~~~~~","color":"red"}

@@ -1,0 +1,1 @@
+scoreboard players operation @s cooldown = mac10_switch S

@@ -1,0 +1,10 @@
+execute if score @s catalog_last matches 30 run function give:makarov_mag
+execute if score @s catalog_last matches 31 run function give:makarov
+execute if score @s catalog_last matches 32 run function give:m4_mag
+execute if score @s catalog_last matches 33 run function give:m4
+execute if score @s catalog_last matches 34 run function give:g3_mag
+execute if score @s catalog_last matches 35 run function give:g3
+execute if score @s catalog_last matches 36 run function give:rpk_mag
+execute if score @s catalog_last matches 37 run function give:rpk
+execute if score @s catalog_last matches 38 run function give:glock17_mag
+execute if score @s catalog_last matches 39 run function give:glock17

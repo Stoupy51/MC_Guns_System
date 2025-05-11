@@ -1,0 +1,20 @@
+{
+    "blend": {
+        "func": "add",
+        "srcrgb": "one",
+        "dstrgb": "zero"
+    },
+    "vertex": "classify",
+    "fragment": "classify",
+    "attributes": [ "Position" ],
+    "samplers": [
+        { "name": "DiffuseSampler" },
+        { "name": "ParticlesSampler" },
+        { "name": "ParticlesDepthSampler" }
+    ],
+    "uniforms": [
+        { "name": "InSize",   "type": "float", "count": 2, "values": [ 1.0, 1.0 ] },
+        { "name": "AuxSize0", "type": "float", "count": 2, "values": [ 1.0, 1.0 ] },
+        { "name": "Time",     "type": "float", "count": 1, "values": [ 1.0 ] }
+    ]
+}

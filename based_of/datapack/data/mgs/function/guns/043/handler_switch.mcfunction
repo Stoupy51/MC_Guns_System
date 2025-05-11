@@ -1,0 +1,1 @@
+scoreboard players operation @s cooldown = mosin_switch S

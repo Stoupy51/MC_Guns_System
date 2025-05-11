@@ -1,0 +1,140 @@
+{
+    "targets": [
+        "translucent",
+        "itemEntity",
+        "particles",
+        "clouds",
+        "weather",
+        "swap1",
+        "swap2",
+        { "name": "temporal1", "width": 4, "height": 1, "bilinear": false },
+        { "name": "temporal2", "width": 4, "height": 1, "bilinear": false }
+    ],
+    "passes": [
+        {
+            "name": "classify",
+            "intarget": "temporal1",
+            "outtarget": "temporal2",
+            "auxtargets": [
+                {
+                    "name": "ParticlesSampler",
+                    "id": "particles"
+                },
+                {
+                    "name": "ParticlesDepthSampler",
+                    "id": "particles:depth"
+                }
+            ]
+        },
+        {
+            "name": "copy",
+            "intarget": "temporal2",
+            "outtarget": "temporal1"
+        },
+        {
+            "name": "flash",
+            "intarget": "minecraft:main",
+            "outtarget": "swap1",
+            "auxtargets": [
+                {
+                    "name": "DiffuseDepthSampler",
+                    "id": "minecraft:main:depth"
+                },
+                {
+                    "name": "AuxSampler",
+                    "id": "temporal1"
+                }
+            ],
+            "uniforms": [
+                {
+                    "name": "Color",
+                    "values": [1.0, 0.8, 0.5 ]
+                }
+            ]
+        },
+        {
+            "name": "transparency",
+            "intarget": "swap1",
+            "outtarget": "swap2",
+            "auxtargets": [
+                {
+                    "name": "DiffuseDepthSampler",
+                    "id": "minecraft:main:depth"
+                },
+                {
+                    "name": "TranslucentSampler",
+                    "id": "translucent"
+                },
+                {
+                    "name": "TranslucentDepthSampler",
+                    "id": "translucent:depth"
+                },
+                {
+                    "name": "ItemEntitySampler",
+                    "id": "itemEntity"
+                },
+                {
+                    "name": "ItemEntityDepthSampler",
+                    "id": "itemEntity:depth"
+                },
+                {
+                    "name": "ParticlesSampler",
+                    "id": "particles"
+                },
+                {
+                    "name": "ParticlesDepthSampler",
+                    "id": "particles:depth"
+                },
+                {
+                    "name": "CloudsSampler",
+                    "id": "clouds"
+                },
+                {
+                    "name": "CloudsDepthSampler",
+                    "id": "clouds:depth"
+                },
+                {
+                    "name": "WeatherSampler",
+                    "id": "weather"
+                },
+                {
+                    "name": "WeatherDepthSampler",
+                    "id": "weather:depth"
+                }
+            ]
+        },
+        {
+            "name": "zoomspark",
+            "intarget": "swap2",
+            "outtarget": "swap1",
+            "auxtargets": [
+                {
+                    "name": "AuxSampler",
+                    "id": "temporal1"
+                },
+                { 
+                    "name" : "SparkTex",
+                    "id" : "flash" , 
+                    "width" : 1536 , 
+                    "height" : 1536 , 
+                    "bilinear" : true 
+                }
+            ],
+            "uniforms": [
+                {
+                    "name": "Distortion",
+                    "values": [0.55]
+                },
+                {
+                    "name": "Zoom",
+                    "values": [4.0]
+                }
+            ]
+        },
+        {
+            "name": "blit",
+            "intarget": "swap1",
+            "outtarget": "minecraft:main"
+        }
+    ]
+}

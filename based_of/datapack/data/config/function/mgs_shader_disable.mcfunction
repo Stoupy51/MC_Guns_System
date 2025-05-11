@@ -1,0 +1,1 @@
+function mgs:gamerule/shader_disable

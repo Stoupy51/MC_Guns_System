@@ -1,0 +1,1 @@
+scoreboard players operation @s cooldown = spas12_switch S

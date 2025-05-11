@@ -1,0 +1,10 @@
+execute if score @s catalog_last matches 20 run function give:dragunov_mag
+execute if score @s catalog_last matches 21 run function give:dragunov
+execute if score @s catalog_last matches 22 run function give:mosin_nagant_mag
+execute if score @s catalog_last matches 23 run function give:mosin_nagant
+execute if score @s catalog_last matches 24 run function give:rpg7_mag
+execute if score @s catalog_last matches 25 run function give:rpg7
+execute if score @s catalog_last matches 26 run function give:desert_eagle_mag
+execute if score @s catalog_last matches 27 run function give:desert_eagle
+execute if score @s catalog_last matches 28 run function give:aug_mag
+execute if score @s catalog_last matches 29 run function give:aug

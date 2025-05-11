@@ -1,0 +1,10 @@
+execute if score @s catalog_last matches 10 run function give:m500_mag
+execute if score @s catalog_last matches 11 run function give:m500
+execute if score @s catalog_last matches 12 run function give:spas12_mag
+execute if score @s catalog_last matches 13 run function give:spas12
+execute if score @s catalog_last matches 14 run function give:mac10_mag
+execute if score @s catalog_last matches 15 run function give:mac10
+execute if score @s catalog_last matches 16 run function give:mp5_mag
+execute if score @s catalog_last matches 17 run function give:mp5
+execute if score @s catalog_last matches 18 run function give:barrett_50cal_mag
+execute if score @s catalog_last matches 19 run function give:barrett_50cal

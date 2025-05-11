@@ -1,0 +1,553 @@
+{
+    "providers": [
+        {
+            "type": "bitmap",
+            "file": "mgs:misc/spaces.png",
+            "ascent": 10,
+            "height": 10,
+            "chars": [
+               "\u2002\u2003\u2004\u2005\u2006\u2007"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "mgs:misc/blueprint_grid.png",
+            "ascent": 8,
+            "height": 61,
+            "chars": [
+               "\uee00"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "mgs:misc/blueprint_parts.png",
+            "ascent": 13,
+            "height": 16,
+            "chars": [
+               "\uee10\uee11\uee12\uee13\uee14\uee15\uee16\uee17\uee18\uee19\uee1a\uee1b\uee1c\uee1d\uee1e\uee1f",
+               "\uee20\uee21\uee22\uee23\uee24\uee25\uee26\uee27\uee28\uee29\uee2a\uee2b\uee2c\uee2d\uee2e\uee2f",
+               "\uee30\uee31\uee32\uee33\uee34\uee35\uee36\uee37\uee38\uee39\uee3a\uee3b\uee3c\uee3d\uee3e\uee3f",
+               "\uee40\uee41\uee42\uee43\uee44\uee45\uee46\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "mgs:misc/blueprint_parts.png",
+            "ascent": 6,
+            "height": 16,
+            "chars": [
+               "\uee50\uee51\uee52\uee53\uee54\uee55\uee56\uee57\uee58\uee59\uee5a\uee5b\uee5c\uee5d\uee5e\uee5f",
+               "\uee60\uee61\uee62\uee63\uee64\uee65\uee66\uee67\uee68\uee69\uee6a\uee6b\uee6c\uee6d\uee6e\uee6f",
+               "\uee70\uee71\uee72\uee73\uee74\uee75\uee76\uee77\uee78\uee79\uee7a\uee7b\uee7c\uee7d\uee7e\uee7f",
+               "\uee80\uee81\uee82\uee83\uee84\uee85\uee86\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "mgs:misc/blueprint_parts.png",
+            "ascent": -1,
+            "height": 16,
+            "chars": [
+               "\uee90\uee91\uee92\uee93\uee94\uee95\uee96\uee97\uee98\uee99\uee9a\uee9b\uee9c\uee9d\uee9e\uee9f",
+               "\ueea0\ueea1\ueea2\ueea3\ueea4\ueea5\ueea6\ueea7\ueea8\ueea9\ueeaa\ueeab\ueeac\ueead\ueeae\ueeaf",
+               "\ueeb0\ueeb1\ueeb2\ueeb3\ueeb4\ueeb5\ueeb6\ueeb7\ueeb8\ueeb9\ueeba\ueebb\ueebc\ueebd\ueebe\ueebf",
+               "\ueec0\ueec1\ueec2\ueec3\ueec4\ueec5\ueec6\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "mgs:misc/blueprint_parts.png",
+            "ascent": 12,
+            "height": 16,
+            "chars": [
+               "\ued10\ued11\ued12\ued13\ued14\ued15\ued16\ued17\ued18\ued19\ued1a\ued1b\ued1c\ued1d\ued1e\ued1f",
+               "\ued20\ued21\ued22\ued23\ued24\ued25\ued26\ued27\ued28\ued29\ued2a\ued2b\ued2c\ued2d\ued2e\ued2f",
+               "\ued30\ued31\ued32\ued33\ued34\ued35\ued36\ued37\ued38\ued39\ued3a\ued3b\ued3c\ued3d\ued3e\ued3f",
+               "\ued40\ued41\ued42\ued43\ued44\ued45\ued46\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "mgs:misc/blueprint_parts.png",
+            "ascent": 4,
+            "height": 16,
+            "chars": [
+               "\ued50\ued51\ued52\ued53\ued54\ued55\ued56\ued57\ued58\ued59\ued5a\ued5b\ued5c\ued5d\ued5e\ued5f",
+               "\ued60\ued61\ued62\ued63\ued64\ued65\ued66\ued67\ued68\ued69\ued6a\ued6b\ued6c\ued6d\ued6e\ued6f",
+               "\ued70\ued71\ued72\ued73\ued74\ued75\ued76\ued77\ued78\ued79\ued7a\ued7b\ued7c\ued7d\ued7e\ued7f",
+               "\ued80\ued81\ued82\ued83\ued84\ued85\ued86\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "mgs:misc/blueprint_parts.png",
+            "ascent": -4,
+            "height": 16,
+            "chars": [
+               "\ued90\ued91\ued92\ued93\ued94\ued95\ued96\ued97\ued98\ued99\ued9a\ued9b\ued9c\ued9d\ued9e\ued9f",
+               "\ueda0\ueda1\ueda2\ueda3\ueda4\ueda5\ueda6\ueda7\ueda8\ueda9\uedaa\uedab\uedac\uedad\uedae\uedaf",
+               "\uedb0\uedb1\uedb2\uedb3\uedb4\uedb5\uedb6\uedb7\uedb8\uedb9\uedba\uedbb\uedbc\uedbd\uedbe\uedbf",
+               "\uedc0\uedc1\uedc2\uedc3\uedc4\uedc5\uedc6\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "mgs:item/iron_block.png",
+            "ascent": 12,
+            "height": 16,
+            "chars": [
+               "\uedd0"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "mgs:item/iron_block.png",
+            "ascent": 4,
+            "height": 16,
+            "chars": [
+               "\uede0"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "mgs:item/iron_block.png",
+            "ascent": -4,
+            "height": 16,
+            "chars": [
+               "\uedf0"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "mgs:item/end_stone_block.png",
+            "ascent": 12,
+            "height": 16,
+            "chars": [
+               "\uedd1"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "mgs:item/end_stone_block.png",
+            "ascent": 4,
+            "height": 16,
+            "chars": [
+               "\uede1"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "mgs:item/end_stone_block.png",
+            "ascent": -4,
+            "height": 16,
+            "chars": [
+               "\uedf1"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "mgs:item/tnt_block.png",
+            "ascent": 12,
+            "height": 16,
+            "chars": [
+               "\uedd2"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "mgs:item/tnt_block.png",
+            "ascent": 4,
+            "height": 16,
+            "chars": [
+               "\uede2"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "mgs:item/tnt_block.png",
+            "ascent": -4,
+            "height": 16,
+            "chars": [
+               "\uedf2"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "mgs:item/oak_planks_block.png",
+            "ascent": 12,
+            "height": 16,
+            "chars": [
+               "\uedd3"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "mgs:item/oak_planks_block.png",
+            "ascent": 4,
+            "height": 16,
+            "chars": [
+               "\uede3"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "mgs:item/oak_planks_block.png",
+            "ascent": -4,
+            "height": 16,
+            "chars": [
+               "\uedf3"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "mgs:misc/catalog/cover.png",
+            "ascent": 12,
+            "height": 140,
+            "chars": [
+               "\uef00"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "mgs:misc/catalog/empty.png",
+            "ascent": 0,
+            "height": 55,
+            "chars": [
+               "\uef01"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "mgs:misc/catalog/none.png",
+            "ascent": 0,
+            "height": 55,
+            "chars": [
+               "\uef02"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "mgs:misc/catalog/holo.png",
+            "ascent": 0,
+            "height": 55,
+            "chars": [
+               "\uef03"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "mgs:misc/catalog/kobra.png",
+            "ascent": 0,
+            "height": 55,
+            "chars": [
+               "\uef04"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "mgs:misc/catalog/acog.png",
+            "ascent": 0,
+            "height": 55,
+            "chars": [
+               "\uef05"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "mgs:misc/catalog/mk4.png",
+            "ascent": 0,
+            "height": 55,
+            "chars": [
+               "\uef06"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "mgs:misc/catalog/pso1.png",
+            "ascent": 0,
+            "height": 55,
+            "chars": [
+               "\uef07"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "mgs:misc/catalog/pu.png",
+            "ascent": 0,
+            "height": 55,
+            "chars": [
+               "\uef08"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "mgs:misc/catalog/ak.png",
+            "ascent": 9,
+            "height": 9,
+            "chars": [
+               "\uef11"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "mgs:misc/catalog/fal.png",
+            "ascent": 9,
+            "height": 9,
+            "chars": [
+               "\uef12"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "mgs:misc/catalog/m16.png",
+            "ascent": 9,
+            "height": 9,
+            "chars": [
+               "\uef13"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "mgs:misc/catalog/1911.png",
+            "ascent": 9,
+            "height": 9,
+            "chars": [
+               "\uef14"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "mgs:misc/catalog/m9.png",
+            "ascent": 9,
+            "height": 9,
+            "chars": [
+               "\uef15"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "mgs:misc/catalog/mac10.png",
+            "ascent": 9,
+            "height": 9,
+            "chars": [
+               "\uef16"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "mgs:misc/catalog/mp5.png",
+            "ascent": 9,
+            "height": 9,
+            "chars": [
+               "\uef17"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "mgs:misc/catalog/m500.png",
+            "ascent": 9,
+            "height": 9,
+            "chars": [
+               "\uef18"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "mgs:misc/catalog/spas12.png",
+            "ascent": 9,
+            "height": 9,
+            "chars": [
+               "\uef19"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "mgs:misc/catalog/m82.png",
+            "ascent": 9,
+            "height": 9,
+            "chars": [
+               "\uef1a"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "mgs:misc/catalog/mosin.png",
+            "ascent": 9,
+            "height": 9,
+            "chars": [
+               "\uef1b"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "mgs:misc/catalog/svd.png",
+            "ascent": 9,
+            "height": 9,
+            "chars": [
+               "\uef1c"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "mgs:misc/catalog/rpg7.png",
+            "ascent": 9,
+            "height": 9,
+            "chars": [
+               "\uef1d"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "mgs:misc/catalog/deagle.png",
+            "ascent": 9,
+            "height": 9,
+            "chars": [
+               "\uef1e"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "mgs:misc/catalog/aug.png",
+            "ascent": 9,
+            "height": 9,
+            "chars": [
+               "\uef1f"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "mgs:misc/catalog/makarov.png",
+            "ascent": 9,
+            "height": 9,
+            "chars": [
+               "\uef20"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "mgs:misc/catalog/m4.png",
+            "ascent": 9,
+            "height": 9,
+            "chars": [
+               "\uef21"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "mgs:misc/catalog/g3.png",
+            "ascent": 9,
+            "height": 9,
+            "chars": [
+               "\uef22"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "mgs:misc/catalog/rpk.png",
+            "ascent": 9,
+            "height": 9,
+            "chars": [
+               "\uef23"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "mgs:misc/catalog/glock17.png",
+            "ascent": 9,
+            "height": 9,
+            "chars": [
+               "\uef24"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "mgs:misc/catalog/glock18.png",
+            "ascent": 9,
+            "height": 9,
+            "chars": [
+               "\uef25"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "mgs:misc/catalog/mp7.png",
+            "ascent": 9,
+            "height": 9,
+            "chars": [
+               "\uef26"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "mgs:misc/catalog/famas.png",
+            "ascent": 9,
+            "height": 9,
+            "chars": [
+               "\uef27"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "mgs:misc/catalog/sten.png",
+            "ascent": 9,
+            "height": 9,
+            "chars": [
+               "\uef28"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "mgs:misc/catalog/ppsh41.png",
+            "ascent": 9,
+            "height": 9,
+            "chars": [
+               "\uef29"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "mgs:misc/catalog/vz61.png",
+            "ascent": 9,
+            "height": 9,
+            "chars": [
+               "\uef2a"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "mgs:misc/catalog/m590.png",
+            "ascent": 9,
+            "height": 9,
+            "chars": [
+               "\uef2b"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "mgs:misc/catalog/m24.png",
+            "ascent": 9,
+            "height": 9,
+            "chars": [
+               "\uef2c"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "mgs:misc/catalog/scar17.png",
+            "ascent": 9,
+            "height": 9,
+            "chars": [
+               "\uef2d"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "mgs:misc/catalog/m249.png",
+            "ascent": 9,
+            "height": 9,
+            "chars": [
+               "\uef2e"
+            ]
+        }
+    ]
+}

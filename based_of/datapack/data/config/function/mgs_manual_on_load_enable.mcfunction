@@ -1,0 +1,1 @@
+function mgs_catalog:gamerule/manual_on_load_enable

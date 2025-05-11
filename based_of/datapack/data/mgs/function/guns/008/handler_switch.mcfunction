@@ -1,0 +1,1 @@
+scoreboard players operation @s cooldown = scar17_switch S
