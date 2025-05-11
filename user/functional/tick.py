@@ -10,5 +10,5 @@ def main(config: dict) -> None:
     database: dict = config["database"]
     pass
 
-    # Right click = 4
+    # TODO: sneak = zoom
 
