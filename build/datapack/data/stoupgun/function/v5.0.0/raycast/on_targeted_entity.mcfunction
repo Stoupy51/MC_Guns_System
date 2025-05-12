@@ -7,18 +7,30 @@
 # Blood particles
 particle block{block_state:"redstone_wire"} ~ ~1 ~ 0.35 0.5 0.35 0 100 force @a[distance=..128]
 
-# Is headshot? (#FIXME: hit_point is updated after function call)
+# Get base damage with 3 digits of precision
+data modify storage stoupgun:input with set value {target:"@s", amount:0.0f, attacker:"@p[tag=stoupgun.attacker]"}
+execute store result score #damage stoupgun.data run data get storage stoupgun:gun stats.damage 1000
+
+# Apply decay (damage *= pow(decay, distance))
+data modify storage bs:in math.pow.x set from storage stoupgun:gun stats.decay
+data modify storage bs:in math.pow.y set from storage bs:lambda raycast.distance
+function #bs.math:pow
+execute store result score #pow_decay_distance stoupgun.data run data get storage bs:out math.pow 1000
+scoreboard players operation #damage stoupgun.data *= #pow_decay_distance stoupgun.data
+
+# Divide by 1000 because we're multiplying two scaled integers with each other (1000*1000 = 1000000)
+scoreboard players operation #damage stoupgun.data /= #1000 stoupgun.data
+
+# Divide damage by 2 if not headshot
 scoreboard players set #is_headshot stoupgun.data 0
 execute store result score #entity_y stoupgun.data run data get entity @s Pos[1] 1000
 execute store result score #hit_y stoupgun.data run data get storage bs:lambda raycast.hit_point[1] 1000
 scoreboard players operation #y_diff stoupgun.data = #hit_y stoupgun.data
 scoreboard players operation #y_diff stoupgun.data -= #entity_y stoupgun.data
-execute if score #y_diff stoupgun.data matches 1500.. run scoreboard players set #is_headshot stoupgun.data 1
-#execute if score #is_headshot stoupgun.data matches 1 run say Headshot!
+execute if score #y_diff stoupgun.data matches 1200.. run scoreboard players set #is_headshot stoupgun.data 1
+execute unless score #is_headshot stoupgun.data matches 1 run scoreboard players operation #damage stoupgun.data /= #2 stoupgun.data
 
 # Damage entity
-data modify storage stoupgun:input with set value {target:"@s", amount:0.0d, attacker:"@p[tag=stoupgun.attacker]"}
-execute if score #is_headshot stoupgun.data matches 1 store result storage stoupgun:input with.amount float 1.0 run data get storage stoupgun:gun stats.damage
-execute if score #is_headshot stoupgun.data matches 0 store result storage stoupgun:input with.amount float 0.5 run data get storage stoupgun:gun stats.damage
+execute store result storage stoupgun:input with.amount float 0.001 run scoreboard players get #damage stoupgun.data
 function stoupgun:v5.0.0/utils/damage with storage stoupgun:input with
 

@@ -11,7 +11,7 @@
 							"function": "minecraft:set_components",
 							"components": {
 								"minecraft:custom_data": {
-									"stoupgun": {"gun": true,"base_weapon": "ak47","stats": {"capacity": 30,"reload": 70,"reload_end": 10,"cooldown": 2,"burst": 3,"damage": 15,"decay": 4,"acc_base": 150,"acc_sneaky": 20,"acc_walk": 500,"acc_sprint": 1500,"acc_jump": 1800,"switch": 25,"kick": 2,"casing_n": 200,"casing_t": 50,"casing_b": -200},"ak47_2_zoom": true},
+									"stoupgun": {"gun": true,"base_weapon": "ak47","stats": {"capacity": 30,"reload": 70,"reload_end": 10,"cooldown": 2,"burst": 3,"damage": 15,"decay": 0.95,"acc_base": 150,"acc_sneaky": 20,"acc_walk": 500,"acc_sprint": 1500,"acc_jump": 1800,"switch": 25,"kick": 2,"casing_n": 200,"casing_t": 50,"casing_b": -200},"ak47_2_zoom": true},
 									"smithed": {"ignore": {"functionality": true,"crafting": true}}
 								},
 								"minecraft:item_model": "stoupgun:ak47_2_zoom",

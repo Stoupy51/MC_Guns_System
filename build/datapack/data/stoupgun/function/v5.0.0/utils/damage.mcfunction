@@ -5,4 +5,5 @@
 #
 
 $damage $(target) $(amount) stoupgun:bullet by $(attacker)
+$say $(amount) by $(attacker)
 
