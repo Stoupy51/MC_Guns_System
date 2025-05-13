@@ -9,5 +9,5 @@ advancement revoke @s only stoupgun:v5.0.0/right_click
 scoreboard players reset @s stoupgun.right_click
 
 # Set pending clicks and reset right click
-scoreboard players set @s stoupgun.pending_clicks 3
+scoreboard players set @s stoupgun.pending_clicks 4
 

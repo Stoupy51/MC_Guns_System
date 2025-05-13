@@ -5,8 +5,8 @@
 #
 
 # Allow bullets to pierce 2 blocks at most
-execute if score $raycast.piercing bs.lambda matches 5.. run scoreboard players set $raycast.piercing bs.lambda 4
-execute if score $raycast.piercing bs.lambda matches 1..4 run scoreboard players remove $raycast.piercing bs.lambda 1
+execute if score $raycast.piercing bs.lambda matches 1..3 run scoreboard players remove $raycast.piercing bs.lambda 1
+execute if score $raycast.piercing bs.lambda matches 5.. run scoreboard players set $raycast.piercing bs.lambda 3
 
 # Divide damage per 2
 execute store result storage stoupgun:gun stats.damage float 0.5 run data get storage stoupgun:gun stats.damage

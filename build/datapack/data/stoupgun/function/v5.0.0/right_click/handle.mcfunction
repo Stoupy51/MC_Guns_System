@@ -39,6 +39,9 @@ tag @s remove stoupgun.attacker
 # TODO
 #playsound stoupgun:common/empty player @a[distance=..12]
 
+# Make a kick
+function stoupgun:v5.0.0/kicks/main
+
 # TODO: Advanced Playsound
 playsound stoupgun:ak47/fire player @s ~ ~1000000 ~ 400000
 playsound stoupgun:ak47/fire player @a[distance=0.01..48] ~ ~ ~ 3

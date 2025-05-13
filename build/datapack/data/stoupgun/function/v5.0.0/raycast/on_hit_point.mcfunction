@@ -4,6 +4,9 @@
 # @within	stoupgun:v5.0.0/right_click/handle
 #
 
+# If targeted entity, return to prevent showing particles
+execute if data storage bs:lambda raycast.targeted_entity run return fail
+
 # Get current block
 data modify storage stoupgun:temp Pos set from entity @s Pos
 data modify entity @s Pos set from storage bs:lambda raycast.targeted_block

@@ -38,7 +38,7 @@ advancement revoke @s only {ns}:v{version}/right_click
 scoreboard players reset @s {ns}.right_click
 
 # Set pending clicks and reset right click
-scoreboard players set @s {ns}.pending_clicks 3
+scoreboard players set @s {ns}.pending_clicks 4
 """)
 
     # Handle pending clicks
@@ -87,6 +87,9 @@ tag @s remove {ns}.attacker
 # TODO
 #playsound {ns}:common/empty player @a[distance=..12]
 
+# Make a kick
+function {ns}:v{version}/kicks/main
+
 # TODO: Advanced Playsound
 playsound {ns}:ak47/fire player @s ~ ~1000000 ~ 400000
 playsound {ns}:ak47/fire player @a[distance=0.01..48] ~ ~ ~ 3
@@ -95,6 +98,9 @@ playsound {ns}:ak47/fire player @a[distance=0.01..48] ~ ~ ~ 3
     # On hit point
     write_versioned_function(config, "raycast/on_hit_point",
 f"""
+# If targeted entity, return to prevent showing particles
+execute if data storage bs:lambda raycast.targeted_entity run return fail
+
 # Get current block
 data modify storage {ns}:temp Pos set from entity @s Pos
 data modify entity @s Pos set from storage bs:lambda raycast.targeted_block
@@ -114,8 +120,8 @@ execute unless data storage {ns}:input with{{block:"minecraft:air"}} run return 
     write_versioned_function(config, "raycast/on_targeted_block",
 f"""
 # Allow bullets to pierce 2 blocks at most
-execute if score $raycast.piercing bs.lambda matches 5.. run scoreboard players set $raycast.piercing bs.lambda 4
-execute if score $raycast.piercing bs.lambda matches 1..4 run scoreboard players remove $raycast.piercing bs.lambda 1
+execute if score $raycast.piercing bs.lambda matches 1..3 run scoreboard players remove $raycast.piercing bs.lambda 1
+execute if score $raycast.piercing bs.lambda matches 5.. run scoreboard players set $raycast.piercing bs.lambda 3
 
 # Divide damage per 2
 execute store result storage {ns}:gun stats.damage float 0.5 run data get storage {ns}:gun stats.damage
@@ -162,4 +168,34 @@ execute unless score #is_headshot {ns}.data matches 1 run scoreboard players ope
 execute store result storage {ns}:input with.amount float 0.1 run scoreboard players get #damage {ns}.data
 function {ns}:v{version}/utils/damage with storage {ns}:input with
 """)
+
+    ## Kicks
+    write_versioned_function(config, "kicks/main",
+f"""
+# Extract kick type & pick random value between 1 and 5
+scoreboard players set #kick {ns}.data 0
+execute store result score #kick {ns}.data run data get storage {ns}:gun stats.kick
+execute store result score #random {ns}.data run random value 1..5
+
+# Switch case
+execute if score #kick {ns}.data matches ..0 run function {ns}:v{version}/kicks/type_0
+execute if score #kick {ns}.data matches 1 run function {ns}:v{version}/kicks/type_1
+execute if score #kick {ns}.data matches 2 run function {ns}:v{version}/kicks/type_2
+execute if score #kick {ns}.data matches 3 run function {ns}:v{version}/kicks/type_3
+execute if score #kick {ns}.data matches 4 run function {ns}:v{version}/kicks/type_4
+execute if score #kick {ns}.data matches 5.. run function {ns}:v{version}/kicks/type_5
+""")
+    all_kicks: list[list[tuple[float, float]]] = [
+        [(-0.05, -0.25), (-0.025, -0.25), (-0.0, -0.25), (0.025, -0.25), (0.05, -0.25)],
+        [(-0.08, -0.5), (-0.03, -0.5), (-0.0, -0.5), (0.03, -0.5), (0.08, -0.5)],
+        [(-0.11, -1.0), (-0.05, -1.0), (-0.0, -1.0), (0.05, -1.0), (0.11, -1.0)],
+        [(-0.13, -1.5), (-0.06, -1.5), (-0.0, -1.5), (0.06, -1.5), (0.13, -1.5)],
+        [(-0.15, -2.0), (-0.06, -2.0), (-0.0, -2.0), (0.06, -2.0), (0.15, -2.0)],
+        [(-0.17, -2.5), (-0.06, -2.5), (-0.0, -2.5), (0.06, -2.5), (0.17, -2.5)],
+    ]
+    for i, kicks in enumerate(all_kicks):
+        content: str = ""
+        for j, (yaw, pitch) in enumerate(kicks):
+            content += f"\nexecute if score #random {ns}.data matches {j+1} run tp @s ~ ~ ~ ~{yaw} ~{pitch}"
+        write_versioned_function(config, f"kicks/type_{i}", content)
 
