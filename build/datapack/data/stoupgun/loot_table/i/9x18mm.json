@@ -1,0 +1,34 @@
+{
+	"pools": [
+		{
+			"rolls": 1,
+			"entries": [
+				{
+					"type": "minecraft:item",
+					"name": "minecraft:command_block",
+					"functions": [
+						{
+							"function": "minecraft:set_components",
+							"components": {
+								"minecraft:custom_data": {
+									"stoupgun": {"casing": true,"9x18mm": true},
+									"smithed": {"ignore": {"functionality": true,"crafting": true}}
+								},
+								"minecraft:item_model": "stoupgun:9x18mm",
+								"minecraft:item_name": {
+									"translate":"stoupgun.9x18mm",
+									"italic": false,
+									"color": "white"
+								},
+								"minecraft:lore": [
+									["",{"text":"I","color": "white","italic": false,"font": "stoupgun:icons"},{"translate":"stoupgun","italic": true,"color": "blue"}]
+								]
+							}
+						}
+					]
+				}
+			]
+		}
+	]
+}
+

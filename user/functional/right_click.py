@@ -12,8 +12,6 @@ def main(config: dict) -> None:
     version: str = config["version"]
     pass
 
-    # Right click = 4
-
     # Advancement detecting right click
     adv: dict = {
         "criteria": {
@@ -35,18 +33,19 @@ def main(config: dict) -> None:
     # Function to set pending clicks
     write_versioned_function(config, "right_click/set_pending_clicks",
 f"""
-# Revoke advancement
+# Revoke advancement and reset right click
 advancement revoke @s only {ns}:v{version}/right_click
+scoreboard players reset @s {ns}.right_click
 
 # Set pending clicks and reset right click
-scoreboard players set @s {ns}.pending_clicks 1
-scoreboard players reset @s {ns}.right_click
+scoreboard players set @s {ns}.pending_clicks 3
 """)
 
     # Handle pending clicks
     write_versioned_function(config, "player/tick",
 f"""
 # If pending clicks, run function
+execute if score @s {ns}.cooldown matches 1.. run scoreboard players remove @s {ns}.cooldown 1
 execute if score @s {ns}.pending_clicks matches 1.. run function {ns}:v{version}/right_click/handle
 """)
 
@@ -55,11 +54,16 @@ execute if score @s {ns}.pending_clicks matches 1.. run function {ns}:v{version}
 f"""
 # Decrease pending clicks by 1
 scoreboard players remove @s {ns}.pending_clicks 1
+execute if score @s {ns}.cooldown matches 1.. run return fail
+
 
 # If SelectedItem is not a gun, stop
 data remove storage {ns}:gun stats
 data modify storage {ns}:gun stats set from entity @s SelectedItem.components."minecraft:custom_data".{ns}.stats
 execute unless data storage {ns}:gun stats run return fail
+
+# Set cooldown
+execute store result score @s {ns}.cooldown run data get storage {ns}:gun stats.cooldown
 
 ## Raycast (https://docs.mcbookshelf.dev/en/latest/modules/raycast.html)
 # Prepare arguments
@@ -79,9 +83,13 @@ tag @s add {ns}.attacker
 execute anchored eyes positioned ^ ^ ^ run function #bs.raycast:run with storage {ns}:input
 tag @s remove {ns}.attacker
 
+# Remove bullet from mag
+# TODO
+#playsound {ns}:common/empty player @a[distance=..12]
+
 # TODO: Advanced Playsound
-playsound stoupgun:ak47/fire player @s ~ ~1000000 ~ 400000
-playsound stoupgun:ak47/fire player @a[distance=0.01..48] ~ ~ ~ 3
+playsound {ns}:ak47/fire player @s ~ ~1000000 ~ 400000
+playsound {ns}:ak47/fire player @a[distance=0.01..48] ~ ~ ~ 3
 """)
 
     # On hit point
@@ -129,17 +137,17 @@ particle block{{block_state:"redstone_wire"}} ~ ~1 ~ 0.35 0.5 0.35 0 100 force @
 
 # Get base damage with 3 digits of precision
 data modify storage {ns}:input with set value {{target:"@s", amount:0.0f, attacker:"@p[tag={ns}.attacker]"}}
-execute store result score #damage {ns}.data run data get storage {ns}:gun stats.damage 1000
+execute store result score #damage {ns}.data run data get storage {ns}:gun stats.damage 10
 
 # Apply decay (damage *= pow(decay, distance))
 data modify storage bs:in math.pow.x set from storage {ns}:gun stats.decay
 data modify storage bs:in math.pow.y set from storage bs:lambda raycast.distance
 function #bs.math:pow
-execute store result score #pow_decay_distance {ns}.data run data get storage bs:out math.pow 1000
+execute store result score #pow_decay_distance {ns}.data run data get storage bs:out math.pow 1000000
 scoreboard players operation #damage {ns}.data *= #pow_decay_distance {ns}.data
 
-# Divide by 1000 because we're multiplying two scaled integers with each other (1000*1000 = 1000000)
-scoreboard players operation #damage {ns}.data /= #1000 {ns}.data
+# Divide by 1000000 because we're multiplying two scaled integers with each other (10*1000000 = 10000000)
+scoreboard players operation #damage {ns}.data /= #1000000 {ns}.data
 
 # Divide damage by 2 if not headshot
 scoreboard players set #is_headshot {ns}.data 0
@@ -151,7 +159,7 @@ execute if score #y_diff {ns}.data matches 1200.. run scoreboard players set #is
 execute unless score #is_headshot {ns}.data matches 1 run scoreboard players operation #damage {ns}.data /= #2 {ns}.data
 
 # Damage entity
-execute store result storage {ns}:input with.amount float 0.001 run scoreboard players get #damage {ns}.data
+execute store result storage {ns}:input with.amount float 0.1 run scoreboard players get #damage {ns}.data
 function {ns}:v{version}/utils/damage with storage {ns}:input with
 """)
 

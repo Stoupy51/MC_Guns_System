@@ -9,17 +9,17 @@ particle block{block_state:"redstone_wire"} ~ ~1 ~ 0.35 0.5 0.35 0 100 force @a[
 
 # Get base damage with 3 digits of precision
 data modify storage stoupgun:input with set value {target:"@s", amount:0.0f, attacker:"@p[tag=stoupgun.attacker]"}
-execute store result score #damage stoupgun.data run data get storage stoupgun:gun stats.damage 1000
+execute store result score #damage stoupgun.data run data get storage stoupgun:gun stats.damage 10
 
 # Apply decay (damage *= pow(decay, distance))
 data modify storage bs:in math.pow.x set from storage stoupgun:gun stats.decay
 data modify storage bs:in math.pow.y set from storage bs:lambda raycast.distance
 function #bs.math:pow
-execute store result score #pow_decay_distance stoupgun.data run data get storage bs:out math.pow 1000
+execute store result score #pow_decay_distance stoupgun.data run data get storage bs:out math.pow 1000000
 scoreboard players operation #damage stoupgun.data *= #pow_decay_distance stoupgun.data
 
-# Divide by 1000 because we're multiplying two scaled integers with each other (1000*1000 = 1000000)
-scoreboard players operation #damage stoupgun.data /= #1000 stoupgun.data
+# Divide by 1000000 because we're multiplying two scaled integers with each other (10*1000000 = 10000000)
+scoreboard players operation #damage stoupgun.data /= #1000000 stoupgun.data
 
 # Divide damage by 2 if not headshot
 scoreboard players set #is_headshot stoupgun.data 0
@@ -31,6 +31,6 @@ execute if score #y_diff stoupgun.data matches 1200.. run scoreboard players set
 execute unless score #is_headshot stoupgun.data matches 1 run scoreboard players operation #damage stoupgun.data /= #2 stoupgun.data
 
 # Damage entity
-execute store result storage stoupgun:input with.amount float 0.001 run scoreboard players get #damage stoupgun.data
+execute store result storage stoupgun:input with.amount float 0.1 run scoreboard players get #damage stoupgun.data
 function stoupgun:v5.0.0/utils/damage with storage stoupgun:input with
 

@@ -17,10 +17,13 @@ f"""
 # Define objectives
 scoreboard objectives add {ns}.right_click minecraft.used:minecraft.warped_fungus_on_a_stick
 scoreboard objectives add {ns}.pending_clicks dummy
+scoreboard objectives add {ns}.cooldown dummy
 
 # Define some constants
 scoreboard players set #2 {ns}.data 2
+scoreboard players set #10 {ns}.data 10
 scoreboard players set #1000 {ns}.data 1000
+scoreboard players set #1000000 {ns}.data 1000000
 """, prepend=True)
 
     # Write to tick file

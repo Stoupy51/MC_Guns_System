@@ -1,14 +1,14 @@
 
 # Imports
-from python_datapack.constants import OVERRIDE_MODEL
+from python_datapack.constants import CUSTOM_ITEM_VANILLA, OVERRIDE_MODEL
 
 
 # Function
-def get_data(ns: str, stats: dict, override_model: dict) -> dict:
+def get_data(ns: str, stats: dict = {}, override_model: dict = {}) -> dict:  # noqa: B006
     return {
-        "id": "minecraft:warped_fungus_on_a_stick",
-        "custom_data": {ns: {"gun":True, **stats}},
-        OVERRIDE_MODEL: override_model
+        "id": "minecraft:warped_fungus_on_a_stick" if stats else CUSTOM_ITEM_VANILLA,
+        "custom_data": {ns: {"gun":True, **stats} if stats else {"casing":True}},
+        **({OVERRIDE_MODEL: override_model} if override_model else {})
     }
 
 # Constants
@@ -52,6 +52,9 @@ Controls how quickly the player can change weapons in combat. """
 KICK: str = "kick"
 """ Intensity of the weapon's recoil effect.
 Higher values create stronger visual kick when firing. """
+CASING_TYPE: str = "casing_type"
+""" Type of bullet casing ejected when firing.
+Determines the visual model and properties of the ejected casing. """
 CASING_N: str = "casing_n"
 """ X-component of the ejected bullet casing's direction vector.
 Controls the direction in which spent casings are ejected from the weapon. """
@@ -61,21 +64,37 @@ Controls the vertical trajectory of ejected casings. """
 CASING_B: str = "casing_b"
 """ Z-component of the ejected bullet casing's direction vector.
 Works with the other components to determine the full 3D trajectory of ejected casings. """
+BASE_WEAPON: str = "base_weapon"
+
+# Casing types
+CASING_762X39MM = "762x39mm"
+CASING_762X51MM = "762x51mm"
+CASING_762X54MM = "762x54mm"
+CASING_9X18MM = "9x18mm"
+CASING_9X19MM = "9x19mm"
+CASING_12GA3IN = "12ga3in"
+CASING_12GA275IN = "12ga275in"
+CASING_32ACP = "32acp"
+CASING_45ACP = "45acp"
+CASING_46X30MM = "46x30mm"
+CASING_50AE = "50ae"
+CASING_50BMG = "50bmg"
+CASING_338LAPUA = "338lapua"
+CASING_556X45MM = "556x45mm"
+CASING_762X25MM = "762x25mm"
 
 
 # Gun stats
-AK47: dict = {
-    "base_weapon": "ak47",
-    "stats": {
-    CAPACITY: 30, RELOAD: 70, RELOAD_END: 10, COOLDOWN: 2, BURST: 3, DAMAGE: 15, DECAY: 0.95,
+AK47: dict = {"stats": {
+    BASE_WEAPON: "ak47",
+    CAPACITY: 30, RELOAD: 70, RELOAD_END: 10, COOLDOWN: 2, BURST: 3, DAMAGE: 15, DECAY: 0.99,
     ACCURACY: 150, ACCURACY_SNEAKY: 20, ACCURACY_WALK: 500, ACCURACY_SPRINT: 1500, ACCURACY_JUMP: 1800,
-    SWITCH: 25, KICK: 2, CASING_N: 200, CASING_T: 50, CASING_B: -200
+    SWITCH: 25, KICK: 2, CASING_TYPE: CASING_762X39MM, CASING_N: 200, CASING_T: 50, CASING_B: -200
 }}
-
 # scoreboard players set ak47_mag S 30           # TODO: Not Implemented
 # scoreboard players set ak47_reload S 70        # TODO: Not Implemented
 # scoreboard players set ak47_reload_end S 10    # TODO: Not Implemented
-# scoreboard players set ak47_cooldown S 2       # TODO: Not Implemented
+# scoreboard players set ak47_cooldown S 2
 # scoreboard players set ak47_burst S 3          # TODO: Not Implemented
 # scoreboard players set ak47_damage S 15
 # scoreboard players set ak47_decay S 4

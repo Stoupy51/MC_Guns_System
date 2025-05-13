@@ -6,11 +6,16 @@
 
 # Decrease pending clicks by 1
 scoreboard players remove @s stoupgun.pending_clicks 1
+execute if score @s stoupgun.cooldown matches 1.. run return fail
+
 
 # If SelectedItem is not a gun, stop
 data remove storage stoupgun:gun stats
 data modify storage stoupgun:gun stats set from entity @s SelectedItem.components."minecraft:custom_data".stoupgun.stats
 execute unless data storage stoupgun:gun stats run return fail
+
+# Set cooldown
+execute store result score @s stoupgun.cooldown run data get storage stoupgun:gun stats.cooldown
 
 ## Raycast (https://docs.mcbookshelf.dev/en/latest/modules/raycast.html)
 # Prepare arguments
@@ -29,6 +34,10 @@ data modify storage stoupgun:input with.on_targeted_entity set value "function s
 tag @s add stoupgun.attacker
 execute anchored eyes positioned ^ ^ ^ run function #bs.raycast:run with storage stoupgun:input
 tag @s remove stoupgun.attacker
+
+# Remove bullet from mag
+# TODO
+#playsound stoupgun:common/empty player @a[distance=..12]
 
 # TODO: Advanced Playsound
 playsound stoupgun:ak47/fire player @s ~ ~1000000 ~ 400000

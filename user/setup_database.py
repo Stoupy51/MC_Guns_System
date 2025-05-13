@@ -8,12 +8,16 @@ from python_datapack.utils.database_helper import (
 )
 
 from user.database.ak47 import main as main_ak47
+from user.database.casing import main as main_casing
 
 
 # Main function should return a database
 def main(config: dict) -> dict[str, dict]:
     database: dict[str,dict] = {}
     ns: str = config["namespace"]
+
+    # Add casings
+    main_casing(database, ns)
 
     # Add weapons
     main_ak47(database, ns)
