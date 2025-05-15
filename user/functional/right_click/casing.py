@@ -56,7 +56,7 @@ execute store result storage {ns}:temp casing.Pos[1] double 0.001 run scoreboard
 execute store result storage {ns}:temp casing.Pos[2] double 0.001 run scoreboard players get #pos_new_z {ns}.data
 
 # Create casing entity
-execute anchored eyes positioned ^ ^ ^ run summon item ~ ~ ~ {item_nbt}
+summon item ~ ~ ~ {item_nbt}
 execute as @n[type=item,tag={ns}.new] run function {ns}:v{version}/casing/update_item
 """)
 

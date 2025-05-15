@@ -37,6 +37,6 @@ execute store result storage stoupgun:temp casing.Pos[1] double 0.001 run scoreb
 execute store result storage stoupgun:temp casing.Pos[2] double 0.001 run scoreboard players get #pos_new_z stoupgun.data
 
 # Create casing entity
-execute anchored eyes positioned ^ ^ ^ run summon item ~ ~ ~ {Tags:["stoupgun.new","stoupgun.casing"],Item:{id:"minecraft:stone",count:1,components:{"minecraft:item_model":"air"}},PickupDelay:32767,Age:5990}
+summon item ~ ~ ~ {Tags:["stoupgun.new","stoupgun.casing"],Item:{id:"minecraft:stone",count:1,components:{"minecraft:item_model":"air"}},PickupDelay:32767,Age:5990}
 execute as @n[type=item,tag=stoupgun.new] run function stoupgun:v5.0.0/casing/update_item
 
