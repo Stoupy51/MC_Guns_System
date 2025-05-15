@@ -1,71 +1,25 @@
 
 # Imports
-import stouputils as stp
-from python_datapack.utils.database_helper import *
+from python_datapack.utils.database_helper import write_versioned_function
 
-from user.config.stats import *
+from user.config.stats import DAMAGE, DECAY
 
 
 # Main function
 def main(config: dict) -> None:
     ns: str = config["namespace"]
     version: str = config["version"]
-    pass
 
-    # Advancement detecting right click
-    adv: dict = {
-        "criteria": {
-            "requirement": {
-                "trigger": "minecraft:tick",
-                "conditions": {
-                    "player": [
-                        {"condition": "minecraft:entity_scores","entity": "this","scores": {f"{ns}.right_click": {"min": 1}}}
-                    ]
-                }
-            }
-        },
-        "rewards": {
-            "function": f"{ns}:v{version}/right_click/set_pending_clicks"
-        }
-    }
-    write_advancement(config, f"{ns}:v{version}/right_click", stp.super_json_dump(adv, max_level=-1))
-
-    # Function to set pending clicks
-    write_versioned_function(config, "right_click/set_pending_clicks",
+    # Handle pending clicks
+    write_versioned_function(config, "player/right_click",
 f"""
-# Revoke advancement and reset right click
-advancement revoke @s only {ns}:v{version}/right_click
-scoreboard players reset @s {ns}.right_click
-
-# Set pending clicks and reset right click
-scoreboard players set @s {ns}.pending_clicks 4
+# Shoot with raycast using https://docs.mcbookshelf.dev/en/latest/modules/raycast.html
+function {ns}:v{version}/raycast/main
 """)
 
     # Handle pending clicks
-    write_versioned_function(config, "player/tick",
+    write_versioned_function(config, "raycast/main",
 f"""
-# If pending clicks, run function
-execute if score @s {ns}.cooldown matches 1.. run scoreboard players remove @s {ns}.cooldown 1
-execute if score @s {ns}.pending_clicks matches 1.. run function {ns}:v{version}/right_click/handle
-""")
-
-    # Handle pending clicks
-    write_versioned_function(config, "right_click/handle",
-f"""
-# Decrease pending clicks by 1
-scoreboard players remove @s {ns}.pending_clicks 1
-execute if score @s {ns}.cooldown matches 1.. run return fail
-
-
-# If SelectedItem is not a gun, stop
-data remove storage {ns}:gun stats
-data modify storage {ns}:gun stats set from entity @s SelectedItem.components."minecraft:custom_data".{ns}.stats
-execute unless data storage {ns}:gun stats run return fail
-
-# Set cooldown
-execute store result score @s {ns}.cooldown run data get storage {ns}:gun stats.cooldown
-
-## Raycast (https://docs.mcbookshelf.dev/en/latest/modules/raycast.html)
 # Prepare arguments
 data modify storage {ns}:input with set value {{}}
 data modify storage {ns}:input with.blocks set value true
@@ -78,21 +32,10 @@ data modify storage {ns}:input with.on_hit_point set value "function {ns}:v{vers
 data modify storage {ns}:input with.on_targeted_block set value "function {ns}:v{version}/raycast/on_targeted_block"
 data modify storage {ns}:input with.on_targeted_entity set value "function {ns}:v{version}/raycast/on_targeted_entity"
 
-# Run raycast with callbacks
+# Launch raycast with callbacks
 tag @s add {ns}.attacker
 execute anchored eyes positioned ^ ^ ^ run function #bs.raycast:run with storage {ns}:input
 tag @s remove {ns}.attacker
-
-# Remove bullet from mag
-# TODO
-#playsound {ns}:common/empty player @a[distance=..12]
-
-# Make a kick
-function {ns}:v{version}/kicks/main
-
-# TODO: Advanced Playsound
-playsound {ns}:ak47/fire player @s ~ ~1000000 ~ 400000
-playsound {ns}:ak47/fire player @a[distance=0.01..48] ~ ~ ~ 3
 """)
 
     # On hit point
@@ -124,7 +67,7 @@ execute if score $raycast.piercing bs.lambda matches 1..3 run scoreboard players
 execute if score $raycast.piercing bs.lambda matches 5.. run scoreboard players set $raycast.piercing bs.lambda 3
 
 # Divide damage per 2
-execute store result storage {ns}:gun stats.damage float 0.5 run data get storage {ns}:gun stats.damage
+execute store result storage {ns}:gun stats.{DAMAGE} float 0.5 run data get storage {ns}:gun stats.{DAMAGE}
 
 execute if block ~ ~ ~ #{ns}:v{version}/sounds/glass run playsound minecraft:block.glass.break block @a ~ ~ ~ 1
 execute if block ~ ~ ~ #{ns}:v{version}/sounds/water run playsound minecraft:ambient.underwater.exit block @a ~ ~ ~ 0.25 1.5
@@ -143,10 +86,10 @@ particle block{{block_state:"redstone_wire"}} ~ ~1 ~ 0.35 0.5 0.35 0 100 force @
 
 # Get base damage with 3 digits of precision
 data modify storage {ns}:input with set value {{target:"@s", amount:0.0f, attacker:"@p[tag={ns}.attacker]"}}
-execute store result score #damage {ns}.data run data get storage {ns}:gun stats.damage 10
+execute store result score #damage {ns}.data run data get storage {ns}:gun stats.{DAMAGE} 10
 
 # Apply decay (damage *= pow(decay, distance))
-data modify storage bs:in math.pow.x set from storage {ns}:gun stats.decay
+data modify storage bs:in math.pow.x set from storage {ns}:gun stats.{DECAY}
 data modify storage bs:in math.pow.y set from storage bs:lambda raycast.distance
 function #bs.math:pow
 execute store result score #pow_decay_distance {ns}.data run data get storage bs:out math.pow 1000000
@@ -169,33 +112,10 @@ execute store result storage {ns}:input with.amount float 0.1 run scoreboard pla
 function {ns}:v{version}/utils/damage with storage {ns}:input with
 """)
 
-    ## Kicks
-    write_versioned_function(config, "kicks/main",
-f"""
-# Extract kick type & pick random value between 1 and 5
-scoreboard players set #kick {ns}.data 0
-execute store result score #kick {ns}.data run data get storage {ns}:gun stats.kick
-execute store result score #random {ns}.data run random value 1..5
-
-# Switch case
-execute if score #kick {ns}.data matches ..0 run function {ns}:v{version}/kicks/type_0
-execute if score #kick {ns}.data matches 1 run function {ns}:v{version}/kicks/type_1
-execute if score #kick {ns}.data matches 2 run function {ns}:v{version}/kicks/type_2
-execute if score #kick {ns}.data matches 3 run function {ns}:v{version}/kicks/type_3
-execute if score #kick {ns}.data matches 4 run function {ns}:v{version}/kicks/type_4
-execute if score #kick {ns}.data matches 5.. run function {ns}:v{version}/kicks/type_5
-""")
-    all_kicks: list[list[tuple[float, float]]] = [
-        [(-0.05, -0.25), (-0.025, -0.25), (-0.0, -0.25), (0.025, -0.25), (0.05, -0.25)],
-        [(-0.08, -0.5), (-0.03, -0.5), (-0.0, -0.5), (0.03, -0.5), (0.08, -0.5)],
-        [(-0.11, -1.0), (-0.05, -1.0), (-0.0, -1.0), (0.05, -1.0), (0.11, -1.0)],
-        [(-0.13, -1.5), (-0.06, -1.5), (-0.0, -1.5), (0.06, -1.5), (0.13, -1.5)],
-        [(-0.15, -2.0), (-0.06, -2.0), (-0.0, -2.0), (0.06, -2.0), (0.15, -2.0)],
-        [(-0.17, -2.5), (-0.06, -2.5), (-0.0, -2.5), (0.06, -2.5), (0.17, -2.5)],
-    ]
-    for i, kicks in enumerate(all_kicks):
-        content: str = ""
-        for j, (yaw, pitch) in enumerate(kicks):
-            content += f"\nexecute if score #random {ns}.data matches {j+1} run tp @s ~ ~ ~ ~{yaw} ~{pitch}"
-        write_versioned_function(config, f"kicks/type_{i}", content)
+    # TODO: Accuracy
+    # scoreboard players set ak47_acc_base S 150     # TODO: Not Implemented
+    # scoreboard players set ak47_acc_sneaky S 20    # TODO: Not Implemented
+    # scoreboard players set ak47_acc_walk S 500     # TODO: Not Implemented
+    # scoreboard players set ak47_acc_sprint S 1500  # TODO: Not Implemented
+    # scoreboard players set ak47_acc_jump S 1800    # TODO: Not Implemented
 

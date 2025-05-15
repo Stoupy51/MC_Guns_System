@@ -18,7 +18,7 @@
 		}
 	},
 	"rewards": {
-		"function": "stoupgun:v5.0.0/right_click/set_pending_clicks"
+		"function": "stoupgun:v5.0.0/player/set_pending_clicks"
 	}
 }
 

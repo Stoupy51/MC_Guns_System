@@ -1,7 +1,7 @@
 
 #> stoupgun:v5.0.0/raycast/on_hit_point
 #
-# @within	stoupgun:v5.0.0/right_click/handle
+# @within	stoupgun:v5.0.0/raycast/main
 #
 
 # If targeted entity, return to prevent showing particles

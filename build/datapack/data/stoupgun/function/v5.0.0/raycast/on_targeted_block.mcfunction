@@ -1,7 +1,7 @@
 
 #> stoupgun:v5.0.0/raycast/on_targeted_block
 #
-# @within	stoupgun:v5.0.0/right_click/handle
+# @within	stoupgun:v5.0.0/raycast/main
 #
 
 # Allow bullets to pierce 2 blocks at most

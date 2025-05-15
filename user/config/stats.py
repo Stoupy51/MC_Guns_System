@@ -95,7 +95,7 @@ AK47: dict = {"stats": {
 # scoreboard players set ak47_reload S 70        # TODO: Not Implemented
 # scoreboard players set ak47_reload_end S 10    # TODO: Not Implemented
 # scoreboard players set ak47_cooldown S 2
-# scoreboard players set ak47_burst S 3          # TODO: Not Implemented
+# scoreboard players set ak47_burst S 3          ## TODO: Not Implemented
 # scoreboard players set ak47_damage S 15
 # scoreboard players set ak47_decay S 4
 # scoreboard players set ak47_acc_base S 150     # TODO: Not Implemented
@@ -103,8 +103,8 @@ AK47: dict = {"stats": {
 # scoreboard players set ak47_acc_walk S 500     # TODO: Not Implemented
 # scoreboard players set ak47_acc_sprint S 1500  # TODO: Not Implemented
 # scoreboard players set ak47_acc_jump S 1800    # TODO: Not Implemented
-# scoreboard players set ak47_switch S 25        # TODO: Not Implemented
-# scoreboard players set ak47_kick S 2           # TODO: Not Implemented
+# scoreboard players set ak47_switch S 25        ## TODO: Not Implemented
+# scoreboard players set ak47_kick S 2
 # scoreboard players set ak47_casing_n S 200     # TODO: Not Implemented
 # scoreboard players set ak47_casing_t S 50      # TODO: Not Implemented
 # scoreboard players set ak47_casing_b S -200    # TODO: Not Implemented

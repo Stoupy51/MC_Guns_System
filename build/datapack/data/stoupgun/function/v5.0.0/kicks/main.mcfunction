@@ -1,7 +1,7 @@
 
 #> stoupgun:v5.0.0/kicks/main
 #
-# @within	stoupgun:v5.0.0/right_click/handle
+# @within	stoupgun:v5.0.0/player/right_click
 #
 
 # Extract kick type & pick random value between 1 and 5
