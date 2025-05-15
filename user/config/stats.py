@@ -52,19 +52,28 @@ Controls how quickly the player can change weapons in combat. """
 KICK: str = "kick"
 """ Intensity of the weapon's recoil effect.
 Higher values create stronger visual kick when firing. """
-CASING_TYPE: str = "casing_type"
+CASING_MODEL: str = "casing_model"
 """ Type of bullet casing ejected when firing.
 Determines the visual model and properties of the ejected casing. """
-CASING_N: str = "casing_n"
-""" X-component of the ejected bullet casing's direction vector.
-Controls the direction in which spent casings are ejected from the weapon. """
-CASING_T: str = "casing_t"
-""" Y-component of the ejected bullet casing's direction vector.
-Controls the vertical trajectory of ejected casings. """
-CASING_B: str = "casing_b"
-""" Z-component of the ejected bullet casing's direction vector.
-Works with the other components to determine the full 3D trajectory of ejected casings. """
+CASING_OFFSET: str = "casing_offset"
+""" Relative position to the player to use when summoning the casing.
+The value is modified in setup_database.py according to the zoom type.
+"""
+CASING_NORMAL: str = "casing_n"
+""" Vertical (Y-axis) component of the ejected casing's direction vector.
+Controls the upward force applied to the casing during ejection. """
+CASING_TANGENT: str = "casing_t"
+""" Forward/backward (Z-axis) component of the ejected casing's direction vector.
+Determines how far the casing is pushed forward or backward, with added randomness for realism. """
+CASING_BINORMAL: str = "casing_b"
+""" Sideways (X-axis) component of the ejected casing's direction vector.
+Controls the horizontal offset of the casing, contributing to its full 3D trajectory. """
 BASE_WEAPON: str = "base_weapon"
+""" Identifier for the base weapon model.
+Determines which weapon model and animations to use as a foundation.
+Used for weapons that share the same base model but have different stats or attachments. """
+
+
 
 # Casing types
 CASING_762X39MM = "762x39mm"
@@ -89,7 +98,8 @@ AK47: dict = {"stats": {
     BASE_WEAPON: "ak47",
     CAPACITY: 30, RELOAD: 70, RELOAD_END: 10, COOLDOWN: 2, BURST: 3, DAMAGE: 15, DECAY: 0.99,
     ACCURACY: 150, ACCURACY_SNEAKY: 20, ACCURACY_WALK: 500, ACCURACY_SPRINT: 1500, ACCURACY_JUMP: 1800,
-    SWITCH: 25, KICK: 2, CASING_TYPE: CASING_762X39MM, CASING_N: 200, CASING_T: 50, CASING_B: -200
+    SWITCH: 25, KICK: 2, CASING_MODEL: CASING_762X39MM, CASING_NORMAL: 200, CASING_TANGENT: 50, CASING_BINORMAL: -200,
+    CASING_OFFSET: {"normal": (-0.35, -0.3, 0.7), "zoom": (-0.05, -0.25, 0.5)},
 }}
 # scoreboard players set ak47_mag S 30           # TODO: Not Implemented
 # scoreboard players set ak47_reload S 70        # TODO: Not Implemented
