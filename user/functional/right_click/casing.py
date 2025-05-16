@@ -78,6 +78,9 @@ function {ns}:v{version}/casing/calculate_motion
 
 # 3. Calculate position offset based on these vectors
 function {ns}:v{version}/casing/calculate_offset
+
+# 4. Kill marker
+kill @s
 """)
 
     # 1. Calculate normal, tangent, and binormal vectors

@@ -7,7 +7,7 @@
 # If targeted entity, return to prevent showing particles
 execute if data storage bs:lambda raycast.targeted_entity run return fail
 
-# Get current block
+# Get current block (https://docs.mcbookshelf.dev/en/latest/modules/block.html#get)
 data modify storage stoupgun:temp Pos set from entity @s Pos
 data modify entity @s Pos set from storage bs:lambda raycast.targeted_block
 execute at @s run function #bs.block:get_block

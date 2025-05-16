@@ -1,8 +1,9 @@
 
 # Imports
-from python_datapack.utils.database_helper import write_versioned_function
+import stouputils as stp
+from python_datapack.utils.database_helper import write_predicate, write_versioned_function
 
-from user.config.stats import DAMAGE, DECAY
+from user.config.stats import ACCURACY_BASE, ACCURACY_JUMP, ACCURACY_SNEAK, ACCURACY_SPRINT, ACCURACY_WALK, DAMAGE, DECAY
 
 
 # Main function
@@ -13,13 +14,23 @@ def main(config: dict) -> None:
     # Handle pending clicks
     write_versioned_function(config, "player/right_click",
 f"""
-# Shoot with raycast using https://docs.mcbookshelf.dev/en/latest/modules/raycast.html
-function {ns}:v{version}/raycast/main
+# Check which type of movement the player is doing
+function {ns}:v{version}/raycast/accuracy/get_value
+
+# Shoot with raycast
+tag @s add {ns}.attacker
+tag @s add bs.raycast.omit
+execute anchored eyes positioned ^ ^ ^ summon marker run function {ns}:v{version}/raycast/main
+tag @s remove {ns}.attacker
 """)
 
     # Handle pending clicks
     write_versioned_function(config, "raycast/main",
 f"""
+# Handle accuracy
+tp @s ~ ~ ~ ~ ~
+function {ns}:v{version}/raycast/accuracy/apply_spread
+
 # Prepare arguments
 data modify storage {ns}:input with set value {{}}
 data modify storage {ns}:input with.blocks set value true
@@ -32,10 +43,8 @@ data modify storage {ns}:input with.on_hit_point set value "function {ns}:v{vers
 data modify storage {ns}:input with.on_targeted_block set value "function {ns}:v{version}/raycast/on_targeted_block"
 data modify storage {ns}:input with.on_targeted_entity set value "function {ns}:v{version}/raycast/on_targeted_entity"
 
-# Launch raycast with callbacks
-tag @s add {ns}.attacker
-execute anchored eyes positioned ^ ^ ^ run function #bs.raycast:run with storage {ns}:input
-tag @s remove {ns}.attacker
+# Launch raycast with callbacks (https://docs.mcbookshelf.dev/en/latest/modules/raycast.html#run-the-raycast)
+execute at @s run function #bs.raycast:run with storage {ns}:input
 """)
 
     # On hit point
@@ -44,7 +53,7 @@ f"""
 # If targeted entity, return to prevent showing particles
 execute if data storage bs:lambda raycast.targeted_entity run return fail
 
-# Get current block
+# Get current block (https://docs.mcbookshelf.dev/en/latest/modules/block.html#get)
 data modify storage {ns}:temp Pos set from entity @s Pos
 data modify entity @s Pos set from storage bs:lambda raycast.targeted_block
 execute at @s run function #bs.block:get_block
@@ -88,7 +97,7 @@ particle block{{block_state:"redstone_wire"}} ~ ~1 ~ 0.35 0.5 0.35 0 100 force @
 data modify storage {ns}:input with set value {{target:"@s", amount:0.0f, attacker:"@p[tag={ns}.attacker]"}}
 execute store result score #damage {ns}.data run data get storage {ns}:gun stats.{DAMAGE} 10
 
-# Apply decay (damage *= pow(decay, distance))
+# Apply decay using `damage *= pow(decay, distance)` (https://docs.mcbookshelf.dev/en/latest/modules/math.html#power)
 data modify storage bs:in math.pow.x set from storage {ns}:gun stats.{DECAY}
 data modify storage bs:in math.pow.y set from storage bs:lambda raycast.distance
 function #bs.math:pow
@@ -112,10 +121,54 @@ execute store result storage {ns}:input with.amount float 0.1 run scoreboard pla
 function {ns}:v{version}/utils/damage with storage {ns}:input with
 """)
 
-    # TODO: Accuracy
-    # scoreboard players set ak47_acc_base S 150     # TODO: Not Implemented
-    # scoreboard players set ak47_acc_sneaky S 20    # TODO: Not Implemented
-    # scoreboard players set ak47_acc_walk S 500     # TODO: Not Implemented
-    # scoreboard players set ak47_acc_sprint S 1500  # TODO: Not Implemented
-    # scoreboard players set ak47_acc_jump S 1800    # TODO: Not Implemented
+
+    ## Accuracy
+    # Prepare predicates for accuracy checks
+    write_predicate(config, f"{ns}:v{version}/is_on_ground", stp.super_json_dump({"condition":"minecraft:entity_properties","entity":"this","predicate":{"flags":{"is_on_ground":True}}}))
+    write_predicate(config, f"{ns}:v{version}/is_sprinting", stp.super_json_dump({"condition":"minecraft:entity_properties","entity":"this","predicate":{"flags":{"is_sprinting":True}}}))
+    write_predicate(config, f"{ns}:v{version}/is_sneaking", stp.super_json_dump({"condition":"minecraft:entity_properties","entity":"this","predicate":{"flags":{"is_sneaking":True}}}))
+    write_predicate(config, f"{ns}:v{version}/is_moving", stp.super_json_dump({"condition":"minecraft:entity_properties","entity":"this","predicate":{"movement":{"horizontal_speed":{"min":0.1}}}}))
+
+    # Get values
+    write_versioned_function(config, "raycast/accuracy/get_value",
+f"""
+## Order is important: Jump > Sprint > Sneak > Walk > Base
+data remove storage {ns}:gun accuracy
+
+# If not on ground, return jump accuracy
+execute unless predicate {ns}:v{version}/is_on_ground run return run data modify storage {ns}:gun accuracy set from storage {ns}:gun stats.{ACCURACY_JUMP}
+
+# If sprinting, return sprint accuracy
+execute if predicate {ns}:v{version}/is_sprinting run return run data modify storage {ns}:gun accuracy set from storage {ns}:gun stats.{ACCURACY_SPRINT}
+
+# If sneaking, return sneak accuracy
+execute if predicate {ns}:v{version}/is_sneaking run return run data modify storage {ns}:gun accuracy set from storage {ns}:gun stats.{ACCURACY_SNEAK}
+
+# If moving horizontally, return walk accuracy
+execute if predicate {ns}:v{version}/is_moving run return run data modify storage {ns}:gun accuracy set from storage {ns}:gun stats.{ACCURACY_WALK}
+
+# Else, return base accuracy
+data modify storage {ns}:gun accuracy set from storage {ns}:gun stats.{ACCURACY_BASE}
+""")
+
+    # Apply random rotation spread
+    write_versioned_function(config, "raycast/accuracy/apply_spread",
+f"""
+# Get random uniform rotation spread (https://docs.mcbookshelf.dev/en/latest/modules/random.html#random-distributions)
+data modify storage {ns}:input with set value {{}}
+execute store result storage {ns}:input with.min int -1 run data get storage {ns}:gun accuracy
+execute store result storage {ns}:input with.max int 1 run data get storage {ns}:gun accuracy
+function #bs.random:uniform with storage {ns}:input with
+
+# Add horizontal rotation (divided by 100) (https://docs.mcbookshelf.dev/en/latest/modules/position.html#add-position-and-rotation)
+scoreboard players operation @s bs.rot.h = $random.uniform bs.out
+function #bs.position:add_rot_h {{scale: 0.01}}
+
+# Get a new random rotation spread
+function #bs.random:uniform with storage {ns}:input with
+
+# Add vertical rotation (divided by 100)
+scoreboard players operation @s bs.rot.v = $random.uniform bs.out
+function #bs.position:add_rot_v {{scale: 0.01}}
+""")
 

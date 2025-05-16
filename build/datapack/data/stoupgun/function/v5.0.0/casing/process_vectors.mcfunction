@@ -13,3 +13,6 @@ function stoupgun:v5.0.0/casing/calculate_motion
 # 3. Calculate position offset based on these vectors
 function stoupgun:v5.0.0/casing/calculate_offset
 
+# 4. Kill marker
+kill @s
+

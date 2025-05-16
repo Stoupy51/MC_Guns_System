@@ -4,6 +4,10 @@
 # @within	stoupgun:v5.0.0/player/right_click
 #
 
+# Handle accuracy
+tp @s ~ ~ ~ ~ ~
+function stoupgun:v5.0.0/raycast/accuracy/apply_spread
+
 # Prepare arguments
 data modify storage stoupgun:input with set value {}
 data modify storage stoupgun:input with.blocks set value true
@@ -16,8 +20,6 @@ data modify storage stoupgun:input with.on_hit_point set value "function stoupgu
 data modify storage stoupgun:input with.on_targeted_block set value "function stoupgun:v5.0.0/raycast/on_targeted_block"
 data modify storage stoupgun:input with.on_targeted_entity set value "function stoupgun:v5.0.0/raycast/on_targeted_entity"
 
-# Launch raycast with callbacks
-tag @s add stoupgun.attacker
-execute anchored eyes positioned ^ ^ ^ run function #bs.raycast:run with storage stoupgun:input
-tag @s remove stoupgun.attacker
+# Launch raycast with callbacks (https://docs.mcbookshelf.dev/en/latest/modules/raycast.html#run-the-raycast)
+execute at @s run function #bs.raycast:run with storage stoupgun:input
 

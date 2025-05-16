@@ -16,8 +16,14 @@ execute unless data storage stoupgun:gun stats run return fail
 # Set cooldown
 execute store result score @s stoupgun.cooldown run data get storage stoupgun:gun stats.cooldown
 
-# Shoot with raycast using https://docs.mcbookshelf.dev/en/latest/modules/raycast.html
-function stoupgun:v5.0.0/raycast/main
+# Check which type of movement the player is doing
+function stoupgun:v5.0.0/raycast/accuracy/get_value
+
+# Shoot with raycast
+tag @s add stoupgun.attacker
+tag @s add bs.raycast.omit
+execute anchored eyes positioned ^ ^ ^ summon marker run function stoupgun:v5.0.0/raycast/main
+tag @s remove stoupgun.attacker
 
 # Simulate weapon kick
 function stoupgun:v5.0.0/kicks/main

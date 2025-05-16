@@ -31,10 +31,10 @@ This value may be reduced at longer distances based on the decay parameter. """
 DECAY: str = "decay"
 """ Rate at which damage decreases over distance using multiplication.
 For instance, a value of 0.95 means damage decreases to 59.9% damage at 10 blocks distance. """
-ACCURACY: str = "acc_base"
+ACCURACY_BASE: str = "acc_base"
 """ Base accuracy of the weapon when standing still.
 Lower values indicate better accuracy (smaller spread of bullets). """
-ACCURACY_SNEAKY: str = "acc_sneaky"
+ACCURACY_SNEAK: str = "acc_sneak"
 """ Accuracy modifier applied when the player is sneaking/crouching.
 Typically improves accuracy (reduces spread) when value is lower than base accuracy. """
 ACCURACY_WALK: str = "acc_walk"
@@ -97,7 +97,7 @@ CASING_762X25MM = "762x25mm"
 AK47: dict = {"stats": {
     BASE_WEAPON: "ak47",
     CAPACITY: 30, RELOAD: 70, RELOAD_END: 10, COOLDOWN: 2, BURST: 3, DAMAGE: 15, DECAY: 0.99,
-    ACCURACY: 150, ACCURACY_SNEAKY: 20, ACCURACY_WALK: 500, ACCURACY_SPRINT: 1500, ACCURACY_JUMP: 1800,
+    ACCURACY_BASE: 150, ACCURACY_SNEAK: 20, ACCURACY_WALK: 500, ACCURACY_SPRINT: 1500, ACCURACY_JUMP: 1800,
     SWITCH: 25, KICK: 2, CASING_MODEL: CASING_762X39MM, CASING_NORMAL: 200, CASING_TANGENT: 50, CASING_BINORMAL: -200,
     CASING_OFFSET: {"normal": (-0.35, -0.3, 0.7), "zoom": (-0.05, -0.25, 0.5)},
 }}
@@ -108,11 +108,11 @@ AK47: dict = {"stats": {
 # scoreboard players set ak47_burst S 3          ## TODO: Not Implemented
 # scoreboard players set ak47_damage S 15
 # scoreboard players set ak47_decay S 4
-# scoreboard players set ak47_acc_base S 150     # TODO: Not Implemented
-# scoreboard players set ak47_acc_sneaky S 20    # TODO: Not Implemented
-# scoreboard players set ak47_acc_walk S 500     # TODO: Not Implemented
-# scoreboard players set ak47_acc_sprint S 1500  # TODO: Not Implemented
-# scoreboard players set ak47_acc_jump S 1800    # TODO: Not Implemented
+# scoreboard players set ak47_acc_base S 150
+# scoreboard players set ak47_acc_sneaky S 20
+# scoreboard players set ak47_acc_walk S 500
+# scoreboard players set ak47_acc_sprint S 1500
+# scoreboard players set ak47_acc_jump S 1800
 # scoreboard players set ak47_switch S 25        ## TODO: Not Implemented
 # scoreboard players set ak47_kick S 2
 # scoreboard players set ak47_casing_n S 200
