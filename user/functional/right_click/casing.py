@@ -40,8 +40,8 @@ execute store result score #random_variation {ns}.data run random value 0..39
 scoreboard players remove #random_variation {ns}.data 20
 scoreboard players operation #casing_tangent {ns}.data += #random_variation {ns}.data
 
-# Calculate look vectors
-execute anchored eyes positioned ^ ^ ^ summon marker run function {ns}:v{version}/casing/look_vectors
+# Calculate look vectors and motion
+execute anchored eyes positioned ^ ^ ^ summon marker run function {ns}:v{version}/casing/process_vectors
 
 # Prepare casting model and motion
 data modify storage {ns}:temp casing set value {{Item:{{components:{{}}}},Motion:[0.0d,0.0d,0.0d],Pos:[0.0d,0.0d,0.0d]}}
@@ -67,10 +67,23 @@ data modify entity @s {{}} merge from storage {ns}:temp casing
 tag @s remove {ns}.new
 """)
 
-    # Calculate motion vectors
-    write_versioned_function(config, "casing/look_vectors",
+    # Process vectors - main handler that calls the 3 sub-functions
+    write_versioned_function(config, "casing/process_vectors",
 f"""
-### Calculate motion vectors based on look direction and casing parameters
+# 1. Calculate base vectors
+function {ns}:v{version}/casing/calculate_vectors
+
+# 2. Calculate motion based on these vectors
+function {ns}:v{version}/casing/calculate_motion
+
+# 3. Calculate position offset based on these vectors
+function {ns}:v{version}/casing/calculate_offset
+""")
+
+    # 1. Calculate normal, tangent, and binormal vectors
+    write_versioned_function(config, "casing/calculate_vectors",
+f"""
+### Calculate base vectors (normal, tangent, binormal) from player's look direction
 
 # Store the initial position of the marker (before movement)
 tp @s ~ ~ ~ ~ ~
@@ -136,8 +149,12 @@ scoreboard players operation #scaled_binormal_y {ns}.data = #binormal_y {ns}.dat
 scoreboard players operation #scaled_binormal_y {ns}.data *= #casing_binormal {ns}.data
 scoreboard players operation #scaled_binormal_z {ns}.data = #binormal_z {ns}.data
 scoreboard players operation #scaled_binormal_z {ns}.data *= #casing_binormal {ns}.data
+""")
 
-## --- COMBINE SCALED VECTORS INTO FINAL MOTION ---
+    # 2. Calculate motion based on vectors
+    write_versioned_function(config, "casing/calculate_motion",
+f"""
+### Calculate motion based on scaled normal, tangent, and binormal vectors
 
 # Start from scaled normals
 scoreboard players operation #motion_x {ns}.data = #scaled_normal_x {ns}.data
@@ -159,39 +176,43 @@ scoreboard players operation #motion_z {ns}.data += #scaled_binormal_z {ns}.data
 scoreboard players operation #motion_x {ns}.data /= #1000 {ns}.data
 scoreboard players operation #motion_y {ns}.data /= #1000 {ns}.data
 scoreboard players operation #motion_z {ns}.data /= #1000 {ns}.data
+""")
 
+    # 3. Calculate offset based on vectors
+    write_versioned_function(config, "casing/calculate_offset",
+f"""
+### Transform local casing offsets into world-space coordinates using the gun's orientation vectors
 
-
-## Calculate new position vectors based on normal, tangent, binormal and casing offsets
-
-# 1) Load raw offset values (each *1000 in scoreboard)
+# 1) Load local offset values from storage and scale to integers (x1000)
+# These represent the desired offset in the gun's local coordinate system
 execute store result score #offset_x {ns}.data run data get storage {ns}:gun stats.{CASING_OFFSET}[0] 1000
 execute store result score #offset_y {ns}.data run data get storage {ns}:gun stats.{CASING_OFFSET}[1] 1000
 execute store result score #offset_z {ns}.data run data get storage {ns}:gun stats.{CASING_OFFSET}[2] 1000
 
-# 2) Compute each axis' contribution to world-space offset
-# Binormal (X-axis)
+# 2) Project local offsets onto world-space axes using orientation vectors
+# Each vector (binormal/normal/tangent) contributes to the final world position
+# Binormal vector (local X) contribution
 scoreboard players operation #off_bx {ns}.data = #binormal_x {ns}.data
 scoreboard players operation #off_bx {ns}.data *= #offset_x {ns}.data
-# Normal   (Y-axis)
+# Normal vector (local Y) contribution
 scoreboard players operation #off_nx {ns}.data = #normal_x {ns}.data
 scoreboard players operation #off_nx {ns}.data *= #offset_y {ns}.data
-# Tangent  (Z-axis)
+# Tangent vector (local Z) contribution
 scoreboard players operation #off_tx {ns}.data = #tangent_x {ns}.data
 scoreboard players operation #off_tx {ns}.data *= #offset_z {ns}.data
 
-# 3) Sum them and scale down (we did multiply by 1000)
+# 3) Combine vector contributions and convert back to decimal coordinates
+# Sum all contributions for X coordinate
 scoreboard players operation #pos_new_x {ns}.data = #off_bx {ns}.data
 scoreboard players operation #pos_new_x {ns}.data += #off_nx {ns}.data
 scoreboard players operation #pos_new_x {ns}.data += #off_tx {ns}.data
 scoreboard players operation #pos_new_x {ns}.data /= #1000 {ns}.data
 
-# 4) Add original position
+# 4) Add base position to get final world coordinates
 scoreboard players operation #pos_new_x {ns}.data += #pos_initial_x {ns}.data
 
-# Repeat X logic for Y and Z…
-
-# Y contributions
+# Repeat same process for Y coordinate
+# Project local offsets onto world Y axis
 scoreboard players operation #off_by {ns}.data = #binormal_y {ns}.data
 scoreboard players operation #off_by {ns}.data *= #offset_x {ns}.data
 scoreboard players operation #off_ny {ns}.data = #normal_y {ns}.data
@@ -199,13 +220,15 @@ scoreboard players operation #off_ny {ns}.data *= #offset_y {ns}.data
 scoreboard players operation #off_ty {ns}.data = #tangent_y {ns}.data
 scoreboard players operation #off_ty {ns}.data *= #offset_z {ns}.data
 
+# Combine and convert Y coordinate
 scoreboard players operation #pos_new_y {ns}.data = #off_by {ns}.data
 scoreboard players operation #pos_new_y {ns}.data += #off_ny {ns}.data
 scoreboard players operation #pos_new_y {ns}.data += #off_ty {ns}.data
 scoreboard players operation #pos_new_y {ns}.data /= #1000 {ns}.data
 scoreboard players operation #pos_new_y {ns}.data += #pos_initial_y {ns}.data
 
-# Z contributions
+# Repeat same process for Z coordinate
+# Project local offsets onto world Z axis
 scoreboard players operation #off_bz {ns}.data = #binormal_z {ns}.data
 scoreboard players operation #off_bz {ns}.data *= #offset_x {ns}.data
 scoreboard players operation #off_nz {ns}.data = #normal_z {ns}.data
@@ -213,6 +236,7 @@ scoreboard players operation #off_nz {ns}.data *= #offset_y {ns}.data
 scoreboard players operation #off_tz {ns}.data = #tangent_z {ns}.data
 scoreboard players operation #off_tz {ns}.data *= #offset_z {ns}.data
 
+# Combine and convert Z coordinate
 scoreboard players operation #pos_new_z {ns}.data = #off_bz {ns}.data
 scoreboard players operation #pos_new_z {ns}.data += #off_nz {ns}.data
 scoreboard players operation #pos_new_z {ns}.data += #off_tz {ns}.data

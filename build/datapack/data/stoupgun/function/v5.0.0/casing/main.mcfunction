@@ -21,8 +21,8 @@ execute store result score #random_variation stoupgun.data run random value 0..3
 scoreboard players remove #random_variation stoupgun.data 20
 scoreboard players operation #casing_tangent stoupgun.data += #random_variation stoupgun.data
 
-# Calculate look vectors
-execute anchored eyes positioned ^ ^ ^ summon marker run function stoupgun:v5.0.0/casing/look_vectors
+# Calculate look vectors and motion
+execute anchored eyes positioned ^ ^ ^ summon marker run function stoupgun:v5.0.0/casing/process_vectors
 
 # Prepare casting model and motion
 data modify storage stoupgun:temp casing set value {Item:{components:{}},Motion:[0.0d,0.0d,0.0d],Pos:[0.0d,0.0d,0.0d]}

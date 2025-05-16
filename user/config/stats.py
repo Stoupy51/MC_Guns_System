@@ -115,7 +115,7 @@ AK47: dict = {"stats": {
 # scoreboard players set ak47_acc_jump S 1800    # TODO: Not Implemented
 # scoreboard players set ak47_switch S 25        ## TODO: Not Implemented
 # scoreboard players set ak47_kick S 2
-# scoreboard players set ak47_casing_n S 200     # TODO: Not Implemented
-# scoreboard players set ak47_casing_t S 50      # TODO: Not Implemented
-# scoreboard players set ak47_casing_b S -200    # TODO: Not Implemented
+# scoreboard players set ak47_casing_n S 200
+# scoreboard players set ak47_casing_t S 50
+# scoreboard players set ak47_casing_b S -200
 
