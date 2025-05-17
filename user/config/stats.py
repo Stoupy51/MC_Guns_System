@@ -2,8 +2,12 @@
 # Imports
 from typing import Any
 
+import stouputils as stp
 from python_datapack.constants import CUSTOM_ITEM_VANILLA, OVERRIDE_MODEL
 
+
+# Utility function
+def json_dump(x): return stp.super_json_dump(x, max_level=-1)
 
 # Function
 def get_data(ns: str, stats: dict[str, Any] | None = None, override_model: dict[str, Any] | None = None) -> dict:
@@ -13,7 +17,7 @@ def get_data(ns: str, stats: dict[str, Any] | None = None, override_model: dict[
         **({OVERRIDE_MODEL: override_model} if override_model else {})
     }
 
-# Constants
+# Mandatory constants
 CAPACITY: str = "capacity"
 """ Maximum number of bullets that can be loaded into the weapon's magazine. """
 RELOAD: str = "reload"
@@ -73,8 +77,15 @@ BASE_WEAPON: str = "base_weapon"
 """ Identifier for the base weapon model.
 Determines which weapon model and animations to use as a foundation.
 Used for weapons that share the same base model but have different stats or attachments. """
+
+# Optional constants
 MODELS: str = "models"
 """ Models to use to switch between normal and zoom modes. """
+IS_ZOOM: str = "is_zoom"
+""" Indicates whether the weapon is currently in zoom mode """
+WEAPON_ID: str = "weapon_id"
+""" Dynamique unique identifier assigned to each weapon item when selected from the hotbar.
+Used to track weapon switching and manage weapon-specific systems and states."""
 
 
 
@@ -116,7 +127,7 @@ AK47: dict = {"stats": {
 # scoreboard players set ak47_acc_walk S 500
 # scoreboard players set ak47_acc_sprint S 1500
 # scoreboard players set ak47_acc_jump S 1800
-# scoreboard players set ak47_switch S 25        ## TODO: Not Implemented
+# scoreboard players set ak47_switch S 25
 # scoreboard players set ak47_kick S 2
 # scoreboard players set ak47_casing_n S 200
 # scoreboard players set ak47_casing_t S 50

@@ -2,10 +2,9 @@
 # Imports
 from typing import Any
 
-import stouputils as stp
 from python_datapack.utils.database_helper import write_advancement, write_item_modifier, write_predicate, write_versioned_function
 
-from user.config.stats import COOLDOWN
+from user.config.stats import COOLDOWN, json_dump
 
 
 # Main function
@@ -29,7 +28,7 @@ def main(config: dict) -> None:
             "function": f"{ns}:v{version}/player/set_pending_clicks"
         }
     }
-    write_advancement(config, f"{ns}:v{version}/right_click", stp.super_json_dump(adv, max_level=-1))
+    write_advancement(config, f"{ns}:v{version}/right_click", json_dump(adv))
 
     # Function to set pending clicks
     write_versioned_function(config, "player/set_pending_clicks",
@@ -56,6 +55,9 @@ data modify storage {ns}:gun stats set from entity @s SelectedItem.components."m
 # Check if we need to zoom weapon or stop
 function {ns}:v{version}/zoom/main
 
+# Check if switching weapon
+function {ns}:v{version}/switch/main
+
 # If pending clicks, run function
 execute if score @s {ns}.cooldown matches 1.. run scoreboard players remove @s {ns}.cooldown 1
 execute if score @s {ns}.pending_clicks matches 1.. run function {ns}:v{version}/player/right_click
@@ -80,14 +82,14 @@ execute store result score @s {ns}.cooldown run data get storage {ns}:gun stats.
 
     # Prepare predicates for movement checks
     # (Can't use flag 'is_on_ground' because /tp @s ~ ~ ~ makes it false for two ticks)
-    write_predicate(config, f"{ns}:v{version}/is_on_ground", stp.super_json_dump({"condition":"minecraft:entity_properties","entity":"this","predicate":{"movement":{"vertical_speed":{"max":0.1}}}}))
-    write_predicate(config, f"{ns}:v{version}/is_sprinting", stp.super_json_dump({"condition":"minecraft:entity_properties","entity":"this","predicate":{"flags":{"is_sprinting":True}}}))
-    write_predicate(config, f"{ns}:v{version}/is_sneaking", stp.super_json_dump({"condition":"minecraft:entity_properties","entity":"this","predicate":{"flags":{"is_sneaking":True}}}))
-    write_predicate(config, f"{ns}:v{version}/is_moving", stp.super_json_dump({"condition":"minecraft:entity_properties","entity":"this","predicate":{"movement":{"horizontal_speed":{"min":0.1}}}}))
+    write_predicate(config, f"{ns}:v{version}/is_on_ground", json_dump({"condition":"minecraft:entity_properties","entity":"this","predicate":{"movement":{"vertical_speed":{"max":0.1}}}}))
+    write_predicate(config, f"{ns}:v{version}/is_sprinting", json_dump({"condition":"minecraft:entity_properties","entity":"this","predicate":{"flags":{"is_sprinting":True}}}))
+    write_predicate(config, f"{ns}:v{version}/is_sneaking", json_dump({"condition":"minecraft:entity_properties","entity":"this","predicate":{"flags":{"is_sneaking":True}}}))
+    write_predicate(config, f"{ns}:v{version}/is_moving", json_dump({"condition":"minecraft:entity_properties","entity":"this","predicate":{"movement":{"horizontal_speed":{"min":0.1}}}}))
 
     # Update weapon stats item modifier
     modifier: dict[str, Any] = {"function":"minecraft:copy_custom_data","source":{"type":"minecraft:storage","source":f"{ns}:gun"},"ops":[{"source":"stats","target":f"{ns}.stats","op":"replace"}]}
-    write_item_modifier(config, f"{ns}:v{version}/update_stats", stp.super_json_dump(modifier))
+    write_item_modifier(config, f"{ns}:v{version}/update_stats", json_dump(modifier))
 
     # Update weapon model item modifier
     write_versioned_function(config, "utils/update_model", """

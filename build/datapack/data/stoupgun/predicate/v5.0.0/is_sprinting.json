@@ -2,7 +2,9 @@
 	"condition": "minecraft:entity_properties",
 	"entity": "this",
 	"predicate": {
-		"flags": {"is_sprinting": true}
+		"flags": {
+			"is_sprinting": true
+		}
 	}
 }
 

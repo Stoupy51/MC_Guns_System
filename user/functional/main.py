@@ -27,6 +27,9 @@ scoreboard objectives add {ns}.cooldown dummy
 # Indicates if the player was zooming (used to remove slowness)
 scoreboard objectives add {ns}.zoom dummy
 
+# Tracks the most recently selected weapon ID for weapon switching mechanics
+scoreboard objectives add {ns}.last_selected dummy
+
 
 # Define some constants
 scoreboard players set #2 {ns}.data 2

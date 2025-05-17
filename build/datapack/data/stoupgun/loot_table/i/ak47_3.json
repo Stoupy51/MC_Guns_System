@@ -14,6 +14,9 @@
 									"stoupgun": {"gun": true,"stats": {"base_weapon": "ak47","capacity": 30,"reload": 70,"reload_end": 10,"cooldown": 2,"burst": 3,"damage": 15,"decay": 0.99,"acc_base": 150,"acc_sneak": 20,"acc_walk": 500,"acc_sprint": 1500,"acc_jump": 1800,"switch": 25,"kick": 2,"casing_model": "stoupgun:762x39mm","casing_n": 200,"casing_t": 50,"casing_b": -200,"casing_offset": {"normal": [-0.35,-0.3,0.7],"zoom": [-0.05,-0.25,0.5]},"models": {"normal": "stoupgun:ak47_3","zoom": "stoupgun:ak47_3_zoom"}},"ak47_3": true},
 									"smithed": {"ignore": {"functionality": true,"crafting": true}}
 								},
+								"minecraft:attribute_modifiers": [
+									{"type": "attack_speed","amount": -3.2,"operation": "add_value","slot": "mainhand","id": "minecraft:base_attack_speed"}
+								],
 								"minecraft:item_model": "stoupgun:ak47_3",
 								"minecraft:item_name": {
 									"translate":"stoupgun.ak47_3",

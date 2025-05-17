@@ -6,8 +6,8 @@
 	},
 	"ops": [
 		{
-			"source": "stats",
-			"target": "stoupgun.stats",
+			"source": "stats.weapon_id",
+			"target": "stoupgun.stats.weapon_id",
 			"op": "replace"
 		}
 	]

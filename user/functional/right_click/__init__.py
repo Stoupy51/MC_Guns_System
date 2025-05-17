@@ -6,6 +6,7 @@ from .common import main as common_main
 from .kick import main as kick_main
 from .raycast import main as raycast_main
 from .sound import main as sound_main
+from .switch import main as switch_main
 from .zoom import main as zoom_main
 
 
@@ -17,6 +18,9 @@ def main(config: dict) -> None:
 
     # Handle zoom functionality
     zoom_main(config)
+
+    # Handle weapon switching mechanics
+    switch_main(config)
 
     # Handle shoot with raycast, with accuracy groups
     raycast_main(config)

@@ -14,6 +14,9 @@ data modify storage stoupgun:gun stats set from entity @s SelectedItem.component
 # Check if we need to zoom weapon or stop
 function stoupgun:v5.0.0/zoom/main
 
+# Check if switching weapon
+function stoupgun:v5.0.0/switch/main
+
 # If pending clicks, run function
 execute if score @s stoupgun.cooldown matches 1.. run scoreboard players remove @s stoupgun.cooldown 1
 execute if score @s stoupgun.pending_clicks matches 1.. run function stoupgun:v5.0.0/player/right_click
