@@ -6,6 +6,7 @@ from .common import main as common_main
 from .kick import main as kick_main
 from .raycast import main as raycast_main
 from .sound import main as sound_main
+from .zoom import main as zoom_main
 
 
 # Main function
@@ -13,6 +14,9 @@ def main(config: dict) -> None:
 
     # Detect right click base
     common_main(config)
+
+    # Handle zoom functionality
+    zoom_main(config)
 
     # Handle shoot with raycast, with accuracy groups
     raycast_main(config)

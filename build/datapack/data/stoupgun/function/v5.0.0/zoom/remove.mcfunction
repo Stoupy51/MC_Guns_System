@@ -4,9 +4,18 @@
 # @within	stoupgun:v5.0.0/zoom/main
 #
 
+# Remove zoom state from gun stats
 data remove storage stoupgun:gun stats.is_zoom
+
+# Prepare input storage for model update
 data modify storage stoupgun:input with set value {"item_model":""}
 data modify storage stoupgun:input with.item_model set from storage stoupgun:gun stats.models.normal
-function stoupgun:v5.0.0/zoom/update_model with storage stoupgun:input with
+
+# Update weapon model and stats
+function stoupgun:v5.0.0/utils/update_model with storage stoupgun:input with
 item modify entity @s weapon.mainhand stoupgun:v5.0.0/update_stats
+
+# Reset zoom state and remove slowness effect
+scoreboard players reset @s stoupgun.zoom
+effect clear @s slowness
 

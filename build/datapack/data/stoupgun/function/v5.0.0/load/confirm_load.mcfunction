@@ -4,10 +4,19 @@
 # @within	stoupgun:v5.0.0/load/valid_dependencies
 #
 
-# Define objectives
+## Define objectives
+# Detect right click with a gun
 scoreboard objectives add stoupgun.right_click minecraft.used:minecraft.warped_fungus_on_a_stick
+
+# Tracks right clicks to enable continuous right-click detection
 scoreboard objectives add stoupgun.pending_clicks dummy
+
+# Cooldown in ticks before being able to shot
 scoreboard objectives add stoupgun.cooldown dummy
+
+# Indicates if the player was zooming (used to remove slowness)
+scoreboard objectives add stoupgun.zoom dummy
+
 
 # Define some constants
 scoreboard players set #2 stoupgun.data 2

@@ -126,17 +126,17 @@ function {ns}:v{version}/utils/damage with storage {ns}:input with
     # Get values
     write_versioned_function(config, "raycast/accuracy/get_value",
 f"""
-## Order is important: Jump > Sprint > Sneak > Walk > Base
+## Order is important: Jump > Sneak > Sprint > Walk > Base
 data remove storage {ns}:gun accuracy
 
 # If not on ground, return jump accuracy
 execute unless predicate {ns}:v{version}/is_on_ground run return run data modify storage {ns}:gun accuracy set from storage {ns}:gun stats.{ACCURACY_JUMP}
 
-# If sprinting, return sprint accuracy
-execute if predicate {ns}:v{version}/is_sprinting run return run data modify storage {ns}:gun accuracy set from storage {ns}:gun stats.{ACCURACY_SPRINT}
-
 # If sneaking, return sneak accuracy
 execute if predicate {ns}:v{version}/is_sneaking run return run data modify storage {ns}:gun accuracy set from storage {ns}:gun stats.{ACCURACY_SNEAK}
+
+# If sprinting, return sprint accuracy
+execute if predicate {ns}:v{version}/is_sprinting run return run data modify storage {ns}:gun accuracy set from storage {ns}:gun stats.{ACCURACY_SPRINT}
 
 # If moving horizontally, return walk accuracy
 execute if predicate {ns}:v{version}/is_moving run return run data modify storage {ns}:gun accuracy set from storage {ns}:gun stats.{ACCURACY_WALK}

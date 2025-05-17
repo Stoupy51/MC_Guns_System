@@ -54,7 +54,7 @@ data remove storage {ns}:gun stats
 data modify storage {ns}:gun stats set from entity @s SelectedItem.components."minecraft:custom_data".{ns}.stats
 
 # Check if we need to zoom weapon or stop
-execute if data storage {ns}:gun stats run function {ns}:v{version}/zoom/main
+function {ns}:v{version}/zoom/main
 
 # If pending clicks, run function
 execute if score @s {ns}.cooldown matches 1.. run scoreboard players remove @s {ns}.cooldown 1
@@ -85,38 +85,12 @@ execute store result score @s {ns}.cooldown run data get storage {ns}:gun stats.
     write_predicate(config, f"{ns}:v{version}/is_sneaking", stp.super_json_dump({"condition":"minecraft:entity_properties","entity":"this","predicate":{"flags":{"is_sneaking":True}}}))
     write_predicate(config, f"{ns}:v{version}/is_moving", stp.super_json_dump({"condition":"minecraft:entity_properties","entity":"this","predicate":{"movement":{"horizontal_speed":{"min":0.1}}}}))
 
-    # Handle zoom
-    write_versioned_function(config, "zoom/main",
-f"""
-# If already zoom and not sneaking, unzoom
-execute if data storage {ns}:gun stats.is_zoom unless predicate {ns}:v{version}/is_sneaking run return run function {ns}:v{version}/zoom/remove
-
-# If not zooming but sneaking, zoom
-execute unless data storage {ns}:gun stats.is_zoom if predicate {ns}:v{version}/is_sneaking run return run function {ns}:v{version}/zoom/set
-""")
-    write_versioned_function(config, "zoom/remove",
-f"""
-data remove storage {ns}:gun stats.is_zoom
-data modify storage {ns}:input with set value {{"item_model":""}}
-data modify storage {ns}:input with.item_model set from storage {ns}:gun stats.models.normal
-function {ns}:v{version}/zoom/update_model with storage {ns}:input with
-item modify entity @s weapon.mainhand {ns}:v{version}/update_stats
-""")
-    write_versioned_function(config, "zoom/set",
-f"""
-data modify storage {ns}:gun stats.is_zoom set value 1b
-data modify storage {ns}:input with set value {{"item_model":""}}
-data modify storage {ns}:input with.item_model set from storage {ns}:gun stats.models.zoom
-function {ns}:v{version}/zoom/update_model with storage {ns}:input with
-item modify entity @s weapon.mainhand {ns}:v{version}/update_stats
-""")
-
     # Update weapon stats item modifier
     modifier: dict[str, Any] = {"function":"minecraft:copy_custom_data","source":{"type":"minecraft:storage","source":f"{ns}:gun"},"ops":[{"source":"stats","target":f"{ns}.stats","op":"replace"}]}
     write_item_modifier(config, f"{ns}:v{version}/update_stats", stp.super_json_dump(modifier))
 
     # Update weapon model item modifier
-    write_versioned_function(config, "zoom/update_model", """
+    write_versioned_function(config, "utils/update_model", """
 $item modify entity @s weapon.mainhand {"function": "minecraft:set_components","components": {"minecraft:item_model": "$(item_model)"}}
 """)
 
