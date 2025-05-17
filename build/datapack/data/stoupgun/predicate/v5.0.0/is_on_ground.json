@@ -2,7 +2,7 @@
 	"condition": "minecraft:entity_properties",
 	"entity": "this",
 	"predicate": {
-		"flags": {"is_on_ground": true}
+		"movement": {"vertical_speed": {"max": 0.1}}
 	}
 }
 

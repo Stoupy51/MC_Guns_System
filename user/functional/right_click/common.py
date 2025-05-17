@@ -79,7 +79,8 @@ execute store result score @s {ns}.cooldown run data get storage {ns}:gun stats.
 """)
 
     # Prepare predicates for movement checks
-    write_predicate(config, f"{ns}:v{version}/is_on_ground", stp.super_json_dump({"condition":"minecraft:entity_properties","entity":"this","predicate":{"flags":{"is_on_ground":True}}}))
+    # (Can't use flag 'is_on_ground' because /tp @s ~ ~ ~ makes it false for two ticks)
+    write_predicate(config, f"{ns}:v{version}/is_on_ground", stp.super_json_dump({"condition":"minecraft:entity_properties","entity":"this","predicate":{"movement":{"vertical_speed":{"max":0.1}}}}))
     write_predicate(config, f"{ns}:v{version}/is_sprinting", stp.super_json_dump({"condition":"minecraft:entity_properties","entity":"this","predicate":{"flags":{"is_sprinting":True}}}))
     write_predicate(config, f"{ns}:v{version}/is_sneaking", stp.super_json_dump({"condition":"minecraft:entity_properties","entity":"this","predicate":{"flags":{"is_sneaking":True}}}))
     write_predicate(config, f"{ns}:v{version}/is_moving", stp.super_json_dump({"condition":"minecraft:entity_properties","entity":"this","predicate":{"movement":{"horizontal_speed":{"min":0.1}}}}))
