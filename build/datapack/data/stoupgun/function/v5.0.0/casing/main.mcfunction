@@ -4,6 +4,10 @@
 # @within	stoupgun:v5.0.0/player/right_click
 #
 
+# Get if player is zooming or not
+scoreboard players set #is_zoom stoupgun.data 0
+execute if data storage stoupgun:gun stats.is_zoom run scoreboard players set #is_zoom stoupgun.data 1
+
 # Extract casing data from gun
 scoreboard players set #casing_normal stoupgun.data 0
 scoreboard players set #casing_tangent stoupgun.data 0

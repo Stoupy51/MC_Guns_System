@@ -1,7 +1,6 @@
 
 # Imports
-import stouputils as stp
-from python_datapack.utils.database_helper import write_predicate, write_versioned_function
+from python_datapack.utils.database_helper import write_versioned_function
 
 from user.config.stats import ACCURACY_BASE, ACCURACY_JUMP, ACCURACY_SNEAK, ACCURACY_SPRINT, ACCURACY_WALK, DAMAGE, DECAY
 
@@ -18,10 +17,8 @@ f"""
 function {ns}:v{version}/raycast/accuracy/get_value
 
 # Shoot with raycast
-tag @s add {ns}.attacker
 tag @s add bs.raycast.omit
 execute anchored eyes positioned ^ ^ ^ summon marker run function {ns}:v{version}/raycast/main
-tag @s remove {ns}.attacker
 """)
 
     # Handle pending clicks
@@ -45,6 +42,9 @@ data modify storage {ns}:input with.on_targeted_entity set value "function {ns}:
 
 # Launch raycast with callbacks (https://docs.mcbookshelf.dev/en/latest/modules/raycast.html#run-the-raycast)
 execute at @s run function #bs.raycast:run with storage {ns}:input
+
+# Kill marker
+kill @s
 """)
 
     # On hit point
@@ -94,7 +94,7 @@ f"""
 particle block{{block_state:"redstone_wire"}} ~ ~1 ~ 0.35 0.5 0.35 0 100 force @a[distance=..128]
 
 # Get base damage with 3 digits of precision
-data modify storage {ns}:input with set value {{target:"@s", amount:0.0f, attacker:"@p[tag={ns}.attacker]"}}
+data modify storage {ns}:input with set value {{target:"@s", amount:0.0f, attacker:"@p[tag={ns}.ticking]"}}
 execute store result score #damage {ns}.data run data get storage {ns}:gun stats.{DAMAGE} 10
 
 # Apply decay using `damage *= pow(decay, distance)` (https://docs.mcbookshelf.dev/en/latest/modules/math.html#power)
@@ -123,12 +123,6 @@ function {ns}:v{version}/utils/damage with storage {ns}:input with
 
 
     ## Accuracy
-    # Prepare predicates for accuracy checks
-    write_predicate(config, f"{ns}:v{version}/is_on_ground", stp.super_json_dump({"condition":"minecraft:entity_properties","entity":"this","predicate":{"flags":{"is_on_ground":True}}}))
-    write_predicate(config, f"{ns}:v{version}/is_sprinting", stp.super_json_dump({"condition":"minecraft:entity_properties","entity":"this","predicate":{"flags":{"is_sprinting":True}}}))
-    write_predicate(config, f"{ns}:v{version}/is_sneaking", stp.super_json_dump({"condition":"minecraft:entity_properties","entity":"this","predicate":{"flags":{"is_sneaking":True}}}))
-    write_predicate(config, f"{ns}:v{version}/is_moving", stp.super_json_dump({"condition":"minecraft:entity_properties","entity":"this","predicate":{"movement":{"horizontal_speed":{"min":0.1}}}}))
-
     # Get values
     write_versioned_function(config, "raycast/accuracy/get_value",
 f"""

@@ -23,6 +23,10 @@ function {ns}:v{version}/casing/main
     # Main function
     write_versioned_function(config, "casing/main",
 f"""
+# Get if player is zooming or not
+scoreboard players set #is_zoom {ns}.data 0
+execute if data storage {ns}:gun stats.is_zoom run scoreboard players set #is_zoom {ns}.data 1
+
 # Extract casing data from gun
 scoreboard players set #casing_normal {ns}.data 0
 scoreboard players set #casing_tangent {ns}.data 0
@@ -188,9 +192,12 @@ f"""
 
 # 1) Load local offset values from storage and scale to integers (x1000)
 # These represent the desired offset in the gun's local coordinate system
-execute store result score #offset_x {ns}.data run data get storage {ns}:gun stats.{CASING_OFFSET}[0] 1000
-execute store result score #offset_y {ns}.data run data get storage {ns}:gun stats.{CASING_OFFSET}[1] 1000
-execute store result score #offset_z {ns}.data run data get storage {ns}:gun stats.{CASING_OFFSET}[2] 1000
+execute if score #is_zoom {ns}.data matches 0 store result score #offset_x {ns}.data run data get storage {ns}:gun stats.{CASING_OFFSET}.normal[0] 1000
+execute if score #is_zoom {ns}.data matches 0 store result score #offset_y {ns}.data run data get storage {ns}:gun stats.{CASING_OFFSET}.normal[1] 1000
+execute if score #is_zoom {ns}.data matches 0 store result score #offset_z {ns}.data run data get storage {ns}:gun stats.{CASING_OFFSET}.normal[2] 1000
+execute if score #is_zoom {ns}.data matches 1 store result score #offset_x {ns}.data run data get storage {ns}:gun stats.{CASING_OFFSET}.zoom[0] 1000
+execute if score #is_zoom {ns}.data matches 1 store result score #offset_y {ns}.data run data get storage {ns}:gun stats.{CASING_OFFSET}.zoom[1] 1000
+execute if score #is_zoom {ns}.data matches 1 store result score #offset_z {ns}.data run data get storage {ns}:gun stats.{CASING_OFFSET}.zoom[2] 1000
 
 # 2) Project local offsets onto world-space axes using orientation vectors
 # Each vector (binormal/normal/tangent) contributes to the final world position

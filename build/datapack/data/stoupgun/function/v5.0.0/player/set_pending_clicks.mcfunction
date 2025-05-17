@@ -4,6 +4,7 @@
 # @within	advancement stoupgun:v5.0.0/right_click
 #
 
+
 # Revoke advancement and reset right click
 advancement revoke @s only stoupgun:v5.0.0/right_click
 scoreboard players reset @s stoupgun.right_click

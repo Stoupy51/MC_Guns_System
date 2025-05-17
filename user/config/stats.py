@@ -1,10 +1,12 @@
 
 # Imports
+from typing import Any
+
 from python_datapack.constants import CUSTOM_ITEM_VANILLA, OVERRIDE_MODEL
 
 
 # Function
-def get_data(ns: str, stats: dict = {}, override_model: dict = {}) -> dict:  # noqa: B006
+def get_data(ns: str, stats: dict[str, Any] | None = None, override_model: dict[str, Any] | None = None) -> dict:
     return {
         "id": "minecraft:warped_fungus_on_a_stick" if stats else CUSTOM_ITEM_VANILLA,
         "custom_data": {ns: {"gun":True, **stats} if stats else {"casing":True}},
@@ -57,8 +59,7 @@ CASING_MODEL: str = "casing_model"
 Determines the visual model and properties of the ejected casing. """
 CASING_OFFSET: str = "casing_offset"
 """ Relative position to the player to use when summoning the casing.
-The value is modified in setup_database.py according to the zoom type.
-"""
+The value is modified in setup_database.py according to the zoom type. """
 CASING_NORMAL: str = "casing_n"
 """ Vertical (Y-axis) component of the ejected casing's direction vector.
 Controls the upward force applied to the casing during ejection. """
@@ -72,6 +73,8 @@ BASE_WEAPON: str = "base_weapon"
 """ Identifier for the base weapon model.
 Determines which weapon model and animations to use as a foundation.
 Used for weapons that share the same base model but have different stats or attachments. """
+MODELS: str = "models"
+""" Models to use to switch between normal and zoom modes. """
 
 
 

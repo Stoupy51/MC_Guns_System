@@ -23,3 +23,6 @@ data modify storage stoupgun:input with.on_targeted_entity set value "function s
 # Launch raycast with callbacks (https://docs.mcbookshelf.dev/en/latest/modules/raycast.html#run-the-raycast)
 execute at @s run function #bs.raycast:run with storage stoupgun:input
 
+# Kill marker
+kill @s
+

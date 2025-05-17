@@ -10,7 +10,7 @@ from python_datapack.utils.database_helper import (
     add_smithed_ignore_vanilla_behaviours_convention,
 )
 
-from user.config.stats import CASING_MODEL, CASING_OFFSET
+from user.config.stats import CASING_MODEL, MODELS
 from user.database.ak47 import main as main_ak47
 from user.database.casing import main as main_casing
 
@@ -23,25 +23,30 @@ def main(config: dict) -> dict[str, dict]:
     # Add casings
     main_casing(database, ns)
 
-    # Add weapons
+    # Add guns
     main_ak47(database, ns)
 
-    # Adjust casing models in weapons
+    # Adjust guns data
     for item, data in database.items():
+
+        # Get all gun data
         data["custom_data"] = json.loads(json.dumps(data.get("custom_data", {})))
-        gun_stats: dict[str, Any] = data["custom_data"].get(ns, {}).get("stats", {})
+        ns_data: dict[str, Any] = data["custom_data"].get(ns, {})
+        gun_stats: dict[str, Any] = ns_data.get("stats", {})
+        if ns_data.get("gun"):
 
-        # If has casing,
-        if gun_stats.get(CASING_MODEL):
+            # If has casing, update model
+            if gun_stats.get(CASING_MODEL):
+                gun_stats[CASING_MODEL] = f"{ns}:{gun_stats[CASING_MODEL]}"
 
-            # Update model
-            gun_stats[CASING_MODEL] = f"{ns}:{gun_stats[CASING_MODEL]}"
+            # Define normal and zoom models
+            normal_model: str = f"{ns}:{item.replace('_zoom', '')}"
+            zoom_model: str = normal_model + "_zoom"
+            gun_stats[MODELS] = {"normal": normal_model, "zoom": zoom_model}
 
-            # Determine casing offset
-            if "_zoom" in item:
-                gun_stats[CASING_OFFSET] = gun_stats[CASING_OFFSET]["zoom"]
-            else:
-                gun_stats[CASING_OFFSET] = gun_stats[CASING_OFFSET]["normal"]
+    # Sort items so that zoom models are at the end
+    sorted_items: list[str] = sorted(database.keys(), key=lambda x: x.endswith("_zoom"))
+    database = {k: database[k] for k in sorted_items}
 
     # Final adjustments, you definitively should keep them!
     add_item_model_component(config, database)

@@ -8,9 +8,12 @@
 
 # 1) Load local offset values from storage and scale to integers (x1000)
 # These represent the desired offset in the gun's local coordinate system
-execute store result score #offset_x stoupgun.data run data get storage stoupgun:gun stats.casing_offset[0] 1000
-execute store result score #offset_y stoupgun.data run data get storage stoupgun:gun stats.casing_offset[1] 1000
-execute store result score #offset_z stoupgun.data run data get storage stoupgun:gun stats.casing_offset[2] 1000
+execute if score #is_zoom stoupgun.data matches 0 store result score #offset_x stoupgun.data run data get storage stoupgun:gun stats.casing_offset.normal[0] 1000
+execute if score #is_zoom stoupgun.data matches 0 store result score #offset_y stoupgun.data run data get storage stoupgun:gun stats.casing_offset.normal[1] 1000
+execute if score #is_zoom stoupgun.data matches 0 store result score #offset_z stoupgun.data run data get storage stoupgun:gun stats.casing_offset.normal[2] 1000
+execute if score #is_zoom stoupgun.data matches 1 store result score #offset_x stoupgun.data run data get storage stoupgun:gun stats.casing_offset.zoom[0] 1000
+execute if score #is_zoom stoupgun.data matches 1 store result score #offset_y stoupgun.data run data get storage stoupgun:gun stats.casing_offset.zoom[1] 1000
+execute if score #is_zoom stoupgun.data matches 1 store result score #offset_z stoupgun.data run data get storage stoupgun:gun stats.casing_offset.zoom[2] 1000
 
 # 2) Project local offsets onto world-space axes using orientation vectors
 # Each vector (binormal/normal/tangent) contributes to the final world position

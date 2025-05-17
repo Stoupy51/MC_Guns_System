@@ -8,7 +8,7 @@
 particle block{block_state:"redstone_wire"} ~ ~1 ~ 0.35 0.5 0.35 0 100 force @a[distance=..128]
 
 # Get base damage with 3 digits of precision
-data modify storage stoupgun:input with set value {target:"@s", amount:0.0f, attacker:"@p[tag=stoupgun.attacker]"}
+data modify storage stoupgun:input with set value {target:"@s", amount:0.0f, attacker:"@p[tag=stoupgun.ticking]"}
 execute store result score #damage stoupgun.data run data get storage stoupgun:gun stats.damage 10
 
 # Apply decay using `damage *= pow(decay, distance)` (https://docs.mcbookshelf.dev/en/latest/modules/math.html#power)

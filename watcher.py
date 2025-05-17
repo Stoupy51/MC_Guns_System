@@ -1,3 +1,4 @@
+
 # Install required packages
 import os
 import sys
@@ -10,7 +11,7 @@ except ImportError:
 	sys.exit(-1)
 
 # Import configuration and watcher
-from python_datapack.utils.print import error
+import stouputils.print as stp
 from python_datapack.watcher import watcher
 
 from config import ROOT, configuration
@@ -18,7 +19,7 @@ from config import ROOT, configuration
 # Main
 if __name__ == "__main__":
 	if not check_config_format(configuration):
-		error("Invalid config format, please check the documentation")
+		stp.error("Invalid config format, please check the documentation")
 
 	# Setup and start file watcher
 	configs_to_get: list[str] = ["merge_folder", "assets_folder", "libs_folder"]
@@ -32,7 +33,7 @@ if __name__ == "__main__":
 		".git/",
 		".venv/",
 	]
-	
+
 	# Start the watcher
 	watcher(to_watch, to_ignore, f"{ROOT}/build.py")
 
