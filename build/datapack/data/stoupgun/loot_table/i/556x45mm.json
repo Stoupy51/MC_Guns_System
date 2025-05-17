@@ -14,12 +14,10 @@
 									"stoupgun": {"casing": true,"556x45mm": true},
 									"smithed": {"ignore": {"functionality": true,"crafting": true}}
 								},
-								"minecraft:item_model": "stoupgun:556x45mm",
 								"minecraft:item_name": {
-									"translate":"stoupgun.556x45mm",
-									"italic": false,
-									"color": "white"
+									"translate":"stoupgun.556x45mm"
 								},
+								"minecraft:item_model": "stoupgun:556x45mm",
 								"minecraft:lore": [
 									["",{"text":"I","color": "white","italic": false,"font": "stoupgun:icons"},{"translate":"stoupgun","italic": true,"color": "blue"}]
 								]
