@@ -15,7 +15,8 @@ data modify storage stoupgun:input with.item_model set from storage stoupgun:gun
 function stoupgun:v5.0.0/utils/update_model with storage stoupgun:input with
 item modify entity @s weapon.mainhand stoupgun:v5.0.0/update_stats
 
-# Reset zoom state and remove slowness effect
+# Apply unzoom effects
+playsound stoupgun:common/lean_out player @s ~ ~1000000 ~ 1000000
 scoreboard players reset @s stoupgun.zoom
 effect clear @s slowness
 
