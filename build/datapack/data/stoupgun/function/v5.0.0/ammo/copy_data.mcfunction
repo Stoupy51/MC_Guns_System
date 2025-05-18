@@ -5,9 +5,9 @@
 #
 
 # Copy the number of remaining bullets
-execute store result score @s stoupgun.remaining_bullets run data get storage stoupgun:gun stats.remaining_bullets
+execute store result score @s stoupgun.remaining_bullets run data get storage stoupgun:gun all.stats.remaining_bullets
 
 # Set remaining bullets to -1 to mark this weapon as needing an update
-data modify storage stoupgun:gun stats.remaining_bullets set value -1
+data modify storage stoupgun:gun all.stats.remaining_bullets set value -1
 item modify entity @s weapon.mainhand stoupgun:v5.0.0/update_stats
 

@@ -6,7 +6,7 @@
 
 # Extract kick type & pick random value between 1 and 5
 scoreboard players set #kick stoupgun.data 0
-execute store result score #kick stoupgun.data run data get storage stoupgun:gun stats.kick
+execute store result score #kick stoupgun.data run data get storage stoupgun:gun all.stats.kick
 execute store result score #random stoupgun.data run random value 1..5
 
 # Switch case

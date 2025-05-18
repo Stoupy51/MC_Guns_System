@@ -22,7 +22,7 @@ function {ns}:v{version}/kicks/main
 f"""
 # Extract kick type & pick random value between 1 and 5
 scoreboard players set #kick {ns}.data 0
-execute store result score #kick {ns}.data run data get storage {ns}:gun stats.{KICK}
+execute store result score #kick {ns}.data run data get storage {ns}:gun all.stats.{KICK}
 execute store result score #random {ns}.data run random value 1..5
 
 # Switch case

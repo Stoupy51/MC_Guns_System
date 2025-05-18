@@ -5,7 +5,7 @@
 #
 
 # Set new weapon switch cooldown
-execute store result score @s stoupgun.cooldown run data get storage stoupgun:gun stats.switch
+execute store result score @s stoupgun.cooldown run data get storage stoupgun:gun all.stats.switch
 
 # 1. When unequipping a weapon (`if score @s stoupgun.last_selected matches 1..` means player was holding a weapon)
 #   - Find the weapon with CURRENT_AMMO set to -1 (meaning not updated)

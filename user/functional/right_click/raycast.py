@@ -76,7 +76,7 @@ execute if score $raycast.piercing bs.lambda matches 1..3 run scoreboard players
 execute if score $raycast.piercing bs.lambda matches 5.. run scoreboard players set $raycast.piercing bs.lambda 3
 
 # Divide damage per 2
-execute store result storage {ns}:gun stats.{DAMAGE} float 0.5 run data get storage {ns}:gun stats.{DAMAGE}
+execute store result storage {ns}:gun all.stats.{DAMAGE} float 0.5 run data get storage {ns}:gun all.stats.{DAMAGE}
 
 execute if block ~ ~ ~ #{ns}:v{version}/sounds/glass run playsound minecraft:block.glass.break block @a ~ ~ ~ 1
 execute if block ~ ~ ~ #{ns}:v{version}/sounds/water run playsound minecraft:ambient.underwater.exit block @a ~ ~ ~ 0.25 1.5
@@ -95,10 +95,10 @@ particle block{{block_state:"redstone_wire"}} ~ ~1 ~ 0.35 0.5 0.35 0 100 force @
 
 # Get base damage with 3 digits of precision
 data modify storage {ns}:input with set value {{target:"@s", amount:0.0f, attacker:"@p[tag={ns}.ticking]"}}
-execute store result score #damage {ns}.data run data get storage {ns}:gun stats.{DAMAGE} 10
+execute store result score #damage {ns}.data run data get storage {ns}:gun all.stats.{DAMAGE} 10
 
 # Apply decay using `damage *= pow(decay, distance)` (https://docs.mcbookshelf.dev/en/latest/modules/math.html#power)
-data modify storage bs:in math.pow.x set from storage {ns}:gun stats.{DECAY}
+data modify storage bs:in math.pow.x set from storage {ns}:gun all.stats.{DECAY}
 data modify storage bs:in math.pow.y set from storage bs:lambda raycast.distance
 function #bs.math:pow
 execute store result score #pow_decay_distance {ns}.data run data get storage bs:out math.pow 1000000
@@ -130,19 +130,19 @@ f"""
 data remove storage {ns}:gun accuracy
 
 # If not on ground, return jump accuracy
-execute unless predicate {ns}:v{version}/is_on_ground run return run data modify storage {ns}:gun accuracy set from storage {ns}:gun stats.{ACCURACY_JUMP}
+execute unless predicate {ns}:v{version}/is_on_ground run return run data modify storage {ns}:gun accuracy set from storage {ns}:gun all.stats.{ACCURACY_JUMP}
 
 # If sneaking, return sneak accuracy
-execute if predicate {ns}:v{version}/is_sneaking run return run data modify storage {ns}:gun accuracy set from storage {ns}:gun stats.{ACCURACY_SNEAK}
+execute if predicate {ns}:v{version}/is_sneaking run return run data modify storage {ns}:gun accuracy set from storage {ns}:gun all.stats.{ACCURACY_SNEAK}
 
 # If sprinting, return sprint accuracy
-execute if predicate {ns}:v{version}/is_sprinting run return run data modify storage {ns}:gun accuracy set from storage {ns}:gun stats.{ACCURACY_SPRINT}
+execute if predicate {ns}:v{version}/is_sprinting run return run data modify storage {ns}:gun accuracy set from storage {ns}:gun all.stats.{ACCURACY_SPRINT}
 
 # If moving horizontally, return walk accuracy
-execute if predicate {ns}:v{version}/is_moving run return run data modify storage {ns}:gun accuracy set from storage {ns}:gun stats.{ACCURACY_WALK}
+execute if predicate {ns}:v{version}/is_moving run return run data modify storage {ns}:gun accuracy set from storage {ns}:gun all.stats.{ACCURACY_WALK}
 
 # Else, return base accuracy
-data modify storage {ns}:gun accuracy set from storage {ns}:gun stats.{ACCURACY_BASE}
+data modify storage {ns}:gun accuracy set from storage {ns}:gun all.stats.{ACCURACY_BASE}
 """)
 
     # Apply random rotation spread

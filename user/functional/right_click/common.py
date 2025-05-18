@@ -49,8 +49,8 @@ f"""
 tag @s add {ns}.ticking
 
 # Copy gun data
-data remove storage {ns}:gun stats
-data modify storage {ns}:gun stats set from entity @s SelectedItem.components."minecraft:custom_data".{ns}.stats
+data remove storage {ns}:gun all
+data modify storage {ns}:gun all set from entity @s SelectedItem.components."minecraft:custom_data".{ns}
 
 # Check if we need to zoom weapon or stop
 function {ns}:v{version}/zoom/main
@@ -82,11 +82,11 @@ execute if score @s {ns}.cooldown matches 1.. run return fail
 execute if score @s {ns}.pending_clicks matches ..-1 run return fail
 
 # Stop if SelectedItem is not a gun or if not enough ammo
-execute unless data storage {ns}:gun stats run return fail
+execute unless data storage {ns}:gun all.stats run return fail
 execute if score @s {ns}.{REMAINING_BULLETS} matches ..0 run return run function {ns}:v{version}/ammo/reload
 
 # Set cooldown
-execute store result score @s {ns}.cooldown run data get storage {ns}:gun stats.{COOLDOWN}
+execute store result score @s {ns}.cooldown run data get storage {ns}:gun all.stats.{COOLDOWN}
 """)
 
     # Prepare predicates for movement checks
@@ -97,7 +97,7 @@ execute store result score @s {ns}.cooldown run data get storage {ns}:gun stats.
     write_predicate(config, f"{ns}:v{version}/is_moving", json_dump({"condition":"minecraft:entity_properties","entity":"this","predicate":{"movement":{"horizontal_speed":{"min":0.1}}}}))
 
     # Update weapon stats item modifier
-    modifier: dict[str, Any] = {"function":"minecraft:copy_custom_data","source":{"type":"minecraft:storage","source":f"{ns}:gun"},"ops":[{"source":"stats","target":f"{ns}.stats","op":"replace"}]}
+    modifier: dict[str, Any] = {"function":"minecraft:copy_custom_data","source":{"type":"minecraft:storage","source":f"{ns}:gun"},"ops":[{"source":"all.stats","target":f"{ns}.stats","op":"replace"}]}
     write_item_modifier(config, f"{ns}:v{version}/update_stats", json_dump(modifier))
 
     # Update weapon model item modifier

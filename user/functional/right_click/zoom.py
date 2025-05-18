@@ -14,24 +14,24 @@ def main(config: dict) -> None:
     write_versioned_function(config, "zoom/main",
 f"""
 # If no gun data, stop here
-execute unless data storage {ns}:gun stats run return run function {ns}:v{version}/zoom/check_slowness
+execute unless data storage {ns}:gun all.stats run return run function {ns}:v{version}/zoom/check_slowness
 
 # If already zoom and not sneaking, unzoom
-execute if data storage {ns}:gun stats.{IS_ZOOM} unless predicate {ns}:v{version}/is_sneaking run return run function {ns}:v{version}/zoom/remove
+execute if data storage {ns}:gun all.stats.{IS_ZOOM} unless predicate {ns}:v{version}/is_sneaking run return run function {ns}:v{version}/zoom/remove
 
 # If not zooming but sneaking, zoom
-execute unless data storage {ns}:gun stats.{IS_ZOOM} if predicate {ns}:v{version}/is_sneaking run return run function {ns}:v{version}/zoom/set
+execute unless data storage {ns}:gun all.stats.{IS_ZOOM} if predicate {ns}:v{version}/is_sneaking run return run function {ns}:v{version}/zoom/set
 """)
 
     # Function to remove zoom state
     write_versioned_function(config, "zoom/remove",
 f"""
 # Remove zoom state from gun stats
-data remove storage {ns}:gun stats.{IS_ZOOM}
+data remove storage {ns}:gun all.stats.{IS_ZOOM}
 
 # Prepare input storage for model update
 data modify storage {ns}:input with set value {{"item_model":""}}
-data modify storage {ns}:input with.item_model set from storage {ns}:gun stats.{MODELS}.normal
+data modify storage {ns}:input with.item_model set from storage {ns}:gun all.stats.{MODELS}.normal
 
 # Update weapon model and stats
 function {ns}:v{version}/utils/update_model with storage {ns}:input with
@@ -47,11 +47,11 @@ effect clear @s slowness
     write_versioned_function(config, "zoom/set",
 f"""
 # Set zoom state in gun stats
-data modify storage {ns}:gun stats.{IS_ZOOM} set value true
+data modify storage {ns}:gun all.stats.{IS_ZOOM} set value true
 
 # Prepare input storage for model update
 data modify storage {ns}:input with set value {{"item_model":""}}
-data modify storage {ns}:input with.item_model set from storage {ns}:gun stats.{MODELS}.zoom
+data modify storage {ns}:input with.item_model set from storage {ns}:gun all.stats.{MODELS}.zoom
 
 # Update weapon model and stats
 function {ns}:v{version}/utils/update_model with storage {ns}:input with

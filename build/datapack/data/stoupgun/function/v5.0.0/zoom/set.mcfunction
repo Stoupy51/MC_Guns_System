@@ -5,11 +5,11 @@
 #
 
 # Set zoom state in gun stats
-data modify storage stoupgun:gun stats.is_zoom set value true
+data modify storage stoupgun:gun all.stats.is_zoom set value true
 
 # Prepare input storage for model update
 data modify storage stoupgun:input with set value {"item_model":""}
-data modify storage stoupgun:input with.item_model set from storage stoupgun:gun stats.models.zoom
+data modify storage stoupgun:input with.item_model set from storage stoupgun:gun all.stats.models.zoom
 
 # Update weapon model and stats
 function stoupgun:v5.0.0/utils/update_model with storage stoupgun:input with

@@ -78,10 +78,10 @@ function {ns}:v{version}/ammo/modify_lore {{slot:"$(slot)"}}
     write_versioned_function(config, "ammo/copy_data",
 f"""
 # Copy the number of remaining bullets
-execute store result score @s {ns}.{REMAINING_BULLETS} run data get storage {ns}:gun stats.{REMAINING_BULLETS}
+execute store result score @s {ns}.{REMAINING_BULLETS} run data get storage {ns}:gun all.stats.{REMAINING_BULLETS}
 
 # Set remaining bullets to -1 to mark this weapon as needing an update
-data modify storage {ns}:gun stats.{REMAINING_BULLETS} set value -1
+data modify storage {ns}:gun all.stats.{REMAINING_BULLETS} set value -1
 item modify entity @s weapon.mainhand {ns}:v{version}/update_stats
 """)
 

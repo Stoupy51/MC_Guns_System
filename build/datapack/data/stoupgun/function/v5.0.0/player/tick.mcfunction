@@ -8,8 +8,8 @@
 tag @s add stoupgun.ticking
 
 # Copy gun data
-data remove storage stoupgun:gun stats
-data modify storage stoupgun:gun stats set from entity @s SelectedItem.components."minecraft:custom_data".stoupgun.stats
+data remove storage stoupgun:gun all
+data modify storage stoupgun:gun all set from entity @s SelectedItem.components."minecraft:custom_data".stoupgun
 
 # Check if we need to zoom weapon or stop
 function stoupgun:v5.0.0/zoom/main

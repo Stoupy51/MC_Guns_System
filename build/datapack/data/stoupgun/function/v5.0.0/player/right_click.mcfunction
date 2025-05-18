@@ -15,11 +15,11 @@ execute if score @s stoupgun.cooldown matches 1.. run return fail
 execute if score @s stoupgun.pending_clicks matches ..-1 run return fail
 
 # Stop if SelectedItem is not a gun or if not enough ammo
-execute unless data storage stoupgun:gun stats run return fail
+execute unless data storage stoupgun:gun all.stats run return fail
 execute if score @s stoupgun.remaining_bullets matches ..0 run return run function stoupgun:v5.0.0/ammo/reload
 
 # Set cooldown
-execute store result score @s stoupgun.cooldown run data get storage stoupgun:gun stats.cooldown
+execute store result score @s stoupgun.cooldown run data get storage stoupgun:gun all.stats.cooldown
 
 # Check which type of movement the player is doing
 function stoupgun:v5.0.0/raycast/accuracy/get_value

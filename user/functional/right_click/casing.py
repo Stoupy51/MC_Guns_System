@@ -25,18 +25,18 @@ function {ns}:v{version}/casing/main
 f"""
 # Get if player is zooming or not
 scoreboard players set #is_zoom {ns}.data 0
-execute if data storage {ns}:gun stats.is_zoom run scoreboard players set #is_zoom {ns}.data 1
+execute if data storage {ns}:gun all.stats.is_zoom run scoreboard players set #is_zoom {ns}.data 1
 
 # Extract casing data from gun
 scoreboard players set #casing_normal {ns}.data 0
 scoreboard players set #casing_tangent {ns}.data 0
 scoreboard players set #casing_binormal {ns}.data 0
-execute store result score #casing_normal {ns}.data run data get storage {ns}:gun stats.{CASING_NORMAL}
-execute store result score #casing_tangent {ns}.data run data get storage {ns}:gun stats.{CASING_TANGENT}
-execute store result score #casing_binormal {ns}.data run data get storage {ns}:gun stats.{CASING_BINORMAL}
+execute store result score #casing_normal {ns}.data run data get storage {ns}:gun all.stats.{CASING_NORMAL}
+execute store result score #casing_tangent {ns}.data run data get storage {ns}:gun all.stats.{CASING_TANGENT}
+execute store result score #casing_binormal {ns}.data run data get storage {ns}:gun all.stats.{CASING_BINORMAL}
 
 # Stop if no casing data
-execute unless data storage {ns}:gun stats.{CASING_MODEL} run return fail
+execute unless data storage {ns}:gun all.stats.{CASING_MODEL} run return fail
 
 # Add random variation to the tangent
 scoreboard players set #random_variation {ns}.data 40
@@ -49,7 +49,7 @@ execute anchored eyes positioned ^ ^ ^ summon marker run function {ns}:v{version
 
 # Prepare casting model and motion
 data modify storage {ns}:temp casing set value {{Item:{{components:{{}}}},Motion:[0.0d,0.0d,0.0d],Pos:[0.0d,0.0d,0.0d]}}
-data modify storage {ns}:temp casing.Item.components."minecraft:item_model" set from storage {ns}:gun stats.{CASING_MODEL}
+data modify storage {ns}:temp casing.Item.components."minecraft:item_model" set from storage {ns}:gun all.stats.{CASING_MODEL}
 execute store result storage {ns}:temp casing.Motion[0] double 0.001 run scoreboard players get #motion_x {ns}.data
 execute store result storage {ns}:temp casing.Motion[1] double 0.001 run scoreboard players get #motion_y {ns}.data
 execute store result storage {ns}:temp casing.Motion[2] double 0.001 run scoreboard players get #motion_z {ns}.data
@@ -192,12 +192,12 @@ f"""
 
 # 1) Load local offset values from storage and scale to integers (x1000)
 # These represent the desired offset in the gun's local coordinate system
-execute if score #is_zoom {ns}.data matches 0 store result score #offset_x {ns}.data run data get storage {ns}:gun stats.{CASING_OFFSET}.normal[0] 1000
-execute if score #is_zoom {ns}.data matches 0 store result score #offset_y {ns}.data run data get storage {ns}:gun stats.{CASING_OFFSET}.normal[1] 1000
-execute if score #is_zoom {ns}.data matches 0 store result score #offset_z {ns}.data run data get storage {ns}:gun stats.{CASING_OFFSET}.normal[2] 1000
-execute if score #is_zoom {ns}.data matches 1 store result score #offset_x {ns}.data run data get storage {ns}:gun stats.{CASING_OFFSET}.zoom[0] 1000
-execute if score #is_zoom {ns}.data matches 1 store result score #offset_y {ns}.data run data get storage {ns}:gun stats.{CASING_OFFSET}.zoom[1] 1000
-execute if score #is_zoom {ns}.data matches 1 store result score #offset_z {ns}.data run data get storage {ns}:gun stats.{CASING_OFFSET}.zoom[2] 1000
+execute if score #is_zoom {ns}.data matches 0 store result score #offset_x {ns}.data run data get storage {ns}:gun all.stats.{CASING_OFFSET}.normal[0] 1000
+execute if score #is_zoom {ns}.data matches 0 store result score #offset_y {ns}.data run data get storage {ns}:gun all.stats.{CASING_OFFSET}.normal[1] 1000
+execute if score #is_zoom {ns}.data matches 0 store result score #offset_z {ns}.data run data get storage {ns}:gun all.stats.{CASING_OFFSET}.normal[2] 1000
+execute if score #is_zoom {ns}.data matches 1 store result score #offset_x {ns}.data run data get storage {ns}:gun all.stats.{CASING_OFFSET}.zoom[0] 1000
+execute if score #is_zoom {ns}.data matches 1 store result score #offset_y {ns}.data run data get storage {ns}:gun all.stats.{CASING_OFFSET}.zoom[1] 1000
+execute if score #is_zoom {ns}.data matches 1 store result score #offset_z {ns}.data run data get storage {ns}:gun all.stats.{CASING_OFFSET}.zoom[2] 1000
 
 # 2) Project local offsets onto world-space axes using orientation vectors
 # Each vector (binormal/normal/tangent) contributes to the final world position

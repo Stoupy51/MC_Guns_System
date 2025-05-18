@@ -8,17 +8,17 @@
 data remove storage stoupgun:gun accuracy
 
 # If not on ground, return jump accuracy
-execute unless predicate stoupgun:v5.0.0/is_on_ground run return run data modify storage stoupgun:gun accuracy set from storage stoupgun:gun stats.acc_jump
+execute unless predicate stoupgun:v5.0.0/is_on_ground run return run data modify storage stoupgun:gun accuracy set from storage stoupgun:gun all.stats.acc_jump
 
 # If sneaking, return sneak accuracy
-execute if predicate stoupgun:v5.0.0/is_sneaking run return run data modify storage stoupgun:gun accuracy set from storage stoupgun:gun stats.acc_sneak
+execute if predicate stoupgun:v5.0.0/is_sneaking run return run data modify storage stoupgun:gun accuracy set from storage stoupgun:gun all.stats.acc_sneak
 
 # If sprinting, return sprint accuracy
-execute if predicate stoupgun:v5.0.0/is_sprinting run return run data modify storage stoupgun:gun accuracy set from storage stoupgun:gun stats.acc_sprint
+execute if predicate stoupgun:v5.0.0/is_sprinting run return run data modify storage stoupgun:gun accuracy set from storage stoupgun:gun all.stats.acc_sprint
 
 # If moving horizontally, return walk accuracy
-execute if predicate stoupgun:v5.0.0/is_moving run return run data modify storage stoupgun:gun accuracy set from storage stoupgun:gun stats.acc_walk
+execute if predicate stoupgun:v5.0.0/is_moving run return run data modify storage stoupgun:gun accuracy set from storage stoupgun:gun all.stats.acc_walk
 
 # Else, return base accuracy
-data modify storage stoupgun:gun accuracy set from storage stoupgun:gun stats.acc_base
+data modify storage stoupgun:gun accuracy set from storage stoupgun:gun all.stats.acc_base
 

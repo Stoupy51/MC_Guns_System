@@ -9,7 +9,7 @@ execute if score $raycast.piercing bs.lambda matches 1..3 run scoreboard players
 execute if score $raycast.piercing bs.lambda matches 5.. run scoreboard players set $raycast.piercing bs.lambda 3
 
 # Divide damage per 2
-execute store result storage stoupgun:gun stats.damage float 0.5 run data get storage stoupgun:gun stats.damage
+execute store result storage stoupgun:gun all.stats.damage float 0.5 run data get storage stoupgun:gun all.stats.damage
 
 execute if block ~ ~ ~ #stoupgun:v5.0.0/sounds/glass run playsound minecraft:block.glass.break block @a ~ ~ ~ 1
 execute if block ~ ~ ~ #stoupgun:v5.0.0/sounds/water run playsound minecraft:ambient.underwater.exit block @a ~ ~ ~ 0.25 1.5
