@@ -4,7 +4,7 @@ from typing import Any
 
 from python_datapack.utils.database_helper import write_advancement, write_item_modifier, write_predicate, write_versioned_function
 
-from user.config.stats import COOLDOWN, json_dump
+from user.config.stats import COOLDOWN, REMAINING_BULLETS, json_dump
 
 
 # Main function
@@ -60,7 +60,9 @@ function {ns}:v{version}/switch/main
 
 # If pending clicks, run function
 execute if score @s {ns}.cooldown matches 1.. run scoreboard players remove @s {ns}.cooldown 1
-execute if score @s {ns}.pending_clicks matches 1.. run function {ns}:v{version}/player/right_click
+execute if score @s {ns}.pending_clicks matches -100.. run function {ns}:v{version}/player/right_click
+
+# TODO: Title action bar that shows bullet icons (grayed = no bullet) instead of count/max_count
 
 # Remove temporary tag
 tag @s remove {ns}.ticking
@@ -69,12 +71,19 @@ tag @s remove {ns}.ticking
     # Handle pending clicks
     write_versioned_function(config, "player/right_click",
 f"""
-# Decrease pending clicks by 1 and stop if cooldown
+# Decrease pending clicks by 1
 scoreboard players remove @s {ns}.pending_clicks 1
-execute if score @s {ns}.cooldown matches 1.. run return fail
 
-# Stop if SelectedItem is not a gun
+# If player stopped right clicking for 1 second, we update the item lore
+execute if score @s {ns}.pending_clicks matches -20 run function {ns}:v{version}/ammo/modify_lore {{slot:"$(slot)"}}
+
+# Stop here is weapon cooldown OR pending clicks if negative
+execute if score @s {ns}.cooldown matches 1.. run return fail
+execute if score @s {ns}.pending_clicks matches ..-1 run return fail
+
+# Stop if SelectedItem is not a gun or if not enough ammo
 execute unless data storage {ns}:gun stats run return fail
+execute if score @s {ns}.{REMAINING_BULLETS} matches ..0 run return run function {ns}:v{version}/ammo/reload
 
 # Set cooldown
 execute store result score @s {ns}.cooldown run data get storage {ns}:gun stats.{COOLDOWN}

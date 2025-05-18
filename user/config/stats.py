@@ -20,7 +20,10 @@ def get_data(ns: str, stats: dict[str, Any] | None = None, override_model: dict[
 # Mandatory constants
 CAPACITY: str = "capacity"
 """ Maximum number of bullets that can be loaded into the weapon's magazine. """
-RELOAD: str = "reload"
+REMAINING_BULLETS: str = "remaining_bullets"
+""" Current number of bullets remaining in the weapon's magazine.
+This value is updated when firing and reloading the weapon. """
+RELOAD_TIME: str = "reload_time"
 """ Time required to reload the weapon, measured in game ticks. """
 RELOAD_END: str = "reload_end"
 """ Additional time in ticks after the reload animation completes.
@@ -110,7 +113,7 @@ CASING_762X25MM = "762x25mm"
 # Gun stats
 AK47: dict = {"stats": {
     BASE_WEAPON: "ak47",
-    CAPACITY: 30, RELOAD: 70, RELOAD_END: 10, COOLDOWN: 2, BURST: 3, DAMAGE: 15, DECAY: 0.99,
+    CAPACITY: 30, RELOAD_TIME: 70, RELOAD_END: 10, COOLDOWN: 2, BURST: 3, DAMAGE: 15, DECAY: 0.99,
     ACCURACY_BASE: 150, ACCURACY_SNEAK: 20, ACCURACY_WALK: 500, ACCURACY_SPRINT: 1500, ACCURACY_JUMP: 1800,
     SWITCH: 25, KICK: 2, CASING_MODEL: CASING_762X39MM, CASING_NORMAL: 200, CASING_TANGENT: 50, CASING_BINORMAL: -200,
     CASING_OFFSET: {"normal": (-0.35, -0.3, 0.7), "zoom": (-0.05, -0.25, 0.5)},

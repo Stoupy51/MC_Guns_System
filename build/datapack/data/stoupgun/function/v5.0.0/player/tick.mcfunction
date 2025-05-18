@@ -19,7 +19,9 @@ function stoupgun:v5.0.0/switch/main
 
 # If pending clicks, run function
 execute if score @s stoupgun.cooldown matches 1.. run scoreboard players remove @s stoupgun.cooldown 1
-execute if score @s stoupgun.pending_clicks matches 1.. run function stoupgun:v5.0.0/player/right_click
+execute if score @s stoupgun.pending_clicks matches -100.. run function stoupgun:v5.0.0/player/right_click
+
+# TODO: Title action bar that shows bullet icons (grayed = no bullet) instead of count/max_count
 
 # Remove temporary tag
 tag @s remove stoupgun.ticking

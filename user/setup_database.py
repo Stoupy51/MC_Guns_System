@@ -10,7 +10,7 @@ from python_datapack.utils.database_helper import (
     add_smithed_ignore_vanilla_behaviours_convention,
 )
 
-from user.config.stats import CASING_MODEL, MODELS, SWITCH
+from user.config.stats import CAPACITY, CASING_MODEL, MODELS, REMAINING_BULLETS, SWITCH
 from user.database.ak47 import main as main_ak47
 from user.database.casing import main as main_casing
 
@@ -35,9 +35,8 @@ def main(config: dict) -> dict[str, dict]:
         gun_stats: dict[str, Any] = ns_data.get("stats", {})
         if ns_data.get("gun"):
 
-            # If has casing, update model
-            if gun_stats.get(CASING_MODEL):
-                gun_stats[CASING_MODEL] = f"{ns}:{gun_stats[CASING_MODEL]}"
+            # Update casing model
+            gun_stats[CASING_MODEL] = f"{ns}:{gun_stats[CASING_MODEL]}"
 
             # Define normal and zoom models
             normal_model: str = f"{ns}:{item.replace('_zoom', '')}"
@@ -47,10 +46,13 @@ def main(config: dict) -> dict[str, dict]:
             # Compute attack speed based of 'switch' stats
             # Formula: [attack_speed = (20.0 / switch_ticks) - 4.0] <- where 4.0 is default attack speed
             if gun_stats.get(SWITCH):
-                attack_speed: float = 20.0 / gun_stats[SWITCH]
+                attack_speed: float = (20.0 / gun_stats[SWITCH]) - 4.0
                 data["attribute_modifiers"] = [
-                    {"type": "attack_speed", "amount": attack_speed - 4.0, "operation": "add_value", "slot": "mainhand", "id": "minecraft:base_attack_speed"}
+                    {"type": "attack_speed", "amount": attack_speed, "operation": "add_value", "slot": "mainhand", "id": "minecraft:base_attack_speed"}
                 ]
+
+            # Initialize magazine with full capacity
+            gun_stats[REMAINING_BULLETS] = gun_stats[CAPACITY]
 
     # Sort items so that zoom models are at the end
     sorted_items: list[str] = sorted(database.keys(), key=lambda x: x.endswith("_zoom"))

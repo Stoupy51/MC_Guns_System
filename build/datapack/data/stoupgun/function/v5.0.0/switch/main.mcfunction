@@ -10,7 +10,7 @@ execute if data storage stoupgun:gun stats unless data storage stoupgun:gun stat
 # If last_selected is different from this one, set cooldown
 scoreboard players set #current_id stoupgun.data 0
 execute store result score #current_id stoupgun.data run data get storage stoupgun:gun stats.weapon_id
-execute unless score @s stoupgun.last_selected = #current_id stoupgun.data store result score @s stoupgun.cooldown run data get storage stoupgun:gun stats.switch
+execute unless score @s stoupgun.last_selected = #current_id stoupgun.data run function stoupgun:v5.0.0/switch/on_weapon_switch
 
 # Update last selected
 scoreboard players operation @s stoupgun.last_selected = #current_id stoupgun.data

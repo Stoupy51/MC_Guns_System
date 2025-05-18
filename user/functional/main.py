@@ -3,6 +3,7 @@
 from python_datapack.utils.database_helper import *
 
 from user.config.blocks import main as write_block_tags
+from user.config.stats import REMAINING_BULLETS
 
 
 # Main function
@@ -15,7 +16,7 @@ def main(config: dict) -> None:
     write_load_file(config,
 f"""
 ## Define objectives
-# Detect right click with a gun
+# Detect right click with a gun #TODO: alternate with carrot_on_a_stick
 scoreboard objectives add {ns}.right_click minecraft.used:minecraft.warped_fungus_on_a_stick
 
 # Tracks right clicks to enable continuous right-click detection
@@ -29,6 +30,9 @@ scoreboard objectives add {ns}.zoom dummy
 
 # Tracks the most recently selected weapon ID for weapon switching mechanics
 scoreboard objectives add {ns}.last_selected dummy
+
+# Tracks the current amount of bullets in the selected weapon
+scoreboard objectives add {ns}.{REMAINING_BULLETS} dummy
 
 
 # Define some constants
