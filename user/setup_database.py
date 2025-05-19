@@ -10,7 +10,7 @@ from python_datapack.utils.database_helper import (
     add_smithed_ignore_vanilla_behaviours_convention,
 )
 
-from user.config.stats import CAPACITY, CASING_MODEL, MODELS, REMAINING_BULLETS, SWITCH
+from user.config.stats import CAPACITY, CASING_MODEL, COOLDOWN, DAMAGE, DECAY, MODELS, RELOAD_TIME, REMAINING_BULLETS, SWITCH, new_hex
 from user.database.ak47 import main as main_ak47
 from user.database.casing import main as main_casing
 
@@ -47,12 +47,25 @@ def main(config: dict) -> dict[str, dict]:
             # Formula: [attack_speed = (20.0 / switch_ticks) - 4.0] <- where 4.0 is default attack speed
             if gun_stats.get(SWITCH):
                 attack_speed: float = (20.0 / gun_stats[SWITCH]) - 4.0
-                data["attribute_modifiers"] = [
-                    {"type": "attack_speed", "amount": attack_speed, "operation": "add_value", "slot": "mainhand", "id": "minecraft:base_attack_speed"}
-                ]
+                data["attribute_modifiers"] = [{"type": "attack_speed", "amount": attack_speed, "operation": "add_value", "slot": "mainhand", "id": "minecraft:base_attack_speed"}]
+                data["tooltip_display"] = {"hide_tooltip": False, "hidden_components": ["minecraft:attribute_modifiers"]}
 
             # Initialize magazine with full capacity
             gun_stats[REMAINING_BULLETS] = gun_stats[CAPACITY]
+
+            # Set custom lore
+            start_hex: str = "c24a17"
+            end_hex: str = "c77e36"
+            fire_rate: float = 20 / gun_stats[COOLDOWN]
+            data["lore"] = [
+                [*new_hex("Damage Per Bullet  ➤ ", start_hex, end_hex), str(gun_stats[DAMAGE])],
+                [*new_hex("Ammo Remaining      ➤ ", start_hex, end_hex), str(gun_stats[REMAINING_BULLETS]), {"text":"/","color":f"#{end_hex}"}, str(gun_stats[CAPACITY])],
+                [*new_hex("Reloading Time       ➤ ", start_hex, end_hex), f"{gun_stats[RELOAD_TIME] / 20:.1f}s"],
+                [*new_hex("Fire Rate             ➤ ", start_hex, end_hex), f"{fire_rate:.1f} {'shots/s' if fire_rate > 1.0 else 's/shot'}"],
+                [*new_hex("Damage Decay       ➤ ", start_hex, end_hex), f"{gun_stats[DECAY] * 100:.2f}%"],
+                [*new_hex("Switch Time           ➤ ", start_hex, end_hex), f"{gun_stats[SWITCH] / 20:.1f}s"],
+                "",
+            ]
 
     # Sort items so that zoom models are at the end
     sorted_items: list[str] = sorted(database.keys(), key=lambda x: x.endswith("_zoom"))
