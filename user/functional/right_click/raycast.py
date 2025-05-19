@@ -97,17 +97,41 @@ particle block{{block_state:"redstone_wire"}} ~ ~1 ~ 0.35 0.5 0.35 0 100 force @
 data modify storage {ns}:input with set value {{target:"@s", amount:0.0f, attacker:"@p[tag={ns}.ticking]"}}
 execute store result score #damage {ns}.data run data get storage {ns}:gun all.stats.{DAMAGE} 10
 
-# Apply decay using `damage *= pow(decay, distance)` (https://docs.mcbookshelf.dev/en/latest/modules/math.html#power)
+# Apply decay and headshot calculations
+function {ns}:v{version}/raycast/apply_decay
+function {ns}:v{version}/raycast/check_headshot
+
+# Damage entity
+execute store result storage {ns}:input with.amount float 0.1 run scoreboard players get #damage {ns}.data
+function {ns}:v{version}/utils/damage with storage {ns}:input with
+""")
+
+    # Apply decay using `damage *= pow(decay, distance / 10)`
+    write_versioned_function(config, "raycast/apply_decay",
+f"""
+## Apply decay using `damage *= pow(decay, distance / 10)`
+# Get decay into x
 data modify storage bs:in math.pow.x set from storage {ns}:gun all.stats.{DECAY}
-data modify storage bs:in math.pow.y set from storage bs:lambda raycast.distance
+
+# Get raycast distance / 10 into y
+execute store result score #raycast_distance {ns}.data run data get storage bs:lambda raycast.distance 1000000
+scoreboard players operation #raycast_distance {ns}.data /= #10 {ns}.data
+execute store result storage bs:in math.pow.y float 0.000001 run scoreboard players get #raycast_distance {ns}.data
+
+# Compute power using https://docs.mcbookshelf.dev/en/latest/modules/math.html#power
 function #bs.math:pow
+
+# Collect computed value and multiply to the damage
 execute store result score #pow_decay_distance {ns}.data run data get storage bs:out math.pow 1000000
 scoreboard players operation #damage {ns}.data *= #pow_decay_distance {ns}.data
 
 # Divide by 1000000 because we're multiplying two scaled integers with each other (10*1000000 = 10000000)
 scoreboard players operation #damage {ns}.data /= #1000000 {ns}.data
+""")
 
-# Divide damage by 2 if not headshot
+    # Check if hit is a headshot and adjust damage accordingly
+    write_versioned_function(config, "raycast/check_headshot",
+f"""
 scoreboard players set #is_headshot {ns}.data 0
 execute store result score #entity_y {ns}.data run data get entity @s Pos[1] 1000
 execute store result score #hit_y {ns}.data run data get storage bs:lambda raycast.hit_point[1] 1000
@@ -115,10 +139,6 @@ scoreboard players operation #y_diff {ns}.data = #hit_y {ns}.data
 scoreboard players operation #y_diff {ns}.data -= #entity_y {ns}.data
 execute if score #y_diff {ns}.data matches 1200.. run scoreboard players set #is_headshot {ns}.data 1
 execute unless score #is_headshot {ns}.data matches 1 run scoreboard players operation #damage {ns}.data /= #2 {ns}.data
-
-# Damage entity
-execute store result storage {ns}:input with.amount float 0.1 run scoreboard players get #damage {ns}.data
-function {ns}:v{version}/utils/damage with storage {ns}:input with
 """)
 
 
