@@ -4,10 +4,10 @@
 # @within	stoupgun:v5.0.0/switch/on_weapon_switch
 #
 
-# Store the current bullet count from the player's scoreboard into the weapon's stats
+# Store player's current ammo count in temporary storage
 execute store result storage stoupgun:temp remaining_bullets int 1 run scoreboard players get @s stoupgun.remaining_bullets
 
-# For each slot, if remaining bullets is -1, update it
+# Check all inventory slots for weapon needing ammo update (remaining bullets = -1)
 execute if items entity @s hotbar.0 *[custom_data~{stoupgun:{stats:{remaining_bullets:-1}}}] run return run function stoupgun:v5.0.0/ammo/set_count {slot:"hotbar.0"}
 execute if items entity @s hotbar.1 *[custom_data~{stoupgun:{stats:{remaining_bullets:-1}}}] run return run function stoupgun:v5.0.0/ammo/set_count {slot:"hotbar.1"}
 execute if items entity @s hotbar.2 *[custom_data~{stoupgun:{stats:{remaining_bullets:-1}}}] run return run function stoupgun:v5.0.0/ammo/set_count {slot:"hotbar.2"}

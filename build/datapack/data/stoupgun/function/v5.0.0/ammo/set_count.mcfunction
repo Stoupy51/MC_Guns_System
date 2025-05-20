@@ -54,9 +54,9 @@
 #			stoupgun:v5.0.0/ammo/update_old_weapon {slot:"player.crafting.3"}
 #
 
-# Item modifier to apply the new remaining bullets count
+# Apply new ammo count to weapon
 $item modify entity @s $(slot) stoupgun:v5.0.0/update_ammo
 
-# Modify gun lore
+# Update weapon's lore to show new ammo count
 $function stoupgun:v5.0.0/ammo/modify_lore {slot:"$(slot)"}
 

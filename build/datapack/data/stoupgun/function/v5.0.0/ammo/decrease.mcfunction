@@ -4,6 +4,6 @@
 # @within	stoupgun:v5.0.0/player/right_click
 #
 
-# Decrease ammo count
+# Remove 1 bullet from player's ammo count
 scoreboard players remove @s stoupgun.remaining_bullets 1
 
