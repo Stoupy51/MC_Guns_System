@@ -58,5 +58,5 @@
 $item modify entity @s $(slot) stoupgun:v5.0.0/update_ammo
 
 # Modify gun lore
-function stoupgun:v5.0.0/ammo/modify_lore {slot:"$(slot)"}
+$function stoupgun:v5.0.0/ammo/modify_lore {slot:"$(slot)"}
 

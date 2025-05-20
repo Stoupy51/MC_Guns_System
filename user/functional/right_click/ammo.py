@@ -72,7 +72,7 @@ f"""
 $item modify entity @s $(slot) {ns}:v{version}/update_ammo
 
 # Modify gun lore
-function {ns}:v{version}/ammo/modify_lore {{slot:"$(slot)"}}
+$function {ns}:v{version}/ammo/modify_lore {{slot:"$(slot)"}}
 """)
 
     # Copy gun data
@@ -88,8 +88,73 @@ item modify entity @s weapon.mainhand {ns}:v{version}/update_stats
 
     # Lore function
     write_versioned_function(config, "ammo/modify_lore",
-"""
-# TODO: If no ammo lore, add it. Else, find the line and modify it.
+f"""
+## In this context, @s has the right amount of bullets in {ns}.{REMAINING_BULLETS}
+# Temporary tag
+tag @s add {ns}.modify_lore
+
+# Copy item lore
+$execute summon item_display run function {ns}:v{version}/ammo/get_current_lore {{"slot":"$(slot)"}}
+
+# Find the ammo line and modify it
+scoreboard players set #index {ns}.data 0
+$execute if data storage {ns}:temp copy[0] run function {ns}:v{version}/ammo/search_lore_loop {{"slot":"$(slot)"}}
+
+# Remove temporary tag
+tag @s remove {ns}.modify_lore
+""")
+
+    # Get lore function
+    write_versioned_function(config, "ammo/get_current_lore",
+f"""
+# Copy item lore
+$item replace entity @s contents from entity @p[tag={ns}.modify_lore] $(slot)
+data modify storage {ns}:temp components set from entity @s item.components
+data modify storage {ns}:temp lore set from storage {ns}:temp components."minecraft:lore"
+data modify storage {ns}:temp copy set from storage {ns}:temp lore
+
+# Kill item display
+kill @s
+""")
+
+    # Search the damn line
+    write_versioned_function(config, "ammo/search_lore_loop",
+f"""
+# Check if lore finishes by format `number/number`, ex: "30", {{"text":"/"}}, "30"
+scoreboard players set #success {ns}.data 0
+data modify storage {ns}:temp lore_extra set from storage {ns}:temp copy[0].extra
+data modify storage {ns}:temp lore_slash set from storage {ns}:temp lore_extra[-2]
+execute if data storage {ns}:temp lore_slash{{"text":"/"}} unless data storage {ns}:temp lore_extra[-3].text unless data storage {ns}:temp lore_extra[-1].text run scoreboard players set #success {ns}.data 1
+
+# If it is, prepare arguments and modify the line
+execute if score #success {ns}.data matches 1 run data modify storage {ns}:input with set value {{}}
+execute if score #success {ns}.data matches 1 store result storage {ns}:input with.index int 1 run scoreboard players get #index {ns}.data
+execute if score #success {ns}.data matches 1 store result storage {ns}:input with.{REMAINING_BULLETS} int 1 run scoreboard players get @s {ns}.{REMAINING_BULLETS}
+execute if score #success {ns}.data matches 1 run data modify storage {ns}:input with.{CAPACITY} set from storage {ns}:temp components."minecraft:custom_data".{ns}.stats.{CAPACITY}
+$execute if score #success {ns}.data matches 1 run data modify storage {ns}:input with.slot set value "$(slot)"
+execute if score #success {ns}.data matches 1 summon item_display run return run function {ns}:v{version}/ammo/found_line with storage {ns}:input with
+
+# Continue loop if not
+data remove storage {ns}:temp copy[0]
+scoreboard players add #index {ns}.data 1
+$execute if data storage {ns}:temp copy[0] run function {ns}:v{version}/ammo/search_lore_loop {{"slot":"$(slot)"}}
+""")
+
+    # Get lore function
+    write_versioned_function(config, "ammo/found_line",
+f"""
+# Copy item to the item display
+$item replace entity @s contents from entity @p[tag={ns}.modify_lore] $(slot)
+
+# Modify lore
+$data modify entity @s item.components."minecraft:lore"[$(index)].extra[-1] set value "$({CAPACITY})"
+$data modify entity @s item.components."minecraft:lore"[$(index)].extra[-3] set value "$({REMAINING_BULLETS})"
+
+# Copy back the item to the player
+$item replace entity @p[tag={ns}.modify_lore] $(slot) from entity @s contents
+
+# Kill item display
+kill @s
 """)
 
     # Reload function
