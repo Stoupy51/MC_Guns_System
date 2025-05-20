@@ -17,47 +17,6 @@ def get_data(ns: str, stats: dict[str, Any] | None = None, override_model: dict[
         **({OVERRIDE_MODEL: override_model} if override_model else {})
     }
 
-def new_hex(text: str, start_hex: str = "c24a17", end_hex: str = "c77e36") -> list[dict[str, Any]]:
-    """Create a gradient text effect by interpolating colors between start and end hex.
-
-    Args:
-        text        (str): The text to apply the gradient to.
-        start_hex   (str): Starting color in hex format (e.g. 'c24a17').
-        end_hex     (str): Ending color in hex format (e.g. 'c77e36').
-
-    Returns:
-        list[dict[str, Any]]: List of text components, each with a letter and its color.
-    """
-    # Convert hex to RGB
-    start_r: int = int(start_hex[0:2], 16)
-    start_g: int = int(start_hex[2:4], 16)
-    start_b: int = int(start_hex[4:6], 16)
-
-    end_r: int = int(end_hex[0:2], 16)
-    end_g: int = int(end_hex[2:4], 16)
-    end_b: int = int(end_hex[4:6], 16)
-
-    result: list[dict[str, Any]] = []
-
-    # For each letter, calculate its color
-    for i, char in enumerate(text):
-        # Calculate progress (0 to 1)
-        progress: float = i / (len(text) - 1) if len(text) > 1 else 0
-
-        # Interpolate each color component
-        r: int = int(start_r + (end_r - start_r) * progress)
-        g: int = int(start_g + (end_g - start_g) * progress)
-        b: int = int(start_b + (end_b - start_b) * progress)
-
-        # Convert to hex
-        color: str = f"{r:02x}{g:02x}{b:02x}"
-
-        # Add text component
-        result.append({"text": char, "color": f"#{color}"})
-        if i == 0:
-            result[-1]["italic"] = False
-
-    return result
 
 # Mandatory constants
 CAPACITY: str = "capacity"

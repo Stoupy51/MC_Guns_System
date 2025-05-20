@@ -1,12 +1,16 @@
 
 #> stoupgun:v5.0.0/ammo/set_count
 #
-# @within	stoupgun:v5.0.0/ammo/update_old_weapon {slot:"weapon.offhand"}
-#			stoupgun:v5.0.0/ammo/update_old_weapon {slot:"player.cursor"}
-#			stoupgun:v5.0.0/ammo/update_old_weapon {slot:"player.crafting.0"}
-#			stoupgun:v5.0.0/ammo/update_old_weapon {slot:"player.crafting.1"}
-#			stoupgun:v5.0.0/ammo/update_old_weapon {slot:"player.crafting.2"}
-#			stoupgun:v5.0.0/ammo/update_old_weapon {slot:"player.crafting.3"}
+# @within	stoupgun:v5.0.0/ammo/update_old_weapon {slot:"hotbar.0"}
+#			stoupgun:v5.0.0/ammo/update_old_weapon {slot:"hotbar.1"}
+#			stoupgun:v5.0.0/ammo/update_old_weapon {slot:"hotbar.2"}
+#			stoupgun:v5.0.0/ammo/update_old_weapon {slot:"hotbar.3"}
+#			stoupgun:v5.0.0/ammo/update_old_weapon {slot:"hotbar.4"}
+#			stoupgun:v5.0.0/ammo/update_old_weapon {slot:"hotbar.5"}
+#			stoupgun:v5.0.0/ammo/update_old_weapon {slot:"hotbar.6"}
+#			stoupgun:v5.0.0/ammo/update_old_weapon {slot:"hotbar.7"}
+#			stoupgun:v5.0.0/ammo/update_old_weapon {slot:"hotbar.8"}
+#			stoupgun:v5.0.0/ammo/update_old_weapon {slot:"weapon.offhand"}
 #			stoupgun:v5.0.0/ammo/update_old_weapon {slot:"container.0"}
 #			stoupgun:v5.0.0/ammo/update_old_weapon {slot:"container.1"}
 #			stoupgun:v5.0.0/ammo/update_old_weapon {slot:"container.2"}
@@ -43,6 +47,11 @@
 #			stoupgun:v5.0.0/ammo/update_old_weapon {slot:"container.33"}
 #			stoupgun:v5.0.0/ammo/update_old_weapon {slot:"container.34"}
 #			stoupgun:v5.0.0/ammo/update_old_weapon {slot:"container.35"}
+#			stoupgun:v5.0.0/ammo/update_old_weapon {slot:"player.cursor"}
+#			stoupgun:v5.0.0/ammo/update_old_weapon {slot:"player.crafting.0"}
+#			stoupgun:v5.0.0/ammo/update_old_weapon {slot:"player.crafting.1"}
+#			stoupgun:v5.0.0/ammo/update_old_weapon {slot:"player.crafting.2"}
+#			stoupgun:v5.0.0/ammo/update_old_weapon {slot:"player.crafting.3"}
 #
 
 # Item modifier to apply the new remaining bullets count

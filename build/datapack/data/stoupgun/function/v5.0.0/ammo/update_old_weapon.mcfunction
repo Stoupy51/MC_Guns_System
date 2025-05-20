@@ -8,12 +8,16 @@
 execute store result storage stoupgun:temp remaining_bullets int 1 run scoreboard players get @s stoupgun.remaining_bullets
 
 # For each slot, if remaining bullets is -1, update it
+execute if items entity @s hotbar.0 *[custom_data~{stoupgun:{stats:{remaining_bullets:-1}}}] run return run function stoupgun:v5.0.0/ammo/set_count {slot:"hotbar.0"}
+execute if items entity @s hotbar.1 *[custom_data~{stoupgun:{stats:{remaining_bullets:-1}}}] run return run function stoupgun:v5.0.0/ammo/set_count {slot:"hotbar.1"}
+execute if items entity @s hotbar.2 *[custom_data~{stoupgun:{stats:{remaining_bullets:-1}}}] run return run function stoupgun:v5.0.0/ammo/set_count {slot:"hotbar.2"}
+execute if items entity @s hotbar.3 *[custom_data~{stoupgun:{stats:{remaining_bullets:-1}}}] run return run function stoupgun:v5.0.0/ammo/set_count {slot:"hotbar.3"}
+execute if items entity @s hotbar.4 *[custom_data~{stoupgun:{stats:{remaining_bullets:-1}}}] run return run function stoupgun:v5.0.0/ammo/set_count {slot:"hotbar.4"}
+execute if items entity @s hotbar.5 *[custom_data~{stoupgun:{stats:{remaining_bullets:-1}}}] run return run function stoupgun:v5.0.0/ammo/set_count {slot:"hotbar.5"}
+execute if items entity @s hotbar.6 *[custom_data~{stoupgun:{stats:{remaining_bullets:-1}}}] run return run function stoupgun:v5.0.0/ammo/set_count {slot:"hotbar.6"}
+execute if items entity @s hotbar.7 *[custom_data~{stoupgun:{stats:{remaining_bullets:-1}}}] run return run function stoupgun:v5.0.0/ammo/set_count {slot:"hotbar.7"}
+execute if items entity @s hotbar.8 *[custom_data~{stoupgun:{stats:{remaining_bullets:-1}}}] run return run function stoupgun:v5.0.0/ammo/set_count {slot:"hotbar.8"}
 execute if items entity @s weapon.offhand *[custom_data~{stoupgun:{stats:{remaining_bullets:-1}}}] run return run function stoupgun:v5.0.0/ammo/set_count {slot:"weapon.offhand"}
-execute if items entity @s player.cursor *[custom_data~{stoupgun:{stats:{remaining_bullets:-1}}}] run return run function stoupgun:v5.0.0/ammo/set_count {slot:"player.cursor"}
-execute if items entity @s player.crafting.0 *[custom_data~{stoupgun:{stats:{remaining_bullets:-1}}}] run return run function stoupgun:v5.0.0/ammo/set_count {slot:"player.crafting.0"}
-execute if items entity @s player.crafting.1 *[custom_data~{stoupgun:{stats:{remaining_bullets:-1}}}] run return run function stoupgun:v5.0.0/ammo/set_count {slot:"player.crafting.1"}
-execute if items entity @s player.crafting.2 *[custom_data~{stoupgun:{stats:{remaining_bullets:-1}}}] run return run function stoupgun:v5.0.0/ammo/set_count {slot:"player.crafting.2"}
-execute if items entity @s player.crafting.3 *[custom_data~{stoupgun:{stats:{remaining_bullets:-1}}}] run return run function stoupgun:v5.0.0/ammo/set_count {slot:"player.crafting.3"}
 execute if items entity @s container.0 *[custom_data~{stoupgun:{stats:{remaining_bullets:-1}}}] run return run function stoupgun:v5.0.0/ammo/set_count {slot:"container.0"}
 execute if items entity @s container.1 *[custom_data~{stoupgun:{stats:{remaining_bullets:-1}}}] run return run function stoupgun:v5.0.0/ammo/set_count {slot:"container.1"}
 execute if items entity @s container.2 *[custom_data~{stoupgun:{stats:{remaining_bullets:-1}}}] run return run function stoupgun:v5.0.0/ammo/set_count {slot:"container.2"}
@@ -50,4 +54,9 @@ execute if items entity @s container.32 *[custom_data~{stoupgun:{stats:{remainin
 execute if items entity @s container.33 *[custom_data~{stoupgun:{stats:{remaining_bullets:-1}}}] run return run function stoupgun:v5.0.0/ammo/set_count {slot:"container.33"}
 execute if items entity @s container.34 *[custom_data~{stoupgun:{stats:{remaining_bullets:-1}}}] run return run function stoupgun:v5.0.0/ammo/set_count {slot:"container.34"}
 execute if items entity @s container.35 *[custom_data~{stoupgun:{stats:{remaining_bullets:-1}}}] run return run function stoupgun:v5.0.0/ammo/set_count {slot:"container.35"}
+execute if items entity @s player.cursor *[custom_data~{stoupgun:{stats:{remaining_bullets:-1}}}] run return run function stoupgun:v5.0.0/ammo/set_count {slot:"player.cursor"}
+execute if items entity @s player.crafting.0 *[custom_data~{stoupgun:{stats:{remaining_bullets:-1}}}] run return run function stoupgun:v5.0.0/ammo/set_count {slot:"player.crafting.0"}
+execute if items entity @s player.crafting.1 *[custom_data~{stoupgun:{stats:{remaining_bullets:-1}}}] run return run function stoupgun:v5.0.0/ammo/set_count {slot:"player.crafting.1"}
+execute if items entity @s player.crafting.2 *[custom_data~{stoupgun:{stats:{remaining_bullets:-1}}}] run return run function stoupgun:v5.0.0/ammo/set_count {slot:"player.crafting.2"}
+execute if items entity @s player.crafting.3 *[custom_data~{stoupgun:{stats:{remaining_bullets:-1}}}] run return run function stoupgun:v5.0.0/ammo/set_count {slot:"player.crafting.3"}
 

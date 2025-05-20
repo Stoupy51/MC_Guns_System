@@ -15,7 +15,8 @@
 									"smithed": {"ignore": {"functionality": true,"crafting": true}}
 								},
 								"minecraft:item_name": {
-									"translate":"stoupgun.12ga275in"
+									"translate":"stoupgun.12ga275in",
+									"color": "white"
 								},
 								"minecraft:item_model": "stoupgun:12ga275in",
 								"minecraft:lore": [

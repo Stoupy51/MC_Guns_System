@@ -8,7 +8,7 @@
 scoreboard players remove @s stoupgun.pending_clicks 1
 
 # If player stopped right clicking for 1 second, we update the item lore
-execute if score @s stoupgun.pending_clicks matches -20 run function stoupgun:v5.0.0/ammo/modify_lore {slot:"$(slot)"}
+execute if score @s stoupgun.pending_clicks matches -20 if data storage stoupgun:gun all.stats run function stoupgun:v5.0.0/ammo/modify_lore {slot:"weapon.mainhand"}
 
 # Stop here is weapon cooldown OR pending clicks if negative
 execute if score @s stoupgun.cooldown matches 1.. run return fail

@@ -46,7 +46,7 @@ def main(database: dict, ns: str) -> None:
 
     # Define names as their ID
     for item, data in db.items():
-        data["item_name"] = {"text":item}
+        data["item_name"] = {"text": item, "color": "white"}
 
     # Merge to database
     database.update(db)

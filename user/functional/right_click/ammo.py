@@ -49,10 +49,11 @@ execute store result storage {ns}:temp {REMAINING_BULLETS} int 1 run scoreboard 
 # For each slot, if remaining bullets is -1, update it
 """
     for slot in (
+        *[f"hotbar.{i}" for i in range(9)],
         "weapon.offhand",
+        *[f"container.{i}" for i in range(4*9)],
         "player.cursor",
         *[f"player.crafting.{i}" for i in range(4)],
-        *[f"container.{i}" for i in range(4*9)]
     ):
         content += f"""execute if items entity @s {slot} *[custom_data~{custom_data}] run return run function {ns}:v{version}/ammo/set_count {{slot:"{slot}"}}\n"""
     write_versioned_function(config, "ammo/update_old_weapon", content)

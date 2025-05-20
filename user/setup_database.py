@@ -3,14 +3,10 @@
 import json
 from typing import Any
 
-from python_datapack.utils.database_helper import (
-    add_item_model_component,
-    add_item_name_and_lore_if_missing,
-    add_private_custom_data_for_namespace,
-    add_smithed_ignore_vanilla_behaviours_convention,
-)
+from python_datapack.utils.database_helper import add_item_model_component, add_item_name_and_lore_if_missing, add_private_custom_data_for_namespace, add_smithed_ignore_vanilla_behaviours_convention
+from python_datapack.utils.database_helper import create_gradient_text as new_hex
 
-from user.config.stats import CAPACITY, CASING_MODEL, COOLDOWN, DAMAGE, DECAY, MODELS, RELOAD_TIME, REMAINING_BULLETS, SWITCH, new_hex
+from user.config.stats import CAPACITY, CASING_MODEL, COOLDOWN, DAMAGE, DECAY, MODELS, RELOAD_TIME, REMAINING_BULLETS, SWITCH
 from user.database.ak47 import main as main_ak47
 from user.database.casing import main as main_casing
 
@@ -57,13 +53,14 @@ def main(config: dict) -> dict[str, dict]:
             start_hex: str = "c24a17"
             end_hex: str = "c77e36"
             fire_rate: float = 20 / gun_stats[COOLDOWN]
+            fire_rate_unit: str = "shots/s" if fire_rate > 1.0 else "s/shot"
             data["lore"] = [
-                [*new_hex("Damage Per Bullet  ➤ ", start_hex, end_hex), str(gun_stats[DAMAGE])],
-                [*new_hex("Ammo Remaining      ➤ ", start_hex, end_hex), str(gun_stats[REMAINING_BULLETS]), {"text":"/","color":f"#{end_hex}"}, str(gun_stats[CAPACITY])],
-                [*new_hex("Reloading Time       ➤ ", start_hex, end_hex), f"{gun_stats[RELOAD_TIME] / 20:.1f}s"],
-                [*new_hex("Fire Rate             ➤ ", start_hex, end_hex), f"{fire_rate:.1f} {'shots/s' if fire_rate > 1.0 else 's/shot'}"],
-                [*new_hex("Damage Decay       ➤ ", start_hex, end_hex), f"{gun_stats[DECAY] * 100:.2f}%"],
-                [*new_hex("Switch Time           ➤ ", start_hex, end_hex), f"{gun_stats[SWITCH] / 20:.1f}s"],
+                [*new_hex("Damage Per Bullet  ➤ ", start_hex, end_hex),    str(gun_stats[DAMAGE])],
+                [*new_hex("Ammo Remaining      ➤ ", start_hex, end_hex),   str(gun_stats[REMAINING_BULLETS]),      {"text":"/","color":f"#{end_hex}"}, str(gun_stats[CAPACITY])],
+                [*new_hex("Reloading Time       ➤ ", start_hex, end_hex),  f"{gun_stats[RELOAD_TIME] / 20:.1f}",   {"text":"s","color":f"#{end_hex}"}],
+                [*new_hex("Fire Rate             ➤ ", start_hex, end_hex), f"{fire_rate:.1f} ",                    *new_hex(fire_rate_unit, end_hex, start_hex, text_length=10)],
+                [*new_hex("Damage Decay       ➤ ", start_hex, end_hex),    f"{gun_stats[DECAY] * 100:.0f}",        {"text":"%","color":f"#{end_hex}"}],
+                [*new_hex("Switch Time           ➤ ", start_hex, end_hex), f"{gun_stats[SWITCH] / 20:.1f}",        {"text":"s","color":f"#{end_hex}"}],
                 "",
             ]
 

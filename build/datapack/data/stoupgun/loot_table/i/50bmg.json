@@ -15,7 +15,8 @@
 									"smithed": {"ignore": {"functionality": true,"crafting": true}}
 								},
 								"minecraft:item_name": {
-									"translate":"stoupgun.50bmg"
+									"translate":"stoupgun.50bmg",
+									"color": "white"
 								},
 								"minecraft:item_model": "stoupgun:50bmg",
 								"minecraft:lore": [
