@@ -4,8 +4,9 @@
 # @within	stoupgun:v5.0.0/switch/main
 #
 
-# Set new weapon switch cooldown
-execute store result score @s stoupgun.cooldown run data get storage stoupgun:gun all.stats.switch
+# Apply weapon switch cooldown only if it exceeds the current cooldown value
+execute store result score #cooldown stoupgun.data run data get storage stoupgun:gun all.stats.switch
+execute if score #cooldown stoupgun.data > @s stoupgun.cooldown run scoreboard players operation @s stoupgun.cooldown = #cooldown stoupgun.data
 
 # When unequipping a weapon (player was holding a weapon):
 #   - Find weapon with CURRENT_AMMO = -1 (needs update)

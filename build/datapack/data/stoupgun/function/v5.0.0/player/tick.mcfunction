@@ -17,8 +17,13 @@ function stoupgun:v5.0.0/zoom/main
 # Check if switching weapon
 function stoupgun:v5.0.0/switch/main
 
-# If pending clicks, run function
+# Decrease cooldown by 1
 execute if score @s stoupgun.cooldown matches 1.. run scoreboard players remove @s stoupgun.cooldown 1
+
+# Check if we need to play reload end sound
+execute if score @s stoupgun.cooldown matches 1.. if data storage stoupgun:gun all.stats run function stoupgun:v5.0.0/sound/check_reload_end
+
+# If pending clicks, run right click function
 execute if score @s stoupgun.pending_clicks matches -100.. run function stoupgun:v5.0.0/player/right_click
 
 # TODO: Title action bar that shows bullet icons (grayed = no bullet) instead of count/max_count

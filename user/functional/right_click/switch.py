@@ -38,8 +38,9 @@ item modify entity @s weapon.mainhand {ns}:v{version}/set_weapon_id
     # On weapon switch function
     write_versioned_function(config, "switch/on_weapon_switch",
 f"""
-# Set new weapon switch cooldown
-execute store result score @s {ns}.cooldown run data get storage {ns}:gun all.stats.{SWITCH}
+# Apply weapon switch cooldown only if it exceeds the current cooldown value
+execute store result score #cooldown {ns}.data run data get storage {ns}:gun all.stats.{SWITCH}
+execute if score #cooldown {ns}.data > @s {ns}.cooldown run scoreboard players operation @s {ns}.cooldown = #cooldown {ns}.data
 """)
 
     modifier: dict[str, Any] = {

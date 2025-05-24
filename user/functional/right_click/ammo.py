@@ -163,12 +163,17 @@ kill @s
     # Reload weapon function (not implemented)
     write_versioned_function(config, "ammo/reload",
 f"""
-# TODO: Implement reload mechanics
-# - Set magazine capacity: {CAPACITY}
-# - Set reload duration: {RELOAD_TIME}
-# - Set reload end delay: {RELOAD_END}
-# scoreboard players set ak47_mag S 30           # TODO: Not Implemented
-# scoreboard players set ak47_reload S 70        # TODO: Not Implemented
-# scoreboard players set ak47_reload_end S 10    # TODO: Not Implemented
+# Set cooldown to reload duration
+execute store result score @s {ns}.cooldown run data get storage {ns}:gun all.stats.{RELOAD_TIME}
+
+# Get the new ammo count
+# TODO: Find ammo in inventory and don't take it out for your ass
+execute store result score @s {ns}.{REMAINING_BULLETS} run data get storage {ns}:gun all.stats.{CAPACITY}
+
+# Play reload sound (and send stats for macro)
+function {ns}:v{version}/sound/reload_start with storage {ns}:gun all.stats
+
+# Add reloading tag
+tag @s add {ns}.reloading
 """)
 

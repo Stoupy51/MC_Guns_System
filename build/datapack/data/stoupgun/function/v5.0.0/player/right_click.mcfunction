@@ -38,5 +38,5 @@ function stoupgun:v5.0.0/casing/main
 function stoupgun:v5.0.0/ammo/decrease
 
 # Advanced Playsound
-function stoupgun:v5.0.0/sound/main
+function stoupgun:v5.0.0/sound/main with storage stoupgun:gun all.stats
 
