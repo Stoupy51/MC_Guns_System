@@ -8,7 +8,27 @@ from python_datapack.utils.database_helper import create_gradient_text as new_he
 
 from user.config.stats import CAPACITY, CASING_MODEL, COOLDOWN, DAMAGE, DECAY, MODELS, RELOAD_TIME, REMAINING_BULLETS, SWITCH
 from user.database.ak47 import main as main_ak47
+from user.database.aug import main as main_aug
 from user.database.casing import main as main_casing
+from user.database.fnfal import main as main_fnfal
+from user.database.glock18 import main as main_glock18
+from user.database.m16a4 import main as main_m16a4
+from user.database.m24 import main as main_m24
+from user.database.m82 import main as main_m82
+from user.database.m249 import main as main_m249
+from user.database.m500 import main as main_m500
+from user.database.m590 import main as main_m590
+from user.database.mac10 import main as main_mac10
+from user.database.mosin import main as main_mosin
+from user.database.mp5 import main as main_mp5
+from user.database.mp7 import main as main_mp7
+from user.database.ppsh41 import main as main_ppsh41
+from user.database.rpg7 import main as main_rpg7
+from user.database.rpk import main as main_rpk
+from user.database.spas12 import main as main_spas12
+from user.database.sten import main as main_sten
+from user.database.svd import main as main_svd
+from user.database.vz61 import main as main_vz61
 
 
 # Main function should return a database
@@ -19,8 +39,38 @@ def main(config: dict) -> dict[str, dict]:
     # Add casings
     main_casing(database, ns)
 
-    # Add guns
+    # Rifles
+    main_m16a4(database, ns)
     main_ak47(database, ns)
+    main_fnfal(database, ns)
+    main_aug(database, ns)
+
+    # Pistols
+    main_glock18(database, ns)
+    main_vz61(database, ns)
+
+    # SMGs
+    main_mp5(database, ns)
+    main_mac10(database, ns)
+    main_mp7(database, ns)
+    main_ppsh41(database, ns)
+    main_sten(database, ns)
+
+    # Shotguns
+    main_spas12(database, ns)
+    main_m500(database, ns)
+    main_m590(database, ns)
+
+    # Snipers
+    main_svd(database, ns)
+    main_m82(database, ns)
+    main_mosin(database, ns)
+    main_m24(database, ns)
+
+    # Special
+    main_rpg7(database, ns)
+    main_rpk(database, ns)
+    main_m249(database, ns)
 
     # Adjust guns data
     for item, data in database.items():
