@@ -1,18 +1,18 @@
 {
 	"parent": "minecraft:item/warped_fungus_on_a_stick",
 	"textures": {
-		"a": "mgs:misc/reticles",
-		"b": "mgs:misc/reticles_1024",
-		"1": "mgs:gun/mp5details2",
-		"0": "mgs:gun/mp5details",
-		"3": "mgs:gun/metal_brighter",
-		"2": "mgs:gun/rubber_cross",
-		"5": "mgs:gun/metal_dark",
-		"4": "mgs:gun/metal",
-		"7": "mgs:gun/kobradetails",
-		"6": "mgs:gun/holodetails",
-		"9": "mgs:gun/mk4details",
-		"8": "mgs:gun/acogdetails"
+		"a": "stoupgun:item/reticles",
+		"b": "stoupgun:item/reticles_1024",
+		"1": "stoupgun:item/mp5details2",
+		"0": "stoupgun:item/mp5details",
+		"3": "stoupgun:item/metal_brighter",
+		"2": "stoupgun:item/rubber_cross",
+		"5": "stoupgun:item/metal_dark",
+		"4": "stoupgun:item/metal",
+		"7": "stoupgun:item/kobradetails",
+		"6": "stoupgun:item/holodetails",
+		"9": "stoupgun:item/mk4details",
+		"8": "stoupgun:item/acogdetails"
 	},
 	"gui_light": "front",
 	"elements": [

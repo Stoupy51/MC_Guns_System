@@ -15,12 +15,12 @@
 									"smithed": {"ignore": {"functionality": true,"crafting": true}}
 								},
 								"minecraft:item_name": {
-									"translate":"stoupgun.45acp",
+									"translate": "stoupgun.45acp",
 									"color": "white"
 								},
 								"minecraft:item_model": "stoupgun:45acp",
 								"minecraft:lore": [
-									["",{"text":"I","color": "white","italic": false,"font": "stoupgun:icons"},{"translate":"stoupgun","italic": true,"color": "blue"}]
+									["",{"text": "I","color": "white","italic": false,"font": "stoupgun:icons"},{"translate": "stoupgun","italic": true,"color": "blue"}]
 								]
 							}
 						}

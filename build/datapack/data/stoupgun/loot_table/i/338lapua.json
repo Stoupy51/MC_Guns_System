@@ -15,12 +15,12 @@
 									"smithed": {"ignore": {"functionality": true,"crafting": true}}
 								},
 								"minecraft:item_name": {
-									"translate":"stoupgun.338lapua",
+									"translate": "stoupgun.338lapua",
 									"color": "white"
 								},
 								"minecraft:item_model": "stoupgun:338lapua",
 								"minecraft:lore": [
-									["",{"text":"I","color": "white","italic": false,"font": "stoupgun:icons"},{"translate":"stoupgun","italic": true,"color": "blue"}]
+									["",{"text": "I","color": "white","italic": false,"font": "stoupgun:icons"},{"translate": "stoupgun","italic": true,"color": "blue"}]
 								]
 							}
 						}
