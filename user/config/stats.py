@@ -114,7 +114,6 @@ CASING_762X25MM = "762x25mm"
 
 
 ## Gun stats
-# TODO: Add missing "reload_mid" for few weapons (such as sniper)
 # Rifles
 M16A4: dict = {"stats": {
     BASE_WEAPON: "m16a4",
@@ -148,16 +147,16 @@ AUG: dict = {"stats": {
     CASING_OFFSET: {"normal": (-0.45, -0.4, 0.4), "zoom": (-0.05, -0.3, 0.3)},
 }}
 
-M4: dict = {"stats": {
-    BASE_WEAPON: "m4",
+M4A1: dict = {"stats": {
+    BASE_WEAPON: "m4a1",
     CAPACITY: 30, RELOAD_TIME: 50, RELOAD_END: 14, COOLDOWN: 2, BURST: 3, DAMAGE: 13, DECAY: 0.92,
     ACCURACY_BASE: 110, ACCURACY_SNEAK: 15, ACCURACY_WALK: 400, ACCURACY_SPRINT: 900, ACCURACY_JUMP: 1400,
     SWITCH: 17, KICK: 2, CASING_MODEL: CASING_556X45MM, CASING_NORMAL: 150, CASING_TANGENT: -75, CASING_BINORMAL: -200,
     CASING_OFFSET: {"normal": (-0.4, -0.35, 0.7), "zoom": (-0.05, -0.25, 0.5)},
 }}
 
-G3: dict = {"stats": {
-    BASE_WEAPON: "g3",
+G3A3: dict = {"stats": {
+    BASE_WEAPON: "g3a3",
     CAPACITY: 20, RELOAD_TIME: 80, RELOAD_END: 17, COOLDOWN: 3, BURST: 2, DAMAGE: 20, DECAY: 0.92,
     ACCURACY_BASE: 180, ACCURACY_SNEAK: 6, ACCURACY_WALK: 600, ACCURACY_SPRINT: 1800, ACCURACY_JUMP: 2500,
     SWITCH: 30, KICK: 3, CASING_MODEL: CASING_762X51MM, CASING_NORMAL: 200, CASING_TANGENT: 100, CASING_BINORMAL: -300,

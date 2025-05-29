@@ -1,0 +1,48 @@
+{
+	"pools": [
+		{
+			"rolls": 1,
+			"entries": [
+				{
+					"type": "minecraft:item",
+					"name": "minecraft:warped_fungus_on_a_stick",
+					"functions": [
+						{
+							"function": "minecraft:set_components",
+							"components": {
+								"minecraft:custom_data": {
+									"stoupgun": {"gun": true,"stats": {"base_weapon": "scar17","capacity": 20,"reload_time": 60,"reload_end": 15,"cooldown": 3,"burst": 2,"damage": 18,"decay": 0.92,"acc_base": 140,"acc_sneak": 5,"acc_walk": 500,"acc_sprint": 1500,"acc_jump": 2300,"switch": 30,"kick": 3,"casing_model": "stoupgun:762x51mm","casing_n": 50,"casing_t": -75,"casing_b": -300,"casing_offset": {"normal": [-0.32,-0.3,0.7],"zoom": [-0.05,-0.25,0.5]},"models": {"normal": "stoupgun:scar17_4","zoom": "stoupgun:scar17_4_zoom"},"remaining_bullets": 20},"scar17_4_zoom": true},
+									"smithed": {"ignore": {"functionality": true,"crafting": true}}
+								},
+								"minecraft:attribute_modifiers": [
+									{"type": "attack_speed","amount": -3.3333333333333335,"operation": "add_value","slot": "mainhand","id": "minecraft:base_attack_speed"}
+								],
+								"minecraft:tooltip_display": {
+									"hide_tooltip": false,
+									"hidden_components": ["minecraft:attribute_modifiers"]
+								},
+								"minecraft:lore": [
+									[{"text":"D","color": "#c24a17","italic": false},{"text":"a","color": "#c24c18"},{"text":"m","color": "#c24f1a"},{"text":"a","color": "#c2511b"},{"text":"g","color": "#c3541d"},{"text":"e","color": "#c3571e"},{"text":" ","color": "#c35920"},{"text":"P","color": "#c35c21"},{"text":"e","color": "#c45e23"},{"text":"r","color": "#c46124"},{"text":" ","color": "#c46426"},{"text":"B","color": "#c46628"},{"text":"u","color": "#c56929"},{"text":"l","color": "#c56b2b"},{"text":"l","color": "#c56e2c"},{"text":"e","color": "#c5712e"},{"text":"t","color": "#c6732f"},{"text":" ","color": "#c67631"},{"text":" ","color": "#c67832"},{"text":"➤","color": "#c67b34"},{"text":" ","color": "#c77e36"},"18"],
+									[{"text":"A","color": "#c24a17","italic": false},{"text":"m","color": "#c24c18"},{"text":"m","color": "#c24e19"},{"text":"o","color": "#c2511b"},{"text":" ","color": "#c2531c"},{"text":"R","color": "#c3561e"},{"text":"e","color": "#c3581f"},{"text":"m","color": "#c35b21"},{"text":"a","color": "#c35d22"},{"text":"i","color": "#c46024"},{"text":"n","color": "#c46225"},{"text":"i","color": "#c46527"},{"text":"n","color": "#c46728"},{"text":"g","color": "#c56a2a"},{"text":" ","color": "#c56c2b"},{"text":" ","color": "#c56f2d"},{"text":" ","color": "#c5712e"},{"text":" ","color": "#c67430"},{"text":" ","color": "#c67631"},{"text":" ","color": "#c67933"},{"text":"➤","color": "#c67b34"},{"text":" ","color": "#c77e36"},"20",{"text":"/","color": "#c77e36"},"20"],
+									[{"text":"R","color": "#c24a17","italic": false},{"text":"e","color": "#c24c18"},{"text":"l","color": "#c24e19"},{"text":"o","color": "#c2511b"},{"text":"a","color": "#c2531c"},{"text":"d","color": "#c3551e"},{"text":"i","color": "#c3581f"},{"text":"n","color": "#c35a20"},{"text":"g","color": "#c35c22"},{"text":" ","color": "#c45f23"},{"text":"T","color": "#c46125"},{"text":"i","color": "#c46426"},{"text":"m","color": "#c46627"},{"text":"e","color": "#c46829"},{"text":" ","color": "#c56b2a"},{"text":" ","color": "#c56d2c"},{"text":" ","color": "#c56f2d"},{"text":" ","color": "#c5722e"},{"text":" ","color": "#c67430"},{"text":" ","color": "#c67631"},{"text":" ","color": "#c67933"},{"text":"➤","color": "#c67b34"},{"text":" ","color": "#c77e36"},"3.0",{"text":"s","color": "#c77e36"}],
+									[{"text":"F","color": "#c24a17","italic": false},{"text":"i","color": "#c24c18"},{"text":"r","color": "#c24e19"},{"text":"e","color": "#c2501b"},{"text":" ","color": "#c2531c"},{"text":"R","color": "#c3551d"},{"text":"a","color": "#c3571f"},{"text":"t","color": "#c35920"},{"text":"e","color": "#c35c21"},{"text":" ","color": "#c35e23"},{"text":" ","color": "#c46024"},{"text":" ","color": "#c46225"},{"text":" ","color": "#c46527"},{"text":" ","color": "#c46728"},{"text":" ","color": "#c56929"},{"text":" ","color": "#c56b2b"},{"text":" ","color": "#c56e2c"},{"text":" ","color": "#c5702d"},{"text":" ","color": "#c5722f"},{"text":" ","color": "#c67430"},{"text":" ","color": "#c67731"},{"text":" ","color": "#c67933"},{"text":"➤","color": "#c67b34"},{"text":" ","color": "#c77e36"},"6.7 ",{"text":"s","color": "#c77e36","italic": false},{"text":"h","color": "#c67832"},{"text":"o","color": "#c5722f"},{"text":"t","color": "#c56c2b"},{"text":"s","color": "#c46628"},{"text":"/","color": "#c46124"},{"text":"s","color": "#c35b21"}],
+									[{"text":"D","color": "#c24a17","italic": false},{"text":"a","color": "#c24c18"},{"text":"m","color": "#c24f1a"},{"text":"a","color": "#c2511b"},{"text":"g","color": "#c3541d"},{"text":"e","color": "#c3571e"},{"text":" ","color": "#c35920"},{"text":"D","color": "#c35c21"},{"text":"e","color": "#c45e23"},{"text":"c","color": "#c46124"},{"text":"a","color": "#c46426"},{"text":"y","color": "#c46628"},{"text":" ","color": "#c56929"},{"text":" ","color": "#c56b2b"},{"text":" ","color": "#c56e2c"},{"text":" ","color": "#c5712e"},{"text":" ","color": "#c6732f"},{"text":" ","color": "#c67631"},{"text":" ","color": "#c67832"},{"text":"➤","color": "#c67b34"},{"text":" ","color": "#c77e36"},"92",{"text":"%","color": "#c77e36"}],
+									[{"text":"S","color": "#c24a17","italic": false},{"text":"w","color": "#c24c18"},{"text":"i","color": "#c24e19"},{"text":"t","color": "#c2501b"},{"text":"c","color": "#c2531c"},{"text":"h","color": "#c3551d"},{"text":" ","color": "#c3571f"},{"text":"T","color": "#c35920"},{"text":"i","color": "#c35c21"},{"text":"m","color": "#c35e23"},{"text":"e","color": "#c46024"},{"text":" ","color": "#c46225"},{"text":" ","color": "#c46527"},{"text":" ","color": "#c46728"},{"text":" ","color": "#c56929"},{"text":" ","color": "#c56b2b"},{"text":" ","color": "#c56e2c"},{"text":" ","color": "#c5702d"},{"text":" ","color": "#c5722f"},{"text":" ","color": "#c67430"},{"text":" ","color": "#c67731"},{"text":" ","color": "#c67933"},{"text":"➤","color": "#c67b34"},{"text":" ","color": "#c77e36"},"1.5",{"text":"s","color": "#c77e36"}],
+									"",
+									["",{"text":"I","color": "white","italic": false,"font": "stoupgun:icons"},{"translate":"stoupgun","italic": true,"color": "blue"}]
+								],
+								"minecraft:item_model": "stoupgun:scar17_4_zoom",
+								"minecraft:item_name": {
+									"translate":"stoupgun.scar17_4_zoom",
+									"italic": false,
+									"color": "white"
+								}
+							}
+						}
+					]
+				}
+			]
+		}
+	]
+}
+
