@@ -25,6 +25,10 @@ scoreboard players set #kick {ns}.data 0
 execute store result score #kick {ns}.data run data get storage {ns}:gun all.stats.{KICK}
 execute store result score #random {ns}.data run random value 1..5
 
+# Check if player is riding a vehicle - if so, use /rotate instead of /tp to avoid dismounting
+scoreboard players set #has_vehicle {ns}.data 0
+execute on vehicle run scoreboard players set #has_vehicle {ns}.data 1
+
 # Switch case
 execute if score #kick {ns}.data matches ..0 run function {ns}:v{version}/kicks/type_0
 execute if score #kick {ns}.data matches 1 run function {ns}:v{version}/kicks/type_1
@@ -43,7 +47,8 @@ execute if score #kick {ns}.data matches 5.. run function {ns}:v{version}/kicks/
     ]
     for i, kicks in enumerate(all_kicks):
         content: str = ""
-        for j, (yaw, pitch) in enumerate(kicks):
-            content += f"\nexecute if score #random {ns}.data matches {j+1} run tp @s ~ ~ ~ ~{yaw} ~{pitch}"
+        for score, command in [(0, "tp @s ~ ~ ~"), (1, "rotate @s")]:
+            for j, (yaw, pitch) in enumerate(kicks):
+                content += f"\nexecute if score #has_vehicle {ns}.data matches {score} if score #random {ns}.data matches {j+1} run {command} ~{yaw} ~{pitch}"
         write_versioned_function(config, f"kicks/type_{i}", content)
 
