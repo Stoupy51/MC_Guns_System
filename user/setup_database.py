@@ -128,7 +128,7 @@ def main(config: dict) -> dict[str, dict]:
             ]
 
     # Sort items so that zoom models are at the end
-    sorted_items: list[str] = sorted(database.keys(), key=lambda x: "_".join(x.split("_")[:-1]))
+    sorted_items: list[str] = sorted(database.keys(), key=lambda x: x.endswith("_zoom"))
     database = {k: database[k] for k in sorted_items}
 
     # Final adjustments, you definitively should keep them!
