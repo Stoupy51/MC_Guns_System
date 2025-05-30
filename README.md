@@ -7,3 +7,15 @@
 
 Credits for resources: MGS 4.2 by TheBradqq
 
+# TODO:
+- Ammo reloading using ammo items
+- Implement Reload Mid, Cooldown Mid, Cooldown End, etc.
+- Implement base item duality (carrot_on_a_stick and warped_fungus_on_a_stick) to trigger proper weapon swapping
+- Add stereo variants for reload sounds (so we can not use 100000 volume)
+- Move weapon sounds under "all.sounds" instead of "all.stats"
+- If no weapon cooldown, consider single click (like pistol) so prevent maintaining right click.
+- Add on_impact explosion stats for RPG
+- Implement advanced sound gameplay
+- Burst mode
+- Drop weapon or switching to left hand starts a reload.
+
