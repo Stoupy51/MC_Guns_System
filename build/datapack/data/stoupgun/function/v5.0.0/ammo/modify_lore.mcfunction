@@ -2,6 +2,8 @@
 #> stoupgun:v5.0.0/ammo/modify_lore
 #
 # @within	stoupgun:v5.0.0/player/right_click {slot:"weapon.mainhand"}
+#			stoupgun:v5.0.0/zoom/remove {slot:"weapon.mainhand"}
+#			stoupgun:v5.0.0/zoom/set {slot:"weapon.mainhand"}
 #			stoupgun:v5.0.0/ammo/set_count {slot:"$(slot)"}
 #
 

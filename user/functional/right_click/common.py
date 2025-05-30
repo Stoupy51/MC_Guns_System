@@ -79,8 +79,8 @@ f"""
 # Decrease pending clicks by 1
 scoreboard players remove @s {ns}.pending_clicks 1
 
-# If player stopped right clicking for 1 second, we update the item lore
-execute if score @s {ns}.pending_clicks matches -20 if data storage {ns}:gun all.stats run function {ns}:v{version}/ammo/modify_lore {{slot:"weapon.mainhand"}}
+# If player stopped right clicking for 3 second, we update the item lore
+execute if score @s {ns}.pending_clicks matches -60 if data storage {ns}:gun all.stats run function {ns}:v{version}/ammo/modify_lore {{slot:"weapon.mainhand"}}
 
 # Stop here is weapon cooldown OR pending clicks if negative
 execute if score @s {ns}.cooldown matches 1.. run return fail

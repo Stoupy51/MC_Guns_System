@@ -35,6 +35,7 @@ data modify storage {ns}:input with.item_model set from storage {ns}:gun all.sta
 
 # Update weapon model and stats
 function {ns}:v{version}/utils/update_model with storage {ns}:input with
+function {ns}:v{version}/ammo/modify_lore {{slot:"weapon.mainhand"}}
 item modify entity @s weapon.mainhand {ns}:v{version}/update_stats
 
 # Apply unzoom effects
@@ -55,6 +56,7 @@ data modify storage {ns}:input with.item_model set from storage {ns}:gun all.sta
 
 # Update weapon model and stats
 function {ns}:v{version}/utils/update_model with storage {ns}:input with
+function {ns}:v{version}/ammo/modify_lore {{slot:"weapon.mainhand"}}
 item modify entity @s weapon.mainhand {ns}:v{version}/update_stats
 
 # Apply zoom effects

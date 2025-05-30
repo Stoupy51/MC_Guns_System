@@ -13,6 +13,7 @@ data modify storage stoupgun:input with.item_model set from storage stoupgun:gun
 
 # Update weapon model and stats
 function stoupgun:v5.0.0/utils/update_model with storage stoupgun:input with
+function stoupgun:v5.0.0/ammo/modify_lore {slot:"weapon.mainhand"}
 item modify entity @s weapon.mainhand stoupgun:v5.0.0/update_stats
 
 # Apply unzoom effects
