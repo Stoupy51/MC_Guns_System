@@ -1,0 +1,15 @@
+{
+	"function": "minecraft:copy_custom_data",
+	"source": {
+		"type": "minecraft:storage",
+		"source": "mgs:gun"
+	},
+	"ops": [
+		{
+			"source": "all.stats.weapon_id",
+			"target": "mgs.stats.weapon_id",
+			"op": "replace"
+		}
+	]
+}
+

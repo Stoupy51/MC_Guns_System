@@ -21,9 +21,9 @@ MERGE_LIBS: bool = False                             # Make new zip of merged li
 
 # Project information
 AUTHOR: str = "TheBradqq, Stoupy51"      # Author(s) name(s) displayed in pack.mcmeta, also used to add convention.debug tag to the players of the same name(s)
-PROJECT_NAME: str = "StoupGun"           # Name of the datapack, used for messages and items lore
+PROJECT_NAME: str = "MC Guns System"     # Name of the datapack, used for messages and items lore
 VERSION: str = "5.0.0"                   # Project version in the following mandatory format: major.minor.patch, ex: 1.0.0 or 1.21.615
-NAMESPACE: str = "stoupgun"              # Simplified version of the datapack name. Used to namespace functions, tags, etc. Should be the same you use in the merge folder.
+NAMESPACE: str = "mgs"                   # Simplified version of the datapack name. Used to namespace functions, tags, etc. Should be the same you use in the merge folder.
 DESCRIPTION = f"{PROJECT_NAME} [{VERSION}] by {AUTHOR}" # Pack description displayed in pack.mcmeta
 
 

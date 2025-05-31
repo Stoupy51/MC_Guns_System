@@ -1,5 +1,5 @@
 
-#> stoupgun:_private/init
+#> mgs:_private/init
 #
 # @within	???
 #
