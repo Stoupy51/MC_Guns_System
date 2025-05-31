@@ -17,7 +17,7 @@ function mgs:v5.0.0/ammo/modify_lore {slot:"weapon.mainhand"}
 item modify entity @s weapon.mainhand mgs:v5.0.0/update_stats
 
 # Apply zoom effects
-playsound mgs:common/lean_in player @s ~ ~1000000 ~ 1000000
+playsound mgs:common/lean_in player @s
 effect give @s slowness infinite 2 true
 scoreboard players set @s mgs.zoom 1
 

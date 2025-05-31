@@ -5,7 +5,7 @@
 #
 
 # Full reload sound for the player
-$playsound mgs:$(base_weapon)/reload player @s ~ ~1000000 ~ 10000000
+$playsound mgs:$(base_weapon)/reload player
 
 # Play the begin reload sound for all nearby players
 $playsound mgs:$(base_weapon)/playerbegin player @a[distance=0.01..16] ~ ~ ~ 0.3

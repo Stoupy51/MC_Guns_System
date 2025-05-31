@@ -39,7 +39,7 @@ function {ns}:v{version}/ammo/modify_lore {{slot:"weapon.mainhand"}}
 item modify entity @s weapon.mainhand {ns}:v{version}/update_stats
 
 # Apply unzoom effects
-playsound {ns}:common/lean_out player @s ~ ~1000000 ~ 1000000
+playsound {ns}:common/lean_out player
 scoreboard players reset @s {ns}.zoom
 effect clear @s slowness
 """)
@@ -60,7 +60,7 @@ function {ns}:v{version}/ammo/modify_lore {{slot:"weapon.mainhand"}}
 item modify entity @s weapon.mainhand {ns}:v{version}/update_stats
 
 # Apply zoom effects
-playsound {ns}:common/lean_in player @s ~ ~1000000 ~ 1000000
+playsound {ns}:common/lean_in player @s
 effect give @s slowness infinite 2 true
 scoreboard players set @s {ns}.zoom 1
 """)
@@ -70,7 +70,7 @@ scoreboard players set @s {ns}.zoom 1
 f"""
 # If player was zooming and switched slot so no longer holding a gun, remove slowness effect
 execute unless score @s {ns}.zoom matches 1 run return fail
-playsound {ns}:common/lean_out player @s ~ ~1000000 ~ 1000000
+playsound {ns}:common/lean_out player @s
 scoreboard players reset @s {ns}.zoom
 effect clear @s slowness
 

@@ -1,6 +1,7 @@
 
 # Imports
 from python_datapack.utils.database_helper import write_versioned_function
+
 from user.config.stats import BASE_WEAPON, RELOAD_END
 
 
@@ -22,15 +23,15 @@ function {ns}:v{version}/sound/main with storage {ns}:gun all.stats
     write_versioned_function(config, "sound/main",
 f"""
 # TODO: Advanced playsound using cracks and stuff
-$playsound {ns}:$({BASE_WEAPON})/fire player @s
-$playsound {ns}:$({BASE_WEAPON})/fire player @a[distance=0.01..48] ~ ~ ~ 3
+$playsound {ns}:$({BASE_WEAPON})/fire player @s ~ ~ ~ 0.25
+$playsound {ns}:$({BASE_WEAPON})/fire player @a[distance=0.01..48] 0.75 1 0.25
 """)
 
     # Reload start function
     write_versioned_function(config, "sound/reload_start",
 f"""
 # Full reload sound for the player
-$playsound {ns}:$({BASE_WEAPON})/reload player @s ~ ~1000000 ~ 10000000
+$playsound {ns}:$({BASE_WEAPON})/reload player
 
 # Play the begin reload sound for all nearby players
 $playsound {ns}:$({BASE_WEAPON})/playerbegin player @a[distance=0.01..16] ~ ~ ~ 0.3

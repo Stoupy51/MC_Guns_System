@@ -6,7 +6,7 @@
 
 # If player was zooming and switched slot so no longer holding a gun, remove slowness effect
 execute unless score @s mgs.zoom matches 1 run return fail
-playsound mgs:common/lean_out player @s ~ ~1000000 ~ 1000000
+playsound mgs:common/lean_out player @s
 scoreboard players reset @s mgs.zoom
 effect clear @s slowness
 

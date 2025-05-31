@@ -80,10 +80,10 @@ execute store result storage {ns}:gun all.stats.{DAMAGE} float 0.5 run data get 
 
 execute if block ~ ~ ~ #{ns}:v{version}/sounds/glass run playsound minecraft:block.glass.break block @a ~ ~ ~ 1
 execute if block ~ ~ ~ #{ns}:v{version}/sounds/water run playsound minecraft:ambient.underwater.exit block @a ~ ~ ~ 0.25 1.5
-execute if block ~ ~ ~ #{ns}:v{version}/sounds/cloth run playsound {ns}:common.cloth_bullet_impact block @a ~ ~ ~ 1
-execute if block ~ ~ ~ #{ns}:v{version}/sounds/dirt run playsound {ns}:common.dirt_bullet_impact block @a ~ ~ ~ 1
-execute if block ~ ~ ~ #{ns}:v{version}/sounds/mud run playsound {ns}:common.mud_bullet_impact block @a ~ ~ ~ 1
-execute if block ~ ~ ~ #{ns}:v{version}/sounds/wood run playsound {ns}:common.wood_bullet_impact block @a ~ ~ ~ 1
+execute if block ~ ~ ~ #{ns}:v{version}/sounds/cloth run playsound {ns}:common/cloth_bullet_impact block @a ~ ~ ~ 1
+execute if block ~ ~ ~ #{ns}:v{version}/sounds/dirt run playsound {ns}:common/dirt_bullet_impact block @a ~ ~ ~ 1
+execute if block ~ ~ ~ #{ns}:v{version}/sounds/mud run playsound {ns}:common/mud_bullet_impact block @a ~ ~ ~ 1
+execute if block ~ ~ ~ #{ns}:v{version}/sounds/wood run playsound {ns}:common/wood_bullet_impact block @a ~ ~ ~ 1
 """)
     write_versioned_function(config, "raycast/block_particles", """$particle block{block_state:"$(block)"} $(x) $(y) $(z) 0.1 0.1 0.1 1 10 force @a[distance=..128]""")
 
