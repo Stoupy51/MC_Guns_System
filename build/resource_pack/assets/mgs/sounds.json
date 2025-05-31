@@ -115,54 +115,6 @@
 		"subtitle": "lean_out",
 		"sounds": ["mgs:common/lean_out"]
 	},
-	"common/medlarge_crack_0_mono": {
-		"subtitle": "medlarge_crack_0_mono",
-		"sounds": ["mgs:common/medlarge_crack_0_mono"]
-	},
-	"common/medlarge_crack_0_stereo": {
-		"subtitle": "medlarge_crack_0_stereo",
-		"sounds": ["mgs:common/medlarge_crack_0_stereo"]
-	},
-	"common/medlarge_crack_1_mono": {
-		"subtitle": "medlarge_crack_1_mono",
-		"sounds": ["mgs:common/medlarge_crack_1_mono"]
-	},
-	"common/medlarge_crack_1_stereo": {
-		"subtitle": "medlarge_crack_1_stereo",
-		"sounds": ["mgs:common/medlarge_crack_1_stereo"]
-	},
-	"common/medlarge_crack_2_mono": {
-		"subtitle": "medlarge_crack_2_mono",
-		"sounds": ["mgs:common/medlarge_crack_2_mono"]
-	},
-	"common/medlarge_crack_2_stereo": {
-		"subtitle": "medlarge_crack_2_stereo",
-		"sounds": ["mgs:common/medlarge_crack_2_stereo"]
-	},
-	"common/medlarge_crack_3_mono": {
-		"subtitle": "medlarge_crack_3_mono",
-		"sounds": ["mgs:common/medlarge_crack_3_mono"]
-	},
-	"common/medlarge_crack_3_stereo": {
-		"subtitle": "medlarge_crack_3_stereo",
-		"sounds": ["mgs:common/medlarge_crack_3_stereo"]
-	},
-	"common/medlarge_crack_4_mono": {
-		"subtitle": "medlarge_crack_4_mono",
-		"sounds": ["mgs:common/medlarge_crack_4_mono"]
-	},
-	"common/medlarge_crack_4_stereo": {
-		"subtitle": "medlarge_crack_4_stereo",
-		"sounds": ["mgs:common/medlarge_crack_4_stereo"]
-	},
-	"common/medlarge_crack_w_mono": {
-		"subtitle": "medlarge_crack_w_mono",
-		"sounds": ["mgs:common/medlarge_crack_w_mono"]
-	},
-	"common/medlarge_crack_w_stereo": {
-		"subtitle": "medlarge_crack_w_stereo",
-		"sounds": ["mgs:common/medlarge_crack_w_stereo"]
-	},
 	"common/med_crack_0_mono": {
 		"subtitle": "med_crack_0_mono",
 		"sounds": ["mgs:common/med_crack_0_mono"]
@@ -211,6 +163,54 @@
 		"subtitle": "med_crack_w_stereo",
 		"sounds": ["mgs:common/med_crack_w_stereo"]
 	},
+	"common/medlarge_crack_0_mono": {
+		"subtitle": "medlarge_crack_0_mono",
+		"sounds": ["mgs:common/medlarge_crack_0_mono"]
+	},
+	"common/medlarge_crack_0_stereo": {
+		"subtitle": "medlarge_crack_0_stereo",
+		"sounds": ["mgs:common/medlarge_crack_0_stereo"]
+	},
+	"common/medlarge_crack_1_mono": {
+		"subtitle": "medlarge_crack_1_mono",
+		"sounds": ["mgs:common/medlarge_crack_1_mono"]
+	},
+	"common/medlarge_crack_1_stereo": {
+		"subtitle": "medlarge_crack_1_stereo",
+		"sounds": ["mgs:common/medlarge_crack_1_stereo"]
+	},
+	"common/medlarge_crack_2_mono": {
+		"subtitle": "medlarge_crack_2_mono",
+		"sounds": ["mgs:common/medlarge_crack_2_mono"]
+	},
+	"common/medlarge_crack_2_stereo": {
+		"subtitle": "medlarge_crack_2_stereo",
+		"sounds": ["mgs:common/medlarge_crack_2_stereo"]
+	},
+	"common/medlarge_crack_3_mono": {
+		"subtitle": "medlarge_crack_3_mono",
+		"sounds": ["mgs:common/medlarge_crack_3_mono"]
+	},
+	"common/medlarge_crack_3_stereo": {
+		"subtitle": "medlarge_crack_3_stereo",
+		"sounds": ["mgs:common/medlarge_crack_3_stereo"]
+	},
+	"common/medlarge_crack_4_mono": {
+		"subtitle": "medlarge_crack_4_mono",
+		"sounds": ["mgs:common/medlarge_crack_4_mono"]
+	},
+	"common/medlarge_crack_4_stereo": {
+		"subtitle": "medlarge_crack_4_stereo",
+		"sounds": ["mgs:common/medlarge_crack_4_stereo"]
+	},
+	"common/medlarge_crack_w_mono": {
+		"subtitle": "medlarge_crack_w_mono",
+		"sounds": ["mgs:common/medlarge_crack_w_mono"]
+	},
+	"common/medlarge_crack_w_stereo": {
+		"subtitle": "medlarge_crack_w_stereo",
+		"sounds": ["mgs:common/medlarge_crack_w_stereo"]
+	},
 	"common/mud_bullet_impact": {
 		"subtitle": "mud_bullet_impact",
 		"sounds": ["mgs:common/mud_bullet_impact_01","mgs:common/mud_bullet_impact_02","mgs:common/mud_bullet_impact_03","mgs:common/mud_bullet_impact_04"]
@@ -234,54 +234,6 @@
 	"common/silence": {
 		"subtitle": "silence",
 		"sounds": ["mgs:common/silence"]
-	},
-	"common/smallmed_crack_0_mono": {
-		"subtitle": "smallmed_crack_0_mono",
-		"sounds": ["mgs:common/smallmed_crack_0_mono"]
-	},
-	"common/smallmed_crack_0_stereo": {
-		"subtitle": "smallmed_crack_0_stereo",
-		"sounds": ["mgs:common/smallmed_crack_0_stereo"]
-	},
-	"common/smallmed_crack_1_mono": {
-		"subtitle": "smallmed_crack_1_mono",
-		"sounds": ["mgs:common/smallmed_crack_1_mono"]
-	},
-	"common/smallmed_crack_1_stereo": {
-		"subtitle": "smallmed_crack_1_stereo",
-		"sounds": ["mgs:common/smallmed_crack_1_stereo"]
-	},
-	"common/smallmed_crack_2_mono": {
-		"subtitle": "smallmed_crack_2_mono",
-		"sounds": ["mgs:common/smallmed_crack_2_mono"]
-	},
-	"common/smallmed_crack_2_stereo": {
-		"subtitle": "smallmed_crack_2_stereo",
-		"sounds": ["mgs:common/smallmed_crack_2_stereo"]
-	},
-	"common/smallmed_crack_3_mono": {
-		"subtitle": "smallmed_crack_3_mono",
-		"sounds": ["mgs:common/smallmed_crack_3_mono"]
-	},
-	"common/smallmed_crack_3_stereo": {
-		"subtitle": "smallmed_crack_3_stereo",
-		"sounds": ["mgs:common/smallmed_crack_3_stereo"]
-	},
-	"common/smallmed_crack_4_mono": {
-		"subtitle": "smallmed_crack_4_mono",
-		"sounds": ["mgs:common/smallmed_crack_4_mono"]
-	},
-	"common/smallmed_crack_4_stereo": {
-		"subtitle": "smallmed_crack_4_stereo",
-		"sounds": ["mgs:common/smallmed_crack_4_stereo"]
-	},
-	"common/smallmed_crack_w_mono": {
-		"subtitle": "smallmed_crack_w_mono",
-		"sounds": ["mgs:common/smallmed_crack_w_mono"]
-	},
-	"common/smallmed_crack_w_stereo": {
-		"subtitle": "smallmed_crack_w_stereo",
-		"sounds": ["mgs:common/smallmed_crack_w_stereo"]
 	},
 	"common/small_crack_0_mono": {
 		"subtitle": "small_crack_0_mono",
@@ -330,6 +282,54 @@
 	"common/small_crack_w_stereo": {
 		"subtitle": "small_crack_w_stereo",
 		"sounds": ["mgs:common/small_crack_w_stereo"]
+	},
+	"common/smallmed_crack_0_mono": {
+		"subtitle": "smallmed_crack_0_mono",
+		"sounds": ["mgs:common/smallmed_crack_0_mono"]
+	},
+	"common/smallmed_crack_0_stereo": {
+		"subtitle": "smallmed_crack_0_stereo",
+		"sounds": ["mgs:common/smallmed_crack_0_stereo"]
+	},
+	"common/smallmed_crack_1_mono": {
+		"subtitle": "smallmed_crack_1_mono",
+		"sounds": ["mgs:common/smallmed_crack_1_mono"]
+	},
+	"common/smallmed_crack_1_stereo": {
+		"subtitle": "smallmed_crack_1_stereo",
+		"sounds": ["mgs:common/smallmed_crack_1_stereo"]
+	},
+	"common/smallmed_crack_2_mono": {
+		"subtitle": "smallmed_crack_2_mono",
+		"sounds": ["mgs:common/smallmed_crack_2_mono"]
+	},
+	"common/smallmed_crack_2_stereo": {
+		"subtitle": "smallmed_crack_2_stereo",
+		"sounds": ["mgs:common/smallmed_crack_2_stereo"]
+	},
+	"common/smallmed_crack_3_mono": {
+		"subtitle": "smallmed_crack_3_mono",
+		"sounds": ["mgs:common/smallmed_crack_3_mono"]
+	},
+	"common/smallmed_crack_3_stereo": {
+		"subtitle": "smallmed_crack_3_stereo",
+		"sounds": ["mgs:common/smallmed_crack_3_stereo"]
+	},
+	"common/smallmed_crack_4_mono": {
+		"subtitle": "smallmed_crack_4_mono",
+		"sounds": ["mgs:common/smallmed_crack_4_mono"]
+	},
+	"common/smallmed_crack_4_stereo": {
+		"subtitle": "smallmed_crack_4_stereo",
+		"sounds": ["mgs:common/smallmed_crack_4_stereo"]
+	},
+	"common/smallmed_crack_w_mono": {
+		"subtitle": "smallmed_crack_w_mono",
+		"sounds": ["mgs:common/smallmed_crack_w_mono"]
+	},
+	"common/smallmed_crack_w_stereo": {
+		"subtitle": "smallmed_crack_w_stereo",
+		"sounds": ["mgs:common/smallmed_crack_w_stereo"]
 	},
 	"common/soft_bullet_impact": {
 		"subtitle": "soft_bullet_impact",
@@ -707,18 +707,6 @@
 		"subtitle": "fire",
 		"sounds": ["mgs:rpg7/fire0","mgs:rpg7/fire1"]
 	},
-	"rpg7/playerbegin": {
-		"subtitle": "playerbegin",
-		"sounds": ["mgs:rpg7/playerbegin"]
-	},
-	"rpg7/playerend": {
-		"subtitle": "playerend",
-		"sounds": ["mgs:rpg7/playerend"]
-	},
-	"rpg7/reload": {
-		"subtitle": "reload",
-		"sounds": ["mgs:rpg7/reload"]
-	},
 	"rpg7/handling/rpg7_endgrab": {
 		"subtitle": "rpg7_endgrab",
 		"sounds": ["mgs:rpg7/handling/rpg7_endgrab"]
@@ -730,6 +718,18 @@
 	"rpg7/handling/rpg7_load": {
 		"subtitle": "rpg7_load",
 		"sounds": ["mgs:rpg7/handling/rpg7_load1","mgs:rpg7/handling/rpg7_load2"]
+	},
+	"rpg7/playerbegin": {
+		"subtitle": "playerbegin",
+		"sounds": ["mgs:rpg7/playerbegin"]
+	},
+	"rpg7/playerend": {
+		"subtitle": "playerend",
+		"sounds": ["mgs:rpg7/playerend"]
+	},
+	"rpg7/reload": {
+		"subtitle": "reload",
+		"sounds": ["mgs:rpg7/reload"]
 	},
 	"rpk/fire": {
 		"subtitle": "fire",
