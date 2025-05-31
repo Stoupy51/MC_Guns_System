@@ -3,8 +3,12 @@
 import json
 from typing import Any
 
-import stouputils as stp
-from python_datapack.utils.database_helper import add_item_model_component, add_item_name_and_lore_if_missing, add_private_custom_data_for_namespace, add_smithed_ignore_vanilla_behaviours_convention
+from python_datapack.utils.database_helper import (
+    add_item_model_component,
+    add_item_name_and_lore_if_missing,
+    add_private_custom_data_for_namespace,
+    add_smithed_ignore_vanilla_behaviours_convention,
+)
 from python_datapack.utils.database_helper import create_gradient_text as new_hex
 
 from user.config.stats import CAPACITY, CASING_MODEL, COOLDOWN, DAMAGE, DECAY, MODELS, RELOAD_TIME, REMAINING_BULLETS, SWITCH
