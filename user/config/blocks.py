@@ -8,6 +8,9 @@ def main(config: dict) -> None:
     version: str = config["version"]
     ns: str = config["namespace"]
 
+    # Write empty block tag
+    write_tags(config, f"{ns}:block/v{version}/empty", stp.super_json_dump({"values": []}))
+
     # Write block tags
     write_tags(config, f"{ns}:block/v{version}/air", stp.super_json_dump({
         "values": [
@@ -101,6 +104,7 @@ def main(config: dict) -> None:
             "#minecraft:flowers",
             "#minecraft:cave_vines",
             "#minecraft:replaceable",
+            "#minecraft:leaves",
             "minecraft:short_grass",
             "minecraft:tall_grass",
             "minecraft:seagrass",

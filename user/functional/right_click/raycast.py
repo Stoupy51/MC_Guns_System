@@ -28,6 +28,18 @@ f"""
 tp @s ~ ~ ~ ~ ~
 function {ns}:v{version}/raycast/accuracy/apply_spread
 
+# Scores to remember to only play a sound type once
+scoreboard players set #played_water {ns}.data 0
+scoreboard players set #played_glass {ns}.data 0
+scoreboard players set #played_cloth {ns}.data 0
+scoreboard players set #played_dirt {ns}.data 0
+scoreboard players set #played_mud {ns}.data 0
+scoreboard players set #played_wood {ns}.data 0
+scoreboard players set #played_plant {ns}.data 0
+scoreboard players set #played_solid {ns}.data 0
+scoreboard players set #played_soft {ns}.data 0
+scoreboard players set #next_air_particle {ns}.data 0
+
 # Prepare arguments
 data modify storage {ns}:input with set value {{}}
 data modify storage {ns}:input with.blocks set value true
@@ -35,7 +47,7 @@ data modify storage {ns}:input with.entities set value true
 data modify storage {ns}:input with.piercing set value 10
 data modify storage {ns}:input with.max_distance set value 128
 data modify storage {ns}:input with.hitbox_shape set value "interaction"
-data modify storage {ns}:input with.ignored_blocks set value "#{ns}:v{version}/air"
+data modify storage {ns}:input with.ignored_blocks set value "#{ns}:v{version}/empty"
 data modify storage {ns}:input with.on_hit_point set value "function {ns}:v{version}/raycast/on_hit_point"
 data modify storage {ns}:input with.on_targeted_block set value "function {ns}:v{version}/raycast/on_targeted_block"
 data modify storage {ns}:input with.on_targeted_entity set value "function {ns}:v{version}/raycast/on_targeted_entity"
@@ -54,38 +66,67 @@ f"""
 execute if data storage bs:lambda raycast.targeted_entity run return fail
 
 # Get current block (https://docs.mcbookshelf.dev/en/latest/modules/block.html#get)
+scoreboard players set #is_water {ns}.data 0
+scoreboard players set #is_pass_through {ns}.data 0
 data modify storage {ns}:temp Pos set from entity @s Pos
 data modify entity @s Pos set from storage bs:lambda raycast.targeted_block
+execute at @s if block ~ ~ ~ #bs.hitbox:can_pass_through run scoreboard players set #is_pass_through {ns}.data 1
+execute at @s if block ~ ~ ~ #{ns}:v{version}/sounds/water run scoreboard players set #is_water {ns}.data 1
 execute at @s run function #bs.block:get_block
 data modify entity @s Pos set from storage {ns}:temp Pos
 
-# Make block particles
+# Make block particles (if not passing through)
 data modify storage {ns}:input with set value {{x:0,y:0,z:0,block:"minecraft:air"}}
 data modify storage {ns}:input with.block set from storage bs:out block.type
 data modify storage {ns}:input with.x set from storage bs:lambda raycast.hit_point[0]
 data modify storage {ns}:input with.y set from storage bs:lambda raycast.hit_point[1]
 data modify storage {ns}:input with.z set from storage bs:lambda raycast.hit_point[2]
-execute unless data storage {ns}:input with{{block:"minecraft:air"}} run return run function {ns}:v{version}/raycast/block_particles with storage {ns}:input with
+execute if score #is_pass_through {ns}.data matches 0 run return run function {ns}:v{version}/raycast/block_particles with storage {ns}:input with
+
+# Change particles if passing through
+execute if score #is_water {ns}.data matches 1 run data modify storage {ns}:input with.block set value "minecraft:bubble"
+execute if score #is_water {ns}.data matches 0 run data modify storage {ns}:input with.block set value "minecraft:mycelium"
+
+# Create particles every third iteration to maintain visual clarity while reducing particle density
+scoreboard players add #next_air_particle {ns}.data 1
+execute if score #next_air_particle {ns}.data matches 2 run function {ns}:v{version}/raycast/air_particles with storage {ns}:input with
+execute if score #next_air_particle {ns}.data matches 3.. run scoreboard players set #next_air_particle {ns}.data 0
 """)
+    write_versioned_function(config, "raycast/block_particles", """$particle block{block_state:"$(block)"} $(x) $(y) $(z) 0.1 0.1 0.1 1 10 force @a[distance=..128]""")
+    write_versioned_function(config, "raycast/air_particles", """$particle $(block) $(x) $(y) $(z) 0 0 0 0 1 force @a[distance=..128]""")
 
     # On targeted block
     write_versioned_function(config, "raycast/on_targeted_block",
 f"""
-# Allow bullets to pierce 2 blocks at most
-execute if score $raycast.piercing bs.lambda matches 1..3 run scoreboard players remove $raycast.piercing bs.lambda 1
-execute if score $raycast.piercing bs.lambda matches 5.. run scoreboard players set $raycast.piercing bs.lambda 3
+# If the block can be passed through, increment back piercing, and stop here if it's not water
+scoreboard players set #is_pass_through {ns}.data 0
+execute if block ~ ~ ~ #bs.hitbox:can_pass_through run scoreboard players set #is_pass_through {ns}.data 1
+execute if score #is_pass_through {ns}.data matches 1 run scoreboard players add $raycast.piercing bs.lambda 1
+execute if score #is_pass_through {ns}.data matches 1 unless block ~ ~ ~ #{ns}:v{version}/sounds/water run return 1
 
-# Divide damage per 2
-execute store result storage {ns}:gun all.stats.{DAMAGE} float 0.5 run data get storage {ns}:gun all.stats.{DAMAGE}
+# Allow bullets to pierce 2 blocks at most (if block isn't water)
+execute if score #is_pass_through {ns}.data matches 0 if score $raycast.piercing bs.lambda matches 1..3 run scoreboard players remove $raycast.piercing bs.lambda 1
+execute if score #is_pass_through {ns}.data matches 0 if score $raycast.piercing bs.lambda matches 5.. run scoreboard players set $raycast.piercing bs.lambda 3
 
-execute if block ~ ~ ~ #{ns}:v{version}/sounds/glass run playsound minecraft:block.glass.break block @a ~ ~ ~ 1
-execute if block ~ ~ ~ #{ns}:v{version}/sounds/water run playsound minecraft:ambient.underwater.exit block @a ~ ~ ~ 0.25 1.5
-execute if block ~ ~ ~ #{ns}:v{version}/sounds/cloth run playsound {ns}:common/cloth_bullet_impact block @a ~ ~ ~ 1
-execute if block ~ ~ ~ #{ns}:v{version}/sounds/dirt run playsound {ns}:common/dirt_bullet_impact block @a ~ ~ ~ 1
-execute if block ~ ~ ~ #{ns}:v{version}/sounds/mud run playsound {ns}:common/mud_bullet_impact block @a ~ ~ ~ 1
-execute if block ~ ~ ~ #{ns}:v{version}/sounds/wood run playsound {ns}:common/wood_bullet_impact block @a ~ ~ ~ 1
-""")
-    write_versioned_function(config, "raycast/block_particles", """$particle block{block_state:"$(block)"} $(x) $(y) $(z) 0.1 0.1 0.1 1 10 force @a[distance=..128]""")
+# Reduce damage by 50% in air, 20% in water
+execute if score #is_pass_through {ns}.data matches 0 store result storage {ns}:gun all.stats.{DAMAGE} float 0.5 run data get storage {ns}:gun all.stats.{DAMAGE}
+execute if score #is_pass_through {ns}.data matches 1 store result storage {ns}:gun all.stats.{DAMAGE} float 0.8 run data get storage {ns}:gun all.stats.{DAMAGE}
+
+## Playsounds
+# Each sound type has a scoreboard objective that tracks if it has been played.
+# The score is set to 1 when the sound plays, preventing it from playing again.
+# The 'run return run' command ensures only one sound tries to play per block hit
+# (e.g. if water already played and it's water again, it will not trigger soft)
+execute if score #is_pass_through {ns}.data matches 1 run return run execute if score #played_water {ns}.data matches 0 store success score #played_water {ns}.data run playsound minecraft:ambient.underwater.exit block @a[distance=..24] ~ ~ ~ 0.8 1.5
+execute if block ~ ~ ~ #{ns}:v{version}/sounds/glass run return run execute if score #played_glass {ns}.data matches 0 store success score #played_glass {ns}.data run playsound minecraft:block.glass.break block @a[distance=..24] ~ ~ ~ 1
+execute if block ~ ~ ~ #{ns}:v{version}/sounds/cloth run return run execute if score #played_cloth {ns}.data matches 0 store success score #played_cloth {ns}.data run playsound {ns}:common/cloth_bullet_impact block @a[distance=..24] ~ ~ ~ 1
+execute if block ~ ~ ~ #{ns}:v{version}/sounds/dirt run return run execute if score #played_dirt {ns}.data matches 0 store success score #played_dirt {ns}.data run playsound {ns}:common/dirt_bullet_impact block @a[distance=..24] ~ ~ ~ 0.3
+execute if block ~ ~ ~ #{ns}:v{version}/sounds/mud run return run execute if score #played_mud {ns}.data matches 0 store success score #played_mud {ns}.data run playsound {ns}:common/mud_bullet_impact block @a[distance=..24] ~ ~ ~ 0.4
+execute if block ~ ~ ~ #{ns}:v{version}/sounds/wood run return run execute if score #played_wood {ns}.data matches 0 store success score #played_wood {ns}.data run playsound {ns}:common/wood_bullet_impact block @a[distance=..24] ~ ~ ~ 0.5
+execute if block ~ ~ ~ #{ns}:v{version}/plant run return run execute if score #played_plant {ns}.data matches 0 store success score #played_plant {ns}.data run playsound minecraft:block.azalea_leaves.break block @a[distance=..24] ~ ~ ~ 1
+execute if block ~ ~ ~ #{ns}:v{version}/solid run return run execute if score #played_solid {ns}.data matches 0 store success score #played_solid {ns}.data run playsound {ns}:common/solid_bullet_impact block @a[distance=..24] ~ ~ ~ 0.2
+execute if score #played_soft {ns}.data matches 0 store success score #played_soft {ns}.data run playsound {ns}:common/soft_bullet_impact block @a[distance=..24] ~ ~ ~ 0.2
+""")  # noqa: E501
 
     # On targeted entity
     write_versioned_function(config, "raycast/on_targeted_entity",

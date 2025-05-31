@@ -49,6 +49,9 @@ f"""
 # Play the end reload sound for all nearby players
 $playsound {ns}:$({BASE_WEAPON})/playerend player @a[distance=0.01..16] ~ ~ ~ 0.3
 
+# Update weapon lore
+function {ns}:v{version}/ammo/modify_lore {{slot:"weapon.mainhand"}}
+
 # Remove reloading tag
 tag @s remove {ns}.reloading
 """)

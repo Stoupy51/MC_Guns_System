@@ -4,7 +4,7 @@ from typing import Any
 
 from python_datapack.utils.database_helper import write_item_modifier, write_versioned_function
 
-from user.config.stats import CAPACITY, RELOAD_END, RELOAD_TIME, REMAINING_BULLETS, json_dump
+from user.config.stats import CAPACITY, RELOAD_TIME, REMAINING_BULLETS, json_dump
 
 
 # Main function
@@ -165,6 +165,9 @@ kill @s
 f"""
 # Set cooldown to reload duration
 execute store result score @s {ns}.cooldown run data get storage {ns}:gun all.stats.{RELOAD_TIME}
+
+# Update weapon lore
+function {ns}:v{version}/ammo/modify_lore {{slot:"weapon.mainhand"}}
 
 # Get the new ammo count
 # TODO: Find ammo in inventory and don't take it out for your ass
