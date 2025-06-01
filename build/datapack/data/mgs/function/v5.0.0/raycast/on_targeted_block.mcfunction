@@ -23,7 +23,7 @@ execute if score #is_pass_through mgs.data matches 1 store result storage mgs:gu
 # The score is set to 1 when the sound plays, preventing it from playing again.
 # The 'run return run' command ensures only one sound tries to play per block hit
 # (e.g. if water already played and it's water again, it will not trigger soft)
-execute if score #is_pass_through mgs.data matches 1 run return run execute if score #played_water mgs.data matches 0 store success score #played_water mgs.data run playsound minecraft:ambient.underwater.exit block @a[distance=..24] ~ ~ ~ 0.8 1.5
+execute if score #is_pass_through mgs.data matches 1 run return run execute if score #played_water mgs.data matches 0 store success score #played_water mgs.data run playsound minecraft:entity.axolotl.splash block @a[distance=..24] ~ ~ ~ 0.8 1.5
 execute if block ~ ~ ~ #mgs:v5.0.0/sounds/glass run return run execute if score #played_glass mgs.data matches 0 store success score #played_glass mgs.data run playsound minecraft:block.glass.break block @a[distance=..24] ~ ~ ~ 1
 execute if block ~ ~ ~ #mgs:v5.0.0/sounds/cloth run return run execute if score #played_cloth mgs.data matches 0 store success score #played_cloth mgs.data run playsound mgs:common/cloth_bullet_impact block @a[distance=..24] ~ ~ ~ 1
 execute if block ~ ~ ~ #mgs:v5.0.0/sounds/dirt run return run execute if score #played_dirt mgs.data matches 0 store success score #played_dirt mgs.data run playsound mgs:common/dirt_bullet_impact block @a[distance=..24] ~ ~ ~ 0.3

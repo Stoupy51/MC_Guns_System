@@ -117,7 +117,7 @@ execute if score #is_pass_through {ns}.data matches 1 store result storage {ns}:
 # The score is set to 1 when the sound plays, preventing it from playing again.
 # The 'run return run' command ensures only one sound tries to play per block hit
 # (e.g. if water already played and it's water again, it will not trigger soft)
-execute if score #is_pass_through {ns}.data matches 1 run return run execute if score #played_water {ns}.data matches 0 store success score #played_water {ns}.data run playsound minecraft:ambient.underwater.exit block @a[distance=..24] ~ ~ ~ 0.8 1.5
+execute if score #is_pass_through {ns}.data matches 1 run return run execute if score #played_water {ns}.data matches 0 store success score #played_water {ns}.data run playsound minecraft:entity.axolotl.splash block @a[distance=..24] ~ ~ ~ 0.8 1.5
 execute if block ~ ~ ~ #{ns}:v{version}/sounds/glass run return run execute if score #played_glass {ns}.data matches 0 store success score #played_glass {ns}.data run playsound minecraft:block.glass.break block @a[distance=..24] ~ ~ ~ 1
 execute if block ~ ~ ~ #{ns}:v{version}/sounds/cloth run return run execute if score #played_cloth {ns}.data matches 0 store success score #played_cloth {ns}.data run playsound {ns}:common/cloth_bullet_impact block @a[distance=..24] ~ ~ ~ 1
 execute if block ~ ~ ~ #{ns}:v{version}/sounds/dirt run return run execute if score #played_dirt {ns}.data matches 0 store success score #played_dirt {ns}.data run playsound {ns}:common/dirt_bullet_impact block @a[distance=..24] ~ ~ ~ 0.3

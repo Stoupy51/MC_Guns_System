@@ -3,7 +3,7 @@
 	"textures": {
 		"1": "mgs:item/metal",
 		"3": "mgs:item/brass",
-		"particle": "mgs:item/brass"
+		"particle": "mgs:item/metal"
 	},
 	"credit": "thebradqq's guns",
 	"elements": [

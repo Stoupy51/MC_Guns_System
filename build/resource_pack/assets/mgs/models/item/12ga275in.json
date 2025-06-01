@@ -4,7 +4,8 @@
 		"0": "mgs:item/metal_bright",
 		"1": "mgs:item/brass",
 		"3": "mgs:item/metal",
-		"4": "mgs:item/red_polymer_stripes"
+		"4": "mgs:item/red_polymer_stripes",
+		"particle": "mgs:item/metal"
 	},
 	"credit": "thebradqq's guns",
 	"elements": [
