@@ -8,13 +8,13 @@
 Credits for resources: MGS 4.2 by TheBradqq
 
 # TODO:
-- Ammo reloading using ammo items
+- Create ammunition system with reloadable items
 - Implement Reload Mid, Cooldown Mid, Cooldown End, etc.
-- Move weapon sounds under "all.sounds" instead of "all.stats"
-- If no weapon cooldown, consider single click (like pistol) so prevent maintaining right click.
-- Add on_impact explosion stats for RPG
-- Implement advanced sound gameplay
-- Burst mode
-- Drop weapon or switching to left hand starts a reload.
-- TODO: Title action bar that shows bullet icons (grayed = no bullet) instead of count/max_count
+- Reorganize weapon NBT structure to move sounds under "all.sounds" instead of "all.stats" I made
+- For weapons without cooldown (e.g. pistol), implement single-click behavior to prevent holding right-click
+- Implement RPG impact explosion mechanics
+- Add acoustic effects for realistic sound propagation
+- Add burst fire mode functionality
+- Trigger reload when weapon is dropped, or switched to off-hand?
+- Implement a title action bar that shows bullet icons (grayed = no bullet) instead of count/max_count
 

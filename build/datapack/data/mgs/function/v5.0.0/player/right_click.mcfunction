@@ -40,3 +40,6 @@ function mgs:v5.0.0/ammo/decrease
 # Advanced Playsound
 function mgs:v5.0.0/sound/main with storage mgs:gun all.stats
 
+# Summon flash
+function mgs:v5.0.0/flash/summon
+

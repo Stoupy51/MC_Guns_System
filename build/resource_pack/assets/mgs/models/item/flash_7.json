@@ -1,0 +1,36 @@
+{
+	"parent": "minecraft:item/white_stained_glass_pane",
+	"textures": {
+		"layer0": "mgs:item/flash_7"
+	},
+	"elements": [
+		{
+			"from": [
+				0,
+				0,
+				8
+			],
+			"to": [
+				16,
+				16,
+				8
+			],
+			"light_emission": 15,
+			"shade": false,
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [0,0,8]
+			},
+			"faces": {
+				"north": {"uv": [0,0,16,16],"texture": "#layer0"},
+				"east": {"uv": [8,0,8,16],"texture": "#layer0"},
+				"south": {"uv": [0,0,16,16],"texture": "#layer0"},
+				"west": {"uv": [8,0,8,16],"texture": "#layer0"},
+				"up": {"uv": [0,8,16,8],"texture": "#layer0"},
+				"down": {"uv": [0,8,16,8],"texture": "#layer0"}
+			}
+		}
+	]
+}
+

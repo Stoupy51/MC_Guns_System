@@ -17,6 +17,7 @@ from user.database.all_pistols import main as main_pistols
 from user.database.aug import main as main_aug
 from user.database.casing import main as main_casing
 from user.database.famas import main as main_famas
+from user.database.flash import main as main_flash
 from user.database.fnfal import main as main_fnfal
 from user.database.g3a3 import main as main_g3a3
 from user.database.m4a1 import main as main_m4a1
@@ -44,8 +45,9 @@ def main(config: dict) -> dict[str, dict]:
     database: dict[str,dict] = {}
     ns: str = config["namespace"]
 
-    # Add casings
+    # Add casings and flashes
     main_casing(database, ns)
+    main_flash(config, database)
 
     # Rifles
     main_m16a4(database, ns)

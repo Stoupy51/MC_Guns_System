@@ -8,6 +8,7 @@ from .raycast import main as raycast_main
 from .sound import main as sound_main
 from .switch import main as switch_main
 from .zoom import main as zoom_main
+from .flash import main as flash_main
 
 
 # Main function
@@ -36,4 +37,7 @@ def main(config: dict) -> None:
 
     # Advanced sound system
     sound_main(config)
+
+    # Handle flash effect when shooting
+    flash_main(config)
 

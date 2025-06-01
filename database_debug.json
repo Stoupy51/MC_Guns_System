@@ -104,6 +104,69 @@
 		"item_model": "mgs:762x54mm",
 		"lore": [["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]]
 	},
+	"flash_1": {
+		"id": "minecraft:white_stained_glass_pane",
+		"custom_data": {"mgs": {"flash_1": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},
+		"item_model": "mgs:flash_1",
+		"item_name": {"text": "Flash 1","italic": false,"color": "white"},
+		"lore": [["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]]
+	},
+	"flash_2": {
+		"id": "minecraft:white_stained_glass_pane",
+		"custom_data": {"mgs": {"flash_2": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},
+		"item_model": "mgs:flash_2",
+		"item_name": {"text": "Flash 2","italic": false,"color": "white"},
+		"lore": [["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]]
+	},
+	"flash_3": {
+		"id": "minecraft:white_stained_glass_pane",
+		"custom_data": {"mgs": {"flash_3": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},
+		"item_model": "mgs:flash_3",
+		"item_name": {"text": "Flash 3","italic": false,"color": "white"},
+		"lore": [["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]]
+	},
+	"flash_4": {
+		"id": "minecraft:white_stained_glass_pane",
+		"custom_data": {"mgs": {"flash_4": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},
+		"item_model": "mgs:flash_4",
+		"item_name": {"text": "Flash 4","italic": false,"color": "white"},
+		"lore": [["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]]
+	},
+	"flash_5": {
+		"id": "minecraft:white_stained_glass_pane",
+		"custom_data": {"mgs": {"flash_5": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},
+		"item_model": "mgs:flash_5",
+		"item_name": {"text": "Flash 5","italic": false,"color": "white"},
+		"lore": [["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]]
+	},
+	"flash_6": {
+		"id": "minecraft:white_stained_glass_pane",
+		"custom_data": {"mgs": {"flash_6": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},
+		"item_model": "mgs:flash_6",
+		"item_name": {"text": "Flash 6","italic": false,"color": "white"},
+		"lore": [["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]]
+	},
+	"flash_7": {
+		"id": "minecraft:white_stained_glass_pane",
+		"custom_data": {"mgs": {"flash_7": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},
+		"item_model": "mgs:flash_7",
+		"item_name": {"text": "Flash 7","italic": false,"color": "white"},
+		"lore": [["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]]
+	},
+	"flash_8": {
+		"id": "minecraft:white_stained_glass_pane",
+		"custom_data": {"mgs": {"flash_8": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},
+		"item_model": "mgs:flash_8",
+		"item_name": {"text": "Flash 8","italic": false,"color": "white"},
+		"lore": [["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]]
+	},
+	"flash_9": {
+		"id": "minecraft:white_stained_glass_pane",
+		"custom_data": {"mgs": {"flash_9": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},
+		"item_model": "mgs:flash_9",
+		"item_name": {"text": "Flash 9","italic": false,"color": "white"},
+		"lore": [["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]]
+	},
 	"m16a4": {
 		"id": "minecraft:warped_fungus_on_a_stick",
 		"custom_data": {"mgs": {"gun": true,"stats": {"base_weapon": "m16a4","capacity": 30,"reload_time": 60,"reload_end": 10,"cooldown": 2,"burst": 3,"damage": 14,"decay": 0.95,"acc_base": 100,"acc_sneak": 7,"acc_walk": 450,"acc_sprint": 1000,"acc_jump": 1500,"switch": 20,"kick": 2,"casing_model": "mgs:556x45mm","casing_n": 150,"casing_t": -75,"casing_b": -200,"casing_offset": {"normal": [-0.4,-0.35,0.7],"zoom": [-0.05,-0.25,0.5]},"models": {"normal": "mgs:m16a4","zoom": "mgs:m16a4_zoom"},"remaining_bullets": 30},"m16a4": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},

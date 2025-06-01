@@ -9,7 +9,13 @@ def main(config: dict) -> None:
     ns: str = config["namespace"]
 
     # Write empty block tag
-    write_tags(config, f"{ns}:block/v{version}/empty", stp.super_json_dump({"values": []}))
+    write_tags(config, f"{ns}:block/v{version}/empty", stp.super_json_dump({"values": [
+        "minecraft:air",
+        "minecraft:cave_air",
+        "minecraft:void_air",
+        "minecraft:light",
+        "minecraft:structure_void",
+    ]}))
 
     # Write block tags
     write_tags(config, f"{ns}:block/v{version}/air", stp.super_json_dump({

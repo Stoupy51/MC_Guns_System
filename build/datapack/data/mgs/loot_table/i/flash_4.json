@@ -1,0 +1,34 @@
+{
+	"pools": [
+		{
+			"rolls": 1,
+			"entries": [
+				{
+					"type": "minecraft:item",
+					"name": "minecraft:white_stained_glass_pane",
+					"functions": [
+						{
+							"function": "minecraft:set_components",
+							"components": {
+								"minecraft:custom_data": {
+									"mgs": {"flash_4": true},
+									"smithed": {"ignore": {"functionality": true,"crafting": true}}
+								},
+								"minecraft:item_model": "mgs:flash_4",
+								"minecraft:item_name": {
+									"translate": "mgs.flash_4",
+									"italic": false,
+									"color": "white"
+								},
+								"minecraft:lore": [
+									["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"translate": "mgs.mc_guns_system","italic": true,"color": "blue"}]
+								]
+							}
+						}
+					]
+				}
+			]
+		}
+	]
+}
+
