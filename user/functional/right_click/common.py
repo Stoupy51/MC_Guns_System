@@ -29,6 +29,7 @@ def main(config: dict) -> None:
         }
     }
     write_advancement(config, f"{ns}:v{version}/right_click", json_dump(adv))
+    write_advancement(config, f"{ns}:v{version}/alt_right_click", json_dump(adv).replace(".right_click", ".alt_right_click"))
 
     # Function to set pending clicks
     write_versioned_function(config, "player/set_pending_clicks",
@@ -36,7 +37,9 @@ f"""
 
 # Revoke advancement and reset right click
 advancement revoke @s only {ns}:v{version}/right_click
+advancement revoke @s only {ns}:v{version}/alt_right_click
 scoreboard players reset @s {ns}.right_click
+scoreboard players reset @s {ns}.alt_right_click
 
 # Set pending clicks
 scoreboard players set @s {ns}.pending_clicks 4
@@ -50,7 +53,9 @@ tag @s add {ns}.ticking
 
 # Copy gun data
 data remove storage {ns}:gun all
-data modify storage {ns}:gun all set from entity @s SelectedItem.components."minecraft:custom_data".{ns}
+data modify storage {ns}:gun SelectedItem set value {{id:""}}
+data modify storage {ns}:gun SelectedItem set from entity @s SelectedItem
+data modify storage {ns}:gun all set from storage {ns}:gun SelectedItem.components."minecraft:custom_data".{ns}
 
 # Check if we need to zoom weapon or stop
 function {ns}:v{version}/zoom/main
@@ -63,6 +68,7 @@ execute if score @s {ns}.cooldown matches 1.. run scoreboard players remove @s {
 
 # Check if we need to play reload end sound
 execute if score @s {ns}.cooldown matches 1.. if data storage {ns}:gun all.stats run function {ns}:v{version}/sound/check_reload_end
+execute if score @s {ns}.cooldown matches 0 if entity @s[tag={ns}.reloading] run function {ns}:v{version}/ammo/end_reload
 
 # If pending clicks, run right click function
 execute if score @s {ns}.pending_clicks matches -100.. run function {ns}:v{version}/player/right_click
@@ -71,6 +77,9 @@ execute if score @s {ns}.pending_clicks matches -100.. run function {ns}:v{versi
 
 # Remove temporary tag
 tag @s remove {ns}.ticking
+
+# Set previous selected weapon (length of string)
+execute store result score @s {ns}.previous_selected run data get storage {ns}:gun SelectedItem.id
 """)
 
     # Handle pending clicks

@@ -166,12 +166,15 @@ f"""
 # Set cooldown to reload duration
 execute store result score @s {ns}.cooldown run data get storage {ns}:gun all.stats.{RELOAD_TIME}
 
-# Update weapon lore
-function {ns}:v{version}/ammo/modify_lore {{slot:"weapon.mainhand"}}
+# Force weapon switch animation
+function {ns}:v{version}/switch/force_switch_animation
 
 # Get the new ammo count
 # TODO: Find ammo in inventory and don't take it out for your ass
 execute store result score @s {ns}.{REMAINING_BULLETS} run data get storage {ns}:gun all.stats.{CAPACITY}
+
+# Update weapon lore
+function {ns}:v{version}/ammo/modify_lore {{slot:"weapon.mainhand"}}
 
 # Play reload sound (and send stats for macro)
 function {ns}:v{version}/sound/reload_start with storage {ns}:gun all.stats
@@ -180,3 +183,11 @@ function {ns}:v{version}/sound/reload_start with storage {ns}:gun all.stats
 tag @s add {ns}.reloading
 """)
 
+    write_versioned_function(config, "ammo/end_reload",
+f"""
+# Update weapon lore
+function {ns}:v{version}/ammo/modify_lore {{slot:"weapon.mainhand"}}
+
+# Remove reloading tag
+tag @s remove {ns}.reloading
+""")

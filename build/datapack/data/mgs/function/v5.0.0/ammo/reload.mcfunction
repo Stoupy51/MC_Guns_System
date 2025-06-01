@@ -7,12 +7,15 @@
 # Set cooldown to reload duration
 execute store result score @s mgs.cooldown run data get storage mgs:gun all.stats.reload_time
 
-# Update weapon lore
-function mgs:v5.0.0/ammo/modify_lore {slot:"weapon.mainhand"}
+# Force weapon switch animation
+function mgs:v5.0.0/switch/force_switch_animation
 
 # Get the new ammo count
 # TODO: Find ammo in inventory and don't take it out for your ass
 execute store result score @s mgs.remaining_bullets run data get storage mgs:gun all.stats.capacity
+
+# Update weapon lore
+function mgs:v5.0.0/ammo/modify_lore {slot:"weapon.mainhand"}
 
 # Play reload sound (and send stats for macro)
 function mgs:v5.0.0/sound/reload_start with storage mgs:gun all.stats

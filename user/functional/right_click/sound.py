@@ -40,7 +40,7 @@ $playsound {ns}:$({BASE_WEAPON})/playerbegin player @a[distance=0.01..16] ~ ~ ~ 
     # Reload end functions
     write_versioned_function(config, "sound/check_reload_end",
 f"""
-# TODO:IF COOLDOWN = RELOAD_END, RUN:
+# If cooldown is reload end, and player was reloading, playsound
 execute store result score #{RELOAD_END} {ns}.data run data get storage {ns}:gun all.stats.{RELOAD_END}
 execute if score @s {ns}.cooldown = #{RELOAD_END} {ns}.data run function {ns}:v{version}/sound/reload_end with storage {ns}:gun all.stats
 """)
@@ -48,11 +48,5 @@ execute if score @s {ns}.cooldown = #{RELOAD_END} {ns}.data run function {ns}:v{
 f"""
 # Play the end reload sound for all nearby players
 $playsound {ns}:$({BASE_WEAPON})/playerend player @a[distance=0.01..16] ~ ~ ~ 0.3
-
-# Update weapon lore
-function {ns}:v{version}/ammo/modify_lore {{slot:"weapon.mainhand"}}
-
-# Remove reloading tag
-tag @s remove {ns}.reloading
 """)
 

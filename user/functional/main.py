@@ -16,8 +16,10 @@ def main(config: dict) -> None:
     write_load_file(config,
 f"""
 ## Define objectives
-# Detect right click with a gun #TODO: alternate with carrot_on_a_stick
+# Detect right click with a gun (Alternative for weapon switching cooldown)
 scoreboard objectives add {ns}.right_click minecraft.used:minecraft.warped_fungus_on_a_stick
+scoreboard objectives add {ns}.alt_right_click minecraft.used:minecraft.carrot_on_a_stick
+scoreboard objectives add {ns}.previous_selected dummy
 
 # Tracks right clicks to enable continuous right-click detection
 scoreboard objectives add {ns}.pending_clicks dummy

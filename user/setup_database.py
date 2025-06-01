@@ -101,13 +101,6 @@ def main(config: dict) -> dict[str, dict]:
             zoom_model: str = normal_model + "_zoom"
             gun_stats[MODELS] = {"normal": normal_model, "zoom": zoom_model}
 
-            # Compute attack speed based of 'switch' stats
-            # Formula: [attack_speed = (20.0 / switch_ticks) - 4.0] <- where 4.0 is default attack speed
-            if gun_stats.get(SWITCH):
-                attack_speed: float = (20.0 / gun_stats[SWITCH]) - 4.0
-                data["attribute_modifiers"] = [{"type": "attack_speed", "amount": attack_speed, "operation": "add_value", "slot": "mainhand", "id": "minecraft:base_attack_speed"}]
-                data["tooltip_display"] = {"hide_tooltip": False, "hidden_components": ["minecraft:attribute_modifiers"]}
-
             # Initialize magazine with full capacity
             gun_stats[REMAINING_BULLETS] = gun_stats[CAPACITY]
 

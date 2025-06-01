@@ -14,13 +14,6 @@
 									"mgs": {"gun": true,"stats": {"base_weapon": "scar17","capacity": 20,"reload_time": 60,"reload_end": 15,"cooldown": 3,"burst": 2,"damage": 18,"decay": 0.92,"acc_base": 140,"acc_sneak": 5,"acc_walk": 500,"acc_sprint": 1500,"acc_jump": 2300,"switch": 30,"kick": 3,"casing_model": "mgs:762x51mm","casing_n": 50,"casing_t": -75,"casing_b": -300,"casing_offset": {"normal": [-0.32,-0.3,0.7],"zoom": [-0.05,-0.25,0.5]},"models": {"normal": "mgs:scar17_4","zoom": "mgs:scar17_4_zoom"},"remaining_bullets": 20},"scar17_4_zoom": true},
 									"smithed": {"ignore": {"functionality": true,"crafting": true}}
 								},
-								"minecraft:attribute_modifiers": [
-									{"type": "attack_speed","amount": -3.3333333333333335,"operation": "add_value","slot": "mainhand","id": "minecraft:base_attack_speed"}
-								],
-								"minecraft:tooltip_display": {
-									"hide_tooltip": false,
-									"hidden_components": ["minecraft:attribute_modifiers"]
-								},
 								"minecraft:lore": [
 									[{"text": "D","color": "#c24a17","italic": false},{"text": "a","color": "#c24c18"},{"text": "m","color": "#c24f1a"},{"text": "a","color": "#c2511b"},{"text": "g","color": "#c3541d"},{"text": "e","color": "#c3571e"},{"text": " ","color": "#c35920"},{"text": "P","color": "#c35c21"},{"text": "e","color": "#c45e23"},{"text": "r","color": "#c46124"},{"text": " ","color": "#c46426"},{"text": "B","color": "#c46628"},{"text": "u","color": "#c56929"},{"text": "l","color": "#c56b2b"},{"text": "l","color": "#c56e2c"},{"text": "e","color": "#c5712e"},{"text": "t","color": "#c6732f"},{"text": " ","color": "#c67631"},{"text": " ","color": "#c67832"},{"text": "➤","color": "#c67b34"},{"text": " ","color": "#c77e36"},"18"],
 									[{"text": "A","color": "#c24a17","italic": false},{"text": "m","color": "#c24c18"},{"text": "m","color": "#c24e19"},{"text": "o","color": "#c2511b"},{"text": " ","color": "#c2531c"},{"text": "R","color": "#c3561e"},{"text": "e","color": "#c3581f"},{"text": "m","color": "#c35b21"},{"text": "a","color": "#c35d22"},{"text": "i","color": "#c46024"},{"text": "n","color": "#c46225"},{"text": "i","color": "#c46527"},{"text": "n","color": "#c46728"},{"text": "g","color": "#c56a2a"},{"text": " ","color": "#c56c2b"},{"text": " ","color": "#c56f2d"},{"text": " ","color": "#c5712e"},{"text": " ","color": "#c67430"},{"text": " ","color": "#c67631"},{"text": " ","color": "#c67933"},{"text": "➤","color": "#c67b34"},{"text": " ","color": "#c77e36"},"20",{"text": "/","color": "#c77e36"},"20"],

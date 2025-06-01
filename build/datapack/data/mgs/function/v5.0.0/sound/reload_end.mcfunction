@@ -7,9 +7,3 @@
 # Play the end reload sound for all nearby players
 $playsound mgs:$(base_weapon)/playerend player @a[distance=0.01..16] ~ ~ ~ 0.3
 
-# Update weapon lore
-function mgs:v5.0.0/ammo/modify_lore {slot:"weapon.mainhand"}
-
-# Remove reloading tag
-tag @s remove mgs.reloading
-
