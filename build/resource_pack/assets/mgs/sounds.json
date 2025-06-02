@@ -59,53 +59,53 @@
 		"subtitle": "flyby",
 		"sounds": ["mgs:common/flyby01","mgs:common/flyby02","mgs:common/flyby03","mgs:common/flyby04","mgs:common/flyby05"]
 	},
-	"common/large_crack_0_mono": {
-		"subtitle": "large_crack_0_mono",
-		"sounds": ["mgs:common/large_crack_0_mono"]
+	"common/large_crack_0_distant": {
+		"subtitle": "large_crack_0_distant",
+		"sounds": ["mgs:common/large_crack_0_distant"]
 	},
-	"common/large_crack_1_mono": {
-		"subtitle": "large_crack_1_mono",
-		"sounds": ["mgs:common/large_crack_1_mono"]
+	"common/large_crack_1_far": {
+		"subtitle": "large_crack_1_far",
+		"sounds": ["mgs:common/large_crack_1_far"]
 	},
-	"common/large_crack_2_mono": {
-		"subtitle": "large_crack_2_mono",
-		"sounds": ["mgs:common/large_crack_2_mono"]
+	"common/large_crack_2_midrange": {
+		"subtitle": "large_crack_2_midrange",
+		"sounds": ["mgs:common/large_crack_2_midrange"]
 	},
-	"common/large_crack_3_mono": {
-		"subtitle": "large_crack_3_mono",
-		"sounds": ["mgs:common/large_crack_3_mono"]
+	"common/large_crack_3_near": {
+		"subtitle": "large_crack_3_near",
+		"sounds": ["mgs:common/large_crack_3_near"]
 	},
-	"common/large_crack_4_mono": {
-		"subtitle": "large_crack_4_mono",
-		"sounds": ["mgs:common/large_crack_4_mono"]
+	"common/large_crack_4_closest": {
+		"subtitle": "large_crack_4_closest",
+		"sounds": ["mgs:common/large_crack_4_closest"]
 	},
-	"common/large_crack_water_mono": {
-		"subtitle": "large_crack_water_mono",
-		"sounds": ["mgs:common/large_crack_water_mono"]
+	"common/large_crack_5_water": {
+		"subtitle": "large_crack_5_water",
+		"sounds": ["mgs:common/large_crack_5_water"]
 	},
-	"common/largest_crack_0_mono": {
-		"subtitle": "largest_crack_0_mono",
-		"sounds": ["mgs:common/largest_crack_0_mono"]
+	"common/largest_crack_0_distant": {
+		"subtitle": "largest_crack_0_distant",
+		"sounds": ["mgs:common/largest_crack_0_distant"]
 	},
-	"common/largest_crack_1_mono": {
-		"subtitle": "largest_crack_1_mono",
-		"sounds": ["mgs:common/largest_crack_1_mono"]
+	"common/largest_crack_1_far": {
+		"subtitle": "largest_crack_1_far",
+		"sounds": ["mgs:common/largest_crack_1_far"]
 	},
-	"common/largest_crack_2_mono": {
-		"subtitle": "largest_crack_2_mono",
-		"sounds": ["mgs:common/largest_crack_2_mono"]
+	"common/largest_crack_2_midrange": {
+		"subtitle": "largest_crack_2_midrange",
+		"sounds": ["mgs:common/largest_crack_2_midrange"]
 	},
-	"common/largest_crack_3_mono": {
-		"subtitle": "largest_crack_3_mono",
-		"sounds": ["mgs:common/largest_crack_3_mono"]
+	"common/largest_crack_3_near": {
+		"subtitle": "largest_crack_3_near",
+		"sounds": ["mgs:common/largest_crack_3_near"]
 	},
-	"common/largest_crack_4_mono": {
-		"subtitle": "largest_crack_4_mono",
-		"sounds": ["mgs:common/largest_crack_4_mono"]
+	"common/largest_crack_4_closest": {
+		"subtitle": "largest_crack_4_closest",
+		"sounds": ["mgs:common/largest_crack_4_closest"]
 	},
-	"common/largest_crack_water_mono": {
-		"subtitle": "largest_crack_water_mono",
-		"sounds": ["mgs:common/largest_crack_water_mono"]
+	"common/largest_crack_5_water": {
+		"subtitle": "largest_crack_5_water",
+		"sounds": ["mgs:common/largest_crack_5_water"]
 	},
 	"common/lean_in": {
 		"subtitle": "lean_in",
@@ -115,29 +115,29 @@
 		"subtitle": "lean_out",
 		"sounds": ["mgs:common/lean_out"]
 	},
-	"common/medium_crack_0_mono": {
-		"subtitle": "medium_crack_0_mono",
-		"sounds": ["mgs:common/medium_crack_0_mono"]
+	"common/medium_crack_0_distant": {
+		"subtitle": "medium_crack_0_distant",
+		"sounds": ["mgs:common/medium_crack_0_distant"]
 	},
-	"common/medium_crack_1_mono": {
-		"subtitle": "medium_crack_1_mono",
-		"sounds": ["mgs:common/medium_crack_1_mono"]
+	"common/medium_crack_1_far": {
+		"subtitle": "medium_crack_1_far",
+		"sounds": ["mgs:common/medium_crack_1_far"]
 	},
-	"common/medium_crack_2_mono": {
-		"subtitle": "medium_crack_2_mono",
-		"sounds": ["mgs:common/medium_crack_2_mono"]
+	"common/medium_crack_2_midrange": {
+		"subtitle": "medium_crack_2_midrange",
+		"sounds": ["mgs:common/medium_crack_2_midrange"]
 	},
-	"common/medium_crack_3_mono": {
-		"subtitle": "medium_crack_3_mono",
-		"sounds": ["mgs:common/medium_crack_3_mono"]
+	"common/medium_crack_3_near": {
+		"subtitle": "medium_crack_3_near",
+		"sounds": ["mgs:common/medium_crack_3_near"]
 	},
-	"common/medium_crack_4_mono": {
-		"subtitle": "medium_crack_4_mono",
-		"sounds": ["mgs:common/medium_crack_4_mono"]
+	"common/medium_crack_4_closest": {
+		"subtitle": "medium_crack_4_closest",
+		"sounds": ["mgs:common/medium_crack_4_closest"]
 	},
-	"common/medium_crack_water_mono": {
-		"subtitle": "medium_crack_water_mono",
-		"sounds": ["mgs:common/medium_crack_water_mono"]
+	"common/medium_crack_5_water": {
+		"subtitle": "medium_crack_5_water",
+		"sounds": ["mgs:common/medium_crack_5_water"]
 	},
 	"common/mud_bullet_impact": {
 		"subtitle": "mud_bullet_impact",
@@ -163,29 +163,29 @@
 		"subtitle": "silence",
 		"sounds": ["mgs:common/silence"]
 	},
-	"common/small_crack_0_mono": {
-		"subtitle": "small_crack_0_mono",
-		"sounds": ["mgs:common/small_crack_0_mono"]
+	"common/small_crack_0_distant": {
+		"subtitle": "small_crack_0_distant",
+		"sounds": ["mgs:common/small_crack_0_distant"]
 	},
-	"common/small_crack_1_mono": {
-		"subtitle": "small_crack_1_mono",
-		"sounds": ["mgs:common/small_crack_1_mono"]
+	"common/small_crack_1_far": {
+		"subtitle": "small_crack_1_far",
+		"sounds": ["mgs:common/small_crack_1_far"]
 	},
-	"common/small_crack_2_mono": {
-		"subtitle": "small_crack_2_mono",
-		"sounds": ["mgs:common/small_crack_2_mono"]
+	"common/small_crack_2_midrange": {
+		"subtitle": "small_crack_2_midrange",
+		"sounds": ["mgs:common/small_crack_2_midrange"]
 	},
-	"common/small_crack_3_mono": {
-		"subtitle": "small_crack_3_mono",
-		"sounds": ["mgs:common/small_crack_3_mono"]
+	"common/small_crack_3_near": {
+		"subtitle": "small_crack_3_near",
+		"sounds": ["mgs:common/small_crack_3_near"]
 	},
-	"common/small_crack_4_mono": {
-		"subtitle": "small_crack_4_mono",
-		"sounds": ["mgs:common/small_crack_4_mono"]
+	"common/small_crack_4_closest": {
+		"subtitle": "small_crack_4_closest",
+		"sounds": ["mgs:common/small_crack_4_closest"]
 	},
-	"common/small_crack_water_mono": {
-		"subtitle": "small_crack_water_mono",
-		"sounds": ["mgs:common/small_crack_water_mono"]
+	"common/small_crack_5_water": {
+		"subtitle": "small_crack_5_water",
+		"sounds": ["mgs:common/small_crack_5_water"]
 	},
 	"common/soft_bullet_impact": {
 		"subtitle": "soft_bullet_impact",
@@ -195,29 +195,29 @@
 		"subtitle": "solid_bullet_impact",
 		"sounds": ["mgs:common/solid_bullet_impact_01","mgs:common/solid_bullet_impact_02","mgs:common/solid_bullet_impact_03","mgs:common/solid_bullet_impact_04","mgs:common/solid_bullet_impact_05"]
 	},
-	"common/tiny_crack_0_mono": {
-		"subtitle": "tiny_crack_0_mono",
-		"sounds": ["mgs:common/tiny_crack_0_mono"]
+	"common/tiny_crack_0_distant": {
+		"subtitle": "tiny_crack_0_distant",
+		"sounds": ["mgs:common/tiny_crack_0_distant"]
 	},
-	"common/tiny_crack_1_mono": {
-		"subtitle": "tiny_crack_1_mono",
-		"sounds": ["mgs:common/tiny_crack_1_mono"]
+	"common/tiny_crack_1_far": {
+		"subtitle": "tiny_crack_1_far",
+		"sounds": ["mgs:common/tiny_crack_1_far"]
 	},
-	"common/tiny_crack_2_mono": {
-		"subtitle": "tiny_crack_2_mono",
-		"sounds": ["mgs:common/tiny_crack_2_mono"]
+	"common/tiny_crack_2_midrange": {
+		"subtitle": "tiny_crack_2_midrange",
+		"sounds": ["mgs:common/tiny_crack_2_midrange"]
 	},
-	"common/tiny_crack_3_mono": {
-		"subtitle": "tiny_crack_3_mono",
-		"sounds": ["mgs:common/tiny_crack_3_mono"]
+	"common/tiny_crack_3_near": {
+		"subtitle": "tiny_crack_3_near",
+		"sounds": ["mgs:common/tiny_crack_3_near"]
 	},
-	"common/tiny_crack_4_mono": {
-		"subtitle": "tiny_crack_4_mono",
-		"sounds": ["mgs:common/tiny_crack_4_mono"]
+	"common/tiny_crack_4_closest": {
+		"subtitle": "tiny_crack_4_closest",
+		"sounds": ["mgs:common/tiny_crack_4_closest"]
 	},
-	"common/tiny_crack_water_mono": {
-		"subtitle": "tiny_crack_water_mono",
-		"sounds": ["mgs:common/tiny_crack_water_mono"]
+	"common/tiny_crack_5_water": {
+		"subtitle": "tiny_crack_5_water",
+		"sounds": ["mgs:common/tiny_crack_5_water"]
 	},
 	"common/wood_bullet_impact": {
 		"subtitle": "wood_bullet_impact",
