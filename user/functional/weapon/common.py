@@ -51,6 +51,9 @@ f"""
 # Add temporary tag
 tag @s add {ns}.ticking
 
+# Compute acoustics (#TODO: Only if player moved enough, and every second not tick)
+function {ns}:v{version}/sound/compute_acoustics
+
 # Copy gun data
 data remove storage {ns}:gun all
 data modify storage {ns}:gun SelectedItem set value {{id:""}}

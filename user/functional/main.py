@@ -36,6 +36,9 @@ scoreboard objectives add {ns}.last_selected dummy
 # Tracks the current amount of bullets in the selected weapon
 scoreboard objectives add {ns}.{REMAINING_BULLETS} dummy
 
+# Tracks the room acoustics level for crack sound effects
+scoreboard objectives add {ns}.acoustics_level dummy
+
 
 # Define some constants
 scoreboard players set #2 {ns}.data 2

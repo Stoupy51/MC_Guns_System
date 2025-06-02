@@ -11,7 +11,7 @@
 							"function": "minecraft:set_components",
 							"components": {
 								"minecraft:custom_data": {
-									"mgs": {"gun": true,"stats": {"base_weapon": "ppsh41","capacity": 71,"reload_time": 100,"reload_mid": 70,"reload_end": 16,"cooldown": 1,"burst": 4,"damage": 10,"decay": 0.92,"acc_base": 175,"acc_sneak": 125,"acc_walk": 400,"acc_sprint": 700,"acc_jump": 1500,"switch": 40,"kick": 2,"casing_model": "mgs:762x25mm","casing_n": 300,"casing_t": -50,"casing_b": -25,"casing_offset": {"normal": [-0.38,-0.2,0.7],"zoom": [0.0,0.0,0.5]},"models": {"normal": "mgs:ppsh41","zoom": "mgs:ppsh41_zoom"},"remaining_bullets": 71},"ppsh41": true},
+									"mgs": {"gun": true,"stats": {"base_weapon": "ppsh41","crack_type": "tiny","capacity": 71,"reload_time": 100,"reload_mid": 70,"reload_end": 16,"cooldown": 1,"burst": 4,"damage": 10,"decay": 0.92,"acc_base": 175,"acc_sneak": 125,"acc_walk": 400,"acc_sprint": 700,"acc_jump": 1500,"switch": 40,"kick": 2,"casing_model": "mgs:762x25mm","casing_n": 300,"casing_t": -50,"casing_b": -25,"casing_offset": {"normal": [-0.38,-0.2,0.7],"zoom": [0.0,0.0,0.5]},"models": {"normal": "mgs:ppsh41","zoom": "mgs:ppsh41_zoom"},"remaining_bullets": 71},"ppsh41": true},
 									"smithed": {"ignore": {"functionality": true,"crafting": true}}
 								},
 								"minecraft:lore": [

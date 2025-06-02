@@ -11,7 +11,7 @@
 							"function": "minecraft:set_components",
 							"components": {
 								"minecraft:custom_data": {
-									"mgs": {"gun": true,"stats": {"base_weapon": "m82","capacity": 10,"reload_time": 80,"reload_mid": 50,"reload_end": 15,"cooldown": 10,"damage": 55,"decay": 0.9,"acc_base": 450,"acc_sneak": 12,"acc_walk": 800,"acc_sprint": 1500,"acc_jump": 3000,"switch": 50,"kick": 5,"casing_model": "mgs:50bmg","casing_n": 50,"casing_t": -25,"casing_b": -225,"casing_offset": {"normal": [-0.28,-0.3,0.7],"zoom": [-0.1,-0.25,0.6]},"models": {"normal": "mgs:m82_2","zoom": "mgs:m82_2_zoom"},"remaining_bullets": 10},"m82_2_zoom": true},
+									"mgs": {"gun": true,"stats": {"base_weapon": "m82","crack_type": "largest","capacity": 10,"reload_time": 80,"reload_mid": 50,"reload_end": 15,"cooldown": 10,"damage": 55,"decay": 0.9,"acc_base": 450,"acc_sneak": 12,"acc_walk": 800,"acc_sprint": 1500,"acc_jump": 3000,"switch": 50,"kick": 5,"casing_model": "mgs:50bmg","casing_n": 50,"casing_t": -25,"casing_b": -225,"casing_offset": {"normal": [-0.28,-0.3,0.7],"zoom": [-0.1,-0.25,0.6]},"models": {"normal": "mgs:m82_2","zoom": "mgs:m82_2_zoom"},"remaining_bullets": 10},"m82_2_zoom": true},
 									"smithed": {"ignore": {"functionality": true,"crafting": true}}
 								},
 								"minecraft:lore": [

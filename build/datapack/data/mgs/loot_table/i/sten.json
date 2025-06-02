@@ -11,7 +11,7 @@
 							"function": "minecraft:set_components",
 							"components": {
 								"minecraft:custom_data": {
-									"mgs": {"gun": true,"stats": {"base_weapon": "sten","capacity": 32,"reload_time": 58,"reload_mid": 40,"reload_end": 10,"cooldown": 3,"burst": 2,"damage": 11,"decay": 0.92,"acc_base": 150,"acc_sneak": 100,"acc_walk": 300,"acc_sprint": 400,"acc_jump": 800,"switch": 20,"kick": 1,"casing_model": "mgs:9x19mm","casing_n": 20,"casing_t": 0,"casing_b": -125,"casing_offset": {"normal": [-0.38,-0.35,0.7],"zoom": [-0.1,-0.12,0.5]},"models": {"normal": "mgs:sten","zoom": "mgs:sten_zoom"},"remaining_bullets": 32},"sten": true},
+									"mgs": {"gun": true,"stats": {"base_weapon": "sten","crack_type": "tiny","capacity": 32,"reload_time": 58,"reload_mid": 40,"reload_end": 10,"cooldown": 3,"burst": 2,"damage": 11,"decay": 0.92,"acc_base": 150,"acc_sneak": 100,"acc_walk": 300,"acc_sprint": 400,"acc_jump": 800,"switch": 20,"kick": 1,"casing_model": "mgs:9x19mm","casing_n": 20,"casing_t": 0,"casing_b": -125,"casing_offset": {"normal": [-0.38,-0.35,0.7],"zoom": [-0.1,-0.12,0.5]},"models": {"normal": "mgs:sten","zoom": "mgs:sten_zoom"},"remaining_bullets": 32},"sten": true},
 									"smithed": {"ignore": {"functionality": true,"crafting": true}}
 								},
 								"minecraft:lore": [

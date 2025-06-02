@@ -11,7 +11,7 @@
 							"function": "minecraft:set_components",
 							"components": {
 								"minecraft:custom_data": {
-									"mgs": {"gun": true,"stats": {"base_weapon": "glock18","capacity": 19,"reload_time": 70,"reload_end": 16,"cooldown": 1,"burst": 4,"damage": 9,"decay": 0.92,"acc_base": 180,"acc_sneak": 140,"acc_walk": 300,"acc_sprint": 400,"acc_jump": 800,"switch": 10,"kick": 3,"casing_model": "mgs:9x19mm","casing_n": 225,"casing_t": -100,"casing_b": -75,"casing_offset": {"normal": [-0.35,-0.27,0.5],"zoom": [-0.05,0.0,0.4]},"models": {"normal": "mgs:glock18","zoom": "mgs:glock18_zoom"},"remaining_bullets": 19},"glock18_zoom": true},
+									"mgs": {"gun": true,"stats": {"base_weapon": "glock18","crack_type": "tiny","capacity": 19,"reload_time": 70,"reload_end": 16,"cooldown": 1,"burst": 4,"damage": 9,"decay": 0.92,"acc_base": 180,"acc_sneak": 140,"acc_walk": 300,"acc_sprint": 400,"acc_jump": 800,"switch": 10,"kick": 3,"casing_model": "mgs:9x19mm","casing_n": 225,"casing_t": -100,"casing_b": -75,"casing_offset": {"normal": [-0.35,-0.27,0.5],"zoom": [-0.05,0.0,0.4]},"models": {"normal": "mgs:glock18","zoom": "mgs:glock18_zoom"},"remaining_bullets": 19},"glock18_zoom": true},
 									"smithed": {"ignore": {"functionality": true,"crafting": true}}
 								},
 								"minecraft:lore": [
