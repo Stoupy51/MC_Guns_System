@@ -137,7 +137,7 @@ execute if score #processed_acoustics {ns}.data matches 5 run function {ns}:v{ve
         for mini, maxi, volume in pairs:
             write_versioned_function(
                 config, f"sound/hearing/{i}_{level}",
-                f"$execute if entity @s[distance={mini}..{maxi}] positioned as @s run playsound {ns}:common/$({CRACK_TYPE})_crack_{i}_{level} player @s ^ ^ ^-12 {volume}\n"
+                f"$execute if entity @s[distance={mini}..{maxi}] positioned as @s run playsound {ns}:common/$({CRACK_TYPE})_crack_{i}_{level} player @s ^ ^ ^-6 {round(volume * 1.5, 3)}\n"
             )
 
     # Main function
