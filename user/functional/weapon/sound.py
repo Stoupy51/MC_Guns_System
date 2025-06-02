@@ -22,9 +22,12 @@ function {ns}:v{version}/sound/main with storage {ns}:gun all.stats
     # Main function
     write_versioned_function(config, "sound/main",
 f"""
-# TODO: Advanced playsound using cracks and stuff
+# Simple weapon fire sound
 $playsound {ns}:$({BASE_WEAPON})/fire player @s ~ ~ ~ 0.25
 $playsound {ns}:$({BASE_WEAPON})/fire player @a[distance=0.01..48] 0.75 1 0.25
+
+# Compute acoustics, and playsound
+function {ns}:v{version}/sound/acoustics with storage {ns}:gun all.stats
 """)
 
     # Reload start function

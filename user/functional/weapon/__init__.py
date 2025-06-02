@@ -3,12 +3,12 @@
 from .ammo import main as ammo_main
 from .casing import main as casing_main
 from .common import main as common_main
+from .flash import main as flash_main
 from .kick import main as kick_main
 from .raycast import main as raycast_main
 from .sound import main as sound_main
 from .switch import main as switch_main
 from .zoom import main as zoom_main
-from .flash import main as flash_main
 
 
 # Main function
