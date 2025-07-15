@@ -1,723 +1,722 @@
 {
 	"ak47/fire": {
-		"subtitle": "fire",
+		"subtitle": "ak47/fire",
 		"sounds": ["mgs:ak47/fire"]
 	},
 	"ak47/playerbegin": {
-		"subtitle": "playerbegin",
+		"subtitle": "ak47/playerbegin",
 		"sounds": ["mgs:ak47/playerbegin"]
 	},
 	"ak47/playerend": {
-		"subtitle": "playerend",
+		"subtitle": "ak47/playerend",
 		"sounds": ["mgs:ak47/playerend"]
 	},
 	"ak47/reload": {
-		"subtitle": "reload",
+		"subtitle": "ak47/reload",
 		"sounds": ["mgs:ak47/reload"]
 	},
 	"aug/fire": {
-		"subtitle": "fire",
+		"subtitle": "aug/fire",
 		"sounds": ["mgs:aug/fire"]
 	},
 	"aug/playerbegin": {
-		"subtitle": "playerbegin",
+		"subtitle": "aug/playerbegin",
 		"sounds": ["mgs:aug/playerbegin"]
 	},
 	"aug/playerend": {
-		"subtitle": "playerend",
+		"subtitle": "aug/playerend",
 		"sounds": ["mgs:aug/playerend"]
 	},
 	"aug/playermid": {
-		"subtitle": "playermid",
+		"subtitle": "aug/playermid",
 		"sounds": ["mgs:aug/playermid"]
 	},
 	"aug/reload": {
-		"subtitle": "reload",
+		"subtitle": "aug/reload",
 		"sounds": ["mgs:aug/reload"]
 	},
 	"common/cloth_bullet_impact": {
-		"subtitle": "cloth_bullet_impact",
+		"subtitle": "common/cloth_bullet_impact_01",
 		"sounds": ["mgs:common/cloth_bullet_impact_01","mgs:common/cloth_bullet_impact_02","mgs:common/cloth_bullet_impact_03","mgs:common/cloth_bullet_impact_04"]
 	},
 	"common/dirt_bullet_impact": {
-		"subtitle": "dirt_bullet_impact",
+		"subtitle": "common/dirt_bullet_impact_01",
 		"sounds": ["mgs:common/dirt_bullet_impact_01","mgs:common/dirt_bullet_impact_02","mgs:common/dirt_bullet_impact_03"]
 	},
 	"common/empty": {
-		"subtitle": "empty",
+		"subtitle": "common/empty",
 		"sounds": ["mgs:common/empty"]
 	},
 	"common/explode_far": {
-		"subtitle": "explode_far",
+		"subtitle": "common/explode_far0",
 		"sounds": ["mgs:common/explode_far0","mgs:common/explode_far1","mgs:common/explode_far2","mgs:common/explode_far3"]
 	},
 	"common/fireselect": {
-		"subtitle": "fireselect",
+		"subtitle": "common/fireselect",
 		"sounds": ["mgs:common/fireselect"]
 	},
 	"common/flyby": {
-		"subtitle": "flyby",
+		"subtitle": "common/flyby01",
 		"sounds": ["mgs:common/flyby01","mgs:common/flyby02","mgs:common/flyby03","mgs:common/flyby04","mgs:common/flyby05"]
 	},
 	"common/large_crack_0_distant": {
-		"subtitle": "large_crack_0_distant",
+		"subtitle": "common/large_crack_0_distant",
 		"sounds": ["mgs:common/large_crack_0_distant"]
 	},
 	"common/large_crack_1_far": {
-		"subtitle": "large_crack_1_far",
+		"subtitle": "common/large_crack_1_far",
 		"sounds": ["mgs:common/large_crack_1_far"]
 	},
 	"common/large_crack_2_midrange": {
-		"subtitle": "large_crack_2_midrange",
+		"subtitle": "common/large_crack_2_midrange",
 		"sounds": ["mgs:common/large_crack_2_midrange"]
 	},
 	"common/large_crack_3_near": {
-		"subtitle": "large_crack_3_near",
+		"subtitle": "common/large_crack_3_near",
 		"sounds": ["mgs:common/large_crack_3_near"]
 	},
 	"common/large_crack_4_closest": {
-		"subtitle": "large_crack_4_closest",
+		"subtitle": "common/large_crack_4_closest",
 		"sounds": ["mgs:common/large_crack_4_closest"]
 	},
 	"common/large_crack_5_water": {
-		"subtitle": "large_crack_5_water",
+		"subtitle": "common/large_crack_5_water",
 		"sounds": ["mgs:common/large_crack_5_water"]
 	},
 	"common/largest_crack_0_distant": {
-		"subtitle": "largest_crack_0_distant",
+		"subtitle": "common/largest_crack_0_distant",
 		"sounds": ["mgs:common/largest_crack_0_distant"]
 	},
 	"common/largest_crack_1_far": {
-		"subtitle": "largest_crack_1_far",
+		"subtitle": "common/largest_crack_1_far",
 		"sounds": ["mgs:common/largest_crack_1_far"]
 	},
 	"common/largest_crack_2_midrange": {
-		"subtitle": "largest_crack_2_midrange",
+		"subtitle": "common/largest_crack_2_midrange",
 		"sounds": ["mgs:common/largest_crack_2_midrange"]
 	},
 	"common/largest_crack_3_near": {
-		"subtitle": "largest_crack_3_near",
+		"subtitle": "common/largest_crack_3_near",
 		"sounds": ["mgs:common/largest_crack_3_near"]
 	},
 	"common/largest_crack_4_closest": {
-		"subtitle": "largest_crack_4_closest",
+		"subtitle": "common/largest_crack_4_closest",
 		"sounds": ["mgs:common/largest_crack_4_closest"]
 	},
 	"common/largest_crack_5_water": {
-		"subtitle": "largest_crack_5_water",
+		"subtitle": "common/largest_crack_5_water",
 		"sounds": ["mgs:common/largest_crack_5_water"]
 	},
 	"common/lean_in": {
-		"subtitle": "lean_in",
+		"subtitle": "common/lean_in1",
 		"sounds": ["mgs:common/lean_in1","mgs:common/lean_in2","mgs:common/lean_in3","mgs:common/lean_in4"]
 	},
 	"common/lean_out": {
-		"subtitle": "lean_out",
+		"subtitle": "common/lean_out",
 		"sounds": ["mgs:common/lean_out"]
 	},
 	"common/medium_crack_0_distant": {
-		"subtitle": "medium_crack_0_distant",
+		"subtitle": "common/medium_crack_0_distant",
 		"sounds": ["mgs:common/medium_crack_0_distant"]
 	},
 	"common/medium_crack_1_far": {
-		"subtitle": "medium_crack_1_far",
+		"subtitle": "common/medium_crack_1_far",
 		"sounds": ["mgs:common/medium_crack_1_far"]
 	},
 	"common/medium_crack_2_midrange": {
-		"subtitle": "medium_crack_2_midrange",
+		"subtitle": "common/medium_crack_2_midrange",
 		"sounds": ["mgs:common/medium_crack_2_midrange"]
 	},
 	"common/medium_crack_3_near": {
-		"subtitle": "medium_crack_3_near",
+		"subtitle": "common/medium_crack_3_near",
 		"sounds": ["mgs:common/medium_crack_3_near"]
 	},
 	"common/medium_crack_4_closest": {
-		"subtitle": "medium_crack_4_closest",
+		"subtitle": "common/medium_crack_4_closest",
 		"sounds": ["mgs:common/medium_crack_4_closest"]
 	},
 	"common/medium_crack_5_water": {
-		"subtitle": "medium_crack_5_water",
+		"subtitle": "common/medium_crack_5_water",
 		"sounds": ["mgs:common/medium_crack_5_water"]
 	},
 	"common/mud_bullet_impact": {
-		"subtitle": "mud_bullet_impact",
+		"subtitle": "common/mud_bullet_impact_01",
 		"sounds": ["mgs:common/mud_bullet_impact_01","mgs:common/mud_bullet_impact_02","mgs:common/mud_bullet_impact_03","mgs:common/mud_bullet_impact_04"]
 	},
 	"common/reload_generic": {
-		"subtitle": "reload_generic",
+		"subtitle": "common/reload_generic",
 		"sounds": ["mgs:common/reload_generic"]
 	},
 	"common/rocket_crack_mono": {
-		"subtitle": "rocket_crack_mono",
+		"subtitle": "common/rocket_crack_mono",
 		"sounds": ["mgs:common/rocket_crack_mono"]
 	},
 	"common/rocket_crack_stereo": {
-		"subtitle": "rocket_crack_stereo",
+		"subtitle": "common/rocket_crack_stereo",
 		"sounds": ["mgs:common/rocket_crack_stereo"]
 	},
 	"common/rocket_flyby": {
-		"subtitle": "rocket_flyby",
+		"subtitle": "common/rocket_flyby01",
 		"sounds": ["mgs:common/rocket_flyby01","mgs:common/rocket_flyby02"]
 	},
 	"common/silence": {
-		"subtitle": "silence",
+		"subtitle": "common/silence",
 		"sounds": ["mgs:common/silence"]
 	},
 	"common/small_crack_0_distant": {
-		"subtitle": "small_crack_0_distant",
+		"subtitle": "common/small_crack_0_distant",
 		"sounds": ["mgs:common/small_crack_0_distant"]
 	},
 	"common/small_crack_1_far": {
-		"subtitle": "small_crack_1_far",
+		"subtitle": "common/small_crack_1_far",
 		"sounds": ["mgs:common/small_crack_1_far"]
 	},
 	"common/small_crack_2_midrange": {
-		"subtitle": "small_crack_2_midrange",
+		"subtitle": "common/small_crack_2_midrange",
 		"sounds": ["mgs:common/small_crack_2_midrange"]
 	},
 	"common/small_crack_3_near": {
-		"subtitle": "small_crack_3_near",
+		"subtitle": "common/small_crack_3_near",
 		"sounds": ["mgs:common/small_crack_3_near"]
 	},
 	"common/small_crack_4_closest": {
-		"subtitle": "small_crack_4_closest",
+		"subtitle": "common/small_crack_4_closest",
 		"sounds": ["mgs:common/small_crack_4_closest"]
 	},
 	"common/small_crack_5_water": {
-		"subtitle": "small_crack_5_water",
+		"subtitle": "common/small_crack_5_water",
 		"sounds": ["mgs:common/small_crack_5_water"]
 	},
 	"common/soft_bullet_impact": {
-		"subtitle": "soft_bullet_impact",
+		"subtitle": "common/soft_bullet_impact_01",
 		"sounds": ["mgs:common/soft_bullet_impact_01","mgs:common/soft_bullet_impact_02","mgs:common/soft_bullet_impact_03","mgs:common/soft_bullet_impact_04","mgs:common/soft_bullet_impact_05"]
 	},
 	"common/solid_bullet_impact": {
-		"subtitle": "solid_bullet_impact",
+		"subtitle": "common/solid_bullet_impact_01",
 		"sounds": ["mgs:common/solid_bullet_impact_01","mgs:common/solid_bullet_impact_02","mgs:common/solid_bullet_impact_03","mgs:common/solid_bullet_impact_04","mgs:common/solid_bullet_impact_05"]
 	},
 	"common/tiny_crack_0_distant": {
-		"subtitle": "tiny_crack_0_distant",
+		"subtitle": "common/tiny_crack_0_distant",
 		"sounds": ["mgs:common/tiny_crack_0_distant"]
 	},
 	"common/tiny_crack_1_far": {
-		"subtitle": "tiny_crack_1_far",
+		"subtitle": "common/tiny_crack_1_far",
 		"sounds": ["mgs:common/tiny_crack_1_far"]
 	},
 	"common/tiny_crack_2_midrange": {
-		"subtitle": "tiny_crack_2_midrange",
+		"subtitle": "common/tiny_crack_2_midrange",
 		"sounds": ["mgs:common/tiny_crack_2_midrange"]
 	},
 	"common/tiny_crack_3_near": {
-		"subtitle": "tiny_crack_3_near",
+		"subtitle": "common/tiny_crack_3_near",
 		"sounds": ["mgs:common/tiny_crack_3_near"]
 	},
 	"common/tiny_crack_4_closest": {
-		"subtitle": "tiny_crack_4_closest",
+		"subtitle": "common/tiny_crack_4_closest",
 		"sounds": ["mgs:common/tiny_crack_4_closest"]
 	},
 	"common/tiny_crack_5_water": {
-		"subtitle": "tiny_crack_5_water",
+		"subtitle": "common/tiny_crack_5_water",
 		"sounds": ["mgs:common/tiny_crack_5_water"]
 	},
 	"common/wood_bullet_impact": {
-		"subtitle": "wood_bullet_impact",
+		"subtitle": "common/wood_bullet_impact_01",
 		"sounds": ["mgs:common/wood_bullet_impact_01","mgs:common/wood_bullet_impact_02","mgs:common/wood_bullet_impact_03","mgs:common/wood_bullet_impact_04"]
 	},
 	"deagle/fire": {
-		"subtitle": "fire",
+		"subtitle": "deagle/fire",
 		"sounds": ["mgs:deagle/fire"]
 	},
 	"deagle/playerbegin": {
-		"subtitle": "playerbegin",
+		"subtitle": "deagle/playerbegin",
 		"sounds": ["mgs:deagle/playerbegin"]
 	},
 	"deagle/playerend": {
-		"subtitle": "playerend",
+		"subtitle": "deagle/playerend",
 		"sounds": ["mgs:deagle/playerend"]
 	},
 	"deagle/reload": {
-		"subtitle": "reload",
+		"subtitle": "deagle/reload",
 		"sounds": ["mgs:deagle/reload"]
 	},
 	"famas/fire": {
-		"subtitle": "fire",
+		"subtitle": "famas/fire",
 		"sounds": ["mgs:famas/fire"]
 	},
 	"famas/playerbegin": {
-		"subtitle": "playerbegin",
+		"subtitle": "famas/playerbegin",
 		"sounds": ["mgs:famas/playerbegin"]
 	},
 	"famas/playerend": {
-		"subtitle": "playerend",
+		"subtitle": "famas/playerend",
 		"sounds": ["mgs:famas/playerend"]
 	},
 	"famas/playermid": {
-		"subtitle": "playermid",
+		"subtitle": "famas/playermid",
 		"sounds": ["mgs:famas/playermid"]
 	},
 	"famas/reload": {
-		"subtitle": "reload",
+		"subtitle": "famas/reload",
 		"sounds": ["mgs:famas/reload"]
 	},
 	"fnfal/fire": {
-		"subtitle": "fire",
+		"subtitle": "fnfal/fire",
 		"sounds": ["mgs:fnfal/fire"]
 	},
 	"fnfal/playerbegin": {
-		"subtitle": "playerbegin",
+		"subtitle": "fnfal/playerbegin",
 		"sounds": ["mgs:fnfal/playerbegin"]
 	},
 	"fnfal/playerend": {
-		"subtitle": "playerend",
+		"subtitle": "fnfal/playerend",
 		"sounds": ["mgs:fnfal/playerend"]
 	},
 	"fnfal/reload": {
-		"subtitle": "reload",
+		"subtitle": "fnfal/reload",
 		"sounds": ["mgs:fnfal/reload"]
 	},
 	"g3a3/fire": {
-		"subtitle": "fire",
+		"subtitle": "g3a3/fire",
 		"sounds": ["mgs:g3a3/fire"]
 	},
 	"g3a3/playerbegin": {
-		"subtitle": "playerbegin",
+		"subtitle": "g3a3/playerbegin",
 		"sounds": ["mgs:g3a3/playerbegin"]
 	},
 	"g3a3/playerend": {
-		"subtitle": "playerend",
+		"subtitle": "g3a3/playerend",
 		"sounds": ["mgs:g3a3/playerend"]
 	},
 	"g3a3/reload": {
-		"subtitle": "reload",
+		"subtitle": "g3a3/reload",
 		"sounds": ["mgs:g3a3/reload"]
 	},
 	"glock17/fire": {
-		"subtitle": "fire",
+		"subtitle": "glock17/fire",
 		"sounds": ["mgs:glock17/fire"]
 	},
 	"glock17/playerbegin": {
-		"subtitle": "playerbegin",
+		"subtitle": "glock17/playerbegin",
 		"sounds": ["mgs:glock17/playerbegin"]
 	},
 	"glock17/playerend": {
-		"subtitle": "playerend",
+		"subtitle": "glock17/playerend",
 		"sounds": ["mgs:glock17/playerend"]
 	},
 	"glock17/reload": {
-		"subtitle": "reload",
+		"subtitle": "glock17/reload",
 		"sounds": ["mgs:glock17/reload"]
 	},
 	"glock18/fire": {
-		"subtitle": "fire",
+		"subtitle": "glock18/fire",
 		"sounds": ["mgs:glock18/fire"]
 	},
 	"glock18/playerbegin": {
-		"subtitle": "playerbegin",
+		"subtitle": "glock18/playerbegin",
 		"sounds": ["mgs:glock18/playerbegin"]
 	},
 	"glock18/playerend": {
-		"subtitle": "playerend",
+		"subtitle": "glock18/playerend",
 		"sounds": ["mgs:glock18/playerend"]
 	},
 	"glock18/reload": {
-		"subtitle": "reload",
+		"subtitle": "glock18/reload",
 		"sounds": ["mgs:glock18/reload"]
 	},
 	"m16a4/fire": {
-		"subtitle": "fire",
+		"subtitle": "m16a4/fire",
 		"sounds": ["mgs:m16a4/fire"]
 	},
 	"m16a4/playerbegin": {
-		"subtitle": "playerbegin",
+		"subtitle": "m16a4/playerbegin",
 		"sounds": ["mgs:m16a4/playerbegin"]
 	},
 	"m16a4/playerend": {
-		"subtitle": "playerend",
+		"subtitle": "m16a4/playerend",
 		"sounds": ["mgs:m16a4/playerend"]
 	},
 	"m16a4/reload": {
-		"subtitle": "reload",
+		"subtitle": "m16a4/reload",
 		"sounds": ["mgs:m16a4/reload"]
 	},
 	"m1911/fire": {
-		"subtitle": "fire",
+		"subtitle": "m1911/fire",
 		"sounds": ["mgs:m1911/fire"]
 	},
 	"m1911/playerbegin": {
-		"subtitle": "playerbegin",
+		"subtitle": "m1911/playerbegin",
 		"sounds": ["mgs:m1911/playerbegin"]
 	},
 	"m1911/playerend": {
-		"subtitle": "playerend",
+		"subtitle": "m1911/playerend",
 		"sounds": ["mgs:m1911/playerend"]
 	},
 	"m1911/reload": {
-		"subtitle": "reload",
+		"subtitle": "m1911/reload",
 		"sounds": ["mgs:m1911/reload"]
 	},
 	"m24/cycle": {
-		"subtitle": "cycle",
+		"subtitle": "m24/cycle",
 		"sounds": ["mgs:m24/cycle"]
 	},
 	"m24/fire": {
-		"subtitle": "fire",
+		"subtitle": "m24/fire",
 		"sounds": ["mgs:m24/fire"]
 	},
 	"m24/playerbegin": {
-		"subtitle": "playerbegin",
+		"subtitle": "m24/playerbegin",
 		"sounds": ["mgs:m24/playerbegin"]
 	},
 	"m24/playerend": {
-		"subtitle": "playerend",
+		"subtitle": "m24/playerend",
 		"sounds": ["mgs:m24/playerend"]
 	},
 	"m24/reload": {
-		"subtitle": "reload",
+		"subtitle": "m24/reload1",
 		"sounds": ["mgs:m24/reload1","mgs:m24/reload2","mgs:m24/reload3","mgs:m24/reload4"]
 	},
 	"m249/fire": {
-		"subtitle": "fire",
+		"subtitle": "m249/fire",
 		"sounds": ["mgs:m249/fire"]
 	},
 	"m249/playerbegin": {
-		"subtitle": "playerbegin",
+		"subtitle": "m249/playerbegin",
 		"sounds": ["mgs:m249/playerbegin"]
 	},
 	"m249/playerend": {
-		"subtitle": "playerend",
+		"subtitle": "m249/playerend",
 		"sounds": ["mgs:m249/playerend"]
 	},
 	"m249/playermid": {
-		"subtitle": "playermid",
+		"subtitle": "m249/playermid",
 		"sounds": ["mgs:m249/playermid"]
 	},
 	"m249/reload": {
-		"subtitle": "reload",
+		"subtitle": "m249/reload",
 		"sounds": ["mgs:m249/reload"]
 	},
 	"m4a1/fire": {
-		"subtitle": "fire",
+		"subtitle": "m4a1/fire",
 		"sounds": ["mgs:m4a1/fire"]
 	},
 	"m4a1/playerbegin": {
-		"subtitle": "playerbegin",
+		"subtitle": "m4a1/playerbegin",
 		"sounds": ["mgs:m4a1/playerbegin"]
 	},
 	"m4a1/playerend": {
-		"subtitle": "playerend",
+		"subtitle": "m4a1/playerend",
 		"sounds": ["mgs:m4a1/playerend"]
 	},
 	"m4a1/reload": {
-		"subtitle": "reload",
+		"subtitle": "m4a1/reload",
 		"sounds": ["mgs:m4a1/reload"]
 	},
 	"m500/fire": {
-		"subtitle": "fire",
+		"subtitle": "m500/fire",
 		"sounds": ["mgs:m500/fire"]
 	},
 	"m500/pump": {
-		"subtitle": "pump",
+		"subtitle": "m500/pump",
 		"sounds": ["mgs:m500/pump"]
 	},
 	"m500/reload": {
-		"subtitle": "reload",
+		"subtitle": "m500/reload1",
 		"sounds": ["mgs:m500/reload1","mgs:m500/reload2","mgs:m500/reload3"]
 	},
 	"m590/fire": {
-		"subtitle": "fire",
+		"subtitle": "m590/fire",
 		"sounds": ["mgs:m590/fire"]
 	},
 	"m590/pump": {
-		"subtitle": "pump",
+		"subtitle": "m590/pump",
 		"sounds": ["mgs:m590/pump"]
 	},
 	"m590/reload": {
-		"subtitle": "reload",
+		"subtitle": "m590/reload1",
 		"sounds": ["mgs:m590/reload1","mgs:m590/reload2","mgs:m590/reload3"]
 	},
 	"m82/fire": {
-		"subtitle": "fire",
+		"subtitle": "m82/fire",
 		"sounds": ["mgs:m82/fire"]
 	},
 	"m82/playerbegin": {
-		"subtitle": "playerbegin",
+		"subtitle": "m82/playerbegin",
 		"sounds": ["mgs:m82/playerbegin"]
 	},
 	"m82/playerend": {
-		"subtitle": "playerend",
+		"subtitle": "m82/playerend",
 		"sounds": ["mgs:m82/playerend"]
 	},
 	"m82/playermid": {
-		"subtitle": "playermid",
+		"subtitle": "m82/playermid",
 		"sounds": ["mgs:m82/playermid"]
 	},
 	"m82/reload": {
-		"subtitle": "reload",
+		"subtitle": "m82/reload",
 		"sounds": ["mgs:m82/reload"]
 	},
 	"m9/fire": {
-		"subtitle": "fire",
+		"subtitle": "m9/fire",
 		"sounds": ["mgs:m9/fire"]
 	},
 	"m9/playerbegin": {
-		"subtitle": "playerbegin",
+		"subtitle": "m9/playerbegin",
 		"sounds": ["mgs:m9/playerbegin"]
 	},
 	"m9/playerend": {
-		"subtitle": "playerend",
+		"subtitle": "m9/playerend",
 		"sounds": ["mgs:m9/playerend"]
 	},
 	"m9/reload": {
-		"subtitle": "reload",
+		"subtitle": "m9/reload",
 		"sounds": ["mgs:m9/reload"]
 	},
 	"mac10/fire": {
-		"subtitle": "fire",
+		"subtitle": "mac10/fire",
 		"sounds": ["mgs:mac10/fire"]
 	},
 	"mac10/playerbegin": {
-		"subtitle": "playerbegin",
+		"subtitle": "mac10/playerbegin",
 		"sounds": ["mgs:mac10/playerbegin"]
 	},
 	"mac10/playerend": {
-		"subtitle": "playerend",
+		"subtitle": "mac10/playerend",
 		"sounds": ["mgs:mac10/playerend"]
 	},
 	"mac10/playermid": {
-		"subtitle": "playermid",
+		"subtitle": "mac10/playermid",
 		"sounds": ["mgs:mac10/playermid"]
 	},
 	"mac10/reload": {
-		"subtitle": "reload",
+		"subtitle": "mac10/reload",
 		"sounds": ["mgs:mac10/reload"]
 	},
 	"makarov/fire": {
-		"subtitle": "fire",
+		"subtitle": "makarov/fire",
 		"sounds": ["mgs:makarov/fire"]
 	},
 	"makarov/playerbegin": {
-		"subtitle": "playerbegin",
+		"subtitle": "makarov/playerbegin",
 		"sounds": ["mgs:makarov/playerbegin"]
 	},
 	"makarov/playerend": {
-		"subtitle": "playerend",
+		"subtitle": "makarov/playerend",
 		"sounds": ["mgs:makarov/playerend"]
 	},
 	"makarov/reload": {
-		"subtitle": "reload",
+		"subtitle": "makarov/reload",
 		"sounds": ["mgs:makarov/reload"]
 	},
 	"mosin/cycle": {
-		"subtitle": "cycle",
+		"subtitle": "mosin/cycle",
 		"sounds": ["mgs:mosin/cycle"]
 	},
 	"mosin/fire": {
-		"subtitle": "fire",
+		"subtitle": "mosin/fire",
 		"sounds": ["mgs:mosin/fire"]
 	},
 	"mosin/playerbegin": {
-		"subtitle": "playerbegin",
+		"subtitle": "mosin/playerbegin",
 		"sounds": ["mgs:mosin/playerbegin"]
 	},
 	"mosin/playerend": {
-		"subtitle": "playerend",
+		"subtitle": "mosin/playerend",
 		"sounds": ["mgs:mosin/playerend"]
 	},
 	"mosin/reload": {
-		"subtitle": "reload",
+		"subtitle": "mosin/reload1",
 		"sounds": ["mgs:mosin/reload1","mgs:mosin/reload2","mgs:mosin/reload3","mgs:mosin/reload4"]
 	},
 	"mp5/fire": {
-		"subtitle": "fire",
+		"subtitle": "mp5/fire",
 		"sounds": ["mgs:mp5/fire"]
 	},
 	"mp5/playerbegin": {
-		"subtitle": "playerbegin",
+		"subtitle": "mp5/playerbegin",
 		"sounds": ["mgs:mp5/playerbegin"]
 	},
 	"mp5/playerend": {
-		"subtitle": "playerend",
+		"subtitle": "mp5/playerend",
 		"sounds": ["mgs:mp5/playerend"]
 	},
 	"mp5/playermid": {
-		"subtitle": "playermid",
+		"subtitle": "mp5/playermid",
 		"sounds": ["mgs:mp5/playermid"]
 	},
 	"mp5/reload": {
-		"subtitle": "reload",
+		"subtitle": "mp5/reload",
 		"sounds": ["mgs:mp5/reload"]
 	},
 	"mp7/fire": {
-		"subtitle": "fire",
+		"subtitle": "mp7/fire",
 		"sounds": ["mgs:mp7/fire"]
 	},
 	"mp7/playerbegin": {
-		"subtitle": "playerbegin",
+		"subtitle": "mp7/playerbegin",
 		"sounds": ["mgs:mp7/playerbegin"]
 	},
 	"mp7/playerend": {
-		"subtitle": "playerend",
+		"subtitle": "mp7/playerend",
 		"sounds": ["mgs:mp7/playerend"]
 	},
 	"mp7/reload": {
-		"subtitle": "reload",
+		"subtitle": "mp7/reload",
 		"sounds": ["mgs:mp7/reload"]
 	},
 	"ppsh41/fire": {
-		"subtitle": "fire",
+		"subtitle": "ppsh41/fire",
 		"sounds": ["mgs:ppsh41/fire"]
 	},
 	"ppsh41/playerbegin": {
-		"subtitle": "playerbegin",
+		"subtitle": "ppsh41/playerbegin",
 		"sounds": ["mgs:ppsh41/playerbegin"]
 	},
 	"ppsh41/playerend": {
-		"subtitle": "playerend",
+		"subtitle": "ppsh41/playerend",
 		"sounds": ["mgs:ppsh41/playerend"]
 	},
 	"ppsh41/playermid": {
-		"subtitle": "playermid",
+		"subtitle": "ppsh41/playermid",
 		"sounds": ["mgs:ppsh41/playermid"]
 	},
 	"ppsh41/reload": {
-		"subtitle": "reload",
+		"subtitle": "ppsh41/reload",
 		"sounds": ["mgs:ppsh41/reload"]
 	},
 	"rpg7/fire": {
-		"subtitle": "fire",
+		"subtitle": "rpg7/fire0",
 		"sounds": ["mgs:rpg7/fire0","mgs:rpg7/fire1"]
 	},
 	"rpg7/handling/rpg7_endgrab": {
-		"subtitle": "rpg7_endgrab",
+		"subtitle": "rpg7/handling/rpg7_endgrab",
 		"sounds": ["mgs:rpg7/handling/rpg7_endgrab"]
 	},
 	"rpg7/handling/rpg7_fetch": {
-		"subtitle": "rpg7_fetch",
+		"subtitle": "rpg7/handling/rpg7_fetch",
 		"sounds": ["mgs:rpg7/handling/rpg7_fetch"]
 	},
 	"rpg7/handling/rpg7_load": {
-		"subtitle": "rpg7_load",
+		"subtitle": "rpg7/handling/rpg7_load1",
 		"sounds": ["mgs:rpg7/handling/rpg7_load1","mgs:rpg7/handling/rpg7_load2"]
 	},
 	"rpg7/playerbegin": {
-		"subtitle": "playerbegin",
+		"subtitle": "rpg7/playerbegin",
 		"sounds": ["mgs:rpg7/playerbegin"]
 	},
 	"rpg7/playerend": {
-		"subtitle": "playerend",
+		"subtitle": "rpg7/playerend",
 		"sounds": ["mgs:rpg7/playerend"]
 	},
 	"rpg7/reload": {
-		"subtitle": "reload",
+		"subtitle": "rpg7/reload",
 		"sounds": ["mgs:rpg7/reload"]
 	},
 	"rpk/fire": {
-		"subtitle": "fire",
+		"subtitle": "rpk/fire",
 		"sounds": ["mgs:rpk/fire"]
 	},
 	"rpk/playerbegin": {
-		"subtitle": "playerbegin",
+		"subtitle": "rpk/playerbegin",
 		"sounds": ["mgs:rpk/playerbegin"]
 	},
 	"rpk/playerend": {
-		"subtitle": "playerend",
+		"subtitle": "rpk/playerend",
 		"sounds": ["mgs:rpk/playerend"]
 	},
 	"rpk/playermid": {
-		"subtitle": "playermid",
+		"subtitle": "rpk/playermid",
 		"sounds": ["mgs:rpk/playermid"]
 	},
 	"rpk/reload": {
-		"subtitle": "reload",
+		"subtitle": "rpk/reload",
 		"sounds": ["mgs:rpk/reload"]
 	},
 	"scar17/fire": {
-		"subtitle": "fire",
+		"subtitle": "scar17/fire",
 		"sounds": ["mgs:scar17/fire"]
 	},
 	"scar17/playerbegin": {
-		"subtitle": "playerbegin",
+		"subtitle": "scar17/playerbegin",
 		"sounds": ["mgs:scar17/playerbegin"]
 	},
 	"scar17/playerend": {
-		"subtitle": "playerend",
+		"subtitle": "scar17/playerend",
 		"sounds": ["mgs:scar17/playerend"]
 	},
 	"scar17/reload": {
-		"subtitle": "reload",
+		"subtitle": "scar17/reload",
 		"sounds": ["mgs:scar17/reload"]
 	},
 	"spas12/fire": {
-		"subtitle": "fire",
+		"subtitle": "spas12/fire",
 		"sounds": ["mgs:spas12/fire"]
 	},
 	"spas12/fire_s": {
-		"subtitle": "fire_s",
+		"subtitle": "spas12/fire_s",
 		"sounds": ["mgs:spas12/fire_s"]
 	},
 	"spas12/pump": {
-		"subtitle": "pump",
+		"subtitle": "spas12/pump",
 		"sounds": ["mgs:spas12/pump"]
 	},
 	"spas12/reload": {
-		"subtitle": "reload",
+		"subtitle": "spas12/reload1",
 		"sounds": ["mgs:spas12/reload1","mgs:spas12/reload2","mgs:spas12/reload3"]
 	},
 	"sten/fire": {
-		"subtitle": "fire",
+		"subtitle": "sten/fire",
 		"sounds": ["mgs:sten/fire"]
 	},
 	"sten/playerbegin": {
-		"subtitle": "playerbegin",
+		"subtitle": "sten/playerbegin",
 		"sounds": ["mgs:sten/playerbegin"]
 	},
 	"sten/playerend": {
-		"subtitle": "playerend",
+		"subtitle": "sten/playerend",
 		"sounds": ["mgs:sten/playerend"]
 	},
 	"sten/playermid": {
-		"subtitle": "playermid",
+		"subtitle": "sten/playermid",
 		"sounds": ["mgs:sten/playermid"]
 	},
 	"sten/reload": {
-		"subtitle": "reload",
+		"subtitle": "sten/reload",
 		"sounds": ["mgs:sten/reload"]
 	},
 	"svd/fire": {
-		"subtitle": "fire",
+		"subtitle": "svd/fire",
 		"sounds": ["mgs:svd/fire"]
 	},
 	"svd/playerbegin": {
-		"subtitle": "playerbegin",
+		"subtitle": "svd/playerbegin",
 		"sounds": ["mgs:svd/playerbegin"]
 	},
 	"svd/playerend": {
-		"subtitle": "playerend",
+		"subtitle": "svd/playerend",
 		"sounds": ["mgs:svd/playerend"]
 	},
 	"svd/playermid": {
-		"subtitle": "playermid",
+		"subtitle": "svd/playermid",
 		"sounds": ["mgs:svd/playermid"]
 	},
 	"svd/reload": {
-		"subtitle": "reload",
+		"subtitle": "svd/reload",
 		"sounds": ["mgs:svd/reload"]
 	},
 	"vz61/fire": {
-		"subtitle": "fire",
+		"subtitle": "vz61/fire",
 		"sounds": ["mgs:vz61/fire"]
 	},
 	"vz61/playerbegin": {
-		"subtitle": "playerbegin",
+		"subtitle": "vz61/playerbegin",
 		"sounds": ["mgs:vz61/playerbegin"]
 	},
 	"vz61/playerend": {
-		"subtitle": "playerend",
+		"subtitle": "vz61/playerend",
 		"sounds": ["mgs:vz61/playerend"]
 	},
 	"vz61/reload": {
-		"subtitle": "reload",
+		"subtitle": "vz61/reload",
 		"sounds": ["mgs:vz61/reload"]
 	}
 }
-

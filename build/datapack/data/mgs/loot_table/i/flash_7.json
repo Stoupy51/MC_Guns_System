@@ -11,17 +11,23 @@
 							"function": "minecraft:set_components",
 							"components": {
 								"minecraft:custom_data": {
-									"mgs": {"flash_7": true},
-									"smithed": {"ignore": {"functionality": true,"crafting": true}}
+									"mgs": {
+										"flash_7": true
+									},
+									"smithed": {
+										"ignore": {"functionality": true,"crafting": true}
+									}
 								},
 								"minecraft:item_model": "mgs:flash_7",
 								"minecraft:item_name": {
-									"translate": "mgs.flash_7",
-									"italic": false,
-									"color": "white"
+									"translate": "mgs.flash_7"
 								},
 								"minecraft:lore": [
-									["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"translate": "mgs.mc_guns_system","italic": true,"color": "blue"}]
+									[
+										"",
+										{"text": "I","color": "white","italic": false,"font": "mgs:icons"},
+										{"translate": "mgs.mc_guns_system","italic": true,"color": "blue"}
+									]
 								]
 							}
 						}
@@ -31,4 +37,3 @@
 		}
 	]
 }
-

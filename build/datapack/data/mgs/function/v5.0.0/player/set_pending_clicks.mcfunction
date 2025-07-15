@@ -5,7 +5,6 @@
 #			advancement mgs:v5.0.0/alt_right_click
 #
 
-
 # Revoke advancement and reset right click
 advancement revoke @s only mgs:v5.0.0/right_click
 advancement revoke @s only mgs:v5.0.0/alt_right_click

@@ -11,8 +11,13 @@
 							"function": "minecraft:set_components",
 							"components": {
 								"minecraft:custom_data": {
-									"mgs": {"casing": true,"45acp": true},
-									"smithed": {"ignore": {"functionality": true,"crafting": true}}
+									"mgs": {
+										"casing": true,
+										"45acp": true
+									},
+									"smithed": {
+										"ignore": {"functionality": true,"crafting": true}
+									}
 								},
 								"minecraft:item_name": {
 									"translate": "mgs.45acp",
@@ -20,7 +25,11 @@
 								},
 								"minecraft:item_model": "mgs:45acp",
 								"minecraft:lore": [
-									["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"translate": "mgs.mc_guns_system","italic": true,"color": "blue"}]
+									[
+										"",
+										{"text": "I","color": "white","italic": false,"font": "mgs:icons"},
+										{"translate": "mgs.mc_guns_system","italic": true,"color": "blue"}
+									]
 								]
 							}
 						}
@@ -30,4 +39,3 @@
 		}
 	]
 }
-
