@@ -14,9 +14,10 @@ execute if score #is_pass_through mgs.data matches 1 unless block ~ ~ ~ #mgs:v5.
 execute if score #is_pass_through mgs.data matches 0 if score $raycast.piercing bs.lambda matches 1..3 run scoreboard players remove $raycast.piercing bs.lambda 1
 execute if score #is_pass_through mgs.data matches 0 if score $raycast.piercing bs.lambda matches 5.. run scoreboard players set $raycast.piercing bs.lambda 3
 
-# Reduce damage by 50% in air, 20% in water
-execute if score #is_pass_through mgs.data matches 0 store result storage mgs:gun all.stats.damage float 0.5 run data get storage mgs:gun all.stats.damage
-execute if score #is_pass_through mgs.data matches 1 store result storage mgs:gun all.stats.damage float 0.8 run data get storage mgs:gun all.stats.damage
+# Reduce damage by 5% in water, and 50% in other blocks
+execute store result score #new_damage mgs.data run data get storage mgs:gun all.stats.damage 1000
+execute if score #is_pass_through mgs.data matches 0 store result storage mgs:gun all.stats.damage float 0.0005 run scoreboard players get #new_damage mgs.data
+execute if score #is_pass_through mgs.data matches 1 store result storage mgs:gun all.stats.damage float 0.00095 run scoreboard players get #new_damage mgs.data
 
 ## Playsounds
 # Each sound type has a scoreboard objective that tracks if it has been played.

@@ -60,7 +60,10 @@ execute as @a[sort=random] at @s run function {ns}:v{version}/player/tick
     Mem.ctx.data[ns].damage_type["bullet"] = set_json_encoder(DamageType({"exhaustion": 0, "message_id": "player", "scaling": "when_caused_by_living_non_player"}))
     for tag in ["bypasses_cooldown", "no_knockback"]:
         write_tag(tag, Mem.ctx.data["minecraft"].damage_type_tags, [f"{ns}:bullet"])
-    write_versioned_function("utils/damage", f"$damage $(target) $(amount) {ns}:bullet by $(attacker)")
+    write_versioned_function("utils/damage", f"""
+$damage $(target) $(amount) {ns}:bullet by $(attacker)
+#$say damage $(target) $(amount) {ns}:bullet by $(attacker)
+""")
 
     # Copy crosshair texture
     Mem.ctx.assets["minecraft"].textures["gui/sprites/hud/crosshair"] = Texture(source_path=f"{Mem.ctx.meta.stewbeet.textures_folder}/crosshair.png")
