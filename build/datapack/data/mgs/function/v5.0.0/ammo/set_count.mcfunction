@@ -1,6 +1,8 @@
 
 #> mgs:v5.0.0/ammo/set_count
 #
+# @executed	as @a[sort=random] & at @s
+#
 # @within	mgs:v5.0.0/ammo/update_old_weapon {slot:"hotbar.0"}
 #			mgs:v5.0.0/ammo/update_old_weapon {slot:"hotbar.1"}
 #			mgs:v5.0.0/ammo/update_old_weapon {slot:"hotbar.2"}
@@ -52,6 +54,8 @@
 #			mgs:v5.0.0/ammo/update_old_weapon {slot:"player.crafting.1"}
 #			mgs:v5.0.0/ammo/update_old_weapon {slot:"player.crafting.2"}
 #			mgs:v5.0.0/ammo/update_old_weapon {slot:"player.crafting.3"}
+#
+# @args		slot (string)
 #
 
 # Apply new ammo count to weapon

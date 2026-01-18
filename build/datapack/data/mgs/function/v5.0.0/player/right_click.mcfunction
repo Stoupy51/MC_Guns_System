@@ -1,6 +1,8 @@
 
 #> mgs:v5.0.0/player/right_click
 #
+# @executed	as @a[sort=random] & at @s
+#
 # @within	mgs:v5.0.0/player/tick
 #
 

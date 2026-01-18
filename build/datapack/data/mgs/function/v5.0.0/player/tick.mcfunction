@@ -1,7 +1,9 @@
 
 #> mgs:v5.0.0/player/tick
 #
-# @within	mgs:v5.0.0/tick
+# @executed	as @a[sort=random] & at @s
+#
+# @within	mgs:v5.0.0/tick [ as @a[sort=random] & at @s ]
 #
 
 # Add temporary tag

@@ -3,7 +3,7 @@
 import json
 from typing import Any
 
-from stewbeet import Context, Mem, add_item_model_component, add_item_name_and_lore_if_missing, add_private_custom_data_for_namespace, add_smithed_ignore_vanilla_behaviours_convention
+from stewbeet import Context, Item, Mem, add_item_model_component, add_item_name_and_lore_if_missing, add_private_custom_data_for_namespace, add_smithed_ignore_vanilla_behaviours_convention
 from stewbeet import create_gradient_text as new_hex
 
 from .config.stats import CAPACITY, CASING_MODEL, COOLDOWN, DAMAGE, DECAY, MODELS, RELOAD_TIME, REMAINING_BULLETS, SWITCH
@@ -37,56 +37,55 @@ from .database.svd import main as main_svd
 
 # Main function should return a database
 def beet_default(ctx: Context) -> None:
-    if Mem.ctx is None:
-        Mem.ctx = ctx
     ns: str = ctx.project_id
 
     # Add casings and flashes
-    main_casing(Mem.definitions, ns)
-    main_flash(Mem.definitions, ns)
+    main_casing()
+    main_flash()
 
     # Rifles
-    main_m16a4(Mem.definitions, ns)
-    main_ak47(Mem.definitions, ns)
-    main_fnfal(Mem.definitions, ns)
-    main_aug(Mem.definitions, ns)
-    main_m4a1(Mem.definitions, ns)
-    main_g3a3(Mem.definitions, ns)
-    main_famas(Mem.definitions, ns)
-    main_scar17(Mem.definitions, ns)
+    main_m16a4()
+    main_ak47()
+    main_fnfal()
+    main_aug()
+    main_m4a1()
+    main_g3a3()
+    main_famas()
+    main_scar17()
 
     # Pistols
-    main_pistols(Mem.definitions, ns)
+    main_pistols()
 
     # SMGs
-    main_mp5(Mem.definitions, ns)
-    main_mac10(Mem.definitions, ns)
-    main_mp7(Mem.definitions, ns)
-    main_ppsh41(Mem.definitions, ns)
-    main_sten(Mem.definitions, ns)
+    main_mp5()
+    main_mac10()
+    main_mp7()
+    main_ppsh41()
+    main_sten()
 
     # Shotguns
-    main_spas12(Mem.definitions, ns)
-    main_m500(Mem.definitions, ns)
-    main_m590(Mem.definitions, ns)
+    main_spas12()
+    main_m500()
+    main_m590()
 
     # Snipers
-    main_svd(Mem.definitions, ns)
-    main_m82(Mem.definitions, ns)
-    main_mosin(Mem.definitions, ns)
-    main_m24(Mem.definitions, ns)
+    main_svd()
+    main_m82()
+    main_mosin()
+    main_m24()
 
     # Special
-    main_rpg7(Mem.definitions, ns)
-    main_rpk(Mem.definitions, ns)
-    main_m249(Mem.definitions, ns)
+    main_rpg7()
+    main_rpk()
+    main_m249()
 
     # Adjust guns data
-    for item, data in Mem.definitions.items():
+    for item in Mem.definitions.keys():
+        obj = Item.from_id(item)
 
         # Get all gun data
-        data["custom_data"] = json.loads(json.dumps(data.get("custom_data", {})))
-        ns_data: dict[str, Any] = data["custom_data"].get(ns, {})
+        obj.components["custom_data"] = json.loads(json.dumps(obj.components.get("custom_data", {})))
+        ns_data: dict[str, Any] = obj.components["custom_data"].get(ns, {})
         gun_stats: dict[str, Any] = ns_data.get("stats", {})
         if ns_data.get("gun"):
 
@@ -112,7 +111,7 @@ def beet_default(ctx: Context) -> None:
                 fire_rate_component.append([*new_hex("Fire Rate             ➤ ", START_HEX, END_HEX), f"{fire_rate:.1f} ", *new_hex(fire_rate_unit, END_HEX, START_HEX, text_length=10)])
 
             # Set custom lore
-            data["lore"] = [
+            obj.components["lore"] = [
                 [*new_hex("Damage Per Bullet  ➤ ", START_HEX, END_HEX),    str(gun_stats[DAMAGE])],
                 [*new_hex("Ammo Remaining      ➤ ", START_HEX, END_HEX),   str(gun_stats[REMAINING_BULLETS]),      {"text":"/","color":f"#{END_HEX}"}, str(gun_stats[CAPACITY])],
                 [*new_hex("Reloading Time       ➤ ", START_HEX, END_HEX),  f"{gun_stats[RELOAD_TIME] / 20:.1f}",   {"text":"s","color":f"#{END_HEX}"}],

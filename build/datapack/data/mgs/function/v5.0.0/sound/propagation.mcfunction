@@ -1,7 +1,9 @@
 
 #> mgs:v5.0.0/sound/propagation
 #
-# @within	mgs:v5.0.0/sound/main
+# @executed	as @a[distance=0.001..224] & facing entity @s eyes
+#
+# @within	mgs:v5.0.0/sound/main [ as @a[distance=0.001..224] & facing entity @s eyes ]
 #
 
 # Make copies of the original acoustics level to work on

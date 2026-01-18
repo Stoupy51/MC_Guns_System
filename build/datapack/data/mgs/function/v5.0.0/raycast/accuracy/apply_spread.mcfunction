@@ -1,6 +1,8 @@
 
 #> mgs:v5.0.0/raycast/accuracy/apply_spread
 #
+# @executed	anchored eyes & positioned ^ ^ ^
+#
 # @within	mgs:v5.0.0/raycast/main
 #
 

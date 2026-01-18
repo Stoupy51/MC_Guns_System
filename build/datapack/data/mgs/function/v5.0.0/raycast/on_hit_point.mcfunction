@@ -1,6 +1,8 @@
 
 #> mgs:v5.0.0/raycast/on_hit_point
 #
+# @executed	anchored eyes & positioned ^ ^ ^
+#
 # @within	mgs:v5.0.0/raycast/main
 #
 

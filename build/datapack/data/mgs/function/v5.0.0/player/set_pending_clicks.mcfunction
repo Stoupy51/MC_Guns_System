@@ -1,6 +1,8 @@
 
 #> mgs:v5.0.0/player/set_pending_clicks
 #
+# @executed	as the player & at current position
+#
 # @within	advancement mgs:v5.0.0/right_click
 #			advancement mgs:v5.0.0/alt_right_click
 #

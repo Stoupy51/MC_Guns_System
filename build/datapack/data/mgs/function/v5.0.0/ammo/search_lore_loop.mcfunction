@@ -1,8 +1,12 @@
 
 #> mgs:v5.0.0/ammo/search_lore_loop
 #
+# @executed	as @a[sort=random] & at @s
+#
 # @within	mgs:v5.0.0/ammo/modify_lore {"slot":"$(slot)"}
 #			mgs:v5.0.0/ammo/search_lore_loop {"slot":"$(slot)"}
+#
+# @args		slot (string)
 #
 
 # Check if current lore line matches ammo format (number/number)

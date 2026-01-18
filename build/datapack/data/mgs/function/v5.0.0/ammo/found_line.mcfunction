@@ -1,7 +1,14 @@
 
 #> mgs:v5.0.0/ammo/found_line
 #
+# @executed	as @a[sort=random] & at @s
+#
 # @within	mgs:v5.0.0/ammo/search_lore_loop with storage mgs:input with
+#
+# @args		slot (unknown)
+#			index (unknown)
+#			capacity (unknown)
+#			remaining_bullets (unknown)
 #
 
 # Copy weapon to item display for modification

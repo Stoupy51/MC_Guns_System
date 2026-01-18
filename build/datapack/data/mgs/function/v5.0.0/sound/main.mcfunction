@@ -1,7 +1,12 @@
 
 #> mgs:v5.0.0/sound/main
 #
+# @executed	as @a[sort=random] & at @s
+#
 # @within	mgs:v5.0.0/player/right_click with storage mgs:gun all.stats
+#
+# @args		base_weapon (unknown)
+#			crack_type (unknown)
 #
 
 # Simple weapon fire sound

@@ -1,6 +1,8 @@
 
 #> mgs:v5.0.0/sound/check_reload_end
 #
+# @executed	as @a[sort=random] & at @s
+#
 # @within	mgs:v5.0.0/player/tick
 #
 
