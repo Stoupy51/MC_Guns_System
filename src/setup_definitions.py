@@ -21,6 +21,7 @@ from stewbeet import (
 from .config.stats import CAPACITY, CASING_MODEL, COOLDOWN, DAMAGE, DECAY, MODELS, RELOAD_TIME, REMAINING_BULLETS, SWITCH
 from .database.ak47 import main as main_ak47
 from .database.all_pistols import main as main_pistols
+from .database.ammo import main as main_ammo
 from .database.aug import main as main_aug
 from .database.casing import main as main_casing
 from .database.famas import main as main_famas
@@ -54,6 +55,7 @@ def beet_default(ctx: Context) -> None:
     # Add casings and flashes
     main_casing()
     main_flash()
+    main_ammo()
 
     # Rifles
     main_m16a4()

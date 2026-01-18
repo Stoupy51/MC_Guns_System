@@ -9,6 +9,13 @@ from stewbeet import Item, JsonDict, Mem
 # Constants
 SRC_ROOT: str = stp.get_root_path(__file__, go_up=1)
 ITEM_MODELS_PATH: str = f"{SRC_ROOT}/database/models"
+ALL_SLOTS: tuple[str, ...] = (
+    *[f"hotbar.{i}" for i in range(9)],
+    "weapon.offhand",
+    *[f"container.{i}" for i in range(4*9)],
+    "player.cursor",
+    *[f"player.crafting.{i}" for i in range(4)],
+)
 
 # Utility functions
 def json_dump(x: Any) -> str: return stp.json_dump(x, max_level=-1)
