@@ -1,7 +1,15 @@
 {
 	"pack": {
-		"pack_format": 64,
-		"description": "MC Guns System [5.0.0] by TheBradqq, Stoupy51"
+		"pack_format": 75,
+		"description": "MC Guns System [5.0.0] by TheBradqq, Stoupy51",
+		"min_format": [
+			75,
+			0
+		],
+		"max_format": [
+			1000,
+			0
+		]
 	},
 	"id": "mgs"
 }

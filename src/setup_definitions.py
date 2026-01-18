@@ -3,8 +3,20 @@
 import json
 from typing import Any
 
-from stewbeet import Context, Item, Mem, add_item_model_component, add_item_name_and_lore_if_missing, add_private_custom_data_for_namespace, add_smithed_ignore_vanilla_behaviours_convention
-from stewbeet import create_gradient_text as new_hex
+from stewbeet import (
+    Context,
+    Item,
+    Mem,
+    add_item_model_component,
+    add_item_name_and_lore_if_missing,
+    add_private_custom_data_for_namespace,
+    add_smithed_ignore_vanilla_behaviours_convention,
+    export_all_definitions_to_json,
+    set_manual_components,
+)
+from stewbeet import (
+    create_gradient_text as new_hex,
+)
 
 from .config.stats import CAPACITY, CASING_MODEL, COOLDOWN, DAMAGE, DECAY, MODELS, RELOAD_TIME, REMAINING_BULLETS, SWITCH
 from .database.ak47 import main as main_ak47
@@ -126,8 +138,12 @@ def beet_default(ctx: Context) -> None:
     Mem.definitions = {k: Mem.definitions[k] for k in sorted_items}
 
     # Final adjustments, you definitively should keep them!
-    add_item_model_component()
+    add_item_model_component(black_list=["item_ids","you_don't_want","in_that","list"])
     add_item_name_and_lore_if_missing()
-    add_private_custom_data_for_namespace()
+    add_private_custom_data_for_namespace()		# Add a custom namespace for easy item detection
     add_smithed_ignore_vanilla_behaviours_convention()	# Smithed items convention
+    set_manual_components(white_list=["item_name", "lore", "custom_name", "damage", "max_damage"]) # Components to include in the manual when hovering items (here is the default list)
+
+    # Debug purposes: export all definitions to a single json file
+    export_all_definitions_to_json(f"{Mem.ctx.directory}/definitions_debug.json")
 

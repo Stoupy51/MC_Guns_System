@@ -12,10 +12,10 @@ execute store result score #game_version mgs.data run data get entity @p DataVer
 
 # Check if the game version is supported
 scoreboard players set #mcload_error mgs.data 0
-execute unless score #game_version mgs.data matches 4438.. run scoreboard players set #mcload_error mgs.data 1
+execute unless score #game_version mgs.data matches 4669.. run scoreboard players set #mcload_error mgs.data 1
 
 # Decode errors
-execute if score #mcload_error mgs.data matches 1 run tellraw @a {"translate": "mgs.mc_guns_system_error_this_version_is_made_for_minecraft_1_21_7","color":"red"}
+execute if score #mcload_error mgs.data matches 1 run tellraw @a {"translate": "mgs.mc_guns_system_error_this_version_is_made_for_minecraft_1_21_11","color":"red"}
 execute if score #dependency_error mgs.data matches 1 run tellraw @a {"translate": "mgs.mc_guns_system_error_libraries_are_missingplease_download_the_ri","color":"red"}
 execute if score #dependency_error mgs.data matches 1 unless score $bs.block.major load.status matches 3.. run tellraw @a {"translate": "mgs.bookshelf_block_v3_2_1","color":"gold","click_event":{"action":"open_url","url":"https://github.com/mcbookshelf/bookshelf/releases"}}
 execute if score #dependency_error mgs.data matches 1 if score $bs.block.major load.status matches 3 unless score $bs.block.minor load.status matches 2.. run tellraw @a {"translate": "mgs.bookshelf_block_v3_2_1","color":"gold","click_event":{"action":"open_url","url":"https://github.com/mcbookshelf/bookshelf/releases"}}
