@@ -17,6 +17,10 @@ ALL_SLOTS: tuple[str, ...] = (
     *[f"player.crafting.{i}" for i in range(4)],
 )
 
+# Color constants
+START_HEX: str = "c24a17"
+END_HEX: str = "c77e36"
+
 # Utility functions
 def json_dump(x: Any) -> str: return stp.json_dump(x, max_level=-1)
 def get_model_path(model_name: str) -> str: return f"{ITEM_MODELS_PATH}/{model_name}.json"

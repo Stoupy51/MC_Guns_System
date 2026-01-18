@@ -13,5 +13,4 @@ Credits for resources: MGS 4.2 by TheBradqq
 - For weapons without cooldown (e.g. pistol), implement single-click behavior to prevent holding right-click
 - Implement RPG impact explosion mechanics
 - Add burst fire mode functionality
-- Implement a title action bar that shows bullet icons (grayed = no bullet) instead of count/max_count
 
