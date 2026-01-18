@@ -1,6 +1,8 @@
 
 #> mgs:v5.0.0/flash/delete
 #
+# @executed	as @e[tag=mgs.flash]
+#
 # @within	mgs:v5.0.0/flash/tick
 #
 

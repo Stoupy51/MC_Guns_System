@@ -1,21 +1,35 @@
 
 # Imports
+import json
 from typing import Any
 
-from stewbeet import CUSTOM_ITEM_VANILLA, OVERRIDE_MODEL
-from stouputils.io import super_json_dump
+import stouputils as stp
+from stewbeet import Item, JsonDict, Mem
 
+# Constants
+SRC_ROOT: str = stp.get_root_path(__file__, go_up=1)
+ITEM_MODELS_PATH: str = f"{SRC_ROOT}/database/models"
 
-# Utility function
-def json_dump(x): return super_json_dump(x, max_level=-1)
+# Utility functions
+def json_dump(x: Any) -> str: return stp.json_dump(x, max_level=-1)
+def get_model_path(model_name: str) -> str: return f"{ITEM_MODELS_PATH}/{model_name}.json"
 
 # Function
-def get_data(ns: str, stats: dict[str, Any] | None = None, override_model: dict[str, Any] | None = None) -> dict:
-    return {
-        "id": "minecraft:warped_fungus_on_a_stick" if stats else CUSTOM_ITEM_VANILLA,
-        "custom_data": {ns: {"gun":True, **stats} if stats else {"casing":True}},
-        **({OVERRIDE_MODEL: override_model} if override_model else {})
-    }
+def add_item(id: str, stats: JsonDict | None = None, model_path: str | None = None, **kwargs: Any) -> Item:
+    if model_path == "auto":
+        model_path = get_model_path(id)
+    return Item(
+        id=id,
+        base_item="minecraft:warped_fungus_on_a_stick" if stats else Item.base_item,
+        components={
+            "custom_data": {Mem.ctx.project_id: {"gun":True, **stats} if stats else {"casing":True}},
+        },
+        override_model=(
+            json.loads(stp.read_file(model_path).replace("mgs:item", f"{Mem.ctx.project_id}:item"))
+            if model_path else None
+        ),
+        **kwargs
+    )
 
 
 # Mandatory constants
@@ -120,7 +134,7 @@ CASING_762X25MM = "762x25mm"
 
 ## Gun stats
 # Rifles
-M16A4: dict = {"stats": {
+M16A4: JsonDict = {"stats": {
     BASE_WEAPON: "m16a4", CRACK_TYPE: "medium",
     CAPACITY: 30, RELOAD_TIME: 60, RELOAD_END: 10, COOLDOWN: 2, BURST: 3, DAMAGE: 14, DECAY: 0.95,
     ACCURACY_BASE: 100, ACCURACY_SNEAK: 7, ACCURACY_WALK: 450, ACCURACY_SPRINT: 1000, ACCURACY_JUMP: 1500,
@@ -128,7 +142,7 @@ M16A4: dict = {"stats": {
     CASING_OFFSET: {"normal": (-0.4, -0.35, 0.7), "zoom": (-0.05, -0.25, 0.5)},
 }}
 
-AK47: dict = {"stats": {
+AK47: JsonDict = {"stats": {
     BASE_WEAPON: "ak47", CRACK_TYPE: "medium",
     CAPACITY: 30, RELOAD_TIME: 70, RELOAD_END: 10, COOLDOWN: 2, BURST: 3, DAMAGE: 15, DECAY: 0.90,
     ACCURACY_BASE: 150, ACCURACY_SNEAK: 20, ACCURACY_WALK: 500, ACCURACY_SPRINT: 1500, ACCURACY_JUMP: 1800,
@@ -136,7 +150,7 @@ AK47: dict = {"stats": {
     CASING_OFFSET: {"normal": (-0.35, -0.3, 0.7), "zoom": (-0.05, -0.25, 0.5)},
 }}
 
-FNFAL: dict = {"stats": {
+FNFAL: JsonDict = {"stats": {
     BASE_WEAPON: "fnfal", CRACK_TYPE: "large",
     CAPACITY: 20, RELOAD_TIME: 80, RELOAD_END: 20, COOLDOWN: 3, BURST: 2, DAMAGE: 22, DECAY: 0.92,
     ACCURACY_BASE: 200, ACCURACY_SNEAK: 10, ACCURACY_WALK: 600, ACCURACY_SPRINT: 1800, ACCURACY_JUMP: 2500,
@@ -144,7 +158,7 @@ FNFAL: dict = {"stats": {
     CASING_OFFSET: {"normal": (-0.3, -0.25, 0.7), "zoom": (-0.05, -0.2, 0.5)},
 }}
 
-AUG: dict = {"stats": {
+AUG: JsonDict = {"stats": {
     BASE_WEAPON: "aug", CRACK_TYPE: "medium",
     CAPACITY: 30, RELOAD_TIME: 80, RELOAD_MID: 40, RELOAD_END: 10, COOLDOWN: 2, BURST: 2, DAMAGE: 13, DECAY: 0.95,
     ACCURACY_BASE: 100, ACCURACY_SNEAK: 12, ACCURACY_WALK: 350, ACCURACY_SPRINT: 800, ACCURACY_JUMP: 1200,
@@ -152,7 +166,7 @@ AUG: dict = {"stats": {
     CASING_OFFSET: {"normal": (-0.45, -0.4, 0.4), "zoom": (-0.05, -0.3, 0.3)},
 }}
 
-M4A1: dict = {"stats": {
+M4A1: JsonDict = {"stats": {
     BASE_WEAPON: "m4a1", CRACK_TYPE: "medium",
     CAPACITY: 30, RELOAD_TIME: 50, RELOAD_END: 14, COOLDOWN: 2, BURST: 3, DAMAGE: 13, DECAY: 0.92,
     ACCURACY_BASE: 110, ACCURACY_SNEAK: 15, ACCURACY_WALK: 400, ACCURACY_SPRINT: 900, ACCURACY_JUMP: 1400,
@@ -160,7 +174,7 @@ M4A1: dict = {"stats": {
     CASING_OFFSET: {"normal": (-0.4, -0.35, 0.7), "zoom": (-0.05, -0.25, 0.5)},
 }}
 
-G3A3: dict = {"stats": {
+G3A3: JsonDict = {"stats": {
     BASE_WEAPON: "g3a3", CRACK_TYPE: "large",
     CAPACITY: 20, RELOAD_TIME: 80, RELOAD_END: 17, COOLDOWN: 3, BURST: 2, DAMAGE: 20, DECAY: 0.92,
     ACCURACY_BASE: 180, ACCURACY_SNEAK: 6, ACCURACY_WALK: 600, ACCURACY_SPRINT: 1800, ACCURACY_JUMP: 2500,
@@ -168,7 +182,7 @@ G3A3: dict = {"stats": {
     CASING_OFFSET: {"normal": (-0.32, -0.3, 0.7), "zoom": (-0.05, -0.25, 0.5)},
 }}
 
-FAMAS: dict = {"stats": {
+FAMAS: JsonDict = {"stats": {
     BASE_WEAPON: "famas", CRACK_TYPE: "medium",
     CAPACITY: 25, RELOAD_TIME: 80, RELOAD_MID: 40, RELOAD_END: 10, COOLDOWN: 2, BURST: 2, DAMAGE: 13, DECAY: 0.95,
     ACCURACY_BASE: 110, ACCURACY_SNEAK: 15, ACCURACY_WALK: 400, ACCURACY_SPRINT: 900, ACCURACY_JUMP: 1400,
@@ -176,7 +190,7 @@ FAMAS: dict = {"stats": {
     CASING_OFFSET: {"normal": (-0.45, -0.35, 0.3), "zoom": (-0.05, -0.3, 0.3)},
 }}
 
-SCAR17: dict = {"stats": {
+SCAR17: JsonDict = {"stats": {
     BASE_WEAPON: "scar17", CRACK_TYPE: "large",
     CAPACITY: 20, RELOAD_TIME: 60, RELOAD_END: 15, COOLDOWN: 3, BURST: 2, DAMAGE: 18, DECAY: 0.92,
     ACCURACY_BASE: 140, ACCURACY_SNEAK: 5, ACCURACY_WALK: 500, ACCURACY_SPRINT: 1500, ACCURACY_JUMP: 2300,
@@ -185,7 +199,7 @@ SCAR17: dict = {"stats": {
 }}
 
 # Pistols
-M1911: dict = {"stats": {
+M1911: JsonDict = {"stats": {
     BASE_WEAPON: "m1911", CRACK_TYPE: "tiny",
     CAPACITY: 7, RELOAD_TIME: 45, RELOAD_END: 10, DAMAGE: 11, DECAY: 0.88,
     ACCURACY_BASE: 165, ACCURACY_SNEAK: 105, ACCURACY_WALK: 250, ACCURACY_SPRINT: 450, ACCURACY_JUMP: 800,
@@ -193,7 +207,7 @@ M1911: dict = {"stats": {
     CASING_OFFSET: {"normal": (-0.33, -0.25, 0.5), "zoom": (-0.05, -0.05, 0.4)},
 }}
 
-M9: dict = {"stats": {
+M9: JsonDict = {"stats": {
     BASE_WEAPON: "m9", CRACK_TYPE: "tiny",
     CAPACITY: 15, RELOAD_TIME: 60, RELOAD_END: 15, DAMAGE: 9, DECAY: 0.92,
     ACCURACY_BASE: 130, ACCURACY_SNEAK: 75, ACCURACY_WALK: 160, ACCURACY_SPRINT: 400, ACCURACY_JUMP: 800,
@@ -201,7 +215,7 @@ M9: dict = {"stats": {
     CASING_OFFSET: {"normal": (-0.35, -0.25, 0.5), "zoom": (-0.05, -0.1, 0.4)},
 }}
 
-DEAGLE: dict = {"stats": {
+DEAGLE: JsonDict = {"stats": {
     BASE_WEAPON: "deagle", CRACK_TYPE: "tiny",
     CAPACITY: 7, RELOAD_TIME: 70, RELOAD_END: 15, COOLDOWN: 3, DAMAGE: 17, DECAY: 0.90,
     ACCURACY_BASE: 220, ACCURACY_SNEAK: 50, ACCURACY_WALK: 400, ACCURACY_SPRINT: 1000, ACCURACY_JUMP: 2000,
@@ -209,7 +223,7 @@ DEAGLE: dict = {"stats": {
     CASING_OFFSET: {"normal": (-0.3, -0.2, 0.5), "zoom": (-0.05, -0.05, 0.4)},
 }}
 
-MAKAROV: dict = {"stats": {
+MAKAROV: JsonDict = {"stats": {
     BASE_WEAPON: "makarov", CRACK_TYPE: "tiny",
     CAPACITY: 8, RELOAD_TIME: 40, RELOAD_END: 10, DAMAGE: 9, DECAY: 0.90,
     ACCURACY_BASE: 120, ACCURACY_SNEAK: 65, ACCURACY_WALK: 130, ACCURACY_SPRINT: 350, ACCURACY_JUMP: 800,
@@ -217,7 +231,7 @@ MAKAROV: dict = {"stats": {
     CASING_OFFSET: {"normal": (-0.3, -0.25, 0.5), "zoom": (-0.05, -0.05, 0.4)},
 }}
 
-GLOCK17: dict = {"stats": {
+GLOCK17: JsonDict = {"stats": {
     BASE_WEAPON: "glock17", CRACK_TYPE: "tiny",
     CAPACITY: 17, RELOAD_TIME: 60, RELOAD_END: 16, DAMAGE: 9, DECAY: 0.92,
     ACCURACY_BASE: 150, ACCURACY_SNEAK: 90, ACCURACY_WALK: 170, ACCURACY_SPRINT: 400, ACCURACY_JUMP: 800,
@@ -225,7 +239,7 @@ GLOCK17: dict = {"stats": {
     CASING_OFFSET: {"normal": (-0.35, -0.27, 0.5), "zoom": (-0.05, 0.0, 0.4)},
 }}
 
-GLOCK18: dict = {"stats": {
+GLOCK18: JsonDict = {"stats": {
     BASE_WEAPON: "glock18", CRACK_TYPE: "tiny",
     CAPACITY: 19, RELOAD_TIME: 70, RELOAD_END: 16, COOLDOWN: 1, BURST: 4, DAMAGE: 9, DECAY: 0.92,
     ACCURACY_BASE: 180, ACCURACY_SNEAK: 140, ACCURACY_WALK: 300, ACCURACY_SPRINT: 400, ACCURACY_JUMP: 800,
@@ -233,7 +247,7 @@ GLOCK18: dict = {"stats": {
     CASING_OFFSET: {"normal": (-0.35, -0.27, 0.5), "zoom": (-0.05, 0.0, 0.4)},
 }}
 
-VZ61: dict = {"stats": {
+VZ61: JsonDict = {"stats": {
     BASE_WEAPON: "vz61", CRACK_TYPE: "tiny",
     CAPACITY: 20, RELOAD_TIME: 70, RELOAD_END: 14, COOLDOWN: 2, BURST: 2, DAMAGE: 8, DECAY: 0.92,
     ACCURACY_BASE: 150, ACCURACY_SNEAK: 80, ACCURACY_WALK: 290, ACCURACY_SPRINT: 400, ACCURACY_JUMP: 800,
@@ -242,7 +256,7 @@ VZ61: dict = {"stats": {
 }}
 
 # SMGS
-MP5: dict = {"stats": {
+MP5: JsonDict = {"stats": {
     BASE_WEAPON: "mp5", CRACK_TYPE: "tiny",
     CAPACITY: 30, RELOAD_TIME: 60, RELOAD_MID: 25, RELOAD_END: 5, COOLDOWN: 2, BURST: 2, DAMAGE: 10, DECAY: 0.92,
     ACCURACY_BASE: 100, ACCURACY_SNEAK: 60, ACCURACY_WALK: 200, ACCURACY_SPRINT: 450, ACCURACY_JUMP: 1000,
@@ -250,7 +264,7 @@ MP5: dict = {"stats": {
     CASING_OFFSET: {"normal": (-0.38, -0.35, 0.7), "zoom": (-0.05, -0.25, 0.5)},
 }}
 
-MAC10: dict = {"stats": {
+MAC10: JsonDict = {"stats": {
     BASE_WEAPON: "mac10", CRACK_TYPE: "tiny",
     CAPACITY: 30, RELOAD_TIME: 50, RELOAD_MID: 38, RELOAD_END: 10, COOLDOWN: 1, BURST: 4, DAMAGE: 11, DECAY: 0.88,
     ACCURACY_BASE: 220, ACCURACY_SNEAK: 150, ACCURACY_WALK: 330, ACCURACY_SPRINT: 400, ACCURACY_JUMP: 800,
@@ -258,7 +272,7 @@ MAC10: dict = {"stats": {
     CASING_OFFSET: {"normal": (-0.4, -0.35, 0.7), "zoom": (-0.1, -0.15, 0.5)},
 }}
 
-MP7: dict = {"stats": {
+MP7: JsonDict = {"stats": {
     BASE_WEAPON: "mp7", CRACK_TYPE: "small",
     CAPACITY: 40, RELOAD_TIME: 55, RELOAD_END: 15, COOLDOWN: 2, BURST: 3, DAMAGE: 12, DECAY: 0.95,
     ACCURACY_BASE: 150, ACCURACY_SNEAK: 50, ACCURACY_WALK: 250, ACCURACY_SPRINT: 480, ACCURACY_JUMP: 1500,
@@ -266,7 +280,7 @@ MP7: dict = {"stats": {
     CASING_OFFSET: {"normal": (-0.45, -0.4, 0.7), "zoom": (-0.05, -0.4, 0.5)},
 }}
 
-PPSH41: dict = {"stats": {
+PPSH41: JsonDict = {"stats": {
     BASE_WEAPON: "ppsh41", CRACK_TYPE: "tiny",
     CAPACITY: 71, RELOAD_TIME: 100, RELOAD_MID: 70, RELOAD_END: 16, COOLDOWN: 1, BURST: 4, DAMAGE: 10, DECAY: 0.92,
     ACCURACY_BASE: 175, ACCURACY_SNEAK: 125, ACCURACY_WALK: 400, ACCURACY_SPRINT: 700, ACCURACY_JUMP: 1500,
@@ -274,7 +288,7 @@ PPSH41: dict = {"stats": {
     CASING_OFFSET: {"normal": (-0.38, -0.2, 0.7), "zoom": (0.0, 0.0, 0.5)},
 }}
 
-STEN: dict = {"stats": {
+STEN: JsonDict = {"stats": {
     BASE_WEAPON: "sten", CRACK_TYPE: "tiny",
     CAPACITY: 32, RELOAD_TIME: 58, RELOAD_MID: 40, RELOAD_END: 10, COOLDOWN: 3, BURST: 2, DAMAGE: 11, DECAY: 0.92,
     ACCURACY_BASE: 150, ACCURACY_SNEAK: 100, ACCURACY_WALK: 300, ACCURACY_SPRINT: 400, ACCURACY_JUMP: 800,
@@ -283,7 +297,7 @@ STEN: dict = {"stats": {
 }}
 
 # Shotguns
-SPAS12: dict = {"stats": {
+SPAS12: JsonDict = {"stats": {
     BASE_WEAPON: "spas12", CRACK_TYPE: "largest",
     CAPACITY: 8, RELOAD_TIME: 20, COOLDOWN: 16, DAMAGE: 13, DECAY: 0.82,
     ACCURACY_BASE: 230, ACCURACY_SNEAK: 190, ACCURACY_WALK: 300, ACCURACY_SPRINT: 800, ACCURACY_JUMP: 1500,
@@ -291,7 +305,7 @@ SPAS12: dict = {"stats": {
     CASING_OFFSET: {"normal": (-0.35, -0.3, 0.7), "zoom": (-0.1, -0.3, 0.6)},
 }}
 
-M500: dict = {"stats": {
+M500: JsonDict = {"stats": {
     BASE_WEAPON: "m500", CRACK_TYPE: "largest",
     CAPACITY: 5, RELOAD_TIME: 22, COOLDOWN: 18, DAMAGE: 14, DECAY: 0.82,
     ACCURACY_BASE: 190, ACCURACY_SNEAK: 160, ACCURACY_WALK: 350, ACCURACY_SPRINT: 800, ACCURACY_JUMP: 1500,
@@ -299,7 +313,7 @@ M500: dict = {"stats": {
     CASING_OFFSET: {"normal": (-0.35, -0.27, 0.7), "zoom": (-0.1, -0.25, 0.6)},
 }}
 
-M590: dict = {"stats": {
+M590: JsonDict = {"stats": {
     BASE_WEAPON: "m590", CRACK_TYPE: "largest",
     CAPACITY: 8, RELOAD_TIME: 22, COOLDOWN: 19, DAMAGE: 14, DECAY: 0.82,
     ACCURACY_BASE: 210, ACCURACY_SNEAK: 175, ACCURACY_WALK: 325, ACCURACY_SPRINT: 800, ACCURACY_JUMP: 1500,
@@ -308,7 +322,7 @@ M590: dict = {"stats": {
 }}
 
 # Snipers
-SVD: dict = {"stats": {
+SVD: JsonDict = {"stats": {
     BASE_WEAPON: "svd", CRACK_TYPE: "large",
     CAPACITY: 10, RELOAD_TIME: 73, RELOAD_MID: 40, RELOAD_END: 10, COOLDOWN: 5, DAMAGE: 27, DECAY: 0.95,
     ACCURACY_BASE: 350, ACCURACY_SNEAK: 5, ACCURACY_WALK: 700, ACCURACY_SPRINT: 1500, ACCURACY_JUMP: 3000,
@@ -316,7 +330,7 @@ SVD: dict = {"stats": {
     CASING_OFFSET: {"normal": (-0.3, -0.27, 0.7), "zoom": (-0.05, -0.25, 0.5)},
 }}
 
-M82: dict = {"stats": {
+M82: JsonDict = {"stats": {
     BASE_WEAPON: "m82", CRACK_TYPE: "largest",
     CAPACITY: 10, RELOAD_TIME: 80, RELOAD_MID: 50, RELOAD_END: 15, COOLDOWN: 10, DAMAGE: 55, DECAY: 0.90,
     ACCURACY_BASE: 450, ACCURACY_SNEAK: 12, ACCURACY_WALK: 800, ACCURACY_SPRINT: 1500, ACCURACY_JUMP: 3000,
@@ -324,7 +338,7 @@ M82: dict = {"stats": {
     CASING_OFFSET: {"normal": (-0.28, -0.3, 0.7), "zoom": (-0.1, -0.25, 0.6)},
 }}
 
-MOSIN: dict = {"stats": {
+MOSIN: JsonDict = {"stats": {
     BASE_WEAPON: "mosin", CRACK_TYPE: "large",
     CAPACITY: 5, RELOAD_TIME: 20, RELOAD_MID: 15, COOLDOWN: 40, DAMAGE: 29, DECAY: 0.95,
     ACCURACY_BASE: 150, ACCURACY_SNEAK: 3, ACCURACY_WALK: 175, ACCURACY_SPRINT: 1000, ACCURACY_JUMP: 1500,
@@ -332,7 +346,7 @@ MOSIN: dict = {"stats": {
     CASING_OFFSET: {"normal": (-0.35, -0.2, 0.6), "zoom": (-0.05, -0.2, 0.4)},
 }}
 
-M24: dict = {"stats": {
+M24: JsonDict = {"stats": {
     BASE_WEAPON: "m24", CRACK_TYPE: "largest",
     CAPACITY: 5, RELOAD_TIME: 25, RELOAD_MID: 14, COOLDOWN: 45, DAMAGE: 36, DECAY: 0.92,
     ACCURACY_BASE: 350, ACCURACY_SNEAK: 1, ACCURACY_WALK: 700, ACCURACY_SPRINT: 1500, ACCURACY_JUMP: 3000,
@@ -342,14 +356,14 @@ M24: dict = {"stats": {
 
 
 # Special
-RPG7: dict = {"stats": {
+RPG7: JsonDict = {"stats": {
     BASE_WEAPON: "rpg7", CRACK_TYPE: "rocket",
     CAPACITY: 1, RELOAD_TIME: 110, RELOAD_END: 20, COOLDOWN: 10, DAMAGE: 30, DECAY: 1.00,
     ACCURACY_BASE: 250, ACCURACY_SNEAK: 100, ACCURACY_WALK: 300, ACCURACY_SPRINT: 300, ACCURACY_JUMP: 300,
     SWITCH: 55, KICK: 6,
 }}
 
-RPK: dict = {"stats": {
+RPK: JsonDict = {"stats": {
     BASE_WEAPON: "rpk", CRACK_TYPE: "medium",
     CAPACITY: 75, RELOAD_TIME: 115, RELOAD_MID: 60, RELOAD_END: 20, COOLDOWN: 2, BURST: 2, DAMAGE: 15, DECAY: 0.90,
     ACCURACY_BASE: 470, ACCURACY_SNEAK: 80, ACCURACY_WALK: 900, ACCURACY_SPRINT: 1500, ACCURACY_JUMP: 3000,
@@ -357,7 +371,7 @@ RPK: dict = {"stats": {
     CASING_OFFSET: {"normal": (-0.35, -0.28, 0.7), "zoom": (-0.05, -0.25, 0.5)},
 }}
 
-M249: dict = {"stats": {
+M249: JsonDict = {"stats": {
     BASE_WEAPON: "m249", CRACK_TYPE: "medium",
     CAPACITY: 150, RELOAD_TIME: 175, RELOAD_MID: 110, RELOAD_END: 30, COOLDOWN: 2, BURST: 2, DAMAGE: 13, DECAY: 0.92,
     ACCURACY_BASE: 300, ACCURACY_SNEAK: 60, ACCURACY_WALK: 1500, ACCURACY_SPRINT: 2500, ACCURACY_JUMP: 4000,

@@ -1,6 +1,8 @@
 
 #> mgs:v5.0.0/raycast/apply_decay
 #
+# @executed	anchored eyes & positioned ^ ^ ^
+#
 # @within	mgs:v5.0.0/raycast/on_targeted_entity
 #
 

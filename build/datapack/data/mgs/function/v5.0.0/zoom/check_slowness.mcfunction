@@ -1,6 +1,8 @@
 
 #> mgs:v5.0.0/zoom/check_slowness
 #
+# @executed	as @a[sort=random] & at @s
+#
 # @within	mgs:v5.0.0/zoom/main
 #
 

@@ -1,6 +1,8 @@
 
 #> mgs:v5.0.0/switch/sync_attack_speed_with_cooldown
 #
+# @executed	as @a[sort=random] & at @s
+#
 # @within	mgs:v5.0.0/switch/force_switch_animation
 #
 

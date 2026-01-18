@@ -1,7 +1,9 @@
 
 #> mgs:v5.0.0/raycast/main
 #
-# @within	mgs:v5.0.0/player/right_click
+# @executed	anchored eyes & positioned ^ ^ ^
+#
+# @within	mgs:v5.0.0/player/right_click [ anchored eyes & positioned ^ ^ ^ ]
 #
 
 # Handle accuracy

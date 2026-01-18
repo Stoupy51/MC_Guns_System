@@ -1,6 +1,8 @@
 
 #> mgs:v5.0.0/kicks/type_4
 #
+# @executed	as @a[sort=random] & at @s
+#
 # @within	mgs:v5.0.0/kicks/main
 #
 

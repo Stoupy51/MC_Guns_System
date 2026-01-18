@@ -1,7 +1,9 @@
 
 #> mgs:v5.0.0/flash/tick
 #
-# @within	mgs:v5.0.0/tick
+# @executed	as @e[tag=mgs.flash]
+#
+# @within	mgs:v5.0.0/tick [ as @e[tag=mgs.flash] ]
 #
 
 # Decrement life time

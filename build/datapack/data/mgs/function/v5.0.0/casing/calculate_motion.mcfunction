@@ -1,6 +1,8 @@
 
 #> mgs:v5.0.0/casing/calculate_motion
 #
+# @executed	anchored eyes & positioned ^ ^ ^
+#
 # @within	mgs:v5.0.0/casing/process_vectors
 #
 

@@ -1,21 +1,20 @@
 
-# ruff: noqa: E501
 # Imports
-from ..config.stats import TEMPLATE, get_data
+from ..config.stats import TEMPLATE, add_item
 
 
 # Main function should return a database
-def main(db: dict, ns: str) -> None:
+def main() -> None:
 
     # Add template
-    db["template"] = get_data(ns, TEMPLATE, {})
-    db["template_zoom"] = get_data(ns, TEMPLATE, {})
-    db["template_1"] = get_data(ns, TEMPLATE, {})
-    db["template_1_zoom"] = get_data(ns, TEMPLATE, {})
-    db["template_2"] = get_data(ns, TEMPLATE, {})
-    db["template_2_zoom"] = get_data(ns, TEMPLATE, {})
-    db["template_3"] = get_data(ns, TEMPLATE, {})
-    db["template_3_zoom"] = get_data(ns, TEMPLATE, {})
-    db["template_4"] = get_data(ns, TEMPLATE, {})
-    db["template_4_zoom"] = get_data(ns, TEMPLATE, {})
+    add_item("template", stats=TEMPLATE, model_path="auto")
+    add_item("template_zoom", stats=TEMPLATE, model_path="auto")
+    add_item("template_1", stats=TEMPLATE, model_path="auto")
+    add_item("template_1_zoom", stats=TEMPLATE, model_path="auto")
+    add_item("template_2", stats=TEMPLATE, model_path="auto")
+    add_item("template_2_zoom", stats=TEMPLATE, model_path="auto")
+    add_item("template_3", stats=TEMPLATE, model_path="auto")
+    add_item("template_3_zoom", stats=TEMPLATE, model_path="auto")
+    add_item("template_4", stats=TEMPLATE, model_path="auto")
+    add_item("template_4_zoom", stats=TEMPLATE, model_path="auto")
 

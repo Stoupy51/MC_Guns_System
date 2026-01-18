@@ -36,11 +36,11 @@
 		"sounds": ["mgs:aug/reload"]
 	},
 	"common/cloth_bullet_impact": {
-		"subtitle": "common/cloth_bullet_impact_01",
+		"subtitle": "common/cloth_bullet_impact",
 		"sounds": ["mgs:common/cloth_bullet_impact_01","mgs:common/cloth_bullet_impact_02","mgs:common/cloth_bullet_impact_03","mgs:common/cloth_bullet_impact_04"]
 	},
 	"common/dirt_bullet_impact": {
-		"subtitle": "common/dirt_bullet_impact_01",
+		"subtitle": "common/dirt_bullet_impact",
 		"sounds": ["mgs:common/dirt_bullet_impact_01","mgs:common/dirt_bullet_impact_02","mgs:common/dirt_bullet_impact_03"]
 	},
 	"common/empty": {
@@ -48,7 +48,7 @@
 		"sounds": ["mgs:common/empty"]
 	},
 	"common/explode_far": {
-		"subtitle": "common/explode_far0",
+		"subtitle": "common/explode_far",
 		"sounds": ["mgs:common/explode_far0","mgs:common/explode_far1","mgs:common/explode_far2","mgs:common/explode_far3"]
 	},
 	"common/fireselect": {
@@ -56,7 +56,7 @@
 		"sounds": ["mgs:common/fireselect"]
 	},
 	"common/flyby": {
-		"subtitle": "common/flyby01",
+		"subtitle": "common/flyby",
 		"sounds": ["mgs:common/flyby01","mgs:common/flyby02","mgs:common/flyby03","mgs:common/flyby04","mgs:common/flyby05"]
 	},
 	"common/large_crack_0_distant": {
@@ -108,7 +108,7 @@
 		"sounds": ["mgs:common/largest_crack_5_water"]
 	},
 	"common/lean_in": {
-		"subtitle": "common/lean_in1",
+		"subtitle": "common/lean_in",
 		"sounds": ["mgs:common/lean_in1","mgs:common/lean_in2","mgs:common/lean_in3","mgs:common/lean_in4"]
 	},
 	"common/lean_out": {
@@ -140,7 +140,7 @@
 		"sounds": ["mgs:common/medium_crack_5_water"]
 	},
 	"common/mud_bullet_impact": {
-		"subtitle": "common/mud_bullet_impact_01",
+		"subtitle": "common/mud_bullet_impact",
 		"sounds": ["mgs:common/mud_bullet_impact_01","mgs:common/mud_bullet_impact_02","mgs:common/mud_bullet_impact_03","mgs:common/mud_bullet_impact_04"]
 	},
 	"common/reload_generic": {
@@ -156,7 +156,7 @@
 		"sounds": ["mgs:common/rocket_crack_stereo"]
 	},
 	"common/rocket_flyby": {
-		"subtitle": "common/rocket_flyby01",
+		"subtitle": "common/rocket_flyby",
 		"sounds": ["mgs:common/rocket_flyby01","mgs:common/rocket_flyby02"]
 	},
 	"common/silence": {
@@ -188,11 +188,11 @@
 		"sounds": ["mgs:common/small_crack_5_water"]
 	},
 	"common/soft_bullet_impact": {
-		"subtitle": "common/soft_bullet_impact_01",
+		"subtitle": "common/soft_bullet_impact",
 		"sounds": ["mgs:common/soft_bullet_impact_01","mgs:common/soft_bullet_impact_02","mgs:common/soft_bullet_impact_03","mgs:common/soft_bullet_impact_04","mgs:common/soft_bullet_impact_05"]
 	},
 	"common/solid_bullet_impact": {
-		"subtitle": "common/solid_bullet_impact_01",
+		"subtitle": "common/solid_bullet_impact",
 		"sounds": ["mgs:common/solid_bullet_impact_01","mgs:common/solid_bullet_impact_02","mgs:common/solid_bullet_impact_03","mgs:common/solid_bullet_impact_04","mgs:common/solid_bullet_impact_05"]
 	},
 	"common/tiny_crack_0_distant": {
@@ -220,7 +220,7 @@
 		"sounds": ["mgs:common/tiny_crack_5_water"]
 	},
 	"common/wood_bullet_impact": {
-		"subtitle": "common/wood_bullet_impact_01",
+		"subtitle": "common/wood_bullet_impact",
 		"sounds": ["mgs:common/wood_bullet_impact_01","mgs:common/wood_bullet_impact_02","mgs:common/wood_bullet_impact_03","mgs:common/wood_bullet_impact_04"]
 	},
 	"deagle/fire": {
@@ -372,7 +372,7 @@
 		"sounds": ["mgs:m24/playerend"]
 	},
 	"m24/reload": {
-		"subtitle": "m24/reload1",
+		"subtitle": "m24/reload",
 		"sounds": ["mgs:m24/reload1","mgs:m24/reload2","mgs:m24/reload3","mgs:m24/reload4"]
 	},
 	"m249/fire": {
@@ -420,7 +420,7 @@
 		"sounds": ["mgs:m500/pump"]
 	},
 	"m500/reload": {
-		"subtitle": "m500/reload1",
+		"subtitle": "m500/reload",
 		"sounds": ["mgs:m500/reload1","mgs:m500/reload2","mgs:m500/reload3"]
 	},
 	"m590/fire": {
@@ -432,7 +432,7 @@
 		"sounds": ["mgs:m590/pump"]
 	},
 	"m590/reload": {
-		"subtitle": "m590/reload1",
+		"subtitle": "m590/reload",
 		"sounds": ["mgs:m590/reload1","mgs:m590/reload2","mgs:m590/reload3"]
 	},
 	"m82/fire": {
@@ -524,7 +524,7 @@
 		"sounds": ["mgs:mosin/playerend"]
 	},
 	"mosin/reload": {
-		"subtitle": "mosin/reload1",
+		"subtitle": "mosin/reload",
 		"sounds": ["mgs:mosin/reload1","mgs:mosin/reload2","mgs:mosin/reload3","mgs:mosin/reload4"]
 	},
 	"mp5/fire": {
@@ -584,7 +584,7 @@
 		"sounds": ["mgs:ppsh41/reload"]
 	},
 	"rpg7/fire": {
-		"subtitle": "rpg7/fire0",
+		"subtitle": "rpg7/fire",
 		"sounds": ["mgs:rpg7/fire0","mgs:rpg7/fire1"]
 	},
 	"rpg7/handling/rpg7_endgrab": {
@@ -596,7 +596,7 @@
 		"sounds": ["mgs:rpg7/handling/rpg7_fetch"]
 	},
 	"rpg7/handling/rpg7_load": {
-		"subtitle": "rpg7/handling/rpg7_load1",
+		"subtitle": "rpg7/handling/rpg7_load",
 		"sounds": ["mgs:rpg7/handling/rpg7_load1","mgs:rpg7/handling/rpg7_load2"]
 	},
 	"rpg7/playerbegin": {
@@ -660,7 +660,7 @@
 		"sounds": ["mgs:spas12/pump"]
 	},
 	"spas12/reload": {
-		"subtitle": "spas12/reload1",
+		"subtitle": "spas12/reload",
 		"sounds": ["mgs:spas12/reload1","mgs:spas12/reload2","mgs:spas12/reload3"]
 	},
 	"sten/fire": {

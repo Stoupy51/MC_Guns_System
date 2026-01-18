@@ -1,7 +1,9 @@
 
 #> mgs:v5.0.0/casing/process_vectors
 #
-# @within	mgs:v5.0.0/casing/main
+# @executed	anchored eyes & positioned ^ ^ ^
+#
+# @within	mgs:v5.0.0/casing/main [ anchored eyes & positioned ^ ^ ^ ]
 #
 
 # 1. Calculate base vectors
