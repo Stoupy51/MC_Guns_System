@@ -1,0 +1,43 @@
+{
+	"pools": [
+		{
+			"rolls": 1,
+			"entries": [
+				{
+					"type": "minecraft:item",
+					"name": "minecraft:command_block",
+					"functions": [
+						{
+							"function": "minecraft:set_components",
+							"components": {
+								"minecraft:max_stack_size": 1,
+								"minecraft:custom_data": {
+									"mgs": {
+										"magazine": true,
+										"weapon": "vz61",
+										"bullets": 20,
+										"vz61_mag": true
+									},
+									"smithed": {
+										"ignore": {"functionality": true,"crafting": true}
+									}
+								},
+								"minecraft:item_model": "mgs:vz61_mag",
+								"minecraft:item_name": {
+									"translate": "mgs.vz61_mag"
+								},
+								"minecraft:lore": [
+									[
+										"",
+										{"text": "I","color": "white","italic": false,"font": "mgs:icons"},
+										{"translate": "mgs.mc_guns_system","italic": true,"color": "blue"}
+									]
+								]
+							}
+						}
+					]
+				}
+			]
+		}
+	]
+}

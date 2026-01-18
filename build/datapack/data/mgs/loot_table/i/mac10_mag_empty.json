@@ -1,0 +1,43 @@
+{
+	"pools": [
+		{
+			"rolls": 1,
+			"entries": [
+				{
+					"type": "minecraft:item",
+					"name": "minecraft:command_block",
+					"functions": [
+						{
+							"function": "minecraft:set_components",
+							"components": {
+								"minecraft:max_stack_size": 1,
+								"minecraft:custom_data": {
+									"mgs": {
+										"magazine": true,
+										"weapon": "mac10",
+										"bullets": 30,
+										"mac10_mag_empty": true
+									},
+									"smithed": {
+										"ignore": {"functionality": true,"crafting": true}
+									}
+								},
+								"minecraft:item_model": "mgs:mac10_mag_empty",
+								"minecraft:item_name": {
+									"translate": "mgs.mac10_mag_empty"
+								},
+								"minecraft:lore": [
+									[
+										"",
+										{"text": "I","color": "white","italic": false,"font": "mgs:icons"},
+										{"translate": "mgs.mc_guns_system","italic": true,"color": "blue"}
+									]
+								]
+							}
+						}
+					]
+				}
+			]
+		}
+	]
+}

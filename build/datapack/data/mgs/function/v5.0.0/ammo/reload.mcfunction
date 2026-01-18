@@ -13,8 +13,8 @@ execute store result score @s mgs.cooldown run data get storage mgs:gun all.stat
 function mgs:v5.0.0/switch/force_switch_animation
 
 # Get the new ammo count
-# TODO: Find ammo in inventory and don't take it out for your ass
-execute store result score @s mgs.remaining_bullets run data get storage mgs:gun all.stats.capacity
+execute if data storage mgs:config no_magazine store result score @s mgs.remaining_bullets run data get storage mgs:gun all.stats.capacity
+execute unless data storage mgs:config no_magazine unless function mgs:v5.0.0/ammo/inventory/find run return fail
 
 # Update weapon lore
 function mgs:v5.0.0/ammo/modify_lore {slot:"weapon.mainhand"}
