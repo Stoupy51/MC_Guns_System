@@ -6,7 +6,14 @@ from ...config.stats import ALL_SLOTS, BASE_WEAPON, CAPACITY, RELOAD_TIME, REMAI
 
 
 def create_lore_functions(type_name: str, tag: str, remaining_source: str, capacity_source: str) -> None:
-    """Create lore modification functions for weapons or magazines."""
+    """ Create lore modification functions for weapons or magazines.
+
+    Args:
+        type_name        (str): Type name for the lore functions (e.g., "lore" or "mag_lore").
+        tag              (str): Temporary tag to identify the item being modified.
+        remaining_source (str): Source to get the remaining bullets value.
+        capacity_source  (str): Source to get the capacity value.
+    """
     ns: str = Mem.ctx.project_id
     version: str = Mem.ctx.project_version
 
@@ -246,7 +253,7 @@ $item replace entity @p[tag={ns}.modify_lore] $(slot) from entity @s contents
 kill @s
 """)
 
-    # Reload weapon function (not implemented)
+    # Reload weapon function
     write_versioned_function("ammo/reload",
 f"""
 # Get the new ammo count
@@ -344,8 +351,8 @@ kill @s
 
     write_versioned_function("ammo/end_reload",
 f"""
-# Update weapon lore
-function {ns}:v{version}/ammo/modify_lore {{slot:"weapon.mainhand"}}
+# Update weapon lore (if still holding weapon)
+execute if data storage {ns}:gun all.gun run function {ns}:v{version}/ammo/modify_lore {{slot:"weapon.mainhand"}}
 
 # Remove reloading tag
 tag @s remove {ns}.reloading

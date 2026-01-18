@@ -12,11 +12,11 @@ tag @s add mgs.ticking
 # Compute acoustics (#TODO: Only if player moved enough, and every second not tick)
 function mgs:v5.0.0/sound/compute_acoustics
 
+# Reload when moving weapon to offhand
+execute if items entity @s weapon.offhand * run function mgs:v5.0.0/player/reload_check
+
 # Copy gun data
-data remove storage mgs:gun all
-data modify storage mgs:gun SelectedItem set value {id:""}
-data modify storage mgs:gun SelectedItem set from entity @s SelectedItem
-data modify storage mgs:gun all set from storage mgs:gun SelectedItem.components."minecraft:custom_data".mgs
+function mgs:v5.0.0/utils/copy_gun_data
 
 # Check if we need to zoom weapon or stop
 function mgs:v5.0.0/zoom/main

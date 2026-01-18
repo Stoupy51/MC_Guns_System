@@ -8,12 +8,10 @@
 Credits for resources: MGS 4.2 by TheBradqq
 
 # TODO:
-- Create ammunition system with reloadable items
 - Implement Reload Mid, Cooldown Mid, Cooldown End, etc.
 - Reorganize weapon NBT structure to move sounds under "all.sounds" instead of "all.stats" I made
 - For weapons without cooldown (e.g. pistol), implement single-click behavior to prevent holding right-click
 - Implement RPG impact explosion mechanics
 - Add burst fire mode functionality
-- Trigger reload when weapon is dropped, or switched to off-hand?
 - Implement a title action bar that shows bullet icons (grayed = no bullet) instead of count/max_count
 
