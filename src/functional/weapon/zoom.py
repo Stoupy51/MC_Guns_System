@@ -14,7 +14,7 @@ def main() -> None:
     write_versioned_function("zoom/main",
 f"""
 # If no gun data, stop here
-execute unless data storage {ns}:gun all.stats run return run function {ns}:v{version}/zoom/check_slowness
+execute unless data storage {ns}:gun all.gun run return run function {ns}:v{version}/zoom/check_slowness
 
 # If already zoom and not sneaking, unzoom
 execute if data storage {ns}:gun all.stats.{IS_ZOOM} unless predicate {ns}:v{version}/is_sneaking run return run function {ns}:v{version}/zoom/remove

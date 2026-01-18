@@ -28,7 +28,7 @@ function mgs:v5.0.0/switch/main
 execute if score @s mgs.cooldown matches 1.. run scoreboard players remove @s mgs.cooldown 1
 
 # Check if we need to play reload end sound
-execute if score @s mgs.cooldown matches 1.. if data storage mgs:gun all.stats run function mgs:v5.0.0/sound/check_reload_end
+execute if score @s mgs.cooldown matches 1.. if data storage mgs:gun all.gun run function mgs:v5.0.0/sound/check_reload_end
 execute if score @s mgs.cooldown matches 0 if entity @s[tag=mgs.reloading] run function mgs:v5.0.0/ammo/end_reload
 
 # If pending clicks, run right click function

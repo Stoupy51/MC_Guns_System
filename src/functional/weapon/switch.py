@@ -16,7 +16,7 @@ def main() -> None:
     write_versioned_function("switch/main",
 f"""
 # Set weapon id if not done yet
-execute if data storage {ns}:gun all.stats unless data storage {ns}:gun all.stats.{WEAPON_ID} run function {ns}:v{version}/switch/set_weapon_id
+execute if data storage {ns}:gun all.gun unless data storage {ns}:gun all.stats.{WEAPON_ID} run function {ns}:v{version}/switch/set_weapon_id
 
 # If last_selected is different from this one, set cooldown
 scoreboard players set #current_id {ns}.data 0
@@ -49,7 +49,7 @@ function {ns}:v{version}/switch/force_switch_animation
     write_versioned_function("switch/force_switch_animation",
 f"""
 # Stop if no weapon in hand
-execute unless data storage {ns}:gun all.stats run return fail
+execute unless data storage {ns}:gun all.gun run return fail
 
 # Modify attack_speed attribute modifier to sync with current cooldown
 function {ns}:v{version}/switch/sync_attack_speed_with_cooldown

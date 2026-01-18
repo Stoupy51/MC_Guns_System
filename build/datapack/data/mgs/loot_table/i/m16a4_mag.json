@@ -15,24 +15,46 @@
 									"mgs": {
 										"magazine": true,
 										"weapon": "m16a4",
-										"bullets": 30,
+										"stats": {"remaining_bullets": 30,"capacity": 30},
 										"m16a4_mag": true
 									},
 									"smithed": {
 										"ignore": {"functionality": true,"crafting": true}
 									}
 								},
-								"minecraft:item_model": "mgs:m16a4_mag",
-								"minecraft:item_name": {
-									"translate": "mgs.m16a4_mag"
-								},
 								"minecraft:lore": [
+									[
+										{"text": "A","color": "#c24a17","italic": false},
+										{"text": "m","color": "#c24d18"},
+										{"text": "m","color": "#c2501a"},
+										{"text": "o","color": "#c2531c"},
+										{"text": " ","color": "#c3571e"},
+										{"text": "R","color": "#c35a20"},
+										{"text": "e","color": "#c35d22"},
+										{"text": "m","color": "#c46024"},
+										{"text": "a","color": "#c46426"},
+										{"text": "i","color": "#c46728"},
+										{"text": "n","color": "#c56a2a"},
+										{"text": "i","color": "#c56d2c"},
+										{"text": "n","color": "#c5712e"},
+										{"text": "g","color": "#c67430"},
+										{"text": " ","color": "#c67732"},
+										{"text": "➤","color": "#c67a34"},
+										{"text": " ","color": "#c77e36"},
+										"30",
+										{"text": "/","color": "#c77e36"},
+										"30"
+									],
 									[
 										"",
 										{"text": "I","color": "white","italic": false,"font": "mgs:icons"},
 										{"translate": "mgs.mc_guns_system","italic": true,"color": "blue"}
 									]
-								]
+								],
+								"minecraft:item_model": "mgs:m16a4_mag",
+								"minecraft:item_name": {
+									"translate": "mgs.m16a4_mag"
+								}
 							}
 						}
 					]

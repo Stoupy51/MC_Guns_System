@@ -5,7 +5,7 @@ import json
 import stouputils as stp
 from stewbeet import Item, Mem
 
-from ..config.stats import get_model_path
+from ..config.stats import CAPACITY, REMAINING_BULLETS, get_model_path
 
 
 # Main function should return a database
@@ -45,9 +45,13 @@ def main() -> None:
         for is_empty in (False, True):
             suffix = "_empty" if is_empty else ""
             item: str = f"{weapon}_mag{suffix}"
+            bullets = 0 if is_empty else capacity
             Item(
                 id=item,
                 override_model=json.loads(stp.read_file(get_model_path(item)).replace("mgs:item", f"{Mem.ctx.project_id}:item")),
-                components={"max_stack_size": 1, "custom_data": {ns: {"magazine": True, "weapon": weapon, "bullets": capacity}}}
+                components={
+                    "max_stack_size": 1,
+                    "custom_data": {ns: {"magazine": True, "weapon": weapon, "stats": {REMAINING_BULLETS: bullets, CAPACITY: capacity}}}
+                }
             )
 
