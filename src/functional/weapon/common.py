@@ -46,6 +46,16 @@ scoreboard players reset @s {ns}.alt_right_click
 scoreboard players set @s {ns}.pending_clicks 4
 """)
 
+    # Copy gun data function
+    write_versioned_function("utils/copy_gun_data",
+f"""
+# Copy gun data
+data remove storage {ns}:gun all
+data modify storage {ns}:gun SelectedItem set value {{id:""}}
+data modify storage {ns}:gun SelectedItem set from entity @s SelectedItem
+data modify storage {ns}:gun all set from storage {ns}:gun SelectedItem.components."minecraft:custom_data".{ns}
+""")
+
     # Player tick function
     write_versioned_function("player/tick",
 f"""
@@ -55,11 +65,11 @@ tag @s add {ns}.ticking
 # Compute acoustics (#TODO: Only if player moved enough, and every second not tick)
 function {ns}:v{version}/sound/compute_acoustics
 
+# Reload when moving weapon to offhand
+execute if items entity @s weapon.offhand * run function {ns}:v{version}/player/reload_check
+
 # Copy gun data
-data remove storage {ns}:gun all
-data modify storage {ns}:gun SelectedItem set value {{id:""}}
-data modify storage {ns}:gun SelectedItem set from entity @s SelectedItem
-data modify storage {ns}:gun all set from storage {ns}:gun SelectedItem.components."minecraft:custom_data".{ns}
+function {ns}:v{version}/utils/copy_gun_data
 
 # Check if we need to zoom weapon or stop
 function {ns}:v{version}/zoom/main
@@ -122,5 +132,26 @@ execute store result score @s {ns}.cooldown run data get storage {ns}:gun all.st
     # Update weapon model item modifier
     write_versioned_function("utils/update_model", """
 $item modify entity @s weapon.mainhand {"function": "minecraft:set_components","components": {"minecraft:item_model": "$(item_model)"}}
+""")
+
+    # Reload check when item is moved to offhand
+    write_versioned_function("player/reload_check",
+f"""
+# If mainhand is empty and offhand has a weapon, move it to mainhand and reload
+execute unless items entity @s weapon.mainhand * if items entity @s weapon.offhand *[custom_data~{{{ns}:{{gun:true}}}}] run function {ns}:v{version}/player/swap_and_reload
+""")
+
+    # Swap offhand to mainhand and reload
+    write_versioned_function("player/swap_and_reload",
+f"""
+# Move offhand item to mainhand
+item replace entity @s weapon.mainhand from entity @s weapon.offhand
+item replace entity @s weapon.offhand with air
+
+# Copy gun data
+function {ns}:v{version}/utils/copy_gun_data
+
+# Reload the weapon
+function {ns}:v{version}/ammo/reload
 """)
 
