@@ -3,57 +3,48 @@
 #
 # @executed	as @a[sort=random] & at @s
 #
-# @within	mgs:v5.0.0/ammo/inventory/find {slot:"hotbar.0"}
-#			mgs:v5.0.0/ammo/inventory/find {slot:"hotbar.1"}
-#			mgs:v5.0.0/ammo/inventory/find {slot:"hotbar.2"}
-#			mgs:v5.0.0/ammo/inventory/find {slot:"hotbar.3"}
-#			mgs:v5.0.0/ammo/inventory/find {slot:"hotbar.4"}
-#			mgs:v5.0.0/ammo/inventory/find {slot:"hotbar.5"}
-#			mgs:v5.0.0/ammo/inventory/find {slot:"hotbar.6"}
-#			mgs:v5.0.0/ammo/inventory/find {slot:"hotbar.7"}
-#			mgs:v5.0.0/ammo/inventory/find {slot:"hotbar.8"}
-#			mgs:v5.0.0/ammo/inventory/find {slot:"weapon.offhand"}
-#			mgs:v5.0.0/ammo/inventory/find {slot:"container.0"}
-#			mgs:v5.0.0/ammo/inventory/find {slot:"container.1"}
-#			mgs:v5.0.0/ammo/inventory/find {slot:"container.2"}
-#			mgs:v5.0.0/ammo/inventory/find {slot:"container.3"}
-#			mgs:v5.0.0/ammo/inventory/find {slot:"container.4"}
-#			mgs:v5.0.0/ammo/inventory/find {slot:"container.5"}
-#			mgs:v5.0.0/ammo/inventory/find {slot:"container.6"}
-#			mgs:v5.0.0/ammo/inventory/find {slot:"container.7"}
-#			mgs:v5.0.0/ammo/inventory/find {slot:"container.8"}
-#			mgs:v5.0.0/ammo/inventory/find {slot:"container.9"}
-#			mgs:v5.0.0/ammo/inventory/find {slot:"container.10"}
-#			mgs:v5.0.0/ammo/inventory/find {slot:"container.11"}
-#			mgs:v5.0.0/ammo/inventory/find {slot:"container.12"}
-#			mgs:v5.0.0/ammo/inventory/find {slot:"container.13"}
-#			mgs:v5.0.0/ammo/inventory/find {slot:"container.14"}
-#			mgs:v5.0.0/ammo/inventory/find {slot:"container.15"}
-#			mgs:v5.0.0/ammo/inventory/find {slot:"container.16"}
-#			mgs:v5.0.0/ammo/inventory/find {slot:"container.17"}
-#			mgs:v5.0.0/ammo/inventory/find {slot:"container.18"}
-#			mgs:v5.0.0/ammo/inventory/find {slot:"container.19"}
-#			mgs:v5.0.0/ammo/inventory/find {slot:"container.20"}
-#			mgs:v5.0.0/ammo/inventory/find {slot:"container.21"}
-#			mgs:v5.0.0/ammo/inventory/find {slot:"container.22"}
-#			mgs:v5.0.0/ammo/inventory/find {slot:"container.23"}
-#			mgs:v5.0.0/ammo/inventory/find {slot:"container.24"}
-#			mgs:v5.0.0/ammo/inventory/find {slot:"container.25"}
-#			mgs:v5.0.0/ammo/inventory/find {slot:"container.26"}
-#			mgs:v5.0.0/ammo/inventory/find {slot:"container.27"}
-#			mgs:v5.0.0/ammo/inventory/find {slot:"container.28"}
-#			mgs:v5.0.0/ammo/inventory/find {slot:"container.29"}
-#			mgs:v5.0.0/ammo/inventory/find {slot:"container.30"}
-#			mgs:v5.0.0/ammo/inventory/find {slot:"container.31"}
-#			mgs:v5.0.0/ammo/inventory/find {slot:"container.32"}
-#			mgs:v5.0.0/ammo/inventory/find {slot:"container.33"}
-#			mgs:v5.0.0/ammo/inventory/find {slot:"container.34"}
-#			mgs:v5.0.0/ammo/inventory/find {slot:"container.35"}
-#			mgs:v5.0.0/ammo/inventory/find {slot:"player.cursor"}
-#			mgs:v5.0.0/ammo/inventory/find {slot:"player.crafting.0"}
-#			mgs:v5.0.0/ammo/inventory/find {slot:"player.crafting.1"}
-#			mgs:v5.0.0/ammo/inventory/find {slot:"player.crafting.2"}
-#			mgs:v5.0.0/ammo/inventory/find {slot:"player.crafting.3"}
+# @within	mgs:v5.0.0/ammo/inventory/find {slot:"hotbar.0",base_weapon:"$(base_weapon)"}
+#			mgs:v5.0.0/ammo/inventory/find {slot:"hotbar.1",base_weapon:"$(base_weapon)"}
+#			mgs:v5.0.0/ammo/inventory/find {slot:"hotbar.2",base_weapon:"$(base_weapon)"}
+#			mgs:v5.0.0/ammo/inventory/find {slot:"hotbar.3",base_weapon:"$(base_weapon)"}
+#			mgs:v5.0.0/ammo/inventory/find {slot:"hotbar.4",base_weapon:"$(base_weapon)"}
+#			mgs:v5.0.0/ammo/inventory/find {slot:"hotbar.5",base_weapon:"$(base_weapon)"}
+#			mgs:v5.0.0/ammo/inventory/find {slot:"hotbar.6",base_weapon:"$(base_weapon)"}
+#			mgs:v5.0.0/ammo/inventory/find {slot:"hotbar.7",base_weapon:"$(base_weapon)"}
+#			mgs:v5.0.0/ammo/inventory/find {slot:"hotbar.8",base_weapon:"$(base_weapon)"}
+#			mgs:v5.0.0/ammo/inventory/find {slot:"weapon.offhand",base_weapon:"$(base_weapon)"}
+#			mgs:v5.0.0/ammo/inventory/find {slot:"inventory.0",base_weapon:"$(base_weapon)"}
+#			mgs:v5.0.0/ammo/inventory/find {slot:"inventory.1",base_weapon:"$(base_weapon)"}
+#			mgs:v5.0.0/ammo/inventory/find {slot:"inventory.2",base_weapon:"$(base_weapon)"}
+#			mgs:v5.0.0/ammo/inventory/find {slot:"inventory.3",base_weapon:"$(base_weapon)"}
+#			mgs:v5.0.0/ammo/inventory/find {slot:"inventory.4",base_weapon:"$(base_weapon)"}
+#			mgs:v5.0.0/ammo/inventory/find {slot:"inventory.5",base_weapon:"$(base_weapon)"}
+#			mgs:v5.0.0/ammo/inventory/find {slot:"inventory.6",base_weapon:"$(base_weapon)"}
+#			mgs:v5.0.0/ammo/inventory/find {slot:"inventory.7",base_weapon:"$(base_weapon)"}
+#			mgs:v5.0.0/ammo/inventory/find {slot:"inventory.8",base_weapon:"$(base_weapon)"}
+#			mgs:v5.0.0/ammo/inventory/find {slot:"inventory.9",base_weapon:"$(base_weapon)"}
+#			mgs:v5.0.0/ammo/inventory/find {slot:"inventory.10",base_weapon:"$(base_weapon)"}
+#			mgs:v5.0.0/ammo/inventory/find {slot:"inventory.11",base_weapon:"$(base_weapon)"}
+#			mgs:v5.0.0/ammo/inventory/find {slot:"inventory.12",base_weapon:"$(base_weapon)"}
+#			mgs:v5.0.0/ammo/inventory/find {slot:"inventory.13",base_weapon:"$(base_weapon)"}
+#			mgs:v5.0.0/ammo/inventory/find {slot:"inventory.14",base_weapon:"$(base_weapon)"}
+#			mgs:v5.0.0/ammo/inventory/find {slot:"inventory.15",base_weapon:"$(base_weapon)"}
+#			mgs:v5.0.0/ammo/inventory/find {slot:"inventory.16",base_weapon:"$(base_weapon)"}
+#			mgs:v5.0.0/ammo/inventory/find {slot:"inventory.17",base_weapon:"$(base_weapon)"}
+#			mgs:v5.0.0/ammo/inventory/find {slot:"inventory.18",base_weapon:"$(base_weapon)"}
+#			mgs:v5.0.0/ammo/inventory/find {slot:"inventory.19",base_weapon:"$(base_weapon)"}
+#			mgs:v5.0.0/ammo/inventory/find {slot:"inventory.20",base_weapon:"$(base_weapon)"}
+#			mgs:v5.0.0/ammo/inventory/find {slot:"inventory.21",base_weapon:"$(base_weapon)"}
+#			mgs:v5.0.0/ammo/inventory/find {slot:"inventory.22",base_weapon:"$(base_weapon)"}
+#			mgs:v5.0.0/ammo/inventory/find {slot:"inventory.23",base_weapon:"$(base_weapon)"}
+#			mgs:v5.0.0/ammo/inventory/find {slot:"inventory.24",base_weapon:"$(base_weapon)"}
+#			mgs:v5.0.0/ammo/inventory/find {slot:"inventory.25",base_weapon:"$(base_weapon)"}
+#			mgs:v5.0.0/ammo/inventory/find {slot:"inventory.26",base_weapon:"$(base_weapon)"}
+#			mgs:v5.0.0/ammo/inventory/find {slot:"player.cursor",base_weapon:"$(base_weapon)"}
+#			mgs:v5.0.0/ammo/inventory/find {slot:"player.crafting.0",base_weapon:"$(base_weapon)"}
+#			mgs:v5.0.0/ammo/inventory/find {slot:"player.crafting.1",base_weapon:"$(base_weapon)"}
+#			mgs:v5.0.0/ammo/inventory/find {slot:"player.crafting.2",base_weapon:"$(base_weapon)"}
+#			mgs:v5.0.0/ammo/inventory/find {slot:"player.crafting.3",base_weapon:"$(base_weapon)"}
 #
 # @args		slot (string)
 #			base_weapon (unknown)
@@ -61,7 +52,7 @@
 
 # Get bullets from the magazine
 tag @s add mgs.extracting_bullets
-execute summon item_display run function mgs:v5.0.0/ammo/extract_bullets {slot:"$(slot)"}
+$execute summon item_display run function mgs:v5.0.0/ammo/extract_bullets {slot:"$(slot)"}
 tag @s remove mgs.extracting_bullets
 execute if score #bullets mgs.data matches 0 run return 0
 
@@ -77,7 +68,13 @@ scoreboard players operation #found_ammo mgs.data += #to_take mgs.data
 scoreboard players operation #bullets mgs.data -= #to_take mgs.data
 
 # Modify the magazine item
-$execute if score #bullets mgs.data matches ..0 run item modify entity @s $(slot) {function:"minecraft:set_components", components:{"minecraft:item_model":"$(base_weapon)_mag_empty"}}
-execute store result storage mgs:temp magazine_bullets int 1 run scoreboard players get #bullets mgs.data
-$item modify entity @s $(slot) mgs:v5.0.0/update_magazine_bullets
+$execute if score #bullets mgs.data matches ..0 run function mgs:v5.0.0/ammo/inventory/set_item_model {slot:"$(slot)",base_weapon:"$(base_weapon)"}
+execute store result storage mgs:temp remaining_bullets int 1 run scoreboard players get #bullets mgs.data
+$item modify entity @s $(slot) mgs:v5.0.0/update_ammo
+
+# Update magazine lore
+$function mgs:v5.0.0/ammo/modify_mag_lore {slot:"$(slot)"}
+
+# Update player's ammo count
+scoreboard players operation @s mgs.remaining_bullets = #found_ammo mgs.data
 

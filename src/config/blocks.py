@@ -70,7 +70,7 @@ def main() -> None:
         "minecraft:soul_lantern",
         "minecraft:scaffolding",
         "minecraft:tripwire",
-        "minecraft:chain",
+        "#minecraft:chains",
         "minecraft:small_amethyst_bud",
         "minecraft:medium_amethyst_bud",
         "minecraft:large_amethyst_bud",

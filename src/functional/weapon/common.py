@@ -1,9 +1,8 @@
 
-# ruff: noqa: E501
 # Imports
 from typing import Any
 
-from stewbeet import Advancement, ItemModifier, Mem, Predicate, set_json_encoder, write_versioned_function
+from stewbeet import Advancement, ItemModifier, JsonDict, Mem, Predicate, set_json_encoder, write_versioned_function
 
 from ...config.stats import COOLDOWN, REMAINING_BULLETS, json_dump
 
@@ -14,7 +13,7 @@ def main() -> None:
     version: str = Mem.ctx.project_version
 
     # Advancement detecting right click
-    adv: dict = {
+    adv: JsonDict = {
         "criteria": {
             "requirement": {
                 "trigger": "minecraft:tick",
@@ -72,7 +71,7 @@ function {ns}:v{version}/switch/main
 execute if score @s {ns}.cooldown matches 1.. run scoreboard players remove @s {ns}.cooldown 1
 
 # Check if we need to play reload end sound
-execute if score @s {ns}.cooldown matches 1.. if data storage {ns}:gun all.stats run function {ns}:v{version}/sound/check_reload_end
+execute if score @s {ns}.cooldown matches 1.. if data storage {ns}:gun all.gun run function {ns}:v{version}/sound/check_reload_end
 execute if score @s {ns}.cooldown matches 0 if entity @s[tag={ns}.reloading] run function {ns}:v{version}/ammo/end_reload
 
 # If pending clicks, run right click function
@@ -94,14 +93,14 @@ f"""
 scoreboard players remove @s {ns}.pending_clicks 1
 
 # If player stopped right clicking for 3 second, we update the item lore
-execute if score @s {ns}.pending_clicks matches -60 if data storage {ns}:gun all.stats run function {ns}:v{version}/ammo/modify_lore {{slot:"weapon.mainhand"}}
+execute if score @s {ns}.pending_clicks matches -60 if data storage {ns}:gun all.gun run function {ns}:v{version}/ammo/modify_lore {{slot:"weapon.mainhand"}}
 
 # Stop here is weapon cooldown OR pending clicks if negative
 execute if score @s {ns}.cooldown matches 1.. run return fail
 execute if score @s {ns}.pending_clicks matches ..-1 run return fail
 
 # Stop if SelectedItem is not a gun or if not enough ammo
-execute unless data storage {ns}:gun all.stats run return fail
+execute unless data storage {ns}:gun all.gun run return fail
 execute if score @s {ns}.{REMAINING_BULLETS} matches ..0 run return run function {ns}:v{version}/ammo/reload
 
 # Set cooldown
@@ -110,7 +109,7 @@ execute store result score @s {ns}.cooldown run data get storage {ns}:gun all.st
 
     # Prepare predicates for movement checks
     # (Can't use flag 'is_on_ground' because /tp @s ~ ~ ~ makes it false for two ticks)
-    def json_enc(x): return set_json_encoder(x, max_level=-1)
+    def json_enc(x: Any) -> Any: return set_json_encoder(x, max_level=-1)
     Mem.ctx.data[ns].predicates[f"v{version}/is_on_ground"] = json_enc(Predicate({"condition":"minecraft:entity_properties","entity":"this","predicate":{"movement":{"vertical_speed":{"max":0.1}}}}))
     Mem.ctx.data[ns].predicates[f"v{version}/is_sprinting"] = json_enc(Predicate({"condition":"minecraft:entity_properties","entity":"this","predicate":{"flags":{"is_sprinting":True}}}))
     Mem.ctx.data[ns].predicates[f"v{version}/is_sneaking"] = json_enc(Predicate({"condition":"minecraft:entity_properties","entity":"this","predicate":{"flags":{"is_sneaking":True}}}))

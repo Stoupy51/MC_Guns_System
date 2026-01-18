@@ -12,7 +12,7 @@ ITEM_MODELS_PATH: str = f"{SRC_ROOT}/database/models"
 ALL_SLOTS: tuple[str, ...] = (
     *[f"hotbar.{i}" for i in range(9)],
     "weapon.offhand",
-    *[f"container.{i}" for i in range(4*9)],
+    *[f"inventory.{i}" for i in range(3*9)],
     "player.cursor",
     *[f"player.crafting.{i}" for i in range(4)],
 )

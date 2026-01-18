@@ -8,7 +8,7 @@
 #
 
 # Stop if no weapon in hand
-execute unless data storage mgs:gun all.stats run return fail
+execute unless data storage mgs:gun all.gun run return fail
 
 # Modify attack_speed attribute modifier to sync with current cooldown
 function mgs:v5.0.0/switch/sync_attack_speed_with_cooldown

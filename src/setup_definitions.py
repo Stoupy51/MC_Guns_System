@@ -6,6 +6,7 @@ from typing import Any
 from stewbeet import (
     Context,
     Item,
+    JsonDict,
     Mem,
     add_item_model_component,
     add_item_name_and_lore_if_missing,
@@ -94,6 +95,8 @@ def beet_default(ctx: Context) -> None:
     main_m249()
 
     # Adjust guns data
+    START_HEX: str = "c24a17"
+    END_HEX: str = "c77e36"
     for item in Mem.definitions.keys():
         obj = Item.from_id(item)
 
@@ -116,8 +119,6 @@ def beet_default(ctx: Context) -> None:
             gun_stats[REMAINING_BULLETS] = gun_stats[CAPACITY]
 
             # Prepare fire_rate lore
-            START_HEX: str = "c24a17"
-            END_HEX: str = "c77e36"
             fire_rate_component: list[list[Any]] = []
             if COOLDOWN in gun_stats:
                 fire_rate: float = 20 / gun_stats[COOLDOWN]
@@ -133,6 +134,21 @@ def beet_default(ctx: Context) -> None:
                 [*new_hex("Damage Decay       ➤ ", START_HEX, END_HEX),    f"{gun_stats[DECAY] * 100:.0f}",        {"text":"%","color":f"#{END_HEX}"}],
                 [*new_hex("Switch Time           ➤ ", START_HEX, END_HEX), f"{gun_stats[SWITCH] / 20:.1f}",        {"text":"s","color":f"#{END_HEX}"}],
                 "",
+            ]
+
+        # Adjust magazines data
+        if ns_data.get("magazine"):
+            weapon: str = ns_data["weapon"]
+            bullets: int = ns_data["stats"][REMAINING_BULLETS]
+
+            # Get weapon's capacity
+            weapon_obj = Item.from_id(weapon)
+            weapon_ns_data: JsonDict = weapon_obj.components["custom_data"].get(ns, {})
+            capacity: int = weapon_ns_data["stats"]["capacity"]
+
+            # Set magazine lore
+            obj.components["lore"] = [
+                [*new_hex("Ammo Remaining ➤ ", START_HEX, END_HEX), str(bullets), {"text": "/", "color": f"#{END_HEX}"}, str(capacity)],
             ]
 
     # Sort items so that zoom models are at the end

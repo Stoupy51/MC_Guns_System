@@ -7,7 +7,7 @@
 #
 
 # Set weapon id if not done yet
-execute if data storage mgs:gun all.stats unless data storage mgs:gun all.stats.weapon_id run function mgs:v5.0.0/switch/set_weapon_id
+execute if data storage mgs:gun all.gun unless data storage mgs:gun all.stats.weapon_id run function mgs:v5.0.0/switch/set_weapon_id
 
 # If last_selected is different from this one, set cooldown
 scoreboard players set #current_id mgs.data 0
