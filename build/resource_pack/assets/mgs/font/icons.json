@@ -1,5 +1,7 @@
 {
 	"providers": [
+		{"type": "bitmap","file": "mgs:font/bullet_full.png","ascent": 7,"height": 9,"chars": ["A"]},
+		{"type": "bitmap","file": "mgs:font/bullet_outline.png","ascent": 7,"height": 9,"chars": ["B"]},
 		{"type": "bitmap","file": "mgs:font/original_icon.png","ascent": 8,"height": 9,"chars": ["I"]}
 	]
 }

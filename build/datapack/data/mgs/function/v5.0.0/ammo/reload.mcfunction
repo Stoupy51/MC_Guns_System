@@ -7,6 +7,11 @@
 #			mgs:v5.0.0/player/swap_and_reload
 #
 
+# Stop if already reloading, or already has full ammo
+execute if entity @s[tag=mgs.reloading] run return fail
+execute store result score #capacity mgs.data run data get storage mgs:gun all.stats.capacity
+execute if score @s mgs.remaining_bullets >= #capacity mgs.data run return fail
+
 # Get the new ammo count
 scoreboard players set @s mgs.cooldown 5
 execute if data storage mgs:config no_magazine store result score @s mgs.remaining_bullets run data get storage mgs:gun all.stats.capacity

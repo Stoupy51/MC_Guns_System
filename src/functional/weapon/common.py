@@ -87,7 +87,8 @@ execute if score @s {ns}.cooldown matches 0 if entity @s[tag={ns}.reloading] run
 # If pending clicks, run right click function
 execute if score @s {ns}.pending_clicks matches -100.. run function {ns}:v{version}/player/right_click
 
-# TODO: Title action bar that shows bullet icons (grayed = no bullet) instead of count/max_count
+# Show ammo action bar
+execute if data storage {ns}:gun all.gun run function {ns}:v{version}/ammo/show_action_bar
 
 # Remove temporary tag
 tag @s remove {ns}.ticking

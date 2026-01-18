@@ -34,7 +34,8 @@ execute if score @s mgs.cooldown matches 0 if entity @s[tag=mgs.reloading] run f
 # If pending clicks, run right click function
 execute if score @s mgs.pending_clicks matches -100.. run function mgs:v5.0.0/player/right_click
 
-# TODO: Title action bar that shows bullet icons (grayed = no bullet) instead of count/max_count
+# Show ammo action bar
+execute if data storage mgs:gun all.gun run function mgs:v5.0.0/ammo/show_action_bar
 
 # Remove temporary tag
 tag @s remove mgs.ticking

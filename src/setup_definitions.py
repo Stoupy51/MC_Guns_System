@@ -19,7 +19,7 @@ from stewbeet import (
     create_gradient_text as new_hex,
 )
 
-from .config.stats import CAPACITY, CASING_MODEL, COOLDOWN, DAMAGE, DECAY, MODELS, RELOAD_TIME, REMAINING_BULLETS, SWITCH
+from .config.stats import CAPACITY, CASING_MODEL, COOLDOWN, DAMAGE, DECAY, END_HEX, MODELS, RELOAD_TIME, REMAINING_BULLETS, START_HEX, SWITCH
 from .database.ak47 import main as main_ak47
 from .database.all_pistols import main as main_pistols
 from .database.ammo import main as main_ammo
@@ -95,8 +95,6 @@ def beet_default(ctx: Context) -> None:
     main_m249()
 
     # Adjust guns data
-    START_HEX: str = "c24a17"
-    END_HEX: str = "c77e36"
     for item in Mem.definitions.keys():
         obj = Item.from_id(item)
 

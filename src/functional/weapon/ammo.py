@@ -2,7 +2,7 @@
 # Imports
 from stewbeet import ItemModifier, JsonDict, Mem, set_json_encoder, write_versioned_function
 
-from ...config.stats import ALL_SLOTS, BASE_WEAPON, CAPACITY, RELOAD_TIME, REMAINING_BULLETS
+from ...config.stats import ALL_SLOTS, BASE_WEAPON, CAPACITY, END_HEX, RELOAD_TIME, REMAINING_BULLETS, START_HEX
 
 
 def create_lore_functions(type_name: str, tag: str, remaining_source: str, capacity_source: str) -> None:
@@ -256,6 +256,11 @@ kill @s
     # Reload weapon function
     write_versioned_function("ammo/reload",
 f"""
+# Stop if already reloading, or already has full ammo
+execute if entity @s[tag={ns}.reloading] run return fail
+execute store result score #capacity {ns}.data run data get storage {ns}:gun all.stats.{CAPACITY}
+execute if score @s {ns}.{REMAINING_BULLETS} >= #capacity {ns}.data run return fail
+
 # Get the new ammo count
 scoreboard players set @s {ns}.cooldown 5
 execute if data storage {ns}:config no_magazine store result score @s {ns}.{REMAINING_BULLETS} run data get storage {ns}:gun all.stats.{CAPACITY}
@@ -356,5 +361,59 @@ execute if data storage {ns}:gun all.gun run function {ns}:v{version}/ammo/modif
 
 # Remove reloading tag
 tag @s remove {ns}.reloading
+""")
+
+    # Show action bar with bullet icons
+    write_versioned_function("ammo/show_action_bar",
+f"""
+# Get capacity
+execute store result score #capacity {ns}.data run data get storage {ns}:gun all.stats.{CAPACITY}
+
+# Get remaining
+execute store result score #remaining {ns}.data run scoreboard players get @s {ns}.{REMAINING_BULLETS}
+
+# Initialize actionbar
+data modify storage {ns}:temp actionbar set value {{list:[]}}
+
+# Check if capacity > 15
+execute if score #capacity {ns}.data matches 16.. run data modify storage {ns}:temp actionbar.list append value {{"score":{{"name":"#remaining","objective":"{ns}.data"}},"color":"#{START_HEX}"}}
+execute if score #capacity {ns}.data matches 16.. run data modify storage {ns}:temp actionbar.list append value {{"text":"x "}}
+execute if score #capacity {ns}.data matches 16.. run data modify storage {ns}:temp actionbar.list append value {{"text":"A","font":"{ns}:icons","shadow_color":[0,0,0,0],"color":"white"}}
+execute if score #capacity {ns}.data matches 16.. run data modify storage {ns}:temp actionbar.list append value {{"text":" / ","color":"#{END_HEX}"}}
+execute if score #capacity {ns}.data matches 16.. run data modify storage {ns}:temp actionbar.list append value {{"score":{{"name":"#capacity","objective":"{ns}.data"}}}}
+execute if score #capacity {ns}.data matches 16.. run data modify storage {ns}:temp actionbar.list append value {{"text":"x "}}
+execute if score #capacity {ns}.data matches 16.. run data modify storage {ns}:temp actionbar.list append value {{"text":"A","font":"{ns}:icons","shadow_color":[0,0,0,0],"color":"white"}}
+execute if score #capacity {ns}.data matches 16.. run function {ns}:v{version}/ammo/display_actionbar with storage {ns}:temp actionbar
+execute if score #capacity {ns}.data matches ..15 run function {ns}:v{version}/ammo/show_action_bar_icons
+""")
+
+    # Show action bar with icons for capacity <= 15
+    write_versioned_function("ammo/show_action_bar_icons",
+f"""
+# Start building
+scoreboard players set #i {ns}.data 0
+execute if score #i {ns}.data < #capacity {ns}.data run function {ns}:v{version}/ammo/build_actionbar
+
+# Show actionbar
+function {ns}:v{version}/ammo/display_actionbar with storage {ns}:temp actionbar
+""")
+
+    # Display actionbar using macro
+    write_versioned_function("ammo/display_actionbar", r"$title @s actionbar $(list)")
+
+    # Build actionbar recursively
+    write_versioned_function("ammo/build_actionbar",
+f"""
+# Append bullet icon
+data modify storage {ns}:temp actionbar.list append value {{"text":"A","font":"{ns}:icons","shadow_color":[0,0,0,0]}}
+
+# For empty bullets, use outline
+execute if score #i {ns}.data >= #remaining {ns}.data run data modify storage {ns}:temp actionbar.list[-1].text set value "B"
+
+# Increment i
+scoreboard players add #i {ns}.data 1
+
+# Recurse if not done
+execute if score #i {ns}.data < #capacity {ns}.data run function {ns}:v{version}/ammo/build_actionbar
 """)
 

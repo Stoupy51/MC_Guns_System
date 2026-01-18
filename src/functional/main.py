@@ -1,6 +1,17 @@
 
 # Imports
-from stewbeet import DamageType, Mem, Texture, set_json_encoder, write_load_file, write_tag, write_tick_file, write_versioned_function
+from stewbeet import (
+    DamageType,
+    Font,
+    Mem,
+    Texture,
+    set_json_encoder,
+    texture_mcmeta,
+    write_load_file,
+    write_tag,
+    write_tick_file,
+    write_versioned_function,
+)
 
 from ..config.blocks import main as write_block_tags
 from ..config.stats import REMAINING_BULLETS
@@ -66,4 +77,15 @@ $damage $(target) $(amount) {ns}:bullet by $(attacker)
 """)
 
     # Copy crosshair texture
-    Mem.ctx.assets["minecraft"].textures["gui/sprites/hud/crosshair"] = Texture(source_path=f"{Mem.ctx.meta.stewbeet.textures_folder}/crosshair.png")
+    textures_folder: str = Mem.ctx.meta.get("stewbeet", {}).get("textures_folder", "")
+    Mem.ctx.assets["minecraft"].textures["gui/sprites/hud/crosshair"] = Texture(source_path=f"{textures_folder}/crosshair.png") # type: ignore
+
+    # Add bullet font (for actionbar)
+    font: Font = Mem.ctx.assets.fonts.setdefault(f"{ns}:icons", Font({"providers": []}))
+    font.data["providers"].extend([
+        {"type": "bitmap","file": f"{ns}:font/bullet_full.png","ascent": 7,"height": 9,"chars": ["A"]},
+        {"type": "bitmap","file": f"{ns}:font/bullet_outline.png","ascent": 7,"height": 9,"chars": ["B"]},
+    ])
+    for icon_name in ["bullet_outline", "bullet_full"]:
+        Mem.ctx.assets[ns].textures[f"font/{icon_name}"] = texture_mcmeta(f"{textures_folder}/{icon_name}.png")
+
