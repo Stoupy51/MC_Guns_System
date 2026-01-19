@@ -9,5 +9,5 @@
 #
 
 # Full reload sound for the player
-$playsound mgs:$(reload) player
+$playsound mgs:$(reload) player @s
 

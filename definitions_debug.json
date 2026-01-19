@@ -1,268 +1,4 @@
 {
-	"9x18mm": {
-		"id": "9x18mm",
-		"base_item": "minecraft:command_block",
-		"recipes": [],
-		"components": {
-			"custom_data": {"mgs": {"casing": true,"9x18mm": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},
-			"item_name": {"text": "9x18mm","color": "white"},
-			"item_model": "mgs:9x18mm",
-			"lore": [["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]]
-		}
-	},
-	"9x19mm": {
-		"id": "9x19mm",
-		"base_item": "minecraft:command_block",
-		"recipes": [],
-		"components": {
-			"custom_data": {"mgs": {"casing": true,"9x19mm": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},
-			"item_name": {"text": "9x19mm","color": "white"},
-			"item_model": "mgs:9x19mm",
-			"lore": [["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]]
-		}
-	},
-	"12ga3in": {
-		"id": "12ga3in",
-		"base_item": "minecraft:command_block",
-		"recipes": [],
-		"components": {
-			"custom_data": {"mgs": {"casing": true,"12ga3in": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},
-			"item_name": {"text": "12ga3in","color": "white"},
-			"item_model": "mgs:12ga3in",
-			"lore": [["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]]
-		}
-	},
-	"12ga275in": {
-		"id": "12ga275in",
-		"base_item": "minecraft:command_block",
-		"recipes": [],
-		"components": {
-			"custom_data": {"mgs": {"casing": true,"12ga275in": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},
-			"item_name": {"text": "12ga275in","color": "white"},
-			"item_model": "mgs:12ga275in",
-			"lore": [["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]]
-		}
-	},
-	"32acp": {
-		"id": "32acp",
-		"base_item": "minecraft:command_block",
-		"recipes": [],
-		"components": {
-			"custom_data": {"mgs": {"casing": true,"32acp": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},
-			"item_name": {"text": "32acp","color": "white"},
-			"item_model": "mgs:32acp",
-			"lore": [["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]]
-		}
-	},
-	"45acp": {
-		"id": "45acp",
-		"base_item": "minecraft:command_block",
-		"recipes": [],
-		"components": {
-			"custom_data": {"mgs": {"casing": true,"45acp": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},
-			"item_name": {"text": "45acp","color": "white"},
-			"item_model": "mgs:45acp",
-			"lore": [["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]]
-		}
-	},
-	"46x30mm": {
-		"id": "46x30mm",
-		"base_item": "minecraft:command_block",
-		"recipes": [],
-		"components": {
-			"custom_data": {"mgs": {"casing": true,"46x30mm": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},
-			"item_name": {"text": "46x30mm","color": "white"},
-			"item_model": "mgs:46x30mm",
-			"lore": [["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]]
-		}
-	},
-	"50ae": {
-		"id": "50ae",
-		"base_item": "minecraft:command_block",
-		"recipes": [],
-		"components": {
-			"custom_data": {"mgs": {"casing": true,"50ae": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},
-			"item_name": {"text": "50ae","color": "white"},
-			"item_model": "mgs:50ae",
-			"lore": [["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]]
-		}
-	},
-	"50bmg": {
-		"id": "50bmg",
-		"base_item": "minecraft:command_block",
-		"recipes": [],
-		"components": {
-			"custom_data": {"mgs": {"casing": true,"50bmg": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},
-			"item_name": {"text": "50bmg","color": "white"},
-			"item_model": "mgs:50bmg",
-			"lore": [["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]]
-		}
-	},
-	"338lapua": {
-		"id": "338lapua",
-		"base_item": "minecraft:command_block",
-		"recipes": [],
-		"components": {
-			"custom_data": {"mgs": {"casing": true,"338lapua": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},
-			"item_name": {"text": "338lapua","color": "white"},
-			"item_model": "mgs:338lapua",
-			"lore": [["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]]
-		}
-	},
-	"556x45mm": {
-		"id": "556x45mm",
-		"base_item": "minecraft:command_block",
-		"recipes": [],
-		"components": {
-			"custom_data": {"mgs": {"casing": true,"556x45mm": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},
-			"item_name": {"text": "556x45mm","color": "white"},
-			"item_model": "mgs:556x45mm",
-			"lore": [["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]]
-		}
-	},
-	"762x25mm": {
-		"id": "762x25mm",
-		"base_item": "minecraft:command_block",
-		"recipes": [],
-		"components": {
-			"custom_data": {"mgs": {"casing": true,"762x25mm": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},
-			"item_name": {"text": "762x25mm","color": "white"},
-			"item_model": "mgs:762x25mm",
-			"lore": [["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]]
-		}
-	},
-	"762x39mm": {
-		"id": "762x39mm",
-		"base_item": "minecraft:command_block",
-		"recipes": [],
-		"components": {
-			"custom_data": {"mgs": {"casing": true,"762x39mm": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},
-			"item_name": {"text": "762x39mm","color": "white"},
-			"item_model": "mgs:762x39mm",
-			"lore": [["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]]
-		}
-	},
-	"762x51mm": {
-		"id": "762x51mm",
-		"base_item": "minecraft:command_block",
-		"recipes": [],
-		"components": {
-			"custom_data": {"mgs": {"casing": true,"762x51mm": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},
-			"item_name": {"text": "762x51mm","color": "white"},
-			"item_model": "mgs:762x51mm",
-			"lore": [["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]]
-		}
-	},
-	"762x54mm": {
-		"id": "762x54mm",
-		"base_item": "minecraft:command_block",
-		"recipes": [],
-		"components": {
-			"custom_data": {"mgs": {"casing": true,"762x54mm": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},
-			"item_name": {"text": "762x54mm","color": "white"},
-			"item_model": "mgs:762x54mm",
-			"lore": [["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]]
-		}
-	},
-	"flash_1": {
-		"id": "flash_1",
-		"base_item": "minecraft:white_stained_glass_pane",
-		"recipes": [],
-		"components": {
-			"custom_data": {"mgs": {"flash_1": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},
-			"item_model": "mgs:flash_1",
-			"item_name": {"text": "Flash 1"},
-			"lore": [["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]]
-		}
-	},
-	"flash_2": {
-		"id": "flash_2",
-		"base_item": "minecraft:white_stained_glass_pane",
-		"recipes": [],
-		"components": {
-			"custom_data": {"mgs": {"flash_2": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},
-			"item_model": "mgs:flash_2",
-			"item_name": {"text": "Flash 2"},
-			"lore": [["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]]
-		}
-	},
-	"flash_3": {
-		"id": "flash_3",
-		"base_item": "minecraft:white_stained_glass_pane",
-		"recipes": [],
-		"components": {
-			"custom_data": {"mgs": {"flash_3": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},
-			"item_model": "mgs:flash_3",
-			"item_name": {"text": "Flash 3"},
-			"lore": [["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]]
-		}
-	},
-	"flash_4": {
-		"id": "flash_4",
-		"base_item": "minecraft:white_stained_glass_pane",
-		"recipes": [],
-		"components": {
-			"custom_data": {"mgs": {"flash_4": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},
-			"item_model": "mgs:flash_4",
-			"item_name": {"text": "Flash 4"},
-			"lore": [["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]]
-		}
-	},
-	"flash_5": {
-		"id": "flash_5",
-		"base_item": "minecraft:white_stained_glass_pane",
-		"recipes": [],
-		"components": {
-			"custom_data": {"mgs": {"flash_5": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},
-			"item_model": "mgs:flash_5",
-			"item_name": {"text": "Flash 5"},
-			"lore": [["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]]
-		}
-	},
-	"flash_6": {
-		"id": "flash_6",
-		"base_item": "minecraft:white_stained_glass_pane",
-		"recipes": [],
-		"components": {
-			"custom_data": {"mgs": {"flash_6": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},
-			"item_model": "mgs:flash_6",
-			"item_name": {"text": "Flash 6"},
-			"lore": [["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]]
-		}
-	},
-	"flash_7": {
-		"id": "flash_7",
-		"base_item": "minecraft:white_stained_glass_pane",
-		"recipes": [],
-		"components": {
-			"custom_data": {"mgs": {"flash_7": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},
-			"item_model": "mgs:flash_7",
-			"item_name": {"text": "Flash 7"},
-			"lore": [["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]]
-		}
-	},
-	"flash_8": {
-		"id": "flash_8",
-		"base_item": "minecraft:white_stained_glass_pane",
-		"recipes": [],
-		"components": {
-			"custom_data": {"mgs": {"flash_8": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},
-			"item_model": "mgs:flash_8",
-			"item_name": {"text": "Flash 8"},
-			"lore": [["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]]
-		}
-	},
-	"flash_9": {
-		"id": "flash_9",
-		"base_item": "minecraft:white_stained_glass_pane",
-		"recipes": [],
-		"components": {
-			"custom_data": {"mgs": {"flash_9": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},
-			"item_model": "mgs:flash_9",
-			"item_name": {"text": "Flash 9"},
-			"lore": [["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]]
-		}
-	},
 	"ak47_mag": {
 		"id": "ak47_mag",
 		"base_item": "minecraft:command_block",
@@ -273,18 +9,6 @@
 			"lore": [[{"text": "A","color": "#c24a17","italic": false},{"text": "m","color": "#c24d18"},{"text": "m","color": "#c2501a"},{"text": "o","color": "#c2531c"},{"text": " ","color": "#c3571e"},{"text": "R","color": "#c35a20"},{"text": "e","color": "#c35d22"},{"text": "m","color": "#c46024"},{"text": "a","color": "#c46426"},{"text": "i","color": "#c46728"},{"text": "n","color": "#c56a2a"},{"text": "i","color": "#c56d2c"},{"text": "n","color": "#c5712e"},{"text": "g","color": "#c67430"},{"text": " ","color": "#c67732"},{"text": "➤","color": "#c67a34"},{"text": " ","color": "#c77e36"},"30",{"text": "/","color": "#c77e36"},"30"],["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]],
 			"item_model": "mgs:ak47_mag",
 			"item_name": {"text": "Ak47 Mag"}
-		}
-	},
-	"ak47_mag_empty": {
-		"id": "ak47_mag_empty",
-		"base_item": "minecraft:command_block",
-		"recipes": [],
-		"components": {
-			"max_stack_size": 1,
-			"custom_data": {"mgs": {"magazine": true,"weapon": "ak47","stats": {"remaining_bullets": 0,"capacity": 30},"ak47_mag_empty": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},
-			"lore": [[{"text": "A","color": "#c24a17","italic": false},{"text": "m","color": "#c24d18"},{"text": "m","color": "#c2501a"},{"text": "o","color": "#c2531c"},{"text": " ","color": "#c3571e"},{"text": "R","color": "#c35a20"},{"text": "e","color": "#c35d22"},{"text": "m","color": "#c46024"},{"text": "a","color": "#c46426"},{"text": "i","color": "#c46728"},{"text": "n","color": "#c56a2a"},{"text": "i","color": "#c56d2c"},{"text": "n","color": "#c5712e"},{"text": "g","color": "#c67430"},{"text": " ","color": "#c67732"},{"text": "➤","color": "#c67a34"},{"text": " ","color": "#c77e36"},"0",{"text": "/","color": "#c77e36"},"30"],["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]],
-			"item_model": "mgs:ak47_mag_empty",
-			"item_name": {"text": "Ak47 Mag Empty"}
 		}
 	},
 	"aug_mag": {
@@ -299,18 +23,6 @@
 			"item_name": {"text": "Aug Mag"}
 		}
 	},
-	"aug_mag_empty": {
-		"id": "aug_mag_empty",
-		"base_item": "minecraft:command_block",
-		"recipes": [],
-		"components": {
-			"max_stack_size": 1,
-			"custom_data": {"mgs": {"magazine": true,"weapon": "aug","stats": {"remaining_bullets": 0,"capacity": 30},"aug_mag_empty": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},
-			"lore": [[{"text": "A","color": "#c24a17","italic": false},{"text": "m","color": "#c24d18"},{"text": "m","color": "#c2501a"},{"text": "o","color": "#c2531c"},{"text": " ","color": "#c3571e"},{"text": "R","color": "#c35a20"},{"text": "e","color": "#c35d22"},{"text": "m","color": "#c46024"},{"text": "a","color": "#c46426"},{"text": "i","color": "#c46728"},{"text": "n","color": "#c56a2a"},{"text": "i","color": "#c56d2c"},{"text": "n","color": "#c5712e"},{"text": "g","color": "#c67430"},{"text": " ","color": "#c67732"},{"text": "➤","color": "#c67a34"},{"text": " ","color": "#c77e36"},"0",{"text": "/","color": "#c77e36"},"30"],["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]],
-			"item_model": "mgs:aug_mag_empty",
-			"item_name": {"text": "Aug Mag Empty"}
-		}
-	},
 	"deagle_mag": {
 		"id": "deagle_mag",
 		"base_item": "minecraft:command_block",
@@ -321,18 +33,6 @@
 			"lore": [[{"text": "A","color": "#c24a17","italic": false},{"text": "m","color": "#c24d18"},{"text": "m","color": "#c2501a"},{"text": "o","color": "#c2531c"},{"text": " ","color": "#c3571e"},{"text": "R","color": "#c35a20"},{"text": "e","color": "#c35d22"},{"text": "m","color": "#c46024"},{"text": "a","color": "#c46426"},{"text": "i","color": "#c46728"},{"text": "n","color": "#c56a2a"},{"text": "i","color": "#c56d2c"},{"text": "n","color": "#c5712e"},{"text": "g","color": "#c67430"},{"text": " ","color": "#c67732"},{"text": "➤","color": "#c67a34"},{"text": " ","color": "#c77e36"},"7",{"text": "/","color": "#c77e36"},"7"],["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]],
 			"item_model": "mgs:deagle_mag",
 			"item_name": {"text": "Deagle Mag"}
-		}
-	},
-	"deagle_mag_empty": {
-		"id": "deagle_mag_empty",
-		"base_item": "minecraft:command_block",
-		"recipes": [],
-		"components": {
-			"max_stack_size": 1,
-			"custom_data": {"mgs": {"magazine": true,"weapon": "deagle","stats": {"remaining_bullets": 0,"capacity": 7},"deagle_mag_empty": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},
-			"lore": [[{"text": "A","color": "#c24a17","italic": false},{"text": "m","color": "#c24d18"},{"text": "m","color": "#c2501a"},{"text": "o","color": "#c2531c"},{"text": " ","color": "#c3571e"},{"text": "R","color": "#c35a20"},{"text": "e","color": "#c35d22"},{"text": "m","color": "#c46024"},{"text": "a","color": "#c46426"},{"text": "i","color": "#c46728"},{"text": "n","color": "#c56a2a"},{"text": "i","color": "#c56d2c"},{"text": "n","color": "#c5712e"},{"text": "g","color": "#c67430"},{"text": " ","color": "#c67732"},{"text": "➤","color": "#c67a34"},{"text": " ","color": "#c77e36"},"0",{"text": "/","color": "#c77e36"},"7"],["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]],
-			"item_model": "mgs:deagle_mag_empty",
-			"item_name": {"text": "Deagle Mag Empty"}
 		}
 	},
 	"famas_mag": {
@@ -347,18 +47,6 @@
 			"item_name": {"text": "Famas Mag"}
 		}
 	},
-	"famas_mag_empty": {
-		"id": "famas_mag_empty",
-		"base_item": "minecraft:command_block",
-		"recipes": [],
-		"components": {
-			"max_stack_size": 1,
-			"custom_data": {"mgs": {"magazine": true,"weapon": "famas","stats": {"remaining_bullets": 0,"capacity": 25},"famas_mag_empty": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},
-			"lore": [[{"text": "A","color": "#c24a17","italic": false},{"text": "m","color": "#c24d18"},{"text": "m","color": "#c2501a"},{"text": "o","color": "#c2531c"},{"text": " ","color": "#c3571e"},{"text": "R","color": "#c35a20"},{"text": "e","color": "#c35d22"},{"text": "m","color": "#c46024"},{"text": "a","color": "#c46426"},{"text": "i","color": "#c46728"},{"text": "n","color": "#c56a2a"},{"text": "i","color": "#c56d2c"},{"text": "n","color": "#c5712e"},{"text": "g","color": "#c67430"},{"text": " ","color": "#c67732"},{"text": "➤","color": "#c67a34"},{"text": " ","color": "#c77e36"},"0",{"text": "/","color": "#c77e36"},"25"],["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]],
-			"item_model": "mgs:famas_mag_empty",
-			"item_name": {"text": "Famas Mag Empty"}
-		}
-	},
 	"fnfal_mag": {
 		"id": "fnfal_mag",
 		"base_item": "minecraft:command_block",
@@ -369,18 +57,6 @@
 			"lore": [[{"text": "A","color": "#c24a17","italic": false},{"text": "m","color": "#c24d18"},{"text": "m","color": "#c2501a"},{"text": "o","color": "#c2531c"},{"text": " ","color": "#c3571e"},{"text": "R","color": "#c35a20"},{"text": "e","color": "#c35d22"},{"text": "m","color": "#c46024"},{"text": "a","color": "#c46426"},{"text": "i","color": "#c46728"},{"text": "n","color": "#c56a2a"},{"text": "i","color": "#c56d2c"},{"text": "n","color": "#c5712e"},{"text": "g","color": "#c67430"},{"text": " ","color": "#c67732"},{"text": "➤","color": "#c67a34"},{"text": " ","color": "#c77e36"},"20",{"text": "/","color": "#c77e36"},"20"],["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]],
 			"item_model": "mgs:fnfal_mag",
 			"item_name": {"text": "Fnfal Mag"}
-		}
-	},
-	"fnfal_mag_empty": {
-		"id": "fnfal_mag_empty",
-		"base_item": "minecraft:command_block",
-		"recipes": [],
-		"components": {
-			"max_stack_size": 1,
-			"custom_data": {"mgs": {"magazine": true,"weapon": "fnfal","stats": {"remaining_bullets": 0,"capacity": 20},"fnfal_mag_empty": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},
-			"lore": [[{"text": "A","color": "#c24a17","italic": false},{"text": "m","color": "#c24d18"},{"text": "m","color": "#c2501a"},{"text": "o","color": "#c2531c"},{"text": " ","color": "#c3571e"},{"text": "R","color": "#c35a20"},{"text": "e","color": "#c35d22"},{"text": "m","color": "#c46024"},{"text": "a","color": "#c46426"},{"text": "i","color": "#c46728"},{"text": "n","color": "#c56a2a"},{"text": "i","color": "#c56d2c"},{"text": "n","color": "#c5712e"},{"text": "g","color": "#c67430"},{"text": " ","color": "#c67732"},{"text": "➤","color": "#c67a34"},{"text": " ","color": "#c77e36"},"0",{"text": "/","color": "#c77e36"},"20"],["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]],
-			"item_model": "mgs:fnfal_mag_empty",
-			"item_name": {"text": "Fnfal Mag Empty"}
 		}
 	},
 	"g3a3_mag": {
@@ -395,18 +71,6 @@
 			"item_name": {"text": "G3A3 Mag"}
 		}
 	},
-	"g3a3_mag_empty": {
-		"id": "g3a3_mag_empty",
-		"base_item": "minecraft:command_block",
-		"recipes": [],
-		"components": {
-			"max_stack_size": 1,
-			"custom_data": {"mgs": {"magazine": true,"weapon": "g3a3","stats": {"remaining_bullets": 0,"capacity": 20},"g3a3_mag_empty": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},
-			"lore": [[{"text": "A","color": "#c24a17","italic": false},{"text": "m","color": "#c24d18"},{"text": "m","color": "#c2501a"},{"text": "o","color": "#c2531c"},{"text": " ","color": "#c3571e"},{"text": "R","color": "#c35a20"},{"text": "e","color": "#c35d22"},{"text": "m","color": "#c46024"},{"text": "a","color": "#c46426"},{"text": "i","color": "#c46728"},{"text": "n","color": "#c56a2a"},{"text": "i","color": "#c56d2c"},{"text": "n","color": "#c5712e"},{"text": "g","color": "#c67430"},{"text": " ","color": "#c67732"},{"text": "➤","color": "#c67a34"},{"text": " ","color": "#c77e36"},"0",{"text": "/","color": "#c77e36"},"20"],["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]],
-			"item_model": "mgs:g3a3_mag_empty",
-			"item_name": {"text": "G3A3 Mag Empty"}
-		}
-	},
 	"glock17_mag": {
 		"id": "glock17_mag",
 		"base_item": "minecraft:command_block",
@@ -417,18 +81,6 @@
 			"lore": [[{"text": "A","color": "#c24a17","italic": false},{"text": "m","color": "#c24d18"},{"text": "m","color": "#c2501a"},{"text": "o","color": "#c2531c"},{"text": " ","color": "#c3571e"},{"text": "R","color": "#c35a20"},{"text": "e","color": "#c35d22"},{"text": "m","color": "#c46024"},{"text": "a","color": "#c46426"},{"text": "i","color": "#c46728"},{"text": "n","color": "#c56a2a"},{"text": "i","color": "#c56d2c"},{"text": "n","color": "#c5712e"},{"text": "g","color": "#c67430"},{"text": " ","color": "#c67732"},{"text": "➤","color": "#c67a34"},{"text": " ","color": "#c77e36"},"17",{"text": "/","color": "#c77e36"},"17"],["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]],
 			"item_model": "mgs:glock17_mag",
 			"item_name": {"text": "Glock17 Mag"}
-		}
-	},
-	"glock17_mag_empty": {
-		"id": "glock17_mag_empty",
-		"base_item": "minecraft:command_block",
-		"recipes": [],
-		"components": {
-			"max_stack_size": 1,
-			"custom_data": {"mgs": {"magazine": true,"weapon": "glock17","stats": {"remaining_bullets": 0,"capacity": 17},"glock17_mag_empty": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},
-			"lore": [[{"text": "A","color": "#c24a17","italic": false},{"text": "m","color": "#c24d18"},{"text": "m","color": "#c2501a"},{"text": "o","color": "#c2531c"},{"text": " ","color": "#c3571e"},{"text": "R","color": "#c35a20"},{"text": "e","color": "#c35d22"},{"text": "m","color": "#c46024"},{"text": "a","color": "#c46426"},{"text": "i","color": "#c46728"},{"text": "n","color": "#c56a2a"},{"text": "i","color": "#c56d2c"},{"text": "n","color": "#c5712e"},{"text": "g","color": "#c67430"},{"text": " ","color": "#c67732"},{"text": "➤","color": "#c67a34"},{"text": " ","color": "#c77e36"},"0",{"text": "/","color": "#c77e36"},"17"],["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]],
-			"item_model": "mgs:glock17_mag_empty",
-			"item_name": {"text": "Glock17 Mag Empty"}
 		}
 	},
 	"glock18_mag": {
@@ -443,18 +95,6 @@
 			"item_name": {"text": "Glock18 Mag"}
 		}
 	},
-	"glock18_mag_empty": {
-		"id": "glock18_mag_empty",
-		"base_item": "minecraft:command_block",
-		"recipes": [],
-		"components": {
-			"max_stack_size": 1,
-			"custom_data": {"mgs": {"magazine": true,"weapon": "glock18","stats": {"remaining_bullets": 0,"capacity": 19},"glock18_mag_empty": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},
-			"lore": [[{"text": "A","color": "#c24a17","italic": false},{"text": "m","color": "#c24d18"},{"text": "m","color": "#c2501a"},{"text": "o","color": "#c2531c"},{"text": " ","color": "#c3571e"},{"text": "R","color": "#c35a20"},{"text": "e","color": "#c35d22"},{"text": "m","color": "#c46024"},{"text": "a","color": "#c46426"},{"text": "i","color": "#c46728"},{"text": "n","color": "#c56a2a"},{"text": "i","color": "#c56d2c"},{"text": "n","color": "#c5712e"},{"text": "g","color": "#c67430"},{"text": " ","color": "#c67732"},{"text": "➤","color": "#c67a34"},{"text": " ","color": "#c77e36"},"0",{"text": "/","color": "#c77e36"},"19"],["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]],
-			"item_model": "mgs:glock18_mag_empty",
-			"item_name": {"text": "Glock18 Mag Empty"}
-		}
-	},
 	"m16a4_mag": {
 		"id": "m16a4_mag",
 		"base_item": "minecraft:command_block",
@@ -465,18 +105,6 @@
 			"lore": [[{"text": "A","color": "#c24a17","italic": false},{"text": "m","color": "#c24d18"},{"text": "m","color": "#c2501a"},{"text": "o","color": "#c2531c"},{"text": " ","color": "#c3571e"},{"text": "R","color": "#c35a20"},{"text": "e","color": "#c35d22"},{"text": "m","color": "#c46024"},{"text": "a","color": "#c46426"},{"text": "i","color": "#c46728"},{"text": "n","color": "#c56a2a"},{"text": "i","color": "#c56d2c"},{"text": "n","color": "#c5712e"},{"text": "g","color": "#c67430"},{"text": " ","color": "#c67732"},{"text": "➤","color": "#c67a34"},{"text": " ","color": "#c77e36"},"30",{"text": "/","color": "#c77e36"},"30"],["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]],
 			"item_model": "mgs:m16a4_mag",
 			"item_name": {"text": "M16A4 Mag"}
-		}
-	},
-	"m16a4_mag_empty": {
-		"id": "m16a4_mag_empty",
-		"base_item": "minecraft:command_block",
-		"recipes": [],
-		"components": {
-			"max_stack_size": 1,
-			"custom_data": {"mgs": {"magazine": true,"weapon": "m16a4","stats": {"remaining_bullets": 0,"capacity": 30},"m16a4_mag_empty": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},
-			"lore": [[{"text": "A","color": "#c24a17","italic": false},{"text": "m","color": "#c24d18"},{"text": "m","color": "#c2501a"},{"text": "o","color": "#c2531c"},{"text": " ","color": "#c3571e"},{"text": "R","color": "#c35a20"},{"text": "e","color": "#c35d22"},{"text": "m","color": "#c46024"},{"text": "a","color": "#c46426"},{"text": "i","color": "#c46728"},{"text": "n","color": "#c56a2a"},{"text": "i","color": "#c56d2c"},{"text": "n","color": "#c5712e"},{"text": "g","color": "#c67430"},{"text": " ","color": "#c67732"},{"text": "➤","color": "#c67a34"},{"text": " ","color": "#c77e36"},"0",{"text": "/","color": "#c77e36"},"30"],["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]],
-			"item_model": "mgs:m16a4_mag_empty",
-			"item_name": {"text": "M16A4 Mag Empty"}
 		}
 	},
 	"m1911_mag": {
@@ -491,18 +119,6 @@
 			"item_name": {"text": "M1911 Mag"}
 		}
 	},
-	"m1911_mag_empty": {
-		"id": "m1911_mag_empty",
-		"base_item": "minecraft:command_block",
-		"recipes": [],
-		"components": {
-			"max_stack_size": 1,
-			"custom_data": {"mgs": {"magazine": true,"weapon": "m1911","stats": {"remaining_bullets": 0,"capacity": 7},"m1911_mag_empty": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},
-			"lore": [[{"text": "A","color": "#c24a17","italic": false},{"text": "m","color": "#c24d18"},{"text": "m","color": "#c2501a"},{"text": "o","color": "#c2531c"},{"text": " ","color": "#c3571e"},{"text": "R","color": "#c35a20"},{"text": "e","color": "#c35d22"},{"text": "m","color": "#c46024"},{"text": "a","color": "#c46426"},{"text": "i","color": "#c46728"},{"text": "n","color": "#c56a2a"},{"text": "i","color": "#c56d2c"},{"text": "n","color": "#c5712e"},{"text": "g","color": "#c67430"},{"text": " ","color": "#c67732"},{"text": "➤","color": "#c67a34"},{"text": " ","color": "#c77e36"},"0",{"text": "/","color": "#c77e36"},"7"],["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]],
-			"item_model": "mgs:m1911_mag_empty",
-			"item_name": {"text": "M1911 Mag Empty"}
-		}
-	},
 	"m249_mag": {
 		"id": "m249_mag",
 		"base_item": "minecraft:command_block",
@@ -513,18 +129,6 @@
 			"lore": [[{"text": "A","color": "#c24a17","italic": false},{"text": "m","color": "#c24d18"},{"text": "m","color": "#c2501a"},{"text": "o","color": "#c2531c"},{"text": " ","color": "#c3571e"},{"text": "R","color": "#c35a20"},{"text": "e","color": "#c35d22"},{"text": "m","color": "#c46024"},{"text": "a","color": "#c46426"},{"text": "i","color": "#c46728"},{"text": "n","color": "#c56a2a"},{"text": "i","color": "#c56d2c"},{"text": "n","color": "#c5712e"},{"text": "g","color": "#c67430"},{"text": " ","color": "#c67732"},{"text": "➤","color": "#c67a34"},{"text": " ","color": "#c77e36"},"150",{"text": "/","color": "#c77e36"},"150"],["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]],
 			"item_model": "mgs:m249_mag",
 			"item_name": {"text": "M249 Mag"}
-		}
-	},
-	"m249_mag_empty": {
-		"id": "m249_mag_empty",
-		"base_item": "minecraft:command_block",
-		"recipes": [],
-		"components": {
-			"max_stack_size": 1,
-			"custom_data": {"mgs": {"magazine": true,"weapon": "m249","stats": {"remaining_bullets": 0,"capacity": 150},"m249_mag_empty": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},
-			"lore": [[{"text": "A","color": "#c24a17","italic": false},{"text": "m","color": "#c24d18"},{"text": "m","color": "#c2501a"},{"text": "o","color": "#c2531c"},{"text": " ","color": "#c3571e"},{"text": "R","color": "#c35a20"},{"text": "e","color": "#c35d22"},{"text": "m","color": "#c46024"},{"text": "a","color": "#c46426"},{"text": "i","color": "#c46728"},{"text": "n","color": "#c56a2a"},{"text": "i","color": "#c56d2c"},{"text": "n","color": "#c5712e"},{"text": "g","color": "#c67430"},{"text": " ","color": "#c67732"},{"text": "➤","color": "#c67a34"},{"text": " ","color": "#c77e36"},"0",{"text": "/","color": "#c77e36"},"150"],["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]],
-			"item_model": "mgs:m249_mag_empty",
-			"item_name": {"text": "M249 Mag Empty"}
 		}
 	},
 	"m4a1_mag": {
@@ -539,18 +143,6 @@
 			"item_name": {"text": "M4A1 Mag"}
 		}
 	},
-	"m4a1_mag_empty": {
-		"id": "m4a1_mag_empty",
-		"base_item": "minecraft:command_block",
-		"recipes": [],
-		"components": {
-			"max_stack_size": 1,
-			"custom_data": {"mgs": {"magazine": true,"weapon": "m4a1","stats": {"remaining_bullets": 0,"capacity": 30},"m4a1_mag_empty": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},
-			"lore": [[{"text": "A","color": "#c24a17","italic": false},{"text": "m","color": "#c24d18"},{"text": "m","color": "#c2501a"},{"text": "o","color": "#c2531c"},{"text": " ","color": "#c3571e"},{"text": "R","color": "#c35a20"},{"text": "e","color": "#c35d22"},{"text": "m","color": "#c46024"},{"text": "a","color": "#c46426"},{"text": "i","color": "#c46728"},{"text": "n","color": "#c56a2a"},{"text": "i","color": "#c56d2c"},{"text": "n","color": "#c5712e"},{"text": "g","color": "#c67430"},{"text": " ","color": "#c67732"},{"text": "➤","color": "#c67a34"},{"text": " ","color": "#c77e36"},"0",{"text": "/","color": "#c77e36"},"30"],["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]],
-			"item_model": "mgs:m4a1_mag_empty",
-			"item_name": {"text": "M4A1 Mag Empty"}
-		}
-	},
 	"m82_mag": {
 		"id": "m82_mag",
 		"base_item": "minecraft:command_block",
@@ -561,18 +153,6 @@
 			"lore": [[{"text": "A","color": "#c24a17","italic": false},{"text": "m","color": "#c24d18"},{"text": "m","color": "#c2501a"},{"text": "o","color": "#c2531c"},{"text": " ","color": "#c3571e"},{"text": "R","color": "#c35a20"},{"text": "e","color": "#c35d22"},{"text": "m","color": "#c46024"},{"text": "a","color": "#c46426"},{"text": "i","color": "#c46728"},{"text": "n","color": "#c56a2a"},{"text": "i","color": "#c56d2c"},{"text": "n","color": "#c5712e"},{"text": "g","color": "#c67430"},{"text": " ","color": "#c67732"},{"text": "➤","color": "#c67a34"},{"text": " ","color": "#c77e36"},"10",{"text": "/","color": "#c77e36"},"10"],["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]],
 			"item_model": "mgs:m82_mag",
 			"item_name": {"text": "M82 Mag"}
-		}
-	},
-	"m82_mag_empty": {
-		"id": "m82_mag_empty",
-		"base_item": "minecraft:command_block",
-		"recipes": [],
-		"components": {
-			"max_stack_size": 1,
-			"custom_data": {"mgs": {"magazine": true,"weapon": "m82","stats": {"remaining_bullets": 0,"capacity": 10},"m82_mag_empty": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},
-			"lore": [[{"text": "A","color": "#c24a17","italic": false},{"text": "m","color": "#c24d18"},{"text": "m","color": "#c2501a"},{"text": "o","color": "#c2531c"},{"text": " ","color": "#c3571e"},{"text": "R","color": "#c35a20"},{"text": "e","color": "#c35d22"},{"text": "m","color": "#c46024"},{"text": "a","color": "#c46426"},{"text": "i","color": "#c46728"},{"text": "n","color": "#c56a2a"},{"text": "i","color": "#c56d2c"},{"text": "n","color": "#c5712e"},{"text": "g","color": "#c67430"},{"text": " ","color": "#c67732"},{"text": "➤","color": "#c67a34"},{"text": " ","color": "#c77e36"},"0",{"text": "/","color": "#c77e36"},"10"],["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]],
-			"item_model": "mgs:m82_mag_empty",
-			"item_name": {"text": "M82 Mag Empty"}
 		}
 	},
 	"m9_mag": {
@@ -587,18 +167,6 @@
 			"item_name": {"text": "M9 Mag"}
 		}
 	},
-	"m9_mag_empty": {
-		"id": "m9_mag_empty",
-		"base_item": "minecraft:command_block",
-		"recipes": [],
-		"components": {
-			"max_stack_size": 1,
-			"custom_data": {"mgs": {"magazine": true,"weapon": "m9","stats": {"remaining_bullets": 0,"capacity": 15},"m9_mag_empty": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},
-			"lore": [[{"text": "A","color": "#c24a17","italic": false},{"text": "m","color": "#c24d18"},{"text": "m","color": "#c2501a"},{"text": "o","color": "#c2531c"},{"text": " ","color": "#c3571e"},{"text": "R","color": "#c35a20"},{"text": "e","color": "#c35d22"},{"text": "m","color": "#c46024"},{"text": "a","color": "#c46426"},{"text": "i","color": "#c46728"},{"text": "n","color": "#c56a2a"},{"text": "i","color": "#c56d2c"},{"text": "n","color": "#c5712e"},{"text": "g","color": "#c67430"},{"text": " ","color": "#c67732"},{"text": "➤","color": "#c67a34"},{"text": " ","color": "#c77e36"},"0",{"text": "/","color": "#c77e36"},"15"],["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]],
-			"item_model": "mgs:m9_mag_empty",
-			"item_name": {"text": "M9 Mag Empty"}
-		}
-	},
 	"mac10_mag": {
 		"id": "mac10_mag",
 		"base_item": "minecraft:command_block",
@@ -609,18 +177,6 @@
 			"lore": [[{"text": "A","color": "#c24a17","italic": false},{"text": "m","color": "#c24d18"},{"text": "m","color": "#c2501a"},{"text": "o","color": "#c2531c"},{"text": " ","color": "#c3571e"},{"text": "R","color": "#c35a20"},{"text": "e","color": "#c35d22"},{"text": "m","color": "#c46024"},{"text": "a","color": "#c46426"},{"text": "i","color": "#c46728"},{"text": "n","color": "#c56a2a"},{"text": "i","color": "#c56d2c"},{"text": "n","color": "#c5712e"},{"text": "g","color": "#c67430"},{"text": " ","color": "#c67732"},{"text": "➤","color": "#c67a34"},{"text": " ","color": "#c77e36"},"30",{"text": "/","color": "#c77e36"},"30"],["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]],
 			"item_model": "mgs:mac10_mag",
 			"item_name": {"text": "Mac10 Mag"}
-		}
-	},
-	"mac10_mag_empty": {
-		"id": "mac10_mag_empty",
-		"base_item": "minecraft:command_block",
-		"recipes": [],
-		"components": {
-			"max_stack_size": 1,
-			"custom_data": {"mgs": {"magazine": true,"weapon": "mac10","stats": {"remaining_bullets": 0,"capacity": 30},"mac10_mag_empty": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},
-			"lore": [[{"text": "A","color": "#c24a17","italic": false},{"text": "m","color": "#c24d18"},{"text": "m","color": "#c2501a"},{"text": "o","color": "#c2531c"},{"text": " ","color": "#c3571e"},{"text": "R","color": "#c35a20"},{"text": "e","color": "#c35d22"},{"text": "m","color": "#c46024"},{"text": "a","color": "#c46426"},{"text": "i","color": "#c46728"},{"text": "n","color": "#c56a2a"},{"text": "i","color": "#c56d2c"},{"text": "n","color": "#c5712e"},{"text": "g","color": "#c67430"},{"text": " ","color": "#c67732"},{"text": "➤","color": "#c67a34"},{"text": " ","color": "#c77e36"},"0",{"text": "/","color": "#c77e36"},"30"],["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]],
-			"item_model": "mgs:mac10_mag_empty",
-			"item_name": {"text": "Mac10 Mag Empty"}
 		}
 	},
 	"makarov_mag": {
@@ -635,18 +191,6 @@
 			"item_name": {"text": "Makarov Mag"}
 		}
 	},
-	"makarov_mag_empty": {
-		"id": "makarov_mag_empty",
-		"base_item": "minecraft:command_block",
-		"recipes": [],
-		"components": {
-			"max_stack_size": 1,
-			"custom_data": {"mgs": {"magazine": true,"weapon": "makarov","stats": {"remaining_bullets": 0,"capacity": 8},"makarov_mag_empty": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},
-			"lore": [[{"text": "A","color": "#c24a17","italic": false},{"text": "m","color": "#c24d18"},{"text": "m","color": "#c2501a"},{"text": "o","color": "#c2531c"},{"text": " ","color": "#c3571e"},{"text": "R","color": "#c35a20"},{"text": "e","color": "#c35d22"},{"text": "m","color": "#c46024"},{"text": "a","color": "#c46426"},{"text": "i","color": "#c46728"},{"text": "n","color": "#c56a2a"},{"text": "i","color": "#c56d2c"},{"text": "n","color": "#c5712e"},{"text": "g","color": "#c67430"},{"text": " ","color": "#c67732"},{"text": "➤","color": "#c67a34"},{"text": " ","color": "#c77e36"},"0",{"text": "/","color": "#c77e36"},"8"],["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]],
-			"item_model": "mgs:makarov_mag_empty",
-			"item_name": {"text": "Makarov Mag Empty"}
-		}
-	},
 	"mp5_mag": {
 		"id": "mp5_mag",
 		"base_item": "minecraft:command_block",
@@ -657,18 +201,6 @@
 			"lore": [[{"text": "A","color": "#c24a17","italic": false},{"text": "m","color": "#c24d18"},{"text": "m","color": "#c2501a"},{"text": "o","color": "#c2531c"},{"text": " ","color": "#c3571e"},{"text": "R","color": "#c35a20"},{"text": "e","color": "#c35d22"},{"text": "m","color": "#c46024"},{"text": "a","color": "#c46426"},{"text": "i","color": "#c46728"},{"text": "n","color": "#c56a2a"},{"text": "i","color": "#c56d2c"},{"text": "n","color": "#c5712e"},{"text": "g","color": "#c67430"},{"text": " ","color": "#c67732"},{"text": "➤","color": "#c67a34"},{"text": " ","color": "#c77e36"},"30",{"text": "/","color": "#c77e36"},"30"],["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]],
 			"item_model": "mgs:mp5_mag",
 			"item_name": {"text": "Mp5 Mag"}
-		}
-	},
-	"mp5_mag_empty": {
-		"id": "mp5_mag_empty",
-		"base_item": "minecraft:command_block",
-		"recipes": [],
-		"components": {
-			"max_stack_size": 1,
-			"custom_data": {"mgs": {"magazine": true,"weapon": "mp5","stats": {"remaining_bullets": 0,"capacity": 30},"mp5_mag_empty": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},
-			"lore": [[{"text": "A","color": "#c24a17","italic": false},{"text": "m","color": "#c24d18"},{"text": "m","color": "#c2501a"},{"text": "o","color": "#c2531c"},{"text": " ","color": "#c3571e"},{"text": "R","color": "#c35a20"},{"text": "e","color": "#c35d22"},{"text": "m","color": "#c46024"},{"text": "a","color": "#c46426"},{"text": "i","color": "#c46728"},{"text": "n","color": "#c56a2a"},{"text": "i","color": "#c56d2c"},{"text": "n","color": "#c5712e"},{"text": "g","color": "#c67430"},{"text": " ","color": "#c67732"},{"text": "➤","color": "#c67a34"},{"text": " ","color": "#c77e36"},"0",{"text": "/","color": "#c77e36"},"30"],["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]],
-			"item_model": "mgs:mp5_mag_empty",
-			"item_name": {"text": "Mp5 Mag Empty"}
 		}
 	},
 	"mp7_mag": {
@@ -683,18 +215,6 @@
 			"item_name": {"text": "Mp7 Mag"}
 		}
 	},
-	"mp7_mag_empty": {
-		"id": "mp7_mag_empty",
-		"base_item": "minecraft:command_block",
-		"recipes": [],
-		"components": {
-			"max_stack_size": 1,
-			"custom_data": {"mgs": {"magazine": true,"weapon": "mp7","stats": {"remaining_bullets": 0,"capacity": 40},"mp7_mag_empty": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},
-			"lore": [[{"text": "A","color": "#c24a17","italic": false},{"text": "m","color": "#c24d18"},{"text": "m","color": "#c2501a"},{"text": "o","color": "#c2531c"},{"text": " ","color": "#c3571e"},{"text": "R","color": "#c35a20"},{"text": "e","color": "#c35d22"},{"text": "m","color": "#c46024"},{"text": "a","color": "#c46426"},{"text": "i","color": "#c46728"},{"text": "n","color": "#c56a2a"},{"text": "i","color": "#c56d2c"},{"text": "n","color": "#c5712e"},{"text": "g","color": "#c67430"},{"text": " ","color": "#c67732"},{"text": "➤","color": "#c67a34"},{"text": " ","color": "#c77e36"},"0",{"text": "/","color": "#c77e36"},"40"],["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]],
-			"item_model": "mgs:mp7_mag_empty",
-			"item_name": {"text": "Mp7 Mag Empty"}
-		}
-	},
 	"ppsh41_mag": {
 		"id": "ppsh41_mag",
 		"base_item": "minecraft:command_block",
@@ -705,18 +225,6 @@
 			"lore": [[{"text": "A","color": "#c24a17","italic": false},{"text": "m","color": "#c24d18"},{"text": "m","color": "#c2501a"},{"text": "o","color": "#c2531c"},{"text": " ","color": "#c3571e"},{"text": "R","color": "#c35a20"},{"text": "e","color": "#c35d22"},{"text": "m","color": "#c46024"},{"text": "a","color": "#c46426"},{"text": "i","color": "#c46728"},{"text": "n","color": "#c56a2a"},{"text": "i","color": "#c56d2c"},{"text": "n","color": "#c5712e"},{"text": "g","color": "#c67430"},{"text": " ","color": "#c67732"},{"text": "➤","color": "#c67a34"},{"text": " ","color": "#c77e36"},"71",{"text": "/","color": "#c77e36"},"71"],["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]],
 			"item_model": "mgs:ppsh41_mag",
 			"item_name": {"text": "Ppsh41 Mag"}
-		}
-	},
-	"ppsh41_mag_empty": {
-		"id": "ppsh41_mag_empty",
-		"base_item": "minecraft:command_block",
-		"recipes": [],
-		"components": {
-			"max_stack_size": 1,
-			"custom_data": {"mgs": {"magazine": true,"weapon": "ppsh41","stats": {"remaining_bullets": 0,"capacity": 71},"ppsh41_mag_empty": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},
-			"lore": [[{"text": "A","color": "#c24a17","italic": false},{"text": "m","color": "#c24d18"},{"text": "m","color": "#c2501a"},{"text": "o","color": "#c2531c"},{"text": " ","color": "#c3571e"},{"text": "R","color": "#c35a20"},{"text": "e","color": "#c35d22"},{"text": "m","color": "#c46024"},{"text": "a","color": "#c46426"},{"text": "i","color": "#c46728"},{"text": "n","color": "#c56a2a"},{"text": "i","color": "#c56d2c"},{"text": "n","color": "#c5712e"},{"text": "g","color": "#c67430"},{"text": " ","color": "#c67732"},{"text": "➤","color": "#c67a34"},{"text": " ","color": "#c77e36"},"0",{"text": "/","color": "#c77e36"},"71"],["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]],
-			"item_model": "mgs:ppsh41_mag_empty",
-			"item_name": {"text": "Ppsh41 Mag Empty"}
 		}
 	},
 	"rpk_mag": {
@@ -731,18 +239,6 @@
 			"item_name": {"text": "Rpk Mag"}
 		}
 	},
-	"rpk_mag_empty": {
-		"id": "rpk_mag_empty",
-		"base_item": "minecraft:command_block",
-		"recipes": [],
-		"components": {
-			"max_stack_size": 1,
-			"custom_data": {"mgs": {"magazine": true,"weapon": "rpk","stats": {"remaining_bullets": 0,"capacity": 75},"rpk_mag_empty": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},
-			"lore": [[{"text": "A","color": "#c24a17","italic": false},{"text": "m","color": "#c24d18"},{"text": "m","color": "#c2501a"},{"text": "o","color": "#c2531c"},{"text": " ","color": "#c3571e"},{"text": "R","color": "#c35a20"},{"text": "e","color": "#c35d22"},{"text": "m","color": "#c46024"},{"text": "a","color": "#c46426"},{"text": "i","color": "#c46728"},{"text": "n","color": "#c56a2a"},{"text": "i","color": "#c56d2c"},{"text": "n","color": "#c5712e"},{"text": "g","color": "#c67430"},{"text": " ","color": "#c67732"},{"text": "➤","color": "#c67a34"},{"text": " ","color": "#c77e36"},"0",{"text": "/","color": "#c77e36"},"75"],["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]],
-			"item_model": "mgs:rpk_mag_empty",
-			"item_name": {"text": "Rpk Mag Empty"}
-		}
-	},
 	"scar17_mag": {
 		"id": "scar17_mag",
 		"base_item": "minecraft:command_block",
@@ -753,18 +249,6 @@
 			"lore": [[{"text": "A","color": "#c24a17","italic": false},{"text": "m","color": "#c24d18"},{"text": "m","color": "#c2501a"},{"text": "o","color": "#c2531c"},{"text": " ","color": "#c3571e"},{"text": "R","color": "#c35a20"},{"text": "e","color": "#c35d22"},{"text": "m","color": "#c46024"},{"text": "a","color": "#c46426"},{"text": "i","color": "#c46728"},{"text": "n","color": "#c56a2a"},{"text": "i","color": "#c56d2c"},{"text": "n","color": "#c5712e"},{"text": "g","color": "#c67430"},{"text": " ","color": "#c67732"},{"text": "➤","color": "#c67a34"},{"text": " ","color": "#c77e36"},"20",{"text": "/","color": "#c77e36"},"20"],["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]],
 			"item_model": "mgs:scar17_mag",
 			"item_name": {"text": "Scar17 Mag"}
-		}
-	},
-	"scar17_mag_empty": {
-		"id": "scar17_mag_empty",
-		"base_item": "minecraft:command_block",
-		"recipes": [],
-		"components": {
-			"max_stack_size": 1,
-			"custom_data": {"mgs": {"magazine": true,"weapon": "scar17","stats": {"remaining_bullets": 0,"capacity": 20},"scar17_mag_empty": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},
-			"lore": [[{"text": "A","color": "#c24a17","italic": false},{"text": "m","color": "#c24d18"},{"text": "m","color": "#c2501a"},{"text": "o","color": "#c2531c"},{"text": " ","color": "#c3571e"},{"text": "R","color": "#c35a20"},{"text": "e","color": "#c35d22"},{"text": "m","color": "#c46024"},{"text": "a","color": "#c46426"},{"text": "i","color": "#c46728"},{"text": "n","color": "#c56a2a"},{"text": "i","color": "#c56d2c"},{"text": "n","color": "#c5712e"},{"text": "g","color": "#c67430"},{"text": " ","color": "#c67732"},{"text": "➤","color": "#c67a34"},{"text": " ","color": "#c77e36"},"0",{"text": "/","color": "#c77e36"},"20"],["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]],
-			"item_model": "mgs:scar17_mag_empty",
-			"item_name": {"text": "Scar17 Mag Empty"}
 		}
 	},
 	"sten_mag": {
@@ -779,18 +263,6 @@
 			"item_name": {"text": "Sten Mag"}
 		}
 	},
-	"sten_mag_empty": {
-		"id": "sten_mag_empty",
-		"base_item": "minecraft:command_block",
-		"recipes": [],
-		"components": {
-			"max_stack_size": 1,
-			"custom_data": {"mgs": {"magazine": true,"weapon": "sten","stats": {"remaining_bullets": 0,"capacity": 32},"sten_mag_empty": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},
-			"lore": [[{"text": "A","color": "#c24a17","italic": false},{"text": "m","color": "#c24d18"},{"text": "m","color": "#c2501a"},{"text": "o","color": "#c2531c"},{"text": " ","color": "#c3571e"},{"text": "R","color": "#c35a20"},{"text": "e","color": "#c35d22"},{"text": "m","color": "#c46024"},{"text": "a","color": "#c46426"},{"text": "i","color": "#c46728"},{"text": "n","color": "#c56a2a"},{"text": "i","color": "#c56d2c"},{"text": "n","color": "#c5712e"},{"text": "g","color": "#c67430"},{"text": " ","color": "#c67732"},{"text": "➤","color": "#c67a34"},{"text": " ","color": "#c77e36"},"0",{"text": "/","color": "#c77e36"},"32"],["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]],
-			"item_model": "mgs:sten_mag_empty",
-			"item_name": {"text": "Sten Mag Empty"}
-		}
-	},
 	"svd_mag": {
 		"id": "svd_mag",
 		"base_item": "minecraft:command_block",
@@ -803,18 +275,6 @@
 			"item_name": {"text": "Svd Mag"}
 		}
 	},
-	"svd_mag_empty": {
-		"id": "svd_mag_empty",
-		"base_item": "minecraft:command_block",
-		"recipes": [],
-		"components": {
-			"max_stack_size": 1,
-			"custom_data": {"mgs": {"magazine": true,"weapon": "svd","stats": {"remaining_bullets": 0,"capacity": 10},"svd_mag_empty": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},
-			"lore": [[{"text": "A","color": "#c24a17","italic": false},{"text": "m","color": "#c24d18"},{"text": "m","color": "#c2501a"},{"text": "o","color": "#c2531c"},{"text": " ","color": "#c3571e"},{"text": "R","color": "#c35a20"},{"text": "e","color": "#c35d22"},{"text": "m","color": "#c46024"},{"text": "a","color": "#c46426"},{"text": "i","color": "#c46728"},{"text": "n","color": "#c56a2a"},{"text": "i","color": "#c56d2c"},{"text": "n","color": "#c5712e"},{"text": "g","color": "#c67430"},{"text": " ","color": "#c67732"},{"text": "➤","color": "#c67a34"},{"text": " ","color": "#c77e36"},"0",{"text": "/","color": "#c77e36"},"10"],["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]],
-			"item_model": "mgs:svd_mag_empty",
-			"item_name": {"text": "Svd Mag Empty"}
-		}
-	},
 	"vz61_mag": {
 		"id": "vz61_mag",
 		"base_item": "minecraft:command_block",
@@ -825,18 +285,6 @@
 			"lore": [[{"text": "A","color": "#c24a17","italic": false},{"text": "m","color": "#c24d18"},{"text": "m","color": "#c2501a"},{"text": "o","color": "#c2531c"},{"text": " ","color": "#c3571e"},{"text": "R","color": "#c35a20"},{"text": "e","color": "#c35d22"},{"text": "m","color": "#c46024"},{"text": "a","color": "#c46426"},{"text": "i","color": "#c46728"},{"text": "n","color": "#c56a2a"},{"text": "i","color": "#c56d2c"},{"text": "n","color": "#c5712e"},{"text": "g","color": "#c67430"},{"text": " ","color": "#c67732"},{"text": "➤","color": "#c67a34"},{"text": " ","color": "#c77e36"},"20",{"text": "/","color": "#c77e36"},"20"],["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]],
 			"item_model": "mgs:vz61_mag",
 			"item_name": {"text": "Vz61 Mag"}
-		}
-	},
-	"vz61_mag_empty": {
-		"id": "vz61_mag_empty",
-		"base_item": "minecraft:command_block",
-		"recipes": [],
-		"components": {
-			"max_stack_size": 1,
-			"custom_data": {"mgs": {"magazine": true,"weapon": "vz61","stats": {"remaining_bullets": 0,"capacity": 20},"vz61_mag_empty": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},
-			"lore": [[{"text": "A","color": "#c24a17","italic": false},{"text": "m","color": "#c24d18"},{"text": "m","color": "#c2501a"},{"text": "o","color": "#c2531c"},{"text": " ","color": "#c3571e"},{"text": "R","color": "#c35a20"},{"text": "e","color": "#c35d22"},{"text": "m","color": "#c46024"},{"text": "a","color": "#c46426"},{"text": "i","color": "#c46728"},{"text": "n","color": "#c56a2a"},{"text": "i","color": "#c56d2c"},{"text": "n","color": "#c5712e"},{"text": "g","color": "#c67430"},{"text": " ","color": "#c67732"},{"text": "➤","color": "#c67a34"},{"text": " ","color": "#c77e36"},"0",{"text": "/","color": "#c77e36"},"20"],["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]],
-			"item_model": "mgs:vz61_mag_empty",
-			"item_name": {"text": "Vz61 Mag Empty"}
 		}
 	},
 	"m16a4": {
@@ -1950,6 +1398,294 @@
 			"item_name": {"text": "M249 3"}
 		}
 	},
+	"ak47_mag_empty": {
+		"id": "ak47_mag_empty",
+		"base_item": "minecraft:command_block",
+		"recipes": [],
+		"components": {
+			"max_stack_size": 1,
+			"custom_data": {"mgs": {"magazine": true,"weapon": "ak47","stats": {"remaining_bullets": 0,"capacity": 30},"ak47_mag_empty": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},
+			"lore": [[{"text": "A","color": "#c24a17","italic": false},{"text": "m","color": "#c24d18"},{"text": "m","color": "#c2501a"},{"text": "o","color": "#c2531c"},{"text": " ","color": "#c3571e"},{"text": "R","color": "#c35a20"},{"text": "e","color": "#c35d22"},{"text": "m","color": "#c46024"},{"text": "a","color": "#c46426"},{"text": "i","color": "#c46728"},{"text": "n","color": "#c56a2a"},{"text": "i","color": "#c56d2c"},{"text": "n","color": "#c5712e"},{"text": "g","color": "#c67430"},{"text": " ","color": "#c67732"},{"text": "➤","color": "#c67a34"},{"text": " ","color": "#c77e36"},"0",{"text": "/","color": "#c77e36"},"30"],["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]],
+			"item_model": "mgs:ak47_mag_empty",
+			"item_name": {"text": "Ak47 Mag Empty"}
+		}
+	},
+	"aug_mag_empty": {
+		"id": "aug_mag_empty",
+		"base_item": "minecraft:command_block",
+		"recipes": [],
+		"components": {
+			"max_stack_size": 1,
+			"custom_data": {"mgs": {"magazine": true,"weapon": "aug","stats": {"remaining_bullets": 0,"capacity": 30},"aug_mag_empty": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},
+			"lore": [[{"text": "A","color": "#c24a17","italic": false},{"text": "m","color": "#c24d18"},{"text": "m","color": "#c2501a"},{"text": "o","color": "#c2531c"},{"text": " ","color": "#c3571e"},{"text": "R","color": "#c35a20"},{"text": "e","color": "#c35d22"},{"text": "m","color": "#c46024"},{"text": "a","color": "#c46426"},{"text": "i","color": "#c46728"},{"text": "n","color": "#c56a2a"},{"text": "i","color": "#c56d2c"},{"text": "n","color": "#c5712e"},{"text": "g","color": "#c67430"},{"text": " ","color": "#c67732"},{"text": "➤","color": "#c67a34"},{"text": " ","color": "#c77e36"},"0",{"text": "/","color": "#c77e36"},"30"],["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]],
+			"item_model": "mgs:aug_mag_empty",
+			"item_name": {"text": "Aug Mag Empty"}
+		}
+	},
+	"deagle_mag_empty": {
+		"id": "deagle_mag_empty",
+		"base_item": "minecraft:command_block",
+		"recipes": [],
+		"components": {
+			"max_stack_size": 1,
+			"custom_data": {"mgs": {"magazine": true,"weapon": "deagle","stats": {"remaining_bullets": 0,"capacity": 7},"deagle_mag_empty": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},
+			"lore": [[{"text": "A","color": "#c24a17","italic": false},{"text": "m","color": "#c24d18"},{"text": "m","color": "#c2501a"},{"text": "o","color": "#c2531c"},{"text": " ","color": "#c3571e"},{"text": "R","color": "#c35a20"},{"text": "e","color": "#c35d22"},{"text": "m","color": "#c46024"},{"text": "a","color": "#c46426"},{"text": "i","color": "#c46728"},{"text": "n","color": "#c56a2a"},{"text": "i","color": "#c56d2c"},{"text": "n","color": "#c5712e"},{"text": "g","color": "#c67430"},{"text": " ","color": "#c67732"},{"text": "➤","color": "#c67a34"},{"text": " ","color": "#c77e36"},"0",{"text": "/","color": "#c77e36"},"7"],["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]],
+			"item_model": "mgs:deagle_mag_empty",
+			"item_name": {"text": "Deagle Mag Empty"}
+		}
+	},
+	"famas_mag_empty": {
+		"id": "famas_mag_empty",
+		"base_item": "minecraft:command_block",
+		"recipes": [],
+		"components": {
+			"max_stack_size": 1,
+			"custom_data": {"mgs": {"magazine": true,"weapon": "famas","stats": {"remaining_bullets": 0,"capacity": 25},"famas_mag_empty": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},
+			"lore": [[{"text": "A","color": "#c24a17","italic": false},{"text": "m","color": "#c24d18"},{"text": "m","color": "#c2501a"},{"text": "o","color": "#c2531c"},{"text": " ","color": "#c3571e"},{"text": "R","color": "#c35a20"},{"text": "e","color": "#c35d22"},{"text": "m","color": "#c46024"},{"text": "a","color": "#c46426"},{"text": "i","color": "#c46728"},{"text": "n","color": "#c56a2a"},{"text": "i","color": "#c56d2c"},{"text": "n","color": "#c5712e"},{"text": "g","color": "#c67430"},{"text": " ","color": "#c67732"},{"text": "➤","color": "#c67a34"},{"text": " ","color": "#c77e36"},"0",{"text": "/","color": "#c77e36"},"25"],["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]],
+			"item_model": "mgs:famas_mag_empty",
+			"item_name": {"text": "Famas Mag Empty"}
+		}
+	},
+	"fnfal_mag_empty": {
+		"id": "fnfal_mag_empty",
+		"base_item": "minecraft:command_block",
+		"recipes": [],
+		"components": {
+			"max_stack_size": 1,
+			"custom_data": {"mgs": {"magazine": true,"weapon": "fnfal","stats": {"remaining_bullets": 0,"capacity": 20},"fnfal_mag_empty": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},
+			"lore": [[{"text": "A","color": "#c24a17","italic": false},{"text": "m","color": "#c24d18"},{"text": "m","color": "#c2501a"},{"text": "o","color": "#c2531c"},{"text": " ","color": "#c3571e"},{"text": "R","color": "#c35a20"},{"text": "e","color": "#c35d22"},{"text": "m","color": "#c46024"},{"text": "a","color": "#c46426"},{"text": "i","color": "#c46728"},{"text": "n","color": "#c56a2a"},{"text": "i","color": "#c56d2c"},{"text": "n","color": "#c5712e"},{"text": "g","color": "#c67430"},{"text": " ","color": "#c67732"},{"text": "➤","color": "#c67a34"},{"text": " ","color": "#c77e36"},"0",{"text": "/","color": "#c77e36"},"20"],["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]],
+			"item_model": "mgs:fnfal_mag_empty",
+			"item_name": {"text": "Fnfal Mag Empty"}
+		}
+	},
+	"g3a3_mag_empty": {
+		"id": "g3a3_mag_empty",
+		"base_item": "minecraft:command_block",
+		"recipes": [],
+		"components": {
+			"max_stack_size": 1,
+			"custom_data": {"mgs": {"magazine": true,"weapon": "g3a3","stats": {"remaining_bullets": 0,"capacity": 20},"g3a3_mag_empty": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},
+			"lore": [[{"text": "A","color": "#c24a17","italic": false},{"text": "m","color": "#c24d18"},{"text": "m","color": "#c2501a"},{"text": "o","color": "#c2531c"},{"text": " ","color": "#c3571e"},{"text": "R","color": "#c35a20"},{"text": "e","color": "#c35d22"},{"text": "m","color": "#c46024"},{"text": "a","color": "#c46426"},{"text": "i","color": "#c46728"},{"text": "n","color": "#c56a2a"},{"text": "i","color": "#c56d2c"},{"text": "n","color": "#c5712e"},{"text": "g","color": "#c67430"},{"text": " ","color": "#c67732"},{"text": "➤","color": "#c67a34"},{"text": " ","color": "#c77e36"},"0",{"text": "/","color": "#c77e36"},"20"],["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]],
+			"item_model": "mgs:g3a3_mag_empty",
+			"item_name": {"text": "G3A3 Mag Empty"}
+		}
+	},
+	"glock17_mag_empty": {
+		"id": "glock17_mag_empty",
+		"base_item": "minecraft:command_block",
+		"recipes": [],
+		"components": {
+			"max_stack_size": 1,
+			"custom_data": {"mgs": {"magazine": true,"weapon": "glock17","stats": {"remaining_bullets": 0,"capacity": 17},"glock17_mag_empty": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},
+			"lore": [[{"text": "A","color": "#c24a17","italic": false},{"text": "m","color": "#c24d18"},{"text": "m","color": "#c2501a"},{"text": "o","color": "#c2531c"},{"text": " ","color": "#c3571e"},{"text": "R","color": "#c35a20"},{"text": "e","color": "#c35d22"},{"text": "m","color": "#c46024"},{"text": "a","color": "#c46426"},{"text": "i","color": "#c46728"},{"text": "n","color": "#c56a2a"},{"text": "i","color": "#c56d2c"},{"text": "n","color": "#c5712e"},{"text": "g","color": "#c67430"},{"text": " ","color": "#c67732"},{"text": "➤","color": "#c67a34"},{"text": " ","color": "#c77e36"},"0",{"text": "/","color": "#c77e36"},"17"],["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]],
+			"item_model": "mgs:glock17_mag_empty",
+			"item_name": {"text": "Glock17 Mag Empty"}
+		}
+	},
+	"glock18_mag_empty": {
+		"id": "glock18_mag_empty",
+		"base_item": "minecraft:command_block",
+		"recipes": [],
+		"components": {
+			"max_stack_size": 1,
+			"custom_data": {"mgs": {"magazine": true,"weapon": "glock18","stats": {"remaining_bullets": 0,"capacity": 19},"glock18_mag_empty": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},
+			"lore": [[{"text": "A","color": "#c24a17","italic": false},{"text": "m","color": "#c24d18"},{"text": "m","color": "#c2501a"},{"text": "o","color": "#c2531c"},{"text": " ","color": "#c3571e"},{"text": "R","color": "#c35a20"},{"text": "e","color": "#c35d22"},{"text": "m","color": "#c46024"},{"text": "a","color": "#c46426"},{"text": "i","color": "#c46728"},{"text": "n","color": "#c56a2a"},{"text": "i","color": "#c56d2c"},{"text": "n","color": "#c5712e"},{"text": "g","color": "#c67430"},{"text": " ","color": "#c67732"},{"text": "➤","color": "#c67a34"},{"text": " ","color": "#c77e36"},"0",{"text": "/","color": "#c77e36"},"19"],["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]],
+			"item_model": "mgs:glock18_mag_empty",
+			"item_name": {"text": "Glock18 Mag Empty"}
+		}
+	},
+	"m16a4_mag_empty": {
+		"id": "m16a4_mag_empty",
+		"base_item": "minecraft:command_block",
+		"recipes": [],
+		"components": {
+			"max_stack_size": 1,
+			"custom_data": {"mgs": {"magazine": true,"weapon": "m16a4","stats": {"remaining_bullets": 0,"capacity": 30},"m16a4_mag_empty": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},
+			"lore": [[{"text": "A","color": "#c24a17","italic": false},{"text": "m","color": "#c24d18"},{"text": "m","color": "#c2501a"},{"text": "o","color": "#c2531c"},{"text": " ","color": "#c3571e"},{"text": "R","color": "#c35a20"},{"text": "e","color": "#c35d22"},{"text": "m","color": "#c46024"},{"text": "a","color": "#c46426"},{"text": "i","color": "#c46728"},{"text": "n","color": "#c56a2a"},{"text": "i","color": "#c56d2c"},{"text": "n","color": "#c5712e"},{"text": "g","color": "#c67430"},{"text": " ","color": "#c67732"},{"text": "➤","color": "#c67a34"},{"text": " ","color": "#c77e36"},"0",{"text": "/","color": "#c77e36"},"30"],["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]],
+			"item_model": "mgs:m16a4_mag_empty",
+			"item_name": {"text": "M16A4 Mag Empty"}
+		}
+	},
+	"m1911_mag_empty": {
+		"id": "m1911_mag_empty",
+		"base_item": "minecraft:command_block",
+		"recipes": [],
+		"components": {
+			"max_stack_size": 1,
+			"custom_data": {"mgs": {"magazine": true,"weapon": "m1911","stats": {"remaining_bullets": 0,"capacity": 7},"m1911_mag_empty": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},
+			"lore": [[{"text": "A","color": "#c24a17","italic": false},{"text": "m","color": "#c24d18"},{"text": "m","color": "#c2501a"},{"text": "o","color": "#c2531c"},{"text": " ","color": "#c3571e"},{"text": "R","color": "#c35a20"},{"text": "e","color": "#c35d22"},{"text": "m","color": "#c46024"},{"text": "a","color": "#c46426"},{"text": "i","color": "#c46728"},{"text": "n","color": "#c56a2a"},{"text": "i","color": "#c56d2c"},{"text": "n","color": "#c5712e"},{"text": "g","color": "#c67430"},{"text": " ","color": "#c67732"},{"text": "➤","color": "#c67a34"},{"text": " ","color": "#c77e36"},"0",{"text": "/","color": "#c77e36"},"7"],["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]],
+			"item_model": "mgs:m1911_mag_empty",
+			"item_name": {"text": "M1911 Mag Empty"}
+		}
+	},
+	"m249_mag_empty": {
+		"id": "m249_mag_empty",
+		"base_item": "minecraft:command_block",
+		"recipes": [],
+		"components": {
+			"max_stack_size": 1,
+			"custom_data": {"mgs": {"magazine": true,"weapon": "m249","stats": {"remaining_bullets": 0,"capacity": 150},"m249_mag_empty": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},
+			"lore": [[{"text": "A","color": "#c24a17","italic": false},{"text": "m","color": "#c24d18"},{"text": "m","color": "#c2501a"},{"text": "o","color": "#c2531c"},{"text": " ","color": "#c3571e"},{"text": "R","color": "#c35a20"},{"text": "e","color": "#c35d22"},{"text": "m","color": "#c46024"},{"text": "a","color": "#c46426"},{"text": "i","color": "#c46728"},{"text": "n","color": "#c56a2a"},{"text": "i","color": "#c56d2c"},{"text": "n","color": "#c5712e"},{"text": "g","color": "#c67430"},{"text": " ","color": "#c67732"},{"text": "➤","color": "#c67a34"},{"text": " ","color": "#c77e36"},"0",{"text": "/","color": "#c77e36"},"150"],["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]],
+			"item_model": "mgs:m249_mag_empty",
+			"item_name": {"text": "M249 Mag Empty"}
+		}
+	},
+	"m4a1_mag_empty": {
+		"id": "m4a1_mag_empty",
+		"base_item": "minecraft:command_block",
+		"recipes": [],
+		"components": {
+			"max_stack_size": 1,
+			"custom_data": {"mgs": {"magazine": true,"weapon": "m4a1","stats": {"remaining_bullets": 0,"capacity": 30},"m4a1_mag_empty": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},
+			"lore": [[{"text": "A","color": "#c24a17","italic": false},{"text": "m","color": "#c24d18"},{"text": "m","color": "#c2501a"},{"text": "o","color": "#c2531c"},{"text": " ","color": "#c3571e"},{"text": "R","color": "#c35a20"},{"text": "e","color": "#c35d22"},{"text": "m","color": "#c46024"},{"text": "a","color": "#c46426"},{"text": "i","color": "#c46728"},{"text": "n","color": "#c56a2a"},{"text": "i","color": "#c56d2c"},{"text": "n","color": "#c5712e"},{"text": "g","color": "#c67430"},{"text": " ","color": "#c67732"},{"text": "➤","color": "#c67a34"},{"text": " ","color": "#c77e36"},"0",{"text": "/","color": "#c77e36"},"30"],["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]],
+			"item_model": "mgs:m4a1_mag_empty",
+			"item_name": {"text": "M4A1 Mag Empty"}
+		}
+	},
+	"m82_mag_empty": {
+		"id": "m82_mag_empty",
+		"base_item": "minecraft:command_block",
+		"recipes": [],
+		"components": {
+			"max_stack_size": 1,
+			"custom_data": {"mgs": {"magazine": true,"weapon": "m82","stats": {"remaining_bullets": 0,"capacity": 10},"m82_mag_empty": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},
+			"lore": [[{"text": "A","color": "#c24a17","italic": false},{"text": "m","color": "#c24d18"},{"text": "m","color": "#c2501a"},{"text": "o","color": "#c2531c"},{"text": " ","color": "#c3571e"},{"text": "R","color": "#c35a20"},{"text": "e","color": "#c35d22"},{"text": "m","color": "#c46024"},{"text": "a","color": "#c46426"},{"text": "i","color": "#c46728"},{"text": "n","color": "#c56a2a"},{"text": "i","color": "#c56d2c"},{"text": "n","color": "#c5712e"},{"text": "g","color": "#c67430"},{"text": " ","color": "#c67732"},{"text": "➤","color": "#c67a34"},{"text": " ","color": "#c77e36"},"0",{"text": "/","color": "#c77e36"},"10"],["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]],
+			"item_model": "mgs:m82_mag_empty",
+			"item_name": {"text": "M82 Mag Empty"}
+		}
+	},
+	"m9_mag_empty": {
+		"id": "m9_mag_empty",
+		"base_item": "minecraft:command_block",
+		"recipes": [],
+		"components": {
+			"max_stack_size": 1,
+			"custom_data": {"mgs": {"magazine": true,"weapon": "m9","stats": {"remaining_bullets": 0,"capacity": 15},"m9_mag_empty": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},
+			"lore": [[{"text": "A","color": "#c24a17","italic": false},{"text": "m","color": "#c24d18"},{"text": "m","color": "#c2501a"},{"text": "o","color": "#c2531c"},{"text": " ","color": "#c3571e"},{"text": "R","color": "#c35a20"},{"text": "e","color": "#c35d22"},{"text": "m","color": "#c46024"},{"text": "a","color": "#c46426"},{"text": "i","color": "#c46728"},{"text": "n","color": "#c56a2a"},{"text": "i","color": "#c56d2c"},{"text": "n","color": "#c5712e"},{"text": "g","color": "#c67430"},{"text": " ","color": "#c67732"},{"text": "➤","color": "#c67a34"},{"text": " ","color": "#c77e36"},"0",{"text": "/","color": "#c77e36"},"15"],["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]],
+			"item_model": "mgs:m9_mag_empty",
+			"item_name": {"text": "M9 Mag Empty"}
+		}
+	},
+	"mac10_mag_empty": {
+		"id": "mac10_mag_empty",
+		"base_item": "minecraft:command_block",
+		"recipes": [],
+		"components": {
+			"max_stack_size": 1,
+			"custom_data": {"mgs": {"magazine": true,"weapon": "mac10","stats": {"remaining_bullets": 0,"capacity": 30},"mac10_mag_empty": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},
+			"lore": [[{"text": "A","color": "#c24a17","italic": false},{"text": "m","color": "#c24d18"},{"text": "m","color": "#c2501a"},{"text": "o","color": "#c2531c"},{"text": " ","color": "#c3571e"},{"text": "R","color": "#c35a20"},{"text": "e","color": "#c35d22"},{"text": "m","color": "#c46024"},{"text": "a","color": "#c46426"},{"text": "i","color": "#c46728"},{"text": "n","color": "#c56a2a"},{"text": "i","color": "#c56d2c"},{"text": "n","color": "#c5712e"},{"text": "g","color": "#c67430"},{"text": " ","color": "#c67732"},{"text": "➤","color": "#c67a34"},{"text": " ","color": "#c77e36"},"0",{"text": "/","color": "#c77e36"},"30"],["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]],
+			"item_model": "mgs:mac10_mag_empty",
+			"item_name": {"text": "Mac10 Mag Empty"}
+		}
+	},
+	"makarov_mag_empty": {
+		"id": "makarov_mag_empty",
+		"base_item": "minecraft:command_block",
+		"recipes": [],
+		"components": {
+			"max_stack_size": 1,
+			"custom_data": {"mgs": {"magazine": true,"weapon": "makarov","stats": {"remaining_bullets": 0,"capacity": 8},"makarov_mag_empty": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},
+			"lore": [[{"text": "A","color": "#c24a17","italic": false},{"text": "m","color": "#c24d18"},{"text": "m","color": "#c2501a"},{"text": "o","color": "#c2531c"},{"text": " ","color": "#c3571e"},{"text": "R","color": "#c35a20"},{"text": "e","color": "#c35d22"},{"text": "m","color": "#c46024"},{"text": "a","color": "#c46426"},{"text": "i","color": "#c46728"},{"text": "n","color": "#c56a2a"},{"text": "i","color": "#c56d2c"},{"text": "n","color": "#c5712e"},{"text": "g","color": "#c67430"},{"text": " ","color": "#c67732"},{"text": "➤","color": "#c67a34"},{"text": " ","color": "#c77e36"},"0",{"text": "/","color": "#c77e36"},"8"],["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]],
+			"item_model": "mgs:makarov_mag_empty",
+			"item_name": {"text": "Makarov Mag Empty"}
+		}
+	},
+	"mp5_mag_empty": {
+		"id": "mp5_mag_empty",
+		"base_item": "minecraft:command_block",
+		"recipes": [],
+		"components": {
+			"max_stack_size": 1,
+			"custom_data": {"mgs": {"magazine": true,"weapon": "mp5","stats": {"remaining_bullets": 0,"capacity": 30},"mp5_mag_empty": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},
+			"lore": [[{"text": "A","color": "#c24a17","italic": false},{"text": "m","color": "#c24d18"},{"text": "m","color": "#c2501a"},{"text": "o","color": "#c2531c"},{"text": " ","color": "#c3571e"},{"text": "R","color": "#c35a20"},{"text": "e","color": "#c35d22"},{"text": "m","color": "#c46024"},{"text": "a","color": "#c46426"},{"text": "i","color": "#c46728"},{"text": "n","color": "#c56a2a"},{"text": "i","color": "#c56d2c"},{"text": "n","color": "#c5712e"},{"text": "g","color": "#c67430"},{"text": " ","color": "#c67732"},{"text": "➤","color": "#c67a34"},{"text": " ","color": "#c77e36"},"0",{"text": "/","color": "#c77e36"},"30"],["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]],
+			"item_model": "mgs:mp5_mag_empty",
+			"item_name": {"text": "Mp5 Mag Empty"}
+		}
+	},
+	"mp7_mag_empty": {
+		"id": "mp7_mag_empty",
+		"base_item": "minecraft:command_block",
+		"recipes": [],
+		"components": {
+			"max_stack_size": 1,
+			"custom_data": {"mgs": {"magazine": true,"weapon": "mp7","stats": {"remaining_bullets": 0,"capacity": 40},"mp7_mag_empty": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},
+			"lore": [[{"text": "A","color": "#c24a17","italic": false},{"text": "m","color": "#c24d18"},{"text": "m","color": "#c2501a"},{"text": "o","color": "#c2531c"},{"text": " ","color": "#c3571e"},{"text": "R","color": "#c35a20"},{"text": "e","color": "#c35d22"},{"text": "m","color": "#c46024"},{"text": "a","color": "#c46426"},{"text": "i","color": "#c46728"},{"text": "n","color": "#c56a2a"},{"text": "i","color": "#c56d2c"},{"text": "n","color": "#c5712e"},{"text": "g","color": "#c67430"},{"text": " ","color": "#c67732"},{"text": "➤","color": "#c67a34"},{"text": " ","color": "#c77e36"},"0",{"text": "/","color": "#c77e36"},"40"],["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]],
+			"item_model": "mgs:mp7_mag_empty",
+			"item_name": {"text": "Mp7 Mag Empty"}
+		}
+	},
+	"ppsh41_mag_empty": {
+		"id": "ppsh41_mag_empty",
+		"base_item": "minecraft:command_block",
+		"recipes": [],
+		"components": {
+			"max_stack_size": 1,
+			"custom_data": {"mgs": {"magazine": true,"weapon": "ppsh41","stats": {"remaining_bullets": 0,"capacity": 71},"ppsh41_mag_empty": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},
+			"lore": [[{"text": "A","color": "#c24a17","italic": false},{"text": "m","color": "#c24d18"},{"text": "m","color": "#c2501a"},{"text": "o","color": "#c2531c"},{"text": " ","color": "#c3571e"},{"text": "R","color": "#c35a20"},{"text": "e","color": "#c35d22"},{"text": "m","color": "#c46024"},{"text": "a","color": "#c46426"},{"text": "i","color": "#c46728"},{"text": "n","color": "#c56a2a"},{"text": "i","color": "#c56d2c"},{"text": "n","color": "#c5712e"},{"text": "g","color": "#c67430"},{"text": " ","color": "#c67732"},{"text": "➤","color": "#c67a34"},{"text": " ","color": "#c77e36"},"0",{"text": "/","color": "#c77e36"},"71"],["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]],
+			"item_model": "mgs:ppsh41_mag_empty",
+			"item_name": {"text": "Ppsh41 Mag Empty"}
+		}
+	},
+	"rpk_mag_empty": {
+		"id": "rpk_mag_empty",
+		"base_item": "minecraft:command_block",
+		"recipes": [],
+		"components": {
+			"max_stack_size": 1,
+			"custom_data": {"mgs": {"magazine": true,"weapon": "rpk","stats": {"remaining_bullets": 0,"capacity": 75},"rpk_mag_empty": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},
+			"lore": [[{"text": "A","color": "#c24a17","italic": false},{"text": "m","color": "#c24d18"},{"text": "m","color": "#c2501a"},{"text": "o","color": "#c2531c"},{"text": " ","color": "#c3571e"},{"text": "R","color": "#c35a20"},{"text": "e","color": "#c35d22"},{"text": "m","color": "#c46024"},{"text": "a","color": "#c46426"},{"text": "i","color": "#c46728"},{"text": "n","color": "#c56a2a"},{"text": "i","color": "#c56d2c"},{"text": "n","color": "#c5712e"},{"text": "g","color": "#c67430"},{"text": " ","color": "#c67732"},{"text": "➤","color": "#c67a34"},{"text": " ","color": "#c77e36"},"0",{"text": "/","color": "#c77e36"},"75"],["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]],
+			"item_model": "mgs:rpk_mag_empty",
+			"item_name": {"text": "Rpk Mag Empty"}
+		}
+	},
+	"scar17_mag_empty": {
+		"id": "scar17_mag_empty",
+		"base_item": "minecraft:command_block",
+		"recipes": [],
+		"components": {
+			"max_stack_size": 1,
+			"custom_data": {"mgs": {"magazine": true,"weapon": "scar17","stats": {"remaining_bullets": 0,"capacity": 20},"scar17_mag_empty": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},
+			"lore": [[{"text": "A","color": "#c24a17","italic": false},{"text": "m","color": "#c24d18"},{"text": "m","color": "#c2501a"},{"text": "o","color": "#c2531c"},{"text": " ","color": "#c3571e"},{"text": "R","color": "#c35a20"},{"text": "e","color": "#c35d22"},{"text": "m","color": "#c46024"},{"text": "a","color": "#c46426"},{"text": "i","color": "#c46728"},{"text": "n","color": "#c56a2a"},{"text": "i","color": "#c56d2c"},{"text": "n","color": "#c5712e"},{"text": "g","color": "#c67430"},{"text": " ","color": "#c67732"},{"text": "➤","color": "#c67a34"},{"text": " ","color": "#c77e36"},"0",{"text": "/","color": "#c77e36"},"20"],["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]],
+			"item_model": "mgs:scar17_mag_empty",
+			"item_name": {"text": "Scar17 Mag Empty"}
+		}
+	},
+	"sten_mag_empty": {
+		"id": "sten_mag_empty",
+		"base_item": "minecraft:command_block",
+		"recipes": [],
+		"components": {
+			"max_stack_size": 1,
+			"custom_data": {"mgs": {"magazine": true,"weapon": "sten","stats": {"remaining_bullets": 0,"capacity": 32},"sten_mag_empty": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},
+			"lore": [[{"text": "A","color": "#c24a17","italic": false},{"text": "m","color": "#c24d18"},{"text": "m","color": "#c2501a"},{"text": "o","color": "#c2531c"},{"text": " ","color": "#c3571e"},{"text": "R","color": "#c35a20"},{"text": "e","color": "#c35d22"},{"text": "m","color": "#c46024"},{"text": "a","color": "#c46426"},{"text": "i","color": "#c46728"},{"text": "n","color": "#c56a2a"},{"text": "i","color": "#c56d2c"},{"text": "n","color": "#c5712e"},{"text": "g","color": "#c67430"},{"text": " ","color": "#c67732"},{"text": "➤","color": "#c67a34"},{"text": " ","color": "#c77e36"},"0",{"text": "/","color": "#c77e36"},"32"],["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]],
+			"item_model": "mgs:sten_mag_empty",
+			"item_name": {"text": "Sten Mag Empty"}
+		}
+	},
+	"svd_mag_empty": {
+		"id": "svd_mag_empty",
+		"base_item": "minecraft:command_block",
+		"recipes": [],
+		"components": {
+			"max_stack_size": 1,
+			"custom_data": {"mgs": {"magazine": true,"weapon": "svd","stats": {"remaining_bullets": 0,"capacity": 10},"svd_mag_empty": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},
+			"lore": [[{"text": "A","color": "#c24a17","italic": false},{"text": "m","color": "#c24d18"},{"text": "m","color": "#c2501a"},{"text": "o","color": "#c2531c"},{"text": " ","color": "#c3571e"},{"text": "R","color": "#c35a20"},{"text": "e","color": "#c35d22"},{"text": "m","color": "#c46024"},{"text": "a","color": "#c46426"},{"text": "i","color": "#c46728"},{"text": "n","color": "#c56a2a"},{"text": "i","color": "#c56d2c"},{"text": "n","color": "#c5712e"},{"text": "g","color": "#c67430"},{"text": " ","color": "#c67732"},{"text": "➤","color": "#c67a34"},{"text": " ","color": "#c77e36"},"0",{"text": "/","color": "#c77e36"},"10"],["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]],
+			"item_model": "mgs:svd_mag_empty",
+			"item_name": {"text": "Svd Mag Empty"}
+		}
+	},
+	"vz61_mag_empty": {
+		"id": "vz61_mag_empty",
+		"base_item": "minecraft:command_block",
+		"recipes": [],
+		"components": {
+			"max_stack_size": 1,
+			"custom_data": {"mgs": {"magazine": true,"weapon": "vz61","stats": {"remaining_bullets": 0,"capacity": 20},"vz61_mag_empty": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},
+			"lore": [[{"text": "A","color": "#c24a17","italic": false},{"text": "m","color": "#c24d18"},{"text": "m","color": "#c2501a"},{"text": "o","color": "#c2531c"},{"text": " ","color": "#c3571e"},{"text": "R","color": "#c35a20"},{"text": "e","color": "#c35d22"},{"text": "m","color": "#c46024"},{"text": "a","color": "#c46426"},{"text": "i","color": "#c46728"},{"text": "n","color": "#c56a2a"},{"text": "i","color": "#c56d2c"},{"text": "n","color": "#c5712e"},{"text": "g","color": "#c67430"},{"text": " ","color": "#c67732"},{"text": "➤","color": "#c67a34"},{"text": " ","color": "#c77e36"},"0",{"text": "/","color": "#c77e36"},"20"],["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]],
+			"item_model": "mgs:vz61_mag_empty",
+			"item_name": {"text": "Vz61 Mag Empty"}
+		}
+	},
 	"m16a4_zoom": {
 		"id": "m16a4_zoom",
 		"base_item": "minecraft:warped_fungus_on_a_stick",
@@ -3059,6 +2795,270 @@
 			"lore": [[{"text": "D","color": "#c24a17","italic": false},{"text": "a","color": "#c24c18"},{"text": "m","color": "#c24f1a"},{"text": "a","color": "#c2511b"},{"text": "g","color": "#c3541d"},{"text": "e","color": "#c3571e"},{"text": " ","color": "#c35920"},{"text": "P","color": "#c35c21"},{"text": "e","color": "#c45e23"},{"text": "r","color": "#c46124"},{"text": " ","color": "#c46426"},{"text": "B","color": "#c46628"},{"text": "u","color": "#c56929"},{"text": "l","color": "#c56b2b"},{"text": "l","color": "#c56e2c"},{"text": "e","color": "#c5712e"},{"text": "t","color": "#c6732f"},{"text": " ","color": "#c67631"},{"text": " ","color": "#c67832"},{"text": "➤","color": "#c67b34"},{"text": " ","color": "#c77e36"},"13"],[{"text": "A","color": "#c24a17","italic": false},{"text": "m","color": "#c24c18"},{"text": "m","color": "#c24e19"},{"text": "o","color": "#c2511b"},{"text": " ","color": "#c2531c"},{"text": "R","color": "#c3561e"},{"text": "e","color": "#c3581f"},{"text": "m","color": "#c35b21"},{"text": "a","color": "#c35d22"},{"text": "i","color": "#c46024"},{"text": "n","color": "#c46225"},{"text": "i","color": "#c46527"},{"text": "n","color": "#c46728"},{"text": "g","color": "#c56a2a"},{"text": " ","color": "#c56c2b"},{"text": " ","color": "#c56f2d"},{"text": " ","color": "#c5712e"},{"text": " ","color": "#c67430"},{"text": " ","color": "#c67631"},{"text": " ","color": "#c67933"},{"text": "➤","color": "#c67b34"},{"text": " ","color": "#c77e36"},"150",{"text": "/","color": "#c77e36"},"150"],[{"text": "R","color": "#c24a17","italic": false},{"text": "e","color": "#c24c18"},{"text": "l","color": "#c24e19"},{"text": "o","color": "#c2511b"},{"text": "a","color": "#c2531c"},{"text": "d","color": "#c3551e"},{"text": "i","color": "#c3581f"},{"text": "n","color": "#c35a20"},{"text": "g","color": "#c35c22"},{"text": " ","color": "#c45f23"},{"text": "T","color": "#c46125"},{"text": "i","color": "#c46426"},{"text": "m","color": "#c46627"},{"text": "e","color": "#c46829"},{"text": " ","color": "#c56b2a"},{"text": " ","color": "#c56d2c"},{"text": " ","color": "#c56f2d"},{"text": " ","color": "#c5722e"},{"text": " ","color": "#c67430"},{"text": " ","color": "#c67631"},{"text": " ","color": "#c67933"},{"text": "➤","color": "#c67b34"},{"text": " ","color": "#c77e36"},"8.8",{"text": "s","color": "#c77e36"}],[{"text": "F","color": "#c24a17","italic": false},{"text": "i","color": "#c24c18"},{"text": "r","color": "#c24e19"},{"text": "e","color": "#c2501b"},{"text": " ","color": "#c2531c"},{"text": "R","color": "#c3551d"},{"text": "a","color": "#c3571f"},{"text": "t","color": "#c35920"},{"text": "e","color": "#c35c21"},{"text": " ","color": "#c35e23"},{"text": " ","color": "#c46024"},{"text": " ","color": "#c46225"},{"text": " ","color": "#c46527"},{"text": " ","color": "#c46728"},{"text": " ","color": "#c56929"},{"text": " ","color": "#c56b2b"},{"text": " ","color": "#c56e2c"},{"text": " ","color": "#c5702d"},{"text": " ","color": "#c5722f"},{"text": " ","color": "#c67430"},{"text": " ","color": "#c67731"},{"text": " ","color": "#c67933"},{"text": "➤","color": "#c67b34"},{"text": " ","color": "#c77e36"},"10.0 ",{"text": "s","color": "#c77e36","italic": false},{"text": "h","color": "#c67832"},{"text": "o","color": "#c5722f"},{"text": "t","color": "#c56c2b"},{"text": "s","color": "#c46628"},{"text": "/","color": "#c46124"},{"text": "s","color": "#c35b21"}],[{"text": "D","color": "#c24a17","italic": false},{"text": "a","color": "#c24c18"},{"text": "m","color": "#c24f1a"},{"text": "a","color": "#c2511b"},{"text": "g","color": "#c3541d"},{"text": "e","color": "#c3571e"},{"text": " ","color": "#c35920"},{"text": "D","color": "#c35c21"},{"text": "e","color": "#c45e23"},{"text": "c","color": "#c46124"},{"text": "a","color": "#c46426"},{"text": "y","color": "#c46628"},{"text": " ","color": "#c56929"},{"text": " ","color": "#c56b2b"},{"text": " ","color": "#c56e2c"},{"text": " ","color": "#c5712e"},{"text": " ","color": "#c6732f"},{"text": " ","color": "#c67631"},{"text": " ","color": "#c67832"},{"text": "➤","color": "#c67b34"},{"text": " ","color": "#c77e36"},"92",{"text": "%","color": "#c77e36"}],[{"text": "S","color": "#c24a17","italic": false},{"text": "w","color": "#c24c18"},{"text": "i","color": "#c24e19"},{"text": "t","color": "#c2501b"},{"text": "c","color": "#c2531c"},{"text": "h","color": "#c3551d"},{"text": " ","color": "#c3571f"},{"text": "T","color": "#c35920"},{"text": "i","color": "#c35c21"},{"text": "m","color": "#c35e23"},{"text": "e","color": "#c46024"},{"text": " ","color": "#c46225"},{"text": " ","color": "#c46527"},{"text": " ","color": "#c46728"},{"text": " ","color": "#c56929"},{"text": " ","color": "#c56b2b"},{"text": " ","color": "#c56e2c"},{"text": " ","color": "#c5702d"},{"text": " ","color": "#c5722f"},{"text": " ","color": "#c67430"},{"text": " ","color": "#c67731"},{"text": " ","color": "#c67933"},{"text": "➤","color": "#c67b34"},{"text": " ","color": "#c77e36"},"3.5",{"text": "s","color": "#c77e36"}],"",["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]],
 			"item_model": "mgs:m249_3_zoom",
 			"item_name": {"text": "M249 3 Zoom"}
+		}
+	},
+	"flash_1": {
+		"id": "flash_1",
+		"base_item": "minecraft:white_stained_glass_pane",
+		"recipes": [],
+		"components": {
+			"custom_data": {"mgs": {"flash_1": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},
+			"item_model": "mgs:flash_1",
+			"item_name": {"text": "Flash 1"},
+			"lore": [["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]]
+		}
+	},
+	"flash_2": {
+		"id": "flash_2",
+		"base_item": "minecraft:white_stained_glass_pane",
+		"recipes": [],
+		"components": {
+			"custom_data": {"mgs": {"flash_2": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},
+			"item_model": "mgs:flash_2",
+			"item_name": {"text": "Flash 2"},
+			"lore": [["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]]
+		}
+	},
+	"flash_3": {
+		"id": "flash_3",
+		"base_item": "minecraft:white_stained_glass_pane",
+		"recipes": [],
+		"components": {
+			"custom_data": {"mgs": {"flash_3": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},
+			"item_model": "mgs:flash_3",
+			"item_name": {"text": "Flash 3"},
+			"lore": [["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]]
+		}
+	},
+	"flash_4": {
+		"id": "flash_4",
+		"base_item": "minecraft:white_stained_glass_pane",
+		"recipes": [],
+		"components": {
+			"custom_data": {"mgs": {"flash_4": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},
+			"item_model": "mgs:flash_4",
+			"item_name": {"text": "Flash 4"},
+			"lore": [["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]]
+		}
+	},
+	"flash_5": {
+		"id": "flash_5",
+		"base_item": "minecraft:white_stained_glass_pane",
+		"recipes": [],
+		"components": {
+			"custom_data": {"mgs": {"flash_5": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},
+			"item_model": "mgs:flash_5",
+			"item_name": {"text": "Flash 5"},
+			"lore": [["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]]
+		}
+	},
+	"flash_6": {
+		"id": "flash_6",
+		"base_item": "minecraft:white_stained_glass_pane",
+		"recipes": [],
+		"components": {
+			"custom_data": {"mgs": {"flash_6": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},
+			"item_model": "mgs:flash_6",
+			"item_name": {"text": "Flash 6"},
+			"lore": [["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]]
+		}
+	},
+	"flash_7": {
+		"id": "flash_7",
+		"base_item": "minecraft:white_stained_glass_pane",
+		"recipes": [],
+		"components": {
+			"custom_data": {"mgs": {"flash_7": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},
+			"item_model": "mgs:flash_7",
+			"item_name": {"text": "Flash 7"},
+			"lore": [["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]]
+		}
+	},
+	"flash_8": {
+		"id": "flash_8",
+		"base_item": "minecraft:white_stained_glass_pane",
+		"recipes": [],
+		"components": {
+			"custom_data": {"mgs": {"flash_8": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},
+			"item_model": "mgs:flash_8",
+			"item_name": {"text": "Flash 8"},
+			"lore": [["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]]
+		}
+	},
+	"flash_9": {
+		"id": "flash_9",
+		"base_item": "minecraft:white_stained_glass_pane",
+		"recipes": [],
+		"components": {
+			"custom_data": {"mgs": {"flash_9": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},
+			"item_model": "mgs:flash_9",
+			"item_name": {"text": "Flash 9"},
+			"lore": [["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]]
+		}
+	},
+	"9x18mm": {
+		"id": "9x18mm",
+		"base_item": "minecraft:command_block",
+		"recipes": [],
+		"components": {
+			"custom_data": {"mgs": {"casing": true,"9x18mm": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},
+			"item_name": {"text": "9x18mm","color": "white"},
+			"item_model": "mgs:9x18mm",
+			"lore": [["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]]
+		}
+	},
+	"9x19mm": {
+		"id": "9x19mm",
+		"base_item": "minecraft:command_block",
+		"recipes": [],
+		"components": {
+			"custom_data": {"mgs": {"casing": true,"9x19mm": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},
+			"item_name": {"text": "9x19mm","color": "white"},
+			"item_model": "mgs:9x19mm",
+			"lore": [["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]]
+		}
+	},
+	"12ga3in": {
+		"id": "12ga3in",
+		"base_item": "minecraft:command_block",
+		"recipes": [],
+		"components": {
+			"custom_data": {"mgs": {"casing": true,"12ga3in": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},
+			"item_name": {"text": "12ga3in","color": "white"},
+			"item_model": "mgs:12ga3in",
+			"lore": [["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]]
+		}
+	},
+	"12ga275in": {
+		"id": "12ga275in",
+		"base_item": "minecraft:command_block",
+		"recipes": [],
+		"components": {
+			"custom_data": {"mgs": {"casing": true,"12ga275in": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},
+			"item_name": {"text": "12ga275in","color": "white"},
+			"item_model": "mgs:12ga275in",
+			"lore": [["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]]
+		}
+	},
+	"32acp": {
+		"id": "32acp",
+		"base_item": "minecraft:command_block",
+		"recipes": [],
+		"components": {
+			"custom_data": {"mgs": {"casing": true,"32acp": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},
+			"item_name": {"text": "32acp","color": "white"},
+			"item_model": "mgs:32acp",
+			"lore": [["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]]
+		}
+	},
+	"45acp": {
+		"id": "45acp",
+		"base_item": "minecraft:command_block",
+		"recipes": [],
+		"components": {
+			"custom_data": {"mgs": {"casing": true,"45acp": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},
+			"item_name": {"text": "45acp","color": "white"},
+			"item_model": "mgs:45acp",
+			"lore": [["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]]
+		}
+	},
+	"46x30mm": {
+		"id": "46x30mm",
+		"base_item": "minecraft:command_block",
+		"recipes": [],
+		"components": {
+			"custom_data": {"mgs": {"casing": true,"46x30mm": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},
+			"item_name": {"text": "46x30mm","color": "white"},
+			"item_model": "mgs:46x30mm",
+			"lore": [["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]]
+		}
+	},
+	"50ae": {
+		"id": "50ae",
+		"base_item": "minecraft:command_block",
+		"recipes": [],
+		"components": {
+			"custom_data": {"mgs": {"casing": true,"50ae": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},
+			"item_name": {"text": "50ae","color": "white"},
+			"item_model": "mgs:50ae",
+			"lore": [["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]]
+		}
+	},
+	"50bmg": {
+		"id": "50bmg",
+		"base_item": "minecraft:command_block",
+		"recipes": [],
+		"components": {
+			"custom_data": {"mgs": {"casing": true,"50bmg": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},
+			"item_name": {"text": "50bmg","color": "white"},
+			"item_model": "mgs:50bmg",
+			"lore": [["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]]
+		}
+	},
+	"338lapua": {
+		"id": "338lapua",
+		"base_item": "minecraft:command_block",
+		"recipes": [],
+		"components": {
+			"custom_data": {"mgs": {"casing": true,"338lapua": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},
+			"item_name": {"text": "338lapua","color": "white"},
+			"item_model": "mgs:338lapua",
+			"lore": [["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]]
+		}
+	},
+	"556x45mm": {
+		"id": "556x45mm",
+		"base_item": "minecraft:command_block",
+		"recipes": [],
+		"components": {
+			"custom_data": {"mgs": {"casing": true,"556x45mm": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},
+			"item_name": {"text": "556x45mm","color": "white"},
+			"item_model": "mgs:556x45mm",
+			"lore": [["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]]
+		}
+	},
+	"762x25mm": {
+		"id": "762x25mm",
+		"base_item": "minecraft:command_block",
+		"recipes": [],
+		"components": {
+			"custom_data": {"mgs": {"casing": true,"762x25mm": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},
+			"item_name": {"text": "762x25mm","color": "white"},
+			"item_model": "mgs:762x25mm",
+			"lore": [["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]]
+		}
+	},
+	"762x39mm": {
+		"id": "762x39mm",
+		"base_item": "minecraft:command_block",
+		"recipes": [],
+		"components": {
+			"custom_data": {"mgs": {"casing": true,"762x39mm": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},
+			"item_name": {"text": "762x39mm","color": "white"},
+			"item_model": "mgs:762x39mm",
+			"lore": [["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]]
+		}
+	},
+	"762x51mm": {
+		"id": "762x51mm",
+		"base_item": "minecraft:command_block",
+		"recipes": [],
+		"components": {
+			"custom_data": {"mgs": {"casing": true,"762x51mm": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},
+			"item_name": {"text": "762x51mm","color": "white"},
+			"item_model": "mgs:762x51mm",
+			"lore": [["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]]
+		}
+	},
+	"762x54mm": {
+		"id": "762x54mm",
+		"base_item": "minecraft:command_block",
+		"recipes": [],
+		"components": {
+			"custom_data": {"mgs": {"casing": true,"762x54mm": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},
+			"item_name": {"text": "762x54mm","color": "white"},
+			"item_model": "mgs:762x54mm",
+			"lore": [["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]]
 		}
 	}
 }

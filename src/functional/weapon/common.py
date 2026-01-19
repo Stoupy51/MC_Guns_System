@@ -80,8 +80,16 @@ function {ns}:v{version}/switch/main
 # Decrease cooldown by 1
 execute if score @s {ns}.cooldown matches 1.. run scoreboard players remove @s {ns}.cooldown 1
 
+# Check mid cooldown sound
+execute if score @s {ns}.cooldown matches 1.. if entity @s[tag={ns}.pump_sound] if data storage {ns}:gun all.sounds.pump run function {ns}:v{version}/sound/check/pump
+execute if score @s {ns}.cooldown matches 0 if entity @s[tag={ns}.pump_sound] run tag @s remove {ns}.pump_sound
+
+# Check mid reload sound
+execute if score @s {ns}.cooldown matches 1.. if entity @s[tag={ns}.reload_mid_sound] if data storage {ns}:gun all.sounds.playermid run function {ns}:v{version}/sound/check/reload_mid
+execute if score @s {ns}.cooldown matches 0 if entity @s[tag={ns}.reload_mid_sound] run tag @s remove {ns}.reload_mid_sound
+
 # Check if we need to play reload end sound
-execute if score @s {ns}.cooldown matches 1.. if data storage {ns}:gun all.gun run function {ns}:v{version}/sound/check_reload_end
+execute if score @s {ns}.cooldown matches 1.. if data storage {ns}:gun all.sounds.playerend run function {ns}:v{version}/sound/check/reload_end
 execute if score @s {ns}.cooldown matches 0 if entity @s[tag={ns}.reloading] run function {ns}:v{version}/ammo/end_reload
 
 # If pending clicks, run right click function

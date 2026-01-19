@@ -3,7 +3,7 @@
 # Imports
 from stewbeet import Mem, write_versioned_function
 
-from ...config.stats import RELOAD_END
+from ...config.stats import COOLDOWN, RELOAD_END, RELOAD_TIME
 
 
 # Main function
@@ -82,17 +82,17 @@ execute if data storage {ns}:gun all.sounds.fire_alt run function {ns}:v{version
 execute unless data storage {ns}:gun all.sounds.fire_alt run function {ns}:v{version}/sound/fire_simple with storage {ns}:gun all.sounds
 
 # Acoustics handling
-execute if data storage {ns}:gun all.sounds.acoustics run function {ns}:v{version}/sound/acoustics_main with storage {ns}:gun all.sounds
+execute if data storage {ns}:gun all.sounds.crack run function {ns}:v{version}/sound/acoustics_main with storage {ns}:gun all.sounds
 """)
     write_versioned_function("sound/fire_simple",
 f"""
 $playsound {ns}:$(fire) player @s ~ ~ ~ 0.25
-$playsound {ns}:$(fire) player @a[distance=0.01..48] 0.75 1 0.25
+$playsound {ns}:$(fire) player @a[distance=0.01..48] ~ ~ ~ 0.75 1 0.25
 """)
     write_versioned_function("sound/fire_alt",
 f"""
 $playsound {ns}:$(fire_alt) player @s ~ ~ ~ 0.25
-$playsound {ns}:$(fire_alt) player @a[distance=0.01..48] 0.75 1 0.25
+$playsound {ns}:$(fire_alt) player @a[distance=0.01..48] ~ ~ ~ 0.75 1 0.25
 """)
     write_versioned_function("sound/acoustics_main",
 f"""
@@ -107,6 +107,38 @@ $execute if score @s {ns}.acoustics_level matches 5 run playsound {ns}:common/$(
 # Directs sound propagation to nearby players by aligning their view with the sound source for accurate positional audio
 scoreboard players operation #origin_acoustics_level {ns}.data = @s {ns}.acoustics_level
 execute as @a[distance=0.001..224] facing entity @s eyes run function {ns}:v{version}/sound/propagation
+""")
+
+    # Check mid cooldown
+    write_versioned_function("sound/check/pump",
+f"""
+# Calculate half of weapon cooldown
+scoreboard players set #divisor {ns}.data 2
+execute store result score #half {ns}.data run data get storage {ns}:gun all.stats.{COOLDOWN}
+scoreboard players operation #half {ns}.data /= #divisor {ns}.data
+
+# If current cooldown equals half, play mid cooldown sound and remove tag
+execute if score @s {ns}.cooldown = #half {ns}.data run function {ns}:v{version}/sound/pump with storage {ns}:gun all.sounds
+""")
+
+    # Check mid reload
+    write_versioned_function("sound/check/reload_mid",
+f"""
+# Calculate half of weapon cooldown
+scoreboard players set #divisor {ns}.data 2
+execute store result score #half {ns}.data run data get storage {ns}:gun all.stats.{RELOAD_TIME}
+scoreboard players operation #half {ns}.data /= #divisor {ns}.data
+
+# If current cooldown equals half, play mid cooldown sound and remove tag
+execute if score @s {ns}.cooldown = #half {ns}.data run function {ns}:v{version}/sound/player_mid with storage {ns}:gun all.sounds
+""")
+
+    # Check reload end
+    write_versioned_function("sound/check/reload_end",
+f"""
+# If cooldown is reload end, and player was reloading, playsound
+execute store result score #{RELOAD_END} {ns}.data run data get storage {ns}:gun all.stats.{RELOAD_END}
+execute if score @s {ns}.cooldown = #{RELOAD_END} {ns}.data run function {ns}:v{version}/sound/player_end with storage {ns}:gun all.sounds
 """)
 
     write_versioned_function("sound/propagation",
@@ -154,28 +186,31 @@ execute if score #processed_acoustics {ns}.data matches 5 run function {ns}:v{ve
                 f"$execute if entity @s[distance={mini}..{maxi}] positioned as @s run playsound {ns}:common/$(crack)_crack_{i}_{level} player @s ^ ^ ^-6 {round(volume * 1.5, 3)}"
             )
 
-    # Reload start function & player begin function (splitted in case a gun is missing one of them)
+    # Missing sounds
     write_versioned_function("sound/reload_start",
 f"""
 # Full reload sound for the player
-$playsound {ns}:$(reload) player
+$playsound {ns}:$(reload) player @s
 """)
     write_versioned_function("sound/player_begin",
 f"""
 # Play the begin reload sound for all nearby players
 $playsound {ns}:$(playerbegin) player @a[distance=0.01..16] ~ ~ ~ 0.3
 """)
-
-    # Reload end functions
-    write_versioned_function("sound/check_reload_end",
+    write_versioned_function("sound/player_mid",
 f"""
-# If cooldown is reload end, and player was reloading, playsound
-execute store result score #{RELOAD_END} {ns}.data run data get storage {ns}:gun all.stats.{RELOAD_END}
-execute if score @s {ns}.cooldown = #{RELOAD_END} {ns}.data run function {ns}:v{version}/sound/reload_end with storage {ns}:gun all.sounds
+# Play the mid reload sound for all nearby players
+$playsound {ns}:$(playermid) player @a[distance=0.01..16] ~ ~ ~ 0.3
 """)
-    write_versioned_function("sound/reload_end",
+    write_versioned_function("sound/player_end",
 f"""
 # Play the end reload sound for all nearby players
 $playsound {ns}:$(playerend) player @a[distance=0.01..16] ~ ~ ~ 0.3
+""")
+    write_versioned_function("sound/pump",
+f"""
+# Play the pump sound for the player and nearby players
+$playsound {ns}:$(pump) player @s
+$playsound {ns}:$(pump) player @a[distance=0.01..16] ~ ~ ~ 0.3
 """)
 

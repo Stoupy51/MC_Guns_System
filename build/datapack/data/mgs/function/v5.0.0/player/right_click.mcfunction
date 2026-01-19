@@ -29,6 +29,7 @@ function mgs:v5.0.0/raycast/accuracy/get_value
 # Shoot with raycast
 tag @s add bs.raycast.omit
 execute anchored eyes positioned ^ ^ ^ summon marker run function mgs:v5.0.0/raycast/main
+tag @s remove bs.raycast.omit
 
 # Simulate weapon kick
 function mgs:v5.0.0/kicks/main
