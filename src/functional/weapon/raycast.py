@@ -38,6 +38,9 @@ execute if score #bullets_to_fire {ns}.data matches 1.. run function {ns}:v{vers
     # Handle pending clicks
     write_versioned_function("raycast/main",
 f"""
+# Copy damage to temp storage to avoid modifying original for multiple pellets
+data modify storage {ns}:temp damage set from storage {ns}:gun all.stats.{DAMAGE}
+
 # Handle accuracy
 tp @s ~ ~ ~ ~ ~
 function {ns}:v{version}/raycast/accuracy/apply_spread
@@ -120,9 +123,9 @@ execute if score #is_pass_through {ns}.data matches 0 if score $raycast.piercing
 execute if score #is_pass_through {ns}.data matches 0 if score $raycast.piercing bs.lambda matches 5.. run scoreboard players set $raycast.piercing bs.lambda 3
 
 # Reduce damage by 5% in water, and 50% in other blocks
-execute store result score #new_damage {ns}.data run data get storage {ns}:gun all.stats.{DAMAGE} 1000
-execute if score #is_pass_through {ns}.data matches 0 store result storage {ns}:gun all.stats.{DAMAGE} float 0.0005 run scoreboard players get #new_damage {ns}.data
-execute if score #is_pass_through {ns}.data matches 1 store result storage {ns}:gun all.stats.{DAMAGE} float 0.00095 run scoreboard players get #new_damage {ns}.data
+execute store result score #new_damage {ns}.data run data get storage {ns}:temp damage 1000
+execute if score #is_pass_through {ns}.data matches 0 store result storage {ns}:temp damage float 0.0005 run scoreboard players get #new_damage {ns}.data
+execute if score #is_pass_through {ns}.data matches 1 store result storage {ns}:temp damage float 0.00095 run scoreboard players get #new_damage {ns}.data
 
 ## Playsounds
 # Each sound type has a scoreboard objective that tracks if it has been played.
@@ -149,7 +152,7 @@ particle block{{block_state:"redstone_wire"}} ~ ~1 ~ 0.35 0.5 0.35 0 100 force @
 
 # Get base damage with 3 digits of precision
 data modify storage {ns}:input with set value {{target:"@s", amount:0.0f, attacker:"@p[tag={ns}.ticking]"}}
-execute store result score #damage {ns}.data run data get storage {ns}:gun all.stats.{DAMAGE} 10
+execute store result score #damage {ns}.data run data get storage {ns}:temp damage 10
 
 # Apply decay and headshot calculations
 function {ns}:v{version}/raycast/apply_decay

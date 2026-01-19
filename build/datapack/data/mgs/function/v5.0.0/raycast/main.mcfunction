@@ -6,6 +6,9 @@
 # @within	mgs:v5.0.0/player/shoot [ anchored eyes & positioned ^ ^ ^ ]
 #
 
+# Copy damage to temp storage to avoid modifying original for multiple pellets
+data modify storage mgs:temp damage set from storage mgs:gun all.stats.damage
+
 # Handle accuracy
 tp @s ~ ~ ~ ~ ~
 function mgs:v5.0.0/raycast/accuracy/apply_spread
