@@ -9,5 +9,5 @@
 #
 
 $playsound mgs:$(fire_alt) player @s ~ ~ ~ 0.25
-$playsound mgs:$(fire_alt) player @a[distance=0.01..48] 0.75 1 0.25
+$playsound mgs:$(fire_alt) player @a[distance=0.01..48] ~ ~ ~ 0.75 1 0.25
 

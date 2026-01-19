@@ -27,8 +27,16 @@ function mgs:v5.0.0/switch/main
 # Decrease cooldown by 1
 execute if score @s mgs.cooldown matches 1.. run scoreboard players remove @s mgs.cooldown 1
 
+# Check mid cooldown sound
+execute if score @s mgs.cooldown matches 1.. if entity @s[tag=mgs.pump_sound] if data storage mgs:gun all.sounds.pump run function mgs:v5.0.0/sound/check/pump
+execute if score @s mgs.cooldown matches 0 if entity @s[tag=mgs.pump_sound] run tag @s remove mgs.pump_sound
+
+# Check mid reload sound
+execute if score @s mgs.cooldown matches 1.. if entity @s[tag=mgs.reload_mid_sound] if data storage mgs:gun all.sounds.playermid run function mgs:v5.0.0/sound/check/reload_mid
+execute if score @s mgs.cooldown matches 0 if entity @s[tag=mgs.reload_mid_sound] run tag @s remove mgs.reload_mid_sound
+
 # Check if we need to play reload end sound
-execute if score @s mgs.cooldown matches 1.. if data storage mgs:gun all.gun run function mgs:v5.0.0/sound/check_reload_end
+execute if score @s mgs.cooldown matches 1.. if data storage mgs:gun all.sounds.playerend run function mgs:v5.0.0/sound/check/reload_end
 execute if score @s mgs.cooldown matches 0 if entity @s[tag=mgs.reloading] run function mgs:v5.0.0/ammo/end_reload
 
 # If pending clicks, run right click function

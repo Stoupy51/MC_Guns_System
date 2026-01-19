@@ -1,9 +1,9 @@
 
-#> mgs:v5.0.0/sound/reload_end
+#> mgs:v5.0.0/sound/player_end
 #
 # @executed	as @a[sort=random] & at @s
 #
-# @within	mgs:v5.0.0/sound/check_reload_end with storage mgs:gun all.sounds
+# @within	mgs:v5.0.0/sound/check/reload_end with storage mgs:gun all.sounds
 #
 # @args		playerend (unknown)
 #

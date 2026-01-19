@@ -150,7 +150,19 @@ def beet_default(ctx: Context) -> None:
             ]
 
     # Sort items so that zoom models are at the end
-    sorted_items: list[str] = sorted(Mem.definitions.keys(), key=lambda x: x.endswith("_zoom"))
+    def sorter(k: str) -> int:
+        obj = Item.from_id(k)
+        ns_data: JsonDict = obj.components.get("custom_data", {}).get(ns, {})
+        if ns_data.get("casing"):
+            return 4
+        if k.startswith("flash_"):
+            return 3
+        if k.endswith("_zoom"):
+            return 2
+        if k.endswith("_mag_empty"):
+            return 1
+        return 0
+    sorted_items: list[str] = sorted(Mem.definitions.keys(), key=sorter)
     Mem.definitions = {k: Mem.definitions[k] for k in sorted_items}
 
     # Final adjustments, you definitively should keep them!

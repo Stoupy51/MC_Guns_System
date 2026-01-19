@@ -19,6 +19,7 @@ function {ns}:v{version}/raycast/accuracy/get_value
 # Shoot with raycast
 tag @s add bs.raycast.omit
 execute anchored eyes positioned ^ ^ ^ summon marker run function {ns}:v{version}/raycast/main
+tag @s remove bs.raycast.omit
 """)
 
     # Handle pending clicks
