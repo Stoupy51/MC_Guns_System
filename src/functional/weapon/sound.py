@@ -15,7 +15,7 @@ def main() -> None:
     write_versioned_function("player/right_click",
 f"""
 # Advanced Playsound
-function {ns}:v{version}/sound/main with storage {ns}:gun all.sounds
+function {ns}:v{version}/sound/main
 """)
 
     # Compute acoustics function
@@ -76,10 +76,26 @@ execute anchored eyes positioned ^ ^ ^ if block ~ ~ ~ #{ns}:v{version}/sounds/wa
     # Main function
     write_versioned_function("sound/main",
 f"""
-# Simple weapon fire sound
+# Fire sounds
+# TODO: Add a mode check to select between fire and fire_alt
+execute if data storage {ns}:gun all.sounds.fire_alt run function {ns}:v{version}/sound/fire_alt with storage {ns}:gun all.sounds
+execute unless data storage {ns}:gun all.sounds.fire_alt run function {ns}:v{version}/sound/fire_simple with storage {ns}:gun all.sounds
+
+# Acoustics handling
+execute if data storage {ns}:gun all.sounds.acoustics run function {ns}:v{version}/sound/acoustics_main with storage {ns}:gun all.sounds
+""")
+    write_versioned_function("sound/fire_simple",
+f"""
 $playsound {ns}:$(fire) player @s ~ ~ ~ 0.25
 $playsound {ns}:$(fire) player @a[distance=0.01..48] 0.75 1 0.25
-
+""")
+    write_versioned_function("sound/fire_alt",
+f"""
+$playsound {ns}:$(fire_alt) player @s ~ ~ ~ 0.25
+$playsound {ns}:$(fire_alt) player @a[distance=0.01..48] 0.75 1 0.25
+""")
+    write_versioned_function("sound/acoustics_main",
+f"""
 # Playsound depending on acoustics level
 $execute if score @s {ns}.acoustics_level matches 0 run playsound {ns}:common/$(crack)_crack_0_distant player @s ~ ~ ~ 1.0
 $execute if score @s {ns}.acoustics_level matches 1 run playsound {ns}:common/$(crack)_crack_1_far player @s ~ ~ ~ 1.0

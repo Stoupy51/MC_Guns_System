@@ -501,7 +501,7 @@ SPAS12: JsonDict = {
     },
     "sounds": {
         "fire": "spas12/fire",
-        "fire_s": "spas12/fire_s",
+        "fire_alt": "spas12/fire_alt",
         "reload": "spas12/reload",
         "pump": "spas12/pump",
         "crack": "largest"

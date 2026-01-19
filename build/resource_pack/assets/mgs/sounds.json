@@ -651,9 +651,9 @@
 		"subtitle": "spas12/fire",
 		"sounds": ["mgs:spas12/fire"]
 	},
-	"spas12/fire_s": {
-		"subtitle": "spas12/fire_s",
-		"sounds": ["mgs:spas12/fire_s"]
+	"spas12/fire_alt": {
+		"subtitle": "spas12/fire_alt",
+		"sounds": ["mgs:spas12/fire_alt"]
 	},
 	"spas12/pump": {
 		"subtitle": "spas12/pump",
