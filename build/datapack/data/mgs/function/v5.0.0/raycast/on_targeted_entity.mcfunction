@@ -12,7 +12,7 @@ particle block{block_state:"redstone_wire"} ~ ~1 ~ 0.35 0.5 0.35 0 100 force @a[
 
 # Get base damage with 3 digits of precision
 data modify storage mgs:input with set value {target:"@s", amount:0.0f, attacker:"@p[tag=mgs.ticking]"}
-execute store result score #damage mgs.data run data get storage mgs:gun all.stats.damage 10
+execute store result score #damage mgs.data run data get storage mgs:temp damage 10
 
 # Apply decay and headshot calculations
 function mgs:v5.0.0/raycast/apply_decay
