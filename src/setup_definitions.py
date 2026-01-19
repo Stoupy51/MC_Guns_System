@@ -1,13 +1,13 @@
 
 # Import database helper and setup constants
 import json
-from typing import Any
 
 from stewbeet import (
     Context,
     Item,
     JsonDict,
     Mem,
+    TextComponent,
     add_item_model_component,
     add_item_name_and_lore_if_missing,
     add_private_custom_data_for_namespace,
@@ -19,7 +19,7 @@ from stewbeet import (
     create_gradient_text as new_hex,
 )
 
-from .config.stats import CAPACITY, CASING_MODEL, COOLDOWN, DAMAGE, DECAY, END_HEX, MODELS, RELOAD_TIME, REMAINING_BULLETS, START_HEX, SWITCH
+from .config.stats import CAPACITY, CASING_MODEL, COOLDOWN, DAMAGE, DECAY, END_HEX, MODELS, PELLET_COUNT, RELOAD_TIME, REMAINING_BULLETS, START_HEX, SWITCH
 from .database.ak47 import main as main_ak47
 from .database.all_pistols import main as main_pistols
 from .database.ammo import main as main_ammo
@@ -117,11 +117,16 @@ def beet_default(ctx: Context) -> None:
             gun_stats[REMAINING_BULLETS] = gun_stats[CAPACITY]
 
             # Prepare fire_rate lore
-            fire_rate_component: list[list[Any]] = []
+            fire_rate_component: list[TextComponent] = []
             if COOLDOWN in gun_stats:
                 fire_rate: float = 20 / gun_stats[COOLDOWN]
                 fire_rate_unit: str = "shots/s" if fire_rate > 1.0 else "s/shot"
                 fire_rate_component.append([*new_hex("Fire Rate             ➤ ", START_HEX, END_HEX), f"{fire_rate:.1f} ", *new_hex(fire_rate_unit, END_HEX, START_HEX, text_length=10)])
+
+            # Prepare pellet count lore
+            pellet_component: list[TextComponent] = []
+            if PELLET_COUNT in gun_stats:
+                pellet_component.append([*new_hex("Pellets Per Shot    ➤ ", START_HEX, END_HEX), str(gun_stats[PELLET_COUNT])])
 
             # Set custom lore
             obj.components["lore"] = [
@@ -129,6 +134,7 @@ def beet_default(ctx: Context) -> None:
                 [*new_hex("Ammo Remaining      ➤ ", START_HEX, END_HEX),   str(gun_stats[REMAINING_BULLETS]),      {"text":"/","color":f"#{END_HEX}"}, str(gun_stats[CAPACITY])],
                 [*new_hex("Reloading Time       ➤ ", START_HEX, END_HEX),  f"{gun_stats[RELOAD_TIME] / 20:.1f}",   {"text":"s","color":f"#{END_HEX}"}],
                 *fire_rate_component,
+                *pellet_component,
                 [*new_hex("Damage Decay       ➤ ", START_HEX, END_HEX),    f"{gun_stats[DECAY] * 100:.0f}",        {"text":"%","color":f"#{END_HEX}"}],
                 [*new_hex("Switch Time           ➤ ", START_HEX, END_HEX), f"{gun_stats[SWITCH] / 20:.1f}",        {"text":"s","color":f"#{END_HEX}"}],
                 "",

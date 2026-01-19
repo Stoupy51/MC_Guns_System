@@ -63,6 +63,8 @@ Controls the weapon's rate of fire. Lower values result in faster firing rates. 
 BURST: str = "burst"
 """ Number of rounds automatically fired when in burst fire mode.
 A value of 1 indicates semi-automatic, while 3 would be a three-round burst. """
+PELLET_COUNT: str = "pellet_count"
+""" Number of projectiles fired per shot (usually for shotguns). """
 DAMAGE: str = "damage"
 """ Base damage inflicted by each bullet at close range.
 This value may be reduced at longer distances based on the decay parameter. """
@@ -494,7 +496,7 @@ STEN: JsonDict = {
 SPAS12: JsonDict = {
     "stats": {
         BASE_WEAPON: "spas12",
-        CAPACITY: 8, RELOAD_TIME: 20, COOLDOWN: 16, DAMAGE: 13, DECAY: 0.82,
+        CAPACITY: 8, RELOAD_TIME: 20, COOLDOWN: 16, PELLET_COUNT: 3, DAMAGE: 13, DECAY: 0.82,
         ACCURACY_BASE: 230, ACCURACY_SNEAK: 190, ACCURACY_WALK: 300, ACCURACY_SPRINT: 800, ACCURACY_JUMP: 1500,
         SWITCH: 25, KICK: 6, CASING_MODEL: CASING_12GA275IN, CASING_NORMAL: 25, CASING_TANGENT: 100, CASING_BINORMAL: -200,
         CASING_OFFSET: {"normal": (-0.35, -0.3, 0.7), "zoom": (-0.1, -0.3, 0.6)},
@@ -511,7 +513,7 @@ SPAS12: JsonDict = {
 M500: JsonDict = {
     "stats": {
         BASE_WEAPON: "m500",
-        CAPACITY: 5, RELOAD_TIME: 22, COOLDOWN: 18, DAMAGE: 14, DECAY: 0.82,
+        CAPACITY: 5, RELOAD_TIME: 22, COOLDOWN: 18, PELLET_COUNT: 3, DAMAGE: 14, DECAY: 0.82,
         ACCURACY_BASE: 250, ACCURACY_SNEAK: 200, ACCURACY_WALK: 350, ACCURACY_SPRINT: 900, ACCURACY_JUMP: 1600,
         SWITCH: 20, KICK: 7, CASING_MODEL: CASING_12GA3IN, CASING_NORMAL: 25, CASING_TANGENT: 100, CASING_BINORMAL: -200,
         CASING_OFFSET: {"normal": (-0.35, -0.3, 0.7), "zoom": (-0.1, -0.3, 0.6)},
@@ -527,7 +529,7 @@ M500: JsonDict = {
 M590: JsonDict = {
     "stats": {
         BASE_WEAPON: "m590",
-        CAPACITY: 8, RELOAD_TIME: 22, COOLDOWN: 19, DAMAGE: 14, DECAY: 0.82,
+        CAPACITY: 8, RELOAD_TIME: 22, COOLDOWN: 19, PELLET_COUNT: 3, DAMAGE: 14, DECAY: 0.82,
         ACCURACY_BASE: 210, ACCURACY_SNEAK: 175, ACCURACY_WALK: 325, ACCURACY_SPRINT: 800, ACCURACY_JUMP: 1500,
         SWITCH: 35, KICK: 5, CASING_MODEL: CASING_12GA3IN, CASING_NORMAL: 50, CASING_TANGENT: 80, CASING_BINORMAL: -220,
         CASING_OFFSET: {"normal": (-0.35, -0.27, 0.7), "zoom": (-0.1, -0.25, 0.6)},

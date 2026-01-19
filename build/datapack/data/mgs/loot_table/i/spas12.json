@@ -13,7 +13,7 @@
 								"minecraft:custom_data": {
 									"mgs": {
 										"gun": true,
-										"stats": {"base_weapon": "spas12","capacity": 8,"reload_time": 20,"cooldown": 16,"damage": 13,"decay": 0.82,"acc_base": 230,"acc_sneak": 190,"acc_walk": 300,"acc_sprint": 800,"acc_jump": 1500,"switch": 25,"kick": 6,"casing_model": "mgs:12ga275in","casing_n": 25,"casing_t": 100,"casing_b": -200,"casing_offset": {"normal": [-0.35,-0.3,0.7],"zoom": [-0.1,-0.3,0.6]},"models": {"normal": "mgs:spas12","zoom": "mgs:spas12_zoom"},"remaining_bullets": 8},
+										"stats": {"base_weapon": "spas12","capacity": 8,"reload_time": 20,"cooldown": 16,"pellet_count": 3,"damage": 13,"decay": 0.82,"acc_base": 230,"acc_sneak": 190,"acc_walk": 300,"acc_sprint": 800,"acc_jump": 1500,"switch": 25,"kick": 6,"casing_model": "mgs:12ga275in","casing_n": 25,"casing_t": 100,"casing_b": -200,"casing_offset": {"normal": [-0.35,-0.3,0.7],"zoom": [-0.1,-0.3,0.6]},"models": {"normal": "mgs:spas12","zoom": "mgs:spas12_zoom"},"remaining_bullets": 8},
 										"sounds": {"fire": "spas12/fire","fire_alt": "spas12/fire_alt","reload": "spas12/reload","pump": "spas12/pump","crack": "largest"},
 										"spas12": true
 									},
@@ -133,6 +133,31 @@
 										{"text": "s","color": "#c46628"},
 										{"text": "/","color": "#c46124"},
 										{"text": "s","color": "#c35b21"}
+									],
+									[
+										{"text": "P","color": "#c24a17","italic": false},
+										{"text": "e","color": "#c24c18"},
+										{"text": "l","color": "#c24e19"},
+										{"text": "l","color": "#c2511b"},
+										{"text": "e","color": "#c2531c"},
+										{"text": "t","color": "#c3561e"},
+										{"text": "s","color": "#c3581f"},
+										{"text": " ","color": "#c35b21"},
+										{"text": "P","color": "#c35d22"},
+										{"text": "e","color": "#c46024"},
+										{"text": "r","color": "#c46225"},
+										{"text": " ","color": "#c46527"},
+										{"text": "S","color": "#c46728"},
+										{"text": "h","color": "#c56a2a"},
+										{"text": "o","color": "#c56c2b"},
+										{"text": "t","color": "#c56f2d"},
+										{"text": " ","color": "#c5712e"},
+										{"text": " ","color": "#c67430"},
+										{"text": " ","color": "#c67631"},
+										{"text": " ","color": "#c67933"},
+										{"text": "➤","color": "#c67b34"},
+										{"text": " ","color": "#c77e36"},
+										"3"
 									],
 									[
 										{"text": "D","color": "#c24a17","italic": false},

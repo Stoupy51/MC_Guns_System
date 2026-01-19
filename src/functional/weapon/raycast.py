@@ -2,7 +2,7 @@
 # Imports
 from stewbeet import Mem, write_versioned_function
 
-from ...config.stats import ACCURACY_BASE, ACCURACY_JUMP, ACCURACY_SNEAK, ACCURACY_SPRINT, ACCURACY_WALK, DAMAGE, DECAY
+from ...config.stats import ACCURACY_BASE, ACCURACY_JUMP, ACCURACY_SNEAK, ACCURACY_SPRINT, ACCURACY_WALK, DAMAGE, DECAY, PELLET_COUNT
 
 
 # Main function
@@ -13,6 +13,15 @@ def main() -> None:
     # Handle pending clicks
     write_versioned_function("player/right_click",
 f"""
+# Shoot the gun
+scoreboard players set #bullets_to_fire {ns}.data 1
+execute if data storage {ns}:gun all.stats.{PELLET_COUNT} store result score #bullets_to_fire {ns}.data run data get storage {ns}:gun all.stats.{PELLET_COUNT}
+function {ns}:v{version}/player/shoot
+""")
+
+    # Handle pending clicks
+    write_versioned_function("player/shoot",
+f"""
 # Check which type of movement the player is doing
 function {ns}:v{version}/raycast/accuracy/get_value
 
@@ -20,6 +29,10 @@ function {ns}:v{version}/raycast/accuracy/get_value
 tag @s add bs.raycast.omit
 execute anchored eyes positioned ^ ^ ^ summon marker run function {ns}:v{version}/raycast/main
 tag @s remove bs.raycast.omit
+
+# Decrease bullets to fire & loop if needed
+scoreboard players remove #bullets_to_fire {ns}.data 1
+execute if score #bullets_to_fire {ns}.data matches 1.. run function {ns}:v{version}/player/shoot
 """)
 
     # Handle pending clicks
