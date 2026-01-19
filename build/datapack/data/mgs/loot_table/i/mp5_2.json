@@ -14,7 +14,7 @@
 									"mgs": {
 										"gun": true,
 										"stats": {"base_weapon": "mp5","capacity": 30,"reload_time": 60,"reload_mid": 25,"reload_end": 5,"cooldown": 2,"burst": 2,"damage": 10,"decay": 0.92,"acc_base": 100,"acc_sneak": 60,"acc_walk": 200,"acc_sprint": 450,"acc_jump": 1000,"switch": 15,"kick": 1,"casing_model": "mgs:9x19mm","casing_n": 225,"casing_t": 10,"casing_b": -275,"casing_offset": {"normal": [-0.38,-0.35,0.7],"zoom": [-0.05,-0.25,0.5]},"models": {"normal": "mgs:mp5_2","zoom": "mgs:mp5_2_zoom"},"remaining_bullets": 30},
-										"sounds": {"fire": "mp5/fire","reload": "mp5/reload","playerbegin": "mp5/playerbegin","playerend": "mp5/playerend","crack": "tiny"},
+										"sounds": {"fire": "mp5/fire","reload": "mp5/reload","playerbegin": "mp5/playerbegin","playerend": "mp5/playerend","playermid": "mp5/playermid","crack": "tiny"},
 										"mp5_2": true
 									},
 									"smithed": {

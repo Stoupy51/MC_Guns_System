@@ -138,12 +138,14 @@ execute if score #processed_acoustics {ns}.data matches 5 run function {ns}:v{ve
                 f"$execute if entity @s[distance={mini}..{maxi}] positioned as @s run playsound {ns}:common/$(crack)_crack_{i}_{level} player @s ^ ^ ^-6 {round(volume * 1.5, 3)}"
             )
 
-    # Reload start function
+    # Reload start function & player begin function (splitted in case a gun is missing one of them)
     write_versioned_function("sound/reload_start",
 f"""
 # Full reload sound for the player
 $playsound {ns}:$(reload) player
-
+""")
+    write_versioned_function("sound/player_begin",
+f"""
 # Play the begin reload sound for all nearby players
 $playsound {ns}:$(playerbegin) player @a[distance=0.01..16] ~ ~ ~ 0.3
 """)

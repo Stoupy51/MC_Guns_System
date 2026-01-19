@@ -278,6 +278,7 @@ function {ns}:v{version}/ammo/modify_lore {{slot:"weapon.mainhand"}}
 
 # Play reload sound (and send sounds for macro)
 function {ns}:v{version}/sound/reload_start with storage {ns}:gun all.sounds
+function {ns}:v{version}/sound/player_begin with storage {ns}:gun all.sounds
 
 # Add reloading tag
 tag @s add {ns}.reloading

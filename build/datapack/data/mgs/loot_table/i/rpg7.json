@@ -14,7 +14,7 @@
 									"mgs": {
 										"gun": true,
 										"stats": {"base_weapon": "rpg7","capacity": 1,"reload_time": 110,"reload_end": 20,"cooldown": 10,"damage": 30,"decay": 1.0,"acc_base": 250,"acc_sneak": 100,"acc_walk": 300,"acc_sprint": 300,"acc_jump": 300,"switch": 55,"kick": 6,"models": {"normal": "mgs:rpg7","zoom": "mgs:rpg7_zoom"},"remaining_bullets": 1},
-										"sounds": {"fire": "rpg7/fire","reload": "rpg7/reload","playerbegin": "rpg7/playerbegin","playerend": "rpg7/playerend","crack": "rocket"},
+										"sounds": {"fire": "rpg7/fire","reload": "rpg7/reload","playerbegin": "rpg7/playerbegin","playerend": "rpg7/playerend","handling_endgrab": "rpg7/handling/rpg7_endgrab","handling_fetch": "rpg7/handling/rpg7_fetch","handling_load": "rpg7/handling/rpg7_load","crack": "rocket"},
 										"rpg7": true
 									},
 									"smithed": {

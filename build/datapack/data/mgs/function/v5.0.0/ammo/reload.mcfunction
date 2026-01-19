@@ -29,6 +29,7 @@ function mgs:v5.0.0/ammo/modify_lore {slot:"weapon.mainhand"}
 
 # Play reload sound (and send sounds for macro)
 function mgs:v5.0.0/sound/reload_start with storage mgs:gun all.sounds
+function mgs:v5.0.0/sound/player_begin with storage mgs:gun all.sounds
 
 # Add reloading tag
 tag @s add mgs.reloading
