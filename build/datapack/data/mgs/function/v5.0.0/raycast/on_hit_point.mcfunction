@@ -7,19 +7,11 @@
 #
 
 # If targeted entity, return to prevent showing particles
-execute if data storage bs:lambda raycast.targeted_entity run return fail
+# (last_callback = 0 for on_hit_point, 1 for on_targeted_block, 2 for on_targeted_entity)
+execute if score #last_callback mgs.data matches 2 run return run scoreboard players set #last_callback mgs.data 0
+scoreboard players set #last_callback mgs.data 0
 
-# Get current block (https://docs.mcbookshelf.dev/en/latest/modules/block.html#get)
-scoreboard players set #is_water mgs.data 0
-scoreboard players set #is_pass_through mgs.data 0
-data modify storage mgs:temp Pos set from entity @s Pos
-data modify entity @s Pos set from storage bs:lambda raycast.targeted_block
-execute at @s if block ~ ~ ~ #bs.hitbox:can_pass_through run scoreboard players set #is_pass_through mgs.data 1
-execute at @s if block ~ ~ ~ #mgs:v5.0.0/sounds/water run scoreboard players set #is_water mgs.data 1
-execute at @s run function #bs.block:get_block
-data modify entity @s Pos set from storage mgs:temp Pos
-
-# Make block particles (if not passing through)
+# Make block particles (if not passing through) (on_targeted_block runs first to set passing through)
 data modify storage mgs:input with set value {x:0,y:0,z:0,block:"minecraft:air"}
 data modify storage mgs:input with.block set from storage bs:out block.type
 data modify storage mgs:input with.x set from storage bs:lambda raycast.hit_point[0]

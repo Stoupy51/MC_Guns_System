@@ -7,6 +7,7 @@
 #
 
 # Blood particles
+scoreboard players set #last_callback mgs.data 2
 particle block{block_state:"redstone_wire"} ~ ~1 ~ 0.35 0.5 0.35 0 100 force @a[distance=..128]
 
 # Get base damage with 3 digits of precision

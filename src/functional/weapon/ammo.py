@@ -265,7 +265,7 @@ execute if score @s {ns}.{REMAINING_BULLETS} >= #capacity {ns}.data run return f
 scoreboard players set @s {ns}.cooldown 5
 execute if data storage {ns}:config no_magazine store result score @s {ns}.{REMAINING_BULLETS} run data get storage {ns}:gun all.stats.{CAPACITY}
 execute unless data storage {ns}:config no_magazine run function {ns}:v{version}/ammo/inventory/find with storage {ns}:gun all.stats
-execute unless data storage {ns}:config no_magazine unless score #found_ammo {ns}.data matches 1.. run return run playsound mgs:common/empty ambient @s
+execute unless data storage {ns}:config no_magazine unless score #found_ammo {ns}.data matches 1.. run return run playsound {ns}:common/empty ambient @s
 
 # Set cooldown to reload duration
 execute store result score @s {ns}.cooldown run data get storage {ns}:gun all.stats.{RELOAD_TIME}
