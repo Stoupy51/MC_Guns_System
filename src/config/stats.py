@@ -206,6 +206,7 @@ AUG: JsonDict = {
         "reload": "aug/reload",
         "playerbegin": "aug/playerbegin",
         "playerend": "aug/playerend",
+        "playermid": "aug/playermid",
         "crack": "medium"
     }
 }
@@ -257,6 +258,7 @@ FAMAS: JsonDict = {
         "reload": "famas/reload",
         "playerbegin": "famas/playerbegin",
         "playerend": "famas/playerend",
+        "playermid": "famas/playermid",
         "crack": "medium"
     }
 }
@@ -412,6 +414,7 @@ MP5: JsonDict = {
         "reload": "mp5/reload",
         "playerbegin": "mp5/playerbegin",
         "playerend": "mp5/playerend",
+        "playermid": "mp5/playermid",
         "crack": "tiny"
     }
 }
@@ -429,6 +432,7 @@ MAC10: JsonDict = {
         "reload": "mac10/reload",
         "playerbegin": "mac10/playerbegin",
         "playerend": "mac10/playerend",
+        "playermid": "mac10/playermid",
         "crack": "tiny"
     }
 }
@@ -463,6 +467,7 @@ PPSH41: JsonDict = {
         "reload": "ppsh41/reload",
         "playerbegin": "ppsh41/playerbegin",
         "playerend": "ppsh41/playerend",
+        "playermid": "ppsh41/playermid",
         "crack": "tiny"
     }
 }
@@ -480,6 +485,7 @@ STEN: JsonDict = {
         "reload": "sten/reload",
         "playerbegin": "sten/playerbegin",
         "playerend": "sten/playerend",
+        "playermid": "sten/playermid",
         "crack": "tiny"
     }
 }
@@ -495,9 +501,9 @@ SPAS12: JsonDict = {
     },
     "sounds": {
         "fire": "spas12/fire",
+        "fire_s": "spas12/fire_s",
         "reload": "spas12/reload",
-        "playerbegin": "spas12/playerbegin",
-        "playerend": "spas12/playerend",
+        "pump": "spas12/pump",
         "crack": "largest"
     }
 }
@@ -513,8 +519,7 @@ M500: JsonDict = {
     "sounds": {
         "fire": "m500/fire",
         "reload": "m500/reload",
-        "playerbegin": "m500/playerbegin",
-        "playerend": "m500/playerend",
+        "pump": "m500/pump",
         "crack": "largest"
     }
 }
@@ -530,8 +535,7 @@ M590: JsonDict = {
     "sounds": {
         "fire": "m590/fire",
         "reload": "m590/reload",
-        "playerbegin": "m590/playerbegin",
-        "playerend": "m590/playerend",
+        "pump": "m590/pump",
         "crack": "largest"
     }
 }
@@ -550,6 +554,7 @@ SVD: JsonDict = {
         "reload": "svd/reload",
         "playerbegin": "svd/playerbegin",
         "playerend": "svd/playerend",
+        "playermid": "svd/playermid",
         "crack": "large"
     }
 }
@@ -567,6 +572,7 @@ M82: JsonDict = {
         "reload": "m82/reload",
         "playerbegin": "m82/playerbegin",
         "playerend": "m82/playerend",
+        "playermid": "m82/playermid",
         "crack": "largest"
     }
 }
@@ -584,6 +590,7 @@ MOSIN: JsonDict = {
         "reload": "mosin/reload",
         "playerbegin": "mosin/playerbegin",
         "playerend": "mosin/playerend",
+        "cycle": "mosin/cycle",
         "crack": "large"
     }
 }
@@ -601,6 +608,7 @@ M24: JsonDict = {
         "reload": "m24/reload",
         "playerbegin": "m24/playerbegin",
         "playerend": "m24/playerend",
+        "cycle": "m24/cycle",
         "crack": "largest"
     }
 }
@@ -619,6 +627,9 @@ RPG7: JsonDict = {
         "reload": "rpg7/reload",
         "playerbegin": "rpg7/playerbegin",
         "playerend": "rpg7/playerend",
+        "handling_endgrab": "rpg7/handling/rpg7_endgrab",
+        "handling_fetch": "rpg7/handling/rpg7_fetch",
+        "handling_load": "rpg7/handling/rpg7_load",
         "crack": "rocket"
     }
 }
@@ -636,6 +647,7 @@ RPK: JsonDict = {
         "reload": "rpk/reload",
         "playerbegin": "rpk/playerbegin",
         "playerend": "rpk/playerend",
+        "playermid": "rpk/playermid",
         "crack": "medium"
     }
 }
@@ -653,6 +665,7 @@ M249: JsonDict = {
         "reload": "m249/reload",
         "playerbegin": "m249/playerbegin",
         "playerend": "m249/playerend",
+        "playermid": "m249/playermid",
         "crack": "medium"
     }
 }

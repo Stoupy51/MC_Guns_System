@@ -14,7 +14,7 @@
 									"mgs": {
 										"gun": true,
 										"stats": {"base_weapon": "spas12","capacity": 8,"reload_time": 20,"cooldown": 16,"damage": 13,"decay": 0.82,"acc_base": 230,"acc_sneak": 190,"acc_walk": 300,"acc_sprint": 800,"acc_jump": 1500,"switch": 25,"kick": 6,"casing_model": "mgs:12ga275in","casing_n": 25,"casing_t": 100,"casing_b": -200,"casing_offset": {"normal": [-0.35,-0.3,0.7],"zoom": [-0.1,-0.3,0.6]},"models": {"normal": "mgs:spas12_3","zoom": "mgs:spas12_3_zoom"},"remaining_bullets": 8},
-										"sounds": {"fire": "spas12/fire","reload": "spas12/reload","playerbegin": "spas12/playerbegin","playerend": "spas12/playerend","crack": "largest"},
+										"sounds": {"fire": "spas12/fire","fire_s": "spas12/fire_s","reload": "spas12/reload","pump": "spas12/pump","crack": "largest"},
 										"spas12_3_zoom": true
 									},
 									"smithed": {

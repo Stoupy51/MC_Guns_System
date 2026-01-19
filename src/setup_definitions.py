@@ -100,9 +100,9 @@ def beet_default(ctx: Context) -> None:
 
         # Get all gun data
         obj.components["custom_data"] = json.loads(json.dumps(obj.components.get("custom_data", {})))
-        ns_data: dict[str, Any] = obj.components["custom_data"].get(ns, {})
-        gun_stats: dict[str, Any] = ns_data.get("stats", {})
+        ns_data: JsonDict = obj.components["custom_data"].get(ns, {})
         if ns_data.get("gun"):
+            gun_stats: JsonDict = ns_data.get("stats", {})
 
             # Update casing model
             if CASING_MODEL in gun_stats:
