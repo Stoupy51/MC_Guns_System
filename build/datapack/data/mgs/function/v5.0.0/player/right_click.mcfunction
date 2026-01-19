@@ -23,13 +23,10 @@ execute if score @s mgs.remaining_bullets matches ..0 run return run function mg
 # Set cooldown
 execute store result score @s mgs.cooldown run data get storage mgs:gun all.stats.cooldown
 
-# Check which type of movement the player is doing
-function mgs:v5.0.0/raycast/accuracy/get_value
-
-# Shoot with raycast
-tag @s add bs.raycast.omit
-execute anchored eyes positioned ^ ^ ^ summon marker run function mgs:v5.0.0/raycast/main
-tag @s remove bs.raycast.omit
+# Shoot the gun
+scoreboard players set #bullets_to_fire mgs.data 1
+execute if data storage mgs:gun all.stats.pellet_count store result score #bullets_to_fire mgs.data run data get storage mgs:gun all.stats.pellet_count
+function mgs:v5.0.0/player/shoot
 
 # Simulate weapon kick
 function mgs:v5.0.0/kicks/main

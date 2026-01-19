@@ -3,7 +3,7 @@
 #
 # @executed	as @a[sort=random] & at @s
 #
-# @within	mgs:v5.0.0/player/right_click
+# @within	mgs:v5.0.0/player/shoot
 #
 
 ## Order is important: Jump > Sneak > Sprint > Walk > Base
