@@ -6,9 +6,15 @@
 # @within	mgs:v5.0.0/raycast/main
 #
 
-# If the block can be passed through, increment back piercing, and stop here if it's not water
+# Get current block (https://docs.mcbookshelf.dev/en/latest/modules/block.html#get)
+scoreboard players set #last_callback mgs.data 1
+scoreboard players set #is_water mgs.data 0
 scoreboard players set #is_pass_through mgs.data 0
 execute if block ~ ~ ~ #bs.hitbox:can_pass_through run scoreboard players set #is_pass_through mgs.data 1
+execute if block ~ ~ ~ #mgs:v5.0.0/sounds/water run scoreboard players set #is_water mgs.data 1
+function #bs.block:get_block
+
+# If the block can be passed through, increment back piercing, and stop here if it's not water
 execute if score #is_pass_through mgs.data matches 1 run scoreboard players add $raycast.piercing bs.lambda 1
 execute if score #is_pass_through mgs.data matches 1 unless block ~ ~ ~ #mgs:v5.0.0/sounds/water run return 1
 

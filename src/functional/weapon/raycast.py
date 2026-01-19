@@ -46,7 +46,6 @@ data modify storage {ns}:input with.blocks set value true
 data modify storage {ns}:input with.entities set value true
 data modify storage {ns}:input with.piercing set value 10
 data modify storage {ns}:input with.max_distance set value 128
-data modify storage {ns}:input with.hitbox_shape set value "interaction"
 data modify storage {ns}:input with.ignored_blocks set value "#{ns}:v{version}/empty"
 data modify storage {ns}:input with.on_hit_point set value "function {ns}:v{version}/raycast/on_hit_point"
 data modify storage {ns}:input with.on_targeted_block set value "function {ns}:v{version}/raycast/on_targeted_block"
@@ -63,19 +62,11 @@ kill @s
     write_versioned_function("raycast/on_hit_point",
 f"""
 # If targeted entity, return to prevent showing particles
-execute if data storage bs:lambda raycast.targeted_entity run return fail
+# (last_callback = 0 for on_hit_point, 1 for on_targeted_block, 2 for on_targeted_entity)
+execute if score #last_callback {ns}.data matches 2 run return run scoreboard players set #last_callback {ns}.data 0
+scoreboard players set #last_callback {ns}.data 0
 
-# Get current block (https://docs.mcbookshelf.dev/en/latest/modules/block.html#get)
-scoreboard players set #is_water {ns}.data 0
-scoreboard players set #is_pass_through {ns}.data 0
-data modify storage {ns}:temp Pos set from entity @s Pos
-data modify entity @s Pos set from storage bs:lambda raycast.targeted_block
-execute at @s if block ~ ~ ~ #bs.hitbox:can_pass_through run scoreboard players set #is_pass_through {ns}.data 1
-execute at @s if block ~ ~ ~ #{ns}:v{version}/sounds/water run scoreboard players set #is_water {ns}.data 1
-execute at @s run function #bs.block:get_block
-data modify entity @s Pos set from storage {ns}:temp Pos
-
-# Make block particles (if not passing through)
+# Make block particles (if not passing through) (on_targeted_block runs first to set passing through)
 data modify storage {ns}:input with set value {{x:0,y:0,z:0,block:"minecraft:air"}}
 data modify storage {ns}:input with.block set from storage bs:out block.type
 data modify storage {ns}:input with.x set from storage bs:lambda raycast.hit_point[0]
@@ -92,15 +83,21 @@ scoreboard players add #next_air_particle {ns}.data 1
 execute if score #next_air_particle {ns}.data matches 2 run function {ns}:v{version}/raycast/air_particles with storage {ns}:input with
 execute if score #next_air_particle {ns}.data matches 3.. run scoreboard players set #next_air_particle {ns}.data 0
 """)
-    write_versioned_function("raycast/block_particles", """$particle block{block_state:"$(block)"} $(x) $(y) $(z) 0.1 0.1 0.1 1 10 force @a[distance=..128]""")
-    write_versioned_function("raycast/air_particles", """$particle $(block) $(x) $(y) $(z) 0 0 0 0 1 force @a[distance=..128]""")
+    write_versioned_function("raycast/block_particles", r"""$particle block{block_state:"$(block)"} $(x) $(y) $(z) 0.1 0.1 0.1 1 10 force @a[distance=..128]""")
+    write_versioned_function("raycast/air_particles", r"""$particle $(block) $(x) $(y) $(z) 0 0 0 0 1 force @a[distance=..128]""")
 
     # On targeted block
     write_versioned_function("raycast/on_targeted_block",
 f"""
-# If the block can be passed through, increment back piercing, and stop here if it's not water
+# Get current block (https://docs.mcbookshelf.dev/en/latest/modules/block.html#get)
+scoreboard players set #last_callback {ns}.data 1
+scoreboard players set #is_water {ns}.data 0
 scoreboard players set #is_pass_through {ns}.data 0
 execute if block ~ ~ ~ #bs.hitbox:can_pass_through run scoreboard players set #is_pass_through {ns}.data 1
+execute if block ~ ~ ~ #{ns}:v{version}/sounds/water run scoreboard players set #is_water {ns}.data 1
+function #bs.block:get_block
+
+# If the block can be passed through, increment back piercing, and stop here if it's not water
 execute if score #is_pass_through {ns}.data matches 1 run scoreboard players add $raycast.piercing bs.lambda 1
 execute if score #is_pass_through {ns}.data matches 1 unless block ~ ~ ~ #{ns}:v{version}/sounds/water run return 1
 
@@ -133,6 +130,7 @@ execute if score #played_soft {ns}.data matches 0 store success score #played_so
     write_versioned_function("raycast/on_targeted_entity",
 f"""
 # Blood particles
+scoreboard players set #last_callback {ns}.data 2
 particle block{{block_state:"redstone_wire"}} ~ ~1 ~ 0.35 0.5 0.35 0 100 force @a[distance=..128]
 
 # Get base damage with 3 digits of precision

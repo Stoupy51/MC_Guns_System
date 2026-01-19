@@ -28,7 +28,6 @@ data modify storage mgs:input with.blocks set value true
 data modify storage mgs:input with.entities set value true
 data modify storage mgs:input with.piercing set value 10
 data modify storage mgs:input with.max_distance set value 128
-data modify storage mgs:input with.hitbox_shape set value "interaction"
 data modify storage mgs:input with.ignored_blocks set value "#mgs:v5.0.0/empty"
 data modify storage mgs:input with.on_hit_point set value "function mgs:v5.0.0/raycast/on_hit_point"
 data modify storage mgs:input with.on_targeted_block set value "function mgs:v5.0.0/raycast/on_targeted_block"
