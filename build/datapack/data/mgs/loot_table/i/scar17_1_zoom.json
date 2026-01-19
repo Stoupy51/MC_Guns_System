@@ -13,7 +13,8 @@
 								"minecraft:custom_data": {
 									"mgs": {
 										"gun": true,
-										"stats": {"base_weapon": "scar17","crack_type": "large","capacity": 20,"reload_time": 60,"reload_end": 15,"cooldown": 3,"burst": 2,"damage": 18,"decay": 0.92,"acc_base": 140,"acc_sneak": 5,"acc_walk": 500,"acc_sprint": 1500,"acc_jump": 2300,"switch": 30,"kick": 3,"casing_model": "mgs:762x51mm","casing_n": 50,"casing_t": -75,"casing_b": -300,"casing_offset": {"normal": [-0.32,-0.3,0.7],"zoom": [-0.05,-0.25,0.5]},"models": {"normal": "mgs:scar17_1","zoom": "mgs:scar17_1_zoom"},"remaining_bullets": 20},
+										"stats": {"base_weapon": "scar17","capacity": 20,"reload_time": 60,"reload_end": 15,"cooldown": 3,"burst": 2,"damage": 18,"decay": 0.92,"acc_base": 140,"acc_sneak": 5,"acc_walk": 500,"acc_sprint": 1500,"acc_jump": 2300,"switch": 30,"kick": 3,"casing_model": "mgs:762x51mm","casing_n": 50,"casing_t": -75,"casing_b": -300,"casing_offset": {"normal": [-0.32,-0.3,0.7],"zoom": [-0.05,-0.25,0.5]},"models": {"normal": "mgs:scar17_1","zoom": "mgs:scar17_1_zoom"},"remaining_bullets": 20},
+										"sounds": {"fire": "scar17/fire","reload": "scar17/reload","playerbegin": "scar17/playerbegin","playerend": "scar17/playerend","crack": "large"},
 										"scar17_1_zoom": true
 									},
 									"smithed": {

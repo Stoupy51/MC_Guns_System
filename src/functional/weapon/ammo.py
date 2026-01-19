@@ -264,8 +264,8 @@ execute if score @s {ns}.{REMAINING_BULLETS} >= #capacity {ns}.data run return f
 # Get the new ammo count
 scoreboard players set @s {ns}.cooldown 5
 execute if data storage {ns}:config no_magazine store result score @s {ns}.{REMAINING_BULLETS} run data get storage {ns}:gun all.stats.{CAPACITY}
-execute unless data storage {ns}:config no_magazine run function {ns}:v{version}/ammo/inventory/find with storage {ns}:gun all.stats
-execute unless data storage {ns}:config no_magazine unless score #found_ammo {ns}.data matches 1.. run return run playsound {ns}:common/empty ambient @s
+execute unless data storage {ns}:config no_magazine store success score #success {ns}.data run function {ns}:v{version}/ammo/inventory/find with storage {ns}:gun all.stats
+execute unless data storage {ns}:config no_magazine if score #success {ns}.data matches 0 run return run playsound {ns}:common/empty ambient @s
 
 # Set cooldown to reload duration
 execute store result score @s {ns}.cooldown run data get storage {ns}:gun all.stats.{RELOAD_TIME}
@@ -276,8 +276,8 @@ function {ns}:v{version}/switch/force_switch_animation
 # Update weapon lore
 function {ns}:v{version}/ammo/modify_lore {{slot:"weapon.mainhand"}}
 
-# Play reload sound (and send stats for macro)
-function {ns}:v{version}/sound/reload_start with storage {ns}:gun all.stats
+# Play reload sound (and send sounds for macro)
+function {ns}:v{version}/sound/reload_start with storage {ns}:gun all.sounds
 
 # Add reloading tag
 tag @s add {ns}.reloading
@@ -295,13 +295,14 @@ tag @s add {ns}.reloading
 f"""
 # Get capacity and initialize found ammo to current remaining bullets
 execute store result score #capacity {ns}.data run data get storage {ns}:gun all.stats.{CAPACITY}
-execute store result score #found_ammo {ns}.data run scoreboard players get @s {ns}.{REMAINING_BULLETS}
+execute store result score #initial_ammo {ns}.data run scoreboard players get @s {ns}.{REMAINING_BULLETS}
+scoreboard players operation #found_ammo {ns}.data = #initial_ammo {ns}.data
 
 # Check all slots for magazines
 {slot_checks}
 
 # If found ammo, return success, else return fail
-execute if score #found_ammo {ns}.data matches 1.. run return 0
+execute unless score @s {ns}.{REMAINING_BULLETS} = #initial_ammo {ns}.data run return 0
 return fail
 """)
 

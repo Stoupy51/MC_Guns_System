@@ -3,7 +3,7 @@
 # Imports
 from stewbeet import Mem, write_versioned_function
 
-from ...config.stats import BASE_WEAPON, CRACK_TYPE, RELOAD_END
+from ...config.stats import RELOAD_END
 
 
 # Main function
@@ -11,13 +11,11 @@ def main() -> None:
     ns: str = Mem.ctx.project_id
     version: str = Mem.ctx.project_version
 
-    # TODO: Remove BASE_WEAPON and make all.sounds a dict containing all the sounds paths so it's customizable
-
     # Handle pending clicks
     write_versioned_function("player/right_click",
 f"""
 # Advanced Playsound
-function {ns}:v{version}/sound/main with storage {ns}:gun all.stats
+function {ns}:v{version}/sound/main with storage {ns}:gun all.sounds
 """)
 
     # Compute acoustics function
@@ -79,16 +77,16 @@ execute anchored eyes positioned ^ ^ ^ if block ~ ~ ~ #{ns}:v{version}/sounds/wa
     write_versioned_function("sound/main",
 f"""
 # Simple weapon fire sound
-$playsound {ns}:$({BASE_WEAPON})/fire player @s ~ ~ ~ 0.25
-$playsound {ns}:$({BASE_WEAPON})/fire player @a[distance=0.01..48] 0.75 1 0.25
+$playsound {ns}:$(fire) player @s ~ ~ ~ 0.25
+$playsound {ns}:$(fire) player @a[distance=0.01..48] 0.75 1 0.25
 
 # Playsound depending on acoustics level
-$execute if score @s {ns}.acoustics_level matches 0 run playsound {ns}:common/$({CRACK_TYPE})_crack_0_distant player @s ~ ~ ~ 1.0
-$execute if score @s {ns}.acoustics_level matches 1 run playsound {ns}:common/$({CRACK_TYPE})_crack_1_far player @s ~ ~ ~ 1.0
-$execute if score @s {ns}.acoustics_level matches 2 run playsound {ns}:common/$({CRACK_TYPE})_crack_2_midrange player @s ~ ~ ~ 1.0
-$execute if score @s {ns}.acoustics_level matches 3 run playsound {ns}:common/$({CRACK_TYPE})_crack_3_near player @s ~ ~ ~ 1.0
-$execute if score @s {ns}.acoustics_level matches 4 run playsound {ns}:common/$({CRACK_TYPE})_crack_4_closest player @s ~ ~ ~ 1.0
-$execute if score @s {ns}.acoustics_level matches 5 run playsound {ns}:common/$({CRACK_TYPE})_crack_5_water player @s ~ ~ ~ 1.0
+$execute if score @s {ns}.acoustics_level matches 0 run playsound {ns}:common/$(crack)_crack_0_distant player @s ~ ~ ~ 1.0
+$execute if score @s {ns}.acoustics_level matches 1 run playsound {ns}:common/$(crack)_crack_1_far player @s ~ ~ ~ 1.0
+$execute if score @s {ns}.acoustics_level matches 2 run playsound {ns}:common/$(crack)_crack_2_midrange player @s ~ ~ ~ 1.0
+$execute if score @s {ns}.acoustics_level matches 3 run playsound {ns}:common/$(crack)_crack_3_near player @s ~ ~ ~ 1.0
+$execute if score @s {ns}.acoustics_level matches 4 run playsound {ns}:common/$(crack)_crack_4_closest player @s ~ ~ ~ 1.0
+$execute if score @s {ns}.acoustics_level matches 5 run playsound {ns}:common/$(crack)_crack_5_water player @s ~ ~ ~ 1.0
 
 # Directs sound propagation to nearby players by aligning their view with the sound source for accurate positional audio
 scoreboard players operation #origin_acoustics_level {ns}.data = @s {ns}.acoustics_level
@@ -118,12 +116,12 @@ execute if score #attenuation_acoustics {ns}.data < @s {ns}.acoustics_level run 
 execute if score @s {ns}.acoustics_level matches 5 run scoreboard players set #processed_acoustics {ns}.data 5
 
 # Play the appropriate sound effect based on the calculated sound level
-execute if score #processed_acoustics {ns}.data matches 0 run function {ns}:v{version}/sound/hearing/0_distant with storage {ns}:gun all.stats
-execute if score #processed_acoustics {ns}.data matches 1 run function {ns}:v{version}/sound/hearing/1_far with storage {ns}:gun all.stats
-execute if score #processed_acoustics {ns}.data matches 2 run function {ns}:v{version}/sound/hearing/2_midrange with storage {ns}:gun all.stats
-execute if score #processed_acoustics {ns}.data matches 3 run function {ns}:v{version}/sound/hearing/3_near with storage {ns}:gun all.stats
-execute if score #processed_acoustics {ns}.data matches 4 run function {ns}:v{version}/sound/hearing/4_closest with storage {ns}:gun all.stats
-execute if score #processed_acoustics {ns}.data matches 5 run function {ns}:v{version}/sound/hearing/5_water with storage {ns}:gun all.stats
+execute if score #processed_acoustics {ns}.data matches 0 run function {ns}:v{version}/sound/hearing/0_distant with storage {ns}:gun all.sounds
+execute if score #processed_acoustics {ns}.data matches 1 run function {ns}:v{version}/sound/hearing/1_far with storage {ns}:gun all.sounds
+execute if score #processed_acoustics {ns}.data matches 2 run function {ns}:v{version}/sound/hearing/2_midrange with storage {ns}:gun all.sounds
+execute if score #processed_acoustics {ns}.data matches 3 run function {ns}:v{version}/sound/hearing/3_near with storage {ns}:gun all.sounds
+execute if score #processed_acoustics {ns}.data matches 4 run function {ns}:v{version}/sound/hearing/4_closest with storage {ns}:gun all.sounds
+execute if score #processed_acoustics {ns}.data matches 5 run function {ns}:v{version}/sound/hearing/5_water with storage {ns}:gun all.sounds
 """)
     sound_levels: list[tuple[str, list[tuple[int, int, float]]]] = [
         ("distant",  [(0, 32, 0.6), (32, 48, 0.55), (48, 64, 0.5), (64, 80, 0.45), (80, 96, 0.4), (96, 112, 0.35), (112, 128, 0.3), (128, 144, 0.25), (144, 160, 0.2), (160, 176, 0.15), (176, 192, 0.1), (192, 208, 0.05)]),
@@ -137,33 +135,17 @@ execute if score #processed_acoustics {ns}.data matches 5 run function {ns}:v{ve
         for mini, maxi, volume in pairs:
             write_versioned_function(
                 f"sound/hearing/{i}_{level}",
-                f"$execute if entity @s[distance={mini}..{maxi}] positioned as @s run playsound {ns}:common/$({CRACK_TYPE})_crack_{i}_{level} player @s ^ ^ ^-6 {round(volume * 1.5, 3)}"
+                f"$execute if entity @s[distance={mini}..{maxi}] positioned as @s run playsound {ns}:common/$(crack)_crack_{i}_{level} player @s ^ ^ ^-6 {round(volume * 1.5, 3)}"
             )
-
-    # Main function
-    write_versioned_function("sound/main",
-f"""
-# Simple weapon fire sound
-$playsound {ns}:$({BASE_WEAPON})/fire player @s ~ ~ ~ 0.25
-$playsound {ns}:$({BASE_WEAPON})/fire player @a[distance=0.01..48] 0.75 1 0.25
-
-# Playsound depending on acoustics level
-execute if score @s {ns}.acoustics_level matches 0 run return run function {ns}:v{version}/acoustics_0 {{}}
-execute if score @s {ns}.acoustics_level matches 1 run return run function {ns}:v{version}/acoustics_1
-execute if score @s {ns}.acoustics_level matches 2 run return run function {ns}:v{version}/acoustics_2
-execute if score @s {ns}.acoustics_level matches 3 run return run function {ns}:v{version}/acoustics_3
-execute if score @s {ns}.acoustics_level matches 4 run return run function {ns}:v{version}/acoustics_4
-execute if score @s {ns}.acoustics_level matches 5 run return run function {ns}:v{version}/acoustics_water
-""")
 
     # Reload start function
     write_versioned_function("sound/reload_start",
 f"""
 # Full reload sound for the player
-$playsound {ns}:$({BASE_WEAPON})/reload player
+$playsound {ns}:$(reload) player
 
 # Play the begin reload sound for all nearby players
-$playsound {ns}:$({BASE_WEAPON})/playerbegin player @a[distance=0.01..16] ~ ~ ~ 0.3
+$playsound {ns}:$(playerbegin) player @a[distance=0.01..16] ~ ~ ~ 0.3
 """)
 
     # Reload end functions
@@ -171,11 +153,11 @@ $playsound {ns}:$({BASE_WEAPON})/playerbegin player @a[distance=0.01..16] ~ ~ ~ 
 f"""
 # If cooldown is reload end, and player was reloading, playsound
 execute store result score #{RELOAD_END} {ns}.data run data get storage {ns}:gun all.stats.{RELOAD_END}
-execute if score @s {ns}.cooldown = #{RELOAD_END} {ns}.data run function {ns}:v{version}/sound/reload_end with storage {ns}:gun all.stats
+execute if score @s {ns}.cooldown = #{RELOAD_END} {ns}.data run function {ns}:v{version}/sound/reload_end with storage {ns}:gun all.sounds
 """)
     write_versioned_function("sound/reload_end",
 f"""
 # Play the end reload sound for all nearby players
-$playsound {ns}:$({BASE_WEAPON})/playerend player @a[distance=0.01..16] ~ ~ ~ 0.3
+$playsound {ns}:$(playerend) player @a[distance=0.01..16] ~ ~ ~ 0.3
 """)
 

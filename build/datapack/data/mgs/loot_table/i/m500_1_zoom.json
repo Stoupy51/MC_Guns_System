@@ -13,7 +13,8 @@
 								"minecraft:custom_data": {
 									"mgs": {
 										"gun": true,
-										"stats": {"base_weapon": "m500","crack_type": "largest","capacity": 5,"reload_time": 22,"cooldown": 18,"damage": 14,"decay": 0.82,"acc_base": 190,"acc_sneak": 160,"acc_walk": 350,"acc_sprint": 800,"acc_jump": 1500,"switch": 30,"kick": 5,"casing_model": "mgs:12ga3in","casing_n": 50,"casing_t": 75,"casing_b": -200,"casing_offset": {"normal": [-0.35,-0.27,0.7],"zoom": [-0.1,-0.25,0.6]},"models": {"normal": "mgs:m500_1","zoom": "mgs:m500_1_zoom"},"remaining_bullets": 5},
+										"stats": {"base_weapon": "m500","capacity": 5,"reload_time": 22,"cooldown": 18,"damage": 14,"decay": 0.82,"acc_base": 250,"acc_sneak": 200,"acc_walk": 350,"acc_sprint": 900,"acc_jump": 1600,"switch": 20,"kick": 7,"casing_model": "mgs:12ga3in","casing_n": 25,"casing_t": 100,"casing_b": -200,"casing_offset": {"normal": [-0.35,-0.3,0.7],"zoom": [-0.1,-0.3,0.6]},"models": {"normal": "mgs:m500_1","zoom": "mgs:m500_1_zoom"},"remaining_bullets": 5},
+										"sounds": {"fire": "m500/fire","reload": "m500/reload","playerbegin": "m500/playerbegin","playerend": "m500/playerend","crack": "largest"},
 										"m500_1_zoom": true
 									},
 									"smithed": {
@@ -183,7 +184,7 @@
 										{"text": " ","color": "#c67933"},
 										{"text": "➤","color": "#c67b34"},
 										{"text": " ","color": "#c77e36"},
-										"1.5",
+										"1.0",
 										{"text": "s","color": "#c77e36"}
 									],
 									"",

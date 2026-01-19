@@ -13,7 +13,8 @@
 								"minecraft:custom_data": {
 									"mgs": {
 										"gun": true,
-										"stats": {"base_weapon": "m249","crack_type": "medium","capacity": 150,"reload_time": 175,"reload_mid": 110,"reload_end": 30,"cooldown": 2,"burst": 2,"damage": 13,"decay": 0.92,"acc_base": 300,"acc_sneak": 60,"acc_walk": 1500,"acc_sprint": 2500,"acc_jump": 4000,"switch": 70,"kick": 2,"casing_model": "mgs:556x45mm","casing_n": -50,"casing_t": 0,"casing_b": -250,"casing_offset": {"normal": [-0.35,-0.34,0.7],"zoom": [0.0,-0.3,0.7]},"models": {"normal": "mgs:m249_3","zoom": "mgs:m249_3_zoom"},"remaining_bullets": 150},
+										"stats": {"base_weapon": "m249","capacity": 150,"reload_time": 175,"reload_mid": 110,"reload_end": 30,"cooldown": 2,"burst": 2,"damage": 13,"decay": 0.92,"acc_base": 300,"acc_sneak": 60,"acc_walk": 1500,"acc_sprint": 2500,"acc_jump": 4000,"switch": 70,"kick": 2,"casing_model": "mgs:556x45mm","casing_n": -50,"casing_t": 0,"casing_b": -250,"casing_offset": {"normal": [-0.35,-0.34,0.7],"zoom": [0.0,-0.3,0.7]},"models": {"normal": "mgs:m249_3","zoom": "mgs:m249_3_zoom"},"remaining_bullets": 150},
+										"sounds": {"fire": "m249/fire","reload": "m249/reload","playerbegin": "m249/playerbegin","playerend": "m249/playerend","crack": "medium"},
 										"m249_3": true
 									},
 									"smithed": {

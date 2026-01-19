@@ -10,7 +10,8 @@
 
 # Get capacity and initialize found ammo to current remaining bullets
 execute store result score #capacity mgs.data run data get storage mgs:gun all.stats.capacity
-execute store result score #found_ammo mgs.data run scoreboard players get @s mgs.remaining_bullets
+execute store result score #initial_ammo mgs.data run scoreboard players get @s mgs.remaining_bullets
+scoreboard players operation #found_ammo mgs.data = #initial_ammo mgs.data
 
 # Check all slots for magazines
 $execute if score #found_ammo mgs.data < #capacity mgs.data if items entity @s hotbar.0 *[custom_data~{mgs:{"magazine":true,"weapon":"$(base_weapon)"}}] run function mgs:v5.0.0/ammo/inventory/process_slot {slot:"hotbar.0",base_weapon:"$(base_weapon)"}
@@ -57,6 +58,6 @@ $execute if score #found_ammo mgs.data < #capacity mgs.data if items entity @s p
 $execute if score #found_ammo mgs.data < #capacity mgs.data if items entity @s player.crafting.3 *[custom_data~{mgs:{"magazine":true,"weapon":"$(base_weapon)"}}] run function mgs:v5.0.0/ammo/inventory/process_slot {slot:"player.crafting.3",base_weapon:"$(base_weapon)"}
 
 # If found ammo, return success, else return fail
-execute if score #found_ammo mgs.data matches 1.. run return 0
+execute unless score @s mgs.remaining_bullets = #initial_ammo mgs.data run return 0
 return fail
 

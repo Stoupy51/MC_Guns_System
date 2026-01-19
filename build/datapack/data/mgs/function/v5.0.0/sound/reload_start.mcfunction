@@ -3,14 +3,15 @@
 #
 # @executed	as @a[sort=random] & at @s
 #
-# @within	mgs:v5.0.0/ammo/reload with storage mgs:gun all.stats
+# @within	mgs:v5.0.0/ammo/reload with storage mgs:gun all.sounds
 #
-# @args		base_weapon (unknown)
+# @args		reload (unknown)
+#			playerbegin (unknown)
 #
 
 # Full reload sound for the player
-$playsound mgs:$(base_weapon)/reload player
+$playsound mgs:$(reload) player
 
 # Play the begin reload sound for all nearby players
-$playsound mgs:$(base_weapon)/playerbegin player @a[distance=0.01..16] ~ ~ ~ 0.3
+$playsound mgs:$(playerbegin) player @a[distance=0.01..16] ~ ~ ~ 0.3
 

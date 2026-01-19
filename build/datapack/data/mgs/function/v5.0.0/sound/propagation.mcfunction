@@ -27,10 +27,10 @@ execute if score #attenuation_acoustics mgs.data < @s mgs.acoustics_level run sc
 execute if score @s mgs.acoustics_level matches 5 run scoreboard players set #processed_acoustics mgs.data 5
 
 # Play the appropriate sound effect based on the calculated sound level
-execute if score #processed_acoustics mgs.data matches 0 run function mgs:v5.0.0/sound/hearing/0_distant with storage mgs:gun all.stats
-execute if score #processed_acoustics mgs.data matches 1 run function mgs:v5.0.0/sound/hearing/1_far with storage mgs:gun all.stats
-execute if score #processed_acoustics mgs.data matches 2 run function mgs:v5.0.0/sound/hearing/2_midrange with storage mgs:gun all.stats
-execute if score #processed_acoustics mgs.data matches 3 run function mgs:v5.0.0/sound/hearing/3_near with storage mgs:gun all.stats
-execute if score #processed_acoustics mgs.data matches 4 run function mgs:v5.0.0/sound/hearing/4_closest with storage mgs:gun all.stats
-execute if score #processed_acoustics mgs.data matches 5 run function mgs:v5.0.0/sound/hearing/5_water with storage mgs:gun all.stats
+execute if score #processed_acoustics mgs.data matches 0 run function mgs:v5.0.0/sound/hearing/0_distant with storage mgs:gun all.sounds
+execute if score #processed_acoustics mgs.data matches 1 run function mgs:v5.0.0/sound/hearing/1_far with storage mgs:gun all.sounds
+execute if score #processed_acoustics mgs.data matches 2 run function mgs:v5.0.0/sound/hearing/2_midrange with storage mgs:gun all.sounds
+execute if score #processed_acoustics mgs.data matches 3 run function mgs:v5.0.0/sound/hearing/3_near with storage mgs:gun all.sounds
+execute if score #processed_acoustics mgs.data matches 4 run function mgs:v5.0.0/sound/hearing/4_closest with storage mgs:gun all.sounds
+execute if score #processed_acoustics mgs.data matches 5 run function mgs:v5.0.0/sound/hearing/5_water with storage mgs:gun all.sounds
 

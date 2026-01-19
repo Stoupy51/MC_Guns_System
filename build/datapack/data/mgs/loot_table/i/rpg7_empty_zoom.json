@@ -13,7 +13,8 @@
 								"minecraft:custom_data": {
 									"mgs": {
 										"gun": true,
-										"stats": {"base_weapon": "rpg7","crack_type": "rocket","capacity": 1,"reload_time": 110,"reload_end": 20,"cooldown": 10,"damage": 30,"decay": 1.0,"acc_base": 250,"acc_sneak": 100,"acc_walk": 300,"acc_sprint": 300,"acc_jump": 300,"switch": 55,"kick": 6,"models": {"normal": "mgs:rpg7_empty","zoom": "mgs:rpg7_empty_zoom"},"remaining_bullets": 1},
+										"stats": {"base_weapon": "rpg7","capacity": 1,"reload_time": 110,"reload_end": 20,"cooldown": 10,"damage": 30,"decay": 1.0,"acc_base": 250,"acc_sneak": 100,"acc_walk": 300,"acc_sprint": 300,"acc_jump": 300,"switch": 55,"kick": 6,"models": {"normal": "mgs:rpg7_empty","zoom": "mgs:rpg7_empty_zoom"},"remaining_bullets": 1},
+										"sounds": {"fire": "rpg7/fire","reload": "rpg7/reload","playerbegin": "rpg7/playerbegin","playerend": "rpg7/playerend","crack": "rocket"},
 										"rpg7_empty_zoom": true
 									},
 									"smithed": {
