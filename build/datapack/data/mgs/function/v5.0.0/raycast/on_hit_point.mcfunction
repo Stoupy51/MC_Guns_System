@@ -13,7 +13,7 @@ scoreboard players set #last_callback mgs.data 0
 
 # Make block particles (if not passing through) (on_targeted_block runs first to set passing through)
 data modify storage mgs:input with set value {x:0,y:0,z:0,block:"minecraft:air"}
-data modify storage mgs:input with.block set from storage bs:out block.type
+data modify storage mgs:input with.block set from storage mgs:temp block.type
 data modify storage mgs:input with.x set from storage bs:lambda raycast.hit_point[0]
 data modify storage mgs:input with.y set from storage bs:lambda raycast.hit_point[1]
 data modify storage mgs:input with.z set from storage bs:lambda raycast.hit_point[2]
