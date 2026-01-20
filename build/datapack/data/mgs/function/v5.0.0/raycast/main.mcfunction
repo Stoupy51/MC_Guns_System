@@ -27,7 +27,7 @@ scoreboard players set #next_air_particle mgs.data 0
 
 # Prepare arguments
 data modify storage mgs:input with set value {}
-data modify storage mgs:input with.blocks set value true
+data modify storage mgs:input with.blocks set value "function #bs.hitbox:callback/get_block_collision_with_fluid"
 data modify storage mgs:input with.entities set value true
 data modify storage mgs:input with.piercing set value 10
 data modify storage mgs:input with.max_distance set value 128

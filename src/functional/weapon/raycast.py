@@ -59,7 +59,7 @@ scoreboard players set #next_air_particle {ns}.data 0
 
 # Prepare arguments
 data modify storage {ns}:input with set value {{}}
-data modify storage {ns}:input with.blocks set value true
+data modify storage {ns}:input with.blocks set value "function #bs.hitbox:callback/get_block_collision_with_fluid"
 data modify storage {ns}:input with.entities set value true
 data modify storage {ns}:input with.piercing set value 10
 data modify storage {ns}:input with.max_distance set value 128
@@ -85,7 +85,7 @@ scoreboard players set #last_callback {ns}.data 0
 
 # Make block particles (if not passing through) (on_targeted_block runs first to set passing through)
 data modify storage {ns}:input with set value {{x:0,y:0,z:0,block:"minecraft:air"}}
-data modify storage {ns}:input with.block set from storage bs:out block.type
+data modify storage {ns}:input with.block set from storage {ns}:temp block.type
 data modify storage {ns}:input with.x set from storage bs:lambda raycast.hit_point[0]
 data modify storage {ns}:input with.y set from storage bs:lambda raycast.hit_point[1]
 data modify storage {ns}:input with.z set from storage bs:lambda raycast.hit_point[2]
@@ -113,6 +113,8 @@ scoreboard players set #is_pass_through {ns}.data 0
 execute if block ~ ~ ~ #bs.hitbox:can_pass_through run scoreboard players set #is_pass_through {ns}.data 1
 execute if block ~ ~ ~ #{ns}:v{version}/sounds/water run scoreboard players set #is_water {ns}.data 1
 function #bs.block:get_block
+data modify storage {ns}:temp block set from storage bs:out block
+#tellraw @a {{"nbt":"block","storage":"{ns}:temp","interpret":false}}
 
 # If the block can be passed through, increment back piercing, and stop here if it's not water
 execute if score #is_pass_through {ns}.data matches 1 run scoreboard players add $raycast.piercing bs.lambda 1
