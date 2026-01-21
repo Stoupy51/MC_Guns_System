@@ -9,6 +9,7 @@ from ...config.stats import (
     ACCURACY_SPRINT,
     ACCURACY_WALK,
     BURST,
+    COOLDOWN,
     DAMAGE,
     DECAY,
     FIRE_MODE,
@@ -27,21 +28,44 @@ f"""
 # Determine number of bullets to fire based on fire mode and held-click state
 scoreboard players set #bullets_to_fire {ns}.data 1
 
-# Check fire mode and if player is holding
+# Check fire mode
+execute store result score #fire_mode_is_semi {ns}.data if data storage {ns}:gun all.stats{{{FIRE_MODE}:"semi"}}
 execute store result score #fire_mode_is_burst {ns}.data if data storage {ns}:gun all.stats{{{FIRE_MODE}:"burst"}}
 
-# If burst mode and holding, don't fire (block auto-fire in burst mode)
-execute if score #fire_mode_is_burst {ns}.data matches 1 if score @s {ns}.held_click matches 1.. run return fail
+# Semi-auto mode: block if holding (only allow single taps)
+execute if score #fire_mode_is_semi {ns}.data matches 1 if score @s {ns}.held_click matches 1.. run return fail
 
-# If burst mode and single tap, fire burst amount
-execute if score #fire_mode_is_burst {ns}.data matches 1 if score @s {ns}.held_click matches 0 if data storage {ns}:gun all.stats.{BURST} store result score #bullets_to_fire {ns}.data run data get storage {ns}:gun all.stats.{BURST}
+# Burst mode: check if burst limit reached, if so block firing
+execute if score #fire_mode_is_burst {ns}.data matches 1 store result score #burst_limit {ns}.data run data get storage {ns}:gun all.stats.{BURST}
+execute if score #fire_mode_is_burst {ns}.data matches 1 if score @s {ns}.burst_count >= #burst_limit {ns}.data run return fail
+
+# Burst mode: on first shot, set pending_clicks to (BURST-1) * COOLDOWN to sustain burst
+execute if score #fire_mode_is_burst {ns}.data matches 1 if score @s {ns}.burst_count matches 0 run function {ns}:v{version}/player/init_burst_clicks
+
+# Burst mode: increment counter
+execute if score #fire_mode_is_burst {ns}.data matches 1 run scoreboard players add @s {ns}.burst_count 1
+
+# Auto mode: allow continuous fire (no blocking)
 
 # For shotguns (pellet count), multiply by pellet count instead
 execute if data storage {ns}:gun all.stats.{PELLET_COUNT} store result score #bullets_to_fire {ns}.data run data get storage {ns}:gun all.stats.{PELLET_COUNT}
 
 # Shoot
 function {ns}:v{version}/player/shoot
-""")  # noqa: E501
+""")
+
+    # Initialize burst mode pending clicks
+    write_versioned_function("player/init_burst_clicks",
+f"""
+# Calculate (BURST - 1) * COOLDOWN
+execute store result score #burst_clicks {ns}.data run data get storage {ns}:gun all.stats.{BURST}
+scoreboard players remove #burst_clicks {ns}.data 1
+execute store result score #cooldown_value {ns}.data run data get storage {ns}:gun all.stats.{COOLDOWN}
+scoreboard players operation #burst_clicks {ns}.data *= #cooldown_value {ns}.data
+
+# Set pending_clicks to sustain burst firing
+scoreboard players operation @s {ns}.pending_clicks = #burst_clicks {ns}.data
+""")
 
     # Handle pending clicks
     write_versioned_function("player/shoot",

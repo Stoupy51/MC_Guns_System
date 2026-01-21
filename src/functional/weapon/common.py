@@ -4,7 +4,7 @@ from typing import Any
 
 from stewbeet import Advancement, ItemModifier, JsonDict, Mem, Predicate, set_json_encoder, write_versioned_function
 
-from ...config.stats import COOLDOWN, REMAINING_BULLETS, json_dump, FIRE_MODE
+from ...config.stats import BURST, COOLDOWN, REMAINING_BULLETS
 
 
 # Main function
@@ -12,15 +12,17 @@ def main() -> None:
     ns: str = Mem.ctx.project_id
     version: str = Mem.ctx.project_version
 
-    # Advancement detecting right click
+    # Advancement detecting right click using using_item trigger
     adv: JsonDict = {
         "criteria": {
             "requirement": {
-                "trigger": "minecraft:tick",
+                "trigger": "minecraft:using_item",
                 "conditions": {
-                    "player": [
-                        {"condition": "minecraft:entity_scores","entity": "this","scores": {f"{ns}.right_click": {"min": 1}}}
-                    ]
+                    "item": {
+                        "predicates": {
+                            "minecraft:custom_data": f"{{{ns}:{{gun:true}}}}"
+                        }
+                    }
                 }
             }
         },
@@ -28,27 +30,39 @@ def main() -> None:
             "function": f"{ns}:v{version}/player/set_pending_clicks"
         }
     }
-    adv_str: str = json_dump(adv)
     Mem.ctx.data[ns].advancements[f"v{version}/right_click"] = set_json_encoder(Advancement(adv), max_level=-1)
-    Mem.ctx.data[ns].advancements[f"v{version}/alt_right_click"] = set_json_encoder(Advancement(adv_str.replace(".right_click", ".alt_right_click")), max_level=-1)
 
     # Function to set pending clicks
     write_versioned_function("player/set_pending_clicks",
 f"""
+# Revoke advancement
+advancement revoke @s only {ns}:v{version}/right_click
+
 # Detect if player is holding right-click (vs single tap)
-# If pending_clicks is still non-negative when new click arrives, player is holding
-# (Minecraft increments every 4-5 ticks randomly, so we check if previous click hasn't expired yet)
+# If pending_clicks >= 0, means it was still positive from previous tick (holding)
 execute if score @s {ns}.pending_clicks matches 0.. run scoreboard players set @s {ns}.held_click 1
 execute if score @s {ns}.pending_clicks matches ..-1 run scoreboard players set @s {ns}.held_click 0
 
-# Revoke advancement and reset right click
-advancement revoke @s only {ns}:v{version}/right_click
-advancement revoke @s only {ns}:v{version}/alt_right_click
-scoreboard players reset @s {ns}.right_click
-scoreboard players reset @s {ns}.alt_right_click
+# Check if we're mid-burst (burst started but not yet complete)
+scoreboard players set #is_mid_burst {ns}.data 0
+execute if score @s {ns}.burst_count matches 1.. run function {ns}:v{version}/utils/copy_gun_data
+execute if score @s {ns}.burst_count matches 1.. if data storage {ns}:gun all.stats{{fire_mode:"burst"}} run function {ns}:v{version}/player/check_mid_burst
 
-# Set pending clicks (gives ~6 tick window for next click to be considered "held")
-scoreboard players set @s {ns}.pending_clicks 4
+# Set pending clicks logic:
+# - If mid-burst: always add (to maintain burst sequence)
+# - Otherwise: set to 1 (normal behavior, will trigger held detection next tick if still holding)
+execute if score #is_mid_burst {ns}.data matches 1 run scoreboard players add @s {ns}.pending_clicks 1
+execute unless score #is_mid_burst {ns}.data matches 1 run scoreboard players set @s {ns}.pending_clicks 1
+""")
+
+    # Check if burst is mid-progress (not complete)
+    write_versioned_function("player/check_mid_burst",
+f"""
+# Get burst limit
+execute store result score #burst_limit {ns}.data run data get storage {ns}:gun all.stats.{BURST}
+
+# If burst_count < burst_limit, we're mid-burst
+execute if score @s {ns}.burst_count < #burst_limit {ns}.data run scoreboard players set #is_mid_burst {ns}.data 1
 """)
 
     # Copy gun data function
@@ -105,6 +119,9 @@ execute if score @s {ns}.pending_clicks matches -100.. run function {ns}:v{versi
 
 # Reset held_click when player stops holding (pending_clicks goes negative)
 execute if score @s {ns}.pending_clicks matches ..-1 run scoreboard players set @s {ns}.held_click 0
+
+# Reset burst_count only if burst completed or player switched weapons
+execute if score @s {ns}.pending_clicks matches ..-1 run function {ns}:v{version}/player/reset_burst_if_complete
 
 # Show action bar
 execute if data storage {ns}:gun all.gun run function {ns}:v{version}/actionbar/show
@@ -173,5 +190,20 @@ function {ns}:v{version}/utils/copy_gun_data
 
 # Reload the weapon
 function {ns}:v{version}/ammo/reload
+""")
+
+    # Reset burst count only if burst is complete
+    write_versioned_function("player/reset_burst_if_complete",
+f"""
+# Check if in burst mode
+execute store result score #fire_mode_is_burst {ns}.data if data storage {ns}:gun all.stats{{fire_mode:"burst"}}
+
+# If not in burst mode, always reset
+execute if score #fire_mode_is_burst {ns}.data matches 0 run scoreboard players set @s {ns}.burst_count 0
+execute if score #fire_mode_is_burst {ns}.data matches 0 run return 0
+
+# If in burst mode, only reset if burst completed
+execute store result score #burst_limit {ns}.data run data get storage {ns}:gun all.stats.burst
+execute if score @s {ns}.burst_count >= #burst_limit {ns}.data run scoreboard players set @s {ns}.burst_count 0
 """)
 

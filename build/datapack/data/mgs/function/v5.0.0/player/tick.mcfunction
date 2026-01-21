@@ -48,6 +48,9 @@ execute if score @s mgs.pending_clicks matches -100.. run function mgs:v5.0.0/pl
 # Reset held_click when player stops holding (pending_clicks goes negative)
 execute if score @s mgs.pending_clicks matches ..-1 run scoreboard players set @s mgs.held_click 0
 
+# Reset burst_count only if burst completed or player switched weapons
+execute if score @s mgs.pending_clicks matches ..-1 run function mgs:v5.0.0/player/reset_burst_if_complete
+
 # Show action bar
 execute if data storage mgs:gun all.gun run function mgs:v5.0.0/actionbar/show
 

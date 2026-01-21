@@ -5,7 +5,7 @@
 			"entries": [
 				{
 					"type": "minecraft:item",
-					"name": "minecraft:warped_fungus_on_a_stick",
+					"name": "minecraft:poisonous_potato",
 					"functions": [
 						{
 							"function": "minecraft:set_components",
@@ -13,13 +13,24 @@
 								"minecraft:custom_data": {
 									"mgs": {
 										"gun": true,
-										"stats": {"base_weapon": "m500","capacity": 5,"reload_time": 22,"cooldown": 18,"pellet_count": 3,"damage": 14,"decay": 0.82,"acc_base": 250,"acc_sneak": 200,"acc_walk": 350,"acc_sprint": 900,"acc_jump": 1600,"switch": 20,"kick": 7,"casing_model": "mgs:12ga3in","casing_n": 25,"casing_t": 100,"casing_b": -200,"casing_offset": {"normal": [-0.35,-0.3,0.7],"zoom": [-0.1,-0.3,0.6]},"models": {"normal": "mgs:m500_1","zoom": "mgs:m500_1_zoom"},"remaining_bullets": 5},
+										"stats": {"base_weapon": "m500","fire_mode": "semi","capacity": 5,"reload_time": 22,"cooldown": 18,"pellet_count": 3,"damage": 14,"decay": 0.82,"acc_base": 250,"acc_sneak": 200,"acc_walk": 350,"acc_sprint": 900,"acc_jump": 1600,"switch": 20,"kick": 7,"casing_model": "mgs:12ga3in","casing_n": 25,"casing_t": 100,"casing_b": -200,"casing_offset": {"normal": [-0.35,-0.3,0.7],"zoom": [-0.1,-0.3,0.6]},"models": {"normal": "mgs:m500_1","zoom": "mgs:m500_1_zoom"},"remaining_bullets": 5},
 										"sounds": {"fire": "m500/fire","reload": "m500/reload","pump": "m500/pump","crack": "largest"},
 										"m500_1": true
 									},
 									"smithed": {
 										"ignore": {"functionality": true,"crafting": true}
 									}
+								},
+								"minecraft:consumable": {
+									"consume_seconds": 1000000,
+									"animation": "none",
+									"sound": "minecraft:intentionally_empty",
+									"has_consume_particles": false
+								},
+								"minecraft:use_effects": {
+									"can_sprint": true,
+									"speed_multiplier": 1.0,
+									"interact_vibrations": false
 								},
 								"minecraft:lore": [
 									[

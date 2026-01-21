@@ -1,5 +1,5 @@
 {
-	"parent": "minecraft:item/warped_fungus_on_a_stick",
+	"parent": "item/generated",
 	"textures": {
 		"particle": "mgs:item/metal_brighter",
 		"1": "mgs:item/metal",

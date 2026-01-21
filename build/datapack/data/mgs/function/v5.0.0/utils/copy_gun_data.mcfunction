@@ -1,9 +1,10 @@
 
 #> mgs:v5.0.0/utils/copy_gun_data
 #
-# @executed	as @a[sort=random] & at @s
+# @executed	as the player & at current position
 #
-# @within	mgs:v5.0.0/player/tick
+# @within	mgs:v5.0.0/player/set_pending_clicks
+#			mgs:v5.0.0/player/tick
 #			mgs:v5.0.0/player/swap_and_reload
 #
 

@@ -1,5 +1,4 @@
 {
-	"parent": "minecraft:item/warped_fungus_on_a_stick",
 	"textures": {
 		"0": "mgs:item/rpg7details",
 		"1": "mgs:item/rpg7wood",

@@ -1,5 +1,4 @@
 {
-	"parent": "minecraft:item/warped_fungus_on_a_stick",
 	"textures": {
 		"1": "mgs:item/makarovplastic_cross",
 		"0": "mgs:item/makarovdetails",

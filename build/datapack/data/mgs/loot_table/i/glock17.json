@@ -5,7 +5,7 @@
 			"entries": [
 				{
 					"type": "minecraft:item",
-					"name": "minecraft:warped_fungus_on_a_stick",
+					"name": "minecraft:poisonous_potato",
 					"functions": [
 						{
 							"function": "minecraft:set_components",
@@ -13,13 +13,24 @@
 								"minecraft:custom_data": {
 									"mgs": {
 										"gun": true,
-										"stats": {"base_weapon": "glock17","capacity": 17,"reload_time": 60,"reload_end": 16,"damage": 9,"decay": 0.92,"acc_base": 150,"acc_sneak": 90,"acc_walk": 170,"acc_sprint": 400,"acc_jump": 800,"switch": 8,"kick": 3,"casing_model": "mgs:9x19mm","casing_n": 225,"casing_t": -100,"casing_b": -75,"casing_offset": {"normal": [-0.35,-0.27,0.5],"zoom": [-0.05,0.0,0.4]},"models": {"normal": "mgs:glock17","zoom": "mgs:glock17_zoom"},"remaining_bullets": 17},
+										"stats": {"base_weapon": "glock17","fire_mode": "semi","capacity": 17,"reload_time": 60,"reload_end": 16,"damage": 9,"decay": 0.92,"acc_base": 150,"acc_sneak": 90,"acc_walk": 170,"acc_sprint": 400,"acc_jump": 800,"switch": 8,"kick": 3,"casing_model": "mgs:9x19mm","casing_n": 225,"casing_t": -100,"casing_b": -75,"casing_offset": {"normal": [-0.35,-0.27,0.5],"zoom": [-0.05,0.0,0.4]},"models": {"normal": "mgs:glock17","zoom": "mgs:glock17_zoom"},"remaining_bullets": 17},
 										"sounds": {"fire": "glock17/fire","reload": "glock17/reload","playerbegin": "glock17/playerbegin","playerend": "glock17/playerend","crack": "tiny"},
 										"glock17": true
 									},
 									"smithed": {
 										"ignore": {"functionality": true,"crafting": true}
 									}
+								},
+								"minecraft:consumable": {
+									"consume_seconds": 1000000,
+									"animation": "none",
+									"sound": "minecraft:intentionally_empty",
+									"has_consume_particles": false
+								},
+								"minecraft:use_effects": {
+									"can_sprint": true,
+									"speed_multiplier": 1.0,
+									"interact_vibrations": false
 								},
 								"minecraft:lore": [
 									[

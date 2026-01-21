@@ -5,7 +5,7 @@
 			"entries": [
 				{
 					"type": "minecraft:item",
-					"name": "minecraft:warped_fungus_on_a_stick",
+					"name": "minecraft:poisonous_potato",
 					"functions": [
 						{
 							"function": "minecraft:set_components",
@@ -13,13 +13,24 @@
 								"minecraft:custom_data": {
 									"mgs": {
 										"gun": true,
-										"stats": {"base_weapon": "sten","capacity": 32,"reload_time": 58,"reload_mid": 40,"reload_end": 10,"cooldown": 3,"burst": 2,"can_burst": true,"damage": 11,"decay": 0.92,"acc_base": 200,"acc_sneak": 100,"acc_walk": 400,"acc_sprint": 800,"acc_jump": 1500,"switch": 25,"kick": 3,"casing_model": "mgs:9x19mm","casing_n": 200,"casing_t": -50,"casing_b": -200,"casing_offset": {"normal": [-0.4,-0.35,0.7],"zoom": [-0.05,-0.25,0.5]},"models": {"normal": "mgs:sten","zoom": "mgs:sten_zoom"},"remaining_bullets": 32},
+										"stats": {"base_weapon": "sten","fire_mode": "auto","capacity": 32,"reload_time": 58,"reload_mid": 40,"reload_end": 10,"cooldown": 3,"burst": 2,"can_burst": true,"can_auto": true,"damage": 11,"decay": 0.92,"acc_base": 200,"acc_sneak": 100,"acc_walk": 400,"acc_sprint": 800,"acc_jump": 1500,"switch": 25,"kick": 3,"casing_model": "mgs:9x19mm","casing_n": 200,"casing_t": -50,"casing_b": -200,"casing_offset": {"normal": [-0.4,-0.35,0.7],"zoom": [-0.05,-0.25,0.5]},"models": {"normal": "mgs:sten","zoom": "mgs:sten_zoom"},"remaining_bullets": 32},
 										"sounds": {"fire": "sten/fire","reload": "sten/reload","playerbegin": "sten/playerbegin","playerend": "sten/playerend","playermid": "sten/playermid","crack": "tiny"},
 										"sten_zoom": true
 									},
 									"smithed": {
 										"ignore": {"functionality": true,"crafting": true}
 									}
+								},
+								"minecraft:consumable": {
+									"consume_seconds": 1000000,
+									"animation": "none",
+									"sound": "minecraft:intentionally_empty",
+									"has_consume_particles": false
+								},
+								"minecraft:use_effects": {
+									"can_sprint": true,
+									"speed_multiplier": 1.0,
+									"interact_vibrations": false
 								},
 								"minecraft:lore": [
 									[

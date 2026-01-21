@@ -5,7 +5,7 @@
 			"entries": [
 				{
 					"type": "minecraft:item",
-					"name": "minecraft:warped_fungus_on_a_stick",
+					"name": "minecraft:poisonous_potato",
 					"functions": [
 						{
 							"function": "minecraft:set_components",
@@ -13,13 +13,24 @@
 								"minecraft:custom_data": {
 									"mgs": {
 										"gun": true,
-										"stats": {"base_weapon": "rpg7","capacity": 1,"reload_time": 110,"reload_end": 20,"cooldown": 10,"damage": 30,"decay": 1.0,"acc_base": 250,"acc_sneak": 100,"acc_walk": 300,"acc_sprint": 300,"acc_jump": 300,"switch": 55,"kick": 6,"models": {"normal": "mgs:rpg7","zoom": "mgs:rpg7_zoom"},"remaining_bullets": 1},
+										"stats": {"base_weapon": "rpg7","fire_mode": "semi","capacity": 1,"reload_time": 110,"reload_end": 20,"cooldown": 10,"damage": 30,"decay": 1.0,"acc_base": 250,"acc_sneak": 100,"acc_walk": 300,"acc_sprint": 300,"acc_jump": 300,"switch": 55,"kick": 6,"models": {"normal": "mgs:rpg7","zoom": "mgs:rpg7_zoom"},"remaining_bullets": 1},
 										"sounds": {"fire": "rpg7/fire","reload": "rpg7/reload","playerbegin": "rpg7/playerbegin","playerend": "rpg7/playerend","handling_endgrab": "rpg7/handling/rpg7_endgrab","handling_fetch": "rpg7/handling/rpg7_fetch","handling_load": "rpg7/handling/rpg7_load","crack": "rocket"},
 										"rpg7": true
 									},
 									"smithed": {
 										"ignore": {"functionality": true,"crafting": true}
 									}
+								},
+								"minecraft:consumable": {
+									"consume_seconds": 1000000,
+									"animation": "none",
+									"sound": "minecraft:intentionally_empty",
+									"has_consume_particles": false
+								},
+								"minecraft:use_effects": {
+									"can_sprint": true,
+									"speed_multiplier": 1.0,
+									"interact_vibrations": false
 								},
 								"minecraft:lore": [
 									[

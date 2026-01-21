@@ -116,6 +116,19 @@ def beet_default(ctx: Context) -> None:
             # Initialize magazine with full capacity
             gun_stats[REMAINING_BULLETS] = gun_stats[CAPACITY]
 
+            # Add consumable and use_effects components for tick-perfect right-click detection
+            obj.components["consumable"] = {
+                "consume_seconds": 1_000_000,  # Very high value to avoid actual consumption
+                "animation": "none",
+                "sound": "minecraft:intentionally_empty",
+                "has_consume_particles": False
+            }
+            obj.components["use_effects"] = {
+                "can_sprint": True,
+                "speed_multiplier": 1.0,
+                "interact_vibrations": False
+            }
+
             # Prepare fire_rate lore
             fire_rate_component: list[TextComponent] = []
             if COOLDOWN in gun_stats:

@@ -26,9 +26,6 @@ def main() -> None:
     write_load_file(
 f"""
 ## Define objectives
-# Detect right click with a gun (Alternative for weapon switching cooldown)
-scoreboard objectives add {ns}.right_click minecraft.used:minecraft.warped_fungus_on_a_stick
-scoreboard objectives add {ns}.alt_right_click minecraft.used:minecraft.carrot_on_a_stick
 scoreboard objectives add {ns}.previous_selected dummy
 
 # Tracks right clicks to enable continuous right-click detection
@@ -36,6 +33,9 @@ scoreboard objectives add {ns}.pending_clicks dummy
 
 # Tracks if the player is holding right-click (vs single tap)
 scoreboard objectives add {ns}.held_click dummy
+
+# Tracks current burst fire count (resets after BURST shots)
+scoreboard objectives add {ns}.burst_count dummy
 
 # Tracks weapon drops to enable fire mode switching
 scoreboard objectives add {ns}.dropped minecraft.custom:minecraft.drop
