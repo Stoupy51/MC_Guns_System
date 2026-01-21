@@ -8,8 +8,6 @@
 Credits for resources: MGS 4.2 by TheBradqq
 
 # TODO:
-- Implement Remaining sounds
 - For weapons without cooldown (e.g. pistol), implement single-click behavior to prevent holding right-click
 - Implement RPG impact explosion mechanics
-- Add burst fire mode functionality
 

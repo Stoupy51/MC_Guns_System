@@ -4,7 +4,7 @@ from typing import Any
 
 from stewbeet import Advancement, ItemModifier, JsonDict, Mem, Predicate, set_json_encoder, write_versioned_function
 
-from ...config.stats import COOLDOWN, REMAINING_BULLETS, json_dump
+from ...config.stats import COOLDOWN, REMAINING_BULLETS, json_dump, FIRE_MODE
 
 
 # Main function
@@ -35,6 +35,11 @@ def main() -> None:
     # Function to set pending clicks
     write_versioned_function("player/set_pending_clicks",
 f"""
+# Detect if player is holding right-click (vs single tap)
+# If pending_clicks is still non-negative when new click arrives, player is holding
+# (Minecraft increments every 4-5 ticks randomly, so we check if previous click hasn't expired yet)
+execute if score @s {ns}.pending_clicks matches 0.. run scoreboard players set @s {ns}.held_click 1
+execute if score @s {ns}.pending_clicks matches ..-1 run scoreboard players set @s {ns}.held_click 0
 
 # Revoke advancement and reset right click
 advancement revoke @s only {ns}:v{version}/right_click
@@ -42,7 +47,7 @@ advancement revoke @s only {ns}:v{version}/alt_right_click
 scoreboard players reset @s {ns}.right_click
 scoreboard players reset @s {ns}.alt_right_click
 
-# Set pending clicks
+# Set pending clicks (gives ~6 tick window for next click to be considered "held")
 scoreboard players set @s {ns}.pending_clicks 4
 """)
 
@@ -67,6 +72,9 @@ function {ns}:v{version}/sound/compute_acoustics
 
 # Reload when moving weapon to offhand
 execute if items entity @s weapon.offhand * run function {ns}:v{version}/player/reload_check
+
+# Check if player dropped weapon to toggle fire mode
+function {ns}:v{version}/switch/check_fire_mode_toggle
 
 # Copy gun data
 function {ns}:v{version}/utils/copy_gun_data
@@ -95,8 +103,11 @@ execute if score @s {ns}.cooldown matches 0 if entity @s[tag={ns}.reloading] run
 # If pending clicks, run right click function
 execute if score @s {ns}.pending_clicks matches -100.. run function {ns}:v{version}/player/right_click
 
-# Show ammo action bar
-execute if data storage {ns}:gun all.gun run function {ns}:v{version}/ammo/show_action_bar
+# Reset held_click when player stops holding (pending_clicks goes negative)
+execute if score @s {ns}.pending_clicks matches ..-1 run scoreboard players set @s {ns}.held_click 0
+
+# Show action bar
+execute if data storage {ns}:gun all.gun run function {ns}:v{version}/actionbar/show
 
 # Remove temporary tag
 tag @s remove {ns}.ticking

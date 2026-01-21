@@ -1,5 +1,6 @@
 
 # Imports
+from .actionbar import main as actionbar_main
 from .ammo import main as ammo_main
 from .casing import main as casing_main
 from .common import main as common_main
@@ -34,6 +35,9 @@ def main() -> None:
 
     # All ammo logic
     ammo_main()
+
+    # Actionbar display (fire mode + ammo)
+    actionbar_main()
 
     # Advanced sound system
     sound_main()

@@ -2,7 +2,18 @@
 # Imports
 from stewbeet import Mem, write_versioned_function
 
-from ...config.stats import ACCURACY_BASE, ACCURACY_JUMP, ACCURACY_SNEAK, ACCURACY_SPRINT, ACCURACY_WALK, DAMAGE, DECAY, PELLET_COUNT
+from ...config.stats import (
+    ACCURACY_BASE,
+    ACCURACY_JUMP,
+    ACCURACY_SNEAK,
+    ACCURACY_SPRINT,
+    ACCURACY_WALK,
+    BURST,
+    DAMAGE,
+    DECAY,
+    FIRE_MODE,
+    PELLET_COUNT,
+)
 
 
 # Main function
@@ -13,11 +24,24 @@ def main() -> None:
     # Handle pending clicks
     write_versioned_function("player/right_click",
 f"""
-# Shoot the gun
+# Determine number of bullets to fire based on fire mode and held-click state
 scoreboard players set #bullets_to_fire {ns}.data 1
+
+# Check fire mode and if player is holding
+execute store result score #fire_mode_is_burst {ns}.data if data storage {ns}:gun all.stats{{{FIRE_MODE}:"burst"}}
+
+# If burst mode and holding, don't fire (block auto-fire in burst mode)
+execute if score #fire_mode_is_burst {ns}.data matches 1 if score @s {ns}.held_click matches 1.. run return fail
+
+# If burst mode and single tap, fire burst amount
+execute if score #fire_mode_is_burst {ns}.data matches 1 if score @s {ns}.held_click matches 0 if data storage {ns}:gun all.stats.{BURST} store result score #bullets_to_fire {ns}.data run data get storage {ns}:gun all.stats.{BURST}
+
+# For shotguns (pellet count), multiply by pellet count instead
 execute if data storage {ns}:gun all.stats.{PELLET_COUNT} store result score #bullets_to_fire {ns}.data run data get storage {ns}:gun all.stats.{PELLET_COUNT}
+
+# Shoot
 function {ns}:v{version}/player/shoot
-""")
+""")  # noqa: E501
 
     # Handle pending clicks
     write_versioned_function("player/shoot",

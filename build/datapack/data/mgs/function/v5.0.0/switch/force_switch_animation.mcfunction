@@ -4,6 +4,7 @@
 # @executed	as @a[sort=random] & at @s
 #
 # @within	mgs:v5.0.0/switch/on_weapon_switch
+#			mgs:v5.0.0/switch/toggle_fire_mode
 #			mgs:v5.0.0/ammo/reload
 #
 

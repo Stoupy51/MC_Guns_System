@@ -23,9 +23,22 @@ execute if score @s mgs.remaining_bullets matches ..0 run return run function mg
 # Set cooldown
 execute store result score @s mgs.cooldown run data get storage mgs:gun all.stats.cooldown
 
-# Shoot the gun
+# Determine number of bullets to fire based on fire mode and held-click state
 scoreboard players set #bullets_to_fire mgs.data 1
+
+# Check fire mode and if player is holding
+execute store result score #fire_mode_is_burst mgs.data if data storage mgs:gun all.stats{fire_mode:"burst"}
+
+# If burst mode and holding, don't fire (block auto-fire in burst mode)
+execute if score #fire_mode_is_burst mgs.data matches 1 if score @s mgs.held_click matches 1.. run return fail
+
+# If burst mode and single tap, fire burst amount
+execute if score #fire_mode_is_burst mgs.data matches 1 if score @s mgs.held_click matches 0 if data storage mgs:gun all.stats.burst store result score #bullets_to_fire mgs.data run data get storage mgs:gun all.stats.burst
+
+# For shotguns (pellet count), multiply by pellet count instead
 execute if data storage mgs:gun all.stats.pellet_count store result score #bullets_to_fire mgs.data run data get storage mgs:gun all.stats.pellet_count
+
+# Shoot
 function mgs:v5.0.0/player/shoot
 
 # Simulate weapon kick

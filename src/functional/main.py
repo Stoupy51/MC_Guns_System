@@ -34,6 +34,12 @@ scoreboard objectives add {ns}.previous_selected dummy
 # Tracks right clicks to enable continuous right-click detection
 scoreboard objectives add {ns}.pending_clicks dummy
 
+# Tracks if the player is holding right-click (vs single tap)
+scoreboard objectives add {ns}.held_click dummy
+
+# Tracks weapon drops to enable fire mode switching
+scoreboard objectives add {ns}.dropped minecraft.custom:minecraft.drop
+
 # Cooldown in ticks before being able to shot
 scoreboard objectives add {ns}.cooldown dummy
 
