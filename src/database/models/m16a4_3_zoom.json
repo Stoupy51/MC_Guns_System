@@ -1,5 +1,4 @@
 {
-	"parent": "minecraft:item/warped_fungus_on_a_stick",
 	"textures": {
 		"a": "mgs:item/mk4details",
 		"c": "mgs:item/reticles_1024",

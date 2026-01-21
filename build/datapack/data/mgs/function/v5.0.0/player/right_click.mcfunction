@@ -26,14 +26,24 @@ execute store result score @s mgs.cooldown run data get storage mgs:gun all.stat
 # Determine number of bullets to fire based on fire mode and held-click state
 scoreboard players set #bullets_to_fire mgs.data 1
 
-# Check fire mode and if player is holding
+# Check fire mode
+execute store result score #fire_mode_is_semi mgs.data if data storage mgs:gun all.stats{fire_mode:"semi"}
 execute store result score #fire_mode_is_burst mgs.data if data storage mgs:gun all.stats{fire_mode:"burst"}
 
-# If burst mode and holding, don't fire (block auto-fire in burst mode)
-execute if score #fire_mode_is_burst mgs.data matches 1 if score @s mgs.held_click matches 1.. run return fail
+# Semi-auto mode: block if holding (only allow single taps)
+execute if score #fire_mode_is_semi mgs.data matches 1 if score @s mgs.held_click matches 1.. run return fail
 
-# If burst mode and single tap, fire burst amount
-execute if score #fire_mode_is_burst mgs.data matches 1 if score @s mgs.held_click matches 0 if data storage mgs:gun all.stats.burst store result score #bullets_to_fire mgs.data run data get storage mgs:gun all.stats.burst
+# Burst mode: check if burst limit reached, if so block firing
+execute if score #fire_mode_is_burst mgs.data matches 1 store result score #burst_limit mgs.data run data get storage mgs:gun all.stats.burst
+execute if score #fire_mode_is_burst mgs.data matches 1 if score @s mgs.burst_count >= #burst_limit mgs.data run return fail
+
+# Burst mode: on first shot, set pending_clicks to (BURST-1) * COOLDOWN to sustain burst
+execute if score #fire_mode_is_burst mgs.data matches 1 if score @s mgs.burst_count matches 0 run function mgs:v5.0.0/player/init_burst_clicks
+
+# Burst mode: increment counter
+execute if score #fire_mode_is_burst mgs.data matches 1 run scoreboard players add @s mgs.burst_count 1
+
+# Auto mode: allow continuous fire (no blocking)
 
 # For shotguns (pellet count), multiply by pellet count instead
 execute if data storage mgs:gun all.stats.pellet_count store result score #bullets_to_fire mgs.data run data get storage mgs:gun all.stats.pellet_count

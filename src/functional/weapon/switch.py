@@ -4,7 +4,7 @@ from typing import Any
 
 from stewbeet import ItemModifier, Mem, set_json_encoder, write_versioned_function
 
-from ...config.stats import CAN_BURST, FIRE_MODE, SWITCH, WEAPON_ID
+from ...config.stats import CAN_AUTO, CAN_BURST, FIRE_MODE, SWITCH, WEAPON_ID
 
 
 # Main function
@@ -32,8 +32,9 @@ scoreboard players operation @s {ns}.last_selected = #current_id {ns}.data
 f"""
 execute store result storage {ns}:gun all.stats.{WEAPON_ID} int 1 run scoreboard players add #next_id {ns}.data 1
 
-# Initialize fire mode to 'auto' if not set
-execute unless data storage {ns}:gun all.stats.{FIRE_MODE} run data modify storage {ns}:gun all.stats.{FIRE_MODE} set value "auto"
+# Initialize fire mode to 'auto' if weapon supports it, otherwise 'semi'
+execute unless data storage {ns}:gun all.stats.{FIRE_MODE} if data storage {ns}:gun all.stats.{CAN_AUTO} run data modify storage {ns}:gun all.stats.{FIRE_MODE} set value "auto"
+execute unless data storage {ns}:gun all.stats.{FIRE_MODE} unless data storage {ns}:gun all.stats.{CAN_AUTO} run data modify storage {ns}:gun all.stats.{FIRE_MODE} set value "semi"
 
 item modify entity @s weapon.mainhand {ns}:v{version}/set_weapon_id
 """)
@@ -58,10 +59,10 @@ execute unless data storage {ns}:gun all.gun run return fail
 # Modify attack_speed attribute modifier to sync with current cooldown
 function {ns}:v{version}/switch/sync_attack_speed_with_cooldown
 
-# Swap weapon in hand if same as previously selected (27 = length of string 'minecraft:carrot_on_a_stick')
+# Swap weapon in hand if same as previously selected (26 chars long = "minecraft:poisonous_potato")
 execute store result score #current_length {ns}.data run data get storage {ns}:gun SelectedItem.id
-execute if score #current_length {ns}.data = @s {ns}.previous_selected if score @s {ns}.previous_selected matches 27 run item modify entity @s weapon.mainhand {{"function": "minecraft:set_item","item": "minecraft:warped_fungus_on_a_stick"}}
-execute if score #current_length {ns}.data = @s {ns}.previous_selected unless score @s {ns}.previous_selected matches 27 run item modify entity @s weapon.mainhand {{"function": "minecraft:set_item","item": "minecraft:carrot_on_a_stick"}}
+execute if score #current_length {ns}.data = @s {ns}.previous_selected if score @s {ns}.previous_selected matches 26 run item modify entity @s weapon.mainhand {{"function": "minecraft:set_item","item": "minecraft:firework_star"}}
+execute if score #current_length {ns}.data = @s {ns}.previous_selected unless score @s {ns}.previous_selected matches 26 run item modify entity @s weapon.mainhand {{"function": "minecraft:set_item","item": "minecraft:poisonous_potato"}}
 """)  # noqa: E501
 
     # Sync attack speed with cooldown function
@@ -123,16 +124,30 @@ function {ns}:v{version}/switch/force_switch_animation
     # Do the actual toggle
     write_versioned_function("switch/do_toggle",
 f"""
-# Check if weapon supports burst fire, otherwise skip toggle
-execute unless data entity @s Item.components."minecraft:custom_data".{ns}.stats.{CAN_BURST} run return fail
-
 # Get current fire mode
 data modify storage {ns}:temp fire_mode set from entity @s Item.components."minecraft:custom_data".{ns}.stats.{FIRE_MODE}
 
-# Toggle: auto -> burst, burst -> auto (default to burst if missing)
-execute if data storage {ns}:temp {{fire_mode:"auto"}} run data modify entity @s Item.components."minecraft:custom_data".{ns}.stats.{FIRE_MODE} set value "burst"
-execute if data storage {ns}:temp {{fire_mode:"burst"}} run data modify entity @s Item.components."minecraft:custom_data".{ns}.stats.{FIRE_MODE} set value "auto"
-execute unless data storage {ns}:temp fire_mode run data modify entity @s Item.components."minecraft:custom_data".{ns}.stats.{FIRE_MODE} set value "burst"
+# Check weapon capabilities
+execute store result score #has_auto {ns}.data if data entity @s Item.components."minecraft:custom_data".{ns}.stats.{CAN_AUTO}
+execute store result score #has_burst {ns}.data if data entity @s Item.components."minecraft:custom_data".{ns}.stats.{CAN_BURST}
+
+# 3-way toggle for weapons with auto and burst: auto -> semi -> burst -> auto
+execute if score #has_auto {ns}.data matches 1 if score #has_burst {ns}.data matches 1 if data storage {ns}:temp {{fire_mode:"auto"}} run data modify entity @s Item.components."minecraft:custom_data".{ns}.stats.{FIRE_MODE} set value "semi"
+execute if score #has_auto {ns}.data matches 1 if score #has_burst {ns}.data matches 1 if data storage {ns}:temp {{fire_mode:"semi"}} run data modify entity @s Item.components."minecraft:custom_data".{ns}.stats.{FIRE_MODE} set value "burst"
+execute if score #has_auto {ns}.data matches 1 if score #has_burst {ns}.data matches 1 if data storage {ns}:temp {{fire_mode:"burst"}} run data modify entity @s Item.components."minecraft:custom_data".{ns}.stats.{FIRE_MODE} set value "auto"
+
+# 2-way toggle for weapons with auto but no burst: auto -> semi -> auto
+execute if score #has_auto {ns}.data matches 1 if score #has_burst {ns}.data matches 0 if data storage {ns}:temp {{fire_mode:"auto"}} run data modify entity @s Item.components."minecraft:custom_data".{ns}.stats.{FIRE_MODE} set value "semi"
+execute if score #has_auto {ns}.data matches 1 if score #has_burst {ns}.data matches 0 if data storage {ns}:temp {{fire_mode:"semi"}} run data modify entity @s Item.components."minecraft:custom_data".{ns}.stats.{FIRE_MODE} set value "auto"
+
+# 2-way toggle for weapons with burst but no auto: semi -> burst -> semi
+execute if score #has_auto {ns}.data matches 0 if score #has_burst {ns}.data matches 1 if data storage {ns}:temp {{fire_mode:"semi"}} run data modify entity @s Item.components."minecraft:custom_data".{ns}.stats.{FIRE_MODE} set value "burst"
+execute if score #has_auto {ns}.data matches 0 if score #has_burst {ns}.data matches 1 if data storage {ns}:temp {{fire_mode:"burst"}} run data modify entity @s Item.components."minecraft:custom_data".{ns}.stats.{FIRE_MODE} set value "semi"
+
+# Weapons with neither auto nor burst stay on semi (should not happen)
+# Default to auto if missing and weapon supports it, otherwise semi
+execute unless data storage {ns}:temp fire_mode if score #has_auto {ns}.data matches 1 run data modify entity @s Item.components."minecraft:custom_data".{ns}.stats.{FIRE_MODE} set value "auto"
+execute unless data storage {ns}:temp fire_mode if score #has_auto {ns}.data matches 0 run data modify entity @s Item.components."minecraft:custom_data".{ns}.stats.{FIRE_MODE} set value "semi"
 
 # Give item back to player's mainhand and kill the item entity
 item replace entity @p weapon.mainhand from entity @s contents
@@ -140,7 +155,7 @@ kill @s
 
 # Play feedback sound
 playsound minecraft:block.note_block.hat ambient @p
-""")
+""")  # noqa: E501
 
     modifier: dict[str, Any] = {
         "function": "minecraft:copy_custom_data",

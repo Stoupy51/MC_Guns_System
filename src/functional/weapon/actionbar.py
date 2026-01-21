@@ -40,32 +40,31 @@ data modify storage {ns}:temp actionbar set value {{list:[]}}
 # Add opening bracket
 data modify storage {ns}:temp actionbar.list append value {{"text":"[ ","color":"#{START_HEX}"}}
 
-# Check current fire mode and add indicators
+# Check weapon capabilities
+execute store result score #has_auto {ns}.data if data storage {ns}:gun all.stats.can_auto
 execute store result score #has_burst {ns}.data if data storage {ns}:gun all.stats.can_burst
 
-# If weapon doesn't support burst, only show [A]
-execute if score #has_burst {ns}.data matches 0 run data modify storage {ns}:temp actionbar.list append value {{"text":"A","color":"green"}}
-execute if score #has_burst {ns}.data matches 0 run data modify storage {ns}:temp actionbar.list append value {{"text":" ]"}}
-execute if score #has_burst {ns}.data matches 0 run return 0
+# Show appropriate fire mode selector based on capabilities
+# Weapons with auto and burst: [A | S | B]
+# Weapons with auto only: [A | S]
+# Weapons with burst only: [S | B]
+# Weapons with neither: [S]
 
-# Weapon supports burst - show full selector
-# A = Auto
-execute if data storage {ns}:gun all.stats{{{FIRE_MODE}:"auto"}} run data modify storage {ns}:temp actionbar.list append value {{"text":"A","color":"green"}}
-execute unless data storage {ns}:gun all.stats{{{FIRE_MODE}:"auto"}} if data storage {ns}:gun all.stats.{FIRE_MODE} run data modify storage {ns}:temp actionbar.list append value {{"text":"A","color":"dark_gray"}}
-execute unless data storage {ns}:gun all.stats.{FIRE_MODE} run data modify storage {ns}:temp actionbar.list append value {{"text":"A","color":"green"}}
+# A = Auto (only show if CAN_AUTO)
+execute if score #has_auto {ns}.data matches 1 if data storage {ns}:gun all.stats{{{FIRE_MODE}:"auto"}} run data modify storage {ns}:temp actionbar.list append value {{"text":"A","color":"green"}}
+execute if score #has_auto {ns}.data matches 1 unless data storage {ns}:gun all.stats{{{FIRE_MODE}:"auto"}} run data modify storage {ns}:temp actionbar.list append value {{"text":"A","color":"dark_gray"}}
+execute if score #has_auto {ns}.data matches 1 run data modify storage {ns}:temp actionbar.list append value {{"text":" | ","color":"gray"}}
 
-# Separator
-data modify storage {ns}:temp actionbar.list append value {{"text":" | ","color":"gray"}}
+# S = Semi-auto (always available)
+execute if data storage {ns}:gun all.stats{{{FIRE_MODE}:"semi"}} run data modify storage {ns}:temp actionbar.list append value {{"text":"S","color":"green"}}
+execute unless data storage {ns}:gun all.stats{{{FIRE_MODE}:"semi"}} run data modify storage {ns}:temp actionbar.list append value {{"text":"S","color":"dark_gray"}}
 
-# S = Semi (not implemented yet, always grayed)
-data modify storage {ns}:temp actionbar.list append value {{"text":"S","color":"dark_gray"}}
+# Show separator and burst only if weapon has burst capability
+execute if score #has_burst {ns}.data matches 1 run data modify storage {ns}:temp actionbar.list append value {{"text":" | ","color":"gray"}}
 
-# Separator
-data modify storage {ns}:temp actionbar.list append value {{"text":" | ","color":"gray"}}
-
-# B = Burst
-execute if data storage {ns}:gun all.stats{{{FIRE_MODE}:"burst"}} run data modify storage {ns}:temp actionbar.list append value {{"text":"B","color":"yellow"}}
-execute unless data storage {ns}:gun all.stats{{{FIRE_MODE}:"burst"}} run data modify storage {ns}:temp actionbar.list append value {{"text":"B","color":"dark_gray"}}
+# B = Burst (only show if CAN_BURST)
+execute if score #has_burst {ns}.data matches 1 if data storage {ns}:gun all.stats{{{FIRE_MODE}:"burst"}} run data modify storage {ns}:temp actionbar.list append value {{"text":"B","color":"yellow"}}
+execute if score #has_burst {ns}.data matches 1 unless data storage {ns}:gun all.stats{{{FIRE_MODE}:"burst"}} run data modify storage {ns}:temp actionbar.list append value {{"text":"B","color":"dark_gray"}}
 
 # Add closing bracket
 data modify storage {ns}:temp actionbar.list append value {{"text":" ]","color":"green"}}
