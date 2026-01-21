@@ -15,6 +15,9 @@ function mgs:v5.0.0/sound/compute_acoustics
 # Reload when moving weapon to offhand
 execute if items entity @s weapon.offhand * run function mgs:v5.0.0/player/reload_check
 
+# Check if player dropped weapon to toggle fire mode
+function mgs:v5.0.0/switch/check_fire_mode_toggle
+
 # Copy gun data
 function mgs:v5.0.0/utils/copy_gun_data
 
@@ -42,8 +45,11 @@ execute if score @s mgs.cooldown matches 0 if entity @s[tag=mgs.reloading] run f
 # If pending clicks, run right click function
 execute if score @s mgs.pending_clicks matches -100.. run function mgs:v5.0.0/player/right_click
 
-# Show ammo action bar
-execute if data storage mgs:gun all.gun run function mgs:v5.0.0/ammo/show_action_bar
+# Reset held_click when player stops holding (pending_clicks goes negative)
+execute if score @s mgs.pending_clicks matches ..-1 run scoreboard players set @s mgs.held_click 0
+
+# Show action bar
+execute if data storage mgs:gun all.gun run function mgs:v5.0.0/actionbar/show
 
 # Remove temporary tag
 tag @s remove mgs.ticking

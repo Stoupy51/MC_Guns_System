@@ -9,6 +9,11 @@
 			"source": "all.stats.weapon_id",
 			"target": "mgs.stats.weapon_id",
 			"op": "replace"
+		},
+		{
+			"source": "all.stats.fire_mode",
+			"target": "mgs.stats.fire_mode",
+			"op": "replace"
 		}
 	]
 }

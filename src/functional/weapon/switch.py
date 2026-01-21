@@ -4,7 +4,7 @@ from typing import Any
 
 from stewbeet import ItemModifier, Mem, set_json_encoder, write_versioned_function
 
-from ...config.stats import SWITCH, WEAPON_ID
+from ...config.stats import CAN_BURST, FIRE_MODE, SWITCH, WEAPON_ID
 
 
 # Main function
@@ -31,6 +31,10 @@ scoreboard players operation @s {ns}.last_selected = #current_id {ns}.data
     write_versioned_function("switch/set_weapon_id",
 f"""
 execute store result storage {ns}:gun all.stats.{WEAPON_ID} int 1 run scoreboard players add #next_id {ns}.data 1
+
+# Initialize fire mode to 'auto' if not set
+execute unless data storage {ns}:gun all.stats.{FIRE_MODE} run data modify storage {ns}:gun all.stats.{FIRE_MODE} set value "auto"
+
 item modify entity @s weapon.mainhand {ns}:v{version}/set_weapon_id
 """)
 
@@ -98,6 +102,46 @@ kill @s
 
 
 
+    # Check for fire mode toggle (weapon drop)
+    write_versioned_function("switch/check_fire_mode_toggle",
+f"""
+# Check if player dropped a weapon
+execute if score @s {ns}.dropped matches 1.. run function {ns}:v{version}/switch/toggle_fire_mode
+scoreboard players reset @s {ns}.dropped
+""")
+
+    # Toggle fire mode function
+    write_versioned_function("switch/toggle_fire_mode",
+f"""
+# Find nearest dropped gun item and execute as it (only if mainhand is empty)
+execute unless items entity @s weapon.mainhand * as @n[type=item,distance=..3,nbt={{Item:{{components:{{"minecraft:custom_data":{{{ns}:{{gun:true}}}}}}}}}}] run function {ns}:v{version}/switch/do_toggle
+
+# Force weapon switch animation
+function {ns}:v{version}/switch/force_switch_animation
+""")  # noqa: E501
+
+    # Do the actual toggle
+    write_versioned_function("switch/do_toggle",
+f"""
+# Check if weapon supports burst fire, otherwise skip toggle
+execute unless data entity @s Item.components."minecraft:custom_data".{ns}.stats.{CAN_BURST} run return fail
+
+# Get current fire mode
+data modify storage {ns}:temp fire_mode set from entity @s Item.components."minecraft:custom_data".{ns}.stats.{FIRE_MODE}
+
+# Toggle: auto -> burst, burst -> auto (default to burst if missing)
+execute if data storage {ns}:temp {{fire_mode:"auto"}} run data modify entity @s Item.components."minecraft:custom_data".{ns}.stats.{FIRE_MODE} set value "burst"
+execute if data storage {ns}:temp {{fire_mode:"burst"}} run data modify entity @s Item.components."minecraft:custom_data".{ns}.stats.{FIRE_MODE} set value "auto"
+execute unless data storage {ns}:temp fire_mode run data modify entity @s Item.components."minecraft:custom_data".{ns}.stats.{FIRE_MODE} set value "burst"
+
+# Give item back to player's mainhand and kill the item entity
+item replace entity @p weapon.mainhand from entity @s contents
+kill @s
+
+# Play feedback sound
+playsound minecraft:block.note_block.hat ambient @p
+""")
+
     modifier: dict[str, Any] = {
         "function": "minecraft:copy_custom_data",
         "source": {
@@ -108,6 +152,11 @@ kill @s
             {
                 "source": f"all.stats.{WEAPON_ID}",
                 "target": f"{ns}.stats.{WEAPON_ID}",
+                "op": "replace"
+            },
+            {
+                "source": f"all.stats.{FIRE_MODE}",
+                "target": f"{ns}.stats.{FIRE_MODE}",
                 "op": "replace"
             }
         ]
