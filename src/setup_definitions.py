@@ -119,7 +119,7 @@ def beet_default(ctx: Context) -> None:
             # Add consumable and use_effects components for tick-perfect right-click detection
             obj.components["consumable"] = {
                 "consume_seconds": 1_000_000,  # Very high value to avoid actual consumption
-                "animation": "none",
+                "animation": "spear",   # Not "none" because of "use" animation still present, but "spear" has minimal animation
                 "sound": "minecraft:intentionally_empty",
                 "has_consume_particles": False
             }

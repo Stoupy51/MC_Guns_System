@@ -81,6 +81,9 @@ f"""
 execute if data storage {ns}:gun all.sounds.fire_alt run function {ns}:v{version}/sound/fire_alt with storage {ns}:gun all.sounds
 execute unless data storage {ns}:gun all.sounds.fire_alt run function {ns}:v{version}/sound/fire_simple with storage {ns}:gun all.sounds
 
+# Cycle sound (for sniper rifles)
+execute if data storage {ns}:gun all.sounds.cycle run function {ns}:v{version}/sound/cycle with storage {ns}:gun all.sounds
+
 # Acoustics handling
 execute if data storage {ns}:gun all.sounds.crack run function {ns}:v{version}/sound/acoustics_main with storage {ns}:gun all.sounds
 """)
@@ -93,6 +96,11 @@ $playsound {ns}:$(fire) player @a[distance=0.01..48] ~ ~ ~ 0.75 1 0.25
 f"""
 $playsound {ns}:$(fire_alt) player @s ~ ~ ~ 0.25
 $playsound {ns}:$(fire_alt) player @a[distance=0.01..48] ~ ~ ~ 0.75 1 0.25
+""")
+    write_versioned_function("sound/cycle",
+f"""
+$playsound {ns}:$(cycle) player @s ~ ~ ~ 0.5
+$playsound {ns}:$(cycle) player @a[distance=0.01..48] ~ ~ ~ 1.0 1 0.5
 """)
     write_versioned_function("sound/acoustics_main",
 f"""

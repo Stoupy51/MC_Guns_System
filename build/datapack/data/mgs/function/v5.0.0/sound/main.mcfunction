@@ -11,6 +11,9 @@
 execute if data storage mgs:gun all.sounds.fire_alt run function mgs:v5.0.0/sound/fire_alt with storage mgs:gun all.sounds
 execute unless data storage mgs:gun all.sounds.fire_alt run function mgs:v5.0.0/sound/fire_simple with storage mgs:gun all.sounds
 
+# Cycle sound (for sniper rifles)
+execute if data storage mgs:gun all.sounds.cycle run function mgs:v5.0.0/sound/cycle with storage mgs:gun all.sounds
+
 # Acoustics handling
 execute if data storage mgs:gun all.sounds.crack run function mgs:v5.0.0/sound/acoustics_main with storage mgs:gun all.sounds
 

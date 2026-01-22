@@ -33,6 +33,7 @@ def add_item(id: str, stats: JsonDict | None = None, model_path: str | None = No
         id=id,
         base_item="minecraft:poisonous_potato" if stats else Item.base_item,
         components={
+            "max_stack_size": 1,
             "custom_data": {Mem.ctx.project_id: {"gun":True, **stats} if stats else {"casing":True}},
         },
         override_model=(
