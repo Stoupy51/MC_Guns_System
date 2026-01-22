@@ -11,7 +11,7 @@
 data modify storage mgs:temp actionbar.list append value {"text":"A","font":"mgs:icons","shadow_color":[0,0,0,0]}
 
 # For empty bullets, use outline
-execute if score #i mgs.data >= #remaining mgs.data run data modify storage mgs:temp actionbar.list[-1].text set value "B"
+execute if score #i mgs.data >= #remaining mgs.data run data modify storage mgs:temp actionbar.list[-1] set value {"text":"B","font":"mgs:icons","color":"gray","shadow_color":[0,0,0,0]}
 
 # Increment counter
 scoreboard players add #i mgs.data 1

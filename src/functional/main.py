@@ -84,7 +84,7 @@ $damage $(target) $(amount) {ns}:bullet by $(attacker)
 
     # Copy crosshair texture
     textures_folder: str = Mem.ctx.meta.get("stewbeet", {}).get("textures_folder", "")
-    Mem.ctx.assets["minecraft"].textures["gui/sprites/hud/crosshair"] = Texture(source_path=f"{textures_folder}/crosshair.png") # type: ignore
+    Mem.ctx.assets["minecraft"].textures["gui/sprites/hud/crosshair"] = Texture(source_path=f"{textures_folder}/crosshair.png")
 
     # Add bullet font (for actionbar)
     font: Font = Mem.ctx.assets.fonts.setdefault(f"{ns}:icons", Font({"providers": []}))
