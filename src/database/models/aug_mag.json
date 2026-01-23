@@ -5,7 +5,8 @@
 		"0": "mgs:item/metal_bright",
 		"3": "mgs:item/metal",
 		"2": "mgs:item/copper",
-		"1_1": "mgs:item/brass"
+		"1_1": "mgs:item/brass",
+		"particle": "mgs:item/metal_bright"
 	},
 	"gui_light": "front",
 	"elements": [

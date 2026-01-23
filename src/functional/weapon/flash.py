@@ -14,6 +14,7 @@ def main() -> None:
     version: str = Mem.ctx.project_version
 
     # Handle pending clicks
+    # TODO: fix flash bug where they don't appear sometimes (probably because the server kills them too fast before the client can render them)
     write_versioned_function("player/right_click",
 f"""
 # Summon flash

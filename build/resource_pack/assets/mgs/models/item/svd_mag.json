@@ -4,7 +4,8 @@
 		"0": "mgs:item/svdmag",
 		"4": "mgs:item/metal",
 		"7": "mgs:item/metal_dark",
-		"1_2": "mgs:item/copper"
+		"1_2": "mgs:item/copper",
+		"particle": "mgs:item/metal"
 	},
 	"gui_light": "front",
 	"elements": [

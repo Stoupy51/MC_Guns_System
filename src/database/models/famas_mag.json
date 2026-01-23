@@ -6,7 +6,8 @@
 		"3": "mgs:item/metal_dark",
 		"2": "mgs:item/metal",
 		"5": "mgs:item/copper",
-		"4": "mgs:item/brass"
+		"4": "mgs:item/brass",
+		"particle": "mgs:item/famasmag"
 	},
 	"gui_light": "front",
 	"elements": [
