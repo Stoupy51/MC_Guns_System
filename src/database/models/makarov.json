@@ -4,7 +4,8 @@
 		"0": "mgs:item/makarovdetails",
 		"3": "mgs:item/metal_dark",
 		"2": "mgs:item/metal_bright",
-		"4": "mgs:item/reticles"
+		"4": "mgs:item/reticles",
+		"particle": "mgs:item/makarovdetails"
 	},
 	"gui_light": "front",
 	"elements": [

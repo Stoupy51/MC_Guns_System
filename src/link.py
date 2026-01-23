@@ -3,6 +3,7 @@
 from stewbeet import Context, Mem
 
 from .functional.main import main as main_datapack
+from .functional.shaders import main as main_shaders
 from .functional.tick import main as main_tick
 from .functional.weapon import main as main_weapon
 
@@ -12,6 +13,7 @@ def beet_default(ctx: Context) -> None:
     if Mem.ctx is None:
         Mem.ctx = ctx
     main_datapack()
+    main_shaders()
     main_weapon()
     main_tick()
 

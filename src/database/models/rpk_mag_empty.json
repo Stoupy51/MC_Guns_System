@@ -4,7 +4,8 @@
 		"1": "mgs:item/metal",
 		"0": "mgs:item/rpkdetails",
 		"3": "mgs:item/copper",
-		"2": "mgs:item/metal_dark"
+		"2": "mgs:item/metal_dark",
+		"particle": "mgs:item/metal"
 	},
 	"gui_light": "front",
 	"elements": [

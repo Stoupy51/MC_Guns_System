@@ -12,7 +12,8 @@
 		"7": "mgs:item/kobradetails",
 		"6": "mgs:item/holodetails",
 		"9": "mgs:item/mk4details",
-		"8": "mgs:item/acogdetails"
+		"8": "mgs:item/acogdetails",
+		"particle": "mgs:item/metal_brighter"
 	},
 	"gui_light": "front",
 	"elements": [

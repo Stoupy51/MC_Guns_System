@@ -12,7 +12,8 @@
 		"7": "mgs:item/holodetails",
 		"6": "mgs:item/metal_dark",
 		"9": "mgs:item/acogdetails",
-		"8": "mgs:item/kobradetails"
+		"8": "mgs:item/kobradetails",
+		"particle": "mgs:item/g3details"
 	},
 	"gui_light": "front",
 	"elements": [
