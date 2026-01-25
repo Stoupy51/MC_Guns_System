@@ -1,7 +1,7 @@
 
 #> mgs:v5.0.0/ammo/found_mag_lore_line
 #
-# @executed	as @a[sort=random] & at @s
+# @executed	as @e[type=player,sort=random] & at @s
 #
 # @within	mgs:v5.0.0/ammo/search_mag_lore_loop with storage mgs:input with
 #

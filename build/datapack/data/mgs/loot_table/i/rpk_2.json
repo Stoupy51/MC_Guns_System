@@ -33,6 +33,11 @@
 									"speed_multiplier": 1.0,
 									"interact_vibrations": false
 								},
+								"minecraft:food": {
+									"saturation": 0,
+									"nutrition": 0,
+									"can_always_eat": true
+								},
 								"minecraft:lore": [
 									[
 										{"text": "D","color": "#c24a17","italic": false},

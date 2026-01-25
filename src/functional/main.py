@@ -67,7 +67,7 @@ scoreboard players set #1000000 {ns}.data 1000000
     write_tick_file(
 f"""
 # Player loop
-execute as @a[sort=random] at @s run function {ns}:v{version}/player/tick
+execute as @e[type=player,sort=random] at @s run function {ns}:v{version}/player/tick
 """)
 
     # Add block tags

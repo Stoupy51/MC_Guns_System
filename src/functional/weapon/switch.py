@@ -103,55 +103,66 @@ kill @s
 
 
 
-    # Check for fire mode toggle (weapon drop)
-    write_versioned_function("switch/check_fire_mode_toggle",
+    # Check for reload (weapon drop)
+    write_versioned_function("switch/check_reload_on_drop",
 f"""
 # Check if player dropped a weapon
-execute if score @s {ns}.dropped matches 1.. run function {ns}:v{version}/switch/toggle_fire_mode
+execute if score @s {ns}.dropped matches 1.. run function {ns}:v{version}/switch/reload_to_dropped_weapon
 scoreboard players reset @s {ns}.dropped
 """)
 
-    # Toggle fire mode function
-    write_versioned_function("switch/toggle_fire_mode",
+    # Reload dropped function
+    write_versioned_function("switch/reload_to_dropped_weapon",
 f"""
 # Find nearest dropped gun item and execute as it (only if mainhand is empty)
-execute unless items entity @s weapon.mainhand * as @n[type=item,distance=..3,nbt={{Item:{{components:{{"minecraft:custom_data":{{{ns}:{{gun:true}}}}}}}}}}] run function {ns}:v{version}/switch/do_toggle
+tag @s add {ns}.to_reload
+execute unless items entity @s weapon.mainhand * as @n[type=item,distance=..3,nbt={{Item:{{components:{{"minecraft:custom_data":{{{ns}:{{gun:true}}}}}}}}}}] run function {ns}:v{version}/switch/weapon_back_to_mainhand
+tag @s remove {ns}.to_reload
 
-# Force weapon switch animation
-function {ns}:v{version}/switch/force_switch_animation
+# Copy gun data
+function {ns}:v{version}/utils/copy_gun_data
+
+# Reload
+function {ns}:v{version}/ammo/reload
 """)  # noqa: E501
+    write_versioned_function("switch/weapon_back_to_mainhand",
+f"""
+# Move reloaded item back to player's mainhand
+item replace entity @p[tag={ns}.to_reload] weapon.mainhand from entity @s contents
+kill @s
+""")
 
     # Do the actual toggle
-    write_versioned_function("switch/do_toggle",
+    write_versioned_function("switch/do_toggle_fire_mode",
 f"""
-# Get current fire mode
-data modify storage {ns}:temp fire_mode set from entity @s Item.components."minecraft:custom_data".{ns}.stats.{FIRE_MODE}
+# Copy gun data & Get current fire mode
+function {ns}:v{version}/utils/copy_gun_data
+data modify storage {ns}:temp fire_mode set from storage {ns}:gun all.stats.{FIRE_MODE}
 
 # Check weapon capabilities
-execute store result score #has_auto {ns}.data if data entity @s Item.components."minecraft:custom_data".{ns}.stats.{CAN_AUTO}
-execute store result score #has_burst {ns}.data if data entity @s Item.components."minecraft:custom_data".{ns}.stats.{CAN_BURST}
+execute store result score #has_auto {ns}.data if data storage {ns}:gun all.stats.{CAN_AUTO}
+execute store result score #has_burst {ns}.data if data storage {ns}:gun all.stats.{CAN_BURST}
 
 # 3-way toggle for weapons with auto and burst: auto -> semi -> burst -> auto
-execute if score #has_auto {ns}.data matches 1 if score #has_burst {ns}.data matches 1 if data storage {ns}:temp {{fire_mode:"auto"}} run data modify entity @s Item.components."minecraft:custom_data".{ns}.stats.{FIRE_MODE} set value "semi"
-execute if score #has_auto {ns}.data matches 1 if score #has_burst {ns}.data matches 1 if data storage {ns}:temp {{fire_mode:"semi"}} run data modify entity @s Item.components."minecraft:custom_data".{ns}.stats.{FIRE_MODE} set value "burst"
-execute if score #has_auto {ns}.data matches 1 if score #has_burst {ns}.data matches 1 if data storage {ns}:temp {{fire_mode:"burst"}} run data modify entity @s Item.components."minecraft:custom_data".{ns}.stats.{FIRE_MODE} set value "auto"
+execute if score #has_auto {ns}.data matches 1 if score #has_burst {ns}.data matches 1 if data storage {ns}:temp {{fire_mode:"auto"}} run data modify storage {ns}:gun all.stats.{FIRE_MODE} set value "semi"
+execute if score #has_auto {ns}.data matches 1 if score #has_burst {ns}.data matches 1 if data storage {ns}:temp {{fire_mode:"semi"}} run data modify storage {ns}:gun all.stats.{FIRE_MODE} set value "burst"
+execute if score #has_auto {ns}.data matches 1 if score #has_burst {ns}.data matches 1 if data storage {ns}:temp {{fire_mode:"burst"}} run data modify storage {ns}:gun all.stats.{FIRE_MODE} set value "auto"
 
 # 2-way toggle for weapons with auto but no burst: auto -> semi -> auto
-execute if score #has_auto {ns}.data matches 1 if score #has_burst {ns}.data matches 0 if data storage {ns}:temp {{fire_mode:"auto"}} run data modify entity @s Item.components."minecraft:custom_data".{ns}.stats.{FIRE_MODE} set value "semi"
-execute if score #has_auto {ns}.data matches 1 if score #has_burst {ns}.data matches 0 if data storage {ns}:temp {{fire_mode:"semi"}} run data modify entity @s Item.components."minecraft:custom_data".{ns}.stats.{FIRE_MODE} set value "auto"
+execute if score #has_auto {ns}.data matches 1 if score #has_burst {ns}.data matches 0 if data storage {ns}:temp {{fire_mode:"auto"}} run data modify storage {ns}:gun all.stats.{FIRE_MODE} set value "semi"
+execute if score #has_auto {ns}.data matches 1 if score #has_burst {ns}.data matches 0 if data storage {ns}:temp {{fire_mode:"semi"}} run data modify storage {ns}:gun all.stats.{FIRE_MODE} set value "auto"
 
 # 2-way toggle for weapons with burst but no auto: semi -> burst -> semi
-execute if score #has_auto {ns}.data matches 0 if score #has_burst {ns}.data matches 1 if data storage {ns}:temp {{fire_mode:"semi"}} run data modify entity @s Item.components."minecraft:custom_data".{ns}.stats.{FIRE_MODE} set value "burst"
-execute if score #has_auto {ns}.data matches 0 if score #has_burst {ns}.data matches 1 if data storage {ns}:temp {{fire_mode:"burst"}} run data modify entity @s Item.components."minecraft:custom_data".{ns}.stats.{FIRE_MODE} set value "semi"
+execute if score #has_auto {ns}.data matches 0 if score #has_burst {ns}.data matches 1 if data storage {ns}:temp {{fire_mode:"semi"}} run data modify storage {ns}:gun all.stats.{FIRE_MODE} set value "burst"
+execute if score #has_auto {ns}.data matches 0 if score #has_burst {ns}.data matches 1 if data storage {ns}:temp {{fire_mode:"burst"}} run data modify storage {ns}:gun all.stats.{FIRE_MODE} set value "semi"
 
 # Weapons with neither auto nor burst stay on semi (should not happen)
 # Default to auto if missing and weapon supports it, otherwise semi
-execute unless data storage {ns}:temp fire_mode if score #has_auto {ns}.data matches 1 run data modify entity @s Item.components."minecraft:custom_data".{ns}.stats.{FIRE_MODE} set value "auto"
-execute unless data storage {ns}:temp fire_mode if score #has_auto {ns}.data matches 0 run data modify entity @s Item.components."minecraft:custom_data".{ns}.stats.{FIRE_MODE} set value "semi"
+execute unless data storage {ns}:temp fire_mode if score #has_auto {ns}.data matches 1 run data modify storage {ns}:gun all.stats.{FIRE_MODE} set value "auto"
+execute unless data storage {ns}:temp fire_mode if score #has_auto {ns}.data matches 0 run data modify storage {ns}:gun all.stats.{FIRE_MODE} set value "semi"
 
-# Give item back to player's mainhand and kill the item entity
-item replace entity @p weapon.mainhand from entity @s contents
-kill @s
+# Modify mainhand item to apply changes
+item modify entity @s weapon.mainhand {ns}:v{version}/set_fire_mode
 
 # Play feedback sound
 playsound minecraft:block.note_block.hat ambient @p
@@ -168,7 +179,18 @@ playsound minecraft:block.note_block.hat ambient @p
                 "source": f"all.stats.{WEAPON_ID}",
                 "target": f"{ns}.stats.{WEAPON_ID}",
                 "op": "replace"
-            },
+            }
+        ]
+    }
+    Mem.ctx.data[ns].item_modifiers[f"v{version}/set_weapon_id"] = set_json_encoder(ItemModifier(modifier), max_level=-1)
+
+    modifier: dict[str, Any] = {
+        "function": "minecraft:copy_custom_data",
+        "source": {
+            "type": "minecraft:storage",
+            "source": f"{ns}:gun"
+        },
+        "ops": [
             {
                 "source": f"all.stats.{FIRE_MODE}",
                 "target": f"{ns}.stats.{FIRE_MODE}",
@@ -176,4 +198,4 @@ playsound minecraft:block.note_block.hat ambient @p
             }
         ]
     }
-    Mem.ctx.data[ns].item_modifiers[f"v{version}/set_weapon_id"] = set_json_encoder(ItemModifier(modifier), max_level=-1)
+    Mem.ctx.data[ns].item_modifiers[f"v{version}/set_fire_mode"] = set_json_encoder(ItemModifier(modifier), max_level=-1)

@@ -1,10 +1,10 @@
 
 #> mgs:v5.0.0/ammo/reload
 #
-# @executed	as @a[sort=random] & at @s
+# @executed	as @e[type=player,sort=random] & at @s
 #
 # @within	mgs:v5.0.0/player/right_click
-#			mgs:v5.0.0/player/swap_and_reload
+#			mgs:v5.0.0/switch/reload_to_dropped_weapon
 #
 
 # Stop if already reloading, or already has full ammo

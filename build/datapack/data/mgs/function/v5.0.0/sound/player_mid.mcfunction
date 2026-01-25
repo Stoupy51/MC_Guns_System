@@ -1,7 +1,7 @@
 
 #> mgs:v5.0.0/sound/player_mid
 #
-# @executed	as @a[sort=random] & at @s
+# @executed	as @e[type=player,sort=random] & at @s
 #
 # @within	mgs:v5.0.0/sound/check/reload_mid with storage mgs:gun all.sounds
 #

@@ -1,7 +1,7 @@
 
 #> mgs:v5.0.0/sound/acoustics_main
 #
-# @executed	as @a[sort=random] & at @s
+# @executed	as @e[type=player,sort=random] & at @s
 #
 # @within	mgs:v5.0.0/sound/main with storage mgs:gun all.sounds
 #

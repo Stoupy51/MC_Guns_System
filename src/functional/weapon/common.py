@@ -84,11 +84,11 @@ tag @s add {ns}.ticking
 # Compute acoustics (#TODO: Only if player moved enough, and every second not tick)
 function {ns}:v{version}/sound/compute_acoustics
 
-# Reload when moving weapon to offhand
-execute if items entity @s weapon.offhand * run function {ns}:v{version}/player/reload_check
+# Change mode if weapon is in offhand
+execute if items entity @s weapon.offhand * run function {ns}:v{version}/player/mode_check
 
-# Check if player dropped weapon to toggle fire mode
-function {ns}:v{version}/switch/check_fire_mode_toggle
+# Check if player dropped weapon to reload
+function {ns}:v{version}/switch/check_reload_on_drop
 
 # Copy gun data
 function {ns}:v{version}/utils/copy_gun_data
@@ -171,25 +171,22 @@ execute store result score @s {ns}.cooldown run data get storage {ns}:gun all.st
 $item modify entity @s weapon.mainhand {"function": "minecraft:set_components","components": {"minecraft:item_model": "$(item_model)"}}
 """)
 
-    # Reload check when item is moved to offhand
-    write_versioned_function("player/reload_check",
+    # Offhand swap now toggles fire mode (swap -> toggle)
+    write_versioned_function("player/mode_check",
 f"""
-# If mainhand is empty and offhand has a weapon, move it to mainhand and reload
-execute unless items entity @s weapon.mainhand * if items entity @s weapon.offhand *[custom_data~{{{ns}:{{gun:true}}}}] run function {ns}:v{version}/player/swap_and_reload
+# If mainhand is empty and offhand has a weapon, move it to mainhand and toggle fire mode
+execute unless items entity @s weapon.mainhand * if items entity @s weapon.offhand *[custom_data~{{{ns}:{{gun:true}}}}] run function {ns}:v{version}/player/swap_and_toggle
 """)
 
-    # Swap offhand to mainhand and reload
-    write_versioned_function("player/swap_and_reload",
+    # Swap offhand to mainhand and toggle fire mode
+    write_versioned_function("player/swap_and_toggle",
 f"""
 # Move offhand item to mainhand
 item replace entity @s weapon.mainhand from entity @s weapon.offhand
 item replace entity @s weapon.offhand with air
 
-# Copy gun data
-function {ns}:v{version}/utils/copy_gun_data
-
-# Reload the weapon
-function {ns}:v{version}/ammo/reload
+# Toggle fire mode for the swapped weapon (storage-level)
+function {ns}:v{version}/switch/do_toggle_fire_mode
 """)
 
     # Reset burst count only if burst is complete

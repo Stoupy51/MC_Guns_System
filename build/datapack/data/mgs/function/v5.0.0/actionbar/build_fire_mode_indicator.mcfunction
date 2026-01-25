@@ -1,7 +1,7 @@
 
 #> mgs:v5.0.0/actionbar/build_fire_mode_indicator
 #
-# @executed	as @a[sort=random] & at @s
+# @executed	as @e[type=player,sort=random] & at @s
 #
 # @within	mgs:v5.0.0/actionbar/show
 #
