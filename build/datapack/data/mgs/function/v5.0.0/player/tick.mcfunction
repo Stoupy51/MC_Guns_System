@@ -1,9 +1,9 @@
 
 #> mgs:v5.0.0/player/tick
 #
-# @executed	as @a[sort=random] & at @s
+# @executed	as @e[type=player,sort=random] & at @s
 #
-# @within	mgs:v5.0.0/tick [ as @a[sort=random] & at @s ]
+# @within	mgs:v5.0.0/tick [ as @e[type=player,sort=random] & at @s ]
 #
 
 # Add temporary tag
@@ -12,11 +12,11 @@ tag @s add mgs.ticking
 # Compute acoustics (#TODO: Only if player moved enough, and every second not tick)
 function mgs:v5.0.0/sound/compute_acoustics
 
-# Reload when moving weapon to offhand
-execute if items entity @s weapon.offhand * run function mgs:v5.0.0/player/reload_check
+# Change mode if weapon is in offhand
+execute if items entity @s weapon.offhand * run function mgs:v5.0.0/player/mode_check
 
-# Check if player dropped weapon to toggle fire mode
-function mgs:v5.0.0/switch/check_fire_mode_toggle
+# Check if player dropped weapon to reload
+function mgs:v5.0.0/switch/check_reload_on_drop
 
 # Copy gun data
 function mgs:v5.0.0/utils/copy_gun_data

@@ -1,7 +1,7 @@
 
 #> mgs:v5.0.0/ammo/extract_bullets
 #
-# @executed	as @a[sort=random] & at @s
+# @executed	as @e[type=player,sort=random] & at @s
 #
 # @within	mgs:v5.0.0/ammo/inventory/process_slot {slot:"$(slot)"}
 #

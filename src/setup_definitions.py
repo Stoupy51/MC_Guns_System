@@ -128,6 +128,7 @@ def beet_default(ctx: Context) -> None:
                 "speed_multiplier": 1.0,
                 "interact_vibrations": False
             }
+            obj.components["food"] = {"saturation":0,"nutrition":0,"can_always_eat":True}
 
             # Prepare fire_rate lore
             fire_rate_component: list[TextComponent] = []
