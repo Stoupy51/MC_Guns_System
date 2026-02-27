@@ -6,6 +6,7 @@ from .casing import main as casing_main
 from .common import main as common_main
 from .flash import main as flash_main
 from .kick import main as kick_main
+from .projectile import main as projectile_main
 from .raycast import main as raycast_main
 from .sound import main as sound_main
 from .switch import main as switch_main
@@ -26,6 +27,9 @@ def main() -> None:
 
     # Handle shoot with raycast, with accuracy groups
     raycast_main()
+
+    # Handle slow projectiles (RPG rockets, grenades, etc.)
+    projectile_main()
 
     # Make a weapon kick
     kick_main()

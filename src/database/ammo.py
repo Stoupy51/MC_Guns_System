@@ -55,3 +55,17 @@ def main() -> None:
                 }
             )
 
+    # Add consumable magazine items (cleared from inventory when depleted)
+    consumable_magazines: list[tuple[str, str, int]] = [
+        ("rpg7", "rpg7_rocket", 1),
+    ]
+    for weapon, item_name, capacity in consumable_magazines:
+        Item(
+            id=item_name,
+            override_model=json.loads(stp.read_file(get_model_path(item_name)).replace("mgs:item", f"{Mem.ctx.project_id}:item")),
+            components={
+                "max_stack_size": 1,
+                "custom_data": {ns: {"magazine": True, "consumable": True, "weapon": weapon, "stats": {REMAINING_BULLETS: capacity, CAPACITY: capacity}}}
+            }
+        )
+

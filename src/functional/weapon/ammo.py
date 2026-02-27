@@ -2,7 +2,7 @@
 # Imports
 from stewbeet import ItemModifier, JsonDict, Mem, set_json_encoder, write_versioned_function
 
-from ...config.stats import ALL_SLOTS, BASE_WEAPON, CAPACITY, END_HEX, RELOAD_TIME, REMAINING_BULLETS, START_HEX
+from ...config.stats import ALL_SLOTS, BASE_WEAPON, CAPACITY, RELOAD_TIME, REMAINING_BULLETS
 
 
 def create_lore_functions(type_name: str, tag: str, remaining_source: str, capacity_source: str) -> None:
@@ -332,6 +332,9 @@ scoreboard players operation #found_ammo {ns}.data += #to_take {ns}.data
 # Subtract from bullets
 scoreboard players operation #bullets {ns}.data -= #to_take {ns}.data
 
+# If the magazine is consumable and empty, clear the slot and return
+$execute if score #bullets {ns}.data matches ..0 if items entity @s $(slot) *[custom_data~{{{ns}:{{consumable:true}}}}] run return run function {ns}:v{version}/ammo/inventory/consume_slot {{slot:"$(slot)"}}
+
 # Modify the magazine item
 $execute if score #bullets {ns}.data matches ..0 run function {ns}:v{version}/ammo/inventory/set_item_model {{slot:"$(slot)",{BASE_WEAPON}:"$({BASE_WEAPON})"}}
 execute store result storage {ns}:temp {REMAINING_BULLETS} int 1 run scoreboard players get #bullets {ns}.data
@@ -342,9 +345,19 @@ $function {ns}:v{version}/ammo/modify_mag_lore {{slot:"$(slot)"}}
 
 # Update player's ammo count
 scoreboard players operation @s {ns}.{REMAINING_BULLETS} = #found_ammo {ns}.data
-""")
+""")  # noqa: E501
     write_versioned_function("ammo/inventory/set_item_model", f"""
 $item modify entity @s $(slot) {{function:"minecraft:set_components", components:{{"minecraft:item_model":"{ns}:$({BASE_WEAPON})_mag_empty"}}}}
+""")
+
+    # Consume a consumable magazine (clear it from inventory)
+    write_versioned_function("ammo/inventory/consume_slot",
+f"""
+# Clear the consumable magazine from the slot
+$item replace entity @s $(slot) with air
+
+# Update player's ammo count
+scoreboard players operation @s {ns}.{REMAINING_BULLETS} = #found_ammo {ns}.data
 """)
 
     write_versioned_function("ammo/extract_bullets",

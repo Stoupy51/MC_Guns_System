@@ -123,6 +123,29 @@ Determines which weapon model and animations to use as a foundation.
 Used for weapons that share the same base model but have different stats or attachments. """
 
 
+# Projectile constants (for slow-traveling bullets like RPG rockets, grenades, etc.)
+PROJECTILE_SPEED: str = "proj_speed"
+""" Speed of the projectile in thousandths of blocks/tick (e.g. 1500 = 1.5 blocks/tick).
+If present in a weapon's stats, the weapon fires a slow projectile instead of an instant raycast. """
+PROJECTILE_GRAVITY: str = "proj_gravity"
+""" Gravity applied to the projectile each tick in thousandths of blocks/tick² (e.g. 50 = 0.05 blocks/tick²).
+Set to 0 for straight-line travel. Configurable per weapon for arcing projectiles like grenades. """
+PROJECTILE_LIFETIME: str = "proj_lifetime"
+""" Maximum lifetime of the projectile in game ticks before it auto-explodes.
+Prevents orphaned projectiles from existing forever. """
+PROJECTILE_MODEL: str = "proj_model"
+""" Item model identifier for the visible projectile entity (item_display).
+Determines the visual appearance of the projectile in flight. """
+EXPLOSION_RADIUS: str = "expl_radius"
+""" Radius of the explosion effect in blocks.
+Entities within this radius will take damage with distance-based falloff. """
+EXPLOSION_DAMAGE: str = "expl_damage"
+""" Base damage dealt at the center of the explosion.
+Damage decreases with distance based on the explosion decay parameter. """
+EXPLOSION_DECAY: str = "expl_decay"
+""" Rate at which explosion damage decreases per block of distance from impact center.
+Uses the formula: damage *= pow(decay, distance). Lower values = faster falloff. """
+
 # Optional constants
 MODELS: str = "models"
 """ Models to use to switch between normal and zoom modes. """
@@ -633,6 +656,8 @@ RPG7: JsonDict = {
         CAPACITY: 1, RELOAD_TIME: 110, RELOAD_END: 20, COOLDOWN: 10, DAMAGE: 30, DECAY: 1.00,
         ACCURACY_BASE: 250, ACCURACY_SNEAK: 100, ACCURACY_WALK: 300, ACCURACY_SPRINT: 300, ACCURACY_JUMP: 300,
         SWITCH: 55, KICK: 6,
+        PROJECTILE_SPEED: 1500, PROJECTILE_GRAVITY: 0, PROJECTILE_LIFETIME: 200, PROJECTILE_MODEL: "rpg7_rocket",
+        EXPLOSION_RADIUS: 5, EXPLOSION_DAMAGE: 30, EXPLOSION_DECAY: 0.80,
     },
     "sounds": {
         "fire": "rpg7/fire",

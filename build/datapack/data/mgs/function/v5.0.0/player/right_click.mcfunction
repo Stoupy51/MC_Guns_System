@@ -45,11 +45,8 @@ execute if score #fire_mode_is_burst mgs.data matches 1 run scoreboard players a
 
 # Auto mode: allow continuous fire (no blocking)
 
-# For shotguns (pellet count), multiply by pellet count instead
-execute if data storage mgs:gun all.stats.pellet_count store result score #bullets_to_fire mgs.data run data get storage mgs:gun all.stats.pellet_count
-
-# Shoot
-function mgs:v5.0.0/player/shoot
+# Route to the appropriate firing method (projectile or hitscan)
+function mgs:v5.0.0/player/fire_weapon
 
 # Simulate weapon kick
 function mgs:v5.0.0/kicks/main

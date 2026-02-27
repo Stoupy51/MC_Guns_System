@@ -287,6 +287,18 @@
 			"item_name": {"text": "Vz61 Mag"}
 		}
 	},
+	"rpg7_rocket": {
+		"id": "rpg7_rocket",
+		"base_item": "minecraft:command_block",
+		"recipes": [],
+		"components": {
+			"max_stack_size": 1,
+			"custom_data": {"mgs": {"magazine": true,"consumable": true,"weapon": "rpg7","stats": {"remaining_bullets": 1,"capacity": 1},"rpg7_rocket": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},
+			"lore": [[{"text": "A","color": "#c24a17","italic": false},{"text": "m","color": "#c24d18"},{"text": "m","color": "#c2501a"},{"text": "o","color": "#c2531c"},{"text": " ","color": "#c3571e"},{"text": "R","color": "#c35a20"},{"text": "e","color": "#c35d22"},{"text": "m","color": "#c46024"},{"text": "a","color": "#c46426"},{"text": "i","color": "#c46728"},{"text": "n","color": "#c56a2a"},{"text": "i","color": "#c56d2c"},{"text": "n","color": "#c5712e"},{"text": "g","color": "#c67430"},{"text": " ","color": "#c67732"},{"text": "➤","color": "#c67a34"},{"text": " ","color": "#c77e36"},"1",{"text": "/","color": "#c77e36"},"1"],["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]],
+			"item_model": "mgs:rpg7_rocket",
+			"item_name": {"text": "Rpg7 Rocket"}
+		}
+	},
 	"m16a4": {
 		"id": "m16a4",
 		"base_item": "minecraft:poisonous_potato",
@@ -1643,7 +1655,7 @@
 		"recipes": [],
 		"components": {
 			"max_stack_size": 1,
-			"custom_data": {"mgs": {"gun": true,"stats": {"base_weapon": "rpg7","fire_mode": "semi","capacity": 1,"reload_time": 110,"reload_end": 20,"cooldown": 10,"damage": 30,"decay": 1.0,"acc_base": 250,"acc_sneak": 100,"acc_walk": 300,"acc_sprint": 300,"acc_jump": 300,"switch": 55,"kick": 6,"models": {"normal": "mgs:rpg7","zoom": "mgs:rpg7_zoom"},"remaining_bullets": 1},"sounds": {"fire": "rpg7/fire","reload": "rpg7/reload","playerbegin": "rpg7/playerbegin","playerend": "rpg7/playerend","handling_endgrab": "rpg7/handling/rpg7_endgrab","handling_fetch": "rpg7/handling/rpg7_fetch","handling_load": "rpg7/handling/rpg7_load","crack": "rocket"},"rpg7": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},
+			"custom_data": {"mgs": {"gun": true,"stats": {"base_weapon": "rpg7","fire_mode": "semi","capacity": 1,"reload_time": 110,"reload_end": 20,"cooldown": 10,"damage": 30,"decay": 1.0,"acc_base": 250,"acc_sneak": 100,"acc_walk": 300,"acc_sprint": 300,"acc_jump": 300,"switch": 55,"kick": 6,"proj_speed": 1500,"proj_gravity": 0,"proj_lifetime": 200,"proj_model": "rpg7_rocket","expl_radius": 5,"expl_damage": 30,"expl_decay": 0.8,"models": {"normal": "mgs:rpg7","zoom": "mgs:rpg7_zoom"},"remaining_bullets": 1},"sounds": {"fire": "rpg7/fire","reload": "rpg7/reload","playerbegin": "rpg7/playerbegin","playerend": "rpg7/playerend","handling_endgrab": "rpg7/handling/rpg7_endgrab","handling_fetch": "rpg7/handling/rpg7_fetch","handling_load": "rpg7/handling/rpg7_load","crack": "rocket"},"rpg7": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},
 			"consumable": {"consume_seconds": 1000000,"animation": "spear","sound": "minecraft:intentionally_empty","has_consume_particles": false},
 			"use_effects": {"can_sprint": true,"speed_multiplier": 1.0,"interact_vibrations": false},
 			"food": {"saturation": 0,"nutrition": 0,"can_always_eat": true},
@@ -1658,7 +1670,7 @@
 		"recipes": [],
 		"components": {
 			"max_stack_size": 1,
-			"custom_data": {"mgs": {"gun": true,"stats": {"base_weapon": "rpg7","fire_mode": "semi","capacity": 1,"reload_time": 110,"reload_end": 20,"cooldown": 10,"damage": 30,"decay": 1.0,"acc_base": 250,"acc_sneak": 100,"acc_walk": 300,"acc_sprint": 300,"acc_jump": 300,"switch": 55,"kick": 6,"models": {"normal": "mgs:rpg7_empty","zoom": "mgs:rpg7_empty_zoom"},"remaining_bullets": 1},"sounds": {"fire": "rpg7/fire","reload": "rpg7/reload","playerbegin": "rpg7/playerbegin","playerend": "rpg7/playerend","handling_endgrab": "rpg7/handling/rpg7_endgrab","handling_fetch": "rpg7/handling/rpg7_fetch","handling_load": "rpg7/handling/rpg7_load","crack": "rocket"},"rpg7_empty": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},
+			"custom_data": {"mgs": {"gun": true,"stats": {"base_weapon": "rpg7","fire_mode": "semi","capacity": 1,"reload_time": 110,"reload_end": 20,"cooldown": 10,"damage": 30,"decay": 1.0,"acc_base": 250,"acc_sneak": 100,"acc_walk": 300,"acc_sprint": 300,"acc_jump": 300,"switch": 55,"kick": 6,"proj_speed": 1500,"proj_gravity": 0,"proj_lifetime": 200,"proj_model": "rpg7_rocket","expl_radius": 5,"expl_damage": 30,"expl_decay": 0.8,"models": {"normal": "mgs:rpg7_empty","zoom": "mgs:rpg7_empty_zoom"},"remaining_bullets": 1},"sounds": {"fire": "rpg7/fire","reload": "rpg7/reload","playerbegin": "rpg7/playerbegin","playerend": "rpg7/playerend","handling_endgrab": "rpg7/handling/rpg7_endgrab","handling_fetch": "rpg7/handling/rpg7_fetch","handling_load": "rpg7/handling/rpg7_load","crack": "rocket"},"rpg7_empty": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},
 			"consumable": {"consume_seconds": 1000000,"animation": "spear","sound": "minecraft:intentionally_empty","has_consume_particles": false},
 			"use_effects": {"can_sprint": true,"speed_multiplier": 1.0,"interact_vibrations": false},
 			"food": {"saturation": 0,"nutrition": 0,"can_always_eat": true},
@@ -3446,7 +3458,7 @@
 		"recipes": [],
 		"components": {
 			"max_stack_size": 1,
-			"custom_data": {"mgs": {"gun": true,"stats": {"base_weapon": "rpg7","fire_mode": "semi","capacity": 1,"reload_time": 110,"reload_end": 20,"cooldown": 10,"damage": 30,"decay": 1.0,"acc_base": 250,"acc_sneak": 100,"acc_walk": 300,"acc_sprint": 300,"acc_jump": 300,"switch": 55,"kick": 6,"models": {"normal": "mgs:rpg7","zoom": "mgs:rpg7_zoom"},"remaining_bullets": 1},"sounds": {"fire": "rpg7/fire","reload": "rpg7/reload","playerbegin": "rpg7/playerbegin","playerend": "rpg7/playerend","handling_endgrab": "rpg7/handling/rpg7_endgrab","handling_fetch": "rpg7/handling/rpg7_fetch","handling_load": "rpg7/handling/rpg7_load","crack": "rocket"},"rpg7_zoom": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},
+			"custom_data": {"mgs": {"gun": true,"stats": {"base_weapon": "rpg7","fire_mode": "semi","capacity": 1,"reload_time": 110,"reload_end": 20,"cooldown": 10,"damage": 30,"decay": 1.0,"acc_base": 250,"acc_sneak": 100,"acc_walk": 300,"acc_sprint": 300,"acc_jump": 300,"switch": 55,"kick": 6,"proj_speed": 1500,"proj_gravity": 0,"proj_lifetime": 200,"proj_model": "rpg7_rocket","expl_radius": 5,"expl_damage": 30,"expl_decay": 0.8,"models": {"normal": "mgs:rpg7","zoom": "mgs:rpg7_zoom"},"remaining_bullets": 1},"sounds": {"fire": "rpg7/fire","reload": "rpg7/reload","playerbegin": "rpg7/playerbegin","playerend": "rpg7/playerend","handling_endgrab": "rpg7/handling/rpg7_endgrab","handling_fetch": "rpg7/handling/rpg7_fetch","handling_load": "rpg7/handling/rpg7_load","crack": "rocket"},"rpg7_zoom": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},
 			"consumable": {"consume_seconds": 1000000,"animation": "spear","sound": "minecraft:intentionally_empty","has_consume_particles": false},
 			"use_effects": {"can_sprint": true,"speed_multiplier": 1.0,"interact_vibrations": false},
 			"food": {"saturation": 0,"nutrition": 0,"can_always_eat": true},
@@ -3461,7 +3473,7 @@
 		"recipes": [],
 		"components": {
 			"max_stack_size": 1,
-			"custom_data": {"mgs": {"gun": true,"stats": {"base_weapon": "rpg7","fire_mode": "semi","capacity": 1,"reload_time": 110,"reload_end": 20,"cooldown": 10,"damage": 30,"decay": 1.0,"acc_base": 250,"acc_sneak": 100,"acc_walk": 300,"acc_sprint": 300,"acc_jump": 300,"switch": 55,"kick": 6,"models": {"normal": "mgs:rpg7_empty","zoom": "mgs:rpg7_empty_zoom"},"remaining_bullets": 1},"sounds": {"fire": "rpg7/fire","reload": "rpg7/reload","playerbegin": "rpg7/playerbegin","playerend": "rpg7/playerend","handling_endgrab": "rpg7/handling/rpg7_endgrab","handling_fetch": "rpg7/handling/rpg7_fetch","handling_load": "rpg7/handling/rpg7_load","crack": "rocket"},"rpg7_empty_zoom": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},
+			"custom_data": {"mgs": {"gun": true,"stats": {"base_weapon": "rpg7","fire_mode": "semi","capacity": 1,"reload_time": 110,"reload_end": 20,"cooldown": 10,"damage": 30,"decay": 1.0,"acc_base": 250,"acc_sneak": 100,"acc_walk": 300,"acc_sprint": 300,"acc_jump": 300,"switch": 55,"kick": 6,"proj_speed": 1500,"proj_gravity": 0,"proj_lifetime": 200,"proj_model": "rpg7_rocket","expl_radius": 5,"expl_damage": 30,"expl_decay": 0.8,"models": {"normal": "mgs:rpg7_empty","zoom": "mgs:rpg7_empty_zoom"},"remaining_bullets": 1},"sounds": {"fire": "rpg7/fire","reload": "rpg7/reload","playerbegin": "rpg7/playerbegin","playerend": "rpg7/playerend","handling_endgrab": "rpg7/handling/rpg7_endgrab","handling_fetch": "rpg7/handling/rpg7_fetch","handling_load": "rpg7/handling/rpg7_load","crack": "rocket"},"rpg7_empty_zoom": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},
 			"consumable": {"consume_seconds": 1000000,"animation": "spear","sound": "minecraft:intentionally_empty","has_consume_particles": false},
 			"use_effects": {"can_sprint": true,"speed_multiplier": 1.0,"interact_vibrations": false},
 			"food": {"saturation": 0,"nutrition": 0,"can_always_eat": true},
