@@ -14,6 +14,7 @@ from ...config.stats import (
     DECAY,
     FIRE_MODE,
     PELLET_COUNT,
+    PROJECTILE_SPEED,
 )
 
 
@@ -47,10 +48,20 @@ execute if score #fire_mode_is_burst {ns}.data matches 1 run scoreboard players 
 
 # Auto mode: allow continuous fire (no blocking)
 
-# For shotguns (pellet count), multiply by pellet count instead
+# Route to the appropriate firing method (projectile or hitscan)
+function {ns}:v{version}/player/fire_weapon
+""")
+
+    # Fire weapon routing: projectile vs hitscan
+    write_versioned_function("player/fire_weapon",
+f"""
+# For weapons with pellet count, set bullets_to_fire appropriately
 execute if data storage {ns}:gun all.stats.{PELLET_COUNT} store result score #bullets_to_fire {ns}.data run data get storage {ns}:gun all.stats.{PELLET_COUNT}
 
-# Shoot
+# If weapon has projectile config, fire slow projectile(s) instead of instant raycast
+execute if data storage {ns}:gun all.stats.{PROJECTILE_SPEED} run return run function {ns}:v{version}/projectile/summon_loop
+
+# Shoot with hitscan raycast
 function {ns}:v{version}/player/shoot
 """)
 

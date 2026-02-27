@@ -4,6 +4,7 @@
 # @executed	anchored eyes & positioned ^ ^ ^
 #
 # @within	mgs:v5.0.0/raycast/main
+#			mgs:v5.0.0/projectile/init
 #
 
 # Get random uniform rotation spread (https://docs.mcbookshelf.dev/en/latest/modules/random.html#random-distributions)

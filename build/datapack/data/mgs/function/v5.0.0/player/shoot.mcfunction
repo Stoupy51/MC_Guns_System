@@ -3,7 +3,7 @@
 #
 # @executed	as @e[type=player,sort=random] & at @s
 #
-# @within	mgs:v5.0.0/player/right_click
+# @within	mgs:v5.0.0/player/fire_weapon
 #			mgs:v5.0.0/player/shoot
 #
 

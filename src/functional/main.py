@@ -61,6 +61,9 @@ scoreboard players set #2 {ns}.data 2
 scoreboard players set #10 {ns}.data 10
 scoreboard players set #1000 {ns}.data 1000
 scoreboard players set #1000000 {ns}.data 1000000
+
+# Initialize slow bullet (projectile) counter
+scoreboard players set #slow_bullet_count {ns}.data 0
 """, prepend=True)
 
     # Write to tick file
