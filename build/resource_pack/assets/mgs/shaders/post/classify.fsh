@@ -1,39 +1,35 @@
 #version 330
 
-// ── Samplers: pipeline inputs ──
-uniform sampler2D ParticlesSampler;       // Particles target (color)
-uniform sampler2D ParticlesDepthSampler;  // Particles target (depth)
+uniform sampler2D ParticlesSampler;
 
-in vec2 texCoord;  // Screen UV from screenquad.vsh
+in vec2 texCoord;
 out vec4 fragColor;
 
-#define MARKERS 5  // Must match particle.vsh/fsh
+#define MARKERS 5
+#define MARKER_RED 254
 
 void main() {
-    vec2 baseUV = vec2(0.5, 1.5 / float(particlesRes.y));
+    // ── Read the exact marker pixels ──
+    // Mode 1 (flash): placed at pixel (0, 0) by particle.vsh
+    // Mode 4 (zoom):  placed at pixel (2, 0) by particle.vsh
+    // texelFetch uses integer pixel coordinates — no UV math, no rounding error.
+    ivec4 p1 = ivec4(round(texelFetch(ParticlesSampler, ivec2(0, 0), 0) * 255.0));
+    ivec4 p4 = ivec4(round(texelFetch(ParticlesSampler, ivec2(2, 0), 0) * 255.0));
+
+    // ── Verify sentinel signature ──
+    // R == MARKER_RED: our unique identifier
+    // B == 0: part of signature (we never use B channel for anything else)
+    // A == 255: confirms particle.fsh wrote it (not a stale clear value)
+    // G == expected mode value: confirms this specific mode is active
+    bool flashActive = (p1.r == MARKER_RED && p1.b == 0 && p1.a == 255 && p1.g == 1);
+    bool zoomActive  = (p4.r == MARKER_RED && p4.b == 0 && p4.a == 255 && p4.g == 4);
+
+    // Flash takes priority over zoom (can't do both at once)
     float mode = 0.0;
-    float bestAlpha = 0.0;
-    float bestDepth = 1.0;
-    vec4 bestPix = vec4(0.0);
+    if (flashActive)     mode = 1.0;
+    else if (zoomActive) mode = 4.0;
 
-    for (int oy = 0; oy <= 2; ++oy) {
-        for (int ox = -1; ox <= 1; ++ox) {
-            vec2 sampleUV = baseUV + vec2(float(ox) / float(particlesRes.x), float(oy) / float(particlesRes.y));
-            vec4 pix = texture(ParticlesSampler, sampleUV);
-            float depth = texture(ParticlesDepthSampler, sampleUV).r;
-
-            // prefer the brightest sentinel-like pixel
-            if (pix.a > bestAlpha) {
-                bestAlpha = pix.a;
-                bestDepth = depth;
-                bestPix = pix;
-            }
-        }
-    }
-
-    // relaxed thresholds
-    if (bestPix.a > 0.003 && bestPix.a < 0.03 && bestDepth < 0.02) {
-        mode = round(bestPix.r * float(MARKERS));
-    }
+    // Output: encode mode in red channel of the 1x1 target.
+    // flash.fsh and zoom.fsh read it: round(texture(...).r * MARKERS)
     fragColor = vec4(mode / float(MARKERS), 0.0, 0.0, 1.0);
 }
