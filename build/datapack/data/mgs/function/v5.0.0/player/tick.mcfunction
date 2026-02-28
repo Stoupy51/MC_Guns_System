@@ -6,6 +6,10 @@
 # @within	mgs:v5.0.0/tick [ as @e[type=player,sort=random] & at @s ]
 #
 
+# Shader: spawn zoom marker (mode 4: red+green)
+# Every tick while ADS, 1 block in front -> detected by particle.vsh -> zoom.fsh
+execute if score @s mgs.zoom matches 1 at @s anchored eyes run particle minecraft:dust{color:[0.011,0.011,0.0],scale:0.01} ^ ^ ^1 0 0 0 0 1 force @s
+
 # Add temporary tag
 tag @s add mgs.ticking
 
