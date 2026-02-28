@@ -11,7 +11,7 @@ execute store result score #proj_gravity mgs.data run data get entity @s data.co
 scoreboard players operation @s bs.vel.y -= #proj_gravity mgs.data
 
 # Move the projectile using Bookshelf's move module with collision detection
-function #bs.move:apply_vel {scale:0.001,with:{blocks:true,entities:false,on_collision:"function mgs:v5.0.0/projectile/on_collision"}}
+function #bs.move:apply_vel {scale:0.001,with:{blocks:true,entities:true,on_collision:"function mgs:v5.0.0/projectile/on_collision"}}
 
 # If collision was detected, explode and stop processing
 execute if entity @s[tag=mgs.exploding] run return run function mgs:v5.0.0/projectile/explode

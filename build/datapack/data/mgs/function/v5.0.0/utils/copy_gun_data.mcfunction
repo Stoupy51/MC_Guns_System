@@ -1,10 +1,10 @@
 
 #> mgs:v5.0.0/utils/copy_gun_data
 #
-# @executed	as the player & at current position
+# @executed	as @e[type=player,sort=random] & at @s
 #
-# @within	mgs:v5.0.0/player/set_pending_clicks
-#			mgs:v5.0.0/player/tick
+# @within	mgs:v5.0.0/player/tick
+#			mgs:v5.0.0/player/set_pending_clicks
 #			mgs:v5.0.0/switch/reload_to_dropped_weapon
 #			mgs:v5.0.0/switch/do_toggle_fire_mode
 #
