@@ -10,5 +10,6 @@ Credits for resources: MGS 4.2 by TheBradqq
 # TODO:
 - Shaders stuff
 - Try to fix the flash bug, and make them make light
+- Hitmaker sound (can be enabled with /trigger)
 
 
