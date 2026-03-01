@@ -115,6 +115,37 @@ void main() {
         }
     }
 
+    // ── Custom crosshair (vanilla crosshair is transparent) ──
+    // Draw a crosshair using color inversion (like vanilla) when NOT zooming.
+    // The vanilla crosshair texture is replaced with a transparent one, so the shader
+    // handles all crosshair rendering. Hidden during zoom for clean scope view.
+    // Spread level (from classify A): 0=sneak, 1=base, 2=walk, 3=sprint, 4=jump
+    if (!zoomMode) {
+        int spreadLevel = int(round(classifyData.a * 255.0));  // 0-4
+
+        // Gap/arm size arrays indexed by spread level (0=tightest, 4=widest)
+        int gaps[5] = int[5](3, 6, 10, 14, 18);
+        int ends[5] = int[5](9, 12, 16, 20, 24);
+        int idx = clamp(spreadLevel, 0, 4);
+        int gap = gaps[idx];
+        int armEnd = ends[idx];
+
+        ivec2 center = ivec2(inSize) / 2;
+        ivec2 fc = ivec2(gl_FragCoord.xy);
+        int dx = fc.x - center.x;
+        int dy = fc.y - center.y;
+
+        // Horizontal arm: y == center, |x - center| in [gap, armEnd]
+        bool hArm = (dy == 0) && (abs(dx) >= gap && abs(dx) <= armEnd);
+        // Vertical arm: x == center, |y - center| in [gap, armEnd]
+        bool vArm = (dx == 0) && (abs(dy) >= gap && abs(dy) <= armEnd);
+
+        if (hArm || vArm) {
+            // Invert colors at crosshair pixels (same visual effect as vanilla INVERT blend)
+            fragColor.rgb = vec3(1.0) - fragColor.rgb;
+        }
+    }
+
 #if DEBUG
     if (gl_FragCoord.x >= 100.0 && gl_FragCoord.x < 150.0 && gl_FragCoord.y >= 5.0 && gl_FragCoord.y < 55.0) {
         if (flashMode && zoomMode) {
