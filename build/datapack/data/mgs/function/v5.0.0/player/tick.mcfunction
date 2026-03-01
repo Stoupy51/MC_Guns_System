@@ -7,8 +7,8 @@
 #
 
 # Shader: spawn zoom marker (mode 4)
-# entity_effect: R=254/255, G=4/255, B=0, A=1 → detected by particle.vsh → placed at pixel (2,0)
-execute if score @s mgs.zoom matches 1 at @s anchored eyes run particle minecraft:entity_effect{color:[0.99607843,0.01568627,0.0,1.0],scale:1f} ^ ^ ^1 0 0 0 0 1 force @s
+# R=254.5/255, G=4.5/255, B=0 → particle.vsh places at pixel (2,0)
+execute if score @s mgs.zoom matches 1 at @s anchored eyes run particle minecraft:entity_effect{color:[0.99803922,0.01764706,0.0,1.0]} ^ ^ ^1 0 0 0 0 1 force @s
 
 # Add temporary tag
 tag @s add mgs.ticking

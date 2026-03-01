@@ -12,7 +12,6 @@ in vec2 texCoord;
 out vec4 fragColor;
 
 #define DEBUG 1
-#define MARKERS 5
 #define RADIUS 0.14
 
 vec4 cubic(float v) {
@@ -52,11 +51,13 @@ vec4 textureBicubic(sampler2D samp, vec2 texCoords, vec2 texSize) {
 
 void main() {
     vec2 inSize = vec2(textureSize(InSampler, 0));
-    float mode = round(texture(ClassifySampler, vec2(0.5, 0.5)).r * float(MARKERS));
+    vec4 classifyData = texture(ClassifySampler, vec2(0.5, 0.5));
+    bool flashMode = classifyData.r > 0.5;
+    bool zoomMode  = classifyData.g > 0.5;
 
     fragColor = texture(InSampler, texCoord);
 
-    if (mode >= 3.5 && mode <= 4.5) {
+    if (zoomMode) {
         float aspectRatio = inSize.x / inSize.y;
         vec2 screenCoord = (texCoord - vec2(0.5)) * vec2(aspectRatio, 1.0);
 
@@ -75,10 +76,12 @@ void main() {
 
 #if DEBUG
     if (gl_FragCoord.x >= 100.0 && gl_FragCoord.x < 150.0 && gl_FragCoord.y < 50.0) {
-        if (mode >= 0.5 && mode <= 3.5) {
-            fragColor = vec4(1.0, 0.5, 0.0, 1.0);  // Orange: flash mode
-        } else if (mode >= 3.5 && mode <= 4.5) {
-            fragColor = vec4(0.0, 1.0, 1.0, 1.0);  // Cyan: zoom mode
+        if (flashMode && zoomMode) {
+            fragColor = vec4(1.0, 1.0, 1.0, 1.0);  // White: both detected
+        } else if (flashMode) {
+            fragColor = vec4(1.0, 0.5, 0.0, 1.0);  // Orange: flash only
+        } else if (zoomMode) {
+            fragColor = vec4(0.0, 1.0, 1.0, 1.0);  // Cyan: zoom only
         } else {
             fragColor = vec4(0.2, 0.2, 1.0, 1.0);  // Blue: no mode
         }
