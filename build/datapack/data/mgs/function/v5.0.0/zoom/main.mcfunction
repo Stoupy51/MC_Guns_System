@@ -31,3 +31,6 @@ execute if score @s mgs.zoom matches 1 if score @s mgs.switch_cooldown matches 0
 # Spawn zoom center-only marker (mode 2) for weapons WITHOUT scope — centers flash spark w/o barrel distortion
 execute if score @s mgs.zoom matches 1 if score @s mgs.switch_cooldown matches 0 if score @s mgs.zoom_timer matches 5.. unless items entity @s weapon.mainhand *[custom_data~{mgs:{scope_level:3}}] unless items entity @s weapon.mainhand *[custom_data~{mgs:{scope_level:4}}] at @s anchored eyes run particle minecraft:dust{color:[0.02,0.25,0.0],scale:0.01} ^ ^ ^1 0 0 0 0 1 force @s
 
+# Crosshair spread marker: spawn when NOT zooming to indicate accuracy via crosshair gap
+execute unless score @s mgs.zoom matches 1 run function mgs:v5.0.0/zoom/crosshair_spread
+

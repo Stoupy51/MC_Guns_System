@@ -9,7 +9,7 @@ in float sphericalVertexDistance;
 in float cylindricalVertexDistance;
 in vec2 texCoord0;
 in vec4 vertexColor;
-flat in int markerMode;  // 0=normal, 1=flash, 3=zoom x3, 4=zoom x4
+flat in int markerMode;  // 0=normal, 1=flash, 2-4=zoom, 5-9=spread
 
 out vec4 fragColor;
 
@@ -22,11 +22,13 @@ void main() {
         // We ONLY write the sentinel at the exact target pixel;
         // all other fragments are discarded to avoid overwriting scene.
         //   Flash    → pixel (0, 0)
-        //   Zoom x2  → pixel (1, 0)  (G=2, no-scope center-only)
-        //   Zoom x3  → pixel (1, 0)  (G=3)
-        //   Zoom x4  → pixel (1, 0)  (G=4)
+        //   Zoom 2-4 → pixel (1, 0)
+        //   Spread 5-9 → pixel (2, 0)
         ivec2 fc = ivec2(gl_FragCoord.xy);
-        ivec2 target = (markerMode == 1) ? ivec2(0, 0) : ivec2(1, 0);
+        ivec2 target;
+        if (markerMode == 1) target = ivec2(0, 0);       // Flash
+        else if (markerMode >= 5) target = ivec2(2, 0);  // Spread
+        else target = ivec2(1, 0);                        // Zoom (2, 3, 4)
         if (fc != target) {
             discard;
         }

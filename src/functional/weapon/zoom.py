@@ -38,6 +38,30 @@ execute if score @s {ns}.zoom matches 1 if score @s {ns}.switch_cooldown matches
 
 # Spawn zoom center-only marker (mode 2) for weapons WITHOUT scope — centers flash spark w/o barrel distortion
 execute if score @s {ns}.zoom matches 1 if score @s {ns}.switch_cooldown matches 0 if score @s {ns}.zoom_timer matches 5.. unless items entity @s weapon.mainhand *[custom_data~{{{ns}:{{scope_level:3}}}}] unless items entity @s weapon.mainhand *[custom_data~{{{ns}:{{scope_level:4}}}}] at @s anchored eyes run particle minecraft:dust{{color:[0.02,0.25,0.0],scale:0.01}} ^ ^ ^1 0 0 0 0 1 force @s
+
+# Crosshair spread marker: spawn when NOT zooming to indicate accuracy via crosshair gap
+execute unless score @s {ns}.zoom matches 1 run function {ns}:v{version}/zoom/crosshair_spread
+""")
+
+    # Crosshair spread: spawn a marker particle encoding the player's movement state
+    # Uses B channel > 0 (with G=0) to distinguish from flash/zoom markers
+    # Priority: jump > sprint > walk > sneak > base (matching accuracy system)
+    write_versioned_function("zoom/crosshair_spread",
+f"""
+# Jump (in air): widest spread
+execute unless predicate {ns}:v{version}/is_on_ground at @s anchored eyes run return run particle minecraft:dust{{color:[0.02,0.0,0.60],scale:0.01}} ^ ^ ^1 0 0 0 0 1 force @s
+
+# Sprint: very wide spread
+execute if predicate {ns}:v{version}/is_sprinting at @s anchored eyes run return run particle minecraft:dust{{color:[0.02,0.0,0.28],scale:0.01}} ^ ^ ^1 0 0 0 0 1 force @s
+
+# Walk: wider spread
+execute unless predicate {ns}:v{version}/is_sprinting if predicate {ns}:v{version}/is_moving at @s anchored eyes run return run particle minecraft:dust{{color:[0.02,0.0,0.12],scale:0.01}} ^ ^ ^1 0 0 0 0 1 force @s
+
+# Sneak: tightest spread (rarely visible since sneak = zoom for guns)
+execute if predicate {ns}:v{version}/is_sneaking at @s anchored eyes run return run particle minecraft:dust{{color:[0.02,0.0,0.02],scale:0.01}} ^ ^ ^1 0 0 0 0 1 force @s
+
+# Base: standing still, default spread
+execute at @s anchored eyes run particle minecraft:dust{{color:[0.02,0.0,0.05],scale:0.01}} ^ ^ ^1 0 0 0 0 1 force @s
 """)
 
     # Function to remove zoom state

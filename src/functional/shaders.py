@@ -132,9 +132,9 @@ from stewbeet import JsonDict, Mem, set_json_encoder, write_versioned_function
 # ╚════════════════════════════════════════════════════════════════════════╝
 #
 # MARKER PIXEL MAP:
-#   Mode 1 (flash)   → screen pixel (0, 0)   [bottom-left corner]
-#   Mode 3 (zoom x3) → screen pixel (1, 0)   [one pixel right]
-#   Mode 4 (zoom x4) → screen pixel (1, 0)   [same pixel, G=3 vs G=4]
+#   Mode 1 (flash)     → screen pixel (0, 0)   [bottom-left corner]
+#   Mode 2-4 (zoom)    → screen pixel (1, 0)   [one pixel right]
+#   Mode 5-9 (spread)  → screen pixel (2, 0)   [two pixels right]
 #
 # MARKER COLOR ENCODING (dust RGB + scale):
 #   Command provides float [R, G, B] (no alpha) + scale (size & lifetime).
@@ -151,9 +151,16 @@ from stewbeet import JsonDict, Mem, set_json_encoder, write_versioned_function
 #   Zoom x4: color:[0.02, 0.08, 0.0], scale:0.01
 #     R ∈ [2-5] after randomization, G ∈ [10-20], B = 0
 #
-#   Detection: R ∈ [1,10], B == 0 → marker signature.
-#   Mode: G == 0 → flash (mode 1), G ∈ [1,7] → zoom x3 (mode 3),
-#         G ∈ [8,25] → zoom x4 (mode 4), G ∈ [26,80] → zoom center-only (mode 2).
+#   Crosshair spread markers (B > 0, G = 0):
+#   Sneak:  color:[0.02, 0.0, 0.02], scale:0.01 → B' ∈ [2-5]
+#   Base:   color:[0.02, 0.0, 0.05], scale:0.01 → B' ∈ [6-13]
+#   Walk:   color:[0.02, 0.0, 0.12], scale:0.01 → B' ∈ [15-31]
+#   Sprint: color:[0.02, 0.0, 0.28], scale:0.01 → B' ∈ [34-71]
+#   Jump:   color:[0.02, 0.0, 0.60], scale:0.01 → B' ∈ [73-153]
+#
+#   Detection: R ∈ [1,10] → marker signature.
+#   Flash/zoom: B == 0, G encodes mode.
+#   Spread: G == 0, B > 0 encodes movement state.
 #
 #   scale=0.01 → particle lifetime = 0 (1 game tick minimum).
 #   Flash auto-expires after 1 tick.
@@ -193,7 +200,7 @@ out vec2 texCoord0;
 out vec4 vertexColor;
 
 // flat = no interpolation across quad (critical for integer flags)
-flat out int markerMode;  // 0=normal particle, 1=flash, 3=zoom x3, 4=zoom x4
+flat out int markerMode;  // 0=normal, 1=flash, 2-4=zoom, 5-9=spread
 
 // Quad corner offsets: covers a small area at the bottom-left of the screen.
 // The sizing is in NDC (not pixels), so no ScreenSize needed.
@@ -221,12 +228,22 @@ const vec2 corners[4] = vec2[4](
 //   G∈[26-80]  → zoom center-only (from 0.25, randomized to [30-63]) — no scope
 int detectMarkerMode(vec4 color) {
     ivec4 ic = ivec4(round(color * 255.0));
-    // Signature: R in [1-10] (very dim dust), B must be 0
-    if (ic.r >= 1 && ic.r <= 10 && ic.b == 0) {
-        if (ic.g == 0) return 1;                   // Flash: G is zero
-        if (ic.g >= 1 && ic.g <= 7) return 3;      // Zoom x3: G from 0.02 → [2-5]
-        if (ic.g >= 8 && ic.g <= 25) return 4;     // Zoom x4: G from 0.08 → [10-20]
-        if (ic.g >= 26 && ic.g <= 80) return 2;    // Zoom center-only: G from 0.25 → [30-63]
+    // Signature: R in [1-10] (very dim dust)
+    if (ic.r >= 1 && ic.r <= 10) {
+        if (ic.b == 0) {
+            // Flash/zoom markers: B==0, G encodes mode
+            if (ic.g == 0) return 1;                   // Flash: G is zero
+            if (ic.g >= 1 && ic.g <= 7) return 3;      // Zoom x3: G from 0.02 → [2-5]
+            if (ic.g >= 8 && ic.g <= 25) return 4;     // Zoom x4: G from 0.08 → [10-20]
+            if (ic.g >= 26 && ic.g <= 80) return 2;    // Zoom center-only: G from 0.25 → [30-63]
+        } else if (ic.g == 0) {
+            // Crosshair spread markers: G==0, B>0 encodes movement state
+            if (ic.b >= 1 && ic.b <= 5) return 5;     // Sneak: B from 0.02 → [2-5]
+            if (ic.b >= 6 && ic.b <= 14) return 6;    // Base: B from 0.05 → [6-13]
+            if (ic.b >= 15 && ic.b <= 33) return 7;   // Walk: B from 0.12 → [15-31]
+            if (ic.b >= 34 && ic.b <= 72) return 8;   // Sprint: B from 0.28 → [34-71]
+            if (ic.b >= 73) return 9;                  // Jump: B from 0.60 → [73-153]
+        }
     }
     return 0;  // Not a marker
 }
@@ -239,7 +256,7 @@ void main() {
         // REDIRECT marker quad to bottom-left corner using FIXED NDC.
         // Both flash and zoom use the same NDC quad covering the corner.
         // The FRAGMENT shader discriminates: flash writes pixel (0,0),
-        // zoom writes pixel (1,0), everything else is discarded.
+        // zoom writes pixel (1,0), spread writes pixel (2,0).
         vec2 base = vec2(-1.0, -1.0);
         vec2 size = vec2(MARKER_NDC_SIZE);
 
@@ -281,7 +298,7 @@ in float sphericalVertexDistance;
 in float cylindricalVertexDistance;
 in vec2 texCoord0;
 in vec4 vertexColor;
-flat in int markerMode;  // 0=normal, 1=flash, 3=zoom x3, 4=zoom x4
+flat in int markerMode;  // 0=normal, 1=flash, 2-4=zoom, 5-9=spread
 
 out vec4 fragColor;
 
@@ -294,11 +311,13 @@ void main() {
         // We ONLY write the sentinel at the exact target pixel;
         // all other fragments are discarded to avoid overwriting scene.
         //   Flash    → pixel (0, 0)
-        //   Zoom x2  → pixel (1, 0)  (G=2, no-scope center-only)
-        //   Zoom x3  → pixel (1, 0)  (G=3)
-        //   Zoom x4  → pixel (1, 0)  (G=4)
+        //   Zoom 2-4 → pixel (1, 0)
+        //   Spread 5-9 → pixel (2, 0)
         ivec2 fc = ivec2(gl_FragCoord.xy);
-        ivec2 target = (markerMode == 1) ? ivec2(0, 0) : ivec2(1, 0);
+        ivec2 target;
+        if (markerMode == 1) target = ivec2(0, 0);       // Flash
+        else if (markerMode >= 5) target = ivec2(2, 0);  // Spread
+        else target = ivec2(1, 0);                        // Zoom (2, 3, 4)
         if (fc != target) {
             discard;
         }
@@ -350,13 +369,19 @@ void main() {
     bool zoomActive  = (p4.r == MARKER_RED && p4.b == 0 && p4.a == 255 && (p4.g == 2 || p4.g == 3 || p4.g == 4));
     int zoomLevel = zoomActive ? p4.g : 0;  // 2=center-only, 3=x3 scope, 4=x4 scope
 
-    // R = flash, G = zoom, B = zoom level (3 or 4) / 255.
-    // flash.fsh reads R, zoom.fsh reads G and B.
+    // Spread (crosshair) sentinel at pixel (2, 0)
+    ivec4 p_spread = ivec4(round(texelFetch(MainSampler, ivec2(2, 0), 0) * 255.0));
+    bool spreadActive = (p_spread.r == MARKER_RED && p_spread.b == 0 && p_spread.a == 255
+                         && p_spread.g >= 5 && p_spread.g <= 9);
+    int spreadLevel = spreadActive ? (p_spread.g - 5) : 1;  // 0-4, default 1 (base)
+
+    // R = flash, G = zoom, B = zoom level / 255, A = spread level / 255.
+    // flash.fsh reads R, zoom.fsh reads G, B, and A.
     fragColor = vec4(
         flashActive ? 1.0 : 0.0,
         zoomActive ? 1.0 : 0.0,
         float(zoomLevel) / 255.0,
-        1.0
+        float(spreadLevel) / 255.0
     );
 }
 """
@@ -693,6 +718,37 @@ void main() {
         if (screenCoord.x > lb.x && screenCoord.y > lb.y &&
             screenCoord.x < ub.x && screenCoord.y < ub.y) {
             fragColor += texture(SparkTexSampler, (screenCoord - lb) / sd + spriteOffset);
+        }
+    }
+
+    // ── Custom crosshair (vanilla crosshair is transparent) ──
+    // Draw a crosshair using color inversion (like vanilla) when NOT zooming.
+    // The vanilla crosshair texture is replaced with a transparent one, so the shader
+    // handles all crosshair rendering. Hidden during zoom for clean scope view.
+    // Spread level (from classify A): 0=sneak, 1=base, 2=walk, 3=sprint, 4=jump
+    if (!zoomMode) {
+        int spreadLevel = int(round(classifyData.a * 255.0));  // 0-4
+
+        // Gap/arm size arrays indexed by spread level (0=tightest, 4=widest)
+        int gaps[5] = int[5](3, 6, 10, 14, 18);
+        int ends[5] = int[5](9, 12, 16, 20, 24);
+        int idx = clamp(spreadLevel, 0, 4);
+        int gap = gaps[idx];
+        int armEnd = ends[idx];
+
+        ivec2 center = ivec2(inSize) / 2;
+        ivec2 fc = ivec2(gl_FragCoord.xy);
+        int dx = fc.x - center.x;
+        int dy = fc.y - center.y;
+
+        // Horizontal arm: y == center, |x - center| in [gap, armEnd]
+        bool hArm = (dy == 0) && (abs(dx) >= gap && abs(dx) <= armEnd);
+        // Vertical arm: x == center, |y - center| in [gap, armEnd]
+        bool vArm = (dx == 0) && (abs(dy) >= gap && abs(dy) <= armEnd);
+
+        if (hArm || vArm) {
+            // Invert colors at crosshair pixels (same visual effect as vanilla INVERT blend)
+            fragColor.rgb = vec3(1.0) - fragColor.rgb;
         }
     }
 
