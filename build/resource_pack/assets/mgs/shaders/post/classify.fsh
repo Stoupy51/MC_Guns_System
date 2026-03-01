@@ -3,11 +3,13 @@
 // Dust is OPAQUE → renders to minecraft:main (not minecraft:particles).
 // ParticleFeatureRenderer.renderSolid() targets the main framebuffer.
 uniform sampler2D MainSampler;
+uniform sampler2D SmoothSpreadSampler;  // Previous frame's smooth spread (persistent feedback)
 
 in vec2 texCoord;
 out vec4 fragColor;
 
 #define MARKER_RED 254
+#define SPREAD_LERP_SPEED 0.15  // Per-frame interpolation (~10 frames for 90% convergence at 60fps)
 
 void main() {
     // Read the exact sentinel pixels from MAIN (where opaque dust renders).
@@ -27,12 +29,17 @@ void main() {
                          && p_spread.g >= 5 && p_spread.g <= 9);
     int spreadLevel = spreadActive ? (p_spread.g - 5) : 1;  // 0-4, default 1 (base)
 
-    // R = flash, G = zoom, B = zoom level / 255, A = spread level / 255.
+    // Smooth interpolation: read previous frame's smooth spread from persistent buffer
+    float prevSmooth = texture(SmoothSpreadSampler, vec2(0.5, 0.5)).r;
+    float targetSpread = float(spreadLevel) / 4.0;  // Normalize to [0.0, 1.0] for 8-bit precision
+    float smoothSpread = mix(prevSmooth, targetSpread, SPREAD_LERP_SPEED);
+
+    // R = flash, G = zoom, B = zoom level / 255, A = smooth spread [0.0-1.0] (maps to levels 0-4).
     // flash.fsh reads R, zoom.fsh reads G, B, and A.
     fragColor = vec4(
         flashActive ? 1.0 : 0.0,
         zoomActive ? 1.0 : 0.0,
         float(zoomLevel) / 255.0,
-        float(spreadLevel) / 255.0
+        smoothSpread
     );
 }
