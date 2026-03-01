@@ -48,6 +48,9 @@ execute if score #fire_mode_is_burst {ns}.data matches 1 run scoreboard players 
 
 # Auto mode: allow continuous fire (no blocking)
 
+# Set cooldown (moved here from common.py so semi-auto check happens before cooldown is set)
+execute store result score @s {ns}.cooldown run data get storage {ns}:gun all.stats.{COOLDOWN}
+
 # Route to the appropriate firing method (projectile or hitscan)
 function {ns}:v{version}/player/fire_weapon
 """)

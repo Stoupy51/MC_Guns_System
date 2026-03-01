@@ -20,9 +20,6 @@ execute if score @s mgs.pending_clicks matches ..-1 run return fail
 execute unless data storage mgs:gun all.gun run return fail
 execute if score @s mgs.remaining_bullets matches ..0 run return run function mgs:v5.0.0/ammo/reload
 
-# Set cooldown
-execute store result score @s mgs.cooldown run data get storage mgs:gun all.stats.cooldown
-
 # Determine number of bullets to fire based on fire mode and held-click state
 scoreboard players set #bullets_to_fire mgs.data 1
 
@@ -44,6 +41,9 @@ execute if score #fire_mode_is_burst mgs.data matches 1 if score @s mgs.burst_co
 execute if score #fire_mode_is_burst mgs.data matches 1 run scoreboard players add @s mgs.burst_count 1
 
 # Auto mode: allow continuous fire (no blocking)
+
+# Set cooldown (moved here from common.py so semi-auto check happens before cooldown is set)
+execute store result score @s mgs.cooldown run data get storage mgs:gun all.stats.cooldown
 
 # Route to the appropriate firing method (projectile or hitscan)
 function mgs:v5.0.0/player/fire_weapon
