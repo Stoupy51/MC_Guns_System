@@ -15,7 +15,7 @@ uniform sampler2D WeatherDepthSampler;
 
 in vec2 texCoord;
 
-#define DEBUG 1
+#define DEBUG 0
 
 vec4 color_layers[6] = vec4[](vec4(0.0), vec4(0.0), vec4(0.0), vec4(0.0), vec4(0.0), vec4(0.0));
 float depth_layers[6] = float[](0, 0, 0, 0, 0, 0);

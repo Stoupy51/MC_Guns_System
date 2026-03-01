@@ -11,7 +11,7 @@ layout(std140) uniform ZoomConfig {
 in vec2 texCoord;
 out vec4 fragColor;
 
-#define DEBUG 1
+#define DEBUG 0
 #define RADIUS 0.14
 
 // Flash spark sprite sheet: 3x3 grid of 9 different flash sprites (1536x1536 total)

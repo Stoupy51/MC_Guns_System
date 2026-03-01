@@ -13,7 +13,7 @@ flat in int markerMode;  // 0=normal, 1=flash, 3=zoom x3, 4=zoom x4
 
 out vec4 fragColor;
 
-#define DEBUG 1
+#define DEBUG 0
 
 void main() {
     if (markerMode > 0) {

@@ -12,7 +12,7 @@ scoreboard players set #is_water mgs.data 0
 scoreboard players set #is_pass_through mgs.data 0
 execute if block ~ ~ ~ #bs.hitbox:can_pass_through run scoreboard players set #is_pass_through mgs.data 1
 execute if block ~ ~ ~ #mgs:v5.0.0/sounds/water run scoreboard players set #is_water mgs.data 1
-function #bs.block:get_block
+function #bs.block:get_type
 data modify storage mgs:temp block set from storage bs:out block
 #tellraw @a {"nbt":"block","storage":"mgs:temp","interpret":false}
 

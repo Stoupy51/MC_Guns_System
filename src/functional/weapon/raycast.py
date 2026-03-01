@@ -171,7 +171,7 @@ scoreboard players set #is_water {ns}.data 0
 scoreboard players set #is_pass_through {ns}.data 0
 execute if block ~ ~ ~ #bs.hitbox:can_pass_through run scoreboard players set #is_pass_through {ns}.data 1
 execute if block ~ ~ ~ #{ns}:v{version}/sounds/water run scoreboard players set #is_water {ns}.data 1
-function #bs.block:get_block
+function #bs.block:get_type
 data modify storage {ns}:temp block set from storage bs:out block
 #tellraw @a {{"nbt":"block","storage":"{ns}:temp","interpret":false}}
 
