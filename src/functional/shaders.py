@@ -285,7 +285,7 @@ flat in int markerMode;  // 0=normal, 1=flash, 3=zoom x3, 4=zoom x4
 
 out vec4 fragColor;
 
-#define DEBUG 1
+#define DEBUG 0
 
 void main() {
     if (markerMode > 0) {
@@ -383,7 +383,7 @@ uniform sampler2D WeatherDepthSampler;
 
 in vec2 texCoord;
 
-#define DEBUG 1
+#define DEBUG 0
 
 vec4 color_layers[6] = vec4[](vec4(0.0), vec4(0.0), vec4(0.0), vec4(0.0), vec4(0.0), vec4(0.0));
 float depth_layers[6] = float[](0, 0, 0, 0, 0, 0);
@@ -519,7 +519,7 @@ layout(std140) uniform FlashConfig {
 in vec2 texCoord;
 out vec4 fragColor;
 
-#define DEBUG 1
+#define DEBUG 0
 #define INTENSITY 1.5
 #define MAXDIST 20.0
 #define NEAR 0.1
@@ -592,7 +592,7 @@ layout(std140) uniform ZoomConfig {
 in vec2 texCoord;
 out vec4 fragColor;
 
-#define DEBUG 1
+#define DEBUG 0
 #define RADIUS 0.14
 
 // Flash spark sprite sheet: 3x3 grid of 9 different flash sprites (1536x1536 total)

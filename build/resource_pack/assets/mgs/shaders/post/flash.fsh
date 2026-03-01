@@ -11,7 +11,7 @@ layout(std140) uniform FlashConfig {
 in vec2 texCoord;
 out vec4 fragColor;
 
-#define DEBUG 1
+#define DEBUG 0
 #define INTENSITY 1.5
 #define MAXDIST 20.0
 #define NEAR 0.1

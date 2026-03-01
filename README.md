@@ -8,8 +8,53 @@
 Credits for resources: MGS 4.2 by TheBradqq
 
 # TODO:
-- Shaders stuff
-- Try to fix the flash bug, and make them make light
-- Hitmaker sound (can be enabled with /trigger)
+- To fix:
+  - In S fire mode, if you shoot, then don't hold button, and start holding again : when cooldown reaches 0, it set you again to max cooldown without shooting. (Mistakenly thought you were holding right click the whole time which is not the case)
+- Crosshair : Figure out how to hide it only when zooming with a gun.
+- When zooming (scope or not) : Lower FOV smoothly using shaders
+- Add grenades (frag, semtex, smoke, flash) : https://docs.mcbookshelf.dev/en/master/modules/move/ <- Apply velocity with bounce and keep physics
+  - (Need to add items to definitions and custom models)
+  - Frag: explodes after 4 seconds (by default, coded in item nbt "stats" part like guns would), damage also coded like RPG in nbt
+  - Semtex: Same as frag but stick to blocks and entities
+  - Smoke: creates a smoke cloud that blocks vision for 10 seconds (using particles, and duration coded in nbt)
+  - Flash: blinds players in a radius for 5 seconds (using title with fade in and out, and duration coded in nbt, using a custom font which is a big big white square in the middle of the screen) (ex: https://github.com/Paralya/Switch/blob/main/src/special_fonts/utils.py)
+- Hitmaker sound (can be toggled with /trigger, default = false so only OG players will enable it) (not in sounds folder yet, need to download)
+- Global constants for things:
+  - RPG Explosion destroying blocks (/function realistic_explosion:explode) (global constant RPG_EXPLOSION_POWER in score mgs.config with default value of 0) (explosion power: https://github.com/Stoupy51/RealisticExplosionLibrary/blob/main/data/realistic_explosion/function/explosion/main.mcfunction)
+  - Grenade Explosion destroying blocks (/function realistic_explosion:explode) (global constant GRENADE_EXPLOSION_POWER in score mgs.config with default value of 0)
+  - Instant kill (excluding entities with {ns}.no_instant_kill tag) (used for zombies bonus) (per player: score {ns}.special.instant_kill (which is a duration time in ticks))
+  - Infinite ammo (don't consume ammo when shooting) (used for testing, and a zombies bonus) (per player: score {ns}.special.infinite_ammo with value 1 or 0)
+  - Quick Reload (reload <score>% faster) (used for quick reload perk in zombies) (per player: score {ns}.special.quick_reload with value in % so 20 means 20% faster reload time, 50 means 50% faster, etc.)
+  - etc.
+- Compatibility & Developement:
+  - Call function tags for various events (#mgs:signals/<event>):
+    - on_hit_entity: when a bullet hits an entity (with hit data in storage)
+    - on_hit_block: when a bullet hits a block (with hit data in storage)
+    - on_shoot: when a weapon is shot (with weapon and player data in storage)
+    - on_reload: when a weapon is reloaded (with weapon and player data in storage)
+    - on_zoom: when a player starts zooming (with weapon and player data in storage)
+    - on_unzoom: when a player stops zooming (with weapon and player data in storage)
+    - on_switch: when a player switches weapon (with new weapon and player data in storage)
+    - on_kill: when a player kills an entity (with victim and killer data in storage)
+    - on_damaged: when a player damages an entity (with victim and damager data in storage)
+    - etc.
+    - Ideally one for each thing that can happen in the system even if you don't think someone would use it. (Would be useful for custom gamemodes, achievements, etc.)
+  - Add a multiplayer mode (mgs:multiplayer/*):
+    - Gamemodes like team deathmatch, capture the flag, free for all, etc.
+    - Dynamic map definitions (spawning points in storage, called on load with function tag #mgs:multiplayer/register_maps etc.)
+    - Dynamic classes definitions (in storage, called on load with function tag #mgs:multiplayer/register_classes etc. With default classes before calling the function tag so if nobody uses it, there is still something!)
+  - Add a whole zombies mode (mgs:zombies/*):
+    - Dynamic map definitions (in storage, called on load with function tag #mgs:zombies/register_maps etc.) with:
+      - Spawning points for players, zombies
+      - Weapon wallbuys
+      - Doors positions, states, prices
+      - Traps positions, types
+      - Perks positions, types
+    - Mystery Box:
+      - Also dynamic with a base pool (storage) that can be modified with a function tag (#mgs:zombies/register_mystery_box_item).
+    - TODO: define here the todos
+- Zombies mode bonus:
+  - Max Ammo: refill every magazine to their max capacity when calling function on the player (e.g. /execute as <player> run function {ns}:zombies/bonus/max_ammo) (Have a global score that says 1: also reload weapons (recent zombies mode), 0: only refill magazines (og zombies mode))
+  - Nuke: only affects entities with {ns}.nukable : on activation, tag every entity with {ns}.nuked, attribute attack damage multiply by 0 to them, then in a loop slowly kill entities selected (1 per tick) and continue looping until no more entity with {ns}.nuked exists. Ideal would be that entities are kill with /damage, from the player who activated the nuke (so rewards correctly).
 
 
