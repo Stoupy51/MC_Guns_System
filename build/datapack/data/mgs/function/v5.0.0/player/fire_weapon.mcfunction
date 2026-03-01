@@ -7,9 +7,9 @@
 #
 
 # Shader: spawn muzzle flash marker (mode 1)
-# R=254.5/255, G=1.5/255, B=0 → particle.vsh places at pixel (0,0)
-# Flash auto-expires via alpha decay check in vsh (~2-5 ticks)
-execute at @s anchored eyes run particle minecraft:entity_effect{color:[0.99803922,0.00588235,0.0,1.0]} ^ ^ ^1 0 0 0 0 1 force @s
+# dust R=0.02, G=0, B=0 → particle.vsh detects and places at pixel (0,0)
+# scale 0.15 → ~1-6 tick lifetime → flash auto-expires when particle dies
+execute at @s anchored eyes run particle minecraft:dust{color:[0.02,0.0,0.0],scale:0.01} ^ ^ ^1 0 0 0 0 1 force @s
 
 # For weapons with pellet count, set bullets_to_fire appropriately
 execute if data storage mgs:gun all.stats.pellet_count store result score #bullets_to_fire mgs.data run data get storage mgs:gun all.stats.pellet_count

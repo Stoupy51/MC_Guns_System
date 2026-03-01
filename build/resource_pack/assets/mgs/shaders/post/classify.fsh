@@ -1,6 +1,8 @@
 #version 330
 
-uniform sampler2D ParticlesSampler;
+// Dust is OPAQUE → renders to minecraft:main (not minecraft:particles).
+// ParticleFeatureRenderer.renderSolid() targets the main framebuffer.
+uniform sampler2D MainSampler;
 
 in vec2 texCoord;
 out vec4 fragColor;
@@ -8,9 +10,11 @@ out vec4 fragColor;
 #define MARKER_RED 254
 
 void main() {
-    // Read the exact marker pixels — texelFetch = no UV math, no rounding error.
-    ivec4 p1 = ivec4(round(texelFetch(ParticlesSampler, ivec2(0, 0), 0) * 255.0));
-    ivec4 p4 = ivec4(round(texelFetch(ParticlesSampler, ivec2(2, 0), 0) * 255.0));
+    // Read the exact sentinel pixels from MAIN (where opaque dust renders).
+    // texelFetch = no UV math, no rounding error.
+    // Flash sentinel at pixel (0, 0), zoom sentinel at pixel (1, 0)
+    ivec4 p1 = ivec4(round(texelFetch(MainSampler, ivec2(0, 0), 0) * 255.0));
+    ivec4 p4 = ivec4(round(texelFetch(MainSampler, ivec2(1, 0), 0) * 255.0));
 
     // Sentinel: R == MARKER_RED, B == 0, A == 255, G == expected mode value
     bool flashActive = (p1.r == MARKER_RED && p1.b == 0 && p1.a == 255 && p1.g == 1);

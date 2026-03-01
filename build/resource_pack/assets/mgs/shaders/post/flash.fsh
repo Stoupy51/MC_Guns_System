@@ -58,7 +58,7 @@ void main() {
     fragColor = vec4(fragColor.rgb, 1.0);
 
 #if DEBUG
-    if (gl_FragCoord.x >= 50.0 && gl_FragCoord.x < 100.0 && gl_FragCoord.y < 50.0) {
+    if (gl_FragCoord.x >= 50.0 && gl_FragCoord.x < 100.0 && gl_FragCoord.y >= 5.0 && gl_FragCoord.y < 55.0) {
         fragColor = vec4(0.0, 1.0, 0.0, 1.0);  // GREEN = pass 3 runs
     }
 #endif
