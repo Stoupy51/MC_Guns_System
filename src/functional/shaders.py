@@ -351,11 +351,13 @@ CLASSIFY_FSH = """\
 // Dust is OPAQUE → renders to minecraft:main (not minecraft:particles).
 // ParticleFeatureRenderer.renderSolid() targets the main framebuffer.
 uniform sampler2D MainSampler;
+uniform sampler2D SmoothSpreadSampler;  // Previous frame's smooth spread (persistent feedback)
 
 in vec2 texCoord;
 out vec4 fragColor;
 
 #define MARKER_RED 254
+#define SPREAD_LERP_SPEED 0.15  // Per-frame interpolation (~10 frames for 90% convergence at 60fps)
 
 void main() {
     // Read the exact sentinel pixels from MAIN (where opaque dust renders).
@@ -375,20 +377,46 @@ void main() {
                          && p_spread.g >= 5 && p_spread.g <= 9);
     int spreadLevel = spreadActive ? (p_spread.g - 5) : 1;  // 0-4, default 1 (base)
 
-    // R = flash, G = zoom, B = zoom level / 255, A = spread level / 255.
+    // Smooth interpolation: read previous frame's smooth spread from persistent buffer
+    float prevSmooth = texture(SmoothSpreadSampler, vec2(0.5, 0.5)).r;
+    float targetSpread = float(spreadLevel) / 4.0;  // Normalize to [0.0, 1.0] for 8-bit precision
+    float smoothSpread = mix(prevSmooth, targetSpread, SPREAD_LERP_SPEED);
+
+    // R = flash, G = zoom, B = zoom level / 255, A = smooth spread [0.0-1.0] (maps to levels 0-4).
     // flash.fsh reads R, zoom.fsh reads G, B, and A.
     fragColor = vec4(
         flashActive ? 1.0 : 0.0,
         zoomActive ? 1.0 : 0.0,
         float(zoomLevel) / 255.0,
-        float(spreadLevel) / 255.0
+        smoothSpread
     );
 }
 """
 
 
 # ────────────────────────────────────────────────────────────────────────────
-# 4. POST-PROCESSING: TRANSPARENCY COMPOSITING
+# 4. POST-PROCESSING: SPREAD COPY (smooth spread feedback loop)
+# ────────────────────────────────────────────────────────────────────────────
+SPREAD_COPY_FSH = """\
+#version 330
+
+// Copy the smooth spread value from classify alpha to the persistent buffer.
+// This creates a one-frame delay feedback loop:
+//   classify reads smooth_spread (prev frame) → computes lerped value → writes to classify.a
+//   spread_copy reads classify.a → writes to smooth_spread (for next frame)
+uniform sampler2D ClassifySampler;
+
+in vec2 texCoord;
+out vec4 fragColor;
+
+void main() {
+    fragColor = vec4(texture(ClassifySampler, vec2(0.5, 0.5)).a, 0.0, 0.0, 1.0);
+}
+"""
+
+
+# ────────────────────────────────────────────────────────────────────────────
+# 5. POST-PROCESSING: TRANSPARENCY COMPOSITING
 # ────────────────────────────────────────────────────────────────────────────
 TRANSPARENCY_FSH = """\
 #version 330
@@ -528,7 +556,7 @@ void main() {
 
 
 # ────────────────────────────────────────────────────────────────────────────
-# 5. POST-PROCESSING: MUZZLE FLASH EFFECT
+# 6. POST-PROCESSING: MUZZLE FLASH EFFECT
 # ────────────────────────────────────────────────────────────────────────────
 FLASH_FSH = """\
 #version 330
@@ -601,7 +629,7 @@ void main() {
 
 
 # ────────────────────────────────────────────────────────────────────────────
-# 6. POST-PROCESSING: BARREL DISTORTION ZOOM
+# 7. POST-PROCESSING: BARREL DISTORTION ZOOM
 # ────────────────────────────────────────────────────────────────────────────
 ZOOM_FSH = """\
 #version 330
@@ -725,26 +753,31 @@ void main() {
     // Draw a crosshair using color inversion (like vanilla) when NOT zooming.
     // The vanilla crosshair texture is replaced with a transparent one, so the shader
     // handles all crosshair rendering. Hidden during zoom for clean scope view.
-    // Spread level (from classify A): 0=sneak, 1=base, 2=walk, 3=sprint, 4=jump
+    // Smooth spread (from classify A): 0.0=sneak → 1.0=jump, interpolated per-frame
     if (!zoomMode) {
-        int spreadLevel = int(round(classifyData.a * 255.0));  // 0-4
+        // Smooth spread value (0.0-1.0 from classify alpha, maps to levels 0-4)
+        float smoothSpread = classifyData.a * 4.0;  // 0.0-4.0
 
-        // Gap/arm size arrays indexed by spread level (0=tightest, 4=widest)
-        int gaps[5] = int[5](3, 6, 10, 14, 18);
-        int ends[5] = int[5](9, 12, 16, 20, 24);
-        int idx = clamp(spreadLevel, 0, 4);
-        int gap = gaps[idx];
-        int armEnd = ends[idx];
+        // GUI scale: approximate from screen height (~2 at 1080p, ~3 at 1440p, ~4 at 4K)
+        float guiScale = max(1.0, round(inSize.y / 540.0));
+
+        // Continuous gap/arm calculation with GUI scale
+        // Level mapping: 0→tight(sneak), 1→base, 2→walk, 3→sprint, 4→jump(widest)
+        float fGap = (1.5 + smoothSpread * 2.0) * guiScale;
+        float fEnd = fGap + 3.0 * guiScale;
+        int gap = int(round(fGap));
+        int armEnd = int(round(fEnd));
 
         ivec2 center = ivec2(inSize) / 2;
         ivec2 fc = ivec2(gl_FragCoord.xy);
         int dx = fc.x - center.x;
         int dy = fc.y - center.y;
 
-        // Horizontal arm: y == center, |x - center| in [gap, armEnd]
-        bool hArm = (dy == 0) && (abs(dx) >= gap && abs(dx) <= armEnd);
-        // Vertical arm: x == center, |y - center| in [gap, armEnd]
-        bool vArm = (dx == 0) && (abs(dy) >= gap && abs(dy) <= armEnd);
+        // Horizontal arm: |y| within line width, |x| in [gap, armEnd]
+        int lineWidth = max(1, int(round(guiScale / 2.0)));
+        bool hArm = (abs(dy) < lineWidth) && (abs(dx) >= gap && abs(dx) <= armEnd);
+        // Vertical arm: |x| within line width, |y| in [gap, armEnd]
+        bool vArm = (abs(dx) < lineWidth) && (abs(dy) >= gap && abs(dy) <= armEnd);
 
         if (hArm || vArm) {
             // Invert colors at crosshair pixels (same visual effect as vanilla INVERT blend)
@@ -783,6 +816,7 @@ def get_post_effect_json(ns: str) -> JsonDict:
     return {
         "targets": {
             "classify": {"width": 1, "height": 1, "persistent": True},
+            "smooth_spread": {"width": 1, "height": 1, "persistent": True},
             "final": {},
             "swap":  {},
         },
@@ -795,8 +829,18 @@ def get_post_effect_json(ns: str) -> JsonDict:
                 "fragment_shader": f"{ns}:post/classify",
                 "inputs": [
                     {"sampler_name": "Main", "target": "minecraft:main"},
+                    {"sampler_name": "SmoothSpread", "target": "smooth_spread"},
                 ],
                 "output": "classify",
+            },
+            # Pass 1b: SPREAD COPY - persist smooth spread for next frame's feedback loop
+            {
+                "vertex_shader":   "minecraft:core/screenquad",
+                "fragment_shader": f"{ns}:post/spread_copy",
+                "inputs": [
+                    {"sampler_name": "Classify", "target": "classify"},
+                ],
+                "output": "smooth_spread",
             },
             # Pass 2: TRANSPARENCY - Fabulous compositing (hides marker pixels)
             {
@@ -882,7 +926,8 @@ def main() -> None:
     Mem.ctx.assets["minecraft"].vertex_shaders["core/particle"]   = VertexShader(PARTICLE_VSH)
     Mem.ctx.assets["minecraft"].fragment_shaders["core/particle"] = FragmentShader(PARTICLE_FSH)
 
-    Mem.ctx.assets[ns].fragment_shaders["post/classify"]    = FragmentShader(CLASSIFY_FSH)
+    Mem.ctx.assets[ns].fragment_shaders["post/classify"]     = FragmentShader(CLASSIFY_FSH)
+    Mem.ctx.assets[ns].fragment_shaders["post/spread_copy"]  = FragmentShader(SPREAD_COPY_FSH)
     Mem.ctx.assets[ns].fragment_shaders["post/transparency"] = FragmentShader(TRANSPARENCY_FSH)
     Mem.ctx.assets[ns].fragment_shaders["post/flash"]       = FragmentShader(FLASH_FSH)
     Mem.ctx.assets[ns].fragment_shaders["post/zoom"]        = FragmentShader(ZOOM_FSH)

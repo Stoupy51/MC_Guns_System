@@ -5,6 +5,11 @@
 			"height": 1,
 			"persistent": true
 		},
+		"smooth_spread": {
+			"width": 1,
+			"height": 1,
+			"persistent": true
+		},
 		"final": {},
 		"swap": {}
 	},
@@ -13,9 +18,18 @@
 			"vertex_shader": "minecraft:core/screenquad",
 			"fragment_shader": "mgs:post/classify",
 			"inputs": [
-				{"sampler_name": "Main","target": "minecraft:main"}
+				{"sampler_name": "Main","target": "minecraft:main"},
+				{"sampler_name": "SmoothSpread","target": "smooth_spread"}
 			],
 			"output": "classify"
+		},
+		{
+			"vertex_shader": "minecraft:core/screenquad",
+			"fragment_shader": "mgs:post/spread_copy",
+			"inputs": [
+				{"sampler_name": "Classify","target": "classify"}
+			],
+			"output": "smooth_spread"
 		},
 		{
 			"vertex_shader": "minecraft:core/screenquad",

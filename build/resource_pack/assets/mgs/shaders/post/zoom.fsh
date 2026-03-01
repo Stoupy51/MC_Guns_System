@@ -119,26 +119,31 @@ void main() {
     // Draw a crosshair using color inversion (like vanilla) when NOT zooming.
     // The vanilla crosshair texture is replaced with a transparent one, so the shader
     // handles all crosshair rendering. Hidden during zoom for clean scope view.
-    // Spread level (from classify A): 0=sneak, 1=base, 2=walk, 3=sprint, 4=jump
+    // Smooth spread (from classify A): 0.0=sneak → 1.0=jump, interpolated per-frame
     if (!zoomMode) {
-        int spreadLevel = int(round(classifyData.a * 255.0));  // 0-4
+        // Smooth spread value (0.0-1.0 from classify alpha, maps to levels 0-4)
+        float smoothSpread = classifyData.a * 4.0;  // 0.0-4.0
 
-        // Gap/arm size arrays indexed by spread level (0=tightest, 4=widest)
-        int gaps[5] = int[5](3, 6, 10, 14, 18);
-        int ends[5] = int[5](9, 12, 16, 20, 24);
-        int idx = clamp(spreadLevel, 0, 4);
-        int gap = gaps[idx];
-        int armEnd = ends[idx];
+        // GUI scale: approximate from screen height (~2 at 1080p, ~3 at 1440p, ~4 at 4K)
+        float guiScale = max(1.0, round(inSize.y / 540.0));
+
+        // Continuous gap/arm calculation with GUI scale
+        // Level mapping: 0→tight(sneak), 1→base, 2→walk, 3→sprint, 4→jump(widest)
+        float fGap = (1.5 + smoothSpread * 2.0) * guiScale;
+        float fEnd = fGap + 3.0 * guiScale;
+        int gap = int(round(fGap));
+        int armEnd = int(round(fEnd));
 
         ivec2 center = ivec2(inSize) / 2;
         ivec2 fc = ivec2(gl_FragCoord.xy);
         int dx = fc.x - center.x;
         int dy = fc.y - center.y;
 
-        // Horizontal arm: y == center, |x - center| in [gap, armEnd]
-        bool hArm = (dy == 0) && (abs(dx) >= gap && abs(dx) <= armEnd);
-        // Vertical arm: x == center, |y - center| in [gap, armEnd]
-        bool vArm = (dx == 0) && (abs(dy) >= gap && abs(dy) <= armEnd);
+        // Horizontal arm: |y| within line width, |x| in [gap, armEnd]
+        int lineWidth = max(1, int(round(guiScale / 2.0)));
+        bool hArm = (abs(dy) < lineWidth) && (abs(dx) >= gap && abs(dx) <= armEnd);
+        // Vertical arm: |x| within line width, |y| in [gap, armEnd]
+        bool vArm = (abs(dx) < lineWidth) && (abs(dy) >= gap && abs(dy) <= armEnd);
 
         if (hArm || vArm) {
             // Invert colors at crosshair pixels (same visual effect as vanilla INVERT blend)
