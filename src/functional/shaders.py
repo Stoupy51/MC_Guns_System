@@ -60,7 +60,7 @@ from stewbeet import JsonDict, Mem, set_json_encoder, write_versioned_function
 # ║                    KEY DESIGN DECISIONS                                ║
 # ║                                                                        ║
 # ║  WHY dust instead of entity_effect:                                    ║
-# ║    dust's scale parameter controls lifetime (random(8-40) × scale).   ║
+# ║    dust's scale parameter controls lifetime (random(8-40) x scale).   ║
 # ║    scale=0.15 → 1-6 ticks. entity_effect has uncontrollable random   ║
 # ║    10-40 tick lifetime that makes flash linger too long.               ║
 # ║                                                                        ║
@@ -81,11 +81,11 @@ from stewbeet import JsonDict, Mem, set_json_encoder, write_versioned_function
 # ║    fsh writes the sentinel at exact gl_FragCoord pixels (0,0)/(1,0).  ║
 # ║                                                                        ║
 # ║  WHY range-based detection:                                            ║
-# ║    Dust applies a random ~0.48-1.0× color multiplier per channel      ║
-# ║    (shared 0.6-1.0 factor × per-channel 0.8-1.0 via darken()).        ║
+# ║    Dust applies a random ~0.48-1.0x color multiplier per channel      ║
+# ║    (shared 0.6-1.0 factor x per-channel 0.8-1.0 via darken()).        ║
 # ║    Input color 0.02 → vertex Color R∈[2-5] in 8-bit.                 ║
 # ║    Checking ranges (R∈[1-10], B==0) handles this randomization.       ║
-# ║    G==0 → flash, G∈[1-10] → zoom. B==0 guaranteed (0×anything=0).    ║
+# ║    G==0 → flash, G∈[1-10] → zoom. B==0 guaranteed (0xanything=0).    ║
 # ║                                                                        ║
 # ║  WHY deterministic sentinel in particle.fsh:                           ║
 # ║    The fsh writes vec4(254/255, mode/255, 0, 1) regardless of the     ║
@@ -121,8 +121,8 @@ from stewbeet import JsonDict, Mem, set_json_encoder, write_versioned_function
 # ║    [BLUE  100-150px]= zoom pass runs (orange/cyan = mode detected)     ║
 # ║    [150-200px] = flash sentinel at (0,0) (YELLOW=found, GRAY=empty)    ║
 # ║    [200-250px] = zoom sentinel at (1,0)  (YELLOW=found, GRAY=empty)    ║
-# ║    [250-300px] = amplified MAIN at (0,0) ×50                           ║
-# ║    [300-350px] = amplified MAIN at (1,0) ×50                           ║
+# ║    [250-300px] = amplified MAIN at (0,0) x50                           ║
+# ║    [300-350px] = amplified MAIN at (1,0) x50                           ║
 # ║    [350-400px] = MAIN DEPTH at (0,0)                                   ║
 # ║             GREEN=near(0), RED=far(1), YELLOW=mid                      ║
 # ║    [400-450px] = MAIN DEPTH at (1,0)                                   ║
@@ -148,7 +148,7 @@ from stewbeet import JsonDict, Mem, set_json_encoder, write_versioned_function
 #   Detection: R ∈ [1,10], B == 0 → marker signature.
 #   Mode: G == 0 → flash (mode 1), G ∈ [1,10] → zoom (mode 4).
 #
-#   scale=0.15 → particle lifetime = random(8-40) × 0.15 = 1-6 ticks.
+#   scale=0.15 → particle lifetime = random(8-40) x 0.15 = 1-6 ticks.
 #   Flash auto-expires when particle dies (no alpha threshold needed).
 #   Zoom spawned every tick → always at least one live particle.
 #
@@ -204,9 +204,9 @@ const vec2 corners[4] = vec2[4](
 #define MARKER_NDC_SIZE 0.015
 
 // Detect dust marker by color pattern.
-// Dust particles apply a random ~0.48-1.0× multiplier per channel
+// Dust particles apply a random ~0.48-1.0x multiplier per channel
 // (DustParticleBase.randomizeColor()). Input 0.02 → R ∈ [2-5] in 8-bit.
-// B==0 is guaranteed (0 × anything = 0).
+// B==0 is guaranteed (0 x anything = 0).
 // G channel determines mode: G==0 → flash, G>0 → zoom.
 int detectMarkerMode(vec4 color) {
     ivec4 ic = ivec4(round(color * 255.0));
@@ -422,8 +422,8 @@ void main() {
     //  [0-50, 5-55]   RED    = transparency pass runs
     //  [150-200]       YELLOW/GRAY = flash sentinel at (0,0)?
     //  [200-250]       YELLOW/GRAY = zoom sentinel at (1,0)?
-    //  [250-300]       Amplified MAIN at (0,0) ×50
-    //  [300-350]       Amplified MAIN at (1,0) ×50
+    //  [250-300]       Amplified MAIN at (0,0) x50
+    //  [300-350]       Amplified MAIN at (1,0) x50
     //  [350-400]       MAIN DEPTH at (0,0): GREEN=near, RED=far, YELLOW=mid
     //  [400-450]       MAIN DEPTH at (1,0): same color coding
 
@@ -444,12 +444,12 @@ void main() {
         fragColor = (dbgZoom.r == 254) ? vec4(1.0, 1.0, 1.0, 1.0) : vec4(0.1, 0.1, 0.1, 1.0);
     }
 
-    // [250-300] Amplified raw MAIN color at flash sentinel (0,0) ×50
+    // [250-300] Amplified raw MAIN color at flash sentinel (0,0) x50
     if (gl_FragCoord.x >= 250.0 && gl_FragCoord.x < 300.0 && gl_FragCoord.y >= 5.0 && gl_FragCoord.y < 55.0) {
         vec4 raw = texelFetch(MainSampler, ivec2(0, 0), 0);
         fragColor = vec4(clamp(raw.rgb * 50.0, 0.0, 1.0), 1.0);
     }
-    // [300-350] Amplified raw MAIN color at zoom sentinel (1,0) ×50
+    // [300-350] Amplified raw MAIN color at zoom sentinel (1,0) x50
     if (gl_FragCoord.x >= 300.0 && gl_FragCoord.x < 350.0 && gl_FragCoord.y >= 5.0 && gl_FragCoord.y < 55.0) {
         vec4 raw = texelFetch(MainSampler, ivec2(1, 0), 0);
         fragColor = vec4(clamp(raw.rgb * 50.0, 0.0, 1.0), 1.0);
@@ -769,13 +769,13 @@ def main() -> None:
 
     # ── Flash marker: mode 1 ──
     # dust color:[R,0,0] with R=0.02 → vsh detects R∈[1-10], G==0, B==0
-    # scale=0.15 → lifetime = random(8-40)×0.15 = 1-6 ticks (brief flash)
+    # scale=0.15 → lifetime = random(8-40)x0.15 = 1-6 ticks (brief flash)
     write_versioned_function("player/fire_weapon",
 """
 # Shader: spawn muzzle flash marker (mode 1)
 # dust R=0.02, G=0, B=0 → particle.vsh detects and places at pixel (0,0)
 # scale 0.15 → ~1-6 tick lifetime → flash auto-expires when particle dies
-execute at @s anchored eyes run particle minecraft:dust{color:[0.02,0.0,0.0],scale:0.01} ^ ^ ^1 0 0 0 0 1 force @s
+execute at @s anchored eyes run particle minecraft:dust{color:[0.02,0.0,0.0],scale:0.01} ^ ^ ^1 0 0 0 0 1 force @a[distance=..16]
 """)
 
     # ── Zoom marker: mode 4 ──
