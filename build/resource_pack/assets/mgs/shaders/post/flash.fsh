@@ -12,7 +12,6 @@ in vec2 texCoord;
 out vec4 fragColor;
 
 #define DEBUG 1
-#define MARKERS 5
 #define INTENSITY 1.5
 #define MAXDIST 20.0
 #define NEAR 0.1
@@ -28,11 +27,11 @@ float LinearizeDepth(float depth) {
 
 void main() {
     vec2 inSize = vec2(textureSize(InSampler, 0));
-    float mode = round(texture(ClassifySampler, vec2(0.5, 0.5)).r * float(MARKERS));
+    bool flashMode = texture(ClassifySampler, vec2(0.5, 0.5)).r > 0.5;
 
     fragColor = texture(InSampler, texCoord);
 
-    if (mode >= 1.0 && mode <= 3.0) {
+    if (flashMode) {
         vec2 oneTexel = 1.0 / inSize;
         float aspectRatio = inSize.x / inSize.y;
 

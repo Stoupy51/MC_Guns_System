@@ -60,77 +60,78 @@ from stewbeet import JsonDict, Mem, set_json_encoder, write_versioned_function
 # ║                                                                        ║
 # ║  WHY entity_effect instead of dust:                                    ║
 # ║    entity_effect passes RGBA directly as vertex Color attribute with   ║
-# ║    no random scaling. This allows exact 8-bit integer detection.       ║
+# ║    no random scaling. This allows reliable 8-bit integer detection.    ║
 # ║    Dust particles apply a random 0.8-1.0x multiplier that corrupts     ║
-# ║    the color values, making exact detection impossible.                ║
+# ║    the color values, making detection impossible.                      ║
+# ║                                                                        ║
+# ║  WHY range-based detection (not exact match):                          ║
+# ║    Minecraft packs float RGBA to ARGB int using floor(value * 255).   ║
+# ║    Values like 4/255=0.01568627 become floor(3.99999)=3, not 4!       ║
+# ║    Using "mid-bin" float values (e.g. 4.5/255) and range checks in    ║
+# ║    the vsh (G in [3-5] → zoom) makes detection immune to ±1 error.   ║
+# ║                                                                        ║
+# ║  WHY alpha threshold for flash:                                        ║
+# ║    entity_effect has random 10-40 tick lifetime. Alpha decays by       ║
+# ║    1/lifetime per tick. Checking A >= 230 in vsh limits the flash     ║
+# ║    sentinel to ~2-5 ticks. Stale particles (A < 230) are still        ║
+# ║    hidden (redirected to a dead pixel) but don't write sentinel data.  ║
+# ║                                                                        ║
+# ║  WHY deterministic sentinel in particle.fsh:                           ║
+# ║    The fsh writes vec4(254/255, mode/255, 0, 1) regardless of the     ║
+# ║    raw Color values. This ensures classify always reads exact integer  ║
+# ║    values via texelFetch, immune to float quantization issues.         ║
 # ║                                                                        ║
 # ║  WHY ScreenSize for pixel placement:                                   ║
 # ║    Hardcoded NDC coordinates (e.g. -0.98) map to different pixels at   ║
 # ║    different resolutions. ScreenSize (from globals.glsl) lets us       ║
 # ║    compute the exact NDC for a given pixel regardless of resolution.   ║
-# ║    This is critical: if the marker lands on the wrong pixel, classify  ║
-# ║    reads nothing and mode is always 0.                                 ║
 # ║                                                                        ║
 # ║  WHY alpha=1.0 forced in particle.fsh:                                 ║
 # ║    When alpha < 1, the GPU blends RGB channels before storing them in  ║
-# ║    the framebuffer (stored.rgb = src.a * src.rgb + ...). This corrupts ║
-# ║    the mode values. With alpha=1, stored = src exactly.                ║
-# ║    We force alpha=255 in the fsh so even aging particles work.         ║
+# ║    the framebuffer. With alpha=1, stored = src exactly.                ║
 # ║                                                                        ║
 # ║  WHY flat varyings:                                                    ║
-# ║    `flat` prevents interpolation between vertices. Without it, the     ║
-# ║    isMarker flag and iColor could be interpolated across the quad,     ║
-# ║    giving wrong values at non-vertex fragment positions.               ║
+# ║    `flat` prevents interpolation between vertices. Without it,         ║
+# ║    markerMode could be interpolated across the quad.                   ║
 # ║                                                                        ║
 # ╠════════════════════════════════════════════════════════════════════════╣
 # ║                      ⚠ REQUIREMENTS ⚠                                 ║
 # ║                                                                        ║
-# ║  • Graphics MUST be set to "Fabulous!" for the post-effect pipeline    ║
-# ║    to run. With Fancy/Fast, post_effect/transparency.json is IGNORED.  ║
-# ║                                                                        ║
-# ║  • The resource pack must be active and loaded.                        ║
-# ║                                                                        ║
-# ║  • The marker particle must be IN FRONT of the camera (not behind!)    ║
-# ║    because Minecraft frustum-culls particles outside the view frustum  ║
-# ║    BEFORE sending them to the GPU.                                     ║
+# ║  • Graphics MUST be set to "Fabulous!"                                 ║
+# ║  • Resource pack must be active and loaded.                            ║
+# ║  • Marker particle must be IN FRONT of the camera.                     ║
 # ║                                                                        ║
 # ╠════════════════════════════════════════════════════════════════════════╣
 # ║                         DEBUG MODE                                     ║
 # ║                                                                        ║
-# ║  Set DEBUG to 1 (currently ON) to show colored debug indicators:       ║
-# ║                                                                        ║
-# ║  BOTTOM-LEFT of screen, three 50x50 squares side by side:              ║
-# ║    [RED]    = transparency compositing pass (pass 2) is running        ║
-# ║    [GREEN]  = flash pass (pass 3) is running                           ║
-# ║    [BLUE]   = zoom pass (pass 4) is running                            ║
-# ║                                                                        ║
-# ║  The zoom pass square color also encodes the detected mode:            ║
-# ║    Blue   = pipeline active, no mode detected (mode 0)                 ║
-# ║    Orange = muzzle flash detected (mode 1)                             ║
-# ║    Cyan   = zoom detected (mode 4)                                     ║
+# ║  Bottom-left debug squares when DEBUG=1:                               ║
+# ║    [RED   0-50px]   = transparency pass runs                           ║
+# ║    [GREEN 50-100px] = flash pass runs                                  ║
+# ║    [BLUE  100-150px]= zoom pass runs (orange/cyan = mode detected)     ║
+# ║    [150-200px] = flash marker pixel (YELLOW=present, GRAY=empty)       ║
+# ║    [200-250px] = zoom  marker pixel (YELLOW=present, GRAY=empty)       ║
 # ║                                                                        ║
 # ╚════════════════════════════════════════════════════════════════════════╝
-#
-# FILE RELATIONSHIPS:
-#   shaders.py             → THIS FILE: generates all shaders + mcfunctions
-#   particle.vsh/fsh       → Override minecraft:core/particle (core rendering)
-#   classify.fsh           → Post pass 1: reads exact pixels → 1x1 mode
-#   transparency.fsh       → Post pass 2: composites all layers, hides marker
-#   flash.fsh              → Post pass 3: applies muzzle flash if mode 1
-#   zoom.fsh               → Post pass 4: applies barrel distortion if mode 4
-#   transparency.json      → Pipeline definition (post_effect/)
-#   fire_weapon.mcfunction → Spawns flash marker particle on each shot
-#   tick.mcfunction        → Spawns zoom marker particle each tick while ADS
 #
 # MARKER PIXEL MAP:
 #   Mode 1 (flash) → screen pixel (0, 0)   [bottom-left corner]
 #   Mode 4 (zoom)  → screen pixel (2, 0)   [2px right of corner]
 #
 # MARKER COLOR ENCODING (entity_effect RGBA):
-#   R = 254/255 = 0.99607843  → MARKER_RED signature
-#   G = mode/255              → encodes mode (1 or 4)
-#   B = 0                     → always 0 (unused, part of signature)
-#   A = 1.0                   → doesn't matter; fsh forces A=255 in output
+#   Command provides float [R, G, B, A]. Minecraft internally packs to ARGB int
+#   using floor(value * 255), so float values must be slightly ABOVE the target
+#   integer boundary to survive truncation.
+#   R = 254.5/255 = 0.99803922   → floor → 254 = MARKER_RED signature
+#   G = 1.5/255  = 0.00588235   → floor → 1   = flash mode
+#   G = 4.5/255  = 0.01764706   → floor → 4   = zoom mode
+#   B = 0                        → always 0 (part of signature)
+#   A = 1.0                      → fsh forces A=255 in output
+#
+#   vsh detects by RANGES (tolerates ±1 quantization).
+#   vsh also checks A >= 230 for flash → limits flash to ~2-5 ticks
+#   (entity_effect alpha decays each tick; stale particles still hidden).
+#   fsh writes DETERMINISTIC sentinel (R=254, G=mode, B=0, A=255)
+#   so classify always reads exact values via texelFetch.
 #
 
 
@@ -142,14 +143,6 @@ from stewbeet import JsonDict, Mem, set_json_encoder, write_versioned_function
 # ────────────────────────────────────────────────────────────────────────────
 # 1. CORE PARTICLE VERTEX SHADER
 # ────────────────────────────────────────────────────────────────────────────
-# Overrides: assets/minecraft/shaders/core/particle.vsh
-# Role: Processes ALL particle vertices. Detects our marker entity_effect
-#       particles by exact 8-bit integer color comparison (MARKER_RED=254),
-#       then REDIRECTS them to single exact pixels at the screen corner.
-#       Pixel position is calculated using ScreenSize from globals.glsl,
-#       ensuring resolution-independence.
-# Inspired by: ShaderSelectorV3 by HalbFettKaese
-#
 PARTICLE_VSH = """\
 #version 330
 
@@ -171,68 +164,61 @@ out float cylindricalVertexDistance;
 out vec2 texCoord0;
 out vec4 vertexColor;
 
-// flat: no interpolation between vertices.
-// Critical: isMarker and iColor must be identical across all 4 vertices
-// of the quad, not interpolated.
-flat out int isMarker;
-flat out ivec4 iColor;
+// flat = no interpolation across quad (critical for integer flags)
+flat out int markerMode;  // 0=normal particle, 1=flash, 4=zoom
 
-// ── Marker signature ──
-// R channel value (0-255) that identifies a marker particle.
-// Chosen to be far from any natural particle color.
-#define MARKER_RED 254
+// Alpha threshold for ACTIVATING flash mode signal.
+// entity_effect alpha decays by 1/lifetime per tick (lifetime = 10-40 ticks).
+// At 230/255 ≈ 0.902, the flash signal lasts ~2-5 ticks depending on lifetime.
+// Stale particles (mode -1) are still hidden but DON'T write the sentinel.
+#define FLASH_ALPHA_MIN 230
 
-// ── Quad corner offsets (UV space, [0,1]²) ──
-// Maps gl_VertexID % 4 → corner of the 1-pixel quad.
-// Must match Minecraft's particle quad winding order.
 const vec2 corners[4] = vec2[4](
-    vec2(0.0, 1.0),  // vertex 0: top-left
-    vec2(0.0, 0.0),  // vertex 1: bottom-left
-    vec2(1.0, 0.0),  // vertex 2: bottom-right
-    vec2(1.0, 1.0)   // vertex 3: top-right
+    vec2(0.0, 1.0),
+    vec2(0.0, 0.0),
+    vec2(1.0, 0.0),
+    vec2(1.0, 1.0)
 );
 
-// ── Pixel address for each mode ──
-// Returns the screen pixel (x, y) where the marker for this mode is placed.
-// bottom-left origin. Must match the addresses used in classify.fsh and
-// transparency.fsh.
-//   Mode 1 (flash) → pixel (0, 0)
-//   Mode 4 (zoom)  → pixel (2, 0)
 ivec2 markerPixel(int mode) {
-    if (mode == 1) return ivec2(0, 0);
-    if (mode == 4) return ivec2(2, 0);
-    return ivec2(0, 0);  // fallback (should never happen)
+    if (mode == 1) return ivec2(0, 0);  // flash → bottom-left corner
+    if (mode == 4) return ivec2(2, 0);  // zoom  → 2px right of corner
+    return ivec2(4, 0);                 // stale → hidden pixel (never read)
+}
+
+// Detect entity_effect marker by color pattern.
+// Minecraft packs float color to ARGB int using floor(value * 255),
+// so the actual vertex Color may be ±1 from the intended value.
+// We use ranges to tolerate this quantization.
+int detectMarkerMode(vec4 color) {
+    ivec4 ic = ivec4(round(color * 255.0));
+    // Signature: R near 254, B must be 0
+    if (ic.r >= 253 && ic.r <= 255 && ic.b == 0) {
+        // Flash: G should be ~1 (range [0-2] covers ±1 quantization)
+        if (ic.g >= 0 && ic.g <= 2) {
+            // Check alpha to limit flash duration:
+            // Fresh particle (A >= 230) → mode 1 (writes sentinel)
+            // Stale particle (A < 230)  → mode -1 (hidden, no sentinel)
+            return (ic.a >= FLASH_ALPHA_MIN) ? 1 : -1;
+        }
+        // Zoom: G should be ~4 (range [3-5] covers ±1 quantization)
+        if (ic.g >= 3 && ic.g <= 5) return 4;
+    }
+    return 0;  // Not a marker
 }
 
 void main() {
-    // Convert vertex Color float [0,1] → integer [0,255] for exact comparison.
-    // entity_effect particles pass RGBA directly as Color; no random scaling.
-    iColor = ivec4(round(Color * 255.0));
+    int mode = detectMarkerMode(Color);
+    markerMode = mode;
 
-    // Detect marker: R == MARKER_RED, B == 0, G > 0 (encodes mode)
-    // We do NOT check alpha here because entity_effect alpha can decrease
-    // as the particle ages. R, G, B are stable throughout the lifetime.
-    int mode = 0;
-    if (iColor.r == MARKER_RED && iColor.b == 0 && iColor.g > 0) {
-        mode = iColor.g;  // G channel directly encodes the mode (1 or 4)
-    }
-
-    // Only handle our two known modes; ignore unknown G values
-    isMarker = int(mode == 1 || mode == 4);
-
-    if (isMarker == 1) {
-        // ── Pixel-perfect placement using ScreenSize ──
-        // ScreenSize is available from globals.glsl in core shaders.
-        // This is the critical fix vs. hardcoded NDC: the same NDC value
-        // maps to different pixels at 1920x1080 vs 2560x1440 vs 1280x720.
-        // Using ScreenSize ensures the marker always lands on the EXACT
-        // pixel that classify.fsh will read.
-        ivec2 pixel = markerPixel(mode);
-        vec2 pixelSize = 2.0 / ScreenSize;          // NDC size of one pixel
-        vec2 base = vec2(-1.0) + vec2(pixel) * pixelSize;  // NDC bottom-left of pixel
+    if (mode != 0) {
+        // REDIRECT marker quad to an exact pixel using ScreenSize.
+        ivec2 pixel = markerPixel(mode);  // mode -1 → hidden pixel (4,0)
+        vec2 pixelSize = 2.0 / ScreenSize;
+        vec2 base = vec2(-1.0) + vec2(pixel) * pixelSize;
         gl_Position = vec4(base + corners[gl_VertexID % 4] * pixelSize, 0.0, 1.0);
 
-        // Zero out all other varyings — they're not needed for markers
+        // Zero out all vanilla varyings (not used for markers)
         sphericalVertexDistance = 0.0;
         cylindricalVertexDistance = 0.0;
         texCoord0 = vec2(0.0);
@@ -240,7 +226,7 @@ void main() {
         return;
     }
 
-    // ── Vanilla particle vertex processing ──
+    // Normal particle: vanilla processing
     gl_Position = ProjMat * ModelViewMat * vec4(Position, 1.0);
     sphericalVertexDistance = fog_spherical_distance(Position);
     cylindricalVertexDistance = fog_cylindrical_distance(Position);
@@ -253,20 +239,6 @@ void main() {
 # ────────────────────────────────────────────────────────────────────────────
 # 2. CORE PARTICLE FRAGMENT SHADER
 # ────────────────────────────────────────────────────────────────────────────
-# Overrides: assets/minecraft/shaders/core/particle.fsh
-# Role: For markers: writes the exact R, G, B from the original particle
-#       color with FORCED alpha=255. The alpha=255 (1.0) ensures no blending
-#       occurs with the background — stored value == written value exactly.
-#       For normal particles: vanilla behavior.
-# Sends to: particles render target (read by classify.fsh in post pipeline)
-#
-# CRITICAL — WHY FORCE ALPHA=255:
-#   GL blend equation for standard alpha: stored.rgb = src.a * src.rgb + (1-src.a) * dst.rgb
-#   With src.a = 1.0: stored.rgb = src.rgb (no change, exact)
-#   With src.a = 0.01: stored.rgb = 0.01 * src.rgb + 0.99 * dst.rgb (corrupted!)
-#   We force alpha=255 in the output so that even if the particle has aged
-#   (and its internal alpha has decayed), the written pixel is always exact.
-#
 PARTICLE_FSH = """\
 #version 330
 
@@ -279,23 +251,26 @@ in float sphericalVertexDistance;
 in float cylindricalVertexDistance;
 in vec2 texCoord0;
 in vec4 vertexColor;
-flat in int isMarker;
-flat in ivec4 iColor;
+flat in int markerMode;  // 0=normal, 1=flash, 4=zoom, -1=stale flash
 
 out vec4 fragColor;
 
 void main() {
-    if (isMarker == 1) {
-        // ── MARKER SENTINEL ──
-        // Write exact R, G, B from original particle color.
-        // Force alpha = 255/255 = 1.0 so the framebuffer stores exactly
-        // what we write (no blending corruption regardless of blend equation).
-        // classify.fsh will read this pixel and verify R==254, B==0, A==255.
-        fragColor = vec4(float(iColor.r), float(iColor.g), float(iColor.b), 255.0) / 255.0;
+    if (markerMode != 0) {
+        if (markerMode > 0) {
+            // Fresh marker: write DETERMINISTIC sentinel values.
+            // R=254/255 = signature, G=mode/255 = mode encoding, B=0, A=1.0
+            // Alpha=1.0 is critical: prevents GPU blending from corrupting RGB.
+            // classify.fsh reads these exact values via texelFetch.
+            fragColor = vec4(254.0 / 255.0, float(markerMode) / 255.0, 0.0, 1.0);
+        } else {
+            // Stale marker (mode -1): write transparent to hide pixel.
+            // Redirected to pixel (4,0) which classify never reads.
+            discard;
+        }
         return;
     }
 
-    // ── NORMAL PARTICLE RENDERING (vanilla behavior) ──
     vec4 color = texture(Sampler0, texCoord0) * vertexColor * ColorModulator;
     if (color.a < 0.1) {
         discard;
@@ -310,20 +285,6 @@ void main() {
 # ────────────────────────────────────────────────────────────────────────────
 # 3. POST-PROCESSING: CLASSIFY PASS
 # ────────────────────────────────────────────────────────────────────────────
-# File: assets/<ns>/shaders/post/classify.fsh
-# Role: Reads the particles render target at EXACT known pixel addresses
-#       and detects the marker sentinel. Outputs to a tiny 1x1 "classify"
-#       target containing the detected mode.
-# Receives from: particles target (written by particle.fsh)
-# Sends to: classify target (read by flash.fsh, zoom.fsh)
-#
-# KEY DIFFERENCE vs. old approach:
-#   Old code scanned a region (5x3 loop) and guessed where the marker might
-#   be. This failed whenever the marker landed outside the scan region due
-#   to resolution differences.
-#   New code reads EXACTLY pixel (0,0) for flash and pixel (2,0) for zoom.
-#   These are the same pixels the vsh placed the marker at (using ScreenSize).
-#
 CLASSIFY_FSH = """\
 #version 330
 
@@ -332,33 +293,20 @@ uniform sampler2D ParticlesSampler;
 in vec2 texCoord;
 out vec4 fragColor;
 
-#define MARKERS 5
 #define MARKER_RED 254
 
 void main() {
-    // ── Read the exact marker pixels ──
-    // Mode 1 (flash): placed at pixel (0, 0) by particle.vsh
-    // Mode 4 (zoom):  placed at pixel (2, 0) by particle.vsh
-    // texelFetch uses integer pixel coordinates — no UV math, no rounding error.
+    // Read the exact marker pixels — texelFetch = no UV math, no rounding error.
     ivec4 p1 = ivec4(round(texelFetch(ParticlesSampler, ivec2(0, 0), 0) * 255.0));
     ivec4 p4 = ivec4(round(texelFetch(ParticlesSampler, ivec2(2, 0), 0) * 255.0));
 
-    // ── Verify sentinel signature ──
-    // R == MARKER_RED: our unique identifier
-    // B == 0: part of signature (we never use B channel for anything else)
-    // A == 255: confirms particle.fsh wrote it (not a stale clear value)
-    // G == expected mode value: confirms this specific mode is active
+    // Sentinel: R == MARKER_RED, B == 0, A == 255, G == expected mode value
     bool flashActive = (p1.r == MARKER_RED && p1.b == 0 && p1.a == 255 && p1.g == 1);
     bool zoomActive  = (p4.r == MARKER_RED && p4.b == 0 && p4.a == 255 && p4.g == 4);
 
-    // Flash takes priority over zoom (can't do both at once)
-    float mode = 0.0;
-    if (flashActive)     mode = 1.0;
-    else if (zoomActive) mode = 4.0;
-
-    // Output: encode mode in red channel of the 1x1 target.
-    // flash.fsh and zoom.fsh read it: round(texture(...).r * MARKERS)
-    fragColor = vec4(mode / float(MARKERS), 0.0, 0.0, 1.0);
+    // Independent channels: both can be active simultaneously.
+    // R = flash, G = zoom. flash.fsh reads R, zoom.fsh reads G.
+    fragColor = vec4(flashActive ? 1.0 : 0.0, zoomActive ? 1.0 : 0.0, 0.0, 1.0);
 }
 """
 
@@ -366,15 +314,6 @@ void main() {
 # ────────────────────────────────────────────────────────────────────────────
 # 4. POST-PROCESSING: TRANSPARENCY COMPOSITING
 # ────────────────────────────────────────────────────────────────────────────
-# File: assets/<ns>/shaders/post/transparency.fsh
-# Role: Fabulous transparency compositing (merges all 6 render layers).
-#       Also HIDES the marker pixels so they're invisible in the final image.
-# Receives from: All 6 Fabulous render targets + depth buffers
-# Sends to: "final" target (read by flash.fsh)
-#
-# Marker pixels are hidden by checking gl_FragCoord against the two known
-# pixel addresses. No color-based heuristics needed.
-#
 TRANSPARENCY_FSH = """\
 #version 330
 
@@ -402,20 +341,14 @@ int active_layers = 0;
 out vec4 fragColor;
 
 void try_insert(vec4 color, float depth) {
-    if (color.a == 0.0) {
-        return;
-    }
+    if (color.a == 0.0) return;
     color_layers[active_layers] = color;
     depth_layers[active_layers] = depth;
     int jj = active_layers++;
     int ii = jj - 1;
     while (jj > 0 && depth_layers[jj] > depth_layers[ii]) {
-        float depthTemp = depth_layers[ii];
-        depth_layers[ii] = depth_layers[jj];
-        depth_layers[jj] = depthTemp;
-        vec4 colorTemp = color_layers[ii];
-        color_layers[ii] = color_layers[jj];
-        color_layers[jj] = colorTemp;
+        float depthTemp = depth_layers[ii]; depth_layers[ii] = depth_layers[jj]; depth_layers[jj] = depthTemp;
+        vec4 colorTemp  = color_layers[ii];  color_layers[ii]  = color_layers[jj];  color_layers[jj]  = colorTemp;
         jj = ii--;
     }
 }
@@ -430,37 +363,39 @@ void main() {
     active_layers = 1;
 
     try_insert(texture(TranslucentSampler, texCoord), texture(TranslucentDepthSampler, texCoord).r);
-    try_insert(texture(ItemEntitySampler, texCoord), texture(ItemEntityDepthSampler, texCoord).r);
+    try_insert(texture(ItemEntitySampler,  texCoord), texture(ItemEntityDepthSampler,  texCoord).r);
 
-    // ── PARTICLES LAYER: skip the exact marker pixels ──
-    // Marker pixels are at known fixed addresses: (0,0) and (2,0).
-    // gl_FragCoord.xy has (0.5, 0.5) at the center of pixel (0,0),
-    // so pixel (0,0) satisfies: x in [0,1), y in [0,1)
-    //    pixel (2,0) satisfies: x in [2,3), y in [0,1)
-    // No color-based heuristic needed — exact position check only.
+    // Hide the exact marker pixels at (0,0) [flash] and (2,0) [zoom]
     vec4 particleColor = texture(ParticlesSampler, texCoord);
     float particleDepth = texture(ParticlesDepthSampler, texCoord).r;
-    bool isMarkerPixel = (gl_FragCoord.y < 1.0) && (
-        (gl_FragCoord.x < 1.0) ||                                        // pixel (0,0): flash
-        (gl_FragCoord.x >= 2.0 && gl_FragCoord.x < 3.0)                  // pixel (2,0): zoom
-    );
+    bool isMarkerPixel = (gl_FragCoord.y < 1.0) &&
+        ((gl_FragCoord.x < 1.0) || (gl_FragCoord.x >= 2.0 && gl_FragCoord.x < 3.0));
     if (!isMarkerPixel) {
         try_insert(particleColor, particleDepth);
     }
 
     try_insert(texture(WeatherSampler, texCoord), texture(WeatherDepthSampler, texCoord).r);
-    try_insert(texture(CloudsSampler, texCoord), texture(CloudsDepthSampler, texCoord).r);
+    try_insert(texture(CloudsSampler,  texCoord), texture(CloudsDepthSampler,  texCoord).r);
 
     vec3 texelAccum = color_layers[0].rgb;
     for (int ii = 1; ii < active_layers; ++ii) {
         texelAccum = blend(texelAccum, color_layers[ii]);
     }
-
     fragColor = vec4(texelAccum.rgb, 1.0);
 
 #if DEBUG
     if (gl_FragCoord.x < 50.0 && gl_FragCoord.y < 50.0) {
         fragColor = vec4(1.0, 0.0, 0.0, 1.0);  // RED = pass 2 runs
+    }
+    // Diagnostic: is marker data present at expected pixel locations?
+    // YELLOW = R=254 found (marker present), DARK GRAY = empty
+    ivec4 dbgFlash = ivec4(round(texelFetch(ParticlesSampler, ivec2(0, 0), 0) * 255.0));
+    ivec4 dbgZoom  = ivec4(round(texelFetch(ParticlesSampler, ivec2(2, 0), 0) * 255.0));
+    if (gl_FragCoord.x >= 150.0 && gl_FragCoord.x < 200.0 && gl_FragCoord.y < 50.0) {
+        fragColor = (dbgFlash.r == 254) ? vec4(1.0, 1.0, 0.0, 1.0) : vec4(0.1, 0.1, 0.1, 1.0);
+    }
+    if (gl_FragCoord.x >= 200.0 && gl_FragCoord.x < 250.0 && gl_FragCoord.y < 50.0) {
+        fragColor = (dbgZoom.r == 254) ? vec4(1.0, 1.0, 0.0, 1.0) : vec4(0.1, 0.1, 0.1, 1.0);
     }
 #endif
 }
@@ -470,8 +405,6 @@ void main() {
 # ────────────────────────────────────────────────────────────────────────────
 # 5. POST-PROCESSING: MUZZLE FLASH EFFECT
 # ────────────────────────────────────────────────────────────────────────────
-# (unchanged from previous version)
-#
 FLASH_FSH = """\
 #version 330
 
@@ -487,7 +420,6 @@ in vec2 texCoord;
 out vec4 fragColor;
 
 #define DEBUG 1
-#define MARKERS 5
 #define INTENSITY 1.5
 #define MAXDIST 20.0
 #define NEAR 0.1
@@ -503,11 +435,11 @@ float LinearizeDepth(float depth) {
 
 void main() {
     vec2 inSize = vec2(textureSize(InSampler, 0));
-    float mode = round(texture(ClassifySampler, vec2(0.5, 0.5)).r * float(MARKERS));
+    bool flashMode = texture(ClassifySampler, vec2(0.5, 0.5)).r > 0.5;
 
     fragColor = texture(InSampler, texCoord);
 
-    if (mode >= 1.0 && mode <= 3.0) {
+    if (flashMode) {
         vec2 oneTexel = 1.0 / inSize;
         float aspectRatio = inSize.x / inSize.y;
 
@@ -545,8 +477,6 @@ void main() {
 # ────────────────────────────────────────────────────────────────────────────
 # 6. POST-PROCESSING: BARREL DISTORTION ZOOM
 # ────────────────────────────────────────────────────────────────────────────
-# (unchanged from previous version)
-#
 ZOOM_FSH = """\
 #version 330
 
@@ -562,7 +492,6 @@ in vec2 texCoord;
 out vec4 fragColor;
 
 #define DEBUG 1
-#define MARKERS 5
 #define RADIUS 0.14
 
 vec4 cubic(float v) {
@@ -602,11 +531,13 @@ vec4 textureBicubic(sampler2D samp, vec2 texCoords, vec2 texSize) {
 
 void main() {
     vec2 inSize = vec2(textureSize(InSampler, 0));
-    float mode = round(texture(ClassifySampler, vec2(0.5, 0.5)).r * float(MARKERS));
+    vec4 classifyData = texture(ClassifySampler, vec2(0.5, 0.5));
+    bool flashMode = classifyData.r > 0.5;
+    bool zoomMode  = classifyData.g > 0.5;
 
     fragColor = texture(InSampler, texCoord);
 
-    if (mode >= 3.5 && mode <= 4.5) {
+    if (zoomMode) {
         float aspectRatio = inSize.x / inSize.y;
         vec2 screenCoord = (texCoord - vec2(0.5)) * vec2(aspectRatio, 1.0);
 
@@ -625,10 +556,12 @@ void main() {
 
 #if DEBUG
     if (gl_FragCoord.x >= 100.0 && gl_FragCoord.x < 150.0 && gl_FragCoord.y < 50.0) {
-        if (mode >= 0.5 && mode <= 3.5) {
-            fragColor = vec4(1.0, 0.5, 0.0, 1.0);  // Orange: flash mode
-        } else if (mode >= 3.5 && mode <= 4.5) {
-            fragColor = vec4(0.0, 1.0, 1.0, 1.0);  // Cyan: zoom mode
+        if (flashMode && zoomMode) {
+            fragColor = vec4(1.0, 1.0, 1.0, 1.0);  // White: both detected
+        } else if (flashMode) {
+            fragColor = vec4(1.0, 0.5, 0.0, 1.0);  // Orange: flash only
+        } else if (zoomMode) {
+            fragColor = vec4(0.0, 1.0, 1.0, 1.0);  // Cyan: zoom only
         } else {
             fragColor = vec4(0.2, 0.2, 1.0, 1.0);  // Blue: no mode
         }
@@ -651,16 +584,14 @@ def get_post_effect_json(ns: str) -> JsonDict:
     """
     return {
         "targets": {
-            # 1x1 target storing the detected mode
             "classify": {"width": 1, "height": 1, "persistent": True},
-            # Full-screen working targets (ping-pong)
             "final": {},
-            "swap": {},
+            "swap":  {},
         },
         "passes": [
             # Pass 1: CLASSIFY - read exact marker pixels, output mode to 1x1 target
             {
-                "vertex_shader": "minecraft:core/screenquad",
+                "vertex_shader":   "minecraft:core/screenquad",
                 "fragment_shader": f"{ns}:post/classify",
                 "inputs": [
                     {"sampler_name": "Particles", "target": "minecraft:particles"},
@@ -669,27 +600,27 @@ def get_post_effect_json(ns: str) -> JsonDict:
             },
             # Pass 2: TRANSPARENCY - Fabulous compositing (hides marker pixels)
             {
-                "vertex_shader": "minecraft:core/screenquad",
+                "vertex_shader":   "minecraft:core/screenquad",
                 "fragment_shader": f"{ns}:post/transparency",
                 "inputs": [
-                    {"sampler_name": "Main",            "target": "minecraft:main"},
-                    {"sampler_name": "MainDepth",       "target": "minecraft:main",        "use_depth_buffer": True},
-                    {"sampler_name": "Translucent",     "target": "minecraft:translucent"},
-                    {"sampler_name": "TranslucentDepth","target": "minecraft:translucent",  "use_depth_buffer": True},
-                    {"sampler_name": "ItemEntity",      "target": "minecraft:item_entity"},
-                    {"sampler_name": "ItemEntityDepth", "target": "minecraft:item_entity",  "use_depth_buffer": True},
-                    {"sampler_name": "Particles",       "target": "minecraft:particles"},
-                    {"sampler_name": "ParticlesDepth",  "target": "minecraft:particles",   "use_depth_buffer": True},
-                    {"sampler_name": "Clouds",          "target": "minecraft:clouds"},
-                    {"sampler_name": "CloudsDepth",     "target": "minecraft:clouds",      "use_depth_buffer": True},
-                    {"sampler_name": "Weather",         "target": "minecraft:weather"},
-                    {"sampler_name": "WeatherDepth",    "target": "minecraft:weather",     "use_depth_buffer": True},
+                    {"sampler_name": "Main",             "target": "minecraft:main"},
+                    {"sampler_name": "MainDepth",        "target": "minecraft:main",        "use_depth_buffer": True},
+                    {"sampler_name": "Translucent",      "target": "minecraft:translucent"},
+                    {"sampler_name": "TranslucentDepth", "target": "minecraft:translucent",  "use_depth_buffer": True},
+                    {"sampler_name": "ItemEntity",       "target": "minecraft:item_entity"},
+                    {"sampler_name": "ItemEntityDepth",  "target": "minecraft:item_entity",  "use_depth_buffer": True},
+                    {"sampler_name": "Particles",        "target": "minecraft:particles"},
+                    {"sampler_name": "ParticlesDepth",   "target": "minecraft:particles",   "use_depth_buffer": True},
+                    {"sampler_name": "Clouds",           "target": "minecraft:clouds"},
+                    {"sampler_name": "CloudsDepth",      "target": "minecraft:clouds",      "use_depth_buffer": True},
+                    {"sampler_name": "Weather",          "target": "minecraft:weather"},
+                    {"sampler_name": "WeatherDepth",     "target": "minecraft:weather",     "use_depth_buffer": True},
                 ],
                 "output": "final",
             },
             # Pass 3: FLASH - depth-based muzzle flash (if mode 1)
             {
-                "vertex_shader": "minecraft:core/screenquad",
+                "vertex_shader":   "minecraft:core/screenquad",
                 "fragment_shader": f"{ns}:post/flash",
                 "inputs": [
                     {"sampler_name": "In",       "target": "final"},
@@ -705,7 +636,7 @@ def get_post_effect_json(ns: str) -> JsonDict:
             },
             # Pass 4: ZOOM - barrel distortion (if mode 4)
             {
-                "vertex_shader": "minecraft:core/screenquad",
+                "vertex_shader":   "minecraft:core/screenquad",
                 "fragment_shader": f"{ns}:post/zoom",
                 "inputs": [
                     {"sampler_name": "In",       "target": "swap", "bilinear": True},
@@ -721,7 +652,7 @@ def get_post_effect_json(ns: str) -> JsonDict:
             },
             # Pass 5: BLIT - copy final result to screen
             {
-                "vertex_shader": "minecraft:core/screenquad",
+                "vertex_shader":   "minecraft:core/screenquad",
                 "fragment_shader": "minecraft:post/blit",
                 "inputs": [
                     {"sampler_name": "In", "target": "final"},
@@ -742,57 +673,37 @@ def get_post_effect_json(ns: str) -> JsonDict:
 # ============================================================================
 
 def main() -> None:
-    """Register all shader files and write marker particle commands.
-
-    Called from link.py as main_shaders(), BEFORE main_weapon().
-    """
+    """Register all shader files and write marker particle commands."""
     ns: str = Mem.ctx.project_id
 
-    # ── Register core particle shaders (override vanilla) ──
     Mem.ctx.assets["minecraft"].vertex_shaders["core/particle"]   = VertexShader(PARTICLE_VSH)
     Mem.ctx.assets["minecraft"].fragment_shaders["core/particle"] = FragmentShader(PARTICLE_FSH)
 
-    # ── Register post-processing fragment shaders ──
     Mem.ctx.assets[ns].fragment_shaders["post/classify"]    = FragmentShader(CLASSIFY_FSH)
     Mem.ctx.assets[ns].fragment_shaders["post/transparency"] = FragmentShader(TRANSPARENCY_FSH)
     Mem.ctx.assets[ns].fragment_shaders["post/flash"]       = FragmentShader(FLASH_FSH)
     Mem.ctx.assets[ns].fragment_shaders["post/zoom"]        = FragmentShader(ZOOM_FSH)
 
-    # ── Register post-effect pipeline (overrides vanilla transparency) ──
     Mem.ctx.assets["minecraft"].post_effects["transparency"] = set_json_encoder(PostEffect(get_post_effect_json(ns)))
 
-    # ── Datapack: spawn marker particles ──
-    #
-    # We use entity_effect particles instead of dust because:
-    #   - entity_effect passes RGBA directly as vertex Color (no random scaling)
-    #   - Values survive as exact 8-bit integers in the GPU
-    #   - Dust applies a random 0.8-1.0x multiplier, corrupting color values
-    #
-    # MARKER COLOR ENCODING:
-    #   R = 254/255 = 0.99607843  → MARKER_RED (signature)
-    #   G = mode/255              → mode 1 = 0.00392157, mode 4 = 0.01568627
-    #   B = 0.0                   → signature (always 0)
-    #   A = 1.0                   → not checked in vsh (may degrade with age)
-    #
-    # PIXEL PLACEMENT (handled by particle.vsh using ScreenSize):
-    #   Mode 1 (flash) → screen pixel (0, 0)
-    #   Mode 4 (zoom)  → screen pixel (2, 0)
-    #
-    # The particle MUST be IN FRONT of the camera (^ ^ ^1, not ^ ^ ^-500)!
-
-    # ── Flash marker: mode 1 (G = 1/255 = 0.00392157) ──
+    # ── Flash marker: mode 1 ──
+    # R=254.5/255, G=1.5/255 → "mid-bin" values survive floor truncation
+    # entity_effect alpha decays; vsh only activates flash for A >= 230 (~2-5 ticks)
     write_versioned_function("player/fire_weapon",
 """
 # Shader: spawn muzzle flash marker (mode 1)
-# entity_effect: R=254/255, G=1/255, B=0, A=1 → detected by particle.vsh → placed at pixel (0,0)
-execute at @s anchored eyes run particle minecraft:entity_effect{color:[0.99607843,0.00392157,0.0,1.0],scale:1f} ^ ^ ^1 0 0 0 0 1 force @s
+# R=254.5/255, G=1.5/255, B=0 → particle.vsh places at pixel (0,0)
+# Flash auto-expires via alpha decay check in vsh (~2-5 ticks)
+execute at @s anchored eyes run particle minecraft:entity_effect{color:[0.99803922,0.00588235,0.0,1.0]} ^ ^ ^1 0 0 0 0 1 force @s
 """)
 
-    # ── Zoom marker: mode 4 (G = 4/255 = 0.01568627) ──
+    # ── Zoom marker: mode 4 ──
+    # R=254.5/255, G=4.5/255 → "mid-bin" values survive floor truncation
+    # Spawned every tick while ADS is active
     write_versioned_function("player/tick",
 f"""
 # Shader: spawn zoom marker (mode 4)
-# entity_effect: R=254/255, G=4/255, B=0, A=1 → detected by particle.vsh → placed at pixel (2,0)
-execute if score @s {ns}.zoom matches 1 at @s anchored eyes run particle minecraft:entity_effect{{color:[0.99607843,0.01568627,0.0,1.0],scale:1f}} ^ ^ ^1 0 0 0 0 1 force @s
+# R=254.5/255, G=4.5/255, B=0 → particle.vsh places at pixel (2,0)
+execute if score @s {ns}.zoom matches 1 at @s anchored eyes run particle minecraft:entity_effect{{color:[0.99803922,0.01764706,0.0,1.0]}} ^ ^ ^1 0 0 0 0 1 force @s
 """)
 
