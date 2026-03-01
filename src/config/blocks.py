@@ -339,7 +339,7 @@ def main() -> None:
         "#minecraft:flowers",
         "#minecraft:saplings",
         "#minecraft:replaceable",
-        "#minecraft:bamboo_plantable_on",
+        "#minecraft:supports_bamboo",
         "minecraft:short_grass",
         "minecraft:tall_grass",
         "minecraft:seagrass",

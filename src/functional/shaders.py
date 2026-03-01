@@ -1,5 +1,4 @@
 
-# ruff: noqa: E501
 # Imports
 from beet import FragmentShader, PostEffect, Texture, VertexShader
 from stewbeet import JsonDict, Mem, set_json_encoder, write_versioned_function
@@ -19,12 +18,12 @@ from stewbeet import JsonDict, Mem, set_json_encoder, write_versioned_function
 # ║  1. DATAPACK spawns a dust particle in front of the player             ║
 # ║     with a specific color encoding the mode.                           ║
 # ║     → fire_weapon.mcfunction  (flash marker, mode 1)                   ║
-# ║     → tick.mcfunction         (zoom marker, mode 4)                    ║
+# ║     → zoom/main.mcfunction    (zoom marker, mode 3/4)                  ║
 # ║                                                                        ║
 # ║  2. CORE PARTICLE SHADER (particle.vsh) intercepts ALL particles.      ║
 # ║     It detects our marker by range-based color pattern detection.      ║
-# ║     R∈[1-10] with B==0 identifies our marker (dust is very dim).      ║
-# ║     G==0 → flash (mode 1), G∈[1-10] → zoom (mode 4).                 ║
+# ║     R∈[1-10] with B==0 identifies our marker (dust is very dim).       ║
+# ║     G==0 → flash (mode 1), G∈[1-10] → zoom (mode 4).                   ║
 # ║     Detected markers are REDIRECTED to a small quad at the             ║
 # ║     bottom-left of the screen using fixed NDC coordinates.             ║
 # ║     The fsh only writes the sentinel at EXACT gl_FragCoord pixels:     ║
@@ -62,8 +61,8 @@ from stewbeet import JsonDict, Mem, set_json_encoder, write_versioned_function
 # ║                    KEY DESIGN DECISIONS                                ║
 # ║                                                                        ║
 # ║  WHY dust instead of entity_effect:                                    ║
-# ║    dust's scale parameter controls lifetime (random(8-40) x scale).   ║
-# ║    scale=0.15 → 1-6 ticks. entity_effect has uncontrollable random   ║
+# ║    dust's scale parameter controls lifetime (random(8-40) x scale).    ║
+# ║    scale=0.15 → 1-6 ticks. entity_effect has uncontrollable random     ║
 # ║    10-40 tick lifetime that makes flash linger too long.               ║
 # ║                                                                        ║
 # ║  WHY classify reads from main (not particles):                         ║
@@ -77,20 +76,20 @@ from stewbeet import JsonDict, Mem, set_json_encoder, write_versioned_function
 # ║  WHY fixed NDC instead of ScreenSize:                                  ║
 # ║    The Globals UBO (which provides ScreenSize) is NOT bound for the    ║
 # ║    particle pipeline. PARTICLE_SNIPPET builds from MATRICES_FOG only,  ║
-# ║    without GLOBALS_SNIPPET. ScreenSize reads as vec2(0,0) → dividing  ║
-# ║    by zero gives infinity → marker at infinity → clipped → no output. ║
+# ║    without GLOBALS_SNIPPET. ScreenSize reads as vec2(0,0) → dividing   ║
+# ║    by zero gives infinity → marker at infinity → clipped → no output.  ║
 # ║    Instead, we use fixed NDC coordinates for the marker quad and the   ║
-# ║    fsh writes the sentinel at exact gl_FragCoord pixels (0,0)/(1,0).  ║
+# ║    fsh writes the sentinel at exact gl_FragCoord pixels (0,0)/(1,0).   ║
 # ║                                                                        ║
 # ║  WHY range-based detection:                                            ║
-# ║    Dust applies a random ~0.48-1.0x color multiplier per channel      ║
-# ║    (shared 0.6-1.0 factor x per-channel 0.8-1.0 via darken()).        ║
-# ║    Input color 0.02 → vertex Color R∈[2-5] in 8-bit.                 ║
-# ║    Checking ranges (R∈[1-10], B==0) handles this randomization.       ║
-# ║    G==0 → flash, G∈[1-10] → zoom. B==0 guaranteed (0xanything=0).    ║
+# ║    Dust applies a random ~0.48-1.0x color multiplier per channel       ║
+# ║    (shared 0.6-1.0 factor x per-channel 0.8-1.0 via darken()).         ║
+# ║    Input color 0.02 → vertex Color R∈[2-5] in 8-bit.                   ║
+# ║    Checking ranges (R∈[1-10], B==0) handles this randomization.        ║
+# ║    G==0 → flash, G∈[1-10] → zoom. B==0 guaranteed (0xanything=0).      ║
 # ║                                                                        ║
 # ║  WHY deterministic sentinel in particle.fsh:                           ║
-# ║    The fsh writes vec4(254/255, mode/255, 0, 1) regardless of the     ║
+# ║    The fsh writes vec4(254/255, mode/255, 0, 1) regardless of the      ║
 # ║    raw Color values. This ensures classify always reads exact integer  ║
 # ║    values via texelFetch, immune to dust's color randomization.        ║
 # ║                                                                        ║
@@ -145,6 +144,8 @@ from stewbeet import JsonDict, Mem, set_json_encoder, write_versioned_function
 #
 #   Flash: color:[0.02, 0.0, 0.0], scale:0.01
 #     R ∈ [2-5] after randomization, G = 0, B = 0
+#   Zoom center-only (no scope): color:[0.02, 0.25, 0.0], scale:0.01
+#     R ∈ [2-5] after randomization, G ∈ [30-63], B = 0
 #   Zoom x3: color:[0.02, 0.02, 0.0], scale:0.01
 #     R ∈ [2-5] after randomization, G ∈ [2-5], B = 0
 #   Zoom x4: color:[0.02, 0.08, 0.0], scale:0.01
@@ -152,7 +153,7 @@ from stewbeet import JsonDict, Mem, set_json_encoder, write_versioned_function
 #
 #   Detection: R ∈ [1,10], B == 0 → marker signature.
 #   Mode: G == 0 → flash (mode 1), G ∈ [1,7] → zoom x3 (mode 3),
-#         G ∈ [8,25] → zoom x4 (mode 4).
+#         G ∈ [8,25] → zoom x4 (mode 4), G ∈ [26,80] → zoom center-only (mode 2).
 #
 #   scale=0.01 → particle lifetime = 0 (1 game tick minimum).
 #   Flash auto-expires after 1 tick.
@@ -217,13 +218,15 @@ const vec2 corners[4] = vec2[4](
 //   G==0        → flash (mode 1)
 //   G∈[1-7]    → zoom x3 (from 0.02, randomized to [2-5])
 //   G∈[8-25]   → zoom x4 (from 0.08, randomized to [10-20])
+//   G∈[26-80]  → zoom center-only (from 0.25, randomized to [30-63]) — no scope
 int detectMarkerMode(vec4 color) {
     ivec4 ic = ivec4(round(color * 255.0));
     // Signature: R in [1-10] (very dim dust), B must be 0
     if (ic.r >= 1 && ic.r <= 10 && ic.b == 0) {
-        if (ic.g == 0) return 1;                  // Flash: G is zero
-        if (ic.g >= 1 && ic.g <= 7) return 3;     // Zoom x3: G from 0.02 → [2-5]
-        if (ic.g >= 8 && ic.g <= 25) return 4;    // Zoom x4: G from 0.08 → [10-20]
+        if (ic.g == 0) return 1;                   // Flash: G is zero
+        if (ic.g >= 1 && ic.g <= 7) return 3;      // Zoom x3: G from 0.02 → [2-5]
+        if (ic.g >= 8 && ic.g <= 25) return 4;     // Zoom x4: G from 0.08 → [10-20]
+        if (ic.g >= 26 && ic.g <= 80) return 2;    // Zoom center-only: G from 0.25 → [30-63]
     }
     return 0;  // Not a marker
 }
@@ -291,6 +294,7 @@ void main() {
         // We ONLY write the sentinel at the exact target pixel;
         // all other fragments are discarded to avoid overwriting scene.
         //   Flash    → pixel (0, 0)
+        //   Zoom x2  → pixel (1, 0)  (G=2, no-scope center-only)
         //   Zoom x3  → pixel (1, 0)  (G=3)
         //   Zoom x4  → pixel (1, 0)  (G=4)
         ivec2 fc = ivec2(gl_FragCoord.xy);
@@ -343,8 +347,8 @@ void main() {
 
     // Sentinel: R == MARKER_RED, B == 0, A == 255, G == expected mode value
     bool flashActive = (p1.r == MARKER_RED && p1.b == 0 && p1.a == 255 && p1.g == 1);
-    bool zoomActive  = (p4.r == MARKER_RED && p4.b == 0 && p4.a == 255 && (p4.g == 3 || p4.g == 4));
-    int zoomLevel = zoomActive ? p4.g : 0;  // 3 for x3 zoom, 4 for x4 zoom
+    bool zoomActive  = (p4.r == MARKER_RED && p4.b == 0 && p4.a == 255 && (p4.g == 2 || p4.g == 3 || p4.g == 4));
+    int zoomLevel = zoomActive ? p4.g : 0;  // 2=center-only, 3=x3 scope, 4=x4 scope
 
     // R = flash, G = zoom, B = zoom level (3 or 4) / 255.
     // flash.fsh reads R, zoom.fsh reads G and B.
@@ -650,8 +654,9 @@ void main() {
     float aspectRatio = inSize.x / inSize.y;
     vec2 screenCoord = (texCoord - vec2(0.5)) * vec2(aspectRatio, 1.0);
 
-    // Apply barrel distortion if zooming (zoom level determines magnification)
-    if (zoomMode && length(screenCoord) < RADIUS) {
+    // Apply barrel distortion if zooming WITH a scope (zoomLevel 3 or 4 only)
+    // zoomLevel 2 = zoomed but no scope: skip distortion, only spark centering below
+    if (zoomMode && zoomLevel >= 3 && length(screenCoord) < RADIUS) {
         float Zoom = float(zoomLevel);  // 3.0 for _3 weapons, 4.0 for _4 weapons
         float d = length(screenCoord * Distortion / RADIUS);
         float z = sqrt(1.0 - d * d);
@@ -846,20 +851,6 @@ execute at @s anchored eyes run particle minecraft:dust{color:[0.02,0.0,0.0],sca
     # ── Zoom marker: mode 3 (x3) or mode 4 (x4) ──
     # Zoom x3: color:[0.02, 0.02, 0] → G∈[2-5] after randomization → mode 3
     # Zoom x4: color:[0.02, 0.08, 0] → G∈[10-20] after randomization → mode 4
-    # Spawned every tick while ADS is active, with delay and scope check
-    write_versioned_function("player/tick",
-f"""
-## Shader: zoom marker with delay and scope check
-# Reset zoom timer when not zooming
-execute unless score @s {ns}.zoom matches 1 run scoreboard players set @s {ns}.zoom_timer 0
-
-# Increment zoom timer while zooming
-execute if score @s {ns}.zoom matches 1 run scoreboard players add @s {ns}.zoom_timer 1
-
-# Spawn zoom x3 marker for _3 weapons (scope_level:3)
-execute if score @s {ns}.zoom matches 1 if score @s {ns}.zoom_timer matches 5.. if items entity @s weapon.mainhand *[custom_data~{{{ns}:{{scope_level:3}}}}] at @s anchored eyes run particle minecraft:dust{{color:[0.02,0.02,0.0],scale:0.01}} ^ ^ ^1 0 0 0 0 1 force @s
-
-# Spawn zoom x4 marker for _4 weapons (scope_level:4)
-execute if score @s {ns}.zoom matches 1 if score @s {ns}.zoom_timer matches 5.. if items entity @s weapon.mainhand *[custom_data~{{{ns}:{{scope_level:4}}}}] at @s anchored eyes run particle minecraft:dust{{color:[0.02,0.08,0.0],scale:0.01}} ^ ^ ^1 0 0 0 0 1 force @s
-""")
+    # Zoom marker spawning is handled in zoom/main (zoom.py) after zoom state
+    # resolution, with cooldown guard and 5-tick delay.
 

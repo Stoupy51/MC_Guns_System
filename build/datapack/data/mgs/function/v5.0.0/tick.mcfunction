@@ -10,6 +10,3 @@ execute as @e[type=player,sort=random] at @s run function mgs:v5.0.0/player/tick
 # Tick function for slow bullets (projectiles)
 execute if score #slow_bullet_count mgs.data matches 1.. as @e[tag=mgs.slow_bullet] at @s run function mgs:v5.0.0/projectile/tick
 
-# Tick function for flashes
-execute if score #flash_count mgs.data matches 1.. as @e[tag=mgs.flash] run function mgs:v5.0.0/flash/tick
-

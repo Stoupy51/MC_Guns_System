@@ -6,19 +6,6 @@
 # @within	mgs:v5.0.0/tick [ as @e[type=player,sort=random] & at @s ]
 #
 
-## Shader: zoom marker with delay and scope check
-# Reset zoom timer when not zooming
-execute unless score @s mgs.zoom matches 1 run scoreboard players set @s mgs.zoom_timer 0
-
-# Increment zoom timer while zooming
-execute if score @s mgs.zoom matches 1 run scoreboard players add @s mgs.zoom_timer 1
-
-# Spawn zoom x3 marker for _3 weapons (scope_level:3)
-execute if score @s mgs.zoom matches 1 if score @s mgs.zoom_timer matches 5.. if items entity @s weapon.mainhand *[custom_data~{mgs:{scope_level:3}}] at @s anchored eyes run particle minecraft:dust{color:[0.02,0.02,0.0],scale:0.01} ^ ^ ^1 0 0 0 0 1 force @s
-
-# Spawn zoom x4 marker for _4 weapons (scope_level:4)
-execute if score @s mgs.zoom matches 1 if score @s mgs.zoom_timer matches 5.. if items entity @s weapon.mainhand *[custom_data~{mgs:{scope_level:4}}] at @s anchored eyes run particle minecraft:dust{color:[0.02,0.08,0.0],scale:0.01} ^ ^ ^1 0 0 0 0 1 force @s
-
 # Add temporary tag
 tag @s add mgs.ticking
 
@@ -42,6 +29,9 @@ function mgs:v5.0.0/switch/main
 
 # Decrease cooldown by 1
 execute if score @s mgs.cooldown matches 1.. run scoreboard players remove @s mgs.cooldown 1
+
+# Decrease switch_cooldown by 1 (separate from shooting cooldown)
+execute if score @s mgs.switch_cooldown matches 1.. run scoreboard players remove @s mgs.switch_cooldown 1
 
 # Check mid cooldown sound
 execute if score @s mgs.cooldown matches 1.. if entity @s[tag=mgs.pump_sound] if data storage mgs:gun all.sounds.pump run function mgs:v5.0.0/sound/check/pump

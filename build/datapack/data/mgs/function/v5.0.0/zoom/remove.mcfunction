@@ -21,5 +21,6 @@ item modify entity @s weapon.mainhand mgs:v5.0.0/update_stats
 # Apply unzoom effects
 playsound mgs:common/lean_out player
 scoreboard players reset @s mgs.zoom
+scoreboard players set @s mgs.zoom_timer 0
 effect clear @s slowness
 

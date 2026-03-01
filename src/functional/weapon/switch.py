@@ -44,7 +44,10 @@ item modify entity @s weapon.mainhand {ns}:v{version}/set_weapon_id
 f"""
 # Apply weapon switch cooldown only if it exceeds the current cooldown value
 execute store result score #cooldown {ns}.data run data get storage {ns}:gun all.stats.{SWITCH}
-execute if score #cooldown {ns}.data > @s {ns}.cooldown run scoreboard players operation @s {ns}.cooldown = #cooldown {ns}.data
+execute unless score #cooldown {ns}.data <= @s {ns}.cooldown run scoreboard players operation @s {ns}.cooldown = #cooldown {ns}.data
+
+# Mirror into switch_cooldown (used by shader zoom guard, unaffected by shooting)
+execute unless score #cooldown {ns}.data <= @s {ns}.switch_cooldown run scoreboard players operation @s {ns}.switch_cooldown = #cooldown {ns}.data
 
 # Force weapon switch animation
 function {ns}:v{version}/switch/force_switch_animation

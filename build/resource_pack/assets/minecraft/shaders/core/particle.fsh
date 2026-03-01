@@ -22,6 +22,7 @@ void main() {
         // We ONLY write the sentinel at the exact target pixel;
         // all other fragments are discarded to avoid overwriting scene.
         //   Flash    → pixel (0, 0)
+        //   Zoom x2  → pixel (1, 0)  (G=2, no-scope center-only)
         //   Zoom x3  → pixel (1, 0)  (G=3)
         //   Zoom x4  → pixel (1, 0)  (G=4)
         ivec2 fc = ivec2(gl_FragCoord.xy);
