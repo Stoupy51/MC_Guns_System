@@ -18,7 +18,7 @@ out vec2 texCoord0;
 out vec4 vertexColor;
 
 // flat = no interpolation across quad (critical for integer flags)
-flat out int markerMode;  // 0=normal particle, 1=flash, 4=zoom
+flat out int markerMode;  // 0=normal particle, 1=flash, 3=zoom x3, 4=zoom x4
 
 // Quad corner offsets: covers a small area at the bottom-left of the screen.
 // The sizing is in NDC (not pixels), so no ScreenSize needed.
@@ -39,13 +39,17 @@ const vec2 corners[4] = vec2[4](
 // Dust particles apply a random ~0.48-1.0x multiplier per channel
 // (DustParticleBase.randomizeColor()). Input 0.02 → R ∈ [2-5] in 8-bit.
 // B==0 is guaranteed (0 x anything = 0).
-// G channel determines mode: G==0 → flash, G>0 → zoom.
+// G channel determines mode:
+//   G==0        → flash (mode 1)
+//   G∈[1-7]    → zoom x3 (from 0.02, randomized to [2-5])
+//   G∈[8-25]   → zoom x4 (from 0.08, randomized to [10-20])
 int detectMarkerMode(vec4 color) {
     ivec4 ic = ivec4(round(color * 255.0));
     // Signature: R in [1-10] (very dim dust), B must be 0
     if (ic.r >= 1 && ic.r <= 10 && ic.b == 0) {
         if (ic.g == 0) return 1;                  // Flash: G is zero
-        if (ic.g >= 1 && ic.g <= 10) return 4;    // Zoom: G is non-zero
+        if (ic.g >= 1 && ic.g <= 7) return 3;     // Zoom x3: G from 0.02 → [2-5]
+        if (ic.g >= 8 && ic.g <= 25) return 4;    // Zoom x4: G from 0.08 → [10-20]
     }
     return 0;  // Not a marker
 }

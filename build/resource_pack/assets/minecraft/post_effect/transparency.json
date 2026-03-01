@@ -42,8 +42,7 @@
 			"inputs": [
 				{"sampler_name": "In","target": "final"},
 				{"sampler_name": "InDepth","target": "minecraft:main","use_depth_buffer": true},
-				{"sampler_name": "Classify","target": "classify"},
-				{"sampler_name": "SparkTex","location": "mgs:flash","width": 1536,"height": 1536,"bilinear": true}
+				{"sampler_name": "Classify","target": "classify"}
 			],
 			"output": "swap",
 			"uniforms": {
@@ -55,11 +54,12 @@
 			"fragment_shader": "mgs:post/zoom",
 			"inputs": [
 				{"sampler_name": "In","target": "swap","bilinear": true},
-				{"sampler_name": "Classify","target": "classify"}
+				{"sampler_name": "Classify","target": "classify"},
+				{"sampler_name": "SparkTex","location": "mgs:flash","width": 1536,"height": 1536,"bilinear": true}
 			],
 			"output": "final",
 			"uniforms": {
-				"ZoomConfig": [{"name": "Distortion","type": "float","value": 0.55},{"name": "Zoom","type": "float","value": 3.0}]
+				"ZoomConfig": [{"name": "Distortion","type": "float","value": 0.55}]
 			}
 		},
 		{

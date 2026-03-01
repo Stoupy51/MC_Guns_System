@@ -116,10 +116,12 @@ def beet_default(ctx: Context) -> None:
             # Initialize magazine with full capacity
             gun_stats[REMAINING_BULLETS] = gun_stats[CAPACITY]
 
-            # Mark weapons with scopes (_3 and _4 variants) for zoom shader filtering
+            # Mark weapons with scopes: _3 variants get x3 zoom, _4 variants get x4 zoom
             base_name = item.replace("_zoom", '')
-            if base_name.endswith("_3") or base_name.endswith("_4"):
-                ns_data["has_scope"] = True
+            if base_name.endswith("_3"):
+                ns_data["scope_level"] = 3
+            elif base_name.endswith("_4"):
+                ns_data["scope_level"] = 4
 
             # Add consumable and use_effects components for tick-perfect right-click detection
             obj.components["consumable"] = {
