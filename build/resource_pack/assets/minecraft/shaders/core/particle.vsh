@@ -36,9 +36,9 @@ const vec2 corners[4] = vec2[4](
 #define MARKER_NDC_SIZE 0.015
 
 // Detect dust marker by color pattern.
-// Dust particles apply a random ~0.48-1.0× multiplier per channel
+// Dust particles apply a random ~0.48-1.0x multiplier per channel
 // (DustParticleBase.randomizeColor()). Input 0.02 → R ∈ [2-5] in 8-bit.
-// B==0 is guaranteed (0 × anything = 0).
+// B==0 is guaranteed (0 x anything = 0).
 // G channel determines mode: G==0 → flash, G>0 → zoom.
 int detectMarkerMode(vec4 color) {
     ivec4 ic = ivec4(round(color * 255.0));

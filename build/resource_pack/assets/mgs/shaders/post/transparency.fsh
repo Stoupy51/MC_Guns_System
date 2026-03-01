@@ -75,8 +75,8 @@ void main() {
     //  [0-50, 5-55]   RED    = transparency pass runs
     //  [150-200]       YELLOW/GRAY = flash sentinel at (0,0)?
     //  [200-250]       YELLOW/GRAY = zoom sentinel at (1,0)?
-    //  [250-300]       Amplified MAIN at (0,0) ×50
-    //  [300-350]       Amplified MAIN at (1,0) ×50
+    //  [250-300]       Amplified MAIN at (0,0) x50
+    //  [300-350]       Amplified MAIN at (1,0) x50
     //  [350-400]       MAIN DEPTH at (0,0): GREEN=near, RED=far, YELLOW=mid
     //  [400-450]       MAIN DEPTH at (1,0): same color coding
 
@@ -97,12 +97,12 @@ void main() {
         fragColor = (dbgZoom.r == 254) ? vec4(1.0, 1.0, 1.0, 1.0) : vec4(0.1, 0.1, 0.1, 1.0);
     }
 
-    // [250-300] Amplified raw MAIN color at flash sentinel (0,0) ×50
+    // [250-300] Amplified raw MAIN color at flash sentinel (0,0) x50
     if (gl_FragCoord.x >= 250.0 && gl_FragCoord.x < 300.0 && gl_FragCoord.y >= 5.0 && gl_FragCoord.y < 55.0) {
         vec4 raw = texelFetch(MainSampler, ivec2(0, 0), 0);
         fragColor = vec4(clamp(raw.rgb * 50.0, 0.0, 1.0), 1.0);
     }
-    // [300-350] Amplified raw MAIN color at zoom sentinel (1,0) ×50
+    // [300-350] Amplified raw MAIN color at zoom sentinel (1,0) x50
     if (gl_FragCoord.x >= 300.0 && gl_FragCoord.x < 350.0 && gl_FragCoord.y >= 5.0 && gl_FragCoord.y < 55.0) {
         vec4 raw = texelFetch(MainSampler, ivec2(1, 0), 0);
         fragColor = vec4(clamp(raw.rgb * 50.0, 0.0, 1.0), 1.0);
