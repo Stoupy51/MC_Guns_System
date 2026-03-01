@@ -73,8 +73,9 @@ void main() {
     float aspectRatio = inSize.x / inSize.y;
     vec2 screenCoord = (texCoord - vec2(0.5)) * vec2(aspectRatio, 1.0);
 
-    // Apply barrel distortion if zooming (zoom level determines magnification)
-    if (zoomMode && length(screenCoord) < RADIUS) {
+    // Apply barrel distortion if zooming WITH a scope (zoomLevel 3 or 4 only)
+    // zoomLevel 2 = zoomed but no scope: skip distortion, only spark centering below
+    if (zoomMode && zoomLevel >= 3 && length(screenCoord) < RADIUS) {
         float Zoom = float(zoomLevel);  // 3.0 for _3 weapons, 4.0 for _4 weapons
         float d = length(screenCoord * Distortion / RADIUS);
         float z = sqrt(1.0 - d * d);

@@ -43,6 +43,9 @@ scoreboard objectives add {ns}.dropped minecraft.custom:minecraft.drop
 # Cooldown in ticks before being able to shot
 scoreboard objectives add {ns}.cooldown dummy
 
+# Tracks weapon-switch-only cooldown (not set when shooting) for zoom shader guard
+scoreboard objectives add {ns}.switch_cooldown dummy
+
 # Indicates if the player was zooming (used to remove slowness)
 scoreboard objectives add {ns}.zoom dummy
 

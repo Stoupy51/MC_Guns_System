@@ -8,7 +8,10 @@
 
 # Apply weapon switch cooldown only if it exceeds the current cooldown value
 execute store result score #cooldown mgs.data run data get storage mgs:gun all.stats.switch
-execute if score #cooldown mgs.data > @s mgs.cooldown run scoreboard players operation @s mgs.cooldown = #cooldown mgs.data
+execute unless score #cooldown mgs.data <= @s mgs.cooldown run scoreboard players operation @s mgs.cooldown = #cooldown mgs.data
+
+# Mirror into switch_cooldown (used by shader zoom guard, unaffected by shooting)
+execute unless score #cooldown mgs.data <= @s mgs.switch_cooldown run scoreboard players operation @s mgs.switch_cooldown = #cooldown mgs.data
 
 # Force weapon switch animation
 function mgs:v5.0.0/switch/force_switch_animation

@@ -43,13 +43,15 @@ const vec2 corners[4] = vec2[4](
 //   G==0        → flash (mode 1)
 //   G∈[1-7]    → zoom x3 (from 0.02, randomized to [2-5])
 //   G∈[8-25]   → zoom x4 (from 0.08, randomized to [10-20])
+//   G∈[26-80]  → zoom center-only (from 0.25, randomized to [30-63]) — no scope
 int detectMarkerMode(vec4 color) {
     ivec4 ic = ivec4(round(color * 255.0));
     // Signature: R in [1-10] (very dim dust), B must be 0
     if (ic.r >= 1 && ic.r <= 10 && ic.b == 0) {
-        if (ic.g == 0) return 1;                  // Flash: G is zero
-        if (ic.g >= 1 && ic.g <= 7) return 3;     // Zoom x3: G from 0.02 → [2-5]
-        if (ic.g >= 8 && ic.g <= 25) return 4;    // Zoom x4: G from 0.08 → [10-20]
+        if (ic.g == 0) return 1;                   // Flash: G is zero
+        if (ic.g >= 1 && ic.g <= 7) return 3;      // Zoom x3: G from 0.02 → [2-5]
+        if (ic.g >= 8 && ic.g <= 25) return 4;     // Zoom x4: G from 0.08 → [10-20]
+        if (ic.g >= 26 && ic.g <= 80) return 2;    // Zoom center-only: G from 0.25 → [30-63]
     }
     return 0;  // Not a marker
 }

@@ -26,7 +26,6 @@ from .database.ammo import main as main_ammo
 from .database.aug import main as main_aug
 from .database.casing import main as main_casing
 from .database.famas import main as main_famas
-from .database.flash import main as main_flash
 from .database.fnfal import main as main_fnfal
 from .database.g3a3 import main as main_g3a3
 from .database.m4a1 import main as main_m4a1
@@ -55,7 +54,6 @@ def beet_default(ctx: Context) -> None:
 
     # Add casings and flashes
     main_casing()
-    main_flash()
     main_ammo()
 
     # Rifles

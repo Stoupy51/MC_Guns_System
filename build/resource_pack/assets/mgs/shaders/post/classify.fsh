@@ -18,8 +18,8 @@ void main() {
 
     // Sentinel: R == MARKER_RED, B == 0, A == 255, G == expected mode value
     bool flashActive = (p1.r == MARKER_RED && p1.b == 0 && p1.a == 255 && p1.g == 1);
-    bool zoomActive  = (p4.r == MARKER_RED && p4.b == 0 && p4.a == 255 && (p4.g == 3 || p4.g == 4));
-    int zoomLevel = zoomActive ? p4.g : 0;  // 3 for x3 zoom, 4 for x4 zoom
+    bool zoomActive  = (p4.r == MARKER_RED && p4.b == 0 && p4.a == 255 && (p4.g == 2 || p4.g == 3 || p4.g == 4));
+    int zoomLevel = zoomActive ? p4.g : 0;  // 2=center-only, 3=x3 scope, 4=x4 scope
 
     // R = flash, G = zoom, B = zoom level (3 or 4) / 255.
     // flash.fsh reads R, zoom.fsh reads G and B.

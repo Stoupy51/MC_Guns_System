@@ -4,7 +4,6 @@ from .actionbar import main as actionbar_main
 from .ammo import main as ammo_main
 from .casing import main as casing_main
 from .common import main as common_main
-from .flash import main as flash_main
 from .kick import main as kick_main
 from .projectile import main as projectile_main
 from .raycast import main as raycast_main
@@ -45,7 +44,4 @@ def main() -> None:
 
     # Advanced sound system
     sound_main()
-
-    # Handle flash effect when shooting
-    flash_main()
 
