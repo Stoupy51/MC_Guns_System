@@ -9,23 +9,28 @@ in float sphericalVertexDistance;
 in float cylindricalVertexDistance;
 in vec2 texCoord0;
 in vec4 vertexColor;
-flat in int markerMode;  // 0=normal, 1=flash, 4=zoom, -1=stale flash
+flat in int markerMode;  // 0=normal, 1=flash, 4=zoom
 
 out vec4 fragColor;
 
+#define DEBUG 1
+
 void main() {
-    if (markerMode != 0) {
-        if (markerMode > 0) {
-            // Fresh marker: write DETERMINISTIC sentinel values.
-            // R=254/255 = signature, G=mode/255 = mode encoding, B=0, A=1.0
-            // Alpha=1.0 is critical: prevents GPU blending from corrupting RGB.
-            // classify.fsh reads these exact values via texelFetch.
-            fragColor = vec4(254.0 / 255.0, float(markerMode) / 255.0, 0.0, 1.0);
-        } else {
-            // Stale marker (mode -1): write transparent to hide pixel.
-            // Redirected to pixel (4,0) which classify never reads.
+    if (markerMode > 0) {
+        // The VSH places a small NDC quad at the bottom-left corner.
+        // Both flash and zoom quads cover the same area.
+        // We ONLY write the sentinel at the exact target pixel;
+        // all other fragments are discarded to avoid overwriting scene.
+        //   Flash → pixel (0, 0)
+        //   Zoom  → pixel (1, 0)
+        ivec2 fc = ivec2(gl_FragCoord.xy);
+        ivec2 target = (markerMode == 1) ? ivec2(0, 0) : ivec2(1, 0);
+        if (fc != target) {
             discard;
         }
+        // Write DETERMINISTIC sentinel: classify reads exact values.
+        // R=254, G=mode, B=0, A=255 — immune to dust color randomization.
+        fragColor = vec4(254.0 / 255.0, float(markerMode) / 255.0, 0.0, 1.0);
         return;
     }
 
@@ -36,4 +41,8 @@ void main() {
     fragColor = apply_fog(color, sphericalVertexDistance, cylindricalVertexDistance,
         FogEnvironmentalStart, FogEnvironmentalEnd,
         FogRenderDistanceStart, FogRenderDistanceEnd, FogColor);
+#if DEBUG
+    // GREEN TINT on ALL non-marker particles processed by this shader.
+    fragColor.g = min(fragColor.g + 0.15, 1.0);
+#endif
 }

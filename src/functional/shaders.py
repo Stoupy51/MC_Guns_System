@@ -14,25 +14,26 @@ from stewbeet import JsonDict, Mem, set_json_encoder, write_versioned_function
 # ║                         HOW IT WORKS                                   ║
 # ╠════════════════════════════════════════════════════════════════════════╣
 # ║                                                                        ║
-# ║  1. DATAPACK spawns an entity_effect particle in front of the player   ║
+# ║  1. DATAPACK spawns a dust particle in front of the player             ║
 # ║     with a specific color encoding the mode.                           ║
 # ║     → fire_weapon.mcfunction  (flash marker, mode 1)                   ║
 # ║     → tick.mcfunction         (zoom marker, mode 4)                    ║
 # ║                                                                        ║
 # ║  2. CORE PARTICLE SHADER (particle.vsh) intercepts ALL particles.      ║
-# ║     It detects our marker by exact 8-bit integer color comparison.     ║
-# ║     MARKER_RED = 254 in the R channel is the signature.                ║
-# ║     G channel encodes the mode (1=flash, 4=zoom).                      ║
-# ║     Detected markers are REDIRECTED to a SINGLE EXACT PIXEL at the     ║
-# ║     bottom-left of the screen using ScreenSize from globals.glsl.      ║
+# ║     It detects our marker by range-based color pattern detection.      ║
+# ║     R∈[1-10] with B==0 identifies our marker (dust is very dim).      ║
+# ║     G==0 → flash (mode 1), G∈[1-10] → zoom (mode 4).                 ║
+# ║     Detected markers are REDIRECTED to a small quad at the             ║
+# ║     bottom-left of the screen using fixed NDC coordinates.             ║
+# ║     The fsh only writes the sentinel at EXACT gl_FragCoord pixels:     ║
 # ║     → Mode 1 (flash) → pixel (0, 0)                                    ║
-# ║     → Mode 4 (zoom)  → pixel (2, 0)                                    ║
+# ║     → Mode 4 (zoom)  → pixel (1, 0)                                    ║
 # ║                                                                        ║
 # ║  3. POST-EFFECT PIPELINE (transparency.json) runs these passes:        ║
 # ║                                                                        ║
 # ║     ┌─────────┐   reads exact pixels   ┌──────────┐                    ║
-# ║     │particles├───────────────────────►│ CLASSIFY │ → 1x1 "classify"   ║
-# ║     │ target  │   at (0,0) and (2,0)   │  (pass1) │   target w/ mode   ║
+# ║     │  main   ├───────────────────────►│ CLASSIFY │ → 1x1 "classify"   ║
+# ║     │ target  │  at (0,60) and (50,60) │  (pass1) │   target w/ mode   ║
 # ║     └─────────┘                        └──────────┘                    ║
 # ║                                                                        ║
 # ║     ┌──────────────┐                  ┌──────────────┐                 ║
@@ -58,28 +59,38 @@ from stewbeet import JsonDict, Mem, set_json_encoder, write_versioned_function
 # ╠════════════════════════════════════════════════════════════════════════╣
 # ║                    KEY DESIGN DECISIONS                                ║
 # ║                                                                        ║
-# ║  WHY entity_effect instead of dust:                                    ║
-# ║    entity_effect passes RGBA directly as vertex Color attribute with   ║
-# ║    no random scaling. This allows reliable 8-bit integer detection.    ║
-# ║    Dust particles apply a random 0.8-1.0x multiplier that corrupts     ║
-# ║    the color values, making detection impossible.                      ║
+# ║  WHY dust instead of entity_effect:                                    ║
+# ║    dust's scale parameter controls lifetime (random(8-40) × scale).   ║
+# ║    scale=0.15 → 1-6 ticks. entity_effect has uncontrollable random   ║
+# ║    10-40 tick lifetime that makes flash linger too long.               ║
 # ║                                                                        ║
-# ║  WHY range-based detection (not exact match):                          ║
-# ║    Minecraft packs float RGBA to ARGB int using floor(value * 255).   ║
-# ║    Values like 4/255=0.01568627 become floor(3.99999)=3, not 4!       ║
-# ║    Using "mid-bin" float values (e.g. 4.5/255) and range checks in    ║
-# ║    the vsh (G in [3-5] → zoom) makes detection immune to ±1 error.   ║
+# ║  WHY classify reads from main (not particles):                         ║
+# ║    Dust uses Layer.OPAQUE → RenderPipelines.OPAQUE_PARTICLE.           ║
+# ║    In Fabulous mode, ParticleFeatureRenderer.renderSolid() renders     ║
+# ║    opaque particles to minecraft:main (not minecraft:particles).       ║
+# ║    Only translucent particles go to minecraft:particles.               ║
+# ║    So our sentinel pixel ends up in main, and classify must read it    ║
+# ║    from there.                                                         ║
 # ║                                                                        ║
-# ║  WHY alpha threshold for flash:                                        ║
-# ║    entity_effect has random 10-40 tick lifetime. Alpha decays by       ║
-# ║    1/lifetime per tick. Checking A >= 230 in vsh limits the flash     ║
-# ║    sentinel to ~2-5 ticks. Stale particles (A < 230) are still        ║
-# ║    hidden (redirected to a dead pixel) but don't write sentinel data.  ║
+# ║  WHY fixed NDC instead of ScreenSize:                                  ║
+# ║    The Globals UBO (which provides ScreenSize) is NOT bound for the    ║
+# ║    particle pipeline. PARTICLE_SNIPPET builds from MATRICES_FOG only,  ║
+# ║    without GLOBALS_SNIPPET. ScreenSize reads as vec2(0,0) → dividing  ║
+# ║    by zero gives infinity → marker at infinity → clipped → no output. ║
+# ║    Instead, we use fixed NDC coordinates for the marker quad and the   ║
+# ║    fsh writes the sentinel at exact gl_FragCoord pixels (0,0)/(1,0).  ║
+# ║                                                                        ║
+# ║  WHY range-based detection:                                            ║
+# ║    Dust applies a random ~0.48-1.0× color multiplier per channel      ║
+# ║    (shared 0.6-1.0 factor × per-channel 0.8-1.0 via darken()).        ║
+# ║    Input color 0.02 → vertex Color R∈[2-5] in 8-bit.                 ║
+# ║    Checking ranges (R∈[1-10], B==0) handles this randomization.       ║
+# ║    G==0 → flash, G∈[1-10] → zoom. B==0 guaranteed (0×anything=0).    ║
 # ║                                                                        ║
 # ║  WHY deterministic sentinel in particle.fsh:                           ║
 # ║    The fsh writes vec4(254/255, mode/255, 0, 1) regardless of the     ║
 # ║    raw Color values. This ensures classify always reads exact integer  ║
-# ║    values via texelFetch, immune to float quantization issues.         ║
+# ║    values via texelFetch, immune to dust's color randomization.        ║
 # ║                                                                        ║
 # ║  WHY ScreenSize for pixel placement:                                   ║
 # ║    Hardcoded NDC coordinates (e.g. -0.98) map to different pixels at   ║
@@ -108,28 +119,39 @@ from stewbeet import JsonDict, Mem, set_json_encoder, write_versioned_function
 # ║    [RED   0-50px]   = transparency pass runs                           ║
 # ║    [GREEN 50-100px] = flash pass runs                                  ║
 # ║    [BLUE  100-150px]= zoom pass runs (orange/cyan = mode detected)     ║
-# ║    [150-200px] = flash marker pixel (YELLOW=present, GRAY=empty)       ║
-# ║    [200-250px] = zoom  marker pixel (YELLOW=present, GRAY=empty)       ║
+# ║    [150-200px] = flash sentinel at (0,0) (YELLOW=found, GRAY=empty)    ║
+# ║    [200-250px] = zoom sentinel at (1,0)  (YELLOW=found, GRAY=empty)    ║
+# ║    [250-300px] = amplified MAIN at (0,0) ×50                           ║
+# ║    [300-350px] = amplified MAIN at (1,0) ×50                           ║
+# ║    [350-400px] = MAIN DEPTH at (0,0)                                   ║
+# ║             GREEN=near(0), RED=far(1), YELLOW=mid                      ║
+# ║    [400-450px] = MAIN DEPTH at (1,0)                                   ║
+# ║             GREEN=near(0), RED=far(1), YELLOW=mid                      ║
 # ║                                                                        ║
 # ╚════════════════════════════════════════════════════════════════════════╝
 #
 # MARKER PIXEL MAP:
 #   Mode 1 (flash) → screen pixel (0, 0)   [bottom-left corner]
-#   Mode 4 (zoom)  → screen pixel (2, 0)   [2px right of corner]
+#   Mode 4 (zoom)  → screen pixel (1, 0)   [one pixel right]
 #
-# MARKER COLOR ENCODING (entity_effect RGBA):
-#   Command provides float [R, G, B, A]. Minecraft internally packs to ARGB int
-#   using floor(value * 255), so float values must be slightly ABOVE the target
-#   integer boundary to survive truncation.
-#   R = 254.5/255 = 0.99803922   → floor → 254 = MARKER_RED signature
-#   G = 1.5/255  = 0.00588235   → floor → 1   = flash mode
-#   G = 4.5/255  = 0.01764706   → floor → 4   = zoom mode
-#   B = 0                        → always 0 (part of signature)
-#   A = 1.0                      → fsh forces A=255 in output
+# MARKER COLOR ENCODING (dust RGB + scale):
+#   Command provides float [R, G, B] (no alpha) + scale (size & lifetime).
+#   Dust particles apply a random color multiplier (~0.48-1.0 per channel)
+#   via AbstractDustParticle.darken(), so vertex Color.rgb varies.
+#   We use very dim colors and range-based detection to handle this.
 #
-#   vsh detects by RANGES (tolerates ±1 quantization).
-#   vsh also checks A >= 230 for flash → limits flash to ~2-5 ticks
-#   (entity_effect alpha decays each tick; stale particles still hidden).
+#   Flash: color:[0.02, 0.0, 0.0], scale:0.15
+#     R ∈ [2-5] after randomization, G = 0, B = 0
+#   Zoom:  color:[0.02, 0.02, 0.0], scale:0.15
+#     R ∈ [2-5] after randomization, G ∈ [2-5], B = 0
+#
+#   Detection: R ∈ [1,10], B == 0 → marker signature.
+#   Mode: G == 0 → flash (mode 1), G ∈ [1,10] → zoom (mode 4).
+#
+#   scale=0.15 → particle lifetime = random(8-40) × 0.15 = 1-6 ticks.
+#   Flash auto-expires when particle dies (no alpha threshold needed).
+#   Zoom spawned every tick → always at least one live particle.
+#
 #   fsh writes DETERMINISTIC sentinel (R=254, G=mode, B=0, A=255)
 #   so classify always reads exact values via texelFetch.
 #
@@ -149,7 +171,6 @@ PARTICLE_VSH = """\
 #moj_import <minecraft:fog.glsl>
 #moj_import <minecraft:dynamictransforms.glsl>
 #moj_import <minecraft:projection.glsl>
-#moj_import <minecraft:globals.glsl>
 #moj_import <minecraft:sample_lightmap.glsl>
 
 in vec3 Position;
@@ -167,12 +188,10 @@ out vec4 vertexColor;
 // flat = no interpolation across quad (critical for integer flags)
 flat out int markerMode;  // 0=normal particle, 1=flash, 4=zoom
 
-// Alpha threshold for ACTIVATING flash mode signal.
-// entity_effect alpha decays by 1/lifetime per tick (lifetime = 10-40 ticks).
-// At 230/255 ≈ 0.902, the flash signal lasts ~2-5 ticks depending on lifetime.
-// Stale particles (mode -1) are still hidden but DON'T write the sentinel.
-#define FLASH_ALPHA_MIN 230
-
+// Quad corner offsets: covers a small area at the bottom-left of the screen.
+// The sizing is in NDC (not pixels), so no ScreenSize needed.
+// NOTE: The Globals UBO (ScreenSize) is NOT bound for the particle pipeline.
+// PARTICLE_SNIPPET only includes MATRICES_FOG_SNIPPET, not GLOBALS_SNIPPET.
 const vec2 corners[4] = vec2[4](
     vec2(0.0, 1.0),
     vec2(0.0, 0.0),
@@ -180,29 +199,21 @@ const vec2 corners[4] = vec2[4](
     vec2(1.0, 1.0)
 );
 
-ivec2 markerPixel(int mode) {
-    if (mode == 1) return ivec2(0, 0);  // flash → bottom-left corner
-    if (mode == 4) return ivec2(2, 0);  // zoom  → 2px right of corner
-    return ivec2(4, 0);                 // stale → hidden pixel (never read)
-}
+// Fixed NDC quad size: 0.015 NDC ≈ 8-15 pixels depending on resolution.
+// This guarantees coverage of pixel (0,0) and (1,0) at any resolution.
+#define MARKER_NDC_SIZE 0.015
 
-// Detect entity_effect marker by color pattern.
-// Minecraft packs float color to ARGB int using floor(value * 255),
-// so the actual vertex Color may be ±1 from the intended value.
-// We use ranges to tolerate this quantization.
+// Detect dust marker by color pattern.
+// Dust particles apply a random ~0.48-1.0× multiplier per channel
+// (DustParticleBase.randomizeColor()). Input 0.02 → R ∈ [2-5] in 8-bit.
+// B==0 is guaranteed (0 × anything = 0).
+// G channel determines mode: G==0 → flash, G>0 → zoom.
 int detectMarkerMode(vec4 color) {
     ivec4 ic = ivec4(round(color * 255.0));
-    // Signature: R near 254, B must be 0
-    if (ic.r >= 253 && ic.r <= 255 && ic.b == 0) {
-        // Flash: G should be ~1 (range [0-2] covers ±1 quantization)
-        if (ic.g >= 0 && ic.g <= 2) {
-            // Check alpha to limit flash duration:
-            // Fresh particle (A >= 230) → mode 1 (writes sentinel)
-            // Stale particle (A < 230)  → mode -1 (hidden, no sentinel)
-            return (ic.a >= FLASH_ALPHA_MIN) ? 1 : -1;
-        }
-        // Zoom: G should be ~4 (range [3-5] covers ±1 quantization)
-        if (ic.g >= 3 && ic.g <= 5) return 4;
+    // Signature: R in [1-10] (very dim dust), B must be 0
+    if (ic.r >= 1 && ic.r <= 10 && ic.b == 0) {
+        if (ic.g == 0) return 1;                  // Flash: G is zero
+        if (ic.g >= 1 && ic.g <= 10) return 4;    // Zoom: G is non-zero
     }
     return 0;  // Not a marker
 }
@@ -212,11 +223,17 @@ void main() {
     markerMode = mode;
 
     if (mode != 0) {
-        // REDIRECT marker quad to an exact pixel using ScreenSize.
-        ivec2 pixel = markerPixel(mode);  // mode -1 → hidden pixel (4,0)
-        vec2 pixelSize = 2.0 / ScreenSize;
-        vec2 base = vec2(-1.0) + vec2(pixel) * pixelSize;
-        gl_Position = vec4(base + corners[gl_VertexID % 4] * pixelSize, 0.0, 1.0);
+        // REDIRECT marker quad to bottom-left corner using FIXED NDC.
+        // Both flash and zoom use the same NDC quad covering the corner.
+        // The FRAGMENT shader discriminates: flash writes pixel (0,0),
+        // zoom writes pixel (1,0), everything else is discarded.
+        vec2 base = vec2(-1.0, -1.0);
+        vec2 size = vec2(MARKER_NDC_SIZE);
+
+        // z = -1.0 puts the marker at the NEAR PLANE (depth 0.0).
+        // Dust uses OPAQUE_PARTICLE pipeline: depth test LEQUAL, depth
+        // write ON. Our depth 0.0 always passes (≤ any scene depth).
+        gl_Position = vec4(base + corners[gl_VertexID % 4] * size, -1.0, 1.0);
 
         // Zero out all vanilla varyings (not used for markers)
         sphericalVertexDistance = 0.0;
@@ -251,23 +268,28 @@ in float sphericalVertexDistance;
 in float cylindricalVertexDistance;
 in vec2 texCoord0;
 in vec4 vertexColor;
-flat in int markerMode;  // 0=normal, 1=flash, 4=zoom, -1=stale flash
+flat in int markerMode;  // 0=normal, 1=flash, 4=zoom
 
 out vec4 fragColor;
 
+#define DEBUG 1
+
 void main() {
-    if (markerMode != 0) {
-        if (markerMode > 0) {
-            // Fresh marker: write DETERMINISTIC sentinel values.
-            // R=254/255 = signature, G=mode/255 = mode encoding, B=0, A=1.0
-            // Alpha=1.0 is critical: prevents GPU blending from corrupting RGB.
-            // classify.fsh reads these exact values via texelFetch.
-            fragColor = vec4(254.0 / 255.0, float(markerMode) / 255.0, 0.0, 1.0);
-        } else {
-            // Stale marker (mode -1): write transparent to hide pixel.
-            // Redirected to pixel (4,0) which classify never reads.
+    if (markerMode > 0) {
+        // The VSH places a small NDC quad at the bottom-left corner.
+        // Both flash and zoom quads cover the same area.
+        // We ONLY write the sentinel at the exact target pixel;
+        // all other fragments are discarded to avoid overwriting scene.
+        //   Flash → pixel (0, 0)
+        //   Zoom  → pixel (1, 0)
+        ivec2 fc = ivec2(gl_FragCoord.xy);
+        ivec2 target = (markerMode == 1) ? ivec2(0, 0) : ivec2(1, 0);
+        if (fc != target) {
             discard;
         }
+        // Write DETERMINISTIC sentinel: classify reads exact values.
+        // R=254, G=mode, B=0, A=255 — immune to dust color randomization.
+        fragColor = vec4(254.0 / 255.0, float(markerMode) / 255.0, 0.0, 1.0);
         return;
     }
 
@@ -278,6 +300,10 @@ void main() {
     fragColor = apply_fog(color, sphericalVertexDistance, cylindricalVertexDistance,
         FogEnvironmentalStart, FogEnvironmentalEnd,
         FogRenderDistanceStart, FogRenderDistanceEnd, FogColor);
+#if DEBUG
+    // GREEN TINT on ALL non-marker particles processed by this shader.
+    fragColor.g = min(fragColor.g + 0.15, 1.0);
+#endif
 }
 """
 
@@ -288,7 +314,9 @@ void main() {
 CLASSIFY_FSH = """\
 #version 330
 
-uniform sampler2D ParticlesSampler;
+// Dust is OPAQUE → renders to minecraft:main (not minecraft:particles).
+// ParticleFeatureRenderer.renderSolid() targets the main framebuffer.
+uniform sampler2D MainSampler;
 
 in vec2 texCoord;
 out vec4 fragColor;
@@ -296,9 +324,11 @@ out vec4 fragColor;
 #define MARKER_RED 254
 
 void main() {
-    // Read the exact marker pixels — texelFetch = no UV math, no rounding error.
-    ivec4 p1 = ivec4(round(texelFetch(ParticlesSampler, ivec2(0, 0), 0) * 255.0));
-    ivec4 p4 = ivec4(round(texelFetch(ParticlesSampler, ivec2(2, 0), 0) * 255.0));
+    // Read the exact sentinel pixels from MAIN (where opaque dust renders).
+    // texelFetch = no UV math, no rounding error.
+    // Flash sentinel at pixel (0, 0), zoom sentinel at pixel (1, 0)
+    ivec4 p1 = ivec4(round(texelFetch(MainSampler, ivec2(0, 0), 0) * 255.0));
+    ivec4 p4 = ivec4(round(texelFetch(MainSampler, ivec2(1, 0), 0) * 255.0));
 
     // Sentinel: R == MARKER_RED, B == 0, A == 255, G == expected mode value
     bool flashActive = (p1.r == MARKER_RED && p1.b == 0 && p1.a == 255 && p1.g == 1);
@@ -365,14 +395,16 @@ void main() {
     try_insert(texture(TranslucentSampler, texCoord), texture(TranslucentDepthSampler, texCoord).r);
     try_insert(texture(ItemEntitySampler,  texCoord), texture(ItemEntityDepthSampler,  texCoord).r);
 
-    // Hide the exact marker pixels at (0,0) [flash] and (2,0) [zoom]
     vec4 particleColor = texture(ParticlesSampler, texCoord);
     float particleDepth = texture(ParticlesDepthSampler, texCoord).r;
-    bool isMarkerPixel = (gl_FragCoord.y < 1.0) &&
-        ((gl_FragCoord.x < 1.0) || (gl_FragCoord.x >= 2.0 && gl_FragCoord.x < 3.0));
-    if (!isMarkerPixel) {
-        try_insert(particleColor, particleDepth);
-    }
+#if DEBUG
+    // Debug: show ALL particles including marker quads (don't hide anything)
+    try_insert(particleColor, particleDepth);
+#else
+    // Hide the exact marker sentinel pixels at (0,0) [flash] and (1,0) [zoom]
+    // These are in the main layer (not particles), but we still insert particles normally.
+    try_insert(particleColor, particleDepth);
+#endif
 
     try_insert(texture(WeatherSampler, texCoord), texture(WeatherDepthSampler, texCoord).r);
     try_insert(texture(CloudsSampler,  texCoord), texture(CloudsDepthSampler,  texCoord).r);
@@ -384,18 +416,65 @@ void main() {
     fragColor = vec4(texelAccum.rgb, 1.0);
 
 #if DEBUG
-    if (gl_FragCoord.x < 50.0 && gl_FragCoord.y < 50.0) {
+    // ═══ DEBUG SQUARES (bottom-left, 50px wide each, starting at y=5) ═══
+    // Sentinel pixels are at (0,0) and (1,0), so debug squares start at y=5
+    // to avoid overwriting them during compositing.
+    //  [0-50, 5-55]   RED    = transparency pass runs
+    //  [150-200]       YELLOW/GRAY = flash sentinel at (0,0)?
+    //  [200-250]       YELLOW/GRAY = zoom sentinel at (1,0)?
+    //  [250-300]       Amplified MAIN at (0,0) ×50
+    //  [300-350]       Amplified MAIN at (1,0) ×50
+    //  [350-400]       MAIN DEPTH at (0,0): GREEN=near, RED=far, YELLOW=mid
+    //  [400-450]       MAIN DEPTH at (1,0): same color coding
+
+    if (gl_FragCoord.x < 50.0 && gl_FragCoord.y >= 5.0 && gl_FragCoord.y < 55.0) {
         fragColor = vec4(1.0, 0.0, 0.0, 1.0);  // RED = pass 2 runs
     }
-    // Diagnostic: is marker data present at expected pixel locations?
-    // YELLOW = R=254 found (marker present), DARK GRAY = empty
-    ivec4 dbgFlash = ivec4(round(texelFetch(ParticlesSampler, ivec2(0, 0), 0) * 255.0));
-    ivec4 dbgZoom  = ivec4(round(texelFetch(ParticlesSampler, ivec2(2, 0), 0) * 255.0));
-    if (gl_FragCoord.x >= 150.0 && gl_FragCoord.x < 200.0 && gl_FragCoord.y < 50.0) {
+
+    // Read sentinel pixels from MAIN at (0,0) and (1,0)
+    ivec4 dbgFlash = ivec4(round(texelFetch(MainSampler, ivec2(0, 0), 0) * 255.0));
+    ivec4 dbgZoom  = ivec4(round(texelFetch(MainSampler, ivec2(1, 0), 0) * 255.0));
+
+    // [150-200] YELLOW if flash sentinel present (R=254), GRAY if empty
+    if (gl_FragCoord.x >= 150.0 && gl_FragCoord.x < 200.0 && gl_FragCoord.y >= 5.0 && gl_FragCoord.y < 55.0) {
         fragColor = (dbgFlash.r == 254) ? vec4(1.0, 1.0, 0.0, 1.0) : vec4(0.1, 0.1, 0.1, 1.0);
     }
-    if (gl_FragCoord.x >= 200.0 && gl_FragCoord.x < 250.0 && gl_FragCoord.y < 50.0) {
-        fragColor = (dbgZoom.r == 254) ? vec4(1.0, 1.0, 0.0, 1.0) : vec4(0.1, 0.1, 0.1, 1.0);
+    // [200-250] YELLOW if zoom sentinel present (R=254), GRAY if empty
+    if (gl_FragCoord.x >= 200.0 && gl_FragCoord.x < 250.0 && gl_FragCoord.y >= 5.0 && gl_FragCoord.y < 55.0) {
+        fragColor = (dbgZoom.r == 254) ? vec4(1.0, 1.0, 1.0, 1.0) : vec4(0.1, 0.1, 0.1, 1.0);
+    }
+
+    // [250-300] Amplified raw MAIN color at flash sentinel (0,0) ×50
+    if (gl_FragCoord.x >= 250.0 && gl_FragCoord.x < 300.0 && gl_FragCoord.y >= 5.0 && gl_FragCoord.y < 55.0) {
+        vec4 raw = texelFetch(MainSampler, ivec2(0, 0), 0);
+        fragColor = vec4(clamp(raw.rgb * 50.0, 0.0, 1.0), 1.0);
+    }
+    // [300-350] Amplified raw MAIN color at zoom sentinel (1,0) ×50
+    if (gl_FragCoord.x >= 300.0 && gl_FragCoord.x < 350.0 && gl_FragCoord.y >= 5.0 && gl_FragCoord.y < 55.0) {
+        vec4 raw = texelFetch(MainSampler, ivec2(1, 0), 0);
+        fragColor = vec4(clamp(raw.rgb * 50.0, 0.0, 1.0), 1.0);
+    }
+    // [350-400] MAIN DEPTH at flash sentinel pixel (0,0)
+    if (gl_FragCoord.x >= 350.0 && gl_FragCoord.x < 400.0 && gl_FragCoord.y >= 5.0 && gl_FragCoord.y < 55.0) {
+        float d = texelFetch(MainDepthSampler, ivec2(0, 0), 0).r;
+        if (d <= 0.001) {
+            fragColor = vec4(0.0, 1.0, 0.0, 1.0);  // GREEN = near plane (sentinel wrote!)
+        } else if (d >= 0.999) {
+            fragColor = vec4(1.0, 0.0, 0.0, 1.0);  // RED = far/cleared (sky)
+        } else {
+            fragColor = vec4(d, d, 0.0, 1.0);       // YELLOW gradient = terrain depth
+        }
+    }
+    // [400-450] MAIN DEPTH at zoom sentinel pixel (1,0)
+    if (gl_FragCoord.x >= 400.0 && gl_FragCoord.x < 450.0 && gl_FragCoord.y >= 5.0 && gl_FragCoord.y < 55.0) {
+        float d = texelFetch(MainDepthSampler, ivec2(1, 0), 0).r;
+        if (d <= 0.001) {
+            fragColor = vec4(0.0, 1.0, 0.0, 1.0);  // GREEN = near plane (sentinel wrote!)
+        } else if (d >= 0.999) {
+            fragColor = vec4(1.0, 0.0, 0.0, 1.0);  // RED = far/cleared (sky)
+        } else {
+            fragColor = vec4(d, d, 0.0, 1.0);       // YELLOW gradient = terrain depth
+        }
     }
 #endif
 }
@@ -466,7 +545,7 @@ void main() {
     fragColor = vec4(fragColor.rgb, 1.0);
 
 #if DEBUG
-    if (gl_FragCoord.x >= 50.0 && gl_FragCoord.x < 100.0 && gl_FragCoord.y < 50.0) {
+    if (gl_FragCoord.x >= 50.0 && gl_FragCoord.x < 100.0 && gl_FragCoord.y >= 5.0 && gl_FragCoord.y < 55.0) {
         fragColor = vec4(0.0, 1.0, 0.0, 1.0);  // GREEN = pass 3 runs
     }
 #endif
@@ -555,7 +634,7 @@ void main() {
     }
 
 #if DEBUG
-    if (gl_FragCoord.x >= 100.0 && gl_FragCoord.x < 150.0 && gl_FragCoord.y < 50.0) {
+    if (gl_FragCoord.x >= 100.0 && gl_FragCoord.x < 150.0 && gl_FragCoord.y >= 5.0 && gl_FragCoord.y < 55.0) {
         if (flashMode && zoomMode) {
             fragColor = vec4(1.0, 1.0, 1.0, 1.0);  // White: both detected
         } else if (flashMode) {
@@ -589,12 +668,14 @@ def get_post_effect_json(ns: str) -> JsonDict:
             "swap":  {},
         },
         "passes": [
-            # Pass 1: CLASSIFY - read exact marker pixels, output mode to 1x1 target
+            # Pass 1: CLASSIFY - read sentinel pixels from MAIN
+            # Dust is OPAQUE → rendered to minecraft:main by renderSolid().
+            # Only translucent particles go to minecraft:particles.
             {
                 "vertex_shader":   "minecraft:core/screenquad",
                 "fragment_shader": f"{ns}:post/classify",
                 "inputs": [
-                    {"sampler_name": "Particles", "target": "minecraft:particles"},
+                    {"sampler_name": "Main", "target": "minecraft:main"},
                 ],
                 "output": "classify",
             },
@@ -687,23 +768,23 @@ def main() -> None:
     Mem.ctx.assets["minecraft"].post_effects["transparency"] = set_json_encoder(PostEffect(get_post_effect_json(ns)))
 
     # ── Flash marker: mode 1 ──
-    # R=254.5/255, G=1.5/255 → "mid-bin" values survive floor truncation
-    # entity_effect alpha decays; vsh only activates flash for A >= 230 (~2-5 ticks)
+    # dust color:[R,0,0] with R=0.02 → vsh detects R∈[1-10], G==0, B==0
+    # scale=0.15 → lifetime = random(8-40)×0.15 = 1-6 ticks (brief flash)
     write_versioned_function("player/fire_weapon",
 """
 # Shader: spawn muzzle flash marker (mode 1)
-# R=254.5/255, G=1.5/255, B=0 → particle.vsh places at pixel (0,0)
-# Flash auto-expires via alpha decay check in vsh (~2-5 ticks)
-execute at @s anchored eyes run particle minecraft:entity_effect{color:[0.99803922,0.00588235,0.0,1.0]} ^ ^ ^1 0 0 0 0 1 force @s
+# dust R=0.02, G=0, B=0 → particle.vsh detects and places at pixel (0,0)
+# scale 0.15 → ~1-6 tick lifetime → flash auto-expires when particle dies
+execute at @s anchored eyes run particle minecraft:dust{color:[0.02,0.0,0.0],scale:0.01} ^ ^ ^1 0 0 0 0 1 force @s
 """)
 
     # ── Zoom marker: mode 4 ──
-    # R=254.5/255, G=4.5/255 → "mid-bin" values survive floor truncation
+    # dust color:[R,G,0] with R=G=0.02 → vsh detects R∈[1-10], G∈[1-10], B==0
     # Spawned every tick while ADS is active
     write_versioned_function("player/tick",
 f"""
 # Shader: spawn zoom marker (mode 4)
-# R=254.5/255, G=4.5/255, B=0 → particle.vsh places at pixel (2,0)
-execute if score @s {ns}.zoom matches 1 at @s anchored eyes run particle minecraft:entity_effect{{color:[0.99803922,0.01764706,0.0,1.0]}} ^ ^ ^1 0 0 0 0 1 force @s
+# dust R=0.02, G=0.02, B=0 → particle.vsh detects and places at pixel (2,0)
+execute if score @s {ns}.zoom matches 1 at @s anchored eyes run particle minecraft:dust{{color:[0.02,0.02,0.0],scale:0.05}} ^ ^ ^1 0 0 0 0 1 force @s
 """)
 

@@ -3,7 +3,6 @@
 #moj_import <minecraft:fog.glsl>
 #moj_import <minecraft:dynamictransforms.glsl>
 #moj_import <minecraft:projection.glsl>
-#moj_import <minecraft:globals.glsl>
 #moj_import <minecraft:sample_lightmap.glsl>
 
 in vec3 Position;
@@ -21,12 +20,10 @@ out vec4 vertexColor;
 // flat = no interpolation across quad (critical for integer flags)
 flat out int markerMode;  // 0=normal particle, 1=flash, 4=zoom
 
-// Alpha threshold for ACTIVATING flash mode signal.
-// entity_effect alpha decays by 1/lifetime per tick (lifetime = 10-40 ticks).
-// At 230/255 ≈ 0.902, the flash signal lasts ~2-5 ticks depending on lifetime.
-// Stale particles (mode -1) are still hidden but DON'T write the sentinel.
-#define FLASH_ALPHA_MIN 230
-
+// Quad corner offsets: covers a small area at the bottom-left of the screen.
+// The sizing is in NDC (not pixels), so no ScreenSize needed.
+// NOTE: The Globals UBO (ScreenSize) is NOT bound for the particle pipeline.
+// PARTICLE_SNIPPET only includes MATRICES_FOG_SNIPPET, not GLOBALS_SNIPPET.
 const vec2 corners[4] = vec2[4](
     vec2(0.0, 1.0),
     vec2(0.0, 0.0),
@@ -34,29 +31,21 @@ const vec2 corners[4] = vec2[4](
     vec2(1.0, 1.0)
 );
 
-ivec2 markerPixel(int mode) {
-    if (mode == 1) return ivec2(0, 0);  // flash → bottom-left corner
-    if (mode == 4) return ivec2(2, 0);  // zoom  → 2px right of corner
-    return ivec2(4, 0);                 // stale → hidden pixel (never read)
-}
+// Fixed NDC quad size: 0.015 NDC ≈ 8-15 pixels depending on resolution.
+// This guarantees coverage of pixel (0,0) and (1,0) at any resolution.
+#define MARKER_NDC_SIZE 0.015
 
-// Detect entity_effect marker by color pattern.
-// Minecraft packs float color to ARGB int using floor(value * 255),
-// so the actual vertex Color may be ±1 from the intended value.
-// We use ranges to tolerate this quantization.
+// Detect dust marker by color pattern.
+// Dust particles apply a random ~0.48-1.0× multiplier per channel
+// (DustParticleBase.randomizeColor()). Input 0.02 → R ∈ [2-5] in 8-bit.
+// B==0 is guaranteed (0 × anything = 0).
+// G channel determines mode: G==0 → flash, G>0 → zoom.
 int detectMarkerMode(vec4 color) {
     ivec4 ic = ivec4(round(color * 255.0));
-    // Signature: R near 254, B must be 0
-    if (ic.r >= 253 && ic.r <= 255 && ic.b == 0) {
-        // Flash: G should be ~1 (range [0-2] covers ±1 quantization)
-        if (ic.g >= 0 && ic.g <= 2) {
-            // Check alpha to limit flash duration:
-            // Fresh particle (A >= 230) → mode 1 (writes sentinel)
-            // Stale particle (A < 230)  → mode -1 (hidden, no sentinel)
-            return (ic.a >= FLASH_ALPHA_MIN) ? 1 : -1;
-        }
-        // Zoom: G should be ~4 (range [3-5] covers ±1 quantization)
-        if (ic.g >= 3 && ic.g <= 5) return 4;
+    // Signature: R in [1-10] (very dim dust), B must be 0
+    if (ic.r >= 1 && ic.r <= 10 && ic.b == 0) {
+        if (ic.g == 0) return 1;                  // Flash: G is zero
+        if (ic.g >= 1 && ic.g <= 10) return 4;    // Zoom: G is non-zero
     }
     return 0;  // Not a marker
 }
@@ -66,11 +55,17 @@ void main() {
     markerMode = mode;
 
     if (mode != 0) {
-        // REDIRECT marker quad to an exact pixel using ScreenSize.
-        ivec2 pixel = markerPixel(mode);  // mode -1 → hidden pixel (4,0)
-        vec2 pixelSize = 2.0 / ScreenSize;
-        vec2 base = vec2(-1.0) + vec2(pixel) * pixelSize;
-        gl_Position = vec4(base + corners[gl_VertexID % 4] * pixelSize, 0.0, 1.0);
+        // REDIRECT marker quad to bottom-left corner using FIXED NDC.
+        // Both flash and zoom use the same NDC quad covering the corner.
+        // The FRAGMENT shader discriminates: flash writes pixel (0,0),
+        // zoom writes pixel (1,0), everything else is discarded.
+        vec2 base = vec2(-1.0, -1.0);
+        vec2 size = vec2(MARKER_NDC_SIZE);
+
+        // z = -1.0 puts the marker at the NEAR PLANE (depth 0.0).
+        // Dust uses OPAQUE_PARTICLE pipeline: depth test LEQUAL, depth
+        // write ON. Our depth 0.0 always passes (≤ any scene depth).
+        gl_Position = vec4(base + corners[gl_VertexID % 4] * size, -1.0, 1.0);
 
         // Zero out all vanilla varyings (not used for markers)
         sphericalVertexDistance = 0.0;

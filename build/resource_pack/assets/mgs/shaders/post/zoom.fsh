@@ -75,7 +75,7 @@ void main() {
     }
 
 #if DEBUG
-    if (gl_FragCoord.x >= 100.0 && gl_FragCoord.x < 150.0 && gl_FragCoord.y < 50.0) {
+    if (gl_FragCoord.x >= 100.0 && gl_FragCoord.x < 150.0 && gl_FragCoord.y >= 5.0 && gl_FragCoord.y < 55.0) {
         if (flashMode && zoomMode) {
             fragColor = vec4(1.0, 1.0, 1.0, 1.0);  // White: both detected
         } else if (flashMode) {
