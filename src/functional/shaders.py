@@ -1,5 +1,7 @@
+
+# ruff: noqa: E501
 # Imports
-from beet import FragmentShader, PostEffect, VertexShader
+from beet import FragmentShader, PostEffect, Texture, VertexShader
 from stewbeet import JsonDict, Mem, set_json_encoder, write_versioned_function
 
 # ============================================================================ #
@@ -490,6 +492,7 @@ FLASH_FSH = """\
 uniform sampler2D InSampler;
 uniform sampler2D InDepthSampler;
 uniform sampler2D ClassifySampler;
+uniform sampler2D SparkTexSampler;
 
 layout(std140) uniform FlashConfig {
     vec3 Color;
@@ -507,6 +510,10 @@ out vec4 fragColor;
 #define FOV 70
 #define CK tan(float(FOV) / 360.0 * 3.14159265358979) * 2.0
 
+// Flash spark texture overlay settings
+#define SPARK_SIZE 0.5       // Size of spark in screen-height units (1.0 = full height)
+#define SPARK_INTENSITY 1.0  // Brightness multiplier for the spark texture
+
 float LinearizeDepth(float depth) {
     float z = depth * 2.0 - 1.0;
     return (NEAR * FAR) / (FAR + NEAR - z * (FAR - NEAR));
@@ -519,9 +526,10 @@ void main() {
     fragColor = texture(InSampler, texCoord);
 
     if (flashMode) {
-        vec2 oneTexel = 1.0 / inSize;
         float aspectRatio = inSize.x / inSize.y;
+        vec2 oneTexel = 1.0 / inSize;
 
+        // Depth-based light/bloom effect
         float depth = LinearizeDepth(texture(InDepthSampler, texCoord).r);
         vec2 screenCoords = (texCoord - 0.5) * vec2(aspectRatio, 1.0) * CK * depth;
         float dist = length(vec3(screenCoords, depth));
@@ -539,6 +547,13 @@ void main() {
             fragColor.rgb *= (INTENSITY / clamp(length(blurColor.rgb), 0.04, 1.0) * lightColor * 0.9)
                            * (1.0 - clamp(length(blurColor.rgb) / 1.6, 0.0, 1.0)) + vec3(1.0);
             fragColor.rgb += INTENSITY * lightColor * 0.1;
+        }
+
+        // Overlay flash spark texture (additive blend, centered on screen)
+        // The texture is square; aspect ratio correction keeps it square on screen.
+        vec2 sparkUV = (texCoord - 0.5) / vec2(SPARK_SIZE / aspectRatio, SPARK_SIZE) + 0.5;
+        if (sparkUV.x >= 0.0 && sparkUV.x <= 1.0 && sparkUV.y >= 0.0 && sparkUV.y <= 1.0) {
+            fragColor.rgb += texture(SparkTexSampler, sparkUV).rgb * SPARK_INTENSITY;
         }
     }
 
@@ -707,6 +722,7 @@ def get_post_effect_json(ns: str) -> JsonDict:
                     {"sampler_name": "In",       "target": "final"},
                     {"sampler_name": "InDepth",  "target": "minecraft:main", "use_depth_buffer": True},
                     {"sampler_name": "Classify", "target": "classify"},
+                    {"sampler_name": "SparkTex", "location": f"{ns}:flash", "width": 1536, "height": 1536, "bilinear": True},
                 ],
                 "output": "swap",
                 "uniforms": {
@@ -727,7 +743,7 @@ def get_post_effect_json(ns: str) -> JsonDict:
                 "uniforms": {
                     "ZoomConfig": [
                         {"name": "Distortion", "type": "float", "value": 0.55},
-                        {"name": "Zoom",       "type": "float", "value": 4.0},
+                        {"name": "Zoom",       "type": "float", "value": 3.0},
                     ],
                 },
             },
@@ -765,26 +781,37 @@ def main() -> None:
     Mem.ctx.assets[ns].fragment_shaders["post/flash"]       = FragmentShader(FLASH_FSH)
     Mem.ctx.assets[ns].fragment_shaders["post/zoom"]        = FragmentShader(ZOOM_FSH)
 
-    Mem.ctx.assets["minecraft"].post_effects["transparency"] = set_json_encoder(PostEffect(get_post_effect_json(ns)))
+    Mem.ctx.assets["minecraft"].post_effects["transparency"] = set_json_encoder(PostEffect(get_post_effect_json(ns)), max_level=4)
+
+    # Register flash spark texture for post-effect overlay (1536x1536 additive spark)
+    textures_folder: str = Mem.ctx.meta.get("stewbeet", {}).get("textures_folder", "")
+    Mem.ctx.assets[ns].textures["effect/flash"] = Texture(source_path=f"{textures_folder}/flash.png")
 
     # ── Flash marker: mode 1 ──
     # dust color:[R,0,0] with R=0.02 → vsh detects R∈[1-10], G==0, B==0
-    # scale=0.15 → lifetime = random(8-40)x0.15 = 1-6 ticks (brief flash)
+    # scale=0.01 → lifetime = 0 (1 game tick minimum) → brief flash for rapid fire
     write_versioned_function("player/fire_weapon",
 """
 # Shader: spawn muzzle flash marker (mode 1)
 # dust R=0.02, G=0, B=0 → particle.vsh detects and places at pixel (0,0)
-# scale 0.15 → ~1-6 tick lifetime → flash auto-expires when particle dies
+# scale 0.01 → lifetime 0 (1 game tick) → flash auto-expires immediately
 execute at @s anchored eyes run particle minecraft:dust{color:[0.02,0.0,0.0],scale:0.01} ^ ^ ^1 0 0 0 0 1 force @a[distance=..16]
 """)
 
     # ── Zoom marker: mode 4 ──
     # dust color:[R,G,0] with R=G=0.02 → vsh detects R∈[1-10], G∈[1-10], B==0
-    # Spawned every tick while ADS is active
+    # Spawned every tick while ADS is active, with 10-tick delay and scope check
     write_versioned_function("player/tick",
 f"""
-# Shader: spawn zoom marker (mode 4)
-# dust R=0.02, G=0.02, B=0 → particle.vsh detects and places at pixel (2,0)
-execute if score @s {ns}.zoom matches 1 at @s anchored eyes run particle minecraft:dust{{color:[0.02,0.02,0.0],scale:0.05}} ^ ^ ^1 0 0 0 0 1 force @s
+## Shader: zoom marker with delay and scope check
+# Reset zoom timer when not zooming
+execute unless score @s {ns}.zoom matches 1 run scoreboard players set @s {ns}.zoom_timer 0
+
+# Increment zoom timer while zooming
+execute if score @s {ns}.zoom matches 1 run scoreboard players add @s {ns}.zoom_timer 1
+
+# Spawn zoom marker only after 5 ticks of continuous zoom AND weapon has scope (_3/_4 variants)
+# dust R=0.02, G=0.02, B=0 → particle.vsh detects and places at pixel (1,0)
+execute if score @s {ns}.zoom matches 1 if score @s {ns}.zoom_timer matches 5.. if items entity @s weapon.mainhand *[custom_data~{{{ns}:{{has_scope:true}}}}] at @s anchored eyes run particle minecraft:dust{{color:[0.02,0.02,0.0],scale:0.01}} ^ ^ ^1 0 0 0 0 1 force @s
 """)
 
