@@ -3,7 +3,6 @@
 uniform sampler2D InSampler;
 uniform sampler2D InDepthSampler;
 uniform sampler2D ClassifySampler;
-uniform sampler2D SparkTexSampler;
 
 layout(std140) uniform FlashConfig {
     vec3 Color;
@@ -20,10 +19,6 @@ out vec4 fragColor;
 #define BLURR 10.0
 #define FOV 70
 #define CK tan(float(FOV) / 360.0 * 3.14159265358979) * 2.0
-
-// Flash spark texture overlay settings
-#define SPARK_SIZE 0.5       // Size of spark in screen-height units (1.0 = full height)
-#define SPARK_INTENSITY 1.0  // Brightness multiplier for the spark texture
 
 float LinearizeDepth(float depth) {
     float z = depth * 2.0 - 1.0;
@@ -58,13 +53,6 @@ void main() {
             fragColor.rgb *= (INTENSITY / clamp(length(blurColor.rgb), 0.04, 1.0) * lightColor * 0.9)
                            * (1.0 - clamp(length(blurColor.rgb) / 1.6, 0.0, 1.0)) + vec3(1.0);
             fragColor.rgb += INTENSITY * lightColor * 0.1;
-        }
-
-        // Overlay flash spark texture (additive blend, centered on screen)
-        // The texture is square; aspect ratio correction keeps it square on screen.
-        vec2 sparkUV = (texCoord - 0.5) / vec2(SPARK_SIZE / aspectRatio, SPARK_SIZE) + 0.5;
-        if (sparkUV.x >= 0.0 && sparkUV.x <= 1.0 && sparkUV.y >= 0.0 && sparkUV.y <= 1.0) {
-            fragColor.rgb += texture(SparkTexSampler, sparkUV).rgb * SPARK_INTENSITY;
         }
     }
 

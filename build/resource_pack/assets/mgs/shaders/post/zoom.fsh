@@ -2,10 +2,10 @@
 
 uniform sampler2D InSampler;
 uniform sampler2D ClassifySampler;
+uniform sampler2D SparkTexSampler;
 
 layout(std140) uniform ZoomConfig {
     float Distortion;
-    float Zoom;
 };
 
 in vec2 texCoord;
@@ -13,6 +13,19 @@ out vec4 fragColor;
 
 #define DEBUG 1
 #define RADIUS 0.14
+
+// Flash spark sprite sheet: 3x3 grid of 9 different flash sprites (1536x1536 total)
+#define SPRITE_COUNT 9
+#define SPRITE_SQRT 3
+
+// Flash spark position & scale in screen-space coords:
+//   screenCoord = (texCoord - 0.5) * vec2(aspectRatio, 1.0)
+// When zooming: centered, slightly below center (muzzle at center of scope)
+#define SPARK_POS_ZOOM   vec2(0.0, -0.125)
+#define SPARK_SCALE_ZOOM vec2(0.6, 0.6)
+// When NOT zooming: offset down-right (muzzle is off-center in hip fire)
+#define SPARK_POS_NORMAL   vec2(0.085, -0.11)
+#define SPARK_SCALE_NORMAL vec2(0.45, 0.45)
 
 vec4 cubic(float v) {
     vec4 n = vec4(1.0, 2.0, 3.0, 4.0) - v;
@@ -54,23 +67,50 @@ void main() {
     vec4 classifyData = texture(ClassifySampler, vec2(0.5, 0.5));
     bool flashMode = classifyData.r > 0.5;
     bool zoomMode  = classifyData.g > 0.5;
+    int zoomLevel = int(round(classifyData.b * 255.0));  // 3 or 4 (from classify B channel)
 
     fragColor = texture(InSampler, texCoord);
+    float aspectRatio = inSize.x / inSize.y;
+    vec2 screenCoord = (texCoord - vec2(0.5)) * vec2(aspectRatio, 1.0);
 
-    if (zoomMode) {
-        float aspectRatio = inSize.x / inSize.y;
-        vec2 screenCoord = (texCoord - vec2(0.5)) * vec2(aspectRatio, 1.0);
+    // Apply barrel distortion if zooming (zoom level determines magnification)
+    if (zoomMode && length(screenCoord) < RADIUS) {
+        float Zoom = float(zoomLevel);  // 3.0 for _3 weapons, 4.0 for _4 weapons
+        float d = length(screenCoord * Distortion / RADIUS);
+        float z = sqrt(1.0 - d * d);
+        float r = atan(d, z) / 3.1415926535;
+        float theta = atan(screenCoord.y, screenCoord.x);
 
-        if (length(screenCoord) < RADIUS) {
-            float d = length(screenCoord * Distortion / RADIUS);
-            float z = sqrt(1.0 - d * d);
-            float r = atan(d, z) / 3.1415926535;
-            float theta = atan(screenCoord.y, screenCoord.x);
+        screenCoord = vec2(cos(theta), sin(theta)) * r / Zoom;
+        vec2 pixCoord = screenCoord * vec2(1.0 / aspectRatio, 1.0) + vec2(0.5);
 
-            screenCoord = vec2(cos(theta), sin(theta)) * r / Zoom;
-            vec2 pixCoord = screenCoord * vec2(1.0 / aspectRatio, 1.0) + vec2(0.5);
+        fragColor = textureBicubic(InSampler, pixCoord, inSize);
+    }
 
-            fragColor = textureBicubic(InSampler, pixCoord, inSize);
+    // Overlay flash spark texture AFTER zoom (spark is NOT barrel-distorted)
+    // The 1536x1536 texture is a 3x3 grid of 9 different flash sprites.
+    // Sprite is chosen pseudo-randomly from scene data each frame.
+    if (flashMode) {
+        // Choose position/scale: centered when also zooming, offset when hip-firing
+        vec2 sparkPos   = zoomMode ? SPARK_POS_ZOOM   : SPARK_POS_NORMAL;
+        vec2 sparkScale = zoomMode ? SPARK_SCALE_ZOOM  : SPARK_SCALE_NORMAL;
+
+        // Bounding box in screen-space
+        vec2 lb = sparkPos - sparkScale / 2.0;
+        vec2 ub = sparkPos + sparkScale / 2.0;
+        vec2 sd = sparkScale * float(SPRITE_SQRT);  // scale for one sprite cell
+
+        // Pseudo-random sprite index (0-8) from scene content.
+        // Using depth/color at fixed pixels as entropy — changes with camera position.
+        float entropy = texelFetch(InSampler, ivec2(317, 211), 0).r
+                      + texelFetch(InSampler, ivec2(211, 317), 0).g;
+        int spriteIndex = int(mod(floor(entropy * 7919.0), float(SPRITE_COUNT)));
+        vec2 spriteOffset = vec2(spriteIndex % SPRITE_SQRT, spriteIndex / SPRITE_SQRT) / float(SPRITE_SQRT);
+
+        // Additive overlay within the spark bounding box
+        if (screenCoord.x > lb.x && screenCoord.y > lb.y &&
+            screenCoord.x < ub.x && screenCoord.y < ub.y) {
+            fragColor += texture(SparkTexSampler, (screenCoord - lb) / sd + spriteOffset);
         }
     }
 

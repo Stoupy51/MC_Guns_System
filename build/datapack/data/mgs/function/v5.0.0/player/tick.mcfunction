@@ -13,9 +13,11 @@ execute unless score @s mgs.zoom matches 1 run scoreboard players set @s mgs.zoo
 # Increment zoom timer while zooming
 execute if score @s mgs.zoom matches 1 run scoreboard players add @s mgs.zoom_timer 1
 
-# Spawn zoom marker only after 5 ticks of continuous zoom AND weapon has scope (_3/_4 variants)
-# dust R=0.02, G=0.02, B=0 → particle.vsh detects and places at pixel (1,0)
-execute if score @s mgs.zoom matches 1 if score @s mgs.zoom_timer matches 5.. if items entity @s weapon.mainhand *[custom_data~{mgs:{has_scope:true}}] at @s anchored eyes run particle minecraft:dust{color:[0.02,0.02,0.0],scale:0.01} ^ ^ ^1 0 0 0 0 1 force @s
+# Spawn zoom x3 marker for _3 weapons (scope_level:3)
+execute if score @s mgs.zoom matches 1 if score @s mgs.zoom_timer matches 5.. if items entity @s weapon.mainhand *[custom_data~{mgs:{scope_level:3}}] at @s anchored eyes run particle minecraft:dust{color:[0.02,0.02,0.0],scale:0.01} ^ ^ ^1 0 0 0 0 1 force @s
+
+# Spawn zoom x4 marker for _4 weapons (scope_level:4)
+execute if score @s mgs.zoom matches 1 if score @s mgs.zoom_timer matches 5.. if items entity @s weapon.mainhand *[custom_data~{mgs:{scope_level:4}}] at @s anchored eyes run particle minecraft:dust{color:[0.02,0.08,0.0],scale:0.01} ^ ^ ^1 0 0 0 0 1 force @s
 
 # Add temporary tag
 tag @s add mgs.ticking

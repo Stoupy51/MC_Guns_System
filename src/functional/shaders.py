@@ -133,8 +133,9 @@ from stewbeet import JsonDict, Mem, set_json_encoder, write_versioned_function
 # ╚════════════════════════════════════════════════════════════════════════╝
 #
 # MARKER PIXEL MAP:
-#   Mode 1 (flash) → screen pixel (0, 0)   [bottom-left corner]
-#   Mode 4 (zoom)  → screen pixel (1, 0)   [one pixel right]
+#   Mode 1 (flash)   → screen pixel (0, 0)   [bottom-left corner]
+#   Mode 3 (zoom x3) → screen pixel (1, 0)   [one pixel right]
+#   Mode 4 (zoom x4) → screen pixel (1, 0)   [same pixel, G=3 vs G=4]
 #
 # MARKER COLOR ENCODING (dust RGB + scale):
 #   Command provides float [R, G, B] (no alpha) + scale (size & lifetime).
@@ -142,16 +143,19 @@ from stewbeet import JsonDict, Mem, set_json_encoder, write_versioned_function
 #   via AbstractDustParticle.darken(), so vertex Color.rgb varies.
 #   We use very dim colors and range-based detection to handle this.
 #
-#   Flash: color:[0.02, 0.0, 0.0], scale:0.15
+#   Flash: color:[0.02, 0.0, 0.0], scale:0.01
 #     R ∈ [2-5] after randomization, G = 0, B = 0
-#   Zoom:  color:[0.02, 0.02, 0.0], scale:0.15
+#   Zoom x3: color:[0.02, 0.02, 0.0], scale:0.01
 #     R ∈ [2-5] after randomization, G ∈ [2-5], B = 0
+#   Zoom x4: color:[0.02, 0.08, 0.0], scale:0.01
+#     R ∈ [2-5] after randomization, G ∈ [10-20], B = 0
 #
 #   Detection: R ∈ [1,10], B == 0 → marker signature.
-#   Mode: G == 0 → flash (mode 1), G ∈ [1,10] → zoom (mode 4).
+#   Mode: G == 0 → flash (mode 1), G ∈ [1,7] → zoom x3 (mode 3),
+#         G ∈ [8,25] → zoom x4 (mode 4).
 #
-#   scale=0.15 → particle lifetime = random(8-40) x 0.15 = 1-6 ticks.
-#   Flash auto-expires when particle dies (no alpha threshold needed).
+#   scale=0.01 → particle lifetime = 0 (1 game tick minimum).
+#   Flash auto-expires after 1 tick.
 #   Zoom spawned every tick → always at least one live particle.
 #
 #   fsh writes DETERMINISTIC sentinel (R=254, G=mode, B=0, A=255)
@@ -188,7 +192,7 @@ out vec2 texCoord0;
 out vec4 vertexColor;
 
 // flat = no interpolation across quad (critical for integer flags)
-flat out int markerMode;  // 0=normal particle, 1=flash, 4=zoom
+flat out int markerMode;  // 0=normal particle, 1=flash, 3=zoom x3, 4=zoom x4
 
 // Quad corner offsets: covers a small area at the bottom-left of the screen.
 // The sizing is in NDC (not pixels), so no ScreenSize needed.
@@ -209,13 +213,17 @@ const vec2 corners[4] = vec2[4](
 // Dust particles apply a random ~0.48-1.0x multiplier per channel
 // (DustParticleBase.randomizeColor()). Input 0.02 → R ∈ [2-5] in 8-bit.
 // B==0 is guaranteed (0 x anything = 0).
-// G channel determines mode: G==0 → flash, G>0 → zoom.
+// G channel determines mode:
+//   G==0        → flash (mode 1)
+//   G∈[1-7]    → zoom x3 (from 0.02, randomized to [2-5])
+//   G∈[8-25]   → zoom x4 (from 0.08, randomized to [10-20])
 int detectMarkerMode(vec4 color) {
     ivec4 ic = ivec4(round(color * 255.0));
     // Signature: R in [1-10] (very dim dust), B must be 0
     if (ic.r >= 1 && ic.r <= 10 && ic.b == 0) {
         if (ic.g == 0) return 1;                  // Flash: G is zero
-        if (ic.g >= 1 && ic.g <= 10) return 4;    // Zoom: G is non-zero
+        if (ic.g >= 1 && ic.g <= 7) return 3;     // Zoom x3: G from 0.02 → [2-5]
+        if (ic.g >= 8 && ic.g <= 25) return 4;    // Zoom x4: G from 0.08 → [10-20]
     }
     return 0;  // Not a marker
 }
@@ -270,7 +278,7 @@ in float sphericalVertexDistance;
 in float cylindricalVertexDistance;
 in vec2 texCoord0;
 in vec4 vertexColor;
-flat in int markerMode;  // 0=normal, 1=flash, 4=zoom
+flat in int markerMode;  // 0=normal, 1=flash, 3=zoom x3, 4=zoom x4
 
 out vec4 fragColor;
 
@@ -282,15 +290,16 @@ void main() {
         // Both flash and zoom quads cover the same area.
         // We ONLY write the sentinel at the exact target pixel;
         // all other fragments are discarded to avoid overwriting scene.
-        //   Flash → pixel (0, 0)
-        //   Zoom  → pixel (1, 0)
+        //   Flash    → pixel (0, 0)
+        //   Zoom x3  → pixel (1, 0)  (G=3)
+        //   Zoom x4  → pixel (1, 0)  (G=4)
         ivec2 fc = ivec2(gl_FragCoord.xy);
         ivec2 target = (markerMode == 1) ? ivec2(0, 0) : ivec2(1, 0);
         if (fc != target) {
             discard;
         }
         // Write DETERMINISTIC sentinel: classify reads exact values.
-        // R=254, G=mode, B=0, A=255 — immune to dust color randomization.
+        // R=254, G=mode(1/3/4), B=0, A=255 — immune to dust color randomization.
         fragColor = vec4(254.0 / 255.0, float(markerMode) / 255.0, 0.0, 1.0);
         return;
     }
@@ -334,11 +343,17 @@ void main() {
 
     // Sentinel: R == MARKER_RED, B == 0, A == 255, G == expected mode value
     bool flashActive = (p1.r == MARKER_RED && p1.b == 0 && p1.a == 255 && p1.g == 1);
-    bool zoomActive  = (p4.r == MARKER_RED && p4.b == 0 && p4.a == 255 && p4.g == 4);
+    bool zoomActive  = (p4.r == MARKER_RED && p4.b == 0 && p4.a == 255 && (p4.g == 3 || p4.g == 4));
+    int zoomLevel = zoomActive ? p4.g : 0;  // 3 for x3 zoom, 4 for x4 zoom
 
-    // Independent channels: both can be active simultaneously.
-    // R = flash, G = zoom. flash.fsh reads R, zoom.fsh reads G.
-    fragColor = vec4(flashActive ? 1.0 : 0.0, zoomActive ? 1.0 : 0.0, 0.0, 1.0);
+    // R = flash, G = zoom, B = zoom level (3 or 4) / 255.
+    // flash.fsh reads R, zoom.fsh reads G and B.
+    fragColor = vec4(
+        flashActive ? 1.0 : 0.0,
+        zoomActive ? 1.0 : 0.0,
+        float(zoomLevel) / 255.0,
+        1.0
+    );
 }
 """
 
@@ -492,7 +507,6 @@ FLASH_FSH = """\
 uniform sampler2D InSampler;
 uniform sampler2D InDepthSampler;
 uniform sampler2D ClassifySampler;
-uniform sampler2D SparkTexSampler;
 
 layout(std140) uniform FlashConfig {
     vec3 Color;
@@ -509,10 +523,6 @@ out vec4 fragColor;
 #define BLURR 10.0
 #define FOV 70
 #define CK tan(float(FOV) / 360.0 * 3.14159265358979) * 2.0
-
-// Flash spark texture overlay settings
-#define SPARK_SIZE 0.5       // Size of spark in screen-height units (1.0 = full height)
-#define SPARK_INTENSITY 1.0  // Brightness multiplier for the spark texture
 
 float LinearizeDepth(float depth) {
     float z = depth * 2.0 - 1.0;
@@ -548,13 +558,6 @@ void main() {
                            * (1.0 - clamp(length(blurColor.rgb) / 1.6, 0.0, 1.0)) + vec3(1.0);
             fragColor.rgb += INTENSITY * lightColor * 0.1;
         }
-
-        // Overlay flash spark texture (additive blend, centered on screen)
-        // The texture is square; aspect ratio correction keeps it square on screen.
-        vec2 sparkUV = (texCoord - 0.5) / vec2(SPARK_SIZE / aspectRatio, SPARK_SIZE) + 0.5;
-        if (sparkUV.x >= 0.0 && sparkUV.x <= 1.0 && sparkUV.y >= 0.0 && sparkUV.y <= 1.0) {
-            fragColor.rgb += texture(SparkTexSampler, sparkUV).rgb * SPARK_INTENSITY;
-        }
     }
 
     fragColor = vec4(fragColor.rgb, 1.0);
@@ -576,10 +579,10 @@ ZOOM_FSH = """\
 
 uniform sampler2D InSampler;
 uniform sampler2D ClassifySampler;
+uniform sampler2D SparkTexSampler;
 
 layout(std140) uniform ZoomConfig {
     float Distortion;
-    float Zoom;
 };
 
 in vec2 texCoord;
@@ -587,6 +590,19 @@ out vec4 fragColor;
 
 #define DEBUG 1
 #define RADIUS 0.14
+
+// Flash spark sprite sheet: 3x3 grid of 9 different flash sprites (1536x1536 total)
+#define SPRITE_COUNT 9
+#define SPRITE_SQRT 3
+
+// Flash spark position & scale in screen-space coords:
+//   screenCoord = (texCoord - 0.5) * vec2(aspectRatio, 1.0)
+// When zooming: centered, slightly below center (muzzle at center of scope)
+#define SPARK_POS_ZOOM   vec2(0.0, -0.125)
+#define SPARK_SCALE_ZOOM vec2(0.6, 0.6)
+// When NOT zooming: offset down-right (muzzle is off-center in hip fire)
+#define SPARK_POS_NORMAL   vec2(0.085, -0.11)
+#define SPARK_SCALE_NORMAL vec2(0.45, 0.45)
 
 vec4 cubic(float v) {
     vec4 n = vec4(1.0, 2.0, 3.0, 4.0) - v;
@@ -628,23 +644,50 @@ void main() {
     vec4 classifyData = texture(ClassifySampler, vec2(0.5, 0.5));
     bool flashMode = classifyData.r > 0.5;
     bool zoomMode  = classifyData.g > 0.5;
+    int zoomLevel = int(round(classifyData.b * 255.0));  // 3 or 4 (from classify B channel)
 
     fragColor = texture(InSampler, texCoord);
+    float aspectRatio = inSize.x / inSize.y;
+    vec2 screenCoord = (texCoord - vec2(0.5)) * vec2(aspectRatio, 1.0);
 
-    if (zoomMode) {
-        float aspectRatio = inSize.x / inSize.y;
-        vec2 screenCoord = (texCoord - vec2(0.5)) * vec2(aspectRatio, 1.0);
+    // Apply barrel distortion if zooming (zoom level determines magnification)
+    if (zoomMode && length(screenCoord) < RADIUS) {
+        float Zoom = float(zoomLevel);  // 3.0 for _3 weapons, 4.0 for _4 weapons
+        float d = length(screenCoord * Distortion / RADIUS);
+        float z = sqrt(1.0 - d * d);
+        float r = atan(d, z) / 3.1415926535;
+        float theta = atan(screenCoord.y, screenCoord.x);
 
-        if (length(screenCoord) < RADIUS) {
-            float d = length(screenCoord * Distortion / RADIUS);
-            float z = sqrt(1.0 - d * d);
-            float r = atan(d, z) / 3.1415926535;
-            float theta = atan(screenCoord.y, screenCoord.x);
+        screenCoord = vec2(cos(theta), sin(theta)) * r / Zoom;
+        vec2 pixCoord = screenCoord * vec2(1.0 / aspectRatio, 1.0) + vec2(0.5);
 
-            screenCoord = vec2(cos(theta), sin(theta)) * r / Zoom;
-            vec2 pixCoord = screenCoord * vec2(1.0 / aspectRatio, 1.0) + vec2(0.5);
+        fragColor = textureBicubic(InSampler, pixCoord, inSize);
+    }
 
-            fragColor = textureBicubic(InSampler, pixCoord, inSize);
+    // Overlay flash spark texture AFTER zoom (spark is NOT barrel-distorted)
+    // The 1536x1536 texture is a 3x3 grid of 9 different flash sprites.
+    // Sprite is chosen pseudo-randomly from scene data each frame.
+    if (flashMode) {
+        // Choose position/scale: centered when also zooming, offset when hip-firing
+        vec2 sparkPos   = zoomMode ? SPARK_POS_ZOOM   : SPARK_POS_NORMAL;
+        vec2 sparkScale = zoomMode ? SPARK_SCALE_ZOOM  : SPARK_SCALE_NORMAL;
+
+        // Bounding box in screen-space
+        vec2 lb = sparkPos - sparkScale / 2.0;
+        vec2 ub = sparkPos + sparkScale / 2.0;
+        vec2 sd = sparkScale * float(SPRITE_SQRT);  // scale for one sprite cell
+
+        // Pseudo-random sprite index (0-8) from scene content.
+        // Using depth/color at fixed pixels as entropy — changes with camera position.
+        float entropy = texelFetch(InSampler, ivec2(317, 211), 0).r
+                      + texelFetch(InSampler, ivec2(211, 317), 0).g;
+        int spriteIndex = int(mod(floor(entropy * 7919.0), float(SPRITE_COUNT)));
+        vec2 spriteOffset = vec2(spriteIndex % SPRITE_SQRT, spriteIndex / SPRITE_SQRT) / float(SPRITE_SQRT);
+
+        // Additive overlay within the spark bounding box
+        if (screenCoord.x > lb.x && screenCoord.y > lb.y &&
+            screenCoord.x < ub.x && screenCoord.y < ub.y) {
+            fragColor += texture(SparkTexSampler, (screenCoord - lb) / sd + spriteOffset);
         }
     }
 
@@ -714,7 +757,7 @@ def get_post_effect_json(ns: str) -> JsonDict:
                 ],
                 "output": "final",
             },
-            # Pass 3: FLASH - depth-based muzzle flash (if mode 1)
+            # Pass 3: FLASH - depth-based muzzle flash light/bloom (if mode 1)
             {
                 "vertex_shader":   "minecraft:core/screenquad",
                 "fragment_shader": f"{ns}:post/flash",
@@ -722,7 +765,6 @@ def get_post_effect_json(ns: str) -> JsonDict:
                     {"sampler_name": "In",       "target": "final"},
                     {"sampler_name": "InDepth",  "target": "minecraft:main", "use_depth_buffer": True},
                     {"sampler_name": "Classify", "target": "classify"},
-                    {"sampler_name": "SparkTex", "location": f"{ns}:flash", "width": 1536, "height": 1536, "bilinear": True},
                 ],
                 "output": "swap",
                 "uniforms": {
@@ -731,19 +773,22 @@ def get_post_effect_json(ns: str) -> JsonDict:
                     ],
                 },
             },
-            # Pass 4: ZOOM - barrel distortion (if mode 4)
+            # Pass 4: ZOOM - barrel distortion + flash spark overlay
+            # SparkTex is the 1536x1536 flash sprite sheet (3x3 grid of 9 sprites).
+            # Spark overlays AFTER zoom so it's not barrel-distorted.
+            # Zoom level (x3/x4) is read from classify B channel.
             {
                 "vertex_shader":   "minecraft:core/screenquad",
                 "fragment_shader": f"{ns}:post/zoom",
                 "inputs": [
                     {"sampler_name": "In",       "target": "swap", "bilinear": True},
                     {"sampler_name": "Classify", "target": "classify"},
+                    {"sampler_name": "SparkTex", "location": f"{ns}:flash", "width": 1536, "height": 1536, "bilinear": True},
                 ],
                 "output": "final",
                 "uniforms": {
                     "ZoomConfig": [
                         {"name": "Distortion", "type": "float", "value": 0.55},
-                        {"name": "Zoom",       "type": "float", "value": 3.0},
                     ],
                 },
             },
@@ -798,9 +843,10 @@ def main() -> None:
 execute at @s anchored eyes run particle minecraft:dust{color:[0.02,0.0,0.0],scale:0.01} ^ ^ ^1 0 0 0 0 1 force @a[distance=..16]
 """)
 
-    # ── Zoom marker: mode 4 ──
-    # dust color:[R,G,0] with R=G=0.02 → vsh detects R∈[1-10], G∈[1-10], B==0
-    # Spawned every tick while ADS is active, with 10-tick delay and scope check
+    # ── Zoom marker: mode 3 (x3) or mode 4 (x4) ──
+    # Zoom x3: color:[0.02, 0.02, 0] → G∈[2-5] after randomization → mode 3
+    # Zoom x4: color:[0.02, 0.08, 0] → G∈[10-20] after randomization → mode 4
+    # Spawned every tick while ADS is active, with delay and scope check
     write_versioned_function("player/tick",
 f"""
 ## Shader: zoom marker with delay and scope check
@@ -810,8 +856,10 @@ execute unless score @s {ns}.zoom matches 1 run scoreboard players set @s {ns}.z
 # Increment zoom timer while zooming
 execute if score @s {ns}.zoom matches 1 run scoreboard players add @s {ns}.zoom_timer 1
 
-# Spawn zoom marker only after 5 ticks of continuous zoom AND weapon has scope (_3/_4 variants)
-# dust R=0.02, G=0.02, B=0 → particle.vsh detects and places at pixel (1,0)
-execute if score @s {ns}.zoom matches 1 if score @s {ns}.zoom_timer matches 5.. if items entity @s weapon.mainhand *[custom_data~{{{ns}:{{has_scope:true}}}}] at @s anchored eyes run particle minecraft:dust{{color:[0.02,0.02,0.0],scale:0.01}} ^ ^ ^1 0 0 0 0 1 force @s
+# Spawn zoom x3 marker for _3 weapons (scope_level:3)
+execute if score @s {ns}.zoom matches 1 if score @s {ns}.zoom_timer matches 5.. if items entity @s weapon.mainhand *[custom_data~{{{ns}:{{scope_level:3}}}}] at @s anchored eyes run particle minecraft:dust{{color:[0.02,0.02,0.0],scale:0.01}} ^ ^ ^1 0 0 0 0 1 force @s
+
+# Spawn zoom x4 marker for _4 weapons (scope_level:4)
+execute if score @s {ns}.zoom matches 1 if score @s {ns}.zoom_timer matches 5.. if items entity @s weapon.mainhand *[custom_data~{{{ns}:{{scope_level:4}}}}] at @s anchored eyes run particle minecraft:dust{{color:[0.02,0.08,0.0],scale:0.01}} ^ ^ ^1 0 0 0 0 1 force @s
 """)
 
