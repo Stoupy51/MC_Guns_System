@@ -152,9 +152,6 @@ execute if score @s {ns}.pending_clicks matches ..-1 run return fail
 # Stop if SelectedItem is not a gun or if not enough ammo
 execute unless data storage {ns}:gun all.gun run return fail
 execute if score @s {ns}.{REMAINING_BULLETS} matches ..0 run return run function {ns}:v{version}/ammo/reload
-
-# Set cooldown
-execute store result score @s {ns}.cooldown run data get storage {ns}:gun all.stats.{COOLDOWN}
 """)
 
     # Prepare predicates for movement checks
