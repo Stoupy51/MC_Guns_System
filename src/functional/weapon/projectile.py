@@ -202,7 +202,9 @@ data modify storage {ns}:temp expl.{EXPLOSION_RADIUS} set from entity @s data.co
 data modify storage {ns}:temp expl.shooter_uuid set from entity @s data.shooter
 
 # Tag the matching shooter for damage attribution
+scoreboard players set #found {ns}.data 0
 execute as @a run function {ns}:v{version}/projectile/match_shooter
+execute if score #found {ns}.data matches 0 as @e[tag={ns}.armed] run function {ns}:v{version}/projectile/match_shooter
 
 # Apply area damage to nearby entities (macro for configurable radius)
 execute store result storage {ns}:temp expl.radius_int int 1 run data get entity @s data.config.{EXPLOSION_RADIUS}
@@ -215,7 +217,7 @@ data modify storage {ns}:signals on_explosion.position set from entity @s Pos
 function #{ns}:signals/on_explosion
 
 # Clean up shooter tag
-tag @a remove {ns}.temp_shooter
+tag @e[tag={ns}.temp_shooter] remove {ns}.temp_shooter
 
 # Delete the projectile
 function {ns}:v{version}/projectile/delete
@@ -240,6 +242,7 @@ data modify storage {ns}:temp copy_uuid set from entity @s UUID
 execute store success score #is_match {ns}.data run data modify storage {ns}:temp copy_uuid set from storage {ns}:temp expl.shooter_uuid
 
 # If #is_match is 0, the UUIDs were identical (no change was made), so this is the shooter
+execute if score #is_match {ns}.data matches 0 run scoreboard players set #found {ns}.data 1
 execute if score #is_match {ns}.data matches 0 run tag @s add {ns}.temp_shooter
 """)
 
@@ -313,19 +316,19 @@ scoreboard players operation #expl_dmg {ns}.data /= #1000000 {ns}.data
 execute if score #expl_dmg {ns}.data matches ..0 run return fail
 
 # Instant kill: if shooter has active instant kill and target is not immune, set damage to 9999
-execute as @p[tag={ns}.temp_shooter] if score @s {ns}.special.instant_kill matches 1.. as @s[tag=!{ns}.no_instant_kill] run scoreboard players set #expl_dmg {ns}.data 9999
+execute as @e[tag={ns}.temp_shooter,limit=1] if score @s {ns}.special.instant_kill matches 1.. as @s[tag=!{ns}.no_instant_kill] run scoreboard players set #expl_dmg {ns}.data 9999
 
 # Apply damage using the existing damage utility
 # Prepare macro arguments: target=@s, amount=damage (float with 0.1 precision), attacker=shooter
-data modify storage {ns}:input with set value {{target:"@s", amount:0.0f, attacker:"@p[tag={ns}.temp_shooter]"}}
+data modify storage {ns}:input with set value {{target:"@s", amount:0.0f, attacker:"@n[tag={ns}.temp_shooter]"}}
 execute store result storage {ns}:input with.amount float 0.1 run scoreboard players get #expl_dmg {ns}.data
 function {ns}:v{version}/utils/damage with storage {ns}:input with
 function #{ns}:signals/damage with storage {ns}:input with
 
 # Signal: on_kill (if entity died after explosion damage, @s switches to shooter)
-execute unless entity @s as @p[tag={ns}.temp_shooter] run data modify storage {ns}:signals on_kill set value {{}}
-execute unless entity @s as @p[tag={ns}.temp_shooter] run data modify storage {ns}:signals on_kill.explosion set value true
-execute unless entity @s as @p[tag={ns}.temp_shooter] run function #{ns}:signals/on_kill
+execute unless entity @s as @e[tag={ns}.temp_shooter,limit=1] run data modify storage {ns}:signals on_kill set value {{}}
+execute unless entity @s as @e[tag={ns}.temp_shooter,limit=1] run data modify storage {ns}:signals on_kill.explosion set value true
+execute unless entity @s as @e[tag={ns}.temp_shooter,limit=1] run function #{ns}:signals/on_kill
 """)
 
     ## Delete projectile

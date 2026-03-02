@@ -4,7 +4,7 @@ from typing import Any
 
 from stewbeet import Advancement, ItemModifier, JsonDict, Mem, Predicate, set_json_encoder, write_versioned_function
 
-from ...config.stats import BURST, COOLDOWN, REMAINING_BULLETS
+from ...config.stats import BURST, REMAINING_BULLETS
 
 
 # Main function

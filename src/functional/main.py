@@ -85,7 +85,7 @@ scoreboard players set #1000 {ns}.data 1000
 scoreboard players set #1000000 {ns}.data 1000000
 
 # Initialize slow bullet (projectile) counter
-scoreboard players set #slow_bullet_count {ns}.data 0
+scoreboard players add #slow_bullet_count {ns}.data 0
 
 # Semtex entity pairing: unique ID objective + global counter
 scoreboard objectives add {ns}.grenade_launch dummy
@@ -147,6 +147,42 @@ execute as @e[type=player,sort=random] at @s run function {ns}:v{version}/player
     ])
     for icon_name in ["bullet_outline", "bullet_full"]:
         Mem.ctx.assets[ns].textures[f"font/{icon_name}"] = texture_mcmeta(f"{textures_folder}/{icon_name}.png")
+
+    # Random weapon function
+    write_versioned_function("utils/random_weapon", f"""
+execute store result score #random {ns}.data run random value 1..31
+$execute if score #random {ns}.data matches 1 run loot replace entity @s $(slot) loot {ns}:i/m16a4
+$execute if score #random {ns}.data matches 2 run loot replace entity @s $(slot) loot {ns}:i/m16a4
+$execute if score #random {ns}.data matches 3 run loot replace entity @s $(slot) loot {ns}:i/ak47
+$execute if score #random {ns}.data matches 4 run loot replace entity @s $(slot) loot {ns}:i/fnfal
+$execute if score #random {ns}.data matches 5 run loot replace entity @s $(slot) loot {ns}:i/aug
+$execute if score #random {ns}.data matches 6 run loot replace entity @s $(slot) loot {ns}:i/m4a1
+$execute if score #random {ns}.data matches 7 run loot replace entity @s $(slot) loot {ns}:i/g3a3
+$execute if score #random {ns}.data matches 8 run loot replace entity @s $(slot) loot {ns}:i/famas
+$execute if score #random {ns}.data matches 9 run loot replace entity @s $(slot) loot {ns}:i/scar17
+$execute if score #random {ns}.data matches 10 run loot replace entity @s $(slot) loot {ns}:i/m1911
+$execute if score #random {ns}.data matches 11 run loot replace entity @s $(slot) loot {ns}:i/m9
+$execute if score #random {ns}.data matches 12 run loot replace entity @s $(slot) loot {ns}:i/deagle
+$execute if score #random {ns}.data matches 13 run loot replace entity @s $(slot) loot {ns}:i/makarov
+$execute if score #random {ns}.data matches 14 run loot replace entity @s $(slot) loot {ns}:i/glock17
+$execute if score #random {ns}.data matches 15 run loot replace entity @s $(slot) loot {ns}:i/glock18
+$execute if score #random {ns}.data matches 16 run loot replace entity @s $(slot) loot {ns}:i/vz61
+$execute if score #random {ns}.data matches 17 run loot replace entity @s $(slot) loot {ns}:i/mp5
+$execute if score #random {ns}.data matches 18 run loot replace entity @s $(slot) loot {ns}:i/mac10
+$execute if score #random {ns}.data matches 19 run loot replace entity @s $(slot) loot {ns}:i/mp7
+$execute if score #random {ns}.data matches 20 run loot replace entity @s $(slot) loot {ns}:i/ppsh41
+$execute if score #random {ns}.data matches 21 run loot replace entity @s $(slot) loot {ns}:i/sten
+$execute if score #random {ns}.data matches 22 run loot replace entity @s $(slot) loot {ns}:i/spas12
+$execute if score #random {ns}.data matches 23 run loot replace entity @s $(slot) loot {ns}:i/m500
+$execute if score #random {ns}.data matches 24 run loot replace entity @s $(slot) loot {ns}:i/m590
+$execute if score #random {ns}.data matches 25 run loot replace entity @s $(slot) loot {ns}:i/svd
+$execute if score #random {ns}.data matches 26 run loot replace entity @s $(slot) loot {ns}:i/m82
+$execute if score #random {ns}.data matches 27 run loot replace entity @s $(slot) loot {ns}:i/mosin
+$execute if score #random {ns}.data matches 28 run loot replace entity @s $(slot) loot {ns}:i/m24
+$execute if score #random {ns}.data matches 29 run loot replace entity @s $(slot) loot {ns}:i/rpg7
+$execute if score #random {ns}.data matches 30 run loot replace entity @s $(slot) loot {ns}:i/rpk
+$execute if score #random {ns}.data matches 31 run loot replace entity @s $(slot) loot {ns}:i/m249
+""")
 
     # Config menu: /function mgs:config
     # Build clickable chat menu for server configuration
