@@ -66,8 +66,9 @@ scoreboard players operation #expl_dmg mgs.data /= #1000000 mgs.data
 # Skip if damage is negligible (less than 0.1)
 execute if score #expl_dmg mgs.data matches ..0 run return fail
 
-# Instant kill: if shooter has active instant kill and target is not immune, set damage to 9999
-execute as @n[tag=mgs.temp_shooter] if score @s mgs.special.instant_kill matches 1.. as @s[tag=!mgs.no_instant_kill] run scoreboard players set #expl_dmg mgs.data 9999
+# Instant kill: if shooter has active instant kill and target is not immune, set damage to 99999
+tag @n[tag=mgs.temp_shooter] add mgs.ticking
+execute as @n[tag=mgs.temp_shooter] if score @s mgs.special.instant_kill matches 1.. as @s[tag=!mgs.no_instant_kill] run scoreboard players set #expl_dmg mgs.data 99999
 
 # Apply damage using the existing damage utility
 # Prepare macro arguments: target=@s, amount=damage (float with 0.1 precision), attacker=shooter
@@ -76,8 +77,18 @@ execute store result storage mgs:input with.amount float 0.1 run scoreboard play
 function mgs:v5.0.0/utils/damage with storage mgs:input with
 function #mgs:signals/damage with storage mgs:input with
 
+# Signal: on_hit_entity (@s = hit entity, weapon/damage info in mgs:signals)
+data modify storage mgs:signals on_hit_entity set value {}
+data modify storage mgs:signals on_hit_entity.weapon set from storage mgs:gun all
+execute store result storage mgs:signals on_hit_entity.damage float 0.1 run scoreboard players get #expl_dmg mgs.data
+data modify storage mgs:signals on_hit_entity.target set from entity @s UUID
+function #mgs:signals/on_hit_entity
+
 # Signal: on_kill (if entity died after explosion damage, @s switches to shooter)
 execute unless entity @s as @n[tag=mgs.temp_shooter] run data modify storage mgs:signals on_kill set value {}
 execute unless entity @s as @n[tag=mgs.temp_shooter] run data modify storage mgs:signals on_kill.explosion set value true
 execute unless entity @s as @n[tag=mgs.temp_shooter] run function #mgs:signals/on_kill
+
+# Remove temporary tag
+tag @n[tag=mgs.temp_shooter] remove mgs.ticking
 

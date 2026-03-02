@@ -1,3 +1,5 @@
 {
-	"values": []
+	"values": [
+		"mgs:v5.0.0/multiplayer/on_kill_signal"
+	]
 }

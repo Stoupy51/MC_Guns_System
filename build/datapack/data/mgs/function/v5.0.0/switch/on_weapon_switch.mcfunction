@@ -6,8 +6,13 @@
 # @within	mgs:v5.0.0/switch/main
 #
 
-# Apply weapon switch cooldown only if it exceeds the current cooldown value
+# Apply weapon switch cooldown from stats
 execute store result score #cooldown mgs.data run data get storage mgs:gun all.stats.switch
+
+# Apply quick swap: reduce cooldown by quick_swap% (e.g. 20 = 20% faster)
+execute if score @s mgs.special.quick_swap matches 1.. run function mgs:v5.0.0/switch/apply_quick_swap
+
+# Only apply if it exceeds the current cooldown value
 execute unless score #cooldown mgs.data <= @s mgs.cooldown run scoreboard players operation @s mgs.cooldown = #cooldown mgs.data
 
 # Mirror into switch_cooldown (used by shader zoom guard, unaffected by shooting)

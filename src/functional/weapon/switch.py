@@ -62,6 +62,21 @@ data modify storage {ns}:signals on_switch set value {{}}
 data modify storage {ns}:signals on_switch.weapon set from storage {ns}:gun all
 function #{ns}:signals/on_switch
 """)
+
+    # Apply quick swap: reduce switch cooldown by quick_swap%
+    write_versioned_function("switch/apply_quick_swap",
+f"""
+# Calculate reduced cooldown: cooldown = cooldown * (100 - quick_swap%) / 100
+scoreboard players set #100 {ns}.data 100
+scoreboard players operation #reduction {ns}.data = #100 {ns}.data
+scoreboard players operation #reduction {ns}.data -= @s {ns}.special.quick_swap
+scoreboard players operation #cooldown {ns}.data *= #reduction {ns}.data
+scoreboard players operation #cooldown {ns}.data /= #100 {ns}.data
+
+# Ensure minimum cooldown of 1 tick
+execute if score #cooldown {ns}.data matches ..0 run scoreboard players set #cooldown {ns}.data 1
+""")
+
     write_versioned_function("switch/force_switch_animation",
 f"""
 # Stop if no weapon in hand

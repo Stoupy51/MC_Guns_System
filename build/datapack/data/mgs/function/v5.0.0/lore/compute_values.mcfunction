@@ -38,7 +38,7 @@ execute store result storage mgs:input lore.rate_dec int 1 run scoreboard player
 # --- Pellets ---
 execute store result storage mgs:input lore.pellets int 1 run scoreboard players get #lore_pellets mgs.data
 
-# --- Decay: float×10000, round and divide by 100 for percentage ---
+# --- Decay: float*10000, round and divide by 100 for percentage ---
 scoreboard players add #lore_decay mgs.data 50
 scoreboard players operation #lore_decay mgs.data /= #100 mgs.data
 execute store result storage mgs:input lore.decay_pct int 1 run scoreboard players get #lore_decay mgs.data

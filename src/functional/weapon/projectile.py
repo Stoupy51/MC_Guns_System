@@ -315,8 +315,9 @@ scoreboard players operation #expl_dmg {ns}.data /= #1000000 {ns}.data
 # Skip if damage is negligible (less than 0.1)
 execute if score #expl_dmg {ns}.data matches ..0 run return fail
 
-# Instant kill: if shooter has active instant kill and target is not immune, set damage to 9999
-execute as @n[tag={ns}.temp_shooter] if score @s {ns}.special.instant_kill matches 1.. as @s[tag=!{ns}.no_instant_kill] run scoreboard players set #expl_dmg {ns}.data 9999
+# Instant kill: if shooter has active instant kill and target is not immune, set damage to 99999
+tag @n[tag={ns}.temp_shooter] add {ns}.ticking
+execute as @n[tag={ns}.temp_shooter] if score @s {ns}.special.instant_kill matches 1.. as @s[tag=!{ns}.no_instant_kill] run scoreboard players set #expl_dmg {ns}.data 99999
 
 # Apply damage using the existing damage utility
 # Prepare macro arguments: target=@s, amount=damage (float with 0.1 precision), attacker=shooter
@@ -325,10 +326,20 @@ execute store result storage {ns}:input with.amount float 0.1 run scoreboard pla
 function {ns}:v{version}/utils/damage with storage {ns}:input with
 function #{ns}:signals/damage with storage {ns}:input with
 
+# Signal: on_hit_entity (@s = hit entity, weapon/damage info in mgs:signals)
+data modify storage {ns}:signals on_hit_entity set value {{}}
+data modify storage {ns}:signals on_hit_entity.weapon set from storage {ns}:gun all
+execute store result storage {ns}:signals on_hit_entity.damage float 0.1 run scoreboard players get #expl_dmg {ns}.data
+data modify storage {ns}:signals on_hit_entity.target set from entity @s UUID
+function #{ns}:signals/on_hit_entity
+
 # Signal: on_kill (if entity died after explosion damage, @s switches to shooter)
 execute unless entity @s as @n[tag={ns}.temp_shooter] run data modify storage {ns}:signals on_kill set value {{}}
 execute unless entity @s as @n[tag={ns}.temp_shooter] run data modify storage {ns}:signals on_kill.explosion set value true
 execute unless entity @s as @n[tag={ns}.temp_shooter] run function #{ns}:signals/on_kill
+
+# Remove temporary tag
+tag @n[tag={ns}.temp_shooter] remove {ns}.ticking
 """)
 
     ## Delete projectile

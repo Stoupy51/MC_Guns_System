@@ -129,6 +129,10 @@ execute if score @s {ns}.pending_clicks matches ..-1 run function {ns}:v{version
 # Show action bar
 execute if data storage {ns}:gun all.gun run function {ns}:v{version}/actionbar/show
 
+# DPS timer: every 20 ticks snapshot mgs.dps -> mgs.previous_dps and reset
+scoreboard players add @s {ns}.dps_timer 1
+execute if score @s {ns}.dps_timer matches 20.. run function {ns}:v{version}/player/dps_snapshot
+
 # Decrement special durations (instant_kill, infinite_ammo)
 execute if score @s {ns}.special.instant_kill matches 1.. run scoreboard players remove @s {ns}.special.instant_kill 1
 execute if score @s {ns}.special.infinite_ammo matches 1.. run scoreboard players remove @s {ns}.special.infinite_ammo 1
@@ -207,4 +211,23 @@ execute if score #fire_mode_is_burst {ns}.data matches 0 run return 0
 execute store result score #burst_limit {ns}.data run data get storage {ns}:gun all.stats.burst
 execute if score @s {ns}.burst_count >= #burst_limit {ns}.data run scoreboard players set @s {ns}.burst_count 0
 """)
+
+    # DPS snapshot: copy accumulated damage to previous_dps, then reset
+    write_versioned_function("player/dps_snapshot",
+f"""
+# Snapshot current DPS accumulator and reset for the next second
+scoreboard players operation @s {ns}.previous_dps = @s {ns}.dps
+scoreboard players set @s {ns}.dps 0
+scoreboard players set @s {ns}.dps_timer 0
+""")
+
+    # DPS signal: on_hit_entity — add actual damage dealt to the shooter's mgs.dps
+    # @s = hit entity, the shooter is the ticking player (has mgs.ticking tag)
+    # #damage mgs.data is damage * 10 (integer), same unit as previous_dps accumulator
+    write_versioned_function("weapon/dps_collect",
+f"""
+# @s = hit entity; add damage (x10) to the shooter's DPS accumulator
+execute store result score #sent_damage {ns}.data run data get storage {ns}:signals on_hit_entity.damage 10
+scoreboard players operation @a[tag={ns}.ticking,limit=1] {ns}.dps += #sent_damage {ns}.data
+""", tags=[f"{ns}:signals/on_hit_entity"])
 

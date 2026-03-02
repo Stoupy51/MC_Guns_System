@@ -58,6 +58,12 @@ scoreboard objectives add mgs.special.instant_kill dummy
 scoreboard objectives add mgs.special.infinite_ammo dummy
 # Quick reload: percentage faster reload (20 = 20% faster, 50 = 50% faster)
 scoreboard objectives add mgs.special.quick_reload dummy
+# Quick swap: percentage faster weapon switch (20 = 20% faster, 50 = 50% faster)
+scoreboard objectives add mgs.special.quick_swap dummy
+# DPS tracking: accumulates damage dealt per second, snapshot stored for actionbar
+scoreboard objectives add mgs.dps dummy
+scoreboard objectives add mgs.previous_dps dummy
+scoreboard objectives add mgs.dps_timer dummy
 
 # Define some constants
 scoreboard players set #2 mgs.data 2
@@ -379,4 +385,40 @@ scoreboard players add #armed_mob_count mgs.data 0
 scoreboard objectives add mgs.mob.timer dummy
 scoreboard objectives add mgs.mob.active_time dummy
 scoreboard objectives add mgs.mob.sleep_time dummy
+
+## Multiplayer scoreboards
+# Team assignment (1 = red, 2 = blue, 0 = none/spectator)
+scoreboard objectives add mgs.mp.team dummy
+# Personal stats
+scoreboard objectives add mgs.mp.kills dummy
+scoreboard objectives add mgs.mp.deaths dummy
+# Round timer (ticks remaining)
+scoreboard objectives add mgs.mp.timer dummy
+
+# Initialize team scores (only if not already set)
+execute unless score #red mgs.mp.team matches -2147483648.. run scoreboard players set #red mgs.mp.team 0
+execute unless score #blue mgs.mp.team matches -2147483648.. run scoreboard players set #blue mgs.mp.team 0
+
+# Initialize game state
+data modify storage mgs:multiplayer game set value {state:"lobby",gamemode:"tdm",score_limit:30,time_limit:12000}
+
+data modify storage mgs:multiplayer classes.assault set value {"name": "Assault", "lore": "Versatile frontline", "main": {"gun": "ak47", "mag": "ak47_mag", "mag_count": 3}, "secondary": {"gun": "m1911", "mag": "m1911_mag", "mag_count": 1}, "melee": "knife", "equipment": {"frag_grenade": 2, "smoke_grenade": 1}}
+data modify storage mgs:multiplayer classes.rifleman set value {"name": "Rifleman", "lore": "Accurate mid-range", "main": {"gun": "m16a4", "mag": "m16a4_mag", "mag_count": 2}, "secondary": {"gun": "glock17", "mag": "glock17_mag", "mag_count": 2}, "melee": "knife", "equipment": {"flash_grenade": 1}}
+data modify storage mgs:multiplayer classes.support set value {"name": "Support", "lore": "Suppressive heavy", "main": {"gun": "m249", "mag": "m249_mag", "mag_count": 3}, "secondary": {"gun": "makarov", "mag": "makarov_mag", "mag_count": 2}, "melee": "knife", "equipment": {"flash_grenade": 1}, "special": {"resupply": true}}
+data modify storage mgs:multiplayer classes.sniper set value {"name": "Sniper", "lore": "Long-range precision", "main": {"gun": "m24"}, "secondary": {"gun": "deagle", "mag": "deagle_mag", "mag_count": 2}, "melee": "knife", "equipment": {"flash_grenade": 1}, "special": {"bipod": true}}
+data modify storage mgs:multiplayer classes.smg set value {"name": "SMG", "lore": "Close quarters", "main": {"gun": "mp5", "mag": "mp5_mag", "mag_count": 3}, "secondary": {"gun": "glock18", "mag": "glock18_mag", "mag_count": 2}, "melee": "knife", "equipment": {"flash_grenade": 1}}
+data modify storage mgs:multiplayer classes.shotgunner set value {"name": "Shotgunner", "lore": "Breaching / CQB", "main": {"gun": "m590"}, "secondary": {"gun": "m1911", "mag": "m1911_mag", "mag_count": 1}, "melee": "knife", "equipment": {"flash_grenade": 1}}
+data modify storage mgs:multiplayer classes.engineer set value {"name": "Engineer", "lore": "Objective / demolitions (limited)", "main": {"gun": "mac10", "mag": "mac10_mag", "mag_count": 3}, "secondary": {"gun": "makarov", "mag": "makarov_mag", "mag_count": 1}, "melee": "knife", "equipment": {"flash_grenade": 1}, "special": {"can_place_explosive": true}}
+data modify storage mgs:multiplayer classes.medic set value {"name": "Medic", "lore": "Team sustain", "main": {"gun": "famas", "mag": "famas_mag", "mag_count": 2}, "secondary": {"gun": "makarov", "mag": "makarov_mag", "mag_count": 2}, "melee": "knife", "equipment": {"flash_grenade": 1}, "special": {"revive_bonus": true}}
+
+# Create teams
+execute unless score #mp_teams_created mgs.data matches 1 run team add mgs.red
+execute unless score #mp_teams_created mgs.data matches 1 run team modify mgs.red color red
+execute unless score #mp_teams_created mgs.data matches 1 run team modify mgs.red friendlyFire false
+execute unless score #mp_teams_created mgs.data matches 1 run team modify mgs.red nametagVisibility hideForOtherTeams
+execute unless score #mp_teams_created mgs.data matches 1 run team add mgs.blue
+execute unless score #mp_teams_created mgs.data matches 1 run team modify mgs.blue color blue
+execute unless score #mp_teams_created mgs.data matches 1 run team modify mgs.blue friendlyFire false
+execute unless score #mp_teams_created mgs.data matches 1 run team modify mgs.blue nametagVisibility hideForOtherTeams
+scoreboard players set #mp_teams_created mgs.data 1
 

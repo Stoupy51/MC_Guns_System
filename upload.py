@@ -3,9 +3,6 @@
 from python_datapack.continuous_delivery import (
     load_credentials,
     upload_to_github,
-    upload_to_modrinth,
-    upload_to_pmc,
-    upload_to_smithed,
 )
 
 # Get credentials
