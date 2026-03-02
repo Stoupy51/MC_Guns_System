@@ -128,7 +128,7 @@ execute as @e[type=player,sort=random] at @s run function {ns}:v{version}/player
         write_tag(tag, Mem.ctx.data["minecraft"].damage_type_tags, [f"{ns}:bullet"])
     write_versioned_function("utils/damage", f"""
 $damage $(target) $(amount) {ns}:bullet by $(attacker)
-#$say damage $(target) $(amount) {ns}:bullet by $(attacker)
+$say damage $(target) $(amount) {ns}:bullet by $(attacker)
 """)
 
     # Replace crosshair texture with transparent one (shader draws custom crosshair conditionally)
