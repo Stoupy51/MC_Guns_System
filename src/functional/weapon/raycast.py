@@ -13,6 +13,7 @@ from ...config.stats import (
     DAMAGE,
     DECAY,
     FIRE_MODE,
+    GRENADE_TYPE,
     PELLET_COUNT,
     PROJECTILE_SPEED,
 )
@@ -60,11 +61,14 @@ data modify storage {ns}:signals on_shoot.weapon set from storage {ns}:gun all
 function #{ns}:signals/on_shoot
 """)
 
-    # Fire weapon routing: projectile vs hitscan
+    # Fire weapon routing: grenade vs projectile vs hitscan
     write_versioned_function("player/fire_weapon",
 f"""
 # For weapons with pellet count, set bullets_to_fire appropriately
 execute if data storage {ns}:gun all.stats.{PELLET_COUNT} store result score #bullets_to_fire {ns}.data run data get storage {ns}:gun all.stats.{PELLET_COUNT}
+
+# If weapon is a grenade, throw it instead
+execute if data storage {ns}:gun all.stats.{GRENADE_TYPE} run return run function {ns}:v{version}/grenade/throw
 
 # If weapon has projectile config, fire slow projectile(s) instead of instant raycast
 execute if data storage {ns}:gun all.stats.{PROJECTILE_SPEED} run return run function {ns}:v{version}/projectile/summon_loop
@@ -199,8 +203,8 @@ execute if score #is_pass_through {ns}.data matches 0 store result score #hardne
 execute if score #is_pass_through {ns}.data matches 0 if score #hardness {ns}.data matches ..-1 run data modify storage {ns}:temp damage set value 0.0d
 execute if score #is_pass_through {ns}.data matches 0 if score #hardness {ns}.data matches ..-1 run return 0
 
-# Piercing: cap on first solid block hit (initial piercing is 10, cap to 3)
-execute if score #is_pass_through {ns}.data matches 0 if score #hardness {ns}.data matches 0.. if score $raycast.piercing bs.lambda matches 5.. run scoreboard players set $raycast.piercing bs.lambda 3
+# Piercing: cap on first solid block hit (initial piercing is 10, cap to 6)
+execute if score #is_pass_through {ns}.data matches 0 if score #hardness {ns}.data matches 0.. if score $raycast.piercing bs.lambda matches 7.. run scoreboard players set $raycast.piercing bs.lambda 6
 # Reduce piercing based on hardness tiers (directly in callback for lambda score access)
 execute if score #is_pass_through {ns}.data matches 0 if score #hardness {ns}.data matches 0..299 run scoreboard players remove $raycast.piercing bs.lambda 1
 execute if score #is_pass_through {ns}.data matches 0 if score #hardness {ns}.data matches 300..999 run scoreboard players remove $raycast.piercing bs.lambda 2

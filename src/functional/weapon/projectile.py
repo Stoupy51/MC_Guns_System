@@ -27,6 +27,7 @@ def main() -> None:
         "minecraft:block_display",
         "minecraft:area_effect_cloud",
         "minecraft:experience_orb",
+        "minecraft:falling_block"
     ])
 
     ## Summon loop (supports pellet_count for multiple projectiles)

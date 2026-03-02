@@ -4,6 +4,7 @@ from .actionbar import main as actionbar_main
 from .ammo import main as ammo_main
 from .casing import main as casing_main
 from .common import main as common_main
+from .grenade import main as grenade_main
 from .kick import main as kick_main
 from .projectile import main as projectile_main
 from .raycast import main as raycast_main
@@ -29,6 +30,9 @@ def main() -> None:
 
     # Handle slow projectiles (RPG rockets, grenades, etc.)
     projectile_main()
+
+    # Handle throwable grenades (frag, semtex, smoke, flash)
+    grenade_main()
 
     # Make a weapon kick
     kick_main()

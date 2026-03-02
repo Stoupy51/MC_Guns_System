@@ -1,0 +1,13 @@
+{
+  "providers": [
+    {
+      "type": "bitmap",
+      "file": "mgs:font/flash_white.png",
+      "ascent": 4000,
+      "height": 8000,
+      "chars": [
+        "F"
+      ]
+    }
+  ]
+}

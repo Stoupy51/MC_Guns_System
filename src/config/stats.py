@@ -146,6 +146,17 @@ EXPLOSION_DECAY: str = "expl_decay"
 """ Rate at which explosion damage decreases per block of distance from impact center.
 Uses the formula: damage *= pow(decay, distance). Lower values = faster falloff. """
 
+# Grenade constants
+GRENADE_TYPE: str = "grenade_type"
+""" Type of grenade: 'frag', 'semtex', 'smoke', or 'flash'.
+If present, the weapon is treated as a throwable grenade instead of a gun. """
+GRENADE_FUSE: str = "grenade_fuse"
+""" Time in game ticks before the grenade detonates after being thrown. """
+GRENADE_DURATION: str = "grenade_duration"
+""" Duration of the grenade effect in ticks (for smoke/flash grenades). """
+GRENADE_EFFECT_RADIUS: str = "grenade_effect_radius"
+""" Radius of the grenade effect in blocks (for smoke/flash grenades). """
+
 # Optional constants
 MODELS: str = "models"
 """ Models to use to switch between normal and zoom modes. """
@@ -704,6 +715,50 @@ M249: JsonDict = {
         "playerend": "m249/playerend",
         "playermid": "m249/playermid",
         "crack": "medium"
+    }
+}
+
+
+# Grenades
+FRAG_GRENADE: JsonDict = {
+    "stats": {
+        GRENADE_TYPE: "frag", FIRE_MODE: "semi",
+        CAPACITY: 1, REMAINING_BULLETS: 1, COOLDOWN: 20,
+        PROJECTILE_SPEED: 1000, PROJECTILE_GRAVITY: 60, PROJECTILE_MODEL: "frag_grenade",
+        GRENADE_FUSE: 80,  # 4 seconds
+        EXPLOSION_RADIUS: 5, EXPLOSION_DAMAGE: 25, EXPLOSION_DECAY: 0.75,
+    }
+}
+
+SEMTEX: JsonDict = {
+    "stats": {
+        GRENADE_TYPE: "semtex", FIRE_MODE: "semi",
+        CAPACITY: 1, REMAINING_BULLETS: 1, COOLDOWN: 20,
+        PROJECTILE_SPEED: 1200, PROJECTILE_GRAVITY: 50, PROJECTILE_MODEL: "semtex",
+        GRENADE_FUSE: 80,  # 4 seconds
+        EXPLOSION_RADIUS: 5, EXPLOSION_DAMAGE: 28, EXPLOSION_DECAY: 0.75,
+    }
+}
+
+SMOKE_GRENADE: JsonDict = {
+    "stats": {
+        GRENADE_TYPE: "smoke", FIRE_MODE: "semi",
+        CAPACITY: 1, REMAINING_BULLETS: 1, COOLDOWN: 20,
+        PROJECTILE_SPEED: 1000, PROJECTILE_GRAVITY: 60, PROJECTILE_MODEL: "smoke_grenade",
+        GRENADE_FUSE: 60,  # 3 seconds before activation
+        GRENADE_DURATION: 200,  # 10 seconds of smoke
+        GRENADE_EFFECT_RADIUS: 5,
+    }
+}
+
+FLASH_GRENADE: JsonDict = {
+    "stats": {
+        GRENADE_TYPE: "flash", FIRE_MODE: "semi",
+        CAPACITY: 1, REMAINING_BULLETS: 1, COOLDOWN: 20,
+        PROJECTILE_SPEED: 1200, PROJECTILE_GRAVITY: 50, PROJECTILE_MODEL: "flash_grenade",
+        GRENADE_FUSE: 60,  # 3 seconds before detonation
+        GRENADE_DURATION: 100,  # 5 seconds of blindness
+        GRENADE_EFFECT_RADIUS: 10,
     }
 }
 

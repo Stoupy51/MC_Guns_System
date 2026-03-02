@@ -32,8 +32,8 @@ execute if score #is_pass_through mgs.data matches 0 store result score #hardnes
 execute if score #is_pass_through mgs.data matches 0 if score #hardness mgs.data matches ..-1 run data modify storage mgs:temp damage set value 0.0d
 execute if score #is_pass_through mgs.data matches 0 if score #hardness mgs.data matches ..-1 run return 0
 
-# Piercing: cap on first solid block hit (initial piercing is 10, cap to 3)
-execute if score #is_pass_through mgs.data matches 0 if score #hardness mgs.data matches 0.. if score $raycast.piercing bs.lambda matches 5.. run scoreboard players set $raycast.piercing bs.lambda 3
+# Piercing: cap on first solid block hit (initial piercing is 10, cap to 6)
+execute if score #is_pass_through mgs.data matches 0 if score #hardness mgs.data matches 0.. if score $raycast.piercing bs.lambda matches 7.. run scoreboard players set $raycast.piercing bs.lambda 6
 # Reduce piercing based on hardness tiers (directly in callback for lambda score access)
 execute if score #is_pass_through mgs.data matches 0 if score #hardness mgs.data matches 0..299 run scoreboard players remove $raycast.piercing bs.lambda 1
 execute if score #is_pass_through mgs.data matches 0 if score #hardness mgs.data matches 300..999 run scoreboard players remove $raycast.piercing bs.lambda 2

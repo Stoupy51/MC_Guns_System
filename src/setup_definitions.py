@@ -19,7 +19,24 @@ from stewbeet import (
     create_gradient_text as new_hex,
 )
 
-from .config.stats import CAPACITY, CASING_MODEL, COOLDOWN, DAMAGE, DECAY, END_HEX, MODELS, PELLET_COUNT, RELOAD_TIME, REMAINING_BULLETS, START_HEX, SWITCH
+from .config.stats import (
+    CAPACITY,
+    CASING_MODEL,
+    COOLDOWN,
+    DAMAGE,
+    DECAY,
+    END_HEX,
+    EXPLOSION_DAMAGE,
+    EXPLOSION_RADIUS,
+    GRENADE_FUSE,
+    GRENADE_TYPE,
+    MODELS,
+    PELLET_COUNT,
+    RELOAD_TIME,
+    REMAINING_BULLETS,
+    START_HEX,
+    SWITCH,
+)
 from .database.ak47 import main as main_ak47
 from .database.all_pistols import main as main_pistols
 from .database.ammo import main as main_ammo
@@ -28,6 +45,7 @@ from .database.casing import main as main_casing
 from .database.famas import main as main_famas
 from .database.fnfal import main as main_fnfal
 from .database.g3a3 import main as main_g3a3
+from .database.grenades import main as main_grenades
 from .database.m4a1 import main as main_m4a1
 from .database.m16a4 import main as main_m16a4
 from .database.m24 import main as main_m24
@@ -92,6 +110,9 @@ def beet_default(ctx: Context) -> None:
     main_rpk()
     main_m249()
 
+    # Grenades
+    main_grenades()
+
     # Adjust guns data
     for item in Mem.definitions.keys():
         obj = Item.from_id(item)
@@ -147,17 +168,38 @@ def beet_default(ctx: Context) -> None:
             if PELLET_COUNT in gun_stats:
                 pellet_component.append([*new_hex("Pellets Per Shot    ➤ ", START_HEX, END_HEX), str(gun_stats[PELLET_COUNT])])
 
-            # Set custom lore
-            obj.components["lore"] = [
-                [*new_hex("Damage Per Bullet  ➤ ", START_HEX, END_HEX),    str(gun_stats[DAMAGE])],
-                [*new_hex("Ammo Remaining      ➤ ", START_HEX, END_HEX),   str(gun_stats[REMAINING_BULLETS]),      {"text":"/","color":f"#{END_HEX}"}, str(gun_stats[CAPACITY])],
-                [*new_hex("Reloading Time       ➤ ", START_HEX, END_HEX),  f"{gun_stats[RELOAD_TIME] / 20:.1f}",   {"text":"s","color":f"#{END_HEX}"}],
-                *fire_rate_component,
-                *pellet_component,
-                [*new_hex("Damage Decay       ➤ ", START_HEX, END_HEX),    f"{gun_stats[DECAY] * 100:.0f}",        {"text":"%","color":f"#{END_HEX}"}],
-                [*new_hex("Switch Time           ➤ ", START_HEX, END_HEX), f"{gun_stats[SWITCH] / 20:.1f}",        {"text":"s","color":f"#{END_HEX}"}],
-                "",
-            ]
+            # Grenades have different lore than regular guns
+            if GRENADE_TYPE in gun_stats:
+                # Grenades can stack (not limited to 1)
+                obj.components["max_stack_size"] = 16
+
+                grenade_type_display: str = gun_stats[GRENADE_TYPE].replace("_", " ").title()
+                fuse_seconds: float = gun_stats.get(GRENADE_FUSE, 0) / 20
+                lore: list[TextComponent] = [
+                    [*new_hex("Type                  ➤ ", START_HEX, END_HEX), grenade_type_display],
+                    [*new_hex("Fuse Time            ➤ ", START_HEX, END_HEX), f"{fuse_seconds:.1f}", {"text":"s","color":f"#{END_HEX}"}],
+                ]
+                if EXPLOSION_DAMAGE in gun_stats:
+                    lore.insert(-1,
+                        [*new_hex("Explosion Damage  ➤ ", START_HEX, END_HEX), str(gun_stats[EXPLOSION_DAMAGE])]
+                    )
+                if EXPLOSION_RADIUS in gun_stats:
+                    lore.insert(-1,
+                        [*new_hex("Explosion Radius   ➤ ", START_HEX, END_HEX), str(gun_stats[EXPLOSION_RADIUS]), {"text":" blocks","color":f"#{END_HEX}"}]
+                    )
+                obj.components["lore"] = [*lore, ""]
+            else:
+                # Set custom lore for regular guns
+                obj.components["lore"] = [
+                    [*new_hex("Damage Per Bullet  ➤ ", START_HEX, END_HEX),    str(gun_stats[DAMAGE])],
+                    [*new_hex("Ammo Remaining      ➤ ", START_HEX, END_HEX),   str(gun_stats[REMAINING_BULLETS]),      {"text":"/","color":f"#{END_HEX}"}, str(gun_stats[CAPACITY])],
+                    [*new_hex("Reloading Time       ➤ ", START_HEX, END_HEX),  f"{gun_stats[RELOAD_TIME] / 20:.1f}",   {"text":"s","color":f"#{END_HEX}"}],
+                    *fire_rate_component,
+                    *pellet_component,
+                    [*new_hex("Damage Decay       ➤ ", START_HEX, END_HEX),    f"{gun_stats[DECAY] * 100:.0f}",        {"text":"%","color":f"#{END_HEX}"}],
+                    [*new_hex("Switch Time           ➤ ", START_HEX, END_HEX), f"{gun_stats[SWITCH] / 20:.1f}",        {"text":"s","color":f"#{END_HEX}"}],
+                    "",
+                ]
 
         # Adjust magazines data
         if ns_data.get("magazine"):
@@ -180,8 +222,6 @@ def beet_default(ctx: Context) -> None:
         ns_data: JsonDict = obj.components.get("custom_data", {}).get(ns, {})
         if ns_data.get("casing"):
             return 4
-        if k.startswith("flash_"):
-            return 3
         if k.endswith("_zoom"):
             return 2
         if k.endswith("_mag_empty"):
