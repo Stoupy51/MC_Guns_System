@@ -10,6 +10,7 @@ from .projectile import main as projectile_main
 from .raycast import main as raycast_main
 from .sound import main as sound_main
 from .switch import main as switch_main
+from .update_lore import main as update_lore_main
 from .zoom import main as zoom_main
 
 
@@ -45,6 +46,9 @@ def main() -> None:
 
     # Actionbar display (fire mode + ammo)
     actionbar_main()
+
+    # Update all lore utility (rebuild lore from stats)
+    update_lore_main()
 
     # Advanced sound system
     sound_main()

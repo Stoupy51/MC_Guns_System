@@ -13,7 +13,7 @@ tag @s add mgs.tp_me
 scoreboard players operation #my_stuck mgs.data = @s mgs.stuck_id
 
 # Find the entity with matching stuck_id (not a grenade) and teleport me to it
-execute as @e[scores={mgs.stuck_id=1..}] if score @s mgs.stuck_id = #my_stuck mgs.data unless entity @s[tag=mgs.grenade] at @s run tp @e[tag=mgs.tp_me,limit=1] ~ ~ ~
+execute as @e[scores={mgs.stuck_id=1..}] if score @s mgs.stuck_id = #my_stuck mgs.data unless entity @s[tag=mgs.grenade] at @s run tp @n[tag=mgs.tp_me] ~ ~ ~
 
 # Remove temp tag
 tag @s remove mgs.tp_me

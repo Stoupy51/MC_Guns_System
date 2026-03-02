@@ -67,7 +67,7 @@ scoreboard players operation #expl_dmg mgs.data /= #1000000 mgs.data
 execute if score #expl_dmg mgs.data matches ..0 run return fail
 
 # Instant kill: if shooter has active instant kill and target is not immune, set damage to 9999
-execute as @e[tag=mgs.temp_shooter,limit=1] if score @s mgs.special.instant_kill matches 1.. as @s[tag=!mgs.no_instant_kill] run scoreboard players set #expl_dmg mgs.data 9999
+execute as @n[tag=mgs.temp_shooter] if score @s mgs.special.instant_kill matches 1.. as @s[tag=!mgs.no_instant_kill] run scoreboard players set #expl_dmg mgs.data 9999
 
 # Apply damage using the existing damage utility
 # Prepare macro arguments: target=@s, amount=damage (float with 0.1 precision), attacker=shooter
@@ -77,7 +77,7 @@ function mgs:v5.0.0/utils/damage with storage mgs:input with
 function #mgs:signals/damage with storage mgs:input with
 
 # Signal: on_kill (if entity died after explosion damage, @s switches to shooter)
-execute unless entity @s as @e[tag=mgs.temp_shooter,limit=1] run data modify storage mgs:signals on_kill set value {}
-execute unless entity @s as @e[tag=mgs.temp_shooter,limit=1] run data modify storage mgs:signals on_kill.explosion set value true
-execute unless entity @s as @e[tag=mgs.temp_shooter,limit=1] run function #mgs:signals/on_kill
+execute unless entity @s as @n[tag=mgs.temp_shooter] run data modify storage mgs:signals on_kill set value {}
+execute unless entity @s as @n[tag=mgs.temp_shooter] run data modify storage mgs:signals on_kill.explosion set value true
+execute unless entity @s as @n[tag=mgs.temp_shooter] run function #mgs:signals/on_kill
 
