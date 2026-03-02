@@ -1,5 +1,4 @@
 
-# ruff: noqa: E501
 # Imports
 from beet import Font, Texture
 from PIL import Image
@@ -253,7 +252,7 @@ scoreboard players add #semtex_id {ns}.data 1
 
 # Assign the same unique ID to both the grenade and the nearest entity
 scoreboard players operation @s {ns}.stuck_id = #semtex_id {ns}.data
-execute positioned ~ ~-1 ~ run scoreboard players operation @e[type=!#{ns}:non_damageable,sort=nearest,limit=1,distance=..2,tag=!{ns}.grenade,tag=!{ns}.slow_bullet] {ns}.stuck_id = #semtex_id {ns}.data
+execute positioned ~ ~-1 ~ run scoreboard players operation @n[type=!#{ns}:non_damageable,distance=..2,tag=!{ns}.grenade,tag=!{ns}.slow_bullet] {ns}.stuck_id = #semtex_id {ns}.data
 
 # Mark that this grenade is stuck to an entity (not just a block)
 tag @s add {ns}.stuck_to_entity
@@ -331,7 +330,9 @@ data modify storage {ns}:temp expl.{EXPLOSION_RADIUS} set from entity @s data.co
 data modify storage {ns}:temp expl.shooter_uuid set from entity @s data.shooter
 
 # Tag the matching shooter for damage attribution
+scoreboard players set #found {ns}.data 0
 execute as @a run function {ns}:v{version}/projectile/match_shooter
+execute if score #found {ns}.data matches 0 as @e[tag={ns}.armed] run function {ns}:v{version}/projectile/match_shooter
 
 # Apply area damage to nearby entities (macro for configurable radius)
 execute store result storage {ns}:temp expl.radius_int int 1 run data get entity @s data.config.{EXPLOSION_RADIUS}
@@ -345,7 +346,7 @@ data modify storage {ns}:signals on_explosion.grenade set value true
 function #{ns}:signals/on_explosion
 
 # Clean up shooter tag
-tag @a remove {ns}.temp_shooter
+tag @e[tag={ns}.temp_shooter] remove {ns}.temp_shooter
 
 # Delete the grenade
 function {ns}:v{version}/grenade/delete

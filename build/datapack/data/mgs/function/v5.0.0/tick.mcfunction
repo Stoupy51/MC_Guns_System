@@ -13,3 +13,6 @@ execute if score #slow_bullet_count mgs.data matches 1.. as @e[tag=mgs.slow_bull
 # Tick function for active grenades
 execute if score #grenade_count mgs.data matches 1.. as @e[tag=mgs.grenade] at @s run function mgs:v5.0.0/grenade/tick
 
+# Armed mob AI loop
+execute if score #armed_mob_count mgs.data matches 1.. as @e[tag=mgs.armed] at @s run function mgs:v5.0.0/mob/tick
+

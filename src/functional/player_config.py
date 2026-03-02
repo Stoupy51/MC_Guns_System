@@ -109,7 +109,7 @@ tellraw @s {info_line}
     write_versioned_function("player/config/damage_debug", f"""
 # Damage debug: global config overrides (tellraw @a), otherwise per-player (tellraw to shooter only)
 $execute if score #damage_debug {ns}.config matches 1 run tellraw @a [{{"text":"[DMG] ","color":"red"}},{{"text":"$(amount)","color":"gold"}},{{"text":" HP to ","color":"gray"}},{{"selector":"$(target)"}},{{"text":" by ","color":"gray"}},{{"selector":"$(attacker)"}}]
-$execute unless score #damage_debug {ns}.config matches 1 if score $(attacker) {ns}.player.damage_debug matches 1 run tellraw $(attacker) [{{"text":"[DMG] ","color":"red"}},{{"text":"$(amount)","color":"gold"}},{{"text":" HP to ","color":"gray"}},{{"selector":"$(target)"}}]
+$execute unless score #damage_debug {ns}.config matches 1 at @s as $(attacker) if score @s {ns}.player.damage_debug matches 1 run tellraw @s [{{"text":"[DMG] ","color":"red"}},{{"text":"$(amount)","color":"gold"}},{{"text":" HP to ","color":"gray"}},{{"selector":"@n"}}]
 """, tags=[f"{ns}:signals/damage"])  # noqa: E501
 
     ## Hitmarker sound on entity hit (added to damage signal)
@@ -118,8 +118,8 @@ $execute unless score #damage_debug {ns}.config matches 1 if score $(attacker) {
 f"""
 # Play hitmarker sound to the shooter if their personal config has it enabled
 # For hitscan: shooter has tag {ns}.ticking
-execute as @a[tag={ns}.ticking] if score @s {ns}.player.hitmarker matches 1 at @s run playsound minecraft:entity.experience_orb.pickup player @s ~ ~ ~ 0.5 2.0
+execute as @a[tag={ns}.ticking] if score @s {ns}.player.hitmarker matches 1 at @s run playsound minecraft:entity.experience_orb.pickup player @s ~ ~ ~ 1.0 2.0
 # For explosions: shooter has tag {ns}.temp_shooter (skip if already played via ticking)
-execute as @a[tag={ns}.temp_shooter,tag=!{ns}.ticking] if score @s {ns}.player.hitmarker matches 1 at @s run playsound minecraft:entity.experience_orb.pickup player @s ~ ~ ~ 0.5 2.0
+execute as @a[tag={ns}.temp_shooter,tag=!{ns}.ticking] if score @s {ns}.player.hitmarker matches 1 at @s run playsound minecraft:entity.experience_orb.pickup player @s ~ ~ ~ 1.0 2.0
 """, tags=[f"{ns}:signals/damage"])
 

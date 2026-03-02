@@ -4,7 +4,9 @@
 # @executed	as @a
 #
 # @within	mgs:v5.0.0/projectile/explode [ as @a ]
+#			mgs:v5.0.0/projectile/explode [ as @e[tag=mgs.armed] ]
 #			mgs:v5.0.0/grenade/detonate_frag [ as @a ]
+#			mgs:v5.0.0/grenade/detonate_frag [ as @e[tag=mgs.armed] ]
 #
 
 # Compare this player's UUID with the stored shooter UUID
@@ -13,5 +15,6 @@ data modify storage mgs:temp copy_uuid set from entity @s UUID
 execute store success score #is_match mgs.data run data modify storage mgs:temp copy_uuid set from storage mgs:temp expl.shooter_uuid
 
 # If #is_match is 0, the UUIDs were identical (no change was made), so this is the shooter
+execute if score #is_match mgs.data matches 0 run scoreboard players set #found mgs.data 1
 execute if score #is_match mgs.data matches 0 run tag @s add mgs.temp_shooter
 

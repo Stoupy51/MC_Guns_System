@@ -67,7 +67,7 @@ scoreboard players set #1000 mgs.data 1000
 scoreboard players set #1000000 mgs.data 1000000
 
 # Initialize slow bullet (projectile) counter
-scoreboard players set #slow_bullet_count mgs.data 0
+scoreboard players add #slow_bullet_count mgs.data 0
 
 # Semtex entity pairing: unique ID objective + global counter
 scoreboard objectives add mgs.grenade_launch dummy
@@ -356,4 +356,12 @@ data modify storage mgs:items all.762x25mm set value {"id": "minecraft:command_b
 data modify storage mgs:items all.762x39mm set value {"id": "minecraft:command_block","count": 1,"components": {"minecraft:item_model": "mgs:762x39mm","minecraft:max_stack_size": 1,"minecraft:custom_data": {"mgs": {"casing": true,"762x39mm": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},"minecraft:item_name": {"translate": "mgs.762x39mm","color": "white"},"minecraft:lore": [["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"translate": "mgs.mc_guns_system","italic": true,"color": "blue"}]]}}
 data modify storage mgs:items all.762x51mm set value {"id": "minecraft:command_block","count": 1,"components": {"minecraft:item_model": "mgs:762x51mm","minecraft:max_stack_size": 1,"minecraft:custom_data": {"mgs": {"casing": true,"762x51mm": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},"minecraft:item_name": {"translate": "mgs.762x51mm","color": "white"},"minecraft:lore": [["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"translate": "mgs.mc_guns_system","italic": true,"color": "blue"}]]}}
 data modify storage mgs:items all.762x54mm set value {"id": "minecraft:command_block","count": 1,"components": {"minecraft:item_model": "mgs:762x54mm","minecraft:max_stack_size": 1,"minecraft:custom_data": {"mgs": {"casing": true,"762x54mm": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},"minecraft:item_name": {"translate": "mgs.762x54mm","color": "white"},"minecraft:lore": [["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"translate": "mgs.mc_guns_system","italic": true,"color": "blue"}]]}}
+
+# Armed mob counter (skip tick loop if 0)
+scoreboard players add #armed_mob_count mgs.data 0
+
+# Mob AI phase timer, active time, and sleep time
+scoreboard objectives add mgs.mob.timer dummy
+scoreboard objectives add mgs.mob.active_time dummy
+scoreboard objectives add mgs.mob.sleep_time dummy
 

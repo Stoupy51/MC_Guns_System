@@ -5,6 +5,7 @@
 #
 # @within	mgs:v5.0.0/player/fire_weapon
 #			mgs:v5.0.0/projectile/summon_loop
+#			mgs:v5.0.0/mob/fire_weapon
 #
 
 # Summon a projectile

@@ -9,7 +9,7 @@ scoreboard players add #semtex_id mgs.data 1
 
 # Assign the same unique ID to both the grenade and the nearest entity
 scoreboard players operation @s mgs.stuck_id = #semtex_id mgs.data
-execute positioned ~ ~-1 ~ run scoreboard players operation @e[type=!#mgs:non_damageable,sort=nearest,limit=1,distance=..2,tag=!mgs.grenade,tag=!mgs.slow_bullet] mgs.stuck_id = #semtex_id mgs.data
+execute positioned ~ ~-1 ~ run scoreboard players operation @n[type=!#mgs:non_damageable,distance=..2,tag=!mgs.grenade,tag=!mgs.slow_bullet] mgs.stuck_id = #semtex_id mgs.data
 
 # Mark that this grenade is stuck to an entity (not just a block)
 tag @s add mgs.stuck_to_entity

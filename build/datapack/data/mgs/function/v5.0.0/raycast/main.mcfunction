@@ -4,6 +4,7 @@
 # @executed	anchored eyes & positioned ^ ^ ^
 #
 # @within	mgs:v5.0.0/player/shoot [ anchored eyes & positioned ^ ^ ^ ]
+#			mgs:v5.0.0/mob/shoot [ anchored eyes & positioned ^ ^ ^ ]
 #
 
 # Copy damage to temp storage to avoid modifying original for multiple pellets

@@ -33,7 +33,9 @@ data modify storage mgs:temp expl.expl_radius set from entity @s data.config.exp
 data modify storage mgs:temp expl.shooter_uuid set from entity @s data.shooter
 
 # Tag the matching shooter for damage attribution
+scoreboard players set #found mgs.data 0
 execute as @a run function mgs:v5.0.0/projectile/match_shooter
+execute if score #found mgs.data matches 0 as @e[tag=mgs.armed] run function mgs:v5.0.0/projectile/match_shooter
 
 # Apply area damage to nearby entities (macro for configurable radius)
 execute store result storage mgs:temp expl.radius_int int 1 run data get entity @s data.config.expl_radius
@@ -46,7 +48,7 @@ data modify storage mgs:signals on_explosion.position set from entity @s Pos
 function #mgs:signals/on_explosion
 
 # Clean up shooter tag
-tag @a remove mgs.temp_shooter
+tag @e[tag=mgs.temp_shooter] remove mgs.temp_shooter
 
 # Delete the projectile
 function mgs:v5.0.0/projectile/delete

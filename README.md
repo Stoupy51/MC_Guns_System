@@ -8,18 +8,6 @@
 Credits for resources: MGS 4.2 by TheBradqq
 
 # TODO:
-- Currently, on_targeted_block reduce damage by 5% in water, and 50% in other blocks. It should instead check for the block hardness : Need to use #bs.block:lookup_type {type:<value>} to get the block hardness (https://docs.mcbookshelf.dev/en/latest/modules/block/#lookup-block) and depending on it stop bullet or/and reduce damage realistically (figure out yourself)
-- Add grenades (frag, semtex, smoke, flash) : https://docs.mcbookshelf.dev/en/master/modules/move/ <- Apply velocity with bounce and keep physics
-  - (You need to add items to definitions and custom models in src/database/models/*.json, it's okay if it's not perfect I'll adjust it later)
-  - Frag: explodes after 4 seconds (by default, coded in item nbt "stats" part like guns would), damage also coded like RPG in nbt
-  - Semtex: Same as frag but stick to blocks and entities
-  - Smoke: creates a smoke cloud that blocks vision for 10 seconds (using particles, and duration coded in nbt)
-  - Flash: blinds players in a radius for 5 seconds (using title with fade in and out, and duration coded in nbt, using a custom font which is a big big white square in the middle of the screen) (ex: https://github.com/Paralya/Switch/blob/main/src/special_fonts/utils.py)
-- Hitmaker sound (can be toggled with /trigger, default = false so only OG players will enable it) (not in sounds folder yet, need to download)
-  - Download the sound and add it to the sounds folder (src/assets/sounds/hitmaker.ogg)
-  - More generally, we'll add a scoreboard trigger "mgs.player.config" that opens a menu in tchat. Score = 1 = menu, 2 = toggle hitmaker, 3 = toggle something else later, etc. (see the other global config file for visual)
-- Mobs with guns need to be added (Any mob tagged with {ns}.armed (for performance)):
-  - They need to be able to shoot and reload (we assume they have infinite ammo for simplicity, so no need to check for magazines and ammo in inventory) (they can still have a cooldown between shots and reloads)
 - Function to update all lore (not only ammo) -> useful for easy custom weapons and upgrades in zombies for example
 - Player config for showing damage per bullet in chat for user who shot (can be toggled with /trigger, default = false so only OG players will enable it) (similar to hitmaker) (not just a /say, need proper tellraw with colors and stuff)
   - Also a global config to enable damage debug -> tellraw @a, overrides player config.
