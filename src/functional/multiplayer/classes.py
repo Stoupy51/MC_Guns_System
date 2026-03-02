@@ -10,7 +10,7 @@ from stewbeet import JsonDict
 #   melee: melee_id
 #   equipment: dict of item_id -> count
 #   special flags preserved where present
-classes: JsonDict = {
+CLASSES: dict[str, JsonDict] = {
     "assault": {
         "name": "Assault",
         "lore": "Versatile frontline",
@@ -29,7 +29,7 @@ classes: JsonDict = {
         "main": {"gun": "m16a4", "mag": "m16a4_mag", "mag_count": 2},
         "secondary": {"gun": "glock17", "mag": "glock17_mag", "mag_count": 2},
         "melee": "knife",
-        "equipment": {"flash_2": 1},
+        "equipment": {"flash_grenade": 1},
     },
 
     "support": {
@@ -38,17 +38,17 @@ classes: JsonDict = {
         "main": {"gun": "m249", "mag": "m249_mag", "mag_count": 3},
         "secondary": {"gun": "makarov", "mag": "makarov_mag", "mag_count": 2},
         "melee": "knife",
-        "equipment": {"flash_4": 1},
+        "equipment": {"flash_grenade": 1},
         "special": {"resupply": True},
     },
 
     "sniper": {
         "name": "Sniper",
         "lore": "Long-range precision",
-        "main": {"gun": "m24", "mag": "m24_mag", "mag_count": 2},
+        "main": {"gun": "m24"},
         "secondary": {"gun": "deagle", "mag": "deagle_mag", "mag_count": 2},
         "melee": "knife",
-        "equipment": {"flash_1": 1},
+        "equipment": {"flash_grenade": 1},
         "special": {"bipod": True},
     },
 
@@ -58,16 +58,16 @@ classes: JsonDict = {
         "main": {"gun": "mp5", "mag": "mp5_mag", "mag_count": 3},
         "secondary": {"gun": "glock18", "mag": "glock18_mag", "mag_count": 2},
         "melee": "knife",
-        "equipment": {"flash_5": 1},
+        "equipment": {"flash_grenade": 1},
     },
 
     "shotgunner": {
         "name": "Shotgunner",
         "lore": "Breaching / CQB",
-        "main": {"gun": "m590", "mag": "m590_mag", "mag_count": 3},
+        "main": {"gun": "m590"},
         "secondary": {"gun": "m1911", "mag": "m1911_mag", "mag_count": 1},
         "melee": "knife",
-        "equipment": {"flash_3": 1},
+        "equipment": {"flash_grenade": 1},
     },
 
     "engineer": {
@@ -76,7 +76,7 @@ classes: JsonDict = {
         "main": {"gun": "mac10", "mag": "mac10_mag", "mag_count": 3},
         "secondary": {"gun": "makarov", "mag": "makarov_mag", "mag_count": 1},
         "melee": "knife",
-        "equipment": {"flash_2": 1},
+        "equipment": {"flash_grenade": 1},
         "special": {"can_place_explosive": True},
     },
 
@@ -86,7 +86,7 @@ classes: JsonDict = {
         "main": {"gun": "famas", "mag": "famas_mag", "mag_count": 2},
         "secondary": {"gun": "makarov", "mag": "makarov_mag", "mag_count": 2},
         "melee": "knife",
-        "equipment": {"flash_1": 1},
+        "equipment": {"flash_grenade": 1},
         "special": {"revive_bonus": True},
     },
 }

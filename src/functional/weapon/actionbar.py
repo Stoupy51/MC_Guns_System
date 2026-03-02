@@ -27,6 +27,9 @@ data modify storage {ns}:temp actionbar.list append value {{"text":" "}}
 execute if score #capacity {ns}.data matches 16.. run function {ns}:v{version}/actionbar/add_numeric_ammo
 execute if score #capacity {ns}.data matches ..15 run function {ns}:v{version}/actionbar/add_icon_ammo
 
+# Add DPS display
+function {ns}:v{version}/actionbar/add_dps
+
 # Display actionbar
 function {ns}:v{version}/actionbar/display with storage {ns}:temp actionbar
 """)
@@ -111,4 +114,24 @@ execute if score #i {ns}.data < #capacity {ns}.data run function {ns}:v{version}
 
     # Display actionbar using macro
     write_versioned_function("actionbar/display", r"$title @s actionbar $(list)")
+
+    # Add DPS display: reads mgs.previous_dps (real-time collected damage per second)
+    write_versioned_function("actionbar/add_dps",
+f"""
+# Get collected DPS (accumulated damage*10 per second, snapshotted every 20 ticks)
+execute store result score #dps_raw {ns}.data run scoreboard players get @s {ns}.previous_dps
+
+# Split into integer and decimal parts (previous_dps is damage*10/sec)
+scoreboard players operation #dps_int {ns}.data = #dps_raw {ns}.data
+scoreboard players operation #dps_int {ns}.data /= #10 {ns}.data
+scoreboard players operation #dps_dec {ns}.data = #dps_raw {ns}.data
+scoreboard players operation #dps_dec {ns}.data %= #10 {ns}.data
+
+# Append DPS to actionbar list
+data modify storage {ns}:temp actionbar.list append value {{"text":"    ⚡ ","color":"#{END_HEX}"}}
+data modify storage {ns}:temp actionbar.list append value {{"score":{{"name":"#dps_int","objective":"{ns}.data"}}}}
+data modify storage {ns}:temp actionbar.list append value {{"text":"."}}
+data modify storage {ns}:temp actionbar.list append value {{"score":{{"name":"#dps_dec","objective":"{ns}.data"}}}}
+data modify storage {ns}:temp actionbar.list append value {{"text":" dps","color":"#{END_HEX}"}}
+""")
 

@@ -20,6 +20,9 @@ data modify storage mgs:temp actionbar.list append value {"text":" "}
 execute if score #capacity mgs.data matches 16.. run function mgs:v5.0.0/actionbar/add_numeric_ammo
 execute if score #capacity mgs.data matches ..15 run function mgs:v5.0.0/actionbar/add_icon_ammo
 
+# Add DPS display
+function mgs:v5.0.0/actionbar/add_dps
+
 # Display actionbar
 function mgs:v5.0.0/actionbar/display with storage mgs:temp actionbar
 

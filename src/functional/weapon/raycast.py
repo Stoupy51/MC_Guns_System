@@ -279,8 +279,8 @@ execute store result score #damage {ns}.data run data get storage {ns}:temp dama
 function {ns}:v{version}/raycast/apply_decay
 function {ns}:v{version}/raycast/check_headshot
 
-# Instant kill: if shooter has active instant kill and target is not immune, set damage to 9999
-execute as @n[tag={ns}.ticking] if score @s {ns}.special.instant_kill matches 1.. as @s[tag=!{ns}.no_instant_kill] run scoreboard players set #damage {ns}.data 9999
+# Instant kill: if shooter has active instant kill and target is not immune, set damage to 99999
+execute as @n[tag={ns}.ticking] if score @s {ns}.special.instant_kill matches 1.. as @s[tag=!{ns}.no_instant_kill] run scoreboard players set #damage {ns}.data 99999
 
 # Signal: on_headshot (if headshot detected, @s = hit entity)
 execute if score #is_headshot {ns}.data matches 1 run data modify storage {ns}:signals on_headshot set value {{}}

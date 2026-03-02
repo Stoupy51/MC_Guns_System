@@ -57,6 +57,10 @@ execute if score @s mgs.pending_clicks matches ..-1 run function mgs:v5.0.0/play
 # Show action bar
 execute if data storage mgs:gun all.gun run function mgs:v5.0.0/actionbar/show
 
+# DPS timer: every 20 ticks snapshot mgs.dps -> mgs.previous_dps and reset
+scoreboard players add @s mgs.dps_timer 1
+execute if score @s mgs.dps_timer matches 20.. run function mgs:v5.0.0/player/dps_snapshot
+
 # Decrement special durations (instant_kill, infinite_ammo)
 execute if score @s mgs.special.instant_kill matches 1.. run scoreboard players remove @s mgs.special.instant_kill 1
 execute if score @s mgs.special.infinite_ammo matches 1.. run scoreboard players remove @s mgs.special.infinite_ammo 1
