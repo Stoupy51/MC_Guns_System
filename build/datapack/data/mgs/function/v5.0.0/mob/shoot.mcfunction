@@ -1,7 +1,7 @@
 
 #> mgs:v5.0.0/mob/shoot
 #
-# @executed	anchored eyes & facing entity @p[distance=..64,gamemode=!spectator,gamemode=!creative] feet
+# @executed	anchored eyes & facing entity @n[tag=mgs.target] feet
 #
 # @within	mgs:v5.0.0/mob/fire_weapon
 #			mgs:v5.0.0/mob/shoot

@@ -1,4 +1,3 @@
-
 # Imports
 from stewbeet import Mem, write_load_file, write_tick_file, write_versioned_function
 
@@ -23,10 +22,6 @@ scoreboard objectives add {ns}.mob.sleep_time dummy
 """)
 
     ## Mob tick function
-    # Runs for each mob tagged {ns}.armed
-    # Active/sleep durations are configured per-mob via:
-    #   {ns}.mob.active_time = number of ticks to stay active (default 50)
-    #   {ns}.mob.sleep_time  = number of ticks to sleep (default 100, set to 0 for continuous shooting)
     write_versioned_function("mob/tick",
 f"""
 # Initialize mob if not yet initialized
@@ -54,21 +49,25 @@ function {ns}:v{version}/mob/copy_gun_data
 # Check if we have valid gun data
 execute unless data storage {ns}:gun all.stats run return 0
 
-# Find nearest target (player within 64 blocks, not in spectator/creative)
-execute unless entity @a[distance=..64,gamemode=!spectator,gamemode=!creative] run return 0
+# Pick target: last attacker if in range, otherwise nearest player
+execute on attacker run tag @s add {ns}.target
+execute unless entity @e[tag={ns}.target] run tag @p[distance=..64,gamemode=!spectator,gamemode=!creative] add {ns}.target
 
-# Line-of-sight check: can the mob see the nearest target? (Bookshelf view check)
-# @s = mob (observer), positioned at target player's position
-execute positioned as @p[distance=..64,gamemode=!spectator,gamemode=!creative] store result score #can_see {ns}.data run function #bs.view:can_see_ata {{with:{{}}}}
-execute unless score #can_see {ns}.data matches 1 run return 0
+# No target in range, skip
+execute unless entity @e[tag={ns}.target] run return 0
+
+# Line-of-sight check: can the mob see the target?
+execute positioned as @n[tag={ns}.target] store result score #can_see {ns}.data run function #bs.view:can_see_ata {{with:{{}}}}
+execute unless score #can_see {ns}.data matches 1 run return run tag @e[tag={ns}.target] remove {ns}.target
 
 # Tag as ticking (for compatibility with existing damage/raycast system)
 tag @s add {ns}.ticking
 
-# Aim at nearest valid target and fire
-execute anchored eyes facing entity @p[distance=..64,gamemode=!spectator,gamemode=!creative] feet run function {ns}:v{version}/mob/fire_weapon
+# Aim at target and fire
+execute anchored eyes facing entity @n[tag={ns}.target] feet run function {ns}:v{version}/mob/fire_weapon
 
-# Remove ticking tag
+# Remove tags
+tag @e[tag={ns}.target] remove {ns}.target
 tag @s remove {ns}.ticking
 """)
 
@@ -84,8 +83,8 @@ execute unless score @s {ns}.mob.active_time matches 1.. run scoreboard players 
 # Default sleep_time to 100 ticks if not set
 execute unless score @s {ns}.mob.sleep_time matches 0.. run scoreboard players set @s {ns}.mob.sleep_time 100
 
-# Initialize cooldown to 0
-scoreboard players set @s {ns}.cooldown 0
+# Initialize cooldown to 1 second
+scoreboard players set @s {ns}.cooldown 20
 
 # Start in active phase
 function {ns}:v{version}/mob/wake_up
@@ -94,20 +93,16 @@ function {ns}:v{version}/mob/wake_up
     ## Transition from sleeping to active phase
     write_versioned_function("mob/wake_up",
 f"""
-# Remove sleeping tag
+# Remove sleeping tag and set timer to active duration
 tag @s remove {ns}.mob_sleeping
-
-# Set timer to active duration
 scoreboard players operation @s {ns}.mob.timer = @s {ns}.mob.active_time
 """)
 
     ## Transition from active to sleeping phase
     write_versioned_function("mob/go_sleep",
 f"""
-# Add sleeping tag
+# Add sleeping tag and set timer to sleep duration
 tag @s add {ns}.mob_sleeping
-
-# Set timer to sleep duration
 scoreboard players operation @s {ns}.mob.timer = @s {ns}.mob.sleep_time
 """)
 
@@ -119,10 +114,12 @@ data remove storage {ns}:gun all
 data modify storage {ns}:gun all set from entity @s equipment.mainhand.components."minecraft:custom_data".{ns}
 """)
 
-    ## Fire weapon routing (similar to player/fire_weapon but simplified for mobs)
-    # No burst mode, no mode checks, no muzzle flash, no casing, no kick
+    ## Fire weapon routing
     write_versioned_function("mob/fire_weapon",
 f"""
+# Rotate to face the target eyes
+rotate @s facing entity @n[tag={ns}.target] eyes
+
 # Set cooldown from weapon stats
 execute store result score @s {ns}.cooldown run data get storage {ns}:gun all.stats.{COOLDOWN}
 
@@ -142,14 +139,13 @@ function {ns}:v{version}/mob/shoot
 # Play fire sound to nearby players
 execute if data storage {ns}:gun all.sounds.fire run function {ns}:v{version}/mob/fire_sound with storage {ns}:gun all.sounds
 
-# Signal: on_shoot (weapon data available in mgs:signals)
+# Signal: on_shoot (weapon data available in {ns}:signals)
 data modify storage {ns}:signals on_shoot set value {{}}
 data modify storage {ns}:signals on_shoot.weapon set from storage {ns}:gun all
 function #{ns}:signals/on_shoot
 """)
 
-    ## Mob shoot function (simplified version of player/shoot)
-    # Uses base accuracy only (mobs don't move/sprint/sneak like players)
+    ## Mob shoot function
     write_versioned_function("mob/shoot",
 f"""
 # Set accuracy (mobs use base accuracy)
@@ -165,7 +161,7 @@ scoreboard players remove #bullets_to_fire {ns}.data 1
 execute if score #bullets_to_fire {ns}.data matches 1.. run function {ns}:v{version}/mob/shoot
 """)
 
-    ## Fire sound for mobs (plays to all nearby players)
+    ## Fire sound for mobs
     write_versioned_function("mob/fire_sound",
 f"""
 $playsound {ns}:$(fire) player @a[distance=..48] ~ ~ ~ 0.75
@@ -179,16 +175,16 @@ execute if score #armed_mob_count {ns}.data matches 1.. as @e[tag={ns}.armed] at
 """)
 
     ## Simple example functions
-    for level, active, sleep in [(1, 50, 100), (2, 50, 50), (3, 60, 20), (4, 72000, 0)]:
+    for level, active, sleep in [(1, 50, 100), (2, 50, 50), (3, 60, 20), (4, 72000, 1)]:
         write_versioned_function(f"mob/example/level_{level}",
 f"""
-# Summon pillager with armed tag and custom name
-summon pillager ~ ~ ~ {{"Tags":["{ns}.armed","{ns}.new"],"CustomName":{{"text":"Armed Pillager [Lv.{level}]","color":"red"}}}}
+# Summon entity with armed tag and custom name
+$summon $(entity) ~ ~ ~ {{"Tags":["{ns}.armed","{ns}.new"],"CustomName":{{"text":"Armed $(entity) [Lv.{level}]","color":"red"}}}}
 
-# Give a random weapon to the pillager
+# Give a random weapon to the entity
 execute as @n[tag={ns}.new] run function {ns}:v{version}/utils/random_weapon {{slot:"weapon.mainhand"}}
 
-# Set mob active time to 50 ticks and sleep time to 100 ticks (difficulty 1 equivalent)
+# Set mob active time and sleep time
 scoreboard players set @n[tag={ns}.new] {ns}.mob.active_time {active}
 scoreboard players set @n[tag={ns}.new] {ns}.mob.sleep_time {sleep}
 

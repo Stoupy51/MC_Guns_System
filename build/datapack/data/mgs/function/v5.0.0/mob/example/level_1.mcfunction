@@ -3,14 +3,16 @@
 #
 # @within	???
 #
+# @args		entity (unknown)
+#
 
-# Summon pillager with armed tag and custom name
-summon pillager ~ ~ ~ {"Tags":["mgs.armed","mgs.new"],"CustomName":{"translate": "mgs.armed_pillager_lv_1","color":"red"}}
+# Summon entity with armed tag and custom name
+$summon $(entity) ~ ~ ~ {"Tags":["mgs.armed","mgs.new"],"CustomName":{"text":"Armed $(entity) [Lv.1]","color":"red"}}
 
-# Give a random weapon to the pillager
+# Give a random weapon to the entity
 execute as @n[tag=mgs.new] run function mgs:v5.0.0/utils/random_weapon {slot:"weapon.mainhand"}
 
-# Set mob active time to 50 ticks and sleep time to 100 ticks (difficulty 1 equivalent)
+# Set mob active time and sleep time
 scoreboard players set @n[tag=mgs.new] mgs.mob.active_time 50
 scoreboard players set @n[tag=mgs.new] mgs.mob.sleep_time 100
 

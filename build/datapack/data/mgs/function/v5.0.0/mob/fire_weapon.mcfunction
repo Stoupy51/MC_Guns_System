@@ -1,10 +1,13 @@
 
 #> mgs:v5.0.0/mob/fire_weapon
 #
-# @executed	anchored eyes & facing entity @p[distance=..64,gamemode=!spectator,gamemode=!creative] feet
+# @executed	anchored eyes & facing entity @n[tag=mgs.target] feet
 #
-# @within	mgs:v5.0.0/mob/tick [ anchored eyes & facing entity @p[distance=..64,gamemode=!spectator,gamemode=!creative] feet ]
+# @within	mgs:v5.0.0/mob/tick [ anchored eyes & facing entity @n[tag=mgs.target] feet ]
 #
+
+# Rotate to face the target eyes
+rotate @s facing entity @n[tag=mgs.target] eyes
 
 # Set cooldown from weapon stats
 execute store result score @s mgs.cooldown run data get storage mgs:gun all.stats.cooldown

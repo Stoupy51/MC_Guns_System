@@ -31,20 +31,24 @@ function mgs:v5.0.0/mob/copy_gun_data
 # Check if we have valid gun data
 execute unless data storage mgs:gun all.stats run return 0
 
-# Find nearest target (player within 64 blocks, not in spectator/creative)
-execute unless entity @a[distance=..64,gamemode=!spectator,gamemode=!creative] run return 0
+# Pick target: last attacker if in range, otherwise nearest player
+execute on attacker run tag @s add mgs.target
+execute unless entity @e[tag=mgs.target] run tag @p[distance=..64,gamemode=!spectator,gamemode=!creative] add mgs.target
 
-# Line-of-sight check: can the mob see the nearest target? (Bookshelf view check)
-# @s = mob (observer), positioned at target player's position
-execute positioned as @p[distance=..64,gamemode=!spectator,gamemode=!creative] store result score #can_see mgs.data run function #bs.view:can_see_ata {with:{}}
-execute unless score #can_see mgs.data matches 1 run return 0
+# No target in range, skip
+execute unless entity @e[tag=mgs.target] run return 0
+
+# Line-of-sight check: can the mob see the target?
+execute positioned as @n[tag=mgs.target] store result score #can_see mgs.data run function #bs.view:can_see_ata {with:{}}
+execute unless score #can_see mgs.data matches 1 run return run tag @e[tag=mgs.target] remove mgs.target
 
 # Tag as ticking (for compatibility with existing damage/raycast system)
 tag @s add mgs.ticking
 
-# Aim at nearest valid target and fire
-execute anchored eyes facing entity @p[distance=..64,gamemode=!spectator,gamemode=!creative] feet run function mgs:v5.0.0/mob/fire_weapon
+# Aim at target and fire
+execute anchored eyes facing entity @n[tag=mgs.target] feet run function mgs:v5.0.0/mob/fire_weapon
 
-# Remove ticking tag
+# Remove tags
+tag @e[tag=mgs.target] remove mgs.target
 tag @s remove mgs.ticking
 

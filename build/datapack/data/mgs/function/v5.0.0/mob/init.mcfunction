@@ -15,8 +15,8 @@ execute unless score @s mgs.mob.active_time matches 1.. run scoreboard players s
 # Default sleep_time to 100 ticks if not set
 execute unless score @s mgs.mob.sleep_time matches 0.. run scoreboard players set @s mgs.mob.sleep_time 100
 
-# Initialize cooldown to 0
-scoreboard players set @s mgs.cooldown 0
+# Initialize cooldown to 1 second
+scoreboard players set @s mgs.cooldown 20
 
 # Start in active phase
 function mgs:v5.0.0/mob/wake_up

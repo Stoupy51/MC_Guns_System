@@ -6,9 +6,7 @@
 # @within	mgs:v5.0.0/mob/tick
 #
 
-# Add sleeping tag
+# Add sleeping tag and set timer to sleep duration
 tag @s add mgs.mob_sleeping
-
-# Set timer to sleep duration
 scoreboard players operation @s mgs.mob.timer = @s mgs.mob.sleep_time
 
