@@ -9,14 +9,18 @@ clear @s
 
 # Give main weapon
 loot give @s loot mgs:i/m16a4
-loot give @s loot mgs:i/m16a4_mag
-loot give @s loot mgs:i/m16a4_mag
 
 # Give secondary weapon
-loot give @s loot mgs:i/glock17
-loot give @s loot mgs:i/glock17_mag
-loot give @s loot mgs:i/glock17_mag
+loot give @s loot mgs:i/m9
 
 # Give equipment
 loot give @s loot mgs:i/flash_grenade
+loot give @s loot mgs:i/smoke_grenade
+
+# Give magazines
+loot give @s loot mgs:i/m16a4_mag
+loot give @s loot mgs:i/m16a4_mag
+loot give @s loot mgs:i/m16a4_mag
+loot give @s loot mgs:i/m9_mag
+loot give @s loot mgs:i/m9_mag
 

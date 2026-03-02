@@ -8,16 +8,20 @@
 clear @s
 
 # Give main weapon
-loot give @s loot mgs:i/mp5
-loot give @s loot mgs:i/mp5_mag
-loot give @s loot mgs:i/mp5_mag
-loot give @s loot mgs:i/mp5_mag
+loot give @s loot mgs:i/mp7
 
 # Give secondary weapon
 loot give @s loot mgs:i/glock18
-loot give @s loot mgs:i/glock18_mag
-loot give @s loot mgs:i/glock18_mag
 
 # Give equipment
 loot give @s loot mgs:i/flash_grenade
+loot give @s loot mgs:i/flash_grenade
+
+# Give magazines
+loot give @s loot mgs:i/mp7_mag
+loot give @s loot mgs:i/mp7_mag
+loot give @s loot mgs:i/mp7_mag
+loot give @s loot mgs:i/mp7_mag
+loot give @s loot mgs:i/glock18_mag
+loot give @s loot mgs:i/glock18_mag
 
