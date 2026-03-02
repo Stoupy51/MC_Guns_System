@@ -4,19 +4,24 @@
 # @within	???
 #
 
-# Apply class: Engineer - Objective / demolitions (limited)
+# Apply class: Engineer - Objective / demolitions
 clear @s
 
 # Give main weapon
-loot give @s loot mgs:i/mac10
-loot give @s loot mgs:i/mac10_mag
-loot give @s loot mgs:i/mac10_mag
-loot give @s loot mgs:i/mac10_mag
+loot give @s loot mgs:i/mp5
 
 # Give secondary weapon
 loot give @s loot mgs:i/makarov
-loot give @s loot mgs:i/makarov_mag
 
 # Give equipment
-loot give @s loot mgs:i/flash_grenade
+loot give @s loot mgs:i/semtex
+loot give @s loot mgs:i/semtex
+loot give @s loot mgs:i/smoke_grenade
+
+# Give magazines
+loot give @s loot mgs:i/mp5_mag
+loot give @s loot mgs:i/mp5_mag
+loot give @s loot mgs:i/mp5_mag
+loot give @s loot mgs:i/makarov_mag
+loot give @s loot mgs:i/makarov_mag
 

@@ -1,4 +1,5 @@
 
+# Weapons
 m16a4
 ak47
 fnfal
@@ -29,4 +30,10 @@ m24
 rpg7
 rpk
 m249
+
+# Grenades
+frag_grenade
+semtex
+flash_grenade
+smoke_grenade
 

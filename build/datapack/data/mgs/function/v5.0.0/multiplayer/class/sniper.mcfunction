@@ -12,9 +12,14 @@ loot give @s loot mgs:i/m24
 
 # Give secondary weapon
 loot give @s loot mgs:i/deagle
-loot give @s loot mgs:i/deagle_mag
-loot give @s loot mgs:i/deagle_mag
 
 # Give equipment
 loot give @s loot mgs:i/flash_grenade
+
+# Give magazines
+loot give @s loot mgs:i/m24_mag
+loot give @s loot mgs:i/m24_mag
+loot give @s loot mgs:i/m24_mag
+loot give @s loot mgs:i/deagle_mag
+loot give @s loot mgs:i/deagle_mag
 

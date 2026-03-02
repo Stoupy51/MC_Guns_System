@@ -1,4 +1,3 @@
-
 # ruff: noqa: E501
 # Imports
 import json
@@ -58,19 +57,23 @@ clear @s
 # Give main weapon
 loot give @s loot {ns}:i/{class_data['main']['gun']}
 """
-		for _ in range(class_data["main"].get("mag_count", 0)):
-			commands += f"loot give @s loot {ns}:i/{class_data['main']['mag']}\n"
 
 		if "secondary" in class_data:
 			commands += f"\n# Give secondary weapon\nloot give @s loot {ns}:i/{class_data['secondary']['gun']}\n"
-			for _ in range(class_data["secondary"].get("mag_count", 0)):
-				commands += f"loot give @s loot {ns}:i/{class_data['secondary']['mag']}\n"
 
 		if "equipment" in class_data:
 			commands += "\n# Give equipment\n"
 			for item_id, count in class_data["equipment"].items():
 				for _ in range(count):
 					commands += f"loot give @s loot {ns}:i/{item_id}\n"
+
+		commands += "\n# Give magazines\n"
+		for _ in range(class_data["main"].get("mag_count", 0)):
+			commands += f"loot give @s loot {ns}:i/{class_data['main']['mag']}\n"
+
+		if "secondary" in class_data:
+			for _ in range(class_data["secondary"].get("mag_count", 0)):
+				commands += f"loot give @s loot {ns}:i/{class_data['secondary']['mag']}\n"
 
 		write_versioned_function(f"multiplayer/class/{class_id}", commands)
 

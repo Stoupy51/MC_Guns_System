@@ -9,14 +9,18 @@ clear @s
 
 # Give main weapon
 loot give @s loot mgs:i/famas
-loot give @s loot mgs:i/famas_mag
-loot give @s loot mgs:i/famas_mag
 
 # Give secondary weapon
-loot give @s loot mgs:i/makarov
-loot give @s loot mgs:i/makarov_mag
-loot give @s loot mgs:i/makarov_mag
+loot give @s loot mgs:i/m1911
 
 # Give equipment
-loot give @s loot mgs:i/flash_grenade
+loot give @s loot mgs:i/smoke_grenade
+loot give @s loot mgs:i/smoke_grenade
+
+# Give magazines
+loot give @s loot mgs:i/famas_mag
+loot give @s loot mgs:i/famas_mag
+loot give @s loot mgs:i/famas_mag
+loot give @s loot mgs:i/m1911_mag
+loot give @s loot mgs:i/m1911_mag
 

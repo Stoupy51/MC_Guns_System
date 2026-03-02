@@ -8,11 +8,13 @@
 Credits for resources: MGS 4.2 by TheBradqq
 
 # TODO:
-- Function to update all lore (not only ammo) -> useful for easy custom weapons and upgrades in zombies for example
-- Player config for showing damage per bullet in chat for user who shot (can be toggled with /trigger, default = false so only OG players will enable it) (similar to hitmaker) (not just a /say, need proper tellraw with colors and stuff)
-  - Also a global config to enable damage debug -> tellraw @a, overrides player config.
-- Along with quick reload score, quick weapon swap score to allow swapping to another weapon faster (also in /function mgs:config)
-- Add DPS on actionbar
+- Add missing "magazines", take them from "based_of" old code
+  - Those are consumable magazines (1 bullet) but stack size! Need to support this (currently not right, the RPG is consuming a max_stack_size 99 into one go to reload one bullet)
+  - { "predicate": { "custom_model_data":430 }, "model": "mgs:gun/mosin_bullet" }
+  - { "predicate": { "custom_model_data":440 }, "model": "mgs:gun/m24_bullet" },
+  - { "predicate": { "custom_model_data":310 }, "model": "mgs:gun/spas12_shell" },
+  - { "predicate": { "custom_model_data":320 }, "model": "mgs:gun/m500_shell" },
+  - { "predicate": { "custom_model_data":330 }, "model": "mgs:gun/m590_shell" },
 - Compatibility & Developement:
   - Add a multiplayer mode (mgs:multiplayer/*):
     - Gamemodes like team deathmatch, capture the flag, free for all, etc.
