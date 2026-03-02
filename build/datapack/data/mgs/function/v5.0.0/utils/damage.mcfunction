@@ -12,5 +12,5 @@
 #
 
 $damage $(target) $(amount) mgs:bullet by $(attacker)
-#$say damage $(target) $(amount) mgs:bullet by $(attacker)
+$say damage $(target) $(amount) mgs:bullet by $(attacker)
 

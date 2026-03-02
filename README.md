@@ -20,6 +20,9 @@ Credits for resources: MGS 4.2 by TheBradqq
   - More generally, we'll add a scoreboard trigger "mgs.player.config" that opens a menu in tchat. Score = 1 = menu, 2 = toggle hitmaker, 3 = toggle something else later, etc. (see the other global config file for visual)
 - Mobs with guns need to be added (Any mob tagged with {ns}.armed (for performance)):
   - They need to be able to shoot and reload (we assume they have infinite ammo for simplicity, so no need to check for magazines and ammo in inventory) (they can still have a cooldown between shots and reloads)
+- Function to update all lore (not only ammo) -> useful for easy custom weapons and upgrades in zombies for example
+- Player config for showing damage per bullet in chat for user who shot (can be toggled with /trigger, default = false so only OG players will enable it) (similar to hitmaker) (not just a /say, need proper tellraw with colors and stuff)
+  - Also a global config to enable damage debug -> tellraw @a, overrides player config.
 - Compatibility & Developement:
   - Add a multiplayer mode (mgs:multiplayer/*):
     - Gamemodes like team deathmatch, capture the flag, free for all, etc.

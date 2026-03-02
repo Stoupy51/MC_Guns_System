@@ -187,20 +187,41 @@ data modify storage {ns}:temp block set from storage bs:out block
 execute if score #is_pass_through {ns}.data matches 1 run scoreboard players add $raycast.piercing bs.lambda 1
 execute if score #is_pass_through {ns}.data matches 1 unless block ~ ~ ~ #{ns}:v{version}/sounds/water run return 1
 
-# Allow bullets to pierce 2 blocks at most (if block isn't water)
-execute if score #is_pass_through {ns}.data matches 0 if score $raycast.piercing bs.lambda matches 1..3 run scoreboard players remove $raycast.piercing bs.lambda 1
-execute if score #is_pass_through {ns}.data matches 0 if score $raycast.piercing bs.lambda matches 5.. run scoreboard players set $raycast.piercing bs.lambda 3
-
-# Reduce damage by 5% in water, and 50% in other blocks
-execute store result score #new_damage {ns}.data run data get storage {ns}:temp damage 1000
-execute if score #is_pass_through {ns}.data matches 0 store result storage {ns}:temp damage float 0.0005 run scoreboard players get #new_damage {ns}.data
+# For water/pass-through: reduce damage by 5%
+execute if score #is_pass_through {ns}.data matches 1 store result score #new_damage {ns}.data run data get storage {ns}:temp damage 1000
 execute if score #is_pass_through {ns}.data matches 1 store result storage {ns}:temp damage float 0.00095 run scoreboard players get #new_damage {ns}.data
+
+# For solid blocks: lookup hardness
+execute if score #is_pass_through {ns}.data matches 0 run function #bs.block:lookup_type with storage bs:out block
+execute if score #is_pass_through {ns}.data matches 0 store result score #hardness {ns}.data run data get storage bs:out block.hardness 1000
+
+# Indestructible blocks (bedrock, barriers, hardness=-1): stop bullet completely
+execute if score #is_pass_through {ns}.data matches 0 if score #hardness {ns}.data matches ..-1 run data modify storage {ns}:temp damage set value 0.0d
+execute if score #is_pass_through {ns}.data matches 0 if score #hardness {ns}.data matches ..-1 run return 0
+
+# Piercing: cap on first solid block hit (initial piercing is 10, cap to 3)
+execute if score #is_pass_through {ns}.data matches 0 if score #hardness {ns}.data matches 0.. if score $raycast.piercing bs.lambda matches 5.. run scoreboard players set $raycast.piercing bs.lambda 3
+# Reduce piercing based on hardness tiers (directly in callback for lambda score access)
+execute if score #is_pass_through {ns}.data matches 0 if score #hardness {ns}.data matches 0..299 run scoreboard players remove $raycast.piercing bs.lambda 1
+execute if score #is_pass_through {ns}.data matches 0 if score #hardness {ns}.data matches 300..999 run scoreboard players remove $raycast.piercing bs.lambda 2
+execute if score #is_pass_through {ns}.data matches 0 if score #hardness {ns}.data matches 1000..2999 run scoreboard players remove $raycast.piercing bs.lambda 3
+execute if score #is_pass_through {ns}.data matches 0 if score #hardness {ns}.data matches 3000.. run scoreboard players set $raycast.piercing bs.lambda 0
+
+# Clamp piercing to 0 (Bookshelf raycast only stops at exactly 0, not negative)
+execute if score #is_pass_through {ns}.data matches 0 if score $raycast.piercing bs.lambda matches ..-1 run scoreboard players set $raycast.piercing bs.lambda 0
+
+# Apply hardness damage reduction (non-indestructible solid blocks only)
+execute if score #is_pass_through {ns}.data matches 0 if score #hardness {ns}.data matches 0.. run function {ns}:v{version}/raycast/apply_block_hardness
 
 # Signal: on_hit_block (only for solid blocks, @s = raycast marker, positioned at block)
 execute if score #is_pass_through {ns}.data matches 0 run data modify storage {ns}:signals on_hit_block set value {{}}
 execute if score #is_pass_through {ns}.data matches 0 run data modify storage {ns}:signals on_hit_block.block set from storage {ns}:temp block
 execute if score #is_pass_through {ns}.data matches 0 run data modify storage {ns}:signals on_hit_block.weapon set from storage {ns}:gun all
 execute if score #is_pass_through {ns}.data matches 0 run function #{ns}:signals/on_hit_block
+
+# Hard blocks (hardness >= 1.0): play impact sound and stop the ray
+execute if score #is_pass_through {ns}.data matches 0 if score #hardness {ns}.data matches 1000.. if score #played_solid {ns}.data matches 0 store success score #played_solid {ns}.data run playsound {ns}:common/solid_bullet_impact block @a[distance=..24] ~ ~ ~ 0.2
+execute if score #is_pass_through {ns}.data matches 0 if score #hardness {ns}.data matches 1000.. run return 0
 
 ## Playsounds
 # Each sound type has a scoreboard objective that tracks if it has been played.
@@ -216,6 +237,27 @@ execute if block ~ ~ ~ #{ns}:v{version}/sounds/wood run return run execute if sc
 execute if block ~ ~ ~ #{ns}:v{version}/plant run return run execute if score #played_plant {ns}.data matches 0 store success score #played_plant {ns}.data run playsound minecraft:block.azalea_leaves.break block @a[distance=..24] ~ ~ ~ 1
 execute if block ~ ~ ~ #{ns}:v{version}/solid run return run execute if score #played_solid {ns}.data matches 0 store success score #played_solid {ns}.data run playsound {ns}:common/solid_bullet_impact block @a[distance=..24] ~ ~ ~ 0.2
 execute if score #played_soft {ns}.data matches 0 store success score #played_soft {ns}.data run playsound {ns}:common/soft_bullet_impact block @a[distance=..24] ~ ~ ~ 0.2
+""")  # noqa: E501
+
+    # Apply block hardness-based damage reduction (called from on_targeted_block, #hardness already set)
+    write_versioned_function("raycast/apply_block_hardness",
+f"""
+#tellraw @a[distance=..128] [{{"text":"Hardness: ","color":"gray","extra":[{{"score":{{"name":"#hardness","objective":"{ns}.data"}},"color":"white"}}]}},{{"text":" $raycast.piercing bs.lambda: ","color":"gray","extra":[{{"score":{{"name":"$raycast.piercing","objective":"bs.lambda"}},"color":"white"}}]}}]
+
+# Calculate damage reduction: reduction = hardness * 400 / 1000, capped at 950
+scoreboard players operation #reduction {ns}.data = #hardness {ns}.data
+scoreboard players operation #reduction {ns}.data /= #10 {ns}.data
+scoreboard players operation #reduction {ns}.data *= #2 {ns}.data
+scoreboard players operation #reduction {ns}.data *= #2 {ns}.data
+execute if score #reduction {ns}.data matches 951.. run scoreboard players set #reduction {ns}.data 950
+
+# Apply: damage = damage * (1000 - reduction) / 1000
+execute store result score #new_damage {ns}.data run data get storage {ns}:temp damage 1000
+scoreboard players set #remaining_pct {ns}.data 1000
+scoreboard players operation #remaining_pct {ns}.data -= #reduction {ns}.data
+scoreboard players operation #new_damage {ns}.data *= #remaining_pct {ns}.data
+scoreboard players operation #new_damage {ns}.data /= #1000 {ns}.data
+execute store result storage {ns}:temp damage float 0.001 run scoreboard players get #new_damage {ns}.data
 """)  # noqa: E501
 
     # On targeted entity
