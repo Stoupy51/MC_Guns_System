@@ -222,6 +222,9 @@ execute store result score #damage {ns}.data run data get storage {ns}:temp dama
 function {ns}:v{version}/raycast/apply_decay
 function {ns}:v{version}/raycast/check_headshot
 
+# Instant kill: if shooter has active instant kill and target is not immune, set damage to 9999
+execute as @p[tag={ns}.ticking] if score @s {ns}.special.instant_kill matches 1.. as @s[tag=!{ns}.no_instant_kill] run scoreboard players set #damage {ns}.data 9999
+
 # Damage entity
 execute store result storage {ns}:input with.amount float 0.1 run scoreboard players get #damage {ns}.data
 function {ns}:v{version}/utils/damage with storage {ns}:input with

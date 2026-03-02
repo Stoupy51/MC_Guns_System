@@ -184,6 +184,9 @@ particle lava ~ ~ ~ 1 1 1 0 30 force @a[distance=..128]
 # Explosion sound
 playsound minecraft:entity.generic.explode player @a[distance=..64] ~ ~ ~ 2 0.8
 
+# Block destruction via RealisticExplosionLibrary (if RPG_EXPLOSION_POWER > 0)
+execute if score #rpg_explosion_power {ns}.config matches 1.. run function {ns}:v{version}/projectile/realistic_explosion
+
 # Store explosion center position for damage calculation
 execute store result storage {ns}:temp expl.center_x int 1 run data get entity @s Pos[0] 1000
 execute store result storage {ns}:temp expl.center_y int 1 run data get entity @s Pos[1] 1000
@@ -209,6 +212,14 @@ tag @a remove {ns}.temp_shooter
 
 # Delete the projectile
 function {ns}:v{version}/projectile/delete
+""")
+
+    ## Realistic block destruction (calls RealisticExplosionLibrary)
+    write_versioned_function("projectile/realistic_explosion",
+f"""
+# Set explosion power from config and call the library
+execute store result storage realistic_explosion:main power int 1 run scoreboard players get #rpg_explosion_power {ns}.config
+function realistic_explosion:explode
 """)
 
     ## Match shooter by UUID comparison
@@ -291,6 +302,9 @@ scoreboard players operation #expl_dmg {ns}.data /= #1000000 {ns}.data
 
 # Skip if damage is negligible (less than 0.1)
 execute if score #expl_dmg {ns}.data matches ..0 run return fail
+
+# Instant kill: if shooter has active instant kill and target is not immune, set damage to 9999
+execute as @p[tag={ns}.temp_shooter] if score @s {ns}.special.instant_kill matches 1.. as @s[tag=!{ns}.no_instant_kill] run scoreboard players set #expl_dmg {ns}.data 9999
 
 # Apply damage using the existing damage utility
 # Prepare macro arguments: target=@s, amount=damage (float with 0.1 precision), attacker=shooter

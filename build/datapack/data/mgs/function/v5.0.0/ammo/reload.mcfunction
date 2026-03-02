@@ -21,6 +21,9 @@ execute unless data storage mgs:config no_magazine if score #success mgs.data ma
 # Set cooldown to reload duration
 execute store result score @s mgs.cooldown run data get storage mgs:gun all.stats.reload_time
 
+# Apply quick reload: reduce cooldown by quick_reload% (e.g. 20 = 20% faster)
+execute if score @s mgs.special.quick_reload matches 1.. run function mgs:v5.0.0/ammo/apply_quick_reload
+
 # Force weapon switch animation
 function mgs:v5.0.0/switch/force_switch_animation
 

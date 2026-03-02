@@ -66,6 +66,9 @@ scoreboard players operation #expl_dmg mgs.data /= #1000000 mgs.data
 # Skip if damage is negligible (less than 0.1)
 execute if score #expl_dmg mgs.data matches ..0 run return fail
 
+# Instant kill: if shooter has active instant kill and target is not immune, set damage to 9999
+execute as @p[tag=mgs.temp_shooter] if score @s mgs.special.instant_kill matches 1.. as @s[tag=!mgs.no_instant_kill] run scoreboard players set #expl_dmg mgs.data 9999
+
 # Apply damage using the existing damage utility
 # Prepare macro arguments: target=@s, amount=damage (float with 0.1 precision), attacker=shooter
 data modify storage mgs:input with set value {target:"@s", amount:0.0f, attacker:"@p[tag=mgs.temp_shooter]"}

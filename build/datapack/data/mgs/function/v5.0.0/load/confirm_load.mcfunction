@@ -40,14 +40,31 @@ scoreboard objectives add mgs.remaining_bullets dummy
 # Tracks the room acoustics level for crack sound effects
 scoreboard objectives add mgs.acoustics_level dummy
 
+## Global configuration scoreboards (admin/server-level)
+# RPG explosion power (0 = no block destruction, higher = more destruction)
+scoreboard objectives add mgs.config dummy
+
+## Per-player special scoreboards (for zombies bonuses, testing, etc.)
+# Instant kill: duration in ticks (kills entities in one hit, except mgs.no_instant_kill tagged)
+scoreboard objectives add mgs.special.instant_kill dummy
+# Infinite ammo: duration in ticks (don't consume ammo, set ammo to max capacity)
+scoreboard objectives add mgs.special.infinite_ammo dummy
+# Quick reload: percentage faster reload (20 = 20% faster, 50 = 50% faster)
+scoreboard objectives add mgs.special.quick_reload dummy
+
 # Define some constants
 scoreboard players set #2 mgs.data 2
 scoreboard players set #10 mgs.data 10
+scoreboard players set #100 mgs.data 100
 scoreboard players set #1000 mgs.data 1000
 scoreboard players set #1000000 mgs.data 1000000
 
 # Initialize slow bullet (projectile) counter
 scoreboard players set #slow_bullet_count mgs.data 0
+
+# Initialize global config defaults (only if not already set)
+execute unless score #rpg_explosion_power mgs.config matches -2147483648.. run scoreboard players set #rpg_explosion_power mgs.config 0
+execute unless score #grenade_explosion_power mgs.config matches -2147483648.. run scoreboard players set #grenade_explosion_power mgs.config 0
 
 # Confirm load
 tellraw @a[tag=convention.debug] {"translate": "mgs.loaded_mc_guns_system_v5_0_0","color":"green"}

@@ -18,6 +18,9 @@ execute store result score #damage mgs.data run data get storage mgs:temp damage
 function mgs:v5.0.0/raycast/apply_decay
 function mgs:v5.0.0/raycast/check_headshot
 
+# Instant kill: if shooter has active instant kill and target is not immune, set damage to 9999
+execute as @p[tag=mgs.ticking] if score @s mgs.special.instant_kill matches 1.. as @s[tag=!mgs.no_instant_kill] run scoreboard players set #damage mgs.data 9999
+
 # Damage entity
 execute store result storage mgs:input with.amount float 0.1 run scoreboard players get #damage mgs.data
 function mgs:v5.0.0/utils/damage with storage mgs:input with

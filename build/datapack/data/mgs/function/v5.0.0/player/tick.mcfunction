@@ -57,6 +57,10 @@ execute if score @s mgs.pending_clicks matches ..-1 run function mgs:v5.0.0/play
 # Show action bar
 execute if data storage mgs:gun all.gun run function mgs:v5.0.0/actionbar/show
 
+# Decrement special durations (instant_kill, infinite_ammo)
+execute if score @s mgs.special.instant_kill matches 1.. run scoreboard players remove @s mgs.special.instant_kill 1
+execute if score @s mgs.special.infinite_ammo matches 1.. run scoreboard players remove @s mgs.special.infinite_ammo 1
+
 # Remove temporary tag
 tag @s remove mgs.ticking
 
