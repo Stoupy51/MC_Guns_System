@@ -67,3 +67,7 @@ tag @s remove mgs.ticking
 # Set previous selected weapon (length of string)
 execute store result score @s mgs.previous_selected run data get storage mgs:gun SelectedItem.id
 
+# Enable /trigger for this player
+scoreboard players enable @s mgs.player.config
+execute if score @s mgs.player.config matches 1.. run function mgs:v5.0.0/player/config/process
+
