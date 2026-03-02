@@ -272,7 +272,7 @@ scoreboard players set #last_callback {ns}.data 2
 particle block{{block_state:"redstone_wire"}} ~ ~1 ~ 0.35 0.5 0.35 0 100 force @a[distance=..128]
 
 # Get base damage with 3 digits of precision
-data modify storage {ns}:input with set value {{target:"@s", amount:0.0f, attacker:"@p[tag={ns}.ticking]"}}
+data modify storage {ns}:input with set value {{target:"@s", amount:0.0f, attacker:"@n[tag={ns}.ticking]"}}
 execute store result score #damage {ns}.data run data get storage {ns}:temp damage 10
 
 # Apply decay and headshot calculations
@@ -280,7 +280,7 @@ function {ns}:v{version}/raycast/apply_decay
 function {ns}:v{version}/raycast/check_headshot
 
 # Instant kill: if shooter has active instant kill and target is not immune, set damage to 9999
-execute as @p[tag={ns}.ticking] if score @s {ns}.special.instant_kill matches 1.. as @s[tag=!{ns}.no_instant_kill] run scoreboard players set #damage {ns}.data 9999
+execute as @n[tag={ns}.ticking] if score @s {ns}.special.instant_kill matches 1.. as @s[tag=!{ns}.no_instant_kill] run scoreboard players set #damage {ns}.data 9999
 
 # Signal: on_headshot (if headshot detected, @s = hit entity)
 execute if score #is_headshot {ns}.data matches 1 run data modify storage {ns}:signals on_headshot set value {{}}
@@ -302,9 +302,9 @@ data modify storage {ns}:signals on_hit_entity.target set from entity @s UUID
 function #{ns}:signals/on_hit_entity
 
 # Signal: on_kill (if entity died, @s switches to shooter player)
-execute unless entity @s as @p[tag={ns}.ticking] run data modify storage {ns}:signals on_kill set value {{}}
-execute unless entity @s as @p[tag={ns}.ticking] run data modify storage {ns}:signals on_kill.weapon set from storage {ns}:gun all
-execute unless entity @s as @p[tag={ns}.ticking] run function #{ns}:signals/on_kill
+execute unless entity @s as @n[tag={ns}.ticking] run data modify storage {ns}:signals on_kill set value {{}}
+execute unless entity @s as @n[tag={ns}.ticking] run data modify storage {ns}:signals on_kill.weapon set from storage {ns}:gun all
+execute unless entity @s as @n[tag={ns}.ticking] run function #{ns}:signals/on_kill
 """)
 
     # Apply decay using `damage *= pow(decay, distance / 10)`

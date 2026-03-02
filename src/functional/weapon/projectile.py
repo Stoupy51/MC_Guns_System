@@ -72,7 +72,7 @@ f"""
 tag @s add {ns}.slow_bullet
 
 # Store shooter UUID for damage attribution
-data modify entity @s data.shooter set from entity @p[tag={ns}.ticking] UUID
+data modify entity @s data.shooter set from entity @n[tag={ns}.ticking] UUID
 
 # Copy explosion and projectile config from temp storage
 data modify entity @s data.config set from storage {ns}:temp proj

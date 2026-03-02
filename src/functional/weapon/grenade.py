@@ -102,7 +102,7 @@ f"""
 tag @s add {ns}.grenade
 
 # Store shooter UUID for damage attribution
-data modify entity @s data.shooter set from entity @p[tag={ns}.ticking] UUID
+data modify entity @s data.shooter set from entity @n[tag={ns}.ticking] UUID
 
 # Copy grenade config from temp storage
 data modify entity @s data.config set from storage {ns}:temp grenade

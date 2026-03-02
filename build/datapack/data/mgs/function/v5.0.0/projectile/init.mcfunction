@@ -10,7 +10,7 @@
 tag @s add mgs.slow_bullet
 
 # Store shooter UUID for damage attribution
-data modify entity @s data.shooter set from entity @p[tag=mgs.ticking] UUID
+data modify entity @s data.shooter set from entity @n[tag=mgs.ticking] UUID
 
 # Copy explosion and projectile config from temp storage
 data modify entity @s data.config set from storage mgs:temp proj

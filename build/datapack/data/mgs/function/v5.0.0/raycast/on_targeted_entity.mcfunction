@@ -11,7 +11,7 @@ scoreboard players set #last_callback mgs.data 2
 particle block{block_state:"redstone_wire"} ~ ~1 ~ 0.35 0.5 0.35 0 100 force @a[distance=..128]
 
 # Get base damage with 3 digits of precision
-data modify storage mgs:input with set value {target:"@s", amount:0.0f, attacker:"@p[tag=mgs.ticking]"}
+data modify storage mgs:input with set value {target:"@s", amount:0.0f, attacker:"@n[tag=mgs.ticking]"}
 execute store result score #damage mgs.data run data get storage mgs:temp damage 10
 
 # Apply decay and headshot calculations
@@ -19,7 +19,7 @@ function mgs:v5.0.0/raycast/apply_decay
 function mgs:v5.0.0/raycast/check_headshot
 
 # Instant kill: if shooter has active instant kill and target is not immune, set damage to 9999
-execute as @p[tag=mgs.ticking] if score @s mgs.special.instant_kill matches 1.. as @s[tag=!mgs.no_instant_kill] run scoreboard players set #damage mgs.data 9999
+execute as @n[tag=mgs.ticking] if score @s mgs.special.instant_kill matches 1.. as @s[tag=!mgs.no_instant_kill] run scoreboard players set #damage mgs.data 9999
 
 # Signal: on_headshot (if headshot detected, @s = hit entity)
 execute if score #is_headshot mgs.data matches 1 run data modify storage mgs:signals on_headshot set value {}
@@ -41,7 +41,7 @@ data modify storage mgs:signals on_hit_entity.target set from entity @s UUID
 function #mgs:signals/on_hit_entity
 
 # Signal: on_kill (if entity died, @s switches to shooter player)
-execute unless entity @s as @p[tag=mgs.ticking] run data modify storage mgs:signals on_kill set value {}
-execute unless entity @s as @p[tag=mgs.ticking] run data modify storage mgs:signals on_kill.weapon set from storage mgs:gun all
-execute unless entity @s as @p[tag=mgs.ticking] run function #mgs:signals/on_kill
+execute unless entity @s as @n[tag=mgs.ticking] run data modify storage mgs:signals on_kill set value {}
+execute unless entity @s as @n[tag=mgs.ticking] run data modify storage mgs:signals on_kill.weapon set from storage mgs:gun all
+execute unless entity @s as @n[tag=mgs.ticking] run function #mgs:signals/on_kill
 
