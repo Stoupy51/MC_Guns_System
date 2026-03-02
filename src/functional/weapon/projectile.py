@@ -224,7 +224,9 @@ function {ns}:v{version}/projectile/delete
     write_versioned_function("projectile/realistic_explosion",
 f"""
 # Set explosion power from config and call the library
-execute store result storage realistic_explosion:main power int 1 run scoreboard players get #rpg_explosion_power {ns}.config
+scoreboard players operation #explosion_power realistic_explosion.data = #rpg_explosion_power {ns}.config
+execute if score #rpg_explosion_power {ns}.config matches 1.. run scoreboard players set #falling_fire realistic_explosion.data 1
+execute unless score #rpg_explosion_power {ns}.config matches 1.. run scoreboard players set #falling_fire realistic_explosion.data 0
 function realistic_explosion:explode
 """)
 
