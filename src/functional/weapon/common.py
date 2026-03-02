@@ -129,6 +129,10 @@ execute if score @s {ns}.pending_clicks matches ..-1 run function {ns}:v{version
 # Show action bar
 execute if data storage {ns}:gun all.gun run function {ns}:v{version}/actionbar/show
 
+# Decrement special durations (instant_kill, infinite_ammo)
+execute if score @s {ns}.special.instant_kill matches 1.. run scoreboard players remove @s {ns}.special.instant_kill 1
+execute if score @s {ns}.special.infinite_ammo matches 1.. run scoreboard players remove @s {ns}.special.infinite_ammo 1
+
 # Remove temporary tag
 tag @s remove {ns}.ticking
 
@@ -151,7 +155,7 @@ execute if score @s {ns}.pending_clicks matches ..-1 run return fail
 
 # Stop if SelectedItem is not a gun or if not enough ammo
 execute unless data storage {ns}:gun all.gun run return fail
-execute if score @s {ns}.{REMAINING_BULLETS} matches ..0 run return run function {ns}:v{version}/ammo/reload
+execute unless score @s {ns}.special.infinite_ammo matches 1.. if score @s {ns}.{REMAINING_BULLETS} matches ..0 run return run function {ns}:v{version}/ammo/reload
 """)
 
     # Prepare predicates for movement checks

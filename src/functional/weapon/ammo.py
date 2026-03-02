@@ -121,6 +121,9 @@ function {ns}:v{version}/ammo/decrease
     # Decrease ammo count function
     write_versioned_function("ammo/decrease",
 f"""
+# If infinite ammo is active, refill ammo to max capacity and skip consumption
+execute if score @s {ns}.special.infinite_ammo matches 1.. run return run function {ns}:v{version}/ammo/infinite_refill
+
 # Remove 1 bullet from player's ammo count
 scoreboard players remove @s {ns}.{REMAINING_BULLETS} 1
 
@@ -129,6 +132,13 @@ execute if data storage {ns}:gun all.sounds.pump run tag @s add {ns}.pump_sound
 
 # Add mid reload sound tag if weapon has reload mid sound
 execute if data storage {ns}:gun all.sounds.playermid run tag @s add {ns}.reload_mid_sound
+""")
+
+    # Infinite ammo refill: set current ammo to weapon's max capacity
+    write_versioned_function("ammo/infinite_refill",
+f"""
+# Set player's ammo count to weapon capacity
+execute store result score @s {ns}.{REMAINING_BULLETS} run data get storage {ns}:gun all.stats.{CAPACITY}
 """)
 
     # Handle weapon switching logic
@@ -276,6 +286,9 @@ execute unless data storage {ns}:config no_magazine if score #success {ns}.data 
 # Set cooldown to reload duration
 execute store result score @s {ns}.cooldown run data get storage {ns}:gun all.stats.{RELOAD_TIME}
 
+# Apply quick reload: reduce cooldown by quick_reload% (e.g. 20 = 20% faster)
+execute if score @s {ns}.special.quick_reload matches 1.. run function {ns}:v{version}/ammo/apply_quick_reload
+
 # Force weapon switch animation
 function {ns}:v{version}/switch/force_switch_animation
 
@@ -288,6 +301,20 @@ function {ns}:v{version}/sound/player_begin with storage {ns}:gun all.sounds
 
 # Add reloading tag
 tag @s add {ns}.reloading
+""")
+
+    # Apply quick reload: reduce cooldown by quick_reload% (cooldown * (100 - quick_reload) / 100)
+    write_versioned_function("ammo/apply_quick_reload",
+f"""
+# Calculate reduced cooldown: cooldown = cooldown * (100 - quick_reload%) / 100
+scoreboard players set #100 {ns}.data 100
+scoreboard players operation #reduction {ns}.data = #100 {ns}.data
+scoreboard players operation #reduction {ns}.data -= @s {ns}.special.quick_reload
+scoreboard players operation @s {ns}.cooldown *= #reduction {ns}.data
+scoreboard players operation @s {ns}.cooldown /= #100 {ns}.data
+
+# Ensure minimum cooldown of 1 tick
+execute if score @s {ns}.cooldown matches ..0 run scoreboard players set @s {ns}.cooldown 1
 """)
 
     # Find and consume magazines from inventory

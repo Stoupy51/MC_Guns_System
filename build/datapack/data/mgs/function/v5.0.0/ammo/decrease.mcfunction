@@ -6,6 +6,9 @@
 # @within	mgs:v5.0.0/player/right_click
 #
 
+# If infinite ammo is active, refill ammo to max capacity and skip consumption
+execute if score @s mgs.special.infinite_ammo matches 1.. run return run function mgs:v5.0.0/ammo/infinite_refill
+
 # Remove 1 bullet from player's ammo count
 scoreboard players remove @s mgs.remaining_bullets 1
 

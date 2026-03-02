@@ -16,6 +16,9 @@ particle lava ~ ~ ~ 1 1 1 0 30 force @a[distance=..128]
 # Explosion sound
 playsound minecraft:entity.generic.explode player @a[distance=..64] ~ ~ ~ 2 0.8
 
+# Block destruction via RealisticExplosionLibrary (if RPG_EXPLOSION_POWER > 0)
+execute if score #rpg_explosion_power mgs.config matches 1.. run function mgs:v5.0.0/projectile/realistic_explosion
+
 # Store explosion center position for damage calculation
 execute store result storage mgs:temp expl.center_x int 1 run data get entity @s Pos[0] 1000
 execute store result storage mgs:temp expl.center_y int 1 run data get entity @s Pos[1] 1000

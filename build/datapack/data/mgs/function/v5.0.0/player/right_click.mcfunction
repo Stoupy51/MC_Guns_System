@@ -18,7 +18,7 @@ execute if score @s mgs.pending_clicks matches ..-1 run return fail
 
 # Stop if SelectedItem is not a gun or if not enough ammo
 execute unless data storage mgs:gun all.gun run return fail
-execute if score @s mgs.remaining_bullets matches ..0 run return run function mgs:v5.0.0/ammo/reload
+execute unless score @s mgs.special.infinite_ammo matches 1.. if score @s mgs.remaining_bullets matches ..0 run return run function mgs:v5.0.0/ammo/reload
 
 # Determine number of bullets to fire based on fire mode and held-click state
 scoreboard players set #bullets_to_fire mgs.data 1
