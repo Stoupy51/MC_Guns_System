@@ -75,6 +75,8 @@ scoreboard objectives add {ns}.special.instant_kill dummy
 scoreboard objectives add {ns}.special.infinite_ammo dummy
 # Quick reload: percentage faster reload (20 = 20% faster, 50 = 50% faster)
 scoreboard objectives add {ns}.special.quick_reload dummy
+# Quick swap: percentage faster weapon switch (20 = 20% faster, 50 = 50% faster)
+scoreboard objectives add {ns}.special.quick_swap dummy
 
 
 # Define some constants
@@ -271,6 +273,15 @@ $execute if score #random {ns}.data matches 31 run loot replace entity @s $(slot
     ])
     qr_line = f'[{blank},{{"text":"  Quick Reload: ","color":"white"}},{qr_btns}]'
 
+    # Quick Swap: 0%, 20%, 50%, 80%
+    qs_options = [("0%", 0, "red"), ("20%", 20, "yellow"), ("50%", 50, "yellow"), ("80%", 80, "green")]
+    qs_btns = ",".join([
+        btn(label, f"/scoreboard players set @s {ns}.special.quick_swap {val}",
+            color, f"Set quick swap to {label}")
+        for label, val, color in qs_options
+    ])
+    qs_line = f'[{blank},{{"text":"  Quick Swap: ","color":"white"}},{qs_btns}]'
+
     write_function(f"{ns}:config",
 f"""tellraw @s {sep}
 tellraw @s {title}
@@ -285,6 +296,7 @@ tellraw @s {special_header}
 tellraw @s {ik_line}
 tellraw @s {ia_line}
 tellraw @s {qr_line}
+tellraw @s {qs_line}
 tellraw @s {sep}
 """)
 
