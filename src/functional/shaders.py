@@ -160,14 +160,14 @@ from stewbeet import JsonDict, Mem, set_json_encoder, write_versioned_function
 #   Jump:   color:[0.02, 0.0, 0.60], scale:0.01 → B' ∈ [73-153]
 #
 #   FOV markers (B > 0 AND G > 0, immediate zoom FOV reduction):
-#   FOV center-only: color:[0.02, 0.25, 0.02] → G' ∈ [30-63], B' ∈ [2-5]
-#   FOV x3:          color:[0.02, 0.02, 0.02] → G' ∈ [2-5],   B' ∈ [2-5]
-#   FOV x4:          color:[0.02, 0.08, 0.02] → G' ∈ [10-20],  B' ∈ [2-5]
+#   FOV center-only: color:[0.02, 0.25, 0.15] → G' ∈ [30-63], B' ∈ [18-38]
+#   FOV x3:          color:[0.02, 0.02, 0.15] → G' ∈ [2-5],   B' ∈ [18-38]
+#   FOV x4:          color:[0.02, 0.08, 0.15] → G' ∈ [10-20],  B' ∈ [18-38]
 #
 #   Detection: R ∈ [1,10] → marker signature.
 #   Flash/zoom: B == 0, G encodes mode.
 #   Spread: G == 0, B > 0 encodes movement state.
-#   FOV: G > 0 AND B ∈ [1-10] → immediate zoom FOV reduction.
+#   FOV: G > 0 AND B ∈ [15-45] → immediate zoom FOV reduction.
 #
 #   scale=0.01 → particle lifetime = 0 (1 game tick minimum).
 #   Flash auto-expires after 1 tick.
@@ -236,8 +236,11 @@ const vec2 corners[4] = vec2[4](
 //   G∈[26-80]  → zoom center-only (from 0.25, randomized to [30-63]) — no scope
 int detectMarkerMode(vec4 color) {
     ivec4 ic = ivec4(round(color * 255.0));
-    // Signature: R in [1-10] (very dim dust)
-    if (ic.r >= 1 && ic.r <= 10) {
+    // Signature: R in [1-10] (very dim dust) AND fully opaque (a>=250).
+    // The alpha check prevents false positives from smoke/large_smoke particles
+    // which have alpha ~204 (0.8) and can randomly produce dim grayscale colors
+    // in the [1-10] range matching our marker signature.
+    if (ic.r >= 1 && ic.r <= 10 && ic.a >= 250) {
         if (ic.b == 0) {
             // Flash/zoom markers: B==0, G encodes mode
             if (ic.g == 0) return 1;                   // Flash: G is zero
@@ -251,9 +254,10 @@ int detectMarkerMode(vec4 color) {
             if (ic.b >= 15 && ic.b <= 33) return 7;   // Walk: B from 0.12 → [15-31]
             if (ic.b >= 34 && ic.b <= 72) return 8;   // Sprint: B from 0.28 → [34-71]
             if (ic.b >= 73) return 9;                  // Jump: B from 0.60 → [73-153]
-        } else if (ic.b >= 1 && ic.b <= 10) {
-            // FOV markers: both G>0 AND B in dim range (immediate zoom FOV reduction)
-            // Same G encoding as zoom but B=0.02 instead of 0 distinguishes them
+        } else if (ic.b >= 15 && ic.b <= 45) {
+            // FOV markers: both G>0 AND B in higher range (B=0.15 → [18-38] after randomization)
+            // This separates FOV markers from dim grayscale particles (smoke etc.) which have B≈R∈[1-10]
+            // Same G encoding as zoom but B=0.15 instead of 0 distinguishes them
             if (ic.g >= 26 && ic.g <= 80) return 12;  // FOV center-only
             if (ic.g >= 1 && ic.g <= 7) return 13;    // FOV x3
             if (ic.g >= 8 && ic.g <= 25) return 14;   // FOV x4

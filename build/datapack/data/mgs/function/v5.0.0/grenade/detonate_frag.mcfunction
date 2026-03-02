@@ -9,7 +9,7 @@
 # Explosion particles
 particle explosion ~ ~ ~ 0 0 0 0 1 force @a[distance=..128]
 particle flame ~ ~ ~ 1 1 1 0.1 100 force @a[distance=..128]
-particle large_smoke ~ ~ ~ 1.5 1.5 1.5 0.05 100 force @a[distance=..128]
+particle campfire_cosy_smoke ~ ~ ~ 1.5 1.5 1.5 0.05 100 force @a[distance=..128]
 particle campfire_signal_smoke ~ ~ ~ 0.5 0.5 0.5 0.05 20 force @a[distance=..128]
 particle lava ~ ~ ~ 1 1 1 0 30 force @a[distance=..128]
 

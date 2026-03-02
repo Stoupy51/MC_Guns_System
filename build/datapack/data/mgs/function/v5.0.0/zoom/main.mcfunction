@@ -26,10 +26,11 @@ execute unless score @s mgs.zoom matches 1 run scoreboard players set @s mgs.zoo
 execute if score @s mgs.zoom matches 1 run scoreboard players add @s mgs.zoom_timer 1
 
 # FOV marker: spawn IMMEDIATELY on zoom (no delay) for smooth FOV reduction
-# Uses color with B=0.02 (non-zero B + non-zero G) to distinguish from zoom/flash/spread markers
-execute if score @s mgs.zoom matches 1 if score @s mgs.switch_cooldown matches 0 if items entity @s weapon.mainhand *[custom_data~{mgs:{scope_level:3}}] at @s anchored eyes run particle minecraft:dust{color:[0.02,0.02,0.02],scale:0.01} ^ ^ ^1 0 0 0 0 1 force @s
-execute if score @s mgs.zoom matches 1 if score @s mgs.switch_cooldown matches 0 if items entity @s weapon.mainhand *[custom_data~{mgs:{scope_level:4}}] at @s anchored eyes run particle minecraft:dust{color:[0.02,0.08,0.02],scale:0.01} ^ ^ ^1 0 0 0 0 1 force @s
-execute if score @s mgs.zoom matches 1 if score @s mgs.switch_cooldown matches 0 unless items entity @s weapon.mainhand *[custom_data~{mgs:{scope_level:3}}] unless items entity @s weapon.mainhand *[custom_data~{mgs:{scope_level:4}}] at @s anchored eyes run particle minecraft:dust{color:[0.02,0.25,0.02],scale:0.01} ^ ^ ^1 0 0 0 0 1 force @s
+# Uses color with B=0.15 (non-zero B + non-zero G) to distinguish from zoom/flash/spread markers
+# B=0.15 → B'∈[18-38] after randomization, safely above dim grayscale particles
+execute if score @s mgs.zoom matches 1 if score @s mgs.switch_cooldown matches 0 if items entity @s weapon.mainhand *[custom_data~{mgs:{scope_level:3}}] at @s anchored eyes run particle minecraft:dust{color:[0.02,0.02,0.15],scale:0.01} ^ ^ ^1 0 0 0 0 1 force @s
+execute if score @s mgs.zoom matches 1 if score @s mgs.switch_cooldown matches 0 if items entity @s weapon.mainhand *[custom_data~{mgs:{scope_level:4}}] at @s anchored eyes run particle minecraft:dust{color:[0.02,0.08,0.15],scale:0.01} ^ ^ ^1 0 0 0 0 1 force @s
+execute if score @s mgs.zoom matches 1 if score @s mgs.switch_cooldown matches 0 unless items entity @s weapon.mainhand *[custom_data~{mgs:{scope_level:3}}] unless items entity @s weapon.mainhand *[custom_data~{mgs:{scope_level:4}}] at @s anchored eyes run particle minecraft:dust{color:[0.02,0.25,0.15],scale:0.01} ^ ^ ^1 0 0 0 0 1 force @s
 
 # Scope zoom marker: spawn AFTER delay for barrel distortion effect
 execute if score @s mgs.zoom matches 1 if score @s mgs.switch_cooldown matches 0 if score @s mgs.zoom_timer matches 5.. if items entity @s weapon.mainhand *[custom_data~{mgs:{scope_level:3}}] at @s anchored eyes run particle minecraft:dust{color:[0.02,0.02,0.0],scale:0.01} ^ ^ ^1 0 0 0 0 1 force @s
