@@ -186,8 +186,8 @@ scoreboard players operation @s bs.vel.y -= #proj_gravity {ns}.data
 execute if data entity @s data.config{{{GRENADE_TYPE}:"semtex"}} run return run function {ns}:v{version}/grenade/move_semtex
 function #bs.move:apply_vel {{scale:0.001,with:{{blocks:true,entities:false,on_collision:"function {ns}:v{version}/grenade/on_bounce"}}}}
 
-# Trail particle (subtle smoke)
-particle smoke ~ ~ ~ 0.05 0.05 0.05 0.01 1 force @a[distance=..64]
+# Trail particle (white_smoke avoids false-positive with shader marker detection)
+particle white_smoke ~ ~ ~ 0.05 0.05 0.05 0.01 1 force @a[distance=..64]
 
 # Decrement fuse timer
 scoreboard players remove @s {ns}.data 1
@@ -209,8 +209,8 @@ scoreboard players remove @s {ns}.grenade_launch 1
 execute if score @s {ns}.grenade_launch matches 0.. run function #bs.move:apply_vel {{scale:0.001,with:{{blocks:true,entities:false,on_collision:"function {ns}:v{version}/grenade/on_stick"}}}}
 execute unless score @s {ns}.grenade_launch matches 0.. run function #bs.move:apply_vel {{scale:0.001,with:{{blocks:true,entities:true,on_collision:"function {ns}:v{version}/grenade/on_stick"}}}}
 
-# Trail particle
-particle smoke ~ ~ ~ 0.05 0.05 0.05 0.01 1 force @a[distance=..64]
+# Trail particle (white_smoke avoids false-positive with shader marker detection)
+particle white_smoke ~ ~ ~ 0.05 0.05 0.05 0.01 1 force @a[distance=..64]
 
 # Decrement fuse timer
 scoreboard players remove @s {ns}.data 1
@@ -307,7 +307,7 @@ f"""
 # Explosion particles
 particle explosion ~ ~ ~ 0 0 0 0 1 force @a[distance=..128]
 particle flame ~ ~ ~ 1 1 1 0.1 100 force @a[distance=..128]
-particle large_smoke ~ ~ ~ 1.5 1.5 1.5 0.05 100 force @a[distance=..128]
+particle campfire_cosy_smoke ~ ~ ~ 1.5 1.5 1.5 0.05 100 force @a[distance=..128]
 particle campfire_signal_smoke ~ ~ ~ 0.5 0.5 0.5 0.05 20 force @a[distance=..128]
 particle lava ~ ~ ~ 1 1 1 0 30 force @a[distance=..128]
 
@@ -483,7 +483,7 @@ execute if score @s {ns}.data matches ..0 run function {ns}:v{version}/grenade/d
 """
 # Dense smoke cloud within effect radius
 particle campfire_signal_smoke ~ ~0.5 ~ 3 2 3 0.01 20 force @a[distance=..128]
-particle large_smoke ~ ~1 ~ 2 1.5 2 0.02 10 force @a[distance=..128]
+particle campfire_cosy_smoke ~ ~1 ~ 2 1.5 2 0.02 10 force @a[distance=..128]
 particle campfire_cosy_smoke ~ ~0.3 ~ 2.5 0.5 2.5 0.005 5 force @a[distance=..128]
 """)
 
