@@ -201,6 +201,7 @@ out vec4 vertexColor;
 
 // flat = no interpolation across quad (critical for integer flags)
 flat out int markerMode;  // 0=normal, 1=flash, 2-4=zoom, 5-9=spread
+flat out float markerViewDist;  // Camera-to-particle distance (for 3rd person detection)
 
 // Quad corner offsets: covers a small area at the bottom-left of the screen.
 // The sizing is in NDC (not pixels), so no ScreenSize needed.
@@ -265,6 +266,10 @@ void main() {
         // write ON. Our depth 0.0 always passes (≤ any scene depth).
         gl_Position = vec4(base + corners[gl_VertexID % 4] * size, -1.0, 1.0);
 
+        // Camera distance for 3rd person detection:
+        // Position is camera-relative → length(Position) ≈ 1.0 in 1st person, ≈ 5.0 in 3rd person
+        markerViewDist = length(Position);
+
         // Zero out all vanilla varyings (not used for markers)
         sphericalVertexDistance = 0.0;
         cylindricalVertexDistance = 0.0;
@@ -274,6 +279,7 @@ void main() {
     }
 
     // Normal particle: vanilla processing
+    markerViewDist = 0.0;
     gl_Position = ProjMat * ModelViewMat * vec4(Position, 1.0);
     sphericalVertexDistance = fog_spherical_distance(Position);
     cylindricalVertexDistance = fog_cylindrical_distance(Position);
@@ -299,6 +305,7 @@ in float cylindricalVertexDistance;
 in vec2 texCoord0;
 in vec4 vertexColor;
 flat in int markerMode;  // 0=normal, 1=flash, 2-4=zoom, 5-9=spread
+flat in float markerViewDist;  // Camera-to-particle distance
 
 out vec4 fragColor;
 
@@ -321,9 +328,10 @@ void main() {
         if (fc != target) {
             discard;
         }
-        // Write DETERMINISTIC sentinel: classify reads exact values.
-        // R=254, G=mode(1/3/4), B=0, A=255 — immune to dust color randomization.
-        fragColor = vec4(254.0 / 255.0, float(markerMode) / 255.0, 0.0, 1.0);
+        // Write DETERMINISTIC sentinel with camera distance for 3rd person detection.
+        // R=254, G=mode, B=viewDist(normalized 0-1 from 0-10 blocks), A=255.
+        // ~0.1 in 1st person, ~0.5 in 3rd person.
+        fragColor = vec4(254.0 / 255.0, float(markerMode) / 255.0, clamp(markerViewDist / 10.0, 0.0, 1.0), 1.0);
         return;
     }
 
@@ -366,14 +374,22 @@ void main() {
     ivec4 p1 = ivec4(round(texelFetch(MainSampler, ivec2(0, 0), 0) * 255.0));
     ivec4 p4 = ivec4(round(texelFetch(MainSampler, ivec2(1, 0), 0) * 255.0));
 
-    // Sentinel: R == MARKER_RED, B == 0, A == 255, G == expected mode value
-    bool flashActive = (p1.r == MARKER_RED && p1.b == 0 && p1.a == 255 && p1.g == 1);
-    bool zoomActive  = (p4.r == MARKER_RED && p4.b == 0 && p4.a == 255 && (p4.g == 2 || p4.g == 3 || p4.g == 4));
+    // Sentinel: R == MARKER_RED, A == 255, G == expected mode value
+    // B now encodes camera-to-particle distance (not checked for detection)
+    bool flashActive = (p1.r == MARKER_RED && p1.a == 255 && p1.g == 1);
+    bool zoomActive  = (p4.r == MARKER_RED && p4.a == 255 && (p4.g == 2 || p4.g == 3 || p4.g == 4));
     int zoomLevel = zoomActive ? p4.g : 0;  // 2=center-only, 3=x3 scope, 4=x4 scope
+
+    // 3rd person detection from sentinel B (camera-to-particle distance)
+    // B = clamp(viewDist / 10.0): ~0.1 in 1st person, ~0.5 in 3rd person
+    float cameraDist = 0.0;
+    if (flashActive) cameraDist = max(cameraDist, float(p1.b) / 255.0 * 10.0);
+    if (zoomActive)  cameraDist = max(cameraDist, float(p4.b) / 255.0 * 10.0);
+    bool thirdPerson = cameraDist > 2.0;  // Threshold: >2 blocks from camera → 3rd person
 
     // Spread (crosshair) sentinel at pixel (2, 0)
     ivec4 p_spread = ivec4(round(texelFetch(MainSampler, ivec2(2, 0), 0) * 255.0));
-    bool spreadActive = (p_spread.r == MARKER_RED && p_spread.b == 0 && p_spread.a == 255
+    bool spreadActive = (p_spread.r == MARKER_RED && p_spread.a == 255
                          && p_spread.g >= 5 && p_spread.g <= 9);
     int spreadLevel = spreadActive ? (p_spread.g - 5) : 1;  // 0-4, default 1 (base)
 
@@ -382,12 +398,12 @@ void main() {
     float targetSpread = float(spreadLevel) / 4.0;  // Normalize to [0.0, 1.0] for 8-bit precision
     float smoothSpread = mix(prevSmooth, targetSpread, SPREAD_LERP_SPEED);
 
-    // R = flash, G = zoom, B = zoom level / 255, A = smooth spread [0.0-1.0] (maps to levels 0-4).
-    // flash.fsh reads R, zoom.fsh reads G, B, and A.
+    // R = flash, G = zoom, B = (zoomLevel + thirdPerson*128) / 255, A = smooth spread.
+    // flash.fsh reads R, zoom.fsh reads G, B (with 3rd person flag), and A.
     fragColor = vec4(
         flashActive ? 1.0 : 0.0,
         zoomActive ? 1.0 : 0.0,
-        float(zoomLevel) / 255.0,
+        float(zoomLevel + (thirdPerson ? 128 : 0)) / 255.0,
         smoothSpread
     );
 }
@@ -701,7 +717,9 @@ void main() {
     vec4 classifyData = texture(ClassifySampler, vec2(0.5, 0.5));
     bool flashMode = classifyData.r > 0.5;
     bool zoomMode  = classifyData.g > 0.5;
-    int zoomLevel = int(round(classifyData.b * 255.0));  // 3 or 4 (from classify B channel)
+    int rawB = int(round(classifyData.b * 255.0));
+    bool thirdPerson = rawB >= 128;  // 3rd person flag packed in high bit of B
+    int zoomLevel = thirdPerson ? rawB - 128 : rawB;  // 0, 2, 3, or 4
 
     fragColor = texture(InSampler, texCoord);
     float aspectRatio = inSize.x / inSize.y;
@@ -709,7 +727,8 @@ void main() {
 
     // Apply barrel distortion if zooming WITH a scope (zoomLevel 3 or 4 only)
     // zoomLevel 2 = zoomed but no scope: skip distortion, only spark centering below
-    if (zoomMode && zoomLevel >= 3 && length(screenCoord) < RADIUS) {
+    // Disabled in 3rd person (barrel distortion makes no sense from behind)
+    if (zoomMode && !thirdPerson && zoomLevel >= 3 && length(screenCoord) < RADIUS) {
         float Zoom = float(zoomLevel);  // 3.0 for _3 weapons, 4.0 for _4 weapons
         float d = length(screenCoord * Distortion / RADIUS);
         float z = sqrt(1.0 - d * d);
@@ -725,7 +744,9 @@ void main() {
     // Overlay flash spark texture AFTER zoom (spark is NOT barrel-distorted)
     // The 1536x1536 texture is a 3x3 grid of 9 different flash sprites.
     // Sprite is chosen pseudo-randomly from scene data each frame.
-    if (flashMode) {
+    // Disabled in 3rd person (spark texture overlay makes no sense from behind;
+    // the flash bloom/lighting from flash.fsh still applies).
+    if (flashMode && !thirdPerson) {
         // Choose position/scale: centered when also zooming, offset when hip-firing
         vec2 sparkPos   = zoomMode ? SPARK_POS_ZOOM   : SPARK_POS_NORMAL;
         vec2 sparkScale = zoomMode ? SPARK_SCALE_ZOOM  : SPARK_SCALE_NORMAL;

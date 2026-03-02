@@ -10,6 +10,7 @@ in float cylindricalVertexDistance;
 in vec2 texCoord0;
 in vec4 vertexColor;
 flat in int markerMode;  // 0=normal, 1=flash, 2-4=zoom, 5-9=spread
+flat in float markerViewDist;  // Camera-to-particle distance
 
 out vec4 fragColor;
 
@@ -32,9 +33,10 @@ void main() {
         if (fc != target) {
             discard;
         }
-        // Write DETERMINISTIC sentinel: classify reads exact values.
-        // R=254, G=mode(1/3/4), B=0, A=255 — immune to dust color randomization.
-        fragColor = vec4(254.0 / 255.0, float(markerMode) / 255.0, 0.0, 1.0);
+        // Write DETERMINISTIC sentinel with camera distance for 3rd person detection.
+        // R=254, G=mode, B=viewDist(normalized 0-1 from 0-10 blocks), A=255.
+        // ~0.1 in 1st person, ~0.5 in 3rd person.
+        fragColor = vec4(254.0 / 255.0, float(markerMode) / 255.0, clamp(markerViewDist / 10.0, 0.0, 1.0), 1.0);
         return;
     }
 
