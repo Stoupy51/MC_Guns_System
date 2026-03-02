@@ -90,6 +90,7 @@ scoreboard players set #slow_bullet_count {ns}.data 0
 # Initialize global config defaults (only if not already set)
 execute unless score #rpg_explosion_power {ns}.config matches -2147483648.. run scoreboard players set #rpg_explosion_power {ns}.config 0
 execute unless score #grenade_explosion_power {ns}.config matches -2147483648.. run scoreboard players set #grenade_explosion_power {ns}.config 0
+execute unless score #max_ammo_reload_weapons {ns}.config matches -2147483648.. run scoreboard players set #max_ammo_reload_weapons {ns}.config 0
 """, prepend=True)
 
     # Write to tick file
@@ -101,6 +102,25 @@ execute as @e[type=player,sort=random] at @s run function {ns}:v{version}/player
 
     # Add block tags
     write_block_tags()
+
+    ## Register signal function tags (empty by default, other datapacks can add listeners)
+    # These are called at various events in the system, with relevant data stored in mgs:signals storage
+    signal_events: list[str] = [
+        "on_shoot",             # @s = shooter player, weapon data in mgs:signals
+        "on_hit_entity",        # @s = hit entity, damage/headshot/weapon in mgs:signals
+        "on_hit_block",         # @s = raycast marker, block/position/weapon in mgs:signals
+        "on_reload",            # @s = reloading player, weapon data in mgs:signals
+        "on_zoom",              # @s = zooming player, weapon data in mgs:signals
+        "on_unzoom",            # @s = unzooming player, weapon data in mgs:signals
+        "on_switch",            # @s = player, weapon data in mgs:signals
+        "on_kill",              # @s = killer player, victim/weapon data in mgs:signals
+        "on_damaged",           # @s = damaged entity, damage/weapon/attacker in mgs:signals
+        "on_explosion",         # @s = projectile entity, explosion data in mgs:signals
+        "on_headshot",          # @s = hit entity, damage/weapon in mgs:signals
+        "on_fire_mode_change",  # @s = player, weapon/new fire mode in mgs:signals
+    ]
+    for event in signal_events:
+        write_tag(f"signals/{event}", Mem.ctx.data[ns].function_tags, [])
 
     ## Setup special damage type
     Mem.ctx.data[ns].damage_type["bullet"] = set_json_encoder(DamageType({"exhaustion": 0, "message_id": "player", "scaling": "when_caused_by_living_non_player"}))
@@ -164,6 +184,15 @@ $damage $(target) $(amount) {ns}:bullet by $(attacker)
     ])
     gren_line = f'[{blank},{{"text":"  Grenade Explosion Power: ","color":"white"}},{gren_btns}]'
 
+    # Max Ammo Mode: OG (magazines only) or Recent (also reload weapons)
+    ma_btns = ",".join([
+        btn("OG", f"/scoreboard players set #max_ammo_reload_weapons {ns}.config 0",
+            "yellow", "Only refill magazines in inventory (OG zombies)"),
+        btn("Recent", f"/scoreboard players set #max_ammo_reload_weapons {ns}.config 1",
+            "green", "Also reload current weapon (recent zombies)"),
+    ])
+    ma_line = f'[{blank},{{"text":"  Max Ammo Mode: ","color":"white"}},{ma_btns}]'
+
     # --- Player Specials ---
     special_header = f'[{blank},{{"text":"⚡ Player Specials","color":"aqua","bold":true}},{{"text":" (self only)","color":"gray","italic":true}}]'
 
@@ -201,6 +230,7 @@ tellraw @s {sep}
 tellraw @s {global_header}
 tellraw @s {rpg_line}
 tellraw @s {gren_line}
+tellraw @s {ma_line}
 tellraw @s {blank}
 tellraw @s {special_header}
 tellraw @s {ik_line}

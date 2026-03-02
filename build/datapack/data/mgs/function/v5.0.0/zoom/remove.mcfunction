@@ -24,3 +24,8 @@ scoreboard players reset @s mgs.zoom
 scoreboard players set @s mgs.zoom_timer 0
 effect clear @s slowness
 
+# Signal: on_unzoom (@s = unzooming player, weapon data in mgs:signals)
+data modify storage mgs:signals on_unzoom set value {}
+data modify storage mgs:signals on_unzoom.weapon set from storage mgs:gun all
+function #mgs:signals/on_unzoom
+

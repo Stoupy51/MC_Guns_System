@@ -29,6 +29,12 @@ execute store result score #new_damage mgs.data run data get storage mgs:temp da
 execute if score #is_pass_through mgs.data matches 0 store result storage mgs:temp damage float 0.0005 run scoreboard players get #new_damage mgs.data
 execute if score #is_pass_through mgs.data matches 1 store result storage mgs:temp damage float 0.00095 run scoreboard players get #new_damage mgs.data
 
+# Signal: on_hit_block (only for solid blocks, @s = raycast marker, positioned at block)
+execute if score #is_pass_through mgs.data matches 0 run data modify storage mgs:signals on_hit_block set value {}
+execute if score #is_pass_through mgs.data matches 0 run data modify storage mgs:signals on_hit_block.block set from storage mgs:temp block
+execute if score #is_pass_through mgs.data matches 0 run data modify storage mgs:signals on_hit_block.weapon set from storage mgs:gun all
+execute if score #is_pass_through mgs.data matches 0 run function #mgs:signals/on_hit_block
+
 ## Playsounds
 # Each sound type has a scoreboard objective that tracks if it has been played.
 # The score is set to 1 when the sound plays, preventing it from playing again.

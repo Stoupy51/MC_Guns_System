@@ -65,6 +65,7 @@ scoreboard players set #slow_bullet_count mgs.data 0
 # Initialize global config defaults (only if not already set)
 execute unless score #rpg_explosion_power mgs.config matches -2147483648.. run scoreboard players set #rpg_explosion_power mgs.config 0
 execute unless score #grenade_explosion_power mgs.config matches -2147483648.. run scoreboard players set #grenade_explosion_power mgs.config 0
+execute unless score #max_ammo_reload_weapons mgs.config matches -2147483648.. run scoreboard players set #max_ammo_reload_weapons mgs.config 0
 
 # Confirm load
 tellraw @a[tag=convention.debug] {"translate": "mgs.loaded_mc_guns_system_v5_0_0","color":"green"}

@@ -7,6 +7,7 @@
 #			mgs:v5.0.0/player/tick
 #			mgs:v5.0.0/switch/reload_to_dropped_weapon
 #			mgs:v5.0.0/switch/do_toggle_fire_mode
+#			mgs:zombies/bonus/max_ammo
 #
 
 # Copy gun data

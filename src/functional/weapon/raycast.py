@@ -53,6 +53,11 @@ execute store result score @s {ns}.cooldown run data get storage {ns}:gun all.st
 
 # Route to the appropriate firing method (projectile or hitscan)
 function {ns}:v{version}/player/fire_weapon
+
+# Signal: on_shoot (weapon data available in mgs:signals)
+data modify storage {ns}:signals on_shoot set value {{}}
+data modify storage {ns}:signals on_shoot.weapon set from storage {ns}:gun all
+function #{ns}:signals/on_shoot
 """)
 
     # Fire weapon routing: projectile vs hitscan
@@ -191,6 +196,12 @@ execute store result score #new_damage {ns}.data run data get storage {ns}:temp 
 execute if score #is_pass_through {ns}.data matches 0 store result storage {ns}:temp damage float 0.0005 run scoreboard players get #new_damage {ns}.data
 execute if score #is_pass_through {ns}.data matches 1 store result storage {ns}:temp damage float 0.00095 run scoreboard players get #new_damage {ns}.data
 
+# Signal: on_hit_block (only for solid blocks, @s = raycast marker, positioned at block)
+execute if score #is_pass_through {ns}.data matches 0 run data modify storage {ns}:signals on_hit_block set value {{}}
+execute if score #is_pass_through {ns}.data matches 0 run data modify storage {ns}:signals on_hit_block.block set from storage {ns}:temp block
+execute if score #is_pass_through {ns}.data matches 0 run data modify storage {ns}:signals on_hit_block.weapon set from storage {ns}:gun all
+execute if score #is_pass_through {ns}.data matches 0 run function #{ns}:signals/on_hit_block
+
 ## Playsounds
 # Each sound type has a scoreboard objective that tracks if it has been played.
 # The score is set to 1 when the sound plays, preventing it from playing again.
@@ -225,9 +236,35 @@ function {ns}:v{version}/raycast/check_headshot
 # Instant kill: if shooter has active instant kill and target is not immune, set damage to 9999
 execute as @p[tag={ns}.ticking] if score @s {ns}.special.instant_kill matches 1.. as @s[tag=!{ns}.no_instant_kill] run scoreboard players set #damage {ns}.data 9999
 
+# Signal: on_headshot (if headshot detected, @s = hit entity)
+execute if score #is_headshot {ns}.data matches 1 run data modify storage {ns}:signals on_headshot set value {{}}
+execute if score #is_headshot {ns}.data matches 1 run data modify storage {ns}:signals on_headshot.weapon set from storage {ns}:gun all
+execute if score #is_headshot {ns}.data matches 1 run execute store result storage {ns}:signals on_headshot.damage float 0.1 run scoreboard players get #damage {ns}.data
+execute if score #is_headshot {ns}.data matches 1 run function #{ns}:signals/on_headshot
+
 # Damage entity
 execute store result storage {ns}:input with.amount float 0.1 run scoreboard players get #damage {ns}.data
 function {ns}:v{version}/utils/damage with storage {ns}:input with
+
+# Signal: on_damaged (@s = hit entity, damage/weapon info in mgs:signals)
+data modify storage {ns}:signals on_damaged set value {{}}
+data modify storage {ns}:signals on_damaged.weapon set from storage {ns}:gun all
+execute store result storage {ns}:signals on_damaged.damage float 0.1 run scoreboard players get #damage {ns}.data
+data modify storage {ns}:signals on_damaged.target set from entity @s UUID
+function #{ns}:signals/on_damaged
+
+# Signal: on_hit_entity (@s = hit entity, weapon/damage info in mgs:signals)
+data modify storage {ns}:signals on_hit_entity set value {{}}
+data modify storage {ns}:signals on_hit_entity.weapon set from storage {ns}:gun all
+execute store result storage {ns}:signals on_hit_entity.damage float 0.1 run scoreboard players get #damage {ns}.data
+execute store result storage {ns}:signals on_hit_entity.headshot int 1 run scoreboard players get #is_headshot {ns}.data
+data modify storage {ns}:signals on_hit_entity.target set from entity @s UUID
+function #{ns}:signals/on_hit_entity
+
+# Signal: on_kill (if entity died, @s switches to shooter player)
+execute unless entity @s as @p[tag={ns}.ticking] run data modify storage {ns}:signals on_kill set value {{}}
+execute unless entity @s as @p[tag={ns}.ticking] run data modify storage {ns}:signals on_kill.weapon set from storage {ns}:gun all
+execute unless entity @s as @p[tag={ns}.ticking] run function #{ns}:signals/on_kill
 """)
 
     # Apply decay using `damage *= pow(decay, distance / 10)`

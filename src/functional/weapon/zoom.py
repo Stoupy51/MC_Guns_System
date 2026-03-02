@@ -89,6 +89,11 @@ playsound {ns}:common/lean_out player
 scoreboard players reset @s {ns}.zoom
 scoreboard players set @s {ns}.zoom_timer 0
 effect clear @s slowness
+
+# Signal: on_unzoom (@s = unzooming player, weapon data in mgs:signals)
+data modify storage {ns}:signals on_unzoom set value {{}}
+data modify storage {ns}:signals on_unzoom.weapon set from storage {ns}:gun all
+function #{ns}:signals/on_unzoom
 """)
 
     # Function to set zoom state
@@ -110,6 +115,11 @@ item modify entity @s weapon.mainhand {ns}:v{version}/update_stats
 playsound {ns}:common/lean_in player @s
 effect give @s slowness infinite 2 true
 scoreboard players set @s {ns}.zoom 1
+
+# Signal: on_zoom (@s = zooming player, weapon data in mgs:signals)
+data modify storage {ns}:signals on_zoom set value {{}}
+data modify storage {ns}:signals on_zoom.weapon set from storage {ns}:gun all
+function #{ns}:signals/on_zoom
 """)
 
     # Function to check and handle slowness effect

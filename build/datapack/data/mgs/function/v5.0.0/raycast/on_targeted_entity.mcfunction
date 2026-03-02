@@ -21,7 +21,33 @@ function mgs:v5.0.0/raycast/check_headshot
 # Instant kill: if shooter has active instant kill and target is not immune, set damage to 9999
 execute as @p[tag=mgs.ticking] if score @s mgs.special.instant_kill matches 1.. as @s[tag=!mgs.no_instant_kill] run scoreboard players set #damage mgs.data 9999
 
+# Signal: on_headshot (if headshot detected, @s = hit entity)
+execute if score #is_headshot mgs.data matches 1 run data modify storage mgs:signals on_headshot set value {}
+execute if score #is_headshot mgs.data matches 1 run data modify storage mgs:signals on_headshot.weapon set from storage mgs:gun all
+execute if score #is_headshot mgs.data matches 1 run execute store result storage mgs:signals on_headshot.damage float 0.1 run scoreboard players get #damage mgs.data
+execute if score #is_headshot mgs.data matches 1 run function #mgs:signals/on_headshot
+
 # Damage entity
 execute store result storage mgs:input with.amount float 0.1 run scoreboard players get #damage mgs.data
 function mgs:v5.0.0/utils/damage with storage mgs:input with
+
+# Signal: on_damaged (@s = hit entity, damage/weapon info in mgs:signals)
+data modify storage mgs:signals on_damaged set value {}
+data modify storage mgs:signals on_damaged.weapon set from storage mgs:gun all
+execute store result storage mgs:signals on_damaged.damage float 0.1 run scoreboard players get #damage mgs.data
+data modify storage mgs:signals on_damaged.target set from entity @s UUID
+function #mgs:signals/on_damaged
+
+# Signal: on_hit_entity (@s = hit entity, weapon/damage info in mgs:signals)
+data modify storage mgs:signals on_hit_entity set value {}
+data modify storage mgs:signals on_hit_entity.weapon set from storage mgs:gun all
+execute store result storage mgs:signals on_hit_entity.damage float 0.1 run scoreboard players get #damage mgs.data
+execute store result storage mgs:signals on_hit_entity.headshot int 1 run scoreboard players get #is_headshot mgs.data
+data modify storage mgs:signals on_hit_entity.target set from entity @s UUID
+function #mgs:signals/on_hit_entity
+
+# Signal: on_kill (if entity died, @s switches to shooter player)
+execute unless entity @s as @p[tag=mgs.ticking] run data modify storage mgs:signals on_kill set value {}
+execute unless entity @s as @p[tag=mgs.ticking] run data modify storage mgs:signals on_kill.weapon set from storage mgs:gun all
+execute unless entity @s as @p[tag=mgs.ticking] run function #mgs:signals/on_kill
 

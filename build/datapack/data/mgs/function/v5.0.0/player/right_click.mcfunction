@@ -48,6 +48,11 @@ execute store result score @s mgs.cooldown run data get storage mgs:gun all.stat
 # Route to the appropriate firing method (projectile or hitscan)
 function mgs:v5.0.0/player/fire_weapon
 
+# Signal: on_shoot (weapon data available in mgs:signals)
+data modify storage mgs:signals on_shoot set value {}
+data modify storage mgs:signals on_shoot.weapon set from storage mgs:gun all
+function #mgs:signals/on_shoot
+
 # Simulate weapon kick
 function mgs:v5.0.0/kicks/main
 
