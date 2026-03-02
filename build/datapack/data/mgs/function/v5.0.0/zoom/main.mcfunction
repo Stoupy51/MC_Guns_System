@@ -9,6 +9,9 @@
 # If no gun data, stop here
 execute unless data storage mgs:gun all.gun run return run function mgs:v5.0.0/zoom/check_slowness
 
+# Grenades cannot zoom/aim
+execute if data storage mgs:gun all.stats.grenade_type run return 0
+
 # If already zoom and not sneaking, unzoom
 execute if data storage mgs:gun all.stats.is_zoom unless predicate mgs:v5.0.0/is_sneaking run return run function mgs:v5.0.0/zoom/remove
 

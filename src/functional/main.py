@@ -87,6 +87,11 @@ scoreboard players set #1000000 {ns}.data 1000000
 # Initialize slow bullet (projectile) counter
 scoreboard players set #slow_bullet_count {ns}.data 0
 
+# Semtex entity pairing: unique ID objective + global counter
+scoreboard objectives add {ns}.grenade_launch dummy
+scoreboard objectives add {ns}.stuck_id dummy
+scoreboard players set #semtex_id {ns}.data 0
+
 # Initialize global config defaults (only if not already set)
 execute unless score #rpg_explosion_power {ns}.config matches -2147483648.. run scoreboard players set #rpg_explosion_power {ns}.config 0
 execute unless score #grenade_explosion_power {ns}.config matches -2147483648.. run scoreboard players set #grenade_explosion_power {ns}.config 0

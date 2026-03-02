@@ -6,6 +6,7 @@
 		"minecraft:text_display",
 		"minecraft:block_display",
 		"minecraft:area_effect_cloud",
-		"minecraft:experience_orb"
+		"minecraft:experience_orb",
+		"minecraft:falling_block"
 	]
 }

@@ -4,6 +4,7 @@
 # @executed	as @a
 #
 # @within	mgs:v5.0.0/projectile/explode [ as @a ]
+#			mgs:v5.0.0/grenade/detonate_frag [ as @a ]
 #
 
 # Compare this player's UUID with the stored shooter UUID

@@ -4,6 +4,7 @@
 # @executed	as @e[tag=mgs.slow_bullet] & at @s
 #
 # @within	mgs:v5.0.0/projectile/explode with storage mgs:temp expl
+#			mgs:v5.0.0/grenade/detonate_frag with storage mgs:temp expl
 #
 # @args		radius_int (unknown)
 #

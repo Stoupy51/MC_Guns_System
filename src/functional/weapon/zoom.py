@@ -17,6 +17,9 @@ f"""
 # If no gun data, stop here
 execute unless data storage {ns}:gun all.gun run return run function {ns}:v{version}/zoom/check_slowness
 
+# Grenades cannot zoom/aim
+execute if data storage {ns}:gun all.stats.grenade_type run return 0
+
 # If already zoom and not sneaking, unzoom
 execute if data storage {ns}:gun all.stats.{IS_ZOOM} unless predicate {ns}:v{version}/is_sneaking run return run function {ns}:v{version}/zoom/remove
 

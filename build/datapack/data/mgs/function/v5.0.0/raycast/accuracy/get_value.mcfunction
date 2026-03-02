@@ -5,6 +5,7 @@
 #
 # @within	mgs:v5.0.0/player/shoot
 #			mgs:v5.0.0/projectile/summon
+#			mgs:v5.0.0/grenade/summon
 #
 
 ## Order is important: Sneak+Air=Walk > Jump > Sneak > Sprint > Walk > Base
