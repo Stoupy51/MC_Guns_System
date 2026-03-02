@@ -35,6 +35,12 @@ execute unless data storage mgs:temp fire_mode if score #has_auto mgs.data match
 # Modify mainhand item to apply changes
 item modify entity @s weapon.mainhand mgs:v5.0.0/set_fire_mode
 
+# Signal: on_fire_mode_change (@s = player, weapon/new fire mode in mgs:signals)
+data modify storage mgs:signals on_fire_mode_change set value {}
+data modify storage mgs:signals on_fire_mode_change.weapon set from storage mgs:gun all
+data modify storage mgs:signals on_fire_mode_change.fire_mode set from storage mgs:gun all.stats.fire_mode
+function #mgs:signals/on_fire_mode_change
+
 # Play feedback sound
 playsound minecraft:block.note_block.hat ambient @p
 

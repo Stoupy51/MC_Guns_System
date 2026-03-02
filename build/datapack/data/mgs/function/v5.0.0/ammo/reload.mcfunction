@@ -37,3 +37,8 @@ function mgs:v5.0.0/sound/player_begin with storage mgs:gun all.sounds
 # Add reloading tag
 tag @s add mgs.reloading
 
+# Signal: on_reload (@s = reloading player, weapon data in mgs:signals)
+data modify storage mgs:signals on_reload set value {}
+data modify storage mgs:signals on_reload.weapon set from storage mgs:gun all
+function #mgs:signals/on_reload
+

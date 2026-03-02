@@ -10,27 +10,17 @@ Credits for resources: MGS 4.2 by TheBradqq
 # TODO:
 - Currently, on_targeted_block reduce damage by 5% in water, and 50% in other blocks. It should instead check for the block hardness : Need to use #bs.block:lookup_type {type:<value>} to get the block hardness (https://docs.mcbookshelf.dev/en/latest/modules/block/#lookup-block) and depending on it stop bullet or/and reduce damage realistically (figure out yourself)
 - Add grenades (frag, semtex, smoke, flash) : https://docs.mcbookshelf.dev/en/master/modules/move/ <- Apply velocity with bounce and keep physics
-  - (Need to add items to definitions and custom models)
+  - (You need to add items to definitions and custom models in src/database/models/*.json, it's okay if it's not perfect I'll adjust it later)
   - Frag: explodes after 4 seconds (by default, coded in item nbt "stats" part like guns would), damage also coded like RPG in nbt
   - Semtex: Same as frag but stick to blocks and entities
   - Smoke: creates a smoke cloud that blocks vision for 10 seconds (using particles, and duration coded in nbt)
   - Flash: blinds players in a radius for 5 seconds (using title with fade in and out, and duration coded in nbt, using a custom font which is a big big white square in the middle of the screen) (ex: https://github.com/Paralya/Switch/blob/main/src/special_fonts/utils.py)
 - Hitmaker sound (can be toggled with /trigger, default = false so only OG players will enable it) (not in sounds folder yet, need to download)
+  - Download the sound and add it to the sounds folder (src/assets/sounds/hitmaker.ogg)
+  - More generally, we'll add a scoreboard trigger "mgs.player.config" that opens a menu in tchat. Score = 1 = menu, 2 = toggle hitmaker, 3 = toggle something else later, etc. (see the other global config file for visual)
 - Mobs with guns need to be added (Any mob tagged with {ns}.armed (for performance)):
   - They need to be able to shoot and reload (we assume they have infinite ammo for simplicity, so no need to check for magazines and ammo in inventory) (they can still have a cooldown between shots and reloads)
 - Compatibility & Developement:
-  - Call function tags for various events (#mgs:signals/<event>):
-    - on_hit_entity: when a bullet hits an entity (with hit data in storage)
-    - on_hit_block: when a bullet hits a block (with hit data in storage)
-    - on_shoot: when a weapon is shot (with weapon and player data in storage)
-    - on_reload: when a weapon is reloaded (with weapon and player data in storage)
-    - on_zoom: when a player starts zooming (with weapon and player data in storage)
-    - on_unzoom: when a player stops zooming (with weapon and player data in storage)
-    - on_switch: when a player switches weapon (with new weapon and player data in storage)
-    - on_kill: when a player kills an entity (with victim and killer data in storage)
-    - on_damaged: when a player damages an entity (with victim and damager data in storage)
-    - etc.
-    - Ideally one for each thing that can happen in the system even if you don't think someone would use it. (Would be useful for custom gamemodes, achievements, etc.)
   - Add a multiplayer mode (mgs:multiplayer/*):
     - Gamemodes like team deathmatch, capture the flag, free for all, etc.
     - Dynamic map definitions (spawning points in storage, called on load with function tag #mgs:multiplayer/register_maps etc.)
@@ -45,8 +35,5 @@ Credits for resources: MGS 4.2 by TheBradqq
     - Mystery Box:
       - Also dynamic with a base pool (storage) that can be modified with a function tag (#mgs:zombies/register_mystery_box_item).
     - TODO: define here the todos
-- Zombies mode bonus:
-  - Max Ammo: refill every magazine to their max capacity when calling function on the player (e.g. /execute as <player> run function {ns}:zombies/bonus/max_ammo) (Have a global score that says 1: also reload weapons (recent zombies mode), 0: only refill magazines (og zombies mode))
-  - Nuke: only affects entities with {ns}.nukable : on activation, tag every entity with {ns}.nuked, attribute attack damage multiply by 0 to them, then in a loop slowly kill entities selected (1 per tick) and continue looping until no more entity with {ns}.nuked exists. Ideal would be that entities are kill with /damage, from the player who activated the nuke (so rewards correctly).
 
 

@@ -1,0 +1,24 @@
+
+#> mgs:v5.0.0/zombies/bonus/extract_mag_data
+#
+# @within	mgs:v5.0.0/zombies/bonus/refill_magazine {slot:"$(slot)"}
+#
+# @args		slot (string)
+#
+
+# Copy item from player to item_display
+$item replace entity @s contents from entity @p[tag=mgs.refilling_mag] $(slot)
+
+# Read capacity and store as remaining_bullets (refill = set bullets to capacity)
+execute store result score #bullets mgs.data run data get entity @s item.components."minecraft:custom_data".mgs.stats.capacity
+execute store result storage mgs:temp remaining_bullets int 1 run data get entity @s item.components."minecraft:custom_data".mgs.stats.capacity
+execute store result storage mgs:temp capacity int 1 run data get entity @s item.components."minecraft:custom_data".mgs.stats.capacity
+
+# Store weapon name and slot for model update macro
+data modify storage mgs:temp refill set value {}
+$data modify storage mgs:temp refill.slot set value "$(slot)"
+data modify storage mgs:temp refill.base_weapon set from entity @s item.components."minecraft:custom_data".mgs.weapon
+
+# Clean up item_display
+kill @s
+

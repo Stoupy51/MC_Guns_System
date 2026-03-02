@@ -75,3 +75,15 @@ data modify storage mgs:input with set value {target:"@s", amount:0.0f, attacker
 execute store result storage mgs:input with.amount float 0.1 run scoreboard players get #expl_dmg mgs.data
 function mgs:v5.0.0/utils/damage with storage mgs:input with
 
+# Signal: on_damaged (@s = damaged entity, explosion damage in mgs:signals)
+data modify storage mgs:signals on_damaged set value {}
+execute store result storage mgs:signals on_damaged.damage float 0.1 run scoreboard players get #expl_dmg mgs.data
+data modify storage mgs:signals on_damaged.target set from entity @s UUID
+data modify storage mgs:signals on_damaged.explosion set value true
+function #mgs:signals/on_damaged
+
+# Signal: on_kill (if entity died after explosion damage, @s switches to shooter)
+execute unless entity @s as @p[tag=mgs.temp_shooter] run data modify storage mgs:signals on_kill set value {}
+execute unless entity @s as @p[tag=mgs.temp_shooter] run data modify storage mgs:signals on_kill.explosion set value true
+execute unless entity @s as @p[tag=mgs.temp_shooter] run function #mgs:signals/on_kill
+

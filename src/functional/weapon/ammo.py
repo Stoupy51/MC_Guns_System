@@ -301,6 +301,11 @@ function {ns}:v{version}/sound/player_begin with storage {ns}:gun all.sounds
 
 # Add reloading tag
 tag @s add {ns}.reloading
+
+# Signal: on_reload (@s = reloading player, weapon data in mgs:signals)
+data modify storage {ns}:signals on_reload set value {{}}
+data modify storage {ns}:signals on_reload.weapon set from storage {ns}:gun all
+function #{ns}:signals/on_reload
 """)
 
     # Apply quick reload: reduce cooldown by quick_reload% (cooldown * (100 - quick_reload) / 100)

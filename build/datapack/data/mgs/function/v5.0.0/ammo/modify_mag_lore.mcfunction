@@ -4,6 +4,7 @@
 # @executed	as @e[type=player,sort=random] & at @s
 #
 # @within	mgs:v5.0.0/ammo/inventory/process_slot {slot:"$(slot)"}
+#			mgs:v5.0.0/zombies/bonus/refill_magazine {slot:"$(slot)"}
 #
 # @args		slot (string)
 #

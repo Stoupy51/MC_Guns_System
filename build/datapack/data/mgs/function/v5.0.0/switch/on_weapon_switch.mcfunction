@@ -16,6 +16,11 @@ execute unless score #cooldown mgs.data <= @s mgs.switch_cooldown run scoreboard
 # Force weapon switch animation
 function mgs:v5.0.0/switch/force_switch_animation
 
+# Signal: on_switch (@s = player, weapon data in mgs:signals)
+data modify storage mgs:signals on_switch set value {}
+data modify storage mgs:signals on_switch.weapon set from storage mgs:gun all
+function #mgs:signals/on_switch
+
 # When unequipping a weapon (player was holding a weapon):
 #   - Find weapon with CURRENT_AMMO = -1 (needs update)
 #   - Store current ammo count in weapon's stats

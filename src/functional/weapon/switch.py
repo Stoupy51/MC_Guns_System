@@ -51,9 +51,12 @@ execute unless score #cooldown {ns}.data <= @s {ns}.switch_cooldown run scoreboa
 
 # Force weapon switch animation
 function {ns}:v{version}/switch/force_switch_animation
-""")
 
-    # Swap weapon function
+# Signal: on_switch (@s = player, weapon data in mgs:signals)
+data modify storage {ns}:signals on_switch set value {{}}
+data modify storage {ns}:signals on_switch.weapon set from storage {ns}:gun all
+function #{ns}:signals/on_switch
+""")
     write_versioned_function("switch/force_switch_animation",
 f"""
 # Stop if no weapon in hand
@@ -166,6 +169,12 @@ execute unless data storage {ns}:temp fire_mode if score #has_auto {ns}.data mat
 
 # Modify mainhand item to apply changes
 item modify entity @s weapon.mainhand {ns}:v{version}/set_fire_mode
+
+# Signal: on_fire_mode_change (@s = player, weapon/new fire mode in mgs:signals)
+data modify storage {ns}:signals on_fire_mode_change set value {{}}
+data modify storage {ns}:signals on_fire_mode_change.weapon set from storage {ns}:gun all
+data modify storage {ns}:signals on_fire_mode_change.fire_mode set from storage {ns}:gun all.stats.{FIRE_MODE}
+function #{ns}:signals/on_fire_mode_change
 
 # Play feedback sound
 playsound minecraft:block.note_block.hat ambient @p

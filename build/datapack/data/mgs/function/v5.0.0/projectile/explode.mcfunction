@@ -39,6 +39,12 @@ execute as @a run function mgs:v5.0.0/projectile/match_shooter
 execute store result storage mgs:temp expl.radius_int int 1 run data get entity @s data.config.expl_radius
 function mgs:v5.0.0/projectile/damage_area with storage mgs:temp expl
 
+# Signal: on_explosion (@s = projectile entity, explosion data in mgs:signals)
+data modify storage mgs:signals on_explosion set value {}
+data modify storage mgs:signals on_explosion.config set from entity @s data.config
+data modify storage mgs:signals on_explosion.position set from entity @s Pos
+function #mgs:signals/on_explosion
+
 # Clean up shooter tag
 tag @a remove mgs.temp_shooter
 
