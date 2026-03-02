@@ -4,6 +4,7 @@ from stewbeet import Context
 
 from .functional.main import main as main_datapack
 from .functional.multiplayer import main as main_multiplayer
+from .functional.player_config import main as main_player_config
 from .functional.shaders import main as main_shaders
 from .functional.tick import main as main_tick
 from .functional.weapon import main as main_weapon
@@ -15,6 +16,7 @@ def beet_default(ctx: Context) -> None:
     main_datapack()
     main_shaders()
     main_weapon()
+    main_player_config()
     main_tick()
 
     # Zombies functional initialization

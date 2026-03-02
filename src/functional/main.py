@@ -96,6 +96,7 @@ scoreboard players set #semtex_id {ns}.data 0
 execute unless score #rpg_explosion_power {ns}.config matches -2147483648.. run scoreboard players set #rpg_explosion_power {ns}.config 0
 execute unless score #grenade_explosion_power {ns}.config matches -2147483648.. run scoreboard players set #grenade_explosion_power {ns}.config 0
 execute unless score #max_ammo_reload_weapons {ns}.config matches -2147483648.. run scoreboard players set #max_ammo_reload_weapons {ns}.config 0
+execute unless score #damage_debug {ns}.config matches -2147483648.. run scoreboard players set #damage_debug {ns}.config 0
 """, prepend=True)
 
     # Write to tick file
@@ -119,7 +120,7 @@ execute as @e[type=player,sort=random] at @s run function {ns}:v{version}/player
         "on_unzoom",            # @s = unzooming player, weapon data in mgs:signals
         "on_switch",            # @s = player, weapon data in mgs:signals
         "on_kill",              # @s = killer player, victim/weapon data in mgs:signals
-        "on_damaged",           # @s = damaged entity, damage/weapon/attacker in mgs:signals
+        "damage",           # @s = damaged entity, damage/weapon/attacker in mgs:signals
         "on_explosion",         # @s = projectile entity, explosion data in mgs:signals
         "on_headshot",          # @s = hit entity, damage/weapon in mgs:signals
         "on_fire_mode_change",  # @s = player, weapon/new fire mode in mgs:signals
@@ -131,10 +132,7 @@ execute as @e[type=player,sort=random] at @s run function {ns}:v{version}/player
     Mem.ctx.data[ns].damage_type["bullet"] = set_json_encoder(DamageType({"exhaustion": 0, "message_id": "player", "scaling": "when_caused_by_living_non_player"}))
     for tag in ["bypasses_cooldown", "no_knockback"]:
         write_tag(tag, Mem.ctx.data["minecraft"].damage_type_tags, [f"{ns}:bullet"])
-    write_versioned_function("utils/damage", f"""
-$damage $(target) $(amount) {ns}:bullet by $(attacker)
-$say damage $(target) $(amount) {ns}:bullet by $(attacker)
-""")
+    write_versioned_function("utils/damage", f"$damage $(target) $(amount) {ns}:bullet by $(attacker)")
 
     # Replace crosshair texture with transparent one (shader draws custom crosshair conditionally)
     textures_folder: str = Mem.ctx.meta.get("stewbeet", {}).get("textures_folder", "")
@@ -198,6 +196,15 @@ $say damage $(target) $(amount) {ns}:bullet by $(attacker)
     ])
     ma_line = f'[{blank},{{"text":"  Max Ammo Mode: ","color":"white"}},{ma_btns}]'
 
+    # Damage Debug (global): OFF or ON (tellraw @a all damage)
+    dd_btns = ",".join([
+        btn("OFF", f"/scoreboard players set #damage_debug {ns}.config 0",
+            "red", "Disable global damage debug"),
+        btn("ON", f"/scoreboard players set #damage_debug {ns}.config 1",
+            "green", "Enable global damage debug (tellraw @a every hit)"),
+    ])
+    dd_line = f'[{blank},{{"text":"  Damage Debug: ","color":"white"}},{dd_btns}]'
+
     # --- Player Specials ---
     special_header = f'[{blank},{{"text":"⚡ Player Specials","color":"aqua","bold":true}},{{"text":" (self only)","color":"gray","italic":true}}]'
 
@@ -236,6 +243,7 @@ tellraw @s {global_header}
 tellraw @s {rpg_line}
 tellraw @s {gren_line}
 tellraw @s {ma_line}
+tellraw @s {dd_line}
 tellraw @s {blank}
 tellraw @s {special_header}
 tellraw @s {ik_line}

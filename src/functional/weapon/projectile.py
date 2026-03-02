@@ -320,13 +320,7 @@ execute as @p[tag={ns}.temp_shooter] if score @s {ns}.special.instant_kill match
 data modify storage {ns}:input with set value {{target:"@s", amount:0.0f, attacker:"@p[tag={ns}.temp_shooter]"}}
 execute store result storage {ns}:input with.amount float 0.1 run scoreboard players get #expl_dmg {ns}.data
 function {ns}:v{version}/utils/damage with storage {ns}:input with
-
-# Signal: on_damaged (@s = damaged entity, explosion damage in mgs:signals)
-data modify storage {ns}:signals on_damaged set value {{}}
-execute store result storage {ns}:signals on_damaged.damage float 0.1 run scoreboard players get #expl_dmg {ns}.data
-data modify storage {ns}:signals on_damaged.target set from entity @s UUID
-data modify storage {ns}:signals on_damaged.explosion set value true
-function #{ns}:signals/on_damaged
+function #{ns}:signals/damage with storage {ns}:input with
 
 # Signal: on_kill (if entity died after explosion damage, @s switches to shooter)
 execute unless entity @s as @p[tag={ns}.temp_shooter] run data modify storage {ns}:signals on_kill set value {{}}

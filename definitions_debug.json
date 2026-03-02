@@ -1865,7 +1865,7 @@
 		"recipes": [],
 		"components": {
 			"max_stack_size": 16,
-			"custom_data": {"mgs": {"gun": true,"stats": {"grenade_type": "flash","fire_mode": "semi","capacity": 1,"remaining_bullets": 1,"cooldown": 20,"proj_speed": 1200,"proj_gravity": 50,"proj_model": "flash_grenade","grenade_fuse": 60,"grenade_duration": 100,"grenade_effect_radius": 10,"models": {"normal": "mgs:flash_grenade","zoom": "mgs:flash_grenade_zoom"}},"flash_grenade": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},
+			"custom_data": {"mgs": {"gun": true,"stats": {"grenade_type": "flash","fire_mode": "semi","capacity": 1,"remaining_bullets": 1,"cooldown": 20,"proj_speed": 1200,"proj_gravity": 50,"proj_model": "flash_grenade","grenade_fuse": 60,"grenade_duration": 100,"grenade_effect_radius": 15,"models": {"normal": "mgs:flash_grenade","zoom": "mgs:flash_grenade_zoom"}},"flash_grenade": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},
 			"consumable": {"consume_seconds": 1000000,"animation": "spear","sound": "minecraft:intentionally_empty","has_consume_particles": false},
 			"use_effects": {"can_sprint": true,"speed_multiplier": 1.0,"interact_vibrations": false},
 			"food": {"saturation": 0,"nutrition": 0,"can_always_eat": true},

@@ -758,7 +758,7 @@ FLASH_GRENADE: JsonDict = {
         PROJECTILE_SPEED: 1200, PROJECTILE_GRAVITY: 50, PROJECTILE_MODEL: "flash_grenade",
         GRENADE_FUSE: 60,  # 3 seconds before detonation
         GRENADE_DURATION: 100,  # 5 seconds of blindness
-        GRENADE_EFFECT_RADIUS: 10,
+        GRENADE_EFFECT_RADIUS: 15,
     }
 }
 
