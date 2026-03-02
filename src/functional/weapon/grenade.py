@@ -284,7 +284,7 @@ tag @s add {ns}.tp_me
 scoreboard players operation #my_stuck {ns}.data = @s {ns}.stuck_id
 
 # Find the entity with matching stuck_id (not a grenade) and teleport me to it
-execute as @e[scores={{{ns}.stuck_id=1..}}] if score @s {ns}.stuck_id = #my_stuck {ns}.data unless entity @s[tag={ns}.grenade] at @s run tp @e[tag={ns}.tp_me,limit=1] ~ ~ ~
+execute as @e[scores={{{ns}.stuck_id=1..}}] if score @s {ns}.stuck_id = #my_stuck {ns}.data unless entity @s[tag={ns}.grenade] at @s run tp @n[tag={ns}.tp_me] ~ ~ ~
 
 # Remove temp tag
 tag @s remove {ns}.tp_me
@@ -438,11 +438,11 @@ f"""
 execute if entity @e[tag={ns}.flash_source,distance=..3] run return run function {ns}:v{version}/grenade/flash_player
 
 # Direction check: is the grenade within the player's field of view? (110 degree cone)
-execute at @e[tag={ns}.flash_source,limit=1] store result score #in_fov {ns}.data run function #bs.view:in_view_ata {{angle:110}}
+execute at @n[tag={ns}.flash_source] store result score #in_fov {ns}.data run function #bs.view:in_view_ata {{angle:110}}
 execute unless score #in_fov {ns}.data matches 1 run return 0
 
 # Line-of-sight check: can the player see the grenade? (no blocks between)
-execute at @e[tag={ns}.flash_source,limit=1] store result score #can_see {ns}.data run function #bs.view:can_see_ata {{with:{{}}}}
+execute at @n[tag={ns}.flash_source] store result score #can_see {ns}.data run function #bs.view:can_see_ata {{with:{{}}}}
 execute unless score #can_see {ns}.data matches 1 run return 0
 
 # Both checks passed: flash the player

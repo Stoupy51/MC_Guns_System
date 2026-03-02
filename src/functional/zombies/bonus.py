@@ -152,7 +152,7 @@ function {ns}:v{version}/zombies/bonus/nuke_loop
     write_versioned_function("zombies/bonus/nuke_loop",
 f"""
 # Find one nuked entity and process it
-execute as @e[tag={ns}.nuked,limit=1,sort=random] at @s run function {ns}:v{version}/zombies/bonus/nuke_damage_one
+execute as @n[tag={ns}.nuked,sort=random] at @s run function {ns}:v{version}/zombies/bonus/nuke_damage_one
 
 # Continue loop if more nuked entities exist
 execute if entity @e[tag={ns}.nuked] run schedule function {ns}:v{version}/zombies/bonus/nuke_loop 1t
@@ -171,6 +171,6 @@ tag @s remove {ns}.nuked
 attribute @s minecraft:attack_damage modifier remove {ns}:nuke_zero_damage
 
 # Deal lethal damage from the nuke activator player
-damage @s 999999 {ns}:bullet by @p[tag={ns}.nuke_activator,limit=1]
+damage @s 999999 {ns}:bullet by @n[tag={ns}.nuke_activator]
 """)
 

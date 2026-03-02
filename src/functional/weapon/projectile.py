@@ -316,7 +316,7 @@ scoreboard players operation #expl_dmg {ns}.data /= #1000000 {ns}.data
 execute if score #expl_dmg {ns}.data matches ..0 run return fail
 
 # Instant kill: if shooter has active instant kill and target is not immune, set damage to 9999
-execute as @e[tag={ns}.temp_shooter,limit=1] if score @s {ns}.special.instant_kill matches 1.. as @s[tag=!{ns}.no_instant_kill] run scoreboard players set #expl_dmg {ns}.data 9999
+execute as @n[tag={ns}.temp_shooter] if score @s {ns}.special.instant_kill matches 1.. as @s[tag=!{ns}.no_instant_kill] run scoreboard players set #expl_dmg {ns}.data 9999
 
 # Apply damage using the existing damage utility
 # Prepare macro arguments: target=@s, amount=damage (float with 0.1 precision), attacker=shooter
@@ -326,9 +326,9 @@ function {ns}:v{version}/utils/damage with storage {ns}:input with
 function #{ns}:signals/damage with storage {ns}:input with
 
 # Signal: on_kill (if entity died after explosion damage, @s switches to shooter)
-execute unless entity @s as @e[tag={ns}.temp_shooter,limit=1] run data modify storage {ns}:signals on_kill set value {{}}
-execute unless entity @s as @e[tag={ns}.temp_shooter,limit=1] run data modify storage {ns}:signals on_kill.explosion set value true
-execute unless entity @s as @e[tag={ns}.temp_shooter,limit=1] run function #{ns}:signals/on_kill
+execute unless entity @s as @n[tag={ns}.temp_shooter] run data modify storage {ns}:signals on_kill set value {{}}
+execute unless entity @s as @n[tag={ns}.temp_shooter] run data modify storage {ns}:signals on_kill.explosion set value true
+execute unless entity @s as @n[tag={ns}.temp_shooter] run function #{ns}:signals/on_kill
 """)
 
     ## Delete projectile
