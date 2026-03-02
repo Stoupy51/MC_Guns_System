@@ -8,9 +8,6 @@
 Credits for resources: MGS 4.2 by TheBradqq
 
 # TODO:
-- To fix:
-  - In S fire mode, if you shoot, then don't hold button, and start holding again : when cooldown reaches 0, it set you again to max cooldown without shooting. (Mistakenly thought you were holding right click the whole time which is not the case)
-- Crosshair : Figure out how to hide it only when zooming with a gun.
 - When zooming (scope or not) : Lower FOV smoothly using shaders
 - Add grenades (frag, semtex, smoke, flash) : https://docs.mcbookshelf.dev/en/master/modules/move/ <- Apply velocity with bounce and keep physics
   - (Need to add items to definitions and custom models)
@@ -19,6 +16,8 @@ Credits for resources: MGS 4.2 by TheBradqq
   - Smoke: creates a smoke cloud that blocks vision for 10 seconds (using particles, and duration coded in nbt)
   - Flash: blinds players in a radius for 5 seconds (using title with fade in and out, and duration coded in nbt, using a custom font which is a big big white square in the middle of the screen) (ex: https://github.com/Paralya/Switch/blob/main/src/special_fonts/utils.py)
 - Hitmaker sound (can be toggled with /trigger, default = false so only OG players will enable it) (not in sounds folder yet, need to download)
+- Mobs with guns need to be added (Any mob tagged with {ns}.armed (for performance)):
+  - They need to be able to shoot and reload (we assume they have infinite ammo for simplicity, so no need to check for magazines and ammo in inventory) (they can still have a cooldown between shots and reloads)
 - Global constants for things:
   - RPG Explosion destroying blocks (/function realistic_explosion:explode) (global constant RPG_EXPLOSION_POWER in score mgs.config with default value of 0) (explosion power: https://github.com/Stoupy51/RealisticExplosionLibrary/blob/main/data/realistic_explosion/function/explosion/main.mcfunction)
   - Grenade Explosion destroying blocks (/function realistic_explosion:explode) (global constant GRENADE_EXPLOSION_POWER in score mgs.config with default value of 0)

@@ -267,10 +267,13 @@ execute unless score #is_headshot {ns}.data matches 1 run scoreboard players ope
     # Get values
     write_versioned_function("raycast/accuracy/get_value",
 f"""
-## Order is important: Jump > Sneak > Sprint > Walk > Base
+## Order is important: Sneak+Air=Walk > Jump > Sneak > Sprint > Walk > Base
 data remove storage {ns}:gun accuracy
 
-# If not on ground, return jump accuracy
+# If sneaking in the air, treat as walking (not jump accuracy)
+execute unless predicate {ns}:v{version}/is_on_ground if predicate {ns}:v{version}/is_sneaking run return run data modify storage {ns}:gun accuracy set from storage {ns}:gun all.stats.{ACCURACY_WALK}
+
+# If not on ground (and not sneaking), return jump accuracy
 execute unless predicate {ns}:v{version}/is_on_ground run return run data modify storage {ns}:gun accuracy set from storage {ns}:gun all.stats.{ACCURACY_JUMP}
 
 # If sneaking, return sneak accuracy
