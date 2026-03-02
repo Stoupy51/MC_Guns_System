@@ -25,11 +25,13 @@ void main() {
         //   Flash    → pixel (0, 0)
         //   Zoom 2-4 → pixel (1, 0)
         //   Spread 5-9 → pixel (2, 0)
+        //   FOV 12-14 → pixel (3, 0)
         ivec2 fc = ivec2(gl_FragCoord.xy);
         ivec2 target;
-        if (markerMode == 1) target = ivec2(0, 0);       // Flash
-        else if (markerMode >= 5) target = ivec2(2, 0);  // Spread
-        else target = ivec2(1, 0);                        // Zoom (2, 3, 4)
+        if (markerMode == 1) target = ivec2(0, 0);        // Flash
+        else if (markerMode >= 12) target = ivec2(3, 0);   // FOV
+        else if (markerMode >= 5) target = ivec2(2, 0);    // Spread
+        else target = ivec2(1, 0);                          // Zoom (2, 3, 4)
         if (fc != target) {
             discard;
         }
