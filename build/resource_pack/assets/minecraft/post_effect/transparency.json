@@ -10,6 +10,11 @@
 			"height": 1,
 			"persistent": true
 		},
+		"smooth_zoom": {
+			"width": 1,
+			"height": 1,
+			"persistent": true
+		},
 		"final": {},
 		"swap": {}
 	},
@@ -30,6 +35,15 @@
 				{"sampler_name": "Classify","target": "classify"}
 			],
 			"output": "smooth_spread"
+		},
+		{
+			"vertex_shader": "minecraft:core/screenquad",
+			"fragment_shader": "mgs:post/zoom_lerp",
+			"inputs": [
+				{"sampler_name": "Main","target": "minecraft:main"},
+				{"sampler_name": "SmoothZoom","target": "smooth_zoom"}
+			],
+			"output": "smooth_zoom"
 		},
 		{
 			"vertex_shader": "minecraft:core/screenquad",
@@ -69,7 +83,8 @@
 			"inputs": [
 				{"sampler_name": "In","target": "swap","bilinear": true},
 				{"sampler_name": "Classify","target": "classify"},
-				{"sampler_name": "SparkTex","location": "mgs:flash","width": 1536,"height": 1536,"bilinear": true}
+				{"sampler_name": "SparkTex","location": "mgs:flash","width": 1536,"height": 1536,"bilinear": true},
+				{"sampler_name": "SmoothZoom","target": "smooth_zoom"}
 			],
 			"output": "final",
 			"uniforms": {

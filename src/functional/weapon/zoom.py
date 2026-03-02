@@ -30,13 +30,15 @@ execute unless score @s {ns}.zoom matches 1 run scoreboard players set @s {ns}.z
 # Increment zoom timer while zooming
 execute if score @s {ns}.zoom matches 1 run scoreboard players add @s {ns}.zoom_timer 1
 
-# Spawn zoom x3 marker for _3 weapons (scope_level:3) — blocked during weapon switch cooldown
+# FOV marker: spawn IMMEDIATELY on zoom (no delay) for smooth FOV reduction
+# Uses color with B=0.02 (non-zero B + non-zero G) to distinguish from zoom/flash/spread markers
+execute if score @s {ns}.zoom matches 1 if score @s {ns}.switch_cooldown matches 0 if items entity @s weapon.mainhand *[custom_data~{{{ns}:{{scope_level:3}}}}] at @s anchored eyes run particle minecraft:dust{{color:[0.02,0.02,0.02],scale:0.01}} ^ ^ ^1 0 0 0 0 1 force @s
+execute if score @s {ns}.zoom matches 1 if score @s {ns}.switch_cooldown matches 0 if items entity @s weapon.mainhand *[custom_data~{{{ns}:{{scope_level:4}}}}] at @s anchored eyes run particle minecraft:dust{{color:[0.02,0.08,0.02],scale:0.01}} ^ ^ ^1 0 0 0 0 1 force @s
+execute if score @s {ns}.zoom matches 1 if score @s {ns}.switch_cooldown matches 0 unless items entity @s weapon.mainhand *[custom_data~{{{ns}:{{scope_level:3}}}}] unless items entity @s weapon.mainhand *[custom_data~{{{ns}:{{scope_level:4}}}}] at @s anchored eyes run particle minecraft:dust{{color:[0.02,0.25,0.02],scale:0.01}} ^ ^ ^1 0 0 0 0 1 force @s
+
+# Scope zoom marker: spawn AFTER delay for barrel distortion effect
 execute if score @s {ns}.zoom matches 1 if score @s {ns}.switch_cooldown matches 0 if score @s {ns}.zoom_timer matches 5.. if items entity @s weapon.mainhand *[custom_data~{{{ns}:{{scope_level:3}}}}] at @s anchored eyes run particle minecraft:dust{{color:[0.02,0.02,0.0],scale:0.01}} ^ ^ ^1 0 0 0 0 1 force @s
-
-# Spawn zoom x4 marker for _4 weapons (scope_level:4) — blocked during weapon switch cooldown
 execute if score @s {ns}.zoom matches 1 if score @s {ns}.switch_cooldown matches 0 if score @s {ns}.zoom_timer matches 5.. if items entity @s weapon.mainhand *[custom_data~{{{ns}:{{scope_level:4}}}}] at @s anchored eyes run particle minecraft:dust{{color:[0.02,0.08,0.0],scale:0.01}} ^ ^ ^1 0 0 0 0 1 force @s
-
-# Spawn zoom center-only marker (mode 2) for weapons WITHOUT scope — centers flash spark w/o barrel distortion
 execute if score @s {ns}.zoom matches 1 if score @s {ns}.switch_cooldown matches 0 if score @s {ns}.zoom_timer matches 5.. unless items entity @s weapon.mainhand *[custom_data~{{{ns}:{{scope_level:3}}}}] unless items entity @s weapon.mainhand *[custom_data~{{{ns}:{{scope_level:4}}}}] at @s anchored eyes run particle minecraft:dust{{color:[0.02,0.25,0.0],scale:0.01}} ^ ^ ^1 0 0 0 0 1 force @s
 
 # Crosshair spread marker: spawn when NOT zooming to indicate accuracy via crosshair gap

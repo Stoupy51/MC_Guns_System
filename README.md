@@ -8,7 +8,7 @@
 Credits for resources: MGS 4.2 by TheBradqq
 
 # TODO:
-- When zooming (scope or not) : Lower FOV smoothly using shaders
+- Currently, on_targeted_block reduce damage by 5% in water, and 50% in other blocks. It should instead check for the block hardness : Need to use #bs.block:lookup_type {type:<value>} to get the block hardness (https://docs.mcbookshelf.dev/en/latest/modules/block/#lookup-block) and depending on it stop bullet or/and reduce damage realistically (figure out yourself)
 - Add grenades (frag, semtex, smoke, flash) : https://docs.mcbookshelf.dev/en/master/modules/move/ <- Apply velocity with bounce and keep physics
   - (Need to add items to definitions and custom models)
   - Frag: explodes after 4 seconds (by default, coded in item nbt "stats" part like guns would), damage also coded like RPG in nbt

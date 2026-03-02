@@ -3,6 +3,7 @@
 uniform sampler2D InSampler;
 uniform sampler2D ClassifySampler;
 uniform sampler2D SparkTexSampler;
+uniform sampler2D SmoothZoomSampler;  // Smooth FOV zoom factor (persistent feedback)
 
 layout(std140) uniform ZoomConfig {
     float Distortion;
@@ -71,12 +72,17 @@ void main() {
     bool thirdPerson = rawB >= 128;  // 3rd person flag packed in high bit of B
     int zoomLevel = thirdPerson ? rawB - 128 : rawB;  // 0, 2, 3, or 4
 
-    fragColor = texture(InSampler, texCoord);
+    // Smooth FOV zoom: scales UV toward center for lower effective FOV
+    // 0.0 = normal FOV, 0.15 = ~1.18x, 0.30 = ~1.43x, 0.45 = ~1.82x
+    float smoothZoom = texture(SmoothZoomSampler, vec2(0.5, 0.5)).r;
+    vec2 zoomedUV = mix(texCoord, vec2(0.5), smoothZoom);
+
+    fragColor = texture(InSampler, zoomedUV);
     float aspectRatio = inSize.x / inSize.y;
     vec2 screenCoord = (texCoord - vec2(0.5)) * vec2(aspectRatio, 1.0);
 
     // Apply barrel distortion if zooming WITH a scope (zoomLevel 3 or 4 only)
-    // zoomLevel 2 = zoomed but no scope: skip distortion, only spark centering below
+    // zoomLevel 2 = zoomed but no scope: skip distortion, FOV reduction still applies above
     // Disabled in 3rd person (barrel distortion makes no sense from behind)
     if (zoomMode && !thirdPerson && zoomLevel >= 3 && length(screenCoord) < RADIUS) {
         float Zoom = float(zoomLevel);  // 3.0 for _3 weapons, 4.0 for _4 weapons
@@ -88,6 +94,8 @@ void main() {
         screenCoord = vec2(cos(theta), sin(theta)) * r / Zoom;
         vec2 pixCoord = screenCoord * vec2(1.0 / aspectRatio, 1.0) + vec2(0.5);
 
+        // Apply FOV zoom to distorted UV as well
+        pixCoord = mix(pixCoord, vec2(0.5), smoothZoom);
         fragColor = textureBicubic(InSampler, pixCoord, inSize);
     }
 

@@ -135,6 +135,7 @@ from stewbeet import JsonDict, Mem, set_json_encoder, write_versioned_function
 #   Mode 1 (flash)     → screen pixel (0, 0)   [bottom-left corner]
 #   Mode 2-4 (zoom)    → screen pixel (1, 0)   [one pixel right]
 #   Mode 5-9 (spread)  → screen pixel (2, 0)   [two pixels right]
+#   Mode 12-14 (FOV)   → screen pixel (3, 0)   [three pixels right]
 #
 # MARKER COLOR ENCODING (dust RGB + scale):
 #   Command provides float [R, G, B] (no alpha) + scale (size & lifetime).
@@ -158,9 +159,15 @@ from stewbeet import JsonDict, Mem, set_json_encoder, write_versioned_function
 #   Sprint: color:[0.02, 0.0, 0.28], scale:0.01 → B' ∈ [34-71]
 #   Jump:   color:[0.02, 0.0, 0.60], scale:0.01 → B' ∈ [73-153]
 #
+#   FOV markers (B > 0 AND G > 0, immediate zoom FOV reduction):
+#   FOV center-only: color:[0.02, 0.25, 0.02] → G' ∈ [30-63], B' ∈ [2-5]
+#   FOV x3:          color:[0.02, 0.02, 0.02] → G' ∈ [2-5],   B' ∈ [2-5]
+#   FOV x4:          color:[0.02, 0.08, 0.02] → G' ∈ [10-20],  B' ∈ [2-5]
+#
 #   Detection: R ∈ [1,10] → marker signature.
 #   Flash/zoom: B == 0, G encodes mode.
 #   Spread: G == 0, B > 0 encodes movement state.
+#   FOV: G > 0 AND B ∈ [1-10] → immediate zoom FOV reduction.
 #
 #   scale=0.01 → particle lifetime = 0 (1 game tick minimum).
 #   Flash auto-expires after 1 tick.
@@ -244,6 +251,12 @@ int detectMarkerMode(vec4 color) {
             if (ic.b >= 15 && ic.b <= 33) return 7;   // Walk: B from 0.12 → [15-31]
             if (ic.b >= 34 && ic.b <= 72) return 8;   // Sprint: B from 0.28 → [34-71]
             if (ic.b >= 73) return 9;                  // Jump: B from 0.60 → [73-153]
+        } else if (ic.b >= 1 && ic.b <= 10) {
+            // FOV markers: both G>0 AND B in dim range (immediate zoom FOV reduction)
+            // Same G encoding as zoom but B=0.02 instead of 0 distinguishes them
+            if (ic.g >= 26 && ic.g <= 80) return 12;  // FOV center-only
+            if (ic.g >= 1 && ic.g <= 7) return 13;    // FOV x3
+            if (ic.g >= 8 && ic.g <= 25) return 14;   // FOV x4
         }
     }
     return 0;  // Not a marker
@@ -320,11 +333,13 @@ void main() {
         //   Flash    → pixel (0, 0)
         //   Zoom 2-4 → pixel (1, 0)
         //   Spread 5-9 → pixel (2, 0)
+        //   FOV 12-14 → pixel (3, 0)
         ivec2 fc = ivec2(gl_FragCoord.xy);
         ivec2 target;
-        if (markerMode == 1) target = ivec2(0, 0);       // Flash
-        else if (markerMode >= 5) target = ivec2(2, 0);  // Spread
-        else target = ivec2(1, 0);                        // Zoom (2, 3, 4)
+        if (markerMode == 1) target = ivec2(0, 0);        // Flash
+        else if (markerMode >= 12) target = ivec2(3, 0);   // FOV
+        else if (markerMode >= 5) target = ivec2(2, 0);    // Spread
+        else target = ivec2(1, 0);                          // Zoom (2, 3, 4)
         if (fc != target) {
             discard;
         }
@@ -645,7 +660,58 @@ void main() {
 
 
 # ────────────────────────────────────────────────────────────────────────────
-# 7. POST-PROCESSING: BARREL DISTORTION ZOOM
+# 7. POST-PROCESSING: SMOOTH ZOOM INTERPOLATION (FOV feedback loop)
+# ────────────────────────────────────────────────────────────────────────────
+ZOOM_LERP_FSH = """\
+#version 330
+
+// Smooth zoom interpolation feedback loop.
+// Reads FOV sentinel pixel directly from main framebuffer (spawned immediately on zoom).
+// Separate from scope zoom markers (pixel 1,0) which are delayed 5 ticks.
+uniform sampler2D MainSampler;
+uniform sampler2D SmoothZoomSampler;  // Previous frame's smooth zoom (persistent feedback)
+
+in vec2 texCoord;
+out vec4 fragColor;
+
+#define MARKER_RED 254
+#define ZOOM_LERP_SPEED 0.12  // Per-frame interpolation (~0.33s to 90% at 60fps)
+
+void main() {
+    // Read FOV sentinel at pixel (3, 0) — spawned immediately on zoom (no 5-tick delay)
+    // R=254, G=mode(12-14), B=viewDist, A=255
+    ivec4 pFov = ivec4(round(texelFetch(MainSampler, ivec2(3, 0), 0) * 255.0));
+    bool fovActive = (pFov.r == MARKER_RED && pFov.a == 255
+                      && pFov.g >= 12 && pFov.g <= 14);
+    int fovZoomLevel = fovActive ? (pFov.g - 10) : 0;  // 2=center, 3=x3, 4=x4
+
+    // 3rd person detection from sentinel B (camera-to-particle distance)
+    float cameraDist = fovActive ? (float(pFov.b) / 255.0 * 10.0) : 0.0;
+    bool thirdPerson = cameraDist > 2.0;
+
+    // Target zoom magnification (UV scale toward center).
+    // Higher = stronger FOV reduction (texCoord = mix(texCoord, 0.5, zoom)).
+    //   0.0  = no magnification (normal FOV)
+    //   0.25 = ~1.33x (center-only zoom, no scope)
+    //   0.30 = ~1.43x (scope x3)
+    //   0.45 = ~1.82x (scope x4)
+    float targetZoom = 0.0;
+    if (fovActive && !thirdPerson) {
+        if (fovZoomLevel == 2) targetZoom = 0.25;       // Center-only: subtle
+        else if (fovZoomLevel == 3) targetZoom = 0.30;   // Scope x3: moderate
+        else if (fovZoomLevel == 4) targetZoom = 0.45;   // Scope x4: strong
+    }
+
+    float prevZoom = texture(SmoothZoomSampler, vec2(0.5, 0.5)).r;
+    float smoothZoom = mix(prevZoom, targetZoom, ZOOM_LERP_SPEED);
+
+    fragColor = vec4(smoothZoom, 0.0, 0.0, 1.0);
+}
+"""
+
+
+# ────────────────────────────────────────────────────────────────────────────
+# 8. POST-PROCESSING: BARREL DISTORTION ZOOM + FOV REDUCTION
 # ────────────────────────────────────────────────────────────────────────────
 ZOOM_FSH = """\
 #version 330
@@ -653,6 +719,7 @@ ZOOM_FSH = """\
 uniform sampler2D InSampler;
 uniform sampler2D ClassifySampler;
 uniform sampler2D SparkTexSampler;
+uniform sampler2D SmoothZoomSampler;  // Smooth FOV zoom factor (persistent feedback)
 
 layout(std140) uniform ZoomConfig {
     float Distortion;
@@ -721,12 +788,17 @@ void main() {
     bool thirdPerson = rawB >= 128;  // 3rd person flag packed in high bit of B
     int zoomLevel = thirdPerson ? rawB - 128 : rawB;  // 0, 2, 3, or 4
 
-    fragColor = texture(InSampler, texCoord);
+    // Smooth FOV zoom: scales UV toward center for lower effective FOV
+    // 0.0 = normal FOV, 0.15 = ~1.18x, 0.30 = ~1.43x, 0.45 = ~1.82x
+    float smoothZoom = texture(SmoothZoomSampler, vec2(0.5, 0.5)).r;
+    vec2 zoomedUV = mix(texCoord, vec2(0.5), smoothZoom);
+
+    fragColor = texture(InSampler, zoomedUV);
     float aspectRatio = inSize.x / inSize.y;
     vec2 screenCoord = (texCoord - vec2(0.5)) * vec2(aspectRatio, 1.0);
 
     // Apply barrel distortion if zooming WITH a scope (zoomLevel 3 or 4 only)
-    // zoomLevel 2 = zoomed but no scope: skip distortion, only spark centering below
+    // zoomLevel 2 = zoomed but no scope: skip distortion, FOV reduction still applies above
     // Disabled in 3rd person (barrel distortion makes no sense from behind)
     if (zoomMode && !thirdPerson && zoomLevel >= 3 && length(screenCoord) < RADIUS) {
         float Zoom = float(zoomLevel);  // 3.0 for _3 weapons, 4.0 for _4 weapons
@@ -738,6 +810,8 @@ void main() {
         screenCoord = vec2(cos(theta), sin(theta)) * r / Zoom;
         vec2 pixCoord = screenCoord * vec2(1.0 / aspectRatio, 1.0) + vec2(0.5);
 
+        // Apply FOV zoom to distorted UV as well
+        pixCoord = mix(pixCoord, vec2(0.5), smoothZoom);
         fragColor = textureBicubic(InSampler, pixCoord, inSize);
     }
 
@@ -838,6 +912,7 @@ def get_post_effect_json(ns: str) -> JsonDict:
         "targets": {
             "classify": {"width": 1, "height": 1, "persistent": True},
             "smooth_spread": {"width": 1, "height": 1, "persistent": True},
+            "smooth_zoom": {"width": 1, "height": 1, "persistent": True},
             "final": {},
             "swap":  {},
         },
@@ -862,6 +937,17 @@ def get_post_effect_json(ns: str) -> JsonDict:
                     {"sampler_name": "Classify", "target": "classify"},
                 ],
                 "output": "smooth_spread",
+            },
+            # Pass 1c: ZOOM LERP - persist smooth zoom for next frame's FOV feedback loop
+            # Reads FOV sentinel at pixel (3,0) directly from main framebuffer
+            {
+                "vertex_shader":   "minecraft:core/screenquad",
+                "fragment_shader": f"{ns}:post/zoom_lerp",
+                "inputs": [
+                    {"sampler_name": "Main",       "target": "minecraft:main"},
+                    {"sampler_name": "SmoothZoom", "target": "smooth_zoom"},
+                ],
+                "output": "smooth_zoom",
             },
             # Pass 2: TRANSPARENCY - Fabulous compositing (hides marker pixels)
             {
@@ -899,17 +985,19 @@ def get_post_effect_json(ns: str) -> JsonDict:
                     ],
                 },
             },
-            # Pass 4: ZOOM - barrel distortion + flash spark overlay
+            # Pass 4: ZOOM - barrel distortion + FOV reduction + flash spark overlay
             # SparkTex is the 1536x1536 flash sprite sheet (3x3 grid of 9 sprites).
             # Spark overlays AFTER zoom so it's not barrel-distorted.
             # Zoom level (x3/x4) is read from classify B channel.
+            # SmoothZoom provides smooth FOV reduction factor.
             {
                 "vertex_shader":   "minecraft:core/screenquad",
                 "fragment_shader": f"{ns}:post/zoom",
                 "inputs": [
-                    {"sampler_name": "In",       "target": "swap", "bilinear": True},
-                    {"sampler_name": "Classify", "target": "classify"},
-                    {"sampler_name": "SparkTex", "location": f"{ns}:flash", "width": 1536, "height": 1536, "bilinear": True},
+                    {"sampler_name": "In",         "target": "swap", "bilinear": True},
+                    {"sampler_name": "Classify",   "target": "classify"},
+                    {"sampler_name": "SparkTex",   "location": f"{ns}:flash", "width": 1536, "height": 1536, "bilinear": True},
+                    {"sampler_name": "SmoothZoom", "target": "smooth_zoom"},
                 ],
                 "output": "final",
                 "uniforms": {
@@ -949,6 +1037,7 @@ def main() -> None:
 
     Mem.ctx.assets[ns].fragment_shaders["post/classify"]     = FragmentShader(CLASSIFY_FSH)
     Mem.ctx.assets[ns].fragment_shaders["post/spread_copy"]  = FragmentShader(SPREAD_COPY_FSH)
+    Mem.ctx.assets[ns].fragment_shaders["post/zoom_lerp"]    = FragmentShader(ZOOM_LERP_FSH)
     Mem.ctx.assets[ns].fragment_shaders["post/transparency"] = FragmentShader(TRANSPARENCY_FSH)
     Mem.ctx.assets[ns].fragment_shaders["post/flash"]       = FragmentShader(FLASH_FSH)
     Mem.ctx.assets[ns].fragment_shaders["post/zoom"]        = FragmentShader(ZOOM_FSH)

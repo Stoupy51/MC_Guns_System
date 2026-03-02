@@ -62,6 +62,12 @@ int detectMarkerMode(vec4 color) {
             if (ic.b >= 15 && ic.b <= 33) return 7;   // Walk: B from 0.12 → [15-31]
             if (ic.b >= 34 && ic.b <= 72) return 8;   // Sprint: B from 0.28 → [34-71]
             if (ic.b >= 73) return 9;                  // Jump: B from 0.60 → [73-153]
+        } else if (ic.b >= 1 && ic.b <= 10) {
+            // FOV markers: both G>0 AND B in dim range (immediate zoom FOV reduction)
+            // Same G encoding as zoom but B=0.02 instead of 0 distinguishes them
+            if (ic.g >= 26 && ic.g <= 80) return 12;  // FOV center-only
+            if (ic.g >= 1 && ic.g <= 7) return 13;    // FOV x3
+            if (ic.g >= 8 && ic.g <= 25) return 14;   // FOV x4
         }
     }
     return 0;  // Not a marker
