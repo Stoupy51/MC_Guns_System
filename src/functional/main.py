@@ -154,7 +154,7 @@ execute as @e[type=player,sort=random] at @s run function {ns}:v{version}/player
 
     def btn(label: str, command: str, color: str = "yellow", hover: str = "") -> str:
         """Create a clickable button JSON component."""
-        obj: JsonDict = {"text": f"[{label}]", "color": color, "click_event": {"action": "run_command", "command": command}}
+        obj: JsonDict = {"text": f"[{label}]", "color": color, "click_event": {"action": "suggest_command", "command": command}}
         if hover:
             obj["hover_event"] = {"action": "show_text", "value": hover}
         return json.dumps(obj)
