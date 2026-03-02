@@ -107,9 +107,17 @@ tellraw @s {info_line}
 """)
 
     write_versioned_function("player/config/damage_debug", f"""
+# Round amount to 1 decimal: store (amount * 10) as int score, then split into whole + decimal parts
+$data modify storage {ns}:temp amount set value $(amount)
+execute store result score #dmg_x10 {ns}.data run data get storage {ns}:temp amount 10
+scoreboard players operation #dmg_whole {ns}.data = #dmg_x10 {ns}.data
+scoreboard players operation #dmg_whole {ns}.data /= #10 {ns}.data
+scoreboard players operation #dmg_dec {ns}.data = #dmg_x10 {ns}.data
+scoreboard players operation #dmg_dec {ns}.data %= #10 {ns}.data
+
 # Damage debug: global config overrides (tellraw @a), otherwise per-player (tellraw to shooter only)
-$execute if score #damage_debug {ns}.config matches 1 run tellraw @a [{{"text":"[DMG] ","color":"red"}},{{"text":"$(amount)","color":"gold"}},{{"text":" HP to ","color":"gray"}},{{"selector":"$(target)"}},{{"text":" by ","color":"gray"}},{{"selector":"$(attacker)"}}]
-$execute unless score #damage_debug {ns}.config matches 1 at @s as $(attacker) if score @s {ns}.player.damage_debug matches 1 run tellraw @s [{{"text":"[DMG] ","color":"red"}},{{"text":"$(amount)","color":"gold"}},{{"text":" HP to ","color":"gray"}},{{"selector":"@n"}}]
+$execute if score #damage_debug {ns}.config matches 1 run tellraw @a [{{"text":"[DMG] ","color":"red"}},[{{"score":{{"name":"#dmg_whole","objective":"{ns}.data"}},"color":"gold"}},".",{{"score":{{"name":"#dmg_dec","objective":"{ns}.data"}}}}],{{"text":" HP to ","color":"gray"}},{{"selector":"$(target)"}},{{"text":" by ","color":"gray"}},{{"selector":"$(attacker)"}}]
+$execute unless score #damage_debug {ns}.config matches 1 at @s as $(attacker) if score @s {ns}.player.damage_debug matches 1 run tellraw @s [{{"text":"[DMG] ","color":"red"}},[{{"score":{{"name":"#dmg_whole","objective":"{ns}.data"}},"color":"gold"}},".",{{"score":{{"name":"#dmg_dec","objective":"{ns}.data"}}}}],{{"text":" HP to ","color":"gray"}},{{"selector":"@n"}}]
 """, tags=[f"{ns}:signals/damage"])  # noqa: E501
 
     ## Hitmarker sound on entity hit (added to damage signal)

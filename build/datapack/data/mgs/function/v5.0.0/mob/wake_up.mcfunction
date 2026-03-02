@@ -7,9 +7,7 @@
 #			mgs:v5.0.0/mob/init
 #
 
-# Remove sleeping tag
+# Remove sleeping tag and set timer to active duration
 tag @s remove mgs.mob_sleeping
-
-# Set timer to active duration
 scoreboard players operation @s mgs.mob.timer = @s mgs.mob.active_time
 

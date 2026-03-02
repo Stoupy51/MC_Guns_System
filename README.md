@@ -12,6 +12,7 @@ Credits for resources: MGS 4.2 by TheBradqq
 - Player config for showing damage per bullet in chat for user who shot (can be toggled with /trigger, default = false so only OG players will enable it) (similar to hitmaker) (not just a /say, need proper tellraw with colors and stuff)
   - Also a global config to enable damage debug -> tellraw @a, overrides player config.
 - Along with quick reload score, quick weapon swap score to allow swapping to another weapon faster (also in /function mgs:config)
+- Add DPS on actionbar
 - Compatibility & Developement:
   - Add a multiplayer mode (mgs:multiplayer/*):
     - Gamemodes like team deathmatch, capture the flag, free for all, etc.
