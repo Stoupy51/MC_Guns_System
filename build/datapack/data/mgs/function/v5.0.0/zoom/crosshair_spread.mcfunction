@@ -6,7 +6,10 @@
 # @within	mgs:v5.0.0/zoom/main
 #
 
-# Jump (in air): widest spread
+# If sneaking in the air, treat as walking (not jump spread)
+execute unless predicate mgs:v5.0.0/is_on_ground if predicate mgs:v5.0.0/is_sneaking at @s anchored eyes run return run particle minecraft:dust{color:[0.02,0.0,0.12],scale:0.01} ^ ^ ^1 0 0 0 0 1 force @s
+
+# Jump (in air, not sneaking): widest spread
 execute unless predicate mgs:v5.0.0/is_on_ground at @s anchored eyes run return run particle minecraft:dust{color:[0.02,0.0,0.60],scale:0.01} ^ ^ ^1 0 0 0 0 1 force @s
 
 # Sprint: very wide spread

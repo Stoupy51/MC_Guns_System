@@ -48,7 +48,10 @@ execute unless score @s {ns}.zoom matches 1 run function {ns}:v{version}/zoom/cr
     # Priority: jump > sprint > walk > sneak > base (matching accuracy system)
     write_versioned_function("zoom/crosshair_spread",
 f"""
-# Jump (in air): widest spread
+# If sneaking in the air, treat as walking (not jump spread)
+execute unless predicate {ns}:v{version}/is_on_ground if predicate {ns}:v{version}/is_sneaking at @s anchored eyes run return run particle minecraft:dust{{color:[0.02,0.0,0.12],scale:0.01}} ^ ^ ^1 0 0 0 0 1 force @s
+
+# Jump (in air, not sneaking): widest spread
 execute unless predicate {ns}:v{version}/is_on_ground at @s anchored eyes run return run particle minecraft:dust{{color:[0.02,0.0,0.60],scale:0.01}} ^ ^ ^1 0 0 0 0 1 force @s
 
 # Sprint: very wide spread
