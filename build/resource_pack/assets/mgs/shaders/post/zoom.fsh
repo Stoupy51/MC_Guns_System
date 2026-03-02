@@ -67,7 +67,9 @@ void main() {
     vec4 classifyData = texture(ClassifySampler, vec2(0.5, 0.5));
     bool flashMode = classifyData.r > 0.5;
     bool zoomMode  = classifyData.g > 0.5;
-    int zoomLevel = int(round(classifyData.b * 255.0));  // 3 or 4 (from classify B channel)
+    int rawB = int(round(classifyData.b * 255.0));
+    bool thirdPerson = rawB >= 128;  // 3rd person flag packed in high bit of B
+    int zoomLevel = thirdPerson ? rawB - 128 : rawB;  // 0, 2, 3, or 4
 
     fragColor = texture(InSampler, texCoord);
     float aspectRatio = inSize.x / inSize.y;
@@ -75,7 +77,8 @@ void main() {
 
     // Apply barrel distortion if zooming WITH a scope (zoomLevel 3 or 4 only)
     // zoomLevel 2 = zoomed but no scope: skip distortion, only spark centering below
-    if (zoomMode && zoomLevel >= 3 && length(screenCoord) < RADIUS) {
+    // Disabled in 3rd person (barrel distortion makes no sense from behind)
+    if (zoomMode && !thirdPerson && zoomLevel >= 3 && length(screenCoord) < RADIUS) {
         float Zoom = float(zoomLevel);  // 3.0 for _3 weapons, 4.0 for _4 weapons
         float d = length(screenCoord * Distortion / RADIUS);
         float z = sqrt(1.0 - d * d);
@@ -91,7 +94,9 @@ void main() {
     // Overlay flash spark texture AFTER zoom (spark is NOT barrel-distorted)
     // The 1536x1536 texture is a 3x3 grid of 9 different flash sprites.
     // Sprite is chosen pseudo-randomly from scene data each frame.
-    if (flashMode) {
+    // Disabled in 3rd person (spark texture overlay makes no sense from behind;
+    // the flash bloom/lighting from flash.fsh still applies).
+    if (flashMode && !thirdPerson) {
         // Choose position/scale: centered when also zooming, offset when hip-firing
         vec2 sparkPos   = zoomMode ? SPARK_POS_ZOOM   : SPARK_POS_NORMAL;
         vec2 sparkScale = zoomMode ? SPARK_SCALE_ZOOM  : SPARK_SCALE_NORMAL;

@@ -19,6 +19,7 @@ out vec4 vertexColor;
 
 // flat = no interpolation across quad (critical for integer flags)
 flat out int markerMode;  // 0=normal, 1=flash, 2-4=zoom, 5-9=spread
+flat out float markerViewDist;  // Camera-to-particle distance (for 3rd person detection)
 
 // Quad corner offsets: covers a small area at the bottom-left of the screen.
 // The sizing is in NDC (not pixels), so no ScreenSize needed.
@@ -83,6 +84,10 @@ void main() {
         // write ON. Our depth 0.0 always passes (≤ any scene depth).
         gl_Position = vec4(base + corners[gl_VertexID % 4] * size, -1.0, 1.0);
 
+        // Camera distance for 3rd person detection:
+        // Position is camera-relative → length(Position) ≈ 1.0 in 1st person, ≈ 5.0 in 3rd person
+        markerViewDist = length(Position);
+
         // Zero out all vanilla varyings (not used for markers)
         sphericalVertexDistance = 0.0;
         cylindricalVertexDistance = 0.0;
@@ -92,6 +97,7 @@ void main() {
     }
 
     // Normal particle: vanilla processing
+    markerViewDist = 0.0;
     gl_Position = ProjMat * ModelViewMat * vec4(Position, 1.0);
     sphericalVertexDistance = fog_spherical_distance(Position);
     cylindricalVertexDistance = fog_cylindrical_distance(Position);
