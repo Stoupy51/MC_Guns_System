@@ -27,6 +27,7 @@ Credits for resources: MGS 4.2 by TheBradqq
       - Perks positions, types
     - Mystery Box:
       - Also dynamic with a base pool (storage) that can be modified with a function tag (#mgs:zombies/register_mystery_box_item).
+      - Visual animation using item/block displays with transformation and interpolation duration (see wiki)
     - TODO: define here the todos
 
 
