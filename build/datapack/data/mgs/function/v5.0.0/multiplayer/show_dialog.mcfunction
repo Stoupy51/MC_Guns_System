@@ -12,6 +12,8 @@
 #			mgs:v5.0.0/multiplayer/editor/scope/secondary_4only with storage mgs:temp
 #			mgs:v5.0.0/multiplayer/editor/show_equipment_dialog with storage mgs:temp
 #			mgs:v5.0.0/multiplayer/editor/show_confirm with storage mgs:temp
+#			mgs:v5.0.0/multiplayer/my_loadouts/browse with storage mgs:temp
+#			mgs:v5.0.0/multiplayer/marketplace/browse with storage mgs:temp
 #
 # @args		dialog (unknown)
 #

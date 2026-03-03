@@ -3,7 +3,8 @@
 # Imports
 from stewbeet import Mem, write_load_file, write_versioned_function
 
-from .classes import CLASS_IDS
+from ..classes import CLASS_IDS
+from .catalogs import TRIG_EDITOR_START, TRIG_MARKETPLACE, TRIG_MY_LOADOUTS
 
 
 def generate_class_selection() -> None:
@@ -56,6 +57,11 @@ data modify storage {ns}:temp class_iter set from storage {ns}:multiplayer class
 
 # Build dialog actions recursively (passes first class data as macro args)
 execute if data storage {ns}:temp class_iter[0] run function {ns}:v{version}/multiplayer/build_class_btn with storage {ns}:temp class_iter[0]
+
+# Append custom loadout buttons
+data modify storage {ns}:temp dialog.actions append value {{label:{{text:"✚ Create Loadout",color:"aqua",bold:true}},tooltip:{{text:"Build a custom loadout from scratch"}},action:{{type:"run_command",command:"/trigger {ns}.player.config set {TRIG_EDITOR_START}"}}}}
+data modify storage {ns}:temp dialog.actions append value {{label:{{text:"📦 My Loadouts",color:"yellow",bold:true}},tooltip:{{text:"Manage your custom loadouts"}},action:{{type:"run_command",command:"/trigger {ns}.player.config set {TRIG_MY_LOADOUTS}"}}}}
+data modify storage {ns}:temp dialog.actions append value {{label:{{text:"🌍 Marketplace",color:"light_purple",bold:true}},tooltip:{{text:"Browse public loadouts from other players"}},action:{{type:"run_command",command:"/trigger {ns}.player.config set {TRIG_MARKETPLACE}"}}}}
 
 # Show the completed dialog via macro
 function {ns}:v{version}/multiplayer/show_dialog with storage {ns}:temp
@@ -117,4 +123,3 @@ f"""
 # Multiplayer: detect respawn (death_count incremented by deathCount criterion)
 execute if data storage {ns}:multiplayer game{{state:"active"}} if score @s {ns}.mp.death_count matches 1.. run function {ns}:v{version}/multiplayer/on_respawn
 """)
-

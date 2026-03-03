@@ -6,7 +6,7 @@ import json
 from stewbeet import Mem, TextComponent, write_versioned_function
 
 from .multiplayer.classes import CLASS_IDS, CLASSES
-from .multiplayer.custom_loadouts import (
+from .multiplayer.loadouts import (
     EQUIPMENT_PRESETS,
     PRIMARY_WEAPONS,
     SECONDARY_WEAPONS,
