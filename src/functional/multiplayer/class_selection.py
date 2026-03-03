@@ -1,11 +1,9 @@
 
 # ruff: noqa: E501
 # Imports
-import json
+from stewbeet import Mem, write_load_file, write_versioned_function
 
-from stewbeet import JsonDict, Mem, write_load_file, write_versioned_function
-
-from .classes import CLASS_IDS, CLASSES, get_class_description
+from .classes import CLASS_IDS
 
 
 def generate_class_selection() -> None:
@@ -25,7 +23,47 @@ scoreboard objectives add {ns}.mp.death_count deathCount
 """)
 
 	## ============================
-	## set_class macro (used by menus, triggers, and inventory selection)
+	## show_dialog macro: passes inline SNBT dialog to /dialog show
+	## ============================
+	write_versioned_function("multiplayer/show_dialog", "$dialog show @s $(dialog)")
+
+	## ============================
+	## build_class_btn: recursive — appends one action entry per class to the dialog
+	## ============================
+	write_versioned_function("multiplayer/build_class_btn",
+f"""
+# Build tooltip from current class
+$data modify storage {ns}:temp _btn set value {{label:{{text:"$(name)",color:"green"}},tooltip:{{text:"$(lore)\\nMain: $(main_gun)\\nSecondary: $(secondary_gun)"}},action:{{type:"run_command",command:"/trigger {ns}.player.config set $(trigger_value)"}}}}
+
+# Append to dialog actions
+data modify storage {ns}:temp dialog.actions append from storage {ns}:temp _btn
+
+# Remove processed class and recurse
+data remove storage {ns}:temp class_iter[0]
+execute if data storage {ns}:temp class_iter[0] run function {ns}:v{version}/multiplayer/build_class_btn with storage {ns}:temp class_iter[0]
+""")
+
+	## ============================
+	## select_class: builds the class selection dialog dynamically and shows it
+	## ============================
+	write_versioned_function("multiplayer/select_class",
+f"""
+# Initialize dialog structure
+data modify storage {ns}:temp dialog set value {{type:"minecraft:multi_action",title:{{text:"Select Your Class",color:"gold",bold:true}},body:[{{type:"minecraft:plain_message",contents:{{text:"Choose a class for multiplayer.",color:"gray"}}}}],actions:[],columns:2,after_action:"close",exit_action:{{label:"Cancel"}}}}
+
+# Copy class list for iteration
+data modify storage {ns}:temp class_iter set from storage {ns}:multiplayer classes_list
+
+# Build dialog actions recursively (passes first class data as macro args)
+execute if data storage {ns}:temp class_iter[0] run function {ns}:v{version}/multiplayer/build_class_btn with storage {ns}:temp class_iter[0]
+
+# Show the completed dialog via macro
+function {ns}:v{version}/multiplayer/show_dialog with storage {ns}:temp
+""")
+
+	## ============================
+	## set_class macro: sets the class score and notifies player
+	## Called from trigger dispatch (trigger values 11-20 → class 1-10)
 	## ============================
 	write_versioned_function("multiplayer/set_class",
 f"""
@@ -39,65 +77,19 @@ $execute unless data storage {ns}:multiplayer game{{state:"active"}} run tellraw
 """)
 
 	## ============================
-	## Give class selector items (initial selection: in hotbar)
+	## apply_class: looks up class by score from storage, copies to temp, applies dynamically
 	## ============================
-	give_initial_commands: str = "# Give class selector items for initial class pick\nclear @s\n"
-	for idx, (class_id, class_data) in enumerate(CLASSES.items()):
-		# Hotbar 0-8, then overflow to inventory.0+
-		slot: str = f"hotbar.{idx}" if idx < 9 else f"inventory.{idx - 9}"
-		give_initial_commands += _class_item_command(slot, class_id, class_data)
-
-	write_versioned_function("multiplayer/give_class_selectors", give_initial_commands)
-
-	## ============================
-	## Give class selectors in bottom inventory row (during gameplay)
-	## ============================
-	give_gameplay_commands: str = "# Give class selector items in bottom inventory row\n"
-	for idx, (class_id, class_data) in enumerate(CLASSES.items()):
-		inv_slot: int = 17 + idx  # inventory.17 through inventory.26
-		give_gameplay_commands += _class_item_command(f"inventory.{inv_slot}", class_id, class_data)
-
-	write_versioned_function("multiplayer/give_class_selectors_gameplay", give_gameplay_commands)
-
-	## ============================
-	## Detect class selection (holding selector in mainhand)
-	## ============================
-	detect_commands: str = ""
-	for class_id in CLASS_IDS:
-		class_num: int = CLASS_IDS[class_id]
-		detect_commands += f'execute if items entity @s weapon.mainhand *[custom_data~{{mgs:{{class_selector:"{class_id}"}}}}] run scoreboard players set @s {ns}.mp.class {class_num}\n'
-
-	detect_commands += f"""
-# Clear all class selector items from inventory
-clear @s minecraft:poisonous_potato[custom_data~{{mgs:{{class_selector:{{}}}}}}]
-
-# If game active: queue for next respawn, keep selectors in inventory for future
-execute if data storage {ns}:multiplayer game{{state:"active"}} run function {ns}:v{version}/multiplayer/give_class_selectors_gameplay
-"""
-	for class_id, class_data in CLASSES.items():
-		class_num = CLASS_IDS[class_id]
-		name: str = class_data["name"]
-		detect_commands += f'execute if score @s {ns}.mp.class matches {class_num} if data storage {ns}:multiplayer game{{state:"active"}} run tellraw @s ["",{{"text":"[MGS] ","color":"gold"}},{{"text":"Class set to ","color":"white"}},{{"text":"{name}","color":"green","bold":true}},{{"text":" — will apply on respawn","color":"yellow"}}]\n'
-
-	detect_commands += """
-# If game not active: only save choice (no loadout outside multiplayer)
-"""
-	for class_id, class_data in CLASSES.items():
-		class_num = CLASS_IDS[class_id]
-		name = class_data["name"]
-		detect_commands += f'execute if score @s {ns}.mp.class matches {class_num} unless data storage {ns}:multiplayer game{{state:"active"}} run tellraw @s ["",{{"text":"[MGS] ","color":"gold"}},{{"text":"Class selected: ","color":"white"}},{{"text":"{name}","color":"green","bold":true}}]\n'
-
-	write_versioned_function("multiplayer/detect_class_selection", detect_commands)
-
-	## ============================
-	## Apply class loadout based on score
-	## ============================
+	# We need to map class_num (score) to an entry in classes_list.
+	# Since classes_list is ordered and 1-indexed via class_num, index = class_num - 1.
+	# We use a helper that copies the correct class to temp using indexed access.
 	apply_commands: str = ""
-	for class_id, class_num in CLASS_IDS.items():
-		apply_commands += f"execute if score @s {ns}.mp.class matches {class_num} run function {ns}:v{version}/multiplayer/class/{class_id}\n"
+	for class_num in CLASS_IDS.values():
+		apply_commands += f"execute if score @s {ns}.mp.class matches {class_num} run data modify storage {ns}:temp current_class set from storage {ns}:multiplayer classes_list[{class_num - 1}]\n"
 
-	# After loadout, give class selectors in bottom inventory row
-	apply_commands += f"\n# Give class selectors in bottom inventory row for future changes\nfunction {ns}:v{version}/multiplayer/give_class_selectors_gameplay\n"
+	apply_commands += f"""
+# Apply the loadout dynamically from the selected class
+function {ns}:v{version}/multiplayer/apply_class_dynamic
+"""
 
 	write_versioned_function("multiplayer/apply_class", apply_commands)
 
@@ -112,41 +104,16 @@ scoreboard players set @s {ns}.mp.death_count 0
 # Increment death stats
 scoreboard players add @s {ns}.mp.deaths 1
 
-# Apply current class (auto-equip with loadout + bottom row selectors)
+# Apply current class loadout
 execute if score @s {ns}.mp.class matches 1.. run function {ns}:v{version}/multiplayer/apply_class
-
-# If no class selected yet, give full selectors
-execute unless score @s {ns}.mp.class matches 1.. run function {ns}:v{version}/multiplayer/give_class_selectors
 """)
 
 	## ============================
-	## Player tick hooks (appended to player/tick)
+	## Player tick hooks
 	## ============================
 	write_versioned_function("player/tick",
 f"""
-# Multiplayer: detect class selection from inventory
-execute if items entity @s weapon.mainhand *[custom_data~{{mgs:{{class_selector:{{}}}}}}] run function {ns}:v{version}/multiplayer/detect_class_selection
-
 # Multiplayer: detect respawn (death_count incremented by deathCount criterion)
 execute if data storage {ns}:multiplayer game{{state:"active"}} if score @s {ns}.mp.death_count matches 1.. run function {ns}:v{version}/multiplayer/on_respawn
 """)
-
-
-def _class_item_command(slot: str, class_id: str, class_data: JsonDict) -> str:
-	""" Generate an 'item replace' command for a class selector item. """
-	gun: str = class_data["main"]["gun"]
-	name: str = class_data["name"]
-	description: str = get_class_description(class_id)
-
-	# Build lore lines from class description (split on newlines)
-	# Use SNBT compound notation (no surrounding quotes) so Minecraft parses them as text components
-	lore_lines: list[str] = []
-	for line in description.split("\n"):
-		lore_lines.append(json.dumps({"text": line, "color": "gray", "italic": False}))
-	lore_snbt: str = ",".join(lore_lines)
-
-	# Build item name as SNBT compound (no surrounding quotes)
-	name_snbt: str = json.dumps({"text": name, "color": "green", "bold": True, "italic": False})
-
-	return f'item replace entity @s {slot} with minecraft:poisonous_potato[item_model="mgs:{gun}",custom_data={{mgs:{{class_selector:"{class_id}"}}}},item_name={name_snbt},lore=[{lore_snbt}],max_stack_size=1]\n'
 

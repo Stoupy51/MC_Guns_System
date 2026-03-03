@@ -1,13 +1,8 @@
 
 # Imports
-import json
-
 from stewbeet import Mem, write_load_file, write_versioned_function
 
-from .classes import CLASSES
-
-# Consumable magazine item IDs (stack count = bullet count, uses set_consumable_count modifier)
-CONSUMABLE_MAGS: set[str] = {"rpg7_rocket", "mosin_bullet", "m24_bullet", "spas12_shell", "m500_shell", "m590_shell"}
+from .classes import CLASS_IDS, CLASSES, build_class_snbt
 
 
 def generate_loadouts() -> None:
@@ -15,70 +10,63 @@ def generate_loadouts() -> None:
 	version: str = Mem.ctx.project_version
 
 	## ============================
-	## Default Class Registration
+	## Initialize default classes in storage as an ordered list
 	## ============================
+	class_entries: list[str] = []
 	for class_id, class_data in CLASSES.items():
-		class_json: str = json.dumps(class_data)
-		write_load_file(f"data modify storage {ns}:multiplayer classes.{class_id} set value {class_json}")
+		class_num: int = CLASS_IDS[class_id]
+		class_entries.append(build_class_snbt(ns, class_id, class_data, class_num))
+
+	classes_snbt: str = ",".join(class_entries)
+	write_load_file(f"data modify storage {ns}:multiplayer classes_list set value [{classes_snbt}]")
 
 	## ============================
-	## Per-class loadout functions
+	## Dynamic loadout application (recursive slot iteration)
 	## ============================
-	for class_id, class_data in CLASSES.items():
-		commands: str = f"""
-# Apply class: {class_data['name']} - {class_data['lore']}
+
+	# apply_slot_loot: give the loot table item to the slot (macro)
+	write_versioned_function("multiplayer/apply_slot_loot", "$loot replace entity @s $(slot) loot $(loot)")
+
+	# apply_slot_count: set item count (for equipment stacking, e.g. 2 grenades)
+	write_versioned_function("multiplayer/apply_slot_count", """$item modify entity @s $(slot) {"function":"minecraft:set_count","count":$(count),"add":false}""")
+
+	# apply_slot_consumable: set consumable magazine stack count from #bullets score
+	write_versioned_function("multiplayer/apply_slot_consumable", f"""
+$scoreboard players set #bullets {ns}.data $(bullets)
+$item modify entity @s $(slot) {ns}:v{version}/set_consumable_count
+""")
+
+	# apply_next_slot: recursive function that processes slots[0] then continues
+	write_versioned_function("multiplayer/apply_next_slot",
+f"""
+# Apply loot to slot
+data modify storage {ns}:temp current_slot set from storage {ns}:temp slots[0]
+function {ns}:v{version}/multiplayer/apply_slot_loot with storage {ns}:temp current_slot
+
+# If count > 1, apply set_count modifier
+execute unless data storage {ns}:temp current_slot{{count:1}} run function {ns}:v{version}/multiplayer/apply_slot_count with storage {ns}:temp current_slot
+
+# If consumable, apply consumable count modifier
+execute if data storage {ns}:temp current_slot{{consumable:true}} run function {ns}:v{version}/multiplayer/apply_slot_consumable with storage {ns}:temp current_slot
+
+# Remove processed slot and recurse
+data remove storage {ns}:temp slots[0]
+execute if data storage {ns}:temp slots[0] run function {ns}:v{version}/multiplayer/apply_next_slot
+""")
+
+	## ============================
+	## apply_class_dynamic: reads class from temp storage and applies loadout
+	## Called after copying the target class data to mgs:temp
+	## ============================
+	write_versioned_function("multiplayer/apply_class_dynamic",
+f"""
+# Clear player inventory
 clear @s
-"""
 
-		# Primary weapon → hotbar.0
-		commands += f"# Primary weapon → hotbar.0\nloot replace entity @s hotbar.0 loot {ns}:i/{class_data['main']['gun']}\n"
+# Copy class slots to iteration temp
+data modify storage {ns}:temp slots set from storage {ns}:temp current_class.slots
 
-		# Secondary weapon → hotbar.1
-		if "secondary" in class_data:
-			commands += f"\n# Secondary weapon → hotbar.1\nloot replace entity @s hotbar.1 loot {ns}:i/{class_data['secondary']['gun']}\n"
-
-		# Equipment (grenades) → hotbar.8, hotbar.7 (one slot per type, count via modifier)
-		if "equipment" in class_data:
-			equip_slot: int = 8
-			commands += "\n# Equipment → hotbar.8, hotbar.7, ...\n"
-			for item_id, count in class_data["equipment"].items():
-				commands += f"loot replace entity @s hotbar.{equip_slot} loot {ns}:i/{item_id}\n"
-				if count > 1:
-					commands += f'item modify entity @s hotbar.{equip_slot} {{"function":"minecraft:set_count","count":{count},"add":false}}\n'
-				equip_slot -= 1
-
-		# Magazines → inventory.0, inventory.1, ...
-		inv_slot: int = 0
-		commands += "\n# Magazines → inventory.0, inventory.1, ...\n"
-
-		# Primary magazines
-		mag_id: str = class_data["main"]["mag"]
-		mag_count: int = class_data["main"].get("mag_count", 0)
-		if mag_id in CONSUMABLE_MAGS:
-			# Consumable: single stack, set count via item modifier
-			commands += f"loot replace entity @s inventory.{inv_slot} loot {ns}:i/{mag_id}\n"
-			commands += f"scoreboard players set #bullets {ns}.data {mag_count}\n"
-			commands += f"item modify entity @s inventory.{inv_slot} {ns}:v{version}/set_consumable_count\n"
-			inv_slot += 1
-		else:
-			# Regular: one magazine per slot
-			for _ in range(mag_count):
-				commands += f"loot replace entity @s inventory.{inv_slot} loot {ns}:i/{mag_id}\n"
-				inv_slot += 1
-
-		# Secondary magazines
-		if "secondary" in class_data:
-			sec_mag_id: str = class_data["secondary"]["mag"]
-			sec_mag_count: int = class_data["secondary"].get("mag_count", 0)
-			if sec_mag_id in CONSUMABLE_MAGS:
-				commands += f"loot replace entity @s inventory.{inv_slot} loot {ns}:i/{sec_mag_id}\n"
-				commands += f"scoreboard players set #bullets {ns}.data {sec_mag_count}\n"
-				commands += f"item modify entity @s inventory.{inv_slot} {ns}:v{version}/set_consumable_count\n"
-				inv_slot += 1
-			else:
-				for _ in range(sec_mag_count):
-					commands += f"loot replace entity @s inventory.{inv_slot} loot {ns}:i/{sec_mag_id}\n"
-					inv_slot += 1
-
-		write_versioned_function(f"multiplayer/class/{class_id}", commands)
+# Recursively apply all slots
+execute if data storage {ns}:temp slots[0] run function {ns}:v{version}/multiplayer/apply_next_slot
+""")
 

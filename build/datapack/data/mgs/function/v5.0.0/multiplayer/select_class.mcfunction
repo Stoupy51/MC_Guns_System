@@ -4,20 +4,18 @@
 # @executed	as @e[type=player,sort=random] & at @s
 #
 # @within	mgs:v5.0.0/player/config/process
+#			mgs:v5.0.0/multiplayer/start [ as @a & at @s ]
 #
 
-tellraw @s {"text":"============================================","color":"dark_gray"}
-tellraw @s ["",{"translate": "mgs.select_your_class","color":"gold","bold":true}]
-tellraw @s {"text":"============================================","color":"dark_gray"}
-tellraw @s ["",{"text": "[Assault]", "color": "green", "click_event": {"action": "run_command", "command": "/trigger mgs.player.config set 11"}, "hover_event": {"action": "show_text", "value": "Versatile frontline\nMain: AK47\nSecondary: M1911"}},{"text":" Versatile frontline","color":"gray","italic":true}]
-tellraw @s ["",{"text": "[Rifleman]", "color": "green", "click_event": {"action": "run_command", "command": "/trigger mgs.player.config set 12"}, "hover_event": {"action": "show_text", "value": "Accurate mid-range\nMain: M16A4\nSecondary: M9"}},{"text":" Accurate mid-range","color":"gray","italic":true}]
-tellraw @s ["",{"text": "[Support]", "color": "green", "click_event": {"action": "run_command", "command": "/trigger mgs.player.config set 13"}, "hover_event": {"action": "show_text", "value": "Suppressive heavy\nMain: M249\nSecondary: GLOCK17"}},{"text":" Suppressive heavy","color":"gray","italic":true}]
-tellraw @s ["",{"text": "[Sniper]", "color": "green", "click_event": {"action": "run_command", "command": "/trigger mgs.player.config set 14"}, "hover_event": {"action": "show_text", "value": "Long-range precision\nMain: M24 4\nSecondary: DEAGLE"}},{"text":" Long-range precision","color":"gray","italic":true}]
-tellraw @s ["",{"text": "[SMG]", "color": "green", "click_event": {"action": "run_command", "command": "/trigger mgs.player.config set 15"}, "hover_event": {"action": "show_text", "value": "Close quarters\nMain: MP7\nSecondary: GLOCK18"}},{"text":" Close quarters","color":"gray","italic":true}]
-tellraw @s ["",{"text": "[Shotgunner]", "color": "green", "click_event": {"action": "run_command", "command": "/trigger mgs.player.config set 16"}, "hover_event": {"action": "show_text", "value": "Breaching / CQB\nMain: SPAS12\nSecondary: M9"}},{"text":" Breaching / CQB","color":"gray","italic":true}]
-tellraw @s ["",{"text": "[Engineer]", "color": "green", "click_event": {"action": "run_command", "command": "/trigger mgs.player.config set 17"}, "hover_event": {"action": "show_text", "value": "Objective / demolitions\nMain: MP5\nSecondary: MAKAROV"}},{"text":" Objective / demolitions","color":"gray","italic":true}]
-tellraw @s ["",{"text": "[Medic]", "color": "green", "click_event": {"action": "run_command", "command": "/trigger mgs.player.config set 18"}, "hover_event": {"action": "show_text", "value": "Team sustain\nMain: FAMAS\nSecondary: M1911"}},{"text":" Team sustain","color":"gray","italic":true}]
-tellraw @s ["",{"text": "[Marksman]", "color": "green", "click_event": {"action": "run_command", "command": "/trigger mgs.player.config set 19"}, "hover_event": {"action": "show_text", "value": "Semi-auto precision\nMain: SVD\nSecondary: GLOCK17"}},{"text":" Semi-auto precision","color":"gray","italic":true}]
-tellraw @s ["",{"text": "[Heavy]", "color": "green", "click_event": {"action": "run_command", "command": "/trigger mgs.player.config set 20"}, "hover_event": {"action": "show_text", "value": "Armored suppressor\nMain: RPK\nSecondary: MAKAROV"}},{"text":" Armored suppressor","color":"gray","italic":true}]
-tellraw @s {"text":"============================================","color":"dark_gray"}
+# Initialize dialog structure
+data modify storage mgs:temp dialog set value {type:"minecraft:multi_action",title:{translate: "mgs.select_your_class",color:"gold",bold:true},body:[{type:"minecraft:plain_message",contents:{translate: "mgs.choose_a_class_for_multiplayer",color:"gray"}}],actions:[],columns:2,after_action:"close",exit_action:{label:"Cancel"}}
+
+# Copy class list for iteration
+data modify storage mgs:temp class_iter set from storage mgs:multiplayer classes_list
+
+# Build dialog actions recursively (passes first class data as macro args)
+execute if data storage mgs:temp class_iter[0] run function mgs:v5.0.0/multiplayer/build_class_btn with storage mgs:temp class_iter[0]
+
+# Show the completed dialog via macro
+function mgs:v5.0.0/multiplayer/show_dialog with storage mgs:temp
 

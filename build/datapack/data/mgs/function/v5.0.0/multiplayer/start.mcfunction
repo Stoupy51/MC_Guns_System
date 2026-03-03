@@ -25,9 +25,9 @@ function #mgs:multiplayer/register_classes
 # Signal game start
 function #mgs:multiplayer/on_game_start
 
-# Give class selectors to all players (those with a class get loadout, others get selectors)
+# Give loadout to players who already have a class, show dialog to those who don't
 execute as @a at @s if score @s mgs.mp.class matches 1.. run function mgs:v5.0.0/multiplayer/apply_class
-execute as @a at @s unless score @s mgs.mp.class matches 1.. run function mgs:v5.0.0/multiplayer/give_class_selectors
+execute as @a at @s unless score @s mgs.mp.class matches 1.. run function mgs:v5.0.0/multiplayer/select_class
 
 # Announce
 tellraw @a ["",{"translate": "mgs.game_started","color":"gold","bold":true},{"translate": "mgs.pick_your_class","color":"yellow"}]

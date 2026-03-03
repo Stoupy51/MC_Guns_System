@@ -28,14 +28,16 @@ execute if score @s mgs.zoom matches 1 run scoreboard players add @s mgs.zoom_ti
 # FOV marker: spawn IMMEDIATELY on zoom (no delay) for smooth FOV reduction
 # Uses color with B=0.15 (non-zero B + non-zero G) to distinguish from zoom/flash/spread markers
 # B=0.15 → B'∈[18-38] after randomization, safely above dim grayscale particles
-execute if score @s mgs.zoom matches 1 if score @s mgs.switch_cooldown matches 0 if items entity @s weapon.mainhand *[custom_data~{mgs:{scope_level:3}}] at @s anchored eyes run particle minecraft:dust{color:[0.02,0.02,0.15],scale:0.01} ^ ^ ^1 0 0 0 0 1 force @s
-execute if score @s mgs.zoom matches 1 if score @s mgs.switch_cooldown matches 0 if items entity @s weapon.mainhand *[custom_data~{mgs:{scope_level:4}}] at @s anchored eyes run particle minecraft:dust{color:[0.02,0.08,0.15],scale:0.01} ^ ^ ^1 0 0 0 0 1 force @s
-execute if score @s mgs.zoom matches 1 if score @s mgs.switch_cooldown matches 0 unless items entity @s weapon.mainhand *[custom_data~{mgs:{scope_level:3}}] unless items entity @s weapon.mainhand *[custom_data~{mgs:{scope_level:4}}] at @s anchored eyes run particle minecraft:dust{color:[0.02,0.25,0.15],scale:0.01} ^ ^ ^1 0 0 0 0 1 force @s
+scoreboard players set #scope_level mgs.data 0
+execute store result score #scope_level mgs.data run data get storage mgs:gun all.scope_level
+execute if score @s mgs.zoom matches 1 if score @s mgs.switch_cooldown matches 0 if score #scope_level mgs.data matches 3 at @s anchored eyes run particle minecraft:dust{color:[0.02,0.02,0.15],scale:0.01} ^ ^ ^1 0 0 0 0 1 force @s
+execute if score @s mgs.zoom matches 1 if score @s mgs.switch_cooldown matches 0 if score #scope_level mgs.data matches 4 at @s anchored eyes run particle minecraft:dust{color:[0.02,0.08,0.15],scale:0.01} ^ ^ ^1 0 0 0 0 1 force @s
+execute if score @s mgs.zoom matches 1 if score @s mgs.switch_cooldown matches 0 unless score #scope_level mgs.data matches 3 unless score #scope_level mgs.data matches 4 at @s anchored eyes run particle minecraft:dust{color:[0.02,0.25,0.15],scale:0.01} ^ ^ ^1 0 0 0 0 1 force @s
 
 # Scope zoom marker: spawn AFTER delay for barrel distortion effect
-execute if score @s mgs.zoom matches 1 if score @s mgs.switch_cooldown matches 0 if score @s mgs.zoom_timer matches 5.. if items entity @s weapon.mainhand *[custom_data~{mgs:{scope_level:3}}] at @s anchored eyes run particle minecraft:dust{color:[0.02,0.02,0.0],scale:0.01} ^ ^ ^1 0 0 0 0 1 force @s
-execute if score @s mgs.zoom matches 1 if score @s mgs.switch_cooldown matches 0 if score @s mgs.zoom_timer matches 5.. if items entity @s weapon.mainhand *[custom_data~{mgs:{scope_level:4}}] at @s anchored eyes run particle minecraft:dust{color:[0.02,0.08,0.0],scale:0.01} ^ ^ ^1 0 0 0 0 1 force @s
-execute if score @s mgs.zoom matches 1 if score @s mgs.switch_cooldown matches 0 if score @s mgs.zoom_timer matches 5.. unless items entity @s weapon.mainhand *[custom_data~{mgs:{scope_level:3}}] unless items entity @s weapon.mainhand *[custom_data~{mgs:{scope_level:4}}] at @s anchored eyes run particle minecraft:dust{color:[0.02,0.25,0.0],scale:0.01} ^ ^ ^1 0 0 0 0 1 force @s
+execute if score @s mgs.zoom matches 1 if score @s mgs.switch_cooldown matches 0 if score @s mgs.zoom_timer matches 5.. if score #scope_level mgs.data matches 3 at @s anchored eyes run particle minecraft:dust{color:[0.02,0.02,0.0],scale:0.01} ^ ^ ^1 0 0 0 0 1 force @s
+execute if score @s mgs.zoom matches 1 if score @s mgs.switch_cooldown matches 0 if score @s mgs.zoom_timer matches 5.. if score #scope_level mgs.data matches 4 at @s anchored eyes run particle minecraft:dust{color:[0.02,0.08,0.0],scale:0.01} ^ ^ ^1 0 0 0 0 1 force @s
+execute if score @s mgs.zoom matches 1 if score @s mgs.switch_cooldown matches 0 if score @s mgs.zoom_timer matches 5.. unless score #scope_level mgs.data matches 3 unless score #scope_level mgs.data matches 4 at @s anchored eyes run particle minecraft:dust{color:[0.02,0.25,0.0],scale:0.01} ^ ^ ^1 0 0 0 0 1 force @s
 
 # Crosshair spread marker: spawn when NOT zooming to indicate accuracy via crosshair gap
 execute unless score @s mgs.zoom matches 1 run function mgs:v5.0.0/zoom/crosshair_spread
