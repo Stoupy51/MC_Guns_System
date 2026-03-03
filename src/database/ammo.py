@@ -56,15 +56,22 @@ def main() -> None:
             )
 
     # Add consumable magazine items (cleared from inventory when depleted)
+    # These are individual bullets/shells that stack, each representing 1 round.
+    # When reloading, the system consumes items from the stack (not the whole stack).
     consumable_magazines: list[tuple[str, str, int]] = [
         ("rpg7", "rpg7_rocket", 1),
+        ("mosin", "mosin_bullet", 1),
+        ("m24", "m24_bullet", 1),
+        ("spas12", "spas12_shell", 1),
+        ("m500", "m500_shell", 1),
+        ("m590", "m590_shell", 1),
     ]
     for weapon, item_name, capacity in consumable_magazines:
         Item(
             id=item_name,
             override_model=json.loads(stp.read_file(get_model_path(item_name)).replace("mgs:item", f"{Mem.ctx.project_id}:item")),
             components={
-                "max_stack_size": 1,
+                "max_stack_size": 64,
                 "custom_data": {ns: {"magazine": True, "consumable": True, "weapon": weapon, "stats": {REMAINING_BULLETS: capacity, CAPACITY: capacity}}}
             }
         )

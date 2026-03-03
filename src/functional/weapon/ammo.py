@@ -1,4 +1,5 @@
 
+# ruff: noqa: E501
 # Imports
 from stewbeet import ItemModifier, JsonDict, Mem, set_json_encoder, write_versioned_function
 
@@ -70,7 +71,7 @@ execute if score #success {ns}.data matches 1 summon item_display run return run
 data remove storage {ns}:temp copy[0]
 scoreboard players add #index {ns}.data 1
 $execute if data storage {ns}:temp copy[0] run function {ns}:v{version}/ammo/search_{type_name}_loop {{"slot":"$(slot)"}}
-""")  # noqa: E501
+""")
 
     # Update ammo count in item lore
     write_versioned_function(f"ammo/found_{type_name}_line",
@@ -174,6 +175,14 @@ execute store result storage {ns}:temp {REMAINING_BULLETS} int 1 run scoreboard 
     }
     Mem.ctx.data[ns].item_modifiers[f"v{version}/update_ammo"] = set_json_encoder(ItemModifier(modifier), max_level=-1)
 
+    # Create item modifier to set consumable stack count from a score (#bullets in mgs.data)
+    consumable_count_modifier: JsonDict = {
+        "function": "minecraft:set_count",
+        "count": {"type": "minecraft:score", "target": {"type": "fixed", "name": "#bullets"}, "score": f"{ns}.data"},
+        "add": False
+    }
+    Mem.ctx.data[ns].item_modifiers[f"v{version}/set_consumable_count"] = set_json_encoder(ItemModifier(consumable_count_modifier), max_level=-1)
+
     # Update weapon's ammo count and lore
     write_versioned_function("ammo/set_count",
 f"""
@@ -250,7 +259,7 @@ execute if score #success {ns}.data matches 1 summon item_display run return run
 data remove storage {ns}:temp copy[0]
 scoreboard players add #index {ns}.data 1
 $execute if data storage {ns}:temp copy[0] run function {ns}:v{version}/ammo/search_lore_loop {{"slot":"$(slot)"}}
-""")  # noqa: E501
+""")
 
     # Update ammo count in weapon lore
     write_versioned_function("ammo/found_line",
@@ -364,8 +373,10 @@ scoreboard players operation #found_ammo {ns}.data += #to_take {ns}.data
 # Subtract from bullets
 scoreboard players operation #bullets {ns}.data -= #to_take {ns}.data
 
-# If the magazine is consumable and empty, clear the slot and return
+# If the magazine is consumable and fully depleted, clear the slot and return
+# If the magazine is consumable but still has items, update the stack count and return
 $execute if score #bullets {ns}.data matches ..0 if items entity @s $(slot) *[custom_data~{{{ns}:{{consumable:true}}}}] run return run function {ns}:v{version}/ammo/inventory/consume_slot {{slot:"$(slot)"}}
+$execute if score #bullets {ns}.data matches 1.. if items entity @s $(slot) *[custom_data~{{{ns}:{{consumable:true}}}}] run return run function {ns}:v{version}/ammo/inventory/consume_partial {{slot:"$(slot)"}}
 
 # Modify the magazine item
 $execute if score #bullets {ns}.data matches ..0 run function {ns}:v{version}/ammo/inventory/set_item_model {{slot:"$(slot)",{BASE_WEAPON}:"$({BASE_WEAPON})"}}
@@ -377,16 +388,26 @@ $function {ns}:v{version}/ammo/modify_mag_lore {{slot:"$(slot)"}}
 
 # Update player's ammo count
 scoreboard players operation @s {ns}.{REMAINING_BULLETS} = #found_ammo {ns}.data
-""")  # noqa: E501
+""")
     write_versioned_function("ammo/inventory/set_item_model", f"""
 $item modify entity @s $(slot) {{function:"minecraft:set_components", components:{{"minecraft:item_model":"{ns}:$({BASE_WEAPON})_mag_empty"}}}}
 """)
 
-    # Consume a consumable magazine (clear it from inventory)
+    # Consume a consumable magazine fully (clear it from inventory)
     write_versioned_function("ammo/inventory/consume_slot",
 f"""
-# Clear the consumable magazine from the slot
+# Clear the fully depleted consumable magazine from the slot
 $item replace entity @s $(slot) with air
+
+# Update player's ammo count
+scoreboard players operation @s {ns}.{REMAINING_BULLETS} = #found_ammo {ns}.data
+""")
+
+    # Partially consume a consumable magazine stack (reduce count, keep remaining)
+    write_versioned_function("ammo/inventory/consume_partial",
+f"""
+# Set the stack count to the remaining bullets (#bullets = remaining items in stack)
+$item modify entity @s $(slot) {ns}:v{version}/set_consumable_count
 
 # Update player's ammo count
 scoreboard players operation @s {ns}.{REMAINING_BULLETS} = #found_ammo {ns}.data
@@ -397,8 +418,10 @@ f"""
 # Copy item to entity
 $item replace entity @s contents from entity @p[tag={ns}.extracting_bullets] $(slot)
 
-# Get bullets
-execute store result score #bullets {ns}.data run data get entity @s item.components."minecraft:custom_data".{ns}.stats.{REMAINING_BULLETS}
+# For consumable magazines, the stack count IS the bullet count (each item = 1 bullet)
+execute if data entity @s item.components."minecraft:custom_data".{ns}.consumable store result score #bullets {ns}.data run data get entity @s item.count
+# For regular magazines, read remaining_bullets from custom data
+execute unless data entity @s item.components."minecraft:custom_data".{ns}.consumable store result score #bullets {ns}.data run data get entity @s item.components."minecraft:custom_data".{ns}.stats.{REMAINING_BULLETS}
 
 # Get magazine capacity
 execute store result storage {ns}:temp {CAPACITY} int 1 run data get entity @s item.components."minecraft:custom_data".{ns}.stats.{CAPACITY}

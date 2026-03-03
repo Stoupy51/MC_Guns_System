@@ -8,7 +8,7 @@
 # @args		slot (string)
 #
 
-# Clear the consumable magazine from the slot
+# Clear the fully depleted consumable magazine from the slot
 $item replace entity @s $(slot) with air
 
 # Update player's ammo count

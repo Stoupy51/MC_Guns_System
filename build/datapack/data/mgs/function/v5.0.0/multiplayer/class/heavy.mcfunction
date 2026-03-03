@@ -6,21 +6,20 @@
 
 # Apply class: Heavy - Armored suppressor
 clear @s
+# Primary weapon → hotbar.0
+loot replace entity @s hotbar.0 loot mgs:i/rpk
 
-# Give main weapon
-loot give @s loot mgs:i/rpk
+# Secondary weapon → hotbar.1
+loot replace entity @s hotbar.1 loot mgs:i/makarov
 
-# Give secondary weapon
-loot give @s loot mgs:i/makarov
+# Equipment → hotbar.8, hotbar.7, ...
+loot replace entity @s hotbar.8 loot mgs:i/frag_grenade
+item modify entity @s hotbar.8 {"function":"minecraft:set_count","count":2,"add":false}
 
-# Give equipment
-loot give @s loot mgs:i/frag_grenade
-loot give @s loot mgs:i/frag_grenade
-
-# Give magazines
-loot give @s loot mgs:i/rpk_mag
-loot give @s loot mgs:i/rpk_mag
-loot give @s loot mgs:i/rpk_mag
-loot give @s loot mgs:i/makarov_mag
-loot give @s loot mgs:i/makarov_mag
+# Magazines → inventory.0, inventory.1, ...
+loot replace entity @s inventory.0 loot mgs:i/rpk_mag
+loot replace entity @s inventory.1 loot mgs:i/rpk_mag
+loot replace entity @s inventory.2 loot mgs:i/rpk_mag
+loot replace entity @s inventory.3 loot mgs:i/makarov_mag
+loot replace entity @s inventory.4 loot mgs:i/makarov_mag
 

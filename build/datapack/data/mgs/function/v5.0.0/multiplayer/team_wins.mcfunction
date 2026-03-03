@@ -12,5 +12,5 @@ $tellraw @a ["",{"text":"🏆 ","color":"gold"},{"text":"$(team) Team Wins!","co
 tellraw @a ["",{"translate": "mgs.final_score_red","color":"white"},{"score":{"name":"#red","objective":"mgs.mp.team"},"color":"red"},{"translate": "mgs.vs_blue","color":"gray"},{"score":{"name":"#blue","objective":"mgs.mp.team"},"color":"blue"}]
 
 # End game
-function mgs:multiplayer/stop
+function mgs:v5.0.0/multiplayer/stop
 
