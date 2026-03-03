@@ -8,5 +8,5 @@
 # @args		secondary_full (unknown)
 #
 
-$data modify storage mgs:temp _build.secondary_data.fixed_slots[0].loot set value "mgs:i/$(secondary_full)"
+$data modify storage mgs:temp _build.secondary_data.gun_slot.loot set value "mgs:i/$(secondary_full)"
 

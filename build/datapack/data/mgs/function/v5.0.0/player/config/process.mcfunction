@@ -41,14 +41,27 @@ execute if score @s mgs.player.config matches 230..234 run function mgs:v5.0.0/m
 execute if score @s mgs.player.config matches 250..258 run function mgs:v5.0.0/multiplayer/editor/pick_secondary
 # 260-264 = Editor: pick secondary scope
 execute if score @s mgs.player.config matches 260..264 run function mgs:v5.0.0/multiplayer/editor/pick_secondary_scope
-# 300-309 = Editor: pick equipment preset
-execute if score @s mgs.player.config matches 300..309 run function mgs:v5.0.0/multiplayer/editor/pick_equipment
 # 350-351 = Editor: save loadout (350=public, 351=private)
 execute if score @s mgs.player.config matches 350..351 run function mgs:v5.0.0/multiplayer/editor/save
-# 360 = Back to secondary weapon dialog
-execute if score @s mgs.player.config matches 360 run function mgs:v5.0.0/multiplayer/editor/show_secondary_dialog
-# 370 = Back to equipment dialog
-execute if score @s mgs.player.config matches 370 run function mgs:v5.0.0/multiplayer/editor/show_equipment_dialog
+# 360 = Back to secondary weapon dialog (refunds secondary weapon + scope costs)
+execute if score @s mgs.player.config matches 360 run function mgs:v5.0.0/multiplayer/editor/back_to_secondary
+# 370 = Back from equipment area: if in perks step (9) refund equip_slot2+perks, else refund equip_slot1 and go to slot1 dialog
+execute if score @s mgs.player.config matches 370 run execute if score @s mgs.mp.edit_step matches 9 run function mgs:v5.0.0/multiplayer/editor/back_from_perks
+execute if score @s mgs.player.config matches 370 run execute unless score @s mgs.mp.edit_step matches 9 run function mgs:v5.0.0/multiplayer/editor/back_to_equip1
+# 380 = Back to perks dialog
+execute if score @s mgs.player.config matches 380 run function mgs:v5.0.0/multiplayer/editor/show_perks_dialog
+# 391-395 = Editor: pick primary mag count (1-5)
+execute if score @s mgs.player.config matches 391..395 run function mgs:v5.0.0/multiplayer/editor/pick_primary_mags
+# 396-401 = Editor: pick secondary mag count (0-5)
+execute if score @s mgs.player.config matches 396..401 run function mgs:v5.0.0/multiplayer/editor/pick_secondary_mags
+# 410-412 = Editor: toggle perk
+execute if score @s mgs.player.config matches 410..412 run function mgs:v5.0.0/multiplayer/editor/pick_perk
+# 450 = Editor: done selecting perks → show confirm
+execute if score @s mgs.player.config matches 450 run function mgs:v5.0.0/multiplayer/editor/perks_done
+# 460-464 = Editor: pick equipment slot 1 grenade
+execute if score @s mgs.player.config matches 460..464 run function mgs:v5.0.0/multiplayer/editor/pick_equip_slot1
+# 470-474 = Editor: pick equipment slot 2 grenade
+execute if score @s mgs.player.config matches 470..474 run function mgs:v5.0.0/multiplayer/editor/pick_equip_slot2
 # === Custom Loadout Actions ===
 # 1000-1099 = Select/use a custom loadout
 execute if score @s mgs.player.config matches 1000..1099 run function mgs:v5.0.0/multiplayer/custom/select

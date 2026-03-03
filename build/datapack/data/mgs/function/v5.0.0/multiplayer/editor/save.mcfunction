@@ -38,7 +38,7 @@ execute if data storage mgs:temp editor{primary:"m500"} run data modify storage 
 execute if data storage mgs:temp editor{primary:"m590"} run data modify storage mgs:temp _build.primary_data set from storage mgs:multiplayer primary_slot_table[21]
 execute if data storage mgs:temp editor{primary:"rpg7"} run data modify storage mgs:temp _build.primary_data set from storage mgs:multiplayer primary_slot_table[22]
 
-# Look up secondary weapon slot data (skip if no secondary)
+# Look up secondary weapon slot data
 execute if data storage mgs:temp editor{secondary:"m1911"} run data modify storage mgs:temp _build.secondary_data set from storage mgs:multiplayer secondary_slot_table[0]
 execute if data storage mgs:temp editor{secondary:"m9"} run data modify storage mgs:temp _build.secondary_data set from storage mgs:multiplayer secondary_slot_table[1]
 execute if data storage mgs:temp editor{secondary:"deagle"} run data modify storage mgs:temp _build.secondary_data set from storage mgs:multiplayer secondary_slot_table[2]
@@ -47,21 +47,8 @@ execute if data storage mgs:temp editor{secondary:"glock17"} run data modify sto
 execute if data storage mgs:temp editor{secondary:"glock18"} run data modify storage mgs:temp _build.secondary_data set from storage mgs:multiplayer secondary_slot_table[5]
 execute if data storage mgs:temp editor{secondary:"vz61"} run data modify storage mgs:temp _build.secondary_data set from storage mgs:multiplayer secondary_slot_table[6]
 
-# Look up equipment slot data
-execute if data storage mgs:temp editor{equipment_idx:0} run data modify storage mgs:temp _build.equipment_data set from storage mgs:multiplayer equipment_slot_table[0]
-execute if data storage mgs:temp editor{equipment_idx:1} run data modify storage mgs:temp _build.equipment_data set from storage mgs:multiplayer equipment_slot_table[1]
-execute if data storage mgs:temp editor{equipment_idx:2} run data modify storage mgs:temp _build.equipment_data set from storage mgs:multiplayer equipment_slot_table[2]
-execute if data storage mgs:temp editor{equipment_idx:3} run data modify storage mgs:temp _build.equipment_data set from storage mgs:multiplayer equipment_slot_table[3]
-execute if data storage mgs:temp editor{equipment_idx:4} run data modify storage mgs:temp _build.equipment_data set from storage mgs:multiplayer equipment_slot_table[4]
-execute if data storage mgs:temp editor{equipment_idx:5} run data modify storage mgs:temp _build.equipment_data set from storage mgs:multiplayer equipment_slot_table[5]
-execute if data storage mgs:temp editor{equipment_idx:6} run data modify storage mgs:temp _build.equipment_data set from storage mgs:multiplayer equipment_slot_table[6]
-execute if data storage mgs:temp editor{equipment_idx:7} run data modify storage mgs:temp _build.equipment_data set from storage mgs:multiplayer equipment_slot_table[7]
-execute if data storage mgs:temp editor{equipment_idx:8} run data modify storage mgs:temp _build.equipment_data set from storage mgs:multiplayer equipment_slot_table[8]
-execute if data storage mgs:temp editor{equipment_idx:9} run data modify storage mgs:temp _build.equipment_data set from storage mgs:multiplayer equipment_slot_table[9]
-
-# Build the final loadout entry
-# Start with base structure
-data modify storage mgs:temp _new_loadout set value {id:0,owner_pid:0,owner_name:"",name:"",public:0b,likes:0,main_gun:"",secondary_gun:"",slots:[]}
+# Build the new loadout entry (include new Pick-10 fields)
+data modify storage mgs:temp _new_loadout set value {id:0,owner_pid:0,owner_name:"",name:"",public:0b,likes:0,main_gun:"",secondary_gun:"",primary_mag_count:1,secondary_mag_count:0,equip_slot1:"",equip_slot2:"",perks:[],slots:[]}
 
 # Set loadout ID from counter
 execute store result storage mgs:temp _new_loadout.id int 1 run data get storage mgs:multiplayer next_loadout_id
@@ -73,39 +60,49 @@ execute store result storage mgs:multiplayer next_loadout_id int 1 run scoreboar
 
 # Set owner info
 execute store result storage mgs:temp _new_loadout.owner_pid int 1 run scoreboard players get @s mgs.mp.pid
-# Owner name is set by a macro call (pass player display name via team prefix trick)
 
-# Set weapon info (store the full scope-modified weapon IDs)
+# Set weapon IDs (scope-modified)
 data modify storage mgs:temp _new_loadout.main_gun set from storage mgs:temp editor.primary_full
 data modify storage mgs:temp _new_loadout.secondary_gun set from storage mgs:temp editor.secondary_full
+
+# Copy Pick-10 fields from editor
+data modify storage mgs:temp _new_loadout.primary_mag_count set from storage mgs:temp editor.primary_mag_count
+data modify storage mgs:temp _new_loadout.secondary_mag_count set from storage mgs:temp editor.secondary_mag_count
+data modify storage mgs:temp _new_loadout.equip_slot1 set from storage mgs:temp editor.equip_slot1
+data modify storage mgs:temp _new_loadout.equip_slot2 set from storage mgs:temp editor.equip_slot2
+data modify storage mgs:temp _new_loadout.perks set from storage mgs:temp editor.perks
 
 # Set visibility
 execute if score #cl_public mgs.data matches 1 run data modify storage mgs:temp _new_loadout.public set value 1b
 
-# Override weapon loot entries with scope-modified weapon IDs (e.g. "ak47_3" instead of "ak47")
+# Override weapon loot entries with scope-modified IDs
 function mgs:v5.0.0/multiplayer/editor/fix_primary_loot with storage mgs:temp editor
 execute if data storage mgs:temp _build.secondary_data run function mgs:v5.0.0/multiplayer/editor/fix_secondary_loot with storage mgs:temp editor
 
-# Build the combined slot list: primary slots + secondary slots + equipment slots
-# 1. Copy primary weapon & magazine slots
-data modify storage mgs:temp _new_loadout.slots set from storage mgs:temp _build.primary_data.slots
+# Build slot list
+# 1. Primary weapon (hotbar.0)
+data modify storage mgs:temp _new_loadout.slots append from storage mgs:temp _build.primary_data.gun_slot
 
-# 2. Append secondary gun slot (hotbar.1)
-execute if data storage mgs:temp _build.secondary_data run data modify storage mgs:temp _new_loadout.slots append from storage mgs:temp _build.secondary_data.fixed_slots[0]
+# 2. Secondary weapon (hotbar.1) — if selected
+execute if data storage mgs:temp _build.secondary_data run data modify storage mgs:temp _new_loadout.slots append from storage mgs:temp _build.secondary_data.gun_slot
 
-# 3. Append secondary magazine slots (need to fix inventory slot numbers)
-# Get next_inv_slot from primary data to know where secondary mags start
-execute store result score #inv_slot mgs.data run data get storage mgs:temp _build.primary_data.next_inv_slot
-# Use recursive function to append secondary mags with correct slot numbers
-execute if data storage mgs:temp _build.secondary_data.mag_slots[0] run function mgs:v5.0.0/multiplayer/editor/append_sec_mags
+# 3. Equipment slots (hotbar.8 and hotbar.7)
+execute unless data storage mgs:temp editor{equip_slot1:""} run function mgs:v5.0.0/multiplayer/editor/append_equip1 with storage mgs:temp editor
+execute unless data storage mgs:temp editor{equip_slot2:""} run function mgs:v5.0.0/multiplayer/editor/append_equip2 with storage mgs:temp editor
 
-# 4. Append equipment slots
-execute if data storage mgs:temp _build.equipment_data.slots[0] run function mgs:v5.0.0/multiplayer/editor/append_equip_slots
+# 4. Primary magazine slots (inventory slots starting at 0)
+scoreboard players set #inv_slot mgs.data 0
+data modify storage mgs:temp _mag_data set from storage mgs:temp _build.primary_data
+execute store result score #pmag_count mgs.data run data get storage mgs:temp editor.primary_mag_count
+execute if score #pmag_count mgs.data matches 1.. run function mgs:v5.0.0/multiplayer/editor/append_mag_slots
 
-# Auto-generate loadout name: "Primary + Secondary" or just "Primary"
+# 5. Secondary magazine slots (continuing from #inv_slot)
+execute if data storage mgs:temp _build.secondary_data run function mgs:v5.0.0/multiplayer/editor/start_secondary_mags
+
+# Auto-name the loadout
 function mgs:v5.0.0/multiplayer/editor/set_name with storage mgs:temp editor
 
-# Append to the custom loadouts list
+# Append to custom loadouts list
 data modify storage mgs:multiplayer custom_loadouts append from storage mgs:temp _new_loadout
 
 # Reset editor state

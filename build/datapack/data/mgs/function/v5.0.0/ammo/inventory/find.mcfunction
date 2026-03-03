@@ -57,7 +57,7 @@ $execute if score #found_ammo mgs.data < #capacity mgs.data if items entity @s p
 $execute if score #found_ammo mgs.data < #capacity mgs.data if items entity @s player.crafting.2 *[custom_data~{mgs:{"magazine":true,"weapon":"$(base_weapon)"}}] run function mgs:v5.0.0/ammo/inventory/process_slot {slot:"player.crafting.2",base_weapon:"$(base_weapon)"}
 $execute if score #found_ammo mgs.data < #capacity mgs.data if items entity @s player.crafting.3 *[custom_data~{mgs:{"magazine":true,"weapon":"$(base_weapon)"}}] run function mgs:v5.0.0/ammo/inventory/process_slot {slot:"player.crafting.3",base_weapon:"$(base_weapon)"}
 
-# If found ammo, return success, else return fail
-execute unless score @s mgs.remaining_bullets = #initial_ammo mgs.data run return 0
+# If found ammo, compute reserve ammo and return success, else return fail
+execute unless score @s mgs.remaining_bullets = #initial_ammo mgs.data run return run function mgs:v5.0.0/ammo/compute_reserve
 return fail
 

@@ -9,7 +9,7 @@
 # Decrease pending clicks by 1
 scoreboard players remove @s mgs.pending_clicks 1
 
-# If player stopped right clicking for 3 second, we update the item lore
+# If player stopped right clicking for 3 second, we update the item lore and reserve ammo
 execute if score @s mgs.pending_clicks matches -60 if data storage mgs:gun all.gun run function mgs:v5.0.0/ammo/modify_lore {slot:"weapon.mainhand"}
 
 # Stop here is weapon cooldown OR pending clicks if negative

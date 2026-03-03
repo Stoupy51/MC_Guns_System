@@ -5,6 +5,9 @@ from stewbeet import ItemModifier, JsonDict, Mem, set_json_encoder, write_versio
 
 from ...config.stats import ALL_SLOTS, BASE_WEAPON, CAPACITY, RELOAD_TIME, REMAINING_BULLETS
 
+# Magazine IDs that are consumable (stack count = bullet count)
+CONSUMABLE_MAG_DATA_KEY = "consumable"
+
 
 def create_lore_functions(type_name: str, tag: str, remaining_source: str, capacity_source: str) -> None:
     """ Create lore modification functions for weapons or magazines.
@@ -349,8 +352,8 @@ scoreboard players operation #found_ammo {ns}.data = #initial_ammo {ns}.data
 # Check all slots for magazines
 {slot_checks}
 
-# If found ammo, return success, else return fail
-execute unless score @s {ns}.{REMAINING_BULLETS} = #initial_ammo {ns}.data run return 0
+# If found ammo, compute reserve ammo and return success, else return fail
+execute unless score @s {ns}.{REMAINING_BULLETS} = #initial_ammo {ns}.data run return run function {ns}:v{version}/ammo/compute_reserve
 return fail
 """)
 
@@ -437,5 +440,66 @@ execute if data storage {ns}:gun all.gun run function {ns}:v{version}/ammo/modif
 
 # Remove reloading tag
 tag @s remove {ns}.reloading
+""")
+
+    ## ============================
+    ## compute_reserve — Sum all magazine bullets in inventory for the current weapon
+    ## Only counts magazines whose base_weapon matches the gun in hand
+    ## Called on reload and when player is idle (~60 ticks without shooting)
+    ## ============================
+    # Build per-slot check lines: for each inventory/hotbar slot, if it contains a matching
+    # magazine (but skip the mainhand weapon itself), extract and add bullet count.
+    reserve_slot_checks: str = ""
+    for slot in ALL_SLOTS:
+        if slot == "weapon.mainhand":
+            continue
+        reserve_slot_checks += (
+            f"$execute if items entity @s {slot} *[custom_data~{{{ns}:{{magazine:true,weapon:\"$({BASE_WEAPON})\"}}}}] run "
+            f"function {ns}:v{version}/ammo/reserve/extract_slot {{slot:\"{slot}\"}}\n"
+        )
+    write_versioned_function("ammo/compute_reserve",
+f"""
+# Skip if not holding a gun
+execute unless data storage {ns}:gun all.gun run return fail
+
+# Reset reserve counter
+scoreboard players set @s {ns}.reserve_ammo 0
+
+# Sum bullets from all matching magazine slots (runs as ticking player)
+function {ns}:v{version}/ammo/reserve/scan with storage {ns}:gun all.stats
+return 0
+""")
+
+    write_versioned_function("ammo/reserve/scan",
+f"""
+# @s = player, $(base_weapon) = current gun id
+{reserve_slot_checks}
+""")
+
+    write_versioned_function("ammo/reserve/extract_slot",
+f"""
+# Called for each slot containing a matching magazine
+# Spawn temp entity to read item data
+tag @s add {ns}.reading_reserve
+$execute summon item_display run function {ns}:v{version}/ammo/reserve/read_item {{slot:"$(slot)"}}
+tag @s remove {ns}.reading_reserve
+""")
+
+    write_versioned_function("ammo/reserve/read_item",
+f"""
+# Copy item to entity
+$item replace entity @s contents from entity @p[tag={ns}.reading_reserve] $(slot)
+
+# Consumable: stack count = bullet count
+execute if data entity @s item.components."minecraft:custom_data".{ns}.consumable store result score #mag_bullets {ns}.data run data get entity @s item.count
+
+# Non-consumable: read remaining_bullets from custom data
+execute unless data entity @s item.components."minecraft:custom_data".{ns}.consumable store result score #mag_bullets {ns}.data run data get entity @s item.components."minecraft:custom_data".{ns}.stats.{REMAINING_BULLETS}
+
+# Add to reserve
+scoreboard players operation @p[tag={ns}.reading_reserve] {ns}.reserve_ammo += #mag_bullets {ns}.data
+
+# Kill entity
+kill @s
 """)
 

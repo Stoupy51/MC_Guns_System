@@ -130,6 +130,18 @@ TRIG_SAVE_PUBLIC          = 350  # Save loadout as public
 TRIG_SAVE_PRIVATE         = 351  # Save loadout as private
 TRIG_BACK_SECONDARY       = 360  # Back to secondary weapon dialog
 TRIG_BACK_EQUIPMENT       = 370  # Back to equipment dialog
+TRIG_BACK_PERKS           = 380  # Back to perks dialog
+TRIG_PRIMARY_MAGS_BASE    = 390  # 390 + count (1-5) → pick primary mag count (391-395)
+TRIG_SECONDARY_MAGS_BASE  = 396  # 396 + count (0-5) → pick secondary mag count (396-401)
+
+# Perk selection triggers: base + perk index
+TRIG_PERK_BASE        = 410  # 410 + perk_index → toggle perk (410-414 for 5 perks)
+TRIG_PERKS_DONE       = 450  # Done selecting perks → go to confirm
+
+# Grenade slot selection triggers
+TRIG_EQUIP_SLOT1_BASE = 460  # 460 + grenade_index (0=none,1=frag,2=semtex,3=flash,4=smoke)
+TRIG_EQUIP_SLOT2_BASE = 470  # 470 + grenade_index (0=none,1=frag,2=semtex,3=flash,4=smoke)
+
 TRIG_SELECT_BASE      = 1000 # 1000 + loadout_id → use as active class
 TRIG_FAVORITE_BASE    = 1100 # 1100 + loadout_id → toggle favorite
 TRIG_LIKE_BASE        = 1200 # 1200 + loadout_id → like loadout
@@ -138,10 +150,46 @@ TRIG_TOGGLE_VIS_BASE  = 1400 # 1400 + loadout_id → toggle public/private
 TRIG_SET_DEFAULT_BASE = 1500 # 1500 + loadout_id → set as default
 TRIG_UNSET_DEFAULT    = 1599 # Unset default loadout
 
+# ============================================================
+# Pick-10 System Constants
+# ============================================================
+PICK10_TOTAL = 10  # Total points budget
+
+# Point costs (each item costs this many points)
+COST_PRIMARY_WEAPON    = 1  # The primary weapon itself
+COST_PRIMARY_SCOPE     = 1  # Any scope on primary (iron sights = 0)
+COST_PRIMARY_MAG       = 1  # Per magazine (base 1 mag included separately)
+COST_SECONDARY_WEAPON  = 1  # The secondary weapon itself
+COST_SECONDARY_SCOPE   = 1  # Any scope on secondary (iron sights = 0)
+COST_SECONDARY_MAG     = 1  # Per magazine
+COST_GRENADE           = 1  # Per grenade (slot 1 and slot 2)
+COST_PERK              = 1  # Per perk
+
+# Grenade types: (item_id, display_name)
+GRENADE_TYPES: list[tuple[str, str]] = [
+	("",              "None"),
+	("frag_grenade",  "Frag Grenade"),
+	("semtex",        "Semtex"),
+	("flash_grenade", "Flash"),
+	("smoke_grenade", "Smoke"),
+]
+
+# Perks: (perk_id, display_name, description, score_name)
+# score_name is the mgs.special.* scoreboard used for each perk effect
+PERKS: list[tuple[str, str, str, str]] = [
+	("quick_reload",   "Sleight of Hand", "Reload 50% faster",       "quick_reload"),
+	("quick_swap",     "Fast Hands",      "Swap weapons 50% faster", "quick_swap"),
+	("infinite_ammo",  "Overkill",        "Unlimited ammo for 30s on spawn", "infinite_ammo"),
+]
+
+# Max number of perks selectable (limited further by available points)
+MAX_PERKS = 3
+
 
 def build_custom_loadout_slots_snbt(ns: str, primary_id: str, secondary_id: str, equipment_preset_idx: int) -> str:
 	"""Build the slots SNBT array from weapon choices (same format as default class slots).
-	Returns the SNBT string for the slots array content (without outer brackets)."""
+	Returns the SNBT string for the slots array content (without outer brackets).
+	LEGACY: used for default classes only. Custom loadouts use build_custom_loadout_slots_new."""
 	slots: list[str] = []
 
 	def add_slot(slot: str, loot: str, count: int = 1, consumable: bool = False, bullets: int = 0) -> None:
@@ -190,3 +238,74 @@ def build_custom_loadout_slots_snbt(ns: str, primary_id: str, secondary_id: str,
 				inv_slot += 1
 
 	return ",".join(slots)
+
+
+def build_custom_loadout_slots_pick10(
+	ns: str,
+	primary_full: str,
+	primary_mag_id: str,
+	primary_mag_count: int,
+	secondary_full: str,
+	secondary_mag_id: str,
+	secondary_mag_count: int,
+	equip_slot1: str,
+	equip_slot2: str,
+) -> str:
+	"""Build the slots SNBT for a Pick-10 custom loadout.
+	primary_full / secondary_full are the scope-modified IDs (e.g. 'ak47_3').
+	mag counts are chosen by player. equip_slot1/2 are item IDs or '' for none."""
+	slots: list[str] = []
+	inv_slot = 0
+
+	def add_slot(slot: str, loot: str, count: int = 1, consumable: bool = False, bullets: int = 0) -> None:
+		slots.append(
+			f'{{slot:"{slot}",loot:"{ns}:i/{loot}",count:{count},consumable:{"1b" if consumable else "0b"},bullets:{bullets}}}'
+		)
+
+	# Primary weapon → hotbar.0
+	add_slot("hotbar.0", primary_full)
+
+	# Secondary weapon → hotbar.1 (if selected)
+	if secondary_full:
+		add_slot("hotbar.1", secondary_full)
+
+	# Equipment slots → hotbar.8 first, then hotbar.7
+	equip_hotbar = 8
+	if equip_slot1:
+		add_slot(f"hotbar.{equip_hotbar}", equip_slot1, count=1)
+		equip_hotbar -= 1
+	if equip_slot2:
+		add_slot(f"hotbar.{equip_hotbar}", equip_slot2, count=1)
+
+	# Primary magazines → inventory.0, inventory.1, ...
+	if primary_mag_id in CONSUMABLE_MAGS:
+		# Consumable: 1 slot with count = bullets per stack (default from primary data)
+		primary_base = primary_full.rstrip("_1234")
+		if primary_base in PRIMARY_INDEX:
+			bullets = PRIMARY_WEAPONS[PRIMARY_INDEX[primary_base]][4]
+		else:
+			bullets = PRIMARY_WEAPONS[PRIMARY_INDEX[primary_full]][4]
+		add_slot(f"inventory.{inv_slot}", primary_mag_id, consumable=True, bullets=bullets)
+		inv_slot += 1
+	else:
+		for _ in range(primary_mag_count):
+			add_slot(f"inventory.{inv_slot}", primary_mag_id)
+			inv_slot += 1
+
+	# Secondary magazines → continuing inventory slots
+	if secondary_full and secondary_mag_id:
+		if secondary_mag_id in CONSUMABLE_MAGS:
+			secondary_base = secondary_full.rstrip("_1234")
+			if secondary_base in SECONDARY_INDEX:
+				bullets = SECONDARY_WEAPONS[SECONDARY_INDEX[secondary_base]][3]
+			else:
+				bullets = SECONDARY_WEAPONS[SECONDARY_INDEX[secondary_full]][3]
+			add_slot(f"inventory.{inv_slot}", secondary_mag_id, consumable=True, bullets=bullets)
+			inv_slot += 1
+		else:
+			for _ in range(secondary_mag_count):
+				add_slot(f"inventory.{inv_slot}", secondary_mag_id)
+				inv_slot += 1
+
+	return ",".join(slots)
+

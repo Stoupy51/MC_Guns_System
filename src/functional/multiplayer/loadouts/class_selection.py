@@ -133,7 +133,7 @@ data remove storage {ns}:temp _find_iter[0]
 execute if data storage {ns}:temp _find_iter[0] run function {ns}:v{version}/multiplayer/apply_custom_found
 """)
 
-	## apply_custom_match — Apply the found loadout
+	## apply_custom_match — Apply the found loadout (slots + perks)
 	write_versioned_function("multiplayer/apply_custom_match",
 f"""
 # Copy found loadout's slots to the format expected by apply_class_dynamic
@@ -142,6 +142,24 @@ data modify storage {ns}:temp current_class.slots set from storage {ns}:temp _fi
 
 # Apply the loadout (clears inventory and gives items)
 function {ns}:v{version}/multiplayer/apply_class_dynamic
+
+# Copy the loadout compound to a flat temp for perk checks (since [0]{{filter}} is invalid syntax)
+data modify storage {ns}:temp _cur_loadout set from storage {ns}:temp _find_iter[0]
+
+# Apply perks from the loadout (new Pick-10 system)
+# Passive perks: set scoreboard scores that are checked by the game logic
+execute if data storage {ns}:temp _cur_loadout{{perks:["quick_reload"]}} run scoreboard players set @s {ns}.special.quick_reload 1
+execute unless data storage {ns}:temp _cur_loadout{{perks:["quick_reload"]}} run scoreboard players set @s {ns}.special.quick_reload 0
+execute if data storage {ns}:temp _cur_loadout{{perks:["quick_swap"]}} run scoreboard players set @s {ns}.special.quick_swap 1
+execute unless data storage {ns}:temp _cur_loadout{{perks:["quick_swap"]}} run scoreboard players set @s {ns}.special.quick_swap 0
+
+# Timed perks: grant limited-duration buff (set score to timer ticks)
+# Overkill (infinite_ammo): unlimited ammo for 30 seconds (600 ticks)
+execute if data storage {ns}:temp _cur_loadout{{perks:["infinite_ammo"]}} run scoreboard players set @s {ns}.special.infinite_ammo 600
+execute unless data storage {ns}:temp _cur_loadout{{perks:["infinite_ammo"]}} run scoreboard players set @s {ns}.special.infinite_ammo 0
+# Assassin (instant_kill): one-shot kill for 10 seconds (200 ticks)
+execute if data storage {ns}:temp _cur_loadout{{perks:["instant_kill"]}} run scoreboard players set @s {ns}.special.instant_kill 200
+execute unless data storage {ns}:temp _cur_loadout{{perks:["instant_kill"]}} run scoreboard players set @s {ns}.special.instant_kill 0
 """)
 
 	## ============================

@@ -57,6 +57,9 @@ execute unless score #cooldown {ns}.data <= @s {ns}.switch_cooldown run scoreboa
 # Force weapon switch animation
 function {ns}:v{version}/switch/force_switch_animation
 
+# Recompute reserve ammo for the newly equipped weapon
+function {ns}:v{version}/ammo/compute_reserve
+
 # Signal: on_switch (@s = player, weapon data in mgs:signals)
 data modify storage {ns}:signals on_switch set value {{}}
 data modify storage {ns}:signals on_switch.weapon set from storage {ns}:gun all

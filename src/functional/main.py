@@ -61,6 +61,10 @@ scoreboard objectives add {ns}.last_selected dummy
 # Tracks the current amount of bullets in the selected weapon
 scoreboard objectives add {ns}.{REMAINING_BULLETS} dummy
 
+# Tracks the total reserve ammo (sum of all magazine bullets in inventory)
+# Updated on reload and when player is idle (not shooting for ~60 ticks)
+scoreboard objectives add {ns}.reserve_ammo dummy
+
 # Tracks the room acoustics level for crack sound effects
 scoreboard objectives add {ns}.acoustics_level dummy
 
