@@ -8,18 +8,21 @@
 Credits for resources: MGS 4.2 by TheBradqq
 
 # TODO:
-- Add missing "magazines", take them from "based_of" old code
-  - Those are consumable magazines (1 bullet) but stack size! Need to support this (currently not right, the RPG is consuming a max_stack_size 99 into one go to reload one bullet)
-  - { "predicate": { "custom_model_data":430 }, "model": "mgs:gun/mosin_bullet" }
-  - { "predicate": { "custom_model_data":440 }, "model": "mgs:gun/m24_bullet" },
-  - { "predicate": { "custom_model_data":310 }, "model": "mgs:gun/spas12_shell" },
-  - { "predicate": { "custom_model_data":320 }, "model": "mgs:gun/m500_shell" },
-  - { "predicate": { "custom_model_data":330 }, "model": "mgs:gun/m590_shell" },
 - Compatibility & Developement:
-  - Add a multiplayer mode (mgs:multiplayer/*):
-    - Gamemodes like team deathmatch, capture the flag, free for all, etc.
+  - Multiplayer mode:
+    - Dynamic classes definitions:
+      - [X] All in storage
+      - [X] Using minecraft /dialog system
+      - [X] Class selection GUI (using /dialog)
+      - [X] Default loadout
+      - [ ] Player custom loadouts (everything dynamic, without being OP so using /trigger)
+        - [ ] Players needs to be able to create their own custom loadouts (like Black Ops 2 pick 10 system) and save them to use in multiplayer matches.
+        - [ ] For each class they made, they can configure if it's public (available for everyone) or private (only for them).
+        - [ ] People can navigate through all custom classes, favorite them, like them, etc. (using /dialog)
+        - [ ] They can filter & sort based on their favorites, likes, the most used, etc.
+        - [ ] They can also set one of the custom classes as their default class, that will be automatically selected when they join a multiplayer match.
     - Dynamic map definitions (spawning points in storage, called on load with function tag #mgs:multiplayer/register_maps etc.)
-    - Dynamic classes definitions (in storage, called on load with function tag #mgs:multiplayer/register_classes etc. With default classes before calling the function tag so if nobody uses it, there is still something!)
+    - Gamemodes like team deathmatch, capture the flag, free for all, etc.
   - Add a whole zombies mode (mgs:zombies/*):
     - Dynamic map definitions (in storage, called on load with function tag #mgs:zombies/register_maps etc.) with:
       - Spawning points for players, zombies
