@@ -1,5 +1,5 @@
 
-#> mgs:multiplayer/select_class
+#> mgs:v5.0.0/multiplayer/select_class
 #
 # @within	???
 #

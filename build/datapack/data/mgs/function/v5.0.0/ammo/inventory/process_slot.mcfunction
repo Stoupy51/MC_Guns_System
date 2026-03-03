@@ -67,8 +67,10 @@ scoreboard players operation #found_ammo mgs.data += #to_take mgs.data
 # Subtract from bullets
 scoreboard players operation #bullets mgs.data -= #to_take mgs.data
 
-# If the magazine is consumable and empty, clear the slot and return
+# If the magazine is consumable and fully depleted, clear the slot and return
+# If the magazine is consumable but still has items, update the stack count and return
 $execute if score #bullets mgs.data matches ..0 if items entity @s $(slot) *[custom_data~{mgs:{consumable:true}}] run return run function mgs:v5.0.0/ammo/inventory/consume_slot {slot:"$(slot)"}
+$execute if score #bullets mgs.data matches 1.. if items entity @s $(slot) *[custom_data~{mgs:{consumable:true}}] run return run function mgs:v5.0.0/ammo/inventory/consume_partial {slot:"$(slot)"}
 
 # Modify the magazine item
 $execute if score #bullets mgs.data matches ..0 run function mgs:v5.0.0/ammo/inventory/set_item_model {slot:"$(slot)",base_weapon:"$(base_weapon)"}

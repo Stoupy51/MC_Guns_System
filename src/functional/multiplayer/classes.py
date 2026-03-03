@@ -47,7 +47,7 @@ CLASSES: dict[str, JsonDict] = {
     "sniper": {
         "name": "Sniper",
         "lore": "Long-range precision",
-        "main": {"gun": "m24", "mag": "m24_mag", "mag_count": 3},
+        "main": {"gun": "m24", "mag": "m24_bullet", "mag_count": 10},
         "secondary": {"gun": "deagle", "mag": "deagle_mag", "mag_count": 2},
         "melee": "knife",
         "equipment": {
@@ -68,7 +68,7 @@ CLASSES: dict[str, JsonDict] = {
     "shotgunner": {
         "name": "Shotgunner",
         "lore": "Breaching / CQB",
-        "main": {"gun": "spas12", "mag": "spas12_mag", "mag_count": 3},
+        "main": {"gun": "spas12", "mag": "spas12_shell", "mag_count": 16},
         "secondary": {"gun": "m9", "mag": "m9_mag", "mag_count": 2},
         "melee": "knife",
         "equipment": {

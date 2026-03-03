@@ -13,5 +13,5 @@ execute if score #toggle mgs.data matches 1 run return run tellraw @s [{"transla
 
 # Otherwise it was ON, turn OFF
 scoreboard players set @s mgs.player.damage_debug 0
-tellraw @s [{"translate": "mgs","color":"gold"},{"translate": "mgs.damage_debug","color":"white"},{"translate": "mgs.off","color":"red"}]
+tellraw @s [{"translate": "mgs","color":"gold"},{"translate": "mgs.damage_debug","color":"white"},{"text":"OFF ✘","color":"red"}]
 

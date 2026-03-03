@@ -203,13 +203,10 @@ def beet_default(ctx: Context) -> None:
 
         # Adjust magazines data
         if ns_data.get("magazine"):
-            weapon: str = ns_data["weapon"]
             bullets: int = ns_data["stats"][REMAINING_BULLETS]
 
-            # Get weapon's capacity
-            weapon_obj = Item.from_id(weapon)
-            weapon_ns_data: JsonDict = weapon_obj.components["custom_data"].get(ns, {})
-            capacity: int = weapon_ns_data["stats"]["capacity"]
+            # Get magazine's capacity
+            capacity: int = ns_data["stats"]["capacity"]
 
             # Set magazine lore
             obj.components["lore"] = [

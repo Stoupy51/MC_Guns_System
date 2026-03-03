@@ -1,5 +1,5 @@
 
-#> mgs:multiplayer/stop
+#> mgs:v5.0.0/multiplayer/stop
 #
 # @within	mgs:v5.0.0/multiplayer/team_wins
 #

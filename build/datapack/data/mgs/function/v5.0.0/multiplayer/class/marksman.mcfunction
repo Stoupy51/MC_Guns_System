@@ -6,21 +6,20 @@
 
 # Apply class: Marksman - Semi-auto precision
 clear @s
+# Primary weapon → hotbar.0
+loot replace entity @s hotbar.0 loot mgs:i/svd
 
-# Give main weapon
-loot give @s loot mgs:i/svd
+# Secondary weapon → hotbar.1
+loot replace entity @s hotbar.1 loot mgs:i/glock17
 
-# Give secondary weapon
-loot give @s loot mgs:i/glock17
+# Equipment → hotbar.8, hotbar.7, ...
+loot replace entity @s hotbar.8 loot mgs:i/flash_grenade
+loot replace entity @s hotbar.7 loot mgs:i/smoke_grenade
 
-# Give equipment
-loot give @s loot mgs:i/flash_grenade
-loot give @s loot mgs:i/smoke_grenade
-
-# Give magazines
-loot give @s loot mgs:i/svd_mag
-loot give @s loot mgs:i/svd_mag
-loot give @s loot mgs:i/svd_mag
-loot give @s loot mgs:i/glock17_mag
-loot give @s loot mgs:i/glock17_mag
+# Magazines → inventory.0, inventory.1, ...
+loot replace entity @s inventory.0 loot mgs:i/svd_mag
+loot replace entity @s inventory.1 loot mgs:i/svd_mag
+loot replace entity @s inventory.2 loot mgs:i/svd_mag
+loot replace entity @s inventory.3 loot mgs:i/glock17_mag
+loot replace entity @s inventory.4 loot mgs:i/glock17_mag
 

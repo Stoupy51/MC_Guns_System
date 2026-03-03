@@ -292,11 +292,71 @@
 		"base_item": "minecraft:command_block",
 		"recipes": [],
 		"components": {
-			"max_stack_size": 1,
+			"max_stack_size": 64,
 			"custom_data": {"mgs": {"magazine": true,"consumable": true,"weapon": "rpg7","stats": {"remaining_bullets": 1,"capacity": 1},"rpg7_rocket": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},
 			"lore": [[{"text": "A","color": "#c24a17","italic": false},{"text": "m","color": "#c24d18"},{"text": "m","color": "#c2501a"},{"text": "o","color": "#c2531c"},{"text": " ","color": "#c3571e"},{"text": "R","color": "#c35a20"},{"text": "e","color": "#c35d22"},{"text": "m","color": "#c46024"},{"text": "a","color": "#c46426"},{"text": "i","color": "#c46728"},{"text": "n","color": "#c56a2a"},{"text": "i","color": "#c56d2c"},{"text": "n","color": "#c5712e"},{"text": "g","color": "#c67430"},{"text": " ","color": "#c67732"},{"text": "➤","color": "#c67a34"},{"text": " ","color": "#c77e36"},"1",{"text": "/","color": "#c77e36"},"1"],["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]],
 			"item_model": "mgs:rpg7_rocket",
 			"item_name": {"text": "Rpg7 Rocket"}
+		}
+	},
+	"mosin_bullet": {
+		"id": "mosin_bullet",
+		"base_item": "minecraft:command_block",
+		"recipes": [],
+		"components": {
+			"max_stack_size": 64,
+			"custom_data": {"mgs": {"magazine": true,"consumable": true,"weapon": "mosin","stats": {"remaining_bullets": 1,"capacity": 1},"mosin_bullet": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},
+			"lore": [[{"text": "A","color": "#c24a17","italic": false},{"text": "m","color": "#c24d18"},{"text": "m","color": "#c2501a"},{"text": "o","color": "#c2531c"},{"text": " ","color": "#c3571e"},{"text": "R","color": "#c35a20"},{"text": "e","color": "#c35d22"},{"text": "m","color": "#c46024"},{"text": "a","color": "#c46426"},{"text": "i","color": "#c46728"},{"text": "n","color": "#c56a2a"},{"text": "i","color": "#c56d2c"},{"text": "n","color": "#c5712e"},{"text": "g","color": "#c67430"},{"text": " ","color": "#c67732"},{"text": "➤","color": "#c67a34"},{"text": " ","color": "#c77e36"},"1",{"text": "/","color": "#c77e36"},"1"],["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]],
+			"item_model": "mgs:mosin_bullet",
+			"item_name": {"text": "Mosin Bullet"}
+		}
+	},
+	"m24_bullet": {
+		"id": "m24_bullet",
+		"base_item": "minecraft:command_block",
+		"recipes": [],
+		"components": {
+			"max_stack_size": 64,
+			"custom_data": {"mgs": {"magazine": true,"consumable": true,"weapon": "m24","stats": {"remaining_bullets": 1,"capacity": 1},"m24_bullet": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},
+			"lore": [[{"text": "A","color": "#c24a17","italic": false},{"text": "m","color": "#c24d18"},{"text": "m","color": "#c2501a"},{"text": "o","color": "#c2531c"},{"text": " ","color": "#c3571e"},{"text": "R","color": "#c35a20"},{"text": "e","color": "#c35d22"},{"text": "m","color": "#c46024"},{"text": "a","color": "#c46426"},{"text": "i","color": "#c46728"},{"text": "n","color": "#c56a2a"},{"text": "i","color": "#c56d2c"},{"text": "n","color": "#c5712e"},{"text": "g","color": "#c67430"},{"text": " ","color": "#c67732"},{"text": "➤","color": "#c67a34"},{"text": " ","color": "#c77e36"},"1",{"text": "/","color": "#c77e36"},"1"],["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]],
+			"item_model": "mgs:m24_bullet",
+			"item_name": {"text": "M24 Bullet"}
+		}
+	},
+	"spas12_shell": {
+		"id": "spas12_shell",
+		"base_item": "minecraft:command_block",
+		"recipes": [],
+		"components": {
+			"max_stack_size": 64,
+			"custom_data": {"mgs": {"magazine": true,"consumable": true,"weapon": "spas12","stats": {"remaining_bullets": 1,"capacity": 1},"spas12_shell": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},
+			"lore": [[{"text": "A","color": "#c24a17","italic": false},{"text": "m","color": "#c24d18"},{"text": "m","color": "#c2501a"},{"text": "o","color": "#c2531c"},{"text": " ","color": "#c3571e"},{"text": "R","color": "#c35a20"},{"text": "e","color": "#c35d22"},{"text": "m","color": "#c46024"},{"text": "a","color": "#c46426"},{"text": "i","color": "#c46728"},{"text": "n","color": "#c56a2a"},{"text": "i","color": "#c56d2c"},{"text": "n","color": "#c5712e"},{"text": "g","color": "#c67430"},{"text": " ","color": "#c67732"},{"text": "➤","color": "#c67a34"},{"text": " ","color": "#c77e36"},"1",{"text": "/","color": "#c77e36"},"1"],["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]],
+			"item_model": "mgs:spas12_shell",
+			"item_name": {"text": "Spas12 Shell"}
+		}
+	},
+	"m500_shell": {
+		"id": "m500_shell",
+		"base_item": "minecraft:command_block",
+		"recipes": [],
+		"components": {
+			"max_stack_size": 64,
+			"custom_data": {"mgs": {"magazine": true,"consumable": true,"weapon": "m500","stats": {"remaining_bullets": 1,"capacity": 1},"m500_shell": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},
+			"lore": [[{"text": "A","color": "#c24a17","italic": false},{"text": "m","color": "#c24d18"},{"text": "m","color": "#c2501a"},{"text": "o","color": "#c2531c"},{"text": " ","color": "#c3571e"},{"text": "R","color": "#c35a20"},{"text": "e","color": "#c35d22"},{"text": "m","color": "#c46024"},{"text": "a","color": "#c46426"},{"text": "i","color": "#c46728"},{"text": "n","color": "#c56a2a"},{"text": "i","color": "#c56d2c"},{"text": "n","color": "#c5712e"},{"text": "g","color": "#c67430"},{"text": " ","color": "#c67732"},{"text": "➤","color": "#c67a34"},{"text": " ","color": "#c77e36"},"1",{"text": "/","color": "#c77e36"},"1"],["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]],
+			"item_model": "mgs:m500_shell",
+			"item_name": {"text": "M500 Shell"}
+		}
+	},
+	"m590_shell": {
+		"id": "m590_shell",
+		"base_item": "minecraft:command_block",
+		"recipes": [],
+		"components": {
+			"max_stack_size": 64,
+			"custom_data": {"mgs": {"magazine": true,"consumable": true,"weapon": "m590","stats": {"remaining_bullets": 1,"capacity": 1},"m590_shell": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},
+			"lore": [[{"text": "A","color": "#c24a17","italic": false},{"text": "m","color": "#c24d18"},{"text": "m","color": "#c2501a"},{"text": "o","color": "#c2531c"},{"text": " ","color": "#c3571e"},{"text": "R","color": "#c35a20"},{"text": "e","color": "#c35d22"},{"text": "m","color": "#c46024"},{"text": "a","color": "#c46426"},{"text": "i","color": "#c46728"},{"text": "n","color": "#c56a2a"},{"text": "i","color": "#c56d2c"},{"text": "n","color": "#c5712e"},{"text": "g","color": "#c67430"},{"text": " ","color": "#c67732"},{"text": "➤","color": "#c67a34"},{"text": " ","color": "#c77e36"},"1",{"text": "/","color": "#c77e36"},"1"],["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]],
+			"item_model": "mgs:m590_shell",
+			"item_name": {"text": "M590 Shell"}
 		}
 	},
 	"m16a4": {
