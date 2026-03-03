@@ -32,7 +32,7 @@ execute if data storage mgs:temp editor{primary:"rpk"} run data modify storage m
 execute if data storage mgs:temp editor{primary:"svd"} run data modify storage mgs:temp _build.primary_data set from storage mgs:multiplayer primary_slot_table[15]
 execute if data storage mgs:temp editor{primary:"m82"} run data modify storage mgs:temp _build.primary_data set from storage mgs:multiplayer primary_slot_table[16]
 execute if data storage mgs:temp editor{primary:"mosin"} run data modify storage mgs:temp _build.primary_data set from storage mgs:multiplayer primary_slot_table[17]
-execute if data storage mgs:temp editor{primary:"m24_4"} run data modify storage mgs:temp _build.primary_data set from storage mgs:multiplayer primary_slot_table[18]
+execute if data storage mgs:temp editor{primary:"m24"} run data modify storage mgs:temp _build.primary_data set from storage mgs:multiplayer primary_slot_table[18]
 execute if data storage mgs:temp editor{primary:"spas12"} run data modify storage mgs:temp _build.primary_data set from storage mgs:multiplayer primary_slot_table[19]
 execute if data storage mgs:temp editor{primary:"m500"} run data modify storage mgs:temp _build.primary_data set from storage mgs:multiplayer primary_slot_table[20]
 execute if data storage mgs:temp editor{primary:"m590"} run data modify storage mgs:temp _build.primary_data set from storage mgs:multiplayer primary_slot_table[21]
@@ -75,12 +75,16 @@ execute store result storage mgs:multiplayer next_loadout_id int 1 run scoreboar
 execute store result storage mgs:temp _new_loadout.owner_pid int 1 run scoreboard players get @s mgs.mp.pid
 # Owner name is set by a macro call (pass player display name via team prefix trick)
 
-# Set weapon info
-data modify storage mgs:temp _new_loadout.main_gun set from storage mgs:temp editor.primary
-data modify storage mgs:temp _new_loadout.secondary_gun set from storage mgs:temp editor.secondary
+# Set weapon info (store the full scope-modified weapon IDs)
+data modify storage mgs:temp _new_loadout.main_gun set from storage mgs:temp editor.primary_full
+data modify storage mgs:temp _new_loadout.secondary_gun set from storage mgs:temp editor.secondary_full
 
 # Set visibility
 execute if score #cl_public mgs.data matches 1 run data modify storage mgs:temp _new_loadout.public set value 1b
+
+# Override weapon loot entries with scope-modified weapon IDs (e.g. "ak47_3" instead of "ak47")
+function mgs:v5.0.0/multiplayer/editor/fix_primary_loot with storage mgs:temp editor
+execute if data storage mgs:temp _build.secondary_data run function mgs:v5.0.0/multiplayer/editor/fix_secondary_loot with storage mgs:temp editor
 
 # Build the combined slot list: primary slots + secondary slots + equipment slots
 # 1. Copy primary weapon & magazine slots
