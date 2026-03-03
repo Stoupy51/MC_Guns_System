@@ -6,6 +6,13 @@
 # @within	mgs:v5.0.0/player/config/process
 #
 
-# TODO: Set the default custom loadout for auto-selection on game start
-tellraw @s [{"translate": "mgs","color":"gold"},{"translate": "mgs.default_loadout_coming_soon","color":"yellow"}]
+# Extract loadout ID from trigger value
+scoreboard players operation #loadout_id mgs.data = @s mgs.player.config
+scoreboard players remove #loadout_id mgs.data 1500
+
+# Store as player's default (scoreboard)
+scoreboard players operation @s mgs.mp.default = #loadout_id mgs.data
+
+# Notify
+tellraw @s ["",{"translate": "mgs","color":"gold"},{"translate": "mgs.default_loadout_set_it_will_auto_apply_when_a_game_starts","color":"green"}]
 

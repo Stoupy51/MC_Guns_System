@@ -8,6 +8,7 @@
 Credits for resources: MGS 4.2 by TheBradqq
 
 # TODO:
+- Title actionbar: Don't show max ammo but sum of reserve ammo (Since it's very costly, do it only on reload and when being still for too long (like the current system)). We'll need a new score to store this (reserve ammo)
 - Compatibility & Developement:
   - Multiplayer mode:
     - Dynamic classes definitions:
