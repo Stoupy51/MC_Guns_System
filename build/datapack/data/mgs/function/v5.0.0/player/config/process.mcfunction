@@ -7,7 +7,7 @@
 #
 
 # 1 = Show config menu
-# 2 = Toggle hitmarker sound
+# 2 = Toggle hitmarker Sound
 # 3 = Toggle damage debug in chat
 # 4 = Open multiplayer class selection menu
 # 11-20 = Select class 1-10 (via trigger from class menu)

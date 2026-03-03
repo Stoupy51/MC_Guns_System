@@ -83,7 +83,7 @@ function #{ns}:multiplayer/on_game_end
 
 # Announce scores
 tellraw @a ["",{{"text":"⚔ Game Over! ","color":"gold","bold":true}}]
-tellraw @a ["",{{"text":"  Red: ","color":"red"}},{{"score":{{"name":"#red","objective":"{ns}.mp.team"}},"color":"white"}},{{"text":" | Blue: ","color":"blue"}},{{"score":{{"name":"#blue","objective":"{ns}.mp.team"}},"color":"white"}}]
+tellraw @a ["",{{"text":"Red","color":"red"}},{{"text":": "}},{{"score":{{"name":"#red","objective":"{ns}.mp.team"}}}}," | ",{{"text":"Blue","color":"blue"}},{{"text":": "}},{{"score":{{"name":"#blue","objective":"{ns}.mp.team"}}}}]
 
 # Clear teams
 scoreboard players set @a {ns}.mp.team 0
@@ -117,7 +117,7 @@ execute if score #blue {ns}.mp.team >= #score_limit {ns}.data run function {ns}:
 f"""
 # Announce winner
 $tellraw @a ["",{{"text":"🏆 ","color":"gold"}},{{"text":"$(team) Team Wins!","color":"gold","bold":true}}]
-tellraw @a ["",{{"text":"  Final Score — Red: ","color":"white"}},{{"score":{{"name":"#red","objective":"{ns}.mp.team"}},"color":"red"}},{{"text":" vs Blue: ","color":"gray"}},{{"score":{{"name":"#blue","objective":"{ns}.mp.team"}},"color":"blue"}}]
+tellraw @a ["",{{"text":"  Final Score - Red: ","color":"gray"}},{{"score":{{"name":"#red","objective":"{ns}.mp.team"}},"color":"red"}},{{"text":" vs Blue: ","color":"gray"}},{{"score":{{"name":"#blue","objective":"{ns}.mp.team"}},"color":"blue"}}]
 
 # End game
 function {ns}:v{version}/multiplayer/stop

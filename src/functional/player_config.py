@@ -1,8 +1,9 @@
 
+# ruff: noqa: E501
 # Imports
 import json
 
-from stewbeet import JsonDict, Mem, write_versioned_function
+from stewbeet import Mem, TextComponent, write_versioned_function
 
 from .multiplayer.classes import CLASS_IDS, CLASSES
 
@@ -36,7 +37,7 @@ execute if score @s {ns}.player.config matches 1.. run function {ns}:v{version}/
     write_versioned_function("player/config/process",
 f"""
 # 1 = Show config menu
-# 2 = Toggle hitmarker sound
+# 2 = Toggle hitmarker Sound
 # 3 = Toggle damage debug in chat
 # 4 = Open multiplayer class selection menu
 # 11-20 = Select class 1-10 (via trigger from class menu)
@@ -47,7 +48,7 @@ execute if score @s {ns}.player.config matches 4 run function {ns}:v{version}/mu
 {"".join(f'execute if score @s {ns}.player.config matches {10 + class_num} run function {ns}:v{version}/multiplayer/set_class {{class_num:{class_num},class_name:"{CLASSES[class_id]["name"]}"}}{chr(10)}' for class_id, class_num in CLASS_IDS.items())}
 # Reset score
 scoreboard players set @s {ns}.player.config 0
-""")  # noqa: E501
+""")
 
     ## Toggle hitmarker
     write_versioned_function("player/config/toggle_hitmarker",
@@ -55,11 +56,11 @@ f"""
 # If currently OFF (0), turn ON (1)
 execute store success score #toggle {ns}.data unless score @s {ns}.player.hitmarker matches 1
 execute if score #toggle {ns}.data matches 1 run scoreboard players set @s {ns}.player.hitmarker 1
-execute if score #toggle {ns}.data matches 1 run return run tellraw @s [{{"text":"[MGS] ","color":"gold"}},{{"text":"Hitmarker sound: ","color":"white"}},{{"text":"ON ✔","color":"green"}}]
+execute if score #toggle {ns}.data matches 1 run return run tellraw @s [{{"text":"[MGS] ","color":"gold"}},{{"text":"Hitmarker Sound: ","color":"white"}},{{"text":"ON","color":"green"}},{{"text":" ✔","color":"green"}}]
 
 # Otherwise it was ON, turn OFF
 scoreboard players set @s {ns}.player.hitmarker 0
-tellraw @s [{{"text":"[MGS] ","color":"gold"}},{{"text":"Hitmarker sound: ","color":"white"}},{{"text":"OFF ✘","color":"red"}}]
+tellraw @s [{{"text":"[MGS] ","color":"gold"}},{{"text":"Hitmarker Sound: ","color":"white"}},{{"text":"OFF","color":"red"}},{{"text":" ✘","color":"red"}}]
 """)
 
     ## Toggle damage debug
@@ -68,32 +69,36 @@ f"""
 # If currently OFF (0), turn ON (1)
 execute store success score #toggle {ns}.data unless score @s {ns}.player.damage_debug matches 1
 execute if score #toggle {ns}.data matches 1 run scoreboard players set @s {ns}.player.damage_debug 1
-execute if score #toggle {ns}.data matches 1 run return run tellraw @s [{{"text":"[MGS] ","color":"gold"}},{{"text":"Damage Debug: ","color":"white"}},{{"text":"ON ✔","color":"green"}}]
+execute if score #toggle {ns}.data matches 1 run return run tellraw @s [{{"text":"[MGS] ","color":"gold"}},{{"text":"Damage Debug: ","color":"white"}},{{"text":"ON","color":"green"}},{{"text":" ✔","color":"green"}}]
 
 # Otherwise it was ON, turn OFF
 scoreboard players set @s {ns}.player.damage_debug 0
-tellraw @s [{{"text":"[MGS] ","color":"gold"}},{{"text":"Damage Debug: ","color":"white"}},{{"text":"OFF ✘","color":"red"}}]
+tellraw @s [{{"text":"[MGS] ","color":"gold"}},{{"text":"Damage Debug: ","color":"white"}},{{"text":"OFF","color":"red"}},{{"text":" ✘","color":"red"}}]
 """)
 
     ## Player config menu (clickable chat buttons)
     def btn(label: str, command: str, color: str = "yellow", hover: str = "") -> str:
-        obj: JsonDict = {"text": f"[{label}]", "color": color, "click_event": {"action": "run_command", "command": command}}
+        obj: TextComponent = [
+            {"text": "[", "color": color, "click_event": {"action": "run_command", "command": command}},
+            label,
+            "]",
+        ]
         if hover:
-            obj["hover_event"] = {"action": "show_text", "value": hover}
+            obj[0]["hover_event"] = {"action": "show_text", "value": hover}
         return json.dumps(obj)
 
     sep = '{"text":"=======================================","color":"dark_gray"}'
     title = '["",{"text":"       🎮 Player Settings 🎮","color":"gold","bold":true}]'
 
     # Hitmarker toggle button
-    hm_btn = btn("Toggle", f"/trigger {ns}.player.config set 2", "yellow", "Toggle hitmarker sound on entity hit")
-    hm_on  = f'["  ",{{"text":"Hitmarker Sound: ","color":"white"}},{{"text":"ON ✔ ","color":"green"}},{hm_btn}]'
-    hm_off = f'["  ",{{"text":"Hitmarker Sound: ","color":"white"}},{{"text":"OFF ✘ ","color":"red"}},{hm_btn}]'
+    hm_btn = btn("Toggle", f"/trigger {ns}.player.config set 2", "yellow", "Toggle hitmarker Sound on entity hit")
+    hm_on  = f'["  ",{{"text":"Hitmarker Sound: ","color":"white"}},{{"text":"ON","color":"green"}},{{"text":" ✔ ","color":"green"}},{hm_btn}]'
+    hm_off = f'["  ",{{"text":"Hitmarker Sound: ","color":"white"}},{{"text":"OFF","color":"red"}},{{"text":" ✘","color":"red"}},{hm_btn}]'
 
     # Damage Debug toggle button
     dd_btn = btn("Toggle", f"/trigger {ns}.player.config set 3", "yellow", "Toggle damage numbers in chat")
-    dd_on  = f'["  ",{{"text":"Damage Debug: ","color":"white"}},{{"text":"ON ✔ ","color":"green"}},{dd_btn}]'
-    dd_off = f'["  ",{{"text":"Damage Debug: ","color":"white"}},{{"text":"OFF ✘ ","color":"red"}},{dd_btn}]'
+    dd_on  = f'["  ",{{"text":"Damage Debug: ","color":"white"}},{{"text":"ON","color":"green"}},{{"text":" ✔ ","color":"green"}},{dd_btn}]'
+    dd_off = f'["  ",{{"text":"Damage Debug: ","color":"white"}},{{"text":"OFF","color":"red"}},{{"text":" ✘","color":"red"}},{dd_btn}]'
 
     # Multiplayer class selection button
     mp_btn = btn("Select Class", f"/trigger {ns}.player.config set 4", "aqua", "Open multiplayer class selection menu")
@@ -127,13 +132,13 @@ scoreboard players operation #dmg_dec {ns}.data %= #10 {ns}.data
 # Damage Debug: global config overrides (tellraw @a), otherwise per-player (tellraw to shooter only)
 $execute if score #damage_debug {ns}.config matches 1 run tellraw @a [{{"text":"[DMG] ","color":"red"}},[{{"score":{{"name":"#dmg_whole","objective":"{ns}.data"}},"color":"gold"}},".",{{"score":{{"name":"#dmg_dec","objective":"{ns}.data"}}}}],{{"text":" HP to ","color":"gray"}},{{"selector":"$(target)"}},{{"text":" by ","color":"gray"}},{{"selector":"$(attacker)"}}]
 $execute unless score #damage_debug {ns}.config matches 1 at @s as $(attacker) if score @s {ns}.player.damage_debug matches 1 run tellraw @s [{{"text":"[DMG] ","color":"red"}},[{{"score":{{"name":"#dmg_whole","objective":"{ns}.data"}},"color":"gold"}},".",{{"score":{{"name":"#dmg_dec","objective":"{ns}.data"}}}}],{{"text":" HP to ","color":"gray"}},{{"selector":"@n"}}]
-""", tags=[f"{ns}:signals/damage"])  # noqa: E501
+""", tags=[f"{ns}:signals/damage"])
 
-    ## Hitmarker sound on entity hit (added to damage signal)
+    ## Hitmarker Sound on entity hit (added to damage signal)
     # Plays for both hitscan (@p[tag=ticking]) and explosion (@p[tag=temp_shooter]) hits
     write_versioned_function("player/config/hitmarker_sound",
 f"""
-# Play hitmarker sound to the shooter if their personal config has it enabled
+# Play hitmarker Sound to the shooter if their personal config has it enabled
 # For hitscan: shooter has tag {ns}.ticking
 execute as @a[tag={ns}.ticking] if score @s {ns}.player.hitmarker matches 1 at @s run playsound minecraft:entity.experience_orb.pickup player @s ~ ~ ~ 1.0 2.0
 # For explosions: shooter has tag {ns}.temp_shooter (skip if already played via ticking)

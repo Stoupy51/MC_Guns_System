@@ -4,8 +4,8 @@ from PIL import Image
 from stewbeet import (
     DamageType,
     Font,
-    JsonDict,
     Mem,
+    TextComponent,
     Texture,
     set_json_encoder,
     texture_mcmeta,
@@ -196,9 +196,13 @@ $execute if score #random {ns}.data matches 31 run loot replace entity @s $(slot
 
     def btn(label: str, command: str, color: str = "yellow", hover: str = "") -> str:
         """Create a clickable button JSON component."""
-        obj: JsonDict = {"text": f"[{label}]", "color": color, "click_event": {"action": "suggest_command", "command": command}}
+        obj: TextComponent = [
+            {"text": "[", "color": color, "click_event": {"action": "suggest_command", "command": command}},
+            label,
+            "]",
+        ]
         if hover:
-            obj["hover_event"] = {"action": "show_text", "value": hover}
+            obj[0]["hover_event"] = {"action": "show_text", "value": hover}
         return json.dumps(obj)
 
     # Separator line
