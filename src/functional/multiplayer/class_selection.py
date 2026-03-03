@@ -65,15 +65,16 @@ function {ns}:v{version}/multiplayer/show_dialog with storage {ns}:temp
 	## set_class macro: sets the class score and notifies player
 	## Called from trigger dispatch (trigger values 11-20 → class 1-10)
 	## ============================
+	apply_now: str = f"""{{"text":" [✔]","color":"gold","hover_event":{{"action":"show_text","value":{{"text":"Click here to apply immediately (OP only)","color":"yellow"}}}},"click_event":{{"action":"run_command","command":"/function {ns}:v{version}/multiplayer/apply_class"}}}}"""
 	write_versioned_function("multiplayer/set_class",
 f"""
 $scoreboard players set @s {ns}.mp.class $(class_num)
 
 # If game active: queue for next respawn
-$execute if data storage {ns}:multiplayer game{{state:"active"}} run tellraw @s ["",{{"text":"[MGS] ","color":"gold"}},{{"text":"Class set to ","color":"white"}},{{"text":"$(class_name)","color":"green","bold":true}},{{"text":" — will apply on respawn","color":"yellow"}}]
+$execute if data storage {ns}:multiplayer game{{state:"active"}} run tellraw @s ["",{{"text":"[MGS] ","color":"gold"}},{{"text":"Class set to ","color":"white"}},{{"text":"$(class_name)","color":"green","bold":true}},{{"text":" — will apply on respawn","color":"yellow"}},{apply_now}]
 
 # If game not active: only save choice (no loadout outside multiplayer)
-$execute unless data storage {ns}:multiplayer game{{state:"active"}} run tellraw @s ["",{{"text":"[MGS] ","color":"gold"}},{{"text":"Class set to ","color":"white"}},{{"text":"$(class_name)","color":"green","bold":true}}]
+$execute unless data storage {ns}:multiplayer game{{state:"active"}} run tellraw @s ["",{{"text":"[MGS] ","color":"gold"}},{{"text":"Class set to ","color":"white"}},{{"text":"$(class_name)","color":"green","bold":true}},{apply_now}]
 """)
 
 	## ============================
