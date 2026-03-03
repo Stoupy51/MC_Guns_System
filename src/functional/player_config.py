@@ -87,20 +87,20 @@ tellraw @s [{{"text":"[MGS] ","color":"gold"}},{{"text":"Damage Debug: ","color"
 
     # Hitmarker toggle button
     hm_btn = btn("Toggle", f"/trigger {ns}.player.config set 2", "yellow", "Toggle hitmarker sound on entity hit")
-    hm_on  = f'["",{{"text":"  Hitmarker Sound: ","color":"white"}},{{"text":"ON ✔ ","color":"green"}},{hm_btn}]'
-    hm_off = f'["",{{"text":"  Hitmarker Sound: ","color":"white"}},{{"text":"OFF ✘ ","color":"red"}},{hm_btn}]'
+    hm_on  = f'["  ",{{"text":"Hitmarker Sound: ","color":"white"}},{{"text":"ON ✔ ","color":"green"}},{hm_btn}]'
+    hm_off = f'["  ",{{"text":"Hitmarker Sound: ","color":"white"}},{{"text":"OFF ✘ ","color":"red"}},{hm_btn}]'
 
     # Damage Debug toggle button
     dd_btn = btn("Toggle", f"/trigger {ns}.player.config set 3", "yellow", "Toggle damage numbers in chat")
-    dd_on  = f'["",{{"text":"  Damage Debug: ","color":"white"}},{{"text":"ON ✔ ","color":"green"}},{dd_btn}]'
-    dd_off = f'["",{{"text":"  Damage Debug: ","color":"white"}},{{"text":"OFF ✘ ","color":"red"}},{dd_btn}]'
+    dd_on  = f'["  ",{{"text":"Damage Debug: ","color":"white"}},{{"text":"ON ✔ ","color":"green"}},{dd_btn}]'
+    dd_off = f'["  ",{{"text":"Damage Debug: ","color":"white"}},{{"text":"OFF ✘ ","color":"red"}},{dd_btn}]'
 
     # Multiplayer class selection button
     mp_btn = btn("Select Class", f"/trigger {ns}.player.config set 4", "aqua", "Open multiplayer class selection menu")
-    mp_line = f'["",{{"text":"  Multiplayer: ","color":"white"}},{mp_btn}]'
+    mp_line = f'["  ",{{"text":"Multiplayer: ","color":"white"}},{mp_btn}]'
 
     # Info line
-    info_line = f'["",{{"text":"  Use ","color":"gray","italic":true}},{{"text":"/trigger {ns}.player.config","color":"aqua","italic":true}},{{"text":" to reopen","color":"gray","italic":true}}]'
+    info_line = f'["  ",{{"text":"Use ","color":"gray","italic":true}},{{"text":"/trigger {ns}.player.config","color":"aqua","italic":true}},{{"text":" to reopen","color":"gray","italic":true}}]'
 
     write_versioned_function("player/config/menu",
 f"""tellraw @s {sep}
