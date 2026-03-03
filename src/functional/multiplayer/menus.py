@@ -4,8 +4,6 @@ import json
 
 from stewbeet import JsonDict, Mem, write_versioned_function
 
-from .classes import CLASS_IDS, CLASSES, get_class_description
-
 
 def btn(label: str, command: str, color: str = "yellow", hover: str = "") -> str:
 	""" Create a clickable button JSON component. """
@@ -19,29 +17,6 @@ def generate_menus() -> None:
 	ns: str = Mem.ctx.project_id
 	version: str = Mem.ctx.project_version
 	sep = '{"text":"============================================","color":"dark_gray"}'
-
-	## ============================
-	## Class Selection Menu
-	## ============================
-	title = '["",{"text":"       ⚔ Select Your Class ⚔","color":"gold","bold":true}]'
-
-	class_btns_lines: str = ""
-	for class_id, class_data in CLASSES.items():
-		name: str = class_data["name"]
-		hover_text: str = get_class_description(class_id)
-		class_num: int = CLASS_IDS[class_id]
-		trigger_value: int = 10 + class_num  # Trigger values 11-20 for classes 1-10
-		btn_json: str = btn(name, f"/trigger {ns}.player.config set {trigger_value}", "green", hover_text)
-		lore: str = class_data["lore"]
-		lore_json = f'{{"text":" {lore}","color":"gray","italic":true}}'
-		class_btns_lines += f"tellraw @s [\"\",{btn_json},{lore_json}]\n"
-
-	write_versioned_function("multiplayer/select_class", f"""
-tellraw @s {sep}
-tellraw @s {title}
-tellraw @s {sep}
-{class_btns_lines}tellraw @s {sep}
-""")
 
 	## ============================
 	## Gamemode Configuration Menu

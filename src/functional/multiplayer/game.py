@@ -62,9 +62,9 @@ function #{ns}:multiplayer/register_classes
 # Signal game start
 function #{ns}:multiplayer/on_game_start
 
-# Give class selectors to all players (those with a class get loadout, others get selectors)
+# Give loadout to players who already have a class, show dialog to those who don't
 execute as @a at @s if score @s {ns}.mp.class matches 1.. run function {ns}:v{version}/multiplayer/apply_class
-execute as @a at @s unless score @s {ns}.mp.class matches 1.. run function {ns}:v{version}/multiplayer/give_class_selectors
+execute as @a at @s unless score @s {ns}.mp.class matches 1.. run function {ns}:v{version}/multiplayer/select_class
 
 # Announce
 tellraw @a ["",{{"text":"⚔ Game Started! ","color":"gold","bold":true}},{{"text":"Pick your class!","color":"yellow"}}]

@@ -7,17 +7,17 @@
 #			mgs:v5.0.0/multiplayer/on_respawn
 #
 
-execute if score @s mgs.mp.class matches 1 run function mgs:v5.0.0/multiplayer/class/assault
-execute if score @s mgs.mp.class matches 2 run function mgs:v5.0.0/multiplayer/class/rifleman
-execute if score @s mgs.mp.class matches 3 run function mgs:v5.0.0/multiplayer/class/support
-execute if score @s mgs.mp.class matches 4 run function mgs:v5.0.0/multiplayer/class/sniper
-execute if score @s mgs.mp.class matches 5 run function mgs:v5.0.0/multiplayer/class/smg
-execute if score @s mgs.mp.class matches 6 run function mgs:v5.0.0/multiplayer/class/shotgunner
-execute if score @s mgs.mp.class matches 7 run function mgs:v5.0.0/multiplayer/class/engineer
-execute if score @s mgs.mp.class matches 8 run function mgs:v5.0.0/multiplayer/class/medic
-execute if score @s mgs.mp.class matches 9 run function mgs:v5.0.0/multiplayer/class/marksman
-execute if score @s mgs.mp.class matches 10 run function mgs:v5.0.0/multiplayer/class/heavy
+execute if score @s mgs.mp.class matches 1 run data modify storage mgs:temp current_class set from storage mgs:multiplayer classes_list[0]
+execute if score @s mgs.mp.class matches 2 run data modify storage mgs:temp current_class set from storage mgs:multiplayer classes_list[1]
+execute if score @s mgs.mp.class matches 3 run data modify storage mgs:temp current_class set from storage mgs:multiplayer classes_list[2]
+execute if score @s mgs.mp.class matches 4 run data modify storage mgs:temp current_class set from storage mgs:multiplayer classes_list[3]
+execute if score @s mgs.mp.class matches 5 run data modify storage mgs:temp current_class set from storage mgs:multiplayer classes_list[4]
+execute if score @s mgs.mp.class matches 6 run data modify storage mgs:temp current_class set from storage mgs:multiplayer classes_list[5]
+execute if score @s mgs.mp.class matches 7 run data modify storage mgs:temp current_class set from storage mgs:multiplayer classes_list[6]
+execute if score @s mgs.mp.class matches 8 run data modify storage mgs:temp current_class set from storage mgs:multiplayer classes_list[7]
+execute if score @s mgs.mp.class matches 9 run data modify storage mgs:temp current_class set from storage mgs:multiplayer classes_list[8]
+execute if score @s mgs.mp.class matches 10 run data modify storage mgs:temp current_class set from storage mgs:multiplayer classes_list[9]
 
-# Give class selectors in bottom inventory row for future changes
-function mgs:v5.0.0/multiplayer/give_class_selectors_gameplay
+# Apply the loadout dynamically from the selected class
+function mgs:v5.0.0/multiplayer/apply_class_dynamic
 

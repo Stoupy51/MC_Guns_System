@@ -1,6 +1,6 @@
 
 # Imports
-from stewbeet import Context
+from stewbeet import Context, official_lib_used
 
 from .functional.main import main as main_datapack
 from .functional.mob_ai import main as main_mob_ai
@@ -26,4 +26,7 @@ def beet_default(ctx: Context) -> None:
 
     # Multiplayer functional initialization
     main_multiplayer()
+
+    # Bookshelf dump module
+    official_lib_used("bs.dump")
 

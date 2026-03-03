@@ -12,7 +12,7 @@ function #mgs:multiplayer/on_game_end
 
 # Announce scores
 tellraw @a ["",{"translate": "mgs.game_over","color":"gold","bold":true}]
-tellraw @a ["",{"translate": "mgs.red","color":"red"},{"score":{"name":"#red","objective":"mgs.mp.team"},"color":"white"},{"translate": "mgs.blue","color":"blue"},{"score":{"name":"#blue","objective":"mgs.mp.team"},"color":"white"}]
+tellraw @a ["",{"text":"  Red: ","color":"red"},{"score":{"name":"#red","objective":"mgs.mp.team"},"color":"white"},{"text":" | Blue: ","color":"blue"},{"score":{"name":"#blue","objective":"mgs.mp.team"},"color":"white"}]
 
 # Clear teams
 scoreboard players set @a mgs.mp.team 0
