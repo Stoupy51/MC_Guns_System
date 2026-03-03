@@ -89,7 +89,12 @@ $execute unless data storage {ns}:multiplayer game{{state:"active"}} run tellraw
 	# We need to map class_num (score) to an entry in classes_list.
 	# Since classes_list is ordered and 1-indexed via class_num, index = class_num - 1.
 	# We use a helper that copies the correct class to temp using indexed access.
-	apply_commands: str = ""
+	apply_commands: str = f"""
+# Check for custom loadout (negative mp.class = custom loadout ID)
+execute if score @s {ns}.mp.class matches ..-1 run return run function {ns}:v{version}/multiplayer/apply_custom_class
+
+# Standard class lookup by class_num score
+"""
 	for class_num in CLASS_IDS.values():
 		apply_commands += f"execute if score @s {ns}.mp.class matches {class_num} run data modify storage {ns}:temp current_class set from storage {ns}:multiplayer classes_list[{class_num - 1}]\n"
 
@@ -99,6 +104,45 @@ function {ns}:v{version}/multiplayer/apply_class_dynamic
 """
 
 	write_versioned_function("multiplayer/apply_class", apply_commands)
+
+	## ============================
+	## apply_custom_class: find custom loadout by ID stored in mp.custom_class, then apply
+	## ============================
+	write_versioned_function("multiplayer/apply_custom_class",
+f"""
+# Store target loadout ID (negate to get positive ID)
+scoreboard players operation #loadout_id {ns}.data = @s {ns}.mp.class
+scoreboard players operation #loadout_id {ns}.data *= #minus_one {ns}.data
+
+# Copy loadouts list for search
+data modify storage {ns}:temp _find_iter set from storage {ns}:multiplayer custom_loadouts
+
+# Recursive search by ID (score-based comparison)
+execute if data storage {ns}:temp _find_iter[0] run function {ns}:v{version}/multiplayer/apply_custom_found
+""")
+
+	## apply_custom_found — Recursive: find loadout by ID and apply it
+	write_versioned_function("multiplayer/apply_custom_found",
+f"""
+# Check if this entry's ID matches the target
+execute store result score #entry_id {ns}.data run data get storage {ns}:temp _find_iter[0].id
+execute if score #entry_id {ns}.data = #loadout_id {ns}.data run return run function {ns}:v{version}/multiplayer/apply_custom_match
+
+# Not found yet, continue search
+data remove storage {ns}:temp _find_iter[0]
+execute if data storage {ns}:temp _find_iter[0] run function {ns}:v{version}/multiplayer/apply_custom_found
+""")
+
+	## apply_custom_match — Apply the found loadout
+	write_versioned_function("multiplayer/apply_custom_match",
+f"""
+# Copy found loadout's slots to the format expected by apply_class_dynamic
+data modify storage {ns}:temp current_class set value {{slots:[]}}
+data modify storage {ns}:temp current_class.slots set from storage {ns}:temp _find_iter[0].slots
+
+# Apply the loadout (clears inventory and gives items)
+function {ns}:v{version}/multiplayer/apply_class_dynamic
+""")
 
 	## ============================
 	## On respawn (called from player tick when death detected)
@@ -111,8 +155,8 @@ scoreboard players set @s {ns}.mp.death_count 0
 # Increment death stats
 scoreboard players add @s {ns}.mp.deaths 1
 
-# Apply current class loadout
-execute if score @s {ns}.mp.class matches 1.. run function {ns}:v{version}/multiplayer/apply_class
+# Apply current class loadout (positive = standard, negative = custom)
+execute unless score @s {ns}.mp.class matches 0 run function {ns}:v{version}/multiplayer/apply_class
 """)
 
 	## ============================

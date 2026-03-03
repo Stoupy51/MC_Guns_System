@@ -22,6 +22,9 @@ scoreboard objectives add {ns}.mp.pid dummy
 execute unless score #next_pid {ns}.data matches 1.. run scoreboard players set #next_pid {ns}.data 1
 scoreboard objectives add {ns}.mp.default dummy
 scoreboard objectives add {ns}.mp.edit_step dummy
+
+# Constant for negation (used to store custom loadout ID as negative mp.class)
+scoreboard players set #minus_one {ns}.data -1
 """)
 
 	## Initialize custom loadout storage (only if not already set)
