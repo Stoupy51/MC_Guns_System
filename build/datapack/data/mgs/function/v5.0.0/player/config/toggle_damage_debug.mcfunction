@@ -9,9 +9,9 @@
 # If currently OFF (0), turn ON (1)
 execute store success score #toggle mgs.data unless score @s mgs.player.damage_debug matches 1
 execute if score #toggle mgs.data matches 1 run scoreboard players set @s mgs.player.damage_debug 1
-execute if score #toggle mgs.data matches 1 run return run tellraw @s [{"translate": "mgs","color":"gold"},{"translate": "mgs.damage_debug","color":"white"},{"text":"ON ✔","color":"green"}]
+execute if score #toggle mgs.data matches 1 run return run tellraw @s [{"translate": "mgs","color":"gold"},{"text":"Damage Debug: ","color":"white"},{"text":"ON ✔","color":"green"}]
 
 # Otherwise it was ON, turn OFF
 scoreboard players set @s mgs.player.damage_debug 0
-tellraw @s [{"translate": "mgs","color":"gold"},{"translate": "mgs.damage_debug","color":"white"},{"text":"OFF ✘","color":"red"}]
+tellraw @s [{"translate": "mgs","color":"gold"},{"text":"Damage Debug: ","color":"white"},{"text":"OFF ✘","color":"red"}]
 

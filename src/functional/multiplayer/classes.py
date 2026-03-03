@@ -47,7 +47,7 @@ CLASSES: dict[str, JsonDict] = {
     "sniper": {
         "name": "Sniper",
         "lore": "Long-range precision",
-        "main": {"gun": "m24", "mag": "m24_bullet", "mag_count": 10},
+        "main": {"gun": "m24_4", "mag": "m24_bullet", "mag_count": 10},
         "secondary": {"gun": "deagle", "mag": "deagle_mag", "mag_count": 2},
         "melee": "knife",
         "equipment": {
@@ -120,4 +120,15 @@ CLASSES: dict[str, JsonDict] = {
         },
     },
 }
+
+# Class number assignments (1-indexed, used for scoreboard mgs.mp.class)
+CLASS_IDS: dict[str, int] = {class_id: idx + 1 for idx, class_id in enumerate(CLASSES)}
+
+
+def get_class_description(class_id: str) -> str:
+    """ Get the hover/lore description text for a class (shared between menus and inventory items). """
+    data = CLASSES[class_id]
+    main_gun: str = data["main"]["gun"].upper().replace("_", " ")
+    secondary_gun: str = data.get("secondary", {}).get("gun", "").upper().replace("_", " ")
+    return f"{data['lore']}\nMain: {main_gun}\nSecondary: {secondary_gun}"
 

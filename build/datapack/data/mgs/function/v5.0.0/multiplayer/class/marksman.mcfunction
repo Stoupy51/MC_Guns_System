@@ -1,7 +1,9 @@
 
 #> mgs:v5.0.0/multiplayer/class/marksman
 #
-# @within	???
+# @executed	as @a & at @s
+#
+# @within	mgs:v5.0.0/multiplayer/apply_class
 #
 
 # Apply class: Marksman - Semi-auto precision

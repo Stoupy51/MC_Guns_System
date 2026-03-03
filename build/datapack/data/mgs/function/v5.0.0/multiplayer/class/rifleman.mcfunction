@@ -1,7 +1,9 @@
 
 #> mgs:v5.0.0/multiplayer/class/rifleman
 #
-# @within	???
+# @executed	as @a & at @s
+#
+# @within	mgs:v5.0.0/multiplayer/apply_class
 #
 
 # Apply class: Rifleman - Accurate mid-range

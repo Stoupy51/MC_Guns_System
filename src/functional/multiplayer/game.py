@@ -7,7 +7,6 @@ from stewbeet import Mem, write_load_file, write_tag, write_versioned_function
 def generate_game() -> None:
 	ns: str = Mem.ctx.project_id
 	version: str = Mem.ctx.project_version
-	blank = '""'
 
 	## ============================
 	## Scoreboards & Storage Setup
@@ -50,6 +49,7 @@ scoreboard players set #red {ns}.mp.team 0
 scoreboard players set #blue {ns}.mp.team 0
 scoreboard players set @a {ns}.mp.kills 0
 scoreboard players set @a {ns}.mp.deaths 0
+scoreboard players set @a {ns}.mp.death_count 0
 
 # Set timer from time_limit
 execute store result score #mp_timer {ns}.data run data get storage {ns}:multiplayer game.time_limit
@@ -62,8 +62,12 @@ function #{ns}:multiplayer/register_classes
 # Signal game start
 function #{ns}:multiplayer/on_game_start
 
+# Give class selectors to all players (those with a class get loadout, others get selectors)
+execute as @a at @s if score @s {ns}.mp.class matches 1.. run function {ns}:v{version}/multiplayer/apply_class
+execute as @a at @s unless score @s {ns}.mp.class matches 1.. run function {ns}:v{version}/multiplayer/give_class_selectors
+
 # Announce
-tellraw @a [{blank},{{"text":"⚔ Game Started! ","color":"gold","bold":true}},{{"text":"Good luck!","color":"yellow"}}]
+tellraw @a ["",{{"text":"⚔ Game Started! ","color":"gold","bold":true}},{{"text":"Pick your class!","color":"yellow"}}]
 """)
 
 	## ============================
@@ -78,8 +82,8 @@ data modify storage {ns}:multiplayer game.state set value "lobby"
 function #{ns}:multiplayer/on_game_end
 
 # Announce scores
-tellraw @a [{blank},{{"text":"⚔ Game Over! ","color":"gold","bold":true}}]
-tellraw @a [{blank},{{"text":"  Red: ","color":"red"}},{{"score":{{"name":"#red","objective":"{ns}.mp.team"}},"color":"white"}},{{"text":" | Blue: ","color":"blue"}},{{"score":{{"name":"#blue","objective":"{ns}.mp.team"}},"color":"white"}}]
+tellraw @a ["",{{"text":"⚔ Game Over! ","color":"gold","bold":true}}]
+tellraw @a ["",{{"text":"  Red: ","color":"red"}},{{"score":{{"name":"#red","objective":"{ns}.mp.team"}},"color":"white"}},{{"text":" | Blue: ","color":"blue"}},{{"score":{{"name":"#blue","objective":"{ns}.mp.team"}},"color":"white"}}]
 
 # Clear teams
 scoreboard players set @a {ns}.mp.team 0
@@ -112,8 +116,8 @@ execute if score #blue {ns}.mp.team >= #score_limit {ns}.data run function {ns}:
 	write_versioned_function("multiplayer/team_wins",
 f"""
 # Announce winner
-$tellraw @a [{blank},{{"text":"🏆 ","color":"gold"}},{{"text":"$(team) Team Wins!","color":"gold","bold":true}}]
-tellraw @a [{blank},{{"text":"  Final Score — Red: ","color":"white"}},{{"score":{{"name":"#red","objective":"{ns}.mp.team"}},"color":"red"}},{{"text":" vs Blue: ","color":"gray"}},{{"score":{{"name":"#blue","objective":"{ns}.mp.team"}},"color":"blue"}}]
+$tellraw @a ["",{{"text":"🏆 ","color":"gold"}},{{"text":"$(team) Team Wins!","color":"gold","bold":true}}]
+tellraw @a ["",{{"text":"  Final Score — Red: ","color":"white"}},{{"score":{{"name":"#red","objective":"{ns}.mp.team"}},"color":"red"}},{{"text":" vs Blue: ","color":"gray"}},{{"score":{{"name":"#blue","objective":"{ns}.mp.team"}},"color":"blue"}}]
 
 # End game
 function {ns}:v{version}/multiplayer/stop

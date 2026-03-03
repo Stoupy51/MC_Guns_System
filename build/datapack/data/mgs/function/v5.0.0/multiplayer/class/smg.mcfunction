@@ -1,7 +1,9 @@
 
 #> mgs:v5.0.0/multiplayer/class/smg
 #
-# @within	???
+# @executed	as @a & at @s
+#
+# @within	mgs:v5.0.0/multiplayer/apply_class
 #
 
 # Apply class: SMG - Close quarters

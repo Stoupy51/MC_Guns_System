@@ -421,11 +421,17 @@ scoreboard players set #mp_teams_created mgs.data 1
 data modify storage mgs:multiplayer classes.assault set value {"name": "Assault", "lore": "Versatile frontline", "main": {"gun": "ak47", "mag": "ak47_mag", "mag_count": 3}, "secondary": {"gun": "m1911", "mag": "m1911_mag", "mag_count": 2}, "melee": "knife", "equipment": {"frag_grenade": 2, "smoke_grenade": 1}}
 data modify storage mgs:multiplayer classes.rifleman set value {"name": "Rifleman", "lore": "Accurate mid-range", "main": {"gun": "m16a4", "mag": "m16a4_mag", "mag_count": 3}, "secondary": {"gun": "m9", "mag": "m9_mag", "mag_count": 2}, "melee": "knife", "equipment": {"flash_grenade": 1, "smoke_grenade": 1}}
 data modify storage mgs:multiplayer classes.support set value {"name": "Support", "lore": "Suppressive heavy", "main": {"gun": "m249", "mag": "m249_mag", "mag_count": 3}, "secondary": {"gun": "glock17", "mag": "glock17_mag", "mag_count": 2}, "melee": "knife", "equipment": {"smoke_grenade": 2}, "special": {"resupply": true}}
-data modify storage mgs:multiplayer classes.sniper set value {"name": "Sniper", "lore": "Long-range precision", "main": {"gun": "m24", "mag": "m24_bullet", "mag_count": 10}, "secondary": {"gun": "deagle", "mag": "deagle_mag", "mag_count": 2}, "melee": "knife", "equipment": {"flash_grenade": 1}, "special": {"bipod": true}}
+data modify storage mgs:multiplayer classes.sniper set value {"name": "Sniper", "lore": "Long-range precision", "main": {"gun": "m24_4", "mag": "m24_bullet", "mag_count": 10}, "secondary": {"gun": "deagle", "mag": "deagle_mag", "mag_count": 2}, "melee": "knife", "equipment": {"flash_grenade": 1}, "special": {"bipod": true}}
 data modify storage mgs:multiplayer classes.smg set value {"name": "SMG", "lore": "Close quarters", "main": {"gun": "mp7", "mag": "mp7_mag", "mag_count": 4}, "secondary": {"gun": "glock18", "mag": "glock18_mag", "mag_count": 2}, "melee": "knife", "equipment": {"flash_grenade": 2}}
 data modify storage mgs:multiplayer classes.shotgunner set value {"name": "Shotgunner", "lore": "Breaching / CQB", "main": {"gun": "spas12", "mag": "spas12_shell", "mag_count": 16}, "secondary": {"gun": "m9", "mag": "m9_mag", "mag_count": 2}, "melee": "knife", "equipment": {"semtex": 2}}
 data modify storage mgs:multiplayer classes.engineer set value {"name": "Engineer", "lore": "Objective / demolitions", "main": {"gun": "mp5", "mag": "mp5_mag", "mag_count": 3}, "secondary": {"gun": "makarov", "mag": "makarov_mag", "mag_count": 2}, "melee": "knife", "equipment": {"semtex": 2, "smoke_grenade": 1}, "special": {"can_place_explosive": true}}
 data modify storage mgs:multiplayer classes.medic set value {"name": "Medic", "lore": "Team sustain", "main": {"gun": "famas", "mag": "famas_mag", "mag_count": 3}, "secondary": {"gun": "m1911", "mag": "m1911_mag", "mag_count": 2}, "melee": "knife", "equipment": {"smoke_grenade": 2}, "special": {"revive_bonus": true}}
 data modify storage mgs:multiplayer classes.marksman set value {"name": "Marksman", "lore": "Semi-auto precision", "main": {"gun": "svd", "mag": "svd_mag", "mag_count": 3}, "secondary": {"gun": "glock17", "mag": "glock17_mag", "mag_count": 2}, "melee": "knife", "equipment": {"flash_grenade": 1, "smoke_grenade": 1}}
 data modify storage mgs:multiplayer classes.heavy set value {"name": "Heavy", "lore": "Armored suppressor", "main": {"gun": "rpk", "mag": "rpk_mag", "mag_count": 3}, "secondary": {"gun": "makarov", "mag": "makarov_mag", "mag_count": 2}, "melee": "knife", "equipment": {"frag_grenade": 2}}
+
+# Class selection scoreboard (1-10 = class id, 0 = none)
+scoreboard objectives add mgs.mp.class dummy
+
+# Death detection for respawn
+scoreboard objectives add mgs.mp.death_count deathCount
 

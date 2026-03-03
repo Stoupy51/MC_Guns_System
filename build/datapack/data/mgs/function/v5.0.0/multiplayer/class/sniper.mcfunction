@@ -1,13 +1,15 @@
 
 #> mgs:v5.0.0/multiplayer/class/sniper
 #
-# @within	???
+# @executed	as @a & at @s
+#
+# @within	mgs:v5.0.0/multiplayer/apply_class
 #
 
 # Apply class: Sniper - Long-range precision
 clear @s
 # Primary weapon → hotbar.0
-loot replace entity @s hotbar.0 loot mgs:i/m24
+loot replace entity @s hotbar.0 loot mgs:i/m24_4
 
 # Secondary weapon → hotbar.1
 loot replace entity @s hotbar.1 loot mgs:i/deagle
