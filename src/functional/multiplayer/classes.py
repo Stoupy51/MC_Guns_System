@@ -84,7 +84,7 @@ CLASSES: dict[str, JsonDict] = {
 CLASS_IDS: dict[str, int] = {class_id: idx + 1 for idx, class_id in enumerate(CLASSES)}
 
 # Trigger value offset (trigger_value = TRIGGER_OFFSET + class_num)
-TRIGGER_OFFSET: int = 10
+TRIGGER_OFFSET: int = 100
 
 
 def get_class_description(class_id: str) -> str:

@@ -26,6 +26,37 @@ execute if score @s mgs.player.config matches 18 run function mgs:v5.0.0/multipl
 execute if score @s mgs.player.config matches 19 run function mgs:v5.0.0/multiplayer/set_class {class_num:9,class_name:"Marksman"}
 execute if score @s mgs.player.config matches 20 run function mgs:v5.0.0/multiplayer/set_class {class_num:10,class_name:"Heavy"}
 
+# === Custom Loadout Editor ===
+# 100 = Open loadout editor (create new)
+execute if score @s mgs.player.config matches 100 run function mgs:v5.0.0/multiplayer/editor/start
+# 101 = Open marketplace browser
+execute if score @s mgs.player.config matches 101 run function mgs:v5.0.0/multiplayer/marketplace/browse
+# 102 = Open my loadouts manager
+execute if score @s mgs.player.config matches 102 run function mgs:v5.0.0/multiplayer/my_loadouts/browse
+# 200-222 = Editor: pick primary weapon
+execute if score @s mgs.player.config matches 200..222 run function mgs:v5.0.0/multiplayer/editor/pick_primary
+# 250-258 = Editor: pick secondary weapon (258 = none)
+execute if score @s mgs.player.config matches 250..258 run function mgs:v5.0.0/multiplayer/editor/pick_secondary
+# 300-309 = Editor: pick equipment preset
+execute if score @s mgs.player.config matches 300..309 run function mgs:v5.0.0/multiplayer/editor/pick_equipment
+# 350-351 = Editor: save loadout (350=public, 351=private)
+execute if score @s mgs.player.config matches 350..351 run function mgs:v5.0.0/multiplayer/editor/save
+# === Custom Loadout Actions ===
+# 1000-1099 = Select/use a custom loadout
+execute if score @s mgs.player.config matches 1000..1099 run function mgs:v5.0.0/multiplayer/custom/select
+# 1100-1199 = Toggle favorite on a loadout
+execute if score @s mgs.player.config matches 1100..1199 run function mgs:v5.0.0/multiplayer/custom/toggle_favorite
+# 1200-1299 = Like a loadout
+execute if score @s mgs.player.config matches 1200..1299 run function mgs:v5.0.0/multiplayer/custom/like
+# 1300-1399 = Delete own loadout
+execute if score @s mgs.player.config matches 1300..1399 run function mgs:v5.0.0/multiplayer/custom/delete
+# 1400-1499 = Toggle public/private on own loadout
+execute if score @s mgs.player.config matches 1400..1499 run function mgs:v5.0.0/multiplayer/custom/toggle_visibility
+# 1500-1598 = Set default custom loadout
+execute if score @s mgs.player.config matches 1500..1599 run function mgs:v5.0.0/multiplayer/custom/set_default
+# 1599 = Unset default loadout
+execute if score @s mgs.player.config matches 1599 run function mgs:v5.0.0/multiplayer/custom/unset_default
+
 # Reset score
 scoreboard players set @s mgs.player.config 0
 
