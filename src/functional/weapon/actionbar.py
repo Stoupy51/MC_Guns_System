@@ -76,24 +76,33 @@ execute if score #has_auto {ns}.data matches 1 unless data storage {ns}:gun all.
 data modify storage {ns}:temp actionbar.list append value {{"text":" ]    ","color":"#{END_HEX}"}}
 """)  # noqa: E501
 
-    # Add numeric ammo display (for capacity > 15)
+    # Add numeric ammo display (for capacity > 15): shows "remaining | reserve"
     write_versioned_function("actionbar/add_numeric_ammo",
 f"""
 data modify storage {ns}:temp actionbar.list append value {{"score":{{"name":"#remaining","objective":"{ns}.data"}}}}
 data modify storage {ns}:temp actionbar.list append value {{"text":"x "}}
 data modify storage {ns}:temp actionbar.list append value {{"text":"A","font":"{ns}:icons","shadow_color":[0,0,0,0],"color":"white"}}
-data modify storage {ns}:temp actionbar.list append value {{"text":" / ","color":"#{END_HEX}"}}
-data modify storage {ns}:temp actionbar.list append value {{"score":{{"name":"#capacity","objective":"{ns}.data"}}}}
+data modify storage {ns}:temp actionbar.list append value {{"text":" | ","color":"#{END_HEX}"}}
+# Reserve ammo from player's scoreboard
+execute store result score #reserve {ns}.data run scoreboard players get @s {ns}.reserve_ammo
+data modify storage {ns}:temp actionbar.list append value {{"score":{{"name":"#reserve","objective":"{ns}.data"}}}}
 data modify storage {ns}:temp actionbar.list append value {{"text":"x "}}
-data modify storage {ns}:temp actionbar.list append value {{"text":"A","font":"{ns}:icons","shadow_color":[0,0,0,0],"color":"white"}}
+data modify storage {ns}:temp actionbar.list append value {{"text":"A","font":"{ns}:icons","shadow_color":[0,0,0,0],"color":"gray"}}
 """)
 
-    # Add icon ammo display (for capacity <= 15)
+    # Add icon ammo display (for capacity <= 15): bullet icons + reserve count
     write_versioned_function("actionbar/add_icon_ammo",
 f"""
 # Build icons recursively
 scoreboard players set #i {ns}.data 0
 execute if score #i {ns}.data < #capacity {ns}.data run function {ns}:v{version}/actionbar/build_icon_loop
+
+# Append reserve ammo count after icons
+data modify storage {ns}:temp actionbar.list append value {{"text":" | ","color":"#{END_HEX}"}}
+execute store result score #reserve {ns}.data run scoreboard players get @s {ns}.reserve_ammo
+data modify storage {ns}:temp actionbar.list append value {{"score":{{"name":"#reserve","objective":"{ns}.data"}}}}
+data modify storage {ns}:temp actionbar.list append value {{"text":"x ","color":"gray"}}
+data modify storage {ns}:temp actionbar.list append value {{"text":"A","font":"{ns}:icons","shadow_color":[0,0,0,0],"color":"gray"}}
 """)
 
     # Build actionbar icons recursively

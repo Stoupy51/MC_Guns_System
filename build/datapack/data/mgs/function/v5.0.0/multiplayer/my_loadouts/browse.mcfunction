@@ -9,7 +9,7 @@
 #
 
 # Initialize dialog with 3 columns: [Name/Select][👁 Toggle Vis][🗑 Delete]
-data modify storage mgs:temp dialog set value {type:"minecraft:multi_action",title:{text:"My Loadouts",color:"gold",bold:true},body:[{type:"minecraft:plain_message",contents:{text:"Manage your custom loadouts.",color:"gray"}}],actions:[],columns:3,after_action:"close",exit_action:{label:"Back",action:{type:"run_command",command:"/trigger mgs.player.config set 4"}}}
+data modify storage mgs:temp dialog set value {type:"minecraft:multi_action",title:{translate: "mgs.my_loadouts",color:"gold",bold:true},body:[{type:"minecraft:plain_message",contents:{translate: "mgs.manage_your_custom_loadouts",color:"gray"}}],actions:[],columns:3,after_action:"close",exit_action:{label:"Back",action:{type:"run_command",command:"/trigger mgs.player.config set 4"}}}
 
 # Copy all loadouts for iteration
 data modify storage mgs:temp _iter set from storage mgs:multiplayer custom_loadouts

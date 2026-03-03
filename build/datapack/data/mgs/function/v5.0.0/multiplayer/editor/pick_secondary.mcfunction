@@ -6,7 +6,7 @@
 # @within	mgs:v5.0.0/player/config/process
 #
 
-# Store secondary weapon choice based on trigger value
+# Store secondary weapon choice
 execute if score @s mgs.player.config matches 250 run data modify storage mgs:temp editor.secondary set value "m1911"
 execute if score @s mgs.player.config matches 250 run data modify storage mgs:temp editor.secondary_name set value "M1911"
 execute if score @s mgs.player.config matches 250 run data modify storage mgs:temp editor.secondary_mag set value "m1911_mag"
@@ -61,10 +61,19 @@ execute if score @s mgs.player.config matches 258 run data modify storage mgs:te
 execute if score @s mgs.player.config matches 258 run data modify storage mgs:temp editor.secondary_scope set value ""
 execute if score @s mgs.player.config matches 258 run data modify storage mgs:temp editor.secondary_scope_name set value ""
 execute if score @s mgs.player.config matches 258 run data modify storage mgs:temp editor.secondary_full set value ""
+execute if score @s mgs.player.config matches 258 run data modify storage mgs:temp editor.secondary_mag set value ""
+execute if score @s mgs.player.config matches 258 run data modify storage mgs:temp editor.secondary_mag_count set value 0
 
-# Route: deagle → scope dialog, others → equipment dialog
+# Check budget before deducting (secondary weapon costs 1 pt; None is free)
+execute unless data storage mgs:temp editor{secondary:""} run execute if score @s mgs.mp.edit_points matches ..0 run return run tellraw @s [{"translate": "mgs","color":"gold"},{"translate": "mgs.not_enough_points_for_a_secondary_weapon","color":"red"}]
+
+# Deduct cost if a secondary was chosen
+execute unless data storage mgs:temp editor{secondary:""} run scoreboard players remove @s mgs.mp.edit_points 1
+
+# Route: none → skip to equip slot 1, deagle → scope, others → secondary mag count
+execute if data storage mgs:temp editor{secondary:""} run return run function mgs:v5.0.0/multiplayer/editor/show_equip_slot1_dialog
 execute if data storage mgs:temp editor{secondary:"deagle"} run return run function mgs:v5.0.0/multiplayer/editor/scope/secondary_4only
 
-# No scope variants: go directly to equipment selection
-function mgs:v5.0.0/multiplayer/editor/show_equipment_dialog
+# No scope variants: go directly to secondary mag count
+function mgs:v5.0.0/multiplayer/editor/show_secondary_mags_dialog
 

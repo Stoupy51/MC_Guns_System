@@ -18,8 +18,8 @@ execute if data storage mgs:temp class_iter[0] run function mgs:v5.0.0/multiplay
 
 # Append custom loadout buttons
 data modify storage mgs:temp dialog.actions append value {label:{translate: "mgs.create_loadout",color:"aqua",bold:true},tooltip:{translate: "mgs.build_a_custom_loadout_from_scratch"},action:{type:"run_command",command:"/trigger mgs.player.config set 100"}}
-data modify storage mgs:temp dialog.actions append value {label:{translate: "mgs.my_loadouts",color:"yellow",bold:true},tooltip:{translate: "mgs.manage_your_custom_loadouts"},action:{type:"run_command",command:"/trigger mgs.player.config set 102"}}
-data modify storage mgs:temp dialog.actions append value {label:{text:"🌍 Marketplace",color:"light_purple",bold:true},tooltip:{translate: "mgs.browse_public_loadouts_from_other_players"},action:{type:"run_command",command:"/trigger mgs.player.config set 101"}}
+data modify storage mgs:temp dialog.actions append value {label:{text:"📦 My Loadouts",color:"yellow",bold:true},tooltip:{text:"Manage your custom loadouts"},action:{type:"run_command",command:"/trigger mgs.player.config set 102"}}
+data modify storage mgs:temp dialog.actions append value {label:{translate: "mgs.marketplace",color:"light_purple",bold:true},tooltip:{translate: "mgs.browse_public_loadouts_from_other_players"},action:{type:"run_command",command:"/trigger mgs.player.config set 101"}}
 
 # Show the completed dialog via macro
 function mgs:v5.0.0/multiplayer/show_dialog with storage mgs:temp

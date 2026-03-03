@@ -7,23 +7,32 @@ from stewbeet import Mem, TextComponent, write_versioned_function
 
 from .multiplayer.classes import CLASS_IDS, CLASSES
 from .multiplayer.loadouts import (
-    EQUIPMENT_PRESETS,
+    GRENADE_TYPES,
+    MAX_PERKS,
+    PERKS,
+    PICK10_TOTAL,
     PRIMARY_WEAPONS,
     SECONDARY_WEAPONS,
     TRIG_BACK_EQUIPMENT,
+    TRIG_BACK_PERKS,
     TRIG_BACK_SECONDARY,
     TRIG_DELETE_BASE,
     TRIG_EDITOR_START,
-    TRIG_EQUIPMENT_BASE,
+    TRIG_EQUIP_SLOT1_BASE,
+    TRIG_EQUIP_SLOT2_BASE,
     TRIG_FAVORITE_BASE,
     TRIG_LIKE_BASE,
     TRIG_MARKETPLACE,
     TRIG_MY_LOADOUTS,
+    TRIG_PERK_BASE,
+    TRIG_PERKS_DONE,
     TRIG_PRIMARY_BASE,
+    TRIG_PRIMARY_MAGS_BASE,
     TRIG_PRIMARY_SCOPE_BASE,
     TRIG_SAVE_PRIVATE,
     TRIG_SAVE_PUBLIC,
     TRIG_SECONDARY_BASE,
+    TRIG_SECONDARY_MAGS_BASE,
     TRIG_SECONDARY_NONE,
     TRIG_SECONDARY_SCOPE_BASE,
     TRIG_SELECT_BASE,
@@ -62,7 +71,11 @@ execute if score @s {ns}.player.config matches 1.. run function {ns}:v{version}/
     # Pre-compute trigger ranges for custom loadout editor
     primary_max = TRIG_PRIMARY_BASE + len(PRIMARY_WEAPONS) - 1
     secondary_max = TRIG_SECONDARY_BASE + len(SECONDARY_WEAPONS) - 1
-    equipment_max = TRIG_EQUIPMENT_BASE + len(EQUIPMENT_PRESETS) - 1
+    primary_mags_max = TRIG_PRIMARY_MAGS_BASE + 5
+    secondary_mags_max = TRIG_SECONDARY_MAGS_BASE + 5
+    perk_max = TRIG_PERK_BASE + len(PERKS) - 1
+    equip1_max = TRIG_EQUIP_SLOT1_BASE + len(GRENADE_TYPES) - 1
+    equip2_max = TRIG_EQUIP_SLOT2_BASE + len(GRENADE_TYPES) - 1
     select_max = TRIG_SELECT_BASE + 99  # Max 99 custom loadouts
     favorite_max = TRIG_FAVORITE_BASE + 99
     like_max = TRIG_LIKE_BASE + 99
@@ -97,14 +110,27 @@ execute if score @s {ns}.player.config matches {TRIG_PRIMARY_SCOPE_BASE}..{TRIG_
 execute if score @s {ns}.player.config matches {TRIG_SECONDARY_BASE}..{TRIG_SECONDARY_NONE} run function {ns}:v{version}/multiplayer/editor/pick_secondary
 # 260-264 = Editor: pick secondary scope
 execute if score @s {ns}.player.config matches {TRIG_SECONDARY_SCOPE_BASE}..{TRIG_SECONDARY_SCOPE_BASE + 4} run function {ns}:v{version}/multiplayer/editor/pick_secondary_scope
-# 300-{equipment_max} = Editor: pick equipment preset
-execute if score @s {ns}.player.config matches {TRIG_EQUIPMENT_BASE}..{equipment_max} run function {ns}:v{version}/multiplayer/editor/pick_equipment
 # 350-351 = Editor: save loadout (350=public, 351=private)
 execute if score @s {ns}.player.config matches {TRIG_SAVE_PUBLIC}..{TRIG_SAVE_PRIVATE} run function {ns}:v{version}/multiplayer/editor/save
-# 360 = Back to secondary weapon dialog
-execute if score @s {ns}.player.config matches {TRIG_BACK_SECONDARY} run function {ns}:v{version}/multiplayer/editor/show_secondary_dialog
-# 370 = Back to equipment dialog
-execute if score @s {ns}.player.config matches {TRIG_BACK_EQUIPMENT} run function {ns}:v{version}/multiplayer/editor/show_equipment_dialog
+# 360 = Back to secondary weapon dialog (refunds secondary weapon + scope costs)
+execute if score @s {ns}.player.config matches {TRIG_BACK_SECONDARY} run function {ns}:v{version}/multiplayer/editor/back_to_secondary
+# 370 = Back from equipment area: if in perks step (9) refund equip_slot2+perks, else refund equip_slot1 and go to slot1 dialog
+execute if score @s {ns}.player.config matches {TRIG_BACK_EQUIPMENT} run execute if score @s {ns}.mp.edit_step matches 9 run function {ns}:v{version}/multiplayer/editor/back_from_perks
+execute if score @s {ns}.player.config matches {TRIG_BACK_EQUIPMENT} run execute unless score @s {ns}.mp.edit_step matches 9 run function {ns}:v{version}/multiplayer/editor/back_to_equip1
+# 380 = Back to perks dialog
+execute if score @s {ns}.player.config matches {TRIG_BACK_PERKS} run function {ns}:v{version}/multiplayer/editor/show_perks_dialog
+# {TRIG_PRIMARY_MAGS_BASE+1}-{primary_mags_max} = Editor: pick primary mag count (1-5)
+execute if score @s {ns}.player.config matches {TRIG_PRIMARY_MAGS_BASE + 1}..{primary_mags_max} run function {ns}:v{version}/multiplayer/editor/pick_primary_mags
+# {TRIG_SECONDARY_MAGS_BASE}-{secondary_mags_max} = Editor: pick secondary mag count (0-5)
+execute if score @s {ns}.player.config matches {TRIG_SECONDARY_MAGS_BASE}..{secondary_mags_max} run function {ns}:v{version}/multiplayer/editor/pick_secondary_mags
+# {TRIG_PERK_BASE}-{perk_max} = Editor: toggle perk
+execute if score @s {ns}.player.config matches {TRIG_PERK_BASE}..{perk_max} run function {ns}:v{version}/multiplayer/editor/pick_perk
+# {TRIG_PERKS_DONE} = Editor: done selecting perks → show confirm
+execute if score @s {ns}.player.config matches {TRIG_PERKS_DONE} run function {ns}:v{version}/multiplayer/editor/perks_done
+# {TRIG_EQUIP_SLOT1_BASE}-{equip1_max} = Editor: pick equipment slot 1 grenade
+execute if score @s {ns}.player.config matches {TRIG_EQUIP_SLOT1_BASE}..{equip1_max} run function {ns}:v{version}/multiplayer/editor/pick_equip_slot1
+# {TRIG_EQUIP_SLOT2_BASE}-{equip2_max} = Editor: pick equipment slot 2 grenade
+execute if score @s {ns}.player.config matches {TRIG_EQUIP_SLOT2_BASE}..{equip2_max} run function {ns}:v{version}/multiplayer/editor/pick_equip_slot2
 # === Custom Loadout Actions ===
 # 1000-1099 = Select/use a custom loadout
 execute if score @s {ns}.player.config matches {TRIG_SELECT_BASE}..{select_max} run function {ns}:v{version}/multiplayer/custom/select
