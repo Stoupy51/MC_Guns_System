@@ -70,6 +70,9 @@ execute if data storage {ns}:temp _del_src[0] run function {ns}:v{version}/multi
 
 # Notify
 tellraw @s ["",{{"text":"[MGS] ","color":"gold"}},{{"text":"Loadout deleted.","color":"green"}}]
+
+# Reopen My Loadouts dialog with updated data
+function {ns}:v{version}/multiplayer/my_loadouts/browse
 """)
 
 	## custom/delete_filter — Recursive: rebuild list without the target entry (score-based)
@@ -96,19 +99,171 @@ f"""
 scoreboard players operation #loadout_id {ns}.data = @s {ns}.player.config
 scoreboard players remove #loadout_id {ns}.data {TRIG_FAVORITE_BASE}
 
-# TODO: Find player data entry by PID and toggle the loadout ID in favorites[]
-tellraw @s [{{"text":"[MGS] ","color":"gold"}},{{"text":"Favorites coming soon!","color":"yellow"}}]
+# Rebuild player_data, toggling favorite in our entry
+data modify storage {ns}:temp _pd_src set from storage {ns}:multiplayer player_data
+data modify storage {ns}:multiplayer player_data set value []
+scoreboard players set #fav_found {ns}.data 0
+execute if data storage {ns}:temp _pd_src[0] run function {ns}:v{version}/multiplayer/custom/fav_pd_rebuild
+
+# Notify based on whether it was added or removed
+execute if score #fav_found {ns}.data matches 1 run tellraw @s ["",{{"text":"[MGS] ","color":"gold"}},{{"text":"Removed from favorites.","color":"yellow"}}]
+execute if score #fav_found {ns}.data matches 0 run tellraw @s ["",{{"text":"[MGS] ","color":"gold"}},{{"text":"Added to favorites!","color":"green"}}]
+
+# Reopen Marketplace dialog with updated data
+function {ns}:v{version}/multiplayer/marketplace/browse
 """)
 
-	## custom/like — Increment loadout's like counter
+	## fav_pd_rebuild — Iterate player_data, modify our entry's favorites
+	write_versioned_function("multiplayer/custom/fav_pd_rebuild",
+f"""
+# Check if this entry's PID matches ours
+execute store result score #pd_pid {ns}.data run data get storage {ns}:temp _pd_src[0].pid
+execute if score #pd_pid {ns}.data = @s {ns}.mp.pid run function {ns}:v{version}/multiplayer/custom/fav_modify_entry
+
+# Append entry (possibly modified) to player_data
+data modify storage {ns}:multiplayer player_data append from storage {ns}:temp _pd_src[0]
+
+# Next
+data remove storage {ns}:temp _pd_src[0]
+execute if data storage {ns}:temp _pd_src[0] run function {ns}:v{version}/multiplayer/custom/fav_pd_rebuild
+""")
+
+	## fav_modify_entry — Toggle loadout ID in our favorites list
+	write_versioned_function("multiplayer/custom/fav_modify_entry",
+f"""
+# Copy favorites for iteration, clear them for rebuild
+data modify storage {ns}:temp _fav_iter set from storage {ns}:temp _pd_src[0].favorites
+data modify storage {ns}:temp _pd_src[0].favorites set value []
+
+# Iterate favorites to remove if found
+execute if data storage {ns}:temp _fav_iter[0] run function {ns}:v{version}/multiplayer/custom/fav_check_each
+
+# If not found (wasn't in favorites), add it
+execute if score #fav_found {ns}.data matches 0 run function {ns}:v{version}/multiplayer/custom/fav_append_new
+""")
+
+	## fav_append_new — Append loadout ID to favorites
+	write_versioned_function("multiplayer/custom/fav_append_new",
+f"""
+# Create a new favorite entry with the loadout ID
+data modify storage {ns}:temp _new_fav set value {{id:0}}
+execute store result storage {ns}:temp _new_fav.id int 1 run scoreboard players get #loadout_id {ns}.data
+data modify storage {ns}:temp _pd_src[0].favorites append from storage {ns}:temp _new_fav
+""")
+
+	## fav_check_each — Check each favorite entry, remove matching ID
+	write_versioned_function("multiplayer/custom/fav_check_each",
+f"""
+# Check if this favorite's ID matches the target
+execute store result score #fav_id {ns}.data run data get storage {ns}:temp _fav_iter[0].id
+execute if score #fav_id {ns}.data = #loadout_id {ns}.data run scoreboard players set #fav_found {ns}.data 1
+
+# If not matching, keep it
+execute unless score #fav_id {ns}.data = #loadout_id {ns}.data run data modify storage {ns}:temp _pd_src[0].favorites append from storage {ns}:temp _fav_iter[0]
+
+# Next
+data remove storage {ns}:temp _fav_iter[0]
+execute if data storage {ns}:temp _fav_iter[0] run function {ns}:v{version}/multiplayer/custom/fav_check_each
+""")
+
+	## custom/like — Increment loadout's like counter (one per player)
 	write_versioned_function("multiplayer/custom/like",
 f"""
 # Extract loadout ID from trigger value
 scoreboard players operation #loadout_id {ns}.data = @s {ns}.player.config
 scoreboard players remove #loadout_id {ns}.data {TRIG_LIKE_BASE}
 
-# TODO: Find loadout by ID, increment likes counter, add to player's liked[] list
-tellraw @s [{{"text":"[MGS] ","color":"gold"}},{{"text":"Likes coming soon!","color":"yellow"}}]
+# Step 1: Check if already liked in our player_data, and add to liked[] if not
+data modify storage {ns}:temp _pd_src set from storage {ns}:multiplayer player_data
+data modify storage {ns}:multiplayer player_data set value []
+scoreboard players set #already_liked {ns}.data 0
+execute if data storage {ns}:temp _pd_src[0] run function {ns}:v{version}/multiplayer/custom/like_pd_rebuild
+
+# Step 2: If not already liked, increment like counter on the loadout
+execute if score #already_liked {ns}.data matches 0 run function {ns}:v{version}/multiplayer/custom/like_increment_setup
+
+# Notify
+execute if score #already_liked {ns}.data matches 0 run tellraw @s ["",{{"text":"[MGS] ","color":"gold"}},{{"text":"Loadout liked!","color":"green"}}]
+execute if score #already_liked {ns}.data matches 1 run tellraw @s ["",{{"text":"[MGS] ","color":"gold"}},{{"text":"You already liked this loadout.","color":"yellow"}}]
+
+# Reopen Marketplace dialog with updated data
+function {ns}:v{version}/multiplayer/marketplace/browse
+""")
+
+	## like_pd_rebuild — Iterate player_data to check/update liked[] in our entry
+	write_versioned_function("multiplayer/custom/like_pd_rebuild",
+f"""
+# Check if this entry's PID matches ours
+execute store result score #pd_pid {ns}.data run data get storage {ns}:temp _pd_src[0].pid
+execute if score #pd_pid {ns}.data = @s {ns}.mp.pid run function {ns}:v{version}/multiplayer/custom/like_modify_entry
+
+# Append entry to player_data
+data modify storage {ns}:multiplayer player_data append from storage {ns}:temp _pd_src[0]
+
+# Next
+data remove storage {ns}:temp _pd_src[0]
+execute if data storage {ns}:temp _pd_src[0] run function {ns}:v{version}/multiplayer/custom/like_pd_rebuild
+""")
+
+	## like_modify_entry — Check if loadout already liked, add if not
+	write_versioned_function("multiplayer/custom/like_modify_entry",
+f"""
+# Iterate liked[] to check if already liked
+data modify storage {ns}:temp _liked_iter set from storage {ns}:temp _pd_src[0].liked
+execute if data storage {ns}:temp _liked_iter[0] run function {ns}:v{version}/multiplayer/custom/like_check_each
+
+# If not already liked, add to liked[] list
+execute if score #already_liked {ns}.data matches 0 run function {ns}:v{version}/multiplayer/custom/like_append_new
+""")
+
+	## like_append_new — Append loadout ID to liked list
+	write_versioned_function("multiplayer/custom/like_append_new",
+f"""
+data modify storage {ns}:temp _new_liked set value {{id:0}}
+execute store result storage {ns}:temp _new_liked.id int 1 run scoreboard players get #loadout_id {ns}.data
+data modify storage {ns}:temp _pd_src[0].liked append from storage {ns}:temp _new_liked
+""")
+
+	## like_check_each — Check each liked entry
+	write_versioned_function("multiplayer/custom/like_check_each",
+f"""
+execute store result score #liked_id {ns}.data run data get storage {ns}:temp _liked_iter[0].id
+execute if score #liked_id {ns}.data = #loadout_id {ns}.data run scoreboard players set #already_liked {ns}.data 1
+
+data remove storage {ns}:temp _liked_iter[0]
+execute if data storage {ns}:temp _liked_iter[0] unless score #already_liked {ns}.data matches 1 run function {ns}:v{version}/multiplayer/custom/like_check_each
+""")
+
+	## like_increment_setup — Rebuild custom_loadouts, incrementing likes on target
+	write_versioned_function("multiplayer/custom/like_increment_setup",
+f"""
+data modify storage {ns}:temp _like_src set from storage {ns}:multiplayer custom_loadouts
+data modify storage {ns}:multiplayer custom_loadouts set value []
+execute if data storage {ns}:temp _like_src[0] run function {ns}:v{version}/multiplayer/custom/like_increment_rebuild
+""")
+
+	## like_increment_rebuild — Iterate loadouts, increment likes on matching ID
+	write_versioned_function("multiplayer/custom/like_increment_rebuild",
+f"""
+# Check if this loadout's ID matches the target
+execute store result score #entry_id {ns}.data run data get storage {ns}:temp _like_src[0].id
+execute if score #entry_id {ns}.data = #loadout_id {ns}.data run function {ns}:v{version}/multiplayer/custom/like_increment_entry
+
+# Append to custom_loadouts
+data modify storage {ns}:multiplayer custom_loadouts append from storage {ns}:temp _like_src[0]
+
+data remove storage {ns}:temp _like_src[0]
+execute if data storage {ns}:temp _like_src[0] run function {ns}:v{version}/multiplayer/custom/like_increment_rebuild
+""")
+
+	## like_increment_entry — Increment the likes counter
+	write_versioned_function("multiplayer/custom/like_increment_entry",
+f"""
+# Ensure likes field exists, then increment
+execute unless data storage {ns}:temp _like_src[0].likes run data modify storage {ns}:temp _like_src[0].likes set value 0
+execute store result score #likes {ns}.data run data get storage {ns}:temp _like_src[0].likes
+scoreboard players add #likes {ns}.data 1
+execute store result storage {ns}:temp _like_src[0].likes int 1 run scoreboard players get #likes {ns}.data
 """)
 
 	## custom/toggle_visibility — Toggle public/private on own loadout
@@ -124,6 +279,9 @@ data modify storage {ns}:multiplayer custom_loadouts set value []
 execute if data storage {ns}:temp _del_src[0] run function {ns}:v{version}/multiplayer/custom/toggle_vis_rebuild
 
 tellraw @s ["",{{"text":"[MGS] ","color":"gold"}},{{"text":"Loadout visibility toggled.","color":"green"}}]
+
+# Reopen My Loadouts dialog with updated data
+function {ns}:v{version}/multiplayer/my_loadouts/browse
 """)
 
 	## custom/toggle_vis_rebuild — Recursive: rebuild list, toggling public on the matching entry

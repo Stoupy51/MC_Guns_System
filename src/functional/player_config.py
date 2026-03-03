@@ -10,6 +10,8 @@ from .multiplayer.loadouts import (
     EQUIPMENT_PRESETS,
     PRIMARY_WEAPONS,
     SECONDARY_WEAPONS,
+    TRIG_BACK_EQUIPMENT,
+    TRIG_BACK_SECONDARY,
     TRIG_DELETE_BASE,
     TRIG_EDITOR_START,
     TRIG_EQUIPMENT_BASE,
@@ -99,6 +101,10 @@ execute if score @s {ns}.player.config matches {TRIG_SECONDARY_SCOPE_BASE}..{TRI
 execute if score @s {ns}.player.config matches {TRIG_EQUIPMENT_BASE}..{equipment_max} run function {ns}:v{version}/multiplayer/editor/pick_equipment
 # 350-351 = Editor: save loadout (350=public, 351=private)
 execute if score @s {ns}.player.config matches {TRIG_SAVE_PUBLIC}..{TRIG_SAVE_PRIVATE} run function {ns}:v{version}/multiplayer/editor/save
+# 360 = Back to secondary weapon dialog
+execute if score @s {ns}.player.config matches {TRIG_BACK_SECONDARY} run function {ns}:v{version}/multiplayer/editor/show_secondary_dialog
+# 370 = Back to equipment dialog
+execute if score @s {ns}.player.config matches {TRIG_BACK_EQUIPMENT} run function {ns}:v{version}/multiplayer/editor/show_equipment_dialog
 # === Custom Loadout Actions ===
 # 1000-1099 = Select/use a custom loadout
 execute if score @s {ns}.player.config matches {TRIG_SELECT_BASE}..{select_max} run function {ns}:v{version}/multiplayer/custom/select

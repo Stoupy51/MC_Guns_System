@@ -6,6 +6,8 @@ from .catalogs import (  # noqa: F401
 	EQUIPMENT_PRESETS,
 	PRIMARY_WEAPONS,
 	SECONDARY_WEAPONS,
+	TRIG_BACK_EQUIPMENT,
+	TRIG_BACK_SECONDARY,
 	TRIG_DELETE_BASE,
 	TRIG_EDITOR_START,
 	TRIG_EQUIPMENT_BASE,
@@ -39,6 +41,8 @@ def generate_custom_loadouts() -> None:
 
 __all__ = [
 	# TRIG_* constants re-exported for backwards compatibility
+	"TRIG_BACK_EQUIPMENT",
+	"TRIG_BACK_SECONDARY",
 	"TRIG_DELETE_BASE",
 	"TRIG_EDITOR_START",
 	"TRIG_EQUIPMENT_BASE",

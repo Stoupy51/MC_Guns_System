@@ -17,3 +17,6 @@ execute if data storage mgs:temp _del_src[0] run function mgs:v5.0.0/multiplayer
 
 tellraw @s ["",{"translate": "mgs","color":"gold"},{"translate": "mgs.loadout_visibility_toggled","color":"green"}]
 
+# Reopen My Loadouts dialog with updated data
+function mgs:v5.0.0/multiplayer/my_loadouts/browse
+

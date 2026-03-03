@@ -45,6 +45,10 @@ execute if score @s mgs.player.config matches 260..264 run function mgs:v5.0.0/m
 execute if score @s mgs.player.config matches 300..309 run function mgs:v5.0.0/multiplayer/editor/pick_equipment
 # 350-351 = Editor: save loadout (350=public, 351=private)
 execute if score @s mgs.player.config matches 350..351 run function mgs:v5.0.0/multiplayer/editor/save
+# 360 = Back to secondary weapon dialog
+execute if score @s mgs.player.config matches 360 run function mgs:v5.0.0/multiplayer/editor/show_secondary_dialog
+# 370 = Back to equipment dialog
+execute if score @s mgs.player.config matches 370 run function mgs:v5.0.0/multiplayer/editor/show_equipment_dialog
 # === Custom Loadout Actions ===
 # 1000-1099 = Select/use a custom loadout
 execute if score @s mgs.player.config matches 1000..1099 run function mgs:v5.0.0/multiplayer/custom/select
