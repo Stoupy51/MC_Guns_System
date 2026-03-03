@@ -35,8 +35,12 @@ execute if score @s mgs.player.config matches 101 run function mgs:v5.0.0/multip
 execute if score @s mgs.player.config matches 102 run function mgs:v5.0.0/multiplayer/my_loadouts/browse
 # 200-222 = Editor: pick primary weapon
 execute if score @s mgs.player.config matches 200..222 run function mgs:v5.0.0/multiplayer/editor/pick_primary
+# 230-234 = Editor: pick primary scope
+execute if score @s mgs.player.config matches 230..234 run function mgs:v5.0.0/multiplayer/editor/pick_primary_scope
 # 250-258 = Editor: pick secondary weapon (258 = none)
 execute if score @s mgs.player.config matches 250..258 run function mgs:v5.0.0/multiplayer/editor/pick_secondary
+# 260-264 = Editor: pick secondary scope
+execute if score @s mgs.player.config matches 260..264 run function mgs:v5.0.0/multiplayer/editor/pick_secondary_scope
 # 300-309 = Editor: pick equipment preset
 execute if score @s mgs.player.config matches 300..309 run function mgs:v5.0.0/multiplayer/editor/pick_equipment
 # 350-351 = Editor: save loadout (350=public, 351=private)

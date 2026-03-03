@@ -5,8 +5,12 @@
 #
 # @within	mgs:v5.0.0/multiplayer/select_class with storage mgs:temp
 #			mgs:v5.0.0/multiplayer/editor/start with storage mgs:temp
-#			mgs:v5.0.0/multiplayer/editor/pick_primary with storage mgs:temp
-#			mgs:v5.0.0/multiplayer/editor/pick_secondary with storage mgs:temp
+#			mgs:v5.0.0/multiplayer/editor/scope/primary_full with storage mgs:temp
+#			mgs:v5.0.0/multiplayer/editor/scope/primary_no4 with storage mgs:temp
+#			mgs:v5.0.0/multiplayer/editor/scope/primary_1only with storage mgs:temp
+#			mgs:v5.0.0/multiplayer/editor/show_secondary_dialog with storage mgs:temp
+#			mgs:v5.0.0/multiplayer/editor/scope/secondary_4only with storage mgs:temp
+#			mgs:v5.0.0/multiplayer/editor/show_equipment_dialog with storage mgs:temp
 #			mgs:v5.0.0/multiplayer/editor/show_confirm with storage mgs:temp
 #
 # @args		dialog (unknown)

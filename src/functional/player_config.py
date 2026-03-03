@@ -18,10 +18,12 @@ from .multiplayer.custom_loadouts import (
     TRIG_MARKETPLACE,
     TRIG_MY_LOADOUTS,
     TRIG_PRIMARY_BASE,
+    TRIG_PRIMARY_SCOPE_BASE,
     TRIG_SAVE_PRIVATE,
     TRIG_SAVE_PUBLIC,
     TRIG_SECONDARY_BASE,
     TRIG_SECONDARY_NONE,
+    TRIG_SECONDARY_SCOPE_BASE,
     TRIG_SELECT_BASE,
     TRIG_SET_DEFAULT_BASE,
     TRIG_TOGGLE_VIS_BASE,
@@ -87,8 +89,12 @@ execute if score @s {ns}.player.config matches {TRIG_MARKETPLACE} run function {
 execute if score @s {ns}.player.config matches {TRIG_MY_LOADOUTS} run function {ns}:v{version}/multiplayer/my_loadouts/browse
 # 200-{primary_max} = Editor: pick primary weapon
 execute if score @s {ns}.player.config matches {TRIG_PRIMARY_BASE}..{primary_max} run function {ns}:v{version}/multiplayer/editor/pick_primary
+# 230-234 = Editor: pick primary scope
+execute if score @s {ns}.player.config matches {TRIG_PRIMARY_SCOPE_BASE}..{TRIG_PRIMARY_SCOPE_BASE + 4} run function {ns}:v{version}/multiplayer/editor/pick_primary_scope
 # 250-{TRIG_SECONDARY_NONE} = Editor: pick secondary weapon (258 = none)
 execute if score @s {ns}.player.config matches {TRIG_SECONDARY_BASE}..{TRIG_SECONDARY_NONE} run function {ns}:v{version}/multiplayer/editor/pick_secondary
+# 260-264 = Editor: pick secondary scope
+execute if score @s {ns}.player.config matches {TRIG_SECONDARY_SCOPE_BASE}..{TRIG_SECONDARY_SCOPE_BASE + 4} run function {ns}:v{version}/multiplayer/editor/pick_secondary_scope
 # 300-{equipment_max} = Editor: pick equipment preset
 execute if score @s {ns}.player.config matches {TRIG_EQUIPMENT_BASE}..{equipment_max} run function {ns}:v{version}/multiplayer/editor/pick_equipment
 # 350-351 = Editor: save loadout (350=public, 351=private)

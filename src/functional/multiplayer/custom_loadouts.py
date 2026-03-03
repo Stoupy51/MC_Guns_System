@@ -36,7 +36,7 @@ PRIMARY_WEAPONS: list[tuple[str, str, str, str, int]] = [
 	("svd",    "SVD",         "DMR",           "svd_mag",    3),
 	("m82",    "M82",         "Sniper",        "m82_mag",    3),
 	("mosin",  "Mosin-Nagant","Sniper",        "mosin_bullet", 10),
-	("m24_4",  "M24",         "Sniper",        "m24_bullet",   10),
+	("m24",    "M24",         "Sniper",        "m24_bullet",   10),
 	# Shotguns
 	("spas12", "SPAS-12",     "Shotgun",       "spas12_shell", 16),
 	("m500",   "M500",        "Shotgun",       "m500_shell",   12),
@@ -77,16 +77,59 @@ EQUIPMENT_PRESETS: list[tuple[str, str, dict[str, int]]] = [
 	("none",         "No Equipment",             {}),
 ]
 
+# Scope variant definitions per weapon base ID
+# Maps base weapon ID → tuple of available scope suffixes ("" = iron sights)
+SCOPE_VARIANTS: dict[str, tuple[str, ...]] = {
+	# Full range: Iron Sights, Red Dot, Holographic, 3x Scope, 4x Scope
+	"ak47": ("", "_1", "_2", "_3", "_4"),
+	"m16a4": ("", "_1", "_2", "_3", "_4"),
+	"famas": ("", "_1", "_2", "_3", "_4"),
+	"aug": ("", "_1", "_2", "_3", "_4"),
+	"m4a1": ("", "_1", "_2", "_3", "_4"),
+	"fnfal": ("", "_1", "_2", "_3", "_4"),
+	"g3a3": ("", "_1", "_2", "_3", "_4"),
+	"scar17": ("", "_1", "_2", "_3", "_4"),
+	"mp5": ("", "_1", "_2", "_3", "_4"),
+	"mp7": ("", "_1", "_2", "_3", "_4"),
+	"svd": ("", "_1", "_2", "_3", "_4"),
+	"m82": ("", "_1", "_2", "_3", "_4"),
+	"m24": ("", "_1", "_2", "_3", "_4"),
+	"rpk": ("", "_1", "_2", "_3", "_4"),
+	# Up to 3x: Iron Sights, Red Dot, Holographic, 3x Scope
+	"spas12": ("", "_1", "_2", "_3"),
+	"m500": ("", "_1", "_2", "_3"),
+	"m590": ("", "_1", "_2", "_3"),
+	"m249": ("", "_1", "_2", "_3"),
+	# Iron Sights + Red Dot only
+	"mosin": ("", "_1"),
+	# Iron Sights + 4x Scope only (secondary)
+	"deagle": ("", "_4"),
+}
+
+# Scope suffix → display name
+SCOPE_NAMES: dict[str, str] = {
+	"": "Iron Sights",
+	"_1": "Holographic",
+	"_2": "Kobra",
+	"_3": "ACOG Red Dot (3x Scope)",
+	"_4": "Mk4 (4x Scope)",
+}
+
+# Ordered scope suffixes for trigger offset mapping (offset 0-4)
+ALL_SCOPE_SUFFIXES: list[str] = ["", "_1", "_2", "_3", "_4"]
+
 # Trigger value ranges for custom loadout system
-TRIG_EDITOR_START     = 100  # Open loadout editor
-TRIG_MARKETPLACE      = 101  # Open marketplace browser
-TRIG_MY_LOADOUTS      = 102  # Open my loadouts manager
-TRIG_PRIMARY_BASE     = 200  # 200 + primary_weapon_index
-TRIG_SECONDARY_BASE   = 250  # 250 + secondary_weapon_index (258 = None)
-TRIG_SECONDARY_NONE   = 258  # Skip secondary weapon
-TRIG_EQUIPMENT_BASE   = 300  # 300 + equipment_preset_index
-TRIG_SAVE_PUBLIC      = 350  # Save loadout as public
-TRIG_SAVE_PRIVATE     = 351  # Save loadout as private
+TRIG_EDITOR_START         = 100  # Open loadout editor
+TRIG_MARKETPLACE          = 101  # Open marketplace browser
+TRIG_MY_LOADOUTS          = 102  # Open my loadouts manager
+TRIG_PRIMARY_BASE         = 200  # 200 + primary_weapon_index
+TRIG_PRIMARY_SCOPE_BASE   = 230  # 230 + scope_index (0=iron, 1=_1, 2=_2, 3=_3, 4=_4)
+TRIG_SECONDARY_BASE       = 250  # 250 + secondary_weapon_index (258 = None)
+TRIG_SECONDARY_NONE       = 258  # Skip secondary weapon
+TRIG_SECONDARY_SCOPE_BASE = 260  # 260 + scope_index
+TRIG_EQUIPMENT_BASE       = 300  # 300 + equipment_preset_index
+TRIG_SAVE_PUBLIC          = 350  # Save loadout as public
+TRIG_SAVE_PRIVATE         = 351  # Save loadout as private
 TRIG_SELECT_BASE      = 1000 # 1000 + loadout_id → use as active class
 TRIG_FAVORITE_BASE    = 1100 # 1100 + loadout_id → toggle favorite
 TRIG_LIKE_BASE        = 1200 # 1200 + loadout_id → like loadout
@@ -243,18 +286,147 @@ function {ns}:v{version}/multiplayer/show_dialog with storage {ns}:temp
 """)
 
 	## ============================
-	## Step 2: editor/pick_primary — Store primary choice, show secondary dialog
+	## Step 2: editor/pick_primary — Store primary choice, route to scope or secondary
 	## ============================
 	# For each primary weapon, generate a dispatch line that stores the choice in temp
+	# Include scope defaults: primary_scope="", primary_scope_name="Iron Sights", primary_full=gun_id
 	pick_primary_lines = ""
 	for idx, (gun_id, display, category, mag_id, mag_count) in enumerate(PRIMARY_WEAPONS):
 		trig = TRIG_PRIMARY_BASE + idx
 		pick_primary_lines += (
 			f'execute if score @s {ns}.player.config matches {trig} run '
 			f'data modify storage {ns}:temp editor set value '
-			f'{{primary:"{gun_id}",primary_name:"{display}",primary_mag:"{mag_id}",primary_mag_count:{mag_count}}}\n'
+			f'{{primary:"{gun_id}",primary_name:"{display}",primary_mag:"{mag_id}",primary_mag_count:{mag_count},'
+			f'primary_scope:"",primary_scope_name:"Iron Sights",primary_full:"{gun_id}"}}\n'
 		)
 
+	# Build scope routing: weapons with scope variants → scope dialog, others → secondary dialog
+	scope_route_lines = ""
+	# Group weapons by their scope variant set for routing
+	scope_set_func: dict[tuple[str, ...], str] = {
+		("", "_1", "_2", "_3", "_4"): "scope/primary_full",
+		("", "_1", "_2", "_3"):       "scope/primary_no4",
+		("", "_1"):                   "scope/primary_1only",
+	}
+	for gun_id, *_ in PRIMARY_WEAPONS:
+		if gun_id in SCOPE_VARIANTS:
+			variants = SCOPE_VARIANTS[gun_id]
+			func_name = scope_set_func[variants]
+			scope_route_lines += (
+				f'execute if data storage {ns}:temp editor{{primary:"{gun_id}"}} run '
+				f'return run function {ns}:v{version}/multiplayer/editor/{func_name}\n'
+			)
+
+	write_versioned_function("multiplayer/editor/pick_primary",
+f"""
+# Store primary weapon choice based on trigger value
+{pick_primary_lines}
+# Route: weapons with scope variants go to scope dialog, others skip to secondary
+{scope_route_lines}
+# No scope variants: go directly to secondary selection
+function {ns}:v{version}/multiplayer/editor/show_secondary_dialog
+""")
+
+	## ============================
+	## Scope dialogs for primary weapon (one per unique scope variant set)
+	## ============================
+	# Helper: build scope action buttons SNBT
+	def scope_actions_snbt(trig_base: int, variants: tuple[str, ...]) -> str:
+		actions: list[str] = []
+		for suffix in variants:
+			idx = ALL_SCOPE_SUFFIXES.index(suffix)
+			trig = trig_base + idx
+			name = SCOPE_NAMES[suffix]
+			actions.append(
+				f'{{label:{{text:"{name}",color:"green"}},'
+				f'action:{{type:"run_command",command:"/trigger {ns}.player.config set {trig}"}}}}'
+			)
+		return ",".join(actions)
+
+	# Full scope set: Iron Sights, Red Dot, Holographic, 3x Scope, 4x Scope
+	full_scope_snbt = scope_actions_snbt(TRIG_PRIMARY_SCOPE_BASE, ("", "_1", "_2", "_3", "_4"))
+	write_versioned_function("multiplayer/editor/scope/primary_full",
+f"""
+data modify storage {ns}:temp dialog set value {{\
+type:"minecraft:multi_action",\
+title:{{text:"Create Loadout — Pick Scope",color:"gold",bold:true}},\
+body:[{{type:"minecraft:plain_message",contents:{{text:"Choose your optic attachment.",color:"gray"}}}}],\
+actions:[{full_scope_snbt}],\
+columns:2,\
+after_action:"close",\
+exit_action:{{label:"Cancel"}}\
+}}
+function {ns}:v{version}/multiplayer/show_dialog with storage {ns}:temp
+""")
+
+	# No _4 set: Iron Sights, Red Dot, Holographic, 3x Scope
+	no4_scope_snbt = scope_actions_snbt(TRIG_PRIMARY_SCOPE_BASE, ("", "_1", "_2", "_3"))
+	write_versioned_function("multiplayer/editor/scope/primary_no4",
+f"""
+data modify storage {ns}:temp dialog set value {{\
+type:"minecraft:multi_action",\
+title:{{text:"Create Loadout — Pick Scope",color:"gold",bold:true}},\
+body:[{{type:"minecraft:plain_message",contents:{{text:"Choose your optic attachment.",color:"gray"}}}}],\
+actions:[{no4_scope_snbt}],\
+columns:2,\
+after_action:"close",\
+exit_action:{{label:"Cancel"}}\
+}}
+function {ns}:v{version}/multiplayer/show_dialog with storage {ns}:temp
+""")
+
+	# Mosin: Iron Sights, Red Dot only
+	mosin_scope_snbt = scope_actions_snbt(TRIG_PRIMARY_SCOPE_BASE, ("", "_1"))
+	write_versioned_function("multiplayer/editor/scope/primary_1only",
+f"""
+data modify storage {ns}:temp dialog set value {{\
+type:"minecraft:multi_action",\
+title:{{text:"Create Loadout — Pick Scope",color:"gold",bold:true}},\
+body:[{{type:"minecraft:plain_message",contents:{{text:"Choose your optic attachment.",color:"gray"}}}}],\
+actions:[{mosin_scope_snbt}],\
+columns:2,\
+after_action:"close",\
+exit_action:{{label:"Cancel"}}\
+}}
+function {ns}:v{version}/multiplayer/show_dialog with storage {ns}:temp
+""")
+
+	## ============================
+	## editor/pick_primary_scope — Store scope choice, compute full weapon ID, show secondary
+	## ============================
+	pick_scope_lines = ""
+	for suffix in ALL_SCOPE_SUFFIXES:
+		idx = ALL_SCOPE_SUFFIXES.index(suffix)
+		trig = TRIG_PRIMARY_SCOPE_BASE + idx
+		name = SCOPE_NAMES[suffix]
+		pick_scope_lines += (
+			f'execute if score @s {ns}.player.config matches {trig} run '
+			f'data modify storage {ns}:temp editor.primary_scope set value "{suffix}"\n'
+		)
+		pick_scope_lines += (
+			f'execute if score @s {ns}.player.config matches {trig} run '
+			f'data modify storage {ns}:temp editor.primary_scope_name set value "{name}"\n'
+		)
+
+	write_versioned_function("multiplayer/editor/pick_primary_scope",
+f"""
+# Store scope choice
+{pick_scope_lines}
+# Compute full weapon ID: base + scope suffix (e.g. "ak47" + "_3" = "ak47_3")
+function {ns}:v{version}/multiplayer/editor/set_primary_full with storage {ns}:temp editor
+
+# Show secondary weapon dialog
+function {ns}:v{version}/multiplayer/editor/show_secondary_dialog
+""")
+
+	## Macro: compute primary_full = primary + primary_scope
+	write_versioned_function("multiplayer/editor/set_primary_full",
+f"""$data modify storage {ns}:temp editor.primary_full set value "$(primary)$(primary_scope)"
+""")
+
+	## ============================
+	## show_secondary_dialog — Build and show secondary weapon selection dialog
+	## ============================
 	secondary_actions: list[str] = []
 	for idx, (gun_id, display, mag_id, _mc) in enumerate(SECONDARY_WEAPONS):
 		trig = TRIG_SECONDARY_BASE + idx
@@ -271,14 +443,10 @@ function {ns}:v{version}/multiplayer/show_dialog with storage {ns}:temp
 	)
 	secondary_actions_snbt = ",".join(secondary_actions)
 
-	write_versioned_function("multiplayer/editor/pick_primary",
+	write_versioned_function("multiplayer/editor/show_secondary_dialog",
 f"""
-# Store primary weapon choice based on trigger value
-{pick_primary_lines}
-# Advance to step 2
 scoreboard players set @s {ns}.mp.edit_step 2
 
-# Build secondary weapon selection dialog
 data modify storage {ns}:temp dialog set value {{\
 type:"minecraft:multi_action",\
 title:{{text:"Create Loadout — Pick Secondary",color:"gold",bold:true}},\
@@ -288,13 +456,11 @@ columns:2,\
 after_action:"close",\
 exit_action:{{label:"Cancel"}}\
 }}
-
-# Show dialog
 function {ns}:v{version}/multiplayer/show_dialog with storage {ns}:temp
 """)
 
 	## ============================
-	## Step 3: editor/pick_secondary — Store secondary choice, show equipment dialog
+	## Step 3: editor/pick_secondary — Store secondary choice, route to scope or equipment
 	## ============================
 	pick_secondary_lines = ""
 	for idx, (gun_id, display, mag_id, mag_count) in enumerate(SECONDARY_WEAPONS):
@@ -315,6 +481,19 @@ function {ns}:v{version}/multiplayer/show_dialog with storage {ns}:temp
 			f'execute if score @s {ns}.player.config matches {trig} run '
 			f'data modify storage {ns}:temp editor.secondary_mag_count set value {mag_count}\n'
 		)
+		# Set scope defaults
+		pick_secondary_lines += (
+			f'execute if score @s {ns}.player.config matches {trig} run '
+			f'data modify storage {ns}:temp editor.secondary_scope set value ""\n'
+		)
+		pick_secondary_lines += (
+			f'execute if score @s {ns}.player.config matches {trig} run '
+			f'data modify storage {ns}:temp editor.secondary_scope_name set value "Iron Sights"\n'
+		)
+		pick_secondary_lines += (
+			f'execute if score @s {ns}.player.config matches {trig} run '
+			f'data modify storage {ns}:temp editor.secondary_full set value "{gun_id}"\n'
+		)
 	# Handle "None" option
 	pick_secondary_lines += (
 		f'execute if score @s {ns}.player.config matches {TRIG_SECONDARY_NONE} run '
@@ -324,7 +503,89 @@ function {ns}:v{version}/multiplayer/show_dialog with storage {ns}:temp
 		f'execute if score @s {ns}.player.config matches {TRIG_SECONDARY_NONE} run '
 		f'data modify storage {ns}:temp editor.secondary_name set value "None"\n'
 	)
+	pick_secondary_lines += (
+		f'execute if score @s {ns}.player.config matches {TRIG_SECONDARY_NONE} run '
+		f'data modify storage {ns}:temp editor.secondary_scope set value ""\n'
+	)
+	pick_secondary_lines += (
+		f'execute if score @s {ns}.player.config matches {TRIG_SECONDARY_NONE} run '
+		f'data modify storage {ns}:temp editor.secondary_scope_name set value ""\n'
+	)
+	pick_secondary_lines += (
+		f'execute if score @s {ns}.player.config matches {TRIG_SECONDARY_NONE} run '
+		f'data modify storage {ns}:temp editor.secondary_full set value ""\n'
+	)
 
+	# Route: deagle has scope variants → show scope dialog, others → equipment
+	secondary_scope_route = (
+		f'execute if data storage {ns}:temp editor{{secondary:"deagle"}} run '
+		f'return run function {ns}:v{version}/multiplayer/editor/scope/secondary_4only\n'
+	)
+
+	write_versioned_function("multiplayer/editor/pick_secondary",
+f"""
+# Store secondary weapon choice based on trigger value
+{pick_secondary_lines}
+# Route: deagle → scope dialog, others → equipment dialog
+{secondary_scope_route}
+# No scope variants: go directly to equipment selection
+function {ns}:v{version}/multiplayer/editor/show_equipment_dialog
+""")
+
+	## ============================
+	## Secondary scope dialog: deagle (Iron Sights + 4x Scope)
+	## ============================
+	deagle_scope_snbt = scope_actions_snbt(TRIG_SECONDARY_SCOPE_BASE, ("", "_4"))
+	write_versioned_function("multiplayer/editor/scope/secondary_4only",
+f"""
+data modify storage {ns}:temp dialog set value {{\
+type:"minecraft:multi_action",\
+title:{{text:"Create Loadout — Pick Scope (Secondary)",color:"gold",bold:true}},\
+body:[{{type:"minecraft:plain_message",contents:{{text:"Choose your secondary optic.",color:"gray"}}}}],\
+actions:[{deagle_scope_snbt}],\
+columns:2,\
+after_action:"close",\
+exit_action:{{label:"Cancel"}}\
+}}
+function {ns}:v{version}/multiplayer/show_dialog with storage {ns}:temp
+""")
+
+	## ============================
+	## editor/pick_secondary_scope — Store scope choice, compute full ID, show equipment
+	## ============================
+	pick_sec_scope_lines = ""
+	for suffix in ALL_SCOPE_SUFFIXES:
+		idx = ALL_SCOPE_SUFFIXES.index(suffix)
+		trig = TRIG_SECONDARY_SCOPE_BASE + idx
+		name = SCOPE_NAMES[suffix]
+		pick_sec_scope_lines += (
+			f'execute if score @s {ns}.player.config matches {trig} run '
+			f'data modify storage {ns}:temp editor.secondary_scope set value "{suffix}"\n'
+		)
+		pick_sec_scope_lines += (
+			f'execute if score @s {ns}.player.config matches {trig} run '
+			f'data modify storage {ns}:temp editor.secondary_scope_name set value "{name}"\n'
+		)
+
+	write_versioned_function("multiplayer/editor/pick_secondary_scope",
+f"""
+# Store secondary scope choice
+{pick_sec_scope_lines}
+# Compute full secondary weapon ID
+function {ns}:v{version}/multiplayer/editor/set_secondary_full with storage {ns}:temp editor
+
+# Show equipment dialog
+function {ns}:v{version}/multiplayer/editor/show_equipment_dialog
+""")
+
+	## Macro: compute secondary_full = secondary + secondary_scope
+	write_versioned_function("multiplayer/editor/set_secondary_full",
+f"""$data modify storage {ns}:temp editor.secondary_full set value "$(secondary)$(secondary_scope)"
+""")
+
+	## ============================
+	## show_equipment_dialog — Build and show equipment preset selection dialog
+	## ============================
 	equipment_actions: list[str] = []
 	for idx, (preset_id, display, items) in enumerate(EQUIPMENT_PRESETS):
 		trig = TRIG_EQUIPMENT_BASE + idx
@@ -334,14 +595,10 @@ function {ns}:v{version}/multiplayer/show_dialog with storage {ns}:temp
 		)
 	equipment_actions_snbt = ",".join(equipment_actions)
 
-	write_versioned_function("multiplayer/editor/pick_secondary",
+	write_versioned_function("multiplayer/editor/show_equipment_dialog",
 f"""
-# Store secondary weapon choice based on trigger value
-{pick_secondary_lines}
-# Advance to step 3
 scoreboard players set @s {ns}.mp.edit_step 3
 
-# Build equipment preset selection dialog
 data modify storage {ns}:temp dialog set value {{\
 type:"minecraft:multi_action",\
 title:{{text:"Create Loadout — Pick Equipment",color:"gold",bold:true}},\
@@ -351,8 +608,6 @@ columns:2,\
 after_action:"close",\
 exit_action:{{label:"Cancel"}}\
 }}
-
-# Show dialog
 function {ns}:v{version}/multiplayer/show_dialog with storage {ns}:temp
 """)
 
@@ -407,8 +662,8 @@ function {ns}:v{version}/multiplayer/editor/show_confirm with storage {ns}:temp 
 f"""
 # Build summary body using macro substitution
 $data modify storage {ns}:temp dialog.body set value [\
-{{type:"minecraft:plain_message",contents:["",{{"text":"▸ Primary: ","color":"white"}},{{"text":"$(primary_name)","color":"green","bold":true}}]}},\
-{{type:"minecraft:plain_message",contents:["",{{"text":"▸ Secondary: ","color":"white"}},{{"text":"$(secondary_name)","color":"yellow","bold":true}}]}},\
+{{type:"minecraft:plain_message",contents:["",{{"text":"▸ Primary: ","color":"white"}},{{"text":"$(primary_name)","color":"green","bold":true}},{{"text":" ($(primary_scope_name))","color":"dark_green"}}]}},\
+{{type:"minecraft:plain_message",contents:["",{{"text":"▸ Secondary: ","color":"white"}},{{"text":"$(secondary_name)","color":"yellow","bold":true}},{{"text":" ($(secondary_scope_name))","color":"gold"}}]}},\
 {{type:"minecraft:plain_message",contents:["",{{"text":"▸ Equipment: ","color":"white"}},{{"text":"$(equipment_name)","color":"aqua","bold":true}}]}},\
 {{type:"minecraft:plain_message",contents:{{text:"\\nSave this loadout?","color":"gray"}}}}\
 ]
@@ -545,12 +800,16 @@ execute store result storage {ns}:multiplayer next_loadout_id int 1 run scoreboa
 execute store result storage {ns}:temp _new_loadout.owner_pid int 1 run scoreboard players get @s {ns}.mp.pid
 # Owner name is set by a macro call (pass player display name via team prefix trick)
 
-# Set weapon info
-data modify storage {ns}:temp _new_loadout.main_gun set from storage {ns}:temp editor.primary
-data modify storage {ns}:temp _new_loadout.secondary_gun set from storage {ns}:temp editor.secondary
+# Set weapon info (store the full scope-modified weapon IDs)
+data modify storage {ns}:temp _new_loadout.main_gun set from storage {ns}:temp editor.primary_full
+data modify storage {ns}:temp _new_loadout.secondary_gun set from storage {ns}:temp editor.secondary_full
 
 # Set visibility
 execute if score #cl_public {ns}.data matches 1 run data modify storage {ns}:temp _new_loadout.public set value 1b
+
+# Override weapon loot entries with scope-modified weapon IDs (e.g. "ak47_3" instead of "ak47")
+function {ns}:v{version}/multiplayer/editor/fix_primary_loot with storage {ns}:temp editor
+execute if data storage {ns}:temp _build.secondary_data run function {ns}:v{version}/multiplayer/editor/fix_secondary_loot with storage {ns}:temp editor
 
 # Build the combined slot list: primary slots + secondary slots + equipment slots
 # 1. Copy primary weapon & magazine slots
@@ -593,6 +852,20 @@ f"""$data modify storage {ns}:temp _new_loadout.name set value "$(primary_name) 
 	## ============================
 	write_versioned_function("multiplayer/editor/notify_saved",
 f"""$tellraw @s ["",{{"text":"[MGS] ","color":"gold"}},{{"text":"Loadout saved: ","color":"white"}},{{"text":"$(primary_name) + $(secondary_name)","color":"green","bold":true}}]
+""")
+
+	## ============================
+	## editor/fix_primary_loot — macro: override primary weapon loot with scope-modified ID
+	## ============================
+	write_versioned_function("multiplayer/editor/fix_primary_loot",
+f"""$data modify storage {ns}:temp _build.primary_data.slots[0].loot set value "{ns}:i/$(primary_full)"
+""")
+
+	## ============================
+	## editor/fix_secondary_loot — macro: override secondary weapon loot with scope-modified ID
+	## ============================
+	write_versioned_function("multiplayer/editor/fix_secondary_loot",
+f"""$data modify storage {ns}:temp _build.secondary_data.fixed_slots[0].loot set value "{ns}:i/$(secondary_full)"
 """)
 
 	## ============================
