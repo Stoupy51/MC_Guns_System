@@ -244,7 +244,7 @@ $execute if score #random {ns}.data matches 31 run loot replace entity @s $(slot
         btn("ON", f"/scoreboard players set #damage_debug {ns}.config 1",
             "green", "Enable global damage debug (tellraw @a every hit)"),
     ])
-    dd_line = f'["  ",{{"text":"Damage debug: ","color":"white"}},{dd_btns}]'
+    dd_line = f'["  ",{{"text":"Damage Debug: ","color":"white"}},{dd_btns}]'
 
     # --- Player Specials ---
     special_header = r'["",{"text":"⚡ Player Specials","color":"aqua","bold":true},{"text":" (self only)","color":"gray","italic":true}]'

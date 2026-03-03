@@ -4,6 +4,8 @@ import json
 
 from stewbeet import JsonDict, Mem, write_versioned_function
 
+from .multiplayer.classes import CLASS_IDS, CLASSES
+
 
 def main() -> None:
     ns: str = Mem.ctx.project_id
@@ -36,13 +38,16 @@ f"""
 # 1 = Show config menu
 # 2 = Toggle hitmarker sound
 # 3 = Toggle damage debug in chat
+# 4 = Open multiplayer class selection menu
+# 11-20 = Select class 1-10 (via trigger from class menu)
 execute if score @s {ns}.player.config matches 1 run function {ns}:v{version}/player/config/menu
 execute if score @s {ns}.player.config matches 2 run function {ns}:v{version}/player/config/toggle_hitmarker
 execute if score @s {ns}.player.config matches 3 run function {ns}:v{version}/player/config/toggle_damage_debug
-
+execute if score @s {ns}.player.config matches 4 run function {ns}:v{version}/multiplayer/select_class
+{"".join(f'execute if score @s {ns}.player.config matches {10 + class_num} run function {ns}:v{version}/multiplayer/set_class {{class_num:{class_num},class_name:"{CLASSES[class_id]["name"]}"}}{chr(10)}' for class_id, class_num in CLASS_IDS.items())}
 # Reset score
 scoreboard players set @s {ns}.player.config 0
-""")
+""")  # noqa: E501
 
     ## Toggle hitmarker
     write_versioned_function("player/config/toggle_hitmarker",
@@ -63,11 +68,11 @@ f"""
 # If currently OFF (0), turn ON (1)
 execute store success score #toggle {ns}.data unless score @s {ns}.player.damage_debug matches 1
 execute if score #toggle {ns}.data matches 1 run scoreboard players set @s {ns}.player.damage_debug 1
-execute if score #toggle {ns}.data matches 1 run return run tellraw @s [{{"text":"[MGS] ","color":"gold"}},{{"text":"Damage debug: ","color":"white"}},{{"text":"ON ✔","color":"green"}}]
+execute if score #toggle {ns}.data matches 1 run return run tellraw @s [{{"text":"[MGS] ","color":"gold"}},{{"text":"Damage Debug: ","color":"white"}},{{"text":"ON ✔","color":"green"}}]
 
 # Otherwise it was ON, turn OFF
 scoreboard players set @s {ns}.player.damage_debug 0
-tellraw @s [{{"text":"[MGS] ","color":"gold"}},{{"text":"Damage debug: ","color":"white"}},{{"text":"OFF ✘","color":"red"}}]
+tellraw @s [{{"text":"[MGS] ","color":"gold"}},{{"text":"Damage Debug: ","color":"white"}},{{"text":"OFF ✘","color":"red"}}]
 """)
 
     ## Player config menu (clickable chat buttons)
@@ -78,21 +83,24 @@ tellraw @s [{{"text":"[MGS] ","color":"gold"}},{{"text":"Damage debug: ","color"
         return json.dumps(obj)
 
     sep = '{"text":"=======================================","color":"dark_gray"}'
-    blank = '""'
-    title = f'[{blank},{{"text":"       🎮 Player Settings 🎮","color":"gold","bold":true}}]'
+    title = '["",{"text":"       🎮 Player Settings 🎮","color":"gold","bold":true}]'
 
     # Hitmarker toggle button
     hm_btn = btn("Toggle", f"/trigger {ns}.player.config set 2", "yellow", "Toggle hitmarker sound on entity hit")
-    hm_on  = f'[{blank},{{"text":"  Hitmarker Sound: ","color":"white"}},{{"text":"ON ✔ ","color":"green"}},{hm_btn}]'
-    hm_off = f'[{blank},{{"text":"  Hitmarker Sound: ","color":"white"}},{{"text":"OFF ✘ ","color":"red"}},{hm_btn}]'
+    hm_on  = f'["",{{"text":"  Hitmarker Sound: ","color":"white"}},{{"text":"ON ✔ ","color":"green"}},{hm_btn}]'
+    hm_off = f'["",{{"text":"  Hitmarker Sound: ","color":"white"}},{{"text":"OFF ✘ ","color":"red"}},{hm_btn}]'
 
-    # Damage debug toggle button
+    # Damage Debug toggle button
     dd_btn = btn("Toggle", f"/trigger {ns}.player.config set 3", "yellow", "Toggle damage numbers in chat")
-    dd_on  = f'[{blank},{{"text":"  Damage Debug: ","color":"white"}},{{"text":"ON ✔ ","color":"green"}},{dd_btn}]'
-    dd_off = f'[{blank},{{"text":"  Damage Debug: ","color":"white"}},{{"text":"OFF ✘ ","color":"red"}},{dd_btn}]'
+    dd_on  = f'["",{{"text":"  Damage Debug: ","color":"white"}},{{"text":"ON ✔ ","color":"green"}},{dd_btn}]'
+    dd_off = f'["",{{"text":"  Damage Debug: ","color":"white"}},{{"text":"OFF ✘ ","color":"red"}},{dd_btn}]'
+
+    # Multiplayer class selection button
+    mp_btn = btn("Select Class", f"/trigger {ns}.player.config set 4", "aqua", "Open multiplayer class selection menu")
+    mp_line = f'["",{{"text":"  Multiplayer: ","color":"white"}},{mp_btn}]'
 
     # Info line
-    info_line = f'[{blank},{{"text":"  Use ","color":"gray","italic":true}},{{"text":"/trigger {ns}.player.config","color":"aqua","italic":true}},{{"text":" to reopen","color":"gray","italic":true}}]'
+    info_line = f'["",{{"text":"  Use ","color":"gray","italic":true}},{{"text":"/trigger {ns}.player.config","color":"aqua","italic":true}},{{"text":" to reopen","color":"gray","italic":true}}]'
 
     write_versioned_function("player/config/menu",
 f"""tellraw @s {sep}
@@ -102,6 +110,7 @@ execute if score @s {ns}.player.hitmarker matches 1 run tellraw @s {hm_on}
 execute unless score @s {ns}.player.hitmarker matches 1 run tellraw @s {hm_off}
 execute if score @s {ns}.player.damage_debug matches 1 run tellraw @s {dd_on}
 execute unless score @s {ns}.player.damage_debug matches 1 run tellraw @s {dd_off}
+tellraw @s {mp_line}
 tellraw @s {sep}
 tellraw @s {info_line}
 """)
@@ -115,7 +124,7 @@ scoreboard players operation #dmg_whole {ns}.data /= #10 {ns}.data
 scoreboard players operation #dmg_dec {ns}.data = #dmg_x10 {ns}.data
 scoreboard players operation #dmg_dec {ns}.data %= #10 {ns}.data
 
-# Damage debug: global config overrides (tellraw @a), otherwise per-player (tellraw to shooter only)
+# Damage Debug: global config overrides (tellraw @a), otherwise per-player (tellraw to shooter only)
 $execute if score #damage_debug {ns}.config matches 1 run tellraw @a [{{"text":"[DMG] ","color":"red"}},[{{"score":{{"name":"#dmg_whole","objective":"{ns}.data"}},"color":"gold"}},".",{{"score":{{"name":"#dmg_dec","objective":"{ns}.data"}}}}],{{"text":" HP to ","color":"gray"}},{{"selector":"$(target)"}},{{"text":" by ","color":"gray"}},{{"selector":"$(attacker)"}}]
 $execute unless score #damage_debug {ns}.config matches 1 at @s as $(attacker) if score @s {ns}.player.damage_debug matches 1 run tellraw @s [{{"text":"[DMG] ","color":"red"}},[{{"score":{{"name":"#dmg_whole","objective":"{ns}.data"}},"color":"gold"}},".",{{"score":{{"name":"#dmg_dec","objective":"{ns}.data"}}}}],{{"text":" HP to ","color":"gray"}},{{"selector":"@n"}}]
 """, tags=[f"{ns}:signals/damage"])  # noqa: E501

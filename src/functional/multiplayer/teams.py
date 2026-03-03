@@ -6,7 +6,6 @@ from stewbeet import Mem, write_load_file, write_versioned_function
 def generate_teams() -> None:
 	ns: str = Mem.ctx.project_id
 	version: str = Mem.ctx.project_version
-	blank: str = '""'
 
 	## ============================
 	## Join Teams
@@ -15,14 +14,14 @@ def generate_teams() -> None:
 f"""
 scoreboard players set @s {ns}.mp.team 1
 team join {ns}.red @s
-tellraw @s [{blank},{{"text":"You joined ","color":"white"}},{{"text":"Red Team","color":"red","bold":true}}]
+tellraw @s ["",{{"text":"You joined ","color":"white"}},{{"text":"Red Team","color":"red","bold":true}}]
 """)
 
 	write_versioned_function("multiplayer/join_blue",
 f"""
 scoreboard players set @s {ns}.mp.team 2
 team join {ns}.blue @s
-tellraw @s [{blank},{{"text":"You joined ","color":"white"}},{{"text":"Blue Team","color":"blue","bold":true}}]
+tellraw @s ["",{{"text":"You joined ","color":"white"}},{{"text":"Blue Team","color":"blue","bold":true}}]
 """)
 
 	write_versioned_function("multiplayer/auto_assign_team",
