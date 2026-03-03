@@ -2,14 +2,18 @@
 # Imports
 import json
 
-from stewbeet import JsonDict, Mem, write_versioned_function
+from stewbeet import Mem, TextComponent, write_versioned_function
 
 
 def btn(label: str, command: str, color: str = "yellow", hover: str = "") -> str:
 	""" Create a clickable button JSON component. """
-	obj: JsonDict = {"text": f"[{label}]", "color": color, "click_event": {"action": "run_command", "command": command}}
+	obj: TextComponent = [
+		{"text": "[", "color": color, "click_event": {"action": "run_command", "command": command}},
+		label,
+		"]",
+	]
 	if hover:
-		obj["hover_event"] = {"action": "show_text", "value": hover}
+		obj[0]["hover_event"] = {"action": "show_text", "value": hover}
 	return json.dumps(obj)
 
 

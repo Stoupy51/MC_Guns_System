@@ -20,7 +20,7 @@ execute if score #origin_acoustics_level mgs.data matches 0..4 if score #origin_
 execute if score #origin_acoustics_level mgs.data < @s mgs.acoustics_level run scoreboard players add #processed_acoustics mgs.data 1
 
 # If (original sound level + 1) is less than listener's acoustics level, increase the sound level by 1
-# This creates a smoother sound transition between different acoustic environments
+# This creates a smoother Sound transition between different acoustic environments
 execute if score #attenuation_acoustics mgs.data < @s mgs.acoustics_level run scoreboard players add #processed_acoustics mgs.data 1
 
 # If listener's acoustics level is 5 (water), force the sound level to water regardless of other conditions
