@@ -34,9 +34,8 @@ $scoreboard players set @s {ns}.mp.class $(class_num)
 # If game active: queue for next respawn
 $execute if data storage {ns}:multiplayer game{{state:"active"}} run tellraw @s ["",{{"text":"[MGS] ","color":"gold"}},{{"text":"Class set to ","color":"white"}},{{"text":"$(class_name)","color":"green","bold":true}},{{"text":" — will apply on respawn","color":"yellow"}}]
 
-# If game not active: apply immediately and notify
+# If game not active: only save choice (no loadout outside multiplayer)
 $execute unless data storage {ns}:multiplayer game{{state:"active"}} run tellraw @s ["",{{"text":"[MGS] ","color":"gold"}},{{"text":"Class set to ","color":"white"}},{{"text":"$(class_name)","color":"green","bold":true}}]
-execute unless data storage {ns}:multiplayer game{{state:"active"}} run function {ns}:v{version}/multiplayer/apply_class
 """)
 
 	## ============================
@@ -80,9 +79,8 @@ execute if data storage {ns}:multiplayer game{{state:"active"}} run function {ns
 		name: str = class_data["name"]
 		detect_commands += f'execute if score @s {ns}.mp.class matches {class_num} if data storage {ns}:multiplayer game{{state:"active"}} run tellraw @s ["",{{"text":"[MGS] ","color":"gold"}},{{"text":"Class set to ","color":"white"}},{{"text":"{name}","color":"green","bold":true}},{{"text":" — will apply on respawn","color":"yellow"}}]\n'
 
-	detect_commands += f"""
-# If game not active: apply immediately
-execute unless data storage {ns}:multiplayer game{{state:"active"}} run function {ns}:v{version}/multiplayer/apply_class
+	detect_commands += """
+# If game not active: only save choice (no loadout outside multiplayer)
 """
 	for class_id, class_data in CLASSES.items():
 		class_num = CLASS_IDS[class_id]

@@ -23,7 +23,6 @@ $scoreboard players set @s mgs.mp.class $(class_num)
 # If game active: queue for next respawn
 $execute if data storage mgs:multiplayer game{state:"active"} run tellraw @s ["",{"translate": "mgs","color":"gold"},{"translate": "mgs.class_set_to","color":"white"},{"text":"$(class_name)","color":"green","bold":true},{"translate": "mgs.will_apply_on_respawn","color":"yellow"}]
 
-# If game not active: apply immediately and notify
+# If game not active: only save choice (no loadout outside multiplayer)
 $execute unless data storage mgs:multiplayer game{state:"active"} run tellraw @s ["",{"translate": "mgs","color":"gold"},{"translate": "mgs.class_set_to","color":"white"},{"text":"$(class_name)","color":"green","bold":true}]
-execute unless data storage mgs:multiplayer game{state:"active"} run function mgs:v5.0.0/multiplayer/apply_class
 
