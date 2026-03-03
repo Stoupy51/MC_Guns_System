@@ -11,6 +11,9 @@ from .catalogs import (
 	SCOPE_NAMES,
 	SCOPE_VARIANTS,
 	SECONDARY_WEAPONS,
+	TRIG_BACK_EQUIPMENT,
+	TRIG_BACK_SECONDARY,
+	TRIG_EDITOR_START,
 	TRIG_EQUIPMENT_BASE,
 	TRIG_PRIMARY_BASE,
 	TRIG_PRIMARY_SCOPE_BASE,
@@ -57,7 +60,7 @@ body:[{{type:"minecraft:plain_message",contents:{{text:"Choose your primary weap
 actions:[{primary_actions_snbt}],\
 columns:2,\
 after_action:"close",\
-exit_action:{{label:"Cancel"}}\
+exit_action:{{label:"Back",action:{{type:"run_command",command:"/trigger {ns}.player.config set 4"}}}}\
 }}
 
 # Show dialog
@@ -133,7 +136,7 @@ body:[{{type:"minecraft:plain_message",contents:{{text:"Choose your optic attach
 actions:[{full_scope_snbt}],\
 columns:2,\
 after_action:"close",\
-exit_action:{{label:"Cancel"}}\
+exit_action:{{label:"Back",action:{{type:"run_command",command:"/trigger {ns}.player.config set {TRIG_EDITOR_START}"}}}}\
 }}
 function {ns}:v{version}/multiplayer/show_dialog with storage {ns}:temp
 """)
@@ -149,7 +152,7 @@ body:[{{type:"minecraft:plain_message",contents:{{text:"Choose your optic attach
 actions:[{no4_scope_snbt}],\
 columns:2,\
 after_action:"close",\
-exit_action:{{label:"Cancel"}}\
+exit_action:{{label:"Back",action:{{type:"run_command",command:"/trigger {ns}.player.config set {TRIG_EDITOR_START}"}}}}\
 }}
 function {ns}:v{version}/multiplayer/show_dialog with storage {ns}:temp
 """)
@@ -165,7 +168,7 @@ body:[{{type:"minecraft:plain_message",contents:{{text:"Choose your optic attach
 actions:[{mosin_scope_snbt}],\
 columns:2,\
 after_action:"close",\
-exit_action:{{label:"Cancel"}}\
+exit_action:{{label:"Back",action:{{type:"run_command",command:"/trigger {ns}.player.config set {TRIG_EDITOR_START}"}}}}\
 }}
 function {ns}:v{version}/multiplayer/show_dialog with storage {ns}:temp
 """)
@@ -233,7 +236,7 @@ body:[{{type:"minecraft:plain_message",contents:{{text:"Choose your secondary we
 actions:[{secondary_actions_snbt}],\
 columns:2,\
 after_action:"close",\
-exit_action:{{label:"Cancel"}}\
+exit_action:{{label:"Back",action:{{type:"run_command",command:"/trigger {ns}.player.config set {TRIG_EDITOR_START}"}}}}\
 }}
 function {ns}:v{version}/multiplayer/show_dialog with storage {ns}:temp
 """)
@@ -324,7 +327,7 @@ body:[{{type:"minecraft:plain_message",contents:{{text:"Choose your secondary op
 actions:[{deagle_scope_snbt}],\
 columns:2,\
 after_action:"close",\
-exit_action:{{label:"Cancel"}}\
+exit_action:{{label:"Back",action:{{type:"run_command",command:"/trigger {ns}.player.config set {TRIG_BACK_SECONDARY}"}}}}\
 }}
 function {ns}:v{version}/multiplayer/show_dialog with storage {ns}:temp
 """)
@@ -385,7 +388,7 @@ body:[{{type:"minecraft:plain_message",contents:{{text:"Choose your equipment lo
 actions:[{equipment_actions_snbt}],\
 columns:2,\
 after_action:"close",\
-exit_action:{{label:"Cancel"}}\
+exit_action:{{label:"Back",action:{{type:"run_command",command:"/trigger {ns}.player.config set {TRIG_BACK_SECONDARY}"}}}}\
 }}
 function {ns}:v{version}/multiplayer/show_dialog with storage {ns}:temp
 """)
@@ -427,7 +430,7 @@ actions:[\
 ],\
 columns:2,\
 after_action:"close",\
-exit_action:{{label:"Cancel"}}\
+exit_action:{{label:"Back",action:{{type:"run_command",command:"/trigger {ns}.player.config set {TRIG_BACK_EQUIPMENT}"}}}}\
 }}
 
 # Show dialog via macro-built summary

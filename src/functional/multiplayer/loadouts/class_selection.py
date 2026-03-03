@@ -160,6 +160,20 @@ execute unless score @s {ns}.mp.class matches 0 run function {ns}:v{version}/mul
 """)
 
 	## ============================
+	## auto_apply_default: apply default custom loadout on game start
+	## Sets mp.class = -(mp.default) then applies
+	## ============================
+	write_versioned_function("multiplayer/auto_apply_default",
+f"""
+# Set mp.class to negative default ID (custom loadout)
+scoreboard players operation @s {ns}.mp.class = @s {ns}.mp.default
+scoreboard players operation @s {ns}.mp.class *= #minus_one {ns}.data
+
+# Apply the loadout
+function {ns}:v{version}/multiplayer/apply_class
+""")
+
+	## ============================
 	## Player tick hooks
 	## ============================
 	write_versioned_function("player/tick",
@@ -167,3 +181,4 @@ f"""
 # Multiplayer: detect respawn (death_count incremented by deathCount criterion)
 execute if data storage {ns}:multiplayer game{{state:"active"}} if score @s {ns}.mp.death_count matches 1.. run function {ns}:v{version}/multiplayer/on_respawn
 """)
+
