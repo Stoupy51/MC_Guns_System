@@ -188,7 +188,8 @@ execute as @n[tag={ns}.new] run function {ns}:v{version}/utils/random_weapon {{s
 scoreboard players set @n[tag={ns}.new] {ns}.mob.active_time {active}
 scoreboard players set @n[tag={ns}.new] {ns}.mob.sleep_time {sleep}
 
-# Clean up new tag
+# Increment armed mob count & Clean up new tag
+scoreboard players add #armed_mob_count {ns}.data 1
 tag @n[tag={ns}.new] remove {ns}.new
 """)
 

@@ -16,6 +16,7 @@ execute as @n[tag=mgs.new] run function mgs:v5.0.0/utils/random_weapon {slot:"we
 scoreboard players set @n[tag=mgs.new] mgs.mob.active_time 60
 scoreboard players set @n[tag=mgs.new] mgs.mob.sleep_time 20
 
-# Clean up new tag
+# Increment armed mob count & Clean up new tag
+scoreboard players add #armed_mob_count mgs.data 1
 tag @n[tag=mgs.new] remove mgs.new
 
