@@ -6,6 +6,9 @@
 # @within	mgs:v5.0.0/tick [ as @e[type=player,sort=random] & at @s ]
 #
 
+# Custom loadouts: assign player ID if not yet assigned
+execute unless score @s mgs.mp.pid matches 1.. run function mgs:v5.0.0/multiplayer/assign_pid
+
 # Add temporary tag
 tag @s add mgs.ticking
 

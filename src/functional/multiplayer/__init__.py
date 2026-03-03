@@ -1,5 +1,7 @@
+
 # Imports
 from .class_selection import generate_class_selection
+from .custom_loadouts import generate_custom_loadouts
 from .game import generate_game
 from .loadout import generate_loadouts
 from .maps import generate_maps
@@ -12,6 +14,7 @@ def main() -> None:
 	generate_teams()
 	generate_loadouts()
 	generate_class_selection()
+	generate_custom_loadouts()
 	generate_maps()
 	generate_menus()
 

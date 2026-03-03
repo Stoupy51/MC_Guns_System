@@ -6,6 +6,27 @@ import json
 from stewbeet import Mem, TextComponent, write_versioned_function
 
 from .multiplayer.classes import CLASS_IDS, CLASSES
+from .multiplayer.custom_loadouts import (
+    EQUIPMENT_PRESETS,
+    PRIMARY_WEAPONS,
+    SECONDARY_WEAPONS,
+    TRIG_DELETE_BASE,
+    TRIG_EDITOR_START,
+    TRIG_EQUIPMENT_BASE,
+    TRIG_FAVORITE_BASE,
+    TRIG_LIKE_BASE,
+    TRIG_MARKETPLACE,
+    TRIG_MY_LOADOUTS,
+    TRIG_PRIMARY_BASE,
+    TRIG_SAVE_PRIVATE,
+    TRIG_SAVE_PUBLIC,
+    TRIG_SECONDARY_BASE,
+    TRIG_SECONDARY_NONE,
+    TRIG_SELECT_BASE,
+    TRIG_SET_DEFAULT_BASE,
+    TRIG_TOGGLE_VIS_BASE,
+    TRIG_UNSET_DEFAULT,
+)
 
 
 def main() -> None:
@@ -34,6 +55,17 @@ execute if score @s {ns}.player.config matches 1.. run function {ns}:v{version}/
 """)
 
     ## Process trigger values
+    # Pre-compute trigger ranges for custom loadout editor
+    primary_max = TRIG_PRIMARY_BASE + len(PRIMARY_WEAPONS) - 1
+    secondary_max = TRIG_SECONDARY_BASE + len(SECONDARY_WEAPONS) - 1
+    equipment_max = TRIG_EQUIPMENT_BASE + len(EQUIPMENT_PRESETS) - 1
+    select_max = TRIG_SELECT_BASE + 99  # Max 99 custom loadouts
+    favorite_max = TRIG_FAVORITE_BASE + 99
+    like_max = TRIG_LIKE_BASE + 99
+    delete_max = TRIG_DELETE_BASE + 99
+    toggle_vis_max = TRIG_TOGGLE_VIS_BASE + 99
+    set_default_max = TRIG_SET_DEFAULT_BASE + 99
+
     write_versioned_function("player/config/process",
 f"""
 # 1 = Show config menu
@@ -46,6 +78,37 @@ execute if score @s {ns}.player.config matches 2 run function {ns}:v{version}/pl
 execute if score @s {ns}.player.config matches 3 run function {ns}:v{version}/player/config/toggle_damage_debug
 execute if score @s {ns}.player.config matches 4 run function {ns}:v{version}/multiplayer/select_class
 {"".join(f'execute if score @s {ns}.player.config matches {10 + class_num} run function {ns}:v{version}/multiplayer/set_class {{class_num:{class_num},class_name:"{CLASSES[class_id]["name"]}"}}{chr(10)}' for class_id, class_num in CLASS_IDS.items())}
+# === Custom Loadout Editor ===
+# 100 = Open loadout editor (create new)
+execute if score @s {ns}.player.config matches {TRIG_EDITOR_START} run function {ns}:v{version}/multiplayer/editor/start
+# 101 = Open marketplace browser
+execute if score @s {ns}.player.config matches {TRIG_MARKETPLACE} run function {ns}:v{version}/multiplayer/marketplace/browse
+# 102 = Open my loadouts manager
+execute if score @s {ns}.player.config matches {TRIG_MY_LOADOUTS} run function {ns}:v{version}/multiplayer/my_loadouts/browse
+# 200-{primary_max} = Editor: pick primary weapon
+execute if score @s {ns}.player.config matches {TRIG_PRIMARY_BASE}..{primary_max} run function {ns}:v{version}/multiplayer/editor/pick_primary
+# 250-{TRIG_SECONDARY_NONE} = Editor: pick secondary weapon (258 = none)
+execute if score @s {ns}.player.config matches {TRIG_SECONDARY_BASE}..{TRIG_SECONDARY_NONE} run function {ns}:v{version}/multiplayer/editor/pick_secondary
+# 300-{equipment_max} = Editor: pick equipment preset
+execute if score @s {ns}.player.config matches {TRIG_EQUIPMENT_BASE}..{equipment_max} run function {ns}:v{version}/multiplayer/editor/pick_equipment
+# 350-351 = Editor: save loadout (350=public, 351=private)
+execute if score @s {ns}.player.config matches {TRIG_SAVE_PUBLIC}..{TRIG_SAVE_PRIVATE} run function {ns}:v{version}/multiplayer/editor/save
+# === Custom Loadout Actions ===
+# 1000-1099 = Select/use a custom loadout
+execute if score @s {ns}.player.config matches {TRIG_SELECT_BASE}..{select_max} run function {ns}:v{version}/multiplayer/custom/select
+# 1100-1199 = Toggle favorite on a loadout
+execute if score @s {ns}.player.config matches {TRIG_FAVORITE_BASE}..{favorite_max} run function {ns}:v{version}/multiplayer/custom/toggle_favorite
+# 1200-1299 = Like a loadout
+execute if score @s {ns}.player.config matches {TRIG_LIKE_BASE}..{like_max} run function {ns}:v{version}/multiplayer/custom/like
+# 1300-1399 = Delete own loadout
+execute if score @s {ns}.player.config matches {TRIG_DELETE_BASE}..{delete_max} run function {ns}:v{version}/multiplayer/custom/delete
+# 1400-1499 = Toggle public/private on own loadout
+execute if score @s {ns}.player.config matches {TRIG_TOGGLE_VIS_BASE}..{toggle_vis_max} run function {ns}:v{version}/multiplayer/custom/toggle_visibility
+# 1500-1598 = Set default custom loadout
+execute if score @s {ns}.player.config matches {TRIG_SET_DEFAULT_BASE}..{set_default_max} run function {ns}:v{version}/multiplayer/custom/set_default
+# 1599 = Unset default loadout
+execute if score @s {ns}.player.config matches {TRIG_UNSET_DEFAULT} run function {ns}:v{version}/multiplayer/custom/unset_default
+
 # Reset score
 scoreboard players set @s {ns}.player.config 0
 """)
