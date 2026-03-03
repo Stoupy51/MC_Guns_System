@@ -7,6 +7,10 @@
 #			mgs:v5.0.0/multiplayer/on_respawn
 #
 
+# Check for custom loadout (negative mp.class = custom loadout ID)
+execute if score @s mgs.mp.class matches ..-1 run return run function mgs:v5.0.0/multiplayer/apply_custom_class
+
+# Standard class lookup by class_num score
 execute if score @s mgs.mp.class matches 1 run data modify storage mgs:temp current_class set from storage mgs:multiplayer classes_list[0]
 execute if score @s mgs.mp.class matches 2 run data modify storage mgs:temp current_class set from storage mgs:multiplayer classes_list[1]
 execute if score @s mgs.mp.class matches 3 run data modify storage mgs:temp current_class set from storage mgs:multiplayer classes_list[2]

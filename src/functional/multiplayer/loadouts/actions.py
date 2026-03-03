@@ -20,49 +20,38 @@ def generate_actions() -> None:
 	## CUSTOM LOADOUT ACTIONS — Select, Delete, Toggle Visibility, Set Default
 	## ====================================================================
 
-	## custom/select — Find loadout by ID and apply it
+	## custom/select — Store custom loadout choice (items applied on respawn/apply_class)
 	write_versioned_function("multiplayer/custom/select",
 f"""
 # Extract loadout ID from trigger value: id = trigger - {TRIG_SELECT_BASE}
 scoreboard players operation #loadout_id {ns}.data = @s {ns}.player.config
 scoreboard players remove #loadout_id {ns}.data {TRIG_SELECT_BASE}
 
-# Copy loadouts list for search
-data modify storage {ns}:temp _find_iter set from storage {ns}:multiplayer custom_loadouts
+# Store as active custom class (negative mp.class = custom loadout ID)
+scoreboard players operation @s {ns}.mp.class = #loadout_id {ns}.data
+scoreboard players operation @s {ns}.mp.class *= #minus_one {ns}.data
 
-# Recursive search by ID (score-based comparison)
-execute if data storage {ns}:temp _find_iter[0] run function {ns}:v{version}/multiplayer/custom/find_and_apply
+# Find the loadout name for notification
+data modify storage {ns}:temp _find_iter set from storage {ns}:multiplayer custom_loadouts
+execute if data storage {ns}:temp _find_iter[0] run function {ns}:v{version}/multiplayer/custom/find_and_notify
 """)
 
-	## custom/find_and_apply — Recursive: find loadout by ID and apply it (score-based)
-	write_versioned_function("multiplayer/custom/find_and_apply",
+	## custom/find_and_notify — Recursive: find loadout by ID and notify player
+	write_versioned_function("multiplayer/custom/find_and_notify",
 f"""
 # Check if this entry's ID matches the target
 execute store result score #entry_id {ns}.data run data get storage {ns}:temp _find_iter[0].id
-execute if score #entry_id {ns}.data = #loadout_id {ns}.data run return run function {ns}:v{version}/multiplayer/custom/apply_found
+execute if score #entry_id {ns}.data = #loadout_id {ns}.data run return run function {ns}:v{version}/multiplayer/custom/notify_selected with storage {ns}:temp _find_iter[0]
 
 # Not found yet, continue search
 data remove storage {ns}:temp _find_iter[0]
-execute if data storage {ns}:temp _find_iter[0] run function {ns}:v{version}/multiplayer/custom/find_and_apply
+execute if data storage {ns}:temp _find_iter[0] run function {ns}:v{version}/multiplayer/custom/find_and_notify
 """)
 
-	## custom/apply_found — Apply the found loadout
-	write_versioned_function("multiplayer/custom/apply_found",
-f"""
-# Copy found loadout's slots to the format expected by apply_class_dynamic
-data modify storage {ns}:temp current_class set value {{slots:[]}}
-data modify storage {ns}:temp current_class.slots set from storage {ns}:temp _find_iter[0].slots
-
-# Apply the loadout (clears inventory and gives items)
-function {ns}:v{version}/multiplayer/apply_class_dynamic
-
-# Notify player
-function {ns}:v{version}/multiplayer/custom/notify_selected with storage {ns}:temp _find_iter[0]
-""")
-
-	## custom/notify_selected — Macro tellraw
+	## custom/notify_selected — Macro tellraw (same message pattern as set_class with OP apply button)
+	apply_now: str = f"""{{"text":" [✔]","color":"gold","hover_event":{{"action":"show_text","value":{{"text":"Click here to apply immediately (OP only)","color":"yellow"}}}},"click_event":{{"action":"run_command","command":"/function {ns}:v{version}/multiplayer/apply_class"}}}}"""
 	write_versioned_function("multiplayer/custom/notify_selected",
-"""$tellraw @s ["",{"text":"[MGS] ","color":"gold"},{"text":"Custom loadout applied: ","color":"white"},{"text":"$(name)","color":"green","bold":true}]
+f"""$tellraw @s ["",{{"text":"[MGS] ","color":"gold"}},{{"text":"Class set to ","color":"white"}},{{"text":"$(name)","color":"green","bold":true}},{{"text":" (custom)","color":"aqua"}},{{"text":" — will apply on respawn","color":"yellow"}},{apply_now}]
 """)
 
 	## custom/delete — Verify ownership and remove loadout from list

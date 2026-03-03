@@ -3,10 +3,10 @@
 #
 # @executed	as @e[type=player,sort=random] & at @s
 #
-# @within	mgs:v5.0.0/multiplayer/custom/apply_found with storage mgs:temp _find_iter[0]
+# @within	mgs:v5.0.0/multiplayer/custom/find_and_notify with storage mgs:temp _find_iter[0]
 #
 # @args		name (unknown)
 #
 
-$tellraw @s ["",{"translate": "mgs","color":"gold"},{"translate": "mgs.custom_loadout_applied","color":"white"},{"text":"$(name)","color":"green","bold":true}]
+$tellraw @s ["",{"translate": "mgs","color":"gold"},{"translate": "mgs.class_set_to","color":"white"},{"text":"$(name)","color":"green","bold":true},{"translate": "mgs.custom","color":"aqua"},{"translate": "mgs.will_apply_on_respawn","color":"yellow"},{"text":" [✔]","color":"gold","hover_event":{"action":"show_text","value":{"translate": "mgs.click_here_to_apply_immediately_op_only","color":"yellow"}},"click_event":{"action":"run_command","command":"/function mgs:v5.0.0/multiplayer/apply_class"}}]
 

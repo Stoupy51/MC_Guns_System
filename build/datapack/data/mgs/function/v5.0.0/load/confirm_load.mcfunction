@@ -436,6 +436,9 @@ execute unless score #next_pid mgs.data matches 1.. run scoreboard players set #
 scoreboard objectives add mgs.mp.default dummy
 scoreboard objectives add mgs.mp.edit_step dummy
 
+# Constant for negation (used to store custom loadout ID as negative mp.class)
+scoreboard players set #minus_one mgs.data -1
+
 # Custom loadouts list (persists across reloads)
 execute unless data storage mgs:multiplayer custom_loadouts run data modify storage mgs:multiplayer custom_loadouts set value []
 # Per-player preference data (persists across reloads)

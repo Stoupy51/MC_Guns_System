@@ -7,7 +7,7 @@
 #
 
 # Initialize dialog with 2 columns: [Use][Delete] per loadout
-data modify storage mgs:temp dialog set value {type:"minecraft:multi_action",title:{text:"My Loadouts",color:"gold",bold:true},body:[{type:"minecraft:plain_message",contents:{translate: "mgs.select_a_loadout_to_use_or_delete_it",color:"gray"}}],actions:[],columns:2,after_action:"close",exit_action:{label:"Back"}}
+data modify storage mgs:temp dialog set value {type:"minecraft:multi_action",title:{translate: "mgs.my_loadouts",color:"gold",bold:true},body:[{type:"minecraft:plain_message",contents:{translate: "mgs.select_a_loadout_to_use_or_delete_it",color:"gray"}}],actions:[],columns:2,after_action:"close",exit_action:{label:"Back"}}
 
 # Copy all loadouts for iteration
 data modify storage mgs:temp _iter set from storage mgs:multiplayer custom_loadouts

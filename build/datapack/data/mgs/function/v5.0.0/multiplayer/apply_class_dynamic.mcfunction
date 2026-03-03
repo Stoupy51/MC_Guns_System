@@ -4,7 +4,7 @@
 # @executed	as @a & at @s
 #
 # @within	mgs:v5.0.0/multiplayer/apply_class
-#			mgs:v5.0.0/multiplayer/custom/apply_found
+#			mgs:v5.0.0/multiplayer/apply_custom_match
 #
 
 # Clear player inventory
