@@ -13,7 +13,8 @@ in vec2 texCoord;
 out vec4 fragColor;
 
 #define DEBUG 0
-#define RADIUS 0.14
+#define RADIUS_LEVEL_3 0.14
+#define RADIUS_LEVEL_4 0.20
 
 // Flash spark sprite sheet: 3x3 grid of 9 different flash sprites (1536x1536 total)
 #define SPRITE_COUNT 9
@@ -84,9 +85,10 @@ void main() {
     // Apply barrel distortion if zooming WITH a scope (zoomLevel 3 or 4 only)
     // zoomLevel 2 = zoomed but no scope: skip distortion, FOV reduction still applies above
     // Disabled in 3rd person (barrel distortion makes no sense from behind)
-    if (zoomMode && !thirdPerson && zoomLevel >= 3 && length(screenCoord) < RADIUS) {
+    if (zoomMode && !thirdPerson && ((zoomLevel == 3 && length(screenCoord) < RADIUS_LEVEL_3) || (zoomLevel == 4 && length(screenCoord) < RADIUS_LEVEL_4))) {
         float Zoom = float(zoomLevel);  // 3.0 for _3 weapons, 4.0 for _4 weapons
-        float d = length(screenCoord * Distortion / RADIUS);
+        float RadiusLevel = (zoomLevel == 3) ? RADIUS_LEVEL_3 : RADIUS_LEVEL_4;
+        float d = length(screenCoord * Distortion / RadiusLevel);
         float z = sqrt(1.0 - d * d);
         float r = atan(d, z) / 3.1415926535;
         float theta = atan(screenCoord.y, screenCoord.x);

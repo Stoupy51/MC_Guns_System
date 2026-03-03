@@ -19,7 +19,6 @@ But wait, just before doing so, make sure you understand everything in the proje
 - based_of folder is the old code (1.19, we are in 1.21.11 / 26.1 now) : we keep it because it can always come handy if we are missing a feature.
 
 To build the project, type `stewbeet` and verify output in build.
-Keep in mind that "py" is Python 3.14, and "python" is 3.9 so don't use the later one but "py" instead"
 
 For each task to do, type `rm done_with_current_task` command in terminal, I'll check on it and tell you if the task is good and you can continue on!
 ```
