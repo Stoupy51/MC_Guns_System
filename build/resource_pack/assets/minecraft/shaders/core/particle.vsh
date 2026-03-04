@@ -44,7 +44,7 @@ const vec2 corners[4] = vec2[4](
 //   G==0        → flash (mode 1)
 //   G∈[1-7]    → zoom x3 (from 0.02, randomized to [2-5])
 //   G∈[8-25]   → zoom x4 (from 0.08, randomized to [10-20])
-//   G∈[26-80]  → zoom center-only (from 0.25, randomized to [30-63]) — no scope
+//   G∈[26-80]  → zoom center-only (from 0.25, randomized to [30-63]) - no scope
 int detectMarkerMode(vec4 color) {
     ivec4 ic = ivec4(round(color * 255.0));
     // Signature: R in [1-10] (very dim dust) AND fully opaque (a>=250).

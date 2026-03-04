@@ -18,10 +18,10 @@ def generate_actions() -> None:
 	version: str = Mem.ctx.project_version
 
 	## ====================================================================
-	## CUSTOM LOADOUT ACTIONS — Select, Delete, Toggle Visibility, Set Default
+	## CUSTOM LOADOUT ACTIONS - Select, Delete, Toggle Visibility, Set Default
 	## ====================================================================
 
-	## custom/select — Store custom loadout choice (items applied on respawn/apply_class)
+	## custom/select - Store custom loadout choice (items applied on respawn/apply_class)
 	write_versioned_function("multiplayer/custom/select",
 f"""
 # Extract loadout ID from trigger value: id = trigger - {TRIG_SELECT_BASE}
@@ -37,7 +37,7 @@ data modify storage {ns}:temp _find_iter set from storage {ns}:multiplayer custo
 execute if data storage {ns}:temp _find_iter[0] run function {ns}:v{version}/multiplayer/custom/find_and_notify
 """)
 
-	## custom/find_and_notify — Recursive: find loadout by ID and notify player
+	## custom/find_and_notify - Recursive: find loadout by ID and notify player
 	write_versioned_function("multiplayer/custom/find_and_notify",
 f"""
 # Check if this entry's ID matches the target
@@ -49,13 +49,13 @@ data remove storage {ns}:temp _find_iter[0]
 execute if data storage {ns}:temp _find_iter[0] run function {ns}:v{version}/multiplayer/custom/find_and_notify
 """)
 
-	## custom/notify_selected — Macro tellraw (same message pattern as set_class with OP apply button)
+	## custom/notify_selected - Macro tellraw (same message pattern as set_class with OP apply button)
 	apply_now: str = f"""{{"text":" [✔]","color":"gold","hover_event":{{"action":"show_text","value":{{"text":"Click here to apply immediately (OP only)","color":"yellow"}}}},"click_event":{{"action":"run_command","command":"/function {ns}:v{version}/multiplayer/apply_class"}}}}"""
 	write_versioned_function("multiplayer/custom/notify_selected",
-f"""$tellraw @s ["",{{"text":"[MGS] ","color":"gold"}},{{"text":"Class set to ","color":"white"}},{{"text":"$(name)","color":"green","bold":true}},{{"text":" (custom)","color":"aqua"}},{{"text":" — will apply on respawn","color":"yellow"}},{apply_now}]
+f"""$tellraw @s ["",{{"text":"[MGS] ","color":"gold"}},{{"text":"Class set to ","color":"white"}},{{"text":"$(name)","color":"green","bold":true}},{{"text":" (custom)","color":"aqua"}},{{"text":" - will apply on respawn","color":"yellow"}},{apply_now}]
 """)
 
-	## custom/delete — Verify ownership and remove loadout from list
+	## custom/delete - Verify ownership and remove loadout from list
 	write_versioned_function("multiplayer/custom/delete",
 f"""
 # Extract loadout ID from trigger value: id = trigger - {TRIG_DELETE_BASE}
@@ -76,7 +76,7 @@ tellraw @s ["",{{"text":"[MGS] ","color":"gold"}},{{"text":"Loadout deleted.","c
 function {ns}:v{version}/multiplayer/my_loadouts/browse
 """)
 
-	## custom/delete_filter — Recursive: rebuild list without the target entry (score-based)
+	## custom/delete_filter - Recursive: rebuild list without the target entry (score-based)
 	write_versioned_function("multiplayer/custom/delete_filter",
 f"""
 # Check if this entry matches BOTH the target ID and our PID
@@ -93,7 +93,7 @@ data remove storage {ns}:temp _del_src[0]
 execute if data storage {ns}:temp _del_src[0] run function {ns}:v{version}/multiplayer/custom/delete_filter
 """)
 
-	## custom/toggle_favorite — Add/remove loadout ID from player's favorites list
+	## custom/toggle_favorite - Add/remove loadout ID from player's favorites list
 	write_versioned_function("multiplayer/custom/toggle_favorite",
 f"""
 # Extract loadout ID from trigger value
@@ -117,7 +117,7 @@ execute if score #fav_found {ns}.data matches 0 run tellraw @s ["",{{"text":"[MG
 function {ns}:v{version}/multiplayer/marketplace/browse
 """)
 
-	## fav_pd_rebuild — Iterate player_data, modify our entry's favorites
+	## fav_pd_rebuild - Iterate player_data, modify our entry's favorites
 	write_versioned_function("multiplayer/custom/fav_pd_rebuild",
 f"""
 # Check if this entry's PID matches ours
@@ -132,7 +132,7 @@ data remove storage {ns}:temp _pd_src[0]
 execute if data storage {ns}:temp _pd_src[0] run function {ns}:v{version}/multiplayer/custom/fav_pd_rebuild
 """)
 
-	## fav_modify_entry — Toggle loadout ID in our favorites list
+	## fav_modify_entry - Toggle loadout ID in our favorites list
 	write_versioned_function("multiplayer/custom/fav_modify_entry",
 f"""
 # Copy favorites for iteration, clear them for rebuild
@@ -146,7 +146,7 @@ execute if data storage {ns}:temp _fav_iter[0] run function {ns}:v{version}/mult
 execute if score #fav_found {ns}.data matches 0 run function {ns}:v{version}/multiplayer/custom/fav_append_new
 """)
 
-	## fav_append_new — Append loadout ID to favorites
+	## fav_append_new - Append loadout ID to favorites
 	write_versioned_function("multiplayer/custom/fav_append_new",
 f"""
 # Create a new favorite entry with the loadout ID
@@ -155,7 +155,7 @@ execute store result storage {ns}:temp _new_fav.id int 1 run scoreboard players 
 data modify storage {ns}:temp _pd_src[0].favorites append from storage {ns}:temp _new_fav
 """)
 
-	## fav_check_each — Check each favorite entry, remove matching ID
+	## fav_check_each - Check each favorite entry, remove matching ID
 	write_versioned_function("multiplayer/custom/fav_check_each",
 f"""
 # Check if this favorite's ID matches the target
@@ -170,7 +170,7 @@ data remove storage {ns}:temp _fav_iter[0]
 execute if data storage {ns}:temp _fav_iter[0] run function {ns}:v{version}/multiplayer/custom/fav_check_each
 """)
 
-	## fav_count_update — Rebuild custom_loadouts, updating favorites_count on target loadout
+	## fav_count_update - Rebuild custom_loadouts, updating favorites_count on target loadout
 	## #fav_found = 0 means just added (increment), 1 means just removed (decrement)
 	write_versioned_function("multiplayer/custom/fav_count_update",
 f"""
@@ -179,7 +179,7 @@ data modify storage {ns}:multiplayer custom_loadouts set value []
 execute if data storage {ns}:temp _fav_count_src[0] run function {ns}:v{version}/multiplayer/custom/fav_count_rebuild
 """)
 
-	## fav_count_rebuild — Iterate loadouts, update favorites_count on matching ID
+	## fav_count_rebuild - Iterate loadouts, update favorites_count on matching ID
 	write_versioned_function("multiplayer/custom/fav_count_rebuild",
 f"""
 execute store result score #entry_id {ns}.data run data get storage {ns}:temp _fav_count_src[0].id
@@ -191,7 +191,7 @@ data remove storage {ns}:temp _fav_count_src[0]
 execute if data storage {ns}:temp _fav_count_src[0] run function {ns}:v{version}/multiplayer/custom/fav_count_rebuild
 """)
 
-	## fav_count_entry — Increment or decrement favorites_count based on #fav_found
+	## fav_count_entry - Increment or decrement favorites_count based on #fav_found
 	write_versioned_function("multiplayer/custom/fav_count_entry",
 f"""
 # Ensure favorites_count field exists
@@ -211,7 +211,7 @@ execute if score #fav_cnt {ns}.data matches ..-1 run scoreboard players set #fav
 execute store result storage {ns}:temp _fav_count_src[0].favorites_count int 1 run scoreboard players get #fav_cnt {ns}.data
 """)
 
-	## custom/like — Increment loadout's like counter (one per player)
+	## custom/like - Increment loadout's like counter (one per player)
 	write_versioned_function("multiplayer/custom/like",
 f"""
 # Extract loadout ID from trigger value
@@ -235,7 +235,7 @@ execute if score #already_liked {ns}.data matches 1 run tellraw @s ["",{{"text":
 function {ns}:v{version}/multiplayer/marketplace/browse
 """)
 
-	## like_pd_rebuild — Iterate player_data to check/update liked[] in our entry
+	## like_pd_rebuild - Iterate player_data to check/update liked[] in our entry
 	write_versioned_function("multiplayer/custom/like_pd_rebuild",
 f"""
 # Check if this entry's PID matches ours
@@ -250,7 +250,7 @@ data remove storage {ns}:temp _pd_src[0]
 execute if data storage {ns}:temp _pd_src[0] run function {ns}:v{version}/multiplayer/custom/like_pd_rebuild
 """)
 
-	## like_modify_entry — Check if loadout already liked, add if not
+	## like_modify_entry - Check if loadout already liked, add if not
 	write_versioned_function("multiplayer/custom/like_modify_entry",
 f"""
 # Iterate liked[] to check if already liked
@@ -261,7 +261,7 @@ execute if data storage {ns}:temp _liked_iter[0] run function {ns}:v{version}/mu
 execute if score #already_liked {ns}.data matches 0 run function {ns}:v{version}/multiplayer/custom/like_append_new
 """)
 
-	## like_append_new — Append loadout ID to liked list
+	## like_append_new - Append loadout ID to liked list
 	write_versioned_function("multiplayer/custom/like_append_new",
 f"""
 data modify storage {ns}:temp _new_liked set value {{id:0}}
@@ -269,7 +269,7 @@ execute store result storage {ns}:temp _new_liked.id int 1 run scoreboard player
 data modify storage {ns}:temp _pd_src[0].liked append from storage {ns}:temp _new_liked
 """)
 
-	## like_check_each — Check each liked entry
+	## like_check_each - Check each liked entry
 	write_versioned_function("multiplayer/custom/like_check_each",
 f"""
 execute store result score #liked_id {ns}.data run data get storage {ns}:temp _liked_iter[0].id
@@ -279,7 +279,7 @@ data remove storage {ns}:temp _liked_iter[0]
 execute if data storage {ns}:temp _liked_iter[0] unless score #already_liked {ns}.data matches 1 run function {ns}:v{version}/multiplayer/custom/like_check_each
 """)
 
-	## like_increment_setup — Rebuild custom_loadouts, incrementing likes on target
+	## like_increment_setup - Rebuild custom_loadouts, incrementing likes on target
 	write_versioned_function("multiplayer/custom/like_increment_setup",
 f"""
 data modify storage {ns}:temp _like_src set from storage {ns}:multiplayer custom_loadouts
@@ -287,7 +287,7 @@ data modify storage {ns}:multiplayer custom_loadouts set value []
 execute if data storage {ns}:temp _like_src[0] run function {ns}:v{version}/multiplayer/custom/like_increment_rebuild
 """)
 
-	## like_increment_rebuild — Iterate loadouts, increment likes on matching ID
+	## like_increment_rebuild - Iterate loadouts, increment likes on matching ID
 	write_versioned_function("multiplayer/custom/like_increment_rebuild",
 f"""
 # Check if this loadout's ID matches the target
@@ -301,7 +301,7 @@ data remove storage {ns}:temp _like_src[0]
 execute if data storage {ns}:temp _like_src[0] run function {ns}:v{version}/multiplayer/custom/like_increment_rebuild
 """)
 
-	## like_increment_entry — Increment the likes counter
+	## like_increment_entry - Increment the likes counter
 	write_versioned_function("multiplayer/custom/like_increment_entry",
 f"""
 # Ensure likes field exists, then increment
@@ -311,7 +311,7 @@ scoreboard players add #likes {ns}.data 1
 execute store result storage {ns}:temp _like_src[0].likes int 1 run scoreboard players get #likes {ns}.data
 """)
 
-	## custom/toggle_visibility — Toggle public/private on own loadout
+	## custom/toggle_visibility - Toggle public/private on own loadout
 	write_versioned_function("multiplayer/custom/toggle_visibility",
 f"""
 # Extract loadout ID from trigger value
@@ -329,7 +329,7 @@ tellraw @s ["",{{"text":"[MGS] ","color":"gold"}},{{"text":"Loadout visibility t
 function {ns}:v{version}/multiplayer/my_loadouts/browse
 """)
 
-	## custom/toggle_vis_rebuild — Recursive: rebuild list, toggling public on the matching entry
+	## custom/toggle_vis_rebuild - Recursive: rebuild list, toggling public on the matching entry
 	write_versioned_function("multiplayer/custom/toggle_vis_rebuild",
 f"""
 # Check if this entry matches our target (ID + ownership)
@@ -348,7 +348,7 @@ data remove storage {ns}:temp _del_src[0]
 execute if data storage {ns}:temp _del_src[0] run function {ns}:v{version}/multiplayer/custom/toggle_vis_rebuild
 """)
 
-	## custom/toggle_entry_vis — Toggle the public flag on _del_src[0]
+	## custom/toggle_entry_vis - Toggle the public flag on _del_src[0]
 	write_versioned_function("multiplayer/custom/toggle_entry_vis",
 f"""
 # Read current value and flip
@@ -357,7 +357,7 @@ execute if score #pub {ns}.data matches 1 run data modify storage {ns}:temp _del
 execute if score #pub {ns}.data matches 0 run data modify storage {ns}:temp _del_src[0].public set value 1b
 """)
 
-	## custom/set_default — Set the default loadout for auto-selection
+	## custom/set_default - Set the default loadout for auto-selection
 	write_versioned_function("multiplayer/custom/set_default",
 f"""
 # Extract loadout ID from trigger value

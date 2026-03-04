@@ -13,7 +13,7 @@ out vec4 fragColor;
 #define ZOOM_LERP_SPEED 0.12  // Per-frame interpolation (~0.33s to 90% at 60fps)
 
 void main() {
-    // Read FOV sentinel at pixel (3, 0) — spawned immediately on zoom (no 5-tick delay)
+    // Read FOV sentinel at pixel (3, 0) - spawned immediately on zoom (no 5-tick delay)
     // R=254, G=mode(12-14), B=viewDist, A=255
     ivec4 pFov = ivec4(round(texelFetch(MainSampler, ivec2(3, 0), 0) * 255.0));
     bool fovActive = (pFov.r == MARKER_RED && pFov.a == 255

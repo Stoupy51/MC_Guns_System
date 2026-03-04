@@ -3,6 +3,7 @@
 from stewbeet import Mem, write_tag, write_tick_file, write_versioned_function
 
 from ...config.stats import (
+    BASE_WEAPON,
     EXPLOSION_DAMAGE,
     EXPLOSION_DECAY,
     EXPLOSION_RADIUS,
@@ -57,6 +58,7 @@ data modify storage {ns}:temp proj.{PROJECTILE_GRAVITY} set from storage {ns}:gu
 data modify storage {ns}:temp proj.{PROJECTILE_SPEED} set from storage {ns}:gun all.stats.{PROJECTILE_SPEED}
 data modify storage {ns}:temp proj.{PROJECTILE_LIFETIME} set from storage {ns}:gun all.stats.{PROJECTILE_LIFETIME}
 data modify storage {ns}:temp proj.{PROJECTILE_MODEL} set from storage {ns}:gun all.stats.{PROJECTILE_MODEL}
+data modify storage {ns}:temp proj.{BASE_WEAPON} set from storage {ns}:gun all.stats.{BASE_WEAPON}
 
 # Summon the projectile entity at the player's eye position
 execute anchored eyes positioned ^ ^ ^0.5 summon item_display run function {ns}:v{version}/projectile/init
@@ -77,8 +79,9 @@ data modify entity @s data.shooter set from entity @n[tag={ns}.ticking] UUID
 # Copy explosion and projectile config from temp storage
 data modify entity @s data.config set from storage {ns}:temp proj
 
-# Set the visual model on the item_display entity
-function {ns}:v{version}/projectile/set_model with entity @s data.config
+# Set the visual model on the item_display entity (ray_gun is invisible - no projectile model)
+execute store success score #is_ray_gun {ns}.data if data entity @s data.config{{{BASE_WEAPON}:"ray_gun"}}
+execute if score #is_ray_gun {ns}.data matches 0 run function {ns}:v{version}/projectile/set_model with entity @s data.config
 
 # Set lifetime score
 execute store result score @s {ns}.data run data get storage {ns}:temp proj.{PROJECTILE_LIFETIME}
@@ -149,9 +152,12 @@ function #bs.move:apply_vel {{scale:0.001,with:{{blocks:true,entities:true,on_co
 # If collision was detected, explode and stop processing
 execute if entity @s[tag={ns}.exploding] run return run function {ns}:v{version}/projectile/explode
 
-# Trail particles: flame + smoke
-particle flame ~ ~ ~ 0.05 0.05 0.05 0.02 3 force @a[distance=..128]
-particle smoke ~ ~ ~ 0.1 0.1 0.1 0.01 2 force @a[distance=..128]
+# Trail particles: ray_gun = green dust swirl, others = flame + smoke
+execute store success score #is_ray_gun {ns}.data if data entity @s data.config{{{BASE_WEAPON}:"ray_gun"}}
+execute if score #is_ray_gun {ns}.data matches 1 run particle dust{{color:[0.0,0.8,0.0],scale:1.5}} ~ ~ ~ 0.1 0.1 0.1 0 8 force @a[distance=..128]
+execute if score #is_ray_gun {ns}.data matches 1 run particle glow ~ ~ ~ 0.1 0.1 0.1 0 3 force @a[distance=..128]
+execute if score #is_ray_gun {ns}.data matches 0 run particle flame ~ ~ ~ 0.05 0.05 0.05 0.02 3 force @a[distance=..128]
+execute if score #is_ray_gun {ns}.data matches 0 run particle smoke ~ ~ ~ 0.1 0.1 0.1 0.01 2 force @a[distance=..128]
 
 # Decrement lifetime
 scoreboard players remove @s {ns}.data 1
@@ -175,15 +181,21 @@ scoreboard players set $move.vel.z bs.lambda 0
     ## Explosion effect
     write_versioned_function("projectile/explode",
 f"""
-# Explosion particles
-particle explosion ~ ~ ~ 0 0 0 0 1 force @a[distance=..128]
-particle flame ~ ~ ~ 1 1 1 0.1 100 force @a[distance=..128]
-particle large_smoke ~ ~ ~ 1.5 1.5 1.5 0.05 50 force @a[distance=..128]
-particle campfire_signal_smoke ~ ~ ~ 0.5 0.5 0.5 0.05 20 force @a[distance=..128]
-particle lava ~ ~ ~ 1 1 1 0 30 force @a[distance=..128]
+# Explosion particles - ray_gun: green energy burst (no smoke)
+execute store success score #is_ray_gun {ns}.data if data entity @s data.config{{{BASE_WEAPON}:"ray_gun"}}
+execute if score #is_ray_gun {ns}.data matches 1 run particle flash{{color:[0.0,0.8,0.0,1.0]}} ~ ~ ~ 0 0 0 0 1 force @a[distance=..128]
+execute if score #is_ray_gun {ns}.data matches 1 run particle dust{{color:[0.0,0.8,0.0],scale:1.5}} ~ ~ ~ 0.5 0.5 0.5 0 200 force @a[distance=..128]
+execute if score #is_ray_gun {ns}.data matches 1 run particle glow ~ ~ ~ 0.5 0.5 0.5 0.1 80 force @a[distance=..128]
+execute if score #is_ray_gun {ns}.data matches 1 run particle electric_spark ~ ~ ~ 0.5 0.5 0.5 0.05 100 force @a[distance=..128]
+# Explosion particles - standard weapons: fire + smoke
+execute if score #is_ray_gun {ns}.data matches 0 run particle explosion ~ ~ ~ 0 0 0 0 1 force @a[distance=..128]
+execute if score #is_ray_gun {ns}.data matches 0 run particle flame ~ ~ ~ 1 1 1 0.1 100 force @a[distance=..128]
+execute if score #is_ray_gun {ns}.data matches 0 run particle large_smoke ~ ~ ~ 1.5 1.5 1.5 0.05 50 force @a[distance=..128]
+execute if score #is_ray_gun {ns}.data matches 0 run particle campfire_signal_smoke ~ ~ ~ 0.5 0.5 0.5 0.05 20 force @a[distance=..128]
+execute if score #is_ray_gun {ns}.data matches 0 run particle lava ~ ~ ~ 1 1 1 0 30 force @a[distance=..128]
 
-# Explosion sound
-playsound minecraft:entity.generic.explode player @a[distance=..64] ~ ~ ~ 2 0.8
+# Explosion sound - ray_gun is silent (no explosion sound)
+execute if score #is_ray_gun {ns}.data matches 0 run playsound minecraft:entity.generic.explode player @a[distance=..64] ~ ~ ~ 2 0.8
 
 # Block destruction via RealisticExplosionLibrary (if RPG_EXPLOSION_POWER > 0)
 execute if score #rpg_explosion_power {ns}.config matches 1.. run function {ns}:v{version}/projectile/realistic_explosion
@@ -207,7 +219,7 @@ execute as @a run function {ns}:v{version}/projectile/match_shooter
 execute if score #found {ns}.data matches 0 as @e[tag={ns}.armed] run function {ns}:v{version}/projectile/match_shooter
 
 # Apply area damage to nearby entities (macro for configurable radius)
-execute store result storage {ns}:temp expl.radius_int int 1 run data get entity @s data.config.{EXPLOSION_RADIUS}
+execute store result storage {ns}:temp expl.radius_float float 1 run data get entity @s data.config.{EXPLOSION_RADIUS}
 function {ns}:v{version}/projectile/damage_area with storage {ns}:temp expl
 
 # Signal: on_explosion (@s = projectile entity, explosion data in mgs:signals)
@@ -249,7 +261,7 @@ execute if score #is_match {ns}.data matches 0 run tag @s add {ns}.temp_shooter
     ## Area damage (macro function for configurable radius)
     write_versioned_function("projectile/damage_area",
 f"""
-$execute as @e[type=!#bs.hitbox:intangible,distance=..$(radius_int)] run function {ns}:v{version}/projectile/damage_entity
+$execute as @e[type=!#bs.hitbox:intangible,distance=..$(radius_float)] run function {ns}:v{version}/projectile/damage_entity
 """)
 
     ## Per-entity damage with distance-based falloff

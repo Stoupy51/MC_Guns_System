@@ -51,7 +51,8 @@ def main() -> None:
                 override_model=json.loads(stp.read_file(get_model_path(item)).replace("mgs:item", f"{Mem.ctx.project_id}:item")),
                 components={
                     "max_stack_size": 1,
-                    "custom_data": {ns: {"magazine": True, "weapon": weapon, "stats": {REMAINING_BULLETS: bullets, CAPACITY: capacity}}}
+                    "custom_data": {ns: {"magazine": True, "weapon": weapon, "stats": {REMAINING_BULLETS: bullets, CAPACITY: capacity}}},
+                    "rarity": "common",
                 }
             )
 
@@ -73,7 +74,8 @@ def main() -> None:
             override_model=json.loads(stp.read_file(get_model_path(item_name)).replace("mgs:item", f"{Mem.ctx.project_id}:item")),
             components={
                 "max_stack_size": 64,
-                "custom_data": {ns: {"magazine": True, "consumable": True, "weapon": weapon, "stats": {REMAINING_BULLETS: capacity, CAPACITY: capacity}}}
+                "custom_data": {ns: {"magazine": True, "consumable": True, "weapon": weapon, "stats": {REMAINING_BULLETS: capacity, CAPACITY: capacity}}},
+                "rarity": "common",
             }
         )
 

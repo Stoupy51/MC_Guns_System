@@ -14,7 +14,7 @@
 								"minecraft:custom_data": {
 									"mgs": {
 										"gun": true,
-										"stats": {"base_weapon": "ray_gun","fire_mode": "auto","capacity": 20,"reload_time": 60,"reload_end": 14,"cooldown": 11,"can_auto": true,"damage": 20,"decay": 0.92,"acc_base": 150,"acc_sneak": 80,"acc_walk": 290,"acc_sprint": 400,"acc_jump": 800,"switch": 12,"kick": 2,"proj_speed": 3000,"proj_gravity": 0,"proj_lifetime": 200,"proj_model": "ray_gun","expl_radius": 2,"expl_damage": 30,"expl_decay": 0.8,"models": {"normal": "mgs:ray_gun","zoom": "mgs:ray_gun_zoom"},"remaining_bullets": 20},
+										"stats": {"base_weapon": "ray_gun","fire_mode": "auto","capacity": 20,"reload_time": 60,"reload_end": 14,"cooldown": 11,"can_auto": true,"damage": 24,"decay": 0.92,"acc_base": 150,"acc_sneak": 80,"acc_walk": 290,"acc_sprint": 400,"acc_jump": 800,"switch": 12,"kick": 5,"proj_speed": 3000,"proj_gravity": 0,"proj_lifetime": 200,"proj_model": "ray_gun","expl_radius": 4,"expl_damage": 32,"expl_decay": 0.8,"models": {"normal": "mgs:ray_gun","zoom": "mgs:ray_gun_zoom"},"remaining_bullets": 20},
 										"sounds": {"fire": "ray_gun/fire","reload": "ray_gun/reload","playerbegin": "ray_gun/playerbegin","playerend": "ray_gun/playerend","playermid": "ray_gun/playermid","crack": "tiny"},
 										"ray_gun": true
 									},
@@ -62,7 +62,7 @@
 										{"text": " ","color": "#c67832"},
 										{"text": "➤","color": "#c67b34"},
 										{"text": " ","color": "#c77e36"},
-										"20"
+										"24"
 									],
 									[
 										{"text": "A","color": "#c24a17","italic": false},
