@@ -30,6 +30,14 @@ execute store result storage mgs:temp _btn_data.delete_trig int 1 run scoreboard
 execute unless data storage mgs:temp _btn_data.perks run data modify storage mgs:temp _btn_data.perks set value []
 execute store result storage mgs:temp _btn_data.perks_count int 1 run data get storage mgs:temp _btn_data.perks
 
+# Build per-perk display names for tooltip
+data modify storage mgs:temp _btn_data.perk0 set value ""
+data modify storage mgs:temp _btn_data.perk1 set value ""
+data modify storage mgs:temp _btn_data.perk2 set value ""
+execute if data storage mgs:temp _btn_data{perks:["quick_reload"]} run data modify storage mgs:temp _btn_data.perk0 set value "\\n- Sleight of Hand"
+execute if data storage mgs:temp _btn_data{perks:["quick_swap"]} run data modify storage mgs:temp _btn_data.perk1 set value "\\n- Fast Hands"
+execute if data storage mgs:temp _btn_data{perks:["infinite_ammo"]} run data modify storage mgs:temp _btn_data.perk2 set value "\\n- Overkill"
+
 # Normalize optional fields (backwards compat for pre-update loadouts)
 execute unless data storage mgs:temp _btn_data.points_used run data modify storage mgs:temp _btn_data.points_used set value 0
 execute unless data storage mgs:temp _btn_data.favorites_count run data modify storage mgs:temp _btn_data.favorites_count set value 0

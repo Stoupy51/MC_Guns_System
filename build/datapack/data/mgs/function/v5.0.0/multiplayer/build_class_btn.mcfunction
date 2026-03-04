@@ -15,7 +15,7 @@
 #
 
 # Build rich tooltip from current class data (includes mag counts and equipment)
-$data modify storage mgs:temp _btn set value {label:{text:"$(name)",color:"green"},tooltip:["",{text:"$(lore)","color":"gray"},{"text":"\n"},{"translate": "mgs.primary","color":"white"},{"text":"$(main_gun)","color":"green"},{"text":" x$(main_mag_count) mags","color":"dark_green"},{"text":"\n"},{"translate": "mgs.secondary","color":"white"},{"text":"$(secondary_gun)","color":"yellow"},{"text":" x$(secondary_mag_count) mags","color":"gold"},{"text":"\n"},{"translate": "mgs.grenades","color":"white"},{"text":"$(equip_display)","color":"aqua"},"\n\n",{"translate": "mgs.click_to_select","color":"dark_gray","italic":true}],action:{type:"run_command",command:"/trigger mgs.player.config set $(trigger_value)"}}
+$data modify storage mgs:temp _btn set value {label:{text:"$(name)",color:"green"},tooltip:["",{text:"$(lore)","color":"gray"},{"text":"\n"},{"text":"Primary: ","color":"white"},{"text":"$(main_gun)","color":"green"},{"text":" x$(main_mag_count) mags","color":"dark_green"},{"text":"\n"},{"text":"Secondary: ","color":"white"},{"text":"$(secondary_gun)","color":"yellow"},{"text":" x$(secondary_mag_count) mags","color":"gold"},{"text":"\n"},{"translate": "mgs.grenades","color":"white"},{"text":"$(equip_display)","color":"aqua"},"\n\n",{"translate": "mgs.click_to_select","color":"dark_gray","italic":true}],action:{type:"run_command",command:"/trigger mgs.player.config set $(trigger_value)"}}
 
 # Append to dialog actions
 data modify storage mgs:temp dialog.actions append from storage mgs:temp _btn
