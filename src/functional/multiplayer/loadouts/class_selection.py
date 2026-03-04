@@ -50,7 +50,7 @@ execute if data storage {ns}:temp class_iter[0] run function {ns}:v{version}/mul
 	write_versioned_function("multiplayer/select_class",
 f"""
 # Initialize dialog structure
-data modify storage {ns}:temp dialog set value {{type:"minecraft:multi_action",title:{{text:"Select Your Class",color:"gold",bold:true}},body:[{{type:"minecraft:plain_message",contents:{{text:"Choose a class for multiplayer.",color:"gray"}}}}],actions:[],columns:2,after_action:"close",exit_action:{{label:"Cancel"}}}}
+data modify storage {ns}:temp dialog set value {{type:"minecraft:multi_action",title:{{text:"Select Your Class",color:"gold",bold:true}},body:{{type:"minecraft:item",item:{{id:"minecraft:crossbow"}},description:{{contents:{{text:"Choose a class for multiplayer.",color:"gray"}}}},show_decoration:false,show_tooltip:true}},actions:[],columns:2,after_action:"close",exit_action:{{label:"Cancel"}}}}
 
 # Copy class list for iteration
 data modify storage {ns}:temp class_iter set from storage {ns}:multiplayer classes_list

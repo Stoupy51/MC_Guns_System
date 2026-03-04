@@ -3,6 +3,7 @@
 from stewbeet import (
     DamageType,
     Font,
+    LootTable,
     Mem,
     TextComponent,
     set_json_encoder,
@@ -116,6 +117,29 @@ execute as @e[type=player,sort=random] at @s run function {ns}:v{version}/player
 
     # Add block tags
     write_block_tags()
+
+    # Loot table for getting username
+    Mem.ctx.data[ns].loot_tables["get_username"] = set_json_encoder(LootTable({
+        "type": "minecraft:block",
+        "pools": [
+            {
+                "rolls": 1,
+                "bonus_rolls": 0,
+                "entries": [
+                    {
+                        "type": "minecraft:item",
+                        "name": "minecraft:player_head",
+                        "functions": [
+                            {
+                                "function": "minecraft:fill_player_head",
+                                "entity": "this"
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    }))
 
     ## Register signal function tags (empty by default, other datapacks can add listeners)
     # These are called at various events in the system, with relevant data stored in mgs:signals storage

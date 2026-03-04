@@ -1,7 +1,6 @@
 
-# ruff: noqa: E501
 # Imports
-from ..classes import CONSUMABLE_MAGS, TRIGGER_OFFSET  # noqa: F401
+from ..classes import CONSUMABLE_MAGS
 
 # ============================================================
 # Weapon & Equipment Catalogs

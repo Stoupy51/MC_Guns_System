@@ -1,5 +1,4 @@
 
-# ruff: noqa: E501
 # Imports
 from stewbeet import Mem, write_load_file, write_versioned_function
 
@@ -63,3 +62,30 @@ f"""
 # Custom loadouts: assign player ID if not yet assigned
 execute unless score @s {ns}.mp.pid matches 1.. run function {ns}:v{version}/multiplayer/assign_pid
 """, prepend=True)
+	## ============================
+	## get_username: capture player username via player head loot table trick
+	## Called via: tag @s add {ns}.username_getter
+	##             execute at @s summon item_display run function .../get_username
+	##             tag @s remove {ns}.username_getter
+	## Result: stores username in {ns}:temp _new_loadout.owner_name
+	## ============================
+	write_versioned_function("multiplayer/get_username",
+f"""
+# @s = item_display entity spawned at the player's position
+# Tag this entity so we can reference it from within the execute-as subcommand
+tag @s add {ns}.username_getter_entity
+
+# Execute AS the calling player (tagged), run loot replace targeting THIS entity
+# The loot table fills a player_head using "this" entity = the executing player
+execute at @s as @n[tag={ns}.username_getter] run loot replace entity @n[tag={ns}.username_getter_entity] contents loot {ns}:get_username
+
+# Store the username from the player head profile component
+data modify storage {ns}:temp _new_loadout.owner_name set from entity @s item.components."minecraft:profile".name
+
+# Fallback if profile was not captured
+execute unless data storage {ns}:temp _new_loadout.owner_name run data modify storage {ns}:temp _new_loadout.owner_name set value ""
+
+# Clean up: kill this entity
+kill @s
+""")
+

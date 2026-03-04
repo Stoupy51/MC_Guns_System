@@ -9,7 +9,6 @@ from .catalogs import (
 	TRIG_EDITOR_START,
 	TRIG_FAVORITE_BASE,
 	TRIG_LIKE_BASE,
-	TRIG_MARKETPLACE,
 	TRIG_MARKETPLACE_ALL,
 	TRIG_MARKETPLACE_FAV_ONLY,
 	TRIG_MARKETPLACE_LIKES,
@@ -77,7 +76,7 @@ execute unless score #is_fav {ns}.data matches 1 if data storage {ns}:temp _fav_
 		return (
 			f'{{type:"minecraft:multi_action",'
 			f'title:{{text:"My Loadouts",color:"gold",bold:true}},'
-			f'body:[{{type:"minecraft:plain_message",contents:{{text:"Manage your custom loadouts.",color:"gray"}}}}],'
+			f'body:{{type:"minecraft:item",item:{{id:"minecraft:written_book"}},description:{{contents:{{text:"Manage your custom loadouts.",color:"gray"}}}},show_decoration:false,show_tooltip:true}},'
 			f'actions:[],'
 			f'columns:3,'
 			f'after_action:"close",'
@@ -240,7 +239,6 @@ execute if score #pub {ns}.data matches 0 run function {ns}:v{version}/multiplay
 		'["",{"text":"$(main_gun_display)","color":"green"},'
 		'{"text":" x$(primary_mag_count) mags","color":"dark_green"},'
 		'"\\n",'
-		'{"text":"Secondary: ","color":"gray"},'
 		'{"text":"$(secondary_gun_display)","color":"yellow"},'
 		'{"text":" x$(secondary_mag_count) mags","color":"gold"},'
 		'"\\n",'
@@ -268,14 +266,14 @@ execute if score #pub {ns}.data matches 0 run function {ns}:v{version}/multiplay
 	## my_loadouts/add_btn_public — Macro: green name (public loadout), rich tooltip
 	write_versioned_function("multiplayer/my_loadouts/add_btn_public",
 f"""$data modify storage {ns}:temp dialog.actions append value {{label:{{text:"$(name)",color:"green"}},tooltip:{_ml_tooltip_pub},action:{{type:"run_command",command:"/trigger {ns}.player.config set $(select_trig)"}}}}
-$data modify storage {ns}:temp dialog.actions append value {{label:{{text:"Public -> Private",color:"red"}},tooltip:{{text:"Toggle this loadout to Private",color:"red"}},action:{{type:"run_command",command:"/trigger {ns}.player.config set $(vis_trig)"}}}}
+$data modify storage {ns}:temp dialog.actions append value {{label:{{text:"Public -> Private",color:"dark_aqua"}},tooltip:{{text:"Toggle this loadout to Private",color:"red"}},action:{{type:"run_command",command:"/trigger {ns}.player.config set $(vis_trig)"}}}}
 $data modify storage {ns}:temp dialog.actions append value {{label:{{text:"\U0001f5d1 Delete",color:"red"}},tooltip:{{text:"Permanently delete this loadout",color:"dark_red"}},action:{{type:"run_command",command:"/trigger {ns}.player.config set $(delete_trig)"}}}}
 """)
 
 	## my_loadouts/add_btn_private — Macro: red name (private loadout), rich tooltip
 	write_versioned_function("multiplayer/my_loadouts/add_btn_private",
 f"""$data modify storage {ns}:temp dialog.actions append value {{label:{{text:"$(name)",color:"red"}},tooltip:{_ml_tooltip_priv},action:{{type:"run_command",command:"/trigger {ns}.player.config set $(select_trig)"}}}}
-$data modify storage {ns}:temp dialog.actions append value {{label:{{text:"Private -> Public",color:"green"}},tooltip:{{text:"Toggle this loadout to Public",color:"green"}},action:{{type:"run_command",command:"/trigger {ns}.player.config set $(vis_trig)"}}}}
+$data modify storage {ns}:temp dialog.actions append value {{label:{{text:"Private -> Public",color:"aqua"}},tooltip:{{text:"Toggle this loadout to Public",color:"green"}},action:{{type:"run_command",command:"/trigger {ns}.player.config set $(vis_trig)"}}}}
 $data modify storage {ns}:temp dialog.actions append value {{label:{{text:"\U0001f5d1 Delete",color:"red"}},tooltip:{{text:"Permanently delete this loadout",color:"dark_red"}},action:{{type:"run_command",command:"/trigger {ns}.player.config set $(delete_trig)"}}}}
 """)
 
@@ -289,7 +287,7 @@ $data modify storage {ns}:temp dialog.actions append value {{label:{{text:"\U000
 		return (
 			f'{{type:"minecraft:multi_action",'
 			f'title:{{text:"Marketplace",color:"light_purple",bold:true}},'
-			f'body:[{{type:"minecraft:plain_message",contents:{{text:"Browse public loadouts from all players.",color:"gray"}}}}],'
+			f'body:{{type:"minecraft:item",item:{{id:"minecraft:emerald"}},description:{{contents:{{text:"Browse public loadouts from all players.",color:"gray"}}}},show_decoration:false,show_tooltip:true}},'
 			f'actions:[],'
 			f'columns:3,'
 			f'after_action:"close",'
@@ -505,7 +503,6 @@ function {ns}:v{version}/multiplayer/marketplace/add_btn with storage {ns}:temp 
 		'["",{"text":"$(main_gun_display)","color":"green"},'
 		'{"text":" x$(primary_mag_count) mags","color":"dark_green"},'
 		'"\\n",'
-		'{"text":"Secondary: ","color":"gray"},'
 		'{"text":"$(secondary_gun_display)","color":"yellow"},'
 		'{"text":" x$(secondary_mag_count) mags","color":"gold"},'
 		'"\\n",'
@@ -529,6 +526,7 @@ function {ns}:v{version}/multiplayer/marketplace/add_btn with storage {ns}:temp 
 	## marketplace/add_btn — Macro: append 3 buttons (Select + Like + Favorite) with rich tooltip
 	write_versioned_function("multiplayer/marketplace/add_btn",
 f"""$data modify storage {ns}:temp dialog.actions append value {{label:{{text:"$(name)",color:"green"}},tooltip:{_mp_tooltip},action:{{type:"run_command",command:"/trigger {ns}.player.config set $(select_trig)"}}}}
-$data modify storage {ns}:temp dialog.actions append value {{label:[{{text:"\u2665 ",color:"red"}},{{text:"Like",color:"yellow"}}],tooltip:{{text:"Like this loadout",color:"yellow"}},action:{{type:"run_command",command:"/trigger {ns}.player.config set $(like_trig)"}}}}
-$data modify storage {ns}:temp dialog.actions append value {{label:[{{text:"\u2b50 ",color:"gold"}},{{text:"Fav",color:"yellow"}}],tooltip:{{text:"Add to favorites",color:"gold"}},action:{{type:"run_command",command:"/trigger {ns}.player.config set $(fav_trig)"}}}}
+$data modify storage {ns}:temp dialog.actions append value {{label:[{{text:"\u2b50 ",color:"gold"}},{{text:"Make Favorite",color:"yellow"}}],tooltip:{{text:"Add to favorites",color:"gold"}},action:{{type:"run_command",command:"/trigger {ns}.player.config set $(fav_trig)"}}}}
+$data modify storage {ns}:temp dialog.actions append value {{label:[{{text:"\u2665 ",color:"red"}},{{text:"Like the Loadout",color:"yellow"}}],tooltip:{{text:"Like this loadout",color:"yellow"}},action:{{type:"run_command",command:"/trigger {ns}.player.config set $(like_trig)"}}}}
 """)
+

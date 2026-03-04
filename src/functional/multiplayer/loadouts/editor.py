@@ -1063,6 +1063,11 @@ execute store result storage {ns}:multiplayer next_loadout_id int 1 run scoreboa
 # Set owner info
 execute store result storage {ns}:temp _new_loadout.owner_pid int 1 run scoreboard players get @s {ns}.mp.pid
 
+# Capture owner username via player head loot table trick
+tag @s add {ns}.username_getter
+execute at @s summon item_display run function {ns}:v{version}/multiplayer/get_username
+tag @s remove {ns}.username_getter
+
 # Set weapon IDs (scope-modified)
 data modify storage {ns}:temp _new_loadout.main_gun set from storage {ns}:temp editor.primary_full
 data modify storage {ns}:temp _new_loadout.secondary_gun set from storage {ns}:temp editor.secondary_full
