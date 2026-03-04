@@ -17,7 +17,10 @@
 #			mgs:v5.0.0/multiplayer/editor/show_perks_dialog_macro with storage mgs:temp
 #			mgs:v5.0.0/multiplayer/editor/show_confirm with storage mgs:temp
 #			mgs:v5.0.0/multiplayer/my_loadouts/browse with storage mgs:temp
+#			mgs:v5.0.0/multiplayer/my_loadouts/browse_fav_only with storage mgs:temp
 #			mgs:v5.0.0/multiplayer/marketplace/browse with storage mgs:temp
+#			mgs:v5.0.0/multiplayer/marketplace/browse_fav_only with storage mgs:temp
+#			mgs:v5.0.0/multiplayer/marketplace/browse_likes with storage mgs:temp
 #
 # @args		dialog (unknown)
 #

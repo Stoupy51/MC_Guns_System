@@ -797,7 +797,7 @@ void main() {
     // Smooth FOV zoom: scales UV toward center for lower effective FOV
     // 0.0 = normal FOV, 0.15 = ~1.18x, 0.30 = ~1.43x, 0.45 = ~1.82x
     float smoothZoom = texture(SmoothZoomSampler, vec2(0.5, 0.5)).r;
-    vec2 zoomedUV = (smoothZoom > 0.001) ? mix(texCoord, vec2(0.5), smoothZoom) : texCoord;
+    vec2 zoomedUV = (smoothZoom > 0.01) ? mix(texCoord, vec2(0.5), smoothZoom) : texCoord;
 
     fragColor = texture(InSampler, zoomedUV);
     float aspectRatio = inSize.x / inSize.y;
@@ -856,7 +856,7 @@ void main() {
     // The vanilla crosshair texture is replaced with a transparent one, so the shader
     // handles all crosshair rendering. Hidden during zoom for clean scope view.
     // Smooth spread (from classify A): 0.0=sneak → 1.0=jump, interpolated per-frame
-    if (!zoomMode && __MGS_CUSTOM_CROSSHAIR__) {
+    if (__MGS_CUSTOM_CROSSHAIR__ && !zoomMode) {
         // Smooth spread value (0.0-1.0 from classify alpha, maps to levels 0-4)
         float smoothSpread = classifyData.a * 4.0;  // 0.0-4.0
 

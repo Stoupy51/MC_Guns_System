@@ -106,6 +106,9 @@ data modify storage {ns}:multiplayer player_data set value []
 scoreboard players set #fav_found {ns}.data 0
 execute if data storage {ns}:temp _pd_src[0] run function {ns}:v{version}/multiplayer/custom/fav_pd_rebuild
 
+# Update favorites_count on the affected loadout in custom_loadouts
+function {ns}:v{version}/multiplayer/custom/fav_count_update
+
 # Notify based on whether it was added or removed
 execute if score #fav_found {ns}.data matches 1 run tellraw @s ["",{{"text":"[MGS] ","color":"gold"}},{{"text":"Removed from favorites.","color":"yellow"}}]
 execute if score #fav_found {ns}.data matches 0 run tellraw @s ["",{{"text":"[MGS] ","color":"gold"}},{{"text":"Added to favorites!","color":"green"}}]
@@ -165,6 +168,47 @@ execute unless score #fav_id {ns}.data = #loadout_id {ns}.data run data modify s
 # Next
 data remove storage {ns}:temp _fav_iter[0]
 execute if data storage {ns}:temp _fav_iter[0] run function {ns}:v{version}/multiplayer/custom/fav_check_each
+""")
+
+	## fav_count_update — Rebuild custom_loadouts, updating favorites_count on target loadout
+	## #fav_found = 0 means just added (increment), 1 means just removed (decrement)
+	write_versioned_function("multiplayer/custom/fav_count_update",
+f"""
+data modify storage {ns}:temp _fav_count_src set from storage {ns}:multiplayer custom_loadouts
+data modify storage {ns}:multiplayer custom_loadouts set value []
+execute if data storage {ns}:temp _fav_count_src[0] run function {ns}:v{version}/multiplayer/custom/fav_count_rebuild
+""")
+
+	## fav_count_rebuild — Iterate loadouts, update favorites_count on matching ID
+	write_versioned_function("multiplayer/custom/fav_count_rebuild",
+f"""
+execute store result score #entry_id {ns}.data run data get storage {ns}:temp _fav_count_src[0].id
+execute if score #entry_id {ns}.data = #loadout_id {ns}.data run function {ns}:v{version}/multiplayer/custom/fav_count_entry
+
+data modify storage {ns}:multiplayer custom_loadouts append from storage {ns}:temp _fav_count_src[0]
+
+data remove storage {ns}:temp _fav_count_src[0]
+execute if data storage {ns}:temp _fav_count_src[0] run function {ns}:v{version}/multiplayer/custom/fav_count_rebuild
+""")
+
+	## fav_count_entry — Increment or decrement favorites_count based on #fav_found
+	write_versioned_function("multiplayer/custom/fav_count_entry",
+f"""
+# Ensure favorites_count field exists
+execute unless data storage {ns}:temp _fav_count_src[0].favorites_count run data modify storage {ns}:temp _fav_count_src[0].favorites_count set value 0
+
+# Load current count into score
+execute store result score #fav_cnt {ns}.data run data get storage {ns}:temp _fav_count_src[0].favorites_count
+
+# fav_found=0 means just added → increment; fav_found=1 means just removed → decrement
+execute if score #fav_found {ns}.data matches 0 run scoreboard players add #fav_cnt {ns}.data 1
+execute if score #fav_found {ns}.data matches 1 run scoreboard players remove #fav_cnt {ns}.data 1
+
+# Clamp to 0 minimum
+execute if score #fav_cnt {ns}.data matches ..-1 run scoreboard players set #fav_cnt {ns}.data 0
+
+# Store back
+execute store result storage {ns}:temp _fav_count_src[0].favorites_count int 1 run scoreboard players get #fav_cnt {ns}.data
 """)
 
 	## custom/like — Increment loadout's like counter (one per player)

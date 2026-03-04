@@ -77,6 +77,15 @@ execute if score @s mgs.player.config matches 1400..1499 run function mgs:v5.0.0
 execute if score @s mgs.player.config matches 1500..1599 run function mgs:v5.0.0/multiplayer/custom/set_default
 # 1599 = Unset default loadout
 execute if score @s mgs.player.config matches 1599 run function mgs:v5.0.0/multiplayer/custom/unset_default
+# === Marketplace / My Loadouts Filter & Sort ===
+# 1600 = Marketplace: all public (favorites first)
+execute if score @s mgs.player.config matches 1600 run function mgs:v5.0.0/multiplayer/marketplace/browse
+# 1601 = Marketplace: only favorited loadouts
+execute if score @s mgs.player.config matches 1601 run function mgs:v5.0.0/multiplayer/marketplace/browse_fav_only
+# 1602 = Marketplace: sorted by most likes
+execute if score @s mgs.player.config matches 1602 run function mgs:v5.0.0/multiplayer/marketplace/browse_likes
+# 1603 = My Loadouts: favorites only
+execute if score @s mgs.player.config matches 1603 run function mgs:v5.0.0/multiplayer/my_loadouts/browse_fav_only
 
 # Reset score
 scoreboard players set @s mgs.player.config 0
