@@ -150,6 +150,12 @@ TRIG_TOGGLE_VIS_BASE  = 1400 # 1400 + loadout_id → toggle public/private
 TRIG_SET_DEFAULT_BASE = 1500 # 1500 + loadout_id → set as default
 TRIG_UNSET_DEFAULT    = 1599 # Unset default loadout
 
+# Filter / Sort view triggers
+TRIG_MARKETPLACE_ALL          = 1600 # Marketplace: show all public (favorites first)
+TRIG_MARKETPLACE_FAV_ONLY     = 1601 # Marketplace: show only player's favorited loadouts
+TRIG_MARKETPLACE_LIKES        = 1602 # Marketplace: show all sorted by likes descending
+TRIG_MY_LOADOUTS_FAV_ONLY     = 1603 # My Loadouts: show only favorited own loadouts
+
 # ============================================================
 # Pick-10 System Constants
 # ============================================================

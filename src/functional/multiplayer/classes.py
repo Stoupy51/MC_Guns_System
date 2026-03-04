@@ -150,9 +150,26 @@ def build_class_snbt(ns: str, class_id: str, class_data: JsonDict, class_num: in
                 inv_slot += 1
 
     slots_snbt: str = ",".join(slots)
+
+    # Build equipment display string (e.g. "2x Frag Grenade, 1x Smoke")
+    equip_parts: list[str] = []
+    equip_display_names: dict[str, str] = {
+        "frag_grenade": "Frag", "semtex": "Semtex",
+        "flash_grenade": "Flash", "smoke_grenade": "Smoke",
+    }
+    for item_id, count in class_data.get("equipment", {}).items():
+        label = equip_display_names.get(item_id, item_id)
+        equip_parts.append(f"{count}x {label}")
+    equip_display: str = ", ".join(equip_parts) if equip_parts else "None"
+
+    main_mag_count: int = class_data["main"].get("mag_count", 0)
+    secondary_mag_count: int = class_data.get("secondary", {}).get("mag_count", 0)
+
     return (
         f'{{id:"{class_id}",name:"{class_data["name"]}",lore:"{class_data["lore"]}",'
         f'trigger_value:{trigger_value},main_gun:"{main_gun}",secondary_gun:"{secondary_gun}",'
+        f'main_mag_count:{main_mag_count},secondary_mag_count:{secondary_mag_count},'
+        f'equip_display:"{equip_display}",'
         f'slots:[{slots_snbt}]}}'
     )
 

@@ -48,8 +48,7 @@ execute if data storage mgs:temp editor{secondary:"glock18"} run data modify sto
 execute if data storage mgs:temp editor{secondary:"vz61"} run data modify storage mgs:temp _build.secondary_data set from storage mgs:multiplayer secondary_slot_table[6]
 
 # Build the new loadout entry (include new Pick-10 fields)
-data modify storage mgs:temp _new_loadout set value {id:0,owner_pid:0,owner_name:"",name:"",public:0b,likes:0,main_gun:"",secondary_gun:"",primary_mag_count:1,secondary_mag_count:0,equip_slot1:"",equip_slot2:"",perks:[],slots:[]}
-
+	data modify storage mgs:temp _new_loadout set value {id:0,owner_pid:0,owner_name:"",name:"",public:0b,likes:0,favorites_count:0,points_used:0,main_gun:"",main_gun_display:"",secondary_gun:"",secondary_gun_display:"None",primary_mag_count:1,secondary_mag_count:0,equip_slot1:"",equip_slot1_name:"None",equip_slot2:"",equip_slot2_name:"None",perks:[],slots:[]}
 # Set loadout ID from counter
 execute store result storage mgs:temp _new_loadout.id int 1 run data get storage mgs:multiplayer next_loadout_id
 
@@ -71,6 +70,23 @@ data modify storage mgs:temp _new_loadout.secondary_mag_count set from storage m
 data modify storage mgs:temp _new_loadout.equip_slot1 set from storage mgs:temp editor.equip_slot1
 data modify storage mgs:temp _new_loadout.equip_slot2 set from storage mgs:temp editor.equip_slot2
 data modify storage mgs:temp _new_loadout.perks set from storage mgs:temp editor.perks
+
+# Compute points used = PICK10_TOTAL - remaining
+scoreboard players set #pts_used mgs.data 10
+scoreboard players operation #pts_used mgs.data -= @s mgs.mp.edit_points
+execute store result storage mgs:temp _new_loadout.points_used int 1 run scoreboard players get #pts_used mgs.data
+
+# Set equip slot display names
+execute if data storage mgs:temp editor{equip_slot1:""} run data modify storage mgs:temp _new_loadout.equip_slot1_name set value "None"
+execute if data storage mgs:temp editor{equip_slot1:"frag_grenade"} run data modify storage mgs:temp _new_loadout.equip_slot1_name set value "Frag Grenade"
+execute if data storage mgs:temp editor{equip_slot1:"semtex"} run data modify storage mgs:temp _new_loadout.equip_slot1_name set value "Semtex"
+execute if data storage mgs:temp editor{equip_slot1:"flash_grenade"} run data modify storage mgs:temp _new_loadout.equip_slot1_name set value "Flash"
+execute if data storage mgs:temp editor{equip_slot1:"smoke_grenade"} run data modify storage mgs:temp _new_loadout.equip_slot1_name set value "Smoke"
+execute if data storage mgs:temp editor{equip_slot2:""} run data modify storage mgs:temp _new_loadout.equip_slot2_name set value "None"
+execute if data storage mgs:temp editor{equip_slot2:"frag_grenade"} run data modify storage mgs:temp _new_loadout.equip_slot2_name set value "Frag Grenade"
+execute if data storage mgs:temp editor{equip_slot2:"semtex"} run data modify storage mgs:temp _new_loadout.equip_slot2_name set value "Semtex"
+execute if data storage mgs:temp editor{equip_slot2:"flash_grenade"} run data modify storage mgs:temp _new_loadout.equip_slot2_name set value "Flash"
+execute if data storage mgs:temp editor{equip_slot2:"smoke_grenade"} run data modify storage mgs:temp _new_loadout.equip_slot2_name set value "Smoke"
 
 # Set visibility
 execute if score #cl_public mgs.data matches 1 run data modify storage mgs:temp _new_loadout.public set value 1b
@@ -99,8 +115,11 @@ execute if score #pmag_count mgs.data matches 1.. run function mgs:v5.0.0/multip
 # 5. Secondary magazine slots (continuing from #inv_slot)
 execute if data storage mgs:temp _build.secondary_data run function mgs:v5.0.0/multiplayer/editor/start_secondary_mags
 
-# Auto-name the loadout
+# Auto-name the loadout and set gun display names
 function mgs:v5.0.0/multiplayer/editor/set_name with storage mgs:temp editor
+function mgs:v5.0.0/multiplayer/editor/set_main_gun_display with storage mgs:temp editor
+data modify storage mgs:temp _new_loadout.secondary_gun_display set value "None"
+execute unless data storage mgs:temp editor{secondary:""} run function mgs:v5.0.0/multiplayer/editor/set_sec_gun_display with storage mgs:temp editor
 
 # Append to custom loadouts list
 data modify storage mgs:multiplayer custom_loadouts append from storage mgs:temp _new_loadout

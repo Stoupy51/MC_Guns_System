@@ -37,6 +37,10 @@ from .multiplayer.loadouts import (
     TRIG_SECONDARY_SCOPE_BASE,
     TRIG_SELECT_BASE,
     TRIG_SET_DEFAULT_BASE,
+    TRIG_MARKETPLACE_ALL,
+    TRIG_MARKETPLACE_FAV_ONLY,
+    TRIG_MARKETPLACE_LIKES,
+    TRIG_MY_LOADOUTS_FAV_ONLY,
     TRIG_TOGGLE_VIS_BASE,
     TRIG_UNSET_DEFAULT,
 )
@@ -146,6 +150,15 @@ execute if score @s {ns}.player.config matches {TRIG_TOGGLE_VIS_BASE}..{toggle_v
 execute if score @s {ns}.player.config matches {TRIG_SET_DEFAULT_BASE}..{set_default_max} run function {ns}:v{version}/multiplayer/custom/set_default
 # 1599 = Unset default loadout
 execute if score @s {ns}.player.config matches {TRIG_UNSET_DEFAULT} run function {ns}:v{version}/multiplayer/custom/unset_default
+# === Marketplace / My Loadouts Filter & Sort ===
+# {TRIG_MARKETPLACE_ALL} = Marketplace: all public (favorites first)
+execute if score @s {ns}.player.config matches {TRIG_MARKETPLACE_ALL} run function {ns}:v{version}/multiplayer/marketplace/browse
+# {TRIG_MARKETPLACE_FAV_ONLY} = Marketplace: only favorited loadouts
+execute if score @s {ns}.player.config matches {TRIG_MARKETPLACE_FAV_ONLY} run function {ns}:v{version}/multiplayer/marketplace/browse_fav_only
+# {TRIG_MARKETPLACE_LIKES} = Marketplace: sorted by most likes
+execute if score @s {ns}.player.config matches {TRIG_MARKETPLACE_LIKES} run function {ns}:v{version}/multiplayer/marketplace/browse_likes
+# {TRIG_MY_LOADOUTS_FAV_ONLY} = My Loadouts: favorites only
+execute if score @s {ns}.player.config matches {TRIG_MY_LOADOUTS_FAV_ONLY} run function {ns}:v{version}/multiplayer/my_loadouts/browse_fav_only
 
 # Reset score
 scoreboard players set @s {ns}.player.config 0

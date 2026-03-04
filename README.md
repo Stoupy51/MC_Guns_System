@@ -8,11 +8,6 @@
 Credits for resources: MGS 4.2 by TheBradqq
 
 # TODO:
-- Fix the crosshair issue:
-  - Currently we are replacing the crosshair texture with an empty one. Then with Shaders we make a new one
-  - The issue with the current method is that people without Fabulous Graphics will not be able to see their crosshair.
-  - We need to not modify the crosshair, but if Fabulous then replace the crosshair by our custom one!
-  - Apparently it's possible
 - Compatibility & Developement:
   - Multiplayer mode:
     - Dynamic classes definitions:

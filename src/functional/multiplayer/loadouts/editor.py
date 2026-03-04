@@ -1026,6 +1026,16 @@ data modify storage {ns}:multiplayer secondary_slot_table set value [{secondary_
 			f'data modify storage {ns}:temp _build.secondary_data set from storage {ns}:multiplayer secondary_slot_table[{idx}]\n'
 		)
 
+	# Equip slot display name dispatch (generated at build time from GRENADE_TYPES)
+	equip1_name_dispatch = "\n".join(
+		f'execute if data storage {ns}:temp editor{{equip_slot1:"{item_id}"}} run data modify storage {ns}:temp _new_loadout.equip_slot1_name set value "{display}"'
+		for item_id, display in GRENADE_TYPES if item_id
+	)
+	equip2_name_dispatch = "\n".join(
+		f'execute if data storage {ns}:temp editor{{equip_slot2:"{item_id}"}} run data modify storage {ns}:temp _new_loadout.equip_slot2_name set value "{display}"'
+		for item_id, display in GRENADE_TYPES if item_id
+	)
+
 	write_versioned_function("multiplayer/editor/save",
 f"""
 # Determine visibility from trigger value
@@ -1041,8 +1051,7 @@ data modify storage {ns}:temp _build set value {{}}
 {save_secondary_dispatch}
 
 # Build the new loadout entry (include new Pick-10 fields)
-data modify storage {ns}:temp _new_loadout set value {{id:0,owner_pid:0,owner_name:"",name:"",public:0b,likes:0,main_gun:"",secondary_gun:"",primary_mag_count:1,secondary_mag_count:0,equip_slot1:"",equip_slot2:"",perks:[],slots:[]}}
-
+	data modify storage {ns}:temp _new_loadout set value {{id:0,owner_pid:0,owner_name:"",name:"",public:0b,likes:0,favorites_count:0,points_used:0,main_gun:"",main_gun_display:"",secondary_gun:"",secondary_gun_display:"None",primary_mag_count:1,secondary_mag_count:0,equip_slot1:"",equip_slot1_name:"None",equip_slot2:"",equip_slot2_name:"None",perks:[],slots:[]}}
 # Set loadout ID from counter
 execute store result storage {ns}:temp _new_loadout.id int 1 run data get storage {ns}:multiplayer next_loadout_id
 
@@ -1064,6 +1073,17 @@ data modify storage {ns}:temp _new_loadout.secondary_mag_count set from storage 
 data modify storage {ns}:temp _new_loadout.equip_slot1 set from storage {ns}:temp editor.equip_slot1
 data modify storage {ns}:temp _new_loadout.equip_slot2 set from storage {ns}:temp editor.equip_slot2
 data modify storage {ns}:temp _new_loadout.perks set from storage {ns}:temp editor.perks
+
+# Compute points used = PICK10_TOTAL - remaining
+scoreboard players set #pts_used {ns}.data {PICK10_TOTAL}
+scoreboard players operation #pts_used {ns}.data -= @s {ns}.mp.edit_points
+execute store result storage {ns}:temp _new_loadout.points_used int 1 run scoreboard players get #pts_used {ns}.data
+
+# Set equip slot display names
+execute if data storage {ns}:temp editor{{equip_slot1:""}} run data modify storage {ns}:temp _new_loadout.equip_slot1_name set value "None"
+{equip1_name_dispatch}
+execute if data storage {ns}:temp editor{{equip_slot2:""}} run data modify storage {ns}:temp _new_loadout.equip_slot2_name set value "None"
+{equip2_name_dispatch}
 
 # Set visibility
 execute if score #cl_public {ns}.data matches 1 run data modify storage {ns}:temp _new_loadout.public set value 1b
@@ -1092,8 +1112,11 @@ execute if score #pmag_count {ns}.data matches 1.. run function {ns}:v{version}/
 # 5. Secondary magazine slots (continuing from #inv_slot)
 execute if data storage {ns}:temp _build.secondary_data run function {ns}:v{version}/multiplayer/editor/start_secondary_mags
 
-# Auto-name the loadout
+# Auto-name the loadout and set gun display names
 function {ns}:v{version}/multiplayer/editor/set_name with storage {ns}:temp editor
+function {ns}:v{version}/multiplayer/editor/set_main_gun_display with storage {ns}:temp editor
+data modify storage {ns}:temp _new_loadout.secondary_gun_display set value "None"
+execute unless data storage {ns}:temp editor{{secondary:""}} run function {ns}:v{version}/multiplayer/editor/set_sec_gun_display with storage {ns}:temp editor
 
 # Append to custom loadouts list
 data modify storage {ns}:multiplayer custom_loadouts append from storage {ns}:temp _new_loadout
@@ -1177,6 +1200,10 @@ f"""$data modify storage {ns}:temp _build.secondary_data.gun_slot.loot set value
 	## Name and notification macros
 	## ============================
 	write_versioned_function("multiplayer/editor/set_name", f"""$data modify storage {ns}:temp _new_loadout.name set value "$(primary_name) + $(secondary_name)"\n""")
+
+	write_versioned_function("multiplayer/editor/set_main_gun_display", f"""$data modify storage {ns}:temp _new_loadout.main_gun_display set value "$(primary_name) ($(primary_scope_name))"\n""")
+
+	write_versioned_function("multiplayer/editor/set_sec_gun_display", f"""$data modify storage {ns}:temp _new_loadout.secondary_gun_display set value "$(secondary_name) ($(secondary_scope_name))"\n""")
 
 	write_versioned_function("multiplayer/editor/notify_saved", """$tellraw @s ["",{"text":"[MGS] ","color":"gold"},{"text":"Loadout saved: ","color":"white"},{"text":"$(primary_name) + $(secondary_name)","color":"green","bold":true}]""")
 
