@@ -135,7 +135,7 @@ void main() {
     // The vanilla crosshair texture is replaced with a transparent one, so the shader
     // handles all crosshair rendering. Hidden during zoom for clean scope view.
     // Smooth spread (from classify A): 0.0=sneak → 1.0=jump, interpolated per-frame
-    if (!zoomMode) {
+    if (!zoomMode && false) {
         // Smooth spread value (0.0-1.0 from classify alpha, maps to levels 0-4)
         float smoothSpread = classifyData.a * 4.0;  // 0.0-4.0
 

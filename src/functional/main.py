@@ -1,12 +1,10 @@
 
 # Imports
-from PIL import Image
 from stewbeet import (
     DamageType,
     Font,
     Mem,
     TextComponent,
-    Texture,
     set_json_encoder,
     texture_mcmeta,
     write_function,
@@ -144,12 +142,8 @@ execute as @e[type=player,sort=random] at @s run function {ns}:v{version}/player
         write_tag(tag, Mem.ctx.data["minecraft"].damage_type_tags, [f"{ns}:bullet"])
     write_versioned_function("utils/damage", f"$damage $(target) $(amount) {ns}:bullet by $(attacker)")
 
-    # Replace crosshair texture with transparent one (shader draws custom crosshair conditionally)
-    textures_folder: str = Mem.ctx.meta.get("stewbeet", {}).get("textures_folder", "")
-    transparent_crosshair = Image.new("RGBA", (8, 8), (0, 0, 0, 0))
-    Mem.ctx.assets["minecraft"].textures["gui/sprites/hud/crosshair"] = Texture(transparent_crosshair)
-
     # Add bullet font (for actionbar)
+    textures_folder: str = Mem.ctx.meta.get("stewbeet", {}).get("textures_folder", "")
     font: Font = Mem.ctx.assets.fonts.setdefault(f"{ns}:icons", Font({"providers": []}))
     font.data["providers"].extend([
         {"type": "bitmap","file": f"{ns}:font/bullet_full.png","ascent": 7,"height": 9,"chars": ["A"]},
