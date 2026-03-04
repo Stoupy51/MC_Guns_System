@@ -46,6 +46,7 @@ execute if data storage mgs:temp editor{secondary:"makarov"} run data modify sto
 execute if data storage mgs:temp editor{secondary:"glock17"} run data modify storage mgs:temp _build.secondary_data set from storage mgs:multiplayer secondary_slot_table[4]
 execute if data storage mgs:temp editor{secondary:"glock18"} run data modify storage mgs:temp _build.secondary_data set from storage mgs:multiplayer secondary_slot_table[5]
 execute if data storage mgs:temp editor{secondary:"vz61"} run data modify storage mgs:temp _build.secondary_data set from storage mgs:multiplayer secondary_slot_table[6]
+execute if data storage mgs:temp editor{secondary:"ray_gun"} run data modify storage mgs:temp _build.secondary_data set from storage mgs:multiplayer secondary_slot_table[7]
 
 # Build the new loadout entry (include new Pick-10 fields)
 	data modify storage mgs:temp _new_loadout set value {id:0,owner_pid:0,owner_name:"",name:"",public:0b,likes:0,favorites_count:0,points_used:0,main_gun:"",main_gun_display:"",secondary_gun:"",secondary_gun_display:"None",primary_mag_count:1,secondary_mag_count:0,equip_slot1:"",equip_slot1_name:"None",equip_slot2:"",equip_slot2_name:"None",perks:[],slots:[]}

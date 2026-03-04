@@ -65,6 +65,7 @@ def main() -> None:
         ("spas12", "spas12_shell", 1),
         ("m500", "m500_shell", 1),
         ("m590", "m590_shell", 1),
+        ("ray_gun", "element_115", 1),
     ]
     for weapon, item_name, capacity in consumable_magazines:
         Item(

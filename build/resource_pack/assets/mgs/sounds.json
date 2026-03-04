@@ -583,6 +583,26 @@
 		"subtitle": "ppsh41/reload",
 		"sounds": ["mgs:ppsh41/reload"]
 	},
+	"ray_gun/fire": {
+		"subtitle": "ray_gun/fire",
+		"sounds": ["mgs:ray_gun/fire_1","mgs:ray_gun/fire_2","mgs:ray_gun/fire_3","mgs:ray_gun/fire_4","mgs:ray_gun/fire_5","mgs:ray_gun/fire_6"]
+	},
+	"ray_gun/playerbegin": {
+		"subtitle": "ray_gun/playerbegin",
+		"sounds": ["mgs:ray_gun/playerbegin"]
+	},
+	"ray_gun/playerend": {
+		"subtitle": "ray_gun/playerend",
+		"sounds": ["mgs:ray_gun/playerend"]
+	},
+	"ray_gun/playermid": {
+		"subtitle": "ray_gun/playermid",
+		"sounds": ["mgs:ray_gun/playermid"]
+	},
+	"ray_gun/reload": {
+		"subtitle": "ray_gun/reload",
+		"sounds": ["mgs:ray_gun/reload"]
+	},
 	"rpg7/fire": {
 		"subtitle": "rpg7/fire",
 		"sounds": ["mgs:rpg7/fire0","mgs:rpg7/fire1"]

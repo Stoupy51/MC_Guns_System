@@ -20,6 +20,7 @@
 										"ignore": {"functionality": true,"crafting": true}
 									}
 								},
+								"minecraft:rarity": "common",
 								"minecraft:item_name": {
 									"translate": "mgs.12ga3in",
 									"color": "white"
