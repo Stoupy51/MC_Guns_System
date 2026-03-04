@@ -8,7 +8,7 @@
 #
 
 # Initialize dialog structure
-data modify storage mgs:temp dialog set value {type:"minecraft:multi_action",title:{translate: "mgs.select_your_class",color:"gold",bold:true},body:[{type:"minecraft:plain_message",contents:{translate: "mgs.choose_a_class_for_multiplayer",color:"gray"}}],actions:[],columns:2,after_action:"close",exit_action:{label:"Cancel"}}
+data modify storage mgs:temp dialog set value {type:"minecraft:multi_action",title:{translate: "mgs.select_your_class",color:"gold",bold:true},body:{type:"minecraft:item",item:{id:"minecraft:crossbow"},description:{contents:{translate: "mgs.choose_a_class_for_multiplayer",color:"gray"}},show_decoration:false,show_tooltip:true},actions:[],columns:2,after_action:"close",exit_action:{label:"Cancel"}}
 
 # Copy class list for iteration
 data modify storage mgs:temp class_iter set from storage mgs:multiplayer classes_list

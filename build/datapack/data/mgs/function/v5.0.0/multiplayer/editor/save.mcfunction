@@ -60,6 +60,11 @@ execute store result storage mgs:multiplayer next_loadout_id int 1 run scoreboar
 # Set owner info
 execute store result storage mgs:temp _new_loadout.owner_pid int 1 run scoreboard players get @s mgs.mp.pid
 
+# Capture owner username via player head loot table trick
+tag @s add mgs.username_getter
+execute at @s summon item_display run function mgs:v5.0.0/multiplayer/get_username
+tag @s remove mgs.username_getter
+
 # Set weapon IDs (scope-modified)
 data modify storage mgs:temp _new_loadout.main_gun set from storage mgs:temp editor.primary_full
 data modify storage mgs:temp _new_loadout.secondary_gun set from storage mgs:temp editor.secondary_full

@@ -228,6 +228,6 @@ scoreboard players set @s {ns}.dps_timer 0
 f"""
 # @s = hit entity; add damage (x10) to the shooter's DPS accumulator
 execute store result score #sent_damage {ns}.data run data get storage {ns}:signals on_hit_entity.damage 10
-scoreboard players operation @a[tag={ns}.ticking,limit=1] {ns}.dps += #sent_damage {ns}.data
+scoreboard players operation @n[tag={ns}.ticking] {ns}.dps += #sent_damage {ns}.data
 """, tags=[f"{ns}:signals/on_hit_entity"])
 
