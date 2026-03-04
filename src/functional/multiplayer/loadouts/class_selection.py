@@ -29,7 +29,7 @@ scoreboard objectives add {ns}.mp.death_count deathCount
 	write_versioned_function("multiplayer/show_dialog", "$dialog show @s $(dialog)")
 
 	## ============================
-	## build_class_btn: recursive — appends one action entry per class to the dialog
+	## build_class_btn: recursive - appends one action entry per class to the dialog
 	## ============================
 	write_versioned_function("multiplayer/build_class_btn",
 f"""
@@ -77,7 +77,7 @@ f"""
 $scoreboard players set @s {ns}.mp.class $(class_num)
 
 # If game active: queue for next respawn
-$execute if data storage {ns}:multiplayer game{{state:"active"}} run tellraw @s ["",{{"text":"[MGS] ","color":"gold"}},{{"text":"Class set to ","color":"white"}},{{"text":"$(class_name)","color":"green","bold":true}},{{"text":" — will apply on respawn","color":"yellow"}},{apply_now}]
+$execute if data storage {ns}:multiplayer game{{state:"active"}} run tellraw @s ["",{{"text":"[MGS] ","color":"gold"}},{{"text":"Class set to ","color":"white"}},{{"text":"$(class_name)","color":"green","bold":true}},{{"text":" - will apply on respawn","color":"yellow"}},{apply_now}]
 
 # If game not active: only save choice (no loadout outside multiplayer)
 $execute unless data storage {ns}:multiplayer game{{state:"active"}} run tellraw @s ["",{{"text":"[MGS] ","color":"gold"}},{{"text":"Class set to ","color":"white"}},{{"text":"$(class_name)","color":"green","bold":true}},{apply_now}]
@@ -121,7 +121,7 @@ data modify storage {ns}:temp _find_iter set from storage {ns}:multiplayer custo
 execute if data storage {ns}:temp _find_iter[0] run function {ns}:v{version}/multiplayer/apply_custom_found
 """)
 
-	## apply_custom_found — Recursive: find loadout by ID and apply it
+	## apply_custom_found - Recursive: find loadout by ID and apply it
 	write_versioned_function("multiplayer/apply_custom_found",
 f"""
 # Check if this entry's ID matches the target
@@ -133,7 +133,7 @@ data remove storage {ns}:temp _find_iter[0]
 execute if data storage {ns}:temp _find_iter[0] run function {ns}:v{version}/multiplayer/apply_custom_found
 """)
 
-	## apply_custom_match — Apply the found loadout (slots + perks)
+	## apply_custom_match - Apply the found loadout (slots + perks)
 	write_versioned_function("multiplayer/apply_custom_match",
 f"""
 # Copy found loadout's slots to the format expected by apply_class_dynamic

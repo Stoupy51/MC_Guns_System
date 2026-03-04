@@ -117,7 +117,7 @@ void main() {
         vec2 sd = sparkScale * float(SPRITE_SQRT);  // scale for one sprite cell
 
         // Pseudo-random sprite index (0-8) from scene content.
-        // Using depth/color at fixed pixels as entropy — changes with camera position.
+        // Using depth/color at fixed pixels as entropy - changes with camera position.
         float entropy = texelFetch(InSampler, ivec2(317, 211), 0).r
                       + texelFetch(InSampler, ivec2(211, 317), 0).g;
         int spriteIndex = int(mod(floor(entropy * 7919.0), float(SPRITE_COUNT)));

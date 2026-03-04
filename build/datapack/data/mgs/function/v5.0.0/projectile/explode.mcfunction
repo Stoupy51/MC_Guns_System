@@ -6,15 +6,21 @@
 # @within	mgs:v5.0.0/projectile/tick
 #
 
-# Explosion particles
-particle explosion ~ ~ ~ 0 0 0 0 1 force @a[distance=..128]
-particle flame ~ ~ ~ 1 1 1 0.1 100 force @a[distance=..128]
-particle large_smoke ~ ~ ~ 1.5 1.5 1.5 0.05 50 force @a[distance=..128]
-particle campfire_signal_smoke ~ ~ ~ 0.5 0.5 0.5 0.05 20 force @a[distance=..128]
-particle lava ~ ~ ~ 1 1 1 0 30 force @a[distance=..128]
+# Explosion particles - ray_gun: green energy burst (no smoke)
+execute store success score #is_ray_gun mgs.data if data entity @s data.config{base_weapon:"ray_gun"}
+execute if score #is_ray_gun mgs.data matches 1 run particle flash{color:[0.0,0.8,0.0,1.0]} ~ ~ ~ 0 0 0 0 1 force @a[distance=..128]
+execute if score #is_ray_gun mgs.data matches 1 run particle dust{color:[0.0,0.8,0.0],scale:1.5} ~ ~ ~ 0.5 0.5 0.5 0 200 force @a[distance=..128]
+execute if score #is_ray_gun mgs.data matches 1 run particle glow ~ ~ ~ 0.5 0.5 0.5 0.1 80 force @a[distance=..128]
+execute if score #is_ray_gun mgs.data matches 1 run particle electric_spark ~ ~ ~ 0.5 0.5 0.5 0.05 100 force @a[distance=..128]
+# Explosion particles - standard weapons: fire + smoke
+execute if score #is_ray_gun mgs.data matches 0 run particle explosion ~ ~ ~ 0 0 0 0 1 force @a[distance=..128]
+execute if score #is_ray_gun mgs.data matches 0 run particle flame ~ ~ ~ 1 1 1 0.1 100 force @a[distance=..128]
+execute if score #is_ray_gun mgs.data matches 0 run particle large_smoke ~ ~ ~ 1.5 1.5 1.5 0.05 50 force @a[distance=..128]
+execute if score #is_ray_gun mgs.data matches 0 run particle campfire_signal_smoke ~ ~ ~ 0.5 0.5 0.5 0.05 20 force @a[distance=..128]
+execute if score #is_ray_gun mgs.data matches 0 run particle lava ~ ~ ~ 1 1 1 0 30 force @a[distance=..128]
 
-# Explosion sound
-playsound minecraft:entity.generic.explode player @a[distance=..64] ~ ~ ~ 2 0.8
+# Explosion sound - ray_gun is silent (no explosion sound)
+execute if score #is_ray_gun mgs.data matches 0 run playsound minecraft:entity.generic.explode player @a[distance=..64] ~ ~ ~ 2 0.8
 
 # Block destruction via RealisticExplosionLibrary (if RPG_EXPLOSION_POWER > 0)
 execute if score #rpg_explosion_power mgs.config matches 1.. run function mgs:v5.0.0/projectile/realistic_explosion

@@ -234,7 +234,7 @@ const vec2 corners[4] = vec2[4](
 //   G==0        → flash (mode 1)
 //   G∈[1-7]    → zoom x3 (from 0.02, randomized to [2-5])
 //   G∈[8-25]   → zoom x4 (from 0.08, randomized to [10-20])
-//   G∈[26-80]  → zoom center-only (from 0.25, randomized to [30-63]) — no scope
+//   G∈[26-80]  → zoom center-only (from 0.25, randomized to [30-63]) - no scope
 int detectMarkerMode(vec4 color) {
     ivec4 ic = ivec4(round(color * 255.0));
     // Signature: R in [1-10] (very dim dust) AND fully opaque (a>=250).
@@ -683,7 +683,7 @@ out vec4 fragColor;
 #define ZOOM_LERP_SPEED 0.12  // Per-frame interpolation (~0.33s to 90% at 60fps)
 
 void main() {
-    // Read FOV sentinel at pixel (3, 0) — spawned immediately on zoom (no 5-tick delay)
+    // Read FOV sentinel at pixel (3, 0) - spawned immediately on zoom (no 5-tick delay)
     // R=254, G=mode(12-14), B=viewDist, A=255
     ivec4 pFov = ivec4(round(texelFetch(MainSampler, ivec2(3, 0), 0) * 255.0));
     bool fovActive = (pFov.r == MARKER_RED && pFov.a == 255
@@ -838,7 +838,7 @@ void main() {
         vec2 sd = sparkScale * float(SPRITE_SQRT);  // scale for one sprite cell
 
         // Pseudo-random sprite index (0-8) from scene content.
-        // Using depth/color at fixed pixels as entropy — changes with camera position.
+        // Using depth/color at fixed pixels as entropy - changes with camera position.
         float entropy = texelFetch(InSampler, ivec2(317, 211), 0).r
                       + texelFetch(InSampler, ivec2(211, 317), 0).g;
         int spriteIndex = int(mod(floor(entropy * 7919.0), float(SPRITE_COUNT)));

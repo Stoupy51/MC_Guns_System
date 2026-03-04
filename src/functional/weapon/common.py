@@ -221,7 +221,7 @@ scoreboard players set @s {ns}.dps 0
 scoreboard players set @s {ns}.dps_timer 0
 """)
 
-    # DPS signal: on_hit_entity — add actual damage dealt to the shooter's mgs.dps
+    # DPS signal: on_hit_entity - add actual damage dealt to the shooter's mgs.dps
     # @s = hit entity, the shooter is the ticking player (has mgs.ticking tag)
     # #damage mgs.data is damage * 10 (integer), same unit as previous_dps accumulator
     write_versioned_function("weapon/dps_collect",

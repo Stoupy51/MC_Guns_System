@@ -6,6 +6,7 @@
 		"components": {
 			"max_stack_size": 1,
 			"custom_data": {"mgs": {"magazine": true,"weapon": "ak47","stats": {"remaining_bullets": 30,"capacity": 30},"ak47_mag": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},
+			"rarity": "common",
 			"lore": [[{"text": "A","color": "#c24a17","italic": false},{"text": "m","color": "#c24d18"},{"text": "m","color": "#c2501a"},{"text": "o","color": "#c2531c"},{"text": " ","color": "#c3571e"},{"text": "R","color": "#c35a20"},{"text": "e","color": "#c35d22"},{"text": "m","color": "#c46024"},{"text": "a","color": "#c46426"},{"text": "i","color": "#c46728"},{"text": "n","color": "#c56a2a"},{"text": "i","color": "#c56d2c"},{"text": "n","color": "#c5712e"},{"text": "g","color": "#c67430"},{"text": " ","color": "#c67732"},{"text": "➤","color": "#c67a34"},{"text": " ","color": "#c77e36"},"30",{"text": "/","color": "#c77e36"},"30"],["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]],
 			"item_model": "mgs:ak47_mag",
 			"item_name": {"text": "Ak47 Mag"}
@@ -18,6 +19,7 @@
 		"components": {
 			"max_stack_size": 1,
 			"custom_data": {"mgs": {"magazine": true,"weapon": "aug","stats": {"remaining_bullets": 30,"capacity": 30},"aug_mag": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},
+			"rarity": "common",
 			"lore": [[{"text": "A","color": "#c24a17","italic": false},{"text": "m","color": "#c24d18"},{"text": "m","color": "#c2501a"},{"text": "o","color": "#c2531c"},{"text": " ","color": "#c3571e"},{"text": "R","color": "#c35a20"},{"text": "e","color": "#c35d22"},{"text": "m","color": "#c46024"},{"text": "a","color": "#c46426"},{"text": "i","color": "#c46728"},{"text": "n","color": "#c56a2a"},{"text": "i","color": "#c56d2c"},{"text": "n","color": "#c5712e"},{"text": "g","color": "#c67430"},{"text": " ","color": "#c67732"},{"text": "➤","color": "#c67a34"},{"text": " ","color": "#c77e36"},"30",{"text": "/","color": "#c77e36"},"30"],["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]],
 			"item_model": "mgs:aug_mag",
 			"item_name": {"text": "Aug Mag"}
@@ -30,6 +32,7 @@
 		"components": {
 			"max_stack_size": 1,
 			"custom_data": {"mgs": {"magazine": true,"weapon": "deagle","stats": {"remaining_bullets": 7,"capacity": 7},"deagle_mag": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},
+			"rarity": "common",
 			"lore": [[{"text": "A","color": "#c24a17","italic": false},{"text": "m","color": "#c24d18"},{"text": "m","color": "#c2501a"},{"text": "o","color": "#c2531c"},{"text": " ","color": "#c3571e"},{"text": "R","color": "#c35a20"},{"text": "e","color": "#c35d22"},{"text": "m","color": "#c46024"},{"text": "a","color": "#c46426"},{"text": "i","color": "#c46728"},{"text": "n","color": "#c56a2a"},{"text": "i","color": "#c56d2c"},{"text": "n","color": "#c5712e"},{"text": "g","color": "#c67430"},{"text": " ","color": "#c67732"},{"text": "➤","color": "#c67a34"},{"text": " ","color": "#c77e36"},"7",{"text": "/","color": "#c77e36"},"7"],["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]],
 			"item_model": "mgs:deagle_mag",
 			"item_name": {"text": "Deagle Mag"}
@@ -42,6 +45,7 @@
 		"components": {
 			"max_stack_size": 1,
 			"custom_data": {"mgs": {"magazine": true,"weapon": "famas","stats": {"remaining_bullets": 25,"capacity": 25},"famas_mag": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},
+			"rarity": "common",
 			"lore": [[{"text": "A","color": "#c24a17","italic": false},{"text": "m","color": "#c24d18"},{"text": "m","color": "#c2501a"},{"text": "o","color": "#c2531c"},{"text": " ","color": "#c3571e"},{"text": "R","color": "#c35a20"},{"text": "e","color": "#c35d22"},{"text": "m","color": "#c46024"},{"text": "a","color": "#c46426"},{"text": "i","color": "#c46728"},{"text": "n","color": "#c56a2a"},{"text": "i","color": "#c56d2c"},{"text": "n","color": "#c5712e"},{"text": "g","color": "#c67430"},{"text": " ","color": "#c67732"},{"text": "➤","color": "#c67a34"},{"text": " ","color": "#c77e36"},"25",{"text": "/","color": "#c77e36"},"25"],["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]],
 			"item_model": "mgs:famas_mag",
 			"item_name": {"text": "Famas Mag"}
@@ -54,6 +58,7 @@
 		"components": {
 			"max_stack_size": 1,
 			"custom_data": {"mgs": {"magazine": true,"weapon": "fnfal","stats": {"remaining_bullets": 20,"capacity": 20},"fnfal_mag": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},
+			"rarity": "common",
 			"lore": [[{"text": "A","color": "#c24a17","italic": false},{"text": "m","color": "#c24d18"},{"text": "m","color": "#c2501a"},{"text": "o","color": "#c2531c"},{"text": " ","color": "#c3571e"},{"text": "R","color": "#c35a20"},{"text": "e","color": "#c35d22"},{"text": "m","color": "#c46024"},{"text": "a","color": "#c46426"},{"text": "i","color": "#c46728"},{"text": "n","color": "#c56a2a"},{"text": "i","color": "#c56d2c"},{"text": "n","color": "#c5712e"},{"text": "g","color": "#c67430"},{"text": " ","color": "#c67732"},{"text": "➤","color": "#c67a34"},{"text": " ","color": "#c77e36"},"20",{"text": "/","color": "#c77e36"},"20"],["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]],
 			"item_model": "mgs:fnfal_mag",
 			"item_name": {"text": "Fnfal Mag"}
@@ -66,6 +71,7 @@
 		"components": {
 			"max_stack_size": 1,
 			"custom_data": {"mgs": {"magazine": true,"weapon": "g3a3","stats": {"remaining_bullets": 20,"capacity": 20},"g3a3_mag": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},
+			"rarity": "common",
 			"lore": [[{"text": "A","color": "#c24a17","italic": false},{"text": "m","color": "#c24d18"},{"text": "m","color": "#c2501a"},{"text": "o","color": "#c2531c"},{"text": " ","color": "#c3571e"},{"text": "R","color": "#c35a20"},{"text": "e","color": "#c35d22"},{"text": "m","color": "#c46024"},{"text": "a","color": "#c46426"},{"text": "i","color": "#c46728"},{"text": "n","color": "#c56a2a"},{"text": "i","color": "#c56d2c"},{"text": "n","color": "#c5712e"},{"text": "g","color": "#c67430"},{"text": " ","color": "#c67732"},{"text": "➤","color": "#c67a34"},{"text": " ","color": "#c77e36"},"20",{"text": "/","color": "#c77e36"},"20"],["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]],
 			"item_model": "mgs:g3a3_mag",
 			"item_name": {"text": "G3A3 Mag"}
@@ -78,6 +84,7 @@
 		"components": {
 			"max_stack_size": 1,
 			"custom_data": {"mgs": {"magazine": true,"weapon": "glock17","stats": {"remaining_bullets": 17,"capacity": 17},"glock17_mag": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},
+			"rarity": "common",
 			"lore": [[{"text": "A","color": "#c24a17","italic": false},{"text": "m","color": "#c24d18"},{"text": "m","color": "#c2501a"},{"text": "o","color": "#c2531c"},{"text": " ","color": "#c3571e"},{"text": "R","color": "#c35a20"},{"text": "e","color": "#c35d22"},{"text": "m","color": "#c46024"},{"text": "a","color": "#c46426"},{"text": "i","color": "#c46728"},{"text": "n","color": "#c56a2a"},{"text": "i","color": "#c56d2c"},{"text": "n","color": "#c5712e"},{"text": "g","color": "#c67430"},{"text": " ","color": "#c67732"},{"text": "➤","color": "#c67a34"},{"text": " ","color": "#c77e36"},"17",{"text": "/","color": "#c77e36"},"17"],["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]],
 			"item_model": "mgs:glock17_mag",
 			"item_name": {"text": "Glock17 Mag"}
@@ -90,6 +97,7 @@
 		"components": {
 			"max_stack_size": 1,
 			"custom_data": {"mgs": {"magazine": true,"weapon": "glock18","stats": {"remaining_bullets": 19,"capacity": 19},"glock18_mag": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},
+			"rarity": "common",
 			"lore": [[{"text": "A","color": "#c24a17","italic": false},{"text": "m","color": "#c24d18"},{"text": "m","color": "#c2501a"},{"text": "o","color": "#c2531c"},{"text": " ","color": "#c3571e"},{"text": "R","color": "#c35a20"},{"text": "e","color": "#c35d22"},{"text": "m","color": "#c46024"},{"text": "a","color": "#c46426"},{"text": "i","color": "#c46728"},{"text": "n","color": "#c56a2a"},{"text": "i","color": "#c56d2c"},{"text": "n","color": "#c5712e"},{"text": "g","color": "#c67430"},{"text": " ","color": "#c67732"},{"text": "➤","color": "#c67a34"},{"text": " ","color": "#c77e36"},"19",{"text": "/","color": "#c77e36"},"19"],["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]],
 			"item_model": "mgs:glock18_mag",
 			"item_name": {"text": "Glock18 Mag"}
@@ -102,6 +110,7 @@
 		"components": {
 			"max_stack_size": 1,
 			"custom_data": {"mgs": {"magazine": true,"weapon": "m16a4","stats": {"remaining_bullets": 30,"capacity": 30},"m16a4_mag": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},
+			"rarity": "common",
 			"lore": [[{"text": "A","color": "#c24a17","italic": false},{"text": "m","color": "#c24d18"},{"text": "m","color": "#c2501a"},{"text": "o","color": "#c2531c"},{"text": " ","color": "#c3571e"},{"text": "R","color": "#c35a20"},{"text": "e","color": "#c35d22"},{"text": "m","color": "#c46024"},{"text": "a","color": "#c46426"},{"text": "i","color": "#c46728"},{"text": "n","color": "#c56a2a"},{"text": "i","color": "#c56d2c"},{"text": "n","color": "#c5712e"},{"text": "g","color": "#c67430"},{"text": " ","color": "#c67732"},{"text": "➤","color": "#c67a34"},{"text": " ","color": "#c77e36"},"30",{"text": "/","color": "#c77e36"},"30"],["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]],
 			"item_model": "mgs:m16a4_mag",
 			"item_name": {"text": "M16A4 Mag"}
@@ -114,6 +123,7 @@
 		"components": {
 			"max_stack_size": 1,
 			"custom_data": {"mgs": {"magazine": true,"weapon": "m1911","stats": {"remaining_bullets": 7,"capacity": 7},"m1911_mag": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},
+			"rarity": "common",
 			"lore": [[{"text": "A","color": "#c24a17","italic": false},{"text": "m","color": "#c24d18"},{"text": "m","color": "#c2501a"},{"text": "o","color": "#c2531c"},{"text": " ","color": "#c3571e"},{"text": "R","color": "#c35a20"},{"text": "e","color": "#c35d22"},{"text": "m","color": "#c46024"},{"text": "a","color": "#c46426"},{"text": "i","color": "#c46728"},{"text": "n","color": "#c56a2a"},{"text": "i","color": "#c56d2c"},{"text": "n","color": "#c5712e"},{"text": "g","color": "#c67430"},{"text": " ","color": "#c67732"},{"text": "➤","color": "#c67a34"},{"text": " ","color": "#c77e36"},"7",{"text": "/","color": "#c77e36"},"7"],["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]],
 			"item_model": "mgs:m1911_mag",
 			"item_name": {"text": "M1911 Mag"}
@@ -126,6 +136,7 @@
 		"components": {
 			"max_stack_size": 1,
 			"custom_data": {"mgs": {"magazine": true,"weapon": "m249","stats": {"remaining_bullets": 150,"capacity": 150},"m249_mag": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},
+			"rarity": "common",
 			"lore": [[{"text": "A","color": "#c24a17","italic": false},{"text": "m","color": "#c24d18"},{"text": "m","color": "#c2501a"},{"text": "o","color": "#c2531c"},{"text": " ","color": "#c3571e"},{"text": "R","color": "#c35a20"},{"text": "e","color": "#c35d22"},{"text": "m","color": "#c46024"},{"text": "a","color": "#c46426"},{"text": "i","color": "#c46728"},{"text": "n","color": "#c56a2a"},{"text": "i","color": "#c56d2c"},{"text": "n","color": "#c5712e"},{"text": "g","color": "#c67430"},{"text": " ","color": "#c67732"},{"text": "➤","color": "#c67a34"},{"text": " ","color": "#c77e36"},"150",{"text": "/","color": "#c77e36"},"150"],["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]],
 			"item_model": "mgs:m249_mag",
 			"item_name": {"text": "M249 Mag"}
@@ -138,6 +149,7 @@
 		"components": {
 			"max_stack_size": 1,
 			"custom_data": {"mgs": {"magazine": true,"weapon": "m4a1","stats": {"remaining_bullets": 30,"capacity": 30},"m4a1_mag": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},
+			"rarity": "common",
 			"lore": [[{"text": "A","color": "#c24a17","italic": false},{"text": "m","color": "#c24d18"},{"text": "m","color": "#c2501a"},{"text": "o","color": "#c2531c"},{"text": " ","color": "#c3571e"},{"text": "R","color": "#c35a20"},{"text": "e","color": "#c35d22"},{"text": "m","color": "#c46024"},{"text": "a","color": "#c46426"},{"text": "i","color": "#c46728"},{"text": "n","color": "#c56a2a"},{"text": "i","color": "#c56d2c"},{"text": "n","color": "#c5712e"},{"text": "g","color": "#c67430"},{"text": " ","color": "#c67732"},{"text": "➤","color": "#c67a34"},{"text": " ","color": "#c77e36"},"30",{"text": "/","color": "#c77e36"},"30"],["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]],
 			"item_model": "mgs:m4a1_mag",
 			"item_name": {"text": "M4A1 Mag"}
@@ -150,6 +162,7 @@
 		"components": {
 			"max_stack_size": 1,
 			"custom_data": {"mgs": {"magazine": true,"weapon": "m82","stats": {"remaining_bullets": 10,"capacity": 10},"m82_mag": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},
+			"rarity": "common",
 			"lore": [[{"text": "A","color": "#c24a17","italic": false},{"text": "m","color": "#c24d18"},{"text": "m","color": "#c2501a"},{"text": "o","color": "#c2531c"},{"text": " ","color": "#c3571e"},{"text": "R","color": "#c35a20"},{"text": "e","color": "#c35d22"},{"text": "m","color": "#c46024"},{"text": "a","color": "#c46426"},{"text": "i","color": "#c46728"},{"text": "n","color": "#c56a2a"},{"text": "i","color": "#c56d2c"},{"text": "n","color": "#c5712e"},{"text": "g","color": "#c67430"},{"text": " ","color": "#c67732"},{"text": "➤","color": "#c67a34"},{"text": " ","color": "#c77e36"},"10",{"text": "/","color": "#c77e36"},"10"],["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]],
 			"item_model": "mgs:m82_mag",
 			"item_name": {"text": "M82 Mag"}
@@ -162,6 +175,7 @@
 		"components": {
 			"max_stack_size": 1,
 			"custom_data": {"mgs": {"magazine": true,"weapon": "m9","stats": {"remaining_bullets": 15,"capacity": 15},"m9_mag": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},
+			"rarity": "common",
 			"lore": [[{"text": "A","color": "#c24a17","italic": false},{"text": "m","color": "#c24d18"},{"text": "m","color": "#c2501a"},{"text": "o","color": "#c2531c"},{"text": " ","color": "#c3571e"},{"text": "R","color": "#c35a20"},{"text": "e","color": "#c35d22"},{"text": "m","color": "#c46024"},{"text": "a","color": "#c46426"},{"text": "i","color": "#c46728"},{"text": "n","color": "#c56a2a"},{"text": "i","color": "#c56d2c"},{"text": "n","color": "#c5712e"},{"text": "g","color": "#c67430"},{"text": " ","color": "#c67732"},{"text": "➤","color": "#c67a34"},{"text": " ","color": "#c77e36"},"15",{"text": "/","color": "#c77e36"},"15"],["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]],
 			"item_model": "mgs:m9_mag",
 			"item_name": {"text": "M9 Mag"}
@@ -174,6 +188,7 @@
 		"components": {
 			"max_stack_size": 1,
 			"custom_data": {"mgs": {"magazine": true,"weapon": "mac10","stats": {"remaining_bullets": 30,"capacity": 30},"mac10_mag": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},
+			"rarity": "common",
 			"lore": [[{"text": "A","color": "#c24a17","italic": false},{"text": "m","color": "#c24d18"},{"text": "m","color": "#c2501a"},{"text": "o","color": "#c2531c"},{"text": " ","color": "#c3571e"},{"text": "R","color": "#c35a20"},{"text": "e","color": "#c35d22"},{"text": "m","color": "#c46024"},{"text": "a","color": "#c46426"},{"text": "i","color": "#c46728"},{"text": "n","color": "#c56a2a"},{"text": "i","color": "#c56d2c"},{"text": "n","color": "#c5712e"},{"text": "g","color": "#c67430"},{"text": " ","color": "#c67732"},{"text": "➤","color": "#c67a34"},{"text": " ","color": "#c77e36"},"30",{"text": "/","color": "#c77e36"},"30"],["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]],
 			"item_model": "mgs:mac10_mag",
 			"item_name": {"text": "Mac10 Mag"}
@@ -186,6 +201,7 @@
 		"components": {
 			"max_stack_size": 1,
 			"custom_data": {"mgs": {"magazine": true,"weapon": "makarov","stats": {"remaining_bullets": 8,"capacity": 8},"makarov_mag": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},
+			"rarity": "common",
 			"lore": [[{"text": "A","color": "#c24a17","italic": false},{"text": "m","color": "#c24d18"},{"text": "m","color": "#c2501a"},{"text": "o","color": "#c2531c"},{"text": " ","color": "#c3571e"},{"text": "R","color": "#c35a20"},{"text": "e","color": "#c35d22"},{"text": "m","color": "#c46024"},{"text": "a","color": "#c46426"},{"text": "i","color": "#c46728"},{"text": "n","color": "#c56a2a"},{"text": "i","color": "#c56d2c"},{"text": "n","color": "#c5712e"},{"text": "g","color": "#c67430"},{"text": " ","color": "#c67732"},{"text": "➤","color": "#c67a34"},{"text": " ","color": "#c77e36"},"8",{"text": "/","color": "#c77e36"},"8"],["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]],
 			"item_model": "mgs:makarov_mag",
 			"item_name": {"text": "Makarov Mag"}
@@ -198,6 +214,7 @@
 		"components": {
 			"max_stack_size": 1,
 			"custom_data": {"mgs": {"magazine": true,"weapon": "mp5","stats": {"remaining_bullets": 30,"capacity": 30},"mp5_mag": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},
+			"rarity": "common",
 			"lore": [[{"text": "A","color": "#c24a17","italic": false},{"text": "m","color": "#c24d18"},{"text": "m","color": "#c2501a"},{"text": "o","color": "#c2531c"},{"text": " ","color": "#c3571e"},{"text": "R","color": "#c35a20"},{"text": "e","color": "#c35d22"},{"text": "m","color": "#c46024"},{"text": "a","color": "#c46426"},{"text": "i","color": "#c46728"},{"text": "n","color": "#c56a2a"},{"text": "i","color": "#c56d2c"},{"text": "n","color": "#c5712e"},{"text": "g","color": "#c67430"},{"text": " ","color": "#c67732"},{"text": "➤","color": "#c67a34"},{"text": " ","color": "#c77e36"},"30",{"text": "/","color": "#c77e36"},"30"],["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]],
 			"item_model": "mgs:mp5_mag",
 			"item_name": {"text": "Mp5 Mag"}
@@ -210,6 +227,7 @@
 		"components": {
 			"max_stack_size": 1,
 			"custom_data": {"mgs": {"magazine": true,"weapon": "mp7","stats": {"remaining_bullets": 40,"capacity": 40},"mp7_mag": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},
+			"rarity": "common",
 			"lore": [[{"text": "A","color": "#c24a17","italic": false},{"text": "m","color": "#c24d18"},{"text": "m","color": "#c2501a"},{"text": "o","color": "#c2531c"},{"text": " ","color": "#c3571e"},{"text": "R","color": "#c35a20"},{"text": "e","color": "#c35d22"},{"text": "m","color": "#c46024"},{"text": "a","color": "#c46426"},{"text": "i","color": "#c46728"},{"text": "n","color": "#c56a2a"},{"text": "i","color": "#c56d2c"},{"text": "n","color": "#c5712e"},{"text": "g","color": "#c67430"},{"text": " ","color": "#c67732"},{"text": "➤","color": "#c67a34"},{"text": " ","color": "#c77e36"},"40",{"text": "/","color": "#c77e36"},"40"],["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]],
 			"item_model": "mgs:mp7_mag",
 			"item_name": {"text": "Mp7 Mag"}
@@ -222,6 +240,7 @@
 		"components": {
 			"max_stack_size": 1,
 			"custom_data": {"mgs": {"magazine": true,"weapon": "ppsh41","stats": {"remaining_bullets": 71,"capacity": 71},"ppsh41_mag": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},
+			"rarity": "common",
 			"lore": [[{"text": "A","color": "#c24a17","italic": false},{"text": "m","color": "#c24d18"},{"text": "m","color": "#c2501a"},{"text": "o","color": "#c2531c"},{"text": " ","color": "#c3571e"},{"text": "R","color": "#c35a20"},{"text": "e","color": "#c35d22"},{"text": "m","color": "#c46024"},{"text": "a","color": "#c46426"},{"text": "i","color": "#c46728"},{"text": "n","color": "#c56a2a"},{"text": "i","color": "#c56d2c"},{"text": "n","color": "#c5712e"},{"text": "g","color": "#c67430"},{"text": " ","color": "#c67732"},{"text": "➤","color": "#c67a34"},{"text": " ","color": "#c77e36"},"71",{"text": "/","color": "#c77e36"},"71"],["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]],
 			"item_model": "mgs:ppsh41_mag",
 			"item_name": {"text": "Ppsh41 Mag"}
@@ -234,6 +253,7 @@
 		"components": {
 			"max_stack_size": 1,
 			"custom_data": {"mgs": {"magazine": true,"weapon": "rpk","stats": {"remaining_bullets": 75,"capacity": 75},"rpk_mag": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},
+			"rarity": "common",
 			"lore": [[{"text": "A","color": "#c24a17","italic": false},{"text": "m","color": "#c24d18"},{"text": "m","color": "#c2501a"},{"text": "o","color": "#c2531c"},{"text": " ","color": "#c3571e"},{"text": "R","color": "#c35a20"},{"text": "e","color": "#c35d22"},{"text": "m","color": "#c46024"},{"text": "a","color": "#c46426"},{"text": "i","color": "#c46728"},{"text": "n","color": "#c56a2a"},{"text": "i","color": "#c56d2c"},{"text": "n","color": "#c5712e"},{"text": "g","color": "#c67430"},{"text": " ","color": "#c67732"},{"text": "➤","color": "#c67a34"},{"text": " ","color": "#c77e36"},"75",{"text": "/","color": "#c77e36"},"75"],["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]],
 			"item_model": "mgs:rpk_mag",
 			"item_name": {"text": "Rpk Mag"}
@@ -246,6 +266,7 @@
 		"components": {
 			"max_stack_size": 1,
 			"custom_data": {"mgs": {"magazine": true,"weapon": "scar17","stats": {"remaining_bullets": 20,"capacity": 20},"scar17_mag": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},
+			"rarity": "common",
 			"lore": [[{"text": "A","color": "#c24a17","italic": false},{"text": "m","color": "#c24d18"},{"text": "m","color": "#c2501a"},{"text": "o","color": "#c2531c"},{"text": " ","color": "#c3571e"},{"text": "R","color": "#c35a20"},{"text": "e","color": "#c35d22"},{"text": "m","color": "#c46024"},{"text": "a","color": "#c46426"},{"text": "i","color": "#c46728"},{"text": "n","color": "#c56a2a"},{"text": "i","color": "#c56d2c"},{"text": "n","color": "#c5712e"},{"text": "g","color": "#c67430"},{"text": " ","color": "#c67732"},{"text": "➤","color": "#c67a34"},{"text": " ","color": "#c77e36"},"20",{"text": "/","color": "#c77e36"},"20"],["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]],
 			"item_model": "mgs:scar17_mag",
 			"item_name": {"text": "Scar17 Mag"}
@@ -258,6 +279,7 @@
 		"components": {
 			"max_stack_size": 1,
 			"custom_data": {"mgs": {"magazine": true,"weapon": "sten","stats": {"remaining_bullets": 32,"capacity": 32},"sten_mag": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},
+			"rarity": "common",
 			"lore": [[{"text": "A","color": "#c24a17","italic": false},{"text": "m","color": "#c24d18"},{"text": "m","color": "#c2501a"},{"text": "o","color": "#c2531c"},{"text": " ","color": "#c3571e"},{"text": "R","color": "#c35a20"},{"text": "e","color": "#c35d22"},{"text": "m","color": "#c46024"},{"text": "a","color": "#c46426"},{"text": "i","color": "#c46728"},{"text": "n","color": "#c56a2a"},{"text": "i","color": "#c56d2c"},{"text": "n","color": "#c5712e"},{"text": "g","color": "#c67430"},{"text": " ","color": "#c67732"},{"text": "➤","color": "#c67a34"},{"text": " ","color": "#c77e36"},"32",{"text": "/","color": "#c77e36"},"32"],["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]],
 			"item_model": "mgs:sten_mag",
 			"item_name": {"text": "Sten Mag"}
@@ -270,6 +292,7 @@
 		"components": {
 			"max_stack_size": 1,
 			"custom_data": {"mgs": {"magazine": true,"weapon": "svd","stats": {"remaining_bullets": 10,"capacity": 10},"svd_mag": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},
+			"rarity": "common",
 			"lore": [[{"text": "A","color": "#c24a17","italic": false},{"text": "m","color": "#c24d18"},{"text": "m","color": "#c2501a"},{"text": "o","color": "#c2531c"},{"text": " ","color": "#c3571e"},{"text": "R","color": "#c35a20"},{"text": "e","color": "#c35d22"},{"text": "m","color": "#c46024"},{"text": "a","color": "#c46426"},{"text": "i","color": "#c46728"},{"text": "n","color": "#c56a2a"},{"text": "i","color": "#c56d2c"},{"text": "n","color": "#c5712e"},{"text": "g","color": "#c67430"},{"text": " ","color": "#c67732"},{"text": "➤","color": "#c67a34"},{"text": " ","color": "#c77e36"},"10",{"text": "/","color": "#c77e36"},"10"],["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]],
 			"item_model": "mgs:svd_mag",
 			"item_name": {"text": "Svd Mag"}
@@ -282,6 +305,7 @@
 		"components": {
 			"max_stack_size": 1,
 			"custom_data": {"mgs": {"magazine": true,"weapon": "vz61","stats": {"remaining_bullets": 20,"capacity": 20},"vz61_mag": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},
+			"rarity": "common",
 			"lore": [[{"text": "A","color": "#c24a17","italic": false},{"text": "m","color": "#c24d18"},{"text": "m","color": "#c2501a"},{"text": "o","color": "#c2531c"},{"text": " ","color": "#c3571e"},{"text": "R","color": "#c35a20"},{"text": "e","color": "#c35d22"},{"text": "m","color": "#c46024"},{"text": "a","color": "#c46426"},{"text": "i","color": "#c46728"},{"text": "n","color": "#c56a2a"},{"text": "i","color": "#c56d2c"},{"text": "n","color": "#c5712e"},{"text": "g","color": "#c67430"},{"text": " ","color": "#c67732"},{"text": "➤","color": "#c67a34"},{"text": " ","color": "#c77e36"},"20",{"text": "/","color": "#c77e36"},"20"],["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]],
 			"item_model": "mgs:vz61_mag",
 			"item_name": {"text": "Vz61 Mag"}
@@ -294,6 +318,7 @@
 		"components": {
 			"max_stack_size": 64,
 			"custom_data": {"mgs": {"magazine": true,"consumable": true,"weapon": "rpg7","stats": {"remaining_bullets": 1,"capacity": 1},"rpg7_rocket": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},
+			"rarity": "common",
 			"lore": [[{"text": "A","color": "#c24a17","italic": false},{"text": "m","color": "#c24d18"},{"text": "m","color": "#c2501a"},{"text": "o","color": "#c2531c"},{"text": " ","color": "#c3571e"},{"text": "R","color": "#c35a20"},{"text": "e","color": "#c35d22"},{"text": "m","color": "#c46024"},{"text": "a","color": "#c46426"},{"text": "i","color": "#c46728"},{"text": "n","color": "#c56a2a"},{"text": "i","color": "#c56d2c"},{"text": "n","color": "#c5712e"},{"text": "g","color": "#c67430"},{"text": " ","color": "#c67732"},{"text": "➤","color": "#c67a34"},{"text": " ","color": "#c77e36"},"1",{"text": "/","color": "#c77e36"},"1"],["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]],
 			"item_model": "mgs:rpg7_rocket",
 			"item_name": {"text": "Rpg7 Rocket"}
@@ -306,6 +331,7 @@
 		"components": {
 			"max_stack_size": 64,
 			"custom_data": {"mgs": {"magazine": true,"consumable": true,"weapon": "mosin","stats": {"remaining_bullets": 1,"capacity": 1},"mosin_bullet": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},
+			"rarity": "common",
 			"lore": [[{"text": "A","color": "#c24a17","italic": false},{"text": "m","color": "#c24d18"},{"text": "m","color": "#c2501a"},{"text": "o","color": "#c2531c"},{"text": " ","color": "#c3571e"},{"text": "R","color": "#c35a20"},{"text": "e","color": "#c35d22"},{"text": "m","color": "#c46024"},{"text": "a","color": "#c46426"},{"text": "i","color": "#c46728"},{"text": "n","color": "#c56a2a"},{"text": "i","color": "#c56d2c"},{"text": "n","color": "#c5712e"},{"text": "g","color": "#c67430"},{"text": " ","color": "#c67732"},{"text": "➤","color": "#c67a34"},{"text": " ","color": "#c77e36"},"1",{"text": "/","color": "#c77e36"},"1"],["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]],
 			"item_model": "mgs:mosin_bullet",
 			"item_name": {"text": "Mosin Bullet"}
@@ -318,6 +344,7 @@
 		"components": {
 			"max_stack_size": 64,
 			"custom_data": {"mgs": {"magazine": true,"consumable": true,"weapon": "m24","stats": {"remaining_bullets": 1,"capacity": 1},"m24_bullet": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},
+			"rarity": "common",
 			"lore": [[{"text": "A","color": "#c24a17","italic": false},{"text": "m","color": "#c24d18"},{"text": "m","color": "#c2501a"},{"text": "o","color": "#c2531c"},{"text": " ","color": "#c3571e"},{"text": "R","color": "#c35a20"},{"text": "e","color": "#c35d22"},{"text": "m","color": "#c46024"},{"text": "a","color": "#c46426"},{"text": "i","color": "#c46728"},{"text": "n","color": "#c56a2a"},{"text": "i","color": "#c56d2c"},{"text": "n","color": "#c5712e"},{"text": "g","color": "#c67430"},{"text": " ","color": "#c67732"},{"text": "➤","color": "#c67a34"},{"text": " ","color": "#c77e36"},"1",{"text": "/","color": "#c77e36"},"1"],["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]],
 			"item_model": "mgs:m24_bullet",
 			"item_name": {"text": "M24 Bullet"}
@@ -330,6 +357,7 @@
 		"components": {
 			"max_stack_size": 64,
 			"custom_data": {"mgs": {"magazine": true,"consumable": true,"weapon": "spas12","stats": {"remaining_bullets": 1,"capacity": 1},"spas12_shell": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},
+			"rarity": "common",
 			"lore": [[{"text": "A","color": "#c24a17","italic": false},{"text": "m","color": "#c24d18"},{"text": "m","color": "#c2501a"},{"text": "o","color": "#c2531c"},{"text": " ","color": "#c3571e"},{"text": "R","color": "#c35a20"},{"text": "e","color": "#c35d22"},{"text": "m","color": "#c46024"},{"text": "a","color": "#c46426"},{"text": "i","color": "#c46728"},{"text": "n","color": "#c56a2a"},{"text": "i","color": "#c56d2c"},{"text": "n","color": "#c5712e"},{"text": "g","color": "#c67430"},{"text": " ","color": "#c67732"},{"text": "➤","color": "#c67a34"},{"text": " ","color": "#c77e36"},"1",{"text": "/","color": "#c77e36"},"1"],["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]],
 			"item_model": "mgs:spas12_shell",
 			"item_name": {"text": "Spas12 Shell"}
@@ -342,6 +370,7 @@
 		"components": {
 			"max_stack_size": 64,
 			"custom_data": {"mgs": {"magazine": true,"consumable": true,"weapon": "m500","stats": {"remaining_bullets": 1,"capacity": 1},"m500_shell": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},
+			"rarity": "common",
 			"lore": [[{"text": "A","color": "#c24a17","italic": false},{"text": "m","color": "#c24d18"},{"text": "m","color": "#c2501a"},{"text": "o","color": "#c2531c"},{"text": " ","color": "#c3571e"},{"text": "R","color": "#c35a20"},{"text": "e","color": "#c35d22"},{"text": "m","color": "#c46024"},{"text": "a","color": "#c46426"},{"text": "i","color": "#c46728"},{"text": "n","color": "#c56a2a"},{"text": "i","color": "#c56d2c"},{"text": "n","color": "#c5712e"},{"text": "g","color": "#c67430"},{"text": " ","color": "#c67732"},{"text": "➤","color": "#c67a34"},{"text": " ","color": "#c77e36"},"1",{"text": "/","color": "#c77e36"},"1"],["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]],
 			"item_model": "mgs:m500_shell",
 			"item_name": {"text": "M500 Shell"}
@@ -354,6 +383,7 @@
 		"components": {
 			"max_stack_size": 64,
 			"custom_data": {"mgs": {"magazine": true,"consumable": true,"weapon": "m590","stats": {"remaining_bullets": 1,"capacity": 1},"m590_shell": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},
+			"rarity": "common",
 			"lore": [[{"text": "A","color": "#c24a17","italic": false},{"text": "m","color": "#c24d18"},{"text": "m","color": "#c2501a"},{"text": "o","color": "#c2531c"},{"text": " ","color": "#c3571e"},{"text": "R","color": "#c35a20"},{"text": "e","color": "#c35d22"},{"text": "m","color": "#c46024"},{"text": "a","color": "#c46426"},{"text": "i","color": "#c46728"},{"text": "n","color": "#c56a2a"},{"text": "i","color": "#c56d2c"},{"text": "n","color": "#c5712e"},{"text": "g","color": "#c67430"},{"text": " ","color": "#c67732"},{"text": "➤","color": "#c67a34"},{"text": " ","color": "#c77e36"},"1",{"text": "/","color": "#c77e36"},"1"],["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]],
 			"item_model": "mgs:m590_shell",
 			"item_name": {"text": "M590 Shell"}
@@ -366,6 +396,7 @@
 		"components": {
 			"max_stack_size": 64,
 			"custom_data": {"mgs": {"magazine": true,"consumable": true,"weapon": "ray_gun","stats": {"remaining_bullets": 1,"capacity": 1},"element_115": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},
+			"rarity": "common",
 			"lore": [[{"text": "A","color": "#c24a17","italic": false},{"text": "m","color": "#c24d18"},{"text": "m","color": "#c2501a"},{"text": "o","color": "#c2531c"},{"text": " ","color": "#c3571e"},{"text": "R","color": "#c35a20"},{"text": "e","color": "#c35d22"},{"text": "m","color": "#c46024"},{"text": "a","color": "#c46426"},{"text": "i","color": "#c46728"},{"text": "n","color": "#c56a2a"},{"text": "i","color": "#c56d2c"},{"text": "n","color": "#c5712e"},{"text": "g","color": "#c67430"},{"text": " ","color": "#c67732"},{"text": "➤","color": "#c67a34"},{"text": " ","color": "#c77e36"},"1",{"text": "/","color": "#c77e36"},"1"],["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]],
 			"item_model": "mgs:element_115",
 			"item_name": {"text": "Element 115"}
@@ -1145,12 +1176,12 @@
 		"recipes": [],
 		"components": {
 			"max_stack_size": 1,
-			"custom_data": {"mgs": {"gun": true,"stats": {"base_weapon": "ray_gun","fire_mode": "auto","capacity": 20,"reload_time": 60,"reload_end": 14,"cooldown": 11,"can_auto": true,"damage": 20,"decay": 0.92,"acc_base": 150,"acc_sneak": 80,"acc_walk": 290,"acc_sprint": 400,"acc_jump": 800,"switch": 12,"kick": 2,"proj_speed": 3000,"proj_gravity": 0,"proj_lifetime": 200,"proj_model": "ray_gun","expl_radius": 2,"expl_damage": 30,"expl_decay": 0.8,"models": {"normal": "mgs:ray_gun","zoom": "mgs:ray_gun_zoom"},"remaining_bullets": 20},"sounds": {"fire": "ray_gun/fire","reload": "ray_gun/reload","playerbegin": "ray_gun/playerbegin","playerend": "ray_gun/playerend","playermid": "ray_gun/playermid","crack": "tiny"},"ray_gun": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},
+			"custom_data": {"mgs": {"gun": true,"stats": {"base_weapon": "ray_gun","fire_mode": "auto","capacity": 20,"reload_time": 60,"reload_end": 14,"cooldown": 11,"can_auto": true,"damage": 24,"decay": 0.92,"acc_base": 150,"acc_sneak": 80,"acc_walk": 290,"acc_sprint": 400,"acc_jump": 800,"switch": 12,"kick": 5,"proj_speed": 3000,"proj_gravity": 0,"proj_lifetime": 200,"proj_model": "ray_gun","expl_radius": 4,"expl_damage": 32,"expl_decay": 0.8,"models": {"normal": "mgs:ray_gun","zoom": "mgs:ray_gun_zoom"},"remaining_bullets": 20},"sounds": {"fire": "ray_gun/fire","reload": "ray_gun/reload","playerbegin": "ray_gun/playerbegin","playerend": "ray_gun/playerend","playermid": "ray_gun/playermid","crack": "tiny"},"ray_gun": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},
 			"rarity": "epic",
 			"consumable": {"consume_seconds": 1000000,"animation": "spear","sound": "minecraft:intentionally_empty","has_consume_particles": false},
 			"use_effects": {"can_sprint": true,"speed_multiplier": 1.0,"interact_vibrations": false},
 			"food": {"saturation": 0,"nutrition": 0,"can_always_eat": true},
-			"lore": [[{"text": "D","color": "#c24a17","italic": false},{"text": "a","color": "#c24c18"},{"text": "m","color": "#c24f1a"},{"text": "a","color": "#c2511b"},{"text": "g","color": "#c3541d"},{"text": "e","color": "#c3571e"},{"text": " ","color": "#c35920"},{"text": "P","color": "#c35c21"},{"text": "e","color": "#c45e23"},{"text": "r","color": "#c46124"},{"text": " ","color": "#c46426"},{"text": "B","color": "#c46628"},{"text": "u","color": "#c56929"},{"text": "l","color": "#c56b2b"},{"text": "l","color": "#c56e2c"},{"text": "e","color": "#c5712e"},{"text": "t","color": "#c6732f"},{"text": " ","color": "#c67631"},{"text": " ","color": "#c67832"},{"text": "➤","color": "#c67b34"},{"text": " ","color": "#c77e36"},"20"],[{"text": "A","color": "#c24a17","italic": false},{"text": "m","color": "#c24c18"},{"text": "m","color": "#c24e19"},{"text": "o","color": "#c2511b"},{"text": " ","color": "#c2531c"},{"text": "R","color": "#c3561e"},{"text": "e","color": "#c3581f"},{"text": "m","color": "#c35b21"},{"text": "a","color": "#c35d22"},{"text": "i","color": "#c46024"},{"text": "n","color": "#c46225"},{"text": "i","color": "#c46527"},{"text": "n","color": "#c46728"},{"text": "g","color": "#c56a2a"},{"text": " ","color": "#c56c2b"},{"text": " ","color": "#c56f2d"},{"text": " ","color": "#c5712e"},{"text": " ","color": "#c67430"},{"text": " ","color": "#c67631"},{"text": " ","color": "#c67933"},{"text": "➤","color": "#c67b34"},{"text": " ","color": "#c77e36"},"20",{"text": "/","color": "#c77e36"},"20"],[{"text": "R","color": "#c24a17","italic": false},{"text": "e","color": "#c24c18"},{"text": "l","color": "#c24e19"},{"text": "o","color": "#c2511b"},{"text": "a","color": "#c2531c"},{"text": "d","color": "#c3551e"},{"text": "i","color": "#c3581f"},{"text": "n","color": "#c35a20"},{"text": "g","color": "#c35c22"},{"text": " ","color": "#c45f23"},{"text": "T","color": "#c46125"},{"text": "i","color": "#c46426"},{"text": "m","color": "#c46627"},{"text": "e","color": "#c46829"},{"text": " ","color": "#c56b2a"},{"text": " ","color": "#c56d2c"},{"text": " ","color": "#c56f2d"},{"text": " ","color": "#c5722e"},{"text": " ","color": "#c67430"},{"text": " ","color": "#c67631"},{"text": " ","color": "#c67933"},{"text": "➤","color": "#c67b34"},{"text": " ","color": "#c77e36"},"3.0",{"text": "s","color": "#c77e36"}],[{"text": "F","color": "#c24a17","italic": false},{"text": "i","color": "#c24c18"},{"text": "r","color": "#c24e19"},{"text": "e","color": "#c2501b"},{"text": " ","color": "#c2531c"},{"text": "R","color": "#c3551d"},{"text": "a","color": "#c3571f"},{"text": "t","color": "#c35920"},{"text": "e","color": "#c35c21"},{"text": " ","color": "#c35e23"},{"text": " ","color": "#c46024"},{"text": " ","color": "#c46225"},{"text": " ","color": "#c46527"},{"text": " ","color": "#c46728"},{"text": " ","color": "#c56929"},{"text": " ","color": "#c56b2b"},{"text": " ","color": "#c56e2c"},{"text": " ","color": "#c5702d"},{"text": " ","color": "#c5722f"},{"text": " ","color": "#c67430"},{"text": " ","color": "#c67731"},{"text": " ","color": "#c67933"},{"text": "➤","color": "#c67b34"},{"text": " ","color": "#c77e36"},"1.8 ",{"text": "s","color": "#c77e36","italic": false},{"text": "h","color": "#c67832"},{"text": "o","color": "#c5722f"},{"text": "t","color": "#c56c2b"},{"text": "s","color": "#c46628"},{"text": "/","color": "#c46124"},{"text": "s","color": "#c35b21"}],[{"text": "D","color": "#c24a17","italic": false},{"text": "a","color": "#c24c18"},{"text": "m","color": "#c24f1a"},{"text": "a","color": "#c2511b"},{"text": "g","color": "#c3541d"},{"text": "e","color": "#c3571e"},{"text": " ","color": "#c35920"},{"text": "D","color": "#c35c21"},{"text": "e","color": "#c45e23"},{"text": "c","color": "#c46124"},{"text": "a","color": "#c46426"},{"text": "y","color": "#c46628"},{"text": " ","color": "#c56929"},{"text": " ","color": "#c56b2b"},{"text": " ","color": "#c56e2c"},{"text": " ","color": "#c5712e"},{"text": " ","color": "#c6732f"},{"text": " ","color": "#c67631"},{"text": " ","color": "#c67832"},{"text": "➤","color": "#c67b34"},{"text": " ","color": "#c77e36"},"92",{"text": "%","color": "#c77e36"}],[{"text": "S","color": "#c24a17","italic": false},{"text": "w","color": "#c24c18"},{"text": "i","color": "#c24e19"},{"text": "t","color": "#c2501b"},{"text": "c","color": "#c2531c"},{"text": "h","color": "#c3551d"},{"text": " ","color": "#c3571f"},{"text": "T","color": "#c35920"},{"text": "i","color": "#c35c21"},{"text": "m","color": "#c35e23"},{"text": "e","color": "#c46024"},{"text": " ","color": "#c46225"},{"text": " ","color": "#c46527"},{"text": " ","color": "#c46728"},{"text": " ","color": "#c56929"},{"text": " ","color": "#c56b2b"},{"text": " ","color": "#c56e2c"},{"text": " ","color": "#c5702d"},{"text": " ","color": "#c5722f"},{"text": " ","color": "#c67430"},{"text": " ","color": "#c67731"},{"text": " ","color": "#c67933"},{"text": "➤","color": "#c67b34"},{"text": " ","color": "#c77e36"},"0.6",{"text": "s","color": "#c77e36"}],"",["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]],
+			"lore": [[{"text": "D","color": "#c24a17","italic": false},{"text": "a","color": "#c24c18"},{"text": "m","color": "#c24f1a"},{"text": "a","color": "#c2511b"},{"text": "g","color": "#c3541d"},{"text": "e","color": "#c3571e"},{"text": " ","color": "#c35920"},{"text": "P","color": "#c35c21"},{"text": "e","color": "#c45e23"},{"text": "r","color": "#c46124"},{"text": " ","color": "#c46426"},{"text": "B","color": "#c46628"},{"text": "u","color": "#c56929"},{"text": "l","color": "#c56b2b"},{"text": "l","color": "#c56e2c"},{"text": "e","color": "#c5712e"},{"text": "t","color": "#c6732f"},{"text": " ","color": "#c67631"},{"text": " ","color": "#c67832"},{"text": "➤","color": "#c67b34"},{"text": " ","color": "#c77e36"},"24"],[{"text": "A","color": "#c24a17","italic": false},{"text": "m","color": "#c24c18"},{"text": "m","color": "#c24e19"},{"text": "o","color": "#c2511b"},{"text": " ","color": "#c2531c"},{"text": "R","color": "#c3561e"},{"text": "e","color": "#c3581f"},{"text": "m","color": "#c35b21"},{"text": "a","color": "#c35d22"},{"text": "i","color": "#c46024"},{"text": "n","color": "#c46225"},{"text": "i","color": "#c46527"},{"text": "n","color": "#c46728"},{"text": "g","color": "#c56a2a"},{"text": " ","color": "#c56c2b"},{"text": " ","color": "#c56f2d"},{"text": " ","color": "#c5712e"},{"text": " ","color": "#c67430"},{"text": " ","color": "#c67631"},{"text": " ","color": "#c67933"},{"text": "➤","color": "#c67b34"},{"text": " ","color": "#c77e36"},"20",{"text": "/","color": "#c77e36"},"20"],[{"text": "R","color": "#c24a17","italic": false},{"text": "e","color": "#c24c18"},{"text": "l","color": "#c24e19"},{"text": "o","color": "#c2511b"},{"text": "a","color": "#c2531c"},{"text": "d","color": "#c3551e"},{"text": "i","color": "#c3581f"},{"text": "n","color": "#c35a20"},{"text": "g","color": "#c35c22"},{"text": " ","color": "#c45f23"},{"text": "T","color": "#c46125"},{"text": "i","color": "#c46426"},{"text": "m","color": "#c46627"},{"text": "e","color": "#c46829"},{"text": " ","color": "#c56b2a"},{"text": " ","color": "#c56d2c"},{"text": " ","color": "#c56f2d"},{"text": " ","color": "#c5722e"},{"text": " ","color": "#c67430"},{"text": " ","color": "#c67631"},{"text": " ","color": "#c67933"},{"text": "➤","color": "#c67b34"},{"text": " ","color": "#c77e36"},"3.0",{"text": "s","color": "#c77e36"}],[{"text": "F","color": "#c24a17","italic": false},{"text": "i","color": "#c24c18"},{"text": "r","color": "#c24e19"},{"text": "e","color": "#c2501b"},{"text": " ","color": "#c2531c"},{"text": "R","color": "#c3551d"},{"text": "a","color": "#c3571f"},{"text": "t","color": "#c35920"},{"text": "e","color": "#c35c21"},{"text": " ","color": "#c35e23"},{"text": " ","color": "#c46024"},{"text": " ","color": "#c46225"},{"text": " ","color": "#c46527"},{"text": " ","color": "#c46728"},{"text": " ","color": "#c56929"},{"text": " ","color": "#c56b2b"},{"text": " ","color": "#c56e2c"},{"text": " ","color": "#c5702d"},{"text": " ","color": "#c5722f"},{"text": " ","color": "#c67430"},{"text": " ","color": "#c67731"},{"text": " ","color": "#c67933"},{"text": "➤","color": "#c67b34"},{"text": " ","color": "#c77e36"},"1.8 ",{"text": "s","color": "#c77e36","italic": false},{"text": "h","color": "#c67832"},{"text": "o","color": "#c5722f"},{"text": "t","color": "#c56c2b"},{"text": "s","color": "#c46628"},{"text": "/","color": "#c46124"},{"text": "s","color": "#c35b21"}],[{"text": "D","color": "#c24a17","italic": false},{"text": "a","color": "#c24c18"},{"text": "m","color": "#c24f1a"},{"text": "a","color": "#c2511b"},{"text": "g","color": "#c3541d"},{"text": "e","color": "#c3571e"},{"text": " ","color": "#c35920"},{"text": "D","color": "#c35c21"},{"text": "e","color": "#c45e23"},{"text": "c","color": "#c46124"},{"text": "a","color": "#c46426"},{"text": "y","color": "#c46628"},{"text": " ","color": "#c56929"},{"text": " ","color": "#c56b2b"},{"text": " ","color": "#c56e2c"},{"text": " ","color": "#c5712e"},{"text": " ","color": "#c6732f"},{"text": " ","color": "#c67631"},{"text": " ","color": "#c67832"},{"text": "➤","color": "#c67b34"},{"text": " ","color": "#c77e36"},"92",{"text": "%","color": "#c77e36"}],[{"text": "S","color": "#c24a17","italic": false},{"text": "w","color": "#c24c18"},{"text": "i","color": "#c24e19"},{"text": "t","color": "#c2501b"},{"text": "c","color": "#c2531c"},{"text": "h","color": "#c3551d"},{"text": " ","color": "#c3571f"},{"text": "T","color": "#c35920"},{"text": "i","color": "#c35c21"},{"text": "m","color": "#c35e23"},{"text": "e","color": "#c46024"},{"text": " ","color": "#c46225"},{"text": " ","color": "#c46527"},{"text": " ","color": "#c46728"},{"text": " ","color": "#c56929"},{"text": " ","color": "#c56b2b"},{"text": " ","color": "#c56e2c"},{"text": " ","color": "#c5702d"},{"text": " ","color": "#c5722f"},{"text": " ","color": "#c67430"},{"text": " ","color": "#c67731"},{"text": " ","color": "#c67933"},{"text": "➤","color": "#c67b34"},{"text": " ","color": "#c77e36"},"0.6",{"text": "s","color": "#c77e36"}],"",["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]],
 			"item_model": "mgs:ray_gun",
 			"item_name": {"text": "Ray Gun"}
 		}
@@ -2074,6 +2105,7 @@
 		"components": {
 			"max_stack_size": 1,
 			"custom_data": {"mgs": {"magazine": true,"weapon": "ak47","stats": {"remaining_bullets": 0,"capacity": 30},"ak47_mag_empty": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},
+			"rarity": "common",
 			"lore": [[{"text": "A","color": "#c24a17","italic": false},{"text": "m","color": "#c24d18"},{"text": "m","color": "#c2501a"},{"text": "o","color": "#c2531c"},{"text": " ","color": "#c3571e"},{"text": "R","color": "#c35a20"},{"text": "e","color": "#c35d22"},{"text": "m","color": "#c46024"},{"text": "a","color": "#c46426"},{"text": "i","color": "#c46728"},{"text": "n","color": "#c56a2a"},{"text": "i","color": "#c56d2c"},{"text": "n","color": "#c5712e"},{"text": "g","color": "#c67430"},{"text": " ","color": "#c67732"},{"text": "➤","color": "#c67a34"},{"text": " ","color": "#c77e36"},"0",{"text": "/","color": "#c77e36"},"30"],["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]],
 			"item_model": "mgs:ak47_mag_empty",
 			"item_name": {"text": "Ak47 Mag Empty"}
@@ -2086,6 +2118,7 @@
 		"components": {
 			"max_stack_size": 1,
 			"custom_data": {"mgs": {"magazine": true,"weapon": "aug","stats": {"remaining_bullets": 0,"capacity": 30},"aug_mag_empty": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},
+			"rarity": "common",
 			"lore": [[{"text": "A","color": "#c24a17","italic": false},{"text": "m","color": "#c24d18"},{"text": "m","color": "#c2501a"},{"text": "o","color": "#c2531c"},{"text": " ","color": "#c3571e"},{"text": "R","color": "#c35a20"},{"text": "e","color": "#c35d22"},{"text": "m","color": "#c46024"},{"text": "a","color": "#c46426"},{"text": "i","color": "#c46728"},{"text": "n","color": "#c56a2a"},{"text": "i","color": "#c56d2c"},{"text": "n","color": "#c5712e"},{"text": "g","color": "#c67430"},{"text": " ","color": "#c67732"},{"text": "➤","color": "#c67a34"},{"text": " ","color": "#c77e36"},"0",{"text": "/","color": "#c77e36"},"30"],["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]],
 			"item_model": "mgs:aug_mag_empty",
 			"item_name": {"text": "Aug Mag Empty"}
@@ -2098,6 +2131,7 @@
 		"components": {
 			"max_stack_size": 1,
 			"custom_data": {"mgs": {"magazine": true,"weapon": "deagle","stats": {"remaining_bullets": 0,"capacity": 7},"deagle_mag_empty": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},
+			"rarity": "common",
 			"lore": [[{"text": "A","color": "#c24a17","italic": false},{"text": "m","color": "#c24d18"},{"text": "m","color": "#c2501a"},{"text": "o","color": "#c2531c"},{"text": " ","color": "#c3571e"},{"text": "R","color": "#c35a20"},{"text": "e","color": "#c35d22"},{"text": "m","color": "#c46024"},{"text": "a","color": "#c46426"},{"text": "i","color": "#c46728"},{"text": "n","color": "#c56a2a"},{"text": "i","color": "#c56d2c"},{"text": "n","color": "#c5712e"},{"text": "g","color": "#c67430"},{"text": " ","color": "#c67732"},{"text": "➤","color": "#c67a34"},{"text": " ","color": "#c77e36"},"0",{"text": "/","color": "#c77e36"},"7"],["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]],
 			"item_model": "mgs:deagle_mag_empty",
 			"item_name": {"text": "Deagle Mag Empty"}
@@ -2110,6 +2144,7 @@
 		"components": {
 			"max_stack_size": 1,
 			"custom_data": {"mgs": {"magazine": true,"weapon": "famas","stats": {"remaining_bullets": 0,"capacity": 25},"famas_mag_empty": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},
+			"rarity": "common",
 			"lore": [[{"text": "A","color": "#c24a17","italic": false},{"text": "m","color": "#c24d18"},{"text": "m","color": "#c2501a"},{"text": "o","color": "#c2531c"},{"text": " ","color": "#c3571e"},{"text": "R","color": "#c35a20"},{"text": "e","color": "#c35d22"},{"text": "m","color": "#c46024"},{"text": "a","color": "#c46426"},{"text": "i","color": "#c46728"},{"text": "n","color": "#c56a2a"},{"text": "i","color": "#c56d2c"},{"text": "n","color": "#c5712e"},{"text": "g","color": "#c67430"},{"text": " ","color": "#c67732"},{"text": "➤","color": "#c67a34"},{"text": " ","color": "#c77e36"},"0",{"text": "/","color": "#c77e36"},"25"],["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]],
 			"item_model": "mgs:famas_mag_empty",
 			"item_name": {"text": "Famas Mag Empty"}
@@ -2122,6 +2157,7 @@
 		"components": {
 			"max_stack_size": 1,
 			"custom_data": {"mgs": {"magazine": true,"weapon": "fnfal","stats": {"remaining_bullets": 0,"capacity": 20},"fnfal_mag_empty": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},
+			"rarity": "common",
 			"lore": [[{"text": "A","color": "#c24a17","italic": false},{"text": "m","color": "#c24d18"},{"text": "m","color": "#c2501a"},{"text": "o","color": "#c2531c"},{"text": " ","color": "#c3571e"},{"text": "R","color": "#c35a20"},{"text": "e","color": "#c35d22"},{"text": "m","color": "#c46024"},{"text": "a","color": "#c46426"},{"text": "i","color": "#c46728"},{"text": "n","color": "#c56a2a"},{"text": "i","color": "#c56d2c"},{"text": "n","color": "#c5712e"},{"text": "g","color": "#c67430"},{"text": " ","color": "#c67732"},{"text": "➤","color": "#c67a34"},{"text": " ","color": "#c77e36"},"0",{"text": "/","color": "#c77e36"},"20"],["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]],
 			"item_model": "mgs:fnfal_mag_empty",
 			"item_name": {"text": "Fnfal Mag Empty"}
@@ -2134,6 +2170,7 @@
 		"components": {
 			"max_stack_size": 1,
 			"custom_data": {"mgs": {"magazine": true,"weapon": "g3a3","stats": {"remaining_bullets": 0,"capacity": 20},"g3a3_mag_empty": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},
+			"rarity": "common",
 			"lore": [[{"text": "A","color": "#c24a17","italic": false},{"text": "m","color": "#c24d18"},{"text": "m","color": "#c2501a"},{"text": "o","color": "#c2531c"},{"text": " ","color": "#c3571e"},{"text": "R","color": "#c35a20"},{"text": "e","color": "#c35d22"},{"text": "m","color": "#c46024"},{"text": "a","color": "#c46426"},{"text": "i","color": "#c46728"},{"text": "n","color": "#c56a2a"},{"text": "i","color": "#c56d2c"},{"text": "n","color": "#c5712e"},{"text": "g","color": "#c67430"},{"text": " ","color": "#c67732"},{"text": "➤","color": "#c67a34"},{"text": " ","color": "#c77e36"},"0",{"text": "/","color": "#c77e36"},"20"],["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]],
 			"item_model": "mgs:g3a3_mag_empty",
 			"item_name": {"text": "G3A3 Mag Empty"}
@@ -2146,6 +2183,7 @@
 		"components": {
 			"max_stack_size": 1,
 			"custom_data": {"mgs": {"magazine": true,"weapon": "glock17","stats": {"remaining_bullets": 0,"capacity": 17},"glock17_mag_empty": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},
+			"rarity": "common",
 			"lore": [[{"text": "A","color": "#c24a17","italic": false},{"text": "m","color": "#c24d18"},{"text": "m","color": "#c2501a"},{"text": "o","color": "#c2531c"},{"text": " ","color": "#c3571e"},{"text": "R","color": "#c35a20"},{"text": "e","color": "#c35d22"},{"text": "m","color": "#c46024"},{"text": "a","color": "#c46426"},{"text": "i","color": "#c46728"},{"text": "n","color": "#c56a2a"},{"text": "i","color": "#c56d2c"},{"text": "n","color": "#c5712e"},{"text": "g","color": "#c67430"},{"text": " ","color": "#c67732"},{"text": "➤","color": "#c67a34"},{"text": " ","color": "#c77e36"},"0",{"text": "/","color": "#c77e36"},"17"],["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]],
 			"item_model": "mgs:glock17_mag_empty",
 			"item_name": {"text": "Glock17 Mag Empty"}
@@ -2158,6 +2196,7 @@
 		"components": {
 			"max_stack_size": 1,
 			"custom_data": {"mgs": {"magazine": true,"weapon": "glock18","stats": {"remaining_bullets": 0,"capacity": 19},"glock18_mag_empty": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},
+			"rarity": "common",
 			"lore": [[{"text": "A","color": "#c24a17","italic": false},{"text": "m","color": "#c24d18"},{"text": "m","color": "#c2501a"},{"text": "o","color": "#c2531c"},{"text": " ","color": "#c3571e"},{"text": "R","color": "#c35a20"},{"text": "e","color": "#c35d22"},{"text": "m","color": "#c46024"},{"text": "a","color": "#c46426"},{"text": "i","color": "#c46728"},{"text": "n","color": "#c56a2a"},{"text": "i","color": "#c56d2c"},{"text": "n","color": "#c5712e"},{"text": "g","color": "#c67430"},{"text": " ","color": "#c67732"},{"text": "➤","color": "#c67a34"},{"text": " ","color": "#c77e36"},"0",{"text": "/","color": "#c77e36"},"19"],["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]],
 			"item_model": "mgs:glock18_mag_empty",
 			"item_name": {"text": "Glock18 Mag Empty"}
@@ -2170,6 +2209,7 @@
 		"components": {
 			"max_stack_size": 1,
 			"custom_data": {"mgs": {"magazine": true,"weapon": "m16a4","stats": {"remaining_bullets": 0,"capacity": 30},"m16a4_mag_empty": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},
+			"rarity": "common",
 			"lore": [[{"text": "A","color": "#c24a17","italic": false},{"text": "m","color": "#c24d18"},{"text": "m","color": "#c2501a"},{"text": "o","color": "#c2531c"},{"text": " ","color": "#c3571e"},{"text": "R","color": "#c35a20"},{"text": "e","color": "#c35d22"},{"text": "m","color": "#c46024"},{"text": "a","color": "#c46426"},{"text": "i","color": "#c46728"},{"text": "n","color": "#c56a2a"},{"text": "i","color": "#c56d2c"},{"text": "n","color": "#c5712e"},{"text": "g","color": "#c67430"},{"text": " ","color": "#c67732"},{"text": "➤","color": "#c67a34"},{"text": " ","color": "#c77e36"},"0",{"text": "/","color": "#c77e36"},"30"],["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]],
 			"item_model": "mgs:m16a4_mag_empty",
 			"item_name": {"text": "M16A4 Mag Empty"}
@@ -2182,6 +2222,7 @@
 		"components": {
 			"max_stack_size": 1,
 			"custom_data": {"mgs": {"magazine": true,"weapon": "m1911","stats": {"remaining_bullets": 0,"capacity": 7},"m1911_mag_empty": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},
+			"rarity": "common",
 			"lore": [[{"text": "A","color": "#c24a17","italic": false},{"text": "m","color": "#c24d18"},{"text": "m","color": "#c2501a"},{"text": "o","color": "#c2531c"},{"text": " ","color": "#c3571e"},{"text": "R","color": "#c35a20"},{"text": "e","color": "#c35d22"},{"text": "m","color": "#c46024"},{"text": "a","color": "#c46426"},{"text": "i","color": "#c46728"},{"text": "n","color": "#c56a2a"},{"text": "i","color": "#c56d2c"},{"text": "n","color": "#c5712e"},{"text": "g","color": "#c67430"},{"text": " ","color": "#c67732"},{"text": "➤","color": "#c67a34"},{"text": " ","color": "#c77e36"},"0",{"text": "/","color": "#c77e36"},"7"],["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]],
 			"item_model": "mgs:m1911_mag_empty",
 			"item_name": {"text": "M1911 Mag Empty"}
@@ -2194,6 +2235,7 @@
 		"components": {
 			"max_stack_size": 1,
 			"custom_data": {"mgs": {"magazine": true,"weapon": "m249","stats": {"remaining_bullets": 0,"capacity": 150},"m249_mag_empty": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},
+			"rarity": "common",
 			"lore": [[{"text": "A","color": "#c24a17","italic": false},{"text": "m","color": "#c24d18"},{"text": "m","color": "#c2501a"},{"text": "o","color": "#c2531c"},{"text": " ","color": "#c3571e"},{"text": "R","color": "#c35a20"},{"text": "e","color": "#c35d22"},{"text": "m","color": "#c46024"},{"text": "a","color": "#c46426"},{"text": "i","color": "#c46728"},{"text": "n","color": "#c56a2a"},{"text": "i","color": "#c56d2c"},{"text": "n","color": "#c5712e"},{"text": "g","color": "#c67430"},{"text": " ","color": "#c67732"},{"text": "➤","color": "#c67a34"},{"text": " ","color": "#c77e36"},"0",{"text": "/","color": "#c77e36"},"150"],["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]],
 			"item_model": "mgs:m249_mag_empty",
 			"item_name": {"text": "M249 Mag Empty"}
@@ -2206,6 +2248,7 @@
 		"components": {
 			"max_stack_size": 1,
 			"custom_data": {"mgs": {"magazine": true,"weapon": "m4a1","stats": {"remaining_bullets": 0,"capacity": 30},"m4a1_mag_empty": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},
+			"rarity": "common",
 			"lore": [[{"text": "A","color": "#c24a17","italic": false},{"text": "m","color": "#c24d18"},{"text": "m","color": "#c2501a"},{"text": "o","color": "#c2531c"},{"text": " ","color": "#c3571e"},{"text": "R","color": "#c35a20"},{"text": "e","color": "#c35d22"},{"text": "m","color": "#c46024"},{"text": "a","color": "#c46426"},{"text": "i","color": "#c46728"},{"text": "n","color": "#c56a2a"},{"text": "i","color": "#c56d2c"},{"text": "n","color": "#c5712e"},{"text": "g","color": "#c67430"},{"text": " ","color": "#c67732"},{"text": "➤","color": "#c67a34"},{"text": " ","color": "#c77e36"},"0",{"text": "/","color": "#c77e36"},"30"],["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]],
 			"item_model": "mgs:m4a1_mag_empty",
 			"item_name": {"text": "M4A1 Mag Empty"}
@@ -2218,6 +2261,7 @@
 		"components": {
 			"max_stack_size": 1,
 			"custom_data": {"mgs": {"magazine": true,"weapon": "m82","stats": {"remaining_bullets": 0,"capacity": 10},"m82_mag_empty": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},
+			"rarity": "common",
 			"lore": [[{"text": "A","color": "#c24a17","italic": false},{"text": "m","color": "#c24d18"},{"text": "m","color": "#c2501a"},{"text": "o","color": "#c2531c"},{"text": " ","color": "#c3571e"},{"text": "R","color": "#c35a20"},{"text": "e","color": "#c35d22"},{"text": "m","color": "#c46024"},{"text": "a","color": "#c46426"},{"text": "i","color": "#c46728"},{"text": "n","color": "#c56a2a"},{"text": "i","color": "#c56d2c"},{"text": "n","color": "#c5712e"},{"text": "g","color": "#c67430"},{"text": " ","color": "#c67732"},{"text": "➤","color": "#c67a34"},{"text": " ","color": "#c77e36"},"0",{"text": "/","color": "#c77e36"},"10"],["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]],
 			"item_model": "mgs:m82_mag_empty",
 			"item_name": {"text": "M82 Mag Empty"}
@@ -2230,6 +2274,7 @@
 		"components": {
 			"max_stack_size": 1,
 			"custom_data": {"mgs": {"magazine": true,"weapon": "m9","stats": {"remaining_bullets": 0,"capacity": 15},"m9_mag_empty": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},
+			"rarity": "common",
 			"lore": [[{"text": "A","color": "#c24a17","italic": false},{"text": "m","color": "#c24d18"},{"text": "m","color": "#c2501a"},{"text": "o","color": "#c2531c"},{"text": " ","color": "#c3571e"},{"text": "R","color": "#c35a20"},{"text": "e","color": "#c35d22"},{"text": "m","color": "#c46024"},{"text": "a","color": "#c46426"},{"text": "i","color": "#c46728"},{"text": "n","color": "#c56a2a"},{"text": "i","color": "#c56d2c"},{"text": "n","color": "#c5712e"},{"text": "g","color": "#c67430"},{"text": " ","color": "#c67732"},{"text": "➤","color": "#c67a34"},{"text": " ","color": "#c77e36"},"0",{"text": "/","color": "#c77e36"},"15"],["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]],
 			"item_model": "mgs:m9_mag_empty",
 			"item_name": {"text": "M9 Mag Empty"}
@@ -2242,6 +2287,7 @@
 		"components": {
 			"max_stack_size": 1,
 			"custom_data": {"mgs": {"magazine": true,"weapon": "mac10","stats": {"remaining_bullets": 0,"capacity": 30},"mac10_mag_empty": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},
+			"rarity": "common",
 			"lore": [[{"text": "A","color": "#c24a17","italic": false},{"text": "m","color": "#c24d18"},{"text": "m","color": "#c2501a"},{"text": "o","color": "#c2531c"},{"text": " ","color": "#c3571e"},{"text": "R","color": "#c35a20"},{"text": "e","color": "#c35d22"},{"text": "m","color": "#c46024"},{"text": "a","color": "#c46426"},{"text": "i","color": "#c46728"},{"text": "n","color": "#c56a2a"},{"text": "i","color": "#c56d2c"},{"text": "n","color": "#c5712e"},{"text": "g","color": "#c67430"},{"text": " ","color": "#c67732"},{"text": "➤","color": "#c67a34"},{"text": " ","color": "#c77e36"},"0",{"text": "/","color": "#c77e36"},"30"],["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]],
 			"item_model": "mgs:mac10_mag_empty",
 			"item_name": {"text": "Mac10 Mag Empty"}
@@ -2254,6 +2300,7 @@
 		"components": {
 			"max_stack_size": 1,
 			"custom_data": {"mgs": {"magazine": true,"weapon": "makarov","stats": {"remaining_bullets": 0,"capacity": 8},"makarov_mag_empty": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},
+			"rarity": "common",
 			"lore": [[{"text": "A","color": "#c24a17","italic": false},{"text": "m","color": "#c24d18"},{"text": "m","color": "#c2501a"},{"text": "o","color": "#c2531c"},{"text": " ","color": "#c3571e"},{"text": "R","color": "#c35a20"},{"text": "e","color": "#c35d22"},{"text": "m","color": "#c46024"},{"text": "a","color": "#c46426"},{"text": "i","color": "#c46728"},{"text": "n","color": "#c56a2a"},{"text": "i","color": "#c56d2c"},{"text": "n","color": "#c5712e"},{"text": "g","color": "#c67430"},{"text": " ","color": "#c67732"},{"text": "➤","color": "#c67a34"},{"text": " ","color": "#c77e36"},"0",{"text": "/","color": "#c77e36"},"8"],["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]],
 			"item_model": "mgs:makarov_mag_empty",
 			"item_name": {"text": "Makarov Mag Empty"}
@@ -2266,6 +2313,7 @@
 		"components": {
 			"max_stack_size": 1,
 			"custom_data": {"mgs": {"magazine": true,"weapon": "mp5","stats": {"remaining_bullets": 0,"capacity": 30},"mp5_mag_empty": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},
+			"rarity": "common",
 			"lore": [[{"text": "A","color": "#c24a17","italic": false},{"text": "m","color": "#c24d18"},{"text": "m","color": "#c2501a"},{"text": "o","color": "#c2531c"},{"text": " ","color": "#c3571e"},{"text": "R","color": "#c35a20"},{"text": "e","color": "#c35d22"},{"text": "m","color": "#c46024"},{"text": "a","color": "#c46426"},{"text": "i","color": "#c46728"},{"text": "n","color": "#c56a2a"},{"text": "i","color": "#c56d2c"},{"text": "n","color": "#c5712e"},{"text": "g","color": "#c67430"},{"text": " ","color": "#c67732"},{"text": "➤","color": "#c67a34"},{"text": " ","color": "#c77e36"},"0",{"text": "/","color": "#c77e36"},"30"],["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]],
 			"item_model": "mgs:mp5_mag_empty",
 			"item_name": {"text": "Mp5 Mag Empty"}
@@ -2278,6 +2326,7 @@
 		"components": {
 			"max_stack_size": 1,
 			"custom_data": {"mgs": {"magazine": true,"weapon": "mp7","stats": {"remaining_bullets": 0,"capacity": 40},"mp7_mag_empty": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},
+			"rarity": "common",
 			"lore": [[{"text": "A","color": "#c24a17","italic": false},{"text": "m","color": "#c24d18"},{"text": "m","color": "#c2501a"},{"text": "o","color": "#c2531c"},{"text": " ","color": "#c3571e"},{"text": "R","color": "#c35a20"},{"text": "e","color": "#c35d22"},{"text": "m","color": "#c46024"},{"text": "a","color": "#c46426"},{"text": "i","color": "#c46728"},{"text": "n","color": "#c56a2a"},{"text": "i","color": "#c56d2c"},{"text": "n","color": "#c5712e"},{"text": "g","color": "#c67430"},{"text": " ","color": "#c67732"},{"text": "➤","color": "#c67a34"},{"text": " ","color": "#c77e36"},"0",{"text": "/","color": "#c77e36"},"40"],["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]],
 			"item_model": "mgs:mp7_mag_empty",
 			"item_name": {"text": "Mp7 Mag Empty"}
@@ -2290,6 +2339,7 @@
 		"components": {
 			"max_stack_size": 1,
 			"custom_data": {"mgs": {"magazine": true,"weapon": "ppsh41","stats": {"remaining_bullets": 0,"capacity": 71},"ppsh41_mag_empty": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},
+			"rarity": "common",
 			"lore": [[{"text": "A","color": "#c24a17","italic": false},{"text": "m","color": "#c24d18"},{"text": "m","color": "#c2501a"},{"text": "o","color": "#c2531c"},{"text": " ","color": "#c3571e"},{"text": "R","color": "#c35a20"},{"text": "e","color": "#c35d22"},{"text": "m","color": "#c46024"},{"text": "a","color": "#c46426"},{"text": "i","color": "#c46728"},{"text": "n","color": "#c56a2a"},{"text": "i","color": "#c56d2c"},{"text": "n","color": "#c5712e"},{"text": "g","color": "#c67430"},{"text": " ","color": "#c67732"},{"text": "➤","color": "#c67a34"},{"text": " ","color": "#c77e36"},"0",{"text": "/","color": "#c77e36"},"71"],["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]],
 			"item_model": "mgs:ppsh41_mag_empty",
 			"item_name": {"text": "Ppsh41 Mag Empty"}
@@ -2302,6 +2352,7 @@
 		"components": {
 			"max_stack_size": 1,
 			"custom_data": {"mgs": {"magazine": true,"weapon": "rpk","stats": {"remaining_bullets": 0,"capacity": 75},"rpk_mag_empty": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},
+			"rarity": "common",
 			"lore": [[{"text": "A","color": "#c24a17","italic": false},{"text": "m","color": "#c24d18"},{"text": "m","color": "#c2501a"},{"text": "o","color": "#c2531c"},{"text": " ","color": "#c3571e"},{"text": "R","color": "#c35a20"},{"text": "e","color": "#c35d22"},{"text": "m","color": "#c46024"},{"text": "a","color": "#c46426"},{"text": "i","color": "#c46728"},{"text": "n","color": "#c56a2a"},{"text": "i","color": "#c56d2c"},{"text": "n","color": "#c5712e"},{"text": "g","color": "#c67430"},{"text": " ","color": "#c67732"},{"text": "➤","color": "#c67a34"},{"text": " ","color": "#c77e36"},"0",{"text": "/","color": "#c77e36"},"75"],["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]],
 			"item_model": "mgs:rpk_mag_empty",
 			"item_name": {"text": "Rpk Mag Empty"}
@@ -2314,6 +2365,7 @@
 		"components": {
 			"max_stack_size": 1,
 			"custom_data": {"mgs": {"magazine": true,"weapon": "scar17","stats": {"remaining_bullets": 0,"capacity": 20},"scar17_mag_empty": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},
+			"rarity": "common",
 			"lore": [[{"text": "A","color": "#c24a17","italic": false},{"text": "m","color": "#c24d18"},{"text": "m","color": "#c2501a"},{"text": "o","color": "#c2531c"},{"text": " ","color": "#c3571e"},{"text": "R","color": "#c35a20"},{"text": "e","color": "#c35d22"},{"text": "m","color": "#c46024"},{"text": "a","color": "#c46426"},{"text": "i","color": "#c46728"},{"text": "n","color": "#c56a2a"},{"text": "i","color": "#c56d2c"},{"text": "n","color": "#c5712e"},{"text": "g","color": "#c67430"},{"text": " ","color": "#c67732"},{"text": "➤","color": "#c67a34"},{"text": " ","color": "#c77e36"},"0",{"text": "/","color": "#c77e36"},"20"],["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]],
 			"item_model": "mgs:scar17_mag_empty",
 			"item_name": {"text": "Scar17 Mag Empty"}
@@ -2326,6 +2378,7 @@
 		"components": {
 			"max_stack_size": 1,
 			"custom_data": {"mgs": {"magazine": true,"weapon": "sten","stats": {"remaining_bullets": 0,"capacity": 32},"sten_mag_empty": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},
+			"rarity": "common",
 			"lore": [[{"text": "A","color": "#c24a17","italic": false},{"text": "m","color": "#c24d18"},{"text": "m","color": "#c2501a"},{"text": "o","color": "#c2531c"},{"text": " ","color": "#c3571e"},{"text": "R","color": "#c35a20"},{"text": "e","color": "#c35d22"},{"text": "m","color": "#c46024"},{"text": "a","color": "#c46426"},{"text": "i","color": "#c46728"},{"text": "n","color": "#c56a2a"},{"text": "i","color": "#c56d2c"},{"text": "n","color": "#c5712e"},{"text": "g","color": "#c67430"},{"text": " ","color": "#c67732"},{"text": "➤","color": "#c67a34"},{"text": " ","color": "#c77e36"},"0",{"text": "/","color": "#c77e36"},"32"],["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]],
 			"item_model": "mgs:sten_mag_empty",
 			"item_name": {"text": "Sten Mag Empty"}
@@ -2338,6 +2391,7 @@
 		"components": {
 			"max_stack_size": 1,
 			"custom_data": {"mgs": {"magazine": true,"weapon": "svd","stats": {"remaining_bullets": 0,"capacity": 10},"svd_mag_empty": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},
+			"rarity": "common",
 			"lore": [[{"text": "A","color": "#c24a17","italic": false},{"text": "m","color": "#c24d18"},{"text": "m","color": "#c2501a"},{"text": "o","color": "#c2531c"},{"text": " ","color": "#c3571e"},{"text": "R","color": "#c35a20"},{"text": "e","color": "#c35d22"},{"text": "m","color": "#c46024"},{"text": "a","color": "#c46426"},{"text": "i","color": "#c46728"},{"text": "n","color": "#c56a2a"},{"text": "i","color": "#c56d2c"},{"text": "n","color": "#c5712e"},{"text": "g","color": "#c67430"},{"text": " ","color": "#c67732"},{"text": "➤","color": "#c67a34"},{"text": " ","color": "#c77e36"},"0",{"text": "/","color": "#c77e36"},"10"],["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]],
 			"item_model": "mgs:svd_mag_empty",
 			"item_name": {"text": "Svd Mag Empty"}
@@ -2350,6 +2404,7 @@
 		"components": {
 			"max_stack_size": 1,
 			"custom_data": {"mgs": {"magazine": true,"weapon": "vz61","stats": {"remaining_bullets": 0,"capacity": 20},"vz61_mag_empty": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},
+			"rarity": "common",
 			"lore": [[{"text": "A","color": "#c24a17","italic": false},{"text": "m","color": "#c24d18"},{"text": "m","color": "#c2501a"},{"text": "o","color": "#c2531c"},{"text": " ","color": "#c3571e"},{"text": "R","color": "#c35a20"},{"text": "e","color": "#c35d22"},{"text": "m","color": "#c46024"},{"text": "a","color": "#c46426"},{"text": "i","color": "#c46728"},{"text": "n","color": "#c56a2a"},{"text": "i","color": "#c56d2c"},{"text": "n","color": "#c5712e"},{"text": "g","color": "#c67430"},{"text": " ","color": "#c67732"},{"text": "➤","color": "#c67a34"},{"text": " ","color": "#c77e36"},"0",{"text": "/","color": "#c77e36"},"20"],["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]],
 			"item_model": "mgs:vz61_mag_empty",
 			"item_name": {"text": "Vz61 Mag Empty"}
@@ -3129,12 +3184,12 @@
 		"recipes": [],
 		"components": {
 			"max_stack_size": 1,
-			"custom_data": {"mgs": {"gun": true,"stats": {"base_weapon": "ray_gun","fire_mode": "auto","capacity": 20,"reload_time": 60,"reload_end": 14,"cooldown": 11,"can_auto": true,"damage": 20,"decay": 0.92,"acc_base": 150,"acc_sneak": 80,"acc_walk": 290,"acc_sprint": 400,"acc_jump": 800,"switch": 12,"kick": 2,"proj_speed": 3000,"proj_gravity": 0,"proj_lifetime": 200,"proj_model": "ray_gun","expl_radius": 2,"expl_damage": 30,"expl_decay": 0.8,"models": {"normal": "mgs:ray_gun","zoom": "mgs:ray_gun_zoom"},"remaining_bullets": 20},"sounds": {"fire": "ray_gun/fire","reload": "ray_gun/reload","playerbegin": "ray_gun/playerbegin","playerend": "ray_gun/playerend","playermid": "ray_gun/playermid","crack": "tiny"},"ray_gun_zoom": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},
+			"custom_data": {"mgs": {"gun": true,"stats": {"base_weapon": "ray_gun","fire_mode": "auto","capacity": 20,"reload_time": 60,"reload_end": 14,"cooldown": 11,"can_auto": true,"damage": 24,"decay": 0.92,"acc_base": 150,"acc_sneak": 80,"acc_walk": 290,"acc_sprint": 400,"acc_jump": 800,"switch": 12,"kick": 5,"proj_speed": 3000,"proj_gravity": 0,"proj_lifetime": 200,"proj_model": "ray_gun","expl_radius": 4,"expl_damage": 32,"expl_decay": 0.8,"models": {"normal": "mgs:ray_gun","zoom": "mgs:ray_gun_zoom"},"remaining_bullets": 20},"sounds": {"fire": "ray_gun/fire","reload": "ray_gun/reload","playerbegin": "ray_gun/playerbegin","playerend": "ray_gun/playerend","playermid": "ray_gun/playermid","crack": "tiny"},"ray_gun_zoom": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},
 			"rarity": "epic",
 			"consumable": {"consume_seconds": 1000000,"animation": "spear","sound": "minecraft:intentionally_empty","has_consume_particles": false},
 			"use_effects": {"can_sprint": true,"speed_multiplier": 1.0,"interact_vibrations": false},
 			"food": {"saturation": 0,"nutrition": 0,"can_always_eat": true},
-			"lore": [[{"text": "D","color": "#c24a17","italic": false},{"text": "a","color": "#c24c18"},{"text": "m","color": "#c24f1a"},{"text": "a","color": "#c2511b"},{"text": "g","color": "#c3541d"},{"text": "e","color": "#c3571e"},{"text": " ","color": "#c35920"},{"text": "P","color": "#c35c21"},{"text": "e","color": "#c45e23"},{"text": "r","color": "#c46124"},{"text": " ","color": "#c46426"},{"text": "B","color": "#c46628"},{"text": "u","color": "#c56929"},{"text": "l","color": "#c56b2b"},{"text": "l","color": "#c56e2c"},{"text": "e","color": "#c5712e"},{"text": "t","color": "#c6732f"},{"text": " ","color": "#c67631"},{"text": " ","color": "#c67832"},{"text": "➤","color": "#c67b34"},{"text": " ","color": "#c77e36"},"20"],[{"text": "A","color": "#c24a17","italic": false},{"text": "m","color": "#c24c18"},{"text": "m","color": "#c24e19"},{"text": "o","color": "#c2511b"},{"text": " ","color": "#c2531c"},{"text": "R","color": "#c3561e"},{"text": "e","color": "#c3581f"},{"text": "m","color": "#c35b21"},{"text": "a","color": "#c35d22"},{"text": "i","color": "#c46024"},{"text": "n","color": "#c46225"},{"text": "i","color": "#c46527"},{"text": "n","color": "#c46728"},{"text": "g","color": "#c56a2a"},{"text": " ","color": "#c56c2b"},{"text": " ","color": "#c56f2d"},{"text": " ","color": "#c5712e"},{"text": " ","color": "#c67430"},{"text": " ","color": "#c67631"},{"text": " ","color": "#c67933"},{"text": "➤","color": "#c67b34"},{"text": " ","color": "#c77e36"},"20",{"text": "/","color": "#c77e36"},"20"],[{"text": "R","color": "#c24a17","italic": false},{"text": "e","color": "#c24c18"},{"text": "l","color": "#c24e19"},{"text": "o","color": "#c2511b"},{"text": "a","color": "#c2531c"},{"text": "d","color": "#c3551e"},{"text": "i","color": "#c3581f"},{"text": "n","color": "#c35a20"},{"text": "g","color": "#c35c22"},{"text": " ","color": "#c45f23"},{"text": "T","color": "#c46125"},{"text": "i","color": "#c46426"},{"text": "m","color": "#c46627"},{"text": "e","color": "#c46829"},{"text": " ","color": "#c56b2a"},{"text": " ","color": "#c56d2c"},{"text": " ","color": "#c56f2d"},{"text": " ","color": "#c5722e"},{"text": " ","color": "#c67430"},{"text": " ","color": "#c67631"},{"text": " ","color": "#c67933"},{"text": "➤","color": "#c67b34"},{"text": " ","color": "#c77e36"},"3.0",{"text": "s","color": "#c77e36"}],[{"text": "F","color": "#c24a17","italic": false},{"text": "i","color": "#c24c18"},{"text": "r","color": "#c24e19"},{"text": "e","color": "#c2501b"},{"text": " ","color": "#c2531c"},{"text": "R","color": "#c3551d"},{"text": "a","color": "#c3571f"},{"text": "t","color": "#c35920"},{"text": "e","color": "#c35c21"},{"text": " ","color": "#c35e23"},{"text": " ","color": "#c46024"},{"text": " ","color": "#c46225"},{"text": " ","color": "#c46527"},{"text": " ","color": "#c46728"},{"text": " ","color": "#c56929"},{"text": " ","color": "#c56b2b"},{"text": " ","color": "#c56e2c"},{"text": " ","color": "#c5702d"},{"text": " ","color": "#c5722f"},{"text": " ","color": "#c67430"},{"text": " ","color": "#c67731"},{"text": " ","color": "#c67933"},{"text": "➤","color": "#c67b34"},{"text": " ","color": "#c77e36"},"1.8 ",{"text": "s","color": "#c77e36","italic": false},{"text": "h","color": "#c67832"},{"text": "o","color": "#c5722f"},{"text": "t","color": "#c56c2b"},{"text": "s","color": "#c46628"},{"text": "/","color": "#c46124"},{"text": "s","color": "#c35b21"}],[{"text": "D","color": "#c24a17","italic": false},{"text": "a","color": "#c24c18"},{"text": "m","color": "#c24f1a"},{"text": "a","color": "#c2511b"},{"text": "g","color": "#c3541d"},{"text": "e","color": "#c3571e"},{"text": " ","color": "#c35920"},{"text": "D","color": "#c35c21"},{"text": "e","color": "#c45e23"},{"text": "c","color": "#c46124"},{"text": "a","color": "#c46426"},{"text": "y","color": "#c46628"},{"text": " ","color": "#c56929"},{"text": " ","color": "#c56b2b"},{"text": " ","color": "#c56e2c"},{"text": " ","color": "#c5712e"},{"text": " ","color": "#c6732f"},{"text": " ","color": "#c67631"},{"text": " ","color": "#c67832"},{"text": "➤","color": "#c67b34"},{"text": " ","color": "#c77e36"},"92",{"text": "%","color": "#c77e36"}],[{"text": "S","color": "#c24a17","italic": false},{"text": "w","color": "#c24c18"},{"text": "i","color": "#c24e19"},{"text": "t","color": "#c2501b"},{"text": "c","color": "#c2531c"},{"text": "h","color": "#c3551d"},{"text": " ","color": "#c3571f"},{"text": "T","color": "#c35920"},{"text": "i","color": "#c35c21"},{"text": "m","color": "#c35e23"},{"text": "e","color": "#c46024"},{"text": " ","color": "#c46225"},{"text": " ","color": "#c46527"},{"text": " ","color": "#c46728"},{"text": " ","color": "#c56929"},{"text": " ","color": "#c56b2b"},{"text": " ","color": "#c56e2c"},{"text": " ","color": "#c5702d"},{"text": " ","color": "#c5722f"},{"text": " ","color": "#c67430"},{"text": " ","color": "#c67731"},{"text": " ","color": "#c67933"},{"text": "➤","color": "#c67b34"},{"text": " ","color": "#c77e36"},"0.6",{"text": "s","color": "#c77e36"}],"",["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]],
+			"lore": [[{"text": "D","color": "#c24a17","italic": false},{"text": "a","color": "#c24c18"},{"text": "m","color": "#c24f1a"},{"text": "a","color": "#c2511b"},{"text": "g","color": "#c3541d"},{"text": "e","color": "#c3571e"},{"text": " ","color": "#c35920"},{"text": "P","color": "#c35c21"},{"text": "e","color": "#c45e23"},{"text": "r","color": "#c46124"},{"text": " ","color": "#c46426"},{"text": "B","color": "#c46628"},{"text": "u","color": "#c56929"},{"text": "l","color": "#c56b2b"},{"text": "l","color": "#c56e2c"},{"text": "e","color": "#c5712e"},{"text": "t","color": "#c6732f"},{"text": " ","color": "#c67631"},{"text": " ","color": "#c67832"},{"text": "➤","color": "#c67b34"},{"text": " ","color": "#c77e36"},"24"],[{"text": "A","color": "#c24a17","italic": false},{"text": "m","color": "#c24c18"},{"text": "m","color": "#c24e19"},{"text": "o","color": "#c2511b"},{"text": " ","color": "#c2531c"},{"text": "R","color": "#c3561e"},{"text": "e","color": "#c3581f"},{"text": "m","color": "#c35b21"},{"text": "a","color": "#c35d22"},{"text": "i","color": "#c46024"},{"text": "n","color": "#c46225"},{"text": "i","color": "#c46527"},{"text": "n","color": "#c46728"},{"text": "g","color": "#c56a2a"},{"text": " ","color": "#c56c2b"},{"text": " ","color": "#c56f2d"},{"text": " ","color": "#c5712e"},{"text": " ","color": "#c67430"},{"text": " ","color": "#c67631"},{"text": " ","color": "#c67933"},{"text": "➤","color": "#c67b34"},{"text": " ","color": "#c77e36"},"20",{"text": "/","color": "#c77e36"},"20"],[{"text": "R","color": "#c24a17","italic": false},{"text": "e","color": "#c24c18"},{"text": "l","color": "#c24e19"},{"text": "o","color": "#c2511b"},{"text": "a","color": "#c2531c"},{"text": "d","color": "#c3551e"},{"text": "i","color": "#c3581f"},{"text": "n","color": "#c35a20"},{"text": "g","color": "#c35c22"},{"text": " ","color": "#c45f23"},{"text": "T","color": "#c46125"},{"text": "i","color": "#c46426"},{"text": "m","color": "#c46627"},{"text": "e","color": "#c46829"},{"text": " ","color": "#c56b2a"},{"text": " ","color": "#c56d2c"},{"text": " ","color": "#c56f2d"},{"text": " ","color": "#c5722e"},{"text": " ","color": "#c67430"},{"text": " ","color": "#c67631"},{"text": " ","color": "#c67933"},{"text": "➤","color": "#c67b34"},{"text": " ","color": "#c77e36"},"3.0",{"text": "s","color": "#c77e36"}],[{"text": "F","color": "#c24a17","italic": false},{"text": "i","color": "#c24c18"},{"text": "r","color": "#c24e19"},{"text": "e","color": "#c2501b"},{"text": " ","color": "#c2531c"},{"text": "R","color": "#c3551d"},{"text": "a","color": "#c3571f"},{"text": "t","color": "#c35920"},{"text": "e","color": "#c35c21"},{"text": " ","color": "#c35e23"},{"text": " ","color": "#c46024"},{"text": " ","color": "#c46225"},{"text": " ","color": "#c46527"},{"text": " ","color": "#c46728"},{"text": " ","color": "#c56929"},{"text": " ","color": "#c56b2b"},{"text": " ","color": "#c56e2c"},{"text": " ","color": "#c5702d"},{"text": " ","color": "#c5722f"},{"text": " ","color": "#c67430"},{"text": " ","color": "#c67731"},{"text": " ","color": "#c67933"},{"text": "➤","color": "#c67b34"},{"text": " ","color": "#c77e36"},"1.8 ",{"text": "s","color": "#c77e36","italic": false},{"text": "h","color": "#c67832"},{"text": "o","color": "#c5722f"},{"text": "t","color": "#c56c2b"},{"text": "s","color": "#c46628"},{"text": "/","color": "#c46124"},{"text": "s","color": "#c35b21"}],[{"text": "D","color": "#c24a17","italic": false},{"text": "a","color": "#c24c18"},{"text": "m","color": "#c24f1a"},{"text": "a","color": "#c2511b"},{"text": "g","color": "#c3541d"},{"text": "e","color": "#c3571e"},{"text": " ","color": "#c35920"},{"text": "D","color": "#c35c21"},{"text": "e","color": "#c45e23"},{"text": "c","color": "#c46124"},{"text": "a","color": "#c46426"},{"text": "y","color": "#c46628"},{"text": " ","color": "#c56929"},{"text": " ","color": "#c56b2b"},{"text": " ","color": "#c56e2c"},{"text": " ","color": "#c5712e"},{"text": " ","color": "#c6732f"},{"text": " ","color": "#c67631"},{"text": " ","color": "#c67832"},{"text": "➤","color": "#c67b34"},{"text": " ","color": "#c77e36"},"92",{"text": "%","color": "#c77e36"}],[{"text": "S","color": "#c24a17","italic": false},{"text": "w","color": "#c24c18"},{"text": "i","color": "#c24e19"},{"text": "t","color": "#c2501b"},{"text": "c","color": "#c2531c"},{"text": "h","color": "#c3551d"},{"text": " ","color": "#c3571f"},{"text": "T","color": "#c35920"},{"text": "i","color": "#c35c21"},{"text": "m","color": "#c35e23"},{"text": "e","color": "#c46024"},{"text": " ","color": "#c46225"},{"text": " ","color": "#c46527"},{"text": " ","color": "#c46728"},{"text": " ","color": "#c56929"},{"text": " ","color": "#c56b2b"},{"text": " ","color": "#c56e2c"},{"text": " ","color": "#c5702d"},{"text": " ","color": "#c5722f"},{"text": " ","color": "#c67430"},{"text": " ","color": "#c67731"},{"text": " ","color": "#c67933"},{"text": "➤","color": "#c67b34"},{"text": " ","color": "#c77e36"},"0.6",{"text": "s","color": "#c77e36"}],"",["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]],
 			"item_model": "mgs:ray_gun_zoom",
 			"item_name": {"text": "Ray Gun Zoom"}
 		}

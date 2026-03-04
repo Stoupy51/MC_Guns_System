@@ -22,6 +22,7 @@
 										"ignore": {"functionality": true,"crafting": true}
 									}
 								},
+								"minecraft:rarity": "common",
 								"minecraft:lore": [
 									[
 										{"text": "A","color": "#c24a17","italic": false},

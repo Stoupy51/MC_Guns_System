@@ -443,7 +443,7 @@ tag @s remove {ns}.reloading
 """)
 
     ## ============================
-    ## compute_reserve — Sum all magazine bullets in inventory for the current weapon
+    ## compute_reserve - Sum all magazine bullets in inventory for the current weapon
     ## Only counts magazines whose base_weapon matches the gun in hand
     ## Called on reload and when player is idle (~60 ticks without shooting)
     ## ============================

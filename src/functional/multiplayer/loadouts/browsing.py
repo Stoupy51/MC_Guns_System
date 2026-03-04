@@ -25,10 +25,10 @@ def generate_browsing() -> None:
 	version: str = Mem.ctx.project_version
 
 	## ====================================================================
-	## SHARED HELPERS — player favorites loading & is-fav check
+	## SHARED HELPERS - player favorites loading & is-fav check
 	## ====================================================================
 
-	## shared/load_player_favorites — Copy current player's favorites list into _cur_favorites
+	## shared/load_player_favorites - Copy current player's favorites list into _cur_favorites
 	write_versioned_function("multiplayer/shared/load_player_favorites",
 f"""
 # Default to empty favorites
@@ -38,7 +38,7 @@ data modify storage {ns}:temp _pd_iter set from storage {ns}:multiplayer player_
 execute if data storage {ns}:temp _pd_iter[0] run function {ns}:v{version}/multiplayer/shared/load_fav_iter
 """)
 
-	## shared/load_fav_iter — Recursive: find our entry by PID and copy favorites
+	## shared/load_fav_iter - Recursive: find our entry by PID and copy favorites
 	write_versioned_function("multiplayer/shared/load_fav_iter",
 f"""
 execute store result score #pd_pid {ns}.data run data get storage {ns}:temp _pd_iter[0].pid
@@ -48,7 +48,7 @@ data remove storage {ns}:temp _pd_iter[0]
 execute unless score #pd_pid {ns}.data = @s {ns}.mp.pid if data storage {ns}:temp _pd_iter[0] run function {ns}:v{version}/multiplayer/shared/load_fav_iter
 """)
 
-	## shared/check_is_fav — Sets #is_fav = 1 if _iter[0].id is in _cur_favorites, else 0
+	## shared/check_is_fav - Sets #is_fav = 1 if _iter[0].id is in _cur_favorites, else 0
 	write_versioned_function("multiplayer/shared/check_is_fav",
 f"""
 execute store result score #check_id {ns}.data run data get storage {ns}:temp _iter[0].id
@@ -57,7 +57,7 @@ scoreboard players set #is_fav {ns}.data 0
 execute if data storage {ns}:temp _fav_check[0] run function {ns}:v{version}/multiplayer/shared/check_fav_iter
 """)
 
-	## shared/check_fav_iter — Recursive: compare each _fav_check entry against #check_id
+	## shared/check_fav_iter - Recursive: compare each _fav_check entry against #check_id
 	write_versioned_function("multiplayer/shared/check_fav_iter",
 f"""
 execute store result score #fav_entry_id {ns}.data run data get storage {ns}:temp _fav_check[0].id
@@ -67,7 +67,7 @@ execute unless score #is_fav {ns}.data matches 1 if data storage {ns}:temp _fav_
 """)
 
 	## ====================================================================
-	## MY LOADOUTS — Browse and manage player's own custom loadouts
+	## MY LOADOUTS - Browse and manage player's own custom loadouts
 	## Organized as: [⭐Favorites Only] [📋All] [✚Create] filter row,
 	##                then favorites, then privates, then publics
 	## ====================================================================
@@ -95,7 +95,7 @@ execute unless score #is_fav {ns}.data matches 1 if data storage {ns}:temp _fav_
 			f'{{label:{{text:"\u271a Create",color:"green",bold:true}},tooltip:{{text:"Build a new custom loadout from scratch"}},action:{{type:"run_command",command:"/trigger {ns}.player.config set {TRIG_EDITOR_START}"}}}}',
 		]
 
-	## my_loadouts/browse — Default: 3-pass build (favorites → privates → publics) + filter row
+	## my_loadouts/browse - Default: 3-pass build (favorites → privates → publics) + filter row
 	write_versioned_function("multiplayer/my_loadouts/browse",
 f"""
 # Initialize dialog
@@ -125,7 +125,7 @@ execute if data storage {ns}:temp _iter[0] run function {ns}:v{version}/multipla
 function {ns}:v{version}/multiplayer/show_dialog with storage {ns}:temp
 """)
 
-	## my_loadouts/browse_fav_only — Filter: only own favorited loadouts
+	## my_loadouts/browse_fav_only - Filter: only own favorited loadouts
 	write_versioned_function("multiplayer/my_loadouts/browse_fav_only",
 f"""
 # Initialize dialog
@@ -148,7 +148,7 @@ execute if data storage {ns}:temp _iter[0] run function {ns}:v{version}/multipla
 function {ns}:v{version}/multiplayer/show_dialog with storage {ns}:temp
 """)
 
-	## my_loadouts/build_list_favs — Pass 1: own loadouts in favorites
+	## my_loadouts/build_list_favs - Pass 1: own loadouts in favorites
 	write_versioned_function("multiplayer/my_loadouts/build_list_favs",
 f"""
 execute store result score #entry_owner {ns}.data run data get storage {ns}:temp _iter[0].owner_pid
@@ -159,7 +159,7 @@ data remove storage {ns}:temp _iter[0]
 execute if data storage {ns}:temp _iter[0] run function {ns}:v{version}/multiplayer/my_loadouts/build_list_favs
 """)
 
-	## my_loadouts/build_list_privates — Pass 2: own private loadouts NOT in favorites
+	## my_loadouts/build_list_privates - Pass 2: own private loadouts NOT in favorites
 	write_versioned_function("multiplayer/my_loadouts/build_list_privates",
 f"""
 execute store result score #entry_owner {ns}.data run data get storage {ns}:temp _iter[0].owner_pid
@@ -169,7 +169,7 @@ data remove storage {ns}:temp _iter[0]
 execute if data storage {ns}:temp _iter[0] run function {ns}:v{version}/multiplayer/my_loadouts/build_list_privates
 """)
 
-	## check_private_not_fav — For own entries: only add if private AND not in favorites
+	## check_private_not_fav - For own entries: only add if private AND not in favorites
 	write_versioned_function("multiplayer/my_loadouts/check_private_not_fav",
 f"""
 execute store result score #pub {ns}.data run data get storage {ns}:temp _iter[0].public
@@ -177,7 +177,7 @@ execute if score #pub {ns}.data matches 0 run function {ns}:v{version}/multiplay
 execute if score #pub {ns}.data matches 0 if score #is_fav {ns}.data matches 0 run function {ns}:v{version}/multiplayer/my_loadouts/prep_btn
 """)
 
-	## my_loadouts/build_list_publics — Pass 3: own public loadouts NOT in favorites
+	## my_loadouts/build_list_publics - Pass 3: own public loadouts NOT in favorites
 	write_versioned_function("multiplayer/my_loadouts/build_list_publics",
 f"""
 execute store result score #entry_owner {ns}.data run data get storage {ns}:temp _iter[0].owner_pid
@@ -187,7 +187,7 @@ data remove storage {ns}:temp _iter[0]
 execute if data storage {ns}:temp _iter[0] run function {ns}:v{version}/multiplayer/my_loadouts/build_list_publics
 """)
 
-	## check_public_not_fav — For own entries: only add if public AND not in favorites
+	## check_public_not_fav - For own entries: only add if public AND not in favorites
 	write_versioned_function("multiplayer/my_loadouts/check_public_not_fav",
 f"""
 execute store result score #pub {ns}.data run data get storage {ns}:temp _iter[0].public
@@ -206,7 +206,7 @@ execute if score #pub {ns}.data matches 1 if score #is_fav {ns}.data matches 0 r
 		)
 	)
 
-	## my_loadouts/prep_btn — Normalize fields, compute triggers, route to correct btn macro
+	## my_loadouts/prep_btn - Normalize fields, compute triggers, route to correct btn macro
 	write_versioned_function("multiplayer/my_loadouts/prep_btn",
 f"""
 # Copy entry data for macro use (all stored fields come along)
@@ -279,14 +279,14 @@ execute if score #pub {ns}.data matches 0 run function {ns}:v{version}/multiplay
 		'{"text":"Private","color":"red","italic":true}',
 	)
 
-	## my_loadouts/add_btn_public — Macro: green name (public loadout), rich tooltip
+	## my_loadouts/add_btn_public - Macro: green name (public loadout), rich tooltip
 	write_versioned_function("multiplayer/my_loadouts/add_btn_public",
 f"""$data modify storage {ns}:temp dialog.actions append value {{label:{{text:"$(name)",color:"green"}},tooltip:{_ml_tooltip_pub},action:{{type:"run_command",command:"/trigger {ns}.player.config set $(select_trig)"}}}}
 $data modify storage {ns}:temp dialog.actions append value {{label:{{text:"Public -> Private",color:"dark_aqua"}},tooltip:{{text:"Toggle this loadout to Private",color:"red"}},action:{{type:"run_command",command:"/trigger {ns}.player.config set $(vis_trig)"}}}}
 $data modify storage {ns}:temp dialog.actions append value {{label:{{text:"\U0001f5d1 Delete",color:"red"}},tooltip:{{text:"Permanently delete this loadout",color:"dark_red"}},action:{{type:"run_command",command:"/trigger {ns}.player.config set $(delete_trig)"}}}}
 """)
 
-	## my_loadouts/add_btn_private — Macro: red name (private loadout), rich tooltip
+	## my_loadouts/add_btn_private - Macro: red name (private loadout), rich tooltip
 	write_versioned_function("multiplayer/my_loadouts/add_btn_private",
 f"""$data modify storage {ns}:temp dialog.actions append value {{label:{{text:"$(name)",color:"red"}},tooltip:{_ml_tooltip_priv},action:{{type:"run_command",command:"/trigger {ns}.player.config set $(select_trig)"}}}}
 $data modify storage {ns}:temp dialog.actions append value {{label:{{text:"Private -> Public",color:"aqua"}},tooltip:{{text:"Toggle this loadout to Public",color:"green"}},action:{{type:"run_command",command:"/trigger {ns}.player.config set $(vis_trig)"}}}}
@@ -294,7 +294,7 @@ $data modify storage {ns}:temp dialog.actions append value {{label:{{text:"\U000
 """)
 
 	## ====================================================================
-	## MARKETPLACE — Browse all public custom loadouts
+	## MARKETPLACE - Browse all public custom loadouts
 	## Organized as: [📋All] [⭐Favorites] [❤Best Liked] filter row,
 	##                then favorited public loadouts first, then the rest
 	## ====================================================================
@@ -321,7 +321,7 @@ $data modify storage {ns}:temp dialog.actions append value {{label:{{text:"\U000
 			f'{{label:{{text:"\u2764 Best Liked",color:"{likes_color}",bold:true}},tooltip:{{text:"Show all public loadouts sorted by most likes"}},action:{{type:"run_command",command:"/trigger {ns}.player.config set {TRIG_MARKETPLACE_LIKES}"}}}}',
 		]
 
-	## marketplace/browse — Default: favorites first, then the rest
+	## marketplace/browse - Default: favorites first, then the rest
 	write_versioned_function("multiplayer/marketplace/browse",
 f"""
 # Initialize dialog
@@ -347,7 +347,7 @@ execute if data storage {ns}:temp _iter[0] run function {ns}:v{version}/multipla
 function {ns}:v{version}/multiplayer/show_dialog with storage {ns}:temp
 """)
 
-	## marketplace/browse_fav_only — Filter: only public + in player's favorites
+	## marketplace/browse_fav_only - Filter: only public + in player's favorites
 	write_versioned_function("multiplayer/marketplace/browse_fav_only",
 f"""
 # Initialize dialog
@@ -370,7 +370,7 @@ execute if data storage {ns}:temp _iter[0] run function {ns}:v{version}/multipla
 function {ns}:v{version}/multiplayer/show_dialog with storage {ns}:temp
 """)
 
-	## marketplace/browse_likes — Sort by likes descending (find-max passes O(n^2), fine for small n)
+	## marketplace/browse_likes - Sort by likes descending (find-max passes O(n^2), fine for small n)
 	write_versioned_function("multiplayer/marketplace/browse_likes",
 f"""
 # Initialize dialog
@@ -397,7 +397,7 @@ execute if data storage {ns}:temp _sort_pool[0] run function {ns}:v{version}/mul
 function {ns}:v{version}/multiplayer/show_dialog with storage {ns}:temp
 """)
 
-	## marketplace/build_list_favs — Pass 1: public + in favorites
+	## marketplace/build_list_favs - Pass 1: public + in favorites
 	write_versioned_function("multiplayer/marketplace/build_list_favs",
 f"""
 execute store result score #pub {ns}.data run data get storage {ns}:temp _iter[0].public
@@ -408,7 +408,7 @@ data remove storage {ns}:temp _iter[0]
 execute if data storage {ns}:temp _iter[0] run function {ns}:v{version}/multiplayer/marketplace/build_list_favs
 """)
 
-	## marketplace/build_list_rest — Pass 2: public + NOT in favorites
+	## marketplace/build_list_rest - Pass 2: public + NOT in favorites
 	write_versioned_function("multiplayer/marketplace/build_list_rest",
 f"""
 execute store result score #pub {ns}.data run data get storage {ns}:temp _iter[0].public
@@ -419,7 +419,7 @@ data remove storage {ns}:temp _iter[0]
 execute if data storage {ns}:temp _iter[0] run function {ns}:v{version}/multiplayer/marketplace/build_list_rest
 """)
 
-	## marketplace/sort_collect_pool — Collect all public loadouts into _sort_pool for likes sort
+	## marketplace/sort_collect_pool - Collect all public loadouts into _sort_pool for likes sort
 	write_versioned_function("multiplayer/marketplace/sort_collect_pool",
 f"""
 execute store result score #pub {ns}.data run data get storage {ns}:temp _iter[0].public
@@ -429,7 +429,7 @@ data remove storage {ns}:temp _iter[0]
 execute if data storage {ns}:temp _iter[0] run function {ns}:v{version}/multiplayer/marketplace/sort_collect_pool
 """)
 
-	## marketplace/sort_build_list — Find max-likes entry, build its button, recurse
+	## marketplace/sort_build_list - Find max-likes entry, build its button, recurse
 	write_versioned_function("multiplayer/marketplace/sort_build_list",
 f"""
 # Find max likes entry in _sort_pool
@@ -452,7 +452,7 @@ execute if data storage {ns}:temp _pool_rebuild[0] run function {ns}:v{version}/
 execute if data storage {ns}:temp _sort_pool[0] run function {ns}:v{version}/multiplayer/marketplace/sort_build_list
 """)
 
-	## marketplace/sort_find_max — Recursive: scan _find_max_iter to find entry with most likes
+	## marketplace/sort_find_max - Recursive: scan _find_max_iter to find entry with most likes
 	write_versioned_function("multiplayer/marketplace/sort_find_max",
 f"""
 execute unless data storage {ns}:temp _find_max_iter[0].likes run data modify storage {ns}:temp _find_max_iter[0].likes set value 0
@@ -465,7 +465,7 @@ data remove storage {ns}:temp _find_max_iter[0]
 execute if data storage {ns}:temp _find_max_iter[0] run function {ns}:v{version}/multiplayer/marketplace/sort_find_max
 """)
 
-	## marketplace/sort_remove_best — Rebuild _sort_pool excluding the entry with id = #extract_id
+	## marketplace/sort_remove_best - Rebuild _sort_pool excluding the entry with id = #extract_id
 	write_versioned_function("multiplayer/marketplace/sort_remove_best",
 f"""
 execute store result score #entry_id {ns}.data run data get storage {ns}:temp _pool_rebuild[0].id
@@ -475,7 +475,7 @@ data remove storage {ns}:temp _pool_rebuild[0]
 execute if data storage {ns}:temp _pool_rebuild[0] run function {ns}:v{version}/multiplayer/marketplace/sort_remove_best
 """)
 
-	## marketplace/prep_btn — Compute triggers, normalize fields, add buttons
+	## marketplace/prep_btn - Compute triggers, normalize fields, add buttons
 	write_versioned_function("multiplayer/marketplace/prep_btn",
 f"""
 # Copy entry data for macro use
@@ -543,7 +543,7 @@ function {ns}:v{version}/multiplayer/marketplace/add_btn with storage {ns}:temp 
 		'{"text":"\\u25b6 Click to select","color":"dark_gray","italic":true}]'
 	)
 
-	## marketplace/add_btn — Macro: append 3 buttons (Select + Like + Favorite) with rich tooltip
+	## marketplace/add_btn - Macro: append 3 buttons (Select + Like + Favorite) with rich tooltip
 	write_versioned_function("multiplayer/marketplace/add_btn",
 f"""$data modify storage {ns}:temp dialog.actions append value {{label:{{text:"$(name)",color:"green"}},tooltip:{_mp_tooltip},action:{{type:"run_command",command:"/trigger {ns}.player.config set $(select_trig)"}}}}
 $data modify storage {ns}:temp dialog.actions append value {{label:[{{text:"\u2b50 ",color:"gold"}},{{text:"Make Favorite",color:"yellow"}}],tooltip:{{text:"Add to favorites",color:"gold"}},action:{{type:"run_command",command:"/trigger {ns}.player.config set $(fav_trig)"}}}}

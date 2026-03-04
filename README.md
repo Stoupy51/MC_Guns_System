@@ -8,24 +8,10 @@
 Credits for resources: MGS 4.2 by TheBradqq
 
 # TODO:
+- Fix in Loadout editor:
+  - Weapons with consumable magazines are often 1 unit. We need to multiply them by the weapon's capacity to be fair. (stack)
 - Compatibility & Developement:
   - Multiplayer mode:
-    - Dynamic classes definitions:
-      - [X] All in storage
-      - [X] Using minecraft /dialog system
-      - [X] Class selection GUI (using /dialog)
-      - [X] Default loadout
-      - [X] Player custom loadouts (everything dynamic, without being OP so using /trigger)
-        - [X] Players needs to be able to create their own custom loadouts (like Black Ops 2 pick 10 system) and save them to use in multiplayer matches.
-        - [X] For each class they made, they can configure if it's public (available for everyone) or private (only for them).
-        - [X] People can navigate through all custom classes, favorite them, like them, etc. (using /dialog)
-        - [ ] There are not enough details in the tooltip/hoverevent of the buttons in marketplace and my loadouts and default loadouts. We need to show up ALL info, nb magazines, points used / total, grenades, nb likes, favorites, owner name, etc.
-        - [ ] They can filter & sort based on their favorites, likes, the most used, etc. Default marketplace organization should be:
-          - Filters & Sort things
-          - Favorites first
-          - Privates
-          - Publics
-        - [X] They can also set one of the custom classes as their default class, that will be automatically selected when they join a multiplayer match.
     - Dynamic map definitions (spawning points in storage, called on load with function tag #mgs:multiplayer/register_maps etc.)
     - Gamemodes like team deathmatch, capture the flag, free for all, etc.
   - Add a whole zombies mode (mgs:zombies/*):

@@ -105,7 +105,7 @@ execute if data storage mgs:temp _build.secondary_data run function mgs:v5.0.0/m
 # 1. Primary weapon (hotbar.0)
 data modify storage mgs:temp _new_loadout.slots append from storage mgs:temp _build.primary_data.gun_slot
 
-# 2. Secondary weapon (hotbar.1) — if selected
+# 2. Secondary weapon (hotbar.1) - if selected
 execute if data storage mgs:temp _build.secondary_data run data modify storage mgs:temp _new_loadout.slots append from storage mgs:temp _build.secondary_data.gun_slot
 
 # 3. Equipment slots (hotbar.8 and hotbar.7)
