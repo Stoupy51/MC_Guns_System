@@ -65,6 +65,9 @@ pipeline:
 
 # Generic dict which holds extra information usable by plugins
 meta:
+    # Enable custom crosshair rendering in shaders (build time)
+    # WARNING: When true, players without "Improved Transparency" setting will not see any crosshair
+    mgs_custom_crosshair: False
 
     # StewBeet specific configuration
     stewbeet:

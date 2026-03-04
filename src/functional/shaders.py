@@ -1,6 +1,7 @@
 
 # Imports
 from beet import FragmentShader, PostEffect, Texture, VertexShader
+from PIL import Image
 from stewbeet import JsonDict, Mem, set_json_encoder, write_versioned_function
 
 # ============================================================================ #
@@ -855,7 +856,7 @@ void main() {
     // The vanilla crosshair texture is replaced with a transparent one, so the shader
     // handles all crosshair rendering. Hidden during zoom for clean scope view.
     // Smooth spread (from classify A): 0.0=sneak → 1.0=jump, interpolated per-frame
-    if (!zoomMode) {
+    if (!zoomMode && __MGS_CUSTOM_CROSSHAIR__) {
         // Smooth spread value (0.0-1.0 from classify alpha, maps to levels 0-4)
         float smoothSpread = classifyData.a * 4.0;  // 0.0-4.0
 
@@ -1037,6 +1038,7 @@ def get_post_effect_json(ns: str) -> JsonDict:
 def main() -> None:
     """Register all shader files and write marker particle commands."""
     ns: str = Mem.ctx.project_id
+    custom_crosshair: bool = Mem.ctx.meta.get("mgs_custom_crosshair", False)
 
     Mem.ctx.assets["minecraft"].vertex_shaders["core/particle"]   = VertexShader(PARTICLE_VSH)
     Mem.ctx.assets["minecraft"].fragment_shaders["core/particle"] = FragmentShader(PARTICLE_FSH)
@@ -1046,7 +1048,7 @@ def main() -> None:
     Mem.ctx.assets[ns].fragment_shaders["post/zoom_lerp"]    = FragmentShader(ZOOM_LERP_FSH)
     Mem.ctx.assets[ns].fragment_shaders["post/transparency"] = FragmentShader(TRANSPARENCY_FSH)
     Mem.ctx.assets[ns].fragment_shaders["post/flash"]       = FragmentShader(FLASH_FSH)
-    Mem.ctx.assets[ns].fragment_shaders["post/zoom"]        = FragmentShader(ZOOM_FSH)
+    Mem.ctx.assets[ns].fragment_shaders["post/zoom"]        = FragmentShader(ZOOM_FSH.replace("__MGS_CUSTOM_CROSSHAIR__", "true" if custom_crosshair else "false"))
 
     Mem.ctx.assets["minecraft"].post_effects["transparency"] = set_json_encoder(PostEffect(get_post_effect_json(ns)), max_level=4)
 
@@ -1070,4 +1072,10 @@ execute unless data storage mgs:gun all.stats.grenade_type at @s anchored eyes r
     # Zoom x4: color:[0.02, 0.08, 0] → G∈[10-20] after randomization → mode 4
     # Zoom marker spawning is handled in zoom/main (zoom.py) after zoom state
     # resolution, with cooldown guard and 5-tick delay.
+
+    # Replace crosshair texture with transparent one (shader draws custom crosshair conditionally)
+    if custom_crosshair:
+        textures_folder: str = Mem.ctx.meta.get("stewbeet", {}).get("textures_folder", "")
+        transparent_crosshair = Image.new("RGBA", (1, 1), (0, 0, 0, 0))
+        Mem.ctx.assets["minecraft"].textures["gui/sprites/hud/crosshair"] = Texture(transparent_crosshair)
 
