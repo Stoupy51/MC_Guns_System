@@ -4,6 +4,7 @@
 from stewbeet import Mem, write_versioned_function
 
 from .catalogs import (
+	PERKS,
 	PICK10_TOTAL,
 	TRIG_DELETE_BASE,
 	TRIG_EDITOR_START,
@@ -194,6 +195,17 @@ execute if score #pub {ns}.data matches 1 run function {ns}:v{version}/multiplay
 execute if score #pub {ns}.data matches 1 if score #is_fav {ns}.data matches 0 run function {ns}:v{version}/multiplayer/my_loadouts/prep_btn
 """)
 
+	# Build perk display lines for tooltips
+	# \\n in SNBT → stored as \n (backslash+n, 2 chars) → when macro-substituted: \n = newline in text component
+	_perk_disp = (
+		"\n".join(f"data modify storage {ns}:temp _btn_data.perk{i} set value \"\"" for i in range(len(PERKS)))
+		+ "\n"
+		+ "\n".join(
+			f'execute if data storage {ns}:temp _btn_data{{perks:["{pid}"]}} run data modify storage {ns}:temp _btn_data.perk{i} set value "\\\\n- {pname}"'
+			for i, (pid, pname, _, _) in enumerate(PERKS)
+		)
+	)
+
 	## my_loadouts/prep_btn — Normalize fields, compute triggers, route to correct btn macro
 	write_versioned_function("multiplayer/my_loadouts/prep_btn",
 f"""
@@ -218,6 +230,9 @@ execute store result storage {ns}:temp _btn_data.delete_trig int 1 run scoreboar
 # Compute perks_count from perks list size
 execute unless data storage {ns}:temp _btn_data.perks run data modify storage {ns}:temp _btn_data.perks set value []
 execute store result storage {ns}:temp _btn_data.perks_count int 1 run data get storage {ns}:temp _btn_data.perks
+
+# Build per-perk display names for tooltip
+{_perk_disp}
 
 # Normalize optional fields (backwards compat for pre-update loadouts)
 execute unless data storage {ns}:temp _btn_data.points_used run data modify storage {ns}:temp _btn_data.points_used set value 0
@@ -250,6 +265,7 @@ execute if score #pub {ns}.data matches 0 run function {ns}:v{version}/multiplay
 		f'{{"text":"$(points_used)/{PICK10_TOTAL}pts","color":"gold"}},'
 		'{"text":"  Perks: ","color":"white"},'
 		'{"text":"$(perks_count)","color":"light_purple"},'
+		'{"text":"$(perk0)$(perk1)$(perk2)","color":"light_purple"},'
 		'"\\n",'
 		'{"text":"\\u2665 $(likes) likes","color":"red"},'
 		'{"text":"  \\u2b50 $(favorites_count) favs","color":"yellow"},'
@@ -484,6 +500,9 @@ execute store result storage {ns}:temp _btn_data.fav_trig int 1 run scoreboard p
 execute unless data storage {ns}:temp _btn_data.perks run data modify storage {ns}:temp _btn_data.perks set value []
 execute store result storage {ns}:temp _btn_data.perks_count int 1 run data get storage {ns}:temp _btn_data.perks
 
+# Build per-perk display names for tooltip
+{_perk_disp}
+
 # Normalize optional fields (backwards compat for pre-update loadouts)
 execute unless data storage {ns}:temp _btn_data.points_used run data modify storage {ns}:temp _btn_data.points_used set value 0
 execute unless data storage {ns}:temp _btn_data.favorites_count run data modify storage {ns}:temp _btn_data.favorites_count set value 0
@@ -514,6 +533,7 @@ function {ns}:v{version}/multiplayer/marketplace/add_btn with storage {ns}:temp 
 		f'{{"text":"$(points_used)/{PICK10_TOTAL}pts","color":"gold"}},'
 		'{"text":"  Perks: ","color":"white"},'
 		'{"text":"$(perks_count)","color":"light_purple"},'
+		'{"text":"$(perk0)$(perk1)$(perk2)","color":"light_purple"},'
 		'"\\n",'
 		'{"text":"\\u2665 $(likes) likes","color":"red"},'
 		'{"text":"  \\u2b50 $(favorites_count) favs","color":"yellow"},'
