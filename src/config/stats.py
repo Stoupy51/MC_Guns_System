@@ -35,6 +35,7 @@ def add_item(id: str, stats: JsonDict | None = None, model_path: str | None = No
         components={
             "max_stack_size": 1,
             "custom_data": {Mem.ctx.project_id: {"gun":True, **stats} if stats else {"casing":True}},
+            "rarity": "common",
         },
         override_model=(
             json.loads(stp.read_file(model_path).replace("mgs:item", f"{Mem.ctx.project_id}:item"))
@@ -442,6 +443,25 @@ VZ61: JsonDict = {
         "reload": "vz61/reload",
         "playerbegin": "vz61/playerbegin",
         "playerend": "vz61/playerend",
+        "crack": "tiny"
+    }
+}
+
+RAY_GUN: JsonDict = {
+    "stats": {
+        BASE_WEAPON: "ray_gun", FIRE_MODE: "auto",
+        CAPACITY: 20, RELOAD_TIME: 60, RELOAD_END: 14, COOLDOWN: 11, CAN_AUTO: True, DAMAGE: 20, DECAY: 0.92,
+        ACCURACY_BASE: 150, ACCURACY_SNEAK: 80, ACCURACY_WALK: 290, ACCURACY_SPRINT: 400, ACCURACY_JUMP: 800,
+        SWITCH: 12, KICK: 2,
+        PROJECTILE_SPEED: 3000, PROJECTILE_GRAVITY: 0, PROJECTILE_LIFETIME: 200, PROJECTILE_MODEL: "ray_gun",
+        EXPLOSION_RADIUS: 2, EXPLOSION_DAMAGE: 30, EXPLOSION_DECAY: 0.80,
+    },
+    "sounds": {
+        "fire": "ray_gun/fire",
+        "reload": "ray_gun/reload",
+        "playerbegin": "ray_gun/playerbegin",
+        "playerend": "ray_gun/playerend",
+        "playermid": "ray_gun/playermid",
         "crack": "tiny"
     }
 }

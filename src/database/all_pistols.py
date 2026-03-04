@@ -1,6 +1,6 @@
 
 # Imports
-from ..config.stats import DEAGLE, GLOCK17, GLOCK18, M9, M1911, MAKAROV, VZ61, add_item
+from ..config.stats import DEAGLE, GLOCK17, GLOCK18, M9, M1911, MAKAROV, RAY_GUN, VZ61, add_item
 
 
 # Main function should return a database
@@ -23,4 +23,8 @@ def main() -> None:
     add_item("glock18_zoom", stats=GLOCK18, model_path="auto")
     add_item("vz61", stats=VZ61, model_path="auto")
     add_item("vz61_zoom", stats=VZ61, model_path="auto")
+
+    # Special ray_gun
+    add_item("ray_gun", stats=RAY_GUN, model_path="auto").components["rarity"] = "epic"
+    add_item("ray_gun_zoom", stats=RAY_GUN, model_path="auto").components["rarity"] = "epic"
 
