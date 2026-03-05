@@ -36,6 +36,9 @@ function {ns}:v{version}/utils/copy_gun_data
 {slot_checks}
 # Also reload all weapons in inventory if config allows (1 = recent zombies, 0 = OG magazines only)
 execute if score #max_ammo_reload_weapons {ns}.config matches 1.. run function {ns}:v{version}/zombies/bonus/max_ammo_reload_weapons
+
+# Recompute reserve ammo display after refilling all magazines
+function {ns}:v{version}/ammo/compute_reserve
 """)
 
     # Reload ALL weapon slots (iterates all inventory)

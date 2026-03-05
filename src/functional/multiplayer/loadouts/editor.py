@@ -1159,6 +1159,10 @@ execute if score #pmag_count {ns}.data matches 1.. run function {ns}:v{version}/
 
 	write_versioned_function("multiplayer/editor/append_mag_consumable",
 f"""
+# Total bullets = mag_bullets (capacity) * pmag_count (user's chosen count)
+execute store result score #mag_bullets {ns}.data run data get storage {ns}:temp _mag_bullets
+scoreboard players operation #mag_bullets {ns}.data *= #pmag_count {ns}.data
+execute store result storage {ns}:temp _mag_bullets int 1 run scoreboard players get #mag_bullets {ns}.data
 execute store result storage {ns}:temp _inv_n int 1 run scoreboard players get #inv_slot {ns}.data
 function {ns}:v{version}/multiplayer/editor/append_mag_consumable_macro with storage {ns}:temp
 scoreboard players add #inv_slot {ns}.data 1

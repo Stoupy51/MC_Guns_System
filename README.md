@@ -8,8 +8,6 @@
 Credits for resources: MGS 4.2 by TheBradqq
 
 # TODO:
-- Fix in Loadout editor:
-  - Weapons with consumable magazines are often 1 unit. We need to multiply them by the weapon's capacity to be fair. (stack)
 - Compatibility & Developement:
   - Multiplayer mode:
     - Dynamic map definitions (spawning points in storage, called on load with function tag #mgs:multiplayer/register_maps etc.)
