@@ -29,6 +29,9 @@ scoreboard objectives add {ns}.mp.bx dummy
 scoreboard objectives add {ns}.mp.by dummy
 scoreboard objectives add {ns}.mp.bz dummy
 
+# Class change detection (for prep phase)
+scoreboard objectives add {ns}.mp.prev_class dummy
+
 # Initialize team scores (only if not already set)
 execute unless score #red {ns}.mp.team matches -2147483648.. run scoreboard players set #red {ns}.mp.team 0
 execute unless score #blue {ns}.mp.team matches -2147483648.. run scoreboard players set #blue {ns}.mp.team 0
@@ -48,8 +51,9 @@ scoreboard players set #60 {ns}.data 60
 	## Game Start (requires a map to be loaded first)
 	write_versioned_function("multiplayer/start",
 f"""
-# Prevent starting if already active
+# Prevent starting if already active or preparing
 execute if data storage {ns}:multiplayer game{{state:"active"}} run return run tellraw @s [{MGS_TAG},{{"text":"Game already in progress!","color":"red"}}]
+execute if data storage {ns}:multiplayer game{{state:"preparing"}} run return run tellraw @s [{MGS_TAG},{{"text":"Game already preparing!","color":"red"}}]
 
 # Load the selected map (reads map_id from game storage)
 function {ns}:v{version}/multiplayer/load_map_from_storage with storage {ns}:multiplayer game
@@ -59,7 +63,7 @@ execute unless score #map_load_found {ns}.data matches 1 run return run tellraw 
 data modify storage {ns}:multiplayer game.map set from storage {ns}:temp map_load.result
 
 # Initialize game
-data modify storage {ns}:multiplayer game.state set value "active"
+data modify storage {ns}:multiplayer game.state set value "preparing"
 
 # Reset scores
 scoreboard players set #red {ns}.mp.team 0
@@ -73,6 +77,9 @@ execute store result score #mp_timer {ns}.data run data get storage {ns}:multipl
 
 # Tag all non-spectator players as in-game
 scoreboard players set @a {ns}.mp.in_game 1
+
+# Set all in-game players to survival
+gamemode survival @a[scores={{{ns}.mp.in_game=1}}]
 
 # Store base coordinates for offset
 execute store result score #gm_base_x {ns}.data run data get storage {ns}:multiplayer game.map.base_coordinates[0]
@@ -113,15 +120,33 @@ execute if data storage {ns}:multiplayer game{{gamemode:"dom"}} run function {ns
 execute if data storage {ns}:multiplayer game{{gamemode:"hp"}} run function {ns}:v{version}/multiplayer/gamemodes/hp/setup
 execute if data storage {ns}:multiplayer game{{gamemode:"snd"}} run function {ns}:v{version}/multiplayer/gamemodes/snd/setup
 
+# Teleport players to spawn points
+function {ns}:v{version}/multiplayer/tp_all_to_spawns
+
+# Freeze all players (no movement during prep)
+effect give @a[scores={{{ns}.mp.in_game=1}}] darkness 10 255 true
+effect give @a[scores={{{ns}.mp.in_game=1}}] blindness 10 255 true
+effect give @a[scores={{{ns}.mp.in_game=1}}] night_vision 10 255 true
+execute as @a[scores={{{ns}.mp.in_game=1}}] run attribute @s minecraft:movement_speed base set 0
+execute as @a[scores={{{ns}.mp.in_game=1}}] run attribute @s minecraft:jump_strength base set 0
+
 # Give loadout to players who already have a class (positive = standard, negative = custom)
 execute as @a at @s unless score @s {ns}.mp.class matches 0 run function {ns}:v{version}/multiplayer/apply_class
 
-# For players with no class: auto-apply default custom loadout if set, otherwise show class dialog
+# For players with no class: auto-apply default custom loadout if set
 execute as @a at @s if score @s {ns}.mp.class matches 0 if score @s {ns}.mp.default matches 1.. run function {ns}:v{version}/multiplayer/auto_apply_default
-execute as @a at @s if score @s {ns}.mp.class matches 0 run function {ns}:v{version}/multiplayer/select_class
+
+# Show class selection dialog to EVERYONE (so they can change during prep)
+execute as @a run function {ns}:v{version}/multiplayer/select_class
+
+# Store current class for change detection during prep
+execute as @a run scoreboard players operation @s {ns}.mp.prev_class = @s {ns}.mp.class
+
+# Schedule end of prep (10 seconds = 200 ticks)
+schedule function {ns}:v{version}/multiplayer/end_prep 200t
 
 # Announce
-tellraw @a ["",[{{"text":"","color":"gold","bold":true}},"⚔ ",{{"text":"Game Started"}},"! "],{{"text":"Pick your class!","color":"yellow"}}]
+tellraw @a ["",[{{"text":"","color":"gold","bold":true}},"⚔ ",{{"text":"Preparing"}},"! "],{{"text":"Choose your class! Game starts in 10 seconds!","color":"yellow"}}]
 """)
 
 	## Load map from storage (reads map_id from game state and passes to load macro)
@@ -155,6 +180,13 @@ execute if score #_swap {ns}.data matches -2147483648.. run scoreboard players r
 f"""
 # End game
 data modify storage {ns}:multiplayer game.state set value "lobby"
+
+# Cancel scheduled prep end (in case game stopped during prep)
+schedule clear {ns}:v{version}/multiplayer/end_prep
+
+# Restore movement (in case stopped during prep)
+execute as @a[scores={{{ns}.mp.in_game=1}}] run attribute @s minecraft:movement_speed base set 0.1
+execute as @a[scores={{{ns}.mp.in_game=1}}] run attribute @s minecraft:jump_strength base set 0.42
 
 # Gamemode cleanup
 execute if data storage {ns}:multiplayer game{{gamemode:"ffa"}} run function {ns}:v{version}/multiplayer/gamemodes/ffa/cleanup
@@ -205,8 +237,9 @@ function {ns}:v{version}/multiplayer/stop
 
 	# ── Game Tick (runs once per server tick when game is active) ──
 	write_tick_file(f"""
-# Multiplayer game tick (only when active)
+# Multiplayer game tick
 execute if data storage {ns}:multiplayer game{{state:"active"}} run function {ns}:v{version}/multiplayer/game_tick
+execute if data storage {ns}:multiplayer game{{state:"preparing"}} run function {ns}:v{version}/multiplayer/prep_tick
 """)
 
 	write_versioned_function("multiplayer/game_tick",
@@ -325,4 +358,84 @@ execute if data storage {ns}:temp _oob_iter[0] run function {ns}:v{version}/mult
 """)
 	write_versioned_function("multiplayer/summon_oob_at", f"""
 $summon minecraft:marker $(x) $(y) $(z) {{Tags:["{ns}.oob_point","{ns}.gm_entity"]}}
+""")
+
+	# ── Spawn Teleportation ───────────────────────────────────────
+
+	## TP all players to appropriate spawn points based on gamemode/team
+	write_versioned_function("multiplayer/tp_all_to_spawns", f"""
+# Copy spawn lists from loaded map
+data modify storage {ns}:temp _red_spawns set from storage {ns}:multiplayer game.map.spawning_points.red
+data modify storage {ns}:temp _blue_spawns set from storage {ns}:multiplayer game.map.spawning_points.blue
+data modify storage {ns}:temp _general_spawns set from storage {ns}:multiplayer game.map.spawning_points.general
+
+# FFA: everyone uses general spawns
+execute if data storage {ns}:multiplayer game{{gamemode:"ffa"}} run data modify storage {ns}:temp _active_spawns set from storage {ns}:temp _general_spawns
+execute if data storage {ns}:multiplayer game{{gamemode:"ffa"}} as @a[scores={{{ns}.mp.in_game=1}}] run function {ns}:v{version}/multiplayer/tp_next_spawn
+
+# Team modes: TP by team
+execute unless data storage {ns}:multiplayer game{{gamemode:"ffa"}} run data modify storage {ns}:temp _active_spawns set from storage {ns}:temp _red_spawns
+execute unless data storage {ns}:multiplayer game{{gamemode:"ffa"}} as @a[scores={{{ns}.mp.in_game=1,{ns}.mp.team=1}}] run function {ns}:v{version}/multiplayer/tp_next_spawn
+
+execute unless data storage {ns}:multiplayer game{{gamemode:"ffa"}} run data modify storage {ns}:temp _active_spawns set from storage {ns}:temp _blue_spawns
+execute unless data storage {ns}:multiplayer game{{gamemode:"ffa"}} as @a[scores={{{ns}.mp.in_game=1,{ns}.mp.team=2}}] run function {ns}:v{version}/multiplayer/tp_next_spawn
+
+# Players with no team yet: use general spawns
+execute unless data storage {ns}:multiplayer game{{gamemode:"ffa"}} run data modify storage {ns}:temp _active_spawns set from storage {ns}:temp _general_spawns
+execute unless data storage {ns}:multiplayer game{{gamemode:"ffa"}} as @a[scores={{{ns}.mp.in_game=1,{ns}.mp.team=0}}] run function {ns}:v{version}/multiplayer/tp_next_spawn
+""")
+
+	## TP single player to next spawn in rotation (run as player)
+	write_versioned_function("multiplayer/tp_next_spawn", f"""
+# Read first spawn point coords (relative)
+execute store result score #_sx {ns}.data run data get storage {ns}:temp _active_spawns[0][0]
+execute store result score #_sy {ns}.data run data get storage {ns}:temp _active_spawns[0][1]
+execute store result score #_sz {ns}.data run data get storage {ns}:temp _active_spawns[0][2]
+execute store result score #_syaw {ns}.data run data get storage {ns}:temp _active_spawns[0][3] 100
+
+# Add base offset → absolute coords
+scoreboard players operation #_sx {ns}.data += #gm_base_x {ns}.data
+scoreboard players operation #_sy {ns}.data += #gm_base_y {ns}.data
+scoreboard players operation #_sz {ns}.data += #gm_base_z {ns}.data
+
+# Store for macro
+execute store result storage {ns}:temp _tp.x double 1 run scoreboard players get #_sx {ns}.data
+execute store result storage {ns}:temp _tp.y double 1 run scoreboard players get #_sy {ns}.data
+execute store result storage {ns}:temp _tp.z double 1 run scoreboard players get #_sz {ns}.data
+execute store result storage {ns}:temp _tp.yaw double 0.01 run scoreboard players get #_syaw {ns}.data
+
+# Rotate list: move first to end, then remove first
+data modify storage {ns}:temp _active_spawns append from storage {ns}:temp _active_spawns[0]
+data remove storage {ns}:temp _active_spawns[0]
+
+# TP
+function {ns}:v{version}/multiplayer/tp_player_at with storage {ns}:temp _tp
+""")
+
+	## TP macro
+	write_versioned_function("multiplayer/tp_player_at", "$tp @s $(x) $(y) $(z) $(yaw) 0")
+
+	# ── Prep Phase ────────────────────────────────────────────────
+
+	## Prep tick: during 10s warmup, detect class changes and apply immediately
+	write_versioned_function("multiplayer/prep_tick", f"""
+# Check for class changes and apply immediately
+execute as @a[scores={{{ns}.mp.in_game=1}}] unless score @s {ns}.mp.class = @s {ns}.mp.prev_class unless score @s {ns}.mp.class matches 0 at @s run function {ns}:v{version}/multiplayer/apply_class
+execute as @a[scores={{{ns}.mp.in_game=1}}] run scoreboard players operation @s {ns}.mp.prev_class = @s {ns}.mp.class
+""")
+
+	## End prep: unfreeze players, transition to active
+	write_versioned_function("multiplayer/end_prep", f"""
+# Only if still preparing (game might have been stopped)
+execute unless data storage {ns}:multiplayer game{{state:"preparing"}} run return fail
+
+# Restore movement
+execute as @a[scores={{{ns}.mp.in_game=1}}] run attribute @s minecraft:movement_speed base set 0.1
+execute as @a[scores={{{ns}.mp.in_game=1}}] run attribute @s minecraft:jump_strength base set 0.42
+
+# Set state to active
+data modify storage {ns}:multiplayer game.state set value "active"
+
+# Announce
+tellraw @a ["",[{{"text":"","color":"green","bold":true}},"⚔ ",{{"text":"GO! GO! GO!"}}]]
 """)

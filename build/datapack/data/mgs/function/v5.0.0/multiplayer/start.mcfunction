@@ -4,8 +4,9 @@
 # @within	???
 #
 
-# Prevent starting if already active
+# Prevent starting if already active or preparing
 execute if data storage mgs:multiplayer game{state:"active"} run return run tellraw @s [[{"text":"","color":"gold"},"[",{"translate": "mgs"},"] "],{"translate": "mgs.game_already_in_progress","color":"red"}]
+execute if data storage mgs:multiplayer game{state:"preparing"} run return run tellraw @s [[{"text":"","color":"gold"},"[",{"translate": "mgs"},"] "],{"translate": "mgs.game_already_preparing","color":"red"}]
 
 # Load the selected map (reads map_id from game storage)
 function mgs:v5.0.0/multiplayer/load_map_from_storage with storage mgs:multiplayer game
@@ -15,7 +16,7 @@ execute unless score #map_load_found mgs.data matches 1 run return run tellraw @
 data modify storage mgs:multiplayer game.map set from storage mgs:temp map_load.result
 
 # Initialize game
-data modify storage mgs:multiplayer game.state set value "active"
+data modify storage mgs:multiplayer game.state set value "preparing"
 
 # Reset scores
 scoreboard players set #red mgs.mp.team 0
@@ -29,6 +30,9 @@ execute store result score #mp_timer mgs.data run data get storage mgs:multiplay
 
 # Tag all non-spectator players as in-game
 scoreboard players set @a mgs.mp.in_game 1
+
+# Set all in-game players to survival
+gamemode survival @a[scores={mgs.mp.in_game=1}]
 
 # Store base coordinates for offset
 execute store result score #gm_base_x mgs.data run data get storage mgs:multiplayer game.map.base_coordinates[0]
@@ -69,13 +73,28 @@ execute if data storage mgs:multiplayer game{gamemode:"dom"} run function mgs:v5
 execute if data storage mgs:multiplayer game{gamemode:"hp"} run function mgs:v5.0.0/multiplayer/gamemodes/hp/setup
 execute if data storage mgs:multiplayer game{gamemode:"snd"} run function mgs:v5.0.0/multiplayer/gamemodes/snd/setup
 
+# Teleport players to spawn points
+function mgs:v5.0.0/multiplayer/tp_all_to_spawns
+
+# Freeze all players (no movement during prep)
+execute as @a[scores={mgs.mp.in_game=1}] run attribute @s minecraft:movement_speed base set 0
+execute as @a[scores={mgs.mp.in_game=1}] run attribute @s minecraft:jump_strength base set 0
+
 # Give loadout to players who already have a class (positive = standard, negative = custom)
 execute as @a at @s unless score @s mgs.mp.class matches 0 run function mgs:v5.0.0/multiplayer/apply_class
 
-# For players with no class: auto-apply default custom loadout if set, otherwise show class dialog
+# For players with no class: auto-apply default custom loadout if set
 execute as @a at @s if score @s mgs.mp.class matches 0 if score @s mgs.mp.default matches 1.. run function mgs:v5.0.0/multiplayer/auto_apply_default
-execute as @a at @s if score @s mgs.mp.class matches 0 run function mgs:v5.0.0/multiplayer/select_class
+
+# Show class selection dialog to EVERYONE (so they can change during prep)
+execute as @a run function mgs:v5.0.0/multiplayer/select_class
+
+# Store current class for change detection during prep
+execute as @a run scoreboard players operation @s mgs.mp.prev_class = @s mgs.mp.class
+
+# Schedule end of prep (10 seconds = 200 ticks)
+schedule function mgs:v5.0.0/multiplayer/end_prep 200t
 
 # Announce
-tellraw @a ["",[{"text":"","color":"gold","bold":true},"⚔ ",{"translate": "mgs.game_started"},"! "],{"translate": "mgs.pick_your_class","color":"yellow"}]
+tellraw @a ["",[{"text":"","color":"gold","bold":true},"⚔ ",{"translate": "mgs.preparing"},"! "],{"translate": "mgs.choose_your_class_game_starts_in_10_seconds","color":"yellow"}]
 

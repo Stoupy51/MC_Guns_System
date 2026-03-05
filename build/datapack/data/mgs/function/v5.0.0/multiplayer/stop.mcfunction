@@ -9,6 +9,13 @@
 # End game
 data modify storage mgs:multiplayer game.state set value "lobby"
 
+# Cancel scheduled prep end (in case game stopped during prep)
+schedule clear mgs:v5.0.0/multiplayer/end_prep
+
+# Restore movement (in case stopped during prep)
+execute as @a[scores={mgs.mp.in_game=1}] run attribute @s minecraft:movement_speed base set 0.1
+execute as @a[scores={mgs.mp.in_game=1}] run attribute @s minecraft:jump_strength base set 0.42
+
 # Gamemode cleanup
 execute if data storage mgs:multiplayer game{gamemode:"ffa"} run function mgs:v5.0.0/multiplayer/gamemodes/ffa/cleanup
 execute if data storage mgs:multiplayer game{gamemode:"tdm"} run function mgs:v5.0.0/multiplayer/gamemodes/tdm/cleanup

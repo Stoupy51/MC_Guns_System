@@ -414,6 +414,9 @@ scoreboard objectives add mgs.mp.bx dummy
 scoreboard objectives add mgs.mp.by dummy
 scoreboard objectives add mgs.mp.bz dummy
 
+# Class change detection (for prep phase)
+scoreboard objectives add mgs.mp.prev_class dummy
+
 # Initialize team scores (only if not already set)
 execute unless score #red mgs.mp.team matches -2147483648.. run scoreboard players set #red mgs.mp.team 0
 execute unless score #blue mgs.mp.team matches -2147483648.. run scoreboard players set #blue mgs.mp.team 0
