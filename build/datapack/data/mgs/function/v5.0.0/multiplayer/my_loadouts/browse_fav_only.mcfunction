@@ -7,7 +7,7 @@
 #
 
 # Initialize dialog
-data modify storage mgs:temp dialog set value {type:"minecraft:multi_action",title:{text:"My Loadouts",color:"gold",bold:true},body:{type:"minecraft:item",item:{id:"minecraft:written_book"},description:{contents:{text:"Manage your custom loadouts.",color:"gray"}},show_decoration:false,show_tooltip:true},actions:[],columns:3,after_action:"close",exit_action:{label:"Back",action:{type:"run_command",command:"/trigger mgs.player.config set 4"}}}
+data modify storage mgs:temp dialog set value {type:"minecraft:multi_action",title:{translate: "mgs.my_loadouts",color:"gold",bold:true},body:{type:"minecraft:item",item:{id:"minecraft:written_book"},description:{contents:{translate: "mgs.manage_your_custom_loadouts",color:"gray"}},show_decoration:false,show_tooltip:true},actions:[],columns:3,after_action:"close",exit_action:{label:"Back",action:{type:"run_command",command:"/trigger mgs.player.config set 4"}}}
 data modify storage mgs:temp dialog.title set value {translate: "mgs.my_loadouts_favorites",color:"gold",bold:true}
 
 # Add filter/sort buttons (favorites tab active)

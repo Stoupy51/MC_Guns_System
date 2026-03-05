@@ -44,11 +44,14 @@ execute as @a run function mgs:v5.0.0/projectile/match_shooter
 execute if score #found mgs.data matches 0 as @e[tag=mgs.armed] run function mgs:v5.0.0/projectile/match_shooter
 
 # Apply bullet direct-hit damage to the entity tagged in on_collision (if entity was hit, not just a block)
-# Read damage amount from projectile config (@s = projectile here)
+# Give shooter ticking tag so DPS signal can find them
+tag @n[tag=mgs.temp_shooter] add mgs.ticking
 data modify storage mgs:input with set value {target:"@s", amount:0.0f, attacker:"@n[tag=mgs.temp_shooter]"}
 execute store result storage mgs:input with.amount float 0.1 run data get entity @s data.config.damage 10
+data modify storage mgs:input with.weapon set from storage mgs:gun all
 execute as @n[tag=mgs.direct_hit,tag=!mgs.temp_shooter] run function mgs:v5.0.0/utils/signal_and_damage
 tag @e[tag=mgs.direct_hit] remove mgs.direct_hit
+tag @n[tag=mgs.temp_shooter] remove mgs.ticking
 
 # Apply area damage to nearby entities (macro for configurable radius)
 execute store result storage mgs:temp expl.radius_float float 1 run data get entity @s data.config.expl_radius

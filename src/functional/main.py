@@ -145,14 +145,13 @@ execute as @e[type=player,sort=random] at @s run function {ns}:v{version}/player
     # These are called at various events in the system, with relevant data stored in mgs:signals storage
     signal_events: list[str] = [
         "on_shoot",             # @s = shooter player, weapon data in mgs:signals
-        "on_hit_entity",        # @s = hit entity, damage/headshot/weapon in mgs:signals
         "on_hit_block",         # @s = raycast marker, block/position/weapon in mgs:signals
         "on_reload",            # @s = reloading player, weapon data in mgs:signals
         "on_zoom",              # @s = zooming player, weapon data in mgs:signals
         "on_unzoom",            # @s = unzooming player, weapon data in mgs:signals
         "on_switch",            # @s = player, weapon data in mgs:signals
         "on_kill",              # @s = killer player, victim/weapon data in mgs:signals
-        "damage",           # @s = damaged entity, damage/weapon/attacker in mgs:signals
+        "damage",           # @s = damaged entity, damage/weapon/attacker in mgs:input with
         "on_explosion",         # @s = projectile entity, explosion data in mgs:signals
         "on_headshot",          # @s = hit entity, damage/weapon in mgs:signals
         "on_fire_mode_change",  # @s = player, weapon/new fire mode in mgs:signals

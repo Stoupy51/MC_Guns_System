@@ -218,11 +218,14 @@ execute as @a run function {ns}:v{version}/projectile/match_shooter
 execute if score #found {ns}.data matches 0 as @e[tag={ns}.armed] run function {ns}:v{version}/projectile/match_shooter
 
 # Apply bullet direct-hit damage to the entity tagged in on_collision (if entity was hit, not just a block)
-# Read damage amount from projectile config (@s = projectile here)
+# Give shooter ticking tag so DPS signal can find them
+tag @n[tag={ns}.temp_shooter] add {ns}.ticking
 data modify storage {ns}:input with set value {{target:"@s", amount:0.0f, attacker:"@n[tag={ns}.temp_shooter]"}}
 execute store result storage {ns}:input with.amount float 0.1 run data get entity @s data.config.{DAMAGE} 10
+data modify storage {ns}:input with.weapon set from storage {ns}:gun all
 execute as @n[tag={ns}.direct_hit,tag=!{ns}.temp_shooter] run function {ns}:v{version}/utils/signal_and_damage
 tag @e[tag={ns}.direct_hit] remove {ns}.direct_hit
+tag @n[tag={ns}.temp_shooter] remove {ns}.ticking
 
 # Apply area damage to nearby entities (macro for configurable radius)
 execute store result storage {ns}:temp expl.radius_float float 1 run data get entity @s data.config.{EXPLOSION_RADIUS}
@@ -335,17 +338,11 @@ tag @n[tag={ns}.temp_shooter] add {ns}.ticking
 execute as @n[tag={ns}.temp_shooter] if score @s {ns}.special.instant_kill matches 1.. as @s[tag=!{ns}.no_instant_kill] run scoreboard players set #expl_dmg {ns}.data 99999
 
 # Apply damage using the existing damage utility
-# Prepare macro arguments: target=@s, amount=damage (float with 0.1 precision), attacker=shooter
+# Apply damage, fire damage signal (weapon info included for handlers)
 data modify storage {ns}:input with set value {{target:"@s", amount:0.0f, attacker:"@n[tag={ns}.temp_shooter]"}}
 execute store result storage {ns}:input with.amount float 0.1 run scoreboard players get #expl_dmg {ns}.data
+data modify storage {ns}:input with.weapon set from storage {ns}:gun all
 function {ns}:v{version}/utils/signal_and_damage
-
-# Signal: on_hit_entity (@s = hit entity, weapon/damage info in mgs:signals)
-data modify storage {ns}:signals on_hit_entity set value {{}}
-data modify storage {ns}:signals on_hit_entity.weapon set from storage {ns}:gun all
-execute store result storage {ns}:signals on_hit_entity.damage float 0.1 run scoreboard players get #expl_dmg {ns}.data
-data modify storage {ns}:signals on_hit_entity.target set from entity @s UUID
-function #{ns}:signals/on_hit_entity
 
 # Signal: on_kill (if entity died after explosion damage, @s switches to shooter)
 execute unless entity @s as @n[tag={ns}.temp_shooter] run data modify storage {ns}:signals on_kill set value {{}}

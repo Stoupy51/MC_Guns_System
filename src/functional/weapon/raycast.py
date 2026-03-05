@@ -288,17 +288,11 @@ execute if score #is_headshot {ns}.data matches 1 run data modify storage {ns}:s
 execute if score #is_headshot {ns}.data matches 1 run execute store result storage {ns}:signals on_headshot.damage float 0.1 run scoreboard players get #damage {ns}.data
 execute if score #is_headshot {ns}.data matches 1 run function #{ns}:signals/on_headshot
 
-# Damage entity
+# Damage entity - include weapon and headshot info in mgs:input with for the damage signal
 execute store result storage {ns}:input with.amount float 0.1 run scoreboard players get #damage {ns}.data
+data modify storage {ns}:input with.weapon set from storage {ns}:gun all
+execute store result storage {ns}:input with.headshot int 1 run scoreboard players get #is_headshot {ns}.data
 function {ns}:v{version}/utils/signal_and_damage
-
-# Signal: on_hit_entity (@s = hit entity, weapon/damage info in mgs:signals)
-data modify storage {ns}:signals on_hit_entity set value {{}}
-data modify storage {ns}:signals on_hit_entity.weapon set from storage {ns}:gun all
-execute store result storage {ns}:signals on_hit_entity.damage float 0.1 run scoreboard players get #damage {ns}.data
-execute store result storage {ns}:signals on_hit_entity.headshot int 1 run scoreboard players get #is_headshot {ns}.data
-data modify storage {ns}:signals on_hit_entity.target set from entity @s UUID
-function #{ns}:signals/on_hit_entity
 
 # Signal: on_kill (if entity died, @s switches to shooter player)
 execute unless entity @s as @n[tag={ns}.ticking] run data modify storage {ns}:signals on_kill set value {{}}

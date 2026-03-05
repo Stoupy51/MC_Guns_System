@@ -47,18 +47,19 @@
 # @args		slot (string)
 #
 
-# Extract magazine data into storage
+# Extract magazine data into storage (sets #bullets = CAPACITY)
 tag @s add mgs.refilling_mag
+scoreboard players set #stack_size mgs.data 1
 $execute summon item_display run function mgs:v5.0.0/zombies/bonus/extract_mag_data {slot:"$(slot)"}
 tag @s remove mgs.refilling_mag
 
-# Apply refilled ammo count to magazine item
-# TODO: Fix the support for "Consumable Magazine" (set to max_stack_size instead)
+# Consumable magazines use stack count as ammo - just set count to capacity and done
+execute if score #stack_size mgs.data matches 2.. run scoreboard players operation #bullets mgs.data = #stack_size mgs.data
+$execute if score #stack_size mgs.data matches 2.. run return run item modify entity @s $(slot) mgs:v5.0.0/set_consumable_count
+execute if score #stack_size mgs.data matches 2.. run scoreboard players set #bullets mgs.data 1
+
+# Regular magazines: update remaining_bullets NBT, restore full model, and refresh lore
 $item modify entity @s $(slot) mgs:v5.0.0/update_ammo
-
-# Set full magazine model (remove empty state)
-function mgs:v5.0.0/zombies/bonus/set_full_mag_model with storage mgs:temp refill
-
-# Update magazine lore display
+execute if score #stack_size mgs.data matches 1 run function mgs:v5.0.0/zombies/bonus/set_full_mag_model with storage mgs:temp refill
 $function mgs:v5.0.0/ammo/modify_mag_lore {slot:"$(slot)"}
 

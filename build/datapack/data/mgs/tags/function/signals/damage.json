@@ -1,5 +1,6 @@
 {
 	"values": [
+		"mgs:v5.0.0/weapon/dps_collect",
 		"mgs:v5.0.0/player/config/damage_debug",
 		"mgs:v5.0.0/player/config/hitmarker_sound"
 	]

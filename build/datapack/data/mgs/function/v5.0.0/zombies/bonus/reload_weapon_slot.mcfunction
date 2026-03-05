@@ -55,7 +55,11 @@ tag @s remove mgs.reloading_weapon
 # Set player scoreboard to capacity (needed by modify_lore)
 scoreboard players operation @s mgs.remaining_bullets = #bullets mgs.data
 
-# Apply new ammo count to the weapon item
+# If this is the active mainhand weapon (remaining_bullets = -1 sentinel), only update lore
+# (don't write CAPACITY to item NBT - the player's scoreboard is the source of truth)
+$execute if items entity @s $(slot) *[custom_data~{mgs:{stats:{remaining_bullets:-1}}}] run return run function mgs:v5.0.0/ammo/modify_lore {slot:"$(slot)"}
+
+# For slots with inactive weapons: write CAPACITY to item NBT
 $item modify entity @s $(slot) mgs:v5.0.0/update_ammo
 
 # Update weapon lore
