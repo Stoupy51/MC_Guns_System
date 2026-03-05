@@ -78,6 +78,9 @@ execute store result score @s mgs.previous_selected run data get storage mgs:gun
 scoreboard players enable @s mgs.player.config
 execute if score @s mgs.player.config matches 1.. run function mgs:v5.0.0/player/config/process
 
+# Map editor tick (particles + actionbar) for players in editor mode
+execute if score @s mgs.mp.map_edit matches 1 run function mgs:v5.0.0/maps/editor/tick
+
 # Multiplayer: detect respawn (death_count incremented by deathCount criterion)
 execute if data storage mgs:multiplayer game{state:"active"} if score @s mgs.mp.death_count matches 1.. run function mgs:v5.0.0/multiplayer/on_respawn
 

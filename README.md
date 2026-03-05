@@ -8,8 +8,6 @@
 Credits for resources: MGS 4.2 by TheBradqq
 
 # TODO:
-- Fix: translations conflicts
-- Raygun reload too loud
 - Compatibility & Developement:
   - Multiplayer mode:
     - Dynamic map definitions (spawning points in storage, called on load with function tag #mgs:maps/register etc.)
@@ -19,12 +17,12 @@ Credits for resources: MGS 4.2 by TheBradqq
         - "name": the map name (string)
         - "description": the map description (string)
         - "base_coordinates": the base coordinates where everything will be relative to (for easy copy/paste)
-        - "boundaries": the map boundaries defined as a list of 2 coordinates (x,y,z) representing the opposite corners of a cuboid (going outside will kill you if not creative or spectator, if you have "{ns}.mp.in_game" tag)
+        - "boundaries": the map boundaries defined as a list of 2 coordinates (x,y,z) representing the opposite corners of a cuboid (going outside will kill you if not creative or spectator, if you have "{ns}.mp.in_game" tag) (need to normalize so x1 < x2, y1 < y2, z1 < z2 even if swap is needed)
         - "spawning_points":
-          - "red": list of starting red team spawning points (list of x,y,z,yaw,pitch coordinates)
+          - "red": list of starting red team spawning points (list of x,y,z,yaw coordinates)
           - "blue": list of starting blue team spawning points
           - "general": list of general spawning points (for free for all or TDM respawn)
-          - Each coordinate will be a list of 5 values (x,y,z,yaw,pitch)
+          - Each coordinate will be a list of 4 values (x,y,z,yaw)
         - "out_of_bounds": list of coordinates that kills any player in a radius of 5 blocks (5 by default but configurable)
         - "search_and_destroy": list of coordinates for search and destroy objectives (when gamemode is active)
         - "domination": list of coordinates for points to capture (domination)
