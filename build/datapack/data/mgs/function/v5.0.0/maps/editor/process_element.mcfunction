@@ -39,6 +39,9 @@ execute if entity @s[tag=mgs.element.search_and_destroy] run return run kill @s
 execute if entity @s[tag=mgs.element.domination] run function mgs:v5.0.0/maps/editor/handle_point
 execute if entity @s[tag=mgs.element.domination] run return run kill @s
 
+execute if entity @s[tag=mgs.element.hardpoint] run function mgs:v5.0.0/maps/editor/handle_point
+execute if entity @s[tag=mgs.element.hardpoint] run return run kill @s
+
 # Fallback: unknown type, just kill
 kill @s
 

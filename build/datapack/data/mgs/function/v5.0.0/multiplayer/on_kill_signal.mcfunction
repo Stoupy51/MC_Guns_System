@@ -7,15 +7,10 @@
 # Only process if multiplayer game is active
 execute unless data storage mgs:multiplayer game{state:"active"} run return fail
 
-# @s = killer player at this point
-scoreboard players add @s mgs.mp.kills 1
-
-# Update team score based on killer's team
-execute if score @s mgs.mp.team matches 1 run scoreboard players add #red mgs.mp.team 1
-execute if score @s mgs.mp.team matches 2 run scoreboard players add #blue mgs.mp.team 1
-
-# Check win condition (score limit)
-execute store result score #score_limit mgs.data run data get storage mgs:multiplayer game.score_limit
-execute if score #red mgs.mp.team >= #score_limit mgs.data run function mgs:v5.0.0/multiplayer/team_wins {team:"Red"}
-execute if score #blue mgs.mp.team >= #score_limit mgs.data run function mgs:v5.0.0/multiplayer/team_wins {team:"Blue"}
+# Dispatch to gamemode-specific kill handler
+execute if data storage mgs:multiplayer game{gamemode:"ffa"} run return run function mgs:v5.0.0/multiplayer/gamemodes/ffa/on_kill
+execute if data storage mgs:multiplayer game{gamemode:"tdm"} run return run function mgs:v5.0.0/multiplayer/gamemodes/tdm/on_kill
+execute if data storage mgs:multiplayer game{gamemode:"dom"} run return run function mgs:v5.0.0/multiplayer/gamemodes/dom/on_kill
+execute if data storage mgs:multiplayer game{gamemode:"hp"} run return run function mgs:v5.0.0/multiplayer/gamemodes/hp/on_kill
+execute if data storage mgs:multiplayer game{gamemode:"snd"} run return run function mgs:v5.0.0/multiplayer/gamemodes/snd/on_kill
 

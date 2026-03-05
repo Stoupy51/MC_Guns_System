@@ -4,7 +4,6 @@
 from stewbeet import Mem, write_versioned_function
 
 from ...helpers import MGS_TAG
-
 from .catalogs import (
 	TRIG_DELETE_BASE,
 	TRIG_FAVORITE_BASE,

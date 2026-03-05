@@ -46,3 +46,8 @@ data modify storage mgs:temp _point_iter set from storage mgs:temp map_edit.map.
 scoreboard players set #_point_tag mgs.data 4
 execute if data storage mgs:temp _point_iter[0] run function mgs:v5.0.0/maps/editor/summon_point_iter
 
+# Summon hardpoint markers
+data modify storage mgs:temp _point_iter set from storage mgs:temp map_edit.map.hardpoint
+scoreboard players set #_point_tag mgs.data 5
+execute if data storage mgs:temp _point_iter[0] run function mgs:v5.0.0/maps/editor/summon_point_iter
+

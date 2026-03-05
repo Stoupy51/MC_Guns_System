@@ -7,6 +7,7 @@
 #			mgs:v5.0.0/maps/editor/save_exit {path:"out_of_bounds"} [ as @e[tag=...] & at @s ]
 #			mgs:v5.0.0/maps/editor/save_exit {path:"search_and_destroy"} [ as @e[tag=...] & at @s ]
 #			mgs:v5.0.0/maps/editor/save_exit {path:"domination"} [ as @e[tag=...] & at @s ]
+#			mgs:v5.0.0/maps/editor/save_exit {path:"hardpoint"} [ as @e[tag=...] & at @s ]
 #
 # @args		path (string)
 #

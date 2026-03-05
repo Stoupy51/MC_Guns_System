@@ -1,9 +1,10 @@
 
 #> mgs:v5.0.0/maps/multiplayer/load
 #
-# @within	mgs:v5.0.0/maps/multiplayer/load {id:"map_id",override:{}}
+# @within	mgs:v5.0.0/multiplayer/load_map_from_storage {id:"$(map_id)",override:{}}
+#			mgs:v5.0.0/maps/multiplayer/load {id:"map_id",override:{}}
 #
-# @args		id (string)
+# @args		id (unknown)
 #			override (compound)
 #
 
@@ -12,7 +13,7 @@
 # Override can contain: dimension:"minecraft:overworld", base_coordinates:[x,y,z]
 
 # Store the target ID for search
-$data modify storage mgs:temp map_load.target_id set value "$(id)"
+$data modify storage mgs:temp map_load.target set value {id:"$(id)"}
 $data modify storage mgs:temp map_load.override set value $(override)
 
 # Copy full map list to search through

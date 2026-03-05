@@ -1,0 +1,20 @@
+
+#> mgs:v5.0.0/multiplayer/gamemodes/dom/setup
+#
+# @within	mgs:v5.0.0/multiplayer/start
+#
+
+tellraw @a [[{"text":"","color":"gold"},"[",{"translate": "mgs"},"] "],{"translate": "mgs.domination_capture_and_hold_zones_to_earn_points","color":"yellow"}]
+
+# Store base coordinates for offset computation
+execute store result score #gm_base_x mgs.data run data get storage mgs:multiplayer game.map.base_coordinates[0]
+execute store result score #gm_base_y mgs.data run data get storage mgs:multiplayer game.map.base_coordinates[1]
+execute store result score #gm_base_z mgs.data run data get storage mgs:multiplayer game.map.base_coordinates[2]
+
+# Summon capture point markers from relative coords
+data modify storage mgs:temp _dom_iter set from storage mgs:multiplayer game.map.domination
+execute if data storage mgs:temp _dom_iter[0] run function mgs:v5.0.0/multiplayer/gamemodes/dom/summon_point
+
+# Initialize scoring interval timer (score every 5 seconds = 100 ticks)
+scoreboard players set #dom_score_timer mgs.data 100
+

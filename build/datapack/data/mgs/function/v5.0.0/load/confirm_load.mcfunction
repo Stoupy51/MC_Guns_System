@@ -406,13 +406,29 @@ scoreboard objectives add mgs.mp.kills dummy
 scoreboard objectives add mgs.mp.deaths dummy
 # Round timer (ticks remaining)
 scoreboard objectives add mgs.mp.timer dummy
+# In-game tag scoreboard (1 = in active game)
+scoreboard objectives add mgs.mp.in_game dummy
+
+# Boundary checking coords
+scoreboard objectives add mgs.mp.bx dummy
+scoreboard objectives add mgs.mp.by dummy
+scoreboard objectives add mgs.mp.bz dummy
 
 # Initialize team scores (only if not already set)
 execute unless score #red mgs.mp.team matches -2147483648.. run scoreboard players set #red mgs.mp.team 0
 execute unless score #blue mgs.mp.team matches -2147483648.. run scoreboard players set #blue mgs.mp.team 0
 
-# Initialize game state
-data modify storage mgs:multiplayer game set value {state:"lobby",gamemode:"tdm",score_limit:30,time_limit:12000}
+# Initialize game state (only if not yet set)
+execute unless data storage mgs:multiplayer game run data modify storage mgs:multiplayer game set value {state:"lobby",gamemode:"tdm",score_limit:30,time_limit:12000,map_id:"hijacked"}
+
+# Constants for timer math
+scoreboard players set #20 mgs.data 20
+scoreboard players set #60 mgs.data 60
+
+# Gamemode scoreboards
+scoreboard objectives add mgs.mp.dom_progress dummy
+scoreboard objectives add mgs.mp.dom_owner dummy
+scoreboard objectives add mgs.mp.gm_timer dummy
 
 # Create teams
 execute unless score #mp_teams_created mgs.data matches 1 run team add mgs.red

@@ -1,12 +1,12 @@
 
 #> mgs:v5.0.0/maps/multiplayer/check_map_id
 #
-# @within	mgs:v5.0.0/maps/multiplayer/find_map with storage mgs:temp map_load.target_id
+# @within	mgs:v5.0.0/maps/multiplayer/find_map with storage mgs:temp map_load.target
 #
 # @args		id (unknown)
 #
 
-$execute store success score #map_load_found mgs.data if data storage mgs:temp map_load{check:{id:"$(id)"}}
+$execute store success score #map_load_found mgs.data if data storage mgs:temp map_load.check{id:"$(id)"}
 execute if score #map_load_found mgs.data matches 1 run data modify storage mgs:temp map_load.result set from storage mgs:temp map_load.check
 
 # Apply base_coordinates override if present
