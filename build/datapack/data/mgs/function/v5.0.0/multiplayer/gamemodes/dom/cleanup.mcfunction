@@ -5,4 +5,5 @@
 #
 
 kill @e[tag=mgs.dom_point]
+kill @e[tag=mgs.dom_label]
 

@@ -9,7 +9,7 @@ scoreboard players remove #hp_rotate_timer mgs.data 1
 execute if score #hp_rotate_timer mgs.data matches ..0 run function mgs:v5.0.0/multiplayer/gamemodes/hp/rotate
 
 # Show particles at zone corners
-execute at @e[tag=mgs.hp_corner] run particle dust{color:[0.5,0.0,0.5],scale:1.5} ~ ~1 ~ 0.5 0.5 0.5 0 10
+execute at @e[tag=mgs.hp_corner] run particle dust{color:[0.5,0.0,0.5],scale:1.5} ~ ~1 ~ 4 0.5 4 0 10
 
 # Count teams in zone: check players between the two corners
 # Store corner A position

@@ -11,6 +11,7 @@ tellraw @a [[{"text":"","color":"gold"},"[",{"translate": "mgs"},"] "],{"transla
 # Show which team attacks
 execute if score #snd_attackers mgs.data matches 1 run tellraw @a [[{"text":"","color":"gold"},"[",{"translate": "mgs"},"] "],{"translate": "mgs.red","color":"red"},{"translate": "mgs.attacks"},{"translate": "mgs.blue","color":"blue"},{"translate": "mgs.defends"}]
 execute if score #snd_attackers mgs.data matches 2 run tellraw @a [[{"text":"","color":"gold"},"[",{"translate": "mgs"},"] "],{"translate": "mgs.blue","color":"blue"},{"translate": "mgs.attacks"},{"translate": "mgs.red","color":"red"},{"translate": "mgs.defends"}]
+playsound minecraft:block.note_block.harp player @a ~ ~ ~ 1 1.0
 
 # Reset bomb state
 scoreboard players set #snd_bomb_state mgs.data 0

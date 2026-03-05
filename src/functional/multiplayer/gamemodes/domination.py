@@ -19,6 +19,9 @@ execute store result score #gm_base_x {ns}.data run data get storage {ns}:multip
 execute store result score #gm_base_y {ns}.data run data get storage {ns}:multiplayer game.map.base_coordinates[1]
 execute store result score #gm_base_z {ns}.data run data get storage {ns}:multiplayer game.map.base_coordinates[2]
 
+# Initialize zone counter for labeling (A, B, C...)
+scoreboard players set #dom_zone_idx {ns}.data 0
+
 # Summon capture point markers from relative coords
 data modify storage {ns}:temp _dom_iter set from storage {ns}:multiplayer game.map.domination
 execute if data storage {ns}:temp _dom_iter[0] run function {ns}:v{version}/multiplayer/gamemodes/dom/summon_point
@@ -44,7 +47,15 @@ execute store result storage {ns}:temp _dom_pos.x double 1 run scoreboard player
 execute store result storage {ns}:temp _dom_pos.y double 1 run scoreboard players get #_ry {ns}.data
 execute store result storage {ns}:temp _dom_pos.z double 1 run scoreboard players get #_rz {ns}.data
 
-# Summon
+# Assign zone label (A, B, C, D, E)
+execute if score #dom_zone_idx {ns}.data matches 0 run data modify storage {ns}:temp _dom_pos.label set value "A"
+execute if score #dom_zone_idx {ns}.data matches 1 run data modify storage {ns}:temp _dom_pos.label set value "B"
+execute if score #dom_zone_idx {ns}.data matches 2 run data modify storage {ns}:temp _dom_pos.label set value "C"
+execute if score #dom_zone_idx {ns}.data matches 3 run data modify storage {ns}:temp _dom_pos.label set value "D"
+execute if score #dom_zone_idx {ns}.data matches 4 run data modify storage {ns}:temp _dom_pos.label set value "E"
+scoreboard players add #dom_zone_idx {ns}.data 1
+
+# Summon marker + text label
 function {ns}:v{version}/multiplayer/gamemodes/dom/summon_point_at with storage {ns}:temp _dom_pos
 
 # Advance
@@ -52,9 +63,10 @@ data remove storage {ns}:temp _dom_iter[0]
 execute if data storage {ns}:temp _dom_iter[0] run function {ns}:v{version}/multiplayer/gamemodes/dom/summon_point
 """)
 
-	## DOM: Summon marker at computed absolute coords (macro)
+	## DOM: Summon marker + text label at computed absolute coords (macro)
 	write_versioned_function("multiplayer/gamemodes/dom/summon_point_at", f"""
 $summon minecraft:marker $(x) $(y) $(z) {{Tags:["{ns}.dom_point","{ns}.gm_entity"]}}
+$summon minecraft:text_display $(x) $(y) $(z) {{Tags:["{ns}.dom_label","{ns}.gm_entity","{ns}.dom_$(label)"],billboard:"vertical",text:{{"text":"$(label)","color":"yellow","bold":true}},transformation:{{translation:[0.0f,2.0f,0.0f],left_rotation:[0.0f,0.0f,0.0f,1.0f],scale:[3.0f,3.0f,3.0f],right_rotation:[0.0f,0.0f,0.0f,1.0f]}},shadow:true,see_through:true}}
 """)
 
 	## DOM Tick: Check capture progress + score
@@ -99,12 +111,16 @@ scoreboard players add @s {ns}.mp.dom_progress 2
 execute if score @s {ns}.mp.dom_progress matches 101.. run scoreboard players set @s {ns}.mp.dom_progress 100
 
 # If crossed 0 from negative (was blue, now contested), briefly neutral
-execute if score #_dom_prog {ns}.data matches ..-1 if score @s {ns}.mp.dom_progress matches 0.. run scoreboard players set @s {ns}.mp.dom_owner 0
 execute if score #_dom_prog {ns}.data matches ..-1 if score @s {ns}.mp.dom_progress matches 0.. run tellraw @a [{MGS_TAG},{{"text":"Domination point neutralized!","color":"yellow"}}]
+execute if score #_dom_prog {ns}.data matches ..-1 if score @s {ns}.mp.dom_progress matches 0.. run playsound minecraft:block.note_block.bass player @a ~ ~ ~ 1 0.5
+execute if score #_dom_prog {ns}.data matches ..-1 if score @s {ns}.mp.dom_progress matches 0.. run scoreboard players set @s {ns}.mp.dom_owner 0
+execute if score #_dom_prog {ns}.data matches ..-1 if score @s {ns}.mp.dom_progress matches 0.. run data modify entity @n[tag={ns}.dom_label,distance=..1] text.color set value "yellow"
 
 # If reached 100, captured by red
-execute if score @s {ns}.mp.dom_progress matches 100 unless score @s {ns}.mp.dom_owner matches 1 run scoreboard players set @s {ns}.mp.dom_owner 1
 execute if score @s {ns}.mp.dom_progress matches 100 unless score @s {ns}.mp.dom_owner matches 1 run tellraw @a [{MGS_TAG},{{"text":"Red","color":"red"}},{{"text":" captured a point!","color":"yellow"}}]
+execute if score @s {ns}.mp.dom_progress matches 100 unless score @s {ns}.mp.dom_owner matches 1 run playsound minecraft:block.note_block.bell player @a ~ ~ ~ 1 1.2
+execute if score @s {ns}.mp.dom_progress matches 100 unless score @s {ns}.mp.dom_owner matches 1 run data modify entity @n[tag={ns}.dom_label,distance=..1] text.color set value "red"
+execute if score @s {ns}.mp.dom_progress matches 100 unless score @s {ns}.mp.dom_owner matches 1 run scoreboard players set @s {ns}.mp.dom_owner 1
 """)
 
 	## DOM: Capture for blue (progress goes -)
@@ -117,12 +133,16 @@ scoreboard players remove @s {ns}.mp.dom_progress 2
 execute if score @s {ns}.mp.dom_progress matches ..-101 run scoreboard players set @s {ns}.mp.dom_progress -100
 
 # If crossed 0 from positive (was red, now contested)
-execute if score #_dom_prog {ns}.data matches 1.. if score @s {ns}.mp.dom_progress matches ..0 run scoreboard players set @s {ns}.mp.dom_owner 0
 execute if score #_dom_prog {ns}.data matches 1.. if score @s {ns}.mp.dom_progress matches ..0 run tellraw @a [{MGS_TAG},{{"text":"Domination point neutralized!","color":"yellow"}}]
+execute if score #_dom_prog {ns}.data matches 1.. if score @s {ns}.mp.dom_progress matches ..0 run playsound minecraft:block.note_block.bass player @a ~ ~ ~ 1 0.5
+execute if score #_dom_prog {ns}.data matches 1.. if score @s {ns}.mp.dom_progress matches ..0 run scoreboard players set @s {ns}.mp.dom_owner 0
+execute if score #_dom_prog {ns}.data matches 1.. if score @s {ns}.mp.dom_progress matches ..0 run data modify entity @n[tag={ns}.dom_label,distance=..1] text.color set value "yellow"
 
 # If reached -100, captured by blue
-execute if score @s {ns}.mp.dom_progress matches -100 unless score @s {ns}.mp.dom_owner matches 2 run scoreboard players set @s {ns}.mp.dom_owner 2
 execute if score @s {ns}.mp.dom_progress matches -100 unless score @s {ns}.mp.dom_owner matches 2 run tellraw @a [{MGS_TAG},{{"text":"Blue","color":"blue"}},{{"text":" captured a point!","color":"yellow"}}]
+execute if score @s {ns}.mp.dom_progress matches -100 unless score @s {ns}.mp.dom_owner matches 2 run playsound minecraft:block.note_block.bell player @a ~ ~ ~ 1 0.8
+execute if score @s {ns}.mp.dom_progress matches -100 unless score @s {ns}.mp.dom_owner matches 2 run data modify entity @n[tag={ns}.dom_label,distance=..1] text.color set value "blue"
+execute if score @s {ns}.mp.dom_progress matches -100 unless score @s {ns}.mp.dom_owner matches 2 run scoreboard players set @s {ns}.mp.dom_owner 2
 """)
 
 	## DOM: Score tick - +1 per owned point
@@ -141,12 +161,18 @@ execute if score #red {ns}.mp.team >= #score_limit {ns}.data run function {ns}:v
 execute if score #blue {ns}.mp.team >= #score_limit {ns}.data run function {ns}:v{version}/multiplayer/team_wins {{team:"Blue"}}
 """)
 
-	## DOM: Point particles (colored by owner)
+	## DOM: Point particles (colored by owner) - base ring + vertical beam
 	write_versioned_function("multiplayer/gamemodes/dom/point_particles", f"""
-# Neutral = white, red = red, blue = blue
-execute if score @s {ns}.mp.dom_owner matches 0 run particle dust{{color:[1.0,1.0,1.0],scale:1.0}} ~ ~1 ~ 1.5 0.5 1.5 0 5
-execute if score @s {ns}.mp.dom_owner matches 1 run particle dust{{color:[1.0,0.2,0.2],scale:1.0}} ~ ~1 ~ 1.5 0.5 1.5 0 5
-execute if score @s {ns}.mp.dom_owner matches 2 run particle dust{{color:[0.2,0.2,1.0],scale:1.0}} ~ ~1 ~ 1.5 0.5 1.5 0 5
+# Base ring around zone
+scoreboard players add @s {ns}.mp.dom_owner 0
+execute if score @s {ns}.mp.dom_owner matches 0 run particle dust{{color:[1.0,1.0,1.0],scale:1.5}} ~ ~0.5 ~ 2.5 0.3 2.5 0 10
+execute if score @s {ns}.mp.dom_owner matches 1 run particle dust{{color:[1.0,0.2,0.2],scale:1.5}} ~ ~0.5 ~ 2.5 0.3 2.5 0 10
+execute if score @s {ns}.mp.dom_owner matches 2 run particle dust{{color:[0.2,0.2,1.0],scale:1.5}} ~ ~0.5 ~ 2.5 0.3 2.5 0 10
+
+# Vertical beam (visible from distance)
+execute if score @s {ns}.mp.dom_owner matches 0 run particle dust{{color:[1.0,1.0,1.0],scale:2.0}} ~ ~8 ~ 0.1 2.0 0.1 0 3
+execute if score @s {ns}.mp.dom_owner matches 1 run particle dust{{color:[1.0,0.2,0.2],scale:2.0}} ~ ~8 ~ 0.1 2.0 0.1 0 3
+execute if score @s {ns}.mp.dom_owner matches 2 run particle dust{{color:[0.2,0.2,1.0],scale:2.0}} ~ ~8 ~ 0.1 2.0 0.1 0 3
 """)
 
 	## DOM Kill Hook: Kills also give +1 to team
@@ -156,7 +182,9 @@ execute if score @s {ns}.mp.team matches 1 run scoreboard players add #red {ns}.
 execute if score @s {ns}.mp.team matches 2 run scoreboard players add #blue {ns}.mp.team 1
 """)
 
-	## DOM Cleanup: Kill markers
+	## DOM Cleanup: Kill markers and labels
 	write_versioned_function("multiplayer/gamemodes/dom/cleanup", f"""
 kill @e[tag={ns}.dom_point]
+kill @e[tag={ns}.dom_label]
 """)
+

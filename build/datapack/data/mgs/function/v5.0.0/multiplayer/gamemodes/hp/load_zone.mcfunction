@@ -33,4 +33,5 @@ execute store result storage mgs:temp _hp_pos.z double 1 run scoreboard players 
 execute if data storage mgs:multiplayer game.hp_zones[1] run function mgs:v5.0.0/multiplayer/gamemodes/hp/summon_corner_b with storage mgs:temp _hp_pos
 
 tellraw @a [[{"text":"","color":"gold"},"[",{"translate": "mgs"},"] "],{"translate": "mgs.hardpoint_zone_active","color":"dark_purple"}]
+playsound minecraft:block.note_block.chime player @a ~ ~ ~ 1 1.0
 

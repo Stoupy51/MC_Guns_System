@@ -60,6 +60,8 @@ execute if data storage {ns}:temp _snd_iter[0] run function {ns}:v{version}/mult
 
 	write_versioned_function("multiplayer/gamemodes/snd/summon_obj_at", f"""
 $summon minecraft:marker $(x) $(y) $(z) {{Tags:["{ns}.snd_obj","{ns}.gm_entity"]}}
+$execute positioned $(x) $(y) $(z) run setblock ~ ~ ~ chest
+$execute positioned $(x) $(y) $(z) run setblock ~ ~1 ~ barrier
 """)
 
 	## S&D: Start Round
@@ -70,6 +72,7 @@ tellraw @a [{MGS_TAG},{{"text":"────── Round ","color":"gold"}},{{"s
 # Show which team attacks
 execute if score #snd_attackers {ns}.data matches 1 run tellraw @a [{MGS_TAG},{{"text":"Red","color":"red"}},{{"text":" attacks | "}},{{"text":"Blue","color":"blue"}},{{"text":" defends"}}]
 execute if score #snd_attackers {ns}.data matches 2 run tellraw @a [{MGS_TAG},{{"text":"Blue","color":"blue"}},{{"text":" attacks | "}},{{"text":"Red","color":"red"}},{{"text":" defends"}}]
+playsound minecraft:block.note_block.harp player @a ~ ~ ~ 1 1.0
 
 # Reset bomb state
 scoreboard players set #snd_bomb_state {ns}.data 0
@@ -185,6 +188,7 @@ execute if score #snd_attackers {ns}.data matches 1 run scoreboard players add #
 execute if score #snd_attackers {ns}.data matches 1 run tellraw @a [{MGS_TAG},{{"text":"Red","color":"red"}},{{"text":" (Attackers) win the round!","color":"yellow"}}]
 execute if score #snd_attackers {ns}.data matches 2 run scoreboard players add #snd_blue_wins {ns}.data 1
 execute if score #snd_attackers {ns}.data matches 2 run tellraw @a [{MGS_TAG},{{"text":"Blue","color":"blue"}},{{"text":" (Attackers) win the round!","color":"yellow"}}]
+playsound minecraft:entity.player.levelup player @a ~ ~ ~ 1 1.0
 
 function {ns}:v{version}/multiplayer/gamemodes/snd/next_round
 """)
@@ -195,6 +199,7 @@ execute if score #snd_attackers {ns}.data matches 1 run scoreboard players add #
 execute if score #snd_attackers {ns}.data matches 1 run tellraw @a [{MGS_TAG},{{"text":"Blue","color":"blue"}},{{"text":" (Defenders) win the round!","color":"yellow"}}]
 execute if score #snd_attackers {ns}.data matches 2 run scoreboard players add #snd_red_wins {ns}.data 1
 execute if score #snd_attackers {ns}.data matches 2 run tellraw @a [{MGS_TAG},{{"text":"Red","color":"red"}},{{"text":" (Defenders) win the round!","color":"yellow"}}]
+playsound minecraft:entity.player.levelup player @a ~ ~ ~ 1 1.0
 
 function {ns}:v{version}/multiplayer/gamemodes/snd/next_round
 """)
@@ -215,7 +220,7 @@ scoreboard players add #snd_round {ns}.data 1
 execute if score #snd_round {ns}.data matches 4 if score #snd_attackers {ns}.data matches 1 run scoreboard players set #snd_attackers {ns}.data 2
 execute if score #snd_round {ns}.data matches 4 if score #snd_attackers {ns}.data matches 2 run scoreboard players set #snd_attackers {ns}.data 1
 execute if score #snd_round {ns}.data matches 4 run tellraw @a [{MGS_TAG},{{"text":"⚔ Sides swapped!","color":"gold"}}]
-
+execute if score #snd_round {ns}.data matches 4 run playsound minecraft:block.note_block.xylophone player @a ~ ~ ~ 1 1.0
 # Start next round (delay 3 seconds = 60 ticks via schedule)
 schedule function {ns}:v{version}/multiplayer/gamemodes/snd/start_round 60t
 """)
@@ -236,6 +241,7 @@ gamemode spectator @s
 
 	## S&D Cleanup
 	write_versioned_function("multiplayer/gamemodes/snd/cleanup", f"""
+execute at @e[tag={ns}.snd_obj] run fill ~ ~ ~ ~ ~1 ~ air
 kill @e[tag={ns}.snd_obj]
 kill @e[tag={ns}.snd_bomb]
 tag @a remove {ns}.snd_alive

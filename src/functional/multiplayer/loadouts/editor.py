@@ -386,7 +386,7 @@ f"""
 # Store secondary weapon choice
 {pick_secondary_lines}
 # Check budget before deducting (secondary weapon costs {COST_SECONDARY_WEAPON} pt; None is free)
-execute unless data storage {ns}:temp editor{{secondary:""}} run execute if score @s {ns}.mp.edit_points matches ..{COST_SECONDARY_WEAPON - 1} run return run tellraw @s [{MGS_TAG},{{"text":"Not enough points for a secondary weapon!","color":"red"}}]
+execute unless data storage {ns}:temp editor{{secondary:""}} if score @s {ns}.mp.edit_points matches ..{COST_SECONDARY_WEAPON - 1} run return run tellraw @s [{MGS_TAG},{{"text":"Not enough points for a secondary weapon!","color":"red"}}]
 
 # Deduct cost if a secondary was chosen
 execute unless data storage {ns}:temp editor{{secondary:""}} run scoreboard players remove @s {ns}.mp.edit_points {COST_SECONDARY_WEAPON}

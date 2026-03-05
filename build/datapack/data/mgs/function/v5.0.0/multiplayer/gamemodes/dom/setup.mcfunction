@@ -11,6 +11,9 @@ execute store result score #gm_base_x mgs.data run data get storage mgs:multipla
 execute store result score #gm_base_y mgs.data run data get storage mgs:multiplayer game.map.base_coordinates[1]
 execute store result score #gm_base_z mgs.data run data get storage mgs:multiplayer game.map.base_coordinates[2]
 
+# Initialize zone counter for labeling (A, B, C...)
+scoreboard players set #dom_zone_idx mgs.data 0
+
 # Summon capture point markers from relative coords
 data modify storage mgs:temp _dom_iter set from storage mgs:multiplayer game.map.domination
 execute if data storage mgs:temp _dom_iter[0] run function mgs:v5.0.0/multiplayer/gamemodes/dom/summon_point

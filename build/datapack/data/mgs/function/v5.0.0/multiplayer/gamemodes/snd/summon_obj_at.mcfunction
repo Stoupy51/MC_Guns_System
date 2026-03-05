@@ -9,4 +9,6 @@
 #
 
 $summon minecraft:marker $(x) $(y) $(z) {Tags:["mgs.snd_obj","mgs.gm_entity"]}
+$execute positioned $(x) $(y) $(z) run setblock ~ ~ ~ chest
+$execute positioned $(x) $(y) $(z) run setblock ~ ~1 ~ barrier
 
