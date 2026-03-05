@@ -265,7 +265,7 @@ execute if score #_spawn_type {ns}.data matches 3 run data modify storage {ns}:t
 function {ns}:v{version}/maps/editor/summon_spawn_marker with storage {ns}:temp _spos
 
 # Store rotation data on the marker
-execute as @e[tag={ns}.new_spawn_marker,limit=1] run data modify entity @s data.yaw set from storage {ns}:temp _spawn_rot.yaw
+execute as @n[tag={ns}.new_spawn_marker] run data modify entity @s data.yaw set from storage {ns}:temp _spawn_rot.yaw
 tag @e[tag={ns}.new_spawn_marker] remove {ns}.new_spawn_marker
 
 # Advance to next
@@ -352,7 +352,7 @@ advancement revoke @s only {ns}:v{version}/maps/editor/on_place
 execute unless score @s {ns}.mp.map_edit matches 1 run return fail
 
 # Find the newly spawned bat entity (tagged by entity_data)
-execute as @e[tag={ns}.new_element,limit=1,sort=nearest] at @s run function {ns}:v{version}/maps/editor/process_element
+execute as @n[tag={ns}.new_element] at @s run function {ns}:v{version}/maps/editor/process_element
 """)
 
 	# ── Process Placed Element ─────────────────────────────────────
@@ -436,8 +436,8 @@ execute if entity @s[tag={ns}.element.general_spawn] run data modify storage {ns
 function {ns}:v{version}/maps/editor/summon_spawn_marker with storage {ns}:temp _pos
 
 # Store the player's rotation on the marker
-execute as @e[tag={ns}.new_spawn_marker,limit=1] store result entity @s data.yaw float 1 run data get entity @p[tag={ns}.map_editor] Rotation[0]
-tag @e[tag={ns}.new_spawn_marker] remove {ns}.new_spawn_marker
+execute as @n[tag={ns}.new_spawn_marker] store result entity @s data.yaw float 1 run data get entity @p[tag={ns}.map_editor] Rotation[0]
+tag @n[tag={ns}.new_spawn_marker] remove {ns}.new_spawn_marker
 
 # Determine name for message
 execute if entity @s[tag={ns}.element.red_spawn] run tellraw @a[tag={ns}.map_editor] [{MGS_TAG},{{"text":"Red Spawn placed!","color":"red"}}]
@@ -476,8 +476,8 @@ execute if entity @s[tag={ns}.element.hardpoint] run tellraw @a[tag={ns}.map_edi
 	write_versioned_function("maps/editor/handle_destroy", f"""
 # Find the nearest map element marker (not a destroy bat, not the bat itself)
 # We search from the destroy bat's position
-execute positioned as @s as @e[tag={ns}.map_element,sort=nearest,limit=1,distance=..10] run function {ns}:v{version}/maps/editor/destroy_element
-execute positioned as @s unless entity @e[tag={ns}.map_element,distance=..10] run tellraw @a[tag={ns}.map_editor] [{MGS_TAG},{{"text":"No element found within 10 blocks!","color":"red"}}]
+execute positioned as @s as @n[tag={ns}.map_element,distance=..10] run function {ns}:v{version}/maps/editor/destroy_element
+execute positioned as @s unless entity @n[tag={ns}.map_element,distance=..10] run tellraw @a[tag={ns}.map_editor] [{MGS_TAG},{{"text":"No element found within 10 blocks!","color":"red"}}]
 """)
 
 	write_versioned_function("maps/editor/destroy_element", f"""
@@ -507,7 +507,7 @@ execute store result storage {ns}:temp map_edit.idx int 1 run scoreboard players
 function {ns}:v{version}/maps/editor/load_map_data with storage {ns}:temp map_edit
 
 # Rebuild base_coordinates from marker
-execute as @e[tag={ns}.map_element,tag={ns}.element.base_coordinates,limit=1] at @s run function {ns}:v{version}/maps/editor/save_base
+execute as @n[tag={ns}.map_element,tag={ns}.element.base_coordinates] at @s run function {ns}:v{version}/maps/editor/save_base
 
 # Load base scores for relative computation
 execute store result score #base_x {ns}.data run data get storage {ns}:temp map_edit.map.base_coordinates[0]

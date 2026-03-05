@@ -32,6 +32,9 @@ scoreboard objectives add {ns}.mp.bz dummy
 # Class change detection (for prep phase)
 scoreboard objectives add {ns}.mp.prev_class dummy
 
+# Respawn protection (ticks of invulnerability after respawn)
+scoreboard objectives add {ns}.mp.respawn_prot dummy
+
 # Initialize team scores (only if not already set)
 execute unless score #red {ns}.mp.team matches -2147483648.. run scoreboard players set #red {ns}.mp.team 0
 execute unless score #blue {ns}.mp.team matches -2147483648.. run scoreboard players set #blue {ns}.mp.team 0
@@ -71,6 +74,7 @@ scoreboard players set #blue {ns}.mp.team 0
 scoreboard players set @a {ns}.mp.kills 0
 scoreboard players set @a {ns}.mp.deaths 0
 scoreboard players set @a {ns}.mp.death_count 0
+scoreboard players set @a {ns}.mp.respawn_prot 0
 
 # Set timer from time_limit
 execute store result score #mp_timer {ns}.data run data get storage {ns}:multiplayer game.time_limit
@@ -78,8 +82,9 @@ execute store result score #mp_timer {ns}.data run data get storage {ns}:multipl
 # Tag all non-spectator players as in-game
 scoreboard players set @a {ns}.mp.in_game 1
 
-# Set all in-game players to survival
-gamemode survival @a[scores={{{ns}.mp.in_game=1}}]
+# Set all in-game players to adventure and enable instant respawn
+gamemode adventure @a[scores={{{ns}.mp.in_game=1}}]
+gamerule immediate_respawn true
 
 # Store base coordinates for offset
 execute store result score #gm_base_x {ns}.data run data get storage {ns}:multiplayer game.map.base_coordinates[0]
@@ -106,6 +111,9 @@ function {ns}:v{version}/multiplayer/normalize_bounds
 # Summon out-of-bounds markers
 function {ns}:v{version}/multiplayer/summon_oob
 
+# Summon spawn point markers (for smart spawn selection)
+function {ns}:v{version}/multiplayer/summon_spawns
+
 # Call register hooks (external datapacks can set up maps/classes)
 function #{ns}:multiplayer/register_maps
 function #{ns}:multiplayer/register_classes
@@ -124,9 +132,10 @@ execute if data storage {ns}:multiplayer game{{gamemode:"snd"}} run function {ns
 function {ns}:v{version}/multiplayer/tp_all_to_spawns
 
 # Freeze all players (no movement during prep)
-effect give @a[scores={{{ns}.mp.in_game=1}}] darkness 10 255 true
-effect give @a[scores={{{ns}.mp.in_game=1}}] blindness 10 255 true
-effect give @a[scores={{{ns}.mp.in_game=1}}] night_vision 10 255 true
+effect give @a[scores={{{ns}.mp.in_game=1}}] darkness 25 255 true
+effect give @a[scores={{{ns}.mp.in_game=1}}] blindness 25 255 true
+effect give @a[scores={{{ns}.mp.in_game=1}}] night_vision 25 255 true
+effect give @a[scores={{{ns}.mp.in_game=1}}] saturation infinite 255 true
 execute as @a[scores={{{ns}.mp.in_game=1}}] run attribute @s minecraft:movement_speed base set 0
 execute as @a[scores={{{ns}.mp.in_game=1}}] run attribute @s minecraft:jump_strength base set 0
 
@@ -184,9 +193,17 @@ data modify storage {ns}:multiplayer game.state set value "lobby"
 # Cancel scheduled prep end (in case game stopped during prep)
 schedule clear {ns}:v{version}/multiplayer/end_prep
 
+# Disable instant respawn
+gamerule immediate_respawn false
+
 # Restore movement (in case stopped during prep)
 execute as @a[scores={{{ns}.mp.in_game=1}}] run attribute @s minecraft:movement_speed base set 0.1
 execute as @a[scores={{{ns}.mp.in_game=1}}] run attribute @s minecraft:jump_strength base set 0.42
+
+# Clear prep effects (in case stopped during prep)
+effect clear @a[scores={{{ns}.mp.in_game=1}}] darkness
+effect clear @a[scores={{{ns}.mp.in_game=1}}] blindness
+effect clear @a[scores={{{ns}.mp.in_game=1}}] night_vision
 
 # Gamemode cleanup
 execute if data storage {ns}:multiplayer game{{gamemode:"ffa"}} run function {ns}:v{version}/multiplayer/gamemodes/ffa/cleanup
@@ -255,11 +272,14 @@ execute if score #_tick_mod {ns}.data matches 0 run function {ns}:v{version}/mul
 # Time's up
 execute if score #mp_timer {ns}.data matches ..0 run function {ns}:v{version}/multiplayer/time_up
 
-# ── Boundary enforcement (for all in-game players) ──
-execute as @a[scores={{{ns}.mp.in_game=1}},gamemode=!creative,gamemode=!spectator] at @s run function {ns}:v{version}/multiplayer/check_bounds
+# ── Respawn protection countdown ──
+execute as @a[scores={{{ns}.mp.respawn_prot=1..}}] run scoreboard players remove @s {ns}.mp.respawn_prot 1
 
-# ── Out-of-bounds check ──
-execute as @a[scores={{{ns}.mp.in_game=1}},gamemode=!creative,gamemode=!spectator] at @s if entity @e[tag={ns}.oob_point,distance=..5] run function {ns}:v{version}/multiplayer/oob_kill
+# ── Boundary enforcement (skip players with respawn protection) ──
+execute as @a[scores={{{ns}.mp.in_game=1,{ns}.mp.respawn_prot=0}},gamemode=!creative,gamemode=!spectator] at @s run function {ns}:v{version}/multiplayer/check_bounds
+
+# ── Out-of-bounds check (skip players with respawn protection) ──
+execute as @a[scores={{{ns}.mp.in_game=1,{ns}.mp.respawn_prot=0}},gamemode=!creative,gamemode=!spectator] at @s if entity @e[tag={ns}.oob_point,distance=..5] run function {ns}:v{version}/multiplayer/oob_kill
 
 # ── Gamemode tick dispatch ──
 execute if data storage {ns}:multiplayer game{{gamemode:"ffa"}} run function {ns}:v{version}/multiplayer/gamemodes/ffa/tick
@@ -360,60 +380,185 @@ execute if data storage {ns}:temp _oob_iter[0] run function {ns}:v{version}/mult
 $summon minecraft:marker $(x) $(y) $(z) {{Tags:["{ns}.oob_point","{ns}.gm_entity"]}}
 """)
 
-	# ── Spawn Teleportation ───────────────────────────────────────
+	# ── Spawn Point Markers ───────────────────────────────────────
 
-	## TP all players to appropriate spawn points based on gamemode/team
-	write_versioned_function("multiplayer/tp_all_to_spawns", f"""
-# Copy spawn lists from loaded map
-data modify storage {ns}:temp _red_spawns set from storage {ns}:multiplayer game.map.spawning_points.red
-data modify storage {ns}:temp _blue_spawns set from storage {ns}:multiplayer game.map.spawning_points.blue
-data modify storage {ns}:temp _general_spawns set from storage {ns}:multiplayer game.map.spawning_points.general
+	## Summon spawn markers from map data (called at game start)
+	write_versioned_function("multiplayer/summon_spawns", f"""
+# Red spawns
+data modify storage {ns}:temp _spawn_iter set from storage {ns}:multiplayer game.map.spawning_points.red
+data modify storage {ns}:temp _spawn_tag set value "{ns}.spawn_red"
+execute if data storage {ns}:temp _spawn_iter[0] run function {ns}:v{version}/multiplayer/summon_spawn_iter
 
-# FFA: everyone uses general spawns
-execute if data storage {ns}:multiplayer game{{gamemode:"ffa"}} run data modify storage {ns}:temp _active_spawns set from storage {ns}:temp _general_spawns
-execute if data storage {ns}:multiplayer game{{gamemode:"ffa"}} as @a[scores={{{ns}.mp.in_game=1}}] run function {ns}:v{version}/multiplayer/tp_next_spawn
+# Blue spawns
+data modify storage {ns}:temp _spawn_iter set from storage {ns}:multiplayer game.map.spawning_points.blue
+data modify storage {ns}:temp _spawn_tag set value "{ns}.spawn_blue"
+execute if data storage {ns}:temp _spawn_iter[0] run function {ns}:v{version}/multiplayer/summon_spawn_iter
 
-# Team modes: TP by team
-execute unless data storage {ns}:multiplayer game{{gamemode:"ffa"}} run data modify storage {ns}:temp _active_spawns set from storage {ns}:temp _red_spawns
-execute unless data storage {ns}:multiplayer game{{gamemode:"ffa"}} as @a[scores={{{ns}.mp.in_game=1,{ns}.mp.team=1}}] run function {ns}:v{version}/multiplayer/tp_next_spawn
-
-execute unless data storage {ns}:multiplayer game{{gamemode:"ffa"}} run data modify storage {ns}:temp _active_spawns set from storage {ns}:temp _blue_spawns
-execute unless data storage {ns}:multiplayer game{{gamemode:"ffa"}} as @a[scores={{{ns}.mp.in_game=1,{ns}.mp.team=2}}] run function {ns}:v{version}/multiplayer/tp_next_spawn
-
-# Players with no team yet: use general spawns
-execute unless data storage {ns}:multiplayer game{{gamemode:"ffa"}} run data modify storage {ns}:temp _active_spawns set from storage {ns}:temp _general_spawns
-execute unless data storage {ns}:multiplayer game{{gamemode:"ffa"}} as @a[scores={{{ns}.mp.in_game=1,{ns}.mp.team=0}}] run function {ns}:v{version}/multiplayer/tp_next_spawn
+# General spawns
+data modify storage {ns}:temp _spawn_iter set from storage {ns}:multiplayer game.map.spawning_points.general
+data modify storage {ns}:temp _spawn_tag set value "{ns}.spawn_general"
+execute if data storage {ns}:temp _spawn_iter[0] run function {ns}:v{version}/multiplayer/summon_spawn_iter
 """)
 
-	## TP single player to next spawn in rotation (run as player)
-	write_versioned_function("multiplayer/tp_next_spawn", f"""
-# Read first spawn point coords (relative)
-execute store result score #_sx {ns}.data run data get storage {ns}:temp _active_spawns[0][0]
-execute store result score #_sy {ns}.data run data get storage {ns}:temp _active_spawns[0][1]
-execute store result score #_sz {ns}.data run data get storage {ns}:temp _active_spawns[0][2]
-execute store result score #_syaw {ns}.data run data get storage {ns}:temp _active_spawns[0][3] 100
+	write_versioned_function("multiplayer/summon_spawn_iter", f"""
+# Read relative coords
+execute store result score #_sx {ns}.data run data get storage {ns}:temp _spawn_iter[0][0]
+execute store result score #_sy {ns}.data run data get storage {ns}:temp _spawn_iter[0][1]
+execute store result score #_sz {ns}.data run data get storage {ns}:temp _spawn_iter[0][2]
+execute store result score #_syaw {ns}.data run data get storage {ns}:temp _spawn_iter[0][3] 100
 
-# Add base offset → absolute coords
+# Convert to absolute
 scoreboard players operation #_sx {ns}.data += #gm_base_x {ns}.data
 scoreboard players operation #_sy {ns}.data += #gm_base_y {ns}.data
 scoreboard players operation #_sz {ns}.data += #gm_base_z {ns}.data
 
-# Store for macro
-execute store result storage {ns}:temp _tp.x double 1 run scoreboard players get #_sx {ns}.data
-execute store result storage {ns}:temp _tp.y double 1 run scoreboard players get #_sy {ns}.data
-execute store result storage {ns}:temp _tp.z double 1 run scoreboard players get #_sz {ns}.data
-execute store result storage {ns}:temp _tp.yaw double 0.01 run scoreboard players get #_syaw {ns}.data
+# Store position + yaw for macro
+execute store result storage {ns}:temp _spos.x double 1 run scoreboard players get #_sx {ns}.data
+execute store result storage {ns}:temp _spos.y double 1 run scoreboard players get #_sy {ns}.data
+execute store result storage {ns}:temp _spos.z double 1 run scoreboard players get #_sz {ns}.data
+execute store result storage {ns}:temp _spos.yaw double 0.01 run scoreboard players get #_syaw {ns}.data
+data modify storage {ns}:temp _spos.tag set from storage {ns}:temp _spawn_tag
 
-# Rotate list: move first to end, then remove first
-data modify storage {ns}:temp _active_spawns append from storage {ns}:temp _active_spawns[0]
-data remove storage {ns}:temp _active_spawns[0]
+# Summon
+function {ns}:v{version}/multiplayer/summon_spawn_at with storage {ns}:temp _spos
 
-# TP
-function {ns}:v{version}/multiplayer/tp_player_at with storage {ns}:temp _tp
+# Next
+data remove storage {ns}:temp _spawn_iter[0]
+execute if data storage {ns}:temp _spawn_iter[0] run function {ns}:v{version}/multiplayer/summon_spawn_iter
 """)
 
-	## TP macro
+	write_versioned_function("multiplayer/summon_spawn_at", f"""
+$summon minecraft:marker $(x) $(y) $(z) {{Tags:["{ns}.spawn_point","$(tag)","{ns}.gm_entity"],data:{{yaw:$(yaw)}}}}
+""")
+
+	# ── Smart Spawn Selection ─────────────────────────────────────
+
+	## TP all players to spawn points at game start
+	write_versioned_function("multiplayer/tp_all_to_spawns", f"""
+# FFA: everyone uses general spawns
+execute if data storage {ns}:multiplayer game{{gamemode:"ffa"}} as @a[scores={{{ns}.mp.in_game=1}}] at @s run function {ns}:v{version}/multiplayer/pick_spawn {{type:"general"}}
+
+# Team modes: TP by team
+execute unless data storage {ns}:multiplayer game{{gamemode:"ffa"}} as @a[scores={{{ns}.mp.in_game=1,{ns}.mp.team=1}}] at @s run function {ns}:v{version}/multiplayer/pick_spawn {{type:"red"}}
+execute unless data storage {ns}:multiplayer game{{gamemode:"ffa"}} as @a[scores={{{ns}.mp.in_game=1,{ns}.mp.team=2}}] at @s run function {ns}:v{version}/multiplayer/pick_spawn {{type:"blue"}}
+
+# Players with no team: use general spawns
+execute unless data storage {ns}:multiplayer game{{gamemode:"ffa"}} as @a[scores={{{ns}.mp.in_game=1,{ns}.mp.team=0}}] at @s run function {ns}:v{version}/multiplayer/pick_spawn {{type:"general"}}
+""")
+
+	## Pick best spawn: find spawn marker farthest from any enemy player (run as player)
+	write_versioned_function("multiplayer/pick_spawn", f"""
+# Mark this player as needing a spawn
+tag @s add {ns}.spawn_pending
+
+# Tag enemy players (for distance calculation — ignore teammates)
+# In FFA or team=0: all in-game players are "enemies" for spawn distance
+execute if score @s {ns}.mp.team matches 0 run tag @a[scores={{{ns}.mp.in_game=1}}] add {ns}.spawn_enemy
+# In team modes: only tag players on different teams
+execute if score @s {ns}.mp.team matches 1 run tag @a[scores={{{ns}.mp.in_game=1,{ns}.mp.team=2..}}] add {ns}.spawn_enemy
+execute if score @s {ns}.mp.team matches 2 run tag @a[scores={{{ns}.mp.in_game=1,{ns}.mp.team=..1}}] add {ns}.spawn_enemy
+# Never count self as an enemy
+tag @s remove {ns}.spawn_enemy
+
+# Tag candidate spawn markers of the right type
+$tag @e[tag={ns}.spawn_point,tag={ns}.spawn_$(type)] add {ns}.spawn_candidate
+
+# Remove candidates that have an enemy player within 5 blocks
+execute as @e[tag={ns}.spawn_candidate] at @s if entity @a[tag={ns}.spawn_enemy,distance=..5] run tag @s remove {ns}.spawn_candidate
+
+# If all were removed (all spawns contested), re-tag all as candidates
+$execute unless entity @e[tag={ns}.spawn_candidate] run tag @e[tag={ns}.spawn_point,tag={ns}.spawn_$(type)] add {ns}.spawn_candidate
+
+# If no enemies, pick random candidate directly (skip expensive distance calc)
+execute unless entity @a[tag={ns}.spawn_enemy] run return run function {ns}:v{version}/multiplayer/pick_spawn_random
+
+# Limit to 10 random candidates before distance computation (optimization)
+tag @e[tag={ns}.spawn_candidate,sort=random,limit=10] add {ns}.spawn_final
+tag @e[tag={ns}.spawn_candidate,tag=!{ns}.spawn_final] remove {ns}.spawn_candidate
+tag @e[tag={ns}.spawn_final] remove {ns}.spawn_final
+
+# Compute distance² to nearest enemy player for each candidate (max 10)
+execute as @e[tag={ns}.spawn_candidate] at @s run function {ns}:v{version}/multiplayer/spawn_calc_dist
+
+# Find the maximum distance score
+scoreboard players set #_best_dist {ns}.data 0
+execute as @e[tag={ns}.spawn_candidate] if score @s {ns}.data > #_best_dist {ns}.data run scoreboard players operation #_best_dist {ns}.data = @s {ns}.data
+
+# Pick the first candidate with that best score and TP the pending player there
+execute as @e[tag={ns}.spawn_candidate,sort=random] if score @s {ns}.data = #_best_dist {ns}.data run function {ns}:v{version}/multiplayer/tp_to_spawn
+
+# Clean up
+tag @e[tag={ns}.spawn_candidate] remove {ns}.spawn_candidate
+tag @a[tag={ns}.spawn_pending] remove {ns}.spawn_pending
+tag @a[tag={ns}.spawn_enemy] remove {ns}.spawn_enemy
+""")
+
+	## Pick random spawn (no enemies — skip distance calc entirely)
+	write_versioned_function("multiplayer/pick_spawn_random", f"""
+execute as @e[tag={ns}.spawn_candidate,sort=random,limit=1] run function {ns}:v{version}/multiplayer/tp_to_spawn
+
+# Clean up
+tag @e[tag={ns}.spawn_candidate] remove {ns}.spawn_candidate
+tag @a[tag={ns}.spawn_pending] remove {ns}.spawn_pending
+tag @a[tag={ns}.spawn_enemy] remove {ns}.spawn_enemy
+""")
+
+	## Calculate distance² from spawn marker to nearest enemy player (run as marker at marker)
+	write_versioned_function("multiplayer/spawn_calc_dist", f"""
+# Get marker position
+execute store result score #_mx {ns}.data run data get entity @s Pos[0]
+execute store result score #_my {ns}.data run data get entity @s Pos[1]
+execute store result score #_mz {ns}.data run data get entity @s Pos[2]
+
+# Get nearest enemy player position (expensive — caller limits candidates)
+data modify storage {ns}:temp _nearest set from entity @p[tag={ns}.spawn_enemy] Pos
+execute store result score #_px {ns}.data run data get storage {ns}:temp _nearest[0]
+execute store result score #_py {ns}.data run data get storage {ns}:temp _nearest[1]
+execute store result score #_pz {ns}.data run data get storage {ns}:temp _nearest[2]
+
+# dx, dy, dz
+scoreboard players operation #_mx {ns}.data -= #_px {ns}.data
+scoreboard players operation #_my {ns}.data -= #_py {ns}.data
+scoreboard players operation #_mz {ns}.data -= #_pz {ns}.data
+
+# distance² = dx² + dy² + dz²
+scoreboard players operation #_mx {ns}.data *= #_mx {ns}.data
+scoreboard players operation #_my {ns}.data *= #_my {ns}.data
+scoreboard players operation #_mz {ns}.data *= #_mz {ns}.data
+scoreboard players operation #_mx {ns}.data += #_my {ns}.data
+scoreboard players operation #_mx {ns}.data += #_mz {ns}.data
+
+# Store on entity
+scoreboard players operation @s {ns}.data = #_mx {ns}.data
+""")
+
+	## TP player to chosen spawn marker (run as the marker)
+	write_versioned_function("multiplayer/tp_to_spawn", f"""
+# Store marker position and yaw for macro
+execute store result storage {ns}:temp _tp.x double 1 run data get entity @s Pos[0]
+execute store result storage {ns}:temp _tp.y double 1 run data get entity @s Pos[1]
+execute store result storage {ns}:temp _tp.z double 1 run data get entity @s Pos[2]
+data modify storage {ns}:temp _tp.yaw set from entity @s data.yaw
+
+# TP the pending player
+execute as @p[tag={ns}.spawn_pending] run function {ns}:v{version}/multiplayer/tp_player_at with storage {ns}:temp _tp
+""")
+
+	## TP macro (run as the player to TP)
 	write_versioned_function("multiplayer/tp_player_at", "$tp @s $(x) $(y) $(z) $(yaw) 0")
+
+	## Respawn TP: always use general spawns on respawn (run as the respawning player)
+	write_versioned_function("multiplayer/respawn_tp", f"""
+function {ns}:v{version}/multiplayer/pick_spawn {{type:"general"}}
+""")
+
+	# ── Shooting Block During Prep ────────────────────────────────
+
+	## Prepend to right_click: block shooting during prep phase
+	write_versioned_function("player/right_click", f"""
+# Block shooting during multiplayer prep phase
+execute if data storage {ns}:multiplayer game{{state:"preparing"}} if score @s {ns}.mp.in_game matches 1 run return fail
+""", prepend=True)
 
 	# ── Prep Phase ────────────────────────────────────────────────
 
@@ -433,9 +578,15 @@ execute unless data storage {ns}:multiplayer game{{state:"preparing"}} run retur
 execute as @a[scores={{{ns}.mp.in_game=1}}] run attribute @s minecraft:movement_speed base set 0.1
 execute as @a[scores={{{ns}.mp.in_game=1}}] run attribute @s minecraft:jump_strength base set 0.42
 
+# Clear prep effects
+effect clear @a[scores={{{ns}.mp.in_game=1}}] darkness
+effect clear @a[scores={{{ns}.mp.in_game=1}}] blindness
+effect clear @a[scores={{{ns}.mp.in_game=1}}] night_vision
+
 # Set state to active
 data modify storage {ns}:multiplayer game.state set value "active"
 
 # Announce
 tellraw @a ["",[{{"text":"","color":"green","bold":true}},"⚔ ",{{"text":"GO! GO! GO!"}}]]
 """)
+

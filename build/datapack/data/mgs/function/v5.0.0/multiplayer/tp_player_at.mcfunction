@@ -1,9 +1,9 @@
 
 #> mgs:v5.0.0/multiplayer/tp_player_at
 #
-# @executed	as @a[scores={mgs.mp.in_game=1}]
+# @executed	as @p[tag=mgs.spawn_pending]
 #
-# @within	mgs:v5.0.0/multiplayer/tp_next_spawn with storage mgs:temp _tp
+# @within	mgs:v5.0.0/multiplayer/tp_to_spawn with storage mgs:temp _tp [ as @p[tag=mgs.spawn_pending] ]
 #
 # @args		x (unknown)
 #			y (unknown)

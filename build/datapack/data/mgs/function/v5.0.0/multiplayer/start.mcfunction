@@ -24,6 +24,7 @@ scoreboard players set #blue mgs.mp.team 0
 scoreboard players set @a mgs.mp.kills 0
 scoreboard players set @a mgs.mp.deaths 0
 scoreboard players set @a mgs.mp.death_count 0
+scoreboard players set @a mgs.mp.respawn_prot 0
 
 # Set timer from time_limit
 execute store result score #mp_timer mgs.data run data get storage mgs:multiplayer game.time_limit
@@ -31,8 +32,9 @@ execute store result score #mp_timer mgs.data run data get storage mgs:multiplay
 # Tag all non-spectator players as in-game
 scoreboard players set @a mgs.mp.in_game 1
 
-# Set all in-game players to survival
+# Set all in-game players to survival and enable instant respawn
 gamemode survival @a[scores={mgs.mp.in_game=1}]
+gamerule immediate_respawn true
 
 # Store base coordinates for offset
 execute store result score #gm_base_x mgs.data run data get storage mgs:multiplayer game.map.base_coordinates[0]
@@ -59,6 +61,9 @@ function mgs:v5.0.0/multiplayer/normalize_bounds
 # Summon out-of-bounds markers
 function mgs:v5.0.0/multiplayer/summon_oob
 
+# Summon spawn point markers (for smart spawn selection)
+function mgs:v5.0.0/multiplayer/summon_spawns
+
 # Call register hooks (external datapacks can set up maps/classes)
 function #mgs:multiplayer/register_maps
 function #mgs:multiplayer/register_classes
@@ -77,6 +82,10 @@ execute if data storage mgs:multiplayer game{gamemode:"snd"} run function mgs:v5
 function mgs:v5.0.0/multiplayer/tp_all_to_spawns
 
 # Freeze all players (no movement during prep)
+effect give @a[scores={mgs.mp.in_game=1}] darkness 25 255 true
+effect give @a[scores={mgs.mp.in_game=1}] blindness 25 255 true
+effect give @a[scores={mgs.mp.in_game=1}] night_vision 25 255 true
+effect give @a[scores={mgs.mp.in_game=1}] saturation infinite 255 true
 execute as @a[scores={mgs.mp.in_game=1}] run attribute @s minecraft:movement_speed base set 0
 execute as @a[scores={mgs.mp.in_game=1}] run attribute @s minecraft:jump_strength base set 0
 

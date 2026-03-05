@@ -1,7 +1,7 @@
 
 #> mgs:v5.0.0/maps/editor/handle_point
 #
-# @executed	as @e[tag=mgs.new_element,limit=1,sort=nearest] & at @s
+# @executed	as @n[tag=mgs.new_element] & at @s
 #
 # @within	mgs:v5.0.0/maps/editor/process_element
 #
