@@ -54,7 +54,7 @@ SECONDARY_WEAPONS: list[tuple[str, str, str, int]] = [
 	("glock17", "Glock 17","glock17_mag", 2),
 	("glock18", "Glock 18","glock18_mag", 2),
 	("vz61",    "VZ-61",   "vz61_mag",    2),
-	("ray_gun", "Ray Gun", "element_115", 3),
+	#("ray_gun", "Ray Gun", "element_115", 3),	# Not for multiplayer lol
 ]
 
 # Index lookup: weapon_id → index in SECONDARY_WEAPONS

@@ -102,7 +102,7 @@ scoreboard objectives add {ns}.stuck_id dummy
 scoreboard players set #semtex_id {ns}.data 0
 
 # Initialize global config defaults (only if not already set)
-execute unless score #rpg_explosion_power {ns}.config matches -2147483648.. run scoreboard players set #rpg_explosion_power {ns}.config 0
+execute unless score #projectile_explosion_power {ns}.config matches -2147483648.. run scoreboard players set #projectile_explosion_power {ns}.config 0
 execute unless score #grenade_explosion_power {ns}.config matches -2147483648.. run scoreboard players set #grenade_explosion_power {ns}.config 0
 execute unless score #max_ammo_reload_weapons {ns}.config matches -2147483648.. run scoreboard players set #max_ammo_reload_weapons {ns}.config 0
 execute unless score #damage_debug {ns}.config matches -2147483648.. run scoreboard players set #damage_debug {ns}.config 0
@@ -165,6 +165,10 @@ execute as @e[type=player,sort=random] at @s run function {ns}:v{version}/player
     for tag in ["bypasses_cooldown", "no_knockback"]:
         write_tag(tag, Mem.ctx.data["minecraft"].damage_type_tags, [f"{ns}:bullet"])
     write_versioned_function("utils/damage", f"$damage $(target) $(amount) {ns}:bullet by $(attacker)")
+    write_versioned_function("utils/signal_and_damage", f"""
+function {ns}:v{version}/utils/damage with storage {ns}:input with
+function #{ns}:signals/damage with storage {ns}:input with
+""")
 
     # Add bullet font (for actionbar)
     textures_folder: str = Mem.ctx.meta.get("stewbeet", {}).get("textures_folder", "")
@@ -238,9 +242,9 @@ $execute if score #random {ns}.data matches 31 run loot replace entity @s $(slot
 
     # RPG Explosion Power
     rpg_btns = ",".join([
-        btn(str(i), f"/scoreboard players set #rpg_explosion_power {ns}.config {i}",
+        btn(str(i), f"/scoreboard players set #projectile_explosion_power {ns}.config {i}",
             "green" if i == 0 else "yellow",
-            f"Set RPG explosion power to {i}" + (" (disabled)" if i == 0 else ""))
+            f"Set Projectile Explosion Power to {i}" + (" (disabled)" if i == 0 else ""))
         for i in range(6)
     ])
     rpg_line = f'["  ",{{"text":"RPG Explosion Power: ","color":"white"}},{rpg_btns}]'
@@ -249,7 +253,7 @@ $execute if score #random {ns}.data matches 31 run loot replace entity @s $(slot
     gren_btns = ",".join([
         btn(str(i), f"/scoreboard players set #grenade_explosion_power {ns}.config {i}",
             "green" if i == 0 else "yellow",
-            f"Set grenade explosion power to {i}" + (" (disabled)" if i == 0 else ""))
+            f"Set Grenade Explosion Power to {i}" + (" (disabled)" if i == 0 else ""))
         for i in range(6)
     ])
     gren_line = f'["  ",{{"text":"Grenade Explosion Power: ","color":"white"}},{gren_btns}]'

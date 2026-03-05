@@ -1,9 +1,9 @@
 
 #> mgs:v5.0.0/projectile/explode
 #
-# @executed	as @e[tag=mgs.slow_bullet] & at @s
+# @executed	at @s
 #
-# @within	mgs:v5.0.0/projectile/tick
+# @within	mgs:v5.0.0/projectile/post_vel
 #
 
 # Explosion particles - ray_gun: green energy burst (no smoke)
@@ -23,12 +23,12 @@ execute if score #is_ray_gun mgs.data matches 0 run particle lava ~ ~ ~ 1 1 1 0 
 execute if score #is_ray_gun mgs.data matches 0 run playsound minecraft:entity.generic.explode player @a[distance=..64] ~ ~ ~ 2 0.8
 
 # Block destruction via RealisticExplosionLibrary (if RPG_EXPLOSION_POWER > 0)
-execute if score #rpg_explosion_power mgs.config matches 1.. run function mgs:v5.0.0/projectile/realistic_explosion
+execute if score #projectile_explosion_power mgs.config matches 1.. run function mgs:v5.0.0/projectile/realistic_explosion
 
 # Store explosion center position for damage calculation
-execute store result storage mgs:temp expl.center_x int 1 run data get entity @s Pos[0] 1000
-execute store result storage mgs:temp expl.center_y int 1 run data get entity @s Pos[1] 1000
-execute store result storage mgs:temp expl.center_z int 1 run data get entity @s Pos[2] 1000
+execute store result score #ctr_x mgs.data run data get entity @s Pos[0] 1000
+execute store result score #ctr_y mgs.data run data get entity @s Pos[1] 1000
+execute store result score #ctr_z mgs.data run data get entity @s Pos[2] 1000
 
 # Copy explosion config from entity data to temp storage
 data modify storage mgs:temp expl.expl_damage set from entity @s data.config.expl_damage
@@ -43,8 +43,15 @@ scoreboard players set #found mgs.data 0
 execute as @a run function mgs:v5.0.0/projectile/match_shooter
 execute if score #found mgs.data matches 0 as @e[tag=mgs.armed] run function mgs:v5.0.0/projectile/match_shooter
 
+# Apply bullet direct-hit damage to the entity tagged in on_collision (if entity was hit, not just a block)
+# Read damage amount from projectile config (@s = projectile here)
+data modify storage mgs:input with set value {target:"@s", amount:0.0f, attacker:"@n[tag=mgs.temp_shooter]"}
+execute store result storage mgs:input with.amount float 0.1 run data get entity @s data.config.damage 10
+execute as @n[tag=mgs.direct_hit,tag=!mgs.temp_shooter] run function mgs:v5.0.0/utils/signal_and_damage
+tag @e[tag=mgs.direct_hit] remove mgs.direct_hit
+
 # Apply area damage to nearby entities (macro for configurable radius)
-execute store result storage mgs:temp expl.radius_int int 1 run data get entity @s data.config.expl_radius
+execute store result storage mgs:temp expl.radius_float float 1 run data get entity @s data.config.expl_radius
 function mgs:v5.0.0/projectile/damage_area with storage mgs:temp expl
 
 # Signal: on_explosion (@s = projectile entity, explosion data in mgs:signals)

@@ -1,9 +1,10 @@
 
 # Imports
-from stewbeet import Mem, write_tag, write_tick_file, write_versioned_function
+from stewbeet import Mem, write_tick_file, write_versioned_function
 
 from ...config.stats import (
     BASE_WEAPON,
+    DAMAGE,
     EXPLOSION_DAMAGE,
     EXPLOSION_DECAY,
     EXPLOSION_RADIUS,
@@ -18,18 +19,6 @@ from ...config.stats import (
 def main() -> None:
     ns: str = Mem.ctx.project_id
     version: str = Mem.ctx.project_version
-
-    # Entity type tag for non-damageable entities (used in explosion area damage)
-    write_tag(f"{ns}:v{version}/non_damageable", Mem.ctx.data.entity_type_tags, [
-        "minecraft:item",
-        "minecraft:item_display",
-        "minecraft:marker",
-        "minecraft:text_display",
-        "minecraft:block_display",
-        "minecraft:area_effect_cloud",
-        "minecraft:experience_orb",
-        "minecraft:falling_block"
-    ])
 
     ## Summon loop (supports pellet_count for multiple projectiles)
     write_versioned_function("projectile/summon_loop",
@@ -54,6 +43,7 @@ data modify storage {ns}:temp proj set value {{}}
 data modify storage {ns}:temp proj.{EXPLOSION_DAMAGE} set from storage {ns}:gun all.stats.{EXPLOSION_DAMAGE}
 data modify storage {ns}:temp proj.{EXPLOSION_DECAY} set from storage {ns}:gun all.stats.{EXPLOSION_DECAY}
 data modify storage {ns}:temp proj.{EXPLOSION_RADIUS} set from storage {ns}:gun all.stats.{EXPLOSION_RADIUS}
+data modify storage {ns}:temp proj.{DAMAGE} set from storage {ns}:gun all.stats.{DAMAGE}
 data modify storage {ns}:temp proj.{PROJECTILE_GRAVITY} set from storage {ns}:gun all.stats.{PROJECTILE_GRAVITY}
 data modify storage {ns}:temp proj.{PROJECTILE_SPEED} set from storage {ns}:gun all.stats.{PROJECTILE_SPEED}
 data modify storage {ns}:temp proj.{PROJECTILE_LIFETIME} set from storage {ns}:gun all.stats.{PROJECTILE_LIFETIME}
@@ -61,7 +51,7 @@ data modify storage {ns}:temp proj.{PROJECTILE_MODEL} set from storage {ns}:gun 
 data modify storage {ns}:temp proj.{BASE_WEAPON} set from storage {ns}:gun all.stats.{BASE_WEAPON}
 
 # Summon the projectile entity at the player's eye position
-execute anchored eyes positioned ^ ^ ^0.5 summon item_display run function {ns}:v{version}/projectile/init
+execute anchored eyes positioned ^ ^ ^0.69 summon item_display run function {ns}:v{version}/projectile/init
 
 # Increment slow bullet counter
 scoreboard players add #slow_bullet_count {ns}.data 1
@@ -150,6 +140,11 @@ scoreboard players operation @s bs.vel.y -= #proj_gravity {ns}.data
 function #bs.move:apply_vel {{scale:0.001,with:{{blocks:true,entities:true,on_collision:"function {ns}:v{version}/projectile/on_collision"}}}}
 
 # If collision was detected, explode and stop processing
+execute at @s run function {ns}:v{version}/projectile/post_vel
+""")
+    write_versioned_function("projectile/post_vel",
+f"""
+# If collision was detected, explode and stop processing
 execute if entity @s[tag={ns}.exploding] run return run function {ns}:v{version}/projectile/explode
 
 # Trail particles: ray_gun = green dust swirl, others = flame + smoke
@@ -166,9 +161,13 @@ scoreboard players remove @s {ns}.data 1
 execute if score @s {ns}.data matches ..0 run function {ns}:v{version}/projectile/explode
 """)
 
-    ## Collision callback (called by bs.move:apply_vel when hitting a block)
+    ## Collision callback (called by bs.move:apply_vel when hitting a block or entity)
     write_versioned_function("projectile/on_collision",
 f"""
+# Tag the nearest non-immune entity as directly hit (for bullet damage in explode)
+# distance=..2.5 covers feet-to-head hit at any entity height up to 2.5 blocks
+execute as @n[distance=..2.5,type=!#bs.hitbox:intangible,tag=!{ns}.slow_bullet] run tag @s add {ns}.direct_hit
+
 # Mark for explosion
 tag @s add {ns}.exploding
 
@@ -198,12 +197,12 @@ execute if score #is_ray_gun {ns}.data matches 0 run particle lava ~ ~ ~ 1 1 1 0
 execute if score #is_ray_gun {ns}.data matches 0 run playsound minecraft:entity.generic.explode player @a[distance=..64] ~ ~ ~ 2 0.8
 
 # Block destruction via RealisticExplosionLibrary (if RPG_EXPLOSION_POWER > 0)
-execute if score #rpg_explosion_power {ns}.config matches 1.. run function {ns}:v{version}/projectile/realistic_explosion
+execute if score #projectile_explosion_power {ns}.config matches 1.. run function {ns}:v{version}/projectile/realistic_explosion
 
 # Store explosion center position for damage calculation
-execute store result storage {ns}:temp expl.center_x int 1 run data get entity @s Pos[0] 1000
-execute store result storage {ns}:temp expl.center_y int 1 run data get entity @s Pos[1] 1000
-execute store result storage {ns}:temp expl.center_z int 1 run data get entity @s Pos[2] 1000
+execute store result score #ctr_x {ns}.data run data get entity @s Pos[0] 1000
+execute store result score #ctr_y {ns}.data run data get entity @s Pos[1] 1000
+execute store result score #ctr_z {ns}.data run data get entity @s Pos[2] 1000
 
 # Copy explosion config from entity data to temp storage
 data modify storage {ns}:temp expl.{EXPLOSION_DAMAGE} set from entity @s data.config.{EXPLOSION_DAMAGE}
@@ -217,6 +216,13 @@ data modify storage {ns}:temp expl.shooter_uuid set from entity @s data.shooter
 scoreboard players set #found {ns}.data 0
 execute as @a run function {ns}:v{version}/projectile/match_shooter
 execute if score #found {ns}.data matches 0 as @e[tag={ns}.armed] run function {ns}:v{version}/projectile/match_shooter
+
+# Apply bullet direct-hit damage to the entity tagged in on_collision (if entity was hit, not just a block)
+# Read damage amount from projectile config (@s = projectile here)
+data modify storage {ns}:input with set value {{target:"@s", amount:0.0f, attacker:"@n[tag={ns}.temp_shooter]"}}
+execute store result storage {ns}:input with.amount float 0.1 run data get entity @s data.config.{DAMAGE} 10
+execute as @n[tag={ns}.direct_hit,tag=!{ns}.temp_shooter] run function {ns}:v{version}/utils/signal_and_damage
+tag @e[tag={ns}.direct_hit] remove {ns}.direct_hit
 
 # Apply area damage to nearby entities (macro for configurable radius)
 execute store result storage {ns}:temp expl.radius_float float 1 run data get entity @s data.config.{EXPLOSION_RADIUS}
@@ -239,9 +245,9 @@ function {ns}:v{version}/projectile/delete
     write_versioned_function("projectile/realistic_explosion",
 f"""
 # Set explosion power from config and call the library
-scoreboard players operation #explosion_power realistic_explosion.data = #rpg_explosion_power {ns}.config
-execute if score #rpg_explosion_power {ns}.config matches 1.. run scoreboard players set #falling_fire realistic_explosion.data 1
-execute unless score #rpg_explosion_power {ns}.config matches 1.. run scoreboard players set #falling_fire realistic_explosion.data 0
+scoreboard players operation #explosion_power realistic_explosion.data = #projectile_explosion_power {ns}.config
+execute if score #projectile_explosion_power {ns}.config matches 1.. run scoreboard players set #falling_fire realistic_explosion.data 1
+execute unless score #projectile_explosion_power {ns}.config matches 1.. run scoreboard players set #falling_fire realistic_explosion.data 0
 function realistic_explosion:explode
 """)
 
@@ -268,18 +274,14 @@ $execute as @e[type=!#bs.hitbox:intangible,distance=..$(radius_float)] run funct
     write_versioned_function("projectile/damage_entity",
 f"""
 # Skip non-living entities and other projectiles
-execute if entity @s[type=#{ns}:v{version}/non_damageable] run return fail
+# Skip the shooter (prevent self-damage from own explosions)
 execute if entity @s[tag={ns}.slow_bullet] run return fail
+execute if entity @s[tag={ns}.temp_shooter] run return fail
 
 # Get this entity's position (scaled by 1000)
 execute store result score #ent_x {ns}.data run data get entity @s Pos[0] 1000
 execute store result score #ent_y {ns}.data run data get entity @s Pos[1] 1000
 execute store result score #ent_z {ns}.data run data get entity @s Pos[2] 1000
-
-# Get explosion center from temp storage
-execute store result score #ctr_x {ns}.data run data get storage {ns}:temp expl.center_x
-execute store result score #ctr_y {ns}.data run data get storage {ns}:temp expl.center_y
-execute store result score #ctr_z {ns}.data run data get storage {ns}:temp expl.center_z
 
 # Calculate distance squared: dx*dx + dy*dy + dz*dz
 scoreboard players operation #dx {ns}.data = #ent_x {ns}.data
@@ -303,16 +305,17 @@ scoreboard players operation #dist_sq {ns}.data += #dy2 {ns}.data
 scoreboard players operation #dist_sq {ns}.data += #dz2 {ns}.data
 
 # Get distance using sqrt (https://docs.mcbookshelf.dev/en/latest/modules/math.html#square-root)
-execute store result storage bs:in math.sqrt double 0.000001 run scoreboard players get #dist_sq {ns}.data
+execute store result storage bs:in math.sqrt.x double 0.000001 run scoreboard players get #dist_sq {ns}.data
 function #bs.math:sqrt
-execute store result score #distance {ns}.data run data get storage bs:out math.sqrt 1
+# Store distance in tenths of blocks (x10) for sub-block decimal precision in decay
+execute store result score #distance {ns}.data run data get storage bs:out math.sqrt 10
 
 # Apply decay-based falloff: damage *= pow(decay, distance)
 # decay into x
 data modify storage bs:in math.pow.x set from storage {ns}:temp expl.{EXPLOSION_DECAY}
 
-# distance into y (already an integer = distance in blocks)
-execute store result storage bs:in math.pow.y float 1 run scoreboard players get #distance {ns}.data
+# distance into y (float tenths-of-blocks * 0.1 = actual block distance as float)
+execute store result storage bs:in math.pow.y float 0.1 run scoreboard players get #distance {ns}.data
 
 # Compute pow(decay, distance)
 function #bs.math:pow
@@ -335,8 +338,7 @@ execute as @n[tag={ns}.temp_shooter] if score @s {ns}.special.instant_kill match
 # Prepare macro arguments: target=@s, amount=damage (float with 0.1 precision), attacker=shooter
 data modify storage {ns}:input with set value {{target:"@s", amount:0.0f, attacker:"@n[tag={ns}.temp_shooter]"}}
 execute store result storage {ns}:input with.amount float 0.1 run scoreboard players get #expl_dmg {ns}.data
-function {ns}:v{version}/utils/damage with storage {ns}:input with
-function #{ns}:signals/damage with storage {ns}:input with
+function {ns}:v{version}/utils/signal_and_damage
 
 # Signal: on_hit_entity (@s = hit entity, weapon/damage info in mgs:signals)
 data modify storage {ns}:signals on_hit_entity set value {{}}

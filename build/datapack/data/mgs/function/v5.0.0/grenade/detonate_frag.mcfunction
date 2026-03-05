@@ -38,7 +38,7 @@ execute as @a run function mgs:v5.0.0/projectile/match_shooter
 execute if score #found mgs.data matches 0 as @e[tag=mgs.armed] run function mgs:v5.0.0/projectile/match_shooter
 
 # Apply area damage to nearby entities (macro for configurable radius)
-execute store result storage mgs:temp expl.radius_int int 1 run data get entity @s data.config.expl_radius
+execute store result storage mgs:temp expl.radius_float float 1 run data get entity @s data.config.expl_radius
 function mgs:v5.0.0/projectile/damage_area with storage mgs:temp expl
 
 # Signal: on_explosion

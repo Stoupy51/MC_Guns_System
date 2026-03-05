@@ -8,11 +8,8 @@ from stewbeet import Mem, TextComponent, write_versioned_function
 from .multiplayer.classes import CLASS_IDS, CLASSES
 from .multiplayer.loadouts import (
     GRENADE_TYPES,
-    MAX_PERKS,
     PERKS,
-    PICK10_TOTAL,
     PRIMARY_WEAPONS,
-    SECONDARY_WEAPONS,
     TRIG_BACK_EQUIPMENT,
     TRIG_BACK_PERKS,
     TRIG_BACK_SECONDARY,
@@ -23,7 +20,11 @@ from .multiplayer.loadouts import (
     TRIG_FAVORITE_BASE,
     TRIG_LIKE_BASE,
     TRIG_MARKETPLACE,
+    TRIG_MARKETPLACE_ALL,
+    TRIG_MARKETPLACE_FAV_ONLY,
+    TRIG_MARKETPLACE_LIKES,
     TRIG_MY_LOADOUTS,
+    TRIG_MY_LOADOUTS_FAV_ONLY,
     TRIG_PERK_BASE,
     TRIG_PERKS_DONE,
     TRIG_PRIMARY_BASE,
@@ -37,10 +38,6 @@ from .multiplayer.loadouts import (
     TRIG_SECONDARY_SCOPE_BASE,
     TRIG_SELECT_BASE,
     TRIG_SET_DEFAULT_BASE,
-    TRIG_MARKETPLACE_ALL,
-    TRIG_MARKETPLACE_FAV_ONLY,
-    TRIG_MARKETPLACE_LIKES,
-    TRIG_MY_LOADOUTS_FAV_ONLY,
     TRIG_TOGGLE_VIS_BASE,
     TRIG_UNSET_DEFAULT,
 )
@@ -74,7 +71,6 @@ execute if score @s {ns}.player.config matches 1.. run function {ns}:v{version}/
     ## Process trigger values
     # Pre-compute trigger ranges for custom loadout editor
     primary_max = TRIG_PRIMARY_BASE + len(PRIMARY_WEAPONS) - 1
-    secondary_max = TRIG_SECONDARY_BASE + len(SECONDARY_WEAPONS) - 1
     primary_mags_max = TRIG_PRIMARY_MAGS_BASE + 5
     secondary_mags_max = TRIG_SECONDARY_MAGS_BASE + 5
     perk_max = TRIG_PERK_BASE + len(PERKS) - 1

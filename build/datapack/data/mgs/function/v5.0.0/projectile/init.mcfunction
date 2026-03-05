@@ -1,9 +1,9 @@
 
 #> mgs:v5.0.0/projectile/init
 #
-# @executed	anchored eyes & positioned ^ ^ ^0.5
+# @executed	anchored eyes & positioned ^ ^ ^0.69
 #
-# @within	mgs:v5.0.0/projectile/summon [ anchored eyes & positioned ^ ^ ^0.5 ]
+# @within	mgs:v5.0.0/projectile/summon [ anchored eyes & positioned ^ ^ ^0.69 ]
 #
 
 # Tag as slow bullet

@@ -53,6 +53,7 @@ $execute summon item_display run function mgs:v5.0.0/zombies/bonus/extract_mag_d
 tag @s remove mgs.refilling_mag
 
 # Apply refilled ammo count to magazine item
+# TODO: Fix the support for "Consumable Magazine" (set to max_stack_size instead)
 $item modify entity @s $(slot) mgs:v5.0.0/update_ammo
 
 # Set full magazine model (remove empty state)
