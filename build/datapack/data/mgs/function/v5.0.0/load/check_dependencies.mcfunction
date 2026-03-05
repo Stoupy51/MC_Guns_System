@@ -24,6 +24,8 @@ execute if score #dependency_error mgs.data matches 0 unless score $bs.random.ma
 execute if score #dependency_error mgs.data matches 0 if score $bs.random.major load.status matches 4 unless score $bs.random.minor load.status matches 0.. run scoreboard players set #dependency_error mgs.data 1
 execute if score #dependency_error mgs.data matches 0 unless score $bs.raycast.major load.status matches 4.. run scoreboard players set #dependency_error mgs.data 1
 execute if score #dependency_error mgs.data matches 0 if score $bs.raycast.major load.status matches 4 unless score $bs.raycast.minor load.status matches 0.. run scoreboard players set #dependency_error mgs.data 1
+execute if score #dependency_error mgs.data matches 0 unless score $bs.sidebar.major load.status matches 4.. run scoreboard players set #dependency_error mgs.data 1
+execute if score #dependency_error mgs.data matches 0 if score $bs.sidebar.major load.status matches 4 unless score $bs.sidebar.minor load.status matches 0.. run scoreboard players set #dependency_error mgs.data 1
 execute if score #dependency_error mgs.data matches 0 unless score $bs.view.major load.status matches 4.. run scoreboard players set #dependency_error mgs.data 1
 execute if score #dependency_error mgs.data matches 0 if score $bs.view.major load.status matches 4 unless score $bs.view.minor load.status matches 0.. run scoreboard players set #dependency_error mgs.data 1
 

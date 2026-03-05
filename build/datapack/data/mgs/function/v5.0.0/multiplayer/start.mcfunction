@@ -32,8 +32,8 @@ execute store result score #mp_timer mgs.data run data get storage mgs:multiplay
 # Tag all non-spectator players as in-game
 scoreboard players set @a mgs.mp.in_game 1
 
-# Set all in-game players to survival and enable instant respawn
-gamemode survival @a[scores={mgs.mp.in_game=1}]
+# Set all in-game players to adventure and enable instant respawn
+gamemode adventure @a[scores={mgs.mp.in_game=1}]
 gamerule immediate_respawn true
 
 # Store base coordinates for offset
@@ -77,6 +77,30 @@ execute if data storage mgs:multiplayer game{gamemode:"tdm"} run function mgs:v5
 execute if data storage mgs:multiplayer game{gamemode:"dom"} run function mgs:v5.0.0/multiplayer/gamemodes/dom/setup
 execute if data storage mgs:multiplayer game{gamemode:"hp"} run function mgs:v5.0.0/multiplayer/gamemodes/hp/setup
 execute if data storage mgs:multiplayer game{gamemode:"snd"} run function mgs:v5.0.0/multiplayer/gamemodes/snd/setup
+
+# Store score limit and compute initial timer values for sidebar
+execute store result score #score_limit mgs.data run data get storage mgs:multiplayer game.score_limit
+execute store result score #_timer_sec mgs.data run scoreboard players get #mp_timer mgs.data
+scoreboard players operation #_timer_sec mgs.data /= #20 mgs.data
+execute store result score #_timer_min mgs.data run scoreboard players get #_timer_sec mgs.data
+scoreboard players operation #_timer_min mgs.data /= #60 mgs.data
+scoreboard players operation #_timer_mod mgs.data = #_timer_sec mgs.data
+scoreboard players operation #_timer_mod mgs.data %= #60 mgs.data
+scoreboard players operation #_timer_tens mgs.data = #_timer_mod mgs.data
+scoreboard players operation #_timer_tens mgs.data /= #10 mgs.data
+scoreboard players operation #_timer_ones mgs.data = #_timer_mod mgs.data
+scoreboard players operation #_timer_ones mgs.data %= #10 mgs.data
+
+# Create sidebar HUD
+scoreboard objectives add mgs.sidebar dummy
+execute if data storage mgs:multiplayer game{gamemode:"ffa"} run function mgs:v5.0.0/multiplayer/create_sidebar_ffa
+execute if data storage mgs:multiplayer game{gamemode:"tdm"} run function mgs:v5.0.0/multiplayer/create_sidebar_team {title:"Team Deathmatch"}
+execute if data storage mgs:multiplayer game{gamemode:"dom"} run function mgs:v5.0.0/multiplayer/create_sidebar_team {title:"Domination"}
+execute if data storage mgs:multiplayer game{gamemode:"hp"} run function mgs:v5.0.0/multiplayer/create_sidebar_team {title:"Hardpoint"}
+execute if data storage mgs:multiplayer game{gamemode:"snd"} run function mgs:v5.0.0/multiplayer/create_sidebar_team {title:"Search & Destroy"}
+
+# Show kills in player list (tab)
+scoreboard objectives setdisplay list mgs.mp.kills
 
 # Teleport players to spawn points
 function mgs:v5.0.0/multiplayer/tp_all_to_spawns

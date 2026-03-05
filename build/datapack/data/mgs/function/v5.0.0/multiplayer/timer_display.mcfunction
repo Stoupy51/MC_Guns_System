@@ -12,6 +12,12 @@ scoreboard players operation #_timer_min mgs.data /= #60 mgs.data
 scoreboard players operation #_timer_mod mgs.data = #_timer_sec mgs.data
 scoreboard players operation #_timer_mod mgs.data %= #60 mgs.data
 
-# Display (only show when < 30 seconds remain as warning)
-execute if score #_timer_sec mgs.data matches ..30 as @a[scores={mgs.mp.in_game=1}] run title @s actionbar [{"text":"⏱ ","color":"red"},{"score":{"name":"#_timer_sec","objective":"mgs.data"},"color":"red"},{"text":"s","color":"red"}]
+# Zero-padded seconds for sidebar
+scoreboard players operation #_timer_tens mgs.data = #_timer_mod mgs.data
+scoreboard players operation #_timer_tens mgs.data /= #10 mgs.data
+scoreboard players operation #_timer_ones mgs.data = #_timer_mod mgs.data
+scoreboard players operation #_timer_ones mgs.data %= #10 mgs.data
+
+# Refresh sidebar with updated values
+function #bs.sidebar:refresh {objective:"mgs.sidebar"}
 

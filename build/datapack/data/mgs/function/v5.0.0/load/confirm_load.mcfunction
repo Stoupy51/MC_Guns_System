@@ -428,6 +428,7 @@ execute unless score #blue mgs.mp.team matches -2147483648.. run scoreboard play
 execute unless data storage mgs:multiplayer game run data modify storage mgs:multiplayer game set value {state:"lobby",gamemode:"tdm",score_limit:30,time_limit:12000,map_id:"hijacked"}
 
 # Constants for timer math
+scoreboard players set #10 mgs.data 10
 scoreboard players set #20 mgs.data 20
 scoreboard players set #60 mgs.data 60
 

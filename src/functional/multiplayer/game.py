@@ -43,6 +43,7 @@ execute unless score #blue {ns}.mp.team matches -2147483648.. run scoreboard pla
 execute unless data storage {ns}:multiplayer game run data modify storage {ns}:multiplayer game set value {{state:"lobby",gamemode:"tdm",score_limit:30,time_limit:12000,map_id:"hijacked"}}
 
 # Constants for timer math
+scoreboard players set #10 {ns}.data 10
 scoreboard players set #20 {ns}.data 20
 scoreboard players set #60 {ns}.data 60
 """)
@@ -127,6 +128,30 @@ execute if data storage {ns}:multiplayer game{{gamemode:"tdm"}} run function {ns
 execute if data storage {ns}:multiplayer game{{gamemode:"dom"}} run function {ns}:v{version}/multiplayer/gamemodes/dom/setup
 execute if data storage {ns}:multiplayer game{{gamemode:"hp"}} run function {ns}:v{version}/multiplayer/gamemodes/hp/setup
 execute if data storage {ns}:multiplayer game{{gamemode:"snd"}} run function {ns}:v{version}/multiplayer/gamemodes/snd/setup
+
+# Store score limit and compute initial timer values for sidebar
+execute store result score #score_limit {ns}.data run data get storage {ns}:multiplayer game.score_limit
+execute store result score #_timer_sec {ns}.data run scoreboard players get #mp_timer {ns}.data
+scoreboard players operation #_timer_sec {ns}.data /= #20 {ns}.data
+execute store result score #_timer_min {ns}.data run scoreboard players get #_timer_sec {ns}.data
+scoreboard players operation #_timer_min {ns}.data /= #60 {ns}.data
+scoreboard players operation #_timer_mod {ns}.data = #_timer_sec {ns}.data
+scoreboard players operation #_timer_mod {ns}.data %= #60 {ns}.data
+scoreboard players operation #_timer_tens {ns}.data = #_timer_mod {ns}.data
+scoreboard players operation #_timer_tens {ns}.data /= #10 {ns}.data
+scoreboard players operation #_timer_ones {ns}.data = #_timer_mod {ns}.data
+scoreboard players operation #_timer_ones {ns}.data %= #10 {ns}.data
+
+# Create sidebar HUD
+scoreboard objectives add {ns}.sidebar dummy
+execute if data storage {ns}:multiplayer game{{gamemode:"ffa"}} run function {ns}:v{version}/multiplayer/create_sidebar_ffa
+execute if data storage {ns}:multiplayer game{{gamemode:"tdm"}} run function {ns}:v{version}/multiplayer/create_sidebar_team {{title:"Team Deathmatch"}}
+execute if data storage {ns}:multiplayer game{{gamemode:"dom"}} run function {ns}:v{version}/multiplayer/create_sidebar_team {{title:"Domination"}}
+execute if data storage {ns}:multiplayer game{{gamemode:"hp"}} run function {ns}:v{version}/multiplayer/create_sidebar_team {{title:"Hardpoint"}}
+execute if data storage {ns}:multiplayer game{{gamemode:"snd"}} run function {ns}:v{version}/multiplayer/create_sidebar_team {{title:"Search & Destroy"}}
+
+# Show kills in player list (tab)
+scoreboard objectives setdisplay list {ns}.mp.kills
 
 # Teleport players to spawn points
 function {ns}:v{version}/multiplayer/tp_all_to_spawns
@@ -222,6 +247,11 @@ function #{ns}:multiplayer/on_game_end
 tellraw @a ["",[{{"text":"","color":"gold","bold":true}},"⚔ ",{{"text":"Game Over"}},"! "]]
 tellraw @a ["",{{"text":"Red","color":"red"}},{{"text":": "}},{{"score":{{"name":"#red","objective":"{ns}.mp.team"}}}}," | ",{{"text":"Blue","color":"blue"}},{{"text":": "}},{{"score":{{"name":"#blue","objective":"{ns}.mp.team"}}}}]
 
+# Remove sidebar and list displays
+scoreboard objectives setdisplay sidebar
+scoreboard objectives remove {ns}.sidebar
+scoreboard objectives setdisplay list
+
 # Clear in-game state
 scoreboard players set @a {ns}.mp.in_game 0
 scoreboard players set @a {ns}.mp.team 0
@@ -299,8 +329,14 @@ scoreboard players operation #_timer_min {ns}.data /= #60 {ns}.data
 scoreboard players operation #_timer_mod {ns}.data = #_timer_sec {ns}.data
 scoreboard players operation #_timer_mod {ns}.data %= #60 {ns}.data
 
-# Display (only show when < 30 seconds remain as warning)
-execute if score #_timer_sec {ns}.data matches ..30 as @a[scores={{{ns}.mp.in_game=1}}] run title @s actionbar [{{"text":"⏱ ","color":"red"}},{{"score":{{"name":"#_timer_sec","objective":"{ns}.data"}},"color":"red"}},{{"text":"s","color":"red"}}]
+# Zero-padded seconds for sidebar
+scoreboard players operation #_timer_tens {ns}.data = #_timer_mod {ns}.data
+scoreboard players operation #_timer_tens {ns}.data /= #10 {ns}.data
+scoreboard players operation #_timer_ones {ns}.data = #_timer_mod {ns}.data
+scoreboard players operation #_timer_ones {ns}.data %= #10 {ns}.data
+
+# Refresh sidebar with updated values
+function #bs.sidebar:refresh {{objective:"{ns}.sidebar"}}
 """)
 
 	## Time up → determine winner
@@ -550,6 +586,33 @@ execute as @p[tag={ns}.spawn_pending] run function {ns}:v{version}/multiplayer/t
 	## Respawn TP: always use general spawns on respawn (run as the respawning player)
 	write_versioned_function("multiplayer/respawn_tp", f"""
 function {ns}:v{version}/multiplayer/pick_spawn {{type:"general"}}
+""")
+
+	# ── Sidebar HUD ───────────────────────────────────────────────
+
+	# Build sidebar content components for reuse
+	sb_timer = (
+		f'[{{text:" ⏱ ",color:"yellow"}},'
+		f'["",{{score:{{name:"#_timer_min",objective:"{ns}.data"}},color:"yellow"}},'
+		f'{{text:":",color:"yellow"}},'
+		f'{{score:{{name:"#_timer_tens",objective:"{ns}.data"}},color:"yellow"}},'
+		f'{{score:{{name:"#_timer_ones",objective:"{ns}.data"}},color:"yellow"}}]]'
+	)
+	sb_red = f'[{{text:" 🔴 Red ",color:"red"}},{{score:{{name:"#red",objective:"{ns}.mp.team"}},color:"white"}}]'
+	sb_blue = f'[{{text:" 🔵 Blue ",color:"blue"}},{{score:{{name:"#blue",objective:"{ns}.mp.team"}},color:"white"}}]'
+	sb_limit = f'[{{text:" First to ",color:"gray"}},{{score:{{name:"#score_limit",objective:"{ns}.data"}},color:"white"}}]'
+	sb_spacer = '{text:" "}'
+
+	## Team sidebar (TDM/DOM/HP/SND) — takes $(title) macro arg
+	write_versioned_function("multiplayer/create_sidebar_team", f"""
+$function #bs.sidebar:create {{objective:"{ns}.sidebar",display_name:{{text:"$(title)",color:"gold",bold:true}},contents:[{sb_timer},{sb_spacer},{sb_red},{sb_blue},{sb_spacer},{sb_limit}]}}
+scoreboard objectives setdisplay sidebar {ns}.sidebar
+""")
+
+	## FFA sidebar
+	write_versioned_function("multiplayer/create_sidebar_ffa", f"""
+function #bs.sidebar:create {{objective:"{ns}.sidebar",display_name:{{text:"Free For All",color:"gold",bold:true}},contents:[{sb_timer},{sb_spacer},{sb_limit}]}}
+scoreboard objectives setdisplay sidebar {ns}.sidebar
 """)
 
 	# ── Shooting Block During Prep ────────────────────────────────
