@@ -77,7 +77,7 @@ execute unless score #is_fav {ns}.data matches 1 if data storage {ns}:temp _fav_
 		return (
 			f'{{type:"minecraft:multi_action",'
 			f'title:{{text:"My Loadouts",color:"gold",bold:true}},'
-			f'body:{{type:"minecraft:item",item:{{id:"minecraft:written_book"}},description:{{contents:{{text:"Manage your custom loadouts.",color:"gray"}}}},show_decoration:false,show_tooltip:true}},'
+			f'body:{{type:"minecraft:item",item:{{id:"minecraft:written_book"}},description:{{contents:{{text:"Manage your custom loadouts",color:"gray"}}}},show_decoration:false,show_tooltip:true}},'
 			f'actions:[],'
 			f'columns:3,'
 			f'after_action:"close",'
@@ -86,7 +86,7 @@ execute unless score #is_fav {ns}.data matches 1 if data storage {ns}:temp _fav_
 		)
 
 	def _my_loadouts_filter_btns(active: str = "all") -> list[str]:
-		"""Return the 3 filter button SNBT entries for My Loadouts."""
+		""" Return the 3 filter button SNBT entries for My Loadouts """
 		fav_color = "gold" if active == "fav" else "yellow"
 		all_color = "aqua" if active == "all" else "white"
 		return [
@@ -303,7 +303,7 @@ $data modify storage {ns}:temp dialog.actions append value {{label:{{text:"\U000
 		return (
 			f'{{type:"minecraft:multi_action",'
 			f'title:{{text:"Marketplace",color:"light_purple",bold:true}},'
-			f'body:{{type:"minecraft:item",item:{{id:"minecraft:emerald"}},description:{{contents:{{text:"Browse public loadouts from all players.",color:"gray"}}}},show_decoration:false,show_tooltip:true}},'
+			f'body:{{type:"minecraft:item",item:{{id:"minecraft:emerald"}},description:{{contents:{{text:"Browse public loadouts from all players",color:"gray"}}}},show_decoration:false,show_tooltip:true}},'
 			f'actions:[],'
 			f'columns:3,'
 			f'after_action:"close",'

@@ -34,7 +34,7 @@ scoreboard objectives add {ns}.mp.death_count deathCount
 	write_versioned_function("multiplayer/build_class_btn",
 f"""
 # Build rich tooltip from current class data (includes mag counts and equipment)
-$data modify storage {ns}:temp _btn set value {{label:{{text:"$(name)",color:"green"}},tooltip:["",{{text:"$(lore)","color":"gray"}},{{"text":"\\n"}},{{"text":"Primary: ","color":"white"}},{{"text":"$(main_gun)","color":"green"}},{{"text":" x$(main_mag_count) mags","color":"dark_green"}},{{"text":"\\n"}},{{"text":"Secondary: ","color":"white"}},{{"text":"$(secondary_gun)","color":"yellow"}},{{"text":" x$(secondary_mag_count) mags","color":"gold"}},{{"text":"\\n"}},{{"text":"Grenades: ","color":"white"}},{{"text":"$(equip_display)","color":"aqua"}},"\\n\\n",{{"text":"\u25b6 Click to select","color":"dark_gray","italic":true}}],action:{{type:"run_command",command:"/trigger {ns}.player.config set $(trigger_value)"}}}}
+$data modify storage {ns}:temp _btn set value {{label:{{text:"$(name)",color:"green"}},tooltip:["",{{text:"$(lore)","color":"gray"}},{{"text":"\\n"}},{{"text":"Primary"}},": ",{{"text":"$(main_gun)","color":"green"}},{{"text":" x$(main_mag_count) mags","color":"dark_green"}},{{"text":"\\n"}},{{"text":"Secondary: ","color":"white"}},{{"text":"$(secondary_gun)","color":"yellow"}},{{"text":" x$(secondary_mag_count) mags","color":"gold"}},{{"text":"\\n"}},{{"text":"Grenades: ","color":"white"}},{{"text":"$(equip_display)","color":"aqua"}},"\\n\\n",{{"text":"\u25b6 Click to select","color":"dark_gray","italic":true}}],action:{{type:"run_command",command:"/trigger {ns}.player.config set $(trigger_value)"}}}}
 
 # Append to dialog actions
 data modify storage {ns}:temp dialog.actions append from storage {ns}:temp _btn
@@ -50,7 +50,7 @@ execute if data storage {ns}:temp class_iter[0] run function {ns}:v{version}/mul
 	write_versioned_function("multiplayer/select_class",
 f"""
 # Initialize dialog structure
-data modify storage {ns}:temp dialog set value {{type:"minecraft:multi_action",title:{{text:"Select Your Class",color:"gold",bold:true}},body:{{type:"minecraft:item",item:{{id:"minecraft:crossbow"}},description:{{contents:{{text:"Choose a class for multiplayer.",color:"gray"}}}},show_decoration:false,show_tooltip:true}},actions:[],columns:2,after_action:"close",exit_action:{{label:"Cancel"}}}}
+data modify storage {ns}:temp dialog set value {{type:"minecraft:multi_action",title:{{text:"Select Your Class",color:"gold",bold:true}},body:{{type:"minecraft:item",item:{{id:"minecraft:crossbow"}},description:{{contents:{{text:"Choose a class for multiplayer",color:"gray"}}}},show_decoration:false,show_tooltip:true}},actions:[],columns:2,after_action:"close",exit_action:{{label:"Cancel"}}}}
 
 # Copy class list for iteration
 data modify storage {ns}:temp class_iter set from storage {ns}:multiplayer classes_list
@@ -59,9 +59,9 @@ data modify storage {ns}:temp class_iter set from storage {ns}:multiplayer class
 execute if data storage {ns}:temp class_iter[0] run function {ns}:v{version}/multiplayer/build_class_btn with storage {ns}:temp class_iter[0]
 
 # Append custom loadout buttons
-data modify storage {ns}:temp dialog.actions append value {{label:{{text:"✚ Create Loadout",color:"aqua",bold:true}},tooltip:{{text:"Build a custom loadout from scratch"}},action:{{type:"run_command",command:"/trigger {ns}.player.config set {TRIG_EDITOR_START}"}}}}
-data modify storage {ns}:temp dialog.actions append value {{label:{{text:"📦 My Loadouts",color:"yellow",bold:true}},tooltip:{{text:"Manage your custom loadouts"}},action:{{type:"run_command",command:"/trigger {ns}.player.config set {TRIG_MY_LOADOUTS}"}}}}
-data modify storage {ns}:temp dialog.actions append value {{label:{{text:"🌍 Marketplace",color:"light_purple",bold:true}},tooltip:{{text:"Browse public loadouts from other players"}},action:{{type:"run_command",command:"/trigger {ns}.player.config set {TRIG_MARKETPLACE}"}}}}
+data modify storage {ns}:temp dialog.actions append value {{label:[{{text:"✚ ",color:"aqua",bold:true}},{{text:"Create Loadout"}}],tooltip:{{text:"Build a custom loadout from scratch"}},action:{{type:"run_command",command:"/trigger {ns}.player.config set {TRIG_EDITOR_START}"}}}}
+data modify storage {ns}:temp dialog.actions append value {{label:[{{text:"📦 ",color:"yellow",bold:true}},{{text:"My Loadouts"}}],tooltip:{{text:"Manage your custom loadouts"}},action:{{type:"run_command",command:"/trigger {ns}.player.config set {TRIG_MY_LOADOUTS}"}}}}
+data modify storage {ns}:temp dialog.actions append value {{label:[{{text:"🌍 ",color:"light_purple",bold:true}},{{text:"Marketplace"}}],tooltip:{{text:"Browse public loadouts from other players"}},action:{{type:"run_command",command:"/trigger {ns}.player.config set {TRIG_MARKETPLACE}"}}}}
 
 # Show the completed dialog via macro
 function {ns}:v{version}/multiplayer/show_dialog with storage {ns}:temp

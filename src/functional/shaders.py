@@ -1036,7 +1036,7 @@ def get_post_effect_json(ns: str) -> JsonDict:
 # ============================================================================
 
 def main() -> None:
-    """Register all shader files and write marker particle commands."""
+    """ Register all shader files and write marker particle commands """
     ns: str = Mem.ctx.project_id
     custom_crosshair: bool = Mem.ctx.meta.get("mgs_custom_crosshair", False)
 

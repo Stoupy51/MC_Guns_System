@@ -59,7 +59,7 @@ def generate_editor() -> None:
 		trig = TRIG_PRIMARY_BASE + idx
 		primary_actions.append(
 			f'{{label:{{text:"{display}",color:"yellow"}},'
-			f'tooltip:["",{{"text":"{category}","color":"gray"}},{{"text":"\\nCost: ","color":"white"}},{{"text":"{COST_PRIMARY_WEAPON} pt","color":"gold"}}],'
+			f'tooltip:["",{{"text":"{category}","color":"gray"}},{{"text":"\\nCost: ","color":"white"}},[{{"text":"{COST_PRIMARY_WEAPON}","color":"gold"}}]," pt"],'
 			f'action:{{type:"run_command",command:"/trigger {ns}.player.config set {trig}"}}}}'
 		)
 	primary_actions_snbt = ",".join(primary_actions)
@@ -85,7 +85,7 @@ type:"minecraft:plain_message",\
 contents:["",{{"text":"Points remaining: ","color":"white"}},{{"text":"$(_pts)","color":"gold","bold":true}},{{"text":" / {PICK10_TOTAL}","color":"dark_gray"}}]\
 }},{{\
 type:"minecraft:plain_message",\
-contents:{{text:"Choose your primary weapon (-{COST_PRIMARY_WEAPON} pt).",color:"gray"}}\
+contents:{{text:"Choose your primary weapon (-{COST_PRIMARY_WEAPON} pt)",color:"gray"}}\
 }}],\
 actions:[{primary_actions_snbt}],\
 columns:2,\
@@ -150,11 +150,11 @@ function {ns}:v{version}/multiplayer/editor/show_primary_mags_dialog
 			trig = trig_base + i
 			name = SCOPE_NAMES[suffix]
 			scope_cost = cost if suffix != "" else 0
-			cost_text = f"-{scope_cost} pt" if scope_cost > 0 else "Free"
+			tooltip: str = '{text:"Free"}' if scope_cost == 0 else f'[{{text:"-{scope_cost}","color":"gold"}}, " pt"]'
 			label_color = "green" if scope_cost == 0 else "yellow"
 			actions.append(
 				f'{{label:{{text:"{name}",color:"{label_color}"}},'
-				f'tooltip:{{text:"{cost_text}"}},'
+				f'tooltip:{tooltip},'
 				f'action:{{type:"run_command",command:"/trigger {ns}.player.config set {trig}"}}}}'
 			)
 		return ",".join(actions)
@@ -175,7 +175,7 @@ type:"minecraft:plain_message",\
 contents:["",{{"text":"Points remaining: ","color":"white"}},{{"text":"$(_pts)","color":"gold","bold":true}},{{"text":" / {PICK10_TOTAL}","color":"dark_gray"}}]\
 }},{{\
 type:"minecraft:plain_message",\
-contents:{{text:"Choose your optic (-{COST_PRIMARY_SCOPE} pt for any scope, iron sights free).",color:"gray"}}\
+contents:{{text:"Choose your optic (-{COST_PRIMARY_SCOPE} pt for any scope, iron sights free)",color:"gray"}}\
 }}],\
 actions:[{snbt}],\
 columns:2,\
@@ -242,7 +242,7 @@ f"""$data modify storage {ns}:temp editor.primary_full set value "$(primary)$(pr
 		extra_cost = count * COST_PRIMARY_MAG
 		mag_actions_primary.append(
 			f'{{label:{{text:"{count}x Magazine",color:"yellow"}},'
-			f'tooltip:["",{{"text":"-{extra_cost} pt","color":"gold"}},{{"text":"\\n{count} magazine(s) in inventory","color":"gray"}}],'
+			f'tooltip:["",{{"text":"-{extra_cost}","color":"gold"}}," ",{{"text":"pt","color":"gold"}},{{"text":"\\n{count} magazine(s) in inventory","color":"gray"}}],'
 			f'action:{{type:"run_command",command:"/trigger {ns}.player.config set {trig}"}}}}'
 		)
 	mag_actions_primary_snbt = ",".join(mag_actions_primary)
@@ -261,7 +261,7 @@ type:"minecraft:plain_message",\
 contents:["",{{"text":"Points remaining: ","color":"white"}},{{"text":"$(_pts)","color":"gold","bold":true}},{{"text":" / {PICK10_TOTAL}","color":"dark_gray"}}]\
 }},{{\
 type:"minecraft:plain_message",\
-contents:{{text:"Select number of primary magazines ({COST_PRIMARY_MAG} pt each).",color:"gray"}}\
+contents:{{text:"Select number of primary magazines ({COST_PRIMARY_MAG} pt each)",color:"gray"}}\
 }}],\
 actions:[{mag_actions_primary_snbt}],\
 columns:1,\
@@ -334,7 +334,7 @@ function {ns}:v{version}/multiplayer/editor/show_secondary_dialog
 		trig = TRIG_SECONDARY_BASE + idx
 		secondary_actions.append(
 			f'{{label:{{text:"{display}",color:"yellow"}},'
-			f'tooltip:["",{{"text":"Pistol","color":"gray"}},{{"text":"\\nCost: ","color":"white"}},{{"text":"{COST_SECONDARY_WEAPON} pt","color":"gold"}}],'
+			f'tooltip:["",{{"text":"Pistol","color":"gray"}},{{"text":"\\nCost: ","color":"white"}},[{{"text":"{COST_SECONDARY_WEAPON}","color":"gold"}}," pt"]],'
 			f'action:{{type:"run_command",command:"/trigger {ns}.player.config set {trig}"}}}}'
 		)
 	secondary_actions.append(
@@ -359,7 +359,7 @@ type:"minecraft:plain_message",\
 contents:["",{{"text":"Points remaining: ","color":"white"}},{{"text":"$(_pts)","color":"gold","bold":true}},{{"text":" / {PICK10_TOTAL}","color":"dark_gray"}}]\
 }},{{\
 type:"minecraft:plain_message",\
-contents:{{text:"Choose your secondary weapon (-{COST_SECONDARY_WEAPON} pt) or skip.",color:"gray"}}\
+contents:{{text:"Choose your secondary weapon (-{COST_SECONDARY_WEAPON} pt) or skip",color:"gray"}}\
 }}],\
 actions:[{secondary_actions_snbt}],\
 columns:2,\
@@ -452,7 +452,7 @@ type:"minecraft:plain_message",\
 contents:["",{{"text":"Points remaining: ","color":"white"}},{{"text":"$(_pts)","color":"gold","bold":true}},{{"text":" / {PICK10_TOTAL}","color":"dark_gray"}}]\
 }},{{\
 type:"minecraft:plain_message",\
-contents:{{text:"Choose your secondary optic (-{COST_SECONDARY_SCOPE} pt for scope, iron sights free).",color:"gray"}}\
+contents:{{text:"Choose your secondary optic (-{COST_SECONDARY_SCOPE} pt for scope, iron sights free)",color:"gray"}}\
 }}],\
 actions:[{deagle_scope_snbt}],\
 columns:2,\
@@ -523,11 +523,11 @@ f"""$data modify storage {ns}:temp editor.secondary_full set value "$(secondary)
 		extra_cost = count * COST_SECONDARY_MAG
 		label = f"{count}x Magazine" if count > 0 else "No Mags (0)"
 		label_color = "yellow" if count > 0 else "green"
-		cost_text = f"-{extra_cost} pt" if extra_cost > 0 else "Free"
+		tooltip: str = '{text:"Free","color":"gold"}' if extra_cost == 0 else f'[{{text:"-{extra_cost}","color":"gold"}}, " pt"]'
 		desc = f"{count} magazine(s) in inventory" if count > 0 else "No secondary magazines"
 		mag_actions_secondary.append(
 			f'{{label:{{text:"{label}",color:"{label_color}"}},'
-			f'tooltip:["",{{"text":"{cost_text}","color":"gold"}},{{"text":"\\n{desc}","color":"gray"}}],'
+			f'tooltip:["",{tooltip},{{"text":"\\n{desc}","color":"gray"}}],'
 			f'action:{{type:"run_command",command:"/trigger {ns}.player.config set {trig}"}}}}'
 		)
 	mag_actions_secondary_snbt = ",".join(mag_actions_secondary)
@@ -546,7 +546,7 @@ type:"minecraft:plain_message",\
 contents:["",{{"text":"Points remaining: ","color":"white"}},{{"text":"$(_pts)","color":"gold","bold":true}},{{"text":" / {PICK10_TOTAL}","color":"dark_gray"}}]\
 }},{{\
 type:"minecraft:plain_message",\
-contents:{{text:"Select number of secondary magazines ({COST_SECONDARY_MAG} pt each).",color:"gray"}}\
+contents:{{text:"Select number of secondary magazines ({COST_SECONDARY_MAG} pt each)",color:"gray"}}\
 }}],\
 actions:[{mag_actions_secondary_snbt}],\
 columns:1,\
@@ -593,11 +593,11 @@ function {ns}:v{version}/multiplayer/editor/show_equip_slot1_dialog
 	equip1_actions: list[str] = []
 	for grenade_idx, (item_id, display) in enumerate(GRENADE_TYPES):
 		trig = TRIG_EQUIP_SLOT1_BASE + grenade_idx
-		cost_text = f"-{COST_GRENADE} pt" if item_id else "Free"
+		tooltip: str = '{text:"Free"}' if not item_id else f'[{{text:"-{COST_GRENADE}"}}, " pt"]'
 		label_color = "yellow" if item_id else "green"
 		equip1_actions.append(
 			f'{{label:{{text:"{display}",color:"{label_color}"}},'
-			f'tooltip:{{text:"{cost_text}"}},'
+			f'tooltip:{tooltip},'
 			f'action:{{type:"run_command",command:"/trigger {ns}.player.config set {trig}"}}}}'
 		)
 	equip1_actions_snbt = ",".join(equip1_actions)
@@ -617,7 +617,7 @@ type:"minecraft:plain_message",\
 contents:["",{{"text":"Points remaining: ","color":"white"}},{{"text":"$(_pts)","color":"gold","bold":true}},{{"text":" / {PICK10_TOTAL}","color":"dark_gray"}}]\
 }},{{\
 type:"minecraft:plain_message",\
-contents:{{text:"Choose grenade for slot 1 (hotbar.8) - {COST_GRENADE} pt if not None.",color:"gray"}}\
+contents:{{text:"Choose grenade for slot 1 (hotbar.8) - {COST_GRENADE} pt if not None",color:"gray"}}\
 }}],\
 actions:[{equip1_actions_snbt}],\
 columns:3,\
@@ -692,11 +692,11 @@ function {ns}:v{version}/multiplayer/editor/show_equip_slot2_dialog
 	equip2_actions: list[str] = []
 	for grenade_idx, (item_id, display) in enumerate(GRENADE_TYPES):
 		trig = TRIG_EQUIP_SLOT2_BASE + grenade_idx
-		cost_text = f"-{COST_GRENADE} pt" if item_id else "Free"
+		tooltip: str = '{text:"Free"}' if not item_id else f'[{{text:"-{COST_GRENADE}"}}, " pt"]'
 		label_color = "yellow" if item_id else "green"
 		equip2_actions.append(
 			f'{{label:{{text:"{display}",color:"{label_color}"}},'
-			f'tooltip:{{text:"{cost_text}"}},'
+			f'tooltip:{tooltip},'
 			f'action:{{type:"run_command",command:"/trigger {ns}.player.config set {trig}"}}}}'
 		)
 	equip2_actions_snbt = ",".join(equip2_actions)
@@ -715,7 +715,7 @@ type:"minecraft:plain_message",\
 contents:["",{{"text":"Points remaining: ","color":"white"}},{{"text":"$(_pts)","color":"gold","bold":true}},{{"text":" / {PICK10_TOTAL}","color":"dark_gray"}}]\
 }},{{\
 type:"minecraft:plain_message",\
-contents:{{text:"Choose grenade for slot 2 (hotbar.7) - {COST_GRENADE} pt if not None.",color:"gray"}}\
+contents:{{text:"Choose grenade for slot 2 (hotbar.7) - {COST_GRENADE} pt if not None",color:"gray"}}\
 }}],\
 actions:[{equip2_actions_snbt}],\
 columns:3,\
@@ -765,7 +765,7 @@ function {ns}:v{version}/multiplayer/editor/show_perks_dialog
 		trig = TRIG_PERK_BASE + perk_idx
 		perks_actions.append(
 			f'{{label:{{text:"{perk_name}",color:"aqua"}},'
-			f'tooltip:["",{{"text":"{perk_desc}","color":"gray"}},{{"text":"\\nCost: ","color":"white"}},{{"text":"{COST_PERK} pt","color":"gold"}}],'
+			f'tooltip:["",{{"text":"{perk_desc}","color":"gray"}},{{"text":"\\nCost: ","color":"white"}},[{{"text":"{COST_PERK}","color":"gold"}}]," pt"],'
 			f'action:{{type:"run_command",command:"/trigger {ns}.player.config set {trig}"}}}}'
 		)
 	# Done button
@@ -931,10 +931,10 @@ title:{{text:"Create Loadout - Review",color:"gold",bold:true}},\
 body:[\
 {{type:"minecraft:plain_message",contents:["",{{"text":"Points used: ","color":"white"}},{{"text":"PLACEHOLDER","color":"gold"}}]}},\
 {{type:"minecraft:plain_message",contents:{{text:"Review your loadout before saving:",color:"white"}}}},\
-{{type:"minecraft:plain_message",contents:["",{{"text":"▸ Primary: ","color":"white"}},{{"text":"$(primary_name)","color":"green","bold":true}},{{"text":" ($(primary_scope_name)) x$(primary_mag_count) mags","color":"dark_green"}}]}},\
-{{type:"minecraft:plain_message",contents:["",{{"text":"▸ Secondary: ","color":"white"}},{{"text":"$(secondary_name)","color":"yellow","bold":true}},{{"text":" x$(secondary_mag_count) mags","color":"gold"}}]}},\
-{{type:"minecraft:plain_message",contents:["",{{"text":"▸ Equip 1: ","color":"white"}},{{"text":"$(equip_slot1)","color":"aqua","bold":true}}]}},\
-{{type:"minecraft:plain_message",contents:["",{{"text":"▸ Equip 2: ","color":"white"}},{{"text":"$(equip_slot2)","color":"aqua","bold":true}}]}}\
+{{type:"minecraft:plain_message",contents:["",{{"text":"➤ Primary: ","color":"white"}},{{"text":"$(primary_name)","color":"green","bold":true}},{{"text":" ($(primary_scope_name)) x$(primary_mag_count) mags","color":"dark_green"}}]}},\
+{{type:"minecraft:plain_message",contents:["",{{"text":"➤ Secondary: ","color":"white"}},{{"text":"$(secondary_name)","color":"yellow","bold":true}},{{"text":" x$(secondary_mag_count) mags","color":"gold"}}]}},\
+{{type:"minecraft:plain_message",contents:["",{{"text":"➤ Equip 1: ","color":"white"}},{{"text":"$(equip_slot1)","color":"aqua","bold":true}}]}},\
+{{type:"minecraft:plain_message",contents:["",{{"text":"➤ Equip 2: ","color":"white"}},{{"text":"$(equip_slot2)","color":"aqua","bold":true}}]}}\
 ],\
 actions:[\
 {{label:{{text:"Save as Public",color:"green"}},tooltip:{{text:"Everyone can see and use this loadout"}},action:{{type:"run_command",command:"/trigger {ns}.player.config set {TRIG_SAVE_PUBLIC}"}}}},\
