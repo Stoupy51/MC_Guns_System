@@ -3,6 +3,7 @@
 # Imports
 from stewbeet import Mem, write_versioned_function
 
+from ...helpers import styled_text
 from .catalogs import (
 	PERKS,
 	PICK10_TOTAL,
@@ -90,9 +91,9 @@ execute unless score #is_fav {ns}.data matches 1 if data storage {ns}:temp _fav_
 		fav_color = "gold" if active == "fav" else "yellow"
 		all_color = "aqua" if active == "all" else "white"
 		return [
-			f'{{label:{{text:"\u2b50 Favorites",color:"{fav_color}",bold:true}},tooltip:{{text:"Show only your favorited loadouts"}},action:{{type:"run_command",command:"/trigger {ns}.player.config set {TRIG_MY_LOADOUTS_FAV_ONLY}"}}}}',
-			f'{{label:{{text:"\U0001f4cb All",color:"{all_color}",bold:true}},tooltip:{{text:"Show all your loadouts (favorites first, then private, then public)"}},action:{{type:"run_command",command:"/trigger {ns}.player.config set {TRIG_MY_LOADOUTS}"}}}}',
-			f'{{label:{{text:"\u271a Create",color:"green",bold:true}},tooltip:{{text:"Build a new custom loadout from scratch"}},action:{{type:"run_command",command:"/trigger {ns}.player.config set {TRIG_EDITOR_START}"}}}}',
+			f'{{label:{styled_text("\u2b50 Favorites", color=fav_color, bold="true")},tooltip:{{text:"Show only your favorited loadouts"}},action:{{type:"run_command",command:"/trigger {ns}.player.config set {TRIG_MY_LOADOUTS_FAV_ONLY}"}}}}',
+			f'{{label:{styled_text("\U0001f4cb All", color=all_color, bold="true")},tooltip:{{text:"Show all your loadouts (favorites first, then private, then public)"}},action:{{type:"run_command",command:"/trigger {ns}.player.config set {TRIG_MY_LOADOUTS}"}}}}',
+			f'{{label:{styled_text("\u271a Create", color="green", bold="true")},tooltip:{{text:"Build a new custom loadout from scratch"}},action:{{type:"run_command",command:"/trigger {ns}.player.config set {TRIG_EDITOR_START}"}}}}',
 		]
 
 	## my_loadouts/browse - Default: 3-pass build (favorites → privates → publics) + filter row
@@ -130,7 +131,7 @@ function {ns}:v{version}/multiplayer/show_dialog with storage {ns}:temp
 f"""
 # Initialize dialog
 data modify storage {ns}:temp dialog set value {_my_loadouts_dialog_init()}
-data modify storage {ns}:temp dialog.title set value {{text:"My Loadouts \u2014 Favorites",color:"gold",bold:true}}
+data modify storage {ns}:temp dialog.title set value [{{text:"",color:"gold",bold:true}},{{text:"My Loadouts"}}," \u2014 ",{{text:"Favorites"}}]
 
 # Add filter/sort buttons (favorites tab active)
 data modify storage {ns}:temp dialog.actions append value {_my_loadouts_filter_btns("fav")[0]}
@@ -206,42 +207,41 @@ execute if score #pub {ns}.data matches 1 if score #is_fav {ns}.data matches 0 r
 		)
 	)
 
+	# Shared: normalize optional fields, compute perks count & display for _btn_data
+	_normalize_fields = "\n".join([
+		f'execute unless data storage {ns}:temp _btn_data.perks run data modify storage {ns}:temp _btn_data.perks set value []',
+		f'execute store result storage {ns}:temp _btn_data.perks_count int 1 run data get storage {ns}:temp _btn_data.perks',
+		_perk_disp,
+		f'execute unless data storage {ns}:temp _btn_data.points_used run data modify storage {ns}:temp _btn_data.points_used set value 0',
+		f'execute unless data storage {ns}:temp _btn_data.favorites_count run data modify storage {ns}:temp _btn_data.favorites_count set value 0',
+		f'execute unless data storage {ns}:temp _btn_data.likes run data modify storage {ns}:temp _btn_data.likes set value 0',
+		f'execute unless data storage {ns}:temp _btn_data.equip_slot1_name run data modify storage {ns}:temp _btn_data.equip_slot1_name set value "?"',
+		f'execute unless data storage {ns}:temp _btn_data.equip_slot2_name run data modify storage {ns}:temp _btn_data.equip_slot2_name set value "?"',
+		f'execute unless data storage {ns}:temp _btn_data.main_gun_display run data modify storage {ns}:temp _btn_data.main_gun_display set from storage {ns}:temp _btn_data.main_gun',
+		f'execute unless data storage {ns}:temp _btn_data.secondary_gun_display run data modify storage {ns}:temp _btn_data.secondary_gun_display set value "None"',
+	])
+
+	# Helper to compute a trigger value and store it
+	def _compute_trig(field: str, base: int) -> str:
+		return (
+			f"execute store result score #trig {ns}.data run data get storage {ns}:temp _iter[0].id\n"
+			f"scoreboard players add #trig {ns}.data {base}\n"
+			f"execute store result storage {ns}:temp _btn_data.{field} int 1 run scoreboard players get #trig {ns}.data"
+		)
+
 	## my_loadouts/prep_btn - Normalize fields, compute triggers, route to correct btn macro
 	write_versioned_function("multiplayer/my_loadouts/prep_btn",
 f"""
-# Copy entry data for macro use (all stored fields come along)
+# Copy entry data for macro use
 data modify storage {ns}:temp _btn_data set from storage {ns}:temp _iter[0]
 
-# Compute select trigger: {TRIG_SELECT_BASE} + id
-execute store result score #trig {ns}.data run data get storage {ns}:temp _iter[0].id
-scoreboard players add #trig {ns}.data {TRIG_SELECT_BASE}
-execute store result storage {ns}:temp _btn_data.select_trig int 1 run scoreboard players get #trig {ns}.data
+# Compute triggers
+{_compute_trig("select_trig", TRIG_SELECT_BASE)}
+{_compute_trig("vis_trig", TRIG_TOGGLE_VIS_BASE)}
+{_compute_trig("delete_trig", TRIG_DELETE_BASE)}
 
-# Compute toggle visibility trigger: {TRIG_TOGGLE_VIS_BASE} + id
-execute store result score #trig {ns}.data run data get storage {ns}:temp _iter[0].id
-scoreboard players add #trig {ns}.data {TRIG_TOGGLE_VIS_BASE}
-execute store result storage {ns}:temp _btn_data.vis_trig int 1 run scoreboard players get #trig {ns}.data
-
-# Compute delete trigger: {TRIG_DELETE_BASE} + id
-execute store result score #trig {ns}.data run data get storage {ns}:temp _iter[0].id
-scoreboard players add #trig {ns}.data {TRIG_DELETE_BASE}
-execute store result storage {ns}:temp _btn_data.delete_trig int 1 run scoreboard players get #trig {ns}.data
-
-# Compute perks_count from perks list size
-execute unless data storage {ns}:temp _btn_data.perks run data modify storage {ns}:temp _btn_data.perks set value []
-execute store result storage {ns}:temp _btn_data.perks_count int 1 run data get storage {ns}:temp _btn_data.perks
-
-# Build per-perk display names for tooltip
-{_perk_disp}
-
-# Normalize optional fields (backwards compat for pre-update loadouts)
-execute unless data storage {ns}:temp _btn_data.points_used run data modify storage {ns}:temp _btn_data.points_used set value 0
-execute unless data storage {ns}:temp _btn_data.favorites_count run data modify storage {ns}:temp _btn_data.favorites_count set value 0
-execute unless data storage {ns}:temp _btn_data.likes run data modify storage {ns}:temp _btn_data.likes set value 0
-execute unless data storage {ns}:temp _btn_data.equip_slot1_name run data modify storage {ns}:temp _btn_data.equip_slot1_name set value "?"
-execute unless data storage {ns}:temp _btn_data.equip_slot2_name run data modify storage {ns}:temp _btn_data.equip_slot2_name set value "?"
-execute unless data storage {ns}:temp _btn_data.main_gun_display run data modify storage {ns}:temp _btn_data.main_gun_display set from storage {ns}:temp _btn_data.main_gun
-execute unless data storage {ns}:temp _btn_data.secondary_gun_display run data modify storage {ns}:temp _btn_data.secondary_gun_display set value "None"
+# Normalize and compute perk display
+{_normalize_fields}
 
 # Route to correct color variant based on public flag (green=public, red=private)
 execute store result score #pub {ns}.data run data get storage {ns}:temp _iter[0].public
@@ -257,13 +257,13 @@ execute if score #pub {ns}.data matches 0 run function {ns}:v{version}/multiplay
 		'{"text":"$(secondary_gun_display)","color":"yellow"},'
 		'{"text":" x$(secondary_mag_count) mags","color":"gold"},'
 		'"\\n",'
-		'{"text":"Grenades: ","color":"gray"},'
+		'[{"text":"","color":"gray"},{"text":"Grenades"},": "],'
 		'{"text":"$(equip_slot1_name)","color":"aqua"},'
 		'{"text":" + $(equip_slot2_name)","color":"aqua"},'
 		'"\\n",'
-		'{"text":"Points: ","color":"white"},'
+		'[{"text":"","color":"white"},{"text":"Points"},": "],'
 		f'{{"text":"$(points_used)/{PICK10_TOTAL}pts","color":"gold"}},'
-		'{"text":"  Perks: ","color":"white"},'
+		'[{"text":"","color":"white"},"  ",{"text":"Perks"},": "],'
 		'{"text":"$(perks_count)","color":"light_purple"},'
 		'{"text":"$(perk0)$(perk1)$(perk2)","color":"light_purple"},'
 		'"\\n",'
@@ -283,14 +283,14 @@ execute if score #pub {ns}.data matches 0 run function {ns}:v{version}/multiplay
 	write_versioned_function("multiplayer/my_loadouts/add_btn_public",
 f"""$data modify storage {ns}:temp dialog.actions append value {{label:{{text:"$(name)",color:"green"}},tooltip:{_ml_tooltip_pub},action:{{type:"run_command",command:"/trigger {ns}.player.config set $(select_trig)"}}}}
 $data modify storage {ns}:temp dialog.actions append value {{label:{{text:"Public -> Private",color:"dark_aqua"}},tooltip:{{text:"Toggle this loadout to Private",color:"red"}},action:{{type:"run_command",command:"/trigger {ns}.player.config set $(vis_trig)"}}}}
-$data modify storage {ns}:temp dialog.actions append value {{label:{{text:"\U0001f5d1 Delete",color:"red"}},tooltip:{{text:"Permanently delete this loadout",color:"dark_red"}},action:{{type:"run_command",command:"/trigger {ns}.player.config set $(delete_trig)"}}}}
+$data modify storage {ns}:temp dialog.actions append value {{label:{styled_text("\U0001f5d1 Delete", color="red")},tooltip:{{text:"Permanently delete this loadout",color:"dark_red"}},action:{{type:"run_command",command:"/trigger {ns}.player.config set $(delete_trig)"}}}}
 """)
 
 	## my_loadouts/add_btn_private - Macro: red name (private loadout), rich tooltip
 	write_versioned_function("multiplayer/my_loadouts/add_btn_private",
 f"""$data modify storage {ns}:temp dialog.actions append value {{label:{{text:"$(name)",color:"red"}},tooltip:{_ml_tooltip_priv},action:{{type:"run_command",command:"/trigger {ns}.player.config set $(select_trig)"}}}}
 $data modify storage {ns}:temp dialog.actions append value {{label:{{text:"Private -> Public",color:"aqua"}},tooltip:{{text:"Toggle this loadout to Public",color:"green"}},action:{{type:"run_command",command:"/trigger {ns}.player.config set $(vis_trig)"}}}}
-$data modify storage {ns}:temp dialog.actions append value {{label:{{text:"\U0001f5d1 Delete",color:"red"}},tooltip:{{text:"Permanently delete this loadout",color:"dark_red"}},action:{{type:"run_command",command:"/trigger {ns}.player.config set $(delete_trig)"}}}}
+$data modify storage {ns}:temp dialog.actions append value {{label:{styled_text("\U0001f5d1 Delete", color="red")},tooltip:{{text:"Permanently delete this loadout",color:"dark_red"}},action:{{type:"run_command",command:"/trigger {ns}.player.config set $(delete_trig)"}}}}
 """)
 
 	## ====================================================================
@@ -316,9 +316,9 @@ $data modify storage {ns}:temp dialog.actions append value {{label:{{text:"\U000
 		fav_color = "gold" if active == "fav" else "yellow"
 		likes_color = "red" if active == "likes" else "white"
 		return [
-			f'{{label:{{text:"\U0001f4cb All",color:"{all_color}",bold:true}},tooltip:{{text:"Show all public loadouts (your favorites first)"}},action:{{type:"run_command",command:"/trigger {ns}.player.config set {TRIG_MARKETPLACE_ALL}"}}}}',
-			f'{{label:{{text:"\u2b50 Favorites",color:"{fav_color}",bold:true}},tooltip:{{text:"Show only loadouts you favorited"}},action:{{type:"run_command",command:"/trigger {ns}.player.config set {TRIG_MARKETPLACE_FAV_ONLY}"}}}}',
-			f'{{label:{{text:"\u2764 Best Liked",color:"{likes_color}",bold:true}},tooltip:{{text:"Show all public loadouts sorted by most likes"}},action:{{type:"run_command",command:"/trigger {ns}.player.config set {TRIG_MARKETPLACE_LIKES}"}}}}',
+			f'{{label:{styled_text("\U0001f4cb All", color=all_color, bold="true")},tooltip:{{text:"Show all public loadouts (your favorites first)"}},action:{{type:"run_command",command:"/trigger {ns}.player.config set {TRIG_MARKETPLACE_ALL}"}}}}',
+			f'{{label:{styled_text("\u2b50 Favorites", color=fav_color, bold="true")},tooltip:{{text:"Show only loadouts you favorited"}},action:{{type:"run_command",command:"/trigger {ns}.player.config set {TRIG_MARKETPLACE_FAV_ONLY}"}}}}',
+			f'{{label:{styled_text("\u2764 Best Liked", color=likes_color, bold="true")},tooltip:{{text:"Show all public loadouts sorted by most likes"}},action:{{type:"run_command",command:"/trigger {ns}.player.config set {TRIG_MARKETPLACE_LIKES}"}}}}',
 		]
 
 	## marketplace/browse - Default: favorites first, then the rest
@@ -352,7 +352,7 @@ function {ns}:v{version}/multiplayer/show_dialog with storage {ns}:temp
 f"""
 # Initialize dialog
 data modify storage {ns}:temp dialog set value {_marketplace_dialog_init()}
-data modify storage {ns}:temp dialog.title set value {{text:"Marketplace \u2014 Favorites",color:"light_purple",bold:true}}
+data modify storage {ns}:temp dialog.title set value [{{text:"",color:"light_purple",bold:true}},{{text:"Marketplace"}}," \u2014 ",{{text:"Favorites"}}]
 
 # Add filter/sort buttons (favorites tab active)
 data modify storage {ns}:temp dialog.actions append value {_marketplace_filter_btns("fav")[0]}
@@ -375,7 +375,7 @@ function {ns}:v{version}/multiplayer/show_dialog with storage {ns}:temp
 f"""
 # Initialize dialog
 data modify storage {ns}:temp dialog set value {_marketplace_dialog_init()}
-data modify storage {ns}:temp dialog.title set value {{text:"Marketplace \u2014 Best Liked",color:"light_purple",bold:true}}
+data modify storage {ns}:temp dialog.title set value [{{text:"",color:"light_purple",bold:true}},{{text:"Marketplace"}}," \u2014 ",{{text:"Best Liked"}}]
 
 # Add filter/sort buttons (likes tab active)
 data modify storage {ns}:temp dialog.actions append value {_marketplace_filter_btns("likes")[0]}
@@ -481,36 +481,13 @@ f"""
 # Copy entry data for macro use
 data modify storage {ns}:temp _btn_data set from storage {ns}:temp _iter[0]
 
-# Compute select trigger: {TRIG_SELECT_BASE} + id
-execute store result score #trig {ns}.data run data get storage {ns}:temp _iter[0].id
-scoreboard players add #trig {ns}.data {TRIG_SELECT_BASE}
-execute store result storage {ns}:temp _btn_data.select_trig int 1 run scoreboard players get #trig {ns}.data
+# Compute triggers
+{_compute_trig("select_trig", TRIG_SELECT_BASE)}
+{_compute_trig("like_trig", TRIG_LIKE_BASE)}
+{_compute_trig("fav_trig", TRIG_FAVORITE_BASE)}
 
-# Compute like trigger: {TRIG_LIKE_BASE} + id
-execute store result score #trig {ns}.data run data get storage {ns}:temp _iter[0].id
-scoreboard players add #trig {ns}.data {TRIG_LIKE_BASE}
-execute store result storage {ns}:temp _btn_data.like_trig int 1 run scoreboard players get #trig {ns}.data
-
-# Compute favorite trigger: {TRIG_FAVORITE_BASE} + id
-execute store result score #trig {ns}.data run data get storage {ns}:temp _iter[0].id
-scoreboard players add #trig {ns}.data {TRIG_FAVORITE_BASE}
-execute store result storage {ns}:temp _btn_data.fav_trig int 1 run scoreboard players get #trig {ns}.data
-
-# Compute perks_count from perks list size
-execute unless data storage {ns}:temp _btn_data.perks run data modify storage {ns}:temp _btn_data.perks set value []
-execute store result storage {ns}:temp _btn_data.perks_count int 1 run data get storage {ns}:temp _btn_data.perks
-
-# Build per-perk display names for tooltip
-{_perk_disp}
-
-# Normalize optional fields (backwards compat for pre-update loadouts)
-execute unless data storage {ns}:temp _btn_data.points_used run data modify storage {ns}:temp _btn_data.points_used set value 0
-execute unless data storage {ns}:temp _btn_data.favorites_count run data modify storage {ns}:temp _btn_data.favorites_count set value 0
-execute unless data storage {ns}:temp _btn_data.likes run data modify storage {ns}:temp _btn_data.likes set value 0
-execute unless data storage {ns}:temp _btn_data.equip_slot1_name run data modify storage {ns}:temp _btn_data.equip_slot1_name set value "?"
-execute unless data storage {ns}:temp _btn_data.equip_slot2_name run data modify storage {ns}:temp _btn_data.equip_slot2_name set value "?"
-execute unless data storage {ns}:temp _btn_data.main_gun_display run data modify storage {ns}:temp _btn_data.main_gun_display set from storage {ns}:temp _btn_data.main_gun
-execute unless data storage {ns}:temp _btn_data.secondary_gun_display run data modify storage {ns}:temp _btn_data.secondary_gun_display set value "None"
+# Normalize and compute perk display
+{_normalize_fields}
 execute unless data storage {ns}:temp _btn_data.owner_name run data modify storage {ns}:temp _btn_data.owner_name set value "?"
 
 # Add buttons to dialog
@@ -525,13 +502,13 @@ function {ns}:v{version}/multiplayer/marketplace/add_btn with storage {ns}:temp 
 		'{"text":"$(secondary_gun_display)","color":"yellow"},'
 		'{"text":" x$(secondary_mag_count) mags","color":"gold"},'
 		'"\\n",'
-		'{"text":"Grenades: ","color":"gray"},'
+		'[{"text":"","color":"gray"},{"text":"Grenades"},": "],'
 		'{"text":"$(equip_slot1_name)","color":"aqua"},'
 		'{"text":" + $(equip_slot2_name)","color":"aqua"},'
 		'"\\n",'
-		'{"text":"Points: ","color":"white"},'
+		'[{"text":"","color":"white"},{"text":"Points"},": "],'
 		f'{{"text":"$(points_used)/{PICK10_TOTAL}pts","color":"gold"}},'
-		'{"text":"  Perks: ","color":"white"},'
+		'[{"text":"","color":"white"},"  ",{"text":"Perks"},": "],'
 		'{"text":"$(perks_count)","color":"light_purple"},'
 		'{"text":"$(perk0)$(perk1)$(perk2)","color":"light_purple"},'
 		'"\\n",'

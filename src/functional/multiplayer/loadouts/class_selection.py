@@ -3,6 +3,7 @@
 # Imports
 from stewbeet import Mem, write_load_file, write_versioned_function
 
+from ...helpers import MGS_TAG
 from ..classes import CLASS_IDS
 from .catalogs import TRIG_EDITOR_START, TRIG_MARKETPLACE, TRIG_MY_LOADOUTS
 
@@ -11,9 +12,7 @@ def generate_class_selection() -> None:
 	ns: str = Mem.ctx.project_id
 	version: str = Mem.ctx.project_version
 
-	## ============================
 	## Scoreboards for class selection
-	## ============================
 	write_load_file(
 f"""
 # Class selection scoreboard (1-10 = class id, 0 = none)
@@ -23,18 +22,14 @@ scoreboard objectives add {ns}.mp.class dummy
 scoreboard objectives add {ns}.mp.death_count deathCount
 """)
 
-	## ============================
 	## show_dialog macro: passes inline SNBT dialog to /dialog show
-	## ============================
 	write_versioned_function("multiplayer/show_dialog", "$dialog show @s $(dialog)")
 
-	## ============================
 	## build_class_btn: recursive - appends one action entry per class to the dialog
-	## ============================
 	write_versioned_function("multiplayer/build_class_btn",
 f"""
 # Build rich tooltip from current class data (includes mag counts and equipment)
-$data modify storage {ns}:temp _btn set value {{label:{{text:"$(name)",color:"green"}},tooltip:["",{{text:"$(lore)","color":"gray"}},{{"text":"\\n"}},{{"text":"Primary"}},": ",{{"text":"$(main_gun)","color":"green"}},{{"text":" x$(main_mag_count) mags","color":"dark_green"}},{{"text":"\\n"}},{{"text":"Secondary: ","color":"white"}},{{"text":"$(secondary_gun)","color":"yellow"}},{{"text":" x$(secondary_mag_count) mags","color":"gold"}},{{"text":"\\n"}},{{"text":"Grenades: ","color":"white"}},{{"text":"$(equip_display)","color":"aqua"}},"\\n\\n",{{"text":"\u25b6 Click to select","color":"dark_gray","italic":true}}],action:{{type:"run_command",command:"/trigger {ns}.player.config set $(trigger_value)"}}}}
+$data modify storage {ns}:temp _btn set value {{label:{{text:"$(name)",color:"green"}},tooltip:["",{{text:"$(lore)","color":"gray"}},{{"text":"\\n"}},{{"text":"Primary"}},": ",{{"text":"$(main_gun)","color":"green"}},{{"text":" x$(main_mag_count) mags","color":"dark_green"}},{{"text":"\\n"}},["",{{"text":"Secondary"}},": "],{{"text":"$(secondary_gun)","color":"yellow"}},{{"text":" x$(secondary_mag_count) mags","color":"gold"}},{{"text":"\\n"}},["",{{"text":"Grenades"}},": "],{{"text":"$(equip_display)","color":"aqua"}},"\\n\\n",{{"text":"\u25b6 Click to select","color":"dark_gray","italic":true}}],action:{{type:"run_command",command:"/trigger {ns}.player.config set $(trigger_value)"}}}}
 
 # Append to dialog actions
 data modify storage {ns}:temp dialog.actions append from storage {ns}:temp _btn
@@ -44,9 +39,7 @@ data remove storage {ns}:temp class_iter[0]
 execute if data storage {ns}:temp class_iter[0] run function {ns}:v{version}/multiplayer/build_class_btn with storage {ns}:temp class_iter[0]
 """)
 
-	## ============================
 	## select_class: builds the class selection dialog dynamically and shows it
-	## ============================
 	write_versioned_function("multiplayer/select_class",
 f"""
 # Initialize dialog structure
@@ -67,25 +60,21 @@ data modify storage {ns}:temp dialog.actions append value {{label:[{{text:"🌍 
 function {ns}:v{version}/multiplayer/show_dialog with storage {ns}:temp
 """)
 
-	## ============================
 	## set_class macro: sets the class score and notifies player
 	## Called from trigger dispatch (trigger values 11-20 → class 1-10)
-	## ============================
 	apply_now: str = f"""{{"text":" [✔]","color":"gold","hover_event":{{"action":"show_text","value":{{"text":"Click here to apply immediately (OP only)","color":"yellow"}}}},"click_event":{{"action":"run_command","command":"/function {ns}:v{version}/multiplayer/apply_class"}}}}"""
 	write_versioned_function("multiplayer/set_class",
 f"""
 $scoreboard players set @s {ns}.mp.class $(class_num)
 
 # If game active: queue for next respawn
-$execute if data storage {ns}:multiplayer game{{state:"active"}} run tellraw @s ["",{{"text":"[MGS] ","color":"gold"}},{{"text":"Class set to ","color":"white"}},{{"text":"$(class_name)","color":"green","bold":true}},{{"text":" - will apply on respawn","color":"yellow"}},{apply_now}]
+$execute if data storage {ns}:multiplayer game{{state:"active"}} run tellraw @s ["",{MGS_TAG},["",{{"text":"Class set to"}}," "],{{"text":"$(class_name)","color":"green","bold":true}},{{"text":" - will apply on respawn","color":"yellow"}},{apply_now}]
 
 # If game not active: only save choice (no loadout outside multiplayer)
-$execute unless data storage {ns}:multiplayer game{{state:"active"}} run tellraw @s ["",{{"text":"[MGS] ","color":"gold"}},{{"text":"Class set to ","color":"white"}},{{"text":"$(class_name)","color":"green","bold":true}},{apply_now}]
+$execute unless data storage {ns}:multiplayer game{{state:"active"}} run tellraw @s ["",{MGS_TAG},["",{{"text":"Class set to"}}," "],{{"text":"$(class_name)","color":"green","bold":true}},{apply_now}]
 """)
 
-	## ============================
 	## apply_class: looks up class by score from storage, copies to temp, applies dynamically
-	## ============================
 	# We need to map class_num (score) to an entry in classes_list.
 	# Since classes_list is ordered and 1-indexed via class_num, index = class_num - 1.
 	# We use a helper that copies the correct class to temp using indexed access.
@@ -105,9 +94,7 @@ function {ns}:v{version}/multiplayer/apply_class_dynamic
 
 	write_versioned_function("multiplayer/apply_class", apply_commands)
 
-	## ============================
 	## apply_custom_class: find custom loadout by ID stored in mp.custom_class, then apply
-	## ============================
 	write_versioned_function("multiplayer/apply_custom_class",
 f"""
 # Store target loadout ID (negate to get positive ID)
@@ -162,9 +149,7 @@ execute if data storage {ns}:temp _cur_loadout{{perks:["instant_kill"]}} run sco
 execute unless data storage {ns}:temp _cur_loadout{{perks:["instant_kill"]}} run scoreboard players set @s {ns}.special.instant_kill 0
 """)
 
-	## ============================
 	## On respawn (called from player tick when death detected)
-	## ============================
 	write_versioned_function("multiplayer/on_respawn",
 f"""
 # Reset death counter
@@ -177,10 +162,8 @@ scoreboard players add @s {ns}.mp.deaths 1
 execute unless score @s {ns}.mp.class matches 0 run function {ns}:v{version}/multiplayer/apply_class
 """)
 
-	## ============================
 	## auto_apply_default: apply default custom loadout on game start
 	## Sets mp.class = -(mp.default) then applies
-	## ============================
 	write_versioned_function("multiplayer/auto_apply_default",
 f"""
 # Set mp.class to negative default ID (custom loadout)
@@ -191,9 +174,7 @@ scoreboard players operation @s {ns}.mp.class *= #minus_one {ns}.data
 function {ns}:v{version}/multiplayer/apply_class
 """)
 
-	## ============================
 	## Player tick hooks
-	## ============================
 	write_versioned_function("player/tick",
 f"""
 # Multiplayer: detect respawn (death_count incremented by deathCount criterion)

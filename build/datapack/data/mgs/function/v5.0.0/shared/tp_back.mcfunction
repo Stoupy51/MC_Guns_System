@@ -1,9 +1,9 @@
 
-#> mgs:v5.0.0/projectile/tp_back
+#> mgs:v5.0.0/shared/tp_back
 #
 # @executed	anchored eyes & positioned ^ ^ ^0.69
 #
-# @within	mgs:v5.0.0/projectile/init with storage mgs:temp proj_pos
+# @within	mgs:v5.0.0/shared/calc_velocity with storage mgs:temp _tp_pos
 #
 # @args		x (unknown)
 #			y (unknown)

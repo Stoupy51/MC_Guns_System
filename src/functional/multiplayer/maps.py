@@ -6,9 +6,7 @@ from stewbeet import Mem, write_versioned_function
 def generate_maps() -> None:
 	ns: str = Mem.ctx.project_id
 
-	## ============================
 	## Dynamic Map Registration
-	## ============================
 	write_versioned_function("multiplayer/register_map",
 f"""
 # Append map from mgs:input multiplayer.map to the maps list

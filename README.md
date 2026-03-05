@@ -12,7 +12,39 @@ Credits for resources: MGS 4.2 by TheBradqq
 - Raygun reload too loud
 - Compatibility & Developement:
   - Multiplayer mode:
-    - Dynamic map definitions (spawning points in storage, called on load with function tag #mgs:multiplayer/register_maps etc.)
+    - Dynamic map definitions (spawning points in storage, called on load with function tag #mgs:maps/register etc.)
+      - We'll have a "{ns}:maps multiplayer" storage which is a list of complete map definitions (default to [])
+      - Each map definition will contain:
+        - "id": the map id (string)
+        - "name": the map name (string)
+        - "description": the map description (string)
+        - "base_coordinates": the base coordinates where everything will be relative to (for easy copy/paste)
+        - "boundaries": the map boundaries defined as a list of 2 coordinates (x,y,z) representing the opposite corners of a cuboid (going outside will kill you if not creative or spectator, if you have "{ns}.mp.in_game" tag)
+        - "spawning_points":
+          - "red": list of starting red team spawning points (list of x,y,z,yaw,pitch coordinates)
+          - "blue": list of starting blue team spawning points
+          - "general": list of general spawning points (for free for all or TDM respawn)
+          - Each coordinate will be a list of 5 values (x,y,z,yaw,pitch)
+        - "out_of_bounds": list of coordinates that kills any player in a radius of 5 blocks (5 by default but configurable)
+        - "search_and_destroy": list of coordinates for search and destroy objectives (when gamemode is active)
+        - "domination": list of coordinates for points to capture (domination)
+        - "hardpoint": list of couple coordinates [(x1, y1, z1),(x2, y2, z2)] for each zone to control
+        - Following keys for being able to complete the map script:
+          - "start_script": the script to execute on map start (create teams, move players in teams, etc.) (string, default to "{ns}:version/maps/multiplayer/default/start")
+          - "tick_script": the tick script to execute when the map is loaded (string, default to "{ns}:version/maps/multiplayer/default/tick")
+          - "join_script": the script to execute when a player joins the map (string, default to "{ns}:version/maps/multiplayer/default/join")
+          - "leave_script": the script to execute when a player leaves the map (string, default to "{ns}:version/maps/multiplayer/default/leave")
+          - "respawn_script": the script to execute when a player respawns (string, default to "{ns}:version/maps/multiplayer/default/respawn")
+      - With all of that being said, we should have a map editor in-game directly:
+        - The map editor would first be a chat gui to browse the maps in the storage, create new ones, delete them, etc.
+        - Map creation, suggest command that would insert the required fields in the storage: `/data modify storage {ns}:maps multiplayer append value {id:"map_id",name:"Map Name",description:"Map Description",base_coordinates:[0,64,0]}`
+        - On load, the player would be moved to creative mode, cleared inventory, and given the map editor tools (see below)
+        - The player in creative mode would have special eggs items in their inventory to place different element.
+        - The first element needed to place is the "base_coordinates" which will be the reference point for all the other coordinates (so that map can be easily shared and used on different worlds with different coordinates)
+        - We would have spawning eggs for each type of element (red spawn, blue spawn, etc). along with a DESTROY egg in hotbar.8
+        - When placing an element, the coordinate will directly be computed relative to the base_coordinates, the temporary mob used for detection would be a marker with "new_element" tag for easy detection so we can replace it and tick particles for each element (to know where each thing is)
+        - When in editor mode, being close to an element will title actionbar that said element type and data (for example "Red Spawn - ID: 1")
+        - IMPORTANT: When loading a map in editor (or for a game) the base_coordinates will be used as default BUT we need to be able to override the dimension and base coordinates with something like `/function {ns}:v{version}/maps/multiplayer/load {"id":"map_id","override":{"dimension":"minecraft:the_nether","base_coordinates":[100,50,100]}}` where override can be "{}" (optional)
     - Gamemodes like team deathmatch, capture the flag, free for all, etc.
   - Add a whole zombies mode (mgs:zombies/*):
     - Dynamic map definitions (in storage, called on load with function tag #mgs:zombies/register_maps etc.) with:

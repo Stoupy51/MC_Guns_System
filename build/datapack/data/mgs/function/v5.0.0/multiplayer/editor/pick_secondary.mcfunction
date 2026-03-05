@@ -7,65 +7,17 @@
 #
 
 # Store secondary weapon choice
-execute if score @s mgs.player.config matches 250 run data modify storage mgs:temp editor.secondary set value "m1911"
-execute if score @s mgs.player.config matches 250 run data modify storage mgs:temp editor.secondary_name set value "M1911"
-execute if score @s mgs.player.config matches 250 run data modify storage mgs:temp editor.secondary_mag set value "m1911_mag"
-execute if score @s mgs.player.config matches 250 run data modify storage mgs:temp editor.secondary_mag_count set value 2
-execute if score @s mgs.player.config matches 250 run data modify storage mgs:temp editor.secondary_scope set value ""
-execute if score @s mgs.player.config matches 250 run data modify storage mgs:temp editor.secondary_scope_name set value "Iron Sights"
-execute if score @s mgs.player.config matches 250 run data modify storage mgs:temp editor.secondary_full set value "m1911"
-execute if score @s mgs.player.config matches 251 run data modify storage mgs:temp editor.secondary set value "m9"
-execute if score @s mgs.player.config matches 251 run data modify storage mgs:temp editor.secondary_name set value "M9"
-execute if score @s mgs.player.config matches 251 run data modify storage mgs:temp editor.secondary_mag set value "m9_mag"
-execute if score @s mgs.player.config matches 251 run data modify storage mgs:temp editor.secondary_mag_count set value 2
-execute if score @s mgs.player.config matches 251 run data modify storage mgs:temp editor.secondary_scope set value ""
-execute if score @s mgs.player.config matches 251 run data modify storage mgs:temp editor.secondary_scope_name set value "Iron Sights"
-execute if score @s mgs.player.config matches 251 run data modify storage mgs:temp editor.secondary_full set value "m9"
-execute if score @s mgs.player.config matches 252 run data modify storage mgs:temp editor.secondary set value "deagle"
-execute if score @s mgs.player.config matches 252 run data modify storage mgs:temp editor.secondary_name set value "Deagle"
-execute if score @s mgs.player.config matches 252 run data modify storage mgs:temp editor.secondary_mag set value "deagle_mag"
-execute if score @s mgs.player.config matches 252 run data modify storage mgs:temp editor.secondary_mag_count set value 2
-execute if score @s mgs.player.config matches 252 run data modify storage mgs:temp editor.secondary_scope set value ""
-execute if score @s mgs.player.config matches 252 run data modify storage mgs:temp editor.secondary_scope_name set value "Iron Sights"
-execute if score @s mgs.player.config matches 252 run data modify storage mgs:temp editor.secondary_full set value "deagle"
-execute if score @s mgs.player.config matches 253 run data modify storage mgs:temp editor.secondary set value "makarov"
-execute if score @s mgs.player.config matches 253 run data modify storage mgs:temp editor.secondary_name set value "Makarov"
-execute if score @s mgs.player.config matches 253 run data modify storage mgs:temp editor.secondary_mag set value "makarov_mag"
-execute if score @s mgs.player.config matches 253 run data modify storage mgs:temp editor.secondary_mag_count set value 2
-execute if score @s mgs.player.config matches 253 run data modify storage mgs:temp editor.secondary_scope set value ""
-execute if score @s mgs.player.config matches 253 run data modify storage mgs:temp editor.secondary_scope_name set value "Iron Sights"
-execute if score @s mgs.player.config matches 253 run data modify storage mgs:temp editor.secondary_full set value "makarov"
-execute if score @s mgs.player.config matches 254 run data modify storage mgs:temp editor.secondary set value "glock17"
-execute if score @s mgs.player.config matches 254 run data modify storage mgs:temp editor.secondary_name set value "Glock 17"
-execute if score @s mgs.player.config matches 254 run data modify storage mgs:temp editor.secondary_mag set value "glock17_mag"
-execute if score @s mgs.player.config matches 254 run data modify storage mgs:temp editor.secondary_mag_count set value 2
-execute if score @s mgs.player.config matches 254 run data modify storage mgs:temp editor.secondary_scope set value ""
-execute if score @s mgs.player.config matches 254 run data modify storage mgs:temp editor.secondary_scope_name set value "Iron Sights"
-execute if score @s mgs.player.config matches 254 run data modify storage mgs:temp editor.secondary_full set value "glock17"
-execute if score @s mgs.player.config matches 255 run data modify storage mgs:temp editor.secondary set value "glock18"
-execute if score @s mgs.player.config matches 255 run data modify storage mgs:temp editor.secondary_name set value "Glock 18"
-execute if score @s mgs.player.config matches 255 run data modify storage mgs:temp editor.secondary_mag set value "glock18_mag"
-execute if score @s mgs.player.config matches 255 run data modify storage mgs:temp editor.secondary_mag_count set value 2
-execute if score @s mgs.player.config matches 255 run data modify storage mgs:temp editor.secondary_scope set value ""
-execute if score @s mgs.player.config matches 255 run data modify storage mgs:temp editor.secondary_scope_name set value "Iron Sights"
-execute if score @s mgs.player.config matches 255 run data modify storage mgs:temp editor.secondary_full set value "glock18"
-execute if score @s mgs.player.config matches 256 run data modify storage mgs:temp editor.secondary set value "vz61"
-execute if score @s mgs.player.config matches 256 run data modify storage mgs:temp editor.secondary_name set value "VZ-61"
-execute if score @s mgs.player.config matches 256 run data modify storage mgs:temp editor.secondary_mag set value "vz61_mag"
-execute if score @s mgs.player.config matches 256 run data modify storage mgs:temp editor.secondary_mag_count set value 2
-execute if score @s mgs.player.config matches 256 run data modify storage mgs:temp editor.secondary_scope set value ""
-execute if score @s mgs.player.config matches 256 run data modify storage mgs:temp editor.secondary_scope_name set value "Iron Sights"
-execute if score @s mgs.player.config matches 256 run data modify storage mgs:temp editor.secondary_full set value "vz61"
-execute if score @s mgs.player.config matches 258 run data modify storage mgs:temp editor.secondary set value ""
-execute if score @s mgs.player.config matches 258 run data modify storage mgs:temp editor.secondary_name set value "None"
-execute if score @s mgs.player.config matches 258 run data modify storage mgs:temp editor.secondary_scope set value ""
-execute if score @s mgs.player.config matches 258 run data modify storage mgs:temp editor.secondary_scope_name set value ""
-execute if score @s mgs.player.config matches 258 run data modify storage mgs:temp editor.secondary_full set value ""
-execute if score @s mgs.player.config matches 258 run data modify storage mgs:temp editor.secondary_mag set value ""
-execute if score @s mgs.player.config matches 258 run data modify storage mgs:temp editor.secondary_mag_count set value 0
+execute if score @s mgs.player.config matches 250 run data modify storage mgs:temp editor merge value {secondary:"m1911",secondary_name:"M1911",secondary_mag:"m1911_mag",secondary_mag_count:2,secondary_scope:"",secondary_scope_name:"Iron Sights",secondary_full:"m1911"}
+execute if score @s mgs.player.config matches 251 run data modify storage mgs:temp editor merge value {secondary:"m9",secondary_name:"M9",secondary_mag:"m9_mag",secondary_mag_count:2,secondary_scope:"",secondary_scope_name:"Iron Sights",secondary_full:"m9"}
+execute if score @s mgs.player.config matches 252 run data modify storage mgs:temp editor merge value {secondary:"deagle",secondary_name:"Deagle",secondary_mag:"deagle_mag",secondary_mag_count:2,secondary_scope:"",secondary_scope_name:"Iron Sights",secondary_full:"deagle"}
+execute if score @s mgs.player.config matches 253 run data modify storage mgs:temp editor merge value {secondary:"makarov",secondary_name:"Makarov",secondary_mag:"makarov_mag",secondary_mag_count:2,secondary_scope:"",secondary_scope_name:"Iron Sights",secondary_full:"makarov"}
+execute if score @s mgs.player.config matches 254 run data modify storage mgs:temp editor merge value {secondary:"glock17",secondary_name:"Glock 17",secondary_mag:"glock17_mag",secondary_mag_count:2,secondary_scope:"",secondary_scope_name:"Iron Sights",secondary_full:"glock17"}
+execute if score @s mgs.player.config matches 255 run data modify storage mgs:temp editor merge value {secondary:"glock18",secondary_name:"Glock 18",secondary_mag:"glock18_mag",secondary_mag_count:2,secondary_scope:"",secondary_scope_name:"Iron Sights",secondary_full:"glock18"}
+execute if score @s mgs.player.config matches 256 run data modify storage mgs:temp editor merge value {secondary:"vz61",secondary_name:"VZ-61",secondary_mag:"vz61_mag",secondary_mag_count:2,secondary_scope:"",secondary_scope_name:"Iron Sights",secondary_full:"vz61"}
+execute if score @s mgs.player.config matches 258 run data modify storage mgs:temp editor merge value {secondary:"",secondary_name:"None",secondary_scope:"",secondary_scope_name:"",secondary_full:"",secondary_mag:"",secondary_mag_count:0}
 
 # Check budget before deducting (secondary weapon costs 1 pt; None is free)
-execute unless data storage mgs:temp editor{secondary:""} run execute if score @s mgs.mp.edit_points matches ..0 run return run tellraw @s [{"translate": "mgs","color":"gold"},{"translate": "mgs.not_enough_points_for_a_secondary_weapon","color":"red"}]
+execute unless data storage mgs:temp editor{secondary:""} run execute if score @s mgs.mp.edit_points matches ..0 run return run tellraw @s [[{"text":"","color":"gold"},"[",{"translate": "mgs"},"] "],{"translate": "mgs.not_enough_points_for_a_secondary_weapon","color":"red"}]
 
 # Deduct cost if a secondary was chosen
 execute unless data storage mgs:temp editor{secondary:""} run scoreboard players remove @s mgs.mp.edit_points 1

@@ -17,6 +17,6 @@ scoreboard players operation #dmg_dec mgs.data = #dmg_x10 mgs.data
 scoreboard players operation #dmg_dec mgs.data %= #10 mgs.data
 
 # Damage Debug: global config overrides (tellraw @a), otherwise per-player (tellraw to shooter only)
-$execute if score #damage_debug mgs.config matches 1 run tellraw @a [{"translate": "mgs.dmg","color":"red"},[{"score":{"name":"#dmg_whole","objective":"mgs.data"},"color":"gold"},".",{"score":{"name":"#dmg_dec","objective":"mgs.data"}}],{"translate": "mgs.hp_to","color":"gray"},{"selector":"$(target)"},{"text":" by ","color":"gray"},{"selector":"$(attacker)"}]
-$execute unless score #damage_debug mgs.config matches 1 at @s as $(attacker) if score @s mgs.player.damage_debug matches 1 run tellraw @s [{"translate": "mgs.dmg","color":"red"},[{"score":{"name":"#dmg_whole","objective":"mgs.data"},"color":"gold"},".",{"score":{"name":"#dmg_dec","objective":"mgs.data"}}],{"translate": "mgs.hp_to","color":"gray"},{"selector":"@n"}]
+$execute if score #damage_debug mgs.config matches 1 run tellraw @a ["",[{"text":"","color":"red"},"[",{"translate": "mgs.dmg"},"] "],[{"score":{"name":"#dmg_whole","objective":"mgs.data"},"color":"gold"},".",{"score":{"name":"#dmg_dec","objective":"mgs.data"}}],{"translate": "mgs.hp_to","color":"gray"},{"selector":"$(target)"},{"text":" by ","color":"gray"},{"selector":"$(attacker)"}]
+$execute unless score #damage_debug mgs.config matches 1 at @s as $(attacker) if score @s mgs.player.damage_debug matches 1 run tellraw @s ["",[{"text":"","color":"red"},"[",{"translate": "mgs.dmg"},"] "],[{"score":{"name":"#dmg_whole","objective":"mgs.data"},"color":"gold"},".",{"score":{"name":"#dmg_dec","objective":"mgs.data"}}],{"translate": "mgs.hp_to","color":"gray"},{"selector":"@n"}]
 

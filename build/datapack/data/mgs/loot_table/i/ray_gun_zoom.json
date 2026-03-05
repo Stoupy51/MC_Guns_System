@@ -15,7 +15,7 @@
 									"mgs": {
 										"gun": true,
 										"stats": {"base_weapon": "ray_gun","fire_mode": "auto","capacity": 20,"reload_time": 60,"reload_end": 14,"cooldown": 11,"can_auto": true,"damage": 24,"decay": 0.92,"acc_base": 150,"acc_sneak": 80,"acc_walk": 290,"acc_sprint": 400,"acc_jump": 800,"switch": 12,"kick": 5,"proj_speed": 3000,"proj_gravity": 0,"proj_lifetime": 200,"proj_model": "ray_gun","expl_radius": 3.5,"expl_damage": 32,"expl_decay": 0.8,"models": {"normal": "mgs:ray_gun","zoom": "mgs:ray_gun_zoom"},"remaining_bullets": 20},
-										"sounds": {"fire": "ray_gun/fire","reload": "ray_gun/reload","playerbegin": "ray_gun/playerbegin","playerend": "ray_gun/playerend","playermid": "ray_gun/playermid","crack": "tiny"},
+										"sounds": {"fire": "ray_gun/fire","reload": "ray_gun/reload","playerbegin": "ray_gun/playerbegin","playerend": "ray_gun/playerend","playermid": "ray_gun/playermid"},
 										"ray_gun_zoom": true
 									},
 									"smithed": {

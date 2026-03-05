@@ -217,27 +217,18 @@ $execute if score #random {ns}.data matches 31 run loot replace entity @s $(slot
 
     # Config menu: /function mgs:config
     # Build clickable chat menu for server configuration
-    import json
-
+    from .helpers import btn as _btn
     def btn(label: str, command: str, color: str = "yellow", hover: str = "") -> str:
-        """Create a clickable button JSON component."""
-        obj: TextComponent = [
-            {"text": "[", "color": color, "click_event": {"action": "suggest_command", "command": command}},
-            label,
-            "]",
-        ]
-        if hover:
-            obj[0]["hover_event"] = {"action": "show_text", "value": hover}
-        return json.dumps(obj)
+        return _btn(label, command, color, hover, action="suggest_command")
 
     # Separator line
     sep = r'{"text":"============================================","color":"dark_gray"}'
 
     # Title
-    title = r'["  ",{"text":"     ☣ MGS Configuration Menu ☣","color":"gold","bold":true}]'
+    title = '["  ",[{"text":"","color":"gold","bold":true},"     ☣ ",{"text":"MGS Configuration Menu"}," ☣"]]'
 
     # --- Global Settings ---
-    global_header = r'["",{"text":"⚙ Global Settings","color":"aqua","bold":true},{"text":" (server-wide)","color":"gray","italic":true}]'
+    global_header = '["",[{"text":"","color":"aqua","bold":true},"⚙ ",{"text":"Global Settings"}],[{"text":"","color":"gray","italic":true}," (",{"text":"server-wide"},")"]]'
 
     # RPG Explosion Power
     rpg_btns = ",".join([
@@ -246,7 +237,7 @@ $execute if score #random {ns}.data matches 31 run loot replace entity @s $(slot
             f"Set Projectile Explosion Power to {i}" + (" (disabled)" if i == 0 else ""))
         for i in range(6)
     ])
-    rpg_line = f'["  ",{{"text":"RPG Explosion Power: ","color":"white"}},{rpg_btns}]'
+    rpg_line = f'["  ",["",{{"text":"RPG Explosion Power"}},": "],{rpg_btns}]'
 
     # Grenade Explosion Power
     gren_btns = ",".join([
@@ -255,7 +246,7 @@ $execute if score #random {ns}.data matches 31 run loot replace entity @s $(slot
             f"Set Grenade Explosion Power to {i}" + (" (disabled)" if i == 0 else ""))
         for i in range(6)
     ])
-    gren_line = f'["  ",{{"text":"Grenade Explosion Power: ","color":"white"}},{gren_btns}]'
+    gren_line = f'["  ",["",{{"text":"Grenade Explosion Power"}},": "],{gren_btns}]'
 
     # Max Ammo Mode: OG (magazines only) or Recent (also reload weapons)
     ma_btns = ",".join([
@@ -264,7 +255,7 @@ $execute if score #random {ns}.data matches 31 run loot replace entity @s $(slot
         btn("Recent", f"/scoreboard players set #max_ammo_reload_weapons {ns}.config 1",
             "green", "Also reload current weapon (recent zombies)"),
     ])
-    ma_line = f'["  ",{{"text":"Max Ammo Mode: ","color":"white"}},{ma_btns}]'
+    ma_line = f'["  ",["",{{"text":"Max Ammo Mode"}},": "],{ma_btns}]'
 
     # Damage Debug (global): OFF or ON (tellraw @a all damage)
     dd_btns = ",".join([
@@ -273,10 +264,10 @@ $execute if score #random {ns}.data matches 31 run loot replace entity @s $(slot
         btn("ON", f"/scoreboard players set #damage_debug {ns}.config 1",
             "green", "Enable global damage debug (tellraw @a every hit)"),
     ])
-    dd_line = f'["  ",{{"text":"Damage Debug: ","color":"white"}},{dd_btns}]'
+    dd_line = f'["  ",["",{{"text":"Damage Debug"}},": "],{dd_btns}]'
 
     # --- Player Specials ---
-    special_header = r'["",{"text":"⚡ Player Specials","color":"aqua","bold":true},{"text":" (self only)","color":"gray","italic":true}]'
+    special_header = '["",[{"text":"","color":"aqua","bold":true},"⚡ ",{"text":"Player Specials"}],[{"text":"","color":"gray","italic":true}," (",{"text":"self only"},")"]]'
 
     # Instant Kill durations: OFF, 10s, 30s, 60s, ∞
     ik_options = [("OFF", 0, "red"), ("10s", 200, "yellow"), ("30s", 600, "yellow"), ("60s", 1200, "yellow"), ("∞", 72000, "light_purple")]
@@ -285,7 +276,7 @@ $execute if score #random {ns}.data matches 31 run loot replace entity @s $(slot
             color, f"Set instant kill {'off' if ticks == 0 else f'for {label}'}")
         for label, ticks, color in ik_options
     ])
-    ik_line = f'["  ",{{"text":"Instant Kill: ","color":"white"}},{ik_btns}]'
+    ik_line = f'["  ",["",{{"text":"Instant Kill"}},": "],{ik_btns}]'
 
     # Infinite Ammo durations: OFF, 10s, 30s, 60s, ∞
     ia_options = [("OFF", 0, "red"), ("10s", 200, "yellow"), ("30s", 600, "yellow"), ("60s", 1200, "yellow"), ("∞", 72000, "light_purple")]
@@ -294,7 +285,7 @@ $execute if score #random {ns}.data matches 31 run loot replace entity @s $(slot
             color, f"Set infinite ammo {'off' if ticks == 0 else f'for {label}'}")
         for label, ticks, color in ia_options
     ])
-    ia_line = f'["  ",{{"text":"Infinite Ammo: ","color":"white"}},{ia_btns}]'
+    ia_line = f'["  ",["",{{"text":"Infinite Ammo"}},": "],{ia_btns}]'
 
     # Quick Reload: 0%, 20%, 50%, 80%
     qr_options = [("0%", 0, "red"), ("20%", 20, "yellow"), ("50%", 50, "yellow"), ("80%", 80, "green")]
@@ -303,7 +294,7 @@ $execute if score #random {ns}.data matches 31 run loot replace entity @s $(slot
             color, f"Set quick reload to {label}")
         for label, val, color in qr_options
     ])
-    qr_line = f'["  ",{{"text":"Quick Reload: ","color":"white"}},{qr_btns}]'
+    qr_line = f'["  ",["",{{"text":"Quick Reload"}},": "],{qr_btns}]'
 
     # Quick Swap: 0%, 20%, 50%, 80%
     qs_options = [("0%", 0, "red"), ("20%", 20, "yellow"), ("50%", 50, "yellow"), ("80%", 80, "green")]
@@ -312,7 +303,7 @@ $execute if score #random {ns}.data matches 31 run loot replace entity @s $(slot
             color, f"Set quick swap to {label}")
         for label, val, color in qs_options
     ])
-    qs_line = f'["  ",{{"text":"Quick Swap: ","color":"white"}},{qs_btns}]'
+    qs_line = f'["  ",["",{{"text":"Quick Swap"}},": "],{qs_btns}]'
 
     write_function(f"{ns}:config",
 f"""tellraw @s {sep}

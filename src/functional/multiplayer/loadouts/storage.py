@@ -7,9 +7,7 @@ def generate_storage() -> None:
 	ns: str = Mem.ctx.project_id
 	version: str = Mem.ctx.project_version
 
-	## ============================
 	## Scoreboards & Storage for custom loadouts
-	## ============================
 	write_load_file(
 f"""
 ## Custom loadout system
@@ -39,9 +37,7 @@ execute unless data storage {ns}:multiplayer player_data run data modify storage
 execute unless data storage {ns}:multiplayer next_loadout_id run data modify storage {ns}:multiplayer next_loadout_id set value 1
 """)
 
-	## ============================
 	## Assign player ID on first interaction (called from player tick if pid == 0)
-	## ============================
 	write_versioned_function("multiplayer/assign_pid",
 f"""
 # Assign a unique player ID
@@ -54,21 +50,17 @@ execute store result storage {ns}:temp _new_player.pid int 1 run scoreboard play
 data modify storage {ns}:multiplayer player_data append from storage {ns}:temp _new_player
 """)
 
-	## ============================
 	## Player tick hook: assign pid if needed
-	## ============================
 	write_versioned_function("player/tick",
 f"""
 # Custom loadouts: assign player ID if not yet assigned
 execute unless score @s {ns}.mp.pid matches 1.. run function {ns}:v{version}/multiplayer/assign_pid
 """, prepend=True)
-	## ============================
 	## get_username: capture player username via player head loot table trick
 	## Called via: tag @s add {ns}.username_getter
 	##             execute at @s summon item_display run function .../get_username
 	##             tag @s remove {ns}.username_getter
 	## Result: stores username in {ns}:temp _new_loadout.owner_name
-	## ============================
 	write_versioned_function("multiplayer/get_username",
 f"""
 # @s = item_display entity spawned at the player's position
