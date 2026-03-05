@@ -41,6 +41,11 @@ function #mgs:multiplayer/on_game_end
 tellraw @a ["",[{"text":"","color":"gold","bold":true},"⚔ ",{"translate": "mgs.game_over"},"! "]]
 tellraw @a ["",{"translate": "mgs.red","color":"red"},{"text":": "},{"score":{"name":"#red","objective":"mgs.mp.team"}}," | ",{"translate": "mgs.blue","color":"blue"},{"text":": "},{"score":{"name":"#blue","objective":"mgs.mp.team"}}]
 
+# Remove sidebar and list displays
+scoreboard objectives setdisplay sidebar
+scoreboard objectives remove mgs.sidebar
+scoreboard objectives setdisplay list
+
 # Clear in-game state
 scoreboard players set @a mgs.mp.in_game 0
 scoreboard players set @a mgs.mp.team 0
