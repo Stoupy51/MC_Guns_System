@@ -3,6 +3,7 @@
 # Imports
 from stewbeet import Mem, write_load_file, write_versioned_function
 
+from ...helpers import MGS_TAG
 from ..classes import CONSUMABLE_MAGS
 from .catalogs import (
 	ALL_SCOPE_SUFFIXES,
@@ -51,15 +52,13 @@ def generate_editor() -> None:
 	## Steps: Primary → Scope → Mags → Secondary → Scope → Mags → Equip1 → Equip2 → Perks → Confirm
 	## ====================================================================
 
-	## ============================
 	## Step 1: editor/start - Initialize Pick-10 budget, show primary weapon selection
-	## ============================
 	primary_actions: list[str] = []
 	for idx, (_gun_id, display, category, _mag, _mc) in enumerate(PRIMARY_WEAPONS):
 		trig = TRIG_PRIMARY_BASE + idx
 		primary_actions.append(
 			f'{{label:{{text:"{display}",color:"yellow"}},'
-			f'tooltip:["",{{"text":"{category}","color":"gray"}},{{"text":"\\nCost: ","color":"white"}},[{{"text":"{COST_PRIMARY_WEAPON}","color":"gold"}}]," pt"],'
+			f'tooltip:["",{{"text":"{category}","color":"gray"}},["","\\n",{{"text":"Cost"}},": "],[{{"text":"{COST_PRIMARY_WEAPON}","color":"gold"}}]," pt"],'
 			f'action:{{type:"run_command",command:"/trigger {ns}.player.config set {trig}"}}}}'
 		)
 	primary_actions_snbt = ",".join(primary_actions)
@@ -82,7 +81,7 @@ type:"minecraft:multi_action",\
 title:{{text:"Create Loadout - Pick Primary",color:"gold",bold:true}},\
 body:[{{\
 type:"minecraft:plain_message",\
-contents:["",{{"text":"Points remaining: ","color":"white"}},{{"text":"$(_pts)","color":"gold","bold":true}},{{"text":" / {PICK10_TOTAL}","color":"dark_gray"}}]\
+contents:["",["",{{"text":"Points remaining"}},": "],{{"text":"$(_pts)","color":"gold","bold":true}},{{"text":" / {PICK10_TOTAL}","color":"dark_gray"}}]\
 }},{{\
 type:"minecraft:plain_message",\
 contents:{{text:"Choose your primary weapon (-{COST_PRIMARY_WEAPON} pt)",color:"gray"}}\
@@ -95,9 +94,7 @@ exit_action:{{label:"Back",action:{{type:"run_command",command:"/trigger {ns}.pl
 function {ns}:v{version}/multiplayer/show_dialog with storage {ns}:temp
 """)
 
-	## ============================
 	## editor/pick_primary - Store primary, deduct cost, route to scope
-	## ============================
 	pick_primary_lines = ""
 	for idx, (gun_id, display, _category, mag_id, mag_count) in enumerate(PRIMARY_WEAPONS):
 		trig = TRIG_PRIMARY_BASE + idx
@@ -140,9 +137,7 @@ scoreboard players remove @s {ns}.mp.edit_points {COST_PRIMARY_WEAPON}
 function {ns}:v{version}/multiplayer/editor/show_primary_mags_dialog
 """)
 
-	## ============================
 	## Primary scope dialogs
-	## ============================
 	def scope_actions_snbt(trig_base: int, variants: tuple[str, ...], cost: int) -> str:
 		actions: list[str] = []
 		for suffix in variants:
@@ -172,7 +167,7 @@ type:"minecraft:multi_action",\
 title:{{text:"Create Loadout - Pick Scope",color:"gold",bold:true}},\
 body:[{{\
 type:"minecraft:plain_message",\
-contents:["",{{"text":"Points remaining: ","color":"white"}},{{"text":"$(_pts)","color":"gold","bold":true}},{{"text":" / {PICK10_TOTAL}","color":"dark_gray"}}]\
+contents:["",["",{{"text":"Points remaining"}},": "],{{"text":"$(_pts)","color":"gold","bold":true}},{{"text":" / {PICK10_TOTAL}","color":"dark_gray"}}]\
 }},{{\
 type:"minecraft:plain_message",\
 contents:{{text:"Choose your optic (-{COST_PRIMARY_SCOPE} pt for any scope, iron sights free)",color:"gray"}}\
@@ -189,34 +184,37 @@ function {ns}:v{version}/multiplayer/show_dialog with storage {ns}:temp
 	write_primary_scope_dialog("no4", ("", "_1", "_2", "_3"))
 	write_primary_scope_dialog("1only", ("", "_1"))
 
-	## ============================
 	## editor/pick_primary_scope - Store scope, deduct cost if non-iron, show mag dialog
-	## ============================
-	pick_scope_lines = ""
-	for suffix in ALL_SCOPE_SUFFIXES:
-		i = ALL_SCOPE_SUFFIXES.index(suffix)
-		trig = TRIG_PRIMARY_SCOPE_BASE + i
-		name = SCOPE_NAMES[suffix]
-		scope_cost = COST_PRIMARY_SCOPE if suffix != "" else 0
-		if scope_cost > 0:
-			pick_scope_lines += (
+	def gen_pick_scope_lines(prefix: str, trig_base: int, cost: int) -> str:
+		"""Generate scope pick + budget check lines for primary or secondary."""
+		lines = ""
+		for suffix in ALL_SCOPE_SUFFIXES:
+			i = ALL_SCOPE_SUFFIXES.index(suffix)
+			trig = trig_base + i
+			name = SCOPE_NAMES[suffix]
+			scope_cost = cost if suffix != "" else 0
+			if scope_cost > 0:
+				lines += (
+					f'execute if score @s {ns}.player.config matches {trig} run '
+					f'execute if score @s {ns}.mp.edit_points matches ..{scope_cost - 1} run '
+					f'return run tellraw @s [{MGS_TAG},{{"text":"Not enough points for a scope!","color":"red"}}]\n'
+				)
+			lines += (
 				f'execute if score @s {ns}.player.config matches {trig} run '
-				f'execute if score @s {ns}.mp.edit_points matches ..{scope_cost - 1} run '
-				f'return run tellraw @s [{{"text":"[MGS] ","color":"gold"}},{{"text":"Not enough points for a scope!","color":"red"}}]\n'
+				f'data modify storage {ns}:temp editor.{prefix}_scope set value "{suffix}"\n'
 			)
-		pick_scope_lines += (
-			f'execute if score @s {ns}.player.config matches {trig} run '
-			f'data modify storage {ns}:temp editor.primary_scope set value "{suffix}"\n'
-		)
-		pick_scope_lines += (
-			f'execute if score @s {ns}.player.config matches {trig} run '
-			f'data modify storage {ns}:temp editor.primary_scope_name set value "{name}"\n'
-		)
-		if scope_cost > 0:
-			pick_scope_lines += (
+			lines += (
 				f'execute if score @s {ns}.player.config matches {trig} run '
-				f'scoreboard players remove @s {ns}.mp.edit_points {scope_cost}\n'
+				f'data modify storage {ns}:temp editor.{prefix}_scope_name set value "{name}"\n'
 			)
+			if scope_cost > 0:
+				lines += (
+					f'execute if score @s {ns}.player.config matches {trig} run '
+					f'scoreboard players remove @s {ns}.mp.edit_points {scope_cost}\n'
+				)
+		return lines
+
+	pick_scope_lines = gen_pick_scope_lines("primary", TRIG_PRIMARY_SCOPE_BASE, COST_PRIMARY_SCOPE)
 
 	write_versioned_function("multiplayer/editor/pick_primary_scope",
 f"""
@@ -233,9 +231,7 @@ function {ns}:v{version}/multiplayer/editor/show_primary_mags_dialog
 f"""$data modify storage {ns}:temp editor.primary_full set value "$(primary)$(primary_scope)"
 """)
 
-	## ============================
 	## show_primary_mags_dialog - Pick how many primary magazines (1-5)
-	## ============================
 	mag_actions_primary: list[str] = []
 	for count in range(1, 6):
 		trig = TRIG_PRIMARY_MAGS_BASE + count
@@ -258,7 +254,7 @@ type:"minecraft:multi_action",\
 title:{{text:"Create Loadout - Primary Magazines",color:"gold",bold:true}},\
 body:[{{\
 type:"minecraft:plain_message",\
-contents:["",{{"text":"Points remaining: ","color":"white"}},{{"text":"$(_pts)","color":"gold","bold":true}},{{"text":" / {PICK10_TOTAL}","color":"dark_gray"}}]\
+contents:["",["",{{"text":"Points remaining"}},": "],{{"text":"$(_pts)","color":"gold","bold":true}},{{"text":" / {PICK10_TOTAL}","color":"dark_gray"}}]\
 }},{{\
 type:"minecraft:plain_message",\
 contents:{{text:"Select number of primary magazines ({COST_PRIMARY_MAG} pt each)",color:"gray"}}\
@@ -271,9 +267,7 @@ exit_action:{{label:"Back",action:{{type:"run_command",command:"/trigger {ns}.pl
 function {ns}:v{version}/multiplayer/show_dialog with storage {ns}:temp
 """)
 
-	## ============================
 	## editor/pick_primary_mags - Store mag count, deduct cost, show secondary dialog
-	## ============================
 	pick_primary_mags_lines = ""
 	for count in range(1, 6):
 		trig = TRIG_PRIMARY_MAGS_BASE + count
@@ -282,7 +276,7 @@ function {ns}:v{version}/multiplayer/show_dialog with storage {ns}:temp
 		pick_primary_mags_lines += (
 			f'execute if score @s {ns}.player.config matches {trig} run '
 			f'execute if score @s {ns}.mp.edit_points matches ..{min_needed - 1} run '
-			f'return run tellraw @s [{{"text":"[MGS] ","color":"gold"}},{{"text":"Not enough points for {count} magazine(s)!","color":"red"}}]\n'
+			f'return run tellraw @s [{MGS_TAG},{{"text":"Not enough points for {count} magazine(s)!","color":"red"}}]\n'
 		)
 		pick_primary_mags_lines += (
 			f'execute if score @s {ns}.player.config matches {trig} run '
@@ -301,9 +295,7 @@ f"""
 function {ns}:v{version}/multiplayer/editor/show_secondary_dialog
 """)
 
-	## ============================
 	## editor/back_to_secondary - Refund secondary weapon and scope costs, go back to secondary
-	## ============================
 	# Build scope refund: check if a scope was selected and refund accordingly
 	scope_refund_lines = "\n".join(
 		f'execute if data storage {ns}:temp editor{{secondary_scope:"{suffix}"}} run scoreboard players add @s {ns}.mp.edit_points {COST_SECONDARY_SCOPE}'
@@ -326,15 +318,13 @@ data modify storage {ns}:temp editor.secondary_mag_count set value 0
 function {ns}:v{version}/multiplayer/editor/show_secondary_dialog
 """)
 
-	## ============================
 	## show_secondary_dialog - Pick secondary weapon or skip
-	## ============================
 	secondary_actions: list[str] = []
 	for idx, (_gun_id, display, _mag_id, _mc) in enumerate(SECONDARY_WEAPONS):
 		trig = TRIG_SECONDARY_BASE + idx
 		secondary_actions.append(
 			f'{{label:{{text:"{display}",color:"yellow"}},'
-			f'tooltip:["",{{"text":"Pistol","color":"gray"}},{{"text":"\\nCost: ","color":"white"}},[{{"text":"{COST_SECONDARY_WEAPON}","color":"gold"}}," pt"]],'
+			f'tooltip:["",{{"text":"Pistol","color":"gray"}},["","\\n",{{"text":"Cost"}},": "],[{{"text":"{COST_SECONDARY_WEAPON}","color":"gold"}}," pt"]],'
 			f'action:{{type:"run_command",command:"/trigger {ns}.player.config set {trig}"}}}}'
 		)
 	secondary_actions.append(
@@ -356,7 +346,7 @@ type:"minecraft:multi_action",\
 title:{{text:"Create Loadout - Pick Secondary",color:"gold",bold:true}},\
 body:[{{\
 type:"minecraft:plain_message",\
-contents:["",{{"text":"Points remaining: ","color":"white"}},{{"text":"$(_pts)","color":"gold","bold":true}},{{"text":" / {PICK10_TOTAL}","color":"dark_gray"}}]\
+contents:["",["",{{"text":"Points remaining"}},": "],{{"text":"$(_pts)","color":"gold","bold":true}},{{"text":" / {PICK10_TOTAL}","color":"dark_gray"}}]\
 }},{{\
 type:"minecraft:plain_message",\
 contents:{{text:"Choose your secondary weapon (-{COST_SECONDARY_WEAPON} pt) or skip",color:"gray"}}\
@@ -369,48 +359,22 @@ exit_action:{{label:"Back",action:{{type:"run_command",command:"/trigger {ns}.pl
 function {ns}:v{version}/multiplayer/show_dialog with storage {ns}:temp
 """)
 
-	## ============================
 	## editor/pick_secondary - Store secondary choice, route to scope or mags
-	## ============================
 	pick_secondary_lines = ""
 	for idx, (gun_id, display, mag_id, mag_count) in enumerate(SECONDARY_WEAPONS):
 		trig = TRIG_SECONDARY_BASE + idx
 		pick_secondary_lines += (
 			f'execute if score @s {ns}.player.config matches {trig} run '
-			f'data modify storage {ns}:temp editor.secondary set value "{gun_id}"\n'
+			f'data modify storage {ns}:temp editor merge value '
+			f'{{secondary:"{gun_id}",secondary_name:"{display}",secondary_mag:"{mag_id}",secondary_mag_count:{mag_count},'
+			f'secondary_scope:"",secondary_scope_name:"Iron Sights",secondary_full:"{gun_id}"}}\n'
 		)
-		pick_secondary_lines += (
-			f'execute if score @s {ns}.player.config matches {trig} run '
-			f'data modify storage {ns}:temp editor.secondary_name set value "{display}"\n'
-		)
-		pick_secondary_lines += (
-			f'execute if score @s {ns}.player.config matches {trig} run '
-			f'data modify storage {ns}:temp editor.secondary_mag set value "{mag_id}"\n'
-		)
-		pick_secondary_lines += (
-			f'execute if score @s {ns}.player.config matches {trig} run '
-			f'data modify storage {ns}:temp editor.secondary_mag_count set value {mag_count}\n'
-		)
-		pick_secondary_lines += (
-			f'execute if score @s {ns}.player.config matches {trig} run '
-			f'data modify storage {ns}:temp editor.secondary_scope set value ""\n'
-		)
-		pick_secondary_lines += (
-			f'execute if score @s {ns}.player.config matches {trig} run '
-			f'data modify storage {ns}:temp editor.secondary_scope_name set value "Iron Sights"\n'
-		)
-		pick_secondary_lines += (
-			f'execute if score @s {ns}.player.config matches {trig} run '
-			f'data modify storage {ns}:temp editor.secondary_full set value "{gun_id}"\n'
-		)
-	# Handle "None"
-	pick_secondary_lines += f'execute if score @s {ns}.player.config matches {TRIG_SECONDARY_NONE} run data modify storage {ns}:temp editor.secondary set value ""\n'
-	pick_secondary_lines += f'execute if score @s {ns}.player.config matches {TRIG_SECONDARY_NONE} run data modify storage {ns}:temp editor.secondary_name set value "None"\n'
-	pick_secondary_lines += f'execute if score @s {ns}.player.config matches {TRIG_SECONDARY_NONE} run data modify storage {ns}:temp editor.secondary_scope set value ""\n'
-	pick_secondary_lines += f'execute if score @s {ns}.player.config matches {TRIG_SECONDARY_NONE} run data modify storage {ns}:temp editor.secondary_scope_name set value ""\n'
-	pick_secondary_lines += f'execute if score @s {ns}.player.config matches {TRIG_SECONDARY_NONE} run data modify storage {ns}:temp editor.secondary_full set value ""\n'
-	pick_secondary_lines += f'execute if score @s {ns}.player.config matches {TRIG_SECONDARY_NONE} run data modify storage {ns}:temp editor.secondary_mag set value ""\n'
-	pick_secondary_lines += f'execute if score @s {ns}.player.config matches {TRIG_SECONDARY_NONE} run data modify storage {ns}:temp editor.secondary_mag_count set value 0\n'
+	# Handle "No Secondary"
+	pick_secondary_lines += (
+		f'execute if score @s {ns}.player.config matches {TRIG_SECONDARY_NONE} run '
+		f'data modify storage {ns}:temp editor merge value '
+		f'{{secondary:"",secondary_name:"None",secondary_scope:"",secondary_scope_name:"",secondary_full:"",secondary_mag:"",secondary_mag_count:0}}\n'
+	)
 
 	secondary_scope_route = (
 		f'execute if data storage {ns}:temp editor{{secondary:"deagle"}} run '
@@ -422,7 +386,7 @@ f"""
 # Store secondary weapon choice
 {pick_secondary_lines}
 # Check budget before deducting (secondary weapon costs {COST_SECONDARY_WEAPON} pt; None is free)
-execute unless data storage {ns}:temp editor{{secondary:""}} run execute if score @s {ns}.mp.edit_points matches ..{COST_SECONDARY_WEAPON - 1} run return run tellraw @s [{{"text":"[MGS] ","color":"gold"}},{{"text":"Not enough points for a secondary weapon!","color":"red"}}]
+execute unless data storage {ns}:temp editor{{secondary:""}} run execute if score @s {ns}.mp.edit_points matches ..{COST_SECONDARY_WEAPON - 1} run return run tellraw @s [{MGS_TAG},{{"text":"Not enough points for a secondary weapon!","color":"red"}}]
 
 # Deduct cost if a secondary was chosen
 execute unless data storage {ns}:temp editor{{secondary:""}} run scoreboard players remove @s {ns}.mp.edit_points {COST_SECONDARY_WEAPON}
@@ -434,9 +398,7 @@ execute if data storage {ns}:temp editor{{secondary:""}} run return run function
 function {ns}:v{version}/multiplayer/editor/show_secondary_mags_dialog
 """)
 
-	## ============================
 	## Secondary scope dialog: deagle (Iron Sights + 4x Scope)
-	## ============================
 	deagle_scope_snbt = scope_actions_snbt(TRIG_SECONDARY_SCOPE_BASE, ("", "_4"), COST_SECONDARY_SCOPE)
 	write_versioned_function("multiplayer/editor/scope/secondary_4only",
 f"""
@@ -449,7 +411,7 @@ type:"minecraft:multi_action",\
 title:{{text:"Create Loadout - Scope (Secondary)",color:"gold",bold:true}},\
 body:[{{\
 type:"minecraft:plain_message",\
-contents:["",{{"text":"Points remaining: ","color":"white"}},{{"text":"$(_pts)","color":"gold","bold":true}},{{"text":" / {PICK10_TOTAL}","color":"dark_gray"}}]\
+contents:["",["",{{"text":"Points remaining"}},": "],{{"text":"$(_pts)","color":"gold","bold":true}},{{"text":" / {PICK10_TOTAL}","color":"dark_gray"}}]\
 }},{{\
 type:"minecraft:plain_message",\
 contents:{{text:"Choose your secondary optic (-{COST_SECONDARY_SCOPE} pt for scope, iron sights free)",color:"gray"}}\
@@ -462,42 +424,8 @@ exit_action:{{label:"Back",action:{{type:"run_command",command:"/trigger {ns}.pl
 function {ns}:v{version}/multiplayer/show_dialog with storage {ns}:temp
 """)
 
-	## ============================
 	## editor/pick_secondary_scope - Store scope, deduct cost, show secondary mags
-	## ============================
-	pick_sec_scope_lines = ""
-	for suffix in ALL_SCOPE_SUFFIXES:
-		i = ALL_SCOPE_SUFFIXES.index(suffix)
-		trig = TRIG_SECONDARY_SCOPE_BASE + i
-		name = SCOPE_NAMES[suffix]
-		scope_cost = COST_SECONDARY_SCOPE if suffix != "" else 0
-		pick_sec_scope_lines += (
-			f'execute if score @s {ns}.player.config matches {trig} run '
-			f'data modify storage {ns}:temp editor.secondary_scope set value "{suffix}"\n'
-		)
-		pick_sec_scope_lines += (
-			f'execute if score @s {ns}.player.config matches {trig} run '
-			f'data modify storage {ns}:temp editor.secondary_scope_name set value "{name}"\n'
-		)
-		if scope_cost > 0:
-			pick_sec_scope_lines += (
-				f'execute if score @s {ns}.player.config matches {trig} run '
-				f'execute if score @s {ns}.mp.edit_points matches ..{scope_cost - 1} run '
-				f'return run tellraw @s [{{"text":"[MGS] ","color":"gold"}},{{"text":"Not enough points for a scope!","color":"red"}}]\n'
-			)
-		pick_sec_scope_lines += (
-			f'execute if score @s {ns}.player.config matches {trig} run '
-			f'data modify storage {ns}:temp editor.secondary_scope set value "{suffix}"\n'
-		)
-		pick_sec_scope_lines += (
-			f'execute if score @s {ns}.player.config matches {trig} run '
-			f'data modify storage {ns}:temp editor.secondary_scope_name set value "{name}"\n'
-		)
-		if scope_cost > 0:
-			pick_sec_scope_lines += (
-				f'execute if score @s {ns}.player.config matches {trig} run '
-				f'scoreboard players remove @s {ns}.mp.edit_points {scope_cost}\n'
-			)
+	pick_sec_scope_lines = gen_pick_scope_lines("secondary", TRIG_SECONDARY_SCOPE_BASE, COST_SECONDARY_SCOPE)
 
 	write_versioned_function("multiplayer/editor/pick_secondary_scope",
 f"""
@@ -514,9 +442,7 @@ function {ns}:v{version}/multiplayer/editor/show_secondary_mags_dialog
 f"""$data modify storage {ns}:temp editor.secondary_full set value "$(secondary)$(secondary_scope)"
 """)
 
-	## ============================
 	## show_secondary_mags_dialog - Pick how many secondary magazines (0-5)
-	## ============================
 	mag_actions_secondary: list[str] = []
 	for count in range(0, 6):
 		trig = TRIG_SECONDARY_MAGS_BASE + count
@@ -543,7 +469,7 @@ type:"minecraft:multi_action",\
 title:{{text:"Create Loadout - Secondary Magazines",color:"gold",bold:true}},\
 body:[{{\
 type:"minecraft:plain_message",\
-contents:["",{{"text":"Points remaining: ","color":"white"}},{{"text":"$(_pts)","color":"gold","bold":true}},{{"text":" / {PICK10_TOTAL}","color":"dark_gray"}}]\
+contents:["",["",{{"text":"Points remaining"}},": "],{{"text":"$(_pts)","color":"gold","bold":true}},{{"text":" / {PICK10_TOTAL}","color":"dark_gray"}}]\
 }},{{\
 type:"minecraft:plain_message",\
 contents:{{text:"Select number of secondary magazines ({COST_SECONDARY_MAG} pt each)",color:"gray"}}\
@@ -556,9 +482,7 @@ exit_action:{{label:"Back",action:{{type:"run_command",command:"/trigger {ns}.pl
 function {ns}:v{version}/multiplayer/show_dialog with storage {ns}:temp
 """)
 
-	## ============================
 	## editor/pick_secondary_mags - Store mag count, deduct cost, show equip slot 1
-	## ============================
 	pick_secondary_mags_lines = ""
 	for count in range(0, 6):
 		trig = TRIG_SECONDARY_MAGS_BASE + count
@@ -567,7 +491,7 @@ function {ns}:v{version}/multiplayer/show_dialog with storage {ns}:temp
 			pick_secondary_mags_lines += (
 				f'execute if score @s {ns}.player.config matches {trig} run '
 				f'execute if score @s {ns}.mp.edit_points matches ..{extra_cost - 1} run '
-				f'return run tellraw @s [{{"text":"[MGS] ","color":"gold"}},{{"text":"Not enough points for {count} secondary magazine(s)!","color":"red"}}]\n'
+				f'return run tellraw @s [{MGS_TAG},{{"text":"Not enough points for {count} secondary magazine(s)!","color":"red"}}]\n'
 			)
 		pick_secondary_mags_lines += (
 			f'execute if score @s {ns}.player.config matches {trig} run '
@@ -587,21 +511,48 @@ f"""
 function {ns}:v{version}/multiplayer/editor/show_equip_slot1_dialog
 """)
 
-	## ============================
-	## show_equip_slot1_dialog - Pick grenade for slot 1 (hotbar.8)
-	## ============================
-	equip1_actions: list[str] = []
-	for grenade_idx, (item_id, display) in enumerate(GRENADE_TYPES):
-		trig = TRIG_EQUIP_SLOT1_BASE + grenade_idx
-		tooltip: str = '{text:"Free"}' if not item_id else f'[{{text:"-{COST_GRENADE}"}}, " pt"]'
-		label_color = "yellow" if item_id else "green"
-		equip1_actions.append(
-			f'{{label:{{text:"{display}",color:"{label_color}"}},'
-			f'tooltip:{tooltip},'
-			f'action:{{type:"run_command",command:"/trigger {ns}.player.config set {trig}"}}}}'
-		)
-	equip1_actions_snbt = ",".join(equip1_actions)
+	## Equip slots 1 & 2 - Generate action lists and pick lines for both
+	equip_configs = [
+		(1, "equip_slot1", TRIG_EQUIP_SLOT1_BASE),
+		(2, "equip_slot2", TRIG_EQUIP_SLOT2_BASE),
+	]
+	equip_actions_snbt: dict[int, str] = {}
+	equip_pick_lines: dict[int, str] = {}
 
+	for slot_num, field, trig_base in equip_configs:
+		actions: list[str] = []
+		for grenade_idx, (item_id, display) in enumerate(GRENADE_TYPES):
+			trig = trig_base + grenade_idx
+			tooltip: str = '{text:"Free"}' if not item_id else f'[{{text:"-{COST_GRENADE}"}}, " pt"]'
+			label_color = "yellow" if item_id else "green"
+			actions.append(
+				f'{{label:{{text:"{display}",color:"{label_color}"}},'
+				f'tooltip:{tooltip},'
+				f'action:{{type:"run_command",command:"/trigger {ns}.player.config set {trig}"}}}}'
+			)
+		equip_actions_snbt[slot_num] = ",".join(actions)
+
+		pick = ""
+		for grenade_idx, (item_id, _display) in enumerate(GRENADE_TYPES):
+			trig = trig_base + grenade_idx
+			if item_id:
+				pick += (
+					f'execute if score @s {ns}.player.config matches {trig} run '
+					f'execute if score @s {ns}.mp.edit_points matches ..{COST_GRENADE - 1} run '
+					f'return run tellraw @s [{MGS_TAG},{{"text":"Not enough points for a grenade!","color":"red"}}]\n'
+				)
+			pick += (
+				f'execute if score @s {ns}.player.config matches {trig} run '
+				f'data modify storage {ns}:temp editor.{field} set value "{item_id}"\n'
+			)
+			if item_id:
+				pick += (
+					f'execute if score @s {ns}.player.config matches {trig} run '
+					f'scoreboard players remove @s {ns}.mp.edit_points {COST_GRENADE}\n'
+				)
+		equip_pick_lines[slot_num] = pick
+
+	## show_equip_slot1_dialog
 	write_versioned_function("multiplayer/editor/show_equip_slot1_dialog",
 f"""
 scoreboard players set @s {ns}.mp.edit_step 3
@@ -614,12 +565,12 @@ type:"minecraft:multi_action",\
 title:{{text:"Create Loadout - Equipment Slot 1",color:"gold",bold:true}},\
 body:[{{\
 type:"minecraft:plain_message",\
-contents:["",{{"text":"Points remaining: ","color":"white"}},{{"text":"$(_pts)","color":"gold","bold":true}},{{"text":" / {PICK10_TOTAL}","color":"dark_gray"}}]\
+contents:["",["",{{"text":"Points remaining"}},": "],{{"text":"$(_pts)","color":"gold","bold":true}},{{"text":" / {PICK10_TOTAL}","color":"dark_gray"}}]\
 }},{{\
 type:"minecraft:plain_message",\
 contents:{{text:"Choose grenade for slot 1 (hotbar.8) - {COST_GRENADE} pt if not None",color:"gray"}}\
 }}],\
-actions:[{equip1_actions_snbt}],\
+actions:[{equip_actions_snbt[1]}],\
 columns:3,\
 after_action:"close",\
 exit_action:{{label:"Back",action:{{type:"run_command",command:"/trigger {ns}.player.config set {TRIG_BACK_SECONDARY}"}}}}\
@@ -627,40 +578,16 @@ exit_action:{{label:"Back",action:{{type:"run_command",command:"/trigger {ns}.pl
 function {ns}:v{version}/multiplayer/show_dialog with storage {ns}:temp
 """)
 
-	## ============================
-	## editor/pick_equip_slot1 - Store slot 1 grenade, deduct cost, show slot 2
-	## ============================
-	pick_equip1_lines = ""
-	for grenade_idx, (item_id, _display) in enumerate(GRENADE_TYPES):
-		trig = TRIG_EQUIP_SLOT1_BASE + grenade_idx
-		if item_id:  # not "None" - check budget first
-			pick_equip1_lines += (
-				f'execute if score @s {ns}.player.config matches {trig} run '
-				f'execute if score @s {ns}.mp.edit_points matches ..{COST_GRENADE - 1} run '
-				f'return run tellraw @s [{{"text":"[MGS] ","color":"gold"}},{{"text":"Not enough points for a grenade!","color":"red"}}]\n'
-			)
-		pick_equip1_lines += (
-			f'execute if score @s {ns}.player.config matches {trig} run '
-			f'data modify storage {ns}:temp editor.equip_slot1 set value "{item_id}"\n'
-		)
-		if item_id:  # not "None"
-			pick_equip1_lines += (
-				f'execute if score @s {ns}.player.config matches {trig} run '
-				f'scoreboard players remove @s {ns}.mp.edit_points {COST_GRENADE}\n'
-			)
-
 	write_versioned_function("multiplayer/editor/pick_equip_slot1",
 f"""
 # Store slot 1 grenade and deduct cost
-{pick_equip1_lines}
+{equip_pick_lines[1]}
 # Show equipment slot 2 dialog
 function {ns}:v{version}/multiplayer/editor/show_equip_slot2_dialog
 """)
 
-	## ============================
 	## editor/back_to_equip1 - Refund equip_slot1 cost, go back to slot 1 dialog
 	##   (called when pressing Back from equip slot 2 dialog, edit_step=4)
-	## ============================
 	write_versioned_function("multiplayer/editor/back_to_equip1",
 f"""
 # Refund equip_slot1 grenade cost if one was selected
@@ -671,10 +598,8 @@ data modify storage {ns}:temp editor.equip_slot1 set value ""
 function {ns}:v{version}/multiplayer/editor/show_equip_slot1_dialog
 """)
 
-	## ============================
 	## editor/back_from_perks - Refund equip_slot2 cost, go back to slot 2 dialog
 	##   (called when pressing Back from perks dialog, edit_step=9)
-	## ============================
 	write_versioned_function("multiplayer/editor/back_from_perks",
 f"""
 # Refund equip_slot2 grenade cost if one was selected
@@ -686,21 +611,7 @@ data modify storage {ns}:temp editor.perks set value []
 function {ns}:v{version}/multiplayer/editor/show_equip_slot2_dialog
 """)
 
-	## ============================
 	## show_equip_slot2_dialog - Pick grenade for slot 2 (hotbar.7)
-	## ============================
-	equip2_actions: list[str] = []
-	for grenade_idx, (item_id, display) in enumerate(GRENADE_TYPES):
-		trig = TRIG_EQUIP_SLOT2_BASE + grenade_idx
-		tooltip: str = '{text:"Free"}' if not item_id else f'[{{text:"-{COST_GRENADE}"}}, " pt"]'
-		label_color = "yellow" if item_id else "green"
-		equip2_actions.append(
-			f'{{label:{{text:"{display}",color:"{label_color}"}},'
-			f'tooltip:{tooltip},'
-			f'action:{{type:"run_command",command:"/trigger {ns}.player.config set {trig}"}}}}'
-		)
-	equip2_actions_snbt = ",".join(equip2_actions)
-
 	write_versioned_function("multiplayer/editor/show_equip_slot2_dialog",
 f"""
 execute store result storage {ns}:temp _pts int 1 run scoreboard players get @s {ns}.mp.edit_points
@@ -712,12 +623,12 @@ type:"minecraft:multi_action",\
 title:{{text:"Create Loadout - Equipment Slot 2",color:"gold",bold:true}},\
 body:[{{\
 type:"minecraft:plain_message",\
-contents:["",{{"text":"Points remaining: ","color":"white"}},{{"text":"$(_pts)","color":"gold","bold":true}},{{"text":" / {PICK10_TOTAL}","color":"dark_gray"}}]\
+contents:["",["",{{"text":"Points remaining"}},": "],{{"text":"$(_pts)","color":"gold","bold":true}},{{"text":" / {PICK10_TOTAL}","color":"dark_gray"}}]\
 }},{{\
 type:"minecraft:plain_message",\
 contents:{{text:"Choose grenade for slot 2 (hotbar.7) - {COST_GRENADE} pt if not None",color:"gray"}}\
 }}],\
-actions:[{equip2_actions_snbt}],\
+actions:[{equip_actions_snbt[2]}],\
 columns:3,\
 after_action:"close",\
 exit_action:{{label:"Back",action:{{type:"run_command",command:"/trigger {ns}.player.config set {TRIG_BACK_EQUIPMENT}"}}}}\
@@ -725,47 +636,23 @@ exit_action:{{label:"Back",action:{{type:"run_command",command:"/trigger {ns}.pl
 function {ns}:v{version}/multiplayer/show_dialog with storage {ns}:temp
 """)
 
-	## ============================
-	## editor/pick_equip_slot2 - Store slot 2, deduct cost, show perks dialog
-	## ============================
-	pick_equip2_lines = ""
-	for grenade_idx, (item_id, _display) in enumerate(GRENADE_TYPES):
-		trig = TRIG_EQUIP_SLOT2_BASE + grenade_idx
-		if item_id:  # not "None" - check budget first
-			pick_equip2_lines += (
-				f'execute if score @s {ns}.player.config matches {trig} run '
-				f'execute if score @s {ns}.mp.edit_points matches ..{COST_GRENADE - 1} run '
-				f'return run tellraw @s [{{"text":"[MGS] ","color":"gold"}},{{"text":"Not enough points for a grenade!","color":"red"}}]\n'
-			)
-		pick_equip2_lines += (
-			f'execute if score @s {ns}.player.config matches {trig} run '
-			f'data modify storage {ns}:temp editor.equip_slot2 set value "{item_id}"\n'
-		)
-		if item_id:
-			pick_equip2_lines += (
-				f'execute if score @s {ns}.player.config matches {trig} run '
-				f'scoreboard players remove @s {ns}.mp.edit_points {COST_GRENADE}\n'
-			)
-
 	write_versioned_function("multiplayer/editor/pick_equip_slot2",
 f"""
 # Store slot 2 grenade and deduct cost
-{pick_equip2_lines}
+{equip_pick_lines[2]}
 # Clear perks list (fresh start)
 data modify storage {ns}:temp editor.perks set value []
 # Show perks dialog
 function {ns}:v{version}/multiplayer/editor/show_perks_dialog
 """)
 
-	## ============================
 	## show_perks_dialog - Toggle perks (up to MAX_PERKS)
-	## ============================
 	perks_actions: list[str] = []
 	for perk_idx, (_perk_id, perk_name, perk_desc, _score) in enumerate(PERKS):
 		trig = TRIG_PERK_BASE + perk_idx
 		perks_actions.append(
 			f'{{label:{{text:"{perk_name}",color:"aqua"}},'
-			f'tooltip:["",{{"text":"{perk_desc}","color":"gray"}},{{"text":"\\nCost: ","color":"white"}},[{{"text":"{COST_PERK}","color":"gold"}}]," pt"],'
+			f'tooltip:["",{{"text":"{perk_desc}","color":"gray"}},["","\\n",{{"text":"Cost"}},": "],[{{"text":"{COST_PERK}","color":"gold"}}]," pt"],'
 			f'action:{{type:"run_command",command:"/trigger {ns}.player.config set {trig}"}}}}'
 		)
 	# Done button
@@ -827,7 +714,7 @@ type:"minecraft:multi_action",\
 title:{{text:"Create Loadout - Perks",color:"gold",bold:true}},\
 body:[{{\
 type:"minecraft:plain_message",\
-contents:["",{{"text":"Points remaining: ","color":"white"}},{{"text":"$(_pts)","color":"gold","bold":true}},{{"text":" / {PICK10_TOTAL}","color":"dark_gray"}}]\
+contents:["",["",{{"text":"Points remaining"}},": "],{{"text":"$(_pts)","color":"gold","bold":true}},{{"text":" / {PICK10_TOTAL}","color":"dark_gray"}}]\
 }},{{\
 type:"minecraft:plain_message",\
 contents:{{text:"Toggle perks below (max {MAX_PERKS}, {COST_PERK} pt each). Selected: $(_perk_count)/{MAX_PERKS}",color:"gray"}}\
@@ -843,71 +730,70 @@ exit_action:{{label:"Back",action:{{type:"run_command",command:"/trigger {ns}.pl
 function {ns}:v{version}/multiplayer/show_dialog with storage {ns}:temp
 """)
 
-	## ============================
 	## editor/pick_perk - Toggle a perk on/off; re-show perks dialog
-	## ============================
+	# Dispatch: store perk_id in temp, call generic toggle
 	pick_perk_dispatch = ""
-	for perk_idx, (_perk_id, _perk_name, _perk_desc, _) in enumerate(PERKS):
+	for perk_idx, (perk_id, *_) in enumerate(PERKS):
 		trig = TRIG_PERK_BASE + perk_idx
 		pick_perk_dispatch += (
 			f'execute if score @s {ns}.player.config matches {trig} run '
-			f'function {ns}:v{version}/multiplayer/editor/toggle_perk_{perk_idx}\n'
+			f'data modify storage {ns}:temp _toggle_perk set value "{perk_id}"\n'
 		)
+
+	perk_count_check = "".join(
+		f'execute if data storage {ns}:temp editor{{perks:["{pid}"]}} run scoreboard players add #perk_count {ns}.data 1\n'
+		for pid, *_ in PERKS
+	)
 
 	write_versioned_function("multiplayer/editor/pick_perk",
 f"""
-# Toggle the selected perk
+# Store which perk was toggled
 {pick_perk_dispatch}
+# Toggle the selected perk (generic macro function)
+function {ns}:v{version}/multiplayer/editor/toggle_perk with storage {ns}:temp
 # Re-open the perks dialog to reflect updated state
 function {ns}:v{version}/multiplayer/editor/show_perks_dialog
 """)
 
-	# Generate toggle functions per perk
-	for perk_idx, (perk_id, _perk_name, _perk_desc, _) in enumerate(PERKS):
-		perk_count_check = "".join(
-			f'execute if data storage {ns}:temp editor{{perks:["{pid}"]}} run scoreboard players add #perk_count {ns}.data 1\n'
-			for pid, *_ in PERKS
-		)
-		write_versioned_function(f"multiplayer/editor/toggle_perk_{perk_idx}",
+	# Generic toggle perk (macro function using _toggle_perk)
+	write_versioned_function("multiplayer/editor/toggle_perk",
 f"""
 # Check if already selected → remove (refund) and early-exit
-execute if data storage {ns}:temp editor{{perks:["{perk_id}"]}} run scoreboard players add @s {ns}.mp.edit_points {COST_PERK}
-execute if data storage {ns}:temp editor{{perks:["{perk_id}"]}} run return run function {ns}:v{version}/multiplayer/editor/remove_perk_{perk_idx}
+$execute if data storage {ns}:temp editor{{perks:["$(_toggle_perk)"]}} run scoreboard players add @s {ns}.mp.edit_points {COST_PERK}
+$execute if data storage {ns}:temp editor{{perks:["$(_toggle_perk)"]}} run return run function {ns}:v{version}/multiplayer/editor/remove_perk
 
 # Check max perks limit
 scoreboard players set #perk_count {ns}.data 0
 {perk_count_check}
-execute if score #perk_count {ns}.data matches {MAX_PERKS}.. run return run tellraw @s [{{"text":"[MGS] ","color":"gold"}},{{"text":"Max {MAX_PERKS} perks allowed!","color":"red"}}]
+execute if score #perk_count {ns}.data matches {MAX_PERKS}.. run return run tellraw @s [{MGS_TAG},{{"text":"Max {MAX_PERKS} perks allowed!","color":"red"}}]
 
 # Check points budget
-execute if score @s {ns}.mp.edit_points matches ..0 run return run tellraw @s [{{"text":"[MGS] ","color":"gold"}},{{"text":"Not enough points!","color":"red"}}]
+execute if score @s {ns}.mp.edit_points matches ..0 run return run tellraw @s [{MGS_TAG},{{"text":"Not enough points!","color":"red"}}]
 
 # Add perk and deduct points
-data modify storage {ns}:temp editor.perks append value "{perk_id}"
+$data modify storage {ns}:temp editor.perks append value "$(_toggle_perk)"
 scoreboard players remove @s {ns}.mp.edit_points {COST_PERK}
 """)
 
-		write_versioned_function(f"multiplayer/editor/remove_perk_{perk_idx}",
+	# Generic remove perk (starts rebuild without the toggled perk)
+	write_versioned_function("multiplayer/editor/remove_perk",
 f"""
-# Rebuild perks list without "{perk_id}"
 data modify storage {ns}:temp _remove_iter set from storage {ns}:temp editor.perks
 data modify storage {ns}:temp editor.perks set value []
-function {ns}:v{version}/multiplayer/editor/rebuild_perks_{perk_idx}
+function {ns}:v{version}/multiplayer/editor/rebuild_perks with storage {ns}:temp
 """)
 
-		write_versioned_function(f"multiplayer/editor/rebuild_perks_{perk_idx}",
+	# Generic rebuild perks (recursive, filters out _toggle_perk via macro)
+	write_versioned_function("multiplayer/editor/rebuild_perks",
 f"""
 execute unless data storage {ns}:temp _remove_iter[0] run return 0
 data modify storage {ns}:temp _perk_val set from storage {ns}:temp _remove_iter[0]
 data remove storage {ns}:temp _remove_iter[0]
-# Re-add if not the removed perk, then continue loop
-execute unless data storage {ns}:temp {{_perk_val:"{perk_id}"}} run data modify storage {ns}:temp editor.perks append from storage {ns}:temp _perk_val
-function {ns}:v{version}/multiplayer/editor/rebuild_perks_{perk_idx}
+$execute unless data storage {ns}:temp {{_perk_val:"$(_toggle_perk)"}} run data modify storage {ns}:temp editor.perks append from storage {ns}:temp _perk_val
+function {ns}:v{version}/multiplayer/editor/rebuild_perks with storage {ns}:temp
 """)
 
-	## ============================
 	## editor/perks_done - Advance to confirm step
-	## ============================
 	write_versioned_function("multiplayer/editor/perks_done",
 f"""
 scoreboard players set @s {ns}.mp.edit_step 10
@@ -915,9 +801,7 @@ scoreboard players set @s {ns}.mp.edit_step 10
 function {ns}:v{version}/multiplayer/editor/show_confirm with storage {ns}:temp editor
 """)
 
-	## ============================
 	## editor/show_confirm - Macro function to build the review dialog
-	## ============================
 	write_versioned_function("multiplayer/editor/show_confirm",
 f"""
 # Compute points used = PICK10_TOTAL - remaining
@@ -929,12 +813,12 @@ $data modify storage {ns}:temp dialog set value {{\
 type:"minecraft:multi_action",\
 title:{{text:"Create Loadout - Review",color:"gold",bold:true}},\
 body:[\
-{{type:"minecraft:plain_message",contents:["",{{"text":"Points used: ","color":"white"}},{{"text":"PLACEHOLDER","color":"gold"}}]}},\
+{{type:"minecraft:plain_message",contents:["",["",{{"text":"Points used"}},": "],{{"text":"PLACEHOLDER","color":"gold"}}]}},\
 {{type:"minecraft:plain_message",contents:{{text:"Review your loadout before saving:",color:"white"}}}},\
-{{type:"minecraft:plain_message",contents:["",{{"text":"➤ Primary: ","color":"white"}},{{"text":"$(primary_name)","color":"green","bold":true}},{{"text":" ($(primary_scope_name)) x$(primary_mag_count) mags","color":"dark_green"}}]}},\
-{{type:"minecraft:plain_message",contents:["",{{"text":"➤ Secondary: ","color":"white"}},{{"text":"$(secondary_name)","color":"yellow","bold":true}},{{"text":" x$(secondary_mag_count) mags","color":"gold"}}]}},\
-{{type:"minecraft:plain_message",contents:["",{{"text":"➤ Equip 1: ","color":"white"}},{{"text":"$(equip_slot1)","color":"aqua","bold":true}}]}},\
-{{type:"minecraft:plain_message",contents:["",{{"text":"➤ Equip 2: ","color":"white"}},{{"text":"$(equip_slot2)","color":"aqua","bold":true}}]}}\
+{{type:"minecraft:plain_message",contents:["","","➤ ",{{"text":"Primary"}},": ",{{"text":"$(primary_name)","color":"green","bold":true}},{{"text":" ($(primary_scope_name)) x$(primary_mag_count) mags","color":"dark_green"}}]}},\
+{{type:"minecraft:plain_message",contents:["","","➤ ",{{"text":"Secondary"}},": ",{{"text":"$(secondary_name)","color":"yellow","bold":true}},{{"text":" x$(secondary_mag_count) mags","color":"gold"}}]}},\
+{{type:"minecraft:plain_message",contents:["","","➤ ",{{"text":"Equip 1"}},": ",{{"text":"$(equip_slot1)","color":"aqua","bold":true}}]}},\
+{{type:"minecraft:plain_message",contents:["","","➤ ",{{"text":"Equip 2"}},": ",{{"text":"$(equip_slot2)","color":"aqua","bold":true}}]}}\
 ],\
 actions:[\
 {{label:{{text:"Save as Public",color:"green"}},tooltip:{{text:"Everyone can see and use this loadout"}},action:{{type:"run_command",command:"/trigger {ns}.player.config set {TRIG_SAVE_PUBLIC}"}}}},\
@@ -956,7 +840,7 @@ function {ns}:v{version}/multiplayer/show_dialog with storage {ns}:temp
 """)
 
 	write_versioned_function("multiplayer/editor/patch_pts_used",
-f"""$data modify storage {ns}:temp dialog.body[0].contents set value ["",{{"text":"Points used: ","color":"white"}},{{"text":"$(_pts_used)","color":"gold","bold":true}},{{"text":" / {PICK10_TOTAL}","color":"dark_gray"}}]
+f"""$data modify storage {ns}:temp dialog.body[0].contents set value ["","",{{"text":"Points used"}},": ",{{"text":"$(_pts_used)","color":"gold","bold":true}},{{"text":" / {PICK10_TOTAL}","color":"dark_gray"}}]
 """)
 
 	write_versioned_function("multiplayer/editor/append_perks_to_confirm",
@@ -974,13 +858,11 @@ function {ns}:v{version}/multiplayer/editor/append_perk_line_macro with storage 
 """)
 
 	write_versioned_function("multiplayer/editor/append_perk_line_macro",
-f"""$data modify storage {ns}:temp dialog.body append value {{type:"minecraft:plain_message",contents:["",{{"text":"  ✔ Perk: ","color":"white"}},{{"text":"$(_perk_val)","color":"aqua"}}]}}
+f"""$data modify storage {ns}:temp dialog.body append value {{type:"minecraft:plain_message",contents:["","","  ✔ ",{{"text":"Perk"}},": ",{{"text":"$(_perk_val)","color":"aqua"}}]}}
 function {ns}:v{version}/multiplayer/editor/append_perk_line
 """)
 
-	## ============================
 	## editor/save - Create the loadout entry with Pick-10 data
-	## ============================
 	# Pre-generate primary weapon slot lookup table
 	primary_slot_entries: list[str] = []
 	for gun_id, _display, _category, mag_id, mag_count in PRIMARY_WEAPONS:
@@ -1027,14 +909,12 @@ data modify storage {ns}:multiplayer secondary_slot_table set value [{secondary_
 		)
 
 	# Equip slot display name dispatch (generated at build time from GRENADE_TYPES)
-	equip1_name_dispatch = "\n".join(
-		f'execute if data storage {ns}:temp editor{{equip_slot1:"{item_id}"}} run data modify storage {ns}:temp _new_loadout.equip_slot1_name set value "{display}"'
-		for item_id, display in GRENADE_TYPES if item_id
-	)
-	equip2_name_dispatch = "\n".join(
-		f'execute if data storage {ns}:temp editor{{equip_slot2:"{item_id}"}} run data modify storage {ns}:temp _new_loadout.equip_slot2_name set value "{display}"'
-		for item_id, display in GRENADE_TYPES if item_id
-	)
+	equip_name_dispatch: dict[int, str] = {}
+	for slot_num, field, _, _ in [(1, "equip_slot1", "hotbar.8", 8), (2, "equip_slot2", "hotbar.7", 7)]:
+		equip_name_dispatch[slot_num] = "\n".join(
+			f'execute if data storage {ns}:temp editor{{{field}:"{item_id}"}} run data modify storage {ns}:temp _new_loadout.{field}_name set value "{display}"'
+			for item_id, display in GRENADE_TYPES if item_id
+		)
 
 	write_versioned_function("multiplayer/editor/save",
 f"""
@@ -1086,9 +966,9 @@ execute store result storage {ns}:temp _new_loadout.points_used int 1 run scoreb
 
 # Set equip slot display names
 execute if data storage {ns}:temp editor{{equip_slot1:""}} run data modify storage {ns}:temp _new_loadout.equip_slot1_name set value "None"
-{equip1_name_dispatch}
+{equip_name_dispatch[1]}
 execute if data storage {ns}:temp editor{{equip_slot2:""}} run data modify storage {ns}:temp _new_loadout.equip_slot2_name set value "None"
-{equip2_name_dispatch}
+{equip_name_dispatch[2]}
 
 # Set visibility
 execute if score #cl_public {ns}.data matches 1 run data modify storage {ns}:temp _new_loadout.public set value 1b
@@ -1194,9 +1074,7 @@ execute store result score #pmag_count {ns}.data run data get storage {ns}:temp 
 execute if score #pmag_count {ns}.data matches 1.. run function {ns}:v{version}/multiplayer/editor/append_mag_slots
 """)
 
-	## ============================
 	## Fix loot macros
-	## ============================
 	write_versioned_function("multiplayer/editor/fix_primary_loot",
 f"""$data modify storage {ns}:temp _build.primary_data.gun_slot.loot set value "{ns}:i/$(primary_full)"
 """)
@@ -1205,14 +1083,12 @@ f"""$data modify storage {ns}:temp _build.primary_data.gun_slot.loot set value "
 f"""$data modify storage {ns}:temp _build.secondary_data.gun_slot.loot set value "{ns}:i/$(secondary_full)"
 """)
 
-	## ============================
 	## Name and notification macros
-	## ============================
 	write_versioned_function("multiplayer/editor/set_name", f"""$data modify storage {ns}:temp _new_loadout.name set value "$(primary_name) + $(secondary_name)"\n""")
 
 	write_versioned_function("multiplayer/editor/set_main_gun_display", f"""$data modify storage {ns}:temp _new_loadout.main_gun_display set value "$(primary_name) ($(primary_scope_name))"\n""")
 
 	write_versioned_function("multiplayer/editor/set_sec_gun_display", f"""$data modify storage {ns}:temp _new_loadout.secondary_gun_display set value "$(secondary_name) ($(secondary_scope_name))"\n""")
 
-	write_versioned_function("multiplayer/editor/notify_saved", """$tellraw @s ["",{"text":"[MGS] ","color":"gold"},{"text":"Loadout saved: ","color":"white"},{"text":"$(primary_name) + $(secondary_name)","color":"green","bold":true}]""")
+	write_versioned_function("multiplayer/editor/notify_saved", '$tellraw @s ["",'+MGS_TAG+',[{"text":"","color":"white"},{"text":"Loadout saved"},": "],{"text":"$(primary_name) + $(secondary_name)","color":"green","bold":true}]')
 

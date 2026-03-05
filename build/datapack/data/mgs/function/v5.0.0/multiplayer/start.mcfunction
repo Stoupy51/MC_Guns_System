@@ -33,5 +33,5 @@ execute as @a at @s if score @s mgs.mp.class matches 0 if score @s mgs.mp.defaul
 execute as @a at @s if score @s mgs.mp.class matches 0 run function mgs:v5.0.0/multiplayer/select_class
 
 # Announce
-tellraw @a ["",{"translate": "mgs.game_started","color":"gold","bold":true},{"translate": "mgs.pick_your_class","color":"yellow"}]
+tellraw @a ["",[{"text":"","color":"gold","bold":true},"⚔ ",{"translate": "mgs.game_started"},"! "],{"translate": "mgs.pick_your_class","color":"yellow"}]
 

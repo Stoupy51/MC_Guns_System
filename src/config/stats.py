@@ -461,8 +461,7 @@ RAY_GUN: JsonDict = {
         "reload": "ray_gun/reload",
         "playerbegin": "ray_gun/playerbegin",
         "playerend": "ray_gun/playerend",
-        "playermid": "ray_gun/playermid",
-        "crack": "tiny"
+        "playermid": "ray_gun/playermid"
     }
 }
 

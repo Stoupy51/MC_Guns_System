@@ -45,20 +45,13 @@ def main() -> None:
     })
 
     ## Throw grenade (called from fire_weapon when grenade_type is present)
+    grenade_stats = [GRENADE_TYPE, GRENADE_FUSE, GRENADE_DURATION, GRENADE_EFFECT_RADIUS, EXPLOSION_DAMAGE, EXPLOSION_DECAY, EXPLOSION_RADIUS, PROJECTILE_GRAVITY, PROJECTILE_SPEED, PROJECTILE_MODEL]
+    grenade_copy = "\n".join(f"data modify storage {ns}:temp grenade.{s} set from storage {ns}:gun all.stats.{s}" for s in grenade_stats)
     write_versioned_function("grenade/throw",
 f"""
 # Prepare grenade data in storage before summoning
 data modify storage {ns}:temp grenade set value {{}}
-data modify storage {ns}:temp grenade.{GRENADE_TYPE} set from storage {ns}:gun all.stats.{GRENADE_TYPE}
-data modify storage {ns}:temp grenade.{GRENADE_FUSE} set from storage {ns}:gun all.stats.{GRENADE_FUSE}
-data modify storage {ns}:temp grenade.{GRENADE_DURATION} set from storage {ns}:gun all.stats.{GRENADE_DURATION}
-data modify storage {ns}:temp grenade.{GRENADE_EFFECT_RADIUS} set from storage {ns}:gun all.stats.{GRENADE_EFFECT_RADIUS}
-data modify storage {ns}:temp grenade.{EXPLOSION_DAMAGE} set from storage {ns}:gun all.stats.{EXPLOSION_DAMAGE}
-data modify storage {ns}:temp grenade.{EXPLOSION_DECAY} set from storage {ns}:gun all.stats.{EXPLOSION_DECAY}
-data modify storage {ns}:temp grenade.{EXPLOSION_RADIUS} set from storage {ns}:gun all.stats.{EXPLOSION_RADIUS}
-data modify storage {ns}:temp grenade.{PROJECTILE_GRAVITY} set from storage {ns}:gun all.stats.{PROJECTILE_GRAVITY}
-data modify storage {ns}:temp grenade.{PROJECTILE_SPEED} set from storage {ns}:gun all.stats.{PROJECTILE_SPEED}
-data modify storage {ns}:temp grenade.{PROJECTILE_MODEL} set from storage {ns}:gun all.stats.{PROJECTILE_MODEL}
+{grenade_copy}
 
 # Summon loop (supports pellet_count for multiple grenades)
 function {ns}:v{version}/grenade/summon_loop
@@ -115,58 +108,8 @@ execute store result score @s {ns}.data run data get entity @s data.config.{GREN
 # Launch grace period: disable entity collision for 3 ticks to avoid sticking to the thrower
 scoreboard players set @s {ns}.grenade_launch 3
 
-# Calculate velocity from the player's look direction
-# Step 1: Record current position
-execute store result score #proj_ox {ns}.data run data get entity @s Pos[0] 1000
-execute store result score #proj_oy {ns}.data run data get entity @s Pos[1] 1000
-execute store result score #proj_oz {ns}.data run data get entity @s Pos[2] 1000
-
-# Step 2: Apply accuracy spread to the grenade's rotation
-tp @s ~ ~ ~ ~ ~
-function {ns}:v{version}/raycast/accuracy/apply_spread
-
-# Step 3: Get direction vector by teleporting from origin (avoids subtraction)
-execute positioned 0.0 0.0 0.0 positioned ^ ^ ^1 run tp @s ~ ~ ~
-
-# Step 4: Read direction directly as velocity components (thousandths of a block)
-execute store result score #proj_vx {ns}.data run data get entity @s Pos[0] 1000
-execute store result score #proj_vy {ns}.data run data get entity @s Pos[1] 1000
-execute store result score #proj_vz {ns}.data run data get entity @s Pos[2] 1000
-
-# Step 5: Multiply direction by speed / 1000 to get velocity
-execute store result score #proj_speed {ns}.data run data get entity @s data.config.{PROJECTILE_SPEED}
-scoreboard players operation #proj_vx {ns}.data *= #proj_speed {ns}.data
-scoreboard players operation #proj_vy {ns}.data *= #proj_speed {ns}.data
-scoreboard players operation #proj_vz {ns}.data *= #proj_speed {ns}.data
-scoreboard players operation #proj_vx {ns}.data /= #1000 {ns}.data
-scoreboard players operation #proj_vy {ns}.data /= #1000 {ns}.data
-scoreboard players operation #proj_vz {ns}.data /= #1000 {ns}.data
-
-# Step 6: Store velocity into bs.vel scores for bs.move module
-scoreboard players operation @s bs.vel.x = #proj_vx {ns}.data
-scoreboard players operation @s bs.vel.y = #proj_vy {ns}.data
-scoreboard players operation @s bs.vel.z = #proj_vz {ns}.data
-
-# Step 7: Teleport back to original position
-execute store result storage {ns}:temp grenade_pos.x double 0.001 run scoreboard players get #proj_ox {ns}.data
-execute store result storage {ns}:temp grenade_pos.y double 0.001 run scoreboard players get #proj_oy {ns}.data
-execute store result storage {ns}:temp grenade_pos.z double 0.001 run scoreboard players get #proj_oz {ns}.data
-function {ns}:v{version}/grenade/tp_back with storage {ns}:temp grenade_pos
-""")
-
-    # Set visual model on the item_display (macro function)
-    write_versioned_function("grenade/set_model",
-f"""
-$data modify entity @s item set value {{id:"minecraft:paper", count:1, components:{{"minecraft:item_model":"{ns}:$({PROJECTILE_MODEL})"}}}}
-data modify entity @s item_display set value "fixed"
-data modify entity @s brightness set value {{sky: 15, block: 15}}
-data modify entity @s teleport_duration set value 1
-""")
-
-    # Teleport back to original position (macro function)
-    write_versioned_function("grenade/tp_back",
-"""
-$tp @s $(x) $(y) $(z)
+# Calculate velocity from the player's look direction and teleport back
+function {ns}:v{version}/shared/calc_velocity
 """)
 
     ## Tick function for each grenade entity

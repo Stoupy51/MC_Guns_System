@@ -7,9 +7,7 @@ def generate_teams() -> None:
 	ns: str = Mem.ctx.project_id
 	version: str = Mem.ctx.project_version
 
-	## ============================
 	## Join Teams
-	## ============================
 	write_versioned_function("multiplayer/join_red",
 f"""
 scoreboard players set @s {ns}.mp.team 1
@@ -35,9 +33,7 @@ execute if score #red_count {ns}.data <= #blue_count {ns}.data run function {ns}
 execute if score #red_count {ns}.data > #blue_count {ns}.data run function {ns}:v{version}/multiplayer/join_blue
 """)
 
-	## ============================
 	## Team Setup (load)
-	## ============================
 	write_load_file(
 f"""
 # Create teams

@@ -1,11 +1,10 @@
 
 #> mgs:v5.0.0/raycast/accuracy/apply_spread
 #
-# @executed	anchored eyes & positioned ^ ^ ^
+# @executed	anchored eyes & positioned ^ ^ ^0.69
 #
-# @within	mgs:v5.0.0/raycast/main
-#			mgs:v5.0.0/projectile/init
-#			mgs:v5.0.0/grenade/init
+# @within	mgs:v5.0.0/shared/calc_velocity
+#			mgs:v5.0.0/raycast/main
 #
 
 # Get random uniform rotation spread (https://docs.mcbookshelf.dev/en/latest/modules/random.html#random-distributions)

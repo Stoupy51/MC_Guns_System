@@ -9,9 +9,7 @@ def generate_loadouts() -> None:
 	ns: str = Mem.ctx.project_id
 	version: str = Mem.ctx.project_version
 
-	## ============================
 	## Initialize default classes in storage as an ordered list
-	## ============================
 	class_entries: list[str] = []
 	for class_id, class_data in CLASSES.items():
 		class_num: int = CLASS_IDS[class_id]
@@ -20,9 +18,7 @@ def generate_loadouts() -> None:
 	classes_snbt: str = ",".join(class_entries)
 	write_load_file(f"data modify storage {ns}:multiplayer classes_list set value [{classes_snbt}]")
 
-	## ============================
 	## Dynamic loadout application (recursive slot iteration)
-	## ============================
 
 	# apply_slot_loot: give the loot table item to the slot (macro)
 	write_versioned_function("multiplayer/apply_slot_loot", "$loot replace entity @s $(slot) loot $(loot)")
@@ -54,10 +50,8 @@ data remove storage {ns}:temp slots[0]
 execute if data storage {ns}:temp slots[0] run function {ns}:v{version}/multiplayer/apply_next_slot
 """)
 
-	## ============================
 	## apply_class_dynamic: reads class from temp storage and applies loadout
 	## Called after copying the target class data to mgs:temp
-	## ============================
 	write_versioned_function("multiplayer/apply_class_dynamic",
 f"""
 # Clear player inventory

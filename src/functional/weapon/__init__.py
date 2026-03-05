@@ -1,5 +1,6 @@
 
 # Imports
+from ..helpers import write_shared_projectile_functions
 from .actionbar import main as actionbar_main
 from .ammo import main as ammo_main
 from .casing import main as casing_main
@@ -16,6 +17,9 @@ from .zoom import main as zoom_main
 
 # Main function
 def main() -> None:
+
+    # Write shared utility functions used by both projectile and grenade systems
+    write_shared_projectile_functions()
 
     # Detect right click base
     common_main()

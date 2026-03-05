@@ -33,6 +33,8 @@ execute if score #bullets_to_fire {ns}.data matches 1.. run function {ns}:v{vers
 
     ## Summon projectile
     # Called from projectile/summon_loop
+    proj_stats = [EXPLOSION_DAMAGE, EXPLOSION_DECAY, EXPLOSION_RADIUS, DAMAGE, PROJECTILE_GRAVITY, PROJECTILE_SPEED, PROJECTILE_LIFETIME, PROJECTILE_MODEL, BASE_WEAPON]
+    proj_copy = "\n".join(f"data modify storage {ns}:temp proj.{s} set from storage {ns}:gun all.stats.{s}" for s in proj_stats)
     write_versioned_function("projectile/summon",
 f"""
 # Get accuracy value and apply spread
@@ -40,15 +42,7 @@ function {ns}:v{version}/raycast/accuracy/get_value
 
 # Prepare projectile data in storage before summoning
 data modify storage {ns}:temp proj set value {{}}
-data modify storage {ns}:temp proj.{EXPLOSION_DAMAGE} set from storage {ns}:gun all.stats.{EXPLOSION_DAMAGE}
-data modify storage {ns}:temp proj.{EXPLOSION_DECAY} set from storage {ns}:gun all.stats.{EXPLOSION_DECAY}
-data modify storage {ns}:temp proj.{EXPLOSION_RADIUS} set from storage {ns}:gun all.stats.{EXPLOSION_RADIUS}
-data modify storage {ns}:temp proj.{DAMAGE} set from storage {ns}:gun all.stats.{DAMAGE}
-data modify storage {ns}:temp proj.{PROJECTILE_GRAVITY} set from storage {ns}:gun all.stats.{PROJECTILE_GRAVITY}
-data modify storage {ns}:temp proj.{PROJECTILE_SPEED} set from storage {ns}:gun all.stats.{PROJECTILE_SPEED}
-data modify storage {ns}:temp proj.{PROJECTILE_LIFETIME} set from storage {ns}:gun all.stats.{PROJECTILE_LIFETIME}
-data modify storage {ns}:temp proj.{PROJECTILE_MODEL} set from storage {ns}:gun all.stats.{PROJECTILE_MODEL}
-data modify storage {ns}:temp proj.{BASE_WEAPON} set from storage {ns}:gun all.stats.{BASE_WEAPON}
+{proj_copy}
 
 # Summon the projectile entity at the player's eye position
 execute anchored eyes positioned ^ ^ ^0.69 summon item_display run function {ns}:v{version}/projectile/init
@@ -76,57 +70,8 @@ execute if score #is_ray_gun {ns}.data matches 0 run function {ns}:v{version}/pr
 # Set lifetime score
 execute store result score @s {ns}.data run data get storage {ns}:temp proj.{PROJECTILE_LIFETIME}
 
-# Calculate velocity from the player's look direction
-# Step 1: Record current position for teleporting back later
-execute store result score #proj_ox {ns}.data run data get entity @s Pos[0] 1000
-execute store result score #proj_oy {ns}.data run data get entity @s Pos[1] 1000
-execute store result score #proj_oz {ns}.data run data get entity @s Pos[2] 1000
-
-# Step 2: Apply accuracy spread to the marker's rotation
-tp @s ~ ~ ~ ~ ~
-function {ns}:v{version}/raycast/accuracy/apply_spread
-
-# Step 3: Get direction vector by teleporting from origin (avoids subtraction)
-execute positioned 0.0 0.0 0.0 positioned ^ ^ ^1 run tp @s ~ ~ ~
-
-# Step 4: Read direction directly as velocity components (thousandths of a block)
-execute store result score #proj_vx {ns}.data run data get entity @s Pos[0] 1000
-execute store result score #proj_vy {ns}.data run data get entity @s Pos[1] 1000
-execute store result score #proj_vz {ns}.data run data get entity @s Pos[2] 1000
-
-# Step 5: Multiply direction by speed / 1000 to get velocity
-execute store result score #proj_speed {ns}.data run data get entity @s data.config.{PROJECTILE_SPEED}
-scoreboard players operation #proj_vx {ns}.data *= #proj_speed {ns}.data
-scoreboard players operation #proj_vy {ns}.data *= #proj_speed {ns}.data
-scoreboard players operation #proj_vz {ns}.data *= #proj_speed {ns}.data
-scoreboard players operation #proj_vx {ns}.data /= #1000 {ns}.data
-scoreboard players operation #proj_vy {ns}.data /= #1000 {ns}.data
-scoreboard players operation #proj_vz {ns}.data /= #1000 {ns}.data
-
-# Step 6: Store velocity into bs.vel scores for bs.move module
-scoreboard players operation @s bs.vel.x = #proj_vx {ns}.data
-scoreboard players operation @s bs.vel.y = #proj_vy {ns}.data
-scoreboard players operation @s bs.vel.z = #proj_vz {ns}.data
-
-# Step 7: Teleport back to original position
-execute store result storage {ns}:temp proj_pos.x double 0.001 run scoreboard players get #proj_ox {ns}.data
-execute store result storage {ns}:temp proj_pos.y double 0.001 run scoreboard players get #proj_oy {ns}.data
-execute store result storage {ns}:temp proj_pos.z double 0.001 run scoreboard players get #proj_oz {ns}.data
-function {ns}:v{version}/projectile/tp_back with storage {ns}:temp proj_pos
-""")
-
-    # Set visual model on the item_display (macro function)
-    write_versioned_function("projectile/set_model",
-f"""
-$data modify entity @s item set value {{id:"minecraft:paper", count:1, components:{{"minecraft:item_model":"{ns}:$({PROJECTILE_MODEL})"}}}}
-data modify entity @s item_display set value "fixed"
-data modify entity @s brightness set value {{sky: 15, block: 15}}
-""")
-
-    # Teleport back to original position (macro function)
-    write_versioned_function("projectile/tp_back",
-"""
-$tp @s $(x) $(y) $(z)
+# Calculate velocity from the player's look direction and teleport back
+function {ns}:v{version}/shared/calc_velocity
 """)
 
     ## Tick function for each projectile entity

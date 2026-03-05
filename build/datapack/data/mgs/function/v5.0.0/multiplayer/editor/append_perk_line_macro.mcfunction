@@ -8,6 +8,6 @@
 # @args		_perk_val (unknown)
 #
 
-$data modify storage mgs:temp dialog.body append value {type:"minecraft:plain_message",contents:["",{"translate": "mgs.perk","color":"white"},{"text":"$(_perk_val)","color":"aqua"}]}
+$data modify storage mgs:temp dialog.body append value {type:"minecraft:plain_message",contents:["","","  ✔ ",{"translate": "mgs.perk"},": ",{"text":"$(_perk_val)","color":"aqua"}]}
 function mgs:v5.0.0/multiplayer/editor/append_perk_line
 

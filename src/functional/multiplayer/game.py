@@ -8,9 +8,7 @@ def generate_game() -> None:
 	ns: str = Mem.ctx.project_id
 	version: str = Mem.ctx.project_version
 
-	## ============================
 	## Scoreboards & Storage Setup
-	## ============================
 	write_load_file(
 f"""
 ## Multiplayer scoreboards
@@ -30,15 +28,11 @@ execute unless score #blue {ns}.mp.team matches -2147483648.. run scoreboard pla
 data modify storage {ns}:multiplayer game set value {{state:"lobby",gamemode:"tdm",score_limit:30,time_limit:12000}}
 """)
 
-	## ============================
 	## Signal function tags
-	## ============================
 	for event in ["register_maps", "register_classes", "on_game_start", "on_game_end"]:
 		write_tag(f"multiplayer/{event}", Mem.ctx.data[ns].function_tags, [])
 
-	## ============================
 	## Game Start
-	## ============================
 	write_versioned_function("multiplayer/start",
 f"""
 # Initialize game
@@ -70,12 +64,10 @@ execute as @a at @s if score @s {ns}.mp.class matches 0 if score @s {ns}.mp.defa
 execute as @a at @s if score @s {ns}.mp.class matches 0 run function {ns}:v{version}/multiplayer/select_class
 
 # Announce
-tellraw @a ["",{{"text":"⚔ Game Started! ","color":"gold","bold":true}},{{"text":"Pick your class!","color":"yellow"}}]
+tellraw @a ["",[{{"text":"","color":"gold","bold":true}},"⚔ ",{{"text":"Game Started"}},"! "],{{"text":"Pick your class!","color":"yellow"}}]
 """)
 
-	## ============================
 	## Game Stop
-	## ============================
 	write_versioned_function("multiplayer/stop",
 f"""
 # End game
@@ -85,16 +77,14 @@ data modify storage {ns}:multiplayer game.state set value "lobby"
 function #{ns}:multiplayer/on_game_end
 
 # Announce scores
-tellraw @a ["",{{"text":"⚔ Game Over! ","color":"gold","bold":true}}]
+tellraw @a ["",[{{"text":"","color":"gold","bold":true}},"⚔ ",{{"text":"Game Over"}},"! "]]
 tellraw @a ["",{{"text":"Red","color":"red"}},{{"text":": "}},{{"score":{{"name":"#red","objective":"{ns}.mp.team"}}}}," | ",{{"text":"Blue","color":"blue"}},{{"text":": "}},{{"score":{{"name":"#blue","objective":"{ns}.mp.team"}}}}]
 
 # Clear teams
 scoreboard players set @a {ns}.mp.team 0
 """)
 
-	## ============================
 	## Kill Tracking (Signal Listener)
-	## ============================
 	write_versioned_function("multiplayer/on_kill_signal",
 f"""
 # Only process if multiplayer game is active
@@ -113,14 +103,12 @@ execute if score #red {ns}.mp.team >= #score_limit {ns}.data run function {ns}:v
 execute if score #blue {ns}.mp.team >= #score_limit {ns}.data run function {ns}:v{version}/multiplayer/team_wins {{team:"Blue"}}
 """, tags=[f"{ns}:signals/on_kill"])
 
-	## ============================
 	## Team Wins
-	## ============================
 	write_versioned_function("multiplayer/team_wins",
 f"""
 # Announce winner
 $tellraw @a ["",{{"text":"🏆 ","color":"gold"}},{{"text":"$(team) Team Wins!","color":"gold","bold":true}}]
-tellraw @a ["",{{"text":"  Final Score - Red: ","color":"gray"}},{{"score":{{"name":"#red","objective":"{ns}.mp.team"}},"color":"red"}},{{"text":" vs Blue: ","color":"gray"}},{{"score":{{"name":"#blue","objective":"{ns}.mp.team"}},"color":"blue"}}]
+tellraw @a ["",[{{"text":"","color":"gray"}},"  ",{{"text":"Final Score - Red"}},": "],{{"score":{{"name":"#red","objective":"{ns}.mp.team"}},"color":"red"}},[{{"text":"","color":"gray"}}," ",{{"text":"vs Blue"}},": "],{{"score":{{"name":"#blue","objective":"{ns}.mp.team"}},"color":"blue"}}]
 
 # End game
 function {ns}:v{version}/multiplayer/stop

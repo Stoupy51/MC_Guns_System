@@ -8,5 +8,5 @@
 # @args		_pts_used (unknown)
 #
 
-$data modify storage mgs:temp dialog.body[0].contents set value ["",{"translate": "mgs.points_used","color":"white"},{"text":"$(_pts_used)","color":"gold","bold":true},{"text":" / 10","color":"dark_gray"}]
+$data modify storage mgs:temp dialog.body[0].contents set value ["","",{"translate": "mgs.points_used"},": ",{"text":"$(_pts_used)","color":"gold","bold":true},{"text":" / 10","color":"dark_gray"}]
 
