@@ -23,6 +23,7 @@ execute as @e[tag=mgs.hp_corner_b] store result score #hp_bz mgs.data run data g
 
 # Tag players inside the zone (between both corners with 3-block margin)
 # Using positioned checking: player must be within 8 blocks of BOTH corners
+# TODO: optimize this shit
 tag @a remove mgs.in_hp_zone
 execute at @e[tag=mgs.hp_corner_a] as @a[distance=..15] at @s at @e[tag=mgs.hp_corner_b,distance=..15] run tag @s add mgs.in_hp_zone
 
