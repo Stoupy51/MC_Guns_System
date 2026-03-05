@@ -7,7 +7,7 @@
 #
 
 # Initialize dialog
-data modify storage mgs:temp dialog set value {type:"minecraft:multi_action",title:{text:"Marketplace",color:"light_purple",bold:true},body:{type:"minecraft:item",item:{id:"minecraft:emerald"},description:{contents:{translate: "mgs.browse_public_loadouts_from_all_players",color:"gray"}},show_decoration:false,show_tooltip:true},actions:[],columns:3,after_action:"close",exit_action:{label:"Back",action:{type:"run_command",command:"/trigger mgs.player.config set 4"}}}
+data modify storage mgs:temp dialog set value {type:"minecraft:multi_action",title:{translate: "mgs.marketplace",color:"light_purple",bold:true},body:{type:"minecraft:item",item:{id:"minecraft:emerald"},description:{contents:{translate: "mgs.browse_public_loadouts_from_all_players",color:"gray"}},show_decoration:false,show_tooltip:true},actions:[],columns:3,after_action:"close",exit_action:{label:"Back",action:{type:"run_command",command:"/trigger mgs.player.config set 4"}}}
 data modify storage mgs:temp dialog.title set value {translate: "mgs.marketplace_best_liked",color:"light_purple",bold:true}
 
 # Add filter/sort buttons (likes tab active)

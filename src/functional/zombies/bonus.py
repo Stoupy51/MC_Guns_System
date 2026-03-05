@@ -58,7 +58,11 @@ tag @s remove {ns}.reloading_weapon
 # Set player scoreboard to capacity (needed by modify_lore)
 scoreboard players operation @s {ns}.{REMAINING_BULLETS} = #bullets {ns}.data
 
-# Apply new ammo count to the weapon item
+# If this is the active mainhand weapon (remaining_bullets = -1 sentinel), only update lore
+# (don't write CAPACITY to item NBT - the player's scoreboard is the source of truth)
+$execute if items entity @s $(slot) *[custom_data~{{{ns}:{{stats:{{{REMAINING_BULLETS}:-1}}}}}}] run return run function {ns}:v{version}/ammo/modify_lore {{slot:"$(slot)"}}
+
+# For slots with inactive weapons: write CAPACITY to item NBT
 $item modify entity @s $(slot) {ns}:v{version}/update_ammo
 
 # Update weapon lore
@@ -85,19 +89,20 @@ kill @s
     # Refill a single magazine slot
     write_versioned_function("zombies/bonus/refill_magazine",
 f"""
-# Extract magazine data into storage
+# Extract magazine data into storage (sets #bullets = CAPACITY)
 tag @s add {ns}.refilling_mag
+scoreboard players set #stack_size {ns}.data 1
 $execute summon item_display run function {ns}:v{version}/zombies/bonus/extract_mag_data {{slot:"$(slot)"}}
 tag @s remove {ns}.refilling_mag
 
-# Apply refilled ammo count to magazine item
-# TODO: Fix the support for "Consumable Magazine" (set to max_stack_size instead)
+# Consumable magazines use stack count as ammo - just set count to capacity and done
+execute if score #stack_size {ns}.data matches 2.. run scoreboard players operation #bullets {ns}.data = #stack_size {ns}.data
+$execute if score #stack_size {ns}.data matches 2.. run return run item modify entity @s $(slot) {ns}:v{version}/set_consumable_count
+execute if score #stack_size {ns}.data matches 2.. run scoreboard players set #bullets {ns}.data 1
+
+# Regular magazines: update remaining_bullets NBT, restore full model, and refresh lore
 $item modify entity @s $(slot) {ns}:v{version}/update_ammo
-
-# Set full magazine model (remove empty state)
-function {ns}:v{version}/zombies/bonus/set_full_mag_model with storage {ns}:temp refill
-
-# Update magazine lore display
+execute if score #stack_size {ns}.data matches 1 run function {ns}:v{version}/zombies/bonus/set_full_mag_model with storage {ns}:temp refill
 $function {ns}:v{version}/ammo/modify_mag_lore {{slot:"$(slot)"}}
 """)
 
@@ -106,6 +111,11 @@ $function {ns}:v{version}/ammo/modify_mag_lore {{slot:"$(slot)"}}
 f"""
 # Copy item from player to item_display
 $item replace entity @s contents from entity @p[tag={ns}.refilling_mag] $(slot)
+
+# Special consumable compatibility (get max_stack_size, 64 by default)
+execute store success score #is_consumable {ns}.data if data entity @s item.components."minecraft:custom_data".{ns}.consumable
+execute if score #is_consumable {ns}.data matches 1 run scoreboard players set #stack_size {ns}.data 64
+execute if score #is_consumable {ns}.data matches 1 if data entity @s item.components."minecraft:max_stack_size" store result score #stack_size {ns}.data run data get entity @s item.components."minecraft:max_stack_size"
 
 # Read capacity and store as remaining_bullets (refill = set bullets to capacity)
 execute store result score #bullets {ns}.data run data get entity @s item.components."minecraft:custom_data".{ns}.stats.{CAPACITY}
@@ -119,11 +129,11 @@ data modify storage {ns}:temp refill.{BASE_WEAPON} set from entity @s item.compo
 
 # Clean up item_display
 kill @s
-""")
+""")  # noqa: E501
 
     # Set magazine item model to non-empty (full) version
-    write_versioned_function("zombies/bonus/set_full_mag_model",
-f"""$item modify entity @s $(slot) {{"function":"minecraft:set_components", "components":{{"minecraft:item_model":"{ns}:$({BASE_WEAPON})_mag"}}}}
+    write_versioned_function("zombies/bonus/set_full_mag_model", f"""
+$item modify entity @s $(slot) {{"function":"minecraft:set_components", "components":{{"minecraft:item_model":"{ns}:$({BASE_WEAPON})_mag"}}}}
 """)
 
     ## ====================================================

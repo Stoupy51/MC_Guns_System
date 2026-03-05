@@ -221,13 +221,15 @@ scoreboard players set @s {ns}.dps 0
 scoreboard players set @s {ns}.dps_timer 0
 """)
 
-    # DPS signal: on_hit_entity - add actual damage dealt to the shooter's mgs.dps
+    # DPS signal: damage - add actual damage dealt to the shooter's mgs.dps
     # @s = hit entity, the shooter is the ticking player (has mgs.ticking tag)
-    # #damage mgs.data is damage * 10 (integer), same unit as previous_dps accumulator
+    # $(amount) is the damage float from the damage signal macro (e.g. 24.0)
     write_versioned_function("weapon/dps_collect",
 f"""
 # @s = hit entity; add damage (x10) to the shooter's DPS accumulator
-execute store result score #sent_damage {ns}.data run data get storage {ns}:signals on_hit_entity.damage 10
+# Store $(amount) float then read back x10 to get integer tenths (same unit as dps accumulator)
+$data modify storage {ns}:temp dps_amount set value $(amount)
+execute store result score #sent_damage {ns}.data run data get storage {ns}:temp dps_amount 10
 scoreboard players operation @n[tag={ns}.ticking] {ns}.dps += #sent_damage {ns}.data
-""", tags=[f"{ns}:signals/on_hit_entity"])
+""", tags=[f"{ns}:signals/damage"])
 
