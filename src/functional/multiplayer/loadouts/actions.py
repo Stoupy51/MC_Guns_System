@@ -70,7 +70,7 @@ data modify storage {ns}:multiplayer custom_loadouts set value []
 execute if data storage {ns}:temp _del_src[0] run function {ns}:v{version}/multiplayer/custom/delete_filter
 
 # Notify
-tellraw @s ["",{{"text":"[MGS] ","color":"gold"}},{{"text":"Loadout deleted.","color":"green"}}]
+tellraw @s ["",{{"text":"[MGS] ","color":"gold"}},{{"text":"Loadout deleted","color":"red"}}]
 
 # Reopen My Loadouts dialog with updated data
 function {ns}:v{version}/multiplayer/my_loadouts/browse
@@ -110,7 +110,7 @@ execute if data storage {ns}:temp _pd_src[0] run function {ns}:v{version}/multip
 function {ns}:v{version}/multiplayer/custom/fav_count_update
 
 # Notify based on whether it was added or removed
-execute if score #fav_found {ns}.data matches 1 run tellraw @s ["",{{"text":"[MGS] ","color":"gold"}},{{"text":"Removed from favorites.","color":"yellow"}}]
+execute if score #fav_found {ns}.data matches 1 run tellraw @s ["",{{"text":"[MGS] ","color":"gold"}},{{"text":"Removed from favorites","color":"yellow"}}]
 execute if score #fav_found {ns}.data matches 0 run tellraw @s ["",{{"text":"[MGS] ","color":"gold"}},{{"text":"Added to favorites!","color":"green"}}]
 
 # Reopen Marketplace dialog with updated data
@@ -229,7 +229,7 @@ execute if score #already_liked {ns}.data matches 0 run function {ns}:v{version}
 
 # Notify
 execute if score #already_liked {ns}.data matches 0 run tellraw @s ["",{{"text":"[MGS] ","color":"gold"}},{{"text":"Loadout liked!","color":"green"}}]
-execute if score #already_liked {ns}.data matches 1 run tellraw @s ["",{{"text":"[MGS] ","color":"gold"}},{{"text":"You already liked this loadout.","color":"yellow"}}]
+execute if score #already_liked {ns}.data matches 1 run tellraw @s ["",{{"text":"[MGS] ","color":"gold"}},{{"text":"You already liked this loadout","color":"yellow"}}]
 
 # Reopen Marketplace dialog with updated data
 function {ns}:v{version}/multiplayer/marketplace/browse
@@ -323,7 +323,7 @@ data modify storage {ns}:temp _del_src set from storage {ns}:multiplayer custom_
 data modify storage {ns}:multiplayer custom_loadouts set value []
 execute if data storage {ns}:temp _del_src[0] run function {ns}:v{version}/multiplayer/custom/toggle_vis_rebuild
 
-tellraw @s ["",{{"text":"[MGS] ","color":"gold"}},{{"text":"Loadout visibility toggled.","color":"green"}}]
+tellraw @s ["",{{"text":"[MGS] ","color":"gold"}},{{"text":"Loadout visibility toggled","color":"green"}}]
 
 # Reopen My Loadouts dialog with updated data
 function {ns}:v{version}/multiplayer/my_loadouts/browse
@@ -368,7 +368,7 @@ scoreboard players remove #loadout_id {ns}.data {TRIG_SET_DEFAULT_BASE}
 scoreboard players operation @s {ns}.mp.default = #loadout_id {ns}.data
 
 # Notify
-tellraw @s ["",{{"text":"[MGS] ","color":"gold"}},{{"text":"Default loadout set! It will auto-apply when a game starts.","color":"green"}}]
+tellraw @s ["",{{"text":"[MGS] ","color":"gold"}},{{"text":"Default loadout set! It will auto-apply when a game starts","color":"green"}}]
 """)
 
 	# Unset default loadout
@@ -376,5 +376,5 @@ tellraw @s ["",{{"text":"[MGS] ","color":"gold"}},{{"text":"Default loadout set!
 f"""
 # Unset default custom loadout - use standard class instead
 scoreboard players set @s {ns}.mp.default 0
-tellraw @s [{{"text":"[MGS] ","color":"gold"}},{{"text":"Default loadout cleared. Standard class will be used.","color":"green"}}]
+tellraw @s [{{"text":"[MGS] ","color":"gold"}},{{"text":"Default loadout cleared. Standard class will be used","color":"green"}}]
 """)

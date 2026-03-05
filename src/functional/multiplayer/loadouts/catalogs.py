@@ -193,9 +193,9 @@ MAX_PERKS = 3
 
 
 def build_custom_loadout_slots_snbt(ns: str, primary_id: str, secondary_id: str, equipment_preset_idx: int) -> str:
-	"""Build the slots SNBT array from weapon choices (same format as default class slots).
+	""" Build the slots SNBT array from weapon choices (same format as default class slots).
 	Returns the SNBT string for the slots array content (without outer brackets).
-	LEGACY: used for default classes only. Custom loadouts use build_custom_loadout_slots_new."""
+	LEGACY: used for default classes only. Custom loadouts use build_custom_loadout_slots_new """
 	slots: list[str] = []
 
 	def add_slot(slot: str, loot: str, count: int = 1, consumable: bool = False, bullets: int = 0) -> None:
@@ -257,9 +257,9 @@ def build_custom_loadout_slots_pick10(
 	equip_slot1: str,
 	equip_slot2: str,
 ) -> str:
-	"""Build the slots SNBT for a Pick-10 custom loadout.
+	""" Build the slots SNBT for a Pick-10 custom loadout.
 	primary_full / secondary_full are the scope-modified IDs (e.g. 'ak47_3').
-	mag counts are chosen by player. equip_slot1/2 are item IDs or '' for none."""
+	mag counts are chosen by player. equip_slot1/2 are item IDs or '' for none """
 	slots: list[str] = []
 	inv_slot = 0
 
