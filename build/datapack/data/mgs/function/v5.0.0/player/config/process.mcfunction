@@ -46,8 +46,8 @@ execute if score @s mgs.player.config matches 350..351 run function mgs:v5.0.0/m
 # 360 = Back to secondary weapon dialog (refunds secondary weapon + scope costs)
 execute if score @s mgs.player.config matches 360 run function mgs:v5.0.0/multiplayer/editor/back_to_secondary
 # 370 = Back from equipment area: if in perks step (9) refund equip_slot2+perks, else refund equip_slot1 and go to slot1 dialog
-execute if score @s mgs.player.config matches 370 run execute if score @s mgs.mp.edit_step matches 9 run function mgs:v5.0.0/multiplayer/editor/back_from_perks
-execute if score @s mgs.player.config matches 370 run execute unless score @s mgs.mp.edit_step matches 9 run function mgs:v5.0.0/multiplayer/editor/back_to_equip1
+execute if score @s mgs.player.config matches 370 if score @s mgs.mp.edit_step matches 9 run function mgs:v5.0.0/multiplayer/editor/back_from_perks
+execute if score @s mgs.player.config matches 370 unless score @s mgs.mp.edit_step matches 9 run function mgs:v5.0.0/multiplayer/editor/back_to_equip1
 # 380 = Back to perks dialog
 execute if score @s mgs.player.config matches 380 run function mgs:v5.0.0/multiplayer/editor/show_perks_dialog
 # 391-395 = Editor: pick primary mag count (1-5)

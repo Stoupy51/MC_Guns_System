@@ -117,8 +117,8 @@ execute if score @s {ns}.player.config matches {TRIG_SAVE_PUBLIC}..{TRIG_SAVE_PR
 # 360 = Back to secondary weapon dialog (refunds secondary weapon + scope costs)
 execute if score @s {ns}.player.config matches {TRIG_BACK_SECONDARY} run function {ns}:v{version}/multiplayer/editor/back_to_secondary
 # 370 = Back from equipment area: if in perks step (9) refund equip_slot2+perks, else refund equip_slot1 and go to slot1 dialog
-execute if score @s {ns}.player.config matches {TRIG_BACK_EQUIPMENT} run execute if score @s {ns}.mp.edit_step matches 9 run function {ns}:v{version}/multiplayer/editor/back_from_perks
-execute if score @s {ns}.player.config matches {TRIG_BACK_EQUIPMENT} run execute unless score @s {ns}.mp.edit_step matches 9 run function {ns}:v{version}/multiplayer/editor/back_to_equip1
+execute if score @s {ns}.player.config matches {TRIG_BACK_EQUIPMENT} if score @s {ns}.mp.edit_step matches 9 run function {ns}:v{version}/multiplayer/editor/back_from_perks
+execute if score @s {ns}.player.config matches {TRIG_BACK_EQUIPMENT} unless score @s {ns}.mp.edit_step matches 9 run function {ns}:v{version}/multiplayer/editor/back_to_equip1
 # 380 = Back to perks dialog
 execute if score @s {ns}.player.config matches {TRIG_BACK_PERKS} run function {ns}:v{version}/multiplayer/editor/show_perks_dialog
 # {TRIG_PRIMARY_MAGS_BASE+1}-{primary_mags_max} = Editor: pick primary mag count (1-5)

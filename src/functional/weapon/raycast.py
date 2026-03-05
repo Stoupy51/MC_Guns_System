@@ -285,7 +285,7 @@ execute as @n[tag={ns}.ticking] if score @s {ns}.special.instant_kill matches 1.
 # Signal: on_headshot (if headshot detected, @s = hit entity)
 execute if score #is_headshot {ns}.data matches 1 run data modify storage {ns}:signals on_headshot set value {{}}
 execute if score #is_headshot {ns}.data matches 1 run data modify storage {ns}:signals on_headshot.weapon set from storage {ns}:gun all
-execute if score #is_headshot {ns}.data matches 1 run execute store result storage {ns}:signals on_headshot.damage float 0.1 run scoreboard players get #damage {ns}.data
+execute if score #is_headshot {ns}.data matches 1 store result storage {ns}:signals on_headshot.damage float 0.1 run scoreboard players get #damage {ns}.data
 execute if score #is_headshot {ns}.data matches 1 run function #{ns}:signals/on_headshot
 
 # Damage entity - include weapon and headshot info in mgs:input with for the damage signal
