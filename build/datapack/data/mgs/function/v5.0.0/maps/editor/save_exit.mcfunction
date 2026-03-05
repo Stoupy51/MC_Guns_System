@@ -37,6 +37,7 @@ execute as @e[tag=mgs.map_element,tag=mgs.element.boundary] at @s run function m
 execute as @e[tag=mgs.map_element,tag=mgs.element.out_of_bounds] at @s run function mgs:v5.0.0/maps/editor/save_point {path:"out_of_bounds"}
 execute as @e[tag=mgs.map_element,tag=mgs.element.search_and_destroy] at @s run function mgs:v5.0.0/maps/editor/save_point {path:"search_and_destroy"}
 execute as @e[tag=mgs.map_element,tag=mgs.element.domination] at @s run function mgs:v5.0.0/maps/editor/save_point {path:"domination"}
+execute as @e[tag=mgs.map_element,tag=mgs.element.hardpoint] at @s run function mgs:v5.0.0/maps/editor/save_point {path:"hardpoint"}
 
 # Write back to storage
 function mgs:v5.0.0/maps/editor/write_back with storage mgs:temp map_edit

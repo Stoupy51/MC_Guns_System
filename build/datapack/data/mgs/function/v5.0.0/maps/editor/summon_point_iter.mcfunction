@@ -25,6 +25,7 @@ execute if score #_point_tag mgs.data matches 1 run data modify storage mgs:temp
 execute if score #_point_tag mgs.data matches 2 run data modify storage mgs:temp _ppos.tag set value "mgs.element.out_of_bounds"
 execute if score #_point_tag mgs.data matches 3 run data modify storage mgs:temp _ppos.tag set value "mgs.element.search_and_destroy"
 execute if score #_point_tag mgs.data matches 4 run data modify storage mgs:temp _ppos.tag set value "mgs.element.domination"
+execute if score #_point_tag mgs.data matches 5 run data modify storage mgs:temp _ppos.tag set value "mgs.element.hardpoint"
 
 function mgs:v5.0.0/maps/editor/summon_point_marker with storage mgs:temp _ppos
 

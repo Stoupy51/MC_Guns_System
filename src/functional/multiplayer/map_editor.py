@@ -12,19 +12,21 @@ from ..helpers import MGS_TAG, btn
 MAX_MAPS = 50
 
 # ── Element Definitions ───────────────────────────────────────────
-# Each element type maps to: display name, color, particle color (RGB), has_rotation
+# Each element type maps to: display name, color, particle color (RGB), has_rotation, slot, egg_model
 ELEMENT_TYPES: dict[str, JsonDict] = {
-	"base_coordinates": {"name": "Base Coordinates", "color": "light_purple", "particle": "1.0 0.0 1.0", "has_rotation": False, "slot": 0},
-	"red_spawn":        {"name": "Red Spawn",        "color": "red",          "particle": "1.0 0.2 0.2", "has_rotation": True,  "slot": 1},
-	"blue_spawn":       {"name": "Blue Spawn",       "color": "blue",         "particle": "0.2 0.2 1.0", "has_rotation": True,  "slot": 2},
-	"general_spawn":    {"name": "General Spawn",    "color": "yellow",       "particle": "1.0 1.0 0.2", "has_rotation": True,  "slot": 3},
-	"boundary":         {"name": "Boundary Corner",  "color": "gray",         "particle": "0.8 0.8 0.8", "has_rotation": False, "slot": 4},
-	"out_of_bounds":    {"name": "Out of Bounds",    "color": "dark_red",     "particle": "0.6 0.0 0.0", "has_rotation": False, "slot": 5},
-	"search_and_destroy": {"name": "S&D Objective",  "color": "gold",         "particle": "1.0 0.6 0.0", "has_rotation": False, "slot": 6},
-	"domination":       {"name": "Domination Point", "color": "green",        "particle": "0.0 1.0 0.0", "has_rotation": False, "slot": 7},
+	# Hotbar slots (common)
+	"base_coordinates":   {"name": "Base Coordinates", "color": "light_purple", "particle": "1.0 0.0 1.0", "has_rotation": False, "slot": "hotbar.0", "egg_model": "minecraft:endermite_spawn_egg"},
+	"red_spawn":          {"name": "Red Spawn",        "color": "red",          "particle": "1.0 0.2 0.2", "has_rotation": True,  "slot": "hotbar.1", "egg_model": "minecraft:magma_cube_spawn_egg"},
+	"blue_spawn":         {"name": "Blue Spawn",       "color": "blue",         "particle": "0.2 0.2 1.0", "has_rotation": True,  "slot": "hotbar.2", "egg_model": "minecraft:dolphin_spawn_egg"},
+	"general_spawn":      {"name": "General Spawn",    "color": "yellow",       "particle": "1.0 1.0 0.2", "has_rotation": True,  "slot": "hotbar.3", "egg_model": "minecraft:blaze_spawn_egg"},
+	"out_of_bounds":      {"name": "Out of Bounds",    "color": "dark_red",     "particle": "0.6 0.0 0.0", "has_rotation": False, "slot": "hotbar.4", "egg_model": "minecraft:spider_spawn_egg"},
+	# Inventory slots (less common)
+	"boundary":           {"name": "Boundary Corner",  "color": "gray",         "particle": "0.8 0.8 0.8", "has_rotation": False, "slot": "inventory.0", "egg_model": "minecraft:skeleton_spawn_egg"},
+	"search_and_destroy": {"name": "S&D Objective",    "color": "gold",         "particle": "1.0 0.6 0.0", "has_rotation": False, "slot": "inventory.1", "egg_model": "minecraft:fox_spawn_egg"},
+	"domination":         {"name": "Domination Point", "color": "green",        "particle": "0.0 1.0 0.0", "has_rotation": False, "slot": "inventory.2", "egg_model": "minecraft:creeper_spawn_egg"},
+	"hardpoint":          {"name": "Hardpoint Zone",   "color": "dark_purple",  "particle": "0.5 0.0 0.5", "has_rotation": False, "slot": "inventory.3", "egg_model": "minecraft:warden_spawn_egg"},
 }
-# Hardpoint is omitted from hotbar (needs 2 coords per zone, handled separately)
-# DESTROY egg is always in hotbar.8
+# DESTROY egg is in weapon.offhand
 
 
 def generate_map_editor() -> None:
@@ -81,7 +83,7 @@ scoreboard players set #map_menu_idx {ns}.data 0
 execute if data storage {ns}:temp map_menu.list[0] run function {ns}:v{version}/maps/editor/menu_entry
 
 # No maps message
-execute unless data storage {ns}:temp map_menu.list[0] run tellraw @s [{{"text":"  No maps created yet.","color":"gray","italic":true}}]
+execute unless data storage {ns}:maps multiplayer[0] run tellraw @s [{{"text":"  No maps created yet.","color":"gray","italic":true}}]
 
 tellraw @s ""
 tellraw @s ["  ",{btn("+ Create New Map", f"/function {ns}:v{version}/maps/editor/create", "green", "Create a new multiplayer map")}]
@@ -223,6 +225,11 @@ execute if data storage {ns}:temp _point_iter[0] run function {ns}:v{version}/ma
 data modify storage {ns}:temp _point_iter set from storage {ns}:temp map_edit.map.domination
 scoreboard players set #_point_tag {ns}.data 4
 execute if data storage {ns}:temp _point_iter[0] run function {ns}:v{version}/maps/editor/summon_point_iter
+
+# Summon hardpoint markers
+data modify storage {ns}:temp _point_iter set from storage {ns}:temp map_edit.map.hardpoint
+scoreboard players set #_point_tag {ns}.data 5
+execute if data storage {ns}:temp _point_iter[0] run function {ns}:v{version}/maps/editor/summon_point_iter
 """)
 
 	write_versioned_function("maps/editor/summon_base_marker", f"""
@@ -293,6 +300,7 @@ execute if score #_point_tag {ns}.data matches 1 run data modify storage {ns}:te
 execute if score #_point_tag {ns}.data matches 2 run data modify storage {ns}:temp _ppos.tag set value "{ns}.element.out_of_bounds"
 execute if score #_point_tag {ns}.data matches 3 run data modify storage {ns}:temp _ppos.tag set value "{ns}.element.search_and_destroy"
 execute if score #_point_tag {ns}.data matches 4 run data modify storage {ns}:temp _ppos.tag set value "{ns}.element.domination"
+execute if score #_point_tag {ns}.data matches 5 run data modify storage {ns}:temp _ppos.tag set value "{ns}.element.hardpoint"
 
 function {ns}:v{version}/maps/editor/summon_point_marker with storage {ns}:temp _ppos
 
@@ -306,27 +314,30 @@ $summon minecraft:marker $(x) $(y) $(z) {{Tags:["{ns}.map_element","$(tag)"]}}
 """)
 
 	# ── Give Editor Tools ──────────────────────────────────────────
-	egg_items: dict[int, str] = {}
+	egg_items: list[str] = []
 	for etype, einfo in ELEMENT_TYPES.items():
 		slot = einfo["slot"]
 		name = einfo["name"]
 		color = einfo["color"]
-		egg_items[slot] = (
-			f'item replace entity @s hotbar.{slot} with minecraft:bat_spawn_egg'
+		egg_model = einfo["egg_model"]
+		egg_items.append(
+			f'item replace entity @s {slot} with minecraft:bat_spawn_egg'
 			f'[minecraft:item_name={{"text":"{name}","color":"{color}","italic":false}},'
+			f'minecraft:item_model="{egg_model}",'
 			f'minecraft:custom_data={{{ns}:{{editor:true,type:"{etype}"}}}},'
 			f'minecraft:entity_data={{id:"minecraft:bat",NoAI:1b,Silent:1b,Invulnerable:1b,Tags:["{ns}.new_element","{ns}.element.{etype}"]}}]'
 		)
 
-	# DESTROY egg in slot 8
+	# DESTROY egg in offhand
 	destroy_cmd = (
-		f'item replace entity @s hotbar.8 with minecraft:bat_spawn_egg'
+		f'item replace entity @s weapon.offhand with minecraft:bat_spawn_egg'
 		f'[minecraft:item_name={{"text":"✘ DESTROY","color":"dark_red","italic":false,"bold":true}},'
+		f'minecraft:item_model="minecraft:wither_skeleton_spawn_egg",'
 		f'minecraft:custom_data={{{ns}:{{editor:true,type:"destroy"}}}},'
 		f'minecraft:entity_data={{id:"minecraft:bat",NoAI:1b,Silent:1b,Invulnerable:1b,Tags:["{ns}.new_element","{ns}.element.destroy"]}}]'
 	)
 
-	give_cmds = "\n".join(egg_items[s] for s in sorted(egg_items)) + "\n" + destroy_cmd
+	give_cmds = "\n".join(egg_items) + "\n" + destroy_cmd
 	write_versioned_function("maps/editor/give_tools", f"""
 # Give all editor egg tools
 {give_cmds}
@@ -379,6 +390,9 @@ execute if entity @s[tag={ns}.element.search_and_destroy] run return run kill @s
 
 execute if entity @s[tag={ns}.element.domination] run function {ns}:v{version}/maps/editor/handle_point
 execute if entity @s[tag={ns}.element.domination] run return run kill @s
+
+execute if entity @s[tag={ns}.element.hardpoint] run function {ns}:v{version}/maps/editor/handle_point
+execute if entity @s[tag={ns}.element.hardpoint] run return run kill @s
 
 # Fallback: unknown type, just kill
 kill @s
@@ -444,6 +458,7 @@ execute if entity @s[tag={ns}.element.boundary] run data modify storage {ns}:tem
 execute if entity @s[tag={ns}.element.out_of_bounds] run data modify storage {ns}:temp _pos.tag set value "{ns}.element.out_of_bounds"
 execute if entity @s[tag={ns}.element.search_and_destroy] run data modify storage {ns}:temp _pos.tag set value "{ns}.element.search_and_destroy"
 execute if entity @s[tag={ns}.element.domination] run data modify storage {ns}:temp _pos.tag set value "{ns}.element.domination"
+execute if entity @s[tag={ns}.element.hardpoint] run data modify storage {ns}:temp _pos.tag set value "{ns}.element.hardpoint"
 
 # Summon permanent marker & Apply rotation (for visual debug)
 function {ns}:v{version}/maps/editor/summon_point_marker with storage {ns}:temp _pos
@@ -453,6 +468,7 @@ execute if entity @s[tag={ns}.element.boundary] run tellraw @a[tag={ns}.map_edit
 execute if entity @s[tag={ns}.element.out_of_bounds] run tellraw @a[tag={ns}.map_editor] [{MGS_TAG},{{"text":"Out of Bounds marker placed!","color":"dark_red"}}]
 execute if entity @s[tag={ns}.element.search_and_destroy] run tellraw @a[tag={ns}.map_editor] [{MGS_TAG},{{"text":"S&D Objective placed!","color":"gold"}}]
 execute if entity @s[tag={ns}.element.domination] run tellraw @a[tag={ns}.map_editor] [{MGS_TAG},{{"text":"Domination Point placed!","color":"green"}}]
+execute if entity @s[tag={ns}.element.hardpoint] run tellraw @a[tag={ns}.map_editor] [{MGS_TAG},{{"text":"Hardpoint Zone placed!","color":"dark_purple"}}]
 """)
 
 	# ── Handle DESTROY ─────────────────────────────────────────────
@@ -475,6 +491,7 @@ execute if entity @s[tag={ns}.element.boundary] run tellraw @a[tag={ns}.map_edit
 execute if entity @s[tag={ns}.element.out_of_bounds] run tellraw @a[tag={ns}.map_editor] [{MGS_TAG},{{"text":"Out of Bounds removed!","color":"dark_red"}}]
 execute if entity @s[tag={ns}.element.search_and_destroy] run tellraw @a[tag={ns}.map_editor] [{MGS_TAG},{{"text":"S&D Objective removed!","color":"gold"}}]
 execute if entity @s[tag={ns}.element.domination] run tellraw @a[tag={ns}.map_editor] [{MGS_TAG},{{"text":"Domination Point removed!","color":"green"}}]
+execute if entity @s[tag={ns}.element.hardpoint] run tellraw @a[tag={ns}.map_editor] [{MGS_TAG},{{"text":"Hardpoint Zone removed!","color":"dark_purple"}}]
 
 # Kill the marker
 kill @s
@@ -515,6 +532,7 @@ execute as @e[tag={ns}.map_element,tag={ns}.element.boundary] at @s run function
 execute as @e[tag={ns}.map_element,tag={ns}.element.out_of_bounds] at @s run function {ns}:v{version}/maps/editor/save_point {{path:"out_of_bounds"}}
 execute as @e[tag={ns}.map_element,tag={ns}.element.search_and_destroy] at @s run function {ns}:v{version}/maps/editor/save_point {{path:"search_and_destroy"}}
 execute as @e[tag={ns}.map_element,tag={ns}.element.domination] at @s run function {ns}:v{version}/maps/editor/save_point {{path:"domination"}}
+execute as @e[tag={ns}.map_element,tag={ns}.element.hardpoint] at @s run function {ns}:v{version}/maps/editor/save_point {{path:"hardpoint"}}
 
 # Write back to storage
 function {ns}:v{version}/maps/editor/write_back with storage {ns}:temp map_edit
@@ -622,15 +640,17 @@ execute at @e[tag={ns}.map_element,tag={ns}.element.boundary] run particle dust{
 execute at @e[tag={ns}.map_element,tag={ns}.element.out_of_bounds] run particle dust{{color:[0.6,0.0,0.0],scale:1.0}} ~ ~1 ~ 0.3 0.5 0.3 0 3
 execute at @e[tag={ns}.map_element,tag={ns}.element.search_and_destroy] run particle dust{{color:[1.0,0.6,0.0],scale:1.0}} ~ ~1 ~ 0.3 0.5 0.3 0 3
 execute at @e[tag={ns}.map_element,tag={ns}.element.domination] run particle dust{{color:[0.0,1.0,0.0],scale:1.0}} ~ ~1 ~ 0.3 0.5 0.3 0 3
+execute at @e[tag={ns}.map_element,tag={ns}.element.hardpoint] run particle dust{{color:[0.5,0.0,0.5],scale:1.0}} ~ ~1 ~ 0.3 0.5 0.3 0 3
 
 # Actionbar: show info when near an element (within 5 blocks)
 execute if entity @e[tag={ns}.map_element,tag={ns}.element.base_coordinates,distance=..5] run return run title @s actionbar [{{"text":"⬟ Base Coordinates","color":"light_purple"}}]
-execute if entity @e[tag={ns}.map_element,tag={ns}.element.red_spawn,distance=..5] run return run title @s actionbar [{{"text":"● Red Spawn","color":"red"}}]
-execute if entity @e[tag={ns}.map_element,tag={ns}.element.blue_spawn,distance=..5] run return run title @s actionbar [{{"text":"● Blue Spawn","color":"blue"}}]
-execute if entity @e[tag={ns}.map_element,tag={ns}.element.general_spawn,distance=..5] run return run title @s actionbar [{{"text":"● General Spawn","color":"yellow"}}]
 execute if entity @e[tag={ns}.map_element,tag={ns}.element.boundary,distance=..5] run return run title @s actionbar [{{"text":"◻ Boundary Corner","color":"gray"}}]
 execute if entity @e[tag={ns}.map_element,tag={ns}.element.out_of_bounds,distance=..5] run return run title @s actionbar [{{"text":"☠ Out of Bounds","color":"dark_red"}}]
 execute if entity @e[tag={ns}.map_element,tag={ns}.element.search_and_destroy,distance=..5] run return run title @s actionbar [{{"text":"💣 S&D Objective","color":"gold"}}]
 execute if entity @e[tag={ns}.map_element,tag={ns}.element.domination,distance=..5] run return run title @s actionbar [{{"text":"🏴 Domination Point","color":"green"}}]
+execute if entity @e[tag={ns}.map_element,tag={ns}.element.hardpoint,distance=..5] run return run title @s actionbar [{{"text":"⚡ Hardpoint Zone","color":"dark_purple"}}]
+execute if entity @e[tag={ns}.map_element,tag={ns}.element.red_spawn,distance=..5] run return run title @s actionbar [{{"text":"● Red Spawn","color":"red"}}]
+execute if entity @e[tag={ns}.map_element,tag={ns}.element.blue_spawn,distance=..5] run return run title @s actionbar [{{"text":"● Blue Spawn","color":"blue"}}]
+execute if entity @e[tag={ns}.map_element,tag={ns}.element.general_spawn,distance=..5] run return run title @s actionbar [{{"text":"● General Spawn","color":"yellow"}}]
 """)
 

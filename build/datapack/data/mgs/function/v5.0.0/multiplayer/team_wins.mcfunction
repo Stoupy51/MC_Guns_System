@@ -1,8 +1,16 @@
 
 #> mgs:v5.0.0/multiplayer/team_wins
 #
-# @within	mgs:v5.0.0/multiplayer/on_kill_signal {team:"Red"}
-#			mgs:v5.0.0/multiplayer/on_kill_signal {team:"Blue"}
+# @within	mgs:v5.0.0/multiplayer/time_up {team:"Red"}
+#			mgs:v5.0.0/multiplayer/time_up {team:"Blue"}
+#			mgs:v5.0.0/multiplayer/gamemodes/tdm/on_kill {team:"Red"}
+#			mgs:v5.0.0/multiplayer/gamemodes/tdm/on_kill {team:"Blue"}
+#			mgs:v5.0.0/multiplayer/gamemodes/dom/score_tick {team:"Red"}
+#			mgs:v5.0.0/multiplayer/gamemodes/dom/score_tick {team:"Blue"}
+#			mgs:v5.0.0/multiplayer/gamemodes/hp/score_tick {team:"Red"}
+#			mgs:v5.0.0/multiplayer/gamemodes/hp/score_tick {team:"Blue"}
+#			mgs:v5.0.0/multiplayer/gamemodes/snd/next_round {team:"Red"}
+#			mgs:v5.0.0/multiplayer/gamemodes/snd/next_round {team:"Blue"}
 #
 # @args		team (string)
 #

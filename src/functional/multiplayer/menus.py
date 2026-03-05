@@ -19,14 +19,16 @@ def generate_menus() -> None:
 	gm_btns = ",".join([
 		gamemode_btn("FFA", "ffa", "green"),
 		gamemode_btn("TDM", "tdm", "yellow"),
-		gamemode_btn("CTF", "ctf", "red"),
+		gamemode_btn("DOM", "dom", "aqua"),
+		gamemode_btn("HP", "hp", "dark_purple"),
+		gamemode_btn("S&D", "snd", "gold"),
 	])
 	gm_line = f'["",["","  ",{{"text":"Gamemode"}},": "],{gm_btns}]'
 
 	sl_btns = ",".join([
 		btn(str(n), f"/data modify storage {ns}:multiplayer game.score_limit set value {n}",
 			"green" if n == 30 else "yellow", f"Set score limit to {n}")
-		for n in [10, 20, 30, 50, 100]
+		for n in [10, 20, 30, 50, 100, 200]
 	])
 	sl_line = f'["",["","  ",{{"text":"Score Limit"}},": "],{sl_btns}]'
 
@@ -37,6 +39,10 @@ def generate_menus() -> None:
 		for label, ticks in tl_options
 	])
 	tl_line = f'["",["","  ",{{"text":"Time Limit"}},": "],{tl_btns}]'
+
+	# Map selection
+	map_select_btn = btn("Select Map", f"/function {ns}:v{version}/multiplayer/map_select", "aqua", "Browse and select a map")
+	map_line = f'["",["","  ",{{"text":"Map"}},": "],{map_select_btn}]'
 
 	start_btn = btn("▶ START", f"/function {ns}:v{version}/multiplayer/start", "green", "Start the match")
 	stop_btn = btn("■ STOP", f"/function {ns}:v{version}/multiplayer/stop", "red", "Stop the match")
@@ -55,8 +61,34 @@ tellraw @s {sep}
 tellraw @s {gm_line}
 tellraw @s {sl_line}
 tellraw @s {tl_line}
+tellraw @s {map_line}
 tellraw @s ""
 tellraw @s {teams_line}
 tellraw @s {actions_line}
 tellraw @s {sep}
 """)
+
+	## Map selection menu: list all available maps
+	write_versioned_function("multiplayer/map_select", f"""
+tellraw @s {sep}
+tellraw @s [{{"text":"","color":"aqua","bold":true}},"  🗺 ",{{"text":"Select Map"}}]
+tellraw @s {sep}
+
+# Copy maps list for iteration
+data modify storage {ns}:temp _map_iter set from storage {ns}:maps multiplayer
+scoreboard players set #_map_idx {ns}.data 0
+execute if data storage {ns}:temp _map_iter[0] run function {ns}:v{version}/multiplayer/map_select_entry with storage {ns}:temp _map_iter[0]
+
+execute unless data storage {ns}:maps multiplayer[0] run tellraw @s [{{"text":"  No maps registered!","color":"red"}}]
+tellraw @s {sep}
+""")
+
+	## Map select entry (recursive macro)
+	write_versioned_function("multiplayer/map_select_entry", f"""
+$tellraw @s ["",{{"text":"  "}},{{"text":"[$(name)]","color":"green","click_event":{{"action":"run_command","command":"/data modify storage {ns}:multiplayer game.map_id set value \\"$(id)\\""}},"hover_event":{{"action":"show_text","value":"Click to select '$(name)'"}}}},{{"text":" - $(description)","color":"gray"}}]
+
+data remove storage {ns}:temp _map_iter[0]
+scoreboard players add #_map_idx {ns}.data 1
+execute if data storage {ns}:temp _map_iter[0] run function {ns}:v{version}/multiplayer/map_select_entry with storage {ns}:temp _map_iter[0]
+""")  # noqa: E501
+

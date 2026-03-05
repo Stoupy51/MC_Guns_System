@@ -12,7 +12,7 @@ execute unless data storage mgs:temp map_load.search[0] run return fail
 data modify storage mgs:temp map_load.check set from storage mgs:temp map_load.search[0]
 
 # Use macro to compare IDs
-function mgs:v5.0.0/maps/multiplayer/check_map_id with storage mgs:temp map_load.target_id
+function mgs:v5.0.0/maps/multiplayer/check_map_id with storage mgs:temp map_load.target
 
 # If found, stop
 execute if score #map_load_found mgs.data matches 1 run return 1

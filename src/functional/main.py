@@ -309,6 +309,11 @@ $execute if score #random {ns}.data matches 31 run loot replace entity @s $(slot
     map_editor_btn = btn("Open Map Editor", f"/function {ns}:v{version}/maps/editor/menu", "green", "Open the multiplayer map editor")
     map_line = f'["  ",{map_editor_btn}]'
 
+    # --- Multiplayer ---
+    mp_header = '[{"text":"","color":"aqua","bold":true},"⚔ ",{"text":"Multiplayer"}]'
+    mp_setup_btn = btn("Game Setup", f"/function {ns}:v{version}/multiplayer/setup", "green", "Open the multiplayer game setup menu")
+    mp_line = f'["  ",{mp_setup_btn}]'
+
     write_function(f"{ns}:config",
 f"""tellraw @s {sep}
 tellraw @s {title}
@@ -327,6 +332,9 @@ tellraw @s {qs_line}
 tellraw @s ""
 tellraw @s {map_header}
 tellraw @s {map_line}
+tellraw @s ""
+tellraw @s {mp_header}
+tellraw @s {mp_line}
 tellraw @s {sep}
 """)
 
