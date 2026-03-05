@@ -252,7 +252,7 @@ scoreboard players add #semtex_id {ns}.data 1
 
 # Assign the same unique ID to both the grenade and the nearest entity
 scoreboard players operation @s {ns}.stuck_id = #semtex_id {ns}.data
-execute positioned ~ ~-1 ~ run scoreboard players operation @n[type=!#{ns}:non_damageable,distance=..2,tag=!{ns}.grenade,tag=!{ns}.slow_bullet] {ns}.stuck_id = #semtex_id {ns}.data
+execute positioned ~ ~-1 ~ run scoreboard players operation @n[type=!#bs.hitbox:intangible,distance=..2,tag=!{ns}.grenade,tag=!{ns}.slow_bullet] {ns}.stuck_id = #semtex_id {ns}.data
 
 # Mark that this grenade is stuck to an entity (not just a block)
 tag @s add {ns}.stuck_to_entity
@@ -335,7 +335,7 @@ execute as @a run function {ns}:v{version}/projectile/match_shooter
 execute if score #found {ns}.data matches 0 as @e[tag={ns}.armed] run function {ns}:v{version}/projectile/match_shooter
 
 # Apply area damage to nearby entities (macro for configurable radius)
-execute store result storage {ns}:temp expl.radius_int int 1 run data get entity @s data.config.{EXPLOSION_RADIUS}
+execute store result storage {ns}:temp expl.radius_float float 1 run data get entity @s data.config.{EXPLOSION_RADIUS}
 function {ns}:v{version}/projectile/damage_area with storage {ns}:temp expl
 
 # Signal: on_explosion
@@ -419,13 +419,13 @@ function {ns}:v{version}/grenade/delete
     write_versioned_function("grenade/flash_apply",
 f"""
 # Apply blindness and darkness effects to all players within radius
-execute store result storage {ns}:temp flash.radius_int int 1 run data get entity @s data.config.{GRENADE_EFFECT_RADIUS}
+execute store result storage {ns}:temp flash.radius_float float 1 run data get entity @s data.config.{GRENADE_EFFECT_RADIUS}
 function {ns}:v{version}/grenade/flash_area with storage {ns}:temp flash
 """)
 
     write_versioned_function("grenade/flash_area",
 f"""
-$execute as @a[distance=..$(radius_int)] at @s run function {ns}:v{version}/grenade/flash_check
+$execute as @a[distance=..$(radius_float)] at @s run function {ns}:v{version}/grenade/flash_check
 """)
 
     # Check if this player should be flashed (close range OR looking at grenade with LOS)

@@ -14,7 +14,7 @@
 								"minecraft:custom_data": {
 									"mgs": {
 										"gun": true,
-										"stats": {"grenade_type": "semtex","fire_mode": "semi","capacity": 1,"remaining_bullets": 1,"cooldown": 20,"proj_speed": 1200,"proj_gravity": 50,"proj_model": "semtex","grenade_fuse": 80,"expl_radius": 5,"expl_damage": 28,"expl_decay": 0.75,"models": {"normal": "mgs:semtex","zoom": "mgs:semtex_zoom"}},
+										"stats": {"grenade_type": "semtex","fire_mode": "semi","capacity": 1,"remaining_bullets": 1,"cooldown": 20,"proj_speed": 1200,"proj_gravity": 50,"proj_model": "semtex","grenade_fuse": 80,"expl_radius": 6,"expl_damage": 28,"expl_decay": 0.75,"models": {"normal": "mgs:semtex","zoom": "mgs:semtex_zoom"}},
 										"semtex": true
 									},
 									"smithed": {
@@ -111,7 +111,7 @@
 										{"text": " ","color": "#c67832"},
 										{"text": "➤","color": "#c67b34"},
 										{"text": " ","color": "#c77e36"},
-										"5",
+										"6",
 										{"translate": "mgs.blocks","color": "#c77e36"}
 									],
 									[

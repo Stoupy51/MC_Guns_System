@@ -290,8 +290,7 @@ execute if score #is_headshot {ns}.data matches 1 run function #{ns}:signals/on_
 
 # Damage entity
 execute store result storage {ns}:input with.amount float 0.1 run scoreboard players get #damage {ns}.data
-function {ns}:v{version}/utils/damage with storage {ns}:input with
-function #{ns}:signals/damage with storage {ns}:input with
+function {ns}:v{version}/utils/signal_and_damage
 
 # Signal: on_hit_entity (@s = hit entity, weapon/damage info in mgs:signals)
 data modify storage {ns}:signals on_hit_entity set value {{}}

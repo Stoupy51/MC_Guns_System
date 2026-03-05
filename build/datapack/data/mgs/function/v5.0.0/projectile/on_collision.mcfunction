@@ -4,6 +4,10 @@
 # @within	???
 #
 
+# Tag the nearest non-immune entity as directly hit (for bullet damage in explode)
+# distance=..2.5 covers feet-to-head hit at any entity height up to 2.5 blocks
+execute as @n[distance=..2.5,type=!#bs.hitbox:intangible,tag=!mgs.slow_bullet] run tag @s add mgs.direct_hit
+
 # Mark for explosion
 tag @s add mgs.exploding
 

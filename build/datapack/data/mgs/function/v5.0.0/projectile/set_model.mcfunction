@@ -1,7 +1,7 @@
 
 #> mgs:v5.0.0/projectile/set_model
 #
-# @executed	anchored eyes & positioned ^ ^ ^0.5
+# @executed	anchored eyes & positioned ^ ^ ^0.69
 #
 # @within	mgs:v5.0.0/projectile/init with entity @s data.config
 #

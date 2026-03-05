@@ -56,13 +56,6 @@ execute if score @s mgs.player.config matches 256 run data modify storage mgs:te
 execute if score @s mgs.player.config matches 256 run data modify storage mgs:temp editor.secondary_scope set value ""
 execute if score @s mgs.player.config matches 256 run data modify storage mgs:temp editor.secondary_scope_name set value "Iron Sights"
 execute if score @s mgs.player.config matches 256 run data modify storage mgs:temp editor.secondary_full set value "vz61"
-execute if score @s mgs.player.config matches 257 run data modify storage mgs:temp editor.secondary set value "ray_gun"
-execute if score @s mgs.player.config matches 257 run data modify storage mgs:temp editor.secondary_name set value "Ray Gun"
-execute if score @s mgs.player.config matches 257 run data modify storage mgs:temp editor.secondary_mag set value "element_115"
-execute if score @s mgs.player.config matches 257 run data modify storage mgs:temp editor.secondary_mag_count set value 3
-execute if score @s mgs.player.config matches 257 run data modify storage mgs:temp editor.secondary_scope set value ""
-execute if score @s mgs.player.config matches 257 run data modify storage mgs:temp editor.secondary_scope_name set value "Iron Sights"
-execute if score @s mgs.player.config matches 257 run data modify storage mgs:temp editor.secondary_full set value "ray_gun"
 execute if score @s mgs.player.config matches 258 run data modify storage mgs:temp editor.secondary set value ""
 execute if score @s mgs.player.config matches 258 run data modify storage mgs:temp editor.secondary_name set value "None"
 execute if score @s mgs.player.config matches 258 run data modify storage mgs:temp editor.secondary_scope set value ""

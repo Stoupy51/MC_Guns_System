@@ -1,24 +1,20 @@
 
 #> mgs:v5.0.0/projectile/damage_entity
 #
-# @executed	as @e[tag=mgs.slow_bullet] & at @s
+# @executed	at @s
 #
 # @within	mgs:v5.0.0/projectile/damage_area
 #
 
 # Skip non-living entities and other projectiles
-execute if entity @s[type=#mgs:v5.0.0/non_damageable] run return fail
+# Skip the shooter (prevent self-damage from own explosions)
 execute if entity @s[tag=mgs.slow_bullet] run return fail
+execute if entity @s[tag=mgs.temp_shooter] run return fail
 
 # Get this entity's position (scaled by 1000)
 execute store result score #ent_x mgs.data run data get entity @s Pos[0] 1000
 execute store result score #ent_y mgs.data run data get entity @s Pos[1] 1000
 execute store result score #ent_z mgs.data run data get entity @s Pos[2] 1000
-
-# Get explosion center from temp storage
-execute store result score #ctr_x mgs.data run data get storage mgs:temp expl.center_x
-execute store result score #ctr_y mgs.data run data get storage mgs:temp expl.center_y
-execute store result score #ctr_z mgs.data run data get storage mgs:temp expl.center_z
 
 # Calculate distance squared: dx*dx + dy*dy + dz*dz
 scoreboard players operation #dx mgs.data = #ent_x mgs.data
@@ -42,16 +38,17 @@ scoreboard players operation #dist_sq mgs.data += #dy2 mgs.data
 scoreboard players operation #dist_sq mgs.data += #dz2 mgs.data
 
 # Get distance using sqrt (https://docs.mcbookshelf.dev/en/latest/modules/math.html#square-root)
-execute store result storage bs:in math.sqrt double 0.000001 run scoreboard players get #dist_sq mgs.data
+execute store result storage bs:in math.sqrt.x double 0.000001 run scoreboard players get #dist_sq mgs.data
 function #bs.math:sqrt
-execute store result score #distance mgs.data run data get storage bs:out math.sqrt 1
+# Store distance in tenths of blocks (x10) for sub-block decimal precision in decay
+execute store result score #distance mgs.data run data get storage bs:out math.sqrt 10
 
 # Apply decay-based falloff: damage *= pow(decay, distance)
 # decay into x
 data modify storage bs:in math.pow.x set from storage mgs:temp expl.expl_decay
 
-# distance into y (already an integer = distance in blocks)
-execute store result storage bs:in math.pow.y float 1 run scoreboard players get #distance mgs.data
+# distance into y (float tenths-of-blocks * 0.1 = actual block distance as float)
+execute store result storage bs:in math.pow.y float 0.1 run scoreboard players get #distance mgs.data
 
 # Compute pow(decay, distance)
 function #bs.math:pow
@@ -74,8 +71,7 @@ execute as @n[tag=mgs.temp_shooter] if score @s mgs.special.instant_kill matches
 # Prepare macro arguments: target=@s, amount=damage (float with 0.1 precision), attacker=shooter
 data modify storage mgs:input with set value {target:"@s", amount:0.0f, attacker:"@n[tag=mgs.temp_shooter]"}
 execute store result storage mgs:input with.amount float 0.1 run scoreboard players get #expl_dmg mgs.data
-function mgs:v5.0.0/utils/damage with storage mgs:input with
-function #mgs:signals/damage with storage mgs:input with
+function mgs:v5.0.0/utils/signal_and_damage
 
 # Signal: on_hit_entity (@s = hit entity, weapon/damage info in mgs:signals)
 data modify storage mgs:signals on_hit_entity set value {}

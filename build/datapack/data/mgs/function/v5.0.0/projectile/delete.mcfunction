@@ -1,7 +1,7 @@
 
 #> mgs:v5.0.0/projectile/delete
 #
-# @executed	as @e[tag=mgs.slow_bullet] & at @s
+# @executed	at @s
 #
 # @within	mgs:v5.0.0/projectile/explode
 #
