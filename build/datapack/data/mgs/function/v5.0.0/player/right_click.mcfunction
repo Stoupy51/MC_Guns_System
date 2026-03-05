@@ -6,6 +6,9 @@
 # @within	mgs:v5.0.0/player/tick
 #
 
+# Block shooting during multiplayer prep phase
+execute if data storage mgs:multiplayer game{state:"preparing"} if score @s mgs.mp.in_game matches 1 run return fail
+
 # Decrease pending clicks by 1
 scoreboard players remove @s mgs.pending_clicks 1
 

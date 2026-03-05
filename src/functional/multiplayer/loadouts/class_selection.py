@@ -158,6 +158,12 @@ scoreboard players set @s {ns}.mp.death_count 0
 # Increment death stats
 scoreboard players add @s {ns}.mp.deaths 1
 
+# Respawn protection (prevent OOB kill for a few ticks)
+scoreboard players set @s {ns}.mp.respawn_prot 5
+
+# Teleport to best spawn point
+function {ns}:v{version}/multiplayer/respawn_tp
+
 # Apply current class loadout (positive = standard, negative = custom)
 execute unless score @s {ns}.mp.class matches 0 run function {ns}:v{version}/multiplayer/apply_class
 """)

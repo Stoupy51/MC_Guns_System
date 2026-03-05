@@ -1,7 +1,7 @@
 
 #> mgs:v5.0.0/maps/editor/handle_spawn
 #
-# @executed	as @e[tag=mgs.new_element,limit=1,sort=nearest] & at @s
+# @executed	as @n[tag=mgs.new_element] & at @s
 #
 # @within	mgs:v5.0.0/maps/editor/process_element
 #
@@ -20,8 +20,8 @@ execute if entity @s[tag=mgs.element.general_spawn] run data modify storage mgs:
 function mgs:v5.0.0/maps/editor/summon_spawn_marker with storage mgs:temp _pos
 
 # Store the player's rotation on the marker
-execute as @e[tag=mgs.new_spawn_marker,limit=1] store result entity @s data.yaw float 1 run data get entity @p[tag=mgs.map_editor] Rotation[0]
-tag @e[tag=mgs.new_spawn_marker] remove mgs.new_spawn_marker
+execute as @n[tag=mgs.new_spawn_marker] store result entity @s data.yaw float 1 run data get entity @p[tag=mgs.map_editor] Rotation[0]
+tag @n[tag=mgs.new_spawn_marker] remove mgs.new_spawn_marker
 
 # Determine name for message
 execute if entity @s[tag=mgs.element.red_spawn] run tellraw @a[tag=mgs.map_editor] [[{"text":"","color":"gold"},"[",{"translate": "mgs"},"] "],{"translate": "mgs.red_spawn_placed","color":"red"}]

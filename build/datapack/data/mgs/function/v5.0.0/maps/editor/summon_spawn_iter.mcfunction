@@ -32,7 +32,7 @@ execute if score #_spawn_type mgs.data matches 3 run data modify storage mgs:tem
 function mgs:v5.0.0/maps/editor/summon_spawn_marker with storage mgs:temp _spos
 
 # Store rotation data on the marker
-execute as @e[tag=mgs.new_spawn_marker,limit=1] run data modify entity @s data.yaw set from storage mgs:temp _spawn_rot.yaw
+execute as @n[tag=mgs.new_spawn_marker] run data modify entity @s data.yaw set from storage mgs:temp _spawn_rot.yaw
 tag @e[tag=mgs.new_spawn_marker] remove mgs.new_spawn_marker
 
 # Advance to next

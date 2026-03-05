@@ -1,0 +1,18 @@
+
+#> mgs:v5.0.0/multiplayer/tp_to_spawn
+#
+# @executed	as @e[tag=mgs.spawn_candidate,sort=random]
+#
+# @within	mgs:v5.0.0/multiplayer/pick_spawn [ as @e[tag=mgs.spawn_candidate,sort=random] ]
+#			mgs:v5.0.0/multiplayer/pick_spawn_random [ as @e[tag=mgs.spawn_candidate,sort=random,limit=1] ]
+#
+
+# Store marker position and yaw for macro
+execute store result storage mgs:temp _tp.x double 1 run data get entity @s Pos[0]
+execute store result storage mgs:temp _tp.y double 1 run data get entity @s Pos[1]
+execute store result storage mgs:temp _tp.z double 1 run data get entity @s Pos[2]
+data modify storage mgs:temp _tp.yaw set from entity @s data.yaw
+
+# TP the pending player
+execute as @p[tag=mgs.spawn_pending] run function mgs:v5.0.0/multiplayer/tp_player_at with storage mgs:temp _tp
+

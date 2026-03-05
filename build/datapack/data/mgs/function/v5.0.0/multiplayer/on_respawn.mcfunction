@@ -12,6 +12,12 @@ scoreboard players set @s mgs.mp.death_count 0
 # Increment death stats
 scoreboard players add @s mgs.mp.deaths 1
 
+# Respawn protection (prevent OOB kill for a few ticks)
+scoreboard players set @s mgs.mp.respawn_prot 5
+
+# Teleport to best spawn point
+function mgs:v5.0.0/multiplayer/respawn_tp
+
 # Apply current class loadout (positive = standard, negative = custom)
 execute unless score @s mgs.mp.class matches 0 run function mgs:v5.0.0/multiplayer/apply_class
 

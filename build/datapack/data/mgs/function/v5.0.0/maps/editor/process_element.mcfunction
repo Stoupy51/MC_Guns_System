@@ -1,9 +1,9 @@
 
 #> mgs:v5.0.0/maps/editor/process_element
 #
-# @executed	as @e[tag=mgs.new_element,limit=1,sort=nearest] & at @s
+# @executed	as @n[tag=mgs.new_element] & at @s
 #
-# @within	mgs:v5.0.0/maps/editor/on_place [ as @e[tag=mgs.new_element,limit=1,sort=nearest] & at @s ]
+# @within	mgs:v5.0.0/maps/editor/on_place [ as @n[tag=mgs.new_element] & at @s ]
 #
 
 # Determine element type from tags and dispatch

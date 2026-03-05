@@ -12,7 +12,7 @@ execute store result storage mgs:temp map_edit.idx int 1 run scoreboard players 
 function mgs:v5.0.0/maps/editor/load_map_data with storage mgs:temp map_edit
 
 # Rebuild base_coordinates from marker
-execute as @e[tag=mgs.map_element,tag=mgs.element.base_coordinates,limit=1] at @s run function mgs:v5.0.0/maps/editor/save_base
+execute as @n[tag=mgs.map_element,tag=mgs.element.base_coordinates] at @s run function mgs:v5.0.0/maps/editor/save_base
 
 # Load base scores for relative computation
 execute store result score #base_x mgs.data run data get storage mgs:temp map_edit.map.base_coordinates[0]
