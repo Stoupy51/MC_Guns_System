@@ -93,6 +93,7 @@ execute as @e[tag={ns}.hp_corner_b] store result score #hp_bz {ns}.data run data
 
 # Tag players inside the zone (between both corners with 3-block margin)
 # Using positioned checking: player must be within 8 blocks of BOTH corners
+# TODO: optimize this shit
 tag @a remove {ns}.in_hp_zone
 execute at @e[tag={ns}.hp_corner_a] as @a[distance=..15] at @s at @e[tag={ns}.hp_corner_b,distance=..15] run tag @s add {ns}.in_hp_zone
 
@@ -110,9 +111,11 @@ execute if score #hp_score_timer {ns}.data matches ..0 run scoreboard players se
 	write_versioned_function("multiplayer/gamemodes/hp/score_tick", f"""
 # Only score if one team exclusively holds the zone (not contested)
 # Red alone in zone
+execute if score #hp_red {ns}.data matches 1.. unless score #hp_blue {ns}.data matches 1.. at @e[tag={ns}.hp_corner] run playsound minecraft:block.note_block.bell player @a ~ ~ ~ 1 1.2
 execute if score #hp_red {ns}.data matches 1.. unless score #hp_blue {ns}.data matches 1.. run scoreboard players add #red {ns}.mp.team 1
 
 # Blue alone in zone
+execute if score #hp_blue {ns}.data matches 1.. unless score #hp_red {ns}.data matches 1.. at @e[tag={ns}.hp_corner] run playsound minecraft:block.note_block.bell player @a ~ ~ ~ 1 1.2
 execute if score #hp_blue {ns}.data matches 1.. unless score #hp_red {ns}.data matches 1.. run scoreboard players add #blue {ns}.mp.team 1
 
 # Check win
