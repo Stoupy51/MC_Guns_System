@@ -4,7 +4,6 @@
 from stewbeet import Mem, write_versioned_function
 
 from .helpers import MGS_TAG
-
 from .multiplayer.classes import CLASS_IDS, CLASSES
 from .multiplayer.loadouts import (
     GRENADE_TYPES,
@@ -66,6 +65,9 @@ f"""
 # Enable /trigger for this player
 scoreboard players enable @s {ns}.player.config
 execute if score @s {ns}.player.config matches 1.. run function {ns}:v{version}/player/config/process
+
+# Map editor tick (particles + actionbar) for players in editor mode
+execute if score @s {ns}.mp.map_edit matches 1 run function {ns}:v{version}/maps/editor/tick
 """)
 
     ## Process trigger values

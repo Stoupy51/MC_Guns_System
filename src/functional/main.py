@@ -5,7 +5,6 @@ from stewbeet import (
     Font,
     LootTable,
     Mem,
-    TextComponent,
     set_json_encoder,
     texture_mcmeta,
     write_function,
@@ -305,6 +304,11 @@ $execute if score #random {ns}.data matches 31 run loot replace entity @s $(slot
     ])
     qs_line = f'["  ",["",{{"text":"Quick Swap"}},": "],{qs_btns}]'
 
+    # --- Map Editor ---
+    map_header = '[{"text":"","color":"aqua","bold":true},"🗺 ",{"text":"Map Editor"}]'
+    map_editor_btn = btn("Open Map Editor", f"/function {ns}:v{version}/maps/editor/menu", "green", "Open the multiplayer map editor")
+    map_line = f'["  ",{map_editor_btn}]'
+
     write_function(f"{ns}:config",
 f"""tellraw @s {sep}
 tellraw @s {title}
@@ -320,6 +324,9 @@ tellraw @s {ik_line}
 tellraw @s {ia_line}
 tellraw @s {qr_line}
 tellraw @s {qs_line}
+tellraw @s ""
+tellraw @s {map_header}
+tellraw @s {map_line}
 tellraw @s {sep}
 """)
 
