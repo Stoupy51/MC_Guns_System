@@ -5,6 +5,7 @@
 #
 # @within	mgs:v5.0.0/switch/on_weapon_switch
 #			mgs:v5.0.0/ammo/inventory/find
+#			mgs:zombies/bonus/max_ammo
 #
 
 # Skip if not holding a gun

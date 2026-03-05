@@ -4,7 +4,6 @@
 # @within	mgs:zombies/bonus/max_ammo
 #
 
-# TODO: Fix mainhand issue, the gun's nbt REMAINING_BULLETS should not be CAPACITY but -1 since it's in mainhand. REUSE A FUNCTION FOR THIS
 # Reload every gun item in every slot
 execute if items entity @s hotbar.0 *[custom_data~{mgs:{gun:true}}] run function mgs:v5.0.0/zombies/bonus/reload_weapon_slot {slot:"hotbar.0"}
 execute if items entity @s hotbar.1 *[custom_data~{mgs:{gun:true}}] run function mgs:v5.0.0/zombies/bonus/reload_weapon_slot {slot:"hotbar.1"}

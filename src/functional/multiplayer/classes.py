@@ -3,7 +3,7 @@
 from stewbeet import JsonDict
 
 # Consumable magazine item IDs (stack count = bullet count, uses set_consumable_count modifier)
-CONSUMABLE_MAGS: set[str] = {"rpg7_rocket", "mosin_bullet", "m24_bullet", "spas12_shell", "m500_shell", "m590_shell"}
+CONSUMABLE_MAGS: set[str] = {"rpg7_rocket", "mosin_bullet", "m24_bullet", "spas12_shell", "m500_shell", "m590_shell", "element_115"}
 
 # Balanced team-vs-team class loadouts (Python-side definitions)
 # Used at build time to generate SNBT for storage initialization

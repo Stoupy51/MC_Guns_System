@@ -54,3 +54,6 @@ execute if items entity @s player.crafting.3 *[custom_data~{mgs:{magazine:true}}
 # Also reload all weapons in inventory if config allows (1 = recent zombies, 0 = OG magazines only)
 execute if score #max_ammo_reload_weapons mgs.config matches 1.. run function mgs:v5.0.0/zombies/bonus/max_ammo_reload_weapons
 
+# Recompute reserve ammo display after refilling all magazines
+function mgs:v5.0.0/ammo/compute_reserve
+
