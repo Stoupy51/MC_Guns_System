@@ -46,4 +46,5 @@ scoreboard objectives setdisplay list
 # Clear in-game state
 scoreboard players set @a mgs.mp.in_game 0
 scoreboard players set @a mgs.mp.team 0
+tag @a[tag=mgs.give_class_menu] remove mgs.give_class_menu
 
