@@ -247,10 +247,10 @@ playsound minecraft:entity.generic.explode player @a[distance=..64] ~ ~ ~ 2 0.8
 # Block destruction via RealisticExplosionLibrary (if grenade_explosion_power > 0)
 execute if score #grenade_explosion_power {ns}.config matches 1.. run function {ns}:v{version}/grenade/realistic_explosion
 
-# Store explosion center position for damage calculation
-execute store result storage {ns}:temp expl.center_x int 1 run data get entity @s Pos[0] 1000
-execute store result storage {ns}:temp expl.center_y int 1 run data get entity @s Pos[1] 1000
-execute store result storage {ns}:temp expl.center_z int 1 run data get entity @s Pos[2] 1000
+# Store explosion center position for damage calculation (scores used by projectile/damage_entity)
+execute store result score #ctr_x {ns}.data run data get entity @s Pos[0] 1000
+execute store result score #ctr_y {ns}.data run data get entity @s Pos[1] 1000
+execute store result score #ctr_z {ns}.data run data get entity @s Pos[2] 1000
 
 # Copy explosion config from entity data to temp storage
 data modify storage {ns}:temp expl.{EXPLOSION_DAMAGE} set from entity @s data.config.{EXPLOSION_DAMAGE}

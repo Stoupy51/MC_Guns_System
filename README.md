@@ -9,8 +9,6 @@ Credits for resources: MGS 4.2 by TheBradqq
 
 # TODO:
 Fixes:
-- Bug with friendly fire: explosion damage does not affect self (because you can't damage players of the same team.)
-  - Idea: enable friendlyFire (in team modify) but check if same team in projectile/damage_entity & raycast/on_targeted_entity.
 - When respawning, sometimes we are killed by out of map. Not sure why, need to investigate
 - Kills are not counted. Killing to not get points to the team and players
 - Issue with respawning
