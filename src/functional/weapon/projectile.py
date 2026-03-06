@@ -211,9 +211,7 @@ $execute as @e[type=!#bs.hitbox:intangible,distance=..$(radius_float)] run funct
     ## Per-entity damage with distance-based falloff
     write_versioned_function("projectile/damage_entity", f"""
 # Skip non-living entities and other projectiles
-# Skip the shooter (prevent self-damage from own explosions)
 execute if entity @s[tag={ns}.slow_bullet] run return fail
-execute if entity @s[tag={ns}.temp_shooter] run return fail
 
 # Get this entity's position (scaled by 1000)
 execute store result score #ent_x {ns}.data run data get entity @s Pos[0] 1000
@@ -263,6 +261,9 @@ execute store result score #decay_factor {ns}.data run data get storage bs:out m
 
 scoreboard players operation #expl_dmg {ns}.data *= #decay_factor {ns}.data
 scoreboard players operation #expl_dmg {ns}.data /= #1000000 {ns}.data
+
+# If this entity IS the shooter and zombie mode is active, nerf explosion damage to 10 hp (100 in scoreboard since we keep 1 decimal digit)
+execute if score #expl_dmg {ns}.data matches 100.. if entity @s[tag={ns}.temp_shooter] if data storage {ns}:zombies game{{state:"active"}} run scoreboard players set #expl_dmg {ns}.data 100
 
 # Skip if damage is negligible (less than 0.1)
 execute if score #expl_dmg {ns}.data matches ..0 run return fail

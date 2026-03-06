@@ -39,17 +39,22 @@ item modify entity @s weapon.mainhand {ns}:v{version}/set_weapon_id
 
     # On weapon switch function
     write_versioned_function("switch/on_weapon_switch", f"""
+# If player was reloading, cancel reload (deferred: no ammo consumed yet)
+execute if entity @s[tag={ns}.reloading] run tag @s remove {ns}.reloading
+execute if entity @s[tag={ns}.pump_sound] run tag @s remove {ns}.pump_sound
+execute if entity @s[tag={ns}.reload_mid_sound] run tag @s remove {ns}.reload_mid_sound
+
 # Apply weapon switch cooldown from stats
 execute store result score #cooldown {ns}.data run data get storage {ns}:gun all.stats.{SWITCH}
 
 # Apply quick swap: reduce cooldown by quick_swap% (e.g. 20 = 20% faster)
 execute if score @s {ns}.special.quick_swap matches 1.. run function {ns}:v{version}/switch/apply_quick_swap
 
-# Only apply if it exceeds the current cooldown value
-execute unless score #cooldown {ns}.data <= @s {ns}.cooldown run scoreboard players operation @s {ns}.cooldown = #cooldown {ns}.data
+# Set cooldown directly (replaces any existing cooldown, including reload cooldown)
+scoreboard players operation @s {ns}.cooldown = #cooldown {ns}.data
 
 # Mirror into switch_cooldown (used by shader zoom guard, unaffected by shooting)
-execute unless score #cooldown {ns}.data <= @s {ns}.switch_cooldown run scoreboard players operation @s {ns}.switch_cooldown = #cooldown {ns}.data
+scoreboard players operation @s {ns}.switch_cooldown = #cooldown {ns}.data
 
 # Force weapon switch animation
 function {ns}:v{version}/switch/force_switch_animation

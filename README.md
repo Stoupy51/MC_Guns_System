@@ -9,13 +9,9 @@ Credits for resources: MGS 4.2 by TheBradqq
 
 # TODO:
 Fixes:
-- Ingame: add saturation permanent (game.py)
-- Switch weapon cooldown:
-  - Currently when you reload a weapon, then switch to a new one, you keep the highest cooldown value
-  - This is annoying since it can lead to situations where you switch to a new weapon and can't shoot because of the previous weapon cooldown
-  - What we would do is if we reload a weapon and switch, it applies the destination weapon's switch cooldown only and do not reload the previous weapon.
-  - BUT we need to be careful about this because when you reload, the weapon's nbt and your ammo are directly updated (not on reload end) <- this needs to be tweaks so the reload only applies ammo changes on reload end!
-- When respawning, sometimes we are killed by out of map. Not sure why, need to investigate but probably related to 
+- Bug with friendly fire: explosion damage does not affect self (because you can't damage players of the same team.)
+  - Idea: enable friendlyFire (in team modify) but check if same team in projectile/damage_entity & raycast/on_targeted_entity.
+- When respawning, sometimes we are killed by out of map. Not sure why, need to investigate
 - Kills are not counted. Killing to not get points to the team and players
 - Issue with respawning
 

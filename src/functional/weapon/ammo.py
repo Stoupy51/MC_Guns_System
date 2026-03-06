@@ -267,17 +267,32 @@ $item replace entity @p[tag={ns}.modify_lore] $(slot) from entity @s contents
 kill @s
 """)
 
-    # Reload weapon function
+    # Check if any matching magazine with bullets exists in inventory (without consuming)
+    has_ammo_checks: str = ""
+    for slot in ALL_SLOTS:
+        has_ammo_checks += (
+            f"$execute if items entity @s {slot} *[custom_data~{{{ns}:{{magazine:true,weapon:\"$({BASE_WEAPON})\"}}}}] "
+            f"unless items entity @s {slot} *[custom_data~{{{ns}:{{stats:{{{REMAINING_BULLETS}:0}}}}}}] "
+            f"run return 1\n"
+        )
+    write_versioned_function("ammo/inventory/has_ammo", f"""
+# Check all slots for matching magazines with bullets (return 1 if found, fail otherwise)
+# Excludes empty non-consumable magazines (remaining_bullets: 0)
+# Consumable magazines don't have this field, so they pass the 'unless' check if they exist
+{has_ammo_checks}
+return fail
+""")
+
+    # Reload weapon function (deferred: magazines consumed on reload end, not start)
     write_versioned_function("ammo/reload", f"""
 # Stop if already reloading, or already has full ammo
 execute if entity @s[tag={ns}.reloading] run return fail
 execute store result score #capacity {ns}.data run data get storage {ns}:gun all.stats.{CAPACITY}
 execute if score @s {ns}.{REMAINING_BULLETS} >= #capacity {ns}.data run return fail
 
-# Get the new ammo count
+# Check if magazines are available (without consuming them)
 scoreboard players set @s {ns}.cooldown 5
-execute if data storage {ns}:config no_magazine store result score @s {ns}.{REMAINING_BULLETS} run data get storage {ns}:gun all.stats.{CAPACITY}
-execute unless data storage {ns}:config no_magazine store success score #success {ns}.data run function {ns}:v{version}/ammo/inventory/find with storage {ns}:gun all.stats
+execute unless data storage {ns}:config no_magazine store success score #success {ns}.data run function {ns}:v{version}/ammo/inventory/has_ammo with storage {ns}:gun all.stats
 execute unless data storage {ns}:config no_magazine if score #success {ns}.data matches 0 run return run playsound {ns}:common/empty ambient @s
 
 # Set cooldown to reload duration
@@ -288,9 +303,6 @@ execute if score @s {ns}.special.quick_reload matches 1.. run function {ns}:v{ve
 
 # Force weapon switch animation
 function {ns}:v{version}/switch/force_switch_animation
-
-# Update weapon lore
-function {ns}:v{version}/ammo/modify_lore {{slot:"weapon.mainhand"}}
 
 # Play reload sound (and send sounds for macro)
 function {ns}:v{version}/sound/reload_start with storage {ns}:gun all.sounds
@@ -413,6 +425,10 @@ kill @s
 """)
 
     write_versioned_function("ammo/end_reload", f"""
+# Actually consume magazines and update ammo now that reload is complete
+execute if data storage {ns}:config no_magazine store result score @s {ns}.{REMAINING_BULLETS} run data get storage {ns}:gun all.stats.{CAPACITY}
+execute unless data storage {ns}:config no_magazine run function {ns}:v{version}/ammo/inventory/find with storage {ns}:gun all.stats
+
 # Update weapon lore (if still holding weapon)
 execute if data storage {ns}:gun all.gun run function {ns}:v{version}/ammo/modify_lore {{slot:"weapon.mainhand"}}
 

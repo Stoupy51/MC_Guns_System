@@ -7,9 +7,7 @@
 #
 
 # Skip non-living entities and other projectiles
-# Skip the shooter (prevent self-damage from own explosions)
 execute if entity @s[tag=mgs.slow_bullet] run return fail
-execute if entity @s[tag=mgs.temp_shooter] run return fail
 
 # Get this entity's position (scaled by 1000)
 execute store result score #ent_x mgs.data run data get entity @s Pos[0] 1000
@@ -59,6 +57,9 @@ execute store result score #decay_factor mgs.data run data get storage bs:out ma
 
 scoreboard players operation #expl_dmg mgs.data *= #decay_factor mgs.data
 scoreboard players operation #expl_dmg mgs.data /= #1000000 mgs.data
+
+# If this entity IS the shooter and zombie mode is active, nerf explosion damage to 10 hp (100 in scoreboard since we keep 1 decimal digit)
+execute if score #expl_dmg mgs.data matches 100.. if entity @s[tag=mgs.temp_shooter] if data storage mgs:zombies game{state:"active"} run scoreboard players set #expl_dmg mgs.data 100
 
 # Skip if damage is negligible (less than 0.1)
 execute if score #expl_dmg mgs.data matches ..0 run return fail
