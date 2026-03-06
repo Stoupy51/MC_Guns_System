@@ -577,13 +577,13 @@ function {ns}:v{version}/multiplayer/pick_spawn {{type:"general"}}
 	# Build sidebar content components for reuse
 	sb_timer = (
 		f'[{{text:" ⏱ ",color:"yellow"}},'
-		f'["",{{score:{{name:"#_timer_min",objective:"{ns}.data"}},color:"yellow"}},'
-		f'{{text:":",color:"yellow"}},'
-		f'{{score:{{name:"#_timer_tens",objective:"{ns}.data"}},color:"yellow"}},'
-		f'{{score:{{name:"#_timer_ones",objective:"{ns}.data"}},color:"yellow"}}]]'
+		f'[{{score:{{name:"#_timer_min",objective:"{ns}.data"}},"color":"yellow"}},'
+		f'{{text:":"}},'
+		f'{{score:{{name:"#_timer_tens",objective:"{ns}.data"}}}},'
+		f'{{score:{{name:"#_timer_ones",objective:"{ns}.data"}}}}]]'
 	)
-	sb_red = f'[{{text:" 🔴 ",color:"red"}},{{text:"Red",color:"red"}}," ",{{score:{{name:"#red",objective:"{ns}.mp.team"}},color:"white"}}]'
-	sb_blue = f'[{{text:" 🔵 ",color:"blue"}},{{text:"Blue",color:"blue"}}," ",{{score:{{name:"#blue",objective:"{ns}.mp.team"}},color:"white"}}]'
+	sb_red = f'[[{{text:" 🔴 ",color:"red"}},{{text:"Red"}}],[" ",{{score:{{name:"#red",objective:"{ns}.mp.team"}},color:"white"}}]]'
+	sb_blue = f'[[{{text:" 🔵 ",color:"blue"}},{{text:"Blue"}}],[" ",{{score:{{name:"#blue",objective:"{ns}.mp.team"}},color:"white"}}]]'
 	sb_limit = f'[{{text:" First to ",color:"gray"}},{{score:{{name:"#score_limit",objective:"{ns}.data"}},color:"white"}}]'
 	sb_spacer = '" "'
 

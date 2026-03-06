@@ -180,6 +180,9 @@ execute if score @s {ns}.mp.dom_owner matches 2 run particle dust{{color:[0.2,0.
 scoreboard players add @s {ns}.mp.kills 1
 execute if score @s {ns}.mp.team matches 1 run scoreboard players add #red {ns}.mp.team 1
 execute if score @s {ns}.mp.team matches 2 run scoreboard players add #blue {ns}.mp.team 1
+
+# Refresh sidebar to show updated team scores
+function #bs.sidebar:refresh {{objective:"{ns}.sidebar"}}
 """)
 
 	## DOM Cleanup: Kill markers and labels

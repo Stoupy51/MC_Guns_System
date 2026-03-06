@@ -1,4 +1,5 @@
-# ruff: noqa: E501
+
+# Imports
 from stewbeet import Mem, write_versioned_function
 
 from ...helpers import MGS_TAG
@@ -21,6 +22,9 @@ tellraw @a [{MGS_TAG},{{"text":"Team Deathmatch! First team to the score limit w
 scoreboard players add @s {ns}.mp.kills 1
 execute if score @s {ns}.mp.team matches 1 run scoreboard players add #red {ns}.mp.team 1
 execute if score @s {ns}.mp.team matches 2 run scoreboard players add #blue {ns}.mp.team 1
+
+# Refresh sidebar to show updated team scores
+function #bs.sidebar:refresh {{objective:"{ns}.sidebar"}}
 
 # Check win condition
 execute store result score #score_limit {ns}.data run data get storage {ns}:multiplayer game.score_limit

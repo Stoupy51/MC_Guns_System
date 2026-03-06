@@ -124,6 +124,9 @@ scoreboard players set #hp_zone_idx {ns}.data 0
 scoreboard players add @s {ns}.mp.kills 1
 execute if score @s {ns}.mp.team matches 1 run scoreboard players add #red {ns}.mp.team 1
 execute if score @s {ns}.mp.team matches 2 run scoreboard players add #blue {ns}.mp.team 1
+
+# Refresh sidebar to show updated team scores
+function #bs.sidebar:refresh {{objective:"{ns}.sidebar"}}
 """)
 
 	## HP Cleanup

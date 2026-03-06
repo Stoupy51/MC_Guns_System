@@ -291,10 +291,13 @@ data modify storage {ns}:input with.weapon set from storage {ns}:gun all
 execute store result storage {ns}:input with.headshot int 1 run scoreboard players get #is_headshot {ns}.data
 function {ns}:v{version}/utils/signal_and_damage
 
-# Signal: on_kill (if entity died, @s switches to shooter player)
-execute unless entity @s as @n[tag={ns}.ticking] run data modify storage {ns}:signals on_kill set value {{}}
-execute unless entity @s as @n[tag={ns}.ticking] run data modify storage {ns}:signals on_kill.weapon set from storage {ns}:gun all
-execute unless entity @s as @n[tag={ns}.ticking] run function #{ns}:signals/on_kill
+# Signal: on_kill (check if entity died after damage)
+# Initialize to 0 (dead) — if entity no longer exists, score stays 0
+scoreboard players set #victim_hp {ns}.data 0
+execute store result score #victim_hp {ns}.data run data get entity @s Health 100
+execute if score #victim_hp {ns}.data matches ..0 run data modify storage {ns}:signals on_kill set value {{}}
+execute if score #victim_hp {ns}.data matches ..0 run data modify storage {ns}:signals on_kill.weapon set from storage {ns}:gun all
+execute if score #victim_hp {ns}.data matches ..0 as @n[tag={ns}.ticking] run function #{ns}:signals/on_kill
 """)
 
     # Apply decay using `damage *= pow(decay, distance / 10)`
