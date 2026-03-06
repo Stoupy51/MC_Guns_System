@@ -213,9 +213,6 @@ data modify storage {ns}:multiplayer game.state set value "lobby"
 # Cancel scheduled prep end (in case game stopped during prep)
 schedule clear {ns}:v{version}/multiplayer/end_prep
 
-# Disable instant respawn
-gamerule immediate_respawn false
-
 # Restore movement (in case stopped during prep)
 execute as @a[scores={{{ns}.mp.in_game=1}}] run attribute @s minecraft:movement_speed base set 0.1
 execute as @a[scores={{{ns}.mp.in_game=1}}] run attribute @s minecraft:jump_strength base set 0.42
@@ -585,10 +582,10 @@ function {ns}:v{version}/multiplayer/pick_spawn {{type:"general"}}
 		f'{{score:{{name:"#_timer_tens",objective:"{ns}.data"}},color:"yellow"}},'
 		f'{{score:{{name:"#_timer_ones",objective:"{ns}.data"}},color:"yellow"}}]]'
 	)
-	sb_red = f'[{{text:" 🔴 Red ",color:"red"}},{{score:{{name:"#red",objective:"{ns}.mp.team"}},color:"white"}}]'
-	sb_blue = f'[{{text:" 🔵 Blue ",color:"blue"}},{{score:{{name:"#blue",objective:"{ns}.mp.team"}},color:"white"}}]'
+	sb_red = f'[{{text:" 🔴 ",color:"red"}},{{text:"Red",color:"red"}}," ",{{score:{{name:"#red",objective:"{ns}.mp.team"}},color:"white"}}]'
+	sb_blue = f'[{{text:" 🔵 ",color:"blue"}},{{text:"Blue",color:"blue"}}," ",{{score:{{name:"#blue",objective:"{ns}.mp.team"}},color:"white"}}]'
 	sb_limit = f'[{{text:" First to ",color:"gray"}},{{score:{{name:"#score_limit",objective:"{ns}.data"}},color:"white"}}]'
-	sb_spacer = '{text:" "}'
+	sb_spacer = '" "'
 
 	## Team sidebar (TDM/DOM/HP/SND) — takes $(title) macro arg
 	write_versioned_function("multiplayer/create_sidebar_team", f"""
