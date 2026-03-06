@@ -12,6 +12,9 @@ scoreboard players set @s mgs.mp.death_count 0
 # Increment death stats
 scoreboard players add @s mgs.mp.deaths 1
 
+# S&D: no respawning, mark as dead and go spectator
+execute if data storage mgs:multiplayer game{gamemode:"snd"} run return run function mgs:v5.0.0/multiplayer/gamemodes/snd/on_death
+
 # Teleport to best spawn point
 function mgs:v5.0.0/multiplayer/respawn_tp
 

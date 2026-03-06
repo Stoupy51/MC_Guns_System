@@ -33,7 +33,9 @@ scoreboard players set @a mgs.mp.in_game 1
 
 # Set all in-game players to adventure and enable instant respawn
 gamemode adventure @a[scores={mgs.mp.in_game=1}]
+execute as @a[scores={mgs.mp.in_game=1}] run attribute @s minecraft:waypoint_receive_range base set 0.0
 gamerule immediate_respawn true
+gamerule keep_inventory true
 
 # Store base coordinates for offset
 execute store result score #gm_base_x mgs.data run data get storage mgs:multiplayer game.map.base_coordinates[0]
