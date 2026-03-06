@@ -6,6 +6,7 @@
 # @within	mgs:v5.0.0/maps/editor/save_lists/multiplayer {path:"red"} [ as @e[tag=...] & at @s ]
 #			mgs:v5.0.0/maps/editor/save_lists/multiplayer {path:"blue"} [ as @e[tag=...] & at @s ]
 #			mgs:v5.0.0/maps/editor/save_lists/multiplayer {path:"general"} [ as @e[tag=...] & at @s ]
+#			mgs:v5.0.0/maps/editor/save_lists/missions {path:"mission"} [ as @e[tag=...] & at @s ]
 #
 # @args		path (string)
 #

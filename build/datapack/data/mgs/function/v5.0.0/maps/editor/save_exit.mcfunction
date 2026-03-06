@@ -7,9 +7,16 @@
 # Only process if in editor mode
 execute unless score @s mgs.mp.map_edit matches 1 run return fail
 
+# Preserve session-modified enemy config before reloading
+data modify storage mgs:temp _session_enemy_config set from storage mgs:temp map_edit.map.enemy_config
+
 # Reload map data (preserves metadata like id, name, description, scripts)
 execute store result storage mgs:temp map_edit.idx int 1 run scoreboard players get @s mgs.mp.map_idx
 function mgs:v5.0.0/maps/editor/load_map_data with storage mgs:temp map_edit
+
+# Restore session-modified enemy config
+execute if data storage mgs:temp _session_enemy_config run data modify storage mgs:temp map_edit.map.enemy_config set from storage mgs:temp _session_enemy_config
+data remove storage mgs:temp _session_enemy_config
 
 # Rebuild base_coordinates from marker
 execute as @n[tag=mgs.map_element,tag=mgs.element.base_coordinates] at @s run function mgs:v5.0.0/maps/editor/save_base

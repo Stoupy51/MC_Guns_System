@@ -24,6 +24,14 @@ ALL_ELEMENTS: dict[str, JsonDict] = {
 	"search_and_destroy": {"name": "S&D Objective",    "color": "gold",         "particle": [1.0, 0.6, 0.0], "particle_scale": 1.0, "has_rotation": False, "egg_model": "minecraft:fox_spawn_egg", "save_type": "point", "save_path": "search_and_destroy", "emoji": "💣"},
 	"domination":         {"name": "Domination Point", "color": "green",        "particle": [0.0, 1.0, 0.0], "particle_scale": 1.0, "has_rotation": False, "egg_model": "minecraft:creeper_spawn_egg", "save_type": "point", "save_path": "domination", "emoji": "🏴"},
 	"hardpoint":          {"name": "Hardpoint Zone",   "color": "dark_purple",  "particle": [0.5, 0.0, 0.5], "particle_scale": 1.0, "has_rotation": False, "egg_model": "minecraft:warden_spawn_egg", "save_type": "point", "save_path": "hardpoint", "emoji": "⚡"},
+	# Mission elements
+	"mission_spawn":      {"name": "Mission Spawn",    "color": "aqua",         "particle": [0.0, 1.0, 1.0], "particle_scale": 1.0, "has_rotation": True,  "egg_model": "minecraft:villager_spawn_egg", "save_type": "spawn", "save_path": "spawning_points.mission", "emoji": "●"},
+	"level_1_enemy":      {"name": "Level 1 Enemy",    "color": "green",        "particle": [0.2, 0.8, 0.2], "particle_scale": 1.0, "has_rotation": False, "egg_model": "minecraft:pillager_spawn_egg", "save_type": "point", "save_path": "enemies.level_1", "emoji": "👤"},
+	"level_2_enemy":      {"name": "Level 2 Enemy",    "color": "yellow",       "particle": [1.0, 1.0, 0.0], "particle_scale": 1.0, "has_rotation": False, "egg_model": "minecraft:vindicator_spawn_egg", "save_type": "point", "save_path": "enemies.level_2", "emoji": "👤"},
+	"level_3_enemy":      {"name": "Level 3 Enemy",    "color": "gold",         "particle": [1.0, 0.6, 0.0], "particle_scale": 1.0, "has_rotation": False, "egg_model": "minecraft:evoker_spawn_egg", "save_type": "point", "save_path": "enemies.level_3", "emoji": "👤"},
+	"level_4_enemy":      {"name": "Level 4 Enemy",    "color": "red",          "particle": [1.0, 0.0, 0.0], "particle_scale": 1.0, "has_rotation": False, "egg_model": "minecraft:ravager_spawn_egg", "save_type": "point", "save_path": "enemies.level_4", "emoji": "👤"},
+	# Config (utility, no marker)
+	"config":             {"name": "⚙ Config",         "color": "white",        "particle": [1.0, 1.0, 1.0], "particle_scale": 0.5, "has_rotation": False, "egg_model": "minecraft:allay_spawn_egg", "save_type": "config", "emoji": "⚙"},
 }
 
 # ── Mode Definitions ──────────────────────────────────────────────
@@ -60,6 +68,14 @@ EDITOR_MODES: dict[str, JsonDict] = {
 		"storage_key": "missions",
 		"slots": {
 			"base_coordinates": "hotbar.0",
+			"mission_spawn": "hotbar.1",
+			"level_1_enemy": "hotbar.2",
+			"level_2_enemy": "hotbar.3",
+			"level_3_enemy": "hotbar.4",
+			"level_4_enemy": "hotbar.5",
+			"out_of_bounds": "hotbar.6",
+			"boundary": "inventory.0",
+			"config": "inventory.1",
 		},
 	},
 }
@@ -79,6 +95,10 @@ def generate_map_editor() -> None:
 scoreboard objectives add {ns}.mp.map_edit dummy
 scoreboard objectives add {ns}.mp.map_idx dummy
 scoreboard objectives add {ns}.mp.map_mode dummy
+scoreboard objectives add {ns}.mp.map_disp dummy
+
+# Reuse warped fungus on stick detection (shared with class menu)
+scoreboard objectives add {ns}.class_menu minecraft.used:minecraft.warped_fungus_on_a_stick
 """)
 
 	storage_init_lines = "\n".join(
@@ -225,6 +245,9 @@ $data modify storage {ns}:temp map_edit.mode set value "$(mode)"
 scoreboard players set @s {ns}.mp.map_edit 1
 tag @s add {ns}.map_editor
 
+# Set display mode to match save mode
+scoreboard players operation @s {ns}.mp.map_disp = @s {ns}.mp.map_mode
+
 # Store index for macro access
 execute store result storage {ns}:temp map_edit.idx int 1 run scoreboard players get @s {ns}.mp.map_idx
 
@@ -279,10 +302,15 @@ function {ns}:v{version}/maps/editor/summon_base_marker with storage {ns}:temp _
 	# Per-mode summon functions
 	for mode_key, mode_info in EDITOR_MODES.items():
 		summon_lines: list[str] = []
+		# Mode-specific initialization
+		if mode_key == "missions":
+			summon_lines.append("# Initialize enemy config with defaults if missing")
+			summon_lines.append(f'execute unless data storage {ns}:temp map_edit.map.enemy_config run data modify storage {ns}:temp map_edit.map.enemy_config set value {{level_1:{{entity:"pillager",hp:20}},level_2:{{entity:"pillager",hp:40}},level_3:{{entity:"pillager",hp:60}},level_4:{{entity:"pillager",hp:80}}}}')
+			summon_lines.append("")
 		for etype in mode_info["slots"]:
 			einfo = ALL_ELEMENTS[etype]
-			if einfo["save_type"] == "base":
-				continue  # handled in parent
+			if einfo["save_type"] in ("base", "config"):
+				continue  # handled in parent / no markers
 			save_path = einfo["save_path"]
 			if einfo["save_type"] == "spawn":
 				summon_lines.append(f'data modify storage {ns}:temp _spawn_iter set from storage {ns}:temp map_edit.map.{save_path}')
@@ -387,13 +415,22 @@ $summon minecraft:marker $(x) $(y) $(z) {{Tags:["{ns}.map_element","$(tag)"]}}
 	)
 
 	give_dispatch = "\n".join(
-		f'execute if score @s {ns}.mp.map_mode matches {i} run function {ns}:v{version}/maps/editor/give_tools/{mk}'
+		f'execute if score @s {ns}.mp.map_disp matches {i} run function {ns}:v{version}/maps/editor/give_tools/{mk}'
 		for i, mk in enumerate(MODE_LIST)
+	)
+
+	mode_switcher_cmd = (
+		f'item replace entity @s hotbar.7 with minecraft:warped_fungus_on_a_stick'
+		f'[minecraft:item_name={{"text":"Switch Mode","color":"white","italic":false}},'
+		f'minecraft:custom_data={{{ns}:{{mode_switcher:true}}}}]'
 	)
 
 	write_versioned_function("maps/editor/give_tools", f"""
 # Destroy egg (always in hotbar.8)
 {destroy_cmd}
+
+# Mode switcher (always in hotbar.7)
+{mode_switcher_cmd}
 
 # Mode-specific eggs
 {give_dispatch}
@@ -444,6 +481,8 @@ execute as @n[tag={ns}.new_element] at @s run function {ns}:v{version}/maps/edit
 			handler = "handle_spawn"
 		elif save_type == "point":
 			handler = "handle_point"
+		elif save_type == "config":
+			handler = "handle_config"
 		else:
 			continue
 		process_lines.append(f'execute if entity @s[tag={ns}.element.{etype}] run function {ns}:v{version}/maps/editor/{handler}')
@@ -541,7 +580,7 @@ execute positioned as @s unless entity @n[tag={ns}.map_element,distance=..10] ru
 	# ── Destroy Element (universal) ────────────────────────────────
 	destroy_msg_lines = "\n".join(
 		f'execute if entity @s[tag={ns}.element.{etype}] run tellraw @a[tag={ns}.map_editor] [{MGS_TAG},{{"text":"{einfo["name"]} removed!","color":"{einfo["color"]}"}}]'
-		for etype, einfo in ALL_ELEMENTS.items()
+		for etype, einfo in ALL_ELEMENTS.items() if einfo["save_type"] != "config"
 	)
 
 	write_versioned_function("maps/editor/destroy_element", f"""
@@ -553,6 +592,41 @@ execute positioned as @s unless entity @n[tag={ns}.map_element,distance=..10] ru
 kill @s
 """)
 
+	# ── Handle Config (missions utility) ───────────────────────────
+	config_lines: list[str] = []
+	config_lines.append("# Initialize enemy config with defaults if missing")
+	config_lines.append(f'execute unless data storage {ns}:temp map_edit.map.enemy_config run data modify storage {ns}:temp map_edit.map.enemy_config set value {{level_1:{{entity:"pillager",hp:20}},level_2:{{entity:"pillager",hp:40}},level_3:{{entity:"pillager",hp:60}},level_4:{{entity:"pillager",hp:80}}}}')
+	config_lines.append("")
+	config_lines.append(f"tellraw @a[tag={ns}.map_editor] {sep}")
+	config_lines.append(f'tellraw @a[tag={ns}.map_editor] [{{"text":"","color":"white","bold":true}},"  ⚙ ",{{"text":"Enemy Configuration"}}]')
+	config_lines.append(f"tellraw @a[tag={ns}.map_editor] {sep}")
+
+	for level in range(1, 5):
+		colors = ["green", "yellow", "gold", "red"]
+		color = colors[level - 1]
+		config_lines.append(
+			f'tellraw @a[tag={ns}.map_editor] '
+			f'["  ",{{"text":"Level {level}","color":"{color}","bold":true}},'
+			f'{{"text":": ","color":"gray"}},'
+			f'{{"storage":"{ns}:temp","nbt":"map_edit.map.enemy_config.level_{level}.entity","color":"white"}},'
+			f'{{"text":" (HP: ","color":"gray"}},'
+			f'{{"storage":"{ns}:temp","nbt":"map_edit.map.enemy_config.level_{level}.hp","color":"yellow"}},'
+			f'{{"text":")","color":"gray"}}]'
+		)
+		entity_btn = btn(
+			"Entity", f'/data modify storage {ns}:temp map_edit.map.enemy_config.level_{level}.entity set value "pillager"',
+			"aqua", f"Edit Level {level} entity type", action="suggest_command"
+		)
+		hp_btn = btn(
+			"HP", f"/data modify storage {ns}:temp map_edit.map.enemy_config.level_{level}.hp set value 20",
+			"yellow", f"Edit Level {level} HP", action="suggest_command"
+		)
+		config_lines.append(f'tellraw @a[tag={ns}.map_editor] ["    ",{entity_btn},{{"text":" "}},{hp_btn}]')
+
+	config_lines.append(f"tellraw @a[tag={ns}.map_editor] {sep}")
+
+	write_versioned_function("maps/editor/handle_config", "\n".join(config_lines))
+
 	# ── Save and Exit Editor ───────────────────────────────────────
 	save_dispatch = "\n".join(
 		f'execute if score @s {ns}.mp.map_mode matches {i} run function {ns}:v{version}/maps/editor/save_lists/{mk}'
@@ -563,9 +637,16 @@ kill @s
 # Only process if in editor mode
 execute unless score @s {ns}.mp.map_edit matches 1 run return fail
 
+# Preserve session-modified enemy config before reloading
+data modify storage {ns}:temp _session_enemy_config set from storage {ns}:temp map_edit.map.enemy_config
+
 # Reload map data (preserves metadata like id, name, description, scripts)
 execute store result storage {ns}:temp map_edit.idx int 1 run scoreboard players get @s {ns}.mp.map_idx
 function {ns}:v{version}/maps/editor/load_map_data with storage {ns}:temp map_edit
+
+# Restore session-modified enemy config
+execute if data storage {ns}:temp _session_enemy_config run data modify storage {ns}:temp map_edit.map.enemy_config set from storage {ns}:temp _session_enemy_config
+data remove storage {ns}:temp _session_enemy_config
 
 # Rebuild base_coordinates from marker
 execute as @n[tag={ns}.map_element,tag={ns}.element.base_coordinates] at @s run function {ns}:v{version}/maps/editor/save_base
@@ -592,8 +673,8 @@ tellraw @s [{MGS_TAG},{{"text":"Map saved!","color":"green"}}]
 		rebuild_lines: list[str] = []
 		for etype in mode_info["slots"]:
 			einfo = ALL_ELEMENTS[etype]
-			if einfo["save_type"] == "base":
-				continue  # handled by save_base
+			if einfo["save_type"] in ("base", "config"):
+				continue  # handled by save_base / no save data
 
 			save_path = einfo["save_path"]
 			if einfo["save_type"] == "spawn":
@@ -697,9 +778,31 @@ tag @s remove {ns}.map_editor
 clear @s
 """)
 
+	# ── Cycle Mode (mode switcher right-click handler) ─────────────
+	mode_count = len(MODE_LIST)
+	cycle_announce = "\n".join(
+		f'execute if score @s {ns}.mp.map_disp matches {i} run tellraw @s [{MGS_TAG},{{"text":"Switched to {EDITOR_MODES[mk]["name"]} mode","color":"{EDITOR_MODES[mk]["color"]}"}}]'
+		for i, mk in enumerate(MODE_LIST)
+	)
+
+	write_versioned_function("maps/editor/cycle_mode", f"""
+# Advance display mode
+scoreboard players add @s {ns}.mp.map_disp 1
+execute if score @s {ns}.mp.map_disp matches {mode_count}.. run scoreboard players set @s {ns}.mp.map_disp 0
+
+# Clear inventory and re-give tools for new mode
+clear @s
+function {ns}:v{version}/maps/editor/give_tools
+
+# Announce
+{cycle_announce}
+""")
+
 	# ── Editor Tick (universal - shows all element types) ──────────
 	particle_lines: list[str] = []
 	for etype, einfo in ALL_ELEMENTS.items():
+		if einfo["save_type"] == "config":
+			continue
 		r, g, b = einfo["particle"]
 		scale = einfo["particle_scale"]
 		spread = "0.2 0.5 0.2" if einfo["save_type"] == "spawn" else "0.3 0.5 0.3"
@@ -710,6 +813,8 @@ clear @s
 
 	actionbar_lines: list[str] = []
 	for etype, einfo in ALL_ELEMENTS.items():
+		if einfo["save_type"] == "config":
+			continue
 		actionbar_lines.append(
 			f'execute if entity @e[tag={ns}.map_element,tag={ns}.element.{etype},distance=..5] run return run title @s actionbar [{{"text":"{einfo["emoji"]} ","color":"{einfo["color"]}"}},{{"text":"{einfo["name"]}"}}]'
 		)
@@ -717,6 +822,9 @@ clear @s
 	write_versioned_function("maps/editor/tick", f"""
 # Only run for players in editor mode
 execute unless score @s {ns}.mp.map_edit matches 1 run return fail
+
+# Mode switcher: detect right-click on warped fungus on a stick
+execute if score @s {ns}.class_menu matches 1.. if items entity @s weapon.mainhand *[custom_data~{{{ns}:{{mode_switcher:true}}}}] run function {ns}:v{version}/maps/editor/cycle_mode
 
 # Show rotation indicator for all markers
 execute as @e[tag={ns}.map_element] run data modify entity @s Rotation[0] set from entity @s data.yaw

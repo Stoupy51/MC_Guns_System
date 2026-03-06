@@ -486,10 +486,36 @@ data modify storage mgs:multiplayer secondary_slot_table set value [{id:"m1911",
 # Initialize multiplayer maps storage (empty list, only if not set)
 execute unless data storage mgs:maps multiplayer run data modify storage mgs:maps multiplayer set value []
 
+## Missions scoreboards
+# In-game flag (1 = active in mission)
+scoreboard objectives add mgs.mi.in_game dummy
+# Current wave/level (1-4)
+scoreboard objectives add mgs.mi.level dummy
+# Enemies remaining in current level
+scoreboard objectives add mgs.mi.enemies dummy
+# Timer (ticks remaining, used for spawn delay between levels)
+scoreboard objectives add mgs.mi.timer dummy
+
+# Boundary checking coords (reuse mp prefix scores)
+scoreboard objectives add mgs.mp.bx dummy
+scoreboard objectives add mgs.mp.by dummy
+scoreboard objectives add mgs.mp.bz dummy
+
+# Constants
+scoreboard players set #20 mgs.data 20
+scoreboard players set #60 mgs.data 60
+
+# Initialize missions game state
+execute unless data storage mgs:missions game run data modify storage mgs:missions game set value {state:"lobby",map_id:""}
+
 # Map editor scoreboards
 scoreboard objectives add mgs.mp.map_edit dummy
 scoreboard objectives add mgs.mp.map_idx dummy
 scoreboard objectives add mgs.mp.map_mode dummy
+scoreboard objectives add mgs.mp.map_disp dummy
+
+# Reuse warped fungus on stick detection (shared with class menu)
+scoreboard objectives add mgs.class_menu minecraft.used:minecraft.warped_fungus_on_a_stick
 
 # Initialize maps storage for all modes
 execute unless data storage mgs:maps multiplayer run data modify storage mgs:maps multiplayer set value []

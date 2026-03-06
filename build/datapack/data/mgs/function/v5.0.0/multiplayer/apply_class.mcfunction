@@ -8,6 +8,8 @@
 #			mgs:v5.0.0/multiplayer/gamemodes/snd/start_round [ as @a[scores={mgs.mp.team=1..2}] & at @s ]
 #			mgs:v5.0.0/multiplayer/on_respawn
 #			mgs:v5.0.0/multiplayer/auto_apply_default
+#			mgs:v5.0.0/missions/start [ at @s ]
+#			mgs:v5.0.0/missions/prep_tick [ at @s ]
 #
 
 # Check for custom loadout (negative mp.class = custom loadout ID)

@@ -2,6 +2,7 @@
 #> mgs:v5.0.0/maps/editor/summon_point_iter
 #
 # @within	mgs:v5.0.0/maps/editor/summon_existing/multiplayer
+#			mgs:v5.0.0/maps/editor/summon_existing/missions
 #			mgs:v5.0.0/maps/editor/summon_point_iter
 #
 
