@@ -2098,6 +2098,19 @@
 			"item_name": {"text": "Flash Grenade"}
 		}
 	},
+	"class_menu": {
+		"id": "class_menu",
+		"base_item": "minecraft:warped_fungus_on_a_stick",
+		"recipes": [],
+		"components": {
+			"max_stack_size": 1,
+			"custom_data": {"mgs": {"class_menu": true},"smithed": {"ignore": {"functionality": true,"crafting": true}}},
+			"rarity": "common",
+			"item_name": [{"text": "Class Menu","color": "gold","italic": false}],
+			"item_model": "minecraft:nether_star",
+			"lore": [["",{"text": "I","color": "white","italic": false,"font": "mgs:icons"},{"text": " MC Guns System","italic": true,"color": "blue"}]]
+		}
+	},
 	"ak47_mag_empty": {
 		"id": "ak47_mag_empty",
 		"base_item": "minecraft:command_block",

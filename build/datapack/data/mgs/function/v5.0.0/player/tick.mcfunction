@@ -81,6 +81,10 @@ execute if score @s mgs.player.config matches 1.. run function mgs:v5.0.0/player
 # Map editor tick (particles + actionbar) for players in editor mode
 execute if score @s mgs.mp.map_edit matches 1 run function mgs:v5.0.0/maps/editor/tick
 
+# Class menu: detect right-click on warped fungus on a stick
+execute if score @s mgs.class_menu matches 1.. if items entity @s weapon.mainhand *[custom_data~{mgs:{class_menu:true}}] run function mgs:v5.0.0/multiplayer/select_class
+scoreboard players set @s mgs.class_menu 0
+
 # Multiplayer: detect respawn (death_count incremented by deathCount criterion)
 execute if data storage mgs:multiplayer game{state:"active"} if score @s mgs.mp.death_count matches 1.. run function mgs:v5.0.0/multiplayer/on_respawn
 

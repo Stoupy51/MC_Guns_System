@@ -31,6 +31,9 @@ execute store result score #mp_timer mgs.data run data get storage mgs:multiplay
 # Tag all non-spectator players as in-game
 scoreboard players set @a mgs.mp.in_game 1
 
+# Enable class menu for multiplayer players
+tag @a[scores={mgs.mp.in_game=1}] add mgs.give_class_menu
+
 # Set all in-game players to adventure and enable instant respawn
 gamemode adventure @a[scores={mgs.mp.in_game=1}]
 execute as @a[scores={mgs.mp.in_game=1}] run attribute @s minecraft:waypoint_receive_range base set 0.0

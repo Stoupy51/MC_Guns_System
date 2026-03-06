@@ -9,8 +9,7 @@ Credits for resources: MGS 4.2 by TheBradqq
 
 # TODO:
 Fixes:
-- Kills are not counted. Killing to not get points to the team and players
-- Issue with respawning
+- On game start, red and blue spawns should be assigned an ID and when we place players the first player to place will place on ID 1, then the second one 2, etc. to avoid starting the game on the SAME spawn point as someone else (unless there are more players than spawn points)
 
 - Compatibility & Developement:
   - Multiplayer mode:

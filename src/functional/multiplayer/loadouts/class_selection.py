@@ -20,6 +20,16 @@ scoreboard objectives add {ns}.mp.class dummy
 
 # Death detection for respawn
 scoreboard objectives add {ns}.mp.death_count deathCount
+
+# Class menu right-click detection (warped fungus on a stick)
+scoreboard objectives add {ns}.class_menu minecraft.used:minecraft.warped_fungus_on_a_stick
+""")
+
+	## Detect class menu right-click in player tick
+	write_versioned_function("player/tick", f"""
+# Class menu: detect right-click on warped fungus on a stick
+execute if score @s {ns}.class_menu matches 1.. if items entity @s weapon.mainhand *[custom_data~{{{ns}:{{class_menu:true}}}}] run function {ns}:v{version}/multiplayer/select_class
+scoreboard players set @s {ns}.class_menu 0
 """)
 
 	## show_dialog macro: passes inline SNBT dialog to /dialog show

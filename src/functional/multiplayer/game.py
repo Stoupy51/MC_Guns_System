@@ -78,6 +78,9 @@ execute store result score #mp_timer {ns}.data run data get storage {ns}:multipl
 # Tag all non-spectator players as in-game
 scoreboard players set @a {ns}.mp.in_game 1
 
+# Enable class menu for multiplayer players
+tag @a[scores={{{ns}.mp.in_game=1}}] add {ns}.give_class_menu
+
 # Set all in-game players to adventure and enable instant respawn
 gamemode adventure @a[scores={{{ns}.mp.in_game=1}}]
 execute as @a[scores={{{ns}.mp.in_game=1}}] run attribute @s minecraft:waypoint_receive_range base set 0.0
@@ -249,6 +252,7 @@ scoreboard objectives setdisplay list
 # Clear in-game state
 scoreboard players set @a {ns}.mp.in_game 0
 scoreboard players set @a {ns}.mp.team 0
+tag @a[tag={ns}.give_class_menu] remove {ns}.give_class_menu
 """)
 
 	## Kill Tracking (Signal Listener) - now dispatches to gamemode

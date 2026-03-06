@@ -60,5 +60,8 @@ data modify storage {ns}:temp slots set from storage {ns}:temp current_class.slo
 
 # Recursively apply all slots
 execute if data storage {ns}:temp slots[0] run function {ns}:v{version}/multiplayer/apply_next_slot
+
+# Give class menu item (only in multiplayer)
+execute if entity @s[tag={ns}.give_class_menu] run loot replace entity @s hotbar.4 loot {ns}:i/class_menu
 """)
 

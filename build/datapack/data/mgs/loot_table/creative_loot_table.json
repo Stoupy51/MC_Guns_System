@@ -137,6 +137,7 @@
 		{"rolls": 1,"entries": [{"type": "minecraft:loot_table","value": "mgs:i/semtex"}]},
 		{"rolls": 1,"entries": [{"type": "minecraft:loot_table","value": "mgs:i/smoke_grenade"}]},
 		{"rolls": 1,"entries": [{"type": "minecraft:loot_table","value": "mgs:i/flash_grenade"}]},
+		{"rolls": 1,"entries": [{"type": "minecraft:loot_table","value": "mgs:i/class_menu"}]},
 		{"rolls": 1,"entries": [{"type": "minecraft:loot_table","value": "mgs:i/ak47_mag_empty"}]},
 		{"rolls": 1,"entries": [{"type": "minecraft:loot_table","value": "mgs:i/aug_mag_empty"}]},
 		{"rolls": 1,"entries": [{"type": "minecraft:loot_table","value": "mgs:i/deagle_mag_empty"}]},

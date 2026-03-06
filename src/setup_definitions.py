@@ -113,6 +113,19 @@ def beet_default(ctx: Context) -> None:
     # Grenades
     main_grenades()
 
+    # Multiplayer class menu item (right-click to open class selection)
+    Item(
+        id="class_menu",
+        base_item="minecraft:warped_fungus_on_a_stick",
+        components={
+            "max_stack_size": 1,
+            "custom_data": {ns: {"class_menu": True}},
+            "rarity": "common",
+            "item_name": [{"text": "Class Menu", "color": "gold", "italic": False}],
+            "item_model": "minecraft:nether_star",
+        },
+    )
+
     # Adjust guns data
     for item in Mem.definitions.keys():
         obj = Item.from_id(item)
