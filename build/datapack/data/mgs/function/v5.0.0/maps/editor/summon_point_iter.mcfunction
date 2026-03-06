@@ -1,7 +1,7 @@
 
 #> mgs:v5.0.0/maps/editor/summon_point_iter
 #
-# @within	mgs:v5.0.0/maps/editor/summon_existing
+# @within	mgs:v5.0.0/maps/editor/summon_existing/multiplayer
 #			mgs:v5.0.0/maps/editor/summon_point_iter
 #
 
@@ -20,12 +20,8 @@ execute store result storage mgs:temp _ppos.x double 1 run scoreboard players ge
 execute store result storage mgs:temp _ppos.y double 1 run scoreboard players get #ry mgs.data
 execute store result storage mgs:temp _ppos.z double 1 run scoreboard players get #rz mgs.data
 
-# Determine tag
-execute if score #_point_tag mgs.data matches 1 run data modify storage mgs:temp _ppos.tag set value "mgs.element.boundary"
-execute if score #_point_tag mgs.data matches 2 run data modify storage mgs:temp _ppos.tag set value "mgs.element.out_of_bounds"
-execute if score #_point_tag mgs.data matches 3 run data modify storage mgs:temp _ppos.tag set value "mgs.element.search_and_destroy"
-execute if score #_point_tag mgs.data matches 4 run data modify storage mgs:temp _ppos.tag set value "mgs.element.domination"
-execute if score #_point_tag mgs.data matches 5 run data modify storage mgs:temp _ppos.tag set value "mgs.element.hardpoint"
+# Set tag from stored tag
+data modify storage mgs:temp _ppos.tag set from storage mgs:temp _point_iter_tag
 
 function mgs:v5.0.0/maps/editor/summon_point_marker with storage mgs:temp _ppos
 

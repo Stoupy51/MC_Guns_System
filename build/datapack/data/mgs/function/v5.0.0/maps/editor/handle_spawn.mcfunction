@@ -23,7 +23,7 @@ function mgs:v5.0.0/maps/editor/summon_spawn_marker with storage mgs:temp _pos
 execute as @n[tag=mgs.new_spawn_marker] store result entity @s data.yaw float 1 run data get entity @p[tag=mgs.map_editor] Rotation[0]
 tag @n[tag=mgs.new_spawn_marker] remove mgs.new_spawn_marker
 
-# Determine name for message
+# Announce
 execute if entity @s[tag=mgs.element.red_spawn] run tellraw @a[tag=mgs.map_editor] [[{"text":"","color":"gold"},"[",{"translate": "mgs"},"] "],{"translate": "mgs.red_spawn_placed","color":"red"}]
 execute if entity @s[tag=mgs.element.blue_spawn] run tellraw @a[tag=mgs.map_editor] [[{"text":"","color":"gold"},"[",{"translate": "mgs"},"] "],{"translate": "mgs.blue_spawn_placed","color":"blue"}]
 execute if entity @s[tag=mgs.element.general_spawn] run tellraw @a[tag=mgs.map_editor] [[{"text":"","color":"gold"},"[",{"translate": "mgs"},"] "],{"translate": "mgs.general_spawn_placed","color":"yellow"}]

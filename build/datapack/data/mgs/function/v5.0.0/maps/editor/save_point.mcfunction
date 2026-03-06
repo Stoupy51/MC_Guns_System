@@ -3,15 +3,16 @@
 #
 # @executed	as @e[tag=...] & at @s
 #
-# @within	mgs:v5.0.0/maps/editor/save_exit {path:"boundaries"} [ as @e[tag=...] & at @s ]
-#			mgs:v5.0.0/maps/editor/save_exit {path:"out_of_bounds"} [ as @e[tag=...] & at @s ]
-#			mgs:v5.0.0/maps/editor/save_exit {path:"search_and_destroy"} [ as @e[tag=...] & at @s ]
-#			mgs:v5.0.0/maps/editor/save_exit {path:"domination"} [ as @e[tag=...] & at @s ]
-#			mgs:v5.0.0/maps/editor/save_exit {path:"hardpoint"} [ as @e[tag=...] & at @s ]
+# @within	mgs:v5.0.0/maps/editor/save_lists/multiplayer {path:"out_of_bounds"} [ as @e[tag=...] & at @s ]
+#			mgs:v5.0.0/maps/editor/save_lists/multiplayer {path:"boundaries"} [ as @e[tag=...] & at @s ]
+#			mgs:v5.0.0/maps/editor/save_lists/multiplayer {path:"search_and_destroy"} [ as @e[tag=...] & at @s ]
+#			mgs:v5.0.0/maps/editor/save_lists/multiplayer {path:"domination"} [ as @e[tag=...] & at @s ]
+#			mgs:v5.0.0/maps/editor/save_lists/multiplayer {path:"hardpoint"} [ as @e[tag=...] & at @s ]
 #
 # @args		path (string)
 #
 
+# @s = marker entity, at its position
 # Get absolute position
 execute store result score #ax mgs.data run data get entity @s Pos[0]
 execute store result score #ay mgs.data run data get entity @s Pos[1]

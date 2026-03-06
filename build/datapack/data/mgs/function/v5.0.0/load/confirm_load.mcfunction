@@ -489,4 +489,10 @@ execute unless data storage mgs:maps multiplayer run data modify storage mgs:map
 # Map editor scoreboards
 scoreboard objectives add mgs.mp.map_edit dummy
 scoreboard objectives add mgs.mp.map_idx dummy
+scoreboard objectives add mgs.mp.map_mode dummy
+
+# Initialize maps storage for all modes
+execute unless data storage mgs:maps multiplayer run data modify storage mgs:maps multiplayer set value []
+execute unless data storage mgs:maps zombies run data modify storage mgs:maps zombies set value []
+execute unless data storage mgs:maps missions run data modify storage mgs:maps missions set value []
 

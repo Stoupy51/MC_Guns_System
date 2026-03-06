@@ -4,7 +4,6 @@ from .game import generate_game
 from .gamemodes import generate_gamemodes
 from .loadout import generate_loadouts
 from .loadouts import generate_class_selection, generate_custom_loadouts
-from .map_editor import generate_map_editor
 from .maps import generate_maps
 from .menus import generate_menus
 from .teams import generate_teams
@@ -18,6 +17,5 @@ def main() -> None:
 	generate_class_selection()
 	generate_custom_loadouts()
 	generate_maps()
-	generate_map_editor()
 	generate_menus()
 

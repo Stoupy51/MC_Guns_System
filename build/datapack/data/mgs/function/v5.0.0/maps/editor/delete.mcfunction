@@ -3,13 +3,13 @@
 #
 # @within	???
 #
-# @args		idx (unknown)
+# @args		mode (unknown)
+#			idx (unknown)
 #
 
-# Delete map at given index (called via /function with {idx:N})
-$data remove storage mgs:maps multiplayer[$(idx)]
+$data remove storage mgs:maps $(mode)[$(idx)]
 tellraw @s [[{"text":"","color":"gold"},"[",{"translate": "mgs"},"] "],{"translate": "mgs.map_deleted","color":"red"}]
 
-# Refresh menu
-function mgs:v5.0.0/maps/editor/menu
+# Refresh menu for the same mode
+$function mgs:v5.0.0/maps/editor/list/$(mode)
 

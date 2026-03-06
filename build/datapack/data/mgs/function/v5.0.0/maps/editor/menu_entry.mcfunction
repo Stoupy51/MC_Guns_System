@@ -1,14 +1,16 @@
 
 #> mgs:v5.0.0/maps/editor/menu_entry
 #
-# @within	mgs:v5.0.0/maps/editor/menu
+# @within	mgs:v5.0.0/maps/editor/list/multiplayer
+#			mgs:v5.0.0/maps/editor/list/zombies
+#			mgs:v5.0.0/maps/editor/list/missions
 #			mgs:v5.0.0/maps/editor/menu_entry
 #
 
 # Read current map name and id
 data modify storage mgs:temp map_menu.current set from storage mgs:temp map_menu.list[0]
 
-# Flatten fields for macro (macro vars can't contain dots)
+# Flatten fields for macro
 data modify storage mgs:temp map_menu.name set from storage mgs:temp map_menu.current.name
 data modify storage mgs:temp map_menu.id set from storage mgs:temp map_menu.current.id
 

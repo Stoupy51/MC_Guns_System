@@ -6,7 +6,8 @@
 # @args		name (unknown)
 #			id (unknown)
 #			idx (unknown)
+#			mode (unknown)
 #
 
-$tellraw @s ["  ",{"text":"$(name)","color":"white"},{"text":" ($(id))","color":"gray"},{"text":" "},[{"text":"[","color":"yellow","click_event":{"action":"run_command","command":"/function mgs:v5.0.0/maps/editor/enter {idx:$(idx)}"},"hover_event":{"action":"show_text","value":"Edit this map"}},{"translate": "mgs.edit"},"]"],{"text":" "},[{"text":"[","color":"red","click_event":{"action":"run_command","command":"/function mgs:v5.0.0/maps/editor/delete {idx:$(idx)}"},"hover_event":{"action":"show_text","value":"Delete this map"}},{"translate": "mgs.delete"},"]"]]
+$tellraw @s ["  ",{"text":"$(name)","color":"white"},{"text":" ($(id))","color":"gray"},{"text":" "},[{"text":"[","color":"yellow","click_event":{"action":"run_command","command":"/function mgs:v5.0.0/maps/editor/enter {idx:$(idx),mode:$(mode)}"},"hover_event":{"action":"show_text","value":"Edit this map"}},{"translate": "mgs.edit"},"]"],{"text":" "},[{"text":"[","color":"red","click_event":{"action":"run_command","command":"/function mgs:v5.0.0/maps/editor/delete {idx:$(idx),mode:$(mode)}"},"hover_event":{"action":"show_text","value":"Delete this map"}},{"translate": "mgs.delete"},"]"]]
 
