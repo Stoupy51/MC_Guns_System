@@ -14,3 +14,6 @@ execute unless data storage mgs:multiplayer game{gamemode:"ffa"} as @a[scores={m
 # Players with no team: use general spawns
 execute unless data storage mgs:multiplayer game{gamemode:"ffa"} as @a[scores={mgs.mp.in_game=1,mgs.mp.team=0}] at @s run function mgs:v5.0.0/multiplayer/pick_spawn {type:"general"}
 
+# Clean up used spawn markers
+tag @e[tag=mgs.spawn_used] remove mgs.spawn_used
+

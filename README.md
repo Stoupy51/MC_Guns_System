@@ -10,10 +10,17 @@ Credits for resources: MGS 4.2 by TheBradqq
 # TODO:
 Fixes:
 - On game start, red and blue spawns should be assigned an ID and when we place players the first player to place will place on ID 1, then the second one 2, etc. to avoid starting the game on the SAME spawn point as someone else (unless there are more players than spawn points)
+- Refactor map editor:
+  - Currently it's only for multiplayer, but it should be usable for "missions" and "zombies" as well.
+  - We need to make the map editor more generic and move the files in proper subdirectories (.py and generated .mcfunction)
+  - The destroy egg should be hotbar.8 and we'll add a new item in hotbar.7 that when right clicking with it it changes our inventory editor loadout with this order: Multiplayer > Missions > Zombies > Multiplayer > ...
+  - For now zombies just make a "zombies spawn" point
+  - For missions we can have 2 types of points: "mission spawn" and "level 1 enemy", "level 2 enemy", ... "level 4 enemy" (for now)
+    - Level 1 enemy will default to "pillager" in the storage but would be possible to edit (along with its weapon, and hp).
+    - Also add a "config" egg that will open chat with how to modify entity's things
 
 - Compatibility & Developement:
   - Multiplayer mode:
-    - Item in hotbar.4 to change class (on right click it opens the class selection menu)
     - Final Kill Cam:
       - Starting 10 seconds before the end of the game, we record every player's position and rotation every tick in a list (with a max size of 200 ticks, so 10 seconds at 20 ticks per second) (storage {ns}:kill_cam players set value {username:[[x,y,z,yaw,pitch],[x,y,z,yaw,pitch],...]},username_2...})
   - Add a whole zombies mode (mgs:zombies/*):

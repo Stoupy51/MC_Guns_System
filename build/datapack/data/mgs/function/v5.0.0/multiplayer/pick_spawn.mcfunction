@@ -25,13 +25,13 @@ execute if score @s mgs.mp.team matches 2 run tag @a[scores={mgs.mp.in_game=1,mg
 # Never count self as an enemy
 tag @s remove mgs.spawn_enemy
 
-# Tag candidate spawn markers of the right type
-$tag @e[tag=mgs.spawn_point,tag=mgs.spawn_$(type)] add mgs.spawn_candidate
+# Tag candidate spawn markers of the right type (exclude already-used spawns)
+$tag @e[tag=mgs.spawn_point,tag=mgs.spawn_$(type),tag=!mgs.spawn_used] add mgs.spawn_candidate
 
 # Remove candidates that have an enemy player within 5 blocks
 execute as @e[tag=mgs.spawn_candidate] at @s if entity @a[tag=mgs.spawn_enemy,distance=..5] run tag @s remove mgs.spawn_candidate
 
-# If all were removed (all spawns contested), re-tag all as candidates
+# If all were removed (all spawns used or contested), re-tag all as candidates
 $execute unless entity @e[tag=mgs.spawn_candidate] run tag @e[tag=mgs.spawn_point,tag=mgs.spawn_$(type)] add mgs.spawn_candidate
 
 # If no enemies, pick random candidate directly (skip expensive distance calc)
