@@ -31,8 +31,7 @@ execute unless data storage {ns}:maps multiplayer[{{id:"hijacked"}}] run data mo
 """, tags=[f"{ns}:maps/register"])  # noqa: E501
 
 	## Dynamic Map Registration (macro)
-	write_versioned_function("maps/multiplayer/register_map",
-f"""
+	write_versioned_function("maps/multiplayer/register_map", f"""
 # Append map from {ns}:input multiplayer.map to the maps list
 # Expected format: {{id:"id", name:"Name", description:"Desc", base_coordinates:[x,y,z],
 #   boundaries:[], spawning_points:{{red:[], blue:[], general:[]}},

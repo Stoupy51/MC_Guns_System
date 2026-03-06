@@ -33,8 +33,7 @@ def main() -> None:
     Mem.ctx.data[ns].advancements[f"v{version}/right_click"] = set_json_encoder(Advancement(adv), max_level=-1)
 
     # Function to set pending clicks
-    write_versioned_function("player/set_pending_clicks",
-f"""
+    write_versioned_function("player/set_pending_clicks", f"""
 # Revoke advancement
 advancement revoke @s only {ns}:v{version}/right_click
 
@@ -56,8 +55,7 @@ execute unless score #is_mid_burst {ns}.data matches 1 run scoreboard players se
 """)
 
     # Check if burst is mid-progress (not complete)
-    write_versioned_function("player/check_mid_burst",
-f"""
+    write_versioned_function("player/check_mid_burst", f"""
 # Get burst limit
 execute store result score #burst_limit {ns}.data run data get storage {ns}:gun all.stats.{BURST}
 
@@ -66,8 +64,7 @@ execute if score @s {ns}.burst_count < #burst_limit {ns}.data run scoreboard pla
 """)
 
     # Copy gun data function
-    write_versioned_function("utils/copy_gun_data",
-f"""
+    write_versioned_function("utils/copy_gun_data", f"""
 # Copy gun data
 data remove storage {ns}:gun all
 data modify storage {ns}:gun SelectedItem set value {{id:""}}
@@ -76,8 +73,7 @@ data modify storage {ns}:gun all set from storage {ns}:gun SelectedItem.componen
 """)
 
     # Player tick function
-    write_versioned_function("player/tick",
-f"""
+    write_versioned_function("player/tick", f"""
 # Add temporary tag
 tag @s add {ns}.ticking
 
@@ -145,8 +141,7 @@ execute store result score @s {ns}.previous_selected run data get storage {ns}:g
 """)
 
     # Handle pending clicks
-    write_versioned_function("player/right_click",
-f"""
+    write_versioned_function("player/right_click", f"""
 # Decrease pending clicks by 1
 scoreboard players remove @s {ns}.pending_clicks 1
 
@@ -180,15 +175,13 @@ $item modify entity @s weapon.mainhand {"function": "minecraft:set_components","
 """)
 
     # Offhand swap now toggles fire mode (swap -> toggle)
-    write_versioned_function("player/mode_check",
-f"""
+    write_versioned_function("player/mode_check", f"""
 # If mainhand is empty and offhand has a weapon, move it to mainhand and toggle fire mode
 execute unless items entity @s weapon.mainhand * if items entity @s weapon.offhand *[custom_data~{{{ns}:{{gun:true}}}}] run function {ns}:v{version}/player/swap_and_toggle
 """)
 
     # Swap offhand to mainhand and toggle fire mode
-    write_versioned_function("player/swap_and_toggle",
-f"""
+    write_versioned_function("player/swap_and_toggle", f"""
 # Move offhand item to mainhand
 item replace entity @s weapon.mainhand from entity @s weapon.offhand
 item replace entity @s weapon.offhand with air
@@ -198,8 +191,7 @@ function {ns}:v{version}/switch/do_toggle_fire_mode
 """)
 
     # Reset burst count only if burst is complete
-    write_versioned_function("player/reset_burst_if_complete",
-f"""
+    write_versioned_function("player/reset_burst_if_complete", f"""
 # Check if in burst mode
 execute store result score #fire_mode_is_burst {ns}.data if data storage {ns}:gun all.stats{{fire_mode:"burst"}}
 
@@ -213,8 +205,7 @@ execute if score @s {ns}.burst_count >= #burst_limit {ns}.data run scoreboard pl
 """)
 
     # DPS snapshot: copy accumulated damage to previous_dps, then reset
-    write_versioned_function("player/dps_snapshot",
-f"""
+    write_versioned_function("player/dps_snapshot", f"""
 # Snapshot current DPS accumulator and reset for the next second
 scoreboard players operation @s {ns}.previous_dps = @s {ns}.dps
 scoreboard players set @s {ns}.dps 0
@@ -224,8 +215,7 @@ scoreboard players set @s {ns}.dps_timer 0
     # DPS signal: damage - add actual damage dealt to the shooter's mgs.dps
     # @s = hit entity, the shooter is the ticking player (has mgs.ticking tag)
     # $(amount) is the damage float from the damage signal macro (e.g. 24.0)
-    write_versioned_function("weapon/dps_collect",
-f"""
+    write_versioned_function("weapon/dps_collect", f"""
 # @s = hit entity; add damage (x10) to the shooter's DPS accumulator
 # Store $(amount) float then read back x10 to get integer tenths (same unit as dps accumulator)
 $data modify storage {ns}:temp dps_amount set value $(amount)

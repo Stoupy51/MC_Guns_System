@@ -11,8 +11,7 @@ def main() -> None:
     version: str = Mem.ctx.project_version
 
     # Main actionbar display function
-    write_versioned_function("actionbar/show",
-f"""
+    write_versioned_function("actionbar/show", f"""
 # Initialize actionbar with fire mode indicator
 function {ns}:v{version}/actionbar/build_fire_mode_indicator
 
@@ -35,8 +34,7 @@ function {ns}:v{version}/actionbar/display with storage {ns}:temp actionbar
 """)
 
     # Build fire mode indicator: [S | B | A]
-    write_versioned_function("actionbar/build_fire_mode_indicator",
-f"""
+    write_versioned_function("actionbar/build_fire_mode_indicator", f"""
 # Initialize actionbar list
 data modify storage {ns}:temp actionbar set value {{list:[]}}
 
@@ -77,8 +75,7 @@ data modify storage {ns}:temp actionbar.list append value {{"text":" ]    ","col
 """)  # noqa: E501
 
     # Add numeric ammo display (for capacity > 15): shows "remaining | reserve"
-    write_versioned_function("actionbar/add_numeric_ammo",
-f"""
+    write_versioned_function("actionbar/add_numeric_ammo", f"""
 data modify storage {ns}:temp actionbar.list append value {{"score":{{"name":"#remaining","objective":"{ns}.data"}}}}
 data modify storage {ns}:temp actionbar.list append value {{"text":"x "}}
 data modify storage {ns}:temp actionbar.list append value {{"text":"A","font":"{ns}:icons","shadow_color":[0,0,0,0],"color":"white"}}
@@ -91,8 +88,7 @@ data modify storage {ns}:temp actionbar.list append value {{"text":"A","font":"{
 """)
 
     # Add icon ammo display (for capacity <= 15): bullet icons + reserve count
-    write_versioned_function("actionbar/add_icon_ammo",
-f"""
+    write_versioned_function("actionbar/add_icon_ammo", f"""
 # Build icons recursively
 scoreboard players set #i {ns}.data 0
 execute if score #i {ns}.data < #capacity {ns}.data run function {ns}:v{version}/actionbar/build_icon_loop
@@ -106,8 +102,7 @@ data modify storage {ns}:temp actionbar.list append value {{"text":"A","font":"{
 """)
 
     # Build actionbar icons recursively
-    write_versioned_function("actionbar/build_icon_loop",
-f"""
+    write_versioned_function("actionbar/build_icon_loop", f"""
 # Append bullet icon (full by default)
 data modify storage {ns}:temp actionbar.list append value {{"text":"A","font":"{ns}:icons","shadow_color":[0,0,0,0]}}
 
@@ -125,8 +120,7 @@ execute if score #i {ns}.data < #capacity {ns}.data run function {ns}:v{version}
     write_versioned_function("actionbar/display", r"$title @s actionbar $(list)")
 
     # Add DPS display: reads mgs.previous_dps (real-time collected damage per second)
-    write_versioned_function("actionbar/add_dps",
-f"""
+    write_versioned_function("actionbar/add_dps", f"""
 # Get collected DPS (accumulated damage*10 per second, snapshotted every 20 ticks)
 execute store result score #dps_raw {ns}.data run scoreboard players get @s {ns}.previous_dps
 

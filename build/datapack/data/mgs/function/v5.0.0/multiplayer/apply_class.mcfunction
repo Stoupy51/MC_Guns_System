@@ -1,9 +1,9 @@
 
 #> mgs:v5.0.0/multiplayer/apply_class
 #
-# @executed	as @a & at @s
+# @executed	at @s
 #
-# @within	mgs:v5.0.0/multiplayer/start [ as @a & at @s ]
+# @within	mgs:v5.0.0/multiplayer/start [ at @s ]
 #			mgs:v5.0.0/multiplayer/prep_tick [ at @s ]
 #			mgs:v5.0.0/multiplayer/gamemodes/snd/start_round [ as @a[scores={mgs.mp.team=1..2}] & at @s ]
 #			mgs:v5.0.0/multiplayer/on_respawn

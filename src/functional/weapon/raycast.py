@@ -25,8 +25,7 @@ def main() -> None:
     version: str = Mem.ctx.project_version
 
     # Handle pending clicks
-    write_versioned_function("player/right_click",
-f"""
+    write_versioned_function("player/right_click", f"""
 # Determine number of bullets to fire based on fire mode and held-click state
 scoreboard players set #bullets_to_fire {ns}.data 1
 
@@ -62,8 +61,7 @@ function #{ns}:signals/on_shoot
 """)
 
     # Fire weapon routing: grenade vs projectile vs hitscan
-    write_versioned_function("player/fire_weapon",
-f"""
+    write_versioned_function("player/fire_weapon", f"""
 # For weapons with pellet count, set bullets_to_fire appropriately
 execute if data storage {ns}:gun all.stats.{PELLET_COUNT} store result score #bullets_to_fire {ns}.data run data get storage {ns}:gun all.stats.{PELLET_COUNT}
 
@@ -78,8 +76,7 @@ function {ns}:v{version}/player/shoot
 """)
 
     # Initialize burst mode pending clicks
-    write_versioned_function("player/init_burst_clicks",
-f"""
+    write_versioned_function("player/init_burst_clicks", f"""
 # Calculate (BURST - 1) * COOLDOWN
 execute store result score #burst_clicks {ns}.data run data get storage {ns}:gun all.stats.{BURST}
 scoreboard players remove #burst_clicks {ns}.data 1
@@ -91,10 +88,12 @@ scoreboard players operation @s {ns}.pending_clicks = #burst_clicks {ns}.data
 """)
 
     # Handle pending clicks
-    write_versioned_function("player/shoot",
-f"""
+    write_versioned_function("player/shoot", f"""
 # Check which type of movement the player is doing
 function {ns}:v{version}/raycast/accuracy/get_value
+
+# Launch cloud particle forward
+execute anchored eyes positioned ^ ^ ^2 run particle minecraft:cloud ~ ~ ~ ^ ^ ^1000000000 0.00000002 0 force @a[distance=..32]
 
 # Shoot with raycast
 tag @s add bs.raycast.omit
@@ -107,8 +106,7 @@ execute if score #bullets_to_fire {ns}.data matches 1.. run function {ns}:v{vers
 """)
 
     # Handle pending clicks
-    write_versioned_function("raycast/main",
-f"""
+    write_versioned_function("raycast/main", f"""
 # Copy damage to temp storage to avoid modifying original for multiple pellets
 data modify storage {ns}:temp damage set from storage {ns}:gun all.stats.{DAMAGE}
 
@@ -147,8 +145,7 @@ kill @s
 """)
 
     # On hit point
-    write_versioned_function("raycast/on_hit_point",
-f"""
+    write_versioned_function("raycast/on_hit_point", f"""
 # If targeted entity, return to prevent showing particles
 # (last_callback = 0 for on_hit_point, 1 for on_targeted_block, 2 for on_targeted_entity)
 execute if score #last_callback {ns}.data matches 2 run return run scoreboard players set #last_callback {ns}.data 0
@@ -175,8 +172,7 @@ execute if score #next_air_particle {ns}.data matches 3.. run scoreboard players
     write_versioned_function("raycast/air_particles", r"""$particle $(block) $(x) $(y) $(z) 0 0 0 0 1 force @a[distance=..128]""")
 
     # On targeted block
-    write_versioned_function("raycast/on_targeted_block",
-f"""
+    write_versioned_function("raycast/on_targeted_block", f"""
 # Get current block (https://docs.mcbookshelf.dev/en/latest/modules/block.html#get)
 scoreboard players set #last_callback {ns}.data 1
 scoreboard players set #is_water {ns}.data 0
@@ -244,8 +240,7 @@ execute if score #played_soft {ns}.data matches 0 store success score #played_so
 """)  # noqa: E501
 
     # Apply block hardness-based damage reduction (called from on_targeted_block, #hardness already set)
-    write_versioned_function("raycast/apply_block_hardness",
-f"""
+    write_versioned_function("raycast/apply_block_hardness", f"""
 #tellraw @a[distance=..128] [{{"text":"Hardness: ","color":"gray","extra":[{{"score":{{"name":"#hardness","objective":"{ns}.data"}},"color":"white"}}]}},{{"text":" $raycast.piercing bs.lambda: ","color":"gray","extra":[{{"score":{{"name":"$raycast.piercing","objective":"bs.lambda"}},"color":"white"}}]}}]
 
 # Calculate damage reduction: reduction = hardness * 400 / 1000, capped at 950
@@ -265,8 +260,7 @@ execute store result storage {ns}:temp damage float 0.001 run scoreboard players
 """)  # noqa: E501
 
     # On targeted entity
-    write_versioned_function("raycast/on_targeted_entity",
-f"""
+    write_versioned_function("raycast/on_targeted_entity", f"""
 # Blood particles
 scoreboard players set #last_callback {ns}.data 2
 particle block{{block_state:"redstone_wire"}} ~ ~1 ~ 0.35 0.5 0.35 0 100 force @a[distance=..128]
@@ -301,8 +295,7 @@ execute unless entity @s as @n[tag={ns}.ticking] run function #{ns}:signals/on_k
 """)
 
     # Apply decay using `damage *= pow(decay, distance / 10)`
-    write_versioned_function("raycast/apply_decay",
-f"""
+    write_versioned_function("raycast/apply_decay", f"""
 ## Apply decay using `damage *= pow(decay, distance / 10)`
 # Get decay into x
 data modify storage bs:in math.pow.x set from storage {ns}:gun all.stats.{DECAY}
@@ -324,8 +317,7 @@ scoreboard players operation #damage {ns}.data /= #1000000 {ns}.data
 """)
 
     # Check if hit is a headshot and adjust damage accordingly
-    write_versioned_function("raycast/check_headshot",
-f"""
+    write_versioned_function("raycast/check_headshot", f"""
 scoreboard players set #is_headshot {ns}.data 0
 execute store result score #entity_y {ns}.data run data get entity @s Pos[1] 1000
 execute store result score #hit_y {ns}.data run data get storage bs:lambda raycast.hit_point[1] 1000
@@ -338,8 +330,7 @@ execute unless score #is_headshot {ns}.data matches 1 run scoreboard players ope
 
     ## Accuracy
     # Get values
-    write_versioned_function("raycast/accuracy/get_value",
-f"""
+    write_versioned_function("raycast/accuracy/get_value", f"""
 ## Order is important: Sneak+Air=Walk > Jump > Sneak > Sprint > Walk > Base
 data remove storage {ns}:gun accuracy
 
@@ -363,8 +354,7 @@ data modify storage {ns}:gun accuracy set from storage {ns}:gun all.stats.{ACCUR
 """)
 
     # Apply random rotation spread
-    write_versioned_function("raycast/accuracy/apply_spread",
-f"""
+    write_versioned_function("raycast/accuracy/apply_spread", f"""
 # Get random uniform rotation spread (https://docs.mcbookshelf.dev/en/latest/modules/random.html#random-distributions)
 data modify storage {ns}:input with set value {{}}
 execute store result storage {ns}:input with.min int -1 run data get storage {ns}:gun accuracy

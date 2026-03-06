@@ -22,8 +22,7 @@ scoreboard objectives add {ns}.mob.sleep_time dummy
 """)
 
     ## Mob tick function
-    write_versioned_function("mob/tick",
-f"""
+    write_versioned_function("mob/tick", f"""
 # Initialize mob if not yet initialized
 execute unless entity @s[tag={ns}.mob_init] run function {ns}:v{version}/mob/init
 
@@ -72,8 +71,7 @@ tag @s remove {ns}.ticking
 """)
 
     ## Initialize a newly tagged armed mob
-    write_versioned_function("mob/init",
-f"""
+    write_versioned_function("mob/init", f"""
 # Mark as initialized
 tag @s add {ns}.mob_init
 
@@ -91,32 +89,28 @@ function {ns}:v{version}/mob/wake_up
 """)
 
     ## Transition from sleeping to active phase
-    write_versioned_function("mob/wake_up",
-f"""
+    write_versioned_function("mob/wake_up", f"""
 # Remove sleeping tag and set timer to active duration
 tag @s remove {ns}.mob_sleeping
 scoreboard players operation @s {ns}.mob.timer = @s {ns}.mob.active_time
 """)
 
     ## Transition from active to sleeping phase
-    write_versioned_function("mob/go_sleep",
-f"""
+    write_versioned_function("mob/go_sleep", f"""
 # Add sleeping tag and set timer to sleep duration
 tag @s add {ns}.mob_sleeping
 scoreboard players operation @s {ns}.mob.timer = @s {ns}.mob.sleep_time
 """)
 
     ## Copy gun data from mob's equipment mainhand to shared storage
-    write_versioned_function("mob/copy_gun_data",
-f"""
+    write_versioned_function("mob/copy_gun_data", f"""
 # Copy gun data from equipment mainhand
 data remove storage {ns}:gun all
 data modify storage {ns}:gun all set from entity @s equipment.mainhand.components."minecraft:custom_data".{ns}
 """)
 
     ## Fire weapon routing
-    write_versioned_function("mob/fire_weapon",
-f"""
+    write_versioned_function("mob/fire_weapon", f"""
 # Rotate to face the target eyes
 rotate @s facing entity @n[tag={ns}.target] eyes
 
@@ -146,8 +140,7 @@ function #{ns}:signals/on_shoot
 """)
 
     ## Mob shoot function
-    write_versioned_function("mob/shoot",
-f"""
+    write_versioned_function("mob/shoot", f"""
 # Set accuracy (mobs use base accuracy)
 data modify storage {ns}:gun accuracy set from storage {ns}:gun all.stats.{ACCURACY_BASE}
 
@@ -162,8 +155,7 @@ execute if score #bullets_to_fire {ns}.data matches 1.. run function {ns}:v{vers
 """)
 
     ## Fire sound for mobs
-    write_versioned_function("mob/fire_sound",
-f"""
+    write_versioned_function("mob/fire_sound", f"""
 $playsound {ns}:$(fire) player @a[distance=..48] ~ ~ ~ 0.75
 """)
 
@@ -176,8 +168,7 @@ execute if score #armed_mob_count {ns}.data matches 1.. as @e[tag={ns}.armed] at
 
     ## Simple example functions
     for level, active, sleep in [(1, 50, 100), (2, 50, 50), (3, 60, 20), (4, 72000, 1)]:
-        write_versioned_function(f"mob/example/level_{level}",
-f"""
+        write_versioned_function(f"mob/example/level_{level}", f"""
 # Summon entity with armed tag and custom name
 $summon $(entity) ~ ~ ~ {{"Tags":["{ns}.armed","{ns}.new"],"CustomName":{{"text":"Armed $(entity) [Lv.{level}]","color":"red"}}}}
 

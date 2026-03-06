@@ -1,7 +1,7 @@
 
 #> mgs:v5.0.0/maps/editor/enter
 #
-# @within	mgs:v5.0.0/maps/editor/menu_entry_display {idx:$(idx)}"},"hover_event":{"action":"show_text","value":"Edit this map"}},{"text":" "},{"translate": "mgs.delete","color":"red","click_event":{"action":"run_command","command":"/function mgs:v5.0.0/maps/editor/delete {idx:$(idx)}"},"hover_event":{"action":"show_text","value":"Delete this map"}}]
+# @within	mgs:v5.0.0/maps/editor/menu_entry_display {idx:$(idx)}"},"hover_event":{"action":"show_text","value":"Edit this map"}},{"text":" "},{"text":"[Delete]","color":"red","click_event":{"action":"run_command","command":"/function mgs:v5.0.0/maps/editor/delete {idx:$(idx)}"},"hover_event":{"action":"show_text","value":"Delete this map"}}]
 #
 # @args		idx (unknown)
 #

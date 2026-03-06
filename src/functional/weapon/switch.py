@@ -13,8 +13,7 @@ def main() -> None:
     version: str = Mem.ctx.project_version
 
     # Weapon switching main function
-    write_versioned_function("switch/main",
-f"""
+    write_versioned_function("switch/main", f"""
 # Set weapon id if not done yet
 execute if data storage {ns}:gun all.gun unless data storage {ns}:gun all.stats.{WEAPON_ID} run function {ns}:v{version}/switch/set_weapon_id
 
@@ -28,8 +27,7 @@ scoreboard players operation @s {ns}.last_selected = #current_id {ns}.data
 """)
 
     # Set weapon id function and item modifier
-    write_versioned_function("switch/set_weapon_id",
-f"""
+    write_versioned_function("switch/set_weapon_id", f"""
 execute store result storage {ns}:gun all.stats.{WEAPON_ID} int 1 run scoreboard players add #next_id {ns}.data 1
 
 # Initialize fire mode to 'auto' if weapon supports it, otherwise 'semi'
@@ -40,8 +38,7 @@ item modify entity @s weapon.mainhand {ns}:v{version}/set_weapon_id
 """)
 
     # On weapon switch function
-    write_versioned_function("switch/on_weapon_switch",
-f"""
+    write_versioned_function("switch/on_weapon_switch", f"""
 # Apply weapon switch cooldown from stats
 execute store result score #cooldown {ns}.data run data get storage {ns}:gun all.stats.{SWITCH}
 
@@ -67,8 +64,7 @@ function #{ns}:signals/on_switch
 """)
 
     # Apply quick swap: reduce switch cooldown by quick_swap%
-    write_versioned_function("switch/apply_quick_swap",
-f"""
+    write_versioned_function("switch/apply_quick_swap", f"""
 # Calculate reduced cooldown: cooldown = cooldown * (100 - quick_swap%) / 100
 scoreboard players set #100 {ns}.data 100
 scoreboard players operation #reduction {ns}.data = #100 {ns}.data
@@ -80,8 +76,7 @@ scoreboard players operation #cooldown {ns}.data /= #100 {ns}.data
 execute if score #cooldown {ns}.data matches ..0 run scoreboard players set #cooldown {ns}.data 1
 """)
 
-    write_versioned_function("switch/force_switch_animation",
-f"""
+    write_versioned_function("switch/force_switch_animation", f"""
 # Stop if no weapon in hand
 execute unless data storage {ns}:gun all.gun run return fail
 
@@ -95,8 +90,7 @@ execute if score #current_length {ns}.data = @s {ns}.previous_selected unless sc
 """)  # noqa: E501
 
     # Sync attack speed with cooldown function
-    write_versioned_function("switch/sync_attack_speed_with_cooldown",
-f"""
+    write_versioned_function("switch/sync_attack_speed_with_cooldown", f"""
 ## Formula: [attack_speed = (20.0 / cooldown) - 4.0] <- where 4.0 is default attack speed
 # Compute attack speed based of @s {ns}.cooldown (with 3 digits precision)
 scoreboard players set #attack_speed {ns}.data 20000
@@ -110,8 +104,7 @@ tag @s remove {ns}.to_modify
 """)
 
     # Modify attack speed function
-    write_versioned_function("switch/modify_attack_speed",
-f"""
+    write_versioned_function("switch/modify_attack_speed", f"""
 # Copy weapon from player's mainhand slot to item_display entity
 item replace entity @s contents from entity @p[tag={ns}.to_modify] weapon.mainhand
 
@@ -133,16 +126,14 @@ kill @s
 
 
     # Check for reload (weapon drop)
-    write_versioned_function("switch/check_reload_on_drop",
-f"""
+    write_versioned_function("switch/check_reload_on_drop", f"""
 # Check if player dropped a weapon
 execute if score @s {ns}.dropped matches 1.. run function {ns}:v{version}/switch/reload_to_dropped_weapon
 scoreboard players reset @s {ns}.dropped
 """)
 
     # Reload dropped function
-    write_versioned_function("switch/reload_to_dropped_weapon",
-f"""
+    write_versioned_function("switch/reload_to_dropped_weapon", f"""
 # Find nearest dropped gun item and execute as it (only if mainhand is empty)
 tag @s add {ns}.to_reload
 execute unless items entity @s weapon.mainhand * as @n[type=item,distance=..3,nbt={{Item:{{components:{{"minecraft:custom_data":{{{ns}:{{gun:true}}}}}}}}}}] run function {ns}:v{version}/switch/weapon_back_to_mainhand
@@ -154,16 +145,14 @@ function {ns}:v{version}/utils/copy_gun_data
 # Reload
 function {ns}:v{version}/ammo/reload
 """)  # noqa: E501
-    write_versioned_function("switch/weapon_back_to_mainhand",
-f"""
+    write_versioned_function("switch/weapon_back_to_mainhand", f"""
 # Move reloaded item back to player's mainhand
 item replace entity @p[tag={ns}.to_reload] weapon.mainhand from entity @s contents
 kill @s
 """)
 
     # Do the actual toggle
-    write_versioned_function("switch/do_toggle_fire_mode",
-f"""
+    write_versioned_function("switch/do_toggle_fire_mode", f"""
 # Copy gun data & Get current fire mode
 function {ns}:v{version}/utils/copy_gun_data
 data modify storage {ns}:temp fire_mode set from storage {ns}:gun all.stats.{FIRE_MODE}

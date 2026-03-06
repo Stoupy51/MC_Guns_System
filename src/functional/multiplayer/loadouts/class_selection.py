@@ -26,8 +26,7 @@ scoreboard objectives add {ns}.mp.death_count deathCount
 	write_versioned_function("multiplayer/show_dialog", "$dialog show @s $(dialog)")
 
 	## build_class_btn: recursive - appends one action entry per class to the dialog
-	write_versioned_function("multiplayer/build_class_btn",
-f"""
+	write_versioned_function("multiplayer/build_class_btn", f"""
 # Build rich tooltip from current class data (includes mag counts and equipment)
 $data modify storage {ns}:temp _btn set value {{label:{{text:"$(name)",color:"green"}},tooltip:["",{{text:"$(lore)","color":"gray"}},{{"text":"\\n"}},{{"text":"Primary"}},": ",{{"text":"$(main_gun)","color":"green"}},{{"text":" x$(main_mag_count) mags","color":"dark_green"}},{{"text":"\\n"}},["",{{"text":"Secondary"}},": "],{{"text":"$(secondary_gun)","color":"yellow"}},{{"text":" x$(secondary_mag_count) mags","color":"gold"}},{{"text":"\\n"}},["",{{"text":"Grenades"}},": "],{{"text":"$(equip_display)","color":"aqua"}},"\\n\\n",{{"text":"\u25b6 Click to select","color":"dark_gray","italic":true}}],action:{{type:"run_command",command:"/trigger {ns}.player.config set $(trigger_value)"}}}}
 
@@ -40,8 +39,7 @@ execute if data storage {ns}:temp class_iter[0] run function {ns}:v{version}/mul
 """)
 
 	## select_class: builds the class selection dialog dynamically and shows it
-	write_versioned_function("multiplayer/select_class",
-f"""
+	write_versioned_function("multiplayer/select_class", f"""
 # Initialize dialog structure
 data modify storage {ns}:temp dialog set value {{type:"minecraft:multi_action",title:{{text:"Select Your Class",color:"gold",bold:true}},body:{{type:"minecraft:item",item:{{id:"minecraft:crossbow"}},description:{{contents:{{text:"Choose a class for multiplayer",color:"gray"}}}},show_decoration:false,show_tooltip:true}},actions:[],columns:2,after_action:"close",exit_action:{{label:"Cancel"}}}}
 
@@ -63,8 +61,7 @@ function {ns}:v{version}/multiplayer/show_dialog with storage {ns}:temp
 	## set_class macro: sets the class score and notifies player
 	## Called from trigger dispatch (trigger values 11-20 → class 1-10)
 	apply_now: str = f"""{{"text":" [✔]","color":"gold","hover_event":{{"action":"show_text","value":{{"text":"Click here to apply immediately (OP only)","color":"yellow"}}}},"click_event":{{"action":"run_command","command":"/function {ns}:v{version}/multiplayer/apply_class"}}}}"""
-	write_versioned_function("multiplayer/set_class",
-f"""
+	write_versioned_function("multiplayer/set_class", f"""
 $scoreboard players set @s {ns}.mp.class $(class_num)
 
 # If game active: queue for next respawn
@@ -95,8 +92,7 @@ function {ns}:v{version}/multiplayer/apply_class_dynamic
 	write_versioned_function("multiplayer/apply_class", apply_commands)
 
 	## apply_custom_class: find custom loadout by ID stored in mp.custom_class, then apply
-	write_versioned_function("multiplayer/apply_custom_class",
-f"""
+	write_versioned_function("multiplayer/apply_custom_class", f"""
 # Store target loadout ID (negate to get positive ID)
 scoreboard players operation #loadout_id {ns}.data = @s {ns}.mp.class
 scoreboard players operation #loadout_id {ns}.data *= #minus_one {ns}.data
@@ -109,8 +105,7 @@ execute if data storage {ns}:temp _find_iter[0] run function {ns}:v{version}/mul
 """)
 
 	## apply_custom_found - Recursive: find loadout by ID and apply it
-	write_versioned_function("multiplayer/apply_custom_found",
-f"""
+	write_versioned_function("multiplayer/apply_custom_found", f"""
 # Check if this entry's ID matches the target
 execute store result score #entry_id {ns}.data run data get storage {ns}:temp _find_iter[0].id
 execute if score #entry_id {ns}.data = #loadout_id {ns}.data run return run function {ns}:v{version}/multiplayer/apply_custom_match
@@ -121,8 +116,7 @@ execute if data storage {ns}:temp _find_iter[0] run function {ns}:v{version}/mul
 """)
 
 	## apply_custom_match - Apply the found loadout (slots + perks)
-	write_versioned_function("multiplayer/apply_custom_match",
-f"""
+	write_versioned_function("multiplayer/apply_custom_match", f"""
 # Copy found loadout's slots to the format expected by apply_class_dynamic
 data modify storage {ns}:temp current_class set value {{slots:[]}}
 data modify storage {ns}:temp current_class.slots set from storage {ns}:temp _find_iter[0].slots
@@ -150,16 +144,12 @@ execute unless data storage {ns}:temp _cur_loadout{{perks:["instant_kill"]}} run
 """)
 
 	## On respawn (called from player tick when death detected)
-	write_versioned_function("multiplayer/on_respawn",
-f"""
+	write_versioned_function("multiplayer/on_respawn", f"""
 # Reset death counter
 scoreboard players set @s {ns}.mp.death_count 0
 
 # Increment death stats
 scoreboard players add @s {ns}.mp.deaths 1
-
-# Respawn protection (prevent OOB kill for a few ticks)
-scoreboard players set @s {ns}.mp.respawn_prot 5
 
 # Teleport to best spawn point
 function {ns}:v{version}/multiplayer/respawn_tp
@@ -170,8 +160,7 @@ execute unless score @s {ns}.mp.class matches 0 run function {ns}:v{version}/mul
 
 	## auto_apply_default: apply default custom loadout on game start
 	## Sets mp.class = -(mp.default) then applies
-	write_versioned_function("multiplayer/auto_apply_default",
-f"""
+	write_versioned_function("multiplayer/auto_apply_default", f"""
 # Set mp.class to negative default ID (custom loadout)
 scoreboard players operation @s {ns}.mp.class = @s {ns}.mp.default
 scoreboard players operation @s {ns}.mp.class *= #minus_one {ns}.data
@@ -181,8 +170,7 @@ function {ns}:v{version}/multiplayer/apply_class
 """)
 
 	## Player tick hooks
-	write_versioned_function("player/tick",
-f"""
+	write_versioned_function("player/tick", f"""
 # Multiplayer: detect respawn (death_count incremented by deathCount criterion)
 execute if data storage {ns}:multiplayer game{{state:"active"}} if score @s {ns}.mp.death_count matches 1.. run function {ns}:v{version}/multiplayer/on_respawn
 """)

@@ -10,6 +10,9 @@
 # Check which type of movement the player is doing
 function mgs:v5.0.0/raycast/accuracy/get_value
 
+# Launch cloud particle forward
+execute anchored eyes positioned ^ ^ ^2 run particle minecraft:cloud ~ ~ ~ ^ ^ ^1000000000 0.00000002 0 force @a[distance=..32]
+
 # Shoot with raycast
 tag @s add bs.raycast.omit
 execute anchored eyes positioned ^ ^ ^ summon marker run function mgs:v5.0.0/raycast/main

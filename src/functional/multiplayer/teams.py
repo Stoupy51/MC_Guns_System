@@ -8,22 +8,19 @@ def generate_teams() -> None:
 	version: str = Mem.ctx.project_version
 
 	## Join Teams
-	write_versioned_function("multiplayer/join_red",
-f"""
+	write_versioned_function("multiplayer/join_red", f"""
 scoreboard players set @s {ns}.mp.team 1
 team join {ns}.red @s
 tellraw @s ["",{{"text":"You joined ","color":"white"}},{{"text":"Red Team","color":"red","bold":true}}]
 """)
 
-	write_versioned_function("multiplayer/join_blue",
-f"""
+	write_versioned_function("multiplayer/join_blue", f"""
 scoreboard players set @s {ns}.mp.team 2
 team join {ns}.blue @s
 tellraw @s ["",{{"text":"You joined ","color":"white"}},{{"text":"Blue Team","color":"blue","bold":true}}]
 """)
 
-	write_versioned_function("multiplayer/auto_assign_team",
-f"""
+	write_versioned_function("multiplayer/auto_assign_team", f"""
 # Count players on each team
 execute store result score #red_count {ns}.data if entity @a[scores={{{ns}.mp.team=1}}]
 execute store result score #blue_count {ns}.data if entity @a[scores={{{ns}.mp.team=2}}]

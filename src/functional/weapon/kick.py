@@ -11,15 +11,13 @@ def main() -> None:
     version: str = Mem.ctx.project_version
 
     # Handle pending clicks
-    write_versioned_function("player/right_click",
-f"""
+    write_versioned_function("player/right_click", f"""
 # Simulate weapon kick
 function {ns}:v{version}/kicks/main
 """)
 
     ## Kicks
-    write_versioned_function("kicks/main",
-f"""
+    write_versioned_function("kicks/main", f"""
 # Extract kick type & pick random value between 1 and 5
 scoreboard players set #kick {ns}.data 0
 execute store result score #kick {ns}.data run data get storage {ns}:gun all.stats.{KICK}

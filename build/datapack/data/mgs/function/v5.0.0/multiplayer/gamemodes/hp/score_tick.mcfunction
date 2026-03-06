@@ -6,11 +6,11 @@
 
 # Only score if one team exclusively holds the zone (not contested)
 # Red alone in zone
-execute if score #hp_red mgs.data matches 1.. unless score #hp_blue mgs.data matches 1.. at @e[tag=mgs.hp_corner] run playsound minecraft:block.note_block.bell player @a ~ ~ ~ 1 1.2
+execute if score #hp_red mgs.data matches 1.. unless score #hp_blue mgs.data matches 1.. at @e[tag=mgs.hp_marker] run playsound minecraft:block.note_block.bell player @a ~ ~ ~ 1 1.2
 execute if score #hp_red mgs.data matches 1.. unless score #hp_blue mgs.data matches 1.. run scoreboard players add #red mgs.mp.team 1
 
 # Blue alone in zone
-execute if score #hp_blue mgs.data matches 1.. unless score #hp_red mgs.data matches 1.. at @e[tag=mgs.hp_corner] run playsound minecraft:block.note_block.bell player @a ~ ~ ~ 1 1.2
+execute if score #hp_blue mgs.data matches 1.. unless score #hp_red mgs.data matches 1.. at @e[tag=mgs.hp_marker] run playsound minecraft:block.note_block.bell player @a ~ ~ ~ 1 1.2
 execute if score #hp_blue mgs.data matches 1.. unless score #hp_red mgs.data matches 1.. run scoreboard players add #blue mgs.mp.team 1
 
 # Check win

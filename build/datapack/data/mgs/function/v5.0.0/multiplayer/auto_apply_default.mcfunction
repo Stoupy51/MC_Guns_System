@@ -1,9 +1,9 @@
 
 #> mgs:v5.0.0/multiplayer/auto_apply_default
 #
-# @executed	as @a & at @s
+# @executed	at @s
 #
-# @within	mgs:v5.0.0/multiplayer/start [ as @a & at @s ]
+# @within	mgs:v5.0.0/multiplayer/start [ at @s ]
 #
 
 # Set mp.class to negative default ID (custom loadout)

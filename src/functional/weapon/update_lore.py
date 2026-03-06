@@ -56,8 +56,7 @@ def main() -> None:
 
 	# Main entry point: utils/update_all_lore {slot:"weapon.mainhand"}
 	# Rebuilds ALL lore lines from the weapon's current stats in custom_data
-	write_versioned_function("utils/update_all_lore",
-f"""
+	write_versioned_function("utils/update_all_lore", f"""
 # Rebuild all lore lines for the weapon in the given slot from its current stats
 # Usage: function {ns}:v{version}/utils/update_all_lore {{slot:"weapon.mainhand"}}
 
@@ -89,8 +88,7 @@ tag @s remove {ns}.update_lore
 
 	# Extract all stats from item into scores
 	cd: str = f'"minecraft:custom_data".{ns}.stats'
-	write_versioned_function("lore/extract_stats",
-f"""
+	write_versioned_function("lore/extract_stats", f"""
 # Copy item from player to item_display
 $item replace entity @s contents from entity @p[tag={ns}.update_lore] $(slot)
 
@@ -130,8 +128,7 @@ kill @s
 """)
 
 	# Compute formatted display values from raw scores
-	write_versioned_function("lore/compute_values",
-f"""
+	write_versioned_function("lore/compute_values", f"""
 # Initialize input storage for macro functions
 data modify storage {ns}:input lore set value {{}}
 
@@ -204,8 +201,7 @@ execute if data storage {ns}:temp {{grenade_type:"flash"}} run data modify stora
 """)
 
 	# Build gun lore (macro function, called with storage mgs:input lore)
-	write_versioned_function("lore/build_gun",
-f"""
+	write_versioned_function("lore/build_gun", f"""
 # Initialize new lore array
 data modify storage {ns}:temp new_lore set value []
 
@@ -254,16 +250,14 @@ data modify storage {ns}:temp new_lore append value ""
 """)
 
 	# Append pellet line (separate function for conditional execution)
-	write_versioned_function("lore/append_pellet_line",
-f"""
+	write_versioned_function("lore/append_pellet_line", f"""
 data modify storage {ns}:temp lore_line set from storage {ns}:lore_templates pellets
 $data modify storage {ns}:temp lore_line append value "$(pellets)"
 data modify storage {ns}:temp new_lore append from storage {ns}:temp lore_line
 """)
 
 	# Build grenade lore (macro function)
-	write_versioned_function("lore/build_grenade",
-f"""
+	write_versioned_function("lore/build_grenade", f"""
 # Initialize new lore array
 data modify storage {ns}:temp new_lore set value []
 
@@ -289,16 +283,14 @@ data modify storage {ns}:temp new_lore append value ""
 """)
 
 	# Append explosion damage line
-	write_versioned_function("lore/append_expl_damage",
-f"""
+	write_versioned_function("lore/append_expl_damage", f"""
 data modify storage {ns}:temp lore_line set from storage {ns}:lore_templates expl_damage
 $data modify storage {ns}:temp lore_line append value "$(expl_damage)"
 data modify storage {ns}:temp new_lore append from storage {ns}:temp lore_line
 """)
 
 	# Append explosion radius line
-	write_versioned_function("lore/append_expl_radius",
-f"""
+	write_versioned_function("lore/append_expl_radius", f"""
 data modify storage {ns}:temp lore_line set from storage {ns}:lore_templates expl_radius
 $data modify storage {ns}:temp lore_line append value "$(expl_radius)"
 data modify storage {ns}:temp lore_line append value {{"text":" blocks","color":"#{END_HEX}"}}
@@ -306,8 +298,7 @@ data modify storage {ns}:temp new_lore append from storage {ns}:temp lore_line
 """)
 
 	# Apply new lore to item
-	write_versioned_function("lore/apply",
-f"""
+	write_versioned_function("lore/apply", f"""
 # Copy item from player to item_display
 $item replace entity @s contents from entity @p[tag={ns}.update_lore] $(slot)
 
