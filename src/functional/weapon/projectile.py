@@ -284,10 +284,13 @@ execute store result storage {ns}:input with.amount float 0.1 run scoreboard pla
 data modify storage {ns}:input with.weapon set from storage {ns}:gun all
 function {ns}:v{version}/utils/signal_and_damage
 
-# Signal: on_kill (if entity died after explosion damage, @s switches to shooter)
-execute unless entity @s as @n[tag={ns}.temp_shooter] run data modify storage {ns}:signals on_kill set value {{}}
-execute unless entity @s as @n[tag={ns}.temp_shooter] run data modify storage {ns}:signals on_kill.explosion set value true
-execute unless entity @s as @n[tag={ns}.temp_shooter] run function #{ns}:signals/on_kill
+# Signal: on_kill (check if entity died after explosion damage)
+# Initialize to 0 (dead) — if entity no longer exists, score stays 0
+scoreboard players set #victim_hp {ns}.data 0
+execute store result score #victim_hp {ns}.data run data get entity @s Health 100
+execute if score #victim_hp {ns}.data matches ..0 run data modify storage {ns}:signals on_kill set value {{}}
+execute if score #victim_hp {ns}.data matches ..0 run data modify storage {ns}:signals on_kill.explosion set value true
+execute if score #victim_hp {ns}.data matches ..0 as @n[tag={ns}.temp_shooter] run function #{ns}:signals/on_kill
 
 # Remove temporary tag
 tag @n[tag={ns}.temp_shooter] remove {ns}.ticking
