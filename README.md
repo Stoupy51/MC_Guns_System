@@ -9,7 +9,6 @@ Credits for resources: MGS 4.2 by TheBradqq
 
 # TODO:
 Fixes:
-- When respawning, sometimes we are killed by out of map. Not sure why, need to investigate
 - Kills are not counted. Killing to not get points to the team and players
 - Issue with respawning
 
