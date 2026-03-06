@@ -151,6 +151,9 @@ scoreboard players set @s {ns}.mp.death_count 0
 # Increment death stats
 scoreboard players add @s {ns}.mp.deaths 1
 
+# S&D: no respawning, mark as dead and go spectator
+execute if data storage {ns}:multiplayer game{{gamemode:"snd"}} run return run function {ns}:v{version}/multiplayer/gamemodes/snd/on_death
+
 # Teleport to best spawn point
 function {ns}:v{version}/multiplayer/respawn_tp
 

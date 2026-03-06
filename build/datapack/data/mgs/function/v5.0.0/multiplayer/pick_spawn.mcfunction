@@ -7,6 +7,8 @@
 #			mgs:v5.0.0/multiplayer/tp_all_to_spawns {type:"red"} [ at @s ]
 #			mgs:v5.0.0/multiplayer/tp_all_to_spawns {type:"blue"} [ at @s ]
 #			mgs:v5.0.0/multiplayer/respawn_tp {type:"general"}
+#			mgs:v5.0.0/multiplayer/respawn_tp {type:"red"}
+#			mgs:v5.0.0/multiplayer/respawn_tp {type:"blue"}
 #
 # @args		type (string)
 #

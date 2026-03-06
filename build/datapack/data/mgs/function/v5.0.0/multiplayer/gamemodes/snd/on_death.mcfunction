@@ -1,7 +1,9 @@
 
 #> mgs:v5.0.0/multiplayer/gamemodes/snd/on_death
 #
-# @within	???
+# @executed	as @e[type=player,sort=random] & at @s
+#
+# @within	mgs:v5.0.0/multiplayer/on_respawn
 #
 
 # Remove alive tag (no respawn in S&D)

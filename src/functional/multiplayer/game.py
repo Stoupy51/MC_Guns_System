@@ -80,7 +80,9 @@ scoreboard players set @a {ns}.mp.in_game 1
 
 # Set all in-game players to adventure and enable instant respawn
 gamemode adventure @a[scores={{{ns}.mp.in_game=1}}]
+execute as @a[scores={{{ns}.mp.in_game=1}}] run attribute @s minecraft:waypoint_receive_range base set 0.0
 gamerule immediate_respawn true
+gamerule keep_inventory true
 
 # Store base coordinates for offset
 execute store result score #gm_base_x {ns}.data run data get storage {ns}:multiplayer game.map.base_coordinates[0]
@@ -569,7 +571,12 @@ execute as @p[tag={ns}.spawn_pending] run function {ns}:v{version}/multiplayer/t
 
 	## Respawn TP: use general spawns on respawn to prevent spawn camping (run as the respawning player)
 	write_versioned_function("multiplayer/respawn_tp", f"""
-function {ns}:v{version}/multiplayer/pick_spawn {{type:"general"}}
+# Try general spawns first (prevents spawn camping)
+execute if entity @e[tag={ns}.spawn_point,tag={ns}.spawn_general] run return run function {ns}:v{version}/multiplayer/pick_spawn {{type:"general"}}
+
+# Fallback to team spawns if map has no general spawns
+execute if score @s {ns}.mp.team matches 1 run return run function {ns}:v{version}/multiplayer/pick_spawn {{type:"red"}}
+execute if score @s {ns}.mp.team matches 2 run return run function {ns}:v{version}/multiplayer/pick_spawn {{type:"blue"}}
 """)
 
 	# ── Sidebar HUD ───────────────────────────────────────────────
