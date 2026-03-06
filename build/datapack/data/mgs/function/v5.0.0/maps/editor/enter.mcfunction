@@ -20,6 +20,9 @@ execute if data storage mgs:temp map_edit{mode:"missions"} run scoreboard player
 scoreboard players set @s mgs.mp.map_edit 1
 tag @s add mgs.map_editor
 
+# Set display mode to match save mode
+scoreboard players operation @s mgs.mp.map_disp = @s mgs.mp.map_mode
+
 # Store index for macro access
 execute store result storage mgs:temp map_edit.idx int 1 run scoreboard players get @s mgs.mp.map_idx
 

@@ -22,7 +22,10 @@ scoreboard players operation #_mx mgs.data -= #_px mgs.data
 scoreboard players operation #_my mgs.data -= #_py mgs.data
 scoreboard players operation #_mz mgs.data -= #_pz mgs.data
 
-# distance = dx + dy + dz
+# distance² = dx² + dy² + dz²
+scoreboard players operation #_mx mgs.data *= #_mx mgs.data
+scoreboard players operation #_my mgs.data *= #_my mgs.data
+scoreboard players operation #_mz mgs.data *= #_mz mgs.data
 scoreboard players operation #_mx mgs.data += #_my mgs.data
 scoreboard players operation #_mx mgs.data += #_mz mgs.data
 

@@ -8,6 +8,12 @@
 #			mgs:v5.0.0/maps/editor/save_lists/multiplayer {path:"search_and_destroy"} [ as @e[tag=...] & at @s ]
 #			mgs:v5.0.0/maps/editor/save_lists/multiplayer {path:"domination"} [ as @e[tag=...] & at @s ]
 #			mgs:v5.0.0/maps/editor/save_lists/multiplayer {path:"hardpoint"} [ as @e[tag=...] & at @s ]
+#			mgs:v5.0.0/maps/editor/save_lists/missions {path:"enemies.level_1"} [ as @e[tag=...] & at @s ]
+#			mgs:v5.0.0/maps/editor/save_lists/missions {path:"enemies.level_2"} [ as @e[tag=...] & at @s ]
+#			mgs:v5.0.0/maps/editor/save_lists/missions {path:"enemies.level_3"} [ as @e[tag=...] & at @s ]
+#			mgs:v5.0.0/maps/editor/save_lists/missions {path:"enemies.level_4"} [ as @e[tag=...] & at @s ]
+#			mgs:v5.0.0/maps/editor/save_lists/missions {path:"out_of_bounds"} [ as @e[tag=...] & at @s ]
+#			mgs:v5.0.0/maps/editor/save_lists/missions {path:"boundaries"} [ as @e[tag=...] & at @s ]
 #
 # @args		path (string)
 #

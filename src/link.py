@@ -4,6 +4,7 @@ from stewbeet import Context, official_lib_used
 
 from .functional.main import main as main_datapack
 from .functional.map_editor import generate_map_editor
+from .functional.missions import main as main_missions
 from .functional.mob_ai import main as main_mob_ai
 from .functional.multiplayer import main as main_multiplayer
 from .functional.player_config import main as main_player_config
@@ -27,6 +28,9 @@ def beet_default(ctx: Context) -> None:
 
     # Multiplayer functional initialization
     main_multiplayer()
+
+    # Missions functional initialization
+    main_missions()
 
     # Map editor (generic for multiplayer, zombies, missions)
     generate_map_editor()

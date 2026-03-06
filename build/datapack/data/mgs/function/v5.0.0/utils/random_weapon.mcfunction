@@ -7,6 +7,7 @@
 #			mgs:v5.0.0/mob/example/level_2 {slot:"weapon.mainhand"} [ as @n[tag=mgs.new] ]
 #			mgs:v5.0.0/mob/example/level_3 {slot:"weapon.mainhand"} [ as @n[tag=mgs.new] ]
 #			mgs:v5.0.0/mob/example/level_4 {slot:"weapon.mainhand"} [ as @n[tag=mgs.new] ]
+#			mgs:v5.0.0/missions/spawn_level {slot:"weapon.mainhand"} [ as @e[tag=mgs.mission_enemy] ]
 #
 # @args		slot (string)
 #

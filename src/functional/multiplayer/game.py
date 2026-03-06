@@ -345,9 +345,11 @@ execute unless data storage {ns}:multiplayer game{{gamemode:"ffa"}} if score #re
 	## FFA time up: find player with most kills
 	write_versioned_function("multiplayer/ffa_time_up", f"""
 tellraw @a [{MGS_TAG},{{"text":"Time's up!","color":"gold"}}]
+
 # Store max kills into a score
 scoreboard players set #_max_kills {ns}.data 0
-execute as @a[scores={{{ns}.mp.in_game=1}}] if score @s {ns}.mp.kills > #_max_kills {ns}.data run scoreboard players operation #_max_kills {ns}.data = @s {ns}.mp.kills
+scoreboard players operation #_max_kills {ns}.data > @a[scores={{{ns}.mp.in_game=1}}] {ns}.mp.kills
+
 # The player with that score wins
 execute as @a[scores={{{ns}.mp.in_game=1}}] if score @s {ns}.mp.kills = #_max_kills {ns}.data run function {ns}:v{version}/multiplayer/gamemodes/ffa/player_wins
 """)
@@ -553,7 +555,10 @@ scoreboard players operation #_mx {ns}.data -= #_px {ns}.data
 scoreboard players operation #_my {ns}.data -= #_py {ns}.data
 scoreboard players operation #_mz {ns}.data -= #_pz {ns}.data
 
-# distance = dx + dy + dz
+# distance² = dx² + dy² + dz²
+scoreboard players operation #_mx {ns}.data *= #_mx {ns}.data
+scoreboard players operation #_my {ns}.data *= #_my {ns}.data
+scoreboard players operation #_mz {ns}.data *= #_mz {ns}.data
 scoreboard players operation #_mx {ns}.data += #_my {ns}.data
 scoreboard players operation #_mx {ns}.data += #_mz {ns}.data
 
@@ -572,8 +577,8 @@ data modify storage {ns}:temp _tp.yaw set from entity @s data.yaw
 # TP the pending player
 execute as @p[tag={ns}.spawn_pending] run function {ns}:v{version}/multiplayer/tp_player_at with storage {ns}:temp _tp
 
-# Mark this spawn as used (prevents duplicate assignments)
-tag @s add {ns}.spawn_used
+# Mark this spawn as used (prevents duplicate assignments) (only in preparing time)
+execute unless data storage {ns}:multiplayer game{{state:"active"}} run tag @s add {ns}.spawn_used
 """)
 
 	## TP macro (run as the player to TP)

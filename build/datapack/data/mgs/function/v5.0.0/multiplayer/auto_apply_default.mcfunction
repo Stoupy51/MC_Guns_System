@@ -4,6 +4,7 @@
 # @executed	at @s
 #
 # @within	mgs:v5.0.0/multiplayer/start [ at @s ]
+#			mgs:v5.0.0/missions/start [ at @s ]
 #
 
 # Set mp.class to negative default ID (custom loadout)
