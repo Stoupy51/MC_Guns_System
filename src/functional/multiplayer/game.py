@@ -473,6 +473,9 @@ execute unless data storage {ns}:multiplayer game{{gamemode:"ffa"}} as @a[scores
 
 # Players with no team: use general spawns
 execute unless data storage {ns}:multiplayer game{{gamemode:"ffa"}} as @a[scores={{{ns}.mp.in_game=1,{ns}.mp.team=0}}] at @s run function {ns}:v{version}/multiplayer/pick_spawn {{type:"general"}}
+
+# Clean up used spawn markers
+tag @e[tag={ns}.spawn_used] remove {ns}.spawn_used
 """)
 
 	## Pick best spawn: find spawn marker farthest from any enemy player (run as player)
@@ -489,13 +492,13 @@ execute if score @s {ns}.mp.team matches 2 run tag @a[scores={{{ns}.mp.in_game=1
 # Never count self as an enemy
 tag @s remove {ns}.spawn_enemy
 
-# Tag candidate spawn markers of the right type
-$tag @e[tag={ns}.spawn_point,tag={ns}.spawn_$(type)] add {ns}.spawn_candidate
+# Tag candidate spawn markers of the right type (exclude already-used spawns)
+$tag @e[tag={ns}.spawn_point,tag={ns}.spawn_$(type),tag=!{ns}.spawn_used] add {ns}.spawn_candidate
 
 # Remove candidates that have an enemy player within 5 blocks
 execute as @e[tag={ns}.spawn_candidate] at @s if entity @a[tag={ns}.spawn_enemy,distance=..5] run tag @s remove {ns}.spawn_candidate
 
-# If all were removed (all spawns contested), re-tag all as candidates
+# If all were removed (all spawns used or contested), re-tag all as candidates
 $execute unless entity @e[tag={ns}.spawn_candidate] run tag @e[tag={ns}.spawn_point,tag={ns}.spawn_$(type)] add {ns}.spawn_candidate
 
 # If no enemies, pick random candidate directly (skip expensive distance calc)
@@ -568,6 +571,9 @@ data modify storage {ns}:temp _tp.yaw set from entity @s data.yaw
 
 # TP the pending player
 execute as @p[tag={ns}.spawn_pending] run function {ns}:v{version}/multiplayer/tp_player_at with storage {ns}:temp _tp
+
+# Mark this spawn as used (prevents duplicate assignments)
+tag @s add {ns}.spawn_used
 """)
 
 	## TP macro (run as the player to TP)

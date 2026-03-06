@@ -16,3 +16,6 @@ data modify storage mgs:temp _tp.yaw set from entity @s data.yaw
 # TP the pending player
 execute as @p[tag=mgs.spawn_pending] run function mgs:v5.0.0/multiplayer/tp_player_at with storage mgs:temp _tp
 
+# Mark this spawn as used (prevents duplicate assignments)
+tag @s add mgs.spawn_used
+
