@@ -36,11 +36,11 @@ f"""
 # Create teams
 execute unless score #mp_teams_created {ns}.data matches 1 run team add {ns}.red
 execute unless score #mp_teams_created {ns}.data matches 1 run team modify {ns}.red color red
-execute unless score #mp_teams_created {ns}.data matches 1 run team modify {ns}.red friendlyFire false
+execute unless score #mp_teams_created {ns}.data matches 1 run team modify {ns}.red friendlyFire true
 execute unless score #mp_teams_created {ns}.data matches 1 run team modify {ns}.red nametagVisibility hideForOtherTeams
 execute unless score #mp_teams_created {ns}.data matches 1 run team add {ns}.blue
 execute unless score #mp_teams_created {ns}.data matches 1 run team modify {ns}.blue color blue
-execute unless score #mp_teams_created {ns}.data matches 1 run team modify {ns}.blue friendlyFire false
+execute unless score #mp_teams_created {ns}.data matches 1 run team modify {ns}.blue friendlyFire true
 execute unless score #mp_teams_created {ns}.data matches 1 run team modify {ns}.blue nametagVisibility hideForOtherTeams
 scoreboard players set #mp_teams_created {ns}.data 1
 """)

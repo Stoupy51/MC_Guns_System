@@ -259,12 +259,17 @@ execute store result storage {ns}:temp damage float 0.001 run scoreboard players
 
     # On targeted entity
     write_versioned_function("raycast/on_targeted_entity", f"""
+# Friendly fire check: skip if target is a teammate (but not the shooter themselves)
+execute if entity @s[type=player] unless entity @s[tag={ns}.ticking] store result score #shooter_team {ns}.data run scoreboard players get @n[tag={ns}.ticking] {ns}.mp.team
+execute if entity @s[type=player] unless entity @s[tag={ns}.ticking] if score #shooter_team {ns}.data matches 1.. if score @s {ns}.mp.team = #shooter_team {ns}.data run return fail
+
 # Blood particles
 scoreboard players set #last_callback {ns}.data 2
 particle block{{block_state:"redstone_wire"}} ~ ~1 ~ 0.35 0.5 0.35 0 100 force @a[distance=..128]
 
 # Get base damage with 3 digits of precision
 data modify storage {ns}:input with set value {{target:"@s", amount:0.0f, attacker:"@n[tag={ns}.ticking]"}}
+execute if entity @n[tag={ns}.ticking,type=player] run data modify storage {ns}:input with.attacker set value "@p[tag={ns}.ticking]"
 execute store result score #damage {ns}.data run data get storage {ns}:temp damage 10
 
 # Apply decay and headshot calculations
