@@ -37,14 +37,14 @@ execute if score @s {ns}.zoom matches 1 run scoreboard players add @s {ns}.zoom_
 # B=0.15 → B'∈[18-38] after randomization, safely above dim grayscale particles
 scoreboard players set #scope_level {ns}.data 0
 execute store result score #scope_level {ns}.data run data get storage {ns}:gun all.scope_level
-execute if score @s {ns}.zoom matches 1 if score @s {ns}.switch_cooldown matches 0 if score #scope_level {ns}.data matches 3 at @s anchored eyes run particle minecraft:dust{{color:[0.02,0.02,0.15],scale:0.01}} ^ ^ ^1 0 0 0 0 1 force @s
-execute if score @s {ns}.zoom matches 1 if score @s {ns}.switch_cooldown matches 0 if score #scope_level {ns}.data matches 4 at @s anchored eyes run particle minecraft:dust{{color:[0.02,0.08,0.15],scale:0.01}} ^ ^ ^1 0 0 0 0 1 force @s
-execute if score @s {ns}.zoom matches 1 if score @s {ns}.switch_cooldown matches 0 unless score #scope_level {ns}.data matches 3 unless score #scope_level {ns}.data matches 4 at @s anchored eyes run particle minecraft:dust{{color:[0.02,0.25,0.15],scale:0.01}} ^ ^ ^1 0 0 0 0 1 force @s
+execute if score @s {ns}.zoom matches 1 if score @s {ns}.switch_cooldown matches 0 if score #scope_level {ns}.data matches 3 at @s anchored eyes run particle minecraft:dust{{color:[0.02,0.02,0.15],scale:0.01}} ^ ^ ^0.1 0 0 0 0 1 force @s
+execute if score @s {ns}.zoom matches 1 if score @s {ns}.switch_cooldown matches 0 if score #scope_level {ns}.data matches 4 at @s anchored eyes run particle minecraft:dust{{color:[0.02,0.08,0.15],scale:0.01}} ^ ^ ^0.1 0 0 0 0 1 force @s
+execute if score @s {ns}.zoom matches 1 if score @s {ns}.switch_cooldown matches 0 unless score #scope_level {ns}.data matches 3 unless score #scope_level {ns}.data matches 4 at @s anchored eyes run particle minecraft:dust{{color:[0.02,0.25,0.15],scale:0.01}} ^ ^ ^0.1 0 0 0 0 1 force @s
 
 # Scope zoom marker: spawn AFTER delay for barrel distortion effect
-execute if score @s {ns}.zoom matches 1 if score @s {ns}.switch_cooldown matches 0 if score @s {ns}.zoom_timer matches 5.. if score #scope_level {ns}.data matches 3 at @s anchored eyes run particle minecraft:dust{{color:[0.02,0.02,0.0],scale:0.01}} ^ ^ ^1 0 0 0 0 1 force @s
-execute if score @s {ns}.zoom matches 1 if score @s {ns}.switch_cooldown matches 0 if score @s {ns}.zoom_timer matches 5.. if score #scope_level {ns}.data matches 4 at @s anchored eyes run particle minecraft:dust{{color:[0.02,0.08,0.0],scale:0.01}} ^ ^ ^1 0 0 0 0 1 force @s
-execute if score @s {ns}.zoom matches 1 if score @s {ns}.switch_cooldown matches 0 if score @s {ns}.zoom_timer matches 5.. unless score #scope_level {ns}.data matches 3 unless score #scope_level {ns}.data matches 4 at @s anchored eyes run particle minecraft:dust{{color:[0.02,0.25,0.0],scale:0.01}} ^ ^ ^1 0 0 0 0 1 force @s
+execute if score @s {ns}.zoom matches 1 if score @s {ns}.switch_cooldown matches 0 if score @s {ns}.zoom_timer matches 5.. if score #scope_level {ns}.data matches 3 at @s anchored eyes run particle minecraft:dust{{color:[0.02,0.02,0.0],scale:0.01}} ^ ^ ^0.1 0 0 0 0 1 force @s
+execute if score @s {ns}.zoom matches 1 if score @s {ns}.switch_cooldown matches 0 if score @s {ns}.zoom_timer matches 5.. if score #scope_level {ns}.data matches 4 at @s anchored eyes run particle minecraft:dust{{color:[0.02,0.08,0.0],scale:0.01}} ^ ^ ^0.1 0 0 0 0 1 force @s
+execute if score @s {ns}.zoom matches 1 if score @s {ns}.switch_cooldown matches 0 if score @s {ns}.zoom_timer matches 5.. unless score #scope_level {ns}.data matches 3 unless score #scope_level {ns}.data matches 4 at @s anchored eyes run particle minecraft:dust{{color:[0.02,0.25,0.0],scale:0.01}} ^ ^ ^0.1 0 0 0 0 1 force @s
 
 # Crosshair spread marker: spawn when NOT zooming to indicate accuracy via crosshair gap
 execute unless score @s {ns}.zoom matches 1 run function {ns}:v{version}/zoom/crosshair_spread
@@ -55,22 +55,22 @@ execute unless score @s {ns}.zoom matches 1 run function {ns}:v{version}/zoom/cr
     # Priority: jump > sprint > walk > sneak > base (matching accuracy system)
     write_versioned_function("zoom/crosshair_spread", f"""
 # If sneaking in the air, treat as walking (not jump spread)
-execute unless predicate {ns}:v{version}/is_on_ground if predicate {ns}:v{version}/is_sneaking at @s anchored eyes run return run particle minecraft:dust{{color:[0.02,0.0,0.12],scale:0.01}} ^ ^ ^1 0 0 0 0 1 force @s
+execute unless predicate {ns}:v{version}/is_on_ground if predicate {ns}:v{version}/is_sneaking at @s anchored eyes run return run particle minecraft:dust{{color:[0.02,0.0,0.12],scale:0.01}} ^ ^ ^0.1 0 0 0 0 1 force @s
 
 # Jump (in air, not sneaking): widest spread
-execute unless predicate {ns}:v{version}/is_on_ground at @s anchored eyes run return run particle minecraft:dust{{color:[0.02,0.0,0.60],scale:0.01}} ^ ^ ^1 0 0 0 0 1 force @s
+execute unless predicate {ns}:v{version}/is_on_ground at @s anchored eyes run return run particle minecraft:dust{{color:[0.02,0.0,0.60],scale:0.01}} ^ ^ ^0.1 0 0 0 0 1 force @s
 
 # Sprint: very wide spread
-execute if predicate {ns}:v{version}/is_sprinting at @s anchored eyes run return run particle minecraft:dust{{color:[0.02,0.0,0.28],scale:0.01}} ^ ^ ^1 0 0 0 0 1 force @s
+execute if predicate {ns}:v{version}/is_sprinting at @s anchored eyes run return run particle minecraft:dust{{color:[0.02,0.0,0.28],scale:0.01}} ^ ^ ^0.1 0 0 0 0 1 force @s
 
 # Walk: wider spread
-execute unless predicate {ns}:v{version}/is_sprinting if predicate {ns}:v{version}/is_moving at @s anchored eyes run return run particle minecraft:dust{{color:[0.02,0.0,0.12],scale:0.01}} ^ ^ ^1 0 0 0 0 1 force @s
+execute unless predicate {ns}:v{version}/is_sprinting if predicate {ns}:v{version}/is_moving at @s anchored eyes run return run particle minecraft:dust{{color:[0.02,0.0,0.12],scale:0.01}} ^ ^ ^0.1 0 0 0 0 1 force @s
 
 # Sneak: tightest spread (rarely visible since sneak = zoom for guns)
-execute if predicate {ns}:v{version}/is_sneaking at @s anchored eyes run return run particle minecraft:dust{{color:[0.02,0.0,0.02],scale:0.01}} ^ ^ ^1 0 0 0 0 1 force @s
+execute if predicate {ns}:v{version}/is_sneaking at @s anchored eyes run return run particle minecraft:dust{{color:[0.02,0.0,0.02],scale:0.01}} ^ ^ ^0.1 0 0 0 0 1 force @s
 
 # Base: standing still, default spread
-execute at @s anchored eyes run particle minecraft:dust{{color:[0.02,0.0,0.05],scale:0.01}} ^ ^ ^1 0 0 0 0 1 force @s
+execute at @s anchored eyes run particle minecraft:dust{{color:[0.02,0.0,0.05],scale:0.01}} ^ ^ ^0.1 0 0 0 0 1 force @s
 """)
 
     # Function to remove zoom state

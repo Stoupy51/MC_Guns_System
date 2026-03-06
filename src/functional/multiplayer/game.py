@@ -292,10 +292,10 @@ execute if score #_tick_mod {ns}.data matches 0 run function {ns}:v{version}/mul
 execute if score #mp_timer {ns}.data matches ..0 run function {ns}:v{version}/multiplayer/time_up
 
 # ── Boundary enforcement (skip players with respawn protection) ──
-execute as @a[scores={{{ns}.mp.in_game=1,{ns}.mp.death_count=0}},gamemode=!creative,gamemode=!spectator] at @s run function {ns}:v{version}/multiplayer/check_bounds
+execute as @e[type=player,scores={{{ns}.mp.in_game=1,{ns}.mp.death_count=0}},gamemode=!creative,gamemode=!spectator] at @s run function {ns}:v{version}/multiplayer/check_bounds
 
 # ── Out-of-bounds check (skip players with respawn protection) ──
-execute as @a[scores={{{ns}.mp.in_game=1,{ns}.mp.death_count=0}},gamemode=!creative,gamemode=!spectator] at @s if entity @e[tag={ns}.oob_point,distance=..5] run function {ns}:v{version}/multiplayer/oob_kill
+execute as @e[type=player,scores={{{ns}.mp.in_game=1,{ns}.mp.death_count=0}},gamemode=!creative,gamemode=!spectator] at @s if entity @e[tag={ns}.oob_point,distance=..5] run function {ns}:v{version}/multiplayer/oob_kill
 
 # ── Gamemode tick dispatch ──
 execute if data storage {ns}:multiplayer game{{gamemode:"ffa"}} run function {ns}:v{version}/multiplayer/gamemodes/ffa/tick
@@ -567,7 +567,7 @@ execute as @p[tag={ns}.spawn_pending] run function {ns}:v{version}/multiplayer/t
 	## TP macro (run as the player to TP)
 	write_versioned_function("multiplayer/tp_player_at", "$tp @s $(x) $(y) $(z) $(yaw) 0")
 
-	## Respawn TP: always use general spawns on respawn (run as the respawning player)
+	## Respawn TP: use general spawns on respawn to prevent spawn camping (run as the respawning player)
 	write_versioned_function("multiplayer/respawn_tp", f"""
 function {ns}:v{version}/multiplayer/pick_spawn {{type:"general"}}
 """)

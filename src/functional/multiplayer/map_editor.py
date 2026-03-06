@@ -112,7 +112,7 @@ execute if data storage {ns}:temp map_menu.list[0] run function {ns}:v{version}/
 """)
 
 	write_versioned_function("maps/editor/menu_entry_display", f"""
-$tellraw @s ["  ",{{"text":"$(name)","color":"white"}},{{"text":" ($(id))","color":"gray"}},{{"text":" "}},{{"text":"[Edit]","color":"yellow","click_event":{{"action":"run_command","command":"/function {ns}:v{version}/maps/editor/enter {{idx:$(idx)}}"}},"hover_event":{{"action":"show_text","value":"Edit this map"}}}},{{"text":" "}},{{"text":"[Delete]","color":"red","click_event":{{"action":"run_command","command":"/function {ns}:v{version}/maps/editor/delete {{idx:$(idx)}}"}},"hover_event":{{"action":"show_text","value":"Delete this map"}}}}]
+$tellraw @s ["  ",{{"text":"$(name)","color":"white"}},{{"text":" ($(id))","color":"gray"}},{{"text":" "}},[{{"text":"[","color":"yellow","click_event":{{"action":"run_command","command":"/function {ns}:v{version}/maps/editor/enter {{idx:$(idx)}}"}},"hover_event":{{"action":"show_text","value":"Edit this map"}}}},{{"text":"Edit"}},"]"],{{"text":" "}},[{{"text":"[","color":"red","click_event":{{"action":"run_command","command":"/function {ns}:v{version}/maps/editor/delete {{idx:$(idx)}}"}},"hover_event":{{"action":"show_text","value":"Delete this map"}}}},{{"text":"Delete"}},"]"]]
 """)
 
 	# ── Map Creation ───────────────────────────────────────────────
