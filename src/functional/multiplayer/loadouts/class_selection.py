@@ -154,6 +154,9 @@ scoreboard players add @s {ns}.mp.deaths 1
 # Teleport to best spawn point
 function {ns}:v{version}/multiplayer/respawn_tp
 
+# Re-apply permanent saturation (lost on death)
+effect give @s saturation infinite 255 true
+
 # Apply current class loadout (positive = standard, negative = custom)
 execute unless score @s {ns}.mp.class matches 0 run function {ns}:v{version}/multiplayer/apply_class
 """)

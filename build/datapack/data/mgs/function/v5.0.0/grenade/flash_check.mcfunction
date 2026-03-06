@@ -17,6 +17,7 @@ execute at @n[tag=mgs.flash_source] store result score #in_fov mgs.data run func
 execute unless score #in_fov mgs.data matches 1 run return 0
 
 # Line-of-sight check: can the player see the grenade? (no blocks between)
+scoreboard players set #can_see mgs.data 0
 execute at @n[tag=mgs.flash_source] store result score #can_see mgs.data run function #bs.view:can_see_ata {with:{}}
 execute unless score #can_see mgs.data matches 1 run return 0
 

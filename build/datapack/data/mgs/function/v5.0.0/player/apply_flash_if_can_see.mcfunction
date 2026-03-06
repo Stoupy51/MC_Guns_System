@@ -7,6 +7,7 @@
 #
 
 scoreboard players set #can_see mgs.data 0
-execute store result score #can_see mgs.data run function #bs.view:can_see_ata {with:{}}
+execute if entity @s[tag=mgs.ticking] run scoreboard players set #can_see mgs.data 1
+execute if score #can_see mgs.data matches 0 store result score #can_see mgs.data run function #bs.view:can_see_ata {with:{}}
 execute if score #can_see mgs.data matches 1 run particle minecraft:dust{color:[0.02,0.0,0.0],scale:0.01} ~ ~ ~ 0 0 0 0 1 force @s
 

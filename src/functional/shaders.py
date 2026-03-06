@@ -1068,7 +1068,8 @@ execute unless data storage mgs:gun all.stats.grenade_type at @s anchored eyes p
 """)
     write_versioned_function("player/apply_flash_if_can_see", f"""
 scoreboard players set #can_see {ns}.data 0
-execute store result score #can_see {ns}.data run function #bs.view:can_see_ata {{with:{{}}}}
+execute if entity @s[tag={ns}.ticking] run scoreboard players set #can_see {ns}.data 1
+execute if score #can_see {ns}.data matches 0 store result score #can_see {ns}.data run function #bs.view:can_see_ata {{with:{{}}}}
 execute if score #can_see {ns}.data matches 1 run particle minecraft:dust{{color:[0.02,0.0,0.0],scale:0.01}} ~ ~ ~ 0 0 0 0 1 force @s
 """)
 

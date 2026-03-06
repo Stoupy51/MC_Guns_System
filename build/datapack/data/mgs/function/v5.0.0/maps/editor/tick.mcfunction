@@ -23,13 +23,13 @@ execute at @e[tag=mgs.map_element,tag=mgs.element.domination] run particle dust{
 execute at @e[tag=mgs.map_element,tag=mgs.element.hardpoint] run particle dust{color:[0.5,0.0,0.5],scale:1.0} ~ ~1 ~ 0.3 0.5 0.3 0 3
 
 # Actionbar: show info when near an element (within 5 blocks)
-execute if entity @e[tag=mgs.map_element,tag=mgs.element.base_coordinates,distance=..5] run return run title @s actionbar [{"text":"⬟ Base Coordinates","color":"light_purple"}]
-execute if entity @e[tag=mgs.map_element,tag=mgs.element.boundary,distance=..5] run return run title @s actionbar [{"text":"◻ Boundary Corner","color":"gray"}]
-execute if entity @e[tag=mgs.map_element,tag=mgs.element.out_of_bounds,distance=..5] run return run title @s actionbar [{"text":"☠ Out of Bounds","color":"dark_red"}]
-execute if entity @e[tag=mgs.map_element,tag=mgs.element.search_and_destroy,distance=..5] run return run title @s actionbar [{"text":"💣 S&D Objective","color":"gold"}]
-execute if entity @e[tag=mgs.map_element,tag=mgs.element.domination,distance=..5] run return run title @s actionbar [{"text":"🏴 Domination Point","color":"green"}]
-execute if entity @e[tag=mgs.map_element,tag=mgs.element.hardpoint,distance=..5] run return run title @s actionbar [{"text":"⚡ Hardpoint Zone","color":"dark_purple"}]
-execute if entity @e[tag=mgs.map_element,tag=mgs.element.red_spawn,distance=..5] run return run title @s actionbar [{"text":"● Red Spawn","color":"red"}]
-execute if entity @e[tag=mgs.map_element,tag=mgs.element.blue_spawn,distance=..5] run return run title @s actionbar [{"text":"● Blue Spawn","color":"blue"}]
-execute if entity @e[tag=mgs.map_element,tag=mgs.element.general_spawn,distance=..5] run return run title @s actionbar [{"text":"● General Spawn","color":"yellow"}]
+execute if entity @e[tag=mgs.map_element,tag=mgs.element.base_coordinates,distance=..5] run return run title @s actionbar [{"text":"⬟ ","color":"light_purple"},{"translate": "mgs.base_coordinates"}]
+execute if entity @e[tag=mgs.map_element,tag=mgs.element.boundary,distance=..5] run return run title @s actionbar [{"text":"◻ ","color":"gray"},{"translate": "mgs.boundary_corner"}]
+execute if entity @e[tag=mgs.map_element,tag=mgs.element.out_of_bounds,distance=..5] run return run title @s actionbar [{"text":"☠ ","color":"dark_red"},{"translate": "mgs.out_of_bounds"}]
+execute if entity @e[tag=mgs.map_element,tag=mgs.element.search_and_destroy,distance=..5] run return run title @s actionbar [{"text":"💣 ","color":"gold"},{"translate": "mgs.sd_objective"}]
+execute if entity @e[tag=mgs.map_element,tag=mgs.element.domination,distance=..5] run return run title @s actionbar [{"text":"🏴 ","color":"green"},{"translate": "mgs.domination_point"}]
+execute if entity @e[tag=mgs.map_element,tag=mgs.element.hardpoint,distance=..5] run return run title @s actionbar [{"text":"⚡ ","color":"dark_purple"},{"translate": "mgs.hardpoint_zone"}]
+execute if entity @e[tag=mgs.map_element,tag=mgs.element.red_spawn,distance=..5] run return run title @s actionbar [{"text":"● ","color":"red"},{"translate": "mgs.red_spawn"}]
+execute if entity @e[tag=mgs.map_element,tag=mgs.element.blue_spawn,distance=..5] run return run title @s actionbar [{"text":"● ","color":"blue"},{"translate": "mgs.blue_spawn"}]
+execute if entity @e[tag=mgs.map_element,tag=mgs.element.general_spawn,distance=..5] run return run title @s actionbar [{"text":"● ","color":"yellow"},{"translate": "mgs.general_spawn"}]
 
