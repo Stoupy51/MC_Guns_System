@@ -3,7 +3,7 @@
 #
 # @executed	as @e[type=player,sort=random] & at @s
 #
-# @within	mgs:v5.0.0/ammo/reload with storage mgs:gun all.stats
+# @within	mgs:v5.0.0/ammo/end_reload with storage mgs:gun all.stats
 #
 # @args		base_weapon (unknown)
 #

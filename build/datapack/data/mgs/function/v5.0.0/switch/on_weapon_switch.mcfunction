@@ -6,17 +6,22 @@
 # @within	mgs:v5.0.0/switch/main
 #
 
+# If player was reloading, cancel reload (deferred: no ammo consumed yet)
+execute if entity @s[tag=mgs.reloading] run tag @s remove mgs.reloading
+execute if entity @s[tag=mgs.pump_sound] run tag @s remove mgs.pump_sound
+execute if entity @s[tag=mgs.reload_mid_sound] run tag @s remove mgs.reload_mid_sound
+
 # Apply weapon switch cooldown from stats
 execute store result score #cooldown mgs.data run data get storage mgs:gun all.stats.switch
 
 # Apply quick swap: reduce cooldown by quick_swap% (e.g. 20 = 20% faster)
 execute if score @s mgs.special.quick_swap matches 1.. run function mgs:v5.0.0/switch/apply_quick_swap
 
-# Only apply if it exceeds the current cooldown value
-execute unless score #cooldown mgs.data <= @s mgs.cooldown run scoreboard players operation @s mgs.cooldown = #cooldown mgs.data
+# Set cooldown directly (replaces any existing cooldown, including reload cooldown)
+scoreboard players operation @s mgs.cooldown = #cooldown mgs.data
 
 # Mirror into switch_cooldown (used by shader zoom guard, unaffected by shooting)
-execute unless score #cooldown mgs.data <= @s mgs.switch_cooldown run scoreboard players operation @s mgs.switch_cooldown = #cooldown mgs.data
+scoreboard players operation @s mgs.switch_cooldown = #cooldown mgs.data
 
 # Force weapon switch animation
 function mgs:v5.0.0/switch/force_switch_animation

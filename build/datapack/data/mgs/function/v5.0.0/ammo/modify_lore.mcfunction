@@ -7,7 +7,6 @@
 #			mgs:v5.0.0/zoom/remove {slot:"weapon.mainhand"}
 #			mgs:v5.0.0/zoom/set {slot:"weapon.mainhand"}
 #			mgs:v5.0.0/ammo/set_count {slot:"$(slot)"}
-#			mgs:v5.0.0/ammo/reload {slot:"weapon.mainhand"}
 #			mgs:v5.0.0/ammo/end_reload {slot:"weapon.mainhand"}
 #			mgs:v5.0.0/zombies/bonus/reload_weapon_slot {slot:"$(slot)"}
 #
