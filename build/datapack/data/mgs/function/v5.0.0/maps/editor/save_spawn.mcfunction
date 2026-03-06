@@ -3,13 +3,14 @@
 #
 # @executed	as @e[tag=...] & at @s
 #
-# @within	mgs:v5.0.0/maps/editor/save_exit {path:"red"} [ as @e[tag=...] & at @s ]
-#			mgs:v5.0.0/maps/editor/save_exit {path:"blue"} [ as @e[tag=...] & at @s ]
-#			mgs:v5.0.0/maps/editor/save_exit {path:"general"} [ as @e[tag=...] & at @s ]
+# @within	mgs:v5.0.0/maps/editor/save_lists/multiplayer {path:"red"} [ as @e[tag=...] & at @s ]
+#			mgs:v5.0.0/maps/editor/save_lists/multiplayer {path:"blue"} [ as @e[tag=...] & at @s ]
+#			mgs:v5.0.0/maps/editor/save_lists/multiplayer {path:"general"} [ as @e[tag=...] & at @s ]
 #
 # @args		path (string)
 #
 
+# @s = marker entity, at its position
 # Get absolute position
 execute store result score #ax mgs.data run data get entity @s Pos[0]
 execute store result score #ay mgs.data run data get entity @s Pos[1]

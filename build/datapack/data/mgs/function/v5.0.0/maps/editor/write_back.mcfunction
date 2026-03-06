@@ -3,8 +3,9 @@
 #
 # @within	mgs:v5.0.0/maps/editor/save_exit with storage mgs:temp map_edit
 #
-# @args		idx (unknown)
+# @args		mode (unknown)
+#			idx (unknown)
 #
 
-$data modify storage mgs:maps multiplayer[$(idx)] set from storage mgs:temp map_edit.map
+$data modify storage mgs:maps $(mode)[$(idx)] set from storage mgs:temp map_edit.map
 

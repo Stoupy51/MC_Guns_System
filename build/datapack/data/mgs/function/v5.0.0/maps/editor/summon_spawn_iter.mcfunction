@@ -1,7 +1,7 @@
 
 #> mgs:v5.0.0/maps/editor/summon_spawn_iter
 #
-# @within	mgs:v5.0.0/maps/editor/summon_existing
+# @within	mgs:v5.0.0/maps/editor/summon_existing/multiplayer
 #			mgs:v5.0.0/maps/editor/summon_spawn_iter
 #
 
@@ -23,12 +23,10 @@ execute store result storage mgs:temp _spos.x double 1 run scoreboard players ge
 execute store result storage mgs:temp _spos.y double 1 run scoreboard players get #ry mgs.data
 execute store result storage mgs:temp _spos.z double 1 run scoreboard players get #rz mgs.data
 
-# Determine tag based on type (1=red, 2=blue, 3=general)
-execute if score #_spawn_type mgs.data matches 1 run data modify storage mgs:temp _spos.tag set value "mgs.element.red_spawn"
-execute if score #_spawn_type mgs.data matches 2 run data modify storage mgs:temp _spos.tag set value "mgs.element.blue_spawn"
-execute if score #_spawn_type mgs.data matches 3 run data modify storage mgs:temp _spos.tag set value "mgs.element.general_spawn"
+# Set tag from stored tag
+data modify storage mgs:temp _spos.tag set from storage mgs:temp _spawn_iter_tag
 
-# Summon marker with yaw stored in data
+# Summon marker with tag
 function mgs:v5.0.0/maps/editor/summon_spawn_marker with storage mgs:temp _spos
 
 # Store rotation data on the marker
