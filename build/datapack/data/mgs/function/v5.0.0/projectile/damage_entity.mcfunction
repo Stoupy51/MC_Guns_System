@@ -9,6 +9,10 @@
 # Skip non-living entities and other projectiles
 execute if entity @s[tag=mgs.slow_bullet] run return fail
 
+# Friendly fire check: skip if target is a teammate (but not the shooter themselves)
+execute if entity @s[type=player] unless entity @s[tag=mgs.temp_shooter] store result score #shooter_team mgs.data run scoreboard players get @n[tag=mgs.temp_shooter] mgs.mp.team
+execute if entity @s[type=player] unless entity @s[tag=mgs.temp_shooter] if score #shooter_team mgs.data matches 1.. if score @s mgs.mp.team = #shooter_team mgs.data run return fail
+
 # Get this entity's position (scaled by 1000)
 execute store result score #ent_x mgs.data run data get entity @s Pos[0] 1000
 execute store result score #ent_y mgs.data run data get entity @s Pos[1] 1000
@@ -71,6 +75,7 @@ execute as @n[tag=mgs.temp_shooter] if score @s mgs.special.instant_kill matches
 # Apply damage using the existing damage utility
 # Apply damage, fire damage signal (weapon info included for handlers)
 data modify storage mgs:input with set value {target:"@s", amount:0.0f, attacker:"@n[tag=mgs.temp_shooter]"}
+execute if entity @n[tag=mgs.temp_shooter,type=player] run data modify storage mgs:input with.attacker set value "@p[tag=mgs.temp_shooter]"
 execute store result storage mgs:input with.amount float 0.1 run scoreboard players get #expl_dmg mgs.data
 data modify storage mgs:input with.weapon set from storage mgs:gun all
 function mgs:v5.0.0/utils/signal_and_damage

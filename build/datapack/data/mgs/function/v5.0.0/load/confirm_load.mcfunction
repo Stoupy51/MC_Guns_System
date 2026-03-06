@@ -437,11 +437,11 @@ scoreboard objectives add mgs.mp.gm_timer dummy
 # Create teams
 execute unless score #mp_teams_created mgs.data matches 1 run team add mgs.red
 execute unless score #mp_teams_created mgs.data matches 1 run team modify mgs.red color red
-execute unless score #mp_teams_created mgs.data matches 1 run team modify mgs.red friendlyFire false
+execute unless score #mp_teams_created mgs.data matches 1 run team modify mgs.red friendlyFire true
 execute unless score #mp_teams_created mgs.data matches 1 run team modify mgs.red nametagVisibility hideForOtherTeams
 execute unless score #mp_teams_created mgs.data matches 1 run team add mgs.blue
 execute unless score #mp_teams_created mgs.data matches 1 run team modify mgs.blue color blue
-execute unless score #mp_teams_created mgs.data matches 1 run team modify mgs.blue friendlyFire false
+execute unless score #mp_teams_created mgs.data matches 1 run team modify mgs.blue friendlyFire true
 execute unless score #mp_teams_created mgs.data matches 1 run team modify mgs.blue nametagVisibility hideForOtherTeams
 scoreboard players set #mp_teams_created mgs.data 1
 

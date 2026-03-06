@@ -6,12 +6,17 @@
 # @within	mgs:v5.0.0/raycast/main
 #
 
+# Friendly fire check: skip if target is a teammate (but not the shooter themselves)
+execute if entity @s[type=player] unless entity @s[tag=mgs.ticking] store result score #shooter_team mgs.data run scoreboard players get @n[tag=mgs.ticking] mgs.mp.team
+execute if entity @s[type=player] unless entity @s[tag=mgs.ticking] if score #shooter_team mgs.data matches 1.. if score @s mgs.mp.team = #shooter_team mgs.data run return fail
+
 # Blood particles
 scoreboard players set #last_callback mgs.data 2
 particle block{block_state:"redstone_wire"} ~ ~1 ~ 0.35 0.5 0.35 0 100 force @a[distance=..128]
 
 # Get base damage with 3 digits of precision
 data modify storage mgs:input with set value {target:"@s", amount:0.0f, attacker:"@n[tag=mgs.ticking]"}
+execute if entity @n[tag=mgs.ticking,type=player] run data modify storage mgs:input with.attacker set value "@p[tag=mgs.ticking]"
 execute store result score #damage mgs.data run data get storage mgs:temp damage 10
 
 # Apply decay and headshot calculations

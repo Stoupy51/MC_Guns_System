@@ -213,6 +213,10 @@ $execute as @e[type=!#bs.hitbox:intangible,distance=..$(radius_float)] run funct
 # Skip non-living entities and other projectiles
 execute if entity @s[tag={ns}.slow_bullet] run return fail
 
+# Friendly fire check: skip if target is a teammate (but not the shooter themselves)
+execute if entity @s[type=player] unless entity @s[tag={ns}.temp_shooter] store result score #shooter_team {ns}.data run scoreboard players get @n[tag={ns}.temp_shooter] {ns}.mp.team
+execute if entity @s[type=player] unless entity @s[tag={ns}.temp_shooter] if score #shooter_team {ns}.data matches 1.. if score @s {ns}.mp.team = #shooter_team {ns}.data run return fail
+
 # Get this entity's position (scaled by 1000)
 execute store result score #ent_x {ns}.data run data get entity @s Pos[0] 1000
 execute store result score #ent_y {ns}.data run data get entity @s Pos[1] 1000
@@ -275,6 +279,7 @@ execute as @n[tag={ns}.temp_shooter] if score @s {ns}.special.instant_kill match
 # Apply damage using the existing damage utility
 # Apply damage, fire damage signal (weapon info included for handlers)
 data modify storage {ns}:input with set value {{target:"@s", amount:0.0f, attacker:"@n[tag={ns}.temp_shooter]"}}
+execute if entity @n[tag={ns}.temp_shooter,type=player] run data modify storage {ns}:input with.attacker set value "@p[tag={ns}.temp_shooter]"
 execute store result storage {ns}:input with.amount float 0.1 run scoreboard players get #expl_dmg {ns}.data
 data modify storage {ns}:input with.weapon set from storage {ns}:gun all
 function {ns}:v{version}/utils/signal_and_damage
