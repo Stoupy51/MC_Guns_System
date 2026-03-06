@@ -496,15 +496,14 @@ execute as @e[tag={ns}.spawn_candidate] at @s if entity @a[tag={ns}.spawn_enemy,
 $execute unless entity @e[tag={ns}.spawn_candidate] run tag @e[tag={ns}.spawn_point,tag={ns}.spawn_$(type)] add {ns}.spawn_candidate
 
 # If no enemies, pick random candidate directly (skip expensive distance calc)
-# TODO: remove comment
-#execute unless entity @a[tag={ns}.spawn_enemy] run return run function {ns}:v{version}/multiplayer/pick_spawn_random
+execute unless entity @a[tag={ns}.spawn_enemy] run return run function {ns}:v{version}/multiplayer/pick_spawn_random
 
-# # Limit to 10 random candidates before distance computation (optimization)
-# tag @e[tag={ns}.spawn_candidate,sort=random] add {ns}.spawn_final
-# tag @e[tag={ns}.spawn_candidate,tag=!{ns}.spawn_final] remove {ns}.spawn_candidate
-# tag @e[tag={ns}.spawn_final] remove {ns}.spawn_final
+# Limit to X random candidates before distance computation (optimization)
+tag @e[tag={ns}.spawn_candidate,sort=random,limit=32] add {ns}.spawn_final
+tag @e[tag={ns}.spawn_candidate,tag=!{ns}.spawn_final] remove {ns}.spawn_candidate
+tag @e[tag={ns}.spawn_final] remove {ns}.spawn_final
 
-# Compute distance² to nearest enemy player for each candidate (max 10)
+# Compute distance² to nearest enemy player for each candidate
 execute as @e[tag={ns}.spawn_candidate] at @s run function {ns}:v{version}/multiplayer/spawn_calc_dist
 
 # Find the maximum distance score
@@ -608,7 +607,7 @@ scoreboard objectives setdisplay sidebar {ns}.sidebar
 	## Prepend to right_click: block shooting during prep phase
 	write_versioned_function("player/right_click", f"""
 # Block shooting during multiplayer prep phase
-execute if data storage {ns}:multiplayer game{{state:"preparing"}} if score @s {ns}.mp.in_game matches 1 run return fail
+execute if score @s {ns}.mp.in_game matches 1 if data storage {ns}:multiplayer game{{state:"preparing"}} run return run scoreboard players set @s {ns}.pending_clicks 0
 """, prepend=True)
 
 	# ── Prep Phase ────────────────────────────────────────────────
@@ -634,10 +633,13 @@ effect clear @a[scores={{{ns}.mp.in_game=1}}] darkness
 effect clear @a[scores={{{ns}.mp.in_game=1}}] blindness
 effect clear @a[scores={{{ns}.mp.in_game=1}}] night_vision
 
+# Re-apply permanent saturation for the active game
+effect give @a[scores={{{ns}.mp.in_game=1}}] saturation infinite 255 true
+
 # Set state to active
 data modify storage {ns}:multiplayer game.state set value "active"
 
 # Announce
-tellraw @a ["",[{{"text":"","color":"green","bold":true}},"⚔ ",{{"text":"GO! GO! GO!"}}]]
+tellraw @a [{{"text":"","color":"green","bold":true}},"⚔ ",{{"text":"GO! GO! GO!"}}]
 """)
 

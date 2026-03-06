@@ -7,7 +7,7 @@
 #
 
 # Block shooting during multiplayer prep phase
-execute if data storage mgs:multiplayer game{state:"preparing"} if score @s mgs.mp.in_game matches 1 run return fail
+execute if score @s mgs.mp.in_game matches 1 if data storage mgs:multiplayer game{state:"preparing"} run return run scoreboard players set @s mgs.pending_clicks 0
 
 # Decrease pending clicks by 1
 scoreboard players remove @s mgs.pending_clicks 1

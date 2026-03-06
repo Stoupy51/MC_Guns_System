@@ -56,6 +56,7 @@ execute unless entity @e[tag={ns}.target] run tag @p[distance=..64,gamemode=!spe
 execute unless entity @e[tag={ns}.target] run return 0
 
 # Line-of-sight check: can the mob see the target?
+scoreboard players set #can_see {ns}.data 0
 execute positioned as @n[tag={ns}.target] store result score #can_see {ns}.data run function #bs.view:can_see_ata {{with:{{}}}}
 execute unless score #can_see {ns}.data matches 1 run return run tag @e[tag={ns}.target] remove {ns}.target
 

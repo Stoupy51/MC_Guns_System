@@ -367,6 +367,7 @@ execute at @n[tag={ns}.flash_source] store result score #in_fov {ns}.data run fu
 execute unless score #in_fov {ns}.data matches 1 run return 0
 
 # Line-of-sight check: can the player see the grenade? (no blocks between)
+scoreboard players set #can_see {ns}.data 0
 execute at @n[tag={ns}.flash_source] store result score #can_see {ns}.data run function #bs.view:can_see_ata {{with:{{}}}}
 execute unless score #can_see {ns}.data matches 1 run return 0
 

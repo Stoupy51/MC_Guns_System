@@ -16,9 +16,12 @@ effect clear @a[scores={mgs.mp.in_game=1}] darkness
 effect clear @a[scores={mgs.mp.in_game=1}] blindness
 effect clear @a[scores={mgs.mp.in_game=1}] night_vision
 
+# Re-apply permanent saturation for the active game
+effect give @a[scores={mgs.mp.in_game=1}] saturation infinite 255 true
+
 # Set state to active
 data modify storage mgs:multiplayer game.state set value "active"
 
 # Announce
-tellraw @a ["",[{"text":"","color":"green","bold":true},"⚔ ",{"translate": "mgs.go_go_go"}]]
+tellraw @a [{"text":"","color":"green","bold":true},"⚔ ",{"translate": "mgs.go_go_go"}]
 

@@ -39,6 +39,7 @@ execute unless entity @e[tag=mgs.target] run tag @p[distance=..64,gamemode=!spec
 execute unless entity @e[tag=mgs.target] run return 0
 
 # Line-of-sight check: can the mob see the target?
+scoreboard players set #can_see mgs.data 0
 execute positioned as @n[tag=mgs.target] store result score #can_see mgs.data run function #bs.view:can_see_ata {with:{}}
 execute unless score #can_see mgs.data matches 1 run return run tag @e[tag=mgs.target] remove mgs.target
 

@@ -643,14 +643,14 @@ execute at @e[tag={ns}.map_element,tag={ns}.element.domination] run particle dus
 execute at @e[tag={ns}.map_element,tag={ns}.element.hardpoint] run particle dust{{color:[0.5,0.0,0.5],scale:1.0}} ~ ~1 ~ 0.3 0.5 0.3 0 3
 
 # Actionbar: show info when near an element (within 5 blocks)
-execute if entity @e[tag={ns}.map_element,tag={ns}.element.base_coordinates,distance=..5] run return run title @s actionbar [{{"text":"⬟ Base Coordinates","color":"light_purple"}}]
-execute if entity @e[tag={ns}.map_element,tag={ns}.element.boundary,distance=..5] run return run title @s actionbar [{{"text":"◻ Boundary Corner","color":"gray"}}]
-execute if entity @e[tag={ns}.map_element,tag={ns}.element.out_of_bounds,distance=..5] run return run title @s actionbar [{{"text":"☠ Out of Bounds","color":"dark_red"}}]
-execute if entity @e[tag={ns}.map_element,tag={ns}.element.search_and_destroy,distance=..5] run return run title @s actionbar [{{"text":"💣 S&D Objective","color":"gold"}}]
-execute if entity @e[tag={ns}.map_element,tag={ns}.element.domination,distance=..5] run return run title @s actionbar [{{"text":"🏴 Domination Point","color":"green"}}]
-execute if entity @e[tag={ns}.map_element,tag={ns}.element.hardpoint,distance=..5] run return run title @s actionbar [{{"text":"⚡ Hardpoint Zone","color":"dark_purple"}}]
-execute if entity @e[tag={ns}.map_element,tag={ns}.element.red_spawn,distance=..5] run return run title @s actionbar [{{"text":"● Red Spawn","color":"red"}}]
-execute if entity @e[tag={ns}.map_element,tag={ns}.element.blue_spawn,distance=..5] run return run title @s actionbar [{{"text":"● Blue Spawn","color":"blue"}}]
-execute if entity @e[tag={ns}.map_element,tag={ns}.element.general_spawn,distance=..5] run return run title @s actionbar [{{"text":"● General Spawn","color":"yellow"}}]
+execute if entity @e[tag={ns}.map_element,tag={ns}.element.base_coordinates,distance=..5] run return run title @s actionbar [{{"text":"⬟ ","color":"light_purple"}},{{"text":"Base Coordinates"}}]
+execute if entity @e[tag={ns}.map_element,tag={ns}.element.boundary,distance=..5] run return run title @s actionbar [{{"text":"◻ ","color":"gray"}},{{"text":"Boundary Corner"}}]
+execute if entity @e[tag={ns}.map_element,tag={ns}.element.out_of_bounds,distance=..5] run return run title @s actionbar [{{"text":"☠ ","color":"dark_red"}},{{"text":"Out of Bounds"}}]
+execute if entity @e[tag={ns}.map_element,tag={ns}.element.search_and_destroy,distance=..5] run return run title @s actionbar [{{"text":"💣 ","color":"gold"}},{{"text":"S&D Objective"}}]
+execute if entity @e[tag={ns}.map_element,tag={ns}.element.domination,distance=..5] run return run title @s actionbar [{{"text":"🏴 ","color":"green"}},{{"text":"Domination Point"}}]
+execute if entity @e[tag={ns}.map_element,tag={ns}.element.hardpoint,distance=..5] run return run title @s actionbar [{{"text":"⚡ ","color":"dark_purple"}},{{"text":"Hardpoint Zone"}}]
+execute if entity @e[tag={ns}.map_element,tag={ns}.element.red_spawn,distance=..5] run return run title @s actionbar [{{"text":"● ","color":"red"}},{{"text":"Red Spawn"}}]
+execute if entity @e[tag={ns}.map_element,tag={ns}.element.blue_spawn,distance=..5] run return run title @s actionbar [{{"text":"● ","color":"blue"}},{{"text":"Blue Spawn"}}]
+execute if entity @e[tag={ns}.map_element,tag={ns}.element.general_spawn,distance=..5] run return run title @s actionbar [{{"text":"● ","color":"yellow"}},{{"text":"General Spawn"}}]
 """)
 

@@ -21,8 +21,9 @@ Fixes:
 
 - Compatibility & Developement:
   - Multiplayer mode:
-    - Dynamic map definitions (spawning points in storage, called on load with function tag #mgs:maps/register etc.)
-    - Gamemodes like team deathmatch, capture the flag, free for all, etc.
+    - Item in hotbar.4 to change class (on right click it opens the class selection menu)
+    - Final Kill Cam:
+      - Starting 10 seconds before the end of the game, we record every player's position and rotation every tick in a list (with a max size of 200 ticks, so 10 seconds at 20 ticks per second) (storage {ns}:kill_cam players set value {username:[[x,y,z,yaw,pitch],[x,y,z,yaw,pitch],...]},username_2...})
   - Add a whole zombies mode (mgs:zombies/*):
     - Dynamic map definitions (in storage, called on load with function tag #mgs:zombies/register_maps etc.) with:
       - Spawning points for players, zombies
