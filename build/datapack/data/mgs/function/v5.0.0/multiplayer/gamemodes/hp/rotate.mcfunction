@@ -4,8 +4,7 @@
 # @within	mgs:v5.0.0/multiplayer/gamemodes/hp/tick
 #
 
-# Remove the first 2 entries (current zone pair) from the zones list
-data remove storage mgs:multiplayer game.hp_zones[0]
+# Remove the first entry (current zone) from the zones list
 data remove storage mgs:multiplayer game.hp_zones[0]
 
 # Check if there are more zones

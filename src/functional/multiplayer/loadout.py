@@ -33,8 +33,7 @@ $item modify entity @s $(slot) {ns}:v{version}/set_consumable_count
 """)
 
 	# apply_next_slot: recursive function that processes slots[0] then continues
-	write_versioned_function("multiplayer/apply_next_slot",
-f"""
+	write_versioned_function("multiplayer/apply_next_slot", f"""
 # Apply loot to slot
 data modify storage {ns}:temp current_slot set from storage {ns}:temp slots[0]
 function {ns}:v{version}/multiplayer/apply_slot_loot with storage {ns}:temp current_slot
@@ -52,8 +51,7 @@ execute if data storage {ns}:temp slots[0] run function {ns}:v{version}/multipla
 
 	## apply_class_dynamic: reads class from temp storage and applies loadout
 	## Called after copying the target class data to mgs:temp
-	write_versioned_function("multiplayer/apply_class_dynamic",
-f"""
+	write_versioned_function("multiplayer/apply_class_dynamic", f"""
 # Clear player inventory
 clear @s
 

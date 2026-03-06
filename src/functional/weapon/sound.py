@@ -12,15 +12,13 @@ def main() -> None:
     version: str = Mem.ctx.project_version
 
     # Handle pending clicks
-    write_versioned_function("player/right_click",
-f"""
+    write_versioned_function("player/right_click", f"""
 # Advanced Playsound
 function {ns}:v{version}/sound/main
 """)
 
     # Compute acoustics function
-    write_versioned_function("sound/compute_acoustics",
-f"""
+    write_versioned_function("sound/compute_acoustics", f"""
 # Initialize acoustics score
 scoreboard players set #acoustics {ns}.data 0
 
@@ -74,8 +72,7 @@ execute anchored eyes positioned ^ ^ ^ if block ~ ~ ~ #{ns}:v{version}/sounds/wa
 """)
 
     # Main function
-    write_versioned_function("sound/main",
-f"""
+    write_versioned_function("sound/main", f"""
 # Fire sounds
 # TODO: Add a mode check to select between fire and fire_alt
 execute if data storage {ns}:gun all.sounds.fire_alt run function {ns}:v{version}/sound/fire_alt with storage {ns}:gun all.sounds
@@ -87,23 +84,19 @@ execute if data storage {ns}:gun all.sounds.cycle run function {ns}:v{version}/s
 # Acoustics handling
 execute if data storage {ns}:gun all.sounds.crack run function {ns}:v{version}/sound/acoustics_main with storage {ns}:gun all.sounds
 """)
-    write_versioned_function("sound/fire_simple",
-f"""
+    write_versioned_function("sound/fire_simple", f"""
 $playsound {ns}:$(fire) player @s ~ ~ ~ 0.25
 $playsound {ns}:$(fire) player @a[distance=0.01..48] ~ ~ ~ 0.75 1 0.25
 """)
-    write_versioned_function("sound/fire_alt",
-f"""
+    write_versioned_function("sound/fire_alt", f"""
 $playsound {ns}:$(fire_alt) player @s ~ ~ ~ 0.25
 $playsound {ns}:$(fire_alt) player @a[distance=0.01..48] ~ ~ ~ 0.75 1 0.25
 """)
-    write_versioned_function("sound/cycle",
-f"""
+    write_versioned_function("sound/cycle", f"""
 $playsound {ns}:$(cycle) player @s ~ ~ ~ 0.5
 $playsound {ns}:$(cycle) player @a[distance=0.01..48] ~ ~ ~ 1.0 1 0.5
 """)
-    write_versioned_function("sound/acoustics_main",
-f"""
+    write_versioned_function("sound/acoustics_main", f"""
 # Playsound depending on acoustics level
 $execute if score @s {ns}.acoustics_level matches 0 run playsound {ns}:common/$(crack)_crack_0_distant player @s ~ ~ ~ 1.0
 $execute if score @s {ns}.acoustics_level matches 1 run playsound {ns}:common/$(crack)_crack_1_far player @s ~ ~ ~ 1.0
@@ -118,8 +111,7 @@ execute as @a[distance=0.001..224] facing entity @s eyes run function {ns}:v{ver
 """)
 
     # Check mid cooldown
-    write_versioned_function("sound/check/pump",
-f"""
+    write_versioned_function("sound/check/pump", f"""
 # Calculate half of weapon cooldown
 scoreboard players set #divisor {ns}.data 2
 execute store result score #half {ns}.data run data get storage {ns}:gun all.stats.{COOLDOWN}
@@ -130,8 +122,7 @@ execute if score @s {ns}.cooldown = #half {ns}.data run function {ns}:v{version}
 """)
 
     # Check mid reload
-    write_versioned_function("sound/check/reload_mid",
-f"""
+    write_versioned_function("sound/check/reload_mid", f"""
 # Calculate half of weapon cooldown
 scoreboard players set #divisor {ns}.data 2
 execute store result score #half {ns}.data run data get storage {ns}:gun all.stats.{RELOAD_TIME}
@@ -142,15 +133,13 @@ execute if score @s {ns}.cooldown = #half {ns}.data run function {ns}:v{version}
 """)
 
     # Check reload end
-    write_versioned_function("sound/check/reload_end",
-f"""
+    write_versioned_function("sound/check/reload_end", f"""
 # If cooldown is reload end, and player was reloading, playsound
 execute store result score #{RELOAD_END} {ns}.data run data get storage {ns}:gun all.stats.{RELOAD_END}
 execute if score @s {ns}.cooldown = #{RELOAD_END} {ns}.data run function {ns}:v{version}/sound/player_end with storage {ns}:gun all.sounds
 """)
 
-    write_versioned_function("sound/propagation",
-f"""
+    write_versioned_function("sound/propagation", f"""
 # Make copies of the original acoustics level to work on
 scoreboard players operation #processed_acoustics {ns}.data = #origin_acoustics_level {ns}.data
 scoreboard players operation #attenuation_acoustics {ns}.data = #origin_acoustics_level {ns}.data
@@ -195,28 +184,23 @@ execute if score #processed_acoustics {ns}.data matches 5 run function {ns}:v{ve
             )
 
     # Missing sounds
-    write_versioned_function("sound/reload_start",
-f"""
+    write_versioned_function("sound/reload_start", f"""
 # Full reload sound for the player
 $playsound {ns}:$(reload) player @s
 """)
-    write_versioned_function("sound/player_begin",
-f"""
+    write_versioned_function("sound/player_begin", f"""
 # Play the begin reload sound for all nearby players
 $playsound {ns}:$(playerbegin) player @a[distance=0.01..16] ~ ~ ~ 0.3
 """)
-    write_versioned_function("sound/player_mid",
-f"""
+    write_versioned_function("sound/player_mid", f"""
 # Play the mid reload sound for all nearby players
 $playsound {ns}:$(playermid) player @a[distance=0.01..16] ~ ~ ~ 0.3
 """)
-    write_versioned_function("sound/player_end",
-f"""
+    write_versioned_function("sound/player_end", f"""
 # Play the end reload sound for all nearby players
 $playsound {ns}:$(playerend) player @a[distance=0.01..16] ~ ~ ~ 0.3
 """)
-    write_versioned_function("sound/pump",
-f"""
+    write_versioned_function("sound/pump", f"""
 # Play the pump sound for the player and nearby players
 $playsound {ns}:$(pump) player @s
 $playsound {ns}:$(pump) player @a[distance=0.01..16] ~ ~ ~ 0.3

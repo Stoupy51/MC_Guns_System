@@ -49,8 +49,7 @@ def main() -> None:
     ## Setup scoreboards
     # Per-player config trigger (players use /trigger mgs.player.config set <value>)
     # Per-player toggle scoreboards (0 = disabled, 1 = enabled)
-    write_versioned_function("load/confirm_load",
-f"""
+    write_versioned_function("load/confirm_load", f"""
 # Player config: trigger objective for /trigger command
 scoreboard objectives add {ns}.player.config trigger
 
@@ -60,8 +59,7 @@ scoreboard objectives add {ns}.player.damage_debug dummy
 """, prepend=True)
 
     ## In player tick: enable trigger and process if set
-    write_versioned_function("player/tick",
-f"""
+    write_versioned_function("player/tick", f"""
 # Enable /trigger for this player
 scoreboard players enable @s {ns}.player.config
 execute if score @s {ns}.player.config matches 1.. run function {ns}:v{version}/player/config/process
@@ -85,8 +83,7 @@ execute if score @s {ns}.mp.map_edit matches 1 run function {ns}:v{version}/maps
     toggle_vis_max = TRIG_TOGGLE_VIS_BASE + 99
     set_default_max = TRIG_SET_DEFAULT_BASE + 99
 
-    write_versioned_function("player/config/process",
-f"""
+    write_versioned_function("player/config/process", f"""
 # 1 = Show config menu
 # 2 = Toggle hitmarker Sound
 # 3 = Toggle damage debug in chat
@@ -164,8 +161,7 @@ scoreboard players set @s {ns}.player.config 0
 
     ## Toggle functions (hitmarker, damage_debug)
     for score_name, display_name in [("hitmarker", "Hitmarker Sound"), ("damage_debug", "Damage Debug")]:
-        write_versioned_function(f"player/config/toggle_{score_name}",
-f"""
+        write_versioned_function(f"player/config/toggle_{score_name}", f"""
 # If currently OFF (0), turn ON (1)
 execute store success score #toggle {ns}.data unless score @s {ns}.player.{score_name} matches 1
 execute if score #toggle {ns}.data matches 1 run scoreboard players set @s {ns}.player.{score_name} 1
@@ -199,8 +195,7 @@ tellraw @s [{MGS_TAG},["",{{"text":"{display_name}"}},": "],{{"text":"OFF","colo
     # Info line
     info_line = f'["  ",{{"text":"Use ","color":"gray","italic":true}},{{"text":"/trigger {ns}.player.config","color":"aqua","italic":true}},{{"text":" to reopen","color":"gray","italic":true}}]'
 
-    write_versioned_function("player/config/menu",
-f"""tellraw @s {sep}
+    write_versioned_function("player/config/menu", f"""tellraw @s {sep}
 tellraw @s {title}
 tellraw @s {sep}
 execute if score @s {ns}.player.hitmarker matches 1 run tellraw @s {hm_on}
@@ -228,8 +223,7 @@ $execute unless score #damage_debug {ns}.config matches 1 at @s as $(attacker) i
 
     ## Hitmarker Sound on entity hit (added to damage signal)
     # Plays for both hitscan (@p[tag=ticking]) and explosion (@p[tag=temp_shooter]) hits
-    write_versioned_function("player/config/hitmarker_sound",
-f"""
+    write_versioned_function("player/config/hitmarker_sound", f"""
 # Play hitmarker Sound to the shooter if their personal config has it enabled
 # For hitscan: shooter has tag {ns}.ticking
 execute as @a[tag={ns}.ticking] if score @s {ns}.player.hitmarker matches 1 at @s run playsound minecraft:entity.experience_orb.pickup player @s ~ ~ ~ 1.0 2.0

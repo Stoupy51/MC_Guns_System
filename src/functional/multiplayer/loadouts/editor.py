@@ -63,8 +63,7 @@ def generate_editor() -> None:
 		)
 	primary_actions_snbt = ",".join(primary_actions)
 
-	write_versioned_function("multiplayer/editor/start",
-f"""
+	write_versioned_function("multiplayer/editor/start", f"""
 # Initialize Pick-10 budget
 scoreboard players set @s {ns}.mp.edit_points {PICK10_TOTAL}
 # Mark editor as active (step 1 = picking primary)
@@ -75,8 +74,7 @@ execute store result storage {ns}:temp _pts int 1 run scoreboard players get @s 
 function {ns}:v{version}/multiplayer/editor/show_primary_dialog_macro with storage {ns}:temp
 """)
 
-	write_versioned_function("multiplayer/editor/show_primary_dialog_macro",
-f"""$data modify storage {ns}:temp dialog set value {{\
+	write_versioned_function("multiplayer/editor/show_primary_dialog_macro", f"""$data modify storage {ns}:temp dialog set value {{\
 type:"minecraft:multi_action",\
 title:{{text:"Create Loadout - Pick Primary",color:"gold",bold:true}},\
 body:[{{\
@@ -124,8 +122,7 @@ function {ns}:v{version}/multiplayer/show_dialog with storage {ns}:temp
 				f'return run function {ns}:v{version}/multiplayer/editor/{func_name}\n'
 			)
 
-	write_versioned_function("multiplayer/editor/pick_primary",
-f"""
+	write_versioned_function("multiplayer/editor/pick_primary", f"""
 # Deduct primary weapon cost
 scoreboard players remove @s {ns}.mp.edit_points {COST_PRIMARY_WEAPON}
 
@@ -156,13 +153,11 @@ function {ns}:v{version}/multiplayer/editor/show_primary_mags_dialog
 
 	def write_primary_scope_dialog(func_suffix: str, variants: tuple[str, ...]) -> None:
 		snbt = scope_actions_snbt(TRIG_PRIMARY_SCOPE_BASE, variants, COST_PRIMARY_SCOPE)
-		write_versioned_function(f"multiplayer/editor/scope/primary_{func_suffix}",
-f"""
+		write_versioned_function(f"multiplayer/editor/scope/primary_{func_suffix}", f"""
 execute store result storage {ns}:temp _pts int 1 run scoreboard players get @s {ns}.mp.edit_points
 function {ns}:v{version}/multiplayer/editor/scope/primary_{func_suffix}_macro with storage {ns}:temp
 """)
-		write_versioned_function(f"multiplayer/editor/scope/primary_{func_suffix}_macro",
-f"""$data modify storage {ns}:temp dialog set value {{\
+		write_versioned_function(f"multiplayer/editor/scope/primary_{func_suffix}_macro", f"""$data modify storage {ns}:temp dialog set value {{\
 type:"minecraft:multi_action",\
 title:{{text:"Create Loadout - Pick Scope",color:"gold",bold:true}},\
 body:[{{\
@@ -216,8 +211,7 @@ function {ns}:v{version}/multiplayer/show_dialog with storage {ns}:temp
 
 	pick_scope_lines = gen_pick_scope_lines("primary", TRIG_PRIMARY_SCOPE_BASE, COST_PRIMARY_SCOPE)
 
-	write_versioned_function("multiplayer/editor/pick_primary_scope",
-f"""
+	write_versioned_function("multiplayer/editor/pick_primary_scope", f"""
 # Store scope choice and deduct cost if non-iron
 {pick_scope_lines}
 # Compute full weapon ID
@@ -227,8 +221,7 @@ function {ns}:v{version}/multiplayer/editor/set_primary_full with storage {ns}:t
 function {ns}:v{version}/multiplayer/editor/show_primary_mags_dialog
 """)
 
-	write_versioned_function("multiplayer/editor/set_primary_full",
-f"""$data modify storage {ns}:temp editor.primary_full set value "$(primary)$(primary_scope)"
+	write_versioned_function("multiplayer/editor/set_primary_full", f"""$data modify storage {ns}:temp editor.primary_full set value "$(primary)$(primary_scope)"
 """)
 
 	## show_primary_mags_dialog - Pick how many primary magazines (1-5)
@@ -243,13 +236,11 @@ f"""$data modify storage {ns}:temp editor.primary_full set value "$(primary)$(pr
 		)
 	mag_actions_primary_snbt = ",".join(mag_actions_primary)
 
-	write_versioned_function("multiplayer/editor/show_primary_mags_dialog",
-f"""
+	write_versioned_function("multiplayer/editor/show_primary_mags_dialog", f"""
 execute store result storage {ns}:temp _pts int 1 run scoreboard players get @s {ns}.mp.edit_points
 function {ns}:v{version}/multiplayer/editor/show_primary_mags_dialog_macro with storage {ns}:temp
 """)
-	write_versioned_function("multiplayer/editor/show_primary_mags_dialog_macro",
-f"""$data modify storage {ns}:temp dialog set value {{\
+	write_versioned_function("multiplayer/editor/show_primary_mags_dialog_macro", f"""$data modify storage {ns}:temp dialog set value {{\
 type:"minecraft:multi_action",\
 title:{{text:"Create Loadout - Primary Magazines",color:"gold",bold:true}},\
 body:[{{\
@@ -287,8 +278,7 @@ function {ns}:v{version}/multiplayer/show_dialog with storage {ns}:temp
 			f'scoreboard players remove @s {ns}.mp.edit_points {extra_cost}\n'
 		)
 
-	write_versioned_function("multiplayer/editor/pick_primary_mags",
-f"""
+	write_versioned_function("multiplayer/editor/pick_primary_mags", f"""
 # Validate and store primary mag count and deduct cost
 {pick_primary_mags_lines}
 # Show secondary weapon dialog
@@ -301,8 +291,7 @@ function {ns}:v{version}/multiplayer/editor/show_secondary_dialog
 		f'execute if data storage {ns}:temp editor{{secondary_scope:"{suffix}"}} run scoreboard players add @s {ns}.mp.edit_points {COST_SECONDARY_SCOPE}'
 		for suffix in ALL_SCOPE_SUFFIXES if suffix != ""
 	)
-	write_versioned_function("multiplayer/editor/back_to_secondary",
-f"""
+	write_versioned_function("multiplayer/editor/back_to_secondary", f"""
 # Refund secondary mags cost (secondary_mag_count * COST_SECONDARY_MAG)
 execute store result score #refund_mags {ns}.data run data get storage {ns}:temp editor.secondary_mag_count
 scoreboard players operation @s {ns}.mp.edit_points += #refund_mags {ns}.data
@@ -334,14 +323,12 @@ function {ns}:v{version}/multiplayer/editor/show_secondary_dialog
 	)
 	secondary_actions_snbt = ",".join(secondary_actions)
 
-	write_versioned_function("multiplayer/editor/show_secondary_dialog",
-f"""
+	write_versioned_function("multiplayer/editor/show_secondary_dialog", f"""
 scoreboard players set @s {ns}.mp.edit_step 2
 execute store result storage {ns}:temp _pts int 1 run scoreboard players get @s {ns}.mp.edit_points
 function {ns}:v{version}/multiplayer/editor/show_secondary_dialog_macro with storage {ns}:temp
 """)
-	write_versioned_function("multiplayer/editor/show_secondary_dialog_macro",
-f"""$data modify storage {ns}:temp dialog set value {{\
+	write_versioned_function("multiplayer/editor/show_secondary_dialog_macro", f"""$data modify storage {ns}:temp dialog set value {{\
 type:"minecraft:multi_action",\
 title:{{text:"Create Loadout - Pick Secondary",color:"gold",bold:true}},\
 body:[{{\
@@ -381,8 +368,7 @@ function {ns}:v{version}/multiplayer/show_dialog with storage {ns}:temp
 		f'return run function {ns}:v{version}/multiplayer/editor/scope/secondary_4only\n'
 	)
 
-	write_versioned_function("multiplayer/editor/pick_secondary",
-f"""
+	write_versioned_function("multiplayer/editor/pick_secondary", f"""
 # Store secondary weapon choice
 {pick_secondary_lines}
 # Check budget before deducting (secondary weapon costs {COST_SECONDARY_WEAPON} pt; None is free)
@@ -400,13 +386,11 @@ function {ns}:v{version}/multiplayer/editor/show_secondary_mags_dialog
 
 	## Secondary scope dialog: deagle (Iron Sights + 4x Scope)
 	deagle_scope_snbt = scope_actions_snbt(TRIG_SECONDARY_SCOPE_BASE, ("", "_4"), COST_SECONDARY_SCOPE)
-	write_versioned_function("multiplayer/editor/scope/secondary_4only",
-f"""
+	write_versioned_function("multiplayer/editor/scope/secondary_4only", f"""
 execute store result storage {ns}:temp _pts int 1 run scoreboard players get @s {ns}.mp.edit_points
 function {ns}:v{version}/multiplayer/editor/scope/secondary_4only_macro with storage {ns}:temp
 """)
-	write_versioned_function("multiplayer/editor/scope/secondary_4only_macro",
-f"""$data modify storage {ns}:temp dialog set value {{\
+	write_versioned_function("multiplayer/editor/scope/secondary_4only_macro", f"""$data modify storage {ns}:temp dialog set value {{\
 type:"minecraft:multi_action",\
 title:{{text:"Create Loadout - Scope (Secondary)",color:"gold",bold:true}},\
 body:[{{\
@@ -427,8 +411,7 @@ function {ns}:v{version}/multiplayer/show_dialog with storage {ns}:temp
 	## editor/pick_secondary_scope - Store scope, deduct cost, show secondary mags
 	pick_sec_scope_lines = gen_pick_scope_lines("secondary", TRIG_SECONDARY_SCOPE_BASE, COST_SECONDARY_SCOPE)
 
-	write_versioned_function("multiplayer/editor/pick_secondary_scope",
-f"""
+	write_versioned_function("multiplayer/editor/pick_secondary_scope", f"""
 # Store secondary scope and deduct cost
 {pick_sec_scope_lines}
 # Compute full secondary ID
@@ -438,8 +421,7 @@ function {ns}:v{version}/multiplayer/editor/set_secondary_full with storage {ns}
 function {ns}:v{version}/multiplayer/editor/show_secondary_mags_dialog
 """)
 
-	write_versioned_function("multiplayer/editor/set_secondary_full",
-f"""$data modify storage {ns}:temp editor.secondary_full set value "$(secondary)$(secondary_scope)"
+	write_versioned_function("multiplayer/editor/set_secondary_full", f"""$data modify storage {ns}:temp editor.secondary_full set value "$(secondary)$(secondary_scope)"
 """)
 
 	## show_secondary_mags_dialog - Pick how many secondary magazines (0-5)
@@ -458,13 +440,11 @@ f"""$data modify storage {ns}:temp editor.secondary_full set value "$(secondary)
 		)
 	mag_actions_secondary_snbt = ",".join(mag_actions_secondary)
 
-	write_versioned_function("multiplayer/editor/show_secondary_mags_dialog",
-f"""
+	write_versioned_function("multiplayer/editor/show_secondary_mags_dialog", f"""
 execute store result storage {ns}:temp _pts int 1 run scoreboard players get @s {ns}.mp.edit_points
 function {ns}:v{version}/multiplayer/editor/show_secondary_mags_dialog_macro with storage {ns}:temp
 """)
-	write_versioned_function("multiplayer/editor/show_secondary_mags_dialog_macro",
-f"""$data modify storage {ns}:temp dialog set value {{\
+	write_versioned_function("multiplayer/editor/show_secondary_mags_dialog_macro", f"""$data modify storage {ns}:temp dialog set value {{\
 type:"minecraft:multi_action",\
 title:{{text:"Create Loadout - Secondary Magazines",color:"gold",bold:true}},\
 body:[{{\
@@ -503,8 +483,7 @@ function {ns}:v{version}/multiplayer/show_dialog with storage {ns}:temp
 				f'scoreboard players remove @s {ns}.mp.edit_points {extra_cost}\n'
 			)
 
-	write_versioned_function("multiplayer/editor/pick_secondary_mags",
-f"""
+	write_versioned_function("multiplayer/editor/pick_secondary_mags", f"""
 # Store secondary mag count and deduct cost
 {pick_secondary_mags_lines}
 # Show equipment slot 1 dialog
@@ -553,14 +532,12 @@ function {ns}:v{version}/multiplayer/editor/show_equip_slot1_dialog
 		equip_pick_lines[slot_num] = pick
 
 	## show_equip_slot1_dialog
-	write_versioned_function("multiplayer/editor/show_equip_slot1_dialog",
-f"""
+	write_versioned_function("multiplayer/editor/show_equip_slot1_dialog", f"""
 scoreboard players set @s {ns}.mp.edit_step 3
 execute store result storage {ns}:temp _pts int 1 run scoreboard players get @s {ns}.mp.edit_points
 function {ns}:v{version}/multiplayer/editor/show_equip_slot1_dialog_macro with storage {ns}:temp
 """)
-	write_versioned_function("multiplayer/editor/show_equip_slot1_dialog_macro",
-f"""$data modify storage {ns}:temp dialog set value {{\
+	write_versioned_function("multiplayer/editor/show_equip_slot1_dialog_macro", f"""$data modify storage {ns}:temp dialog set value {{\
 type:"minecraft:multi_action",\
 title:{{text:"Create Loadout - Equipment Slot 1",color:"gold",bold:true}},\
 body:[{{\
@@ -578,8 +555,7 @@ exit_action:{{label:"Back",action:{{type:"run_command",command:"/trigger {ns}.pl
 function {ns}:v{version}/multiplayer/show_dialog with storage {ns}:temp
 """)
 
-	write_versioned_function("multiplayer/editor/pick_equip_slot1",
-f"""
+	write_versioned_function("multiplayer/editor/pick_equip_slot1", f"""
 # Store slot 1 grenade and deduct cost
 {equip_pick_lines[1]}
 # Show equipment slot 2 dialog
@@ -588,8 +564,7 @@ function {ns}:v{version}/multiplayer/editor/show_equip_slot2_dialog
 
 	## editor/back_to_equip1 - Refund equip_slot1 cost, go back to slot 1 dialog
 	##   (called when pressing Back from equip slot 2 dialog, edit_step=4)
-	write_versioned_function("multiplayer/editor/back_to_equip1",
-f"""
+	write_versioned_function("multiplayer/editor/back_to_equip1", f"""
 # Refund equip_slot1 grenade cost if one was selected
 execute unless data storage {ns}:temp editor{{equip_slot1:""}} run scoreboard players add @s {ns}.mp.edit_points {COST_GRENADE}
 # Clear equip_slot1 state
@@ -600,8 +575,7 @@ function {ns}:v{version}/multiplayer/editor/show_equip_slot1_dialog
 
 	## editor/back_from_perks - Refund equip_slot2 cost, go back to slot 2 dialog
 	##   (called when pressing Back from perks dialog, edit_step=9)
-	write_versioned_function("multiplayer/editor/back_from_perks",
-f"""
+	write_versioned_function("multiplayer/editor/back_from_perks", f"""
 # Refund equip_slot2 grenade cost if one was selected
 execute unless data storage {ns}:temp editor{{equip_slot2:""}} run scoreboard players add @s {ns}.mp.edit_points {COST_GRENADE}
 # Clear equip_slot2 state and perks list
@@ -612,13 +586,11 @@ function {ns}:v{version}/multiplayer/editor/show_equip_slot2_dialog
 """)
 
 	## show_equip_slot2_dialog - Pick grenade for slot 2 (hotbar.7)
-	write_versioned_function("multiplayer/editor/show_equip_slot2_dialog",
-f"""
+	write_versioned_function("multiplayer/editor/show_equip_slot2_dialog", f"""
 execute store result storage {ns}:temp _pts int 1 run scoreboard players get @s {ns}.mp.edit_points
 function {ns}:v{version}/multiplayer/editor/show_equip_slot2_dialog_macro with storage {ns}:temp
 """)
-	write_versioned_function("multiplayer/editor/show_equip_slot2_dialog_macro",
-f"""$data modify storage {ns}:temp dialog set value {{\
+	write_versioned_function("multiplayer/editor/show_equip_slot2_dialog_macro", f"""$data modify storage {ns}:temp dialog set value {{\
 type:"minecraft:multi_action",\
 title:{{text:"Create Loadout - Equipment Slot 2",color:"gold",bold:true}},\
 body:[{{\
@@ -636,8 +608,7 @@ exit_action:{{label:"Back",action:{{type:"run_command",command:"/trigger {ns}.pl
 function {ns}:v{version}/multiplayer/show_dialog with storage {ns}:temp
 """)
 
-	write_versioned_function("multiplayer/editor/pick_equip_slot2",
-f"""
+	write_versioned_function("multiplayer/editor/pick_equip_slot2", f"""
 # Store slot 2 grenade and deduct cost
 {equip_pick_lines[2]}
 # Clear perks list (fresh start)
@@ -680,8 +651,7 @@ function {ns}:v{version}/multiplayer/editor/show_perks_dialog
 		for perk_id, *_ in PERKS
 	)
 
-	write_versioned_function("multiplayer/editor/show_perks_dialog",
-f"""
+	write_versioned_function("multiplayer/editor/show_perks_dialog", f"""
 scoreboard players set @s {ns}.mp.edit_step 9
 execute store result storage {ns}:temp _pts int 1 run scoreboard players get @s {ns}.mp.edit_points
 
@@ -708,8 +678,7 @@ function {ns}:v{version}/multiplayer/editor/show_perks_dialog_macro with storage
 
 	# Build perk status lines for the macro - each shows ✔ or ✘ based on _perk_N value
 	# Since we can't do conditional text in one SNBT, we'll show the check mark count and list names
-	write_versioned_function("multiplayer/editor/show_perks_dialog_macro",
-f"""$data modify storage {ns}:temp dialog set value {{\
+	write_versioned_function("multiplayer/editor/show_perks_dialog_macro", f"""$data modify storage {ns}:temp dialog set value {{\
 type:"minecraft:multi_action",\
 title:{{text:"Create Loadout - Perks",color:"gold",bold:true}},\
 body:[{{\
@@ -745,8 +714,7 @@ function {ns}:v{version}/multiplayer/show_dialog with storage {ns}:temp
 		for pid, *_ in PERKS
 	)
 
-	write_versioned_function("multiplayer/editor/pick_perk",
-f"""
+	write_versioned_function("multiplayer/editor/pick_perk", f"""
 # Store which perk was toggled
 {pick_perk_dispatch}
 # Toggle the selected perk (generic macro function)
@@ -756,8 +724,7 @@ function {ns}:v{version}/multiplayer/editor/show_perks_dialog
 """)
 
 	# Generic toggle perk (macro function using _toggle_perk)
-	write_versioned_function("multiplayer/editor/toggle_perk",
-f"""
+	write_versioned_function("multiplayer/editor/toggle_perk", f"""
 # Check if already selected → remove (refund) and early-exit
 $execute if data storage {ns}:temp editor{{perks:["$(_toggle_perk)"]}} run scoreboard players add @s {ns}.mp.edit_points {COST_PERK}
 $execute if data storage {ns}:temp editor{{perks:["$(_toggle_perk)"]}} run return run function {ns}:v{version}/multiplayer/editor/remove_perk
@@ -776,16 +743,14 @@ scoreboard players remove @s {ns}.mp.edit_points {COST_PERK}
 """)
 
 	# Generic remove perk (starts rebuild without the toggled perk)
-	write_versioned_function("multiplayer/editor/remove_perk",
-f"""
+	write_versioned_function("multiplayer/editor/remove_perk", f"""
 data modify storage {ns}:temp _remove_iter set from storage {ns}:temp editor.perks
 data modify storage {ns}:temp editor.perks set value []
 function {ns}:v{version}/multiplayer/editor/rebuild_perks with storage {ns}:temp
 """)
 
 	# Generic rebuild perks (recursive, filters out _toggle_perk via macro)
-	write_versioned_function("multiplayer/editor/rebuild_perks",
-f"""
+	write_versioned_function("multiplayer/editor/rebuild_perks", f"""
 execute unless data storage {ns}:temp _remove_iter[0] run return 0
 data modify storage {ns}:temp _perk_val set from storage {ns}:temp _remove_iter[0]
 data remove storage {ns}:temp _remove_iter[0]
@@ -794,16 +759,14 @@ function {ns}:v{version}/multiplayer/editor/rebuild_perks with storage {ns}:temp
 """)
 
 	## editor/perks_done - Advance to confirm step
-	write_versioned_function("multiplayer/editor/perks_done",
-f"""
+	write_versioned_function("multiplayer/editor/perks_done", f"""
 scoreboard players set @s {ns}.mp.edit_step 10
 # Show confirmation dialog
 function {ns}:v{version}/multiplayer/editor/show_confirm with storage {ns}:temp editor
 """)
 
 	## editor/show_confirm - Macro function to build the review dialog
-	write_versioned_function("multiplayer/editor/show_confirm",
-f"""
+	write_versioned_function("multiplayer/editor/show_confirm", f"""
 # Compute points used = PICK10_TOTAL - remaining
 scoreboard players set #pts_used {ns}.data {PICK10_TOTAL}
 scoreboard players operation #pts_used {ns}.data -= @s {ns}.mp.edit_points
@@ -839,26 +802,22 @@ execute if data storage {ns}:temp editor.perks[0] run function {ns}:v{version}/m
 function {ns}:v{version}/multiplayer/show_dialog with storage {ns}:temp
 """)
 
-	write_versioned_function("multiplayer/editor/patch_pts_used",
-f"""$data modify storage {ns}:temp dialog.body[0].contents set value ["","",{{"text":"Points used"}},": ",{{"text":"$(_pts_used)","color":"gold","bold":true}},{{"text":" / {PICK10_TOTAL}","color":"dark_gray"}}]
+	write_versioned_function("multiplayer/editor/patch_pts_used", f"""$data modify storage {ns}:temp dialog.body[0].contents set value ["","",{{"text":"Points used"}},": ",{{"text":"$(_pts_used)","color":"gold","bold":true}},{{"text":" / {PICK10_TOTAL}","color":"dark_gray"}}]
 """)
 
-	write_versioned_function("multiplayer/editor/append_perks_to_confirm",
-f"""
+	write_versioned_function("multiplayer/editor/append_perks_to_confirm", f"""
 data modify storage {ns}:temp _perk_iter set from storage {ns}:temp editor.perks
 function {ns}:v{version}/multiplayer/editor/append_perk_line
 """)
 
-	write_versioned_function("multiplayer/editor/append_perk_line",
-f"""
+	write_versioned_function("multiplayer/editor/append_perk_line", f"""
 execute unless data storage {ns}:temp _perk_iter[0] run return 0
 data modify storage {ns}:temp _perk_val set from storage {ns}:temp _perk_iter[0]
 data remove storage {ns}:temp _perk_iter[0]
 function {ns}:v{version}/multiplayer/editor/append_perk_line_macro with storage {ns}:temp
 """)
 
-	write_versioned_function("multiplayer/editor/append_perk_line_macro",
-f"""$data modify storage {ns}:temp dialog.body append value {{type:"minecraft:plain_message",contents:["","","  ✔ ",{{"text":"Perk"}},": ",{{"text":"$(_perk_val)","color":"aqua"}}]}}
+	write_versioned_function("multiplayer/editor/append_perk_line_macro", f"""$data modify storage {ns}:temp dialog.body append value {{type:"minecraft:plain_message",contents:["","","  ✔ ",{{"text":"Perk"}},": ",{{"text":"$(_perk_val)","color":"aqua"}}]}}
 function {ns}:v{version}/multiplayer/editor/append_perk_line
 """)
 
@@ -916,8 +875,7 @@ data modify storage {ns}:multiplayer secondary_slot_table set value [{secondary_
 			for item_id, display in GRENADE_TYPES if item_id
 		)
 
-	write_versioned_function("multiplayer/editor/save",
-f"""
+	write_versioned_function("multiplayer/editor/save", f"""
 # Determine visibility from trigger value
 scoreboard players set #cl_public {ns}.data 0
 execute if score @s {ns}.player.config matches {TRIG_SAVE_PUBLIC} run scoreboard players set #cl_public {ns}.data 1
@@ -1014,17 +972,14 @@ function {ns}:v{version}/multiplayer/editor/notify_saved with storage {ns}:temp 
 """)
 
 	## Equip slot append macros
-	write_versioned_function("multiplayer/editor/append_equip1",
-f"""$data modify storage {ns}:temp _new_loadout.slots append value {{slot:"hotbar.8",loot:"{ns}:i/$(equip_slot1)",count:1,consumable:0b,bullets:0}}
+	write_versioned_function("multiplayer/editor/append_equip1", f"""$data modify storage {ns}:temp _new_loadout.slots append value {{slot:"hotbar.8",loot:"{ns}:i/$(equip_slot1)",count:1,consumable:0b,bullets:0}}
 """)
 
-	write_versioned_function("multiplayer/editor/append_equip2",
-f"""$data modify storage {ns}:temp _new_loadout.slots append value {{slot:"hotbar.7",loot:"{ns}:i/$(equip_slot2)",count:1,consumable:0b,bullets:0}}
+	write_versioned_function("multiplayer/editor/append_equip2", f"""$data modify storage {ns}:temp _new_loadout.slots append value {{slot:"hotbar.7",loot:"{ns}:i/$(equip_slot2)",count:1,consumable:0b,bullets:0}}
 """)
 
 	## append_mag_slots - Add magazine slots based on type and count
-	write_versioned_function("multiplayer/editor/append_mag_slots",
-f"""
+	write_versioned_function("multiplayer/editor/append_mag_slots", f"""
 # Flatten mag_id for macro use (macro vars can't use dot-paths)
 data modify storage {ns}:temp _mag_id set from storage {ns}:temp _mag_data.mag_id
 data modify storage {ns}:temp _mag_bullets set from storage {ns}:temp _mag_data.mag_bullets
@@ -1037,8 +992,7 @@ execute if data storage {ns}:temp _mag_data{{mag_consumable:1b}} run return 0
 execute if score #pmag_count {ns}.data matches 1.. run function {ns}:v{version}/multiplayer/editor/append_mag_loop
 """)
 
-	write_versioned_function("multiplayer/editor/append_mag_consumable",
-f"""
+	write_versioned_function("multiplayer/editor/append_mag_consumable", f"""
 # Total bullets = mag_bullets (capacity) * pmag_count (user's chosen count)
 execute store result score #mag_bullets {ns}.data run data get storage {ns}:temp _mag_bullets
 scoreboard players operation #mag_bullets {ns}.data *= #pmag_count {ns}.data
@@ -1048,12 +1002,10 @@ function {ns}:v{version}/multiplayer/editor/append_mag_consumable_macro with sto
 scoreboard players add #inv_slot {ns}.data 1
 """)
 
-	write_versioned_function("multiplayer/editor/append_mag_consumable_macro",
-f"""$data modify storage {ns}:temp _new_loadout.slots append value {{slot:"inventory.$(_inv_n)",loot:"{ns}:i/$(_mag_id)",count:1,consumable:1b,bullets:$(_mag_bullets)}}
+	write_versioned_function("multiplayer/editor/append_mag_consumable_macro", f"""$data modify storage {ns}:temp _new_loadout.slots append value {{slot:"inventory.$(_inv_n)",loot:"{ns}:i/$(_mag_id)",count:1,consumable:1b,bullets:$(_mag_bullets)}}
 """)
 
-	write_versioned_function("multiplayer/editor/append_mag_loop",
-f"""
+	write_versioned_function("multiplayer/editor/append_mag_loop", f"""
 execute if score #pmag_count {ns}.data matches ..0 run return 0
 execute store result storage {ns}:temp _inv_n int 1 run scoreboard players get #inv_slot {ns}.data
 function {ns}:v{version}/multiplayer/editor/append_mag_regular with storage {ns}:temp
@@ -1062,25 +1014,21 @@ scoreboard players remove #pmag_count {ns}.data 1
 return run function {ns}:v{version}/multiplayer/editor/append_mag_loop
 """)
 
-	write_versioned_function("multiplayer/editor/append_mag_regular",
-f"""$data modify storage {ns}:temp _new_loadout.slots append value {{slot:"inventory.$(_inv_n)",loot:"{ns}:i/$(_mag_id)",count:1,consumable:0b,bullets:0}}
+	write_versioned_function("multiplayer/editor/append_mag_regular", f"""$data modify storage {ns}:temp _new_loadout.slots append value {{slot:"inventory.$(_inv_n)",loot:"{ns}:i/$(_mag_id)",count:1,consumable:0b,bullets:0}}
 """)
 
 	## start_secondary_mags - setup secondary mag data and loop
-	write_versioned_function("multiplayer/editor/start_secondary_mags",
-f"""
+	write_versioned_function("multiplayer/editor/start_secondary_mags", f"""
 data modify storage {ns}:temp _mag_data set from storage {ns}:temp _build.secondary_data
 execute store result score #pmag_count {ns}.data run data get storage {ns}:temp editor.secondary_mag_count
 execute if score #pmag_count {ns}.data matches 1.. run function {ns}:v{version}/multiplayer/editor/append_mag_slots
 """)
 
 	## Fix loot macros
-	write_versioned_function("multiplayer/editor/fix_primary_loot",
-f"""$data modify storage {ns}:temp _build.primary_data.gun_slot.loot set value "{ns}:i/$(primary_full)"
+	write_versioned_function("multiplayer/editor/fix_primary_loot", f"""$data modify storage {ns}:temp _build.primary_data.gun_slot.loot set value "{ns}:i/$(primary_full)"
 """)
 
-	write_versioned_function("multiplayer/editor/fix_secondary_loot",
-f"""$data modify storage {ns}:temp _build.secondary_data.gun_slot.loot set value "{ns}:i/$(secondary_full)"
+	write_versioned_function("multiplayer/editor/fix_secondary_loot", f"""$data modify storage {ns}:temp _build.secondary_data.gun_slot.loot set value "{ns}:i/$(secondary_full)"
 """)
 
 	## Name and notification macros

@@ -24,7 +24,6 @@ scoreboard players set #blue mgs.mp.team 0
 scoreboard players set @a mgs.mp.kills 0
 scoreboard players set @a mgs.mp.deaths 0
 scoreboard players set @a mgs.mp.death_count 0
-scoreboard players set @a mgs.mp.respawn_prot 0
 
 # Set timer from time_limit
 execute store result score #mp_timer mgs.data run data get storage mgs:multiplayer game.time_limit
@@ -114,16 +113,17 @@ execute as @a[scores={mgs.mp.in_game=1}] run attribute @s minecraft:movement_spe
 execute as @a[scores={mgs.mp.in_game=1}] run attribute @s minecraft:jump_strength base set 0
 
 # Give loadout to players who already have a class (positive = standard, negative = custom)
-execute as @a at @s unless score @s mgs.mp.class matches 0 run function mgs:v5.0.0/multiplayer/apply_class
+execute as @a[scores={mgs.mp.in_game=1}] at @s unless score @s mgs.mp.class matches 0 run function mgs:v5.0.0/multiplayer/apply_class
 
 # For players with no class: auto-apply default custom loadout if set
-execute as @a at @s if score @s mgs.mp.class matches 0 if score @s mgs.mp.default matches 1.. run function mgs:v5.0.0/multiplayer/auto_apply_default
+scoreboard players add @s mgs.mp.class 0
+execute as @a[scores={mgs.mp.in_game=1}] at @s if score @s mgs.mp.class matches 0 if score @s mgs.mp.default matches 1.. run function mgs:v5.0.0/multiplayer/auto_apply_default
 
 # Show class selection dialog to EVERYONE (so they can change during prep)
-execute as @a run function mgs:v5.0.0/multiplayer/select_class
+execute as @a[scores={mgs.mp.in_game=1}] run function mgs:v5.0.0/multiplayer/select_class
 
 # Store current class for change detection during prep
-execute as @a run scoreboard players operation @s mgs.mp.prev_class = @s mgs.mp.class
+execute as @a[scores={mgs.mp.in_game=1}] run scoreboard players operation @s mgs.mp.prev_class = @s mgs.mp.class
 
 # Schedule end of prep (10 seconds = 200 ticks)
 schedule function mgs:v5.0.0/multiplayer/end_prep 200t

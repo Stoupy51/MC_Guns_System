@@ -405,7 +405,7 @@ void main() {
     float cameraDist = 0.0;
     if (flashActive) cameraDist = max(cameraDist, float(p1.b) / 255.0 * 10.0);
     if (zoomActive)  cameraDist = max(cameraDist, float(p4.b) / 255.0 * 10.0);
-    bool thirdPerson = cameraDist > 2.0;  // Threshold: >2 blocks from camera → 3rd person
+    bool notFirstPerson = cameraDist > 1.0;  // Threshold: >0.3 block from camera → 3rd person or other player
 
     // Spread (crosshair) sentinel at pixel (2, 0)
     ivec4 p_spread = ivec4(round(texelFetch(MainSampler, ivec2(2, 0), 0) * 255.0));
@@ -418,12 +418,12 @@ void main() {
     float targetSpread = float(spreadLevel) / 4.0;  // Normalize to [0.0, 1.0] for 8-bit precision
     float smoothSpread = mix(prevSmooth, targetSpread, SPREAD_LERP_SPEED);
 
-    // R = flash, G = zoom, B = (zoomLevel + thirdPerson*128) / 255, A = smooth spread.
+    // R = flash, G = zoom, B = (zoomLevel + notFirstPerson*128) / 255, A = smooth spread.
     // flash.fsh reads R, zoom.fsh reads G, B (with 3rd person flag), and A.
     fragColor = vec4(
         flashActive ? 1.0 : 0.0,
         zoomActive ? 1.0 : 0.0,
-        float(zoomLevel + (thirdPerson ? 128 : 0)) / 255.0,
+        float(zoomLevel + (notFirstPerson ? 128 : 0)) / 255.0,
         smoothSpread
     );
 }
@@ -692,7 +692,7 @@ void main() {
 
     // 3rd person detection from sentinel B (camera-to-particle distance)
     float cameraDist = fovActive ? (float(pFov.b) / 255.0 * 10.0) : 0.0;
-    bool thirdPerson = cameraDist > 2.0;
+    bool notFirstPerson = cameraDist > 1.0;
 
     // Target zoom magnification (UV scale toward center).
     // Higher = stronger FOV reduction (texCoord = mix(texCoord, 0.5, zoom)).
@@ -701,7 +701,7 @@ void main() {
     //   0.30 = ~1.43x (scope x3)
     //   0.45 = ~1.82x (scope x4)
     float targetZoom = 0.0;
-    if (fovActive && !thirdPerson) {
+    if (fovActive && !notFirstPerson) {
         if (fovZoomLevel == 2) targetZoom = 0.25;       // Center-only: subtle
         else if (fovZoomLevel == 3) targetZoom = 0.30;   // Scope x3: moderate
         else if (fovZoomLevel == 4) targetZoom = 0.45;   // Scope x4: strong
@@ -791,8 +791,8 @@ void main() {
     bool flashMode = classifyData.r > 0.5;
     bool zoomMode  = classifyData.g > 0.5;
     int rawB = int(round(classifyData.b * 255.0));
-    bool thirdPerson = rawB >= 128;  // 3rd person flag packed in high bit of B
-    int zoomLevel = thirdPerson ? rawB - 128 : rawB;  // 0, 2, 3, or 4
+    bool notFirstPerson = rawB >= 128;  // 3rd person flag packed in high bit of B
+    int zoomLevel = notFirstPerson ? rawB - 128 : rawB;  // 0, 2, 3, or 4
 
     // Smooth FOV zoom: scales UV toward center for lower effective FOV
     // 0.0 = normal FOV, 0.15 = ~1.18x, 0.30 = ~1.43x, 0.45 = ~1.82x
@@ -806,7 +806,7 @@ void main() {
     // Apply barrel distortion if zooming WITH a scope (zoomLevel 3 or 4 only)
     // zoomLevel 2 = zoomed but no scope: skip distortion, FOV reduction still applies above
     // Disabled in 3rd person (barrel distortion makes no sense from behind)
-    if (zoomMode && !thirdPerson && ((zoomLevel == 3 && length(screenCoord) < RADIUS_LEVEL_3) || (zoomLevel == 4 && length(screenCoord) < RADIUS_LEVEL_4))) {
+    if (zoomMode && !notFirstPerson && ((zoomLevel == 3 && length(screenCoord) < RADIUS_LEVEL_3) || (zoomLevel == 4 && length(screenCoord) < RADIUS_LEVEL_4))) {
         float Zoom = float(zoomLevel);  // 3.0 for _3 weapons, 4.0 for _4 weapons
         float RadiusLevel = (zoomLevel == 3) ? RADIUS_LEVEL_3 : RADIUS_LEVEL_4;
         float d = length(screenCoord * Distortion / RadiusLevel);
@@ -827,7 +827,7 @@ void main() {
     // Sprite is chosen pseudo-randomly from scene data each frame.
     // Disabled in 3rd person (spark texture overlay makes no sense from behind;
     // the flash bloom/lighting from flash.fsh still applies).
-    if (flashMode && !thirdPerson) {
+    if (flashMode && !notFirstPerson) {
         // Choose position/scale: centered when also zooming, offset when hip-firing
         vec2 sparkPos   = zoomMode ? SPARK_POS_ZOOM   : SPARK_POS_NORMAL;
         vec2 sparkScale = zoomMode ? SPARK_SCALE_ZOOM  : SPARK_SCALE_NORMAL;
@@ -1059,12 +1059,17 @@ def main() -> None:
     # ── Flash marker: mode 1 ──
     # dust color:[R,0,0] with R=0.02 → vsh detects R∈[1-10], G==0, B==0
     # scale=0.01 → lifetime = 0 (1 game tick minimum) → brief flash for rapid fire
-    write_versioned_function("player/fire_weapon",
-"""
+    version: str = Mem.ctx.project_version
+    write_versioned_function("player/fire_weapon", f"""
 # Shader: spawn muzzle flash marker (mode 1) - skip for grenades
 # dust R=0.02, G=0, B=0 → particle.vsh detects and places at pixel (0,0)
 # scale 0.01 → lifetime 0 (1 game tick) → flash auto-expires immediately
-execute unless data storage mgs:gun all.stats.grenade_type at @s anchored eyes run particle minecraft:dust{color:[0.02,0.0,0.0],scale:0.01} ^ ^ ^1 0 0 0 0 1 force @a[distance=..16]
+execute unless data storage mgs:gun all.stats.grenade_type at @s anchored eyes positioned ^ ^ ^0.001 as @a[distance=..16] run function {ns}:v{version}/player/apply_flash_if_can_see
+""")
+    write_versioned_function("player/apply_flash_if_can_see", f"""
+scoreboard players set #can_see {ns}.data 0
+execute store result score #can_see {ns}.data run function #bs.view:can_see_ata {{with:{{}}}}
+execute if score #can_see {ns}.data matches 1 run particle minecraft:dust{{color:[0.02,0.0,0.0],scale:0.01}} ~ ~ ~ 0 0 0 0 1 force @s
 """)
 
     # ── Zoom marker: mode 3 (x3) or mode 4 (x4) ──

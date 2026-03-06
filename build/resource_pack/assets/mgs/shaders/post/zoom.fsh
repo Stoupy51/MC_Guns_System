@@ -70,8 +70,8 @@ void main() {
     bool flashMode = classifyData.r > 0.5;
     bool zoomMode  = classifyData.g > 0.5;
     int rawB = int(round(classifyData.b * 255.0));
-    bool thirdPerson = rawB >= 128;  // 3rd person flag packed in high bit of B
-    int zoomLevel = thirdPerson ? rawB - 128 : rawB;  // 0, 2, 3, or 4
+    bool notFirstPerson = rawB >= 128;  // 3rd person flag packed in high bit of B
+    int zoomLevel = notFirstPerson ? rawB - 128 : rawB;  // 0, 2, 3, or 4
 
     // Smooth FOV zoom: scales UV toward center for lower effective FOV
     // 0.0 = normal FOV, 0.15 = ~1.18x, 0.30 = ~1.43x, 0.45 = ~1.82x
@@ -85,7 +85,7 @@ void main() {
     // Apply barrel distortion if zooming WITH a scope (zoomLevel 3 or 4 only)
     // zoomLevel 2 = zoomed but no scope: skip distortion, FOV reduction still applies above
     // Disabled in 3rd person (barrel distortion makes no sense from behind)
-    if (zoomMode && !thirdPerson && ((zoomLevel == 3 && length(screenCoord) < RADIUS_LEVEL_3) || (zoomLevel == 4 && length(screenCoord) < RADIUS_LEVEL_4))) {
+    if (zoomMode && !notFirstPerson && ((zoomLevel == 3 && length(screenCoord) < RADIUS_LEVEL_3) || (zoomLevel == 4 && length(screenCoord) < RADIUS_LEVEL_4))) {
         float Zoom = float(zoomLevel);  // 3.0 for _3 weapons, 4.0 for _4 weapons
         float RadiusLevel = (zoomLevel == 3) ? RADIUS_LEVEL_3 : RADIUS_LEVEL_4;
         float d = length(screenCoord * Distortion / RadiusLevel);
@@ -106,7 +106,7 @@ void main() {
     // Sprite is chosen pseudo-randomly from scene data each frame.
     // Disabled in 3rd person (spark texture overlay makes no sense from behind;
     // the flash bloom/lighting from flash.fsh still applies).
-    if (flashMode && !thirdPerson) {
+    if (flashMode && !notFirstPerson) {
         // Choose position/scale: centered when also zooming, offset when hip-firing
         vec2 sparkPos   = zoomMode ? SPARK_POS_ZOOM   : SPARK_POS_NORMAL;
         vec2 sparkScale = zoomMode ? SPARK_SCALE_ZOOM  : SPARK_SCALE_NORMAL;

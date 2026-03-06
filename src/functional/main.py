@@ -314,8 +314,7 @@ $execute if score #random {ns}.data matches 31 run loot replace entity @s $(slot
     mp_setup_btn = btn("Game Setup", f"/function {ns}:v{version}/multiplayer/setup", "green", "Open the multiplayer game setup menu")
     mp_line = f'["  ",{mp_setup_btn}]'
 
-    write_function(f"{ns}:config",
-f"""tellraw @s {sep}
+    write_function(f"{ns}:config", f"""tellraw @s {sep}
 tellraw @s {title}
 tellraw @s {sep}
 tellraw @s {global_header}

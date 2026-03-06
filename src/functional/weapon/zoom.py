@@ -12,8 +12,7 @@ def main() -> None:
     version: str = Mem.ctx.project_version
 
     # Handle zoom functionality
-    write_versioned_function("zoom/main",
-f"""
+    write_versioned_function("zoom/main", f"""
 # If no gun data, stop here
 execute unless data storage {ns}:gun all.gun run return run function {ns}:v{version}/zoom/check_slowness
 
@@ -54,8 +53,7 @@ execute unless score @s {ns}.zoom matches 1 run function {ns}:v{version}/zoom/cr
     # Crosshair spread: spawn a marker particle encoding the player's movement state
     # Uses B channel > 0 (with G=0) to distinguish from flash/zoom markers
     # Priority: jump > sprint > walk > sneak > base (matching accuracy system)
-    write_versioned_function("zoom/crosshair_spread",
-f"""
+    write_versioned_function("zoom/crosshair_spread", f"""
 # If sneaking in the air, treat as walking (not jump spread)
 execute unless predicate {ns}:v{version}/is_on_ground if predicate {ns}:v{version}/is_sneaking at @s anchored eyes run return run particle minecraft:dust{{color:[0.02,0.0,0.12],scale:0.01}} ^ ^ ^1 0 0 0 0 1 force @s
 
@@ -76,8 +74,7 @@ execute at @s anchored eyes run particle minecraft:dust{{color:[0.02,0.0,0.05],s
 """)
 
     # Function to remove zoom state
-    write_versioned_function("zoom/remove",
-f"""
+    write_versioned_function("zoom/remove", f"""
 # Remove zoom state from gun stats
 data remove storage {ns}:gun all.stats.{IS_ZOOM}
 
@@ -103,8 +100,7 @@ function #{ns}:signals/on_unzoom
 """)
 
     # Function to set zoom state
-    write_versioned_function("zoom/set",
-f"""
+    write_versioned_function("zoom/set", f"""
 # Set zoom state in gun stats
 data modify storage {ns}:gun all.stats.{IS_ZOOM} set value true
 
@@ -129,8 +125,7 @@ function #{ns}:signals/on_zoom
 """)
 
     # Function to check and handle slowness effect
-    write_versioned_function("zoom/check_slowness",
-f"""
+    write_versioned_function("zoom/check_slowness", f"""
 # If player was zooming and switched slot so no longer holding a gun, remove slowness effect
 execute unless score @s {ns}.zoom matches 1 run return fail
 playsound {ns}:common/lean_out player @s

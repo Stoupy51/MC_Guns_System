@@ -47,8 +47,7 @@ def main() -> None:
     ## Throw grenade (called from fire_weapon when grenade_type is present)
     grenade_stats = [GRENADE_TYPE, GRENADE_FUSE, GRENADE_DURATION, GRENADE_EFFECT_RADIUS, EXPLOSION_DAMAGE, EXPLOSION_DECAY, EXPLOSION_RADIUS, PROJECTILE_GRAVITY, PROJECTILE_SPEED, PROJECTILE_MODEL]
     grenade_copy = "\n".join(f"data modify storage {ns}:temp grenade.{s} set from storage {ns}:gun all.stats.{s}" for s in grenade_stats)
-    write_versioned_function("grenade/throw",
-f"""
+    write_versioned_function("grenade/throw", f"""
 # Prepare grenade data in storage before summoning
 data modify storage {ns}:temp grenade set value {{}}
 {grenade_copy}
@@ -64,8 +63,7 @@ scoreboard players set @s {ns}.{REMAINING_BULLETS} 2
 """)
 
     ## Summon loop (supports pellet_count for multiple grenades)
-    write_versioned_function("grenade/summon_loop",
-f"""
+    write_versioned_function("grenade/summon_loop", f"""
 # Summon a grenade
 function {ns}:v{version}/grenade/summon
 
@@ -75,8 +73,7 @@ execute if score #bullets_to_fire {ns}.data matches 1.. run function {ns}:v{vers
 """)
 
     ## Summon a single grenade entity
-    write_versioned_function("grenade/summon",
-f"""
+    write_versioned_function("grenade/summon", f"""
 # Get accuracy value and apply spread
 function {ns}:v{version}/raycast/accuracy/get_value
 
@@ -88,8 +85,7 @@ scoreboard players add #grenade_count {ns}.data 1
 """)
 
     ## Initialize the newly summoned grenade entity
-    write_versioned_function("grenade/init",
-f"""
+    write_versioned_function("grenade/init", f"""
 # Tag as grenade
 tag @s add {ns}.grenade
 
@@ -113,8 +109,7 @@ function {ns}:v{version}/shared/calc_velocity
 """)
 
     ## Tick function for each grenade entity
-    write_versioned_function("grenade/tick",
-f"""
+    write_versioned_function("grenade/tick", f"""
 # Skip if grenade is stuck (semtex on a surface) or in smoke/flash effect phase
 execute if entity @s[tag={ns}.grenade_stuck] run return run function {ns}:v{version}/grenade/tick_stuck
 execute if entity @s[tag={ns}.grenade_active_effect] run return run function {ns}:v{version}/grenade/tick_effect
@@ -139,8 +134,7 @@ execute if score @s {ns}.data matches ..0 run function {ns}:v{version}/grenade/d
 """)
 
     ## Move semtex (uses stick collision instead of bounce)
-    write_versioned_function("grenade/move_semtex",
-f"""
+    write_versioned_function("grenade/move_semtex", f"""
 # Apply gravity
 execute store result score #proj_gravity {ns}.data run data get entity @s data.config.{PROJECTILE_GRAVITY}
 scoreboard players operation @s bs.vel.y -= #proj_gravity {ns}.data
@@ -172,8 +166,7 @@ playsound minecraft:entity.item.pickup player @a[distance=..32] ~ ~ ~ 0.5 0.5
 """)
 
     ## Stick collision callback (for semtex)
-    write_versioned_function("grenade/on_stick",
-f"""
+    write_versioned_function("grenade/on_stick", f"""
 # Stop all velocity (stick to the surface)
 function #bs.move:callback/stick
 
@@ -188,8 +181,7 @@ playsound minecraft:block.honey_block.place player @a[distance=..32] ~ ~ ~ 1 1.2
 """)
 
     ## Pair semtex grenade with target entity using unique scoreboard ID
-    write_versioned_function("grenade/stick_to_entity",
-f"""
+    write_versioned_function("grenade/stick_to_entity", f"""
 # Increment the global semtex pairing counter to get a unique ID
 scoreboard players add #semtex_id {ns}.data 1
 
@@ -202,8 +194,7 @@ tag @s add {ns}.stuck_to_entity
 """)
 
     ## Tick for stuck grenades (just countdown)
-    write_versioned_function("grenade/tick_stuck",
-f"""
+    write_versioned_function("grenade/tick_stuck", f"""
 # If stuck to an entity, follow it
 execute if entity @s[tag={ns}.stuck_to_entity] run function {ns}:v{version}/grenade/follow_entity
 
@@ -218,8 +209,7 @@ execute if score @s {ns}.data matches ..0 run function {ns}:v{version}/grenade/d
 """)
 
     ## Follow the paired entity (teleport grenade to entity's position)
-    write_versioned_function("grenade/follow_entity",
-f"""
+    write_versioned_function("grenade/follow_entity", f"""
 # Tag myself for the teleportation
 tag @s add {ns}.tp_me
 
@@ -234,8 +224,7 @@ tag @s remove {ns}.tp_me
 """)
 
     ## Detonation router - dispatch based on grenade type
-    write_versioned_function("grenade/detonate",
-f"""
+    write_versioned_function("grenade/detonate", f"""
 # Route to the appropriate detonation effect based on grenade type
 execute if data entity @s data.config{{{GRENADE_TYPE}:"frag"}} run return run function {ns}:v{version}/grenade/detonate_frag
 execute if data entity @s data.config{{{GRENADE_TYPE}:"semtex"}} run return run function {ns}:v{version}/grenade/detonate_frag
@@ -244,8 +233,7 @@ execute if data entity @s data.config{{{GRENADE_TYPE}:"flash"}} run return run f
 """)
 
     ## Frag/Semtex detonation - explosion with area damage (reuses projectile explosion logic)
-    write_versioned_function("grenade/detonate_frag",
-f"""
+    write_versioned_function("grenade/detonate_frag", f"""
 # Explosion particles
 particle explosion ~ ~ ~ 0 0 0 0 1 force @a[distance=..128]
 particle flame ~ ~ ~ 1 1 1 0.1 100 force @a[distance=..128]
@@ -296,8 +284,7 @@ function {ns}:v{version}/grenade/delete
 """)
 
     ## Realistic block destruction for grenades
-    write_versioned_function("grenade/realistic_explosion",
-f"""
+    write_versioned_function("grenade/realistic_explosion", f"""
 # Set explosion power from config and call the library
 scoreboard players operation #explosion_power realistic_explosion.data = #grenade_explosion_power {ns}.config
 execute if score #grenade_explosion_power {ns}.config matches 1.. run scoreboard players set #falling_fire realistic_explosion.data 1
@@ -306,8 +293,7 @@ function realistic_explosion:explode
 """)
 
     ## Smoke grenade detonation - start emitting smoke particles
-    write_versioned_function("grenade/detonate_smoke",
-f"""
+    write_versioned_function("grenade/detonate_smoke", f"""
 # Activation sound
 playsound minecraft:block.fire.extinguish player @a[distance=..32] ~ ~ ~ 1 0.8
 playsound minecraft:entity.generic.extinguish_fire player @a[distance=..32] ~ ~ ~ 1 0.5
@@ -328,8 +314,7 @@ particle campfire_signal_smoke ~ ~ ~ 2 1 2 0.02 30 force @a[distance=..128]
 """)
 
     ## Flash grenade detonation - blind nearby players
-    write_versioned_function("grenade/detonate_flash",
-f"""
+    write_versioned_function("grenade/detonate_flash", f"""
 # Flash sound
 playsound minecraft:entity.firework_rocket.blast player @a[distance=..32] ~ ~ ~ 2 2
 playsound minecraft:entity.lightning_bolt.thunder player @a[distance=..16] ~ ~ ~ 0.3 2
@@ -359,21 +344,18 @@ function {ns}:v{version}/grenade/delete
 """)
 
     ## Apply flash effect to nearby players (macro for configurable radius)
-    write_versioned_function("grenade/flash_apply",
-f"""
+    write_versioned_function("grenade/flash_apply", f"""
 # Apply blindness and darkness effects to all players within radius
 execute store result storage {ns}:temp flash.radius_float float 1 run data get entity @s data.config.{GRENADE_EFFECT_RADIUS}
 function {ns}:v{version}/grenade/flash_area with storage {ns}:temp flash
 """)
 
-    write_versioned_function("grenade/flash_area",
-f"""
+    write_versioned_function("grenade/flash_area", f"""
 $execute as @a[distance=..$(radius_float)] at @s run function {ns}:v{version}/grenade/flash_check
 """)
 
     # Check if this player should be flashed (close range OR looking at grenade with LOS)
-    write_versioned_function("grenade/flash_check",
-f"""
+    write_versioned_function("grenade/flash_check", f"""
 # @s = player, position = player's position (from at @s)
 # Flash source grenade is tagged {ns}.flash_source
 
@@ -392,8 +374,7 @@ execute unless score #can_see {ns}.data matches 1 run return 0
 function {ns}:v{version}/grenade/flash_player
 """)
 
-    write_versioned_function("grenade/flash_player",
-f"""
+    write_versioned_function("grenade/flash_player", f"""
 # Apply full blindness + darkness
 effect give @s minecraft:blindness 5 0 true
 effect give @s minecraft:darkness 3 0 true
@@ -404,8 +385,7 @@ title @s title {{"text":"F","font":"{ns}:flash"}}
 """)
 
     ## Tick for active effect grenades (smoke particles)
-    write_versioned_function("grenade/tick_effect",
-f"""
+    write_versioned_function("grenade/tick_effect", f"""
 # Decrement effect duration
 scoreboard players remove @s {ns}.data 1
 
@@ -432,8 +412,7 @@ particle campfire_cosy_smoke ~ ~0.3 ~ 2.5 0.5 2.5 0.005 5 force @a[distance=..12
 """)
 
     ## Delete grenade entity
-    write_versioned_function("grenade/delete",
-f"""
+    write_versioned_function("grenade/delete", f"""
 # If stuck to an entity, clean up the target's stuck_id
 execute if entity @s[tag={ns}.stuck_to_entity] run function {ns}:v{version}/grenade/cleanup_stuck_entity
 
@@ -443,8 +422,7 @@ kill @s
 """)
 
     ## Clean up stuck_id from the paired entity
-    write_versioned_function("grenade/cleanup_stuck_entity",
-f"""
+    write_versioned_function("grenade/cleanup_stuck_entity", f"""
 # Read my stuck ID
 scoreboard players operation #my_stuck {ns}.data = @s {ns}.stuck_id
 

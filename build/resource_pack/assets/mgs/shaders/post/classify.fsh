@@ -29,7 +29,7 @@ void main() {
     float cameraDist = 0.0;
     if (flashActive) cameraDist = max(cameraDist, float(p1.b) / 255.0 * 10.0);
     if (zoomActive)  cameraDist = max(cameraDist, float(p4.b) / 255.0 * 10.0);
-    bool thirdPerson = cameraDist > 2.0;  // Threshold: >2 blocks from camera → 3rd person
+    bool notFirstPerson = cameraDist > 1.0;  // Threshold: >0.3 block from camera → 3rd person or other player
 
     // Spread (crosshair) sentinel at pixel (2, 0)
     ivec4 p_spread = ivec4(round(texelFetch(MainSampler, ivec2(2, 0), 0) * 255.0));
@@ -42,12 +42,12 @@ void main() {
     float targetSpread = float(spreadLevel) / 4.0;  // Normalize to [0.0, 1.0] for 8-bit precision
     float smoothSpread = mix(prevSmooth, targetSpread, SPREAD_LERP_SPEED);
 
-    // R = flash, G = zoom, B = (zoomLevel + thirdPerson*128) / 255, A = smooth spread.
+    // R = flash, G = zoom, B = (zoomLevel + notFirstPerson*128) / 255, A = smooth spread.
     // flash.fsh reads R, zoom.fsh reads G, B (with 3rd person flag), and A.
     fragColor = vec4(
         flashActive ? 1.0 : 0.0,
         zoomActive ? 1.0 : 0.0,
-        float(zoomLevel + (thirdPerson ? 128 : 0)) / 255.0,
+        float(zoomLevel + (notFirstPerson ? 128 : 0)) / 255.0,
         smoothSpread
     );
 }

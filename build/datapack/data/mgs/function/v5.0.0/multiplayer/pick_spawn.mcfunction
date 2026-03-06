@@ -33,19 +33,20 @@ execute as @e[tag=mgs.spawn_candidate] at @s if entity @a[tag=mgs.spawn_enemy,di
 $execute unless entity @e[tag=mgs.spawn_candidate] run tag @e[tag=mgs.spawn_point,tag=mgs.spawn_$(type)] add mgs.spawn_candidate
 
 # If no enemies, pick random candidate directly (skip expensive distance calc)
-execute unless entity @a[tag=mgs.spawn_enemy] run return run function mgs:v5.0.0/multiplayer/pick_spawn_random
+# TODO: remove comment
+#execute unless entity @a[tag=mgs.spawn_enemy] run return run function mgs:v5.0.0/multiplayer/pick_spawn_random
 
-# Limit to 10 random candidates before distance computation (optimization)
-tag @e[tag=mgs.spawn_candidate,sort=random,limit=10] add mgs.spawn_final
-tag @e[tag=mgs.spawn_candidate,tag=!mgs.spawn_final] remove mgs.spawn_candidate
-tag @e[tag=mgs.spawn_final] remove mgs.spawn_final
+# # Limit to 10 random candidates before distance computation (optimization)
+# tag @e[tag=mgs.spawn_candidate,sort=random] add mgs.spawn_final
+# tag @e[tag=mgs.spawn_candidate,tag=!mgs.spawn_final] remove mgs.spawn_candidate
+# tag @e[tag=mgs.spawn_final] remove mgs.spawn_final
 
 # Compute distance² to nearest enemy player for each candidate (max 10)
 execute as @e[tag=mgs.spawn_candidate] at @s run function mgs:v5.0.0/multiplayer/spawn_calc_dist
 
 # Find the maximum distance score
 scoreboard players set #_best_dist mgs.data 0
-execute as @e[tag=mgs.spawn_candidate] if score @s mgs.data > #_best_dist mgs.data run scoreboard players operation #_best_dist mgs.data = @s mgs.data
+scoreboard players operation #_best_dist mgs.data > @e[tag=mgs.spawn_candidate] mgs.data
 
 # Pick the first candidate with that best score and TP the pending player there
 execute as @e[tag=mgs.spawn_candidate,sort=random] if score @s mgs.data = #_best_dist mgs.data run function mgs:v5.0.0/multiplayer/tp_to_spawn

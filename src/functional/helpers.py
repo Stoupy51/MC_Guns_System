@@ -76,8 +76,7 @@ def write_shared_projectile_functions() -> None:
     # Shared: Calculate velocity from look direction and apply to bs.vel, then teleport back
     # Requires: entity @s at summon position, data.config.PROJECTILE_SPEED set on entity
     # Uses raycast/accuracy/apply_spread for spread
-    write_versioned_function("shared/calc_velocity",
-f"""
+    write_versioned_function("shared/calc_velocity", f"""
 # Record current position for teleporting back later
 execute store result score #proj_ox {ns}.data run data get entity @s Pos[0] 1000
 execute store result score #proj_oy {ns}.data run data get entity @s Pos[1] 1000

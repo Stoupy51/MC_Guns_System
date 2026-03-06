@@ -38,8 +38,7 @@ execute unless data storage {ns}:multiplayer next_loadout_id run data modify sto
 """)
 
 	## Assign player ID on first interaction (called from player tick if pid == 0)
-	write_versioned_function("multiplayer/assign_pid",
-f"""
+	write_versioned_function("multiplayer/assign_pid", f"""
 # Assign a unique player ID
 scoreboard players operation @s {ns}.mp.pid = #next_pid {ns}.data
 scoreboard players add #next_pid {ns}.data 1
@@ -51,8 +50,7 @@ data modify storage {ns}:multiplayer player_data append from storage {ns}:temp _
 """)
 
 	## Player tick hook: assign pid if needed
-	write_versioned_function("player/tick",
-f"""
+	write_versioned_function("player/tick", f"""
 # Custom loadouts: assign player ID if not yet assigned
 execute unless score @s {ns}.mp.pid matches 1.. run function {ns}:v{version}/multiplayer/assign_pid
 """, prepend=True)
@@ -61,8 +59,7 @@ execute unless score @s {ns}.mp.pid matches 1.. run function {ns}:v{version}/mul
 	##             execute at @s summon item_display run function .../get_username
 	##             tag @s remove {ns}.username_getter
 	## Result: stores username in {ns}:temp _new_loadout.owner_name
-	write_versioned_function("multiplayer/get_username",
-f"""
+	write_versioned_function("multiplayer/get_username", f"""
 # @s = item_display entity spawned at the player's position
 # Tag this entity so we can reference it from within the execute-as subcommand
 tag @s add {ns}.username_getter_entity

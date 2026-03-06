@@ -22,7 +22,7 @@ void main() {
 
     // 3rd person detection from sentinel B (camera-to-particle distance)
     float cameraDist = fovActive ? (float(pFov.b) / 255.0 * 10.0) : 0.0;
-    bool thirdPerson = cameraDist > 2.0;
+    bool notFirstPerson = cameraDist > 1.0;
 
     // Target zoom magnification (UV scale toward center).
     // Higher = stronger FOV reduction (texCoord = mix(texCoord, 0.5, zoom)).
@@ -31,7 +31,7 @@ void main() {
     //   0.30 = ~1.43x (scope x3)
     //   0.45 = ~1.82x (scope x4)
     float targetZoom = 0.0;
-    if (fovActive && !thirdPerson) {
+    if (fovActive && !notFirstPerson) {
         if (fovZoomLevel == 2) targetZoom = 0.25;       // Center-only: subtle
         else if (fovZoomLevel == 3) targetZoom = 0.30;   // Scope x3: moderate
         else if (fovZoomLevel == 4) targetZoom = 0.45;   // Scope x4: strong

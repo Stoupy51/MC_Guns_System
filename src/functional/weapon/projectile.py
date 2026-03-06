@@ -21,8 +21,7 @@ def main() -> None:
     version: str = Mem.ctx.project_version
 
     ## Summon loop (supports pellet_count for multiple projectiles)
-    write_versioned_function("projectile/summon_loop",
-f"""
+    write_versioned_function("projectile/summon_loop", f"""
 # Summon a projectile
 function {ns}:v{version}/projectile/summon
 
@@ -35,8 +34,7 @@ execute if score #bullets_to_fire {ns}.data matches 1.. run function {ns}:v{vers
     # Called from projectile/summon_loop
     proj_stats = [EXPLOSION_DAMAGE, EXPLOSION_DECAY, EXPLOSION_RADIUS, DAMAGE, PROJECTILE_GRAVITY, PROJECTILE_SPEED, PROJECTILE_LIFETIME, PROJECTILE_MODEL, BASE_WEAPON]
     proj_copy = "\n".join(f"data modify storage {ns}:temp proj.{s} set from storage {ns}:gun all.stats.{s}" for s in proj_stats)
-    write_versioned_function("projectile/summon",
-f"""
+    write_versioned_function("projectile/summon", f"""
 # Get accuracy value and apply spread
 function {ns}:v{version}/raycast/accuracy/get_value
 
@@ -52,8 +50,7 @@ scoreboard players add #slow_bullet_count {ns}.data 1
 """)
 
     ## Initialize the newly summoned projectile marker
-    write_versioned_function("projectile/init",
-f"""
+    write_versioned_function("projectile/init", f"""
 # Tag as slow bullet
 tag @s add {ns}.slow_bullet
 
@@ -75,8 +72,7 @@ function {ns}:v{version}/shared/calc_velocity
 """)
 
     ## Tick function for each projectile entity
-    write_versioned_function("projectile/tick",
-f"""
+    write_versioned_function("projectile/tick", f"""
 # Apply gravity (subtract from Y velocity)
 execute store result score #proj_gravity {ns}.data run data get entity @s data.config.{PROJECTILE_GRAVITY}
 scoreboard players operation @s bs.vel.y -= #proj_gravity {ns}.data
@@ -87,8 +83,7 @@ function #bs.move:apply_vel {{scale:0.001,with:{{blocks:true,entities:true,on_co
 # If collision was detected, explode and stop processing
 execute at @s run function {ns}:v{version}/projectile/post_vel
 """)
-    write_versioned_function("projectile/post_vel",
-f"""
+    write_versioned_function("projectile/post_vel", f"""
 # If collision was detected, explode and stop processing
 execute if entity @s[tag={ns}.exploding] run return run function {ns}:v{version}/projectile/explode
 
@@ -107,8 +102,7 @@ execute if score @s {ns}.data matches ..0 run function {ns}:v{version}/projectil
 """)
 
     ## Collision callback (called by bs.move:apply_vel when hitting a block or entity)
-    write_versioned_function("projectile/on_collision",
-f"""
+    write_versioned_function("projectile/on_collision", f"""
 # Tag the nearest non-immune entity as directly hit (for bullet damage in explode)
 # distance=..2.5 covers feet-to-head hit at any entity height up to 2.5 blocks
 execute as @n[distance=..2.5,type=!#bs.hitbox:intangible,tag=!{ns}.slow_bullet] run tag @s add {ns}.direct_hit
@@ -123,8 +117,7 @@ scoreboard players set $move.vel.z bs.lambda 0
 """)
 
     ## Explosion effect
-    write_versioned_function("projectile/explode",
-f"""
+    write_versioned_function("projectile/explode", f"""
 # Explosion particles - ray_gun: green energy burst (no smoke)
 execute store success score #is_ray_gun {ns}.data if data entity @s data.config{{{BASE_WEAPON}:"ray_gun"}}
 execute if score #is_ray_gun {ns}.data matches 1 run particle flash{{color:[0.0,0.8,0.0,1.0]}} ~ ~ ~ 0 0 0 0 1 force @a[distance=..128]
@@ -190,8 +183,7 @@ function {ns}:v{version}/projectile/delete
 """)
 
     ## Realistic block destruction (calls RealisticExplosionLibrary)
-    write_versioned_function("projectile/realistic_explosion",
-f"""
+    write_versioned_function("projectile/realistic_explosion", f"""
 # Set explosion power from config and call the library
 scoreboard players operation #explosion_power realistic_explosion.data = #projectile_explosion_power {ns}.config
 execute if score #projectile_explosion_power {ns}.config matches 1.. run scoreboard players set #falling_fire realistic_explosion.data 1
@@ -200,8 +192,7 @@ function realistic_explosion:explode
 """)
 
     ## Match shooter by UUID comparison
-    write_versioned_function("projectile/match_shooter",
-f"""
+    write_versioned_function("projectile/match_shooter", f"""
 # Compare this player's UUID with the stored shooter UUID
 # data modify returns 0 (no change) when values are identical, 1 when modified
 data modify storage {ns}:temp copy_uuid set from entity @s UUID
@@ -213,14 +204,12 @@ execute if score #is_match {ns}.data matches 0 run tag @s add {ns}.temp_shooter
 """)
 
     ## Area damage (macro function for configurable radius)
-    write_versioned_function("projectile/damage_area",
-f"""
+    write_versioned_function("projectile/damage_area", f"""
 $execute as @e[type=!#bs.hitbox:intangible,distance=..$(radius_float)] run function {ns}:v{version}/projectile/damage_entity
 """)
 
     ## Per-entity damage with distance-based falloff
-    write_versioned_function("projectile/damage_entity",
-f"""
+    write_versioned_function("projectile/damage_entity", f"""
 # Skip non-living entities and other projectiles
 # Skip the shooter (prevent self-damage from own explosions)
 execute if entity @s[tag={ns}.slow_bullet] run return fail
@@ -299,8 +288,7 @@ tag @n[tag={ns}.temp_shooter] remove {ns}.ticking
 """)
 
     ## Delete projectile
-    write_versioned_function("projectile/delete",
-f"""
+    write_versioned_function("projectile/delete", f"""
 # Decrease slow bullet counter and kill entity
 scoreboard players remove #slow_bullet_count {ns}.data 1
 kill @s

@@ -32,9 +32,6 @@ scoreboard objectives add {ns}.mp.bz dummy
 # Class change detection (for prep phase)
 scoreboard objectives add {ns}.mp.prev_class dummy
 
-# Respawn protection (ticks of invulnerability after respawn)
-scoreboard objectives add {ns}.mp.respawn_prot dummy
-
 # Initialize team scores (only if not already set)
 execute unless score #red {ns}.mp.team matches -2147483648.. run scoreboard players set #red {ns}.mp.team 0
 execute unless score #blue {ns}.mp.team matches -2147483648.. run scoreboard players set #blue {ns}.mp.team 0
@@ -53,8 +50,7 @@ scoreboard players set #60 {ns}.data 60
 		write_tag(f"multiplayer/{event}", Mem.ctx.data[ns].function_tags, [])
 
 	## Game Start (requires a map to be loaded first)
-	write_versioned_function("multiplayer/start",
-f"""
+	write_versioned_function("multiplayer/start", f"""
 # Prevent starting if already active or preparing
 execute if data storage {ns}:multiplayer game{{state:"active"}} run return run tellraw @s [{MGS_TAG},{{"text":"Game already in progress!","color":"red"}}]
 execute if data storage {ns}:multiplayer game{{state:"preparing"}} run return run tellraw @s [{MGS_TAG},{{"text":"Game already preparing!","color":"red"}}]
@@ -75,7 +71,6 @@ scoreboard players set #blue {ns}.mp.team 0
 scoreboard players set @a {ns}.mp.kills 0
 scoreboard players set @a {ns}.mp.deaths 0
 scoreboard players set @a {ns}.mp.death_count 0
-scoreboard players set @a {ns}.mp.respawn_prot 0
 
 # Set timer from time_limit
 execute store result score #mp_timer {ns}.data run data get storage {ns}:multiplayer game.time_limit
@@ -165,16 +160,17 @@ execute as @a[scores={{{ns}.mp.in_game=1}}] run attribute @s minecraft:movement_
 execute as @a[scores={{{ns}.mp.in_game=1}}] run attribute @s minecraft:jump_strength base set 0
 
 # Give loadout to players who already have a class (positive = standard, negative = custom)
-execute as @a at @s unless score @s {ns}.mp.class matches 0 run function {ns}:v{version}/multiplayer/apply_class
+execute as @a[scores={{{ns}.mp.in_game=1}}] at @s unless score @s {ns}.mp.class matches 0 run function {ns}:v{version}/multiplayer/apply_class
 
 # For players with no class: auto-apply default custom loadout if set
-execute as @a at @s if score @s {ns}.mp.class matches 0 if score @s {ns}.mp.default matches 1.. run function {ns}:v{version}/multiplayer/auto_apply_default
+scoreboard players add @s {ns}.mp.class 0
+execute as @a[scores={{{ns}.mp.in_game=1}}] at @s if score @s {ns}.mp.class matches 0 if score @s {ns}.mp.default matches 1.. run function {ns}:v{version}/multiplayer/auto_apply_default
 
 # Show class selection dialog to EVERYONE (so they can change during prep)
-execute as @a run function {ns}:v{version}/multiplayer/select_class
+execute as @a[scores={{{ns}.mp.in_game=1}}] run function {ns}:v{version}/multiplayer/select_class
 
 # Store current class for change detection during prep
-execute as @a run scoreboard players operation @s {ns}.mp.prev_class = @s {ns}.mp.class
+execute as @a[scores={{{ns}.mp.in_game=1}}] run scoreboard players operation @s {ns}.mp.prev_class = @s {ns}.mp.class
 
 # Schedule end of prep (10 seconds = 200 ticks)
 schedule function {ns}:v{version}/multiplayer/end_prep 200t
@@ -210,8 +206,7 @@ execute if score #_swap {ns}.data matches -2147483648.. run scoreboard players r
 """)
 
 	## Game Stop
-	write_versioned_function("multiplayer/stop",
-f"""
+	write_versioned_function("multiplayer/stop", f"""
 # End game
 data modify storage {ns}:multiplayer game.state set value "lobby"
 
@@ -258,8 +253,7 @@ scoreboard players set @a {ns}.mp.team 0
 """)
 
 	## Kill Tracking (Signal Listener) - now dispatches to gamemode
-	write_versioned_function("multiplayer/on_kill_signal",
-f"""
+	write_versioned_function("multiplayer/on_kill_signal", f"""
 # Only process if multiplayer game is active
 execute unless data storage {ns}:multiplayer game{{state:"active"}} run return fail
 
@@ -272,8 +266,7 @@ execute if data storage {ns}:multiplayer game{{gamemode:"snd"}} run return run f
 """, tags=[f"{ns}:signals/on_kill"])
 
 	## Team Wins
-	write_versioned_function("multiplayer/team_wins",
-f"""
+	write_versioned_function("multiplayer/team_wins", f"""
 # Announce winner
 $tellraw @a ["",{{"text":"🏆 ","color":"gold"}},{{"text":"$(team) Team Wins!","color":"gold","bold":true}}]
 tellraw @a ["",[{{"text":"","color":"gray"}},"  ",{{"text":"Final Score - Red"}},": "],{{"score":{{"name":"#red","objective":"{ns}.mp.team"}},"color":"red"}},[{{"text":"","color":"gray"}}," ",{{"text":"vs Blue"}},": "],{{"score":{{"name":"#blue","objective":"{ns}.mp.team"}},"color":"blue"}}]
@@ -289,8 +282,7 @@ execute if data storage {ns}:multiplayer game{{state:"active"}} run function {ns
 execute if data storage {ns}:multiplayer game{{state:"preparing"}} run function {ns}:v{version}/multiplayer/prep_tick
 """)
 
-	write_versioned_function("multiplayer/game_tick",
-f"""
+	write_versioned_function("multiplayer/game_tick", f"""
 # ── Timer ──
 scoreboard players remove #mp_timer {ns}.data 1
 
@@ -302,14 +294,11 @@ execute if score #_tick_mod {ns}.data matches 0 run function {ns}:v{version}/mul
 # Time's up
 execute if score #mp_timer {ns}.data matches ..0 run function {ns}:v{version}/multiplayer/time_up
 
-# ── Respawn protection countdown ──
-execute as @a[scores={{{ns}.mp.respawn_prot=1..}}] run scoreboard players remove @s {ns}.mp.respawn_prot 1
-
 # ── Boundary enforcement (skip players with respawn protection) ──
-execute as @a[scores={{{ns}.mp.in_game=1,{ns}.mp.respawn_prot=0}},gamemode=!creative,gamemode=!spectator] at @s run function {ns}:v{version}/multiplayer/check_bounds
+execute as @a[scores={{{ns}.mp.in_game=1,{ns}.mp.death_count=0}},gamemode=!creative,gamemode=!spectator] at @s run function {ns}:v{version}/multiplayer/check_bounds
 
 # ── Out-of-bounds check (skip players with respawn protection) ──
-execute as @a[scores={{{ns}.mp.in_game=1,{ns}.mp.respawn_prot=0}},gamemode=!creative,gamemode=!spectator] at @s if entity @e[tag={ns}.oob_point,distance=..5] run function {ns}:v{version}/multiplayer/oob_kill
+execute as @a[scores={{{ns}.mp.in_game=1,{ns}.mp.death_count=0}},gamemode=!creative,gamemode=!spectator] at @s if entity @e[tag={ns}.oob_point,distance=..5] run function {ns}:v{version}/multiplayer/oob_kill
 
 # ── Gamemode tick dispatch ──
 execute if data storage {ns}:multiplayer game{{gamemode:"ffa"}} run function {ns}:v{version}/multiplayer/gamemodes/ffa/tick
@@ -369,17 +358,18 @@ function {ns}:v{version}/multiplayer/stop
 	## Boundary check (run as each in-game player at their position)
 	write_versioned_function("multiplayer/check_bounds", f"""
 # Get player position as integers
-execute store result score @s {ns}.mp.bx run data get entity @s Pos[0]
-execute store result score @s {ns}.mp.by run data get entity @s Pos[1]
-execute store result score @s {ns}.mp.bz run data get entity @s Pos[2]
+data modify storage {ns}:temp _player_pos set from entity @s Pos
+execute store result score @s {ns}.mp.bx run data get storage {ns}:temp _player_pos[0]
+execute store result score @s {ns}.mp.by run data get storage {ns}:temp _player_pos[1]
+execute store result score @s {ns}.mp.bz run data get storage {ns}:temp _player_pos[2]
 
 # Check if outside boundaries (any axis out of range = OOB)
-execute if score @s {ns}.mp.bx < #bound_x1 {ns}.data run function {ns}:v{version}/multiplayer/bounds_kill
-execute if score @s {ns}.mp.bx > #bound_x2 {ns}.data run function {ns}:v{version}/multiplayer/bounds_kill
-execute if score @s {ns}.mp.by < #bound_y1 {ns}.data run function {ns}:v{version}/multiplayer/bounds_kill
-execute if score @s {ns}.mp.by > #bound_y2 {ns}.data run function {ns}:v{version}/multiplayer/bounds_kill
-execute if score @s {ns}.mp.bz < #bound_z1 {ns}.data run function {ns}:v{version}/multiplayer/bounds_kill
-execute if score @s {ns}.mp.bz > #bound_z2 {ns}.data run function {ns}:v{version}/multiplayer/bounds_kill
+execute if score @s {ns}.mp.bx < #bound_x1 {ns}.data run return run function {ns}:v{version}/multiplayer/bounds_kill
+execute if score @s {ns}.mp.bx > #bound_x2 {ns}.data run return run function {ns}:v{version}/multiplayer/bounds_kill
+execute if score @s {ns}.mp.by < #bound_y1 {ns}.data run return run function {ns}:v{version}/multiplayer/bounds_kill
+execute if score @s {ns}.mp.by > #bound_y2 {ns}.data run return run function {ns}:v{version}/multiplayer/bounds_kill
+execute if score @s {ns}.mp.bz < #bound_z1 {ns}.data run return run function {ns}:v{version}/multiplayer/bounds_kill
+execute if score @s {ns}.mp.bz > #bound_z2 {ns}.data run return run function {ns}:v{version}/multiplayer/bounds_kill
 """)
 
 	## Kill player out of bounds
@@ -506,19 +496,20 @@ execute as @e[tag={ns}.spawn_candidate] at @s if entity @a[tag={ns}.spawn_enemy,
 $execute unless entity @e[tag={ns}.spawn_candidate] run tag @e[tag={ns}.spawn_point,tag={ns}.spawn_$(type)] add {ns}.spawn_candidate
 
 # If no enemies, pick random candidate directly (skip expensive distance calc)
-execute unless entity @a[tag={ns}.spawn_enemy] run return run function {ns}:v{version}/multiplayer/pick_spawn_random
+# TODO: remove comment
+#execute unless entity @a[tag={ns}.spawn_enemy] run return run function {ns}:v{version}/multiplayer/pick_spawn_random
 
-# Limit to 10 random candidates before distance computation (optimization)
-tag @e[tag={ns}.spawn_candidate,sort=random,limit=10] add {ns}.spawn_final
-tag @e[tag={ns}.spawn_candidate,tag=!{ns}.spawn_final] remove {ns}.spawn_candidate
-tag @e[tag={ns}.spawn_final] remove {ns}.spawn_final
+# # Limit to 10 random candidates before distance computation (optimization)
+# tag @e[tag={ns}.spawn_candidate,sort=random] add {ns}.spawn_final
+# tag @e[tag={ns}.spawn_candidate,tag=!{ns}.spawn_final] remove {ns}.spawn_candidate
+# tag @e[tag={ns}.spawn_final] remove {ns}.spawn_final
 
 # Compute distance² to nearest enemy player for each candidate (max 10)
 execute as @e[tag={ns}.spawn_candidate] at @s run function {ns}:v{version}/multiplayer/spawn_calc_dist
 
 # Find the maximum distance score
 scoreboard players set #_best_dist {ns}.data 0
-execute as @e[tag={ns}.spawn_candidate] if score @s {ns}.data > #_best_dist {ns}.data run scoreboard players operation #_best_dist {ns}.data = @s {ns}.data
+scoreboard players operation #_best_dist {ns}.data > @e[tag={ns}.spawn_candidate] {ns}.data
 
 # Pick the first candidate with that best score and TP the pending player there
 execute as @e[tag={ns}.spawn_candidate,sort=random] if score @s {ns}.data = #_best_dist {ns}.data run function {ns}:v{version}/multiplayer/tp_to_spawn
@@ -557,10 +548,7 @@ scoreboard players operation #_mx {ns}.data -= #_px {ns}.data
 scoreboard players operation #_my {ns}.data -= #_py {ns}.data
 scoreboard players operation #_mz {ns}.data -= #_pz {ns}.data
 
-# distance² = dx² + dy² + dz²
-scoreboard players operation #_mx {ns}.data *= #_mx {ns}.data
-scoreboard players operation #_my {ns}.data *= #_my {ns}.data
-scoreboard players operation #_mz {ns}.data *= #_mz {ns}.data
+# distance = dx + dy + dz
 scoreboard players operation #_mx {ns}.data += #_my {ns}.data
 scoreboard players operation #_mx {ns}.data += #_mz {ns}.data
 
