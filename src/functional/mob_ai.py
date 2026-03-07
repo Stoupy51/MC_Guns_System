@@ -167,9 +167,9 @@ f"""
 execute if score #armed_mob_count {ns}.data matches 1.. as @e[tag={ns}.armed] at @s run function {ns}:v{version}/mob/tick
 """)
 
-    ## Simple example functions
+    ## Simple default functions
     for level, active, sleep in [(1, 50, 100), (2, 50, 50), (3, 60, 20), (4, 72000, 1)]:
-        write_versioned_function(f"mob/example/level_{level}", f"""
+        write_versioned_function(f"mob/default/level_{level}", f"""
 # Summon entity with armed tag and custom name
 $summon $(entity) ~ ~ ~ {{"Tags":["{ns}.armed","{ns}.new"],"CustomName":{{"text":"Armed $(entity) [Lv.{level}]","color":"red"}}}}
 

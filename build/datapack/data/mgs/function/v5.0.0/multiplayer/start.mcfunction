@@ -40,6 +40,9 @@ execute as @a[scores={mgs.mp.in_game=1}] run attribute @s minecraft:waypoint_rec
 gamerule immediate_respawn true
 gamerule keep_inventory true
 
+# Reset spectate timers
+scoreboard players set @a mgs.mp.spectate_timer 0
+
 # Store base coordinates for offset
 execute store result score #gm_base_x mgs.data run data get storage mgs:multiplayer game.map.base_coordinates[0]
 execute store result score #gm_base_y mgs.data run data get storage mgs:multiplayer game.map.base_coordinates[1]
@@ -99,8 +102,8 @@ scoreboard players operation #_timer_ones mgs.data %= #10 mgs.data
 scoreboard objectives add mgs.sidebar dummy
 execute if data storage mgs:multiplayer game{gamemode:"ffa"} run function mgs:v5.0.0/multiplayer/create_sidebar_ffa
 execute if data storage mgs:multiplayer game{gamemode:"tdm"} run function mgs:v5.0.0/multiplayer/create_sidebar_team {title:"Team Deathmatch"}
-execute if data storage mgs:multiplayer game{gamemode:"dom"} run function mgs:v5.0.0/multiplayer/create_sidebar_team {title:"Domination"}
-execute if data storage mgs:multiplayer game{gamemode:"hp"} run function mgs:v5.0.0/multiplayer/create_sidebar_team {title:"Hardpoint"}
+execute if data storage mgs:multiplayer game{gamemode:"dom"} run function mgs:v5.0.0/multiplayer/create_sidebar_dom
+execute if data storage mgs:multiplayer game{gamemode:"hp"} run function mgs:v5.0.0/multiplayer/create_sidebar_hp
 execute if data storage mgs:multiplayer game{gamemode:"snd"} run function mgs:v5.0.0/multiplayer/create_sidebar_team {title:"Search & Destroy"}
 
 # Show kills in player list (tab)

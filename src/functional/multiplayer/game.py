@@ -32,6 +32,12 @@ scoreboard objectives add {ns}.mp.bz dummy
 # Class change detection (for prep phase)
 scoreboard objectives add {ns}.mp.prev_class dummy
 
+# Spectate timer (ticks remaining before respawn, 0 = not spectating)
+scoreboard objectives add {ns}.mp.spectate_timer dummy
+
+# FFA ranking (1 = most kills, 2 = second, ..., 0 = unranked)
+scoreboard objectives add {ns}.mp.ffa_rank dummy
+
 # Initialize team scores (only if not already set)
 execute unless score #red {ns}.mp.team matches -2147483648.. run scoreboard players set #red {ns}.mp.team 0
 execute unless score #blue {ns}.mp.team matches -2147483648.. run scoreboard players set #blue {ns}.mp.team 0
@@ -86,6 +92,9 @@ gamemode adventure @a[scores={{{ns}.mp.in_game=1}}]
 execute as @a[scores={{{ns}.mp.in_game=1}}] run attribute @s minecraft:waypoint_receive_range base set 0.0
 gamerule immediate_respawn true
 gamerule keep_inventory true
+
+# Reset spectate timers
+scoreboard players set @a {ns}.mp.spectate_timer 0
 
 # Store base coordinates for offset
 execute store result score #gm_base_x {ns}.data run data get storage {ns}:multiplayer game.map.base_coordinates[0]
@@ -146,8 +155,8 @@ scoreboard players operation #_timer_ones {ns}.data %= #10 {ns}.data
 scoreboard objectives add {ns}.sidebar dummy
 execute if data storage {ns}:multiplayer game{{gamemode:"ffa"}} run function {ns}:v{version}/multiplayer/create_sidebar_ffa
 execute if data storage {ns}:multiplayer game{{gamemode:"tdm"}} run function {ns}:v{version}/multiplayer/create_sidebar_team {{title:"Team Deathmatch"}}
-execute if data storage {ns}:multiplayer game{{gamemode:"dom"}} run function {ns}:v{version}/multiplayer/create_sidebar_team {{title:"Domination"}}
-execute if data storage {ns}:multiplayer game{{gamemode:"hp"}} run function {ns}:v{version}/multiplayer/create_sidebar_team {{title:"Hardpoint"}}
+execute if data storage {ns}:multiplayer game{{gamemode:"dom"}} run function {ns}:v{version}/multiplayer/create_sidebar_dom
+execute if data storage {ns}:multiplayer game{{gamemode:"hp"}} run function {ns}:v{version}/multiplayer/create_sidebar_hp
 execute if data storage {ns}:multiplayer game{{gamemode:"snd"}} run function {ns}:v{version}/multiplayer/create_sidebar_team {{title:"Search & Destroy"}}
 
 # Show kills in player list (tab)
@@ -234,6 +243,9 @@ execute if data storage {ns}:multiplayer game{{gamemode:"dom"}} run function {ns
 execute if data storage {ns}:multiplayer game{{gamemode:"hp"}} run function {ns}:v{version}/multiplayer/gamemodes/hp/cleanup
 execute if data storage {ns}:multiplayer game{{gamemode:"snd"}} run function {ns}:v{version}/multiplayer/gamemodes/snd/cleanup
 
+# Restore all spectating players to adventure mode
+gamemode adventure @a[scores={{{ns}.mp.in_game=1}},gamemode=spectator]
+
 # Kill gamemode entities
 kill @e[tag={ns}.gm_entity]
 
@@ -252,7 +264,93 @@ scoreboard objectives setdisplay list
 # Clear in-game state
 scoreboard players set @a {ns}.mp.in_game 0
 scoreboard players set @a {ns}.mp.team 0
+scoreboard players set @a {ns}.mp.spectate_timer 0
 tag @a[tag={ns}.give_class_menu] remove {ns}.give_class_menu
+""")
+
+	# ── Simulated Death ───────────────────────────────────────────
+	# Called when lethal damage is intercepted (bullet/projectile) or for OOB kills
+	# @s = victim player; storage mgs:input with.attacker may or may not exist
+
+	write_versioned_function("multiplayer/simulate_death", f"""
+# Heal to prevent actual death & Increment death stats
+effect give @s instant_health 1 100 true
+scoreboard players add @s {ns}.mp.deaths 1
+
+# Fire damage signal (hit effects, hitmarker, DPS) if this came from a bullet hit
+execute if data storage {ns}:input with.amount run function #{ns}:signals/damage with storage {ns}:input with
+
+# Fire kill signal as attacker (if attacker exists in input)
+execute if data storage {ns}:input with.attacker run function {ns}:v{version}/multiplayer/simulate_death_fire_kill with storage {ns}:input with
+
+# No attacker: random funny self-death message
+execute unless data storage {ns}:input with.attacker run function {ns}:v{version}/multiplayer/random_death_message
+
+# Increment death stats
+scoreboard players add @s {ns}.mp.deaths 1
+
+# S&D: no respawning, mark as dead and go spectator
+execute if data storage {ns}:multiplayer game{{gamemode:"snd"}} run return run function {ns}:v{version}/multiplayer/gamemodes/snd/on_death
+
+# Set player to spectator mode for 3 seconds (60 ticks)
+gamemode spectator @s
+scoreboard players set @s {ns}.mp.spectate_timer 60
+
+# Spectate attacker (tagged by fire_kill) or random
+spectate @a[tag={ns}.temp_killer,gamemode=!spectator,limit=1,sort=nearest] @s
+execute unless entity @a[tag={ns}.temp_killer] run function {ns}:v{version}/multiplayer/spectate_random_player
+tag @a[tag={ns}.temp_killer] remove {ns}.temp_killer
+
+# Announce death & playsound
+title @s title [{{"text":"☠","color":"red"}}]
+title @s subtitle [{{"text":"Respawning in 3 seconds...","color":"gray"}}]
+execute at @s run playsound minecraft:entity.player.hurt ambient @s
+""")
+
+	## Fire kill signal as attacker + death message (macro function)
+	## @s = victim, $(attacker) = attacker selector from storage
+	write_versioned_function("multiplayer/simulate_death_fire_kill", f"""
+$tag $(attacker) add {ns}.temp_killer
+
+# Self-kill check: if victim(@s) is also tagged as killer, it's self-damage
+execute if entity @s[tag={ns}.temp_killer] run tag @s remove {ns}.temp_killer
+execute unless entity @a[tag={ns}.temp_killer] run return run function {ns}:v{version}/multiplayer/random_self_kill_message
+
+# Normal kill: fire signal and show message
+tag @s add {ns}.temp_victim
+$execute as $(attacker) run function #{ns}:signals/on_kill
+function {ns}:v{version}/multiplayer/random_kill_message
+tag @s remove {ns}.temp_victim
+""")
+
+	## Random death message for self-deaths (OOB, environmental)
+	write_versioned_function("multiplayer/random_death_message", f"""
+execute store result score #random_message {ns}.data run random value 1..5
+execute if score #random_message {ns}.data matches 1 run tellraw @a[scores={{{ns}.mp.in_game=1..}}] ["",{{"selector":"@s","color":"red"}},{{"text":" made a terrible mistake","color":"gray"}}]
+execute if score #random_message {ns}.data matches 2 run tellraw @a[scores={{{ns}.mp.in_game=1..}}] ["",{{"selector":"@s","color":"red"}},{{"text":" forgot how gravity works","color":"gray"}}]
+execute if score #random_message {ns}.data matches 3 run tellraw @a[scores={{{ns}.mp.in_game=1..}}] ["",{{"selector":"@s","color":"red"}},{{"text":" played themselves","color":"gray"}}]
+execute if score #random_message {ns}.data matches 4 run tellraw @a[scores={{{ns}.mp.in_game=1..}}] ["",{{"selector":"@s","color":"red"}},{{"text":" left the battlefield","color":"gray"}}]
+execute if score #random_message {ns}.data matches 5 run tellraw @a[scores={{{ns}.mp.in_game=1..}}] ["",{{"selector":"@s","color":"red"}},{{"text":" embraced the void","color":"gray"}}]
+""")
+
+	## Random self-kill message (grenade, RPG, own explosion)
+	write_versioned_function("multiplayer/random_self_kill_message", f"""
+execute store result score #random_message {ns}.data run random value 1..5
+execute if score #random_message {ns}.data matches 1 run tellraw @a[scores={{{ns}.mp.in_game=1..}}] ["",{{"selector":"@s","color":"red"}},{{"text":" blew themselves up","color":"gray"}}]
+execute if score #random_message {ns}.data matches 2 run tellraw @a[scores={{{ns}.mp.in_game=1..}}] ["",{{"selector":"@s","color":"red"}},{{"text":" got a taste of their own medicine","color":"gray"}}]
+execute if score #random_message {ns}.data matches 3 run tellraw @a[scores={{{ns}.mp.in_game=1..}}] ["",{{"selector":"@s","color":"red"}},{{"text":" found out the blast radius the hard way","color":"gray"}}]
+execute if score #random_message {ns}.data matches 4 run tellraw @a[scores={{{ns}.mp.in_game=1..}}] ["",{{"selector":"@s","color":"red"}},{{"text":" didn't throw the grenade far enough","color":"gray"}}]
+execute if score #random_message {ns}.data matches 5 run tellraw @a[scores={{{ns}.mp.in_game=1..}}] ["",{{"selector":"@s","color":"red"}},{{"text":" is their own worst enemy","color":"gray"}}]
+""")
+
+	## Random kill message (uses temp_killer/temp_victim tags, shared by simulate_death + on_respawn)
+	write_versioned_function("multiplayer/random_kill_message", f"""
+execute store result score #random_message {ns}.data run random value 1..5
+execute if score #random_message {ns}.data matches 1 run tellraw @a[scores={{{ns}.mp.in_game=1..}}] ["",{{"selector":"@a[tag={ns}.temp_killer]","color":"red"}},{{"text":" eliminated ","color":"gray"}},{{"selector":"@a[tag={ns}.temp_victim]","color":"red"}}]
+execute if score #random_message {ns}.data matches 2 run tellraw @a[scores={{{ns}.mp.in_game=1..}}] ["",{{"selector":"@a[tag={ns}.temp_killer]","color":"red"}},{{"text":" took down ","color":"gray"}},{{"selector":"@a[tag={ns}.temp_victim]","color":"red"}}]
+execute if score #random_message {ns}.data matches 3 run tellraw @a[scores={{{ns}.mp.in_game=1..}}] ["",{{"selector":"@a[tag={ns}.temp_killer]","color":"red"}},{{"text":" dispatched ","color":"gray"}},{{"selector":"@a[tag={ns}.temp_victim]","color":"red"}}]
+execute if score #random_message {ns}.data matches 4 run tellraw @a[scores={{{ns}.mp.in_game=1..}}] ["",{{"selector":"@a[tag={ns}.temp_killer]","color":"red"}},{{"text":" sent ","color":"gray"}},{{"selector":"@a[tag={ns}.temp_victim]","color":"red"}},{{"text":" to the shadow realm","color":"gray"}}]
+execute if score #random_message {ns}.data matches 5 run tellraw @a[scores={{{ns}.mp.in_game=1..}}] ["",{{"selector":"@a[tag={ns}.temp_killer]","color":"red"}},{{"text":" wiped ","color":"gray"}},{{"selector":"@a[tag={ns}.temp_victim]","color":"red"}},{{"text":" off the map","color":"gray"}}]
 """)
 
 	## Kill Tracking (Signal Listener) - now dispatches to gamemode
@@ -286,6 +384,10 @@ execute if data storage {ns}:multiplayer game{{state:"preparing"}} run function 
 """)
 
 	write_versioned_function("multiplayer/game_tick", f"""
+# ── Spectate Timer (3s before respawn) ──
+execute as @a[scores={{{ns}.mp.in_game=1,{ns}.mp.spectate_timer=1..}}] run scoreboard players remove @s {ns}.mp.spectate_timer 1
+execute as @a[scores={{{ns}.mp.in_game=1,{ns}.mp.spectate_timer=0}},gamemode=spectator] at @s run function {ns}:v{version}/multiplayer/actual_respawn
+
 # ── Timer ──
 scoreboard players remove #mp_timer {ns}.data 1
 
@@ -328,7 +430,8 @@ scoreboard players operation #_timer_ones {ns}.data = #_timer_mod {ns}.data
 scoreboard players operation #_timer_ones {ns}.data %= #10 {ns}.data
 
 # Refresh sidebar with updated values
-function #bs.sidebar:refresh {{objective:"{ns}.sidebar"}}
+execute unless data storage {ns}:multiplayer game{{gamemode:"ffa"}} run function #bs.sidebar:refresh {{objective:"{ns}.sidebar"}}
+execute if data storage {ns}:multiplayer game{{gamemode:"ffa"}} run function {ns}:v{version}/multiplayer/refresh_sidebar_ffa
 """)
 
 	## Time up → determine winner
@@ -377,11 +480,19 @@ execute if score @s {ns}.mp.bz < #bound_z1 {ns}.data run return run function {ns
 execute if score @s {ns}.mp.bz > #bound_z2 {ns}.data run return run function {ns}:v{version}/multiplayer/bounds_kill
 """)
 
-	## Kill player out of bounds
-	write_versioned_function("multiplayer/bounds_kill", "kill @s")
+	## Kill player out of bounds (simulate death, never /kill)
+	write_versioned_function("multiplayer/bounds_kill", f"""
+# Clear attacker input (environmental death) and simulate death
+data modify storage {ns}:input with set value {{}}
+function {ns}:v{version}/multiplayer/simulate_death
+""")
 
-	## OOB kill (player near an out-of-bounds marker)
-	write_versioned_function("multiplayer/oob_kill", "kill @s")
+	## OOB kill (player near an out-of-bounds marker) (simulate death, never /kill)
+	write_versioned_function("multiplayer/oob_kill", f"""
+# Clear attacker input (environmental death) and simulate death
+data modify storage {ns}:input with set value {{}}
+function {ns}:v{version}/multiplayer/simulate_death
+""")
 
 	## Summon OOB markers from map data (relative → absolute)
 	write_versioned_function("multiplayer/summon_oob", f"""
@@ -609,15 +720,89 @@ execute if score @s {ns}.mp.team matches 2 run return run function {ns}:v{versio
 	sb_limit = f'[{{text:" First to ",color:"gray"}},{{score:{{name:"#score_limit",objective:"{ns}.data"}},color:"white"}}]'
 	sb_spacer = '" "'
 
-	## Team sidebar (TDM/DOM/HP/SND) — takes $(title) macro arg
+	## Team sidebar (TDM/SND) — takes $(title) macro arg
 	write_versioned_function("multiplayer/create_sidebar_team", f"""
 $function #bs.sidebar:create {{objective:"{ns}.sidebar",display_name:{{text:"$(title)",color:"gold",bold:true}},contents:[{sb_timer},{sb_spacer},{sb_red},{sb_blue},{sb_spacer},{sb_limit}]}}
 scoreboard objectives setdisplay sidebar {ns}.sidebar
 """)
 
-	## FFA sidebar
+	## FFA sidebar — ranked players with kills using bs.sidebar
 	write_versioned_function("multiplayer/create_sidebar_ffa", f"""
-function #bs.sidebar:create {{objective:"{ns}.sidebar",display_name:{{text:"Free For All",color:"gold",bold:true}},contents:[{sb_timer},{sb_spacer},{sb_limit}]}}
+function {ns}:v{version}/multiplayer/refresh_sidebar_ffa
+scoreboard objectives setdisplay sidebar {ns}.sidebar
+""")
+
+	# FFA sidebar refresh: ranks players by kills, builds sidebar with top 10
+	# Called every second from timer_display and on kills
+	ffa_rank_code = f"""
+# Initialize sidebar header in storage
+data modify storage {ns}:temp ffa_sb set value [{sb_timer},{sb_spacer},{sb_limit},{sb_spacer}]
+
+# Reset ranks and tag candidates
+scoreboard players set @a {ns}.mp.ffa_rank 0
+tag @a[scores={{{ns}.mp.in_game=1..}}] add {ns}.ffa_candidate
+"""
+	for i in range(1, 11):
+		ffa_rank_code += f"""
+# Rank {i}
+execute unless entity @a[tag={ns}.ffa_candidate] run return run function {ns}:v{version}/multiplayer/build_sidebar_ffa with storage {ns}:temp
+scoreboard players set #ffa_max {ns}.data -1
+execute as @a[tag={ns}.ffa_candidate] run scoreboard players operation #ffa_max {ns}.data > @s {ns}.mp.kills
+execute as @a[tag={ns}.ffa_candidate,limit=1,sort=random] if score @s {ns}.mp.kills >= #ffa_max {ns}.data run scoreboard players set @s {ns}.mp.ffa_rank {i}
+execute as @a[scores={{{ns}.mp.ffa_rank={i}}}] run tag @s remove {ns}.ffa_candidate
+data modify storage {ns}:temp ffa_sb append value [[{{text:" {i}. ",color:"gold"}},{{selector:"@a[scores={{{ns}.mp.ffa_rank={i}}}]",color:"yellow"}}],{{score:{{name:"@a[scores={{{ns}.mp.ffa_rank={i}}}]",objective:"{ns}.mp.kills"}},color:"white"}}]
+"""
+	ffa_rank_code += f"""
+# Clean up and build
+tag @a remove {ns}.ffa_candidate
+function {ns}:v{version}/multiplayer/build_sidebar_ffa with storage {ns}:temp
+"""
+	write_versioned_function("multiplayer/refresh_sidebar_ffa", ffa_rank_code)
+
+	## FFA sidebar build (macro function)
+	write_versioned_function("multiplayer/build_sidebar_ffa", f"""
+$function #bs.sidebar:create {{objective:"{ns}.sidebar",display_name:{{text:"Free For All",color:"gold",bold:true}},contents:$(ffa_sb)}}
+""")
+
+	## Domination sidebar — shows team scores + point ownership per zone
+	# Point status display helper (0=⚪, 1=🔴, 2=🔵) — updated each tick via refresh
+	# We build DOM point lines that reference #dom_owner_X scores
+	# Since sidebar can't do conditionals, we use a helper function to rebuild sidebar each score_tick
+	write_versioned_function("multiplayer/create_sidebar_dom", f"""
+function {ns}:v{version}/multiplayer/refresh_sidebar_dom
+scoreboard objectives setdisplay sidebar {ns}.sidebar
+""")
+
+	# DOM sidebar refresh: rebuilds the sidebar content with current point ownership
+	# Called every score_tick (every 5 seconds) and on point captures
+	write_versioned_function("multiplayer/refresh_sidebar_dom", f"""
+# Build point status strings based on ownership scores
+# Zone A
+execute if score #dom_owner_a {ns}.data matches 0 run data modify storage {ns}:temp dom_sb.a set value '{{"text":" A: ⚪ Neutral","color":"gray"}}'
+execute if score #dom_owner_a {ns}.data matches 1 run data modify storage {ns}:temp dom_sb.a set value '{{"text":" A: 🔴 Red","color":"red"}}'
+execute if score #dom_owner_a {ns}.data matches 2 run data modify storage {ns}:temp dom_sb.a set value '{{"text":" A: 🔵 Blue","color":"blue"}}'
+
+# Zone B
+execute if score #dom_owner_b {ns}.data matches 0 run data modify storage {ns}:temp dom_sb.b set value '{{"text":" B: ⚪ Neutral","color":"gray"}}'
+execute if score #dom_owner_b {ns}.data matches 1 run data modify storage {ns}:temp dom_sb.b set value '{{"text":" B: 🔴 Red","color":"red"}}'
+execute if score #dom_owner_b {ns}.data matches 2 run data modify storage {ns}:temp dom_sb.b set value '{{"text":" B: 🔵 Blue","color":"blue"}}'
+
+# Zone C
+execute if score #dom_owner_c {ns}.data matches 0 run data modify storage {ns}:temp dom_sb.c set value '{{"text":" C: ⚪ Neutral","color":"gray"}}'
+execute if score #dom_owner_c {ns}.data matches 1 run data modify storage {ns}:temp dom_sb.c set value '{{"text":" C: 🔴 Red","color":"red"}}'
+execute if score #dom_owner_c {ns}.data matches 2 run data modify storage {ns}:temp dom_sb.c set value '{{"text":" C: 🔵 Blue","color":"blue"}}'
+
+# Build sidebar with dynamic point entries
+function {ns}:v{version}/multiplayer/build_sidebar_dom with storage {ns}:temp dom_sb
+""")
+
+	write_versioned_function("multiplayer/build_sidebar_dom", f"""
+$function #bs.sidebar:create {{objective:"{ns}.sidebar",display_name:{{text:"Domination",color:"gold",bold:true}},contents:[{sb_timer},{sb_spacer},{sb_red},{sb_blue},{sb_spacer},$(a),$(b),$(c),{sb_spacer},{sb_limit}]}}
+""")
+
+	## Hardpoint sidebar — shows team scores + controlling team + time to move
+	write_versioned_function("multiplayer/create_sidebar_hp", f"""
+function #bs.sidebar:create {{objective:"{ns}.sidebar",display_name:{{text:"Hardpoint",color:"gold",bold:true}},contents:[{sb_timer},{sb_spacer},{sb_red},{sb_blue},{sb_spacer},[{{text:" Zone: ",color:"dark_purple"}},{{score:{{name:"#hp_rotate_sec",objective:"{ns}.data"}},color:"white"}},{{text:"s left",color:"gray"}}],{sb_spacer},{sb_limit}]}}
 scoreboard objectives setdisplay sidebar {ns}.sidebar
 """)
 

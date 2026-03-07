@@ -39,6 +39,9 @@ function {ns}:v{version}/multiplayer/stop
 # Only personal kill tracking (no team scoring)
 scoreboard players add @s {ns}.mp.kills 1
 
+# Refresh FFA sidebar with updated rankings
+function {ns}:v{version}/multiplayer/refresh_sidebar_ffa
+
 # Check win
 execute store result score #score_limit {ns}.data run data get storage {ns}:multiplayer game.score_limit
 execute if score @s {ns}.mp.kills >= #score_limit {ns}.data run function {ns}:v{version}/multiplayer/gamemodes/ffa/player_wins

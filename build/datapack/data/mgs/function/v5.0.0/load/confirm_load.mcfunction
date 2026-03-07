@@ -418,6 +418,12 @@ scoreboard objectives add mgs.mp.bz dummy
 # Class change detection (for prep phase)
 scoreboard objectives add mgs.mp.prev_class dummy
 
+# Spectate timer (ticks remaining before respawn, 0 = not spectating)
+scoreboard objectives add mgs.mp.spectate_timer dummy
+
+# FFA ranking (1 = most kills, 2 = second, ..., 0 = unranked)
+scoreboard objectives add mgs.mp.ffa_rank dummy
+
 # Initialize team scores (only if not already set)
 execute unless score #red mgs.mp.team matches -2147483648.. run scoreboard players set #red mgs.mp.team 0
 execute unless score #blue mgs.mp.team matches -2147483648.. run scoreboard players set #blue mgs.mp.team 0

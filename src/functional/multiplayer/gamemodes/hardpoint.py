@@ -24,6 +24,9 @@ data modify storage {ns}:multiplayer game.hp_zones set from storage {ns}:multipl
 # Rotation timer (60 seconds = 1200 ticks per zone)
 scoreboard players set #hp_rotate_timer {ns}.data 1200
 
+# Rotation timer in seconds for sidebar display
+scoreboard players set #hp_rotate_sec {ns}.data 60
+
 # Scoring timer (score every 1 second = 20 ticks)
 scoreboard players set #hp_score_timer {ns}.data 20
 
@@ -62,6 +65,13 @@ $summon minecraft:marker $(x) $(y) $(z) {{Tags:["{ns}.hp_marker","{ns}.gm_entity
 # Rotation timer
 scoreboard players remove #hp_rotate_timer {ns}.data 1
 execute if score #hp_rotate_timer {ns}.data matches ..0 run function {ns}:v{version}/multiplayer/gamemodes/hp/rotate
+
+# Update seconds display for sidebar (ticks / 20)
+scoreboard players operation #hp_rotate_sec {ns}.data = #hp_rotate_timer {ns}.data
+scoreboard players operation #hp_rotate_sec {ns}.data /= #20 {ns}.data
+
+# Refresh sidebar every second (when score_timer resets)
+execute if score #hp_score_timer {ns}.data matches ..1 run function #bs.sidebar:refresh {{objective:"{ns}.sidebar"}}
 
 # Show particles at zone center
 execute at @e[tag={ns}.hp_marker] run particle dust{{color:[0.5,0.0,0.5],scale:1.5}} ~ ~ ~ 4 0.5 4 0 10
@@ -107,6 +117,7 @@ execute unless data storage {ns}:multiplayer game.hp_zones[0] run function {ns}:
 
 # Reset rotation timer
 scoreboard players set #hp_rotate_timer {ns}.data 1200
+scoreboard players set #hp_rotate_sec {ns}.data 60
 
 # Load next zone
 function {ns}:v{version}/multiplayer/gamemodes/hp/load_zone

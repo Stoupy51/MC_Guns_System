@@ -1,5 +1,5 @@
 
-#> mgs:v5.0.0/mob/example/level_1
+#> mgs:v5.0.0/mob/default/level_1
 #
 # @within	???
 #

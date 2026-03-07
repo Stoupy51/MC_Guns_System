@@ -153,7 +153,7 @@ execute if data storage {ns}:temp _cur_loadout{{perks:["instant_kill"]}} run sco
 execute unless data storage {ns}:temp _cur_loadout{{perks:["instant_kill"]}} run scoreboard players set @s {ns}.special.instant_kill 0
 """)
 
-	## On respawn (called from player tick when death detected)
+	## On respawn (called from player tick when actual vanilla death detected - environmental only)
 	write_versioned_function("multiplayer/on_respawn", f"""
 # Reset death counter
 scoreboard players set @s {ns}.mp.death_count 0
@@ -161,8 +161,47 @@ scoreboard players set @s {ns}.mp.death_count 0
 # Increment death stats
 scoreboard players add @s {ns}.mp.deaths 1
 
+# Death message: try to find attacker, otherwise random message
+tag @s add {ns}.temp_victim
+execute on attacker run tag @s add {ns}.temp_killer
+execute if entity @a[tag={ns}.temp_killer] run function {ns}:v{version}/multiplayer/random_kill_message
+execute unless entity @a[tag={ns}.temp_killer] run function {ns}:v{version}/multiplayer/random_death_message
+tag @s remove {ns}.temp_victim
+
 # S&D: no respawning, mark as dead and go spectator
 execute if data storage {ns}:multiplayer game{{gamemode:"snd"}} run return run function {ns}:v{version}/multiplayer/gamemodes/snd/on_death
+
+# Set player to spectator mode for 3 seconds (60 ticks) before actual respawn
+gamemode spectator @s
+scoreboard players set @s {ns}.mp.spectate_timer 60
+
+# Try to spectate the player who killed us (last attacker)
+execute if entity @a[tag={ns}.temp_killer,gamemode=!spectator] run spectate @a[tag={ns}.temp_killer,gamemode=!spectator,limit=1,sort=nearest] @s
+
+# If no killer found (environmental death), spectate a random alive in-game player
+execute unless entity @a[tag={ns}.temp_killer] run function {ns}:v{version}/multiplayer/spectate_random_player
+
+# Clean up killer tag
+tag @a[tag={ns}.temp_killer] remove {ns}.temp_killer
+
+# Announce
+title @s title [{{"text":"☠","color":"red"}}]
+title @s subtitle [{{"text":"Respawning in 3 seconds...","color":"gray"}}]
+""")
+
+	## Spectate a random alive in-game player (fallback when no killer)
+	write_versioned_function("multiplayer/spectate_random_player", f"""
+# Pick a random alive in-game player (not self, not spectator)
+execute as @a[scores={{{ns}.mp.in_game=1}},gamemode=!spectator,sort=random,limit=1] run spectate @s @p[scores={{{ns}.mp.spectate_timer=1..}},sort=nearest]
+""")
+
+	## Actual respawn: called when spectate timer reaches 0
+	write_versioned_function("multiplayer/actual_respawn", f"""
+# Stop spectating
+spectate @s
+
+# Switch back to adventure
+gamemode adventure @s
 
 # Teleport to best spawn point
 function {ns}:v{version}/multiplayer/respawn_tp

@@ -28,6 +28,9 @@ execute if data storage mgs:multiplayer game{gamemode:"dom"} run function mgs:v5
 execute if data storage mgs:multiplayer game{gamemode:"hp"} run function mgs:v5.0.0/multiplayer/gamemodes/hp/cleanup
 execute if data storage mgs:multiplayer game{gamemode:"snd"} run function mgs:v5.0.0/multiplayer/gamemodes/snd/cleanup
 
+# Restore all spectating players to adventure mode
+gamemode adventure @a[scores={mgs.mp.in_game=1},gamemode=spectator]
+
 # Kill gamemode entities
 kill @e[tag=mgs.gm_entity]
 
@@ -46,5 +49,6 @@ scoreboard objectives setdisplay list
 # Clear in-game state
 scoreboard players set @a mgs.mp.in_game 0
 scoreboard players set @a mgs.mp.team 0
+scoreboard players set @a mgs.mp.spectate_timer 0
 tag @a[tag=mgs.give_class_menu] remove mgs.give_class_menu
 
