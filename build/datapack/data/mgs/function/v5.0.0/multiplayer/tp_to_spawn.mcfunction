@@ -4,7 +4,7 @@
 # @executed	as @e[tag=mgs.spawn_candidate,sort=random]
 #
 # @within	mgs:v5.0.0/multiplayer/pick_spawn [ as @e[tag=mgs.spawn_candidate,sort=random] ]
-#			mgs:v5.0.0/multiplayer/pick_spawn_random [ as @e[tag=mgs.spawn_candidate,sort=random,limit=1] ]
+#			mgs:v5.0.0/multiplayer/pick_spawn_random [ as @n[tag=mgs.spawn_candidate,sort=random] ]
 #
 
 # Store marker position and yaw for macro

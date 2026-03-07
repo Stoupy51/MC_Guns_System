@@ -1,13 +1,7 @@
 
 #> mgs:v5.0.0/utils/random_weapon
 #
-# @executed	as @n[tag=mgs.new]
-#
-# @within	mgs:v5.0.0/mob/default/level_1 {slot:"weapon.mainhand"} [ as @n[tag=mgs.new] ]
-#			mgs:v5.0.0/mob/default/level_2 {slot:"weapon.mainhand"} [ as @n[tag=mgs.new] ]
-#			mgs:v5.0.0/mob/default/level_3 {slot:"weapon.mainhand"} [ as @n[tag=mgs.new] ]
-#			mgs:v5.0.0/mob/default/level_4 {slot:"weapon.mainhand"} [ as @n[tag=mgs.new] ]
-#			mgs:v5.0.0/missions/spawn_level {slot:"weapon.mainhand"} [ as @e[tag=mgs.mission_enemy] ]
+# @within	mgs:v5.0.0/mob/default/on_new {slot:"weapon.mainhand"}
 #
 # @args		slot (string)
 #

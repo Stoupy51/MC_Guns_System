@@ -27,10 +27,7 @@ execute at @e[tag=mgs.map_element,tag=mgs.element.search_and_destroy] run partic
 execute at @e[tag=mgs.map_element,tag=mgs.element.domination] run particle dust{color:[0.0,1.0,0.0],scale:1.0} ~ ~1 ~ 0.3 0.5 0.3 0 3
 execute at @e[tag=mgs.map_element,tag=mgs.element.hardpoint] run particle dust{color:[0.5,0.0,0.5],scale:1.0} ~ ~1 ~ 0.3 0.5 0.3 0 3
 execute at @e[tag=mgs.map_element,tag=mgs.element.mission_spawn] run particle dust{color:[0.0,1.0,1.0],scale:1.0} ~ ~1 ~ 0.2 0.5 0.2 0 3
-execute at @e[tag=mgs.map_element,tag=mgs.element.level_1_enemy] run particle dust{color:[0.2,0.8,0.2],scale:1.0} ~ ~1 ~ 0.3 0.5 0.3 0 3
-execute at @e[tag=mgs.map_element,tag=mgs.element.level_2_enemy] run particle dust{color:[1.0,1.0,0.0],scale:1.0} ~ ~1 ~ 0.3 0.5 0.3 0 3
-execute at @e[tag=mgs.map_element,tag=mgs.element.level_3_enemy] run particle dust{color:[1.0,0.6,0.0],scale:1.0} ~ ~1 ~ 0.3 0.5 0.3 0 3
-execute at @e[tag=mgs.map_element,tag=mgs.element.level_4_enemy] run particle dust{color:[1.0,0.0,0.0],scale:1.0} ~ ~1 ~ 0.3 0.5 0.3 0 3
+execute at @e[tag=mgs.map_element,tag=mgs.element.enemy] run particle dust{color:[1.0,0.2,0.2],scale:1.0} ~ ~1 ~ 0.3 0.5 0.3 0 3
 
 # Actionbar: show info when near an element (within 5 blocks)
 execute if entity @e[tag=mgs.map_element,tag=mgs.element.base_coordinates,distance=..5] run return run title @s actionbar [{"text":"⬟ ","color":"light_purple"},{"translate": "mgs.base_coordinates"}]
@@ -43,8 +40,5 @@ execute if entity @e[tag=mgs.map_element,tag=mgs.element.search_and_destroy,dist
 execute if entity @e[tag=mgs.map_element,tag=mgs.element.domination,distance=..5] run return run title @s actionbar [{"text":"🏴 ","color":"green"},{"translate": "mgs.domination_point"}]
 execute if entity @e[tag=mgs.map_element,tag=mgs.element.hardpoint,distance=..5] run return run title @s actionbar [{"text":"⚡ ","color":"dark_purple"},{"translate": "mgs.hardpoint_zone"}]
 execute if entity @e[tag=mgs.map_element,tag=mgs.element.mission_spawn,distance=..5] run return run title @s actionbar [{"text":"● ","color":"aqua"},{"translate": "mgs.mission_spawn"}]
-execute if entity @e[tag=mgs.map_element,tag=mgs.element.level_1_enemy,distance=..5] run return run title @s actionbar [{"text":"👤 ","color":"green"},{"translate": "mgs.level_1_enemy"}]
-execute if entity @e[tag=mgs.map_element,tag=mgs.element.level_2_enemy,distance=..5] run return run title @s actionbar [{"text":"👤 ","color":"yellow"},{"translate": "mgs.level_2_enemy"}]
-execute if entity @e[tag=mgs.map_element,tag=mgs.element.level_3_enemy,distance=..5] run return run title @s actionbar [{"text":"👤 ","color":"gold"},{"translate": "mgs.level_3_enemy"}]
-execute if entity @e[tag=mgs.map_element,tag=mgs.element.level_4_enemy,distance=..5] run return run title @s actionbar [{"text":"👤 ","color":"red"},{"translate": "mgs.level_4_enemy"}]
+execute if entity @e[tag=mgs.map_element,tag=mgs.element.enemy,distance=..5] run return run title @s actionbar [{"text":"👤 ","color":"red"},{"translate": "mgs.enemy"}]
 

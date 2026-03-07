@@ -176,7 +176,7 @@ gamemode spectator @s
 scoreboard players set @s {ns}.mp.spectate_timer 60
 
 # Try to spectate the player who killed us (last attacker)
-execute if entity @a[tag={ns}.temp_killer,gamemode=!spectator] run spectate @a[tag={ns}.temp_killer,gamemode=!spectator,limit=1,sort=nearest] @s
+execute if entity @a[tag={ns}.temp_killer,gamemode=!spectator] run spectate @p[tag={ns}.temp_killer,gamemode=!spectator] @s
 
 # If no killer found (environmental death), spectate a random alive in-game player
 execute unless entity @a[tag={ns}.temp_killer] run function {ns}:v{version}/multiplayer/spectate_random_player
@@ -192,7 +192,7 @@ title @s subtitle [{{"text":"Respawning in 3 seconds...","color":"gray"}}]
 	## Spectate a random alive in-game player (fallback when no killer)
 	write_versioned_function("multiplayer/spectate_random_player", f"""
 # Pick a random alive in-game player (not self, not spectator)
-execute as @a[scores={{{ns}.mp.in_game=1}},gamemode=!spectator,sort=random,limit=1] run spectate @s @p[scores={{{ns}.mp.spectate_timer=1..}},sort=nearest]
+execute as @r[scores={{{ns}.mp.in_game=1}},gamemode=!spectator] run spectate @s @p[scores={{{ns}.mp.spectate_timer=1..}},sort=nearest]
 """)
 
 	## Actual respawn: called when spectate timer reaches 0
@@ -228,5 +228,8 @@ function {ns}:v{version}/multiplayer/apply_class
 	write_versioned_function("player/tick", f"""
 # Multiplayer: detect respawn (death_count incremented by deathCount criterion)
 execute if data storage {ns}:multiplayer game{{state:"active"}} if score @s {ns}.mp.death_count matches 1.. run function {ns}:v{version}/multiplayer/on_respawn
+
+# Missions: detect respawn
+execute if data storage {ns}:missions game{{state:"active"}} if score @s {ns}.mi.in_game matches 1.. if score @s {ns}.mp.death_count matches 1.. run function {ns}:v{version}/missions/on_respawn
 """)
 

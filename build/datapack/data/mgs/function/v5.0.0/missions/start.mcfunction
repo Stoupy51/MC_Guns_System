@@ -18,25 +18,25 @@ execute unless score #map_load_found mgs.data matches 1 run return run tellraw @
 # Copy loaded map data into game state
 data modify storage mgs:missions game.map set from storage mgs:temp map_load.result
 
-# Initialize enemy config defaults if missing
-execute unless data storage mgs:missions game.map.enemy_config run data modify storage mgs:missions game.map.enemy_config set value {level_1:{entity:"pillager",hp:20},level_2:{entity:"pillager",hp:40},level_3:{entity:"pillager",hp:60},level_4:{entity:"pillager",hp:80}}
-
 # Set state to preparing
 data modify storage mgs:missions game.state set value "preparing"
 
 # Reset scores
 scoreboard players set @a mgs.mi.in_game 0
-scoreboard players set #mi_level mgs.data 0
-scoreboard players set #mi_enemies mgs.data 0
+scoreboard players set #mi_timer mgs.data 0
+scoreboard players set #mi_total_enemies mgs.data 0
+scoreboard players set @a mgs.mi.kills 0
 
-# Tag all players as in-game
-scoreboard players set @a mgs.mi.in_game 1
+# Tag all team 1 players as in-game (multiplayer support)
+execute if entity @a[scores={mgs.mp.team=1}] as @a[scores={mgs.mp.team=1}] run scoreboard players set @s mgs.mi.in_game 1
+# Fallback: if no team system, tag all players
+execute unless entity @a[scores={mgs.mi.in_game=1}] run scoreboard players set @a mgs.mi.in_game 1
 
 # Enable class menu for mission players
 tag @a[scores={mgs.mi.in_game=1}] add mgs.give_class_menu
 
 # Set gamerules
-gamemode adventure @a[scores={mgs.mi.in_game=1}]
+gamemode spectator @a[scores={mgs.mi.in_game=1}]
 gamerule immediate_respawn true
 gamerule keep_inventory true
 
@@ -60,42 +60,18 @@ scoreboard players operation #bound_y2 mgs.data += #gm_base_y mgs.data
 scoreboard players operation #bound_z2 mgs.data += #gm_base_z mgs.data
 function mgs:v5.0.0/missions/normalize_bounds
 
-# Summon OOB markers
-function mgs:v5.0.0/missions/summon_oob
+# Forceload the mission area to ensure chunks are loaded
+function mgs:v5.0.0/missions/forceload_area
 
-# Summon spawn point markers
-function mgs:v5.0.0/missions/summon_spawns
+# Teleport all players as spectator to base coordinates for chunk preloading
+execute store result storage mgs:temp _tp.x int 1 run scoreboard players get #gm_base_x mgs.data
+execute store result storage mgs:temp _tp.y int 1 run scoreboard players get #gm_base_y mgs.data
+execute store result storage mgs:temp _tp.z int 1 run scoreboard players get #gm_base_z mgs.data
+execute as @a[scores={mgs.mi.in_game=1}] run function mgs:v5.0.0/missions/tp_to_base with storage mgs:temp _tp
 
-# Signal mission start
-function #mgs:missions/on_mission_start
-
-# Teleport all players to mission spawns
-function mgs:v5.0.0/missions/tp_all_to_spawns
-
-# Freeze players during prep
-effect give @a[scores={mgs.mi.in_game=1}] darkness 25 255 true
-effect give @a[scores={mgs.mi.in_game=1}] blindness 25 255 true
-effect give @a[scores={mgs.mi.in_game=1}] night_vision 25 255 true
-effect give @a[scores={mgs.mi.in_game=1}] saturation infinite 255 true
-execute as @a[scores={mgs.mi.in_game=1}] run attribute @s minecraft:movement_speed base set 0
-execute as @a[scores={mgs.mi.in_game=1}] run attribute @s minecraft:jump_strength base set 0
-
-# Give loadout to players who already have a class
-execute as @a[scores={mgs.mi.in_game=1}] at @s unless score @s mgs.mp.class matches 0 run function mgs:v5.0.0/multiplayer/apply_class
-
-# Auto-apply default custom loadout if no class set
-scoreboard players add @s mgs.mp.class 0
-execute as @a[scores={mgs.mi.in_game=1}] at @s if score @s mgs.mp.class matches 0 if score @s mgs.mp.default matches 1.. run function mgs:v5.0.0/multiplayer/auto_apply_default
-
-# Show class selection
-execute as @a[scores={mgs.mi.in_game=1}] run function mgs:v5.0.0/multiplayer/select_class
-
-# Store current class for change detection
-execute as @a[scores={mgs.mi.in_game=1}] run scoreboard players operation @s mgs.mp.prev_class = @s mgs.mp.class
-
-# Schedule end of prep (10 seconds)
-schedule function mgs:v5.0.0/missions/end_prep 200t
+# Schedule preload completion after 1 second
+schedule function mgs:v5.0.0/missions/preload_complete 20t
 
 # Announce
-tellraw @a ["",{"text":"","color":"aqua","bold":true},"🎯 ",{"translate": "mgs.preparing_choose_your_class_mission_starts_in_10_seconds","color":"yellow"}]
+tellraw @a ["",{"text":"","color":"aqua","bold":true},"🎯 ",{"translate": "mgs.loading_mission_area","color":"yellow"}]
 

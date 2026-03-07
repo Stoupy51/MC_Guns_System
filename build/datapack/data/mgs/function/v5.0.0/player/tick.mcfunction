@@ -88,3 +88,6 @@ scoreboard players set @s mgs.class_menu 0
 # Multiplayer: detect respawn (death_count incremented by deathCount criterion)
 execute if data storage mgs:multiplayer game{state:"active"} if score @s mgs.mp.death_count matches 1.. run function mgs:v5.0.0/multiplayer/on_respawn
 
+# Missions: detect respawn
+execute if data storage mgs:missions game{state:"active"} if score @s mgs.mi.in_game matches 1.. if score @s mgs.mp.death_count matches 1.. run function mgs:v5.0.0/missions/on_respawn
+

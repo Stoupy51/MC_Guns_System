@@ -4,12 +4,23 @@
 # @within	mgs:v5.0.0/tick
 #
 
-# Boundary enforcement (skip players with respawn protection)
-execute as @e[type=player,scores={mgs.mi.in_game=1,mgs.mp.death_count=0},gamemode=!creative,gamemode=!spectator] at @s run function mgs:v5.0.0/missions/check_bounds
+# Increment mission timer
+scoreboard players add #mi_timer mgs.data 1
 
-# OOB check
-execute as @e[type=player,scores={mgs.mi.in_game=1,mgs.mp.death_count=0},gamemode=!creative,gamemode=!spectator] at @s if entity @e[tag=mgs.oob_point,distance=..5] run kill @s
+# Boundary enforcement (skip spectators) & OOB Check
+execute as @e[tag=mgs.mission_enemy] at @s run function mgs:v5.0.0/missions/check_bounds
+execute as @e[type=player,scores={mgs.mi.in_game=1},gamemode=!creative,gamemode=!spectator] at @s run function mgs:v5.0.0/missions/check_bounds
+execute as @e[type=player,scores={mgs.mi.in_game=1},gamemode=!creative,gamemode=!spectator] at @s if entity @e[tag=mgs.oob_point,distance=..5] run damage @s 10000 out_of_world
 
-# Check if all enemies are dead (level transition)
-execute unless entity @e[tag=mgs.mission_enemy] if score #mi_level mgs.data matches 1..4 run function mgs:v5.0.0/missions/level_cleared
+# Track enemy kills (total enemies - alive enemies)
+execute store result score #_alive mgs.data if entity @e[tag=mgs.mission_enemy]
+scoreboard players operation #_mi_kills mgs.data = #mi_total_enemies mgs.data
+scoreboard players operation #_mi_kills mgs.data -= #_alive mgs.data
+
+# Update compass for all players (point to nearest enemy)
+execute as @a[scores={mgs.mi.in_game=1}] at @s run function mgs:v5.0.0/missions/update_compass
+execute at @r[scores={mgs.mi.in_game=1}] run kill @e[type=experience_orb,distance=..200]
+
+# Check if all enemies are dead → victory
+execute unless entity @e[tag=mgs.mission_enemy] run return run function mgs:v5.0.0/missions/victory
 

@@ -1,7 +1,7 @@
 
 #> mgs:v5.0.0/missions/summon_spawns
 #
-# @within	mgs:v5.0.0/missions/start
+# @within	mgs:v5.0.0/missions/preload_complete
 #
 
 # Mission spawns

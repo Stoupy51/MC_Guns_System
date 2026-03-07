@@ -16,7 +16,7 @@ tag @e[tag=mgs.spawn_point,tag=mgs.spawn_mission,tag=!mgs.spawn_used] add mgs.sp
 execute unless entity @e[tag=mgs.spawn_candidate] run tag @e[tag=mgs.spawn_point,tag=mgs.spawn_mission] add mgs.spawn_candidate
 
 # Pick random candidate
-execute as @e[tag=mgs.spawn_candidate,sort=random,limit=1] run function mgs:v5.0.0/missions/tp_to_spawn
+execute as @n[tag=mgs.spawn_candidate,sort=random] run function mgs:v5.0.0/missions/tp_to_spawn
 
 # Cleanup
 tag @e[tag=mgs.spawn_candidate] remove mgs.spawn_candidate

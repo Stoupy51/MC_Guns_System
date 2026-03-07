@@ -297,7 +297,7 @@ gamemode spectator @s
 scoreboard players set @s {ns}.mp.spectate_timer 60
 
 # Spectate attacker (tagged by fire_kill) or random
-spectate @a[tag={ns}.temp_killer,gamemode=!spectator,limit=1,sort=nearest] @s
+spectate @p[tag={ns}.temp_killer,gamemode=!spectator] @s
 execute unless entity @a[tag={ns}.temp_killer] run function {ns}:v{version}/multiplayer/spectate_random_player
 tag @a[tag={ns}.temp_killer] remove {ns}.temp_killer
 
@@ -640,7 +640,7 @@ tag @a[tag={ns}.spawn_enemy] remove {ns}.spawn_enemy
 
 	## Pick random spawn (no enemies — skip distance calc entirely)
 	write_versioned_function("multiplayer/pick_spawn_random", f"""
-execute as @e[tag={ns}.spawn_candidate,sort=random,limit=1] run function {ns}:v{version}/multiplayer/tp_to_spawn
+execute as @n[tag={ns}.spawn_candidate,sort=random] run function {ns}:v{version}/multiplayer/tp_to_spawn
 
 # Clean up
 tag @e[tag={ns}.spawn_candidate] remove {ns}.spawn_candidate
@@ -748,7 +748,7 @@ tag @a[scores={{{ns}.mp.in_game=1..}}] add {ns}.ffa_candidate
 execute unless entity @a[tag={ns}.ffa_candidate] run return run function {ns}:v{version}/multiplayer/build_sidebar_ffa with storage {ns}:temp
 scoreboard players set #ffa_max {ns}.data -1
 execute as @a[tag={ns}.ffa_candidate] run scoreboard players operation #ffa_max {ns}.data > @s {ns}.mp.kills
-execute as @a[tag={ns}.ffa_candidate,limit=1,sort=random] if score @s {ns}.mp.kills >= #ffa_max {ns}.data run scoreboard players set @s {ns}.mp.ffa_rank {i}
+execute as @r[tag={ns}.ffa_candidate] if score @s {ns}.mp.kills >= #ffa_max {ns}.data run scoreboard players set @s {ns}.mp.ffa_rank {i}
 execute as @a[scores={{{ns}.mp.ffa_rank={i}}}] run tag @s remove {ns}.ffa_candidate
 data modify storage {ns}:temp ffa_sb append value [[{{text:" {i}. ",color:"gold"}},{{selector:"@a[scores={{{ns}.mp.ffa_rank={i}}}]",color:"yellow"}}],{{score:{{name:"@a[scores={{{ns}.mp.ffa_rank={i}}}]",objective:"{ns}.mp.kills"}},color:"white"}}]
 """
@@ -831,6 +831,7 @@ execute unless data storage {ns}:multiplayer game{{state:"preparing"}} run retur
 # Restore movement
 execute as @a[scores={{{ns}.mp.in_game=1}}] run attribute @s minecraft:movement_speed base set 0.1
 execute as @a[scores={{{ns}.mp.in_game=1}}] run attribute @s minecraft:jump_strength base set 0.42
+execute as @a[scores={{{ns}.mi.in_game=1}}] run attribute @s minecraft:waypoint_receive_range base set 0.0
 
 # Clear prep effects
 effect clear @a[scores={{{ns}.mp.in_game=1}}] darkness

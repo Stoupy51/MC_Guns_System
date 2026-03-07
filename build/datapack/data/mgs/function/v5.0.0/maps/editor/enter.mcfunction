@@ -38,6 +38,12 @@ execute store result score #base_x mgs.data run data get storage mgs:temp map_ed
 execute store result score #base_y mgs.data run data get storage mgs:temp map_edit.map.base_coordinates[1]
 execute store result score #base_z mgs.data run data get storage mgs:temp map_edit.map.base_coordinates[2]
 
+# Teleport to base coordinates
+execute store result storage mgs:temp _tp.x int 1 run scoreboard players get #base_x mgs.data
+execute store result storage mgs:temp _tp.y int 1 run scoreboard players get #base_y mgs.data
+execute store result storage mgs:temp _tp.z int 1 run scoreboard players get #base_z mgs.data
+function mgs:v5.0.0/missions/tp_to_base with storage mgs:temp _tp
+
 # Summon markers for existing elements
 function mgs:v5.0.0/maps/editor/summon_existing
 

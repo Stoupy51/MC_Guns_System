@@ -27,7 +27,7 @@ gamemode spectator @s
 scoreboard players set @s mgs.mp.spectate_timer 60
 
 # Try to spectate the player who killed us (last attacker)
-execute if entity @a[tag=mgs.temp_killer,gamemode=!spectator] run spectate @a[tag=mgs.temp_killer,gamemode=!spectator,limit=1,sort=nearest] @s
+execute if entity @a[tag=mgs.temp_killer,gamemode=!spectator] run spectate @p[tag=mgs.temp_killer,gamemode=!spectator] @s
 
 # If no killer found (environmental death), spectate a random alive in-game player
 execute unless entity @a[tag=mgs.temp_killer] run function mgs:v5.0.0/multiplayer/spectate_random_player

@@ -33,7 +33,7 @@ gamemode spectator @s
 scoreboard players set @s mgs.mp.spectate_timer 60
 
 # Spectate attacker (tagged by fire_kill) or random
-spectate @a[tag=mgs.temp_killer,gamemode=!spectator,limit=1,sort=nearest] @s
+spectate @p[tag=mgs.temp_killer,gamemode=!spectator] @s
 execute unless entity @a[tag=mgs.temp_killer] run function mgs:v5.0.0/multiplayer/spectate_random_player
 tag @a[tag=mgs.temp_killer] remove mgs.temp_killer
 

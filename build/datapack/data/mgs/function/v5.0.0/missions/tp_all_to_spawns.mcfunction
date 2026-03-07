@@ -1,7 +1,7 @@
 
 #> mgs:v5.0.0/missions/tp_all_to_spawns
 #
-# @within	mgs:v5.0.0/missions/start
+# @within	mgs:v5.0.0/missions/preload_complete
 #
 
 # Teleport all players to mission spawns (random selection)
