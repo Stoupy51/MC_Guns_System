@@ -501,6 +501,8 @@ scoreboard objectives add mgs.mi.timer dummy
 scoreboard objectives add mgs.mi.total_enemies dummy
 # Player kill count for missions
 scoreboard objectives add mgs.mi.kills dummy
+# Player death count for missions
+scoreboard objectives add mgs.mi.deaths dummy
 
 # Boundary checking coords (reuse mp prefix scores)
 scoreboard objectives add mgs.mp.bx dummy

@@ -18,14 +18,11 @@ def generate_missions_game() -> None:
 	write_load_file(
 f"""
 ## Missions scoreboards
-# In-game flag (1 = active in mission)
 scoreboard objectives add {ns}.mi.in_game dummy
-# Mission timer (ticks elapsed since start)
 scoreboard objectives add {ns}.mi.timer dummy
-# Total enemies spawned
 scoreboard objectives add {ns}.mi.total_enemies dummy
-# Player kill count for missions
 scoreboard objectives add {ns}.mi.kills dummy
+scoreboard objectives add {ns}.mi.deaths dummy
 
 # Boundary checking coords (reuse mp prefix scores)
 scoreboard objectives add {ns}.mp.bx dummy
@@ -68,6 +65,7 @@ scoreboard players set @a {ns}.mi.in_game 0
 scoreboard players set #mi_timer {ns}.data 0
 scoreboard players set #mi_total_enemies {ns}.data 0
 scoreboard players set @a {ns}.mi.kills 0
+scoreboard players set @a {ns}.mi.deaths 0
 
 # Tag all team 1 players as in-game (multiplayer support)
 execute if entity @a[scores={{{ns}.mp.team=1}}] as @a[scores={{{ns}.mp.team=1}}] run scoreboard players set @s {ns}.mi.in_game 1
@@ -316,8 +314,9 @@ $forceload remove $(x1) $(z1) $(x2) $(z2)
 
 	## On Respawn (missions death handling)
 	write_versioned_function("missions/on_respawn", f"""
-# Reset death counter
+# Reset death counter & Increment mission death stats
 scoreboard players set @s {ns}.mp.death_count 0
+scoreboard players add @s {ns}.mi.deaths 1
 
 # Teleport to random mission spawn point
 function {ns}:v{version}/missions/respawn_tp
@@ -415,6 +414,10 @@ title @a[scores={{{ns}.mi.in_game=1}}] subtitle {{"text":"All enemies eliminated
 tellraw @a ["","\\n",{{"text":"═══════ MISSION COMPLETE ═══════","color":"gold","bold":true}}]
 tellraw @a ["",{{"text":"  ⏱ Time: ","color":"gray"}},{{"score":{{"name":"#_mi_minutes","objective":"{ns}.data"}},"color":"yellow"}},"m ",{{"score":{{"name":"#_mi_rem_sec","objective":"{ns}.data"}},"color":"yellow"}},"s"]
 tellraw @a ["",{{"text":"  💀 Enemies killed: ","color":"gray"}},{{"score":{{"name":"#mi_total_enemies","objective":"{ns}.data"}},"color":"red"}}]
+
+# Per-player stats
+execute as @a[scores={{{ns}.mi.in_game=1}}] run tellraw @a ["",{{"text":"  🎖 ","color":"gray"}},{{"selector":"@s","color":"yellow"}}," — Kills: ",{{"score":{{"name":"@s","objective":"{ns}.mi.kills"}},"color":"green"}}," | Deaths: ",{{"score":{{"name":"@s","objective":"{ns}.mi.deaths"}},"color":"red"}}]
+
 tellraw @a ["",{{"text":"═══════════════════════════════","color":"gold","bold":true}},"\\n"]
 
 # End game
@@ -459,6 +462,7 @@ scoreboard players set @a {ns}.mi.in_game 0
 scoreboard players set #mi_timer {ns}.data 0
 scoreboard players set #mi_total_enemies {ns}.data 0
 scoreboard players set @a {ns}.mi.kills 0
+scoreboard players set @a {ns}.mi.deaths 0
 tag @a[tag={ns}.give_class_menu] remove {ns}.give_class_menu
 """)
 

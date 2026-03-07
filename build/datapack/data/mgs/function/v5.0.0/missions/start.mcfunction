@@ -26,6 +26,7 @@ scoreboard players set @a mgs.mi.in_game 0
 scoreboard players set #mi_timer mgs.data 0
 scoreboard players set #mi_total_enemies mgs.data 0
 scoreboard players set @a mgs.mi.kills 0
+scoreboard players set @a mgs.mi.deaths 0
 
 # Tag all team 1 players as in-game (multiplayer support)
 execute if entity @a[scores={mgs.mp.team=1}] as @a[scores={mgs.mp.team=1}] run scoreboard players set @s mgs.mi.in_game 1

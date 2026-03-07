@@ -23,6 +23,10 @@ title @a[scores={mgs.mi.in_game=1}] subtitle {"translate": "mgs.all_enemies_elim
 tellraw @a ["","\n",{"translate": "mgs.mission_complete","color":"gold","bold":true}]
 tellraw @a ["",{"translate": "mgs.time","color":"gray"},{"score":{"name":"#_mi_minutes","objective":"mgs.data"},"color":"yellow"},"m ",{"score":{"name":"#_mi_rem_sec","objective":"mgs.data"},"color":"yellow"},"s"]
 tellraw @a ["",{"translate": "mgs.enemies_killed","color":"gray"},{"score":{"name":"#mi_total_enemies","objective":"mgs.data"},"color":"red"}]
+
+# Per-player stats
+execute as @a[scores={mgs.mi.in_game=1}] run tellraw @a ["",{"text":"  🎖 ","color":"gray"},{"selector":"@s","color":"yellow"}," — Kills: ",{"score":{"name":"@s","objective":"mgs.mi.kills"},"color":"green"}," | Deaths: ",{"score":{"name":"@s","objective":"mgs.mi.deaths"},"color":"red"}]
+
 tellraw @a ["",{"text":"═══════════════════════════════","color":"gold","bold":true},"\n"]
 
 # End game
