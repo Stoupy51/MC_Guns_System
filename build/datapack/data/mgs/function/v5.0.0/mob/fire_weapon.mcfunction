@@ -9,6 +9,9 @@
 # Rotate to face the target eyes
 rotate @s facing entity @n[tag=mgs.target] eyes
 
+# Apply random inaccuracy (skip for level 5 mobs with perfect aim)
+execute unless entity @s[tag=mgs.mob_lv5] run function mgs:v5.0.0/mob/apply_inaccuracy
+
 # Set cooldown from weapon stats
 execute store result score @s mgs.cooldown run data get storage mgs:gun all.stats.cooldown
 
