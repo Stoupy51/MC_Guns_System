@@ -295,7 +295,7 @@ execute as @e[type=player,scores={{{ns}.mi.in_game=1,{ns}.mp.death_count=0}},gam
 execute unless entity @e[tag={ns}.mission_enemy] if score #mi_level {ns}.data matches 1..4 run function {ns}:v{version}/missions/level_cleared
 """)
 
-	## Boundary check (same pattern as multiplayer)
+	## Boundary check
 	write_versioned_function("missions/check_bounds", f"""
 data modify storage {ns}:temp _player_pos set from entity @s Pos
 execute store result score @s {ns}.mp.bx run data get storage {ns}:temp _player_pos[0]

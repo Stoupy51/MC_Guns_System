@@ -17,6 +17,9 @@ data modify storage mgs:multiplayer game.hp_zones set from storage mgs:multiplay
 # Rotation timer (60 seconds = 1200 ticks per zone)
 scoreboard players set #hp_rotate_timer mgs.data 1200
 
+# Rotation timer in seconds for sidebar display
+scoreboard players set #hp_rotate_sec mgs.data 60
+
 # Scoring timer (score every 1 second = 20 ticks)
 scoreboard players set #hp_score_timer mgs.data 20
 

@@ -174,8 +174,9 @@ function {ns}:v{version}/multiplayer/gamemodes/snd/defenders_win
 execute at @e[tag={ns}.snd_bomb] run particle minecraft:explosion_emitter ~ ~1 ~ 2 2 2 0 5
 execute at @e[tag={ns}.snd_bomb] run playsound minecraft:entity.generic.explode player @a ~ ~ ~ 2 0.8
 
-# Kill any players near the bomb (10 block radius)
-execute at @e[tag={ns}.snd_bomb] run kill @a[distance=..10,gamemode=!creative,gamemode=!spectator]
+# Simulate death for any players near the bomb (10 block radius)
+execute at @e[tag={ns}.snd_bomb] as @a[distance=..10,gamemode=!creative,gamemode=!spectator,scores={{{ns}.mp.in_game=1..}}] run data modify storage {ns}:input with set value {{}}
+execute at @e[tag={ns}.snd_bomb] as @a[distance=..10,gamemode=!creative,gamemode=!spectator,scores={{{ns}.mp.in_game=1..}}] run function {ns}:v{version}/multiplayer/simulate_death
 
 tellraw @a [{MGS_TAG},{{"text":"💥 BOMB EXPLODED!","color":"red","bold":true}}]
 kill @e[tag={ns}.snd_bomb]

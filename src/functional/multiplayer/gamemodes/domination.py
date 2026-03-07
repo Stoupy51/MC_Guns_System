@@ -22,9 +22,22 @@ execute store result score #gm_base_z {ns}.data run data get storage {ns}:multip
 # Initialize zone counter for labeling (A, B, C...)
 scoreboard players set #dom_zone_idx {ns}.data 0
 
+# Initialize global point ownership scores (0=neutral, 1=red, 2=blue)
+scoreboard players set #dom_owner_a {ns}.data 0
+scoreboard players set #dom_owner_b {ns}.data 0
+scoreboard players set #dom_owner_c {ns}.data 0
+scoreboard players set #dom_owner_d {ns}.data 0
+scoreboard players set #dom_owner_e {ns}.data 0
+
+# Store total number of points for sidebar
+scoreboard players set #dom_point_count {ns}.data 0
+
 # Summon capture point markers from relative coords
 data modify storage {ns}:temp _dom_iter set from storage {ns}:multiplayer game.map.domination
 execute if data storage {ns}:temp _dom_iter[0] run function {ns}:v{version}/multiplayer/gamemodes/dom/summon_point
+
+# Store final count of dom points
+execute store result score #dom_point_count {ns}.data if entity @e[tag={ns}.dom_point]
 
 # Initialize scoring interval timer (score every 5 seconds = 100 ticks)
 scoreboard players set #dom_score_timer {ns}.data 100
@@ -65,7 +78,7 @@ execute if data storage {ns}:temp _dom_iter[0] run function {ns}:v{version}/mult
 
 	## DOM: Summon marker + text label at computed absolute coords (macro)
 	write_versioned_function("multiplayer/gamemodes/dom/summon_point_at", f"""
-$summon minecraft:marker $(x) $(y) $(z) {{Tags:["{ns}.dom_point","{ns}.gm_entity"]}}
+$summon minecraft:marker $(x) $(y) $(z) {{Tags:["{ns}.dom_point","{ns}.gm_entity","{ns}.dom_label_$(label)"]}}
 $summon minecraft:text_display $(x) $(y) $(z) {{Tags:["{ns}.dom_label","{ns}.gm_entity","{ns}.dom_$(label)"],billboard:"vertical",text:{{"text":"$(label)","color":"yellow","bold":true}},transformation:{{translation:[0.0f,2.0f,0.0f],left_rotation:[0.0f,0.0f,0.0f,1.0f],scale:[3.0f,3.0f,3.0f],right_rotation:[0.0f,0.0f,0.0f,1.0f]}},shadow:true,see_through:true}}
 """)
 
@@ -73,6 +86,13 @@ $summon minecraft:text_display $(x) $(y) $(z) {{Tags:["{ns}.dom_label","{ns}.gm_
 	write_versioned_function("multiplayer/gamemodes/dom/tick", f"""
 # Process each domination point
 execute as @e[tag={ns}.dom_point] at @s run function {ns}:v{version}/multiplayer/gamemodes/dom/point_tick
+
+# Sync point ownership to global scores for sidebar display
+execute as @e[tag={ns}.dom_point,tag={ns}.dom_label_A] store result score #dom_owner_a {ns}.data run scoreboard players get @s {ns}.mp.dom_owner
+execute as @e[tag={ns}.dom_point,tag={ns}.dom_label_B] store result score #dom_owner_b {ns}.data run scoreboard players get @s {ns}.mp.dom_owner
+execute as @e[tag={ns}.dom_point,tag={ns}.dom_label_C] store result score #dom_owner_c {ns}.data run scoreboard players get @s {ns}.mp.dom_owner
+execute as @e[tag={ns}.dom_point,tag={ns}.dom_label_D] store result score #dom_owner_d {ns}.data run scoreboard players get @s {ns}.mp.dom_owner
+execute as @e[tag={ns}.dom_point,tag={ns}.dom_label_E] store result score #dom_owner_e {ns}.data run scoreboard players get @s {ns}.mp.dom_owner
 
 # Scoring interval
 scoreboard players remove #dom_score_timer {ns}.data 1
@@ -155,6 +175,9 @@ execute store result score #_dom_b {ns}.data if entity @e[tag={ns}.dom_point,sco
 scoreboard players operation #red {ns}.mp.team += #_dom_r {ns}.data
 scoreboard players operation #blue {ns}.mp.team += #_dom_b {ns}.data
 
+# Refresh DOM sidebar with updated point ownership
+function {ns}:v{version}/multiplayer/refresh_sidebar_dom
+
 # Check win
 execute store result score #score_limit {ns}.data run data get storage {ns}:multiplayer game.score_limit
 execute if score #red {ns}.mp.team >= #score_limit {ns}.data run function {ns}:v{version}/multiplayer/team_wins {{team:"Red"}}
@@ -181,8 +204,8 @@ scoreboard players add @s {ns}.mp.kills 1
 execute if score @s {ns}.mp.team matches 1 run scoreboard players add #red {ns}.mp.team 1
 execute if score @s {ns}.mp.team matches 2 run scoreboard players add #blue {ns}.mp.team 1
 
-# Refresh sidebar to show updated team scores
-function #bs.sidebar:refresh {{objective:"{ns}.sidebar"}}
+# Refresh DOM sidebar to show updated team scores and point ownership
+function {ns}:v{version}/multiplayer/refresh_sidebar_dom
 """)
 
 	## DOM Cleanup: Kill markers and labels

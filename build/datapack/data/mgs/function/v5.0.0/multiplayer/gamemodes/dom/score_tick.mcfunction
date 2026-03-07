@@ -12,6 +12,9 @@ execute store result score #_dom_b mgs.data if entity @e[tag=mgs.dom_point,score
 scoreboard players operation #red mgs.mp.team += #_dom_r mgs.data
 scoreboard players operation #blue mgs.mp.team += #_dom_b mgs.data
 
+# Refresh DOM sidebar with updated point ownership
+function mgs:v5.0.0/multiplayer/refresh_sidebar_dom
+
 # Check win
 execute store result score #score_limit mgs.data run data get storage mgs:multiplayer game.score_limit
 execute if score #red mgs.mp.team >= #score_limit mgs.data run function mgs:v5.0.0/multiplayer/team_wins {team:"Red"}

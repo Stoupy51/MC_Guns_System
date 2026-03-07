@@ -3,10 +3,10 @@
 #
 # @executed	as @n[tag=mgs.new]
 #
-# @within	mgs:v5.0.0/mob/example/level_1 {slot:"weapon.mainhand"} [ as @n[tag=mgs.new] ]
-#			mgs:v5.0.0/mob/example/level_2 {slot:"weapon.mainhand"} [ as @n[tag=mgs.new] ]
-#			mgs:v5.0.0/mob/example/level_3 {slot:"weapon.mainhand"} [ as @n[tag=mgs.new] ]
-#			mgs:v5.0.0/mob/example/level_4 {slot:"weapon.mainhand"} [ as @n[tag=mgs.new] ]
+# @within	mgs:v5.0.0/mob/default/level_1 {slot:"weapon.mainhand"} [ as @n[tag=mgs.new] ]
+#			mgs:v5.0.0/mob/default/level_2 {slot:"weapon.mainhand"} [ as @n[tag=mgs.new] ]
+#			mgs:v5.0.0/mob/default/level_3 {slot:"weapon.mainhand"} [ as @n[tag=mgs.new] ]
+#			mgs:v5.0.0/mob/default/level_4 {slot:"weapon.mainhand"} [ as @n[tag=mgs.new] ]
 #			mgs:v5.0.0/missions/spawn_level {slot:"weapon.mainhand"} [ as @e[tag=mgs.mission_enemy] ]
 #
 # @args		slot (string)

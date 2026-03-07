@@ -2,8 +2,6 @@
 #> mgs:v5.0.0/multiplayer/create_sidebar_team
 #
 # @within	mgs:v5.0.0/multiplayer/start {title:"Team Deathmatch"}
-#			mgs:v5.0.0/multiplayer/start {title:"Domination"}
-#			mgs:v5.0.0/multiplayer/start {title:"Hardpoint"}
 #			mgs:v5.0.0/multiplayer/start {title:"Search & Destroy"}
 #
 # @args		title (string)

@@ -1,9 +1,9 @@
 
 #> mgs:v5.0.0/multiplayer/respawn_tp
 #
-# @executed	as @e[type=player,sort=random] & at @s
+# @executed	at @s
 #
-# @within	mgs:v5.0.0/multiplayer/on_respawn
+# @within	mgs:v5.0.0/multiplayer/actual_respawn
 #
 
 # Try general spawns first (prevents spawn camping)

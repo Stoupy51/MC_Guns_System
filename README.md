@@ -9,15 +9,19 @@ Credits for resources: MGS 4.2 by TheBradqq
 
 # TODO:
 Fixes:
-- On game start, red and blue spawns should be assigned an ID and when we place players the first player to place will place on ID 1, then the second one 2, etc. to avoid starting the game on the SAME spawn point as someone else (unless there are more players than spawn points)
-- Refactor map editor:
-  - Currently it's only for multiplayer, but it should be usable for "missions" and "zombies" as well.
-  - We need to make the map editor more generic and move the files in proper subdirectories (.py and generated .mcfunction)
-  - The destroy egg should be hotbar.8 and we'll add a new item in hotbar.7 that when right clicking with it it changes our inventory editor loadout with this order: Multiplayer > Missions > Zombies > Multiplayer > ...
-  - For now zombies just make a "zombies spawn" point
-  - For missions we can have 2 types of points: "mission spawn" and "level 1 enemy", "level 2 enemy", ... "level 4 enemy" (for now)
-    - Level 1 enemy will default to "pillager" in the storage but would be possible to edit (along with its weapon, and hp).
-    - Also add a "config" egg that will open chat with how to modify entity's things
+- All Multiplayer games:
+  - Never /kill (when damage is dealt, going out of the map/out of bounds, etc.) and instead simulate their death (still reward kill score if killed by a player tho)
+  - Currently we are doing instant respawn which I don't like. When the player is killed, it should /spectate for 3 seconds the player that killed them (or a random player if killed by the environment) before respawning at the spawn point.
+  - Domination: show on sidebar which team is currently dominating each point
+  - Hardpoint: show on sidebar which team is currently controlling each point and how much time before the hardpoint moves to the next location
+  - Free for all: show on sidebar the top 10 players with their kills
+- Missions mode:
+  - You miss understood the concept of missions mode. All enemies are spawned at the start of the game and the goal is to kill them all. The enemy levels are their difficulty. Maps are created with level 1 enemies being near the spawn point and level 4 enemies being far from the spawn point. When all enemies are killed, the game ends and the player gets a score based on their performance (time taken, accuracy, etc.)
+  - The game should be possible to play in multiplayer (all players in team 1 will be in the same game)
+  - The players should have a compass that points towards the nearest enemy (hotbar.3)
+  - In Editor mode, when placing an level 1 enemy, the mob data should ONLY be a function path (e.g. mgs:v5.0.0/mob/default/level_1 (see mob_ai.py)). Then, during mission, this function is called at the right position to spawn the enemy. (The function handles every thing).
+    - For us, level 1 default is `{ns}:v{version}/mob/default/level_1 {"entity":"pillager"}`, same goes for level 2, 3, and 4
+    - Then in editor mode, when placing an enemy, tellraw the user with a suggest command click_event to configure the mob data {pos:[x,y,z],function:"mgs:v5.0.0/mob/default/level_1 {"entity":"pillager"}"}
 
 - Compatibility & Developement:
   - Multiplayer mode:

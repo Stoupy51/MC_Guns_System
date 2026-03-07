@@ -4,6 +4,10 @@
 # @within	mgs:v5.0.0/tick
 #
 
+# ── Spectate Timer (3s before respawn) ──
+execute as @a[scores={mgs.mp.in_game=1,mgs.mp.spectate_timer=1..}] run scoreboard players remove @s mgs.mp.spectate_timer 1
+execute as @a[scores={mgs.mp.in_game=1,mgs.mp.spectate_timer=0},gamemode=spectator] at @s run function mgs:v5.0.0/multiplayer/actual_respawn
+
 # ── Timer ──
 scoreboard players remove #mp_timer mgs.data 1
 
