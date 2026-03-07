@@ -9,6 +9,9 @@
 # Reset death counter
 scoreboard players set @s mgs.mp.death_count 0
 
+# Increment mission death stats
+scoreboard players add @s mgs.mi.deaths 1
+
 # Teleport to random mission spawn point
 function mgs:v5.0.0/missions/respawn_tp
 
