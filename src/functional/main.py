@@ -1,4 +1,3 @@
-
 # Imports
 from stewbeet import (
     DamageType,
@@ -315,16 +314,11 @@ $execute if score #random {ns}.data matches 31 run loot replace entity @s $(slot
     map_editor_btn = btn("Open Map Editor", f"/function {ns}:v{version}/maps/editor/menu", "green", "Open the map editor")
     map_line = f'["  ",{map_editor_btn}]'
 
-    # --- Multiplayer ---
-    mp_header = '[{"text":"","color":"aqua","bold":true},"⚔ ",{"text":"Multiplayer"}]'
+    # --- Multiplayer & Missions ---
+    mp_header = '[{"text":"","color":"aqua","bold":true},"⚔ ",{"text":"Multiplayer & Missions"}]'
     mp_setup_btn = btn("Game Setup", f"/function {ns}:v{version}/multiplayer/setup", "green", "Open the multiplayer game setup menu")
-    mp_line = f'["  ",{mp_setup_btn}]'
-
-    # --- Missions ---
-    missions_header = '[{"text":"","color":"aqua","bold":true},"🎯 ",{"text":"Missions"}]'
     missions_setup_btn = btn("Mission Setup", f"/function {ns}:v{version}/missions/setup", "green", "Open the mission setup menu")
-    missions_editor_btn = btn("Mission Maps", f"/function {ns}:v{version}/maps/editor/list/missions", "aqua", "Open the missions map editor")
-    missions_line = f'["  ",{missions_setup_btn},{{"text":" "}},{missions_editor_btn}]'
+    mp_line = f'["  ",{mp_setup_btn},{{"text":" "}},{missions_setup_btn}]'
 
     write_function(f"{ns}:config", f"""tellraw @s {sep}
 tellraw @s {title}
@@ -346,9 +340,6 @@ tellraw @s {map_line}
 tellraw @s ""
 tellraw @s {mp_header}
 tellraw @s {mp_line}
-tellraw @s ""
-tellraw @s {missions_header}
-tellraw @s {missions_line}
 tellraw @s {sep}
 """)
 

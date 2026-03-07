@@ -10,6 +10,7 @@ execute unless data storage mgs:multiplayer game{state:"preparing"} run return f
 # Restore movement
 execute as @a[scores={mgs.mp.in_game=1}] run attribute @s minecraft:movement_speed base set 0.1
 execute as @a[scores={mgs.mp.in_game=1}] run attribute @s minecraft:jump_strength base set 0.42
+execute as @a[scores={mgs.mi.in_game=1}] run attribute @s minecraft:waypoint_receive_range base set 0.0
 
 # Clear prep effects
 effect clear @a[scores={mgs.mp.in_game=1}] darkness

@@ -1,9 +1,9 @@
 
 #> mgs:v5.0.0/missions/tp_to_spawn
 #
-# @executed	as @e[tag=mgs.spawn_candidate,sort=random,limit=1]
+# @executed	as @n[tag=mgs.spawn_candidate,sort=random]
 #
-# @within	mgs:v5.0.0/missions/pick_spawn [ as @e[tag=mgs.spawn_candidate,sort=random,limit=1] ]
+# @within	mgs:v5.0.0/missions/pick_spawn [ as @n[tag=mgs.spawn_candidate,sort=random] ]
 #
 
 execute store result storage mgs:temp _tp.x double 1 run data get entity @s Pos[0]

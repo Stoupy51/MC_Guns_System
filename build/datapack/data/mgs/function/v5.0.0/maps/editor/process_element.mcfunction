@@ -40,20 +40,19 @@ execute if entity @s[tag=mgs.element.hardpoint] run return run kill @s
 execute if entity @s[tag=mgs.element.mission_spawn] run function mgs:v5.0.0/maps/editor/handle_spawn
 execute if entity @s[tag=mgs.element.mission_spawn] run return run kill @s
 
-execute if entity @s[tag=mgs.element.level_1_enemy] run function mgs:v5.0.0/maps/editor/handle_point
-execute if entity @s[tag=mgs.element.level_1_enemy] run return run kill @s
-
-execute if entity @s[tag=mgs.element.level_2_enemy] run function mgs:v5.0.0/maps/editor/handle_point
-execute if entity @s[tag=mgs.element.level_2_enemy] run return run kill @s
-
-execute if entity @s[tag=mgs.element.level_3_enemy] run function mgs:v5.0.0/maps/editor/handle_point
-execute if entity @s[tag=mgs.element.level_3_enemy] run return run kill @s
-
-execute if entity @s[tag=mgs.element.level_4_enemy] run function mgs:v5.0.0/maps/editor/handle_point
-execute if entity @s[tag=mgs.element.level_4_enemy] run return run kill @s
+execute if entity @s[tag=mgs.element.enemy] run function mgs:v5.0.0/maps/editor/handle_enemy
+execute if entity @s[tag=mgs.element.enemy] run return run kill @s
 
 execute if entity @s[tag=mgs.element.config] run function mgs:v5.0.0/maps/editor/handle_config
 execute if entity @s[tag=mgs.element.config] run return run kill @s
+
+# Editor utility handlers
+execute if entity @s[tag=mgs.element.editor_save_exit] run execute as @p[tag=mgs.map_editor] run function mgs:v5.0.0/maps/editor/save_exit
+execute if entity @s[tag=mgs.element.editor_save_exit] run return run kill @s
+execute if entity @s[tag=mgs.element.editor_exit] run execute as @p[tag=mgs.map_editor] run function mgs:v5.0.0/maps/editor/exit
+execute if entity @s[tag=mgs.element.editor_exit] run return run kill @s
+execute if entity @s[tag=mgs.element.editor_save] run execute as @p[tag=mgs.map_editor] run function mgs:v5.0.0/maps/editor/save_only
+execute if entity @s[tag=mgs.element.editor_save] run return run kill @s
 
 # Fallback: unknown type
 kill @s

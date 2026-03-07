@@ -6,7 +6,7 @@
 # @within	mgs:v5.0.0/player/tick
 #			mgs:v5.0.0/player/config/process
 #			mgs:v5.0.0/multiplayer/start [ as @a[scores={mgs.mp.in_game=1}] ]
-#			mgs:v5.0.0/missions/start [ as @a[scores={mgs.mi.in_game=1}] ]
+#			mgs:v5.0.0/missions/preload_complete [ as @a[scores={mgs.mi.in_game=1}] ]
 #
 
 # Initialize dialog structure

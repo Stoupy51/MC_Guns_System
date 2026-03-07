@@ -9,19 +9,10 @@ Credits for resources: MGS 4.2 by TheBradqq
 
 # TODO:
 Fixes:
-- All Multiplayer games:
-  - Never /kill (when damage is dealt, going out of the map/out of bounds, etc.) and instead simulate their death (still reward kill score if killed by a player tho)
-  - Currently we are doing instant respawn which I don't like. When the player is killed, it should /spectate for 3 seconds the player that killed them (or a random player if killed by the environment) before respawning at the spawn point.
-  - Domination: show on sidebar which team is currently dominating each point
-  - Hardpoint: show on sidebar which team is currently controlling each point and how much time before the hardpoint moves to the next location
-  - Free for all: show on sidebar the top 10 players with their kills
 - Missions mode:
-  - You miss understood the concept of missions mode. All enemies are spawned at the start of the game and the goal is to kill them all. The enemy levels are their difficulty. Maps are created with level 1 enemies being near the spawn point and level 4 enemies being far from the spawn point. When all enemies are killed, the game ends and the player gets a score based on their performance (time taken, accuracy, etc.)
-  - The game should be possible to play in multiplayer (all players in team 1 will be in the same game)
-  - The players should have a compass that points towards the nearest enemy (hotbar.3)
-  - In Editor mode, when placing an level 1 enemy, the mob data should ONLY be a function path (e.g. mgs:v5.0.0/mob/default/level_1 (see mob_ai.py)). Then, during mission, this function is called at the right position to spawn the enemy. (The function handles every thing).
-    - For us, level 1 default is `{ns}:v{version}/mob/default/level_1 {"entity":"pillager"}`, same goes for level 2, 3, and 4
-    - Then in editor mode, when placing an enemy, tellraw the user with a suggest command click_event to configure the mob data {pos:[x,y,z],function:"mgs:v5.0.0/mob/default/level_1 {"entity":"pillager"}"}
+  - Count deaths and show it in final message
+  - Mob AI is too accurate, need to randomly rotate between -20 and 20 degrees on both yaw and pitch when targeting the player (excluding level 5 mobs which you'll create)
+  - We need to add a respawn cooldown exactly like multiplayer <= may need refactor to avoid code duplication.
 
 - Compatibility & Developement:
   - Multiplayer mode:

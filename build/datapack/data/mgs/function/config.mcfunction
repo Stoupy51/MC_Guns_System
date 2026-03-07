@@ -22,10 +22,7 @@ tellraw @s ""
 tellraw @s [{"text":"","color":"aqua","bold":true},"🗺 ",{"translate": "mgs.map_editor"}]
 tellraw @s ["  ",[{"text": "[", "color": "green", "click_event": {"action": "suggest_command", "command": "/function mgs:v5.0.0/maps/editor/menu"}, "hover_event": {"action": "show_text", "value": "Open the map editor"}}, "Open Map Editor", "]"]]
 tellraw @s ""
-tellraw @s [{"text":"","color":"aqua","bold":true},"⚔ ",{"translate": "mgs.multiplayer"}]
-tellraw @s ["  ",[{"text": "[", "color": "green", "click_event": {"action": "suggest_command", "command": "/function mgs:v5.0.0/multiplayer/setup"}, "hover_event": {"action": "show_text", "value": "Open the multiplayer game setup menu"}}, "Game Setup", "]"]]
-tellraw @s ""
-tellraw @s [{"text":"","color":"aqua","bold":true},"🎯 ",{"translate": "mgs.missions"}]
-tellraw @s ["  ",[{"text": "[", "color": "green", "click_event": {"action": "suggest_command", "command": "/function mgs:v5.0.0/missions/setup"}, "hover_event": {"action": "show_text", "value": "Open the mission setup menu"}}, "Mission Setup", "]"],{"text":" "},[{"text": "[", "color": "aqua", "click_event": {"action": "suggest_command", "command": "/function mgs:v5.0.0/maps/editor/list/missions"}, "hover_event": {"action": "show_text", "value": "Open the missions map editor"}}, "Mission Maps", "]"]]
+tellraw @s [{"text":"","color":"aqua","bold":true},"⚔ ",{"translate": "mgs.multiplayer_missions"}]
+tellraw @s ["  ",[{"text": "[", "color": "green", "click_event": {"action": "suggest_command", "command": "/function mgs:v5.0.0/multiplayer/setup"}, "hover_event": {"action": "show_text", "value": "Open the multiplayer game setup menu"}}, "Game Setup", "]"],{"text":" "},[{"text": "[", "color": "green", "click_event": {"action": "suggest_command", "command": "/function mgs:v5.0.0/missions/setup"}, "hover_event": {"action": "show_text", "value": "Open the mission setup menu"}}, "Mission Setup", "]"]]
 tellraw @s {"text":"============================================","color":"dark_gray"}
 

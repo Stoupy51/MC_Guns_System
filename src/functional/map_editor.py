@@ -26,10 +26,7 @@ ALL_ELEMENTS: dict[str, JsonDict] = {
 	"hardpoint":          {"name": "Hardpoint Zone",   "color": "dark_purple",  "particle": [0.5, 0.0, 0.5], "particle_scale": 1.0, "has_rotation": False, "egg_model": "minecraft:warden_spawn_egg", "save_type": "point", "save_path": "hardpoint", "emoji": "⚡"},
 	# Mission elements
 	"mission_spawn":      {"name": "Mission Spawn",    "color": "aqua",         "particle": [0.0, 1.0, 1.0], "particle_scale": 1.0, "has_rotation": True,  "egg_model": "minecraft:villager_spawn_egg", "save_type": "spawn", "save_path": "spawning_points.mission", "emoji": "●"},
-	"level_1_enemy":      {"name": "Level 1 Enemy",    "color": "green",        "particle": [0.2, 0.8, 0.2], "particle_scale": 1.0, "has_rotation": False, "egg_model": "minecraft:pillager_spawn_egg", "save_type": "point", "save_path": "enemies.level_1", "emoji": "👤"},
-	"level_2_enemy":      {"name": "Level 2 Enemy",    "color": "yellow",       "particle": [1.0, 1.0, 0.0], "particle_scale": 1.0, "has_rotation": False, "egg_model": "minecraft:vindicator_spawn_egg", "save_type": "point", "save_path": "enemies.level_2", "emoji": "👤"},
-	"level_3_enemy":      {"name": "Level 3 Enemy",    "color": "gold",         "particle": [1.0, 0.6, 0.0], "particle_scale": 1.0, "has_rotation": False, "egg_model": "minecraft:evoker_spawn_egg", "save_type": "point", "save_path": "enemies.level_3", "emoji": "👤"},
-	"level_4_enemy":      {"name": "Level 4 Enemy",    "color": "red",          "particle": [1.0, 0.0, 0.0], "particle_scale": 1.0, "has_rotation": False, "egg_model": "minecraft:ravager_spawn_egg", "save_type": "point", "save_path": "enemies.level_4", "emoji": "👤"},
+	"enemy":              {"name": "Enemy",             "color": "red",          "particle": [1.0, 0.2, 0.2], "particle_scale": 1.0, "has_rotation": False, "egg_model": "minecraft:pillager_spawn_egg", "save_type": "enemy", "save_path": "enemies", "emoji": "👤"},
 	# Config (utility, no marker)
 	"config":             {"name": "⚙ Config",         "color": "white",        "particle": [1.0, 1.0, 1.0], "particle_scale": 0.5, "has_rotation": False, "egg_model": "minecraft:allay_spawn_egg", "save_type": "config", "emoji": "⚙"},
 }
@@ -69,13 +66,10 @@ EDITOR_MODES: dict[str, JsonDict] = {
 		"slots": {
 			"base_coordinates": "hotbar.0",
 			"mission_spawn": "hotbar.1",
-			"level_1_enemy": "hotbar.2",
-			"level_2_enemy": "hotbar.3",
-			"level_3_enemy": "hotbar.4",
-			"level_4_enemy": "hotbar.5",
-			"out_of_bounds": "hotbar.6",
-			"boundary": "inventory.0",
-			"config": "inventory.1",
+			"enemy": "hotbar.2",
+			"out_of_bounds": "hotbar.3",
+			"boundary": "hotbar.4",
+			"config": "hotbar.5",
 		},
 	},
 }
@@ -263,6 +257,12 @@ execute store result score #base_x {ns}.data run data get storage {ns}:temp map_
 execute store result score #base_y {ns}.data run data get storage {ns}:temp map_edit.map.base_coordinates[1]
 execute store result score #base_z {ns}.data run data get storage {ns}:temp map_edit.map.base_coordinates[2]
 
+# Teleport to base coordinates
+execute store result storage {ns}:temp _tp.x int 1 run scoreboard players get #base_x {ns}.data
+execute store result storage {ns}:temp _tp.y int 1 run scoreboard players get #base_y {ns}.data
+execute store result storage {ns}:temp _tp.z int 1 run scoreboard players get #base_z {ns}.data
+function {ns}:v{version}/missions/tp_to_base with storage {ns}:temp _tp
+
 # Summon markers for existing elements
 function {ns}:v{version}/maps/editor/summon_existing
 
@@ -302,11 +302,6 @@ function {ns}:v{version}/maps/editor/summon_base_marker with storage {ns}:temp _
 	# Per-mode summon functions
 	for mode_key, mode_info in EDITOR_MODES.items():
 		summon_lines: list[str] = []
-		# Mode-specific initialization
-		if mode_key == "missions":
-			summon_lines.append("# Initialize enemy config with defaults if missing")
-			summon_lines.append(f'execute unless data storage {ns}:temp map_edit.map.enemy_config run data modify storage {ns}:temp map_edit.map.enemy_config set value {{level_1:{{entity:"pillager",hp:20}},level_2:{{entity:"pillager",hp:40}},level_3:{{entity:"pillager",hp:60}},level_4:{{entity:"pillager",hp:80}}}}')
-			summon_lines.append("")
 		for etype in mode_info["slots"]:
 			einfo = ALL_ELEMENTS[etype]
 			if einfo["save_type"] in ("base", "config"):
@@ -321,6 +316,10 @@ function {ns}:v{version}/maps/editor/summon_base_marker with storage {ns}:temp _
 				summon_lines.append(f'data modify storage {ns}:temp _point_iter set from storage {ns}:temp map_edit.map.{save_path}')
 				summon_lines.append(f'data modify storage {ns}:temp _point_iter_tag set value "{ns}.element.{etype}"')
 				summon_lines.append(f'execute if data storage {ns}:temp _point_iter[0] run function {ns}:v{version}/maps/editor/summon_point_iter')
+				summon_lines.append("")
+			elif einfo["save_type"] == "enemy":
+				summon_lines.append(f'data modify storage {ns}:temp _enemy_edit_iter set from storage {ns}:temp map_edit.map.{save_path}')
+				summon_lines.append(f'execute if data storage {ns}:temp _enemy_edit_iter[0] run function {ns}:v{version}/maps/editor/summon_enemy_edit_iter')
 				summon_lines.append("")
 
 		write_versioned_function(
@@ -405,6 +404,39 @@ execute if data storage {ns}:temp _point_iter[0] run function {ns}:v{version}/ma
 $summon minecraft:marker $(x) $(y) $(z) {{Tags:["{ns}.map_element","$(tag)"]}}
 """)
 
+	# Summon enemy markers - iterates list of {pos:[x,y,z], function:"..."} entries
+	write_versioned_function("maps/editor/summon_enemy_edit_iter", f"""
+# Read relative position from first entry
+execute store result score #rx {ns}.data run data get storage {ns}:temp _enemy_edit_iter[0].pos[0]
+execute store result score #ry {ns}.data run data get storage {ns}:temp _enemy_edit_iter[0].pos[1]
+execute store result score #rz {ns}.data run data get storage {ns}:temp _enemy_edit_iter[0].pos[2]
+
+# Add base to get absolute
+scoreboard players operation #rx {ns}.data += #base_x {ns}.data
+scoreboard players operation #ry {ns}.data += #base_y {ns}.data
+scoreboard players operation #rz {ns}.data += #base_z {ns}.data
+
+# Prepare position for macro
+execute store result storage {ns}:temp _epos.x double 1 run scoreboard players get #rx {ns}.data
+execute store result storage {ns}:temp _epos.y double 1 run scoreboard players get #ry {ns}.data
+execute store result storage {ns}:temp _epos.z double 1 run scoreboard players get #rz {ns}.data
+
+# Summon marker
+function {ns}:v{version}/maps/editor/summon_enemy_marker with storage {ns}:temp _epos
+
+# Store function data on the marker
+execute as @n[tag={ns}.new_enemy_marker] run data modify entity @s data.function set from storage {ns}:temp _enemy_edit_iter[0].function
+tag @e[tag={ns}.new_enemy_marker] remove {ns}.new_enemy_marker
+
+# Advance to next
+data remove storage {ns}:temp _enemy_edit_iter[0]
+execute if data storage {ns}:temp _enemy_edit_iter[0] run function {ns}:v{version}/maps/editor/summon_enemy_edit_iter
+""")
+
+	write_versioned_function("maps/editor/summon_enemy_marker", f"""
+$summon minecraft:marker $(x) $(y) $(z) {{Tags:["{ns}.map_element","{ns}.element.enemy","{ns}.new_enemy_marker"]}}
+""")
+
 	# ── Give Editor Tools (dispatch by mode score) ─────────────────
 	destroy_cmd = (
 		f'item replace entity @s hotbar.8 with minecraft:bat_spawn_egg'
@@ -425,12 +457,41 @@ $summon minecraft:marker $(x) $(y) $(z) {{Tags:["{ns}.map_element","$(tag)"]}}
 		f'minecraft:custom_data={{{ns}:{{mode_switcher:true}}}}]'
 	)
 
+	save_exit_cmd = (
+		f'item replace entity @s inventory.26 with minecraft:bat_spawn_egg'
+		f'[minecraft:item_name={{"text":"💾 Save & Exit","color":"green","italic":false,"bold":true}},'
+		f'minecraft:item_model="minecraft:turtle_spawn_egg",'
+		f'minecraft:custom_data={{{ns}:{{editor:true,type:"editor_save_exit"}}}},'
+		f'minecraft:entity_data={{id:"minecraft:bat",NoAI:1b,Silent:1b,Invulnerable:1b,Tags:["{ns}.new_element","{ns}.element.editor_save_exit"]}}]'
+	)
+
+	exit_cmd = (
+		f'item replace entity @s inventory.25 with minecraft:bat_spawn_egg'
+		f'[minecraft:item_name={{"text":"✘ Exit","color":"red","italic":false,"bold":true}},'
+		f'minecraft:item_model="minecraft:ghast_spawn_egg",'
+		f'minecraft:custom_data={{{ns}:{{editor:true,type:"editor_exit"}}}},'
+		f'minecraft:entity_data={{id:"minecraft:bat",NoAI:1b,Silent:1b,Invulnerable:1b,Tags:["{ns}.new_element","{ns}.element.editor_exit"]}}]'
+	)
+
+	save_only_cmd = (
+		f'item replace entity @s inventory.24 with minecraft:bat_spawn_egg'
+		f'[minecraft:item_name={{"text":"💾 Save","color":"aqua","italic":false,"bold":true}},'
+		f'minecraft:item_model="minecraft:axolotl_spawn_egg",'
+		f'minecraft:custom_data={{{ns}:{{editor:true,type:"editor_save"}}}},'
+		f'minecraft:entity_data={{id:"minecraft:bat",NoAI:1b,Silent:1b,Invulnerable:1b,Tags:["{ns}.new_element","{ns}.element.editor_save"]}}]'
+	)
+
 	write_versioned_function("maps/editor/give_tools", f"""
 # Destroy egg (always in hotbar.8)
 {destroy_cmd}
 
 # Mode switcher (always in hotbar.7)
 {mode_switcher_cmd}
+
+# Utility eggs (bottom-right of inventory)
+{save_exit_cmd}
+{exit_cmd}
+{save_only_cmd}
 
 # Mode-specific eggs
 {give_dispatch}
@@ -483,11 +544,23 @@ execute as @n[tag={ns}.new_element] at @s run function {ns}:v{version}/maps/edit
 			handler = "handle_point"
 		elif save_type == "config":
 			handler = "handle_config"
+		elif save_type == "enemy":
+			handler = "handle_enemy"
 		else:
 			continue
 		process_lines.append(f'execute if entity @s[tag={ns}.element.{etype}] run function {ns}:v{version}/maps/editor/{handler}')
 		process_lines.append(f'execute if entity @s[tag={ns}.element.{etype}] run return run kill @s')
 		process_lines.append("")
+
+	# Editor utility handlers (save, exit, save & exit)
+	process_lines.append("# Editor utility handlers")
+	process_lines.append(f'execute if entity @s[tag={ns}.element.editor_save_exit] run execute as @p[tag={ns}.map_editor] run function {ns}:v{version}/maps/editor/save_exit')
+	process_lines.append(f'execute if entity @s[tag={ns}.element.editor_save_exit] run return run kill @s')
+	process_lines.append(f'execute if entity @s[tag={ns}.element.editor_exit] run execute as @p[tag={ns}.map_editor] run function {ns}:v{version}/maps/editor/exit')
+	process_lines.append(f'execute if entity @s[tag={ns}.element.editor_exit] run return run kill @s')
+	process_lines.append(f'execute if entity @s[tag={ns}.element.editor_save] run execute as @p[tag={ns}.map_editor] run function {ns}:v{version}/maps/editor/save_only')
+	process_lines.append(f'execute if entity @s[tag={ns}.element.editor_save] run return run kill @s')
+	process_lines.append("")
 
 	process_lines.append("# Fallback: unknown type")
 	process_lines.append("kill @s")
@@ -570,6 +643,27 @@ function {ns}:v{version}/maps/editor/summon_point_marker with storage {ns}:temp 
 {point_msg_lines}
 """)
 
+	# ── Handle Enemy Element (missions) ────────────────────────────
+	write_versioned_function("maps/editor/handle_enemy", f"""
+# Initialize default function if missing
+execute unless data storage {ns}:temp map_edit.map.default_enemy_function run data modify storage {ns}:temp map_edit.map.default_enemy_function set value "{ns}:v{version}/mob/default/level_1 {{\\"entity\\":\\"pillager\\"}}"
+
+# Get position for permanent marker
+execute store result storage {ns}:temp _pos.x double 1 run data get entity @s Pos[0]
+execute store result storage {ns}:temp _pos.y double 1 run data get entity @s Pos[1]
+execute store result storage {ns}:temp _pos.z double 1 run data get entity @s Pos[2]
+
+# Summon permanent marker
+function {ns}:v{version}/maps/editor/summon_enemy_marker with storage {ns}:temp _pos
+
+# Store the default function on the marker
+execute as @n[tag={ns}.new_enemy_marker] run data modify entity @s data.function set from storage {ns}:temp map_edit.map.default_enemy_function
+tag @e[tag={ns}.new_enemy_marker] remove {ns}.new_enemy_marker
+
+# Announce
+tellraw @a[tag={ns}.map_editor] [{MGS_TAG},{{"text":"Enemy placed!","color":"red"}}]
+""")
+
 	# ── Handle DESTROY ─────────────────────────────────────────────
 	write_versioned_function("maps/editor/handle_destroy", f"""
 # Find the nearest map element marker (within 10 blocks)
@@ -594,34 +688,39 @@ kill @s
 
 	# ── Handle Config (missions utility) ───────────────────────────
 	config_lines: list[str] = []
-	config_lines.append("# Initialize enemy config with defaults if missing")
-	config_lines.append(f'execute unless data storage {ns}:temp map_edit.map.enemy_config run data modify storage {ns}:temp map_edit.map.enemy_config set value {{level_1:{{entity:"pillager",hp:20}},level_2:{{entity:"pillager",hp:40}},level_3:{{entity:"pillager",hp:60}},level_4:{{entity:"pillager",hp:80}}}}')
+	config_lines.append("# Initialize default enemy function if missing")
+	config_lines.append(f'execute unless data storage {ns}:temp map_edit.map.default_enemy_function run data modify storage {ns}:temp map_edit.map.default_enemy_function set value "{ns}:v{version}/mob/default/level_1 {{\\"entity\\":\\"pillager\\"}}"')
 	config_lines.append("")
 	config_lines.append(f"tellraw @a[tag={ns}.map_editor] {sep}")
 	config_lines.append(f'tellraw @a[tag={ns}.map_editor] [{{"text":"","color":"white","bold":true}},"  ⚙ ",{{"text":"Enemy Configuration"}}]')
 	config_lines.append(f"tellraw @a[tag={ns}.map_editor] {sep}")
+	config_lines.append(
+		f'tellraw @a[tag={ns}.map_editor] '
+		f'["  ",{{"text":"Default Function: ","color":"gray"}},'
+		f'{{"storage":"{ns}:temp","nbt":"map_edit.map.default_enemy_function","color":"white"}}]'
+	)
+	fn_btn = btn(
+		"Edit Function",
+		f'/data modify storage {ns}:temp map_edit.map.default_enemy_function set value "{ns}:v{version}/mob/default/level_1 {{\'entity\':\'pillager\'}}"',
+		"aqua", "Click to edit the default spawn function for new enemies", action="suggest_command"
+	)
+	config_lines.append(f'tellraw @a[tag={ns}.map_editor] ["    ",{fn_btn}]')
+	config_lines.append(f'tellraw @a[tag={ns}.map_editor] ["  ",{{"text":"ℹ Edit the function path above, then run the command.","color":"dark_gray","italic":true}}]')  # noqa: RUF001
+	config_lines.append("")
 
-	for level in range(1, 5):
-		colors = ["green", "yellow", "gold", "red"]
-		color = colors[level - 1]
-		config_lines.append(
-			f'tellraw @a[tag={ns}.map_editor] '
-			f'["  ",{{"text":"Level {level}","color":"{color}","bold":true}},'
-			f'{{"text":": ","color":"gray"}},'
-			f'{{"storage":"{ns}:temp","nbt":"map_edit.map.enemy_config.level_{level}.entity","color":"white"}},'
-			f'{{"text":" (HP: ","color":"gray"}},'
-			f'{{"storage":"{ns}:temp","nbt":"map_edit.map.enemy_config.level_{level}.hp","color":"yellow"}},'
-			f'{{"text":")","color":"gray"}}]'
-		)
-		entity_btn = btn(
-			"Entity", f'/data modify storage {ns}:temp map_edit.map.enemy_config.level_{level}.entity set value "pillager"',
-			"aqua", f"Edit Level {level} entity type", action="suggest_command"
-		)
-		hp_btn = btn(
-			"HP", f"/data modify storage {ns}:temp map_edit.map.enemy_config.level_{level}.hp set value 20",
-			"yellow", f"Edit Level {level} HP", action="suggest_command"
-		)
-		config_lines.append(f'tellraw @a[tag={ns}.map_editor] ["    ",{entity_btn},{{"text":" "}},{hp_btn}]')
+	# Show nearest enemy marker info if any within 10 blocks
+	config_lines.append(f"execute if entity @e[tag={ns}.element.enemy,distance=..10] run tellraw @a[tag={ns}.map_editor] {sep}")
+	config_lines.append(
+		f'execute if entity @e[tag={ns}.element.enemy,distance=..10] run tellraw @a[tag={ns}.map_editor] '
+		f'["  ",{{"text":"Nearest Enemy: ","color":"yellow","bold":true}},'
+		f'{{"entity":"@n[tag={ns}.element.enemy,distance=..10]","nbt":"data.function","color":"white"}}]'
+	)
+	nearest_fn_btn = btn(
+		"Edit Nearest Enemy",
+		f'/data modify entity @n[tag={ns}.element.enemy,distance=..10] data.function set value "{ns}:v{version}/mob/default/level_1 {{\'entity\':\'pillager\'}}"',
+		"yellow", "Click to edit the nearest enemy's spawn function", action="suggest_command"
+	)
+	config_lines.append(f'execute if entity @e[tag={ns}.element.enemy,distance=..10] run tellraw @a[tag={ns}.map_editor] ["    ",{nearest_fn_btn}]')
 
 	config_lines.append(f"tellraw @a[tag={ns}.map_editor] {sep}")
 
@@ -637,16 +736,38 @@ kill @s
 # Only process if in editor mode
 execute unless score @s {ns}.mp.map_edit matches 1 run return fail
 
-# Preserve session-modified enemy config before reloading
-data modify storage {ns}:temp _session_enemy_config set from storage {ns}:temp map_edit.map.enemy_config
+# Do the actual save
+function {ns}:v{version}/maps/editor/do_save
+
+# Cleanup and exit
+function {ns}:v{version}/maps/editor/cleanup
+tellraw @s [{MGS_TAG},{{"text":"Map saved and editor closed!","color":"green"}}]
+""")
+
+	write_versioned_function("maps/editor/save_only", f"""
+# Only process if in editor mode
+execute unless score @s {ns}.mp.map_edit matches 1 run return fail
+
+# Do the actual save
+function {ns}:v{version}/maps/editor/do_save
+
+# Re-give tools (since save clears + re-gives via advancement revoke)
+function {ns}:v{version}/maps/editor/give_tools
+
+tellraw @s [{MGS_TAG},{{"text":"Map saved!","color":"green"}}]
+""")
+
+	write_versioned_function("maps/editor/do_save", f"""
+# Preserve session-modified default enemy function before reloading
+data modify storage {ns}:temp _session_enemy_fn set from storage {ns}:temp map_edit.map.default_enemy_function
 
 # Reload map data (preserves metadata like id, name, description, scripts)
 execute store result storage {ns}:temp map_edit.idx int 1 run scoreboard players get @s {ns}.mp.map_idx
 function {ns}:v{version}/maps/editor/load_map_data with storage {ns}:temp map_edit
 
-# Restore session-modified enemy config
-execute if data storage {ns}:temp _session_enemy_config run data modify storage {ns}:temp map_edit.map.enemy_config set from storage {ns}:temp _session_enemy_config
-data remove storage {ns}:temp _session_enemy_config
+# Restore session-modified default enemy function
+execute if data storage {ns}:temp _session_enemy_fn run data modify storage {ns}:temp map_edit.map.default_enemy_function set from storage {ns}:temp _session_enemy_fn
+data remove storage {ns}:temp _session_enemy_fn
 
 # Rebuild base_coordinates from marker
 execute as @n[tag={ns}.map_element,tag={ns}.element.base_coordinates] at @s run function {ns}:v{version}/maps/editor/save_base
@@ -661,10 +782,6 @@ execute store result score #base_z {ns}.data run data get storage {ns}:temp map_
 
 # Write back to storage
 function {ns}:v{version}/maps/editor/write_back with storage {ns}:temp map_edit
-
-# Cleanup and exit
-function {ns}:v{version}/maps/editor/cleanup
-tellraw @s [{MGS_TAG},{{"text":"Map saved!","color":"green"}}]
 """)
 
 	# Per-mode save lists functions
@@ -684,7 +801,9 @@ tellraw @s [{MGS_TAG},{{"text":"Map saved!","color":"green"}}]
 			elif einfo["save_type"] == "point":
 				reset_lines.append(f'data modify storage {ns}:temp map_edit.map.{save_path} set value []')
 				rebuild_lines.append(f'execute as @e[tag={ns}.map_element,tag={ns}.element.{etype}] at @s run function {ns}:v{version}/maps/editor/save_point {{path:"{save_path}"}}')
-
+			elif einfo["save_type"] == "enemy":
+				reset_lines.append(f'data modify storage {ns}:temp map_edit.map.{save_path} set value []')
+				rebuild_lines.append(f'execute as @e[tag={ns}.map_element,tag={ns}.element.{etype}] at @s run function {ns}:v{version}/maps/editor/save_enemy')
 		all_lines: list[str] = []
 		if reset_lines:
 			all_lines.append("# Reset lists")
@@ -751,6 +870,30 @@ execute store result storage {ns}:temp _save_coord[2] int 1 run scoreboard playe
 
 # Append to the correct list
 $data modify storage {ns}:temp map_edit.map.$(path) append from storage {ns}:temp _save_coord
+""")
+
+	## Save an enemy element (pos + function)
+	write_versioned_function("maps/editor/save_enemy", f"""
+# @s = enemy marker, at its position
+# Get absolute position
+execute store result score #ax {ns}.data run data get entity @s Pos[0]
+execute store result score #ay {ns}.data run data get entity @s Pos[1]
+execute store result score #az {ns}.data run data get entity @s Pos[2]
+
+# Compute relative coordinates
+scoreboard players operation #ax {ns}.data -= #base_x {ns}.data
+scoreboard players operation #ay {ns}.data -= #base_y {ns}.data
+scoreboard players operation #az {ns}.data -= #base_z {ns}.data
+
+# Build enemy entry {{pos:[x,y,z], function:"..."}}
+data modify storage {ns}:temp _save_enemy set value {{pos:[0,0,0],function:""}}
+execute store result storage {ns}:temp _save_enemy.pos[0] int 1 run scoreboard players get #ax {ns}.data
+execute store result storage {ns}:temp _save_enemy.pos[1] int 1 run scoreboard players get #ay {ns}.data
+execute store result storage {ns}:temp _save_enemy.pos[2] int 1 run scoreboard players get #az {ns}.data
+data modify storage {ns}:temp _save_enemy.function set from entity @s data.function
+
+# Append to enemies list
+data modify storage {ns}:temp map_edit.map.enemies append from storage {ns}:temp _save_enemy
 """)
 
 	## Write map back to storage at the correct index and mode

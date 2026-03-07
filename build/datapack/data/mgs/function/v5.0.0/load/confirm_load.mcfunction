@@ -495,12 +495,12 @@ execute unless data storage mgs:maps multiplayer run data modify storage mgs:map
 ## Missions scoreboards
 # In-game flag (1 = active in mission)
 scoreboard objectives add mgs.mi.in_game dummy
-# Current wave/level (1-4)
-scoreboard objectives add mgs.mi.level dummy
-# Enemies remaining in current level
-scoreboard objectives add mgs.mi.enemies dummy
-# Timer (ticks remaining, used for spawn delay between levels)
+# Mission timer (ticks elapsed since start)
 scoreboard objectives add mgs.mi.timer dummy
+# Total enemies spawned
+scoreboard objectives add mgs.mi.total_enemies dummy
+# Player kill count for missions
+scoreboard objectives add mgs.mi.kills dummy
 
 # Boundary checking coords (reuse mp prefix scores)
 scoreboard objectives add mgs.mp.bx dummy

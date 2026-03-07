@@ -3,7 +3,7 @@
 #
 # @executed	as @n[tag=...] & at @s
 #
-# @within	mgs:v5.0.0/maps/editor/save_exit [ as @n[tag=...] & at @s ]
+# @within	mgs:v5.0.0/maps/editor/do_save [ as @n[tag=...] & at @s ]
 #
 
 # @s = base_coordinates marker, at its position

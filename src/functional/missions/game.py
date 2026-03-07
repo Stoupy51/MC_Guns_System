@@ -1,10 +1,9 @@
 
 # ruff: noqa: E501
 # Missions Game System
-# Cooperative PvE game mode: players fight through 4 levels of enemies.
-# Each level spawns enemies at predefined positions from the map editor.
-# Clearing all enemies in a level advances to the next level.
-# Completing all 4 levels = mission success.
+# Cooperative PvE game mode: all enemies spawn at game start, players kill them all.
+# Enemy positions and spawn functions are stored per-map via the editor.
+# When all enemies are killed, the game ends with a performance score.
 
 from stewbeet import Mem, write_load_file, write_tag, write_tick_file, write_versioned_function
 
@@ -21,12 +20,12 @@ f"""
 ## Missions scoreboards
 # In-game flag (1 = active in mission)
 scoreboard objectives add {ns}.mi.in_game dummy
-# Current wave/level (1-4)
-scoreboard objectives add {ns}.mi.level dummy
-# Enemies remaining in current level
-scoreboard objectives add {ns}.mi.enemies dummy
-# Timer (ticks remaining, used for spawn delay between levels)
+# Mission timer (ticks elapsed since start)
 scoreboard objectives add {ns}.mi.timer dummy
+# Total enemies spawned
+scoreboard objectives add {ns}.mi.total_enemies dummy
+# Player kill count for missions
+scoreboard objectives add {ns}.mi.kills dummy
 
 # Boundary checking coords (reuse mp prefix scores)
 scoreboard objectives add {ns}.mp.bx dummy
@@ -61,25 +60,25 @@ execute unless score #map_load_found {ns}.data matches 1 run return run tellraw 
 # Copy loaded map data into game state
 data modify storage {ns}:missions game.map set from storage {ns}:temp map_load.result
 
-# Initialize enemy config defaults if missing
-execute unless data storage {ns}:missions game.map.enemy_config run data modify storage {ns}:missions game.map.enemy_config set value {{level_1:{{entity:"pillager",hp:20}},level_2:{{entity:"pillager",hp:40}},level_3:{{entity:"pillager",hp:60}},level_4:{{entity:"pillager",hp:80}}}}
-
 # Set state to preparing
 data modify storage {ns}:missions game.state set value "preparing"
 
 # Reset scores
 scoreboard players set @a {ns}.mi.in_game 0
-scoreboard players set #mi_level {ns}.data 0
-scoreboard players set #mi_enemies {ns}.data 0
+scoreboard players set #mi_timer {ns}.data 0
+scoreboard players set #mi_total_enemies {ns}.data 0
+scoreboard players set @a {ns}.mi.kills 0
 
-# Tag all players as in-game
-scoreboard players set @a {ns}.mi.in_game 1
+# Tag all team 1 players as in-game (multiplayer support)
+execute if entity @a[scores={{{ns}.mp.team=1}}] as @a[scores={{{ns}.mp.team=1}}] run scoreboard players set @s {ns}.mi.in_game 1
+# Fallback: if no team system, tag all players
+execute unless entity @a[scores={{{ns}.mi.in_game=1}}] run scoreboard players set @a {ns}.mi.in_game 1
 
 # Enable class menu for mission players
 tag @a[scores={{{ns}.mi.in_game=1}}] add {ns}.give_class_menu
 
 # Set gamerules
-gamemode adventure @a[scores={{{ns}.mi.in_game=1}}]
+gamemode spectator @a[scores={{{ns}.mi.in_game=1}}]
 gamerule immediate_respawn true
 gamerule keep_inventory true
 
@@ -103,6 +102,35 @@ scoreboard players operation #bound_y2 {ns}.data += #gm_base_y {ns}.data
 scoreboard players operation #bound_z2 {ns}.data += #gm_base_z {ns}.data
 function {ns}:v{version}/missions/normalize_bounds
 
+# Forceload the mission area to ensure chunks are loaded
+function {ns}:v{version}/missions/forceload_area
+
+# Teleport all players as spectator to base coordinates for chunk preloading
+execute store result storage {ns}:temp _tp.x int 1 run scoreboard players get #gm_base_x {ns}.data
+execute store result storage {ns}:temp _tp.y int 1 run scoreboard players get #gm_base_y {ns}.data
+execute store result storage {ns}:temp _tp.z int 1 run scoreboard players get #gm_base_z {ns}.data
+execute as @a[scores={{{ns}.mi.in_game=1}}] run function {ns}:v{version}/missions/tp_to_base with storage {ns}:temp _tp
+
+# Schedule preload completion after 1 second
+schedule function {ns}:v{version}/missions/preload_complete 20t
+
+# Announce
+tellraw @a ["",{{"text":"","color":"aqua","bold":true}},"🎯 ",{{"text":"Loading mission area...","color":"yellow"}}]
+""")
+
+	## Teleport to base coordinates (macro)
+	write_versioned_function("missions/tp_to_base", """
+$tp @s $(x) $(y) $(z)
+""")
+
+	## Preload complete → transition to prep phase
+	write_versioned_function("missions/preload_complete", f"""
+# Guard: only if still preparing
+execute unless data storage {ns}:missions game{{state:"preparing"}} run return fail
+
+# Switch to adventure mode
+gamemode adventure @a[scores={{{ns}.mi.in_game=1}}]
+
 # Summon OOB markers
 function {ns}:v{version}/missions/summon_oob
 
@@ -122,6 +150,7 @@ effect give @a[scores={{{ns}.mi.in_game=1}}] night_vision 25 255 true
 effect give @a[scores={{{ns}.mi.in_game=1}}] saturation infinite 255 true
 execute as @a[scores={{{ns}.mi.in_game=1}}] run attribute @s minecraft:movement_speed base set 0
 execute as @a[scores={{{ns}.mi.in_game=1}}] run attribute @s minecraft:jump_strength base set 0
+execute as @a[scores={{{ns}.mi.in_game=1}}] run attribute @s minecraft:waypoint_receive_range base reset
 
 # Give loadout to players who already have a class
 execute as @a[scores={{{ns}.mi.in_game=1}}] at @s unless score @s {ns}.mp.class matches 0 run function {ns}:v{version}/multiplayer/apply_class
@@ -136,11 +165,11 @@ execute as @a[scores={{{ns}.mi.in_game=1}}] run function {ns}:v{version}/multipl
 # Store current class for change detection
 execute as @a[scores={{{ns}.mi.in_game=1}}] run scoreboard players operation @s {ns}.mp.prev_class = @s {ns}.mp.class
 
-# Schedule end of prep (10 seconds)
-schedule function {ns}:v{version}/missions/end_prep 200t
+# Schedule end of prep (9 seconds remaining)
+schedule function {ns}:v{version}/missions/end_prep 180t
 
 # Announce
-tellraw @a ["",{{"text":"","color":"aqua","bold":true}},"🎯 ",{{"text":"Preparing! Choose your class! Mission starts in 10 seconds!","color":"yellow"}}]
+tellraw @a ["",{{"text":"","color":"aqua","bold":true}},"🎯 ",{{"text":"Preparing! Choose your class! Mission starts in 9 seconds!","color":"yellow"}}]
 """)
 
 	## Load map from storage
@@ -173,7 +202,7 @@ execute as @a[scores={{{ns}.mi.in_game=1}}] unless score @s {ns}.mp.prev_class =
 execute as @a[scores={{{ns}.mi.in_game=1}}] run scoreboard players operation @s {ns}.mp.prev_class = @s {ns}.mp.class
 """)
 
-	## End Prep → Start Level 1
+	## End Prep → Start Mission (spawn all enemies)
 	write_versioned_function("missions/end_prep", f"""
 # Guard: only if still preparing
 execute unless data storage {ns}:missions game{{state:"preparing"}} run return fail
@@ -193,88 +222,114 @@ effect clear @a[scores={{{ns}.mi.in_game=1}}] night_vision
 # Keep saturation
 effect give @a[scores={{{ns}.mi.in_game=1}}] saturation infinite 255 true
 
+# Spawn all enemies from map data
+function {ns}:v{version}/missions/spawn_all_enemies
+
+# Give compass pointing to nearest enemy (hotbar slot 3)
+execute as @a[scores={{{ns}.mi.in_game=1}}] run item replace entity @s hotbar.3 with compass[custom_data={{{ns}:{{compass:true}}}}]
+
+# Reset mission timer (counts up)
+scoreboard players set #mi_timer {ns}.data 0
+
 # Announce
-tellraw @a ["",{{"text":"","color":"aqua","bold":true}},"🎯 ",{{"text":"GO! GO! GO!"}}]
-
-# Start level 1
-scoreboard players set #mi_level {ns}.data 1
-function {ns}:v{version}/missions/spawn_level
+tellraw @a ["",{{"text":"","color":"aqua","bold":true}},"🎯 ",{{"text":"GO! GO! GO! Kill all enemies!"}}]
 """)
 
-	## Spawn enemies for the current level
-	write_versioned_function("missions/spawn_level", f"""
-# Announce current level
-execute if score #mi_level {ns}.data matches 1 run tellraw @a ["",{{"text":"","color":"green","bold":true}},"  ▶ ",{{"text":"Level 1"}}]
-execute if score #mi_level {ns}.data matches 2 run tellraw @a ["",{{"text":"","color":"yellow","bold":true}},"  ▶ ",{{"text":"Level 2"}}]
-execute if score #mi_level {ns}.data matches 3 run tellraw @a ["",{{"text":"","color":"gold","bold":true}},"  ▶ ",{{"text":"Level 3"}}]
-execute if score #mi_level {ns}.data matches 4 run tellraw @a ["",{{"text":"","color":"red","bold":true}},"  ▶ ",{{"text":"Level 4"}}]
+	## Spawn all enemies at once from map data
+	write_versioned_function("missions/spawn_all_enemies", f"""
+# Copy enemy list for iteration
+data modify storage {ns}:temp _enemy_iter set from storage {ns}:missions game.map.enemies
 
-# Store base coordinates for offset
-execute store result score #gm_base_x {ns}.data run data get storage {ns}:missions game.map.base_coordinates[0]
-execute store result score #gm_base_y {ns}.data run data get storage {ns}:missions game.map.base_coordinates[1]
-execute store result score #gm_base_z {ns}.data run data get storage {ns}:missions game.map.base_coordinates[2]
-
-# Reset enemy count
-scoreboard players set #mi_enemies {ns}.data 0
-
-# Dispatch to level-specific spawner
-execute if score #mi_level {ns}.data matches 1 run function {ns}:v{version}/missions/spawn_level_1
-execute if score #mi_level {ns}.data matches 2 run function {ns}:v{version}/missions/spawn_level_2
-execute if score #mi_level {ns}.data matches 3 run function {ns}:v{version}/missions/spawn_level_3
-execute if score #mi_level {ns}.data matches 4 run function {ns}:v{version}/missions/spawn_level_4
-
-# Give a random gun to all enemies that don't have any gun
-execute as @e[tag={ns}.mission_enemy] unless items entity @s weapon.mainhand * run function {ns}:v{version}/utils/random_weapon {{slot:"weapon.mainhand"}}
-""")
-
-	## Per-level spawn functions
-	for level in range(1, 5):
-		write_versioned_function(f"missions/spawn_level_{level}", f"""
-# Copy enemy positions for iteration
-data modify storage {ns}:temp _enemy_iter set from storage {ns}:missions game.map.enemies.level_{level}
-
-# Copy enemy config for this level
-data modify storage {ns}:temp _enemy_config set from storage {ns}:missions game.map.enemy_config.level_{level}
-
-# Iterate and spawn
+# Start iteration
 execute if data storage {ns}:temp _enemy_iter[0] run function {ns}:v{version}/missions/spawn_enemy_iter
+
+# Tag all newly spawned armed mobs as mission enemies
+execute as @e[tag={ns}.armed,tag=!{ns}.mission_enemy] run tag @s add {ns}.mission_enemy
+execute as @e[tag={ns}.mission_enemy] run tag @s add {ns}.gm_entity
+
+# Store total enemy count
+execute store result score #mi_total_enemies {ns}.data if entity @e[tag={ns}.mission_enemy]
+
+# Announce count
+tellraw @a [{MGS_TAG},{{"score":{{"name":"#mi_total_enemies","objective":"{ns}.data"}},"color":"yellow"}}," ",{{"text":"enemies spawned!","color":"gray"}}]
 """)
 
-	## Spawn enemy iterator (reusable across levels)
+	## Spawn enemy iterator
 	write_versioned_function("missions/spawn_enemy_iter", f"""
-# Read relative coordinates
-execute store result score #_ex {ns}.data run data get storage {ns}:temp _enemy_iter[0][0]
-execute store result score #_ey {ns}.data run data get storage {ns}:temp _enemy_iter[0][1]
-execute store result score #_ez {ns}.data run data get storage {ns}:temp _enemy_iter[0][2]
+# Read relative position
+execute store result score #_ex {ns}.data run data get storage {ns}:temp _enemy_iter[0].pos[0]
+execute store result score #_ey {ns}.data run data get storage {ns}:temp _enemy_iter[0].pos[1]
+execute store result score #_ez {ns}.data run data get storage {ns}:temp _enemy_iter[0].pos[2]
 
 # Convert to absolute
 scoreboard players operation #_ex {ns}.data += #gm_base_x {ns}.data
 scoreboard players operation #_ey {ns}.data += #gm_base_y {ns}.data
 scoreboard players operation #_ez {ns}.data += #gm_base_z {ns}.data
 
-# Store for macro
+# Store absolute position for macro
 execute store result storage {ns}:temp _epos.x double 1 run scoreboard players get #_ex {ns}.data
 execute store result storage {ns}:temp _epos.y double 1 run scoreboard players get #_ey {ns}.data
 execute store result storage {ns}:temp _epos.z double 1 run scoreboard players get #_ez {ns}.data
 
-# Copy entity type and HP from config
-data modify storage {ns}:temp _epos.entity set from storage {ns}:temp _enemy_config.entity
-data modify storage {ns}:temp _epos.hp set from storage {ns}:temp _enemy_config.hp
+# Copy the function path
+data modify storage {ns}:temp _epos.function set from storage {ns}:temp _enemy_iter[0].function
 
-# Summon
-function {ns}:v{version}/missions/summon_enemy with storage {ns}:temp _epos
-
-# Increment enemy count
-scoreboard players add #mi_enemies {ns}.data 1
+# Call the mob function at the absolute position
+function {ns}:v{version}/missions/call_enemy_function with storage {ns}:temp _epos
 
 # Next
 data remove storage {ns}:temp _enemy_iter[0]
 execute if data storage {ns}:temp _enemy_iter[0] run function {ns}:v{version}/missions/spawn_enemy_iter
 """)
 
-	## Summon a single enemy at position (macro)
-	write_versioned_function("missions/summon_enemy", f"""
-$summon $(entity) $(x) $(y) $(z) {{Tags:["{ns}.mission_enemy","{ns}.gm_entity"],DeathLootTable:"minecraft:empty",attributes:[{{id:"minecraft:max_health",base:$(hp)}}],Health:$(hp)f}}
+	## Call the stored mob function at a given position (macro)
+	write_versioned_function("missions/call_enemy_function", """
+$execute positioned $(x) $(y) $(z) run function $(function)
+""")
+
+	## Forceload / unload the mission boundary area
+	write_versioned_function("missions/forceload_area", f"""
+# Store boundary coords into storage for macro
+execute store result storage {ns}:temp _fl.x1 int 1 run scoreboard players get #bound_x1 {ns}.data
+execute store result storage {ns}:temp _fl.z1 int 1 run scoreboard players get #bound_z1 {ns}.data
+execute store result storage {ns}:temp _fl.x2 int 1 run scoreboard players get #bound_x2 {ns}.data
+execute store result storage {ns}:temp _fl.z2 int 1 run scoreboard players get #bound_z2 {ns}.data
+function {ns}:v{version}/missions/forceload_add with storage {ns}:temp _fl
+""")
+
+	write_versioned_function("missions/forceload_add", """
+$forceload add $(x1) $(z1) $(x2) $(z2)
+""")
+
+	write_versioned_function("missions/remove_forceload", f"""
+# Store boundary coords into storage for macro
+execute store result storage {ns}:temp _fl.x1 int 1 run scoreboard players get #bound_x1 {ns}.data
+execute store result storage {ns}:temp _fl.z1 int 1 run scoreboard players get #bound_z1 {ns}.data
+execute store result storage {ns}:temp _fl.x2 int 1 run scoreboard players get #bound_x2 {ns}.data
+execute store result storage {ns}:temp _fl.z2 int 1 run scoreboard players get #bound_z2 {ns}.data
+function {ns}:v{version}/missions/forceload_remove with storage {ns}:temp _fl
+""")
+
+	write_versioned_function("missions/forceload_remove", """
+$forceload remove $(x1) $(z1) $(x2) $(z2)
+""")
+
+	## On Respawn (missions death handling)
+	write_versioned_function("missions/on_respawn", f"""
+# Reset death counter
+scoreboard players set @s {ns}.mp.death_count 0
+
+# Teleport to random mission spawn point
+function {ns}:v{version}/missions/respawn_tp
+
+# Re-apply saturation
+effect give @s saturation infinite 255 true
+
+# Re-apply class loadout (lost on death)
+execute unless score @s {ns}.mp.class matches 0 run function {ns}:v{version}/multiplayer/apply_class
+
+# Re-give compass
+item replace entity @s hotbar.3 with compass[custom_data={{{ns}:{{compass:true}}}}]
 """)
 
 	## Game Tick
@@ -285,14 +340,25 @@ execute if data storage {ns}:missions game{{state:"preparing"}} run function {ns
 """)
 
 	write_versioned_function("missions/game_tick", f"""
-# Boundary enforcement (skip players with respawn protection)
-execute as @e[type=player,scores={{{ns}.mi.in_game=1,{ns}.mp.death_count=0}},gamemode=!creative,gamemode=!spectator] at @s run function {ns}:v{version}/missions/check_bounds
+# Increment mission timer
+scoreboard players add #mi_timer {ns}.data 1
 
-# OOB check
-execute as @e[type=player,scores={{{ns}.mi.in_game=1,{ns}.mp.death_count=0}},gamemode=!creative,gamemode=!spectator] at @s if entity @e[tag={ns}.oob_point,distance=..5] run kill @s
+# Boundary enforcement (skip spectators) & OOB Check
+execute as @e[tag={ns}.mission_enemy] at @s run function {ns}:v{version}/missions/check_bounds
+execute as @e[type=player,scores={{{ns}.mi.in_game=1}},gamemode=!creative,gamemode=!spectator] at @s run function {ns}:v{version}/missions/check_bounds
+execute as @e[type=player,scores={{{ns}.mi.in_game=1}},gamemode=!creative,gamemode=!spectator] at @s if entity @e[tag={ns}.oob_point,distance=..5] run damage @s 10000 out_of_world
 
-# Check if all enemies are dead (level transition)
-execute unless entity @e[tag={ns}.mission_enemy] if score #mi_level {ns}.data matches 1..4 run function {ns}:v{version}/missions/level_cleared
+# Track enemy kills (total enemies - alive enemies)
+execute store result score #_alive {ns}.data if entity @e[tag={ns}.mission_enemy]
+scoreboard players operation #_mi_kills {ns}.data = #mi_total_enemies {ns}.data
+scoreboard players operation #_mi_kills {ns}.data -= #_alive {ns}.data
+
+# Update compass for all players (point to nearest enemy)
+execute as @a[scores={{{ns}.mi.in_game=1}}] at @s run function {ns}:v{version}/missions/update_compass
+execute at @r[scores={{{ns}.mi.in_game=1}}] run kill @e[type=experience_orb,distance=..200]
+
+# Check if all enemies are dead → victory
+execute unless entity @e[tag={ns}.mission_enemy] run return run function {ns}:v{version}/missions/victory
 """)
 
 	## Boundary check
@@ -302,33 +368,54 @@ execute store result score @s {ns}.mp.bx run data get storage {ns}:temp _player_
 execute store result score @s {ns}.mp.by run data get storage {ns}:temp _player_pos[1]
 execute store result score @s {ns}.mp.bz run data get storage {ns}:temp _player_pos[2]
 
-execute if score @s {ns}.mp.bx < #bound_x1 {ns}.data run return run kill @s
-execute if score @s {ns}.mp.bx > #bound_x2 {ns}.data run return run kill @s
-execute if score @s {ns}.mp.by < #bound_y1 {ns}.data run return run kill @s
-execute if score @s {ns}.mp.by > #bound_y2 {ns}.data run return run kill @s
-execute if score @s {ns}.mp.bz < #bound_z1 {ns}.data run return run kill @s
-execute if score @s {ns}.mp.bz > #bound_z2 {ns}.data run return run kill @s
+execute if score @s {ns}.mp.bx < #bound_x1 {ns}.data run return run damage @s 10000 out_of_world
+execute if score @s {ns}.mp.bx > #bound_x2 {ns}.data run return run damage @s 10000 out_of_world
+execute if score @s {ns}.mp.by < #bound_y1 {ns}.data run return run damage @s 10000 out_of_world
+execute if score @s {ns}.mp.by > #bound_y2 {ns}.data run return run damage @s 10000 out_of_world
+execute if score @s {ns}.mp.bz < #bound_z1 {ns}.data run return run damage @s 10000 out_of_world
+execute if score @s {ns}.mp.bz > #bound_z2 {ns}.data run return run damage @s 10000 out_of_world
 """)
 
-	## Level Cleared → advance or win
-	write_versioned_function("missions/level_cleared", f"""
-# Check if all 4 levels are done
-execute if score #mi_level {ns}.data matches 4 run return run function {ns}:v{version}/missions/victory
+	## Compass - points toward nearest enemy (runs as player at player)
+	write_versioned_function("missions/update_compass", f"""
+# Skip if no enemies remain
+execute unless entity @e[tag={ns}.mission_enemy] run return fail
 
-# Announce
-execute if score #mi_level {ns}.data matches 1 run tellraw @a ["",{{"text":"","color":"green","bold":true}},"  ✔ ",{{"text":"Level 1 Cleared!"}}]
-execute if score #mi_level {ns}.data matches 2 run tellraw @a ["",{{"text":"","color":"yellow","bold":true}},"  ✔ ",{{"text":"Level 2 Cleared!"}}]
-execute if score #mi_level {ns}.data matches 3 run tellraw @a ["",{{"text":"","color":"gold","bold":true}},"  ✔ ",{{"text":"Level 3 Cleared!"}}]
+# Get nearest enemy position as ints
+execute store result storage {ns}:temp _compass.x int 1 run data get entity @n[tag={ns}.mission_enemy] Pos[0]
+execute store result storage {ns}:temp _compass.y int 1 run data get entity @n[tag={ns}.mission_enemy] Pos[1]
+execute store result storage {ns}:temp _compass.z int 1 run data get entity @n[tag={ns}.mission_enemy] Pos[2]
 
-# Advance to next level after short delay (3 seconds)
-scoreboard players add #mi_level {ns}.data 1
-schedule function {ns}:v{version}/missions/spawn_level 60t
+# Update compass in hotbar slot 3
+function {ns}:v{version}/missions/set_compass_target with storage {ns}:temp _compass
 """)
 
-	## Victory!
+	write_versioned_function("missions/set_compass_target", f"""
+$item replace entity @s hotbar.3 with compass[lodestone_tracker={{target:{{pos:[I;$(x),$(y),$(z)],dimension:"minecraft:overworld"}},tracked:false}},custom_data={{{ns}:{{compass:true}}}}]
+""")
+
+	## Victory - all enemies killed!
 	write_versioned_function("missions/victory", f"""
-tellraw @a ["",{{"text":"","color":"gold","bold":true}},"🏆 ",{{"text":"Mission Complete!"}}]
-tellraw @a [{MGS_TAG},{{"text":"All levels cleared! Well done!","color":"green"}}]
+# Calculate time in seconds
+scoreboard players operation #_mi_seconds {ns}.data = #mi_timer {ns}.data
+scoreboard players operation #_mi_seconds {ns}.data /= #20 {ns}.data
+
+# Calculate minutes and remaining seconds
+scoreboard players operation #_mi_minutes {ns}.data = #_mi_seconds {ns}.data
+scoreboard players operation #_mi_minutes {ns}.data /= #60 {ns}.data
+scoreboard players operation #_mi_rem_sec {ns}.data = #_mi_seconds {ns}.data
+scoreboard players operation #_mi_rem_sec {ns}.data %= #60 {ns}.data
+
+# Title
+title @a[scores={{{ns}.mi.in_game=1}}] times 10 80 20
+title @a[scores={{{ns}.mi.in_game=1}}] title {{"text":"MISSION COMPLETE","color":"gold","bold":true}}
+title @a[scores={{{ns}.mi.in_game=1}}] subtitle {{"text":"All enemies eliminated!","color":"green"}}
+
+# Performance summary
+tellraw @a ["","\\n",{{"text":"═══════ MISSION COMPLETE ═══════","color":"gold","bold":true}}]
+tellraw @a ["",{{"text":"  ⏱ Time: ","color":"gray"}},{{"score":{{"name":"#_mi_minutes","objective":"{ns}.data"}},"color":"yellow"}},"m ",{{"score":{{"name":"#_mi_rem_sec","objective":"{ns}.data"}},"color":"yellow"}},"s"]
+tellraw @a ["",{{"text":"  💀 Enemies killed: ","color":"gray"}},{{"score":{{"name":"#mi_total_enemies","objective":"{ns}.data"}},"color":"red"}}]
+tellraw @a ["",{{"text":"═══════════════════════════════","color":"gold","bold":true}},"\\n"]
 
 # End game
 function {ns}:v{version}/missions/stop
@@ -341,7 +428,6 @@ data modify storage {ns}:missions game.state set value "lobby"
 
 # Cancel scheduled functions
 schedule clear {ns}:v{version}/missions/end_prep
-schedule clear {ns}:v{version}/missions/spawn_level
 
 # Restore movement
 execute as @a[scores={{{ns}.mi.in_game=1}}] run attribute @s minecraft:movement_speed base set 0.1
@@ -352,9 +438,15 @@ effect clear @a[scores={{{ns}.mi.in_game=1}}] darkness
 effect clear @a[scores={{{ns}.mi.in_game=1}}] blindness
 effect clear @a[scores={{{ns}.mi.in_game=1}}] night_vision
 
+# Remove compass from all players
+clear @a[scores={{{ns}.mi.in_game=1}}] compass[custom_data~{{{ns}:{{compass:true}}}}]
+
 # Kill all mission entities (enemies + markers)
 kill @e[tag={ns}.mission_enemy]
 kill @e[tag={ns}.gm_entity]
+
+# Remove forceload
+function {ns}:v{version}/missions/remove_forceload
 
 # Signal mission end
 function #{ns}:missions/on_mission_end
@@ -364,7 +456,9 @@ tellraw @a [{MGS_TAG},{{"text":"Mission ended.","color":"red"}}]
 
 # Reset in-game state
 scoreboard players set @a {ns}.mi.in_game 0
-scoreboard players set #mi_level {ns}.data 0
+scoreboard players set #mi_timer {ns}.data 0
+scoreboard players set #mi_total_enemies {ns}.data 0
+scoreboard players set @a {ns}.mi.kills 0
 tag @a[tag={ns}.give_class_menu] remove {ns}.give_class_menu
 """)
 
@@ -446,7 +540,7 @@ tag @e[tag={ns}.spawn_point,tag={ns}.spawn_mission,tag=!{ns}.spawn_used] add {ns
 execute unless entity @e[tag={ns}.spawn_candidate] run tag @e[tag={ns}.spawn_point,tag={ns}.spawn_mission] add {ns}.spawn_candidate
 
 # Pick random candidate
-execute as @e[tag={ns}.spawn_candidate,sort=random,limit=1] run function {ns}:v{version}/missions/tp_to_spawn
+execute as @n[tag={ns}.spawn_candidate,sort=random] run function {ns}:v{version}/missions/tp_to_spawn
 
 # Cleanup
 tag @e[tag={ns}.spawn_candidate] remove {ns}.spawn_candidate

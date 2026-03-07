@@ -168,20 +168,28 @@ execute if score #armed_mob_count {ns}.data matches 1.. as @e[tag={ns}.armed] at
 """)
 
     ## Simple default functions
-    for level, active, sleep in [(1, 50, 100), (2, 50, 50), (3, 60, 20), (4, 72000, 1)]:
-        write_versioned_function(f"mob/default/level_{level}", f"""
-# Summon entity with armed tag and custom name
-$summon $(entity) ~ ~ ~ {{"Tags":["{ns}.armed","{ns}.new"],"CustomName":{{"text":"Armed $(entity) [Lv.{level}]","color":"red"}}}}
+    write_versioned_function("mob/default/on_new", f"""
+# Tags, data, and attributes
+tag @s add {ns}.armed
+$data modify entity @s CustomName set value {{"text":"Armed $(entity) [Lv.$(level)]","color":"red"}}
+data modify entity @s DeathLootTable set value "minecraft:empty"
+data modify entity @s HandDropChances set value [0.2f,0.0f]
+data modify entity @s PersistenceRequired set value true
+attribute @s minecraft:waypoint_transmit_range base set 32
 
 # Give a random weapon to the entity
-execute as @n[tag={ns}.new] run function {ns}:v{version}/utils/random_weapon {{slot:"weapon.mainhand"}}
+function {ns}:v{version}/utils/random_weapon {{slot:"weapon.mainhand"}}
 
 # Set mob active time and sleep time
-scoreboard players set @n[tag={ns}.new] {ns}.mob.active_time {active}
-scoreboard players set @n[tag={ns}.new] {ns}.mob.sleep_time {sleep}
+$scoreboard players set @s {ns}.mob.active_time $(active_time)
+$scoreboard players set @s {ns}.mob.sleep_time $(sleep_time)
 
-# Increment armed mob count & Clean up new tag
+# Increment armed mob count
 scoreboard players add #armed_mob_count {ns}.data 1
-tag @n[tag={ns}.new] remove {ns}.new
 """)
+    for level, active, sleep in [(1, 50, 100), (2, 50, 50), (3, 60, 20), (4, 72000, 1)]:
+        write_versioned_function(
+            f"mob/default/level_{level}",
+            f"""$execute summon $(entity) run function {ns}:v{version}/mob/default/on_new {{entity:"$(entity)",level:{level},active_time:{active},sleep_time:{sleep}}}"""
+        )
 

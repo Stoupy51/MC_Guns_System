@@ -1,6 +1,8 @@
 
 #> mgs:v5.0.0/maps/editor/cleanup
 #
+# @executed	as @n[tag=mgs.new_element] & at @s
+#
 # @within	mgs:v5.0.0/maps/editor/save_exit
 #			mgs:v5.0.0/maps/editor/exit
 #

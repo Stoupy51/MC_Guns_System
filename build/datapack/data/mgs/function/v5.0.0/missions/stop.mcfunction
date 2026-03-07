@@ -9,7 +9,6 @@ data modify storage mgs:missions game.state set value "lobby"
 
 # Cancel scheduled functions
 schedule clear mgs:v5.0.0/missions/end_prep
-schedule clear mgs:v5.0.0/missions/spawn_level
 
 # Restore movement
 execute as @a[scores={mgs.mi.in_game=1}] run attribute @s minecraft:movement_speed base set 0.1
@@ -20,9 +19,15 @@ effect clear @a[scores={mgs.mi.in_game=1}] darkness
 effect clear @a[scores={mgs.mi.in_game=1}] blindness
 effect clear @a[scores={mgs.mi.in_game=1}] night_vision
 
+# Remove compass from all players
+clear @a[scores={mgs.mi.in_game=1}] compass[custom_data~{mgs:{compass:true}}]
+
 # Kill all mission entities (enemies + markers)
 kill @e[tag=mgs.mission_enemy]
 kill @e[tag=mgs.gm_entity]
+
+# Remove forceload
+function mgs:v5.0.0/missions/remove_forceload
 
 # Signal mission end
 function #mgs:missions/on_mission_end
@@ -32,6 +37,8 @@ tellraw @a [[{"text":"","color":"gold"},"[",{"translate": "mgs"},"] "],{"transla
 
 # Reset in-game state
 scoreboard players set @a mgs.mi.in_game 0
-scoreboard players set #mi_level mgs.data 0
+scoreboard players set #mi_timer mgs.data 0
+scoreboard players set #mi_total_enemies mgs.data 0
+scoreboard players set @a mgs.mi.kills 0
 tag @a[tag=mgs.give_class_menu] remove mgs.give_class_menu
 

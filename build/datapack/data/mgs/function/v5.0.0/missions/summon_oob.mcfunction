@@ -1,7 +1,7 @@
 
 #> mgs:v5.0.0/missions/summon_oob
 #
-# @within	mgs:v5.0.0/missions/start
+# @within	mgs:v5.0.0/missions/preload_complete
 #
 
 execute store result score #gm_base_x mgs.data run data get storage mgs:missions game.map.base_coordinates[0]
