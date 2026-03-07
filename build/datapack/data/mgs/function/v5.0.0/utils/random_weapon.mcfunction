@@ -2,6 +2,7 @@
 #> mgs:v5.0.0/utils/random_weapon
 #
 # @within	mgs:v5.0.0/mob/default/on_new {slot:"weapon.mainhand"}
+#			mgs:v5.0.0/mob/default/on_new_lv5 {slot:"weapon.mainhand"}
 #
 # @args		slot (string)
 #

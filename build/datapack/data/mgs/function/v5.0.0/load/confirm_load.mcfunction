@@ -493,15 +493,10 @@ data modify storage mgs:multiplayer secondary_slot_table set value [{id:"m1911",
 execute unless data storage mgs:maps multiplayer run data modify storage mgs:maps multiplayer set value []
 
 ## Missions scoreboards
-# In-game flag (1 = active in mission)
 scoreboard objectives add mgs.mi.in_game dummy
-# Mission timer (ticks elapsed since start)
 scoreboard objectives add mgs.mi.timer dummy
-# Total enemies spawned
 scoreboard objectives add mgs.mi.total_enemies dummy
-# Player kill count for missions
 scoreboard objectives add mgs.mi.kills dummy
-# Player death count for missions
 scoreboard objectives add mgs.mi.deaths dummy
 
 # Boundary checking coords (reuse mp prefix scores)

@@ -110,10 +110,26 @@ data remove storage {ns}:gun all
 data modify storage {ns}:gun all set from entity @s equipment.mainhand.components."minecraft:custom_data".{ns}
 """)
 
+    ## Apply random rotation offset for inaccuracy (non-level-5 mobs only)
+    write_versioned_function("mob/apply_inaccuracy", f"""
+# Random yaw offset: -20.0 to +20.0 degrees (stored as -200..200, applied with 0.1 scale)
+execute store result storage {ns}:temp _rot.yaw double 0.1 run random value -200..200
+execute store result storage {ns}:temp _rot.pitch double 0.1 run random value -200..200
+function {ns}:v{version}/mob/apply_rotation_offset with storage {ns}:temp _rot
+""")
+
+    ## Apply rotation offset (macro)
+    write_versioned_function("mob/apply_rotation_offset", """
+$rotate @s ~$(yaw) ~$(pitch)
+""")
+
     ## Fire weapon routing
     write_versioned_function("mob/fire_weapon", f"""
 # Rotate to face the target eyes
 rotate @s facing entity @n[tag={ns}.target] eyes
+
+# Apply random inaccuracy (skip for level 5 mobs with perfect aim)
+execute unless entity @s[tag={ns}.mob_lv5] run function {ns}:v{version}/mob/apply_inaccuracy
 
 # Set cooldown from weapon stats
 execute store result score @s {ns}.cooldown run data get storage {ns}:gun all.stats.{COOLDOWN}
@@ -192,4 +208,15 @@ scoreboard players add #armed_mob_count {ns}.data 1
             f"mob/default/level_{level}",
             f"""$execute summon $(entity) run function {ns}:v{version}/mob/default/on_new {{entity:"$(entity)",level:{level},active_time:{active},sleep_time:{sleep}}}"""
         )
+
+    # Level 5: perfect accuracy (always active, no sleep, tagged to skip inaccuracy)
+    write_versioned_function(
+        "mob/default/level_5",
+        f"""$execute summon $(entity) run function {ns}:v{version}/mob/default/on_new_lv5 {{entity:"$(entity)"}}"""
+    )
+    write_versioned_function("mob/default/on_new_lv5", f"""
+# Tags, data, and attributes
+$function {ns}:v{version}/mob/default/on_new {{entity:"$(entity)",level:5,active_time:72000,sleep_time:0}}
+tag @s add {ns}.mob_lv5
+""")
 
