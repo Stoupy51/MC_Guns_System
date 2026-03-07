@@ -6,8 +6,8 @@
 # @within	mgs:v5.0.0/mob/fire_weapon
 #
 
-# Random yaw offset: -20.00 to +20.00 degrees (stored as -2000..2000, applied with 0.01 scale)
-execute store result storage mgs:temp _rot.yaw double 0.01 run random value -2000..2000
-execute store result storage mgs:temp _rot.pitch double 0.01 run random value -2000..2000
+# Random yaw offset: -20.0 to +20.0 degrees (stored as -200..200, applied with 0.1 scale)
+execute store result storage mgs:temp _rot.yaw double 0.1 run random value -200..200
+execute store result storage mgs:temp _rot.pitch double 0.1 run random value -200..200
 function mgs:v5.0.0/mob/apply_rotation_offset with storage mgs:temp _rot
 

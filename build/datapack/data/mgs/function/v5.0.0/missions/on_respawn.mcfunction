@@ -10,15 +10,14 @@
 scoreboard players set @s mgs.mp.death_count 0
 scoreboard players add @s mgs.mi.deaths 1
 
-# Teleport to random mission spawn point
-function mgs:v5.0.0/missions/respawn_tp
+# Set player to spectator mode for 3 seconds (60 ticks) before actual respawn
+gamemode spectator @s
+scoreboard players set @s mgs.mp.spectate_timer 60
 
-# Re-apply saturation
-effect give @s saturation infinite 255 true
+# Spectate a random alive in-game player
+function mgs:v5.0.0/missions/spectate_random_player
 
-# Re-apply class loadout (lost on death)
-execute unless score @s mgs.mp.class matches 0 run function mgs:v5.0.0/multiplayer/apply_class
-
-# Re-give compass
-item replace entity @s hotbar.3 with compass[custom_data={mgs:{compass:true}}]
+# Announce respawn delay to the dying player
+title @s title [{"text":"☠","color":"red"}]
+title @s subtitle [{"translate": "mgs.respawning_in_3_seconds","color":"gray"}]
 

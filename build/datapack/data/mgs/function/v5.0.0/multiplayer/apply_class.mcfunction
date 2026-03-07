@@ -10,7 +10,7 @@
 #			mgs:v5.0.0/multiplayer/auto_apply_default
 #			mgs:v5.0.0/missions/preload_complete [ at @s ]
 #			mgs:v5.0.0/missions/prep_tick [ at @s ]
-#			mgs:v5.0.0/missions/on_respawn
+#			mgs:v5.0.0/missions/actual_respawn
 #
 
 # Check for custom loadout (negative mp.class = custom loadout ID)

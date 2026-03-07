@@ -312,11 +312,37 @@ function {ns}:v{version}/missions/forceload_remove with storage {ns}:temp _fl
 $forceload remove $(x1) $(z1) $(x2) $(z2)
 """)
 
-	## On Respawn (missions death handling)
+	## On Respawn (missions death handling - now with cooldown like multiplayer)
 	write_versioned_function("missions/on_respawn", f"""
 # Reset death counter & Increment mission death stats
 scoreboard players set @s {ns}.mp.death_count 0
 scoreboard players add @s {ns}.mi.deaths 1
+
+# Set player to spectator mode for 3 seconds (60 ticks) before actual respawn
+gamemode spectator @s
+scoreboard players set @s {ns}.mp.spectate_timer 60
+
+# Spectate a random alive in-game player
+function {ns}:v{version}/missions/spectate_random_player
+
+# Announce respawn delay to the dying player
+title @s title [{{"text":"☠","color":"red"}}]
+title @s subtitle [{{"text":"Respawning in 3 seconds...","color":"gray"}}]
+""")
+
+	## Spectate a random alive in-game player (fallback)
+	write_versioned_function("missions/spectate_random_player", f"""
+# Pick a random alive in-game player (not self, not spectator)
+execute as @r[scores={{{ns}.mi.in_game=1}},gamemode=!spectator] run spectate @s @p[scores={{{ns}.mp.spectate_timer=1..}},sort=nearest]
+""")
+
+	## Actual respawn: called when spectate timer reaches 0
+	write_versioned_function("missions/actual_respawn", f"""
+# Stop spectating
+spectate @s
+
+# Switch back to adventure
+gamemode adventure @s
 
 # Teleport to random mission spawn point
 function {ns}:v{version}/missions/respawn_tp
@@ -339,6 +365,10 @@ execute if data storage {ns}:missions game{{state:"preparing"}} run function {ns
 """)
 
 	write_versioned_function("missions/game_tick", f"""
+# ── Spectate Timer (3s respawn cooldown) ──
+execute as @a[scores={{{ns}.mi.in_game=1,{ns}.mp.spectate_timer=1..}}] run scoreboard players remove @s {ns}.mp.spectate_timer 1
+execute as @a[scores={{{ns}.mi.in_game=1,{ns}.mp.spectate_timer=0}},gamemode=spectator] at @s run function {ns}:v{version}/missions/actual_respawn
+
 # Increment mission timer
 scoreboard players add #mi_timer {ns}.data 1
 

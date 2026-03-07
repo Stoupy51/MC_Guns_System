@@ -5,6 +5,7 @@
 #			mgs:v5.0.0/mob/default/level_2 {entity:"$(entity)",level:2,active_time:50,sleep_time:50}
 #			mgs:v5.0.0/mob/default/level_3 {entity:"$(entity)",level:3,active_time:60,sleep_time:20}
 #			mgs:v5.0.0/mob/default/level_4 {entity:"$(entity)",level:4,active_time:72000,sleep_time:1}
+#			mgs:v5.0.0/mob/default/on_new_lv5 {entity:"$(entity)",level:5,active_time:72000,sleep_time:0}
 #
 # @args		entity (unknown)
 #			level (int)
