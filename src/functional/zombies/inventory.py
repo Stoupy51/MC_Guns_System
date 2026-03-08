@@ -21,7 +21,7 @@ def generate_zombies_inventory() -> None:
 	ability_cd = "{" + ns + ":{zb_ability_item:true}}"
 	frag_cd = "{" + ns + ':{gun:true,stats:{grenade_type:"frag"}}}'
 	frag_stats_cd = "{" + ns + ':{stats:{grenade_type:"frag"}}}'
-	ns_cd = "{" + ns + ":}"
+	ns_cd = "{" + ns + ":{}}"
 
 	# Full knife item definition (20 attack damage to one-shot round 1 zombies)
 	knife_item = (
@@ -185,6 +185,12 @@ execute if items entity @s hotbar.1 {gun_match} unless items entity @s inventory
 
 # Prevent items in forbidden slots
 item replace entity @s hotbar.5 with air
+
+# Restrict hotbar.2/3 and inventory.2/3 without mule kick perk
+execute unless score @s {ns}.zb.perk.mule_kick matches 1 if items entity @s hotbar.2 {gun_match} run clear @s hotbar.2 1
+execute unless score @s {ns}.zb.perk.mule_kick matches 1 run item replace entity @s hotbar.3 with air
+execute unless score @s {ns}.zb.perk.mule_kick matches 1 run item replace entity @s inventory.2 with air
+execute unless score @s {ns}.zb.perk.mule_kick matches 1 run item replace entity @s inventory.3 with air
 
 # Clear cursor (prevent holding mgs items outside inventory)
 execute if items entity @s player.cursor {ns_match} run item replace entity @s player.cursor with air

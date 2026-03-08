@@ -47,6 +47,10 @@ execute store result storage {ns}:temp _wb.y int 1 run scoreboard players get #w
 execute store result storage {ns}:temp _wb.z int 1 run scoreboard players get #wbz {ns}.data
 data modify storage {ns}:temp _wb.weapon_id set from storage {ns}:temp _wb_iter[0].weapon_id
 
+# Read display name (default to weapon_id, override with "name" field)
+data modify storage {ns}:temp _wb.name set from storage {ns}:temp _wb_iter[0].weapon_id
+execute if data storage {ns}:temp _wb_iter[0].name run data modify storage {ns}:temp _wb.name set from storage {ns}:temp _wb_iter[0].name
+
 # Read facing (default 0 = south)
 data modify storage {ns}:temp _wb.facing set value 0
 execute store result storage {ns}:temp _wb.facing int 1 run data get storage {ns}:temp _wb_iter[0].facing
@@ -63,6 +67,7 @@ execute store result score @n[tag=_wb_new] {ns}.zb.wb.rfpap run data get storage
 # Store weapon_id in indexed storage for later lookup
 execute store result storage {ns}:temp _wb_store.id int 1 run scoreboard players get #wb_counter {ns}.data
 data modify storage {ns}:temp _wb_store.weapon_id set from storage {ns}:temp _wb_iter[0].weapon_id
+data modify storage {ns}:temp _wb_store.name set from storage {ns}:temp _wb.name
 function {ns}:v{version}/zombies/wallbuys/store_data with storage {ns}:temp _wb_store
 
 # Register Bookshelf events
@@ -89,7 +94,7 @@ $summon minecraft:item_display $(x) $(y) $(z) {{billboard:"fixed",Rotation:[$(fa
 """)
 
 	write_versioned_function("zombies/wallbuys/store_data", f"""
-$data modify storage {ns}:zombies wallbuy_data."$(id)" set value {{weapon_id:"$(weapon_id)"}}
+$data modify storage {ns}:zombies wallbuy_data."$(id)" set value {{weapon_id:"$(weapon_id)",name:"$(name)"}}
 """)
 
 	write_versioned_function("zombies/wallbuys/set_display_item", f"""
@@ -130,10 +135,16 @@ $loot give @s loot {ns}:i/$(weapon_id)
 """)
 
 	## Hover events (executor: "source" = player)
+	write_versioned_function("zombies/wallbuys/get_hover_name", f"""
+$data modify storage {ns}:temp _wb_hover_name set from storage {ns}:zombies wallbuy_data."$(id)".name
+""")
+
 	write_versioned_function("zombies/wallbuys/on_hover_enter", f"""
 execute store result score #wb_price {ns}.data run scoreboard players get @n[tag=bs.interaction.target] {ns}.zb.wb.price
+execute store result storage {ns}:temp _wb_hover.id int 1 run scoreboard players get @n[tag=bs.interaction.target] {ns}.zb.wb.id
+function {ns}:v{version}/zombies/wallbuys/get_hover_name with storage {ns}:temp _wb_hover
 title @s times 0 40 10
-title @s title [{{"text":"🔫 Wallbuy","color":"gold"}}]
+title @s title [{{"text":"🔫 ","color":"gold"}},{{"storage":"{ns}:temp","nbt":"_wb_hover_name","color":"gold"}}]
 title @s subtitle [{{"text":"Cost: ","color":"gray"}},{{"score":{{"name":"#wb_price","objective":"{ns}.data"}},"color":"yellow"}},{{"text":" points","color":"gray"}}]
 """)
 

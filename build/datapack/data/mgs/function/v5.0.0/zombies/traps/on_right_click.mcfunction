@@ -21,7 +21,7 @@ execute unless score #trap_ready mgs.data matches 1 run return run tellraw @s [[
 
 # Check price
 execute store result score #trap_price mgs.data run scoreboard players get @n[tag=bs.interaction.target] mgs.zb.trap.price
-execute unless score @s mgs.zb.points >= #trap_price mgs.data run return run tellraw @s [[{"text":"","color":"gold"},"[",{"translate": "mgs"},"] "],{"translate": "mgs.not_enough_points","color":"red"}]
+execute unless score @s mgs.zb.points >= #trap_price mgs.data run return run tellraw @s [[{"text":"","color":"gold"},"[",{"translate": "mgs"},"] "],{"text":" Not enough points!","color":"red"}]
 
 # Deduct points
 scoreboard players operation @s mgs.zb.points -= #trap_price mgs.data

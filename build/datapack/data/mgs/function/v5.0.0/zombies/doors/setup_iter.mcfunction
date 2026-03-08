@@ -19,6 +19,13 @@ execute store result storage mgs:temp _door.y int 1 run scoreboard players get #
 execute store result storage mgs:temp _door.z int 1 run scoreboard players get #dz mgs.data
 data modify storage mgs:temp _door.block set from storage mgs:temp _door_iter[0].block
 
+# Read door name (default "Door", override with "name" field)
+data modify storage mgs:temp _door_name.name set value "Door"
+execute if data storage mgs:temp _door_iter[0].name run data modify storage mgs:temp _door_name.name set from storage mgs:temp _door_iter[0].name
+# Read optional back_name (default to name)
+data modify storage mgs:temp _door_name.back_name set from storage mgs:temp _door_name.name
+execute if data storage mgs:temp _door_iter[0].back_name run data modify storage mgs:temp _door_name.back_name set from storage mgs:temp _door_iter[0].back_name
+
 # Place block and summon interaction entity
 function mgs:v5.0.0/zombies/doors/place_at with storage mgs:temp _door
 
@@ -28,6 +35,10 @@ execute store result score @n[tag=mgs.door_new] mgs.zb.door.price run data get s
 execute store result score @n[tag=mgs.door_new] mgs.zb.door.gid run data get storage mgs:temp _door_iter[0].group_id
 execute store result score @n[tag=mgs.door_new] mgs.zb.door.bgid run data get storage mgs:temp _door_iter[0].back_group_id
 execute store result score @n[tag=mgs.door_new] mgs.zb.door.anim run data get storage mgs:temp _door_iter[0].animation
+
+# Store name indexed by link_id
+execute store result storage mgs:temp _door_name.id int 1 run data get storage mgs:temp _door_iter[0].link_id
+function mgs:v5.0.0/zombies/doors/store_name with storage mgs:temp _door_name
 
 # Register Bookshelf events
 execute as @e[tag=mgs.door_new] run function #bs.interaction:on_right_click {run:"function mgs:v5.0.0/zombies/doors/on_right_click",executor:"source"}

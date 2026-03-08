@@ -416,7 +416,7 @@ scoreboard objectives add mgs.zb.perk.juggernog dummy
 scoreboard objectives add mgs.zb.perk.speed_cola dummy
 scoreboard objectives add mgs.zb.perk.double_tap dummy
 scoreboard objectives add mgs.zb.perk.quick_revive dummy
-# TODO: more perks?
+scoreboard objectives add mgs.zb.perk.mule_kick dummy
 
 # Spawn point group_id scoreboard
 scoreboard objectives add mgs.zb.spawn.gid dummy
