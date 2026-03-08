@@ -10,9 +10,9 @@ kill @e[tag=mgs.snd_bomb]
 tag @a remove mgs.snd_alive
 
 # Check if either team won enough rounds (best of max_rounds)
-scoreboard players set #_snd_win_threshold mgs.data 4
-execute if score #snd_red_wins mgs.data >= #_snd_win_threshold mgs.data run function mgs:v5.0.0/multiplayer/team_wins {team:"Red"}
-execute if score #snd_blue_wins mgs.data >= #_snd_win_threshold mgs.data run function mgs:v5.0.0/multiplayer/team_wins {team:"Blue"}
+scoreboard players set #snd_win_threshold mgs.data 4
+execute if score #snd_red_wins mgs.data >= #snd_win_threshold mgs.data run function mgs:v5.0.0/multiplayer/team_wins {team:"Red"}
+execute if score #snd_blue_wins mgs.data >= #snd_win_threshold mgs.data run function mgs:v5.0.0/multiplayer/team_wins {team:"Blue"}
 
 # Swap sides at halftime (after round 3)
 scoreboard players add #snd_round mgs.data 1

@@ -12,6 +12,6 @@
 $data modify storage mgs:zombies game.unlocked_groups."$(gid)" set value 1b
 
 # Tag spawn markers with matching group_id as unlocked
-$scoreboard players set #_unlock_gid mgs.data $(gid)
-execute as @e[tag=mgs.spawn_point] if score @s mgs.zb.spawn.gid = #_unlock_gid mgs.data run tag @s add mgs.spawn_unlocked
+$scoreboard players set #unlock_gid mgs.data $(gid)
+execute as @e[tag=mgs.spawn_point] if score @s mgs.zb.spawn.gid = #unlock_gid mgs.data run tag @s add mgs.spawn_unlocked
 

@@ -1,0 +1,10 @@
+{
+	"criteria": {
+		"change": {
+			"trigger": "minecraft:inventory_changed"
+		}
+	},
+	"rewards": {
+		"function": "mgs:v5.0.0/zombies/inventory/on_change"
+	}
+}

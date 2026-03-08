@@ -87,16 +87,16 @@ execute if data storage mgs:multiplayer game{gamemode:"snd"} run function mgs:v5
 
 # Store score limit and compute initial timer values for sidebar
 execute store result score #score_limit mgs.data run data get storage mgs:multiplayer game.score_limit
-execute store result score #_timer_sec mgs.data run scoreboard players get #mp_timer mgs.data
-scoreboard players operation #_timer_sec mgs.data /= #20 mgs.data
-execute store result score #_timer_min mgs.data run scoreboard players get #_timer_sec mgs.data
-scoreboard players operation #_timer_min mgs.data /= #60 mgs.data
-scoreboard players operation #_timer_mod mgs.data = #_timer_sec mgs.data
-scoreboard players operation #_timer_mod mgs.data %= #60 mgs.data
-scoreboard players operation #_timer_tens mgs.data = #_timer_mod mgs.data
-scoreboard players operation #_timer_tens mgs.data /= #10 mgs.data
-scoreboard players operation #_timer_ones mgs.data = #_timer_mod mgs.data
-scoreboard players operation #_timer_ones mgs.data %= #10 mgs.data
+execute store result score #timer_sec mgs.data run scoreboard players get #mp_timer mgs.data
+scoreboard players operation #timer_sec mgs.data /= #20 mgs.data
+execute store result score #timer_min mgs.data run scoreboard players get #timer_sec mgs.data
+scoreboard players operation #timer_min mgs.data /= #60 mgs.data
+scoreboard players operation #timer_mod mgs.data = #timer_sec mgs.data
+scoreboard players operation #timer_mod mgs.data %= #60 mgs.data
+scoreboard players operation #timer_tens mgs.data = #timer_mod mgs.data
+scoreboard players operation #timer_tens mgs.data /= #10 mgs.data
+scoreboard players operation #timer_ones mgs.data = #timer_mod mgs.data
+scoreboard players operation #timer_ones mgs.data %= #10 mgs.data
 
 # Create sidebar HUD
 scoreboard objectives add mgs.sidebar dummy

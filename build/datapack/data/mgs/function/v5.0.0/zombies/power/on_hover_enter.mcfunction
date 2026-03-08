@@ -5,6 +5,6 @@
 #
 
 title @s times 0 40 10
-title @s title [{"text":"⚡ Power Switch","color":"yellow","bold":true}]
+title @s title [{"text":"⚡ Power Switch","color":"yellow"}]
 title @s subtitle [{"translate": "mgs.right_click_to_activate","color":"gray"}]
 

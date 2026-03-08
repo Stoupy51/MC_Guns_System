@@ -30,36 +30,36 @@ execute unless entity @e[tag={ns}.mystery_box_active] as @n[tag={ns}.mystery_box
 
 	write_versioned_function("zombies/mystery_box/setup_pos_iter", f"""
 # Read relative position from compound and convert to absolute
-execute store result score #_mbx {ns}.data run data get storage {ns}:temp _mb_iter[0].pos[0]
-execute store result score #_mby {ns}.data run data get storage {ns}:temp _mb_iter[0].pos[1]
-execute store result score #_mbz {ns}.data run data get storage {ns}:temp _mb_iter[0].pos[2]
+execute store result score #mbx {ns}.data run data get storage {ns}:temp _mb_iter[0].pos[0]
+execute store result score #mby {ns}.data run data get storage {ns}:temp _mb_iter[0].pos[1]
+execute store result score #mbz {ns}.data run data get storage {ns}:temp _mb_iter[0].pos[2]
 
-scoreboard players operation #_mbx {ns}.data += #gm_base_x {ns}.data
-scoreboard players operation #_mby {ns}.data += #gm_base_y {ns}.data
-scoreboard players operation #_mbz {ns}.data += #gm_base_z {ns}.data
+scoreboard players operation #mbx {ns}.data += #gm_base_x {ns}.data
+scoreboard players operation #mby {ns}.data += #gm_base_y {ns}.data
+scoreboard players operation #mbz {ns}.data += #gm_base_z {ns}.data
 
-execute store result storage {ns}:temp _mbpos.x double 1 run scoreboard players get #_mbx {ns}.data
-execute store result storage {ns}:temp _mbpos.y double 1 run scoreboard players get #_mby {ns}.data
-execute store result storage {ns}:temp _mbpos.z double 1 run scoreboard players get #_mbz {ns}.data
+execute store result storage {ns}:temp _mbpos.x double 1 run scoreboard players get #mbx {ns}.data
+execute store result storage {ns}:temp _mbpos.y double 1 run scoreboard players get #mby {ns}.data
+execute store result storage {ns}:temp _mbpos.z double 1 run scoreboard players get #mbz {ns}.data
 
 function {ns}:v{version}/zombies/mystery_box/summon_pos_at with storage {ns}:temp _mbpos
 
 # Tag entities that can_start_on
 data modify storage {ns}:temp can_start_on set from storage {ns}:temp _mb_iter[0].can_start_on
-execute if data storage {ns}:temp {{can_start_on:1b}} run tag @n[tag={ns}._mb_new] add {ns}.mb_can_start
+execute if data storage {ns}:temp {{can_start_on:1b}} run tag @n[tag={ns}.mb_new] add {ns}.mb_can_start
 
 # Register Bookshelf events on newly spawned entity
-execute as @n[tag={ns}._mb_new] run function #bs.interaction:on_right_click {{run:"function {ns}:v{version}/zombies/mystery_box/on_right_click",executor:"source"}}
-execute as @n[tag={ns}._mb_new] run function #bs.interaction:on_hover_enter {{run:"function {ns}:v{version}/zombies/mystery_box/on_hover_enter",executor:"source"}}
-execute as @n[tag={ns}._mb_new] run function #bs.interaction:on_hover_leave {{run:"function {ns}:v{version}/zombies/mystery_box/on_hover_leave",executor:"source"}}
-tag @n[tag={ns}._mb_new] remove {ns}._mb_new
+execute as @n[tag={ns}.mb_new] run function #bs.interaction:on_right_click {{run:"function {ns}:v{version}/zombies/mystery_box/on_right_click",executor:"source"}}
+execute as @n[tag={ns}.mb_new] run function #bs.interaction:on_hover_enter {{run:"function {ns}:v{version}/zombies/mystery_box/on_hover_enter",executor:"source"}}
+execute as @n[tag={ns}.mb_new] run function #bs.interaction:on_hover_leave {{run:"function {ns}:v{version}/zombies/mystery_box/on_hover_leave",executor:"source"}}
+tag @n[tag={ns}.mb_new] remove {ns}.mb_new
 
 data remove storage {ns}:temp _mb_iter[0]
 execute if data storage {ns}:temp _mb_iter[0] run function {ns}:v{version}/zombies/mystery_box/setup_pos_iter
 """)
 
 	write_versioned_function("zombies/mystery_box/summon_pos_at", f"""
-$summon minecraft:interaction $(x) $(y) $(z) {{width:1.0f,height:1.0f,response:true,Tags:["{ns}.mystery_box_pos","{ns}.gm_entity","{ns}._mb_new","bs.entity.interaction"]}}
+$summon minecraft:interaction $(x) $(y) $(z) {{width:1.0f,height:1.0f,response:true,Tags:["{ns}.mystery_box_pos","{ns}.gm_entity","{ns}.mb_new","bs.entity.interaction"]}}
 """)
 
 	## On right-click: Bookshelf callback (executor:"source" = @s is the player)
@@ -91,10 +91,10 @@ scoreboard players operation @s {ns}.zb.points -= #zb_mystery_box_price {ns}.con
 data modify storage {ns}:zombies mystery_box.spinning set value true
 
 # Pick a random weapon from the pool
-execute store result score #_mb_pool_size {ns}.data run data get storage {ns}:zombies mystery_box_pool
-execute if score #_mb_pool_size {ns}.data matches ..0 run return run tellraw @s [{MGS_TAG},{{"text":"Mystery Box pool is empty!","color":"red"}}]
-execute store result score #_mb_pick {ns}.data run random value 0..100
-scoreboard players operation #_mb_pick {ns}.data %= #_mb_pool_size {ns}.data
+execute store result score #mb_pool_size {ns}.data run data get storage {ns}:zombies mystery_box_pool
+execute if score #mb_pool_size {ns}.data matches ..0 run return run tellraw @s [{MGS_TAG},{{"text":"Mystery Box pool is empty!","color":"red"}}]
+execute store result score #mb_pick {ns}.data run random value 0..100
+scoreboard players operation #mb_pick {ns}.data %= #mb_pool_size {ns}.data
 
 # Copy pool and iterate to the picked index
 data modify storage {ns}:temp _mb_pool_iter set from storage {ns}:zombies mystery_box_pool
@@ -114,9 +114,9 @@ tellraw @a[scores={{{ns}.zb.in_game=1}}] [{MGS_TAG},{{"text":"Mystery Box spinni
 """)
 
 	write_versioned_function("zombies/mystery_box/pick_item", f"""
-execute if score #_mb_pick {ns}.data matches 1.. run data remove storage {ns}:temp _mb_pool_iter[0]
-execute if score #_mb_pick {ns}.data matches 1.. run scoreboard players remove #_mb_pick {ns}.data 1
-execute if score #_mb_pick {ns}.data matches 1.. run function {ns}:v{version}/zombies/mystery_box/pick_item
+execute if score #mb_pick {ns}.data matches 1.. run data remove storage {ns}:temp _mb_pool_iter[0]
+execute if score #mb_pick {ns}.data matches 1.. run scoreboard players remove #mb_pick {ns}.data 1
+execute if score #mb_pick {ns}.data matches 1.. run function {ns}:v{version}/zombies/mystery_box/pick_item
 """)
 
 	## Display entity: spawns at box level, floats up with interpolation
@@ -149,9 +149,9 @@ execute if score #mb_anim_timer {ns}.data matches ..-60 run function {ns}:v{vers
 	## Cycle display: swap the item_display model to simulate cycling
 	write_versioned_function("zombies/mystery_box/cycle_display", f"""
 # Pick a random item from pool to display
-execute store result score #_mb_cycle {ns}.data run random value 0..100
-execute store result score #_mb_ps {ns}.data run data get storage {ns}:zombies mystery_box_pool
-scoreboard players operation #_mb_cycle {ns}.data %= #_mb_ps {ns}.data
+execute store result score #mb_cycle {ns}.data run random value 0..100
+execute store result score #mb_ps {ns}.data run data get storage {ns}:zombies mystery_box_pool
+scoreboard players operation #mb_cycle {ns}.data %= #mb_ps {ns}.data
 
 data modify storage {ns}:temp _mb_cycle_iter set from storage {ns}:zombies mystery_box_pool
 function {ns}:v{version}/zombies/mystery_box/cycle_iterate
@@ -161,9 +161,9 @@ data modify entity @n[tag={ns}.mb_display] item set from storage {ns}:temp _mb_c
 """)
 
 	write_versioned_function("zombies/mystery_box/cycle_iterate", f"""
-execute if score #_mb_cycle {ns}.data matches 1.. run data remove storage {ns}:temp _mb_cycle_iter[0]
-execute if score #_mb_cycle {ns}.data matches 1.. run scoreboard players remove #_mb_cycle {ns}.data 1
-execute if score #_mb_cycle {ns}.data matches 1.. run function {ns}:v{version}/zombies/mystery_box/cycle_iterate
+execute if score #mb_cycle {ns}.data matches 1.. run data remove storage {ns}:temp _mb_cycle_iter[0]
+execute if score #mb_cycle {ns}.data matches 1.. run scoreboard players remove #mb_cycle {ns}.data 1
+execute if score #mb_cycle {ns}.data matches 1.. run function {ns}:v{version}/zombies/mystery_box/cycle_iterate
 """)
 
 	## Show result: display the final picked weapon with interpolation
@@ -216,9 +216,9 @@ data remove storage {ns}:zombies mystery_box.result
 	write_versioned_function("zombies/mystery_box/on_hover_enter", f"""
 execute unless entity @e[tag=bs.interaction.target,tag={ns}.mystery_box_active] run return fail
 execute unless data storage {ns}:zombies game{{state:"active"}} run return fail
-execute if data storage {ns}:zombies mystery_box{{ready:true}} run return run title @s actionbar [{{"text":"Mystery Box","color":"light_purple","bold":true}},{{"text":" - ","color":"gray"}},{{"text":"Click to collect!","color":"green"}}]
-execute if data storage {ns}:zombies mystery_box{{spinning:true}} run return run title @s actionbar [{{"text":"Mystery Box","color":"light_purple","bold":true}},{{"text":" - ","color":"gray"}},{{"text":"Spinning...","color":"yellow"}}]
-title @s actionbar [{{"text":"Mystery Box","color":"light_purple","bold":true}},{{"text":" - ","color":"gray"}},{{"text":"950 points","color":"gold"}}]
+execute if data storage {ns}:zombies mystery_box{{ready:true}} run return run title @s actionbar [{{"text":"Mystery Box","color":"light_purple"}},{{"text":" - ","color":"gray"}},{{"text":"Click to collect!","color":"green"}}]
+execute if data storage {ns}:zombies mystery_box{{spinning:true}} run return run title @s actionbar [{{"text":"Mystery Box","color":"light_purple"}},{{"text":" - ","color":"gray"}},{{"text":"Spinning...","color":"yellow"}}]
+title @s actionbar [{{"text":"Mystery Box","color":"light_purple"}},{{"text":" - ","color":"gray"}},{{"text":"950 points","color":"gold"}}]
 """)
 
 	write_versioned_function("zombies/mystery_box/on_hover_leave", """

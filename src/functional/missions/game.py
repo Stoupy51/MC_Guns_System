@@ -177,20 +177,20 @@ $function {ns}:v{version}/maps/missions/load {{id:"$(map_id)",override:{{}}}}
 
 	## Normalize boundaries (reuse multiplayer pattern)
 	write_versioned_function("missions/normalize_bounds", f"""
-execute if score #bound_x1 {ns}.data > #bound_x2 {ns}.data run scoreboard players operation #_swap {ns}.data = #bound_x1 {ns}.data
+execute if score #bound_x1 {ns}.data > #bound_x2 {ns}.data run scoreboard players operation #swap {ns}.data = #bound_x1 {ns}.data
 execute if score #bound_x1 {ns}.data > #bound_x2 {ns}.data run scoreboard players operation #bound_x1 {ns}.data = #bound_x2 {ns}.data
-execute if score #_swap {ns}.data matches -2147483648.. run scoreboard players operation #bound_x2 {ns}.data = #_swap {ns}.data
-execute if score #_swap {ns}.data matches -2147483648.. run scoreboard players reset #_swap {ns}.data
+execute if score #swap {ns}.data matches -2147483648.. run scoreboard players operation #bound_x2 {ns}.data = #swap {ns}.data
+execute if score #swap {ns}.data matches -2147483648.. run scoreboard players reset #swap {ns}.data
 
-execute if score #bound_y1 {ns}.data > #bound_y2 {ns}.data run scoreboard players operation #_swap {ns}.data = #bound_y1 {ns}.data
+execute if score #bound_y1 {ns}.data > #bound_y2 {ns}.data run scoreboard players operation #swap {ns}.data = #bound_y1 {ns}.data
 execute if score #bound_y1 {ns}.data > #bound_y2 {ns}.data run scoreboard players operation #bound_y1 {ns}.data = #bound_y2 {ns}.data
-execute if score #_swap {ns}.data matches -2147483648.. run scoreboard players operation #bound_y2 {ns}.data = #_swap {ns}.data
-execute if score #_swap {ns}.data matches -2147483648.. run scoreboard players reset #_swap {ns}.data
+execute if score #swap {ns}.data matches -2147483648.. run scoreboard players operation #bound_y2 {ns}.data = #swap {ns}.data
+execute if score #swap {ns}.data matches -2147483648.. run scoreboard players reset #swap {ns}.data
 
-execute if score #bound_z1 {ns}.data > #bound_z2 {ns}.data run scoreboard players operation #_swap {ns}.data = #bound_z1 {ns}.data
+execute if score #bound_z1 {ns}.data > #bound_z2 {ns}.data run scoreboard players operation #swap {ns}.data = #bound_z1 {ns}.data
 execute if score #bound_z1 {ns}.data > #bound_z2 {ns}.data run scoreboard players operation #bound_z1 {ns}.data = #bound_z2 {ns}.data
-execute if score #_swap {ns}.data matches -2147483648.. run scoreboard players operation #bound_z2 {ns}.data = #_swap {ns}.data
-execute if score #_swap {ns}.data matches -2147483648.. run scoreboard players reset #_swap {ns}.data
+execute if score #swap {ns}.data matches -2147483648.. run scoreboard players operation #bound_z2 {ns}.data = #swap {ns}.data
+execute if score #swap {ns}.data matches -2147483648.. run scoreboard players reset #swap {ns}.data
 """)
 
 	## Prep Tick (check for class changes during preparation)
@@ -255,19 +255,19 @@ tellraw @a [{MGS_TAG},{{"score":{{"name":"#mi_total_enemies","objective":"{ns}.d
 	## Spawn enemy iterator
 	write_versioned_function("missions/spawn_enemy_iter", f"""
 # Read relative position
-execute store result score #_ex {ns}.data run data get storage {ns}:temp _enemy_iter[0].pos[0]
-execute store result score #_ey {ns}.data run data get storage {ns}:temp _enemy_iter[0].pos[1]
-execute store result score #_ez {ns}.data run data get storage {ns}:temp _enemy_iter[0].pos[2]
+execute store result score #ex {ns}.data run data get storage {ns}:temp _enemy_iter[0].pos[0]
+execute store result score #ey {ns}.data run data get storage {ns}:temp _enemy_iter[0].pos[1]
+execute store result score #ez {ns}.data run data get storage {ns}:temp _enemy_iter[0].pos[2]
 
 # Convert to absolute
-scoreboard players operation #_ex {ns}.data += #gm_base_x {ns}.data
-scoreboard players operation #_ey {ns}.data += #gm_base_y {ns}.data
-scoreboard players operation #_ez {ns}.data += #gm_base_z {ns}.data
+scoreboard players operation #ex {ns}.data += #gm_base_x {ns}.data
+scoreboard players operation #ey {ns}.data += #gm_base_y {ns}.data
+scoreboard players operation #ez {ns}.data += #gm_base_z {ns}.data
 
 # Store absolute position for macro
-execute store result storage {ns}:temp _epos.x double 1 run scoreboard players get #_ex {ns}.data
-execute store result storage {ns}:temp _epos.y double 1 run scoreboard players get #_ey {ns}.data
-execute store result storage {ns}:temp _epos.z double 1 run scoreboard players get #_ez {ns}.data
+execute store result storage {ns}:temp _epos.x double 1 run scoreboard players get #ex {ns}.data
+execute store result storage {ns}:temp _epos.y double 1 run scoreboard players get #ey {ns}.data
+execute store result storage {ns}:temp _epos.z double 1 run scoreboard players get #ez {ns}.data
 
 # Copy the function path
 data modify storage {ns}:temp _epos.function set from storage {ns}:temp _enemy_iter[0].function
@@ -365,7 +365,7 @@ execute if data storage {ns}:missions game{{state:"preparing"}} run function {ns
 """)
 
 	write_versioned_function("missions/game_tick", f"""
-# ── Spectate Timer (3s respawn cooldown) ──
+# Spectate Timer (3s respawn cooldown)
 execute as @a[scores={{{ns}.mi.in_game=1,{ns}.mp.spectate_timer=1..}}] run scoreboard players remove @s {ns}.mp.spectate_timer 1
 execute as @a[scores={{{ns}.mi.in_game=1,{ns}.mp.spectate_timer=0}},gamemode=spectator] at @s run function {ns}:v{version}/missions/actual_respawn
 
@@ -378,9 +378,9 @@ execute as @e[type=player,scores={{{ns}.mi.in_game=1}},gamemode=!creative,gamemo
 execute as @e[type=player,scores={{{ns}.mi.in_game=1}},gamemode=!creative,gamemode=!spectator] at @s if entity @e[tag={ns}.oob_point,distance=..5] run damage @s 10000 out_of_world
 
 # Track enemy kills (total enemies - alive enemies)
-execute store result score #_alive {ns}.data if entity @e[tag={ns}.mission_enemy]
-scoreboard players operation #_mi_kills {ns}.data = #mi_total_enemies {ns}.data
-scoreboard players operation #_mi_kills {ns}.data -= #_alive {ns}.data
+execute store result score #alive {ns}.data if entity @e[tag={ns}.mission_enemy]
+scoreboard players operation #mi_kills {ns}.data = #mi_total_enemies {ns}.data
+scoreboard players operation #mi_kills {ns}.data -= #alive {ns}.data
 
 # Update compass for all players (point to nearest enemy)
 execute as @a[scores={{{ns}.mi.in_game=1}}] at @s run function {ns}:v{version}/missions/update_compass
@@ -426,14 +426,14 @@ $item replace entity @s hotbar.3 with compass[lodestone_tracker={{target:{{pos:[
 	## Victory - all enemies killed!
 	write_versioned_function("missions/victory", f"""
 # Calculate time in seconds
-scoreboard players operation #_mi_seconds {ns}.data = #mi_timer {ns}.data
-scoreboard players operation #_mi_seconds {ns}.data /= #20 {ns}.data
+scoreboard players operation #mi_seconds {ns}.data = #mi_timer {ns}.data
+scoreboard players operation #mi_seconds {ns}.data /= #20 {ns}.data
 
 # Calculate minutes and remaining seconds
-scoreboard players operation #_mi_minutes {ns}.data = #_mi_seconds {ns}.data
-scoreboard players operation #_mi_minutes {ns}.data /= #60 {ns}.data
-scoreboard players operation #_mi_rem_sec {ns}.data = #_mi_seconds {ns}.data
-scoreboard players operation #_mi_rem_sec {ns}.data %= #60 {ns}.data
+scoreboard players operation #mi_minutes {ns}.data = #mi_seconds {ns}.data
+scoreboard players operation #mi_minutes {ns}.data /= #60 {ns}.data
+scoreboard players operation #mi_rem_sec {ns}.data = #mi_seconds {ns}.data
+scoreboard players operation #mi_rem_sec {ns}.data %= #60 {ns}.data
 
 # Title
 title @a[scores={{{ns}.mi.in_game=1}}] times 10 80 20
@@ -442,7 +442,7 @@ title @a[scores={{{ns}.mi.in_game=1}}] subtitle {{"text":"All enemies eliminated
 
 # Performance summary
 tellraw @a ["","\\n",{{"text":"═══════ MISSION COMPLETE ═══════","color":"gold","bold":true}}]
-tellraw @a ["",{{"text":"  ⏱ Time: ","color":"gray"}},{{"score":{{"name":"#_mi_minutes","objective":"{ns}.data"}},"color":"yellow"}},"m ",{{"score":{{"name":"#_mi_rem_sec","objective":"{ns}.data"}},"color":"yellow"}},"s"]
+tellraw @a ["",{{"text":"  ⏱ Time: ","color":"gray"}},{{"score":{{"name":"#mi_minutes","objective":"{ns}.data"}},"color":"yellow"}},"m ",{{"score":{{"name":"#mi_rem_sec","objective":"{ns}.data"}},"color":"yellow"}},"s"]
 tellraw @a ["",{{"text":"  💀 Enemies killed: ","color":"gray"}},{{"score":{{"name":"#mi_total_enemies","objective":"{ns}.data"}},"color":"red"}}]
 
 # Per-player stats
@@ -496,7 +496,7 @@ scoreboard players set @a {ns}.mi.deaths 0
 tag @a[tag={ns}.give_class_menu] remove {ns}.give_class_menu
 """)
 
-	# ── Summon OOB markers ────────────────────────────────────────
+	# Summon OOB markers ────────────────────────────────────────
 	write_versioned_function("missions/summon_oob", f"""
 execute store result score #gm_base_x {ns}.data run data get storage {ns}:missions game.map.base_coordinates[0]
 execute store result score #gm_base_y {ns}.data run data get storage {ns}:missions game.map.base_coordinates[1]
@@ -506,15 +506,15 @@ data modify storage {ns}:temp _oob_iter set from storage {ns}:missions game.map.
 execute if data storage {ns}:temp _oob_iter[0] run function {ns}:v{version}/missions/summon_oob_iter
 """)
 	write_versioned_function("missions/summon_oob_iter", f"""
-execute store result score #_rx {ns}.data run data get storage {ns}:temp _oob_iter[0][0]
-execute store result score #_ry {ns}.data run data get storage {ns}:temp _oob_iter[0][1]
-execute store result score #_rz {ns}.data run data get storage {ns}:temp _oob_iter[0][2]
-scoreboard players operation #_rx {ns}.data += #gm_base_x {ns}.data
-scoreboard players operation #_ry {ns}.data += #gm_base_y {ns}.data
-scoreboard players operation #_rz {ns}.data += #gm_base_z {ns}.data
-execute store result storage {ns}:temp _oob_pos.x double 1 run scoreboard players get #_rx {ns}.data
-execute store result storage {ns}:temp _oob_pos.y double 1 run scoreboard players get #_ry {ns}.data
-execute store result storage {ns}:temp _oob_pos.z double 1 run scoreboard players get #_rz {ns}.data
+execute store result score #rx {ns}.data run data get storage {ns}:temp _oob_iter[0][0]
+execute store result score #ry {ns}.data run data get storage {ns}:temp _oob_iter[0][1]
+execute store result score #rz {ns}.data run data get storage {ns}:temp _oob_iter[0][2]
+scoreboard players operation #rx {ns}.data += #gm_base_x {ns}.data
+scoreboard players operation #ry {ns}.data += #gm_base_y {ns}.data
+scoreboard players operation #rz {ns}.data += #gm_base_z {ns}.data
+execute store result storage {ns}:temp _oob_pos.x double 1 run scoreboard players get #rx {ns}.data
+execute store result storage {ns}:temp _oob_pos.y double 1 run scoreboard players get #ry {ns}.data
+execute store result storage {ns}:temp _oob_pos.z double 1 run scoreboard players get #rz {ns}.data
 function {ns}:v{version}/missions/summon_oob_at with storage {ns}:temp _oob_pos
 data remove storage {ns}:temp _oob_iter[0]
 execute if data storage {ns}:temp _oob_iter[0] run function {ns}:v{version}/missions/summon_oob_iter
@@ -523,7 +523,7 @@ execute if data storage {ns}:temp _oob_iter[0] run function {ns}:v{version}/miss
 $summon minecraft:marker $(x) $(y) $(z) {{Tags:["{ns}.oob_point","{ns}.gm_entity"]}}
 """)
 
-	# ── Spawn Point Markers ───────────────────────────────────────
+	# Spawn Point Markers ───────────────────────────────────────
 	write_versioned_function("missions/summon_spawns", f"""
 # Mission spawns
 data modify storage {ns}:temp _spawn_iter set from storage {ns}:missions game.map.spawning_points.mission
@@ -532,19 +532,19 @@ execute if data storage {ns}:temp _spawn_iter[0] run function {ns}:v{version}/mi
 """)
 
 	write_versioned_function("missions/summon_spawn_iter", f"""
-execute store result score #_sx {ns}.data run data get storage {ns}:temp _spawn_iter[0][0]
-execute store result score #_sy {ns}.data run data get storage {ns}:temp _spawn_iter[0][1]
-execute store result score #_sz {ns}.data run data get storage {ns}:temp _spawn_iter[0][2]
-execute store result score #_syaw {ns}.data run data get storage {ns}:temp _spawn_iter[0][3] 100
+execute store result score #sx {ns}.data run data get storage {ns}:temp _spawn_iter[0][0]
+execute store result score #sy {ns}.data run data get storage {ns}:temp _spawn_iter[0][1]
+execute store result score #sz {ns}.data run data get storage {ns}:temp _spawn_iter[0][2]
+execute store result score #syaw {ns}.data run data get storage {ns}:temp _spawn_iter[0][3] 100
 
-scoreboard players operation #_sx {ns}.data += #gm_base_x {ns}.data
-scoreboard players operation #_sy {ns}.data += #gm_base_y {ns}.data
-scoreboard players operation #_sz {ns}.data += #gm_base_z {ns}.data
+scoreboard players operation #sx {ns}.data += #gm_base_x {ns}.data
+scoreboard players operation #sy {ns}.data += #gm_base_y {ns}.data
+scoreboard players operation #sz {ns}.data += #gm_base_z {ns}.data
 
-execute store result storage {ns}:temp _spos.x double 1 run scoreboard players get #_sx {ns}.data
-execute store result storage {ns}:temp _spos.y double 1 run scoreboard players get #_sy {ns}.data
-execute store result storage {ns}:temp _spos.z double 1 run scoreboard players get #_sz {ns}.data
-execute store result storage {ns}:temp _spos.yaw double 0.01 run scoreboard players get #_syaw {ns}.data
+execute store result storage {ns}:temp _spos.x double 1 run scoreboard players get #sx {ns}.data
+execute store result storage {ns}:temp _spos.y double 1 run scoreboard players get #sy {ns}.data
+execute store result storage {ns}:temp _spos.z double 1 run scoreboard players get #sz {ns}.data
+execute store result storage {ns}:temp _spos.yaw double 0.01 run scoreboard players get #syaw {ns}.data
 data modify storage {ns}:temp _spos.tag set from storage {ns}:temp _spawn_tag
 
 function {ns}:v{version}/missions/summon_spawn_at with storage {ns}:temp _spos
@@ -557,7 +557,7 @@ execute if data storage {ns}:temp _spawn_iter[0] run function {ns}:v{version}/mi
 $summon minecraft:marker $(x) $(y) $(z) {{Tags:["{ns}.spawn_point","$(tag)","{ns}.gm_entity"],data:{{yaw:$(yaw)}}}}
 """)
 
-	# ── Smart Spawn Teleportation ─────────────────────────────────
+	# Smart Spawn Teleportation ─────────────────────────────────
 	write_versioned_function("missions/tp_all_to_spawns", f"""
 # Teleport all players to mission spawns (random selection)
 execute as @a[scores={{{ns}.mi.in_game=1}}] at @s run function {ns}:v{version}/missions/pick_spawn

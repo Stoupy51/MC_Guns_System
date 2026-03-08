@@ -44,15 +44,15 @@ function {ns}:v{version}/multiplayer/gamemodes/snd/start_round
 
 	## S&D: Summon objective markers (relative → absolute)
 	write_versioned_function("multiplayer/gamemodes/snd/summon_obj", f"""
-execute store result score #_rx {ns}.data run data get storage {ns}:temp _snd_iter[0][0]
-execute store result score #_ry {ns}.data run data get storage {ns}:temp _snd_iter[0][1]
-execute store result score #_rz {ns}.data run data get storage {ns}:temp _snd_iter[0][2]
-scoreboard players operation #_rx {ns}.data += #gm_base_x {ns}.data
-scoreboard players operation #_ry {ns}.data += #gm_base_y {ns}.data
-scoreboard players operation #_rz {ns}.data += #gm_base_z {ns}.data
-execute store result storage {ns}:temp _snd_pos.x double 1 run scoreboard players get #_rx {ns}.data
-execute store result storage {ns}:temp _snd_pos.y double 1 run scoreboard players get #_ry {ns}.data
-execute store result storage {ns}:temp _snd_pos.z double 1 run scoreboard players get #_rz {ns}.data
+execute store result score #rx {ns}.data run data get storage {ns}:temp _snd_iter[0][0]
+execute store result score #ry {ns}.data run data get storage {ns}:temp _snd_iter[0][1]
+execute store result score #rz {ns}.data run data get storage {ns}:temp _snd_iter[0][2]
+scoreboard players operation #rx {ns}.data += #gm_base_x {ns}.data
+scoreboard players operation #ry {ns}.data += #gm_base_y {ns}.data
+scoreboard players operation #rz {ns}.data += #gm_base_z {ns}.data
+execute store result storage {ns}:temp _snd_pos.x double 1 run scoreboard players get #rx {ns}.data
+execute store result storage {ns}:temp _snd_pos.y double 1 run scoreboard players get #ry {ns}.data
+execute store result storage {ns}:temp _snd_pos.z double 1 run scoreboard players get #rz {ns}.data
 function {ns}:v{version}/multiplayer/gamemodes/snd/summon_obj_at with storage {ns}:temp _snd_pos
 data remove storage {ns}:temp _snd_iter[0]
 execute if data storage {ns}:temp _snd_iter[0] run function {ns}:v{version}/multiplayer/gamemodes/snd/summon_obj
@@ -101,14 +101,14 @@ execute if score #snd_bomb_state {ns}.data matches 2 run scoreboard players remo
 execute if score #snd_bomb_state {ns}.data matches 2 if score #snd_bomb_timer {ns}.data matches ..0 run function {ns}:v{version}/multiplayer/gamemodes/snd/bomb_explodes
 
 # Check if all attackers are dead (defenders win)
-execute store result score #_snd_atk_alive {ns}.data if entity @a[tag={ns}.snd_alive,scores={{{ns}.mp.team=1}}]
-execute if score #snd_attackers {ns}.data matches 2 store result score #_snd_atk_alive {ns}.data if entity @a[tag={ns}.snd_alive,scores={{{ns}.mp.team=2}}]
-execute if score #_snd_atk_alive {ns}.data matches 0 if score #snd_bomb_state {ns}.data matches ..1 run function {ns}:v{version}/multiplayer/gamemodes/snd/defenders_win
+execute store result score #snd_atk_alive {ns}.data if entity @a[tag={ns}.snd_alive,scores={{{ns}.mp.team=1}}]
+execute if score #snd_attackers {ns}.data matches 2 store result score #snd_atk_alive {ns}.data if entity @a[tag={ns}.snd_alive,scores={{{ns}.mp.team=2}}]
+execute if score #snd_atk_alive {ns}.data matches 0 if score #snd_bomb_state {ns}.data matches ..1 run function {ns}:v{version}/multiplayer/gamemodes/snd/defenders_win
 
 # Check if all defenders are dead and bomb not planted (attackers win)
-execute store result score #_snd_def_alive {ns}.data if entity @a[tag={ns}.snd_alive,scores={{{ns}.mp.team=2}}]
-execute if score #snd_attackers {ns}.data matches 2 store result score #_snd_def_alive {ns}.data if entity @a[tag={ns}.snd_alive,scores={{{ns}.mp.team=1}}]
-execute if score #_snd_def_alive {ns}.data matches 0 run function {ns}:v{version}/multiplayer/gamemodes/snd/attackers_win
+execute store result score #snd_def_alive {ns}.data if entity @a[tag={ns}.snd_alive,scores={{{ns}.mp.team=2}}]
+execute if score #snd_attackers {ns}.data matches 2 store result score #snd_def_alive {ns}.data if entity @a[tag={ns}.snd_alive,scores={{{ns}.mp.team=1}}]
+execute if score #snd_def_alive {ns}.data matches 0 run function {ns}:v{version}/multiplayer/gamemodes/snd/attackers_win
 
 # Particles at objectives
 execute at @e[tag={ns}.snd_obj] run particle dust{{color:[1.0,0.6,0.0],scale:1.0}} ~ ~1 ~ 1.0 0.5 1.0 0 5
@@ -212,9 +212,9 @@ kill @e[tag={ns}.snd_bomb]
 tag @a remove {ns}.snd_alive
 
 # Check if either team won enough rounds (best of max_rounds)
-scoreboard players set #_snd_win_threshold {ns}.data 4
-execute if score #snd_red_wins {ns}.data >= #_snd_win_threshold {ns}.data run function {ns}:v{version}/multiplayer/team_wins {{team:"Red"}}
-execute if score #snd_blue_wins {ns}.data >= #_snd_win_threshold {ns}.data run function {ns}:v{version}/multiplayer/team_wins {{team:"Blue"}}
+scoreboard players set #snd_win_threshold {ns}.data 4
+execute if score #snd_red_wins {ns}.data >= #snd_win_threshold {ns}.data run function {ns}:v{version}/multiplayer/team_wins {{team:"Red"}}
+execute if score #snd_blue_wins {ns}.data >= #snd_win_threshold {ns}.data run function {ns}:v{version}/multiplayer/team_wins {{team:"Blue"}}
 
 # Swap sides at halftime (after round 3)
 scoreboard players add #snd_round {ns}.data 1

@@ -39,13 +39,13 @@ execute as @n[tag=mgs.new_zb_marker] run data modify entity @s data set from sto
 execute as @n[tag=mgs.new_zb_marker] run data modify entity @s data.group_id set from storage mgs:temp map_edit.zb_defaults.group_id
 
 # Get player rotation as yaw
-execute store result score #_yaw mgs.data run data get entity @p[tag=mgs.map_editor] Rotation[0]
+execute store result score #yaw mgs.data run data get entity @p[tag=mgs.map_editor] Rotation[0]
 
 # Apply 180° yaw offset
-scoreboard players add #_yaw mgs.data 180
+scoreboard players add #yaw mgs.data 180
 
 # Store yaw on marker
-execute as @n[tag=mgs.new_zb_marker] store result entity @s data.yaw float 1 run scoreboard players get #_yaw mgs.data
+execute as @n[tag=mgs.new_zb_marker] store result entity @s data.yaw float 1 run scoreboard players get #yaw mgs.data
 
 # For doors: capture block from player's offhand (required)
 execute if entity @s[tag=mgs.element.door] as @p[tag=mgs.map_editor] run data modify storage mgs:temp _zb_offhand_block set from entity @s equipment.offhand.id

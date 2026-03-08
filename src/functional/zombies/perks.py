@@ -24,7 +24,7 @@ scoreboard objectives add {ns}.zb.perk.power dummy
 
 	## Setup: iterate perk compounds, summon interaction entities
 	write_versioned_function("zombies/perks/setup", f"""
-scoreboard players set #_pk_counter {ns}.data 0
+scoreboard players set #pk_counter {ns}.data 0
 data modify storage {ns}:zombies perk_data set value {{}}
 data modify storage {ns}:temp _pk_iter set from storage {ns}:zombies game.map.perks
 execute if data storage {ns}:temp _pk_iter[0] run function {ns}:v{version}/zombies/perks/setup_iter
@@ -32,32 +32,32 @@ execute if data storage {ns}:temp _pk_iter[0] run function {ns}:v{version}/zombi
 
 	write_versioned_function("zombies/perks/setup_iter", f"""
 # Assign incrementing ID
-scoreboard players add #_pk_counter {ns}.data 1
+scoreboard players add #pk_counter {ns}.data 1
 
 # Read relative position and convert to absolute
-execute store result score #_pkx {ns}.data run data get storage {ns}:temp _pk_iter[0].pos[0]
-execute store result score #_pky {ns}.data run data get storage {ns}:temp _pk_iter[0].pos[1]
-execute store result score #_pkz {ns}.data run data get storage {ns}:temp _pk_iter[0].pos[2]
-scoreboard players operation #_pkx {ns}.data += #gm_base_x {ns}.data
-scoreboard players operation #_pky {ns}.data += #gm_base_y {ns}.data
-scoreboard players operation #_pkz {ns}.data += #gm_base_z {ns}.data
+execute store result score #pkx {ns}.data run data get storage {ns}:temp _pk_iter[0].pos[0]
+execute store result score #pky {ns}.data run data get storage {ns}:temp _pk_iter[0].pos[1]
+execute store result score #pkz {ns}.data run data get storage {ns}:temp _pk_iter[0].pos[2]
+scoreboard players operation #pkx {ns}.data += #gm_base_x {ns}.data
+scoreboard players operation #pky {ns}.data += #gm_base_y {ns}.data
+scoreboard players operation #pkz {ns}.data += #gm_base_z {ns}.data
 
 # Store absolute position for macro
-execute store result storage {ns}:temp _pk.x int 1 run scoreboard players get #_pkx {ns}.data
-execute store result storage {ns}:temp _pk.y int 1 run scoreboard players get #_pky {ns}.data
-execute store result storage {ns}:temp _pk.z int 1 run scoreboard players get #_pkz {ns}.data
+execute store result storage {ns}:temp _pk.x int 1 run scoreboard players get #pkx {ns}.data
+execute store result storage {ns}:temp _pk.y int 1 run scoreboard players get #pky {ns}.data
+execute store result storage {ns}:temp _pk.z int 1 run scoreboard players get #pkz {ns}.data
 
 # Summon interaction entity
 function {ns}:v{version}/zombies/perks/place_at with storage {ns}:temp _pk
 
 # Set scoreboards on entity
-scoreboard players operation @n[tag=_pk_new] {ns}.zb.perk.id = #_pk_counter {ns}.data
+scoreboard players operation @n[tag=_pk_new] {ns}.zb.perk.id = #pk_counter {ns}.data
 execute store result score @n[tag=_pk_new] {ns}.zb.perk.price run data get storage {ns}:temp _pk_iter[0].price
 # Store power requirement as 1/0 (true stored as 1b in NBT, data get returns 1)
 execute store result score @n[tag=_pk_new] {ns}.zb.perk.power run data get storage {ns}:temp _pk_iter[0].power
 
 # Store perk_id in indexed storage for later lookup
-execute store result storage {ns}:temp _pk_store.id int 1 run scoreboard players get #_pk_counter {ns}.data
+execute store result storage {ns}:temp _pk_store.id int 1 run scoreboard players get #pk_counter {ns}.data
 data modify storage {ns}:temp _pk_store.perk_id set from storage {ns}:temp _pk_iter[0].perk_id
 function {ns}:v{version}/zombies/perks/store_data with storage {ns}:temp _pk_store
 
@@ -86,8 +86,8 @@ $data modify storage {ns}:zombies perk_data."$(id)" set value {{perk_id:"$(perk_
 execute unless data storage {ns}:zombies game{{state:"active"}} run return fail
 
 # Check power requirement
-execute store result score #_pk_power {ns}.data run scoreboard players get @n[tag=bs.interaction.target] {ns}.zb.perk.power
-execute if score #_pk_power {ns}.data matches 1 unless score #zb_power {ns}.data matches 1 run return run tellraw @s [{MGS_TAG},{{"text":" ⚡ Requires power!","color":"red"}}]
+execute store result score #pk_power {ns}.data run scoreboard players get @n[tag=bs.interaction.target] {ns}.zb.perk.power
+execute if score #pk_power {ns}.data matches 1 unless score #zb_power {ns}.data matches 1 run return run tellraw @s [{MGS_TAG},{{"text":" ⚡ Requires power!","color":"red"}}]
 
 # Look up perk_id
 execute store result storage {ns}:temp _pk_buy.id int 1 run scoreboard players get @n[tag=bs.interaction.target] {ns}.zb.perk.id
@@ -95,14 +95,14 @@ function {ns}:v{version}/zombies/perks/lookup_perk with storage {ns}:temp _pk_bu
 
 # Check if player already has this perk
 function {ns}:v{version}/zombies/perks/check_owned with storage {ns}:temp _pk_data
-execute if score #_pk_owned {ns}.data matches 1 run return run tellraw @s [{MGS_TAG},{{"text":" Already have this perk!","color":"yellow"}}]
+execute if score #pk_owned {ns}.data matches 1 run return run tellraw @s [{MGS_TAG},{{"text":" Already have this perk!","color":"yellow"}}]
 
 # Get price and check points
-execute store result score #_pk_price {ns}.data run scoreboard players get @n[tag=bs.interaction.target] {ns}.zb.perk.price
-execute unless score @s {ns}.zb.points >= #_pk_price {ns}.data run return run tellraw @s [{MGS_TAG},{{"text":" Not enough points!","color":"red"}}]
+execute store result score #pk_price {ns}.data run scoreboard players get @n[tag=bs.interaction.target] {ns}.zb.perk.price
+execute unless score @s {ns}.zb.points >= #pk_price {ns}.data run return run tellraw @s [{MGS_TAG},{{"text":" Not enough points!","color":"red"}}]
 
 # Deduct points
-scoreboard players operation @s {ns}.zb.points -= #_pk_price {ns}.data
+scoreboard players operation @s {ns}.zb.points -= #pk_price {ns}.data
 
 # Apply perk effect (sets scoreboard + calls specific perk function)
 function {ns}:v{version}/zombies/perks/apply with storage {ns}:temp _pk_data
@@ -119,8 +119,8 @@ $data modify storage {ns}:temp _pk_data set from storage {ns}:zombies perk_data.
 """)
 
 	write_versioned_function("zombies/perks/check_owned", f"""
-scoreboard players set #_pk_owned {ns}.data 0
-$execute if score @s {ns}.zb.perk.$(perk_id) matches 1 run scoreboard players set #_pk_owned {ns}.data 1
+scoreboard players set #pk_owned {ns}.data 0
+$execute if score @s {ns}.zb.perk.$(perk_id) matches 1 run scoreboard players set #pk_owned {ns}.data 1
 """)
 
 	write_versioned_function("zombies/perks/apply", f"""
@@ -156,10 +156,10 @@ tellraw @s [{MGS_TAG},{{"text":" 💚 Quick Revive! You can revive teammates","c
 
 	## Hover events (executor: "source" = player)
 	write_versioned_function("zombies/perks/on_hover_enter", f"""
-execute store result score #_pk_price {ns}.data run scoreboard players get @n[tag=bs.interaction.target] {ns}.zb.perk.price
+execute store result score #pk_price {ns}.data run scoreboard players get @n[tag=bs.interaction.target] {ns}.zb.perk.price
 title @s times 0 40 10
-title @s title [{{"text":"🥤 Perk Machine","color":"dark_purple","bold":true}}]
-title @s subtitle [{{"text":"Cost: ","color":"gray"}},{{"score":{{"name":"#_pk_price","objective":"{ns}.data"}},"color":"yellow"}},{{"text":" points","color":"gray"}}]
+title @s title [{{"text":"🥤 Perk Machine","color":"dark_purple"}}]
+title @s subtitle [{{"text":"Cost: ","color":"gray"}},{{"score":{{"name":"#pk_price","objective":"{ns}.data"}},"color":"yellow"}},{{"text":" points","color":"gray"}}]
 """)
 
 	write_versioned_function("zombies/perks/on_hover_leave", """

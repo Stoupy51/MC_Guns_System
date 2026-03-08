@@ -46,11 +46,11 @@ tag @e[tag=mgs.spawn_final] remove mgs.spawn_final
 execute as @e[tag=mgs.spawn_candidate] at @s run function mgs:v5.0.0/multiplayer/spawn_calc_dist
 
 # Find the maximum distance score
-scoreboard players set #_best_dist mgs.data 0
-scoreboard players operation #_best_dist mgs.data > @e[tag=mgs.spawn_candidate] mgs.data
+scoreboard players set #best_dist mgs.data 0
+scoreboard players operation #best_dist mgs.data > @e[tag=mgs.spawn_candidate] mgs.data
 
 # Pick the first candidate with that best score and TP the pending player there
-execute as @e[tag=mgs.spawn_candidate,sort=random] if score @s mgs.data = #_best_dist mgs.data run function mgs:v5.0.0/multiplayer/tp_to_spawn
+execute as @e[tag=mgs.spawn_candidate,sort=random] if score @s mgs.data = #best_dist mgs.data run function mgs:v5.0.0/multiplayer/tp_to_spawn
 
 # Clean up
 tag @e[tag=mgs.spawn_candidate] remove mgs.spawn_candidate
