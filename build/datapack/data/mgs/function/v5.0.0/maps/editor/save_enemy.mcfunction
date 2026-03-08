@@ -1,9 +1,9 @@
 
 #> mgs:v5.0.0/maps/editor/save_enemy
 #
-# @executed	as @e[tag=...] & at @s
+# @executed	as @e[tag=mgs.element.enemy] & at @s
 #
-# @within	mgs:v5.0.0/maps/editor/save_lists/missions [ as @e[tag=...] & at @s ]
+# @within	mgs:v5.0.0/maps/editor/save_lists/missions [ as @e[tag=mgs.element.enemy] & at @s ]
 #
 
 # @s = enemy marker, at its position

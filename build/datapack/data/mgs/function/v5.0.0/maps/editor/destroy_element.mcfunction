@@ -1,9 +1,9 @@
 
 #> mgs:v5.0.0/maps/editor/destroy_element
 #
-# @executed	positioned as @s as
+# @executed	at @s & as @n[tag=mgs.map_element,distance=..3]
 #
-# @within	mgs:v5.0.0/maps/editor/handle_destroy [ positioned as @s as ]
+# @within	mgs:v5.0.0/maps/editor/handle_destroy [ at @s & as @n[tag=mgs.map_element,distance=..3] ]
 #
 
 # @s = the map_element marker to destroy
@@ -26,6 +26,7 @@ execute if entity @s[tag=mgs.element.door] run tellraw @a[tag=mgs.map_editor] [[
 execute if entity @s[tag=mgs.element.trap] run tellraw @a[tag=mgs.map_editor] [[{"text":"","color":"gold"},"[",{"translate": "mgs"},"] "],{"translate": "mgs.trap_removed","color":"red"}]
 execute if entity @s[tag=mgs.element.perk_machine] run tellraw @a[tag=mgs.map_editor] [[{"text":"","color":"gold"},"[",{"translate": "mgs"},"] "],{"translate": "mgs.perk_machine_removed","color":"dark_purple"}]
 execute if entity @s[tag=mgs.element.mystery_box_pos] run tellraw @a[tag=mgs.map_editor] [[{"text":"","color":"gold"},"[",{"translate": "mgs"},"] "],{"translate": "mgs.mystery_box_pos_removed","color":"light_purple"}]
+execute if entity @s[tag=mgs.element.power_switch] run tellraw @a[tag=mgs.map_editor] [[{"text":"","color":"gold"},"[",{"translate": "mgs"},"] "],{"translate": "mgs.power_switch_removed","color":"green"}]
 
 # Show data dump if element has compound data (zb_object, enemy, spawn)
 execute if data entity @s data run tellraw @a[tag=mgs.map_editor] ["  ",{"translate": "mgs.data","color":"gray"},{"entity":"@s","nbt":"data","color":"white"}]

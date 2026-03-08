@@ -17,12 +17,12 @@ data modify storage mgs:temp map_edit.map.domination set value []
 data modify storage mgs:temp map_edit.map.hardpoint set value []
 
 # Rebuild from markers
-execute as @e[tag=mgs.map_element,tag=mgs.element.red_spawn] at @s run function mgs:v5.0.0/maps/editor/save_spawn {path:"red"}
-execute as @e[tag=mgs.map_element,tag=mgs.element.blue_spawn] at @s run function mgs:v5.0.0/maps/editor/save_spawn {path:"blue"}
-execute as @e[tag=mgs.map_element,tag=mgs.element.general_spawn] at @s run function mgs:v5.0.0/maps/editor/save_spawn {path:"general"}
-execute as @e[tag=mgs.map_element,tag=mgs.element.out_of_bounds] at @s run function mgs:v5.0.0/maps/editor/save_point {path:"out_of_bounds"}
-execute as @e[tag=mgs.map_element,tag=mgs.element.boundary] at @s run function mgs:v5.0.0/maps/editor/save_point {path:"boundaries"}
-execute as @e[tag=mgs.map_element,tag=mgs.element.search_and_destroy] at @s run function mgs:v5.0.0/maps/editor/save_point {path:"search_and_destroy"}
-execute as @e[tag=mgs.map_element,tag=mgs.element.domination] at @s run function mgs:v5.0.0/maps/editor/save_point {path:"domination"}
-execute as @e[tag=mgs.map_element,tag=mgs.element.hardpoint] at @s run function mgs:v5.0.0/maps/editor/save_point {path:"hardpoint"}
+execute as @e[tag=mgs.element.red_spawn] at @s run function mgs:v5.0.0/maps/editor/save_spawn {path:"red"}
+execute as @e[tag=mgs.element.blue_spawn] at @s run function mgs:v5.0.0/maps/editor/save_spawn {path:"blue"}
+execute as @e[tag=mgs.element.general_spawn] at @s run function mgs:v5.0.0/maps/editor/save_spawn {path:"general"}
+execute as @e[tag=mgs.element.out_of_bounds] at @s run function mgs:v5.0.0/maps/editor/save_point {path:"out_of_bounds"}
+execute as @e[tag=mgs.element.boundary] at @s run function mgs:v5.0.0/maps/editor/save_point {path:"boundaries"}
+execute as @e[tag=mgs.element.search_and_destroy] at @s run function mgs:v5.0.0/maps/editor/save_point {path:"search_and_destroy"}
+execute as @e[tag=mgs.element.domination] at @s run function mgs:v5.0.0/maps/editor/save_point {path:"domination"}
+execute as @e[tag=mgs.element.hardpoint] at @s run function mgs:v5.0.0/maps/editor/save_point {path:"hardpoint"}
 

@@ -32,6 +32,10 @@ data modify storage mgs:temp _zb_iter set from storage mgs:temp map_edit.map.mys
 data modify storage mgs:temp _zb_iter_tag set value "mgs.element.mystery_box_pos"
 execute if data storage mgs:temp _zb_iter[0] run function mgs:v5.0.0/maps/editor/summon_zb_object_iter
 
+data modify storage mgs:temp _zb_iter set from storage mgs:temp map_edit.map.power_switch
+data modify storage mgs:temp _zb_iter_tag set value "mgs.element.power_switch"
+execute if data storage mgs:temp _zb_iter[0] run function mgs:v5.0.0/maps/editor/summon_zb_object_iter
+
 data modify storage mgs:temp _point_iter set from storage mgs:temp map_edit.map.out_of_bounds
 data modify storage mgs:temp _point_iter_tag set value "mgs.element.out_of_bounds"
 execute if data storage mgs:temp _point_iter[0] run function mgs:v5.0.0/maps/editor/summon_point_iter

@@ -1,15 +1,16 @@
 
 #> mgs:v5.0.0/maps/editor/save_zb_object
 #
-# @executed	as @e[tag=...] & at @s
+# @executed	as @e[tag=mgs.element.player_spawn_zb] & at @s
 #
-# @within	mgs:v5.0.0/maps/editor/save_lists/zombies {path:"spawning_points.players"} [ as @e[tag=...] & at @s ]
-#			mgs:v5.0.0/maps/editor/save_lists/zombies {path:"spawning_points.zombies"} [ as @e[tag=...] & at @s ]
-#			mgs:v5.0.0/maps/editor/save_lists/zombies {path:"wallbuys"} [ as @e[tag=...] & at @s ]
-#			mgs:v5.0.0/maps/editor/save_lists/zombies {path:"doors"} [ as @e[tag=...] & at @s ]
-#			mgs:v5.0.0/maps/editor/save_lists/zombies {path:"traps"} [ as @e[tag=...] & at @s ]
-#			mgs:v5.0.0/maps/editor/save_lists/zombies {path:"perks"} [ as @e[tag=...] & at @s ]
-#			mgs:v5.0.0/maps/editor/save_lists/zombies {path:"mystery_box.positions"} [ as @e[tag=...] & at @s ]
+# @within	mgs:v5.0.0/maps/editor/save_lists/zombies {path:"spawning_points.players"} [ as @e[tag=mgs.element.player_spawn_zb] & at @s ]
+#			mgs:v5.0.0/maps/editor/save_lists/zombies {path:"spawning_points.zombies"} [ as @e[tag=mgs.element.zombie_spawn] & at @s ]
+#			mgs:v5.0.0/maps/editor/save_lists/zombies {path:"wallbuys"} [ as @e[tag=mgs.element.wallbuy] & at @s ]
+#			mgs:v5.0.0/maps/editor/save_lists/zombies {path:"doors"} [ as @e[tag=mgs.element.door] & at @s ]
+#			mgs:v5.0.0/maps/editor/save_lists/zombies {path:"traps"} [ as @e[tag=mgs.element.trap] & at @s ]
+#			mgs:v5.0.0/maps/editor/save_lists/zombies {path:"perks"} [ at @s ]
+#			mgs:v5.0.0/maps/editor/save_lists/zombies {path:"mystery_box.positions"} [ as @e[tag=mgs.element.mystery_box_pos] & at @s ]
+#			mgs:v5.0.0/maps/editor/save_lists/zombies {path:"power_switch"} [ as @e[tag=mgs.element.power_switch] & at @s ]
 #
 # @args		path (string)
 #

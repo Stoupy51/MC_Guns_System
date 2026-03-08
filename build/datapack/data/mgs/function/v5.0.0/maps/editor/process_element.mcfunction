@@ -67,6 +67,9 @@ execute if entity @s[tag=mgs.element.perk_machine] run return run kill @s
 execute if entity @s[tag=mgs.element.mystery_box_pos] run function mgs:v5.0.0/maps/editor/handle_zb_object
 execute if entity @s[tag=mgs.element.mystery_box_pos] run return run kill @s
 
+execute if entity @s[tag=mgs.element.power_switch] run function mgs:v5.0.0/maps/editor/handle_zb_object
+execute if entity @s[tag=mgs.element.power_switch] run return run kill @s
+
 # Zombies utility tool handlers
 execute if entity @s[tag=mgs.element.zb_defaults] run function mgs:v5.0.0/maps/editor/handle_zb_defaults
 execute if entity @s[tag=mgs.element.zb_defaults] run return run kill @s

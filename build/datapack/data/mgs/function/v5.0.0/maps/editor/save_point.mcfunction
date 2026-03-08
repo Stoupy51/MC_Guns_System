@@ -1,17 +1,17 @@
 
 #> mgs:v5.0.0/maps/editor/save_point
 #
-# @executed	as @e[tag=...] & at @s
+# @executed	as @e[tag=mgs.element.out_of_bounds] & at @s
 #
-# @within	mgs:v5.0.0/maps/editor/save_lists/multiplayer {path:"out_of_bounds"} [ as @e[tag=...] & at @s ]
-#			mgs:v5.0.0/maps/editor/save_lists/multiplayer {path:"boundaries"} [ as @e[tag=...] & at @s ]
-#			mgs:v5.0.0/maps/editor/save_lists/multiplayer {path:"search_and_destroy"} [ as @e[tag=...] & at @s ]
-#			mgs:v5.0.0/maps/editor/save_lists/multiplayer {path:"domination"} [ as @e[tag=...] & at @s ]
-#			mgs:v5.0.0/maps/editor/save_lists/multiplayer {path:"hardpoint"} [ as @e[tag=...] & at @s ]
-#			mgs:v5.0.0/maps/editor/save_lists/zombies {path:"out_of_bounds"} [ as @e[tag=...] & at @s ]
-#			mgs:v5.0.0/maps/editor/save_lists/zombies {path:"boundaries"} [ as @e[tag=...] & at @s ]
-#			mgs:v5.0.0/maps/editor/save_lists/missions {path:"out_of_bounds"} [ as @e[tag=...] & at @s ]
-#			mgs:v5.0.0/maps/editor/save_lists/missions {path:"boundaries"} [ as @e[tag=...] & at @s ]
+# @within	mgs:v5.0.0/maps/editor/save_lists/multiplayer {path:"out_of_bounds"} [ as @e[tag=mgs.element.out_of_bounds] & at @s ]
+#			mgs:v5.0.0/maps/editor/save_lists/multiplayer {path:"boundaries"} [ as @e[tag=mgs.element.boundary] & at @s ]
+#			mgs:v5.0.0/maps/editor/save_lists/multiplayer {path:"search_and_destroy"} [ as @e[tag=mgs.element.search_and_destroy] & at @s ]
+#			mgs:v5.0.0/maps/editor/save_lists/multiplayer {path:"domination"} [ at @s ]
+#			mgs:v5.0.0/maps/editor/save_lists/multiplayer {path:"hardpoint"} [ at @s ]
+#			mgs:v5.0.0/maps/editor/save_lists/zombies {path:"out_of_bounds"} [ as @e[tag=mgs.element.out_of_bounds] & at @s ]
+#			mgs:v5.0.0/maps/editor/save_lists/zombies {path:"boundaries"} [ as @e[tag=mgs.element.boundary] & at @s ]
+#			mgs:v5.0.0/maps/editor/save_lists/missions {path:"out_of_bounds"} [ as @e[tag=mgs.element.out_of_bounds] & at @s ]
+#			mgs:v5.0.0/maps/editor/save_lists/missions {path:"boundaries"} [ as @e[tag=mgs.element.boundary] & at @s ]
 #
 # @args		path (string)
 #

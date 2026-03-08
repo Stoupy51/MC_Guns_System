@@ -1,12 +1,12 @@
 
 #> mgs:v5.0.0/maps/editor/save_spawn
 #
-# @executed	as @e[tag=...] & at @s
+# @executed	as @e[tag=mgs.element.red_spawn] & at @s
 #
-# @within	mgs:v5.0.0/maps/editor/save_lists/multiplayer {path:"red"} [ as @e[tag=...] & at @s ]
-#			mgs:v5.0.0/maps/editor/save_lists/multiplayer {path:"blue"} [ as @e[tag=...] & at @s ]
-#			mgs:v5.0.0/maps/editor/save_lists/multiplayer {path:"general"} [ as @e[tag=...] & at @s ]
-#			mgs:v5.0.0/maps/editor/save_lists/missions {path:"mission"} [ as @e[tag=...] & at @s ]
+# @within	mgs:v5.0.0/maps/editor/save_lists/multiplayer {path:"red"} [ as @e[tag=mgs.element.red_spawn] & at @s ]
+#			mgs:v5.0.0/maps/editor/save_lists/multiplayer {path:"blue"} [ as @e[tag=mgs.element.blue_spawn] & at @s ]
+#			mgs:v5.0.0/maps/editor/save_lists/multiplayer {path:"general"} [ as @e[tag=mgs.element.general_spawn] & at @s ]
+#			mgs:v5.0.0/maps/editor/save_lists/missions {path:"mission"} [ as @e[tag=mgs.element.mission_spawn] & at @s ]
 #
 # @args		path (string)
 #

@@ -34,21 +34,22 @@ ALL_ELEMENTS: dict[str, JsonDict] = {
 	"config":             {"name": "⚙ Config",         "color": "white",        "particle": [1.0, 1.0, 1.0], "particle_scale": 0.5, "has_rotation": False, "egg_model": "minecraft:allay_spawn_egg", "save_type": "config", "emoji": "⚙"},
 	# Zombies elements (zb_object: compound data with pos/rotation/group_id + extra fields)
 	"zombie_spawn":       {"name": "Zombie Spawn",     "color": "dark_green",   "particle": [0.0, 0.5, 0.0], "particle_scale": 1.0, "has_rotation": True,  "egg_model": "minecraft:zombie_spawn_egg",      "save_type": "zb_object", "save_path": "spawning_points.zombies", "emoji": "🧟",
-                           "defaults": {"group_id": 0}},
+                           "defaults": {}},
 	"player_spawn_zb":    {"name": "Player Spawn",     "color": "aqua",         "particle": [0.0, 1.0, 1.0], "particle_scale": 1.0, "has_rotation": True,  "egg_model": "minecraft:villager_spawn_egg",    "save_type": "zb_object", "save_path": "spawning_points.players", "emoji": "●",
-                           "defaults": {"group_id": 0}},
+                           "defaults": {}},
 	"wallbuy":            {"name": "Wallbuy",          "color": "yellow",       "particle": [1.0, 1.0, 0.0], "particle_scale": 1.0, "has_rotation": True,  "egg_model": "minecraft:iron_golem_spawn_egg",  "save_type": "zb_object", "save_path": "wallbuys", "emoji": "🔫",
-                           "defaults": {"group_id": 0, "price": 1000, "refill_price": 500, "refill_price_pap": 2500, "weapon_id": "m1911"},
-                           "yaw_offset": 180},
+                           "defaults": {"price": 1000, "refill_price": 500, "refill_price_pap": 4500, "weapon_id": "m1911"}},
 	"door":               {"name": "Door",             "color": "gold",         "particle": [1.0, 0.6, 0.0], "particle_scale": 1.0, "has_rotation": True,  "egg_model": "minecraft:hoglin_spawn_egg",      "save_type": "zb_object", "save_path": "doors", "emoji": "🚪",
-                           "defaults": {"group_id": 0, "link_id": 0, "back_group_id": -1, "block": "", "animation": 0, "sound": ""},
+                           "defaults": {"price": 1000, "link_id": 1, "back_group_id": -1, "block": "", "animation": 0, "sound": ""},
                            "requires_offhand_block": True},
 	"trap":               {"name": "Trap",             "color": "red",          "particle": [1.0, 0.2, 0.2], "particle_scale": 1.0, "has_rotation": True,  "egg_model": "minecraft:cave_spider_spawn_egg", "save_type": "zb_object", "save_path": "traps", "emoji": "⚡",
-                           "defaults": {"group_id": 0, "price": 1000, "type": 0, "duration": 200, "cooldown": 600, "effect_radius": [3.0, 2.0, 3.0], "power": True}},
+                           "defaults": {"price": 1000, "type": 0, "duration": 200, "cooldown": 1200, "effect_radius": [3.0, 2.0, 3.0], "power": True}},
 	"perk_machine":       {"name": "Perk Machine",     "color": "dark_purple",  "particle": [0.5, 0.0, 0.5], "particle_scale": 1.0, "has_rotation": True,  "egg_model": "minecraft:witch_spawn_egg",       "save_type": "zb_object", "save_path": "perks", "emoji": "🧪",
-                           "defaults": {"group_id": 0, "price": 2500, "perk_id": 1, "power": True}},
+                           "defaults": {"price": 2500, "perk_id": "juggernog", "power": True}},
 	"mystery_box_pos":    {"name": "Mystery Box Pos",  "color": "light_purple", "particle": [1.0, 0.0, 1.0], "particle_scale": 1.0, "has_rotation": True,  "egg_model": "minecraft:evoker_spawn_egg",      "save_type": "zb_object", "save_path": "mystery_box.positions", "emoji": "📦",
-                           "defaults": {"group_id": 0, "can_start_on": True}},
+                           "defaults": {"can_start_on": True}},
+	"power_switch":       {"name": "Power Switch",     "color": "green",        "particle": [0.0, 1.0, 0.0], "particle_scale": 1.0, "has_rotation": True,  "egg_model": "minecraft:slime_spawn_egg",       "save_type": "zb_object", "save_path": "power_switch", "emoji": "⚡",
+                           "defaults": {}},
 }
 
 # ── Mode Definitions ──────────────────────────────────────────────
@@ -84,8 +85,9 @@ EDITOR_MODES: dict[str, JsonDict] = {
 			"trap": "hotbar.5",
 			"perk_machine": "inventory.0",
 			"mystery_box_pos": "inventory.1",
-			"out_of_bounds": "inventory.2",
-			"boundary": "inventory.3",
+			"power_switch": "inventory.2",
+			"out_of_bounds": "inventory.3",
+			"boundary": "inventory.4",
 		},
 	},
 	"missions": {
@@ -665,7 +667,7 @@ execute as @n[tag={ns}.new_element] at @s run function {ns}:v{version}/maps/edit
 	# ── Handle Base Coordinates ────────────────────────────────────
 	write_versioned_function("maps/editor/handle_base", f"""
 # Kill any existing base marker
-kill @e[tag={ns}.map_element,tag={ns}.element.base_coordinates]
+kill @e[tag={ns}.element.base_coordinates]
 
 # Get position
 execute store result score #base_x {ns}.data run data get entity @s Pos[0]
@@ -774,11 +776,8 @@ tellraw @a[tag={ns}.map_editor] [{MGS_TAG},{{"text":"Enemy placed!","color":"red
 	for etype, einfo in zb_elements.items():
 		zb_msg_lines.append(f'execute if entity @s[tag={ns}.element.{etype}] run tellraw @a[tag={ns}.map_editor] [{MGS_TAG},{{"text":"{einfo["name"]} placed!","color":"{einfo["color"]}"}}]')
 
-	# Yaw offset lines (only for elements with yaw_offset)
-	zb_yaw_offset_lines: list[str] = []
-	for etype, einfo in zb_elements.items():
-		if einfo.get("yaw_offset"):
-			zb_yaw_offset_lines.append(f'execute if entity @s[tag={ns}.element.{etype}] run scoreboard players add #_yaw {ns}.data {einfo["yaw_offset"]}')
+	# All zb_object elements get a 180° yaw offset
+	zb_yaw_offset_line = f'scoreboard players add #_yaw {ns}.data 180'
 
 	write_versioned_function("maps/editor/handle_zb_object", f"""
 # Get position for permanent marker
@@ -795,19 +794,24 @@ function {ns}:v{version}/maps/editor/summon_zb_marker with storage {ns}:temp _zb
 # Copy data compound to marker
 execute as @n[tag={ns}.new_zb_marker] run data modify entity @s data set from storage {ns}:temp _zb_new
 
+# Apply shared group_id default
+execute as @n[tag={ns}.new_zb_marker] run data modify entity @s data.group_id set from storage {ns}:temp map_edit.zb_defaults.group_id
+
 # Get player rotation as yaw
 execute store result score #_yaw {ns}.data run data get entity @p[tag={ns}.map_editor] Rotation[0]
 
-# Apply yaw offsets for specific element types (e.g. wallbuy faces wall)
-{chr(10).join(zb_yaw_offset_lines)}
+# Apply 180° yaw offset
+{zb_yaw_offset_line}
 
 # Store yaw on marker
 execute as @n[tag={ns}.new_zb_marker] store result entity @s data.yaw float 1 run scoreboard players get #_yaw {ns}.data
 
-# For doors: capture block from player's offhand
-execute if entity @s[tag={ns}.element.door] as @p[tag={ns}.map_editor] run data modify storage {ns}:temp _zb_offhand_block set from entity @s Inventory[{{Slot:-106b}}].id
-execute if entity @s[tag={ns}.element.door] if data storage {ns}:temp _zb_offhand_block run execute as @n[tag={ns}.new_zb_marker] run data modify entity @s data.block set from storage {ns}:temp _zb_offhand_block
-execute if entity @s[tag={ns}.element.door] unless data storage {ns}:temp _zb_offhand_block run tellraw @a[tag={ns}.map_editor] [{MGS_TAG},{{"text":"⚠ Door placed without block! Hold a block in offhand.","color":"yellow"}}]
+# For doors: capture block from player's offhand (required)
+execute if entity @s[tag={ns}.element.door] as @p[tag={ns}.map_editor] run data modify storage {ns}:temp _zb_offhand_block set from entity @s equipment.offhand.id
+execute if entity @s[tag={ns}.element.door] unless data storage {ns}:temp _zb_offhand_block run tellraw @a[tag={ns}.map_editor] [{MGS_TAG},{{"text":"⚠ Door cancelled! Hold a block in offhand.","color":"red"}}]
+execute if entity @s[tag={ns}.element.door] unless data storage {ns}:temp _zb_offhand_block run kill @e[tag={ns}.new_zb_marker]
+execute if entity @s[tag={ns}.element.door] unless data storage {ns}:temp _zb_offhand_block run return fail
+execute if entity @s[tag={ns}.element.door] run execute as @n[tag={ns}.new_zb_marker] run data modify entity @s data.block set from storage {ns}:temp _zb_offhand_block
 data remove storage {ns}:temp _zb_offhand_block
 
 tag @e[tag={ns}.new_zb_marker] remove {ns}.new_zb_marker
@@ -818,9 +822,9 @@ tag @e[tag={ns}.new_zb_marker] remove {ns}.new_zb_marker
 
 	# ── Handle DESTROY ─────────────────────────────────────────────
 	write_versioned_function("maps/editor/handle_destroy", f"""
-# Find the nearest map element marker (within 10 blocks)
-execute positioned as @s as @n[tag={ns}.map_element,distance=..10] run function {ns}:v{version}/maps/editor/destroy_element
-execute positioned as @s unless entity @n[tag={ns}.map_element,distance=..10] run tellraw @a[tag={ns}.map_editor] [{MGS_TAG},{{"text":"No element found within 10 blocks!","color":"red"}}]
+# Find the nearest map element marker (within 3 blocks)
+execute at @s unless entity @n[tag={ns}.map_element,distance=..3] run tellraw @a[tag={ns}.map_editor] [{MGS_TAG},{{"text":"No element found within 3 blocks!","color":"red"}}]
+execute at @s as @n[tag={ns}.map_element,distance=..3] run function {ns}:v{version}/maps/editor/destroy_element
 """)
 
 	# ── Destroy Element (universal) ────────────────────────────────
@@ -907,7 +911,23 @@ kill @s
 	zb_defaults_lines.append(f"tellraw @a[tag={ns}.map_editor] {sep}")
 	zb_defaults_lines.append("")
 
+	# Shared group_id default
+	group_id_btn = btn(
+		"\u270e",
+		f"/data modify storage {ns}:temp map_edit.zb_defaults.group_id set value 0",
+		"aqua", "Click to edit group_id", action="suggest_command"
+	)
+	zb_defaults_lines.append(
+		f'tellraw @a[tag={ns}.map_editor] '
+		f'["  ",{{"text":"group_id: ","color":"gray"}},'
+		f'{{"storage":"{ns}:temp","nbt":"map_edit.zb_defaults.group_id","color":"white"}}," ",{group_id_btn}]'
+	)
+	zb_defaults_lines.append(f'tellraw @a[tag={ns}.map_editor] ["  ",{{"text":"Applies to ALL element types.","color":"dark_gray","italic":true}}]')
+	zb_defaults_lines.append("")
+
 	for etype, einfo in zb_elements.items():
+		if not einfo["defaults"]:
+			continue  # Skip elements with no type-specific defaults
 		zb_defaults_lines.append(
 			f'tellraw @a[tag={ns}.map_editor] [{{"text":"  {einfo["emoji"]} {einfo["name"]}","color":"{einfo["color"]}","bold":true}}]'
 		)
@@ -931,6 +951,7 @@ kill @s
 
 	# ── Init ZB Defaults (called on editor enter for zombies mode) ─
 	init_defaults_lines: list[str] = []
+	init_defaults_lines.append(f'data modify storage {ns}:temp map_edit.zb_defaults.group_id set value 0')
 	for etype, einfo in zb_elements.items():
 		compound = snbt_compound(einfo["defaults"])
 		init_defaults_lines.append(f'data modify storage {ns}:temp map_edit.zb_defaults.{etype} set value {compound}')
@@ -940,8 +961,8 @@ kill @s
 	# ── Handle ZB Configure (configure nearest element) ────────────
 	write_versioned_function("maps/editor/handle_zb_configure", f"""
 # Find the nearest map element marker (within 10 blocks)
-execute positioned as @s as @n[tag={ns}.map_element,distance=..10] run function {ns}:v{version}/maps/editor/show_element_config
-execute positioned as @s unless entity @n[tag={ns}.map_element,distance=..10] run tellraw @a[tag={ns}.map_editor] [{MGS_TAG},{{"text":"No element found within 10 blocks!","color":"red"}}]
+execute at @s as @n[tag={ns}.map_element,distance=..10] run function {ns}:v{version}/maps/editor/show_element_config
+execute at @s unless entity @n[tag={ns}.map_element,distance=..10] run tellraw @a[tag={ns}.map_editor] [{MGS_TAG},{{"text":"No element found within 10 blocks!","color":"red"}}]
 """)
 
 	# show_element_config: runs as the nearest marker, shows type-specific fields
@@ -954,12 +975,30 @@ execute positioned as @s unless entity @n[tag={ns}.map_element,distance=..10] ru
 			f'execute if entity @s[tag={ns}.element.{etype}] run tellraw @a[tag={ns}.map_editor] '
 			f'[{{"text":"  {einfo["emoji"]} {einfo["name"]} Configuration","color":"{einfo["color"]}","bold":true}}]'
 		)
+		# group_id is shared across all types
+		group_id_edit_btn = btn(
+			"✎",
+			f"/data modify entity @n[tag={ns}.element.{etype},distance=..10] data.group_id set value 0",
+			"yellow", "Click to edit group_id", action="suggest_command"
+		)
+		zb_config_lines.append(
+			f'execute if entity @s[tag={ns}.element.{etype}] run tellraw @a[tag={ns}.map_editor] '
+			f'["    ",{{"text":"group_id: ","color":"gray"}},'
+			f'{{"entity":"@s","nbt":"data.group_id","color":"white"}}," ",{group_id_edit_btn}]'
+		)
 		for field, default_val in einfo["defaults"].items():
 			snbt_val = snbt_suggest(default_val)
+			# Door price uses propagation function (applies to all doors with same link_id)
+			if etype == "door" and field == "price":
+				edit_cmd = f"/function {ns}:v{version}/maps/editor/set_door_link_price {{price:{snbt_val}}}"
+				hover_text = "Sets price on ALL doors with same link_id"
+			else:
+				edit_cmd = f"/data modify entity @n[tag={ns}.element.{etype},distance=..10] data.{field} set value {snbt_val}"
+				hover_text = f"Click to edit {field}"
 			edit_btn = btn(
 				"✎",
-				f"/data modify entity @n[tag={ns}.map_element,tag={ns}.element.{etype},distance=..10] data.{field} set value {snbt_val}",
-				"yellow", f"Click to edit {field}", action="suggest_command"
+				edit_cmd,
+				"yellow", hover_text, action="suggest_command"
 			)
 			zb_config_lines.append(
 				f'execute if entity @s[tag={ns}.element.{etype}] run tellraw @a[tag={ns}.map_editor] '
@@ -973,7 +1012,7 @@ execute positioned as @s unless entity @n[tag={ns}.map_element,distance=..10] ru
 			continue
 		edit_yaw_btn = btn(
 			"✎",
-			f"/data modify entity @n[tag={ns}.map_element,tag={ns}.element.{etype},distance=..10] data.yaw set value 0.0f",
+			f"/data modify entity @n[tag={ns}.element.{etype},distance=..10] data.yaw set value 0.0f",
 			"yellow", "Click to edit yaw", action="suggest_command"
 		)
 		zb_config_lines.append(
@@ -989,7 +1028,7 @@ execute positioned as @s unless entity @n[tag={ns}.map_element,distance=..10] ru
 	# For enemy types: show function
 	edit_fn_btn = btn(
 		"✎",
-		f"/data modify entity @n[tag={ns}.map_element,tag={ns}.element.enemy,distance=..10] data.function set value '{ns}:v{version}/mob/default/level_1'",
+		f"/data modify entity @n[tag={ns}.element.enemy,distance=..10] data.function set value '{ns}:v{version}/mob/default/level_1'",
 		"yellow", "Click to edit function", action="suggest_command"
 	)
 	zb_config_lines.append(
@@ -1014,6 +1053,19 @@ execute positioned as @s unless entity @n[tag={ns}.map_element,distance=..10] ru
 	zb_config_lines.append(f"tellraw @a[tag={ns}.map_editor] {sep}")
 
 	write_versioned_function("maps/editor/show_element_config", "\n".join(zb_config_lines))
+
+	# ── Door Price Propagation (set price on all doors with same link_id) ──
+	write_versioned_function("maps/editor/set_door_link_price", f"""
+$data modify storage {ns}:temp _door_set_price set value $(price)
+execute store result score #_link_id {ns}.data run data get entity @n[tag={ns}.element.door,distance=..10] data.link_id
+execute as @e[tag={ns}.element.door] run function {ns}:v{version}/maps/editor/door_price_if_match
+tellraw @a[tag={ns}.map_editor] [{MGS_TAG},{{"text":"Updated price for all doors with matching link_id","color":"green"}}]
+""")
+
+	write_versioned_function("maps/editor/door_price_if_match", f"""
+execute store result score #_check {ns}.data run data get entity @s data.link_id
+execute if score #_check {ns}.data = #_link_id {ns}.data run data modify entity @s data.price set from storage {ns}:temp _door_set_price
+""")
 
 	# ── Save and Exit Editor ───────────────────────────────────────
 	save_dispatch = "\n".join(
@@ -1059,7 +1111,7 @@ execute if data storage {ns}:temp _session_enemy_fn run data modify storage {ns}
 data remove storage {ns}:temp _session_enemy_fn
 
 # Rebuild base_coordinates from marker
-execute as @n[tag={ns}.map_element,tag={ns}.element.base_coordinates] at @s run function {ns}:v{version}/maps/editor/save_base
+execute as @n[tag={ns}.element.base_coordinates] at @s run function {ns}:v{version}/maps/editor/save_base
 
 # Load base scores for relative computation
 execute store result score #base_x {ns}.data run data get storage {ns}:temp map_edit.map.base_coordinates[0]
@@ -1086,16 +1138,16 @@ function {ns}:v{version}/maps/editor/write_back with storage {ns}:temp map_edit
 			if einfo["save_type"] == "spawn":
 				reset_lines.append(f'data modify storage {ns}:temp map_edit.map.{save_path} set value []')
 				path_suffix = save_path.split(".")[-1]
-				rebuild_lines.append(f'execute as @e[tag={ns}.map_element,tag={ns}.element.{etype}] at @s run function {ns}:v{version}/maps/editor/save_spawn {{path:"{path_suffix}"}}')
+				rebuild_lines.append(f'execute as @e[tag={ns}.element.{etype}] at @s run function {ns}:v{version}/maps/editor/save_spawn {{path:"{path_suffix}"}}')
 			elif einfo["save_type"] == "point":
 				reset_lines.append(f'data modify storage {ns}:temp map_edit.map.{save_path} set value []')
-				rebuild_lines.append(f'execute as @e[tag={ns}.map_element,tag={ns}.element.{etype}] at @s run function {ns}:v{version}/maps/editor/save_point {{path:"{save_path}"}}')
+				rebuild_lines.append(f'execute as @e[tag={ns}.element.{etype}] at @s run function {ns}:v{version}/maps/editor/save_point {{path:"{save_path}"}}')
 			elif einfo["save_type"] == "enemy":
 				reset_lines.append(f'data modify storage {ns}:temp map_edit.map.{save_path} set value []')
-				rebuild_lines.append(f'execute as @e[tag={ns}.map_element,tag={ns}.element.{etype}] at @s run function {ns}:v{version}/maps/editor/save_enemy')
+				rebuild_lines.append(f'execute as @e[tag={ns}.element.{etype}] at @s run function {ns}:v{version}/maps/editor/save_enemy')
 			elif einfo["save_type"] == "zb_object":
 				reset_lines.append(f'data modify storage {ns}:temp map_edit.map.{save_path} set value []')
-				rebuild_lines.append(f'execute as @e[tag={ns}.map_element,tag={ns}.element.{etype}] at @s run function {ns}:v{version}/maps/editor/save_zb_object {{path:"{save_path}"}}')
+				rebuild_lines.append(f'execute as @e[tag={ns}.element.{etype}] at @s run function {ns}:v{version}/maps/editor/save_zb_object {{path:"{save_path}"}}')
 		all_lines: list[str] = []
 		if reset_lines:
 			all_lines.append("# Reset lists")
@@ -1256,16 +1308,19 @@ clear @s
 		spread = "0.2 0.5 0.2" if einfo["save_type"] == "spawn" else "0.3 0.5 0.3"
 		count = 5 if etype == "base_coordinates" else 3
 		particle_lines.append(
-			f'execute at @e[tag={ns}.map_element,tag={ns}.element.{etype}] run particle dust{{color:[{r},{g},{b}],scale:{scale}}} ~ ~1 ~ {spread} 0 {count}'
+			f'execute at @e[tag={ns}.element.{etype}] run particle dust{{color:[{r},{g},{b}],scale:{scale}}} ~ ~1 ~ {spread} 0 {count}'
 		)
 
-	actionbar_lines: list[str] = []
+	actionbar_type_lines: list[str] = []
 	for etype, einfo in ALL_ELEMENTS.items():
 		if einfo["save_type"] == "config":
 			continue
-		actionbar_lines.append(
-			f'execute if entity @e[tag={ns}.map_element,tag={ns}.element.{etype},distance=..5] run return run title @s actionbar [{{"text":"{einfo["emoji"]} ","color":"{einfo["color"]}"}},{{"text":"{einfo["name"]}"}}]'
+		actionbar_type_lines.append(
+			f'execute if entity @s[tag={ns}.element.{etype}] run return run title @a[tag={ns}.check_nearest] actionbar [{{"text":"{einfo["emoji"]} ","color":"{einfo["color"]}"}},{{"text":"{einfo["name"]}"}}]'
 		)
+
+	# Show nearest element name in actionbar (runs as the nearest marker)
+	write_versioned_function("maps/editor/actionbar_nearest", "\n".join(actionbar_type_lines))
 
 	write_versioned_function("maps/editor/tick", f"""
 # Only run for players in editor mode
@@ -1278,6 +1333,9 @@ execute as @e[tag={ns}.map_element] at @s positioned ^ ^ ^0.5 run particle dust{
 # Per-element particles
 {chr(10).join(particle_lines)}
 
-# Actionbar: show info when near an element (within 5 blocks)
-{chr(10).join(actionbar_lines)}
+# Actionbar: show nearest element info (within 5 blocks)
+tag @s add {ns}.check_nearest
+execute as @n[tag={ns}.map_element,distance=..5] run function {ns}:v{version}/maps/editor/actionbar_nearest
+tag @s remove {ns}.check_nearest
 """)
+
