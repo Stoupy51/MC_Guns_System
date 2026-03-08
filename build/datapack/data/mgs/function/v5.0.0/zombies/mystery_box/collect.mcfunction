@@ -1,9 +1,7 @@
 
 #> mgs:v5.0.0/zombies/mystery_box/collect
 #
-# @executed	at @e[tag=mgs.mystery_box_active,limit=1] & as @p[distance=..3,scores={mgs.zb.in_game=1}]
-#
-# @within	mgs:v5.0.0/zombies/mystery_box/check_collect [ at @e[tag=mgs.mystery_box_active,limit=1] & as @p[distance=..3,scores={mgs.zb.in_game=1}] ]
+# @within	mgs:v5.0.0/zombies/mystery_box/on_right_click
 #
 
 # Give the result item to the player via its give function

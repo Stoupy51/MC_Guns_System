@@ -51,3 +51,9 @@ tag @a[tag=mgs.give_class_menu] remove mgs.give_class_menu
 # Reset mystery box
 function mgs:v5.0.0/zombies/mystery_box/reset
 
+# Reset perk effects
+execute as @a[scores={mgs.zb.in_game=1}] run attribute @s minecraft:max_health base set 20
+tag @a remove mgs.perk.speed_cola
+tag @a remove mgs.perk.double_tap
+tag @a remove mgs.perk.quick_revive
+

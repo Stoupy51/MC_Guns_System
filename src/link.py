@@ -1,6 +1,6 @@
 
 # Imports
-from stewbeet import Context, official_lib_used
+from stewbeet import Context, Mem, official_lib_used
 
 from .functional.main import main as main_datapack
 from .functional.map_editor import generate_map_editor
@@ -37,4 +37,8 @@ def beet_default(ctx: Context) -> None:
 
     # Bookshelf dump module
     official_lib_used("bs.dump")
+
+    # Generate 3D renders
+    # from stewbeet.plugins.ingame_manual.iso_renders import generate_all_iso_renders  # pyright: ignore[reportMissingTypeStubs]
+    # generate_all_iso_renders(override_cache_path=f"{Mem.ctx.directory}/iso_renders", ignore_vanilla=True, ignore_painting=True)
 

@@ -8,6 +8,8 @@
 data modify storage mgs:temp _mb_iter set from storage mgs:zombies game.map.mystery_box.positions
 execute if data storage mgs:temp _mb_iter[0] run function mgs:v5.0.0/zombies/mystery_box/setup_pos_iter
 
-# Pick a random position as the active mystery box
-execute as @e[tag=mgs.mystery_box_pos,sort=random,limit=1] run tag @s add mgs.mystery_box_active
+# Pick a random position with can_start_on as the active mystery box
+execute as @n[tag=mgs.mystery_box_pos,tag=mgs.mb_can_start,sort=random] run tag @s add mgs.mystery_box_active
+# Fallback if no can_start_on positions exist
+execute unless entity @e[tag=mgs.mystery_box_active] as @n[tag=mgs.mystery_box_pos,sort=random] run tag @s add mgs.mystery_box_active
 

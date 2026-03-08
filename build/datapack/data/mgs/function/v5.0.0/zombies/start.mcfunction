@@ -89,3 +89,15 @@ schedule function mgs:v5.0.0/zombies/preload_complete 20t
 # Announce
 tellraw @a ["",{"text":"","color":"dark_green","bold":true},"🧟 ",{"translate": "mgs.loading_zombies_map","color":"yellow"}]
 
+# Initialize power state
+scoreboard players set #zb_power mgs.data 0
+
+# Initialize unlocked groups (group 0 = starting area, compound keys for quick lookup)
+data modify storage mgs:zombies game.unlocked_groups set value {"0": 1b}
+
+# Reset perk scoreboards
+scoreboard players set @a mgs.zb.perk.juggernog 0
+scoreboard players set @a mgs.zb.perk.speed_cola 0
+scoreboard players set @a mgs.zb.perk.double_tap 0
+scoreboard players set @a mgs.zb.perk.quick_revive 0
+

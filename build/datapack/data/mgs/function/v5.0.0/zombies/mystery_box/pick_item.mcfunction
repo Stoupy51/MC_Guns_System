@@ -1,8 +1,6 @@
 
 #> mgs:v5.0.0/zombies/mystery_box/pick_item
 #
-# @executed	as @p[distance=..3,scores={mgs.zb.in_game=1}]
-#
 # @within	mgs:v5.0.0/zombies/mystery_box/try_use
 #			mgs:v5.0.0/zombies/mystery_box/pick_item
 #

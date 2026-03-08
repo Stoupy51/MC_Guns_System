@@ -418,6 +418,12 @@ scoreboard objectives add mgs.zb.perk.double_tap dummy
 scoreboard objectives add mgs.zb.perk.quick_revive dummy
 # TODO: more perks?
 
+# Spawn point group_id scoreboard
+scoreboard objectives add mgs.zb.spawn.gid dummy
+
+# Sidebar rank scoreboard
+scoreboard objectives add mgs.zb.sb_rank dummy
+
 # Constants
 scoreboard players set #20 mgs.data 20
 scoreboard players set #60 mgs.data 60
@@ -435,6 +441,35 @@ execute unless data storage mgs:zombies mystery_box_pool run data modify storage
 execute unless score #zb_points_kill mgs.config matches 1.. run scoreboard players set #zb_points_kill mgs.config 100
 execute unless score #zb_points_hit mgs.config matches 1.. run scoreboard players set #zb_points_hit mgs.config 10
 execute unless score #zb_mystery_box_price mgs.config matches 1.. run scoreboard players set #zb_mystery_box_price mgs.config 950
+
+# Door entity scoreboards
+scoreboard objectives add mgs.zb.door.link dummy
+scoreboard objectives add mgs.zb.door.price dummy
+scoreboard objectives add mgs.zb.door.gid dummy
+scoreboard objectives add mgs.zb.door.bgid dummy
+scoreboard objectives add mgs.zb.door.anim dummy
+
+# Wallbuy entity scoreboards
+scoreboard objectives add mgs.zb.wb.id dummy
+scoreboard objectives add mgs.zb.wb.price dummy
+scoreboard objectives add mgs.zb.wb.rfprice dummy
+scoreboard objectives add mgs.zb.wb.rfpap dummy
+
+# Perk machine entity scoreboards
+scoreboard objectives add mgs.zb.perk.id dummy
+scoreboard objectives add mgs.zb.perk.price dummy
+scoreboard objectives add mgs.zb.perk.power dummy
+
+# Trap entity scoreboards
+scoreboard objectives add mgs.zb.trap.id dummy
+scoreboard objectives add mgs.zb.trap.price dummy
+scoreboard objectives add mgs.zb.trap.power dummy
+scoreboard objectives add mgs.zb.trap.type dummy
+scoreboard objectives add mgs.zb.trap.dur dummy
+scoreboard objectives add mgs.zb.trap.cd_max dummy
+scoreboard objectives add mgs.zb.trap.timer dummy
+scoreboard objectives add mgs.zb.trap.cd dummy
+scoreboard objectives add mgs.zb.trap.radius dummy
 
 ## Multiplayer scoreboards
 # Team assignment (1 = red, 2 = blue, 0 = none/spectator)

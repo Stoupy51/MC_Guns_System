@@ -12,6 +12,6 @@ scoreboard players operation #_mb_cycle mgs.data %= #_mb_ps mgs.data
 data modify storage mgs:temp _mb_cycle_iter set from storage mgs:zombies mystery_box_pool
 function mgs:v5.0.0/zombies/mystery_box/cycle_iterate
 
-# Apply the display item
-execute as @e[tag=mgs.mb_display,limit=1] run function mgs:v5.0.0/zombies/mystery_box/apply_cycle_item
+# Apply the cycled item directly to the display entity
+data modify entity @n[tag=mgs.mb_display] item set from storage mgs:temp _mb_cycle_iter[0].display_item
 

@@ -30,9 +30,8 @@ effect give @a[scores={mgs.zb.in_game=1}] saturation infinite 255 true
 execute as @a[scores={mgs.zb.in_game=1}] run attribute @s minecraft:movement_speed base set 0
 execute as @a[scores={mgs.zb.in_game=1}] run attribute @s minecraft:jump_strength base set 0
 
-# Give starting weapon (M1911) to all players
-clear @a[scores={mgs.zb.in_game=1}]
-execute as @a[scores={mgs.zb.in_game=1}] at @s run loot give @s loot mgs:i/m1911
+# Give starting loadout to all players
+execute as @a[scores={mgs.zb.in_game=1}] at @s run function mgs:v5.0.0/zombies/inventory/give_starting_loadout
 
 # Show zombies perk selection menu
 execute as @a[scores={mgs.zb.in_game=1}] run function mgs:v5.0.0/zombies/passive_ability_menu
@@ -48,4 +47,19 @@ tellraw @a ["",{"text":"","color":"dark_green","bold":true},"🧟 ",{"translate"
 
 # Setup mystery box positions
 execute if data storage mgs:zombies game.map.mystery_box.positions[0] run function mgs:v5.0.0/zombies/mystery_box/setup_positions
+
+# Setup power switches
+execute if data storage mgs:zombies game.map.power_switch[0] run function mgs:v5.0.0/zombies/power/setup
+
+# Setup doors
+execute if data storage mgs:zombies game.map.doors[0] run function mgs:v5.0.0/zombies/doors/setup
+
+# Setup wallbuys
+execute if data storage mgs:zombies game.map.wallbuys[0] run function mgs:v5.0.0/zombies/wallbuys/setup
+
+# Setup perk machines
+execute if data storage mgs:zombies game.map.perks[0] run function mgs:v5.0.0/zombies/perks/setup
+
+# Setup traps
+execute if data storage mgs:zombies game.map.traps[0] run function mgs:v5.0.0/zombies/traps/setup
 

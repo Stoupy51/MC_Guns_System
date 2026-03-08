@@ -18,6 +18,6 @@ function mgs:v5.0.0/zombies/respawn_tp
 # Re-apply saturation
 effect give @s saturation infinite 255 true
 
-# Re-give M1911 on respawn
-loot give @s loot mgs:i/m1911
+# Re-give starting weapon on respawn
+function mgs:v5.0.0/zombies/inventory/give_respawn_loadout
 

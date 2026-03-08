@@ -1,0 +1,12 @@
+
+#> mgs:v5.0.0/zombies/perks/place_at
+#
+# @within	mgs:v5.0.0/zombies/perks/setup_iter with storage mgs:temp _pk
+#
+# @args		x (unknown)
+#			y (unknown)
+#			z (unknown)
+#
+
+$summon minecraft:interaction $(x) $(y) $(z) {width:1.0f,height:1.0f,response:true,Tags:["mgs.perk_machine","mgs.gm_entity","bs.entity.interaction","_pk_new"]}
+

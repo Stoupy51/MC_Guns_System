@@ -5,10 +5,11 @@
 #			mgs:v5.0.0/zombies/summon_spawn_iter
 #
 
-execute store result score #_sx mgs.data run data get storage mgs:temp _spawn_iter[0][0]
-execute store result score #_sy mgs.data run data get storage mgs:temp _spawn_iter[0][1]
-execute store result score #_sz mgs.data run data get storage mgs:temp _spawn_iter[0][2]
-execute store result score #_syaw mgs.data run data get storage mgs:temp _spawn_iter[0][3] 100
+# Read position from compound format
+execute store result score #_sx mgs.data run data get storage mgs:temp _spawn_iter[0].pos[0]
+execute store result score #_sy mgs.data run data get storage mgs:temp _spawn_iter[0].pos[1]
+execute store result score #_sz mgs.data run data get storage mgs:temp _spawn_iter[0].pos[2]
+execute store result score #_syaw mgs.data run data get storage mgs:temp _spawn_iter[0].rotation[0] 100
 
 scoreboard players operation #_sx mgs.data += #gm_base_x mgs.data
 scoreboard players operation #_sy mgs.data += #gm_base_y mgs.data
@@ -21,6 +22,11 @@ execute store result storage mgs:temp _spos.yaw double 0.01 run scoreboard playe
 data modify storage mgs:temp _spos.tag set from storage mgs:temp _spawn_tag
 
 function mgs:v5.0.0/zombies/summon_spawn_at with storage mgs:temp _spos
+
+# Set group_id score on newly spawned marker (default 0 if not defined)
+scoreboard players set @n[tag=mgs._new_spawn] mgs.zb.spawn.gid 0
+execute store result score @n[tag=mgs._new_spawn] mgs.zb.spawn.gid run data get storage mgs:temp _spawn_iter[0].group_id
+tag @n[tag=mgs._new_spawn] remove mgs._new_spawn
 
 data remove storage mgs:temp _spawn_iter[0]
 execute if data storage mgs:temp _spawn_iter[0] run function mgs:v5.0.0/zombies/summon_spawn_iter
