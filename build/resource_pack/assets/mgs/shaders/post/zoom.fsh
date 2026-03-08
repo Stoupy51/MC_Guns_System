@@ -130,7 +130,7 @@ void main() {
         }
     }
 
-    // ── Custom crosshair (vanilla crosshair is transparent) ──
+    // ── Custom crosshair (vanilla crosshair is transparent)
     // Draw a crosshair using color inversion (like vanilla) when NOT zooming.
     // The vanilla crosshair texture is replaced with a transparent one, so the shader
     // handles all crosshair rendering. Hidden during zoom for clean scope view.

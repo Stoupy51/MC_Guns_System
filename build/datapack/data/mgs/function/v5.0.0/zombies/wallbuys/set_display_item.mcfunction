@@ -6,5 +6,5 @@
 # @args		weapon_id (unknown)
 #
 
-$execute as @e[tag=_wb_new_display] run loot replace entity @s contents loot mgs:i/$(weapon_id)
+$execute as @e[tag=mgs.wb_new_display] run loot replace entity @s contents loot mgs:i/$(weapon_id)
 

@@ -40,15 +40,15 @@ function {ns}:v{version}/multiplayer/gamemodes/hp/load_zone
 kill @e[tag={ns}.hp_marker]
 
 # Zone point: relative → absolute
-execute store result score #_rx {ns}.data run data get storage {ns}:multiplayer game.hp_zones[0][0]
-execute store result score #_ry {ns}.data run data get storage {ns}:multiplayer game.hp_zones[0][1]
-execute store result score #_rz {ns}.data run data get storage {ns}:multiplayer game.hp_zones[0][2]
-scoreboard players operation #_rx {ns}.data += #gm_base_x {ns}.data
-scoreboard players operation #_ry {ns}.data += #gm_base_y {ns}.data
-scoreboard players operation #_rz {ns}.data += #gm_base_z {ns}.data
-execute store result storage {ns}:temp _hp_pos.x double 1 run scoreboard players get #_rx {ns}.data
-execute store result storage {ns}:temp _hp_pos.y double 1 run scoreboard players get #_ry {ns}.data
-execute store result storage {ns}:temp _hp_pos.z double 1 run scoreboard players get #_rz {ns}.data
+execute store result score #rx {ns}.data run data get storage {ns}:multiplayer game.hp_zones[0][0]
+execute store result score #ry {ns}.data run data get storage {ns}:multiplayer game.hp_zones[0][1]
+execute store result score #rz {ns}.data run data get storage {ns}:multiplayer game.hp_zones[0][2]
+scoreboard players operation #rx {ns}.data += #gm_base_x {ns}.data
+scoreboard players operation #ry {ns}.data += #gm_base_y {ns}.data
+scoreboard players operation #rz {ns}.data += #gm_base_z {ns}.data
+execute store result storage {ns}:temp _hp_pos.x double 1 run scoreboard players get #rx {ns}.data
+execute store result storage {ns}:temp _hp_pos.y double 1 run scoreboard players get #ry {ns}.data
+execute store result storage {ns}:temp _hp_pos.z double 1 run scoreboard players get #rz {ns}.data
 function {ns}:v{version}/multiplayer/gamemodes/hp/summon_marker with storage {ns}:temp _hp_pos
 
 tellraw @a [{MGS_TAG},{{"text":"⚡ Hardpoint zone active!","color":"dark_purple"}}]

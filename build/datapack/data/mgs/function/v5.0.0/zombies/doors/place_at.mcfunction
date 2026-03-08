@@ -13,5 +13,5 @@
 $setblock $(x) $(y) $(z) $(block)
 
 # Summon interaction entity
-$summon minecraft:interaction $(x) $(y) $(z) {width:1.0f,height:1.0f,response:true,Tags:["mgs.door","mgs.gm_entity","bs.entity.interaction","_door_new"]}
+$summon minecraft:interaction $(x) $(y) $(z) {width:1.1f,height:1.1f,response:true,Tags:["mgs.door","mgs.gm_entity","bs.entity.interaction","mgs.door_new"]}
 

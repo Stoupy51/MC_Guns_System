@@ -5,12 +5,6 @@
 #			mgs:v5.0.0/zombies/round_complete 200t [ scheduled ]
 #
 
-# Reduce ability cooldowns
-function mgs:v5.0.0/zombies/perks/reduce_cooldowns
-
-# Check guardian ability (summon golem at round start)
-function mgs:v5.0.0/zombies/perks/check_guardian
-
 # Increment round number
 execute store result score #zb_round mgs.data run data get storage mgs:zombies game.round
 scoreboard players add #zb_round mgs.data 1
@@ -45,4 +39,13 @@ function mgs:v5.0.0/zombies/refresh_sidebar
 
 # Announce
 tellraw @a ["",{"text":"","color":"dark_green","bold":true},"🧟 ",{"text":"Round ","color":"red"},{"score":{"name":"#zb_round","objective":"mgs.data"},"color":"gold","bold":true},{"translate": "mgs.has_begun","color":"red"}]
+
+# Replenish grenades for all alive players (+2, cap at 4)
+execute as @a[scores={mgs.zb.in_game=1},gamemode=!spectator] run function mgs:v5.0.0/zombies/inventory/replenish_grenades
+
+# Reduce ability cooldowns
+function mgs:v5.0.0/zombies/perks/reduce_cooldowns
+
+# Check guardian ability (summon golem at round start)
+function mgs:v5.0.0/zombies/perks/check_guardian
 

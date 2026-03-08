@@ -4,7 +4,7 @@
 # @within	mgs:v5.0.0/tick
 #
 
-# ── Spectate Timer (3s respawn cooldown) ──
+# Spectate Timer (3s respawn cooldown)
 execute as @a[scores={mgs.mi.in_game=1,mgs.mp.spectate_timer=1..}] run scoreboard players remove @s mgs.mp.spectate_timer 1
 execute as @a[scores={mgs.mi.in_game=1,mgs.mp.spectate_timer=0},gamemode=spectator] at @s run function mgs:v5.0.0/missions/actual_respawn
 
@@ -17,9 +17,9 @@ execute as @e[type=player,scores={mgs.mi.in_game=1},gamemode=!creative,gamemode=
 execute as @e[type=player,scores={mgs.mi.in_game=1},gamemode=!creative,gamemode=!spectator] at @s if entity @e[tag=mgs.oob_point,distance=..5] run damage @s 10000 out_of_world
 
 # Track enemy kills (total enemies - alive enemies)
-execute store result score #_alive mgs.data if entity @e[tag=mgs.mission_enemy]
-scoreboard players operation #_mi_kills mgs.data = #mi_total_enemies mgs.data
-scoreboard players operation #_mi_kills mgs.data -= #_alive mgs.data
+execute store result score #alive mgs.data if entity @e[tag=mgs.mission_enemy]
+scoreboard players operation #mi_kills mgs.data = #mi_total_enemies mgs.data
+scoreboard players operation #mi_kills mgs.data -= #alive mgs.data
 
 # Update compass for all players (point to nearest enemy)
 execute as @a[scores={mgs.mi.in_game=1}] at @s run function mgs:v5.0.0/missions/update_compass

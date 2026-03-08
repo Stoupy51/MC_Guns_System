@@ -20,25 +20,25 @@ execute if data storage {ns}:temp _pw_iter[0] run function {ns}:v{version}/zombi
 
 	write_versioned_function("zombies/power/setup_iter", f"""
 # Read relative position and convert to absolute
-execute store result score #_pwx {ns}.data run data get storage {ns}:temp _pw_iter[0].pos[0]
-execute store result score #_pwy {ns}.data run data get storage {ns}:temp _pw_iter[0].pos[1]
-execute store result score #_pwz {ns}.data run data get storage {ns}:temp _pw_iter[0].pos[2]
-scoreboard players operation #_pwx {ns}.data += #gm_base_x {ns}.data
-scoreboard players operation #_pwy {ns}.data += #gm_base_y {ns}.data
-scoreboard players operation #_pwz {ns}.data += #gm_base_z {ns}.data
+execute store result score #pwx {ns}.data run data get storage {ns}:temp _pw_iter[0].pos[0]
+execute store result score #pwy {ns}.data run data get storage {ns}:temp _pw_iter[0].pos[1]
+execute store result score #pwz {ns}.data run data get storage {ns}:temp _pw_iter[0].pos[2]
+scoreboard players operation #pwx {ns}.data += #gm_base_x {ns}.data
+scoreboard players operation #pwy {ns}.data += #gm_base_y {ns}.data
+scoreboard players operation #pwz {ns}.data += #gm_base_z {ns}.data
 
 # Store absolute position for macro
-execute store result storage {ns}:temp _pw.x int 1 run scoreboard players get #_pwx {ns}.data
-execute store result storage {ns}:temp _pw.y int 1 run scoreboard players get #_pwy {ns}.data
-execute store result storage {ns}:temp _pw.z int 1 run scoreboard players get #_pwz {ns}.data
+execute store result storage {ns}:temp _pw.x int 1 run scoreboard players get #pwx {ns}.data
+execute store result storage {ns}:temp _pw.y int 1 run scoreboard players get #pwy {ns}.data
+execute store result storage {ns}:temp _pw.z int 1 run scoreboard players get #pwz {ns}.data
 
 # Determine lever facing from stored yaw (stored = player_yaw + 180)
-execute store result score #_pw_yaw {ns}.data run data get storage {ns}:temp _pw_iter[0].rotation[0]
+execute store result score #pw_yaw {ns}.data run data get storage {ns}:temp _pw_iter[0].rotation[0]
 data modify storage {ns}:temp _pw.facing set value "north"
-execute if score #_pw_yaw {ns}.data matches 0..44 run data modify storage {ns}:temp _pw.facing set value "south"
-execute if score #_pw_yaw {ns}.data matches 315..360 run data modify storage {ns}:temp _pw.facing set value "south"
-execute if score #_pw_yaw {ns}.data matches 45..134 run data modify storage {ns}:temp _pw.facing set value "west"
-execute if score #_pw_yaw {ns}.data matches 225..314 run data modify storage {ns}:temp _pw.facing set value "east"
+execute if score #pw_yaw {ns}.data matches 0..44 run data modify storage {ns}:temp _pw.facing set value "south"
+execute if score #pw_yaw {ns}.data matches 315..360 run data modify storage {ns}:temp _pw.facing set value "south"
+execute if score #pw_yaw {ns}.data matches 45..134 run data modify storage {ns}:temp _pw.facing set value "west"
+execute if score #pw_yaw {ns}.data matches 225..314 run data modify storage {ns}:temp _pw.facing set value "east"
 
 # Place lever and summon interaction entity
 function {ns}:v{version}/zombies/power/place_at with storage {ns}:temp _pw
@@ -93,7 +93,7 @@ tellraw @a[scores={{{ns}.zb.in_game=1}}] [{MGS_TAG},{{"text":" ⚡ Power is ON!"
 	## Hover events (run as the player looking at the power switch)
 	write_versioned_function("zombies/power/on_hover_enter", """
 title @s times 0 40 10
-title @s title [{"text":"⚡ Power Switch","color":"yellow","bold":true}]
+title @s title [{"text":"⚡ Power Switch","color":"yellow"}]
 title @s subtitle [{"text":"Right-click to activate","color":"gray"}]
 """)
 

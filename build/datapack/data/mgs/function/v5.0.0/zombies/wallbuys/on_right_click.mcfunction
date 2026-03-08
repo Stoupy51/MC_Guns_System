@@ -8,13 +8,13 @@
 execute unless data storage mgs:zombies game{state:"active"} run return fail
 
 # Get wallbuy price
-execute store result score #_wb_price mgs.data run scoreboard players get @n[tag=bs.interaction.target] mgs.zb.wb.price
+execute store result score #wb_price mgs.data run scoreboard players get @n[tag=bs.interaction.target] mgs.zb.wb.price
 
 # Check player has enough points
-execute unless score @s mgs.zb.points >= #_wb_price mgs.data run return run tellraw @s [[{"text":"","color":"gold"},"[",{"translate": "mgs"},"] "],{"translate": "mgs.not_enough_points","color":"red"}]
+execute unless score @s mgs.zb.points >= #wb_price mgs.data run return run tellraw @s [[{"text":"","color":"gold"},"[",{"translate": "mgs"},"] "],{"translate": "mgs.not_enough_points","color":"red"}]
 
 # Deduct points
-scoreboard players operation @s mgs.zb.points -= #_wb_price mgs.data
+scoreboard players operation @s mgs.zb.points -= #wb_price mgs.data
 
 # Get weapon_id from storage via wallbuy ID
 execute store result storage mgs:temp _wb_buy.id int 1 run scoreboard players get @n[tag=bs.interaction.target] mgs.zb.wb.id

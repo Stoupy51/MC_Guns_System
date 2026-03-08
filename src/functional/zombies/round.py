@@ -9,7 +9,7 @@ def generate_zombies_rounds() -> None:
 	ns: str = Mem.ctx.project_id
 	version: str = Mem.ctx.project_version
 
-	# ── Round System ──────────────────────────────────────────────
+	# Round System ──────────────────────────────────────────────
 
 	## Start a new round
 	write_versioned_function("zombies/start_round", f"""
@@ -51,7 +51,7 @@ tellraw @a ["",{{"text":"","color":"dark_green","bold":true}},"🧟 ",{{"text":"
 
 	## Spawn a single zombie using proximity-based selection from spawn markers
 	write_versioned_function("zombies/spawn_zombie", f"""
-# ── Tag nearby unlocked zombie spawns ──
+# Tag nearby unlocked zombie spawns
 # First pass: 32 blocks from any alive player
 execute as @a[scores={{{ns}.zb.in_game=1}},gamemode=!spectator] at @s run tag @e[tag={ns}.spawn_zb,tag={ns}.spawn_unlocked,distance=..32] add {ns}.zb_near
 
@@ -98,24 +98,24 @@ $execute as @n[tag={ns}.zombie_round,tag=!{ns}.zb_scaled] run function {ns}:v{ve
 	write_versioned_function("zombies/scale_zombie", f"""
 tag @s add {ns}.zb_scaled
 
-$scoreboard players set #_zb_level {ns}.data $(level)
+$scoreboard players set #zb_level {ns}.data $(level)
 
 # Level 1: default 20 HP (rounds 1-5) — no changes needed
 # Level 2: 30 HP (rounds 6-10)
-execute if score #_zb_level {ns}.data matches 2 run attribute @s minecraft:max_health base set 30
-execute if score #_zb_level {ns}.data matches 2 run data modify entity @s Health set value 30f
+execute if score #zb_level {ns}.data matches 2 run attribute @s minecraft:max_health base set 30
+execute if score #zb_level {ns}.data matches 2 run data modify entity @s Health set value 30f
 
 # Level 3: 40 HP (rounds 11-15)
-execute if score #_zb_level {ns}.data matches 3 run attribute @s minecraft:max_health base set 40
-execute if score #_zb_level {ns}.data matches 3 run data modify entity @s Health set value 40f
+execute if score #zb_level {ns}.data matches 3 run attribute @s minecraft:max_health base set 40
+execute if score #zb_level {ns}.data matches 3 run data modify entity @s Health set value 40f
 
 # Level 4: 60 HP (rounds 16+)
-execute if score #_zb_level {ns}.data matches 4 run attribute @s minecraft:max_health base set 60
-execute if score #_zb_level {ns}.data matches 4 run data modify entity @s Health set value 60f
+execute if score #zb_level {ns}.data matches 4 run attribute @s minecraft:max_health base set 60
+execute if score #zb_level {ns}.data matches 4 run data modify entity @s Health set value 60f
 
 # Increase speed slightly at higher levels
-execute if score #_zb_level {ns}.data matches 3 run attribute @s minecraft:movement_speed base set 0.26
-execute if score #_zb_level {ns}.data matches 4 run attribute @s minecraft:movement_speed base set 0.30
+execute if score #zb_level {ns}.data matches 3 run attribute @s minecraft:movement_speed base set 0.26
+execute if score #zb_level {ns}.data matches 4 run attribute @s minecraft:movement_speed base set 0.30
 """)
 
 	## Spawn tick: spawn zombies on a timer
@@ -134,7 +134,7 @@ function {ns}:v{version}/zombies/spawn_zombie
 scoreboard players remove #zb_to_spawn {ns}.data 1
 """)
 
-	# ── Round Completion ──────────────────────────────────────────
+	# Round Completion ──────────────────────────────────────────
 
 	write_versioned_function("zombies/round_complete", f"""
 # Guard: prevent re-triggering every tick
@@ -151,10 +151,17 @@ title @a[scores={{{ns}.zb.in_game=1}}] title [{{"text":"Round Complete!","color"
 execute as @a[scores={{{ns}.zb.in_game=1}},gamemode=!spectator] run scoreboard players add @s {ns}.zb.points 500
 
 # Announce
-execute store result score #_completed_round {ns}.data run data get storage {ns}:zombies game.round
-tellraw @a ["",{{"text":"","color":"dark_green","bold":true}},"🧟 ",{{"text":"Round ","color":"green"}},{{"score":{{"name":"#_completed_round","objective":"{ns}.data"}},"color":"gold","bold":true}},{{"text":" complete! +500 points. Next round in 10 seconds...","color":"green"}}]
+execute store result score #completed_round {ns}.data run data get storage {ns}:zombies game.round
+tellraw @a ["",{{"text":"","color":"dark_green","bold":true}},"🧟 ",{{"text":"Round ","color":"green"}},{{"score":{{"name":"#completed_round","objective":"{ns}.data"}},"color":"gold","bold":true}},{{"text":" complete! +500 points. Next round in 10 seconds...","color":"green"}}]
 
 # Schedule next round after 10 seconds
 schedule function {ns}:v{version}/zombies/start_round 200t
+""")
+
+	# Grenade Replenishment (appended to start_round) ───────────
+
+	write_versioned_function("zombies/start_round", f"""
+# Replenish grenades for all alive players (+2, cap at 4)
+execute as @a[scores={{{ns}.zb.in_game=1}},gamemode=!spectator] run function {ns}:v{version}/zombies/inventory/replenish_grenades
 """)
 

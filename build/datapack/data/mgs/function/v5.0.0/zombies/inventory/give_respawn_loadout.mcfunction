@@ -6,6 +6,5 @@
 # @within	mgs:v5.0.0/zombies/actual_respawn
 #
 
-# Re-give M1911 on respawn
-loot give @s loot mgs:i/m1911
+function mgs:v5.0.0/zombies/inventory/give_starting_loadout
 

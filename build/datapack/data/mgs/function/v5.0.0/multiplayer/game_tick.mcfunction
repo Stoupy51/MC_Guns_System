@@ -4,28 +4,28 @@
 # @within	mgs:v5.0.0/tick
 #
 
-# ── Spectate Timer (3s before respawn) ──
+# Spectate Timer (3s before respawn)
 execute as @a[scores={mgs.mp.in_game=1,mgs.mp.spectate_timer=1..}] run scoreboard players remove @s mgs.mp.spectate_timer 1
 execute as @a[scores={mgs.mp.in_game=1,mgs.mp.spectate_timer=0},gamemode=spectator] at @s run function mgs:v5.0.0/multiplayer/actual_respawn
 
-# ── Timer ──
+# Timer
 scoreboard players remove #mp_timer mgs.data 1
 
 # Timer display every second (20 ticks)
-execute store result score #_tick_mod mgs.data run scoreboard players get #mp_timer mgs.data
-scoreboard players operation #_tick_mod mgs.data %= #20 mgs.data
-execute if score #_tick_mod mgs.data matches 0 run function mgs:v5.0.0/multiplayer/timer_display
+execute store result score #tick_mod mgs.data run scoreboard players get #mp_timer mgs.data
+scoreboard players operation #tick_mod mgs.data %= #20 mgs.data
+execute if score #tick_mod mgs.data matches 0 run function mgs:v5.0.0/multiplayer/timer_display
 
 # Time's up
 execute if score #mp_timer mgs.data matches ..0 run function mgs:v5.0.0/multiplayer/time_up
 
-# ── Boundary enforcement (skip players with respawn protection) ──
+# Boundary enforcement (skip players with respawn protection)
 execute as @e[type=player,scores={mgs.mp.in_game=1,mgs.mp.death_count=0},gamemode=!creative,gamemode=!spectator] at @s run function mgs:v5.0.0/multiplayer/check_bounds
 
-# ── Out-of-bounds check (skip players with respawn protection) ──
+# Out-of-bounds check (skip players with respawn protection)
 execute as @e[type=player,scores={mgs.mp.in_game=1,mgs.mp.death_count=0},gamemode=!creative,gamemode=!spectator] at @s if entity @e[tag=mgs.oob_point,distance=..5] run function mgs:v5.0.0/multiplayer/oob_kill
 
-# ── Gamemode tick dispatch ──
+# Gamemode tick dispatch
 execute if data storage mgs:multiplayer game{gamemode:"ffa"} run function mgs:v5.0.0/multiplayer/gamemodes/ffa/tick
 execute if data storage mgs:multiplayer game{gamemode:"tdm"} run function mgs:v5.0.0/multiplayer/gamemodes/tdm/tick
 execute if data storage mgs:multiplayer game{gamemode:"dom"} run function mgs:v5.0.0/multiplayer/gamemodes/dom/tick

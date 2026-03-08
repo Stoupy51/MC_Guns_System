@@ -5,12 +5,12 @@
 #
 
 # Count red-owned and blue-owned points
-execute store result score #_dom_r mgs.data if entity @e[tag=mgs.dom_point,scores={mgs.mp.dom_owner=1}]
-execute store result score #_dom_b mgs.data if entity @e[tag=mgs.dom_point,scores={mgs.mp.dom_owner=2}]
+execute store result score #dom_r mgs.data if entity @e[tag=mgs.dom_point,scores={mgs.mp.dom_owner=1}]
+execute store result score #dom_b mgs.data if entity @e[tag=mgs.dom_point,scores={mgs.mp.dom_owner=2}]
 
 # Add to team scores
-scoreboard players operation #red mgs.mp.team += #_dom_r mgs.data
-scoreboard players operation #blue mgs.mp.team += #_dom_b mgs.data
+scoreboard players operation #red mgs.mp.team += #dom_r mgs.data
+scoreboard players operation #blue mgs.mp.team += #dom_b mgs.data
 
 # Refresh DOM sidebar with updated point ownership
 function mgs:v5.0.0/multiplayer/refresh_sidebar_dom

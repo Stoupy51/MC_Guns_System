@@ -140,16 +140,16 @@ execute if data storage {ns}:multiplayer game{{gamemode:"snd"}} run function {ns
 
 # Store score limit and compute initial timer values for sidebar
 execute store result score #score_limit {ns}.data run data get storage {ns}:multiplayer game.score_limit
-execute store result score #_timer_sec {ns}.data run scoreboard players get #mp_timer {ns}.data
-scoreboard players operation #_timer_sec {ns}.data /= #20 {ns}.data
-execute store result score #_timer_min {ns}.data run scoreboard players get #_timer_sec {ns}.data
-scoreboard players operation #_timer_min {ns}.data /= #60 {ns}.data
-scoreboard players operation #_timer_mod {ns}.data = #_timer_sec {ns}.data
-scoreboard players operation #_timer_mod {ns}.data %= #60 {ns}.data
-scoreboard players operation #_timer_tens {ns}.data = #_timer_mod {ns}.data
-scoreboard players operation #_timer_tens {ns}.data /= #10 {ns}.data
-scoreboard players operation #_timer_ones {ns}.data = #_timer_mod {ns}.data
-scoreboard players operation #_timer_ones {ns}.data %= #10 {ns}.data
+execute store result score #timer_sec {ns}.data run scoreboard players get #mp_timer {ns}.data
+scoreboard players operation #timer_sec {ns}.data /= #20 {ns}.data
+execute store result score #timer_min {ns}.data run scoreboard players get #timer_sec {ns}.data
+scoreboard players operation #timer_min {ns}.data /= #60 {ns}.data
+scoreboard players operation #timer_mod {ns}.data = #timer_sec {ns}.data
+scoreboard players operation #timer_mod {ns}.data %= #60 {ns}.data
+scoreboard players operation #timer_tens {ns}.data = #timer_mod {ns}.data
+scoreboard players operation #timer_tens {ns}.data /= #10 {ns}.data
+scoreboard players operation #timer_ones {ns}.data = #timer_mod {ns}.data
+scoreboard players operation #timer_ones {ns}.data %= #10 {ns}.data
 
 # Create sidebar HUD
 scoreboard objectives add {ns}.sidebar dummy
@@ -201,22 +201,22 @@ $function {ns}:v{version}/maps/multiplayer/load {{id:"$(map_id)",override:{{}}}}
 	## Normalize boundaries: ensure min < max for each axis
 	write_versioned_function("multiplayer/normalize_bounds", f"""
 # Swap x if needed
-execute if score #bound_x1 {ns}.data > #bound_x2 {ns}.data run scoreboard players operation #_swap {ns}.data = #bound_x1 {ns}.data
+execute if score #bound_x1 {ns}.data > #bound_x2 {ns}.data run scoreboard players operation #swap {ns}.data = #bound_x1 {ns}.data
 execute if score #bound_x1 {ns}.data > #bound_x2 {ns}.data run scoreboard players operation #bound_x1 {ns}.data = #bound_x2 {ns}.data
-execute if score #_swap {ns}.data matches -2147483648.. run scoreboard players operation #bound_x2 {ns}.data = #_swap {ns}.data
-execute if score #_swap {ns}.data matches -2147483648.. run scoreboard players reset #_swap {ns}.data
+execute if score #swap {ns}.data matches -2147483648.. run scoreboard players operation #bound_x2 {ns}.data = #swap {ns}.data
+execute if score #swap {ns}.data matches -2147483648.. run scoreboard players reset #swap {ns}.data
 
 # Swap y if needed
-execute if score #bound_y1 {ns}.data > #bound_y2 {ns}.data run scoreboard players operation #_swap {ns}.data = #bound_y1 {ns}.data
+execute if score #bound_y1 {ns}.data > #bound_y2 {ns}.data run scoreboard players operation #swap {ns}.data = #bound_y1 {ns}.data
 execute if score #bound_y1 {ns}.data > #bound_y2 {ns}.data run scoreboard players operation #bound_y1 {ns}.data = #bound_y2 {ns}.data
-execute if score #_swap {ns}.data matches -2147483648.. run scoreboard players operation #bound_y2 {ns}.data = #_swap {ns}.data
-execute if score #_swap {ns}.data matches -2147483648.. run scoreboard players reset #_swap {ns}.data
+execute if score #swap {ns}.data matches -2147483648.. run scoreboard players operation #bound_y2 {ns}.data = #swap {ns}.data
+execute if score #swap {ns}.data matches -2147483648.. run scoreboard players reset #swap {ns}.data
 
 # Swap z if needed
-execute if score #bound_z1 {ns}.data > #bound_z2 {ns}.data run scoreboard players operation #_swap {ns}.data = #bound_z1 {ns}.data
+execute if score #bound_z1 {ns}.data > #bound_z2 {ns}.data run scoreboard players operation #swap {ns}.data = #bound_z1 {ns}.data
 execute if score #bound_z1 {ns}.data > #bound_z2 {ns}.data run scoreboard players operation #bound_z1 {ns}.data = #bound_z2 {ns}.data
-execute if score #_swap {ns}.data matches -2147483648.. run scoreboard players operation #bound_z2 {ns}.data = #_swap {ns}.data
-execute if score #_swap {ns}.data matches -2147483648.. run scoreboard players reset #_swap {ns}.data
+execute if score #swap {ns}.data matches -2147483648.. run scoreboard players operation #bound_z2 {ns}.data = #swap {ns}.data
+execute if score #swap {ns}.data matches -2147483648.. run scoreboard players reset #swap {ns}.data
 """)
 
 	## Game Stop
@@ -268,7 +268,7 @@ scoreboard players set @a {ns}.mp.spectate_timer 0
 tag @a[tag={ns}.give_class_menu] remove {ns}.give_class_menu
 """)
 
-	# ── Simulated Death ───────────────────────────────────────────
+	# Simulated Death ───────────────────────────────────────────
 	# Called when lethal damage is intercepted (bullet/projectile) or for OOB kills
 	# @s = victim player; storage mgs:input with.attacker may or may not exist
 
@@ -376,7 +376,7 @@ tellraw @a ["",[{{"text":"","color":"gray"}},"  ",{{"text":"Final Score - Red"}}
 function {ns}:v{version}/multiplayer/stop
 """)
 
-	# ── Game Tick (runs once per server tick when game is active) ──
+	# Game Tick (runs once per server tick when game is active)
 	write_tick_file(f"""
 # Multiplayer game tick
 execute if data storage {ns}:multiplayer game{{state:"active"}} run function {ns}:v{version}/multiplayer/game_tick
@@ -384,28 +384,28 @@ execute if data storage {ns}:multiplayer game{{state:"preparing"}} run function 
 """)
 
 	write_versioned_function("multiplayer/game_tick", f"""
-# ── Spectate Timer (3s before respawn) ──
+# Spectate Timer (3s before respawn)
 execute as @a[scores={{{ns}.mp.in_game=1,{ns}.mp.spectate_timer=1..}}] run scoreboard players remove @s {ns}.mp.spectate_timer 1
 execute as @a[scores={{{ns}.mp.in_game=1,{ns}.mp.spectate_timer=0}},gamemode=spectator] at @s run function {ns}:v{version}/multiplayer/actual_respawn
 
-# ── Timer ──
+# Timer
 scoreboard players remove #mp_timer {ns}.data 1
 
 # Timer display every second (20 ticks)
-execute store result score #_tick_mod {ns}.data run scoreboard players get #mp_timer {ns}.data
-scoreboard players operation #_tick_mod {ns}.data %= #20 {ns}.data
-execute if score #_tick_mod {ns}.data matches 0 run function {ns}:v{version}/multiplayer/timer_display
+execute store result score #tick_mod {ns}.data run scoreboard players get #mp_timer {ns}.data
+scoreboard players operation #tick_mod {ns}.data %= #20 {ns}.data
+execute if score #tick_mod {ns}.data matches 0 run function {ns}:v{version}/multiplayer/timer_display
 
 # Time's up
 execute if score #mp_timer {ns}.data matches ..0 run function {ns}:v{version}/multiplayer/time_up
 
-# ── Boundary enforcement (skip players with respawn protection) ──
+# Boundary enforcement (skip players with respawn protection)
 execute as @e[type=player,scores={{{ns}.mp.in_game=1,{ns}.mp.death_count=0}},gamemode=!creative,gamemode=!spectator] at @s run function {ns}:v{version}/multiplayer/check_bounds
 
-# ── Out-of-bounds check (skip players with respawn protection) ──
+# Out-of-bounds check (skip players with respawn protection)
 execute as @e[type=player,scores={{{ns}.mp.in_game=1,{ns}.mp.death_count=0}},gamemode=!creative,gamemode=!spectator] at @s if entity @e[tag={ns}.oob_point,distance=..5] run function {ns}:v{version}/multiplayer/oob_kill
 
-# ── Gamemode tick dispatch ──
+# Gamemode tick dispatch
 execute if data storage {ns}:multiplayer game{{gamemode:"ffa"}} run function {ns}:v{version}/multiplayer/gamemodes/ffa/tick
 execute if data storage {ns}:multiplayer game{{gamemode:"tdm"}} run function {ns}:v{version}/multiplayer/gamemodes/tdm/tick
 execute if data storage {ns}:multiplayer game{{gamemode:"dom"}} run function {ns}:v{version}/multiplayer/gamemodes/dom/tick
@@ -416,18 +416,18 @@ execute if data storage {ns}:multiplayer game{{gamemode:"snd"}} run function {ns
 	## Timer display (actionbar timer in minutes:seconds for all in-game players)
 	write_versioned_function("multiplayer/timer_display", f"""
 # Convert ticks to seconds
-execute store result score #_timer_sec {ns}.data run scoreboard players get #mp_timer {ns}.data
-scoreboard players operation #_timer_sec {ns}.data /= #20 {ns}.data
-execute store result score #_timer_min {ns}.data run scoreboard players get #_timer_sec {ns}.data
-scoreboard players operation #_timer_min {ns}.data /= #60 {ns}.data
-scoreboard players operation #_timer_mod {ns}.data = #_timer_sec {ns}.data
-scoreboard players operation #_timer_mod {ns}.data %= #60 {ns}.data
+execute store result score #timer_sec {ns}.data run scoreboard players get #mp_timer {ns}.data
+scoreboard players operation #timer_sec {ns}.data /= #20 {ns}.data
+execute store result score #timer_min {ns}.data run scoreboard players get #timer_sec {ns}.data
+scoreboard players operation #timer_min {ns}.data /= #60 {ns}.data
+scoreboard players operation #timer_mod {ns}.data = #timer_sec {ns}.data
+scoreboard players operation #timer_mod {ns}.data %= #60 {ns}.data
 
 # Zero-padded seconds for sidebar
-scoreboard players operation #_timer_tens {ns}.data = #_timer_mod {ns}.data
-scoreboard players operation #_timer_tens {ns}.data /= #10 {ns}.data
-scoreboard players operation #_timer_ones {ns}.data = #_timer_mod {ns}.data
-scoreboard players operation #_timer_ones {ns}.data %= #10 {ns}.data
+scoreboard players operation #timer_tens {ns}.data = #timer_mod {ns}.data
+scoreboard players operation #timer_tens {ns}.data /= #10 {ns}.data
+scoreboard players operation #timer_ones {ns}.data = #timer_mod {ns}.data
+scoreboard players operation #timer_ones {ns}.data %= #10 {ns}.data
 
 # Refresh sidebar with updated values
 execute unless data storage {ns}:multiplayer game{{gamemode:"ffa"}} run function #bs.sidebar:refresh {{objective:"{ns}.sidebar"}}
@@ -450,11 +450,11 @@ execute unless data storage {ns}:multiplayer game{{gamemode:"ffa"}} if score #re
 tellraw @a [{MGS_TAG},{{"text":"Time's up!","color":"gold"}}]
 
 # Store max kills into a score
-scoreboard players set #_max_kills {ns}.data 0
-scoreboard players operation #_max_kills {ns}.data > @a[scores={{{ns}.mp.in_game=1}}] {ns}.mp.kills
+scoreboard players set #max_kills {ns}.data 0
+scoreboard players operation #max_kills {ns}.data > @a[scores={{{ns}.mp.in_game=1}}] {ns}.mp.kills
 
 # The player with that score wins
-execute as @a[scores={{{ns}.mp.in_game=1}}] if score @s {ns}.mp.kills = #_max_kills {ns}.data run function {ns}:v{version}/multiplayer/gamemodes/ffa/player_wins
+execute as @a[scores={{{ns}.mp.in_game=1}}] if score @s {ns}.mp.kills = #max_kills {ns}.data run function {ns}:v{version}/multiplayer/gamemodes/ffa/player_wins
 """)
 
 	## Game draw
@@ -505,15 +505,15 @@ data modify storage {ns}:temp _oob_iter set from storage {ns}:multiplayer game.m
 execute if data storage {ns}:temp _oob_iter[0] run function {ns}:v{version}/multiplayer/summon_oob_iter
 """)
 	write_versioned_function("multiplayer/summon_oob_iter", f"""
-execute store result score #_rx {ns}.data run data get storage {ns}:temp _oob_iter[0][0]
-execute store result score #_ry {ns}.data run data get storage {ns}:temp _oob_iter[0][1]
-execute store result score #_rz {ns}.data run data get storage {ns}:temp _oob_iter[0][2]
-scoreboard players operation #_rx {ns}.data += #gm_base_x {ns}.data
-scoreboard players operation #_ry {ns}.data += #gm_base_y {ns}.data
-scoreboard players operation #_rz {ns}.data += #gm_base_z {ns}.data
-execute store result storage {ns}:temp _oob_pos.x double 1 run scoreboard players get #_rx {ns}.data
-execute store result storage {ns}:temp _oob_pos.y double 1 run scoreboard players get #_ry {ns}.data
-execute store result storage {ns}:temp _oob_pos.z double 1 run scoreboard players get #_rz {ns}.data
+execute store result score #rx {ns}.data run data get storage {ns}:temp _oob_iter[0][0]
+execute store result score #ry {ns}.data run data get storage {ns}:temp _oob_iter[0][1]
+execute store result score #rz {ns}.data run data get storage {ns}:temp _oob_iter[0][2]
+scoreboard players operation #rx {ns}.data += #gm_base_x {ns}.data
+scoreboard players operation #ry {ns}.data += #gm_base_y {ns}.data
+scoreboard players operation #rz {ns}.data += #gm_base_z {ns}.data
+execute store result storage {ns}:temp _oob_pos.x double 1 run scoreboard players get #rx {ns}.data
+execute store result storage {ns}:temp _oob_pos.y double 1 run scoreboard players get #ry {ns}.data
+execute store result storage {ns}:temp _oob_pos.z double 1 run scoreboard players get #rz {ns}.data
 function {ns}:v{version}/multiplayer/summon_oob_at with storage {ns}:temp _oob_pos
 data remove storage {ns}:temp _oob_iter[0]
 execute if data storage {ns}:temp _oob_iter[0] run function {ns}:v{version}/multiplayer/summon_oob_iter
@@ -522,7 +522,7 @@ execute if data storage {ns}:temp _oob_iter[0] run function {ns}:v{version}/mult
 $summon minecraft:marker $(x) $(y) $(z) {{Tags:["{ns}.oob_point","{ns}.gm_entity"]}}
 """)
 
-	# ── Spawn Point Markers ───────────────────────────────────────
+	# Spawn Point Markers ───────────────────────────────────────
 
 	## Summon spawn markers from map data (called at game start)
 	write_versioned_function("multiplayer/summon_spawns", f"""
@@ -544,21 +544,21 @@ execute if data storage {ns}:temp _spawn_iter[0] run function {ns}:v{version}/mu
 
 	write_versioned_function("multiplayer/summon_spawn_iter", f"""
 # Read relative coords
-execute store result score #_sx {ns}.data run data get storage {ns}:temp _spawn_iter[0][0]
-execute store result score #_sy {ns}.data run data get storage {ns}:temp _spawn_iter[0][1]
-execute store result score #_sz {ns}.data run data get storage {ns}:temp _spawn_iter[0][2]
-execute store result score #_syaw {ns}.data run data get storage {ns}:temp _spawn_iter[0][3] 100
+execute store result score #sx {ns}.data run data get storage {ns}:temp _spawn_iter[0][0]
+execute store result score #sy {ns}.data run data get storage {ns}:temp _spawn_iter[0][1]
+execute store result score #sz {ns}.data run data get storage {ns}:temp _spawn_iter[0][2]
+execute store result score #syaw {ns}.data run data get storage {ns}:temp _spawn_iter[0][3] 100
 
 # Convert to absolute
-scoreboard players operation #_sx {ns}.data += #gm_base_x {ns}.data
-scoreboard players operation #_sy {ns}.data += #gm_base_y {ns}.data
-scoreboard players operation #_sz {ns}.data += #gm_base_z {ns}.data
+scoreboard players operation #sx {ns}.data += #gm_base_x {ns}.data
+scoreboard players operation #sy {ns}.data += #gm_base_y {ns}.data
+scoreboard players operation #sz {ns}.data += #gm_base_z {ns}.data
 
 # Store position + yaw for macro
-execute store result storage {ns}:temp _spos.x double 1 run scoreboard players get #_sx {ns}.data
-execute store result storage {ns}:temp _spos.y double 1 run scoreboard players get #_sy {ns}.data
-execute store result storage {ns}:temp _spos.z double 1 run scoreboard players get #_sz {ns}.data
-execute store result storage {ns}:temp _spos.yaw double 0.01 run scoreboard players get #_syaw {ns}.data
+execute store result storage {ns}:temp _spos.x double 1 run scoreboard players get #sx {ns}.data
+execute store result storage {ns}:temp _spos.y double 1 run scoreboard players get #sy {ns}.data
+execute store result storage {ns}:temp _spos.z double 1 run scoreboard players get #sz {ns}.data
+execute store result storage {ns}:temp _spos.yaw double 0.01 run scoreboard players get #syaw {ns}.data
 data modify storage {ns}:temp _spos.tag set from storage {ns}:temp _spawn_tag
 
 # Summon
@@ -573,7 +573,7 @@ execute if data storage {ns}:temp _spawn_iter[0] run function {ns}:v{version}/mu
 $summon minecraft:marker $(x) $(y) $(z) {{Tags:["{ns}.spawn_point","$(tag)","{ns}.gm_entity"],data:{{yaw:$(yaw)}}}}
 """)
 
-	# ── Smart Spawn Selection ─────────────────────────────────────
+	# Smart Spawn Selection ─────────────────────────────────────
 
 	## TP all players to spawn points at game start
 	write_versioned_function("multiplayer/tp_all_to_spawns", f"""
@@ -626,11 +626,11 @@ tag @e[tag={ns}.spawn_final] remove {ns}.spawn_final
 execute as @e[tag={ns}.spawn_candidate] at @s run function {ns}:v{version}/multiplayer/spawn_calc_dist
 
 # Find the maximum distance score
-scoreboard players set #_best_dist {ns}.data 0
-scoreboard players operation #_best_dist {ns}.data > @e[tag={ns}.spawn_candidate] {ns}.data
+scoreboard players set #best_dist {ns}.data 0
+scoreboard players operation #best_dist {ns}.data > @e[tag={ns}.spawn_candidate] {ns}.data
 
 # Pick the first candidate with that best score and TP the pending player there
-execute as @e[tag={ns}.spawn_candidate,sort=random] if score @s {ns}.data = #_best_dist {ns}.data run function {ns}:v{version}/multiplayer/tp_to_spawn
+execute as @e[tag={ns}.spawn_candidate,sort=random] if score @s {ns}.data = #best_dist {ns}.data run function {ns}:v{version}/multiplayer/tp_to_spawn
 
 # Clean up
 tag @e[tag={ns}.spawn_candidate] remove {ns}.spawn_candidate
@@ -651,30 +651,30 @@ tag @a[tag={ns}.spawn_enemy] remove {ns}.spawn_enemy
 	## Calculate distance² from spawn marker to nearest enemy player (run as marker at marker)
 	write_versioned_function("multiplayer/spawn_calc_dist", f"""
 # Get marker position
-execute store result score #_mx {ns}.data run data get entity @s Pos[0]
-execute store result score #_my {ns}.data run data get entity @s Pos[1]
-execute store result score #_mz {ns}.data run data get entity @s Pos[2]
+execute store result score #mx {ns}.data run data get entity @s Pos[0]
+execute store result score #my {ns}.data run data get entity @s Pos[1]
+execute store result score #mz {ns}.data run data get entity @s Pos[2]
 
 # Get nearest enemy player position (expensive — caller limits candidates)
 data modify storage {ns}:temp _nearest set from entity @p[tag={ns}.spawn_enemy] Pos
-execute store result score #_px {ns}.data run data get storage {ns}:temp _nearest[0]
-execute store result score #_py {ns}.data run data get storage {ns}:temp _nearest[1]
-execute store result score #_pz {ns}.data run data get storage {ns}:temp _nearest[2]
+execute store result score #px {ns}.data run data get storage {ns}:temp _nearest[0]
+execute store result score #py {ns}.data run data get storage {ns}:temp _nearest[1]
+execute store result score #pz {ns}.data run data get storage {ns}:temp _nearest[2]
 
 # dx, dy, dz
-scoreboard players operation #_mx {ns}.data -= #_px {ns}.data
-scoreboard players operation #_my {ns}.data -= #_py {ns}.data
-scoreboard players operation #_mz {ns}.data -= #_pz {ns}.data
+scoreboard players operation #mx {ns}.data -= #px {ns}.data
+scoreboard players operation #my {ns}.data -= #py {ns}.data
+scoreboard players operation #mz {ns}.data -= #pz {ns}.data
 
 # distance² = dx² + dy² + dz²
-scoreboard players operation #_mx {ns}.data *= #_mx {ns}.data
-scoreboard players operation #_my {ns}.data *= #_my {ns}.data
-scoreboard players operation #_mz {ns}.data *= #_mz {ns}.data
-scoreboard players operation #_mx {ns}.data += #_my {ns}.data
-scoreboard players operation #_mx {ns}.data += #_mz {ns}.data
+scoreboard players operation #mx {ns}.data *= #mx {ns}.data
+scoreboard players operation #my {ns}.data *= #my {ns}.data
+scoreboard players operation #mz {ns}.data *= #mz {ns}.data
+scoreboard players operation #mx {ns}.data += #my {ns}.data
+scoreboard players operation #mx {ns}.data += #mz {ns}.data
 
 # Store on entity
-scoreboard players operation @s {ns}.data = #_mx {ns}.data
+scoreboard players operation @s {ns}.data = #mx {ns}.data
 """)
 
 	## TP player to chosen spawn marker (run as the marker)
@@ -705,15 +705,15 @@ execute if score @s {ns}.mp.team matches 1 run return run function {ns}:v{versio
 execute if score @s {ns}.mp.team matches 2 run return run function {ns}:v{version}/multiplayer/pick_spawn {{type:"blue"}}
 """)
 
-	# ── Sidebar HUD ───────────────────────────────────────────────
+	# Sidebar HUD ───────────────────────────────────────────────
 
 	# Build sidebar content components for reuse
 	sb_timer = (
 		f'[{{text:" ⏱ ",color:"yellow"}},'
-		f'[{{score:{{name:"#_timer_min",objective:"{ns}.data"}},"color":"yellow"}},'
+		f'[{{score:{{name:"#timer_min",objective:"{ns}.data"}},"color":"yellow"}},'
 		f'{{text:":"}},'
-		f'{{score:{{name:"#_timer_tens",objective:"{ns}.data"}}}},'
-		f'{{score:{{name:"#_timer_ones",objective:"{ns}.data"}}}}]]'
+		f'{{score:{{name:"#timer_tens",objective:"{ns}.data"}}}},'
+		f'{{score:{{name:"#timer_ones",objective:"{ns}.data"}}}}]]'
 	)
 	sb_red = f'[[{{text:" 🔴 ",color:"red"}},{{text:"Red"}}],[" ",{{score:{{name:"#red",objective:"{ns}.mp.team"}},color:"white"}}]]'
 	sb_blue = f'[[{{text:" 🔵 ",color:"blue"}},{{text:"Blue"}}],[" ",{{score:{{name:"#blue",objective:"{ns}.mp.team"}},color:"white"}}]]'
@@ -806,7 +806,7 @@ function #bs.sidebar:create {{objective:"{ns}.sidebar",display_name:{{text:"Hard
 scoreboard objectives setdisplay sidebar {ns}.sidebar
 """)
 
-	# ── Shooting Block During Prep ────────────────────────────────
+	# Shooting Block During Prep ────────────────────────────────
 
 	## Prepend to right_click: block shooting during prep phase
 	write_versioned_function("player/right_click", f"""
@@ -814,7 +814,7 @@ scoreboard objectives setdisplay sidebar {ns}.sidebar
 execute if score @s {ns}.mp.in_game matches 1 if data storage {ns}:multiplayer game{{state:"preparing"}} run return run scoreboard players set @s {ns}.pending_clicks 0
 """, prepend=True)
 
-	# ── Prep Phase ────────────────────────────────────────────────
+	# Prep Phase ────────────────────────────────────────────────
 
 	## Prep tick: during 10s warmup, detect class changes and apply immediately
 	write_versioned_function("multiplayer/prep_tick", f"""

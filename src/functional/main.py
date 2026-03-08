@@ -164,9 +164,9 @@ execute as @e[type=player,sort=random] at @s run function {ns}:v{version}/player
     write_versioned_function("utils/damage", f"$damage $(target) $(amount) {ns}:bullet by $(attacker)")
     write_versioned_function("utils/signal_and_damage", f"""
 # Check if target is a player in active MP game and damage would be lethal -> simulate death
-execute store result score #_incoming_dmg {ns}.data run data get storage {ns}:input with.amount 10
-execute store result score #_victim_hp {ns}.data run data get entity @s Health 10
-execute if entity @s[type=player,scores={{{ns}.mp.in_game=1..}}] if score #_incoming_dmg {ns}.data >= #_victim_hp {ns}.data run return run function {ns}:v{version}/multiplayer/simulate_death
+execute store result score #incoming_dmg {ns}.data run data get storage {ns}:input with.amount 10
+execute store result score #victim_hp {ns}.data run data get entity @s Health 10
+execute if entity @s[type=player,scores={{{ns}.mp.in_game=1..}}] if score #incoming_dmg {ns}.data >= #victim_hp {ns}.data run return run function {ns}:v{version}/multiplayer/simulate_death
 
 # Non-lethal or non-MP: normal damage + signals
 function {ns}:v{version}/utils/damage with storage {ns}:input with

@@ -851,7 +851,7 @@ void main() {
         }
     }
 
-    // ── Custom crosshair (vanilla crosshair is transparent) ──
+    // ── Custom crosshair (vanilla crosshair is transparent)
     // Draw a crosshair using color inversion (like vanilla) when NOT zooming.
     // The vanilla crosshair texture is replaced with a transparent one, so the shader
     // handles all crosshair rendering. Hidden during zoom for clean scope view.
@@ -1056,7 +1056,7 @@ def main() -> None:
     textures_folder: str = Mem.ctx.meta.get("stewbeet", {}).get("textures_folder", "")
     Mem.ctx.assets[ns].textures["effect/flash"] = Texture(source_path=f"{textures_folder}/flash.png")
 
-    # ── Flash marker: mode 1 ──
+    # Flash marker: mode 1
     # dust color:[R,0,0] with R=0.02 → vsh detects R∈[1-10], G==0, B==0
     # scale=0.01 → lifetime = 0 (1 game tick minimum) → brief flash for rapid fire
     version: str = Mem.ctx.project_version
@@ -1073,7 +1073,7 @@ execute if score #can_see {ns}.data matches 0 store result score #can_see {ns}.d
 execute if score #can_see {ns}.data matches 1 run particle minecraft:dust{{color:[0.02,0.0,0.0],scale:0.01}} ~ ~ ~ 0 0 0 0 1 force @s
 """)
 
-    # ── Zoom marker: mode 3 (x3) or mode 4 (x4) ──
+    # Zoom marker: mode 3 (x3) or mode 4 (x4)
     # Zoom x3: color:[0.02, 0.02, 0] → G∈[2-5] after randomization → mode 3
     # Zoom x4: color:[0.02, 0.08, 0] → G∈[10-20] after randomization → mode 4
     # Zoom marker spawning is handled in zoom/main (zoom.py) after zoom state

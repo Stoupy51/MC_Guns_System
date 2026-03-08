@@ -14,10 +14,10 @@ scoreboard players operation @s mgs.zb.points -= #zb_mystery_box_price mgs.confi
 data modify storage mgs:zombies mystery_box.spinning set value true
 
 # Pick a random weapon from the pool
-execute store result score #_mb_pool_size mgs.data run data get storage mgs:zombies mystery_box_pool
-execute if score #_mb_pool_size mgs.data matches ..0 run return run tellraw @s [[{"text":"","color":"gold"},"[",{"translate": "mgs"},"] "],{"translate": "mgs.mystery_box_pool_is_empty","color":"red"}]
-execute store result score #_mb_pick mgs.data run random value 0..100
-scoreboard players operation #_mb_pick mgs.data %= #_mb_pool_size mgs.data
+execute store result score #mb_pool_size mgs.data run data get storage mgs:zombies mystery_box_pool
+execute if score #mb_pool_size mgs.data matches ..0 run return run tellraw @s [[{"text":"","color":"gold"},"[",{"translate": "mgs"},"] "],{"translate": "mgs.mystery_box_pool_is_empty","color":"red"}]
+execute store result score #mb_pick mgs.data run random value 0..100
+scoreboard players operation #mb_pick mgs.data %= #mb_pool_size mgs.data
 
 # Copy pool and iterate to the picked index
 data modify storage mgs:temp _mb_pool_iter set from storage mgs:zombies mystery_box_pool

@@ -46,19 +46,19 @@ scoreboard players set #dom_score_timer {ns}.data 100
 	## DOM: Summon a single capture point marker (convert relative to absolute)
 	write_versioned_function("multiplayer/gamemodes/dom/summon_point", f"""
 # Read relative coords
-execute store result score #_rx {ns}.data run data get storage {ns}:temp _dom_iter[0][0]
-execute store result score #_ry {ns}.data run data get storage {ns}:temp _dom_iter[0][1]
-execute store result score #_rz {ns}.data run data get storage {ns}:temp _dom_iter[0][2]
+execute store result score #rx {ns}.data run data get storage {ns}:temp _dom_iter[0][0]
+execute store result score #ry {ns}.data run data get storage {ns}:temp _dom_iter[0][1]
+execute store result score #rz {ns}.data run data get storage {ns}:temp _dom_iter[0][2]
 
 # Add base offset
-scoreboard players operation #_rx {ns}.data += #gm_base_x {ns}.data
-scoreboard players operation #_ry {ns}.data += #gm_base_y {ns}.data
-scoreboard players operation #_rz {ns}.data += #gm_base_z {ns}.data
+scoreboard players operation #rx {ns}.data += #gm_base_x {ns}.data
+scoreboard players operation #ry {ns}.data += #gm_base_y {ns}.data
+scoreboard players operation #rz {ns}.data += #gm_base_z {ns}.data
 
 # Prepare position for macro
-execute store result storage {ns}:temp _dom_pos.x double 1 run scoreboard players get #_rx {ns}.data
-execute store result storage {ns}:temp _dom_pos.y double 1 run scoreboard players get #_ry {ns}.data
-execute store result storage {ns}:temp _dom_pos.z double 1 run scoreboard players get #_rz {ns}.data
+execute store result storage {ns}:temp _dom_pos.x double 1 run scoreboard players get #rx {ns}.data
+execute store result storage {ns}:temp _dom_pos.y double 1 run scoreboard players get #ry {ns}.data
+execute store result storage {ns}:temp _dom_pos.z double 1 run scoreboard players get #rz {ns}.data
 
 # Assign zone label (A, B, C, D, E)
 execute if score #dom_zone_idx {ns}.data matches 0 run data modify storage {ns}:temp _dom_pos.label set value "A"
@@ -106,23 +106,23 @@ execute as @e[tag={ns}.dom_point] at @s run function {ns}:v{version}/multiplayer
 	## DOM: Per-point tick - check nearby players and adjust capture
 	write_versioned_function("multiplayer/gamemodes/dom/point_tick", f"""
 # Count red and blue players within 5 blocks
-execute store result score #_dom_red {ns}.data if entity @a[distance=..5,scores={{{ns}.mp.team=1}}]
-execute store result score #_dom_blue {ns}.data if entity @a[distance=..5,scores={{{ns}.mp.team=2}}]
+execute store result score #dom_red {ns}.data if entity @a[distance=..5,scores={{{ns}.mp.team=1}}]
+execute store result score #dom_blue {ns}.data if entity @a[distance=..5,scores={{{ns}.mp.team=2}}]
 
 # If contested (both teams present), no progress change
-execute if score #_dom_red {ns}.data matches 1.. if score #_dom_blue {ns}.data matches 1.. run return fail
+execute if score #dom_red {ns}.data matches 1.. if score #dom_blue {ns}.data matches 1.. run return fail
 
 # If only red present: progress toward red (increase toward 100)
-execute if score #_dom_red {ns}.data matches 1.. unless score #_dom_blue {ns}.data matches 1.. run function {ns}:v{version}/multiplayer/gamemodes/dom/capture_red
+execute if score #dom_red {ns}.data matches 1.. unless score #dom_blue {ns}.data matches 1.. run function {ns}:v{version}/multiplayer/gamemodes/dom/capture_red
 
 # If only blue present: progress toward blue (decrease toward -100)
-execute if score #_dom_blue {ns}.data matches 1.. unless score #_dom_red {ns}.data matches 1.. run function {ns}:v{version}/multiplayer/gamemodes/dom/capture_blue
+execute if score #dom_blue {ns}.data matches 1.. unless score #dom_red {ns}.data matches 1.. run function {ns}:v{version}/multiplayer/gamemodes/dom/capture_blue
 """)
 
 	## DOM: Capture for red (progress goes +)
 	write_versioned_function("multiplayer/gamemodes/dom/capture_red", f"""
 # Get current progress
-execute store result score #_dom_prog {ns}.data run scoreboard players get @s {ns}.mp.dom_progress
+execute store result score #dom_prog {ns}.data run scoreboard players get @s {ns}.mp.dom_progress
 
 # Increase progress (2 per tick when capturing)
 scoreboard players add @s {ns}.mp.dom_progress 2
@@ -131,10 +131,10 @@ scoreboard players add @s {ns}.mp.dom_progress 2
 execute if score @s {ns}.mp.dom_progress matches 101.. run scoreboard players set @s {ns}.mp.dom_progress 100
 
 # If crossed 0 from negative (was blue, now contested), briefly neutral
-execute if score #_dom_prog {ns}.data matches ..-1 if score @s {ns}.mp.dom_progress matches 0.. run tellraw @a [{MGS_TAG},{{"text":"Domination point neutralized!","color":"yellow"}}]
-execute if score #_dom_prog {ns}.data matches ..-1 if score @s {ns}.mp.dom_progress matches 0.. run playsound minecraft:block.note_block.bass player @a ~ ~ ~ 1 0.5
-execute if score #_dom_prog {ns}.data matches ..-1 if score @s {ns}.mp.dom_progress matches 0.. run scoreboard players set @s {ns}.mp.dom_owner 0
-execute if score #_dom_prog {ns}.data matches ..-1 if score @s {ns}.mp.dom_progress matches 0.. run data modify entity @n[tag={ns}.dom_label,distance=..1] text.color set value "yellow"
+execute if score #dom_prog {ns}.data matches ..-1 if score @s {ns}.mp.dom_progress matches 0.. run tellraw @a [{MGS_TAG},{{"text":"Domination point neutralized!","color":"yellow"}}]
+execute if score #dom_prog {ns}.data matches ..-1 if score @s {ns}.mp.dom_progress matches 0.. run playsound minecraft:block.note_block.bass player @a ~ ~ ~ 1 0.5
+execute if score #dom_prog {ns}.data matches ..-1 if score @s {ns}.mp.dom_progress matches 0.. run scoreboard players set @s {ns}.mp.dom_owner 0
+execute if score #dom_prog {ns}.data matches ..-1 if score @s {ns}.mp.dom_progress matches 0.. run data modify entity @n[tag={ns}.dom_label,distance=..1] text.color set value "yellow"
 
 # If reached 100, captured by red
 execute if score @s {ns}.mp.dom_progress matches 100 unless score @s {ns}.mp.dom_owner matches 1 run tellraw @a [{MGS_TAG},{{"text":"Red","color":"red"}},{{"text":" captured a point!","color":"yellow"}}]
@@ -146,17 +146,17 @@ execute if score @s {ns}.mp.dom_progress matches 100 unless score @s {ns}.mp.dom
 	## DOM: Capture for blue (progress goes -)
 	write_versioned_function("multiplayer/gamemodes/dom/capture_blue", f"""
 # Decrease progress (2 per tick when capturing)
-execute store result score #_dom_prog {ns}.data run scoreboard players get @s {ns}.mp.dom_progress
+execute store result score #dom_prog {ns}.data run scoreboard players get @s {ns}.mp.dom_progress
 scoreboard players remove @s {ns}.mp.dom_progress 2
 
 # Cap at -100
 execute if score @s {ns}.mp.dom_progress matches ..-101 run scoreboard players set @s {ns}.mp.dom_progress -100
 
 # If crossed 0 from positive (was red, now contested)
-execute if score #_dom_prog {ns}.data matches 1.. if score @s {ns}.mp.dom_progress matches ..0 run tellraw @a [{MGS_TAG},{{"text":"Domination point neutralized!","color":"yellow"}}]
-execute if score #_dom_prog {ns}.data matches 1.. if score @s {ns}.mp.dom_progress matches ..0 run playsound minecraft:block.note_block.bass player @a ~ ~ ~ 1 0.5
-execute if score #_dom_prog {ns}.data matches 1.. if score @s {ns}.mp.dom_progress matches ..0 run scoreboard players set @s {ns}.mp.dom_owner 0
-execute if score #_dom_prog {ns}.data matches 1.. if score @s {ns}.mp.dom_progress matches ..0 run data modify entity @n[tag={ns}.dom_label,distance=..1] text.color set value "yellow"
+execute if score #dom_prog {ns}.data matches 1.. if score @s {ns}.mp.dom_progress matches ..0 run tellraw @a [{MGS_TAG},{{"text":"Domination point neutralized!","color":"yellow"}}]
+execute if score #dom_prog {ns}.data matches 1.. if score @s {ns}.mp.dom_progress matches ..0 run playsound minecraft:block.note_block.bass player @a ~ ~ ~ 1 0.5
+execute if score #dom_prog {ns}.data matches 1.. if score @s {ns}.mp.dom_progress matches ..0 run scoreboard players set @s {ns}.mp.dom_owner 0
+execute if score #dom_prog {ns}.data matches 1.. if score @s {ns}.mp.dom_progress matches ..0 run data modify entity @n[tag={ns}.dom_label,distance=..1] text.color set value "yellow"
 
 # If reached -100, captured by blue
 execute if score @s {ns}.mp.dom_progress matches -100 unless score @s {ns}.mp.dom_owner matches 2 run tellraw @a [{MGS_TAG},{{"text":"Blue","color":"blue"}},{{"text":" captured a point!","color":"yellow"}}]
@@ -168,12 +168,12 @@ execute if score @s {ns}.mp.dom_progress matches -100 unless score @s {ns}.mp.do
 	## DOM: Score tick - +1 per owned point
 	write_versioned_function("multiplayer/gamemodes/dom/score_tick", f"""
 # Count red-owned and blue-owned points
-execute store result score #_dom_r {ns}.data if entity @e[tag={ns}.dom_point,scores={{{ns}.mp.dom_owner=1}}]
-execute store result score #_dom_b {ns}.data if entity @e[tag={ns}.dom_point,scores={{{ns}.mp.dom_owner=2}}]
+execute store result score #dom_r {ns}.data if entity @e[tag={ns}.dom_point,scores={{{ns}.mp.dom_owner=1}}]
+execute store result score #dom_b {ns}.data if entity @e[tag={ns}.dom_point,scores={{{ns}.mp.dom_owner=2}}]
 
 # Add to team scores
-scoreboard players operation #red {ns}.mp.team += #_dom_r {ns}.data
-scoreboard players operation #blue {ns}.mp.team += #_dom_b {ns}.data
+scoreboard players operation #red {ns}.mp.team += #dom_r {ns}.data
+scoreboard players operation #blue {ns}.mp.team += #dom_b {ns}.data
 
 # Refresh DOM sidebar with updated point ownership
 function {ns}:v{version}/multiplayer/refresh_sidebar_dom

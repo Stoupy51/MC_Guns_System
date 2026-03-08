@@ -42,7 +42,7 @@ tellraw @s {sep}
 
 # Copy maps list for iteration
 data modify storage {ns}:temp _map_iter set from storage {ns}:maps missions
-scoreboard players set #_map_idx {ns}.data 0
+scoreboard players set #map_idx {ns}.data 0
 execute if data storage {ns}:temp _map_iter[0] run function {ns}:v{version}/missions/map_select_entry with storage {ns}:temp _map_iter[0]
 
 execute unless data storage {ns}:maps missions[0] run tellraw @s [{{"text":"  No mission maps! Create one in the map editor first.","color":"red"}}]
@@ -54,6 +54,6 @@ tellraw @s {sep}
 $tellraw @s ["",{{"text":"  "}},{{"text":"[$(name)]","color":"green","click_event":{{"action":"run_command","command":"/data modify storage {ns}:missions game.map_id set value \\"$(id)\\""}},"hover_event":{{"action":"show_text","value":"Click to select '$(name)'"}}}},{{"text":" - $(description)","color":"gray"}}]
 
 data remove storage {ns}:temp _map_iter[0]
-scoreboard players add #_map_idx {ns}.data 1
+scoreboard players add #map_idx {ns}.data 1
 execute if data storage {ns}:temp _map_iter[0] run function {ns}:v{version}/missions/map_select_entry with storage {ns}:temp _map_iter[0]
 """)  # noqa: E501

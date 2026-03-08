@@ -13,7 +13,7 @@ from .helpers import MGS_TAG, btn
 
 MAX_MAPS = 50
 
-# ── Element Definitions ───────────────────────────────────────────
+# Element Definitions ───────────────────────────────────────────
 # All element types across all modes. Each has display properties, save info, and egg model.
 # save_type: "base" (single, handled specially), "spawn" (list of [x,y,z,yaw]), "point" (list of [x,y,z])
 #            "zb_object" (list of compound objects with pos/rotation/group_id + extra fields)
@@ -52,7 +52,7 @@ ALL_ELEMENTS: dict[str, JsonDict] = {
                            "defaults": {}},
 }
 
-# ── Mode Definitions ──────────────────────────────────────────────
+# Mode Definitions ──────────────────────────────────────────────
 # Each mode defines which elements are available and their slot assignments.
 # storage_key: key in {ns}:maps storage (e.g., multiplayer, zombies, missions)
 EDITOR_MODES: dict[str, JsonDict] = {
@@ -114,7 +114,7 @@ def generate_map_editor() -> None:
 
 	sep = '{"text":"============================================","color":"dark_gray"}'
 
-	# ── Scoreboards & Storage Init ─────────────────────────────────
+	# Scoreboards & Storage Init ─────────────────────────────────
 	write_load_file(f"""
 # Map editor scoreboards
 scoreboard objectives add {ns}.mp.map_edit dummy
@@ -135,7 +135,7 @@ scoreboard objectives add {ns}.class_menu minecraft.used:minecraft.warped_fungus
 {storage_init_lines}
 """)
 
-	# ── Advancement for egg placement detection ─────────────────────
+	# Advancement for egg placement detection ─────────────────────
 	adv: JsonDict = {
 		"criteria": {
 			"requirement": {
@@ -160,19 +160,19 @@ scoreboard objectives add {ns}.class_menu minecraft.used:minecraft.warped_fungus
 	}
 	Mem.ctx.data[ns].advancements[f"v{version}/maps/editor/on_place"] = set_json_encoder(Advancement(adv), max_level=-1)
 
-	# ── Mode tab buttons (used in all list views) ──────────────────
+	# Mode tab buttons (used in all list views) ──────────────────
 	mode_tabs = ",".join(
 		btn(mode_info["name"], f"/function {ns}:v{version}/maps/editor/list/{mode_key}", mode_info["color"], f"View {mode_info['name']} maps")
 		for mode_key, mode_info in EDITOR_MODES.items()
 	)
 
-	# ── Menu Entry Point ───────────────────────────────────────────
+	# Menu Entry Point ───────────────────────────────────────────
 	write_versioned_function("maps/editor/menu", f"""
 # Default: show multiplayer maps
 function {ns}:v{version}/maps/editor/list/multiplayer
 """)
 
-	# ── Per-Mode Map List ──────────────────────────────────────────
+	# Per-Mode Map List ──────────────────────────────────────────
 	for mode_key, mode_info in EDITOR_MODES.items():
 		sk = mode_info["storage_key"]
 		create_btn = btn("+ Create New Map", f"/function {ns}:v{version}/maps/editor/create/{mode_key}", "green", f"Create a new {mode_info['name']} map")
@@ -200,7 +200,7 @@ tellraw @s ["  ",{create_btn}]
 tellraw @s {sep}
 """)
 
-	# ── Menu Entry (recursive - one map per call) ──────────────────
+	# Menu Entry (recursive - one map per call) ──────────────────
 	write_versioned_function("maps/editor/menu_entry", f"""
 # Read current map name and id
 data modify storage {ns}:temp map_menu.current set from storage {ns}:temp map_menu.list[0]
@@ -225,7 +225,7 @@ execute if data storage {ns}:temp map_menu.list[0] run function {ns}:v{version}/
 $tellraw @s ["  ",{{"text":"$(name)","color":"white"}},{{"text":" ($(id))","color":"gray"}}," ",[{{"text":"[","color":"yellow","click_event":{{"action":"run_command","command":"/function {ns}:v{version}/maps/editor/enter {{idx:$(idx),mode:$(mode)}}"}},"hover_event":{{"action":"show_text","value":"Edit this map"}}}},{{"text":"Edit"}},"]"]," ",[{{"text":"[","color":"red","click_event":{{"action":"run_command","command":"/function {ns}:v{version}/maps/editor/delete {{idx:$(idx),mode:$(mode)}}"}},"hover_event":{{"action":"show_text","value":"Delete this map"}}}},{{"text":"Delete"}},"]"]]
 """)
 
-	# ── Map Creation (per mode) ────────────────────────────────────
+	# Map Creation (per mode) ────────────────────────────────────
 	for mode_key, mode_info in EDITOR_MODES.items():
 		sk = mode_info["storage_key"]
 		create_snbt = r"id:'my_map',name:'My Map',description:'A new map',base_coordinates:[0,64,0]"
@@ -243,7 +243,7 @@ tellraw @s ["  ",{back_btn}]
 tellraw @s {sep}
 """)
 
-	# ── Delete Map (macro with mode) ───────────────────────────────
+	# Delete Map (macro with mode) ───────────────────────────────
 	write_versioned_function("maps/editor/delete", f"""
 $data remove storage {ns}:maps $(mode)[$(idx)]
 tellraw @s [{MGS_TAG},{{"text":"Map deleted.","color":"red"}}]
@@ -252,7 +252,7 @@ tellraw @s [{MGS_TAG},{{"text":"Map deleted.","color":"red"}}]
 $function {ns}:v{version}/maps/editor/list/$(mode)
 """)
 
-	# ── Enter Editor Mode (macro with mode+idx) ────────────────────
+	# Enter Editor Mode (macro with mode+idx) ────────────────────
 	mode_score_lines = "\n".join(
 		f'execute if data storage {ns}:temp map_edit{{mode:"{mk}"}} run scoreboard players set @s {ns}.mp.map_mode {i}'
 		for i, mk in enumerate(MODE_LIST)
@@ -313,7 +313,7 @@ tellraw @s [{MGS_TAG},{{"text":"Use ","color":"gray"}},{btn("Save & Exit", f"/fu
 $data modify storage {ns}:temp map_edit.map set from storage {ns}:maps $(mode)[$(idx)]
 """)
 
-	# ── Summon Existing Elements ───────────────────────────────────
+	# Summon Existing Elements ───────────────────────────────────
 	summon_dispatch = "\n".join(
 		f'execute if score @s {ns}.mp.map_mode matches {i} run function {ns}:v{version}/maps/editor/summon_existing/{mk}'
 		for i, mk in enumerate(MODE_LIST)
@@ -366,7 +366,7 @@ function {ns}:v{version}/maps/editor/summon_base_marker with storage {ns}:temp _
 			"\n".join(summon_lines) if summon_lines else "# No mode-specific elements to summon"
 		)
 
-	# ── Summon helpers (shared) ────────────────────────────────────
+	# Summon helpers (shared) ────────────────────────────────────
 	write_versioned_function("maps/editor/summon_base_marker", f"""
 $summon minecraft:marker $(x) $(y) $(z) {{Tags:["{ns}.map_element","{ns}.element.base_coordinates"]}}
 """)
@@ -517,7 +517,7 @@ execute if data storage {ns}:temp _zb_iter[0] run function {ns}:v{version}/maps/
 $summon minecraft:marker $(x) $(y) $(z) {{Tags:["{ns}.map_element","$(tag)","{ns}.new_zb_marker"]}}
 """)
 
-	# ── Give Editor Tools (dispatch by mode score) ─────────────────
+	# Give Editor Tools (dispatch by mode score) ─────────────────
 	destroy_cmd = (
 		f'item replace entity @s hotbar.8 with minecraft:bat_spawn_egg'
 		f'[minecraft:item_name={{"text":"✘ DESTROY","color":"dark_red","italic":false,"bold":true}},'
@@ -601,7 +601,7 @@ $summon minecraft:marker $(x) $(y) $(z) {{Tags:["{ns}.map_element","$(tag)","{ns
 			"\n".join(egg_cmds) if egg_cmds else "# No eggs for this mode"
 		)
 
-	# ── On Place (Advancement Reward) ──────────────────────────────
+	# On Place (Advancement Reward) ──────────────────────────────
 	write_versioned_function("maps/editor/on_place", f"""
 # Revoke advancement immediately so it can trigger again
 advancement revoke @s only {ns}:v{version}/maps/editor/on_place
@@ -613,7 +613,7 @@ execute unless score @s {ns}.mp.map_edit matches 1 run return fail
 execute as @n[tag={ns}.new_element] at @s run function {ns}:v{version}/maps/editor/process_element
 """)
 
-	# ── Process Placed Element (universal - handles all types) ─────
+	# Process Placed Element (universal - handles all types) ─────
 	process_lines: list[str] = []
 	# Destroy handler first
 	process_lines.append('# DESTROY handler')
@@ -664,7 +664,7 @@ execute as @n[tag={ns}.new_element] at @s run function {ns}:v{version}/maps/edit
 
 	write_versioned_function("maps/editor/process_element", "\n".join(process_lines))
 
-	# ── Handle Base Coordinates ────────────────────────────────────
+	# Handle Base Coordinates ────────────────────────────────────
 	write_versioned_function("maps/editor/handle_base", f"""
 # Kill any existing base marker
 kill @e[tag={ns}.element.base_coordinates]
@@ -684,7 +684,7 @@ function {ns}:v{version}/maps/editor/summon_base_marker with storage {ns}:temp _
 execute as @a[tag={ns}.map_editor] run tellraw @s [{MGS_TAG},{{"text":"Base coordinates set!","color":"light_purple"}}]
 """)
 
-	# ── Handle Spawn Point (universal) ─────────────────────────────
+	# Handle Spawn Point (universal) ─────────────────────────────
 	spawn_tag_lines = "\n".join(
 		f'execute if entity @s[tag={ns}.element.{etype}] run data modify storage {ns}:temp _pos.tag set value "{ns}.element.{etype}"'
 		for etype, einfo in ALL_ELEMENTS.items() if einfo["save_type"] == "spawn"
@@ -714,7 +714,7 @@ tag @n[tag={ns}.new_spawn_marker] remove {ns}.new_spawn_marker
 {spawn_msg_lines}
 """)
 
-	# ── Handle Point Element (universal) ───────────────────────────
+	# Handle Point Element (universal) ───────────────────────────
 	point_tag_lines = "\n".join(
 		f'execute if entity @s[tag={ns}.element.{etype}] run data modify storage {ns}:temp _pos.tag set value "{ns}.element.{etype}"'
 		for etype, einfo in ALL_ELEMENTS.items() if einfo["save_type"] == "point"
@@ -740,7 +740,7 @@ function {ns}:v{version}/maps/editor/summon_point_marker with storage {ns}:temp 
 {point_msg_lines}
 """)
 
-	# ── Handle Enemy Element (missions) ────────────────────────────
+	# Handle Enemy Element (missions) ────────────────────────────
 	write_versioned_function("maps/editor/handle_enemy", f"""
 # Initialize default function if missing
 execute unless data storage {ns}:temp map_edit.map.default_enemy_function run data modify storage {ns}:temp map_edit.map.default_enemy_function set value "{ns}:v{version}/mob/default/level_1 {{\\"entity\\":\\"pillager\\"}}"
@@ -761,7 +761,7 @@ tag @e[tag={ns}.new_enemy_marker] remove {ns}.new_enemy_marker
 tellraw @a[tag={ns}.map_editor] [{MGS_TAG},{{"text":"Enemy placed!","color":"red"}}]
 """)
 
-	# ── Handle ZB Object (zombies compound elements) ───────────────
+	# Handle ZB Object (zombies compound elements) ───────────────
 	# Detect type, copy defaults, get rotation, summon marker with data
 	zb_elements = {etype: einfo for etype, einfo in ALL_ELEMENTS.items() if einfo["save_type"] == "zb_object"}
 
@@ -777,7 +777,7 @@ tellraw @a[tag={ns}.map_editor] [{MGS_TAG},{{"text":"Enemy placed!","color":"red
 		zb_msg_lines.append(f'execute if entity @s[tag={ns}.element.{etype}] run tellraw @a[tag={ns}.map_editor] [{MGS_TAG},{{"text":"{einfo["name"]} placed!","color":"{einfo["color"]}"}}]')
 
 	# All zb_object elements get a 180° yaw offset
-	zb_yaw_offset_line = f'scoreboard players add #_yaw {ns}.data 180'
+	zb_yaw_offset_line = f'scoreboard players add #yaw {ns}.data 180'
 
 	write_versioned_function("maps/editor/handle_zb_object", f"""
 # Get position for permanent marker
@@ -798,13 +798,13 @@ execute as @n[tag={ns}.new_zb_marker] run data modify entity @s data set from st
 execute as @n[tag={ns}.new_zb_marker] run data modify entity @s data.group_id set from storage {ns}:temp map_edit.zb_defaults.group_id
 
 # Get player rotation as yaw
-execute store result score #_yaw {ns}.data run data get entity @p[tag={ns}.map_editor] Rotation[0]
+execute store result score #yaw {ns}.data run data get entity @p[tag={ns}.map_editor] Rotation[0]
 
 # Apply 180° yaw offset
 {zb_yaw_offset_line}
 
 # Store yaw on marker
-execute as @n[tag={ns}.new_zb_marker] store result entity @s data.yaw float 1 run scoreboard players get #_yaw {ns}.data
+execute as @n[tag={ns}.new_zb_marker] store result entity @s data.yaw float 1 run scoreboard players get #yaw {ns}.data
 
 # For doors: capture block from player's offhand (required)
 execute if entity @s[tag={ns}.element.door] as @p[tag={ns}.map_editor] run data modify storage {ns}:temp _zb_offhand_block set from entity @s equipment.offhand.id
@@ -820,14 +820,14 @@ tag @e[tag={ns}.new_zb_marker] remove {ns}.new_zb_marker
 {chr(10).join(zb_msg_lines)}
 """)
 
-	# ── Handle DESTROY ─────────────────────────────────────────────
+	# Handle DESTROY ─────────────────────────────────────────────
 	write_versioned_function("maps/editor/handle_destroy", f"""
 # Find the nearest map element marker (within 3 blocks)
 execute at @s unless entity @n[tag={ns}.map_element,distance=..3] run tellraw @a[tag={ns}.map_editor] [{MGS_TAG},{{"text":"No element found within 3 blocks!","color":"red"}}]
 execute at @s as @n[tag={ns}.map_element,distance=..3] run function {ns}:v{version}/maps/editor/destroy_element
 """)
 
-	# ── Destroy Element (universal) ────────────────────────────────
+	# Destroy Element (universal) ────────────────────────────────
 	destroy_msg_lines = "\n".join(
 		f'execute if entity @s[tag={ns}.element.{etype}] run tellraw @a[tag={ns}.map_editor] [{MGS_TAG},{{"text":"{einfo["name"]} removed!","color":"{einfo["color"]}"}}]'
 		for etype, einfo in ALL_ELEMENTS.items() if einfo["save_type"] != "config"
@@ -845,7 +845,7 @@ execute if data entity @s data run tellraw @a[tag={ns}.map_editor] ["  ",{{"text
 kill @s
 """)
 
-	# ── Handle Config (missions utility) ───────────────────────────
+	# Handle Config (missions utility) ───────────────────────────
 	config_lines: list[str] = []
 	config_lines.append("# Initialize default enemy function if missing")
 	config_lines.append(f'execute unless data storage {ns}:temp map_edit.map.default_enemy_function run data modify storage {ns}:temp map_edit.map.default_enemy_function set value "{ns}:v{version}/mob/default/level_1 {{\\"entity\\":\\"pillager\\"}}"')
@@ -885,7 +885,7 @@ kill @s
 
 	write_versioned_function("maps/editor/handle_config", "\n".join(config_lines))
 
-	# ── Handle ZB Defaults (configure defaults for new zombies elements) ──
+	# Handle ZB Defaults (configure defaults for new zombies elements)
 	def snbt_suggest(val: Any) -> str:
 		"""Format a Python value as SNBT for MC commands."""
 		if isinstance(val, bool):
@@ -949,7 +949,7 @@ kill @s
 
 	write_versioned_function("maps/editor/handle_zb_defaults", "\n".join(zb_defaults_lines))
 
-	# ── Init ZB Defaults (called on editor enter for zombies mode) ─
+	# Init ZB Defaults (called on editor enter for zombies mode) ─
 	init_defaults_lines: list[str] = []
 	init_defaults_lines.append(f'data modify storage {ns}:temp map_edit.zb_defaults.group_id set value 0')
 	for etype, einfo in zb_elements.items():
@@ -958,7 +958,7 @@ kill @s
 
 	write_versioned_function("maps/editor/init_zb_defaults", "\n".join(init_defaults_lines))
 
-	# ── Handle ZB Configure (configure nearest element) ────────────
+	# Handle ZB Configure (configure nearest element) ────────────
 	write_versioned_function("maps/editor/handle_zb_configure", f"""
 # Find the nearest map element marker (within 10 blocks)
 execute at @s as @n[tag={ns}.map_element,distance=..10] run function {ns}:v{version}/maps/editor/show_element_config
@@ -1055,20 +1055,20 @@ execute at @s unless entity @n[tag={ns}.map_element,distance=..10] run tellraw @
 
 	write_versioned_function("maps/editor/show_element_config", "\n".join(zb_config_lines))
 
-	# ── Door Price Propagation (set price on all doors with same link_id) ──
+	# Door Price Propagation (set price on all doors with same link_id)
 	write_versioned_function("maps/editor/set_door_link_price", f"""
 $data modify storage {ns}:temp _door_set_price set value $(price)
-execute store result score #_link_id {ns}.data run data get entity @n[tag={ns}.element.door,distance=..10] data.link_id
+execute store result score #link_id {ns}.data run data get entity @n[tag={ns}.element.door,distance=..10] data.link_id
 execute as @e[tag={ns}.element.door] run function {ns}:v{version}/maps/editor/door_price_if_match
 tellraw @a[tag={ns}.map_editor] [{MGS_TAG},{{"text":"Updated price for all doors with matching link_id","color":"green"}}]
 """)
 
 	write_versioned_function("maps/editor/door_price_if_match", f"""
-execute store result score #_check {ns}.data run data get entity @s data.link_id
-execute if score #_check {ns}.data = #_link_id {ns}.data run data modify entity @s data.price set from storage {ns}:temp _door_set_price
+execute store result score #check {ns}.data run data get entity @s data.link_id
+execute if score #check {ns}.data = #link_id {ns}.data run data modify entity @s data.price set from storage {ns}:temp _door_set_price
 """)
 
-	# ── Save and Exit Editor ───────────────────────────────────────
+	# Save and Exit Editor ───────────────────────────────────────
 	save_dispatch = "\n".join(
 		f'execute if score @s {ns}.mp.map_mode matches {i} run function {ns}:v{version}/maps/editor/save_lists/{mk}'
 		for i, mk in enumerate(MODE_LIST)
@@ -1279,14 +1279,14 @@ $data modify storage {ns}:temp map_edit.map.$(path) append from storage {ns}:tem
 $data modify storage {ns}:maps $(mode)[$(idx)] set from storage {ns}:temp map_edit.map
 """)
 
-	# ── Exit Without Saving ────────────────────────────────────────
+	# Exit Without Saving ────────────────────────────────────────
 	write_versioned_function("maps/editor/exit", f"""
 execute unless score @s {ns}.mp.map_edit matches 1 run return fail
 function {ns}:v{version}/maps/editor/cleanup
 tellraw @s [{MGS_TAG},{{"text":"Exited map editor (changes discarded).","color":"red"}}]
 """)
 
-	# ── Cleanup (shared by save_exit and exit) ─────────────────────
+	# Cleanup (shared by save_exit and exit) ─────────────────────
 	write_versioned_function("maps/editor/cleanup", f"""
 # Kill all editor markers
 kill @e[tag={ns}.map_element]
@@ -1299,7 +1299,7 @@ tag @s remove {ns}.map_editor
 clear @s
 """)
 
-	# ── Editor Tick (universal - shows all element types) ──────────
+	# Editor Tick (universal - shows all element types) ──────────
 	particle_lines: list[str] = []
 	for etype, einfo in ALL_ELEMENTS.items():
 		if einfo["save_type"] == "config":

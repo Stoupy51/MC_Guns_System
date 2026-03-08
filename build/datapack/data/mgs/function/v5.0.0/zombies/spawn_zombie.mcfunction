@@ -4,7 +4,7 @@
 # @within	mgs:v5.0.0/zombies/spawn_tick
 #
 
-# ── Tag nearby unlocked zombie spawns ──
+# Tag nearby unlocked zombie spawns
 # First pass: 32 blocks from any alive player
 execute as @a[scores={mgs.zb.in_game=1},gamemode=!spectator] at @s run tag @e[tag=mgs.spawn_zb,tag=mgs.spawn_unlocked,distance=..32] add mgs.zb_near
 
