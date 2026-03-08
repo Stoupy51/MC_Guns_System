@@ -7,7 +7,7 @@
 #
 
 # Kill any existing base marker
-kill @e[tag=mgs.map_element,tag=mgs.element.base_coordinates]
+kill @e[tag=mgs.element.base_coordinates]
 
 # Get position
 execute store result score #base_x mgs.data run data get entity @s Pos[0]

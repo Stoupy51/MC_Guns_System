@@ -36,7 +36,7 @@ We need to be methodical for zombies. Let's start by listing all the features we
       - price (int): the price to pay to buy the weapon from the wall
       - refill_price (int): the price to pay to refill ammo for the weapon bought from the wall
       - refill_price_pap (int): the price to pay to refill ammo for the Pack-a-Punched weapon
-      - weapon_id (int): the id of the weapon that will be bought when interacting with the wallbuy (defined in storage as well with all weapon config). Can be either a string `"m1911"` or a loot table `{loot_table:"mgs:i/m1911"}`
+      - weapon_id (str | dict[str, str]): the id of the weapon that will be bought when interacting with the wallbuy (defined in storage as well with all weapon config). Can be either a string `"m1911"` or a loot table `{loot_table:"mgs:i/m1911"}`
     - Door (this one is tricky, don't loose it):
       - link_id (int): used to link the door to other doors meaning that when one door with the same link_id is bought, all doors with the same link_id are bought (used for double doors for example). WARNING: Different from group_id since it can depend on the buy order!
       - back_group_id (int): Sometimes, a door can be opened from the other side, leading to a situation like this:
@@ -59,7 +59,7 @@ We need to be methodical for zombies. Let's start by listing all the features we
       - power (boolean): default to true. Need power to be buyable
     - Perk Machine:
       - price (int)
-      - perk_id (int): the id of the perk that will be bought when interacting with the perk machine (defined in storage as well with all perk config).
+      - perk_id (str): the id of the perk that will be bought when interacting with the perk machine (defined in storage as well with all perk config).
       - power (boolean): default to true. Need power to be buyable
     - Mystery Box Pos:
       - can_start_on (boolean): default to true. Indicate if when starting the game this spawn point can be used. (Useful for big maps where you don't want the mystery box to spawn the furthest of the player spawn)

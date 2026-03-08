@@ -15,7 +15,7 @@ title @a[scores={mgs.zb.in_game=1}] title {"text":"GAME OVER","color":"dark_red"
 execute store result score #_final_round mgs.data run data get storage mgs:zombies game.round
 
 # Performance summary
-tellraw @a ["","\n",{"text":"═══════ GAME OVER ═══════","color":"dark_red","bold":true}]
+tellraw @a ["","\n",{"translate": "mgs.game_over","color":"dark_red","bold":true}]
 tellraw @a ["",{"translate": "mgs.final_round","color":"gray"},{"score":{"name":"#_final_round","objective":"mgs.data"},"color":"red","bold":true}]
 
 # Per-player stats

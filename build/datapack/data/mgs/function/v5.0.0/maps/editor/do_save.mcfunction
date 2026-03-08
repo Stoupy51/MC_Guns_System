@@ -19,7 +19,7 @@ execute if data storage mgs:temp _session_enemy_fn run data modify storage mgs:t
 data remove storage mgs:temp _session_enemy_fn
 
 # Rebuild base_coordinates from marker
-execute as @n[tag=mgs.map_element,tag=mgs.element.base_coordinates] at @s run function mgs:v5.0.0/maps/editor/save_base
+execute as @n[tag=mgs.element.base_coordinates] at @s run function mgs:v5.0.0/maps/editor/save_base
 
 # Load base scores for relative computation
 execute store result score #base_x mgs.data run data get storage mgs:temp map_edit.map.base_coordinates[0]

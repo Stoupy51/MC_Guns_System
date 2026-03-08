@@ -6,7 +6,7 @@
 #
 
 # Announce round
-tellraw @a [[{"text":"","color":"gold"},"[",{"translate": "mgs"},"] "],{"text":"────── Round ","color":"gold"},{"score":{"name":"#snd_round","objective":"mgs.data"},"color":"yellow"},{"text":" ──────","color":"gold"}]
+tellraw @a [[{"text":"","color":"gold"},"[",{"translate": "mgs"},"] "],{"translate": "mgs.round","color":"gold"},{"score":{"name":"#snd_round","objective":"mgs.data"},"color":"yellow"},{"text":" ──────","color":"gold"}]
 
 # Show which team attacks
 execute if score #snd_attackers mgs.data matches 1 run tellraw @a [[{"text":"","color":"gold"},"[",{"translate": "mgs"},"] "],{"translate": "mgs.red","color":"red"},{"translate": "mgs.attacks"},{"translate": "mgs.blue","color":"blue"},{"translate": "mgs.defends"}]

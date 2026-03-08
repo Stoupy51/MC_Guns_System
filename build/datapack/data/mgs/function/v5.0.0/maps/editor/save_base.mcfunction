@@ -1,9 +1,9 @@
 
 #> mgs:v5.0.0/maps/editor/save_base
 #
-# @executed	as @n[tag=...] & at @s
+# @executed	at @s
 #
-# @within	mgs:v5.0.0/maps/editor/do_save [ as @n[tag=...] & at @s ]
+# @within	mgs:v5.0.0/maps/editor/do_save [ at @s ]
 #
 
 # @s = base_coordinates marker, at its position
