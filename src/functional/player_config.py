@@ -88,11 +88,17 @@ execute if score @s {ns}.mp.map_edit matches 1 run function {ns}:v{version}/maps
 # 2 = Toggle hitmarker Sound
 # 3 = Toggle damage debug in chat
 # 4 = Open multiplayer class selection menu
+# 6-9 = Zombies perk selection (passive/ability via trigger from dialog)
 # 11-20 = Select class 1-10 (via trigger from class menu)
 execute if score @s {ns}.player.config matches 1 run function {ns}:v{version}/player/config/menu
 execute if score @s {ns}.player.config matches 2 run function {ns}:v{version}/player/config/toggle_hitmarker
 execute if score @s {ns}.player.config matches 3 run function {ns}:v{version}/player/config/toggle_damage_debug
 execute if score @s {ns}.player.config matches 4 run function {ns}:v{version}/multiplayer/select_class
+execute if score @s {ns}.player.config matches 5 run function {ns}:v{version}/zombies/passive_ability_menu
+execute if score @s {ns}.player.config matches 6 run function {ns}:v{version}/zombies/perks/set_passive_1
+execute if score @s {ns}.player.config matches 7 run function {ns}:v{version}/zombies/perks/set_passive_2
+execute if score @s {ns}.player.config matches 8 run function {ns}:v{version}/zombies/perks/set_ability_1
+execute if score @s {ns}.player.config matches 9 run function {ns}:v{version}/zombies/perks/set_ability_2
 {"".join(f'execute if score @s {ns}.player.config matches {10 + class_num} run function {ns}:v{version}/multiplayer/set_class {{class_num:{class_num},class_name:"{CLASSES[class_id]["name"]}"}}{chr(10)}' for class_id, class_num in CLASS_IDS.items())}
 # === Custom Loadout Editor ===
 # 100 = Open loadout editor (create new)

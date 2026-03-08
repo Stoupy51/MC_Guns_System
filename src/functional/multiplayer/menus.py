@@ -51,8 +51,8 @@ def generate_menus() -> None:
 	team_btn_blue = btn("Blue", f"/function {ns}:v{version}/multiplayer/join_blue", "blue", "Join Blue Team")
 	team_btn_auto = btn("Auto", f"/function {ns}:v{version}/multiplayer/auto_assign_team", "yellow", "Auto-balance assign")
 
-	actions_line = f'["",["","  ",{{"text":"Actions"}},": "],{start_btn},{{"text":" "}},{stop_btn},{{"text":" "}},{class_btn}]'
-	teams_line = f'["",["","  ",{{"text":"Join Team"}},": "],{team_btn_red},{{"text":" "}},{team_btn_blue},{{"text":" "}},{team_btn_auto}]'
+	actions_line = f'["",["","  ",{{"text":"Actions"}},": "],{start_btn}," ",{stop_btn}," ",{class_btn}]'
+	teams_line = f'["",["","  ",{{"text":"Join Team"}},": "],{team_btn_red}," ",{team_btn_blue}," ",{team_btn_auto}]'
 
 	write_versioned_function("multiplayer/setup", f"""
 tellraw @s {sep}
