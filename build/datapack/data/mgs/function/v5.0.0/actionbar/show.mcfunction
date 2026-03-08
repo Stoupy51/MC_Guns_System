@@ -14,7 +14,7 @@ execute store result score #capacity mgs.data run data get storage mgs:gun all.s
 execute store result score #remaining mgs.data run scoreboard players get @s mgs.remaining_bullets
 
 # Add separator between fire mode and ammo
-data modify storage mgs:temp actionbar.list append value {"text":" "}
+data modify storage mgs:temp actionbar.list append value " "
 
 # Check if capacity > 15 (use numeric display) or <= 15 (use icons)
 execute if score #capacity mgs.data matches 16.. run function mgs:v5.0.0/actionbar/add_numeric_ammo

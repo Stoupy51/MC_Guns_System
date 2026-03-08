@@ -1,7 +1,7 @@
 
 #> mgs:v5.0.0/maps/editor/enter
 #
-# @within	mgs:v5.0.0/maps/editor/menu_entry_display {idx:$(idx),mode:$(mode)}"},"hover_event":{"action":"show_text","value":"Edit this map"}},{"translate": "mgs.edit"},"]"],{"text":" "},[{"text":"[","color":"red","click_event":{"action":"run_command","command":"/function mgs:v5.0.0/maps/editor/delete {idx:$(idx),mode:$(mode)}"},"hover_event":{"action":"show_text","value":"Delete this map"}},{"translate": "mgs.delete"},"]"]]
+# @within	mgs:v5.0.0/maps/editor/menu_entry_display {idx:$(idx),mode:$(mode)}"},"hover_event":{"action":"show_text","value":"Edit this map"}},{"translate": "mgs.edit"},"]"]," ",[{"text":"[","color":"red","click_event":{"action":"run_command","command":"/function mgs:v5.0.0/maps/editor/delete {idx:$(idx),mode:$(mode)}"},"hover_event":{"action":"show_text","value":"Delete this map"}},{"translate": "mgs.delete"},"]"]]
 #
 # @args		idx (unknown)
 #			mode (unknown)
@@ -49,6 +49,9 @@ function mgs:v5.0.0/maps/editor/summon_existing
 
 # Give editor tools (dispatch by mode)
 function mgs:v5.0.0/maps/editor/give_tools
+
+# Initialize zombies element defaults (only for zombies mode)
+execute if score @s mgs.mp.map_mode matches 1 run function mgs:v5.0.0/maps/editor/init_zb_defaults
 
 # Announce
 tellraw @s [[{"text":"","color":"gold"},"[",{"translate": "mgs"},"] "],{"translate": "mgs.entered_map_editor_for","color":"green"},{"text":"","color":"white"},{"storage":"mgs:temp","nbt":"map_edit.map.name"}]

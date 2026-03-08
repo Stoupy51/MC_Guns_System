@@ -5,6 +5,8 @@
 # Elements are placed via spawn eggs detected by advancement (item_used_on_block).
 # Markers in the world represent elements during editing; storage is written on save.
 
+from typing import Any, cast
+
 from stewbeet import Advancement, JsonDict, Mem, set_json_encoder, write_load_file, write_versioned_function
 
 from .helpers import MGS_TAG, btn
@@ -14,6 +16,7 @@ MAX_MAPS = 50
 # ── Element Definitions ───────────────────────────────────────────
 # All element types across all modes. Each has display properties, save info, and egg model.
 # save_type: "base" (single, handled specially), "spawn" (list of [x,y,z,yaw]), "point" (list of [x,y,z])
+#            "zb_object" (list of compound objects with pos/rotation/group_id + extra fields)
 ALL_ELEMENTS: dict[str, JsonDict] = {
 	"base_coordinates":   {"name": "Base Coordinates", "color": "light_purple", "particle": [1.0, 0.0, 1.0], "particle_scale": 1.5, "has_rotation": False, "egg_model": "minecraft:endermite_spawn_egg", "save_type": "base", "emoji": "⬟"},
 	"red_spawn":          {"name": "Red Spawn",        "color": "red",          "particle": [1.0, 0.2, 0.2], "particle_scale": 1.0, "has_rotation": True,  "egg_model": "minecraft:magma_cube_spawn_egg", "save_type": "spawn", "save_path": "spawning_points.red", "emoji": "●"},
@@ -29,6 +32,23 @@ ALL_ELEMENTS: dict[str, JsonDict] = {
 	"enemy":              {"name": "Enemy",             "color": "red",          "particle": [1.0, 0.2, 0.2], "particle_scale": 1.0, "has_rotation": False, "egg_model": "minecraft:pillager_spawn_egg", "save_type": "enemy", "save_path": "enemies", "emoji": "👤"},
 	# Config (utility, no marker)
 	"config":             {"name": "⚙ Config",         "color": "white",        "particle": [1.0, 1.0, 1.0], "particle_scale": 0.5, "has_rotation": False, "egg_model": "minecraft:allay_spawn_egg", "save_type": "config", "emoji": "⚙"},
+	# Zombies elements (zb_object: compound data with pos/rotation/group_id + extra fields)
+	"zombie_spawn":       {"name": "Zombie Spawn",     "color": "dark_green",   "particle": [0.0, 0.5, 0.0], "particle_scale": 1.0, "has_rotation": True,  "egg_model": "minecraft:zombie_spawn_egg",      "save_type": "zb_object", "save_path": "spawning_points.zombies", "emoji": "🧟",
+                           "defaults": {"group_id": 0}},
+	"player_spawn_zb":    {"name": "Player Spawn",     "color": "aqua",         "particle": [0.0, 1.0, 1.0], "particle_scale": 1.0, "has_rotation": True,  "egg_model": "minecraft:villager_spawn_egg",    "save_type": "zb_object", "save_path": "spawning_points.players", "emoji": "●",
+                           "defaults": {"group_id": 0}},
+	"wallbuy":            {"name": "Wallbuy",          "color": "yellow",       "particle": [1.0, 1.0, 0.0], "particle_scale": 1.0, "has_rotation": True,  "egg_model": "minecraft:iron_golem_spawn_egg",  "save_type": "zb_object", "save_path": "wallbuys", "emoji": "🔫",
+                           "defaults": {"group_id": 0, "price": 1000, "refill_price": 500, "refill_price_pap": 2500, "weapon_id": "m1911"},
+                           "yaw_offset": 180},
+	"door":               {"name": "Door",             "color": "gold",         "particle": [1.0, 0.6, 0.0], "particle_scale": 1.0, "has_rotation": True,  "egg_model": "minecraft:hoglin_spawn_egg",      "save_type": "zb_object", "save_path": "doors", "emoji": "🚪",
+                           "defaults": {"group_id": 0, "link_id": 0, "back_group_id": -1, "block": "", "animation": 0, "sound": ""},
+                           "requires_offhand_block": True},
+	"trap":               {"name": "Trap",             "color": "red",          "particle": [1.0, 0.2, 0.2], "particle_scale": 1.0, "has_rotation": True,  "egg_model": "minecraft:cave_spider_spawn_egg", "save_type": "zb_object", "save_path": "traps", "emoji": "⚡",
+                           "defaults": {"group_id": 0, "price": 1000, "type": 0, "duration": 200, "cooldown": 600, "effect_radius": [3.0, 2.0, 3.0], "power": True}},
+	"perk_machine":       {"name": "Perk Machine",     "color": "dark_purple",  "particle": [0.5, 0.0, 0.5], "particle_scale": 1.0, "has_rotation": True,  "egg_model": "minecraft:witch_spawn_egg",       "save_type": "zb_object", "save_path": "perks", "emoji": "🧪",
+                           "defaults": {"group_id": 0, "price": 2500, "perk_id": 1, "power": True}},
+	"mystery_box_pos":    {"name": "Mystery Box Pos",  "color": "light_purple", "particle": [1.0, 0.0, 1.0], "particle_scale": 1.0, "has_rotation": True,  "egg_model": "minecraft:evoker_spawn_egg",      "save_type": "zb_object", "save_path": "mystery_box.positions", "emoji": "📦",
+                           "defaults": {"group_id": 0, "can_start_on": True}},
 }
 
 # ── Mode Definitions ──────────────────────────────────────────────
@@ -57,6 +77,15 @@ EDITOR_MODES: dict[str, JsonDict] = {
 		"storage_key": "zombies",
 		"slots": {
 			"base_coordinates": "hotbar.0",
+			"player_spawn_zb": "hotbar.1",
+			"zombie_spawn": "hotbar.2",
+			"wallbuy": "hotbar.3",
+			"door": "hotbar.4",
+			"trap": "hotbar.5",
+			"perk_machine": "inventory.0",
+			"mystery_box_pos": "inventory.1",
+			"out_of_bounds": "inventory.2",
+			"boundary": "inventory.3",
 		},
 	},
 	"missions": {
@@ -191,7 +220,7 @@ execute if data storage {ns}:temp map_menu.list[0] run function {ns}:v{version}/
 """)
 
 	write_versioned_function("maps/editor/menu_entry_display", f"""
-$tellraw @s ["  ",{{"text":"$(name)","color":"white"}},{{"text":" ($(id))","color":"gray"}},{{"text":" "}},[{{"text":"[","color":"yellow","click_event":{{"action":"run_command","command":"/function {ns}:v{version}/maps/editor/enter {{idx:$(idx),mode:$(mode)}}"}},"hover_event":{{"action":"show_text","value":"Edit this map"}}}},{{"text":"Edit"}},"]"],{{"text":" "}},[{{"text":"[","color":"red","click_event":{{"action":"run_command","command":"/function {ns}:v{version}/maps/editor/delete {{idx:$(idx),mode:$(mode)}}"}},"hover_event":{{"action":"show_text","value":"Delete this map"}}}},{{"text":"Delete"}},"]"]]
+$tellraw @s ["  ",{{"text":"$(name)","color":"white"}},{{"text":" ($(id))","color":"gray"}}," ",[{{"text":"[","color":"yellow","click_event":{{"action":"run_command","command":"/function {ns}:v{version}/maps/editor/enter {{idx:$(idx),mode:$(mode)}}"}},"hover_event":{{"action":"show_text","value":"Edit this map"}}}},{{"text":"Edit"}},"]"]," ",[{{"text":"[","color":"red","click_event":{{"action":"run_command","command":"/function {ns}:v{version}/maps/editor/delete {{idx:$(idx),mode:$(mode)}}"}},"hover_event":{{"action":"show_text","value":"Delete this map"}}}},{{"text":"Delete"}},"]"]]
 """)
 
 	# ── Map Creation (per mode) ────────────────────────────────────
@@ -269,6 +298,9 @@ function {ns}:v{version}/maps/editor/summon_existing
 # Give editor tools (dispatch by mode)
 function {ns}:v{version}/maps/editor/give_tools
 
+# Initialize zombies element defaults (only for zombies mode)
+execute if score @s {ns}.mp.map_mode matches {MODE_LIST.index("zombies")} run function {ns}:v{version}/maps/editor/init_zb_defaults
+
 # Announce
 tellraw @s [{MGS_TAG},{{"text":"Entered map editor for: ","color":"green"}},{{"text":"","color":"white"}},{{"storage":"{ns}:temp","nbt":"map_edit.map.name"}}]
 tellraw @s [{MGS_TAG},{{"text":"Place eggs to add elements. DESTROY egg (hotbar 9) removes nearest element.","color":"yellow"}}]
@@ -320,6 +352,11 @@ function {ns}:v{version}/maps/editor/summon_base_marker with storage {ns}:temp _
 			elif einfo["save_type"] == "enemy":
 				summon_lines.append(f'data modify storage {ns}:temp _enemy_edit_iter set from storage {ns}:temp map_edit.map.{save_path}')
 				summon_lines.append(f'execute if data storage {ns}:temp _enemy_edit_iter[0] run function {ns}:v{version}/maps/editor/summon_enemy_edit_iter')
+				summon_lines.append("")
+			elif einfo["save_type"] == "zb_object":
+				summon_lines.append(f'data modify storage {ns}:temp _zb_iter set from storage {ns}:temp map_edit.map.{save_path}')
+				summon_lines.append(f'data modify storage {ns}:temp _zb_iter_tag set value "{ns}.element.{etype}"')
+				summon_lines.append(f'execute if data storage {ns}:temp _zb_iter[0] run function {ns}:v{version}/maps/editor/summon_zb_object_iter')
 				summon_lines.append("")
 
 		write_versioned_function(
@@ -437,6 +474,47 @@ execute if data storage {ns}:temp _enemy_edit_iter[0] run function {ns}:v{versio
 $summon minecraft:marker $(x) $(y) $(z) {{Tags:["{ns}.map_element","{ns}.element.enemy","{ns}.new_enemy_marker"]}}
 """)
 
+	# Summon zb_object markers - iterates list of compound objects {pos:[x,y,z], rotation:[yaw,pitch], ...}
+	# Tag is read from {ns}:temp _zb_iter_tag (set before calling)
+	write_versioned_function("maps/editor/summon_zb_object_iter", f"""
+# Read relative position from first entry
+execute store result score #rx {ns}.data run data get storage {ns}:temp _zb_iter[0].pos[0]
+execute store result score #ry {ns}.data run data get storage {ns}:temp _zb_iter[0].pos[1]
+execute store result score #rz {ns}.data run data get storage {ns}:temp _zb_iter[0].pos[2]
+
+# Add base to get absolute
+scoreboard players operation #rx {ns}.data += #base_x {ns}.data
+scoreboard players operation #ry {ns}.data += #base_y {ns}.data
+scoreboard players operation #rz {ns}.data += #base_z {ns}.data
+
+# Prepare position for macro
+execute store result storage {ns}:temp _zbpos.x double 1 run scoreboard players get #rx {ns}.data
+execute store result storage {ns}:temp _zbpos.y double 1 run scoreboard players get #ry {ns}.data
+execute store result storage {ns}:temp _zbpos.z double 1 run scoreboard players get #rz {ns}.data
+
+# Set tag
+data modify storage {ns}:temp _zbpos.tag set from storage {ns}:temp _zb_iter_tag
+
+# Summon marker
+function {ns}:v{version}/maps/editor/summon_zb_marker with storage {ns}:temp _zbpos
+
+# Copy all compound data onto the marker
+execute as @n[tag={ns}.new_zb_marker] run data modify entity @s data set from storage {ns}:temp _zb_iter[0]
+
+# Set yaw from rotation for the direction indicator
+execute if data storage {ns}:temp _zb_iter[0].rotation run execute as @n[tag={ns}.new_zb_marker] run data modify entity @s data.yaw set from storage {ns}:temp _zb_iter[0].rotation[0]
+
+tag @e[tag={ns}.new_zb_marker] remove {ns}.new_zb_marker
+
+# Advance to next
+data remove storage {ns}:temp _zb_iter[0]
+execute if data storage {ns}:temp _zb_iter[0] run function {ns}:v{version}/maps/editor/summon_zb_object_iter
+""")
+
+	write_versioned_function("maps/editor/summon_zb_marker", f"""
+$summon minecraft:marker $(x) $(y) $(z) {{Tags:["{ns}.map_element","$(tag)","{ns}.new_zb_marker"]}}
+""")
+
 	# ── Give Editor Tools (dispatch by mode score) ─────────────────
 	destroy_cmd = (
 		f'item replace entity @s hotbar.8 with minecraft:bat_spawn_egg'
@@ -449,12 +527,6 @@ $summon minecraft:marker $(x) $(y) $(z) {{Tags:["{ns}.map_element","{ns}.element
 	give_dispatch = "\n".join(
 		f'execute if score @s {ns}.mp.map_disp matches {i} run function {ns}:v{version}/maps/editor/give_tools/{mk}'
 		for i, mk in enumerate(MODE_LIST)
-	)
-
-	mode_switcher_cmd = (
-		f'item replace entity @s hotbar.7 with minecraft:warped_fungus_on_a_stick'
-		f'[minecraft:item_name={{"text":"Switch Mode","color":"white","italic":false}},'
-		f'minecraft:custom_data={{{ns}:{{mode_switcher:true}}}}]'
 	)
 
 	save_exit_cmd = (
@@ -485,9 +557,6 @@ $summon minecraft:marker $(x) $(y) $(z) {{Tags:["{ns}.map_element","{ns}.element
 # Destroy egg (always in hotbar.8)
 {destroy_cmd}
 
-# Mode switcher (always in hotbar.7)
-{mode_switcher_cmd}
-
 # Utility eggs (bottom-right of inventory)
 {save_exit_cmd}
 {exit_cmd}
@@ -508,6 +577,22 @@ $summon minecraft:marker $(x) $(y) $(z) {{Tags:["{ns}.map_element","{ns}.element
 				f'minecraft:item_model="{einfo["egg_model"]}",'
 				f'minecraft:custom_data={{{ns}:{{editor:true,type:"{etype}"}}}},'
 				f'minecraft:entity_data={{id:"minecraft:bat",NoAI:1b,Silent:1b,Invulnerable:1b,Tags:["{ns}.new_element","{ns}.element.{etype}"]}}]'
+			)
+		# Zombies mode: add defaults config (hotbar.6) and configure element (hotbar.7) tools
+		if mode_key == "zombies":
+			egg_cmds.append(
+				f'item replace entity @s hotbar.6 with minecraft:bat_spawn_egg'
+				f'[minecraft:item_name={{"text":"⚙ Defaults","color":"white","italic":false,"bold":true}},'
+				f'minecraft:item_model="minecraft:allay_spawn_egg",'
+				f'minecraft:custom_data={{{ns}:{{editor:true,type:"zb_defaults"}}}},'
+				f'minecraft:entity_data={{id:"minecraft:bat",NoAI:1b,Silent:1b,Invulnerable:1b,Tags:["{ns}.new_element","{ns}.element.zb_defaults"]}}]'
+			)
+			egg_cmds.append(
+				f'item replace entity @s hotbar.7 with minecraft:bat_spawn_egg'
+				f'[minecraft:item_name={{"text":"🔧 Configure","color":"aqua","italic":false,"bold":true}},'
+				f'minecraft:item_model="minecraft:breeze_spawn_egg",'
+				f'minecraft:custom_data={{{ns}:{{editor:true,type:"zb_configure"}}}},'
+				f'minecraft:entity_data={{id:"minecraft:bat",NoAI:1b,Silent:1b,Invulnerable:1b,Tags:["{ns}.new_element","{ns}.element.zb_configure"]}}]'
 			)
 		write_versioned_function(
 			f"maps/editor/give_tools/{mode_key}",
@@ -546,11 +631,21 @@ execute as @n[tag={ns}.new_element] at @s run function {ns}:v{version}/maps/edit
 			handler = "handle_config"
 		elif save_type == "enemy":
 			handler = "handle_enemy"
+		elif save_type == "zb_object":
+			handler = "handle_zb_object"
 		else:
 			continue
 		process_lines.append(f'execute if entity @s[tag={ns}.element.{etype}] run function {ns}:v{version}/maps/editor/{handler}')
 		process_lines.append(f'execute if entity @s[tag={ns}.element.{etype}] run return run kill @s')
 		process_lines.append("")
+
+	# Zombies utility tool handlers
+	process_lines.append("# Zombies utility tool handlers")
+	process_lines.append(f'execute if entity @s[tag={ns}.element.zb_defaults] run function {ns}:v{version}/maps/editor/handle_zb_defaults')
+	process_lines.append(f'execute if entity @s[tag={ns}.element.zb_defaults] run return run kill @s')
+	process_lines.append(f'execute if entity @s[tag={ns}.element.zb_configure] run function {ns}:v{version}/maps/editor/handle_zb_configure')
+	process_lines.append(f'execute if entity @s[tag={ns}.element.zb_configure] run return run kill @s')
+	process_lines.append("")
 
 	# Editor utility handlers (save, exit, save & exit)
 	process_lines.append("# Editor utility handlers")
@@ -664,6 +759,63 @@ tag @e[tag={ns}.new_enemy_marker] remove {ns}.new_enemy_marker
 tellraw @a[tag={ns}.map_editor] [{MGS_TAG},{{"text":"Enemy placed!","color":"red"}}]
 """)
 
+	# ── Handle ZB Object (zombies compound elements) ───────────────
+	# Detect type, copy defaults, get rotation, summon marker with data
+	zb_elements = {etype: einfo for etype, einfo in ALL_ELEMENTS.items() if einfo["save_type"] == "zb_object"}
+
+	# Build tag detection lines
+	zb_tag_lines: list[str] = []
+	for etype in zb_elements:
+		zb_tag_lines.append(f'execute if entity @s[tag={ns}.element.{etype}] run data modify storage {ns}:temp _zbpos.tag set value "{ns}.element.{etype}"')
+		zb_tag_lines.append(f'execute if entity @s[tag={ns}.element.{etype}] run data modify storage {ns}:temp _zb_new set from storage {ns}:temp map_edit.zb_defaults.{etype}')
+
+	# Build announce lines
+	zb_msg_lines: list[str] = []
+	for etype, einfo in zb_elements.items():
+		zb_msg_lines.append(f'execute if entity @s[tag={ns}.element.{etype}] run tellraw @a[tag={ns}.map_editor] [{MGS_TAG},{{"text":"{einfo["name"]} placed!","color":"{einfo["color"]}"}}]')
+
+	# Yaw offset lines (only for elements with yaw_offset)
+	zb_yaw_offset_lines: list[str] = []
+	for etype, einfo in zb_elements.items():
+		if einfo.get("yaw_offset"):
+			zb_yaw_offset_lines.append(f'execute if entity @s[tag={ns}.element.{etype}] run scoreboard players add #_yaw {ns}.data {einfo["yaw_offset"]}')
+
+	write_versioned_function("maps/editor/handle_zb_object", f"""
+# Get position for permanent marker
+execute store result storage {ns}:temp _zbpos.x double 1 run data get entity @s Pos[0]
+execute store result storage {ns}:temp _zbpos.y double 1 run data get entity @s Pos[1]
+execute store result storage {ns}:temp _zbpos.z double 1 run data get entity @s Pos[2]
+
+# Detect type and copy defaults
+{chr(10).join(zb_tag_lines)}
+
+# Summon marker
+function {ns}:v{version}/maps/editor/summon_zb_marker with storage {ns}:temp _zbpos
+
+# Copy data compound to marker
+execute as @n[tag={ns}.new_zb_marker] run data modify entity @s data set from storage {ns}:temp _zb_new
+
+# Get player rotation as yaw
+execute store result score #_yaw {ns}.data run data get entity @p[tag={ns}.map_editor] Rotation[0]
+
+# Apply yaw offsets for specific element types (e.g. wallbuy faces wall)
+{chr(10).join(zb_yaw_offset_lines)}
+
+# Store yaw on marker
+execute as @n[tag={ns}.new_zb_marker] store result entity @s data.yaw float 1 run scoreboard players get #_yaw {ns}.data
+
+# For doors: capture block from player's offhand
+execute if entity @s[tag={ns}.element.door] as @p[tag={ns}.map_editor] run data modify storage {ns}:temp _zb_offhand_block set from entity @s Inventory[{{Slot:-106b}}].id
+execute if entity @s[tag={ns}.element.door] if data storage {ns}:temp _zb_offhand_block run execute as @n[tag={ns}.new_zb_marker] run data modify entity @s data.block set from storage {ns}:temp _zb_offhand_block
+execute if entity @s[tag={ns}.element.door] unless data storage {ns}:temp _zb_offhand_block run tellraw @a[tag={ns}.map_editor] [{MGS_TAG},{{"text":"⚠ Door placed without block! Hold a block in offhand.","color":"yellow"}}]
+data remove storage {ns}:temp _zb_offhand_block
+
+tag @e[tag={ns}.new_zb_marker] remove {ns}.new_zb_marker
+
+# Announce
+{chr(10).join(zb_msg_lines)}
+""")
+
 	# ── Handle DESTROY ─────────────────────────────────────────────
 	write_versioned_function("maps/editor/handle_destroy", f"""
 # Find the nearest map element marker (within 10 blocks)
@@ -681,6 +833,9 @@ execute positioned as @s unless entity @n[tag={ns}.map_element,distance=..10] ru
 # @s = the map_element marker to destroy
 # Announce what was removed
 {destroy_msg_lines}
+
+# Show data dump if element has compound data (zb_object, enemy, spawn)
+execute if data entity @s data run tellraw @a[tag={ns}.map_editor] ["  ",{{"text":"Data: ","color":"gray"}},{{"entity":"@s","nbt":"data","color":"white"}}]
 
 # Kill the marker
 kill @s
@@ -725,6 +880,140 @@ kill @s
 	config_lines.append(f"tellraw @a[tag={ns}.map_editor] {sep}")
 
 	write_versioned_function("maps/editor/handle_config", "\n".join(config_lines))
+
+	# ── Handle ZB Defaults (configure defaults for new zombies elements) ──
+	def snbt_suggest(val: Any) -> str:
+		"""Format a Python value as SNBT for MC commands."""
+		if isinstance(val, bool):
+			return "1b" if val else "0b"
+		elif isinstance(val, int):
+			return str(val)
+		elif isinstance(val, float):
+			return f"{val}f"
+		elif isinstance(val, str):
+			return f"'{val}'"
+		elif isinstance(val, list):
+			return "[" + ",".join(snbt_suggest(v) for v in cast(list[Any], val)) + "]"
+		return str(val)
+
+	def snbt_compound(d: JsonDict) -> str:
+		"""Convert a Python dict to an SNBT compound string."""
+		return "{" + ",".join(f"{k}:{snbt_suggest(v)}" for k, v in d.items()) + "}"
+
+	zb_defaults_lines: list[str] = []
+	zb_defaults_lines.append(f"tellraw @a[tag={ns}.map_editor] {sep}")
+	zb_defaults_lines.append(f'tellraw @a[tag={ns}.map_editor] [{{"text":"","color":"white","bold":true}},"  ⚙ ",{{"text":"Zombies Element Defaults"}}]')
+	zb_defaults_lines.append(f'tellraw @a[tag={ns}.map_editor] [{{"text":"  New elements use these values on placement","color":"gray","italic":true}}]')
+	zb_defaults_lines.append(f"tellraw @a[tag={ns}.map_editor] {sep}")
+	zb_defaults_lines.append("")
+
+	for etype, einfo in zb_elements.items():
+		zb_defaults_lines.append(
+			f'tellraw @a[tag={ns}.map_editor] [{{"text":"  {einfo["emoji"]} {einfo["name"]}","color":"{einfo["color"]}","bold":true}}]'
+		)
+		for field, default_val in einfo["defaults"].items():
+			snbt_val = snbt_suggest(default_val)
+			edit_btn = btn(
+				"✎",
+				f"/data modify storage {ns}:temp map_edit.zb_defaults.{etype}.{field} set value {snbt_val}",
+				"aqua", f"Click to edit {field}", action="suggest_command"
+			)
+			zb_defaults_lines.append(
+				f'tellraw @a[tag={ns}.map_editor] '
+				f'["    ",{{"text":"{field}: ","color":"gray"}},'
+				f'{{"storage":"{ns}:temp","nbt":"map_edit.zb_defaults.{etype}.{field}","color":"white"}}," ",{edit_btn}]'
+			)
+		zb_defaults_lines.append("")
+
+	zb_defaults_lines.append(f"tellraw @a[tag={ns}.map_editor] {sep}")
+
+	write_versioned_function("maps/editor/handle_zb_defaults", "\n".join(zb_defaults_lines))
+
+	# ── Init ZB Defaults (called on editor enter for zombies mode) ─
+	init_defaults_lines: list[str] = []
+	for etype, einfo in zb_elements.items():
+		compound = snbt_compound(einfo["defaults"])
+		init_defaults_lines.append(f'data modify storage {ns}:temp map_edit.zb_defaults.{etype} set value {compound}')
+
+	write_versioned_function("maps/editor/init_zb_defaults", "\n".join(init_defaults_lines))
+
+	# ── Handle ZB Configure (configure nearest element) ────────────
+	write_versioned_function("maps/editor/handle_zb_configure", f"""
+# Find the nearest map element marker (within 10 blocks)
+execute positioned as @s as @n[tag={ns}.map_element,distance=..10] run function {ns}:v{version}/maps/editor/show_element_config
+execute positioned as @s unless entity @n[tag={ns}.map_element,distance=..10] run tellraw @a[tag={ns}.map_editor] [{MGS_TAG},{{"text":"No element found within 10 blocks!","color":"red"}}]
+""")
+
+	# show_element_config: runs as the nearest marker, shows type-specific fields
+	zb_config_lines: list[str] = []
+	zb_config_lines.append(f"tellraw @a[tag={ns}.map_editor] {sep}")
+
+	# For each zb_object type, show its fields
+	for etype, einfo in zb_elements.items():
+		zb_config_lines.append(
+			f'execute if entity @s[tag={ns}.element.{etype}] run tellraw @a[tag={ns}.map_editor] '
+			f'[{{"text":"  {einfo["emoji"]} {einfo["name"]} Configuration","color":"{einfo["color"]}","bold":true}}]'
+		)
+		for field, default_val in einfo["defaults"].items():
+			snbt_val = snbt_suggest(default_val)
+			edit_btn = btn(
+				"✎",
+				f"/data modify entity @n[tag={ns}.map_element,tag={ns}.element.{etype},distance=..10] data.{field} set value {snbt_val}",
+				"yellow", f"Click to edit {field}", action="suggest_command"
+			)
+			zb_config_lines.append(
+				f'execute if entity @s[tag={ns}.element.{etype}] run tellraw @a[tag={ns}.map_editor] '
+				f'["    ",{{"text":"{field}: ","color":"gray"}},'
+				f'{{"entity":"@s","nbt":"data.{field}","color":"white"}}," ",{edit_btn}]'
+			)
+
+	# For spawn types: show yaw
+	for etype, einfo in ALL_ELEMENTS.items():
+		if einfo["save_type"] != "spawn":
+			continue
+		edit_yaw_btn = btn(
+			"✎",
+			f"/data modify entity @n[tag={ns}.map_element,tag={ns}.element.{etype},distance=..10] data.yaw set value 0.0f",
+			"yellow", "Click to edit yaw", action="suggest_command"
+		)
+		zb_config_lines.append(
+			f'execute if entity @s[tag={ns}.element.{etype}] run tellraw @a[tag={ns}.map_editor] '
+			f'[{{"text":"  {einfo["emoji"]} {einfo["name"]}","color":"{einfo["color"]}","bold":true}}]'
+		)
+		zb_config_lines.append(
+			f'execute if entity @s[tag={ns}.element.{etype}] run tellraw @a[tag={ns}.map_editor] '
+			f'["    ",{{"text":"yaw: ","color":"gray"}},'
+			f'{{"entity":"@s","nbt":"data.yaw","color":"white"}}," ",{edit_yaw_btn}]'
+		)
+
+	# For enemy types: show function
+	edit_fn_btn = btn(
+		"✎",
+		f"/data modify entity @n[tag={ns}.map_element,tag={ns}.element.enemy,distance=..10] data.function set value '{ns}:v{version}/mob/default/level_1'",
+		"yellow", "Click to edit function", action="suggest_command"
+	)
+	zb_config_lines.append(
+		f'execute if entity @s[tag={ns}.element.enemy] run tellraw @a[tag={ns}.map_editor] '
+		f'[{{"text":"  👤 Enemy Configuration","color":"red","bold":true}}]'
+	)
+	zb_config_lines.append(
+		f'execute if entity @s[tag={ns}.element.enemy] run tellraw @a[tag={ns}.map_editor] '
+		f'["    ",{{"text":"function: ","color":"gray"}},'
+		f'{{"entity":"@s","nbt":"data.function","color":"white"}}," ",{edit_fn_btn}]'
+	)
+
+	# For point/base types: no configurable fields
+	for etype, einfo in ALL_ELEMENTS.items():
+		if einfo["save_type"] not in ("point", "base"):
+			continue
+		zb_config_lines.append(
+			f'execute if entity @s[tag={ns}.element.{etype}] run tellraw @a[tag={ns}.map_editor] '
+			f'[{{"text":"  {einfo["emoji"]} {einfo["name"]} — no configurable fields","color":"gray","italic":true}}]'
+		)
+
+	zb_config_lines.append(f"tellraw @a[tag={ns}.map_editor] {sep}")
+
+	write_versioned_function("maps/editor/show_element_config", "\n".join(zb_config_lines))
 
 	# ── Save and Exit Editor ───────────────────────────────────────
 	save_dispatch = "\n".join(
@@ -804,6 +1093,9 @@ function {ns}:v{version}/maps/editor/write_back with storage {ns}:temp map_edit
 			elif einfo["save_type"] == "enemy":
 				reset_lines.append(f'data modify storage {ns}:temp map_edit.map.{save_path} set value []')
 				rebuild_lines.append(f'execute as @e[tag={ns}.map_element,tag={ns}.element.{etype}] at @s run function {ns}:v{version}/maps/editor/save_enemy')
+			elif einfo["save_type"] == "zb_object":
+				reset_lines.append(f'data modify storage {ns}:temp map_edit.map.{save_path} set value []')
+				rebuild_lines.append(f'execute as @e[tag={ns}.map_element,tag={ns}.element.{etype}] at @s run function {ns}:v{version}/maps/editor/save_zb_object {{path:"{save_path}"}}')
 		all_lines: list[str] = []
 		if reset_lines:
 			all_lines.append("# Reset lists")
@@ -896,6 +1188,39 @@ data modify storage {ns}:temp _save_enemy.function set from entity @s data.funct
 data modify storage {ns}:temp map_edit.map.enemies append from storage {ns}:temp _save_enemy
 """)
 
+	## Save a zb_object element (macro: path = wallbuys/doors/etc.)
+	write_versioned_function("maps/editor/save_zb_object", f"""
+# @s = marker entity, at its position
+# Get absolute position
+execute store result score #ax {ns}.data run data get entity @s Pos[0]
+execute store result score #ay {ns}.data run data get entity @s Pos[1]
+execute store result score #az {ns}.data run data get entity @s Pos[2]
+
+# Compute relative coordinates
+scoreboard players operation #ax {ns}.data -= #base_x {ns}.data
+scoreboard players operation #ay {ns}.data -= #base_y {ns}.data
+scoreboard players operation #az {ns}.data -= #base_z {ns}.data
+
+# Copy marker's data compound as the base entry
+data modify storage {ns}:temp _save_zb set from entity @s data
+
+# Overwrite pos with relative coordinates
+data modify storage {ns}:temp _save_zb.pos set value [0, 0, 0]
+execute store result storage {ns}:temp _save_zb.pos[0] int 1 run scoreboard players get #ax {ns}.data
+execute store result storage {ns}:temp _save_zb.pos[1] int 1 run scoreboard players get #ay {ns}.data
+execute store result storage {ns}:temp _save_zb.pos[2] int 1 run scoreboard players get #az {ns}.data
+
+# Build rotation array from yaw (pitch is always 0)
+data modify storage {ns}:temp _save_zb.rotation set value [0.0f, 0.0f]
+data modify storage {ns}:temp _save_zb.rotation[0] set from entity @s data.yaw
+
+# Remove internal-only marker fields (yaw is stored in rotation array)
+data remove storage {ns}:temp _save_zb.yaw
+
+# Append to the correct list
+$data modify storage {ns}:temp map_edit.map.$(path) append from storage {ns}:temp _save_zb
+""")
+
 	## Write map back to storage at the correct index and mode
 	write_versioned_function("maps/editor/write_back", f"""
 $data modify storage {ns}:maps $(mode)[$(idx)] set from storage {ns}:temp map_edit.map
@@ -919,26 +1244,6 @@ tag @s remove {ns}.map_editor
 
 # Clear editor tools
 clear @s
-""")
-
-	# ── Cycle Mode (mode switcher right-click handler) ─────────────
-	mode_count = len(MODE_LIST)
-	cycle_announce = "\n".join(
-		f'execute if score @s {ns}.mp.map_disp matches {i} run tellraw @s [{MGS_TAG},{{"text":"Switched to {EDITOR_MODES[mk]["name"]} mode","color":"{EDITOR_MODES[mk]["color"]}"}}]'
-		for i, mk in enumerate(MODE_LIST)
-	)
-
-	write_versioned_function("maps/editor/cycle_mode", f"""
-# Advance display mode
-scoreboard players add @s {ns}.mp.map_disp 1
-execute if score @s {ns}.mp.map_disp matches {mode_count}.. run scoreboard players set @s {ns}.mp.map_disp 0
-
-# Clear inventory and re-give tools for new mode
-clear @s
-function {ns}:v{version}/maps/editor/give_tools
-
-# Announce
-{cycle_announce}
 """)
 
 	# ── Editor Tick (universal - shows all element types) ──────────
@@ -965,9 +1270,6 @@ function {ns}:v{version}/maps/editor/give_tools
 	write_versioned_function("maps/editor/tick", f"""
 # Only run for players in editor mode
 execute unless score @s {ns}.mp.map_edit matches 1 run return fail
-
-# Mode switcher: detect right-click on warped fungus on a stick
-execute if score @s {ns}.class_menu matches 1.. if items entity @s weapon.mainhand *[custom_data~{{{ns}:{{mode_switcher:true}}}}] run function {ns}:v{version}/maps/editor/cycle_mode
 
 # Show rotation indicator for all markers
 execute as @e[tag={ns}.map_element] run data modify entity @s Rotation[0] set from entity @s data.yaw

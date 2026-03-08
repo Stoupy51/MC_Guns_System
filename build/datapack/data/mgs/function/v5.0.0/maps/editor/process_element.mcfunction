@@ -46,6 +46,33 @@ execute if entity @s[tag=mgs.element.enemy] run return run kill @s
 execute if entity @s[tag=mgs.element.config] run function mgs:v5.0.0/maps/editor/handle_config
 execute if entity @s[tag=mgs.element.config] run return run kill @s
 
+execute if entity @s[tag=mgs.element.zombie_spawn] run function mgs:v5.0.0/maps/editor/handle_zb_object
+execute if entity @s[tag=mgs.element.zombie_spawn] run return run kill @s
+
+execute if entity @s[tag=mgs.element.player_spawn_zb] run function mgs:v5.0.0/maps/editor/handle_zb_object
+execute if entity @s[tag=mgs.element.player_spawn_zb] run return run kill @s
+
+execute if entity @s[tag=mgs.element.wallbuy] run function mgs:v5.0.0/maps/editor/handle_zb_object
+execute if entity @s[tag=mgs.element.wallbuy] run return run kill @s
+
+execute if entity @s[tag=mgs.element.door] run function mgs:v5.0.0/maps/editor/handle_zb_object
+execute if entity @s[tag=mgs.element.door] run return run kill @s
+
+execute if entity @s[tag=mgs.element.trap] run function mgs:v5.0.0/maps/editor/handle_zb_object
+execute if entity @s[tag=mgs.element.trap] run return run kill @s
+
+execute if entity @s[tag=mgs.element.perk_machine] run function mgs:v5.0.0/maps/editor/handle_zb_object
+execute if entity @s[tag=mgs.element.perk_machine] run return run kill @s
+
+execute if entity @s[tag=mgs.element.mystery_box_pos] run function mgs:v5.0.0/maps/editor/handle_zb_object
+execute if entity @s[tag=mgs.element.mystery_box_pos] run return run kill @s
+
+# Zombies utility tool handlers
+execute if entity @s[tag=mgs.element.zb_defaults] run function mgs:v5.0.0/maps/editor/handle_zb_defaults
+execute if entity @s[tag=mgs.element.zb_defaults] run return run kill @s
+execute if entity @s[tag=mgs.element.zb_configure] run function mgs:v5.0.0/maps/editor/handle_zb_configure
+execute if entity @s[tag=mgs.element.zb_configure] run return run kill @s
+
 # Editor utility handlers
 execute if entity @s[tag=mgs.element.editor_save_exit] run execute as @p[tag=mgs.map_editor] run function mgs:v5.0.0/maps/editor/save_exit
 execute if entity @s[tag=mgs.element.editor_save_exit] run return run kill @s

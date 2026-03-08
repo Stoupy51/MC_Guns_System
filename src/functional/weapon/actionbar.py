@@ -20,7 +20,7 @@ execute store result score #capacity {ns}.data run data get storage {ns}:gun all
 execute store result score #remaining {ns}.data run scoreboard players get @s {ns}.{REMAINING_BULLETS}
 
 # Add separator between fire mode and ammo
-data modify storage {ns}:temp actionbar.list append value {{"text":" "}}
+data modify storage {ns}:temp actionbar.list append value " "
 
 # Check if capacity > 15 (use numeric display) or <= 15 (use icons)
 execute if score #capacity {ns}.data matches 16.. run function {ns}:v{version}/actionbar/add_numeric_ammo

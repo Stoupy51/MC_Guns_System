@@ -315,10 +315,11 @@ $execute if score #random {ns}.data matches 31 run loot replace entity @s $(slot
     map_line = f'["  ",{map_editor_btn}]'
 
     # --- Multiplayer & Missions ---
-    mp_header = '[{"text":"","color":"aqua","bold":true},"⚔ ",{"text":"Multiplayer & Missions"}]'
+    mp_header = '[{"text":"","color":"aqua","bold":true},"⚔ ",{"text":"Multiplayer, Zombies, Missions"}]'
     mp_setup_btn = btn("Game Setup", f"/function {ns}:v{version}/multiplayer/setup", "green", "Open the multiplayer game setup menu")
+    zb_setup_btn = btn("Zombies Setup", f"/function {ns}:v{version}/zombies/setup", "green", "Open the zombies setup menu")
     missions_setup_btn = btn("Mission Setup", f"/function {ns}:v{version}/missions/setup", "green", "Open the mission setup menu")
-    mp_line = f'["  ",{mp_setup_btn},{{"text":" "}},{missions_setup_btn}]'
+    mp_line = f'["  ",{mp_setup_btn}," ",{zb_setup_btn}," ",{missions_setup_btn}]'
 
     write_function(f"{ns}:config", f"""tellraw @s {sep}
 tellraw @s {title}

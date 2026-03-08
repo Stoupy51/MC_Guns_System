@@ -399,6 +399,43 @@ scoreboard objectives add mgs.mob.timer dummy
 scoreboard objectives add mgs.mob.active_time dummy
 scoreboard objectives add mgs.mob.sleep_time dummy
 
+## Zombies scoreboards
+scoreboard objectives add mgs.zb.in_game dummy
+scoreboard objectives add mgs.zb.points dummy
+scoreboard objectives add mgs.zb.kills dummy
+scoreboard objectives add mgs.zb.downs dummy
+
+# Perk scoreboards
+# zb.passive: 0=none, 1=points_x1.2, 2=powerup_x1.5
+# zb.ability: 0=none, 1=coward, 2=guardian
+# Ability cooldown (0 = ready, 1+ = on cooldown in rounds remaining)
+scoreboard objectives add mgs.zb.passive dummy
+scoreboard objectives add mgs.zb.ability dummy
+scoreboard objectives add mgs.zb.ability_cd dummy
+scoreboard objectives add mgs.zb.perk.juggernog dummy
+scoreboard objectives add mgs.zb.perk.speed_cola dummy
+scoreboard objectives add mgs.zb.perk.double_tap dummy
+scoreboard objectives add mgs.zb.perk.quick_revive dummy
+# TODO: more perks?
+
+# Constants
+scoreboard players set #20 mgs.data 20
+scoreboard players set #60 mgs.data 60
+scoreboard players set #100 mgs.data 100
+scoreboard players set #150 mgs.data 150
+scoreboard players set #4 mgs.data 4
+
+# Initialize zombies game state
+execute unless data storage mgs:zombies game run data modify storage mgs:zombies game set value {state:"lobby",map_id:"",round:0}
+
+# Initialize mystery box base pool (can be extended via function tag)
+execute unless data storage mgs:zombies mystery_box_pool run data modify storage mgs:zombies mystery_box_pool set value []
+
+# Config: points per kill, points per hit
+execute unless score #zb_points_kill mgs.config matches 1.. run scoreboard players set #zb_points_kill mgs.config 100
+execute unless score #zb_points_hit mgs.config matches 1.. run scoreboard players set #zb_points_hit mgs.config 10
+execute unless score #zb_mystery_box_price mgs.config matches 1.. run scoreboard players set #zb_mystery_box_price mgs.config 950
+
 ## Multiplayer scoreboards
 # Team assignment (1 = red, 2 = blue, 0 = none/spectator)
 scoreboard objectives add mgs.mp.team dummy

@@ -9,6 +9,9 @@
 # Block shooting during multiplayer prep phase
 execute if score @s mgs.mp.in_game matches 1 if data storage mgs:multiplayer game{state:"preparing"} run return run scoreboard players set @s mgs.pending_clicks 0
 
+# Block shooting during zombies prep phase
+execute if score @s mgs.zb.in_game matches 1 if data storage mgs:zombies game{state:"preparing"} run return run scoreboard players set @s mgs.pending_clicks 0
+
 # Decrease pending clicks by 1
 scoreboard players remove @s mgs.pending_clicks 1
 

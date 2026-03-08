@@ -22,7 +22,7 @@ def generate_missions_menus() -> None:
 	stop_btn = btn("■ STOP", f"/function {ns}:v{version}/missions/stop", "red", "Stop the mission")
 	class_btn = btn("⚔ Classes", f"/function {ns}:v{version}/multiplayer/select_class", "aqua", "Select your class")
 
-	actions_line = f'["",["","  ",{{"text":"Actions"}},": "],{start_btn},{{"text":" "}},{stop_btn},{{"text":" "}},{class_btn}]'
+	actions_line = f'["",["","  ",{{"text":"Actions"}},": "],{start_btn}," ",{stop_btn}," ",{class_btn}]'
 
 	write_versioned_function("missions/setup", f"""
 tellraw @s {sep}

@@ -16,6 +16,10 @@ execute if score #grenade_count mgs.data matches 1.. as @e[tag=mgs.grenade] at @
 # Armed mob AI loop
 execute if score #armed_mob_count mgs.data matches 1.. as @e[tag=mgs.armed] at @s run function mgs:v5.0.0/mob/tick
 
+# Zombies game tick
+execute if data storage mgs:zombies game{state:"active"} run function mgs:v5.0.0/zombies/game_tick
+execute if data storage mgs:zombies game{state:"preparing"} run function mgs:v5.0.0/zombies/prep_tick
+
 # Multiplayer game tick
 execute if data storage mgs:multiplayer game{state:"active"} run function mgs:v5.0.0/multiplayer/game_tick
 execute if data storage mgs:multiplayer game{state:"preparing"} run function mgs:v5.0.0/multiplayer/prep_tick

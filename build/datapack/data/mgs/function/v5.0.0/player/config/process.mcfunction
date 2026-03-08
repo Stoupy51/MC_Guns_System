@@ -10,11 +10,17 @@
 # 2 = Toggle hitmarker Sound
 # 3 = Toggle damage debug in chat
 # 4 = Open multiplayer class selection menu
+# 6-9 = Zombies perk selection (passive/ability via trigger from dialog)
 # 11-20 = Select class 1-10 (via trigger from class menu)
 execute if score @s mgs.player.config matches 1 run function mgs:v5.0.0/player/config/menu
 execute if score @s mgs.player.config matches 2 run function mgs:v5.0.0/player/config/toggle_hitmarker
 execute if score @s mgs.player.config matches 3 run function mgs:v5.0.0/player/config/toggle_damage_debug
 execute if score @s mgs.player.config matches 4 run function mgs:v5.0.0/multiplayer/select_class
+execute if score @s mgs.player.config matches 5 run function mgs:v5.0.0/zombies/passive_ability_menu
+execute if score @s mgs.player.config matches 6 run function mgs:v5.0.0/zombies/perks/set_passive_1
+execute if score @s mgs.player.config matches 7 run function mgs:v5.0.0/zombies/perks/set_passive_2
+execute if score @s mgs.player.config matches 8 run function mgs:v5.0.0/zombies/perks/set_ability_1
+execute if score @s mgs.player.config matches 9 run function mgs:v5.0.0/zombies/perks/set_ability_2
 execute if score @s mgs.player.config matches 11 run function mgs:v5.0.0/multiplayer/set_class {class_num:1,class_name:"Assault"}
 execute if score @s mgs.player.config matches 12 run function mgs:v5.0.0/multiplayer/set_class {class_num:2,class_name:"Rifleman"}
 execute if score @s mgs.player.config matches 13 run function mgs:v5.0.0/multiplayer/set_class {class_num:3,class_name:"Support"}
