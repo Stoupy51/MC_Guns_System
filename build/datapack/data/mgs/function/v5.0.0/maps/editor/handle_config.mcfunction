@@ -10,7 +10,7 @@
 execute unless data storage mgs:temp map_edit.map.default_enemy_function run data modify storage mgs:temp map_edit.map.default_enemy_function set value "mgs:v5.0.0/mob/default/level_1 {\"entity\":\"pillager\"}"
 
 tellraw @a[tag=mgs.map_editor] {"text":"============================================","color":"dark_gray"}
-tellraw @a[tag=mgs.map_editor] [{"text":"","color":"white","bold":true},"  ⚙ ",{"text":"Enemy Configuration"}]
+tellraw @a[tag=mgs.map_editor] [{"text":"","color":"white","bold":true},"  ⚙ ",{"translate": "mgs.enemy_configuration"}]
 tellraw @a[tag=mgs.map_editor] {"text":"============================================","color":"dark_gray"}
 tellraw @a[tag=mgs.map_editor] ["  ",{"translate": "mgs.default_function","color":"gray"},{"storage":"mgs:temp","nbt":"map_edit.map.default_enemy_function","color":"white"}]
 tellraw @a[tag=mgs.map_editor] ["    ",[{"text": "[", "color": "aqua", "click_event": {"action": "suggest_command", "command": "/data modify storage mgs:temp map_edit.map.default_enemy_function set value \"mgs:v5.0.0/mob/default/level_1 {'entity':'pillager'}\""}, "hover_event": {"action": "show_text", "value": "Click to edit the default spawn function for new enemies"}}, "Edit Function", "]"]]
