@@ -22,6 +22,10 @@ execute store result storage mgs:temp _wb.y int 1 run scoreboard players get #wb
 execute store result storage mgs:temp _wb.z int 1 run scoreboard players get #wbz mgs.data
 data modify storage mgs:temp _wb.weapon_id set from storage mgs:temp _wb_iter[0].weapon_id
 
+# Read display name (default to weapon_id, override with "name" field)
+data modify storage mgs:temp _wb.name set from storage mgs:temp _wb_iter[0].weapon_id
+execute if data storage mgs:temp _wb_iter[0].name run data modify storage mgs:temp _wb.name set from storage mgs:temp _wb_iter[0].name
+
 # Read facing (default 0 = south)
 data modify storage mgs:temp _wb.facing set value 0
 execute store result storage mgs:temp _wb.facing int 1 run data get storage mgs:temp _wb_iter[0].facing
@@ -38,6 +42,7 @@ execute store result score @n[tag=_wb_new] mgs.zb.wb.rfpap run data get storage 
 # Store weapon_id in indexed storage for later lookup
 execute store result storage mgs:temp _wb_store.id int 1 run scoreboard players get #wb_counter mgs.data
 data modify storage mgs:temp _wb_store.weapon_id set from storage mgs:temp _wb_iter[0].weapon_id
+data modify storage mgs:temp _wb_store.name set from storage mgs:temp _wb.name
 function mgs:v5.0.0/zombies/wallbuys/store_data with storage mgs:temp _wb_store
 
 # Register Bookshelf events

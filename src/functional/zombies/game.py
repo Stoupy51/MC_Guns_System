@@ -32,7 +32,7 @@ scoreboard objectives add {ns}.zb.perk.juggernog dummy
 scoreboard objectives add {ns}.zb.perk.speed_cola dummy
 scoreboard objectives add {ns}.zb.perk.double_tap dummy
 scoreboard objectives add {ns}.zb.perk.quick_revive dummy
-# TODO: more perks?
+scoreboard objectives add {ns}.zb.perk.mule_kick dummy
 
 # Spawn point group_id scoreboard
 scoreboard objectives add {ns}.zb.spawn.gid dummy

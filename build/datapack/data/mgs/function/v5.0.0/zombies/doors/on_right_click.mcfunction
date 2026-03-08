@@ -11,7 +11,7 @@ execute unless data storage mgs:zombies game{state:"active"} run return fail
 execute store result score #door_price mgs.data run scoreboard players get @n[tag=bs.interaction.target] mgs.zb.door.price
 
 # Check player has enough points
-execute unless score @s mgs.zb.points >= #door_price mgs.data run return run tellraw @s [[{"text":"","color":"gold"},"[",{"translate": "mgs"},"] "],{"translate": "mgs.not_enough_points","color":"red"}]
+execute unless score @s mgs.zb.points >= #door_price mgs.data run return run tellraw @s [[{"text":"","color":"gold"},"[",{"translate": "mgs"},"] "],{"text":" Not enough points!","color":"red"}]
 
 # Deduct points
 scoreboard players operation @s mgs.zb.points -= #door_price mgs.data

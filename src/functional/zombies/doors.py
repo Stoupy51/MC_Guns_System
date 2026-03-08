@@ -42,6 +42,13 @@ execute store result storage {ns}:temp _door.y int 1 run scoreboard players get 
 execute store result storage {ns}:temp _door.z int 1 run scoreboard players get #dz {ns}.data
 data modify storage {ns}:temp _door.block set from storage {ns}:temp _door_iter[0].block
 
+# Read door name (default "Door", override with "name" field)
+data modify storage {ns}:temp _door_name.name set value "Door"
+execute if data storage {ns}:temp _door_iter[0].name run data modify storage {ns}:temp _door_name.name set from storage {ns}:temp _door_iter[0].name
+# Read optional back_name (default to name)
+data modify storage {ns}:temp _door_name.back_name set from storage {ns}:temp _door_name.name
+execute if data storage {ns}:temp _door_iter[0].back_name run data modify storage {ns}:temp _door_name.back_name set from storage {ns}:temp _door_iter[0].back_name
+
 # Place block and summon interaction entity
 function {ns}:v{version}/zombies/doors/place_at with storage {ns}:temp _door
 
@@ -51,6 +58,10 @@ execute store result score @n[tag={ns}.door_new] {ns}.zb.door.price run data get
 execute store result score @n[tag={ns}.door_new] {ns}.zb.door.gid run data get storage {ns}:temp _door_iter[0].group_id
 execute store result score @n[tag={ns}.door_new] {ns}.zb.door.bgid run data get storage {ns}:temp _door_iter[0].back_group_id
 execute store result score @n[tag={ns}.door_new] {ns}.zb.door.anim run data get storage {ns}:temp _door_iter[0].animation
+
+# Store name indexed by link_id
+execute store result storage {ns}:temp _door_name.id int 1 run data get storage {ns}:temp _door_iter[0].link_id
+function {ns}:v{version}/zombies/doors/store_name with storage {ns}:temp _door_name
 
 # Register Bookshelf events
 execute as @e[tag={ns}.door_new] run function #bs.interaction:on_right_click {{run:"function {ns}:v{version}/zombies/doors/on_right_click",executor:"source"}}
@@ -128,11 +139,21 @@ $scoreboard players set #unlock_gid {ns}.data $(gid)
 execute as @e[tag={ns}.spawn_point] if score @s {ns}.zb.spawn.gid = #unlock_gid {ns}.data run tag @s add {ns}.spawn_unlocked
 """)
 
+	write_versioned_function("zombies/doors/store_name", f"""
+$data modify storage {ns}:zombies door_names."$(id)" set value {{name:"$(name)",back_name:"$(back_name)"}}
+""")
+
+	write_versioned_function("zombies/doors/get_hover_name", f"""
+$data modify storage {ns}:temp _door_hover_name set from storage {ns}:zombies door_names."$(id)".name
+""")
+
 	## Hover events (executor: "source" = player)
 	write_versioned_function("zombies/doors/on_hover_enter", f"""
 execute store result score #door_price {ns}.data run scoreboard players get @n[tag=bs.interaction.target] {ns}.zb.door.price
+execute store result storage {ns}:temp _door_hover.id int 1 run scoreboard players get @n[tag=bs.interaction.target] {ns}.zb.door.link
+function {ns}:v{version}/zombies/doors/get_hover_name with storage {ns}:temp _door_hover
 title @s times 0 40 10
-title @s title [{{"text":"🚪 Door","color":"gold"}}]
+title @s title [{{"text":"🚪 ","color":"gold"}},{{"storage":"{ns}:temp","nbt":"_door_hover_name","color":"gold"}}]
 title @s subtitle [{{"text":"Cost: ","color":"gray"}},{{"score":{{"name":"#door_price","objective":"{ns}.data"}},"color":"yellow"}},{{"text":" points","color":"gray"}}]
 """)
 
