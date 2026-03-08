@@ -43,7 +43,7 @@ ALL_ELEMENTS: dict[str, JsonDict] = {
                            "defaults": {"price": 1000, "link_id": 1, "back_group_id": -1, "block": "", "animation": 0, "sound": ""},
                            "requires_offhand_block": True},
 	"trap":               {"name": "Trap",             "color": "red",          "particle": [1.0, 0.2, 0.2], "particle_scale": 1.0, "has_rotation": True,  "egg_model": "minecraft:cave_spider_spawn_egg", "save_type": "zb_object", "save_path": "traps", "emoji": "⚡",
-                           "defaults": {"price": 1000, "type": 0, "duration": 200, "cooldown": 1200, "effect_radius": [3.0, 2.0, 3.0], "power": True}},
+                           "defaults": {"price": 1000, "type": 0, "duration": 200, "cooldown": 1200, "effect_radius": [3.0, 2.0, 3.0], "offset_pos": [0, 0, 0], "power": True}},
 	"perk_machine":       {"name": "Perk Machine",     "color": "dark_purple",  "particle": [0.5, 0.0, 0.5], "particle_scale": 1.0, "has_rotation": True,  "egg_model": "minecraft:witch_spawn_egg",       "save_type": "zb_object", "save_path": "perks", "emoji": "🧪",
                            "defaults": {"price": 2500, "perk_id": "juggernog", "power": True}},
 	"mystery_box_pos":    {"name": "Mystery Box Pos",  "color": "light_purple", "particle": [1.0, 0.0, 1.0], "particle_scale": 1.0, "has_rotation": True,  "egg_model": "minecraft:evoker_spawn_egg",      "save_type": "zb_object", "save_path": "mystery_box.positions", "emoji": "📦",
@@ -922,7 +922,7 @@ kill @s
 		f'["  ",{{"text":"group_id: ","color":"gray"}},'
 		f'{{"storage":"{ns}:temp","nbt":"map_edit.zb_defaults.group_id","color":"white"}}," ",{group_id_btn}]'
 	)
-	zb_defaults_lines.append(f'tellraw @a[tag={ns}.map_editor] ["  ",{{"text":"Applies to ALL element types.","color":"dark_gray","italic":true}}]')
+	zb_defaults_lines.append(f'tellraw @a[tag={ns}.map_editor] ["  ",{{"text":"Applies to Zombie Spawn & Player Spawn.","color":"dark_gray","italic":true}}]')
 	zb_defaults_lines.append("")
 
 	for etype, einfo in zb_elements.items():
@@ -975,17 +975,18 @@ execute at @s unless entity @n[tag={ns}.map_element,distance=..10] run tellraw @
 			f'execute if entity @s[tag={ns}.element.{etype}] run tellraw @a[tag={ns}.map_editor] '
 			f'[{{"text":"  {einfo["emoji"]} {einfo["name"]} Configuration","color":"{einfo["color"]}","bold":true}}]'
 		)
-		# group_id is shared across all types
-		group_id_edit_btn = btn(
-			"✎",
-			f"/data modify entity @n[tag={ns}.element.{etype},distance=..10] data.group_id set value 0",
-			"yellow", "Click to edit group_id", action="suggest_command"
-		)
-		zb_config_lines.append(
-			f'execute if entity @s[tag={ns}.element.{etype}] run tellraw @a[tag={ns}.map_editor] '
-			f'["    ",{{"text":"group_id: ","color":"gray"}},'
-			f'{{"entity":"@s","nbt":"data.group_id","color":"white"}}," ",{group_id_edit_btn}]'
-		)
+		# group_id only shown for spawn-type zombies elements
+		if etype in ("zombie_spawn", "player_spawn_zb"):
+			group_id_edit_btn = btn(
+				"✎",
+				f"/data modify entity @n[tag={ns}.element.{etype},distance=..10] data.group_id set value 0",
+				"yellow", "Click to edit group_id", action="suggest_command"
+			)
+			zb_config_lines.append(
+				f'execute if entity @s[tag={ns}.element.{etype}] run tellraw @a[tag={ns}.map_editor] '
+				f'["    ",{{"text":"group_id: ","color":"gray"}},'
+				f'{{"entity":"@s","nbt":"data.group_id","color":"white"}}," ",{group_id_edit_btn}]'
+			)
 		for field, default_val in einfo["defaults"].items():
 			snbt_val = snbt_suggest(default_val)
 			# Door price uses propagation function (applies to all doors with same link_id)
