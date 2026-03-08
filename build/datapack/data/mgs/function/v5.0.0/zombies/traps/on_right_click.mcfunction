@@ -1,0 +1,34 @@
+
+#> mgs:v5.0.0/zombies/traps/on_right_click
+#
+# @within	???
+#
+
+# Guard: game must be active
+execute unless data storage mgs:zombies game{state:"active"} run return fail
+
+# Check power requirement
+execute store result score #_trap_power mgs.data run scoreboard players get @n[tag=bs.interaction.target] mgs.zb.trap.power
+execute if score #_trap_power mgs.data matches 1 unless score #zb_power mgs.data matches 1 run return run tellraw @s [[{"text":"","color":"gold"},"[",{"translate": "mgs"},"] "],{"translate": "mgs.requires_power","color":"red"}]
+
+# Get trap ID
+execute store result score #_trap_id mgs.data run scoreboard players get @n[tag=bs.interaction.target] mgs.zb.trap.id
+
+# Check if trap is ready (not active, not on cooldown)
+scoreboard players set #_trap_ready mgs.data 0
+execute as @e[tag=mgs.trap_center] if score @s mgs.zb.trap.id = #_trap_id mgs.data if score @s mgs.zb.trap.timer matches 0 if score @s mgs.zb.trap.cd matches 0 run scoreboard players set #_trap_ready mgs.data 1
+execute unless score #_trap_ready mgs.data matches 1 run return run tellraw @s [[{"text":"","color":"gold"},"[",{"translate": "mgs"},"] "],{"translate": "mgs.trap_not_ready","color":"yellow"}]
+
+# Check price
+execute store result score #_trap_price mgs.data run scoreboard players get @n[tag=bs.interaction.target] mgs.zb.trap.price
+execute unless score @s mgs.zb.points >= #_trap_price mgs.data run return run tellraw @s [[{"text":"","color":"gold"},"[",{"translate": "mgs"},"] "],{"translate": "mgs.not_enough_points","color":"red"}]
+
+# Deduct points
+scoreboard players operation @s mgs.zb.points -= #_trap_price mgs.data
+
+# Activate trap (set timer = duration on the marker)
+execute as @e[tag=mgs.trap_center] if score @s mgs.zb.trap.id = #_trap_id mgs.data run scoreboard players operation @s mgs.zb.trap.timer = @s mgs.zb.trap.dur
+
+# Announce
+tellraw @a[scores={mgs.zb.in_game=1}] [[{"text":"","color":"gold"},"[",{"translate": "mgs"},"] "],{"translate": "mgs.trap_activated","color":"gold"}]
+

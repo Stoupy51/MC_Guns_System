@@ -3,7 +3,6 @@
 # Zombies Game System
 # Wave-based survival mode with zombie spawning, points, perks, mystery box, wallbuys, doors, and traps.
 # Map definitions are dynamic (stored in storage, registered via function tags).
-
 from stewbeet import Mem, write_load_file, write_tag, write_tick_file, write_versioned_function
 
 from ..helpers import MGS_TAG
@@ -34,6 +33,12 @@ scoreboard objectives add {ns}.zb.perk.speed_cola dummy
 scoreboard objectives add {ns}.zb.perk.double_tap dummy
 scoreboard objectives add {ns}.zb.perk.quick_revive dummy
 # TODO: more perks?
+
+# Spawn point group_id scoreboard
+scoreboard objectives add {ns}.zb.spawn.gid dummy
+
+# Sidebar rank scoreboard
+scoreboard objectives add {ns}.zb.sb_rank dummy
 
 # Constants
 scoreboard players set #20 {ns}.data 20
@@ -202,9 +207,8 @@ effect give @a[scores={{{ns}.zb.in_game=1}}] saturation infinite 255 true
 execute as @a[scores={{{ns}.zb.in_game=1}}] run attribute @s minecraft:movement_speed base set 0
 execute as @a[scores={{{ns}.zb.in_game=1}}] run attribute @s minecraft:jump_strength base set 0
 
-# Give starting weapon (M1911) to all players
-clear @a[scores={{{ns}.zb.in_game=1}}]
-execute as @a[scores={{{ns}.zb.in_game=1}}] at @s run loot give @s loot {ns}:i/m1911
+# Give starting loadout to all players
+execute as @a[scores={{{ns}.zb.in_game=1}}] at @s run function {ns}:v{version}/zombies/inventory/give_starting_loadout
 
 # Show zombies perk selection menu
 execute as @a[scores={{{ns}.zb.in_game=1}}] run function {ns}:v{version}/zombies/passive_ability_menu
@@ -248,132 +252,7 @@ effect give @a[scores={{{ns}.zb.in_game=1}}] saturation infinite 255 true
 function {ns}:v{version}/zombies/start_round
 """)
 
-	# ── Round System ──────────────────────────────────────────────
 
-	## Start a new round
-	write_versioned_function("zombies/start_round", f"""
-# Increment round number
-execute store result score #zb_round {ns}.data run data get storage {ns}:zombies game.round
-scoreboard players add #zb_round {ns}.data 1
-execute store result storage {ns}:zombies game.round int 1 run scoreboard players get #zb_round {ns}.data
-
-# Calculate zombies to spawn this round: base formula = round * 4 + (player_count - 1) * 2
-execute store result score #zb_player_count {ns}.data if entity @a[scores={{{ns}.zb.in_game=1}},gamemode=!spectator]
-scoreboard players remove #zb_player_count {ns}.data 1
-scoreboard players operation #zb_player_count {ns}.data *= #2 {ns}.data
-scoreboard players operation #zb_to_spawn {ns}.data = #zb_round {ns}.data
-scoreboard players operation #zb_to_spawn {ns}.data *= #4 {ns}.data
-scoreboard players operation #zb_to_spawn {ns}.data += #zb_player_count {ns}.data
-
-# Store zombies to spawn and remaining count
-scoreboard players operation #zb_remaining {ns}.data = #zb_to_spawn {ns}.data
-
-# Set spawn timer (spawn a zombie every 2 seconds = 40 ticks)
-scoreboard players set #zb_spawn_timer {ns}.data 20
-
-# Grace period: don't check game over for 3 seconds (60 ticks)
-scoreboard players set #zb_round_grace {ns}.data 60
-
-# Title
-title @a[scores={{{ns}.zb.in_game=1}}] times 10 40 10
-title @a[scores={{{ns}.zb.in_game=1}}] title [{{"text":"Round ","color":"red","bold":true}},{{"score":{{"name":"#zb_round","objective":"{ns}.data"}},"color":"gold","bold":true}}]
-
-# Signal round start
-function #{ns}:zombies/on_round_start
-
-# Refresh sidebar
-function {ns}:v{version}/zombies/refresh_sidebar
-
-# Announce
-tellraw @a ["",{{"text":"","color":"dark_green","bold":true}},"🧟 ",{{"text":"Round ","color":"red"}},{{"score":{{"name":"#zb_round","objective":"{ns}.data"}},"color":"gold","bold":true}},{{"text":" has begun!","color":"red"}}]
-""")
-
-	## Spawn a single zombie at a random zombie spawn point
-	write_versioned_function("zombies/spawn_zombie", f"""
-# Pick a random zombie spawn point (relative coordinates)
-data modify storage {ns}:temp _zs_iter set from storage {ns}:zombies game.map.spawning_points.zombies
-
-# Count available spawn points
-execute store result score #_zs_count {ns}.data run data get storage {ns}:zombies game.map.spawning_points.zombies
-execute if score #_zs_count {ns}.data matches ..0 run return fail
-
-# Pick random index
-execute store result score #_zs_idx {ns}.data run random value 0..100
-scoreboard players operation #_zs_idx {ns}.data %= #_zs_count {ns}.data
-
-# Iterate to that index
-function {ns}:v{version}/zombies/spawn_zombie_at_idx
-""")
-
-	## Iterate to selected index and spawn
-	write_versioned_function("zombies/spawn_zombie_at_idx", f"""
-execute if score #_zs_idx {ns}.data matches 1.. run data remove storage {ns}:temp _zs_iter[0]
-execute if score #_zs_idx {ns}.data matches 1.. run scoreboard players remove #_zs_idx {ns}.data 1
-execute if score #_zs_idx {ns}.data matches 1.. run function {ns}:v{version}/zombies/spawn_zombie_at_idx
-
-# Now at the right index, read position
-execute if score #_zs_idx {ns}.data matches 0 run function {ns}:v{version}/zombies/do_spawn_zombie
-""")
-
-	## Actually spawn the zombie at the chosen position
-	write_versioned_function("zombies/do_spawn_zombie", f"""
-# Read relative position
-execute store result score #_zx {ns}.data run data get storage {ns}:temp _zs_iter[0][0]
-execute store result score #_zy {ns}.data run data get storage {ns}:temp _zs_iter[0][1]
-execute store result score #_zz {ns}.data run data get storage {ns}:temp _zs_iter[0][2]
-
-# Convert to absolute
-scoreboard players operation #_zx {ns}.data += #gm_base_x {ns}.data
-scoreboard players operation #_zy {ns}.data += #gm_base_y {ns}.data
-scoreboard players operation #_zz {ns}.data += #gm_base_z {ns}.data
-
-# Store absolute position for macro
-execute store result storage {ns}:temp _zpos.x double 1 run scoreboard players get #_zx {ns}.data
-execute store result storage {ns}:temp _zpos.y double 1 run scoreboard players get #_zy {ns}.data
-execute store result storage {ns}:temp _zpos.z double 1 run scoreboard players get #_zz {ns}.data
-
-# Determine zombie level based on round
-# Rounds 1-5: level 1, 6-10: level 2, 11-15: level 3, 16+: level 4
-execute if score #zb_round {ns}.data matches ..5 run data modify storage {ns}:temp _zpos.level set value "1"
-execute if score #zb_round {ns}.data matches 6..10 run data modify storage {ns}:temp _zpos.level set value "2"
-execute if score #zb_round {ns}.data matches 11..15 run data modify storage {ns}:temp _zpos.level set value "3"
-execute if score #zb_round {ns}.data matches 16.. run data modify storage {ns}:temp _zpos.level set value "4"
-
-# Spawn the zombie
-function {ns}:v{version}/zombies/summon_zombie_at with storage {ns}:temp _zpos
-""")
-
-	## Summon zombie at absolute position (macro)
-	write_versioned_function("zombies/summon_zombie_at", f"""
-# Summon a regular zombie (not armed)
-$summon minecraft:zombie $(x) $(y) $(z) {{Tags:["{ns}.zombie_round","{ns}.gm_entity","{ns}.nukable"],CanPickUpLoot:false,PersistenceRequired:true}}
-
-# Scale health based on round level
-$execute as @e[tag={ns}.zombie_round,tag=!{ns}.zb_scaled,limit=1,sort=nearest] run function {ns}:v{version}/zombies/scale_zombie {{level:"$(level)"}}
-""")
-
-	write_versioned_function("zombies/scale_zombie", f"""
-tag @s add {ns}.zb_scaled
-
-$scoreboard players set #_zb_level {ns}.data $(level)
-
-# Level 1: default 20 HP (rounds 1-5) — no changes needed
-# Level 2: 30 HP (rounds 6-10)
-execute if score #_zb_level {ns}.data matches 2 run attribute @s minecraft:max_health base set 30
-execute if score #_zb_level {ns}.data matches 2 run data modify entity @s Health set value 30f
-
-# Level 3: 40 HP (rounds 11-15)
-execute if score #_zb_level {ns}.data matches 3 run attribute @s minecraft:max_health base set 40
-execute if score #_zb_level {ns}.data matches 3 run data modify entity @s Health set value 40f
-
-# Level 4: 60 HP (rounds 16+)
-execute if score #_zb_level {ns}.data matches 4 run attribute @s minecraft:max_health base set 60
-execute if score #_zb_level {ns}.data matches 4 run data modify entity @s Health set value 60f
-
-# Increase speed slightly at higher levels
-execute if score #_zb_level {ns}.data matches 3 run attribute @s minecraft:movement_speed base set 0.26
-execute if score #_zb_level {ns}.data matches 4 run attribute @s minecraft:movement_speed base set 0.30
-""")
 
 	# ── Game Tick ─────────────────────────────────────────────────
 
@@ -404,31 +283,16 @@ execute if score #zb_round_grace {ns}.data matches 1.. run scoreboard players re
 execute unless score #zb_round_grace {ns}.data matches 1.. store result score #_zb_alive_players {ns}.data if entity @a[scores={{{ns}.zb.in_game=1}},gamemode=!spectator]
 execute unless score #zb_round_grace {ns}.data matches 1.. if score #_zb_alive_players {ns}.data matches 0 run function {ns}:v{version}/zombies/game_over
 
-# ── Points display on actionbar (every 10 ticks) ──
-execute store result score #_zb_tick_mod {ns}.data run random value 0..0
-execute if score #_zb_tick_mod {ns}.data matches 0 as @a[scores={{{ns}.zb.in_game=1}},gamemode=!spectator] run function {ns}:v{version}/zombies/show_points_actionbar
-
 # ── Refresh sidebar every second (20 ticks) ──
 scoreboard players add #zb_sidebar_timer {ns}.data 1
 execute if score #zb_sidebar_timer {ns}.data matches 20.. run scoreboard players set #zb_sidebar_timer {ns}.data 0
 execute if score #zb_sidebar_timer {ns}.data matches 0 run function {ns}:v{version}/zombies/refresh_sidebar
+
+# ── Cleanup ──
+kill @e[type=experience_orb]
 """)
 
-	## Spawn tick: spawn zombies on a timer
-	write_versioned_function("zombies/spawn_tick", f"""
-# Decrease spawn timer
-scoreboard players remove #zb_spawn_timer {ns}.data 1
-execute if score #zb_spawn_timer {ns}.data matches 1.. run return 0
 
-# Reset timer (spawn every 2 seconds)
-scoreboard players set #zb_spawn_timer {ns}.data 40
-
-# Spawn a zombie
-function {ns}:v{version}/zombies/spawn_zombie
-
-# Decrease count to spawn
-scoreboard players remove #zb_to_spawn {ns}.data 1
-""")
 
 	## Boundary checks (reuse pattern from missions)
 	write_versioned_function("zombies/check_bounds", f"""
@@ -445,31 +309,7 @@ execute if score @s {ns}.mp.bz < #bound_z1 {ns}.data run return run damage @s 10
 execute if score @s {ns}.mp.bz > #bound_z2 {ns}.data run return run damage @s 10000 out_of_world
 """)
 
-	## Show points on actionbar
-	write_versioned_function("zombies/show_points_actionbar", f"""
-title @s actionbar [{{"text":"💰 ","color":"gold"}},{{"score":{{"name":"@s","objective":"{ns}.zb.points"}},"color":"yellow"}},{{"text":" points","color":"gray"}}]
-""")
 
-	# ── Round Completion ──────────────────────────────────────────
-
-	write_versioned_function("zombies/round_complete", f"""
-# Signal round end
-function #{ns}:zombies/on_round_end
-
-# Title
-title @a[scores={{{ns}.zb.in_game=1}}] times 10 40 10
-title @a[scores={{{ns}.zb.in_game=1}}] title [{{"text":"Round Complete!","color":"green","bold":true}}]
-
-# Give all players 500 bonus points for surviving the round
-execute as @a[scores={{{ns}.zb.in_game=1}},gamemode=!spectator] run scoreboard players add @s {ns}.zb.points 500
-
-# Announce
-execute store result score #_completed_round {ns}.data run data get storage {ns}:zombies game.round
-tellraw @a ["",{{"text":"","color":"dark_green","bold":true}},"🧟 ",{{"text":"Round ","color":"green"}},{{"score":{{"name":"#_completed_round","objective":"{ns}.data"}},"color":"gold","bold":true}},{{"text":" complete! +500 points. Next round in 10 seconds...","color":"green"}}]
-
-# Schedule next round after 10 seconds
-schedule function {ns}:v{version}/zombies/start_round 200t
-""")
 
 	# ── Death & Respawn ───────────────────────────────────────────
 
@@ -512,8 +352,8 @@ function {ns}:v{version}/zombies/respawn_tp
 # Re-apply saturation
 effect give @s saturation infinite 255 true
 
-# Re-give M1911 on respawn
-loot give @s loot {ns}:i/m1911
+# Re-give starting weapon on respawn
+function {ns}:v{version}/zombies/inventory/give_respawn_loadout
 """)
 
 	## Add player tick hook for zombies death detection
@@ -695,7 +535,7 @@ execute as @a[scores={{{ns}.zb.in_game=1,{ns}.zb.ability=2,{ns}.zb.ability_cd=0}
 
 	write_versioned_function("zombies/perks/trigger_guardian", f"""
 # Summon an Iron Golem ally near the player
-summon minecraft:iron_golem ~ ~ ~ {{Tags:["{ns}.guardian_golem","{ns}.gm_entity"],PlayerCreated:0b,CustomName:'"\\u00a72Guardian"'}}
+summon minecraft:iron_golem ~ ~ ~ {{Tags:["{ns}.guardian_golem","{ns}.gm_entity"],PlayerCreated:0b,CustomName:{{"text":"Guardian","color":"green"}}}}
 
 # Set cooldown (1 round)
 scoreboard players set @s {ns}.zb.ability_cd 1
@@ -789,13 +629,23 @@ $summon minecraft:marker $(x) $(y) $(z) {{Tags:["{ns}.oob_point","{ns}.gm_entity
 data modify storage {ns}:temp _spawn_iter set from storage {ns}:zombies game.map.spawning_points.players
 data modify storage {ns}:temp _spawn_tag set value "{ns}.spawn_zb_player"
 execute if data storage {ns}:temp _spawn_iter[0] run function {ns}:v{version}/zombies/summon_spawn_iter
+
+# Zombie spawns
+data modify storage {ns}:temp _spawn_iter set from storage {ns}:zombies game.map.spawning_points.zombies
+data modify storage {ns}:temp _spawn_tag set value "{ns}.spawn_zb"
+execute if data storage {ns}:temp _spawn_iter[0] run function {ns}:v{version}/zombies/summon_spawn_iter
+
+# Tag group 0 spawns as unlocked (starting area)
+scoreboard players set #_unlock_gid {ns}.data 0
+execute as @e[tag={ns}.spawn_point] if score @s {ns}.zb.spawn.gid = #_unlock_gid {ns}.data run tag @s add {ns}.spawn_unlocked
 """)
 
 	write_versioned_function("zombies/summon_spawn_iter", f"""
-execute store result score #_sx {ns}.data run data get storage {ns}:temp _spawn_iter[0][0]
-execute store result score #_sy {ns}.data run data get storage {ns}:temp _spawn_iter[0][1]
-execute store result score #_sz {ns}.data run data get storage {ns}:temp _spawn_iter[0][2]
-execute store result score #_syaw {ns}.data run data get storage {ns}:temp _spawn_iter[0][3] 100
+# Read position from compound format
+execute store result score #_sx {ns}.data run data get storage {ns}:temp _spawn_iter[0].pos[0]
+execute store result score #_sy {ns}.data run data get storage {ns}:temp _spawn_iter[0].pos[1]
+execute store result score #_sz {ns}.data run data get storage {ns}:temp _spawn_iter[0].pos[2]
+execute store result score #_syaw {ns}.data run data get storage {ns}:temp _spawn_iter[0].rotation[0] 100
 
 scoreboard players operation #_sx {ns}.data += #gm_base_x {ns}.data
 scoreboard players operation #_sy {ns}.data += #gm_base_y {ns}.data
@@ -809,12 +659,17 @@ data modify storage {ns}:temp _spos.tag set from storage {ns}:temp _spawn_tag
 
 function {ns}:v{version}/zombies/summon_spawn_at with storage {ns}:temp _spos
 
+# Set group_id score on newly spawned marker (default 0 if not defined)
+scoreboard players set @n[tag={ns}._new_spawn] {ns}.zb.spawn.gid 0
+execute store result score @n[tag={ns}._new_spawn] {ns}.zb.spawn.gid run data get storage {ns}:temp _spawn_iter[0].group_id
+tag @n[tag={ns}._new_spawn] remove {ns}._new_spawn
+
 data remove storage {ns}:temp _spawn_iter[0]
 execute if data storage {ns}:temp _spawn_iter[0] run function {ns}:v{version}/zombies/summon_spawn_iter
 """)
 
 	write_versioned_function("zombies/summon_spawn_at", f"""
-$summon minecraft:marker $(x) $(y) $(z) {{Tags:["{ns}.spawn_point","$(tag)","{ns}.gm_entity"],data:{{yaw:$(yaw)}}}}
+$summon minecraft:marker $(x) $(y) $(z) {{Tags:["{ns}.spawn_point","$(tag)","{ns}.gm_entity","{ns}._new_spawn"],data:{{yaw:$(yaw)}}}}
 """)
 
 	# ── Smart Spawn Selection ─────────────────────────────────────
@@ -827,11 +682,11 @@ tag @e[tag={ns}.spawn_used] remove {ns}.spawn_used
 	write_versioned_function("zombies/pick_spawn", f"""
 tag @s add {ns}.spawn_pending
 
-# Tag candidate spawns (exclude used)
-tag @e[tag={ns}.spawn_point,tag={ns}.spawn_zb_player,tag=!{ns}.spawn_used] add {ns}.spawn_candidate
+# Tag candidate spawns (unlocked, exclude used)
+tag @e[tag={ns}.spawn_point,tag={ns}.spawn_zb_player,tag={ns}.spawn_unlocked,tag=!{ns}.spawn_used] add {ns}.spawn_candidate
 
-# If all used, re-tag all
-execute unless entity @e[tag={ns}.spawn_candidate] run tag @e[tag={ns}.spawn_point,tag={ns}.spawn_zb_player] add {ns}.spawn_candidate
+# If all used, re-tag all unlocked
+execute unless entity @e[tag={ns}.spawn_candidate] run tag @e[tag={ns}.spawn_point,tag={ns}.spawn_zb_player,tag={ns}.spawn_unlocked] add {ns}.spawn_candidate
 
 # Pick random candidate
 execute as @n[tag={ns}.spawn_candidate,sort=random] run function {ns}:v{version}/zombies/tp_to_spawn
@@ -872,8 +727,34 @@ scoreboard objectives setdisplay sidebar {ns}.zb_sidebar
 execute store result score #_zb_alive {ns}.data if entity @e[tag={ns}.zombie_round]
 scoreboard players operation #_zb_total {ns}.data = #_zb_alive {ns}.data
 scoreboard players operation #_zb_total {ns}.data += #zb_to_spawn {ns}.data
+execute if score #_zb_total {ns}.data matches ..-1 run scoreboard players set #_zb_total {ns}.data 0
 
-function #bs.sidebar:create {{objective:"{ns}.zb_sidebar",display_name:{{text:"🧟 Zombies",color:"dark_green",bold:true}},contents:[{{text:" Round: ",extra:[{{score:{{name:"#zb_round",objective:"{ns}.data"}},color:"gold"}}],color:"red"}},{{text:" Zombies: ",extra:[{{score:{{name:"#_zb_total",objective:"{ns}.data"}},color:"red"}}],color:"gray"}}," "]}}
+# Initialize sidebar contents
+data modify storage {ns}:temp zb_sb set value [{{text:" Round: ",extra:[{{score:{{name:"#zb_round",objective:"{ns}.data"}},color:"gold"}}],color:"red"}},{{text:" Zombies: ",extra:[{{score:{{name:"#_zb_total",objective:"{ns}.data"}},color:"red"}}],color:"gray"}}," "]
+
+# Rank players for sidebar display
+scoreboard players set @a {ns}.zb.sb_rank 0
+tag @a[scores={{{ns}.zb.in_game=1}}] add {ns}.zb_sb_cand
+function {ns}:v{version}/zombies/sidebar_rank_players
+
+# Build sidebar via macro
+function {ns}:v{version}/zombies/build_sidebar with storage {ns}:temp
+""")
+
+	# Rank players and append to sidebar (up to 8 players)
+	sidebar_rank_code = ""
+	for i in range(1, 9):
+		sidebar_rank_code += f"""
+execute unless entity @a[tag={ns}.zb_sb_cand] run return 0
+execute as @r[tag={ns}.zb_sb_cand] run scoreboard players set @s {ns}.zb.sb_rank {i}
+tag @a[scores={{{ns}.zb.sb_rank={i}}}] remove {ns}.zb_sb_cand
+data modify storage {ns}:temp zb_sb append value [{{selector:"@a[scores={{{ns}.zb.sb_rank={i}}}]",color:"yellow"}},{{score:{{name:"@a[scores={{{ns}.zb.sb_rank={i}}}]",objective:"{ns}.zb.points"}},color:"gold"}}]
+"""
+	sidebar_rank_code += f"\ntag @a remove {ns}.zb_sb_cand\n"
+	write_versioned_function("zombies/sidebar_rank_players", sidebar_rank_code)
+
+	write_versioned_function("zombies/build_sidebar", f"""
+$function #bs.sidebar:create {{objective:"{ns}.zb_sidebar",display_name:{{text:"🧟 Zombies",color:"dark_green",bold:true}},contents:$(zb_sb)}}
 """)
 
 	# ── Block shooting during prep ────────────────────────────────

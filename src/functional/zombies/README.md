@@ -334,3 +334,25 @@ All interactive elements (wallbuys, doors, traps, perk machines, mystery box, po
 5. **Perk Machines + Revival System** — Gameplay perks, BO2-style revival
 6. **Traps** — Area control with offset interaction pos
 7. **Mystery Box Update** — Compound format migration + animation overhaul
+
+
+
+
+We need proper inventory management.
+Currently we have a starting pistol and that's all. Which is VERY wrong.
+Taking inspiration of Black Ops 2, I want:
+- hotbar.0 : knife (iron_sword currently)
+- hotbar.1 : starting weapon (m1911)
+- inventory.1 : starting weapon's magazine. (issue: it's only 7 bullets for m1911. To fix this, we'll modify magazine data to have 8 times the normal amount of bullets max. The current ammo count in the magazine should be exactly half of the magazine max (This half-count rule will be applied only to the starting weapon))
+- hotbar.2 : starting empty
+- inventory.2 : will store weapon's magazines
+- hotbar.3 : third weapon (if mule_kick perk)
+- inventory.3 : will store weapon's magazines
+- hotbar.7: main throwable (frag_grenade): starting with 4 and +2 every round (max count is 4)
+- hotbar.6: secondary throwable (empty by default): none for now, but keep in mind we'll use it
+- hotbar.8: player info item (lore contains all information: weapons, magazines, equipments, perks, passive, ability (used or not this round))
+- hotbar.4: use ability item (if not automatic, the player can use its ability) (lore with all information about the ability <= This enhance the need of an ability.py module for centralizing information and other stuff)
+- Prevent any drop and moving item in inventory (inventory_changed advancement that will check the inventory logic!)
+  - If dropped magazine, move it back to player's inventory (execute as item on origin)
+  - Take every case!! (like swapping slot 1 & 2, etc.)
+

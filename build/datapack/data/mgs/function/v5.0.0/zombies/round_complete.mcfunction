@@ -4,6 +4,9 @@
 # @within	mgs:v5.0.0/zombies/game_tick
 #
 
+# Guard: prevent re-triggering every tick
+scoreboard players set #zb_to_spawn mgs.data -1
+
 # Signal round end
 function #mgs:zombies/on_round_end
 

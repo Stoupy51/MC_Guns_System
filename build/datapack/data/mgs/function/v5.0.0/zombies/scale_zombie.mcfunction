@@ -1,6 +1,8 @@
 
 #> mgs:v5.0.0/zombies/scale_zombie
 #
+# @executed	as @n[tag=mgs.zb_near,sort=random] & at @s
+#
 # @within	mgs:v5.0.0/zombies/summon_zombie_at {level:"$(level)"}
 #
 # @args		level (unknown)

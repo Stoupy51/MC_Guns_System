@@ -1,23 +1,15 @@
 
 #> mgs:v5.0.0/zombies/do_spawn_zombie
 #
-# @within	mgs:v5.0.0/zombies/spawn_zombie_at_idx
+# @executed	as @n[tag=mgs.zb_near,sort=random] & at @s
+#
+# @within	mgs:v5.0.0/zombies/spawn_zombie [ as @n[tag=mgs.zb_near,sort=random] & at @s ]
 #
 
-# Read relative position
-execute store result score #_zx mgs.data run data get storage mgs:temp _zs_iter[0][0]
-execute store result score #_zy mgs.data run data get storage mgs:temp _zs_iter[0][1]
-execute store result score #_zz mgs.data run data get storage mgs:temp _zs_iter[0][2]
-
-# Convert to absolute
-scoreboard players operation #_zx mgs.data += #gm_base_x mgs.data
-scoreboard players operation #_zy mgs.data += #gm_base_y mgs.data
-scoreboard players operation #_zz mgs.data += #gm_base_z mgs.data
-
-# Store absolute position for macro
-execute store result storage mgs:temp _zpos.x double 1 run scoreboard players get #_zx mgs.data
-execute store result storage mgs:temp _zpos.y double 1 run scoreboard players get #_zy mgs.data
-execute store result storage mgs:temp _zpos.z double 1 run scoreboard players get #_zz mgs.data
+# Store position for macro
+execute store result storage mgs:temp _zpos.x double 1 run data get entity @s Pos[0]
+execute store result storage mgs:temp _zpos.y double 1 run data get entity @s Pos[1]
+execute store result storage mgs:temp _zpos.z double 1 run data get entity @s Pos[2]
 
 # Determine zombie level based on round
 # Rounds 1-5: level 1, 6-10: level 2, 11-15: level 3, 16+: level 4

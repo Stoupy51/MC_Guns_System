@@ -24,14 +24,13 @@ execute if score #zb_round_grace mgs.data matches 1.. run scoreboard players rem
 execute unless score #zb_round_grace mgs.data matches 1.. store result score #_zb_alive_players mgs.data if entity @a[scores={mgs.zb.in_game=1},gamemode=!spectator]
 execute unless score #zb_round_grace mgs.data matches 1.. if score #_zb_alive_players mgs.data matches 0 run function mgs:v5.0.0/zombies/game_over
 
-# ── Points display on actionbar (every 10 ticks) ──
-execute store result score #_zb_tick_mod mgs.data run random value 0..0
-execute if score #_zb_tick_mod mgs.data matches 0 as @a[scores={mgs.zb.in_game=1},gamemode=!spectator] run function mgs:v5.0.0/zombies/show_points_actionbar
-
 # ── Refresh sidebar every second (20 ticks) ──
 scoreboard players add #zb_sidebar_timer mgs.data 1
 execute if score #zb_sidebar_timer mgs.data matches 20.. run scoreboard players set #zb_sidebar_timer mgs.data 0
 execute if score #zb_sidebar_timer mgs.data matches 0 run function mgs:v5.0.0/zombies/refresh_sidebar
+
+# ── Cleanup ──
+kill @e[type=experience_orb]
 
 # Ability tick
 function mgs:v5.0.0/zombies/ability_tick
@@ -39,9 +38,9 @@ function mgs:v5.0.0/zombies/ability_tick
 # Mystery box animation tick
 function mgs:v5.0.0/zombies/mystery_box/tick
 
-# Mystery box interaction check
-function mgs:v5.0.0/zombies/mystery_box/check_use
+# Trap active tick (damage + timer)
+execute as @e[tag=mgs.trap_center,scores={mgs.zb.trap.timer=1..}] at @s run function mgs:v5.0.0/zombies/traps/active_tick
 
-# Mystery box collection check
-function mgs:v5.0.0/zombies/mystery_box/check_collect
+# Trap cooldown tick
+execute as @e[tag=mgs.trap_center,scores={mgs.zb.trap.cd=1..}] run scoreboard players remove @s mgs.zb.trap.cd 1
 

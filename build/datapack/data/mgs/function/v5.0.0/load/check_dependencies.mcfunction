@@ -14,6 +14,8 @@ execute if score #dependency_error mgs.data matches 0 unless score $bs.dump.majo
 execute if score #dependency_error mgs.data matches 0 if score $bs.dump.major load.status matches 4 unless score $bs.dump.minor load.status matches 0.. run scoreboard players set #dependency_error mgs.data 1
 execute if score #dependency_error mgs.data matches 0 unless score $bs.hitbox.major load.status matches 4.. run scoreboard players set #dependency_error mgs.data 1
 execute if score #dependency_error mgs.data matches 0 if score $bs.hitbox.major load.status matches 4 unless score $bs.hitbox.minor load.status matches 0.. run scoreboard players set #dependency_error mgs.data 1
+execute if score #dependency_error mgs.data matches 0 unless score $bs.interaction.major load.status matches 4.. run scoreboard players set #dependency_error mgs.data 1
+execute if score #dependency_error mgs.data matches 0 if score $bs.interaction.major load.status matches 4 unless score $bs.interaction.minor load.status matches 0.. run scoreboard players set #dependency_error mgs.data 1
 execute if score #dependency_error mgs.data matches 0 unless score $bs.math.major load.status matches 4.. run scoreboard players set #dependency_error mgs.data 1
 execute if score #dependency_error mgs.data matches 0 if score $bs.math.major load.status matches 4 unless score $bs.math.minor load.status matches 0.. run scoreboard players set #dependency_error mgs.data 1
 execute if score #dependency_error mgs.data matches 0 unless score $bs.move.major load.status matches 4.. run scoreboard players set #dependency_error mgs.data 1

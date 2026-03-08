@@ -12,6 +12,5 @@ kill @e[tag=mgs.mb_display]
 # Reset state
 data modify storage mgs:zombies mystery_box.spinning set value false
 data modify storage mgs:zombies mystery_box.ready set value false
-data remove storage mgs:zombies mystery_box.buyer
 data remove storage mgs:zombies mystery_box.result
 

@@ -1,5 +1,5 @@
 {
-	"parent": "bar",
+	"parent": "item/generated",
 	"textures": {
 		"a": "mgs:item/reticles_1024",
 		"particle": "mgs:item/mp7details",

@@ -4,17 +4,19 @@
 # @within	mgs:v5.0.0/zombies/spawn_tick
 #
 
-# Pick a random zombie spawn point (relative coordinates)
-data modify storage mgs:temp _zs_iter set from storage mgs:zombies game.map.spawning_points.zombies
+# ── Tag nearby unlocked zombie spawns ──
+# First pass: 32 blocks from any alive player
+execute as @a[scores={mgs.zb.in_game=1},gamemode=!spectator] at @s run tag @e[tag=mgs.spawn_zb,tag=mgs.spawn_unlocked,distance=..32] add mgs.zb_near
 
-# Count available spawn points
-execute store result score #_zs_count mgs.data run data get storage mgs:zombies game.map.spawning_points.zombies
-execute if score #_zs_count mgs.data matches ..0 run return fail
+# Second pass: 64 blocks if none found
+execute unless entity @e[tag=mgs.zb_near] as @a[scores={mgs.zb.in_game=1},gamemode=!spectator] at @s run tag @e[tag=mgs.spawn_zb,tag=mgs.spawn_unlocked,distance=..64] add mgs.zb_near
 
-# Pick random index
-execute store result score #_zs_idx mgs.data run random value 0..100
-scoreboard players operation #_zs_idx mgs.data %= #_zs_count mgs.data
+# Fallback: any unlocked spawn
+execute unless entity @e[tag=mgs.zb_near] run tag @e[tag=mgs.spawn_zb,tag=mgs.spawn_unlocked] add mgs.zb_near
 
-# Iterate to that index
-function mgs:v5.0.0/zombies/spawn_zombie_at_idx
+# Pick random from tagged set and spawn
+execute as @n[tag=mgs.zb_near,sort=random] at @s run function mgs:v5.0.0/zombies/do_spawn_zombie
+
+# Cleanup
+tag @e[tag=mgs.zb_near] remove mgs.zb_near
 
