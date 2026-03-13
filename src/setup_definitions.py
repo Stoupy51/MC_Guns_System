@@ -198,7 +198,7 @@ def beet_default(ctx: Context) -> None:
                     )
                 if EXPLOSION_RADIUS in gun_stats:
                     lore.insert(-1,
-                        [*new_hex("Explosion Radius   ➤ ", START_HEX, END_HEX), str(gun_stats[EXPLOSION_RADIUS]), {"text":" blocks","color":f"#{END_HEX}"}]
+                        [*new_hex("Explosion Radius   ➤ ", START_HEX, END_HEX), str(gun_stats[EXPLOSION_RADIUS])," ",{"text":"blocks","color":f"#{END_HEX}"}]
                     )
                 obj.components["lore"] = [*lore, ""]
             else:

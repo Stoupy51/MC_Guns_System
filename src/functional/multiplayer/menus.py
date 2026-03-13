@@ -79,13 +79,13 @@ data modify storage {ns}:temp _map_iter set from storage {ns}:maps multiplayer
 scoreboard players set #map_idx {ns}.data 0
 execute if data storage {ns}:temp _map_iter[0] run function {ns}:v{version}/multiplayer/map_select_entry with storage {ns}:temp _map_iter[0]
 
-execute unless data storage {ns}:maps multiplayer[0] run tellraw @s [{{"text":"  No maps registered!","color":"red"}}]
+execute unless data storage {ns}:maps multiplayer[0] run tellraw @s ["  ",{{"text":"No maps registered!","color":"red"}}]
 tellraw @s {sep}
 """)
 
 	## Map select entry (recursive macro)
 	write_versioned_function("multiplayer/map_select_entry", f"""
-$tellraw @s ["",{{"text":"  "}},{{"text":"[$(name)]","color":"green","click_event":{{"action":"run_command","command":"/data modify storage {ns}:multiplayer game.map_id set value \\"$(id)\\""}},"hover_event":{{"action":"show_text","value":"Click to select '$(name)'"}}}},{{"text":" - $(description)","color":"gray"}}]
+$tellraw @s ["","  ",{{"text":""}},{{"text":"[$(name)]","color":"green","click_event":{{"action":"run_command","command":"/data modify storage {ns}:multiplayer game.map_id set value \\"$(id)\\""}},"hover_event":{{"action":"show_text","value":"Click to select '$(name)'"}}}},{{"text":" - $(description)","color":"gray"}}]
 
 data remove storage {ns}:temp _map_iter[0]
 scoreboard players add #map_idx {ns}.data 1

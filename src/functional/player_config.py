@@ -186,20 +186,20 @@ tellraw @s [{MGS_TAG},["",{{"text":"{display_name}"}},": "],{{"text":"OFF","colo
 
     # Hitmarker toggle button
     hm_btn = btn("Toggle", f"/trigger {ns}.player.config set 2", "yellow", "Toggle hitmarker Sound on entity hit")
-    hm_on  = f'["  ",["",{{"text":"Hitmarker Sound"}},": "],{{"text":"ON","color":"green"}},{{"text":" ✔ ","color":"green"}},{hm_btn}]'
-    hm_off = f'["  ",["",{{"text":"Hitmarker Sound"}},": "],{{"text":"OFF","color":"red"}},{{"text":" ✘","color":"red"}},{hm_btn}]'
+    hm_on  = f'["  ",{{"text":"Hitmarker Sound"}},": ",{{"text":"ON","color":"green"}},{{"text":" ✔ ","color":"green"}},{hm_btn}]'
+    hm_off = f'["  ",{{"text":"Hitmarker Sound"}},": ",{{"text":"OFF","color":"red"}},{{"text":" ✘","color":"red"}},{hm_btn}]'
 
     # Damage Debug toggle button
     dd_btn = btn("Toggle", f"/trigger {ns}.player.config set 3", "yellow", "Toggle damage numbers in chat")
-    dd_on  = f'["  ",["",{{"text":"Damage Debug"}},": "],{{"text":"ON","color":"green"}},{{"text":" ✔ ","color":"green"}},{dd_btn}]'
-    dd_off = f'["  ",["",{{"text":"Damage Debug"}},": "],{{"text":"OFF","color":"red"}},{{"text":" ✘","color":"red"}},{dd_btn}]'
+    dd_on  = f'["  ",{{"text":"Damage Debug"}},": ",{{"text":"ON","color":"green"}},{{"text":" ✔ ","color":"green"}},{dd_btn}]'
+    dd_off = f'["  ",{{"text":"Damage Debug"}},": ",{{"text":"OFF","color":"red"}},{{"text":" ✘","color":"red"}},{dd_btn}]'
 
     # Multiplayer class selection button
     mp_btn = btn("Select Class", f"/trigger {ns}.player.config set 4", "aqua", "Open multiplayer class selection menu")
-    mp_line = f'["  ",["",{{"text":"Multiplayer"}},": "],{mp_btn}]'
+    mp_line = f'["  ",{{"text":"Multiplayer"}},": ",{mp_btn}]'
 
     # Info line
-    info_line = f'["  ",{{"text":"Use ","color":"gray","italic":true}},{{"text":"/trigger {ns}.player.config","color":"aqua","italic":true}},{{"text":" to reopen","color":"gray","italic":true}}]'
+    info_line = f'["  ",{{"text":"Use","color":"gray","italic":true}}," ",{{"text":"/trigger {ns}.player.config","color":"aqua","italic":true}}," ",{{"text":"to reopen","color":"gray","italic":true}}]'
 
     write_versioned_function("player/config/menu", f"""tellraw @s {sep}
 tellraw @s {title}
@@ -223,8 +223,8 @@ scoreboard players operation #dmg_dec {ns}.data = #dmg_x10 {ns}.data
 scoreboard players operation #dmg_dec {ns}.data %= #10 {ns}.data
 
 # Damage Debug: global config overrides (tellraw @a), otherwise per-player (tellraw to shooter only)
-$execute if score #damage_debug {ns}.config matches 1 run tellraw @a ["",[{{"text":"","color":"red"}},"[",{{"text":"DMG"}},"] "],[{{"score":{{"name":"#dmg_whole","objective":"{ns}.data"}},"color":"gold"}},".",{{"score":{{"name":"#dmg_dec","objective":"{ns}.data"}}}}],{{"text":" HP to ","color":"gray"}},{{"selector":"$(target)"}},{{"text":" by ","color":"gray"}},{{"selector":"$(attacker)"}}]
-$execute unless score #damage_debug {ns}.config matches 1 at @s as $(attacker) if score @s {ns}.player.damage_debug matches 1 run tellraw @s ["",[{{"text":"","color":"red"}},"[",{{"text":"DMG"}},"] "],[{{"score":{{"name":"#dmg_whole","objective":"{ns}.data"}},"color":"gold"}},".",{{"score":{{"name":"#dmg_dec","objective":"{ns}.data"}}}}],{{"text":" HP to ","color":"gray"}},{{"selector":"@n"}}]
+$execute if score #damage_debug {ns}.config matches 1 run tellraw @a ["",[{{"text":"","color":"red"}},"[",{{"text":"DMG"}},"] "],[{{"score":{{"name":"#dmg_whole","objective":"{ns}.data"}},"color":"gold"}},".",{{"score":{{"name":"#dmg_dec","objective":"{ns}.data"}}}}]," ",{{"text":"HP to","color":"gray"}}," ",{{"selector":"$(target)"}}," ",{{"text":"by","color":"gray"}}," ",{{"selector":"$(attacker)"}}]
+$execute unless score #damage_debug {ns}.config matches 1 at @s as $(attacker) if score @s {ns}.player.damage_debug matches 1 run tellraw @s ["",[{{"text":"","color":"red"}},"[",{{"text":"DMG"}},"] "],[{{"score":{{"name":"#dmg_whole","objective":"{ns}.data"}},"color":"gold"}},".",{{"score":{{"name":"#dmg_dec","objective":"{ns}.data"}}}}]," ",{{"text":"HP to","color":"gray"}}," ",{{"selector":"@n"}}]
 """, tags=[f"{ns}:signals/damage"])
 
     ## Hitmarker Sound on entity hit (added to damage signal)
