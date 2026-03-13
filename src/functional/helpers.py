@@ -9,7 +9,7 @@ from stewbeet import Mem, TextComponent, write_versioned_function
 # Use in tellraw arrays: tellraw @s ["",{MGS_TAG},...]
 # The brackets/space are raw strings (not matched by lang plugin).
 # {"text":"MGS"} will be translated to {"translate":"mgs"} → value "MGS".
-MGS_TAG = '[{"text":"","color":"gold"},"[",{"text":"MGS"},"] "]'
+MGS_TAG: str = r'[{"text":"","color":"gold"},"[",{"text":"MGS"},"] "]'
 
 
 def styled_text(text: str, **attrs: str) -> str:

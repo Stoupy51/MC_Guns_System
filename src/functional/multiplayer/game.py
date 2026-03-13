@@ -326,31 +326,31 @@ tag @s remove {ns}.temp_victim
 	## Random death message for self-deaths (OOB, environmental)
 	write_versioned_function("multiplayer/random_death_message", f"""
 execute store result score #random_message {ns}.data run random value 1..5
-execute if score #random_message {ns}.data matches 1 run tellraw @a[scores={{{ns}.mp.in_game=1..}}] ["",{{"selector":"@s","color":"red"}},{{"text":" made a terrible mistake","color":"gray"}}]
-execute if score #random_message {ns}.data matches 2 run tellraw @a[scores={{{ns}.mp.in_game=1..}}] ["",{{"selector":"@s","color":"red"}},{{"text":" forgot how gravity works","color":"gray"}}]
-execute if score #random_message {ns}.data matches 3 run tellraw @a[scores={{{ns}.mp.in_game=1..}}] ["",{{"selector":"@s","color":"red"}},{{"text":" played themselves","color":"gray"}}]
-execute if score #random_message {ns}.data matches 4 run tellraw @a[scores={{{ns}.mp.in_game=1..}}] ["",{{"selector":"@s","color":"red"}},{{"text":" left the battlefield","color":"gray"}}]
-execute if score #random_message {ns}.data matches 5 run tellraw @a[scores={{{ns}.mp.in_game=1..}}] ["",{{"selector":"@s","color":"red"}},{{"text":" embraced the void","color":"gray"}}]
+execute if score #random_message {ns}.data matches 1 run tellraw @a[scores={{{ns}.mp.in_game=1..}}] ["",{{"selector":"@s","color":"red"}}," ",{{"text":"made a terrible mistake","color":"gray"}}]
+execute if score #random_message {ns}.data matches 2 run tellraw @a[scores={{{ns}.mp.in_game=1..}}] ["",{{"selector":"@s","color":"red"}}," ",{{"text":"forgot how gravity works","color":"gray"}}]
+execute if score #random_message {ns}.data matches 3 run tellraw @a[scores={{{ns}.mp.in_game=1..}}] ["",{{"selector":"@s","color":"red"}}," ",{{"text":"played themselves","color":"gray"}}]
+execute if score #random_message {ns}.data matches 4 run tellraw @a[scores={{{ns}.mp.in_game=1..}}] ["",{{"selector":"@s","color":"red"}}," ",{{"text":"left the battlefield","color":"gray"}}]
+execute if score #random_message {ns}.data matches 5 run tellraw @a[scores={{{ns}.mp.in_game=1..}}] ["",{{"selector":"@s","color":"red"}}," ",{{"text":"embraced the void","color":"gray"}}]
 """)
 
 	## Random self-kill message (grenade, RPG, own explosion)
 	write_versioned_function("multiplayer/random_self_kill_message", f"""
 execute store result score #random_message {ns}.data run random value 1..5
-execute if score #random_message {ns}.data matches 1 run tellraw @a[scores={{{ns}.mp.in_game=1..}}] ["",{{"selector":"@s","color":"red"}},{{"text":" blew themselves up","color":"gray"}}]
-execute if score #random_message {ns}.data matches 2 run tellraw @a[scores={{{ns}.mp.in_game=1..}}] ["",{{"selector":"@s","color":"red"}},{{"text":" got a taste of their own medicine","color":"gray"}}]
-execute if score #random_message {ns}.data matches 3 run tellraw @a[scores={{{ns}.mp.in_game=1..}}] ["",{{"selector":"@s","color":"red"}},{{"text":" found out the blast radius the hard way","color":"gray"}}]
-execute if score #random_message {ns}.data matches 4 run tellraw @a[scores={{{ns}.mp.in_game=1..}}] ["",{{"selector":"@s","color":"red"}},{{"text":" didn't throw the grenade far enough","color":"gray"}}]
-execute if score #random_message {ns}.data matches 5 run tellraw @a[scores={{{ns}.mp.in_game=1..}}] ["",{{"selector":"@s","color":"red"}},{{"text":" is their own worst enemy","color":"gray"}}]
+execute if score #random_message {ns}.data matches 1 run tellraw @a[scores={{{ns}.mp.in_game=1..}}] ["",{{"selector":"@s","color":"red"}}," ",{{"text":"blew themselves up","color":"gray"}}]
+execute if score #random_message {ns}.data matches 2 run tellraw @a[scores={{{ns}.mp.in_game=1..}}] ["",{{"selector":"@s","color":"red"}}," ",{{"text":"got a taste of their own medicine","color":"gray"}}]
+execute if score #random_message {ns}.data matches 3 run tellraw @a[scores={{{ns}.mp.in_game=1..}}] ["",{{"selector":"@s","color":"red"}}," ",{{"text":"found out the blast radius the hard way","color":"gray"}}]
+execute if score #random_message {ns}.data matches 4 run tellraw @a[scores={{{ns}.mp.in_game=1..}}] ["",{{"selector":"@s","color":"red"}}," ",{{"text":"didn't throw the grenade far enough","color":"gray"}}]
+execute if score #random_message {ns}.data matches 5 run tellraw @a[scores={{{ns}.mp.in_game=1..}}] ["",{{"selector":"@s","color":"red"}}," ",{{"text":"is their own worst enemy","color":"gray"}}]
 """)
 
 	## Random kill message (uses temp_killer/temp_victim tags, shared by simulate_death + on_respawn)
 	write_versioned_function("multiplayer/random_kill_message", f"""
 execute store result score #random_message {ns}.data run random value 1..5
-execute if score #random_message {ns}.data matches 1 run tellraw @a[scores={{{ns}.mp.in_game=1..}}] ["",{{"selector":"@a[tag={ns}.temp_killer]","color":"red"}},{{"text":" eliminated ","color":"gray"}},{{"selector":"@a[tag={ns}.temp_victim]","color":"red"}}]
-execute if score #random_message {ns}.data matches 2 run tellraw @a[scores={{{ns}.mp.in_game=1..}}] ["",{{"selector":"@a[tag={ns}.temp_killer]","color":"red"}},{{"text":" took down ","color":"gray"}},{{"selector":"@a[tag={ns}.temp_victim]","color":"red"}}]
-execute if score #random_message {ns}.data matches 3 run tellraw @a[scores={{{ns}.mp.in_game=1..}}] ["",{{"selector":"@a[tag={ns}.temp_killer]","color":"red"}},{{"text":" dispatched ","color":"gray"}},{{"selector":"@a[tag={ns}.temp_victim]","color":"red"}}]
-execute if score #random_message {ns}.data matches 4 run tellraw @a[scores={{{ns}.mp.in_game=1..}}] ["",{{"selector":"@a[tag={ns}.temp_killer]","color":"red"}},{{"text":" sent ","color":"gray"}},{{"selector":"@a[tag={ns}.temp_victim]","color":"red"}},{{"text":" to the shadow realm","color":"gray"}}]
-execute if score #random_message {ns}.data matches 5 run tellraw @a[scores={{{ns}.mp.in_game=1..}}] ["",{{"selector":"@a[tag={ns}.temp_killer]","color":"red"}},{{"text":" wiped ","color":"gray"}},{{"selector":"@a[tag={ns}.temp_victim]","color":"red"}},{{"text":" off the map","color":"gray"}}]
+execute if score #random_message {ns}.data matches 1 run tellraw @a[scores={{{ns}.mp.in_game=1..}}] ["",{{"selector":"@a[tag={ns}.temp_killer]","color":"red"}}," ",{{"text":"eliminated","color":"gray"}}," ",{{"selector":"@a[tag={ns}.temp_victim]","color":"red"}}]
+execute if score #random_message {ns}.data matches 2 run tellraw @a[scores={{{ns}.mp.in_game=1..}}] ["",{{"selector":"@a[tag={ns}.temp_killer]","color":"red"}}," ",{{"text":"took down","color":"gray"}}," ",{{"selector":"@a[tag={ns}.temp_victim]","color":"red"}}]
+execute if score #random_message {ns}.data matches 3 run tellraw @a[scores={{{ns}.mp.in_game=1..}}] ["",{{"selector":"@a[tag={ns}.temp_killer]","color":"red"}}," ",{{"text":"dispatched","color":"gray"}}," ",{{"selector":"@a[tag={ns}.temp_victim]","color":"red"}}]
+execute if score #random_message {ns}.data matches 4 run tellraw @a[scores={{{ns}.mp.in_game=1..}}] ["",{{"selector":"@a[tag={ns}.temp_killer]","color":"red"}}," ",{{"text":"sent","color":"gray"}}," ",{{"selector":"@a[tag={ns}.temp_victim]","color":"red"}}," ",{{"text":"to the shadow realm","color":"gray"}}]
+execute if score #random_message {ns}.data matches 5 run tellraw @a[scores={{{ns}.mp.in_game=1..}}] ["",{{"selector":"@a[tag={ns}.temp_killer]","color":"red"}}," ",{{"text":"wiped","color":"gray"}}," ",{{"selector":"@a[tag={ns}.temp_victim]","color":"red"}}," ",{{"text":"off the map","color":"gray"}}]
 """)
 
 	## Kill Tracking (Signal Listener) - now dispatches to gamemode
@@ -778,19 +778,19 @@ scoreboard objectives setdisplay sidebar {ns}.sidebar
 	write_versioned_function("multiplayer/refresh_sidebar_dom", f"""
 # Build point status strings based on ownership scores
 # Zone A
-execute if score #dom_owner_a {ns}.data matches 0 run data modify storage {ns}:temp dom_sb.a set value '{{"text":" A: ⚪ Neutral","color":"gray"}}'
-execute if score #dom_owner_a {ns}.data matches 1 run data modify storage {ns}:temp dom_sb.a set value '{{"text":" A: 🔴 Red","color":"red"}}'
-execute if score #dom_owner_a {ns}.data matches 2 run data modify storage {ns}:temp dom_sb.a set value '{{"text":" A: 🔵 Blue","color":"blue"}}'
+execute if score #dom_owner_a {ns}.data matches 0 run data modify storage {ns}:temp dom_sb.a set value '[" ",{{"text":"A: ⚪ Neutral","color":"gray"}}]'
+execute if score #dom_owner_a {ns}.data matches 1 run data modify storage {ns}:temp dom_sb.a set value '[" ",{{"text":"A: 🔴 Red","color":"red"}}]'
+execute if score #dom_owner_a {ns}.data matches 2 run data modify storage {ns}:temp dom_sb.a set value '[" ",{{"text":"A: 🔵 Blue","color":"blue"}}]'
 
 # Zone B
-execute if score #dom_owner_b {ns}.data matches 0 run data modify storage {ns}:temp dom_sb.b set value '{{"text":" B: ⚪ Neutral","color":"gray"}}'
-execute if score #dom_owner_b {ns}.data matches 1 run data modify storage {ns}:temp dom_sb.b set value '{{"text":" B: 🔴 Red","color":"red"}}'
-execute if score #dom_owner_b {ns}.data matches 2 run data modify storage {ns}:temp dom_sb.b set value '{{"text":" B: 🔵 Blue","color":"blue"}}'
+execute if score #dom_owner_b {ns}.data matches 0 run data modify storage {ns}:temp dom_sb.b set value '[" ",{{"text":"B: ⚪ Neutral","color":"gray"}}]'
+execute if score #dom_owner_b {ns}.data matches 1 run data modify storage {ns}:temp dom_sb.b set value '[" ",{{"text":"B: 🔴 Red","color":"red"}}]'
+execute if score #dom_owner_b {ns}.data matches 2 run data modify storage {ns}:temp dom_sb.b set value '[" ",{{"text":"B: 🔵 Blue","color":"blue"}}]'
 
 # Zone C
-execute if score #dom_owner_c {ns}.data matches 0 run data modify storage {ns}:temp dom_sb.c set value '{{"text":" C: ⚪ Neutral","color":"gray"}}'
-execute if score #dom_owner_c {ns}.data matches 1 run data modify storage {ns}:temp dom_sb.c set value '{{"text":" C: 🔴 Red","color":"red"}}'
-execute if score #dom_owner_c {ns}.data matches 2 run data modify storage {ns}:temp dom_sb.c set value '{{"text":" C: 🔵 Blue","color":"blue"}}'
+execute if score #dom_owner_c {ns}.data matches 0 run data modify storage {ns}:temp dom_sb.c set value '[" ",{{"text":"C: ⚪ Neutral","color":"gray"}}]'
+execute if score #dom_owner_c {ns}.data matches 1 run data modify storage {ns}:temp dom_sb.c set value '[" ",{{"text":"C: 🔴 Red","color":"red"}}]'
+execute if score #dom_owner_c {ns}.data matches 2 run data modify storage {ns}:temp dom_sb.c set value '[" ",{{"text":"C: 🔵 Blue","color":"blue"}}]'
 
 # Build sidebar with dynamic point entries
 function {ns}:v{version}/multiplayer/build_sidebar_dom with storage {ns}:temp dom_sb

@@ -137,7 +137,7 @@ execute if score #dom_prog {ns}.data matches ..-1 if score @s {ns}.mp.dom_progre
 execute if score #dom_prog {ns}.data matches ..-1 if score @s {ns}.mp.dom_progress matches 0.. run data modify entity @n[tag={ns}.dom_label,distance=..1] text.color set value "yellow"
 
 # If reached 100, captured by red
-execute if score @s {ns}.mp.dom_progress matches 100 unless score @s {ns}.mp.dom_owner matches 1 run tellraw @a [{MGS_TAG},{{"text":"Red","color":"red"}},{{"text":" captured a point!","color":"yellow"}}]
+execute if score @s {ns}.mp.dom_progress matches 100 unless score @s {ns}.mp.dom_owner matches 1 run tellraw @a [{MGS_TAG},{{"text":"Red","color":"red"}}," ",{{"text":"captured a point!","color":"yellow"}}]
 execute if score @s {ns}.mp.dom_progress matches 100 unless score @s {ns}.mp.dom_owner matches 1 run playsound minecraft:block.note_block.bell player @a ~ ~ ~ 1 1.2
 execute if score @s {ns}.mp.dom_progress matches 100 unless score @s {ns}.mp.dom_owner matches 1 run data modify entity @n[tag={ns}.dom_label,distance=..1] text.color set value "red"
 execute if score @s {ns}.mp.dom_progress matches 100 unless score @s {ns}.mp.dom_owner matches 1 run scoreboard players set @s {ns}.mp.dom_owner 1
@@ -159,7 +159,7 @@ execute if score #dom_prog {ns}.data matches 1.. if score @s {ns}.mp.dom_progres
 execute if score #dom_prog {ns}.data matches 1.. if score @s {ns}.mp.dom_progress matches ..0 run data modify entity @n[tag={ns}.dom_label,distance=..1] text.color set value "yellow"
 
 # If reached -100, captured by blue
-execute if score @s {ns}.mp.dom_progress matches -100 unless score @s {ns}.mp.dom_owner matches 2 run tellraw @a [{MGS_TAG},{{"text":"Blue","color":"blue"}},{{"text":" captured a point!","color":"yellow"}}]
+execute if score @s {ns}.mp.dom_progress matches -100 unless score @s {ns}.mp.dom_owner matches 2 run tellraw @a [{MGS_TAG},{{"text":"Blue","color":"blue"}}," ",{{"text":"captured a point!","color":"yellow"}}]
 execute if score @s {ns}.mp.dom_progress matches -100 unless score @s {ns}.mp.dom_owner matches 2 run playsound minecraft:block.note_block.bell player @a ~ ~ ~ 1 0.8
 execute if score @s {ns}.mp.dom_progress matches -100 unless score @s {ns}.mp.dom_owner matches 2 run data modify entity @n[tag={ns}.dom_label,distance=..1] text.color set value "blue"
 execute if score @s {ns}.mp.dom_progress matches -100 unless score @s {ns}.mp.dom_owner matches 2 run scoreboard players set @s {ns}.mp.dom_owner 2

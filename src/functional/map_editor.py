@@ -193,7 +193,7 @@ scoreboard players set #map_menu_idx {ns}.data 0
 execute if data storage {ns}:temp map_menu.list[0] run function {ns}:v{version}/maps/editor/menu_entry
 
 # No maps message
-execute unless data storage {ns}:maps {sk}[0] run tellraw @s [{{"text":"  No maps created yet.","color":"gray","italic":true}}]
+execute unless data storage {ns}:maps {sk}[0] run tellraw @s ["  ",{{"text":"No maps created yet.","color":"gray","italic":true}}]
 
 tellraw @s ""
 tellraw @s ["  ",{create_btn}]
@@ -235,9 +235,9 @@ $tellraw @s ["  ",{{"text":"$(name)","color":"white"}},{{"text":" ($(id))","colo
 tellraw @s {sep}
 tellraw @s [{{"text":"","color":"gold","bold":true}},"  📝 ",{{"text":"Create New {mode_info['name']} Map"}}]
 tellraw @s {sep}
-tellraw @s [{{"text":"  Run this command to create a new map:","color":"yellow"}}]
+tellraw @s [":"Run this command to create a new map:","color":"yellow"}}]
 tellraw @s [{{"text":"","color":"aqua","click_event":{{"action":"suggest_command","command":"/data modify storage {ns}:maps {sk} append value {{{create_snbt}}}"}}}},"/data modify storage {ns}:maps {sk} append value {{...}}"]
-tellraw @s [{{"text":"  ⬆ Click to paste the command, then edit the id/name/description.","color":"gray","italic":true}}]
+tellraw @s ["  ",{{"text":"⬆ Click to paste the command, then edit the id/name/description.","color":"gray","italic":true}}]
 tellraw @s ""
 tellraw @s ["  ",{back_btn}]
 tellraw @s {sep}
@@ -907,7 +907,7 @@ kill @s
 	zb_defaults_lines: list[str] = []
 	zb_defaults_lines.append(f"tellraw @a[tag={ns}.map_editor] {sep}")
 	zb_defaults_lines.append(f'tellraw @a[tag={ns}.map_editor] [{{"text":"","color":"white","bold":true}},"  ⚙ ",{{"text":"Zombies Element Defaults"}}]')
-	zb_defaults_lines.append(f'tellraw @a[tag={ns}.map_editor] [{{"text":"  New elements use these values on placement","color":"gray","italic":true}}]')
+	zb_defaults_lines.append(f'tellraw @a[tag={ns}.map_editor] ["  ",{{"text":"New elements use these values on placement","color":"gray","italic":true}}]')
 	zb_defaults_lines.append(f"tellraw @a[tag={ns}.map_editor] {sep}")
 	zb_defaults_lines.append("")
 
@@ -929,7 +929,7 @@ kill @s
 		if not einfo["defaults"]:
 			continue  # Skip elements with no type-specific defaults
 		zb_defaults_lines.append(
-			f'tellraw @a[tag={ns}.map_editor] [{{"text":"  {einfo["emoji"]} {einfo["name"]}","color":"{einfo["color"]}","bold":true}}]'
+			f'tellraw @a[tag={ns}.map_editor] ["  ",{{"text":"{einfo["emoji"]} {einfo["name"]}","color":"{einfo["color"]}","bold":true}}]'
 		)
 		for field, default_val in einfo["defaults"].items():
 			snbt_val = snbt_suggest(default_val)
@@ -973,7 +973,7 @@ execute at @s unless entity @n[tag={ns}.map_element,distance=..10] run tellraw @
 	for etype, einfo in zb_elements.items():
 		zb_config_lines.append(
 			f'execute if entity @s[tag={ns}.element.{etype}] run tellraw @a[tag={ns}.map_editor] '
-			f'[{{"text":"  {einfo["emoji"]} {einfo["name"]} Configuration","color":"{einfo["color"]}","bold":true}}]'
+			f'["  ",{{"text":"{einfo["emoji"]} {einfo["name"]} Configuration","color":"{einfo["color"]}","bold":true}}]'
 		)
 		# group_id only shown for spawn-type zombies elements
 		if etype in ("zombie_spawn", "player_spawn_zb"):
@@ -1018,7 +1018,7 @@ execute at @s unless entity @n[tag={ns}.map_element,distance=..10] run tellraw @
 		)
 		zb_config_lines.append(
 			f'execute if entity @s[tag={ns}.element.{etype}] run tellraw @a[tag={ns}.map_editor] '
-			f'[{{"text":"  {einfo["emoji"]} {einfo["name"]}","color":"{einfo["color"]}","bold":true}}]'
+			f'["  ",{{"text":"{einfo["emoji"]} {einfo["name"]}","color":"{einfo["color"]}","bold":true}}]'
 		)
 		zb_config_lines.append(
 			f'execute if entity @s[tag={ns}.element.{etype}] run tellraw @a[tag={ns}.map_editor] '
@@ -1034,7 +1034,7 @@ execute at @s unless entity @n[tag={ns}.map_element,distance=..10] run tellraw @
 	)
 	zb_config_lines.append(
 		f'execute if entity @s[tag={ns}.element.enemy] run tellraw @a[tag={ns}.map_editor] '
-		f'[{{"text":"  👤 Enemy Configuration","color":"red","bold":true}}]'
+		f'["  ",{{"text":"👤 Enemy Configuration","color":"red","bold":true}}]'
 	)
 	zb_config_lines.append(
 		f'execute if entity @s[tag={ns}.element.enemy] run tellraw @a[tag={ns}.map_editor] '
@@ -1048,7 +1048,7 @@ execute at @s unless entity @n[tag={ns}.map_element,distance=..10] run tellraw @
 			continue
 		zb_config_lines.append(
 			f'execute if entity @s[tag={ns}.element.{etype}] run tellraw @a[tag={ns}.map_editor] '
-			f'[{{"text":"  {einfo["emoji"]} {einfo["name"]} — no configurable fields","color":"gray","italic":true}}]'
+			f'["  ",{{"text":"{einfo["emoji"]} {einfo["name"]} — no configurable fields","color":"gray","italic":true}}]'
 		)
 
 	zb_config_lines.append(f"tellraw @a[tag={ns}.map_editor] {sep}")

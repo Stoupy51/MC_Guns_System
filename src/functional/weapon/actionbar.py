@@ -131,10 +131,13 @@ scoreboard players operation #dps_dec {ns}.data = #dps_raw {ns}.data
 scoreboard players operation #dps_dec {ns}.data %= #10 {ns}.data
 
 # Append DPS to actionbar list
-data modify storage {ns}:temp actionbar.list append value {{"text":"    ⚡ ","color":"#{END_HEX}"}}
+data modify storage {ns}:temp actionbar.list append value "    "
+data modify storage {ns}:temp actionbar.list append value {{"text":"⚡","color":"#{END_HEX}"}}
+data modify storage {ns}:temp actionbar.list append value " "
 data modify storage {ns}:temp actionbar.list append value {{"score":{{"name":"#dps_int","objective":"{ns}.data"}}}}
 data modify storage {ns}:temp actionbar.list append value {{"text":"."}}
 data modify storage {ns}:temp actionbar.list append value {{"score":{{"name":"#dps_dec","objective":"{ns}.data"}}}}
-data modify storage {ns}:temp actionbar.list append value {{"text":" dps","color":"#{END_HEX}"}}
+data modify storage {ns}:temp actionbar.list append value " "
+data modify storage {ns}:temp actionbar.list append value {{"text":"dps","color":"#{END_HEX}"}}
 """)
 

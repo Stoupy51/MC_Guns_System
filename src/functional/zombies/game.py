@@ -377,10 +377,10 @@ execute store result score #final_round {ns}.data run data get storage {ns}:zomb
 
 # Performance summary
 tellraw @a ["","\\n",{{"text":"═══════ GAME OVER ═══════","color":"dark_red","bold":true}}]
-tellraw @a ["",{{"text":"  🧟 Final Round: ","color":"gray"}},{{"score":{{"name":"#final_round","objective":"{ns}.data"}},"color":"red","bold":true}}]
+tellraw @a ["","  ",{{"text":"🧟 Final Round: ","color":"gray"}},{{"score":{{"name":"#final_round","objective":"{ns}.data"}},"color":"red","bold":true}}]
 
 # Per-player stats
-execute as @a[scores={{{ns}.zb.in_game=1}}] run tellraw @a ["",{{"text":"  🎖 ","color":"gray"}},{{"selector":"@s","color":"yellow"}}," — Kills: ",{{"score":{{"name":"@s","objective":"{ns}.zb.kills"}},"color":"green"}}," | Downs: ",{{"score":{{"name":"@s","objective":"{ns}.zb.downs"}},"color":"red"}}," | Points: ",{{"score":{{"name":"@s","objective":"{ns}.zb.points"}},"color":"gold"}}]
+execute as @a[scores={{{ns}.zb.in_game=1}}] run tellraw @a ["","  ",{{"text":"🎖 ","color":"gray"}},{{"selector":"@s","color":"yellow"}}," — Kills: ",{{"score":{{"name":"@s","objective":"{ns}.zb.kills"}},"color":"green"}}," | Downs: ",{{"score":{{"name":"@s","objective":"{ns}.zb.downs"}},"color":"red"}}," | Points: ",{{"score":{{"name":"@s","objective":"{ns}.zb.points"}},"color":"gold"}}]
 
 tellraw @a ["",{{"text":"═════════════════════════","color":"dark_red","bold":true}},"\\n"]
 
