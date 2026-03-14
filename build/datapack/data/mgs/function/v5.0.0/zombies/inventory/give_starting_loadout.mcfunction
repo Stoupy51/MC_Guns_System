@@ -11,7 +11,7 @@
 clear @s
 
 # hotbar.0: Knife
-item replace entity @s hotbar.0 with minecraft:iron_sword[custom_data={mgs:{knife:true}},item_name={"translate": "mgs.knife","color":"white","italic":false},attribute_modifiers=[{type:"attack_damage",amount:20,operation:"add_value",slot:"mainhand",id:"minecraft:base_attack_damage"}]]
+item replace entity @s hotbar.0 with minecraft:iron_sword[custom_data={mgs:{knife:true}},item_name={"translate":"mgs.knife","color":"white","italic":false},attribute_modifiers=[{type:"attack_damage",amount:20,operation:"add_value",slot:"mainhand",id:"minecraft:base_attack_damage"}]]
 
 # hotbar.1: Starting weapon (M1911)
 loot replace entity @s hotbar.1 loot mgs:i/m1911

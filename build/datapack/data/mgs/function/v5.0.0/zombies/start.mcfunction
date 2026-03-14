@@ -5,16 +5,16 @@
 #
 
 # Prevent starting if already active or preparing
-execute if data storage mgs:zombies game{state:"active"} run return run tellraw @s [[{"text":"","color":"gold"},"[",{"translate": "mgs"},"] "],{"translate": "mgs.zombies_game_already_in_progress","color":"red"}]
-execute if data storage mgs:zombies game{state:"preparing"} run return run tellraw @s [[{"text":"","color":"gold"},"[",{"translate": "mgs"},"] "],{"translate": "mgs.zombies_game_already_preparing","color":"red"}]
+execute if data storage mgs:zombies game{state:"active"} run return run tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.zombies_game_already_in_progress","color":"red"}]
+execute if data storage mgs:zombies game{state:"preparing"} run return run tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.zombies_game_already_preparing","color":"red"}]
 
 # Check that a map is selected
-execute unless data storage mgs:zombies game.map_id run return run tellraw @s [[{"text":"","color":"gold"},"[",{"translate": "mgs"},"] "],{"translate": "mgs.no_map_selected_use_the_setup_menu_to_select_a_zombies_map","color":"red"}]
-execute if data storage mgs:zombies game{map_id:""} run return run tellraw @s [[{"text":"","color":"gold"},"[",{"translate": "mgs"},"] "],{"translate": "mgs.no_map_selected_use_the_setup_menu_to_select_a_zombies_map","color":"red"}]
+execute unless data storage mgs:zombies game.map_id run return run tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.no_map_selected_use_the_setup_menu_to_select_a_zombies_map","color":"red"}]
+execute if data storage mgs:zombies game{map_id:""} run return run tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.no_map_selected_use_the_setup_menu_to_select_a_zombies_map","color":"red"}]
 
 # Load the selected map
 function mgs:v5.0.0/zombies/load_map_from_storage with storage mgs:zombies game
-execute unless score #map_load_found mgs.data matches 1 run return run tellraw @s [[{"text":"","color":"gold"},"[",{"translate": "mgs"},"] "],{"translate": "mgs.map_not_found_select_a_valid_zombies_map","color":"red"}]
+execute unless score #map_load_found mgs.data matches 1 run return run tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.map_not_found_select_a_valid_zombies_map","color":"red"}]
 
 # Copy loaded map data into game state
 data modify storage mgs:zombies game.map set from storage mgs:temp map_load.result
@@ -87,7 +87,7 @@ function #mgs:zombies/register_mystery_box_item
 schedule function mgs:v5.0.0/zombies/preload_complete 20t
 
 # Announce
-tellraw @a ["",{"text":"","color":"dark_green","bold":true},"🧟 ",{"translate": "mgs.loading_zombies_map","color":"yellow"}]
+tellraw @a ["",{"text":"","color":"dark_green","bold":true},"🧟 ",{"translate":"mgs.loading_zombies_map","color":"yellow"}]
 
 # Initialize power state
 scoreboard players set #zb_power mgs.data 0

@@ -14,7 +14,7 @@ execute unless data storage mgs:zombies game{state:"active"} run return fail
 execute if data storage mgs:zombies mystery_box{ready:true} run return run function mgs:v5.0.0/zombies/mystery_box/collect
 
 # If already spinning: inform player
-execute if data storage mgs:zombies mystery_box{spinning:true} run return run tellraw @s [[{"text":"","color":"gold"},"[",{"translate": "mgs"},"] "],{"translate": "mgs.mystery_box_is_already_in_use","color":"red"}]
+execute if data storage mgs:zombies mystery_box{spinning:true} run return run tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.mystery_box_is_already_in_use","color":"red"}]
 
 # Otherwise: try to use (buy)
 function mgs:v5.0.0/zombies/mystery_box/try_use

@@ -43,7 +43,7 @@ schedule function mgs:v5.0.0/zombies/end_prep 180t
 function mgs:v5.0.0/zombies/create_sidebar
 
 # Announce
-tellraw @a ["",{"text":"","color":"dark_green","bold":true},"🧟 ",{"translate": "mgs.preparing_choose_your_perk_round_1_starts_in_9_seconds","color":"yellow"}]
+tellraw @a ["",{"text":"","color":"dark_green","bold":true},"🧟 ",{"translate":"mgs.preparing_choose_your_perk_round_1_starts_in_9_seconds","color":"yellow"}]
 
 # Setup mystery box positions
 execute if data storage mgs:zombies game.map.mystery_box.positions[0] run function mgs:v5.0.0/zombies/mystery_box/setup_positions

@@ -235,7 +235,7 @@ $tellraw @s ["  ",{{"text":"$(name)","color":"white"}},{{"text":" ($(id))","colo
 tellraw @s {sep}
 tellraw @s [{{"text":"","color":"gold","bold":true}},"  📝 ",{{"text":"Create New {mode_info['name']} Map"}}]
 tellraw @s {sep}
-tellraw @s [":"Run this command to create a new map:","color":"yellow"}}]
+tellraw @s {{"text":"Run this command to create a new map:","color":"yellow"}}
 tellraw @s [{{"text":"","color":"aqua","click_event":{{"action":"suggest_command","command":"/data modify storage {ns}:maps {sk} append value {{{create_snbt}}}"}}}},"/data modify storage {ns}:maps {sk} append value {{...}}"]
 tellraw @s ["  ",{{"text":"⬆ Click to paste the command, then edit the id/name/description.","color":"gray","italic":true}}]
 tellraw @s ""

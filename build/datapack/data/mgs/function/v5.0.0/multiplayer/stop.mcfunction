@@ -38,8 +38,8 @@ kill @e[tag=mgs.gm_entity]
 function #mgs:multiplayer/on_game_end
 
 # Announce scores
-tellraw @a ["",[{"text":"","color":"gold","bold":true},"⚔ ",{"text":"Game Over"},"! "]]
-tellraw @a ["",{"translate": "mgs.red","color":"red"},{"text":": "},{"score":{"name":"#red","objective":"mgs.mp.team"}}," | ",{"translate": "mgs.blue","color":"blue"},{"text":": "},{"score":{"name":"#blue","objective":"mgs.mp.team"}}]
+tellraw @a ["",[{"text":"","color":"gold","bold":true},"⚔ ",{"translate":"mgs.game_over_2"},"! "]]
+tellraw @a ["",{"translate":"mgs.red","color":"red"},{"text":": "},{"score":{"name":"#red","objective":"mgs.mp.team"}}," | ",{"translate":"mgs.blue","color":"blue"},{"text":": "},{"score":{"name":"#blue","objective":"mgs.mp.team"}}]
 
 # Remove sidebar and list displays
 scoreboard objectives setdisplay sidebar

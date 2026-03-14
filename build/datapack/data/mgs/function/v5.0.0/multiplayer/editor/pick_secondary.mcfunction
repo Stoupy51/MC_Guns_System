@@ -17,7 +17,7 @@ execute if score @s mgs.player.config matches 256 run data modify storage mgs:te
 execute if score @s mgs.player.config matches 258 run data modify storage mgs:temp editor merge value {secondary:"",secondary_name:"None",secondary_scope:"",secondary_scope_name:"",secondary_full:"",secondary_mag:"",secondary_mag_count:0}
 
 # Check budget before deducting (secondary weapon costs 1 pt; None is free)
-execute unless data storage mgs:temp editor{secondary:""} if score @s mgs.mp.edit_points matches ..0 run return run tellraw @s [[{"text":"","color":"gold"},"[",{"translate": "mgs"},"] "],{"translate": "mgs.not_enough_points_for_a_secondary_weapon","color":"red"}]
+execute unless data storage mgs:temp editor{secondary:""} if score @s mgs.mp.edit_points matches ..0 run return run tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.not_enough_points_for_a_secondary_weapon","color":"red"}]
 
 # Deduct cost if a secondary was chosen
 execute unless data storage mgs:temp editor{secondary:""} run scoreboard players remove @s mgs.mp.edit_points 1

@@ -33,7 +33,7 @@ function mgs:v5.0.0/missions/remove_forceload
 function #mgs:missions/on_mission_end
 
 # Announce
-tellraw @a [[{"text":"","color":"gold"},"[",{"translate": "mgs"},"] "],{"translate": "mgs.mission_ended","color":"red"}]
+tellraw @a [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.mission_ended","color":"red"}]
 
 # Reset in-game state
 scoreboard players set @a mgs.mi.in_game 0

@@ -21,16 +21,16 @@
 									}
 								},
 								"minecraft:rarity": "common",
-								"minecraft:item_name": {
-									"translate": "mgs.45acp",
+								"minecraft:item_name": [{
+									"text":"45",
 									"color": "white"
-								},
+								}, {"translate": "mgs.acp"}],
 								"minecraft:item_model": "mgs:45acp",
 								"minecraft:lore": [
 									[
 										"",
 										{"text": "I","color": "white","italic": false,"font": "mgs:icons"},
-										{"translate": "mgs.mc_guns_system","italic": true,"color": "blue"}
+										[{"text":" ","italic": true,"color": "blue"}, {"translate": "mgs.mc_guns_system"}]
 									]
 								]
 							}

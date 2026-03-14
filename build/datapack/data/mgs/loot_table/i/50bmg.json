@@ -21,16 +21,16 @@
 									}
 								},
 								"minecraft:rarity": "common",
-								"minecraft:item_name": {
-									"translate": "mgs.50bmg",
+								"minecraft:item_name": [{
+									"text":"50",
 									"color": "white"
-								},
+								}, {"translate": "mgs.bmg"}],
 								"minecraft:item_model": "mgs:50bmg",
 								"minecraft:lore": [
 									[
 										"",
 										{"text": "I","color": "white","italic": false,"font": "mgs:icons"},
-										{"translate": "mgs.mc_guns_system","italic": true,"color": "blue"}
+										[{"text":" ","italic": true,"color": "blue"}, {"translate": "mgs.mc_guns_system"}]
 									]
 								]
 							}

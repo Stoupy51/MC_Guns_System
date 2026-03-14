@@ -18,5 +18,5 @@ execute as @e[tag=mgs.mission_enemy] run tag @s add mgs.gm_entity
 execute store result score #mi_total_enemies mgs.data if entity @e[tag=mgs.mission_enemy]
 
 # Announce count
-tellraw @a [[{"text":"","color":"gold"},"[",{"translate": "mgs"},"] "],{"score":{"name":"#mi_total_enemies","objective":"mgs.data"},"color":"yellow"}," ",{"translate": "mgs.enemies_spawned","color":"gray"}]
+tellraw @a [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"score":{"name":"#mi_total_enemies","objective":"mgs.data"},"color":"yellow"}," ",{"translate":"mgs.enemies_spawned","color":"gray"}]
 

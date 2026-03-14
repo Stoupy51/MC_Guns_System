@@ -22,5 +22,5 @@ execute as @n[tag=mgs.new_enemy_marker] run data modify entity @s data.function 
 tag @e[tag=mgs.new_enemy_marker] remove mgs.new_enemy_marker
 
 # Announce
-tellraw @a[tag=mgs.map_editor] [[{"text":"","color":"gold"},"[",{"translate": "mgs"},"] "],{"translate": "mgs.enemy_placed","color":"red"}]
+tellraw @a[tag=mgs.map_editor] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.enemy_placed","color":"red"}]
 

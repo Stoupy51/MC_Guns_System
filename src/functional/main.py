@@ -280,7 +280,7 @@ $execute if score #random {ns}.data matches 31 run loot replace entity @s $(slot
             color, f"Set instant kill {'off' if ticks == 0 else f'for {label}'}")
         for label, ticks, color in ik_options
     ])
-    ik_line = f'["  ",[{{"text":"Instant Kill"}},": ",{ik_btns}]'
+    ik_line = f'["  ",[{{"text":"Instant Kill"}},": ",{ik_btns}]]'
 
     # Infinite Ammo durations: OFF, 10s, 30s, 60s, ∞
     ia_options = [("OFF", 0, "red"), ("10s", 200, "yellow"), ("30s", 600, "yellow"), ("60s", 1200, "yellow"), ("∞", 72000, "light_purple")]
@@ -289,7 +289,7 @@ $execute if score #random {ns}.data matches 31 run loot replace entity @s $(slot
             color, f"Set infinite ammo {'off' if ticks == 0 else f'for {label}'}")
         for label, ticks, color in ia_options
     ])
-    ia_line = f'["  ",[{{"text":"Infinite Ammo"}},": ",{ia_btns}]'
+    ia_line = f'["  ",[{{"text":"Infinite Ammo"}},": ",{ia_btns}]]'
 
     # Quick Reload: 0%, 20%, 50%, 80%
     qr_options = [("0%", 0, "red"), ("20%", 20, "yellow"), ("50%", 50, "yellow"), ("80%", 80, "green")]
@@ -298,7 +298,7 @@ $execute if score #random {ns}.data matches 31 run loot replace entity @s $(slot
             color, f"Set quick reload to {label}")
         for label, val, color in qr_options
     ])
-    qr_line = f'["  ",[{{"text":"Quick Reload"}},": ",{qr_btns}]'
+    qr_line = f'["  ",[{{"text":"Quick Reload"}},": ",{qr_btns}]]'
 
     # Quick Swap: 0%, 20%, 50%, 80%
     qs_options = [("0%", 0, "red"), ("20%", 20, "yellow"), ("50%", 50, "yellow"), ("80%", 80, "green")]
@@ -307,7 +307,7 @@ $execute if score #random {ns}.data matches 31 run loot replace entity @s $(slot
             color, f"Set quick swap to {label}")
         for label, val, color in qs_options
     ])
-    qs_line = f'["  ",[{{"text":"Quick Swap"}},": ",{qs_btns}]'
+    qs_line = f'["  ",[{{"text":"Quick Swap"}},": ",{qs_btns}]]'
 
     # --- Map Editor ---
     map_header = '[{"text":"","color":"aqua","bold":true},"🗺 ",{"text":"Map Editor"}]'
@@ -321,7 +321,8 @@ $execute if score #random {ns}.data matches 31 run loot replace entity @s $(slot
     missions_setup_btn = btn("Mission Setup", f"/function {ns}:v{version}/missions/setup", "green", "Open the mission setup menu")
     mp_line = f'["  ",{mp_setup_btn}," ",{zb_setup_btn}," ",{missions_setup_btn}]'
 
-    write_function(f"{ns}:config", f"""tellraw @s {sep}
+    write_function(f"{ns}:config", f"""
+tellraw @s {sep}
 tellraw @s {title}
 tellraw @s {sep}
 tellraw @s {global_header}

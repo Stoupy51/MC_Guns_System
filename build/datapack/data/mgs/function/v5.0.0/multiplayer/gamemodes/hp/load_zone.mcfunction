@@ -20,6 +20,6 @@ execute store result storage mgs:temp _hp_pos.y double 1 run scoreboard players 
 execute store result storage mgs:temp _hp_pos.z double 1 run scoreboard players get #rz mgs.data
 function mgs:v5.0.0/multiplayer/gamemodes/hp/summon_marker with storage mgs:temp _hp_pos
 
-tellraw @a [[{"text":"","color":"gold"},"[",{"translate": "mgs"},"] "],{"translate": "mgs.hardpoint_zone_active","color":"dark_purple"}]
+tellraw @a [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],[{"text":"⚡ ","color":"dark_purple"}, {"translate":"mgs.hardpoint_zone_active"}]]
 playsound minecraft:block.note_block.chime player @a ~ ~ ~ 1 1.0
 

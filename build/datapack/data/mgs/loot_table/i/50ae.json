@@ -22,7 +22,7 @@
 								},
 								"minecraft:rarity": "common",
 								"minecraft:item_name": {
-									"translate": "mgs.50ae",
+									"text": "50ae",
 									"color": "white"
 								},
 								"minecraft:item_model": "mgs:50ae",
@@ -30,7 +30,7 @@
 									[
 										"",
 										{"text": "I","color": "white","italic": false,"font": "mgs:icons"},
-										{"translate": "mgs.mc_guns_system","italic": true,"color": "blue"}
+										[{"text":" ","italic": true,"color": "blue"}, {"translate": "mgs.mc_guns_system"}]
 									]
 								]
 							}

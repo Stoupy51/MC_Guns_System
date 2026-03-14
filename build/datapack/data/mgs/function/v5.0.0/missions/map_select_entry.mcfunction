@@ -9,7 +9,7 @@
 #			description (unknown)
 #
 
-$tellraw @s ["",{"text":"  "},{"text":"[$(name)]","color":"green","click_event":{"action":"run_command","command":"/data modify storage mgs:missions game.map_id set value \"$(id)\""},"hover_event":{"action":"show_text","value":"Click to select '$(name)'"}},{"text":" - $(description)","color":"gray"}]
+$tellraw @s ["","  ",{"text":""},{"text":"[$(name)]","color":"green","click_event":{"action":"run_command","command":"/data modify storage mgs:missions game.map_id set value \"$(id)\""},"hover_event":{"action":"show_text","value":"Click to select '$(name)'"}},{"text":" - $(description)","color":"gray"}]
 
 data remove storage mgs:temp _map_iter[0]
 scoreboard players add #map_idx mgs.data 1

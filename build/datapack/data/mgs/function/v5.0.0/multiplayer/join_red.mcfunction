@@ -6,5 +6,5 @@
 
 scoreboard players set @s mgs.mp.team 1
 team join mgs.red @s
-tellraw @s ["",{"translate": "mgs.you_joined","color":"white"},{"translate": "mgs.red_team","color":"red","bold":true}]
+tellraw @s ["",{"translate":"mgs.you_joined","color":"white"},{"translate":"mgs.red_team","color":"red","bold":true}]
 

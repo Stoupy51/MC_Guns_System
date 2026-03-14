@@ -8,6 +8,6 @@
 
 data modify storage mgs:temp lore_line set from storage mgs:lore_templates expl_radius
 $data modify storage mgs:temp lore_line append value "$(expl_radius)"
-data modify storage mgs:temp lore_line append value {"translate": "mgs.blocks","color":"#c77e36"}
+data modify storage mgs:temp lore_line append value [{"text":" ","color":"#c77e36"}, {"translate":"mgs.blocks"}]
 data modify storage mgs:temp new_lore append from storage mgs:temp lore_line
 

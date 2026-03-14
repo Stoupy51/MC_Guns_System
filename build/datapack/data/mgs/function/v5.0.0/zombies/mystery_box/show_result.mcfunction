@@ -14,5 +14,5 @@ data merge entity @n[tag=mgs.mb_display] {transformation:{translation:[0f,1.0f,0
 data modify storage mgs:zombies mystery_box.ready set value true
 
 # Announce result
-tellraw @a[scores={mgs.zb.in_game=1}] [[{"text":"","color":"gold"},"[",{"translate": "mgs"},"] "],{"translate": "mgs.mystery_box_result_ready","color":"light_purple"},{"translate": "mgs.right_click_to_collect","color":"green","bold":true}]
+tellraw @a[scores={mgs.zb.in_game=1}] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.mystery_box_result_ready","color":"light_purple"},{"translate":"mgs.right_click_to_collect","color":"green","bold":true}]
 

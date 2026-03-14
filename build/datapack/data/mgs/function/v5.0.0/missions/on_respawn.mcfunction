@@ -19,5 +19,5 @@ function mgs:v5.0.0/missions/spectate_random_player
 
 # Announce respawn delay to the dying player
 title @s title [{"text":"☠","color":"red"}]
-title @s subtitle [{"translate": "mgs.respawning_in_3_seconds","color":"gray"}]
+title @s subtitle [{"translate":"mgs.respawning_in_3_seconds","color":"gray"}]
 

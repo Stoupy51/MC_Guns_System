@@ -21,5 +21,5 @@ execute store result storage mgs:temp _pos.z double 1 run scoreboard players get
 function mgs:v5.0.0/maps/editor/summon_base_marker with storage mgs:temp _pos
 
 # Announce
-execute as @a[tag=mgs.map_editor] run tellraw @s [[{"text":"","color":"gold"},"[",{"translate": "mgs"},"] "],{"translate": "mgs.base_coordinates_set","color":"light_purple"}]
+execute as @a[tag=mgs.map_editor] run tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.base_coordinates_set","color":"light_purple"}]
 

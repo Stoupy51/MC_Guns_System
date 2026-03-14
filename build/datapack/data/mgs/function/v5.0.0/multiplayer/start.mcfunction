@@ -5,12 +5,12 @@
 #
 
 # Prevent starting if already active or preparing
-execute if data storage mgs:multiplayer game{state:"active"} run return run tellraw @s [[{"text":"","color":"gold"},"[",{"translate": "mgs"},"] "],{"translate": "mgs.game_already_in_progress","color":"red"}]
-execute if data storage mgs:multiplayer game{state:"preparing"} run return run tellraw @s [[{"text":"","color":"gold"},"[",{"translate": "mgs"},"] "],{"translate": "mgs.game_already_preparing","color":"red"}]
+execute if data storage mgs:multiplayer game{state:"active"} run return run tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.game_already_in_progress","color":"red"}]
+execute if data storage mgs:multiplayer game{state:"preparing"} run return run tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.game_already_preparing","color":"red"}]
 
 # Load the selected map (reads map_id from game storage)
 function mgs:v5.0.0/multiplayer/load_map_from_storage with storage mgs:multiplayer game
-execute unless score #map_load_found mgs.data matches 1 run return run tellraw @s [[{"text":"","color":"gold"},"[",{"translate": "mgs"},"] "],{"translate": "mgs.no_map_found_select_a_map_first","color":"red"}]
+execute unless score #map_load_found mgs.data matches 1 run return run tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.no_map_found_select_a_map_first","color":"red"}]
 
 # Copy loaded map data into game state
 data modify storage mgs:multiplayer game.map set from storage mgs:temp map_load.result
@@ -137,5 +137,5 @@ execute as @a[scores={mgs.mp.in_game=1}] run scoreboard players operation @s mgs
 schedule function mgs:v5.0.0/multiplayer/end_prep 200t
 
 # Announce
-tellraw @a ["",[{"text":"","color":"gold","bold":true},"⚔ ",{"translate": "mgs.preparing"},"! "],{"translate": "mgs.choose_your_class_game_starts_in_10_seconds","color":"yellow"}]
+tellraw @a ["",[{"text":"","color":"gold","bold":true},"⚔ ",{"translate":"mgs.preparing"},"! "],{"translate":"mgs.choose_your_class_game_starts_in_10_seconds","color":"yellow"}]
 

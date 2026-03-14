@@ -12,7 +12,7 @@ execute at @e[tag=mgs.snd_bomb] run playsound minecraft:entity.generic.explode p
 execute at @e[tag=mgs.snd_bomb] as @a[distance=..10,gamemode=!creative,gamemode=!spectator,scores={mgs.mp.in_game=1..}] run data modify storage mgs:input with set value {}
 execute at @e[tag=mgs.snd_bomb] as @a[distance=..10,gamemode=!creative,gamemode=!spectator,scores={mgs.mp.in_game=1..}] run function mgs:v5.0.0/multiplayer/simulate_death
 
-tellraw @a [[{"text":"","color":"gold"},"[",{"translate": "mgs"},"] "],{"translate": "mgs.bomb_exploded","color":"red","bold":true}]
+tellraw @a [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],[{"text":"💥 ","color":"red","bold":true}, {"translate":"mgs.bomb_exploded"}]]
 kill @e[tag=mgs.snd_bomb]
 function mgs:v5.0.0/multiplayer/gamemodes/snd/attackers_win
 

@@ -14,5 +14,5 @@ function mgs:v5.0.0/maps/editor/do_save
 
 # Cleanup and exit
 function mgs:v5.0.0/maps/editor/cleanup
-tellraw @s [[{"text":"","color":"gold"},"[",{"translate": "mgs"},"] "],{"translate": "mgs.map_saved_and_editor_closed","color":"green"}]
+tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.map_saved_and_editor_closed","color":"green"}]
 
