@@ -26,8 +26,7 @@ execute if data storage mgs:temp {can_start_on:1b} run tag @n[tag=mgs.mb_new] ad
 
 # Register Bookshelf events on newly spawned entity
 execute as @n[tag=mgs.mb_new] run function #bs.interaction:on_right_click {run:"function mgs:v5.0.0/zombies/mystery_box/on_right_click",executor:"source"}
-execute as @n[tag=mgs.mb_new] run function #bs.interaction:on_hover_enter {run:"function mgs:v5.0.0/zombies/mystery_box/on_hover_enter",executor:"source"}
-execute as @n[tag=mgs.mb_new] run function #bs.interaction:on_hover_leave {run:"function mgs:v5.0.0/zombies/mystery_box/on_hover_leave",executor:"source"}
+execute as @n[tag=mgs.mb_new] run function #bs.interaction:on_hover {run:"function mgs:v5.0.0/zombies/mystery_box/on_hover",executor:"source"}
 tag @n[tag=mgs.mb_new] remove mgs.mb_new
 
 data remove storage mgs:temp _mb_iter[0]

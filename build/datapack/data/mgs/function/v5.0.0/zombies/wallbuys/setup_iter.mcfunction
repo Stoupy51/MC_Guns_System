@@ -34,25 +34,28 @@ execute store result storage mgs:temp _wb.facing int 1 run data get storage mgs:
 function mgs:v5.0.0/zombies/wallbuys/place_at with storage mgs:temp _wb
 
 # Set scoreboards on interaction entity
-scoreboard players operation @n[tag=_wb_new] mgs.zb.wb.id = #wb_counter mgs.data
-execute store result score @n[tag=_wb_new] mgs.zb.wb.price run data get storage mgs:temp _wb_iter[0].price
-execute store result score @n[tag=_wb_new] mgs.zb.wb.rfprice run data get storage mgs:temp _wb_iter[0].refill_price
-execute store result score @n[tag=_wb_new] mgs.zb.wb.rfpap run data get storage mgs:temp _wb_iter[0].refill_price_pap
+scoreboard players operation @n[tag=mgs.wb_new] mgs.zb.wb.id = #wb_counter mgs.data
+execute store result score @n[tag=mgs.wb_new] mgs.zb.wb.price run data get storage mgs:temp _wb_iter[0].price
+execute store result score @n[tag=mgs.wb_new] mgs.zb.wb.rfprice run data get storage mgs:temp _wb_iter[0].refill_price
+execute store result score @n[tag=mgs.wb_new] mgs.zb.wb.rfpap run data get storage mgs:temp _wb_iter[0].refill_price_pap
 
 # Store weapon_id in indexed storage for later lookup
 execute store result storage mgs:temp _wb_store.id int 1 run scoreboard players get #wb_counter mgs.data
 data modify storage mgs:temp _wb_store.weapon_id set from storage mgs:temp _wb_iter[0].weapon_id
 data modify storage mgs:temp _wb_store.name set from storage mgs:temp _wb.name
-function mgs:v5.0.0/zombies/wallbuys/store_data with storage mgs:temp _wb_store
 
 # Register Bookshelf events
-execute as @n[tag=_wb_new] run function #bs.interaction:on_right_click {run:"function mgs:v5.0.0/zombies/wallbuys/on_right_click",executor:"source"}
-execute as @n[tag=_wb_new] run function #bs.interaction:on_hover_enter {run:"function mgs:v5.0.0/zombies/wallbuys/on_hover_enter",executor:"source"}
-execute as @n[tag=_wb_new] run function #bs.interaction:on_hover_leave {run:"function mgs:v5.0.0/zombies/wallbuys/on_hover_leave",executor:"source"}
-tag @n[tag=_wb_new] remove _wb_new
+execute as @n[tag=mgs.wb_new] run function #bs.interaction:on_right_click {run:"function mgs:v5.0.0/zombies/wallbuys/on_right_click",executor:"source"}
+execute as @n[tag=mgs.wb_new] run function #bs.interaction:on_hover {run:"function mgs:v5.0.0/zombies/wallbuys/on_hover",executor:"source"}
+tag @n[tag=mgs.wb_new] remove mgs.wb_new
 
 # Set item on display entity
 function mgs:v5.0.0/zombies/wallbuys/set_display_item with storage mgs:temp _wb
+
+# Capture displayed item_name for hover title
+data modify storage mgs:temp _wb_store.item_name set from entity @n[tag=mgs.wb_new_display] item.components."minecraft:item_name"
+function mgs:v5.0.0/zombies/wallbuys/store_data with storage mgs:temp _wb_store
+
 tag @e[tag=mgs.wb_new_display] remove mgs.wb_new_display
 
 # Continue iteration

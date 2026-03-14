@@ -9,7 +9,20 @@
 # @s = trap center marker, at @s position
 
 # Apply damage based on trap type
-execute store result storage mgs:temp _trap_tick.r int 1 run scoreboard players get @s mgs.zb.trap.radius
+execute store result storage mgs:temp _trap_tick.rx int 1 run scoreboard players get @s mgs.zb.trap.rx
+execute store result storage mgs:temp _trap_tick.ry int 1 run scoreboard players get @s mgs.zb.trap.ry
+execute store result storage mgs:temp _trap_tick.rz int 1 run scoreboard players get @s mgs.zb.trap.rz
+
+scoreboard players operation #trap_sx mgs.data = @s mgs.zb.trap.rx
+scoreboard players operation #trap_sy mgs.data = @s mgs.zb.trap.ry
+scoreboard players operation #trap_sz mgs.data = @s mgs.zb.trap.rz
+scoreboard players operation #trap_sx mgs.data += #trap_sx mgs.data
+scoreboard players operation #trap_sy mgs.data += #trap_sy mgs.data
+scoreboard players operation #trap_sz mgs.data += #trap_sz mgs.data
+execute store result storage mgs:temp _trap_tick.sx int 1 run scoreboard players get #trap_sx mgs.data
+execute store result storage mgs:temp _trap_tick.sy int 1 run scoreboard players get #trap_sy mgs.data
+execute store result storage mgs:temp _trap_tick.sz int 1 run scoreboard players get #trap_sz mgs.data
+
 execute if score @s mgs.zb.trap.type matches 0 run function mgs:v5.0.0/zombies/traps/damage_fire with storage mgs:temp _trap_tick
 execute if score @s mgs.zb.trap.type matches 1 run function mgs:v5.0.0/zombies/traps/damage_electric with storage mgs:temp _trap_tick
 

@@ -42,8 +42,7 @@ function mgs:v5.0.0/zombies/doors/store_name with storage mgs:temp _door_name
 
 # Register Bookshelf events
 execute as @e[tag=mgs.door_new] run function #bs.interaction:on_right_click {run:"function mgs:v5.0.0/zombies/doors/on_right_click",executor:"source"}
-execute as @e[tag=mgs.door_new] run function #bs.interaction:on_hover_enter {run:"function mgs:v5.0.0/zombies/doors/on_hover_enter",executor:"source"}
-execute as @e[tag=mgs.door_new] run function #bs.interaction:on_hover_leave {run:"function mgs:v5.0.0/zombies/doors/on_hover_leave",executor:"source"}
+execute as @e[tag=mgs.door_new] run function #bs.interaction:on_hover {run:"function mgs:v5.0.0/zombies/doors/on_hover",executor:"source"}
 tag @e[tag=mgs.door_new] remove mgs.door_new
 
 # Continue iteration

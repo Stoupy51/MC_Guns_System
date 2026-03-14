@@ -116,8 +116,11 @@ scoreboard players add #i {ns}.data 1
 execute if score #i {ns}.data < #capacity {ns}.data run function {ns}:v{version}/actionbar/build_icon_loop
 """)
 
-    # Display actionbar using macro
-    write_versioned_function("actionbar/display", r"$title @s actionbar $(list)")
+    # Display actionbar through Smithed Actionbar with persistent priority.
+    write_versioned_function("actionbar/display", """
+$data modify storage smithed.actionbar:input message set value {json:$(list),priority:'persistent',freeze:1}
+function #smithed.actionbar:message
+""")
 
     # Add DPS display: reads mgs.previous_dps (real-time collected damage per second)
     write_versioned_function("actionbar/add_dps", f"""

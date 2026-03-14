@@ -738,5 +738,9 @@
 	"vz61/reload": {
 		"subtitle": "vz61/reload",
 		"sounds": ["mgs:vz61/reload"]
+	},
+	"zombies/mystery_box_spin": {
+		"subtitle": "zombies/mystery_box_spin",
+		"sounds": ["mgs:zombies/mystery_box_spin"]
 	}
 }

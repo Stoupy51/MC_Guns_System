@@ -41,6 +41,7 @@ scoreboard objectives add {ns}.zb.spawn.gid dummy
 scoreboard objectives add {ns}.zb.sb_rank dummy
 
 # Constants
+scoreboard players set #5 {ns}.data 5
 scoreboard players set #20 {ns}.data 20
 scoreboard players set #60 {ns}.data 60
 scoreboard players set #100 {ns}.data 100
@@ -54,7 +55,8 @@ execute unless data storage {ns}:zombies game run data modify storage {ns}:zombi
 execute unless data storage {ns}:zombies mystery_box_pool run data modify storage {ns}:zombies mystery_box_pool set value []
 
 # Config: points per kill, points per hit
-execute unless score #zb_points_kill {ns}.config matches 1.. run scoreboard players set #zb_points_kill {ns}.config 100
+# TODO: ZB points hit not used
+execute unless score #zb_points_kill {ns}.config matches 1.. run scoreboard players set #zb_points_kill {ns}.config 50
 execute unless score #zb_points_hit {ns}.config matches 1.. run scoreboard players set #zb_points_hit {ns}.config 10
 execute unless score #zb_mystery_box_price {ns}.config matches 1.. run scoreboard players set #zb_mystery_box_price {ns}.config 950
 """)
@@ -448,8 +450,10 @@ execute unless data storage {ns}:zombies game{{state:"active"}} run return fail
 # Award kill points (with passive bonus if applicable)
 scoreboard players operation @s {ns}.zb.points += #zb_points_kill {ns}.config
 
-# Apply x1.2 points passive: add 20% extra (100 * 0.2 = 20 extra points per kill)
-execute if score @s {ns}.zb.passive matches 1 run scoreboard players add @s {ns}.zb.points 20
+# Apply x1.2 points passive: add 20% extra
+execute if score @s {ns}.zb.passive matches 1 run scoreboard players operation #additional {ns}.data = #zb_points_kill {ns}.config
+execute if score @s {ns}.zb.passive matches 1 run scoreboard players operation #additional {ns}.data /= #5 {ns}.data
+execute if score @s {ns}.zb.passive matches 1 run scoreboard players operation @s {ns}.zb.points += #additional {ns}.data
 
 scoreboard players add @s {ns}.zb.kills 1
 """, tags=[f"{ns}:signals/on_kill"])

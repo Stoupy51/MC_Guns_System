@@ -5,8 +5,13 @@
 #
 # @within	mgs:v5.0.0/zombies/traps/active_tick with storage mgs:temp _trap_tick
 #
-# @args		r (unknown)
+# @args		rx (unknown)
+#			ry (unknown)
+#			rz (unknown)
+#			sx (unknown)
+#			sy (unknown)
+#			sz (unknown)
 #
 
-$execute as @e[tag=mgs.zombie_round,distance=..$(r)] run damage @s 99999
+$execute positioned ~-$(rx) ~-$(ry) ~-$(rz) as @e[tag=mgs.zombie_round,dx=$(sx),dy=$(sy),dz=$(sz)] run damage @s 99999
 

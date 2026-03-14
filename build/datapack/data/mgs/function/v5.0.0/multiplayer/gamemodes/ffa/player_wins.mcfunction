@@ -10,7 +10,7 @@
 
 # Announce winner using player's name
 tellraw @a ["",{"text":"🏆 ","color":"gold"},{"selector":"@s","color":"gold","bold":true}," ",{"translate":"mgs.wins","color":"gold","bold":true}]
-tellraw @a ["","  ",{"translate":"mgs.score","color":"gray"},{"score":{"name":"@s","objective":"mgs.mp.kills"},"color":"yellow"}," ",{"translate":"mgs.kills_2","color":"gray"}]
+tellraw @a ["","  ",{"translate":"mgs.score","color":"gray"},{"score":{"name":"@s","objective":"mgs.mp.kills"},"color":"yellow"}," ",{"translate":"mgs.kills","color":"gray"}]
 
 # End game
 function mgs:v5.0.0/multiplayer/stop

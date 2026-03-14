@@ -3,6 +3,7 @@
 from .ability import generate_zombies_abilities
 from .bonus import main as bonus_main
 from .doors import generate_doors
+from .feedback import generate_zombies_feedback
 from .game import generate_zombies_game
 from .inventory import generate_zombies_inventory
 from .maps import generate_zombies_maps
@@ -24,6 +25,7 @@ def main() -> None:
     generate_zombies_game()
     generate_zombies_rounds()
     generate_zombies_abilities()
+    generate_zombies_feedback()
     generate_zombies_inventory()
     generate_mystery_box()
     generate_power_switch()

@@ -9,13 +9,13 @@ data modify storage mgs:zombies game.state set value "ended"
 
 # Title
 title @a[scores={mgs.zb.in_game=1}] times 10 80 20
-title @a[scores={mgs.zb.in_game=1}] title {"translate":"mgs.game_over","color":"dark_red","bold":true}
+title @a[scores={mgs.zb.in_game=1}] title {"translate":"mgs.game_over_2","color":"dark_red","bold":true}
 
 # Calculate final round
 execute store result score #final_round mgs.data run data get storage mgs:zombies game.round
 
 # Performance summary
-tellraw @a ["","\n",[{"text":"═══════ ","color":"dark_red","bold":true}, {"translate":"mgs.game_over"}, " ═══════"]]
+tellraw @a ["","\n",[{"text":"═══════ ","color":"dark_red","bold":true}, {"translate":"mgs.game_over_2"}, " ═══════"]]
 tellraw @a ["","  ",[{"text":"🧟 ","color":"gray"}, {"translate":"mgs.final_round"}],{"score":{"name":"#final_round","objective":"mgs.data"},"color":"red","bold":true}]
 
 # Per-player stats

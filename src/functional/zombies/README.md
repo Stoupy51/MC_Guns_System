@@ -146,7 +146,7 @@ All interactive elements (wallbuys, doors, traps, perk machines, mystery box, po
 - `zombies/doors/check_use` — Detect interaction, validate points
 - `zombies/doors/try_open` — Deduct points, open all doors with same link_id
 - `zombies/doors/open_one` — Per-entity: remove block (animation-dependent), kill self
-- `zombies/doors/on_hover_enter` — Show title with price
+- `zombies/doors/on_hover` — Show title with price
 - `zombies/doors/on_hover_leave` — Clear title
 
 ---
@@ -201,7 +201,7 @@ All interactive elements (wallbuys, doors, traps, perk machines, mystery box, po
 - `zombies/wallbuys/check_use` — Detect interaction, process purchase
 - `zombies/wallbuys/try_buy` — Check points, buy vs refill, give weapon
 - `zombies/wallbuys/give_weapon` — Macro: give weapon by ID
-- `zombies/wallbuys/on_hover_enter` — Show title with weapon name and price
+- `zombies/wallbuys/on_hover` — Show title with weapon name and price
 - `zombies/wallbuys/on_hover_leave` — Clear title
 
 ---
@@ -246,7 +246,7 @@ All interactive elements (wallbuys, doors, traps, perk machines, mystery box, po
 - `zombies/traps/activate` — Start trap with duration timer
 - `zombies/traps/tick` — Process active traps (damage, particles, timers)
 - `zombies/traps/deactivate` — Start cooldown
-- `zombies/traps/on_hover_enter` — Show trap info via title
+- `zombies/traps/on_hover` — Show trap info via title
 
 ---
 
@@ -297,7 +297,7 @@ All interactive elements (wallbuys, doors, traps, perk machines, mystery box, po
 - `zombies/perks/check_machine_use` — Detect interaction, validate
 - `zombies/perks/buy_perk` — Macro: dispatch by perk_id
 - `zombies/perks/apply_{perk_id}` — Per-perk logic (juggernog, speed_cola, double_tap, quick_revive)
-- `zombies/perks/on_hover_enter` — Show perk info
+- `zombies/perks/on_hover` — Show perk info
 - `zombies/revival/tick` — Check for downed players, process revival progress
 - `zombies/revival/start_revive` — Begin reviving a downed player
 - `zombies/revival/complete` — Revive the player
