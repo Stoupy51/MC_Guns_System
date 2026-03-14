@@ -425,6 +425,7 @@ scoreboard objectives add mgs.zb.spawn.gid dummy
 scoreboard objectives add mgs.zb.sb_rank dummy
 
 # Constants
+scoreboard players set #5 mgs.data 5
 scoreboard players set #20 mgs.data 20
 scoreboard players set #60 mgs.data 60
 scoreboard players set #100 mgs.data 100
@@ -438,7 +439,8 @@ execute unless data storage mgs:zombies game run data modify storage mgs:zombies
 execute unless data storage mgs:zombies mystery_box_pool run data modify storage mgs:zombies mystery_box_pool set value []
 
 # Config: points per kill, points per hit
-execute unless score #zb_points_kill mgs.config matches 1.. run scoreboard players set #zb_points_kill mgs.config 100
+# TODO: ZB points hit not used
+execute unless score #zb_points_kill mgs.config matches 1.. run scoreboard players set #zb_points_kill mgs.config 50
 execute unless score #zb_points_hit mgs.config matches 1.. run scoreboard players set #zb_points_hit mgs.config 10
 execute unless score #zb_mystery_box_price mgs.config matches 1.. run scoreboard players set #zb_mystery_box_price mgs.config 950
 
@@ -469,7 +471,9 @@ scoreboard objectives add mgs.zb.trap.dur dummy
 scoreboard objectives add mgs.zb.trap.cd_max dummy
 scoreboard objectives add mgs.zb.trap.timer dummy
 scoreboard objectives add mgs.zb.trap.cd dummy
-scoreboard objectives add mgs.zb.trap.radius dummy
+scoreboard objectives add mgs.zb.trap.rx dummy
+scoreboard objectives add mgs.zb.trap.ry dummy
+scoreboard objectives add mgs.zb.trap.rz dummy
 
 ## Multiplayer scoreboards
 # Team assignment (1 = red, 2 = blue, 0 = none/spectator)

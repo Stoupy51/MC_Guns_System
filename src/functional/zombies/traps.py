@@ -23,7 +23,9 @@ scoreboard objectives add {ns}.zb.trap.dur dummy
 scoreboard objectives add {ns}.zb.trap.cd_max dummy
 scoreboard objectives add {ns}.zb.trap.timer dummy
 scoreboard objectives add {ns}.zb.trap.cd dummy
-scoreboard objectives add {ns}.zb.trap.radius dummy
+scoreboard objectives add {ns}.zb.trap.rx dummy
+scoreboard objectives add {ns}.zb.trap.ry dummy
+scoreboard objectives add {ns}.zb.trap.rz dummy
 """)
 
 	## Setup: iterate trap compounds, summon interaction + marker entities
@@ -37,21 +39,21 @@ execute if data storage {ns}:temp _trap_iter[0] run function {ns}:v{version}/zom
 # Assign incrementing ID
 scoreboard players add #trap_counter {ns}.data 1
 
-# Read trap center position (relative) and convert to absolute
-execute store result score #tx {ns}.data run data get storage {ns}:temp _trap_iter[0].pos[0]
-execute store result score #ty {ns}.data run data get storage {ns}:temp _trap_iter[0].pos[1]
-execute store result score #tz {ns}.data run data get storage {ns}:temp _trap_iter[0].pos[2]
-scoreboard players operation #tx {ns}.data += #gm_base_x {ns}.data
-scoreboard players operation #ty {ns}.data += #gm_base_y {ns}.data
-scoreboard players operation #tz {ns}.data += #gm_base_z {ns}.data
+# Read interaction position (relative) and convert to absolute
+execute store result score #tix {ns}.data run data get storage {ns}:temp _trap_iter[0].pos[0]
+execute store result score #tiy {ns}.data run data get storage {ns}:temp _trap_iter[0].pos[1]
+execute store result score #tiz {ns}.data run data get storage {ns}:temp _trap_iter[0].pos[2]
+scoreboard players operation #tix {ns}.data += #gm_base_x {ns}.data
+scoreboard players operation #tiy {ns}.data += #gm_base_y {ns}.data
+scoreboard players operation #tiz {ns}.data += #gm_base_z {ns}.data
 
-# Compute interaction entity position (trap center + offset_pos)
-execute store result score #tix {ns}.data run data get storage {ns}:temp _trap_iter[0].offset_pos[0]
-execute store result score #tiy {ns}.data run data get storage {ns}:temp _trap_iter[0].offset_pos[1]
-execute store result score #tiz {ns}.data run data get storage {ns}:temp _trap_iter[0].offset_pos[2]
-scoreboard players operation #tix {ns}.data += #tx {ns}.data
-scoreboard players operation #tiy {ns}.data += #ty {ns}.data
-scoreboard players operation #tiz {ns}.data += #tz {ns}.data
+# Compute trap effect center from interaction position + offset_pos
+execute store result score #tx {ns}.data run data get storage {ns}:temp _trap_iter[0].offset_pos[0]
+execute store result score #ty {ns}.data run data get storage {ns}:temp _trap_iter[0].offset_pos[1]
+execute store result score #tz {ns}.data run data get storage {ns}:temp _trap_iter[0].offset_pos[2]
+scoreboard players operation #tx {ns}.data += #tix {ns}.data
+scoreboard players operation #ty {ns}.data += #tiy {ns}.data
+scoreboard players operation #tz {ns}.data += #tiz {ns}.data
 
 # Store positions for macros
 execute store result storage {ns}:temp _trap.cx int 1 run scoreboard players get #tx {ns}.data
@@ -78,20 +80,15 @@ execute store result score @n[tag=_trap_new_m] {ns}.zb.trap.cd_max run data get 
 scoreboard players set @n[tag=_trap_new_m] {ns}.zb.trap.timer 0
 scoreboard players set @n[tag=_trap_new_m] {ns}.zb.trap.cd 0
 
-# Compute max radius from effect_radius
-execute store result score #tr_x {ns}.data run data get storage {ns}:temp _trap_iter[0].effect_radius[0]
-execute store result score #tr_y {ns}.data run data get storage {ns}:temp _trap_iter[0].effect_radius[1]
-execute store result score #tr_z {ns}.data run data get storage {ns}:temp _trap_iter[0].effect_radius[2]
-scoreboard players operation #tr_max {ns}.data = #tr_x {ns}.data
-execute if score #tr_y {ns}.data > #tr_max {ns}.data run scoreboard players operation #tr_max {ns}.data = #tr_y {ns}.data
-execute if score #tr_z {ns}.data > #tr_max {ns}.data run scoreboard players operation #tr_max {ns}.data = #tr_z {ns}.data
-scoreboard players operation @n[tag=_trap_new_m] {ns}.zb.trap.radius = #tr_max {ns}.data
+# Store per-axis effect radius
+execute store result score @n[tag=_trap_new_m] {ns}.zb.trap.rx run data get storage {ns}:temp _trap_iter[0].effect_radius[0]
+execute store result score @n[tag=_trap_new_m] {ns}.zb.trap.ry run data get storage {ns}:temp _trap_iter[0].effect_radius[1]
+execute store result score @n[tag=_trap_new_m] {ns}.zb.trap.rz run data get storage {ns}:temp _trap_iter[0].effect_radius[2]
 tag @e[tag=_trap_new_m] remove _trap_new_m
 
 # Register Bookshelf events on interaction entity
 execute as @e[tag=_trap_new_bs] run function #bs.interaction:on_right_click {{run:"function {ns}:v{version}/zombies/traps/on_right_click",executor:"source"}}
-execute as @e[tag=_trap_new_bs] run function #bs.interaction:on_hover_enter {{run:"function {ns}:v{version}/zombies/traps/on_hover_enter",executor:"source"}}
-execute as @e[tag=_trap_new_bs] run function #bs.interaction:on_hover_leave {{run:"function {ns}:v{version}/zombies/traps/on_hover_leave",executor:"source"}}
+execute as @e[tag=_trap_new_bs] run function #bs.interaction:on_hover {{run:"function {ns}:v{version}/zombies/traps/on_hover",executor:"source"}}
 tag @e[tag=_trap_new_bs] remove _trap_new_bs
 
 # Continue iteration
@@ -114,7 +111,7 @@ execute unless data storage {ns}:zombies game{{state:"active"}} run return fail
 
 # Check power requirement
 execute store result score #trap_power {ns}.data run scoreboard players get @n[tag=bs.interaction.target] {ns}.zb.trap.power
-execute if score #trap_power {ns}.data matches 1 unless score #zb_power {ns}.data matches 1 run return run tellraw @s [{MGS_TAG},{{"text":" ⚡ Requires power!","color":"red"}}]
+execute if score #trap_power {ns}.data matches 1 unless score #zb_power {ns}.data matches 1 run return run function {ns}:v{version}/zombies/traps/deny_requires_power
 
 # Get trap ID
 execute store result score #trap_id {ns}.data run scoreboard players get @n[tag=bs.interaction.target] {ns}.zb.trap.id
@@ -122,11 +119,11 @@ execute store result score #trap_id {ns}.data run scoreboard players get @n[tag=
 # Check if trap is ready (not active, not on cooldown)
 scoreboard players set #trap_ready {ns}.data 0
 execute as @e[tag={ns}.trap_center] if score @s {ns}.zb.trap.id = #trap_id {ns}.data if score @s {ns}.zb.trap.timer matches 0 if score @s {ns}.zb.trap.cd matches 0 run scoreboard players set #trap_ready {ns}.data 1
-execute unless score #trap_ready {ns}.data matches 1 run return run tellraw @s [{MGS_TAG},{{"text":" Trap not ready!","color":"yellow"}}]
+execute unless score #trap_ready {ns}.data matches 1 run return run function {ns}:v{version}/zombies/traps/deny_not_ready
 
 # Check price
 execute store result score #trap_price {ns}.data run scoreboard players get @n[tag=bs.interaction.target] {ns}.zb.trap.price
-execute unless score @s {ns}.zb.points >= #trap_price {ns}.data run return run tellraw @s [{MGS_TAG},{{"text":" Not enough points!","color":"red"}}]
+execute unless score @s {ns}.zb.points >= #trap_price {ns}.data run return run function {ns}:v{version}/zombies/traps/deny_not_enough_points
 
 # Deduct points
 scoreboard players operation @s {ns}.zb.points -= #trap_price {ns}.data
@@ -135,7 +132,23 @@ scoreboard players operation @s {ns}.zb.points -= #trap_price {ns}.data
 execute as @e[tag={ns}.trap_center] if score @s {ns}.zb.trap.id = #trap_id {ns}.data run scoreboard players operation @s {ns}.zb.trap.timer = @s {ns}.zb.trap.dur
 
 # Announce
-tellraw @a[scores={{{ns}.zb.in_game=1}}] [{MGS_TAG},{{"text":" ⚠ Trap activated!","color":"gold"}}]
+tellraw @a[scores={{{ns}.zb.in_game=1}}] [{MGS_TAG},{{"text":"Trap activated for ","color":"gold"}},{{"score":{{"name":"#trap_price","objective":"{ns}.data"}},"color":"yellow"}},{{"text":" points.","color":"gold"}}]
+function {ns}:v{version}/zombies/feedback/sound_announce
+""")
+
+	write_versioned_function("zombies/traps/deny_requires_power", f"""
+tellraw @s [{MGS_TAG},{{"text":"This trap requires power.","color":"red"}}]
+function {ns}:v{version}/zombies/feedback/sound_deny
+""")
+
+	write_versioned_function("zombies/traps/deny_not_ready", f"""
+tellraw @s [{MGS_TAG},{{"text":"Trap is on cooldown and not ready yet.","color":"yellow"}}]
+function {ns}:v{version}/zombies/feedback/sound_deny
+""")
+
+	write_versioned_function("zombies/traps/deny_not_enough_points", f"""
+tellraw @s [{MGS_TAG},{{"text":"You don't have enough points (","color":"red"}},{{"score":{{"name":"#trap_price","objective":"{ns}.data"}},"color":"yellow"}},{{"text":" needed).","color":"red"}}]
+function {ns}:v{version}/zombies/feedback/sound_deny
 """)
 
 	## Active trap tick: damage zombies, particles, decrement timer
@@ -143,7 +156,20 @@ tellraw @a[scores={{{ns}.zb.in_game=1}}] [{MGS_TAG},{{"text":" ⚠ Trap activate
 # @s = trap center marker, at @s position
 
 # Apply damage based on trap type
-execute store result storage {ns}:temp _trap_tick.r int 1 run scoreboard players get @s {ns}.zb.trap.radius
+execute store result storage {ns}:temp _trap_tick.rx int 1 run scoreboard players get @s {ns}.zb.trap.rx
+execute store result storage {ns}:temp _trap_tick.ry int 1 run scoreboard players get @s {ns}.zb.trap.ry
+execute store result storage {ns}:temp _trap_tick.rz int 1 run scoreboard players get @s {ns}.zb.trap.rz
+
+scoreboard players operation #trap_sx {ns}.data = @s {ns}.zb.trap.rx
+scoreboard players operation #trap_sy {ns}.data = @s {ns}.zb.trap.ry
+scoreboard players operation #trap_sz {ns}.data = @s {ns}.zb.trap.rz
+scoreboard players operation #trap_sx {ns}.data += #trap_sx {ns}.data
+scoreboard players operation #trap_sy {ns}.data += #trap_sy {ns}.data
+scoreboard players operation #trap_sz {ns}.data += #trap_sz {ns}.data
+execute store result storage {ns}:temp _trap_tick.sx int 1 run scoreboard players get #trap_sx {ns}.data
+execute store result storage {ns}:temp _trap_tick.sy int 1 run scoreboard players get #trap_sy {ns}.data
+execute store result storage {ns}:temp _trap_tick.sz int 1 run scoreboard players get #trap_sz {ns}.data
+
 execute if score @s {ns}.zb.trap.type matches 0 run function {ns}:v{version}/zombies/traps/damage_fire with storage {ns}:temp _trap_tick
 execute if score @s {ns}.zb.trap.type matches 1 run function {ns}:v{version}/zombies/traps/damage_electric with storage {ns}:temp _trap_tick
 
@@ -159,23 +185,17 @@ execute if score @s {ns}.zb.trap.timer matches 0 run scoreboard players operatio
 """)
 
 	write_versioned_function("zombies/traps/damage_fire", f"""
-$execute as @e[tag={ns}.zombie_round,distance=..$(r)] run damage @s 5 minecraft:on_fire
+$execute positioned ~-$(rx) ~-$(ry) ~-$(rz) as @e[tag={ns}.zombie_round,dx=$(sx),dy=$(sy),dz=$(sz)] run damage @s 5 minecraft:on_fire
 """)
 
 	write_versioned_function("zombies/traps/damage_electric", f"""
-$execute as @e[tag={ns}.zombie_round,distance=..$(r)] run damage @s 99999
+$execute positioned ~-$(rx) ~-$(ry) ~-$(rz) as @e[tag={ns}.zombie_round,dx=$(sx),dy=$(sy),dz=$(sz)] run damage @s 99999
 """)
 
 	## Hover events (executor: "source" = player)
-	write_versioned_function("zombies/traps/on_hover_enter", f"""
-execute store result score #trap_price {ns}.data run scoreboard players get @n[tag=bs.interaction.target] {ns}.zb.trap.price
-title @s times 0 40 10
-title @s title [{{"text":"⚠ Trap","color":"red"}}]
-title @s subtitle [{{"text":"Cost: ","color":"gray"}},{{"score":{{"name":"#trap_price","objective":"{ns}.data"}},"color":"yellow"}},{{"text":" points","color":"gray"}}]
-""")
-
-	write_versioned_function("zombies/traps/on_hover_leave", """
-title @s clear
+	write_versioned_function("zombies/traps/on_hover", """
+data modify storage smithed.actionbar:input message set value {json:[{"text":"⚠ Trap","color":"red"},{"text":" - Right-click to activate","color":"gray"}],priority:'notification',freeze:5}
+function #smithed.actionbar:message
 """)
 
 	## Hook into game tick: process active traps and cooldowns

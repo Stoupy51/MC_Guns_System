@@ -43,6 +43,7 @@
 #			mgs:zombies/bonus/max_ammo {slot:"player.crafting.1"}
 #			mgs:zombies/bonus/max_ammo {slot:"player.crafting.2"}
 #			mgs:zombies/bonus/max_ammo {slot:"player.crafting.3"}
+#			mgs:v5.0.0/zombies/wallbuys/reload_pair {slot:"inventory.$(inventory)"}
 #
 # @args		slot (string)
 #

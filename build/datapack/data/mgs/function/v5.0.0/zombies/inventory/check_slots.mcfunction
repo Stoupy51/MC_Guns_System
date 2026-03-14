@@ -6,33 +6,29 @@
 # @within	mgs:v5.0.0/zombies/inventory/on_change
 #
 
-# Knife must be in hotbar.0
-execute unless items entity @s hotbar.0 minecraft:iron_sword[custom_data~{mgs:{knife:true}}] run function mgs:v5.0.0/zombies/inventory/fix_knife
+# hard forbidden slot
+execute if items entity @s hotbar.5 * run function mgs:v5.0.0/zombies/inventory/drop_wrong_slot_item {slot:"hotbar.5"}
 
-# Info item must be in hotbar.8
-execute unless items entity @s hotbar.8 *[custom_data~{mgs:{zb_info:true}}] run function mgs:v5.0.0/zombies/inventory/fix_info
+# Always-enforced slots
+function mgs:v5.0.0/zombies/inventory/enforce_slot {slot:"hotbar.8",match:"*[custom_data~{mgs:{zb_info:true,zombies:{hotbar:8}}}]",expected_nbt:{mgs:{zb_info:true,zombies:{hotbar:8}}}}
+function mgs:v5.0.0/zombies/inventory/enforce_slot {slot:"hotbar.7",match:"*[custom_data~{mgs:{gun:true,zombies:{hotbar:7}}}]",expected_nbt:{mgs:{gun:true,zombies:{hotbar:7}}}}
+function mgs:v5.0.0/zombies/inventory/enforce_slot {slot:"hotbar.6",match:"*[custom_data~{mgs:{gun:true,zombies:{hotbar:6}}}]",expected_nbt:{mgs:{gun:true,zombies:{hotbar:6}}}}
+function mgs:v5.0.0/zombies/inventory/enforce_slot {slot:"hotbar.2",match:"*[custom_data~{mgs:{gun:true,zombies:{hotbar:2}}}]",expected_nbt:{mgs:{gun:true,zombies:{hotbar:2}}}}
+function mgs:v5.0.0/zombies/inventory/enforce_slot {slot:"hotbar.1",match:"*[custom_data~{mgs:{gun:true,zombies:{hotbar:1}}}]",expected_nbt:{mgs:{gun:true,zombies:{hotbar:1}}}}
+function mgs:v5.0.0/zombies/inventory/enforce_slot {slot:"hotbar.0",match:"*[custom_data~{mgs:{knife:true,zombies:{hotbar:0}}}]",expected_nbt:{mgs:{knife:true,zombies:{hotbar:0}}}}
+function mgs:v5.0.0/zombies/inventory/enforce_slot {slot:"inventory.1",match:"*[custom_data~{mgs:{magazine:true,zombies:{inventory:1}}}]",expected_nbt:{mgs:{magazine:true,zombies:{inventory:1}}}}
+function mgs:v5.0.0/zombies/inventory/enforce_slot {slot:"inventory.2",match:"*[custom_data~{mgs:{magazine:true,zombies:{inventory:2}}}]",expected_nbt:{mgs:{magazine:true,zombies:{inventory:2}}}}
 
-# Grenade must be in hotbar.7
-execute unless items entity @s hotbar.7 *[custom_data~{mgs:{gun:true,stats:{grenade_type:"frag"}}}] run function mgs:v5.0.0/zombies/inventory/fix_grenade
-
-# Ability item must be in hotbar.4 (if player has ability)
-execute if score @s mgs.zb.ability matches 1.. unless items entity @s hotbar.4 *[custom_data~{mgs:{zb_ability_item:true}}] run function mgs:v5.0.0/zombies/inventory/give_ability_item
-
-# Weapon in hotbar.1 must be a gun
-execute unless items entity @s hotbar.1 *[custom_data~{mgs:{gun:true}}] run function mgs:v5.0.0/zombies/inventory/fix_weapon_1
-
-# Magazine in inventory.1 should exist if weapon 1 exists
-execute if items entity @s hotbar.1 *[custom_data~{mgs:{gun:true}}] unless items entity @s inventory.1 *[custom_data~{mgs:{magazine:true}}] run function mgs:v5.0.0/zombies/inventory/fix_mag_1
-
-# Prevent items in forbidden slots
-item replace entity @s hotbar.5 with air
-
-# Restrict hotbar.2/3 and inventory.2/3 without mule kick perk
-execute unless score @s mgs.zb.perk.mule_kick matches 1 run item replace entity @s hotbar.2 with air
+# Mule kick gates the third weapon/magazine slots only.
+execute if score @s mgs.zb.perk.mule_kick matches 1 run function mgs:v5.0.0/zombies/inventory/enforce_slot {slot:"hotbar.3",match:"*[custom_data~{mgs:{gun:true,zombies:{hotbar:3}}}]",expected_nbt:{mgs:{gun:true,zombies:{hotbar:3}}}}
+execute if score @s mgs.zb.perk.mule_kick matches 1 run function mgs:v5.0.0/zombies/inventory/enforce_slot {slot:"inventory.3",match:"*[custom_data~{mgs:{magazine:true,zombies:{inventory:3}}}]",expected_nbt:{mgs:{magazine:true,zombies:{inventory:3}}}}
 execute unless score @s mgs.zb.perk.mule_kick matches 1 run item replace entity @s hotbar.3 with air
-execute unless score @s mgs.zb.perk.mule_kick matches 1 run item replace entity @s inventory.2 with air
 execute unless score @s mgs.zb.perk.mule_kick matches 1 run item replace entity @s inventory.3 with air
 
-# Clear cursor (prevent holding mgs items outside inventory)
-execute if items entity @s player.cursor *[custom_data~{mgs:{}}] run item replace entity @s player.cursor with air
+# Ability slot is only for manual abilities (automatic abilities such as coward should not show item)
+execute if score @s mgs.zb.ability matches 3.. run function mgs:v5.0.0/zombies/inventory/enforce_slot {slot:"hotbar.4",match:"*[custom_data~{mgs:{zb_ability_item:true,zombies:{hotbar:4}}}]",expected_nbt:{mgs:{zb_ability_item:true,zombies:{hotbar:4}}}}
+execute unless score @s mgs.zb.ability matches 3.. run item replace entity @s hotbar.4 with air
+
+# Clear cursor (prevent dragging tagged items outside managed inventory)
+execute if items entity @s player.cursor * run function mgs:v5.0.0/zombies/inventory/drop_wrong_slot_item {slot:"player.cursor"}
 

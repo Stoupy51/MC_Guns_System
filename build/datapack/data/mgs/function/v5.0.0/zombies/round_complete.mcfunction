@@ -19,7 +19,7 @@ execute as @a[scores={mgs.zb.in_game=1},gamemode=!spectator] run scoreboard play
 
 # Announce
 execute store result score #completed_round mgs.data run data get storage mgs:zombies game.round
-tellraw @a ["",{"text":"","color":"dark_green","bold":true},"🧟 ",{"translate":"mgs.round_2","color":"green"},{"score":{"name":"#completed_round","objective":"mgs.data"},"color":"gold","bold":true},{"translate":"mgs.complete_500_points_next_round_in_10_seconds","color":"green"}]
+tellraw @a ["",{"text":"","color":"dark_green","bold":true},"🧟 ",{"translate":"mgs.round","color":"green"},{"score":{"name":"#completed_round","objective":"mgs.data"},"color":"gold","bold":true},{"translate":"mgs.complete_500_points_next_round_in_10_seconds","color":"green"}]
 
 # Schedule next round after 10 seconds
 schedule function mgs:v5.0.0/zombies/start_round 200t

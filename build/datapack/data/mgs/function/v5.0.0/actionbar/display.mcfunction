@@ -8,5 +8,6 @@
 # @args		list (unknown)
 #
 
-$title @s actionbar $(list)
+$data modify storage smithed.actionbar:input message set value {json:$(list),priority:'persistent',freeze:1}
+function #smithed.actionbar:message
 

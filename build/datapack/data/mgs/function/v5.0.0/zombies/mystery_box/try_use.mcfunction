@@ -5,7 +5,10 @@
 #
 
 # Check if player has enough points
-execute unless score @s mgs.zb.points >= #zb_mystery_box_price mgs.config run return run tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.not_enough_points_950_required","color":"red"}]
+execute unless score @s mgs.zb.points >= #zb_mystery_box_price mgs.config run return run function mgs:v5.0.0/zombies/mystery_box/deny_not_enough_points
+
+# Ensure at least a default pool exists.
+function mgs:v5.0.0/zombies/mystery_box/ensure_default_pool
 
 # Deduct points
 scoreboard players operation @s mgs.zb.points -= #zb_mystery_box_price mgs.config
@@ -13,25 +16,22 @@ scoreboard players operation @s mgs.zb.points -= #zb_mystery_box_price mgs.confi
 # Start spinning
 data modify storage mgs:zombies mystery_box.spinning set value true
 
-# Pick a random weapon from the pool
-execute store result score #mb_pool_size mgs.data run data get storage mgs:zombies mystery_box_pool
-execute if score #mb_pool_size mgs.data matches ..0 run return run tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.mystery_box_pool_is_empty","color":"red"}]
-execute store result score #mb_pick mgs.data run random value 0..100
-scoreboard players operation #mb_pick mgs.data %= #mb_pool_size mgs.data
+# Pick a random weapon from the pool and reroll if player already owns it.
+function mgs:v5.0.0/zombies/mystery_box/pick_random_result
+scoreboard players set #mb_reroll mgs.data 0
+function mgs:v5.0.0/zombies/mystery_box/reroll_owned
 
-# Copy pool and iterate to the picked index
-data modify storage mgs:temp _mb_pool_iter set from storage mgs:zombies mystery_box_pool
-function mgs:v5.0.0/zombies/mystery_box/pick_item
+# If still owned after rerolls, refund and fail.
+execute if score #mb_owned mgs.data matches 1 run scoreboard players operation @s mgs.zb.points += #zb_mystery_box_price mgs.config
+execute if score #mb_owned mgs.data matches 1 run return run function mgs:v5.0.0/zombies/mystery_box/deny_all_owned
 
-# Store the result
-data modify storage mgs:zombies mystery_box.result set from storage mgs:temp _mb_pool_iter[0]
-
-# Start animation timer (40 ticks cycling + 60 ticks display = 100 total)
-scoreboard players set #mb_anim_timer mgs.data 40
+# Start animation timer (80 ticks cycling with slowdown + 150 ticks display window)
+scoreboard players set #mb_anim_timer mgs.data 120
 
 # Spawn display entity at box position
 execute at @n[tag=mgs.mystery_box_active] run function mgs:v5.0.0/zombies/mystery_box/spawn_display
 
 # Announce
 tellraw @a[scores={mgs.zb.in_game=1}] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.mystery_box_spinning","color":"light_purple"}]
+function mgs:v5.0.0/zombies/feedback/sound_box_spin
 

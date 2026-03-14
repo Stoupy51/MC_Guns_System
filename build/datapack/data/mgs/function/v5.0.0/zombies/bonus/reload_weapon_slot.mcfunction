@@ -43,6 +43,9 @@
 #			mgs:v5.0.0/zombies/bonus/max_ammo_reload_weapons {slot:"player.crafting.1"}
 #			mgs:v5.0.0/zombies/bonus/max_ammo_reload_weapons {slot:"player.crafting.2"}
 #			mgs:v5.0.0/zombies/bonus/max_ammo_reload_weapons {slot:"player.crafting.3"}
+#			mgs:v5.0.0/zombies/wallbuys/give_to_slot {slot:"hotbar.$(hotbar)"}
+#			mgs:v5.0.0/zombies/wallbuys/reload_pair {slot:"hotbar.$(hotbar)"}
+#			mgs:v5.0.0/zombies/wallbuys/replace_pair {slot:"hotbar.$(hotbar)"}
 #
 # @args		slot (string)
 #

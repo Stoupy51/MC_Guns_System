@@ -1,7 +1,7 @@
 
 #> mgs:v5.0.0/zombies/mystery_box/pick_item
 #
-# @within	mgs:v5.0.0/zombies/mystery_box/try_use
+# @within	mgs:v5.0.0/zombies/mystery_box/pick_random_result
 #			mgs:v5.0.0/zombies/mystery_box/pick_item
 #
 

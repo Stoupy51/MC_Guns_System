@@ -63,8 +63,7 @@ function {ns}:v{version}/zombies/perks/store_data with storage {ns}:temp _pk_sto
 
 # Register Bookshelf events
 execute as @n[tag=_pk_new] run function #bs.interaction:on_right_click {{run:"function {ns}:v{version}/zombies/perks/on_right_click",executor:"source"}}
-execute as @n[tag=_pk_new] run function #bs.interaction:on_hover_enter {{run:"function {ns}:v{version}/zombies/perks/on_hover_enter",executor:"source"}}
-execute as @n[tag=_pk_new] run function #bs.interaction:on_hover_leave {{run:"function {ns}:v{version}/zombies/perks/on_hover_leave",executor:"source"}}
+execute as @n[tag=_pk_new] run function #bs.interaction:on_hover {{run:"function {ns}:v{version}/zombies/perks/on_hover",executor:"source"}}
 tag @n[tag=_pk_new] remove _pk_new
 
 # Continue iteration
@@ -87,7 +86,7 @@ execute unless data storage {ns}:zombies game{{state:"active"}} run return fail
 
 # Check power requirement
 execute store result score #pk_power {ns}.data run scoreboard players get @n[tag=bs.interaction.target] {ns}.zb.perk.power
-execute if score #pk_power {ns}.data matches 1 unless score #zb_power {ns}.data matches 1 run return run tellraw @s [{MGS_TAG},{{"text":" ⚡ Requires power!","color":"red"}}]
+execute if score #pk_power {ns}.data matches 1 unless score #zb_power {ns}.data matches 1 run return run function {ns}:v{version}/zombies/perks/deny_requires_power
 
 # Look up perk_id
 execute store result storage {ns}:temp _pk_buy.id int 1 run scoreboard players get @n[tag=bs.interaction.target] {ns}.zb.perk.id
@@ -95,11 +94,11 @@ function {ns}:v{version}/zombies/perks/lookup_perk with storage {ns}:temp _pk_bu
 
 # Check if player already has this perk
 function {ns}:v{version}/zombies/perks/check_owned with storage {ns}:temp _pk_data
-execute if score #pk_owned {ns}.data matches 1 run return run tellraw @s [{MGS_TAG},{{"text":" Already have this perk!","color":"yellow"}}]
+execute if score #pk_owned {ns}.data matches 1 run return run function {ns}:v{version}/zombies/perks/deny_already_owned
 
 # Get price and check points
 execute store result score #pk_price {ns}.data run scoreboard players get @n[tag=bs.interaction.target] {ns}.zb.perk.price
-execute unless score @s {ns}.zb.points >= #pk_price {ns}.data run return run tellraw @s [{MGS_TAG},{{"text":" Not enough points!","color":"red"}}]
+execute unless score @s {ns}.zb.points >= #pk_price {ns}.data run return run function {ns}:v{version}/zombies/perks/deny_not_enough_points
 
 # Deduct points
 scoreboard players operation @s {ns}.zb.points -= #pk_price {ns}.data
@@ -111,7 +110,22 @@ function {ns}:v{version}/zombies/perks/apply with storage {ns}:temp _pk_data
 function #{ns}:zombies/on_new_perk
 
 # Sound
-playsound minecraft:entity.player.levelup master @s ~ ~ ~ 1 1.5
+function {ns}:v{version}/zombies/feedback/sound_success
+""")
+
+	write_versioned_function("zombies/perks/deny_requires_power", f"""
+tellraw @s [{MGS_TAG},{{"text":"This perk machine requires power.","color":"red"}}]
+function {ns}:v{version}/zombies/feedback/sound_deny
+""")
+
+	write_versioned_function("zombies/perks/deny_already_owned", f"""
+tellraw @s [{MGS_TAG},{{"text":"You already own this perk.","color":"yellow"}}]
+function {ns}:v{version}/zombies/feedback/sound_deny
+""")
+
+	write_versioned_function("zombies/perks/deny_not_enough_points", f"""
+tellraw @s [{MGS_TAG},{{"text":"You don't have enough points (","color":"red"}},{{"score":{{"name":"#pk_price","objective":"{ns}.data"}},"color":"yellow"}},{{"text":" needed).","color":"red"}}]
+function {ns}:v{version}/zombies/feedback/sound_deny
 """)
 
 	write_versioned_function("zombies/perks/lookup_perk", f"""
@@ -136,34 +150,28 @@ $function {ns}:v{version}/zombies/perks/apply/$(perk_id)
 # Increase max health to 40 HP
 attribute @s minecraft:max_health base set 40
 data modify entity @s Health set value 40f
-tellraw @s [{MGS_TAG},{{"text":" 🍺 Juggernog! Max HP: 40","color":"dark_red","bold":true}}]
+tellraw @s [{MGS_TAG},{{"text":"🍺 Juggernog! Max HP: 40","color":"dark_red","bold":true}}]
 """)
 
 	write_versioned_function("zombies/perks/apply/speed_cola", f"""
 tag @s add {ns}.perk.speed_cola
-tellraw @s [{MGS_TAG},{{"text":" ⚡ Speed Cola! Faster reload","color":"green","bold":true}}]
+tellraw @s [{MGS_TAG},{{"text":"⚡ Speed Cola! Faster reload","color":"green","bold":true}}]
 """)
 
 	write_versioned_function("zombies/perks/apply/double_tap", f"""
 tag @s add {ns}.perk.double_tap
-tellraw @s [{MGS_TAG},{{"text":" 🔥 Double Tap! More damage","color":"gold","bold":true}}]
+tellraw @s [{MGS_TAG},{{"text":"🔥 Double Tap! More damage","color":"gold","bold":true}}]
 """)
 
 	write_versioned_function("zombies/perks/apply/quick_revive", f"""
 tag @s add {ns}.perk.quick_revive
-tellraw @s [{MGS_TAG},{{"text":" 💚 Quick Revive! You can revive teammates","color":"aqua","bold":true}}]
+tellraw @s [{MGS_TAG},{{"text":"💚 Quick Revive! You can revive teammates","color":"aqua","bold":true}}]
 """)
 
 	## Hover events (executor: "source" = player)
-	write_versioned_function("zombies/perks/on_hover_enter", f"""
-execute store result score #pk_price {ns}.data run scoreboard players get @n[tag=bs.interaction.target] {ns}.zb.perk.price
-title @s times 0 40 10
-title @s title [{{"text":"🥤 Perk Machine","color":"dark_purple"}}]
-title @s subtitle [{{"text":"Cost: ","color":"gray"}},{{"score":{{"name":"#pk_price","objective":"{ns}.data"}},"color":"yellow"}},{{"text":" points","color":"gray"}}]
-""")
-
-	write_versioned_function("zombies/perks/on_hover_leave", """
-title @s clear
+	write_versioned_function("zombies/perks/on_hover", """
+data modify storage smithed.actionbar:input message set value {json:[{"text":"🥤 Perk Machine","color":"dark_purple"},{"text":" - Right-click to buy","color":"gray"}],priority:'notification',freeze:5}
+function #smithed.actionbar:message
 """)
 
 	## Hook into game start: reset perk scoreboards

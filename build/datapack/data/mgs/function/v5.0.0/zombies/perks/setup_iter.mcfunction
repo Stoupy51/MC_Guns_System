@@ -37,8 +37,7 @@ function mgs:v5.0.0/zombies/perks/store_data with storage mgs:temp _pk_store
 
 # Register Bookshelf events
 execute as @n[tag=_pk_new] run function #bs.interaction:on_right_click {run:"function mgs:v5.0.0/zombies/perks/on_right_click",executor:"source"}
-execute as @n[tag=_pk_new] run function #bs.interaction:on_hover_enter {run:"function mgs:v5.0.0/zombies/perks/on_hover_enter",executor:"source"}
-execute as @n[tag=_pk_new] run function #bs.interaction:on_hover_leave {run:"function mgs:v5.0.0/zombies/perks/on_hover_leave",executor:"source"}
+execute as @n[tag=_pk_new] run function #bs.interaction:on_hover {run:"function mgs:v5.0.0/zombies/perks/on_hover",executor:"source"}
 tag @n[tag=_pk_new] remove _pk_new
 
 # Continue iteration

@@ -65,8 +65,7 @@ function {ns}:v{version}/zombies/doors/store_name with storage {ns}:temp _door_n
 
 # Register Bookshelf events
 execute as @e[tag={ns}.door_new] run function #bs.interaction:on_right_click {{run:"function {ns}:v{version}/zombies/doors/on_right_click",executor:"source"}}
-execute as @e[tag={ns}.door_new] run function #bs.interaction:on_hover_enter {{run:"function {ns}:v{version}/zombies/doors/on_hover_enter",executor:"source"}}
-execute as @e[tag={ns}.door_new] run function #bs.interaction:on_hover_leave {{run:"function {ns}:v{version}/zombies/doors/on_hover_leave",executor:"source"}}
+execute as @e[tag={ns}.door_new] run function #bs.interaction:on_hover {{run:"function {ns}:v{version}/zombies/doors/on_hover",executor:"source"}}
 tag @e[tag={ns}.door_new] remove {ns}.door_new
 
 # Continue iteration
@@ -91,7 +90,7 @@ execute unless data storage {ns}:zombies game{{state:"active"}} run return fail
 execute store result score #door_price {ns}.data run scoreboard players get @n[tag=bs.interaction.target] {ns}.zb.door.price
 
 # Check player has enough points
-execute unless score @s {ns}.zb.points >= #door_price {ns}.data run return run tellraw @s [{MGS_TAG},{{"text":" Not enough points!","color":"red"}}]
+execute unless score @s {ns}.zb.points >= #door_price {ns}.data run return run function {ns}:v{version}/zombies/doors/deny_not_enough_points
 
 # Deduct points
 scoreboard players operation @s {ns}.zb.points -= #door_price {ns}.data
@@ -103,7 +102,13 @@ execute store result score #door_link {ns}.data run scoreboard players get @n[ta
 execute as @e[tag={ns}.door] if score @s {ns}.zb.door.link = #door_link {ns}.data at @s run function {ns}:v{version}/zombies/doors/open_one
 
 # Announce
-tellraw @a[scores={{{ns}.zb.in_game=1}}] [{MGS_TAG},{{"text":" 🚪 Door opened!","color":"green"}}]
+tellraw @s [{MGS_TAG},{{"text":"Door opened for ","color":"green"}},{{"score":{{"name":"#door_price","objective":"{ns}.data"}},"color":"yellow"}},{{"text":" points.","color":"green"}}]
+function {ns}:v{version}/zombies/feedback/sound_announce
+""")
+
+	write_versioned_function("zombies/doors/deny_not_enough_points", f"""
+tellraw @s [{MGS_TAG},{{"text":"You don't have enough points (","color":"red"}},{{"score":{{"name":"#door_price","objective":"{ns}.data"}},"color":"yellow"}},{{"text":" needed).","color":"red"}}]
+function {ns}:v{version}/zombies/feedback/sound_deny
 """)
 
 	## Open a single door entity (@s = door entity, at @s position)
@@ -148,17 +153,9 @@ $data modify storage {ns}:temp _door_hover_name set from storage {ns}:zombies do
 """)
 
 	## Hover events (executor: "source" = player)
-	write_versioned_function("zombies/doors/on_hover_enter", f"""
-execute store result score #door_price {ns}.data run scoreboard players get @n[tag=bs.interaction.target] {ns}.zb.door.price
-execute store result storage {ns}:temp _door_hover.id int 1 run scoreboard players get @n[tag=bs.interaction.target] {ns}.zb.door.link
-function {ns}:v{version}/zombies/doors/get_hover_name with storage {ns}:temp _door_hover
-title @s times 0 40 10
-title @s title [{{"text":"🚪 ","color":"gold"}},{{"storage":"{ns}:temp","nbt":"_door_hover_name","color":"gold"}}]
-title @s subtitle [{{"text":"Cost: ","color":"gray"}},{{"score":{{"name":"#door_price","objective":"{ns}.data"}},"color":"yellow"}},{{"text":" points","color":"gray"}}]
-""")
-
-	write_versioned_function("zombies/doors/on_hover_leave", """
-title @s clear
+	write_versioned_function("zombies/doors/on_hover", """
+data modify storage smithed.actionbar:input message set value {json:[{"text":"🚪 Door","color":"gold"},{"text":" - Right-click to open","color":"gray"}],priority:'notification',freeze:5}
+function #smithed.actionbar:message
 """)
 
 	## Hook into game start: initialize unlocked groups
