@@ -5,5 +5,5 @@
 #
 
 tag @s add mgs.perk.double_tap
-tellraw @s [[{"text":"","color":"gold"},"[",{"translate": "mgs"},"] "],{"translate": "mgs.double_tap_more_damage","color":"gold","bold":true}]
+tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],[{"text":" 🔥 ","color":"gold","bold":true}, {"translate":"mgs.double_tap_more_damage"}]]
 

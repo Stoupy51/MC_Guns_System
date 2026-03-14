@@ -20,8 +20,8 @@ execute if data storage mgs:temp _pd_src[0] run function mgs:v5.0.0/multiplayer/
 function mgs:v5.0.0/multiplayer/custom/fav_count_update
 
 # Notify based on whether it was added or removed
-execute if score #fav_found mgs.data matches 1 run tellraw @s ["",[{"text":"","color":"gold"},"[",{"translate": "mgs"},"] "],{"translate": "mgs.removed_from_favorites","color":"yellow"}]
-execute if score #fav_found mgs.data matches 0 run tellraw @s ["",[{"text":"","color":"gold"},"[",{"translate": "mgs"},"] "],{"translate": "mgs.added_to_favorites","color":"green"}]
+execute if score #fav_found mgs.data matches 1 run tellraw @s ["",[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.removed_from_favorites","color":"yellow"}]
+execute if score #fav_found mgs.data matches 0 run tellraw @s ["",[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.added_to_favorites","color":"green"}]
 
 # Reopen Marketplace dialog with updated data
 function mgs:v5.0.0/multiplayer/marketplace/browse

@@ -16,9 +16,12 @@ scoreboard players operation #dps_dec mgs.data = #dps_raw mgs.data
 scoreboard players operation #dps_dec mgs.data %= #10 mgs.data
 
 # Append DPS to actionbar list
-data modify storage mgs:temp actionbar.list append value {"text":"    ⚡ ","color":"#c77e36"}
+data modify storage mgs:temp actionbar.list append value "    "
+data modify storage mgs:temp actionbar.list append value {"text":"⚡","color":"#c77e36"}
+data modify storage mgs:temp actionbar.list append value " "
 data modify storage mgs:temp actionbar.list append value {"score":{"name":"#dps_int","objective":"mgs.data"}}
 data modify storage mgs:temp actionbar.list append value {"text":"."}
 data modify storage mgs:temp actionbar.list append value {"score":{"name":"#dps_dec","objective":"mgs.data"}}
-data modify storage mgs:temp actionbar.list append value {"translate": "mgs.dps","color":"#c77e36"}
+data modify storage mgs:temp actionbar.list append value " "
+data modify storage mgs:temp actionbar.list append value {"translate":"mgs.dps","color":"#c77e36"}
 

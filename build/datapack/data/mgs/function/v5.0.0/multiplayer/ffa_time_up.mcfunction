@@ -4,7 +4,7 @@
 # @within	mgs:v5.0.0/multiplayer/time_up
 #
 
-tellraw @a [[{"text":"","color":"gold"},"[",{"translate": "mgs"},"] "],{"translate": "mgs.times_up","color":"gold"}]
+tellraw @a [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.times_up","color":"gold"}]
 
 # Store max kills into a score
 scoreboard players set #max_kills mgs.data 0

@@ -6,7 +6,7 @@
 # @within	mgs:v5.0.0/raycast/on_targeted_block
 #
 
-#tellraw @a[distance=..128] [{"translate": "mgs.hardness","color":"gray","extra":[{"score":{"name":"#hardness","objective":"mgs.data"},"color":"white"}]},{"translate": "mgs.raycast_piercing_bs_lambda","color":"gray","extra":[{"score":{"name":"$raycast.piercing","objective":"bs.lambda"},"color":"white"}]}]
+#tellraw @a[distance=..128] [{"translate":"mgs.hardness","color":"gray","extra":[{"score":{"name":"#hardness","objective":"mgs.data"},"color":"white"}]},[{"text":" $","color":"gray","extra":[{"score":{"name":"$raycast.piercing","objective":"bs.lambda"},"color":"white"}]}, {"translate":"mgs.raycast_piercing_bs_lambda"}]]
 
 # Calculate damage reduction: reduction = hardness * 400 / 1000, capped at 950
 scoreboard players operation #reduction mgs.data = #hardness mgs.data

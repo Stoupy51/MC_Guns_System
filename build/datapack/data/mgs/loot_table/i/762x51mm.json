@@ -21,16 +21,16 @@
 									}
 								},
 								"minecraft:rarity": "common",
-								"minecraft:item_name": {
-									"translate": "mgs.762x51mm",
+								"minecraft:item_name": [{
+									"text":"762",
 									"color": "white"
-								},
+								}, {"translate": "mgs.x51mm"}],
 								"minecraft:item_model": "mgs:762x51mm",
 								"minecraft:lore": [
 									[
 										"",
 										{"text": "I","color": "white","italic": false,"font": "mgs:icons"},
-										{"translate": "mgs.mc_guns_system","italic": true,"color": "blue"}
+										[{"text":" ","italic": true,"color": "blue"}, {"translate": "mgs.mc_guns_system"}]
 									]
 								]
 							}

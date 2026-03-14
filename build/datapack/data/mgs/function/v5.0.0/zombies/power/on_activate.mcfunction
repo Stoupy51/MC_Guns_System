@@ -27,5 +27,5 @@ execute as @e[tag=mgs.power_switch] at @s if entity @s[tag=mgs.pw_face_west] run
 kill @e[tag=mgs.power_switch]
 
 # Announce
-tellraw @a[scores={mgs.zb.in_game=1}] [[{"text":"","color":"gold"},"[",{"translate": "mgs"},"] "],{"translate": "mgs.power_is_on","color":"green","bold":true}]
+tellraw @a[scores={mgs.zb.in_game=1}] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],[{"text":" ⚡ ","color":"green","bold":true}, {"translate":"mgs.power_is_on"}]]
 

@@ -37,5 +37,5 @@ tag @a[tag=mgs.temp_killer] remove mgs.temp_killer
 
 # Announce
 title @s title [{"text":"☠","color":"red"}]
-title @s subtitle [{"translate": "mgs.respawning_in_3_seconds","color":"gray"}]
+title @s subtitle [{"translate":"mgs.respawning_in_3_seconds","color":"gray"}]
 

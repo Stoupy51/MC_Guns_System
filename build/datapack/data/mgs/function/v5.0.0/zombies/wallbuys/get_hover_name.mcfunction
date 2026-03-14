@@ -6,5 +6,5 @@
 # @args		id (unknown)
 #
 
-$data modify storage mgs:temp _wb_hover_name set from storage mgs:zombies wallbuy_data."$(id)".name
+$data modify storage mgs:temp wb_hover_name set from storage mgs:zombies wallbuy_data."$(id)".name
 

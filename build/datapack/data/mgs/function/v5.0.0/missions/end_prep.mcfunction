@@ -32,5 +32,5 @@ execute as @a[scores={mgs.mi.in_game=1}] run item replace entity @s hotbar.3 wit
 scoreboard players set #mi_timer mgs.data 0
 
 # Announce
-tellraw @a ["",{"text":"","color":"aqua","bold":true},"🎯 ",{"translate": "mgs.go_go_go_kill_all_enemies"}]
+tellraw @a ["",{"text":"","color":"aqua","bold":true},"🎯 ",{"translate":"mgs.go_go_go_kill_all_enemies"}]
 

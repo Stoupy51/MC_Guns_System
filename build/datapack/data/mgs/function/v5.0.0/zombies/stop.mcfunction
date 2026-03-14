@@ -35,7 +35,7 @@ scoreboard objectives setdisplay sidebar
 scoreboard objectives remove mgs.zb_sidebar
 
 # Announce
-tellraw @a [[{"text":"","color":"gold"},"[",{"translate": "mgs"},"] "],{"translate": "mgs.zombies_game_ended","color":"red"}]
+tellraw @a [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.zombies_game_ended","color":"red"}]
 
 # Reset in-game state
 scoreboard players set @a mgs.zb.in_game 0

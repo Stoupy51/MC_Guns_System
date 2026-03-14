@@ -29,7 +29,7 @@ scoreboard players set #zb_round_grace mgs.data 60
 
 # Title
 title @a[scores={mgs.zb.in_game=1}] times 10 40 10
-title @a[scores={mgs.zb.in_game=1}] title [{"text":"Round ","color":"red","bold":true},{"score":{"name":"#zb_round","objective":"mgs.data"},"color":"gold","bold":true}]
+title @a[scores={mgs.zb.in_game=1}] title [{"translate":"mgs.round_2","color":"red","bold":true},{"score":{"name":"#zb_round","objective":"mgs.data"},"color":"gold","bold":true}]
 
 # Signal round start
 function #mgs:zombies/on_round_start
@@ -38,7 +38,7 @@ function #mgs:zombies/on_round_start
 function mgs:v5.0.0/zombies/refresh_sidebar
 
 # Announce
-tellraw @a ["",{"text":"","color":"dark_green","bold":true},"🧟 ",{"text":"Round ","color":"red"},{"score":{"name":"#zb_round","objective":"mgs.data"},"color":"gold","bold":true},{"translate": "mgs.has_begun","color":"red"}]
+tellraw @a ["",{"text":"","color":"dark_green","bold":true},"🧟 ",{"translate":"mgs.round_2","color":"red"},{"score":{"name":"#zb_round","objective":"mgs.data"},"color":"gold","bold":true},[{"text":" ","color":"red"}, {"translate":"mgs.has_begun"}]]
 
 # Replenish grenades for all alive players (+2, cap at 4)
 execute as @a[scores={mgs.zb.in_game=1},gamemode=!spectator] run function mgs:v5.0.0/zombies/inventory/replenish_grenades

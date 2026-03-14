@@ -18,10 +18,10 @@ execute if data storage mgs:temp editor{perks:["quick_reload"]} run scoreboard p
 execute if data storage mgs:temp editor{perks:["quick_swap"]} run scoreboard players add #perk_count mgs.data 1
 execute if data storage mgs:temp editor{perks:["infinite_ammo"]} run scoreboard players add #perk_count mgs.data 1
 
-execute if score #perk_count mgs.data matches 3.. run return run tellraw @s [[{"text":"","color":"gold"},"[",{"translate": "mgs"},"] "],{"translate": "mgs.max_3_perks_allowed","color":"red"}]
+execute if score #perk_count mgs.data matches 3.. run return run tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.max_3_perks_allowed","color":"red"}]
 
 # Check points budget
-execute if score @s mgs.mp.edit_points matches ..0 run return run tellraw @s [[{"text":"","color":"gold"},"[",{"translate": "mgs"},"] "],{"translate": "mgs.not_enough_points","color":"red"}]
+execute if score @s mgs.mp.edit_points matches ..0 run return run tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.not_enough_points","color":"red"}]
 
 # Add perk and deduct points
 $data modify storage mgs:temp editor.perks append value "$(_toggle_perk)"

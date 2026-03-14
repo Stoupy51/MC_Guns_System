@@ -6,5 +6,5 @@
 # @args		ffa_sb (unknown)
 #
 
-$function #bs.sidebar:create {objective:"mgs.sidebar",display_name:{translate: "mgs.free_for_all",color:"gold",bold:true},contents:$(ffa_sb)}
+$function #bs.sidebar:create {objective:"mgs.sidebar",display_name:{translate:"mgs.free_for_all",color:"gold",bold:true},contents:$(ffa_sb)}
 

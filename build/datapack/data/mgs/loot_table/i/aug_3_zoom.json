@@ -24,6 +24,13 @@
 									}
 								},
 								"minecraft:rarity": "common",
+								"minecraft:item_name": [
+									{
+										"translate": "mgs.aug_acog_red_dot_3x_scope",
+										"color": "gold",
+										"italic": false
+									}
+								],
 								"minecraft:consumable": {
 									"consume_seconds": 1000000,
 									"animation": "spear",
@@ -210,13 +217,10 @@
 									[
 										"",
 										{"text": "I","color": "white","italic": false,"font": "mgs:icons"},
-										{"translate": "mgs.mc_guns_system","italic": true,"color": "blue"}
+										[{"text":" ","italic": true,"color": "blue"}, {"translate": "mgs.mc_guns_system"}]
 									]
 								],
-								"minecraft:item_model": "mgs:aug_3_zoom",
-								"minecraft:item_name": {
-									"translate": "mgs.aug_3_zoom"
-								}
+								"minecraft:item_model": "mgs:aug_3_zoom"
 							}
 						}
 					]

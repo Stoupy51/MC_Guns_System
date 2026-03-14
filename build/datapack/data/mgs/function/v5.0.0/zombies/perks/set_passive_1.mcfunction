@@ -7,6 +7,6 @@
 #
 
 scoreboard players set @s mgs.zb.passive 1
-tellraw @s [[{"text":"","color":"gold"},"[",{"translate": "mgs"},"] "],{"translate": "mgs.passive_set","color":"gray"},{"translate": "mgs.x1_2_points","color":"gold"}]
+tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.passive_set","color":"gray"},{"translate":"mgs.x1_2_points","color":"gold"}]
 function mgs:v5.0.0/zombies/ability_menu
 

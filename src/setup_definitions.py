@@ -1,6 +1,7 @@
 
-# Import database helper and setup constants
+# Imports
 import json
+import stouputils as stp
 
 from stewbeet import (
     Context,
@@ -19,6 +20,7 @@ from stewbeet import (
     create_gradient_text as new_hex,
 )
 
+from .config.catalogs import GRENADE_TYPES, PRIMARY_WEAPONS, SCOPE_NAMES, SECONDARY_WEAPONS
 from .config.stats import (
     CAPACITY,
     CASING_MODEL,
@@ -67,6 +69,7 @@ from .database.svd import main as main_svd
 
 
 # Main function should return a database
+@stp.measure_time(printer=stp.progress, message="Set up item definitions")
 def beet_default(ctx: Context) -> None:
     ns: str = ctx.project_id
 
@@ -126,6 +129,15 @@ def beet_default(ctx: Context) -> None:
         },
     )
 
+    # Name maps sourced from shared loadout catalogs
+    weapon_display_names: dict[str, str] = {
+        **{item_id: display for item_id, display, *_ in PRIMARY_WEAPONS},
+        **{item_id: display for item_id, display, *_ in SECONDARY_WEAPONS},
+    }
+    grenade_display_names: dict[str, str] = {
+        item_id: display for item_id, display in GRENADE_TYPES if item_id
+    }
+
     # Adjust guns data
     for item in Mem.definitions.keys():
         obj = Item.from_id(item)
@@ -135,6 +147,32 @@ def beet_default(ctx: Context) -> None:
         ns_data: JsonDict = obj.components["custom_data"].get(ns, {})
         if ns_data.get("gun"):
             gun_stats: JsonDict = ns_data.get("stats", {})
+
+            # Resolve catalog display name + optional scope suffix
+            base_name: str = item.replace("_zoom", "")
+            scope_suffix: str = ""
+            for candidate in ("_1", "_2", "_3", "_4"):
+                if base_name.endswith(candidate):
+                    scope_suffix = candidate
+                    break
+            base_weapon_id: str = base_name[:-2] if scope_suffix else base_name
+
+            display_name: str | None = weapon_display_names.get(base_weapon_id)
+            if not display_name:
+                display_name = grenade_display_names.get(base_weapon_id)
+            if not display_name and GRENADE_TYPE in gun_stats:
+                grenade_key = str(gun_stats[GRENADE_TYPE])
+                display_name = (
+                    grenade_display_names.get(grenade_key)
+                    or grenade_display_names.get(f"{grenade_key}_grenade")
+                    or grenade_key.replace("_", " ").title()
+                )
+
+            if display_name:
+                scope_name: str | None = SCOPE_NAMES.get(scope_suffix)
+                if scope_suffix and scope_name:
+                    display_name = f"{display_name} ({scope_name})"
+                obj.components["item_name"] = [{"text": display_name, "color": "gold", "italic": False}]
 
             # Update casing model
             if CASING_MODEL in gun_stats:
@@ -149,10 +187,9 @@ def beet_default(ctx: Context) -> None:
             gun_stats[REMAINING_BULLETS] = gun_stats[CAPACITY]
 
             # Mark weapons with scopes: _3 variants get x3 zoom, _4 variants get x4 zoom
-            base_name = item.replace("_zoom", '')
-            if base_name.endswith("_3"):
+            if scope_suffix == "_3":
                 ns_data["scope_level"] = 3
-            elif base_name.endswith("_4"):
+            elif scope_suffix == "_4":
                 ns_data["scope_level"] = 4
 
             # Add consumable and use_effects components for tick-perfect right-click detection
@@ -248,5 +285,5 @@ def beet_default(ctx: Context) -> None:
     set_manual_components(white_list=["item_name", "lore", "custom_name", "damage", "max_damage"]) # Components to include in the manual when hovering items (here is the default list)
 
     # Debug purposes: export all definitions to a single json file
-    export_all_definitions_to_json(f"{Mem.ctx.directory}/definitions_debug.json")
+    stp.run_in_subprocess(export_all_definitions_to_json, f"{Mem.ctx.directory}/definitions_debug.json", no_join=True)
 

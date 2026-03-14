@@ -39,6 +39,6 @@ tag @a[tag=mgs.temp_killer] remove mgs.temp_killer
 
 # Announce death & playsound
 title @s title [{"text":"☠","color":"red"}]
-title @s subtitle [{"translate": "mgs.respawning_in_3_seconds","color":"gray"}]
+title @s subtitle [{"translate":"mgs.respawning_in_3_seconds","color":"gray"}]
 execute at @s run playsound minecraft:entity.player.hurt ambient @s
 

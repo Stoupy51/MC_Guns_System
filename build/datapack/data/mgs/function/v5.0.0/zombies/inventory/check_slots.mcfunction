@@ -28,7 +28,7 @@ execute if items entity @s hotbar.1 *[custom_data~{mgs:{gun:true}}] unless items
 item replace entity @s hotbar.5 with air
 
 # Restrict hotbar.2/3 and inventory.2/3 without mule kick perk
-execute unless score @s mgs.zb.perk.mule_kick matches 1 if items entity @s hotbar.2 *[custom_data~{mgs:{gun:true}}] run clear @s hotbar.2 1
+execute unless score @s mgs.zb.perk.mule_kick matches 1 run item replace entity @s hotbar.2 with air
 execute unless score @s mgs.zb.perk.mule_kick matches 1 run item replace entity @s hotbar.3 with air
 execute unless score @s mgs.zb.perk.mule_kick matches 1 run item replace entity @s inventory.2 with air
 execute unless score @s mgs.zb.perk.mule_kick matches 1 run item replace entity @s inventory.3 with air

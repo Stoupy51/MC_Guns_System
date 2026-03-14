@@ -50,13 +50,13 @@
 									[
 										"",
 										{"text": "I","color": "white","italic": false,"font": "mgs:icons"},
-										{"translate": "mgs.mc_guns_system","italic": true,"color": "blue"}
+										[{"text":" ","italic": true,"color": "blue"}, {"translate": "mgs.mc_guns_system"}]
 									]
 								],
 								"minecraft:item_model": "mgs:element_115",
-								"minecraft:item_name": {
-									"translate": "mgs.element_115"
-								}
+								"minecraft:item_name": [{
+									"translate":"mgs.element"
+								}, " 115"]
 							}
 						}
 					]

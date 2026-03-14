@@ -187,7 +187,7 @@ execute if items entity @s hotbar.1 {gun_match} unless items entity @s inventory
 item replace entity @s hotbar.5 with air
 
 # Restrict hotbar.2/3 and inventory.2/3 without mule kick perk
-execute unless score @s {ns}.zb.perk.mule_kick matches 1 if items entity @s hotbar.2 {gun_match} run clear @s hotbar.2 1
+execute unless score @s {ns}.zb.perk.mule_kick matches 1 run item replace entity @s hotbar.2 with air
 execute unless score @s {ns}.zb.perk.mule_kick matches 1 run item replace entity @s hotbar.3 with air
 execute unless score @s {ns}.zb.perk.mule_kick matches 1 run item replace entity @s inventory.2 with air
 execute unless score @s {ns}.zb.perk.mule_kick matches 1 run item replace entity @s inventory.3 with air

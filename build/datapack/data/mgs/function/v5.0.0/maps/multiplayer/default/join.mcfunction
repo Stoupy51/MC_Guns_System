@@ -7,5 +7,5 @@
 #
 
 # Default map join script
-$tellraw @a [{"text":"","color":"gold"},"[",{"translate": "mgs"},"] ",{"text":"$(player_name) joined the map","color":"green"}]
+$tellraw @a [{"text":"","color":"gold"},"[",{"translate":"mgs"},"] ",{"text":"$(player_name) joined the map","color":"green"}]
 

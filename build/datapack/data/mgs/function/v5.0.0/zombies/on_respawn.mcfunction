@@ -21,5 +21,5 @@ function mgs:v5.0.0/zombies/spectate_random_player
 
 # Announce
 title @s title [{"text":"\u2620","color":"red"}]
-title @s subtitle [{"translate": "mgs.respawning_in_5_seconds","color":"gray"}]
+title @s subtitle [{"translate":"mgs.respawning_in_5_seconds","color":"gray"}]
 

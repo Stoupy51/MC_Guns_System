@@ -5,5 +5,5 @@
 #
 
 # Default map start script
-tellraw @a [{"text":"","color":"gold"},"[",{"translate": "mgs"},"] ",{"translate": "mgs.map_started_default_script","color":"yellow"}]
+tellraw @a [{"text":"","color":"gold"},"[",{"translate":"mgs"},"] ",{"translate":"mgs.map_started_default_script","color":"yellow"}]
 

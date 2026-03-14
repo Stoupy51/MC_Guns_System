@@ -22,6 +22,13 @@
 									}
 								},
 								"minecraft:rarity": "common",
+								"minecraft:item_name": [
+									{
+										"translate": "mgs.frag_grenade",
+										"color": "gold",
+										"italic": false
+									}
+								],
 								"minecraft:consumable": {
 									"consume_seconds": 1000000,
 									"animation": "spear",
@@ -112,6 +119,7 @@
 										{"text": "➤","color": "#c67b34"},
 										{"text": " ","color": "#c77e36"},
 										"6",
+										" ",
 										{"translate": "mgs.blocks","color": "#c77e36"}
 									],
 									[
@@ -145,13 +153,10 @@
 									[
 										"",
 										{"text": "I","color": "white","italic": false,"font": "mgs:icons"},
-										{"translate": "mgs.mc_guns_system","italic": true,"color": "blue"}
+										[{"text":" ","italic": true,"color": "blue"}, {"translate": "mgs.mc_guns_system"}]
 									]
 								],
-								"minecraft:item_model": "mgs:frag_grenade",
-								"minecraft:item_name": {
-									"translate": "mgs.frag_grenade"
-								}
+								"minecraft:item_model": "mgs:frag_grenade"
 							}
 						}
 					]

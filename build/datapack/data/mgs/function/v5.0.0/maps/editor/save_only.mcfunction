@@ -15,5 +15,5 @@ function mgs:v5.0.0/maps/editor/do_save
 # Re-give tools (since save clears + re-gives via advancement revoke)
 function mgs:v5.0.0/maps/editor/give_tools
 
-tellraw @s [[{"text":"","color":"gold"},"[",{"translate": "mgs"},"] "],{"translate": "mgs.map_saved","color":"green"}]
+tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.map_saved","color":"green"}]
 

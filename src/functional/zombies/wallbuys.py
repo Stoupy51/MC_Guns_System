@@ -136,7 +136,7 @@ $loot give @s loot {ns}:i/$(weapon_id)
 
 	## Hover events (executor: "source" = player)
 	write_versioned_function("zombies/wallbuys/get_hover_name", f"""
-$data modify storage {ns}:temp _wb_hover_name set from storage {ns}:zombies wallbuy_data."$(id)".name
+$data modify storage {ns}:temp wb_hover_name set from storage {ns}:zombies wallbuy_data."$(id)".name
 """)
 
 	write_versioned_function("zombies/wallbuys/on_hover_enter", f"""
@@ -144,7 +144,7 @@ execute store result score #wb_price {ns}.data run scoreboard players get @n[tag
 execute store result storage {ns}:temp _wb_hover.id int 1 run scoreboard players get @n[tag=bs.interaction.target] {ns}.zb.wb.id
 function {ns}:v{version}/zombies/wallbuys/get_hover_name with storage {ns}:temp _wb_hover
 title @s times 0 40 10
-title @s title [{{"text":"🔫 ","color":"gold"}},{{"storage":"{ns}:temp","nbt":"_wb_hover_name","color":"gold"}}]
+title @s title [{{"text":"🔫 ","color":"gold"}},{{"storage":"{ns}:temp","nbt":"wb_hover_name","color":"gold"}}]
 title @s subtitle [{{"text":"Cost: ","color":"gray"}},{{"score":{{"name":"#wb_price","objective":"{ns}.data"}},"color":"yellow"}},{{"text":" points","color":"gray"}}]
 """)
 

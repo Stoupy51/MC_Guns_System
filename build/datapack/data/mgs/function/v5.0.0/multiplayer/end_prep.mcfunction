@@ -24,5 +24,5 @@ effect give @a[scores={mgs.mp.in_game=1}] saturation infinite 255 true
 data modify storage mgs:multiplayer game.state set value "active"
 
 # Announce
-tellraw @a [{"text":"","color":"green","bold":true},"⚔ ",{"translate": "mgs.go_go_go"}]
+tellraw @a [{"text":"","color":"green","bold":true},"⚔ ",{"translate":"mgs.go_go_go"}]
 

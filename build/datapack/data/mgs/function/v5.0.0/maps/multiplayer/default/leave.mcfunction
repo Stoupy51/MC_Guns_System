@@ -7,5 +7,5 @@
 #
 
 # Default map leave script
-$tellraw @a [{"text":"","color":"gold"},"[",{"translate": "mgs"},"] ",{"text":"$(player_name) left the map","color":"red"}]
+$tellraw @a [{"text":"","color":"gold"},"[",{"translate":"mgs"},"] ",{"text":"$(player_name) left the map","color":"red"}]
 
