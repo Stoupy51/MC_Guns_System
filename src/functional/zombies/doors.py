@@ -10,6 +10,7 @@ from ..helpers import MGS_TAG
 def generate_doors() -> None:
 	ns: str = Mem.ctx.project_id
 	version: str = Mem.ctx.project_version
+	interaction_offset: float = 0.75  # Distance in front of door block to place interaction entities
 	front_door_tags: str = f'["{ns}.door","{ns}.door_front","{ns}.gm_entity","bs.entity.interaction","{ns}.door_new"]'
 	back_door_tags: str = f'["{ns}.door","{ns}.door_back","{ns}.gm_entity","bs.entity.interaction","{ns}.door_new"]'
 	door_hover_message: str = (
@@ -28,6 +29,7 @@ scoreboard objectives add {ns}.zb.door.price dummy
 scoreboard objectives add {ns}.zb.door.gid dummy
 scoreboard objectives add {ns}.zb.door.bgid dummy
 scoreboard objectives add {ns}.zb.door.anim dummy
+scoreboard objectives add {ns}.zb.door.rot dummy
 """)
 
 	## Setup: iterate door compounds, place blocks, summon interaction entities
@@ -69,6 +71,7 @@ execute store result score @e[tag={ns}.door_new] {ns}.zb.door.price run data get
 execute store result score @e[tag={ns}.door_new] {ns}.zb.door.gid run data get storage {ns}:temp _door_iter[0].group_id
 execute store result score @e[tag={ns}.door_new] {ns}.zb.door.bgid run data get storage {ns}:temp _door_iter[0].back_group_id
 execute store result score @e[tag={ns}.door_new] {ns}.zb.door.anim run data get storage {ns}:temp _door_iter[0].animation
+execute store result score @e[tag={ns}.door_new] {ns}.zb.door.rot run data get storage {ns}:temp _door_iter[0].rotation[0]
 
 # Store name indexed by link_id
 execute store result storage {ns}:temp _door_name.id int 1 run data get storage {ns}:temp _door_iter[0].link_id
@@ -89,10 +92,10 @@ execute if data storage {ns}:temp _door_iter[0] run function {ns}:v{version}/zom
 $setblock $(x) $(y) $(z) $(block)
 
 # Summon front-side interaction entity.
-$execute positioned $(x) $(y) $(z) rotated $(facing) 0 run summon minecraft:interaction ^ ^ ^0.5 {{width:1.5f,height:1.1f,response:true,Tags:{front_door_tags}}}
+$execute positioned $(x) $(y) $(z) rotated $(facing) 0 run summon minecraft:interaction ^ ^ ^{interaction_offset} {{width:1.5f,height:1.1f,response:true,Tags:{front_door_tags}}}
 
 # Summon back-side interaction entity.
-$execute positioned $(x) $(y) $(z) rotated $(facing) 0 run summon minecraft:interaction ^ ^ ^-0.5 {{width:1.5f,height:1.1f,response:true,Tags:{back_door_tags}}}
+$execute positioned $(x) $(y) $(z) rotated $(facing) 0 run summon minecraft:interaction ^ ^ ^-{interaction_offset} {{width:1.5f,height:1.1f,response:true,Tags:{back_door_tags}}}
 """)
 
 	## Right-click handler (executor: "source" = player)
@@ -127,10 +130,15 @@ function {ns}:v{version}/zombies/feedback/sound_deny
 
 	## Open a single door entity (@s = door entity, at @s position)
 	write_versioned_function("zombies/doors/open_one", f"""
+# Use stored rotation and side-aware local offset so both front/back interactions
+# target the same door block position.
+execute store result storage {ns}:temp _door_open.rot int 1 run scoreboard players get @s {ns}.zb.door.rot
+data modify storage {ns}:temp _door_open.offset set value -{interaction_offset}
+execute if entity @s[tag={ns}.door_back] run data modify storage {ns}:temp _door_open.offset set value {interaction_offset}
+
 # Remove block based on animation type (0 = destroy with particles, 1+ = silent air)
-execute if score @s {ns}.zb.door.anim matches 0 run setblock ~ ~ ~ air destroy
-execute if score @s {ns}.zb.door.anim matches 0 run kill @e[type=item,distance=..1.5]
-execute unless score @s {ns}.zb.door.anim matches 0 run setblock ~ ~ ~ air
+execute if score @s {ns}.zb.door.anim matches 0 run function {ns}:v{version}/zombies/doors/remove_block_destroy with storage {ns}:temp _door_open
+execute unless score @s {ns}.zb.door.anim matches 0 run function {ns}:v{version}/zombies/doors/remove_block_silent with storage {ns}:temp _door_open
 
 # Unlock primary group
 execute store result storage {ns}:temp _door_unlock.gid int 1 run scoreboard players get @s {ns}.zb.door.gid
@@ -141,6 +149,15 @@ execute unless score @s {ns}.zb.door.bgid matches -1 run function {ns}:v{version
 
 # Kill door interaction entity
 kill @s
+""")
+
+	write_versioned_function("zombies/doors/remove_block_destroy", """
+$execute positioned ~ ~ ~ rotated $(rot) 0 positioned ^ ^ ^$(offset) run setblock ~ ~ ~ air destroy
+$execute positioned ~ ~ ~ rotated $(rot) 0 positioned ^ ^ ^$(offset) run kill @e[type=item,distance=..1.5]
+""")
+
+	write_versioned_function("zombies/doors/remove_block_silent", """
+$execute positioned ~ ~ ~ rotated $(rot) 0 positioned ^ ^ ^$(offset) run setblock ~ ~ ~ air
 """)
 
 	## Unlock back group helper (@s = door entity)

@@ -37,6 +37,7 @@ execute store result score @e[tag=mgs.door_new] mgs.zb.door.price run data get s
 execute store result score @e[tag=mgs.door_new] mgs.zb.door.gid run data get storage mgs:temp _door_iter[0].group_id
 execute store result score @e[tag=mgs.door_new] mgs.zb.door.bgid run data get storage mgs:temp _door_iter[0].back_group_id
 execute store result score @e[tag=mgs.door_new] mgs.zb.door.anim run data get storage mgs:temp _door_iter[0].animation
+execute store result score @e[tag=mgs.door_new] mgs.zb.door.rot run data get storage mgs:temp _door_iter[0].rotation[0]
 
 # Store name indexed by link_id
 execute store result storage mgs:temp _door_name.id int 1 run data get storage mgs:temp _door_iter[0].link_id
