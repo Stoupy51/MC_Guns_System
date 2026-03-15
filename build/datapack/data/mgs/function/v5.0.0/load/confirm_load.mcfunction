@@ -445,6 +445,7 @@ scoreboard objectives add mgs.zb.door.price dummy
 scoreboard objectives add mgs.zb.door.gid dummy
 scoreboard objectives add mgs.zb.door.bgid dummy
 scoreboard objectives add mgs.zb.door.anim dummy
+scoreboard objectives add mgs.zb.door.rot dummy
 
 # Wallbuy entity scoreboards
 scoreboard objectives add mgs.zb.wb.id dummy
