@@ -11,31 +11,56 @@ from stewbeet import Mem, write_versioned_function
 
 from ...config.catalogs import PRIMARY_WEAPONS, SECONDARY_WEAPONS
 from ..helpers import MGS_TAG
+from ..multiplayer.classes import CONSUMABLE_MAGS
 
 
 def generate_mystery_box() -> None:
 	ns: str = Mem.ctx.project_id
 	version: str = Mem.ctx.project_version
 	owned_gun_macro_cd: str = "{" + ns + ':{gun:true,stats:{base_weapon:"$(weapon_id)"}}}'
-	default_pool_weapons: tuple[str, ...] = tuple(
-		dict.fromkeys([weapon_id for weapon_id, *_ in PRIMARY_WEAPONS] + [weapon_id for weapon_id, *_ in SECONDARY_WEAPONS])
-	)
+	weapon_pool_meta: dict[str, tuple[str, int, bool]] = {}
+	for weapon_id, _, _, mag_id, mag_count in PRIMARY_WEAPONS:
+		weapon_pool_meta.setdefault(weapon_id, (mag_id, mag_count, mag_id in CONSUMABLE_MAGS))
+	for weapon_id, _, mag_id, mag_count in SECONDARY_WEAPONS:
+		weapon_pool_meta.setdefault(weapon_id, (mag_id, mag_count, mag_id in CONSUMABLE_MAGS))
+	default_pool_weapons: tuple[str, ...] = tuple(weapon_pool_meta.keys())
 
 	default_pool_entries: str = ",".join(
 		[
 			(
 				f'{{weapon_id:"{weapon_id}",'
-				f'give_function:"{ns}:v{version}/zombies/mystery_box/default_give/{weapon_id}"}}'
+				f'give_function:"{ns}:v{version}/zombies/mystery_box/default_give/{weapon_id}",'
+				f'mag_id:"{weapon_pool_meta[weapon_id][0]}",'
+				f'mag_count:{weapon_pool_meta[weapon_id][1]},'
+				f'consumable:{"1b" if weapon_pool_meta[weapon_id][2] else "0b"}}}'
 			)
 			for weapon_id in default_pool_weapons
 		]
 	)
 
 	for weapon_id in default_pool_weapons:
+		mag_id, mag_count, is_consumable = weapon_pool_meta[weapon_id]
 		write_versioned_function(f"zombies/mystery_box/default_give/{weapon_id}", f"""
-data modify storage {ns}:temp _wb_weapon set value {{weapon_id:"{weapon_id}",name:"{weapon_id}"}}
+data modify storage {ns}:temp _wb_weapon set value {{weapon_id:"{weapon_id}",name:"{weapon_id}",consumable:{"1b" if is_consumable else "0b"},mag_id:"{mag_id}",mag_count:{mag_count}}}
 scoreboard players set #wb_price {ns}.data 0
 function {ns}:v{version}/zombies/wallbuys/process_purchase with storage {ns}:temp _wb_weapon
+execute if score #wb_purchase_done {ns}.data matches 1 if data storage {ns}:temp _wb_weapon{{consumable:1b}} run function {ns}:v{version}/zombies/mystery_box/give_consumable_reserve with storage {ns}:temp _wb_weapon
+""")
+
+	write_versioned_function("zombies/mystery_box/give_consumable_reserve", f"""
+scoreboard players set #mb_mag_given {ns}.data 0
+
+$execute if score #mb_mag_given {ns}.data matches 0 if items entity @s hotbar.1 *[custom_data~{owned_gun_macro_cd}] run function {ns}:v{version}/zombies/mystery_box/give_consumable_slot {{inventory:1,mag_id:"$(mag_id)",mag_count:$(mag_count)}}
+$execute if score #mb_mag_given {ns}.data matches 0 if items entity @s hotbar.2 *[custom_data~{owned_gun_macro_cd}] run function {ns}:v{version}/zombies/mystery_box/give_consumable_slot {{inventory:2,mag_id:"$(mag_id)",mag_count:$(mag_count)}}
+$execute if score #mb_mag_given {ns}.data matches 0 if items entity @s hotbar.3 *[custom_data~{owned_gun_macro_cd}] run function {ns}:v{version}/zombies/mystery_box/give_consumable_slot {{inventory:3,mag_id:"$(mag_id)",mag_count:$(mag_count)}}
+""")
+
+	write_versioned_function("zombies/mystery_box/give_consumable_slot", f"""
+$loot replace entity @s inventory.$(inventory) loot {ns}:i/$(mag_id)
+$scoreboard players set #bullets {ns}.data $(mag_count)
+$item modify entity @s inventory.$(inventory) {ns}:v{version}/set_consumable_count
+$function {ns}:v{version}/zombies/inventory/apply_slot_tag {{slot:"inventory.$(inventory)",group:"inventory",index:$(inventory)}}
+scoreboard players set #mb_mag_given {ns}.data 1
 """)
 
 	write_versioned_function("zombies/mystery_box/ensure_default_pool", f"""
@@ -84,7 +109,7 @@ execute if data storage {ns}:temp _mb_iter[0] run function {ns}:v{version}/zombi
 """)
 
 	write_versioned_function("zombies/mystery_box/summon_pos_at", f"""
-$summon minecraft:interaction $(x) $(y) $(z) {{width:2.0f,height:2.0f,response:true,Tags:["{ns}.mystery_box_pos","{ns}.gm_entity","{ns}.mb_new","bs.entity.interaction"]}}
+$summon minecraft:interaction $(x) $(y) $(z) {{width:1.5f,height:2.0f,response:true,Tags:["{ns}.mystery_box_pos","{ns}.gm_entity","{ns}.mb_new","bs.entity.interaction"]}}
 """)
 
 	## On right-click: Bookshelf callback (executor:"source" = @s is the player)
@@ -132,7 +157,7 @@ function {ns}:v{version}/zombies/mystery_box/reroll_owned
 execute if score #mb_owned {ns}.data matches 1 run scoreboard players operation @s {ns}.zb.points += #zb_mystery_box_price {ns}.config
 execute if score #mb_owned {ns}.data matches 1 run return run function {ns}:v{version}/zombies/mystery_box/deny_all_owned
 
-# Start animation timer (80 ticks cycling with slowdown + 150 ticks display window)
+# Start animation timer (120 ticks cycling with slowdown + 150 ticks display window)
 scoreboard players set #mb_anim_timer {ns}.data 120
 
 # Spawn display entity at box position
@@ -192,10 +217,15 @@ execute if score #mb_pick {ns}.data matches 1.. run function {ns}:v{version}/zom
 	## Display entity: spawns at box level, floats up with interpolation
 	write_versioned_function("zombies/mystery_box/spawn_display", f"""
 # Spawn item display at box level with small scale
-summon minecraft:item_display ~ ~0.5 ~ {{Tags:["{ns}.mb_display","{ns}.gm_entity"],item:{{id:"minecraft:nether_star",count:1,components:{{"minecraft:item_model":"air"}}}},transformation:{{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[0.5f,0.5f,0.5f]}},billboard:"fixed"}}
+summon minecraft:item_display ~ ~0.5 ~ {{Tags:["{ns}.mb_display","{ns}.gm_entity","{ns}.mb_display_new"],item:{{id:"minecraft:nether_star",count:1,components:{{"minecraft:item_model":"air"}}}},transformation:{{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[0.5f,0.5f,0.5f]}},billboard:"fixed"}}
 
-# Float up: set target transformation and trigger interpolation
-data merge entity @n[tag={ns}.mb_display] {{transformation:{{translation:[0f,0.8f,0f]}},start_interpolation:0,interpolation_duration:50}}
+# Apply interpolation a few ticks later to avoid same-tick spawn interpolation glitches.
+schedule function {ns}:v{version}/zombies/mystery_box/spawn_display_finalize 5t append
+""")
+
+	write_versioned_function("zombies/mystery_box/spawn_display_finalize", f"""
+data merge entity @n[tag={ns}.mb_display_new] {{transformation:{{translation:[0f,0.8f,0f]}},start_interpolation:0,interpolation_duration:200}}
+tag @e[tag={ns}.mb_display_new] remove {ns}.mb_display_new
 """)
 
 	## Mystery box tick: handle animation
@@ -224,23 +254,22 @@ scoreboard players operation #mb_elapsed {ns}.data -= #mb_anim_timer {ns}.data
 # Constants for modulo cadence checks
 scoreboard players set #mb_c2 {ns}.data 2
 scoreboard players set #mb_c5 {ns}.data 5
-scoreboard players set #mb_c10 {ns}.data 10
-scoreboard players set #mb_c20 {ns}.data 20
+scoreboard players set #mb_c8 {ns}.data 8
 
-# 0..19 ticks elapsed: every 2 ticks
+# 0..29 ticks elapsed: every 2 ticks
 scoreboard players operation #mb_mod {ns}.data = #mb_elapsed {ns}.data
-execute if score #mb_elapsed {ns}.data matches ..19 run scoreboard players operation #mb_mod {ns}.data %= #mb_c2 {ns}.data
-execute if score #mb_elapsed {ns}.data matches ..19 if score #mb_mod {ns}.data matches 0 run function {ns}:v{version}/zombies/mystery_box/cycle_display
+execute if score #mb_elapsed {ns}.data matches ..29 run scoreboard players operation #mb_mod {ns}.data %= #mb_c2 {ns}.data
+execute if score #mb_elapsed {ns}.data matches ..29 if score #mb_mod {ns}.data matches 0 run function {ns}:v{version}/zombies/mystery_box/cycle_display
 
-# 20..29 ticks elapsed: every 5 ticks
+# 30..49 ticks elapsed: every 5 ticks
 scoreboard players operation #mb_mod {ns}.data = #mb_elapsed {ns}.data
-execute if score #mb_elapsed {ns}.data matches 20..29 run scoreboard players operation #mb_mod {ns}.data %= #mb_c5 {ns}.data
-execute if score #mb_elapsed {ns}.data matches 20..29 if score #mb_mod {ns}.data matches 0 run function {ns}:v{version}/zombies/mystery_box/cycle_display
+execute if score #mb_elapsed {ns}.data matches 30..49 run scoreboard players operation #mb_mod {ns}.data %= #mb_c5 {ns}.data
+execute if score #mb_elapsed {ns}.data matches 30..49 if score #mb_mod {ns}.data matches 0 run function {ns}:v{version}/zombies/mystery_box/cycle_display
 
-# 30+ ticks elapsed: every 10 ticks
+# 50+ ticks elapsed: every 8 ticks
 scoreboard players operation #mb_mod {ns}.data = #mb_elapsed {ns}.data
-execute if score #mb_elapsed {ns}.data matches 30.. run scoreboard players operation #mb_mod {ns}.data %= #mb_c10 {ns}.data
-execute if score #mb_elapsed {ns}.data matches 30.. if score #mb_mod {ns}.data matches 0 run function {ns}:v{version}/zombies/mystery_box/cycle_display
+execute if score #mb_elapsed {ns}.data matches 50.. run scoreboard players operation #mb_mod {ns}.data %= #mb_c8 {ns}.data
+execute if score #mb_elapsed {ns}.data matches 50.. if score #mb_mod {ns}.data matches 0 run function {ns}:v{version}/zombies/mystery_box/cycle_display
 """)
 
 	## Cycle display: swap the item_display model to simulate cycling
@@ -293,17 +322,44 @@ $loot replace entity @n[tag={ns}.mb_display] contents loot {ns}:i/$(weapon_id)
 	## Collect the mystery box result (called from on_right_click, @s = player)
 	write_versioned_function("zombies/mystery_box/collect", f"""
 # Give the result item to the player via its give function
+scoreboard players set #wb_purchase_done {ns}.data 0
+scoreboard players set #wb_purchase_mode {ns}.data -1
 execute if data storage {ns}:zombies mystery_box.result.give_function run function {ns}:v{version}/zombies/mystery_box/give_via_function
 
 # If the give flow failed (e.g. invalid selected slot), keep result ready for retry.
-execute if score #wb_purchase_mode {ns}.data matches -1 run return 0
+execute if score #wb_purchase_done {ns}.data matches 0 run return 0
+
+# Resolve the collected weapon display name from the given item.
+execute if data storage {ns}:zombies mystery_box.result.weapon_id run function {ns}:v{version}/zombies/mystery_box/capture_collected_name with storage {ns}:zombies mystery_box.result
 
 # Announce
-tellraw @s [{MGS_TAG},{{"text":"You collected ","color":"green"}},{{"storage":"{ns}:zombies","nbt":"mystery_box.result.weapon_id","color":"gold"}},{{"text":" from the Mystery Box.","color":"green"}}]
+tellraw @s [{MGS_TAG},{{"text":"You collected ","color":"green"}},{{"storage":"{ns}:temp","nbt":"_mb_collected_name","interpret":true}},{{"text":" from the Mystery Box.","color":"green"}}]
 function {ns}:v{version}/zombies/feedback/sound_success
 
 # Reset box
 function {ns}:v{version}/zombies/mystery_box/reset
+""")
+
+	write_versioned_function("zombies/mystery_box/capture_collected_name", f"""
+data modify storage {ns}:temp _mb_collected_name set value [{{"text":"$(weapon_id)","color":"gold"}}]
+scoreboard players set #mb_name_found {ns}.data 0
+
+$execute if score #mb_name_found {ns}.data matches 0 if items entity @s hotbar.1 *[custom_data~{owned_gun_macro_cd}] run function {ns}:v{version}/zombies/mystery_box/capture_collected_name_slot {{slot:"hotbar.1"}}
+$execute if score #mb_name_found {ns}.data matches 0 if items entity @s hotbar.2 *[custom_data~{owned_gun_macro_cd}] run function {ns}:v{version}/zombies/mystery_box/capture_collected_name_slot {{slot:"hotbar.2"}}
+$execute if score #mb_name_found {ns}.data matches 0 if items entity @s hotbar.3 *[custom_data~{owned_gun_macro_cd}] run function {ns}:v{version}/zombies/mystery_box/capture_collected_name_slot {{slot:"hotbar.3"}}
+""")
+
+	write_versioned_function("zombies/mystery_box/capture_collected_name_slot", f"""
+tag @s add {ns}.mb_name_reader
+$execute summon item_display run function {ns}:v{version}/zombies/mystery_box/extract_collected_item_name {{slot:"$(slot)"}}
+tag @s remove {ns}.mb_name_reader
+scoreboard players set #mb_name_found {ns}.data 1
+""")
+
+	write_versioned_function("zombies/mystery_box/extract_collected_item_name", f"""
+$item replace entity @s contents from entity @p[tag={ns}.mb_name_reader] $(slot)
+data modify storage {ns}:temp _mb_collected_name set from entity @s item.components."minecraft:item_name"
+kill @s
 """)
 
 	write_versioned_function("zombies/mystery_box/give_via_function", f"""
@@ -327,17 +383,17 @@ data remove storage {ns}:zombies mystery_box.result
 
 	## Hover functions for active mystery box
 	write_versioned_function("zombies/mystery_box/hud_ready", """
-data modify storage smithed.actionbar:input message set value {json:[{"text":"Mystery Box","color":"light_purple"},{"text":" - ","color":"gray"},{"text":"Click to collect!","color":"green"}],priority:'notification',freeze:5}
+data modify storage smithed.actionbar:input message set value {json:[{"text":"🎲 Mystery Box","color":"light_purple"},{"text":" - ","color":"gray"},{"text":"Click to collect!","color":"green"}],priority:'notification',freeze:5}
 function #smithed.actionbar:message
 """)
 
 	write_versioned_function("zombies/mystery_box/hud_spinning", """
-data modify storage smithed.actionbar:input message set value {json:[{"text":"Mystery Box","color":"light_purple"},{"text":" - ","color":"gray"},{"text":"Spinning...","color":"yellow"}],priority:'notification',freeze:5}
+data modify storage smithed.actionbar:input message set value {json:[{"text":"🎲 Mystery Box","color":"light_purple"},{"text":" - ","color":"gray"},{"text":"Spinning...","color":"yellow"}],priority:'notification',freeze:5}
 function #smithed.actionbar:message
 """)
 
 	write_versioned_function("zombies/mystery_box/hud_price", """
-data modify storage smithed.actionbar:input message set value {json:[{"text":"Mystery Box","color":"light_purple"},{"text":" - ","color":"gray"},{"text":"950 points","color":"gold"}],priority:'notification',freeze:5}
+data modify storage smithed.actionbar:input message set value {json:[{"text":"🎲 Mystery Box","color":"light_purple"},{"text":" - ","color":"gray"},{"text":"950 points","color":"gold"}],priority:'notification',freeze:5}
 function #smithed.actionbar:message
 """)
 

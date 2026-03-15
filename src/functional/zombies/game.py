@@ -28,11 +28,6 @@ scoreboard objectives add {ns}.zb.downs dummy
 scoreboard objectives add {ns}.zb.passive dummy
 scoreboard objectives add {ns}.zb.ability dummy
 scoreboard objectives add {ns}.zb.ability_cd dummy
-scoreboard objectives add {ns}.zb.perk.juggernog dummy
-scoreboard objectives add {ns}.zb.perk.speed_cola dummy
-scoreboard objectives add {ns}.zb.perk.double_tap dummy
-scoreboard objectives add {ns}.zb.perk.quick_revive dummy
-scoreboard objectives add {ns}.zb.perk.mule_kick dummy
 
 # Spawn point group_id scoreboard
 scoreboard objectives add {ns}.zb.spawn.gid dummy
@@ -206,6 +201,7 @@ effect give @a[scores={{{ns}.zb.in_game=1}}] darkness 25 255 true
 effect give @a[scores={{{ns}.zb.in_game=1}}] blindness 25 255 true
 effect give @a[scores={{{ns}.zb.in_game=1}}] night_vision 25 255 true
 effect give @a[scores={{{ns}.zb.in_game=1}}] saturation infinite 255 true
+execute as @a[scores={{{ns}.zb.in_game=1}}] run attribute @s minecraft:max_health base reset
 execute as @a[scores={{{ns}.zb.in_game=1}}] run attribute @s minecraft:movement_speed base set 0
 execute as @a[scores={{{ns}.zb.in_game=1}}] run attribute @s minecraft:jump_strength base set 0
 
@@ -239,8 +235,8 @@ execute unless data storage {ns}:zombies game{{state:"preparing"}} run return fa
 data modify storage {ns}:zombies game.state set value "active"
 
 # Restore movement
-execute as @a[scores={{{ns}.zb.in_game=1}}] run attribute @s minecraft:movement_speed base set 0.1
-execute as @a[scores={{{ns}.zb.in_game=1}}] run attribute @s minecraft:jump_strength base set 0.42
+execute as @a[scores={{{ns}.zb.in_game=1}}] run attribute @s minecraft:movement_speed base reset
+execute as @a[scores={{{ns}.zb.in_game=1}}] run attribute @s minecraft:jump_strength base reset
 
 # Clear prep effects
 effect clear @a[scores={{{ns}.zb.in_game=1}}] darkness
@@ -404,8 +400,9 @@ schedule clear {ns}:v{version}/zombies/end_prep
 schedule clear {ns}:v{version}/zombies/start_round
 
 # Restore movement
-execute as @a[scores={{{ns}.zb.in_game=1}}] run attribute @s minecraft:movement_speed base set 0.1
-execute as @a[scores={{{ns}.zb.in_game=1}}] run attribute @s minecraft:jump_strength base set 0.42
+execute as @a[scores={{{ns}.zb.in_game=1}}] run attribute @s minecraft:max_health base reset
+execute as @a[scores={{{ns}.zb.in_game=1}}] run attribute @s minecraft:movement_speed base reset
+execute as @a[scores={{{ns}.zb.in_game=1}}] run attribute @s minecraft:jump_strength base reset
 
 # Clear effects
 effect clear @a[scores={{{ns}.zb.in_game=1}}] darkness
@@ -624,7 +621,7 @@ scoreboard players operation #zb_total {ns}.data += #zb_to_spawn {ns}.data
 execute if score #zb_total {ns}.data matches ..-1 run scoreboard players set #zb_total {ns}.data 0
 
 # Initialize sidebar contents
-data modify storage {ns}:temp zb_sb set value [{{text:" Round: ",extra:[{{score:{{name:"#zb_round",objective:"{ns}.data"}},color:"gold"}}],color:"red"}},{{text:" Zombies: ",extra:[{{score:{{name:"#zb_total",objective:"{ns}.data"}},color:"red"}}],color:"gray"}}," "]
+data modify storage {ns}:temp zb_sb set value [[{{text:"Round",color:"red"}},{{score:{{name:"#zb_round",objective:"{ns}.data"}},color:"gold"}}],[{{text:"Zombies",color:"red"}},{{score:{{name:"#zb_total",objective:"{ns}.data"}},color:"gold"}}]," "]
 
 # Rank players for sidebar display
 scoreboard players set @a {ns}.zb.sb_rank 0
@@ -642,13 +639,13 @@ function {ns}:v{version}/zombies/build_sidebar with storage {ns}:temp
 execute unless entity @a[tag={ns}.zb_sb_cand] run return 0
 execute as @r[tag={ns}.zb_sb_cand] run scoreboard players set @s {ns}.zb.sb_rank {i}
 tag @a[scores={{{ns}.zb.sb_rank={i}}}] remove {ns}.zb_sb_cand
-data modify storage {ns}:temp zb_sb append value [{{selector:"@a[scores={{{ns}.zb.sb_rank={i}}}]",color:"yellow"}},{{score:{{name:"@a[scores={{{ns}.zb.sb_rank={i}}}]",objective:"{ns}.zb.points"}},color:"gold"}}]
+data modify storage {ns}:temp zb_sb append value [{{selector:"@a[scores={{{ns}.zb.sb_rank={i}}}]",color:"green"}},{{score:{{name:"@a[scores={{{ns}.zb.sb_rank={i}}}]",objective:"{ns}.zb.points"}},color:"yellow"}}]
 """
 	sidebar_rank_code += f"\ntag @a remove {ns}.zb_sb_cand\n"
 	write_versioned_function("zombies/sidebar_rank_players", sidebar_rank_code)
 
 	write_versioned_function("zombies/build_sidebar", f"""
-$function #bs.sidebar:create {{objective:"{ns}.zb_sidebar",display_name:{{text:"🧟 Zombies",color:"dark_green",bold:true}},contents:$(zb_sb)}}
+$function #bs.sidebar:create {{objective:"{ns}.zb_sidebar",display_name:{{text:"Zombies",color:"dark_green",bold:true}},contents:$(zb_sb)}}
 """)
 
 	# Block shooting during prep ────────────────────────────────

@@ -30,6 +30,6 @@ scoreboard players operation @s mgs.zb.points -= #trap_price mgs.data
 execute as @e[tag=mgs.trap_center] if score @s mgs.zb.trap.id = #trap_id mgs.data run scoreboard players operation @s mgs.zb.trap.timer = @s mgs.zb.trap.dur
 
 # Announce
-tellraw @a[scores={mgs.zb.in_game=1}] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.trap_activated_for","color":"gold"},{"score":{"name":"#trap_price","objective":"mgs.data"},"color":"yellow"},[{"text":" ","color":"gold"}, {"translate":"mgs.points_2"}]]
+tellraw @a[scores={mgs.zb.in_game=1}] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.trap_activated_for","color":"gold"},{"score":{"name":"#trap_price","objective":"mgs.data"},"color":"yellow"},[{"text":" ","color":"gold"}, {"translate":"mgs.points_3"}]]
 function mgs:v5.0.0/zombies/feedback/sound_announce
 

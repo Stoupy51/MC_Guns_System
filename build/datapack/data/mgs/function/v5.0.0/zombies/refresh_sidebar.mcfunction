@@ -13,7 +13,7 @@ scoreboard players operation #zb_total mgs.data += #zb_to_spawn mgs.data
 execute if score #zb_total mgs.data matches ..-1 run scoreboard players set #zb_total mgs.data 0
 
 # Initialize sidebar contents
-data modify storage mgs:temp zb_sb set value [[{text:" ",extra:[{score:{name:"#zb_round",objective:"mgs.data"},color:"gold"}],color:"red"}, {translate:"mgs.round_2"}],[{text:" ",extra:[{score:{name:"#zb_total",objective:"mgs.data"},color:"red"}],color:"gray"}, {translate:"mgs.zombies_2"}]," "]
+data modify storage mgs:temp zb_sb set value [[{translate:"mgs.round_3",color:"red"},{score:{name:"#zb_round",objective:"mgs.data"},color:"gold"}],[{translate:"mgs.zombies",color:"red"},{score:{name:"#zb_total",objective:"mgs.data"},color:"gold"}]," "]
 
 # Rank players for sidebar display
 scoreboard players set @a mgs.zb.sb_rank 0

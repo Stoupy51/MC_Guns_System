@@ -4,5 +4,5 @@
 # @within	???
 #
 
-title @s title [{"text":"🔫 ","color":"gold"},{"storage":"mgs:temp","nbt":"_wb_weapon.item_name","interpret":true,"color":"gold"}]
+title @s title [{"text":"🔫 ","color":"gold"},{"storage":"mgs:temp","nbt":"_wb_weapon.item_name","color":"gold","interpret":true}]
 

@@ -8,5 +8,5 @@
 #			z (unknown)
 #
 
-$summon minecraft:interaction $(x) $(y) $(z) {width:1.0f,height:1.0f,response:true,Tags:["mgs.perk_machine","mgs.gm_entity","bs.entity.interaction","_pk_new"]}
+$summon minecraft:interaction $(x) $(y) $(z) {width:1.0f,height:2.0f,response:true,Tags:["mgs.perk_machine","mgs.gm_entity","bs.entity.interaction","mgs.pk_new"]}
 

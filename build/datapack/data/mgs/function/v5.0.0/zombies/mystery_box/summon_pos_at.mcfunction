@@ -8,5 +8,5 @@
 #			z (unknown)
 #
 
-$summon minecraft:interaction $(x) $(y) $(z) {width:2.0f,height:2.0f,response:true,Tags:["mgs.mystery_box_pos","mgs.gm_entity","mgs.mb_new","bs.entity.interaction"]}
+$summon minecraft:interaction $(x) $(y) $(z) {width:1.5f,height:2.0f,response:true,Tags:["mgs.mystery_box_pos","mgs.gm_entity","mgs.mb_new","bs.entity.interaction"]}
 

@@ -18,6 +18,8 @@ execute store result storage mgs:temp _door.x int 1 run scoreboard players get #
 execute store result storage mgs:temp _door.y int 1 run scoreboard players get #dy mgs.data
 execute store result storage mgs:temp _door.z int 1 run scoreboard players get #dz mgs.data
 data modify storage mgs:temp _door.block set from storage mgs:temp _door_iter[0].block
+data modify storage mgs:temp _door.facing set value 0
+execute store result storage mgs:temp _door.facing int 1 run data get storage mgs:temp _door_iter[0].rotation[0]
 
 # Read door name (default "Door", override with "name" field)
 data modify storage mgs:temp _door_name.name set value "Door"
@@ -30,11 +32,11 @@ execute if data storage mgs:temp _door_iter[0].back_name run data modify storage
 function mgs:v5.0.0/zombies/doors/place_at with storage mgs:temp _door
 
 # Set scoreboards on newly spawned door entity
-execute store result score @n[tag=mgs.door_new] mgs.zb.door.link run data get storage mgs:temp _door_iter[0].link_id
-execute store result score @n[tag=mgs.door_new] mgs.zb.door.price run data get storage mgs:temp _door_iter[0].price
-execute store result score @n[tag=mgs.door_new] mgs.zb.door.gid run data get storage mgs:temp _door_iter[0].group_id
-execute store result score @n[tag=mgs.door_new] mgs.zb.door.bgid run data get storage mgs:temp _door_iter[0].back_group_id
-execute store result score @n[tag=mgs.door_new] mgs.zb.door.anim run data get storage mgs:temp _door_iter[0].animation
+execute store result score @e[tag=mgs.door_new] mgs.zb.door.link run data get storage mgs:temp _door_iter[0].link_id
+execute store result score @e[tag=mgs.door_new] mgs.zb.door.price run data get storage mgs:temp _door_iter[0].price
+execute store result score @e[tag=mgs.door_new] mgs.zb.door.gid run data get storage mgs:temp _door_iter[0].group_id
+execute store result score @e[tag=mgs.door_new] mgs.zb.door.bgid run data get storage mgs:temp _door_iter[0].back_group_id
+execute store result score @e[tag=mgs.door_new] mgs.zb.door.anim run data get storage mgs:temp _door_iter[0].animation
 
 # Store name indexed by link_id
 execute store result storage mgs:temp _door_name.id int 1 run data get storage mgs:temp _door_iter[0].link_id

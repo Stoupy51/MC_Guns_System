@@ -412,11 +412,6 @@ scoreboard objectives add mgs.zb.downs dummy
 scoreboard objectives add mgs.zb.passive dummy
 scoreboard objectives add mgs.zb.ability dummy
 scoreboard objectives add mgs.zb.ability_cd dummy
-scoreboard objectives add mgs.zb.perk.juggernog dummy
-scoreboard objectives add mgs.zb.perk.speed_cola dummy
-scoreboard objectives add mgs.zb.perk.double_tap dummy
-scoreboard objectives add mgs.zb.perk.quick_revive dummy
-scoreboard objectives add mgs.zb.perk.mule_kick dummy
 
 # Spawn point group_id scoreboard
 scoreboard objectives add mgs.zb.spawn.gid dummy
@@ -461,6 +456,13 @@ scoreboard objectives add mgs.zb.wb.rfpap dummy
 scoreboard objectives add mgs.zb.perk.id dummy
 scoreboard objectives add mgs.zb.perk.price dummy
 scoreboard objectives add mgs.zb.perk.power dummy
+
+# Perk ownership scoreboards
+scoreboard objectives add mgs.zb.perk.juggernog dummy
+scoreboard objectives add mgs.zb.perk.speed_cola dummy
+scoreboard objectives add mgs.zb.perk.double_tap dummy
+scoreboard objectives add mgs.zb.perk.quick_revive dummy
+scoreboard objectives add mgs.zb.perk.mule_kick dummy
 
 # Trap entity scoreboards
 scoreboard objectives add mgs.zb.trap.id dummy

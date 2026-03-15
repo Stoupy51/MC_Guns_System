@@ -95,9 +95,10 @@ scoreboard players set #zb_power mgs.data 0
 # Initialize unlocked groups (group 0 = starting area, compound keys for quick lookup)
 data modify storage mgs:zombies game.unlocked_groups set value {"0": 1b}
 
-# Reset perk scoreboards
-scoreboard players set @a mgs.zb.perk.juggernog 0
-scoreboard players set @a mgs.zb.perk.speed_cola 0
-scoreboard players set @a mgs.zb.perk.double_tap 0
-scoreboard players set @a mgs.zb.perk.quick_revive 0
+# Reset perk scoreboards for all known score holders (including offline players).
+scoreboard players reset * mgs.zb.perk.juggernog
+scoreboard players reset * mgs.zb.perk.speed_cola
+scoreboard players reset * mgs.zb.perk.double_tap
+scoreboard players reset * mgs.zb.perk.quick_revive
+scoreboard players reset * mgs.zb.perk.mule_kick
 

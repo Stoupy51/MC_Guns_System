@@ -39,13 +39,16 @@ ALL_ELEMENTS: dict[str, JsonDict] = {
                            "defaults": {}},
 	"wallbuy":            {"name": "Wallbuy",          "color": "yellow",       "particle": [1.0, 1.0, 0.0], "particle_scale": 1.0, "has_rotation": True,  "egg_model": "minecraft:iron_golem_spawn_egg",  "save_type": "zb_object", "save_path": "wallbuys", "emoji": "🔫",
                            "defaults": {"price": 1000, "refill_price": 500, "refill_price_pap": 4500, "weapon_id": "m1911"}},
-	"door":               {"name": "Door",             "color": "gold",         "particle": [1.0, 0.6, 0.0], "particle_scale": 1.0, "has_rotation": True,  "egg_model": "minecraft:hoglin_spawn_egg",      "save_type": "zb_object", "save_path": "doors", "emoji": "🚪",
-                           "defaults": {"price": 1000, "link_id": 1, "back_group_id": -1, "block": "", "animation": 0, "sound": ""},
-                           "requires_offhand_block": True},
+	"door":               {
+		"name": "Door", "color": "gold", "particle": [1.0, 0.6, 0.0], "particle_scale": 1.0, "has_rotation": True,
+		"egg_model": "minecraft:hoglin_spawn_egg", "save_type": "zb_object", "save_path": "doors", "emoji": "🚪",
+		"defaults": {"name": "Door", "back_name": "Door", "price": 1000, "link_id": 1, "back_group_id": -1, "block": "", "animation": 0, "sound": ""},
+		"requires_offhand_block": True,
+	},
 	"trap":               {"name": "Trap",             "color": "red",          "particle": [1.0, 0.2, 0.2], "particle_scale": 1.0, "has_rotation": True,  "egg_model": "minecraft:cave_spider_spawn_egg", "save_type": "zb_object", "save_path": "traps", "emoji": "⚡",
                            "defaults": {"price": 1000, "type": 0, "duration": 200, "cooldown": 1200, "effect_radius": [3.0, 2.0, 3.0], "offset_pos": [0, 0, 0], "power": True}},
 	"perk_machine":       {"name": "Perk Machine",     "color": "dark_purple",  "particle": [0.5, 0.0, 0.5], "particle_scale": 1.0, "has_rotation": True,  "egg_model": "minecraft:witch_spawn_egg",       "save_type": "zb_object", "save_path": "perks", "emoji": "🧪",
-                           "defaults": {"price": 2500, "perk_id": "juggernog", "power": True}},
+                           "defaults": {"name": "Juggernog", "price": 2500, "perk_id": "juggernog", "power": True}},
 	"mystery_box_pos":    {"name": "Mystery Box Pos",  "color": "light_purple", "particle": [1.0, 0.0, 1.0], "particle_scale": 1.0, "has_rotation": True,  "egg_model": "minecraft:evoker_spawn_egg",      "save_type": "zb_object", "save_path": "mystery_box.positions", "emoji": "📦",
                            "defaults": {"can_start_on": True}},
 	"power_switch":       {"name": "Power Switch",     "color": "green",        "particle": [0.0, 1.0, 0.0], "particle_scale": 1.0, "has_rotation": True,  "egg_model": "minecraft:slime_spawn_egg",       "save_type": "zb_object", "save_path": "power_switch", "emoji": "⚡",
@@ -304,7 +307,7 @@ function {ns}:v{version}/maps/editor/give_tools
 execute if score @s {ns}.mp.map_mode matches {MODE_LIST.index("zombies")} run function {ns}:v{version}/maps/editor/init_zb_defaults
 
 # Announce
-tellraw @s [{MGS_TAG},{{"text":"Entered map editor for: ","color":"green"}},{{"text":"","color":"white"}},{{"storage":"{ns}:temp","nbt":"map_edit.map.name"}}]
+tellraw @s [{MGS_TAG},{{"text":"Entered map editor for: ","color":"green"}},{{"text":"","color":"white"}},{{"storage":"{ns}:temp","nbt":"map_edit.map.name","interpret":true}}]
 tellraw @s [{MGS_TAG},{{"text":"Place eggs to add elements. DESTROY egg (hotbar 9) removes nearest element.","color":"yellow"}}]
 tellraw @s [{MGS_TAG},{{"text":"Use ","color":"gray"}},{btn("Save & Exit", f"/function {ns}:v{version}/maps/editor/save_exit", "green", "Save changes and exit editor")},{{"text":" or "}},{btn("Exit", f"/function {ns}:v{version}/maps/editor/exit", "red", "Discard changes and exit editor")}]
 """)
@@ -989,10 +992,10 @@ execute at @s unless entity @n[tag={ns}.map_element,distance=..10] run tellraw @
 			)
 		for field, default_val in einfo["defaults"].items():
 			snbt_val = snbt_suggest(default_val)
-			# Door price uses propagation function (applies to all doors with same link_id)
-			if etype == "door" and field == "price":
-				edit_cmd = f"/function {ns}:v{version}/maps/editor/set_door_link_price {{price:{snbt_val}}}"
-				hover_text = "Sets price on ALL doors with same link_id"
+			# Door fields (except link_id) use propagation to all doors with same link_id.
+			if etype == "door" and field != "link_id":
+				edit_cmd = f"/function {ns}:v{version}/maps/editor/set_door_link_{field} {{{field}:{snbt_val}}}"
+				hover_text = f"Sets {field} on ALL doors with same link_id"
 			else:
 				edit_cmd = f"/data modify entity @n[tag={ns}.element.{etype},distance=..10] data.{field} set value {snbt_val}"
 				hover_text = f"Click to edit {field}"
@@ -1055,20 +1058,59 @@ execute at @s unless entity @n[tag={ns}.map_element,distance=..10] run tellraw @
 
 	write_versioned_function("maps/editor/show_element_config", "\n".join(zb_config_lines))
 
-	# Door Price Propagation (set price on all doors with same link_id)
-	write_versioned_function("maps/editor/set_door_link_price", f"""
-$data modify storage {ns}:temp _door_set_price set value $(price)
+	# Door Link Propagation (set selected field on all doors with same link_id)
+	write_versioned_function("maps/editor/set_door_link_apply", f"""
+execute unless entity @n[tag={ns}.element.door,distance=..10] run return run tellraw @a[tag={ns}.map_editor] [{MGS_TAG},{{"text":"No door found within 10 blocks!","color":"red"}}]
 execute store result score #link_id {ns}.data run data get entity @n[tag={ns}.element.door,distance=..10] data.link_id
-execute as @e[tag={ns}.element.door] run function {ns}:v{version}/maps/editor/door_price_if_match
-tellraw @a[tag={ns}.map_editor] [{MGS_TAG},{{"text":"Updated price for all doors with matching link_id","color":"green"}}]
+execute as @e[tag={ns}.element.door] run function {ns}:v{version}/maps/editor/door_set_if_match
+tellraw @a[tag={ns}.map_editor] [{MGS_TAG},{{"text":"Updated ","color":"green"}},{{"storage":"{ns}:temp","nbt":"_door_set.field","color":"yellow"}},{{"text":" for all doors with matching link_id","color":"green"}}]
 """)
 
-	write_versioned_function("maps/editor/door_price_if_match", f"""
+	write_versioned_function("maps/editor/door_set_if_match", f"""
 execute store result score #check {ns}.data run data get entity @s data.link_id
-execute if score #check {ns}.data = #link_id {ns}.data run data modify entity @s data.price set from storage {ns}:temp _door_set_price
+execute if score #check {ns}.data = #link_id {ns}.data run function {ns}:v{version}/maps/editor/door_apply_field with storage {ns}:temp _door_set
 """)
 
-	# Save and Exit Editor ───────────────────────────────────────
+	write_versioned_function("maps/editor/door_apply_field", f"""
+$data modify entity @s data.$(field) set from storage {ns}:temp _door_set.value
+""")
+
+	write_versioned_function("maps/editor/set_door_link_price", f"""
+$data modify storage {ns}:temp _door_set set value {{field:"price",value:$(price)}}
+function {ns}:v{version}/maps/editor/set_door_link_apply
+""")
+
+	write_versioned_function("maps/editor/set_door_link_back_group_id", f"""
+$data modify storage {ns}:temp _door_set set value {{field:"back_group_id",value:$(back_group_id)}}
+function {ns}:v{version}/maps/editor/set_door_link_apply
+""")
+
+	write_versioned_function("maps/editor/set_door_link_block", f"""
+$data modify storage {ns}:temp _door_set set value {{field:"block",value:"$(block)"}}
+function {ns}:v{version}/maps/editor/set_door_link_apply
+""")
+
+	write_versioned_function("maps/editor/set_door_link_animation", f"""
+$data modify storage {ns}:temp _door_set set value {{field:"animation",value:$(animation)}}
+function {ns}:v{version}/maps/editor/set_door_link_apply
+""")
+
+	write_versioned_function("maps/editor/set_door_link_sound", f"""
+$data modify storage {ns}:temp _door_set set value {{field:"sound",value:"$(sound)"}}
+function {ns}:v{version}/maps/editor/set_door_link_apply
+""")
+
+	write_versioned_function("maps/editor/set_door_link_name", f"""
+$data modify storage {ns}:temp _door_set set value {{field:"name",value:"$(name)"}}
+function {ns}:v{version}/maps/editor/set_door_link_apply
+""")
+
+	write_versioned_function("maps/editor/set_door_link_back_name", f"""
+$data modify storage {ns}:temp _door_set set value {{field:"back_name",value:"$(back_name)"}}
+function {ns}:v{version}/maps/editor/set_door_link_apply
+""")
+
+	# Save and Exit Editor
 	save_dispatch = "\n".join(
 		f'execute if score @s {ns}.mp.map_mode matches {i} run function {ns}:v{version}/maps/editor/save_lists/{mk}'
 		for i, mk in enumerate(MODE_LIST)

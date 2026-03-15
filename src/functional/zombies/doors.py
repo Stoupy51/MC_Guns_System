@@ -10,6 +10,15 @@ from ..helpers import MGS_TAG
 def generate_doors() -> None:
 	ns: str = Mem.ctx.project_id
 	version: str = Mem.ctx.project_version
+	front_door_tags: str = f'["{ns}.door","{ns}.door_front","{ns}.gm_entity","bs.entity.interaction","{ns}.door_new"]'
+	back_door_tags: str = f'["{ns}.door","{ns}.door_back","{ns}.gm_entity","bs.entity.interaction","{ns}.door_new"]'
+	door_hover_message: str = (
+		f'[{{"text":"🛠 ","color":"gold"}},'
+		f'{{"storage":"{ns}:temp","nbt":"_door_hover_name","color":"yellow","interpret":true}},'
+		f'{{"text":" - Cost: ","color":"gray"}},'
+		f'{{"score":{{"name":"#door_price","objective":"{ns}.data"}},"color":"yellow"}},'
+		f'{{"text":" points","color":"gray"}}]'
+	)
 
 	## Door entity scoreboards
 	write_load_file(f"""
@@ -41,6 +50,8 @@ execute store result storage {ns}:temp _door.x int 1 run scoreboard players get 
 execute store result storage {ns}:temp _door.y int 1 run scoreboard players get #dy {ns}.data
 execute store result storage {ns}:temp _door.z int 1 run scoreboard players get #dz {ns}.data
 data modify storage {ns}:temp _door.block set from storage {ns}:temp _door_iter[0].block
+data modify storage {ns}:temp _door.facing set value 0
+execute store result storage {ns}:temp _door.facing int 1 run data get storage {ns}:temp _door_iter[0].rotation[0]
 
 # Read door name (default "Door", override with "name" field)
 data modify storage {ns}:temp _door_name.name set value "Door"
@@ -53,11 +64,11 @@ execute if data storage {ns}:temp _door_iter[0].back_name run data modify storag
 function {ns}:v{version}/zombies/doors/place_at with storage {ns}:temp _door
 
 # Set scoreboards on newly spawned door entity
-execute store result score @n[tag={ns}.door_new] {ns}.zb.door.link run data get storage {ns}:temp _door_iter[0].link_id
-execute store result score @n[tag={ns}.door_new] {ns}.zb.door.price run data get storage {ns}:temp _door_iter[0].price
-execute store result score @n[tag={ns}.door_new] {ns}.zb.door.gid run data get storage {ns}:temp _door_iter[0].group_id
-execute store result score @n[tag={ns}.door_new] {ns}.zb.door.bgid run data get storage {ns}:temp _door_iter[0].back_group_id
-execute store result score @n[tag={ns}.door_new] {ns}.zb.door.anim run data get storage {ns}:temp _door_iter[0].animation
+execute store result score @e[tag={ns}.door_new] {ns}.zb.door.link run data get storage {ns}:temp _door_iter[0].link_id
+execute store result score @e[tag={ns}.door_new] {ns}.zb.door.price run data get storage {ns}:temp _door_iter[0].price
+execute store result score @e[tag={ns}.door_new] {ns}.zb.door.gid run data get storage {ns}:temp _door_iter[0].group_id
+execute store result score @e[tag={ns}.door_new] {ns}.zb.door.bgid run data get storage {ns}:temp _door_iter[0].back_group_id
+execute store result score @e[tag={ns}.door_new] {ns}.zb.door.anim run data get storage {ns}:temp _door_iter[0].animation
 
 # Store name indexed by link_id
 execute store result storage {ns}:temp _door_name.id int 1 run data get storage {ns}:temp _door_iter[0].link_id
@@ -77,8 +88,11 @@ execute if data storage {ns}:temp _door_iter[0] run function {ns}:v{version}/zom
 # Place door block at position
 $setblock $(x) $(y) $(z) $(block)
 
-# Summon interaction entity
-$summon minecraft:interaction $(x) $(y) $(z) {{width:1.1f,height:1.1f,response:true,Tags:["{ns}.door","{ns}.gm_entity","bs.entity.interaction","{ns}.door_new"]}}
+# Summon front-side interaction entity.
+$execute positioned $(x) $(y) $(z) rotated $(facing) 0 run summon minecraft:interaction ^ ^ ^0.5 {{width:1.5f,height:1.1f,response:true,Tags:{front_door_tags}}}
+
+# Summon back-side interaction entity.
+$execute positioned $(x) $(y) $(z) rotated $(facing) 0 run summon minecraft:interaction ^ ^ ^-0.5 {{width:1.5f,height:1.1f,response:true,Tags:{back_door_tags}}}
 """)
 
 	## Right-click handler (executor: "source" = player)
@@ -152,9 +166,18 @@ $data modify storage {ns}:zombies door_names."$(id)" set value {{name:"$(name)",
 $data modify storage {ns}:temp _door_hover_name set from storage {ns}:zombies door_names."$(id)".name
 """)
 
+	write_versioned_function("zombies/doors/get_hover_name_back", f"""
+$data modify storage {ns}:temp _door_hover_name set from storage {ns}:zombies door_names."$(id)".back_name
+""")
+
 	## Hover events (executor: "source" = player)
-	write_versioned_function("zombies/doors/on_hover", """
-data modify storage smithed.actionbar:input message set value {json:[{"text":"🚪 Door","color":"gold"},{"text":" - Right-click to open","color":"gray"}],priority:'notification',freeze:5}
+	write_versioned_function("zombies/doors/on_hover", f"""
+execute store result score #door_price {ns}.data run scoreboard players get @n[tag=bs.interaction.target] {ns}.zb.door.price
+execute store result score #door_link {ns}.data run scoreboard players get @n[tag=bs.interaction.target] {ns}.zb.door.link
+execute store result storage {ns}:temp _door_hover.id int 1 run scoreboard players get #door_link {ns}.data
+execute if entity @e[tag=bs.interaction.target,tag={ns}.door_back] run function {ns}:v{version}/zombies/doors/get_hover_name_back with storage {ns}:temp _door_hover
+execute unless entity @e[tag=bs.interaction.target,tag={ns}.door_back] run function {ns}:v{version}/zombies/doors/get_hover_name with storage {ns}:temp _door_hover
+data modify storage smithed.actionbar:input message set value {{json:{door_hover_message},priority:'notification',freeze:5}}
 function #smithed.actionbar:message
 """)
 

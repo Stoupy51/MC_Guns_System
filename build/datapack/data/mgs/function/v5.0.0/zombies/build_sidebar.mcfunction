@@ -6,5 +6,5 @@
 # @args		zb_sb (unknown)
 #
 
-$function #bs.sidebar:create {objective:"mgs.zb_sidebar",display_name:[{text:"🧟 ",color:"dark_green",bold:true}, {translate:"mgs.zombies"}],contents:$(zb_sb)}
+$function #bs.sidebar:create {objective:"mgs.zb_sidebar",display_name:{translate:"mgs.zombies",color:"dark_green",bold:true},contents:$(zb_sb)}
 

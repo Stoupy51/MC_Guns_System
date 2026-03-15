@@ -1,15 +1,60 @@
 
 # Perk Machine System
 # Stationary machines where players buy gameplay-enhancing perks.
-# Available perks: juggernog, speed_cola, double_tap, quick_revive
+# Available perks and their behavior are defined in PERK_DEFINITIONS.
 from stewbeet import Mem, write_load_file, write_tag, write_versioned_function
 
 from ..helpers import MGS_TAG
+
+PERK_DEFINITIONS: dict[str, dict[str, str | list[str]]] = {
+	"juggernog": {
+		"display_name": "Juggernog",
+		"message": "🍺 Juggernog! Max HP: 40",
+		"message_color": "dark_red",
+		"commands": [
+			"attribute @s minecraft:max_health base set 40",
+		],
+	},
+	"speed_cola": {
+		"display_name": "Speed Cola",
+		"message": "⚡ Speed Cola! Faster reload",
+		"message_color": "green",
+		"commands": [
+			"scoreboard players set @s {ns}.special.quick_reload 50",
+		],
+	},
+	"double_tap": {
+		"display_name": "Double Tap",
+		"message": "🔥 Double Tap! More damage",
+		"message_color": "gold",
+		"commands": [
+			"scoreboard players set @s {ns}.special.additional_shots 1",
+		],
+	},
+	"quick_revive": {
+		"display_name": "Quick Revive",
+		"message": "💚 Quick Revive! You can revive teammates",
+		"message_color": "aqua",
+	},
+	"mule_kick": {
+		"display_name": "Mule Kick",
+		"message": "🎒 Mule Kick! Third weapon slot unlocked",
+		"message_color": "gold",
+	},
+}
 
 
 def generate_perks() -> None:
 	ns: str = Mem.ctx.project_id
 	version: str = Mem.ctx.project_version
+	perk_objectives_add: str = "\n".join(
+		f"scoreboard objectives add {ns}.zb.perk.{perk_id} dummy"
+		for perk_id in PERK_DEFINITIONS
+	)
+	perk_reset_all_players: str = "\n".join(
+		f"scoreboard players reset * {ns}.zb.perk.{perk_id}"
+		for perk_id in PERK_DEFINITIONS
+	)
 
 	## Perk machine entity scoreboards
 	write_load_file(f"""
@@ -17,6 +62,9 @@ def generate_perks() -> None:
 scoreboard objectives add {ns}.zb.perk.id dummy
 scoreboard objectives add {ns}.zb.perk.price dummy
 scoreboard objectives add {ns}.zb.perk.power dummy
+
+# Perk ownership scoreboards
+{perk_objectives_add}
 """)
 
 	## Signal function tag for extensibility
@@ -51,20 +99,22 @@ execute store result storage {ns}:temp _pk.z int 1 run scoreboard players get #p
 function {ns}:v{version}/zombies/perks/place_at with storage {ns}:temp _pk
 
 # Set scoreboards on entity
-scoreboard players operation @n[tag=_pk_new] {ns}.zb.perk.id = #pk_counter {ns}.data
-execute store result score @n[tag=_pk_new] {ns}.zb.perk.price run data get storage {ns}:temp _pk_iter[0].price
+scoreboard players operation @n[tag={ns}.pk_new] {ns}.zb.perk.id = #pk_counter {ns}.data
+execute store result score @n[tag={ns}.pk_new] {ns}.zb.perk.price run data get storage {ns}:temp _pk_iter[0].price
 # Store power requirement as 1/0 (true stored as 1b in NBT, data get returns 1)
-execute store result score @n[tag=_pk_new] {ns}.zb.perk.power run data get storage {ns}:temp _pk_iter[0].power
+execute store result score @n[tag={ns}.pk_new] {ns}.zb.perk.power run data get storage {ns}:temp _pk_iter[0].power
 
 # Store perk_id in indexed storage for later lookup
 execute store result storage {ns}:temp _pk_store.id int 1 run scoreboard players get #pk_counter {ns}.data
 data modify storage {ns}:temp _pk_store.perk_id set from storage {ns}:temp _pk_iter[0].perk_id
+data modify storage {ns}:temp _pk_store.name set from storage {ns}:temp _pk_iter[0].perk_id
+execute if data storage {ns}:temp _pk_iter[0].name run data modify storage {ns}:temp _pk_store.name set from storage {ns}:temp _pk_iter[0].name
 function {ns}:v{version}/zombies/perks/store_data with storage {ns}:temp _pk_store
 
 # Register Bookshelf events
-execute as @n[tag=_pk_new] run function #bs.interaction:on_right_click {{run:"function {ns}:v{version}/zombies/perks/on_right_click",executor:"source"}}
-execute as @n[tag=_pk_new] run function #bs.interaction:on_hover {{run:"function {ns}:v{version}/zombies/perks/on_hover",executor:"source"}}
-tag @n[tag=_pk_new] remove _pk_new
+execute as @n[tag={ns}.pk_new] run function #bs.interaction:on_right_click {{run:"function {ns}:v{version}/zombies/perks/on_right_click",executor:"source"}}
+execute as @n[tag={ns}.pk_new] run function #bs.interaction:on_hover {{run:"function {ns}:v{version}/zombies/perks/on_hover",executor:"source"}}
+tag @n[tag={ns}.pk_new] remove {ns}.pk_new
 
 # Continue iteration
 data remove storage {ns}:temp _pk_iter[0]
@@ -72,11 +122,11 @@ execute if data storage {ns}:temp _pk_iter[0] run function {ns}:v{version}/zombi
 """)
 
 	write_versioned_function("zombies/perks/place_at", f"""
-$summon minecraft:interaction $(x) $(y) $(z) {{width:1.0f,height:1.0f,response:true,Tags:["{ns}.perk_machine","{ns}.gm_entity","bs.entity.interaction","_pk_new"]}}
+$summon minecraft:interaction $(x) $(y) $(z) {{width:1.0f,height:2.0f,response:true,Tags:["{ns}.perk_machine","{ns}.gm_entity","bs.entity.interaction","{ns}.pk_new"]}}
 """)
 
 	write_versioned_function("zombies/perks/store_data", f"""
-$data modify storage {ns}:zombies perk_data."$(id)" set value {{perk_id:"$(perk_id)"}}
+$data modify storage {ns}:zombies perk_data."$(id)" set value {{perk_id:"$(perk_id)",name:"$(name)"}}
 """)
 
 	## Right-click handler (executor: "source" = player)
@@ -132,6 +182,16 @@ function {ns}:v{version}/zombies/feedback/sound_deny
 $data modify storage {ns}:temp _pk_data set from storage {ns}:zombies perk_data."$(id)"
 """)
 
+	hover_name_lines: str = "\n".join(
+		f'execute unless data storage {ns}:temp _pk_data.name if data storage {ns}:temp _pk_data{{perk_id:"{perk_id}"}} run data modify storage {ns}:temp _pk_hover_name set value "{perk_data["display_name"]}"'  # noqa: E501
+		for perk_id, perk_data in PERK_DEFINITIONS.items()
+	)
+	write_versioned_function("zombies/perks/get_hover_name", f"""
+data modify storage {ns}:temp _pk_hover_name set value "Perk"
+execute if data storage {ns}:temp _pk_data.name run data modify storage {ns}:temp _pk_hover_name set from storage {ns}:temp _pk_data.name
+{hover_name_lines}
+""")
+
 	write_versioned_function("zombies/perks/check_owned", f"""
 scoreboard players set #pk_owned {ns}.data 0
 $execute if score @s {ns}.zb.perk.$(perk_id) matches 1 run scoreboard players set #pk_owned {ns}.data 1
@@ -145,42 +205,31 @@ $scoreboard players set @s {ns}.zb.perk.$(perk_id) 1
 $function {ns}:v{version}/zombies/perks/apply/$(perk_id)
 """)
 
-	## Per-perk effect functions
-	write_versioned_function("zombies/perks/apply/juggernog", f"""
-# Increase max health to 40 HP
-attribute @s minecraft:max_health base set 40
-data modify entity @s Health set value 40f
-tellraw @s [{MGS_TAG},{{"text":"🍺 Juggernog! Max HP: 40","color":"dark_red","bold":true}}]
-""")
-
-	write_versioned_function("zombies/perks/apply/speed_cola", f"""
-tag @s add {ns}.perk.speed_cola
-tellraw @s [{MGS_TAG},{{"text":"⚡ Speed Cola! Faster reload","color":"green","bold":true}}]
-""")
-
-	write_versioned_function("zombies/perks/apply/double_tap", f"""
-tag @s add {ns}.perk.double_tap
-tellraw @s [{MGS_TAG},{{"text":"🔥 Double Tap! More damage","color":"gold","bold":true}}]
-""")
-
-	write_versioned_function("zombies/perks/apply/quick_revive", f"""
-tag @s add {ns}.perk.quick_revive
-tellraw @s [{MGS_TAG},{{"text":"💚 Quick Revive! You can revive teammates","color":"aqua","bold":true}}]
+	## Per-perk effect functions (generated from top-level metadata)
+	for perk_id, perk_data in PERK_DEFINITIONS.items():
+		extra_commands: str = "\n".join(
+			command.replace("{ns}", ns)
+			for command in perk_data.get("commands", [])
+		)
+		write_versioned_function(f"zombies/perks/apply/{perk_id}", f"""
+{extra_commands}
+tellraw @s [{MGS_TAG},{{"text":"{perk_data["message"]}","color":"{perk_data["message_color"]}"}}]
 """)
 
 	## Hover events (executor: "source" = player)
-	write_versioned_function("zombies/perks/on_hover", """
-data modify storage smithed.actionbar:input message set value {json:[{"text":"🥤 Perk Machine","color":"dark_purple"},{"text":" - Right-click to buy","color":"gray"}],priority:'notification',freeze:5}
+	write_versioned_function("zombies/perks/on_hover", f"""
+execute store result score #pk_price {ns}.data run scoreboard players get @n[tag=bs.interaction.target] {ns}.zb.perk.price
+execute store result storage {ns}:temp _pk_hover.id int 1 run scoreboard players get @n[tag=bs.interaction.target] {ns}.zb.perk.id
+function {ns}:v{version}/zombies/perks/lookup_perk with storage {ns}:temp _pk_hover
+function {ns}:v{version}/zombies/perks/get_hover_name
+data modify storage smithed.actionbar:input message set value {{json:[{{"text":"🥤 ","color":"dark_purple"}},{{"storage":"{ns}:temp","nbt":"_pk_hover_name","color":"light_purple","interpret":true}},{{"text":" - Cost: ","color":"gray"}},{{"score":{{"name":"#pk_price","objective":"{ns}.data"}},"color":"yellow"}},{{"text":" points","color":"gray"}}],priority:'notification',freeze:5}}
 function #smithed.actionbar:message
-""")
+""")  # noqa: E501
 
 	## Hook into game start: reset perk scoreboards
 	write_versioned_function("zombies/start", f"""
-# Reset perk scoreboards
-scoreboard players set @a {ns}.zb.perk.juggernog 0
-scoreboard players set @a {ns}.zb.perk.speed_cola 0
-scoreboard players set @a {ns}.zb.perk.double_tap 0
-scoreboard players set @a {ns}.zb.perk.quick_revive 0
+# Reset perk scoreboards for all known score holders (including offline players).
+{perk_reset_all_players}
 """)
 
 	## Hook into preload_complete: setup perk machines
@@ -196,4 +245,7 @@ execute as @a[scores={{{ns}.zb.in_game=1}}] run attribute @s minecraft:max_healt
 tag @a remove {ns}.perk.speed_cola
 tag @a remove {ns}.perk.double_tap
 tag @a remove {ns}.perk.quick_revive
+
+# Reset perk scoreboards for all known score holders (including offline players).
+{perk_reset_all_players}
 """)

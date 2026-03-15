@@ -11,8 +11,8 @@ execute unless data storage mgs:zombies game{state:"preparing"} run return fail
 data modify storage mgs:zombies game.state set value "active"
 
 # Restore movement
-execute as @a[scores={mgs.zb.in_game=1}] run attribute @s minecraft:movement_speed base set 0.1
-execute as @a[scores={mgs.zb.in_game=1}] run attribute @s minecraft:jump_strength base set 0.42
+execute as @a[scores={mgs.zb.in_game=1}] run attribute @s minecraft:movement_speed base reset
+execute as @a[scores={mgs.zb.in_game=1}] run attribute @s minecraft:jump_strength base reset
 
 # Clear prep effects
 effect clear @a[scores={mgs.zb.in_game=1}] darkness

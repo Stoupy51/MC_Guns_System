@@ -4,6 +4,6 @@
 # @within	???
 #
 
-tag @s add mgs.perk.speed_cola
-tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],[{"text":"⚡ ","color":"green","bold":true}, {"translate":"mgs.speed_cola_faster_reload"}]]
+scoreboard players set @s mgs.special.quick_reload 50
+tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],[{"text":"⚡ ","color":"green"}, {"translate":"mgs.speed_cola_faster_reload"}]]
 

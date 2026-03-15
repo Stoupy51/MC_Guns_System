@@ -23,6 +23,6 @@ execute store result score #door_link mgs.data run scoreboard players get @n[tag
 execute as @e[tag=mgs.door] if score @s mgs.zb.door.link = #door_link mgs.data at @s run function mgs:v5.0.0/zombies/doors/open_one
 
 # Announce
-tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.door_opened_for","color":"green"},{"score":{"name":"#door_price","objective":"mgs.data"},"color":"yellow"},[{"text":" ","color":"green"}, {"translate":"mgs.points_2"}]]
+tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.door_opened_for","color":"green"},{"score":{"name":"#door_price","objective":"mgs.data"},"color":"yellow"},[{"text":" ","color":"green"}, {"translate":"mgs.points_3"}]]
 function mgs:v5.0.0/zombies/feedback/sound_announce
 
