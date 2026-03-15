@@ -12,8 +12,9 @@ schedule clear mgs:v5.0.0/zombies/end_prep
 schedule clear mgs:v5.0.0/zombies/start_round
 
 # Restore movement
-execute as @a[scores={mgs.zb.in_game=1}] run attribute @s minecraft:movement_speed base set 0.1
-execute as @a[scores={mgs.zb.in_game=1}] run attribute @s minecraft:jump_strength base set 0.42
+execute as @a[scores={mgs.zb.in_game=1}] run attribute @s minecraft:max_health base reset
+execute as @a[scores={mgs.zb.in_game=1}] run attribute @s minecraft:movement_speed base reset
+execute as @a[scores={mgs.zb.in_game=1}] run attribute @s minecraft:jump_strength base reset
 
 # Clear effects
 effect clear @a[scores={mgs.zb.in_game=1}] darkness
@@ -56,4 +57,11 @@ execute as @a[scores={mgs.zb.in_game=1}] run attribute @s minecraft:max_health b
 tag @a remove mgs.perk.speed_cola
 tag @a remove mgs.perk.double_tap
 tag @a remove mgs.perk.quick_revive
+
+# Reset perk scoreboards for all known score holders (including offline players).
+scoreboard players reset * mgs.zb.perk.juggernog
+scoreboard players reset * mgs.zb.perk.speed_cola
+scoreboard players reset * mgs.zb.perk.double_tap
+scoreboard players reset * mgs.zb.perk.quick_revive
+scoreboard players reset * mgs.zb.perk.mule_kick
 

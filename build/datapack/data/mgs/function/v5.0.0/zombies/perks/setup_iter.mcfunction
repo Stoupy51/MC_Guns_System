@@ -25,20 +25,22 @@ execute store result storage mgs:temp _pk.z int 1 run scoreboard players get #pk
 function mgs:v5.0.0/zombies/perks/place_at with storage mgs:temp _pk
 
 # Set scoreboards on entity
-scoreboard players operation @n[tag=_pk_new] mgs.zb.perk.id = #pk_counter mgs.data
-execute store result score @n[tag=_pk_new] mgs.zb.perk.price run data get storage mgs:temp _pk_iter[0].price
+scoreboard players operation @n[tag=mgs.pk_new] mgs.zb.perk.id = #pk_counter mgs.data
+execute store result score @n[tag=mgs.pk_new] mgs.zb.perk.price run data get storage mgs:temp _pk_iter[0].price
 # Store power requirement as 1/0 (true stored as 1b in NBT, data get returns 1)
-execute store result score @n[tag=_pk_new] mgs.zb.perk.power run data get storage mgs:temp _pk_iter[0].power
+execute store result score @n[tag=mgs.pk_new] mgs.zb.perk.power run data get storage mgs:temp _pk_iter[0].power
 
 # Store perk_id in indexed storage for later lookup
 execute store result storage mgs:temp _pk_store.id int 1 run scoreboard players get #pk_counter mgs.data
 data modify storage mgs:temp _pk_store.perk_id set from storage mgs:temp _pk_iter[0].perk_id
+data modify storage mgs:temp _pk_store.name set from storage mgs:temp _pk_iter[0].perk_id
+execute if data storage mgs:temp _pk_iter[0].name run data modify storage mgs:temp _pk_store.name set from storage mgs:temp _pk_iter[0].name
 function mgs:v5.0.0/zombies/perks/store_data with storage mgs:temp _pk_store
 
 # Register Bookshelf events
-execute as @n[tag=_pk_new] run function #bs.interaction:on_right_click {run:"function mgs:v5.0.0/zombies/perks/on_right_click",executor:"source"}
-execute as @n[tag=_pk_new] run function #bs.interaction:on_hover {run:"function mgs:v5.0.0/zombies/perks/on_hover",executor:"source"}
-tag @n[tag=_pk_new] remove _pk_new
+execute as @n[tag=mgs.pk_new] run function #bs.interaction:on_right_click {run:"function mgs:v5.0.0/zombies/perks/on_right_click",executor:"source"}
+execute as @n[tag=mgs.pk_new] run function #bs.interaction:on_hover {run:"function mgs:v5.0.0/zombies/perks/on_hover",executor:"source"}
+tag @n[tag=mgs.pk_new] remove mgs.pk_new
 
 # Continue iteration
 data remove storage mgs:temp _pk_iter[0]

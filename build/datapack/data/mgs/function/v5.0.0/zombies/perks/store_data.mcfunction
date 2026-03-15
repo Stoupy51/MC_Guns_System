@@ -5,7 +5,8 @@
 #
 # @args		id (unknown)
 #			perk_id (unknown)
+#			name (unknown)
 #
 
-$data modify storage mgs:zombies perk_data."$(id)" set value {perk_id:"$(perk_id)"}
+$data modify storage mgs:zombies perk_data."$(id)" set value {perk_id:"$(perk_id)",name:"$(name)"}
 

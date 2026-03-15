@@ -4,6 +4,6 @@
 # @within	???
 #
 
-tag @s add mgs.perk.double_tap
-tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],[{"text":"🔥 ","color":"gold","bold":true}, {"translate":"mgs.double_tap_more_damage"}]]
+scoreboard players set @s mgs.special.additional_shots 1
+tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],[{"text":"🔥 ","color":"gold"}, {"translate":"mgs.double_tap_more_damage"}]]
 

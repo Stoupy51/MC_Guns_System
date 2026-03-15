@@ -6,7 +6,7 @@
 # @args		slot (string)
 #
 
-$item replace entity @s contents from entity @p[tag=mgs.wb_reading_mag,limit=1] $(slot)
+$item replace entity @s contents from entity @p[tag=mgs.wb_reading_mag] $(slot)
 execute store result score #wb_mag_rem mgs.data run data get entity @s item.components."minecraft:custom_data".mgs.stats.remaining_bullets
 execute store result score #wb_mag_cap mgs.data run data get entity @s item.components."minecraft:custom_data".mgs.stats.capacity
 kill @s
