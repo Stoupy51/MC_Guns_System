@@ -1,7 +1,7 @@
 
 #> mgs:v5.0.0/multiplayer/random_kill_message
 #
-# @executed	anchored eyes & positioned ^ ^ ^
+# @executed	at @s
 #
 # @within	mgs:v5.0.0/multiplayer/simulate_death_fire_kill
 #			mgs:v5.0.0/multiplayer/on_respawn

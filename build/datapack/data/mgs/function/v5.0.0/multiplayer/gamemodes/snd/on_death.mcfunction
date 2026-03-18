@@ -1,7 +1,7 @@
 
 #> mgs:v5.0.0/multiplayer/gamemodes/snd/on_death
 #
-# @executed	anchored eyes & positioned ^ ^ ^
+# @executed	at @s
 #
 # @within	mgs:v5.0.0/multiplayer/simulate_death
 #			mgs:v5.0.0/multiplayer/on_respawn

@@ -1,7 +1,7 @@
 
 #> mgs:v5.0.0/utils/damage
 #
-# @executed	anchored eyes & positioned ^ ^ ^
+# @executed	at @s
 #
 # @within	mgs:v5.0.0/utils/signal_and_damage with storage mgs:input with
 #
