@@ -3,7 +3,7 @@
 #
 # @executed	at @s
 #
-# @within	mgs:v5.0.0/raycast/deal_damage
+# @within	mgs:v5.0.0/raycast/apply_damage
 #			mgs:v5.0.0/projectile/explode [ as @n[tag=...] ]
 #			mgs:v5.0.0/projectile/damage_entity
 #

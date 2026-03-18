@@ -36,6 +36,7 @@ data modify storage mgs:input with.ignored_blocks set value "#mgs:v5.0.0/empty"
 data modify storage mgs:input with.on_entry_point set value "function mgs:v5.0.0/raycast/on_entry_point"
 data modify storage mgs:input with.on_targeted_block set value "function mgs:v5.0.0/raycast/on_targeted_block"
 data modify storage mgs:input with.on_targeted_entity set value "function mgs:v5.0.0/raycast/on_targeted_entity"
+data modify storage mgs:input with.on_exit_point set value "function mgs:v5.0.0/raycast/on_exit_point"
 
 # Launch raycast with callbacks (https://docs.mcbookshelf.dev/en/latest/modules/raycast.html#run-the-raycast)
 execute at @s run function #bs.raycast:run with storage mgs:input
