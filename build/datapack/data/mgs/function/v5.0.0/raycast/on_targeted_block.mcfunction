@@ -7,7 +7,7 @@
 #
 
 # Get current block (https://docs.mcbookshelf.dev/en/latest/modules/block.html#get)
-scoreboard players set #last_callback mgs.data 1
+scoreboard players set #is_entity_hit mgs.data 0
 scoreboard players set #is_water mgs.data 0
 scoreboard players set #is_pass_through mgs.data 0
 execute if block ~ ~ ~ #bs.hitbox:can_pass_through run scoreboard players set #is_pass_through mgs.data 1

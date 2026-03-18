@@ -1,6 +1,6 @@
 
 # Imports
-from stewbeet import Context, Mem, official_lib_used
+from stewbeet import Context, official_lib_used
 
 from .functional.main import main as main_datapack
 from .functional.map_editor import generate_map_editor

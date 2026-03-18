@@ -1,8 +1,8 @@
 
 # Imports
 import json
-import stouputils as stp
 
+import stouputils as stp
 from stewbeet import (
     Context,
     Item,

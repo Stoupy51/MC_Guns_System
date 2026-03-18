@@ -126,12 +126,12 @@ scoreboard players set #next_air_particle {ns}.data 0
 
 # Prepare arguments
 data modify storage {ns}:input with set value {{}}
-data modify storage {ns}:input with.blocks set value "function #bs.hitbox:callback/get_block_collision_with_fluid"
+data modify storage {ns}:input with.blocks set value "function #bs.hitbox:callback/get_block_shape_with_fluid"
 data modify storage {ns}:input with.entities set value true
 data modify storage {ns}:input with.piercing set value 10
 data modify storage {ns}:input with.max_distance set value 128
 data modify storage {ns}:input with.ignored_blocks set value "#{ns}:v{version}/empty"
-data modify storage {ns}:input with.on_hit_point set value "function {ns}:v{version}/raycast/on_hit_point"
+data modify storage {ns}:input with.on_entry_point set value "function {ns}:v{version}/raycast/on_entry_point"
 data modify storage {ns}:input with.on_targeted_block set value "function {ns}:v{version}/raycast/on_targeted_block"
 data modify storage {ns}:input with.on_targeted_entity set value "function {ns}:v{version}/raycast/on_targeted_entity"
 
@@ -142,19 +142,15 @@ execute at @s run function #bs.raycast:run with storage {ns}:input
 kill @s
 """)
 
-    # On hit point
-    write_versioned_function("raycast/on_hit_point", f"""
+    # On entry point
+    write_versioned_function("raycast/on_entry_point", f"""
 # If targeted entity, return to prevent showing particles
-# (last_callback = 0 for on_hit_point, 1 for on_targeted_block, 2 for on_targeted_entity)
-execute if score #last_callback {ns}.data matches 2 run return run scoreboard players set #last_callback {ns}.data 0
-scoreboard players set #last_callback {ns}.data 0
+execute if score #is_entity_hit {ns}.data matches 1 run return 0
+scoreboard players set #is_entity_hit {ns}.data 0
 
 # Make block particles (if not passing through) (on_targeted_block runs first to set passing through)
-data modify storage {ns}:input with set value {{x:0,y:0,z:0,block:"minecraft:air"}}
+data modify storage {ns}:input with set value {{block:"minecraft:air"}}
 data modify storage {ns}:input with.block set from storage {ns}:temp block.type
-data modify storage {ns}:input with.x set from storage bs:lambda raycast.hit_point[0]
-data modify storage {ns}:input with.y set from storage bs:lambda raycast.hit_point[1]
-data modify storage {ns}:input with.z set from storage bs:lambda raycast.hit_point[2]
 execute if score #is_pass_through {ns}.data matches 0 run return run function {ns}:v{version}/raycast/block_particles with storage {ns}:input with
 
 # Change particles if passing through
@@ -166,13 +162,13 @@ scoreboard players add #next_air_particle {ns}.data 1
 execute if score #next_air_particle {ns}.data matches 2 run function {ns}:v{version}/raycast/air_particles with storage {ns}:input with
 execute if score #next_air_particle {ns}.data matches 3.. run scoreboard players set #next_air_particle {ns}.data 0
 """)
-    write_versioned_function("raycast/block_particles", r"""$particle block{block_state:"$(block)"} $(x) $(y) $(z) 0.1 0.1 0.1 1 10 force @a[distance=..128]""")
-    write_versioned_function("raycast/air_particles", r"""$particle $(block) $(x) $(y) $(z) 0 0 0 0 1 force @a[distance=..128]""")
+    write_versioned_function("raycast/block_particles", r"""$particle block{block_state:"$(block)"} ~ ~ ~ 0.1 0.1 0.1 1 10 force @a[distance=..128]""")
+    write_versioned_function("raycast/air_particles", r"""$particle $(block) ~ ~ ~ 0 0 0 0 1 force @a[distance=..128]""")
 
     # On targeted block
     write_versioned_function("raycast/on_targeted_block", f"""
 # Get current block (https://docs.mcbookshelf.dev/en/latest/modules/block.html#get)
-scoreboard players set #last_callback {ns}.data 1
+scoreboard players set #is_entity_hit {ns}.data 0
 scoreboard players set #is_water {ns}.data 0
 scoreboard players set #is_pass_through {ns}.data 0
 execute if block ~ ~ ~ #bs.hitbox:can_pass_through run scoreboard players set #is_pass_through {ns}.data 1
@@ -259,14 +255,20 @@ execute store result storage {ns}:temp damage float 0.001 run scoreboard players
 
     # On targeted entity
     write_versioned_function("raycast/on_targeted_entity", f"""
+# Mark that we hit an entity
+scoreboard players set #is_entity_hit {ns}.data 1
+
 # Friendly fire check: skip if target is a teammate (but not the shooter themselves)
 execute if entity @s[type=player] unless entity @s[tag={ns}.ticking] store result score #shooter_team {ns}.data run scoreboard players get @n[tag={ns}.ticking] {ns}.mp.team
 execute if entity @s[type=player] unless entity @s[tag={ns}.ticking] if score #shooter_team {ns}.data matches 1.. if score @s {ns}.mp.team = #shooter_team {ns}.data run return fail
 
 # Blood particles
-scoreboard players set #last_callback {ns}.data 2
-particle block{{block_state:"redstone_wire"}} ~ ~1 ~ 0.35 0.5 0.35 0 100 force @a[distance=..128]
+execute at @s run particle block{{block_state:"redstone_wire"}} ~ ~1 ~ 0.35 0.5 0.35 0 100 force @a[distance=..128]
 
+# Deal damage
+execute at @s run function {ns}:v{version}/raycast/deal_damage
+""")
+    write_versioned_function("raycast/deal_damage", f"""
 # Get base damage with 3 digits of precision
 data modify storage {ns}:input with set value {{target:"@s", amount:0.0f, attacker:"@n[tag={ns}.ticking]"}}
 execute if entity @n[tag={ns}.ticking,type=player] run data modify storage {ns}:input with.attacker set value "@p[tag={ns}.ticking]"
@@ -307,26 +309,26 @@ execute if score #victim_hp {ns}.data matches ..0 as @n[tag={ns}.ticking] run fu
 data modify storage bs:in math.pow.x set from storage {ns}:gun all.stats.{DECAY}
 
 # Get raycast distance / 10 into y
-execute store result score #raycast_distance {ns}.data run data get storage bs:lambda raycast.distance 1000000
+execute store result score #raycast_distance {ns}.data run scoreboard players get $raycast.entry_distance bs.lambda
 scoreboard players operation #raycast_distance {ns}.data /= #10 {ns}.data
-execute store result storage bs:in math.pow.y float 0.000001 run scoreboard players get #raycast_distance {ns}.data
+execute store result storage bs:in math.pow.y float 0.001 run scoreboard players get #raycast_distance {ns}.data
 
 # Compute power using https://docs.mcbookshelf.dev/en/latest/modules/math.html#power
 function #bs.math:pow
 
 # Collect computed value and multiply to the damage
-execute store result score #pow_decay_distance {ns}.data run data get storage bs:out math.pow 1000000
+execute store result score #pow_decay_distance {ns}.data run data get storage bs:out math.pow 1000
 scoreboard players operation #damage {ns}.data *= #pow_decay_distance {ns}.data
 
-# Divide by 1000000 because we're multiplying two scaled integers with each other (10*1000000 = 10000000)
-scoreboard players operation #damage {ns}.data /= #1000000 {ns}.data
+# Divide by 1000 because we're multiplying two scaled integers with each other (10*1000 = 10000)
+scoreboard players operation #damage {ns}.data /= #1000 {ns}.data
 """)
 
     # Check if hit is a headshot and adjust damage accordingly
     write_versioned_function("raycast/check_headshot", f"""
 scoreboard players set #is_headshot {ns}.data 0
 execute store result score #entity_y {ns}.data run data get entity @s Pos[1] 1000
-execute store result score #hit_y {ns}.data run data get storage bs:lambda raycast.hit_point[1] 1000
+execute store result score #hit_y {ns}.data run scoreboard players get $raycast.entry_point.y bs.lambda
 scoreboard players operation #y_diff {ns}.data = #hit_y {ns}.data
 scoreboard players operation #y_diff {ns}.data -= #entity_y {ns}.data
 execute if score #y_diff {ns}.data matches 1200.. run scoreboard players set #is_headshot {ns}.data 1

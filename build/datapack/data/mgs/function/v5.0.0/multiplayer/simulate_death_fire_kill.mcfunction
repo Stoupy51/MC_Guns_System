@@ -1,7 +1,7 @@
 
 #> mgs:v5.0.0/multiplayer/simulate_death_fire_kill
 #
-# @executed	anchored eyes & positioned ^ ^ ^
+# @executed	at @s
 #
 # @within	mgs:v5.0.0/multiplayer/simulate_death with storage mgs:input with
 #
