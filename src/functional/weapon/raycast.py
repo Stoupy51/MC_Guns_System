@@ -134,6 +134,7 @@ data modify storage {ns}:input with.ignored_blocks set value "#{ns}:v{version}/e
 data modify storage {ns}:input with.on_entry_point set value "function {ns}:v{version}/raycast/on_entry_point"
 data modify storage {ns}:input with.on_targeted_block set value "function {ns}:v{version}/raycast/on_targeted_block"
 data modify storage {ns}:input with.on_targeted_entity set value "function {ns}:v{version}/raycast/on_targeted_entity"
+data modify storage {ns}:input with.on_exit_point set value "function {ns}:v{version}/raycast/on_exit_point"
 
 # Launch raycast with callbacks (https://docs.mcbookshelf.dev/en/latest/modules/raycast.html#run-the-raycast)
 execute at @s run function #bs.raycast:run with storage {ns}:input
@@ -142,11 +143,17 @@ execute at @s run function #bs.raycast:run with storage {ns}:input
 kill @s
 """)
 
+    # On exit point - headshot calculation and damage
+    write_versioned_function("raycast/on_exit_point", f"""
+# If entity, calculate headshot and apply damage to entity
+execute if score #is_entity_hit {ns}.data matches 1 as @e[tag={ns}.raycast_target] run function {ns}:v{version}/raycast/headshot_and_damage
+scoreboard players set #is_entity_hit {ns}.data 0
+""")
+
     # On entry point
     write_versioned_function("raycast/on_entry_point", f"""
 # If targeted entity, return to prevent showing particles
 execute if score #is_entity_hit {ns}.data matches 1 run return 0
-scoreboard players set #is_entity_hit {ns}.data 0
 
 # Make block particles (if not passing through) (on_targeted_block runs first to set passing through)
 data modify storage {ns}:input with set value {{block:"minecraft:air"}}
@@ -255,51 +262,22 @@ execute store result storage {ns}:temp damage float 0.001 run scoreboard players
 
     # On targeted entity
     write_versioned_function("raycast/on_targeted_entity", f"""
-# Mark that we hit an entity
-scoreboard players set #is_entity_hit {ns}.data 1
-
 # Friendly fire check: skip if target is a teammate (but not the shooter themselves)
 execute if entity @s[type=player] unless entity @s[tag={ns}.ticking] store result score #shooter_team {ns}.data run scoreboard players get @n[tag={ns}.ticking] {ns}.mp.team
 execute if entity @s[type=player] unless entity @s[tag={ns}.ticking] if score #shooter_team {ns}.data matches 1.. if score @s {ns}.mp.team = #shooter_team {ns}.data run return fail
 
+# Mark that we hit an entity
+scoreboard players set #is_entity_hit {ns}.data 1
+tag @s add {ns}.raycast_target
+
 # Blood particles
 execute at @s run particle block{{block_state:"redstone_wire"}} ~ ~1 ~ 0.35 0.5 0.35 0 100 force @a[distance=..128]
 
-# Deal damage
-execute at @s run function {ns}:v{version}/raycast/deal_damage
-""")
-    write_versioned_function("raycast/deal_damage", f"""
-# Get base damage with 3 digits of precision
+# Store attack info and calculate decay
 data modify storage {ns}:input with set value {{target:"@s", amount:0.0f, attacker:"@n[tag={ns}.ticking]"}}
 execute if entity @n[tag={ns}.ticking,type=player] run data modify storage {ns}:input with.attacker set value "@p[tag={ns}.ticking]"
 execute store result score #damage {ns}.data run data get storage {ns}:temp damage 10
-
-# Apply decay and headshot calculations
 function {ns}:v{version}/raycast/apply_decay
-function {ns}:v{version}/raycast/check_headshot
-
-# Instant kill: if shooter has active instant kill and target is not immune, set damage to 99999
-execute as @n[tag={ns}.ticking] if score @s {ns}.special.instant_kill matches 1.. as @s[tag=!{ns}.no_instant_kill] run scoreboard players set #damage {ns}.data 99999
-
-# Signal: on_headshot (if headshot detected, @s = hit entity)
-execute if score #is_headshot {ns}.data matches 1 run data modify storage {ns}:signals on_headshot set value {{}}
-execute if score #is_headshot {ns}.data matches 1 run data modify storage {ns}:signals on_headshot.weapon set from storage {ns}:gun all
-execute if score #is_headshot {ns}.data matches 1 store result storage {ns}:signals on_headshot.damage float 0.1 run scoreboard players get #damage {ns}.data
-execute if score #is_headshot {ns}.data matches 1 run function #{ns}:signals/on_headshot
-
-# Damage entity - include weapon and headshot info in mgs:input with for the damage signal
-execute store result storage {ns}:input with.amount float 0.1 run scoreboard players get #damage {ns}.data
-data modify storage {ns}:input with.weapon set from storage {ns}:gun all
-execute store result storage {ns}:input with.headshot int 1 run scoreboard players get #is_headshot {ns}.data
-function {ns}:v{version}/utils/signal_and_damage
-
-# Signal: on_kill (check if entity died after damage)
-# Initialize to 0 (dead) — if entity no longer exists, score stays 0
-scoreboard players set #victim_hp {ns}.data 0
-execute store result score #victim_hp {ns}.data run data get entity @s Health 100
-execute if score #victim_hp {ns}.data matches ..0 run data modify storage {ns}:signals on_kill set value {{}}
-execute if score #victim_hp {ns}.data matches ..0 run data modify storage {ns}:signals on_kill.weapon set from storage {ns}:gun all
-execute if score #victim_hp {ns}.data matches ..0 as @n[tag={ns}.ticking] run function #{ns}:signals/on_kill
 """)
 
     # Apply decay using `damage *= pow(decay, distance / 10)`
@@ -324,15 +302,76 @@ scoreboard players operation #damage {ns}.data *= #pow_decay_distance {ns}.data
 scoreboard players operation #damage {ns}.data /= #1000 {ns}.data
 """)
 
-    # Check if hit is a headshot and adjust damage accordingly
-    write_versioned_function("raycast/check_headshot", f"""
+    # Calculate headshot bonus based on center distance and apply damage
+    write_versioned_function("raycast/headshot_and_damage", f"""
+# Check if in head zone (Y above 1400 relative to entity), if not apply normal damage
 scoreboard players set #is_headshot {ns}.data 0
-execute store result score #entity_y {ns}.data run data get entity @s Pos[1] 1000
-execute store result score #hit_y {ns}.data run scoreboard players get $raycast.entry_point.y bs.lambda
-scoreboard players operation #y_diff {ns}.data = #hit_y {ns}.data
-scoreboard players operation #y_diff {ns}.data -= #entity_y {ns}.data
-execute if score #y_diff {ns}.data matches 1200.. run scoreboard players set #is_headshot {ns}.data 1
-execute unless score #is_headshot {ns}.data matches 1 run scoreboard players operation #damage {ns}.data /= #2 {ns}.data
+scoreboard players set #headshot_multiplier {ns}.data 1000
+execute unless score $raycast.entry_point.y bs.lambda matches 1400.. at @s run return run function {ns}:v{version}/raycast/apply_damage
+
+# Calculate center of trajectory through head: ((entry_x + exit_x) / 2, (entry_z + exit_z) / 2)
+execute store result score #entry_x {ns}.data run scoreboard players get $raycast.entry_point.x bs.lambda
+execute store result score #entry_z {ns}.data run scoreboard players get $raycast.entry_point.z bs.lambda
+execute store result score #exit_x {ns}.data run scoreboard players get $raycast.exit_point.x bs.lambda
+execute store result score #exit_z {ns}.data run scoreboard players get $raycast.exit_point.z bs.lambda
+
+scoreboard players operation #exit_x {ns}.data += #entry_x {ns}.data
+scoreboard players operation #exit_z {ns}.data += #entry_z {ns}.data
+scoreboard players operation #exit_x {ns}.data /= #2 {ns}.data
+scoreboard players operation #exit_z {ns}.data /= #2 {ns}.data
+
+scoreboard players set #dist_sq {ns}.data 0
+scoreboard players operation #dist_sq {ns}.data = #exit_x {ns}.data
+scoreboard players operation #dist_sq {ns}.data *= #exit_x {ns}.data
+scoreboard players operation #exit_z {ns}.data *= #exit_z {ns}.data
+scoreboard players operation #dist_sq {ns}.data += #exit_z {ns}.data
+
+# Get sqrt: https://docs.mcbookshelf.dev/en/latest/modules/math/#square-root
+data modify storage bs:in math.sqrt.x set value 0
+execute store result storage bs:in math.sqrt.x float 0.000001 run scoreboard players get #dist_sq {ns}.data
+function #bs.math:sqrt
+execute store result score #distance {ns}.data run data get storage bs:out math.sqrt 1000
+
+# Clamp distance to 500 (0.5 block)
+execute if score #distance {ns}.data matches 501.. run scoreboard players set #distance {ns}.data 500
+
+# Calculate multiplier: 2000 - (distance * 2)
+scoreboard players set #headshot_multiplier {ns}.data 2000
+scoreboard players operation #distance {ns}.data *= #2 {ns}.data
+scoreboard players operation #headshot_multiplier {ns}.data -= #distance {ns}.data
+
+# Apply multiplier to damage
+scoreboard players operation #damage {ns}.data *= #headshot_multiplier {ns}.data
+scoreboard players operation #damage {ns}.data /= #1000 {ns}.data
+
+# Apply damage
+scoreboard players set #is_headshot {ns}.data 1
+execute at @s run function {ns}:v{version}/raycast/apply_damage
+""")
+
+    # Apply final damage and signals
+    write_versioned_function("raycast/apply_damage", f"""
+# Instant kill check
+execute as @n[tag={ns}.ticking] if score @s {ns}.special.instant_kill matches 1.. as @s[tag=!{ns}.no_instant_kill] run scoreboard players set #damage {ns}.data 99999
+
+# Signal: on_headshot
+execute if score #is_headshot {ns}.data matches 1 run data modify storage {ns}:signals on_headshot set value {{}}
+execute if score #is_headshot {ns}.data matches 1 run data modify storage {ns}:signals on_headshot.weapon set from storage {ns}:gun all
+execute if score #is_headshot {ns}.data matches 1 store result storage {ns}:signals on_headshot.damage float 0.1 run scoreboard players get #damage {ns}.data
+execute if score #is_headshot {ns}.data matches 1 run function #{ns}:signals/on_headshot
+
+# Damage entity
+execute store result storage {ns}:input with.amount float 0.1 run scoreboard players get #damage {ns}.data
+data modify storage {ns}:input with.weapon set from storage {ns}:gun all
+execute store result storage {ns}:input with.headshot int 1 run scoreboard players get #is_headshot {ns}.data
+function {ns}:v{version}/utils/signal_and_damage
+
+# Signal: on_kill
+scoreboard players set #victim_hp {ns}.data 0
+execute store result score #victim_hp {ns}.data run data get entity @s Health 100
+execute if score #victim_hp {ns}.data matches ..0 run data modify storage {ns}:signals on_kill set value {{}}
+execute if score #victim_hp {ns}.data matches ..0 run data modify storage {ns}:signals on_kill.weapon set from storage {ns}:gun all
+execute if score #victim_hp {ns}.data matches ..0 as @n[tag={ns}.ticking] run function #{ns}:signals/on_kill
 """)
 
 

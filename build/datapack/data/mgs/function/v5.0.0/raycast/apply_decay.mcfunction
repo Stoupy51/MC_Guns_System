@@ -1,9 +1,9 @@
 
 #> mgs:v5.0.0/raycast/apply_decay
 #
-# @executed	at @s
+# @executed	anchored eyes & positioned ^ ^ ^
 #
-# @within	mgs:v5.0.0/raycast/deal_damage
+# @within	mgs:v5.0.0/raycast/on_targeted_entity
 #
 
 ## Apply decay using `damage *= pow(decay, distance / 10)`

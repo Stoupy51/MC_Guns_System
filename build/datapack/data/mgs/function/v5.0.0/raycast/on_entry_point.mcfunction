@@ -8,7 +8,6 @@
 
 # If targeted entity, return to prevent showing particles
 execute if score #is_entity_hit mgs.data matches 1 run return 0
-scoreboard players set #is_entity_hit mgs.data 0
 
 # Make block particles (if not passing through) (on_targeted_block runs first to set passing through)
 data modify storage mgs:input with set value {block:"minecraft:air"}
