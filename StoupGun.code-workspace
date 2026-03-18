@@ -5,6 +5,9 @@
 		},
 		{
 			"path": "../StewBeet"
+		},
+		{
+			"path": "../stouputils"
 		}
 	],
 	"settings": {}
