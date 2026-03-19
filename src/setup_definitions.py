@@ -285,5 +285,6 @@ def beet_default(ctx: Context) -> None:
     set_manual_components(white_list=["item_name", "lore", "custom_name", "damage", "max_damage"]) # Components to include in the manual when hovering items (here is the default list)
 
     # Debug purposes: export all definitions to a single json file
-    stp.run_in_subprocess(export_all_definitions_to_json, f"{Mem.ctx.directory}/definitions_debug.json", no_join=True)
+    return
+    export_all_definitions_to_json(f"{Mem.ctx.directory}/definitions_debug.json", Mem.definitions)
 

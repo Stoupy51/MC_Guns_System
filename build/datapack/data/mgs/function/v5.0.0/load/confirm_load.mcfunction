@@ -51,6 +51,9 @@ scoreboard objectives add mgs.reserve_ammo dummy
 # Tracks the room acoustics level for crack sound effects
 scoreboard objectives add mgs.acoustics_level dummy
 
+# Tracks how much time has passed since the player last saw a muzzle flash
+scoreboard objectives add mgs.last_muzzle_flash dummy
+
 ## Global configuration scoreboards (admin/server-level)
 # RPG explosion power (0 = no block destruction, higher = more destruction)
 scoreboard objectives add mgs.config dummy

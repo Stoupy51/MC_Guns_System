@@ -50,7 +50,8 @@ execute store result score #cooldown {ns}.data run data get storage {ns}:gun all
 # Apply quick swap: reduce cooldown by quick_swap% (e.g. 20 = 20% faster)
 execute if score @s {ns}.special.quick_swap matches 1.. run function {ns}:v{version}/switch/apply_quick_swap
 
-# Set cooldown directly (replaces any existing cooldown, including reload cooldown)
+# Convert to expiration tick and set as both cooldown and switch_cooldown
+scoreboard players operation #cooldown {ns}.data += #total_tick {ns}.data
 scoreboard players operation @s {ns}.cooldown = #cooldown {ns}.data
 
 # Mirror into switch_cooldown (used by shader zoom guard, unaffected by shooting)
@@ -98,8 +99,10 @@ execute if score #current_length {ns}.data = @s {ns}.previous_selected unless sc
     write_versioned_function("switch/sync_attack_speed_with_cooldown", f"""
 ## Formula: [attack_speed = (20.0 / cooldown) - 4.0] <- where 4.0 is default attack speed
 # Compute attack speed based of @s {ns}.cooldown (with 3 digits precision)
+scoreboard players operation #remaining_cooldown {ns}.data = @s {ns}.cooldown
+scoreboard players operation #remaining_cooldown {ns}.data -= #total_tick {ns}.data
 scoreboard players set #attack_speed {ns}.data 20000
-scoreboard players operation #attack_speed {ns}.data /= @s {ns}.cooldown
+scoreboard players operation #attack_speed {ns}.data /= #remaining_cooldown {ns}.data
 scoreboard players remove #attack_speed {ns}.data 4000
 
 # Summon a temporary entity that will be used to modify the attack speed attribute modifier from the player's mainhand slot

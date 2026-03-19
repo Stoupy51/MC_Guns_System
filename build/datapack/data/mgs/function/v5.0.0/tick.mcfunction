@@ -4,6 +4,9 @@
 # @within	mgs:v5.0.0/load/tick_verification
 #
 
+# Infinitely incrementing tick counter for general timing purposes
+scoreboard players add #total_tick mgs.data 1
+
 # Player loop
 execute as @e[type=player,sort=random] at @s run function mgs:v5.0.0/player/tick
 
