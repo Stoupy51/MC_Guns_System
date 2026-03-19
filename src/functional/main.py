@@ -65,6 +65,9 @@ scoreboard objectives add {ns}.reserve_ammo dummy
 # Tracks the room acoustics level for crack sound effects
 scoreboard objectives add {ns}.acoustics_level dummy
 
+# Tracks how much time has passed since the player last saw a muzzle flash
+scoreboard objectives add {ns}.last_muzzle_flash dummy
+
 ## Global configuration scoreboards (admin/server-level)
 # RPG explosion power (0 = no block destruction, higher = more destruction)
 scoreboard objectives add {ns}.config dummy
@@ -109,6 +112,9 @@ execute unless score #damage_debug {ns}.config matches -2147483648.. run scorebo
     # Write to tick file
     write_tick_file(
 f"""
+# Infinitely incrementing tick counter for general timing purposes
+scoreboard players add #total_tick {ns}.data 1
+
 # Player loop
 execute as @e[type=player,sort=random] at @s run function {ns}:v{version}/player/tick
 """)

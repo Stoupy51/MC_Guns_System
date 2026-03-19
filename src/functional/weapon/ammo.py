@@ -292,14 +292,18 @@ execute if score @s {ns}.{REMAINING_BULLETS} >= #capacity {ns}.data run return f
 
 # Check if magazines are available (without consuming them)
 scoreboard players set @s {ns}.cooldown 5
+scoreboard players operation @s {ns}.cooldown += #total_tick {ns}.data
 execute unless data storage {ns}:config no_magazine store success score #success {ns}.data run function {ns}:v{version}/ammo/inventory/has_ammo with storage {ns}:gun all.stats
 execute unless data storage {ns}:config no_magazine if score #success {ns}.data matches 0 run return run playsound {ns}:common/empty ambient @s
 
-# Set cooldown to reload duration
+# Set cooldown as expiration tick: get reload duration and apply quick_reload reduction
 execute store result score @s {ns}.cooldown run data get storage {ns}:gun all.stats.{RELOAD_TIME}
 
 # Apply quick reload: reduce cooldown by quick_reload% (e.g. 20 = 20% faster)
 execute if score @s {ns}.special.quick_reload matches 1.. run function {ns}:v{version}/ammo/apply_quick_reload
+
+# Convert to expiration tick
+scoreboard players operation @s {ns}.cooldown += #total_tick {ns}.data
 
 # Force weapon switch animation
 function {ns}:v{version}/switch/force_switch_animation

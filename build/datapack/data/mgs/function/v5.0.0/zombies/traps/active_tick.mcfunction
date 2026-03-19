@@ -33,6 +33,7 @@ execute if score @s mgs.zb.trap.type matches 1 run particle minecraft:electric_s
 # Decrement timer
 scoreboard players remove @s mgs.zb.trap.timer 1
 
-# Check if deactivated
+# Check if deactivated: set cooldown as expiration tick
 execute if score @s mgs.zb.trap.timer matches 0 run scoreboard players operation @s mgs.zb.trap.cd = @s mgs.zb.trap.cd_max
+execute if score @s mgs.zb.trap.timer matches 0 run scoreboard players operation @s mgs.zb.trap.cd += #total_tick mgs.data
 

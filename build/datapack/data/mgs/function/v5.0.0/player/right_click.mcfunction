@@ -18,8 +18,8 @@ scoreboard players remove @s mgs.pending_clicks 1
 # If player stopped right clicking for 3 second, we update the item lore and reserve ammo
 execute if score @s mgs.pending_clicks matches -60 if data storage mgs:gun all.gun run function mgs:v5.0.0/ammo/modify_lore {slot:"weapon.mainhand"}
 
-# Stop here is weapon cooldown OR pending clicks if negative
-execute if score @s mgs.cooldown matches 1.. run return fail
+# Stop here if weapon cooldown OR pending clicks if negative
+execute if score @s mgs.cooldown > #total_tick mgs.data run return fail
 execute if score @s mgs.pending_clicks matches ..-1 run return fail
 
 # Stop if SelectedItem is not a gun or if not enough ammo
@@ -48,8 +48,10 @@ execute if score #fire_mode_is_burst mgs.data matches 1 run scoreboard players a
 
 # Auto mode: allow continuous fire (no blocking)
 
-# Set cooldown (moved here from common.py so semi-auto check happens before cooldown is set)
-execute store result score @s mgs.cooldown run data get storage mgs:gun all.stats.cooldown
+# Set cooldown as expiration tick: end_tick = current_tick + cooldown_duration
+execute store result score #cooldown mgs.data run data get storage mgs:gun all.stats.cooldown
+scoreboard players operation #cooldown mgs.data += #total_tick mgs.data
+scoreboard players operation @s mgs.cooldown = #cooldown mgs.data
 
 # Route to the appropriate firing method (projectile or hitscan)
 function mgs:v5.0.0/player/fire_weapon

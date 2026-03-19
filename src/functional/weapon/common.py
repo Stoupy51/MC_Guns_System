@@ -95,23 +95,17 @@ function {ns}:v{version}/zoom/main
 # Check if switching weapon
 function {ns}:v{version}/switch/main
 
-# Decrease cooldown by 1
-execute if score @s {ns}.cooldown matches 1.. run scoreboard players remove @s {ns}.cooldown 1
-
-# Decrease switch_cooldown by 1 (separate from shooting cooldown)
-execute if score @s {ns}.switch_cooldown matches 1.. run scoreboard players remove @s {ns}.switch_cooldown 1
-
 # Check mid cooldown sound
-execute if score @s {ns}.cooldown matches 1.. if entity @s[tag={ns}.pump_sound] if data storage {ns}:gun all.sounds.pump run function {ns}:v{version}/sound/check/pump
-execute if score @s {ns}.cooldown matches 0 if entity @s[tag={ns}.pump_sound] run tag @s remove {ns}.pump_sound
+execute if score @s {ns}.cooldown > #total_tick {ns}.data if entity @s[tag={ns}.pump_sound] if data storage {ns}:gun all.sounds.pump run function {ns}:v{version}/sound/check/pump
+execute unless score @s {ns}.cooldown > #total_tick {ns}.data if entity @s[tag={ns}.pump_sound] run tag @s remove {ns}.pump_sound
 
 # Check mid reload sound
-execute if score @s {ns}.cooldown matches 1.. if entity @s[tag={ns}.reload_mid_sound] if data storage {ns}:gun all.sounds.playermid run function {ns}:v{version}/sound/check/reload_mid
-execute if score @s {ns}.cooldown matches 0 if entity @s[tag={ns}.reload_mid_sound] run tag @s remove {ns}.reload_mid_sound
+execute if score @s {ns}.cooldown > #total_tick {ns}.data if entity @s[tag={ns}.reload_mid_sound] if data storage {ns}:gun all.sounds.playermid run function {ns}:v{version}/sound/check/reload_mid
+execute unless score @s {ns}.cooldown > #total_tick {ns}.data if entity @s[tag={ns}.reload_mid_sound] run tag @s remove {ns}.reload_mid_sound
 
 # Check if we need to play reload end sound
-execute if score @s {ns}.cooldown matches 1.. if data storage {ns}:gun all.sounds.playerend run function {ns}:v{version}/sound/check/reload_end
-execute if score @s {ns}.cooldown matches 0 if entity @s[tag={ns}.reloading] run function {ns}:v{version}/ammo/end_reload
+execute if score @s {ns}.cooldown > #total_tick {ns}.data if data storage {ns}:gun all.sounds.playerend run function {ns}:v{version}/sound/check/reload_end
+execute unless score @s {ns}.cooldown > #total_tick {ns}.data if entity @s[tag={ns}.reloading] run function {ns}:v{version}/ammo/end_reload
 
 # If pending clicks, run right click function
 execute if score @s {ns}.pending_clicks matches -100.. run function {ns}:v{version}/player/right_click
@@ -148,8 +142,8 @@ scoreboard players remove @s {ns}.pending_clicks 1
 # If player stopped right clicking for 3 second, we update the item lore and reserve ammo
 execute if score @s {ns}.pending_clicks matches -60 if data storage {ns}:gun all.gun run function {ns}:v{version}/ammo/modify_lore {{slot:"weapon.mainhand"}}
 
-# Stop here is weapon cooldown OR pending clicks if negative
-execute if score @s {ns}.cooldown matches 1.. run return fail
+# Stop here if weapon cooldown OR pending clicks if negative
+execute if score @s {ns}.cooldown > #total_tick {ns}.data run return fail
 execute if score @s {ns}.pending_clicks matches ..-1 run return fail
 
 # Stop if SelectedItem is not a gun or if not enough ammo

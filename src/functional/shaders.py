@@ -1067,6 +1067,12 @@ def main() -> None:
 execute unless data storage mgs:gun all.stats.grenade_type at @s anchored eyes positioned ^ ^ ^0.001 as @a[distance=..16] run function {ns}:v{version}/player/apply_flash_if_can_see
 """)
     write_versioned_function("player/apply_flash_if_can_see", f"""
+# Stop if player saw flash less than 3 ticks ago (allowing previous flash to expire)
+execute if score @s {ns}.last_muzzle_flash > #total_tick {ns}.data run return 0
+scoreboard players set @s {ns}.last_muzzle_flash 3
+scoreboard players operation @s {ns}.last_muzzle_flash += #total_tick {ns}.data
+
+# Check line of sight to flash position and set #can_see accordingly (score 0 or 1).
 scoreboard players set #can_see {ns}.data 0
 execute if entity @s[tag={ns}.ticking] run scoreboard players set #can_see {ns}.data 1
 execute if score #can_see {ns}.data matches 0 store result score #can_see {ns}.data run function #bs.view:can_see_ata {{with:{{}}}}

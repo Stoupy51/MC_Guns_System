@@ -118,7 +118,7 @@ execute store result score #trap_id {ns}.data run scoreboard players get @n[tag=
 
 # Check if trap is ready (not active, not on cooldown)
 scoreboard players set #trap_ready {ns}.data 0
-execute as @e[tag={ns}.trap_center] if score @s {ns}.zb.trap.id = #trap_id {ns}.data if score @s {ns}.zb.trap.timer matches 0 if score @s {ns}.zb.trap.cd matches 0 run scoreboard players set #trap_ready {ns}.data 1
+execute as @e[tag={ns}.trap_center] if score @s {ns}.zb.trap.id = #trap_id {ns}.data if score @s {ns}.zb.trap.timer matches 0 unless score @s {ns}.zb.trap.cd > #total_tick {ns}.data run scoreboard players set #trap_ready {ns}.data 1
 execute unless score #trap_ready {ns}.data matches 1 run return run function {ns}:v{version}/zombies/traps/deny_not_ready
 
 # Check price
@@ -180,8 +180,9 @@ execute if score @s {ns}.zb.trap.type matches 1 run particle minecraft:electric_
 # Decrement timer
 scoreboard players remove @s {ns}.zb.trap.timer 1
 
-# Check if deactivated
+# Check if deactivated: set cooldown as expiration tick
 execute if score @s {ns}.zb.trap.timer matches 0 run scoreboard players operation @s {ns}.zb.trap.cd = @s {ns}.zb.trap.cd_max
+execute if score @s {ns}.zb.trap.timer matches 0 run scoreboard players operation @s {ns}.zb.trap.cd += #total_tick {ns}.data
 """)
 
 	write_versioned_function("zombies/traps/damage_fire", f"""
@@ -204,8 +205,7 @@ function #smithed.actionbar:message
 # Trap active tick (damage + timer)
 execute as @e[tag={ns}.trap_center,scores={{{ns}.zb.trap.timer=1..}}] at @s run function {ns}:v{version}/zombies/traps/active_tick
 
-# Trap cooldown tick
-execute as @e[tag={ns}.trap_center,scores={{{ns}.zb.trap.cd=1..}}] run scoreboard players remove @s {ns}.zb.trap.cd 1
+# Trap cooldown uses expiration tick comparison (no per-tick decrements needed)
 """)
 
 	## Hook into preload_complete: setup traps

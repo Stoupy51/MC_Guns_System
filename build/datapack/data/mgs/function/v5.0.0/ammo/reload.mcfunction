@@ -14,14 +14,18 @@ execute if score @s mgs.remaining_bullets >= #capacity mgs.data run return fail
 
 # Check if magazines are available (without consuming them)
 scoreboard players set @s mgs.cooldown 5
+scoreboard players operation @s mgs.cooldown += #total_tick mgs.data
 execute unless data storage mgs:config no_magazine store success score #success mgs.data run function mgs:v5.0.0/ammo/inventory/has_ammo with storage mgs:gun all.stats
 execute unless data storage mgs:config no_magazine if score #success mgs.data matches 0 run return run playsound mgs:common/empty ambient @s
 
-# Set cooldown to reload duration
+# Set cooldown as expiration tick: get reload duration and apply quick_reload reduction
 execute store result score @s mgs.cooldown run data get storage mgs:gun all.stats.reload_time
 
 # Apply quick reload: reduce cooldown by quick_reload% (e.g. 20 = 20% faster)
 execute if score @s mgs.special.quick_reload matches 1.. run function mgs:v5.0.0/ammo/apply_quick_reload
+
+# Convert to expiration tick
+scoreboard players operation @s mgs.cooldown += #total_tick mgs.data
 
 # Force weapon switch animation
 function mgs:v5.0.0/switch/force_switch_animation

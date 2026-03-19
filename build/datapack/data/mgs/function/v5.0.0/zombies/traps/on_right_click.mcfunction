@@ -16,7 +16,7 @@ execute store result score #trap_id mgs.data run scoreboard players get @n[tag=b
 
 # Check if trap is ready (not active, not on cooldown)
 scoreboard players set #trap_ready mgs.data 0
-execute as @e[tag=mgs.trap_center] if score @s mgs.zb.trap.id = #trap_id mgs.data if score @s mgs.zb.trap.timer matches 0 if score @s mgs.zb.trap.cd matches 0 run scoreboard players set #trap_ready mgs.data 1
+execute as @e[tag=mgs.trap_center] if score @s mgs.zb.trap.id = #trap_id mgs.data if score @s mgs.zb.trap.timer matches 0 unless score @s mgs.zb.trap.cd > #total_tick mgs.data run scoreboard players set #trap_ready mgs.data 1
 execute unless score #trap_ready mgs.data matches 1 run return run function mgs:v5.0.0/zombies/traps/deny_not_ready
 
 # Check price
