@@ -326,11 +326,10 @@ scoreboard players operation #dist_sq {ns}.data *= #exit_x {ns}.data
 scoreboard players operation #exit_z {ns}.data *= #exit_z {ns}.data
 scoreboard players operation #dist_sq {ns}.data += #exit_z {ns}.data
 
-# Get sqrt: https://docs.mcbookshelf.dev/en/latest/modules/math/#square-root
-data modify storage bs:in math.sqrt.x set value 0
-execute store result storage bs:in math.sqrt.x float 0.000001 run scoreboard players get #dist_sq {ns}.data
-function #bs.math:sqrt
-execute store result score #distance {ns}.data run data get storage bs:out math.sqrt 1000
+# Get integer square root: https://docs.mcbookshelf.dev/en/latest/modules/math/#square-root
+scoreboard players operation $math.isqrt.x bs.in = #dist_sq {ns}.data
+function #bs.math:isqrt
+scoreboard players operation #distance {ns}.data = $math.isqrt bs.out
 
 # Clamp distance to 500 (0.5 block)
 execute if score #distance {ns}.data matches 501.. run scoreboard players set #distance {ns}.data 500
