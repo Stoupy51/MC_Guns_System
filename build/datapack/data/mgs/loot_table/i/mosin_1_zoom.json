@@ -14,7 +14,7 @@
 								"minecraft:custom_data": {
 									"mgs": {
 										"gun": true,
-										"stats": {"base_weapon": "mosin","fire_mode": "semi","capacity": 5,"reload_time": 20,"reload_mid": 15,"cooldown": 40,"damage": 29,"decay": 0.95,"acc_base": 150,"acc_sneak": 3,"acc_walk": 175,"acc_sprint": 1000,"acc_jump": 1500,"switch": 25,"kick": 4,"casing_model": "mgs:762x54mm","casing_n": 100,"casing_t": -50,"casing_b": -100,"casing_offset": {"normal": [-0.35,-0.2,0.6],"zoom": [-0.05,-0.2,0.4]},"models": {"normal": "mgs:mosin_1","zoom": "mgs:mosin_1_zoom"},"remaining_bullets": 5},
+										"stats": {"base_weapon": "mosin","fire_mode": "semi","capacity": 5,"reload_time": 20,"reload_mid": 15,"cooldown": 40,"damage": 29,"decay": 0.95,"acc_base": 150,"acc_sneak": 3,"acc_walk": 175,"acc_sprint": 1000,"acc_jump": 1500,"switch": 25,"kick": 4,"casing_model": "mgs:762x54mm","casing_n": 100,"casing_t": -50,"casing_b": -100,"casing_offset": {"normal": [-0.35,-0.2,0.6],"zoom": [-0.05,-0.2,0.4]},"pap_stats": {"pap_name": "Marksmen's Old Silent Infantry","capacity": 7,"remaining_bullets": 7,"reload_time": 14,"reload_mid": 10,"cooldown": 28,"acc_base": 110,"acc_walk": 130,"acc_sprint": 700,"acc_jump": 1200,"switch": 18,"damage": [42,52,64,78,95]},"models": {"normal": "mgs:mosin_1","zoom": "mgs:mosin_1_zoom"},"remaining_bullets": 5},
 										"sounds": {"fire": "mosin/fire","reload": "mosin/reload","playerbegin": "mosin/playerbegin","playerend": "mosin/playerend","cycle": "mosin/cycle","crack": "large"},
 										"mosin_1_zoom": true
 									},
