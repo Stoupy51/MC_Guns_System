@@ -1,7 +1,7 @@
 
 # Imports
 import json
-from typing import Any
+from typing import Any, cast
 
 import stouputils as stp
 from stewbeet import Item, JsonDict, Mem
@@ -164,8 +164,79 @@ MODELS: str = "models"
 IS_ZOOM: str = "is_zoom"
 """ Indicates whether the weapon is currently in zoom mode """
 WEAPON_ID: str = "weapon_id"
-""" Dynamique unique identifier assigned to each weapon item when selected from the hotbar.
+""" Dynamic unique identifier assigned to each weapon item when selected from the hotbar.
 Used to track weapon switching and manage weapon-specific systems and states."""
+PAP_STATS: str = "pap_stats"
+""" Pack-a-Punch stat overrides applied when a weapon is upgraded.
+Any PAP stat value can be a scalar or a list. Scalars are treated like a list with one value. """
+PAP_NAME: str = "pap_name"
+""" Optional Pack-a-Punch display name entry inside PAP_STATS.
+Can be a scalar string or a list of strings (one per PAP level). """
+
+
+def get_pap_max_level(weapon_stats: JsonDict) -> int:
+    """ Return max PAP level based on the longest PAP stat list for this weapon. """
+    pap_stats_any: Any = weapon_stats.get(PAP_STATS)
+    if not isinstance(pap_stats_any, dict) or not pap_stats_any:
+        return 0
+    pap_stats = cast(dict[str, Any], pap_stats_any)
+
+    max_level: int = 0
+    for value in pap_stats.values():
+        if isinstance(value, (list, tuple)):
+            pap_values = cast(list[Any] | tuple[Any, ...], value)
+            max_level = max(max_level, len(pap_values))
+        else:
+            max_level = max(max_level, 1)
+    return max_level
+
+
+def resolve_pap_overrides(weapon_stats: JsonDict, pap_level: int) -> JsonDict:
+    """ Resolve PAP overrides for a given level.
+
+    For list values, this clamps to the last value when pap_level exceeds list length.
+    For scalar values, the same value is used at every PAP level.
+    """
+    pap_stats_any: Any = weapon_stats.get(PAP_STATS)
+    if not isinstance(pap_stats_any, dict) or pap_level <= 0:
+        return {}
+    pap_stats = cast(dict[str, Any], pap_stats_any)
+
+    resolved: JsonDict = {}
+    value_index: int = pap_level - 1
+    for stat_key, value in pap_stats.items():
+        if isinstance(value, (list, tuple)):
+            pap_values = cast(list[Any] | tuple[Any, ...], value)
+            if not pap_values:
+                continue
+            resolved[stat_key] = pap_values[min(value_index, len(pap_values) - 1)]
+        else:
+            resolved[stat_key] = value
+    return resolved
+
+
+def resolve_pap_name(weapon_stats: JsonDict, pap_level: int, default_name: str) -> str:
+    """ Resolve PAP display name for a given level.
+
+    Reads PAP_STATS[PAP_NAME] as scalar or list and clamps list indexing to the last value.
+    Falls back to default_name when PAP name is missing or invalid.
+    """
+    pap_stats_any: Any = weapon_stats.get(PAP_STATS)
+    if not isinstance(pap_stats_any, dict) or pap_level <= 0:
+        return default_name
+    pap_stats = cast(dict[str, Any], pap_stats_any)
+
+    pap_name: Any = pap_stats.get(PAP_NAME)
+    if isinstance(pap_name, str):
+        return pap_name
+    if isinstance(pap_name, (list, tuple)):
+        pap_names = cast(list[Any] | tuple[Any, ...], pap_name)
+        if not pap_names:
+            return default_name
+        idx: int = min(pap_level - 1, len(pap_names) - 1)
+        picked = pap_names[idx]
+        return picked if isinstance(picked, str) else default_name
+    return default_name
 
 
 
@@ -196,6 +267,19 @@ M16A4: JsonDict = {
         ACCURACY_BASE: 100, ACCURACY_SNEAK: 7, ACCURACY_WALK: 450, ACCURACY_SPRINT: 1000, ACCURACY_JUMP: 1500,
         SWITCH: 20, KICK: 2, CASING_MODEL: CASING_556X45MM, CASING_NORMAL: 150, CASING_TANGENT: -75, CASING_BINORMAL: -200,
         CASING_OFFSET: {"normal": (-0.4, -0.35, 0.7), "zoom": (-0.05, -0.25, 0.5)},
+        PAP_STATS: {
+            PAP_NAME: "Skullpiercer",
+            CAPACITY: 40,
+            REMAINING_BULLETS: 40,
+            RELOAD_TIME: 50,
+            RELOAD_END: 8,
+            ACCURACY_BASE: 85,
+            ACCURACY_WALK: 360,
+            ACCURACY_SPRINT: 850,
+            ACCURACY_JUMP: 1200,
+            SWITCH: 16,
+            DAMAGE: [16, 19, 23, 27, 32],
+        },
     },
     "sounds": {
         "fire": "m16a4/fire",
@@ -213,6 +297,19 @@ AK47: JsonDict = {
         ACCURACY_BASE: 150, ACCURACY_SNEAK: 20, ACCURACY_WALK: 500, ACCURACY_SPRINT: 1500, ACCURACY_JUMP: 1800,
         SWITCH: 25, KICK: 2, CASING_MODEL: CASING_762X39MM, CASING_NORMAL: 200, CASING_TANGENT: 50, CASING_BINORMAL: -200,
         CASING_OFFSET: {"normal": (-0.35, -0.3, 0.7), "zoom": (-0.05, -0.25, 0.5)},
+        PAP_STATS: {
+            PAP_NAME: "Reznov's Revenge",
+            CAPACITY: 40,
+            REMAINING_BULLETS: 40,
+            RELOAD_TIME: 58,
+            RELOAD_END: 8,
+            ACCURACY_BASE: 120,
+            ACCURACY_WALK: 420,
+            ACCURACY_SPRINT: 1000,
+            ACCURACY_JUMP: 1500,
+            SWITCH: 20,
+            DAMAGE: [17, 21, 25, 30, 35],
+        },
     },
     "sounds": {
         "fire": "ak47/fire",
@@ -230,6 +327,20 @@ FNFAL: JsonDict = {
         ACCURACY_BASE: 200, ACCURACY_SNEAK: 10, ACCURACY_WALK: 600, ACCURACY_SPRINT: 1800, ACCURACY_JUMP: 2500,
         SWITCH: 35, KICK: 3, CASING_MODEL: CASING_762X51MM, CASING_NORMAL: 125, CASING_TANGENT: 25, CASING_BINORMAL: -200,
         CASING_OFFSET: {"normal": (-0.3, -0.25, 0.7), "zoom": (-0.05, -0.2, 0.5)},
+        PAP_STATS: {
+            PAP_NAME: "WN",
+            CAPACITY: 30,
+            REMAINING_BULLETS: 30,
+            RELOAD_TIME: 65,
+            RELOAD_END: 14,
+            COOLDOWN: 2,
+            ACCURACY_BASE: 140,
+            ACCURACY_WALK: 460,
+            ACCURACY_SPRINT: 1200,
+            ACCURACY_JUMP: 1500,
+            SWITCH: 28,
+            DAMAGE: [24, 29, 35, 42, 50],
+        },
     },
     "sounds": {
         "fire": "fnfal/fire",
@@ -247,6 +358,20 @@ AUG: JsonDict = {
         ACCURACY_BASE: 100, ACCURACY_SNEAK: 12, ACCURACY_WALK: 350, ACCURACY_SPRINT: 800, ACCURACY_JUMP: 1200,
         SWITCH: 15, KICK: 2, CASING_MODEL: CASING_556X45MM, CASING_NORMAL: 125, CASING_TANGENT: -100, CASING_BINORMAL: -125,
         CASING_OFFSET: {"normal": (-0.45, -0.4, 0.4), "zoom": (-0.05, -0.3, 0.3)},
+        PAP_STATS: {
+            PAP_NAME: "AUG-50M3",
+            CAPACITY: 42,
+            REMAINING_BULLETS: 42,
+            RELOAD_TIME: 60,
+            RELOAD_MID: 30,
+            RELOAD_END: 8,
+            ACCURACY_BASE: 80,
+            ACCURACY_WALK: 260,
+            ACCURACY_SPRINT: 650,
+            ACCURACY_JUMP: 1000,
+            SWITCH: 12,
+            DAMAGE: [15, 19, 23, 28, 33],
+        },
     },
     "sounds": {
         "fire": "aug/fire",
@@ -265,6 +390,19 @@ M4A1: JsonDict = {
         ACCURACY_BASE: 110, ACCURACY_SNEAK: 15, ACCURACY_WALK: 400, ACCURACY_SPRINT: 900, ACCURACY_JUMP: 1400,
         SWITCH: 17, KICK: 2, CASING_MODEL: CASING_556X45MM, CASING_NORMAL: 150, CASING_TANGENT: -75, CASING_BINORMAL: -200,
         CASING_OFFSET: {"normal": (-0.4, -0.35, 0.7), "zoom": (-0.05, -0.25, 0.5)},
+        PAP_STATS: {
+            PAP_NAME: "M4A1 Mk II",
+            CAPACITY: 42,
+            REMAINING_BULLETS: 42,
+            RELOAD_TIME: 42,
+            RELOAD_END: 10,
+            ACCURACY_BASE: 90,
+            ACCURACY_WALK: 320,
+            ACCURACY_SPRINT: 760,
+            ACCURACY_JUMP: 1200,
+            SWITCH: 14,
+            DAMAGE: [15, 18, 22, 27, 32],
+        },
     },
     "sounds": {
         "fire": "m4a1/fire",
@@ -282,6 +420,20 @@ G3A3: JsonDict = {
         ACCURACY_BASE: 180, ACCURACY_SNEAK: 6, ACCURACY_WALK: 600, ACCURACY_SPRINT: 1800, ACCURACY_JUMP: 2500,
         SWITCH: 30, KICK: 3, CASING_MODEL: CASING_762X51MM, CASING_NORMAL: 200, CASING_TANGENT: 100, CASING_BINORMAL: -300,
         CASING_OFFSET: {"normal": (-0.32, -0.3, 0.7), "zoom": (-0.05, -0.25, 0.5)},
+        PAP_STATS: {
+            PAP_NAME: "G3A3 Mk II",
+            CAPACITY: 30,
+            REMAINING_BULLETS: 30,
+            RELOAD_TIME: 62,
+            RELOAD_END: 12,
+            COOLDOWN: 2,
+            ACCURACY_BASE: 130,
+            ACCURACY_WALK: 450,
+            ACCURACY_SPRINT: 1200,
+            ACCURACY_JUMP: 1800,
+            SWITCH: 24,
+            DAMAGE: [22, 27, 33, 40, 48],
+        },
     },
     "sounds": {
         "fire": "g3a3/fire",
@@ -299,6 +451,20 @@ FAMAS: JsonDict = {
         ACCURACY_BASE: 110, ACCURACY_SNEAK: 15, ACCURACY_WALK: 400, ACCURACY_SPRINT: 900, ACCURACY_JUMP: 1400,
         SWITCH: 13, KICK: 2, CASING_MODEL: CASING_556X45MM, CASING_NORMAL: 150, CASING_TANGENT: -150, CASING_BINORMAL: -225,
         CASING_OFFSET: {"normal": (-0.45, -0.35, 0.3), "zoom": (-0.05, -0.3, 0.3)},
+        PAP_STATS: {
+            PAP_NAME: "G16-GL35",
+            CAPACITY: 38,
+            REMAINING_BULLETS: 38,
+            RELOAD_TIME: 60,
+            RELOAD_MID: 28,
+            RELOAD_END: 8,
+            ACCURACY_BASE: 90,
+            ACCURACY_WALK: 300,
+            ACCURACY_SPRINT: 700,
+            ACCURACY_JUMP: 1200,
+            SWITCH: 10,
+            DAMAGE: [15, 19, 23, 28, 34],
+        },
     },
     "sounds": {
         "fire": "famas/fire",
@@ -317,6 +483,20 @@ SCAR17: JsonDict = {
         ACCURACY_BASE: 140, ACCURACY_SNEAK: 5, ACCURACY_WALK: 500, ACCURACY_SPRINT: 1500, ACCURACY_JUMP: 2300,
         SWITCH: 30, KICK: 3, CASING_MODEL: CASING_762X51MM, CASING_NORMAL: 50, CASING_TANGENT: -75, CASING_BINORMAL: -300,
         CASING_OFFSET: {"normal": (-0.32, -0.3, 0.7), "zoom": (-0.05, -0.25, 0.5)},
+        PAP_STATS: {
+            PAP_NAME: "Agarthan Reaper",
+            CAPACITY: 30,
+            REMAINING_BULLETS: 30,
+            RELOAD_TIME: 48,
+            RELOAD_END: 10,
+            COOLDOWN: 2,
+            ACCURACY_BASE: 110,
+            ACCURACY_WALK: 380,
+            ACCURACY_SPRINT: 1000,
+            ACCURACY_JUMP: 1500,
+            SWITCH: 24,
+            DAMAGE: [21, 26, 32, 39, 47],
+        },
     },
     "sounds": {
         "fire": "scar17/fire",
@@ -335,6 +515,18 @@ M1911: JsonDict = {
         ACCURACY_BASE: 165, ACCURACY_SNEAK: 105, ACCURACY_WALK: 250, ACCURACY_SPRINT: 450, ACCURACY_JUMP: 800,
         SWITCH: 10, KICK: 4, CASING_MODEL: CASING_45ACP, CASING_NORMAL: 250, CASING_TANGENT: 0, CASING_BINORMAL: -150,
         CASING_OFFSET: {"normal": (-0.33, -0.25, 0.5), "zoom": (-0.05, -0.05, 0.4)},
+        PAP_STATS: {
+            PAP_NAME: "Mustang and Sally",
+            CAPACITY: 12,
+            REMAINING_BULLETS: 12,
+            RELOAD_TIME: 32,
+            RELOAD_END: 8,
+            ACCURACY_BASE: 120,
+            ACCURACY_WALK: 190,
+            ACCURACY_SPRINT: 340,
+            SWITCH: 8,
+            DAMAGE: [14, 18, 23, 29, 36],
+        },
     },
     "sounds": {
         "fire": "m1911/fire",
@@ -352,6 +544,19 @@ M9: JsonDict = {
         ACCURACY_BASE: 130, ACCURACY_SNEAK: 75, ACCURACY_WALK: 160, ACCURACY_SPRINT: 400, ACCURACY_JUMP: 800,
         SWITCH: 10, KICK: 3, CASING_MODEL: CASING_9X19MM, CASING_NORMAL: 100, CASING_TANGENT: -75, CASING_BINORMAL: -150,
         CASING_OFFSET: {"normal": (-0.35, -0.25, 0.5), "zoom": (-0.05, -0.1, 0.4)},
+        PAP_STATS: {
+            PAP_NAME: "Beretta M9",
+            CAPACITY: 21,
+            REMAINING_BULLETS: 21,
+            RELOAD_TIME: 45,
+            RELOAD_END: 10,
+            ACCURACY_BASE: 100,
+            ACCURACY_WALK: 130,
+            ACCURACY_SPRINT: 300,
+            ACCURACY_JUMP: 600,
+            SWITCH: 8,
+            DAMAGE: [12, 15, 19, 24, 30],
+        },
     },
     "sounds": {
         "fire": "m9/fire",
@@ -369,6 +574,20 @@ DEAGLE: JsonDict = {
         ACCURACY_BASE: 220, ACCURACY_SNEAK: 50, ACCURACY_WALK: 400, ACCURACY_SPRINT: 1000, ACCURACY_JUMP: 2000,
         SWITCH: 15, KICK: 5, CASING_MODEL: CASING_50AE, CASING_NORMAL: 250, CASING_TANGENT: -75, CASING_BINORMAL: -100,
         CASING_OFFSET: {"normal": (-0.3, -0.2, 0.5), "zoom": (-0.05, -0.05, 0.4)},
+        PAP_STATS: {
+            PAP_NAME: "Space Eagle",
+            CAPACITY: 10,
+            REMAINING_BULLETS: 10,
+            RELOAD_TIME: 55,
+            RELOAD_END: 10,
+            COOLDOWN: 2,
+            ACCURACY_BASE: 170,
+            ACCURACY_WALK: 280,
+            ACCURACY_SPRINT: 650,
+            ACCURACY_JUMP: 1200,
+            SWITCH: 12,
+            DAMAGE: [22, 28, 35, 43, 52],
+        },
     },
     "sounds": {
         "fire": "deagle/fire",
@@ -386,6 +605,19 @@ MAKAROV: JsonDict = {
         ACCURACY_BASE: 120, ACCURACY_SNEAK: 65, ACCURACY_WALK: 130, ACCURACY_SPRINT: 350, ACCURACY_JUMP: 800,
         SWITCH: 8, KICK: 2, CASING_MODEL: CASING_9X18MM, CASING_NORMAL: 250, CASING_TANGENT: -100, CASING_BINORMAL: -75,
         CASING_OFFSET: {"normal": (-0.3, -0.25, 0.5), "zoom": (-0.05, -0.05, 0.4)},
+        PAP_STATS: {
+            PAP_NAME: "Mak-A-Roar",
+            CAPACITY: 12,
+            REMAINING_BULLETS: 12,
+            RELOAD_TIME: 30,
+            RELOAD_END: 8,
+            ACCURACY_BASE: 95,
+            ACCURACY_WALK: 105,
+            ACCURACY_SPRINT: 250,
+            ACCURACY_JUMP: 500,
+            SWITCH: 6,
+            DAMAGE: [12, 15, 19, 24, 30],
+        },
     },
     "sounds": {
         "fire": "makarov/fire",
@@ -403,6 +635,19 @@ GLOCK17: JsonDict = {
         ACCURACY_BASE: 150, ACCURACY_SNEAK: 90, ACCURACY_WALK: 170, ACCURACY_SPRINT: 400, ACCURACY_JUMP: 800,
         SWITCH: 8, KICK: 3, CASING_MODEL: CASING_9X19MM, CASING_NORMAL: 225, CASING_TANGENT: -100, CASING_BINORMAL: -75,
         CASING_OFFSET: {"normal": (-0.35, -0.27, 0.5), "zoom": (-0.05, 0.0, 0.4)},
+        PAP_STATS: {
+            PAP_NAME: "Glock 'n' Load",
+            CAPACITY: 24,
+            REMAINING_BULLETS: 24,
+            RELOAD_TIME: 44,
+            RELOAD_END: 10,
+            ACCURACY_BASE: 110,
+            ACCURACY_WALK: 130,
+            ACCURACY_SPRINT: 280,
+            ACCURACY_JUMP: 500,
+            SWITCH: 6,
+            DAMAGE: [12, 15, 19, 24, 30],
+        },
     },
     "sounds": {
         "fire": "glock17/fire",
@@ -420,6 +665,19 @@ GLOCK18: JsonDict = {
         ACCURACY_BASE: 180, ACCURACY_SNEAK: 140, ACCURACY_WALK: 300, ACCURACY_SPRINT: 400, ACCURACY_JUMP: 800,
         SWITCH: 10, KICK: 3, CASING_MODEL: CASING_9X19MM, CASING_NORMAL: 225, CASING_TANGENT: -100, CASING_BINORMAL: -75,
         CASING_OFFSET: {"normal": (-0.35, -0.27, 0.5), "zoom": (-0.05, 0.0, 0.4)},
+        PAP_STATS: {
+            PAP_NAME: "The Panic Button",
+            CAPACITY: 28,
+            REMAINING_BULLETS: 28,
+            RELOAD_TIME: 52,
+            RELOAD_END: 10,
+            ACCURACY_BASE: 130,
+            ACCURACY_WALK: 220,
+            ACCURACY_SPRINT: 280,
+            ACCURACY_JUMP: 500,
+            SWITCH: 8,
+            DAMAGE: [11, 14, 18, 23, 29],
+        },
     },
     "sounds": {
         "fire": "glock18/fire",
@@ -437,6 +695,20 @@ VZ61: JsonDict = {
         ACCURACY_BASE: 150, ACCURACY_SNEAK: 80, ACCURACY_WALK: 290, ACCURACY_SPRINT: 400, ACCURACY_JUMP: 800,
         SWITCH: 12, KICK: 2, CASING_MODEL: CASING_32ACP, CASING_NORMAL: 300, CASING_TANGENT: 25, CASING_BINORMAL: 0,
         CASING_OFFSET: {"normal": (-0.23, -0.1, 0.5), "zoom": (0, 0.05, 0.4)},
+        PAP_STATS: {
+            PAP_NAME: "Skorpitron",
+            CAPACITY: 28,
+            REMAINING_BULLETS: 28,
+            RELOAD_TIME: 52,
+            RELOAD_END: 10,
+            COOLDOWN: 1,
+            ACCURACY_BASE: 120,
+            ACCURACY_WALK: 210,
+            ACCURACY_SPRINT: 280,
+            ACCURACY_JUMP: 500,
+            SWITCH: 8,
+            DAMAGE: [10, 13, 17, 22, 28],
+        },
     },
     "sounds": {
         "fire": "vz61/fire",
@@ -455,6 +727,22 @@ RAY_GUN: JsonDict = {
         SWITCH: 12, KICK: 5,
         PROJECTILE_SPEED: 3000, PROJECTILE_GRAVITY: 0, PROJECTILE_LIFETIME: 200, PROJECTILE_MODEL: "ray_gun",
         EXPLOSION_RADIUS: 3.5, EXPLOSION_DAMAGE: 32, EXPLOSION_DECAY: 0.80,
+        PAP_STATS: {
+            PAP_NAME: "Porter's X2 Ray Gun",
+            CAPACITY: 30,
+            REMAINING_BULLETS: 30,
+            RELOAD_TIME: 45,
+            RELOAD_END: 10,
+            COOLDOWN: 9,
+            ACCURACY_BASE: 110,
+            ACCURACY_WALK: 210,
+            ACCURACY_SPRINT: 280,
+            ACCURACY_JUMP: 500,
+            SWITCH: 9,
+            PROJECTILE_SPEED: 3400,
+            EXPLOSION_DAMAGE: 40,
+            DAMAGE: [30, 38, 48, 60, 74],
+        },
     },
     "sounds": {
         "fire": "ray_gun/fire",
@@ -473,6 +761,21 @@ MP5: JsonDict = {
         ACCURACY_BASE: 100, ACCURACY_SNEAK: 60, ACCURACY_WALK: 200, ACCURACY_SPRINT: 450, ACCURACY_JUMP: 1000,
         SWITCH: 15, KICK: 1, CASING_MODEL: CASING_9X19MM, CASING_NORMAL: 225, CASING_TANGENT: 10, CASING_BINORMAL: -275,
         CASING_OFFSET: {"normal": (-0.38, -0.35, 0.7), "zoom": (-0.05, -0.25, 0.5)},
+        PAP_STATS: {
+            PAP_NAME: "MP115 Kollider",
+            CAPACITY: 42,
+            REMAINING_BULLETS: 42,
+            RELOAD_TIME: 45,
+            RELOAD_MID: 20,
+            RELOAD_END: 4,
+            COOLDOWN: 1,
+            ACCURACY_BASE: 80,
+            ACCURACY_WALK: 150,
+            ACCURACY_SPRINT: 320,
+            ACCURACY_JUMP: 500,
+            SWITCH: 11,
+            DAMAGE: [12, 15, 19, 24, 30],
+        },
     },
     "sounds": {
         "fire": "mp5/fire",
@@ -491,6 +794,20 @@ MAC10: JsonDict = {
         ACCURACY_BASE: 220, ACCURACY_SNEAK: 150, ACCURACY_WALK: 330, ACCURACY_SPRINT: 400, ACCURACY_JUMP: 800,
         SWITCH: 10, KICK: 2, CASING_MODEL: CASING_45ACP, CASING_NORMAL: 125, CASING_TANGENT: -25, CASING_BINORMAL: -175,
         CASING_OFFSET: {"normal": (-0.4, -0.35, 0.7), "zoom": (-0.05, -0.25, 0.5)},
+        PAP_STATS: {
+            PAP_NAME: "Mac Attack",
+            CAPACITY: 45,
+            REMAINING_BULLETS: 45,
+            RELOAD_TIME: 40,
+            RELOAD_MID: 28,
+            RELOAD_END: 8,
+            ACCURACY_BASE: 165,
+            ACCURACY_WALK: 250,
+            ACCURACY_SPRINT: 300,
+            ACCURACY_JUMP: 500,
+            SWITCH: 8,
+            DAMAGE: [13, 16, 20, 25, 31],
+        },
     },
     "sounds": {
         "fire": "mac10/fire",
@@ -509,6 +826,20 @@ MP7: JsonDict = {
         ACCURACY_BASE: 150, ACCURACY_SNEAK: 50, ACCURACY_WALK: 250, ACCURACY_SPRINT: 480, ACCURACY_JUMP: 1500,
         SWITCH: 20, KICK: 2, CASING_MODEL: CASING_46X30MM, CASING_NORMAL: 10, CASING_TANGENT: -50, CASING_BINORMAL: -275,
         CASING_OFFSET: {"normal": (-0.45, -0.4, 0.7), "zoom": (-0.05, -0.4, 0.5)},
+        PAP_STATS: {
+            PAP_NAME: "MP-Heaven",
+            CAPACITY: 55,
+            REMAINING_BULLETS: 55,
+            RELOAD_TIME: 42,
+            RELOAD_END: 10,
+            COOLDOWN: 1,
+            ACCURACY_BASE: 110,
+            ACCURACY_WALK: 180,
+            ACCURACY_SPRINT: 330,
+            ACCURACY_JUMP: 1200,
+            SWITCH: 14,
+            DAMAGE: [14, 18, 22, 27, 33],
+        },
     },
     "sounds": {
         "fire": "mp7/fire",
@@ -526,6 +857,20 @@ PPSH41: JsonDict = {
         ACCURACY_BASE: 175, ACCURACY_SNEAK: 125, ACCURACY_WALK: 400, ACCURACY_SPRINT: 700, ACCURACY_JUMP: 1500,
         SWITCH: 40, KICK: 2, CASING_MODEL: CASING_762X25MM, CASING_NORMAL: 300, CASING_TANGENT: -50, CASING_BINORMAL: -25,
         CASING_OFFSET: {"normal": (-0.38, -0.2, 0.7), "zoom": (0.0, 0.0, 0.5)},
+        PAP_STATS: {
+            PAP_NAME: "The Reaper",
+            CAPACITY: 90,
+            REMAINING_BULLETS: 90,
+            RELOAD_TIME: 75,
+            RELOAD_MID: 48,
+            RELOAD_END: 12,
+            ACCURACY_BASE: 135,
+            ACCURACY_WALK: 290,
+            ACCURACY_SPRINT: 500,
+            ACCURACY_JUMP: 1200,
+            SWITCH: 30,
+            DAMAGE: [12, 15, 19, 24, 30],
+        },
     },
     "sounds": {
         "fire": "ppsh41/fire",
@@ -544,6 +889,21 @@ STEN: JsonDict = {
         ACCURACY_BASE: 200, ACCURACY_SNEAK: 100, ACCURACY_WALK: 400, ACCURACY_SPRINT: 800, ACCURACY_JUMP: 1500,
         SWITCH: 25, KICK: 3, CASING_MODEL: CASING_9X19MM, CASING_NORMAL: 200, CASING_TANGENT: -50, CASING_BINORMAL: -200,
         CASING_OFFSET: {"normal": (-0.4, -0.35, 0.7), "zoom": (-0.05, -0.25, 0.5)},
+        PAP_STATS: {
+            PAP_NAME: "Sten & Deliver",
+            CAPACITY: 45,
+            REMAINING_BULLETS: 45,
+            RELOAD_TIME: 44,
+            RELOAD_MID: 28,
+            RELOAD_END: 8,
+            COOLDOWN: 2,
+            ACCURACY_BASE: 150,
+            ACCURACY_WALK: 280,
+            ACCURACY_SPRINT: 520,
+            ACCURACY_JUMP: 1200,
+            SWITCH: 18,
+            DAMAGE: [13, 17, 21, 26, 32],
+        },
     },
     "sounds": {
         "fire": "sten/fire",
@@ -563,6 +923,20 @@ SPAS12: JsonDict = {
         ACCURACY_BASE: 230, ACCURACY_SNEAK: 190, ACCURACY_WALK: 300, ACCURACY_SPRINT: 800, ACCURACY_JUMP: 1500,
         SWITCH: 25, KICK: 6, CASING_MODEL: CASING_12GA275IN, CASING_NORMAL: 25, CASING_TANGENT: 100, CASING_BINORMAL: -200,
         CASING_OFFSET: {"normal": (-0.35, -0.3, 0.7), "zoom": (-0.1, -0.3, 0.6)},
+        PAP_STATS: {
+            PAP_NAME: "SPAZ-24",
+            CAPACITY: 12,
+            REMAINING_BULLETS: 12,
+            RELOAD_TIME: 14,
+            COOLDOWN: 12,
+            PELLET_COUNT: 4,
+            ACCURACY_BASE: 170,
+            ACCURACY_WALK: 220,
+            ACCURACY_SPRINT: 550,
+            ACCURACY_JUMP: 1200,
+            SWITCH: 18,
+            DAMAGE: [17, 22, 28, 35, 43],
+        },
     },
     "sounds": {
         "fire": "spas12/fire",
@@ -580,6 +954,20 @@ M500: JsonDict = {
         ACCURACY_BASE: 250, ACCURACY_SNEAK: 200, ACCURACY_WALK: 350, ACCURACY_SPRINT: 900, ACCURACY_JUMP: 1600,
         SWITCH: 20, KICK: 7, CASING_MODEL: CASING_12GA3IN, CASING_NORMAL: 25, CASING_TANGENT: 100, CASING_BINORMAL: -200,
         CASING_OFFSET: {"normal": (-0.35, -0.3, 0.7), "zoom": (-0.1, -0.3, 0.6)},
+        PAP_STATS: {
+            PAP_NAME: "Voice of Justice",
+            CAPACITY: 8,
+            REMAINING_BULLETS: 8,
+            RELOAD_TIME: 16,
+            COOLDOWN: 14,
+            PELLET_COUNT: 4,
+            ACCURACY_BASE: 180,
+            ACCURACY_WALK: 240,
+            ACCURACY_SPRINT: 600,
+            ACCURACY_JUMP: 1200,
+            SWITCH: 15,
+            DAMAGE: [18, 23, 29, 36, 44],
+        },
     },
     "sounds": {
         "fire": "m500/fire",
@@ -596,6 +984,20 @@ M590: JsonDict = {
         ACCURACY_BASE: 210, ACCURACY_SNEAK: 175, ACCURACY_WALK: 325, ACCURACY_SPRINT: 800, ACCURACY_JUMP: 1500,
         SWITCH: 35, KICK: 5, CASING_MODEL: CASING_12GA3IN, CASING_NORMAL: 50, CASING_TANGENT: 80, CASING_BINORMAL: -220,
         CASING_OFFSET: {"normal": (-0.35, -0.27, 0.7), "zoom": (-0.1, -0.25, 0.6)},
+        PAP_STATS: {
+            PAP_NAME: "The Conversation Ender",
+            CAPACITY: 12,
+            REMAINING_BULLETS: 12,
+            RELOAD_TIME: 16,
+            COOLDOWN: 14,
+            PELLET_COUNT: 4,
+            ACCURACY_BASE: 155,
+            ACCURACY_WALK: 220,
+            ACCURACY_SPRINT: 520,
+            ACCURACY_JUMP: 1200,
+            SWITCH: 26,
+            DAMAGE: [18, 23, 29, 36, 44],
+        },
     },
     "sounds": {
         "fire": "m590/fire",
@@ -613,6 +1015,21 @@ SVD: JsonDict = {
         ACCURACY_BASE: 350, ACCURACY_SNEAK: 5, ACCURACY_WALK: 700, ACCURACY_SPRINT: 1500, ACCURACY_JUMP: 3000,
         SWITCH: 40, KICK: 4, CASING_MODEL: CASING_762X54MM, CASING_NORMAL: 150, CASING_TANGENT: -150, CASING_BINORMAL: -175,
         CASING_OFFSET: {"normal": (-0.3, -0.27, 0.7), "zoom": (-0.05, -0.25, 0.5)},
+        PAP_STATS: {
+            PAP_NAME: "Sudden Violence Device",
+            CAPACITY: 14,
+            REMAINING_BULLETS: 14,
+            RELOAD_TIME: 55,
+            RELOAD_MID: 30,
+            RELOAD_END: 8,
+            COOLDOWN: 4,
+            ACCURACY_BASE: 250,
+            ACCURACY_WALK: 450,
+            ACCURACY_SPRINT: 1000,
+            ACCURACY_JUMP: 2000,
+            SWITCH: 30,
+            DAMAGE: [34, 42, 52, 64, 78],
+        },
     },
     "sounds": {
         "fire": "svd/fire",
@@ -631,6 +1048,21 @@ M82: JsonDict = {
         ACCURACY_BASE: 450, ACCURACY_SNEAK: 12, ACCURACY_WALK: 800, ACCURACY_SPRINT: 1500, ACCURACY_JUMP: 3000,
         SWITCH: 50, KICK: 5, CASING_MODEL: CASING_50BMG, CASING_NORMAL: 50, CASING_TANGENT: -25, CASING_BINORMAL: -225,
         CASING_OFFSET: {"normal": (-0.28, -0.3, 0.7), "zoom": (-0.1, -0.25, 0.6)},
+        PAP_STATS: {
+            PAP_NAME: "Macro Annihilator",
+            CAPACITY: 12,
+            REMAINING_BULLETS: 12,
+            RELOAD_TIME: 62,
+            RELOAD_MID: 38,
+            RELOAD_END: 10,
+            COOLDOWN: 8,
+            ACCURACY_BASE: 320,
+            ACCURACY_WALK: 500,
+            ACCURACY_SPRINT: 1100,
+            ACCURACY_JUMP: 2000,
+            SWITCH: 38,
+            DAMAGE: [70, 86, 104, 125, 150],
+        },
     },
     "sounds": {
         "fire": "m82/fire",
@@ -649,6 +1081,20 @@ MOSIN: JsonDict = {
         ACCURACY_BASE: 150, ACCURACY_SNEAK: 3, ACCURACY_WALK: 175, ACCURACY_SPRINT: 1000, ACCURACY_JUMP: 1500,
         SWITCH: 25, KICK: 4, CASING_MODEL: CASING_762X54MM, CASING_NORMAL: 100, CASING_TANGENT: -50, CASING_BINORMAL: -100,
         CASING_OFFSET: {"normal": (-0.35, -0.2, 0.6), "zoom": (-0.05, -0.2, 0.4)},
+        PAP_STATS: {
+            PAP_NAME: "Marksmen's Old Silent Infantry",
+            CAPACITY: 7,
+            REMAINING_BULLETS: 7,
+            RELOAD_TIME: 14,
+            RELOAD_MID: 10,
+            COOLDOWN: 28,
+            ACCURACY_BASE: 110,
+            ACCURACY_WALK: 130,
+            ACCURACY_SPRINT: 700,
+            ACCURACY_JUMP: 1200,
+            SWITCH: 18,
+            DAMAGE: [42, 52, 64, 78, 95],
+        },
     },
     "sounds": {
         "fire": "mosin/fire",
@@ -667,6 +1113,20 @@ M24: JsonDict = {
         ACCURACY_BASE: 350, ACCURACY_SNEAK: 1, ACCURACY_WALK: 700, ACCURACY_SPRINT: 1500, ACCURACY_JUMP: 3000,
         SWITCH: 39, KICK: 4, CASING_MODEL: CASING_338LAPUA, CASING_NORMAL: 100, CASING_TANGENT: -50, CASING_BINORMAL: -100,
         CASING_OFFSET: {"normal": (-0.35, -0.2, 0.6), "zoom": (-0.05, -0.2, 0.4)},
+        PAP_STATS: {
+            PAP_NAME: "Isolator of Judgment",
+            CAPACITY: 7,
+            REMAINING_BULLETS: 7,
+            RELOAD_TIME: 18,
+            RELOAD_MID: 10,
+            COOLDOWN: 32,
+            ACCURACY_BASE: 250,
+            ACCURACY_WALK: 420,
+            ACCURACY_SPRINT: 1000,
+            ACCURACY_JUMP: 2000,
+            SWITCH: 28,
+            DAMAGE: [50, 62, 76, 92, 110],
+        },
     },
     "sounds": {
         "fire": "m24/fire",
@@ -688,6 +1148,18 @@ RPG7: JsonDict = {
         SWITCH: 55, KICK: 6,
         PROJECTILE_SPEED: 1500, PROJECTILE_GRAVITY: 0, PROJECTILE_LIFETIME: 200, PROJECTILE_MODEL: "rpg7_rocket",
         EXPLOSION_RADIUS: 6, EXPLOSION_DAMAGE: 30, EXPLOSION_DECAY: 0.80,
+        PAP_STATS: {
+            PAP_NAME: "Rocket Propelled Grievance",
+            CAPACITY: 8,
+            RELOAD_TIME: 80,
+            RELOAD_END: 14,
+            COOLDOWN: 8,
+            SWITCH: 40,
+            PROJECTILE_SPEED: 1800,
+            EXPLOSION_RADIUS: 7,
+            EXPLOSION_DAMAGE: 42,
+            DAMAGE: [45, 60, 78, 98],
+        },
     },
     "sounds": {
         "fire": "rpg7/fire",
@@ -708,6 +1180,21 @@ RPK: JsonDict = {
         ACCURACY_BASE: 470, ACCURACY_SNEAK: 80, ACCURACY_WALK: 900, ACCURACY_SPRINT: 1500, ACCURACY_JUMP: 3000,
         SWITCH: 55, KICK: 3, CASING_MODEL: CASING_762X39MM, CASING_NORMAL: 200, CASING_TANGENT: 50, CASING_BINORMAL: -200,
         CASING_OFFSET: {"normal": (-0.35, -0.28, 0.7), "zoom": (-0.05, -0.25, 0.5)},
+        PAP_STATS: {
+            PAP_NAME: "R115 Resonator",
+            CAPACITY: 100,
+            REMAINING_BULLETS: 100,
+            RELOAD_TIME: 84,
+            RELOAD_MID: 45,
+            RELOAD_END: 14,
+            COOLDOWN: 1,
+            ACCURACY_BASE: 320,
+            ACCURACY_WALK: 650,
+            ACCURACY_SPRINT: 1100,
+            ACCURACY_JUMP: 2000,
+            SWITCH: 40,
+            DAMAGE: [18, 22, 27, 33, 40],
+        },
     },
     "sounds": {
         "fire": "rpk/fire",
@@ -726,6 +1213,21 @@ M249: JsonDict = {
         ACCURACY_BASE: 300, ACCURACY_SNEAK: 60, ACCURACY_WALK: 1500, ACCURACY_SPRINT: 2500, ACCURACY_JUMP: 4000,
         SWITCH: 70, KICK: 2, CASING_MODEL: CASING_556X45MM, CASING_NORMAL: -50, CASING_TANGENT: 0, CASING_BINORMAL: -250,
         CASING_OFFSET: {"normal": (-0.35, -0.34, 0.7), "zoom": (0.0, -0.3, 0.7)},
+        PAP_STATS: {
+            PAP_NAME: "Endless Barrage",
+            CAPACITY: 180,
+            REMAINING_BULLETS: 180,
+            RELOAD_TIME: 120,
+            RELOAD_MID: 70,
+            RELOAD_END: 20,
+            COOLDOWN: 1,
+            ACCURACY_BASE: 240,
+            ACCURACY_WALK: 900,
+            ACCURACY_SPRINT: 1500,
+            ACCURACY_JUMP: 3000,
+            SWITCH: 50,
+            DAMAGE: [16, 20, 25, 31, 38],
+        },
     },
     "sounds": {
         "fire": "m249/fire",
