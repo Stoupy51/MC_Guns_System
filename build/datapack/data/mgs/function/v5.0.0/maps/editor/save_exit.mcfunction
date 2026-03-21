@@ -1,9 +1,9 @@
 
 #> mgs:v5.0.0/maps/editor/save_exit
 #
-# @executed	as @n[tag=mgs.new_element] & at @s
+# @executed	as @p[tag=mgs.map_editor]
 #
-# @within	mgs:v5.0.0/maps/editor/process_element
+# @within	mgs:v5.0.0/maps/editor/process_element [ as @p[tag=mgs.map_editor] ]
 #
 
 # Only process if in editor mode

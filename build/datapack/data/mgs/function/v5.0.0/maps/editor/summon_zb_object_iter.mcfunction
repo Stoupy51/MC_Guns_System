@@ -30,7 +30,7 @@ function mgs:v5.0.0/maps/editor/summon_zb_marker with storage mgs:temp _zbpos
 execute as @n[tag=mgs.new_zb_marker] run data modify entity @s data set from storage mgs:temp _zb_iter[0]
 
 # Set yaw from rotation for the direction indicator
-execute if data storage mgs:temp _zb_iter[0].rotation run execute as @n[tag=mgs.new_zb_marker] run data modify entity @s data.yaw set from storage mgs:temp _zb_iter[0].rotation[0]
+execute if data storage mgs:temp _zb_iter[0].rotation as @n[tag=mgs.new_zb_marker] run data modify entity @s data.yaw set from storage mgs:temp _zb_iter[0].rotation[0]
 
 tag @e[tag=mgs.new_zb_marker] remove mgs.new_zb_marker
 

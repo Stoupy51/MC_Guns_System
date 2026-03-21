@@ -77,11 +77,11 @@ execute if entity @s[tag=mgs.element.zb_configure] run function mgs:v5.0.0/maps/
 execute if entity @s[tag=mgs.element.zb_configure] run return run kill @s
 
 # Editor utility handlers
-execute if entity @s[tag=mgs.element.editor_save_exit] run execute as @p[tag=mgs.map_editor] run function mgs:v5.0.0/maps/editor/save_exit
+execute if entity @s[tag=mgs.element.editor_save_exit] as @p[tag=mgs.map_editor] run function mgs:v5.0.0/maps/editor/save_exit
 execute if entity @s[tag=mgs.element.editor_save_exit] run return run kill @s
-execute if entity @s[tag=mgs.element.editor_exit] run execute as @p[tag=mgs.map_editor] run function mgs:v5.0.0/maps/editor/exit
+execute if entity @s[tag=mgs.element.editor_exit] as @p[tag=mgs.map_editor] run function mgs:v5.0.0/maps/editor/exit
 execute if entity @s[tag=mgs.element.editor_exit] run return run kill @s
-execute if entity @s[tag=mgs.element.editor_save] run execute as @p[tag=mgs.map_editor] run function mgs:v5.0.0/maps/editor/save_only
+execute if entity @s[tag=mgs.element.editor_save] as @p[tag=mgs.map_editor] run function mgs:v5.0.0/maps/editor/save_only
 execute if entity @s[tag=mgs.element.editor_save] run return run kill @s
 
 # Fallback: unknown type

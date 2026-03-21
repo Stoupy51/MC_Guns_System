@@ -31,8 +31,8 @@ data modify storage mgs:temp _wb.rotation set from storage mgs:temp _wb_iter[0].
 
 # Summon interaction + item display entities
 function mgs:v5.0.0/zombies/wallbuys/place_at with storage mgs:temp _wb
-execute as @n[tag=mgs.wb_new] at @s run tp @s ^ ^ ^0.5
-execute as @n[tag=mgs.wb_new_display] at @s run tp @s ^ ^0.5 ^0.47
+execute as @n[tag=mgs.wb_new] at @s run tp @s ^ ^ ^-0.5
+execute as @n[tag=mgs.wb_new_display] at @s run tp @s ^ ^0.5 ^-0.47
 
 # Set scoreboards on interaction entity
 scoreboard players operation @n[tag=mgs.wb_new] mgs.zb.wb.id = #wb_counter mgs.data

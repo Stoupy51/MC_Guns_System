@@ -5,6 +5,7 @@
 from stewbeet import Mem, write_load_file, write_tag, write_versioned_function
 
 from ..helpers import MGS_TAG
+from .common import deny_not_enough_points_body, deny_requires_power_body, game_active_guard_cmd
 
 PERK_DEFINITIONS: dict[str, dict[str, str | list[str]]] = {
 	"juggernog": {
@@ -132,7 +133,7 @@ $data modify storage {ns}:zombies perk_data."$(id)" set value {{perk_id:"$(perk_
 	## Right-click handler (executor: "source" = player)
 	write_versioned_function("zombies/perks/on_right_click", f"""
 # Guard: game must be active
-execute unless data storage {ns}:zombies game{{state:"active"}} run return fail
+{game_active_guard_cmd(ns)}
 
 # Check power requirement
 execute store result score #pk_power {ns}.data run scoreboard players get @n[tag=bs.interaction.target] {ns}.zb.perk.power
@@ -164,8 +165,7 @@ function {ns}:v{version}/zombies/feedback/sound_success
 """)
 
 	write_versioned_function("zombies/perks/deny_requires_power", f"""
-tellraw @s [{MGS_TAG},{{"text":"This perk machine requires power.","color":"red"}}]
-function {ns}:v{version}/zombies/feedback/sound_deny
+{deny_requires_power_body(ns, version, "perk machine")}
 """)
 
 	write_versioned_function("zombies/perks/deny_already_owned", f"""
@@ -174,8 +174,7 @@ function {ns}:v{version}/zombies/feedback/sound_deny
 """)
 
 	write_versioned_function("zombies/perks/deny_not_enough_points", f"""
-tellraw @s [{MGS_TAG},{{"text":"You don't have enough points (","color":"red"}},{{"score":{{"name":"#pk_price","objective":"{ns}.data"}},"color":"yellow"}},{{"text":" needed).","color":"red"}}]
-function {ns}:v{version}/zombies/feedback/sound_deny
+{deny_not_enough_points_body(ns, version, "#pk_price")}
 """)
 
 	write_versioned_function("zombies/perks/lookup_perk", f"""

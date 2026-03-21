@@ -6,6 +6,7 @@
 from stewbeet import Mem, write_load_file, write_versioned_function
 
 from ..helpers import MGS_TAG
+from .common import deny_not_enough_points_body, deny_requires_power_body, game_active_guard_cmd
 
 
 def generate_traps() -> None:
@@ -107,7 +108,7 @@ $summon minecraft:marker $(cx) $(cy) $(cz) {{Tags:["{ns}.trap_center","{ns}.gm_e
 	## Right-click handler (executor: "source" = player)
 	write_versioned_function("zombies/traps/on_right_click", f"""
 # Guard: game must be active
-execute unless data storage {ns}:zombies game{{state:"active"}} run return fail
+{game_active_guard_cmd(ns)}
 
 # Check power requirement
 execute store result score #trap_power {ns}.data run scoreboard players get @n[tag=bs.interaction.target] {ns}.zb.trap.power
@@ -137,8 +138,7 @@ function {ns}:v{version}/zombies/feedback/sound_announce
 """)
 
 	write_versioned_function("zombies/traps/deny_requires_power", f"""
-tellraw @s [{MGS_TAG},{{"text":"This trap requires power.","color":"red"}}]
-function {ns}:v{version}/zombies/feedback/sound_deny
+{deny_requires_power_body(ns, version, "trap")}
 """)
 
 	write_versioned_function("zombies/traps/deny_not_ready", f"""
@@ -147,8 +147,7 @@ function {ns}:v{version}/zombies/feedback/sound_deny
 """)
 
 	write_versioned_function("zombies/traps/deny_not_enough_points", f"""
-tellraw @s [{MGS_TAG},{{"text":"You don't have enough points (","color":"red"}},{{"score":{{"name":"#trap_price","objective":"{ns}.data"}},"color":"yellow"}},{{"text":" needed).","color":"red"}}]
-function {ns}:v{version}/zombies/feedback/sound_deny
+{deny_not_enough_points_body(ns, version, "#trap_price")}
 """)
 
 	## Active trap tick: damage zombies, particles, decrement timer

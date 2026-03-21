@@ -1,9 +1,9 @@
 
 #> mgs:v5.0.0/maps/editor/exit
 #
-# @executed	as @n[tag=mgs.new_element] & at @s
+# @executed	as @p[tag=mgs.map_editor]
 #
-# @within	mgs:v5.0.0/maps/editor/process_element
+# @within	mgs:v5.0.0/maps/editor/process_element [ as @p[tag=mgs.map_editor] ]
 #
 
 execute unless score @s mgs.mp.map_edit matches 1 run return fail

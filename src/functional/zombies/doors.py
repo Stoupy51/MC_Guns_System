@@ -5,6 +5,7 @@
 from stewbeet import Mem, write_load_file, write_versioned_function
 
 from ..helpers import MGS_TAG
+from .common import deny_not_enough_points_body, game_active_guard_cmd
 
 
 def generate_doors() -> None:
@@ -101,7 +102,7 @@ $execute positioned $(x) $(y) $(z) rotated $(facing) 0 run summon minecraft:inte
 	## Right-click handler (executor: "source" = player)
 	write_versioned_function("zombies/doors/on_right_click", f"""
 # Guard: game must be active
-execute unless data storage {ns}:zombies game{{state:"active"}} run return fail
+{game_active_guard_cmd(ns)}
 
 # Get door price from interacted entity
 execute store result score #door_price {ns}.data run scoreboard players get @n[tag=bs.interaction.target] {ns}.zb.door.price
@@ -124,8 +125,7 @@ function {ns}:v{version}/zombies/feedback/sound_announce
 """)
 
 	write_versioned_function("zombies/doors/deny_not_enough_points", f"""
-tellraw @s [{MGS_TAG},{{"text":"You don't have enough points (","color":"red"}},{{"score":{{"name":"#door_price","objective":"{ns}.data"}},"color":"yellow"}},{{"text":" needed).","color":"red"}}]
-function {ns}:v{version}/zombies/feedback/sound_deny
+{deny_not_enough_points_body(ns, version, "#door_price")}
 """)
 
 	## Open a single door entity (@s = door entity, at @s position)
