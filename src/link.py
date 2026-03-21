@@ -39,6 +39,7 @@ def beet_default(ctx: Context) -> None:
     official_lib_used("bs.dump")
 
     # Generate 3D renders
+    # from stewbeet import Mem
     # from stewbeet.plugins.ingame_manual.iso_renders import generate_all_iso_renders  # pyright: ignore[reportMissingTypeStubs]
     # generate_all_iso_renders(override_cache_path=f"{Mem.ctx.directory}/iso_renders", ignore_vanilla=True, ignore_painting=True)
 
