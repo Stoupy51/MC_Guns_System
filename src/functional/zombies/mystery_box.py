@@ -158,8 +158,8 @@ function {ns}:v{version}/zombies/mystery_box/reroll_owned
 execute if score #mb_owned {ns}.data matches 1 run scoreboard players operation @s {ns}.zb.points += #zb_mystery_box_price {ns}.config
 execute if score #mb_owned {ns}.data matches 1 run return run function {ns}:v{version}/zombies/mystery_box/deny_all_owned
 
-# Start animation timer (120 ticks cycling with slowdown + 150 ticks display window)
-scoreboard players set #mb_anim_timer {ns}.data 120
+# Start animation timer (100 ticks cycling with slowdown + 150 ticks display window)
+scoreboard players set #mb_anim_timer {ns}.data 105
 
 # Spawn display entity at box position
 execute at @n[tag={ns}.mystery_box_active] run function {ns}:v{version}/zombies/mystery_box/spawn_display

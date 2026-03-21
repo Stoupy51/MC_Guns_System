@@ -5,6 +5,7 @@
 from stewbeet import Mem, write_versioned_function
 
 from ..helpers import MGS_TAG
+from .common import game_active_guard_cmd
 
 
 def generate_power_switch() -> None:
@@ -64,7 +65,7 @@ tag @e[tag=_pw_new] remove _pw_new
 	## On right-click: activate power (runs as the clicking player)
 	write_versioned_function("zombies/power/on_activate", f"""
 # Guard: game must be active
-execute unless data storage {ns}:zombies game{{state:"active"}} run return fail
+{game_active_guard_cmd(ns)}
 
 # Guard: power must not already be on
 execute if score #zb_power {ns}.data matches 1 run return run function {ns}:v{version}/zombies/power/deny_already_on

@@ -1,7 +1,7 @@
 
 #> mgs:v5.0.0/maps/editor/save_lists/multiplayer
 #
-# @executed	as @n[tag=mgs.new_element] & at @s
+# @executed	as @p[tag=mgs.map_editor]
 #
 # @within	mgs:v5.0.0/maps/editor/do_save
 #

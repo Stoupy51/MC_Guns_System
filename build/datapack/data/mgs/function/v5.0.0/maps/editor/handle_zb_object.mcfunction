@@ -52,7 +52,7 @@ execute if entity @s[tag=mgs.element.door] as @p[tag=mgs.map_editor] run data mo
 execute if entity @s[tag=mgs.element.door] unless data storage mgs:temp _zb_offhand_block run tellraw @a[tag=mgs.map_editor] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.door_cancelled_hold_a_block_in_offhand","color":"red"}]
 execute if entity @s[tag=mgs.element.door] unless data storage mgs:temp _zb_offhand_block run kill @e[tag=mgs.new_zb_marker]
 execute if entity @s[tag=mgs.element.door] unless data storage mgs:temp _zb_offhand_block run return fail
-execute if entity @s[tag=mgs.element.door] run execute as @n[tag=mgs.new_zb_marker] run data modify entity @s data.block set from storage mgs:temp _zb_offhand_block
+execute if entity @s[tag=mgs.element.door] as @n[tag=mgs.new_zb_marker] run data modify entity @s data.block set from storage mgs:temp _zb_offhand_block
 data remove storage mgs:temp _zb_offhand_block
 
 tag @e[tag=mgs.new_zb_marker] remove mgs.new_zb_marker

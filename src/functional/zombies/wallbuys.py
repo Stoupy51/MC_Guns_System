@@ -6,6 +6,7 @@
 from stewbeet import Mem, write_load_file, write_versioned_function
 
 from ..helpers import MGS_TAG
+from .common import deny_not_enough_points_body, game_active_guard_cmd
 
 
 def generate_wallbuys() -> None:
@@ -58,8 +59,8 @@ data modify storage {ns}:temp _wb.rotation set from storage {ns}:temp _wb_iter[0
 
 # Summon interaction + item display entities
 function {ns}:v{version}/zombies/wallbuys/place_at with storage {ns}:temp _wb
-execute as @n[tag={ns}.wb_new] at @s run tp @s ^ ^ ^0.5
-execute as @n[tag={ns}.wb_new_display] at @s run tp @s ^ ^0.5 ^0.47
+execute as @n[tag={ns}.wb_new] at @s run tp @s ^ ^ ^-0.5
+execute as @n[tag={ns}.wb_new_display] at @s run tp @s ^ ^0.5 ^-0.47
 
 # Set scoreboards on interaction entity
 scoreboard players operation @n[tag={ns}.wb_new] {ns}.zb.wb.id = #wb_counter {ns}.data
@@ -110,7 +111,7 @@ $execute as @e[tag={ns}.wb_new_display] run loot replace entity @s contents loot
 	## Right-click handler (executor: "source" = player)
 	write_versioned_function("zombies/wallbuys/on_right_click", f"""
 # Guard: game must be active
-execute unless data storage {ns}:zombies game{{state:"active"}} run return fail
+{game_active_guard_cmd(ns)}
 
 # Get wallbuy price
 execute store result score #wb_price {ns}.data run scoreboard players get @n[tag=bs.interaction.target] {ns}.zb.wb.price
@@ -136,8 +137,7 @@ execute if score #wb_purchase_mode {ns}.data matches 4 run function {ns}:v{versi
 """)
 
 	write_versioned_function("zombies/wallbuys/deny_not_enough_points", f"""
-tellraw @s [{MGS_TAG},{{"text":"You don't have enough points (","color":"red"}},{{"score":{{"name":"#wb_price","objective":"{ns}.data"}},"color":"yellow"}},{{"text":" needed).","color":"red"}}]
-function {ns}:v{version}/zombies/feedback/sound_deny
+{deny_not_enough_points_body(ns, version, "#wb_price")}
 """)
 
 	write_versioned_function("zombies/wallbuys/msg_purchased", f"""
