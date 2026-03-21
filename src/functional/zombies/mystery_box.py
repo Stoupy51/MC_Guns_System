@@ -92,6 +92,7 @@ scoreboard players operation #mbz {ns}.data += #gm_base_z {ns}.data
 execute store result storage {ns}:temp _mbpos.x double 1 run scoreboard players get #mbx {ns}.data
 execute store result storage {ns}:temp _mbpos.y double 1 run scoreboard players get #mby {ns}.data
 execute store result storage {ns}:temp _mbpos.z double 1 run scoreboard players get #mbz {ns}.data
+data modify storage {ns}:temp _mbpos.rotation set from storage {ns}:temp _mb_iter[0].rotation
 
 function {ns}:v{version}/zombies/mystery_box/summon_pos_at with storage {ns}:temp _mbpos
 
@@ -109,7 +110,7 @@ execute if data storage {ns}:temp _mb_iter[0] run function {ns}:v{version}/zombi
 """)
 
 	write_versioned_function("zombies/mystery_box/summon_pos_at", f"""
-$summon minecraft:interaction $(x) $(y) $(z) {{width:1.5f,height:2.0f,response:true,Tags:["{ns}.mystery_box_pos","{ns}.gm_entity","{ns}.mb_new","bs.entity.interaction"]}}
+$summon minecraft:interaction $(x) $(y) $(z) {{width:1.5f,height:2.0f,response:true,Rotation:$(rotation),Tags:["{ns}.mystery_box_pos","{ns}.gm_entity","{ns}.mb_new","bs.entity.interaction"]}}
 """)
 
 	## On right-click: Bookshelf callback (executor:"source" = @s is the player)
@@ -216,8 +217,9 @@ execute if score #mb_pick {ns}.data matches 1.. run function {ns}:v{version}/zom
 
 	## Display entity: spawns at box level, floats up with interpolation
 	write_versioned_function("zombies/mystery_box/spawn_display", f"""
-# Spawn item display at box level with small scale
-summon minecraft:item_display ~ ~0.5 ~ {{Tags:["{ns}.mb_display","{ns}.gm_entity","{ns}.mb_display_new"],item:{{id:"minecraft:nether_star",count:1,components:{{"minecraft:item_model":"air"}}}},transformation:{{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[0.5f,0.5f,0.5f]}},billboard:"fixed"}}
+# Spawn item display at box level with small scale and correct facing
+summon minecraft:item_display ~ ~0.5 ~ {{Tags:["{ns}.mb_display","{ns}.gm_entity","{ns}.mb_display_new"],item_display:"fixed",item:{{id:"minecraft:nether_star",count:1,components:{{"minecraft:item_model":"air"}}}},transformation:{{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[0.5f,0.5f,0.5f]}},billboard:"fixed"}}
+tp @n[tag={ns}.mb_display_new] ~ ~0.5 ~ ~ ~
 
 # Apply interpolation a few ticks later to avoid same-tick spawn interpolation glitches.
 schedule function {ns}:v{version}/zombies/mystery_box/spawn_display_finalize 5t append
@@ -225,7 +227,7 @@ schedule function {ns}:v{version}/zombies/mystery_box/spawn_display_finalize 5t 
 
 	write_versioned_function("zombies/mystery_box/spawn_display_finalize", f"""
 data merge entity @n[tag={ns}.mb_display_new] {{transformation:{{translation:[0f,0.8f,0f]}},start_interpolation:0,interpolation_duration:200}}
-tag @e[tag={ns}.mb_display_new] remove {ns}.mb_display_new
+tag @n[tag={ns}.mb_display_new] remove {ns}.mb_display_new
 """)
 
 	## Mystery box tick: handle animation

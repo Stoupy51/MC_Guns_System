@@ -507,7 +507,7 @@ function {ns}:v{version}/maps/editor/summon_zb_marker with storage {ns}:temp _zb
 execute as @n[tag={ns}.new_zb_marker] run data modify entity @s data set from storage {ns}:temp _zb_iter[0]
 
 # Set yaw from rotation for the direction indicator
-execute if data storage {ns}:temp _zb_iter[0].rotation run execute as @n[tag={ns}.new_zb_marker] run data modify entity @s data.yaw set from storage {ns}:temp _zb_iter[0].rotation[0]
+execute if data storage {ns}:temp _zb_iter[0].rotation as @n[tag={ns}.new_zb_marker] run data modify entity @s data.yaw set from storage {ns}:temp _zb_iter[0].rotation[0]
 
 tag @e[tag={ns}.new_zb_marker] remove {ns}.new_zb_marker
 
@@ -654,11 +654,11 @@ execute as @n[tag={ns}.new_element] at @s run function {ns}:v{version}/maps/edit
 
 	# Editor utility handlers (save, exit, save & exit)
 	process_lines.append("# Editor utility handlers")
-	process_lines.append(f'execute if entity @s[tag={ns}.element.editor_save_exit] run execute as @p[tag={ns}.map_editor] run function {ns}:v{version}/maps/editor/save_exit')
+	process_lines.append(f'execute if entity @s[tag={ns}.element.editor_save_exit] as @p[tag={ns}.map_editor] run function {ns}:v{version}/maps/editor/save_exit')
 	process_lines.append(f'execute if entity @s[tag={ns}.element.editor_save_exit] run return run kill @s')
-	process_lines.append(f'execute if entity @s[tag={ns}.element.editor_exit] run execute as @p[tag={ns}.map_editor] run function {ns}:v{version}/maps/editor/exit')
+	process_lines.append(f'execute if entity @s[tag={ns}.element.editor_exit] as @p[tag={ns}.map_editor] run function {ns}:v{version}/maps/editor/exit')
 	process_lines.append(f'execute if entity @s[tag={ns}.element.editor_exit] run return run kill @s')
-	process_lines.append(f'execute if entity @s[tag={ns}.element.editor_save] run execute as @p[tag={ns}.map_editor] run function {ns}:v{version}/maps/editor/save_only')
+	process_lines.append(f'execute if entity @s[tag={ns}.element.editor_save] as @p[tag={ns}.map_editor] run function {ns}:v{version}/maps/editor/save_only')
 	process_lines.append(f'execute if entity @s[tag={ns}.element.editor_save] run return run kill @s')
 	process_lines.append("")
 
@@ -814,7 +814,7 @@ execute if entity @s[tag={ns}.element.door] as @p[tag={ns}.map_editor] run data 
 execute if entity @s[tag={ns}.element.door] unless data storage {ns}:temp _zb_offhand_block run tellraw @a[tag={ns}.map_editor] [{MGS_TAG},{{"text":"⚠ Door cancelled! Hold a block in offhand.","color":"red"}}]
 execute if entity @s[tag={ns}.element.door] unless data storage {ns}:temp _zb_offhand_block run kill @e[tag={ns}.new_zb_marker]
 execute if entity @s[tag={ns}.element.door] unless data storage {ns}:temp _zb_offhand_block run return fail
-execute if entity @s[tag={ns}.element.door] run execute as @n[tag={ns}.new_zb_marker] run data modify entity @s data.block set from storage {ns}:temp _zb_offhand_block
+execute if entity @s[tag={ns}.element.door] as @n[tag={ns}.new_zb_marker] run data modify entity @s data.block set from storage {ns}:temp _zb_offhand_block
 data remove storage {ns}:temp _zb_offhand_block
 
 tag @e[tag={ns}.new_zb_marker] remove {ns}.new_zb_marker
@@ -1022,6 +1022,19 @@ execute at @s unless entity @n[tag={ns}.map_element,distance=..10] run tellraw @
 		zb_config_lines.append(
 			f'execute if entity @s[tag={ns}.element.{etype}] run tellraw @a[tag={ns}.map_editor] '
 			f'["  ",{{"text":"{einfo["emoji"]} {einfo["name"]}","color":"{einfo["color"]}","bold":true}}]'
+		)
+		zb_config_lines.append(
+			f'execute if entity @s[tag={ns}.element.{etype}] run tellraw @a[tag={ns}.map_editor] '
+			f'["    ",{{"text":"yaw: ","color":"gray"}},'
+			f'{{"entity":"@s","nbt":"data.yaw","color":"white"}}," ",{edit_yaw_btn}]'
+		)
+
+	# For zb_object types: show yaw (rotation)
+	for etype, _ in zb_elements.items():
+		edit_yaw_btn = btn(
+			"✎",
+			f"/data modify entity @n[tag={ns}.element.{etype},distance=..10] data.yaw set value 0.0f",
+			"yellow", "Click to edit yaw", action="suggest_command"
 		)
 		zb_config_lines.append(
 			f'execute if entity @s[tag={ns}.element.{etype}] run tellraw @a[tag={ns}.map_editor] '
