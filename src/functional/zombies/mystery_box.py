@@ -74,6 +74,10 @@ execute if data storage {ns}:temp _mb_iter[0] run function {ns}:v{version}/zombi
 execute as @n[tag={ns}.mystery_box_pos,tag={ns}.mb_can_start,sort=random] run tag @s add {ns}.mystery_box_active
 # Fallback if no can_start_on positions exist
 execute unless entity @e[tag={ns}.mystery_box_active] as @n[tag={ns}.mystery_box_pos,sort=random] run tag @s add {ns}.mystery_box_active
+
+# Init pull counter and spawn presence chest at the active position.
+scoreboard players set #mb_pulls {ns}.data 0
+function {ns}:v{version}/zombies/mystery_box/sync_presence_display
 """)
 
 	write_versioned_function("zombies/mystery_box/setup_pos_iter", f"""
@@ -108,6 +112,37 @@ execute if data storage {ns}:temp _mb_iter[0] run function {ns}:v{version}/zombi
 
 	write_versioned_function("zombies/mystery_box/summon_pos_at", f"""
 $summon minecraft:interaction $(x) $(y) $(z) {{width:1.5f,height:2.0f,response:true,Rotation:$(rotation),Tags:["{ns}.mystery_box_pos","{ns}.gm_entity","{ns}.mb_new","bs.entity.interaction"]}}
+""")
+
+	write_versioned_function("zombies/mystery_box/sync_presence_display", f"""
+# Keep one chest display at the currently active mystery box.
+kill @e[tag={ns}.mb_presence]
+execute as @n[tag={ns}.mystery_box_active] at @s run summon minecraft:item_display ~ ~0.7 ~ {{Tags:["{ns}.mb_presence","{ns}.gm_entity"],item_display:"fixed",billboard:"fixed",item:{{id:"minecraft:chest",count:1}},transformation:{{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[0.85f,0.85f,0.85f]}}}}
+""")
+
+	write_versioned_function("zombies/mystery_box/maybe_move_after_pull", f"""
+scoreboard players add #mb_pulls {ns}.data 1
+
+# Every 4 successful pulls, roll a 1/3 chance to move.
+execute if score #mb_pulls {ns}.data matches 4.. store result score #mb_move_roll {ns}.data run random value 0..2
+execute if score #mb_pulls {ns}.data matches 4.. if score #mb_move_roll {ns}.data matches 0 run function {ns}:v{version}/zombies/mystery_box/move_active_position
+execute if score #mb_pulls {ns}.data matches 4.. run scoreboard players set #mb_pulls {ns}.data 0
+""")
+
+	write_versioned_function("zombies/mystery_box/move_active_position", f"""
+# Need at least 2 positions to move.
+execute store result score #mb_pos_count {ns}.data run data get storage {ns}:zombies game.map.mystery_box.positions
+execute if score #mb_pos_count {ns}.data matches ..1 run return 0
+
+tag @e[tag={ns}.mystery_box_active] add {ns}.mb_prev_active
+tag @e[tag={ns}.mystery_box_active] remove {ns}.mystery_box_active
+execute as @n[tag={ns}.mystery_box_pos,tag=!{ns}.mb_prev_active,sort=random] run tag @s add {ns}.mystery_box_active
+tag @e[tag={ns}.mb_prev_active] remove {ns}.mb_prev_active
+
+function {ns}:v{version}/zombies/mystery_box/sync_presence_display
+
+tellraw @a[scores={{{ns}.zb.in_game=1}}] [{MGS_TAG},{{"text":"Mystery Box moved!","color":"yellow"}}]
+function {ns}:v{version}/zombies/feedback/sound_announce
 """)
 
 	## On right-click: Bookshelf callback (executor:"source" = @s is the player)
@@ -335,6 +370,9 @@ execute if data storage {ns}:zombies mystery_box.result.weapon_id run function {
 tellraw @s [{MGS_TAG},{{"text":"You collected ","color":"green"}},{{"storage":"{ns}:temp","nbt":"_mb_collected_name","interpret":true}},{{"text":" from the Mystery Box.","color":"green"}}]
 function {ns}:v{version}/zombies/feedback/sound_success
 
+# Track pulls and sometimes move the box.
+function {ns}:v{version}/zombies/mystery_box/maybe_move_after_pull
+
 # Reset box
 function {ns}:v{version}/zombies/mystery_box/reset
 """)
@@ -420,4 +458,6 @@ execute if data storage {ns}:zombies game.map.mystery_box.positions[0] run funct
 	write_versioned_function("zombies/stop", f"""
 # Reset mystery box
 function {ns}:v{version}/zombies/mystery_box/reset
+kill @e[tag={ns}.mb_presence]
+scoreboard players set #mb_pulls {ns}.data 0
 """)
