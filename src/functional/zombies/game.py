@@ -211,14 +211,14 @@ execute as @a[scores={{{ns}.zb.in_game=1}}] at @s run function {ns}:v{version}/z
 # Show zombies perk selection menu
 execute as @a[scores={{{ns}.zb.in_game=1}}] run function {ns}:v{version}/zombies/passive_ability_menu
 
-# Schedule end of prep (9 seconds remaining)
-schedule function {ns}:v{version}/zombies/end_prep 180t
+# Schedule end of prep (10 seconds remaining)
+schedule function {ns}:v{version}/zombies/end_prep 200t
 
 # Initialize sidebar
 function {ns}:v{version}/zombies/create_sidebar
 
 # Announce
-tellraw @a ["",{{"text":"","color":"dark_green","bold":true}},"🧟 ",{{"text":"Preparing! Choose your perk! Round 1 starts in 9 seconds!","color":"yellow"}}]
+tellraw @a ["",{{"text":"","color":"dark_green","bold":true}},"🧟 ",{{"text":"Preparing! Choose your perk! Round 1 starts in 10 seconds!","color":"yellow"}}]
 """)
 
 	## Prep Tick (no class to detect, just wait)
