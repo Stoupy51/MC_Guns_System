@@ -13,6 +13,13 @@ def generate_wallbuys() -> None:
 	version: str = Mem.ctx.project_version
 	gun_cd: str = "{" + ns + ":{gun:true}}"
 	mag_cd: str = "{" + ns + ":{magazine:true}}"
+	wallbuy_hover_message: str = (
+		f'[{{"text":"🔫 ","color":"gold"}},'
+		f'{{"storage":"{ns}:temp","nbt":"_wb_display_name","color":"yellow","interpret":true}},'
+		f'{{"text":" - Cost: ","color":"gray"}},'
+		f'{{"score":{{"name":"#wb_price","objective":"{ns}.data"}},"color":"yellow"}},'
+		f'{{"text":" points","color":"gray"}}]'
+	)
 
 	# Build weapon_id -> magazine_id mapping
 	weapon_mag_data: dict[str, str] = {}
@@ -130,6 +137,7 @@ scoreboard players operation @s {ns}.zb.points -= #wb_price {ns}.data
 # Get weapon_id from storage via wallbuy ID
 execute store result storage {ns}:temp _wb_buy.id int 1 run scoreboard players get @n[tag=bs.interaction.target] {ns}.zb.wb.id
 function {ns}:v{version}/zombies/wallbuys/lookup_weapon with storage {ns}:temp _wb_buy
+function {ns}:v{version}/zombies/wallbuys/get_display_name
 
 # Process buy by zombies inventory rules
 function {ns}:v{version}/zombies/wallbuys/process_purchase with storage {ns}:temp _wb_weapon
@@ -146,7 +154,7 @@ execute if score #wb_purchase_mode {ns}.data matches 4 run function {ns}:v{versi
 """)
 
 	write_versioned_function("zombies/wallbuys/msg_purchased", f"""
-tellraw @s [{MGS_TAG},{{"text":"You bought ","color":"green"}},{{"storage":"{ns}:temp","nbt":"_wb_weapon.name","color":"gold","interpret":true}},{{"text":" for ","color":"green"}},{{"score":{{"name":"#wb_price","objective":"{ns}.data"}},"color":"yellow"}},{{"text":" points.","color":"green"}}]
+tellraw @s [{MGS_TAG},{{"text":"You bought ","color":"green"}},{{"storage":"{ns}:temp","nbt":"_wb_display_name","color":"gold","interpret":true}},{{"text":" for ","color":"green"}},{{"score":{{"name":"#wb_price","objective":"{ns}.data"}},"color":"yellow"}},{{"text":" points.","color":"green"}}]
 function {ns}:v{version}/zombies/feedback/sound_success
 """)
 
@@ -156,7 +164,7 @@ function {ns}:v{version}/zombies/feedback/sound_refill
 """)
 
 	write_versioned_function("zombies/wallbuys/msg_replaced", f"""
-tellraw @s [{MGS_TAG},{{"text":"Swapped your selected weapon for ","color":"yellow"}},{{"storage":"{ns}:temp","nbt":"_wb_weapon.name","color":"gold","interpret":true}},{{"text":" (","color":"yellow"}},{{"score":{{"name":"#wb_price","objective":"{ns}.data"}},"color":"yellow"}},{{"text":" points).","color":"yellow"}}]
+tellraw @s [{MGS_TAG},{{"text":"Swapped your selected weapon for ","color":"yellow"}},{{"storage":"{ns}:temp","nbt":"_wb_display_name","color":"gold","interpret":true}},{{"text":" (","color":"yellow"}},{{"score":{{"name":"#wb_price","objective":"{ns}.data"}},"color":"yellow"}},{{"text":" points).","color":"yellow"}}]
 function {ns}:v{version}/zombies/feedback/sound_replace
 """)
 
@@ -177,6 +185,14 @@ function {ns}:v{version}/zombies/feedback/sound_deny
 
 	write_versioned_function("zombies/wallbuys/lookup_weapon", f"""
 $data modify storage {ns}:temp _wb_weapon set from storage {ns}:zombies wallbuy_data."$(id)"
+""")
+
+	write_versioned_function("zombies/wallbuys/get_display_name", f"""
+# Default to localized display item name.
+data modify storage {ns}:temp _wb_display_name set from storage {ns}:temp _wb_weapon.item_name
+
+# If a custom map name is set, use it instead.
+execute unless data storage {ns}:temp _wb_weapon{{name:""}} if data storage {ns}:temp _wb_weapon.name run data modify storage {ns}:temp _wb_display_name set from storage {ns}:temp _wb_weapon.name
 """)
 
 	write_versioned_function("zombies/wallbuys/process_purchase", f"""
@@ -351,7 +367,8 @@ title @s title [{{"text":"🔫 ","color":"gold"}},{{"storage":"{ns}:temp","nbt":
 execute store result score #wb_price {ns}.data run scoreboard players get @n[tag=bs.interaction.target] {ns}.zb.wb.price
 execute store result storage {ns}:temp _wb_hover.id int 1 run scoreboard players get @n[tag=bs.interaction.target] {ns}.zb.wb.id
 function {ns}:v{version}/zombies/wallbuys/get_hover_name with storage {ns}:temp _wb_hover
-data modify storage smithed.actionbar:input message set value {{json:[{{"text":"🔫 Wallbuy","color":"gold"}},{{"text":" - Cost: ","color":"gray"}},{{"score":{{"name":"#wb_price","objective":"{ns}.data"}},"color":"yellow"}},{{"text":" points","color":"gray"}}],priority:'notification',freeze:5}}
+function {ns}:v{version}/zombies/wallbuys/get_display_name
+data modify storage smithed.actionbar:input message set value {{json:{wallbuy_hover_message},priority:'notification',freeze:5}}
 function #smithed.actionbar:message
 """)
 

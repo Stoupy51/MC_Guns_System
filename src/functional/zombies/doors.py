@@ -116,13 +116,18 @@ scoreboard players operation @s {ns}.zb.points -= #door_price {ns}.data
 # Get link_id from interacted door
 execute store result score #door_link {ns}.data run scoreboard players get @n[tag=bs.interaction.target] {ns}.zb.door.link
 
+# Resolve door display name for announcement (front/back aware)
+execute store result storage {ns}:temp _door_hover.id int 1 run scoreboard players get #door_link {ns}.data
+execute if entity @e[tag=bs.interaction.target,tag={ns}.door_back] run function {ns}:v{version}/zombies/doors/get_hover_name_back with storage {ns}:temp _door_hover
+execute unless entity @e[tag=bs.interaction.target,tag={ns}.door_back] run function {ns}:v{version}/zombies/doors/get_hover_name with storage {ns}:temp _door_hover
+
 # Open all doors with matching link_id
 execute as @e[tag={ns}.door] if score @s {ns}.zb.door.link = #door_link {ns}.data at @s run function {ns}:v{version}/zombies/doors/open_one
 
 # Announce
-tellraw @s [{MGS_TAG},{{"text":"Door opened for ","color":"green"}},{{"score":{{"name":"#door_price","objective":"{ns}.data"}},"color":"yellow"}},{{"text":" points.","color":"green"}}]
+tellraw @a [{MGS_TAG},{{"selector":"@s","color":"yellow"}},{{"text":" opened ","color":"green"}},{{"storage":"{ns}:temp","nbt":"_door_hover_name","color":"gold","interpret":true}},{{"text":" for ","color":"green"}},{{"score":{{"name":"#door_price","objective":"{ns}.data"}},"color":"yellow"}},{{"text":" points.","color":"green"}}]
 function {ns}:v{version}/zombies/feedback/sound_announce
-""")
+""")  # noqa: E501
 
 	write_versioned_function("zombies/doors/deny_not_enough_points", f"""
 {deny_not_enough_points_body(ns, version, "#door_price")}

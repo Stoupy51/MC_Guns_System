@@ -19,6 +19,7 @@ scoreboard players operation @s mgs.zb.points -= #wb_price mgs.data
 # Get weapon_id from storage via wallbuy ID
 execute store result storage mgs:temp _wb_buy.id int 1 run scoreboard players get @n[tag=bs.interaction.target] mgs.zb.wb.id
 function mgs:v5.0.0/zombies/wallbuys/lookup_weapon with storage mgs:temp _wb_buy
+function mgs:v5.0.0/zombies/wallbuys/get_display_name
 
 # Process buy by zombies inventory rules
 function mgs:v5.0.0/zombies/wallbuys/process_purchase with storage mgs:temp _wb_weapon

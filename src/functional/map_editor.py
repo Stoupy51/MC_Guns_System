@@ -38,7 +38,7 @@ ALL_ELEMENTS: dict[str, JsonDict] = {
 	"player_spawn_zb":    {"name": "Player Spawn",     "color": "aqua",         "particle": [0.0, 1.0, 1.0], "particle_scale": 1.0, "has_rotation": True,  "egg_model": "minecraft:villager_spawn_egg",    "save_type": "zb_object", "save_path": "spawning_points.players", "emoji": "●",
                            "defaults": {}},
 	"wallbuy":            {"name": "Wallbuy",          "color": "yellow",       "particle": [1.0, 1.0, 0.0], "particle_scale": 1.0, "has_rotation": True,  "egg_model": "minecraft:iron_golem_spawn_egg",  "save_type": "zb_object", "save_path": "wallbuys", "emoji": "🔫",
-                           "defaults": {"price": 1000, "refill_price": 500, "refill_price_pap": 4500, "weapon_id": "m1911", "magazine_id": "m1911_mag"}},
+                           "defaults": {"name": "", "price": 1000, "refill_price": 500, "refill_price_pap": 4500, "weapon_id": "m1911", "magazine_id": "m1911_mag"}},
 	"door":               {
 		"name": "Door", "color": "gold", "particle": [1.0, 0.6, 0.0], "particle_scale": 1.0, "has_rotation": True,
 		"egg_model": "minecraft:hoglin_spawn_egg", "save_type": "zb_object", "save_path": "doors", "emoji": "🚪",
@@ -898,7 +898,7 @@ kill @s
 		elif isinstance(val, float):
 			return f"{val}f"
 		elif isinstance(val, str):
-			return f"'{val}'"
+			return f'"{val}"'
 		elif isinstance(val, list):
 			return "[" + ",".join(snbt_suggest(v) for v in cast(list[Any], val)) + "]"
 		return str(val)
