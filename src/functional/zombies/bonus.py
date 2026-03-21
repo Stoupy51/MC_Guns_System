@@ -110,7 +110,7 @@ $function {ns}:v{version}/ammo/modify_mag_lore {{slot:"$(slot)"}}
 $item replace entity @s contents from entity @p[tag={ns}.refilling_mag] $(slot)
 
 # Special consumable compatibility (get max_stack_size, 64 by default)
-execute store success score #is_consumable {ns}.data if data entity @s item.components."minecraft:custom_data".{ns}.consumable
+execute store success score #is_consumable {ns}.data if data entity @s item.components."minecraft:custom_data".{ns}{{consumable:1b}}
 execute if score #is_consumable {ns}.data matches 1 run scoreboard players set #stack_size {ns}.data 64
 execute if score #is_consumable {ns}.data matches 1 if data entity @s item.components."minecraft:max_stack_size" store result score #stack_size {ns}.data run data get entity @s item.components."minecraft:max_stack_size"
 

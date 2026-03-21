@@ -1,4 +1,3 @@
-
 # ruff: noqa: E501
 # Imports
 from stewbeet import ItemModifier, JsonDict, Mem, set_json_encoder, write_versioned_function
@@ -416,10 +415,10 @@ scoreboard players operation @s {ns}.{REMAINING_BULLETS} = #found_ammo {ns}.data
 # Copy item to entity
 $item replace entity @s contents from entity @p[tag={ns}.extracting_bullets] $(slot)
 
-# For consumable magazines, the stack count IS the bullet count (each item = 1 bullet)
-execute if data entity @s item.components."minecraft:custom_data".{ns}.consumable store result score #bullets {ns}.data run data get entity @s item.count
-# For regular magazines, read remaining_bullets from custom data
-execute unless data entity @s item.components."minecraft:custom_data".{ns}.consumable store result score #bullets {ns}.data run data get entity @s item.components."minecraft:custom_data".{ns}.stats.{REMAINING_BULLETS}
+# For consumable magazines (1b = true consumable), the stack count IS the bullet count (each item = 1 bullet)
+# For regular/converted magazines, read remaining_bullets from custom data
+execute if data entity @s item.components."minecraft:custom_data".{ns}{{consumable:1b}} store result score #bullets {ns}.data run data get entity @s item.count
+execute unless data entity @s item.components."minecraft:custom_data".{ns}{{consumable:1b}} store result score #bullets {ns}.data run data get entity @s item.components."minecraft:custom_data".{ns}.stats.{REMAINING_BULLETS}
 
 # Get magazine capacity
 execute store result storage {ns}:temp {CAPACITY} int 1 run data get entity @s item.components."minecraft:custom_data".{ns}.stats.{CAPACITY}
@@ -484,11 +483,11 @@ tag @s remove {ns}.reading_reserve
 # Copy item to entity
 $item replace entity @s contents from entity @p[tag={ns}.reading_reserve] $(slot)
 
-# Consumable: stack count = bullet count
-execute if data entity @s item.components."minecraft:custom_data".{ns}.consumable store result score #mag_bullets {ns}.data run data get entity @s item.count
+# Consumable (1b = true consumable): stack count = bullet count
+execute if data entity @s item.components."minecraft:custom_data".{ns}{{consumable:1b}} store result score #mag_bullets {ns}.data run data get entity @s item.count
 
 # Non-consumable: read remaining_bullets from custom data
-execute unless data entity @s item.components."minecraft:custom_data".{ns}.consumable store result score #mag_bullets {ns}.data run data get entity @s item.components."minecraft:custom_data".{ns}.stats.{REMAINING_BULLETS}
+execute unless data entity @s item.components."minecraft:custom_data".{ns}{{consumable:1b}} store result score #mag_bullets {ns}.data run data get entity @s item.components."minecraft:custom_data".{ns}.stats.{REMAINING_BULLETS}
 
 # Add to reserve
 scoreboard players operation @p[tag={ns}.reading_reserve] {ns}.reserve_ammo += #mag_bullets {ns}.data

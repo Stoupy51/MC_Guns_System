@@ -19,8 +19,7 @@ $execute if score #wb_mag_given mgs.data matches 0 run item replace entity @s in
 
 $function mgs:v5.0.0/zombies/inventory/apply_slot_tag {slot:"hotbar.$(hotbar)",group:"hotbar",index:$(hotbar)}
 $execute if score #wb_mag_given mgs.data matches 1 run function mgs:v5.0.0/zombies/inventory/apply_slot_tag {slot:"inventory.$(inventory)",group:"inventory",index:$(inventory)}
-
-$execute if score #wb_mag_given mgs.data matches 1 run function mgs:v5.0.0/zombies/inventory/scale_magazine_slot {slot:"inventory.$(inventory)"}
+$execute if score #wb_mag_given mgs.data matches 1 run function mgs:v5.0.0/zombies/inventory/scale_magazine_slot {slot:"inventory.$(inventory)",index:$(inventory),remaining_multiplier:1}
 
 $function mgs:v5.0.0/zombies/bonus/reload_weapon_slot {slot:"hotbar.$(hotbar)"}
 

@@ -11,11 +11,11 @@
 # Copy item to entity
 $item replace entity @s contents from entity @p[tag=mgs.reading_reserve] $(slot)
 
-# Consumable: stack count = bullet count
-execute if data entity @s item.components."minecraft:custom_data".mgs.consumable store result score #mag_bullets mgs.data run data get entity @s item.count
+# Consumable (1b = true consumable): stack count = bullet count
+execute if data entity @s item.components."minecraft:custom_data".mgs{consumable:1b} store result score #mag_bullets mgs.data run data get entity @s item.count
 
 # Non-consumable: read remaining_bullets from custom data
-execute unless data entity @s item.components."minecraft:custom_data".mgs.consumable store result score #mag_bullets mgs.data run data get entity @s item.components."minecraft:custom_data".mgs.stats.remaining_bullets
+execute unless data entity @s item.components."minecraft:custom_data".mgs{consumable:1b} store result score #mag_bullets mgs.data run data get entity @s item.components."minecraft:custom_data".mgs.stats.remaining_bullets
 
 # Add to reserve
 scoreboard players operation @p[tag=mgs.reading_reserve] mgs.reserve_ammo += #mag_bullets mgs.data

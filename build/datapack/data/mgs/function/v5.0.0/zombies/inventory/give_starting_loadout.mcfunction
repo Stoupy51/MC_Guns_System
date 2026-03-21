@@ -18,7 +18,7 @@ loot replace entity @s hotbar.1 loot mgs:i/m1911
 function mgs:v5.0.0/zombies/inventory/apply_slot_tag {slot:"hotbar.1",group:"hotbar",index:1}
 
 loot replace entity @s inventory.1 loot mgs:i/m1911_mag
-function mgs:v5.0.0/zombies/inventory/scale_magazine_slot {slot:"inventory.1"}
+function mgs:v5.0.0/zombies/inventory/scale_magazine_slot {slot:"inventory.1",index:1,remaining_multiplier:0.5}
 function mgs:v5.0.0/zombies/inventory/apply_slot_tag {slot:"inventory.1",group:"inventory",index:1}
 
 # hotbar.7: main equipment (frag by default)

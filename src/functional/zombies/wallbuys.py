@@ -1,4 +1,3 @@
-
 # ruff: noqa: E501
 # Wallbuy System
 # Wall-mounted weapon stations. Players interact to buy weapons.
@@ -215,8 +214,7 @@ $execute if score #wb_mag_given {ns}.data matches 0 run item replace entity @s i
 
 $function {ns}:v{version}/zombies/inventory/apply_slot_tag {{slot:"hotbar.$(hotbar)",group:"hotbar",index:$(hotbar)}}
 $execute if score #wb_mag_given {ns}.data matches 1 run function {ns}:v{version}/zombies/inventory/apply_slot_tag {{slot:"inventory.$(inventory)",group:"inventory",index:$(inventory)}}
-
-$execute if score #wb_mag_given {ns}.data matches 1 run function {ns}:v{version}/zombies/inventory/scale_magazine_slot {{slot:"inventory.$(inventory)"}}
+$execute if score #wb_mag_given {ns}.data matches 1 run function {ns}:v{version}/zombies/inventory/scale_magazine_slot {{slot:"inventory.$(inventory)",index:$(inventory),remaining_multiplier:1}}
 
 $function {ns}:v{version}/zombies/bonus/reload_weapon_slot {{slot:"hotbar.$(hotbar)"}}
 
@@ -278,7 +276,7 @@ scoreboard players set #wb_new_mag {ns}.data 0
 scoreboard players set #wb_mag_created {ns}.data 0
 $execute unless items entity @s inventory.$(inventory) *[custom_data~{mag_cd}] run scoreboard players set #wb_new_mag {ns}.data 1
 $execute if score #wb_new_mag {ns}.data matches 1 store success score #wb_mag_created {ns}.data run loot replace entity @s inventory.$(inventory) loot {ns}:i/$(magazine_id)
-$execute if score #wb_new_mag {ns}.data matches 1 if score #wb_mag_created {ns}.data matches 1 run function {ns}:v{version}/zombies/inventory/scale_magazine_slot {{slot:"inventory.$(inventory)"}}
+$execute if score #wb_new_mag {ns}.data matches 1 if score #wb_mag_created {ns}.data matches 1 run function {ns}:v{version}/zombies/inventory/scale_magazine_slot {{slot:"inventory.$(inventory)",index:$(inventory),remaining_multiplier:1}}
 
 $function {ns}:v{version}/zombies/bonus/reload_weapon_slot {{slot:"hotbar.$(hotbar)"}}
 $execute if items entity @s inventory.$(inventory) *[custom_data~{mag_cd}] run function {ns}:v{version}/zombies/bonus/refill_magazine {{slot:"inventory.$(inventory)"}}
@@ -332,8 +330,7 @@ $execute if score #wb_mag_given {ns}.data matches 0 run item replace entity @s i
 
 $function {ns}:v{version}/zombies/inventory/apply_slot_tag {{slot:"hotbar.$(hotbar)",group:"hotbar",index:$(hotbar)}}
 $execute if score #wb_mag_given {ns}.data matches 1 run function {ns}:v{version}/zombies/inventory/apply_slot_tag {{slot:"inventory.$(inventory)",group:"inventory",index:$(inventory)}}
-
-$execute if score #wb_mag_given {ns}.data matches 1 run function {ns}:v{version}/zombies/inventory/scale_magazine_slot {{slot:"inventory.$(inventory)"}}
+$execute if score #wb_mag_given {ns}.data matches 1 run function {ns}:v{version}/zombies/inventory/scale_magazine_slot {{slot:"inventory.$(inventory)",index:$(inventory),remaining_multiplier:1}}
 
 $function {ns}:v{version}/zombies/bonus/reload_weapon_slot {{slot:"hotbar.$(hotbar)"}}
 
@@ -363,3 +360,4 @@ function #smithed.actionbar:message
 # Setup wallbuys
 execute if data storage {ns}:zombies game.map.wallbuys[0] run function {ns}:v{version}/zombies/wallbuys/setup
 """)
+
