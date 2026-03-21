@@ -10,7 +10,7 @@
 $item replace entity @s contents from entity @p[tag=mgs.refilling_mag] $(slot)
 
 # Special consumable compatibility (get max_stack_size, 64 by default)
-execute store success score #is_consumable mgs.data if data entity @s item.components."minecraft:custom_data".mgs.consumable
+execute store success score #is_consumable mgs.data if data entity @s item.components."minecraft:custom_data".mgs{consumable:1b}
 execute if score #is_consumable mgs.data matches 1 run scoreboard players set #stack_size mgs.data 64
 execute if score #is_consumable mgs.data matches 1 if data entity @s item.components."minecraft:max_stack_size" store result score #stack_size mgs.data run data get entity @s item.components."minecraft:max_stack_size"
 

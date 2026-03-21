@@ -5,6 +5,7 @@
 #
 # @within	mgs:v5.0.0/ammo/inventory/process_slot {slot:"$(slot)"}
 #			mgs:v5.0.0/zombies/bonus/refill_magazine {slot:"$(slot)"}
+#			mgs:v5.0.0/zombies/inventory/scale_magazine_slot {slot:"$(slot)"}
 #
 # @args		slot (string)
 #

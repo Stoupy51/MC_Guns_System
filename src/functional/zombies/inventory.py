@@ -55,6 +55,20 @@ def generate_zombies_inventory() -> None:
 	}
 	Mem.ctx.data[ns].item_modifiers[f"v{version}/zb_slot_tag"] = set_json_encoder(ItemModifier(zb_slot_modifier), max_level=-1)
 
+	# Marks a magazine as zombies-converted by setting consumable to 2b.
+	# Value 1b = true consumable (stack count = bullets), 2b = zombies non-consumable (custom_data only).
+	zb_mark_converted_modifier: list[JsonDict] = [
+		{
+			"function": "minecraft:set_custom_data",
+			"tag": f'{{{ns}: {{consumable: 2b}}}}',
+		},
+		{
+			"function": "minecraft:set_components",
+			"components": {"minecraft:max_stack_size": 1}
+		}
+	]
+	Mem.ctx.data[ns].item_modifiers[f"v{version}/zb_mark_converted"] = set_json_encoder(ItemModifier(zb_mark_converted_modifier), max_level=-1) # type: ignore
+
 	all_slot_scans: str = ""
 	for slot in ALL_SLOTS:
 		all_slot_scans += (
@@ -68,26 +82,30 @@ $data modify storage {ns}:temp zb_slot.$(group) set value $(index)
 $item modify entity @s $(slot) {ns}:v{version}/zb_slot_tag
 """)
 
-	write_versioned_function("zombies/inventory/read_mag_capacity", f"""
+	write_versioned_function("zombies/inventory/read_capacity", f"""
 $item replace entity @s contents from entity @p[tag={ns}.zb_scaling_mag] $(slot)
-execute store result score #zb_cap {ns}.data run data get entity @s item.components."minecraft:custom_data".{ns}.stats.{CAPACITY}
+$execute store result score #zb_cap {ns}.data run data get entity @s item.components."minecraft:custom_data".{ns}.stats.{CAPACITY} $(multiplier)
 kill @s
 """)
 
 	write_versioned_function("zombies/inventory/scale_magazine_slot", f"""
+# Read capacity from the paired weapon at hotbar.$(index) (inventory.N always pairs with hotbar.N)
 tag @s add {ns}.zb_scaling_mag
-$execute summon item_display run function {ns}:v{version}/zombies/inventory/read_mag_capacity {{slot:"$(slot)"}}
+$execute summon item_display run function {ns}:v{version}/zombies/inventory/read_capacity {{slot:"hotbar.$(index)",multiplier:6}}
 tag @s remove {ns}.zb_scaling_mag
 
-# Store face-value capacity directly (no consumable x8 scaling needed).
+# Write capacity and starting ammo into custom_data
 execute store result storage {ns}:temp zb_item_stats.{CAPACITY} int 1 run scoreboard players get #zb_cap {ns}.data
-
-# Start at half capacity (floor).
-scoreboard players set #zb_const {ns}.data 2
-scoreboard players operation #zb_cap {ns}.data /= #zb_const {ns}.data
-execute store result storage {ns}:temp zb_item_stats.{REMAINING_BULLETS} int 1 run scoreboard players get #zb_cap {ns}.data
-
+$execute store result storage {ns}:temp zb_item_stats.{REMAINING_BULLETS} int $(remaining_multiplier) run scoreboard players get #zb_cap {ns}.data
 $item modify entity @s $(slot) {ns}:v{version}/zb_item_stats
+
+# Mark as zombies-converted (consumable=2b): ammo.py reads remaining_bullets instead of stack count.
+$item modify entity @s $(slot) {ns}:v{version}/zb_mark_converted
+
+# Update magazine lore to show new ammo count
+data modify storage {ns}:temp {CAPACITY} set from storage {ns}:temp zb_item_stats.{CAPACITY}
+execute store result score #bullets {ns}.data run data get storage {ns}:temp zb_item_stats.{REMAINING_BULLETS}
+$function {ns}:v{version}/ammo/modify_mag_lore {{slot:"$(slot)"}}
 """)
 
 	write_versioned_function("zombies/inventory/enforce_slot", f"""
@@ -147,7 +165,7 @@ loot replace entity @s hotbar.1 loot {ns}:i/m1911
 function {ns}:v{version}/zombies/inventory/apply_slot_tag {{slot:"hotbar.1",group:"hotbar",index:1}}
 
 loot replace entity @s inventory.1 loot {ns}:i/m1911_mag
-function {ns}:v{version}/zombies/inventory/scale_magazine_slot {{slot:"inventory.1"}}
+function {ns}:v{version}/zombies/inventory/scale_magazine_slot {{slot:"inventory.1",index:1,remaining_multiplier:0.5}}
 function {ns}:v{version}/zombies/inventory/apply_slot_tag {{slot:"inventory.1",group:"inventory",index:1}}
 
 # hotbar.7: main equipment (frag by default)

@@ -1,0 +1,12 @@
+[
+	{
+		"function": "minecraft:set_custom_data",
+		"tag": "{mgs: {consumable: 2b}}"
+	},
+	{
+		"function": "minecraft:set_components",
+		"components": {
+			"minecraft:max_stack_size": 1
+		}
+	}
+]

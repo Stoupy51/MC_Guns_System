@@ -34,7 +34,7 @@
 #			mgs:v5.0.0/zombies/wallbuys/on_right_click with storage mgs:temp _wb_weapon
 #
 # @args		weapon_id (string)
-#			magazine_id (unknown)
+#			magazine_id (string)
 #
 
 scoreboard players set #wb_purchase_done mgs.data 0

@@ -33,13 +33,13 @@
 #			mgs:v5.0.0/zombies/mystery_box/default_give/vz61 with storage mgs:temp _wb_weapon
 #
 # @args		weapon_id (string)
-#			mag_id (string)
+#			magazine_id (string)
 #			mag_count (int)
 #
 
 scoreboard players set #mb_mag_given mgs.data 0
 
-$execute if score #mb_mag_given mgs.data matches 0 if items entity @s hotbar.1 *[custom_data~{mgs:{gun:true,stats:{base_weapon:"$(weapon_id)"}}}] run function mgs:v5.0.0/zombies/mystery_box/give_consumable_slot {inventory:1,mag_id:"$(mag_id)",mag_count:$(mag_count)}
-$execute if score #mb_mag_given mgs.data matches 0 if items entity @s hotbar.2 *[custom_data~{mgs:{gun:true,stats:{base_weapon:"$(weapon_id)"}}}] run function mgs:v5.0.0/zombies/mystery_box/give_consumable_slot {inventory:2,mag_id:"$(mag_id)",mag_count:$(mag_count)}
-$execute if score #mb_mag_given mgs.data matches 0 if items entity @s hotbar.3 *[custom_data~{mgs:{gun:true,stats:{base_weapon:"$(weapon_id)"}}}] run function mgs:v5.0.0/zombies/mystery_box/give_consumable_slot {inventory:3,mag_id:"$(mag_id)",mag_count:$(mag_count)}
+$execute if score #mb_mag_given mgs.data matches 0 if items entity @s hotbar.1 *[custom_data~{mgs:{gun:true,stats:{base_weapon:"$(weapon_id)"}}}] run function mgs:v5.0.0/zombies/mystery_box/give_consumable_slot {inventory:1,magazine_id:"$(magazine_id)",mag_count:$(mag_count)}
+$execute if score #mb_mag_given mgs.data matches 0 if items entity @s hotbar.2 *[custom_data~{mgs:{gun:true,stats:{base_weapon:"$(weapon_id)"}}}] run function mgs:v5.0.0/zombies/mystery_box/give_consumable_slot {inventory:2,magazine_id:"$(magazine_id)",mag_count:$(mag_count)}
+$execute if score #mb_mag_given mgs.data matches 0 if items entity @s hotbar.3 *[custom_data~{mgs:{gun:true,stats:{base_weapon:"$(weapon_id)"}}}] run function mgs:v5.0.0/zombies/mystery_box/give_consumable_slot {inventory:3,magazine_id:"$(magazine_id)",mag_count:$(mag_count)}
 

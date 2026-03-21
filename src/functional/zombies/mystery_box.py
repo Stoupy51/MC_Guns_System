@@ -27,7 +27,7 @@ def generate_mystery_box() -> None:
 			(
 				f'{{weapon_id:"{weapon_id}",'
 				f'give_function:"{ns}:v{version}/zombies/mystery_box/default_give/{weapon_id}",'
-				f'mag_id:"{weapon_mag_data[weapon_id][0]}",'
+				f'magazine_id:"{weapon_mag_data[weapon_id][0]}",'
 				f'mag_count:{weapon_mag_data[weapon_id][1]},'
 				f'consumable:{"1b" if weapon_mag_data[weapon_id][2] else "0b"}}}'
 			)
@@ -36,9 +36,9 @@ def generate_mystery_box() -> None:
 	)
 
 	for weapon_id in default_pool_weapons:
-		mag_id, mag_count, is_consumable = weapon_mag_data[weapon_id]
+		magazine_id, mag_count, is_consumable = weapon_mag_data[weapon_id]
 		write_versioned_function(f"zombies/mystery_box/default_give/{weapon_id}", f"""
-data modify storage {ns}:temp _wb_weapon set value {{weapon_id:"{weapon_id}",name:"{weapon_id}",consumable:{"1b" if is_consumable else "0b"},mag_id:"{mag_id}",mag_count:{mag_count}}}
+data modify storage {ns}:temp _wb_weapon set value {{weapon_id:"{weapon_id}",name:"{weapon_id}",consumable:{"1b" if is_consumable else "0b"},magazine_id:"{magazine_id}",mag_count:{mag_count}}}
 scoreboard players set #wb_price {ns}.data 0
 function {ns}:v{version}/zombies/wallbuys/process_purchase with storage {ns}:temp _wb_weapon
 execute if score #wb_purchase_done {ns}.data matches 1 if data storage {ns}:temp _wb_weapon{{consumable:1b}} run function {ns}:v{version}/zombies/mystery_box/give_consumable_reserve with storage {ns}:temp _wb_weapon
@@ -47,13 +47,13 @@ execute if score #wb_purchase_done {ns}.data matches 1 if data storage {ns}:temp
 	write_versioned_function("zombies/mystery_box/give_consumable_reserve", f"""
 scoreboard players set #mb_mag_given {ns}.data 0
 
-$execute if score #mb_mag_given {ns}.data matches 0 if items entity @s hotbar.1 *[custom_data~{owned_gun_macro_cd}] run function {ns}:v{version}/zombies/mystery_box/give_consumable_slot {{inventory:1,mag_id:"$(mag_id)",mag_count:$(mag_count)}}
-$execute if score #mb_mag_given {ns}.data matches 0 if items entity @s hotbar.2 *[custom_data~{owned_gun_macro_cd}] run function {ns}:v{version}/zombies/mystery_box/give_consumable_slot {{inventory:2,mag_id:"$(mag_id)",mag_count:$(mag_count)}}
-$execute if score #mb_mag_given {ns}.data matches 0 if items entity @s hotbar.3 *[custom_data~{owned_gun_macro_cd}] run function {ns}:v{version}/zombies/mystery_box/give_consumable_slot {{inventory:3,mag_id:"$(mag_id)",mag_count:$(mag_count)}}
+$execute if score #mb_mag_given {ns}.data matches 0 if items entity @s hotbar.1 *[custom_data~{owned_gun_macro_cd}] run function {ns}:v{version}/zombies/mystery_box/give_consumable_slot {{inventory:1,magazine_id:"$(magazine_id)",mag_count:$(mag_count)}}
+$execute if score #mb_mag_given {ns}.data matches 0 if items entity @s hotbar.2 *[custom_data~{owned_gun_macro_cd}] run function {ns}:v{version}/zombies/mystery_box/give_consumable_slot {{inventory:2,magazine_id:"$(magazine_id)",mag_count:$(mag_count)}}
+$execute if score #mb_mag_given {ns}.data matches 0 if items entity @s hotbar.3 *[custom_data~{owned_gun_macro_cd}] run function {ns}:v{version}/zombies/mystery_box/give_consumable_slot {{inventory:3,magazine_id:"$(magazine_id)",mag_count:$(mag_count)}}
 """)
 
 	write_versioned_function("zombies/mystery_box/give_consumable_slot", f"""
-$loot replace entity @s inventory.$(inventory) loot {ns}:i/$(mag_id)
+$loot replace entity @s inventory.$(inventory) loot {ns}:i/$(magazine_id)
 $scoreboard players set #bullets {ns}.data $(mag_count)
 $item modify entity @s inventory.$(inventory) {ns}:v{version}/set_consumable_count
 $function {ns}:v{version}/zombies/inventory/apply_slot_tag {{slot:"inventory.$(inventory)",group:"inventory",index:$(inventory)}}
