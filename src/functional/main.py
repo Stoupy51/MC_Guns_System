@@ -122,6 +122,9 @@ execute as @e[type=player,sort=random] at @s run function {ns}:v{version}/player
     # Add block tags
     write_block_tags()
 
+    # Entity tags to ignore when shooting
+    write_tag(f"{ns}:ignore", Mem.ctx.data.entity_type_tags, ["#bs.hitbox:intangible", "minecraft:interaction"])
+
     # Loot table for getting username
     Mem.ctx.data[ns].loot_tables["get_username"] = set_json_encoder(LootTable({
         "type": "minecraft:block",
