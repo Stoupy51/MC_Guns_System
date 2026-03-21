@@ -79,10 +79,10 @@ tag @s add {ns}.zb_scaling_mag
 $execute summon item_display run function {ns}:v{version}/zombies/inventory/read_mag_capacity {{slot:"$(slot)"}}
 tag @s remove {ns}.zb_scaling_mag
 
-scoreboard players set #zb_const {ns}.data 8
-scoreboard players operation #zb_cap {ns}.data *= #zb_const {ns}.data
+# Store face-value capacity directly (no consumable x8 scaling needed).
 execute store result storage {ns}:temp zb_item_stats.{CAPACITY} int 1 run scoreboard players get #zb_cap {ns}.data
 
+# Start at half capacity (floor).
 scoreboard players set #zb_const {ns}.data 2
 scoreboard players operation #zb_cap {ns}.data /= #zb_const {ns}.data
 execute store result storage {ns}:temp zb_item_stats.{REMAINING_BULLETS} int 1 run scoreboard players get #zb_cap {ns}.data

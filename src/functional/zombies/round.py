@@ -124,8 +124,8 @@ execute if score #zb_level {ns}.data matches 4 run attribute @s minecraft:moveme
 scoreboard players remove #zb_spawn_timer {ns}.data 1
 execute if score #zb_spawn_timer {ns}.data matches 1.. run return 0
 
-# Reset timer (spawn every 1 second)
-scoreboard players set #zb_spawn_timer {ns}.data 20
+# Reset timer (spawn every 1 tick)
+scoreboard players set #zb_spawn_timer {ns}.data 1
 
 # Spawn a zombie
 function {ns}:v{version}/zombies/spawn_zombie

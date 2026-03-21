@@ -32,7 +32,7 @@ data modify storage mgs:temp _wb.rotation set from storage mgs:temp _wb_iter[0].
 # Summon interaction + item display entities
 function mgs:v5.0.0/zombies/wallbuys/place_at with storage mgs:temp _wb
 execute as @n[tag=mgs.wb_new] at @s run tp @s ^ ^ ^-0.5
-execute as @n[tag=mgs.wb_new_display] at @s run tp @s ^ ^0.5 ^-0.47
+execute as @n[tag=mgs.wb_new_display] at @s run tp @s ^ ^0.5 ^-0.49
 
 # Set scoreboards on interaction entity
 scoreboard players operation @n[tag=mgs.wb_new] mgs.zb.wb.id = #wb_counter mgs.data
@@ -40,9 +40,10 @@ execute store result score @n[tag=mgs.wb_new] mgs.zb.wb.price run data get stora
 execute store result score @n[tag=mgs.wb_new] mgs.zb.wb.rfprice run data get storage mgs:temp _wb_iter[0].refill_price
 execute store result score @n[tag=mgs.wb_new] mgs.zb.wb.rfpap run data get storage mgs:temp _wb_iter[0].refill_price_pap
 
-# Store weapon_id in indexed storage for later lookup
+# Store weapon_id, magazine_id, and name in indexed storage for later lookup
 execute store result storage mgs:temp _wb_store.id int 1 run scoreboard players get #wb_counter mgs.data
 data modify storage mgs:temp _wb_store.weapon_id set from storage mgs:temp _wb_iter[0].weapon_id
+data modify storage mgs:temp _wb_store.magazine_id set from storage mgs:temp _wb_iter[0].magazine_id
 data modify storage mgs:temp _wb_store.name set from storage mgs:temp _wb.name
 
 # Register Bookshelf events

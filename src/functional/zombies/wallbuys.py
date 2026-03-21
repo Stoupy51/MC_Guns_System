@@ -6,7 +6,7 @@
 from stewbeet import Mem, write_load_file, write_versioned_function
 
 from ..helpers import MGS_TAG
-from .common import deny_not_enough_points_body, game_active_guard_cmd
+from .common import build_weapon_magazine_data, deny_not_enough_points_body, game_active_guard_cmd
 
 
 def generate_wallbuys() -> None:
@@ -14,6 +14,11 @@ def generate_wallbuys() -> None:
 	version: str = Mem.ctx.project_version
 	gun_cd: str = "{" + ns + ":{gun:true}}"
 	mag_cd: str = "{" + ns + ":{magazine:true}}"
+
+	# Build weapon_id -> magazine_id mapping
+	weapon_mag_data: dict[str, str] = {}
+	for weapon_id, (mag_id, _, _) in build_weapon_magazine_data().items():
+		weapon_mag_data[weapon_id] = mag_id
 
 	## Wallbuy entity scoreboards
 	write_load_file(f"""
@@ -60,7 +65,7 @@ data modify storage {ns}:temp _wb.rotation set from storage {ns}:temp _wb_iter[0
 # Summon interaction + item display entities
 function {ns}:v{version}/zombies/wallbuys/place_at with storage {ns}:temp _wb
 execute as @n[tag={ns}.wb_new] at @s run tp @s ^ ^ ^-0.5
-execute as @n[tag={ns}.wb_new_display] at @s run tp @s ^ ^0.5 ^-0.47
+execute as @n[tag={ns}.wb_new_display] at @s run tp @s ^ ^0.5 ^-0.49
 
 # Set scoreboards on interaction entity
 scoreboard players operation @n[tag={ns}.wb_new] {ns}.zb.wb.id = #wb_counter {ns}.data
@@ -68,9 +73,10 @@ execute store result score @n[tag={ns}.wb_new] {ns}.zb.wb.price run data get sto
 execute store result score @n[tag={ns}.wb_new] {ns}.zb.wb.rfprice run data get storage {ns}:temp _wb_iter[0].refill_price
 execute store result score @n[tag={ns}.wb_new] {ns}.zb.wb.rfpap run data get storage {ns}:temp _wb_iter[0].refill_price_pap
 
-# Store weapon_id in indexed storage for later lookup
+# Store weapon_id, magazine_id, and name in indexed storage for later lookup
 execute store result storage {ns}:temp _wb_store.id int 1 run scoreboard players get #wb_counter {ns}.data
 data modify storage {ns}:temp _wb_store.weapon_id set from storage {ns}:temp _wb_iter[0].weapon_id
+data modify storage {ns}:temp _wb_store.magazine_id set from storage {ns}:temp _wb_iter[0].magazine_id
 data modify storage {ns}:temp _wb_store.name set from storage {ns}:temp _wb.name
 
 # Register Bookshelf events
@@ -101,7 +107,7 @@ $summon minecraft:item_display $(x) $(y) $(z) {{billboard:"fixed",item_display:"
 """)
 
 	write_versioned_function("zombies/wallbuys/store_data", f"""
-$data modify storage {ns}:zombies wallbuy_data."$(id)" set value {{weapon_id:"$(weapon_id)",name:"$(name)",item_name:$(item_name)}}
+$data modify storage {ns}:zombies wallbuy_data."$(id)" set value {{weapon_id:"$(weapon_id)",name:"$(name)",magazine_id:"$(magazine_id)",item_name:$(item_name)}}
 """)
 
 	write_versioned_function("zombies/wallbuys/set_display_item", f"""
@@ -160,6 +166,16 @@ tellraw @s [{MGS_TAG},{{"text":"Ammo is already full. Refunded ","color":"red"}}
 function {ns}:v{version}/zombies/feedback/sound_deny
 """)
 
+	# Generate lookup function for weapon -> magazine mapping
+	magazine_lookup_cmds = "\n".join([
+		f"execute if data storage {ns}:temp _wb_store{{weapon_id:\"{wid}\"}} run data modify storage {ns}:temp _wb_store.magazine_id set value \"{mag_id}\""
+		for wid, (mag_id, _, _) in build_weapon_magazine_data().items()
+	])
+
+	write_versioned_function("zombies/wallbuys/lookup_magazine_id", f"""
+{magazine_lookup_cmds}
+""")
+
 	write_versioned_function("zombies/wallbuys/lookup_weapon", f"""
 $data modify storage {ns}:temp _wb_weapon set from storage {ns}:zombies wallbuy_data."$(id)"
 """)
@@ -168,15 +184,16 @@ $data modify storage {ns}:temp _wb_weapon set from storage {ns}:zombies wallbuy_
 scoreboard players set #wb_purchase_done {ns}.data 0
 scoreboard players set #wb_purchase_mode {ns}.data 0
 
+# Count guns in hotbar to determine placement logic
 function {ns}:v{version}/zombies/wallbuys/count_guns
 
 # Always prioritize refill of the same weapon to prevent duplicates.
 execute if score #wb_purchase_done {ns}.data matches 0 run function {ns}:v{version}/zombies/wallbuys/try_refill_owned with storage {ns}:temp _wb_weapon
 
 # New placement logic
-$execute if score #wb_gun_count {ns}.data matches 0 run function {ns}:v{version}/zombies/wallbuys/give_to_slot {{hotbar:1,inventory:1,weapon_id:"$(weapon_id)"}}
-$execute if score #wb_purchase_done {ns}.data matches 0 if score #wb_gun_count {ns}.data matches 1 run function {ns}:v{version}/zombies/wallbuys/give_to_slot {{hotbar:2,inventory:2,weapon_id:"$(weapon_id)"}}
-$execute if score #wb_purchase_done {ns}.data matches 0 if score #wb_gun_count {ns}.data matches 2 if score @s {ns}.zb.perk.mule_kick matches 1.. run function {ns}:v{version}/zombies/wallbuys/give_to_slot {{hotbar:3,inventory:3,weapon_id:"$(weapon_id)"}}
+$execute if score #wb_gun_count {ns}.data matches 0 run function {ns}:v{version}/zombies/wallbuys/give_to_slot {{hotbar:1,inventory:1,weapon_id:"$(weapon_id)",magazine_id:"$(magazine_id)"}}
+$execute if score #wb_purchase_done {ns}.data matches 0 if score #wb_gun_count {ns}.data matches 1 run function {ns}:v{version}/zombies/wallbuys/give_to_slot {{hotbar:2,inventory:2,weapon_id:"$(weapon_id)",magazine_id:"$(magazine_id)"}}
+$execute if score #wb_purchase_done {ns}.data matches 0 if score #wb_gun_count {ns}.data matches 2 if score @s {ns}.zb.perk.mule_kick matches 1.. run function {ns}:v{version}/zombies/wallbuys/give_to_slot {{hotbar:3,inventory:3,weapon_id:"$(weapon_id)",magazine_id:"$(magazine_id)"}}
 
 # Otherwise replace the currently selected gun slot (1/2/3 only)
 execute if score #wb_purchase_done {ns}.data matches 0 run function {ns}:v{version}/zombies/wallbuys/replace_selected with storage {ns}:temp _wb_weapon
@@ -193,7 +210,7 @@ execute if items entity @s hotbar.3 *[custom_data~{gun_cd}] run scoreboard playe
 $loot replace entity @s hotbar.$(hotbar) loot {ns}:i/$(weapon_id)
 
 scoreboard players set #wb_mag_given {ns}.data 0
-$execute store success score #wb_mag_given {ns}.data run loot replace entity @s inventory.$(inventory) loot {ns}:i/$(weapon_id)_mag
+$execute store success score #wb_mag_given {ns}.data run loot replace entity @s inventory.$(inventory) loot {ns}:i/$(magazine_id)
 $execute if score #wb_mag_given {ns}.data matches 0 run item replace entity @s inventory.$(inventory) with air
 
 $function {ns}:v{version}/zombies/inventory/apply_slot_tag {{slot:"hotbar.$(hotbar)",group:"hotbar",index:$(hotbar)}}
@@ -212,17 +229,17 @@ execute if score #wb_purchase_done {ns}.data matches 1 run return 0
 
 function {ns}:v{version}/zombies/wallbuys/check_mag_not_full {{slot:"inventory.1"}}
 $function {ns}:v{version}/zombies/wallbuys/check_same_weapon_slot {{slot:1,weapon_id:"$(weapon_id)"}}
-$execute if score #wb_purchase_done {ns}.data matches 0 if score #wb_same_weapon {ns}.data matches 1 if score #wb_mag_not_full {ns}.data matches 1 run function {ns}:v{version}/zombies/wallbuys/reload_pair {{hotbar:1,inventory:1,weapon_id:"$(weapon_id)"}}
+$execute if score #wb_purchase_done {ns}.data matches 0 if score #wb_same_weapon {ns}.data matches 1 if score #wb_mag_not_full {ns}.data matches 1 run function {ns}:v{version}/zombies/wallbuys/reload_pair {{hotbar:1,inventory:1,weapon_id:"$(weapon_id)",magazine_id:"$(magazine_id)"}}
 execute if score #wb_purchase_done {ns}.data matches 0 if score #wb_same_weapon {ns}.data matches 1 if score #wb_mag_not_full {ns}.data matches 0 run function {ns}:v{version}/zombies/wallbuys/refill_already_full
 
 function {ns}:v{version}/zombies/wallbuys/check_mag_not_full {{slot:"inventory.2"}}
 $function {ns}:v{version}/zombies/wallbuys/check_same_weapon_slot {{slot:2,weapon_id:"$(weapon_id)"}}
-$execute if score #wb_purchase_done {ns}.data matches 0 if score #wb_same_weapon {ns}.data matches 1 if score #wb_mag_not_full {ns}.data matches 1 run function {ns}:v{version}/zombies/wallbuys/reload_pair {{hotbar:2,inventory:2,weapon_id:"$(weapon_id)"}}
+$execute if score #wb_purchase_done {ns}.data matches 0 if score #wb_same_weapon {ns}.data matches 1 if score #wb_mag_not_full {ns}.data matches 1 run function {ns}:v{version}/zombies/wallbuys/reload_pair {{hotbar:2,inventory:2,weapon_id:"$(weapon_id)",magazine_id:"$(magazine_id)"}}
 execute if score #wb_purchase_done {ns}.data matches 0 if score #wb_same_weapon {ns}.data matches 1 if score #wb_mag_not_full {ns}.data matches 0 run function {ns}:v{version}/zombies/wallbuys/refill_already_full
 
 function {ns}:v{version}/zombies/wallbuys/check_mag_not_full {{slot:"inventory.3"}}
 $function {ns}:v{version}/zombies/wallbuys/check_same_weapon_slot {{slot:3,weapon_id:"$(weapon_id)"}}
-$execute if score #wb_purchase_done {ns}.data matches 0 if score #wb_same_weapon {ns}.data matches 1 if score #wb_mag_not_full {ns}.data matches 1 run function {ns}:v{version}/zombies/wallbuys/reload_pair {{hotbar:3,inventory:3,weapon_id:"$(weapon_id)"}}
+$execute if score #wb_purchase_done {ns}.data matches 0 if score #wb_same_weapon {ns}.data matches 1 if score #wb_mag_not_full {ns}.data matches 1 run function {ns}:v{version}/zombies/wallbuys/reload_pair {{hotbar:3,inventory:3,weapon_id:"$(weapon_id)",magazine_id:"$(magazine_id)"}}
 execute if score #wb_purchase_done {ns}.data matches 0 if score #wb_same_weapon {ns}.data matches 1 if score #wb_mag_not_full {ns}.data matches 0 run function {ns}:v{version}/zombies/wallbuys/refill_already_full
 """)
 
@@ -238,7 +255,7 @@ scoreboard players set #wb_mag_not_full {ns}.data 0
 $execute unless items entity @s $(slot) *[custom_data~{mag_cd}] run scoreboard players set #wb_mag_not_full {ns}.data 1
 
 tag @s add {ns}.wb_reading_mag
-$execute if items entity @s $(slot) *[custom_data~{mag_cd}] run summon minecraft:item_display run function {ns}:v{version}/zombies/wallbuys/read_mag_state {{slot:"$(slot)"}}
+$execute if items entity @s $(slot) *[custom_data~{mag_cd}] summon minecraft:item_display run function {ns}:v{version}/zombies/wallbuys/read_mag_state {{slot:"$(slot)"}}
 tag @s remove {ns}.wb_reading_mag
 
 execute if score #wb_mag_rem {ns}.data < #wb_mag_cap {ns}.data run scoreboard players set #wb_mag_not_full {ns}.data 1
@@ -260,7 +277,7 @@ kill @s
 scoreboard players set #wb_new_mag {ns}.data 0
 scoreboard players set #wb_mag_created {ns}.data 0
 $execute unless items entity @s inventory.$(inventory) *[custom_data~{mag_cd}] run scoreboard players set #wb_new_mag {ns}.data 1
-$execute if score #wb_new_mag {ns}.data matches 1 store success score #wb_mag_created {ns}.data run loot replace entity @s inventory.$(inventory) loot {ns}:i/$(weapon_id)_mag
+$execute if score #wb_new_mag {ns}.data matches 1 store success score #wb_mag_created {ns}.data run loot replace entity @s inventory.$(inventory) loot {ns}:i/$(magazine_id)
 $execute if score #wb_new_mag {ns}.data matches 1 if score #wb_mag_created {ns}.data matches 1 run function {ns}:v{version}/zombies/inventory/scale_magazine_slot {{slot:"inventory.$(inventory)"}}
 
 $function {ns}:v{version}/zombies/bonus/reload_weapon_slot {{slot:"hotbar.$(hotbar)"}}
@@ -279,21 +296,21 @@ execute store result score #wb_sel {ns}.data run data get entity @s SelectedItem
 
 execute if score #wb_purchase_done {ns}.data matches 0 if score #wb_sel {ns}.data matches 1 run function {ns}:v{version}/zombies/wallbuys/check_mag_not_full {{slot:"inventory.1"}}
 $execute if score #wb_purchase_done {ns}.data matches 0 if score #wb_sel {ns}.data matches 1 run function {ns}:v{version}/zombies/wallbuys/check_same_weapon_slot {{slot:1,weapon_id:"$(weapon_id)"}}
-$execute if score #wb_purchase_done {ns}.data matches 0 if score #wb_sel {ns}.data matches 1 if score #wb_same_weapon {ns}.data matches 1 if score #wb_mag_not_full {ns}.data matches 1 run function {ns}:v{version}/zombies/wallbuys/reload_pair {{hotbar:1,inventory:1,weapon_id:"$(weapon_id)"}}
+$execute if score #wb_purchase_done {ns}.data matches 0 if score #wb_sel {ns}.data matches 1 if score #wb_same_weapon {ns}.data matches 1 if score #wb_mag_not_full {ns}.data matches 1 run function {ns}:v{version}/zombies/wallbuys/reload_pair {{hotbar:1,inventory:1,weapon_id:"$(weapon_id)",magazine_id:"$(magazine_id)"}}
 execute if score #wb_purchase_done {ns}.data matches 0 if score #wb_sel {ns}.data matches 1 if score #wb_same_weapon {ns}.data matches 1 if score #wb_mag_not_full {ns}.data matches 0 run function {ns}:v{version}/zombies/wallbuys/refill_already_full
-$execute if score #wb_purchase_done {ns}.data matches 0 if score #wb_sel {ns}.data matches 1 if items entity @s hotbar.1 *[custom_data~{gun_cd}] run function {ns}:v{version}/zombies/wallbuys/replace_pair {{hotbar:1,inventory:1,weapon_id:"$(weapon_id)"}}
+$execute if score #wb_purchase_done {ns}.data matches 0 if score #wb_sel {ns}.data matches 1 if items entity @s hotbar.1 *[custom_data~{gun_cd}] run function {ns}:v{version}/zombies/wallbuys/replace_pair {{hotbar:1,inventory:1,weapon_id:"$(weapon_id)",magazine_id:"$(magazine_id)"}}
 
 execute if score #wb_purchase_done {ns}.data matches 0 if score #wb_sel {ns}.data matches 2 run function {ns}:v{version}/zombies/wallbuys/check_mag_not_full {{slot:"inventory.2"}}
 $execute if score #wb_purchase_done {ns}.data matches 0 if score #wb_sel {ns}.data matches 2 run function {ns}:v{version}/zombies/wallbuys/check_same_weapon_slot {{slot:2,weapon_id:"$(weapon_id)"}}
-$execute if score #wb_purchase_done {ns}.data matches 0 if score #wb_sel {ns}.data matches 2 if score #wb_same_weapon {ns}.data matches 1 if score #wb_mag_not_full {ns}.data matches 1 run function {ns}:v{version}/zombies/wallbuys/reload_pair {{hotbar:2,inventory:2,weapon_id:"$(weapon_id)"}}
+$execute if score #wb_purchase_done {ns}.data matches 0 if score #wb_sel {ns}.data matches 2 if score #wb_same_weapon {ns}.data matches 1 if score #wb_mag_not_full {ns}.data matches 1 run function {ns}:v{version}/zombies/wallbuys/reload_pair {{hotbar:2,inventory:2,weapon_id:"$(weapon_id)",magazine_id:"$(magazine_id)"}}
 execute if score #wb_purchase_done {ns}.data matches 0 if score #wb_sel {ns}.data matches 2 if score #wb_same_weapon {ns}.data matches 1 if score #wb_mag_not_full {ns}.data matches 0 run function {ns}:v{version}/zombies/wallbuys/refill_already_full
-$execute if score #wb_purchase_done {ns}.data matches 0 if score #wb_sel {ns}.data matches 2 if items entity @s hotbar.2 *[custom_data~{gun_cd}] run function {ns}:v{version}/zombies/wallbuys/replace_pair {{hotbar:2,inventory:2,weapon_id:"$(weapon_id)"}}
+$execute if score #wb_purchase_done {ns}.data matches 0 if score #wb_sel {ns}.data matches 2 if items entity @s hotbar.2 *[custom_data~{gun_cd}] run function {ns}:v{version}/zombies/wallbuys/replace_pair {{hotbar:2,inventory:2,weapon_id:"$(weapon_id)",magazine_id:"$(magazine_id)"}}
 
 execute if score #wb_purchase_done {ns}.data matches 0 if score #wb_sel {ns}.data matches 3 run function {ns}:v{version}/zombies/wallbuys/check_mag_not_full {{slot:"inventory.3"}}
 $execute if score #wb_purchase_done {ns}.data matches 0 if score #wb_sel {ns}.data matches 3 run function {ns}:v{version}/zombies/wallbuys/check_same_weapon_slot {{slot:3,weapon_id:"$(weapon_id)"}}
-$execute if score #wb_purchase_done {ns}.data matches 0 if score #wb_sel {ns}.data matches 3 if score #wb_same_weapon {ns}.data matches 1 if score #wb_mag_not_full {ns}.data matches 1 run function {ns}:v{version}/zombies/wallbuys/reload_pair {{hotbar:3,inventory:3,weapon_id:"$(weapon_id)"}}
+$execute if score #wb_purchase_done {ns}.data matches 0 if score #wb_sel {ns}.data matches 3 if score #wb_same_weapon {ns}.data matches 1 if score #wb_mag_not_full {ns}.data matches 1 run function {ns}:v{version}/zombies/wallbuys/reload_pair {{hotbar:3,inventory:3,weapon_id:"$(weapon_id)",magazine_id:"$(magazine_id)"}}
 execute if score #wb_purchase_done {ns}.data matches 0 if score #wb_sel {ns}.data matches 3 if score #wb_same_weapon {ns}.data matches 1 if score #wb_mag_not_full {ns}.data matches 0 run function {ns}:v{version}/zombies/wallbuys/refill_already_full
-$execute if score #wb_purchase_done {ns}.data matches 0 if score #wb_sel {ns}.data matches 3 if items entity @s hotbar.3 *[custom_data~{gun_cd}] run function {ns}:v{version}/zombies/wallbuys/replace_pair {{hotbar:3,inventory:3,weapon_id:"$(weapon_id)"}}
+$execute if score #wb_purchase_done {ns}.data matches 0 if score #wb_sel {ns}.data matches 3 if items entity @s hotbar.3 *[custom_data~{gun_cd}] run function {ns}:v{version}/zombies/wallbuys/replace_pair {{hotbar:3,inventory:3,weapon_id:"$(weapon_id)",magazine_id:"$(magazine_id)"}}
 
 execute if score #wb_purchase_done {ns}.data matches 0 run scoreboard players operation @s {ns}.zb.points += #wb_price {ns}.data
 execute if score #wb_purchase_done {ns}.data matches 0 run function {ns}:v{version}/zombies/wallbuys/deny_hold_valid_slot
@@ -310,7 +327,7 @@ function {ns}:v{version}/zombies/feedback/sound_deny
 $loot replace entity @s hotbar.$(hotbar) loot {ns}:i/$(weapon_id)
 
 scoreboard players set #wb_mag_given {ns}.data 0
-$execute store success score #wb_mag_given {ns}.data run loot replace entity @s inventory.$(inventory) loot {ns}:i/$(weapon_id)_mag
+$execute store success score #wb_mag_given {ns}.data run loot replace entity @s inventory.$(inventory) loot {ns}:i/$(magazine_id)
 $execute if score #wb_mag_given {ns}.data matches 0 run item replace entity @s inventory.$(inventory) with air
 
 $function {ns}:v{version}/zombies/inventory/apply_slot_tag {{slot:"hotbar.$(hotbar)",group:"hotbar",index:$(hotbar)}}

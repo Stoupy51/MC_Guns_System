@@ -47,7 +47,7 @@
 #			mgs:v5.0.0/ammo/inventory/find {slot:"player.crafting.3",base_weapon:"$(base_weapon)"}
 #
 # @args		slot (string)
-#			base_weapon (unknown)
+#			base_weapon (string)
 #
 
 # Get bullets from the magazine

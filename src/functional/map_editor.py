@@ -29,7 +29,7 @@ ALL_ELEMENTS: dict[str, JsonDict] = {
 	"hardpoint":          {"name": "Hardpoint Zone",   "color": "dark_purple",  "particle": [0.5, 0.0, 0.5], "particle_scale": 1.0, "has_rotation": False, "egg_model": "minecraft:warden_spawn_egg", "save_type": "point", "save_path": "hardpoint", "emoji": "⚡"},
 	# Mission elements
 	"mission_spawn":      {"name": "Mission Spawn",    "color": "aqua",         "particle": [0.0, 1.0, 1.0], "particle_scale": 1.0, "has_rotation": True,  "egg_model": "minecraft:villager_spawn_egg", "save_type": "spawn", "save_path": "spawning_points.mission", "emoji": "●"},
-	"enemy":              {"name": "Enemy",             "color": "red",          "particle": [1.0, 0.2, 0.2], "particle_scale": 1.0, "has_rotation": False, "egg_model": "minecraft:pillager_spawn_egg", "save_type": "enemy", "save_path": "enemies", "emoji": "👤"},
+	"enemy":              {"name": "Enemy",            "color": "red",          "particle": [1.0, 0.2, 0.2], "particle_scale": 1.0, "has_rotation": False, "egg_model": "minecraft:pillager_spawn_egg", "save_type": "enemy", "save_path": "enemies", "emoji": "👤"},
 	# Config (utility, no marker)
 	"config":             {"name": "⚙ Config",         "color": "white",        "particle": [1.0, 1.0, 1.0], "particle_scale": 0.5, "has_rotation": False, "egg_model": "minecraft:allay_spawn_egg", "save_type": "config", "emoji": "⚙"},
 	# Zombies elements (zb_object: compound data with pos/rotation/group_id + extra fields)
@@ -38,7 +38,7 @@ ALL_ELEMENTS: dict[str, JsonDict] = {
 	"player_spawn_zb":    {"name": "Player Spawn",     "color": "aqua",         "particle": [0.0, 1.0, 1.0], "particle_scale": 1.0, "has_rotation": True,  "egg_model": "minecraft:villager_spawn_egg",    "save_type": "zb_object", "save_path": "spawning_points.players", "emoji": "●",
                            "defaults": {}},
 	"wallbuy":            {"name": "Wallbuy",          "color": "yellow",       "particle": [1.0, 1.0, 0.0], "particle_scale": 1.0, "has_rotation": True,  "egg_model": "minecraft:iron_golem_spawn_egg",  "save_type": "zb_object", "save_path": "wallbuys", "emoji": "🔫",
-                           "defaults": {"price": 1000, "refill_price": 500, "refill_price_pap": 4500, "weapon_id": "m1911"}},
+                           "defaults": {"price": 1000, "refill_price": 500, "refill_price_pap": 4500, "weapon_id": "m1911", "magazine_id": "m1911_mag"}},
 	"door":               {
 		"name": "Door", "color": "gold", "particle": [1.0, 0.6, 0.0], "particle_scale": 1.0, "has_rotation": True,
 		"egg_model": "minecraft:hoglin_spawn_egg", "save_type": "zb_object", "save_path": "doors", "emoji": "🚪",

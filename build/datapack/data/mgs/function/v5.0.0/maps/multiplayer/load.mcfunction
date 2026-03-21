@@ -4,7 +4,7 @@
 # @within	mgs:v5.0.0/multiplayer/load_map_from_storage {id:"$(map_id)",override:{}}
 #			mgs:v5.0.0/maps/multiplayer/load {id:"map_id",override:{}}
 #
-# @args		id (unknown)
+# @args		id (string)
 #			override (compound)
 #
 
