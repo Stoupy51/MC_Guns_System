@@ -9,5 +9,5 @@
 # @args		radius_float (unknown)
 #
 
-$execute as @e[type=!#bs.hitbox:intangible,distance=..$(radius_float)] run function mgs:v5.0.0/projectile/damage_entity
+$execute as @e[type=!#mgs:ignore,distance=..$(radius_float),tag=!global.ignore.kill,tag=!global.ignore,nbt=!{Invulnerable:true}] run function mgs:v5.0.0/projectile/damage_entity
 

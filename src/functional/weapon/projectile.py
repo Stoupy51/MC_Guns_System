@@ -1,6 +1,6 @@
 
 # Imports
-from stewbeet import Mem, write_tick_file, write_versioned_function
+from stewbeet import Conventions, Mem, write_tick_file, write_versioned_function
 
 from ...config.stats import (
     BASE_WEAPON,
@@ -105,7 +105,7 @@ execute if score @s {ns}.data matches ..0 run function {ns}:v{version}/projectil
     write_versioned_function("projectile/on_collision", f"""
 # Tag the nearest non-immune entity as directly hit (for bullet damage in explode)
 # distance=..2.5 covers feet-to-head hit at any entity height up to 2.5 blocks
-execute as @n[distance=..2.5,type=!#bs.hitbox:intangible,tag=!{ns}.slow_bullet] run tag @s add {ns}.direct_hit
+execute as @n[distance=..2.5,type=!#{ns}:ignore,tag=!{ns}.slow_bullet,{Conventions.GLOBAL_KILL.avoid},nbt=!{{Invulnerable:true}}] run tag @s add {ns}.direct_hit
 
 # Mark for explosion
 tag @s add {ns}.exploding
@@ -205,7 +205,7 @@ execute if score #is_match {ns}.data matches 0 run tag @s add {ns}.temp_shooter
 
     ## Area damage (macro function for configurable radius)
     write_versioned_function("projectile/damage_area", f"""
-$execute as @e[type=!#bs.hitbox:intangible,distance=..$(radius_float)] run function {ns}:v{version}/projectile/damage_entity
+$execute as @e[type=!#{ns}:ignore,distance=..$(radius_float),{Conventions.GLOBAL_KILL.avoid},nbt=!{{Invulnerable:true}}] run function {ns}:v{version}/projectile/damage_entity
 """)
 
     ## Per-entity damage with distance-based falloff

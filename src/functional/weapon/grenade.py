@@ -2,7 +2,7 @@
 # Imports
 from beet import Font, Texture
 from PIL import Image
-from stewbeet import ItemModifier, Mem, set_json_encoder, write_tick_file, write_versioned_function
+from stewbeet import Conventions, ItemModifier, Mem, set_json_encoder, write_tick_file, write_versioned_function
 
 from ...config.stats import (
     EXPLOSION_DAMAGE,
@@ -187,11 +187,11 @@ scoreboard players add #semtex_id {ns}.data 1
 
 # Assign the same unique ID to both the grenade and the nearest entity
 scoreboard players operation @s {ns}.stuck_id = #semtex_id {ns}.data
-execute positioned ~ ~-1 ~ run scoreboard players operation @n[type=!#bs.hitbox:intangible,distance=..2,tag=!{ns}.grenade,tag=!{ns}.slow_bullet] {ns}.stuck_id = #semtex_id {ns}.data
+execute positioned ~ ~-1 ~ run scoreboard players operation @n[type=!#{ns}:ignore,distance=..2,tag=!{ns}.grenade,tag=!{ns}.slow_bullet,{Conventions.GLOBAL_KILL.avoid},nbt=!{{Invulnerable:true}}] {ns}.stuck_id = #semtex_id {ns}.data
 
 # Mark that this grenade is stuck to an entity (not just a block)
 tag @s add {ns}.stuck_to_entity
-""")
+""")  # noqa: E501
 
     ## Tick for stuck grenades (just countdown)
     write_versioned_function("grenade/tick_stuck", f"""
