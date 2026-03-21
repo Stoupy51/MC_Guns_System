@@ -6,6 +6,9 @@
 # @within	mgs:v5.0.0/raycast/on_exit_point [ as @e[tag=mgs.raycast_target] ]
 #
 
+# Remove raycast target tag
+tag @s remove mgs.raycast_target
+
 # Check if in head zone (Y above 1400 relative to entity), if not apply normal damage
 scoreboard players set #is_headshot mgs.data 0
 scoreboard players set #headshot_multiplier mgs.data 1000

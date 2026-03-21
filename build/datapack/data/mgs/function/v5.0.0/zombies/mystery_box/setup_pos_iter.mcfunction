@@ -17,6 +17,7 @@ scoreboard players operation #mbz mgs.data += #gm_base_z mgs.data
 execute store result storage mgs:temp _mbpos.x double 1 run scoreboard players get #mbx mgs.data
 execute store result storage mgs:temp _mbpos.y double 1 run scoreboard players get #mby mgs.data
 execute store result storage mgs:temp _mbpos.z double 1 run scoreboard players get #mbz mgs.data
+data modify storage mgs:temp _mbpos.rotation set from storage mgs:temp _mb_iter[0].rotation
 
 function mgs:v5.0.0/zombies/mystery_box/summon_pos_at with storage mgs:temp _mbpos
 

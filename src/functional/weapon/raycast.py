@@ -133,6 +133,7 @@ data modify storage {ns}:input with.entities set value true
 data modify storage {ns}:input with.piercing set value 10
 data modify storage {ns}:input with.max_distance set value 128
 data modify storage {ns}:input with.ignored_blocks set value "#{ns}:v{version}/empty"
+data modify storage {ns}:input with.ignored_entities set value "#{ns}:ignore"
 data modify storage {ns}:input with.on_entry_point set value "function {ns}:v{version}/raycast/on_entry_point"
 data modify storage {ns}:input with.on_targeted_block set value "function {ns}:v{version}/raycast/on_targeted_block"
 data modify storage {ns}:input with.on_targeted_entity set value "function {ns}:v{version}/raycast/on_targeted_entity"
@@ -306,6 +307,9 @@ scoreboard players operation #damage {ns}.data /= #1000 {ns}.data
 
     # Calculate headshot bonus based on center distance and apply damage
     write_versioned_function("raycast/headshot_and_damage", f"""
+# Remove raycast target tag
+tag @s remove {ns}.raycast_target
+
 # Check if in head zone (Y above 1400 relative to entity), if not apply normal damage
 scoreboard players set #is_headshot {ns}.data 0
 scoreboard players set #headshot_multiplier {ns}.data 1000

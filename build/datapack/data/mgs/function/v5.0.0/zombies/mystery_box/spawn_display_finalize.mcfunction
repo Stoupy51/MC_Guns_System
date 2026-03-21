@@ -5,5 +5,5 @@
 #
 
 data merge entity @n[tag=mgs.mb_display_new] {transformation:{translation:[0f,0.8f,0f]},start_interpolation:0,interpolation_duration:200}
-tag @e[tag=mgs.mb_display_new] remove mgs.mb_display_new
+tag @n[tag=mgs.mb_display_new] remove mgs.mb_display_new
 
