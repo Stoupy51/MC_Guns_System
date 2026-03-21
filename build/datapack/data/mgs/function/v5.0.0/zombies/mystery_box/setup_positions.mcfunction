@@ -13,3 +13,7 @@ execute as @n[tag=mgs.mystery_box_pos,tag=mgs.mb_can_start,sort=random] run tag 
 # Fallback if no can_start_on positions exist
 execute unless entity @e[tag=mgs.mystery_box_active] as @n[tag=mgs.mystery_box_pos,sort=random] run tag @s add mgs.mystery_box_active
 
+# Init pull counter and spawn presence chest at the active position.
+scoreboard players set #mb_pulls mgs.data 0
+function mgs:v5.0.0/zombies/mystery_box/sync_presence_display
+

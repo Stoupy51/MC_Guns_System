@@ -19,6 +19,9 @@ execute if data storage mgs:zombies mystery_box.result.weapon_id run function mg
 tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.you_collected","color":"green"},{"storage":"mgs:temp","nbt":"_mb_collected_name","interpret":true},[{"text":" ","color":"green"}, {"translate":"mgs.from_the_mystery_box"}]]
 function mgs:v5.0.0/zombies/feedback/sound_success
 
+# Track pulls and sometimes move the box.
+function mgs:v5.0.0/zombies/mystery_box/maybe_move_after_pull
+
 # Reset box
 function mgs:v5.0.0/zombies/mystery_box/reset
 

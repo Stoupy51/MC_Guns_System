@@ -1,7 +1,8 @@
 
 #> mgs:v5.0.0/zombies/feedback/sound_announce
 #
-# @within	mgs:v5.0.0/zombies/doors/on_right_click
+# @within	mgs:v5.0.0/zombies/mystery_box/move_active_position
+#			mgs:v5.0.0/zombies/doors/on_right_click
 #			mgs:v5.0.0/zombies/traps/on_right_click
 #
 
