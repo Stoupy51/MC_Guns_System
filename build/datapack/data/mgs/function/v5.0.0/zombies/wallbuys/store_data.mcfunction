@@ -6,8 +6,9 @@
 # @args		id (unknown)
 #			weapon_id (unknown)
 #			name (unknown)
+#			magazine_id (unknown)
 #			item_name (unknown)
 #
 
-$data modify storage mgs:zombies wallbuy_data."$(id)" set value {weapon_id:"$(weapon_id)",name:"$(name)",item_name:$(item_name)}
+$data modify storage mgs:zombies wallbuy_data."$(id)" set value {weapon_id:"$(weapon_id)",name:"$(name)",magazine_id:"$(magazine_id)",item_name:$(item_name)}
 

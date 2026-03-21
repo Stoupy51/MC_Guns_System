@@ -3,7 +3,7 @@
 #
 # @within	mgs:v5.0.0/mob/default/level_5 {entity:"$(entity)"}
 #
-# @args		entity (unknown)
+# @args		entity (string)
 #
 
 # Tags, data, and attributes

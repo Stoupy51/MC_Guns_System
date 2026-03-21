@@ -5,7 +5,7 @@
 #
 # @within	mgs:v5.0.0/zombies/summon_zombie_at {level:"$(level)"}
 #
-# @args		level (unknown)
+# @args		level (string)
 #
 
 tag @s add mgs.zb_scaled

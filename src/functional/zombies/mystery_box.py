@@ -9,37 +9,34 @@
 
 from stewbeet import Mem, write_versioned_function
 
-from ...config.catalogs import PRIMARY_WEAPONS, SECONDARY_WEAPONS
 from ..helpers import MGS_TAG
-from ..multiplayer.classes import CONSUMABLE_MAGS
+from .common import build_weapon_magazine_data
 
 
 def generate_mystery_box() -> None:
 	ns: str = Mem.ctx.project_id
 	version: str = Mem.ctx.project_version
 	owned_gun_macro_cd: str = "{" + ns + ':{gun:true,stats:{base_weapon:"$(weapon_id)"}}}'
-	weapon_pool_meta: dict[str, tuple[str, int, bool]] = {}
-	for weapon_id, _, _, mag_id, mag_count in PRIMARY_WEAPONS:
-		weapon_pool_meta.setdefault(weapon_id, (mag_id, mag_count, mag_id in CONSUMABLE_MAGS))
-	for weapon_id, _, mag_id, mag_count in SECONDARY_WEAPONS:
-		weapon_pool_meta.setdefault(weapon_id, (mag_id, mag_count, mag_id in CONSUMABLE_MAGS))
-	default_pool_weapons: tuple[str, ...] = tuple(weapon_pool_meta.keys())
+
+	# Use common helper to build weapon->magazine mappings from catalogs
+	weapon_mag_data: dict[str, tuple[str, int, bool]] = build_weapon_magazine_data()
+	default_pool_weapons: tuple[str, ...] = tuple(weapon_mag_data.keys())
 
 	default_pool_entries: str = ",".join(
 		[
 			(
 				f'{{weapon_id:"{weapon_id}",'
 				f'give_function:"{ns}:v{version}/zombies/mystery_box/default_give/{weapon_id}",'
-				f'mag_id:"{weapon_pool_meta[weapon_id][0]}",'
-				f'mag_count:{weapon_pool_meta[weapon_id][1]},'
-				f'consumable:{"1b" if weapon_pool_meta[weapon_id][2] else "0b"}}}'
+				f'mag_id:"{weapon_mag_data[weapon_id][0]}",'
+				f'mag_count:{weapon_mag_data[weapon_id][1]},'
+				f'consumable:{"1b" if weapon_mag_data[weapon_id][2] else "0b"}}}'
 			)
 			for weapon_id in default_pool_weapons
 		]
 	)
 
 	for weapon_id in default_pool_weapons:
-		mag_id, mag_count, is_consumable = weapon_pool_meta[weapon_id]
+		mag_id, mag_count, is_consumable = weapon_mag_data[weapon_id]
 		write_versioned_function(f"zombies/mystery_box/default_give/{weapon_id}", f"""
 data modify storage {ns}:temp _wb_weapon set value {{weapon_id:"{weapon_id}",name:"{weapon_id}",consumable:{"1b" if is_consumable else "0b"},mag_id:"{mag_id}",mag_count:{mag_count}}}
 scoreboard players set #wb_price {ns}.data 0

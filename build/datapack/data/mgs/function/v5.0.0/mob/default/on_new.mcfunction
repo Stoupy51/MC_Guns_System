@@ -7,7 +7,7 @@
 #			mgs:v5.0.0/mob/default/level_4 {entity:"$(entity)",level:4,active_time:72000,sleep_time:1}
 #			mgs:v5.0.0/mob/default/on_new_lv5 {entity:"$(entity)",level:5,active_time:72000,sleep_time:0}
 #
-# @args		entity (unknown)
+# @args		entity (string)
 #			level (int)
 #			active_time (int)
 #			sleep_time (int)

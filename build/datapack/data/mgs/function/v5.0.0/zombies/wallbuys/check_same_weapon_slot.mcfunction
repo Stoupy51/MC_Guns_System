@@ -9,7 +9,7 @@
 #			mgs:v5.0.0/zombies/wallbuys/replace_selected {slot:3,weapon_id:"$(weapon_id)"}
 #
 # @args		slot (int)
-#			weapon_id (unknown)
+#			weapon_id (string)
 #
 
 scoreboard players set #wb_same_weapon mgs.data 0

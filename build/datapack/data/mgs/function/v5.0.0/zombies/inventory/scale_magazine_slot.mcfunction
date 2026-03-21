@@ -15,10 +15,10 @@ tag @s add mgs.zb_scaling_mag
 $execute summon item_display run function mgs:v5.0.0/zombies/inventory/read_mag_capacity {slot:"$(slot)"}
 tag @s remove mgs.zb_scaling_mag
 
-scoreboard players set #zb_const mgs.data 8
-scoreboard players operation #zb_cap mgs.data *= #zb_const mgs.data
+# Store face-value capacity directly (no consumable x8 scaling needed).
 execute store result storage mgs:temp zb_item_stats.capacity int 1 run scoreboard players get #zb_cap mgs.data
 
+# Start at half capacity (floor).
 scoreboard players set #zb_const mgs.data 2
 scoreboard players operation #zb_cap mgs.data /= #zb_const mgs.data
 execute store result storage mgs:temp zb_item_stats.remaining_bullets int 1 run scoreboard players get #zb_cap mgs.data
