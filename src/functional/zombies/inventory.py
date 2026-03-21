@@ -186,8 +186,18 @@ function {ns}:v{version}/zombies/inventory/give_starting_loadout
 """)
 
 	write_versioned_function("zombies/inventory/refresh_info_item", f"""
-item replace entity @s hotbar.8 with minecraft:paper[custom_data={{{ns}:{{zb_info:true}}}},item_name={{"text":"\\u2139 Player Info","color":"gold","italic":false}},lore=[{{"text":"Round: ","color":"gray","italic":false,"extra":[{{"score":{{"name":"#zb_round","objective":"{ns}.data"}},"color":"gold"}}]}},{{"text":"Points: ","color":"gray","italic":false,"extra":[{{"score":{{"name":"@s","objective":"{ns}.zb.points"}},"color":"gold"}}]}},{{"text":"Kills: ","color":"gray","italic":false,"extra":[{{"score":{{"name":"@s","objective":"{ns}.zb.kills"}},"color":"green"}}]}},{{"text":"Downs: ","color":"gray","italic":false,"extra":[{{"score":{{"name":"@s","objective":"{ns}.zb.downs"}},"color":"red"}}]}},{{"text":"","italic":false}},{{"text":"Passive: ","color":"gray","italic":false,"extra":[{{"score":{{"name":"@s","objective":"{ns}.zb.passive"}},"color":"aqua"}}]}},{{"text":"Ability: ","color":"gray","italic":false,"extra":[{{"score":{{"name":"@s","objective":"{ns}.zb.ability"}},"color":"green"}}]}}]]
+# Resolve scoreboard values into storage so lore lines render concrete numbers.
+execute store result storage {ns}:temp info.round int 1 run scoreboard players get #zb_round {ns}.data
+execute store result storage {ns}:temp info.points int 1 run scoreboard players get @s {ns}.zb.points
+execute store result storage {ns}:temp info.kills int 1 run scoreboard players get @s {ns}.zb.kills
+execute store result storage {ns}:temp info.downs int 1 run scoreboard players get @s {ns}.zb.downs
+
+function {ns}:v{version}/zombies/inventory/refresh_info_item_render with storage {ns}:temp info
 function {ns}:v{version}/zombies/inventory/apply_slot_tag {{slot:"hotbar.8",group:"hotbar",index:8}}
+""")
+
+	write_versioned_function("zombies/inventory/refresh_info_item_render", f"""
+$item replace entity @s hotbar.8 with minecraft:paper[custom_data={{{ns}:{{zb_info:true}}}},item_name={{"text":"\\u2139 Player Info","color":"gold","italic":false}},lore=[{{"text":"Round: $(round)","color":"gray","italic":false}},{{"text":"Points: $(points)","color":"gray","italic":false}},{{"text":"Kills: $(kills)","color":"gray","italic":false}},{{"text":"Downs: $(downs)","color":"gray","italic":false}}]]
 """)
 
 	write_versioned_function("zombies/inventory/give_ability_item", f"""
@@ -253,6 +263,10 @@ execute unless score @s {ns}.zb.ability matches 3.. run item replace entity @s h
 
 # Clear cursor (prevent dragging tagged items outside managed inventory)
 execute if items entity @s player.cursor * run function {ns}:v{version}/zombies/inventory/drop_wrong_slot_item {{slot:"player.cursor"}}
+""")
+
+	write_versioned_function("zombies/game_tick", f"""
+#execute as @a[scores={{{ns}.zb.in_game=1}},gamemode=!spectator] if items entity @s hotbar.8 *[custom_data~{info_slot_cd}] run function {ns}:v{version}/zombies/inventory/refresh_info_item
 """)
 
 	write_versioned_function("zombies/inventory/on_new_item", f"""

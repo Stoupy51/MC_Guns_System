@@ -35,6 +35,8 @@ kill @e[type=experience_orb]
 # Ability tick
 function mgs:v5.0.0/zombies/ability_tick
 
+#execute as @a[scores={mgs.zb.in_game=1},gamemode=!spectator] if items entity @s hotbar.8 *[custom_data~{mgs:{zb_info:true,zombies:{hotbar:8}}}] run function mgs:v5.0.0/zombies/inventory/refresh_info_item
+
 # Mystery box animation tick
 function mgs:v5.0.0/zombies/mystery_box/tick
 
