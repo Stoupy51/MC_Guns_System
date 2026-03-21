@@ -1,12 +1,17 @@
 
 #> mgs:v5.0.0/zombies/inventory/refresh_info_item
 #
-# @executed	at @s
-#
-# @within	mgs:v5.0.0/zombies/inventory/give_starting_loadout
+# @within	mgs:v5.0.0/zombies/game_tick
+#			mgs:v5.0.0/zombies/inventory/give_starting_loadout
 #			mgs:v5.0.0/zombies/inventory/recreate_critical_items
 #
 
-item replace entity @s hotbar.8 with minecraft:paper[custom_data={mgs:{zb_info:true}},item_name={"text":"\u2139 Player Info","color":"gold","italic":false},lore=[{"translate":"mgs.round_2","color":"gray","italic":false,"extra":[{"score":{"name":"#zb_round","objective":"mgs.data"},"color":"gold"}]},{"translate":"mgs.points_4","color":"gray","italic":false,"extra":[{"score":{"name":"@s","objective":"mgs.zb.points"},"color":"gold"}]},{"translate":"mgs.kills_2","color":"gray","italic":false,"extra":[{"score":{"name":"@s","objective":"mgs.zb.kills"},"color":"green"}]},{"translate":"mgs.downs","color":"gray","italic":false,"extra":[{"score":{"name":"@s","objective":"mgs.zb.downs"},"color":"red"}]},{"text":"","italic":false},{"translate":"mgs.passive","color":"gray","italic":false,"extra":[{"score":{"name":"@s","objective":"mgs.zb.passive"},"color":"aqua"}]},{"translate":"mgs.ability","color":"gray","italic":false,"extra":[{"score":{"name":"@s","objective":"mgs.zb.ability"},"color":"green"}]}]]
+# Resolve scoreboard values into storage so lore lines render concrete numbers.
+execute store result storage mgs:temp info.round int 1 run scoreboard players get #zb_round mgs.data
+execute store result storage mgs:temp info.points int 1 run scoreboard players get @s mgs.zb.points
+execute store result storage mgs:temp info.kills int 1 run scoreboard players get @s mgs.zb.kills
+execute store result storage mgs:temp info.downs int 1 run scoreboard players get @s mgs.zb.downs
+
+function mgs:v5.0.0/zombies/inventory/refresh_info_item_render with storage mgs:temp info
 function mgs:v5.0.0/zombies/inventory/apply_slot_tag {slot:"hotbar.8",group:"hotbar",index:8}
 
