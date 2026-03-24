@@ -12,10 +12,10 @@ execute store result score #game_version mgs.data run data get entity @p DataVer
 
 # Check if the game version is supported
 scoreboard players set #mcload_error mgs.data 0
-execute unless score #game_version mgs.data matches 4669.. run scoreboard players set #mcload_error mgs.data 1
+execute unless score #game_version mgs.data matches 4786.. run scoreboard players set #mcload_error mgs.data 1
 
 # Decode errors
-execute if score #mcload_error mgs.data matches 1 run tellraw @a {"translate":"mgs.mc_guns_system_error_this_version_is_made_for_minecraft_1_21_11","color":"red"}
+execute if score #mcload_error mgs.data matches 1 run tellraw @a {"translate":"mgs.mc_guns_system_error_this_version_is_made_for_minecraft_26_1","color":"red"}
 execute if score #dependency_error mgs.data matches 1 run tellraw @a {"translate":"mgs.mc_guns_system_error_libraries_are_missingplease_download_the_ri","color":"red"}
 execute if score #dependency_error mgs.data matches 1 unless score #smithed.actionbar.major load.status matches 0.. run tellraw @a [{"text":"- ","color":"gold","click_event":{"action":"open_url","url":"https://wiki.smithed.dev/libraries/actionbar/"}}, {"translate":"mgs.smithed_actionbar_v0_6_6"}]
 execute if score #dependency_error mgs.data matches 1 if score #smithed.actionbar.major load.status matches 0 unless score #smithed.actionbar.minor load.status matches 6.. run tellraw @a [{"text":"- ","color":"gold","click_event":{"action":"open_url","url":"https://wiki.smithed.dev/libraries/actionbar/"}}, {"translate":"mgs.smithed_actionbar_v0_6_6"}]
