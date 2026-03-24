@@ -21,6 +21,16 @@ It includes:
 - A custom loadout and class ecosystem.
 - Shader-based visual effects (zoom, flash, spread feedback).
 
+Quick item commands:
+
+- Give all registered items: `/function mgs:_give_all`
+- Give one specific item: `/loot give @s loot mgs:i/<item>`
+
+Quick config commands:
+
+- Open player config menu: `/trigger mgs.player.config set 1`
+- Open admin/server config menu: `/function mgs:config`
+
 ## 📊 Feature Matrix By Mode
 
 | System                     | Multiplayer          | Missions                | Zombies                      |
