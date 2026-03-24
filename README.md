@@ -7,64 +7,250 @@
 
 Credits for resources: MGS 4.2 by TheBradqq
 
-# TODO:
-Fixes:
-- 
+## 🎮 Overview
 
-- Compatibility & Developement:
-  - Multiplayer mode:
-    - Final Kill Cam:
-      - Starting 10 seconds before the end of the game, we record every player's position and rotation every tick in a list (with a max size of 200 ticks, so 10 seconds at 20 ticks per second) (storage {ns}:kill_cam players set value {username:[[x,y,z,yaw,pitch],[x,y,z,yaw,pitch],...]},username_2...})
+MC Guns System 26.1 is a full FPS framework for Minecraft.
 
-We need to be methodical for zombies. Let's start by listing all the features we want to implement.
-- Editor mode:
-  - Each feature (player spawn, zombie spawn, wallbuy, door, ...) is an element that can be defined in the editor mode and stored in a storage.
-    - Required fields are:
-      - position (list): (x,y,z)
-      - rotation (list): (yaw, pitch)
-      - group_id (int): Default 0 (unlocked on game start), used to unlock elements during the game (e.g. buying door of group 1 will unlock all elements with group_id 1)
-    - Required fields depending on the element type (see below)
-  - During the editor, to simplify things. You'll have:
-    - hotbar.8: destroy nearest element (send to chat whole element data for debug in case of issues)
-    - hotbar.7: configure element (tellraw in chat of all element config options and how to edit them)
-    - hotbar.6: configure default config for next elements to place (group_id, wallbuy price, door price, trap type and price, perk type and price). Even tho we can configure later, it's faster to set it up before placing elements.
-  - Now the features:
-    - First, Player Spawn (no additional fields): There can be multiple spawn points (players will spawn in random order in one of them at the start of the game looping over if there are more players than zombies spawn).
-      - There can be Player Spawn with higher group_id (used for player respawning after death on round start)
-    - Second, Zombie Spawn: No additional fields
-    - Wallbuy additional fields (when placed, takes player's rotation + 180 yaw) (implementation will later turn it into an item display + interaction):
-      - price (int): the price to pay to buy the weapon from the wall
-      - refill_price (int): the price to pay to refill ammo for the weapon bought from the wall
-      - refill_price_pap (int): the price to pay to refill ammo for the Pack-a-Punched weapon
-      - weapon_id (str | dict[str, str]): the id of the weapon that will be bought when interacting with the wallbuy (defined in storage as well with all weapon config). Can be either a string `"m1911"` or a loot table `{loot_table:"mgs:i/m1911"}`
-    - Door (this one is tricky, don't loose it):
-      - link_id (int): used to link the door to other doors meaning that when one door with the same link_id is bought, all doors with the same link_id are bought (used for double doors for example). WARNING: Different from group_id since it can depend on the buy order!
-      - back_group_id (int): Sometimes, a door can be opened from the other side, leading to a situation like this:
-        - There are two doors (Door A with group id 1, Door B with group id 2)
-        - If we buy Door B from the Door A zone, we unlock zombies spawn for group 2.
-        - If we buy Door A from the Door B zone, we unlock zombies spawn for group 1.
-        - In this case, we can set back_group_id of Door B to 1 while still having group_id of 2, so when we buy Door B, we unlock group 2 (normal behavior), but when we buy Door A from the Door B zone, we unlock group 1 (back_group_id) since we already unlocked group 2.
-      - block (str): This one is for the visual representation of the door and it's also very tricky:
-        - When placing the door, the player MUST have a block in their offhand otherwise we cancel the placement.
-        - When placing the door, we copy the block id from the player's offhand and store it in the door element data "block" (/data get entity @s equipment.offhand.id).
-        - Therefore, when starting the game we can place that block, and later destroy it when opening the door.
-      - animation (int): 0 = setblock destroy (default), 1 = setblock air (disappear), 2 = [summon block_display, disappear block, then apply transformation to launch it in the sky] (the animation animations are for later.)
-      - sound (str): sound to play when door bought. (can be undefined if we want to keep the setblock destroy default sound)
-    - Trap:
-      - price (int)
-      - type (int): 0 = fire enemies, 1 = electric oneshoting non-boss mobs
-      - duration (int): Duration in ticks
-      - cooldown (int): Duration in ticks
-      - effect_radius (list[float]): list of 3 float values for a cuboid radius (x,y,z)
-      - power (boolean): default to true. Need power to be buyable
-    - Perk Machine:
-      - price (int)
-      - perk_id (str): the id of the perk that will be bought when interacting with the perk machine (defined in storage as well with all perk config).
-      - power (boolean): default to true. Need power to be buyable
-    - Mystery Box Pos:
-      - can_start_on (boolean): default to true. Indicate if when starting the game this spawn point can be used. (Useful for big maps where you don't want the mystery box to spawn the furthest of the player spawn)
-    - Out of Bounds: (Don't need rotation or group_id)
-    - Boundary Corner: (Don't need rotation or group_id)
+It includes:
 
-- Zombies mode implementation: we will do it later, first focus on the editor and the data structure in storage, then we will implement the actual mechanics in game.
+- Data-driven weapons (stats in item NBT/custom_data).
+- Multiplayer game modes.
+- Missions (co-op PvE).
+- Zombies mode.
+- A generic in-game map editor for all modes.
+- A custom loadout and class ecosystem.
+- Shader-based visual effects (zoom, flash, spread feedback).
+
+## 📊 Feature Matrix By Mode
+
+| System                     | Multiplayer          | Missions                | Zombies                      |
+| -------------------------- | -------------------- | ----------------------- | ---------------------------- |
+| Match setup menu           | Yes                  | Yes                     | Yes                          |
+| Dynamic map select/load    | Yes                  | Yes                     | Yes                          |
+| In-game map editor support | Yes                  | Yes                     | Yes                          |
+| Team support               | Yes                  | Optional                | No                           |
+| Classes / loadouts         | Yes (full)           | Yes (reuse MP loadouts) | Custom zombies loadout rules |
+| Respawn + spectate flow    | Yes                  | Yes                     | Yes                          |
+| Bounds + OOB handling      | Yes                  | Yes                     | Yes                          |
+| Sidebar HUD                | Yes                  | Partial                 | Yes                          |
+| Weapon system integration  | Full                 | Full                    | Full                         |
+| Progression loop           | Score/time objective | Kill all enemies        | Round-based survival         |
+
+## 🔄 Differences With MGS 4.2
+
+Major differences in 5.0 (Minecraft 26.1+) compared to MGS 4.2:
+
+1. Rewrite architecture
+    - Generated by a Python build pipeline ([StewBeet](https://stewbeet.paralya.fr/))
+    - Systems are modularized by domain (weapon, multiplayer, missions, zombies, editor).
+2. Data-driven weapons
+    - Weapon behavior is stored on items (custom_data/NBT stats), reducing hardcoded logic.
+3. Integrated game framework
+    - Multiplayer, missions, and zombies are first-class systems in the same project.
+4. Generic map editor
+    - All modes use one in-game editor format with per-mode element sets.
+5. Custom loadout ecosystem
+    - Large custom class/loadout editor and marketplace-like sharing flow.
+6. Shader and presentation upgrades
+    - Zoom/flash/spread visual pipeline and richer in-game UX.
+7. Current tradeoff
+    - Legacy crafting flow from 4.2 is not yet implemented in this rewrite, and is not planned for now.
+
+## ⚔️ Multiplayer Systems
+
+- Core game states: lobby, preparing, active, stop.
+- Smart spawning from map spawn points.
+- Simulated deaths, spectate timer, respawn flow.
+- Out-of-bounds and boundary enforcement.
+- Team management (red/blue/auto assign).
+- Sidebar and score tracking by gamemode.
+
+Implemented gamemodes:
+- 🔥 FFA.
+- 🗿 Team Deathmatch.
+- 🏳️ Domination.
+- ⚡ Hardpoint.
+- 💣 Search and Destroy.
+
+## 🎯 Missions Systems
+
+- Co-op PvE mission runtime.
+- Spawn all map-defined enemies on mission start.
+- Mission success when enemy count reaches zero.
+- Player respawn/spectate handling.
+- Compass updates toward targets.
+
+## 🧟 Zombies Systems (Heavily Work In Progress)
+
+- Full round loop (start round, spawn loop, round complete, next round).
+- Scaled zombie health/speed by round tiers.
+- Points, kills, downs tracking.
+- Strict slot-managed inventory (knife, gun slots, mags, equipment).
+- Door system with linked unlock groups.
+- Wallbuys with buy/refill/replace behavior.
+- Power switch gating map systems.
+- Trap system (timed activation + cooldown, multiple trap types).
+- Mystery box with dynamic pool + rerolls + movement between positions.
+- Perk machines and perk ownership scoreboards.
+- Passive and active ability system.
+- Bonus systems (max ammo refill, nuke kill loop).
+
+## 🗺️ Map Editor: Complete Explanation
+
+### ❓ What It Is
+
+The map editor is a generic in-game authoring tool that edits storage-based maps for:
+
+- Multiplayer.
+- Missions.
+- Zombies.
+
+Instead of hardcoding coordinates in functions, map data is stored in mode-specific storage lists and loaded dynamically at runtime.
+
+### 💾 How Maps Are Stored
+
+Each mode uses a list in storage:
+
+- multiplayer maps list.
+- missions maps list.
+- zombies maps list.
+
+A map entry is a compound with fields such as:
+
+- id.
+- name.
+- description.
+- base_coordinates.
+- boundaries.
+- mode-specific arrays (spawn points, objectives, enemies, zombies objects, etc.).
+
+Coordinates for authored elements are relative to base_coordinates. At runtime they are converted to absolute world positions.
+
+### 🧭 Editor Entry And Core Workflow
+
+1. 🚪 Open editor menu.
+- From config menu (Game Setup) and then map editor entry.
+
+2. 🧷 Select mode tab.
+- Multiplayer, Missions, or Zombies.
+
+3. 📝 Select an existing map or create a new map.
+
+4. 🛠️ Enter edit session.
+- The editor loads map data into temporary storage.
+- Existing elements are spawned as markers/entities for visualization.
+- The player receives editor tools (spawn eggs and utility items).
+
+5. 📍 Place elements in-world.
+- Placing an editor egg triggers a handler via advancement.
+- A new marker/entity is spawned and tagged with its element type.
+
+6. ⚙️ Configure elements.
+- Some elements support extra per-element settings via editor config handlers (especially zombies objects).
+
+7. 💾 Save changes.
+- The editor reads all live markers/entities.
+- Converts absolute positions back to relative positions.
+- Rebuilds the map compound in storage.
+
+8. 🧹 Exit and cleanup.
+- Editor entities/items/tags are cleaned up.
+
+### ⚔️ Multiplayer Editor Elements
+
+- Base coordinates.
+- Red spawn points.
+- Blue spawn points.
+- General spawn points.
+- Out-of-bounds points.
+- Boundary corners.
+- Search and Destroy objective points.
+- Domination points.
+- Hardpoint points.
+
+### 🎯 Missions Editor Elements
+
+- Base coordinates.
+- Mission spawn points.
+- Enemy markers (with enemy function/config references).
+- Out-of-bounds points.
+- Boundary corners.
+- Config utility entry.
+
+### 🧟 Zombies Editor Elements
+
+- Base coordinates.
+- Player spawns.
+- Zombie spawns.
+- Wallbuys.
+- Doors.
+- Traps.
+- Perk machines.
+- Mystery box positions.
+- Power switch.
+- Out-of-bounds points.
+- Boundary corners.
+
+### 🧪 Zombies Element Configuration Model
+
+Zombies objects are stored as compounds with positional fields plus defaults/overrides. Example categories:
+
+- Wallbuy: weapon id, display name, buy/refill prices.
+- Door: price, link id, back group, block/animation/sound/name settings.
+- Trap: type, duration, cooldown, effect radius, power requirement.
+- Perk machine: perk id, name, price, power requirement.
+- Mystery box position: can_start_on flag.
+
+This lets map behavior be authored without touching function code.
+
+### 💡 Why This Editor Design Matters
+
+- Reusable: one editor architecture for three game families.
+- Portable: maps are relative and easy to move.
+- Shareable: map compounds can be copied between worlds/projects.
+- Extensible: mode systems read storage data and can be extended by function tags.
+
+### ✅ Practical Editing Tips
+
+- Always place base coordinates first.
+- Validate boundaries early to avoid false OOB kills.
+- Ensure each mode has enough spawn points for expected player counts.
+- For zombies, verify door group/link consistency before long playtests.
+- Save frequently while editing large maps.
+
+## 🔫 Shared Weapon Framework
+
+- Right-click based shooting pipeline.
+- Hitscan raycast shooting (spread, decay, headshots, signals).
+- Slow projectiles (RPG-like travel + explosion).
+- Throwable grenades (frag, semtex, smoke, flash).
+- Ammo + reload + reserve ammo management.
+- Fire mode switching (semi/auto/burst where available).
+- Quick swap and quick reload modifiers.
+- Recoil and casing ejection.
+- Actionbar weapon HUD.
+- Runtime lore rebuilding from weapon stats.
+- Advanced firing and environment-aware sound logic.
+
+## 🧩 Custom Loadouts And Classes
+
+- Predefined balanced classes.
+- Full custom loadout editor flow.
+- Pick-10 style constraints and perk selection.
+- Marketplace browsing and filtering.
+- Favorite/like/public-private/default loadout actions.
+- Dynamic class apply pipeline across game modes.
+
+## 🗂️ Data-Driven Definitions
+
+- Weapon, magazine, grenade, and casing definitions are generated from Python sources.
+- Weapon stats are embedded in item custom_data.
+- Automatic display name/model/lore generation.
+- PAP (Pack-a-Punch) schema support in stat config.
+
+## 🚧 Known WIP / Pending Items
+
+- Legacy crafting system from MGS 4.2 is not integrated.
+- Some fine-tuning TODOs remain in advanced sound/zoom behavior.
+- Future multiplayer TODO: final kill cam buffer/recording design: Starting 10 seconds before the end of the game, we record every player's position and rotation every tick in a list (with a max size of 200 ticks, so 10 seconds at 20 ticks per second) (storage {ns}:kill_cam players set value {username:[[x,y,z,yaw,pitch],[x,y,z,yaw,pitch],...]},username_2...})
 
