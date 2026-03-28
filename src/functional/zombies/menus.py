@@ -50,7 +50,7 @@ tellraw @s {sep}
 
 	## Map select entry (recursive macro)
 	write_versioned_function("zombies/map_select_entry", f"""
-$tellraw @s ["","  ",{{"text":""}},{{"text":"[$(name)]","color":"green","click_event":{{"action":"run_command","command":"/data modify storage {ns}:zombies game.map_id set value \\"$(id)\\""}},"hover_event":{{"action":"show_text","value":"Click to select '$(name)'"}}}},{{"text":" - $(description)","color":"gray"}}]
+$tellraw @s ["","  ",{{"text":""}},{{"text":"[$(name)]","color":"green","click_event":{{"action":"suggest_command","command":"/data modify storage {ns}:zombies game.map_id set value \\"$(id)\\""}},"hover_event":{{"action":"show_text","value":"Click to select '$(name)'"}}}},{{"text":" - $(description)","color":"gray"}}]
 
 data remove storage {ns}:temp _map_iter[0]
 scoreboard players add #map_idx {ns}.data 1

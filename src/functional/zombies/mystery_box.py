@@ -7,6 +7,7 @@
 # Uses Bookshelf interaction module for click/hover detection.
 # Positions use compound format: {pos:[x,y,z], rotation:[yaw,0.0f], group_id:N, can_start_on:1b}
 
+# FIXME: A player can steal the box result of another player
 from stewbeet import Mem, write_versioned_function
 
 from ..helpers import MGS_TAG

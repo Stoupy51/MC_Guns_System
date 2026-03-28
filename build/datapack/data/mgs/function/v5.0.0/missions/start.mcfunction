@@ -36,6 +36,9 @@ execute unless entity @a[scores={mgs.mi.in_game=1}] run scoreboard players set @
 # Enable class menu for mission players
 tag @a[scores={mgs.mi.in_game=1}] add mgs.give_class_menu
 
+# Snapshot player total kills at mission start for per-mission kill delta
+execute as @a[scores={mgs.mi.in_game=1}] run scoreboard players operation @s mgs.mi.kill_base = @s mgs.mi.kill_total
+
 # Set gamerules
 gamemode spectator @a[scores={mgs.mi.in_game=1}]
 gamerule immediate_respawn true

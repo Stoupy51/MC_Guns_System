@@ -2,6 +2,7 @@
 #> mgs:v5.0.0/maps/editor/give_tools
 #
 # @within	mgs:v5.0.0/maps/editor/enter
+#			mgs:v5.0.0/maps/editor/invite_all [ as @a[scores={mgs.mp.map_edit=1}] ]
 #			mgs:v5.0.0/maps/editor/save_only
 #
 

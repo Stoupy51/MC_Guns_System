@@ -1,7 +1,7 @@
 
 #> mgs:v5.0.0/maps/editor/do_save
 #
-# @executed	as @p[tag=mgs.map_editor]
+# @executed	as @p[tag=mgs.map_editor,distance=..6,sort=nearest]
 #
 # @within	mgs:v5.0.0/maps/editor/save_exit
 #			mgs:v5.0.0/maps/editor/save_only

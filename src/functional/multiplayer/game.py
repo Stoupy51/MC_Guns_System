@@ -4,6 +4,7 @@
 from stewbeet import Mem, write_load_file, write_tag, write_tick_file, write_versioned_function
 
 from ..helpers import MGS_TAG
+from ..respawn_countdown import respawn_countdown_tick_lines
 
 
 def generate_game() -> None:
@@ -384,9 +385,7 @@ execute if data storage {ns}:multiplayer game{{state:"preparing"}} run function 
 """)
 
 	write_versioned_function("multiplayer/game_tick", f"""
-# Spectate Timer (3s before respawn)
-execute as @a[scores={{{ns}.mp.in_game=1,{ns}.mp.spectate_timer=1..}}] run scoreboard players remove @s {ns}.mp.spectate_timer 1
-execute as @a[scores={{{ns}.mp.in_game=1,{ns}.mp.spectate_timer=0}},gamemode=spectator] at @s run function {ns}:v{version}/multiplayer/actual_respawn
+{respawn_countdown_tick_lines(ns, "mp", f"{ns}:v{version}/multiplayer/actual_respawn")}
 
 # Timer
 scoreboard players remove #mp_timer {ns}.data 1
@@ -748,19 +747,22 @@ tag @a[scores={{{ns}.mp.in_game=1..}}] add {ns}.ffa_candidate
 execute unless entity @a[tag={ns}.ffa_candidate] run return run function {ns}:v{version}/multiplayer/build_sidebar_ffa with storage {ns}:temp
 scoreboard players set #ffa_max {ns}.data -1
 execute as @a[tag={ns}.ffa_candidate] run scoreboard players operation #ffa_max {ns}.data > @s {ns}.mp.kills
-execute as @r[tag={ns}.ffa_candidate] if score @s {ns}.mp.kills >= #ffa_max {ns}.data run scoreboard players set @s {ns}.mp.ffa_rank {i}
+tag @a remove {ns}.ffa_top
+execute as @a[tag={ns}.ffa_candidate] if score @s {ns}.mp.kills = #ffa_max {ns}.data run tag @s add {ns}.ffa_top
+execute as @p[tag={ns}.ffa_top,sort=arbitrary] run scoreboard players set @s {ns}.mp.ffa_rank {i}
+tag @a[tag={ns}.ffa_top] remove {ns}.ffa_top
 execute as @a[scores={{{ns}.mp.ffa_rank={i}}}] run tag @s remove {ns}.ffa_candidate
 data modify storage {ns}:temp ffa_sb append value [[{{text:" {i}. ",color:"gold"}},{{selector:"@a[scores={{{ns}.mp.ffa_rank={i}}}]",color:"yellow"}}],{{score:{{name:"@a[scores={{{ns}.mp.ffa_rank={i}}}]",objective:"{ns}.mp.kills"}},color:"white"}}]
 """
 	ffa_rank_code += f"""
-# Clean up and build
-tag @a remove {ns}.ffa_candidate
+# Build
 function {ns}:v{version}/multiplayer/build_sidebar_ffa with storage {ns}:temp
 """
 	write_versioned_function("multiplayer/refresh_sidebar_ffa", ffa_rank_code)
 
 	## FFA sidebar build (macro function)
 	write_versioned_function("multiplayer/build_sidebar_ffa", f"""
+tag @a remove {ns}.ffa_candidate
 $function #bs.sidebar:create {{objective:"{ns}.sidebar",display_name:{{text:"Free For All",color:"gold",bold:true}},contents:$(ffa_sb)}}
 """)
 

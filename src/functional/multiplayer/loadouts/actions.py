@@ -49,7 +49,7 @@ execute if data storage {ns}:temp _find_iter[0] run function {ns}:v{version}/mul
 """)
 
 	## custom/notify_selected - Macro tellraw (same message pattern as set_class with OP apply button)
-	apply_now: str = f"""{{"text":" [✔]","color":"gold","hover_event":{{"action":"show_text","value":{{"text":"Click here to apply immediately (OP only)","color":"yellow"}}}},"click_event":{{"action":"run_command","command":"/function {ns}:v{version}/multiplayer/apply_class"}}}}"""
+	apply_now: str = f"""{{"text":" [✔]","color":"gold","hover_event":{{"action":"show_text","value":{{"text":"Click here to apply immediately (OP only)","color":"yellow"}}}},"click_event":{{"action":"suggest_command","command":"/function {ns}:v{version}/multiplayer/apply_class"}}}}"""
 	write_versioned_function("multiplayer/custom/notify_selected", f"""$tellraw @s ["",{MGS_TAG},["",{{"text":"Class set to"}}," "],{{"text":"$(name)","color":"green","bold":true}},[{{"text":"","color":"aqua"}}," (",{{"text":"custom"}},")"],{{"text":" - will apply on respawn","color":"yellow"}},{apply_now}]
 """)
 

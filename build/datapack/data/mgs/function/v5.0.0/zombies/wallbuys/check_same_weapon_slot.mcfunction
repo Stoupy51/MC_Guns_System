@@ -4,6 +4,9 @@
 # @within	mgs:v5.0.0/zombies/wallbuys/try_refill_owned {slot:1,weapon_id:"$(weapon_id)"}
 #			mgs:v5.0.0/zombies/wallbuys/try_refill_owned {slot:2,weapon_id:"$(weapon_id)"}
 #			mgs:v5.0.0/zombies/wallbuys/try_refill_owned {slot:3,weapon_id:"$(weapon_id)"}
+#			mgs:v5.0.0/zombies/wallbuys/compute_effective_price {slot:1,weapon_id:"$(weapon_id)"}
+#			mgs:v5.0.0/zombies/wallbuys/compute_effective_price {slot:2,weapon_id:"$(weapon_id)"}
+#			mgs:v5.0.0/zombies/wallbuys/compute_effective_price {slot:3,weapon_id:"$(weapon_id)"}
 #			mgs:v5.0.0/zombies/wallbuys/replace_selected {slot:1,weapon_id:"$(weapon_id)"}
 #			mgs:v5.0.0/zombies/wallbuys/replace_selected {slot:2,weapon_id:"$(weapon_id)"}
 #			mgs:v5.0.0/zombies/wallbuys/replace_selected {slot:3,weapon_id:"$(weapon_id)"}

@@ -29,7 +29,7 @@ ALL_ELEMENTS: dict[str, JsonDict] = {
 	"hardpoint":          {"name": "Hardpoint Zone",   "color": "dark_purple",  "particle": [0.5, 0.0, 0.5], "particle_scale": 1.0, "has_rotation": False, "egg_model": "minecraft:warden_spawn_egg", "save_type": "point", "save_path": "hardpoint", "emoji": "⚡"},
 	# Mission elements
 	"mission_spawn":      {"name": "Mission Spawn",    "color": "aqua",         "particle": [0.0, 1.0, 1.0], "particle_scale": 1.0, "has_rotation": True,  "egg_model": "minecraft:villager_spawn_egg", "save_type": "spawn", "save_path": "spawning_points.mission", "emoji": "●"},
-	"enemy":              {"name": "Enemy",            "color": "red",          "particle": [1.0, 0.2, 0.2], "particle_scale": 1.0, "has_rotation": False, "egg_model": "minecraft:pillager_spawn_egg", "save_type": "enemy", "save_path": "enemies", "emoji": "👤"},
+	"enemy":              {"name": "Enemy",            "color": "red",          "particle": [1.0, 0.2, 0.2], "particle_scale": 1.0, "has_rotation": False, "egg_model": "minecraft:pillager_spawn_egg", "save_type": "enemy", "save_path": "enemies", "emoji": "👤", "config_uses_default_function": True},
 	# Config (utility, no marker)
 	"config":             {"name": "⚙ Config",         "color": "white",        "particle": [1.0, 1.0, 1.0], "particle_scale": 0.5, "has_rotation": False, "egg_model": "minecraft:allay_spawn_egg", "save_type": "config", "emoji": "⚙"},
 	# Zombies elements (zb_object: compound data with pos/rotation/group_id + extra fields)
@@ -45,10 +45,12 @@ ALL_ELEMENTS: dict[str, JsonDict] = {
 		"defaults": {"name": "Door", "back_name": "Door", "price": 1000, "link_id": 1, "back_group_id": -1, "block": "", "animation": 0, "sound": ""},
 		"requires_offhand_block": True,
 	},
-	"trap":               {"name": "Trap",             "color": "red",          "particle": [1.0, 0.2, 0.2], "particle_scale": 1.0, "has_rotation": True,  "egg_model": "minecraft:cave_spider_spawn_egg", "save_type": "zb_object", "save_path": "traps", "emoji": "⚡",
+	"trap":               {"name": "Trap",             "color": "red",          "particle": [1.0, 0.2, 0.2], "particle_scale": 1.0, "has_rotation": True,  "egg_model": "minecraft:cave_spider_spawn_egg", "save_type": "zb_object", "save_path": "traps", "emoji": "🔮",
                            "defaults": {"price": 1000, "type": 0, "duration": 200, "cooldown": 1200, "effect_radius": [3.0, 2.0, 3.0], "offset_pos": [0, 0, 0], "power": True}},
 	"perk_machine":       {"name": "Perk Machine",     "color": "dark_purple",  "particle": [0.5, 0.0, 0.5], "particle_scale": 1.0, "has_rotation": True,  "egg_model": "minecraft:witch_spawn_egg",       "save_type": "zb_object", "save_path": "perks", "emoji": "🧪",
                            "defaults": {"name": "Juggernog", "price": 2500, "perk_id": "juggernog", "power": True}},
+	"pap_machine":        {"name": "Pack-a-Punch",     "color": "dark_red",     "particle": [0.8, 0.1, 0.1], "particle_scale": 1.0, "has_rotation": True,  "egg_model": "minecraft:creaking_spawn_egg",    "save_type": "zb_object", "save_path": "pap_machines", "emoji": "🔥",
+                           "defaults": {"name": "Pack-a-Punch", "price": 5000, "power": True}},
 	"mystery_box_pos":    {"name": "Mystery Box Pos",  "color": "light_purple", "particle": [1.0, 0.0, 1.0], "particle_scale": 1.0, "has_rotation": True,  "egg_model": "minecraft:evoker_spawn_egg",      "save_type": "zb_object", "save_path": "mystery_box.positions", "emoji": "📦",
                            "defaults": {"can_start_on": True}},
 	"power_switch":       {"name": "Power Switch",     "color": "green",        "particle": [0.0, 1.0, 0.0], "particle_scale": 1.0, "has_rotation": True,  "egg_model": "minecraft:slime_spawn_egg",       "save_type": "zb_object", "save_path": "power_switch", "emoji": "⚡",
@@ -91,6 +93,7 @@ EDITOR_MODES: dict[str, JsonDict] = {
 			"power_switch": "inventory.2",
 			"out_of_bounds": "inventory.3",
 			"boundary": "inventory.4",
+			"pap_machine": "inventory.5",
 		},
 	},
 	"missions": {
@@ -225,7 +228,7 @@ execute if data storage {ns}:temp map_menu.list[0] run function {ns}:v{version}/
 """)
 
 	write_versioned_function("maps/editor/menu_entry_display", f"""
-$tellraw @s ["  ",{{"text":"$(name)","color":"white"}},{{"text":" ($(id))","color":"gray"}}," ",[{{"text":"[","color":"yellow","click_event":{{"action":"run_command","command":"/function {ns}:v{version}/maps/editor/enter {{idx:$(idx),mode:$(mode)}}"}},"hover_event":{{"action":"show_text","value":"Edit this map"}}}},{{"text":"Edit"}},"]"]," ",[{{"text":"[","color":"red","click_event":{{"action":"run_command","command":"/function {ns}:v{version}/maps/editor/delete {{idx:$(idx),mode:$(mode)}}"}},"hover_event":{{"action":"show_text","value":"Delete this map"}}}},{{"text":"Delete"}},"]"]]
+$tellraw @s ["  ",{{"text":"$(name)","color":"white"}},{{"text":" ($(id))","color":"gray"}}," ",[{{"text":"[","color":"yellow","click_event":{{"action":"suggest_command","command":"/function {ns}:v{version}/maps/editor/enter {{idx:$(idx),mode:$(mode)}}"}},"hover_event":{{"action":"show_text","value":"Edit this map"}}}},{{"text":"Edit"}},"]"]," ",[{{"text":"[","color":"red","click_event":{{"action":"suggest_command","command":"/function {ns}:v{version}/maps/editor/delete {{idx:$(idx),mode:$(mode)}}"}},"hover_event":{{"action":"show_text","value":"Delete this map"}}}},{{"text":"Delete"}},"]"]]
 """)
 
 	# Map Creation (per mode) ────────────────────────────────────
@@ -309,7 +312,33 @@ execute if score @s {ns}.mp.map_mode matches {MODE_LIST.index("zombies")} run fu
 # Announce
 tellraw @s [{MGS_TAG},{{"text":"Entered map editor for: ","color":"green"}},{{"text":"","color":"white"}},{{"storage":"{ns}:temp","nbt":"map_edit.map.name","interpret":true}}]
 tellraw @s [{MGS_TAG},{{"text":"Place eggs to add elements. DESTROY egg (hotbar 9) removes nearest element.","color":"yellow"}}]
+tellraw @s [{MGS_TAG},{{"text":"Need collaborators? ","color":"gray"}},{btn("Invite All Players", f"/function {ns}:v{version}/maps/editor/invite_all", "aqua", "Put all online players into this editor session")}]
 tellraw @s [{MGS_TAG},{{"text":"Use ","color":"gray"}},{btn("Save & Exit", f"/function {ns}:v{version}/maps/editor/save_exit", "green", "Save changes and exit editor")},{{"text":" or "}},{btn("Exit", f"/function {ns}:v{version}/maps/editor/exit", "red", "Discard changes and exit editor")}]
+""")
+
+	write_versioned_function("maps/editor/invite_all", f"""
+# Must be called by a player already in editor mode
+execute unless score @s {ns}.mp.map_edit matches 1 run return run tellraw @s [{MGS_TAG},{{"text":"You must be in map editor to invite players.","color":"red"}}]
+
+# Share caller's editor session state with everyone not currently editing
+scoreboard players set @a {ns}.mp.map_edit 1
+scoreboard players operation @a[scores={{{ns}.mp.map_edit=1}}] {ns}.mp.map_idx = @s {ns}.mp.map_idx
+scoreboard players operation @a[scores={{{ns}.mp.map_edit=1}}] {ns}.mp.map_mode = @s {ns}.mp.map_mode
+scoreboard players operation @a[scores={{{ns}.mp.map_edit=1}}] {ns}.mp.map_disp = @s {ns}.mp.map_disp
+tag @a[scores={{{ns}.mp.map_edit=1}}] add {ns}.map_editor
+
+# Put invited players in creative and sync inventory/tools
+gamemode creative @a[scores={{{ns}.mp.map_edit=1}}]
+clear @a[scores={{{ns}.mp.map_edit=1}}]
+execute as @a[scores={{{ns}.mp.map_edit=1}}] run function {ns}:v{version}/maps/editor/give_tools
+
+# Teleport invited players to current base coordinates
+execute store result storage {ns}:temp _tp.x int 1 run scoreboard players get #base_x {ns}.data
+execute store result storage {ns}:temp _tp.y int 1 run scoreboard players get #base_y {ns}.data
+execute store result storage {ns}:temp _tp.z int 1 run scoreboard players get #base_z {ns}.data
+execute as @a[scores={{{ns}.mp.map_edit=1}}] run function {ns}:v{version}/missions/tp_to_base with storage {ns}:temp _tp
+
+tellraw @a[scores={{{ns}.mp.map_edit=1}}] [{MGS_TAG},{{"text":"Editor session synced for all players.","color":"aqua"}}]
 """)
 
 	write_versioned_function("maps/editor/load_map_data", f"""
@@ -654,11 +683,11 @@ execute as @n[tag={ns}.new_element] at @s run function {ns}:v{version}/maps/edit
 
 	# Editor utility handlers (save, exit, save & exit)
 	process_lines.append("# Editor utility handlers")
-	process_lines.append(f'execute if entity @s[tag={ns}.element.editor_save_exit] as @p[tag={ns}.map_editor] run function {ns}:v{version}/maps/editor/save_exit')
+	process_lines.append(f'execute if entity @s[tag={ns}.element.editor_save_exit] as @p[tag={ns}.map_editor,distance=..6,sort=nearest] run function {ns}:v{version}/maps/editor/save_exit')
 	process_lines.append(f'execute if entity @s[tag={ns}.element.editor_save_exit] run return run kill @s')
-	process_lines.append(f'execute if entity @s[tag={ns}.element.editor_exit] as @p[tag={ns}.map_editor] run function {ns}:v{version}/maps/editor/exit')
+	process_lines.append(f'execute if entity @s[tag={ns}.element.editor_exit] as @p[tag={ns}.map_editor,distance=..6,sort=nearest] run function {ns}:v{version}/maps/editor/exit')
 	process_lines.append(f'execute if entity @s[tag={ns}.element.editor_exit] run return run kill @s')
-	process_lines.append(f'execute if entity @s[tag={ns}.element.editor_save] as @p[tag={ns}.map_editor] run function {ns}:v{version}/maps/editor/save_only')
+	process_lines.append(f'execute if entity @s[tag={ns}.element.editor_save] as @p[tag={ns}.map_editor,distance=..6,sort=nearest] run function {ns}:v{version}/maps/editor/save_only')
 	process_lines.append(f'execute if entity @s[tag={ns}.element.editor_save] run return run kill @s')
 	process_lines.append("")
 
@@ -710,7 +739,7 @@ execute store result storage {ns}:temp _pos.z double 1 run data get entity @s Po
 function {ns}:v{version}/maps/editor/summon_spawn_marker with storage {ns}:temp _pos
 
 # Store the player's rotation on the marker
-execute as @n[tag={ns}.new_spawn_marker] store result entity @s data.yaw float 1 run data get entity @p[tag={ns}.map_editor] Rotation[0]
+execute as @n[tag={ns}.new_spawn_marker] store result entity @s data.yaw float 1 run data get entity @p[tag={ns}.map_editor,distance=..6,sort=nearest] Rotation[0]
 tag @n[tag={ns}.new_spawn_marker] remove {ns}.new_spawn_marker
 
 # Announce
@@ -801,7 +830,7 @@ execute as @n[tag={ns}.new_zb_marker] run data modify entity @s data set from st
 execute as @n[tag={ns}.new_zb_marker] run data modify entity @s data.group_id set from storage {ns}:temp map_edit.zb_defaults.group_id
 
 # Get player rotation as yaw
-execute store result score #yaw {ns}.data run data get entity @p[tag={ns}.map_editor] Rotation[0]
+execute store result score #yaw {ns}.data run data get entity @p[tag={ns}.map_editor,distance=..6,sort=nearest] Rotation[0]
 
 # Apply 180° yaw offset
 {zb_yaw_offset_line}
@@ -810,7 +839,7 @@ execute store result score #yaw {ns}.data run data get entity @p[tag={ns}.map_ed
 execute as @n[tag={ns}.new_zb_marker] store result entity @s data.yaw float 1 run scoreboard players get #yaw {ns}.data
 
 # For doors: capture block from player's offhand (required)
-execute if entity @s[tag={ns}.element.door] as @p[tag={ns}.map_editor] run data modify storage {ns}:temp _zb_offhand_block set from entity @s equipment.offhand.id
+execute if entity @s[tag={ns}.element.door] as @p[tag={ns}.map_editor,distance=..6,sort=nearest] run data modify storage {ns}:temp _zb_offhand_block set from entity @s equipment.offhand.id
 execute if entity @s[tag={ns}.element.door] unless data storage {ns}:temp _zb_offhand_block run tellraw @a[tag={ns}.map_editor] [{MGS_TAG},{{"text":"⚠ Door cancelled! Hold a block in offhand.","color":"red"}}]
 execute if entity @s[tag={ns}.element.door] unless data storage {ns}:temp _zb_offhand_block run kill @e[tag={ns}.new_zb_marker]
 execute if entity @s[tag={ns}.element.door] unless data storage {ns}:temp _zb_offhand_block run return fail
@@ -849,15 +878,16 @@ kill @s
 """)
 
 	# Handle Config (missions utility) ───────────────────────────
+	config_target = f"@p[tag={ns}.map_editor,distance=..6,sort=nearest]"
 	config_lines: list[str] = []
 	config_lines.append("# Initialize default enemy function if missing")
 	config_lines.append(f'execute unless data storage {ns}:temp map_edit.map.default_enemy_function run data modify storage {ns}:temp map_edit.map.default_enemy_function set value "{ns}:v{version}/mob/default/level_1 {{\\"entity\\":\\"pillager\\"}}"')
 	config_lines.append("")
-	config_lines.append(f"tellraw @a[tag={ns}.map_editor] {sep}")
-	config_lines.append(f'tellraw @a[tag={ns}.map_editor] [{{"text":"","color":"white","bold":true}},"  ⚙ ",{{"text":"Enemy Configuration"}}]')
-	config_lines.append(f"tellraw @a[tag={ns}.map_editor] {sep}")
+	config_lines.append(f"tellraw {config_target} {sep}")
+	config_lines.append(f'tellraw {config_target} [{{"text":"","color":"white","bold":true}},"  ⚙ ",{{"text":"Enemy Configuration"}}]')
+	config_lines.append(f"tellraw {config_target} {sep}")
 	config_lines.append(
-		f'tellraw @a[tag={ns}.map_editor] '
+		f'tellraw {config_target} '
 		f'["  ",{{"text":"Default Function: ","color":"gray"}},'
 		f'{{"storage":"{ns}:temp","nbt":"map_edit.map.default_enemy_function","color":"white"}}]'
 	)
@@ -866,25 +896,28 @@ kill @s
 		f'/data modify storage {ns}:temp map_edit.map.default_enemy_function set value "{ns}:v{version}/mob/default/level_1 {{\'entity\':\'pillager\'}}"',
 		"aqua", "Click to edit the default spawn function for new enemies", action="suggest_command"
 	)
-	config_lines.append(f'tellraw @a[tag={ns}.map_editor] ["    ",{fn_btn}]')
-	config_lines.append(f'tellraw @a[tag={ns}.map_editor] ["  ",{{"text":"ℹ Edit the function path above, then run the command.","color":"dark_gray","italic":true}}]')  # noqa: RUF001
+	config_lines.append(f'tellraw {config_target} ["    ",{fn_btn}]')
+	config_lines.append(f'tellraw {config_target} ["  ",{{"text":"ℹ Edit the function path above, then run the command.","color":"dark_gray","italic":true}}]')  # noqa: RUF001
 	config_lines.append("")
 
-	# Show nearest enemy marker info if any within 10 blocks
-	config_lines.append(f"execute if entity @e[tag={ns}.element.enemy,distance=..10] run tellraw @a[tag={ns}.map_editor] {sep}")
-	config_lines.append(
-		f'execute if entity @e[tag={ns}.element.enemy,distance=..10] run tellraw @a[tag={ns}.map_editor] '
-		f'["  ",{{"text":"Nearest Enemy: ","color":"yellow","bold":true}},'
-		f'{{"entity":"@n[tag={ns}.element.enemy,distance=..10]","nbt":"data.function","color":"white"}}]'
-	)
-	nearest_fn_btn = btn(
-		"Edit Nearest Enemy",
-		f'/data modify entity @n[tag={ns}.element.enemy,distance=..10] data.function set value "{ns}:v{version}/mob/default/level_1 {{\'entity\':\'pillager\'}}"',
-		"yellow", "Click to edit the nearest enemy's spawn function", action="suggest_command"
-	)
-	config_lines.append(f'execute if entity @e[tag={ns}.element.enemy,distance=..10] run tellraw @a[tag={ns}.map_editor] ["    ",{nearest_fn_btn}]')
+	# Show nearest configurable elements that can use the default function.
+	for etype, einfo in ALL_ELEMENTS.items():
+		if not cast(bool, einfo.get("config_uses_default_function", False)):
+			continue
+		config_lines.append(f"execute if entity @e[tag={ns}.element.{etype},distance=..10] run tellraw {config_target} {sep}")
+		config_lines.append(
+			f'execute if entity @e[tag={ns}.element.{etype},distance=..10] run tellraw {config_target} '
+			f'["  ",{{"text":"Nearest {einfo["name"]}: ","color":"yellow","bold":true}},'
+			f'{{"entity":"@n[tag={ns}.element.{etype},distance=..10]","nbt":"data.function","color":"white"}}]'
+		)
+		nearest_fn_btn = btn(
+			f"Edit Nearest {einfo['name']}",
+			f'/data modify entity @n[tag={ns}.element.{etype},distance=..10] data.function set from storage {ns}:temp map_edit.map.default_enemy_function',
+			"yellow", f"Apply current default function to nearest {einfo['name'].lower()}", action="suggest_command"
+		)
+		config_lines.append(f'execute if entity @e[tag={ns}.element.{etype},distance=..10] run tellraw {config_target} ["    ",{nearest_fn_btn}]')
 
-	config_lines.append(f"tellraw @a[tag={ns}.map_editor] {sep}")
+	config_lines.append(f"tellraw {config_target} {sep}")
 
 	write_versioned_function("maps/editor/handle_config", "\n".join(config_lines))
 

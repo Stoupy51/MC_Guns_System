@@ -8,6 +8,7 @@
 from stewbeet import Mem, write_load_file, write_tag, write_tick_file, write_versioned_function
 
 from ..helpers import MGS_TAG
+from ..respawn_countdown import respawn_countdown_tick_lines
 
 
 def generate_missions_game() -> None:
@@ -23,6 +24,8 @@ scoreboard objectives add {ns}.mi.timer dummy
 scoreboard objectives add {ns}.mi.total_enemies dummy
 scoreboard objectives add {ns}.mi.kills dummy
 scoreboard objectives add {ns}.mi.deaths dummy
+scoreboard objectives add {ns}.mi.kill_total totalKillCount
+scoreboard objectives add {ns}.mi.kill_base dummy
 
 # Boundary checking coords (reuse mp prefix scores)
 scoreboard objectives add {ns}.mp.bx dummy
@@ -74,6 +77,9 @@ execute unless entity @a[scores={{{ns}.mi.in_game=1}}] run scoreboard players se
 
 # Enable class menu for mission players
 tag @a[scores={{{ns}.mi.in_game=1}}] add {ns}.give_class_menu
+
+# Snapshot player total kills at mission start for per-mission kill delta
+execute as @a[scores={{{ns}.mi.in_game=1}}] run scoreboard players operation @s {ns}.mi.kill_base = @s {ns}.mi.kill_total
 
 # Set gamerules
 gamemode spectator @a[scores={{{ns}.mi.in_game=1}}]
@@ -365,9 +371,7 @@ execute if data storage {ns}:missions game{{state:"preparing"}} run function {ns
 """)
 
 	write_versioned_function("missions/game_tick", f"""
-# Spectate Timer (3s respawn cooldown)
-execute as @a[scores={{{ns}.mi.in_game=1,{ns}.mp.spectate_timer=1..}}] run scoreboard players remove @s {ns}.mp.spectate_timer 1
-execute as @a[scores={{{ns}.mi.in_game=1,{ns}.mp.spectate_timer=0}},gamemode=spectator] at @s run function {ns}:v{version}/missions/actual_respawn
+{respawn_countdown_tick_lines(ns, "mi", f"{ns}:v{version}/missions/actual_respawn")}
 
 # Increment mission timer
 scoreboard players add #mi_timer {ns}.data 1
@@ -425,6 +429,10 @@ $item replace entity @s hotbar.3 with compass[lodestone_tracker={{target:{{pos:[
 
 	## Victory - all enemies killed!
 	write_versioned_function("missions/victory", f"""
+	# Compute per-player mission kills from totalKillCount delta
+	execute as @a[scores={{{ns}.mi.in_game=1}}] run scoreboard players operation @s {ns}.mi.kills = @s {ns}.mi.kill_total
+	execute as @a[scores={{{ns}.mi.in_game=1}}] run scoreboard players operation @s {ns}.mi.kills -= @s {ns}.mi.kill_base
+
 # Calculate time in seconds
 scoreboard players operation #mi_seconds {ns}.data = #mi_timer {ns}.data
 scoreboard players operation #mi_seconds {ns}.data /= #20 {ns}.data

@@ -24,6 +24,8 @@ execute if entity @s[tag=mgs.element.trap] run data modify storage mgs:temp _zbp
 execute if entity @s[tag=mgs.element.trap] run data modify storage mgs:temp _zb_new set from storage mgs:temp map_edit.zb_defaults.trap
 execute if entity @s[tag=mgs.element.perk_machine] run data modify storage mgs:temp _zbpos.tag set value "mgs.element.perk_machine"
 execute if entity @s[tag=mgs.element.perk_machine] run data modify storage mgs:temp _zb_new set from storage mgs:temp map_edit.zb_defaults.perk_machine
+execute if entity @s[tag=mgs.element.pap_machine] run data modify storage mgs:temp _zbpos.tag set value "mgs.element.pap_machine"
+execute if entity @s[tag=mgs.element.pap_machine] run data modify storage mgs:temp _zb_new set from storage mgs:temp map_edit.zb_defaults.pap_machine
 execute if entity @s[tag=mgs.element.mystery_box_pos] run data modify storage mgs:temp _zbpos.tag set value "mgs.element.mystery_box_pos"
 execute if entity @s[tag=mgs.element.mystery_box_pos] run data modify storage mgs:temp _zb_new set from storage mgs:temp map_edit.zb_defaults.mystery_box_pos
 execute if entity @s[tag=mgs.element.power_switch] run data modify storage mgs:temp _zbpos.tag set value "mgs.element.power_switch"
@@ -39,7 +41,7 @@ execute as @n[tag=mgs.new_zb_marker] run data modify entity @s data set from sto
 execute as @n[tag=mgs.new_zb_marker] run data modify entity @s data.group_id set from storage mgs:temp map_edit.zb_defaults.group_id
 
 # Get player rotation as yaw
-execute store result score #yaw mgs.data run data get entity @p[tag=mgs.map_editor] Rotation[0]
+execute store result score #yaw mgs.data run data get entity @p[tag=mgs.map_editor,distance=..6,sort=nearest] Rotation[0]
 
 # Apply 180° yaw offset
 scoreboard players add #yaw mgs.data 180
@@ -48,7 +50,7 @@ scoreboard players add #yaw mgs.data 180
 execute as @n[tag=mgs.new_zb_marker] store result entity @s data.yaw float 1 run scoreboard players get #yaw mgs.data
 
 # For doors: capture block from player's offhand (required)
-execute if entity @s[tag=mgs.element.door] as @p[tag=mgs.map_editor] run data modify storage mgs:temp _zb_offhand_block set from entity @s equipment.offhand.id
+execute if entity @s[tag=mgs.element.door] as @p[tag=mgs.map_editor,distance=..6,sort=nearest] run data modify storage mgs:temp _zb_offhand_block set from entity @s equipment.offhand.id
 execute if entity @s[tag=mgs.element.door] unless data storage mgs:temp _zb_offhand_block run tellraw @a[tag=mgs.map_editor] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.door_cancelled_hold_a_block_in_offhand","color":"red"}]
 execute if entity @s[tag=mgs.element.door] unless data storage mgs:temp _zb_offhand_block run kill @e[tag=mgs.new_zb_marker]
 execute if entity @s[tag=mgs.element.door] unless data storage mgs:temp _zb_offhand_block run return fail
@@ -64,6 +66,7 @@ execute if entity @s[tag=mgs.element.wallbuy] run tellraw @a[tag=mgs.map_editor]
 execute if entity @s[tag=mgs.element.door] run tellraw @a[tag=mgs.map_editor] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.door_placed","color":"gold"}]
 execute if entity @s[tag=mgs.element.trap] run tellraw @a[tag=mgs.map_editor] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.trap_placed","color":"red"}]
 execute if entity @s[tag=mgs.element.perk_machine] run tellraw @a[tag=mgs.map_editor] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.perk_machine_placed","color":"dark_purple"}]
+execute if entity @s[tag=mgs.element.pap_machine] run tellraw @a[tag=mgs.map_editor] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.pack_a_punch_placed","color":"dark_red"}]
 execute if entity @s[tag=mgs.element.mystery_box_pos] run tellraw @a[tag=mgs.map_editor] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.mystery_box_pos_placed","color":"light_purple"}]
 execute if entity @s[tag=mgs.element.power_switch] run tellraw @a[tag=mgs.map_editor] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.power_switch_placed","color":"green"}]
 

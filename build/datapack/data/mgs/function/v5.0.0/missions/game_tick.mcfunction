@@ -6,6 +6,8 @@
 
 # Spectate Timer (3s respawn cooldown)
 execute as @a[scores={mgs.mi.in_game=1,mgs.mp.spectate_timer=1..}] run scoreboard players remove @s mgs.mp.spectate_timer 1
+execute as @a[scores={mgs.mi.in_game=1,mgs.mp.spectate_timer=40},gamemode=spectator] run title @s subtitle [{"translate":"mgs.respawning_in_2_seconds","color":"gray"}]
+execute as @a[scores={mgs.mi.in_game=1,mgs.mp.spectate_timer=20},gamemode=spectator] run title @s subtitle [{"translate":"mgs.respawning_in_1_second","color":"gray"}]
 execute as @a[scores={mgs.mi.in_game=1,mgs.mp.spectate_timer=0},gamemode=spectator] at @s run function mgs:v5.0.0/missions/actual_respawn
 
 # Increment mission timer

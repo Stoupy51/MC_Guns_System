@@ -1,9 +1,9 @@
 
 #> mgs:v5.0.0/maps/editor/save_exit
 #
-# @executed	as @p[tag=mgs.map_editor]
+# @executed	as @p[tag=mgs.map_editor,distance=..6,sort=nearest]
 #
-# @within	mgs:v5.0.0/maps/editor/process_element [ as @p[tag=mgs.map_editor] ]
+# @within	mgs:v5.0.0/maps/editor/process_element [ as @p[tag=mgs.map_editor,distance=..6,sort=nearest] ]
 #
 
 # Only process if in editor mode
