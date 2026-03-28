@@ -7,8 +7,8 @@
 #
 
 # Count red and blue players within 5 blocks
-execute store result score #dom_red mgs.data if entity @a[distance=..5,scores={mgs.mp.team=1}]
-execute store result score #dom_blue mgs.data if entity @a[distance=..5,scores={mgs.mp.team=2}]
+execute store result score #dom_red mgs.data if entity @a[distance=..5,gamemode=!spectator,scores={mgs.mp.in_game=1,mgs.mp.team=1}]
+execute store result score #dom_blue mgs.data if entity @a[distance=..5,gamemode=!spectator,scores={mgs.mp.in_game=1,mgs.mp.team=2}]
 
 # If contested (both teams present), no progress change
 execute if score #dom_red mgs.data matches 1.. if score #dom_blue mgs.data matches 1.. run return fail

@@ -31,6 +31,7 @@ execute at @e[tag=mgs.element.wallbuy] run particle dust{color:[1.0,1.0,0.0],sca
 execute at @e[tag=mgs.element.door] run particle dust{color:[1.0,0.6,0.0],scale:1.0} ~ ~1 ~ 0.3 0.5 0.3 0 3
 execute at @e[tag=mgs.element.trap] run particle dust{color:[1.0,0.2,0.2],scale:1.0} ~ ~1 ~ 0.3 0.5 0.3 0 3
 execute at @e[tag=mgs.element.perk_machine] run particle dust{color:[0.5,0.0,0.5],scale:1.0} ~ ~1 ~ 0.3 0.5 0.3 0 3
+execute at @e[tag=mgs.element.pap_machine] run particle dust{color:[0.8,0.1,0.1],scale:1.0} ~ ~1 ~ 0.3 0.5 0.3 0 3
 execute at @e[tag=mgs.element.mystery_box_pos] run particle dust{color:[1.0,0.0,1.0],scale:1.0} ~ ~1 ~ 0.3 0.5 0.3 0 3
 execute at @e[tag=mgs.element.power_switch] run particle dust{color:[0.0,1.0,0.0],scale:1.0} ~ ~1 ~ 0.3 0.5 0.3 0 3
 

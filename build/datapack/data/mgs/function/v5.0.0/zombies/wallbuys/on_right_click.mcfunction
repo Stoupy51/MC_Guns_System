@@ -7,19 +7,25 @@
 # Guard: game must be active
 execute unless data storage mgs:zombies game{state:"active"} run return fail
 
-# Get wallbuy price
-execute store result score #wb_price mgs.data run scoreboard players get @n[tag=bs.interaction.target] mgs.zb.wb.price
+# Get wallbuy id + data first (used by dynamic price logic)
+execute store result storage mgs:temp _wb_buy.id int 1 run scoreboard players get @n[tag=bs.interaction.target] mgs.zb.wb.id
+function mgs:v5.0.0/zombies/wallbuys/lookup_weapon with storage mgs:temp _wb_buy
+function mgs:v5.0.0/zombies/wallbuys/get_display_name
+
+# Read all possible prices from wallbuy entity
+execute store result score #wb_buy_price mgs.data run scoreboard players get @n[tag=bs.interaction.target] mgs.zb.wb.price
+execute store result score #wb_rfprice mgs.data run scoreboard players get @n[tag=bs.interaction.target] mgs.zb.wb.rfprice
+execute store result score #wb_rfpap mgs.data run scoreboard players get @n[tag=bs.interaction.target] mgs.zb.wb.rfpap
+
+# Compute effective price for this interaction (buy vs refill vs PAP refill)
+scoreboard players operation #wb_price mgs.data = #wb_buy_price mgs.data
+function mgs:v5.0.0/zombies/wallbuys/compute_effective_price with storage mgs:temp _wb_weapon
 
 # Check player has enough points
 execute unless score @s mgs.zb.points >= #wb_price mgs.data run return run function mgs:v5.0.0/zombies/wallbuys/deny_not_enough_points
 
 # Deduct points
 scoreboard players operation @s mgs.zb.points -= #wb_price mgs.data
-
-# Get weapon_id from storage via wallbuy ID
-execute store result storage mgs:temp _wb_buy.id int 1 run scoreboard players get @n[tag=bs.interaction.target] mgs.zb.wb.id
-function mgs:v5.0.0/zombies/wallbuys/lookup_weapon with storage mgs:temp _wb_buy
-function mgs:v5.0.0/zombies/wallbuys/get_display_name
 
 # Process buy by zombies inventory rules
 function mgs:v5.0.0/zombies/wallbuys/process_purchase with storage mgs:temp _wb_weapon

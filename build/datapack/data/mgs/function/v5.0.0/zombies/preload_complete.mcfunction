@@ -49,6 +49,9 @@ tellraw @a ["",{"text":"","color":"dark_green","bold":true},"🧟 ",{"translate"
 # Setup mystery box positions
 execute if data storage mgs:zombies game.map.mystery_box.positions[0] run function mgs:v5.0.0/zombies/mystery_box/setup_positions
 
+# Setup Pack-a-Punch machines
+execute if data storage mgs:zombies game.map.pap_machines[0] run function mgs:v5.0.0/zombies/pap/setup
+
 # Setup power switches
 execute if data storage mgs:zombies game.map.power_switch[0] run function mgs:v5.0.0/zombies/power/setup
 

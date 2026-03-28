@@ -11,6 +11,7 @@
 #			mgs:v5.0.0/maps/editor/save_lists/zombies {path:"perks"} [ at @s ]
 #			mgs:v5.0.0/maps/editor/save_lists/zombies {path:"mystery_box.positions"} [ as @e[tag=mgs.element.mystery_box_pos] & at @s ]
 #			mgs:v5.0.0/maps/editor/save_lists/zombies {path:"power_switch"} [ as @e[tag=mgs.element.power_switch] & at @s ]
+#			mgs:v5.0.0/maps/editor/save_lists/zombies {path:"pap_machines"} [ at @s ]
 #
 # @args		path (string)
 #

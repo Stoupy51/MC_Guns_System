@@ -266,6 +266,7 @@ execute store result storage {ns}:temp damage float 0.001 run scoreboard players
     # On targeted entity
     write_versioned_function("raycast/on_targeted_entity", f"""
 # Friendly fire check: skip if target is a teammate (but not the shooter themselves)
+execute if entity @s[type=player,gamemode=spectator] run return 0
 execute if entity @s[type=player] unless entity @s[tag={ns}.ticking] store result score #shooter_team {ns}.data run scoreboard players get @n[tag={ns}.ticking] {ns}.mp.team
 execute if entity @s[type=player] unless entity @s[tag={ns}.ticking] if score #shooter_team {ns}.data matches 1.. if score @s {ns}.mp.team = #shooter_team {ns}.data run return fail
 

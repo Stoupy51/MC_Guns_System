@@ -46,7 +46,7 @@ def styled_text(text: str, **attrs: str) -> str:
     return f'[{",".join(parts)}]'
 
 
-def btn(label: str, command: str, color: str = "yellow", hover: str = "", action: str = "run_command") -> str:
+def btn(label: str, command: str, color: str = "yellow", hover: str = "", action: str = "suggest_command") -> str:
     """ Create a clickable button JSON component.
 
     Args:
@@ -54,7 +54,7 @@ def btn(label: str, command: str, color: str = "yellow", hover: str = "", action
         command   (str): The command to run when the button is clicked.
         color     (str): The color of the button text.
         hover     (str): Optional tooltip text to show when hovering over the button.
-        action    (str): The click event action type (default: "run_command").
+        action    (str): The click event action type (default: "suggest_command").
     """
     obj: TextComponent = [
         {"text": "[", "color": color, "click_event": {"action": action, "command": command}},

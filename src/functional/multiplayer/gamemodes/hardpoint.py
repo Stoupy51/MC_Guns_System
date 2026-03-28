@@ -27,6 +27,9 @@ scoreboard players set #hp_rotate_timer {ns}.data 1200
 # Rotation timer in seconds for sidebar display
 scoreboard players set #hp_rotate_sec {ns}.data 60
 
+# Label index for current hardpoint zone (A, B, C, D, E)
+scoreboard players set #hp_zone_idx {ns}.data 0
+
 # Scoring timer (score every 1 second = 20 ticks)
 scoreboard players set #hp_score_timer {ns}.data 20
 
@@ -38,6 +41,7 @@ function {ns}:v{version}/multiplayer/gamemodes/hp/load_zone
 	write_versioned_function("multiplayer/gamemodes/hp/load_zone", f"""
 # Kill old zone marker
 kill @e[tag={ns}.hp_marker]
+kill @e[tag={ns}.hp_label]
 
 # Zone point: relative → absolute
 execute store result score #rx {ns}.data run data get storage {ns}:multiplayer game.hp_zones[0][0]
@@ -49,16 +53,27 @@ scoreboard players operation #rz {ns}.data += #gm_base_z {ns}.data
 execute store result storage {ns}:temp _hp_pos.x double 1 run scoreboard players get #rx {ns}.data
 execute store result storage {ns}:temp _hp_pos.y double 1 run scoreboard players get #ry {ns}.data
 execute store result storage {ns}:temp _hp_pos.z double 1 run scoreboard players get #rz {ns}.data
+
+# Assign point label (fallback to HP for maps with >5 zones)
+data modify storage {ns}:temp _hp_pos.label set value "HP"
+execute if score #hp_zone_idx {ns}.data matches 0 run data modify storage {ns}:temp _hp_pos.label set value "A"
+execute if score #hp_zone_idx {ns}.data matches 1 run data modify storage {ns}:temp _hp_pos.label set value "B"
+execute if score #hp_zone_idx {ns}.data matches 2 run data modify storage {ns}:temp _hp_pos.label set value "C"
+execute if score #hp_zone_idx {ns}.data matches 3 run data modify storage {ns}:temp _hp_pos.label set value "D"
+execute if score #hp_zone_idx {ns}.data matches 4 run data modify storage {ns}:temp _hp_pos.label set value "E"
+scoreboard players add #hp_zone_idx {ns}.data 1
+
 function {ns}:v{version}/multiplayer/gamemodes/hp/summon_marker with storage {ns}:temp _hp_pos
 
-tellraw @a [{MGS_TAG},{{"text":"⚡ Hardpoint zone active!","color":"dark_purple"}}]
+tellraw @a [{MGS_TAG},{{"text":"⚡ Hardpoint ","color":"dark_purple"}},{{"storage":"{ns}:temp","nbt":"_hp_pos.label","color":"yellow","interpret":true}},{{"text":" active!","color":"dark_purple"}}]
 playsound minecraft:block.note_block.chime player @a ~ ~ ~ 1 1.0
 """)
 
 	## HP: Summon zone marker (macro)
 	write_versioned_function("multiplayer/gamemodes/hp/summon_marker", f"""
 $summon minecraft:marker $(x) $(y) $(z) {{Tags:["{ns}.hp_marker","{ns}.gm_entity"]}}
-""")
+$summon minecraft:text_display $(x) $(y) $(z) {{Tags:["{ns}.hp_label","{ns}.gm_entity","{ns}.hp_$(label)"],billboard:"vertical",text:{{"text":"$(label)","color":"dark_purple","bold":true}},transformation:{{translation:[0.0f,2.0f,0.0f],left_rotation:[0.0f,0.0f,0.0f,1.0f],scale:[3.0f,3.0f,3.0f],right_rotation:[0.0f,0.0f,0.0f,1.0f]}},shadow:true,see_through:true}}
+""")  # noqa: E501
 
 	## HP Tick: Zone particles, scoring, rotation
 	write_versioned_function("multiplayer/gamemodes/hp/tick", f"""
@@ -78,7 +93,7 @@ execute at @e[tag={ns}.hp_marker] run particle dust{{color:[0.5,0.0,0.5],scale:1
 
 # Tag players inside the zone (within 5 blocks horizontally, 4 blocks vertically)
 tag @a remove {ns}.in_hp_zone
-execute at @e[tag={ns}.hp_marker] positioned ~-2 ~ ~-2 run tag @a[dx=5,dy=5,dz=5] add {ns}.in_hp_zone
+execute at @e[tag={ns}.hp_marker] positioned ~-2 ~ ~-2 run tag @a[dx=5,dy=5,dz=5,gamemode=!spectator,scores={{{ns}.mp.in_game=1}}] add {ns}.in_hp_zone
 
 # Count teams in zone
 execute store result score #hp_red {ns}.data if entity @a[tag={ns}.in_hp_zone,scores={{{ns}.mp.team=1}}]
@@ -143,6 +158,7 @@ function #bs.sidebar:refresh {{objective:"{ns}.sidebar"}}
 	## HP Cleanup
 	write_versioned_function("multiplayer/gamemodes/hp/cleanup", f"""
 kill @e[tag={ns}.hp_marker]
+kill @e[tag={ns}.hp_label]
 tag @a remove {ns}.in_hp_zone
 """)
 

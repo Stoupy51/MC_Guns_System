@@ -20,6 +20,9 @@ scoreboard players set #hp_rotate_timer mgs.data 1200
 # Rotation timer in seconds for sidebar display
 scoreboard players set #hp_rotate_sec mgs.data 60
 
+# Label index for current hardpoint zone (A, B, C, D, E)
+scoreboard players set #hp_zone_idx mgs.data 0
+
 # Scoring timer (score every 1 second = 20 ticks)
 scoreboard players set #hp_score_timer mgs.data 20
 

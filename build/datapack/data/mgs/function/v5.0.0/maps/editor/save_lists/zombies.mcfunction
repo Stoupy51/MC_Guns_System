@@ -1,7 +1,7 @@
 
 #> mgs:v5.0.0/maps/editor/save_lists/zombies
 #
-# @executed	as @p[tag=mgs.map_editor]
+# @executed	as @p[tag=mgs.map_editor,distance=..6,sort=nearest]
 #
 # @within	mgs:v5.0.0/maps/editor/do_save
 #
@@ -17,6 +17,7 @@ data modify storage mgs:temp map_edit.map.mystery_box.positions set value []
 data modify storage mgs:temp map_edit.map.power_switch set value []
 data modify storage mgs:temp map_edit.map.out_of_bounds set value []
 data modify storage mgs:temp map_edit.map.boundaries set value []
+data modify storage mgs:temp map_edit.map.pap_machines set value []
 
 # Rebuild from markers
 execute as @e[tag=mgs.element.player_spawn_zb] at @s run function mgs:v5.0.0/maps/editor/save_zb_object {path:"spawning_points.players"}
@@ -29,4 +30,5 @@ execute as @e[tag=mgs.element.mystery_box_pos] at @s run function mgs:v5.0.0/map
 execute as @e[tag=mgs.element.power_switch] at @s run function mgs:v5.0.0/maps/editor/save_zb_object {path:"power_switch"}
 execute as @e[tag=mgs.element.out_of_bounds] at @s run function mgs:v5.0.0/maps/editor/save_point {path:"out_of_bounds"}
 execute as @e[tag=mgs.element.boundary] at @s run function mgs:v5.0.0/maps/editor/save_point {path:"boundaries"}
+execute as @e[tag=mgs.element.pap_machine] at @s run function mgs:v5.0.0/maps/editor/save_zb_object {path:"pap_machines"}
 

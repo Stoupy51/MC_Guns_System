@@ -1,0 +1,14 @@
+{
+	"function": "minecraft:copy_custom_data",
+	"source": {
+		"type": "minecraft:storage",
+		"source": "mgs:temp"
+	},
+	"ops": [
+		{
+			"source": "_pap_extract.stats",
+			"target": "mgs.stats",
+			"op": "replace"
+		}
+	]
+}

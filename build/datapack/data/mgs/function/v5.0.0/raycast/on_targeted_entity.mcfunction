@@ -7,6 +7,7 @@
 #
 
 # Friendly fire check: skip if target is a teammate (but not the shooter themselves)
+execute if entity @s[type=player,gamemode=spectator] run return 0
 execute if entity @s[type=player] unless entity @s[tag=mgs.ticking] store result score #shooter_team mgs.data run scoreboard players get @n[tag=mgs.ticking] mgs.mp.team
 execute if entity @s[type=player] unless entity @s[tag=mgs.ticking] if score #shooter_team mgs.data matches 1.. if score @s mgs.mp.team = #shooter_team mgs.data run return fail
 

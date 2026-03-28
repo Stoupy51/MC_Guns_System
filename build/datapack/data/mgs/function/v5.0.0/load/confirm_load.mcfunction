@@ -442,6 +442,11 @@ execute unless score #zb_points_kill mgs.config matches 1.. run scoreboard playe
 execute unless score #zb_points_hit mgs.config matches 1.. run scoreboard players set #zb_points_hit mgs.config 10
 execute unless score #zb_mystery_box_price mgs.config matches 1.. run scoreboard players set #zb_mystery_box_price mgs.config 950
 
+# Pack-a-Punch machine scoreboards
+scoreboard objectives add mgs.zb.pap.id dummy
+scoreboard objectives add mgs.zb.pap.price dummy
+scoreboard objectives add mgs.zb.pap.power dummy
+
 # Door entity scoreboards
 scoreboard objectives add mgs.zb.door.link dummy
 scoreboard objectives add mgs.zb.door.price dummy
@@ -580,6 +585,8 @@ scoreboard objectives add mgs.mi.timer dummy
 scoreboard objectives add mgs.mi.total_enemies dummy
 scoreboard objectives add mgs.mi.kills dummy
 scoreboard objectives add mgs.mi.deaths dummy
+scoreboard objectives add mgs.mi.kill_total totalKillCount
+scoreboard objectives add mgs.mi.kill_base dummy
 
 # Boundary checking coords (reuse mp prefix scores)
 scoreboard objectives add mgs.mp.bx dummy

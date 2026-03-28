@@ -18,7 +18,8 @@ def generate_wallbuys() -> None:
 		f'{{"storage":"{ns}:temp","nbt":"_wb_display_name","color":"yellow","interpret":true}},'
 		f'{{"text":" - Cost: ","color":"gray"}},'
 		f'{{"score":{{"name":"#wb_price","objective":"{ns}.data"}},"color":"yellow"}},'
-		f'{{"text":" points","color":"gray"}}]'
+		f'{{"text":" points","color":"gray"}},'
+		f'{{"storage":"{ns}:temp","nbt":"_wb_price_suffix","color":"gray","interpret":true}}]'
 	)
 
 	# Build weapon_id -> magazine_id mapping
@@ -125,19 +126,25 @@ $execute as @e[tag={ns}.wb_new_display] run loot replace entity @s contents loot
 # Guard: game must be active
 {game_active_guard_cmd(ns)}
 
-# Get wallbuy price
-execute store result score #wb_price {ns}.data run scoreboard players get @n[tag=bs.interaction.target] {ns}.zb.wb.price
+# Get wallbuy id + data first (used by dynamic price logic)
+execute store result storage {ns}:temp _wb_buy.id int 1 run scoreboard players get @n[tag=bs.interaction.target] {ns}.zb.wb.id
+function {ns}:v{version}/zombies/wallbuys/lookup_weapon with storage {ns}:temp _wb_buy
+function {ns}:v{version}/zombies/wallbuys/get_display_name
+
+# Read all possible prices from wallbuy entity
+execute store result score #wb_buy_price {ns}.data run scoreboard players get @n[tag=bs.interaction.target] {ns}.zb.wb.price
+execute store result score #wb_rfprice {ns}.data run scoreboard players get @n[tag=bs.interaction.target] {ns}.zb.wb.rfprice
+execute store result score #wb_rfpap {ns}.data run scoreboard players get @n[tag=bs.interaction.target] {ns}.zb.wb.rfpap
+
+# Compute effective price for this interaction (buy vs refill vs PAP refill)
+scoreboard players operation #wb_price {ns}.data = #wb_buy_price {ns}.data
+function {ns}:v{version}/zombies/wallbuys/compute_effective_price with storage {ns}:temp _wb_weapon
 
 # Check player has enough points
 execute unless score @s {ns}.zb.points >= #wb_price {ns}.data run return run function {ns}:v{version}/zombies/wallbuys/deny_not_enough_points
 
 # Deduct points
 scoreboard players operation @s {ns}.zb.points -= #wb_price {ns}.data
-
-# Get weapon_id from storage via wallbuy ID
-execute store result storage {ns}:temp _wb_buy.id int 1 run scoreboard players get @n[tag=bs.interaction.target] {ns}.zb.wb.id
-function {ns}:v{version}/zombies/wallbuys/lookup_weapon with storage {ns}:temp _wb_buy
-function {ns}:v{version}/zombies/wallbuys/get_display_name
 
 # Process buy by zombies inventory rules
 function {ns}:v{version}/zombies/wallbuys/process_purchase with storage {ns}:temp _wb_weapon
@@ -262,6 +269,46 @@ scoreboard players set #wb_purchase_done {ns}.data 1
 scoreboard players set #wb_purchase_mode {ns}.data 4
 """)
 
+	write_versioned_function("zombies/wallbuys/compute_effective_price", f"""
+scoreboard players set #wb_price_locked {ns}.data 0
+scoreboard players set #wb_price_mode {ns}.data 0
+
+# Slot 1 refill candidate
+$function {ns}:v{version}/zombies/wallbuys/check_same_weapon_slot {{slot:1,weapon_id:"$(weapon_id)"}}
+execute if score #wb_same_weapon {ns}.data matches 1 run function {ns}:v{version}/zombies/wallbuys/check_mag_not_full {{slot:"inventory.1"}}
+execute if score #wb_price_locked {ns}.data matches 0 if score #wb_same_weapon {ns}.data matches 1 if score #wb_mag_not_full {ns}.data matches 1 run return run function {ns}:v{version}/zombies/wallbuys/select_refill_price {{hotbar:1}}
+
+# Slot 2 refill candidate
+$function {ns}:v{version}/zombies/wallbuys/check_same_weapon_slot {{slot:2,weapon_id:"$(weapon_id)"}}
+execute if score #wb_same_weapon {ns}.data matches 1 run function {ns}:v{version}/zombies/wallbuys/check_mag_not_full {{slot:"inventory.2"}}
+execute if score #wb_price_locked {ns}.data matches 0 if score #wb_same_weapon {ns}.data matches 1 if score #wb_mag_not_full {ns}.data matches 1 run return run function {ns}:v{version}/zombies/wallbuys/select_refill_price {{hotbar:2}}
+
+# Slot 3 refill candidate
+$function {ns}:v{version}/zombies/wallbuys/check_same_weapon_slot {{slot:3,weapon_id:"$(weapon_id)"}}
+execute if score #wb_same_weapon {ns}.data matches 1 run function {ns}:v{version}/zombies/wallbuys/check_mag_not_full {{slot:"inventory.3"}}
+execute if score #wb_price_locked {ns}.data matches 0 if score #wb_same_weapon {ns}.data matches 1 if score #wb_mag_not_full {ns}.data matches 1 run return run function {ns}:v{version}/zombies/wallbuys/select_refill_price {{hotbar:3}}
+""")
+
+	write_versioned_function("zombies/wallbuys/select_refill_price", f"""
+# Default refill price
+scoreboard players operation #wb_price {ns}.data = #wb_rfprice {ns}.data
+scoreboard players set #wb_price_mode {ns}.data 1
+
+# PAP refill price if weapon in this slot has pap_level > 0
+scoreboard players set #wb_pap_level {ns}.data 0
+$execute store result score #wb_pap_level {ns}.data run data get entity @s Inventory[{{Slot:$(hotbar)b}}].components."minecraft:custom_data".{ns}.stats.pap_level
+execute if score #wb_pap_level {ns}.data matches 1.. run scoreboard players operation #wb_price {ns}.data = #wb_rfpap {ns}.data
+execute if score #wb_pap_level {ns}.data matches 1.. run scoreboard players set #wb_price_mode {ns}.data 2
+
+scoreboard players set #wb_price_locked {ns}.data 1
+""")
+
+	write_versioned_function("zombies/wallbuys/set_hover_price_suffix", f"""
+data modify storage {ns}:temp _wb_price_suffix set value ""
+execute if score #wb_price_mode {ns}.data matches 1 run data modify storage {ns}:temp _wb_price_suffix set value " (Refill)"
+execute if score #wb_price_mode {ns}.data matches 2 run data modify storage {ns}:temp _wb_price_suffix set value " (PAP Refill)"
+""")
+
 	write_versioned_function("zombies/wallbuys/check_mag_not_full", f"""
 scoreboard players set #wb_mag_not_full {ns}.data 0
 
@@ -364,10 +411,18 @@ title @s title [{{"text":"🔫 ","color":"gold"}},{{"storage":"{ns}:temp","nbt":
 """)
 
 	write_versioned_function("zombies/wallbuys/on_hover", f"""
-execute store result score #wb_price {ns}.data run scoreboard players get @n[tag=bs.interaction.target] {ns}.zb.wb.price
 execute store result storage {ns}:temp _wb_hover.id int 1 run scoreboard players get @n[tag=bs.interaction.target] {ns}.zb.wb.id
 function {ns}:v{version}/zombies/wallbuys/get_hover_name with storage {ns}:temp _wb_hover
 function {ns}:v{version}/zombies/wallbuys/get_display_name
+
+# Dynamic hover price (buy, refill, or PAP refill)
+execute store result score #wb_buy_price {ns}.data run scoreboard players get @n[tag=bs.interaction.target] {ns}.zb.wb.price
+execute store result score #wb_rfprice {ns}.data run scoreboard players get @n[tag=bs.interaction.target] {ns}.zb.wb.rfprice
+execute store result score #wb_rfpap {ns}.data run scoreboard players get @n[tag=bs.interaction.target] {ns}.zb.wb.rfpap
+scoreboard players operation #wb_price {ns}.data = #wb_buy_price {ns}.data
+function {ns}:v{version}/zombies/wallbuys/compute_effective_price with storage {ns}:temp _wb_weapon
+function {ns}:v{version}/zombies/wallbuys/set_hover_price_suffix
+
 data modify storage smithed.actionbar:input message set value {{json:{wallbuy_hover_message},priority:'notification',freeze:5}}
 function #smithed.actionbar:message
 """)

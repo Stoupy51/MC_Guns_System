@@ -10,6 +10,12 @@
 # Clear player inventory
 clear @s
 
+# Apply armor
+item replace entity @s armor.head with air
+item replace entity @s armor.chest with leather_chestplate[dyed_color=10263702,unbreakable={}]
+item replace entity @s armor.legs with chainmail_leggings[unbreakable={}]
+item replace entity @s armor.feet with iron_boots[unbreakable={}]
+
 # Copy class slots to iteration temp
 data modify storage mgs:temp slots set from storage mgs:temp current_class.slots
 
