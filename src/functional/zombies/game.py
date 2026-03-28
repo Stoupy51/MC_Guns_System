@@ -377,14 +377,14 @@ execute as @r[scores={{{ns}.zb.in_game=1}},gamemode=!spectator] run spectate @s 
 # Stop spectating
 spectate @s
 
-# Switch back to adventure
-gamemode adventure @s
-
 # Teleport to random player spawn
 function {ns}:v{version}/zombies/respawn_tp
 
 # Re-apply saturation
 effect give @s saturation infinite 255 true
+
+# Switch back to adventure
+gamemode adventure @s
 
 # Re-give starting weapon on respawn
 function {ns}:v{version}/zombies/inventory/give_respawn_loadout

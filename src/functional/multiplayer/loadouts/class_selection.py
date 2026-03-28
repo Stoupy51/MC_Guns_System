@@ -200,9 +200,6 @@ execute as @r[scores={{{ns}.mp.in_game=1}},gamemode=!spectator] run spectate @s 
 # Stop spectating
 spectate @s
 
-# Switch back to adventure
-gamemode adventure @s
-
 # Teleport to best spawn point
 function {ns}:v{version}/multiplayer/respawn_tp
 
@@ -211,6 +208,9 @@ effect give @s saturation infinite 255 true
 
 # Apply current class loadout (positive = standard, negative = custom)
 execute unless score @s {ns}.mp.class matches 0 run function {ns}:v{version}/multiplayer/apply_class
+
+# Switch back to adventure
+gamemode adventure @s
 
 # Run map-defined respawn commands on this player (if any)
 execute if data storage {ns}:multiplayer game.map.respawn_commands[0] at @s run function {ns}:v{version}/multiplayer/run_respawn_commands

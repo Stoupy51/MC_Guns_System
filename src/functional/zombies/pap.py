@@ -211,33 +211,33 @@ function {ns}:v{version}/zombies/pap/pick_list_value_step
 
 	# Append " +X" to each lore line's text-component list for current PAP level.
 	write_versioned_function("zombies/pap/append_level_to_lore", f"""
-	data modify storage {ns}:temp _pap_lore.in set from storage {ns}:temp _pap_extract.lore
-	data modify storage {ns}:temp _pap_lore.out set value []
-	execute store result storage {ns}:temp _pap_lore.level int 1 run scoreboard players get #pap_next {ns}.data
-	function {ns}:v{version}/zombies/pap/append_level_to_lore_iter
-	data modify storage {ns}:temp _pap_extract.lore set from storage {ns}:temp _pap_lore.out
+data modify storage {ns}:temp _pap_lore.in set from storage {ns}:temp _pap_extract.lore
+data modify storage {ns}:temp _pap_lore.out set value []
+execute store result storage {ns}:temp _pap_lore.level int 1 run scoreboard players get #pap_next {ns}.data
+function {ns}:v{version}/zombies/pap/append_level_to_lore_iter
+data modify storage {ns}:temp _pap_extract.lore set from storage {ns}:temp _pap_lore.out
 	""")
 
 	write_versioned_function("zombies/pap/append_level_to_lore_iter", f"""
-	execute unless data storage {ns}:temp _pap_lore.in[0] run return 0
-	data modify storage {ns}:temp _pap_lore.line set from storage {ns}:temp _pap_lore.in[0]
-	function {ns}:v{version}/zombies/pap/append_level_to_lore_line with storage {ns}:temp _pap_lore
-	data modify storage {ns}:temp _pap_lore.out append from storage {ns}:temp _pap_lore.line
-	data remove storage {ns}:temp _pap_lore.in[0]
-	function {ns}:v{version}/zombies/pap/append_level_to_lore_iter
+execute unless data storage {ns}:temp _pap_lore.in[0] run return 0
+data modify storage {ns}:temp _pap_lore.line set from storage {ns}:temp _pap_lore.in[0]
+function {ns}:v{version}/zombies/pap/append_level_to_lore_line with storage {ns}:temp _pap_lore
+data modify storage {ns}:temp _pap_lore.out append from storage {ns}:temp _pap_lore.line
+data remove storage {ns}:temp _pap_lore.in[0]
+function {ns}:v{version}/zombies/pap/append_level_to_lore_iter
 	""")
 
 	write_versioned_function("zombies/pap/append_level_to_lore_line", f"""
-	$execute if data storage {ns}:temp _pap_lore.line.text unless data storage {ns}:temp _pap_lore.line.extra[0] run data modify storage {ns}:temp _pap_lore.line.extra set value []
-	$execute if data storage {ns}:temp _pap_lore.line.text run data modify storage {ns}:temp _pap_lore.line.extra append value {{"text":" +$(level)","color":"dark_green","italic":false}}
+execute if data storage {ns}:temp _pap_lore.line.text unless data storage {ns}:temp _pap_lore.line.extra[0] run data modify storage {ns}:temp _pap_lore.line.extra set value []
+$execute if data storage {ns}:temp _pap_lore.line.text run data modify storage {ns}:temp _pap_lore.line.extra append value {{"text":" +$(level)","color":"dark_green","italic":false}}
 	""")
 
 	write_versioned_function("zombies/pap/set_item_name", """
-	$item modify entity @s $(slot) {"function":"minecraft:set_components","components":{"minecraft:item_name":{"text":"$(name)","color":"gold","italic":false}}}
+$item modify entity @s $(slot) {"function":"minecraft:set_components","components":{"minecraft:item_name":{"text":"$(name)","color":"gold","italic":false}}}
 """)
 
 	write_versioned_function("zombies/pap/set_item_lore", """
-	$item modify entity @s $(slot) {"function":"minecraft:set_components","components":{"minecraft:lore":$(lore)}}
+$item modify entity @s $(slot) {"function":"minecraft:set_components","components":{"minecraft:lore":$(lore)}}
 	""")
 
 	write_versioned_function("zombies/pap/apply_to_slot", f"""

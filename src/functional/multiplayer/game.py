@@ -82,6 +82,7 @@ data modify storage {ns}:multiplayer game.state set value "preparing"
 # Reset scores
 scoreboard players set #red {ns}.mp.team 0
 scoreboard players set #blue {ns}.mp.team 0
+scoreboard players set #mp_has_boundary {ns}.data 0
 scoreboard players set @a {ns}.mp.kills 0
 scoreboard players set @a {ns}.mp.deaths 0
 scoreboard players set @a {ns}.mp.death_count 0
@@ -109,22 +110,11 @@ execute store result score #gm_base_x {ns}.data run data get storage {ns}:multip
 execute store result score #gm_base_y {ns}.data run data get storage {ns}:multiplayer game.map.base_coordinates[1]
 execute store result score #gm_base_z {ns}.data run data get storage {ns}:multiplayer game.map.base_coordinates[2]
 
-# Store boundary corners (relative) and convert to absolute
-execute store result score #bound_x1 {ns}.data run data get storage {ns}:multiplayer game.map.boundaries[0][0]
-execute store result score #bound_y1 {ns}.data run data get storage {ns}:multiplayer game.map.boundaries[0][1]
-execute store result score #bound_z1 {ns}.data run data get storage {ns}:multiplayer game.map.boundaries[0][2]
-execute store result score #bound_x2 {ns}.data run data get storage {ns}:multiplayer game.map.boundaries[1][0]
-execute store result score #bound_y2 {ns}.data run data get storage {ns}:multiplayer game.map.boundaries[1][1]
-execute store result score #bound_z2 {ns}.data run data get storage {ns}:multiplayer game.map.boundaries[1][2]
-scoreboard players operation #bound_x1 {ns}.data += #gm_base_x {ns}.data
-scoreboard players operation #bound_y1 {ns}.data += #gm_base_y {ns}.data
-scoreboard players operation #bound_z1 {ns}.data += #gm_base_z {ns}.data
-scoreboard players operation #bound_x2 {ns}.data += #gm_base_x {ns}.data
-scoreboard players operation #bound_y2 {ns}.data += #gm_base_y {ns}.data
-scoreboard players operation #bound_z2 {ns}.data += #gm_base_z {ns}.data
+# Detect whether this map defines a boundary (needs 2 points)
+execute if data storage {ns}:multiplayer game.map.boundaries[0] if data storage {ns}:multiplayer game.map.boundaries[1] run scoreboard players set #mp_has_boundary {ns}.data 1
 
-# Normalize boundaries (ensure x1 < x2, y1 < y2, z1 < z2)
-function {ns}:v{version}/multiplayer/normalize_bounds
+# Normalize and store boundaries only when they exist
+execute if score #mp_has_boundary {ns}.data matches 1 run function {ns}:v{version}/multiplayer/load_bounds
 
 # Summon out-of-bounds markers
 function {ns}:v{version}/multiplayer/summon_oob
@@ -207,6 +197,24 @@ tellraw @a ["",[{{"text":"","color":"gold","bold":true}},"⚔ ",{{"text":"Prepar
 	## Load map from storage (reads map_id from game state and passes to load macro)
 	write_versioned_function("multiplayer/load_map_from_storage", f"""
 $function {ns}:v{version}/maps/multiplayer/load {{id:"$(map_id)",override:{{}}}}
+""")
+
+	## Store and normalize boundaries when map provides them
+	write_versioned_function("multiplayer/load_bounds", f"""
+# Store boundary corners (relative) and convert to absolute
+execute store result score #bound_x1 {ns}.data run data get storage {ns}:multiplayer game.map.boundaries[0][0]
+execute store result score #bound_y1 {ns}.data run data get storage {ns}:multiplayer game.map.boundaries[0][1]
+execute store result score #bound_z1 {ns}.data run data get storage {ns}:multiplayer game.map.boundaries[0][2]
+execute store result score #bound_x2 {ns}.data run data get storage {ns}:multiplayer game.map.boundaries[1][0]
+execute store result score #bound_y2 {ns}.data run data get storage {ns}:multiplayer game.map.boundaries[1][1]
+execute store result score #bound_z2 {ns}.data run data get storage {ns}:multiplayer game.map.boundaries[1][2]
+scoreboard players operation #bound_x1 {ns}.data += #gm_base_x {ns}.data
+scoreboard players operation #bound_y1 {ns}.data += #gm_base_y {ns}.data
+scoreboard players operation #bound_z1 {ns}.data += #gm_base_z {ns}.data
+scoreboard players operation #bound_x2 {ns}.data += #gm_base_x {ns}.data
+scoreboard players operation #bound_y2 {ns}.data += #gm_base_y {ns}.data
+scoreboard players operation #bound_z2 {ns}.data += #gm_base_z {ns}.data
+function {ns}:v{version}/multiplayer/normalize_bounds
 """)
 
 	## Normalize boundaries: ensure min < max for each axis
@@ -329,6 +337,7 @@ scoreboard objectives setdisplay list
 scoreboard players set @a {ns}.mp.in_game 0
 scoreboard players set @a {ns}.mp.team 0
 scoreboard players set @a {ns}.mp.spectate_timer 0
+scoreboard players set #mp_has_boundary {ns}.data 0
 tag @a[tag={ns}.give_class_menu] remove {ns}.give_class_menu
 """)
 
@@ -462,7 +471,7 @@ execute if score #tick_mod {ns}.data matches 0 run function {ns}:v{version}/mult
 execute if score #mp_timer {ns}.data matches ..0 run function {ns}:v{version}/multiplayer/time_up
 
 # Boundary enforcement (skip players with respawn protection)
-execute as @e[type=player,scores={{{ns}.mp.in_game=1,{ns}.mp.death_count=0}},gamemode=!creative,gamemode=!spectator] at @s run function {ns}:v{version}/multiplayer/check_bounds
+execute if score #mp_has_boundary {ns}.data matches 1 as @e[type=player,scores={{{ns}.mp.in_game=1,{ns}.mp.death_count=0}},gamemode=!creative,gamemode=!spectator] at @s run function {ns}:v{version}/multiplayer/check_bounds
 
 # Out-of-bounds check (skip players with respawn protection)
 execute as @e[type=player,scores={{{ns}.mp.in_game=1,{ns}.mp.death_count=0}},gamemode=!creative,gamemode=!spectator] at @s if entity @e[tag={ns}.oob_point,distance=..5] run function {ns}:v{version}/multiplayer/oob_kill
@@ -784,6 +793,7 @@ execute if score @s {ns}.mp.team matches 2 run return run function {ns}:v{versio
 
 	## Team sidebar (TDM/SND) — takes $(title) macro arg
 	write_versioned_function("multiplayer/create_sidebar_team", f"""
+scoreboard objectives remove {ns}.sidebar
 $function #bs.sidebar:create {{objective:"{ns}.sidebar",display_name:{{text:"$(title)",color:"gold",bold:true}},contents:[{sb_timer},{sb_spacer},{sb_red},{sb_blue},{sb_spacer},{sb_limit}]}}
 scoreboard objectives setdisplay sidebar {ns}.sidebar
 """)

@@ -1,6 +1,8 @@
 
 #> mgs:v5.0.0/multiplayer/join_red
 #
+# @executed	as @a[scores={mgs.mp.in_game=1,mgs.mp.team=0}]
+#
 # @within	mgs:v5.0.0/multiplayer/auto_assign_team
 #
 

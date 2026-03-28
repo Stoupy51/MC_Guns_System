@@ -105,6 +105,7 @@ execute if score @s {ns}.data matches ..0 run function {ns}:v{version}/projectil
     write_versioned_function("projectile/on_collision", f"""
 # Tag the nearest non-immune entity as directly hit (for bullet damage in explode)
 # distance=..2.5 covers feet-to-head hit at any entity height up to 2.5 blocks
+tag @e[tag={ns}.direct_hit] remove {ns}.direct_hit
 execute as @n[distance=..2.5,type=!#{ns}:ignore,tag=!{ns}.slow_bullet,{Conventions.GLOBAL_KILL.avoid},nbt=!{{Invulnerable:true}}] run tag @s add {ns}.direct_hit
 
 # Mark for explosion
