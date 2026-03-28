@@ -36,6 +36,12 @@ scoreboard objectives add {ns}.mp.bz dummy
 scoreboard players set #20 {ns}.data 20
 scoreboard players set #60 {ns}.data 60
 
+# Mission mob team (created once)
+execute unless score #mi_mob_team_created {ns}.data matches 1 run team add {ns}.mi_mobs
+execute unless score #mi_mob_team_created {ns}.data matches 1 run team modify {ns}.mi_mobs color dark_red
+execute unless score #mi_mob_team_created {ns}.data matches 1 run team modify {ns}.mi_mobs friendlyFire false
+execute unless score #mi_mob_team_created {ns}.data matches 1 run scoreboard players set #mi_mob_team_created {ns}.data 1
+
 # Initialize missions game state
 execute unless data storage {ns}:missions game run data modify storage {ns}:missions game set value {{state:"lobby",map_id:""}}
 """)
@@ -60,6 +66,13 @@ execute unless score #map_load_found {ns}.data matches 1 run return run tellraw 
 # Copy loaded map data into game state
 data modify storage {ns}:missions game.map set from storage {ns}:temp map_load.result
 
+# Legacy compatibility: normalize respawn command keys
+execute unless data storage {ns}:missions game.map.respawn_commands if data storage {ns}:missions game.map.respawn_command[0] run data modify storage {ns}:missions game.map.respawn_commands set from storage {ns}:missions game.map.respawn_command
+execute unless data storage {ns}:missions game.map.respawn_commands if data storage {ns}:missions game.map.respawn_command.command run data modify storage {ns}:missions game.map.respawn_commands set value []
+execute unless data storage {ns}:missions game.map.respawn_commands[0] if data storage {ns}:missions game.map.respawn_command.command run data modify storage {ns}:missions game.map.respawn_commands append from storage {ns}:missions game.map.respawn_command
+execute unless data storage {ns}:missions game.map.respawn_commands run data modify storage {ns}:missions game.map.respawn_commands set value []
+execute unless data storage {ns}:missions game.map.start_commands run data modify storage {ns}:missions game.map.start_commands set value []
+
 # Set state to preparing
 data modify storage {ns}:missions game.state set value "preparing"
 
@@ -67,6 +80,7 @@ data modify storage {ns}:missions game.state set value "preparing"
 scoreboard players set @a {ns}.mi.in_game 0
 scoreboard players set #mi_timer {ns}.data 0
 scoreboard players set #mi_total_enemies {ns}.data 0
+scoreboard players set #mi_has_boundary {ns}.data 0
 scoreboard players set @a {ns}.mi.kills 0
 scoreboard players set @a {ns}.mi.deaths 0
 
@@ -74,6 +88,9 @@ scoreboard players set @a {ns}.mi.deaths 0
 execute if entity @a[scores={{{ns}.mp.team=1}}] as @a[scores={{{ns}.mp.team=1}}] run scoreboard players set @s {ns}.mi.in_game 1
 # Fallback: if no team system, tag all players
 execute unless entity @a[scores={{{ns}.mi.in_game=1}}] run scoreboard players set @a {ns}.mi.in_game 1
+
+# Missions are fully cooperative: force all mission players to one shared team id
+scoreboard players set @a[scores={{{ns}.mi.in_game=1}}] {ns}.mp.team 1
 
 # Enable class menu for mission players
 tag @a[scores={{{ns}.mi.in_game=1}}] add {ns}.give_class_menu
@@ -91,23 +108,14 @@ execute store result score #gm_base_x {ns}.data run data get storage {ns}:missio
 execute store result score #gm_base_y {ns}.data run data get storage {ns}:missions game.map.base_coordinates[1]
 execute store result score #gm_base_z {ns}.data run data get storage {ns}:missions game.map.base_coordinates[2]
 
-# Normalize and store boundaries
-execute store result score #bound_x1 {ns}.data run data get storage {ns}:missions game.map.boundaries[0][0]
-execute store result score #bound_y1 {ns}.data run data get storage {ns}:missions game.map.boundaries[0][1]
-execute store result score #bound_z1 {ns}.data run data get storage {ns}:missions game.map.boundaries[0][2]
-execute store result score #bound_x2 {ns}.data run data get storage {ns}:missions game.map.boundaries[1][0]
-execute store result score #bound_y2 {ns}.data run data get storage {ns}:missions game.map.boundaries[1][1]
-execute store result score #bound_z2 {ns}.data run data get storage {ns}:missions game.map.boundaries[1][2]
-scoreboard players operation #bound_x1 {ns}.data += #gm_base_x {ns}.data
-scoreboard players operation #bound_y1 {ns}.data += #gm_base_y {ns}.data
-scoreboard players operation #bound_z1 {ns}.data += #gm_base_z {ns}.data
-scoreboard players operation #bound_x2 {ns}.data += #gm_base_x {ns}.data
-scoreboard players operation #bound_y2 {ns}.data += #gm_base_y {ns}.data
-scoreboard players operation #bound_z2 {ns}.data += #gm_base_z {ns}.data
-function {ns}:v{version}/missions/normalize_bounds
+# Detect whether this map defines a boundary (needs 2 points)
+execute if data storage {ns}:missions game.map.boundaries[0] if data storage {ns}:missions game.map.boundaries[1] run scoreboard players set #mi_has_boundary {ns}.data 1
+
+# Normalize and store boundaries only when they exist
+execute if score #mi_has_boundary {ns}.data matches 1 run function {ns}:v{version}/missions/load_bounds
 
 # Forceload the mission area to ensure chunks are loaded
-function {ns}:v{version}/missions/forceload_area
+execute if score #mi_has_boundary {ns}.data matches 1 run function {ns}:v{version}/missions/forceload_area
 
 # Teleport all players as spectator to base coordinates for chunk preloading
 execute store result storage {ns}:temp _tp.x int 1 run scoreboard players get #gm_base_x {ns}.data
@@ -182,6 +190,23 @@ $function {ns}:v{version}/maps/missions/load {{id:"$(map_id)",override:{{}}}}
 """)
 
 	## Normalize boundaries (reuse multiplayer pattern)
+	write_versioned_function("missions/load_bounds", f"""
+execute store result score #bound_x1 {ns}.data run data get storage {ns}:missions game.map.boundaries[0][0]
+execute store result score #bound_y1 {ns}.data run data get storage {ns}:missions game.map.boundaries[0][1]
+execute store result score #bound_z1 {ns}.data run data get storage {ns}:missions game.map.boundaries[0][2]
+execute store result score #bound_x2 {ns}.data run data get storage {ns}:missions game.map.boundaries[1][0]
+execute store result score #bound_y2 {ns}.data run data get storage {ns}:missions game.map.boundaries[1][1]
+execute store result score #bound_z2 {ns}.data run data get storage {ns}:missions game.map.boundaries[1][2]
+scoreboard players operation #bound_x1 {ns}.data += #gm_base_x {ns}.data
+scoreboard players operation #bound_y1 {ns}.data += #gm_base_y {ns}.data
+scoreboard players operation #bound_z1 {ns}.data += #gm_base_z {ns}.data
+scoreboard players operation #bound_x2 {ns}.data += #gm_base_x {ns}.data
+scoreboard players operation #bound_y2 {ns}.data += #gm_base_y {ns}.data
+scoreboard players operation #bound_z2 {ns}.data += #gm_base_z {ns}.data
+function {ns}:v{version}/missions/normalize_bounds
+""")
+
+	## Normalize boundaries (reuse multiplayer pattern)
 	write_versioned_function("missions/normalize_bounds", f"""
 execute if score #bound_x1 {ns}.data > #bound_x2 {ns}.data run scoreboard players operation #swap {ns}.data = #bound_x1 {ns}.data
 execute if score #bound_x1 {ns}.data > #bound_x2 {ns}.data run scoreboard players operation #bound_x1 {ns}.data = #bound_x2 {ns}.data
@@ -197,6 +222,39 @@ execute if score #bound_z1 {ns}.data > #bound_z2 {ns}.data run scoreboard player
 execute if score #bound_z1 {ns}.data > #bound_z2 {ns}.data run scoreboard players operation #bound_z1 {ns}.data = #bound_z2 {ns}.data
 execute if score #swap {ns}.data matches -2147483648.. run scoreboard players operation #bound_z2 {ns}.data = #swap {ns}.data
 execute if score #swap {ns}.data matches -2147483648.. run scoreboard players reset #swap {ns}.data
+""")
+
+	## Run map start commands (relative pos + command string)
+	write_versioned_function("missions/run_start_commands", f"""
+data modify storage {ns}:temp _start_cmd_iter set from storage {ns}:missions game.map.start_commands
+execute if data storage {ns}:temp _start_cmd_iter[0] run function {ns}:v{version}/missions/run_start_commands_iter
+""")
+
+	write_versioned_function("missions/run_start_commands_iter", f"""
+# Read relative position
+execute store result score #cx {ns}.data run data get storage {ns}:temp _start_cmd_iter[0].pos[0]
+execute store result score #cy {ns}.data run data get storage {ns}:temp _start_cmd_iter[0].pos[1]
+execute store result score #cz {ns}.data run data get storage {ns}:temp _start_cmd_iter[0].pos[2]
+
+# Convert to absolute
+scoreboard players operation #cx {ns}.data += #gm_base_x {ns}.data
+scoreboard players operation #cy {ns}.data += #gm_base_y {ns}.data
+scoreboard players operation #cz {ns}.data += #gm_base_z {ns}.data
+
+# Prepare macro args
+execute store result storage {ns}:temp _start_cmd.x int 1 run scoreboard players get #cx {ns}.data
+execute store result storage {ns}:temp _start_cmd.y int 1 run scoreboard players get #cy {ns}.data
+execute store result storage {ns}:temp _start_cmd.z int 1 run scoreboard players get #cz {ns}.data
+data modify storage {ns}:temp _start_cmd.command set from storage {ns}:temp _start_cmd_iter[0].command
+
+# Execute and advance
+function {ns}:v{version}/missions/run_start_command with storage {ns}:temp _start_cmd
+data remove storage {ns}:temp _start_cmd_iter[0]
+execute if data storage {ns}:temp _start_cmd_iter[0] run function {ns}:v{version}/missions/run_start_commands_iter
+""")
+
+	write_versioned_function("missions/run_start_command", """
+$execute positioned $(x) $(y) $(z) run $(command)
 """)
 
 	## Prep Tick (check for class changes during preparation)
@@ -229,6 +287,9 @@ effect give @a[scores={{{ns}.mi.in_game=1}}] saturation infinite 255 true
 # Spawn all enemies from map data
 function {ns}:v{version}/missions/spawn_all_enemies
 
+# Run map-defined start commands after enemies are spawned
+execute if data storage {ns}:missions game.map.start_commands[0] run function {ns}:v{version}/missions/run_start_commands
+
 # Give compass pointing to nearest enemy (hotbar slot 3)
 execute as @a[scores={{{ns}.mi.in_game=1}}] run item replace entity @s hotbar.3 with compass[custom_data={{{ns}:{{compass:true}}}}]
 
@@ -250,6 +311,7 @@ execute if data storage {ns}:temp _enemy_iter[0] run function {ns}:v{version}/mi
 # Tag all newly spawned armed mobs as mission enemies
 execute as @e[tag={ns}.armed,tag=!{ns}.mission_enemy] run tag @s add {ns}.mission_enemy
 execute as @e[tag={ns}.mission_enemy] run tag @s add {ns}.gm_entity
+team join {ns}.mi_mobs @e[tag={ns}.mission_enemy]
 
 # Store total enemy count
 execute store result score #mi_total_enemies {ns}.data if entity @e[tag={ns}.mission_enemy]
@@ -361,6 +423,29 @@ execute unless score @s {ns}.mp.class matches 0 run function {ns}:v{version}/mul
 
 # Re-give compass
 item replace entity @s hotbar.3 with compass[custom_data={{{ns}:{{compass:true}}}}]
+
+# Run map-defined respawn commands on this player (if any)
+execute if data storage {ns}:missions game.map.respawn_commands[0] at @s run function {ns}:v{version}/missions/run_respawn_commands
+""")
+
+	## Run map respawn commands as the respawned player
+	write_versioned_function("missions/run_respawn_commands", f"""
+data modify storage {ns}:temp _respawn_cmd_iter set from storage {ns}:missions game.map.respawn_commands
+execute if data storage {ns}:temp _respawn_cmd_iter[0] at @s run function {ns}:v{version}/missions/run_respawn_commands_iter
+""")
+
+	write_versioned_function("missions/run_respawn_commands_iter", f"""
+# Copy command string
+data modify storage {ns}:temp _respawn_cmd.command set from storage {ns}:temp _respawn_cmd_iter[0].command
+
+# Execute as current player and advance
+function {ns}:v{version}/missions/run_respawn_command with storage {ns}:temp _respawn_cmd
+data remove storage {ns}:temp _respawn_cmd_iter[0]
+execute if data storage {ns}:temp _respawn_cmd_iter[0] at @s run function {ns}:v{version}/missions/run_respawn_commands_iter
+""")
+
+	write_versioned_function("missions/run_respawn_command", """
+$execute as @s at @s run $(command)
 """)
 
 	## Game Tick
@@ -377,8 +462,8 @@ execute if data storage {ns}:missions game{{state:"preparing"}} run function {ns
 scoreboard players add #mi_timer {ns}.data 1
 
 # Boundary enforcement (skip spectators) & OOB Check
-execute as @e[tag={ns}.mission_enemy] at @s run function {ns}:v{version}/missions/check_bounds
-execute as @e[type=player,scores={{{ns}.mi.in_game=1}},gamemode=!creative,gamemode=!spectator] at @s run function {ns}:v{version}/missions/check_bounds
+execute if score #mi_has_boundary {ns}.data matches 1 as @e[tag={ns}.mission_enemy] at @s run function {ns}:v{version}/missions/check_bounds
+execute if score #mi_has_boundary {ns}.data matches 1 as @e[type=player,scores={{{ns}.mi.in_game=1}},gamemode=!creative,gamemode=!spectator] at @s run function {ns}:v{version}/missions/check_bounds
 execute as @e[type=player,scores={{{ns}.mi.in_game=1}},gamemode=!creative,gamemode=!spectator] at @s if entity @e[tag={ns}.oob_point,distance=..5] run damage @s 10000 out_of_world
 
 # Track enemy kills (total enemies - alive enemies)
@@ -487,7 +572,7 @@ kill @e[tag={ns}.mission_enemy]
 kill @e[tag={ns}.gm_entity]
 
 # Remove forceload
-function {ns}:v{version}/missions/remove_forceload
+execute if score #mi_has_boundary {ns}.data matches 1 run function {ns}:v{version}/missions/remove_forceload
 
 # Signal mission end
 function #{ns}:missions/on_mission_end
@@ -496,9 +581,11 @@ function #{ns}:missions/on_mission_end
 tellraw @a [{MGS_TAG},{{"text":"Mission ended.","color":"red"}}]
 
 # Reset in-game state
+scoreboard players set @a[scores={{{ns}.mi.in_game=1}}] {ns}.mp.team 0
 scoreboard players set @a {ns}.mi.in_game 0
 scoreboard players set #mi_timer {ns}.data 0
 scoreboard players set #mi_total_enemies {ns}.data 0
+scoreboard players set #mi_has_boundary {ns}.data 0
 scoreboard players set @a {ns}.mi.kills 0
 scoreboard players set @a {ns}.mi.deaths 0
 tag @a[tag={ns}.give_class_menu] remove {ns}.give_class_menu

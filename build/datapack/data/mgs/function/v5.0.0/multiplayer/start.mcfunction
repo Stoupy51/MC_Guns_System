@@ -15,6 +15,13 @@ execute unless score #map_load_found mgs.data matches 1 run return run tellraw @
 # Copy loaded map data into game state
 data modify storage mgs:multiplayer game.map set from storage mgs:temp map_load.result
 
+# Legacy compatibility: normalize respawn command keys
+execute unless data storage mgs:multiplayer game.map.respawn_commands if data storage mgs:multiplayer game.map.respawn_command[0] run data modify storage mgs:multiplayer game.map.respawn_commands set from storage mgs:multiplayer game.map.respawn_command
+execute unless data storage mgs:multiplayer game.map.respawn_commands if data storage mgs:multiplayer game.map.respawn_command.command run data modify storage mgs:multiplayer game.map.respawn_commands set value []
+execute unless data storage mgs:multiplayer game.map.respawn_commands[0] if data storage mgs:multiplayer game.map.respawn_command.command run data modify storage mgs:multiplayer game.map.respawn_commands append from storage mgs:multiplayer game.map.respawn_command
+execute unless data storage mgs:multiplayer game.map.respawn_commands run data modify storage mgs:multiplayer game.map.respawn_commands set value []
+execute unless data storage mgs:multiplayer game.map.start_commands run data modify storage mgs:multiplayer game.map.start_commands set value []
+
 # Initialize game
 data modify storage mgs:multiplayer game.state set value "preparing"
 
@@ -84,6 +91,9 @@ execute if data storage mgs:multiplayer game{gamemode:"tdm"} run function mgs:v5
 execute if data storage mgs:multiplayer game{gamemode:"dom"} run function mgs:v5.0.0/multiplayer/gamemodes/dom/setup
 execute if data storage mgs:multiplayer game{gamemode:"hp"} run function mgs:v5.0.0/multiplayer/gamemodes/hp/setup
 execute if data storage mgs:multiplayer game{gamemode:"snd"} run function mgs:v5.0.0/multiplayer/gamemodes/snd/setup
+
+# Run map-defined start commands after entity/setup summons
+execute if data storage mgs:multiplayer game.map.start_commands[0] run function mgs:v5.0.0/multiplayer/run_start_commands
 
 # Store score limit and compute initial timer values for sidebar
 execute store result score #score_limit mgs.data run data get storage mgs:multiplayer game.score_limit

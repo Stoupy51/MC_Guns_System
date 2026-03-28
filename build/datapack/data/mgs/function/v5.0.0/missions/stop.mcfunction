@@ -27,7 +27,7 @@ kill @e[tag=mgs.mission_enemy]
 kill @e[tag=mgs.gm_entity]
 
 # Remove forceload
-function mgs:v5.0.0/missions/remove_forceload
+execute if score #mi_has_boundary mgs.data matches 1 run function mgs:v5.0.0/missions/remove_forceload
 
 # Signal mission end
 function #mgs:missions/on_mission_end
@@ -36,9 +36,11 @@ function #mgs:missions/on_mission_end
 tellraw @a [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.mission_ended","color":"red"}]
 
 # Reset in-game state
+scoreboard players set @a[scores={mgs.mi.in_game=1}] mgs.mp.team 0
 scoreboard players set @a mgs.mi.in_game 0
 scoreboard players set #mi_timer mgs.data 0
 scoreboard players set #mi_total_enemies mgs.data 0
+scoreboard players set #mi_has_boundary mgs.data 0
 scoreboard players set @a mgs.mi.kills 0
 scoreboard players set @a mgs.mi.deaths 0
 tag @a[tag=mgs.give_class_menu] remove mgs.give_class_menu

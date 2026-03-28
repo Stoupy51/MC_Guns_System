@@ -15,6 +15,8 @@ execute if entity @s[tag=mgs.element.boundary] run return run title @a[tag=mgs.c
 execute if entity @s[tag=mgs.element.search_and_destroy] run return run title @a[tag=mgs.check_nearest] actionbar [{"text":"💣 ","color":"gold"},{"translate":"mgs.sd_objective"}]
 execute if entity @s[tag=mgs.element.domination] run return run title @a[tag=mgs.check_nearest] actionbar [{"text":"🏴 ","color":"green"},{"translate":"mgs.domination_point"}]
 execute if entity @s[tag=mgs.element.hardpoint] run return run title @a[tag=mgs.check_nearest] actionbar [{"text":"⚡ ","color":"dark_purple"},{"translate":"mgs.hardpoint_zone"}]
+execute if entity @s[tag=mgs.element.start_command] run return run title @a[tag=mgs.check_nearest] actionbar [{"text":"⚙ ","color":"aqua"},{"translate":"mgs.start_command"}]
+execute if entity @s[tag=mgs.element.respawn_command] run return run title @a[tag=mgs.check_nearest] actionbar [{"text":"↺ ","color":"dark_aqua"},{"translate":"mgs.respawn_command"}]
 execute if entity @s[tag=mgs.element.mission_spawn] run return run title @a[tag=mgs.check_nearest] actionbar [{"text":"● ","color":"aqua"},{"translate":"mgs.mission_spawn"}]
 execute if entity @s[tag=mgs.element.enemy] run return run title @a[tag=mgs.check_nearest] actionbar [{"text":"👤 ","color":"red"},{"translate":"mgs.enemy"}]
 execute if entity @s[tag=mgs.element.zombie_spawn] run return run title @a[tag=mgs.check_nearest] actionbar [{"text":"🧟 ","color":"dark_green"},{"translate":"mgs.zombie_spawn"}]

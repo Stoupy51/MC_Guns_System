@@ -1,7 +1,7 @@
 
 #> mgs:v5.0.0/missions/normalize_bounds
 #
-# @within	mgs:v5.0.0/missions/start
+# @within	mgs:v5.0.0/missions/load_bounds
 #
 
 execute if score #bound_x1 mgs.data > #bound_x2 mgs.data run scoreboard players operation #swap mgs.data = #bound_x1 mgs.data

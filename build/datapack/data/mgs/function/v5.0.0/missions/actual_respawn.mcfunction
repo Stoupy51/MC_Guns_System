@@ -24,3 +24,6 @@ execute unless score @s mgs.mp.class matches 0 run function mgs:v5.0.0/multiplay
 # Re-give compass
 item replace entity @s hotbar.3 with compass[custom_data={mgs:{compass:true}}]
 
+# Run map-defined respawn commands on this player (if any)
+execute if data storage mgs:missions game.map.respawn_commands[0] at @s run function mgs:v5.0.0/missions/run_respawn_commands
+

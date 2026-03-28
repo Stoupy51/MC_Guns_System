@@ -13,6 +13,7 @@ execute if data storage mgs:temp _enemy_iter[0] run function mgs:v5.0.0/missions
 # Tag all newly spawned armed mobs as mission enemies
 execute as @e[tag=mgs.armed,tag=!mgs.mission_enemy] run tag @s add mgs.mission_enemy
 execute as @e[tag=mgs.mission_enemy] run tag @s add mgs.gm_entity
+team join mgs.mi_mobs @e[tag=mgs.mission_enemy]
 
 # Store total enemy count
 execute store result score #mi_total_enemies mgs.data if entity @e[tag=mgs.mission_enemy]
