@@ -37,6 +37,12 @@ execute if entity @s[tag=mgs.element.domination] run return run kill @s
 execute if entity @s[tag=mgs.element.hardpoint] run function mgs:v5.0.0/maps/editor/handle_point
 execute if entity @s[tag=mgs.element.hardpoint] run return run kill @s
 
+execute if entity @s[tag=mgs.element.start_command] run function mgs:v5.0.0/maps/editor/handle_start_command
+execute if entity @s[tag=mgs.element.start_command] run return run kill @s
+
+execute if entity @s[tag=mgs.element.respawn_command] run function mgs:v5.0.0/maps/editor/handle_respawn_command
+execute if entity @s[tag=mgs.element.respawn_command] run return run kill @s
+
 execute if entity @s[tag=mgs.element.mission_spawn] run function mgs:v5.0.0/maps/editor/handle_spawn
 execute if entity @s[tag=mgs.element.mission_spawn] run return run kill @s
 

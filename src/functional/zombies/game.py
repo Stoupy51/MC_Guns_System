@@ -176,6 +176,39 @@ execute if score #swap {ns}.data matches -2147483648.. run scoreboard players op
 execute if score #swap {ns}.data matches -2147483648.. run scoreboard players reset #swap {ns}.data
 """)
 
+	## Run map start commands (relative pos + command string)
+	write_versioned_function("zombies/run_start_commands", f"""
+data modify storage {ns}:temp _start_cmd_iter set from storage {ns}:zombies game.map.start_commands
+execute if data storage {ns}:temp _start_cmd_iter[0] run function {ns}:v{version}/zombies/run_start_commands_iter
+""")
+
+	write_versioned_function("zombies/run_start_commands_iter", f"""
+# Read relative position
+execute store result score #cx {ns}.data run data get storage {ns}:temp _start_cmd_iter[0].pos[0]
+execute store result score #cy {ns}.data run data get storage {ns}:temp _start_cmd_iter[0].pos[1]
+execute store result score #cz {ns}.data run data get storage {ns}:temp _start_cmd_iter[0].pos[2]
+
+# Convert to absolute
+scoreboard players operation #cx {ns}.data += #gm_base_x {ns}.data
+scoreboard players operation #cy {ns}.data += #gm_base_y {ns}.data
+scoreboard players operation #cz {ns}.data += #gm_base_z {ns}.data
+
+# Prepare macro args
+execute store result storage {ns}:temp _start_cmd.x int 1 run scoreboard players get #cx {ns}.data
+execute store result storage {ns}:temp _start_cmd.y int 1 run scoreboard players get #cy {ns}.data
+execute store result storage {ns}:temp _start_cmd.z int 1 run scoreboard players get #cz {ns}.data
+data modify storage {ns}:temp _start_cmd.command set from storage {ns}:temp _start_cmd_iter[0].command
+
+# Execute and advance
+function {ns}:v{version}/zombies/run_start_command with storage {ns}:temp _start_cmd
+data remove storage {ns}:temp _start_cmd_iter[0]
+execute if data storage {ns}:temp _start_cmd_iter[0] run function {ns}:v{version}/zombies/run_start_commands_iter
+""")
+
+	write_versioned_function("zombies/run_start_command", """
+$execute positioned $(x) $(y) $(z) run $(command)
+""")
+
 	## Preload complete → transition to prep phase
 	write_versioned_function("zombies/preload_complete", f"""
 # Guard: only if still preparing
@@ -192,6 +225,9 @@ function {ns}:v{version}/zombies/summon_spawns
 
 # Signal zombies game start
 function #{ns}:zombies/on_game_start
+
+# Run map-defined start commands after entity/setup summons
+execute if data storage {ns}:zombies game.map.start_commands[0] run function {ns}:v{version}/zombies/run_start_commands
 
 # Teleport all players to player spawns
 function {ns}:v{version}/zombies/tp_all_to_spawns

@@ -19,6 +19,9 @@ function mgs:v5.0.0/zombies/summon_spawns
 # Signal zombies game start
 function #mgs:zombies/on_game_start
 
+# Run map-defined start commands after entity/setup summons
+execute if data storage mgs:zombies game.map.start_commands[0] run function mgs:v5.0.0/zombies/run_start_commands
+
 # Teleport all players to player spawns
 function mgs:v5.0.0/zombies/tp_all_to_spawns
 

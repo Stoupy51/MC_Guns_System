@@ -597,6 +597,12 @@ scoreboard objectives add mgs.mp.bz dummy
 scoreboard players set #20 mgs.data 20
 scoreboard players set #60 mgs.data 60
 
+# Mission mob team (created once)
+execute unless score #mi_mob_team_created mgs.data matches 1 run team add mgs.mi_mobs
+execute unless score #mi_mob_team_created mgs.data matches 1 run team modify mgs.mi_mobs color dark_red
+execute unless score #mi_mob_team_created mgs.data matches 1 run team modify mgs.mi_mobs friendlyFire false
+execute unless score #mi_mob_team_created mgs.data matches 1 run scoreboard players set #mi_mob_team_created mgs.data 1
+
 # Initialize missions game state
 execute unless data storage mgs:missions game run data modify storage mgs:missions game set value {state:"lobby",map_id:""}
 

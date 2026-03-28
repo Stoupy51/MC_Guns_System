@@ -27,6 +27,8 @@ ALL_ELEMENTS: dict[str, JsonDict] = {
 	"search_and_destroy": {"name": "S&D Objective",    "color": "gold",         "particle": [1.0, 0.6, 0.0], "particle_scale": 1.0, "has_rotation": False, "egg_model": "minecraft:fox_spawn_egg", "save_type": "point", "save_path": "search_and_destroy", "emoji": "💣"},
 	"domination":         {"name": "Domination Point", "color": "green",        "particle": [0.0, 1.0, 0.0], "particle_scale": 1.0, "has_rotation": False, "egg_model": "minecraft:creeper_spawn_egg", "save_type": "point", "save_path": "domination", "emoji": "🏴"},
 	"hardpoint":          {"name": "Hardpoint Zone",   "color": "dark_purple",  "particle": [0.5, 0.0, 0.5], "particle_scale": 1.0, "has_rotation": False, "egg_model": "minecraft:warden_spawn_egg", "save_type": "point", "save_path": "hardpoint", "emoji": "⚡"},
+	"start_command":      {"name": "Start Command",    "color": "aqua",         "particle": [0.0, 0.9, 0.9], "particle_scale": 1.0, "has_rotation": False, "egg_model": "minecraft:allay_spawn_egg", "save_type": "start_command", "save_path": "start_commands", "emoji": "⚙"},
+	"respawn_command":    {"name": "Respawn Command",  "color": "dark_aqua",    "particle": [0.0, 0.7, 0.7], "particle_scale": 1.0, "has_rotation": False, "egg_model": "minecraft:vex_spawn_egg", "save_type": "respawn_command", "save_path": "respawn_commands", "emoji": "↺"},
 	# Mission elements
 	"mission_spawn":      {"name": "Mission Spawn",    "color": "aqua",         "particle": [0.0, 1.0, 1.0], "particle_scale": 1.0, "has_rotation": True,  "egg_model": "minecraft:villager_spawn_egg", "save_type": "spawn", "save_path": "spawning_points.mission", "emoji": "●"},
 	"enemy":              {"name": "Enemy",            "color": "red",          "particle": [1.0, 0.2, 0.2], "particle_scale": 1.0, "has_rotation": False, "egg_model": "minecraft:pillager_spawn_egg", "save_type": "enemy", "save_path": "enemies", "emoji": "👤", "config_uses_default_function": True},
@@ -75,6 +77,8 @@ EDITOR_MODES: dict[str, JsonDict] = {
 			"search_and_destroy": "hotbar.6",
 			"domination": "inventory.0",
 			"hardpoint": "inventory.1",
+			"start_command": "inventory.2",
+			"respawn_command": "inventory.3",
 		},
 	},
 	"zombies": {
@@ -94,6 +98,7 @@ EDITOR_MODES: dict[str, JsonDict] = {
 			"out_of_bounds": "inventory.3",
 			"boundary": "inventory.4",
 			"pap_machine": "inventory.5",
+			"start_command": "inventory.6",
 		},
 	},
 	"missions": {
@@ -107,6 +112,8 @@ EDITOR_MODES: dict[str, JsonDict] = {
 			"out_of_bounds": "hotbar.3",
 			"boundary": "hotbar.4",
 			"config": "hotbar.5",
+			"start_command": "inventory.0",
+			"respawn_command": "inventory.1",
 		},
 	},
 }
@@ -234,7 +241,7 @@ $tellraw @s ["  ",{{"text":"$(name)","color":"white"}},{{"text":" ($(id))","colo
 	# Map Creation (per mode) ────────────────────────────────────
 	for mode_key, mode_info in EDITOR_MODES.items():
 		sk = mode_info["storage_key"]
-		create_snbt = r"id:'my_map',name:'My Map',description:'A new map',base_coordinates:[0,64,0]"
+		create_snbt = r"id:'my_map',name:'My Map',description:'A new map',base_coordinates:[0,64,0],start_commands:[],respawn_commands:[]"
 		back_btn = btn("◀ Back", f"/function {ns}:v{version}/maps/editor/list/{mode_key}", "yellow", "Back to map list")
 
 		write_versioned_function(f"maps/editor/create/{mode_key}", f"""
@@ -387,6 +394,14 @@ function {ns}:v{version}/maps/editor/summon_base_marker with storage {ns}:temp _
 				summon_lines.append(f'data modify storage {ns}:temp _enemy_edit_iter set from storage {ns}:temp map_edit.map.{save_path}')
 				summon_lines.append(f'execute if data storage {ns}:temp _enemy_edit_iter[0] run function {ns}:v{version}/maps/editor/summon_enemy_edit_iter')
 				summon_lines.append("")
+			elif einfo["save_type"] == "start_command":
+				summon_lines.append(f'data modify storage {ns}:temp _start_cmd_iter set from storage {ns}:temp map_edit.map.{save_path}')
+				summon_lines.append(f'execute if data storage {ns}:temp _start_cmd_iter[0] run function {ns}:v{version}/maps/editor/summon_start_command_iter')
+				summon_lines.append("")
+			elif einfo["save_type"] == "respawn_command":
+				summon_lines.append(f'data modify storage {ns}:temp _respawn_cmd_iter set from storage {ns}:temp map_edit.map.{save_path}')
+				summon_lines.append(f'execute if data storage {ns}:temp _respawn_cmd_iter[0] run function {ns}:v{version}/maps/editor/summon_respawn_command_iter')
+				summon_lines.append("")
 			elif einfo["save_type"] == "zb_object":
 				summon_lines.append(f'data modify storage {ns}:temp _zb_iter set from storage {ns}:temp map_edit.map.{save_path}')
 				summon_lines.append(f'data modify storage {ns}:temp _zb_iter_tag set value "{ns}.element.{etype}"')
@@ -506,6 +521,72 @@ execute if data storage {ns}:temp _enemy_edit_iter[0] run function {ns}:v{versio
 
 	write_versioned_function("maps/editor/summon_enemy_marker", f"""
 $summon minecraft:marker $(x) $(y) $(z) {{Tags:["{ns}.map_element","{ns}.element.enemy","{ns}.new_enemy_marker"]}}
+""")
+
+	# Summon start command markers - iterates list of {pos:[x,y,z], command:"..."} entries
+	write_versioned_function("maps/editor/summon_start_command_iter", f"""
+# Read relative position from first entry
+execute store result score #rx {ns}.data run data get storage {ns}:temp _start_cmd_iter[0].pos[0]
+execute store result score #ry {ns}.data run data get storage {ns}:temp _start_cmd_iter[0].pos[1]
+execute store result score #rz {ns}.data run data get storage {ns}:temp _start_cmd_iter[0].pos[2]
+
+# Add base to get absolute
+scoreboard players operation #rx {ns}.data += #base_x {ns}.data
+scoreboard players operation #ry {ns}.data += #base_y {ns}.data
+scoreboard players operation #rz {ns}.data += #base_z {ns}.data
+
+# Prepare position for macro
+execute store result storage {ns}:temp _cpos.x double 1 run scoreboard players get #rx {ns}.data
+execute store result storage {ns}:temp _cpos.y double 1 run scoreboard players get #ry {ns}.data
+execute store result storage {ns}:temp _cpos.z double 1 run scoreboard players get #rz {ns}.data
+
+# Summon marker
+function {ns}:v{version}/maps/editor/summon_start_command_marker with storage {ns}:temp _cpos
+
+# Store command on marker
+execute as @n[tag={ns}.new_start_cmd_marker] run data modify entity @s data.command set from storage {ns}:temp _start_cmd_iter[0].command
+tag @e[tag={ns}.new_start_cmd_marker] remove {ns}.new_start_cmd_marker
+
+# Advance to next
+data remove storage {ns}:temp _start_cmd_iter[0]
+execute if data storage {ns}:temp _start_cmd_iter[0] run function {ns}:v{version}/maps/editor/summon_start_command_iter
+""")
+
+	write_versioned_function("maps/editor/summon_start_command_marker", f"""
+$summon minecraft:marker $(x) $(y) $(z) {{Tags:["{ns}.map_element","{ns}.element.start_command","{ns}.new_start_cmd_marker"]}}
+""")
+
+	# Summon respawn command markers - iterates list of {pos:[x,y,z], command:"..."} entries
+	write_versioned_function("maps/editor/summon_respawn_command_iter", f"""
+# Read relative position from first entry
+execute store result score #rx {ns}.data run data get storage {ns}:temp _respawn_cmd_iter[0].pos[0]
+execute store result score #ry {ns}.data run data get storage {ns}:temp _respawn_cmd_iter[0].pos[1]
+execute store result score #rz {ns}.data run data get storage {ns}:temp _respawn_cmd_iter[0].pos[2]
+
+# Add base to get absolute
+scoreboard players operation #rx {ns}.data += #base_x {ns}.data
+scoreboard players operation #ry {ns}.data += #base_y {ns}.data
+scoreboard players operation #rz {ns}.data += #base_z {ns}.data
+
+# Prepare position for macro
+execute store result storage {ns}:temp _rcpos.x double 1 run scoreboard players get #rx {ns}.data
+execute store result storage {ns}:temp _rcpos.y double 1 run scoreboard players get #ry {ns}.data
+execute store result storage {ns}:temp _rcpos.z double 1 run scoreboard players get #rz {ns}.data
+
+# Summon marker
+function {ns}:v{version}/maps/editor/summon_respawn_command_marker with storage {ns}:temp _rcpos
+
+# Store command on marker
+execute as @n[tag={ns}.new_respawn_cmd_marker] run data modify entity @s data.command set from storage {ns}:temp _respawn_cmd_iter[0].command
+tag @e[tag={ns}.new_respawn_cmd_marker] remove {ns}.new_respawn_cmd_marker
+
+# Advance to next
+data remove storage {ns}:temp _respawn_cmd_iter[0]
+execute if data storage {ns}:temp _respawn_cmd_iter[0] run function {ns}:v{version}/maps/editor/summon_respawn_command_iter
+""")
+
+	write_versioned_function("maps/editor/summon_respawn_command_marker", f"""
+$summon minecraft:marker $(x) $(y) $(z) {{Tags:["{ns}.map_element","{ns}.element.respawn_command","{ns}.new_respawn_cmd_marker"]}}
 """)
 
 	# Summon zb_object markers - iterates list of compound objects {pos:[x,y,z], rotation:[yaw,pitch], ...}
@@ -665,6 +746,10 @@ execute as @n[tag={ns}.new_element] at @s run function {ns}:v{version}/maps/edit
 			handler = "handle_config"
 		elif save_type == "enemy":
 			handler = "handle_enemy"
+		elif save_type == "start_command":
+			handler = "handle_start_command"
+		elif save_type == "respawn_command":
+			handler = "handle_respawn_command"
 		elif save_type == "zb_object":
 			handler = "handle_zb_object"
 		else:
@@ -793,6 +878,54 @@ tag @e[tag={ns}.new_enemy_marker] remove {ns}.new_enemy_marker
 tellraw @a[tag={ns}.map_editor] [{MGS_TAG},{{"text":"Enemy placed!","color":"red"}}]
 """)
 
+	# Handle Start Command Element (all modes) ──────────────────
+	edit_cmd_btn = btn(
+		"Edit Command",
+		f'/data modify entity @n[tag={ns}.element.start_command,distance=..10] data.command set value "say Hello from start command"',
+		"aqua", "Click to edit the command to run at game start", action="suggest_command"
+	)
+	write_versioned_function("maps/editor/handle_start_command", f"""
+# Get position for permanent marker
+execute store result storage {ns}:temp _pos.x double 1 run data get entity @s Pos[0]
+execute store result storage {ns}:temp _pos.y double 1 run data get entity @s Pos[1]
+execute store result storage {ns}:temp _pos.z double 1 run data get entity @s Pos[2]
+
+# Summon permanent marker
+function {ns}:v{version}/maps/editor/summon_start_command_marker with storage {ns}:temp _pos
+
+# Set default command on marker
+execute as @n[tag={ns}.new_start_cmd_marker] run data modify entity @s data.command set value "say Hello from start command"
+tag @e[tag={ns}.new_start_cmd_marker] remove {ns}.new_start_cmd_marker
+
+# Announce + quick edit helper
+tellraw @a[tag={ns}.map_editor] [{MGS_TAG},{{"text":"Start Command placed!","color":"aqua"}}]
+tellraw @a[tag={ns}.map_editor] ["  ",{edit_cmd_btn}]
+""")
+
+	# Handle Respawn Command Element (multiplayer + missions) ───
+	edit_respawn_cmd_btn = btn(
+		"Edit Command",
+		f'/data modify entity @n[tag={ns}.element.respawn_command,distance=..10] data.command set value "effect give @s minecraft:speed 5 0 true"',
+		"dark_aqua", "Click to edit the command to run when players respawn", action="suggest_command"
+	)
+	write_versioned_function("maps/editor/handle_respawn_command", f"""
+# Get position for permanent marker
+execute store result storage {ns}:temp _pos.x double 1 run data get entity @s Pos[0]
+execute store result storage {ns}:temp _pos.y double 1 run data get entity @s Pos[1]
+execute store result storage {ns}:temp _pos.z double 1 run data get entity @s Pos[2]
+
+# Summon permanent marker
+function {ns}:v{version}/maps/editor/summon_respawn_command_marker with storage {ns}:temp _pos
+
+# Set default command on marker
+execute as @n[tag={ns}.new_respawn_cmd_marker] run data modify entity @s data.command set value "effect give @s minecraft:speed 5 0 true"
+tag @e[tag={ns}.new_respawn_cmd_marker] remove {ns}.new_respawn_cmd_marker
+
+# Announce + quick edit helper
+tellraw @a[tag={ns}.map_editor] [{MGS_TAG},{{"text":"Respawn Command placed!","color":"dark_aqua"}}]
+tellraw @a[tag={ns}.map_editor] ["  ",{edit_respawn_cmd_btn}]
+""")
+
 	# Handle ZB Object (zombies compound elements) ───────────────
 	# Detect type, copy defaults, get rotation, summon marker with data
 	zb_elements = {etype: einfo for etype, einfo in ALL_ELEMENTS.items() if einfo["save_type"] == "zb_object"}
@@ -891,12 +1024,8 @@ kill @s
 		f'["  ",{{"text":"Default Function: ","color":"gray"}},'
 		f'{{"storage":"{ns}:temp","nbt":"map_edit.map.default_enemy_function","color":"white"}}]'
 	)
-	fn_btn = btn(
-		"Edit Function",
-		f'/data modify storage {ns}:temp map_edit.map.default_enemy_function set value "{ns}:v{version}/mob/default/level_1 {{\'entity\':\'pillager\'}}"',
-		"aqua", "Click to edit the default spawn function for new enemies", action="suggest_command"
-	)
-	config_lines.append(f'tellraw {config_target} ["    ",{fn_btn}]')
+	config_lines.append(f'data modify storage {ns}:temp _cfg.default_fn set from storage {ns}:temp map_edit.map.default_enemy_function')
+	config_lines.append(f'function {ns}:v{version}/maps/editor/handle_config_default_btn with storage {ns}:temp _cfg')
 	config_lines.append(f'tellraw {config_target} ["  ",{{"text":"ℹ Edit the function path above, then run the command.","color":"dark_gray","italic":true}}]')  # noqa: RUF001
 	config_lines.append("")
 
@@ -904,22 +1033,40 @@ kill @s
 	for etype, einfo in ALL_ELEMENTS.items():
 		if not cast(bool, einfo.get("config_uses_default_function", False)):
 			continue
-		config_lines.append(f"execute if entity @e[tag={ns}.element.{etype},distance=..10] run tellraw {config_target} {sep}")
-		config_lines.append(
-			f'execute if entity @e[tag={ns}.element.{etype},distance=..10] run tellraw {config_target} '
-			f'["  ",{{"text":"Nearest {einfo["name"]}: ","color":"yellow","bold":true}},'
-			f'{{"entity":"@n[tag={ns}.element.{etype},distance=..10]","nbt":"data.function","color":"white"}}]'
-		)
-		nearest_fn_btn = btn(
-			f"Edit Nearest {einfo['name']}",
-			f'/data modify entity @n[tag={ns}.element.{etype},distance=..10] data.function set from storage {ns}:temp map_edit.map.default_enemy_function',
-			"yellow", f"Apply current default function to nearest {einfo['name'].lower()}", action="suggest_command"
-		)
-		config_lines.append(f'execute if entity @e[tag={ns}.element.{etype},distance=..10] run tellraw {config_target} ["    ",{nearest_fn_btn}]')
+		config_lines.append(f'execute if entity @e[tag={ns}.element.{etype},distance=..10] run data modify storage {ns}:temp _cfg.default_fn set from storage {ns}:temp map_edit.map.default_enemy_function')
+		config_lines.append(f'execute if entity @e[tag={ns}.element.{etype},distance=..10] run data modify storage {ns}:temp _cfg.nearest_fn set from entity @n[tag={ns}.element.{etype},distance=..10] data.function')
+		config_lines.append(f'execute if entity @e[tag={ns}.element.{etype},distance=..10] run function {ns}:v{version}/maps/editor/handle_config_nearest_{etype}_btn with storage {ns}:temp _cfg')
+
+	# Show nearest command-based mission objects.
+	for etype in ("start_command", "respawn_command"):
+		einfo = ALL_ELEMENTS[etype]
+		config_lines.append(f'execute if entity @e[tag={ns}.element.{etype},distance=..10] run data modify storage {ns}:temp _cfg.nearest_cmd set from entity @n[tag={ns}.element.{etype},distance=..10] data.command')
+		config_lines.append(f'execute if entity @e[tag={ns}.element.{etype},distance=..10] run function {ns}:v{version}/maps/editor/handle_config_nearest_{etype}_btn with storage {ns}:temp _cfg')
 
 	config_lines.append(f"tellraw {config_target} {sep}")
 
 	write_versioned_function("maps/editor/handle_config", "\n".join(config_lines))
+
+	write_versioned_function("maps/editor/handle_config_default_btn", f"""
+$tellraw {config_target} ["    ",{{"text":"[Edit Function]","color":"aqua","click_event":{{"action":"suggest_command","command":"/data modify storage {ns}:temp map_edit.map.default_enemy_function set value \\"$(default_fn)\\""}},"hover_event":{{"action":"show_text","value":"Click to edit the default spawn function for new enemies"}}}}]
+""")
+
+	for etype, einfo in ALL_ELEMENTS.items():
+		if not cast(bool, einfo.get("config_uses_default_function", False)):
+			continue
+		write_versioned_function(f"maps/editor/handle_config_nearest_{etype}_btn", f"""
+tellraw {config_target} {sep}
+tellraw {config_target} ["  ",{{"text":"Nearest {einfo["name"]}: ","color":"yellow","bold":true}},{{"entity":"@n[tag={ns}.element.{etype},distance=..10]","nbt":"data.function","color":"white"}}]
+$tellraw {config_target} ["    ",{{"text":"[Edit Nearest {einfo["name"]}]","color":"yellow","click_event":{{"action":"suggest_command","command":"/data modify entity @n[tag={ns}.element.{etype},distance=..10] data.function set value \\"$(nearest_fn)\\""}},"hover_event":{{"action":"show_text","value":"Edit nearest {einfo["name"].lower()} using its current function"}}}}]
+""")
+
+	for etype in ("start_command", "respawn_command"):
+		einfo = ALL_ELEMENTS[etype]
+		write_versioned_function(f"maps/editor/handle_config_nearest_{etype}_btn", f"""
+tellraw {config_target} {sep}
+tellraw {config_target} ["  ",{{"text":"Nearest {einfo["name"]}: ","color":"yellow","bold":true}},{{"entity":"@n[tag={ns}.element.{etype},distance=..10]","nbt":"data.command","color":"white"}}]
+$tellraw {config_target} ["    ",{{"text":"[Edit Nearest {einfo["name"]}]","color":"yellow","click_event":{{"action":"suggest_command","command":"/data modify entity @n[tag={ns}.element.{etype},distance=..10] data.command set value \\"$(nearest_cmd)\\""}},"hover_event":{{"action":"show_text","value":"Edit nearest {einfo["name"].lower()} command using its current value"}}}}]
+""")
 
 	# Handle ZB Defaults (configure defaults for new zombies elements)
 	def snbt_suggest(val: Any) -> str:
@@ -1234,6 +1381,12 @@ function {ns}:v{version}/maps/editor/write_back with storage {ns}:temp map_edit
 			elif einfo["save_type"] == "enemy":
 				reset_lines.append(f'data modify storage {ns}:temp map_edit.map.{save_path} set value []')
 				rebuild_lines.append(f'execute as @e[tag={ns}.element.{etype}] at @s run function {ns}:v{version}/maps/editor/save_enemy')
+			elif einfo["save_type"] == "start_command":
+				reset_lines.append(f'data modify storage {ns}:temp map_edit.map.{save_path} set value []')
+				rebuild_lines.append(f'execute as @e[tag={ns}.element.{etype}] at @s run function {ns}:v{version}/maps/editor/save_start_command {{path:"{save_path}"}}')
+			elif einfo["save_type"] == "respawn_command":
+				reset_lines.append(f'data modify storage {ns}:temp map_edit.map.{save_path} set value []')
+				rebuild_lines.append(f'execute as @e[tag={ns}.element.{etype}] at @s run function {ns}:v{version}/maps/editor/save_respawn_command {{path:"{save_path}"}}')
 			elif einfo["save_type"] == "zb_object":
 				reset_lines.append(f'data modify storage {ns}:temp map_edit.map.{save_path} set value []')
 				rebuild_lines.append(f'execute as @e[tag={ns}.element.{etype}] at @s run function {ns}:v{version}/maps/editor/save_zb_object {{path:"{save_path}"}}')
@@ -1329,6 +1482,54 @@ data modify storage {ns}:temp _save_enemy.function set from entity @s data.funct
 data modify storage {ns}:temp map_edit.map.enemies append from storage {ns}:temp _save_enemy
 """)
 
+	## Save a start command element (pos + command)
+	write_versioned_function("maps/editor/save_start_command", f"""
+# @s = start command marker, at its position
+# Get absolute position
+execute store result score #ax {ns}.data run data get entity @s Pos[0]
+execute store result score #ay {ns}.data run data get entity @s Pos[1]
+execute store result score #az {ns}.data run data get entity @s Pos[2]
+
+# Compute relative coordinates
+scoreboard players operation #ax {ns}.data -= #base_x {ns}.data
+scoreboard players operation #ay {ns}.data -= #base_y {ns}.data
+scoreboard players operation #az {ns}.data -= #base_z {ns}.data
+
+# Build start command entry {{pos:[x,y,z],command:"..."}}
+data modify storage {ns}:temp _save_start_cmd set value {{pos:[0,0,0],command:""}}
+execute store result storage {ns}:temp _save_start_cmd.pos[0] int 1 run scoreboard players get #ax {ns}.data
+execute store result storage {ns}:temp _save_start_cmd.pos[1] int 1 run scoreboard players get #ay {ns}.data
+execute store result storage {ns}:temp _save_start_cmd.pos[2] int 1 run scoreboard players get #az {ns}.data
+data modify storage {ns}:temp _save_start_cmd.command set from entity @s data.command
+
+# Append to list path
+$data modify storage {ns}:temp map_edit.map.$(path) append from storage {ns}:temp _save_start_cmd
+""")
+
+	## Save a respawn command element (pos + command)
+	write_versioned_function("maps/editor/save_respawn_command", f"""
+# @s = respawn command marker, at its position
+# Get absolute position
+execute store result score #ax {ns}.data run data get entity @s Pos[0]
+execute store result score #ay {ns}.data run data get entity @s Pos[1]
+execute store result score #az {ns}.data run data get entity @s Pos[2]
+
+# Compute relative coordinates
+scoreboard players operation #ax {ns}.data -= #base_x {ns}.data
+scoreboard players operation #ay {ns}.data -= #base_y {ns}.data
+scoreboard players operation #az {ns}.data -= #base_z {ns}.data
+
+# Build respawn command entry {{pos:[x,y,z],command:"..."}}
+data modify storage {ns}:temp _save_respawn_cmd set value {{pos:[0,0,0],command:""}}
+execute store result storage {ns}:temp _save_respawn_cmd.pos[0] int 1 run scoreboard players get #ax {ns}.data
+execute store result storage {ns}:temp _save_respawn_cmd.pos[1] int 1 run scoreboard players get #ay {ns}.data
+execute store result storage {ns}:temp _save_respawn_cmd.pos[2] int 1 run scoreboard players get #az {ns}.data
+data modify storage {ns}:temp _save_respawn_cmd.command set from entity @s data.command
+
+# Append to list path
+$data modify storage {ns}:temp map_edit.map.$(path) append from storage {ns}:temp _save_respawn_cmd
+""")
+
 	## Save a zb_object element (macro: path = wallbuys/doors/etc.)
 	write_versioned_function("maps/editor/save_zb_object", f"""
 # @s = marker entity, at its position
@@ -1395,7 +1596,7 @@ clear @s
 		r, g, b = einfo["particle"]
 		scale = einfo["particle_scale"]
 		spread = "0.2 0.5 0.2" if einfo["save_type"] == "spawn" else "0.3 0.5 0.3"
-		count = 5 if etype == "base_coordinates" else 3
+		count = 2 if etype == "base_coordinates" else 1
 		particle_lines.append(
 			f'execute at @e[tag={ns}.element.{etype}] run particle dust{{color:[{r},{g},{b}],scale:{scale}}} ~ ~1 ~ {spread} 0 {count}'
 		)

@@ -25,6 +25,9 @@ effect give @a[scores={mgs.mi.in_game=1}] saturation infinite 255 true
 # Spawn all enemies from map data
 function mgs:v5.0.0/missions/spawn_all_enemies
 
+# Run map-defined start commands after enemies are spawned
+execute if data storage mgs:missions game.map.start_commands[0] run function mgs:v5.0.0/missions/run_start_commands
+
 # Give compass pointing to nearest enemy (hotbar slot 3)
 execute as @a[scores={mgs.mi.in_game=1}] run item replace entity @s hotbar.3 with compass[custom_data={mgs:{compass:true}}]
 

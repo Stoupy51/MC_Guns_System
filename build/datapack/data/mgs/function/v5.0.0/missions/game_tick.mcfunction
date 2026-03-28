@@ -14,8 +14,8 @@ execute as @a[scores={mgs.mi.in_game=1,mgs.mp.spectate_timer=0},gamemode=spectat
 scoreboard players add #mi_timer mgs.data 1
 
 # Boundary enforcement (skip spectators) & OOB Check
-execute as @e[tag=mgs.mission_enemy] at @s run function mgs:v5.0.0/missions/check_bounds
-execute as @e[type=player,scores={mgs.mi.in_game=1},gamemode=!creative,gamemode=!spectator] at @s run function mgs:v5.0.0/missions/check_bounds
+execute if score #mi_has_boundary mgs.data matches 1 as @e[tag=mgs.mission_enemy] at @s run function mgs:v5.0.0/missions/check_bounds
+execute if score #mi_has_boundary mgs.data matches 1 as @e[type=player,scores={mgs.mi.in_game=1},gamemode=!creative,gamemode=!spectator] at @s run function mgs:v5.0.0/missions/check_bounds
 execute as @e[type=player,scores={mgs.mi.in_game=1},gamemode=!creative,gamemode=!spectator] at @s if entity @e[tag=mgs.oob_point,distance=..5] run damage @s 10000 out_of_world
 
 # Track enemy kills (total enemies - alive enemies)
