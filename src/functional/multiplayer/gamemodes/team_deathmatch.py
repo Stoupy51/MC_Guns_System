@@ -11,6 +11,9 @@ def generate_team_deathmatch() -> None:
 
 	## TDM Setup
 	write_versioned_function("multiplayer/gamemodes/tdm/setup", f"""
+# Auto-assign players with no team so team scores can increment
+execute as @a[scores={{{ns}.mp.in_game=1,{ns}.mp.team=0}}] run function {ns}:v{version}/multiplayer/auto_assign_team
+
 tellraw @a [{MGS_TAG},{{"text":"Team Deathmatch! First team to the score limit wins!","color":"yellow"}}]
 """)
 

@@ -1,7 +1,7 @@
 
 #> mgs:v5.0.0/multiplayer/normalize_bounds
 #
-# @within	mgs:v5.0.0/multiplayer/start
+# @within	mgs:v5.0.0/multiplayer/load_bounds
 #
 
 # Swap x if needed

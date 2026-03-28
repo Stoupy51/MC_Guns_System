@@ -28,6 +28,7 @@ data modify storage mgs:multiplayer game.state set value "preparing"
 # Reset scores
 scoreboard players set #red mgs.mp.team 0
 scoreboard players set #blue mgs.mp.team 0
+scoreboard players set #mp_has_boundary mgs.data 0
 scoreboard players set @a mgs.mp.kills 0
 scoreboard players set @a mgs.mp.deaths 0
 scoreboard players set @a mgs.mp.death_count 0
@@ -55,22 +56,11 @@ execute store result score #gm_base_x mgs.data run data get storage mgs:multipla
 execute store result score #gm_base_y mgs.data run data get storage mgs:multiplayer game.map.base_coordinates[1]
 execute store result score #gm_base_z mgs.data run data get storage mgs:multiplayer game.map.base_coordinates[2]
 
-# Store boundary corners (relative) and convert to absolute
-execute store result score #bound_x1 mgs.data run data get storage mgs:multiplayer game.map.boundaries[0][0]
-execute store result score #bound_y1 mgs.data run data get storage mgs:multiplayer game.map.boundaries[0][1]
-execute store result score #bound_z1 mgs.data run data get storage mgs:multiplayer game.map.boundaries[0][2]
-execute store result score #bound_x2 mgs.data run data get storage mgs:multiplayer game.map.boundaries[1][0]
-execute store result score #bound_y2 mgs.data run data get storage mgs:multiplayer game.map.boundaries[1][1]
-execute store result score #bound_z2 mgs.data run data get storage mgs:multiplayer game.map.boundaries[1][2]
-scoreboard players operation #bound_x1 mgs.data += #gm_base_x mgs.data
-scoreboard players operation #bound_y1 mgs.data += #gm_base_y mgs.data
-scoreboard players operation #bound_z1 mgs.data += #gm_base_z mgs.data
-scoreboard players operation #bound_x2 mgs.data += #gm_base_x mgs.data
-scoreboard players operation #bound_y2 mgs.data += #gm_base_y mgs.data
-scoreboard players operation #bound_z2 mgs.data += #gm_base_z mgs.data
+# Detect whether this map defines a boundary (needs 2 points)
+execute if data storage mgs:multiplayer game.map.boundaries[0] if data storage mgs:multiplayer game.map.boundaries[1] run scoreboard players set #mp_has_boundary mgs.data 1
 
-# Normalize boundaries (ensure x1 < x2, y1 < y2, z1 < z2)
-function mgs:v5.0.0/multiplayer/normalize_bounds
+# Normalize and store boundaries only when they exist
+execute if score #mp_has_boundary mgs.data matches 1 run function mgs:v5.0.0/multiplayer/load_bounds
 
 # Summon out-of-bounds markers
 function mgs:v5.0.0/multiplayer/summon_oob

@@ -50,5 +50,6 @@ scoreboard objectives setdisplay list
 scoreboard players set @a mgs.mp.in_game 0
 scoreboard players set @a mgs.mp.team 0
 scoreboard players set @a mgs.mp.spectate_timer 0
+scoreboard players set #mp_has_boundary mgs.data 0
 tag @a[tag=mgs.give_class_menu] remove mgs.give_class_menu
 
