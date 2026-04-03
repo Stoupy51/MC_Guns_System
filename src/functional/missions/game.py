@@ -112,27 +112,22 @@ execute store result score #gm_base_z {ns}.data run data get storage {ns}:missio
 execute if data storage {ns}:missions game.map.boundaries[0] if data storage {ns}:missions game.map.boundaries[1] run scoreboard players set #mi_has_boundary {ns}.data 1
 
 # Normalize and store boundaries only when they exist
-execute if score #mi_has_boundary {ns}.data matches 1 run function {ns}:v{version}/missions/load_bounds
+execute if score #mi_has_boundary {ns}.data matches 1 run function {ns}:v{version}/shared/load_bounds {{mode:"missions"}}
 
 # Forceload the mission area to ensure chunks are loaded
-execute if score #mi_has_boundary {ns}.data matches 1 run function {ns}:v{version}/missions/forceload_area
+execute if score #mi_has_boundary {ns}.data matches 1 run function {ns}:v{version}/shared/forceload_area
 
 # Teleport all players as spectator to base coordinates for chunk preloading
 execute store result storage {ns}:temp _tp.x int 1 run scoreboard players get #gm_base_x {ns}.data
 execute store result storage {ns}:temp _tp.y int 1 run scoreboard players get #gm_base_y {ns}.data
 execute store result storage {ns}:temp _tp.z int 1 run scoreboard players get #gm_base_z {ns}.data
-execute as @a[scores={{{ns}.mi.in_game=1}}] run function {ns}:v{version}/missions/tp_to_base with storage {ns}:temp _tp
+execute as @a[scores={{{ns}.mi.in_game=1}}] run function {ns}:v{version}/shared/tp_to_position with storage {ns}:temp _tp
 
 # Schedule preload completion after 1 second
 schedule function {ns}:v{version}/missions/preload_complete 20t
 
 # Announce
 tellraw @a ["",{{"text":"","color":"aqua","bold":true}},"🎯 ",{{"text":"Loading mission area...","color":"yellow"}}]
-""")
-
-	## Teleport to base coordinates (macro)
-	write_versioned_function("missions/tp_to_base", """
-$tp @s $(x) $(y) $(z)
 """)
 
 	## Preload complete → transition to prep phase
@@ -144,7 +139,7 @@ execute unless data storage {ns}:missions game{{state:"preparing"}} run return f
 gamemode adventure @a[scores={{{ns}.mi.in_game=1}}]
 
 # Summon OOB markers
-function {ns}:v{version}/missions/summon_oob
+function {ns}:v{version}/shared/summon_oob {{mode:"missions"}}
 
 # Summon spawn point markers
 function {ns}:v{version}/missions/summon_spawns
@@ -186,75 +181,7 @@ tellraw @a ["",{{"text":"","color":"aqua","bold":true}},"🎯 ",{{"text":"Prepar
 
 	## Load map from storage
 	write_versioned_function("missions/load_map_from_storage", f"""
-$function {ns}:v{version}/maps/missions/load {{id:"$(map_id)",override:{{}}}}
-""")
-
-	## Normalize boundaries (reuse multiplayer pattern)
-	write_versioned_function("missions/load_bounds", f"""
-execute store result score #bound_x1 {ns}.data run data get storage {ns}:missions game.map.boundaries[0][0]
-execute store result score #bound_y1 {ns}.data run data get storage {ns}:missions game.map.boundaries[0][1]
-execute store result score #bound_z1 {ns}.data run data get storage {ns}:missions game.map.boundaries[0][2]
-execute store result score #bound_x2 {ns}.data run data get storage {ns}:missions game.map.boundaries[1][0]
-execute store result score #bound_y2 {ns}.data run data get storage {ns}:missions game.map.boundaries[1][1]
-execute store result score #bound_z2 {ns}.data run data get storage {ns}:missions game.map.boundaries[1][2]
-scoreboard players operation #bound_x1 {ns}.data += #gm_base_x {ns}.data
-scoreboard players operation #bound_y1 {ns}.data += #gm_base_y {ns}.data
-scoreboard players operation #bound_z1 {ns}.data += #gm_base_z {ns}.data
-scoreboard players operation #bound_x2 {ns}.data += #gm_base_x {ns}.data
-scoreboard players operation #bound_y2 {ns}.data += #gm_base_y {ns}.data
-scoreboard players operation #bound_z2 {ns}.data += #gm_base_z {ns}.data
-function {ns}:v{version}/missions/normalize_bounds
-""")
-
-	## Normalize boundaries (reuse multiplayer pattern)
-	write_versioned_function("missions/normalize_bounds", f"""
-execute if score #bound_x1 {ns}.data > #bound_x2 {ns}.data run scoreboard players operation #swap {ns}.data = #bound_x1 {ns}.data
-execute if score #bound_x1 {ns}.data > #bound_x2 {ns}.data run scoreboard players operation #bound_x1 {ns}.data = #bound_x2 {ns}.data
-execute if score #swap {ns}.data matches -2147483648.. run scoreboard players operation #bound_x2 {ns}.data = #swap {ns}.data
-execute if score #swap {ns}.data matches -2147483648.. run scoreboard players reset #swap {ns}.data
-
-execute if score #bound_y1 {ns}.data > #bound_y2 {ns}.data run scoreboard players operation #swap {ns}.data = #bound_y1 {ns}.data
-execute if score #bound_y1 {ns}.data > #bound_y2 {ns}.data run scoreboard players operation #bound_y1 {ns}.data = #bound_y2 {ns}.data
-execute if score #swap {ns}.data matches -2147483648.. run scoreboard players operation #bound_y2 {ns}.data = #swap {ns}.data
-execute if score #swap {ns}.data matches -2147483648.. run scoreboard players reset #swap {ns}.data
-
-execute if score #bound_z1 {ns}.data > #bound_z2 {ns}.data run scoreboard players operation #swap {ns}.data = #bound_z1 {ns}.data
-execute if score #bound_z1 {ns}.data > #bound_z2 {ns}.data run scoreboard players operation #bound_z1 {ns}.data = #bound_z2 {ns}.data
-execute if score #swap {ns}.data matches -2147483648.. run scoreboard players operation #bound_z2 {ns}.data = #swap {ns}.data
-execute if score #swap {ns}.data matches -2147483648.. run scoreboard players reset #swap {ns}.data
-""")
-
-	## Run map start commands (relative pos + command string)
-	write_versioned_function("missions/run_start_commands", f"""
-data modify storage {ns}:temp _start_cmd_iter set from storage {ns}:missions game.map.start_commands
-execute if data storage {ns}:temp _start_cmd_iter[0] run function {ns}:v{version}/missions/run_start_commands_iter
-""")
-
-	write_versioned_function("missions/run_start_commands_iter", f"""
-# Read relative position
-execute store result score #cx {ns}.data run data get storage {ns}:temp _start_cmd_iter[0].pos[0]
-execute store result score #cy {ns}.data run data get storage {ns}:temp _start_cmd_iter[0].pos[1]
-execute store result score #cz {ns}.data run data get storage {ns}:temp _start_cmd_iter[0].pos[2]
-
-# Convert to absolute
-scoreboard players operation #cx {ns}.data += #gm_base_x {ns}.data
-scoreboard players operation #cy {ns}.data += #gm_base_y {ns}.data
-scoreboard players operation #cz {ns}.data += #gm_base_z {ns}.data
-
-# Prepare macro args
-execute store result storage {ns}:temp _start_cmd.x int 1 run scoreboard players get #cx {ns}.data
-execute store result storage {ns}:temp _start_cmd.y int 1 run scoreboard players get #cy {ns}.data
-execute store result storage {ns}:temp _start_cmd.z int 1 run scoreboard players get #cz {ns}.data
-data modify storage {ns}:temp _start_cmd.command set from storage {ns}:temp _start_cmd_iter[0].command
-
-# Execute and advance
-function {ns}:v{version}/missions/run_start_command with storage {ns}:temp _start_cmd
-data remove storage {ns}:temp _start_cmd_iter[0]
-execute if data storage {ns}:temp _start_cmd_iter[0] run function {ns}:v{version}/missions/run_start_commands_iter
-""")
-
-	write_versioned_function("missions/run_start_command", """
-$execute positioned $(x) $(y) $(z) run $(command)
+$function {ns}:v{version}/shared/maps/load {{id:"$(map_id)",mode:"missions",override:{{}}}}
 """)
 
 	## Prep Tick (check for class changes during preparation)
@@ -288,7 +215,7 @@ effect give @a[scores={{{ns}.mi.in_game=1}}] saturation infinite 255 true
 function {ns}:v{version}/missions/spawn_all_enemies
 
 # Run map-defined start commands after enemies are spawned
-execute if data storage {ns}:missions game.map.start_commands[0] run function {ns}:v{version}/missions/run_start_commands
+execute if data storage {ns}:missions game.map.start_commands[0] run function {ns}:v{version}/shared/run_start_commands {{mode:"missions"}}
 
 # Give compass pointing to nearest enemy (hotbar slot 3)
 execute as @a[scores={{{ns}.mi.in_game=1}}] run item replace entity @s hotbar.3 with compass[custom_data={{{ns}:{{compass:true}}}}]
@@ -353,33 +280,6 @@ execute if data storage {ns}:temp _enemy_iter[0] run function {ns}:v{version}/mi
 $execute positioned $(x) $(y) $(z) run function $(function)
 """)
 
-	## Forceload / unload the mission boundary area
-	write_versioned_function("missions/forceload_area", f"""
-# Store boundary coords into storage for macro
-execute store result storage {ns}:temp _fl.x1 int 1 run scoreboard players get #bound_x1 {ns}.data
-execute store result storage {ns}:temp _fl.z1 int 1 run scoreboard players get #bound_z1 {ns}.data
-execute store result storage {ns}:temp _fl.x2 int 1 run scoreboard players get #bound_x2 {ns}.data
-execute store result storage {ns}:temp _fl.z2 int 1 run scoreboard players get #bound_z2 {ns}.data
-function {ns}:v{version}/missions/forceload_add with storage {ns}:temp _fl
-""")
-
-	write_versioned_function("missions/forceload_add", """
-$forceload add $(x1) $(z1) $(x2) $(z2)
-""")
-
-	write_versioned_function("missions/remove_forceload", f"""
-# Store boundary coords into storage for macro
-execute store result storage {ns}:temp _fl.x1 int 1 run scoreboard players get #bound_x1 {ns}.data
-execute store result storage {ns}:temp _fl.z1 int 1 run scoreboard players get #bound_z1 {ns}.data
-execute store result storage {ns}:temp _fl.x2 int 1 run scoreboard players get #bound_x2 {ns}.data
-execute store result storage {ns}:temp _fl.z2 int 1 run scoreboard players get #bound_z2 {ns}.data
-function {ns}:v{version}/missions/forceload_remove with storage {ns}:temp _fl
-""")
-
-	write_versioned_function("missions/forceload_remove", """
-$forceload remove $(x1) $(z1) $(x2) $(z2)
-""")
-
 	## On Respawn (missions death handling - now with cooldown like multiplayer)
 	write_versioned_function("missions/on_respawn", f"""
 # Reset death counter & Increment mission death stats
@@ -425,27 +325,7 @@ execute unless score @s {ns}.mp.class matches 0 run function {ns}:v{version}/mul
 item replace entity @s hotbar.3 with compass[custom_data={{{ns}:{{compass:true}}}}]
 
 # Run map-defined respawn commands on this player (if any)
-execute if data storage {ns}:missions game.map.respawn_commands[0] at @s run function {ns}:v{version}/missions/run_respawn_commands
-""")
-
-	## Run map respawn commands as the respawned player
-	write_versioned_function("missions/run_respawn_commands", f"""
-data modify storage {ns}:temp _respawn_cmd_iter set from storage {ns}:missions game.map.respawn_commands
-execute if data storage {ns}:temp _respawn_cmd_iter[0] at @s run function {ns}:v{version}/missions/run_respawn_commands_iter
-""")
-
-	write_versioned_function("missions/run_respawn_commands_iter", f"""
-# Copy command string
-data modify storage {ns}:temp _respawn_cmd.command set from storage {ns}:temp _respawn_cmd_iter[0].command
-
-# Execute as current player and advance
-function {ns}:v{version}/missions/run_respawn_command with storage {ns}:temp _respawn_cmd
-data remove storage {ns}:temp _respawn_cmd_iter[0]
-execute if data storage {ns}:temp _respawn_cmd_iter[0] at @s run function {ns}:v{version}/missions/run_respawn_commands_iter
-""")
-
-	write_versioned_function("missions/run_respawn_command", """
-$execute as @s at @s run $(command)
+execute if data storage {ns}:missions game.map.respawn_commands[0] at @s run function {ns}:v{version}/shared/run_respawn_commands {{mode:"missions"}}
 """)
 
 	## Game Tick
@@ -572,7 +452,7 @@ kill @e[tag={ns}.mission_enemy]
 kill @e[tag={ns}.gm_entity]
 
 # Remove forceload
-execute if score #mi_has_boundary {ns}.data matches 1 run function {ns}:v{version}/missions/remove_forceload
+execute if score #mi_has_boundary {ns}.data matches 1 run function {ns}:v{version}/shared/remove_forceload
 
 # Signal mission end
 function #{ns}:missions/on_mission_end
@@ -589,33 +469,6 @@ scoreboard players set #mi_has_boundary {ns}.data 0
 scoreboard players set @a {ns}.mi.kills 0
 scoreboard players set @a {ns}.mi.deaths 0
 tag @a[tag={ns}.give_class_menu] remove {ns}.give_class_menu
-""")
-
-	# Summon OOB markers ────────────────────────────────────────
-	write_versioned_function("missions/summon_oob", f"""
-execute store result score #gm_base_x {ns}.data run data get storage {ns}:missions game.map.base_coordinates[0]
-execute store result score #gm_base_y {ns}.data run data get storage {ns}:missions game.map.base_coordinates[1]
-execute store result score #gm_base_z {ns}.data run data get storage {ns}:missions game.map.base_coordinates[2]
-
-data modify storage {ns}:temp _oob_iter set from storage {ns}:missions game.map.out_of_bounds
-execute if data storage {ns}:temp _oob_iter[0] run function {ns}:v{version}/missions/summon_oob_iter
-""")
-	write_versioned_function("missions/summon_oob_iter", f"""
-execute store result score #rx {ns}.data run data get storage {ns}:temp _oob_iter[0][0]
-execute store result score #ry {ns}.data run data get storage {ns}:temp _oob_iter[0][1]
-execute store result score #rz {ns}.data run data get storage {ns}:temp _oob_iter[0][2]
-scoreboard players operation #rx {ns}.data += #gm_base_x {ns}.data
-scoreboard players operation #ry {ns}.data += #gm_base_y {ns}.data
-scoreboard players operation #rz {ns}.data += #gm_base_z {ns}.data
-execute store result storage {ns}:temp _oob_pos.x double 1 run scoreboard players get #rx {ns}.data
-execute store result storage {ns}:temp _oob_pos.y double 1 run scoreboard players get #ry {ns}.data
-execute store result storage {ns}:temp _oob_pos.z double 1 run scoreboard players get #rz {ns}.data
-function {ns}:v{version}/missions/summon_oob_at with storage {ns}:temp _oob_pos
-data remove storage {ns}:temp _oob_iter[0]
-execute if data storage {ns}:temp _oob_iter[0] run function {ns}:v{version}/missions/summon_oob_iter
-""")
-	write_versioned_function("missions/summon_oob_at", f"""
-$summon minecraft:marker $(x) $(y) $(z) {{Tags:["{ns}.oob_point","{ns}.gm_entity"]}}
 """)
 
 	# Spawn Point Markers ───────────────────────────────────────

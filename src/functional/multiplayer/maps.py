@@ -59,55 +59,6 @@ $tellraw @a [{"text":"","color":"gold"},"[",{"text":"MGS"},"] ",{"text":"$(playe
 # @s = respawning player, spawn data in {ns}:temp
 """)
 
-	## Map loading with optional overrides (macro function)
-	write_versioned_function("maps/multiplayer/load", f"""
-# Load a map for gameplay or editing
-# Usage: /function {ns}:v{version}/maps/multiplayer/load {{id:"map_id",override:{{}}}}
-# Override can contain: dimension:"minecraft:overworld", base_coordinates:[x,y,z]
-
-# Store the target ID for search
-$data modify storage {ns}:temp map_load.target set value {{id:"$(id)"}}
-$data modify storage {ns}:temp map_load.override set value $(override)
-
-# Copy full map list to search through
-data modify storage {ns}:temp map_load.search set from storage {ns}:maps multiplayer
-
-# Initialize search
-scoreboard players set #map_load_idx {ns}.data 0
-scoreboard players set #map_load_found {ns}.data 0
-function {ns}:v{version}/maps/multiplayer/find_map
-""")
-
-	## Find map by ID (iterates list)
-	write_versioned_function("maps/multiplayer/find_map", f"""
-# Check if the list still has elements
-execute unless data storage {ns}:temp map_load.search[0] run return fail
-
-# Copy first element to check
-data modify storage {ns}:temp map_load.check set from storage {ns}:temp map_load.search[0]
-
-# Use macro to compare IDs
-function {ns}:v{version}/maps/multiplayer/check_map_id with storage {ns}:temp map_load.target
-
-# If found, stop
-execute if score #map_load_found {ns}.data matches 1 run return 1
-
-# Not found, advance to next
-data remove storage {ns}:temp map_load.search[0]
-scoreboard players add #map_load_idx {ns}.data 1
-function {ns}:v{version}/maps/multiplayer/find_map
-""")
-
-	## Check if current element's ID matches (uses macro from target_id storage)
-	# target_id is stored as a raw string value, so we wrap in a compound for matching
-	write_versioned_function("maps/multiplayer/check_map_id", f"""
-$execute store success score #map_load_found {ns}.data if data storage {ns}:temp map_load.check{{id:"$(id)"}}
-execute if score #map_load_found {ns}.data matches 1 run data modify storage {ns}:temp map_load.result set from storage {ns}:temp map_load.check
-
-# Apply base_coordinates override if present
-execute if score #map_load_found {ns}.data matches 1 if data storage {ns}:temp map_load.override.base_coordinates run data modify storage {ns}:temp map_load.result.base_coordinates set from storage {ns}:temp map_load.override.base_coordinates
-""")  # noqa: E501
-
 	## Store the index of loaded map for later use
 	write_versioned_function("maps/multiplayer/store_loaded_idx", f"""
 execute store result storage {ns}:temp map_load.result_idx int 1 run scoreboard players get #map_load_idx {ns}.data

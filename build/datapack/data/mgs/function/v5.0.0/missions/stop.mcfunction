@@ -28,7 +28,7 @@ kill @e[tag=mgs.mission_enemy]
 kill @e[tag=mgs.gm_entity]
 
 # Remove forceload
-execute if score #mi_has_boundary mgs.data matches 1 run function mgs:v5.0.0/missions/remove_forceload
+execute if score #mi_has_boundary mgs.data matches 1 run function mgs:v5.0.0/shared/remove_forceload
 
 # Signal mission end
 function #mgs:missions/on_mission_end

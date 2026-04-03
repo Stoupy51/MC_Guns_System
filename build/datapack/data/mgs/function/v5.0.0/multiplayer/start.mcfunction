@@ -60,10 +60,10 @@ execute store result score #gm_base_z mgs.data run data get storage mgs:multipla
 execute if data storage mgs:multiplayer game.map.boundaries[0] if data storage mgs:multiplayer game.map.boundaries[1] run scoreboard players set #mp_has_boundary mgs.data 1
 
 # Normalize and store boundaries only when they exist
-execute if score #mp_has_boundary mgs.data matches 1 run function mgs:v5.0.0/multiplayer/load_bounds
+execute if score #mp_has_boundary mgs.data matches 1 run function mgs:v5.0.0/shared/load_bounds {mode:"multiplayer"}
 
 # Summon out-of-bounds markers
-function mgs:v5.0.0/multiplayer/summon_oob
+function mgs:v5.0.0/shared/summon_oob {mode:"multiplayer"}
 
 # Summon spawn point markers (for smart spawn selection)
 function mgs:v5.0.0/multiplayer/summon_spawns
@@ -83,7 +83,7 @@ execute if data storage mgs:multiplayer game{gamemode:"hp"} run function mgs:v5.
 execute if data storage mgs:multiplayer game{gamemode:"snd"} run function mgs:v5.0.0/multiplayer/gamemodes/snd/setup
 
 # Run map-defined start commands after entity/setup summons
-execute if data storage mgs:multiplayer game.map.start_commands[0] run function mgs:v5.0.0/multiplayer/run_start_commands
+execute if data storage mgs:multiplayer game.map.start_commands[0] run function mgs:v5.0.0/shared/run_start_commands {mode:"multiplayer"}
 
 # Store score limit and compute initial timer values for sidebar
 execute store result score #score_limit mgs.data run data get storage mgs:multiplayer game.score_limit

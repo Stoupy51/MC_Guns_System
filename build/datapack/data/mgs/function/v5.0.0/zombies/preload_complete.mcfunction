@@ -11,7 +11,7 @@ execute unless data storage mgs:zombies game{state:"preparing"} run return fail
 gamemode adventure @a[scores={mgs.zb.in_game=1}]
 
 # Summon OOB markers (only if map has out_of_bounds data)
-execute if data storage mgs:zombies game.map.out_of_bounds run function mgs:v5.0.0/zombies/summon_oob
+execute if data storage mgs:zombies game.map.out_of_bounds run function mgs:v5.0.0/shared/summon_oob {mode:"zombies"}
 
 # Summon spawn point markers for players
 function mgs:v5.0.0/zombies/summon_spawns
@@ -20,7 +20,7 @@ function mgs:v5.0.0/zombies/summon_spawns
 function #mgs:zombies/on_game_start
 
 # Run map-defined start commands after entity/setup summons
-execute if data storage mgs:zombies game.map.start_commands[0] run function mgs:v5.0.0/zombies/run_start_commands
+execute if data storage mgs:zombies game.map.start_commands[0] run function mgs:v5.0.0/shared/run_start_commands {mode:"zombies"}
 
 # Teleport all players to player spawns
 function mgs:v5.0.0/zombies/tp_all_to_spawns

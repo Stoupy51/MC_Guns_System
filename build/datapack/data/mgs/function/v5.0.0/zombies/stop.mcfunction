@@ -30,7 +30,7 @@ kill @e[tag=mgs.zombie_round]
 kill @e[tag=mgs.gm_entity]
 
 # Remove forceload (only if bounds were set)
-execute if score #zb_has_bounds mgs.data matches 1 run function mgs:v5.0.0/zombies/remove_forceload
+execute if score #zb_has_bounds mgs.data matches 1 run function mgs:v5.0.0/shared/remove_forceload
 
 # Remove sidebar
 scoreboard objectives setdisplay sidebar

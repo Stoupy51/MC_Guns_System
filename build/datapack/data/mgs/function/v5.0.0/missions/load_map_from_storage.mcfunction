@@ -6,5 +6,5 @@
 # @args		map_id (unknown)
 #
 
-$function mgs:v5.0.0/maps/missions/load {id:"$(map_id)",override:{}}
+$function mgs:v5.0.0/shared/maps/load {id:"$(map_id)",mode:"missions",override:{}}
 

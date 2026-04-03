@@ -23,7 +23,7 @@ execute as @a[scores={mgs.mp.map_edit=1}] run function mgs:v5.0.0/maps/editor/gi
 execute store result storage mgs:temp _tp.x int 1 run scoreboard players get #base_x mgs.data
 execute store result storage mgs:temp _tp.y int 1 run scoreboard players get #base_y mgs.data
 execute store result storage mgs:temp _tp.z int 1 run scoreboard players get #base_z mgs.data
-execute as @a[scores={mgs.mp.map_edit=1}] run function mgs:v5.0.0/missions/tp_to_base with storage mgs:temp _tp
+execute as @a[scores={mgs.mp.map_edit=1}] run function mgs:v5.0.0/shared/tp_to_position with storage mgs:temp _tp
 
 tellraw @a[scores={mgs.mp.map_edit=1}] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.editor_session_synced_for_all_players","color":"aqua"}]
 

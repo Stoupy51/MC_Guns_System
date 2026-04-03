@@ -56,28 +56,16 @@ scoreboard players set #zb_has_bounds mgs.data 0
 execute if data storage mgs:zombies game.map.boundaries[0] run scoreboard players set #zb_has_bounds mgs.data 1
 
 # Normalize and store boundaries (only if defined)
-execute if score #zb_has_bounds mgs.data matches 1 store result score #bound_x1 mgs.data run data get storage mgs:zombies game.map.boundaries[0][0]
-execute if score #zb_has_bounds mgs.data matches 1 store result score #bound_y1 mgs.data run data get storage mgs:zombies game.map.boundaries[0][1]
-execute if score #zb_has_bounds mgs.data matches 1 store result score #bound_z1 mgs.data run data get storage mgs:zombies game.map.boundaries[0][2]
-execute if score #zb_has_bounds mgs.data matches 1 store result score #bound_x2 mgs.data run data get storage mgs:zombies game.map.boundaries[1][0]
-execute if score #zb_has_bounds mgs.data matches 1 store result score #bound_y2 mgs.data run data get storage mgs:zombies game.map.boundaries[1][1]
-execute if score #zb_has_bounds mgs.data matches 1 store result score #bound_z2 mgs.data run data get storage mgs:zombies game.map.boundaries[1][2]
-execute if score #zb_has_bounds mgs.data matches 1 run scoreboard players operation #bound_x1 mgs.data += #gm_base_x mgs.data
-execute if score #zb_has_bounds mgs.data matches 1 run scoreboard players operation #bound_y1 mgs.data += #gm_base_y mgs.data
-execute if score #zb_has_bounds mgs.data matches 1 run scoreboard players operation #bound_z1 mgs.data += #gm_base_z mgs.data
-execute if score #zb_has_bounds mgs.data matches 1 run scoreboard players operation #bound_x2 mgs.data += #gm_base_x mgs.data
-execute if score #zb_has_bounds mgs.data matches 1 run scoreboard players operation #bound_y2 mgs.data += #gm_base_y mgs.data
-execute if score #zb_has_bounds mgs.data matches 1 run scoreboard players operation #bound_z2 mgs.data += #gm_base_z mgs.data
-execute if score #zb_has_bounds mgs.data matches 1 run function mgs:v5.0.0/zombies/normalize_bounds
+execute if score #zb_has_bounds mgs.data matches 1 run function mgs:v5.0.0/shared/load_bounds {mode:"zombies"}
 
 # Forceload the area (only if bounds defined)
-execute if score #zb_has_bounds mgs.data matches 1 run function mgs:v5.0.0/zombies/forceload_area
+execute if score #zb_has_bounds mgs.data matches 1 run function mgs:v5.0.0/shared/forceload_area
 
 # Teleport all players as spectator to base coordinates for chunk preloading
 execute store result storage mgs:temp _tp.x int 1 run scoreboard players get #gm_base_x mgs.data
 execute store result storage mgs:temp _tp.y int 1 run scoreboard players get #gm_base_y mgs.data
 execute store result storage mgs:temp _tp.z int 1 run scoreboard players get #gm_base_z mgs.data
-execute as @a[scores={mgs.zb.in_game=1}] run function mgs:v5.0.0/zombies/tp_to_base with storage mgs:temp _tp
+execute as @a[scores={mgs.zb.in_game=1}] run function mgs:v5.0.0/shared/tp_to_position with storage mgs:temp _tp
 
 # Register custom maps and mystery box items (extension points)
 function #mgs:zombies/register_maps
