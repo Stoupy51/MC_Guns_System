@@ -1,7 +1,7 @@
 
 #> mgs:v5.0.0/maps/editor/create/missions
 #
-# @within	???
+# @within	mgs:v5.0.0/maps/editor/list/missions "hover_event": {"action": "show_text", "value": "Create a new Missions map"}}, "+ Create New Map", "]"]]
 #
 
 tellraw @s {"text":"============================================","color":"dark_gray"}

@@ -19,6 +19,8 @@
 										"glock18_mag_empty": true
 									},
 									"smithed": {
+										"id": "mgs:glock18_mag_empty",
+										"origin": "mgs",
 										"ignore": {"functionality": true,"crafting": true}
 									}
 								},

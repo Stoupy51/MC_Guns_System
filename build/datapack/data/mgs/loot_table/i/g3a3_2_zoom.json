@@ -19,6 +19,8 @@
 										"g3a3_2_zoom": true
 									},
 									"smithed": {
+										"id": "mgs:g3a3_2_zoom",
+										"origin": "mgs",
 										"ignore": {"functionality": true,"crafting": true}
 									}
 								},

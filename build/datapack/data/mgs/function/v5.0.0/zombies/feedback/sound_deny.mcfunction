@@ -1,6 +1,8 @@
 
 #> mgs:v5.0.0/zombies/feedback/sound_deny
 #
+# @executed	as @n[tag=mgs.mb_new]
+#
 # @within	mgs:v5.0.0/zombies/mystery_box/deny_already_in_use
 #			mgs:v5.0.0/zombies/mystery_box/deny_not_enough_points
 #			mgs:v5.0.0/zombies/mystery_box/deny_pool_empty

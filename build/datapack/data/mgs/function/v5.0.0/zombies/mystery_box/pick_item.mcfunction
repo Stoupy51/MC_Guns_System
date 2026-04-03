@@ -1,6 +1,8 @@
 
 #> mgs:v5.0.0/zombies/mystery_box/pick_item
 #
+# @executed	as @n[tag=mgs.mb_new]
+#
 # @within	mgs:v5.0.0/zombies/mystery_box/pick_random_result
 #			mgs:v5.0.0/zombies/mystery_box/pick_item
 #

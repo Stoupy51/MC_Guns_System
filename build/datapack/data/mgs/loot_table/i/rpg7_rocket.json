@@ -20,6 +20,8 @@
 										"rpg7_rocket": true
 									},
 									"smithed": {
+										"id": "mgs:rpg7_rocket",
+										"origin": "mgs",
 										"ignore": {"functionality": true,"crafting": true}
 									}
 								},

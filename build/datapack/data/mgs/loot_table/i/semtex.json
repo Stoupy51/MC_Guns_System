@@ -18,6 +18,8 @@
 										"semtex": true
 									},
 									"smithed": {
+										"id": "mgs:semtex",
+										"origin": "mgs",
 										"ignore": {"functionality": true,"crafting": true}
 									}
 								},

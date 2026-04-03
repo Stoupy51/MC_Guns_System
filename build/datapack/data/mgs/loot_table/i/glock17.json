@@ -19,6 +19,8 @@
 										"glock17": true
 									},
 									"smithed": {
+										"id": "mgs:glock17",
+										"origin": "mgs",
 										"ignore": {"functionality": true,"crafting": true}
 									}
 								},

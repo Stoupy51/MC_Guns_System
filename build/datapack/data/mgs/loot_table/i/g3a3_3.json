@@ -20,6 +20,8 @@
 										"g3a3_3": true
 									},
 									"smithed": {
+										"id": "mgs:g3a3_3",
+										"origin": "mgs",
 										"ignore": {"functionality": true,"crafting": true}
 									}
 								},

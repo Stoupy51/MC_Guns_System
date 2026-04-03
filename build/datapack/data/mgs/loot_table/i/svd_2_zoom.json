@@ -19,6 +19,8 @@
 										"svd_2_zoom": true
 									},
 									"smithed": {
+										"id": "mgs:svd_2_zoom",
+										"origin": "mgs",
 										"ignore": {"functionality": true,"crafting": true}
 									}
 								},

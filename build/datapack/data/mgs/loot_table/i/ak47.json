@@ -19,6 +19,8 @@
 										"ak47": true
 									},
 									"smithed": {
+										"id": "mgs:ak47",
+										"origin": "mgs",
 										"ignore": {"functionality": true,"crafting": true}
 									}
 								},

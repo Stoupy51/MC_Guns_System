@@ -19,6 +19,8 @@
 										"deagle": true
 									},
 									"smithed": {
+										"id": "mgs:deagle",
+										"origin": "mgs",
 										"ignore": {"functionality": true,"crafting": true}
 									}
 								},

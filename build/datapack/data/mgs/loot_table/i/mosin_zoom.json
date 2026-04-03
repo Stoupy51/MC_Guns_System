@@ -19,6 +19,8 @@
 										"mosin_zoom": true
 									},
 									"smithed": {
+										"id": "mgs:mosin_zoom",
+										"origin": "mgs",
 										"ignore": {"functionality": true,"crafting": true}
 									}
 								},

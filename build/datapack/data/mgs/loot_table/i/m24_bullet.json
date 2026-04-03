@@ -20,6 +20,8 @@
 										"m24_bullet": true
 									},
 									"smithed": {
+										"id": "mgs:m24_bullet",
+										"origin": "mgs",
 										"ignore": {"functionality": true,"crafting": true}
 									}
 								},

@@ -1,7 +1,9 @@
 
 #> mgs:v5.0.0/zombies/wallbuys/on_hover
 #
-# @within	???
+# @executed	as @n[tag=mgs.wb_new]
+#
+# @within	mgs:v5.0.0/zombies/wallbuys/setup_iter {run:"function mgs:v5.0.0/zombies/wallbuys/on_hover",executor:"source"} [ as @n[tag=mgs.wb_new] ]
 #
 
 execute store result storage mgs:temp _wb_hover.id int 1 run scoreboard players get @n[tag=bs.interaction.target] mgs.zb.wb.id

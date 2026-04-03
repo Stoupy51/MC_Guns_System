@@ -1,6 +1,8 @@
 
 #> mgs:v5.0.0/zombies/doors/deny_not_enough_points
 #
+# @executed	as @e[tag=mgs.door_new]
+#
 # @within	mgs:v5.0.0/zombies/doors/on_right_click
 #
 

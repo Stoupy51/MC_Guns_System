@@ -18,6 +18,8 @@
 										"frag_grenade": true
 									},
 									"smithed": {
+										"id": "mgs:frag_grenade",
+										"origin": "mgs",
 										"ignore": {"functionality": true,"crafting": true}
 									}
 								},

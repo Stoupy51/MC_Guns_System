@@ -1,6 +1,8 @@
 
 #> mgs:v5.0.0/zombies/wallbuys/deny_not_enough_points
 #
+# @executed	as @n[tag=mgs.wb_new]
+#
 # @within	mgs:v5.0.0/zombies/wallbuys/on_right_click
 #
 

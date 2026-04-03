@@ -19,6 +19,8 @@
 										"makarov_zoom": true
 									},
 									"smithed": {
+										"id": "mgs:makarov_zoom",
+										"origin": "mgs",
 										"ignore": {"functionality": true,"crafting": true}
 									}
 								},

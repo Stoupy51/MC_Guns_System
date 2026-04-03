@@ -1,6 +1,8 @@
 
 #> mgs:v5.0.0/zombies/wallbuys/set_hover_price_suffix
 #
+# @executed	as @n[tag=mgs.wb_new]
+#
 # @within	mgs:v5.0.0/zombies/wallbuys/on_hover
 #
 

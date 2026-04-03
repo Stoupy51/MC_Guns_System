@@ -1,7 +1,9 @@
 
 #> mgs:v5.0.0/projectile/on_collision
 #
-# @within	???
+# @executed	as @e[tag=mgs.slow_bullet] & at @s
+#
+# @within	mgs:v5.0.0/projectile/tick {scale:0.001,with:{blocks:true,entities:true,on_collision:"function mgs:v5.0.0/projectile/on_collision"}}
 #
 
 # Tag the nearest non-immune entity as directly hit (for bullet damage in explode)

@@ -19,6 +19,8 @@
 										"m249_1": true
 									},
 									"smithed": {
+										"id": "mgs:m249_1",
+										"origin": "mgs",
 										"ignore": {"functionality": true,"crafting": true}
 									}
 								},

@@ -17,6 +17,8 @@
 										"50bmg": true
 									},
 									"smithed": {
+										"id": "mgs:50bmg",
+										"origin": "mgs",
 										"ignore": {"functionality": true,"crafting": true}
 									}
 								},

@@ -1,7 +1,9 @@
 
 #> mgs:v5.0.0/zombies/wallbuys/on_right_click
 #
-# @within	???
+# @executed	as @n[tag=mgs.wb_new]
+#
+# @within	mgs:v5.0.0/zombies/wallbuys/setup_iter {run:"function mgs:v5.0.0/zombies/wallbuys/on_right_click",executor:"source"} [ as @n[tag=mgs.wb_new] ]
 #
 
 # Guard: game must be active

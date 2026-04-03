@@ -1,6 +1,8 @@
 
 #> mgs:v5.0.0/zombies/mystery_box/capture_collected_name
 #
+# @executed	as @n[tag=mgs.mb_new]
+#
 # @within	mgs:v5.0.0/zombies/mystery_box/collect with storage mgs:zombies mystery_box.result
 #
 # @args		weapon_id (unknown)

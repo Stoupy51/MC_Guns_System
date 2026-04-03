@@ -19,6 +19,8 @@
 										"rpk_mag": true
 									},
 									"smithed": {
+										"id": "mgs:rpk_mag",
+										"origin": "mgs",
 										"ignore": {"functionality": true,"crafting": true}
 									}
 								},

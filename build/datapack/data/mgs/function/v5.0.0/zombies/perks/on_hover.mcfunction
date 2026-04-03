@@ -1,7 +1,9 @@
 
 #> mgs:v5.0.0/zombies/perks/on_hover
 #
-# @within	???
+# @executed	as @n[tag=mgs.pk_new]
+#
+# @within	mgs:v5.0.0/zombies/perks/setup_iter {run:"function mgs:v5.0.0/zombies/perks/on_hover",executor:"source"} [ as @n[tag=mgs.pk_new] ]
 #
 
 execute store result score #pk_price mgs.data run scoreboard players get @n[tag=bs.interaction.target] mgs.zb.perk.price

@@ -1,6 +1,8 @@
 
 #> mgs:v5.0.0/zombies/perks/deny_requires_power
 #
+# @executed	as @n[tag=mgs.pk_new]
+#
 # @within	mgs:v5.0.0/zombies/perks/on_right_click
 #
 

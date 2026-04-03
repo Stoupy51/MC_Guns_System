@@ -19,6 +19,8 @@
 										"m4a1": true
 									},
 									"smithed": {
+										"id": "mgs:m4a1",
+										"origin": "mgs",
 										"ignore": {"functionality": true,"crafting": true}
 									}
 								},

@@ -19,6 +19,8 @@
 										"rpg7": true
 									},
 									"smithed": {
+										"id": "mgs:rpg7",
+										"origin": "mgs",
 										"ignore": {"functionality": true,"crafting": true}
 									}
 								},

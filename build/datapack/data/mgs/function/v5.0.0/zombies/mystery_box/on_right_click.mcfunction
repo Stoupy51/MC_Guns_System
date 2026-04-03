@@ -1,7 +1,9 @@
 
 #> mgs:v5.0.0/zombies/mystery_box/on_right_click
 #
-# @within	???
+# @executed	as @n[tag=mgs.mb_new]
+#
+# @within	mgs:v5.0.0/zombies/mystery_box/setup_pos_iter {run:"function mgs:v5.0.0/zombies/mystery_box/on_right_click",executor:"source"} [ as @n[tag=mgs.mb_new] ]
 #
 
 # Only respond if this is the active mystery box

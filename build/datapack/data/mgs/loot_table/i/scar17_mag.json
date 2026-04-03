@@ -19,6 +19,8 @@
 										"scar17_mag": true
 									},
 									"smithed": {
+										"id": "mgs:scar17_mag",
+										"origin": "mgs",
 										"ignore": {"functionality": true,"crafting": true}
 									}
 								},

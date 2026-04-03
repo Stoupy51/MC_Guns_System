@@ -1,6 +1,8 @@
 
 #> mgs:v5.0.0/zombies/feedback/sound_box_spin
 #
+# @executed	as @n[tag=mgs.mb_new]
+#
 # @within	mgs:v5.0.0/zombies/mystery_box/try_use
 #
 

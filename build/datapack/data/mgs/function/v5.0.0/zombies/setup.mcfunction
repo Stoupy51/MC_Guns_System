@@ -1,7 +1,7 @@
 
 #> mgs:v5.0.0/zombies/setup
 #
-# @within	???
+# @within	mgs:config "hover_event": {"action": "show_text", "value": "Open the multiplayer game setup menu"}}, "Game Setup", "]"]," ",[{"text": "[", "color": "green", "click_event": {"action": "suggest_command", "command": "/function mgs:v5.0.0/zombies/setup"}, "hover_event": {"action": "show_text", "value": "Open the zombies setup menu"}}, "Zombies Setup", "]"]," ",[{"text": "[", "color": "green", "click_event": {"action": "suggest_command", "command": "/function mgs:v5.0.0/missions/setup"}, "hover_event": {"action": "show_text", "value": "Open the mission setup menu"}}, "Mission Setup", "]"]]
 #
 
 tellraw @s {"text":"============================================","color":"dark_gray"}

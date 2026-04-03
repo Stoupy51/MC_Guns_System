@@ -20,6 +20,8 @@
 										"famas_4": true
 									},
 									"smithed": {
+										"id": "mgs:famas_4",
+										"origin": "mgs",
 										"ignore": {"functionality": true,"crafting": true}
 									}
 								},

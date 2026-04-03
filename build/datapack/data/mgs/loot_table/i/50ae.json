@@ -17,6 +17,8 @@
 										"50ae": true
 									},
 									"smithed": {
+										"id": "mgs:50ae",
+										"origin": "mgs",
 										"ignore": {"functionality": true,"crafting": true}
 									}
 								},

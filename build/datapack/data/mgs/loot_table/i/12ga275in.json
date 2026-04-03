@@ -17,6 +17,8 @@
 										"12ga275in": true
 									},
 									"smithed": {
+										"id": "mgs:12ga275in",
+										"origin": "mgs",
 										"ignore": {"functionality": true,"crafting": true}
 									}
 								},

@@ -1,7 +1,9 @@
 
 #> mgs:v5.0.0/zombies/perks/on_right_click
 #
-# @within	???
+# @executed	as @n[tag=mgs.pk_new]
+#
+# @within	mgs:v5.0.0/zombies/perks/setup_iter {run:"function mgs:v5.0.0/zombies/perks/on_right_click",executor:"source"} [ as @n[tag=mgs.pk_new] ]
 #
 
 # Guard: game must be active

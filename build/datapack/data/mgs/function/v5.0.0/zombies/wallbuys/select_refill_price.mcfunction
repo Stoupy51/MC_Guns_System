@@ -1,6 +1,8 @@
 
 #> mgs:v5.0.0/zombies/wallbuys/select_refill_price
 #
+# @executed	as @n[tag=mgs.wb_new]
+#
 # @within	mgs:v5.0.0/zombies/wallbuys/compute_effective_price {hotbar:1}
 #			mgs:v5.0.0/zombies/wallbuys/compute_effective_price {hotbar:2}
 #			mgs:v5.0.0/zombies/wallbuys/compute_effective_price {hotbar:3}

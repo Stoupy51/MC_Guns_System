@@ -19,6 +19,8 @@
 										"m82_2_zoom": true
 									},
 									"smithed": {
+										"id": "mgs:m82_2_zoom",
+										"origin": "mgs",
 										"ignore": {"functionality": true,"crafting": true}
 									}
 								},

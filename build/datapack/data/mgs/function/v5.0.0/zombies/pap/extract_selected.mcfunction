@@ -1,6 +1,8 @@
 
 #> mgs:v5.0.0/zombies/pap/extract_selected
 #
+# @executed	as @n[tag=mgs.pap_new]
+#
 # @within	mgs:v5.0.0/zombies/pap/on_right_click with storage mgs:temp _pap
 #
 # @args		slot (unknown)

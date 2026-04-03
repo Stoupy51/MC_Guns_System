@@ -19,6 +19,8 @@
 										"ak47_mag_empty": true
 									},
 									"smithed": {
+										"id": "mgs:ak47_mag_empty",
+										"origin": "mgs",
 										"ignore": {"functionality": true,"crafting": true}
 									}
 								},

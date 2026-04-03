@@ -18,6 +18,8 @@
 										"flash_grenade": true
 									},
 									"smithed": {
+										"id": "mgs:flash_grenade",
+										"origin": "mgs",
 										"ignore": {"functionality": true,"crafting": true}
 									}
 								},

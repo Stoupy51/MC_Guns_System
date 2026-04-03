@@ -18,6 +18,8 @@
 										"smoke_grenade": true
 									},
 									"smithed": {
+										"id": "mgs:smoke_grenade",
+										"origin": "mgs",
 										"ignore": {"functionality": true,"crafting": true}
 									}
 								},

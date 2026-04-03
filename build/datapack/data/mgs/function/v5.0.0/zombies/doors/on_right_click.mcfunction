@@ -1,7 +1,9 @@
 
 #> mgs:v5.0.0/zombies/doors/on_right_click
 #
-# @within	???
+# @executed	as @e[tag=mgs.door_new]
+#
+# @within	mgs:v5.0.0/zombies/doors/setup_iter {run:"function mgs:v5.0.0/zombies/doors/on_right_click",executor:"source"} [ as @e[tag=mgs.door_new] ]
 #
 
 # Guard: game must be active

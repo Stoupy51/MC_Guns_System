@@ -19,6 +19,8 @@
 										"m1911_zoom": true
 									},
 									"smithed": {
+										"id": "mgs:m1911_zoom",
+										"origin": "mgs",
 										"ignore": {"functionality": true,"crafting": true}
 									}
 								},

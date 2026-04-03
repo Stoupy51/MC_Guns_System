@@ -20,6 +20,8 @@
 										"ak47_4_zoom": true
 									},
 									"smithed": {
+										"id": "mgs:ak47_4_zoom",
+										"origin": "mgs",
 										"ignore": {"functionality": true,"crafting": true}
 									}
 								},

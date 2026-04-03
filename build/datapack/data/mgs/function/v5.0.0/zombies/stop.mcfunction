@@ -1,7 +1,8 @@
 
 #> mgs:v5.0.0/zombies/stop
 #
-# @within	mgs:v5.0.0/zombies/game_over 100t [ scheduled ]
+# @within	mgs:v5.0.0/zombies/setup "hover_event": {"action": "show_text", "value": "Start the zombies game"}}, "\u25b6 START", "]"]," ",[{"text": "[", "color": "red", "click_event": {"action": "suggest_command", "command": "/function mgs:v5.0.0/zombies/stop"}, "hover_event": {"action": "show_text", "value": "Stop the zombies game"}}, "\u25a0 STOP", "]"]]
+#			mgs:v5.0.0/zombies/game_over 100t [ scheduled ]
 #
 
 # Set state to lobby

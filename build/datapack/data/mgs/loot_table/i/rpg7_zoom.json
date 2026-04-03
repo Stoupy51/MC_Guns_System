@@ -19,6 +19,8 @@
 										"rpg7_zoom": true
 									},
 									"smithed": {
+										"id": "mgs:rpg7_zoom",
+										"origin": "mgs",
 										"ignore": {"functionality": true,"crafting": true}
 									}
 								},

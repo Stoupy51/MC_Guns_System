@@ -1,6 +1,8 @@
 
 #> mgs:v5.0.0/zombies/mystery_box/deny_already_in_use
 #
+# @executed	as @n[tag=mgs.mb_new]
+#
 # @within	mgs:v5.0.0/zombies/mystery_box/on_right_click
 #
 

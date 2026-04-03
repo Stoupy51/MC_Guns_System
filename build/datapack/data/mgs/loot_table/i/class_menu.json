@@ -16,6 +16,8 @@
 										"class_menu": true
 									},
 									"smithed": {
+										"id": "mgs:class_menu",
+										"origin": "mgs",
 										"ignore": {"functionality": true,"crafting": true}
 									}
 								},

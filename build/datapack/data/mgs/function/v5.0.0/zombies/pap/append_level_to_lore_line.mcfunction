@@ -1,6 +1,8 @@
 
 #> mgs:v5.0.0/zombies/pap/append_level_to_lore_line
 #
+# @executed	as @n[tag=mgs.pap_new]
+#
 # @within	mgs:v5.0.0/zombies/pap/append_level_to_lore_iter with storage mgs:temp _pap_lore
 #
 # @args		level (unknown)

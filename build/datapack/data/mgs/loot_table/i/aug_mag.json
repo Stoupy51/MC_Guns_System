@@ -19,6 +19,8 @@
 										"aug_mag": true
 									},
 									"smithed": {
+										"id": "mgs:aug_mag",
+										"origin": "mgs",
 										"ignore": {"functionality": true,"crafting": true}
 									}
 								},

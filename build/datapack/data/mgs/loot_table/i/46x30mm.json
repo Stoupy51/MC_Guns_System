@@ -17,6 +17,8 @@
 										"46x30mm": true
 									},
 									"smithed": {
+										"id": "mgs:46x30mm",
+										"origin": "mgs",
 										"ignore": {"functionality": true,"crafting": true}
 									}
 								},

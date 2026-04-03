@@ -1,7 +1,9 @@
 
 #> mgs:v5.0.0/zombies/power/on_activate
 #
-# @within	???
+# @executed	as @e[tag=_pw_new]
+#
+# @within	mgs:v5.0.0/zombies/power/place_at {run:"function mgs:v5.0.0/zombies/power/on_activate",executor:"source"} [ as @e[tag=_pw_new] ]
 #
 
 # Guard: game must be active

@@ -17,6 +17,8 @@
 										"9x19mm": true
 									},
 									"smithed": {
+										"id": "mgs:9x19mm",
+										"origin": "mgs",
 										"ignore": {"functionality": true,"crafting": true}
 									}
 								},

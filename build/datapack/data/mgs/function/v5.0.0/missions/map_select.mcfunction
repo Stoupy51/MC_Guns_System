@@ -1,7 +1,7 @@
 
 #> mgs:v5.0.0/missions/map_select
 #
-# @within	???
+# @within	mgs:v5.0.0/missions/setup "hover_event": {"action": "show_text", "value": "Browse and select a mission map"}}, "Select Map", "]"]]
 #
 
 tellraw @s {"text":"============================================","color":"dark_gray"}
