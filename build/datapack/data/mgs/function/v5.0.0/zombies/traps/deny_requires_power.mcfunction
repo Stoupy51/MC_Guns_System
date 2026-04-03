@@ -1,6 +1,8 @@
 
 #> mgs:v5.0.0/zombies/traps/deny_requires_power
 #
+# @executed	as @e[tag=_trap_new_bs]
+#
 # @within	mgs:v5.0.0/zombies/traps/on_right_click
 #
 

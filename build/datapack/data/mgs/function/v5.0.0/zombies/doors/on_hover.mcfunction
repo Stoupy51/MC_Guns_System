@@ -1,7 +1,9 @@
 
 #> mgs:v5.0.0/zombies/doors/on_hover
 #
-# @within	???
+# @executed	as @e[tag=mgs.door_new]
+#
+# @within	mgs:v5.0.0/zombies/doors/setup_iter {run:"function mgs:v5.0.0/zombies/doors/on_hover",executor:"source"} [ as @e[tag=mgs.door_new] ]
 #
 
 execute store result score #door_price mgs.data run scoreboard players get @n[tag=bs.interaction.target] mgs.zb.door.price

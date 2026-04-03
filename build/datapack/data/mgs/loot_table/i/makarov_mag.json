@@ -19,6 +19,8 @@
 										"makarov_mag": true
 									},
 									"smithed": {
+										"id": "mgs:makarov_mag",
+										"origin": "mgs",
 										"ignore": {"functionality": true,"crafting": true}
 									}
 								},

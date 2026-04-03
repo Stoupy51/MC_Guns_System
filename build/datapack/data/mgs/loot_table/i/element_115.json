@@ -20,6 +20,8 @@
 										"element_115": true
 									},
 									"smithed": {
+										"id": "mgs:element_115",
+										"origin": "mgs",
 										"ignore": {"functionality": true,"crafting": true}
 									}
 								},

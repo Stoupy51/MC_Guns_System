@@ -19,6 +19,8 @@
 										"ray_gun_zoom": true
 									},
 									"smithed": {
+										"id": "mgs:ray_gun_zoom",
+										"origin": "mgs",
 										"ignore": {"functionality": true,"crafting": true}
 									}
 								},

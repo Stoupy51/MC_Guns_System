@@ -1,7 +1,9 @@
 
 #> mgs:v5.0.0/zombies/pap/on_right_click
 #
-# @within	???
+# @executed	as @n[tag=mgs.pap_new]
+#
+# @within	mgs:v5.0.0/zombies/pap/setup_iter {run:"function mgs:v5.0.0/zombies/pap/on_right_click",executor:"source"} [ as @n[tag=mgs.pap_new] ]
 #
 
 # Guard: game must be active

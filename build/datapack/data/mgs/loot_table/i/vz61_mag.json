@@ -19,6 +19,8 @@
 										"vz61_mag": true
 									},
 									"smithed": {
+										"id": "mgs:vz61_mag",
+										"origin": "mgs",
 										"ignore": {"functionality": true,"crafting": true}
 									}
 								},

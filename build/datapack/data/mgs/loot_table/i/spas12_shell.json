@@ -20,6 +20,8 @@
 										"spas12_shell": true
 									},
 									"smithed": {
+										"id": "mgs:spas12_shell",
+										"origin": "mgs",
 										"ignore": {"functionality": true,"crafting": true}
 									}
 								},

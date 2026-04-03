@@ -19,6 +19,8 @@
 										"m500_zoom": true
 									},
 									"smithed": {
+										"id": "mgs:m500_zoom",
+										"origin": "mgs",
 										"ignore": {"functionality": true,"crafting": true}
 									}
 								},

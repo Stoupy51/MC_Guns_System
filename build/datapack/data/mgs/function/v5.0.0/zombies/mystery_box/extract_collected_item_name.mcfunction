@@ -1,6 +1,8 @@
 
 #> mgs:v5.0.0/zombies/mystery_box/extract_collected_item_name
 #
+# @executed	as @n[tag=mgs.mb_new]
+#
 # @within	mgs:v5.0.0/zombies/mystery_box/capture_collected_name_slot {slot:"$(slot)"}
 #
 # @args		slot (string)

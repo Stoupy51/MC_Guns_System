@@ -19,6 +19,8 @@
 										"famas": true
 									},
 									"smithed": {
+										"id": "mgs:famas",
+										"origin": "mgs",
 										"ignore": {"functionality": true,"crafting": true}
 									}
 								},

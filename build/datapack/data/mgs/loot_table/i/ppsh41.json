@@ -19,6 +19,8 @@
 										"ppsh41": true
 									},
 									"smithed": {
+										"id": "mgs:ppsh41",
+										"origin": "mgs",
 										"ignore": {"functionality": true,"crafting": true}
 									}
 								},

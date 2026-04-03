@@ -1,7 +1,9 @@
 
 #> mgs:v5.0.0/zombies/pap/on_hover
 #
-# @within	???
+# @executed	as @n[tag=mgs.pap_new]
+#
+# @within	mgs:v5.0.0/zombies/pap/setup_iter {run:"function mgs:v5.0.0/zombies/pap/on_hover",executor:"source"} [ as @n[tag=mgs.pap_new] ]
 #
 
 execute store result score #pap_price mgs.data run scoreboard players get @n[tag=bs.interaction.target] mgs.zb.pap.price

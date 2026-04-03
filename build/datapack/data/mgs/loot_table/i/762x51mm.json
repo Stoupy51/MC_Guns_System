@@ -17,6 +17,8 @@
 										"762x51mm": true
 									},
 									"smithed": {
+										"id": "mgs:762x51mm",
+										"origin": "mgs",
 										"ignore": {"functionality": true,"crafting": true}
 									}
 								},

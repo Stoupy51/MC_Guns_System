@@ -19,6 +19,8 @@
 										"mp7_zoom": true
 									},
 									"smithed": {
+										"id": "mgs:mp7_zoom",
+										"origin": "mgs",
 										"ignore": {"functionality": true,"crafting": true}
 									}
 								},

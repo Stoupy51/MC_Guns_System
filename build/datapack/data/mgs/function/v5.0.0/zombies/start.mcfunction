@@ -1,7 +1,7 @@
 
 #> mgs:v5.0.0/zombies/start
 #
-# @within	???
+# @within	mgs:v5.0.0/zombies/setup "hover_event": {"action": "show_text", "value": "Start the zombies game"}}, "\u25b6 START", "]"]," ",[{"text": "[", "color": "red", "click_event": {"action": "suggest_command", "command": "/function mgs:v5.0.0/zombies/stop"}, "hover_event": {"action": "show_text", "value": "Stop the zombies game"}}, "\u25a0 STOP", "]"]]
 #
 
 # Prevent starting if already active or preparing

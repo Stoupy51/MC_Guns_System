@@ -19,6 +19,8 @@
 										"spas12": true
 									},
 									"smithed": {
+										"id": "mgs:spas12",
+										"origin": "mgs",
 										"ignore": {"functionality": true,"crafting": true}
 									}
 								},

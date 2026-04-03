@@ -1,6 +1,8 @@
 
 #> mgs:v5.0.0/zombies/pap/apply_field/acc_jump
 #
+# @executed	as @n[tag=mgs.pap_new]
+#
 # @within	mgs:v5.0.0/zombies/pap/apply_runtime_overrides
 #
 

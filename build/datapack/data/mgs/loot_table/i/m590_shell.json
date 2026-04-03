@@ -20,6 +20,8 @@
 										"m590_shell": true
 									},
 									"smithed": {
+										"id": "mgs:m590_shell",
+										"origin": "mgs",
 										"ignore": {"functionality": true,"crafting": true}
 									}
 								},

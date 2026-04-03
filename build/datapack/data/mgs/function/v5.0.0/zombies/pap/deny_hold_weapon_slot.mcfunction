@@ -1,6 +1,8 @@
 
 #> mgs:v5.0.0/zombies/pap/deny_hold_weapon_slot
 #
+# @executed	as @n[tag=mgs.pap_new]
+#
 # @within	mgs:v5.0.0/zombies/pap/on_right_click
 #
 

@@ -19,6 +19,8 @@
 										"mp7_mag_empty": true
 									},
 									"smithed": {
+										"id": "mgs:mp7_mag_empty",
+										"origin": "mgs",
 										"ignore": {"functionality": true,"crafting": true}
 									}
 								},

@@ -20,6 +20,8 @@
 										"m16a4_4": true
 									},
 									"smithed": {
+										"id": "mgs:m16a4_4",
+										"origin": "mgs",
 										"ignore": {"functionality": true,"crafting": true}
 									}
 								},

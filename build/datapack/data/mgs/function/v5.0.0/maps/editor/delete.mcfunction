@@ -1,7 +1,7 @@
 
 #> mgs:v5.0.0/maps/editor/delete
 #
-# @within	???
+# @within	mgs:v5.0.0/maps/editor/menu_entry_display {idx:$(idx),mode:$(mode)}"},"hover_event":{"action":"show_text","value":"Edit this map"}},{"translate":"mgs.edit"},"]"]," ",[{"text":"[","color":"red","click_event":{"action":"suggest_command","command":"/function mgs:v5.0.0/maps/editor/delete {idx:$(idx),mode:$(mode)}"},"hover_event":{"action":"show_text","value":"Delete this map"}},{"translate":"mgs.delete"},"]"]]
 #
 # @args		mode (unknown)
 #			idx (unknown)

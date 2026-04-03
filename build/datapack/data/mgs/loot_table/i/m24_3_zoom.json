@@ -20,6 +20,8 @@
 										"m24_3_zoom": true
 									},
 									"smithed": {
+										"id": "mgs:m24_3_zoom",
+										"origin": "mgs",
 										"ignore": {"functionality": true,"crafting": true}
 									}
 								},

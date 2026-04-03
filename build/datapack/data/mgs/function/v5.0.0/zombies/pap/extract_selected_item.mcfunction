@@ -1,6 +1,8 @@
 
 #> mgs:v5.0.0/zombies/pap/extract_selected_item
 #
+# @executed	as @n[tag=mgs.pap_new]
+#
 # @within	mgs:v5.0.0/zombies/pap/extract_selected {slot:"$(slot)"}
 #
 # @args		slot (string)

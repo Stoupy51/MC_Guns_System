@@ -1,7 +1,10 @@
 
 #> mgs:v5.0.0/grenade/on_stick
 #
-# @within	???
+# @executed	as @e[tag=mgs.grenade] & at @s
+#
+# @within	mgs:v5.0.0/grenade/move_semtex {scale:0.001,with:{blocks:true,entities:false,on_collision:"function mgs:v5.0.0/grenade/on_stick"}}
+#			mgs:v5.0.0/grenade/move_semtex {scale:0.001,with:{blocks:true,entities:true,on_collision:"function mgs:v5.0.0/grenade/on_stick"}}
 #
 
 # Stop all velocity (stick to the surface)

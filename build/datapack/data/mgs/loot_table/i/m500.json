@@ -19,6 +19,8 @@
 										"m500": true
 									},
 									"smithed": {
+										"id": "mgs:m500",
+										"origin": "mgs",
 										"ignore": {"functionality": true,"crafting": true}
 									}
 								},

@@ -20,6 +20,8 @@
 										"rpk_3": true
 									},
 									"smithed": {
+										"id": "mgs:rpk_3",
+										"origin": "mgs",
 										"ignore": {"functionality": true,"crafting": true}
 									}
 								},

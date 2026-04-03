@@ -17,6 +17,8 @@
 										"32acp": true
 									},
 									"smithed": {
+										"id": "mgs:32acp",
+										"origin": "mgs",
 										"ignore": {"functionality": true,"crafting": true}
 									}
 								},

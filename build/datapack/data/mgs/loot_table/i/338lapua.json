@@ -17,6 +17,8 @@
 										"338lapua": true
 									},
 									"smithed": {
+										"id": "mgs:338lapua",
+										"origin": "mgs",
 										"ignore": {"functionality": true,"crafting": true}
 									}
 								},

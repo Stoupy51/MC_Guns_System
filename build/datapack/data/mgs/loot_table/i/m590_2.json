@@ -19,6 +19,8 @@
 										"m590_2": true
 									},
 									"smithed": {
+										"id": "mgs:m590_2",
+										"origin": "mgs",
 										"ignore": {"functionality": true,"crafting": true}
 									}
 								},

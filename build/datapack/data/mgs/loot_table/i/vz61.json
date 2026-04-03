@@ -19,6 +19,8 @@
 										"vz61": true
 									},
 									"smithed": {
+										"id": "mgs:vz61",
+										"origin": "mgs",
 										"ignore": {"functionality": true,"crafting": true}
 									}
 								},

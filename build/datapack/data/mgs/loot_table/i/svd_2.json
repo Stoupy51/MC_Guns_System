@@ -19,6 +19,8 @@
 										"svd_2": true
 									},
 									"smithed": {
+										"id": "mgs:svd_2",
+										"origin": "mgs",
 										"ignore": {"functionality": true,"crafting": true}
 									}
 								},

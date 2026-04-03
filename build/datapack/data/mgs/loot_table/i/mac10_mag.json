@@ -19,6 +19,8 @@
 										"mac10_mag": true
 									},
 									"smithed": {
+										"id": "mgs:mac10_mag",
+										"origin": "mgs",
 										"ignore": {"functionality": true,"crafting": true}
 									}
 								},

@@ -19,6 +19,8 @@
 										"sten_zoom": true
 									},
 									"smithed": {
+										"id": "mgs:sten_zoom",
+										"origin": "mgs",
 										"ignore": {"functionality": true,"crafting": true}
 									}
 								},

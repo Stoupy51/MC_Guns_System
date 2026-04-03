@@ -1,6 +1,8 @@
 
 #> mgs:v5.0.0/zombies/mystery_box/capture_collected_name_slot
 #
+# @executed	as @n[tag=mgs.mb_new]
+#
 # @within	mgs:v5.0.0/zombies/mystery_box/capture_collected_name {slot:"hotbar.1"}
 #			mgs:v5.0.0/zombies/mystery_box/capture_collected_name {slot:"hotbar.2"}
 #			mgs:v5.0.0/zombies/mystery_box/capture_collected_name {slot:"hotbar.3"}

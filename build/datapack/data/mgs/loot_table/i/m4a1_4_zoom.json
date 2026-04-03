@@ -20,6 +20,8 @@
 										"m4a1_4_zoom": true
 									},
 									"smithed": {
+										"id": "mgs:m4a1_4_zoom",
+										"origin": "mgs",
 										"ignore": {"functionality": true,"crafting": true}
 									}
 								},

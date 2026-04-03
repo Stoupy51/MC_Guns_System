@@ -19,6 +19,8 @@
 										"rpk_zoom": true
 									},
 									"smithed": {
+										"id": "mgs:rpk_zoom",
+										"origin": "mgs",
 										"ignore": {"functionality": true,"crafting": true}
 									}
 								},

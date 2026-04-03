@@ -20,6 +20,8 @@
 										"famas_3_zoom": true
 									},
 									"smithed": {
+										"id": "mgs:famas_3_zoom",
+										"origin": "mgs",
 										"ignore": {"functionality": true,"crafting": true}
 									}
 								},

@@ -19,6 +19,8 @@
 										"fnfal": true
 									},
 									"smithed": {
+										"id": "mgs:fnfal",
+										"origin": "mgs",
 										"ignore": {"functionality": true,"crafting": true}
 									}
 								},

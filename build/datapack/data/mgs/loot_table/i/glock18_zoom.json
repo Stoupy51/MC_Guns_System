@@ -19,6 +19,8 @@
 										"glock18_zoom": true
 									},
 									"smithed": {
+										"id": "mgs:glock18_zoom",
+										"origin": "mgs",
 										"ignore": {"functionality": true,"crafting": true}
 									}
 								},

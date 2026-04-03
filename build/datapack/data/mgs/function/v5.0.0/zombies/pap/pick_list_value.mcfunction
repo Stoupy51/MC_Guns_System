@@ -1,6 +1,8 @@
 
 #> mgs:v5.0.0/zombies/pap/pick_list_value
 #
+# @executed	as @n[tag=mgs.pap_new]
+#
 # @within	mgs:v5.0.0/zombies/pap/apply_field/capacity
 #			mgs:v5.0.0/zombies/pap/apply_field/remaining_bullets
 #			mgs:v5.0.0/zombies/pap/apply_field/reload_time

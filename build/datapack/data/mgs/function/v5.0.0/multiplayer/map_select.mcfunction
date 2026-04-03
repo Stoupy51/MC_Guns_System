@@ -1,7 +1,7 @@
 
 #> mgs:v5.0.0/multiplayer/map_select
 #
-# @within	???
+# @within	mgs:v5.0.0/multiplayer/setup "hover_event": {"action": "show_text", "value": "Browse and select a map"}}, "Select Map", "]"]]
 #
 
 tellraw @s {"text":"============================================","color":"dark_gray"}

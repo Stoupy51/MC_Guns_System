@@ -19,6 +19,8 @@
 										"scar17_2_zoom": true
 									},
 									"smithed": {
+										"id": "mgs:scar17_2_zoom",
+										"origin": "mgs",
 										"ignore": {"functionality": true,"crafting": true}
 									}
 								},

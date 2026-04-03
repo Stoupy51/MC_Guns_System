@@ -19,6 +19,8 @@
 										"mp7_2": true
 									},
 									"smithed": {
+										"id": "mgs:mp7_2",
+										"origin": "mgs",
 										"ignore": {"functionality": true,"crafting": true}
 									}
 								},

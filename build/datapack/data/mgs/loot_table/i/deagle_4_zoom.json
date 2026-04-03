@@ -20,6 +20,8 @@
 										"deagle_4_zoom": true
 									},
 									"smithed": {
+										"id": "mgs:deagle_4_zoom",
+										"origin": "mgs",
 										"ignore": {"functionality": true,"crafting": true}
 									}
 								},

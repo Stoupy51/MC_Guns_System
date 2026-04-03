@@ -1,6 +1,8 @@
 
 #> mgs:v5.0.0/zombies/mystery_box/check_owned_result
 #
+# @executed	as @n[tag=mgs.mb_new]
+#
 # @within	mgs:v5.0.0/zombies/mystery_box/reroll_owned with storage mgs:zombies mystery_box.result
 #
 # @args		weapon_id (unknown)

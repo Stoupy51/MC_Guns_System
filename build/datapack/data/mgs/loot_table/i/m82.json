@@ -19,6 +19,8 @@
 										"m82": true
 									},
 									"smithed": {
+										"id": "mgs:m82",
+										"origin": "mgs",
 										"ignore": {"functionality": true,"crafting": true}
 									}
 								},

@@ -19,6 +19,8 @@
 										"ray_gun": true
 									},
 									"smithed": {
+										"id": "mgs:ray_gun",
+										"origin": "mgs",
 										"ignore": {"functionality": true,"crafting": true}
 									}
 								},

@@ -1,6 +1,8 @@
 
 #> mgs:v5.0.0/zombies/wallbuys/lookup_weapon
 #
+# @executed	as @n[tag=mgs.wb_new]
+#
 # @within	mgs:v5.0.0/zombies/wallbuys/on_right_click with storage mgs:temp _wb_buy
 #
 # @args		id (unknown)

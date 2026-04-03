@@ -19,6 +19,8 @@
 										"mosin": true
 									},
 									"smithed": {
+										"id": "mgs:mosin",
+										"origin": "mgs",
 										"ignore": {"functionality": true,"crafting": true}
 									}
 								},

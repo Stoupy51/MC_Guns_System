@@ -1,6 +1,8 @@
 
 #> mgs:v5.0.0/zombies/wallbuys/get_display_name
 #
+# @executed	as @n[tag=mgs.wb_new]
+#
 # @within	mgs:v5.0.0/zombies/wallbuys/on_right_click
 #			mgs:v5.0.0/zombies/wallbuys/on_hover
 #

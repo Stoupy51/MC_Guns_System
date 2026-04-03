@@ -19,6 +19,8 @@
 										"vz61_zoom": true
 									},
 									"smithed": {
+										"id": "mgs:vz61_zoom",
+										"origin": "mgs",
 										"ignore": {"functionality": true,"crafting": true}
 									}
 								},

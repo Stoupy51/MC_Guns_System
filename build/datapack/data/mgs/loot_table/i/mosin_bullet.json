@@ -20,6 +20,8 @@
 										"mosin_bullet": true
 									},
 									"smithed": {
+										"id": "mgs:mosin_bullet",
+										"origin": "mgs",
 										"ignore": {"functionality": true,"crafting": true}
 									}
 								},
