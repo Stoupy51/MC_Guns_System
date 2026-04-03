@@ -11,7 +11,7 @@ execute unless data storage mgs:missions game{state:"preparing"} run return fail
 gamemode adventure @a[scores={mgs.mi.in_game=1}]
 
 # Summon OOB markers
-function mgs:v5.0.0/missions/summon_oob
+function mgs:v5.0.0/shared/summon_oob {mode:"missions"}
 
 # Summon spawn point markers
 function mgs:v5.0.0/missions/summon_spawns

@@ -22,5 +22,5 @@ execute unless score @s mgs.mp.class matches 0 run function mgs:v5.0.0/multiplay
 gamemode adventure @s
 
 # Run map-defined respawn commands on this player (if any)
-execute if data storage mgs:multiplayer game.map.respawn_commands[0] at @s run function mgs:v5.0.0/multiplayer/run_respawn_commands
+execute if data storage mgs:multiplayer game.map.respawn_commands[0] at @s run function mgs:v5.0.0/shared/run_respawn_commands {mode:"multiplayer"}
 

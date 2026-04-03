@@ -64,16 +64,16 @@ execute store result score #gm_base_z mgs.data run data get storage mgs:missions
 execute if data storage mgs:missions game.map.boundaries[0] if data storage mgs:missions game.map.boundaries[1] run scoreboard players set #mi_has_boundary mgs.data 1
 
 # Normalize and store boundaries only when they exist
-execute if score #mi_has_boundary mgs.data matches 1 run function mgs:v5.0.0/missions/load_bounds
+execute if score #mi_has_boundary mgs.data matches 1 run function mgs:v5.0.0/shared/load_bounds {mode:"missions"}
 
 # Forceload the mission area to ensure chunks are loaded
-execute if score #mi_has_boundary mgs.data matches 1 run function mgs:v5.0.0/missions/forceload_area
+execute if score #mi_has_boundary mgs.data matches 1 run function mgs:v5.0.0/shared/forceload_area
 
 # Teleport all players as spectator to base coordinates for chunk preloading
 execute store result storage mgs:temp _tp.x int 1 run scoreboard players get #gm_base_x mgs.data
 execute store result storage mgs:temp _tp.y int 1 run scoreboard players get #gm_base_y mgs.data
 execute store result storage mgs:temp _tp.z int 1 run scoreboard players get #gm_base_z mgs.data
-execute as @a[scores={mgs.mi.in_game=1}] run function mgs:v5.0.0/missions/tp_to_base with storage mgs:temp _tp
+execute as @a[scores={mgs.mi.in_game=1}] run function mgs:v5.0.0/shared/tp_to_position with storage mgs:temp _tp
 
 # Schedule preload completion after 1 second
 schedule function mgs:v5.0.0/missions/preload_complete 20t

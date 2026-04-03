@@ -114,10 +114,10 @@ execute store result score #gm_base_z {ns}.data run data get storage {ns}:multip
 execute if data storage {ns}:multiplayer game.map.boundaries[0] if data storage {ns}:multiplayer game.map.boundaries[1] run scoreboard players set #mp_has_boundary {ns}.data 1
 
 # Normalize and store boundaries only when they exist
-execute if score #mp_has_boundary {ns}.data matches 1 run function {ns}:v{version}/multiplayer/load_bounds
+execute if score #mp_has_boundary {ns}.data matches 1 run function {ns}:v{version}/shared/load_bounds {{mode:"multiplayer"}}
 
 # Summon out-of-bounds markers
-function {ns}:v{version}/multiplayer/summon_oob
+function {ns}:v{version}/shared/summon_oob {{mode:"multiplayer"}}
 
 # Summon spawn point markers (for smart spawn selection)
 function {ns}:v{version}/multiplayer/summon_spawns
@@ -137,7 +137,7 @@ execute if data storage {ns}:multiplayer game{{gamemode:"hp"}} run function {ns}
 execute if data storage {ns}:multiplayer game{{gamemode:"snd"}} run function {ns}:v{version}/multiplayer/gamemodes/snd/setup
 
 # Run map-defined start commands after entity/setup summons
-execute if data storage {ns}:multiplayer game.map.start_commands[0] run function {ns}:v{version}/multiplayer/run_start_commands
+execute if data storage {ns}:multiplayer game.map.start_commands[0] run function {ns}:v{version}/shared/run_start_commands {{mode:"multiplayer"}}
 
 # Store score limit and compute initial timer values for sidebar
 execute store result score #score_limit {ns}.data run data get storage {ns}:multiplayer game.score_limit
@@ -196,99 +196,7 @@ tellraw @a ["",[{{"text":"","color":"gold","bold":true}},"⚔ ",{{"text":"Prepar
 
 	## Load map from storage (reads map_id from game state and passes to load macro)
 	write_versioned_function("multiplayer/load_map_from_storage", f"""
-$function {ns}:v{version}/maps/multiplayer/load {{id:"$(map_id)",override:{{}}}}
-""")
-
-	## Store and normalize boundaries when map provides them
-	write_versioned_function("multiplayer/load_bounds", f"""
-# Store boundary corners (relative) and convert to absolute
-execute store result score #bound_x1 {ns}.data run data get storage {ns}:multiplayer game.map.boundaries[0][0]
-execute store result score #bound_y1 {ns}.data run data get storage {ns}:multiplayer game.map.boundaries[0][1]
-execute store result score #bound_z1 {ns}.data run data get storage {ns}:multiplayer game.map.boundaries[0][2]
-execute store result score #bound_x2 {ns}.data run data get storage {ns}:multiplayer game.map.boundaries[1][0]
-execute store result score #bound_y2 {ns}.data run data get storage {ns}:multiplayer game.map.boundaries[1][1]
-execute store result score #bound_z2 {ns}.data run data get storage {ns}:multiplayer game.map.boundaries[1][2]
-scoreboard players operation #bound_x1 {ns}.data += #gm_base_x {ns}.data
-scoreboard players operation #bound_y1 {ns}.data += #gm_base_y {ns}.data
-scoreboard players operation #bound_z1 {ns}.data += #gm_base_z {ns}.data
-scoreboard players operation #bound_x2 {ns}.data += #gm_base_x {ns}.data
-scoreboard players operation #bound_y2 {ns}.data += #gm_base_y {ns}.data
-scoreboard players operation #bound_z2 {ns}.data += #gm_base_z {ns}.data
-function {ns}:v{version}/multiplayer/normalize_bounds
-""")
-
-	## Normalize boundaries: ensure min < max for each axis
-	write_versioned_function("multiplayer/normalize_bounds", f"""
-# Swap x if needed
-execute if score #bound_x1 {ns}.data > #bound_x2 {ns}.data run scoreboard players operation #swap {ns}.data = #bound_x1 {ns}.data
-execute if score #bound_x1 {ns}.data > #bound_x2 {ns}.data run scoreboard players operation #bound_x1 {ns}.data = #bound_x2 {ns}.data
-execute if score #swap {ns}.data matches -2147483648.. run scoreboard players operation #bound_x2 {ns}.data = #swap {ns}.data
-execute if score #swap {ns}.data matches -2147483648.. run scoreboard players reset #swap {ns}.data
-
-# Swap y if needed
-execute if score #bound_y1 {ns}.data > #bound_y2 {ns}.data run scoreboard players operation #swap {ns}.data = #bound_y1 {ns}.data
-execute if score #bound_y1 {ns}.data > #bound_y2 {ns}.data run scoreboard players operation #bound_y1 {ns}.data = #bound_y2 {ns}.data
-execute if score #swap {ns}.data matches -2147483648.. run scoreboard players operation #bound_y2 {ns}.data = #swap {ns}.data
-execute if score #swap {ns}.data matches -2147483648.. run scoreboard players reset #swap {ns}.data
-
-# Swap z if needed
-execute if score #bound_z1 {ns}.data > #bound_z2 {ns}.data run scoreboard players operation #swap {ns}.data = #bound_z1 {ns}.data
-execute if score #bound_z1 {ns}.data > #bound_z2 {ns}.data run scoreboard players operation #bound_z1 {ns}.data = #bound_z2 {ns}.data
-execute if score #swap {ns}.data matches -2147483648.. run scoreboard players operation #bound_z2 {ns}.data = #swap {ns}.data
-execute if score #swap {ns}.data matches -2147483648.. run scoreboard players reset #swap {ns}.data
-""")
-
-	## Run map start commands (relative pos + command string)
-	write_versioned_function("multiplayer/run_start_commands", f"""
-data modify storage {ns}:temp _start_cmd_iter set from storage {ns}:multiplayer game.map.start_commands
-execute if data storage {ns}:temp _start_cmd_iter[0] run function {ns}:v{version}/multiplayer/run_start_commands_iter
-""")
-
-	write_versioned_function("multiplayer/run_start_commands_iter", f"""
-# Read relative position
-execute store result score #cx {ns}.data run data get storage {ns}:temp _start_cmd_iter[0].pos[0]
-execute store result score #cy {ns}.data run data get storage {ns}:temp _start_cmd_iter[0].pos[1]
-execute store result score #cz {ns}.data run data get storage {ns}:temp _start_cmd_iter[0].pos[2]
-
-# Convert to absolute
-scoreboard players operation #cx {ns}.data += #gm_base_x {ns}.data
-scoreboard players operation #cy {ns}.data += #gm_base_y {ns}.data
-scoreboard players operation #cz {ns}.data += #gm_base_z {ns}.data
-
-# Prepare macro args
-execute store result storage {ns}:temp _start_cmd.x int 1 run scoreboard players get #cx {ns}.data
-execute store result storage {ns}:temp _start_cmd.y int 1 run scoreboard players get #cy {ns}.data
-execute store result storage {ns}:temp _start_cmd.z int 1 run scoreboard players get #cz {ns}.data
-data modify storage {ns}:temp _start_cmd.command set from storage {ns}:temp _start_cmd_iter[0].command
-
-# Execute and advance
-function {ns}:v{version}/multiplayer/run_start_command with storage {ns}:temp _start_cmd
-data remove storage {ns}:temp _start_cmd_iter[0]
-execute if data storage {ns}:temp _start_cmd_iter[0] run function {ns}:v{version}/multiplayer/run_start_commands_iter
-""")
-
-	write_versioned_function("multiplayer/run_start_command", """
-$execute positioned $(x) $(y) $(z) run $(command)
-""")
-
-	## Run map respawn commands as the respawned player
-	write_versioned_function("multiplayer/run_respawn_commands", f"""
-data modify storage {ns}:temp _respawn_cmd_iter set from storage {ns}:multiplayer game.map.respawn_commands
-execute if data storage {ns}:temp _respawn_cmd_iter[0] at @s run function {ns}:v{version}/multiplayer/run_respawn_commands_iter
-""")
-
-	write_versioned_function("multiplayer/run_respawn_commands_iter", f"""
-# Copy command string
-data modify storage {ns}:temp _respawn_cmd.command set from storage {ns}:temp _respawn_cmd_iter[0].command
-
-# Execute as current player and advance
-function {ns}:v{version}/multiplayer/run_respawn_command with storage {ns}:temp _respawn_cmd
-data remove storage {ns}:temp _respawn_cmd_iter[0]
-execute if data storage {ns}:temp _respawn_cmd_iter[0] at @s run function {ns}:v{version}/multiplayer/run_respawn_commands_iter
-""")
-
-	write_versioned_function("multiplayer/run_respawn_command", """
-$execute at @s run $(command)
+$function {ns}:v{version}/shared/maps/load {{id:"$(map_id)",mode:"multiplayer",override:{{}}}}
 """)
 
 	## Game Stop
@@ -563,34 +471,6 @@ function {ns}:v{version}/multiplayer/simulate_death
 # Clear attacker input (environmental death) and simulate death
 data modify storage {ns}:input with set value {{}}
 function {ns}:v{version}/multiplayer/simulate_death
-""")
-
-	## Summon OOB markers from map data (relative → absolute)
-	write_versioned_function("multiplayer/summon_oob", f"""
-# Store base coordinates for offset
-execute store result score #gm_base_x {ns}.data run data get storage {ns}:multiplayer game.map.base_coordinates[0]
-execute store result score #gm_base_y {ns}.data run data get storage {ns}:multiplayer game.map.base_coordinates[1]
-execute store result score #gm_base_z {ns}.data run data get storage {ns}:multiplayer game.map.base_coordinates[2]
-
-data modify storage {ns}:temp _oob_iter set from storage {ns}:multiplayer game.map.out_of_bounds
-execute if data storage {ns}:temp _oob_iter[0] run function {ns}:v{version}/multiplayer/summon_oob_iter
-""")
-	write_versioned_function("multiplayer/summon_oob_iter", f"""
-execute store result score #rx {ns}.data run data get storage {ns}:temp _oob_iter[0][0]
-execute store result score #ry {ns}.data run data get storage {ns}:temp _oob_iter[0][1]
-execute store result score #rz {ns}.data run data get storage {ns}:temp _oob_iter[0][2]
-scoreboard players operation #rx {ns}.data += #gm_base_x {ns}.data
-scoreboard players operation #ry {ns}.data += #gm_base_y {ns}.data
-scoreboard players operation #rz {ns}.data += #gm_base_z {ns}.data
-execute store result storage {ns}:temp _oob_pos.x double 1 run scoreboard players get #rx {ns}.data
-execute store result storage {ns}:temp _oob_pos.y double 1 run scoreboard players get #ry {ns}.data
-execute store result storage {ns}:temp _oob_pos.z double 1 run scoreboard players get #rz {ns}.data
-function {ns}:v{version}/multiplayer/summon_oob_at with storage {ns}:temp _oob_pos
-data remove storage {ns}:temp _oob_iter[0]
-execute if data storage {ns}:temp _oob_iter[0] run function {ns}:v{version}/multiplayer/summon_oob_iter
-""")
-	write_versioned_function("multiplayer/summon_oob_at", f"""
-$summon minecraft:marker $(x) $(y) $(z) {{Tags:["{ns}.oob_point","{ns}.gm_entity"]}}
 """)
 
 	# Spawn Point Markers ───────────────────────────────────────

@@ -213,7 +213,7 @@ execute unless score @s {ns}.mp.class matches 0 run function {ns}:v{version}/mul
 gamemode adventure @s
 
 # Run map-defined respawn commands on this player (if any)
-execute if data storage {ns}:multiplayer game.map.respawn_commands[0] at @s run function {ns}:v{version}/multiplayer/run_respawn_commands
+execute if data storage {ns}:multiplayer game.map.respawn_commands[0] at @s run function {ns}:v{version}/shared/run_respawn_commands {{mode:"multiplayer"}}
 """)
 
 	## auto_apply_default: apply default custom loadout on game start

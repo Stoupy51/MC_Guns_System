@@ -305,7 +305,7 @@ execute store result score #base_z {ns}.data run data get storage {ns}:temp map_
 execute store result storage {ns}:temp _tp.x int 1 run scoreboard players get #base_x {ns}.data
 execute store result storage {ns}:temp _tp.y int 1 run scoreboard players get #base_y {ns}.data
 execute store result storage {ns}:temp _tp.z int 1 run scoreboard players get #base_z {ns}.data
-function {ns}:v{version}/missions/tp_to_base with storage {ns}:temp _tp
+function {ns}:v{version}/shared/tp_to_position with storage {ns}:temp _tp
 
 # Summon markers for existing elements
 function {ns}:v{version}/maps/editor/summon_existing
@@ -343,7 +343,7 @@ execute as @a[scores={{{ns}.mp.map_edit=1}}] run function {ns}:v{version}/maps/e
 execute store result storage {ns}:temp _tp.x int 1 run scoreboard players get #base_x {ns}.data
 execute store result storage {ns}:temp _tp.y int 1 run scoreboard players get #base_y {ns}.data
 execute store result storage {ns}:temp _tp.z int 1 run scoreboard players get #base_z {ns}.data
-execute as @a[scores={{{ns}.mp.map_edit=1}}] run function {ns}:v{version}/missions/tp_to_base with storage {ns}:temp _tp
+execute as @a[scores={{{ns}.mp.map_edit=1}}] run function {ns}:v{version}/shared/tp_to_position with storage {ns}:temp _tp
 
 tellraw @a[scores={{{ns}.mp.map_edit=1}}] [{MGS_TAG},{{"text":"Editor session synced for all players.","color":"aqua"}}]
 """)

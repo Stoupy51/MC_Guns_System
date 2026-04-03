@@ -2,6 +2,7 @@
 # Imports
 from stewbeet import Context, official_lib_used
 
+from .functional.core import main as main_core
 from .functional.main import main as main_datapack
 from .functional.map_editor import generate_map_editor
 from .functional.missions import main as main_missions
@@ -22,6 +23,9 @@ def beet_default(ctx: Context) -> None:
     main_player_config()
     main_mob_ai()
     main_tick()
+
+    # Shared core functions (bounds, teleport, maps, commands, spawning)
+    main_core()
 
     # Zombies functional initialization
     main_zombies()
