@@ -30,9 +30,7 @@ execute if score @s {ns}.mp.team matches 2 run scoreboard players add #blue {ns}
 function #bs.sidebar:refresh {{objective:"{ns}.sidebar"}}
 
 # Check win condition
-execute store result score #score_limit {ns}.data run data get storage {ns}:multiplayer game.score_limit
-execute if score #red {ns}.mp.team >= #score_limit {ns}.data run function {ns}:v{version}/multiplayer/team_wins {{team:"Red"}}
-execute if score #blue {ns}.mp.team >= #score_limit {ns}.data run function {ns}:v{version}/multiplayer/team_wins {{team:"Blue"}}
+function {ns}:v{version}/multiplayer/check_team_win
 """)
 
 	## TDM Cleanup

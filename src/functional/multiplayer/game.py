@@ -347,6 +347,13 @@ execute if data storage {ns}:multiplayer game{{gamemode:"hp"}} run return run fu
 execute if data storage {ns}:multiplayer game{{gamemode:"snd"}} run return run function {ns}:v{version}/multiplayer/gamemodes/snd/on_kill
 """, tags=[f"{ns}:signals/on_kill"])
 
+	## Check Team Win (shared by TDM, DOM, HP)
+	write_versioned_function("multiplayer/check_team_win", f"""
+execute store result score #score_limit {ns}.data run data get storage {ns}:multiplayer game.score_limit
+execute if score #red {ns}.mp.team >= #score_limit {ns}.data run function {ns}:v{version}/multiplayer/team_wins {{team:"Red"}}
+execute if score #blue {ns}.mp.team >= #score_limit {ns}.data run function {ns}:v{version}/multiplayer/team_wins {{team:"Blue"}}
+""")
+
 	## Team Wins
 	write_versioned_function("multiplayer/team_wins", f"""
 # Announce winner
