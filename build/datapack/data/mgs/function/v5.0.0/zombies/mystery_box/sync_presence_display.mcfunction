@@ -7,5 +7,7 @@
 
 # Keep one chest display at the currently active mystery box.
 kill @e[tag=mgs.mb_presence]
-execute as @n[tag=mgs.mystery_box_active] at @s run summon minecraft:item_display ~ ~0.7 ~ {Tags:["mgs.mb_presence","mgs.gm_entity"],item_display:"fixed",billboard:"fixed",item:{id:"minecraft:chest",count:1},transformation:{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[0.85f,0.85f,0.85f]}}
+execute as @n[tag=mgs.mystery_box_active] at @s run data modify storage mgs:temp _mb_chest.yaw set value 0.0f
+execute as @n[tag=mgs.mystery_box_active] at @s run data modify storage mgs:temp _mb_chest.yaw set from entity @s Rotation[0]
+execute as @n[tag=mgs.mystery_box_active] at @s run function mgs:v5.0.0/zombies/mystery_box/summon_presence_display with storage mgs:temp _mb_chest
 

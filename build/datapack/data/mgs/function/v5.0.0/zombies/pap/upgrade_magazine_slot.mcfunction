@@ -61,8 +61,11 @@ data modify storage mgs:temp capacity set from storage mgs:temp zb_item_stats.ca
 scoreboard players operation #bullets mgs.data = #pap_mag_cap mgs.data
 $function mgs:v5.0.0/ammo/modify_mag_lore {slot:"$(slot)"}
 
-# Restore full magazine model
+# Restore full magazine model (read actual item_model from the magazine)
 $data modify storage mgs:temp refill.slot set value "$(slot)"
 data modify storage mgs:temp refill.base_weapon set from storage mgs:temp _pap_extract.stats.base_weapon
+tag @s add mgs.pap_extracting_mag
+$execute summon item_display run function mgs:v5.0.0/zombies/pap/extract_mag_model {slot:"$(slot)"}
+tag @s remove mgs.pap_extracting_mag
 function mgs:v5.0.0/zombies/bonus/set_full_mag_model with storage mgs:temp refill
 

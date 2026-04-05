@@ -118,7 +118,13 @@ $summon minecraft:interaction $(x) $(y) $(z) {{width:1.5f,height:2.0f,response:t
 	write_versioned_function("zombies/mystery_box/sync_presence_display", f"""
 # Keep one chest display at the currently active mystery box.
 kill @e[tag={ns}.mb_presence]
-execute as @n[tag={ns}.mystery_box_active] at @s run summon minecraft:item_display ~ ~0.7 ~ {{Tags:["{ns}.mb_presence","{ns}.gm_entity"],item_display:"fixed",billboard:"fixed",item:{{id:"minecraft:chest",count:1}},transformation:{{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[0.85f,0.85f,0.85f]}}}}
+execute as @n[tag={ns}.mystery_box_active] at @s run data modify storage {ns}:temp _mb_chest.yaw set value 0.0f
+execute as @n[tag={ns}.mystery_box_active] at @s run data modify storage {ns}:temp _mb_chest.yaw set from entity @s Rotation[0]
+execute as @n[tag={ns}.mystery_box_active] at @s run function {ns}:v{version}/zombies/mystery_box/summon_presence_display with storage {ns}:temp _mb_chest
+""")
+
+	write_versioned_function("zombies/mystery_box/summon_presence_display", f"""
+$execute positioned ~ ~0.7 ~ run summon minecraft:item_display ~ ~ ~ {{Rotation:[$(yaw),0f],Tags:["{ns}.mb_presence","{ns}.gm_entity"],item_display:"fixed",billboard:"fixed",item:{{id:"minecraft:chest",count:1}},transformation:{{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[0.85f,0.85f,0.85f]}}}}
 """)
 
 	write_versioned_function("zombies/mystery_box/maybe_move_after_pull", f"""

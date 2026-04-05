@@ -8,7 +8,8 @@
 #			display_tag (unknown)
 #			display_item_id (unknown)
 #			display_item_model (unknown)
+#			display_yaw (unknown)
 #
 
-$data modify storage mgs:zombies pap_data."$(id)" set value {name:"$(name)",display_tag:"$(display_tag)",display_item_id:"$(display_item_id)",display_item_model:"$(display_item_model)"}
+$data modify storage mgs:zombies pap_data."$(id)" set value {name:"$(name)",display_tag:"$(display_tag)",display_item_id:"$(display_item_id)",display_item_model:"$(display_item_model)",display_yaw:$(display_yaw)}
 
