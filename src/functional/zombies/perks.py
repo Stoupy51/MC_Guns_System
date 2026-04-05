@@ -123,6 +123,10 @@ data modify storage {ns}:temp _pk_disp.item_model set value "minecraft:potion"
 execute if data storage {ns}:temp _pk_iter[0].display_item run data modify storage {ns}:temp _pk_disp.item_id set from storage {ns}:temp _pk_iter[0].display_item
 execute if data storage {ns}:temp _pk_iter[0].item_model run data modify storage {ns}:temp _pk_disp.item_model set from storage {ns}:temp _pk_iter[0].item_model
 execute as @n[tag={ns}.pk_new] at @s run function {ns}:v{version}/zombies/display/summon_machine_display with storage {ns}:temp _pk_disp
+tag @n[tag={ns}.pk_new] add {ns}.perk_machine
+tag @n[tag={ns}.pk_new] remove {ns}.pk_new
+
+# Iterate next
 data remove storage {ns}:temp _pk_iter[0]
 execute if data storage {ns}:temp _pk_iter[0] run function {ns}:v{version}/zombies/perks/setup_iter
 """)

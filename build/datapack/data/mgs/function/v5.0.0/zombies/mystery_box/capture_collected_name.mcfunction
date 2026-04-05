@@ -8,7 +8,7 @@
 # @args		weapon_id (unknown)
 #
 
-data modify storage mgs:temp _mb_collected_name set value [{"text":"$(weapon_id)","color":"gold"}]
+$data modify storage mgs:temp _mb_collected_name set value [{"text":"$(weapon_id)","color":"gold"}]
 scoreboard players set #mb_name_found mgs.data 0
 
 $execute if score #mb_name_found mgs.data matches 0 if items entity @s hotbar.1 *[custom_data~{mgs:{gun:true,stats:{base_weapon:"$(weapon_id)"}}}] run function mgs:v5.0.0/zombies/mystery_box/capture_collected_name_slot {slot:"hotbar.1"}

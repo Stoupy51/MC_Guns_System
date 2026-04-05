@@ -6,7 +6,10 @@
 # @within	mgs:v5.0.0/zombies/pap/anim_step
 #
 
-# Interpolate weapon display upward: Y from -0.5 to +1.2 over 30 ticks, slight scale increase
-data merge entity @n[tag=mgs.pap_weapon_display,distance=..2] {interpolation_duration:30,start_interpolation:0,transformation:{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],translation:[0f,1.2f,0f],scale:[0.85f,0.85f,0.85f]}}
+# Slide weapon horizontally out to the left with slight elevation over 40 ticks, scale up
+data merge entity @n[tag=mgs.pap_weapon_display,distance=..2] {interpolation_duration:40,start_interpolation:0,transformation:{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],translation:[-0.8f,0.2f,0f],scale:[0.9f,0.9f,0.9f]}}
 playsound minecraft:block.beacon.activate ambient @a[distance=..30] ~ ~ ~ 1.5 0.8
+
+# Weapon upgraded — notify players
+tellraw @a[scores={mgs.zb.in_game=1}] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.weapon_upgraded_collect_it_before_it_retreats","color":"aqua"}]
 

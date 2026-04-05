@@ -6,12 +6,7 @@
 # @within	mgs:v5.0.0/zombies/game_tick [ at @s ]
 #
 
-# Spawn an item entity and copy the weapon from the display into it (dropping to the ground)
-summon minecraft:item ~ ~0.5 ~ {PickupDelay:40,Tags:["mgs.pap_drop"],Item:{id:"minecraft:stone",count:1}}
-data modify entity @n[tag=mgs.pap_drop,distance=..1] Item set from entity @n[tag=mgs.pap_weapon_display,distance=..2] item
-tag @n[tag=mgs.pap_drop,distance=..1] remove mgs.pap_drop
-
-# Remove weapon display
+# Weapon is lost — destroy it (not dropped)
 kill @e[tag=mgs.pap_weapon_display,distance=..2]
 
 # Reset to idle
@@ -20,6 +15,7 @@ scoreboard players set @s mgs.pap_anim -1
 # Restore static machine display
 function mgs:v5.0.0/zombies/pap/anim_restore_display
 
-# Sound
+# Notify and sound
+tellraw @a[scores={mgs.zb.in_game=1}] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.the_weapon_was_lost","color":"red","bold":true}]
 playsound minecraft:entity.generic.extinguish_fire ambient @a[distance=..20] ~ ~ ~ 1.0 0.8
 

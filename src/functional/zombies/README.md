@@ -9,3 +9,8 @@
   - Messages are not correctly timed
   - If the weapon is not picked up, it should disappear.
 
+- Perks, mystery box, etc. are not placed with proper yaw even tho it's configured in editor
+- Editor doesn't show option for item model overrides for PaP, perks, and mystery box.
+
+- RayGun magazine bug: loosing item_model because conversion from consumable to not is scuffed
+
