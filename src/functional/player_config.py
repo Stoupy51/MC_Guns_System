@@ -60,6 +60,9 @@ scoreboard objectives add {ns}.player.damage_debug dummy
 
     ## In player tick: enable trigger and process if set
     write_versioned_function("player/tick", f"""
+# Assign unique player ID (Bookshelf SUID) if not yet assigned
+execute unless score @s bs.id matches 0.. run function #bs.id:give_suid
+
 # Enable /trigger for this player
 scoreboard players enable @s {ns}.player.config
 execute if score @s {ns}.player.config matches 1.. run function {ns}:v{version}/player/config/process
@@ -84,6 +87,10 @@ execute if score @s {ns}.mp.map_edit matches 1 run function {ns}:v{version}/maps
     set_default_max = TRIG_SET_DEFAULT_BASE + 99
 
     write_versioned_function("player/config/process", f"""
+# Load per-player editor state (isolates simultaneous editors)
+execute store result storage {ns}:temp _pid int 1 run scoreboard players get @s bs.id
+function {ns}:v{version}/multiplayer/editor/load_state with storage {ns}:temp
+
 # 1 = Show config menu
 # 2 = Toggle hitmarker Sound
 # 3 = Toggle damage debug in chat
@@ -160,6 +167,9 @@ execute if score @s {ns}.player.config matches {TRIG_MARKETPLACE_FAV_ONLY} run f
 execute if score @s {ns}.player.config matches {TRIG_MARKETPLACE_LIKES} run function {ns}:v{version}/multiplayer/marketplace/browse_likes
 # {TRIG_MY_LOADOUTS_FAV_ONLY} = My Loadouts: favorites only
 execute if score @s {ns}.player.config matches {TRIG_MY_LOADOUTS_FAV_ONLY} run function {ns}:v{version}/multiplayer/my_loadouts/browse_fav_only
+
+# Save per-player editor state back to isolated storage
+function {ns}:v{version}/multiplayer/editor/save_state with storage {ns}:temp
 
 # Reset score
 scoreboard players set @s {ns}.player.config 0

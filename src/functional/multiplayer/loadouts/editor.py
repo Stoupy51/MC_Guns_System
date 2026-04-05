@@ -48,6 +48,18 @@ def generate_editor() -> None:
 	version: str = Mem.ctx.project_version
 
 	## ====================================================================
+	## Per-player editor state isolation
+	## Editor state is stored in {ns}:editor.{pid} (one per player).
+	## At dispatch start, we load to {ns}:temp editor; at end, save back.
+	## ====================================================================
+	write_versioned_function("multiplayer/editor/load_state", f"""
+$data modify storage {ns}:temp editor set from storage {ns}:editor "$(_pid)"
+""")
+	write_versioned_function("multiplayer/editor/save_state", f"""
+$data modify storage {ns}:editor "$(_pid)" set from storage {ns}:temp editor
+""")
+
+	## ====================================================================
 	## LOADOUT EDITOR - Pick-10 dialog flow
 	## Steps: Primary → Scope → Mags → Secondary → Scope → Mags → Equip1 → Equip2 → Perks → Confirm
 	## ====================================================================
