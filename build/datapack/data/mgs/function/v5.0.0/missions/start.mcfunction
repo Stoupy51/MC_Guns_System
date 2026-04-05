@@ -56,9 +56,7 @@ gamerule immediate_respawn true
 gamerule keep_inventory true
 
 # Store base coordinates for offset
-execute store result score #gm_base_x mgs.data run data get storage mgs:missions game.map.base_coordinates[0]
-execute store result score #gm_base_y mgs.data run data get storage mgs:missions game.map.base_coordinates[1]
-execute store result score #gm_base_z mgs.data run data get storage mgs:missions game.map.base_coordinates[2]
+function mgs:v5.0.0/shared/load_base_coordinates {mode:"missions"}
 
 # Detect whether this map defines a boundary (needs 2 points)
 execute if data storage mgs:missions game.map.boundaries[0] if data storage mgs:missions game.map.boundaries[1] run scoreboard players set #mi_has_boundary mgs.data 1

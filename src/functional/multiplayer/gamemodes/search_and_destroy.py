@@ -14,9 +14,7 @@ def generate_search_and_destroy() -> None:
 tellraw @a [{MGS_TAG},{{"text":"Search & Destroy! Attackers plant, defenders defuse!","color":"yellow"}}]
 
 # Store base coordinates for offset
-execute store result score #gm_base_x {ns}.data run data get storage {ns}:multiplayer game.map.base_coordinates[0]
-execute store result score #gm_base_y {ns}.data run data get storage {ns}:multiplayer game.map.base_coordinates[1]
-execute store result score #gm_base_z {ns}.data run data get storage {ns}:multiplayer game.map.base_coordinates[2]
+function {ns}:v{version}/shared/load_base_coordinates {{mode:"multiplayer"}}
 
 # Round tracking
 scoreboard players set #snd_round {ns}.data 1
