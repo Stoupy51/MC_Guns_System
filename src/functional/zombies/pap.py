@@ -3,7 +3,7 @@
 # Resolves PAP upgrades at runtime from the selected gun's own stats.pap_stats.
 from stewbeet import ItemModifier, JsonDict, Mem, set_json_encoder, write_load_file, write_versioned_function
 
-from ...config.stats import REMAINING_BULLETS
+from ...config.stats import ALL_SLOTS, BASE_WEAPON, REMAINING_BULLETS
 from ..helpers import MGS_TAG
 from .common import deny_not_enough_points_body, deny_requires_power_body, game_active_guard_cmd
 
@@ -209,29 +209,159 @@ function {ns}:v{version}/zombies/pap/pick_list_value_step
 	]
 	write_versioned_function("zombies/pap/resolve_runtime_name", "\n".join(name_lines))
 
-	# Append " +X" to each lore line's text-component list for current PAP level.
-	write_versioned_function("zombies/pap/append_level_to_lore", f"""
-data modify storage {ns}:temp _pap_lore.in set from storage {ns}:temp _pap_extract.lore
-data modify storage {ns}:temp _pap_lore.out set value []
-execute store result storage {ns}:temp _pap_lore.level int 1 run scoreboard players get #pap_next {ns}.data
-function {ns}:v{version}/zombies/pap/append_level_to_lore_iter
-data modify storage {ns}:temp _pap_extract.lore set from storage {ns}:temp _pap_lore.out
-	""")
+	# Set item name with PAP level suffix: [name, " (PaP N/M)"]
+	write_versioned_function("zombies/pap/set_item_name_with_level", """
+$item modify entity @s $(slot) {"function":"minecraft:set_components","components":{"minecraft:item_name":[{"text":"$(name)","color":"gold","italic":false},{"text":" (PaP $(level)/$(max))","color":"aqua","italic":false}]}}
+""")
 
-	write_versioned_function("zombies/pap/append_level_to_lore_iter", f"""
-execute unless data storage {ns}:temp _pap_lore.in[0] run return 0
-data modify storage {ns}:temp _pap_lore.line set from storage {ns}:temp _pap_lore.in[0]
-function {ns}:v{version}/zombies/pap/append_level_to_lore_line with storage {ns}:temp _pap_lore
-data modify storage {ns}:temp _pap_lore.out append from storage {ns}:temp _pap_lore.line
-data remove storage {ns}:temp _pap_lore.in[0]
-function {ns}:v{version}/zombies/pap/append_level_to_lore_iter
-	""")
+	# Annotate lore lines with runtime-computed PAP deltas.
+	# Old stats are in _pap_old_stats (copied before overrides), new stats in _pap_extract.stats.
+	# Uses #pap_li to track current lore line index.
+	annotate_lore_lines: list[str] = [f'scoreboard players set #pap_li {ns}.data 0']
 
-	write_versioned_function("zombies/pap/append_level_to_lore_line", f"""
-execute if data storage {ns}:temp _pap_lore.line.text unless data storage {ns}:temp _pap_lore.line.extra[0] run data modify storage {ns}:temp _pap_lore.line.extra set value []
-$execute if data storage {ns}:temp _pap_lore.line.text run data modify storage {ns}:temp _pap_lore.line.extra append value {{"text":" +$(level)","color":"dark_green","italic":false}}
-	""")
+	# Line 0: Damage (integer)
+	annotate_lore_lines.extend([
+		f'execute store result score #pap_old {ns}.data run data get storage {ns}:temp _pap_old_stats.damage',
+		f'execute store result score #pap_new {ns}.data run data get storage {ns}:temp _pap_extract.stats.damage',
+		f'scoreboard players operation #pap_delta {ns}.data = #pap_new {ns}.data',
+		f'scoreboard players operation #pap_delta {ns}.data -= #pap_old {ns}.data',
+		f'execute unless score #pap_delta {ns}.data matches 0 run function {ns}:v{version}/zombies/pap/annotate_int_delta',
+		f'scoreboard players add #pap_li {ns}.data 1',
+	])
 
+	# Line 1: Ammo (skip — updated by ammo.py)
+	annotate_lore_lines.append(f'scoreboard players add #pap_li {ns}.data 1')
+
+	# Line 2: Reload Time (ticks → seconds)
+	annotate_lore_lines.extend([
+		f'execute store result score #pap_old {ns}.data run data get storage {ns}:temp _pap_old_stats.reload_time',
+		f'execute store result score #pap_new {ns}.data run data get storage {ns}:temp _pap_extract.stats.reload_time',
+		f'scoreboard players operation #pap_delta {ns}.data = #pap_new {ns}.data',
+		f'scoreboard players operation #pap_delta {ns}.data -= #pap_old {ns}.data',
+		f'execute unless score #pap_delta {ns}.data matches 0 run function {ns}:v{version}/zombies/pap/annotate_time_delta',
+		f'scoreboard players add #pap_li {ns}.data 1',
+	])
+
+	# Line 3 (conditional): Fire Rate — only if weapon has cooldown
+	annotate_lore_lines.append(
+		f'execute if data storage {ns}:temp _pap_extract.stats.cooldown run function {ns}:v{version}/zombies/pap/annotate_fire_rate_line'
+	)
+
+	# Line N (conditional): Pellets — only if weapon has pellet_count
+	annotate_lore_lines.append(
+		f'execute if data storage {ns}:temp _pap_extract.stats.pellet_count run function {ns}:v{version}/zombies/pap/annotate_pellets_line'
+	)
+
+	# Line N: Damage Decay (percentage, scaled x100)
+	annotate_lore_lines.extend([
+		f'execute store result score #pap_old {ns}.data run data get storage {ns}:temp _pap_old_stats.decay 100',
+		f'execute store result score #pap_new {ns}.data run data get storage {ns}:temp _pap_extract.stats.decay 100',
+		f'scoreboard players operation #pap_delta {ns}.data = #pap_new {ns}.data',
+		f'scoreboard players operation #pap_delta {ns}.data -= #pap_old {ns}.data',
+		f'execute unless score #pap_delta {ns}.data matches 0 run function {ns}:v{version}/zombies/pap/annotate_pct_delta',
+		f'scoreboard players add #pap_li {ns}.data 1',
+	])
+
+	# Line N: Switch Time (ticks → seconds)
+	annotate_lore_lines.extend([
+		f'execute store result score #pap_old {ns}.data run data get storage {ns}:temp _pap_old_stats.switch',
+		f'execute store result score #pap_new {ns}.data run data get storage {ns}:temp _pap_extract.stats.switch',
+		f'scoreboard players operation #pap_delta {ns}.data = #pap_new {ns}.data',
+		f'scoreboard players operation #pap_delta {ns}.data -= #pap_old {ns}.data',
+		f'execute unless score #pap_delta {ns}.data matches 0 run function {ns}:v{version}/zombies/pap/annotate_time_delta',
+	])
+	write_versioned_function("zombies/pap/annotate_lore", "\n".join(annotate_lore_lines))
+
+	# Helper: annotate new integer value (damage, pellets)
+	write_versioned_function("zombies/pap/annotate_int_delta", f"""
+execute store result storage {ns}:temp _pap_ann.index int 1 run scoreboard players get #pap_li {ns}.data
+data modify storage {ns}:temp _pap_ann.suffix set value ""
+execute store result storage {ns}:temp _pap_ann.value int 1 run scoreboard players get #pap_new {ns}.data
+function {ns}:v{version}/zombies/pap/annotate_append_int with storage {ns}:temp _pap_ann
+""")
+
+	# Helper: annotate new percentage value (decay — x100 already in #pap_new)
+	write_versioned_function("zombies/pap/annotate_pct_delta", f"""
+execute store result storage {ns}:temp _pap_ann.index int 1 run scoreboard players get #pap_li {ns}.data
+data modify storage {ns}:temp _pap_ann.suffix set value "%"
+execute store result storage {ns}:temp _pap_ann.value int 1 run scoreboard players get #pap_new {ns}.data
+function {ns}:v{version}/zombies/pap/annotate_append_int with storage {ns}:temp _pap_ann
+""")
+
+	# Helper: annotate new time value (reload, switch) — new ticks → X.Ys
+	write_versioned_function("zombies/pap/annotate_time_delta", f"""
+execute store result storage {ns}:temp _pap_ann.index int 1 run scoreboard players get #pap_li {ns}.data
+data modify storage {ns}:temp _pap_ann.suffix set value "s"
+
+# Tenths of seconds: new_ticks * 10 / 20
+scoreboard players operation #pap_tenths {ns}.data = #pap_new {ns}.data
+scoreboard players operation #pap_tenths {ns}.data *= #10 {ns}.data
+scoreboard players operation #pap_tenths {ns}.data /= #20 {ns}.data
+
+# Split into whole.decimal
+scoreboard players operation #pap_whole {ns}.data = #pap_tenths {ns}.data
+scoreboard players operation #pap_whole {ns}.data /= #10 {ns}.data
+scoreboard players operation #pap_dec {ns}.data = #pap_tenths {ns}.data
+scoreboard players operation #pap_dec {ns}.data %= #10 {ns}.data
+
+execute store result storage {ns}:temp _pap_ann.whole int 1 run scoreboard players get #pap_whole {ns}.data
+execute store result storage {ns}:temp _pap_ann.dec int 1 run scoreboard players get #pap_dec {ns}.data
+function {ns}:v{version}/zombies/pap/annotate_append_dec with storage {ns}:temp _pap_ann
+""")
+
+	# Helper: fire rate line (conditional) — rate = 200/cooldown (tenths)
+	write_versioned_function("zombies/pap/annotate_fire_rate_line", f"""
+execute store result score #pap_old {ns}.data run data get storage {ns}:temp _pap_old_stats.cooldown
+execute store result score #pap_new {ns}.data run data get storage {ns}:temp _pap_extract.stats.cooldown
+
+# Compute fire rate in tenths: 200 / cooldown
+scoreboard players operation #pap_rate_old {ns}.data = #200 {ns}.data
+scoreboard players operation #pap_rate_old {ns}.data /= #pap_old {ns}.data
+scoreboard players operation #pap_rate_new {ns}.data = #200 {ns}.data
+scoreboard players operation #pap_rate_new {ns}.data /= #pap_new {ns}.data
+
+scoreboard players operation #pap_delta {ns}.data = #pap_rate_new {ns}.data
+scoreboard players operation #pap_delta {ns}.data -= #pap_rate_old {ns}.data
+
+# Annotate if rate changed
+execute store result storage {ns}:temp _pap_ann.index int 1 run scoreboard players get #pap_li {ns}.data
+execute unless score #pap_delta {ns}.data matches 0 run function {ns}:v{version}/zombies/pap/annotate_rate_delta
+scoreboard players add #pap_li {ns}.data 1
+""")
+
+	# Helper: new rate value — #pap_rate_new is in tenths, split whole.dec
+	write_versioned_function("zombies/pap/annotate_rate_delta", f"""
+data modify storage {ns}:temp _pap_ann.suffix set value ""
+
+scoreboard players operation #pap_whole {ns}.data = #pap_rate_new {ns}.data
+scoreboard players operation #pap_whole {ns}.data /= #10 {ns}.data
+scoreboard players operation #pap_dec {ns}.data = #pap_rate_new {ns}.data
+scoreboard players operation #pap_dec {ns}.data %= #10 {ns}.data
+
+execute store result storage {ns}:temp _pap_ann.whole int 1 run scoreboard players get #pap_whole {ns}.data
+execute store result storage {ns}:temp _pap_ann.dec int 1 run scoreboard players get #pap_dec {ns}.data
+function {ns}:v{version}/zombies/pap/annotate_append_dec with storage {ns}:temp _pap_ann
+""")
+
+	# Helper: pellets line (conditional) — integer delta
+	write_versioned_function("zombies/pap/annotate_pellets_line", f"""
+execute store result score #pap_old {ns}.data run data get storage {ns}:temp _pap_old_stats.pellet_count
+execute store result score #pap_new {ns}.data run data get storage {ns}:temp _pap_extract.stats.pellet_count
+scoreboard players operation #pap_delta {ns}.data = #pap_new {ns}.data
+scoreboard players operation #pap_delta {ns}.data -= #pap_old {ns}.data
+execute unless score #pap_delta {ns}.data matches 0 run function {ns}:v{version}/zombies/pap/annotate_int_delta
+scoreboard players add #pap_li {ns}.data 1
+""")
+
+	# Macro: append integer annotation " > $(value)$(suffix)" — always appends, never removes previous
+	write_versioned_function("zombies/pap/annotate_append_int", f"""
+$data modify storage {ns}:temp _pap_extract.lore[$(index)].extra append value {{"text":" > $(value)$(suffix)","color":"aqua","italic":false}}
+""")
+
+	# Macro: append decimal annotation " > $(whole).$(dec)$(suffix)" — always appends, never removes previous
+	write_versioned_function("zombies/pap/annotate_append_dec", f"""
+$data modify storage {ns}:temp _pap_extract.lore[$(index)].extra append value {{"text":" > $(whole).$(dec)$(suffix)","color":"aqua","italic":false}}
+""")
 	write_versioned_function("zombies/pap/set_item_name", """
 $item modify entity @s $(slot) {"function":"minecraft:set_components","components":{"minecraft:item_name":{"text":"$(name)","color":"gold","italic":false}}}
 """)
@@ -242,10 +372,9 @@ $item modify entity @s $(slot) {"function":"minecraft:set_components","component
 
 	write_versioned_function("zombies/pap/apply_to_slot", f"""
 $item modify entity @s $(slot) {ns}:v{version}/zb_pap_apply_stats
-execute if data storage {ns}:temp _pap_extract.new_name run data modify storage {ns}:temp _pap_apply_name.slot set value "$(slot)"
-execute if data storage {ns}:temp _pap_extract.new_name run data modify storage {ns}:temp _pap_apply_name.name set from storage {ns}:temp _pap_extract.new_name
-execute if data storage {ns}:temp _pap_extract.new_name run function {ns}:v{version}/zombies/pap/set_item_name with storage {ns}:temp _pap_apply_name
-execute if data storage {ns}:temp _pap_extract.lore[0] run data modify storage {ns}:temp _pap_apply_lore.slot set value "$(slot)"
+$data modify storage {ns}:temp _pap_name_data.slot set value "$(slot)"
+function {ns}:v{version}/zombies/pap/set_item_name_with_level with storage {ns}:temp _pap_name_data
+$execute if data storage {ns}:temp _pap_extract.lore[0] run data modify storage {ns}:temp _pap_apply_lore.slot set value "$(slot)"
 execute if data storage {ns}:temp _pap_extract.lore[0] run data modify storage {ns}:temp _pap_apply_lore.lore set from storage {ns}:temp _pap_extract.lore
 execute if data storage {ns}:temp _pap_extract.lore[0] run function {ns}:v{version}/zombies/pap/set_item_lore with storage {ns}:temp _pap_apply_lore
 $function {ns}:v{version}/zombies/bonus/reload_weapon_slot {{slot:"$(slot)"}}
@@ -324,6 +453,9 @@ scoreboard players remove #pap_next_idx {ns}.data 1
 function {ns}:v{version}/zombies/pap/compute_max_level
 execute if score #pap_next {ns}.data > #pap_max {ns}.data run return run function {ns}:v{version}/zombies/pap/deny_max_level
 
+# Backup visible stats for lore annotation before overrides
+data modify storage {ns}:temp _pap_old_stats set from storage {ns}:temp _pap_extract.stats
+
 # Deduct points and apply runtime overrides from pap_stats
 scoreboard players operation @s {ns}.zb.points -= #pap_price {ns}.data
 function {ns}:v{version}/zombies/pap/apply_runtime_overrides
@@ -331,29 +463,75 @@ function {ns}:v{version}/zombies/pap/apply_runtime_overrides
 # Keep level tracking in the weapon data itself
 execute store result storage {ns}:temp _pap_extract.stats.pap_level int 1 run scoreboard players get #pap_next {ns}.data
 
-# Optional runtime PAP name override
+# Resolve pre-built PAP display name with level suffix
 execute if data storage {ns}:temp _pap_extract.stats.pap_stats.pap_name run function {ns}:v{version}/zombies/pap/resolve_runtime_name
 
-# Lore visual marker for current PAP level
-execute if data storage {ns}:temp _pap_extract.lore[0] run function {ns}:v{version}/zombies/pap/append_level_to_lore
+# Prepare name data: use PAP name if available, otherwise keep original
+execute if data storage {ns}:temp _pap_extract.new_name run data modify storage {ns}:temp _pap_name_data.name set from storage {ns}:temp _pap_extract.new_name
+execute unless data storage {ns}:temp _pap_extract.new_name run data modify storage {ns}:temp _pap_name_data.name set from storage {ns}:temp _pap_extract.current_name
+execute store result storage {ns}:temp _pap_name_data.level int 1 run scoreboard players get #pap_next {ns}.data
+execute store result storage {ns}:temp _pap_name_data.max int 1 run scoreboard players get #pap_max {ns}.data
 
-# Preserve common refill behavior: if capacity is overridden and no explicit remaining_bullets override,
-# refill to the new capacity for this upgrade.
-execute if data storage {ns}:temp _pap_extract.stats.pap_stats.capacity unless data storage {ns}:temp _pap_extract.stats.pap_stats.{REMAINING_BULLETS} run data modify storage {ns}:temp _pap_extract.stats.{REMAINING_BULLETS} set from storage {ns}:temp _pap_extract.stats.capacity
+# Annotate lore lines with runtime-computed PAP deltas
+execute if data storage {ns}:temp _pap_extract.lore[0] run function {ns}:v{version}/zombies/pap/annotate_lore
 
-# Apply to item and refresh ammo/lore
+# Always refill gun ammo to max capacity on PAP
+data modify storage {ns}:temp _pap_extract.stats.{REMAINING_BULLETS} set from storage {ns}:temp _pap_extract.stats.capacity
+
+# Apply to item, refill matching magazines, and refresh ammo display
 function {ns}:v{version}/zombies/pap/apply_to_slot with storage {ns}:temp _pap
+function {ns}:v{version}/zombies/pap/refill_matching_magazines with storage {ns}:temp _pap_extract.stats
 function {ns}:v{version}/ammo/compute_reserve
 
 # Message and feedback
 execute store result storage {ns}:temp _pap_buy.id int 1 run scoreboard players get @n[tag=bs.interaction.target] {ns}.zb.pap.id
 function {ns}:v{version}/zombies/pap/lookup_machine with storage {ns}:temp _pap_buy
-tellraw @s [{MGS_TAG},{{"text":"Upgraded via ","color":"green"}},{{"storage":"{ns}:temp","nbt":"_pap_machine.name","color":"gold","interpret":true}},{{"text":" to level ","color":"green"}},{{"score":{{"name":"#pap_next","objective":"{ns}.data"}},"color":"yellow"}},{{"text":".","color":"green"}}]
+function {ns}:v{version}/zombies/pap/pap_chat_message
 function {ns}:v{version}/zombies/feedback/sound_success
 """)
+
+	# Refill all magazine items in inventory that match the PAP'd weapon's base_weapon.
+	mag_refill_lines: list[str] = [f"# Refill matching {BASE_WEAPON} magazines — called with storage mgs:temp _pap_extract.stats"]
+	for slot in ALL_SLOTS:
+		if slot == "weapon.mainhand":
+			continue
+		mag_refill_lines.append(
+			f'$execute if items entity @s {slot} *[custom_data~{{{ns}:{{magazine:true,weapon:"$({BASE_WEAPON})"}}}}] run function {ns}:v{version}/zombies/bonus/refill_magazine {{slot:"{slot}"}}'
+		)
+	write_versioned_function("zombies/pap/refill_matching_magazines", "\n".join(mag_refill_lines))
+
+	# Macro: send one lore-line compound as a tellraw text component (with prefix).
+	write_versioned_function("zombies/pap/pap_chat_lore_line", """$tellraw @s [{"text":"- ","color":"gray"},$(line)]\n""")
+
+	# Macro: copy lore[$(index)] to _pap_lore_line.line and display if non-empty.
+	write_versioned_function("zombies/pap/pap_chat_lore_iter", f"""
+$data modify storage {ns}:temp _pap_lore_line.line set from storage {ns}:temp _pap_extract.lore[$(index)]
+execute if data storage {ns}:temp _pap_lore_line.line unless data storage {ns}:temp _pap_lore_line.line{{text:""}} run function {ns}:v{version}/zombies/pap/pap_chat_lore_line with storage {ns}:temp _pap_lore_line
+""")
+
+	# Loop: iterates indices 0 .. #pap_lore_len-1, calling pap_chat_lore_iter each step.
+	write_versioned_function("zombies/pap/pap_chat_lore_loop", f"""
+execute store result storage {ns}:temp _pap_lore_idx.index int 1 run scoreboard players get #pap_li {ns}.data
+function {ns}:v{version}/zombies/pap/pap_chat_lore_iter with storage {ns}:temp _pap_lore_idx
+scoreboard players add #pap_li {ns}.data 1
+execute if score #pap_li {ns}.data < #pap_lore_len {ns}.data run function {ns}:v{version}/zombies/pap/pap_chat_lore_loop
+""")
+
+	# Detailed PAP upgrade chat message.
+	pap_chat_lines: list[str] = [
+		f'tellraw @s [{MGS_TAG},{{"text":"Machine: ","color":"gray"}},{{"storage":"{ns}:temp","nbt":"_pap_machine.name","color":"gold","italic":false,"interpret":true}},{{"text":"\\nLevel: ","color":"gray"}},{{"score":{{"name":"#pap_next","objective":"{ns}.data"}},"color":"aqua"}},{{"text":"/","color":"dark_gray"}},{{"score":{{"name":"#pap_max","objective":"{ns}.data"}},"color":"aqua"}},{{"text":"  Cost: -","color":"gray"}},{{"score":{{"name":"#pap_price","objective":"{ns}.data"}},"color":"yellow"}},{{"text":" points","color":"gray"}}]',
+		'tellraw @s [{"text":"Weapon stats:","color":"gray","italic":true}]',
+		# Compute (len - 2) to skip the last 2 entries (switch time + empty separator)
+		f'execute store result score #pap_lore_len {ns}.data run data get storage {ns}:temp _pap_extract.lore',
+		f'scoreboard players remove #pap_lore_len {ns}.data 2',
+		f'scoreboard players set #pap_li {ns}.data 0',
+		f'execute if score #pap_li {ns}.data < #pap_lore_len {ns}.data run function {ns}:v{version}/zombies/pap/pap_chat_lore_loop',
+	]
+	write_versioned_function("zombies/pap/pap_chat_message", "\n".join(pap_chat_lines))
 
 	# Hook into preload_complete to spawn PAP machine interactions.
 	write_versioned_function("zombies/preload_complete", f"""
 # Setup Pack-a-Punch machines
 execute if data storage {ns}:zombies game.map.pap_machines[0] run function {ns}:v{version}/zombies/pap/setup
 """)
+

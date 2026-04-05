@@ -50,6 +50,9 @@ scoreboard players remove #pap_next_idx mgs.data 1
 function mgs:v5.0.0/zombies/pap/compute_max_level
 execute if score #pap_next mgs.data > #pap_max mgs.data run return run function mgs:v5.0.0/zombies/pap/deny_max_level
 
+# Backup visible stats for lore annotation before overrides
+data modify storage mgs:temp _pap_old_stats set from storage mgs:temp _pap_extract.stats
+
 # Deduct points and apply runtime overrides from pap_stats
 scoreboard players operation @s mgs.zb.points -= #pap_price mgs.data
 function mgs:v5.0.0/zombies/pap/apply_runtime_overrides
@@ -57,23 +60,29 @@ function mgs:v5.0.0/zombies/pap/apply_runtime_overrides
 # Keep level tracking in the weapon data itself
 execute store result storage mgs:temp _pap_extract.stats.pap_level int 1 run scoreboard players get #pap_next mgs.data
 
-# Optional runtime PAP name override
+# Resolve pre-built PAP display name with level suffix
 execute if data storage mgs:temp _pap_extract.stats.pap_stats.pap_name run function mgs:v5.0.0/zombies/pap/resolve_runtime_name
 
-# Lore visual marker for current PAP level
-execute if data storage mgs:temp _pap_extract.lore[0] run function mgs:v5.0.0/zombies/pap/append_level_to_lore
+# Prepare name data: use PAP name if available, otherwise keep original
+execute if data storage mgs:temp _pap_extract.new_name run data modify storage mgs:temp _pap_name_data.name set from storage mgs:temp _pap_extract.new_name
+execute unless data storage mgs:temp _pap_extract.new_name run data modify storage mgs:temp _pap_name_data.name set from storage mgs:temp _pap_extract.current_name
+execute store result storage mgs:temp _pap_name_data.level int 1 run scoreboard players get #pap_next mgs.data
+execute store result storage mgs:temp _pap_name_data.max int 1 run scoreboard players get #pap_max mgs.data
 
-# Preserve common refill behavior: if capacity is overridden and no explicit remaining_bullets override,
-# refill to the new capacity for this upgrade.
-execute if data storage mgs:temp _pap_extract.stats.pap_stats.capacity unless data storage mgs:temp _pap_extract.stats.pap_stats.remaining_bullets run data modify storage mgs:temp _pap_extract.stats.remaining_bullets set from storage mgs:temp _pap_extract.stats.capacity
+# Annotate lore lines with runtime-computed PAP deltas
+execute if data storage mgs:temp _pap_extract.lore[0] run function mgs:v5.0.0/zombies/pap/annotate_lore
 
-# Apply to item and refresh ammo/lore
+# Always refill gun ammo to max capacity on PAP
+data modify storage mgs:temp _pap_extract.stats.remaining_bullets set from storage mgs:temp _pap_extract.stats.capacity
+
+# Apply to item, refill matching magazines, and refresh ammo display
 function mgs:v5.0.0/zombies/pap/apply_to_slot with storage mgs:temp _pap
+function mgs:v5.0.0/zombies/pap/refill_matching_magazines with storage mgs:temp _pap_extract.stats
 function mgs:v5.0.0/ammo/compute_reserve
 
 # Message and feedback
 execute store result storage mgs:temp _pap_buy.id int 1 run scoreboard players get @n[tag=bs.interaction.target] mgs.zb.pap.id
 function mgs:v5.0.0/zombies/pap/lookup_machine with storage mgs:temp _pap_buy
-tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.upgraded_via","color":"green"},{"storage":"mgs:temp","nbt":"_pap_machine.name","color":"gold","interpret":true},[{"text":" ","color":"green"}, {"translate":"mgs.to_level"}],{"score":{"name":"#pap_next","objective":"mgs.data"},"color":"yellow"},{"text":".","color":"green"}]
+function mgs:v5.0.0/zombies/pap/pap_chat_message
 function mgs:v5.0.0/zombies/feedback/sound_success
 
