@@ -7,7 +7,7 @@
 #
 
 # Weapon not collected — retreat slowly into the machine over 100 ticks
-data merge entity @n[tag=mgs.pap_weapon_display,distance=..2] {Glowing:0b,interpolation_duration:100,start_interpolation:0,transformation:{left_rotation:[0f,0.383f,0f,0.924f],right_rotation:[0f,0f,0f,1f],translation:[0f,-0.3f,0f],scale:[0.5f,0.5f,0.5f]}}
+data merge entity @n[tag=mgs.pap_weapon_display,distance=..2] {Glowing:0b,interpolation_duration:100,start_interpolation:0,transformation:{translation:[0f,0f,0f],scale:[0.6f,0.6f,0.6f]}}
 
 # Enter retreat mode: pap_anim -2 → -102 over 100 ticks
 scoreboard players set @s mgs.pap_anim -2

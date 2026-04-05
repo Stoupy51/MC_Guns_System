@@ -8,6 +8,7 @@
 # @args		base_weapon (unknown)
 #
 
+data remove storage mgs:temp _pap_scopes
 $data modify storage mgs:temp _pap_scopes set from storage mgs:zombies scope_variants."$(base_weapon)"
 
 # Skip if weapon has no scope variants or only one

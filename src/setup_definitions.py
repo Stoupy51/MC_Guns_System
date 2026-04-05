@@ -136,9 +136,9 @@ def beet_default(ctx: Context) -> None:
 
             # Mark weapons with scopes: _3 variants get x3 zoom, _4 variants get x4 zoom
             if scope_suffix == "_3":
-                ns_data["scope_level"] = 3
+                gun_stats["scope_level"] = 3
             elif scope_suffix == "_4":
-                ns_data["scope_level"] = 4
+                gun_stats["scope_level"] = 4
 
             # Add consumable and use_effects components for tick-perfect right-click detection
             obj.components["consumable"] = {

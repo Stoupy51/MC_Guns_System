@@ -60,6 +60,10 @@ scoreboard objectives add {ns}.zb.pap.id dummy
 scoreboard objectives add {ns}.zb.pap.price dummy
 scoreboard objectives add {ns}.zb.pap.power dummy
 scoreboard objectives add {ns}.pap_anim dummy
+
+# Per-player PAP tracking (for cleanup when weapon is lost/collected)
+scoreboard objectives add {ns}.zb.pap_s dummy
+scoreboard objectives add {ns}.zb.pap_mid dummy
 """)
 
 	# Load scope variant data for PAP randomization
@@ -254,6 +258,7 @@ function {ns}:v{version}/zombies/pap/pick_list_value_step
 	# --- PAP Scope Randomization ---
 	# Randomly change the weapon's scope variant when it exits the PAP machine.
 	write_versioned_function("zombies/pap/randomize_scope", f"""
+data remove storage {ns}:temp _pap_scopes
 $data modify storage {ns}:temp _pap_scopes set from storage {ns}:zombies scope_variants."$({BASE_WEAPON})"
 
 # Skip if weapon has no scope variants or only one
@@ -644,6 +649,8 @@ playsound minecraft:block.anvil.use ambient @s ~ ~ ~ 0.7 0.9
 
 # Take weapon from player and start PAP animation
 tag @s add {ns}.pap_owner
+scoreboard players operation @s {ns}.zb.pap_s = #pap_sel {ns}.data
+execute store result score @s {ns}.zb.pap_mid run scoreboard players get @n[tag=bs.interaction.target] {ns}.zb.pap.id
 execute as @n[tag=bs.interaction.target] at @s run function {ns}:v{version}/zombies/pap/anim_start with storage {ns}:temp _pap
 tag @s remove {ns}.pap_owner
 """)
@@ -695,6 +702,13 @@ execute if score #pap_li {ns}.data < #pap_lore_len {ns}.data run function {ns}:v
 	#   100:            TRIGGER RETREAT — glowing weapon, starts retreat timer
 	#   -2→-102 (100 t): RETREAT   — weapon retreats back, still collectible
 	#   -102:           RETREAT FINISH — weapon destroyed (lost)
+	# FIXME, use this Timeline instead (no rotation or size changes):
+	#   240-> 211 (30t): GOING IN   — slide horizontally from ahead to center (beware of waiting 2 ticks after summon before starting interpolation to avoid information not being synced to client)
+	#   210-> 151 (60t): INSIDE     — particles + periodic sound
+	#   150-> 121 (30t): COMING OUT — slide horizontally from center to ahead
+	#   120:             TRIGGER RETREAT — glowing weapon, starts retreat timer and allows collection
+	#   119→ 1 (118t):   RETREAT   — weapon retreats back, still collectible
+	#   0:               RETREAT FINISH — weapon destroyed (lost) (sound)
 
 	# Spawn weapon item_display, transfer weapon, start horizontal going-in.
 	write_versioned_function("zombies/pap/anim_start", f"""
@@ -702,14 +716,14 @@ execute if score #pap_li {ns}.data < #pap_lore_len {ns}.data run function {ns}:v
 # $(slot) = player weapon slot (hotbar.1 / hotbar.2 / hotbar.3)
 
 # Summon weapon item_display offset to the right of the machine
-summon minecraft:item_display ~ ~0.8 ~ {{Tags:["{ns}.pap_weapon_display","{ns}.gm_entity"],billboard:"fixed",item_display:"fixed",Glowing:0b,transformation:{{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],translation:[0.8f,0f,0f],scale:[0.85f,0.85f,0.85f]}}}}
+summon minecraft:item_display ~ ~0.8 ~ {{Tags:["{ns}.pap_weapon_display","{ns}.gm_entity"],billboard:"fixed",item_display:"fixed",Glowing:0b,transformation:{{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[0.6f,0.6f,0.6f]}}}}
 
 # Transfer weapon into display entity via contents slot, then clear player slot
 $item replace entity @n[tag={ns}.pap_weapon_display,distance=..2] contents from entity @p[tag={ns}.pap_owner] $(slot)
 $item replace entity @p[tag={ns}.pap_owner] $(slot) with minecraft:air
 
 # Start going-in interpolation: slide horizontally from ahead to center over 40 ticks with 45-degree Y rotation
-data merge entity @n[tag={ns}.pap_weapon_display,distance=..2] {{interpolation_duration:40,start_interpolation:0,transformation:{{left_rotation:[0f,0.0f,0f,0.1f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[0.8f,0.8f,0.8f]}}}}
+data merge entity @n[tag={ns}.pap_weapon_display,distance=..2] {{interpolation_duration:40,start_interpolation:0,transformation:{{left_rotation:[0f,0.0f,0f,1f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[0.6f,0.6f,0.6f]}}}}
 
 # Store this machine's slot for later retrieval when player collects the weapon
 execute store result storage {ns}:temp _pap_anim_slot.id int 1 run scoreboard players get @s {ns}.zb.pap.id
@@ -763,18 +777,18 @@ scoreboard players operation #pap_t {ns}.data %= #2 {ns}.data
 execute if score #pap_t {ns}.data matches 0 run particle dust{{color:[0.565,0.0,1.0],scale:1.5}} ~ ~0.8 ~ 0.4 0.2 0.2 0 4 force
 """)
 
-	# Trigger inside processing: rotate weapon 180 degrees and shrink
+	# Trigger inside processing
 	write_versioned_function("zombies/pap/anim_trigger_inside", f"""
-# Rotate 180 degrees around Y axis, shrink slightly, dip down during processing (60 ticks)
-data merge entity @n[tag={ns}.pap_weapon_display,distance=..2] {{interpolation_duration:60,start_interpolation:0,transformation:{{left_rotation:[0f,1f,0f,0f],right_rotation:[0f,0f,0f,1f],translation:[0f,-0.15f,0f],scale:[0.6f,0.6f,0.6f]}}}}
+# Dip down during processing (60 ticks)
+data merge entity @n[tag={ns}.pap_weapon_display,distance=..2] {{interpolation_duration:60,start_interpolation:0,transformation:{{translation:[0f,0f,0f],scale:[0.6f,0.6f,0.6f]}}}}
 playsound minecraft:block.enchantment_table.use ambient @a[distance=..30] ~ ~ ~ 0.8 1.0
 """)
 
 	# Dense particles and sounds while the weapon is being processed inside the machine.
 	write_versioned_function("zombies/pap/anim_inside", f"""
 # Dense purple dust + end_rod particles every tick
-particle dust{{color:[0.565,0.0,1.0],scale:1.5}} ~ ~0.8 ~ 0.4 0.3 0.4 0 6 force
-particle end_rod ~ ~0.8 ~ 0.3 0.2 0.3 0.05 4 force
+particle dust{{color:[0.565,0.0,1.0],scale:1.5}} ~ ~0.8 ~ 0.4 0.3 0.4 0 1 force
+particle end_rod ~ ~0.8 ~ 0.3 0.2 0.3 0.05 1 force
 
 # Periodic processing sound every 10 ticks
 execute store result score #pap_t {ns}.data run scoreboard players get @s {ns}.pap_anim
@@ -785,7 +799,7 @@ execute if score #pap_t {ns}.data matches 0 run playsound minecraft:block.enchan
 	# Trigger coming-out interpolation: slide horizontally out to the left, elevated.
 	write_versioned_function("zombies/pap/anim_trigger_coming_out", f"""
 # Slide weapon horizontally out to the left with slight elevation over 40 ticks, scale up
-data merge entity @n[tag={ns}.pap_weapon_display,distance=..2] {{interpolation_duration:40,start_interpolation:0,transformation:{{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],translation:[-0.8f,0.2f,0f],scale:[0.9f,0.9f,0.9f]}}}}
+data merge entity @n[tag={ns}.pap_weapon_display,distance=..2] {{interpolation_duration:40,start_interpolation:0,transformation:{{translation:[-0.8f,0f,0f],scale:[0.6f,0.6f,0.6f]}}}}
 playsound minecraft:block.beacon.activate ambient @a[distance=..30] ~ ~ ~ 1.5 0.8
 
 # Weapon upgraded — notify players
@@ -794,28 +808,28 @@ tellraw @a[scores={{{ns}.zb.in_game=1}}] [{MGS_TAG},{{"text":"Weapon upgraded! C
 
 	# End_rod and purple particles during the coming-out phase.
 	write_versioned_function("zombies/pap/anim_coming_out", r"""
-particle end_rod ~ ~0.8 ~ 0.4 0.3 0.3 0.05 6 force
-particle dust{color:[0.565,0.0,1.0],scale:1.5} ~ ~1.0 ~ 0.4 0.3 0.4 0 5 force
+particle end_rod ~ ~0.8 ~ 0.4 0.3 0.3 0.05 3 force
+particle dust{color:[0.565,0.0,1.0],scale:1.5} ~ ~1.0 ~ 0.4 0.3 0.4 0 2 force
 """)
 
 	# Trigger: weapon fully emerged — start slow retreat (BO style).
 	write_versioned_function("zombies/pap/anim_trigger_retreat", f"""
 # Weapon glows while collectible, start retreat: slide back to center and down over 100 ticks
-data merge entity @n[tag={ns}.pap_weapon_display,distance=..2] {{Glowing:1b,interpolation_duration:100,start_interpolation:0,transformation:{{left_rotation:[0f,0.383f,0f,0.924f],right_rotation:[0f,0f,0f,1f],translation:[0f,-0.3f,0f],scale:[0.5f,0.5f,0.5f]}}}}
+data merge entity @n[tag={ns}.pap_weapon_display,distance=..2] {{Glowing:1b,interpolation_duration:100,start_interpolation:0,transformation:{{translation:[0f,0f,0f],scale:[0.6f,0.6f,0.6f]}}}}
 
 # Switch to retreat mode (-2 to -102 over 100 ticks)
 scoreboard players set @s {ns}.pap_anim -2
 
 # Sound + particle burst
 particle end_rod ~ ~1.0 ~ 0.5 0.3 0.5 0.1 20 force
-playsound minecraft:ui.toast.challenge_complete ambient @a[distance=..30] ~ ~ ~ 0.8 1.0
+playsound minecraft:entity.player.levelup ambient @a[distance=..30] ~ ~ ~ 0.8 1.0
 tellraw @a[scores={{{ns}.zb.in_game=1}}] [{MGS_TAG},{{"text":"The weapon is retreating! Collect it now!","color":"yellow"}}]
 """)
 
 	# Timeout: safety net if pap_anim somehow reaches 0 (should not happen normally).
 	write_versioned_function("zombies/pap/anim_timeout", f"""
 # Weapon not collected — retreat slowly into the machine over 100 ticks
-data merge entity @n[tag={ns}.pap_weapon_display,distance=..2] {{Glowing:0b,interpolation_duration:100,start_interpolation:0,transformation:{{left_rotation:[0f,0.383f,0f,0.924f],right_rotation:[0f,0f,0f,1f],translation:[0f,-0.3f,0f],scale:[0.5f,0.5f,0.5f]}}}}
+data merge entity @n[tag={ns}.pap_weapon_display,distance=..2] {{Glowing:0b,interpolation_duration:100,start_interpolation:0,transformation:{{translation:[0f,0f,0f],scale:[0.6f,0.6f,0.6f]}}}}
 
 # Enter retreat mode: pap_anim -2 → -102 over 100 ticks
 scoreboard players set @s {ns}.pap_anim -2
@@ -845,6 +859,35 @@ function {ns}:v{version}/zombies/pap/anim_restore_display
 # Notify and sound
 tellraw @a[scores={{{ns}.zb.in_game=1}}] [{MGS_TAG},{{"text":"The weapon was lost!","color":"red","bold":true}}]
 playsound minecraft:entity.generic.extinguish_fire ambient @a[distance=..20] ~ ~ ~ 1.0 0.8
+
+# Clean up orphaned magazine and PAP tracking for the owner
+execute store result score #pap_mid {ns}.data run scoreboard players get @s {ns}.zb.pap.id
+execute store result storage {ns}:temp _pap_retreat.id int 1 run scoreboard players get @s {ns}.zb.pap.id
+function {ns}:v{version}/zombies/pap/retreat_cleanup with storage {ns}:temp _pap_retreat
+""")
+
+	# Clean up orphaned magazine and tracking data when weapon is lost.
+	write_versioned_function("zombies/pap/retreat_cleanup", f"""
+# Get the stored slot for this machine
+$data modify storage {ns}:temp _pap_retreat.slot set from storage {ns}:zombies pap_anim_slot."$(id)"
+
+# Find owner by matching PAP machine ID and clear their orphaned magazine
+execute as @a[scores={{{ns}.zb.pap_s=1..}}] if score @s {ns}.zb.pap_mid = #pap_mid {ns}.data run function {ns}:v{version}/zombies/pap/retreat_clear_owner
+
+# Clean stored slot data
+$data remove storage {ns}:zombies pap_anim_slot."$(id)"
+""")
+
+	# Clear orphaned magazine from the player who lost their weapon (runs as player).
+	write_versioned_function("zombies/pap/retreat_clear_owner", f"""
+# Clear the orphaned magazine from the corresponding inventory slot
+execute if data storage {ns}:temp _pap_retreat{{slot:"hotbar.1"}} run item replace entity @s inventory.1 with air
+execute if data storage {ns}:temp _pap_retreat{{slot:"hotbar.2"}} run item replace entity @s inventory.2 with air
+execute if data storage {ns}:temp _pap_retreat{{slot:"hotbar.3"}} run item replace entity @s inventory.3 with air
+
+# Reset PAP tracking scores
+scoreboard players set @s {ns}.zb.pap_s 0
+scoreboard players set @s {ns}.zb.pap_mid 0
 """)
 
 	# Called from on_right_click when machine pap_anim is in collect-wait range (1..100).
@@ -861,9 +904,10 @@ execute store result storage {ns}:temp _pap_c.id int 1 run scoreboard players ge
 function {ns}:v{version}/zombies/pap/anim_collect_lookup with storage {ns}:temp _pap_c
 """)
 
-	# Macro $(id): fetch stored slot string, then call give.
+	# Macro $(id): fetch stored slot string and pass id, then call give.
 	write_versioned_function("zombies/pap/anim_collect_lookup", f"""
 $data modify storage {ns}:temp _pap_cg.slot set from storage {ns}:zombies pap_anim_slot."$(id)"
+$data modify storage {ns}:temp _pap_cg.id set value $(id)
 function {ns}:v{version}/zombies/pap/anim_collect_give with storage {ns}:temp _pap_cg
 """)
 
@@ -883,6 +927,14 @@ kill @e[tag={ns}.pap_weapon_display,distance=..2]
 
 # Restore the static machine display entity
 function {ns}:v{version}/zombies/pap/anim_restore_display
+
+# Clear PAP slot tracking for the original owner
+execute store result score #pap_mid {ns}.data run scoreboard players get @s {ns}.zb.pap.id
+execute as @a[scores={{{ns}.zb.pap_s=1..}}] if score @s {ns}.zb.pap_mid = #pap_mid {ns}.data run scoreboard players set @s {ns}.zb.pap_s 0
+execute as @a[scores={{{ns}.zb.pap_mid=1..}}] if score @s {ns}.zb.pap_mid = #pap_mid {ns}.data run scoreboard players set @s {ns}.zb.pap_mid 0
+
+# Clean stored slot data
+$data remove storage {ns}:zombies pap_anim_slot."$(id)"
 
 # Notify the player
 execute as @p[tag={ns}.pap_owner] run tellraw @s [{MGS_TAG},{{"text":"You collected your upgraded weapon!","color":"green","bold":true}}]

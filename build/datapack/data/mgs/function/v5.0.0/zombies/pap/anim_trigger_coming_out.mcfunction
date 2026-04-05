@@ -7,7 +7,7 @@
 #
 
 # Slide weapon horizontally out to the left with slight elevation over 40 ticks, scale up
-data merge entity @n[tag=mgs.pap_weapon_display,distance=..2] {interpolation_duration:40,start_interpolation:0,transformation:{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],translation:[-0.8f,0.2f,0f],scale:[0.9f,0.9f,0.9f]}}
+data merge entity @n[tag=mgs.pap_weapon_display,distance=..2] {interpolation_duration:40,start_interpolation:0,transformation:{translation:[-0.8f,0f,0f],scale:[0.6f,0.6f,0.6f]}}
 playsound minecraft:block.beacon.activate ambient @a[distance=..30] ~ ~ ~ 1.5 0.8
 
 # Weapon upgraded — notify players

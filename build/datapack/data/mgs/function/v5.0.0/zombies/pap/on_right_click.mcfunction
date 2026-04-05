@@ -101,6 +101,8 @@ playsound minecraft:block.anvil.use ambient @s ~ ~ ~ 0.7 0.9
 
 # Take weapon from player and start PAP animation
 tag @s add mgs.pap_owner
+scoreboard players operation @s mgs.zb.pap_s = #pap_sel mgs.data
+execute store result score @s mgs.zb.pap_mid run scoreboard players get @n[tag=bs.interaction.target] mgs.zb.pap.id
 execute as @n[tag=bs.interaction.target] at @s run function mgs:v5.0.0/zombies/pap/anim_start with storage mgs:temp _pap
 tag @s remove mgs.pap_owner
 
