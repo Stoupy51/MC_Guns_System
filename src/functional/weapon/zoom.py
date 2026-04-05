@@ -19,11 +19,15 @@ execute unless data storage {ns}:gun all.gun run return run function {ns}:v{vers
 # Grenades cannot zoom/aim
 execute if data storage {ns}:gun all.stats.grenade_type run return 0
 
+# Get is sneaking state (don't apply zoom if reloading)
+scoreboard players set #is_sneaking {ns}.data 0
+execute if predicate {ns}:v{version}/is_sneaking unless entity @s[tag={ns}.reloading] run scoreboard players set #is_sneaking {ns}.data 1
+
 # If already zoom and not sneaking, unzoom
-execute if data storage {ns}:gun all.stats.{IS_ZOOM} unless predicate {ns}:v{version}/is_sneaking run return run function {ns}:v{version}/zoom/remove
+execute if data storage {ns}:gun all.stats.{IS_ZOOM} if score #is_sneaking {ns}.data matches 0 run return run function {ns}:v{version}/zoom/remove
 
 # If not zooming but sneaking, zoom
-execute unless data storage {ns}:gun all.stats.{IS_ZOOM} if predicate {ns}:v{version}/is_sneaking run return run function {ns}:v{version}/zoom/set
+execute unless data storage {ns}:gun all.stats.{IS_ZOOM} if score #is_sneaking {ns}.data matches 1 run return run function {ns}:v{version}/zoom/set
 
 ## Shader: zoom marker with delay, scope check, and cooldown guard
 # Reset zoom timer when not zooming

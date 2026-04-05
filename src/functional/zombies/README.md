@@ -11,3 +11,8 @@
 
 - When loosing weapon with pap, while having 3 weapons in inventory, we end up with 2.
 In case the loose slot is between gun 1 and 3, when we get a new weapon it believes we have 2 guns (slot 1 and 2) and it replaces the third weapon even tho it's slot 2 that is empty
+
+- Inventory:
+  - If I swap gun 1 and 2 by pressing hotbar keys in inventory, then gun 1 will disappear (also the magazines) and gun 2 will be replaced to its expected position. We are effectively loosing a gun and its magazines.
+  - Same issue apply with other items, if I swap the Player Info item with anything in the inventory, the item will be lost but not the Player Info item itself.
+
