@@ -379,7 +379,7 @@ function {ns}:v{version}/zombies/mystery_box/reset
 """)
 
 	write_versioned_function("zombies/mystery_box/capture_collected_name", f"""
-data modify storage {ns}:temp _mb_collected_name set value [{{"text":"$(weapon_id)","color":"gold"}}]
+$data modify storage {ns}:temp _mb_collected_name set value [{{"text":"$(weapon_id)","color":"gold"}}]
 scoreboard players set #mb_name_found {ns}.data 0
 
 $execute if score #mb_name_found {ns}.data matches 0 if items entity @s hotbar.1 *[custom_data~{owned_gun_macro_cd}] run function {ns}:v{version}/zombies/mystery_box/capture_collected_name_slot {{slot:"hotbar.1"}}

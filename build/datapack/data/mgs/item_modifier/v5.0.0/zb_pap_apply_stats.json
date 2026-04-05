@@ -9,6 +9,11 @@
 			"source": "_pap_extract.stats",
 			"target": "mgs.stats",
 			"op": "replace"
+		},
+		{
+			"source": "_pap_extract.weapon",
+			"target": "mgs.weapon",
+			"op": "replace"
 		}
 	]
 }

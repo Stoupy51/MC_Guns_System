@@ -9,11 +9,11 @@
 # Guard: game must be active
 execute unless data storage mgs:zombies game{state:"active"} run return fail
 
-# If weapon is coming-out (100..129) or retreating (-61..-2): allow collection
-execute if score @n[tag=bs.interaction.target] mgs.pap_anim matches 100..129 run return run function mgs:v5.0.0/zombies/pap/anim_collect
-execute if score @n[tag=bs.interaction.target] mgs.pap_anim matches -61..-2 run return run function mgs:v5.0.0/zombies/pap/anim_collect
+# If weapon is coming-out (101..140) or retreating (-101..-2): allow collection
+execute if score @n[tag=bs.interaction.target] mgs.pap_anim matches 101..140 run return run function mgs:v5.0.0/zombies/pap/anim_collect
+execute if score @n[tag=bs.interaction.target] mgs.pap_anim matches -101..-2 run return run function mgs:v5.0.0/zombies/pap/anim_collect
 # If machine is going-in or inside (not yet collectible), deny
-execute if score @n[tag=bs.interaction.target] mgs.pap_anim matches 130.. run return run function mgs:v5.0.0/zombies/pap/anim_deny_processing
+execute if score @n[tag=bs.interaction.target] mgs.pap_anim matches 141.. run return run function mgs:v5.0.0/zombies/pap/anim_deny_processing
 
 # Guard: power requirement
 execute store result score #pap_power mgs.data run scoreboard players get @n[tag=bs.interaction.target] mgs.zb.pap.power
@@ -63,6 +63,9 @@ data modify storage mgs:temp _pap_old_stats set from storage mgs:temp _pap_extra
 scoreboard players operation @s mgs.zb.points -= #pap_price mgs.data
 function mgs:v5.0.0/zombies/pap/apply_runtime_overrides
 
+# Randomize weapon scope
+function mgs:v5.0.0/zombies/pap/randomize_scope with storage mgs:temp _pap_extract.stats
+
 # Keep level tracking in the weapon data itself
 execute store result storage mgs:temp _pap_extract.stats.pap_level int 1 run scoreboard players get #pap_next mgs.data
 
@@ -75,22 +78,26 @@ execute unless data storage mgs:temp _pap_extract.new_name run data modify stora
 execute store result storage mgs:temp _pap_name_data.level int 1 run scoreboard players get #pap_next mgs.data
 execute store result storage mgs:temp _pap_name_data.max int 1 run scoreboard players get #pap_max mgs.data
 
+# Backup ammo lore line before annotation (annotation would break modify_lore search pattern)
+execute if data storage mgs:temp _pap_extract.lore[1] run data modify storage mgs:temp _pap_lore1_original set from storage mgs:temp _pap_extract.lore[1]
+
 # Annotate lore lines with runtime-computed PAP deltas
 execute if data storage mgs:temp _pap_extract.lore[0] run function mgs:v5.0.0/zombies/pap/annotate_lore
+
+# Restore unannotated ammo line for item (preserves "/" pattern for modify_lore)
+execute if data storage mgs:temp _pap_lore1_original run data modify storage mgs:temp _pap_extract.lore[1] set from storage mgs:temp _pap_lore1_original
 
 # Always refill gun ammo to max capacity on PAP
 data modify storage mgs:temp _pap_extract.stats.remaining_bullets set from storage mgs:temp _pap_extract.stats.capacity
 
-# Apply to item, refill matching magazines, and refresh ammo display
+# Apply to item, upgrade+refill matching magazines (8x capacity), and refresh ammo display
 function mgs:v5.0.0/zombies/pap/apply_to_slot with storage mgs:temp _pap
-function mgs:v5.0.0/zombies/pap/refill_matching_magazines with storage mgs:temp _pap_extract.stats
+function mgs:v5.0.0/zombies/pap/pap_upgrade_magazines with storage mgs:temp _pap_extract.stats
 function mgs:v5.0.0/ammo/compute_reserve
 
-# Message and feedback
-execute store result storage mgs:temp _pap_buy.id int 1 run scoreboard players get @n[tag=bs.interaction.target] mgs.zb.pap.id
-function mgs:v5.0.0/zombies/pap/lookup_machine with storage mgs:temp _pap_buy
-function mgs:v5.0.0/zombies/pap/pap_chat_message
-function mgs:v5.0.0/zombies/feedback/sound_success
+# Brief feedback — detailed stats shown when weapon emerges
+tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.pack_a_punching_your_weapon","color":"aqua"}]
+playsound minecraft:block.anvil.use ambient @s ~ ~ ~ 0.7 0.9
 
 # Take weapon from player and start PAP animation
 tag @s add mgs.pap_owner

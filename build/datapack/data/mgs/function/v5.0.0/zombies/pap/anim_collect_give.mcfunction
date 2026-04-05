@@ -24,6 +24,6 @@ kill @e[tag=mgs.pap_weapon_display,distance=..2]
 function mgs:v5.0.0/zombies/pap/anim_restore_display
 
 # Notify the player
-execute as @p[tag=mgs.pap_owner] run tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.collect_your_upgraded_weapon","color":"green","bold":true}]
+execute as @p[tag=mgs.pap_owner] run tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.you_collected_your_upgraded_weapon","color":"green","bold":true}]
 execute as @p[tag=mgs.pap_owner] run function mgs:v5.0.0/zombies/feedback/sound_success
 
