@@ -31,6 +31,7 @@
 #			mgs:v5.0.0/zombies/mystery_box/default_give/glock17 with storage mgs:temp _wb_weapon
 #			mgs:v5.0.0/zombies/mystery_box/default_give/glock18 with storage mgs:temp _wb_weapon
 #			mgs:v5.0.0/zombies/mystery_box/default_give/vz61 with storage mgs:temp _wb_weapon
+#			mgs:v5.0.0/zombies/mystery_box/default_give/ray_gun with storage mgs:temp _wb_weapon
 #			mgs:v5.0.0/zombies/wallbuys/on_right_click with storage mgs:temp _wb_weapon
 #
 # @args		weapon_id (string)

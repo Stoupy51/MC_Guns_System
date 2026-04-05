@@ -54,7 +54,7 @@ def generate_editor() -> None:
 
 	## Step 1: editor/start - Initialize Pick-10 budget, show primary weapon selection
 	primary_actions: list[str] = []
-	for idx, (_gun_id, display, category, _mag, _mc) in enumerate(PRIMARY_WEAPONS):
+	for idx, (_gun_id, display, category, _mag, _mc, _il) in enumerate(w for w in PRIMARY_WEAPONS if w[5]):
 		trig = TRIG_PRIMARY_BASE + idx
 		primary_actions.append(
 			f'{{label:{{text:"{display}",color:"yellow"}},'
@@ -94,7 +94,7 @@ function {ns}:v{version}/multiplayer/show_dialog with storage {ns}:temp
 
 	## editor/pick_primary - Store primary, deduct cost, route to scope
 	pick_primary_lines = ""
-	for idx, (gun_id, display, _category, mag_id, mag_count) in enumerate(PRIMARY_WEAPONS):
+	for idx, (gun_id, display, _category, mag_id, mag_count, _il) in enumerate(w for w in PRIMARY_WEAPONS if w[5]):
 		trig = TRIG_PRIMARY_BASE + idx
 		pick_primary_lines += (
 			f'execute if score @s {ns}.player.config matches {trig} run '
@@ -309,7 +309,7 @@ function {ns}:v{version}/multiplayer/editor/show_secondary_dialog
 
 	## show_secondary_dialog - Pick secondary weapon or skip
 	secondary_actions: list[str] = []
-	for idx, (_gun_id, display, _mag_id, _mc) in enumerate(SECONDARY_WEAPONS):
+	for idx, (_gun_id, display, _mag_id, _mc, _il) in enumerate(w for w in SECONDARY_WEAPONS if w[4]):
 		trig = TRIG_SECONDARY_BASE + idx
 		secondary_actions.append(
 			f'{{label:{{text:"{display}",color:"yellow"}},'
@@ -348,7 +348,7 @@ function {ns}:v{version}/multiplayer/show_dialog with storage {ns}:temp
 
 	## editor/pick_secondary - Store secondary choice, route to scope or mags
 	pick_secondary_lines = ""
-	for idx, (gun_id, display, mag_id, mag_count) in enumerate(SECONDARY_WEAPONS):
+	for idx, (gun_id, display, mag_id, mag_count, _il) in enumerate(w for w in SECONDARY_WEAPONS if w[4]):
 		trig = TRIG_SECONDARY_BASE + idx
 		pick_secondary_lines += (
 			f'execute if score @s {ns}.player.config matches {trig} run '
@@ -824,7 +824,7 @@ function {ns}:v{version}/multiplayer/editor/append_perk_line
 	## editor/save - Create the loadout entry with Pick-10 data
 	# Pre-generate primary weapon slot lookup table
 	primary_slot_entries: list[str] = []
-	for gun_id, _display, _category, mag_id, mag_count in PRIMARY_WEAPONS:
+	for gun_id, _display, _category, mag_id, mag_count, *_ in PRIMARY_WEAPONS:
 		gun_slot = f'{{slot:"hotbar.0",loot:"{ns}:i/{gun_id}",count:1,consumable:0b,bullets:0}}'
 		is_consumable = "1b" if mag_id in CONSUMABLE_MAGS else "0b"
 		bullets = mag_count if mag_id in CONSUMABLE_MAGS else 0
@@ -835,7 +835,7 @@ function {ns}:v{version}/multiplayer/editor/append_perk_line
 
 	# Pre-generate secondary weapon slot lookup table
 	secondary_slot_entries: list[str] = []
-	for gun_id, _display, mag_id, mag_count in SECONDARY_WEAPONS:
+	for gun_id, _display, mag_id, mag_count, _il in (w for w in SECONDARY_WEAPONS if w[4]):
 		gun_slot = f'{{slot:"hotbar.1",loot:"{ns}:i/{gun_id}",count:1,consumable:0b,bullets:0}}'
 		is_consumable = "1b" if mag_id in CONSUMABLE_MAGS else "0b"
 		bullets = mag_count if mag_id in CONSUMABLE_MAGS else 0
@@ -861,7 +861,7 @@ data modify storage {ns}:multiplayer secondary_slot_table set value [{secondary_
 
 	# Secondary dispatch
 	save_secondary_dispatch = ""
-	for idx, (gun_id, *_) in enumerate(SECONDARY_WEAPONS):
+	for idx, (gun_id, *_) in enumerate(w for w in SECONDARY_WEAPONS if w[4]):
 		save_secondary_dispatch += (
 			f'execute if data storage {ns}:temp editor{{secondary:"{gun_id}"}} run '
 			f'data modify storage {ns}:temp _build.secondary_data set from storage {ns}:multiplayer secondary_slot_table[{idx}]\n'

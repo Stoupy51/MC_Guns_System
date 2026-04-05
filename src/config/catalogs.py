@@ -1,54 +1,54 @@
 
 # Weapon & Equipment Catalog constants
 
-# Primary weapons: (item_id, display_name, category, magazine_id, default_mag_count)
+# Primary weapons: (item_id, display_name, category, magazine_id, default_mag_count, in_loadout)
 # For consumable mags (shells/bullets), default_mag_count = total bullets in one stack slot
-PRIMARY_WEAPONS: list[tuple[str, str, str, str, int]] = [
+PRIMARY_WEAPONS: list[tuple[str, str, str, str, int, bool]] = [
     # Assault Rifles
-    ("ak47",   "AK-47",       "Assault Rifle", "ak47_mag",   3),
-    ("m16a4",  "M16A4",       "Assault Rifle", "m16a4_mag",  3),
-    ("famas",  "FAMAS",       "Assault Rifle", "famas_mag",  3),
-    ("aug",    "AUG",         "Assault Rifle", "aug_mag",    3),
-    ("m4a1",   "M4A1",        "Assault Rifle", "m4a1_mag",   3),
+    ("ak47",   "AK-47",       "Assault Rifle", "ak47_mag",   3, True),
+    ("m16a4",  "M16A4",       "Assault Rifle", "m16a4_mag",  3, True),
+    ("famas",  "FAMAS",       "Assault Rifle", "famas_mag",  3, True),
+    ("aug",    "AUG",         "Assault Rifle", "aug_mag",    3, True),
+    ("m4a1",   "M4A1",        "Assault Rifle", "m4a1_mag",   3, True),
     # Battle Rifles
-    ("fnfal",  "FN FAL",      "Battle Rifle",  "fnfal_mag",  3),
-    ("g3a3",   "G3A3",        "Battle Rifle",  "g3a3_mag",   3),
-    ("scar17", "SCAR-17",     "Battle Rifle",  "scar17_mag", 3),
+    ("fnfal",  "FN FAL",      "Battle Rifle",  "fnfal_mag",  3, True),
+    ("g3a3",   "G3A3",        "Battle Rifle",  "g3a3_mag",   3, True),
+    ("scar17", "SCAR-17",     "Battle Rifle",  "scar17_mag", 3, True),
     # SMGs
-    ("mp5",    "MP5",         "SMG",           "mp5_mag",    4),
-    ("mp7",    "MP7",         "SMG",           "mp7_mag",    4),
-    ("mac10",  "MAC-10",      "SMG",           "mac10_mag",  4),
-    ("ppsh41", "PPSh-41",     "SMG",           "ppsh41_mag", 3),
-    ("sten",   "Sten",        "SMG",           "sten_mag",   3),
+    ("mp5",    "MP5",         "SMG",           "mp5_mag",    4, True),
+    ("mp7",    "MP7",         "SMG",           "mp7_mag",    4, True),
+    ("mac10",  "MAC-10",      "SMG",           "mac10_mag",  4, True),
+    ("ppsh41", "PPSh-41",     "SMG",           "ppsh41_mag", 3, True),
+    ("sten",   "Sten",        "SMG",           "sten_mag",   3, True),
     # LMGs
-    ("m249",   "M249",        "LMG",           "m249_mag",   3),
-    ("rpk",    "RPK",         "LMG",           "rpk_mag",    3),
+    ("m249",   "M249",        "LMG",           "m249_mag",   3, True),
+    ("rpk",    "RPK",         "LMG",           "rpk_mag",    3, True),
     # DMR / Snipers
-    ("svd",    "SVD",         "DMR",           "svd_mag",    3),
-    ("m82",    "M82",         "Sniper",        "m82_mag",    3),
-    ("mosin",  "Mosin-Nagant", "Sniper",       "mosin_bullet", 10),
-    ("m24",    "M24",         "Sniper",        "m24_bullet",   10),
+    ("svd",    "SVD",         "DMR",           "svd_mag",    3, True),
+    ("m82",    "M82",         "Sniper",        "m82_mag",    3, True),
+    ("mosin",  "Mosin-Nagant", "Sniper",       "mosin_bullet", 10, True),
+    ("m24",    "M24",         "Sniper",        "m24_bullet",   10, True),
     # Shotguns
-    ("spas12", "SPAS-12",     "Shotgun",       "spas12_shell", 16),
-    ("m500",   "M500",        "Shotgun",       "m500_shell",   12),
-    ("m590",   "M590",        "Shotgun",       "m590_shell",   16),
+    ("spas12", "SPAS-12",     "Shotgun",       "spas12_shell", 16, True),
+    ("m500",   "M500",        "Shotgun",       "m500_shell",   12, True),
+    ("m590",   "M590",        "Shotgun",       "m590_shell",   16, True),
     # Launchers
-    ("rpg7",   "RPG-7",       "Launcher",      "rpg7_rocket",  3),
+    ("rpg7",   "RPG-7",       "Launcher",      "rpg7_rocket",  3, True),
 ]
 
 # Index lookup: weapon_id -> index in PRIMARY_WEAPONS
 PRIMARY_INDEX: dict[str, int] = {w[0]: i for i, w in enumerate(PRIMARY_WEAPONS)}
 
-# Secondary weapons: (item_id, display_name, magazine_id, default_mag_count)
-SECONDARY_WEAPONS: list[tuple[str, str, str, int]] = [
-    ("m1911",   "M1911",   "m1911_mag",   2),
-    ("m9",      "M9",      "m9_mag",      2),
-    ("deagle",  "Deagle",  "deagle_mag",  2),
-    ("makarov", "Makarov", "makarov_mag", 2),
-    ("glock17", "Glock 17", "glock17_mag", 2),
-    ("glock18", "Glock 18", "glock18_mag", 2),
-    ("vz61",    "VZ-61",   "vz61_mag",    2),
-    # ("ray_gun", "Ray Gun", "element_115", 3),  # Not for multiplayer lol
+# Secondary weapons: (item_id, display_name, magazine_id, default_mag_count, in_loadout)
+SECONDARY_WEAPONS: list[tuple[str, str, str, int, bool]] = [
+    ("m1911",   "M1911",   "m1911_mag",   2, True),
+    ("m9",      "M9",      "m9_mag",      2, True),
+    ("deagle",  "Deagle",  "deagle_mag",  2, True),
+    ("makarov", "Makarov", "makarov_mag", 2, True),
+    ("glock17", "Glock 17", "glock17_mag", 2, True),
+    ("glock18", "Glock 18", "glock18_mag", 2, True),
+    ("vz61",    "VZ-61",   "vz61_mag",    2, True),
+    ("ray_gun", "Ray Gun", "element_115",  3, False),
 ]
 
 # Index lookup: weapon_id -> index in SECONDARY_WEAPONS

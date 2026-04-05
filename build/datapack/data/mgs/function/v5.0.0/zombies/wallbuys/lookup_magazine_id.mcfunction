@@ -34,4 +34,5 @@ execute if data storage mgs:temp _wb_store{weapon_id:"makarov"} run data modify 
 execute if data storage mgs:temp _wb_store{weapon_id:"glock17"} run data modify storage mgs:temp _wb_store.magazine_id set value "glock17_mag"
 execute if data storage mgs:temp _wb_store{weapon_id:"glock18"} run data modify storage mgs:temp _wb_store.magazine_id set value "glock18_mag"
 execute if data storage mgs:temp _wb_store{weapon_id:"vz61"} run data modify storage mgs:temp _wb_store.magazine_id set value "vz61_mag"
+execute if data storage mgs:temp _wb_store{weapon_id:"ray_gun"} run data modify storage mgs:temp _wb_store.magazine_id set value "element_115"
 

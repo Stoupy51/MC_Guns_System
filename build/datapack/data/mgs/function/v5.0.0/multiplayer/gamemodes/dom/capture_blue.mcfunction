@@ -6,14 +6,13 @@
 # @within	mgs:v5.0.0/multiplayer/gamemodes/dom/point_tick
 #
 
-# Decrease progress (2 per tick when capturing)
 execute store result score #dom_prog mgs.data run scoreboard players get @s mgs.mp.dom_progress
 scoreboard players remove @s mgs.mp.dom_progress 2
 
 # Cap at -100
 execute if score @s mgs.mp.dom_progress matches ..-101 run scoreboard players set @s mgs.mp.dom_progress -100
 
-# If crossed 0 from positive (was red, now contested)
+# If crossed 0, point neutralized
 execute if score #dom_prog mgs.data matches 1.. if score @s mgs.mp.dom_progress matches ..0 if entity @s[tag=mgs.dom_label_A] run tellraw @a [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.point_a_neutralized","color":"yellow"}]
 execute if score #dom_prog mgs.data matches 1.. if score @s mgs.mp.dom_progress matches ..0 if entity @s[tag=mgs.dom_label_B] run tellraw @a [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.point_b_neutralized","color":"yellow"}]
 execute if score #dom_prog mgs.data matches 1.. if score @s mgs.mp.dom_progress matches ..0 if entity @s[tag=mgs.dom_label_C] run tellraw @a [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.point_c_neutralized","color":"yellow"}]
