@@ -29,15 +29,12 @@ scoreboard players operation @n[tag=mgs.pap_new] mgs.zb.pap.id = #pap_counter mg
 execute store result score @n[tag=mgs.pap_new] mgs.zb.pap.price run data get storage mgs:temp _pap_iter[0].price
 execute store result score @n[tag=mgs.pap_new] mgs.zb.pap.power run data get storage mgs:temp _pap_iter[0].power
 
-# Store display metadata for lookup
-execute store result storage mgs:temp _pap_store.id int 1 run scoreboard players get #pap_counter mgs.data
-data modify storage mgs:temp _pap_store.name set value "Pack-a-Punch"
-execute if data storage mgs:temp _pap_iter[0].name run data modify storage mgs:temp _pap_store.name set from storage mgs:temp _pap_iter[0].name
-function mgs:v5.0.0/zombies/pap/store_data with storage mgs:temp _pap_store
-
 # Register Bookshelf interaction callbacks
 execute as @n[tag=mgs.pap_new] run function #bs.interaction:on_right_click {run:"function mgs:v5.0.0/zombies/pap/on_right_click",executor:"source"}
 execute as @n[tag=mgs.pap_new] run function #bs.interaction:on_hover {run:"function mgs:v5.0.0/zombies/pap/on_hover",executor:"source"}
+
+# Initialize animation state: -1 = idle
+scoreboard players set @n[tag=mgs.pap_new] mgs.pap_anim -1
 
 # Spawn visual item_display at machine position (default: netherite_block; overridable via display_item + item_model map fields)
 data modify storage mgs:temp _pap_disp.tag set value "mgs.pap_display"
@@ -46,6 +43,16 @@ data modify storage mgs:temp _pap_disp.item_model set value "minecraft:netherite
 execute if data storage mgs:temp _pap_iter[0].display_item run data modify storage mgs:temp _pap_disp.item_id set from storage mgs:temp _pap_iter[0].display_item
 execute if data storage mgs:temp _pap_iter[0].item_model run data modify storage mgs:temp _pap_disp.item_model set from storage mgs:temp _pap_iter[0].item_model
 execute as @n[tag=mgs.pap_new] at @s run function mgs:v5.0.0/zombies/display/summon_machine_display with storage mgs:temp _pap_disp
+
+# Store display metadata for lookup (reuse the computed _pap_disp fields)
+execute store result storage mgs:temp _pap_store.id int 1 run scoreboard players get #pap_counter mgs.data
+data modify storage mgs:temp _pap_store.name set value "Pack-a-Punch"
+execute if data storage mgs:temp _pap_iter[0].name run data modify storage mgs:temp _pap_store.name set from storage mgs:temp _pap_iter[0].name
+data modify storage mgs:temp _pap_store.display_tag set from storage mgs:temp _pap_disp.tag
+data modify storage mgs:temp _pap_store.display_item_id set from storage mgs:temp _pap_disp.item_id
+data modify storage mgs:temp _pap_store.display_item_model set from storage mgs:temp _pap_disp.item_model
+function mgs:v5.0.0/zombies/pap/store_data with storage mgs:temp _pap_store
+
 tag @n[tag=mgs.pap_new] remove mgs.pap_new
 
 # Continue iteration

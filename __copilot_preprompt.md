@@ -16,7 +16,7 @@ But wait, just before doing so, make sure you understand everything in the proje
 - assets folder contains assets
 - build folder is the result of the build, never modify it
 - If you need to understand minecraft vanilla bheavior, the decompiled source code is in "minecraft_source_code" folder
-- based_of folder is the old code (1.19, we are in 1.21.11 / 26.1 now) : we keep it because it can always come handy if we are missing a feature.
+- based_of folder is the old code (1.19, we are in 26.1 now) : we keep it because it can always come handy if we are missing a feature.
 
 To build the project, type `stewbeet` and verify output in build.
 

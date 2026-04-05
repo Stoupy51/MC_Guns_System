@@ -9,6 +9,12 @@
 # Guard: game must be active
 execute unless data storage mgs:zombies game{state:"active"} run return fail
 
+# If weapon is coming-out (100..129) or retreating (-61..-2): allow collection
+execute if score @n[tag=bs.interaction.target] mgs.pap_anim matches 100..129 run return run function mgs:v5.0.0/zombies/pap/anim_collect
+execute if score @n[tag=bs.interaction.target] mgs.pap_anim matches -61..-2 run return run function mgs:v5.0.0/zombies/pap/anim_collect
+# If machine is going-in or inside (not yet collectible), deny
+execute if score @n[tag=bs.interaction.target] mgs.pap_anim matches 130.. run return run function mgs:v5.0.0/zombies/pap/anim_deny_processing
+
 # Guard: power requirement
 execute store result score #pap_power mgs.data run scoreboard players get @n[tag=bs.interaction.target] mgs.zb.pap.power
 execute if score #pap_power mgs.data matches 1 unless score #zb_power mgs.data matches 1 run return run function mgs:v5.0.0/zombies/pap/deny_requires_power
@@ -85,4 +91,9 @@ execute store result storage mgs:temp _pap_buy.id int 1 run scoreboard players g
 function mgs:v5.0.0/zombies/pap/lookup_machine with storage mgs:temp _pap_buy
 function mgs:v5.0.0/zombies/pap/pap_chat_message
 function mgs:v5.0.0/zombies/feedback/sound_success
+
+# Take weapon from player and start PAP animation
+tag @s add mgs.pap_owner
+execute as @n[tag=bs.interaction.target] at @s run function mgs:v5.0.0/zombies/pap/anim_start with storage mgs:temp _pap
+tag @s remove mgs.pap_owner
 
