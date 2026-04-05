@@ -117,9 +117,7 @@ execute if score #hp_blue {ns}.data matches 1.. unless score #hp_red {ns}.data m
 execute if score #hp_blue {ns}.data matches 1.. unless score #hp_red {ns}.data matches 1.. run scoreboard players add #blue {ns}.mp.team 1
 
 # Check win
-execute store result score #score_limit {ns}.data run data get storage {ns}:multiplayer game.score_limit
-execute if score #red {ns}.mp.team >= #score_limit {ns}.data run function {ns}:v{version}/multiplayer/team_wins {{team:"Red"}}
-execute if score #blue {ns}.mp.team >= #score_limit {ns}.data run function {ns}:v{version}/multiplayer/team_wins {{team:"Blue"}}
+function {ns}:v{version}/multiplayer/check_team_win
 """)
 
 	## HP: Rotate zone
