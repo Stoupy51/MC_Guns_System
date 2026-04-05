@@ -7,9 +7,7 @@
 tellraw @a [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.search_destroy_attackers_plant_defenders_defuse","color":"yellow"}]
 
 # Store base coordinates for offset
-execute store result score #gm_base_x mgs.data run data get storage mgs:multiplayer game.map.base_coordinates[0]
-execute store result score #gm_base_y mgs.data run data get storage mgs:multiplayer game.map.base_coordinates[1]
-execute store result score #gm_base_z mgs.data run data get storage mgs:multiplayer game.map.base_coordinates[2]
+function mgs:v5.0.0/shared/load_base_coordinates {mode:"multiplayer"}
 
 # Round tracking
 scoreboard players set #snd_round mgs.data 1

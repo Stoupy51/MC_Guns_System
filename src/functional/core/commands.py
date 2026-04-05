@@ -58,3 +58,11 @@ execute if data storage {ns}:temp _respawn_cmd_iter[0] at @s run function {ns}:v
 
 	write_versioned_function("shared/run_respawn_command", "$execute at @s run $(command)")
 
+	## Load map base coordinates into scoreboard (3-line triplet)
+	## Usage: function shared/load_base_coordinates {mode:"multiplayer"}
+	write_versioned_function("shared/load_base_coordinates", f"""
+$execute store result score #gm_base_x {ns}.data run data get storage {ns}:$(mode) game.map.base_coordinates[0]
+$execute store result score #gm_base_y {ns}.data run data get storage {ns}:$(mode) game.map.base_coordinates[1]
+$execute store result score #gm_base_z {ns}.data run data get storage {ns}:$(mode) game.map.base_coordinates[2]
+""")
+

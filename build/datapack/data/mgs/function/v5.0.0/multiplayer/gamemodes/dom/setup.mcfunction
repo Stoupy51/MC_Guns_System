@@ -7,9 +7,7 @@
 tellraw @a [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.domination_capture_and_hold_zones_to_earn_points","color":"yellow"}]
 
 # Store base coordinates for offset computation
-execute store result score #gm_base_x mgs.data run data get storage mgs:multiplayer game.map.base_coordinates[0]
-execute store result score #gm_base_y mgs.data run data get storage mgs:multiplayer game.map.base_coordinates[1]
-execute store result score #gm_base_z mgs.data run data get storage mgs:multiplayer game.map.base_coordinates[2]
+function mgs:v5.0.0/shared/load_base_coordinates {mode:"multiplayer"}
 
 # Initialize zone counter for labeling (A, B, C...)
 scoreboard players set #dom_zone_idx mgs.data 0

@@ -96,9 +96,7 @@ gamerule keep_inventory true
 data modify storage {ns}:zombies game.round set value 0
 
 # Store base coordinates for offset
-execute store result score #gm_base_x {ns}.data run data get storage {ns}:zombies game.map.base_coordinates[0]
-execute store result score #gm_base_y {ns}.data run data get storage {ns}:zombies game.map.base_coordinates[1]
-execute store result score #gm_base_z {ns}.data run data get storage {ns}:zombies game.map.base_coordinates[2]
+function {ns}:v{version}/shared/load_base_coordinates {{mode:"zombies"}}
 
 # Check if map has boundaries defined
 scoreboard players set #zb_has_bounds {ns}.data 0

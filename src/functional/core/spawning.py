@@ -10,9 +10,7 @@ def write_shared_spawning_functions() -> None:
 	## Summon OOB markers from map data (relative → absolute)
 	## Usage: function shared/summon_oob {mode:"multiplayer"}
 	write_versioned_function("shared/summon_oob", f"""
-$execute store result score #gm_base_x {ns}.data run data get storage {ns}:$(mode) game.map.base_coordinates[0]
-$execute store result score #gm_base_y {ns}.data run data get storage {ns}:$(mode) game.map.base_coordinates[1]
-$execute store result score #gm_base_z {ns}.data run data get storage {ns}:$(mode) game.map.base_coordinates[2]
+$function {ns}:v{version}/shared/load_base_coordinates {{mode:"$(mode)"}}
 
 $data modify storage {ns}:temp _oob_iter set from storage {ns}:$(mode) game.map.out_of_bounds
 execute if data storage {ns}:temp _oob_iter[0] run function {ns}:v{version}/shared/summon_oob_iter

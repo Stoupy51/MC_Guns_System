@@ -15,9 +15,7 @@ def generate_domination() -> None:
 tellraw @a [{MGS_TAG},{{"text":"Domination! Capture and hold zones to earn points!","color":"yellow"}}]
 
 # Store base coordinates for offset computation
-execute store result score #gm_base_x {ns}.data run data get storage {ns}:multiplayer game.map.base_coordinates[0]
-execute store result score #gm_base_y {ns}.data run data get storage {ns}:multiplayer game.map.base_coordinates[1]
-execute store result score #gm_base_z {ns}.data run data get storage {ns}:multiplayer game.map.base_coordinates[2]
+function {ns}:v{version}/shared/load_base_coordinates {{mode:"multiplayer"}}
 
 # Initialize zone counter for labeling (A, B, C...)
 scoreboard players set #dom_zone_idx {ns}.data 0

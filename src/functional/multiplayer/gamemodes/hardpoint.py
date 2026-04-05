@@ -14,9 +14,7 @@ def generate_hardpoint() -> None:
 tellraw @a [{MGS_TAG},{{"text":"Hardpoint! Control the zone to score!","color":"yellow"}}]
 
 # Store base coordinates for offset
-execute store result score #gm_base_x {ns}.data run data get storage {ns}:multiplayer game.map.base_coordinates[0]
-execute store result score #gm_base_y {ns}.data run data get storage {ns}:multiplayer game.map.base_coordinates[1]
-execute store result score #gm_base_z {ns}.data run data get storage {ns}:multiplayer game.map.base_coordinates[2]
+function {ns}:v{version}/shared/load_base_coordinates {{mode:"multiplayer"}}
 
 # Copy hardpoint zones from map to game state
 data modify storage {ns}:multiplayer game.hp_zones set from storage {ns}:multiplayer game.map.hardpoint

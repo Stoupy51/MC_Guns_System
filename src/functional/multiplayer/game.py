@@ -101,9 +101,7 @@ gamerule keep_inventory true
 scoreboard players set @a {ns}.mp.spectate_timer 0
 
 # Store base coordinates for offset
-execute store result score #gm_base_x {ns}.data run data get storage {ns}:multiplayer game.map.base_coordinates[0]
-execute store result score #gm_base_y {ns}.data run data get storage {ns}:multiplayer game.map.base_coordinates[1]
-execute store result score #gm_base_z {ns}.data run data get storage {ns}:multiplayer game.map.base_coordinates[2]
+function {ns}:v{version}/shared/load_base_coordinates {{mode:"multiplayer"}}
 
 # Detect whether this map defines a boundary (needs 2 points)
 execute if data storage {ns}:multiplayer game.map.boundaries[0] if data storage {ns}:multiplayer game.map.boundaries[1] run scoreboard players set #mp_has_boundary {ns}.data 1
