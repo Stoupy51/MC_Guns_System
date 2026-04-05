@@ -42,9 +42,9 @@ execute if score @s {ns}.zoom matches 1 unless score @s {ns}.switch_cooldown > #
 execute if score @s {ns}.zoom matches 1 unless score @s {ns}.switch_cooldown > #total_tick {ns}.data unless score #scope_level {ns}.data matches 3 unless score #scope_level {ns}.data matches 4 at @s anchored eyes run particle minecraft:dust{{color:[0.02,0.25,0.15],scale:0.01}} ^ ^ ^0.1 0 0 0 0 1 force @s
 
 # Scope zoom marker: spawn AFTER delay for barrel distortion effect
-execute if score @s {ns}.zoom matches 1 unless score @s {ns}.switch_cooldown > #total_tick {ns}.data if score @s {ns}.zoom_timer matches 5.. if score #scope_level {ns}.data matches 3 at @s anchored eyes run particle minecraft:dust{{color:[0.02,0.02,0.0],scale:0.01}} ^ ^ ^0.1 0 0 0 0 1 force @s
-execute if score @s {ns}.zoom matches 1 unless score @s {ns}.switch_cooldown > #total_tick {ns}.data if score @s {ns}.zoom_timer matches 5.. if score #scope_level {ns}.data matches 4 at @s anchored eyes run particle minecraft:dust{{color:[0.02,0.08,0.0],scale:0.01}} ^ ^ ^0.1 0 0 0 0 1 force @s
-execute if score @s {ns}.zoom matches 1 unless score @s {ns}.switch_cooldown > #total_tick {ns}.data if score @s {ns}.zoom_timer matches 5.. unless score #scope_level {ns}.data matches 3 unless score #scope_level {ns}.data matches 4 at @s anchored eyes run particle minecraft:dust{{color:[0.02,0.25,0.0],scale:0.01}} ^ ^ ^0.1 0 0 0 0 1 force @s
+execute if score @s {ns}.zoom matches 1 unless score @s {ns}.switch_cooldown > #total_tick {ns}.data if score @s {ns}.zoom_timer matches 6.. if score #scope_level {ns}.data matches 3 at @s anchored eyes run particle minecraft:dust{{color:[0.02,0.02,0.0],scale:0.01}} ^ ^ ^0.1 0 0 0 0 1 force @s
+execute if score @s {ns}.zoom matches 1 unless score @s {ns}.switch_cooldown > #total_tick {ns}.data if score @s {ns}.zoom_timer matches 6.. if score #scope_level {ns}.data matches 4 at @s anchored eyes run particle minecraft:dust{{color:[0.02,0.08,0.0],scale:0.01}} ^ ^ ^0.1 0 0 0 0 1 force @s
+execute if score @s {ns}.zoom matches 1 unless score @s {ns}.switch_cooldown > #total_tick {ns}.data if score @s {ns}.zoom_timer matches 6.. unless score #scope_level {ns}.data matches 3 unless score #scope_level {ns}.data matches 4 at @s anchored eyes run particle minecraft:dust{{color:[0.02,0.25,0.0],scale:0.01}} ^ ^ ^0.1 0 0 0 0 1 force @s
 
 # Crosshair spread marker: spawn when NOT zooming to indicate accuracy via crosshair gap
 execute unless score @s {ns}.zoom matches 1 run function {ns}:v{version}/zoom/crosshair_spread
