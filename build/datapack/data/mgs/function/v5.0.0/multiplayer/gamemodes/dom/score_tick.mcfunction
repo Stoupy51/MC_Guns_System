@@ -16,7 +16,5 @@ scoreboard players operation #blue mgs.mp.team += #dom_b mgs.data
 function mgs:v5.0.0/multiplayer/refresh_sidebar_dom
 
 # Check win
-execute store result score #score_limit mgs.data run data get storage mgs:multiplayer game.score_limit
-execute if score #red mgs.mp.team >= #score_limit mgs.data run function mgs:v5.0.0/multiplayer/team_wins {team:"Red"}
-execute if score #blue mgs.mp.team >= #score_limit mgs.data run function mgs:v5.0.0/multiplayer/team_wins {team:"Blue"}
+function mgs:v5.0.0/multiplayer/check_team_win
 

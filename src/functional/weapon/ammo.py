@@ -323,7 +323,6 @@ function #{ns}:signals/on_reload
     # Apply quick reload: reduce cooldown by quick_reload% (cooldown * (100 - quick_reload) / 100)
     write_versioned_function("ammo/apply_quick_reload", f"""
 # Calculate reduced cooldown: cooldown = cooldown * (100 - quick_reload%) / 100
-scoreboard players set #100 {ns}.data 100
 scoreboard players operation #reduction {ns}.data = #100 {ns}.data
 scoreboard players operation #reduction {ns}.data -= @s {ns}.special.quick_reload
 scoreboard players operation @s {ns}.cooldown *= #reduction {ns}.data

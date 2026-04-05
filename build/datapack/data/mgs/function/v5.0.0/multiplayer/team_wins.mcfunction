@@ -5,8 +5,6 @@
 #			mgs:v5.0.0/multiplayer/check_team_win {team:"Blue"}
 #			mgs:v5.0.0/multiplayer/time_up {team:"Red"}
 #			mgs:v5.0.0/multiplayer/time_up {team:"Blue"}
-#			mgs:v5.0.0/multiplayer/gamemodes/dom/score_tick {team:"Red"}
-#			mgs:v5.0.0/multiplayer/gamemodes/dom/score_tick {team:"Blue"}
 #			mgs:v5.0.0/multiplayer/gamemodes/snd/next_round {team:"Red"}
 #			mgs:v5.0.0/multiplayer/gamemodes/snd/next_round {team:"Blue"}
 #

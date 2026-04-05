@@ -7,7 +7,6 @@
 #
 
 # Calculate reduced cooldown: cooldown = cooldown * (100 - quick_swap%) / 100
-scoreboard players set #100 mgs.data 100
 scoreboard players operation #reduction mgs.data = #100 mgs.data
 scoreboard players operation #reduction mgs.data -= @s mgs.special.quick_swap
 scoreboard players operation #cooldown mgs.data *= #reduction mgs.data

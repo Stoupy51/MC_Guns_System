@@ -46,10 +46,6 @@ execute unless score #blue {ns}.mp.team matches -2147483648.. run scoreboard pla
 # Initialize game state (only if not yet set)
 execute unless data storage {ns}:multiplayer game run data modify storage {ns}:multiplayer game set value {{state:"lobby",gamemode:"tdm",score_limit:30,time_limit:12000,map_id:"hijacked"}}
 
-# Constants for timer math
-scoreboard players set #10 {ns}.data 10
-scoreboard players set #20 {ns}.data 20
-scoreboard players set #60 {ns}.data 60
 """)
 
 	## Signal function tags
