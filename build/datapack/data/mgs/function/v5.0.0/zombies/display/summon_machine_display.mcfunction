@@ -4,6 +4,7 @@
 # @executed	as @n[tag=mgs.pap_new] & at @s
 #
 # @within	mgs:v5.0.0/zombies/pap/setup_iter with storage mgs:temp _pap_disp [ as @n[tag=mgs.pap_new] & at @s ]
+#			mgs:v5.0.0/zombies/pap/anim_restore_display_lookup with storage mgs:temp _pap_restore_disp
 #			mgs:v5.0.0/zombies/perks/setup_iter with storage mgs:temp _pk_disp [ as @n[tag=mgs.pk_new] & at @s ]
 #
 # @args		tag (unknown)

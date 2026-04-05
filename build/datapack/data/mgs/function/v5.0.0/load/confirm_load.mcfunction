@@ -150,6 +150,7 @@ execute unless score #zb_mystery_box_price mgs.config matches 1.. run scoreboard
 scoreboard objectives add mgs.zb.pap.id dummy
 scoreboard objectives add mgs.zb.pap.price dummy
 scoreboard objectives add mgs.zb.pap.power dummy
+scoreboard objectives add mgs.pap_anim dummy
 
 # Door entity scoreboards
 scoreboard objectives add mgs.zb.door.link dummy
