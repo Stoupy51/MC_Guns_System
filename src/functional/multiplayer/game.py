@@ -3,7 +3,7 @@
 # Imports
 from stewbeet import Mem, write_load_file, write_tag, write_tick_file, write_versioned_function
 
-from ..helpers import MGS_TAG
+from ..helpers import MGS_TAG, game_start_guards
 from ..respawn_countdown import respawn_countdown_tick_lines
 
 
@@ -55,8 +55,7 @@ execute unless data storage {ns}:multiplayer game run data modify storage {ns}:m
 	## Game Start (requires a map to be loaded first)
 	write_versioned_function("multiplayer/start", f"""
 # Prevent starting if already active or preparing
-execute if data storage {ns}:multiplayer game{{state:"active"}} run return run tellraw @s [{MGS_TAG},{{"text":"Game already in progress!","color":"red"}}]
-execute if data storage {ns}:multiplayer game{{state:"preparing"}} run return run tellraw @s [{MGS_TAG},{{"text":"Game already preparing!","color":"red"}}]
+{game_start_guards(ns, "multiplayer", "Game")}
 
 # Load the selected map (reads map_id from game storage)
 function {ns}:v{version}/multiplayer/load_map_from_storage with storage {ns}:multiplayer game

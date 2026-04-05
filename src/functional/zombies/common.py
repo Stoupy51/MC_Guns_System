@@ -1,13 +1,13 @@
 
 # Shared command builders for zombies modules.
 from ...config.catalogs import PRIMARY_WEAPONS, SECONDARY_WEAPONS
-from ..helpers import MGS_TAG
+from ..helpers import MGS_TAG, game_active_guard
 from ..multiplayer.classes import CONSUMABLE_MAGS
 
 
 def game_active_guard_cmd(ns: str) -> str:
 	""" Return the standard guard command for active zombies games. """
-	return f'execute unless data storage {ns}:zombies game{{state:"active"}} run return fail'
+	return game_active_guard(ns, "zombies")
 
 
 def deny_not_enough_points_body(ns: str, version: str, price_score: str) -> str:
