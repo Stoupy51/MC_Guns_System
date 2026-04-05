@@ -20,6 +20,6 @@ But wait, just before doing so, make sure you understand everything in the proje
 
 To build the project, type `stewbeet` and verify output in build.
 
-For each task to do, type `rm done_with_current_task` command in terminal, a Review Agent will check on it and tell you if the task is good and you can continue on!
+For each task to do, type `rm done_with_current_task_call_review_agent` command in terminal, a Review Agent will check on it and tell you if the task is good and you can continue on!
 ALWAYS run this command when you're finished!
 ```

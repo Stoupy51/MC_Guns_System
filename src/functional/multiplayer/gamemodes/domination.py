@@ -105,6 +105,15 @@ execute as @e[tag={ns}.dom_point] at @s run function {ns}:v{version}/multiplayer
 
 	## DOM: Per-point tick - check nearby players and adjust capture
 	write_versioned_function("multiplayer/gamemodes/dom/point_tick", f"""
+# Visual capture progress particles (smooth blue <-> yellow <-> red gradient)
+execute if score @s {ns}.mp.dom_progress matches -65..65 run particle dust{{color:[1.0,1.0,0.0],scale:1.0}} ~ ~1 ~ 1 1 1 0 5
+execute if score @s {ns}.mp.dom_progress matches 34..65 run particle dust{{color:[1.0,0.75,0.25],scale:1.0}} ~ ~1 ~ 1 1 1 0 5
+execute if score @s {ns}.mp.dom_progress matches 66..99 run particle dust{{color:[1.0,0.5,0.0],scale:1.0}} ~ ~1 ~ 1 1 1 0 5
+execute if score @s {ns}.mp.dom_progress matches 100 run particle dust{{color:[1.0,0.0,0.0],scale:1.0}} ~ ~1 ~ 1 1 1 0 5
+execute if score @s {ns}.mp.dom_progress matches -65..-34 run particle dust{{color:[0.25,0.75,1.0],scale:1.0}} ~ ~1 ~ 1 1 1 0 5
+execute if score @s {ns}.mp.dom_progress matches -99..-66 run particle dust{{color:[0.0,0.5,1.0],scale:1.0}} ~ ~1 ~ 1 1 1 0 5
+execute if score @s {ns}.mp.dom_progress matches -100 run particle dust{{color:[0.0,0.0,1.0],scale:1.0}} ~ ~1 ~ 1 1 1 0 5
+
 # Count red and blue players within 5 blocks
 execute store result score #dom_red {ns}.data if entity @a[distance=..5,gamemode=!spectator,scores={{{ns}.mp.in_game=1,{ns}.mp.team=1}}]
 execute store result score #dom_blue {ns}.data if entity @a[distance=..5,gamemode=!spectator,scores={{{ns}.mp.in_game=1,{ns}.mp.team=2}}]
@@ -119,66 +128,40 @@ execute if score #dom_red {ns}.data matches 1.. unless score #dom_blue {ns}.data
 execute if score #dom_blue {ns}.data matches 1.. unless score #dom_red {ns}.data matches 1.. run function {ns}:v{version}/multiplayer/gamemodes/dom/capture_blue
 """)
 
-	## DOM: Capture for red (progress goes +)
-	write_versioned_function("multiplayer/gamemodes/dom/capture_red", f"""
-# Get current progress
+	## DOM: Capture for red/blue (parameterized mirror)
+	DOM_LABELS: list[str] = ["A", "B", "C", "D", "E"]
+	for color, team_name, owner_id, op, cap, cap_match, neut_old, neut_new, pitch in [
+		("red",  "Red",  1, "add",    100,  "101..",  "..-1", "0..",  "1.2"),
+		("blue", "Blue", 2, "remove", -100, "..-101", "1..",  "..0",  "0.8"),
+	]:
+		neutralize_labels: str = "\n".join(
+			f'execute if score #dom_prog {ns}.data matches {neut_old} if score @s {ns}.mp.dom_progress matches {neut_new} '
+			f'if entity @s[tag={ns}.dom_label_{lbl}] run tellraw @a [{MGS_TAG},{{"text":"Point {lbl} neutralized!","color":"yellow"}}]'
+			for lbl in DOM_LABELS
+		)
+		capture_labels: str = "\n".join(
+			f'execute if score @s {ns}.mp.dom_progress matches {cap} unless score @s {ns}.mp.dom_owner matches {owner_id} '
+			f'if entity @s[tag={ns}.dom_label_{lbl}] run tellraw @a [{MGS_TAG},{{"text":"{team_name}","color":"{color}"}}," ",{{"text":"captured point {lbl}!","color":"yellow"}}]'
+			for lbl in DOM_LABELS
+		)
+		write_versioned_function(f"multiplayer/gamemodes/dom/capture_{color}", f"""
 execute store result score #dom_prog {ns}.data run scoreboard players get @s {ns}.mp.dom_progress
+scoreboard players {op} @s {ns}.mp.dom_progress 2
 
-# Increase progress (2 per tick when capturing)
-scoreboard players add @s {ns}.mp.dom_progress 2
+# Cap at {cap}
+execute if score @s {ns}.mp.dom_progress matches {cap_match} run scoreboard players set @s {ns}.mp.dom_progress {cap}
 
-# Cap at 100
-execute if score @s {ns}.mp.dom_progress matches 101.. run scoreboard players set @s {ns}.mp.dom_progress 100
+# If crossed 0, point neutralized
+{neutralize_labels}
+execute if score #dom_prog {ns}.data matches {neut_old} if score @s {ns}.mp.dom_progress matches {neut_new} run playsound minecraft:block.note_block.bass player @a ~ ~ ~ 1 0.5
+execute if score #dom_prog {ns}.data matches {neut_old} if score @s {ns}.mp.dom_progress matches {neut_new} run scoreboard players set @s {ns}.mp.dom_owner 0
+execute if score #dom_prog {ns}.data matches {neut_old} if score @s {ns}.mp.dom_progress matches {neut_new} run data modify entity @n[tag={ns}.dom_label,distance=..1] text.color set value "yellow"
 
-# If crossed 0 from negative (was blue, now contested), briefly neutral
-execute if score #dom_prog {ns}.data matches ..-1 if score @s {ns}.mp.dom_progress matches 0.. if entity @s[tag={ns}.dom_label_A] run tellraw @a [{MGS_TAG},{{"text":"Point A neutralized!","color":"yellow"}}]
-execute if score #dom_prog {ns}.data matches ..-1 if score @s {ns}.mp.dom_progress matches 0.. if entity @s[tag={ns}.dom_label_B] run tellraw @a [{MGS_TAG},{{"text":"Point B neutralized!","color":"yellow"}}]
-execute if score #dom_prog {ns}.data matches ..-1 if score @s {ns}.mp.dom_progress matches 0.. if entity @s[tag={ns}.dom_label_C] run tellraw @a [{MGS_TAG},{{"text":"Point C neutralized!","color":"yellow"}}]
-execute if score #dom_prog {ns}.data matches ..-1 if score @s {ns}.mp.dom_progress matches 0.. if entity @s[tag={ns}.dom_label_D] run tellraw @a [{MGS_TAG},{{"text":"Point D neutralized!","color":"yellow"}}]
-execute if score #dom_prog {ns}.data matches ..-1 if score @s {ns}.mp.dom_progress matches 0.. if entity @s[tag={ns}.dom_label_E] run tellraw @a [{MGS_TAG},{{"text":"Point E neutralized!","color":"yellow"}}]
-execute if score #dom_prog {ns}.data matches ..-1 if score @s {ns}.mp.dom_progress matches 0.. run playsound minecraft:block.note_block.bass player @a ~ ~ ~ 1 0.5
-execute if score #dom_prog {ns}.data matches ..-1 if score @s {ns}.mp.dom_progress matches 0.. run scoreboard players set @s {ns}.mp.dom_owner 0
-execute if score #dom_prog {ns}.data matches ..-1 if score @s {ns}.mp.dom_progress matches 0.. run data modify entity @n[tag={ns}.dom_label,distance=..1] text.color set value "yellow"
-
-# If reached 100, captured by red
-execute if score @s {ns}.mp.dom_progress matches 100 unless score @s {ns}.mp.dom_owner matches 1 if entity @s[tag={ns}.dom_label_A] run tellraw @a [{MGS_TAG},{{"text":"Red","color":"red"}}," ",{{"text":"captured point A!","color":"yellow"}}]
-execute if score @s {ns}.mp.dom_progress matches 100 unless score @s {ns}.mp.dom_owner matches 1 if entity @s[tag={ns}.dom_label_B] run tellraw @a [{MGS_TAG},{{"text":"Red","color":"red"}}," ",{{"text":"captured point B!","color":"yellow"}}]
-execute if score @s {ns}.mp.dom_progress matches 100 unless score @s {ns}.mp.dom_owner matches 1 if entity @s[tag={ns}.dom_label_C] run tellraw @a [{MGS_TAG},{{"text":"Red","color":"red"}}," ",{{"text":"captured point C!","color":"yellow"}}]
-execute if score @s {ns}.mp.dom_progress matches 100 unless score @s {ns}.mp.dom_owner matches 1 if entity @s[tag={ns}.dom_label_D] run tellraw @a [{MGS_TAG},{{"text":"Red","color":"red"}}," ",{{"text":"captured point D!","color":"yellow"}}]
-execute if score @s {ns}.mp.dom_progress matches 100 unless score @s {ns}.mp.dom_owner matches 1 if entity @s[tag={ns}.dom_label_E] run tellraw @a [{MGS_TAG},{{"text":"Red","color":"red"}}," ",{{"text":"captured point E!","color":"yellow"}}]
-execute if score @s {ns}.mp.dom_progress matches 100 unless score @s {ns}.mp.dom_owner matches 1 run playsound minecraft:block.note_block.bell player @a ~ ~ ~ 1 1.2
-execute if score @s {ns}.mp.dom_progress matches 100 unless score @s {ns}.mp.dom_owner matches 1 run data modify entity @n[tag={ns}.dom_label,distance=..1] text.color set value "red"
-execute if score @s {ns}.mp.dom_progress matches 100 unless score @s {ns}.mp.dom_owner matches 1 run scoreboard players set @s {ns}.mp.dom_owner 1
-""")
-
-	## DOM: Capture for blue (progress goes -)
-	write_versioned_function("multiplayer/gamemodes/dom/capture_blue", f"""
-# Decrease progress (2 per tick when capturing)
-execute store result score #dom_prog {ns}.data run scoreboard players get @s {ns}.mp.dom_progress
-scoreboard players remove @s {ns}.mp.dom_progress 2
-
-# Cap at -100
-execute if score @s {ns}.mp.dom_progress matches ..-101 run scoreboard players set @s {ns}.mp.dom_progress -100
-
-# If crossed 0 from positive (was red, now contested)
-execute if score #dom_prog {ns}.data matches 1.. if score @s {ns}.mp.dom_progress matches ..0 if entity @s[tag={ns}.dom_label_A] run tellraw @a [{MGS_TAG},{{"text":"Point A neutralized!","color":"yellow"}}]
-execute if score #dom_prog {ns}.data matches 1.. if score @s {ns}.mp.dom_progress matches ..0 if entity @s[tag={ns}.dom_label_B] run tellraw @a [{MGS_TAG},{{"text":"Point B neutralized!","color":"yellow"}}]
-execute if score #dom_prog {ns}.data matches 1.. if score @s {ns}.mp.dom_progress matches ..0 if entity @s[tag={ns}.dom_label_C] run tellraw @a [{MGS_TAG},{{"text":"Point C neutralized!","color":"yellow"}}]
-execute if score #dom_prog {ns}.data matches 1.. if score @s {ns}.mp.dom_progress matches ..0 if entity @s[tag={ns}.dom_label_D] run tellraw @a [{MGS_TAG},{{"text":"Point D neutralized!","color":"yellow"}}]
-execute if score #dom_prog {ns}.data matches 1.. if score @s {ns}.mp.dom_progress matches ..0 if entity @s[tag={ns}.dom_label_E] run tellraw @a [{MGS_TAG},{{"text":"Point E neutralized!","color":"yellow"}}]
-execute if score #dom_prog {ns}.data matches 1.. if score @s {ns}.mp.dom_progress matches ..0 run playsound minecraft:block.note_block.bass player @a ~ ~ ~ 1 0.5
-execute if score #dom_prog {ns}.data matches 1.. if score @s {ns}.mp.dom_progress matches ..0 run scoreboard players set @s {ns}.mp.dom_owner 0
-execute if score #dom_prog {ns}.data matches 1.. if score @s {ns}.mp.dom_progress matches ..0 run data modify entity @n[tag={ns}.dom_label,distance=..1] text.color set value "yellow"
-
-# If reached -100, captured by blue
-execute if score @s {ns}.mp.dom_progress matches -100 unless score @s {ns}.mp.dom_owner matches 2 if entity @s[tag={ns}.dom_label_A] run tellraw @a [{MGS_TAG},{{"text":"Blue","color":"blue"}}," ",{{"text":"captured point A!","color":"yellow"}}]
-execute if score @s {ns}.mp.dom_progress matches -100 unless score @s {ns}.mp.dom_owner matches 2 if entity @s[tag={ns}.dom_label_B] run tellraw @a [{MGS_TAG},{{"text":"Blue","color":"blue"}}," ",{{"text":"captured point B!","color":"yellow"}}]
-execute if score @s {ns}.mp.dom_progress matches -100 unless score @s {ns}.mp.dom_owner matches 2 if entity @s[tag={ns}.dom_label_C] run tellraw @a [{MGS_TAG},{{"text":"Blue","color":"blue"}}," ",{{"text":"captured point C!","color":"yellow"}}]
-execute if score @s {ns}.mp.dom_progress matches -100 unless score @s {ns}.mp.dom_owner matches 2 if entity @s[tag={ns}.dom_label_D] run tellraw @a [{MGS_TAG},{{"text":"Blue","color":"blue"}}," ",{{"text":"captured point D!","color":"yellow"}}]
-execute if score @s {ns}.mp.dom_progress matches -100 unless score @s {ns}.mp.dom_owner matches 2 if entity @s[tag={ns}.dom_label_E] run tellraw @a [{MGS_TAG},{{"text":"Blue","color":"blue"}}," ",{{"text":"captured point E!","color":"yellow"}}]
-execute if score @s {ns}.mp.dom_progress matches -100 unless score @s {ns}.mp.dom_owner matches 2 run playsound minecraft:block.note_block.bell player @a ~ ~ ~ 1 0.8
-execute if score @s {ns}.mp.dom_progress matches -100 unless score @s {ns}.mp.dom_owner matches 2 run data modify entity @n[tag={ns}.dom_label,distance=..1] text.color set value "blue"
-execute if score @s {ns}.mp.dom_progress matches -100 unless score @s {ns}.mp.dom_owner matches 2 run scoreboard players set @s {ns}.mp.dom_owner 2
+# If reached {cap}, captured by {color}
+{capture_labels}
+execute if score @s {ns}.mp.dom_progress matches {cap} unless score @s {ns}.mp.dom_owner matches {owner_id} run playsound minecraft:block.note_block.bell player @a ~ ~ ~ 1 {pitch}
+execute if score @s {ns}.mp.dom_progress matches {cap} unless score @s {ns}.mp.dom_owner matches {owner_id} run data modify entity @n[tag={ns}.dom_label,distance=..1] text.color set value "{color}"
+execute if score @s {ns}.mp.dom_progress matches {cap} unless score @s {ns}.mp.dom_owner matches {owner_id} run scoreboard players set @s {ns}.mp.dom_owner {owner_id}
 """)
 
 	## DOM: Score tick - +1 per owned point

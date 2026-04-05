@@ -39,33 +39,11 @@ from .config.stats import (
     START_HEX,
     SWITCH,
 )
-from .database.ak47 import main as main_ak47
-from .database.all_pistols import main as main_pistols
 from .database.ammo import main as main_ammo
-from .database.aug import main as main_aug
 from .database.casing import main as main_casing
-from .database.famas import main as main_famas
-from .database.fnfal import main as main_fnfal
-from .database.g3a3 import main as main_g3a3
 from .database.grenades import main as main_grenades
-from .database.m4a1 import main as main_m4a1
-from .database.m16a4 import main as main_m16a4
-from .database.m24 import main as main_m24
-from .database.m82 import main as main_m82
-from .database.m249 import main as main_m249
-from .database.m500 import main as main_m500
-from .database.m590 import main as main_m590
-from .database.mac10 import main as main_mac10
-from .database.mosin import main as main_mosin
-from .database.mp5 import main as main_mp5
-from .database.mp7 import main as main_mp7
-from .database.ppsh41 import main as main_ppsh41
 from .database.rpg7 import main as main_rpg7
-from .database.rpk import main as main_rpk
-from .database.scar17 import main as main_scar17
-from .database.spas12 import main as main_spas12
-from .database.sten import main as main_sten
-from .database.svd import main as main_svd
+from .database.weapons import main as main_weapons
 
 
 # Main function should return a database
@@ -77,41 +55,11 @@ def beet_default(ctx: Context) -> None:
     main_casing()
     main_ammo()
 
-    # Rifles
-    main_m16a4()
-    main_ak47()
-    main_fnfal()
-    main_aug()
-    main_m4a1()
-    main_g3a3()
-    main_famas()
-    main_scar17()
-
-    # Pistols
-    main_pistols()
-
-    # SMGs
-    main_mp5()
-    main_mac10()
-    main_mp7()
-    main_ppsh41()
-    main_sten()
-
-    # Shotguns
-    main_spas12()
-    main_m500()
-    main_m590()
-
-    # Snipers
-    main_svd()
-    main_m82()
-    main_mosin()
-    main_m24()
+    # All weapons (rifles, pistols, SMGs, shotguns, snipers, LMGs)
+    main_weapons()
 
     # Special
     main_rpg7()
-    main_rpk()
-    main_m249()
 
     # Grenades
     main_grenades()
