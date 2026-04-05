@@ -115,9 +115,14 @@ function {ns}:v{version}/zombies/perks/store_data with storage {ns}:temp _pk_sto
 # Register Bookshelf events
 execute as @n[tag={ns}.pk_new] run function #bs.interaction:on_right_click {{run:"function {ns}:v{version}/zombies/perks/on_right_click",executor:"source"}}
 execute as @n[tag={ns}.pk_new] run function #bs.interaction:on_hover {{run:"function {ns}:v{version}/zombies/perks/on_hover",executor:"source"}}
-tag @n[tag={ns}.pk_new] remove {ns}.pk_new
 
-# Continue iteration
+# Spawn visual item_display at machine position (default: potion; overridable via display_item + item_model map fields)
+data modify storage {ns}:temp _pk_disp.tag set value "{ns}.pk_display"
+data modify storage {ns}:temp _pk_disp.item_id set value "minecraft:potion"
+data modify storage {ns}:temp _pk_disp.item_model set value "minecraft:potion"
+execute if data storage {ns}:temp _pk_iter[0].display_item run data modify storage {ns}:temp _pk_disp.item_id set from storage {ns}:temp _pk_iter[0].display_item
+execute if data storage {ns}:temp _pk_iter[0].item_model run data modify storage {ns}:temp _pk_disp.item_model set from storage {ns}:temp _pk_iter[0].item_model
+execute as @n[tag={ns}.pk_new] at @s run function {ns}:v{version}/zombies/display/summon_machine_display with storage {ns}:temp _pk_disp
 data remove storage {ns}:temp _pk_iter[0]
 execute if data storage {ns}:temp _pk_iter[0] run function {ns}:v{version}/zombies/perks/setup_iter
 """)

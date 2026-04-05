@@ -2,6 +2,7 @@
 # Imports
 from .ability import generate_zombies_abilities
 from .bonus import main as bonus_main
+from .display_helpers import generate_display_helpers
 from .doors import generate_doors
 from .feedback import generate_zombies_feedback
 from .game import generate_zombies_game
@@ -28,6 +29,7 @@ def main() -> None:
     generate_zombies_abilities()
     generate_zombies_feedback()
     generate_zombies_inventory()
+    generate_display_helpers()
     generate_mystery_box()
     generate_pap()
     generate_power_switch()

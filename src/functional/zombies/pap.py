@@ -101,6 +101,14 @@ function {ns}:v{version}/zombies/pap/store_data with storage {ns}:temp _pap_stor
 # Register Bookshelf interaction callbacks
 execute as @n[tag={ns}.pap_new] run function #bs.interaction:on_right_click {{run:"function {ns}:v{version}/zombies/pap/on_right_click",executor:"source"}}
 execute as @n[tag={ns}.pap_new] run function #bs.interaction:on_hover {{run:"function {ns}:v{version}/zombies/pap/on_hover",executor:"source"}}
+
+# Spawn visual item_display at machine position (default: netherite_block; overridable via display_item + item_model map fields)
+data modify storage {ns}:temp _pap_disp.tag set value "{ns}.pap_display"
+data modify storage {ns}:temp _pap_disp.item_id set value "minecraft:netherite_block"
+data modify storage {ns}:temp _pap_disp.item_model set value "minecraft:netherite_block"
+execute if data storage {ns}:temp _pap_iter[0].display_item run data modify storage {ns}:temp _pap_disp.item_id set from storage {ns}:temp _pap_iter[0].display_item
+execute if data storage {ns}:temp _pap_iter[0].item_model run data modify storage {ns}:temp _pap_disp.item_model set from storage {ns}:temp _pap_iter[0].item_model
+execute as @n[tag={ns}.pap_new] at @s run function {ns}:v{version}/zombies/display/summon_machine_display with storage {ns}:temp _pap_disp
 tag @n[tag={ns}.pap_new] remove {ns}.pap_new
 
 # Continue iteration

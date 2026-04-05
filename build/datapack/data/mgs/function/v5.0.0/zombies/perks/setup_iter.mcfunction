@@ -40,9 +40,14 @@ function mgs:v5.0.0/zombies/perks/store_data with storage mgs:temp _pk_store
 # Register Bookshelf events
 execute as @n[tag=mgs.pk_new] run function #bs.interaction:on_right_click {run:"function mgs:v5.0.0/zombies/perks/on_right_click",executor:"source"}
 execute as @n[tag=mgs.pk_new] run function #bs.interaction:on_hover {run:"function mgs:v5.0.0/zombies/perks/on_hover",executor:"source"}
-tag @n[tag=mgs.pk_new] remove mgs.pk_new
 
-# Continue iteration
+# Spawn visual item_display at machine position (default: potion; overridable via display_item + item_model map fields)
+data modify storage mgs:temp _pk_disp.tag set value "mgs.pk_display"
+data modify storage mgs:temp _pk_disp.item_id set value "minecraft:potion"
+data modify storage mgs:temp _pk_disp.item_model set value "minecraft:potion"
+execute if data storage mgs:temp _pk_iter[0].display_item run data modify storage mgs:temp _pk_disp.item_id set from storage mgs:temp _pk_iter[0].display_item
+execute if data storage mgs:temp _pk_iter[0].item_model run data modify storage mgs:temp _pk_disp.item_model set from storage mgs:temp _pk_iter[0].item_model
+execute as @n[tag=mgs.pk_new] at @s run function mgs:v5.0.0/zombies/display/summon_machine_display with storage mgs:temp _pk_disp
 data remove storage mgs:temp _pk_iter[0]
 execute if data storage mgs:temp _pk_iter[0] run function mgs:v5.0.0/zombies/perks/setup_iter
 
