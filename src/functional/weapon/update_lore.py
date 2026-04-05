@@ -150,7 +150,6 @@ execute store result storage {ns}:input lore.reload_int int 1 run scoreboard pla
 execute store result storage {ns}:input lore.reload_dec int 1 run scoreboard players get #reload_dec {ns}.data
 
 # --- Fire rate: tenths_of_shots_per_second = 200 / cooldown → "X.Y" ---
-scoreboard players set #200 {ns}.data 200
 scoreboard players operation #fire_rate_tenths {ns}.data = #200 {ns}.data
 scoreboard players operation #fire_rate_tenths {ns}.data /= #lore_cooldown {ns}.data
 scoreboard players operation #rate_int {ns}.data = #fire_rate_tenths {ns}.data

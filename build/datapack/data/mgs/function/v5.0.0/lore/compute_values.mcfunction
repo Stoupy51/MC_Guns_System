@@ -25,7 +25,6 @@ execute store result storage mgs:input lore.reload_int int 1 run scoreboard play
 execute store result storage mgs:input lore.reload_dec int 1 run scoreboard players get #reload_dec mgs.data
 
 # --- Fire rate: tenths_of_shots_per_second = 200 / cooldown → "X.Y" ---
-scoreboard players set #200 mgs.data 200
 scoreboard players operation #fire_rate_tenths mgs.data = #200 mgs.data
 scoreboard players operation #fire_rate_tenths mgs.data /= #lore_cooldown mgs.data
 scoreboard players operation #rate_int mgs.data = #fire_rate_tenths mgs.data

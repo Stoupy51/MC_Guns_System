@@ -35,14 +35,6 @@ scoreboard objectives add {ns}.zb.spawn.gid dummy
 # Sidebar rank scoreboard
 scoreboard objectives add {ns}.zb.sb_rank dummy
 
-# Constants
-scoreboard players set #5 {ns}.data 5
-scoreboard players set #20 {ns}.data 20
-scoreboard players set #60 {ns}.data 60
-scoreboard players set #100 {ns}.data 100
-scoreboard players set #150 {ns}.data 150
-scoreboard players set #4 {ns}.data 4
-
 # Initialize zombies game state
 execute unless data storage {ns}:zombies game run data modify storage {ns}:zombies game set value {{state:"lobby",map_id:"",round:0}}
 

@@ -32,10 +32,6 @@ scoreboard objectives add {ns}.mp.bx dummy
 scoreboard objectives add {ns}.mp.by dummy
 scoreboard objectives add {ns}.mp.bz dummy
 
-# Constants
-scoreboard players set #20 {ns}.data 20
-scoreboard players set #60 {ns}.data 60
-
 # Mission mob team (created once)
 execute unless score #mi_mob_team_created {ns}.data matches 1 run team add {ns}.mi_mobs
 execute unless score #mi_mob_team_created {ns}.data matches 1 run team modify {ns}.mi_mobs color dark_red

@@ -87,13 +87,6 @@ scoreboard objectives add {ns}.previous_dps dummy
 scoreboard objectives add {ns}.dps_timer dummy
 
 
-# Define some constants
-scoreboard players set #2 {ns}.data 2
-scoreboard players set #10 {ns}.data 10
-scoreboard players set #100 {ns}.data 100
-scoreboard players set #1000 {ns}.data 1000
-scoreboard players set #1000000 {ns}.data 1000000
-
 # Initialize slow bullet (projectile) counter
 scoreboard players add #slow_bullet_count {ns}.data 0
 
