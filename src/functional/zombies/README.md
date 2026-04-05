@@ -1,16 +1,13 @@
 
 # FIXME:
-- PaP machine:
-  - Should change scope randomly each time you send your weapon in (should change scope when coming out of PaP), also should add component "enchantment_glint_override=true"
-  - The ammo lore didn't get the pap suffix.
-  - Magazine capacity should update to 8x the base weapon capacity
-  - The animation is not accurate. It should properly use interpolation, rotation, and translation.
-    - All should be horizontal movement. And timings are incorrect, check internet for black ops pap animation for reference.
-  - Messages are not correctly timed
-  - If the weapon is not picked up, it should disappear.
+- Pap:
+	# FIXME, use this Timeline instead (no rotation or size changes):
+	#   240-> 211 (30t): GOING IN   — slide horizontally from ahead to center (beware of waiting 2 ticks after summon before starting interpolation to avoid information not being synced to client)
+	#   210-> 151 (60t): INSIDE     — particles + periodic sound
+	#   150-> 121 (30t): COMING OUT — slide horizontally from center to ahead
+	#   120:             TRIGGER RETREAT — glowing weapon, starts retreat timer and allows collection
+	#   119→ 1 (118t):   RETREAT   — weapon retreats back, still collectible
+	#   0:               RETREAT FINISH — weapon destroyed (lost) (sound)
 
-- Perks, mystery box, etc. are not placed with proper yaw even tho it's configured in editor
-- Editor doesn't show option for item model overrides for PaP, perks, and mystery box.
-
-- RayGun magazine bug: loosing item_model because conversion from consumable to not is scuffed
-
+- When loosing weapon with pap, while having 3 weapons in inventory, we end up with 2.
+In case the loose slot is between gun 1 and 3, when we get a new weapon it believes we have 2 guns (slot 1 and 2) and it replaces the third weapon even tho it's slot 2 that is empty
