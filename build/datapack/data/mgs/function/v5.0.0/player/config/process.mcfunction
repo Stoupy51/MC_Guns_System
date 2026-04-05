@@ -6,6 +6,10 @@
 # @within	mgs:v5.0.0/player/tick
 #
 
+# Load per-player editor state (isolates simultaneous editors)
+execute store result storage mgs:temp _pid int 1 run scoreboard players get @s bs.id
+function mgs:v5.0.0/multiplayer/editor/load_state with storage mgs:temp
+
 # 1 = Show config menu
 # 2 = Toggle hitmarker Sound
 # 3 = Toggle damage debug in chat
@@ -92,6 +96,9 @@ execute if score @s mgs.player.config matches 1601 run function mgs:v5.0.0/multi
 execute if score @s mgs.player.config matches 1602 run function mgs:v5.0.0/multiplayer/marketplace/browse_likes
 # 1603 = My Loadouts: favorites only
 execute if score @s mgs.player.config matches 1603 run function mgs:v5.0.0/multiplayer/my_loadouts/browse_fav_only
+
+# Save per-player editor state back to isolated storage
+function mgs:v5.0.0/multiplayer/editor/save_state with storage mgs:temp
 
 # Reset score
 scoreboard players set @s mgs.player.config 0
