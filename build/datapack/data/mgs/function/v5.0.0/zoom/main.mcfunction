@@ -29,7 +29,7 @@ execute if score @s mgs.zoom matches 1 run scoreboard players add @s mgs.zoom_ti
 # Uses color with B=0.15 (non-zero B + non-zero G) to distinguish from zoom/flash/spread markers
 # B=0.15 → B'∈[18-38] after randomization, safely above dim grayscale particles
 scoreboard players set #scope_level mgs.data 0
-execute store result score #scope_level mgs.data run data get storage mgs:gun all.scope_level
+execute store result score #scope_level mgs.data run data get storage mgs:gun all.stats.scope_level
 execute if score @s mgs.zoom matches 1 unless score @s mgs.switch_cooldown > #total_tick mgs.data if score #scope_level mgs.data matches 3 at @s anchored eyes run particle minecraft:dust{color:[0.02,0.02,0.15],scale:0.01} ^ ^ ^0.1 0 0 0 0 1 force @s
 execute if score @s mgs.zoom matches 1 unless score @s mgs.switch_cooldown > #total_tick mgs.data if score #scope_level mgs.data matches 4 at @s anchored eyes run particle minecraft:dust{color:[0.02,0.08,0.15],scale:0.01} ^ ^ ^0.1 0 0 0 0 1 force @s
 execute if score @s mgs.zoom matches 1 unless score @s mgs.switch_cooldown > #total_tick mgs.data unless score #scope_level mgs.data matches 3 unless score #scope_level mgs.data matches 4 at @s anchored eyes run particle minecraft:dust{color:[0.02,0.25,0.15],scale:0.01} ^ ^ ^0.1 0 0 0 0 1 force @s

@@ -32,3 +32,8 @@ execute unless score @s mgs.zb.ability matches 3.. run item replace entity @s ho
 # Clear cursor (prevent dragging tagged items outside managed inventory)
 execute if items entity @s player.cursor * run function mgs:v5.0.0/zombies/inventory/drop_wrong_slot_item {slot:"player.cursor"}
 
+# Clean orphaned magazines (gun lost in PAP but magazine remains) — skip slots actively in PAP
+execute unless score @s mgs.zb.pap_s matches 1 unless items entity @s hotbar.1 *[custom_data~{mgs:{gun:true}}] if items entity @s inventory.1 *[custom_data~{mgs:{magazine:true}}] run item replace entity @s inventory.1 with air
+execute unless score @s mgs.zb.pap_s matches 2 unless items entity @s hotbar.2 *[custom_data~{mgs:{gun:true}}] if items entity @s inventory.2 *[custom_data~{mgs:{magazine:true}}] run item replace entity @s inventory.2 with air
+execute unless score @s mgs.zb.pap_s matches 3 unless items entity @s hotbar.3 *[custom_data~{mgs:{gun:true}}] if items entity @s inventory.3 *[custom_data~{mgs:{magazine:true}}] run item replace entity @s inventory.3 with air
+

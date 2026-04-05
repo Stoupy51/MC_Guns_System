@@ -152,6 +152,10 @@ scoreboard objectives add mgs.zb.pap.price dummy
 scoreboard objectives add mgs.zb.pap.power dummy
 scoreboard objectives add mgs.pap_anim dummy
 
+# Per-player PAP tracking (for cleanup when weapon is lost/collected)
+scoreboard objectives add mgs.zb.pap_s dummy
+scoreboard objectives add mgs.zb.pap_mid dummy
+
 data modify storage mgs:zombies scope_variants."ak47" set value [{id:"ak47",model:"mgs:ak47",zoom:"mgs:ak47_zoom"},{id:"ak47_1",model:"mgs:ak47_1",zoom:"mgs:ak47_1_zoom"},{id:"ak47_2",model:"mgs:ak47_2",zoom:"mgs:ak47_2_zoom"},{id:"ak47_3",model:"mgs:ak47_3",zoom:"mgs:ak47_3_zoom",scope_level:3},{id:"ak47_4",model:"mgs:ak47_4",zoom:"mgs:ak47_4_zoom",scope_level:4}]
 data modify storage mgs:zombies scope_variants."m16a4" set value [{id:"m16a4",model:"mgs:m16a4",zoom:"mgs:m16a4_zoom"},{id:"m16a4_1",model:"mgs:m16a4_1",zoom:"mgs:m16a4_1_zoom"},{id:"m16a4_2",model:"mgs:m16a4_2",zoom:"mgs:m16a4_2_zoom"},{id:"m16a4_3",model:"mgs:m16a4_3",zoom:"mgs:m16a4_3_zoom",scope_level:3},{id:"m16a4_4",model:"mgs:m16a4_4",zoom:"mgs:m16a4_4_zoom",scope_level:4}]
 data modify storage mgs:zombies scope_variants."famas" set value [{id:"famas",model:"mgs:famas",zoom:"mgs:famas_zoom"},{id:"famas_1",model:"mgs:famas_1",zoom:"mgs:famas_1_zoom"},{id:"famas_2",model:"mgs:famas_2",zoom:"mgs:famas_2_zoom"},{id:"famas_3",model:"mgs:famas_3",zoom:"mgs:famas_3_zoom",scope_level:3},{id:"famas_4",model:"mgs:famas_4",zoom:"mgs:famas_4_zoom",scope_level:4}]

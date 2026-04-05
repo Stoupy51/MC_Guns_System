@@ -12,6 +12,8 @@ def generate_zombies_inventory() -> None:
 	version: str = Mem.ctx.project_version
 
 	knife_cd = "{" + ns + ":{knife:true}}"
+	gun_cd = "{" + ns + ":{gun:true}}"
+	mag_cd = "{" + ns + ":{magazine:true}}"
 	zb_tagged_cd = "{" + ns + ":{zombies:{}}}"
 
 	knife_slot_cd = "{" + ns + ":{knife:true,zombies:{hotbar:0}}}"
@@ -267,6 +269,11 @@ execute unless score @s {ns}.zb.ability matches 3.. run item replace entity @s h
 
 # Clear cursor (prevent dragging tagged items outside managed inventory)
 execute if items entity @s player.cursor * run function {ns}:v{version}/zombies/inventory/drop_wrong_slot_item {{slot:"player.cursor"}}
+
+# Clean orphaned magazines (gun lost in PAP but magazine remains) — skip slots actively in PAP
+execute unless score @s {ns}.zb.pap_s matches 1 unless items entity @s hotbar.1 *[custom_data~{gun_cd}] if items entity @s inventory.1 *[custom_data~{mag_cd}] run item replace entity @s inventory.1 with air
+execute unless score @s {ns}.zb.pap_s matches 2 unless items entity @s hotbar.2 *[custom_data~{gun_cd}] if items entity @s inventory.2 *[custom_data~{mag_cd}] run item replace entity @s inventory.2 with air
+execute unless score @s {ns}.zb.pap_s matches 3 unless items entity @s hotbar.3 *[custom_data~{gun_cd}] if items entity @s inventory.3 *[custom_data~{mag_cd}] run item replace entity @s inventory.3 with air
 """)
 
 	write_versioned_function("zombies/game_tick", f"""

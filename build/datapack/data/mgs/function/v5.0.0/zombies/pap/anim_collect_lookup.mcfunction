@@ -9,5 +9,6 @@
 #
 
 $data modify storage mgs:temp _pap_cg.slot set from storage mgs:zombies pap_anim_slot."$(id)"
+$data modify storage mgs:temp _pap_cg.id set value $(id)
 function mgs:v5.0.0/zombies/pap/anim_collect_give with storage mgs:temp _pap_cg
 
