@@ -38,6 +38,14 @@ function mgs:v5.0.0/zombies/pap/store_data with storage mgs:temp _pap_store
 # Register Bookshelf interaction callbacks
 execute as @n[tag=mgs.pap_new] run function #bs.interaction:on_right_click {run:"function mgs:v5.0.0/zombies/pap/on_right_click",executor:"source"}
 execute as @n[tag=mgs.pap_new] run function #bs.interaction:on_hover {run:"function mgs:v5.0.0/zombies/pap/on_hover",executor:"source"}
+
+# Spawn visual item_display at machine position (default: netherite_block; overridable via display_item + item_model map fields)
+data modify storage mgs:temp _pap_disp.tag set value "mgs.pap_display"
+data modify storage mgs:temp _pap_disp.item_id set value "minecraft:netherite_block"
+data modify storage mgs:temp _pap_disp.item_model set value "minecraft:netherite_block"
+execute if data storage mgs:temp _pap_iter[0].display_item run data modify storage mgs:temp _pap_disp.item_id set from storage mgs:temp _pap_iter[0].display_item
+execute if data storage mgs:temp _pap_iter[0].item_model run data modify storage mgs:temp _pap_disp.item_model set from storage mgs:temp _pap_iter[0].item_model
+execute as @n[tag=mgs.pap_new] at @s run function mgs:v5.0.0/zombies/display/summon_machine_display with storage mgs:temp _pap_disp
 tag @n[tag=mgs.pap_new] remove mgs.pap_new
 
 # Continue iteration
