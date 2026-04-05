@@ -12,6 +12,19 @@ from stewbeet import Mem, TextComponent, write_versioned_function
 MGS_TAG: str = r'[{"text":"","color":"gold"},"[",{"text":"MGS"},"] "]'
 
 
+def game_active_guard(ns: str, storage: str) -> str:
+	""" Return the standard guard command for active games. """
+	return f'execute unless data storage {ns}:{storage} game{{state:"active"}} run return fail'
+
+
+def game_start_guards(ns: str, storage: str, mode_name: str) -> str:
+	""" Return the 2-line guard for game start functions (active + preparing). """
+	return f"""
+execute if data storage {ns}:{storage} game{{state:"active"}} run return run tellraw @s [{MGS_TAG},{{"text":"{mode_name} already in progress!","color":"red"}}]
+execute if data storage {ns}:{storage} game{{state:"preparing"}} run return run tellraw @s [{MGS_TAG},{{"text":"{mode_name} already preparing!","color":"red"}}]
+""".strip()
+
+
 def styled_text(text: str, **attrs: str) -> str:
     """ Create a styled text component, automatically splitting non-alphanumeric
     prefixes/suffixes into raw strings so the lang plugin only sees clean alpha text.

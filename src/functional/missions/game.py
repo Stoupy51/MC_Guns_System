@@ -7,7 +7,7 @@
 
 from stewbeet import Mem, write_load_file, write_tag, write_tick_file, write_versioned_function
 
-from ..helpers import MGS_TAG
+from ..helpers import MGS_TAG, game_start_guards
 from ..respawn_countdown import respawn_countdown_tick_lines
 
 
@@ -49,8 +49,7 @@ execute unless data storage {ns}:missions game run data modify storage {ns}:miss
 	## Game Start
 	write_versioned_function("missions/start", f"""
 # Prevent starting if already active or preparing
-execute if data storage {ns}:missions game{{state:"active"}} run return run tellraw @s [{MGS_TAG},{{"text":"Mission already in progress!","color":"red"}}]
-execute if data storage {ns}:missions game{{state:"preparing"}} run return run tellraw @s [{MGS_TAG},{{"text":"Mission already preparing!","color":"red"}}]
+{game_start_guards(ns, "missions", "Mission")}
 
 # Check that a map is selected
 execute if data storage {ns}:missions game{{map_id:""}} run return run tellraw @s [{MGS_TAG},{{"text":"No map selected! Use the setup menu to select a mission map.","color":"red"}}]
