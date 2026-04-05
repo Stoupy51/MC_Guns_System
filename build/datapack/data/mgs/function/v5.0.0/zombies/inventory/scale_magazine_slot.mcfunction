@@ -26,6 +26,10 @@ $item modify entity @s $(slot) mgs:v5.0.0/zb_item_stats
 # Mark as zombies-converted (consumable=2b): ammo.py reads remaining_bullets instead of stack count.
 $item modify entity @s $(slot) mgs:v5.0.0/zb_mark_converted
 
+# Force count to 1 (consumable magazines used stack count as ammo, now using custom_data)
+scoreboard players set #bullets mgs.data 1
+$item modify entity @s $(slot) mgs:v5.0.0/set_consumable_count
+
 # Update magazine lore to show new ammo count
 data modify storage mgs:temp capacity set from storage mgs:temp zb_item_stats.capacity
 execute store result score #bullets mgs.data run data get storage mgs:temp zb_item_stats.remaining_bullets

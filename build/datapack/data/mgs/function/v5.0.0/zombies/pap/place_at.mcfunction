@@ -6,7 +6,8 @@
 # @args		x (unknown)
 #			y (unknown)
 #			z (unknown)
+#			rotation (unknown)
 #
 
-$summon minecraft:interaction $(x) $(y) $(z) {width:1.2f,height:2.2f,response:true,Tags:["mgs.pap_machine","mgs.gm_entity","bs.entity.interaction","mgs.pap_new"]}
+$summon minecraft:interaction $(x) $(y) $(z) {width:1.2f,height:2.2f,response:true,Rotation:$(rotation),Tags:["mgs.pap_machine","mgs.gm_entity","bs.entity.interaction","mgs.pap_new"]}
 

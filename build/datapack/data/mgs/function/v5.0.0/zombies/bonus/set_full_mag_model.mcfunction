@@ -5,8 +5,8 @@
 #			mgs:v5.0.0/zombies/pap/upgrade_magazine_slot with storage mgs:temp refill
 #
 # @args		slot (unknown)
-#			base_weapon (unknown)
+#			mag_model (unknown)
 #
 
-$item modify entity @s $(slot) {"function":"minecraft:set_components", "components":{"minecraft:item_model":"mgs:$(base_weapon)_mag"}}
+$item modify entity @s $(slot) {"function":"minecraft:set_components", "components":{"minecraft:item_model":"$(mag_model)"}}
 

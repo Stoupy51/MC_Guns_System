@@ -91,10 +91,11 @@ scoreboard players operation #pkx {ns}.data += #gm_base_x {ns}.data
 scoreboard players operation #pky {ns}.data += #gm_base_y {ns}.data
 scoreboard players operation #pkz {ns}.data += #gm_base_z {ns}.data
 
-# Store absolute position for macro
+# Store absolute position and rotation for macro
 execute store result storage {ns}:temp _pk.x int 1 run scoreboard players get #pkx {ns}.data
 execute store result storage {ns}:temp _pk.y int 1 run scoreboard players get #pky {ns}.data
 execute store result storage {ns}:temp _pk.z int 1 run scoreboard players get #pkz {ns}.data
+data modify storage {ns}:temp _pk.rotation set from storage {ns}:temp _pk_iter[0].rotation
 
 # Summon interaction entity
 function {ns}:v{version}/zombies/perks/place_at with storage {ns}:temp _pk
@@ -118,10 +119,14 @@ execute as @n[tag={ns}.pk_new] run function #bs.interaction:on_hover {{run:"func
 
 # Spawn visual item_display at machine position (default: potion; overridable via display_item + item_model map fields)
 data modify storage {ns}:temp _pk_disp.tag set value "{ns}.pk_display"
-data modify storage {ns}:temp _pk_disp.item_id set value "minecraft:potion"
-data modify storage {ns}:temp _pk_disp.item_model set value "minecraft:potion"
+data modify storage {ns}:temp _pk_disp.item_id set value ""
+data modify storage {ns}:temp _pk_disp.item_model set value ""
+data modify storage {ns}:temp _pk_disp.yaw set value 0.0
 execute if data storage {ns}:temp _pk_iter[0].display_item run data modify storage {ns}:temp _pk_disp.item_id set from storage {ns}:temp _pk_iter[0].display_item
 execute if data storage {ns}:temp _pk_iter[0].item_model run data modify storage {ns}:temp _pk_disp.item_model set from storage {ns}:temp _pk_iter[0].item_model
+execute if data storage {ns}:temp _pk_disp{{item_id:""}} run data modify storage {ns}:temp _pk_disp.item_id set value "minecraft:potion"
+execute if data storage {ns}:temp _pk_disp{{item_model:""}} run data modify storage {ns}:temp _pk_disp.item_model set value "minecraft:potion"
+execute if data storage {ns}:temp _pk_iter[0].rotation[0] run data modify storage {ns}:temp _pk_disp.yaw set from storage {ns}:temp _pk_iter[0].rotation[0]
 execute as @n[tag={ns}.pk_new] at @s run function {ns}:v{version}/zombies/display/summon_machine_display with storage {ns}:temp _pk_disp
 tag @n[tag={ns}.pk_new] add {ns}.perk_machine
 tag @n[tag={ns}.pk_new] remove {ns}.pk_new
@@ -132,7 +137,7 @@ execute if data storage {ns}:temp _pk_iter[0] run function {ns}:v{version}/zombi
 """)
 
 	write_versioned_function("zombies/perks/place_at", f"""
-$summon minecraft:interaction $(x) $(y) $(z) {{width:1.0f,height:2.0f,response:true,Tags:["{ns}.perk_machine","{ns}.gm_entity","bs.entity.interaction","{ns}.pk_new"]}}
+$summon minecraft:interaction $(x) $(y) $(z) {{width:1.0f,height:2.0f,response:true,Rotation:$(rotation),Tags:["{ns}.perk_machine","{ns}.gm_entity","bs.entity.interaction","{ns}.pk_new"]}}
 """)
 
 	write_versioned_function("zombies/perks/store_data", f"""

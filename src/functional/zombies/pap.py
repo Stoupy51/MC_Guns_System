@@ -100,10 +100,11 @@ scoreboard players operation #papx {ns}.data += #gm_base_x {ns}.data
 scoreboard players operation #papy {ns}.data += #gm_base_y {ns}.data
 scoreboard players operation #papz {ns}.data += #gm_base_z {ns}.data
 
-# Store absolute coords for summon macro
+# Store absolute coords and rotation for summon macro
 execute store result storage {ns}:temp _pap_place.x int 1 run scoreboard players get #papx {ns}.data
 execute store result storage {ns}:temp _pap_place.y int 1 run scoreboard players get #papy {ns}.data
 execute store result storage {ns}:temp _pap_place.z int 1 run scoreboard players get #papz {ns}.data
+data modify storage {ns}:temp _pap_place.rotation set from storage {ns}:temp _pap_iter[0].rotation
 
 # Summon interaction entity
 function {ns}:v{version}/zombies/pap/place_at with storage {ns}:temp _pap_place
@@ -122,10 +123,14 @@ scoreboard players set @n[tag={ns}.pap_new] {ns}.pap_anim -1
 
 # Spawn visual item_display at machine position (default: netherite_block; overridable via display_item + item_model map fields)
 data modify storage {ns}:temp _pap_disp.tag set value "{ns}.pap_display"
-data modify storage {ns}:temp _pap_disp.item_id set value "minecraft:netherite_block"
-data modify storage {ns}:temp _pap_disp.item_model set value "minecraft:netherite_block"
+data modify storage {ns}:temp _pap_disp.item_id set value ""
+data modify storage {ns}:temp _pap_disp.item_model set value ""
+data modify storage {ns}:temp _pap_disp.yaw set value 0.0
 execute if data storage {ns}:temp _pap_iter[0].display_item run data modify storage {ns}:temp _pap_disp.item_id set from storage {ns}:temp _pap_iter[0].display_item
 execute if data storage {ns}:temp _pap_iter[0].item_model run data modify storage {ns}:temp _pap_disp.item_model set from storage {ns}:temp _pap_iter[0].item_model
+execute if data storage {ns}:temp _pap_disp{{item_id:""}} run data modify storage {ns}:temp _pap_disp.item_id set value "minecraft:netherite_block"
+execute if data storage {ns}:temp _pap_disp{{item_model:""}} run data modify storage {ns}:temp _pap_disp.item_model set value "minecraft:netherite_block"
+execute if data storage {ns}:temp _pap_iter[0].rotation[0] run data modify storage {ns}:temp _pap_disp.yaw set from storage {ns}:temp _pap_iter[0].rotation[0]
 execute as @n[tag={ns}.pap_new] at @s run function {ns}:v{version}/zombies/display/summon_machine_display with storage {ns}:temp _pap_disp
 
 # Store display metadata for lookup (reuse the computed _pap_disp fields)
@@ -135,6 +140,7 @@ execute if data storage {ns}:temp _pap_iter[0].name run data modify storage {ns}
 data modify storage {ns}:temp _pap_store.display_tag set from storage {ns}:temp _pap_disp.tag
 data modify storage {ns}:temp _pap_store.display_item_id set from storage {ns}:temp _pap_disp.item_id
 data modify storage {ns}:temp _pap_store.display_item_model set from storage {ns}:temp _pap_disp.item_model
+data modify storage {ns}:temp _pap_store.display_yaw set from storage {ns}:temp _pap_disp.yaw
 function {ns}:v{version}/zombies/pap/store_data with storage {ns}:temp _pap_store
 
 tag @n[tag={ns}.pap_new] remove {ns}.pap_new
@@ -145,11 +151,11 @@ execute if data storage {ns}:temp _pap_iter[0] run function {ns}:v{version}/zomb
 """)
 
 	write_versioned_function("zombies/pap/place_at", f"""
-$summon minecraft:interaction $(x) $(y) $(z) {{width:1.2f,height:2.2f,response:true,Tags:["{ns}.pap_machine","{ns}.gm_entity","bs.entity.interaction","{ns}.pap_new"]}}
+$summon minecraft:interaction $(x) $(y) $(z) {{width:1.2f,height:2.2f,response:true,Rotation:$(rotation),Tags:["{ns}.pap_machine","{ns}.gm_entity","bs.entity.interaction","{ns}.pap_new"]}}
 """)
 
 	write_versioned_function("zombies/pap/store_data", f"""
-$data modify storage {ns}:zombies pap_data."$(id)" set value {{name:"$(name)",display_tag:"$(display_tag)",display_item_id:"$(display_item_id)",display_item_model:"$(display_item_model)"}}
+$data modify storage {ns}:zombies pap_data."$(id)" set value {{name:"$(name)",display_tag:"$(display_tag)",display_item_id:"$(display_item_id)",display_item_model:"$(display_item_model)",display_yaw:$(display_yaw)}}
 """)
 
 	write_versioned_function("zombies/pap/lookup_machine", f"""
@@ -311,10 +317,20 @@ data modify storage {ns}:temp {CAPACITY} set from storage {ns}:temp zb_item_stat
 scoreboard players operation #bullets {ns}.data = #pap_mag_cap {ns}.data
 $function {ns}:v{version}/ammo/modify_mag_lore {{slot:"$(slot)"}}
 
-# Restore full magazine model
+# Restore full magazine model (read actual item_model from the magazine)
 $data modify storage {ns}:temp refill.slot set value "$(slot)"
 data modify storage {ns}:temp refill.{BASE_WEAPON} set from storage {ns}:temp _pap_extract.stats.{BASE_WEAPON}
+tag @s add {ns}.pap_extracting_mag
+$execute summon item_display run function {ns}:v{version}/zombies/pap/extract_mag_model {{slot:"$(slot)"}}
+tag @s remove {ns}.pap_extracting_mag
 function {ns}:v{version}/zombies/bonus/set_full_mag_model with storage {ns}:temp refill
+""")
+
+	# Extract magazine item_model via item_display (@s = item_display, caller = player)
+	write_versioned_function("zombies/pap/extract_mag_model", f"""
+$item replace entity @s contents from entity @p[tag={ns}.pap_extracting_mag] $(slot)
+data modify storage {ns}:temp refill.mag_model set from entity @s item.components."minecraft:item_model"
+kill @s
 """)
 
 	# Set item name with PAP level suffix: [name, " (PaP N/M)"]
@@ -884,6 +900,7 @@ function {ns}:v{version}/zombies/pap/anim_restore_display_lookup with storage {n
 $data modify storage {ns}:temp _pap_restore_disp.tag set from storage {ns}:zombies pap_data."$(id)".display_tag
 $data modify storage {ns}:temp _pap_restore_disp.item_id set from storage {ns}:zombies pap_data."$(id)".display_item_id
 $data modify storage {ns}:temp _pap_restore_disp.item_model set from storage {ns}:zombies pap_data."$(id)".display_item_model
+$data modify storage {ns}:temp _pap_restore_disp.yaw set from storage {ns}:zombies pap_data."$(id)".display_yaw
 function {ns}:v{version}/zombies/display/summon_machine_display with storage {ns}:temp _pap_restore_disp
 """)
 

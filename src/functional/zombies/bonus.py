@@ -119,18 +119,19 @@ execute store result score #bullets {ns}.data run data get entity @s item.compon
 execute store result storage {ns}:temp {REMAINING_BULLETS} int 1 run data get entity @s item.components."minecraft:custom_data".{ns}.stats.{CAPACITY}
 execute store result storage {ns}:temp {CAPACITY} int 1 run data get entity @s item.components."minecraft:custom_data".{ns}.stats.{CAPACITY}
 
-# Store weapon name and slot for model update macro
+# Store weapon name, slot, and current item_model for model update macro
 data modify storage {ns}:temp refill set value {{}}
 $data modify storage {ns}:temp refill.slot set value "$(slot)"
 data modify storage {ns}:temp refill.{BASE_WEAPON} set from entity @s item.components."minecraft:custom_data".{ns}.weapon
+data modify storage {ns}:temp refill.mag_model set from entity @s item.components."minecraft:item_model"
 
 # Clean up item_display
 kill @s
 """)  # noqa: E501
 
     # Set magazine item model to non-empty (full) version
-    write_versioned_function("zombies/bonus/set_full_mag_model", f"""
-$item modify entity @s $(slot) {{"function":"minecraft:set_components", "components":{{"minecraft:item_model":"{ns}:$({BASE_WEAPON})_mag"}}}}
+    write_versioned_function("zombies/bonus/set_full_mag_model", r"""
+$item modify entity @s $(slot) {"function":"minecraft:set_components", "components":{"minecraft:item_model":"$(mag_model)"}}
 """)
 
     ## ====================================================

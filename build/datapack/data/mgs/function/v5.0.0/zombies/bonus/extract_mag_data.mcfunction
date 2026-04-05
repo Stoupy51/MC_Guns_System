@@ -19,10 +19,11 @@ execute store result score #bullets mgs.data run data get entity @s item.compone
 execute store result storage mgs:temp remaining_bullets int 1 run data get entity @s item.components."minecraft:custom_data".mgs.stats.capacity
 execute store result storage mgs:temp capacity int 1 run data get entity @s item.components."minecraft:custom_data".mgs.stats.capacity
 
-# Store weapon name and slot for model update macro
+# Store weapon name, slot, and current item_model for model update macro
 data modify storage mgs:temp refill set value {}
 $data modify storage mgs:temp refill.slot set value "$(slot)"
 data modify storage mgs:temp refill.base_weapon set from entity @s item.components."minecraft:custom_data".mgs.weapon
+data modify storage mgs:temp refill.mag_model set from entity @s item.components."minecraft:item_model"
 
 # Clean up item_display
 kill @s
