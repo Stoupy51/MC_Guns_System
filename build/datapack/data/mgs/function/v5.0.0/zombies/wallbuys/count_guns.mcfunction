@@ -1,7 +1,7 @@
 
 #> mgs:v5.0.0/zombies/wallbuys/count_guns
 #
-# @within	mgs:v5.0.0/zombies/wallbuys/process_purchase
+# @within	???
 #
 
 scoreboard players set #wb_gun_count mgs.data 0
