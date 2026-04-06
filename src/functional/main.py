@@ -26,6 +26,11 @@ def main() -> None:
     write_load_file(
 f"""
 ## Define objectives
+# Used to tag players that should be selected by Multiplayer/Mission/Zombies functions (@a)
+# We use a scoreboard instead of tag so we can reset offline players
+scoreboard objectives add {ns}.player dummy
+
+# Tracks the currently selected weapon ID for each player
 scoreboard objectives add {ns}.previous_selected dummy
 
 # Tracks right clicks to enable continuous right-click detection

@@ -12,6 +12,11 @@ scoreboard objectives add mgs.player.hitmarker dummy
 scoreboard objectives add mgs.player.damage_debug dummy
 
 ## Define objectives
+# Used to tag players that should be selected by Multiplayer/Mission/Zombies functions (@a)
+# We use a scoreboard instead of tag so we can reset offline players
+scoreboard objectives add mgs.player dummy
+
+# Tracks the currently selected weapon ID for each player
 scoreboard objectives add mgs.previous_selected dummy
 
 # Tracks right clicks to enable continuous right-click detection

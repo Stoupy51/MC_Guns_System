@@ -40,11 +40,8 @@ function mgs:v5.0.0/zombies/ability_tick
 # Mystery box animation tick
 function mgs:v5.0.0/zombies/mystery_box/tick
 
-# PAP animation tick
+# PAP animation tick (all phases use positive timer: 240→0)
 execute as @e[tag=mgs.pap_machine,scores={mgs.pap_anim=1..}] at @s run function mgs:v5.0.0/zombies/pap/anim_step
-execute as @e[tag=mgs.pap_machine,scores={mgs.pap_anim=0}] at @s run function mgs:v5.0.0/zombies/pap/anim_timeout
-execute as @e[tag=mgs.pap_machine,scores={mgs.pap_anim=-101..-2}] at @s run function mgs:v5.0.0/zombies/pap/anim_retreat_step
-execute as @e[tag=mgs.pap_machine,scores={mgs.pap_anim=-102}] at @s run function mgs:v5.0.0/zombies/pap/anim_retreat_finish
 
 # Trap active tick (damage + timer)
 execute as @e[tag=mgs.trap_center,scores={mgs.zb.trap.timer=1..}] at @s run function mgs:v5.0.0/zombies/traps/active_tick

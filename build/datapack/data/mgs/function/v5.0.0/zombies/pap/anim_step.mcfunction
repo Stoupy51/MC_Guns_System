@@ -9,21 +9,36 @@
 # Decrement timer
 scoreboard players remove @s mgs.pap_anim 1
 
-# Phase: GOING IN (timer 200..239)
-execute if score @s mgs.pap_anim matches 200..239 run function mgs:v5.0.0/zombies/pap/anim_going_in
+# Trigger: start going-in interpolation (2 ticks after summon for client sync)
+execute if score @s mgs.pap_anim matches 238 run function mgs:v5.0.0/zombies/pap/anim_trigger_going_in
 
-# Trigger: weapon fully in at timer=199 — start inside rotation
-execute if score @s mgs.pap_anim matches 199 run function mgs:v5.0.0/zombies/pap/anim_trigger_inside
+# Phase: GOING IN (timer 211..237)
+execute if score @s mgs.pap_anim matches 211..237 run function mgs:v5.0.0/zombies/pap/anim_going_in
 
-# Phase: INSIDE (timer 140..199)
-execute if score @s mgs.pap_anim matches 140..199 run function mgs:v5.0.0/zombies/pap/anim_inside
+# Trigger: weapon fully in at timer=210 — start inside processing
+execute if score @s mgs.pap_anim matches 210 run function mgs:v5.0.0/zombies/pap/anim_trigger_inside
 
-# Trigger: start coming-out interpolation at timer=139
-execute if score @s mgs.pap_anim matches 139 run function mgs:v5.0.0/zombies/pap/anim_trigger_coming_out
+# Phase: INSIDE (timer 151..209)
+execute if score @s mgs.pap_anim matches 151..209 run function mgs:v5.0.0/zombies/pap/anim_inside
 
-# Phase: COMING OUT (timer 100..139)
-execute if score @s mgs.pap_anim matches 100..139 run function mgs:v5.0.0/zombies/pap/anim_coming_out
+# Trigger: start coming-out interpolation at timer=150
+execute if score @s mgs.pap_anim matches 150 run function mgs:v5.0.0/zombies/pap/anim_trigger_coming_out
 
-# Trigger: weapon fully emerged at timer=100 — start retreat
-execute if score @s mgs.pap_anim matches 100 run function mgs:v5.0.0/zombies/pap/anim_trigger_retreat
+# Phase: COMING OUT (timer 121..149)
+execute if score @s mgs.pap_anim matches 121..149 run function mgs:v5.0.0/zombies/pap/anim_coming_out
+
+# Trigger: weapon fully emerged at timer=120 — start retreat, allow collection
+execute if score @s mgs.pap_anim matches 120 run function mgs:v5.0.0/zombies/pap/anim_trigger_retreat
+execute if score @s mgs.pap_anim matches 119 as @n[tag=mgs.pap_weapon_display,distance=..2] at @s run tp @s ^ ^ ^-0.085
+execute if score @s mgs.pap_anim matches 100 as @n[tag=mgs.pap_weapon_display,distance=..2] at @s run tp @s ^ ^ ^-0.085
+execute if score @s mgs.pap_anim matches 80 as @n[tag=mgs.pap_weapon_display,distance=..2] at @s run tp @s ^ ^ ^-0.085
+execute if score @s mgs.pap_anim matches 60 as @n[tag=mgs.pap_weapon_display,distance=..2] at @s run tp @s ^ ^ ^-0.085
+execute if score @s mgs.pap_anim matches 40 as @n[tag=mgs.pap_weapon_display,distance=..2] at @s run tp @s ^ ^ ^-0.085
+execute if score @s mgs.pap_anim matches 20 as @n[tag=mgs.pap_weapon_display,distance=..2] at @s run tp @s ^ ^ ^-0.085
+
+# Phase: RETREAT (timer 1..119) — smoke particles
+execute if score @s mgs.pap_anim matches 1..119 run particle smoke ~ ~0.5 ~ 0.2 0.2 0.2 0.05 2 force
+
+# Retreat finished at timer=0 — weapon is lost
+execute if score @s mgs.pap_anim matches 0 run function mgs:v5.0.0/zombies/pap/anim_retreat_finish
 
