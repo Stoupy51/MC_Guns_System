@@ -1,9 +1,7 @@
 
 #> mgs:v5.0.0/zombies/pap/randomize_scope
 #
-# @executed	as @n[tag=mgs.pap_new]
-#
-# @within	mgs:v5.0.0/zombies/pap/repap_scope_only with storage mgs:temp _pap_extract.stats
+# @within	mgs:v5.0.0/zombies/pap/randomize_scope_different with storage mgs:temp _pap_extract.stats
 #			mgs:v5.0.0/zombies/pap/on_right_click with storage mgs:temp _pap_extract.stats
 #
 # @args		base_weapon (unknown)

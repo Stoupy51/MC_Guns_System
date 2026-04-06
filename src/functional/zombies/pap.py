@@ -274,6 +274,16 @@ execute if score #pap_scope_i {ns}.data < #pap_scope_idx {ns}.data run function 
 $item modify entity @s $(slot) {"function":"minecraft:set_components","components":{"minecraft:item_model":"$(model)"}}
 """)
 
+	# Randomize scope but guarantee a different result than the current one
+	# _pap_old_weapon must be set before calling this
+	write_versioned_function("zombies/pap/randomize_scope_different", f"""
+function {ns}:v{version}/zombies/pap/randomize_scope with storage {ns}:temp _pap_extract.stats
+# data modify set returns 0 if values are equal, 1 if different
+execute store success score #pap_scope_changed {ns}.data run data modify storage {ns}:temp _pap_old_weapon set from storage {ns}:temp _pap_extract.weapon
+# Retry if same weapon ID was picked (guaranteed to terminate since ≥2 variants exist)
+execute if score #pap_scope_changed {ns}.data matches 0 run function {ns}:v{version}/zombies/pap/randomize_scope_different
+""")
+
 	# --- PAP Magazine Capacity Upgrade (8x weapon capacity) ---
 	pap_mag_lines: list[str] = [
 		f"# Upgrade and refill matching {BASE_WEAPON} magazines to 8x weapon capacity",
@@ -547,8 +557,11 @@ execute unless score @s {ns}.zb.points matches {REPAP_SCOPE_PRICE}.. run return 
 # Deduct points
 scoreboard players remove @s {ns}.zb.points {REPAP_SCOPE_PRICE}
 
-# Randomize weapon scope
-function {ns}:v{version}/zombies/pap/randomize_scope with storage {ns}:temp _pap_extract.stats
+# Save current weapon ID to ensure we get a different scope
+data modify storage {ns}:temp _pap_old_weapon set from storage {ns}:temp _pap_extract.weapon
+
+# Randomize weapon scope (retry until different from current)
+function {ns}:v{version}/zombies/pap/randomize_scope_different
 
 # Apply updated stats + weapon ID to the item (zb_pap_apply_stats replaces both)
 $item modify entity @s $(slot) {ns}:v{version}/zb_pap_apply_stats

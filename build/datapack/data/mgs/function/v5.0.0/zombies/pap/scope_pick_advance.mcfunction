@@ -1,8 +1,6 @@
 
 #> mgs:v5.0.0/zombies/pap/scope_pick_advance
 #
-# @executed	as @n[tag=mgs.pap_new]
-#
 # @within	mgs:v5.0.0/zombies/pap/randomize_scope
 #			mgs:v5.0.0/zombies/pap/scope_pick_advance
 #
