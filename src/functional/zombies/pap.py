@@ -4,37 +4,15 @@
 from stewbeet import ItemModifier, JsonDict, Mem, set_json_encoder, write_load_file, write_versioned_function
 
 from ...config.catalogs import SCOPE_VARIANTS
-from ...config.stats import ALL_SLOTS, BASE_WEAPON, CAPACITY, REMAINING_BULLETS
+from ...config.stats import (
+	ALL_SLOTS,
+	BASE_WEAPON,
+	CAPACITY,
+	REMAINING_BULLETS,
+	STATS_FIELDS,
+)
 from ..helpers import MGS_TAG
 from .common import deny_not_enough_points_body, deny_requires_power_body, game_active_guard_cmd
-
-# Fields resolved dynamically from stats.pap_stats at runtime.
-# No weapon IDs are hardcoded: only key names are used.
-PAP_RUNTIME_FIELDS: tuple[str, ...] = (
-	"capacity",
-	"remaining_bullets",
-	"reload_time",
-	"reload_end",
-	"reload_mid",
-	"cooldown",
-	"burst",
-	"pellet_count",
-	"damage",
-	"decay",
-	"acc_base",
-	"acc_sneak",
-	"acc_walk",
-	"acc_sprint",
-	"acc_jump",
-	"switch",
-	"kick",
-	"proj_speed",
-	"proj_gravity",
-	"proj_lifetime",
-	"expl_radius",
-	"expl_damage",
-	"expl_decay",
-)
 
 
 def generate_pap() -> None:
@@ -214,7 +192,7 @@ function {ns}:v{version}/zombies/pap/pick_list_value_step
 
 	# Runtime max level from list lengths in pap_stats (defaults to 1 when pap_stats exists).
 	compute_max_lines: list[str] = [f"scoreboard players set #pap_max {ns}.data 1"]
-	for field in PAP_RUNTIME_FIELDS:
+	for field in STATS_FIELDS:
 		compute_max_lines.append(
 			f'execute if data storage {ns}:temp _pap_extract.stats.pap_stats.{field}[0] store result score #pap_len {ns}.data run data get storage {ns}:temp _pap_extract.stats.pap_stats.{field}'
 		)
@@ -230,7 +208,7 @@ function {ns}:v{version}/zombies/pap/pick_list_value_step
 	write_versioned_function("zombies/pap/compute_max_level", "\n".join(compute_max_lines))
 
 	# Apply one PAP field dynamically from stats.pap_stats.<field> for #pap_next_idx.
-	for field in PAP_RUNTIME_FIELDS:
+	for field in STATS_FIELDS:
 		field_lines: list[str] = [
 			f'data modify storage {ns}:temp _pap_pick.list set from storage {ns}:temp _pap_extract.stats.pap_stats.{field}',
 			f'execute if data storage {ns}:temp _pap_pick.list[0] run function {ns}:v{version}/zombies/pap/pick_list_value',
@@ -240,7 +218,7 @@ function {ns}:v{version}/zombies/pap/pick_list_value_step
 		write_versioned_function(f"zombies/pap/apply_field/{field}", "\n".join(field_lines))
 
 	apply_lines: list[str] = []
-	for field in PAP_RUNTIME_FIELDS:
+	for field in STATS_FIELDS:
 		apply_lines.append(
 			f'execute if data storage {ns}:temp _pap_extract.stats.pap_stats.{field} run function {ns}:v{version}/zombies/pap/apply_field/{field}'
 		)

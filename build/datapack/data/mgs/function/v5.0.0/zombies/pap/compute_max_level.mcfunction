@@ -53,6 +53,12 @@ execute if data storage mgs:temp _pap_extract.stats.pap_stats.expl_damage[0] sto
 execute if score #pap_len mgs.data > #pap_max mgs.data run scoreboard players operation #pap_max mgs.data = #pap_len mgs.data
 execute if data storage mgs:temp _pap_extract.stats.pap_stats.expl_decay[0] store result score #pap_len mgs.data run data get storage mgs:temp _pap_extract.stats.pap_stats.expl_decay
 execute if score #pap_len mgs.data > #pap_max mgs.data run scoreboard players operation #pap_max mgs.data = #pap_len mgs.data
+execute if data storage mgs:temp _pap_extract.stats.pap_stats.fire_mode[0] store result score #pap_len mgs.data run data get storage mgs:temp _pap_extract.stats.pap_stats.fire_mode
+execute if score #pap_len mgs.data > #pap_max mgs.data run scoreboard players operation #pap_max mgs.data = #pap_len mgs.data
+execute if data storage mgs:temp _pap_extract.stats.pap_stats.can_auto[0] store result score #pap_len mgs.data run data get storage mgs:temp _pap_extract.stats.pap_stats.can_auto
+execute if score #pap_len mgs.data > #pap_max mgs.data run scoreboard players operation #pap_max mgs.data = #pap_len mgs.data
+execute if data storage mgs:temp _pap_extract.stats.pap_stats.can_burst[0] store result score #pap_len mgs.data run data get storage mgs:temp _pap_extract.stats.pap_stats.can_burst
+execute if score #pap_len mgs.data > #pap_max mgs.data run scoreboard players operation #pap_max mgs.data = #pap_len mgs.data
 execute if data storage mgs:temp _pap_extract.stats.pap_stats.pap_name[0] store result score #pap_len mgs.data run data get storage mgs:temp _pap_extract.stats.pap_stats.pap_name
 execute if score #pap_len mgs.data > #pap_max mgs.data run scoreboard players operation #pap_max mgs.data = #pap_len mgs.data
 
