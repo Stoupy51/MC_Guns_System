@@ -117,24 +117,39 @@ $function {ns}:v{version}/ammo/modify_mag_lore {{slot:"$(slot)"}}
 	write_versioned_function("zombies/inventory/enforce_slot", f"""
 $execute if items entity @s $(slot) $(match) run return 1
 
-# If there is a slot-tagged zombies item in the wrong slot, drop it first then clear slot to avoid dupes.
-$execute if items entity @s $(slot) {zb_tagged_match} run function {ns}:v{version}/zombies/inventory/drop_wrong_slot_item {{slot:"$(slot)"}}
-
+# Scan all inventory slots for the correct item and swap it into place
 scoreboard players set #zb_inv_found {ns}.data 0
 {all_slot_scans}
+execute if score #zb_inv_found {ns}.data matches 1 run return 1
 
-execute if score #zb_inv_found {ns}.data matches 0 run tag @s add {ns}.inv_slot_owner
-$execute if score #zb_inv_found {ns}.data matches 0 as @e[type=item,distance=..8,nbt={{Item:{{components:{{"minecraft:custom_data":$(expected_nbt)}}}}}}] on origin if entity @s[tag={ns}.inv_slot_owner] run function {ns}:v{version}/zombies/inventory/try_pick_dropped_item {{slot:"$(slot)",expected_nbt:$(expected_nbt)}}
-execute if score #zb_inv_found {ns}.data matches 0 run tag @s remove {ns}.inv_slot_owner
+# Not found in any slot: drop wrong zombies item from target slot if present, then try ground pickup
+$execute if items entity @s $(slot) {zb_tagged_match} run function {ns}:v{version}/zombies/inventory/drop_wrong_slot_item {{slot:"$(slot)"}}
+
+tag @s add {ns}.inv_slot_owner
+$execute as @e[type=item,distance=..8,nbt={{Item:{{components:{{"minecraft:custom_data":$(expected_nbt)}}}}}}] on origin if entity @s[tag={ns}.inv_slot_owner] run function {ns}:v{version}/zombies/inventory/try_pick_dropped_item {{slot:"$(slot)",expected_nbt:$(expected_nbt)}}
+tag @s remove {ns}.inv_slot_owner
 
 return 0
 """)
 
 	write_versioned_function("zombies/inventory/move_found_slot", f"""
-$execute if items entity @s $(to) * run function {ns}:v{version}/zombies/inventory/drop_wrong_slot_item {{slot:"$(to)"}}
-$item replace entity @s $(to) from entity @s $(from)
-$item replace entity @s $(from) with air
+# Swap source and target via temp item_display (handles empty target too)
+tag @s add {ns}.inv_swapping
+$execute summon item_display run function {ns}:v{version}/zombies/inventory/swap_slots {{from:"$(from)",to:"$(to)"}}
+tag @s remove {ns}.inv_swapping
 scoreboard players set #zb_inv_found {ns}.data 1
+""")
+
+	write_versioned_function("zombies/inventory/swap_slots", f"""
+# @s = temp item_display, player = @p[tag={ns}.inv_swapping]
+# Save target item to temp display
+$item replace entity @s contents from entity @p[tag={ns}.inv_swapping] $(to)
+# Move source to target
+$item replace entity @p[tag={ns}.inv_swapping] $(to) from entity @p[tag={ns}.inv_swapping] $(from)
+# Put old target item (from display) into source, or clear source if target was empty
+$execute if items entity @s contents * run item replace entity @p[tag={ns}.inv_swapping] $(from) from entity @s contents
+$execute unless items entity @s contents * run item replace entity @p[tag={ns}.inv_swapping] $(from) with air
+kill @s
 """)
 
 	write_versioned_function("zombies/inventory/drop_wrong_slot_item", f"""
@@ -240,7 +255,11 @@ execute unless score @s {ns}.zb.in_game matches 1 run return fail
 execute if data storage {ns}:zombies game{{state:"lobby"}} run return fail
 execute if data storage {ns}:zombies game{{state:"ended"}} run return fail
 
+# Prevent recursive re-entry (item replace in swap/enforce can re-trigger inventory_changed)
+execute if entity @s[tag={ns}.inv_checking] run return fail
+tag @s add {ns}.inv_checking
 function {ns}:v{version}/zombies/inventory/check_slots
+tag @s remove {ns}.inv_checking
 """)
 
 	write_versioned_function("zombies/inventory/check_slots", f"""
