@@ -724,9 +724,6 @@ execute store result storage {ns}:temp _pap_anim_slot.id int 1 run scoreboard pl
 $data modify storage {ns}:temp _pap_anim_slot.slot set value "$(slot)"
 function {ns}:v{version}/zombies/pap/anim/store_slot with storage {ns}:temp _pap_anim_slot
 
-# Hide the static item_display temporarily (restored on collect or retreat finish)
-kill @e[tag={ns}.pap_display,distance=..2]
-
 # Start animation timer: 240 ticks total
 scoreboard players set @s {ns}.pap_anim 240
 
@@ -843,9 +840,6 @@ kill @e[tag={ns}.pap_weapon_display,distance=..2]
 # Reset to idle
 scoreboard players set @s {ns}.pap_anim -1
 
-# Restore static machine display
-function {ns}:v{version}/zombies/pap/anim/restore_display
-
 # Notify and sound
 tellraw @a[scores={{{ns}.zb.in_game=1}}] [{MGS_TAG},{{"text":"The weapon was lost!","color":"red","bold":true}}]
 playsound minecraft:entity.generic.extinguish_fire ambient @a[distance=..20] ~ ~ ~ 1.0 0.8
@@ -914,9 +908,6 @@ scoreboard players set @s {ns}.pap_anim -1
 
 # Remove weapon display (item already given back, safe to kill)
 kill @e[tag={ns}.pap_weapon_display,distance=..2]
-
-# Restore the static machine display entity
-function {ns}:v{version}/zombies/pap/anim/restore_display
 
 # Clear PAP slot tracking for the original owner
 execute store result score #pap_mid {ns}.data run scoreboard players get @s {ns}.zb.pap.id

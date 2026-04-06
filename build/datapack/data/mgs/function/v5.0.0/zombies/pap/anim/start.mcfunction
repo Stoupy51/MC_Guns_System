@@ -24,9 +24,6 @@ execute store result storage mgs:temp _pap_anim_slot.id int 1 run scoreboard pla
 $data modify storage mgs:temp _pap_anim_slot.slot set value "$(slot)"
 function mgs:v5.0.0/zombies/pap/anim/store_slot with storage mgs:temp _pap_anim_slot
 
-# Hide the static item_display temporarily (restored on collect or retreat finish)
-kill @e[tag=mgs.pap_display,distance=..2]
-
 # Start animation timer: 240 ticks total
 scoreboard players set @s mgs.pap_anim 240
 
