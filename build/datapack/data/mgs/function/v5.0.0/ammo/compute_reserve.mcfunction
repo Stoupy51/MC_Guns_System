@@ -7,7 +7,7 @@
 #			mgs:v5.0.0/ammo/inventory/find
 #			mgs:zombies/bonus/max_ammo
 #			mgs:v5.0.0/zombies/pap/on_right_click
-#			mgs:v5.0.0/zombies/pap/anim_collect_give [ as @p[tag=mgs.pap_owner] ]
+#			mgs:v5.0.0/zombies/pap/anim/collect_give [ as @p[tag=mgs.pap_owner] ]
 #
 
 # Skip if not holding a gun

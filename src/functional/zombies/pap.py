@@ -557,10 +557,10 @@ function {ns}:v{version}/zombies/feedback/sound_deny
 # Guard: game must be active
 {game_active_guard_cmd(ns)}
 
-# If weapon is coming-out (121..150) or retreating/collectible (1..120): allow collection
-execute if score @n[tag=bs.interaction.target] {ns}.pap_anim matches 1..150 run return run function {ns}:v{version}/zombies/pap/anim_collect
-# If machine is going-in or inside (not yet collectible), deny
-execute if score @n[tag=bs.interaction.target] {ns}.pap_anim matches 151.. run return run function {ns}:v{version}/zombies/pap/anim_deny_processing
+# If weapon is in retreat/collectible phase (1..120): allow collection
+execute if score @n[tag=bs.interaction.target] {ns}.pap_anim matches 1..120 run return run function {ns}:v{version}/zombies/pap/anim/collect
+# If machine is going-in, inside, or coming-out (not yet collectible), deny
+execute if score @n[tag=bs.interaction.target] {ns}.pap_anim matches 121.. run return run function {ns}:v{version}/zombies/pap/anim/deny_processing
 
 # Guard: power requirement
 execute store result score #pap_power {ns}.data run scoreboard players get @n[tag=bs.interaction.target] {ns}.zb.pap.power
@@ -642,14 +642,19 @@ function {ns}:v{version}/zombies/pap/apply_to_slot with storage {ns}:temp _pap
 function {ns}:v{version}/zombies/pap/pap_upgrade_magazines with storage {ns}:temp _pap_extract.stats
 function {ns}:v{version}/ammo/compute_reserve
 
-# Brief feedback — detailed stats shown when weapon emerges
+# Brief feedback — detailed stats shown in chat
 tellraw @s [{MGS_TAG},{{"text":"Pack-a-Punching your weapon...","color":"aqua"}}]
+
+# Show detailed PAP stats in chat
+execute store result storage {ns}:temp _pap_hover.id int 1 run scoreboard players get @n[tag=bs.interaction.target] {ns}.zb.pap.id
+function {ns}:v{version}/zombies/pap/lookup_machine with storage {ns}:temp _pap_hover
+function {ns}:v{version}/zombies/pap/pap_chat_message
 
 # Take weapon from player and start PAP animation
 tag @s add {ns}.pap_owner
 scoreboard players operation @s {ns}.zb.pap_s = #pap_sel {ns}.data
 execute store result score @s {ns}.zb.pap_mid run scoreboard players get @n[tag=bs.interaction.target] {ns}.zb.pap.id
-execute as @n[tag=bs.interaction.target] at @s run function {ns}:v{version}/zombies/pap/anim_start with storage {ns}:temp _pap
+execute as @n[tag=bs.interaction.target] at @s run function {ns}:v{version}/zombies/pap/anim/start with storage {ns}:temp _pap
 tag @s remove {ns}.pap_owner
 """)
 
@@ -702,7 +707,7 @@ execute if score #pap_li {ns}.data < #pap_lore_len {ns}.data run function {ns}:v
 	#   0:             RETREAT FINISH — weapon destroyed (lost) (sound)
 
 	# Spawn weapon item_display, transfer weapon, start animation timer.
-	write_versioned_function("zombies/pap/anim_start", f"""
+	write_versioned_function("zombies/pap/anim/start", f"""
 # @s = PAP machine entity, AT machine position
 # $(slot) = player weapon slot (hotbar.1 / hotbar.2 / hotbar.3)
 
@@ -717,7 +722,7 @@ $item replace entity @p[tag={ns}.pap_owner] $(slot) with minecraft:air
 # Store this machine's slot for later retrieval when player collects the weapon
 execute store result storage {ns}:temp _pap_anim_slot.id int 1 run scoreboard players get @s {ns}.zb.pap.id
 $data modify storage {ns}:temp _pap_anim_slot.slot set value "$(slot)"
-function {ns}:v{version}/zombies/pap/anim_store_slot with storage {ns}:temp _pap_anim_slot
+function {ns}:v{version}/zombies/pap/anim/store_slot with storage {ns}:temp _pap_anim_slot
 
 # Hide the static item_display temporarily (restored on collect or retreat finish)
 kill @e[tag={ns}.pap_display,distance=..2]
@@ -730,35 +735,35 @@ playsound minecraft:block.beacon.activate ambient @a[distance=..30] ~ ~ ~ 1.0 0.
 """)
 
 	# Persist weapon slot keyed by machine ID in zombies storage.
-	write_versioned_function("zombies/pap/anim_store_slot", f"""
+	write_versioned_function("zombies/pap/anim/store_slot", f"""
 $data modify storage {ns}:zombies pap_anim_slot."$(id)" set value "$(slot)"
 """)
 
 	# Main per-machine tick dispatcher (runs as machine when pap_anim >= 1).
-	write_versioned_function("zombies/pap/anim_step", f"""
+	write_versioned_function("zombies/pap/anim/step", f"""
 # Decrement timer
 scoreboard players remove @s {ns}.pap_anim 1
 
 # Trigger: start going-in interpolation (2 ticks after summon for client sync)
-execute if score @s {ns}.pap_anim matches 238 run function {ns}:v{version}/zombies/pap/anim_trigger_going_in
+execute if score @s {ns}.pap_anim matches 238 run function {ns}:v{version}/zombies/pap/anim/trigger_going_in
 
 # Phase: GOING IN (timer 211..237)
-execute if score @s {ns}.pap_anim matches 211..237 run function {ns}:v{version}/zombies/pap/anim_going_in
+execute if score @s {ns}.pap_anim matches 211..237 run function {ns}:v{version}/zombies/pap/anim/going_in
 
 # Trigger: weapon fully in at timer=210 — start inside processing
-execute if score @s {ns}.pap_anim matches 210 run function {ns}:v{version}/zombies/pap/anim_trigger_inside
+execute if score @s {ns}.pap_anim matches 210 run function {ns}:v{version}/zombies/pap/anim/trigger_inside
 
 # Phase: INSIDE (timer 151..209)
-execute if score @s {ns}.pap_anim matches 151..209 run function {ns}:v{version}/zombies/pap/anim_inside
+execute if score @s {ns}.pap_anim matches 151..209 run function {ns}:v{version}/zombies/pap/anim/inside
 
 # Trigger: start coming-out interpolation at timer=150
-execute if score @s {ns}.pap_anim matches 150 run function {ns}:v{version}/zombies/pap/anim_trigger_coming_out
+execute if score @s {ns}.pap_anim matches 150 run function {ns}:v{version}/zombies/pap/anim/trigger_coming_out
 
 # Phase: COMING OUT (timer 121..149)
-execute if score @s {ns}.pap_anim matches 121..149 run function {ns}:v{version}/zombies/pap/anim_coming_out
+execute if score @s {ns}.pap_anim matches 121..149 run function {ns}:v{version}/zombies/pap/anim/coming_out
 
 # Trigger: weapon fully emerged at timer=120 — start retreat, allow collection
-execute if score @s {ns}.pap_anim matches 120 run function {ns}:v{version}/zombies/pap/anim_trigger_retreat
+execute if score @s {ns}.pap_anim matches 120 run function {ns}:v{version}/zombies/pap/anim/trigger_retreat
 execute if score @s {ns}.pap_anim matches 119 as @n[tag={ns}.pap_weapon_display,distance=..2] at @s run tp @s ^ ^ ^-0.085
 execute if score @s {ns}.pap_anim matches 100 as @n[tag={ns}.pap_weapon_display,distance=..2] at @s run tp @s ^ ^ ^-0.085
 execute if score @s {ns}.pap_anim matches 80 as @n[tag={ns}.pap_weapon_display,distance=..2] at @s run tp @s ^ ^ ^-0.085
@@ -770,18 +775,18 @@ execute if score @s {ns}.pap_anim matches 20 as @n[tag={ns}.pap_weapon_display,d
 execute if score @s {ns}.pap_anim matches 1..119 run particle smoke ~ ~0.5 ~ 0.2 0.2 0.2 0.05 2 force
 
 # Retreat finished at timer=0 — weapon is lost
-execute if score @s {ns}.pap_anim matches 0 run function {ns}:v{version}/zombies/pap/anim_retreat_finish
+execute if score @s {ns}.pap_anim matches 0 run function {ns}:v{version}/zombies/pap/anim/retreat_finish
 """)
 
 	# New function: start going-in interpolation 2 ticks after summon (client sync).
-	write_versioned_function("zombies/pap/anim_trigger_going_in", f"""
+	write_versioned_function("zombies/pap/anim/trigger_going_in", f"""
 # Slide weapon from ahead ^0.5 to center over 30 ticks (no rotation/size changes)
 execute as @n[tag={ns}.pap_weapon_display,distance=..2] at @s run tp @s ^ ^ ^-0.5
 playsound minecraft:block.enchantment_table.use ambient @a[distance=..30] ~ ~ ~ 0.8 1.0
 """)
 
 	# Sparse purple particles during the going-in phase (horizontal slide).
-	write_versioned_function("zombies/pap/anim_going_in", f"""
+	write_versioned_function("zombies/pap/anim/going_in", f"""
 # Sparse purple dust every 2 ticks along the horizontal path
 execute store result score #pap_t {ns}.data run scoreboard players get @s {ns}.pap_anim
 scoreboard players operation #pap_t {ns}.data %= #2 {ns}.data
@@ -789,12 +794,12 @@ execute if score #pap_t {ns}.data matches 0 run particle dust{{color:[0.565,0.0,
 """)
 
 	# Trigger inside processing (weapon already at center, no transformation change needed).
-	write_versioned_function("zombies/pap/anim_trigger_inside", r"""
+	write_versioned_function("zombies/pap/anim/trigger_inside", r"""
 playsound minecraft:block.enchantment_table.use ambient @a[distance=..30] ~ ~ ~ 0.8 1.0
 """)
 
 	# Dense particles and sounds while the weapon is being processed inside the machine.
-	write_versioned_function("zombies/pap/anim_inside", f"""
+	write_versioned_function("zombies/pap/anim/inside", f"""
 # Dense purple dust + end_rod particles every tick
 particle dust{{color:[0.565,0.0,1.0],scale:1.5}} ~ ~0.8 ~ 0.4 0.3 0.4 0 1 force
 particle end_rod ~ ~0.8 ~ 0.3 0.2 0.3 0.05 1 force
@@ -806,35 +811,32 @@ execute if score #pap_t {ns}.data matches 0 run playsound minecraft:block.enchan
 """)
 
 	# Trigger coming-out interpolation: slide horizontally out over 30 ticks.
-	write_versioned_function("zombies/pap/anim_trigger_coming_out", f"""
+	write_versioned_function("zombies/pap/anim/trigger_coming_out", f"""
 # Slide weapon horizontally out to the left over 30 ticks (no rotation/size changes)
 execute as @n[tag={ns}.pap_weapon_display,distance=..2] at @s run tp @s ^ ^ ^0.5
 playsound minecraft:block.beacon.activate ambient @a[distance=..30] ~ ~ ~ 1.5 0.8
-
-# Weapon upgraded — notify players
-tellraw @a[scores={{{ns}.zb.in_game=1}}] [{MGS_TAG},{{"text":"Weapon upgraded! Collect it before it retreats!","color":"aqua"}}]
 """)
 
 	# End_rod and purple particles during the coming-out phase.
-	write_versioned_function("zombies/pap/anim_coming_out", """
+	write_versioned_function("zombies/pap/anim/coming_out", """
 particle end_rod ~ ~0.8 ~ 0.4 0.3 0.3 0.05 3 force
 particle dust{color:[0.565,0.0,1.0],scale:1.5} ~ ~1.0 ~ 0.4 0.3 0.4 0 2 force
 """)
 
 	# Trigger: weapon fully emerged — start slow retreat (BO style).
 	# Timer stays positive: 119→1 retreat, 0 = finish.
-	write_versioned_function("zombies/pap/anim_trigger_retreat", f"""
+	write_versioned_function("zombies/pap/anim/trigger_retreat", f"""
 # Weapon glows while collectible, start retreat: slide back to center over 119 ticks (no rotation/size changes)
 data merge entity @n[tag={ns}.pap_weapon_display,distance=..2] {{teleport_duration:20,Glowing:true}}
 
 # Sound + particle burst
 particle end_rod ~ ~1.0 ~ 0.5 0.3 0.5 0.1 20 force
 playsound minecraft:entity.player.levelup ambient @a[distance=..30] ~ ~ ~ 0.8 1.0
-tellraw @a[scores={{{ns}.zb.in_game=1}}] [{MGS_TAG},{{"text":"The weapon is retreating! Collect it now!","color":"yellow"}}]
+tellraw @a[scores={{{ns}.zb.in_game=1}}] [{MGS_TAG},{{"text":"Weapon upgraded! Collect it before it retreats!","color":"aqua"}}]
 """)
 
 	# Retreat finished: weapon is LOST — destroy display, restore static display.
-	write_versioned_function("zombies/pap/anim_retreat_finish", f"""
+	write_versioned_function("zombies/pap/anim/retreat_finish", f"""
 # Weapon is lost — destroy it (not dropped)
 kill @e[tag={ns}.pap_weapon_display,distance=..2]
 
@@ -842,7 +844,7 @@ kill @e[tag={ns}.pap_weapon_display,distance=..2]
 scoreboard players set @s {ns}.pap_anim -1
 
 # Restore static machine display
-function {ns}:v{version}/zombies/pap/anim_restore_display
+function {ns}:v{version}/zombies/pap/anim/restore_display
 
 # Notify and sound
 tellraw @a[scores={{{ns}.zb.in_game=1}}] [{MGS_TAG},{{"text":"The weapon was lost!","color":"red","bold":true}}]
@@ -879,28 +881,28 @@ scoreboard players set @s {ns}.zb.pap_mid 0
 """)
 
 	# Called from on_right_click when machine pap_anim is in collectible range (1..150).
-	write_versioned_function("zombies/pap/anim_collect", f"""
+	write_versioned_function("zombies/pap/anim/collect", f"""
 # Tag the clicking player so machine-context functions can target them precisely
 tag @s add {ns}.pap_owner
-execute as @n[tag=bs.interaction.target] at @s run function {ns}:v{version}/zombies/pap/anim_collect_at_machine
+execute as @n[tag=bs.interaction.target] at @s run function {ns}:v{version}/zombies/pap/anim/collect_at_machine
 tag @s remove {ns}.pap_owner
 """)
 
 	# Resolve machine ID and call lookup (runs as machine).
-	write_versioned_function("zombies/pap/anim_collect_at_machine", f"""
+	write_versioned_function("zombies/pap/anim/collect_at_machine", f"""
 execute store result storage {ns}:temp _pap_c.id int 1 run scoreboard players get @s {ns}.zb.pap.id
-function {ns}:v{version}/zombies/pap/anim_collect_lookup with storage {ns}:temp _pap_c
+function {ns}:v{version}/zombies/pap/anim/collect_lookup with storage {ns}:temp _pap_c
 """)
 
 	# Macro $(id): fetch stored slot string and pass id, then call give.
-	write_versioned_function("zombies/pap/anim_collect_lookup", f"""
+	write_versioned_function("zombies/pap/anim/collect_lookup", f"""
 $data modify storage {ns}:temp _pap_cg.slot set from storage {ns}:zombies pap_anim_slot."$(id)"
 $data modify storage {ns}:temp _pap_cg.id set value $(id)
-function {ns}:v{version}/zombies/pap/anim_collect_give with storage {ns}:temp _pap_cg
+function {ns}:v{version}/zombies/pap/anim/collect_give with storage {ns}:temp _pap_cg
 """)
 
 	# Macro $(slot): give weapon back from display entity's contents slot, cleanup, restore display, notify.
-	write_versioned_function("zombies/pap/anim_collect_give", f"""
+	write_versioned_function("zombies/pap/anim/collect_give", f"""
 # Return upgraded weapon directly from the display entity's contents slot
 $item replace entity @p[tag={ns}.pap_owner] $(slot) from entity @n[tag={ns}.pap_weapon_display,distance=..2] contents
 
@@ -914,7 +916,7 @@ scoreboard players set @s {ns}.pap_anim -1
 kill @e[tag={ns}.pap_weapon_display,distance=..2]
 
 # Restore the static machine display entity
-function {ns}:v{version}/zombies/pap/anim_restore_display
+function {ns}:v{version}/zombies/pap/anim/restore_display
 
 # Clear PAP slot tracking for the original owner
 execute store result score #pap_mid {ns}.data run scoreboard players get @s {ns}.zb.pap.id
@@ -925,18 +927,17 @@ execute as @a[scores={{{ns}.zb.pap_mid=1..}}] if score @s {ns}.zb.pap_mid = #pap
 $data remove storage {ns}:zombies pap_anim_slot."$(id)"
 
 # Notify the player
-execute as @p[tag={ns}.pap_owner] run tellraw @s [{MGS_TAG},{{"text":"You collected your upgraded weapon!","color":"green","bold":true}}]
 execute as @p[tag={ns}.pap_owner] run function {ns}:v{version}/zombies/feedback/sound_success
 """)
 
 	# Re-summon the static item_display for the machine (runs as machine).
-	write_versioned_function("zombies/pap/anim_restore_display", f"""
+	write_versioned_function("zombies/pap/anim/restore_display", f"""
 execute store result storage {ns}:temp _pap_restore.id int 1 run scoreboard players get @s {ns}.zb.pap.id
-function {ns}:v{version}/zombies/pap/anim_restore_display_lookup with storage {ns}:temp _pap_restore
+function {ns}:v{version}/zombies/pap/anim/restore_display_lookup with storage {ns}:temp _pap_restore
 """)
 
 	# Macro $(id): fetch stored display metadata and call summon_machine_display.
-	write_versioned_function("zombies/pap/anim_restore_display_lookup", f"""
+	write_versioned_function("zombies/pap/anim/restore_display_lookup", f"""
 $data modify storage {ns}:temp _pap_restore_disp.tag set from storage {ns}:zombies pap_data."$(id)".display_tag
 $data modify storage {ns}:temp _pap_restore_disp.item_id set from storage {ns}:zombies pap_data."$(id)".display_item_id
 $data modify storage {ns}:temp _pap_restore_disp.item_model set from storage {ns}:zombies pap_data."$(id)".display_item_model
@@ -945,7 +946,7 @@ function {ns}:v{version}/zombies/display/summon_machine_display with storage {ns
 """)
 
 	# Deny message when machine is busy.
-	write_versioned_function("zombies/pap/anim_deny_processing", f"""
+	write_versioned_function("zombies/pap/anim/deny_processing", f"""
 tellraw @s [{MGS_TAG},{{"text":"The Pack-a-Punch machine is currently processing a weapon...","color":"yellow"}}]
 function {ns}:v{version}/zombies/feedback/sound_deny
 """)
@@ -953,7 +954,7 @@ function {ns}:v{version}/zombies/feedback/sound_deny
 	# Hook PAP animation into the game tick loop.
 	write_versioned_function("zombies/game_tick", f"""
 # PAP animation tick (all phases use positive timer: 240→0)
-execute as @e[tag={ns}.pap_machine,scores={{{ns}.pap_anim=1..}}] at @s run function {ns}:v{version}/zombies/pap/anim_step
+execute as @e[tag={ns}.pap_machine,scores={{{ns}.pap_anim=1..}}] at @s run function {ns}:v{version}/zombies/pap/anim/step
 """)
 
 	# Hook into preload_complete to spawn PAP machine interactions.
