@@ -6,5 +6,5 @@
 # @within	mgs:v5.0.0/zombies/pap/anim/trigger_inside
 #
 
-playsound mgs:zombies/pap/upgrade ambient @a[scores={mgs.zb.in_game=1}] ~ ~ ~ 0.3 1.0
+playsound mgs:zombies/pap/upgrade ambient @a[scores={mgs.zb.in_game=1}] ~ ~ ~ 0.5 1.0
 
