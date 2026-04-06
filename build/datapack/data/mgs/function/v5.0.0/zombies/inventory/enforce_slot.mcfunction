@@ -22,9 +22,7 @@
 
 $execute if items entity @s $(slot) $(match) run return 1
 
-# If there is a slot-tagged zombies item in the wrong slot, drop it first then clear slot to avoid dupes.
-$execute if items entity @s $(slot) *[custom_data~{mgs:{zombies:{}}}] run function mgs:v5.0.0/zombies/inventory/drop_wrong_slot_item {slot:"$(slot)"}
-
+# Scan all inventory slots for the correct item and swap it into place
 scoreboard players set #zb_inv_found mgs.data 0
 $execute if score #zb_inv_found mgs.data matches 0 if items entity @s hotbar.0 $(match) run function mgs:v5.0.0/zombies/inventory/move_found_slot {from:"hotbar.0",to:"$(slot)"}
 $execute if score #zb_inv_found mgs.data matches 0 if items entity @s hotbar.1 $(match) run function mgs:v5.0.0/zombies/inventory/move_found_slot {from:"hotbar.1",to:"$(slot)"}
@@ -69,9 +67,14 @@ $execute if score #zb_inv_found mgs.data matches 0 if items entity @s player.cra
 $execute if score #zb_inv_found mgs.data matches 0 if items entity @s player.crafting.2 $(match) run function mgs:v5.0.0/zombies/inventory/move_found_slot {from:"player.crafting.2",to:"$(slot)"}
 $execute if score #zb_inv_found mgs.data matches 0 if items entity @s player.crafting.3 $(match) run function mgs:v5.0.0/zombies/inventory/move_found_slot {from:"player.crafting.3",to:"$(slot)"}
 
-execute if score #zb_inv_found mgs.data matches 0 run tag @s add mgs.inv_slot_owner
-$execute if score #zb_inv_found mgs.data matches 0 as @e[type=item,distance=..8,nbt={Item:{components:{"minecraft:custom_data":$(expected_nbt)}}}] on origin if entity @s[tag=mgs.inv_slot_owner] run function mgs:v5.0.0/zombies/inventory/try_pick_dropped_item {slot:"$(slot)",expected_nbt:$(expected_nbt)}
-execute if score #zb_inv_found mgs.data matches 0 run tag @s remove mgs.inv_slot_owner
+execute if score #zb_inv_found mgs.data matches 1 run return 1
+
+# Not found in any slot: drop wrong zombies item from target slot if present, then try ground pickup
+$execute if items entity @s $(slot) *[custom_data~{mgs:{zombies:{}}}] run function mgs:v5.0.0/zombies/inventory/drop_wrong_slot_item {slot:"$(slot)"}
+
+tag @s add mgs.inv_slot_owner
+$execute as @e[type=item,distance=..8,nbt={Item:{components:{"minecraft:custom_data":$(expected_nbt)}}}] on origin if entity @s[tag=mgs.inv_slot_owner] run function mgs:v5.0.0/zombies/inventory/try_pick_dropped_item {slot:"$(slot)",expected_nbt:$(expected_nbt)}
+tag @s remove mgs.inv_slot_owner
 
 return 0
 

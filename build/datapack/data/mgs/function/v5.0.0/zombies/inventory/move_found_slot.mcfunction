@@ -46,12 +46,13 @@
 #			mgs:v5.0.0/zombies/inventory/enforce_slot {from:"player.crafting.2",to:"$(slot)"}
 #			mgs:v5.0.0/zombies/inventory/enforce_slot {from:"player.crafting.3",to:"$(slot)"}
 #
-# @args		to (string)
-#			from (string)
+# @args		from (string)
+#			to (string)
 #
 
-$execute if items entity @s $(to) * run function mgs:v5.0.0/zombies/inventory/drop_wrong_slot_item {slot:"$(to)"}
-$item replace entity @s $(to) from entity @s $(from)
-$item replace entity @s $(from) with air
+# Swap source and target via temp item_display (handles empty target too)
+tag @s add mgs.inv_swapping
+$execute summon item_display run function mgs:v5.0.0/zombies/inventory/swap_slots {from:"$(from)",to:"$(to)"}
+tag @s remove mgs.inv_swapping
 scoreboard players set #zb_inv_found mgs.data 1
 
