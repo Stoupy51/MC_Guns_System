@@ -83,6 +83,12 @@ execute if data storage mgs:temp _pap_extract.lore[1] run data modify storage mg
 # Annotate lore lines with runtime-computed PAP deltas
 execute if data storage mgs:temp _pap_extract.lore[0] run function mgs:v5.0.0/zombies/pap/annotate_lore
 
+# Show detailed PAP stats in chat (before restoring unannotated ammo line)
+tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.pack_a_punching_your_weapon","color":"aqua"}]
+execute store result storage mgs:temp _pap_hover.id int 1 run scoreboard players get @n[tag=bs.interaction.target] mgs.zb.pap.id
+function mgs:v5.0.0/zombies/pap/lookup_machine with storage mgs:temp _pap_hover
+function mgs:v5.0.0/zombies/pap/pap_chat_message
+
 # Restore unannotated ammo line for item (preserves "/" pattern for modify_lore)
 execute if data storage mgs:temp _pap_lore1_original run data modify storage mgs:temp _pap_extract.lore[1] set from storage mgs:temp _pap_lore1_original
 
@@ -93,14 +99,6 @@ data modify storage mgs:temp _pap_extract.stats.remaining_bullets set from stora
 function mgs:v5.0.0/zombies/pap/apply_to_slot with storage mgs:temp _pap
 function mgs:v5.0.0/zombies/pap/pap_upgrade_magazines with storage mgs:temp _pap_extract.stats
 function mgs:v5.0.0/ammo/compute_reserve
-
-# Brief feedback — detailed stats shown in chat
-tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.pack_a_punching_your_weapon","color":"aqua"}]
-
-# Show detailed PAP stats in chat
-execute store result storage mgs:temp _pap_hover.id int 1 run scoreboard players get @n[tag=bs.interaction.target] mgs.zb.pap.id
-function mgs:v5.0.0/zombies/pap/lookup_machine with storage mgs:temp _pap_hover
-function mgs:v5.0.0/zombies/pap/pap_chat_message
 
 # Take weapon from player and start PAP animation
 tag @s add mgs.pap_owner
