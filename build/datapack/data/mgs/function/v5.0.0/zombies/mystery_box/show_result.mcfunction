@@ -1,8 +1,11 @@
 
 #> mgs:v5.0.0/zombies/mystery_box/show_result
 #
-# @within	mgs:v5.0.0/zombies/mystery_box/tick
+# @within	mgs:v5.0.0/zombies/mystery_box/spin_tick
 #
+
+# If box will move, show teddy bear instead of weapon
+execute if score #mb_will_move mgs.data matches 1 run return run function mgs:v5.0.0/zombies/mystery_box/show_bear_result
 
 # Set display to final result
 execute if data storage mgs:zombies mystery_box.result.weapon_id run function mgs:v5.0.0/zombies/mystery_box/show_result_weapon with storage mgs:zombies mystery_box.result
@@ -17,5 +20,4 @@ data modify storage mgs:zombies mystery_box.ready set value true
 
 # Announce result
 tellraw @a[scores={mgs.zb.in_game=1}] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.mystery_box_result_ready","color":"light_purple"},{"translate":"mgs.right_click_to_collect","color":"green","bold":true}]
-function mgs:v5.0.0/zombies/feedback/sound_box_ready
 

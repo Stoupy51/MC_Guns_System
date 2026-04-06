@@ -13,7 +13,7 @@
 # $(slot) = player weapon slot (hotbar.1 / hotbar.2 / hotbar.3)
 
 # Summon weapon item_display offset ahead of the machine (will slide to center)
-execute positioned ~ ~0.8 ~ run summon minecraft:item_display ^ ^ ^0.5 {Tags:["mgs.pap_weapon_display","mgs.gm_entity"],teleport_duration:30,billboard:"fixed",item_display:"fixed",transformation:{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[0.6f,0.6f,0.6f]}}
+execute positioned ~ ~0.8 ~ run summon minecraft:item_display ^ ^ ^0.5 {Tags:["mgs.pap_weapon_display","mgs.gm_entity"],teleport_duration:20,billboard:"fixed",item_display:"fixed",transformation:{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[0.6f,0.6f,0.6f]}}
 
 # Transfer weapon into display entity via contents slot, then clear player slot
 data modify entity @n[tag=mgs.pap_weapon_display,distance=..2] Rotation set from entity @s Rotation
@@ -29,5 +29,6 @@ function mgs:v5.0.0/zombies/pap/anim/store_slot with storage mgs:temp _pap_anim_
 scoreboard players set @s mgs.pap_anim 240
 
 # Sound: machine accepting weapon
-playsound minecraft:block.beacon.activate ambient @a[distance=..30] ~ ~ ~ 1.0 0.6
+function mgs:v5.0.0/zombies/feedback/sound_pap_knuckle_crack
+function mgs:v5.0.0/zombies/feedback/sound_pap_jingle_sting
 

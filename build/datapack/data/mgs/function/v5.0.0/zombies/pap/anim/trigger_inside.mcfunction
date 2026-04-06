@@ -6,5 +6,6 @@
 # @within	mgs:v5.0.0/zombies/pap/anim/step
 #
 
-playsound minecraft:block.enchantment_table.use ambient @a[distance=..30] ~ ~ ~ 0.8 1.0
+function mgs:v5.0.0/zombies/feedback/sound_pap_loop
+function mgs:v5.0.0/zombies/feedback/sound_pap_upgrade
 

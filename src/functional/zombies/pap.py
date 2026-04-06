@@ -741,11 +741,11 @@ execute if score #pap_li {ns}.data < #pap_lore_len {ns}.data run function {ns}:v
 
 	# --- PAP Animation System (BO1-style, horizontal movement) ---
 	# Timeline (240 ticks total, no rotation or size changes):
-	#   240→211 (30t): GOING IN   — slide horizontally from ahead to center (2-tick wait after summon)
-	#   210→151 (60t): INSIDE     — particles + periodic sound
-	#   150→121 (30t): COMING OUT — slide horizontally from center to ahead
-	#   120:           TRIGGER RETREAT — glowing weapon, starts retreat timer, allows collection
-	#   119→1 (118t):  RETREAT    — weapon retreats back, still collectible
+	#   240→221 (20t): GOING IN   — slide horizontally from ahead to center (2-tick wait after summon)
+	#   220→161 (60t): INSIDE     — particles + periodic sound
+	#   160→141 (20t): COMING OUT — slide horizontally from center to ahead
+	#   140:           TRIGGER RETREAT — glowing weapon, starts retreat timer, allows collection
+	#   139→1 (138t):  RETREAT    — weapon retreats back, still collectible
 	#   0:             RETREAT FINISH — weapon destroyed (lost) (sound)
 
 	# Spawn weapon item_display, transfer weapon, start animation timer.
@@ -754,7 +754,7 @@ execute if score #pap_li {ns}.data < #pap_lore_len {ns}.data run function {ns}:v
 # $(slot) = player weapon slot (hotbar.1 / hotbar.2 / hotbar.3)
 
 # Summon weapon item_display offset ahead of the machine (will slide to center)
-execute positioned ~ ~0.8 ~ run summon minecraft:item_display ^ ^ ^0.5 {{Tags:["{ns}.pap_weapon_display","{ns}.gm_entity"],teleport_duration:30,billboard:"fixed",item_display:"fixed",transformation:{{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[0.6f,0.6f,0.6f]}}}}
+execute positioned ~ ~0.8 ~ run summon minecraft:item_display ^ ^ ^0.5 {{Tags:["{ns}.pap_weapon_display","{ns}.gm_entity"],teleport_duration:20,billboard:"fixed",item_display:"fixed",transformation:{{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[0.6f,0.6f,0.6f]}}}}
 
 # Transfer weapon into display entity via contents slot, then clear player slot
 data modify entity @n[tag={ns}.pap_weapon_display,distance=..2] Rotation set from entity @s Rotation
@@ -770,7 +770,8 @@ function {ns}:v{version}/zombies/pap/anim/store_slot with storage {ns}:temp _pap
 scoreboard players set @s {ns}.pap_anim 240
 
 # Sound: machine accepting weapon
-playsound minecraft:block.beacon.activate ambient @a[distance=..30] ~ ~ ~ 1.0 0.6
+function {ns}:v{version}/zombies/feedback/sound_pap_knuckle_crack
+function {ns}:v{version}/zombies/feedback/sound_pap_jingle_sting
 """)
 
 	# Persist weapon slot keyed by machine ID in zombies storage.
@@ -786,32 +787,36 @@ scoreboard players remove @s {ns}.pap_anim 1
 # Trigger: start going-in interpolation (2 ticks after summon for client sync)
 execute if score @s {ns}.pap_anim matches 238 run function {ns}:v{version}/zombies/pap/anim/trigger_going_in
 
-# Phase: GOING IN (timer 211..237)
-execute if score @s {ns}.pap_anim matches 211..237 run function {ns}:v{version}/zombies/pap/anim/going_in
+# Phase: GOING IN (timer 221..237)
+execute if score @s {ns}.pap_anim matches 221..237 run function {ns}:v{version}/zombies/pap/anim/going_in
 
-# Trigger: weapon fully in at timer=210 — start inside processing
-execute if score @s {ns}.pap_anim matches 210 run function {ns}:v{version}/zombies/pap/anim/trigger_inside
+# Trigger: weapon fully in at timer=220 — start inside processing
+execute if score @s {ns}.pap_anim matches 220 run function {ns}:v{version}/zombies/pap/anim/trigger_inside
 
-# Phase: INSIDE (timer 151..209)
-execute if score @s {ns}.pap_anim matches 151..209 run function {ns}:v{version}/zombies/pap/anim/inside
+# Phase: INSIDE (timer 161..219)
+execute if score @s {ns}.pap_anim matches 161..219 run function {ns}:v{version}/zombies/pap/anim/inside
 
-# Trigger: start coming-out interpolation at timer=150
-execute if score @s {ns}.pap_anim matches 150 run function {ns}:v{version}/zombies/pap/anim/trigger_coming_out
+# Trigger: start coming-out interpolation at timer=160
+execute if score @s {ns}.pap_anim matches 160 run function {ns}:v{version}/zombies/pap/anim/trigger_coming_out
 
-# Phase: COMING OUT (timer 121..149)
-execute if score @s {ns}.pap_anim matches 121..149 run function {ns}:v{version}/zombies/pap/anim/coming_out
+# Phase: COMING OUT (timer 146..159)
+execute if score @s {ns}.pap_anim matches 146..159 run function {ns}:v{version}/zombies/pap/anim/coming_out
 
-# Trigger: weapon fully emerged at timer=120 — start retreat, allow collection
-execute if score @s {ns}.pap_anim matches 120 run function {ns}:v{version}/zombies/pap/anim/trigger_retreat
-execute if score @s {ns}.pap_anim matches 119 as @n[tag={ns}.pap_weapon_display,distance=..2] at @s run tp @s ^ ^ ^-0.085
-execute if score @s {ns}.pap_anim matches 100 as @n[tag={ns}.pap_weapon_display,distance=..2] at @s run tp @s ^ ^ ^-0.085
-execute if score @s {ns}.pap_anim matches 80 as @n[tag={ns}.pap_weapon_display,distance=..2] at @s run tp @s ^ ^ ^-0.085
-execute if score @s {ns}.pap_anim matches 60 as @n[tag={ns}.pap_weapon_display,distance=..2] at @s run tp @s ^ ^ ^-0.085
-execute if score @s {ns}.pap_anim matches 40 as @n[tag={ns}.pap_weapon_display,distance=..2] at @s run tp @s ^ ^ ^-0.085
-execute if score @s {ns}.pap_anim matches 20 as @n[tag={ns}.pap_weapon_display,distance=..2] at @s run tp @s ^ ^ ^-0.085
+# Trigger: weapon fully emerged at timer=145 — start retreat, allow collection
+execute if score @s {ns}.pap_anim matches 145 run function {ns}:v{version}/zombies/pap/anim/trigger_retreat
+execute if score @s {ns}.pap_anim matches 125 as @n[tag={ns}.pap_weapon_display,distance=..2] at @s run tp @s ^ ^ ^-0.1
+execute if score @s {ns}.pap_anim matches 105 as @n[tag={ns}.pap_weapon_display,distance=..2] at @s run tp @s ^ ^ ^-0.1
+execute if score @s {ns}.pap_anim matches 85 as @n[tag={ns}.pap_weapon_display,distance=..2] at @s run tp @s ^ ^ ^-0.1
+execute if score @s {ns}.pap_anim matches 65 as @n[tag={ns}.pap_weapon_display,distance=..2] at @s run tp @s ^ ^ ^-0.1
+execute if score @s {ns}.pap_anim matches 45 as @n[tag={ns}.pap_weapon_display,distance=..2] at @s run tp @s ^ ^ ^-0.1
+execute if score @s {ns}.pap_anim matches 25 as @n[tag={ns}.pap_weapon_display,distance=..2] at @s run tp @s ^ ^ ^-0.1
+execute if score @s {ns}.pap_anim matches 5 as @n[tag={ns}.pap_weapon_display,distance=..2] at @s run tp @s ^ ^ ^-0.1
 
-# Phase: RETREAT (timer 1..119) — smoke particles
-execute if score @s {ns}.pap_anim matches 1..119 run particle smoke ~ ~0.5 ~ 0.2 0.2 0.2 0.05 2 force
+# Phase: RETREAT (timer 1..115) — smoke particles + looping sound every 20 ticks
+execute if score @s {ns}.pap_anim matches 1..115 run particle smoke ~ ~0.5 ~ 0.2 0.2 0.2 0.05 2 force
+execute store result score #pap_t {ns}.data run scoreboard players get @s {ns}.pap_anim
+scoreboard players operation #pap_t {ns}.data %= #20 {ns}.data
+execute if score @s {ns}.pap_anim matches 1..115 if score #pap_t {ns}.data matches 0 run function {ns}:v{version}/zombies/feedback/sound_pap_retreat_loop
 
 # Retreat finished at timer=0 — weapon is lost
 execute if score @s {ns}.pap_anim matches 0 run function {ns}:v{version}/zombies/pap/anim/retreat_finish
@@ -821,7 +826,6 @@ execute if score @s {ns}.pap_anim matches 0 run function {ns}:v{version}/zombies
 	write_versioned_function("zombies/pap/anim/trigger_going_in", f"""
 # Slide weapon from ahead ^0.5 to center over 30 ticks (no rotation/size changes)
 execute as @n[tag={ns}.pap_weapon_display,distance=..2] at @s run tp @s ^ ^ ^-0.5
-playsound minecraft:block.enchantment_table.use ambient @a[distance=..30] ~ ~ ~ 0.8 1.0
 """)
 
 	# Sparse purple particles during the going-in phase (horizontal slide).
@@ -833,8 +837,9 @@ execute if score #pap_t {ns}.data matches 0 run particle dust{{color:[0.565,0.0,
 """)
 
 	# Trigger inside processing (weapon already at center, no transformation change needed).
-	write_versioned_function("zombies/pap/anim/trigger_inside", r"""
-playsound minecraft:block.enchantment_table.use ambient @a[distance=..30] ~ ~ ~ 0.8 1.0
+	write_versioned_function("zombies/pap/anim/trigger_inside", f"""
+function {ns}:v{version}/zombies/feedback/sound_pap_loop
+function {ns}:v{version}/zombies/feedback/sound_pap_upgrade
 """)
 
 	# Dense particles and sounds while the weapon is being processed inside the machine.
@@ -843,17 +848,17 @@ playsound minecraft:block.enchantment_table.use ambient @a[distance=..30] ~ ~ ~ 
 particle dust{{color:[0.565,0.0,1.0],scale:1.5}} ~ ~0.8 ~ 0.4 0.3 0.4 0 1 force
 particle end_rod ~ ~0.8 ~ 0.3 0.2 0.3 0.05 1 force
 
-# Periodic processing sound every 10 ticks
+# Periodic processing sound every 20 ticks
 execute store result score #pap_t {ns}.data run scoreboard players get @s {ns}.pap_anim
-scoreboard players operation #pap_t {ns}.data %= #10 {ns}.data
-execute if score #pap_t {ns}.data matches 0 run playsound minecraft:block.enchantment_table.use ambient @a[distance=..30] ~ ~ ~ 0.8 1.2
+scoreboard players operation #pap_t {ns}.data %= #20 {ns}.data
+execute if score #pap_t {ns}.data matches 0 run function {ns}:v{version}/zombies/feedback/sound_pap_loop
 """)
 
 	# Trigger coming-out interpolation: slide horizontally out over 30 ticks.
 	write_versioned_function("zombies/pap/anim/trigger_coming_out", f"""
 # Slide weapon horizontally out to the left over 30 ticks (no rotation/size changes)
 execute as @n[tag={ns}.pap_weapon_display,distance=..2] at @s run tp @s ^ ^ ^0.5
-playsound minecraft:block.beacon.activate ambient @a[distance=..30] ~ ~ ~ 1.5 0.8
+function {ns}:v{version}/zombies/feedback/sound_pap_dispense
 """)
 
 	# End_rod and purple particles during the coming-out phase.
@@ -866,11 +871,11 @@ particle dust{color:[0.565,0.0,1.0],scale:1.5} ~ ~1.0 ~ 0.4 0.3 0.4 0 2 force
 	# Timer stays positive: 119→1 retreat, 0 = finish.
 	write_versioned_function("zombies/pap/anim/trigger_retreat", f"""
 # Weapon glows while collectible, start retreat: slide back to center over 119 ticks (no rotation/size changes)
-data merge entity @n[tag={ns}.pap_weapon_display,distance=..2] {{teleport_duration:20,Glowing:true}}
+data merge entity @n[tag={ns}.pap_weapon_display,distance=..2] {{Glowing:true}}
 
 # Sound + particle burst
 particle end_rod ~ ~1.0 ~ 0.5 0.3 0.5 0.1 20 force
-playsound minecraft:entity.player.levelup ambient @a[distance=..30] ~ ~ ~ 0.8 1.0
+function {ns}:v{version}/zombies/feedback/sound_pap_ready
 tellraw @a[scores={{{ns}.zb.in_game=1}}] [{MGS_TAG},{{"text":"Weapon upgraded! Collect it before it retreats!","color":"aqua"}}]
 """)
 
@@ -884,7 +889,7 @@ scoreboard players set @s {ns}.pap_anim -1
 
 # Notify and sound
 tellraw @a[scores={{{ns}.zb.in_game=1}}] [{MGS_TAG},{{"text":"The weapon was lost!","color":"red","bold":true}}]
-playsound minecraft:entity.generic.extinguish_fire ambient @a[distance=..20] ~ ~ ~ 1.0 0.8
+function {ns}:v{version}/zombies/feedback/sound_pap_deny
 
 # Clean up orphaned magazine and PAP tracking for the owner
 execute store result score #pap_mid {ns}.data run scoreboard players get @s {ns}.zb.pap.id

@@ -2,7 +2,7 @@
 #> mgs:v5.0.0/zombies/mystery_box/reset
 #
 # @within	mgs:v5.0.0/zombies/stop
-#			mgs:v5.0.0/zombies/mystery_box/tick
+#			mgs:v5.0.0/zombies/mystery_box/spin_tick
 #			mgs:v5.0.0/zombies/mystery_box/collect
 #
 
