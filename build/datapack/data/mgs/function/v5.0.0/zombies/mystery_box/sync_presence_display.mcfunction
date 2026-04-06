@@ -2,7 +2,6 @@
 #> mgs:v5.0.0/zombies/mystery_box/sync_presence_display
 #
 # @within	mgs:v5.0.0/zombies/mystery_box/setup_positions
-#			mgs:v5.0.0/zombies/mystery_box/move_active_position
 #
 
 # Keep one chest display at the currently active mystery box.

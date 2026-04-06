@@ -32,10 +32,77 @@ playsound minecraft:block.beacon.activate ambient @a[scores={{{ns}.zb.in_game=1}
 """)
 
 	write_versioned_function("zombies/feedback/sound_box_spin", f"""
-playsound {ns}:zombies/mystery_box_spin ambient @a[scores={{{ns}.zb.in_game=1}}] ~ ~ ~ 0.9 1.0
+playsound {ns}:zombies/mystery_box/box_spin ambient @a[scores={{{ns}.zb.in_game=1}}] ~ ~ ~ 0.1 1.0
+playsound {ns}:zombies/mystery_box/music_box ambient @a[scores={{{ns}.zb.in_game=1}}] ~ ~ ~ 1.0 1.0
 """)
 
 	write_versioned_function("zombies/feedback/sound_box_ready", f"""
-playsound minecraft:entity.player.levelup ambient @a[scores={{{ns}.zb.in_game=1}}] ~ ~ ~ 0.7 1.2
+playsound minecraft:entity.player.levelup ambient @a[scores={{{ns}.zb.in_game=1}}] ~ ~ ~ 0.7 1.0
+""")
+
+	## Mystery Box: Black Ops-style sound effects
+	write_versioned_function("zombies/feedback/sound_box_open", f"""
+playsound {ns}:zombies/mystery_box/open ambient @a[scores={{{ns}.zb.in_game=1}}] ~ ~ ~ 0.9 1.0
+""")
+
+	write_versioned_function("zombies/feedback/sound_box_close", f"""
+playsound {ns}:zombies/mystery_box/close ambient @a[scores={{{ns}.zb.in_game=1}}] ~ ~ ~ 0.9 1.0
+""")
+
+	write_versioned_function("zombies/feedback/sound_box_bye_bye", f"""
+execute as @a[scores={{{ns}.zb.in_game=1}}] at @s run playsound {ns}:zombies/mystery_box/bye_bye ambient @s ~ ~ ~ 1.0 1.0
+""")
+
+	write_versioned_function("zombies/feedback/sound_box_woosh", f"""
+playsound {ns}:zombies/mystery_box/woosh ambient @a[scores={{{ns}.zb.in_game=1}}] ~ ~ ~ 1.0 1.0
+""")
+
+	write_versioned_function("zombies/feedback/sound_box_disappear", f"""
+playsound {ns}:zombies/mystery_box/disappear ambient @a[scores={{{ns}.zb.in_game=1}}] ~ ~ ~ 1.0 1.0
+""")
+
+	write_versioned_function("zombies/feedback/sound_box_poof", f"""
+playsound {ns}:zombies/mystery_box/poof ambient @a[scores={{{ns}.zb.in_game=1}}] ~ ~ ~ 1.0 1.0
+""")
+
+	write_versioned_function("zombies/feedback/sound_box_land", f"""
+playsound {ns}:zombies/mystery_box/land ambient @a[scores={{{ns}.zb.in_game=1}}] ~ ~ ~ 1.0 1.0
+""")
+
+	## PAP: Black Ops-style sound effects (positional, distance-limited)
+	write_versioned_function("zombies/feedback/sound_pap_knuckle_crack", f"""
+playsound {ns}:zombies/pap/knuckle_crack ambient @a[scores={{{ns}.zb.in_game=1}}] ~ ~ ~ 1.0 1.0
+""")
+
+	write_versioned_function("zombies/feedback/sound_pap_loop", f"""
+playsound {ns}:zombies/pap/pap_loop ambient @a[scores={{{ns}.zb.in_game=1}}] ~ ~ ~ 0.25 1.0
+""")
+
+	write_versioned_function("zombies/feedback/sound_pap_dispense", f"""
+playsound {ns}:zombies/pap/dispense ambient @a[scores={{{ns}.zb.in_game=1}}] ~ ~ ~ 1.0 1.0
+""")
+
+	write_versioned_function("zombies/feedback/sound_pap_upgrade", f"""
+playsound {ns}:zombies/pap/upgrade ambient @a[scores={{{ns}.zb.in_game=1}}] ~ ~ ~ 0.3 1.0
+""")
+
+	write_versioned_function("zombies/feedback/sound_pap_jingle_sting", f"""
+playsound {ns}:zombies/pap/jingle_sting ambient @a[scores={{{ns}.zb.in_game=1}}] ~ ~ ~ 1.0 1.0
+""")
+
+	write_versioned_function("zombies/feedback/sound_pap_ready", f"""
+playsound {ns}:zombies/pap/ready ambient @a[scores={{{ns}.zb.in_game=1}}] ~ ~ ~ 1.0 1.0
+""")
+
+	write_versioned_function("zombies/feedback/sound_pap_retreat_loop", f"""
+playsound {ns}:zombies/pap/retreat_loop ambient @a[scores={{{ns}.zb.in_game=1}}] ~ ~ ~ 0.5 1.0
+""")
+
+	write_versioned_function("zombies/feedback/sound_pap_power_on", f"""
+playsound {ns}:zombies/pap/power_on ambient @a[scores={{{ns}.zb.in_game=1}}] ~ ~ ~ 1.0 1.0
+""")
+
+	write_versioned_function("zombies/feedback/sound_pap_deny", f"""
+playsound {ns}:zombies/pap/deny ambient @a[scores={{{ns}.zb.in_game=1}}] ~ ~ ~ 1.0 1.0
 """)
 

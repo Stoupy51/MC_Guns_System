@@ -739,8 +739,80 @@
 		"subtitle": "vz61/reload",
 		"sounds": ["mgs:vz61/reload"]
 	},
-	"zombies/mystery_box_spin": {
-		"subtitle": "zombies/mystery_box_spin",
-		"sounds": ["mgs:zombies/mystery_box_spin"]
+	"zombies/mystery_box/box_spin": {
+		"subtitle": "zombies/mystery_box/box_spin",
+		"sounds": ["mgs:zombies/mystery_box/box_spin"]
+	},
+	"zombies/mystery_box/bye_bye": {
+		"subtitle": "zombies/mystery_box/bye_bye",
+		"sounds": ["mgs:zombies/mystery_box/bye_bye"]
+	},
+	"zombies/mystery_box/close": {
+		"subtitle": "zombies/mystery_box/close",
+		"sounds": ["mgs:zombies/mystery_box/close"]
+	},
+	"zombies/mystery_box/disappear": {
+		"subtitle": "zombies/mystery_box/disappear",
+		"sounds": ["mgs:zombies/mystery_box/disappear"]
+	},
+	"zombies/mystery_box/land": {
+		"subtitle": "zombies/mystery_box/land",
+		"sounds": ["mgs:zombies/mystery_box/land"]
+	},
+	"zombies/mystery_box/music_box": {
+		"subtitle": "zombies/mystery_box/music_box",
+		"sounds": ["mgs:zombies/mystery_box/music_box"]
+	},
+	"zombies/mystery_box/music_box_short": {
+		"subtitle": "zombies/mystery_box/music_box_short",
+		"sounds": ["mgs:zombies/mystery_box/music_box_short"]
+	},
+	"zombies/mystery_box/open": {
+		"subtitle": "zombies/mystery_box/open",
+		"sounds": ["mgs:zombies/mystery_box/open"]
+	},
+	"zombies/mystery_box/poof": {
+		"subtitle": "zombies/mystery_box/poof",
+		"sounds": ["mgs:zombies/mystery_box/poof"]
+	},
+	"zombies/mystery_box/woosh": {
+		"subtitle": "zombies/mystery_box/woosh",
+		"sounds": ["mgs:zombies/mystery_box/woosh"]
+	},
+	"zombies/pap/deny": {
+		"subtitle": "zombies/pap/deny",
+		"sounds": ["mgs:zombies/pap/deny"]
+	},
+	"zombies/pap/dispense": {
+		"subtitle": "zombies/pap/dispense",
+		"sounds": ["mgs:zombies/pap/dispense"]
+	},
+	"zombies/pap/jingle_sting": {
+		"subtitle": "zombies/pap/jingle_sting",
+		"sounds": ["mgs:zombies/pap/jingle_sting"]
+	},
+	"zombies/pap/knuckle_crack": {
+		"subtitle": "zombies/pap/knuckle_crack",
+		"sounds": ["mgs:zombies/pap/knuckle_crack"]
+	},
+	"zombies/pap/pap_loop": {
+		"subtitle": "zombies/pap/pap_loop",
+		"sounds": ["mgs:zombies/pap/pap_loop"]
+	},
+	"zombies/pap/power_on": {
+		"subtitle": "zombies/pap/power_on",
+		"sounds": ["mgs:zombies/pap/power_on"]
+	},
+	"zombies/pap/ready": {
+		"subtitle": "zombies/pap/ready",
+		"sounds": ["mgs:zombies/pap/ready"]
+	},
+	"zombies/pap/retreat_loop": {
+		"subtitle": "zombies/pap/retreat_loop",
+		"sounds": ["mgs:zombies/pap/retreat_loop"]
+	},
+	"zombies/pap/upgrade": {
+		"subtitle": "zombies/pap/upgrade",
+		"sounds": ["mgs:zombies/pap/upgrade"]
 	}
 }

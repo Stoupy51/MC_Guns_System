@@ -1,7 +1,7 @@
 
 #> mgs:v5.0.0/zombies/mystery_box/cycle_step
 #
-# @within	mgs:v5.0.0/zombies/mystery_box/tick
+# @within	mgs:v5.0.0/zombies/mystery_box/spin_tick
 #
 
 # elapsed = 80 - timer

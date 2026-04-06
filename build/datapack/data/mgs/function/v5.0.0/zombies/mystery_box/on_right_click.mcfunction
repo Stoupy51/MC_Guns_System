@@ -12,6 +12,9 @@ execute unless entity @e[tag=bs.interaction.target,tag=mgs.mystery_box_active] r
 # Check game is active
 execute unless data storage mgs:zombies game{state:"active"} run return fail
 
+# If box is moving: deny
+execute if score #mb_move_timer mgs.data matches 1.. run return run function mgs:v5.0.0/zombies/mystery_box/deny_moving
+
 # If result is ready: collect
 execute if data storage mgs:zombies mystery_box{ready:true} run return run function mgs:v5.0.0/zombies/mystery_box/collect
 

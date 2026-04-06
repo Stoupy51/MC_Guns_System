@@ -8,16 +8,48 @@
 # Positions use compound format: {pos:[x,y,z], rotation:[yaw,0.0f], group_id:N, can_start_on:1b}
 
 # FIXME: A player can steal the box result of another player
-from stewbeet import Mem, write_versioned_function
+from stewbeet import LootTable, Mem, set_json_encoder, write_versioned_function
 
 from ..helpers import MGS_TAG
 from .common import build_weapon_magazine_data
+
+# Move animation constants
+MOVE_BEAR_TICKS: int = 30		# bear visible before ascend starts
+MOVE_ASCEND_TICKS: int = 80	# ascend at old location
+MOVE_WAIT_TICKS: int = 100		# 5-second wait before descending
+MOVE_DESCEND_TICKS: int = 70	# descend at new location
+MOVE_TOTAL_TICKS: int = MOVE_BEAR_TICKS + MOVE_ASCEND_TICKS + MOVE_WAIT_TICKS + MOVE_DESCEND_TICKS	# 280
+
+# Teddy bear player head texture (Black Ops easter egg)
+BEAR_HEAD_TEXTURE: str = "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvY2RiNjZjZjlmMTdlMTQ4OTMxMGM3YWNjNjgxMDE2MDUxMTk2YTg0OGUwNzZkYjZmYzA5MzkxYjkyODcyYTc3NyJ9fX0="
 
 
 def generate_mystery_box() -> None:
 	ns: str = Mem.ctx.project_id
 	version: str = Mem.ctx.project_version
 	owned_gun_macro_cd: str = "{" + ns + ':{gun:true,stats:{base_weapon:"$(weapon_id)"}}}'
+
+	# Register teddy bear loot table for Mystery Box move animation
+	Mem.ctx.data[ns].loot_tables["i/mystery_box_bear"] = set_json_encoder(LootTable({
+		"pools": [{
+			"rolls": 1,
+			"entries": [{
+				"type": "minecraft:item",
+				"name": "minecraft:player_head",
+				"functions": [{
+					"function": "minecraft:set_components",
+					"components": {
+						"minecraft:profile": {
+							"properties": [{
+								"name": "textures",
+								"value": BEAR_HEAD_TEXTURE,
+							}],
+						},
+					},
+				}],
+			}],
+		}],
+	}))
 
 	# Use common helper to build weapon->magazine mappings from catalogs
 	weapon_mag_data: dict[str, tuple[str, int, bool]] = build_weapon_magazine_data()
@@ -110,15 +142,6 @@ execute as @n[tag={ns}.mystery_box_active] at @s run function {ns}:v{version}/zo
 $execute positioned ~ ~0.7 ~ run summon minecraft:item_display ~ ~ ~ {{Rotation:[$(yaw),0f],Tags:["{ns}.mb_presence","{ns}.gm_entity"],item_display:"fixed",billboard:"fixed",item:{{id:"minecraft:chest",count:1}},transformation:{{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[0.85f,0.85f,0.85f]}}}}
 """)
 
-	write_versioned_function("zombies/mystery_box/maybe_move_after_pull", f"""
-scoreboard players add #mb_pulls {ns}.data 1
-
-# Every 4 successful pulls, roll a 1/3 chance to move.
-execute if score #mb_pulls {ns}.data matches 4.. store result score #mb_move_roll {ns}.data run random value 0..2
-execute if score #mb_pulls {ns}.data matches 4.. if score #mb_move_roll {ns}.data matches 0 run function {ns}:v{version}/zombies/mystery_box/move_active_position
-execute if score #mb_pulls {ns}.data matches 4.. run scoreboard players set #mb_pulls {ns}.data 0
-""")
-
 	write_versioned_function("zombies/mystery_box/move_active_position", f"""
 # Need at least 2 positions to move.
 execute store result score #mb_pos_count {ns}.data run data get storage {ns}:zombies game.map.mystery_box.positions
@@ -128,11 +151,6 @@ tag @e[tag={ns}.mystery_box_active] add {ns}.mb_prev_active
 tag @e[tag={ns}.mystery_box_active] remove {ns}.mystery_box_active
 execute as @n[tag={ns}.mystery_box_pos,tag=!{ns}.mb_prev_active,sort=random] run tag @s add {ns}.mystery_box_active
 tag @e[tag={ns}.mb_prev_active] remove {ns}.mb_prev_active
-
-function {ns}:v{version}/zombies/mystery_box/sync_presence_display
-
-tellraw @a[scores={{{ns}.zb.in_game=1}}] [{MGS_TAG},{{"text":"Mystery Box moved!","color":"yellow"}}]
-function {ns}:v{version}/zombies/feedback/sound_announce
 """)
 
 	## On right-click: Bookshelf callback (executor:"source" = @s is the player)
@@ -143,6 +161,9 @@ execute unless entity @e[tag=bs.interaction.target,tag={ns}.mystery_box_active] 
 # Check game is active
 execute unless data storage {ns}:zombies game{{state:"active"}} run return fail
 
+# If box is moving: deny
+execute if score #mb_move_timer {ns}.data matches 1.. run return run function {ns}:v{version}/zombies/mystery_box/deny_moving
+
 # If result is ready: collect
 execute if data storage {ns}:zombies mystery_box{{ready:true}} run return run function {ns}:v{version}/zombies/mystery_box/collect
 
@@ -151,6 +172,11 @@ execute if data storage {ns}:zombies mystery_box{{spinning:true}} run return run
 
 # Otherwise: try to use (buy)
 function {ns}:v{version}/zombies/mystery_box/try_use
+""")
+
+	write_versioned_function("zombies/mystery_box/deny_moving", f"""
+tellraw @s [{MGS_TAG},{{"text":"The Mystery Box is moving...","color":"yellow"}}]
+function {ns}:v{version}/zombies/feedback/sound_deny
 """)
 
 	write_versioned_function("zombies/mystery_box/deny_already_in_use", f"""
@@ -168,6 +194,16 @@ function {ns}:v{version}/zombies/mystery_box/ensure_default_pool
 # Deduct points
 scoreboard players operation @s {ns}.zb.points -= #zb_mystery_box_price {ns}.config
 
+# Tag buyer for potential bear-result refund
+tag @s add {ns}.mb_buyer
+
+# Pre-determine if box will move (replaces maybe_move_after_pull)
+scoreboard players set #mb_will_move {ns}.data 0
+scoreboard players add #mb_pulls {ns}.data 1
+execute if score #mb_pulls {ns}.data matches 4.. store result score #mb_move_roll {ns}.data run random value 0..2
+execute if score #mb_pulls {ns}.data matches 4.. if score #mb_move_roll {ns}.data matches 0 run scoreboard players set #mb_will_move {ns}.data 1
+execute if score #mb_will_move {ns}.data matches 1 run scoreboard players set #mb_pulls {ns}.data 0
+
 # Start spinning
 data modify storage {ns}:zombies mystery_box.spinning set value true
 
@@ -178,6 +214,7 @@ function {ns}:v{version}/zombies/mystery_box/reroll_owned
 
 # If still owned after rerolls, refund and fail.
 execute if score #mb_owned {ns}.data matches 1 run scoreboard players operation @s {ns}.zb.points += #zb_mystery_box_price {ns}.config
+execute if score #mb_owned {ns}.data matches 1 run tag @s remove {ns}.mb_buyer
 execute if score #mb_owned {ns}.data matches 1 run return run function {ns}:v{version}/zombies/mystery_box/deny_all_owned
 
 # Start animation timer (100 ticks cycling with slowdown + 150 ticks display window)
@@ -188,7 +225,8 @@ execute at @n[tag={ns}.mystery_box_active] run function {ns}:v{version}/zombies/
 
 # Announce
 tellraw @a[scores={{{ns}.zb.in_game=1}}] [{MGS_TAG},{{"text":"Mystery Box spinning...","color":"light_purple"}}]
-function {ns}:v{version}/zombies/feedback/sound_box_spin
+execute as @n[tag={ns}.mystery_box_active] at @s run function {ns}:v{version}/zombies/feedback/sound_box_open
+execute as @n[tag={ns}.mystery_box_active] at @s run function {ns}:v{version}/zombies/feedback/sound_box_spin
 """)
 
 	write_versioned_function("zombies/mystery_box/pick_random_result", f"""
@@ -254,9 +292,14 @@ tag @n[tag={ns}.mb_display_new] remove {ns}.mb_display_new
 
 	## Mystery box tick: handle animation
 	write_versioned_function("zombies/mystery_box/tick", f"""
-# Only tick if spinning
-execute unless data storage {ns}:zombies mystery_box{{spinning:true}} run return 0
+# Spin animation tick
+execute if data storage {ns}:zombies mystery_box{{spinning:true}} run function {ns}:v{version}/zombies/mystery_box/spin_tick
 
+# Move animation tick (independent of spin)
+execute if score #mb_move_timer {ns}.data matches 1.. run function {ns}:v{version}/zombies/mystery_box/move_anim_tick
+""")
+
+	write_versioned_function("zombies/mystery_box/spin_tick", f"""
 # Decrement timer
 scoreboard players remove #mb_anim_timer {ns}.data 1
 
@@ -323,6 +366,9 @@ execute if score #mb_cycle {ns}.data matches 1.. run function {ns}:v{version}/zo
 
 	## Show result: display the final picked weapon with interpolation
 	write_versioned_function("zombies/mystery_box/show_result", f"""
+# If box will move, show teddy bear instead of weapon
+execute if score #mb_will_move {ns}.data matches 1 run return run function {ns}:v{version}/zombies/mystery_box/show_bear_result
+
 # Set display to final result
 execute if data storage {ns}:zombies mystery_box.result.weapon_id run function {ns}:v{version}/zombies/mystery_box/show_result_weapon with storage {ns}:zombies mystery_box.result
 execute unless data storage {ns}:zombies mystery_box.result.weapon_id run data modify entity @n[tag={ns}.mb_display] item set from storage {ns}:zombies mystery_box.result.display_item
@@ -336,11 +382,133 @@ data modify storage {ns}:zombies mystery_box.ready set value true
 
 # Announce result
 tellraw @a[scores={{{ns}.zb.in_game=1}}] [{MGS_TAG},{{"text":"Mystery Box result ready! ","color":"light_purple"}},{{"text":"Right-click to collect!","color":"green","bold":true}}]
-function {ns}:v{version}/zombies/feedback/sound_box_ready
 """)
 
 	write_versioned_function("zombies/mystery_box/show_result_weapon", f"""
 $loot replace entity @n[tag={ns}.mb_display] contents loot {ns}:i/$(weapon_id)
+""")
+
+	## Teddy bear result: box is about to move (Black Ops style)
+	write_versioned_function("zombies/mystery_box/show_bear_result", f"""
+# Replace display with teddy bear
+loot replace entity @n[tag={ns}.mb_display] contents loot {ns}:i/mystery_box_bear
+
+# Rise bear out of the box (like normal result)
+data merge entity @n[tag={ns}.mb_display] {{transformation:{{translation:[0f,1.5f,0f]}}}}
+data merge entity @n[tag={ns}.mb_display] {{interpolation_duration:40,transformation:{{translation:[0f,0.5f,0f]}},start_interpolation:0}}
+
+# Refund the buyer
+execute as @a[tag={ns}.mb_buyer] run scoreboard players operation @s {ns}.zb.points += #zb_mystery_box_price {ns}.config
+tag @a[tag={ns}.mb_buyer] remove {ns}.mb_buyer
+
+# Stop spin, start move animation timer
+data modify storage {ns}:zombies mystery_box.spinning set value false
+scoreboard players set #mb_move_timer {ns}.data {MOVE_TOTAL_TICKS}
+
+# Announce
+tellraw @a[scores={{{ns}.zb.in_game=1}}] [{MGS_TAG},{{"text":"The Mystery Box is moving!","color":"yellow","bold":true}}]
+execute as @n[tag={ns}.mystery_box_active] at @s run function {ns}:v{version}/zombies/feedback/sound_box_bye_bye
+""")
+
+	## Move animation: tick dispatcher
+	# Timer phases (counting down from {MOVE_TOTAL_TICKS}=280):
+	#   bear visible (280..251): bear rises out of box (30 ticks)
+	#   ascend (250..171): chest + bear rise up (80 ticks)
+	#   wait (170..71): pause with no box visible (100 ticks = 5 seconds)
+	#   transition (70): pick new location, spawn descending chest
+	#   descend (69..1): chest descends at new location (69 ticks)
+	#   land (0): finalize
+
+	ascend_start: int = MOVE_ASCEND_TICKS + MOVE_WAIT_TICKS + MOVE_DESCEND_TICKS + 1	# 251
+	ascend_end: int = MOVE_WAIT_TICKS + MOVE_DESCEND_TICKS + 1						# 171
+	transition: int = MOVE_DESCEND_TICKS							# 70
+	descend_end: int = 1
+
+	write_versioned_function("zombies/mystery_box/move_anim_tick", f"""
+scoreboard players remove #mb_move_timer {ns}.data 1
+
+# Bear phase: start ascend interpolation on chest + bear
+execute if score #mb_move_timer {ns}.data matches {ascend_start} run function {ns}:v{version}/zombies/mystery_box/move_anim_start_ascend
+
+# Ascend phase: move chest + bear upward (slow then fast)
+execute if score #mb_move_timer {ns}.data matches {ascend_end}..{ascend_start} run function {ns}:v{version}/zombies/mystery_box/move_anim_ascend_step
+
+# End of ascend: kill old displays
+execute if score #mb_move_timer {ns}.data matches {ascend_end - 1} run kill @e[tag={ns}.mb_display]
+execute if score #mb_move_timer {ns}.data matches {ascend_end - 1} run kill @e[tag={ns}.mb_presence]
+
+# Wait phase ({ascend_end - 1}..{transition + 1}): 5 seconds, no box visible
+
+# Transition: pick new location, spawn descending chest
+execute if score #mb_move_timer {ns}.data matches {transition} run function {ns}:v{version}/zombies/mystery_box/move_anim_transition
+
+# Descend phase: chest descends at new location (fast then slow)
+execute if score #mb_move_timer {ns}.data matches {descend_end}..{transition - 1} run function {ns}:v{version}/zombies/mystery_box/move_anim_descend_step
+
+# Land: finalize
+execute if score #mb_move_timer {ns}.data matches 0 run function {ns}:v{version}/zombies/mystery_box/move_anim_land
+""")
+
+	write_versioned_function("zombies/mystery_box/move_anim_start_ascend", f"""
+# Enable smooth movement on chest and bear displays
+data merge entity @n[tag={ns}.mb_presence] {{teleport_duration:5}}
+data merge entity @n[tag={ns}.mb_display] {{teleport_duration:5}}
+execute as @n[tag={ns}.mystery_box_active] at @s run function {ns}:v{version}/zombies/feedback/sound_box_disappear
+""")
+
+	# Ascend: slow first half, fast second half
+	ascend_mid: int = ascend_end + MOVE_ASCEND_TICKS // 2	# 111
+	write_versioned_function("zombies/mystery_box/move_anim_ascend_step", f"""
+# Slow phase (first half): rise ~0.06 blocks/tick
+execute if score #mb_move_timer {ns}.data matches {ascend_mid}..{ascend_start} as @n[tag={ns}.mb_presence] at @s run tp @s ~ ~0.06 ~
+execute if score #mb_move_timer {ns}.data matches {ascend_mid}..{ascend_start} as @n[tag={ns}.mb_display] at @s run tp @s ~ ~0.06 ~
+
+# Fast phase (second half): rise ~0.18 blocks/tick
+execute if score #mb_move_timer {ns}.data matches {ascend_end}..{ascend_mid - 1} as @n[tag={ns}.mb_presence] at @s run tp @s ~ ~0.18 ~
+execute if score #mb_move_timer {ns}.data matches {ascend_end}..{ascend_mid - 1} as @n[tag={ns}.mb_display] at @s run tp @s ~ ~0.18 ~
+
+# Smoke particles at old location
+execute at @n[tag={ns}.mystery_box_active] run particle minecraft:large_smoke ~ ~1 ~ 0.3 0.5 0.3 0.02 2 force
+""")
+
+	write_versioned_function("zombies/mystery_box/move_anim_transition", f"""
+# Pick new active position
+function {ns}:v{version}/zombies/mystery_box/move_active_position
+
+# Spawn new chest display above the new active position (height = 0.7 + descent total)
+# Fast: 35t * 0.18 = 6.3 blocks, Slow: 34t * 0.06 = 2.04 blocks, Total = 8.34
+execute as @n[tag={ns}.mystery_box_active] at @s positioned ~ ~9.04 ~ run summon minecraft:item_display ~ ~ ~ {{Tags:["{ns}.mb_presence","{ns}.gm_entity"],item_display:"fixed",billboard:"fixed",item:{{id:"minecraft:chest",count:1}},transformation:{{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[0.85f,0.85f,0.85f]}},teleport_duration:5}}
+execute as @n[tag={ns}.mystery_box_active] at @s as @n[tag={ns}.mb_presence] run data modify entity @s Rotation set from entity @n[tag={ns}.mystery_box_active] Rotation
+
+# Light beam particles at new location
+execute at @n[tag={ns}.mystery_box_active] run particle minecraft:end_rod ~ ~3 ~ 0.1 2 0.1 0.05 20 force
+execute as @n[tag={ns}.mystery_box_active] at @s run function {ns}:v{version}/zombies/feedback/sound_box_poof
+""")
+
+	# Descend: fast first half, slow second half (landing)
+	descend_mid: int = MOVE_DESCEND_TICKS // 2		# 35
+	write_versioned_function("zombies/mystery_box/move_anim_descend_step", f"""
+# Fast phase (first half): descend ~0.18 blocks/tick
+execute if score #mb_move_timer {ns}.data matches {descend_mid}..{transition - 1} as @n[tag={ns}.mb_presence] at @s run tp @s ~ ~-0.18 ~
+
+# Slow phase (second half, landing): descend ~0.06 blocks/tick
+execute if score #mb_move_timer {ns}.data matches {descend_end}..{descend_mid - 1} as @n[tag={ns}.mb_presence] at @s run tp @s ~ ~-0.06 ~
+
+# Trailing particles
+execute at @n[tag={ns}.mb_presence] run particle minecraft:end_rod ~ ~-0.5 ~ 0.2 0.1 0.2 0.01 1 force
+""")
+
+	write_versioned_function("zombies/mystery_box/move_anim_land", f"""
+# Snap the descending chest to exact final position smoothly
+execute as @n[tag={ns}.mystery_box_active] at @s as @n[tag={ns}.mb_presence] run tp @s ~ ~0.7 ~
+
+# Reset move state
+scoreboard players set #mb_move_timer {ns}.data 0
+data remove storage {ns}:zombies mystery_box.result
+
+# Announce arrival
+tellraw @a[scores={{{ns}.zb.in_game=1}}] [{MGS_TAG},{{"text":"The Mystery Box has arrived at a new location!","color":"yellow"}}]
+execute as @n[tag={ns}.mystery_box_active] at @s run function {ns}:v{version}/zombies/feedback/sound_box_land
 """)
 
 	## Collect the mystery box result (called from on_right_click, @s = player)
@@ -359,9 +527,10 @@ execute if data storage {ns}:zombies mystery_box.result.weapon_id run function {
 # Announce
 tellraw @s [{MGS_TAG},{{"text":"You collected ","color":"green"}},{{"storage":"{ns}:temp","nbt":"_mb_collected_name","interpret":true}},{{"text":" from the Mystery Box.","color":"green"}}]
 function {ns}:v{version}/zombies/feedback/sound_success
+execute as @n[tag={ns}.mystery_box_active] at @s run function {ns}:v{version}/zombies/feedback/sound_box_close
 
-# Track pulls and sometimes move the box.
-function {ns}:v{version}/zombies/mystery_box/maybe_move_after_pull
+# Remove buyer tag
+tag @s remove {ns}.mb_buyer
 
 # Reset box
 function {ns}:v{version}/zombies/mystery_box/reset
@@ -424,9 +593,15 @@ data modify storage smithed.actionbar:input message set value {json:[{"text":"ðŸ
 function #smithed.actionbar:message
 """)
 
+	write_versioned_function("zombies/mystery_box/hud_moving", """
+data modify storage smithed.actionbar:input message set value {json:[{"text":"ðŸŽ² Mystery Box","color":"light_purple"},{"text":" - ","color":"gray"},{"text":"Moving...","color":"yellow"}],priority:'notification',freeze:5}
+function #smithed.actionbar:message
+""")
+
 	write_versioned_function("zombies/mystery_box/on_hover", f"""
 execute unless entity @e[tag=bs.interaction.target,tag={ns}.mystery_box_active] run return fail
 execute unless data storage {ns}:zombies game{{state:"active"}} run return fail
+execute if score #mb_move_timer {ns}.data matches 1.. run return run function {ns}:v{version}/zombies/mystery_box/hud_moving
 execute if data storage {ns}:zombies mystery_box{{ready:true}} run return run function {ns}:v{version}/zombies/mystery_box/hud_ready
 execute if data storage {ns}:zombies mystery_box{{spinning:true}} run return run function {ns}:v{version}/zombies/mystery_box/hud_spinning
 function {ns}:v{version}/zombies/mystery_box/hud_price
@@ -450,4 +625,6 @@ execute if data storage {ns}:zombies game.map.mystery_box.positions[0] run funct
 function {ns}:v{version}/zombies/mystery_box/reset
 kill @e[tag={ns}.mb_presence]
 scoreboard players set #mb_pulls {ns}.data 0
+scoreboard players set #mb_move_timer {ns}.data 0
+tag @a remove {ns}.mb_buyer
 """)
