@@ -20,8 +20,11 @@ execute unless score @s mgs.zb.points matches 1000.. run return run function mgs
 # Deduct points
 scoreboard players remove @s mgs.zb.points 1000
 
-# Randomize weapon scope
-function mgs:v5.0.0/zombies/pap/randomize_scope with storage mgs:temp _pap_extract.stats
+# Save current weapon ID to ensure we get a different scope
+data modify storage mgs:temp _pap_old_weapon set from storage mgs:temp _pap_extract.weapon
+
+# Randomize weapon scope (retry until different from current)
+function mgs:v5.0.0/zombies/pap/randomize_scope_different
 
 # Apply updated stats + weapon ID to the item (zb_pap_apply_stats replaces both)
 $item modify entity @s $(slot) mgs:v5.0.0/zb_pap_apply_stats
