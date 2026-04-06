@@ -9,11 +9,10 @@
 # Guard: game must be active
 execute unless data storage mgs:zombies game{state:"active"} run return fail
 
-# If weapon is coming-out (101..140) or retreating (-101..-2): allow collection
-execute if score @n[tag=bs.interaction.target] mgs.pap_anim matches 101..140 run return run function mgs:v5.0.0/zombies/pap/anim_collect
-execute if score @n[tag=bs.interaction.target] mgs.pap_anim matches -101..-2 run return run function mgs:v5.0.0/zombies/pap/anim_collect
+# If weapon is coming-out (121..150) or retreating/collectible (1..120): allow collection
+execute if score @n[tag=bs.interaction.target] mgs.pap_anim matches 1..150 run return run function mgs:v5.0.0/zombies/pap/anim_collect
 # If machine is going-in or inside (not yet collectible), deny
-execute if score @n[tag=bs.interaction.target] mgs.pap_anim matches 141.. run return run function mgs:v5.0.0/zombies/pap/anim_deny_processing
+execute if score @n[tag=bs.interaction.target] mgs.pap_anim matches 151.. run return run function mgs:v5.0.0/zombies/pap/anim_deny_processing
 
 # Guard: power requirement
 execute store result score #pap_power mgs.data run scoreboard players get @n[tag=bs.interaction.target] mgs.zb.pap.power
@@ -97,7 +96,6 @@ function mgs:v5.0.0/ammo/compute_reserve
 
 # Brief feedback — detailed stats shown when weapon emerges
 tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.pack_a_punching_your_weapon","color":"aqua"}]
-playsound minecraft:block.anvil.use ambient @s ~ ~ ~ 0.7 0.9
 
 # Take weapon from player and start PAP animation
 tag @s add mgs.pap_owner

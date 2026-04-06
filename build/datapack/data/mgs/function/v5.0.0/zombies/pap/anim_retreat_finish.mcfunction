@@ -3,7 +3,7 @@
 #
 # @executed	at @s
 #
-# @within	mgs:v5.0.0/zombies/game_tick [ at @s ]
+# @within	mgs:v5.0.0/zombies/pap/anim_step
 #
 
 # Weapon is lost — destroy it (not dropped)

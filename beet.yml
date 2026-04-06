@@ -51,6 +51,7 @@ pipeline:
     # - "stewbeet.plugins.compatibilities.simpledrawer"
     # - "stewbeet.plugins.compatibilities.neo_enchant"
     - "src.link" # User code
+    # - "mecha"
     - "stewbeet.plugins.finalyze.scoreboard_constants"
     - "stewbeet.plugins.finalyze.custom_blocks_ticking"
     - "stewbeet.plugins.finalyze.basic_datapack_structure"
@@ -69,6 +70,11 @@ meta:
     # Enable custom crosshair rendering in shaders (build time)
     # WARNING: When true, players without "Improved Transparency" setting will not see any crosshair
     mgs_custom_crosshair: True  # TODO: Turn off on environments where MGS is not always used (e.g. Minigames Server)
+
+    # Mecha configuration for multiline support and pattern matching
+    mecha:
+        multiline: true
+        formatting: preserve
 
     # StewBeet specific configuration
     stewbeet:
