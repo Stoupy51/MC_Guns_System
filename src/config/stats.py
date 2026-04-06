@@ -421,7 +421,7 @@ M4A1: JsonDict = {
         SWITCH: 17, KICK: 2, CASING_MODEL: CASING_556X45MM, CASING_NORMAL: 150, CASING_TANGENT: -75, CASING_BINORMAL: -200,
         CASING_OFFSET: {"normal": (-0.4, -0.35, 0.7), "zoom": (-0.05, -0.25, 0.5)},
         PAP_STATS: {
-            PAP_NAME: "M4A1 Mk II",
+            PAP_NAME: "M4-Annihilator",
             CAPACITY: 42,
             REMAINING_BULLETS: 42,
             RELOAD_TIME: 42,
@@ -451,7 +451,7 @@ G3A3: JsonDict = {
         SWITCH: 30, KICK: 3, CASING_MODEL: CASING_762X51MM, CASING_NORMAL: 200, CASING_TANGENT: 100, CASING_BINORMAL: -300,
         CASING_OFFSET: {"normal": (-0.32, -0.3, 0.7), "zoom": (-0.05, -0.25, 0.5)},
         PAP_STATS: {
-            PAP_NAME: "G3A3 Mk II",
+            PAP_NAME: "Great Dane",
             CAPACITY: 30,
             REMAINING_BULLETS: 30,
             RELOAD_TIME: 62,
@@ -1185,7 +1185,7 @@ RPG7: JsonDict = {
             CAPACITY: 8,
             RELOAD_TIME: 80,
             RELOAD_END: 14,
-            COOLDOWN: 8,
+            COOLDOWN: 5,
             SWITCH: 40,
             PROJECTILE_SPEED: 1800,
             EXPLOSION_RADIUS: 7,
