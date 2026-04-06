@@ -56,6 +56,9 @@ tag @s add mgs.reloading_weapon
 $execute summon item_display run function mgs:v5.0.0/zombies/bonus/extract_weapon_capacity {slot:"$(slot)"}
 tag @s remove mgs.reloading_weapon
 
+# Save current ammo display (so non-active slot reloads don't corrupt the active HUD)
+scoreboard players operation #rws_save mgs.data = @s mgs.remaining_bullets
+
 # Set player scoreboard to capacity (needed by modify_lore)
 scoreboard players operation @s mgs.remaining_bullets = #bullets mgs.data
 
@@ -68,4 +71,7 @@ $item modify entity @s $(slot) mgs:v5.0.0/update_ammo
 
 # Update weapon lore
 $function mgs:v5.0.0/ammo/modify_lore {slot:"$(slot)"}
+
+# Restore the active weapon's ammo display for non-active slots
+scoreboard players operation @s mgs.remaining_bullets = #rws_save mgs.data
 
