@@ -55,6 +55,9 @@ tag @s add {ns}.reloading_weapon
 $execute summon item_display run function {ns}:v{version}/zombies/bonus/extract_weapon_capacity {{slot:"$(slot)"}}
 tag @s remove {ns}.reloading_weapon
 
+# Save current ammo display (so non-active slot reloads don't corrupt the active HUD)
+scoreboard players operation #rws_save {ns}.data = @s {ns}.{REMAINING_BULLETS}
+
 # Set player scoreboard to capacity (needed by modify_lore)
 scoreboard players operation @s {ns}.{REMAINING_BULLETS} = #bullets {ns}.data
 
@@ -67,6 +70,9 @@ $item modify entity @s $(slot) {ns}:v{version}/update_ammo
 
 # Update weapon lore
 $function {ns}:v{version}/ammo/modify_lore {{slot:"$(slot)"}}
+
+# Restore the active weapon's ammo display for non-active slots
+scoreboard players operation @s {ns}.{REMAINING_BULLETS} = #rws_save {ns}.data
 """)
 
     # Extract weapon capacity from item_display (@s = item_display)
