@@ -1,5 +1,5 @@
 
-#> mgs:v5.0.0/zombies/pap/anim_start
+#> mgs:v5.0.0/zombies/pap/anim/start
 #
 # @executed	at @s
 #
@@ -22,7 +22,7 @@ $item replace entity @p[tag=mgs.pap_owner] $(slot) with minecraft:air
 # Store this machine's slot for later retrieval when player collects the weapon
 execute store result storage mgs:temp _pap_anim_slot.id int 1 run scoreboard players get @s mgs.zb.pap.id
 $data modify storage mgs:temp _pap_anim_slot.slot set value "$(slot)"
-function mgs:v5.0.0/zombies/pap/anim_store_slot with storage mgs:temp _pap_anim_slot
+function mgs:v5.0.0/zombies/pap/anim/store_slot with storage mgs:temp _pap_anim_slot
 
 # Hide the static item_display temporarily (restored on collect or retreat finish)
 kill @e[tag=mgs.pap_display,distance=..2]

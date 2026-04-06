@@ -1,5 +1,5 @@
 
-#> mgs:v5.0.0/zombies/pap/anim_deny_processing
+#> mgs:v5.0.0/zombies/pap/anim/deny_processing
 #
 # @executed	as @n[tag=mgs.pap_new]
 #

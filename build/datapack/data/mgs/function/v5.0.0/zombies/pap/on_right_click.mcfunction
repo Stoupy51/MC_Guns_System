@@ -9,10 +9,10 @@
 # Guard: game must be active
 execute unless data storage mgs:zombies game{state:"active"} run return fail
 
-# If weapon is coming-out (121..150) or retreating/collectible (1..120): allow collection
-execute if score @n[tag=bs.interaction.target] mgs.pap_anim matches 1..150 run return run function mgs:v5.0.0/zombies/pap/anim_collect
-# If machine is going-in or inside (not yet collectible), deny
-execute if score @n[tag=bs.interaction.target] mgs.pap_anim matches 151.. run return run function mgs:v5.0.0/zombies/pap/anim_deny_processing
+# If weapon is in retreat/collectible phase (1..120): allow collection
+execute if score @n[tag=bs.interaction.target] mgs.pap_anim matches 1..120 run return run function mgs:v5.0.0/zombies/pap/anim/collect
+# If machine is going-in, inside, or coming-out (not yet collectible), deny
+execute if score @n[tag=bs.interaction.target] mgs.pap_anim matches 121.. run return run function mgs:v5.0.0/zombies/pap/anim/deny_processing
 
 # Guard: power requirement
 execute store result score #pap_power mgs.data run scoreboard players get @n[tag=bs.interaction.target] mgs.zb.pap.power
@@ -94,13 +94,18 @@ function mgs:v5.0.0/zombies/pap/apply_to_slot with storage mgs:temp _pap
 function mgs:v5.0.0/zombies/pap/pap_upgrade_magazines with storage mgs:temp _pap_extract.stats
 function mgs:v5.0.0/ammo/compute_reserve
 
-# Brief feedback — detailed stats shown when weapon emerges
+# Brief feedback — detailed stats shown in chat
 tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.pack_a_punching_your_weapon","color":"aqua"}]
+
+# Show detailed PAP stats in chat
+execute store result storage mgs:temp _pap_hover.id int 1 run scoreboard players get @n[tag=bs.interaction.target] mgs.zb.pap.id
+function mgs:v5.0.0/zombies/pap/lookup_machine with storage mgs:temp _pap_hover
+function mgs:v5.0.0/zombies/pap/pap_chat_message
 
 # Take weapon from player and start PAP animation
 tag @s add mgs.pap_owner
 scoreboard players operation @s mgs.zb.pap_s = #pap_sel mgs.data
 execute store result score @s mgs.zb.pap_mid run scoreboard players get @n[tag=bs.interaction.target] mgs.zb.pap.id
-execute as @n[tag=bs.interaction.target] at @s run function mgs:v5.0.0/zombies/pap/anim_start with storage mgs:temp _pap
+execute as @n[tag=bs.interaction.target] at @s run function mgs:v5.0.0/zombies/pap/anim/start with storage mgs:temp _pap
 tag @s remove mgs.pap_owner
 

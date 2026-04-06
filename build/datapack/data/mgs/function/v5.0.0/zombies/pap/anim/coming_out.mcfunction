@@ -1,9 +1,9 @@
 
-#> mgs:v5.0.0/zombies/pap/anim_coming_out
+#> mgs:v5.0.0/zombies/pap/anim/coming_out
 #
 # @executed	at @s
 #
-# @within	mgs:v5.0.0/zombies/pap/anim_step
+# @within	mgs:v5.0.0/zombies/pap/anim/step
 #
 
 particle end_rod ~ ~0.8 ~ 0.4 0.3 0.3 0.05 3 force

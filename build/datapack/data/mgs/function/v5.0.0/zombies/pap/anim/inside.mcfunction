@@ -1,9 +1,9 @@
 
-#> mgs:v5.0.0/zombies/pap/anim_inside
+#> mgs:v5.0.0/zombies/pap/anim/inside
 #
 # @executed	at @s
 #
-# @within	mgs:v5.0.0/zombies/pap/anim_step
+# @within	mgs:v5.0.0/zombies/pap/anim/step
 #
 
 # Dense purple dust + end_rod particles every tick

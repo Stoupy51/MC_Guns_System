@@ -1,9 +1,9 @@
 
-#> mgs:v5.0.0/zombies/pap/anim_collect_give
+#> mgs:v5.0.0/zombies/pap/anim/collect_give
 #
 # @executed	at @s
 #
-# @within	mgs:v5.0.0/zombies/pap/anim_collect_lookup with storage mgs:temp _pap_cg
+# @within	mgs:v5.0.0/zombies/pap/anim/collect_lookup with storage mgs:temp _pap_cg
 #
 # @args		slot (unknown)
 #			id (unknown)
@@ -22,7 +22,7 @@ scoreboard players set @s mgs.pap_anim -1
 kill @e[tag=mgs.pap_weapon_display,distance=..2]
 
 # Restore the static machine display entity
-function mgs:v5.0.0/zombies/pap/anim_restore_display
+function mgs:v5.0.0/zombies/pap/anim/restore_display
 
 # Clear PAP slot tracking for the original owner
 execute store result score #pap_mid mgs.data run scoreboard players get @s mgs.zb.pap.id
@@ -33,6 +33,5 @@ execute as @a[scores={mgs.zb.pap_mid=1..}] if score @s mgs.zb.pap_mid = #pap_mid
 $data remove storage mgs:zombies pap_anim_slot."$(id)"
 
 # Notify the player
-execute as @p[tag=mgs.pap_owner] run tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.you_collected_your_upgraded_weapon","color":"green","bold":true}]
 execute as @p[tag=mgs.pap_owner] run function mgs:v5.0.0/zombies/feedback/sound_success
 

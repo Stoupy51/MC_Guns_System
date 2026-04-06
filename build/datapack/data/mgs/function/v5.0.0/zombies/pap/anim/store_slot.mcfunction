@@ -1,9 +1,9 @@
 
-#> mgs:v5.0.0/zombies/pap/anim_store_slot
+#> mgs:v5.0.0/zombies/pap/anim/store_slot
 #
 # @executed	at @s
 #
-# @within	mgs:v5.0.0/zombies/pap/anim_start with storage mgs:temp _pap_anim_slot
+# @within	mgs:v5.0.0/zombies/pap/anim/start with storage mgs:temp _pap_anim_slot
 #
 # @args		id (unknown)
 #			slot (unknown)

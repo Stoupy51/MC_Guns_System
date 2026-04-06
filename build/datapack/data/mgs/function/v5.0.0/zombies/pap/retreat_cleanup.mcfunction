@@ -3,7 +3,7 @@
 #
 # @executed	at @s
 #
-# @within	mgs:v5.0.0/zombies/pap/anim_retreat_finish with storage mgs:temp _pap_retreat
+# @within	mgs:v5.0.0/zombies/pap/anim/retreat_finish with storage mgs:temp _pap_retreat
 #
 # @args		id (unknown)
 #

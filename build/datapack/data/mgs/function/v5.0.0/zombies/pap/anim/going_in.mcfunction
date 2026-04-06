@@ -1,9 +1,9 @@
 
-#> mgs:v5.0.0/zombies/pap/anim_going_in
+#> mgs:v5.0.0/zombies/pap/anim/going_in
 #
 # @executed	at @s
 #
-# @within	mgs:v5.0.0/zombies/pap/anim_step
+# @within	mgs:v5.0.0/zombies/pap/anim/step
 #
 
 # Sparse purple dust every 2 ticks along the horizontal path
