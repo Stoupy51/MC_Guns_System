@@ -526,7 +526,60 @@ tellraw @s [{MGS_TAG},{{"text":"This weapon cannot be Pack-a-Punched.","color":"
 function {ns}:v{version}/zombies/feedback/sound_deny
 """)
 
+	REPAP_SCOPE_PRICE: int = 1000
+
 	write_versioned_function("zombies/pap/deny_max_level", f"""
+tellraw @s [{MGS_TAG},{{"text":"This weapon is already at max Pack-a-Punch level.","color":"yellow"}}]
+function {ns}:v{version}/zombies/feedback/sound_deny
+""")
+
+	## Re-PAP at max level: scope-only randomization for a reduced price
+	write_versioned_function("zombies/pap/repap_scope_only", f"""
+# Guard: weapon must have at least 2 scope variants to re-roll
+data remove storage {ns}:temp _pap_scope_check
+data modify storage {ns}:temp _pap_scope_bw.{BASE_WEAPON} set from storage {ns}:temp _pap_extract.stats.{BASE_WEAPON}
+function {ns}:v{version}/zombies/pap/check_scope_variants with storage {ns}:temp _pap_scope_bw
+execute unless score #pap_has_scopes {ns}.data matches 1 run return run function {ns}:v{version}/zombies/pap/deny_no_scope_variants
+
+# Guard: enough points for scope re-roll
+execute unless score @s {ns}.zb.points matches {REPAP_SCOPE_PRICE}.. run return run function {ns}:v{version}/zombies/pap/deny_not_enough_points_scope
+
+# Deduct points
+scoreboard players remove @s {ns}.zb.points {REPAP_SCOPE_PRICE}
+
+# Randomize weapon scope
+function {ns}:v{version}/zombies/pap/randomize_scope with storage {ns}:temp _pap_extract.stats
+
+# Apply updated stats + weapon ID to the item (zb_pap_apply_stats replaces both)
+$item modify entity @s $(slot) {ns}:v{version}/zb_pap_apply_stats
+
+# Update item model to match the new scope
+$data modify storage {ns}:temp _pap_scope_model.slot set value "$(slot)"
+data modify storage {ns}:temp _pap_scope_model.model set from storage {ns}:temp _pap_extract.stats.models.normal
+function {ns}:v{version}/zombies/pap/set_item_model_from_scope with storage {ns}:temp _pap_scope_model
+
+# Brief feedback
+tellraw @s [{MGS_TAG},{{"text":"Scope re-rolled! (-{REPAP_SCOPE_PRICE} points)","color":"aqua"}}]
+
+# Start PAP animation
+tag @s add {ns}.pap_owner
+scoreboard players operation @s {ns}.zb.pap_s = #pap_sel {ns}.data
+execute store result score @s {ns}.zb.pap_mid run scoreboard players get @n[tag=bs.interaction.target] {ns}.zb.pap.id
+execute as @n[tag=bs.interaction.target] at @s run function {ns}:v{version}/zombies/pap/anim/start with storage {ns}:temp _pap
+tag @s remove {ns}.pap_owner
+""")
+
+	write_versioned_function("zombies/pap/deny_not_enough_points_scope", f"""
+tellraw @s [{MGS_TAG},{{"text":"You don't have enough points ({REPAP_SCOPE_PRICE} needed).","color":"red"}}]
+function {ns}:v{version}/zombies/feedback/sound_deny
+""")
+
+	write_versioned_function("zombies/pap/check_scope_variants", f"""
+scoreboard players set #pap_has_scopes {ns}.data 0
+$execute if data storage {ns}:zombies scope_variants."$({BASE_WEAPON})"[1] run scoreboard players set #pap_has_scopes {ns}.data 1
+""")
+
+	write_versioned_function("zombies/pap/deny_no_scope_variants", f"""
 tellraw @s [{MGS_TAG},{{"text":"This weapon is already at max Pack-a-Punch level.","color":"yellow"}}]
 function {ns}:v{version}/zombies/feedback/sound_deny
 """)
@@ -579,7 +632,7 @@ scoreboard players remove #pap_next_idx {ns}.data 1
 
 # Guard: next level must be <= runtime max derived from pap_stats lists
 function {ns}:v{version}/zombies/pap/compute_max_level
-execute if score #pap_next {ns}.data > #pap_max {ns}.data run return run function {ns}:v{version}/zombies/pap/deny_max_level
+execute if score #pap_next {ns}.data > #pap_max {ns}.data run return run function {ns}:v{version}/zombies/pap/repap_scope_only with storage {ns}:temp _pap
 
 # Backup visible stats for lore annotation before overrides
 data modify storage {ns}:temp _pap_old_stats set from storage {ns}:temp _pap_extract.stats

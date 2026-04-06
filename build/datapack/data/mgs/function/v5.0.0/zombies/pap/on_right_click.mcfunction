@@ -53,7 +53,7 @@ scoreboard players remove #pap_next_idx mgs.data 1
 
 # Guard: next level must be <= runtime max derived from pap_stats lists
 function mgs:v5.0.0/zombies/pap/compute_max_level
-execute if score #pap_next mgs.data > #pap_max mgs.data run return run function mgs:v5.0.0/zombies/pap/deny_max_level
+execute if score #pap_next mgs.data > #pap_max mgs.data run return run function mgs:v5.0.0/zombies/pap/repap_scope_only with storage mgs:temp _pap
 
 # Backup visible stats for lore annotation before overrides
 data modify storage mgs:temp _pap_old_stats set from storage mgs:temp _pap_extract.stats

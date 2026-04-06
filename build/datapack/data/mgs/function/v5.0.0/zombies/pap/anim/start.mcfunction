@@ -3,7 +3,8 @@
 #
 # @executed	at @s
 #
-# @within	mgs:v5.0.0/zombies/pap/on_right_click with storage mgs:temp _pap [ at @s ]
+# @within	mgs:v5.0.0/zombies/pap/repap_scope_only with storage mgs:temp _pap [ at @s ]
+#			mgs:v5.0.0/zombies/pap/on_right_click with storage mgs:temp _pap [ at @s ]
 #
 # @args		slot (unknown)
 #
