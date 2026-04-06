@@ -9,10 +9,10 @@
 # Guard: game must be active
 execute unless data storage mgs:zombies game{state:"active"} run return fail
 
-# If weapon is in retreat/collectible phase (1..120): allow collection
-execute if score @n[tag=bs.interaction.target] mgs.pap_anim matches 1..120 run return run function mgs:v5.0.0/zombies/pap/anim/collect
+# If weapon is in retreat/collectible phase (1..205): allow collection
+execute if score @n[tag=bs.interaction.target] mgs.pap_anim matches 1..205 run return run function mgs:v5.0.0/zombies/pap/anim/collect
 # If machine is going-in, inside, or coming-out (not yet collectible), deny
-execute if score @n[tag=bs.interaction.target] mgs.pap_anim matches 121.. run return run function mgs:v5.0.0/zombies/pap/anim/deny_processing
+execute if score @n[tag=bs.interaction.target] mgs.pap_anim matches 206.. run return run function mgs:v5.0.0/zombies/pap/anim/deny_processing
 
 # Guard: power requirement
 execute store result score #pap_power mgs.data run scoreboard players get @n[tag=bs.interaction.target] mgs.zb.pap.power

@@ -25,8 +25,8 @@ execute store result storage mgs:temp _pap_anim_slot.id int 1 run scoreboard pla
 $data modify storage mgs:temp _pap_anim_slot.slot set value "$(slot)"
 function mgs:v5.0.0/zombies/pap/anim/store_slot with storage mgs:temp _pap_anim_slot
 
-# Start animation timer: 240 ticks total
-scoreboard players set @s mgs.pap_anim 240
+# Start animation timer: 300 ticks total
+scoreboard players set @s mgs.pap_anim 300
 
 # Sound: machine accepting weapon
 function mgs:v5.0.0/zombies/feedback/sound_pap_knuckle_crack

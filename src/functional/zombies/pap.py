@@ -601,10 +601,10 @@ function {ns}:v{version}/zombies/feedback/sound_deny
 # Guard: game must be active
 {game_active_guard_cmd(ns)}
 
-# If weapon is in retreat/collectible phase (1..120): allow collection
-execute if score @n[tag=bs.interaction.target] {ns}.pap_anim matches 1..120 run return run function {ns}:v{version}/zombies/pap/anim/collect
+# If weapon is in retreat/collectible phase (1..205): allow collection
+execute if score @n[tag=bs.interaction.target] {ns}.pap_anim matches 1..205 run return run function {ns}:v{version}/zombies/pap/anim/collect
 # If machine is going-in, inside, or coming-out (not yet collectible), deny
-execute if score @n[tag=bs.interaction.target] {ns}.pap_anim matches 121.. run return run function {ns}:v{version}/zombies/pap/anim/deny_processing
+execute if score @n[tag=bs.interaction.target] {ns}.pap_anim matches 206.. run return run function {ns}:v{version}/zombies/pap/anim/deny_processing
 
 # Guard: power requirement
 execute store result score #pap_power {ns}.data run scoreboard players get @n[tag=bs.interaction.target] {ns}.zb.pap.power
@@ -766,8 +766,8 @@ execute store result storage {ns}:temp _pap_anim_slot.id int 1 run scoreboard pl
 $data modify storage {ns}:temp _pap_anim_slot.slot set value "$(slot)"
 function {ns}:v{version}/zombies/pap/anim/store_slot with storage {ns}:temp _pap_anim_slot
 
-# Start animation timer: 240 ticks total
-scoreboard players set @s {ns}.pap_anim 240
+# Start animation timer: 300 ticks total
+scoreboard players set @s {ns}.pap_anim 300
 
 # Sound: machine accepting weapon
 function {ns}:v{version}/zombies/feedback/sound_pap_knuckle_crack
@@ -785,38 +785,42 @@ $data modify storage {ns}:zombies pap_anim_slot."$(id)" set value "$(slot)"
 scoreboard players remove @s {ns}.pap_anim 1
 
 # Trigger: start going-in interpolation (2 ticks after summon for client sync)
-execute if score @s {ns}.pap_anim matches 238 run function {ns}:v{version}/zombies/pap/anim/trigger_going_in
+execute if score @s {ns}.pap_anim matches 298 run function {ns}:v{version}/zombies/pap/anim/trigger_going_in
 
-# Phase: GOING IN (timer 221..237)
-execute if score @s {ns}.pap_anim matches 221..237 run function {ns}:v{version}/zombies/pap/anim/going_in
+# Phase: GOING IN (timer 281..297)
+execute if score @s {ns}.pap_anim matches 281..297 run function {ns}:v{version}/zombies/pap/anim/going_in
 
-# Trigger: weapon fully in at timer=220 — start inside processing
-execute if score @s {ns}.pap_anim matches 220 run function {ns}:v{version}/zombies/pap/anim/trigger_inside
+# Trigger: weapon fully in at timer=280 — start inside processing
+execute if score @s {ns}.pap_anim matches 280 run function {ns}:v{version}/zombies/pap/anim/trigger_inside
 
-# Phase: INSIDE (timer 161..219)
-execute if score @s {ns}.pap_anim matches 161..219 run function {ns}:v{version}/zombies/pap/anim/inside
+# Phase: INSIDE (timer 225..279)
+execute if score @s {ns}.pap_anim matches 225..279 run function {ns}:v{version}/zombies/pap/anim/inside
 
-# Trigger: start coming-out interpolation at timer=160
-execute if score @s {ns}.pap_anim matches 160 run function {ns}:v{version}/zombies/pap/anim/trigger_coming_out
+# Trigger: start coming-out interpolation at timer=225
+execute if score @s {ns}.pap_anim matches 225 run function {ns}:v{version}/zombies/pap/anim/trigger_coming_out
 
-# Phase: COMING OUT (timer 146..159)
-execute if score @s {ns}.pap_anim matches 146..159 run function {ns}:v{version}/zombies/pap/anim/coming_out
+# Phase: COMING OUT (timer 206..219)
+execute if score @s {ns}.pap_anim matches 206..219 run function {ns}:v{version}/zombies/pap/anim/coming_out
 
-# Trigger: weapon fully emerged at timer=145 — start retreat, allow collection
-execute if score @s {ns}.pap_anim matches 145 run function {ns}:v{version}/zombies/pap/anim/trigger_retreat
-execute if score @s {ns}.pap_anim matches 125 as @n[tag={ns}.pap_weapon_display,distance=..2] at @s run tp @s ^ ^ ^-0.1
-execute if score @s {ns}.pap_anim matches 105 as @n[tag={ns}.pap_weapon_display,distance=..2] at @s run tp @s ^ ^ ^-0.1
-execute if score @s {ns}.pap_anim matches 85 as @n[tag={ns}.pap_weapon_display,distance=..2] at @s run tp @s ^ ^ ^-0.1
-execute if score @s {ns}.pap_anim matches 65 as @n[tag={ns}.pap_weapon_display,distance=..2] at @s run tp @s ^ ^ ^-0.1
-execute if score @s {ns}.pap_anim matches 45 as @n[tag={ns}.pap_weapon_display,distance=..2] at @s run tp @s ^ ^ ^-0.1
-execute if score @s {ns}.pap_anim matches 25 as @n[tag={ns}.pap_weapon_display,distance=..2] at @s run tp @s ^ ^ ^-0.1
-execute if score @s {ns}.pap_anim matches 5 as @n[tag={ns}.pap_weapon_display,distance=..2] at @s run tp @s ^ ^ ^-0.1
+# Trigger: weapon fully emerged at timer=205 — start retreat, allow collection
+execute if score @s {ns}.pap_anim matches 205 run function {ns}:v{version}/zombies/pap/anim/trigger_retreat
+execute if score @s {ns}.pap_anim matches 205 as @n[tag={ns}.pap_weapon_display,distance=..2] at @s run tp @s ^ ^ ^-0.06
+execute if score @s {ns}.pap_anim matches 185 as @n[tag={ns}.pap_weapon_display,distance=..2] at @s run tp @s ^ ^ ^-0.06
+execute if score @s {ns}.pap_anim matches 165 as @n[tag={ns}.pap_weapon_display,distance=..2] at @s run tp @s ^ ^ ^-0.06
+execute if score @s {ns}.pap_anim matches 145 as @n[tag={ns}.pap_weapon_display,distance=..2] at @s run tp @s ^ ^ ^-0.06
+execute if score @s {ns}.pap_anim matches 125 as @n[tag={ns}.pap_weapon_display,distance=..2] at @s run tp @s ^ ^ ^-0.06
+execute if score @s {ns}.pap_anim matches 105 as @n[tag={ns}.pap_weapon_display,distance=..2] at @s run tp @s ^ ^ ^-0.06
+execute if score @s {ns}.pap_anim matches 85 as @n[tag={ns}.pap_weapon_display,distance=..2] at @s run tp @s ^ ^ ^-0.06
+execute if score @s {ns}.pap_anim matches 65 as @n[tag={ns}.pap_weapon_display,distance=..2] at @s run tp @s ^ ^ ^-0.06
+execute if score @s {ns}.pap_anim matches 45 as @n[tag={ns}.pap_weapon_display,distance=..2] at @s run tp @s ^ ^ ^-0.06
+execute if score @s {ns}.pap_anim matches 25 as @n[tag={ns}.pap_weapon_display,distance=..2] at @s run tp @s ^ ^ ^-0.06
+execute if score @s {ns}.pap_anim matches 5 as @n[tag={ns}.pap_weapon_display,distance=..2] at @s run tp @s ^ ^ ^-0.06
 
-# Phase: RETREAT (timer 1..115) — smoke particles + looping sound every 20 ticks
-execute if score @s {ns}.pap_anim matches 1..115 run particle smoke ~ ~0.5 ~ 0.2 0.2 0.2 0.05 2 force
+# Phase: RETREAT (timer 1..205) — smoke particles + looping sound every 20 ticks
+execute if score @s {ns}.pap_anim matches 1..205 run particle smoke ~ ~0.5 ~ 0.2 0.2 0.2 0.05 2 force
 execute store result score #pap_t {ns}.data run scoreboard players get @s {ns}.pap_anim
 scoreboard players operation #pap_t {ns}.data %= #20 {ns}.data
-execute if score @s {ns}.pap_anim matches 1..115 if score #pap_t {ns}.data matches 0 run function {ns}:v{version}/zombies/feedback/sound_pap_retreat_loop
+execute if score @s {ns}.pap_anim matches 1..205 if score #pap_t {ns}.data matches 0 run function {ns}:v{version}/zombies/feedback/sound_pap_retreat_loop
 
 # Retreat finished at timer=0 — weapon is lost
 execute if score @s {ns}.pap_anim matches 0 run function {ns}:v{version}/zombies/pap/anim/retreat_finish
