@@ -24,3 +24,6 @@ tellraw @a ["",{"text":"","color":"dark_green","bold":true},"🧟 ",{"translate"
 # Schedule next round after 10 seconds
 schedule function mgs:v5.0.0/zombies/start_round 200t
 
+# Respawn all bled-out (spectator) players for the next round
+function mgs:v5.0.0/zombies/revive/round_respawn
+

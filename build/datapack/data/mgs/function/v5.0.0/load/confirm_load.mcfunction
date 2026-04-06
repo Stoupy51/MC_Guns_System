@@ -210,6 +210,11 @@ scoreboard objectives add mgs.zb.perk.double_tap dummy
 scoreboard objectives add mgs.zb.perk.quick_revive dummy
 scoreboard objectives add mgs.zb.perk.mule_kick dummy
 
+# Revive system scoreboards
+scoreboard objectives add mgs.zb.downed dummy
+scoreboard objectives add mgs.zb.bleed dummy
+scoreboard objectives add mgs.zb.revive_p dummy
+
 # Trap entity scoreboards
 scoreboard objectives add mgs.zb.trap.id dummy
 scoreboard objectives add mgs.zb.trap.price dummy

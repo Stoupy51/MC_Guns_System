@@ -88,3 +88,9 @@ scoreboard players reset * mgs.zb.perk.double_tap
 scoreboard players reset * mgs.zb.perk.quick_revive
 scoreboard players reset * mgs.zb.perk.mule_kick
 
+# Reset revive state
+scoreboard players set @a mgs.zb.downed 0
+scoreboard players set @a mgs.zb.bleed 0
+scoreboard players set @a mgs.zb.revive_p 0
+tag @a remove mgs.downed
+

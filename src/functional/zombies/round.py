@@ -156,6 +156,9 @@ tellraw @a ["",{{"text":"","color":"dark_green","bold":true}},"🧟 ",{{"text":"
 
 # Schedule next round after 10 seconds
 schedule function {ns}:v{version}/zombies/start_round 200t
+
+# Respawn all bled-out (spectator) players for the next round
+function {ns}:v{version}/zombies/revive/round_respawn
 """)
 
 	# Grenade Replenishment (appended to start_round) ───────────
