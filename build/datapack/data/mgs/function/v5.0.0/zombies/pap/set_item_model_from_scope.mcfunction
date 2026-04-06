@@ -4,6 +4,7 @@
 # @executed	as @n[tag=mgs.pap_new]
 #
 # @within	mgs:v5.0.0/zombies/pap/apply_to_slot with storage mgs:temp _pap_scope_model
+#			mgs:v5.0.0/zombies/pap/repap_scope_only with storage mgs:temp _pap_scope_model
 #
 # @args		slot (unknown)
 #			model (unknown)
