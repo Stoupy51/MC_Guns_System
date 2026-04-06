@@ -1,8 +1,6 @@
 
 #> mgs:v5.0.0/zombies/pap/anim/restore_display_lookup
 #
-# @executed	at @s
-#
 # @within	mgs:v5.0.0/zombies/pap/anim/restore_display with storage mgs:temp _pap_restore
 #
 # @args		id (unknown)

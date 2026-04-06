@@ -21,9 +21,6 @@ scoreboard players set @s mgs.pap_anim -1
 # Remove weapon display (item already given back, safe to kill)
 kill @e[tag=mgs.pap_weapon_display,distance=..2]
 
-# Restore the static machine display entity
-function mgs:v5.0.0/zombies/pap/anim/restore_display
-
 # Clear PAP slot tracking for the original owner
 execute store result score #pap_mid mgs.data run scoreboard players get @s mgs.zb.pap.id
 execute as @a[scores={mgs.zb.pap_s=1..}] if score @s mgs.zb.pap_mid = #pap_mid mgs.data run scoreboard players set @s mgs.zb.pap_s 0
