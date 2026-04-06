@@ -158,6 +158,36 @@ GRENADE_DURATION: str = "grenade_duration"
 GRENADE_EFFECT_RADIUS: str = "grenade_effect_radius"
 """ Radius of the grenade effect in blocks (for smoke/flash grenades). """
 
+# Stats field
+STATS_FIELDS: tuple[str, ...] = (
+	CAPACITY,
+	REMAINING_BULLETS,
+	RELOAD_TIME,
+	RELOAD_END,
+	RELOAD_MID,
+	COOLDOWN,
+	BURST,
+	PELLET_COUNT,
+	DAMAGE,
+	DECAY,
+	ACCURACY_BASE,
+	ACCURACY_SNEAK,
+	ACCURACY_WALK,
+	ACCURACY_SPRINT,
+	ACCURACY_JUMP,
+	SWITCH,
+	KICK,
+	PROJECTILE_SPEED,
+	PROJECTILE_GRAVITY,
+	PROJECTILE_LIFETIME,
+	EXPLOSION_RADIUS,
+	EXPLOSION_DAMAGE,
+	EXPLOSION_DECAY,
+	FIRE_MODE,
+	CAN_AUTO,
+	CAN_BURST,
+)
+
 # Optional constants
 MODELS: str = "models"
 """ Models to use to switch between normal and zoom modes. """
@@ -1150,6 +1180,8 @@ RPG7: JsonDict = {
         EXPLOSION_RADIUS: 6, EXPLOSION_DAMAGE: 30, EXPLOSION_DECAY: 0.80,
         PAP_STATS: {
             PAP_NAME: "Rocket Propelled Grievance",
+            FIRE_MODE: "auto",
+            CAN_AUTO: True,
             CAPACITY: 8,
             RELOAD_TIME: 80,
             RELOAD_END: 14,

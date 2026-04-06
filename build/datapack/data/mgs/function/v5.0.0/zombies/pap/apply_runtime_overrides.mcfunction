@@ -29,4 +29,7 @@ execute if data storage mgs:temp _pap_extract.stats.pap_stats.proj_lifetime run 
 execute if data storage mgs:temp _pap_extract.stats.pap_stats.expl_radius run function mgs:v5.0.0/zombies/pap/apply_field/expl_radius
 execute if data storage mgs:temp _pap_extract.stats.pap_stats.expl_damage run function mgs:v5.0.0/zombies/pap/apply_field/expl_damage
 execute if data storage mgs:temp _pap_extract.stats.pap_stats.expl_decay run function mgs:v5.0.0/zombies/pap/apply_field/expl_decay
+execute if data storage mgs:temp _pap_extract.stats.pap_stats.fire_mode run function mgs:v5.0.0/zombies/pap/apply_field/fire_mode
+execute if data storage mgs:temp _pap_extract.stats.pap_stats.can_auto run function mgs:v5.0.0/zombies/pap/apply_field/can_auto
+execute if data storage mgs:temp _pap_extract.stats.pap_stats.can_burst run function mgs:v5.0.0/zombies/pap/apply_field/can_burst
 

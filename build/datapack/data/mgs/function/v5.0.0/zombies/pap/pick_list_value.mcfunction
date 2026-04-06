@@ -26,6 +26,9 @@
 #			mgs:v5.0.0/zombies/pap/apply_field/expl_radius
 #			mgs:v5.0.0/zombies/pap/apply_field/expl_damage
 #			mgs:v5.0.0/zombies/pap/apply_field/expl_decay
+#			mgs:v5.0.0/zombies/pap/apply_field/fire_mode
+#			mgs:v5.0.0/zombies/pap/apply_field/can_auto
+#			mgs:v5.0.0/zombies/pap/apply_field/can_burst
 #			mgs:v5.0.0/zombies/pap/resolve_runtime_name
 #
 
