@@ -72,6 +72,8 @@ scoreboard objectives add mgs.special.infinite_ammo dummy
 scoreboard objectives add mgs.special.quick_reload dummy
 # Quick swap: percentage faster weapon switch (20 = 20% faster, 50 = 50% faster)
 scoreboard objectives add mgs.special.quick_swap dummy
+# Additional shots: number of extra projectiles per shot (Double Tap perk)
+scoreboard objectives add mgs.special.additional_shots dummy
 # DPS tracking: accumulates damage dealt per second, snapshot stored for actionbar
 scoreboard objectives add mgs.dps dummy
 scoreboard objectives add mgs.previous_dps dummy

@@ -86,6 +86,8 @@ scoreboard objectives add {ns}.special.infinite_ammo dummy
 scoreboard objectives add {ns}.special.quick_reload dummy
 # Quick swap: percentage faster weapon switch (20 = 20% faster, 50 = 50% faster)
 scoreboard objectives add {ns}.special.quick_swap dummy
+# Additional shots: number of extra projectiles per shot (Double Tap perk)
+scoreboard objectives add {ns}.special.additional_shots dummy
 # DPS tracking: accumulates damage dealt per second, snapshot stored for actionbar
 scoreboard objectives add {ns}.dps dummy
 scoreboard objectives add {ns}.previous_dps dummy

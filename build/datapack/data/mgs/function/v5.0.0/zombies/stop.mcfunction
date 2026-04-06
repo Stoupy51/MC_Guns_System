@@ -61,6 +61,13 @@ tag @a remove mgs.perk.speed_cola
 tag @a remove mgs.perk.double_tap
 tag @a remove mgs.perk.quick_revive
 
+# Reset special scoreboards granted by perks
+scoreboard players set @a mgs.special.quick_reload 0
+scoreboard players set @a mgs.special.additional_shots 0
+scoreboard players set @a mgs.special.instant_kill 0
+scoreboard players set @a mgs.special.infinite_ammo 0
+scoreboard players set @a mgs.special.quick_swap 0
+
 # Reset perk scoreboards for all known score holders (including offline players).
 scoreboard players reset * mgs.zb.perk.juggernog
 scoreboard players reset * mgs.zb.perk.speed_cola
