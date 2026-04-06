@@ -936,7 +936,7 @@ function {ns}:v{version}/zombies/display/summon_machine_display with storage {ns
 
 	# Deny message when machine is busy.
 	write_versioned_function("zombies/pap/anim/deny_processing", f"""
-tellraw @s [{MGS_TAG},{{"text":"The Pack-a-Punch machine is currently processing a weapon...","color":"yellow"}}]
+tellraw @s [{MGS_TAG},{{"text":"Already processing a weapon...","color":"yellow"}}]
 function {ns}:v{version}/zombies/feedback/sound_deny
 """)
 
