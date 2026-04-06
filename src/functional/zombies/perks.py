@@ -259,6 +259,13 @@ tag @a remove {ns}.perk.speed_cola
 tag @a remove {ns}.perk.double_tap
 tag @a remove {ns}.perk.quick_revive
 
+# Reset special scoreboards granted by perks
+scoreboard players set @a {ns}.special.quick_reload 0
+scoreboard players set @a {ns}.special.additional_shots 0
+scoreboard players set @a {ns}.special.instant_kill 0
+scoreboard players set @a {ns}.special.infinite_ammo 0
+scoreboard players set @a {ns}.special.quick_swap 0
+
 # Reset perk scoreboards for all known score holders (including offline players).
 {perk_reset_all_players}
 """)
