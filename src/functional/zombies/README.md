@@ -1,30 +1,8 @@
 
 
-# FIXME
-PaP Lore is not shown for the weapon's ammo remaining/capacity
-
-18:34:38.386
-net.minecraft.client.gui.components.ChatComponent
-Render thread
-[System] [CHAT] Weapon stats:
-18:34:38.386
-net.minecraft.client.gui.components.ChatComponent
-Render thread
-[System] [CHAT] - Damage Per Bullet  ➤ 11 > 14
-18:34:38.386
-net.minecraft.client.gui.components.ChatComponent
-Render thread
-[System] [CHAT] - Ammo Remaining      ➤ 0/7
-18:34:38.386
-net.minecraft.client.gui.components.ChatComponent
-Render thread
-[System] [CHAT] - Reloading Time       ➤ 2.2s > 1.6s
-18:34:38.386
-net.minecraft.client.gui.components.ChatComponent
-Render thread
-[System] [CHAT] - Damage Decay       ➤ 88%
-18:34:38.396
-net.minecraft.client.gui.components.ChatComponent
-Render thread
-[System] [CHAT] - Switch Time           ➤ 0.5s > 0.4s
+# TODO:
+- RPG should become AUTO (stats.py) after Papped
+- Revive system like in Black ops Zombies where downed players can be revived by teammates within a time limit. Only respawn on wave end if not revived in time.
+- Proper Mystery Box moving animation (chest going up slowly, then faster, then down to new location).
+  - The moving box should be an bear item we get like in Black Ops
 
