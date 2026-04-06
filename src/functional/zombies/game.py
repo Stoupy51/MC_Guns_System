@@ -218,9 +218,8 @@ execute if data storage {ns}:zombies game{{state:"preparing"}} run function {ns}
 """)
 
 	write_versioned_function("zombies/game_tick", f"""
-# Spectate Timer (3s respawn cooldown)
-execute as @a[scores={{{ns}.zb.in_game=1,{ns}.mp.spectate_timer=1..}}] run scoreboard players remove @s {ns}.mp.spectate_timer 1
-execute as @a[scores={{{ns}.zb.in_game=1,{ns}.mp.spectate_timer=0}},gamemode=spectator] at @s run function {ns}:v{version}/zombies/actual_respawn
+# Revive system tick (process downed players)
+function {ns}:v{version}/zombies/revive/tick
 
 # Zombie Spawning (if there are still zombies to spawn)
 execute if score #zb_to_spawn {ns}.data matches 1.. run function {ns}:v{version}/zombies/spawn_tick
@@ -233,9 +232,9 @@ execute if score #zb_has_bounds {ns}.data matches 1 as @e[type=player,scores={{{
 execute store result score #zb_alive {ns}.data if entity @e[tag={ns}.zombie_round]
 execute if score #zb_alive {ns}.data matches 0 if score #zb_to_spawn {ns}.data matches 0 run function {ns}:v{version}/zombies/round_complete
 
-# Check game over (all players down/spectator, but not during first 3 seconds)
+# Check game over (all players downed or spectator means no one can revive)
 execute if score #zb_round_grace {ns}.data matches 1.. run scoreboard players remove #zb_round_grace {ns}.data 1
-execute unless score #zb_round_grace {ns}.data matches 1.. store result score #zb_alive_players {ns}.data if entity @a[scores={{{ns}.zb.in_game=1}},gamemode=!spectator]
+execute unless score #zb_round_grace {ns}.data matches 1.. store result score #zb_alive_players {ns}.data if entity @a[scores={{{ns}.zb.in_game=1,{ns}.zb.downed=0}},gamemode=!spectator]
 execute unless score #zb_round_grace {ns}.data matches 1.. if score #zb_alive_players {ns}.data matches 0 run function {ns}:v{version}/zombies/game_over
 
 # Refresh sidebar every second (20 ticks)
@@ -268,7 +267,7 @@ execute if score @s {ns}.mp.bz > #bound_z2 {ns}.data run return run damage @s 10
 
 	# Death & Respawn ───────────────────────────────────────────
 
-	## On Respawn (zombies death handling - with cooldown)
+	## On Respawn (zombies death handling → enter downed state)
 	write_versioned_function("zombies/on_respawn", f"""
 # Reset death counter
 scoreboard players set @s {ns}.mp.death_count 0
@@ -276,39 +275,8 @@ scoreboard players set @s {ns}.mp.death_count 0
 # Increment down count
 scoreboard players add @s {ns}.zb.downs 1
 
-# Set player to spectator mode for 5 seconds (100 ticks) before actual respawn
-gamemode spectator @s
-scoreboard players set @s {ns}.mp.spectate_timer 100
-
-# Spectate a random alive in-game player
-function {ns}:v{version}/zombies/spectate_random_player
-
-# Announce
-title @s title [{{"text":"\\u2620","color":"red"}}]
-title @s subtitle [{{"text":"Respawning in 5 seconds...","color":"gray"}}]
-""")
-
-	## Spectate a random alive in-game player
-	write_versioned_function("zombies/spectate_random_player", f"""
-execute as @r[scores={{{ns}.zb.in_game=1}},gamemode=!spectator] run spectate @s @p[scores={{{ns}.mp.spectate_timer=1..}},sort=nearest]
-""")
-
-	## Actual respawn: called when spectate timer reaches 0
-	write_versioned_function("zombies/actual_respawn", f"""
-# Stop spectating
-spectate @s
-
-# Teleport to random player spawn
-function {ns}:v{version}/zombies/respawn_tp
-
-# Re-apply saturation
-effect give @s saturation infinite 255 true
-
-# Switch back to adventure
-gamemode adventure @s
-
-# Re-give starting weapon on respawn
-function {ns}:v{version}/zombies/inventory/give_respawn_loadout
+# Enter downed state (revive system)
+function {ns}:v{version}/zombies/revive/on_down
 """)
 
 	## Add player tick hook for zombies death detection

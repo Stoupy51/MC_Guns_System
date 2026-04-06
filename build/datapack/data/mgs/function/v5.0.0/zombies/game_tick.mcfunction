@@ -4,9 +4,8 @@
 # @within	mgs:v5.0.0/tick
 #
 
-# Spectate Timer (3s respawn cooldown)
-execute as @a[scores={mgs.zb.in_game=1,mgs.mp.spectate_timer=1..}] run scoreboard players remove @s mgs.mp.spectate_timer 1
-execute as @a[scores={mgs.zb.in_game=1,mgs.mp.spectate_timer=0},gamemode=spectator] at @s run function mgs:v5.0.0/zombies/actual_respawn
+# Revive system tick (process downed players)
+function mgs:v5.0.0/zombies/revive/tick
 
 # Zombie Spawning (if there are still zombies to spawn)
 execute if score #zb_to_spawn mgs.data matches 1.. run function mgs:v5.0.0/zombies/spawn_tick
@@ -19,9 +18,9 @@ execute if score #zb_has_bounds mgs.data matches 1 as @e[type=player,scores={mgs
 execute store result score #zb_alive mgs.data if entity @e[tag=mgs.zombie_round]
 execute if score #zb_alive mgs.data matches 0 if score #zb_to_spawn mgs.data matches 0 run function mgs:v5.0.0/zombies/round_complete
 
-# Check game over (all players down/spectator, but not during first 3 seconds)
+# Check game over (all players downed or spectator means no one can revive)
 execute if score #zb_round_grace mgs.data matches 1.. run scoreboard players remove #zb_round_grace mgs.data 1
-execute unless score #zb_round_grace mgs.data matches 1.. store result score #zb_alive_players mgs.data if entity @a[scores={mgs.zb.in_game=1},gamemode=!spectator]
+execute unless score #zb_round_grace mgs.data matches 1.. store result score #zb_alive_players mgs.data if entity @a[scores={mgs.zb.in_game=1,mgs.zb.downed=0},gamemode=!spectator]
 execute unless score #zb_round_grace mgs.data matches 1.. if score #zb_alive_players mgs.data matches 0 run function mgs:v5.0.0/zombies/game_over
 
 # Refresh sidebar every second (20 ticks)
