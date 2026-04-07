@@ -70,6 +70,7 @@ def main() -> None:
                 weapons.append(item)
 
     # For each weapon, make variants with only one material (e.g. wood, metal, gold, etc.)
+    # TODO: move after "Adjust guns data" in setup definitions, better for components
     for material in ("gold", "autumn", "black_metal", "copper", "red_polymer_stripes"):
         for weapon in weapons:
             item_id: str = f"{weapon.id}_{material}" if not weapon.id.endswith("_zoom") else f"{weapon.id[:-5]}_{material}_zoom"
