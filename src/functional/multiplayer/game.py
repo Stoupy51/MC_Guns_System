@@ -4,7 +4,7 @@
 from stewbeet import Mem, write_load_file, write_tag, write_tick_file, write_versioned_function
 
 from ..helpers import MGS_TAG, game_start_guards
-from ..respawn_countdown import respawn_countdown_tick_lines
+from ..core.respawn_countdown import respawn_countdown_tick_lines
 
 
 def generate_game() -> None:

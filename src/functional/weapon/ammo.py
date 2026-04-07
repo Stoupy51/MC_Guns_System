@@ -123,6 +123,7 @@ execute if score @s {ns}.special.infinite_ammo matches 1.. run return run functi
 
 # Remove 1 bullet from player's ammo count
 scoreboard players remove @s {ns}.{REMAINING_BULLETS} 1
+execute if score @s {ns}.{REMAINING_BULLETS} matches ..0 run function {ns}:v{version}/ammo/reload
 
 # Add mid cooldown sound tag if weapon has pump sound
 execute if data storage {ns}:gun all.sounds.pump run tag @s add {ns}.pump_sound
