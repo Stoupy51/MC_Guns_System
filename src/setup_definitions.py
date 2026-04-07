@@ -55,11 +55,11 @@ def beet_default(ctx: Context) -> None:
     main_casing()
     main_ammo()
 
-    # All weapons (rifles, pistols, SMGs, shotguns, snipers, LMGs)
-    main_weapons()
-
     # Special
     main_rpg7()
+
+    # All weapons (rifles, pistols, SMGs, shotguns, snipers, LMGs)
+    main_weapons()
 
     # Grenades
     main_grenades()
@@ -224,6 +224,12 @@ def beet_default(ctx: Context) -> None:
         return 0
     sorted_items: list[str] = sorted(Mem.definitions.keys(), key=sorter)
     Mem.definitions = {k: Mem.definitions[k] for k in sorted_items}
+
+    # Prevent some items to get in the give_all chests
+    for item in Mem.definitions.keys():
+        obj = Item.from_id(item)
+        if item.endswith(("_zoom", "_mag_empty")):
+            obj.skip_gives = True
 
     # Final adjustments, you definitively should keep them!
     add_item_model_component(black_list=["item_ids","you_don't_want","in_that","list"])

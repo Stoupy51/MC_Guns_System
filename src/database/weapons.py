@@ -56,6 +56,7 @@ WEAPON_RARITY: dict[str, str] = {
 
 
 def main() -> None:
+    weapons: list[Item] = [Item.from_id("rpg7")]
     for weapon_id, stats in WEAPON_STATS.items():
         # Get scope variants from catalog (default: iron sights only)
         variants: tuple[str, ...] = SCOPE_VARIANTS.get(weapon_id, ("",))
@@ -66,4 +67,21 @@ def main() -> None:
                 item: Item = add_item(name, stats=stats, model_path="auto")
                 if rarity:
                     item.components["rarity"] = rarity
+                weapons.append(item)
+
+    # For each weapon, make variants with only one material (e.g. wood, metal, gold, etc.)
+    for material in ("gold", "autumn", "black_metal", "copper", "red_polymer_stripes"):
+        for weapon in weapons:
+            item_id: str = f"{weapon.id}_{material}" if not weapon.id.endswith("_zoom") else f"{weapon.id[:-5]}_{material}_zoom"
+            item: Item = Item(
+                id=item_id, base_item=weapon.base_item, components=weapon.components.copy(), override_model=weapon.override_model
+            )
+
+            # Replace texture in override model with material texture
+            if item.override_model:
+                item.override_model = item.override_model.copy()
+                item.override_model["textures"] = item.override_model.get("textures", {}).copy()
+                for key, texture in item.override_model["textures"].items():
+                    if all(x not in texture for x in ("acogdetails", "holodetails", "kobradetails", "reticles")):
+                        item.override_model["textures"][key] = f"mgs:item/{material}"
 
