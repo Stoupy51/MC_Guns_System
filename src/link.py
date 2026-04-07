@@ -42,8 +42,9 @@ def beet_default(ctx: Context) -> None:
     # Bookshelf dump module
     official_lib_used("bs.dump")
 
-    # Generate 3D renders
-    from stewbeet import Mem
+    # Generate 3D renders (excluding _zoom variants)
+    from stewbeet import Item, Mem
     from stewbeet.plugins.ingame_manual.iso_renders import generate_all_iso_renders  # pyright: ignore[reportMissingTypeStubs]
+    [Item.from_id(x).components.pop("item_model", None) for x in Mem.definitions.keys() if x.endswith("_zoom")]
     generate_all_iso_renders(override_cache_path=f"{Mem.ctx.directory}/iso_renders", ignore_vanilla=True, ignore_painting=True)
 
