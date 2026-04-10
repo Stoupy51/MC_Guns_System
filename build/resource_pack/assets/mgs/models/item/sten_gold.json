@@ -1,13 +1,13 @@
 {
 	"parent": "item/generated",
 	"textures": {
-		"particle": "mgs:item/gold",
-		"1": "mgs:item/gold",
-		"0": "mgs:item/gold",
-		"3": "mgs:item/gold",
-		"2": "mgs:item/gold",
+		"particle": "mgs:item/metal_gold",
+		"1": "mgs:item/stendetails2_gold",
+		"0": "mgs:item/stendetails_gold",
+		"3": "mgs:item/metal_gold",
+		"2": "mgs:item/metal_bright_gold",
 		"5": "mgs:item/reticles",
-		"4": "mgs:item/gold"
+		"4": "mgs:item/metal_dark_gold"
 	},
 	"credit": "thebradqq's guns",
 	"elements": [

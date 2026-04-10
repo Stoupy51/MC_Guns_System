@@ -1,13 +1,13 @@
 {
 	"parent": "item/generated",
 	"textures": {
-		"particle": "mgs:item/red_polymer_stripes",
-		"1": "mgs:item/red_polymer_stripes",
-		"0": "mgs:item/red_polymer_stripes",
-		"3": "mgs:item/red_polymer_stripes",
-		"2": "mgs:item/red_polymer_stripes",
+		"particle": "mgs:item/metal_red_polymer_stripes",
+		"1": "mgs:item/stendetails2_red_polymer_stripes",
+		"0": "mgs:item/stendetails_red_polymer_stripes",
+		"3": "mgs:item/metal_red_polymer_stripes",
+		"2": "mgs:item/metal_bright_red_polymer_stripes",
 		"5": "mgs:item/reticles",
-		"4": "mgs:item/red_polymer_stripes"
+		"4": "mgs:item/metal_dark_red_polymer_stripes"
 	},
 	"credit": "thebradqq's guns",
 	"elements": [

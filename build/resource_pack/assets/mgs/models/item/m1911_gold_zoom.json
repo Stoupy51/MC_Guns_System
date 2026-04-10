@@ -2,10 +2,10 @@
 	"parent": "item/generated",
 	"textures": {
 		"particle": "mgs:item/reticles",
-		"1": "mgs:item/gold",
-		"0": "mgs:item/gold",
-		"3": "mgs:item/gold",
-		"2": "mgs:item/gold",
+		"1": "mgs:item/1911wood_cross_gold",
+		"0": "mgs:item/1911details_gold",
+		"3": "mgs:item/metal_dark_gold",
+		"2": "mgs:item/metal_bright_gold",
 		"4": "mgs:item/reticles"
 	},
 	"gui_light": "front",

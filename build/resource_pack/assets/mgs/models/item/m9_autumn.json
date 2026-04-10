@@ -2,12 +2,12 @@
 	"parent": "item/generated",
 	"textures": {
 		"particle": "mgs:item/reticles",
-		"1": "mgs:item/autumn",
-		"0": "mgs:item/autumn",
-		"3": "mgs:item/autumn",
-		"2": "mgs:item/autumn",
-		"5": "mgs:item/autumn",
-		"4": "mgs:item/autumn",
+		"1": "mgs:item/rubber_cross_autumn",
+		"0": "mgs:item/m9details_autumn",
+		"3": "mgs:item/metal_bright_autumn",
+		"2": "mgs:item/metal_autumn",
+		"5": "mgs:item/metal_dark_autumn",
+		"4": "mgs:item/metal_brighter_autumn",
 		"6": "mgs:item/reticles"
 	},
 	"gui_light": "front",

@@ -1,13 +1,13 @@
 {
 	"parent": "item/generated",
 	"textures": {
-		"particle": "mgs:item/gold",
-		"1": "mgs:item/gold",
-		"0": "mgs:item/gold",
-		"3": "mgs:item/gold",
-		"2": "mgs:item/gold",
-		"5": "mgs:item/gold",
-		"4": "mgs:item/gold",
+		"particle": "mgs:item/pudetails_gold",
+		"1": "mgs:item/mosinsights_gold",
+		"0": "mgs:item/mosindetails_gold",
+		"3": "mgs:item/metal_gold",
+		"2": "mgs:item/mosinwood_gold",
+		"5": "mgs:item/pudetails_gold",
+		"4": "mgs:item/metal_dark_gold",
 		"7": "mgs:item/reticles_1024",
 		"6": "mgs:item/reticles"
 	},

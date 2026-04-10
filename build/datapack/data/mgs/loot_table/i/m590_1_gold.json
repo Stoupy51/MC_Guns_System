@@ -25,6 +25,13 @@
 									}
 								},
 								"minecraft:rarity": "common",
+								"minecraft:item_name": [
+									{
+										"translate": "mgs.m590_holographic",
+										"color": "gold",
+										"italic": false
+									}
+								],
 								"minecraft:consumable": {
 									"consume_seconds": 1000000,
 									"animation": "spear",
@@ -239,10 +246,7 @@
 										[{"text":" ","italic": true,"color": "blue"}, {"translate": "mgs.mc_guns_system"}]
 									]
 								],
-								"minecraft:item_model": "mgs:m590_1_gold",
-								"minecraft:item_name": {
-									"translate": "mgs.m590_1_gold"
-								}
+								"minecraft:item_model": "mgs:m590_1_gold"
 							}
 						}
 					]

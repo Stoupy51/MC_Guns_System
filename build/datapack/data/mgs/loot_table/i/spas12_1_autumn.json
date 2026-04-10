@@ -25,6 +25,13 @@
 									}
 								},
 								"minecraft:rarity": "common",
+								"minecraft:item_name": [
+									{
+										"translate": "mgs.spas_12_holographic",
+										"color": "gold",
+										"italic": false
+									}
+								],
 								"minecraft:consumable": {
 									"consume_seconds": 1000000,
 									"animation": "spear",
@@ -239,10 +246,7 @@
 										[{"text":" ","italic": true,"color": "blue"}, {"translate": "mgs.mc_guns_system"}]
 									]
 								],
-								"minecraft:item_model": "mgs:spas12_1_autumn",
-								"minecraft:item_name": {
-									"translate": "mgs.spas12_1_autumn"
-								}
+								"minecraft:item_model": "mgs:spas12_1_autumn"
 							}
 						}
 					]

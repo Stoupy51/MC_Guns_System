@@ -1,13 +1,13 @@
 {
 	"parent": "item/generated",
 	"textures": {
-		"particle": "mgs:item/red_polymer_stripes",
-		"1": "mgs:item/red_polymer_stripes",
-		"0": "mgs:item/red_polymer_stripes",
-		"3": "mgs:item/red_polymer_stripes",
-		"2": "mgs:item/red_polymer_stripes",
-		"5": "mgs:item/red_polymer_stripes",
-		"4": "mgs:item/red_polymer_stripes",
+		"particle": "mgs:item/pudetails_red_polymer_stripes",
+		"1": "mgs:item/mosinsights_red_polymer_stripes",
+		"0": "mgs:item/mosindetails_red_polymer_stripes",
+		"3": "mgs:item/metal_red_polymer_stripes",
+		"2": "mgs:item/mosinwood_red_polymer_stripes",
+		"5": "mgs:item/pudetails_red_polymer_stripes",
+		"4": "mgs:item/metal_dark_red_polymer_stripes",
 		"7": "mgs:item/reticles_1024",
 		"6": "mgs:item/reticles"
 	},

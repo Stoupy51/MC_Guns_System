@@ -2,10 +2,10 @@
 	"parent": "item/generated",
 	"textures": {
 		"particle": "mgs:item/reticles",
-		"1": "mgs:item/red_polymer_stripes",
-		"0": "mgs:item/red_polymer_stripes",
-		"3": "mgs:item/red_polymer_stripes",
-		"2": "mgs:item/red_polymer_stripes",
+		"1": "mgs:item/glock17_polymer_dots_red_polymer_stripes",
+		"0": "mgs:item/glock17details_red_polymer_stripes",
+		"3": "mgs:item/metal_red_polymer_stripes",
+		"2": "mgs:item/metal_dark_red_polymer_stripes",
 		"5": "mgs:item/reticles"
 	},
 	"gui_light": "front",

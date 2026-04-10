@@ -1,8 +1,8 @@
 {
 	"parent": "item/generated",
 	"textures": {
-		"0": "mgs:item/gold",
-		"particle": "mgs:item/gold"
+		"0": "mgs:item/ray_gun_gold",
+		"particle": "mgs:item/ray_gun_gold"
 	},
 	"format_version": "1.21.11",
 	"credit": "halfhumanyt & Stoupy",

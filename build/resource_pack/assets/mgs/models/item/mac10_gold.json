@@ -1,11 +1,11 @@
 {
 	"parent": "item/generated",
 	"textures": {
-		"particle": "mgs:item/gold",
-		"1": "mgs:item/gold",
-		"0": "mgs:item/gold",
-		"3": "mgs:item/gold",
-		"2": "mgs:item/gold",
+		"particle": "mgs:item/metal_brighter_gold",
+		"1": "mgs:item/metal_gold",
+		"0": "mgs:item/mac10details_gold",
+		"3": "mgs:item/metal_brighter_gold",
+		"2": "mgs:item/metal_bright_gold",
 		"4": "mgs:item/reticles"
 	},
 	"gui_light": "front",

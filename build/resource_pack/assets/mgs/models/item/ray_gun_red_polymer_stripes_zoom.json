@@ -1,8 +1,8 @@
 {
 	"parent": "item/generated",
 	"textures": {
-		"0": "mgs:item/red_polymer_stripes",
-		"particle": "mgs:item/red_polymer_stripes"
+		"0": "mgs:item/ray_gun_red_polymer_stripes",
+		"particle": "mgs:item/ray_gun_red_polymer_stripes"
 	},
 	"format_version": "1.21.11",
 	"credit": "halfhumanyt & Stoupy",

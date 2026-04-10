@@ -1,13 +1,13 @@
 {
 	"parent": "item/generated",
 	"textures": {
-		"particle": "mgs:item/red_polymer_stripes",
-		"1": "mgs:item/red_polymer_stripes",
-		"0": "mgs:item/red_polymer_stripes",
-		"3": "mgs:item/red_polymer_stripes",
-		"2": "mgs:item/red_polymer_stripes",
-		"5": "mgs:item/red_polymer_stripes",
-		"4": "mgs:item/red_polymer_stripes",
+		"particle": "mgs:item/vz61wood_red_polymer_stripes",
+		"1": "mgs:item/vz61grip_red_polymer_stripes",
+		"0": "mgs:item/vz61details_red_polymer_stripes",
+		"3": "mgs:item/metal_bright_red_polymer_stripes",
+		"2": "mgs:item/vz61wood_red_polymer_stripes",
+		"5": "mgs:item/metal_dark_red_polymer_stripes",
+		"4": "mgs:item/metal_red_polymer_stripes",
 		"6": "mgs:item/reticles"
 	},
 	"credit": "thebradqq's guns",
