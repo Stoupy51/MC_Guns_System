@@ -1,12 +1,12 @@
 {
 	"parent": "item/generated",
 	"textures": {
-		"1": "mgs:item/gold",
-		"0": "mgs:item/gold",
-		"3": "mgs:item/gold",
-		"2": "mgs:item/gold",
+		"1": "mgs:item/makarovplastic_cross_gold",
+		"0": "mgs:item/makarovdetails_gold",
+		"3": "mgs:item/metal_dark_gold",
+		"2": "mgs:item/metal_bright_gold",
 		"4": "mgs:item/reticles",
-		"particle": "mgs:item/gold"
+		"particle": "mgs:item/makarovdetails_gold"
 	},
 	"gui_light": "front",
 	"elements": [

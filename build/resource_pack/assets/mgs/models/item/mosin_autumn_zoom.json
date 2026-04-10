@@ -1,13 +1,13 @@
 {
 	"parent": "item/generated",
 	"textures": {
-		"particle": "mgs:item/autumn",
-		"1": "mgs:item/autumn",
-		"0": "mgs:item/autumn",
-		"3": "mgs:item/autumn",
-		"2": "mgs:item/autumn",
-		"5": "mgs:item/autumn",
-		"4": "mgs:item/autumn",
+		"particle": "mgs:item/pudetails_autumn",
+		"1": "mgs:item/mosinsights_autumn",
+		"0": "mgs:item/mosindetails_autumn",
+		"3": "mgs:item/metal_autumn",
+		"2": "mgs:item/mosinwood_autumn",
+		"5": "mgs:item/pudetails_autumn",
+		"4": "mgs:item/metal_dark_autumn",
 		"7": "mgs:item/reticles_1024",
 		"6": "mgs:item/reticles"
 	},

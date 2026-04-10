@@ -1,13 +1,13 @@
 {
 	"parent": "item/generated",
 	"textures": {
-		"particle": "mgs:item/autumn",
-		"1": "mgs:item/autumn",
-		"0": "mgs:item/autumn",
-		"3": "mgs:item/autumn",
-		"2": "mgs:item/autumn",
+		"particle": "mgs:item/metal_autumn",
+		"1": "mgs:item/stendetails2_autumn",
+		"0": "mgs:item/stendetails_autumn",
+		"3": "mgs:item/metal_autumn",
+		"2": "mgs:item/metal_bright_autumn",
 		"5": "mgs:item/reticles",
-		"4": "mgs:item/autumn"
+		"4": "mgs:item/metal_dark_autumn"
 	},
 	"credit": "thebradqq's guns",
 	"elements": [

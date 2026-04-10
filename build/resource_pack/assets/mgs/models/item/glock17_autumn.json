@@ -2,10 +2,10 @@
 	"parent": "item/generated",
 	"textures": {
 		"particle": "mgs:item/reticles",
-		"1": "mgs:item/autumn",
-		"0": "mgs:item/autumn",
-		"3": "mgs:item/autumn",
-		"2": "mgs:item/autumn",
+		"1": "mgs:item/glock17_polymer_dots_autumn",
+		"0": "mgs:item/glock17details_autumn",
+		"3": "mgs:item/metal_autumn",
+		"2": "mgs:item/metal_dark_autumn",
 		"5": "mgs:item/reticles"
 	},
 	"gui_light": "front",

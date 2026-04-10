@@ -1,13 +1,13 @@
 {
 	"parent": "item/generated",
 	"textures": {
-		"particle": "mgs:item/autumn",
-		"1": "mgs:item/autumn",
-		"0": "mgs:item/autumn",
-		"3": "mgs:item/autumn",
-		"2": "mgs:item/autumn",
-		"5": "mgs:item/autumn",
-		"4": "mgs:item/autumn",
+		"particle": "mgs:item/vz61wood_autumn",
+		"1": "mgs:item/vz61grip_autumn",
+		"0": "mgs:item/vz61details_autumn",
+		"3": "mgs:item/metal_bright_autumn",
+		"2": "mgs:item/vz61wood_autumn",
+		"5": "mgs:item/metal_dark_autumn",
+		"4": "mgs:item/metal_autumn",
 		"6": "mgs:item/reticles"
 	},
 	"credit": "thebradqq's guns",

@@ -25,6 +25,13 @@
 									}
 								},
 								"minecraft:rarity": "epic",
+								"minecraft:item_name": [
+									{
+										"translate": "mgs.ray_gun",
+										"color": "gold",
+										"italic": false
+									}
+								],
 								"minecraft:consumable": {
 									"consume_seconds": 1000000,
 									"animation": "spear",
@@ -214,10 +221,7 @@
 										[{"text":" ","italic": true,"color": "blue"}, {"translate": "mgs.mc_guns_system"}]
 									]
 								],
-								"minecraft:item_model": "mgs:ray_gun_autumn",
-								"minecraft:item_name": {
-									"translate": "mgs.ray_gun_autumn"
-								}
+								"minecraft:item_model": "mgs:ray_gun_autumn"
 							}
 						}
 					]

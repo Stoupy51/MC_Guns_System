@@ -40,6 +40,7 @@ from .config.stats import (
     SWITCH,
 )
 from .database.ammo import main as main_ammo
+from .database.camo import main as camo_main
 from .database.casing import main as main_casing
 from .database.grenades import main as main_grenades
 from .database.rpg7 import main as main_rpg7
@@ -210,6 +211,10 @@ def beet_default(ctx: Context) -> None:
             obj.components["lore"] = [
                 [*new_hex("Ammo Remaining ➤ ", START_HEX, END_HEX), str(bullets), {"text": "/", "color": f"#{END_HEX}"}, str(capacity)],
             ]
+
+
+    # For each weapon, make camo variants (e.g. wood, metal, gold, etc.)
+    camo_main()
 
     # Sort items so that zoom models are at the end
     def sorter(k: str) -> int:

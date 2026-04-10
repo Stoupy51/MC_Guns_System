@@ -1,0 +1,169 @@
+{
+	"pools": [
+		{
+			"rolls": 1,
+			"entries": [
+				{
+					"type": "minecraft:item",
+					"name": "minecraft:poisonous_potato",
+					"functions": [
+						{
+							"function": "minecraft:set_components",
+							"components": {
+								"minecraft:max_stack_size": 16,
+								"minecraft:custom_data": {
+									"mgs": {
+										"gun": true,
+										"stats": {"grenade_type": "frag","fire_mode": "semi","capacity": 1,"remaining_bullets": 1,"cooldown": 20,"proj_speed": 1000,"proj_gravity": 60,"proj_model": "frag_grenade","grenade_fuse": 80,"expl_radius": 6,"expl_damage": 25,"expl_decay": 0.75,"models": {"normal": "mgs:frag_grenade_gold","zoom": "mgs:frag_grenade_gold_zoom"}},
+										"frag_grenade_gold": true
+									},
+									"smithed": {
+										"id": "mgs:frag_grenade_gold",
+										"origin": "mgs",
+										"ignore": {"functionality": true,"crafting": true}
+									}
+								},
+								"minecraft:rarity": "common",
+								"minecraft:item_name": [
+									{
+										"translate": "mgs.frag_grenade",
+										"color": "gold",
+										"italic": false
+									}
+								],
+								"minecraft:consumable": {
+									"consume_seconds": 1000000,
+									"animation": "spear",
+									"sound": "minecraft:intentionally_empty",
+									"has_consume_particles": false
+								},
+								"minecraft:use_effects": {
+									"can_sprint": true,
+									"speed_multiplier": 1.0,
+									"interact_vibrations": false
+								},
+								"minecraft:food": {
+									"saturation": 0,
+									"nutrition": 0,
+									"can_always_eat": true
+								},
+								"minecraft:lore": [
+									[
+										{"text": "T","color": "#c24a17","italic": false},
+										{"text": "y","color": "#c24c18"},
+										{"text": "p","color": "#c24e19"},
+										{"text": "e","color": "#c2501b"},
+										{"text": " ","color": "#c2531c"},
+										{"text": " ","color": "#c3551d"},
+										{"text": " ","color": "#c3571f"},
+										{"text": " ","color": "#c35920"},
+										{"text": " ","color": "#c35c21"},
+										{"text": " ","color": "#c35e23"},
+										{"text": " ","color": "#c46024"},
+										{"text": " ","color": "#c46225"},
+										{"text": " ","color": "#c46527"},
+										{"text": " ","color": "#c46728"},
+										{"text": " ","color": "#c56929"},
+										{"text": " ","color": "#c56b2b"},
+										{"text": " ","color": "#c56e2c"},
+										{"text": " ","color": "#c5702d"},
+										{"text": " ","color": "#c5722f"},
+										{"text": " ","color": "#c67430"},
+										{"text": " ","color": "#c67731"},
+										{"text": " ","color": "#c67933"},
+										{"text": "➤","color": "#c67b34"},
+										{"text": " ","color": "#c77e36"},
+										"Frag"
+									],
+									[
+										{"text": "E","color": "#c24a17","italic": false},
+										{"text": "x","color": "#c24c18"},
+										{"text": "p","color": "#c24f1a"},
+										{"text": "l","color": "#c2521b"},
+										{"text": "o","color": "#c3541d"},
+										{"text": "s","color": "#c3571f"},
+										{"text": "i","color": "#c35a20"},
+										{"text": "o","color": "#c35d22"},
+										{"text": "n","color": "#c45f24"},
+										{"text": " ","color": "#c46225"},
+										{"text": "D","color": "#c46527"},
+										{"text": "a","color": "#c46828"},
+										{"text": "m","color": "#c56a2a"},
+										{"text": "a","color": "#c56d2c"},
+										{"text": "g","color": "#c5702d"},
+										{"text": "e","color": "#c5732f"},
+										{"text": " ","color": "#c67531"},
+										{"text": " ","color": "#c67832"},
+										{"text": "➤","color": "#c67b34"},
+										{"text": " ","color": "#c77e36"},
+										"25"
+									],
+									[
+										{"text": "E","color": "#c24a17","italic": false},
+										{"text": "x","color": "#c24c18"},
+										{"text": "p","color": "#c24f1a"},
+										{"text": "l","color": "#c2511b"},
+										{"text": "o","color": "#c3541d"},
+										{"text": "s","color": "#c3571e"},
+										{"text": "i","color": "#c35920"},
+										{"text": "o","color": "#c35c21"},
+										{"text": "n","color": "#c45e23"},
+										{"text": " ","color": "#c46124"},
+										{"text": "R","color": "#c46426"},
+										{"text": "a","color": "#c46628"},
+										{"text": "d","color": "#c56929"},
+										{"text": "i","color": "#c56b2b"},
+										{"text": "u","color": "#c56e2c"},
+										{"text": "s","color": "#c5712e"},
+										{"text": " ","color": "#c6732f"},
+										{"text": " ","color": "#c67631"},
+										{"text": " ","color": "#c67832"},
+										{"text": "➤","color": "#c67b34"},
+										{"text": " ","color": "#c77e36"},
+										"6",
+										" ",
+										{"translate": "mgs.blocks","color": "#c77e36"}
+									],
+									[
+										{"text": "F","color": "#c24a17","italic": false},
+										{"text": "u","color": "#c24c18"},
+										{"text": "s","color": "#c24e19"},
+										{"text": "e","color": "#c2511b"},
+										{"text": " ","color": "#c2531c"},
+										{"text": "T","color": "#c3551e"},
+										{"text": "i","color": "#c3581f"},
+										{"text": "m","color": "#c35a20"},
+										{"text": "e","color": "#c35c22"},
+										{"text": " ","color": "#c45f23"},
+										{"text": " ","color": "#c46125"},
+										{"text": " ","color": "#c46426"},
+										{"text": " ","color": "#c46627"},
+										{"text": " ","color": "#c46829"},
+										{"text": " ","color": "#c56b2a"},
+										{"text": " ","color": "#c56d2c"},
+										{"text": " ","color": "#c56f2d"},
+										{"text": " ","color": "#c5722e"},
+										{"text": " ","color": "#c67430"},
+										{"text": " ","color": "#c67631"},
+										{"text": " ","color": "#c67933"},
+										{"text": "➤","color": "#c67b34"},
+										{"text": " ","color": "#c77e36"},
+										"4.0",
+										{"text": "s","color": "#c77e36"}
+									],
+									"",
+									[
+										"",
+										{"text": "I","color": "white","italic": false,"font": "mgs:icons"},
+										[{"text":" ","italic": true,"color": "blue"}, {"translate": "mgs.mc_guns_system"}]
+									]
+								],
+								"minecraft:item_model": "mgs:frag_grenade_gold"
+							}
+						}
+					]
+				}
+			]
+		}
+	]
+}

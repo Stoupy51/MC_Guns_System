@@ -1,12 +1,12 @@
 {
 	"parent": "item/generated",
 	"textures": {
-		"0": "mgs:item/gold",
-		"1": "mgs:item/gold",
-		"2": "mgs:item/gold",
-		"3": "mgs:item/gold",
+		"0": "mgs:item/rpg7details_gold",
+		"1": "mgs:item/rpg7wood_gold",
+		"2": "mgs:item/metal_bright_gold",
+		"3": "mgs:item/metal_dark_gold",
 		"4": "mgs:item/reticles",
-		"particle": "mgs:item/gold"
+		"particle": "mgs:item/metal_dark_gold"
 	},
 	"credit": "thebradqq's guns",
 	"gui_light": "front",

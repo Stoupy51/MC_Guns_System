@@ -1,8 +1,8 @@
 {
 	"parent": "item/generated",
 	"textures": {
-		"0": "mgs:item/autumn",
-		"particle": "mgs:item/autumn"
+		"0": "mgs:item/ray_gun_autumn",
+		"particle": "mgs:item/ray_gun_autumn"
 	},
 	"format_version": "1.21.11",
 	"credit": "halfhumanyt & Stoupy",

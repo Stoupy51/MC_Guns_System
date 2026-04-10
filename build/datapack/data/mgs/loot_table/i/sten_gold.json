@@ -25,6 +25,13 @@
 									}
 								},
 								"minecraft:rarity": "common",
+								"minecraft:item_name": [
+									{
+										"translate": "mgs.sten",
+										"color": "gold",
+										"italic": false
+									}
+								],
 								"minecraft:consumable": {
 									"consume_seconds": 1000000,
 									"animation": "spear",
@@ -214,10 +221,7 @@
 										[{"text":" ","italic": true,"color": "blue"}, {"translate": "mgs.mc_guns_system"}]
 									]
 								],
-								"minecraft:item_model": "mgs:sten_gold",
-								"minecraft:item_name": {
-									"translate": "mgs.sten_gold"
-								}
+								"minecraft:item_model": "mgs:sten_gold"
 							}
 						}
 					]

@@ -25,6 +25,13 @@
 									}
 								},
 								"minecraft:rarity": "common",
+								"minecraft:item_name": [
+									{
+										"text": "M9",
+										"color": "gold",
+										"italic": false
+									}
+								],
 								"minecraft:consumable": {
 									"consume_seconds": 1000000,
 									"animation": "spear",
@@ -180,10 +187,7 @@
 										[{"text":" ","italic": true,"color": "blue"}, {"translate": "mgs.mc_guns_system"}]
 									]
 								],
-								"minecraft:item_model": "mgs:m9_red_polymer_stripes",
-								"minecraft:item_name": {
-									"translate": "mgs.m9_red_polymer_stripes"
-								}
+								"minecraft:item_model": "mgs:m9_red_polymer_stripes"
 							}
 						}
 					]
