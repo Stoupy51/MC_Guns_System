@@ -3,11 +3,11 @@
 	"textures": {
 		"particle": "mgs:item/reticles",
 		"1": "mgs:item/glock18_polymer_dots_gold",
-		"0": "mgs:item/glock18details_gold",
-		"3": "mgs:item/metal_gold",
+		"0": "mgs:item/glock18details",
+		"3": "mgs:item/metal",
 		"2": "mgs:item/brown_polymer_dark_gold",
 		"5": "mgs:item/reticles",
-		"4": "mgs:item/metal_dark_gold"
+		"4": "mgs:item/metal_dark"
 	},
 	"gui_light": "front",
 	"elements": [

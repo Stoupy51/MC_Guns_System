@@ -14,7 +14,7 @@
 								"minecraft:custom_data": {
 									"mgs": {
 										"gun": true,
-										"stats": {"grenade_type": "frag","fire_mode": "semi","capacity": 1,"remaining_bullets": 1,"cooldown": 20,"proj_speed": 1000,"proj_gravity": 60,"proj_model": "frag_grenade","grenade_fuse": 80,"expl_radius": 6,"expl_damage": 25,"expl_decay": 0.75,"models": {"normal": "mgs:frag_grenade_galaxy","zoom": "mgs:frag_grenade_galaxy_zoom"}},
+										"stats": {"grenade_type": "frag","fire_mode": "semi","capacity": 1,"remaining_bullets": 1,"cooldown": 20,"proj_speed": 1000,"proj_gravity": 60,"proj_model": "frag_grenade","grenade_fuse": 80,"expl_radius": 6,"expl_damage": 25,"expl_decay": 0.75,"models": {"normal": "mgs:frag_grenade","zoom": "mgs:frag_grenade_zoom"}},
 										"frag_grenade_galaxy": true
 									},
 									"smithed": {

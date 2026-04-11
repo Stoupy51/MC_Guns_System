@@ -4,10 +4,10 @@
 		"particle": "mgs:item/pudetails_gold",
 		"1": "mgs:item/mosinsights_gold",
 		"0": "mgs:item/mosindetails_gold",
-		"3": "mgs:item/metal_gold",
+		"3": "mgs:item/metal",
 		"2": "mgs:item/mosinwood_gold",
 		"5": "mgs:item/pudetails_gold",
-		"4": "mgs:item/metal_dark_gold",
+		"4": "mgs:item/metal_dark",
 		"7": "mgs:item/reticles_1024",
 		"6": "mgs:item/reticles"
 	},
