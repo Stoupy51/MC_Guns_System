@@ -3,10 +3,10 @@
 	"textures": {
 		"0": "mgs:item/rpg7details_gold",
 		"1": "mgs:item/rpg7wood_gold",
-		"2": "mgs:item/metal_bright_gold",
-		"3": "mgs:item/metal_dark_gold",
+		"2": "mgs:item/metal_bright",
+		"3": "mgs:item/metal_dark",
 		"4": "mgs:item/reticles",
-		"particle": "mgs:item/metal_dark_gold"
+		"particle": "mgs:item/metal_dark"
 	},
 	"credit": "thebradqq's guns",
 	"gui_light": "front",

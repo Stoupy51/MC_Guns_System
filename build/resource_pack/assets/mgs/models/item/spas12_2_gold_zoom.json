@@ -3,8 +3,8 @@
 	"textures": {
 		"particle": "mgs:item/reticles",
 		"1": "mgs:item/metal_brighter_gold",
-		"0": "mgs:item/spas12details_gold",
-		"3": "mgs:item/metal_gold",
+		"0": "mgs:item/spas12details",
+		"3": "mgs:item/metal",
 		"2": "mgs:item/metal_bright_gold",
 		"5": "mgs:item/holodetails",
 		"4": "mgs:item/metal_dark_gold",

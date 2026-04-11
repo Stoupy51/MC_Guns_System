@@ -14,10 +14,10 @@
 		"2": "mgs:item/tan_polymer_bright_gold",
 		"5": "mgs:item/tan_metal_gold",
 		"4": "mgs:item/tan_metal_bright_gold",
-		"7": "mgs:item/metal_bright_gold",
-		"6": "mgs:item/metal_brighter_gold",
-		"9": "mgs:item/metal_dark_gold",
-		"8": "mgs:item/metal_gold"
+		"7": "mgs:item/metal_bright",
+		"6": "mgs:item/metal_brighter",
+		"9": "mgs:item/metal_dark",
+		"8": "mgs:item/metal"
 	},
 	"gui_light": "front",
 	"elements": [

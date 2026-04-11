@@ -1,8 +1,8 @@
 {
 	"parent": "item/generated",
 	"textures": {
-		"0": "mgs:item/metal_gold",
-		"particle": "mgs:item/metal_gold"
+		"0": "mgs:item/metal",
+		"particle": "mgs:item/metal"
 	},
 	"format_version": "1.21.11",
 	"credit": "Claude Opus 4.6",

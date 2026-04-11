@@ -2,12 +2,12 @@
 	"parent": "item/generated",
 	"textures": {
 		"particle": "mgs:item/m590details_gold",
-		"1": "mgs:item/metal_brighter_gold",
+		"1": "mgs:item/metal_brighter",
 		"0": "mgs:item/m590details_gold",
-		"3": "mgs:item/metal_gold",
-		"2": "mgs:item/metal_bright_gold",
+		"3": "mgs:item/metal",
+		"2": "mgs:item/metal_bright",
 		"5": "mgs:item/holodetails",
-		"4": "mgs:item/metal_dark_gold",
+		"4": "mgs:item/metal_dark",
 		"7": "mgs:item/kobradetails",
 		"9": "mgs:item/reticles",
 		"8": "mgs:item/acogdetails"

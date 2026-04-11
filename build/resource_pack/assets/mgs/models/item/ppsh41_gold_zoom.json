@@ -1,11 +1,11 @@
 {
 	"parent": "item/generated",
 	"textures": {
-		"particle": "mgs:item/ppshwood_gold",
+		"particle": "mgs:item/ppshwood",
 		"1": "mgs:item/ppshdetails2_gold",
-		"0": "mgs:item/ppshdetails_gold",
+		"0": "mgs:item/ppshdetails",
 		"3": "mgs:item/metal_brighter_gold",
-		"2": "mgs:item/ppshwood_gold",
+		"2": "mgs:item/ppshwood",
 		"5": "mgs:item/metal_gold",
 		"4": "mgs:item/metal_bright_gold",
 		"6": "mgs:item/reticles"

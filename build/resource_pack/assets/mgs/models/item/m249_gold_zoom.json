@@ -10,12 +10,12 @@
 		"0": "mgs:item/m249details_gold",
 		"3": "mgs:item/olive_polymer_dark_gold",
 		"2": "mgs:item/olive_polymer_gold",
-		"5": "mgs:item/copper_gold",
-		"4": "mgs:item/brass_gold",
-		"7": "mgs:item/metal_bright_gold",
+		"5": "mgs:item/copper",
+		"4": "mgs:item/brass",
+		"7": "mgs:item/metal_bright",
 		"6": "mgs:item/metal_brighter_gold",
-		"9": "mgs:item/metal_dark_gold",
-		"8": "mgs:item/metal_gold"
+		"9": "mgs:item/metal_dark",
+		"8": "mgs:item/metal"
 	},
 	"gui_light": "front",
 	"elements": [

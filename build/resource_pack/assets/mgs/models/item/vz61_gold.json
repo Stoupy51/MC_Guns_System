@@ -1,11 +1,11 @@
 {
 	"parent": "item/generated",
 	"textures": {
-		"particle": "mgs:item/vz61wood_gold",
-		"1": "mgs:item/vz61grip_gold",
+		"particle": "mgs:item/vz61wood",
+		"1": "mgs:item/vz61grip",
 		"0": "mgs:item/vz61details_gold",
 		"3": "mgs:item/metal_bright_gold",
-		"2": "mgs:item/vz61wood_gold",
+		"2": "mgs:item/vz61wood",
 		"5": "mgs:item/metal_dark_gold",
 		"4": "mgs:item/metal_gold",
 		"6": "mgs:item/reticles"

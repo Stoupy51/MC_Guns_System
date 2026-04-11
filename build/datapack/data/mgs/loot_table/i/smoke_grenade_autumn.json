@@ -14,7 +14,7 @@
 								"minecraft:custom_data": {
 									"mgs": {
 										"gun": true,
-										"stats": {"grenade_type": "smoke","fire_mode": "semi","capacity": 1,"remaining_bullets": 1,"cooldown": 20,"proj_speed": 1000,"proj_gravity": 60,"proj_model": "smoke_grenade","grenade_fuse": 60,"grenade_duration": 200,"grenade_effect_radius": 5,"models": {"normal": "mgs:smoke_grenade_autumn","zoom": "mgs:smoke_grenade_autumn_zoom"}},
+										"stats": {"grenade_type": "smoke","fire_mode": "semi","capacity": 1,"remaining_bullets": 1,"cooldown": 20,"proj_speed": 1000,"proj_gravity": 60,"proj_model": "smoke_grenade","grenade_fuse": 60,"grenade_duration": 200,"grenade_effect_radius": 5,"models": {"normal": "mgs:smoke_grenade","zoom": "mgs:smoke_grenade_zoom"}},
 										"smoke_grenade_autumn": true
 									},
 									"smithed": {
