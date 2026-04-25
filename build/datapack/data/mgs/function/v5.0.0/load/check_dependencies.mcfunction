@@ -7,10 +7,10 @@
 ## Check if MC Guns System is loadable (dependencies)
 scoreboard players set #dependency_error mgs.data 0
 execute if score #dependency_error mgs.data matches 0 unless score #smithed.actionbar.major load.status matches 0.. run scoreboard players set #dependency_error mgs.data 1
-execute if score #dependency_error mgs.data matches 0 if score #smithed.actionbar.major load.status matches 0 unless score #smithed.actionbar.minor load.status matches 6.. run scoreboard players set #dependency_error mgs.data 1
-execute if score #dependency_error mgs.data matches 0 if score #smithed.actionbar.major load.status matches 0 if score #smithed.actionbar.minor load.status matches 6 unless score #smithed.actionbar.patch load.status matches 6.. run scoreboard players set #dependency_error mgs.data 1
+execute if score #dependency_error mgs.data matches 0 if score #smithed.actionbar.major load.status matches 0 unless score #smithed.actionbar.minor load.status matches 7.. run scoreboard players set #dependency_error mgs.data 1
 execute if score #dependency_error mgs.data matches 0 unless score #realistic_explosion.major load.status matches 1.. run scoreboard players set #dependency_error mgs.data 1
 execute if score #dependency_error mgs.data matches 0 if score #realistic_explosion.major load.status matches 1 unless score #realistic_explosion.minor load.status matches 2.. run scoreboard players set #dependency_error mgs.data 1
+execute if score #dependency_error mgs.data matches 0 if score #realistic_explosion.major load.status matches 1 if score #realistic_explosion.minor load.status matches 2 unless score #realistic_explosion.patch load.status matches 1.. run scoreboard players set #dependency_error mgs.data 1
 execute if score #dependency_error mgs.data matches 0 unless score $bs.block.major load.status matches 4.. run scoreboard players set #dependency_error mgs.data 1
 execute if score #dependency_error mgs.data matches 0 if score $bs.block.major load.status matches 4 unless score $bs.block.minor load.status matches 0.. run scoreboard players set #dependency_error mgs.data 1
 execute if score #dependency_error mgs.data matches 0 if score $bs.block.major load.status matches 4 if score $bs.block.minor load.status matches 0 unless score $bs.block.patch load.status matches 1.. run scoreboard players set #dependency_error mgs.data 1
