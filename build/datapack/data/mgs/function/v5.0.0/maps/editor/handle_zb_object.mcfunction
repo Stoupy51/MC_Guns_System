@@ -30,6 +30,8 @@ execute if entity @s[tag=mgs.element.mystery_box_pos] run data modify storage mg
 execute if entity @s[tag=mgs.element.mystery_box_pos] run data modify storage mgs:temp _zb_new set from storage mgs:temp map_edit.zb_defaults.mystery_box_pos
 execute if entity @s[tag=mgs.element.power_switch] run data modify storage mgs:temp _zbpos.tag set value "mgs.element.power_switch"
 execute if entity @s[tag=mgs.element.power_switch] run data modify storage mgs:temp _zb_new set from storage mgs:temp map_edit.zb_defaults.power_switch
+execute if entity @s[tag=mgs.element.barrier] run data modify storage mgs:temp _zbpos.tag set value "mgs.element.barrier"
+execute if entity @s[tag=mgs.element.barrier] run data modify storage mgs:temp _zb_new set from storage mgs:temp map_edit.zb_defaults.barrier
 
 # Summon marker
 function mgs:v5.0.0/maps/editor/summon_zb_marker with storage mgs:temp _zbpos
@@ -69,4 +71,5 @@ execute if entity @s[tag=mgs.element.perk_machine] run tellraw @a[tag=mgs.map_ed
 execute if entity @s[tag=mgs.element.pap_machine] run tellraw @a[tag=mgs.map_editor] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.pack_a_punch_placed","color":"dark_red"}]
 execute if entity @s[tag=mgs.element.mystery_box_pos] run tellraw @a[tag=mgs.map_editor] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.mystery_box_pos_placed","color":"light_purple"}]
 execute if entity @s[tag=mgs.element.power_switch] run tellraw @a[tag=mgs.map_editor] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.power_switch_placed","color":"green"}]
+execute if entity @s[tag=mgs.element.barrier] run tellraw @a[tag=mgs.map_editor] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.barrier_placed","color":"aqua"}]
 

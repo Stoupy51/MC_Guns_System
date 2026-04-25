@@ -184,6 +184,15 @@ data modify storage mgs:zombies scope_variants."m249" set value [{id:"m249",mode
 data modify storage mgs:zombies scope_variants."mosin" set value [{id:"mosin",model:"mgs:mosin",zoom:"mgs:mosin_zoom"},{id:"mosin_1",model:"mgs:mosin_1",zoom:"mgs:mosin_1_zoom"}]
 data modify storage mgs:zombies scope_variants."deagle" set value [{id:"deagle",model:"mgs:deagle",zoom:"mgs:deagle_zoom"},{id:"deagle_4",model:"mgs:deagle_4",zoom:"mgs:deagle_4_zoom",scope_level:4}]
 
+# Barrier entity scoreboards
+scoreboard objectives add mgs.zb.barrier.id dummy
+scoreboard objectives add mgs.zb.barrier.state dummy
+scoreboard objectives add mgs.zb.barrier.r_timer dummy
+scoreboard objectives add mgs.zb.barrier.rp_timer dummy
+scoreboard objectives add mgs.zb.barrier.radius dummy
+scoreboard objectives add mgs.zb.barrier.removing_id dummy
+scoreboard objectives add mgs.zb.barrier.repairing_id dummy
+
 # Door entity scoreboards
 scoreboard objectives add mgs.zb.door.link dummy
 scoreboard objectives add mgs.zb.door.price dummy
