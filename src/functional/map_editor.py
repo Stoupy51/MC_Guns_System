@@ -57,6 +57,12 @@ ALL_ELEMENTS: dict[str, JsonDict] = {
                            "defaults": {"can_start_on": True, "display_item": "", "item_model": ""}},
 	"power_switch":       {"name": "Power Switch",     "color": "green",        "particle": [0.0, 1.0, 0.0], "particle_scale": 1.0, "has_rotation": True,  "egg_model": "minecraft:slime_spawn_egg",       "save_type": "zb_object", "save_path": "power_switch", "emoji": "⚡",
                            "defaults": {}},
+	"barrier":            {"name": "Barrier",          "color": "aqua",         "particle": [0.0, 1.0, 1.0], "particle_scale": 1.0, "has_rotation": True,  "egg_model": "minecraft:guardian_spawn_egg",    "save_type": "zb_object", "save_path": "barriers",     "emoji": "🧱",
+                           "defaults": {
+                                "block_enabled":  {"Name": "minecraft:oak_fence_gate", "Properties": {"open": "false"}},
+                                "block_disabled": {"Name": "minecraft:oak_fence_gate", "Properties": {"open": "true"}},
+                                "radius": 2,
+                           }},
 }
 
 # Mode Definitions ──────────────────────────────────────────────
@@ -99,6 +105,7 @@ EDITOR_MODES: dict[str, JsonDict] = {
 			"boundary": "inventory.4",
 			"pap_machine": "inventory.5",
 			"start_command": "inventory.6",
+			"barrier": "inventory.8",
 		},
 	},
 	"missions": {
@@ -1081,8 +1088,9 @@ $tellraw {config_target} ["    ",{{"text":"[Edit Nearest {einfo["name"]}]","colo
 			return f'"{val}"'
 		elif isinstance(val, list):
 			return "[" + ",".join(snbt_suggest(v) for v in cast(list[Any], val)) + "]"
+		elif isinstance(val, dict):
+			return "{" + ",".join(f"{k}:{snbt_suggest(v)}" for k, v in cast(dict[str, Any], val).items()) + "}"
 		return str(val)
-
 	def snbt_compound(d: JsonDict) -> str:
 		"""Convert a Python dict to an SNBT compound string."""
 		return "{" + ",".join(f"{k}:{snbt_suggest(v)}" for k, v in d.items()) + "}"

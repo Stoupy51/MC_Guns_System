@@ -30,6 +30,7 @@ execute if entity @s[tag=mgs.element.perk_machine] run tellraw @a[tag=mgs.map_ed
 execute if entity @s[tag=mgs.element.pap_machine] run tellraw @a[tag=mgs.map_editor] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.pack_a_punch_removed","color":"dark_red"}]
 execute if entity @s[tag=mgs.element.mystery_box_pos] run tellraw @a[tag=mgs.map_editor] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.mystery_box_pos_removed","color":"light_purple"}]
 execute if entity @s[tag=mgs.element.power_switch] run tellraw @a[tag=mgs.map_editor] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.power_switch_removed","color":"green"}]
+execute if entity @s[tag=mgs.element.barrier] run tellraw @a[tag=mgs.map_editor] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.barrier_removed","color":"aqua"}]
 
 # Show data dump if element has compound data (zb_object, enemy, spawn)
 execute if data entity @s data run tellraw @a[tag=mgs.map_editor] ["  ",{"translate":"mgs.data","color":"gray"},{"entity":"@s","nbt":"data","color":"white"}]

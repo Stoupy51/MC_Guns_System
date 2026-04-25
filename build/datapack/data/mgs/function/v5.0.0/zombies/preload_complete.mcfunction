@@ -55,6 +55,9 @@ execute if data storage mgs:zombies game.map.mystery_box.positions[0] run functi
 # Setup Pack-a-Punch machines
 execute if data storage mgs:zombies game.map.pap_machines[0] run function mgs:v5.0.0/zombies/pap/setup
 
+# Setup barriers
+execute if data storage mgs:zombies game.map.barriers[0] run function mgs:v5.0.0/zombies/barriers/setup
+
 # Setup power switches
 execute if data storage mgs:zombies game.map.power_switch[0] run function mgs:v5.0.0/zombies/power/setup
 

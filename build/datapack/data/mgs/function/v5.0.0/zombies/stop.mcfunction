@@ -57,6 +57,10 @@ scoreboard players set #mb_pulls mgs.data 0
 scoreboard players set #mb_move_timer mgs.data 0
 tag @a remove mgs.mb_buyer
 
+# Barriers cleanup
+tag @e[tag=mgs.barrier_removing] remove mgs.barrier_removing
+tag @a[tag=mgs.barrier_repairing] remove mgs.barrier_repairing
+
 # Reset perk effects
 execute as @a[scores={mgs.zb.in_game=1}] run attribute @s minecraft:max_health base set 20
 tag @a remove mgs.perk.speed_cola

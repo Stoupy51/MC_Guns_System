@@ -28,4 +28,5 @@ execute if entity @s[tag=mgs.element.perk_machine] run return run title @a[tag=m
 execute if entity @s[tag=mgs.element.pap_machine] run return run title @a[tag=mgs.check_nearest] actionbar [{"text":"🔥 ","color":"dark_red"},{"translate":"mgs.pack_a_punch"}]
 execute if entity @s[tag=mgs.element.mystery_box_pos] run return run title @a[tag=mgs.check_nearest] actionbar [{"text":"📦 ","color":"light_purple"},{"translate":"mgs.mystery_box_pos"}]
 execute if entity @s[tag=mgs.element.power_switch] run return run title @a[tag=mgs.check_nearest] actionbar [{"text":"⚡ ","color":"green"},{"translate":"mgs.power_switch"}]
+execute if entity @s[tag=mgs.element.barrier] run return run title @a[tag=mgs.check_nearest] actionbar [{"text":"🧱 ","color":"aqua"},{"translate":"mgs.barrier"}]
 
