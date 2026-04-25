@@ -65,6 +65,9 @@ function mgs:v5.0.0/zombies/pap/apply_runtime_overrides
 # Randomize weapon scope
 function mgs:v5.0.0/zombies/pap/randomize_scope with storage mgs:temp _pap_extract.stats
 
+# Randomize weapon camo (applied after scope, so camo appends to the scoped weapon id)
+function mgs:v5.0.0/zombies/pap/randomize_camo with storage mgs:temp _pap_extract.stats
+
 # Keep level tracking in the weapon data itself
 execute store result storage mgs:temp _pap_extract.stats.pap_level int 1 run scoreboard players get #pap_next mgs.data
 

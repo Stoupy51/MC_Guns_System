@@ -3,8 +3,8 @@
 # Imports
 from stewbeet import Mem, write_load_file, write_tag, write_tick_file, write_versioned_function
 
-from ..helpers import MGS_TAG, game_start_guards
 from ..core.respawn_countdown import respawn_countdown_tick_lines
+from ..helpers import MGS_TAG, game_start_guards, regen_disable_lines, regen_enable_lines
 
 
 def generate_game() -> None:
@@ -99,6 +99,8 @@ gamerule keep_inventory true
 
 # Reset spectate timers
 scoreboard players set @a {ns}.mp.spectate_timer 0
+
+{regen_enable_lines(ns)}
 
 # Store base coordinates for offset
 function {ns}:v{version}/shared/load_base_coordinates {{mode:"multiplayer"}}
@@ -215,6 +217,8 @@ execute if data storage {ns}:multiplayer game{{gamemode:"tdm"}} run function {ns
 execute if data storage {ns}:multiplayer game{{gamemode:"dom"}} run function {ns}:v{version}/multiplayer/gamemodes/dom/cleanup
 execute if data storage {ns}:multiplayer game{{gamemode:"hp"}} run function {ns}:v{version}/multiplayer/gamemodes/hp/cleanup
 execute if data storage {ns}:multiplayer game{{gamemode:"snd"}} run function {ns}:v{version}/multiplayer/gamemodes/snd/cleanup
+
+{regen_disable_lines(ns)}
 
 # Restore all spectating players to adventure mode
 gamemode adventure @a[scores={{{ns}.mp.in_game=1}},gamemode=spectator]

@@ -5,7 +5,7 @@
 # Map definitions are dynamic (stored in storage, registered via function tags).
 from stewbeet import Mem, write_load_file, write_tag, write_tick_file, write_versioned_function
 
-from ..helpers import MGS_TAG, game_start_guards
+from ..helpers import MGS_TAG, game_start_guards, regen_disable_lines, regen_enable_lines
 
 
 def generate_zombies_game() -> None:
@@ -86,6 +86,9 @@ scoreboard players set @a {ns}.zb.in_game 1
 # Reset death counters and spectate timers to prevent false triggers
 scoreboard players set @a {ns}.mp.death_count 0
 scoreboard players set @a {ns}.mp.spectate_timer 0
+
+# Disable natural regeneration, enable custom regen system
+{regen_enable_lines(ns)}
 
 # Set gamerules
 gamemode spectator @a[scores={{{ns}.zb.in_game=1}}]
@@ -347,11 +350,12 @@ execute if score #zb_has_bounds {ns}.data matches 1 run function {ns}:v{version}
 # Remove sidebar
 scoreboard objectives setdisplay sidebar
 scoreboard objectives remove {ns}.zb_sidebar
-
+{regen_disable_lines(ns)}
 # Announce
 tellraw @a [{MGS_TAG},{{"text":"Zombies game ended.","color":"red"}}]
 
 # Reset in-game state
+
 scoreboard players set @a {ns}.zb.in_game 0
 scoreboard players set @a {ns}.zb.points 0
 scoreboard players set @a {ns}.zb.kills 0

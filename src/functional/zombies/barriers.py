@@ -85,11 +85,11 @@ $execute positioned $(x) $(y) $(z) align xyz positioned ~.5 ~.5 ~.5 run summon m
 	## Single tick dispatch (optimization: ONE @e sweep for all barrier displays)
 	write_versioned_function("zombies/barriers/tick", f"""
 # @s = barrier display, at @s — dispatch by state
-execute if score @s {ns}.zb.barrier.state matches 0 run function {ns}:v{version}/zombies/barriers/intact_tick
+execute if score @s {ns}.zb.barrier.state matches 0 positioned ^ ^ ^-1 run function {ns}:v{version}/zombies/barriers/intact_tick
 execute if score @s {ns}.zb.barrier.state matches 1 run function {ns}:v{version}/zombies/barriers/destroyed_tick
 
 # Player collision: push players in barrier's facing direction every tick (both states)
-execute rotated as @s as @a[scores={{{ns}.zb.in_game=1}},distance=..0.75] positioned as @s run tp @s ^ ^ ^0.8
+execute as @a[scores={{{ns}.zb.in_game=1}},distance=..0.75] positioned as @s run tp @s ^ ^ ^0.8
 """)
 
 	## Intact barrier tick
@@ -135,8 +135,7 @@ $execute as @e[tag={ns}.barrier_removing,distance=..$(radius)] at @s if score @s
 execute if score #barrier_remover_valid {ns}.data matches 1 run scoreboard players remove @s {ns}.zb.barrier.r_timer 1
 execute if score #barrier_remover_valid {ns}.data matches 1 if score @s {ns}.zb.barrier.r_timer matches 0 run function {ns}:v{version}/zombies/barriers/destroy
 
-# If not in range: check if remover still exists globally (alive but out of range = pause; gone = cancel)
-execute if score #barrier_remover_valid {ns}.data matches 0 as @e[tag={ns}.barrier_removing] if score @s {ns}.zb.barrier.removing_id = #barrier_id {ns}.data run scoreboard players set #barrier_remover_valid {ns}.data 2
+# Not in range (dead or pushed out): always cancel so the zombie is freed
 execute if score #barrier_remover_valid {ns}.data matches 0 run function {ns}:v{version}/zombies/barriers/cancel_remove
 """)
 

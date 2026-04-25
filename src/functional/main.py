@@ -107,6 +107,10 @@ execute unless score #projectile_explosion_power {ns}.config matches -2147483648
 execute unless score #grenade_explosion_power {ns}.config matches -2147483648.. run scoreboard players set #grenade_explosion_power {ns}.config 0
 execute unless score #max_ammo_reload_weapons {ns}.config matches -2147483648.. run scoreboard players set #max_ammo_reload_weapons {ns}.config 0
 execute unless score #damage_debug {ns}.config matches -2147483648.. run scoreboard players set #damage_debug {ns}.config 0
+
+# Health regeneration tracking (global, shared across all game modes)
+scoreboard objectives add {ns}.last_hit dummy
+scoreboard objectives add {ns}.hp_prev dummy
 """, prepend=True)
 
     # Write to tick file
@@ -117,6 +121,24 @@ scoreboard players add #total_tick {ns}.data 1
 
 # Player loop
 execute as @e[type=player,sort=random] at @s run function {ns}:v{version}/player/tick
+""")
+
+    # Health regeneration tick hook (global — only runs during an active game)
+    write_versioned_function("player/tick", f"""
+# Health regeneration: Black Ops style — only active during a game
+execute if score #any_game_active {ns}.data matches 1 run function {ns}:v{version}/player/regen_tick
+""")
+
+    write_versioned_function("player/regen_tick", f"""
+# @s = any player during an active game
+execute store result score #hp_cur {ns}.data run data get entity @s Health 1
+execute if score #hp_cur {ns}.data < @s {ns}.hp_prev run scoreboard players set @s {ns}.last_hit 0
+execute unless score #hp_cur {ns}.data < @s {ns}.hp_prev run scoreboard players add @s {ns}.last_hit 1
+scoreboard players operation @s {ns}.hp_prev = #hp_cur {ns}.data
+execute unless score @s {ns}.last_hit matches 100.. run return 0
+execute store result score #hp_max {ns}.data run attribute @s minecraft:max_health get 1
+execute if score #hp_cur {ns}.data >= #hp_max {ns}.data run effect clear @s minecraft:regeneration
+execute unless score #hp_cur {ns}.data >= #hp_max {ns}.data run effect give @s minecraft:regeneration 3 2 true
 """)
 
     # Add block tags

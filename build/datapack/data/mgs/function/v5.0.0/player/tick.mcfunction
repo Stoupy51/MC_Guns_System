@@ -9,6 +9,9 @@
 # Custom loadouts: assign player ID if not yet assigned
 execute unless score @s mgs.mp.pid matches 1.. run function mgs:v5.0.0/multiplayer/assign_pid
 
+# Health regeneration: Black Ops style — only active during a game
+execute if score #any_game_active mgs.data matches 1 run function mgs:v5.0.0/player/regen_tick
+
 # Add temporary tag
 tag @s add mgs.ticking
 

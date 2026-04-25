@@ -7,8 +7,8 @@
 
 from stewbeet import Mem, write_load_file, write_tag, write_tick_file, write_versioned_function
 
-from ..helpers import MGS_TAG, game_start_guards
 from ..core.respawn_countdown import respawn_countdown_tick_lines
+from ..helpers import MGS_TAG, game_start_guards, regen_disable_lines, regen_enable_lines
 
 
 def generate_missions_game() -> None:
@@ -97,6 +97,8 @@ execute as @a[scores={{{ns}.mi.in_game=1}}] run scoreboard players operation @s 
 gamemode spectator @a[scores={{{ns}.mi.in_game=1}}]
 gamerule immediate_respawn true
 gamerule keep_inventory true
+
+{regen_enable_lines(ns)}
 
 # Store base coordinates for offset
 function {ns}:v{version}/shared/load_base_coordinates {{mode:"missions"}}
@@ -449,6 +451,8 @@ execute if score #mi_has_boundary {ns}.data matches 1 run function {ns}:v{versio
 
 # Signal mission end
 function #{ns}:missions/on_mission_end
+
+{regen_disable_lines(ns)}
 
 # Announce
 tellraw @a [{MGS_TAG},{{"text":"Mission ended.","color":"red"}}]

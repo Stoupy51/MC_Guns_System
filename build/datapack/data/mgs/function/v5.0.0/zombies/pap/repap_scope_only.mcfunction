@@ -26,10 +26,13 @@ data modify storage mgs:temp _pap_old_weapon set from storage mgs:temp _pap_extr
 # Randomize weapon scope (retry until different from current)
 function mgs:v5.0.0/zombies/pap/randomize_scope_different
 
+# Randomize camo (uses new scope weapon_id, same base_weapon)
+function mgs:v5.0.0/zombies/pap/randomize_camo with storage mgs:temp _pap_extract.stats
+
 # Apply updated stats + weapon ID to the item (zb_pap_apply_stats replaces both)
 $item modify entity @s $(slot) mgs:v5.0.0/zb_pap_apply_stats
 
-# Update item model to match the new scope
+# Update item model to match the new scope + camo
 $data modify storage mgs:temp _pap_scope_model.slot set value "$(slot)"
 data modify storage mgs:temp _pap_scope_model.model set from storage mgs:temp _pap_extract.stats.models.normal
 function mgs:v5.0.0/zombies/pap/set_item_model_from_scope with storage mgs:temp _pap_scope_model
