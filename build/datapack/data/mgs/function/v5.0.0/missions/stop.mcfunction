@@ -33,6 +33,10 @@ execute if score #mi_has_boundary mgs.data matches 1 run function mgs:v5.0.0/sha
 # Signal mission end
 function #mgs:missions/on_mission_end
 
+# Re-enable natural regeneration, disable custom regen system
+gamerule natural_health_regeneration true
+scoreboard players set #any_game_active mgs.data 0
+
 # Announce
 tellraw @a [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.mission_ended","color":"red"}]
 

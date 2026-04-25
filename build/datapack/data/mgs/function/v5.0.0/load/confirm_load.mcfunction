@@ -93,6 +93,10 @@ execute unless score #grenade_explosion_power mgs.config matches -2147483648.. r
 execute unless score #max_ammo_reload_weapons mgs.config matches -2147483648.. run scoreboard players set #max_ammo_reload_weapons mgs.config 0
 execute unless score #damage_debug mgs.config matches -2147483648.. run scoreboard players set #damage_debug mgs.config 0
 
+# Health regeneration tracking (global, shared across all game modes)
+scoreboard objectives add mgs.last_hit dummy
+scoreboard objectives add mgs.hp_prev dummy
+
 # Confirm load
 tellraw @a[tag=convention.debug] {"translate":"mgs.loaded_mc_guns_system_v5_0_0","color":"green"}
 scoreboard players set #mgs.loaded load.status 1
@@ -183,6 +187,7 @@ data modify storage mgs:zombies scope_variants."m590" set value [{id:"m590",mode
 data modify storage mgs:zombies scope_variants."m249" set value [{id:"m249",model:"mgs:m249",zoom:"mgs:m249_zoom"},{id:"m249_1",model:"mgs:m249_1",zoom:"mgs:m249_1_zoom"},{id:"m249_2",model:"mgs:m249_2",zoom:"mgs:m249_2_zoom"},{id:"m249_3",model:"mgs:m249_3",zoom:"mgs:m249_3_zoom",scope_level:3}]
 data modify storage mgs:zombies scope_variants."mosin" set value [{id:"mosin",model:"mgs:mosin",zoom:"mgs:mosin_zoom"},{id:"mosin_1",model:"mgs:mosin_1",zoom:"mgs:mosin_1_zoom"}]
 data modify storage mgs:zombies scope_variants."deagle" set value [{id:"deagle",model:"mgs:deagle",zoom:"mgs:deagle_zoom"},{id:"deagle_4",model:"mgs:deagle_4",zoom:"mgs:deagle_4_zoom",scope_level:4}]
+data modify storage mgs:zombies camo_variants._default set value ["gold","autumn","galaxy","red_polymer_stripes"]
 
 # Barrier entity scoreboards
 scoreboard objectives add mgs.zb.barrier.id dummy

@@ -15,9 +15,6 @@ $execute if data storage mgs:temp _pap_extract.lore[0] run data modify storage m
 execute if data storage mgs:temp _pap_extract.lore[0] run data modify storage mgs:temp _pap_apply_lore.lore set from storage mgs:temp _pap_extract.lore
 execute if data storage mgs:temp _pap_extract.lore[0] run function mgs:v5.0.0/zombies/pap/set_item_lore with storage mgs:temp _pap_apply_lore
 
-# Set enchantment glint on PAP weapons
-$item modify entity @s $(slot) {"function":"minecraft:set_components","components":{"minecraft:enchantment_glint_override":true}}
-
 # Update item_model to match new scope
 $data modify storage mgs:temp _pap_scope_model.slot set value "$(slot)"
 data modify storage mgs:temp _pap_scope_model.model set from storage mgs:temp _pap_extract.stats.models.normal

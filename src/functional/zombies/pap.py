@@ -1,3 +1,4 @@
+
 # ruff: noqa: E501
 # Pack-a-Punch machine system for zombies mode.
 # Resolves PAP upgrades at runtime from the selected gun's own stats.pap_stats.
@@ -11,6 +12,7 @@ from ...config.stats import (
 	REMAINING_BULLETS,
 	STATS_FIELDS,
 )
+from ...database.camo import MATERIALS
 from ..helpers import MGS_TAG
 from .common import deny_not_enough_points_body, deny_requires_power_body, game_active_guard_cmd
 
@@ -61,6 +63,12 @@ scoreboard objectives add {ns}.zb.pap_mid dummy
 			f'data modify storage {ns}:zombies scope_variants."{base_weapon}" set value [{",".join(entries)}]'
 		)
 	write_load_file("\n".join(scope_data_lines))
+
+	# Load camo variant data for PAP randomization
+	all_camos = list(MATERIALS.keys())
+	all_camos_str = ",".join(f'"{c}"' for c in all_camos)
+	camo_data_lines: list[str] = [f'data modify storage {ns}:zombies camo_variants._default set value [{all_camos_str}]']
+	write_load_file("\n".join(camo_data_lines))
 
 	# Setup: iterate map compounds and summon interaction entities.
 	write_versioned_function("zombies/pap/setup", f"""
@@ -267,6 +275,45 @@ data remove storage {ns}:temp _pap_scopes[0]
 scoreboard players add #pap_scope_i {ns}.data 1
 data modify storage {ns}:temp _pap_scope_pick set from storage {ns}:temp _pap_scopes[0]
 execute if score #pap_scope_i {ns}.data < #pap_scope_idx {ns}.data run function {ns}:v{version}/zombies/pap/scope_pick_advance
+""")
+
+	# --- PAP Camo Randomization ---
+	# Randomly pick a camo variant after scope selection and apply it to the weapon model names.
+	write_versioned_function("zombies/pap/randomize_camo", f"""
+# MACRO: $({BASE_WEAPON}) from _pap_extract.stats
+data modify storage {ns}:temp _pap_camos set value []
+$data modify storage {ns}:temp _pap_camos set from storage {ns}:zombies camo_variants."$({BASE_WEAPON})"
+execute unless data storage {ns}:temp _pap_camos[0] run data modify storage {ns}:temp _pap_camos set from storage {ns}:zombies camo_variants._default
+execute unless data storage {ns}:temp _pap_camos[0] run return 0
+
+# Pick random index
+execute store result score #pap_camo_count {ns}.data run data get storage {ns}:temp _pap_camos
+execute store result score #pap_camo_idx {ns}.data run random value 0..999999
+scoreboard players operation #pap_camo_idx {ns}.data %= #pap_camo_count {ns}.data
+
+# Iterate to the picked index
+scoreboard players set #pap_camo_i {ns}.data 0
+data modify storage {ns}:temp _pap_camo_pick set from storage {ns}:temp _pap_camos[0]
+execute if score #pap_camo_i {ns}.data < #pap_camo_idx {ns}.data run function {ns}:v{version}/zombies/pap/camo_pick_advance
+
+# Build apply data: post-scope weapon id + picked camo name
+data modify storage {ns}:temp _pap_camo_data set value {{}}
+data modify storage {ns}:temp _pap_camo_data.camo set from storage {ns}:temp _pap_camo_pick
+data modify storage {ns}:temp _pap_camo_data.weapon_id set from storage {ns}:temp _pap_extract.weapon
+function {ns}:v{version}/zombies/pap/apply_camo with storage {ns}:temp _pap_camo_data
+""")
+
+	write_versioned_function("zombies/pap/camo_pick_advance", f"""
+data remove storage {ns}:temp _pap_camos[0]
+scoreboard players add #pap_camo_i {ns}.data 1
+data modify storage {ns}:temp _pap_camo_pick set from storage {ns}:temp _pap_camos[0]
+execute if score #pap_camo_i {ns}.data < #pap_camo_idx {ns}.data run function {ns}:v{version}/zombies/pap/camo_pick_advance
+""")
+
+	write_versioned_function("zombies/pap/apply_camo", f"""
+# MACRO: $(weapon_id) = weapon id after scope selection, $(camo) = camo name
+$data modify storage {ns}:temp _pap_extract.stats.models.normal set value "{ns}:$(weapon_id)_$(camo)"
+$data modify storage {ns}:temp _pap_extract.stats.models.zoom set value "{ns}:$(weapon_id)_$(camo)_zoom"
 """)
 
 	# Set item_model component from scope data
@@ -502,9 +549,6 @@ $execute if data storage {ns}:temp _pap_extract.lore[0] run data modify storage 
 execute if data storage {ns}:temp _pap_extract.lore[0] run data modify storage {ns}:temp _pap_apply_lore.lore set from storage {ns}:temp _pap_extract.lore
 execute if data storage {ns}:temp _pap_extract.lore[0] run function {ns}:v{version}/zombies/pap/set_item_lore with storage {ns}:temp _pap_apply_lore
 
-# Set enchantment glint on PAP weapons
-$item modify entity @s $(slot) {{"function":"minecraft:set_components","components":{{"minecraft:enchantment_glint_override":true}}}}
-
 # Update item_model to match new scope
 $data modify storage {ns}:temp _pap_scope_model.slot set value "$(slot)"
 data modify storage {ns}:temp _pap_scope_model.model set from storage {ns}:temp _pap_extract.stats.models.normal
@@ -563,10 +607,13 @@ data modify storage {ns}:temp _pap_old_weapon set from storage {ns}:temp _pap_ex
 # Randomize weapon scope (retry until different from current)
 function {ns}:v{version}/zombies/pap/randomize_scope_different
 
+# Randomize camo (uses new scope weapon_id, same base_weapon)
+function {ns}:v{version}/zombies/pap/randomize_camo with storage {ns}:temp _pap_extract.stats
+
 # Apply updated stats + weapon ID to the item (zb_pap_apply_stats replaces both)
 $item modify entity @s $(slot) {ns}:v{version}/zb_pap_apply_stats
 
-# Update item model to match the new scope
+# Update item model to match the new scope + camo
 $data modify storage {ns}:temp _pap_scope_model.slot set value "$(slot)"
 data modify storage {ns}:temp _pap_scope_model.model set from storage {ns}:temp _pap_extract.stats.models.normal
 function {ns}:v{version}/zombies/pap/set_item_model_from_scope with storage {ns}:temp _pap_scope_model
@@ -656,6 +703,9 @@ function {ns}:v{version}/zombies/pap/apply_runtime_overrides
 
 # Randomize weapon scope
 function {ns}:v{version}/zombies/pap/randomize_scope with storage {ns}:temp _pap_extract.stats
+
+# Randomize weapon camo (applied after scope, so camo appends to the scoped weapon id)
+function {ns}:v{version}/zombies/pap/randomize_camo with storage {ns}:temp _pap_extract.stats
 
 # Keep level tracking in the weapon data itself
 execute store result storage {ns}:temp _pap_extract.stats.pap_level int 1 run scoreboard players get #pap_next {ns}.data

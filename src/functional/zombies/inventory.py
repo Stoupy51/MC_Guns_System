@@ -296,7 +296,10 @@ execute unless score @s {ns}.zb.pap_s matches 3 unless items entity @s hotbar.3 
 """)
 
 	write_versioned_function("zombies/game_tick", f"""
-#execute as @a[scores={{{ns}.zb.in_game=1}},gamemode=!spectator] if items entity @s hotbar.8 *[custom_data~{info_slot_cd}] run function {ns}:v{version}/zombies/inventory/refresh_info_item
+# Refresh player info item every 5 seconds (100 ticks)
+scoreboard players add #zb_info_timer {ns}.data 1
+execute if score #zb_info_timer {ns}.data matches 100.. run scoreboard players set #zb_info_timer {ns}.data 0
+execute if score #zb_info_timer {ns}.data matches 0 as @a[scores={{{ns}.zb.in_game=1}},gamemode=!spectator] if items entity @s hotbar.8 *[custom_data~{info_slot_cd}] run function {ns}:v{version}/zombies/inventory/refresh_info_item
 """)
 
 	write_versioned_function("zombies/inventory/on_new_item", f"""

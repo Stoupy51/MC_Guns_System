@@ -1,7 +1,7 @@
 
 #> mgs:v5.0.0/zombies/barriers/cancel_remove
 #
-# @executed	as @e[tag=mgs.barrier_display] & at @s
+# @executed	positioned ^ ^ ^-1
 #
 # @within	mgs:v5.0.0/zombies/barriers/handle_removing
 #

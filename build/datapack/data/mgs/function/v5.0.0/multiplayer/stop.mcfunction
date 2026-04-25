@@ -29,6 +29,10 @@ execute if data storage mgs:multiplayer game{gamemode:"dom"} run function mgs:v5
 execute if data storage mgs:multiplayer game{gamemode:"hp"} run function mgs:v5.0.0/multiplayer/gamemodes/hp/cleanup
 execute if data storage mgs:multiplayer game{gamemode:"snd"} run function mgs:v5.0.0/multiplayer/gamemodes/snd/cleanup
 
+# Re-enable natural regeneration, disable custom regen system
+gamerule natural_health_regeneration true
+scoreboard players set #any_game_active mgs.data 0
+
 # Restore all spectating players to adventure mode
 gamemode adventure @a[scores={mgs.mp.in_game=1},gamemode=spectator]
 

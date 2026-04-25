@@ -35,11 +35,14 @@ execute if score #zb_has_bounds mgs.data matches 1 run function mgs:v5.0.0/share
 # Remove sidebar
 scoreboard objectives setdisplay sidebar
 scoreboard objectives remove mgs.zb_sidebar
-
+# Re-enable natural regeneration, disable custom regen system
+gamerule natural_health_regeneration true
+scoreboard players set #any_game_active mgs.data 0
 # Announce
 tellraw @a [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.zombies_game_ended","color":"red"}]
 
 # Reset in-game state
+
 scoreboard players set @a mgs.zb.in_game 0
 scoreboard players set @a mgs.zb.points 0
 scoreboard players set @a mgs.zb.kills 0

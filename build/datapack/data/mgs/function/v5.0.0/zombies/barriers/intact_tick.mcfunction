@@ -1,9 +1,9 @@
 
 #> mgs:v5.0.0/zombies/barriers/intact_tick
 #
-# @executed	as @e[tag=mgs.barrier_display] & at @s
+# @executed	positioned ^ ^ ^-1
 #
-# @within	mgs:v5.0.0/zombies/barriers/tick
+# @within	mgs:v5.0.0/zombies/barriers/tick [ positioned ^ ^ ^-1 ]
 #
 
 # @s = intact barrier display, at @s

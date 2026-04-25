@@ -25,6 +25,28 @@ execute if data storage {ns}:{storage} game{{state:"preparing"}} run return run 
 """.strip()
 
 
+def regen_enable_lines(ns: str) -> str:
+	""" Lines to add at game start: disable natural regen, activate custom regen system. """
+	return f"""
+# Disable natural regeneration, enable custom regen system
+gamerule natural_health_regeneration false
+scoreboard players set #any_game_active {ns}.data 1
+
+# Reset per-player regen state
+scoreboard players set @a {ns}.last_hit 0
+execute as @a run execute store result score @s {ns}.hp_prev run data get entity @s Health 1
+""".strip()
+
+
+def regen_disable_lines(ns: str) -> str:
+	""" Lines to add at game stop: re-enable natural regen, deactivate custom regen system. """
+	return f"""
+# Re-enable natural regeneration, disable custom regen system
+gamerule natural_health_regeneration true
+scoreboard players set #any_game_active {ns}.data 0
+""".strip()
+
+
 def styled_text(text: str, **attrs: str) -> str:
     """ Create a styled text component, automatically splitting non-alphanumeric
     prefixes/suffixes into raw strings so the lang plugin only sees clean alpha text.

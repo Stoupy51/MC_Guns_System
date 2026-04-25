@@ -38,6 +38,15 @@ scoreboard players set @a mgs.zb.in_game 1
 scoreboard players set @a mgs.mp.death_count 0
 scoreboard players set @a mgs.mp.spectate_timer 0
 
+# Disable natural regeneration, enable custom regen system
+# Disable natural regeneration, enable custom regen system
+gamerule natural_health_regeneration false
+scoreboard players set #any_game_active mgs.data 1
+
+# Reset per-player regen state
+scoreboard players set @a mgs.last_hit 0
+execute as @a run execute store result score @s mgs.hp_prev run data get entity @s Health 1
+
 # Set gamerules
 gamemode spectator @a[scores={mgs.zb.in_game=1}]
 gamerule immediate_respawn true
