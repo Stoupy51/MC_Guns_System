@@ -63,6 +63,7 @@ tag @a remove mgs.mb_buyer
 # Barriers cleanup
 tag @e[tag=mgs.barrier_removing] remove mgs.barrier_removing
 tag @a[tag=mgs.barrier_repairing] remove mgs.barrier_repairing
+scoreboard players reset @a mgs.zb.barrier_repairs
 
 # Reset perk effects
 execute as @a[scores={mgs.zb.in_game=1}] run attribute @s minecraft:max_health base set 20

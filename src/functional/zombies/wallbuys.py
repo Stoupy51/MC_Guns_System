@@ -420,7 +420,7 @@ scoreboard players operation #wb_price {ns}.data = #wb_buy_price {ns}.data
 function {ns}:v{version}/zombies/wallbuys/compute_effective_price with storage {ns}:temp _wb_weapon
 function {ns}:v{version}/zombies/wallbuys/set_hover_price_suffix
 
-data modify storage smithed.actionbar:input message set value {{json:{wallbuy_hover_message},priority:'notification',freeze:5}}
+data modify storage smithed.actionbar:input message set value {{json:{wallbuy_hover_message},priority:"conditional",freeze:5}}
 function #smithed.actionbar:message
 """)
 

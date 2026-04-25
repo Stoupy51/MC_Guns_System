@@ -199,7 +199,7 @@ execute store result score #door_link {ns}.data run scoreboard players get @n[ta
 execute store result storage {ns}:temp _door_hover.id int 1 run scoreboard players get #door_link {ns}.data
 execute if entity @e[tag=bs.interaction.target,tag={ns}.door_back] run function {ns}:v{version}/zombies/doors/get_hover_name_back with storage {ns}:temp _door_hover
 execute unless entity @e[tag=bs.interaction.target,tag={ns}.door_back] run function {ns}:v{version}/zombies/doors/get_hover_name with storage {ns}:temp _door_hover
-data modify storage smithed.actionbar:input message set value {{json:{door_hover_message},priority:'notification',freeze:5}}
+data modify storage smithed.actionbar:input message set value {{json:{door_hover_message},priority:"conditional",freeze:5}}
 function #smithed.actionbar:message
 """)
 

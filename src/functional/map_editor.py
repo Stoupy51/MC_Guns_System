@@ -61,7 +61,7 @@ ALL_ELEMENTS: dict[str, JsonDict] = {
                            "defaults": {
                                 "block_enabled":  {"Name": "minecraft:oak_fence_gate", "Properties": {"open": "false"}},
                                 "block_disabled": {"Name": "minecraft:oak_fence_gate", "Properties": {"open": "true"}},
-                                "radius": 2,
+                                "radius": 1,
                            }},
 }
 

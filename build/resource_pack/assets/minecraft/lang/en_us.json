@@ -45,7 +45,7 @@
 	"mgs.barrier_configuration": "Barrier Configuration",
 	"mgs.barrier_placed": "Barrier placed!",
 	"mgs.barrier_removed": "Barrier removed!",
-	"mgs.barrier_repaired": "Barrier repaired!",
+	"mgs.barrier_repaired": "Barrier repaired! ",
 	"mgs.base_coordinates": "Base Coordinates",
 	"mgs.base_coordinates_no_configurable_fields": "⬟ Base Coordinates — no configurable fields",
 	"mgs.base_coordinates_removed": "Base Coordinates removed!",

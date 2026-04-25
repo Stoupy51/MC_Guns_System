@@ -197,6 +197,8 @@ scoreboard objectives add mgs.zb.barrier.rp_timer dummy
 scoreboard objectives add mgs.zb.barrier.radius dummy
 scoreboard objectives add mgs.zb.barrier.removing_id dummy
 scoreboard objectives add mgs.zb.barrier.repairing_id dummy
+# Per-player barrier repair counter (reset each round, capped reward at 25)
+scoreboard objectives add mgs.zb.barrier_repairs dummy
 
 # Door entity scoreboards
 scoreboard objectives add mgs.zb.door.link dummy

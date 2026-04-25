@@ -98,7 +98,7 @@ function {ns}:v{version}/zombies/feedback/sound_deny
 
 	## Hover events (run as the player looking at the power switch)
 	write_versioned_function("zombies/power/on_hover", """
-data modify storage smithed.actionbar:input message set value {json:[{"text":"⚡ Power Switch","color":"yellow"}],priority:'notification',freeze:5}
+data modify storage smithed.actionbar:input message set value {json:[{"text":"⚡ Power Switch","color":"yellow"}],priority:"conditional",freeze:5}
 function #smithed.actionbar:message
 """)
 

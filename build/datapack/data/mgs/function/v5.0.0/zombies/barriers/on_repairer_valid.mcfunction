@@ -9,6 +9,6 @@
 # @s = repairing player
 scoreboard players set #barrier_repair_valid mgs.data 1
 # Actionbar progress: show remaining ticks out of 30
-data modify storage smithed.actionbar:input message set value {json:[[{"text":"🔧 ","color":"aqua"}, {"translate":"mgs.repairing_barrier"}],{"score":{"name":"#barrier_rp_cur","objective":"mgs.data"},"color":"yellow"},{"text":"/30","color":"gray"}],priority:"notification",freeze:2}
+data modify storage smithed.actionbar:input message set value {json:[[{"text":"🔧 ","color":"aqua"}, {"translate":"mgs.repairing_barrier"}],{"score":{"name":"#barrier_rp_cur","objective":"mgs.data"},"color":"yellow"},{"text":"/30","color":"gray"}],priority:"conditional",freeze:2}
 function #smithed.actionbar:message
 
