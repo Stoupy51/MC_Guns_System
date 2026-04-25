@@ -579,22 +579,22 @@ data remove storage {ns}:zombies mystery_box.result
 
 	## Hover functions for active mystery box
 	write_versioned_function("zombies/mystery_box/hud_ready", """
-data modify storage smithed.actionbar:input message set value {json:[{"text":"🎲 Mystery Box","color":"light_purple"},{"text":" - ","color":"gray"},{"text":"Click to collect!","color":"green"}],priority:'notification',freeze:5}
+data modify storage smithed.actionbar:input message set value {json:[{"text":"🎲 Mystery Box","color":"light_purple"},{"text":" - ","color":"gray"},{"text":"Click to collect!","color":"green"}],priority:"conditional",freeze:5}
 function #smithed.actionbar:message
 """)
 
 	write_versioned_function("zombies/mystery_box/hud_spinning", """
-data modify storage smithed.actionbar:input message set value {json:[{"text":"🎲 Mystery Box","color":"light_purple"},{"text":" - ","color":"gray"},{"text":"Spinning...","color":"yellow"}],priority:'notification',freeze:5}
+data modify storage smithed.actionbar:input message set value {json:[{"text":"🎲 Mystery Box","color":"light_purple"},{"text":" - ","color":"gray"},{"text":"Spinning...","color":"yellow"}],priority:"conditional",freeze:5}
 function #smithed.actionbar:message
 """)
 
 	write_versioned_function("zombies/mystery_box/hud_price", """
-data modify storage smithed.actionbar:input message set value {json:[{"text":"🎲 Mystery Box","color":"light_purple"},{"text":" - ","color":"gray"},{"text":"950 points","color":"gold"}],priority:'notification',freeze:5}
+data modify storage smithed.actionbar:input message set value {json:[{"text":"🎲 Mystery Box","color":"light_purple"},{"text":" - ","color":"gray"},{"text":"950 points","color":"gold"}],priority:"conditional",freeze:5}
 function #smithed.actionbar:message
 """)
 
 	write_versioned_function("zombies/mystery_box/hud_moving", """
-data modify storage smithed.actionbar:input message set value {json:[{"text":"🎲 Mystery Box","color":"light_purple"},{"text":" - ","color":"gray"},{"text":"Moving...","color":"yellow"}],priority:'notification',freeze:5}
+data modify storage smithed.actionbar:input message set value {json:[{"text":"🎲 Mystery Box","color":"light_purple"},{"text":" - ","color":"gray"},{"text":"Moving...","color":"yellow"}],priority:"conditional",freeze:5}
 function #smithed.actionbar:message
 """)
 

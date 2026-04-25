@@ -235,7 +235,7 @@ execute store result score #pk_price {ns}.data run scoreboard players get @n[tag
 execute store result storage {ns}:temp _pk_hover.id int 1 run scoreboard players get @n[tag=bs.interaction.target] {ns}.zb.perk.id
 function {ns}:v{version}/zombies/perks/lookup_perk with storage {ns}:temp _pk_hover
 function {ns}:v{version}/zombies/perks/get_hover_name
-data modify storage smithed.actionbar:input message set value {{json:[{{"text":"🥤 ","color":"dark_purple"}},{{"storage":"{ns}:temp","nbt":"_pk_hover_name","color":"light_purple","interpret":true}},{{"text":" - Cost: ","color":"gray"}},{{"score":{{"name":"#pk_price","objective":"{ns}.data"}},"color":"yellow"}},{{"text":" points","color":"gray"}}],priority:'notification',freeze:5}}
+data modify storage smithed.actionbar:input message set value {{json:[{{"text":"🥤 ","color":"dark_purple"}},{{"storage":"{ns}:temp","nbt":"_pk_hover_name","color":"light_purple","interpret":true}},{{"text":" - Cost: ","color":"gray"}},{{"score":{{"name":"#pk_price","objective":"{ns}.data"}},"color":"yellow"}},{{"text":" points","color":"gray"}}],priority:"conditional",freeze:5}}
 function #smithed.actionbar:message
 """)  # noqa: E501
 

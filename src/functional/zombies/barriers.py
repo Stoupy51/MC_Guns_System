@@ -24,6 +24,8 @@ scoreboard objectives add {ns}.zb.barrier.rp_timer dummy
 scoreboard objectives add {ns}.zb.barrier.radius dummy
 scoreboard objectives add {ns}.zb.barrier.removing_id dummy
 scoreboard objectives add {ns}.zb.barrier.repairing_id dummy
+# Per-player barrier repair counter (reset each round, capped reward at 25)
+scoreboard objectives add {ns}.zb.barrier_repairs dummy
 """)
 
 	## Setup: iterate barrier compounds, summon block_display entities
@@ -210,7 +212,7 @@ execute if score #barrier_repair_valid {ns}.data matches 1 if score @s {ns}.zb.b
 # @s = repairing player
 scoreboard players set #barrier_repair_valid {ns}.data 1
 # Actionbar progress: show remaining ticks out of 30
-data modify storage smithed.actionbar:input message set value {{json:[{{"text":"🔧 Repairing barrier... ","color":"aqua"}},{{"score":{{"name":"#barrier_rp_cur","objective":"{ns}.data"}},"color":"yellow"}},{{"text":"/30","color":"gray"}}],priority:"notification",freeze:2}}
+data modify storage smithed.actionbar:input message set value {{json:[{{"text":"🔧 Repairing barrier... ","color":"aqua"}},{{"score":{{"name":"#barrier_rp_cur","objective":"{ns}.data"}},"color":"yellow"}},{{"text":"/30","color":"gray"}}],priority:"conditional",freeze:2}}
 function #smithed.actionbar:message
 """)
 
@@ -242,7 +244,12 @@ playsound minecraft:block.anvil.use block @a ~ ~ ~ 1.0 1.5
 	write_versioned_function("zombies/barriers/on_repair_complete_player", f"""
 # @s = repairing player
 tag @s remove {ns}.barrier_repairing
-data modify storage smithed.actionbar:input message set value {{json:[{{"text":"✔ Barrier repaired!","color":"green"}}],priority:"notification",freeze:20}}
+
+# Reward +10 points (max 25 barrier repairs rewarded per round)
+execute unless score @s {ns}.zb.barrier_repairs matches 25.. run scoreboard players add @s {ns}.zb.points 10
+execute unless score @s {ns}.zb.barrier_repairs matches 25.. run scoreboard players add @s {ns}.zb.barrier_repairs 1
+
+data modify storage smithed.actionbar:input message set value {{json:[{{"text":"✔ Barrier repaired! ","color":"green"}},{{"text":"+10","color":"gold"}},{{"text":" points","color":"yellow"}}],priority:"notification",freeze:20}}
 function #smithed.actionbar:message
 """)
 
@@ -266,10 +273,17 @@ execute as @e[tag={ns}.barrier_display] at @s run function {ns}:v{version}/zombi
 execute if data storage {ns}:zombies game.map.barriers[0] run function {ns}:v{version}/zombies/barriers/setup
 """)
 
+	## Reset repair counter at the start of each round
+	write_versioned_function("zombies/on_round_start", f"""
+# Reset barrier repair counters for all players
+scoreboard players set @a {ns}.zb.barrier_repairs 0
+""")
+
 	## Hook into stop — clean up tags on living entities (gm_entity kill handles the entities)
 	write_versioned_function("zombies/stop", f"""
 # Barriers cleanup
 tag @e[tag={ns}.barrier_removing] remove {ns}.barrier_removing
 tag @a[tag={ns}.barrier_repairing] remove {ns}.barrier_repairing
+scoreboard players reset @a {ns}.zb.barrier_repairs
 """)
 
