@@ -124,32 +124,71 @@ $execute as @n[tag={ns}.zombie_round,tag=!{ns}.zb_scaled] run function {ns}:v{ve
 
 	## Normal zombie: scale health/speed by level + start rise animation
 	write_versioned_function("zombies/types/normal", f"""
-# Add scaled tag and set level score for scaling functions
+# Add scaled tag
 tag @s add {ns}.zb_scaled
-$scoreboard players set #zb_level {ns}.data $(level)
 
 # Delay visual death by 20 ticks
 data modify entity @s DeathTime set value -20s
 
-# Level 1: default 20 HP (rounds 1-5) — no changes needed
-# Level 2: 30 HP (rounds 6-10)
-execute if score #zb_level {ns}.data matches 2 run attribute @s minecraft:max_health base set 30
-execute if score #zb_level {ns}.data matches 2 run data modify entity @s Health set value 30f
+# Compute BO2-derived HP for this round and apply it to this zombie
+function {ns}:v{version}/zombies/calc_zombie_hp
+execute store result storage {ns}:temp _zb_hp.val int 1 run scoreboard players get #zb_hp {ns}.data
+function {ns}:v{version}/zombies/apply_zombie_hp with storage {ns}:temp _zb_hp
 
-# Level 3: 40 HP (rounds 11-15)
-execute if score #zb_level {ns}.data matches 3 run attribute @s minecraft:max_health base set 40
-execute if score #zb_level {ns}.data matches 3 run data modify entity @s Health set value 40f
+# Speed tiers from BO2 behavior (multiplier 8): walk R1-5, run R6-8, sprint R9+
+execute if score #zb_round {ns}.data matches ..5 run attribute @s minecraft:movement_speed base set 0.18
+execute if score #zb_round {ns}.data matches 6..8 run attribute @s minecraft:movement_speed base set 0.23
+execute if score #zb_round {ns}.data matches 9 run attribute @s minecraft:movement_speed base set 0.30
 
-# Level 4: 60 HP (rounds 16+)
-execute if score #zb_level {ns}.data matches 4 run attribute @s minecraft:max_health base set 60
-execute if score #zb_level {ns}.data matches 4 run data modify entity @s Health set value 60f
-
-# Increase speed slightly at higher levels
-execute if score #zb_level {ns}.data matches 3 run attribute @s minecraft:movement_speed base set 0.26
-execute if score #zb_level {ns}.data matches 4 run attribute @s minecraft:movement_speed base set 0.30
+# BO2-style walkers: R10+ has 10% chance to spawn as walk speed instead of sprint
+execute if score #zb_round {ns}.data matches 10.. store result score #zb_speed_roll {ns}.data run random value 1..10
+execute if score #zb_round {ns}.data matches 10.. if score #zb_speed_roll {ns}.data matches 1 run attribute @s minecraft:movement_speed base set 0.23
+execute if score #zb_round {ns}.data matches 10.. if score #zb_speed_roll {ns}.data matches 2.. run attribute @s minecraft:movement_speed base set 0.30
 
 # Start rise animation (20 ticks to rise 2 blocks)
 scoreboard players set @s {ns}.zb.rise_tick 20
+""")
+
+	## Compute zombie HP for current round (BO2 formula adapted to Minecraft scale)
+	write_versioned_function("zombies/calc_zombie_hp", f"""
+# R1-9: linear growth
+execute if score #zb_round {ns}.data matches ..9 run function {ns}:v{version}/zombies/calc_zombie_hp_linear
+
+# R10+: exponential growth
+execute if score #zb_round {ns}.data matches 10.. run function {ns}:v{version}/zombies/calc_zombie_hp_exp
+
+# Cap at Minecraft-safe gameplay max
+execute unless score #zb_hp {ns}.data matches 15..2048 run scoreboard players set #zb_hp {ns}.data 2048
+""")
+
+	## R1-9: (150 + (round - 1) * 100) * 2 / 15
+	write_versioned_function("zombies/calc_zombie_hp_linear", f"""
+scoreboard players operation #zb_hp {ns}.data = #zb_round {ns}.data
+scoreboard players remove #zb_hp {ns}.data 1
+scoreboard players operation #zb_hp {ns}.data *= #100 {ns}.data
+scoreboard players operation #zb_hp {ns}.data += #150 {ns}.data
+scoreboard players operation #zb_hp {ns}.data *= #2 {ns}.data
+scoreboard players operation #zb_hp {ns}.data /= #15 {ns}.data
+""")
+
+	## R10+: 950 * 1.1^(round - 9) * 2 / 15
+	write_versioned_function("zombies/calc_zombie_hp_exp", f"""
+scoreboard players operation #zb_exp_round {ns}.data = #zb_round {ns}.data
+scoreboard players remove #zb_exp_round {ns}.data 9
+
+data modify storage bs:in math.pow.x set value 1.1f
+execute store result storage bs:in math.pow.y float 1 run scoreboard players get #zb_exp_round {ns}.data
+function #bs.math:pow
+
+execute store result score #zb_hp {ns}.data run data get storage bs:out math.pow 950
+scoreboard players operation #zb_hp {ns}.data *= #2 {ns}.data
+scoreboard players operation #zb_hp {ns}.data /= #15 {ns}.data
+""")
+
+	## Apply computed HP to the current zombie (@s)
+	write_versioned_function("zombies/apply_zombie_hp", """
+$attribute @s minecraft:max_health base set $(val)
+execute store result entity @s Health float 1 run attribute @s minecraft:max_health get
 """)
 
 	## Armed zombie stub (TODO: carries weapon, drops ammo on death)
