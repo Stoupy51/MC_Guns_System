@@ -46,6 +46,7 @@ execute unless data storage {ns}:zombies mystery_box_pool run data modify storag
 
 # Config: points per kill, points per hit
 # TODO: ZB points hit not used
+# FIXME: when killing a zombie it gives two times zb_points_kill, need to fix
 execute unless score #zb_points_kill {ns}.config matches 1.. run scoreboard players set #zb_points_kill {ns}.config 50
 execute unless score #zb_points_hit {ns}.config matches 1.. run scoreboard players set #zb_points_hit {ns}.config 10
 execute unless score #zb_mystery_box_price {ns}.config matches 1.. run scoreboard players set #zb_mystery_box_price {ns}.config 950

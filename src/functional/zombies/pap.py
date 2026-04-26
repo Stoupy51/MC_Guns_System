@@ -247,7 +247,7 @@ function {ns}:v{version}/zombies/pap/pick_list_value_step
 data remove storage {ns}:temp _pap_scopes
 $data modify storage {ns}:temp _pap_scopes set from storage {ns}:zombies scope_variants."$({BASE_WEAPON})"
 
-# Skip if weapon has no scope variants or only one
+# Skip if weapon has no scope variants or only one (default)
 execute unless data storage {ns}:temp _pap_scopes[1] run return 0
 
 # Count variants
@@ -299,7 +299,10 @@ execute if score #pap_camo_i {ns}.data < #pap_camo_idx {ns}.data run function {n
 # Build apply data: post-scope weapon id + picked camo name
 data modify storage {ns}:temp _pap_camo_data set value {{}}
 data modify storage {ns}:temp _pap_camo_data.camo set from storage {ns}:temp _pap_camo_pick
-data modify storage {ns}:temp _pap_camo_data.weapon_id set from storage {ns}:temp _pap_extract.weapon
+
+# Fallback to base weapon id when no scoped weapon id is present
+data modify storage {ns}:temp _pap_camo_data.weapon_id set from storage {ns}:temp _pap_extract.stats.{BASE_WEAPON}
+execute if data storage {ns}:temp _pap_extract.weapon run data modify storage {ns}:temp _pap_camo_data.weapon_id set from storage {ns}:temp _pap_extract.weapon
 function {ns}:v{version}/zombies/pap/apply_camo with storage {ns}:temp _pap_camo_data
 """)
 
@@ -324,9 +327,16 @@ $item modify entity @s $(slot) {"function":"minecraft:set_components","component
 	# Randomize scope but guarantee a different result than the current one
 	# _pap_old_weapon must be set before calling this
 	write_versioned_function("zombies/pap/randomize_scope_different", f"""
+# Skip if weapon has no scope variants or only one (default)
+$data modify storage {ns}:temp _pap_scopes set from storage {ns}:zombies scope_variants."$({BASE_WEAPON})"
+execute unless data storage {ns}:temp _pap_scopes[1] run return 0
+
+# Randomize scope again
 function {ns}:v{version}/zombies/pap/randomize_scope with storage {ns}:temp _pap_extract.stats
+
 # data modify set returns 0 if values are equal, 1 if different
 execute store success score #pap_scope_changed {ns}.data run data modify storage {ns}:temp _pap_old_weapon set from storage {ns}:temp _pap_extract.weapon
+
 # Retry if same weapon ID was picked (guaranteed to terminate since ≥2 variants exist)
 execute if score #pap_scope_changed {ns}.data matches 0 run function {ns}:v{version}/zombies/pap/randomize_scope_different
 """)
@@ -587,15 +597,9 @@ tellraw @s [{MGS_TAG},{{"text":"This weapon is already at max Pack-a-Punch level
 function {ns}:v{version}/zombies/feedback/sound_deny
 """)
 
-	## Re-PAP at max level: scope-only randomization for a reduced price
+	## Re-PAP at max level: scope/camo only randomization for a reduced price
 	write_versioned_function("zombies/pap/repap_scope_only", f"""
-# Guard: weapon must have at least 2 scope variants to re-roll
-data remove storage {ns}:temp _pap_scope_check
-data modify storage {ns}:temp _pap_scope_bw.{BASE_WEAPON} set from storage {ns}:temp _pap_extract.stats.{BASE_WEAPON}
-function {ns}:v{version}/zombies/pap/check_scope_variants with storage {ns}:temp _pap_scope_bw
-execute unless score #pap_has_scopes {ns}.data matches 1 run return run function {ns}:v{version}/zombies/pap/deny_no_scope_variants
-
-# Guard: enough points for scope re-roll
+# Guard: enough points for scope/camo re-roll
 execute unless score @s {ns}.zb.points matches {REPAP_SCOPE_PRICE}.. run return run function {ns}:v{version}/zombies/pap/deny_not_enough_points_scope
 
 # Deduct points
@@ -605,7 +609,7 @@ scoreboard players remove @s {ns}.zb.points {REPAP_SCOPE_PRICE}
 data modify storage {ns}:temp _pap_old_weapon set from storage {ns}:temp _pap_extract.weapon
 
 # Randomize weapon scope (retry until different from current)
-function {ns}:v{version}/zombies/pap/randomize_scope_different
+function {ns}:v{version}/zombies/pap/randomize_scope_different with storage {ns}:temp _pap_extract.stats
 
 # Randomize camo (uses new scope weapon_id, same base_weapon)
 function {ns}:v{version}/zombies/pap/randomize_camo with storage {ns}:temp _pap_extract.stats
@@ -631,16 +635,6 @@ tag @s remove {ns}.pap_owner
 
 	write_versioned_function("zombies/pap/deny_not_enough_points_scope", f"""
 tellraw @s [{MGS_TAG},{{"text":"You don't have enough points ({REPAP_SCOPE_PRICE} needed).","color":"red"}}]
-function {ns}:v{version}/zombies/feedback/sound_deny
-""")
-
-	write_versioned_function("zombies/pap/check_scope_variants", f"""
-scoreboard players set #pap_has_scopes {ns}.data 0
-$execute if data storage {ns}:zombies scope_variants."$({BASE_WEAPON})"[1] run scoreboard players set #pap_has_scopes {ns}.data 1
-""")
-
-	write_versioned_function("zombies/pap/deny_no_scope_variants", f"""
-tellraw @s [{MGS_TAG},{{"text":"This weapon is already at max Pack-a-Punch level.","color":"yellow"}}]
 function {ns}:v{version}/zombies/feedback/sound_deny
 """)
 
