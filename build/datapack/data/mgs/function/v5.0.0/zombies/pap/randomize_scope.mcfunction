@@ -10,7 +10,7 @@
 data remove storage mgs:temp _pap_scopes
 $data modify storage mgs:temp _pap_scopes set from storage mgs:zombies scope_variants."$(base_weapon)"
 
-# Skip if weapon has no scope variants or only one
+# Skip if weapon has no scope variants or only one (default)
 execute unless data storage mgs:temp _pap_scopes[1] run return 0
 
 # Count variants

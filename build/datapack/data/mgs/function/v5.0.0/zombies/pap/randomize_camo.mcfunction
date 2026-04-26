@@ -28,6 +28,9 @@ execute if score #pap_camo_i mgs.data < #pap_camo_idx mgs.data run function mgs:
 # Build apply data: post-scope weapon id + picked camo name
 data modify storage mgs:temp _pap_camo_data set value {}
 data modify storage mgs:temp _pap_camo_data.camo set from storage mgs:temp _pap_camo_pick
-data modify storage mgs:temp _pap_camo_data.weapon_id set from storage mgs:temp _pap_extract.weapon
+
+# Fallback to base weapon id when no scoped weapon id is present
+data modify storage mgs:temp _pap_camo_data.weapon_id set from storage mgs:temp _pap_extract.stats.base_weapon
+execute if data storage mgs:temp _pap_extract.weapon run data modify storage mgs:temp _pap_camo_data.weapon_id set from storage mgs:temp _pap_extract.weapon
 function mgs:v5.0.0/zombies/pap/apply_camo with storage mgs:temp _pap_camo_data
 

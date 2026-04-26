@@ -8,13 +8,7 @@
 # @args		slot (unknown)
 #
 
-# Guard: weapon must have at least 2 scope variants to re-roll
-data remove storage mgs:temp _pap_scope_check
-data modify storage mgs:temp _pap_scope_bw.base_weapon set from storage mgs:temp _pap_extract.stats.base_weapon
-function mgs:v5.0.0/zombies/pap/check_scope_variants with storage mgs:temp _pap_scope_bw
-execute unless score #pap_has_scopes mgs.data matches 1 run return run function mgs:v5.0.0/zombies/pap/deny_no_scope_variants
-
-# Guard: enough points for scope re-roll
+# Guard: enough points for scope/camo re-roll
 execute unless score @s mgs.zb.points matches 1000.. run return run function mgs:v5.0.0/zombies/pap/deny_not_enough_points_scope
 
 # Deduct points
@@ -24,7 +18,7 @@ scoreboard players remove @s mgs.zb.points 1000
 data modify storage mgs:temp _pap_old_weapon set from storage mgs:temp _pap_extract.weapon
 
 # Randomize weapon scope (retry until different from current)
-function mgs:v5.0.0/zombies/pap/randomize_scope_different
+function mgs:v5.0.0/zombies/pap/randomize_scope_different with storage mgs:temp _pap_extract.stats
 
 # Randomize camo (uses new scope weapon_id, same base_weapon)
 function mgs:v5.0.0/zombies/pap/randomize_camo with storage mgs:temp _pap_extract.stats
