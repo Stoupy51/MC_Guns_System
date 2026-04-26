@@ -35,6 +35,9 @@ scoreboard objectives add {ns}.zb.spawn.gid dummy
 # Sidebar rank scoreboard
 scoreboard objectives add {ns}.zb.sb_rank dummy
 
+# Rise animation: ticks remaining for each rising zombie
+scoreboard objectives add {ns}.zb.rise_tick dummy
+
 # Initialize zombies game state
 execute unless data storage {ns}:zombies game run data modify storage {ns}:zombies game set value {{state:"lobby",map_id:"",round:0}}
 
@@ -227,6 +230,9 @@ function {ns}:v{version}/zombies/revive/tick
 # Zombie Spawning (if there are still zombies to spawn)
 execute if score #zb_to_spawn {ns}.data matches 1.. run function {ns}:v{version}/zombies/spawn_tick
 
+# Rise animation tick for spawning zombies
+execute as @e[tag={ns}.zb_rising] at @s run function {ns}:v{version}/zombies/zombie_rise_tick
+
 # Boundary enforcement (skip spectators, only if map has bounds)
 execute if score #zb_has_bounds {ns}.data matches 1 as @e[tag={ns}.zombie_round] at @s run function {ns}:v{version}/zombies/check_bounds
 execute if score #zb_has_bounds {ns}.data matches 1 as @e[type=player,scores={{{ns}.zb.in_game=1}},gamemode=!creative,gamemode=!spectator] at @s run function {ns}:v{version}/zombies/check_bounds
@@ -239,6 +245,14 @@ execute if score #zb_alive {ns}.data matches 0 if score #zb_to_spawn {ns}.data m
 execute if score #zb_round_grace {ns}.data matches 1.. run scoreboard players remove #zb_round_grace {ns}.data 1
 execute unless score #zb_round_grace {ns}.data matches 1.. store result score #zb_alive_players {ns}.data if entity @a[scores={{{ns}.zb.in_game=1,{ns}.zb.downed=0}},gamemode=!spectator]
 execute unless score #zb_round_grace {ns}.data matches 1.. if score #zb_alive_players {ns}.data matches 0 run function {ns}:v{version}/zombies/game_over
+
+# Stuck zombie glow: count up once all spawns are done (60s = 1200 ticks after last spawn)
+execute if score #zb_to_spawn {ns}.data matches 0 run scoreboard players add #zb_stuck_timer {ns}.data 1
+execute if score #zb_to_spawn {ns}.data matches 1.. run scoreboard players set #zb_stuck_timer {ns}.data 0
+# Once threshold reached, tick glow refresh timer (every 5s = 100 ticks → apply glowing for 6s = 120 ticks)
+execute if score #zb_stuck_timer {ns}.data matches 1200.. run scoreboard players add #zb_glow_timer {ns}.data 1
+execute if score #zb_glow_timer {ns}.data matches 100.. run scoreboard players set #zb_glow_timer {ns}.data 0
+execute if score #zb_stuck_timer {ns}.data matches 1200.. if score #zb_glow_timer {ns}.data matches 0 if entity @e[tag={ns}.zombie_round] run function {ns}:v{version}/zombies/glow_stuck_zombies
 
 # Refresh sidebar every second (20 ticks)
 scoreboard players add #zb_sidebar_timer {ns}.data 1

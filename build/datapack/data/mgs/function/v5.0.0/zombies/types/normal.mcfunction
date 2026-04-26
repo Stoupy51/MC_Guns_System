@@ -1,9 +1,9 @@
 
-#> mgs:v5.0.0/zombies/scale_zombie
+#> mgs:v5.0.0/zombies/types/normal
 #
-# @executed	as @n[tag=mgs.zb_near,sort=random] & at @s
-#
-# @within	mgs:v5.0.0/zombies/summon_zombie_at {level:"$(level)"}
+# @within	mgs:v5.0.0/zombies/types/armed {level:"$(level)"}
+#			mgs:v5.0.0/zombies/types/fast {level:"$(level)"}
+#			mgs:v5.0.0/zombies/types/tank {level:"$(level)"}
 #
 # @args		level (string)
 #
@@ -28,4 +28,7 @@ execute if score #zb_level mgs.data matches 4 run data modify entity @s Health s
 # Increase speed slightly at higher levels
 execute if score #zb_level mgs.data matches 3 run attribute @s minecraft:movement_speed base set 0.26
 execute if score #zb_level mgs.data matches 4 run attribute @s minecraft:movement_speed base set 0.30
+
+# Start rise animation (20 ticks to rise 2 blocks)
+scoreboard players set @s mgs.zb.rise_tick 20
 
