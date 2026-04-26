@@ -10,7 +10,8 @@
 #
 
 # Summon zombie 2 blocks underground with NoAI (rise animation in progress)
-summon minecraft:zombie ~ ~-2 ~ {Tags:["mgs.zombie_round","mgs.gm_entity","mgs.nukable","mgs.zb_rising"],CanPickUpLoot:false,PersistenceRequired:true,DeathLootTable:"minecraft:empty",NoAI:1b}
+# Attach a marker passenger so death can be intercepted before vanilla event 60 (poof particles).
+summon minecraft:zombie ~ ~-2 ~ {Tags:["mgs.zombie_round","mgs.gm_entity","mgs.nukable","mgs.zb_rising"],CanPickUpLoot:false,PersistenceRequired:true,DeathLootTable:"minecraft:empty",NoAI:1b,Passengers:[{id:"minecraft:marker",Tags:["mgs.death_watch","mgs.gm_entity"]}]}
 
 # Apply type-specific scaling (health, speed, rise timer)
 $execute as @n[tag=mgs.zombie_round,tag=!mgs.zb_scaled] run function mgs:v5.0.0/zombies/types/$(type) {level:"$(level)"}

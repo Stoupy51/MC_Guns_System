@@ -53,6 +53,8 @@ scoreboard players set @a mgs.zb.ability_cd 0
 scoreboard players set @a mgs.mp.spectate_timer 0
 tag @a[tag=mgs.give_class_menu] remove mgs.give_class_menu
 
+kill @e[type=minecraft:marker,tag=mgs.death_watch]
+
 # Reset mystery box
 function mgs:v5.0.0/zombies/mystery_box/reset
 kill @e[tag=mgs.mb_presence]

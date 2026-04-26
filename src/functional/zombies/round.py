@@ -18,13 +18,15 @@ execute store result score #zb_round {ns}.data run data get storage {ns}:zombies
 scoreboard players add #zb_round {ns}.data 1
 execute store result storage {ns}:zombies game.round int 1 run scoreboard players get #zb_round {ns}.data
 
-# Calculate zombies to spawn this round: base formula = round * 4 + (player_count - 1) * 2
+# Calculate zombies to spawn this round: min(48, 7 + round) * min(4, player_count)
+# Solo player: r1=8,  r5=12, r10=17, r20=27,  r40=47,  r41+ caps at 48
+# 4+ players:  r1=32, r5=48, r10=68, r20=108, r40=188, r41+ caps at 192
 execute store result score #zb_player_count {ns}.data if entity @a[scores={{{ns}.zb.in_game=1}},gamemode=!spectator]
-scoreboard players remove #zb_player_count {ns}.data 1
-scoreboard players operation #zb_player_count {ns}.data *= #2 {ns}.data
+execute if score #zb_player_count {ns}.data matches 5.. run scoreboard players set #zb_player_count {ns}.data 4
 scoreboard players operation #zb_to_spawn {ns}.data = #zb_round {ns}.data
-scoreboard players operation #zb_to_spawn {ns}.data *= #4 {ns}.data
-scoreboard players operation #zb_to_spawn {ns}.data += #zb_player_count {ns}.data
+scoreboard players add #zb_to_spawn {ns}.data 7
+execute if score #zb_to_spawn {ns}.data matches 49.. run scoreboard players set #zb_to_spawn {ns}.data 48
+scoreboard players operation #zb_to_spawn {ns}.data *= #zb_player_count {ns}.data
 
 # Store zombies to spawn and remaining count
 scoreboard players operation #zb_remaining {ns}.data = #zb_to_spawn {ns}.data
@@ -109,7 +111,8 @@ function {ns}:v{version}/zombies/summon_zombie_at with storage {ns}:temp _zpos
 	# Execution context comes from: spawn_zombie → at @s (spawn marker) → do_spawn_zombie → here.
 	write_versioned_function("zombies/summon_zombie_at", f"""
 # Summon zombie 2 blocks underground with NoAI (rise animation in progress)
-summon minecraft:zombie ~ ~-2 ~ {{Tags:["{ns}.zombie_round","{ns}.gm_entity","{ns}.nukable","{ns}.zb_rising"],CanPickUpLoot:false,PersistenceRequired:true,DeathLootTable:"minecraft:empty",NoAI:1b}}
+# Attach a marker passenger so death can be intercepted before vanilla event 60 (poof particles).
+summon minecraft:zombie ~ ~-2 ~ {{Tags:["{ns}.zombie_round","{ns}.gm_entity","{ns}.nukable","{ns}.zb_rising"],CanPickUpLoot:false,PersistenceRequired:true,DeathLootTable:"minecraft:empty",NoAI:1b,Passengers:[{{id:"minecraft:marker",Tags:["{ns}.death_watch","{ns}.gm_entity"]}}]}}
 
 # Apply type-specific scaling (health, speed, rise timer)
 $execute as @n[tag={ns}.zombie_round,tag=!{ns}.zb_scaled] run function {ns}:v{version}/zombies/types/$(type) {{level:"$(level)"}}
@@ -121,9 +124,12 @@ $execute as @n[tag={ns}.zombie_round,tag=!{ns}.zb_scaled] run function {ns}:v{ve
 
 	## Normal zombie: scale health/speed by level + start rise animation
 	write_versioned_function("zombies/types/normal", f"""
+# Add scaled tag and set level score for scaling functions
 tag @s add {ns}.zb_scaled
-
 $scoreboard players set #zb_level {ns}.data $(level)
+
+# Delay visual death by 20 ticks
+data modify entity @s DeathTime set value -20s
 
 # Level 1: default 20 HP (rounds 1-5) — no changes needed
 # Level 2: 30 HP (rounds 6-10)
@@ -196,6 +202,24 @@ data modify entity @s NoAI set value 0b
 tag @s remove {ns}.zb_rising
 """)
 
+	## Per-tick death watch: intercept zombie death before vanilla event 60 (poof particles)
+	write_versioned_function("zombies/death_watch_tick", f"""
+# Move execution from marker passenger -> vehicle (zombie), then intercept once DeathTime starts.
+execute as @e[type=minecraft:marker,tag={ns}.death_watch] at @s on vehicle if data entity @s {{DeathTime:1s}} run function {ns}:v{version}/zombies/on_zombie_dying
+""")
+
+	## Intercept a dying zombie before DeathTime reaches 20
+	write_versioned_function("zombies/on_zombie_dying", f"""
+# Guard: only process round zombies.
+execute unless entity @s[tag={ns}.zombie_round] run return 0
+
+# Kill the attached death-watch marker while still mounted to avoid orphan buildup.
+kill @n[type=minecraft:marker,tag={ns}.death_watch,distance=..1]
+
+# Remove zombie before vanilla death event 60 can fire.
+tp @s ~ -10000 ~
+""")
+
 	## Spawn tick: spawn zombies on a timer
 	write_versioned_function("zombies/spawn_tick", f"""
 # Decrease spawn timer
@@ -237,15 +261,12 @@ function #{ns}:zombies/on_round_end
 title @a[scores={{{ns}.zb.in_game=1}}] times 10 40 10
 title @a[scores={{{ns}.zb.in_game=1}}] title [{{"text":"Round Complete!","color":"green","bold":true}}]
 
-# Give all players 500 bonus points for surviving the round
-execute as @a[scores={{{ns}.zb.in_game=1}},gamemode=!spectator] run scoreboard players add @s {ns}.zb.points 500
-
 # Announce
 execute store result score #completed_round {ns}.data run data get storage {ns}:zombies game.round
-tellraw @a ["",{{"text":"","color":"dark_green","bold":true}},"🧟 ",{{"text":"Round ","color":"green"}},{{"score":{{"name":"#completed_round","objective":"{ns}.data"}},"color":"gold","bold":true}},{{"text":" complete! +500 points. Next round in 10 seconds...","color":"green"}}]
+tellraw @a ["",{{"text":"","color":"dark_green","bold":true}},"🧟 ",{{"text":"Round ","color":"green"}},{{"score":{{"name":"#completed_round","objective":"{ns}.data"}},"color":"gold","bold":true}},{{"text":" complete! Next round in 5 seconds...","color":"green"}}]
 
-# Schedule next round after 10 seconds
-schedule function {ns}:v{version}/zombies/start_round 200t
+# Schedule next round after 5 seconds
+schedule function {ns}:v{version}/zombies/start_round 5s
 
 # Respawn all bled-out (spectator) players for the next round
 function {ns}:v{version}/zombies/revive/round_respawn
@@ -272,5 +293,16 @@ effect give @e[tag={ns}.zombie_round,tag=!{ns}.zb_near_player] glowing 6 0 true
 
 # Cleanup temp tag
 tag @e[tag={ns}.zb_near_player] remove {ns}.zb_near_player
+""")
+
+	## Hook death watch into the main zombies game tick
+	write_versioned_function("zombies/game_tick", f"""
+# Intercept dying zombies before vanilla death particles are emitted.
+function {ns}:v{version}/zombies/death_watch_tick
+""")
+
+	## Cleanup for round/end bulk-kill paths
+	write_versioned_function("zombies/stop", f"""
+kill @e[type=minecraft:marker,tag={ns}.death_watch]
 """)
 

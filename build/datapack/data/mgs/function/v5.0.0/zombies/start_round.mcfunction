@@ -2,7 +2,7 @@
 #> mgs:v5.0.0/zombies/start_round
 #
 # @within	mgs:v5.0.0/zombies/end_prep
-#			mgs:v5.0.0/zombies/round_complete 200t [ scheduled ]
+#			mgs:v5.0.0/zombies/round_complete 5s [ scheduled ]
 #
 
 # Increment round number
@@ -10,13 +10,15 @@ execute store result score #zb_round mgs.data run data get storage mgs:zombies g
 scoreboard players add #zb_round mgs.data 1
 execute store result storage mgs:zombies game.round int 1 run scoreboard players get #zb_round mgs.data
 
-# Calculate zombies to spawn this round: base formula = round * 4 + (player_count - 1) * 2
+# Calculate zombies to spawn this round: min(48, 7 + round) * min(4, player_count)
+# Solo player: r1=8,  r5=12, r10=17, r20=27,  r40=47,  r41+ caps at 48
+# 4+ players:  r1=32, r5=48, r10=68, r20=108, r40=188, r41+ caps at 192
 execute store result score #zb_player_count mgs.data if entity @a[scores={mgs.zb.in_game=1},gamemode=!spectator]
-scoreboard players remove #zb_player_count mgs.data 1
-scoreboard players operation #zb_player_count mgs.data *= #2 mgs.data
+execute if score #zb_player_count mgs.data matches 5.. run scoreboard players set #zb_player_count mgs.data 4
 scoreboard players operation #zb_to_spawn mgs.data = #zb_round mgs.data
-scoreboard players operation #zb_to_spawn mgs.data *= #4 mgs.data
-scoreboard players operation #zb_to_spawn mgs.data += #zb_player_count mgs.data
+scoreboard players add #zb_to_spawn mgs.data 7
+execute if score #zb_to_spawn mgs.data matches 49.. run scoreboard players set #zb_to_spawn mgs.data 48
+scoreboard players operation #zb_to_spawn mgs.data *= #zb_player_count mgs.data
 
 # Store zombies to spawn and remaining count
 scoreboard players operation #zb_remaining mgs.data = #zb_to_spawn mgs.data

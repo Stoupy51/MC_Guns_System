@@ -8,9 +8,12 @@
 # @args		level (string)
 #
 
+# Add scaled tag and set level score for scaling functions
 tag @s add mgs.zb_scaled
-
 $scoreboard players set #zb_level mgs.data $(level)
+
+# Delay visual death by 20 ticks
+data modify entity @s DeathTime set value -20s
 
 # Level 1: default 20 HP (rounds 1-5) — no changes needed
 # Level 2: 30 HP (rounds 6-10)
