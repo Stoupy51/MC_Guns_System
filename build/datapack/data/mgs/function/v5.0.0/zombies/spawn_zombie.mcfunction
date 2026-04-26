@@ -1,7 +1,7 @@
 
 #> mgs:v5.0.0/zombies/spawn_zombie
 #
-# @within	mgs:v5.0.0/zombies/spawn_tick
+# @within	mgs:v5.0.0/zombies/spawn_batch_tick
 #
 
 # Tag nearby unlocked zombie spawns

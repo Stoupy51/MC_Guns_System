@@ -10,6 +10,9 @@ function mgs:v5.0.0/zombies/revive/tick
 # Zombie Spawning (if there are still zombies to spawn)
 execute if score #zb_to_spawn mgs.data matches 1.. run function mgs:v5.0.0/zombies/spawn_tick
 
+# Rise animation tick for spawning zombies
+execute as @e[tag=mgs.zb_rising] at @s run function mgs:v5.0.0/zombies/zombie_rise_tick
+
 # Boundary enforcement (skip spectators, only if map has bounds)
 execute if score #zb_has_bounds mgs.data matches 1 as @e[tag=mgs.zombie_round] at @s run function mgs:v5.0.0/zombies/check_bounds
 execute if score #zb_has_bounds mgs.data matches 1 as @e[type=player,scores={mgs.zb.in_game=1},gamemode=!creative,gamemode=!spectator] at @s run function mgs:v5.0.0/zombies/check_bounds
@@ -22,6 +25,14 @@ execute if score #zb_alive mgs.data matches 0 if score #zb_to_spawn mgs.data mat
 execute if score #zb_round_grace mgs.data matches 1.. run scoreboard players remove #zb_round_grace mgs.data 1
 execute unless score #zb_round_grace mgs.data matches 1.. store result score #zb_alive_players mgs.data if entity @a[scores={mgs.zb.in_game=1,mgs.zb.downed=0},gamemode=!spectator]
 execute unless score #zb_round_grace mgs.data matches 1.. if score #zb_alive_players mgs.data matches 0 run function mgs:v5.0.0/zombies/game_over
+
+# Stuck zombie glow: count up once all spawns are done (60s = 1200 ticks after last spawn)
+execute if score #zb_to_spawn mgs.data matches 0 run scoreboard players add #zb_stuck_timer mgs.data 1
+execute if score #zb_to_spawn mgs.data matches 1.. run scoreboard players set #zb_stuck_timer mgs.data 0
+# Once threshold reached, tick glow refresh timer (every 5s = 100 ticks → apply glowing for 6s = 120 ticks)
+execute if score #zb_stuck_timer mgs.data matches 1200.. run scoreboard players add #zb_glow_timer mgs.data 1
+execute if score #zb_glow_timer mgs.data matches 100.. run scoreboard players set #zb_glow_timer mgs.data 0
+execute if score #zb_stuck_timer mgs.data matches 1200.. if score #zb_glow_timer mgs.data matches 0 if entity @e[tag=mgs.zombie_round] run function mgs:v5.0.0/zombies/glow_stuck_zombies
 
 # Refresh sidebar every second (20 ticks)
 scoreboard players add #zb_sidebar_timer mgs.data 1

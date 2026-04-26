@@ -21,11 +21,15 @@ scoreboard players operation #zb_to_spawn mgs.data += #zb_player_count mgs.data
 # Store zombies to spawn and remaining count
 scoreboard players operation #zb_remaining mgs.data = #zb_to_spawn mgs.data
 
-# Set spawn timer (spawn a zombie every 2 seconds = 40 ticks)
-scoreboard players set #zb_spawn_timer mgs.data 20
+# Calculate initial spawn timer and batch size for this round
+function mgs:v5.0.0/zombies/calc_spawn_timer
 
 # Grace period: don't check game over for 3 seconds (60 ticks)
 scoreboard players set #zb_round_grace mgs.data 60
+
+# Reset stuck zombie glow timers
+scoreboard players set #zb_stuck_timer mgs.data 0
+scoreboard players set #zb_glow_timer mgs.data 0
 
 # Title
 title @a[scores={mgs.zb.in_game=1}] times 10 40 10

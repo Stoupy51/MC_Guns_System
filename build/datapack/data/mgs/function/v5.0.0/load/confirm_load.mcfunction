@@ -145,6 +145,9 @@ scoreboard objectives add mgs.zb.spawn.gid dummy
 # Sidebar rank scoreboard
 scoreboard objectives add mgs.zb.sb_rank dummy
 
+# Rise animation: ticks remaining for each rising zombie
+scoreboard objectives add mgs.zb.rise_tick dummy
+
 # Initialize zombies game state
 execute unless data storage mgs:zombies game run data modify storage mgs:zombies game set value {state:"lobby",map_id:"",round:0}
 
@@ -376,6 +379,7 @@ scoreboard players set #4 mgs.data 4
 scoreboard players set #5 mgs.data 5
 scoreboard players set #10 mgs.data 10
 scoreboard players set #20 mgs.data 20
+scoreboard players set #50 mgs.data 50
 scoreboard players set #60 mgs.data 60
 scoreboard players set #100 mgs.data 100
 scoreboard players set #200 mgs.data 200

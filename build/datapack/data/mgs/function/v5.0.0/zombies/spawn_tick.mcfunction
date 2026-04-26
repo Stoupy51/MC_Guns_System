@@ -8,12 +8,10 @@
 scoreboard players remove #zb_spawn_timer mgs.data 1
 execute if score #zb_spawn_timer mgs.data matches 1.. run return 0
 
-# Reset timer (spawn every 1 tick)
-scoreboard players set #zb_spawn_timer mgs.data 1
+# Timer fired: recalculate timer and batch size for next cycle
+function mgs:v5.0.0/zombies/calc_spawn_timer
 
-# Spawn a zombie
-function mgs:v5.0.0/zombies/spawn_zombie
-
-# Decrease count to spawn
-scoreboard players remove #zb_to_spawn mgs.data 1
+# Spawn a batch of zombies (batch size depends on round)
+scoreboard players operation #zb_spawn_batch_remaining mgs.data = #zb_spawn_batch mgs.data
+function mgs:v5.0.0/zombies/spawn_batch_tick
 
