@@ -28,7 +28,7 @@ scoreboard players add #downed_id_next mgs.data 1
 scoreboard players operation @s mgs.zb.downed_id = #downed_id_next mgs.data
 
 # Summon mannequin (crouching pose, invulnerable, temp tag for targeting)
-summon minecraft:mannequin ~ ~ ~ {Invulnerable:1b,pose:"sleeping",hide_description:true,Tags:["mgs.downed_mannequin","mgs.downed_new","mgs.gm_entity"]}
+summon minecraft:mannequin ~ ~ ~ {Invulnerable:1b,pose:"swimming",hide_description:true,Tags:["mgs.downed_mannequin","mgs.downed_new","mgs.gm_entity"]}
 
 # Copy the player's downed_id to the mannequin so we can find it uniquely later
 scoreboard players operation @n[tag=mgs.downed_new] mgs.zb.downed_id = @s mgs.zb.downed_id
@@ -56,7 +56,7 @@ tag @e[tag=mgs.downed_hud_new] remove mgs.downed_hud_new
 gamemode spectator @s
 
 # Summon invisible item_display as camera vehicle (spectator will ride it for locked third-person view)
-summon minecraft:item_display ~ ~ ~ {Tags:["mgs.downed_cam","mgs.downed_cam_new","mgs.gm_entity"],teleport_duration:0}
+summon minecraft:item_display ~ ~ ~ {Tags:["mgs.downed_cam","mgs.downed_cam_new","mgs.gm_entity"],teleport_duration:1}
 
 # Copy downed_id to camera entity for unique identification
 scoreboard players operation @n[tag=mgs.downed_cam_new] mgs.zb.downed_id = @s mgs.zb.downed_id
