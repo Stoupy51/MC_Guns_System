@@ -6,10 +6,10 @@
 # Pool can be extended via function tag #mgs:zombies/register_mystery_box_item
 # Uses Bookshelf interaction module for click/hover detection.
 # Positions use compound format: {pos:[x,y,z], rotation:[yaw,0.0f], group_id:N, can_start_on:1b}
-
-# FIXME: A player can steal the box result of another player
 from stewbeet import LootTable, Mem, set_json_encoder, write_versioned_function
 
+from ...config.stats import WEIGHT
+from ...database.weapons import WEAPON_STATS
 from ..helpers import MGS_TAG
 from .common import build_weapon_magazine_data
 
@@ -30,7 +30,7 @@ def generate_mystery_box() -> None:
 	owned_gun_macro_cd: str = "{" + ns + ':{gun:true,stats:{base_weapon:"$(weapon_id)"}}}'
 
 	# Register teddy bear loot table for Mystery Box move animation
-	Mem.ctx.data[ns].loot_tables["i/mystery_box_bear"] = set_json_encoder(LootTable({
+	Mem.ctx.data[ns].loot_tables["zombies/mystery_box_bear"] = set_json_encoder(LootTable({
 		"pools": [{
 			"rolls": 1,
 			"entries": [{
@@ -55,18 +55,23 @@ def generate_mystery_box() -> None:
 	weapon_mag_data: dict[str, tuple[str, int, bool]] = build_weapon_magazine_data()
 	default_pool_weapons: tuple[str, ...] = tuple(weapon_mag_data.keys())
 
-	default_pool_entries: str = ",".join(
-		[
-			(
-				f'{{weapon_id:"{weapon_id}",'
-				f'give_function:"{ns}:v{version}/zombies/mystery_box/default_give/{weapon_id}",'
-				f'magazine_id:"{weapon_mag_data[weapon_id][0]}",'
-				f'mag_count:{weapon_mag_data[weapon_id][1]},'
-				f'consumable:{"1b" if weapon_mag_data[weapon_id][2] else "0b"}}}'
-			)
-			for weapon_id in default_pool_weapons
-		]
-	)
+	pool_entries: list[str] = []
+	pool_weights: list[int] = []
+	for weapon_id in default_pool_weapons:
+		weight: int = WEAPON_STATS.get(weapon_id, {}).get("stats", {}).get(WEIGHT, 5)
+		if weight == 0:
+			continue  # Weight 0 = excluded from mystery box
+		mag_id, mag_count, is_consumable = weapon_mag_data[weapon_id]
+		pool_entries.append(
+			f'{{weapon_id:"{weapon_id}",'
+			f'give_function:"{ns}:v{version}/zombies/mystery_box/default_give/{weapon_id}",'
+			f'magazine_id:"{mag_id}",'
+			f'mag_count:{mag_count},'
+			f'consumable:{"1b" if is_consumable else "0b"}}}'
+		)
+		pool_weights.append(weight)
+	default_pool_entries: str = ",".join(pool_entries)
+	default_pool_weights: str = ",".join(str(w) for w in pool_weights)
 
 	for weapon_id in default_pool_weapons:
 		magazine_id, mag_count, is_consumable = weapon_mag_data[weapon_id]
@@ -78,6 +83,7 @@ function {ns}:v{version}/zombies/wallbuys/process_purchase with storage {ns}:tem
 
 	write_versioned_function("zombies/mystery_box/ensure_default_pool", f"""
 data modify storage {ns}:zombies mystery_box_pool set value [{default_pool_entries}]
+data modify storage {ns}:zombies mystery_box_weights set value [{default_pool_weights}]
 """)
 
 	## Setup: iterate mystery box position compounds, summon interaction entities with Bookshelf
@@ -164,8 +170,9 @@ execute unless data storage {ns}:zombies game{{state:"active"}} run return fail
 # If box is moving: deny
 execute if score #mb_move_timer {ns}.data matches 1.. run return run function {ns}:v{version}/zombies/mystery_box/deny_moving
 
-# If result is ready: collect
-execute if data storage {ns}:zombies mystery_box{{ready:true}} run return run function {ns}:v{version}/zombies/mystery_box/collect
+# If result is ready: only the buyer can collect
+execute if data storage {ns}:zombies mystery_box{{ready:true}} if entity @s[tag={ns}.mb_buyer] run return run function {ns}:v{version}/zombies/mystery_box/collect
+execute if data storage {ns}:zombies mystery_box{{ready:true}} unless entity @s[tag={ns}.mb_buyer] run return run function {ns}:v{version}/zombies/mystery_box/deny_not_your_result
 
 # If already spinning: inform player
 execute if data storage {ns}:zombies mystery_box{{spinning:true}} run return run function {ns}:v{version}/zombies/mystery_box/deny_already_in_use
@@ -232,11 +239,10 @@ execute as @n[tag={ns}.mystery_box_active] at @s run function {ns}:v{version}/zo
 	write_versioned_function("zombies/mystery_box/pick_random_result", f"""
 execute store result score #mb_pool_size {ns}.data run data get storage {ns}:zombies mystery_box_pool
 execute if score #mb_pool_size {ns}.data matches ..0 run return run function {ns}:v{version}/zombies/mystery_box/deny_pool_empty
-execute store result score #mb_pick {ns}.data run random value 0..1000000
-scoreboard players operation #mb_pick {ns}.data %= #mb_pool_size {ns}.data
-data modify storage {ns}:temp _mb_pool_iter set from storage {ns}:zombies mystery_box_pool
-function {ns}:v{version}/zombies/mystery_box/pick_item
-data modify storage {ns}:zombies mystery_box.result set from storage {ns}:temp _mb_pool_iter[0]
+data modify storage bs:in random.weighted_choice.options set from storage {ns}:zombies mystery_box_pool
+data modify storage bs:in random.weighted_choice.weights set from storage {ns}:zombies mystery_box_weights
+function #bs.random:weighted_choice
+data modify storage {ns}:zombies mystery_box.result set from storage bs:out random.weighted_choice
 """)
 
 	write_versioned_function("zombies/mystery_box/check_owned_result", f"""
@@ -244,6 +250,21 @@ scoreboard players set #mb_owned {ns}.data 0
 $execute if items entity @s hotbar.1 *[custom_data~{owned_gun_macro_cd}] run scoreboard players set #mb_owned {ns}.data 1
 $execute if items entity @s hotbar.2 *[custom_data~{owned_gun_macro_cd}] run scoreboard players set #mb_owned {ns}.data 1
 $execute if items entity @s hotbar.3 *[custom_data~{owned_gun_macro_cd}] run scoreboard players set #mb_owned {ns}.data 1
+
+# Also treat as owned if Ray Gun cap (max 2 players) is reached and result is Ray Gun (special case to limit 2 Ray Guns per game)
+execute if score #mb_owned {ns}.data matches 0 run function {ns}:v{version}/zombies/mystery_box/check_ray_gun_cap
+""")
+
+	write_versioned_function("zombies/mystery_box/check_ray_gun_cap", f"""
+# Only applies when the result is ray_gun
+execute unless data storage {ns}:zombies mystery_box.result{{weapon_id:"ray_gun"}} run return fail
+
+# Count ray_gun owners across all in-game players (cap = 2)
+scoreboard players set #mb_ray_gun_owners {ns}.data 0
+execute as @a[scores={{{ns}.zb.in_game=1}}] if items entity @s hotbar.1 *[custom_data~{{{ns}:{{gun:true,stats:{{base_weapon:"ray_gun"}}}}}}] run scoreboard players add #mb_ray_gun_owners {ns}.data 1
+execute as @a[scores={{{ns}.zb.in_game=1}}] if items entity @s hotbar.2 *[custom_data~{{{ns}:{{gun:true,stats:{{base_weapon:"ray_gun"}}}}}}] run scoreboard players add #mb_ray_gun_owners {ns}.data 1
+execute as @a[scores={{{ns}.zb.in_game=1}}] if items entity @s hotbar.3 *[custom_data~{{{ns}:{{gun:true,stats:{{base_weapon:"ray_gun"}}}}}}] run scoreboard players add #mb_ray_gun_owners {ns}.data 1
+execute if score #mb_ray_gun_owners {ns}.data matches 2.. run scoreboard players set #mb_owned {ns}.data 1
 """)
 
 	write_versioned_function("zombies/mystery_box/reroll_owned", f"""
@@ -259,20 +280,14 @@ tellraw @s [{MGS_TAG},{{"text":"You don't have enough points (","color":"red"}},
 function {ns}:v{version}/zombies/feedback/sound_deny
 """)
 
-	write_versioned_function("zombies/mystery_box/deny_pool_empty", f"""
-tellraw @s [{MGS_TAG},{{"text":"Mystery Box pool is empty.","color":"red"}}]
+	write_versioned_function("zombies/mystery_box/deny_not_your_result", f"""
+tellraw @s [{MGS_TAG},{{"text":"Wait for the current player to collect their result.","color":"red"}}]
 function {ns}:v{version}/zombies/feedback/sound_deny
 """)
 
 	write_versioned_function("zombies/mystery_box/deny_all_owned", f"""
 tellraw @s [{MGS_TAG},{{"text":"You already own all available Mystery Box weapons. Points refunded.","color":"yellow"}}]
 function {ns}:v{version}/zombies/feedback/sound_deny
-""")
-
-	write_versioned_function("zombies/mystery_box/pick_item", f"""
-execute if score #mb_pick {ns}.data matches 1.. run data remove storage {ns}:temp _mb_pool_iter[0]
-execute if score #mb_pick {ns}.data matches 1.. run scoreboard players remove #mb_pick {ns}.data 1
-execute if score #mb_pick {ns}.data matches 1.. run function {ns}:v{version}/zombies/mystery_box/pick_item
 """)
 
 	## Display entity: spawns at box level, floats up with interpolation
@@ -342,27 +357,21 @@ execute if score #mb_elapsed {ns}.data matches 50.. if score #mb_mod {ns}.data m
 	## Cycle display: swap the item_display model to simulate cycling
 	write_versioned_function("zombies/mystery_box/cycle_display", f"""
 # Pick a random item from pool to display
-execute store result score #mb_cycle {ns}.data run random value 0..100
-execute store result score #mb_ps {ns}.data run data get storage {ns}:zombies mystery_box_pool
-scoreboard players operation #mb_cycle {ns}.data %= #mb_ps {ns}.data
-
-data modify storage {ns}:temp _mb_cycle_iter set from storage {ns}:zombies mystery_box_pool
-function {ns}:v{version}/zombies/mystery_box/cycle_iterate
+data modify storage bs:in random.weighted_choice.options set from storage {ns}:zombies mystery_box_pool
+data modify storage bs:in random.weighted_choice.weights set from storage {ns}:zombies mystery_box_weights
+function #bs.random:weighted_choice
+data modify storage {ns}:temp _mb_cycle_item set from storage bs:out random.weighted_choice
 
 # Apply the cycled item to the display entity.
-execute if data storage {ns}:temp _mb_cycle_iter[0].weapon_id run function {ns}:v{version}/zombies/mystery_box/cycle_display_weapon with storage {ns}:temp _mb_cycle_iter[0]
-execute unless data storage {ns}:temp _mb_cycle_iter[0].weapon_id run data modify entity @n[tag={ns}.mb_display] item set from storage {ns}:temp _mb_cycle_iter[0].display_item
+execute if data storage {ns}:temp _mb_cycle_item.weapon_id run function {ns}:v{version}/zombies/mystery_box/cycle_display_weapon with storage {ns}:temp _mb_cycle_item
+execute unless data storage {ns}:temp _mb_cycle_item.weapon_id run data modify entity @n[tag={ns}.mb_display] item set from storage {ns}:temp _mb_cycle_item.display_item
 """)
 
 	write_versioned_function("zombies/mystery_box/cycle_display_weapon", f"""
 $loot replace entity @n[tag={ns}.mb_display] contents loot {ns}:i/$(weapon_id)
 """)
 
-	write_versioned_function("zombies/mystery_box/cycle_iterate", f"""
-execute if score #mb_cycle {ns}.data matches 1.. run data remove storage {ns}:temp _mb_cycle_iter[0]
-execute if score #mb_cycle {ns}.data matches 1.. run scoreboard players remove #mb_cycle {ns}.data 1
-execute if score #mb_cycle {ns}.data matches 1.. run function {ns}:v{version}/zombies/mystery_box/cycle_iterate
-""")
+
 
 	## Show result: display the final picked weapon with interpolation
 	write_versioned_function("zombies/mystery_box/show_result", f"""
@@ -391,7 +400,7 @@ $loot replace entity @n[tag={ns}.mb_display] contents loot {ns}:i/$(weapon_id)
 	## Teddy bear result: box is about to move (Black Ops style)
 	write_versioned_function("zombies/mystery_box/show_bear_result", f"""
 # Replace display with teddy bear
-loot replace entity @n[tag={ns}.mb_display] contents loot {ns}:i/mystery_box_bear
+loot replace entity @n[tag={ns}.mb_display] contents loot {ns}:zombies/mystery_box_bear
 
 # Rise bear out of the box (like normal result)
 data merge entity @n[tag={ns}.mb_display] {{transformation:{{translation:[0f,1.5f,0f]}}}}

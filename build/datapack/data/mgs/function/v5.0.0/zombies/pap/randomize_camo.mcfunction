@@ -15,15 +15,10 @@ $data modify storage mgs:temp _pap_camos set from storage mgs:zombies camo_varia
 execute unless data storage mgs:temp _pap_camos[0] run data modify storage mgs:temp _pap_camos set from storage mgs:zombies camo_variants._default
 execute unless data storage mgs:temp _pap_camos[0] run return 0
 
-# Pick random index
-execute store result score #pap_camo_count mgs.data run data get storage mgs:temp _pap_camos
-execute store result score #pap_camo_idx mgs.data run random value 0..999999
-scoreboard players operation #pap_camo_idx mgs.data %= #pap_camo_count mgs.data
-
-# Iterate to the picked index
-scoreboard players set #pap_camo_i mgs.data 0
-data modify storage mgs:temp _pap_camo_pick set from storage mgs:temp _pap_camos[0]
-execute if score #pap_camo_i mgs.data < #pap_camo_idx mgs.data run function mgs:v5.0.0/zombies/pap/camo_pick_advance
+# Pick a random camo variant using Bookshelf
+data modify storage bs:in random.choice.options set from storage mgs:temp _pap_camos
+function #bs.random:choice
+data modify storage mgs:temp _pap_camo_pick set from storage bs:out random.choice
 
 # Build apply data: post-scope weapon id + picked camo name
 data modify storage mgs:temp _pap_camo_data set value {}
