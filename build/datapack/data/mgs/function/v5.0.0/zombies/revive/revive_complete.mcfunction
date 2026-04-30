@@ -17,9 +17,11 @@ execute store result storage mgs:temp rv_x double 0.001 run data get entity @n[t
 execute store result storage mgs:temp rv_y double 0.001 run data get entity @n[tag=mgs.downed_mannequin] Pos[1] 1000
 execute store result storage mgs:temp rv_z double 0.001 run data get entity @n[tag=mgs.downed_mannequin] Pos[2] 1000
 
-# Kill mannequin, HUD display, and camera entity
-kill @n[tag=mgs.downed_mannequin]
-kill @n[tag=mgs.downed_hud]
+# Hide mannequin and HUD by teleporting far below the world (avoids kill animation/drops)
+tp @n[tag=mgs.downed_mannequin] ~ -10000 ~
+tp @n[tag=mgs.downed_hud] ~ -10000 ~
+tag @n[tag=mgs.downed_mannequin] remove mgs.downed_mannequin
+tag @n[tag=mgs.downed_hud] remove mgs.downed_hud
 scoreboard players operation #my_downed_id mgs.data = @s mgs.zb.downed_id
 execute as @e[tag=mgs.downed_cam] if score @s mgs.zb.downed_id = #my_downed_id mgs.data run kill @s
 

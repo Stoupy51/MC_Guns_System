@@ -8,7 +8,7 @@
 
 # Mark player as downed
 scoreboard players set @s mgs.zb.downed 1
-scoreboard players set @s mgs.zb.bleed 600
+scoreboard players set @s mgs.zb.bleed 1200
 scoreboard players set @s mgs.zb.revive_p 0
 tag @s add mgs.downed_spectator
 
@@ -51,6 +51,9 @@ function mgs:v5.0.0/zombies/revive/tp_to_death with storage mgs:temp
 # Remove temp tags so future queries don't accidentally match
 tag @e[tag=mgs.downed_new] remove mgs.downed_new
 tag @e[tag=mgs.downed_hud_new] remove mgs.downed_hud_new
+
+# Remove all perks when going down
+function mgs:v5.0.0/zombies/perks/lose_all
 
 # Player enters spectator mode
 gamemode spectator @s

@@ -92,6 +92,9 @@ execute if score @s {ns}.zb.barrier.state matches 1 run function {ns}:v{version}
 
 # Player collision: push players in barrier's facing direction every tick (both states)
 execute as @a[scores={{{ns}.zb.in_game=1}},distance=..0.75] positioned as @s run tp @s ^ ^ ^0.8
+
+# Downed mannequin collision: same push so crawling players can't clip through barriers
+execute as @e[tag={ns}.downed_mannequin,distance=..0.75] positioned as @s run tp @s ^ ^ ^0.8
 """)
 
 	## Intact barrier tick

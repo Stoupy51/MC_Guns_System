@@ -11,9 +11,11 @@ scoreboard players set @s mgs.zb.downed 0
 scoreboard players set @s mgs.zb.revive_p 0
 tag @s remove mgs.downed_spectator
 
-# Kill mannequin, HUD display, and camera entity
-kill @n[tag=mgs.downed_mannequin]
-kill @n[tag=mgs.downed_hud]
+# Hide mannequin and HUD by teleporting far below the world
+tp @n[tag=mgs.downed_mannequin] ~ -10000 ~
+tp @n[tag=mgs.downed_hud] ~ -10000 ~
+tag @n[tag=mgs.downed_mannequin] remove mgs.downed_mannequin
+tag @n[tag=mgs.downed_hud] remove mgs.downed_hud
 scoreboard players operation #my_downed_id mgs.data = @s mgs.zb.downed_id
 execute as @e[tag=mgs.downed_cam] if score @s mgs.zb.downed_id = #my_downed_id mgs.data run kill @s
 
