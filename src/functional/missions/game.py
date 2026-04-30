@@ -468,6 +468,43 @@ scoreboard players set @a {ns}.mi.deaths 0
 tag @a[tag={ns}.give_class_menu] remove {ns}.give_class_menu
 """)
 
+	## Join Ongoing Mission (late-joiner support)
+	write_versioned_function("missions/join_game", f"""
+# Require an active mission
+execute unless data storage {ns}:missions game{{state:"active"}} run return run tellraw @s [{MGS_TAG},{{"text":"No active mission to join!","color":"red"}}]
+
+# Prevent double-joining
+execute if score @s {ns}.mi.in_game matches 1 run return run tellraw @s [{MGS_TAG},{{"text":"You are already in the mission!","color":"red"}}]
+
+# Tag as in-game and reset stats
+scoreboard players set @s {ns}.mi.in_game 1
+scoreboard players set @s {ns}.mp.team 1
+scoreboard players set @s {ns}.mi.kills 0
+scoreboard players set @s {ns}.mi.deaths 0
+scoreboard players set @s {ns}.mp.death_count 0
+scoreboard players set @s {ns}.mp.spectate_timer 0
+
+# Setup player
+gamemode adventure @s
+effect give @s saturation infinite 255 true
+
+# Enable class menu and show class selection
+tag @s add {ns}.give_class_menu
+function {ns}:v{version}/multiplayer/select_class
+
+# Apply class if already chosen
+execute unless score @s {ns}.mp.class matches 0 run function {ns}:v{version}/multiplayer/apply_class
+
+# Give compass
+item replace entity @s hotbar.3 with compass[custom_data={{{ns}:{{compass:true}}}}]
+
+# Teleport to spawn
+function {ns}:v{version}/missions/respawn_tp
+
+# Announce
+tellraw @a ["",{{"selector":"@s","color":"green"}},{{"text":" joined the mission!","color":"green"}}]
+""")
+
 	# Spawn Point Markers ───────────────────────────────────────
 	write_versioned_function("missions/summon_spawns", f"""
 # Mission spawns

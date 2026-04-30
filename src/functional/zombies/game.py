@@ -382,6 +382,43 @@ scoreboard players set @a {ns}.mp.spectate_timer 0
 tag @a[tag={ns}.give_class_menu] remove {ns}.give_class_menu
 """)
 
+	## Join Ongoing Zombies Game (late-joiner support)
+	write_versioned_function("zombies/join_game", f"""
+# Require an active zombies game
+execute unless data storage {ns}:zombies game{{state:"active"}} run return run tellraw @s [{MGS_TAG},{{"text":"No active zombies game to join!","color":"red"}}]
+
+# Prevent double-joining
+execute if score @s {ns}.zb.in_game matches 1 run return run tellraw @s [{MGS_TAG},{{"text":"You are already in the zombies game!","color":"red"}}]
+
+# Tag as in-game and reset stats
+scoreboard players set @s {ns}.zb.in_game 1
+scoreboard players set @s {ns}.zb.points 500
+scoreboard players set @s {ns}.zb.kills 0
+scoreboard players set @s {ns}.zb.downs 0
+scoreboard players set @s {ns}.zb.passive 0
+scoreboard players set @s {ns}.zb.ability 0
+scoreboard players set @s {ns}.zb.ability_cd 0
+scoreboard players set @s {ns}.mp.spectate_timer 0
+scoreboard players set @s {ns}.mp.death_count 0
+
+# Setup player
+gamemode adventure @s
+effect give @s saturation infinite 255 true
+
+# Enable class menu and show class selection
+tag @s add {ns}.give_class_menu
+function {ns}:v{version}/multiplayer/select_class
+
+# Apply class if already chosen
+execute unless score @s {ns}.mp.class matches 0 run function {ns}:v{version}/multiplayer/apply_class
+
+# Teleport to spawn
+function {ns}:v{version}/zombies/respawn_tp
+
+# Announce
+tellraw @a ["",{{"selector":"@s","color":"dark_green"}},{{"text":" joined the zombies game!","color":"dark_green"}}]
+""")
+
 	# Kill Points ───────────────────────────────────────────────
 	# Hook into the on_kill signal to add points when killing zombies
 	write_versioned_function("zombies/on_kill_signal", f"""
@@ -535,6 +572,7 @@ data modify storage {ns}:temp zb_sb append value [{{selector:"@a[scores={{{ns}.z
 	write_versioned_function("zombies/sidebar_rank_players", sidebar_rank_code)
 
 	write_versioned_function("zombies/build_sidebar", f"""
+scoreboard objectives remove {ns}.sidebar
 $function #bs.sidebar:create {{objective:"{ns}.zb_sidebar",display_name:{{text:"Zombies",color:"dark_green",bold:true}},contents:$(zb_sb)}}
 """)
 

@@ -88,6 +88,9 @@ execute store result score #mp_timer {ns}.data run data get storage {ns}:multipl
 # Tag all non-spectator players as in-game
 scoreboard players set @a {ns}.mp.in_game 1
 
+# Auto-assign teamless players so every participant has a team
+execute as @a[scores={{{ns}.mp.in_game=1}}] unless score @s {ns}.mp.team matches 1.. run function {ns}:v{version}/multiplayer/auto_assign_team
+
 # Enable class menu for multiplayer players
 tag @a[scores={{{ns}.mp.in_game=1}}] add {ns}.give_class_menu
 
@@ -239,11 +242,50 @@ scoreboard objectives remove {ns}.sidebar
 scoreboard objectives setdisplay list
 
 # Clear in-game state
+team leave @a[team={ns}.red]
+team leave @a[team={ns}.blue]
 scoreboard players set @a {ns}.mp.in_game 0
 scoreboard players set @a {ns}.mp.team 0
 scoreboard players set @a {ns}.mp.spectate_timer 0
 scoreboard players set #mp_has_boundary {ns}.data 0
 tag @a[tag={ns}.give_class_menu] remove {ns}.give_class_menu
+""")
+
+	## Join Ongoing Game (late-joiner support)
+	write_versioned_function("multiplayer/join_game", f"""
+# Require an active or preparing game
+execute unless data storage {ns}:multiplayer game{{state:"active"}} unless data storage {ns}:multiplayer game{{state:"preparing"}} run return run tellraw @s [{MGS_TAG},{{"text":"No active game to join!","color":"red"}}]
+
+# Prevent double-joining
+execute if score @s {ns}.mp.in_game matches 1 run return run tellraw @s [{MGS_TAG},{{"text":"You are already in the game!","color":"red"}}]
+
+# Tag as in-game and reset stats
+scoreboard players set @s {ns}.mp.in_game 1
+scoreboard players set @s {ns}.mp.kills 0
+scoreboard players set @s {ns}.mp.deaths 0
+scoreboard players set @s {ns}.mp.death_count 0
+scoreboard players set @s {ns}.mp.spectate_timer 0
+
+# Auto-assign team if not already on one
+execute unless score @s {ns}.mp.team matches 1.. run function {ns}:v{version}/multiplayer/auto_assign_team
+
+# Setup player (match active game settings)
+gamemode adventure @s
+attribute @s minecraft:waypoint_receive_range base set 0.0
+effect give @s saturation infinite 255 true
+
+# Enable class menu and show class selection
+tag @s add {ns}.give_class_menu
+function {ns}:v{version}/multiplayer/select_class
+
+# Apply class if already chosen
+execute unless score @s {ns}.mp.class matches 0 run function {ns}:v{version}/multiplayer/apply_class
+
+# Teleport to spawn
+function {ns}:v{version}/multiplayer/respawn_tp
+
+# Announce
+tellraw @a ["",{{"selector":"@s","color":"yellow"}},{{"text":" joined the game!","color":"yellow"}}]
 """)
 
 	# Simulated Death ───────────────────────────────────────────
@@ -720,6 +762,7 @@ function {ns}:v{version}/multiplayer/build_sidebar_ffa with storage {ns}:temp
 	## FFA sidebar build (macro function)
 	write_versioned_function("multiplayer/build_sidebar_ffa", f"""
 tag @a remove {ns}.ffa_candidate
+scoreboard objectives remove {ns}.sidebar
 $function #bs.sidebar:create {{objective:"{ns}.sidebar",display_name:{{text:"Free For All",color:"gold",bold:true}},contents:$(ffa_sb)}}
 """)
 
@@ -756,11 +799,13 @@ function {ns}:v{version}/multiplayer/build_sidebar_dom with storage {ns}:temp do
 """)
 
 	write_versioned_function("multiplayer/build_sidebar_dom", f"""
+scoreboard objectives remove {ns}.sidebar
 $function #bs.sidebar:create {{objective:"{ns}.sidebar",display_name:{{text:"Domination",color:"gold",bold:true}},contents:[{sb_timer},{sb_spacer},{sb_red},{sb_blue},{sb_spacer},$(a),$(b),$(c),{sb_spacer},{sb_limit}]}}
 """)
 
 	## Hardpoint sidebar — shows team scores + controlling team + time to move
 	write_versioned_function("multiplayer/create_sidebar_hp", f"""
+scoreboard objectives remove {ns}.sidebar
 function #bs.sidebar:create {{objective:"{ns}.sidebar",display_name:{{text:"Hardpoint",color:"gold",bold:true}},contents:[{sb_timer},{sb_spacer},{sb_red},{sb_blue},{sb_spacer},[{{text:" Zone: ",color:"dark_purple"}},{{score:{{name:"#hp_rotate_sec",objective:"{ns}.data"}},color:"white"}},{{text:"s left",color:"gray"}}],{sb_spacer},{sb_limit}]}}
 scoreboard objectives setdisplay sidebar {ns}.sidebar
 """)

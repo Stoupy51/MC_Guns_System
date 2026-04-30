@@ -30,6 +30,21 @@ execute if score #red_count {ns}.data <= #blue_count {ns}.data run function {ns}
 execute if score #red_count {ns}.data > #blue_count {ns}.data run function {ns}:v{version}/multiplayer/join_blue
 """)
 
+	## Show Team Roster
+	sep = '{"text":"============================================","color":"dark_gray"}'
+	write_versioned_function("multiplayer/show_teams", f"""
+tellraw @s {sep}
+tellraw @s ["",["","  👥 ",{{"text":"Team Roster","bold":true}}]]
+tellraw @s {sep}
+execute store result score #team_red_count {ns}.data if entity @a[scores={{{ns}.mp.team=1}}]
+execute store result score #team_blue_count {ns}.data if entity @a[scores={{{ns}.mp.team=2}}]
+execute store result score #team_total {ns}.data if entity @a[scores={{{ns}.mp.team=1..}}]
+tellraw @s ["",{{"text":"  Red Team","color":"red","bold":true}},{{"text":" ("}},{{"score":{{"name":"#team_red_count","objective":"{ns}.data"}}}},{{"text":")"}},{{"text":": "}},{{"selector":"@a[scores={{{ns}.mp.team=1}}]","color":"red"}}]
+tellraw @s ["",{{"text":"  Blue Team","color":"blue","bold":true}},{{"text":" ("}},{{"score":{{"name":"#team_blue_count","objective":"{ns}.data"}}}},{{"text":")"}},{{"text":": "}},{{"selector":"@a[scores={{{ns}.mp.team=2}}]","color":"blue"}}]
+execute unless score #team_total {ns}.data matches 1.. run tellraw @s ["  ",{{"text":"⚠ No players have joined a team yet!","color":"yellow"}}]
+tellraw @s {sep}
+""")  # noqa: E501
+
 	## Team Setup (load)
 	write_load_file(
 f"""

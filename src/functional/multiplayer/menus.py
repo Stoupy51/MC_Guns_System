@@ -27,8 +27,8 @@ def generate_menus() -> None:
 
 	sl_btns = ",".join([
 		btn(str(n), f"/data modify storage {ns}:multiplayer game.score_limit set value {n}",
-			"green" if n == 30 else "yellow", f"Set score limit to {n}")
-		for n in [10, 20, 30, 50, 100, 200]
+			"green" if n == 50 else "yellow", f"Set score limit to {n}")
+		for n in [10, 20, 30, 50, 100, 200, 300, 500]
 	])
 	sl_line = f'["",["","  ",{{"text":"Score Limit"}},": "],{sl_btns}]'
 
@@ -47,12 +47,14 @@ def generate_menus() -> None:
 	start_btn = btn("▶ START", f"/function {ns}:v{version}/multiplayer/start", "green", "Start the match")
 	stop_btn = btn("■ STOP", f"/function {ns}:v{version}/multiplayer/stop", "red", "Stop the match")
 	class_btn = btn("⚔ Classes", f"/function {ns}:v{version}/multiplayer/select_class", "aqua", "Select your class")
+	join_btn = btn("+ Join", f"/function {ns}:v{version}/multiplayer/join_game", "yellow", "Join the ongoing game as a late joiner")
 	team_btn_red = btn("Red", f"/function {ns}:v{version}/multiplayer/join_red", "red", "Join Red Team")
 	team_btn_blue = btn("Blue", f"/function {ns}:v{version}/multiplayer/join_blue", "blue", "Join Blue Team")
-	team_btn_auto = btn("Auto", f"/function {ns}:v{version}/multiplayer/auto_assign_team", "yellow", "Auto-balance assign")
+	team_btn_auto = btn("Auto", f"/execute as @a[sort=random] run function {ns}:v{version}/multiplayer/auto_assign_team", "yellow", "Auto-balance assign")
+	team_btn_roster = btn("👥 Roster", f"/function {ns}:v{version}/multiplayer/show_teams", "dark_aqua", "Show which players have team assignments")
 
-	actions_line = f'["",["","  ",{{"text":"Actions"}},": "],{start_btn}," ",{stop_btn}," ",{class_btn}]'
-	teams_line = f'["",["","  ",{{"text":"Join Team"}},": "],{team_btn_red}," ",{team_btn_blue}," ",{team_btn_auto}]'
+	actions_line = f'["",["","  ",{{"text":"Actions"}},": "],{start_btn}," ",{stop_btn}," ",{class_btn}," ",{join_btn}]'
+	teams_line = f'["",["","  ",{{"text":"Join Team"}},": "],{team_btn_red}," ",{team_btn_blue}," ",{team_btn_auto}," ",{team_btn_roster}]'
 
 	write_versioned_function("multiplayer/setup", f"""
 tellraw @s {sep}

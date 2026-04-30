@@ -14,7 +14,7 @@
 								"minecraft:custom_data": {
 									"mgs": {
 										"gun": true,
-										"stats": {"base_weapon": "m500","fire_mode": "semi","capacity": 5,"reload_time": 22,"cooldown": 18,"pellet_count": 3,"damage": 14,"decay": 0.82,"acc_base": 250,"acc_sneak": 200,"acc_walk": 350,"acc_sprint": 900,"acc_jump": 1600,"switch": 20,"kick": 7,"casing_model": "mgs:12ga3in","casing_n": 25,"casing_t": 100,"casing_b": -200,"casing_offset": {"normal": [-0.35,-0.3,0.7],"zoom": [-0.1,-0.3,0.6]},"pap_stats": {"pap_name": "Voice of Justice","capacity": 8,"remaining_bullets": 8,"reload_time": 16,"cooldown": 14,"pellet_count": 4,"acc_base": 180,"acc_walk": 240,"acc_sprint": 600,"acc_jump": 1200,"switch": 15,"damage": [18,23,29,36,44]},"models": {"normal": "mgs:m500_1","zoom": "mgs:m500_1_zoom"},"remaining_bullets": 5},
+										"stats": {"base_weapon": "m500","fire_mode": "semi","capacity": 5,"reload_time": 22,"cooldown": 18,"pellet_count": 3,"damage": 14,"decay": 0.82,"weight": 4,"acc_base": 250,"acc_sneak": 200,"acc_walk": 350,"acc_sprint": 900,"acc_jump": 1600,"switch": 20,"kick": 7,"casing_model": "mgs:12ga3in","casing_n": 25,"casing_t": 100,"casing_b": -200,"casing_offset": {"normal": [-0.35,-0.3,0.7],"zoom": [-0.1,-0.3,0.6]},"pap_stats": {"pap_name": "Voice of Justice","capacity": 8,"remaining_bullets": 8,"reload_time": 16,"cooldown": 14,"pellet_count": 4,"acc_base": 180,"acc_walk": 240,"acc_sprint": 600,"acc_jump": 1200,"switch": 15,"damage": [28,33,39,46,54]},"models": {"normal": "mgs:m500_1","zoom": "mgs:m500_1_zoom"},"remaining_bullets": 5},
 										"sounds": {"fire": "m500/fire","reload": "m500/reload","pump": "m500/pump","crack": "largest"},
 										"m500_1_red_polymer_stripes": true
 									},

@@ -21,8 +21,10 @@ def generate_missions_menus() -> None:
 	start_btn = btn("▶ START", f"/function {ns}:v{version}/missions/start", "green", "Start the mission")
 	stop_btn = btn("■ STOP", f"/function {ns}:v{version}/missions/stop", "red", "Stop the mission")
 	class_btn = btn("⚔ Classes", f"/function {ns}:v{version}/multiplayer/select_class", "aqua", "Select your class")
+	teams_btn = btn("👥 Roster", f"/function {ns}:v{version}/multiplayer/show_teams", "dark_aqua", "Show which players have team assignments")
+	join_btn = btn("+ Join", f"/function {ns}:v{version}/missions/join_game", "yellow", "Join the ongoing mission as a late joiner")
 
-	actions_line = f'["",["","  ",{{"text":"Actions"}},": "],{start_btn}," ",{stop_btn}," ",{class_btn}]'
+	actions_line = f'["",["","  ",{{"text":"Actions"}},": "],{start_btn}," ",{stop_btn}," ",{class_btn}," ",{teams_btn}," ",{join_btn}]'
 
 	write_versioned_function("missions/setup", f"""
 tellraw @s {sep}
