@@ -87,3 +87,7 @@ execute if score #zb_reviving mgs.data matches 1 unless entity @a[scores={mgs.zb
 # Bleed out: time's up
 execute if score @s mgs.zb.bleed matches ..0 run function mgs:v5.0.0/zombies/revive/bleed_out
 
+# Instant bleed out: if no healthy players remain and no solo QR auto-revive is active,
+# there is no hope of revive — end the suspense immediately
+execute if score #zb_reviving mgs.data matches 0 unless entity @a[scores={mgs.zb.in_game=1,mgs.zb.downed=0},gamemode=!spectator] run function mgs:v5.0.0/zombies/revive/bleed_out
+

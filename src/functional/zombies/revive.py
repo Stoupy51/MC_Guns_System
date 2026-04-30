@@ -228,6 +228,10 @@ execute if score #zb_reviving {ns}.data matches 1 unless entity @a[scores={{{ns}
 
 # Bleed out: time's up
 execute if score @s {ns}.zb.bleed matches ..0 run function {ns}:v{version}/zombies/revive/bleed_out
+
+# Instant bleed out: if no healthy players remain and no solo QR auto-revive is active,
+# there is no hope of revive — end the suspense immediately
+execute if score #zb_reviving {ns}.data matches 0 unless entity @a[scores={{{ns}.zb.in_game=1,{ns}.zb.downed=0}},gamemode=!spectator] run function {ns}:v{version}/zombies/revive/bleed_out
 """)
 
 	# ──────────────────────────────────────────────────────────────────────────
