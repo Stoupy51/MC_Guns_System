@@ -42,5 +42,5 @@ execute if score #has_auto mgs.data matches 1 if data storage mgs:gun all.stats{
 execute if score #has_auto mgs.data matches 1 unless data storage mgs:gun all.stats{fire_mode:"auto"} run data modify storage mgs:temp actionbar.list append value {"text":"A"}
 
 # Add closing bracket
-data modify storage mgs:temp actionbar.list append value {"text":" ]    ","color":"#c77e36"}
+data modify storage mgs:temp actionbar.list append value {"text":" ] ","color":"#c77e36"}
 

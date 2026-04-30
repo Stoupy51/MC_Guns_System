@@ -15,6 +15,9 @@ def main() -> None:
 # Initialize actionbar with fire mode indicator
 function {ns}:v{version}/actionbar/build_fire_mode_indicator
 
+# Add cooldown ready indicator
+function {ns}:v{version}/actionbar/add_cooldown_indicator
+
 # Get capacity and remaining bullets
 execute store result score #capacity {ns}.data run data get storage {ns}:gun all.stats.{CAPACITY}
 execute store result score #remaining {ns}.data run scoreboard players get @s {ns}.{REMAINING_BULLETS}
@@ -71,7 +74,7 @@ execute if score #has_auto {ns}.data matches 1 if data storage {ns}:gun all.stat
 execute if score #has_auto {ns}.data matches 1 unless data storage {ns}:gun all.stats{{{FIRE_MODE}:"auto"}} run data modify storage {ns}:temp actionbar.list append value {{"text":"A"}}
 
 # Add closing bracket
-data modify storage {ns}:temp actionbar.list append value {{"text":" ]    ","color":"#{END_HEX}"}}
+data modify storage {ns}:temp actionbar.list append value {{"text":" ] ","color":"#{END_HEX}"}}
 """)  # noqa: E501
 
     # Add numeric ammo display (for capacity > 15): shows "remaining | reserve"
@@ -114,6 +117,13 @@ scoreboard players add #i {ns}.data 1
 
 # Recurse if not done
 execute if score #i {ns}.data < #capacity {ns}.data run function {ns}:v{version}/actionbar/build_icon_loop
+""")
+
+    # Add cooldown ready indicator: green ● when ready to fire, dark_red ● when on cooldown
+    write_versioned_function("actionbar/add_cooldown_indicator", f"""
+# Append cooldown indicator dot: green if ready, dark_red if on cooldown
+execute if score @s {ns}.cooldown <= #total_tick {ns}.data run data modify storage {ns}:temp actionbar.list append value {{"text":" ● ","color":"green"}}
+execute if score @s {ns}.cooldown > #total_tick {ns}.data run data modify storage {ns}:temp actionbar.list append value {{"text":" ● ","color":"dark_red"}}
 """)
 
     # Display actionbar through Smithed Actionbar with persistent priority.
