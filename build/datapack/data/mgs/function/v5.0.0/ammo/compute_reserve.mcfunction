@@ -13,6 +13,9 @@
 # Skip if not holding a gun
 execute unless data storage mgs:gun all.gun run return fail
 
+# Skip if weapon has no base_weapon (e.g. grenades)
+execute unless data storage mgs:gun all.stats.base_weapon run return fail
+
 # Reset reserve counter
 scoreboard players set @s mgs.reserve_ammo 0
 

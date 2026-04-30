@@ -458,6 +458,9 @@ tag @s remove {ns}.reloading
 # Skip if not holding a gun
 execute unless data storage {ns}:gun all.gun run return fail
 
+# Skip if weapon has no base_weapon (e.g. grenades)
+execute unless data storage {ns}:gun all.stats.{BASE_WEAPON} run return fail
+
 # Reset reserve counter
 scoreboard players set @s {ns}.reserve_ammo 0
 
