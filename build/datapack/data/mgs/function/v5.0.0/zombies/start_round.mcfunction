@@ -33,10 +33,6 @@ scoreboard players set #zb_round_grace mgs.data 60
 scoreboard players set #zb_stuck_timer mgs.data 0
 scoreboard players set #zb_glow_timer mgs.data 0
 
-# Title
-title @a[scores={mgs.zb.in_game=1}] times 10 40 10
-title @a[scores={mgs.zb.in_game=1}] title [{"translate":"mgs.round","color":"red","bold":true},{"score":{"name":"#zb_round","objective":"mgs.data"},"color":"gold","bold":true}]
-
 # Signal round start
 function #mgs:zombies/on_round_start
 

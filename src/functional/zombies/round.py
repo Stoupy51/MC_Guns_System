@@ -41,10 +41,6 @@ scoreboard players set #zb_round_grace {ns}.data 60
 scoreboard players set #zb_stuck_timer {ns}.data 0
 scoreboard players set #zb_glow_timer {ns}.data 0
 
-# Title
-title @a[scores={{{ns}.zb.in_game=1}}] times 10 40 10
-title @a[scores={{{ns}.zb.in_game=1}}] title [{{"text":"Round ","color":"red","bold":true}},{{"score":{{"name":"#zb_round","objective":"{ns}.data"}},"color":"gold","bold":true}}]
-
 # Signal round start
 function #{ns}:zombies/on_round_start
 
@@ -295,10 +291,6 @@ scoreboard players set #zb_to_spawn {ns}.data -1
 
 # Signal round end
 function #{ns}:zombies/on_round_end
-
-# Title
-title @a[scores={{{ns}.zb.in_game=1}}] times 10 40 10
-title @a[scores={{{ns}.zb.in_game=1}}] title [{{"text":"Round Complete!","color":"green","bold":true}}]
 
 # Announce
 execute store result score #completed_round {ns}.data run data get storage {ns}:zombies game.round

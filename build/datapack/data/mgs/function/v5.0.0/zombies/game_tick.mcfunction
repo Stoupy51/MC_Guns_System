@@ -42,6 +42,9 @@ execute if score #zb_sidebar_timer mgs.data matches 0 run function mgs:v5.0.0/zo
 # Cleanup
 kill @e[type=experience_orb]
 
+# Award kill points from totalKillCount delta
+execute as @a[scores={mgs.zb.in_game=1},gamemode=!spectator] run function mgs:v5.0.0/zombies/check_kill_points
+
 # Intercept dying zombies before vanilla death particles are emitted.
 function mgs:v5.0.0/zombies/death_watch_tick
 

@@ -80,13 +80,16 @@ execute store result storage mgs:input with.amount float 0.1 run scoreboard play
 data modify storage mgs:input with.weapon set from storage mgs:gun all
 function mgs:v5.0.0/utils/signal_and_damage
 
-# Signal: on_kill (check if entity died after explosion damage)
+# Signal: on_kill (check if entity died after explosion damage, guard against double-fire)
 # Initialize to 0 (dead) — if entity no longer exists, score stays 0
 scoreboard players set #victim_hp mgs.data 0
 execute store result score #victim_hp mgs.data run data get entity @s Health 100
-execute if score #victim_hp mgs.data matches ..0 run data modify storage mgs:signals on_kill set value {}
-execute if score #victim_hp mgs.data matches ..0 run data modify storage mgs:signals on_kill.explosion set value true
-execute if score #victim_hp mgs.data matches ..0 as @n[tag=mgs.temp_shooter] run function #mgs:signals/on_kill
+scoreboard players set #is_new_kill mgs.data 0
+execute if score #victim_hp mgs.data matches ..0 unless entity @s[tag=mgs.already_killed] run scoreboard players set #is_new_kill mgs.data 1
+execute if score #victim_hp mgs.data matches ..0 unless entity @s[tag=mgs.already_killed] run tag @s add mgs.already_killed
+execute if score #is_new_kill mgs.data matches 1 run data modify storage mgs:signals on_kill set value {}
+execute if score #is_new_kill mgs.data matches 1 run data modify storage mgs:signals on_kill.explosion set value true
+execute if score #is_new_kill mgs.data matches 1 as @n[tag=mgs.temp_shooter] run function #mgs:signals/on_kill
 
 # Remove temporary tag
 tag @n[tag=mgs.temp_shooter] remove mgs.ticking

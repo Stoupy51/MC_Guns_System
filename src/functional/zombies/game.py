@@ -38,6 +38,10 @@ scoreboard objectives add {ns}.zb.sb_rank dummy
 # Rise animation: ticks remaining for each rising zombie
 scoreboard objectives add {ns}.zb.rise_tick dummy
 
+# Kill tracking (vanilla totalKillCount stat) and baseline snapshot
+scoreboard objectives add {ns}.total_kills totalKillCount
+scoreboard objectives add {ns}.zb.prev_kills dummy
+
 # Initialize zombies game state
 execute unless data storage {ns}:zombies game run data modify storage {ns}:zombies game set value {{state:"lobby",map_id:"",round:0}}
 
@@ -45,10 +49,9 @@ execute unless data storage {ns}:zombies game run data modify storage {ns}:zombi
 execute unless data storage {ns}:zombies mystery_box_pool run data modify storage {ns}:zombies mystery_box_pool set value []
 
 # Config: points per kill, points per hit
-# TODO: ZB points hit not used
-# FIXME: when killing a zombie it gives two times zb_points_kill, need to fix
 execute unless score #zb_points_kill {ns}.config matches 1.. run scoreboard players set #zb_points_kill {ns}.config 50
 execute unless score #zb_points_hit {ns}.config matches 1.. run scoreboard players set #zb_points_hit {ns}.config 10
+execute unless score #zb_points_knife_kill {ns}.config matches 1.. run scoreboard players set #zb_points_knife_kill {ns}.config 130
 execute unless score #zb_mystery_box_price {ns}.config matches 1.. run scoreboard players set #zb_mystery_box_price {ns}.config 950
 """)
 
@@ -86,6 +89,9 @@ scoreboard players set @a {ns}.zb.ability_cd 0
 
 # Tag all players as in-game
 scoreboard players set @a {ns}.zb.in_game 1
+
+# Initialize kill tracking baseline (so kills before game start don't count)
+execute as @a run scoreboard players operation @s {ns}.zb.prev_kills = @s {ns}.total_kills
 
 # Reset death counters and spectate timers to prevent false triggers
 scoreboard players set @a {ns}.mp.death_count 0
@@ -378,6 +384,7 @@ scoreboard players set @a {ns}.zb.downs 0
 scoreboard players set @a {ns}.zb.passive 0
 scoreboard players set @a {ns}.zb.ability 0
 scoreboard players set @a {ns}.zb.ability_cd 0
+scoreboard players set @a {ns}.zb.prev_kills 0
 scoreboard players set @a {ns}.mp.spectate_timer 0
 tag @a[tag={ns}.give_class_menu] remove {ns}.give_class_menu
 """)
@@ -405,6 +412,9 @@ scoreboard players set @s {ns}.mp.death_count 0
 gamemode adventure @s
 effect give @s saturation infinite 255 true
 
+# Initialize kill tracking baseline
+scoreboard players operation @s {ns}.zb.prev_kills = @s {ns}.total_kills
+
 # Enable class menu and show class selection
 tag @s add {ns}.give_class_menu
 function {ns}:v{version}/multiplayer/select_class
@@ -420,22 +430,50 @@ tellraw @a ["",{{"selector":"@s","color":"dark_green"}},{{"text":" joined the zo
 """)
 
 	# Kill Points ───────────────────────────────────────────────
-	# Hook into the on_kill signal to add points when killing zombies
-	write_versioned_function("zombies/on_kill_signal", f"""
-# Only process if zombies game is active
-execute unless data storage {ns}:zombies game{{state:"active"}} run return fail
+	# Track kills via totalKillCount stat delta — catches all kill types (bullets, knife, etc.)
+	write_versioned_function("zombies/check_kill_points", f"""
+# Calculate delta kills since last check
+scoreboard players operation #zb_kills_delta {ns}.data = @s {ns}.total_kills
+scoreboard players operation #zb_kills_delta {ns}.data -= @s {ns}.zb.prev_kills
+scoreboard players operation @s {ns}.zb.prev_kills = @s {ns}.total_kills
 
-# Award kill points (with passive bonus if applicable)
-scoreboard players operation @s {ns}.zb.points += #zb_points_kill {ns}.config
+# Skip if no new kills
+execute if score #zb_kills_delta {ns}.data matches ..0 run return 0
+
+# Determine kill type: gun (bullet kill = {{}}) or melee (knife kill = 130)
+scoreboard players set #zb_kill_points {ns}.data 0
+execute if items entity @s weapon.mainhand *[custom_data~{{{{{ns}:{{{{gun:true}}}}}}}}] run scoreboard players operation #zb_kill_points {ns}.data = #zb_points_kill {ns}.config
+execute unless items entity @s weapon.mainhand *[custom_data~{{{{{ns}:{{{{gun:true}}}}}}}}] run scoreboard players operation #zb_kill_points {ns}.data = #zb_points_knife_kill {ns}.config
+
+# Award base points (delta * points_per_kill_type)
+scoreboard players operation #total_kill_points {ns}.data = #zb_kills_delta {ns}.data
+scoreboard players operation #total_kill_points {ns}.data *= #zb_kill_points {ns}.data
+scoreboard players operation @s {ns}.zb.points += #total_kill_points {ns}.data
 
 # Apply x1.2 points passive: add 20% extra
-execute if score @s {ns}.zb.passive matches 1 run scoreboard players operation #additional {ns}.data = #zb_points_kill {ns}.config
+execute if score @s {ns}.zb.passive matches 1 run scoreboard players operation #additional {ns}.data = #total_kill_points {ns}.data
 execute if score @s {ns}.zb.passive matches 1 run scoreboard players operation #additional {ns}.data /= #5 {ns}.data
 execute if score @s {ns}.zb.passive matches 1 run scoreboard players operation @s {ns}.zb.points += #additional {ns}.data
 
-scoreboard players add @s {ns}.zb.kills 1
-""", tags=[f"{ns}:signals/on_kill"])
+# Accumulate kill count
+scoreboard players operation @s {ns}.zb.kills += #zb_kills_delta {ns}.data
+""")
 
+	# Bullet hit points (+10 per bullet hit on a live zombie)
+	write_versioned_function("zombies/on_hit_signal", f"""
+# Only process if zombies game is active & If the hit target is a live round zombie
+execute unless data storage {ns}:zombies game{{{{state:"active"}}}} run return fail
+execute unless entity @s[tag={ns}.zombie_round] run return fail
+
+# Award +10 bullet hit points to the shooter
+scoreboard players operation @n[tag={ns}.ticking] {ns}.zb.points += #zb_points_hit {ns}.config
+""", tags=[f"{ns}:signals/damage"])
+
+	# Hook kill check into game_tick (per in-game player, non-spectator)
+	write_versioned_function("zombies/game_tick", f"""
+# Award kill points from totalKillCount delta
+execute as @a[scores={{{ns}.zb.in_game=1}},gamemode=!spectator] run function {ns}:v{version}/zombies/check_kill_points
+""")
 
 
 

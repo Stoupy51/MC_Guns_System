@@ -12,5 +12,3 @@ playsound mgs:common/lean_out player @s
 scoreboard players reset @s mgs.zoom
 effect clear @s slowness
 
-# TODO optionnal: Find the weapon in inventory and turn it back to non-zoom model
-

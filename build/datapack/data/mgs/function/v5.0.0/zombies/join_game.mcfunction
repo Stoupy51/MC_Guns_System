@@ -25,6 +25,9 @@ scoreboard players set @s mgs.mp.death_count 0
 gamemode adventure @s
 effect give @s saturation infinite 255 true
 
+# Initialize kill tracking baseline
+scoreboard players operation @s mgs.zb.prev_kills = @s mgs.total_kills
+
 # Enable class menu and show class selection
 tag @s add mgs.give_class_menu
 function mgs:v5.0.0/multiplayer/select_class
