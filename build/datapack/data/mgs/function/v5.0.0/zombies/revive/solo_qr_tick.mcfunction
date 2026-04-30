@@ -15,8 +15,13 @@ scoreboard players set #zb_reviving mgs.data 2
 # Increment revive_p at normal speed (1/tick)
 scoreboard players add @s mgs.zb.revive_p 1
 
-# Show solo QR auto-revive actionbar
-data modify storage smithed.actionbar:input message set value {json:[[{"text":"⚡ ","color":"aqua"}, {"translate":"mgs.solo_quick_revive"}],{"score":{"name":"@s","objective":"mgs.zb.revive_p"},"color":"green"},{"text":"/200t","color":"gray"}],priority:"override",freeze:2}
+# Show solo QR auto-revive actionbar with seconds display
+scoreboard players operation #rv_qr_sec mgs.data = @s mgs.zb.revive_p
+scoreboard players operation #rv_qr_sec mgs.data /= #20 mgs.data
+scoreboard players operation #rv_qr_tenth mgs.data = @s mgs.zb.revive_p
+scoreboard players operation #rv_qr_tenth mgs.data %= #20 mgs.data
+scoreboard players operation #rv_qr_tenth mgs.data /= #2 mgs.data
+data modify storage smithed.actionbar:input message set value {json:[[{"text":"⚡ ","color":"aqua"}, {"translate":"mgs.solo_quick_revive"}],{"score":{"name":"#rv_qr_sec","objective":"mgs.data"},"color":"green"},{"text":".","color":"green"},{"score":{"name":"#rv_qr_tenth","objective":"mgs.data"},"color":"green"},{"translate":"mgs.s_10_0s","color":"gray"}],priority:"override",freeze:2}
 function #smithed.actionbar:message
 
 # Auto-revive once threshold reached

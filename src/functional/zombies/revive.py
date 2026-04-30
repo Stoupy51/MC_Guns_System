@@ -4,19 +4,19 @@
 # When a player takes lethal damage, they enter a "downed" state.
 # A mannequin is spawned at their death location wearing their armor/skin.
 # The player spectates the mannequin and can crawl (slow movement via WASD input predicates).
-# Teammates revive by standing near the mannequin. After 30s without revive, player bleed out.
+# Teammates revive by standing near the mannequin. After 60s without revive, player bleed out.
 # Solo + Quick Revive: auto-revive after 10s, up to 3 times.
 from stewbeet import JsonDict, Mem, Predicate, set_json_encoder, write_load_file, write_versioned_function
 
 from ..helpers import MGS_TAG
 
 # Revive configuration
-BLEED_OUT_TICKS: int = 600		# 30 seconds to be revived before bleed out
+BLEED_OUT_TICKS: int = 1200		# 60 seconds to be revived before bleed out
 REVIVE_TICKS: int = 60			# 3 seconds of proximity to revive
 REVIVE_RANGE: float = 2.5		# Blocks range for revive interaction
 QUICK_REVIVE_TICKS: int = 30	# 1.5 seconds with Quick Revive perk
 SOLO_QR_TICKS: int = 200		# 10 seconds for solo Quick Revive auto-revive
-SOLO_QR_MAX: int = 3			# Max solo Quick Revive uses per game
+SOLO_QR_MAX: int = 3			# Total solo self-revives allowed per game; each use requires rebuying QR
 CRAWL_SPEED: float = 0.06		# Blocks per tick for downed crawl movement
 # HUD text display height above mannequin
 HUD_OFFSET_Y_THOUSANDTHS: int = 2000  # 2.0 blocks * 1000 (for scoreboard math)
@@ -98,6 +98,9 @@ function {ns}:v{version}/zombies/revive/tp_to_death with storage {ns}:temp
 # Remove temp tags so future queries don't accidentally match
 tag @e[tag={ns}.downed_new] remove {ns}.downed_new
 tag @e[tag={ns}.downed_hud_new] remove {ns}.downed_hud_new
+
+# Remove all perks when going down
+function {ns}:v{version}/zombies/perks/lose_all
 
 # Player enters spectator mode
 gamemode spectator @s
@@ -195,8 +198,8 @@ execute as @n[tag={ns}.downed_mannequin] at @s run execute as @a[scores={{{ns}.z
 # Solo Quick Revive auto-revive: if no teammates in-game and player has quick_revive + uses left
 execute if score #zb_reviving {ns}.data matches 0 if entity @s[tag={ns}.perk.quick_revive] unless score #zb_solo_revive_block {ns}.data matches 1 run function {ns}:v{version}/zombies/revive/check_solo_qr
 
-# If someone is reviving, increment progress; if not, decay
-execute if score #zb_reviving {ns}.data matches 1.. run scoreboard players add @s {ns}.zb.revive_p 1
+# If teammate is reviving (=1), increment progress; if solo QR (=2), skip (solo_qr_tick handles it); if none (=0), decay
+execute if score #zb_reviving {ns}.data matches 1 run scoreboard players add @s {ns}.zb.revive_p 1
 execute if score #zb_reviving {ns}.data matches 0 if score @s {ns}.zb.revive_p matches 1.. run scoreboard players remove @s {ns}.zb.revive_p 2
 
 # Show bleed timer on downed player's actionbar ONLY when not in solo QR (which has its own actionbar)
@@ -247,8 +250,13 @@ scoreboard players set #zb_reviving {ns}.data 2
 # Increment revive_p at normal speed (1/tick)
 scoreboard players add @s {ns}.zb.revive_p 1
 
-# Show solo QR auto-revive actionbar
-data modify storage smithed.actionbar:input message set value {{json:[{{"text":"⚡ Solo Quick Revive: ","color":"aqua"}},{{"score":{{"name":"@s","objective":"{ns}.zb.revive_p"}},"color":"green"}},{{"text":"/{SOLO_QR_TICKS}t","color":"gray"}}],priority:"override",freeze:2}}
+# Show solo QR auto-revive actionbar with seconds display
+scoreboard players operation #rv_qr_sec {ns}.data = @s {ns}.zb.revive_p
+scoreboard players operation #rv_qr_sec {ns}.data /= #20 {ns}.data
+scoreboard players operation #rv_qr_tenth {ns}.data = @s {ns}.zb.revive_p
+scoreboard players operation #rv_qr_tenth {ns}.data %= #20 {ns}.data
+scoreboard players operation #rv_qr_tenth {ns}.data /= #2 {ns}.data
+data modify storage smithed.actionbar:input message set value {{json:[{{"text":"⚡ Solo Quick Revive: ","color":"aqua"}},{{"score":{{"name":"#rv_qr_sec","objective":"{ns}.data"}},"color":"green"}},{{"text":".","color":"green"}},{{"score":{{"name":"#rv_qr_tenth","objective":"{ns}.data"}},"color":"green"}},{{"text":"s / {SOLO_QR_TICKS // 20}.{(SOLO_QR_TICKS % 20) // 2}s","color":"gray"}}],priority:"override",freeze:2}}
 function #smithed.actionbar:message
 
 # Auto-revive once threshold reached
@@ -260,10 +268,15 @@ execute if score @s {ns}.zb.revive_p matches {SOLO_QR_TICKS}.. run function {ns}
 # Consume one Quick Revive use
 scoreboard players add @s {ns}.zb.qr_uses 1
 
-# If used up all 3, remove the Quick Revive perk
-execute if score @s {ns}.zb.qr_uses matches {SOLO_QR_MAX}.. run tag @s remove {ns}.perk.quick_revive
-execute if score @s {ns}.zb.qr_uses matches {SOLO_QR_MAX}.. run scoreboard players set @s {ns}.zb.perk.quick_revive 0
-execute if score @s {ns}.zb.qr_uses matches {SOLO_QR_MAX}.. run tellraw @s [{MGS_TAG},{{"text":"Quick Revive used up! ({SOLO_QR_MAX}/{SOLO_QR_MAX})","color":"gray"}}]
+# Always remove the QR tag so the player must rebuy each time
+tag @s remove {ns}.perk.quick_revive
+
+# If all {SOLO_QR_MAX} uses are exhausted, keep the perk score at 1 to permanently block rebuy
+# Otherwise reset to 0 so the machine allows a new purchase
+execute if score @s {ns}.zb.qr_uses matches {SOLO_QR_MAX}.. run scoreboard players set @s {ns}.zb.perk.quick_revive 1
+execute unless score @s {ns}.zb.qr_uses matches {SOLO_QR_MAX}.. run scoreboard players set @s {ns}.zb.perk.quick_revive 0
+execute if score @s {ns}.zb.qr_uses matches {SOLO_QR_MAX}.. run tellraw @s [{MGS_TAG},{{"text":"Quick Revive exhausted! ({SOLO_QR_MAX}/{SOLO_QR_MAX}) No more self-revives this game.","color":"dark_red"}}]
+execute unless score @s {ns}.zb.qr_uses matches {SOLO_QR_MAX}.. run tellraw @s [{MGS_TAG},{{"text":"Quick Revive used! ({SOLO_QR_MAX - 1 if SOLO_QR_MAX > 1 else 0}/{SOLO_QR_MAX}) Rebuy for another self-revive.","color":"gray"}}]
 
 # Proceed with revive
 function {ns}:v{version}/zombies/revive/revive_complete
@@ -325,9 +338,11 @@ execute store result storage {ns}:temp rv_x double 0.001 run data get entity @n[
 execute store result storage {ns}:temp rv_y double 0.001 run data get entity @n[tag={ns}.downed_mannequin] Pos[1] 1000
 execute store result storage {ns}:temp rv_z double 0.001 run data get entity @n[tag={ns}.downed_mannequin] Pos[2] 1000
 
-# Kill mannequin, HUD display, and camera entity
-kill @n[tag={ns}.downed_mannequin]
-kill @n[tag={ns}.downed_hud]
+# Hide mannequin and HUD by teleporting far below the world (avoids kill animation/drops)
+tp @n[tag={ns}.downed_mannequin] ~ -10000 ~
+tp @n[tag={ns}.downed_hud] ~ -10000 ~
+tag @n[tag={ns}.downed_mannequin] remove {ns}.downed_mannequin
+tag @n[tag={ns}.downed_hud] remove {ns}.downed_hud
 scoreboard players operation #my_downed_id {ns}.data = @s {ns}.zb.downed_id
 execute as @e[tag={ns}.downed_cam] if score @s {ns}.zb.downed_id = #my_downed_id {ns}.data run kill @s
 
@@ -361,9 +376,11 @@ scoreboard players set @s {ns}.zb.downed 0
 scoreboard players set @s {ns}.zb.revive_p 0
 tag @s remove {ns}.downed_spectator
 
-# Kill mannequin, HUD display, and camera entity
-kill @n[tag={ns}.downed_mannequin]
-kill @n[tag={ns}.downed_hud]
+# Hide mannequin and HUD by teleporting far below the world
+tp @n[tag={ns}.downed_mannequin] ~ -10000 ~
+tp @n[tag={ns}.downed_hud] ~ -10000 ~
+tag @n[tag={ns}.downed_mannequin] remove {ns}.downed_mannequin
+tag @n[tag={ns}.downed_hud] remove {ns}.downed_hud
 scoreboard players operation #my_downed_id {ns}.data = @s {ns}.zb.downed_id
 execute as @e[tag={ns}.downed_cam] if score @s {ns}.zb.downed_id = #my_downed_id {ns}.data run kill @s
 

@@ -56,8 +56,8 @@ execute as @n[tag=mgs.downed_mannequin] at @s run execute as @a[scores={mgs.zb.i
 # Solo Quick Revive auto-revive: if no teammates in-game and player has quick_revive + uses left
 execute if score #zb_reviving mgs.data matches 0 if entity @s[tag=mgs.perk.quick_revive] unless score #zb_solo_revive_block mgs.data matches 1 run function mgs:v5.0.0/zombies/revive/check_solo_qr
 
-# If someone is reviving, increment progress; if not, decay
-execute if score #zb_reviving mgs.data matches 1.. run scoreboard players add @s mgs.zb.revive_p 1
+# If teammate is reviving (=1), increment progress; if solo QR (=2), skip (solo_qr_tick handles it); if none (=0), decay
+execute if score #zb_reviving mgs.data matches 1 run scoreboard players add @s mgs.zb.revive_p 1
 execute if score #zb_reviving mgs.data matches 0 if score @s mgs.zb.revive_p matches 1.. run scoreboard players remove @s mgs.zb.revive_p 2
 
 # Show bleed timer on downed player's actionbar ONLY when not in solo QR (which has its own actionbar)

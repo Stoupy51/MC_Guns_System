@@ -13,3 +13,6 @@ execute if score @s mgs.zb.barrier.state matches 1 run function mgs:v5.0.0/zombi
 # Player collision: push players in barrier's facing direction every tick (both states)
 execute as @a[scores={mgs.zb.in_game=1},distance=..0.75] positioned as @s run tp @s ^ ^ ^0.8
 
+# Downed mannequin collision: same push so crawling players can't clip through barriers
+execute as @e[tag=mgs.downed_mannequin,distance=..0.75] positioned as @s run tp @s ^ ^ ^0.8
+

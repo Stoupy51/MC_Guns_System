@@ -2,18 +2,21 @@
 # Perk Machine System
 # Stationary machines where players buy gameplay-enhancing perks.
 # Available perks and their behavior are defined in PERK_DEFINITIONS.
-from stewbeet import Mem, write_load_file, write_tag, write_versioned_function
+from stewbeet import JsonDict, Mem, write_load_file, write_tag, write_versioned_function
 
 from ..helpers import MGS_TAG
 from .common import deny_not_enough_points_body, deny_requires_power_body, game_active_guard_cmd
 
-PERK_DEFINITIONS: dict[str, dict[str, str | list[str]]] = {
+PERK_DEFINITIONS: dict[str, JsonDict] = {
 	"juggernog": {
 		"display_name": "Juggernog",
 		"message": "🍺 Juggernog! Max HP: 40",
 		"message_color": "dark_red",
 		"commands": [
 			"attribute @s minecraft:max_health base set 40",
+		],
+		"removal_commands": [
+			"attribute @s minecraft:max_health base reset",
 		],
 	},
 	"speed_cola": {
@@ -23,6 +26,9 @@ PERK_DEFINITIONS: dict[str, dict[str, str | list[str]]] = {
 		"commands": [
 			"scoreboard players set @s {ns}.special.quick_reload 50",
 		],
+		"removal_commands": [
+			"scoreboard players set @s {ns}.special.quick_reload 0",
+		],
 	},
 	"double_tap": {
 		"display_name": "Double Tap",
@@ -31,11 +37,20 @@ PERK_DEFINITIONS: dict[str, dict[str, str | list[str]]] = {
 		"commands": [
 			"scoreboard players set @s {ns}.special.additional_shots 1",
 		],
+		"removal_commands": [
+			"scoreboard players set @s {ns}.special.additional_shots 0",
+		],
 	},
 	"quick_revive": {
 		"display_name": "Quick Revive",
 		"message": "💚 Quick Revive! You can revive teammates",
 		"message_color": "aqua",
+		"commands": [
+			"tag @s add {ns}.perk.quick_revive",
+		],
+		# No removal_commands: tag removal and score management handled by solo_qr_complete
+		# persistent_score=True: lose_all does NOT reset this score (solo_qr_complete manages it)
+		"persistent_score": True,
 	},
 	"mule_kick": {
 		"display_name": "Mule Kick",
@@ -227,6 +242,25 @@ $function {ns}:v{version}/zombies/perks/apply/$(perk_id)
 		write_versioned_function(f"zombies/perks/apply/{perk_id}", f"""
 {extra_commands}
 tellraw @s [{MGS_TAG},{{"text":"{perk_data["message"]}","color":"{perk_data["message_color"]}"}}]
+""")
+
+	## Lose all perks: called when a player goes down
+	lose_all_lines: list[str] = []
+	for perk_id, perk_data in PERK_DEFINITIONS.items():
+		removal = perk_data.get("removal_commands", [])
+		if removal:
+			for cmd in removal:
+				lose_all_lines.append(
+					f"execute if score @s {ns}.zb.perk.{perk_id} matches 1 run {cmd.replace('{ns}', ns)}"
+				)
+		# Skip score reset for perks with persistent_score=True (e.g. quick_revive manages its own score)
+		if not perk_data.get("persistent_score", False):
+			lose_all_lines.append(f"scoreboard players set @s {ns}.zb.perk.{perk_id} 0")
+	lose_all_body = "\n".join(lose_all_lines)
+	write_versioned_function("zombies/perks/lose_all", f"""
+# Remove all perk effects and reset scoreboard tracking
+{lose_all_body}
+tellraw @s [{MGS_TAG},{{"text":"All perks lost!","color":"red"}}]
 """)
 
 	## Hover events (executor: "source" = player)
