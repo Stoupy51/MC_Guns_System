@@ -15,8 +15,11 @@ execute if score #any_game_active mgs.data matches 1 run function mgs:v5.0.0/pla
 # Add temporary tag
 tag @s add mgs.ticking
 
-# Compute acoustics (#TODO: Only if player moved enough, and every second not tick)
-function mgs:v5.0.0/sound/compute_acoustics
+# Compute acoustics (only if player moved enough, every second not tick)
+scoreboard players operation #acoustics_phase mgs.data = #total_tick mgs.data
+scoreboard players operation #acoustics_phase mgs.data %= #20 mgs.data
+execute if score #acoustics_phase mgs.data matches 0 if predicate mgs:v5.0.0/is_moving run function mgs:v5.0.0/sound/compute_acoustics
+execute if score #acoustics_phase mgs.data matches 0 unless predicate mgs:v5.0.0/is_on_ground run function mgs:v5.0.0/sound/compute_acoustics
 
 # Change mode if weapon is in offhand
 execute if items entity @s weapon.offhand * run function mgs:v5.0.0/player/mode_check
