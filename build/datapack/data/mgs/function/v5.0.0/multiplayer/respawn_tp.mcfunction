@@ -1,9 +1,8 @@
 
 #> mgs:v5.0.0/multiplayer/respawn_tp
 #
-# @executed	at @s
-#
-# @within	mgs:v5.0.0/multiplayer/actual_respawn
+# @within	mgs:v5.0.0/multiplayer/join_game
+#			mgs:v5.0.0/multiplayer/actual_respawn
 #
 
 # Try general spawns first (prevents spawn camping)
