@@ -14,7 +14,7 @@
 								"minecraft:custom_data": {
 									"mgs": {
 										"gun": true,
-										"stats": {"base_weapon": "m24","fire_mode": "semi","capacity": 5,"reload_time": 25,"reload_mid": 14,"cooldown": 45,"damage": 36,"decay": 0.92,"acc_base": 350,"acc_sneak": 1,"acc_walk": 700,"acc_sprint": 1500,"acc_jump": 3000,"switch": 39,"kick": 4,"casing_model": "mgs:338lapua","casing_n": 100,"casing_t": -50,"casing_b": -100,"casing_offset": {"normal": [-0.35,-0.2,0.6],"zoom": [-0.05,-0.2,0.4]},"pap_stats": {"pap_name": "Isolator of Judgment","capacity": 7,"remaining_bullets": 7,"reload_time": 18,"reload_mid": 10,"cooldown": 32,"acc_base": 250,"acc_walk": 420,"acc_sprint": 1000,"acc_jump": 2000,"switch": 28,"damage": [50,62,76,92,110]},"models": {"normal": "mgs:m24","zoom": "mgs:m24_zoom"},"remaining_bullets": 5},
+										"stats": {"base_weapon": "m24","fire_mode": "semi","capacity": 5,"reload_time": 25,"reload_mid": 14,"cooldown": 45,"damage": 36,"decay": 0.92,"weight": 4,"acc_base": 350,"acc_sneak": 1,"acc_walk": 700,"acc_sprint": 1500,"acc_jump": 3000,"switch": 39,"kick": 4,"casing_model": "mgs:338lapua","casing_n": 100,"casing_t": -50,"casing_b": -100,"casing_offset": {"normal": [-0.35,-0.2,0.6],"zoom": [-0.05,-0.2,0.4]},"pap_stats": {"pap_name": "Isolator of Judgment","capacity": 7,"remaining_bullets": 7,"reload_time": 18,"reload_mid": 10,"cooldown": 32,"acc_base": 250,"acc_walk": 420,"acc_sprint": 1000,"acc_jump": 2000,"switch": 28,"damage": [72,84,98,114,132]},"models": {"normal": "mgs:m24","zoom": "mgs:m24_zoom"},"remaining_bullets": 5},
 										"sounds": {"fire": "m24/fire","reload": "m24/reload","playerbegin": "m24/playerbegin","playerend": "m24/playerend","cycle": "m24/cycle","crack": "largest"},
 										"m24_gold": true
 									},

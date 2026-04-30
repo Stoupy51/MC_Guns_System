@@ -20,8 +20,10 @@ def generate_zombies_menus() -> None:
 	# Action buttons
 	start_btn = btn("▶ START", f"/function {ns}:v{version}/zombies/start", "green", "Start the zombies game")
 	stop_btn = btn("■ STOP", f"/function {ns}:v{version}/zombies/stop", "red", "Stop the zombies game")
+	teams_btn = btn("👥 Roster", f"/function {ns}:v{version}/multiplayer/show_teams", "dark_aqua", "Show which players have team assignments")
+	join_btn = btn("+ Join", f"/function {ns}:v{version}/zombies/join_game", "yellow", "Join the ongoing zombies game as a late joiner")
 
-	actions_line = f'["",["","  ",{{"text":"Actions"}},": "],{start_btn}," ",{stop_btn}]'
+	actions_line = f'["",["","  ",{{"text":"Actions"}},": "],{start_btn}," ",{stop_btn}," ",{teams_btn}," ",{join_btn}]'
 
 	write_versioned_function("zombies/setup", f"""
 tellraw @s {sep}
