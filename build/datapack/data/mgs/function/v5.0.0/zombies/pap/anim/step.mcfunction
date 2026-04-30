@@ -21,6 +21,9 @@ execute if score @s mgs.pap_anim matches 280 run function mgs:v5.0.0/zombies/pap
 # Phase: INSIDE (timer 225..279)
 execute if score @s mgs.pap_anim matches 225..279 run function mgs:v5.0.0/zombies/pap/anim/inside
 
+# Trigger: apply scope+camo cosmetics at midpoint of inside phase (timer=252)
+execute if score @s mgs.pap_anim matches 252 run function mgs:v5.0.0/zombies/pap/anim/apply_cosmetics
+
 # Trigger: start coming-out interpolation at timer=225
 execute if score @s mgs.pap_anim matches 225 run function mgs:v5.0.0/zombies/pap/anim/trigger_coming_out
 
