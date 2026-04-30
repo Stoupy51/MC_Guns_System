@@ -1,7 +1,7 @@
 
 #> mgs:v5.0.0/zombies/inventory/give_respawn_loadout
 #
-# @executed	at @s
+# @executed	as @a[scores={mgs.zb.in_game=1},gamemode=spectator]
 #
 # @within	mgs:v5.0.0/zombies/revive/do_round_respawn
 #

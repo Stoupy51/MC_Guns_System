@@ -238,6 +238,12 @@ scoreboard objectives add mgs.zb.downed dummy
 scoreboard objectives add mgs.zb.bleed dummy
 scoreboard objectives add mgs.zb.revive_p dummy
 
+# Solo Quick Revive uses remaining
+scoreboard objectives add mgs.zb.qr_uses dummy
+
+# Unique downed ID: links player to their specific mannequin
+scoreboard objectives add mgs.zb.downed_id dummy
+
 # Trap entity scoreboards
 scoreboard objectives add mgs.zb.trap.id dummy
 scoreboard objectives add mgs.zb.trap.price dummy
