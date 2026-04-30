@@ -77,8 +77,11 @@ data modify storage {ns}:gun all set from storage {ns}:gun SelectedItem.componen
 # Add temporary tag
 tag @s add {ns}.ticking
 
-# Compute acoustics (#TODO: Only if player moved enough (horizontal movement, vertical movement, reuse predicates), and every second not tick)
-function {ns}:v{version}/sound/compute_acoustics
+# Compute acoustics (only if player moved enough, every second not tick)
+scoreboard players operation #acoustics_phase {ns}.data = #total_tick {ns}.data
+scoreboard players operation #acoustics_phase {ns}.data %= #20 {ns}.data
+execute if score #acoustics_phase {ns}.data matches 0 if predicate {ns}:v{version}/is_moving run function {ns}:v{version}/sound/compute_acoustics
+execute if score #acoustics_phase {ns}.data matches 0 unless predicate {ns}:v{version}/is_on_ground run function {ns}:v{version}/sound/compute_acoustics
 
 # Change mode if weapon is in offhand
 execute if items entity @s weapon.offhand * run function {ns}:v{version}/player/mode_check
