@@ -2,6 +2,8 @@
 #> mgs:v5.0.0/zombies/refresh_sidebar
 #
 # @within	mgs:v5.0.0/zombies/game_tick
+#			mgs:v5.0.0/zombies/check_kill_points
+#			mgs:v5.0.0/zombies/on_hit_signal
 #			mgs:v5.0.0/zombies/create_sidebar
 #			mgs:v5.0.0/zombies/start_round
 #

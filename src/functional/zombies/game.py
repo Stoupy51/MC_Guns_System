@@ -457,6 +457,9 @@ execute if score @s {ns}.zb.passive matches 1 run scoreboard players operation @
 
 # Accumulate kill count
 scoreboard players operation @s {ns}.zb.kills += #zb_kills_delta {ns}.data
+
+# Refresh sidebar
+function {ns}:v{version}/zombies/refresh_sidebar
 """)
 
 	# Bullet hit points (+10 per bullet hit on a live zombie)
@@ -467,6 +470,9 @@ execute unless entity @s[tag={ns}.zombie_round] run return fail
 
 # Award +10 bullet hit points to the shooter
 scoreboard players operation @n[tag={ns}.ticking] {ns}.zb.points += #zb_points_hit {ns}.config
+
+# Refresh sidebar
+function {ns}:v{version}/zombies/refresh_sidebar
 """, tags=[f"{ns}:signals/damage"])
 
 	# Hook kill check into game_tick (per in-game player, non-spectator)

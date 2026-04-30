@@ -11,3 +11,6 @@ execute unless entity @s[tag=mgs.zombie_round] run return fail
 # Award +10 bullet hit points to the shooter
 scoreboard players operation @n[tag=mgs.ticking] mgs.zb.points += #zb_points_hit mgs.config
 
+# Refresh sidebar
+function mgs:v5.0.0/zombies/refresh_sidebar
+
