@@ -5,7 +5,7 @@
 #
 
 # Replace display with teddy bear
-loot replace entity @n[tag=mgs.mb_display] contents loot mgs:i/mystery_box_bear
+loot replace entity @n[tag=mgs.mb_display] contents loot mgs:zombies/mystery_box_bear
 
 # Rise bear out of the box (like normal result)
 data merge entity @n[tag=mgs.mb_display] {transformation:{translation:[0f,1.5f,0f]}}

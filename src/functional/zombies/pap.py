@@ -250,17 +250,10 @@ $data modify storage {ns}:temp _pap_scopes set from storage {ns}:zombies scope_v
 # Skip if weapon has no scope variants or only one (default)
 execute unless data storage {ns}:temp _pap_scopes[1] run return 0
 
-# Count variants
-execute store result score #pap_scope_count {ns}.data run data get storage {ns}:temp _pap_scopes
-
-# Pick random index: random 0..999999 then modulo count
-execute store result score #pap_scope_idx {ns}.data run random value 0..999999
-scoreboard players operation #pap_scope_idx {ns}.data %= #pap_scope_count {ns}.data
-
-# Iterate to the picked index
-scoreboard players set #pap_scope_i {ns}.data 0
-data modify storage {ns}:temp _pap_scope_pick set from storage {ns}:temp _pap_scopes[0]
-execute if score #pap_scope_i {ns}.data < #pap_scope_idx {ns}.data run function {ns}:v{version}/zombies/pap/scope_pick_advance
+# Pick a random scope variant using Bookshelf
+data modify storage bs:in random.choice.options set from storage {ns}:temp _pap_scopes
+function #bs.random:choice
+data modify storage {ns}:temp _pap_scope_pick set from storage bs:out random.choice
 
 # Apply the picked scope to the weapon extract
 data modify storage {ns}:temp _pap_extract.stats.models.normal set from storage {ns}:temp _pap_scope_pick.model
@@ -268,13 +261,6 @@ data modify storage {ns}:temp _pap_extract.stats.models.zoom set from storage {n
 data modify storage {ns}:temp _pap_extract.weapon set from storage {ns}:temp _pap_scope_pick.id
 data remove storage {ns}:temp _pap_extract.stats.scope_level
 execute if data storage {ns}:temp _pap_scope_pick.scope_level run data modify storage {ns}:temp _pap_extract.stats.scope_level set from storage {ns}:temp _pap_scope_pick.scope_level
-""")
-
-	write_versioned_function("zombies/pap/scope_pick_advance", f"""
-data remove storage {ns}:temp _pap_scopes[0]
-scoreboard players add #pap_scope_i {ns}.data 1
-data modify storage {ns}:temp _pap_scope_pick set from storage {ns}:temp _pap_scopes[0]
-execute if score #pap_scope_i {ns}.data < #pap_scope_idx {ns}.data run function {ns}:v{version}/zombies/pap/scope_pick_advance
 """)
 
 	# --- PAP Camo Randomization ---
@@ -286,15 +272,10 @@ $data modify storage {ns}:temp _pap_camos set from storage {ns}:zombies camo_var
 execute unless data storage {ns}:temp _pap_camos[0] run data modify storage {ns}:temp _pap_camos set from storage {ns}:zombies camo_variants._default
 execute unless data storage {ns}:temp _pap_camos[0] run return 0
 
-# Pick random index
-execute store result score #pap_camo_count {ns}.data run data get storage {ns}:temp _pap_camos
-execute store result score #pap_camo_idx {ns}.data run random value 0..999999
-scoreboard players operation #pap_camo_idx {ns}.data %= #pap_camo_count {ns}.data
-
-# Iterate to the picked index
-scoreboard players set #pap_camo_i {ns}.data 0
-data modify storage {ns}:temp _pap_camo_pick set from storage {ns}:temp _pap_camos[0]
-execute if score #pap_camo_i {ns}.data < #pap_camo_idx {ns}.data run function {ns}:v{version}/zombies/pap/camo_pick_advance
+# Pick a random camo variant using Bookshelf
+data modify storage bs:in random.choice.options set from storage {ns}:temp _pap_camos
+function #bs.random:choice
+data modify storage {ns}:temp _pap_camo_pick set from storage bs:out random.choice
 
 # Build apply data: post-scope weapon id + picked camo name
 data modify storage {ns}:temp _pap_camo_data set value {{}}
@@ -304,13 +285,6 @@ data modify storage {ns}:temp _pap_camo_data.camo set from storage {ns}:temp _pa
 data modify storage {ns}:temp _pap_camo_data.weapon_id set from storage {ns}:temp _pap_extract.stats.{BASE_WEAPON}
 execute if data storage {ns}:temp _pap_extract.weapon run data modify storage {ns}:temp _pap_camo_data.weapon_id set from storage {ns}:temp _pap_extract.weapon
 function {ns}:v{version}/zombies/pap/apply_camo with storage {ns}:temp _pap_camo_data
-""")
-
-	write_versioned_function("zombies/pap/camo_pick_advance", f"""
-data remove storage {ns}:temp _pap_camos[0]
-scoreboard players add #pap_camo_i {ns}.data 1
-data modify storage {ns}:temp _pap_camo_pick set from storage {ns}:temp _pap_camos[0]
-execute if score #pap_camo_i {ns}.data < #pap_camo_idx {ns}.data run function {ns}:v{version}/zombies/pap/camo_pick_advance
 """)
 
 	write_versioned_function("zombies/pap/apply_camo", f"""

@@ -77,7 +77,7 @@ data modify storage {ns}:gun all set from storage {ns}:gun SelectedItem.componen
 # Add temporary tag
 tag @s add {ns}.ticking
 
-# Compute acoustics (#TODO: Only if player moved enough, and every second not tick)
+# Compute acoustics (#TODO: Only if player moved enough (horizontal movement, vertical movement, reuse predicates), and every second not tick)
 function {ns}:v{version}/sound/compute_acoustics
 
 # Change mode if weapon is in offhand
