@@ -1,7 +1,7 @@
 
 #> mgs:v5.0.0/multiplayer/start
 #
-# @within	mgs:v5.0.0/multiplayer/setup "hover_event": {"action": "show_text", "value": "Start the match"}}, "\u25b6 START", "]"]," ",[{"text": "[", "color": "red", "click_event": {"action": "suggest_command", "command": "/function mgs:v5.0.0/multiplayer/stop"}, "hover_event": {"action": "show_text", "value": "Stop the match"}}, "\u25a0 STOP", "]"]," ",[{"text": "[", "color": "aqua", "click_event": {"action": "suggest_command", "command": "/function mgs:v5.0.0/multiplayer/select_class"}, "hover_event": {"action": "show_text", "value": "Select your class"}}, "\u2694 Classes", "]"]]
+# @within	mgs:v5.0.0/multiplayer/setup "hover_event": {"action": "show_text", "value": "Start the match"}}, "\u25b6 START", "]"]," ",[{"text": "[", "color": "red", "click_event": {"action": "suggest_command", "command": "/function mgs:v5.0.0/multiplayer/stop"}, "hover_event": {"action": "show_text", "value": "Stop the match"}}, "\u25a0 STOP", "]"]," ",[{"text": "[", "color": "aqua", "click_event": {"action": "suggest_command", "command": "/function mgs:v5.0.0/multiplayer/select_class"}, "hover_event": {"action": "show_text", "value": "Select your class"}}, "\u2694 Classes", "]"]," ",[{"text": "[", "color": "yellow", "click_event": {"action": "suggest_command", "command": "/function mgs:v5.0.0/multiplayer/join_game"}, "hover_event": {"action": "show_text", "value": "Join the ongoing game as a late joiner"}}, "+ Join", "]"]]
 #
 
 # Prevent starting if already active or preparing
@@ -38,6 +38,9 @@ execute store result score #mp_timer mgs.data run data get storage mgs:multiplay
 
 # Tag all non-spectator players as in-game
 scoreboard players set @a mgs.mp.in_game 1
+
+# Auto-assign teamless players so every participant has a team
+execute as @a[scores={mgs.mp.in_game=1}] unless score @s mgs.mp.team matches 1.. run function mgs:v5.0.0/multiplayer/auto_assign_team
 
 # Enable class menu for multiplayer players
 tag @a[scores={mgs.mp.in_game=1}] add mgs.give_class_menu

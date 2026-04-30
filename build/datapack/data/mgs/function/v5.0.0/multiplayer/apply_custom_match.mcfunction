@@ -1,8 +1,6 @@
 
 #> mgs:v5.0.0/multiplayer/apply_custom_match
 #
-# @executed	at @s
-#
 # @within	mgs:v5.0.0/multiplayer/apply_custom_found
 #
 

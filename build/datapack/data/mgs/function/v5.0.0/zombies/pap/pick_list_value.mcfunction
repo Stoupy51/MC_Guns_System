@@ -20,6 +20,7 @@
 #			mgs:v5.0.0/zombies/pap/apply_field/acc_jump
 #			mgs:v5.0.0/zombies/pap/apply_field/switch
 #			mgs:v5.0.0/zombies/pap/apply_field/kick
+#			mgs:v5.0.0/zombies/pap/apply_field/weight
 #			mgs:v5.0.0/zombies/pap/apply_field/proj_speed
 #			mgs:v5.0.0/zombies/pap/apply_field/proj_gravity
 #			mgs:v5.0.0/zombies/pap/apply_field/proj_lifetime

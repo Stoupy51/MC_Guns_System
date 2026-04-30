@@ -1,9 +1,8 @@
 
 #> mgs:v5.0.0/zombies/respawn_tp
 #
-# @executed	at @s
-#
-# @within	mgs:v5.0.0/zombies/perks/trigger_coward
+# @within	mgs:v5.0.0/zombies/join_game
+#			mgs:v5.0.0/zombies/perks/trigger_coward
 #			mgs:v5.0.0/zombies/revive/do_round_respawn
 #
 

@@ -1,9 +1,9 @@
 
 #> mgs:v5.0.0/multiplayer/apply_class
 #
-# @executed	at @s
-#
-# @within	mgs:v5.0.0/multiplayer/start [ at @s ]
+# @within	mgs:v5.0.0/zombies/join_game
+#			mgs:v5.0.0/multiplayer/start [ at @s ]
+#			mgs:v5.0.0/multiplayer/join_game
 #			mgs:v5.0.0/multiplayer/prep_tick [ at @s ]
 #			mgs:v5.0.0/multiplayer/gamemodes/snd/start_round [ as @a[scores={mgs.mp.team=1..2}] & at @s ]
 #			mgs:v5.0.0/multiplayer/set_class
@@ -13,6 +13,7 @@
 #			mgs:v5.0.0/missions/preload_complete [ at @s ]
 #			mgs:v5.0.0/missions/prep_tick [ at @s ]
 #			mgs:v5.0.0/missions/actual_respawn
+#			mgs:v5.0.0/missions/join_game
 #
 
 # Check for custom loadout (negative mp.class = custom loadout ID)
