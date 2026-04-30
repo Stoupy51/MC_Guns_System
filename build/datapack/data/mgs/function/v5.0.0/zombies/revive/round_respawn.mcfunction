@@ -5,5 +5,5 @@
 #
 
 # Respawn all spectator (bled-out) players
-execute as @a[scores={mgs.zb.in_game=1},gamemode=spectator] at @s run function mgs:v5.0.0/zombies/revive/do_round_respawn
+execute as @a[scores={mgs.zb.in_game=1},gamemode=spectator] run function mgs:v5.0.0/zombies/revive/do_round_respawn
 

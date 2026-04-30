@@ -17,6 +17,7 @@
     - After 3 seconds of being revived, the mannequin disappears and the player is teleported out of spectator mode and can play again.
     - If the player is not revived within 30 seconds, they will die and respawn normally, and the mannequin will disappear.
     - To indicate to other players the revive state of the player, we will use text display like in multiplayer domination: always being above the mannequin and slowly changing color from orange to red as the revive timer goes down and turn white while being revived.
+- PAP fire sounds
 - Traps damage:
   - Currently, it does a fixed amount of damage. It should do infinite damage
 - Visuals for mystery box, pap, and perks

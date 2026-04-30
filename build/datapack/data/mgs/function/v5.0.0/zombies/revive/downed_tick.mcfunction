@@ -9,20 +9,60 @@
 # Decrement bleed timer
 scoreboard players remove @s mgs.zb.bleed 1
 
-# Check if any teammate is reviving (within range and looking at downed player)
-# Reset progress if no one is nearby
+# Third-person view: teleport camera item_display to 3 blocks behind and 2 above the mannequin
+# Player rides the item_display, so camera follows it automatically
+scoreboard players operation #my_downed_id mgs.data = @s mgs.zb.downed_id
+execute as @e[tag=mgs.downed_mannequin] if score @s mgs.zb.downed_id = #my_downed_id mgs.data run tag @s add mgs.downed_mine_temp
+execute as @n[tag=mgs.downed_mine_temp] at @s as @e[tag=mgs.downed_cam] if score @s mgs.zb.downed_id = #my_downed_id mgs.data at @n[tag=mgs.downed_mine_temp] run tp @s ^ ^2 ^-3
+tag @e[tag=mgs.downed_mine_temp] remove mgs.downed_mine_temp
+
+# Re-mount player onto camera entity every tick (ensures no accidental dismount)
+scoreboard players operation #my_downed_id mgs.data = @s mgs.zb.downed_id
+execute as @e[tag=mgs.downed_cam] if score @s mgs.zb.downed_id = #my_downed_id mgs.data run tag @s add mgs.downed_mine_temp
+ride @s mount @n[tag=mgs.downed_mine_temp]
+tag @e[tag=mgs.downed_mine_temp] remove mgs.downed_mine_temp
+
+# Sync mannequin yaw + pitch from spectating player's look direction (direct float copy, no score rounding)
+data modify entity @n[tag=mgs.downed_mannequin] Rotation[0] set from entity @s Rotation[0]
+data modify entity @n[tag=mgs.downed_mannequin] Rotation[1] set value 0.0f
+
+# Move mannequin based on spectator player input (slow crawl)
+execute if entity @s[predicate=mgs:v5.0.0/input/forward] as @n[tag=mgs.downed_mannequin] at @s run tp @s ^ ^ ^0.08
+execute if entity @s[predicate=mgs:v5.0.0/input/backward] as @n[tag=mgs.downed_mannequin] at @s run tp @s ^ ^ ^-0.08
+execute if entity @s[predicate=mgs:v5.0.0/input/left] as @n[tag=mgs.downed_mannequin] at @s run tp @s ^0.08 ^ ^
+execute if entity @s[predicate=mgs:v5.0.0/input/right] as @n[tag=mgs.downed_mannequin] at @s run tp @s ^-0.08 ^ ^
+
+# Keep HUD text_display anchored 2 blocks above the mannequin
+execute as @n[tag=mgs.downed_mannequin] at @s run tp @n[tag=mgs.downed_hud] ~ ~2 ~
+
+# Check for revivers (alive non-downed players within range of mannequin)
 scoreboard players set #zb_reviving mgs.data 0
-execute as @a[scores={mgs.zb.in_game=1,mgs.zb.downed=0},gamemode=!spectator,distance=..2.5] facing entity @s eyes run function mgs:v5.0.0/zombies/revive/check_reviver
+execute as @n[tag=mgs.downed_mannequin] at @s run execute as @a[scores={mgs.zb.in_game=1,mgs.zb.downed=0},gamemode=!spectator,distance=..2.5] run scoreboard players set #zb_reviving mgs.data 1
 
-# If someone is actively reviving, increment progress
-execute if score #zb_reviving mgs.data matches 1.. run function mgs:v5.0.0/zombies/revive/progress_tick
+# Solo Quick Revive auto-revive: if no teammates in-game and player has quick_revive + uses left
+execute if score #zb_reviving mgs.data matches 0 if entity @s[tag=mgs.perk.quick_revive] unless score #zb_solo_revive_block mgs.data matches 1 run function mgs:v5.0.0/zombies/revive/check_solo_qr
 
-# If no one is reviving, decay progress
+# If someone is reviving, increment progress; if not, decay
+execute if score #zb_reviving mgs.data matches 1.. run scoreboard players add @s mgs.zb.revive_p 1
 execute if score #zb_reviving mgs.data matches 0 if score @s mgs.zb.revive_p matches 1.. run scoreboard players remove @s mgs.zb.revive_p 2
 
-# Show bleed timer on actionbar
-execute store result storage mgs:temp _rv_sec int 1 run scoreboard players get @s mgs.zb.bleed
-function mgs:v5.0.0/zombies/revive/show_bleed_bar
+# Show bleed timer on downed player's actionbar ONLY when not in solo QR (which has its own actionbar)
+execute if score #zb_reviving mgs.data matches ..1 run data modify storage smithed.actionbar:input message set value {json:[[{"text":"☠ ","color":"red"}, {"translate":"mgs.bleeding_out"}],{"score":{"name":"@s","objective":"mgs.zb.bleed"},"color":"gray"},{"text":"t","color":"dark_gray"}],priority:"override",freeze:2}
+execute if score #zb_reviving mgs.data matches ..1 run function #smithed.actionbar:message
+
+# Show revive progress bar to nearby alive players (from mannequin position)
+execute if score #zb_reviving mgs.data matches 1 as @n[tag=mgs.downed_mannequin] at @s run execute as @a[scores={mgs.zb.in_game=1,mgs.zb.downed=0},gamemode=!spectator,distance=..2.5] run function mgs:v5.0.0/zombies/revive/show_reviver_bar
+
+# Update HUD text_display color based on revive state / bleed timer
+execute if score #zb_reviving mgs.data matches 1.. run function mgs:v5.0.0/zombies/revive/hud_white
+execute if score #zb_reviving mgs.data matches 0 if score @s mgs.zb.bleed matches 400.. run function mgs:v5.0.0/zombies/revive/hud_orange
+execute if score #zb_reviving mgs.data matches 0 if score @s mgs.zb.bleed matches 200..399 run function mgs:v5.0.0/zombies/revive/hud_gold
+execute if score #zb_reviving mgs.data matches 0 if score @s mgs.zb.bleed matches ..199 run function mgs:v5.0.0/zombies/revive/hud_red
+
+# Check revive complete (Quick Revive threshold if reviver nearby has perk; normal otherwise)
+# Use matches 1 (exactly) to exclude solo QR mode (which sets #zb_reviving=2)
+execute if score #zb_reviving mgs.data matches 1 if entity @a[scores={mgs.zb.in_game=1,mgs.zb.downed=0},gamemode=!spectator,distance=..2.5,tag=mgs.perk.quick_revive] if score @s mgs.zb.revive_p matches 30.. run function mgs:v5.0.0/zombies/revive/revive_complete
+execute if score #zb_reviving mgs.data matches 1 unless entity @a[scores={mgs.zb.in_game=1,mgs.zb.downed=0},gamemode=!spectator,distance=..2.5,tag=mgs.perk.quick_revive] if score @s mgs.zb.revive_p matches 60.. run function mgs:v5.0.0/zombies/revive/revive_complete
 
 # Bleed out: time's up
 execute if score @s mgs.zb.bleed matches ..0 run function mgs:v5.0.0/zombies/revive/bleed_out

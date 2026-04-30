@@ -174,6 +174,7 @@ effect give @a[scores={{{ns}.zb.in_game=1}}] saturation infinite 255 true
 execute as @a[scores={{{ns}.zb.in_game=1}}] run attribute @s minecraft:max_health base reset
 execute as @a[scores={{{ns}.zb.in_game=1}}] run attribute @s minecraft:movement_speed base set 0
 execute as @a[scores={{{ns}.zb.in_game=1}}] run attribute @s minecraft:jump_strength base set 0
+execute as @a[scores={{{ns}.zb.in_game=1}}] run attribute @s minecraft:knockback_resistance base set 1024
 
 # Give starting loadout to all players
 execute as @a[scores={{{ns}.zb.in_game=1}}] at @s run function {ns}:v{version}/zombies/inventory/give_starting_loadout
@@ -248,9 +249,14 @@ execute if score #zb_has_bounds {ns}.data matches 1 as @e[type=player,scores={{{
 execute store result score #zb_alive {ns}.data if entity @e[tag={ns}.zombie_round]
 execute if score #zb_alive {ns}.data matches 0 if score #zb_to_spawn {ns}.data matches 0 run function {ns}:v{version}/zombies/round_complete
 
-# Check game over (all players downed or spectator means no one can revive)
+# Check game over: only trigger when no healthy AND no downed players remain
+# - Healthy: downed=0, gamemode=!spectator (playing normally)
+# - Downed: downed=1, gamemode=spectator (spectating their mannequin, can be revived)
+# - Bled out: downed=0, gamemode=spectator (waiting for next round — truly dead)
 execute if score #zb_round_grace {ns}.data matches 1.. run scoreboard players remove #zb_round_grace {ns}.data 1
 execute unless score #zb_round_grace {ns}.data matches 1.. store result score #zb_alive_players {ns}.data if entity @a[scores={{{ns}.zb.in_game=1,{ns}.zb.downed=0}},gamemode=!spectator]
+execute unless score #zb_round_grace {ns}.data matches 1.. store result score #zb_downed_alive {ns}.data if entity @a[scores={{{ns}.zb.in_game=1,{ns}.zb.downed=1}},gamemode=spectator]
+execute unless score #zb_round_grace {ns}.data matches 1.. run scoreboard players operation #zb_alive_players {ns}.data += #zb_downed_alive {ns}.data
 execute unless score #zb_round_grace {ns}.data matches 1.. if score #zb_alive_players {ns}.data matches 0 run function {ns}:v{version}/zombies/game_over
 
 # Stuck zombie glow: count up once all spawns are done (60s = 1200 ticks after last spawn)
