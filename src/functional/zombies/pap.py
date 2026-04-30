@@ -579,8 +579,11 @@ execute unless score @s {ns}.zb.points matches {REPAP_SCOPE_PRICE}.. run return 
 # Deduct points
 scoreboard players remove @s {ns}.zb.points {REPAP_SCOPE_PRICE}
 
-# Save current weapon ID to ensure we get a different scope
+# Save current weapon ID and models before scope randomization (for restore)
 data modify storage {ns}:temp _pap_old_weapon set from storage {ns}:temp _pap_extract.weapon
+data modify storage {ns}:temp _pap_pre_cosm_models set from storage {ns}:temp _pap_extract.stats.models
+data remove storage {ns}:temp _pap_pre_cosm_scope_level
+execute if data storage {ns}:temp _pap_extract.stats.scope_level run data modify storage {ns}:temp _pap_pre_cosm_scope_level set from storage {ns}:temp _pap_extract.stats.scope_level
 
 # Randomize weapon scope (retry until different from current)
 function {ns}:v{version}/zombies/pap/randomize_scope_different with storage {ns}:temp _pap_extract.stats
@@ -588,13 +591,22 @@ function {ns}:v{version}/zombies/pap/randomize_scope_different with storage {ns}
 # Randomize camo (uses new scope weapon_id, same base_weapon)
 function {ns}:v{version}/zombies/pap/randomize_camo with storage {ns}:temp _pap_extract.stats
 
-# Apply updated stats + weapon ID to the item (zb_pap_apply_stats replaces both)
-$item modify entity @s $(slot) {ns}:v{version}/zb_pap_apply_stats
+# Store pending cosmetics (scope + camo) for mid-animation application, keyed by machine ID
+data modify storage {ns}:temp _pap_cosm_store set value {{}}
+execute store result storage {ns}:temp _pap_cosm_store.id int 1 run scoreboard players get @n[tag=bs.interaction.target] {ns}.zb.pap.id
+data modify storage {ns}:temp _pap_cosm_store.models set from storage {ns}:temp _pap_extract.stats.models
+data modify storage {ns}:temp _pap_cosm_store.weapon set from storage {ns}:temp _pap_extract.weapon
+execute if data storage {ns}:temp _pap_extract.stats.scope_level run data modify storage {ns}:temp _pap_cosm_store.scope_level set from storage {ns}:temp _pap_extract.stats.scope_level
+function {ns}:v{version}/zombies/pap/anim/store_cosmetics with storage {ns}:temp _pap_cosm_store
 
-# Update item model to match the new scope + camo
-$data modify storage {ns}:temp _pap_scope_model.slot set value "$(slot)"
-data modify storage {ns}:temp _pap_scope_model.model set from storage {ns}:temp _pap_extract.stats.models.normal
-function {ns}:v{version}/zombies/pap/set_item_model_from_scope with storage {ns}:temp _pap_scope_model
+# Restore original appearance so the item enters the machine with its current look
+data modify storage {ns}:temp _pap_extract.stats.models set from storage {ns}:temp _pap_pre_cosm_models
+data modify storage {ns}:temp _pap_extract.weapon set from storage {ns}:temp _pap_old_weapon
+data remove storage {ns}:temp _pap_extract.stats.scope_level
+execute if data storage {ns}:temp _pap_pre_cosm_scope_level run data modify storage {ns}:temp _pap_extract.stats.scope_level set from storage {ns}:temp _pap_pre_cosm_scope_level
+
+# Apply stats to item (with restored original cosmetics)
+$item modify entity @s $(slot) {ns}:v{version}/zb_pap_apply_stats
 
 # Brief feedback
 tellraw @s [{MGS_TAG},{{"text":"Scope re-rolled! (-{REPAP_SCOPE_PRICE} points)","color":"aqua"}}]
@@ -669,11 +681,28 @@ data modify storage {ns}:temp _pap_old_stats set from storage {ns}:temp _pap_ext
 scoreboard players operation @s {ns}.zb.points -= #pap_price {ns}.data
 function {ns}:v{version}/zombies/pap/apply_runtime_overrides
 
+# Save original weapon ID before scope randomization (for later restore)
+data modify storage {ns}:temp _pap_pre_cosm_weapon set from storage {ns}:temp _pap_extract.weapon
+
 # Randomize weapon scope
 function {ns}:v{version}/zombies/pap/randomize_scope with storage {ns}:temp _pap_extract.stats
 
 # Randomize weapon camo (applied after scope, so camo appends to the scoped weapon id)
 function {ns}:v{version}/zombies/pap/randomize_camo with storage {ns}:temp _pap_extract.stats
+
+# Store pending cosmetics (scope + camo) for mid-animation application, keyed by machine ID
+data modify storage {ns}:temp _pap_cosm_store set value {{}}
+execute store result storage {ns}:temp _pap_cosm_store.id int 1 run scoreboard players get @n[tag=bs.interaction.target] {ns}.zb.pap.id
+data modify storage {ns}:temp _pap_cosm_store.models set from storage {ns}:temp _pap_extract.stats.models
+data modify storage {ns}:temp _pap_cosm_store.weapon set from storage {ns}:temp _pap_extract.weapon
+execute if data storage {ns}:temp _pap_extract.stats.scope_level run data modify storage {ns}:temp _pap_cosm_store.scope_level set from storage {ns}:temp _pap_extract.stats.scope_level
+function {ns}:v{version}/zombies/pap/anim/store_cosmetics with storage {ns}:temp _pap_cosm_store
+
+# Restore original appearance so the item enters the machine with its current look
+data modify storage {ns}:temp _pap_extract.stats.models set from storage {ns}:temp _pap_old_stats.models
+data modify storage {ns}:temp _pap_extract.weapon set from storage {ns}:temp _pap_pre_cosm_weapon
+data remove storage {ns}:temp _pap_extract.stats.scope_level
+execute if data storage {ns}:temp _pap_old_stats.scope_level run data modify storage {ns}:temp _pap_extract.stats.scope_level set from storage {ns}:temp _pap_old_stats.scope_level
 
 # Keep level tracking in the weapon data itself
 execute store result storage {ns}:temp _pap_extract.stats.pap_level int 1 run scoreboard players get #pap_next {ns}.data
@@ -797,6 +826,35 @@ function {ns}:v{version}/zombies/feedback/sound_pap_jingle_sting
 $data modify storage {ns}:zombies pap_anim_slot."$(id)" set value "$(slot)"
 """)
 
+	# Persist scope+camo cosmetics keyed by machine ID (called before animation starts).
+	write_versioned_function("zombies/pap/anim/store_cosmetics", f"""
+$data modify storage {ns}:zombies pap_pending_cosmetics."$(id)" set from storage {ns}:temp _pap_cosm_store
+""")
+
+	# Fetch scope+camo cosmetics for this machine into temp storage.
+	write_versioned_function("zombies/pap/anim/fetch_cosmetics", f"""
+$data modify storage {ns}:temp _pap_pending_cosmetics set from storage {ns}:zombies pap_pending_cosmetics."$(id)"
+""")
+
+	# Apply stored scope+camo cosmetics to the weapon display entity (runs as machine).
+	write_versioned_function("zombies/pap/anim/apply_cosmetics", f"""
+execute store result storage {ns}:temp _pap_cosm_fetch.id int 1 run scoreboard players get @s {ns}.zb.pap.id
+function {ns}:v{version}/zombies/pap/anim/fetch_cosmetics with storage {ns}:temp _pap_cosm_fetch
+execute as @n[tag={ns}.pap_weapon_display,distance=..2] run function {ns}:v{version}/zombies/pap/anim/apply_cosmetics_to_display
+""")
+
+	# Apply scope+camo data from temp storage to the item in this display entity.
+	write_versioned_function("zombies/pap/anim/apply_cosmetics_to_display", f"""
+data modify entity @s item.components."minecraft:custom_data".{ns}.stats.models set from storage {ns}:temp _pap_pending_cosmetics.models
+data remove entity @s item.components."minecraft:custom_data".{ns}.weapon
+execute if data storage {ns}:temp _pap_pending_cosmetics.weapon run data modify entity @s item.components."minecraft:custom_data".{ns}.weapon set from storage {ns}:temp _pap_pending_cosmetics.weapon
+data remove entity @s item.components."minecraft:custom_data".{ns}.stats.scope_level
+execute if data storage {ns}:temp _pap_pending_cosmetics.scope_level run data modify entity @s item.components."minecraft:custom_data".{ns}.stats.scope_level set from storage {ns}:temp _pap_pending_cosmetics.scope_level
+data modify storage {ns}:temp _pap_scope_model.slot set value "contents"
+data modify storage {ns}:temp _pap_scope_model.model set from storage {ns}:temp _pap_pending_cosmetics.models.normal
+function {ns}:v{version}/zombies/pap/set_item_model_from_scope with storage {ns}:temp _pap_scope_model
+""")
+
 	# Main per-machine tick dispatcher (runs as machine when pap_anim >= 1).
 	write_versioned_function("zombies/pap/anim/step", f"""
 # Decrement timer
@@ -813,6 +871,9 @@ execute if score @s {ns}.pap_anim matches 280 run function {ns}:v{version}/zombi
 
 # Phase: INSIDE (timer 225..279)
 execute if score @s {ns}.pap_anim matches 225..279 run function {ns}:v{version}/zombies/pap/anim/inside
+
+# Trigger: apply scope+camo cosmetics at midpoint of inside phase (timer=252)
+execute if score @s {ns}.pap_anim matches 252 run function {ns}:v{version}/zombies/pap/anim/apply_cosmetics
 
 # Trigger: start coming-out interpolation at timer=225
 execute if score @s {ns}.pap_anim matches 225 run function {ns}:v{version}/zombies/pap/anim/trigger_coming_out

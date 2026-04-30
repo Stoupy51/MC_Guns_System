@@ -62,11 +62,28 @@ data modify storage mgs:temp _pap_old_stats set from storage mgs:temp _pap_extra
 scoreboard players operation @s mgs.zb.points -= #pap_price mgs.data
 function mgs:v5.0.0/zombies/pap/apply_runtime_overrides
 
+# Save original weapon ID before scope randomization (for later restore)
+data modify storage mgs:temp _pap_pre_cosm_weapon set from storage mgs:temp _pap_extract.weapon
+
 # Randomize weapon scope
 function mgs:v5.0.0/zombies/pap/randomize_scope with storage mgs:temp _pap_extract.stats
 
 # Randomize weapon camo (applied after scope, so camo appends to the scoped weapon id)
 function mgs:v5.0.0/zombies/pap/randomize_camo with storage mgs:temp _pap_extract.stats
+
+# Store pending cosmetics (scope + camo) for mid-animation application, keyed by machine ID
+data modify storage mgs:temp _pap_cosm_store set value {}
+execute store result storage mgs:temp _pap_cosm_store.id int 1 run scoreboard players get @n[tag=bs.interaction.target] mgs.zb.pap.id
+data modify storage mgs:temp _pap_cosm_store.models set from storage mgs:temp _pap_extract.stats.models
+data modify storage mgs:temp _pap_cosm_store.weapon set from storage mgs:temp _pap_extract.weapon
+execute if data storage mgs:temp _pap_extract.stats.scope_level run data modify storage mgs:temp _pap_cosm_store.scope_level set from storage mgs:temp _pap_extract.stats.scope_level
+function mgs:v5.0.0/zombies/pap/anim/store_cosmetics with storage mgs:temp _pap_cosm_store
+
+# Restore original appearance so the item enters the machine with its current look
+data modify storage mgs:temp _pap_extract.stats.models set from storage mgs:temp _pap_old_stats.models
+data modify storage mgs:temp _pap_extract.weapon set from storage mgs:temp _pap_pre_cosm_weapon
+data remove storage mgs:temp _pap_extract.stats.scope_level
+execute if data storage mgs:temp _pap_old_stats.scope_level run data modify storage mgs:temp _pap_extract.stats.scope_level set from storage mgs:temp _pap_old_stats.scope_level
 
 # Keep level tracking in the weapon data itself
 execute store result storage mgs:temp _pap_extract.stats.pap_level int 1 run scoreboard players get #pap_next mgs.data

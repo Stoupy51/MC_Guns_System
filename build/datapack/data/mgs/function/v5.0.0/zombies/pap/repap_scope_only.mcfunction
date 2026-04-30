@@ -14,8 +14,11 @@ execute unless score @s mgs.zb.points matches 1000.. run return run function mgs
 # Deduct points
 scoreboard players remove @s mgs.zb.points 1000
 
-# Save current weapon ID to ensure we get a different scope
+# Save current weapon ID and models before scope randomization (for restore)
 data modify storage mgs:temp _pap_old_weapon set from storage mgs:temp _pap_extract.weapon
+data modify storage mgs:temp _pap_pre_cosm_models set from storage mgs:temp _pap_extract.stats.models
+data remove storage mgs:temp _pap_pre_cosm_scope_level
+execute if data storage mgs:temp _pap_extract.stats.scope_level run data modify storage mgs:temp _pap_pre_cosm_scope_level set from storage mgs:temp _pap_extract.stats.scope_level
 
 # Randomize weapon scope (retry until different from current)
 function mgs:v5.0.0/zombies/pap/randomize_scope_different with storage mgs:temp _pap_extract.stats
@@ -23,13 +26,22 @@ function mgs:v5.0.0/zombies/pap/randomize_scope_different with storage mgs:temp 
 # Randomize camo (uses new scope weapon_id, same base_weapon)
 function mgs:v5.0.0/zombies/pap/randomize_camo with storage mgs:temp _pap_extract.stats
 
-# Apply updated stats + weapon ID to the item (zb_pap_apply_stats replaces both)
-$item modify entity @s $(slot) mgs:v5.0.0/zb_pap_apply_stats
+# Store pending cosmetics (scope + camo) for mid-animation application, keyed by machine ID
+data modify storage mgs:temp _pap_cosm_store set value {}
+execute store result storage mgs:temp _pap_cosm_store.id int 1 run scoreboard players get @n[tag=bs.interaction.target] mgs.zb.pap.id
+data modify storage mgs:temp _pap_cosm_store.models set from storage mgs:temp _pap_extract.stats.models
+data modify storage mgs:temp _pap_cosm_store.weapon set from storage mgs:temp _pap_extract.weapon
+execute if data storage mgs:temp _pap_extract.stats.scope_level run data modify storage mgs:temp _pap_cosm_store.scope_level set from storage mgs:temp _pap_extract.stats.scope_level
+function mgs:v5.0.0/zombies/pap/anim/store_cosmetics with storage mgs:temp _pap_cosm_store
 
-# Update item model to match the new scope + camo
-$data modify storage mgs:temp _pap_scope_model.slot set value "$(slot)"
-data modify storage mgs:temp _pap_scope_model.model set from storage mgs:temp _pap_extract.stats.models.normal
-function mgs:v5.0.0/zombies/pap/set_item_model_from_scope with storage mgs:temp _pap_scope_model
+# Restore original appearance so the item enters the machine with its current look
+data modify storage mgs:temp _pap_extract.stats.models set from storage mgs:temp _pap_pre_cosm_models
+data modify storage mgs:temp _pap_extract.weapon set from storage mgs:temp _pap_old_weapon
+data remove storage mgs:temp _pap_extract.stats.scope_level
+execute if data storage mgs:temp _pap_pre_cosm_scope_level run data modify storage mgs:temp _pap_extract.stats.scope_level set from storage mgs:temp _pap_pre_cosm_scope_level
+
+# Apply stats to item (with restored original cosmetics)
+$item modify entity @s $(slot) mgs:v5.0.0/zb_pap_apply_stats
 
 # Brief feedback
 tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.scope_re_rolled_1000_points","color":"aqua"}]
