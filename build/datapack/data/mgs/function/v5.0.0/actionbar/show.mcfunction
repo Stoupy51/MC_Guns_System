@@ -9,6 +9,9 @@
 # Initialize actionbar with fire mode indicator
 function mgs:v5.0.0/actionbar/build_fire_mode_indicator
 
+# Add cooldown ready indicator
+function mgs:v5.0.0/actionbar/add_cooldown_indicator
+
 # Get capacity and remaining bullets
 execute store result score #capacity mgs.data run data get storage mgs:gun all.stats.capacity
 execute store result score #remaining mgs.data run scoreboard players get @s mgs.remaining_bullets
