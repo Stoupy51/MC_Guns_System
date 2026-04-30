@@ -14,10 +14,10 @@ scoreboard players operation @s mgs.zb.prev_kills = @s mgs.total_kills
 # Skip if no new kills
 execute if score #zb_kills_delta mgs.data matches ..0 run return 0
 
-# Determine kill type: gun (bullet kill = {}) or melee (knife kill = 130)
+# Determine kill type: gun (bullet kill = 50) or melee (knife kill = 130)
 scoreboard players set #zb_kill_points mgs.data 0
-execute if items entity @s weapon.mainhand *[custom_data~{{mgs:{{gun:true}}}}] run scoreboard players operation #zb_kill_points mgs.data = #zb_points_kill mgs.config
-execute unless items entity @s weapon.mainhand *[custom_data~{{mgs:{{gun:true}}}}] run scoreboard players operation #zb_kill_points mgs.data = #zb_points_knife_kill mgs.config
+execute if items entity @s weapon.mainhand *[custom_data~{mgs:{gun:true}}] run scoreboard players operation #zb_kill_points mgs.data = #zb_points_kill mgs.config
+execute unless items entity @s weapon.mainhand *[custom_data~{mgs:{gun:true}}] run scoreboard players operation #zb_kill_points mgs.data = #zb_points_knife_kill mgs.config
 
 # Award base points (delta * points_per_kill_type)
 scoreboard players operation #total_kill_points mgs.data = #zb_kills_delta mgs.data
