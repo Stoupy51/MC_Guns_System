@@ -135,7 +135,5 @@ execute unless score @s {ns}.zoom matches 1 run return fail
 playsound {ns}:common/lean_out player @s
 scoreboard players reset @s {ns}.zoom
 effect clear @s slowness
-
-# TODO optionnal: Find the weapon in inventory and turn it back to non-zoom model
 """)
 

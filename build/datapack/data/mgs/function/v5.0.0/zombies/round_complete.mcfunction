@@ -10,10 +10,6 @@ scoreboard players set #zb_to_spawn mgs.data -1
 # Signal round end
 function #mgs:zombies/on_round_end
 
-# Title
-title @a[scores={mgs.zb.in_game=1}] times 10 40 10
-title @a[scores={mgs.zb.in_game=1}] title [{"translate":"mgs.round_complete","color":"green","bold":true}]
-
 # Announce
 execute store result score #completed_round mgs.data run data get storage mgs:zombies game.round
 tellraw @a ["",{"text":"","color":"dark_green","bold":true},"🧟 ",{"translate":"mgs.round","color":"green"},{"score":{"name":"#completed_round","objective":"mgs.data"},"color":"gold","bold":true},{"translate":"mgs.complete_next_round_in_5_seconds","color":"green"}]

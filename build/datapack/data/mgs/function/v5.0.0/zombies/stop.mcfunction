@@ -50,6 +50,7 @@ scoreboard players set @a mgs.zb.downs 0
 scoreboard players set @a mgs.zb.passive 0
 scoreboard players set @a mgs.zb.ability 0
 scoreboard players set @a mgs.zb.ability_cd 0
+scoreboard players set @a mgs.zb.prev_kills 0
 scoreboard players set @a mgs.mp.spectate_timer 0
 tag @a[tag=mgs.give_class_menu] remove mgs.give_class_menu
 

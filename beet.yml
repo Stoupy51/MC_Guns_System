@@ -69,7 +69,7 @@ pipeline:
 meta:
     # Enable custom crosshair rendering in shaders (build time)
     # WARNING: When true, players without "Improved Transparency" setting will not see any crosshair
-    mgs_custom_crosshair: False  # TODO: Turn off on environments where MGS is not always used (e.g. Minigames Server)
+    mgs_custom_crosshair: False  # Turn off on environments where MGS is not always used (e.g. Minigames Server)
 
     # Mecha configuration for multiline support and pattern matching
     mecha:

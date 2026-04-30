@@ -1,6 +1,5 @@
 {
 	"values": [
-		"mgs:v5.0.0/zombies/on_kill_signal",
 		"mgs:v5.0.0/multiplayer/on_kill_signal"
 	]
 }

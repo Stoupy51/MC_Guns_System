@@ -372,12 +372,15 @@ data modify storage {ns}:input with.weapon set from storage {ns}:gun all
 execute store result storage {ns}:input with.headshot int 1 run scoreboard players get #is_headshot {ns}.data
 function {ns}:v{version}/utils/signal_and_damage
 
-# Signal: on_kill
+# Signal: on_kill (guard against double-fire on already-dying entities)
 scoreboard players set #victim_hp {ns}.data 0
 execute store result score #victim_hp {ns}.data run data get entity @s Health 100
-execute if score #victim_hp {ns}.data matches ..0 run data modify storage {ns}:signals on_kill set value {{}}
-execute if score #victim_hp {ns}.data matches ..0 run data modify storage {ns}:signals on_kill.weapon set from storage {ns}:gun all
-execute if score #victim_hp {ns}.data matches ..0 as @n[tag={ns}.ticking] run function #{ns}:signals/on_kill
+scoreboard players set #is_new_kill {ns}.data 0
+execute if score #victim_hp {ns}.data matches ..0 unless entity @s[tag={ns}.already_killed] run scoreboard players set #is_new_kill {ns}.data 1
+execute if score #victim_hp {ns}.data matches ..0 unless entity @s[tag={ns}.already_killed] run tag @s add {ns}.already_killed
+execute if score #is_new_kill {ns}.data matches 1 run data modify storage {ns}:signals on_kill set value {{}}
+execute if score #is_new_kill {ns}.data matches 1 run data modify storage {ns}:signals on_kill.weapon set from storage {ns}:gun all
+execute if score #is_new_kill {ns}.data matches 1 as @n[tag={ns}.ticking] run function #{ns}:signals/on_kill
 """)
 
 

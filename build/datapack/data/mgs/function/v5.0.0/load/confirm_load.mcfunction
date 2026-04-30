@@ -148,6 +148,10 @@ scoreboard objectives add mgs.zb.sb_rank dummy
 # Rise animation: ticks remaining for each rising zombie
 scoreboard objectives add mgs.zb.rise_tick dummy
 
+# Kill tracking (vanilla totalKillCount stat) and baseline snapshot
+scoreboard objectives add mgs.total_kills totalKillCount
+scoreboard objectives add mgs.zb.prev_kills dummy
+
 # Initialize zombies game state
 execute unless data storage mgs:zombies game run data modify storage mgs:zombies game set value {state:"lobby",map_id:"",round:0}
 
@@ -155,10 +159,9 @@ execute unless data storage mgs:zombies game run data modify storage mgs:zombies
 execute unless data storage mgs:zombies mystery_box_pool run data modify storage mgs:zombies mystery_box_pool set value []
 
 # Config: points per kill, points per hit
-# TODO: ZB points hit not used
-# FIXME: when killing a zombie it gives two times zb_points_kill, need to fix
 execute unless score #zb_points_kill mgs.config matches 1.. run scoreboard players set #zb_points_kill mgs.config 50
 execute unless score #zb_points_hit mgs.config matches 1.. run scoreboard players set #zb_points_hit mgs.config 10
+execute unless score #zb_points_knife_kill mgs.config matches 1.. run scoreboard players set #zb_points_knife_kill mgs.config 130
 execute unless score #zb_mystery_box_price mgs.config matches 1.. run scoreboard players set #zb_mystery_box_price mgs.config 950
 
 # Pack-a-Punch machine scoreboards

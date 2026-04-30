@@ -34,6 +34,9 @@ scoreboard players set @a mgs.zb.ability_cd 0
 # Tag all players as in-game
 scoreboard players set @a mgs.zb.in_game 1
 
+# Initialize kill tracking baseline (so kills before game start don't count)
+execute as @a run scoreboard players operation @s mgs.zb.prev_kills = @s mgs.total_kills
+
 # Reset death counters and spectate timers to prevent false triggers
 scoreboard players set @a mgs.mp.death_count 0
 scoreboard players set @a mgs.mp.spectate_timer 0
