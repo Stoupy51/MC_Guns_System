@@ -440,10 +440,10 @@ scoreboard players operation @s {ns}.zb.prev_kills = @s {ns}.total_kills
 # Skip if no new kills
 execute if score #zb_kills_delta {ns}.data matches ..0 run return 0
 
-# Determine kill type: gun (bullet kill = {{}}) or melee (knife kill = 130)
+# Determine kill type: gun (bullet kill = 50) or melee (knife kill = 130)
 scoreboard players set #zb_kill_points {ns}.data 0
-execute if items entity @s weapon.mainhand *[custom_data~{{{{{ns}:{{{{gun:true}}}}}}}}] run scoreboard players operation #zb_kill_points {ns}.data = #zb_points_kill {ns}.config
-execute unless items entity @s weapon.mainhand *[custom_data~{{{{{ns}:{{{{gun:true}}}}}}}}] run scoreboard players operation #zb_kill_points {ns}.data = #zb_points_knife_kill {ns}.config
+execute if items entity @s weapon.mainhand *[custom_data~{{{ns}:{{gun:true}}}}] run scoreboard players operation #zb_kill_points {ns}.data = #zb_points_kill {ns}.config
+execute unless items entity @s weapon.mainhand *[custom_data~{{{ns}:{{gun:true}}}}] run scoreboard players operation #zb_kill_points {ns}.data = #zb_points_knife_kill {ns}.config
 
 # Award base points (delta * points_per_kill_type)
 scoreboard players operation #total_kill_points {ns}.data = #zb_kills_delta {ns}.data
@@ -462,7 +462,7 @@ scoreboard players operation @s {ns}.zb.kills += #zb_kills_delta {ns}.data
 	# Bullet hit points (+10 per bullet hit on a live zombie)
 	write_versioned_function("zombies/on_hit_signal", f"""
 # Only process if zombies game is active & If the hit target is a live round zombie
-execute unless data storage {ns}:zombies game{{{{state:"active"}}}} run return fail
+execute unless data storage {ns}:zombies game{{state:"active"}} run return fail
 execute unless entity @s[tag={ns}.zombie_round] run return fail
 
 # Award +10 bullet hit points to the shooter
