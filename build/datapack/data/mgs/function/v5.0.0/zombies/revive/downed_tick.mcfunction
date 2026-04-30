@@ -22,15 +22,29 @@ execute as @e[tag=mgs.downed_cam] if score @s mgs.zb.downed_id = #my_downed_id m
 ride @s mount @n[tag=mgs.downed_mine_temp]
 tag @e[tag=mgs.downed_mine_temp] remove mgs.downed_mine_temp
 
-# Sync mannequin yaw + pitch from spectating player's look direction (direct float copy, no score rounding)
-data modify entity @n[tag=mgs.downed_mannequin] Rotation[0] set from entity @s Rotation[0]
-data modify entity @n[tag=mgs.downed_mannequin] Rotation[1] set value 0.0f
+# Sync mannequin yaw from player look direction — use downed_id to target correct mannequin
+execute as @e[tag=mgs.downed_mannequin] if score @s mgs.zb.downed_id = #my_downed_id mgs.data run tag @s add mgs.downed_mine_temp
+execute as @n[tag=mgs.downed_mine_temp] run data modify entity @s Rotation[0] set from entity @p[tag=mgs.downed_spectator] Rotation[0]
+execute as @n[tag=mgs.downed_mine_temp] run data modify entity @s Rotation[1] set value 0.0f
+tag @e[tag=mgs.downed_mine_temp] remove mgs.downed_mine_temp
 
-# Move mannequin based on spectator player input (slow crawl)
-execute if entity @s[predicate=mgs:v5.0.0/input/forward] as @n[tag=mgs.downed_mannequin] at @s run tp @s ^ ^ ^0.08
-execute if entity @s[predicate=mgs:v5.0.0/input/backward] as @n[tag=mgs.downed_mannequin] at @s run tp @s ^ ^ ^-0.08
-execute if entity @s[predicate=mgs:v5.0.0/input/left] as @n[tag=mgs.downed_mannequin] at @s run tp @s ^0.08 ^ ^
-execute if entity @s[predicate=mgs:v5.0.0/input/right] as @n[tag=mgs.downed_mannequin] at @s run tp @s ^-0.08 ^ ^
+# Move mannequin using Bookshelf motion (smooth, physics-based, no tp stuttering)
+# Zero out velocity first, then accumulate based on active inputs
+execute as @e[tag=mgs.downed_mannequin] if score @s mgs.zb.downed_id = #my_downed_id mgs.data run scoreboard players set @s bs.vel.x 0
+execute as @e[tag=mgs.downed_mannequin] if score @s mgs.zb.downed_id = #my_downed_id mgs.data run scoreboard players set @s bs.vel.y 0
+execute as @e[tag=mgs.downed_mannequin] if score @s mgs.zb.downed_id = #my_downed_id mgs.data run scoreboard players set @s bs.vel.z 0
+
+# Forward/backward: local +Z / -Z (scale: 80 = 0.08 blocks/tick at scale:0.001)
+execute if entity @s[predicate=mgs:v5.0.0/input/forward] as @e[tag=mgs.downed_mannequin] if score @s mgs.zb.downed_id = #my_downed_id mgs.data run scoreboard players set @s bs.vel.z 60
+execute if entity @s[predicate=mgs:v5.0.0/input/backward] as @e[tag=mgs.downed_mannequin] if score @s mgs.zb.downed_id = #my_downed_id mgs.data run scoreboard players set @s bs.vel.z -60
+
+# Left/right: local +X / -X
+execute if entity @s[predicate=mgs:v5.0.0/input/left] as @e[tag=mgs.downed_mannequin] if score @s mgs.zb.downed_id = #my_downed_id mgs.data run scoreboard players set @s bs.vel.x 60
+execute if entity @s[predicate=mgs:v5.0.0/input/right] as @e[tag=mgs.downed_mannequin] if score @s mgs.zb.downed_id = #my_downed_id mgs.data run scoreboard players set @s bs.vel.x -60
+
+# Convert local velocity (relative to mannequin facing) to canonical (world), then apply motion
+execute as @e[tag=mgs.downed_mannequin] if score @s mgs.zb.downed_id = #my_downed_id mgs.data at @s rotated as @s run function #bs.move:local_to_canonical
+execute as @e[tag=mgs.downed_mannequin] if score @s mgs.zb.downed_id = #my_downed_id mgs.data run function #bs.move:set_motion {scale:0.001}
 
 # Keep HUD text_display anchored 2 blocks above the mannequin
 execute as @n[tag=mgs.downed_mannequin] at @s run tp @n[tag=mgs.downed_hud] ~ ~2 ~
@@ -47,7 +61,13 @@ execute if score #zb_reviving mgs.data matches 1.. run scoreboard players add @s
 execute if score #zb_reviving mgs.data matches 0 if score @s mgs.zb.revive_p matches 1.. run scoreboard players remove @s mgs.zb.revive_p 2
 
 # Show bleed timer on downed player's actionbar ONLY when not in solo QR (which has its own actionbar)
-execute if score #zb_reviving mgs.data matches ..1 run data modify storage smithed.actionbar:input message set value {json:[[{"text":"☠ ","color":"red"}, {"translate":"mgs.bleeding_out"}],{"score":{"name":"@s","objective":"mgs.zb.bleed"},"color":"gray"},{"text":"t","color":"dark_gray"}],priority:"override",freeze:2}
+# Compute display: whole seconds and tenths digit (sec = bleed/20, tenth = (bleed%20)/2)
+execute if score #zb_reviving mgs.data matches ..1 run scoreboard players operation #rv_disp_sec mgs.data = @s mgs.zb.bleed
+execute if score #zb_reviving mgs.data matches ..1 run scoreboard players operation #rv_disp_sec mgs.data /= #20 mgs.data
+execute if score #zb_reviving mgs.data matches ..1 run scoreboard players operation #rv_disp_tenth mgs.data = @s mgs.zb.bleed
+execute if score #zb_reviving mgs.data matches ..1 run scoreboard players operation #rv_disp_tenth mgs.data %= #20 mgs.data
+execute if score #zb_reviving mgs.data matches ..1 run scoreboard players operation #rv_disp_tenth mgs.data /= #2 mgs.data
+execute if score #zb_reviving mgs.data matches ..1 run data modify storage smithed.actionbar:input message set value {json:[[{"text":"☠ ","color":"red"}, {"translate":"mgs.bleeding_out"}],{"score":{"name":"#rv_disp_sec","objective":"mgs.data"},"color":"gray"},{"text":".","color":"gray"},{"score":{"name":"#rv_disp_tenth","objective":"mgs.data"},"color":"gray"},{"text":"s","color":"dark_gray"}],priority:"override",freeze:2}
 execute if score #zb_reviving mgs.data matches ..1 run function #smithed.actionbar:message
 
 # Show revive progress bar to nearby alive players (from mannequin position)

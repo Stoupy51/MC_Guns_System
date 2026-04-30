@@ -17,7 +17,7 @@ REVIVE_RANGE: float = 2.5		# Blocks range for revive interaction
 QUICK_REVIVE_TICKS: int = 30	# 1.5 seconds with Quick Revive perk
 SOLO_QR_TICKS: int = 200		# 10 seconds for solo Quick Revive auto-revive
 SOLO_QR_MAX: int = 3			# Max solo Quick Revive uses per game
-CRAWL_SPEED: float = 0.08		# Blocks per tick for downed crawl movement
+CRAWL_SPEED: float = 0.06		# Blocks per tick for downed crawl movement
 # HUD text display height above mannequin
 HUD_OFFSET_Y_THOUSANDTHS: int = 2000  # 2.0 blocks * 1000 (for scoreboard math)
 
@@ -75,7 +75,7 @@ scoreboard players add #downed_id_next {ns}.data 1
 scoreboard players operation @s {ns}.zb.downed_id = #downed_id_next {ns}.data
 
 # Summon mannequin (crouching pose, invulnerable, temp tag for targeting)
-summon minecraft:mannequin ~ ~ ~ {{Invulnerable:1b,pose:"sleeping",hide_description:true,Tags:["{ns}.downed_mannequin","{ns}.downed_new","{ns}.gm_entity"]}}
+summon minecraft:mannequin ~ ~ ~ {{Invulnerable:1b,pose:"swimming",hide_description:true,Tags:["{ns}.downed_mannequin","{ns}.downed_new","{ns}.gm_entity"]}}
 
 # Copy the player's downed_id to the mannequin so we can find it uniquely later
 scoreboard players operation @n[tag={ns}.downed_new] {ns}.zb.downed_id = @s {ns}.zb.downed_id
@@ -161,15 +161,29 @@ execute as @e[tag={ns}.downed_cam] if score @s {ns}.zb.downed_id = #my_downed_id
 ride @s mount @n[tag={ns}.downed_mine_temp]
 tag @e[tag={ns}.downed_mine_temp] remove {ns}.downed_mine_temp
 
-# Sync mannequin yaw + pitch from spectating player's look direction (direct float copy, no score rounding)
-data modify entity @n[tag={ns}.downed_mannequin] Rotation[0] set from entity @s Rotation[0]
-data modify entity @n[tag={ns}.downed_mannequin] Rotation[1] set value 0.0f
+# Sync mannequin yaw from player look direction — use downed_id to target correct mannequin
+execute as @e[tag={ns}.downed_mannequin] if score @s {ns}.zb.downed_id = #my_downed_id {ns}.data run tag @s add {ns}.downed_mine_temp
+execute as @n[tag={ns}.downed_mine_temp] run data modify entity @s Rotation[0] set from entity @p[tag={ns}.downed_spectator] Rotation[0]
+execute as @n[tag={ns}.downed_mine_temp] run data modify entity @s Rotation[1] set value 0.0f
+tag @e[tag={ns}.downed_mine_temp] remove {ns}.downed_mine_temp
 
-# Move mannequin based on spectator player input (slow crawl)
-execute if entity @s[predicate={ns}:v{version}/input/forward] as @n[tag={ns}.downed_mannequin] at @s run tp @s ^ ^ ^{CRAWL_SPEED}
-execute if entity @s[predicate={ns}:v{version}/input/backward] as @n[tag={ns}.downed_mannequin] at @s run tp @s ^ ^ ^-{CRAWL_SPEED}
-execute if entity @s[predicate={ns}:v{version}/input/left] as @n[tag={ns}.downed_mannequin] at @s run tp @s ^{CRAWL_SPEED} ^ ^
-execute if entity @s[predicate={ns}:v{version}/input/right] as @n[tag={ns}.downed_mannequin] at @s run tp @s ^-{CRAWL_SPEED} ^ ^
+# Move mannequin using Bookshelf motion (smooth, physics-based, no tp stuttering)
+# Zero out velocity first, then accumulate based on active inputs
+execute as @e[tag={ns}.downed_mannequin] if score @s {ns}.zb.downed_id = #my_downed_id {ns}.data run scoreboard players set @s bs.vel.x 0
+execute as @e[tag={ns}.downed_mannequin] if score @s {ns}.zb.downed_id = #my_downed_id {ns}.data run scoreboard players set @s bs.vel.y 0
+execute as @e[tag={ns}.downed_mannequin] if score @s {ns}.zb.downed_id = #my_downed_id {ns}.data run scoreboard players set @s bs.vel.z 0
+
+# Forward/backward: local +Z / -Z (scale: 80 = 0.08 blocks/tick at scale:0.001)
+execute if entity @s[predicate={ns}:v{version}/input/forward] as @e[tag={ns}.downed_mannequin] if score @s {ns}.zb.downed_id = #my_downed_id {ns}.data run scoreboard players set @s bs.vel.z {int(CRAWL_SPEED * 1000)}
+execute if entity @s[predicate={ns}:v{version}/input/backward] as @e[tag={ns}.downed_mannequin] if score @s {ns}.zb.downed_id = #my_downed_id {ns}.data run scoreboard players set @s bs.vel.z -{int(CRAWL_SPEED * 1000)}
+
+# Left/right: local +X / -X
+execute if entity @s[predicate={ns}:v{version}/input/left] as @e[tag={ns}.downed_mannequin] if score @s {ns}.zb.downed_id = #my_downed_id {ns}.data run scoreboard players set @s bs.vel.x {int(CRAWL_SPEED * 1000)}
+execute if entity @s[predicate={ns}:v{version}/input/right] as @e[tag={ns}.downed_mannequin] if score @s {ns}.zb.downed_id = #my_downed_id {ns}.data run scoreboard players set @s bs.vel.x -{int(CRAWL_SPEED * 1000)}
+
+# Convert local velocity (relative to mannequin facing) to canonical (world), then apply motion
+execute as @e[tag={ns}.downed_mannequin] if score @s {ns}.zb.downed_id = #my_downed_id {ns}.data at @s rotated as @s run function #bs.move:local_to_canonical
+execute as @e[tag={ns}.downed_mannequin] if score @s {ns}.zb.downed_id = #my_downed_id {ns}.data run function #bs.move:set_motion {{scale:0.001}}
 
 # Keep HUD text_display anchored 2 blocks above the mannequin
 execute as @n[tag={ns}.downed_mannequin] at @s run tp @n[tag={ns}.downed_hud] ~ ~2 ~
@@ -186,7 +200,13 @@ execute if score #zb_reviving {ns}.data matches 1.. run scoreboard players add @
 execute if score #zb_reviving {ns}.data matches 0 if score @s {ns}.zb.revive_p matches 1.. run scoreboard players remove @s {ns}.zb.revive_p 2
 
 # Show bleed timer on downed player's actionbar ONLY when not in solo QR (which has its own actionbar)
-execute if score #zb_reviving {ns}.data matches ..1 run data modify storage smithed.actionbar:input message set value {{json:[{{"text":"☠ Bleeding out: ","color":"red"}},{{"score":{{"name":"@s","objective":"{ns}.zb.bleed"}},"color":"gray"}},{{"text":"t","color":"dark_gray"}}],priority:"override",freeze:2}}
+# Compute display: whole seconds and tenths digit (sec = bleed/20, tenth = (bleed%20)/2)
+execute if score #zb_reviving {ns}.data matches ..1 run scoreboard players operation #rv_disp_sec {ns}.data = @s {ns}.zb.bleed
+execute if score #zb_reviving {ns}.data matches ..1 run scoreboard players operation #rv_disp_sec {ns}.data /= #20 {ns}.data
+execute if score #zb_reviving {ns}.data matches ..1 run scoreboard players operation #rv_disp_tenth {ns}.data = @s {ns}.zb.bleed
+execute if score #zb_reviving {ns}.data matches ..1 run scoreboard players operation #rv_disp_tenth {ns}.data %= #20 {ns}.data
+execute if score #zb_reviving {ns}.data matches ..1 run scoreboard players operation #rv_disp_tenth {ns}.data /= #2 {ns}.data
+execute if score #zb_reviving {ns}.data matches ..1 run data modify storage smithed.actionbar:input message set value {{json:[{{"text":"☠ Bleeding out: ","color":"red"}},{{"score":{{"name":"#rv_disp_sec","objective":"{ns}.data"}},"color":"gray"}},{{"text":".","color":"gray"}},{{"score":{{"name":"#rv_disp_tenth","objective":"{ns}.data"}},"color":"gray"}},{{"text":"s","color":"dark_gray"}}],priority:"override",freeze:2}}
 execute if score #zb_reviving {ns}.data matches ..1 run function #smithed.actionbar:message
 
 # Show revive progress bar to nearby alive players (from mannequin position)
