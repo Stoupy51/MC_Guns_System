@@ -1,5 +1,6 @@
 {
 	"values": [
-		"mgs:v5.0.0/zombies/inventory/on_new_item"
+		"mgs:v5.0.0/zombies/inventory/on_new_item",
+		"mgs:v5.0.0/zombies/powerups/intercept_item"
 	]
 }

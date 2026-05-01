@@ -1,7 +1,9 @@
 
 #> mgs:zombies/bonus/max_ammo
 #
-# @within	???
+# @executed	as @a[scores={mgs.zb.in_game=1},gamemode=!spectator]
+#
+# @within	mgs:v5.0.0/zombies/powerups/activate/max_ammo [ as @a[scores={mgs.zb.in_game=1},gamemode=!spectator] ]
 #
 
 # Copy gun data for current weapon (needed for ammo scoreboard sync)

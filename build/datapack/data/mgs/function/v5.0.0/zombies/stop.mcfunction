@@ -68,6 +68,14 @@ tag @e[tag=mgs.barrier_removing] remove mgs.barrier_removing
 tag @a[tag=mgs.barrier_repairing] remove mgs.barrier_repairing
 scoreboard players reset @a mgs.zb.barrier_repairs
 
+# Power-up cleanup
+kill @e[tag=mgs.pu_item]
+kill @e[tag=mgs.pu_text]
+scoreboard players set #zb_drops_this_round mgs.data 0
+scoreboard players set #zb_score_to_drop mgs.data 0
+scoreboard players set @a mgs.special.double_points 0
+data modify storage mgs:data _pu_queue set value []
+
 # Reset perk effects
 execute as @a[scores={mgs.zb.in_game=1}] run attribute @s minecraft:max_health base set 20
 tag @a remove mgs.perk.speed_cola

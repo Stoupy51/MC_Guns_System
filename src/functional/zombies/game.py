@@ -104,6 +104,7 @@ scoreboard players set @a {ns}.mp.spectate_timer 0
 gamemode spectator @a[scores={{{ns}.zb.in_game=1}}]
 gamerule immediate_respawn true
 gamerule keep_inventory true
+gamerule max_entity_cramming 96
 
 # Initialize round to 0 (first round will be 1)
 data modify storage {ns}:zombies game.round set value 0

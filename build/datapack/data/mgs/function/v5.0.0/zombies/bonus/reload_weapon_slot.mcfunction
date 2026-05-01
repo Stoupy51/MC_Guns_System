@@ -1,6 +1,8 @@
 
 #> mgs:v5.0.0/zombies/bonus/reload_weapon_slot
 #
+# @executed	as @a[scores={mgs.zb.in_game=1},gamemode=!spectator]
+#
 # @within	mgs:v5.0.0/zombies/bonus/max_ammo_reload_weapons {slot:"hotbar.0"}
 #			mgs:v5.0.0/zombies/bonus/max_ammo_reload_weapons {slot:"hotbar.1"}
 #			mgs:v5.0.0/zombies/bonus/max_ammo_reload_weapons {slot:"hotbar.2"}

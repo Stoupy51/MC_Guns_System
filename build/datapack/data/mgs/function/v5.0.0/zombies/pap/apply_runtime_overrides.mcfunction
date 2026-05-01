@@ -4,6 +4,7 @@
 # @executed	as @n[tag=mgs.pap_new]
 #
 # @within	mgs:v5.0.0/zombies/pap/on_right_click
+#			mgs:v5.0.0/zombies/pap/on_free_pap
 #
 
 execute if data storage mgs:temp _pap_extract.stats.pap_stats.capacity run function mgs:v5.0.0/zombies/pap/apply_field/capacity

@@ -1,6 +1,8 @@
 
 #> mgs:v5.0.0/zombies/bonus/max_ammo_reload_weapons
 #
+# @executed	as @a[scores={mgs.zb.in_game=1},gamemode=!spectator]
+#
 # @within	mgs:zombies/bonus/max_ammo
 #
 

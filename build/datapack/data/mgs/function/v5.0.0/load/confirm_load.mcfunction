@@ -207,6 +207,13 @@ scoreboard objectives add mgs.zb.barrier.repairing_id dummy
 # Per-player barrier repair counter (reset each round, capped reward at 25)
 scoreboard objectives add mgs.zb.barrier_repairs dummy
 
+# Power-up entity scoreboards
+scoreboard objectives add mgs.zb.pu.type dummy
+scoreboard objectives add mgs.zb.pu.timer dummy
+
+# Per-player double-points duration (ticks)
+scoreboard objectives add mgs.special.double_points dummy
+
 # Door entity scoreboards
 scoreboard objectives add mgs.zb.door.link dummy
 scoreboard objectives add mgs.zb.door.price dummy
@@ -392,6 +399,7 @@ scoreboard players set #20 mgs.data 20
 scoreboard players set #50 mgs.data 50
 scoreboard players set #60 mgs.data 60
 scoreboard players set #100 mgs.data 100
+scoreboard players set #114 mgs.data 114
 scoreboard players set #150 mgs.data 150
 scoreboard players set #200 mgs.data 200
 scoreboard players set #1000 mgs.data 1000

@@ -54,6 +54,7 @@ execute as @a run execute store result score @s mgs.hp_prev run data get entity 
 gamemode spectator @a[scores={mgs.zb.in_game=1}]
 gamerule immediate_respawn true
 gamerule keep_inventory true
+gamerule max_entity_cramming 96
 
 # Initialize round to 0 (first round will be 1)
 data modify storage mgs:zombies game.round set value 0

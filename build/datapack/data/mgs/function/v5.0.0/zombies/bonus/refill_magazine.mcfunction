@@ -1,6 +1,8 @@
 
 #> mgs:v5.0.0/zombies/bonus/refill_magazine
 #
+# @executed	as @a[scores={mgs.zb.in_game=1},gamemode=!spectator]
+#
 # @within	mgs:zombies/bonus/max_ammo {slot:"hotbar.0"}
 #			mgs:zombies/bonus/max_ammo {slot:"hotbar.1"}
 #			mgs:zombies/bonus/max_ammo {slot:"hotbar.2"}

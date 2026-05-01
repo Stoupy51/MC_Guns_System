@@ -14,3 +14,6 @@ scoreboard players operation @n[tag=mgs.ticking] mgs.zb.points += #zb_points_hit
 # Refresh sidebar
 function mgs:v5.0.0/zombies/refresh_sidebar
 
+# Double points bonus for bullet hit points
+execute if score @n[tag=mgs.ticking] mgs.special.double_points matches 1.. run scoreboard players operation @n[tag=mgs.ticking] mgs.zb.points += #zb_points_hit mgs.config
+

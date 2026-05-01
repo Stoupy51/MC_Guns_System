@@ -71,6 +71,18 @@ execute as @e[tag=mgs.pap_machine,scores={mgs.pap_anim=1..}] at @s run function 
 execute as @e[tag=mgs.zombie_round,tag=mgs.barrier_frozen] run function mgs:v5.0.0/zombies/barriers/restore_zombie_speed
 execute as @e[tag=mgs.barrier_display] at @s run function mgs:v5.0.0/zombies/barriers/tick
 
+# Power-up entity tick (lifetime countdown, blink, pickup detection)
+execute as @e[tag=mgs.pu_item] at @s run function mgs:v5.0.0/zombies/powerups/entity_tick
+
+# Blink state: toggles between 0 and 1 every 5 ticks
+scoreboard players add #zb_blink_counter mgs.data 1
+execute if score #zb_blink_counter mgs.data matches 5.. run scoreboard players set #zb_blink_counter mgs.data 0
+execute if score #zb_blink_counter mgs.data matches 0 run scoreboard players add #zb_blink_state mgs.data 1
+execute if score #zb_blink_state mgs.data matches 2.. run scoreboard players set #zb_blink_state mgs.data 0
+
+# Decrement double_points duration for alive in-game players
+execute as @a[scores={mgs.special.double_points=1..},gamemode=!spectator] run scoreboard players remove @s mgs.special.double_points 1
+
 # Trap active tick (damage + timer)
 execute as @e[tag=mgs.trap_center,scores={mgs.zb.trap.timer=1..}] at @s run function mgs:v5.0.0/zombies/traps/active_tick
 

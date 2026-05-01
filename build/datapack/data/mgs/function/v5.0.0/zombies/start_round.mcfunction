@@ -10,15 +10,16 @@ execute store result score #zb_round mgs.data run data get storage mgs:zombies g
 scoreboard players add #zb_round mgs.data 1
 execute store result storage mgs:zombies game.round int 1 run scoreboard players get #zb_round mgs.data
 
-# Calculate zombies to spawn this round: min(48, 7 + round) * min(4, player_count)
-# Solo player: r1=8,  r5=12, r10=17, r20=27,  r40=47,  r41+ caps at 48
-# 4+ players:  r1=32, r5=48, r10=68, r20=108, r40=188, r41+ caps at 192
+# Calculate zombies to spawn this round: min(256, min(96, 7 + round) * min(4, player_count))
+# Solo player: r1=8,  r5=12, r10=17, r20=27,  r40=47,  r41+ caps at 96
+# 4+ players:  r1=32, r5=48, r10=68, r20=108, r40=188, r41+ caps at 256
 execute store result score #zb_player_count mgs.data if entity @a[scores={mgs.zb.in_game=1},gamemode=!spectator]
 execute if score #zb_player_count mgs.data matches 5.. run scoreboard players set #zb_player_count mgs.data 4
 scoreboard players operation #zb_to_spawn mgs.data = #zb_round mgs.data
 scoreboard players add #zb_to_spawn mgs.data 7
-execute if score #zb_to_spawn mgs.data matches 49.. run scoreboard players set #zb_to_spawn mgs.data 48
+execute if score #zb_to_spawn mgs.data matches 97.. run scoreboard players set #zb_to_spawn mgs.data 96
 scoreboard players operation #zb_to_spawn mgs.data *= #zb_player_count mgs.data
+execute if score #zb_to_spawn mgs.data matches 257.. run scoreboard players set #zb_to_spawn mgs.data 256
 
 # Store zombies to spawn and remaining count
 scoreboard players operation #zb_remaining mgs.data = #zb_to_spawn mgs.data
@@ -50,4 +51,12 @@ function mgs:v5.0.0/zombies/perks/reduce_cooldowns
 
 # Check guardian ability (summon golem at round start)
 function mgs:v5.0.0/zombies/perks/check_guardian
+
+# Reset per-round power-up drop counter
+scoreboard players set #zb_drops_this_round mgs.data 0
+
+# Threshold = sum of all in-game player points at round start + 2000
+scoreboard players set #zb_score_to_drop mgs.data 0
+execute as @a[scores={mgs.zb.in_game=1},gamemode=!spectator] run scoreboard players operation #zb_score_to_drop mgs.data += @s mgs.zb.points
+scoreboard players add #zb_score_to_drop mgs.data 2000
 
