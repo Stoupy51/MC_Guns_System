@@ -5,5 +5,4 @@
 #
 
 function mgs:v5.0.0/multiplayer/refresh_sidebar_ffa
-scoreboard objectives setdisplay sidebar mgs.sidebar
 

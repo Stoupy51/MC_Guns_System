@@ -4,6 +4,9 @@
 # @within	mgs:v5.0.0/tick
 #
 
+# Always enforce sidebar display (objective may be removed/recreated by refresh functions)
+scoreboard objectives setdisplay sidebar mgs.sidebar
+
 # Spectate Timer (3s respawn cooldown)
 execute as @a[scores={mgs.mp.in_game=1,mgs.mp.spectate_timer=1..}] run scoreboard players remove @s mgs.mp.spectate_timer 1
 execute as @a[scores={mgs.mp.in_game=1,mgs.mp.spectate_timer=40},gamemode=spectator] run title @s subtitle [{"translate":"mgs.respawning_in_2_seconds","color":"gray"}]
