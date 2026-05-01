@@ -439,6 +439,12 @@ execute if data storage {ns}:multiplayer game{{gamemode:"snd"}} run function {ns
 """)
 
 	## Timer display (actionbar timer in minutes:seconds for all in-game players)
+	write_versioned_function("multiplayer/game_tick", f"""
+# Always enforce sidebar display (objective may be removed/recreated by refresh functions)
+scoreboard objectives setdisplay sidebar {ns}.sidebar
+""", prepend=True)
+
+	## Timer display (actionbar timer in minutes:seconds for all in-game players)
 	write_versioned_function("multiplayer/timer_display", f"""
 # Convert ticks to seconds
 execute store result score #timer_sec {ns}.data run scoreboard players get #mp_timer {ns}.data
@@ -727,7 +733,6 @@ scoreboard objectives setdisplay sidebar {ns}.sidebar
 	## FFA sidebar — ranked players with kills using bs.sidebar
 	write_versioned_function("multiplayer/create_sidebar_ffa", f"""
 function {ns}:v{version}/multiplayer/refresh_sidebar_ffa
-scoreboard objectives setdisplay sidebar {ns}.sidebar
 """)
 
 	# FFA sidebar refresh: ranks players by kills, builds sidebar with top 10
@@ -764,6 +769,7 @@ function {ns}:v{version}/multiplayer/build_sidebar_ffa with storage {ns}:temp
 tag @a remove {ns}.ffa_candidate
 scoreboard objectives remove {ns}.sidebar
 $function #bs.sidebar:create {{objective:"{ns}.sidebar",display_name:{{text:"Free For All",color:"gold",bold:true}},contents:$(ffa_sb)}}
+scoreboard objectives setdisplay sidebar {ns}.sidebar
 """)
 
 	## Domination sidebar — shows team scores + point ownership per zone
@@ -801,6 +807,7 @@ function {ns}:v{version}/multiplayer/build_sidebar_dom with storage {ns}:temp do
 	write_versioned_function("multiplayer/build_sidebar_dom", f"""
 scoreboard objectives remove {ns}.sidebar
 $function #bs.sidebar:create {{objective:"{ns}.sidebar",display_name:{{text:"Domination",color:"gold",bold:true}},contents:[{sb_timer},{sb_spacer},{sb_red},{sb_blue},{sb_spacer},$(a),$(b),$(c),{sb_spacer},{sb_limit}]}}
+scoreboard objectives setdisplay sidebar {ns}.sidebar
 """)
 
 	## Hardpoint sidebar — shows team scores + controlling team + time to move

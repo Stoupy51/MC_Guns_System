@@ -584,7 +584,6 @@ execute if entity @e[tag={ns}.spawn_point,tag={ns}.spawn_zb_player] run function
 """)
 
 	# Sidebar HUD ───────────────────────────────────────────────
-
 	write_versioned_function("zombies/create_sidebar", f"""
 scoreboard objectives add {ns}.zb_sidebar dummy
 function {ns}:v{version}/zombies/refresh_sidebar
