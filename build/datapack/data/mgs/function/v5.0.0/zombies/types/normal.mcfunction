@@ -18,13 +18,13 @@ function mgs:v5.0.0/zombies/apply_zombie_hp with storage mgs:temp _zb_hp
 
 # Speed tiers from BO2 behavior (multiplier 8): walk R1-5, run R6-8, sprint R9+
 execute if score #zb_round mgs.data matches ..5 run attribute @s minecraft:movement_speed base set 0.20
-execute if score #zb_round mgs.data matches 6..8 run attribute @s minecraft:movement_speed base set 0.23
-execute if score #zb_round mgs.data matches 9 run attribute @s minecraft:movement_speed base set 0.28
+execute if score #zb_round mgs.data matches 6..8 run attribute @s minecraft:movement_speed base set 0.24
+execute if score #zb_round mgs.data matches 9 run attribute @s minecraft:movement_speed base set 0.32
 
 # BO2-style walkers: R10+ has 10% chance to spawn as walk speed instead of sprint
 execute if score #zb_round mgs.data matches 10.. store result score #zb_speed_roll mgs.data run random value 1..10
-execute if score #zb_round mgs.data matches 10.. if score #zb_speed_roll mgs.data matches 1 run attribute @s minecraft:movement_speed base set 0.23
-execute if score #zb_round mgs.data matches 10.. if score #zb_speed_roll mgs.data matches 2.. run attribute @s minecraft:movement_speed base set 0.28
+execute if score #zb_round mgs.data matches 10.. if score #zb_speed_roll mgs.data matches 1 run attribute @s minecraft:movement_speed base set 0.24
+execute if score #zb_round mgs.data matches 10.. if score #zb_speed_roll mgs.data matches 2.. run attribute @s minecraft:movement_speed base set 0.32
 
 # Start rise animation (20 ticks to rise 2 blocks)
 scoreboard players set @s mgs.zb.rise_tick 20

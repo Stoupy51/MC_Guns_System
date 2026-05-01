@@ -1,7 +1,9 @@
 
 #> mgs:zombies/bonus/nuke
 #
-# @within	???
+# @executed	as @a[tag=mgs.pu_collecting,scores={mgs.zb.in_game=1},gamemode=!spectator]
+#
+# @within	mgs:v5.0.0/zombies/powerups/activate/nuke [ as @a[tag=mgs.pu_collecting,scores={mgs.zb.in_game=1},gamemode=!spectator] ]
 #
 
 # Remove any existing nuke activator (in case of concurrent nukes)

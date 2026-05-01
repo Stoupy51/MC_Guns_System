@@ -18,15 +18,16 @@ execute store result score #zb_round {ns}.data run data get storage {ns}:zombies
 scoreboard players add #zb_round {ns}.data 1
 execute store result storage {ns}:zombies game.round int 1 run scoreboard players get #zb_round {ns}.data
 
-# Calculate zombies to spawn this round: min(48, 7 + round) * min(4, player_count)
-# Solo player: r1=8,  r5=12, r10=17, r20=27,  r40=47,  r41+ caps at 48
-# 4+ players:  r1=32, r5=48, r10=68, r20=108, r40=188, r41+ caps at 192
+# Calculate zombies to spawn this round: min(256, min(96, 7 + round) * min(4, player_count))
+# Solo player: r1=8,  r5=12, r10=17, r20=27,  r40=47,  r41+ caps at 96
+# 4+ players:  r1=32, r5=48, r10=68, r20=108, r40=188, r41+ caps at 256
 execute store result score #zb_player_count {ns}.data if entity @a[scores={{{ns}.zb.in_game=1}},gamemode=!spectator]
 execute if score #zb_player_count {ns}.data matches 5.. run scoreboard players set #zb_player_count {ns}.data 4
 scoreboard players operation #zb_to_spawn {ns}.data = #zb_round {ns}.data
 scoreboard players add #zb_to_spawn {ns}.data 7
-execute if score #zb_to_spawn {ns}.data matches 49.. run scoreboard players set #zb_to_spawn {ns}.data 48
+execute if score #zb_to_spawn {ns}.data matches 97.. run scoreboard players set #zb_to_spawn {ns}.data 96
 scoreboard players operation #zb_to_spawn {ns}.data *= #zb_player_count {ns}.data
+execute if score #zb_to_spawn {ns}.data matches 257.. run scoreboard players set #zb_to_spawn {ns}.data 256
 
 # Store zombies to spawn and remaining count
 scoreboard players operation #zb_remaining {ns}.data = #zb_to_spawn {ns}.data
@@ -132,13 +133,13 @@ function {ns}:v{version}/zombies/apply_zombie_hp with storage {ns}:temp _zb_hp
 
 # Speed tiers from BO2 behavior (multiplier 8): walk R1-5, run R6-8, sprint R9+
 execute if score #zb_round {ns}.data matches ..5 run attribute @s minecraft:movement_speed base set 0.20
-execute if score #zb_round {ns}.data matches 6..8 run attribute @s minecraft:movement_speed base set 0.23
-execute if score #zb_round {ns}.data matches 9 run attribute @s minecraft:movement_speed base set 0.28
+execute if score #zb_round {ns}.data matches 6..8 run attribute @s minecraft:movement_speed base set 0.24
+execute if score #zb_round {ns}.data matches 9 run attribute @s minecraft:movement_speed base set 0.32
 
 # BO2-style walkers: R10+ has 10% chance to spawn as walk speed instead of sprint
 execute if score #zb_round {ns}.data matches 10.. store result score #zb_speed_roll {ns}.data run random value 1..10
-execute if score #zb_round {ns}.data matches 10.. if score #zb_speed_roll {ns}.data matches 1 run attribute @s minecraft:movement_speed base set 0.23
-execute if score #zb_round {ns}.data matches 10.. if score #zb_speed_roll {ns}.data matches 2.. run attribute @s minecraft:movement_speed base set 0.28
+execute if score #zb_round {ns}.data matches 10.. if score #zb_speed_roll {ns}.data matches 1 run attribute @s minecraft:movement_speed base set 0.24
+execute if score #zb_round {ns}.data matches 10.. if score #zb_speed_roll {ns}.data matches 2.. run attribute @s minecraft:movement_speed base set 0.32
 
 # Start rise animation (20 ticks to rise 2 blocks)
 scoreboard players set @s {ns}.zb.rise_tick 20
@@ -249,6 +250,9 @@ execute unless entity @s[tag={ns}.zombie_round] run return 0
 
 # Kill the attached death-watch marker while still mounted to avoid orphan buildup.
 kill @n[type=minecraft:marker,tag={ns}.death_watch,distance=..1]
+
+# Check if a power-up should drop at this zombie's position.
+function {ns}:v{version}/zombies/powerups/check_drop
 
 # Remove zombie before vanilla death event 60 can fire.
 tp @s ~ -10000 ~

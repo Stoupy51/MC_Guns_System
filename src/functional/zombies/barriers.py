@@ -290,3 +290,29 @@ tag @a[tag={ns}.barrier_repairing] remove {ns}.barrier_repairing
 scoreboard players reset @a {ns}.zb.barrier_repairs
 """)
 
+	## Carpenter: instantly repair every barrier in the broken state
+	write_versioned_function("zombies/barriers/repair_all", f"""
+execute as @e[tag={ns}.barrier_display,scores={{{ns}.zb.barrier.state=1}}] at @s run function {ns}:v{version}/zombies/barriers/instant_repair
+""")
+
+	## Instantly repair a single barrier entity (run as the item_display entity, at @s)
+	write_versioned_function("zombies/barriers/instant_repair", f"""
+# Set barrier to intact state
+scoreboard players set @s {ns}.zb.barrier.state 0
+
+# Clear any in-progress remove / repair counters so no stale IDs linger
+scoreboard players set @s {ns}.zb.barrier.repairing_id 0
+scoreboard players set @s {ns}.zb.barrier.removing_id 0
+
+# Release any zombie or player currently acting on this barrier
+tag @e[tag={ns}.barrier_removing,scores={{{ns}.zb.barrier.removing_id=1..}}] remove {ns}.barrier_removing
+tag @a[tag={ns}.barrier_repairing] remove {ns}.barrier_repairing
+
+# Re-enable the block (collision/visibility)
+data modify entity @s block_state set from entity @s data.block_enabled
+
+# Visual feedback
+particle minecraft:happy_villager ~ ~ ~ 0.5 0.5 0.5 0.05 10 normal
+playsound minecraft:block.wood.place block @a ~ ~ ~ 1.0 1.0
+""")
+

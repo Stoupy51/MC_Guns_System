@@ -14,6 +14,7 @@ from .mystery_box import generate_mystery_box
 from .pap import generate_pap
 from .perks import generate_perks
 from .power import generate_power_switch
+from .powerups import generate_powerups
 from .revive import generate_revive
 from .round import generate_zombies_rounds
 from .traps import generate_traps
@@ -35,6 +36,7 @@ def main() -> None:
     generate_mystery_box()
     generate_pap()
     generate_barriers()
+    generate_powerups()
     generate_power_switch()
     generate_doors()
     generate_wallbuys()

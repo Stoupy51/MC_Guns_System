@@ -1,6 +1,8 @@
 
 #> mgs:v5.0.0/zombies/bonus/nuke_loop
 #
+# @executed	as @a[tag=mgs.pu_collecting,scores={mgs.zb.in_game=1},gamemode=!spectator]
+#
 # @within	mgs:zombies/bonus/nuke
 #			mgs:v5.0.0/zombies/bonus/nuke_loop 1t [ scheduled ]
 #
