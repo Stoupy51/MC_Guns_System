@@ -24,6 +24,7 @@ function mgs:v5.0.1/zombies/inventory/apply_slot_tag {slot:"inventory.1",group:"
 # hotbar.7: main equipment (frag by default)
 loot replace entity @s hotbar.7 loot mgs:i/frag_grenade
 item modify entity @s hotbar.7 mgs:v5.0.1/grenade/set_count_4
+function mgs:v5.0.1/zombies/inventory/apply_slot_tag {slot:"hotbar.7",group:"hotbar",index:7}
 
 # hotbar.8: info item
 function mgs:v5.0.1/zombies/inventory/refresh_info_item
