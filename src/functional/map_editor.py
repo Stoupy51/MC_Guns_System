@@ -679,6 +679,14 @@ $summon minecraft:marker $(x) $(y) $(z) {{Tags:["{ns}.map_element","$(tag)","{ns
 		f'minecraft:entity_data={{id:"minecraft:bat",NoAI:1b,Silent:1b,Invulnerable:1b,Tags:["{ns}.new_element","{ns}.element.editor_save"]}}]'
 	)
 
+	coord_stick_cmd = (
+		f'item replace entity @s inventory.23 with minecraft:warped_fungus_on_a_stick'
+		f'[minecraft:item_name={{"text":"📐 Coord Stick","color":"yellow","italic":false,"bold":true}},'
+		f'minecraft:custom_data={{{ns}:{{coord_stick:true}}}},'
+		f'minecraft:item_model="minecraft:stick",'
+		f'minecraft:enchantment_glint_override=true]'
+	)
+
 	write_versioned_function("maps/editor/give_tools", f"""
 # Destroy egg (always in hotbar.8)
 {destroy_cmd}
@@ -687,6 +695,9 @@ $summon minecraft:marker $(x) $(y) $(z) {{Tags:["{ns}.map_element","$(tag)","{ns
 {save_exit_cmd}
 {exit_cmd}
 {save_only_cmd}
+
+# Coord stick utility
+{coord_stick_cmd}
 
 # Mode-specific eggs
 {give_dispatch}
@@ -1698,5 +1709,70 @@ execute as @e[tag={ns}.map_element] at @s positioned ^ ^ ^0.5 run particle dust{
 tag @s add {ns}.check_nearest
 execute as @n[tag={ns}.map_element,distance=..5] run function {ns}:v{version}/maps/editor/actionbar_nearest
 tag @s remove {ns}.check_nearest
+""")
+
+	# Coord Stick ─────────────────────────────────────────────────
+	# Detection in player/tick (prepend so it runs before scoreboard reset)
+	write_versioned_function("player/tick", f"""
+# Coord stick: detect right-click on coord stick
+execute if score @s {ns}.class_menu matches 1.. if items entity @s weapon.mainhand *[custom_data~{{{ns}:{{coord_stick:true}}}}] run function {ns}:v{version}/utils/coord_stick
+""", prepend=True)
+
+	## Entry point (runs as player)
+	write_versioned_function("utils/coord_stick", f"""
+# Tag the player so tellraw can target them from inside the at-aimed-block context
+tag @s add {ns}.coord_stick_user
+function #bs.view:at_aimed_block {{run:"function {ns}:v{version}/utils/coord_stick_relative",with:{{}}}}
+tag @s remove {ns}.coord_stick_user
+""")
+
+	## State machine — runs at the aimed block
+	write_versioned_function("utils/coord_stick_relative", f"""
+# State: 0 = first click, 1 = second click (origin already saved)
+scoreboard players set #cs_state {ns}.data 0
+execute if data storage {ns}:temp coord_stick.origin run scoreboard players set #cs_state {ns}.data 1
+
+# Particle at block center
+execute align xyz run particle firework ~.5 ~.5 ~.5 0.4 0.4 0.4 0.01 100 force @a[distance=..20]
+
+# --- Second click: compute relative offset ---
+execute if score #cs_state {ns}.data matches 1 summon marker run function {ns}:v{version}/utils/coord_stick_store_pos
+execute if score #cs_state {ns}.data matches 1 run scoreboard players operation #cs_dest_x {ns}.data = #cs_pos_x {ns}.data
+execute if score #cs_state {ns}.data matches 1 run scoreboard players operation #cs_dest_y {ns}.data = #cs_pos_y {ns}.data
+execute if score #cs_state {ns}.data matches 1 run scoreboard players operation #cs_dest_z {ns}.data = #cs_pos_z {ns}.data
+execute if score #cs_state {ns}.data matches 1 store result score #cs_orig_x {ns}.data run data get storage {ns}:temp coord_stick.origin[0]
+execute if score #cs_state {ns}.data matches 1 store result score #cs_orig_y {ns}.data run data get storage {ns}:temp coord_stick.origin[1]
+execute if score #cs_state {ns}.data matches 1 store result score #cs_orig_z {ns}.data run data get storage {ns}:temp coord_stick.origin[2]
+execute if score #cs_state {ns}.data matches 1 run scoreboard players operation #cs_dest_x {ns}.data -= #cs_orig_x {ns}.data
+execute if score #cs_state {ns}.data matches 1 run scoreboard players operation #cs_dest_y {ns}.data -= #cs_orig_y {ns}.data
+execute if score #cs_state {ns}.data matches 1 run scoreboard players operation #cs_dest_z {ns}.data -= #cs_orig_z {ns}.data
+execute if score #cs_state {ns}.data matches 1 run data modify storage {ns}:temp coord_stick.result set value {{x:0,y:0,z:0}}
+execute if score #cs_state {ns}.data matches 1 store result storage {ns}:temp coord_stick.result.x int 1 run scoreboard players get #cs_dest_x {ns}.data
+execute if score #cs_state {ns}.data matches 1 store result storage {ns}:temp coord_stick.result.y int 1 run scoreboard players get #cs_dest_y {ns}.data
+execute if score #cs_state {ns}.data matches 1 store result storage {ns}:temp coord_stick.result.z int 1 run scoreboard players get #cs_dest_z {ns}.data
+execute if score #cs_state {ns}.data matches 1 as @a[tag={ns}.coord_stick_user,limit=1] run function {ns}:v{version}/utils/coord_stick_print with storage {ns}:temp coord_stick.result
+execute if score #cs_state {ns}.data matches 1 run data remove storage {ns}:temp coord_stick.result
+execute if score #cs_state {ns}.data matches 1 run data remove storage {ns}:temp coord_stick.origin
+
+# --- First click: record origin position ---
+execute if score #cs_state {ns}.data matches 0 summon marker run function {ns}:v{version}/utils/coord_stick_store_pos
+execute if score #cs_state {ns}.data matches 0 run data modify storage {ns}:temp coord_stick.origin set value [0,0,0]
+execute if score #cs_state {ns}.data matches 0 store result storage {ns}:temp coord_stick.origin[0] int 1 run scoreboard players get #cs_pos_x {ns}.data
+execute if score #cs_state {ns}.data matches 0 store result storage {ns}:temp coord_stick.origin[1] int 1 run scoreboard players get #cs_pos_y {ns}.data
+execute if score #cs_state {ns}.data matches 0 store result storage {ns}:temp coord_stick.origin[2] int 1 run scoreboard players get #cs_pos_z {ns}.data
+execute if score #cs_state {ns}.data matches 0 as @a[tag={ns}.coord_stick_user,limit=1] run tellraw @s [{MGS_TAG},{{"text":"First position saved! Right-click again to get the offset.","color":"yellow"}}]
+""")
+
+	## Stores current entity Pos into #cs_pos_x/y/z scores, then kills the marker
+	write_versioned_function("utils/coord_stick_store_pos", f"""
+execute store result score #cs_pos_x {ns}.data run data get entity @s Pos[0]
+execute store result score #cs_pos_y {ns}.data run data get entity @s Pos[1]
+execute store result score #cs_pos_z {ns}.data run data get entity @s Pos[2]
+kill @s
+""")
+
+	## Macro print: outputs "positioned ~X ~Y ~Z" with copy-to-clipboard click event
+	write_versioned_function("utils/coord_stick_print", f"""
+$tellraw @s [{MGS_TAG},{{"text":"positioned ~$(x) ~$(y) ~$(z)","color":"aqua","click_event":{{"action":"copy_to_clipboard","value":"positioned ~$(x) ~$(y) ~$(z)"}},"hover_event":{{"action":"show_text","value":"Click to copy"}}}}]
 """)
 
