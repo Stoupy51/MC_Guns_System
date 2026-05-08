@@ -6,6 +6,9 @@
 # @within	mgs:v5.0.1/tick [ as @e[type=player,sort=random] & at @s ]
 #
 
+# Coord stick: detect right-click on coord stick
+execute if score @s mgs.class_menu matches 1.. if items entity @s weapon.mainhand *[custom_data~{mgs:{coord_stick:true}}] run function mgs:v5.0.1/utils/coord_stick
+
 # Custom loadouts: assign player ID if not yet assigned
 execute unless score @s mgs.mp.pid matches 1.. run function mgs:v5.0.1/multiplayer/assign_pid
 
