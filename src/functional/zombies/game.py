@@ -163,6 +163,7 @@ function #{ns}:zombies/on_game_start
 
 # Run map-defined start commands after entity/setup summons
 execute if data storage {ns}:zombies game.map.start_commands[0] run function {ns}:v{version}/shared/run_start_commands {{mode:"zombies"}}
+execute if data storage {ns}:zombies game.map.start_function run function {ns}:v{version}/shared/call_map_start_fn with storage {ns}:zombies game.map
 
 # Teleport all players to player spawns
 function {ns}:v{version}/zombies/tp_all_to_spawns
@@ -235,6 +236,9 @@ execute if data storage {ns}:zombies game{{state:"preparing"}} run function {ns}
 	write_versioned_function("zombies/game_tick", f"""
 # Revive system tick (process downed players)
 function {ns}:v{version}/zombies/revive/tick
+
+# Call map-defined tick function if configured
+execute if data storage {ns}:zombies game.map.tick_function run function {ns}:v{version}/shared/call_map_tick_fn with storage {ns}:zombies game.map
 
 # Zombie Spawning (if there are still zombies to spawn)
 execute if score #zb_to_spawn {ns}.data matches 1.. run function {ns}:v{version}/zombies/spawn_tick

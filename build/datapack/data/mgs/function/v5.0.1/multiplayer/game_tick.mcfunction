@@ -37,3 +37,6 @@ execute if data storage mgs:multiplayer game{gamemode:"dom"} run function mgs:v5
 execute if data storage mgs:multiplayer game{gamemode:"hp"} run function mgs:v5.0.1/multiplayer/gamemodes/hp/tick
 execute if data storage mgs:multiplayer game{gamemode:"snd"} run function mgs:v5.0.1/multiplayer/gamemodes/snd/tick
 
+# Call map-defined tick function if configured
+execute if data storage mgs:multiplayer game.map.tick_function run function mgs:v5.0.1/shared/call_map_tick_fn with storage mgs:multiplayer game.map
+

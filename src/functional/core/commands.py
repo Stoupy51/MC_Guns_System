@@ -58,6 +58,14 @@ execute if data storage {ns}:temp _respawn_cmd_iter[0] at @s run function {ns}:v
 
 	write_versioned_function("shared/run_respawn_command", "$execute at @s run $(command)")
 
+	## Call a map-defined start function (once at game start)
+	## Usage: execute if data storage {ns}:{mode} game.map.start_function run function shared/call_map_start_fn with storage {ns}:{mode} game.map
+	write_versioned_function("shared/call_map_start_fn", "$function $(start_function)")
+
+	## Call a map-defined tick function (every game tick)
+	## Usage: execute if data storage {ns}:{mode} game.map.tick_function run function shared/call_map_tick_fn with storage {ns}:{mode} game.map
+	write_versioned_function("shared/call_map_tick_fn", "$function $(tick_function)")
+
 	## Load map base coordinates into scoreboard (3-line triplet)
 	## Usage: function shared/load_base_coordinates {mode:"multiplayer"}
 	write_versioned_function("shared/load_base_coordinates", f"""

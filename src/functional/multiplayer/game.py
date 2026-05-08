@@ -136,6 +136,7 @@ execute if data storage {ns}:multiplayer game{{gamemode:"snd"}} run function {ns
 
 # Run map-defined start commands after entity/setup summons
 execute if data storage {ns}:multiplayer game.map.start_commands[0] run function {ns}:v{version}/shared/run_start_commands {{mode:"multiplayer"}}
+execute if data storage {ns}:multiplayer game.map.start_function run function {ns}:v{version}/shared/call_map_start_fn with storage {ns}:multiplayer game.map
 
 # Store score limit and compute initial timer values for sidebar
 execute store result score #score_limit {ns}.data run data get storage {ns}:multiplayer game.score_limit
@@ -436,6 +437,9 @@ execute if data storage {ns}:multiplayer game{{gamemode:"tdm"}} run function {ns
 execute if data storage {ns}:multiplayer game{{gamemode:"dom"}} run function {ns}:v{version}/multiplayer/gamemodes/dom/tick
 execute if data storage {ns}:multiplayer game{{gamemode:"hp"}} run function {ns}:v{version}/multiplayer/gamemodes/hp/tick
 execute if data storage {ns}:multiplayer game{{gamemode:"snd"}} run function {ns}:v{version}/multiplayer/gamemodes/snd/tick
+
+# Call map-defined tick function if configured
+execute if data storage {ns}:multiplayer game.map.tick_function run function {ns}:v{version}/shared/call_map_tick_fn with storage {ns}:multiplayer game.map
 """)
 
 	## Timer display (actionbar timer in minutes:seconds for all in-game players)

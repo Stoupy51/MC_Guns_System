@@ -27,6 +27,9 @@ scoreboard players operation #mi_kills mgs.data -= #alive mgs.data
 execute as @a[scores={mgs.mi.in_game=1}] at @s run function mgs:v5.0.1/missions/update_compass
 execute at @r[scores={mgs.mi.in_game=1}] run kill @e[type=experience_orb,distance=..200]
 
+# Call map-defined tick function if configured
+execute if data storage mgs:missions game.map.tick_function run function mgs:v5.0.1/shared/call_map_tick_fn with storage mgs:missions game.map
+
 # Check if all enemies are dead → victory
 execute unless entity @e[tag=mgs.mission_enemy] run return run function mgs:v5.0.1/missions/victory
 
