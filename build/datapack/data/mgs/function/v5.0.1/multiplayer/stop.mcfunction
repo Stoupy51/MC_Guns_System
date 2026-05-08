@@ -54,6 +54,10 @@ scoreboard objectives setdisplay list
 # Clear in-game state
 team leave @a[team=mgs.red]
 team leave @a[team=mgs.blue]
+
+# Call map leave script for each in-game player (state is still active/preparing here)
+execute as @a[scores={mgs.mp.in_game=1}] run function mgs:v5.0.1/shared/maps/call_leave_script_at_base
+
 scoreboard players set @a mgs.mp.in_game 0
 scoreboard players set @a mgs.mp.team 0
 scoreboard players set @a mgs.mp.spectate_timer 0

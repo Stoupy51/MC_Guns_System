@@ -21,7 +21,6 @@ function #mgs:zombies/on_game_start
 
 # Run map-defined start commands after entity/setup summons
 execute if data storage mgs:zombies game.map.start_commands[0] run function mgs:v5.0.1/shared/run_start_commands {mode:"zombies"}
-execute if data storage mgs:zombies game.map.start_function run function mgs:v5.0.1/shared/call_map_start_fn with storage mgs:zombies game.map
 
 # Teleport all players to player spawns
 function mgs:v5.0.1/zombies/tp_all_to_spawns

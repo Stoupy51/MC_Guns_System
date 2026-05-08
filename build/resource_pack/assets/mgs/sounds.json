@@ -739,6 +739,10 @@
 		"subtitle": "vz61/reload",
 		"sounds": ["mgs:vz61/reload"]
 	},
+	"zombies/music/115_song": {
+		"subtitle": "zombies/music/115_song",
+		"sounds": [{"name": "mgs:zombies/music/115_song","stream": true}]
+	},
 	"zombies/mystery_box/box_spin": {
 		"subtitle": "zombies/mystery_box/box_spin",
 		"sounds": ["mgs:zombies/mystery_box/box_spin"]
@@ -789,7 +793,7 @@
 	},
 	"zombies/pap/jingle_sting": {
 		"subtitle": "zombies/pap/jingle_sting",
-		"sounds": ["mgs:zombies/pap/jingle_sting"]
+		"sounds": [{"name": "mgs:zombies/pap/jingle_sting","stream": true}]
 	},
 	"zombies/pap/knuckle_crack": {
 		"subtitle": "zombies/pap/knuckle_crack",

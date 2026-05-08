@@ -1,9 +1,10 @@
 
 #> mgs:v5.0.1/zombies/feedback/sound_deny
 #
-# @executed	as @n[tag=mgs.mb_new]
+# @executed	at @s
 #
-# @within	mgs:v5.0.1/zombies/mystery_box/deny_moving
+# @within	mgs:v5.0.1/maps/zombies/kino_der_toten/teleporter/deny_recharging [ at @s ]
+#			mgs:v5.0.1/zombies/mystery_box/deny_moving
 #			mgs:v5.0.1/zombies/mystery_box/deny_already_in_use
 #			mgs:v5.0.1/zombies/mystery_box/deny_not_enough_points
 #			mgs:v5.0.1/zombies/mystery_box/deny_not_your_result

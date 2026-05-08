@@ -1311,7 +1311,7 @@ SMOKE_GRENADE: JsonDict = {
         CAPACITY: 1, REMAINING_BULLETS: 1, COOLDOWN: 20,
         PROJECTILE_SPEED: 1000, PROJECTILE_GRAVITY: 60, PROJECTILE_MODEL: "smoke_grenade",
         GRENADE_FUSE: 60,  # 3 seconds before activation
-        GRENADE_DURATION: 200,  # 10 seconds of smoke
+        GRENADE_DURATION: 60,  # 3 seconds of smoke
         GRENADE_EFFECT_RADIUS: 5,
     }
 }

@@ -136,7 +136,6 @@ execute if data storage {ns}:multiplayer game{{gamemode:"snd"}} run function {ns
 
 # Run map-defined start commands after entity/setup summons
 execute if data storage {ns}:multiplayer game.map.start_commands[0] run function {ns}:v{version}/shared/run_start_commands {{mode:"multiplayer"}}
-execute if data storage {ns}:multiplayer game.map.start_function run function {ns}:v{version}/shared/call_map_start_fn with storage {ns}:multiplayer game.map
 
 # Store score limit and compute initial timer values for sidebar
 execute store result score #score_limit {ns}.data run data get storage {ns}:multiplayer game.score_limit
@@ -245,6 +244,10 @@ scoreboard objectives setdisplay list
 # Clear in-game state
 team leave @a[team={ns}.red]
 team leave @a[team={ns}.blue]
+
+# Call map leave script for each in-game player (state is still active/preparing here)
+execute as @a[scores={{{ns}.mp.in_game=1}}] run function {ns}:v{version}/shared/maps/call_leave_script_at_base
+
 scoreboard players set @a {ns}.mp.in_game 0
 scoreboard players set @a {ns}.mp.team 0
 scoreboard players set @a {ns}.mp.spectate_timer 0
@@ -284,6 +287,9 @@ execute unless score @s {ns}.mp.class matches 0 run function {ns}:v{version}/mul
 
 # Teleport to spawn
 function {ns}:v{version}/multiplayer/respawn_tp
+
+# Call map join script (executed as the joining player)
+function {ns}:v{version}/shared/maps/call_join_script_at_base
 
 # Announce
 tellraw @a ["",{{"selector":"@s","color":"yellow"}},{{"text":" joined the game!","color":"yellow"}}]
@@ -438,8 +444,8 @@ execute if data storage {ns}:multiplayer game{{gamemode:"dom"}} run function {ns
 execute if data storage {ns}:multiplayer game{{gamemode:"hp"}} run function {ns}:v{version}/multiplayer/gamemodes/hp/tick
 execute if data storage {ns}:multiplayer game{{gamemode:"snd"}} run function {ns}:v{version}/multiplayer/gamemodes/snd/tick
 
-# Call map-defined tick function if configured
-execute if data storage {ns}:multiplayer game.map.tick_function run function {ns}:v{version}/shared/call_map_tick_fn with storage {ns}:multiplayer game.map
+# Call map-defined tick script
+function {ns}:v{version}/shared/maps/call_tick_script_at_base
 """)
 
 	## Timer display (actionbar timer in minutes:seconds for all in-game players)
@@ -858,6 +864,9 @@ effect give @a[scores={{{ns}.mp.in_game=1}}] saturation infinite 255 true
 
 # Set state to active
 data modify storage {ns}:multiplayer game.state set value "active"
+
+# Call map start scripts (state is now active, chunks had time to load)
+function {ns}:v{version}/shared/maps/call_start_script_at_base
 
 # Announce
 tellraw @a [{{"text":"","color":"green","bold":true}},"⚔ ",{{"text":"GO! GO! GO!"}}]

@@ -1,6 +1,6 @@
 
 # Shared start/respawn command iteration functions
-from stewbeet import Mem, write_versioned_function
+from stewbeet import Mem, write_tag, write_versioned_function
 
 
 def write_shared_command_functions() -> None:
@@ -58,13 +58,31 @@ execute if data storage {ns}:temp _respawn_cmd_iter[0] at @s run function {ns}:v
 
 	write_versioned_function("shared/run_respawn_command", "$execute at @s run $(command)")
 
-	## Call a map-defined start function (once at game start)
-	## Usage: execute if data storage {ns}:{mode} game.map.start_function run function shared/call_map_start_fn with storage {ns}:{mode} game.map
-	write_versioned_function("shared/call_map_start_fn", "$function $(start_function)")
+	## Generic map script function tags (all modes register to these)
+	## start_script: called once when game transitions to active
+	## tick_script:  called every game_tick while active
+	## join_script:  called as @s when a player joins/rejoins
+	## leave_script: called as @s for each player when the game ends
+	## respawn_script: called as @s when a player respawns
+	## power_script: called as interaction when a player interacts with the power switch (if applicable)
+	for script in ["start", "tick", "join", "leave", "respawn", "power"]:
+		write_tag(f"maps/{script}_script", Mem.ctx.data[ns].function_tags, [])
 
-	## Call a map-defined tick function (every game tick)
-	## Usage: execute if data storage {ns}:{mode} game.map.tick_function run function shared/call_map_tick_fn with storage {ns}:{mode} game.map
-	write_versioned_function("shared/call_map_tick_fn", "$function $(tick_function)")
+	## Shared macro: execute a function positioned at base coordinates
+	write_versioned_function("shared/call_at_base", """
+$execute positioned $(x) $(y) $(z) run function $(fn)
+""")
+
+	## Wrappers: call a map function tag positioned at map base coordinates
+	## Usage: function shared/maps/call_start_script_at_base
+	for script in ["start", "tick", "join", "leave", "respawn", "power"]:
+		write_versioned_function(f"shared/maps/call_{script}_script_at_base", f"""
+execute store result storage {ns}:temp _base.x int 1 run scoreboard players get #gm_base_x {ns}.data
+execute store result storage {ns}:temp _base.y int 1 run scoreboard players get #gm_base_y {ns}.data
+execute store result storage {ns}:temp _base.z int 1 run scoreboard players get #gm_base_z {ns}.data
+data modify storage {ns}:temp _base.fn set value "#{ns}:maps/{script}_script"
+function {ns}:v{version}/shared/call_at_base with storage {ns}:temp _base
+""")
 
 	## Load map base coordinates into scoreboard (3-line triplet)
 	## Usage: function shared/load_base_coordinates {mode:"multiplayer"}

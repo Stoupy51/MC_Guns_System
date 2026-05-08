@@ -3,17 +3,6 @@
 from stewbeet import Mem, write_load_file, write_versioned_function
 
 
-# Default map scripts (version-dependent)
-def default_scripts(ns: str, version: str) -> str:
-	return (
-		f'start_script:"{ns}:v{version}/maps/multiplayer/default/start",'
-		f'tick_script:"{ns}:v{version}/maps/multiplayer/default/tick",'
-		f'join_script:"{ns}:v{version}/maps/multiplayer/default/join",'
-		f'leave_script:"{ns}:v{version}/maps/multiplayer/default/leave",'
-		f'respawn_script:"{ns}:v{version}/maps/multiplayer/default/respawn"'
-	)
-
-
 def generate_maps() -> None:
 	ns: str = Mem.ctx.project_id
 	version: str = Mem.ctx.project_version
@@ -35,32 +24,43 @@ execute unless data storage {ns}:maps multiplayer[{{id:"hijacked"}}] run data mo
 # Append map from {ns}:input multiplayer.map to the maps list
 # Expected format: {{id:"id", name:"Name", description:"Desc", base_coordinates:[x,y,z],
 #   boundaries:[], spawning_points:{{red:[], blue:[], general:[]}},
-#   out_of_bounds:[], search_and_destroy:[], domination:[], hardpoint:[],
-#   start_script:"...", tick_script:"...", join_script:"...", leave_script:"...", respawn_script:"..."}}
+#   out_of_bounds:[], search_and_destroy:[], domination:[], hardpoint:[]}}
 data modify storage {ns}:maps multiplayer append from storage {ns}:input multiplayer.map
-""")
-
-	## Default map scripts (placeholders)
-	write_versioned_function("maps/multiplayer/default/start", """
-# Default map start script
-tellraw @a [{"text":"","color":"gold"},"[",{"text":"MGS"},"] ",{"text":"Map started (default script)","color":"yellow"}]
-""")
-	write_versioned_function("maps/multiplayer/default/tick", "# Default map tick (no-op)")
-	write_versioned_function("maps/multiplayer/default/join", """
-# Default map join script
-$tellraw @a [{"text":"","color":"gold"},"[",{"text":"MGS"},"] ",{"text":"$(player_name) joined the map","color":"green"}]
-""")
-	write_versioned_function("maps/multiplayer/default/leave", """
-# Default map leave script
-$tellraw @a [{"text":"","color":"gold"},"[",{"text":"MGS"},"] ",{"text":"$(player_name) left the map","color":"red"}]
-""")
-	write_versioned_function("maps/multiplayer/default/respawn", f"""
-# Default map respawn script - teleport player to a random general spawn point
-# @s = respawning player, spawn data in {ns}:temp
 """)
 
 	## Store the index of loaded map for later use
 	write_versioned_function("maps/multiplayer/store_loaded_idx", f"""
 execute store result storage {ns}:temp map_load.result_idx int 1 run scoreboard players get #map_load_idx {ns}.data
 """)
+
+	# ── Hijacked map scripts ────────────────────────────────────────────────────
+	# Logic functions (actual work)
+	write_versioned_function("maps/multiplayer/hijacked/start", """
+# Hijacked map start script
+tellraw @a [{"text":"","color":"gold"},"[",{"text":"MGS"},"] ",{"text":"Welcome to Hijacked!","color":"yellow"}]
+""")
+	write_versioned_function("maps/multiplayer/hijacked/tick", "# Hijacked map tick (no-op placeholder)")
+	write_versioned_function("maps/multiplayer/hijacked/join", """
+# Hijacked map join script
+tellraw @a [{"text":"","color":"gold"},"[",{"text":"MGS"},"] ",{"selector":"@s","color":"green"},{"text":" joined Hijacked","color":"green"}]
+""")
+	write_versioned_function("maps/multiplayer/hijacked/leave", """
+# Hijacked map leave script
+tellraw @a [{"text":"","color":"gold"},"[",{"text":"MGS"},"] ",{"selector":"@s","color":"red"},{"text":" left Hijacked","color":"red"}]
+""")
+	write_versioned_function("maps/multiplayer/hijacked/respawn", """
+# Hijacked map respawn script
+# @s = respawning player
+""")
+
+	# Calls functions — guard then delegate, registered to the shared function tags
+	guard_mp_hijacked: str = (
+		f'execute if data storage {ns}:multiplayer game{{state:"active"}}'
+		f' if data storage {ns}:multiplayer game{{map_id:"hijacked"}}'
+	)
+	for script in ["start", "tick", "join", "leave", "respawn"]:
+		write_versioned_function(f"maps/multiplayer/hijacked/calls/{script}",
+			f"{guard_mp_hijacked} run return run function {ns}:v{version}/maps/multiplayer/hijacked/{script}",
+			tags=[f"{ns}:maps/{script}_script"]
+		)
 

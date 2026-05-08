@@ -214,6 +214,9 @@ gamemode adventure @s
 
 # Run map-defined respawn commands on this player (if any)
 execute if data storage {ns}:multiplayer game.map.respawn_commands[0] at @s run function {ns}:v{version}/shared/run_respawn_commands {{mode:"multiplayer"}}
+
+# Call map respawn script (executed as the respawning player)
+function {ns}:v{version}/shared/maps/call_respawn_script_at_base
 """)
 
 	## auto_apply_default: apply default custom loadout on game start

@@ -89,6 +89,9 @@ kill @e[tag={ns}.power_switch]
 # Announce
 tellraw @a[scores={{{ns}.zb.in_game=1}}] [{MGS_TAG},{{"text":"Power is ON!","color":"green","bold":true}}]
 function {ns}:v{version}/zombies/feedback/sound_power_on
+
+# Signal map-specific power-on hooks
+function {ns}:v{version}/shared/maps/call_power_script_at_base
 """)
 
 	write_versioned_function("zombies/power/deny_already_on", f"""
