@@ -30,6 +30,20 @@ def main() -> None:
         max_level=-1
     )
 
+    # Create item modifiers to set grenade count (for initial give and replenishment)
+    Mem.ctx.data[ns].item_modifiers[f"v{version}/grenade/set_count_4"] = set_json_encoder(
+        ItemModifier({"function": "minecraft:set_count", "count": 4}),
+        max_level=-1
+    )
+    Mem.ctx.data[ns].item_modifiers[f"v{version}/grenade/set_count_2"] = set_json_encoder(
+        ItemModifier({"function": "minecraft:set_count", "count": 2}),
+        max_level=-1
+    )
+    Mem.ctx.data[ns].item_modifiers[f"v{version}/grenade/set_count_add_2"] = set_json_encoder(
+        ItemModifier({"function": "minecraft:set_count", "count": 2, "add": True}),
+        max_level=-1
+    )
+
     # Create white pixel texture for flash grenade screen fill
     white_pixel = Image.new("RGB", (1, 1), (255, 255, 255))
     Mem.ctx.assets.textures[f"{ns}:font/flash_white"] = Texture(white_pixel)

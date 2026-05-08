@@ -26,14 +26,14 @@ def json_dump(x: Any) -> str: return stp.json_dump(x, max_level=-1)
 def get_model_path(model_name: str) -> str: return f"{ITEM_MODELS_PATH}/{model_name}.json"
 
 # Function
-def add_item(id: str, stats: JsonDict | None = None, model_path: str | None = None, **kwargs: Any) -> Item:
+def add_item(id: str, stats: JsonDict | None = None, model_path: str | None = None, max_stack_size: int = 1, **kwargs: Any) -> Item:
     if model_path == "auto":
         model_path = get_model_path(id)
     return Item(
         id=id,
         base_item="minecraft:poisonous_potato" if stats else Item.base_item,
         components={
-            "max_stack_size": 1,
+            "max_stack_size": max_stack_size,
             "custom_data": {Mem.ctx.project_id: {"gun":True, **stats} if stats else {"casing":True}},
             "rarity": "common",
         },
