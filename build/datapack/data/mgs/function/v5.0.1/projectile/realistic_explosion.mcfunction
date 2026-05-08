@@ -1,0 +1,14 @@
+
+#> mgs:v5.0.1/projectile/realistic_explosion
+#
+# @executed	at @s
+#
+# @within	mgs:v5.0.1/projectile/explode
+#
+
+# Set explosion power from config and call the library
+scoreboard players operation #explosion_power realistic_explosion.data = #projectile_explosion_power mgs.config
+execute if score #projectile_explosion_power mgs.config matches 1.. run scoreboard players set #falling_fire realistic_explosion.data 1
+execute unless score #projectile_explosion_power mgs.config matches 1.. run scoreboard players set #falling_fire realistic_explosion.data 0
+function realistic_explosion:explode
+

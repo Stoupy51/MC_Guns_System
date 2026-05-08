@@ -1,0 +1,26 @@
+
+#> mgs:v5.0.1/ammo/compute_reserve
+#
+# @executed	as @e[type=player,sort=random] & at @s
+#
+# @within	mgs:v5.0.1/switch/on_weapon_switch
+#			mgs:v5.0.1/ammo/inventory/find
+#			mgs:zombies/bonus/max_ammo
+#			mgs:v5.0.1/zombies/pap/on_right_click
+#			mgs:v5.0.1/zombies/pap/anim/collect_give [ as @p[tag=mgs.pap_owner] ]
+#			mgs:v5.0.1/zombies/pap/on_free_pap
+#
+
+# Skip if not holding a gun
+execute unless data storage mgs:gun all.gun run return fail
+
+# Skip if weapon has no base_weapon (e.g. grenades)
+execute unless data storage mgs:gun all.stats.base_weapon run return fail
+
+# Reset reserve counter
+scoreboard players set @s mgs.reserve_ammo 0
+
+# Sum bullets from all matching magazine slots (runs as ticking player)
+function mgs:v5.0.1/ammo/reserve/scan with storage mgs:gun all.stats
+return 0
+

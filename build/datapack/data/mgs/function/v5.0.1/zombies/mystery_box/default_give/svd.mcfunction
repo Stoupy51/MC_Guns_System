@@ -1,0 +1,10 @@
+
+#> mgs:v5.0.1/zombies/mystery_box/default_give/svd
+#
+# @within	???
+#
+
+data modify storage mgs:temp _wb_weapon set value {weapon_id:"svd",name:"svd",consumable:0b,magazine_id:"svd_mag",mag_count:3}
+scoreboard players set #wb_price mgs.data 0
+function mgs:v5.0.1/zombies/wallbuys/process_purchase with storage mgs:temp _wb_weapon
+

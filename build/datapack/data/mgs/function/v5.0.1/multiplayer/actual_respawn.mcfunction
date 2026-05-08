@@ -1,0 +1,26 @@
+
+#> mgs:v5.0.1/multiplayer/actual_respawn
+#
+# @executed	at @s
+#
+# @within	mgs:v5.0.1/multiplayer/game_tick [ at @s ]
+#
+
+# Stop spectating
+spectate @s
+
+# Teleport to best spawn point
+function mgs:v5.0.1/multiplayer/respawn_tp
+
+# Re-apply permanent saturation (lost on death)
+effect give @s saturation infinite 255 true
+
+# Apply current class loadout (positive = standard, negative = custom)
+execute unless score @s mgs.mp.class matches 0 run function mgs:v5.0.1/multiplayer/apply_class
+
+# Switch back to adventure
+gamemode adventure @s
+
+# Run map-defined respawn commands on this player (if any)
+execute if data storage mgs:multiplayer game.map.respawn_commands[0] at @s run function mgs:v5.0.1/shared/run_respawn_commands {mode:"multiplayer"}
+
