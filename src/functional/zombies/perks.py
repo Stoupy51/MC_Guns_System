@@ -152,7 +152,7 @@ execute if data storage {ns}:temp _pk_iter[0] run function {ns}:v{version}/zombi
 """)
 
 	write_versioned_function("zombies/perks/place_at", f"""
-$summon minecraft:interaction $(x) $(y) $(z) {{width:1.0f,height:2.0f,response:true,Rotation:$(rotation),Tags:["{ns}.perk_machine","{ns}.gm_entity","bs.entity.interaction","{ns}.pk_new"]}}
+$summon minecraft:interaction $(x) $(y) $(z) {{width:1.2f,height:2.0f,response:true,Rotation:$(rotation),Tags:["{ns}.perk_machine","{ns}.gm_entity","bs.entity.interaction","{ns}.pk_new"]}}
 """)
 
 	write_versioned_function("zombies/perks/store_data", f"""

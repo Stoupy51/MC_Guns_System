@@ -41,6 +41,9 @@ scoreboard players set #any_game_active mgs.data 0
 # Announce
 tellraw @a [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.zombies_game_ended","color":"red"}]
 
+# Call map leave script for each in-game player (state is still active here)
+execute as @a[scores={mgs.zb.in_game=1}] run function mgs:v5.0.1/shared/maps/call_leave_script_at_base
+
 # Reset in-game state
 
 scoreboard players set @a mgs.zb.in_game 0

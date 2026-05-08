@@ -35,6 +35,9 @@ item replace entity @s hotbar.3 with compass[custom_data={mgs:{compass:true}}]
 # Teleport to spawn
 function mgs:v5.0.1/missions/respawn_tp
 
+# Call map join script (executed as the joining player)
+function mgs:v5.0.1/shared/maps/call_join_script_at_base
+
 # Announce
 tellraw @a ["",{"selector":"@s","color":"green"},[{"text":" ","color":"green"}, {"translate":"mgs.joined_the_mission"}]]
 

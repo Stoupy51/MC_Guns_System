@@ -430,6 +430,9 @@ execute unless score @s {ns}.zb.perk.juggernog matches 1.. run attribute @s mine
 # Re-give starting weapon on respawn
 function {ns}:v{version}/zombies/inventory/give_respawn_loadout
 
+# Call map respawn script (executed as the respawning player)
+function {ns}:v{version}/shared/maps/call_respawn_script_at_base
+
 # Announce
 tellraw @a[scores={{{ns}.zb.in_game=1}}] [{MGS_TAG},{{"selector":"@s","color":"green"}},{{"text":" has respawned!","color":"gray"}}]
 """)

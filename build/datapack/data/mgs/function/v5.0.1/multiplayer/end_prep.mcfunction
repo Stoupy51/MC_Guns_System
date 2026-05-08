@@ -23,6 +23,9 @@ effect give @a[scores={mgs.mp.in_game=1}] saturation infinite 255 true
 # Set state to active
 data modify storage mgs:multiplayer game.state set value "active"
 
+# Call map start scripts (state is now active, chunks had time to load)
+function mgs:v5.0.1/shared/maps/call_start_script_at_base
+
 # Announce
 tellraw @a [{"text":"","color":"green","bold":true},"⚔ ",{"translate":"mgs.go_go_go"}]
 

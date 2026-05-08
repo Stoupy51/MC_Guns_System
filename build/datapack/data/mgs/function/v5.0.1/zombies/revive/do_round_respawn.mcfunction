@@ -24,6 +24,9 @@ execute unless score @s mgs.zb.perk.juggernog matches 1.. run attribute @s minec
 # Re-give starting weapon on respawn
 function mgs:v5.0.1/zombies/inventory/give_respawn_loadout
 
+# Call map respawn script (executed as the respawning player)
+function mgs:v5.0.1/shared/maps/call_respawn_script_at_base
+
 # Announce
 tellraw @a[scores={mgs.zb.in_game=1}] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"selector":"@s","color":"green"},[{"text":" ","color":"gray"}, {"translate":"mgs.has_respawned"}]]
 

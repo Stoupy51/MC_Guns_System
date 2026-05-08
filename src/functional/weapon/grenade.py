@@ -310,7 +310,7 @@ scoreboard players set @s bs.vel.y 0
 scoreboard players set @s bs.vel.z 0
 
 # Initial burst of smoke
-particle campfire_signal_smoke ~ ~ ~ 2 1 2 0.02 30 force @a[distance=..128]
+particle campfire_signal_smoke ~ ~ ~ 1.5 1 1.5 0.02 200 force @a[distance=..128]
 """)
 
     ## Flash grenade detonation - blind nearby players
@@ -407,9 +407,9 @@ execute if score @s {ns}.data matches ..0 run function {ns}:v{version}/grenade/d
     write_versioned_function("grenade/smoke_particles",
 """
 # Dense smoke cloud within effect radius
-particle campfire_signal_smoke ~ ~0.5 ~ 3 2 3 0.01 20 force @a[distance=..128]
-particle campfire_cosy_smoke ~ ~1 ~ 2 1.5 2 0.02 10 force @a[distance=..128]
-particle campfire_cosy_smoke ~ ~0.3 ~ 2.5 0.5 2.5 0.005 5 force @a[distance=..128]
+particle campfire_signal_smoke ~ ~0.5 ~ 2 1.5 2 0.01 50 force @a[distance=..128]
+particle campfire_cosy_smoke ~ ~1 ~ 1.5 1 1.5 0.02 20 force @a[distance=..128]
+particle campfire_cosy_smoke ~ ~0.3 ~ 2 0.5 2 0.005 10 force @a[distance=..128]
 """)
 
     ## Delete grenade entity

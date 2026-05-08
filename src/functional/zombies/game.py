@@ -163,7 +163,6 @@ function #{ns}:zombies/on_game_start
 
 # Run map-defined start commands after entity/setup summons
 execute if data storage {ns}:zombies game.map.start_commands[0] run function {ns}:v{version}/shared/run_start_commands {{mode:"zombies"}}
-execute if data storage {ns}:zombies game.map.start_function run function {ns}:v{version}/shared/call_map_start_fn with storage {ns}:zombies game.map
 
 # Teleport all players to player spawns
 function {ns}:v{version}/zombies/tp_all_to_spawns
@@ -221,6 +220,9 @@ effect give @a[scores={{{ns}.zb.in_game=1}}] saturation infinite 255 true
 
 # Start round 1
 function {ns}:v{version}/zombies/start_round
+
+# Call map start scripts (state is now active, chunks had time to load)
+function {ns}:v{version}/shared/maps/call_start_script_at_base
 """)
 
 
@@ -237,8 +239,8 @@ execute if data storage {ns}:zombies game{{state:"preparing"}} run function {ns}
 # Revive system tick (process downed players)
 function {ns}:v{version}/zombies/revive/tick
 
-# Call map-defined tick function if configured
-execute if data storage {ns}:zombies game.map.tick_function run function {ns}:v{version}/shared/call_map_tick_fn with storage {ns}:zombies game.map
+# Call map-defined tick script
+function {ns}:v{version}/shared/maps/call_tick_script_at_base
 
 # Zombie Spawning (if there are still zombies to spawn)
 execute if score #zb_to_spawn {ns}.data matches 1.. run function {ns}:v{version}/zombies/spawn_tick
@@ -386,6 +388,9 @@ scoreboard objectives remove {ns}.zb_sidebar
 # Announce
 tellraw @a [{MGS_TAG},{{"text":"Zombies game ended.","color":"red"}}]
 
+# Call map leave script for each in-game player (state is still active here)
+execute as @a[scores={{{ns}.zb.in_game=1}}] run function {ns}:v{version}/shared/maps/call_leave_script_at_base
+
 # Reset in-game state
 
 scoreboard players set @a {ns}.zb.in_game 0
@@ -435,6 +440,9 @@ execute unless score @s {ns}.mp.class matches 0 run function {ns}:v{version}/mul
 
 # Teleport to spawn
 function {ns}:v{version}/zombies/respawn_tp
+
+# Call map join script (executed as the joining player)
+function {ns}:v{version}/shared/maps/call_join_script_at_base
 
 # Announce
 tellraw @a ["",{{"selector":"@s","color":"dark_green"}},{{"text":" joined the zombies game!","color":"dark_green"}}]

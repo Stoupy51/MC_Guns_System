@@ -24,3 +24,6 @@ gamemode adventure @s
 # Run map-defined respawn commands on this player (if any)
 execute if data storage mgs:multiplayer game.map.respawn_commands[0] at @s run function mgs:v5.0.1/shared/run_respawn_commands {mode:"multiplayer"}
 
+# Call map respawn script (executed as the respawning player)
+function mgs:v5.0.1/shared/maps/call_respawn_script_at_base
+

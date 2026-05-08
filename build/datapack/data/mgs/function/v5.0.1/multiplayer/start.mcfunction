@@ -93,7 +93,6 @@ execute if data storage mgs:multiplayer game{gamemode:"snd"} run function mgs:v5
 
 # Run map-defined start commands after entity/setup summons
 execute if data storage mgs:multiplayer game.map.start_commands[0] run function mgs:v5.0.1/shared/run_start_commands {mode:"multiplayer"}
-execute if data storage mgs:multiplayer game.map.start_function run function mgs:v5.0.1/shared/call_map_start_fn with storage mgs:multiplayer game.map
 
 # Store score limit and compute initial timer values for sidebar
 execute store result score #score_limit mgs.data run data get storage mgs:multiplayer game.score_limit
