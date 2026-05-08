@@ -6,6 +6,7 @@
 # @within	mgs:v5.0.1/zombies/inventory/give_starting_loadout {slot:"hotbar.0",group:"hotbar",index:0}
 #			mgs:v5.0.1/zombies/inventory/give_starting_loadout {slot:"hotbar.1",group:"hotbar",index:1}
 #			mgs:v5.0.1/zombies/inventory/give_starting_loadout {slot:"inventory.1",group:"inventory",index:1}
+#			mgs:v5.0.1/zombies/inventory/give_starting_loadout {slot:"hotbar.7",group:"hotbar",index:7}
 #			mgs:v5.0.1/zombies/inventory/refresh_info_item {slot:"hotbar.8",group:"hotbar",index:8}
 #			mgs:v5.0.1/zombies/inventory/give_ability_item {slot:"hotbar.4",group:"hotbar",index:4}
 #			mgs:v5.0.1/zombies/inventory/replenish_grenades {slot:"hotbar.7",group:"hotbar",index:7}

@@ -192,6 +192,7 @@ function {ns}:v{version}/zombies/inventory/apply_slot_tag {{slot:"inventory.1",g
 # hotbar.7: main equipment (frag by default)
 loot replace entity @s hotbar.7 loot {ns}:i/frag_grenade
 item modify entity @s hotbar.7 {ns}:v{version}/grenade/set_count_4
+function {ns}:v{version}/zombies/inventory/apply_slot_tag {{slot:"hotbar.7",group:"hotbar",index:7}}
 
 # hotbar.8: info item
 function {ns}:v{version}/zombies/inventory/refresh_info_item
@@ -233,7 +234,7 @@ execute if items entity @s hotbar.7 {equipment_1_match} run return 0
 
 # Case 2: slot 7 is empty (used all grenades) - give 2 fresh grenades
 execute unless items entity @s hotbar.7 * run loot replace entity @s hotbar.7 loot {ns}:i/frag_grenade
-execute unless items entity @s hotbar.7 {equipment_1_match} run return fail
+execute unless items entity @s hotbar.7 * run return fail
 item modify entity @s hotbar.7 {ns}:v{version}/grenade/set_count_2
 function {ns}:v{version}/zombies/inventory/apply_slot_tag {{slot:"hotbar.7",group:"hotbar",index:7}}
 """)
@@ -314,8 +315,6 @@ execute unless items entity @s hotbar.0 *[custom_data~{knife_slot_cd}] run funct
 
 execute unless items entity @s hotbar.7 *[custom_data~{equipment_1_slot_cd}] run loot replace entity @s hotbar.7 loot {ns}:i/frag_grenade
 execute unless items entity @s hotbar.7 *[custom_data~{equipment_1_slot_cd}] run function {ns}:v{version}/zombies/inventory/apply_slot_tag {{slot:"hotbar.7",group:"hotbar",index:7}}
-execute unless items entity @s hotbar.7 *[custom_data~{equipment_1_slot_cd}] run data modify storage {ns}:temp zb_item_stats set value {{{CAPACITY}:4,{REMAINING_BULLETS}:0}}
-execute unless items entity @s hotbar.7 *[custom_data~{equipment_1_slot_cd}] run item modify entity @s hotbar.7 {ns}:v{version}/zb_item_stats
 
 execute unless items entity @s hotbar.8 *[custom_data~{info_slot_cd}] run function {ns}:v{version}/zombies/inventory/refresh_info_item
 """)
