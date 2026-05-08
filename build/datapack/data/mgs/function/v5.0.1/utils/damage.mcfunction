@@ -1,0 +1,14 @@
+
+#> mgs:v5.0.1/utils/damage
+#
+# @executed	at @s
+#
+# @within	mgs:v5.0.1/utils/signal_and_damage with storage mgs:input with
+#
+# @args		target (unknown)
+#			amount (unknown)
+#			attacker (unknown)
+#
+
+$damage $(target) $(amount) mgs:bullet by $(attacker)
+

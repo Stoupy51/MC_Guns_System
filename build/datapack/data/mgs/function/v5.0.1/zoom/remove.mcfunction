@@ -1,0 +1,31 @@
+
+#> mgs:v5.0.1/zoom/remove
+#
+# @executed	as @e[type=player,sort=random] & at @s
+#
+# @within	mgs:v5.0.1/zoom/main
+#
+
+# Remove zoom state from gun stats
+data remove storage mgs:gun all.stats.is_zoom
+
+# Prepare input storage for model update
+data modify storage mgs:input with set value {"item_model":""}
+data modify storage mgs:input with.item_model set from storage mgs:gun all.stats.models.normal
+
+# Update weapon model and stats
+function mgs:v5.0.1/utils/update_model with storage mgs:input with
+function mgs:v5.0.1/ammo/modify_lore {slot:"weapon.mainhand"}
+item modify entity @s weapon.mainhand mgs:v5.0.1/update_stats
+
+# Apply unzoom effects
+playsound mgs:common/lean_out player
+scoreboard players reset @s mgs.zoom
+scoreboard players set @s mgs.zoom_timer 0
+effect clear @s slowness
+
+# Signal: on_unzoom (@s = unzooming player, weapon data in mgs:signals)
+data modify storage mgs:signals on_unzoom set value {}
+data modify storage mgs:signals on_unzoom.weapon set from storage mgs:gun all
+function #mgs:signals/on_unzoom
+

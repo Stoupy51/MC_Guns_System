@@ -1,0 +1,12 @@
+
+#> mgs:v5.0.1/zombies/barriers/on_remover_valid
+#
+# @executed	positioned ^ ^ ^-1
+#
+# @within	mgs:v5.0.1/zombies/barriers/handle_removing
+#
+
+# @s = removing zombie, at zombie position (via at @s in handle_removing selector)
+scoreboard players set #barrier_remover_valid mgs.data 1
+particle minecraft:large_smoke ~ ~1 ~ 0.3 0.3 0.3 0.02 1
+

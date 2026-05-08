@@ -1,0 +1,14 @@
+
+#> mgs:v5.0.1/multiplayer/gamemodes/snd/on_death
+#
+# @executed	at @s
+#
+# @within	mgs:v5.0.1/multiplayer/simulate_death
+#			mgs:v5.0.1/multiplayer/on_respawn
+#
+
+# Remove alive tag (no respawn in S&D)
+tag @s remove mgs.snd_alive
+# Set to spectator mode
+gamemode spectator @s
+
