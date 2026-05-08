@@ -20,8 +20,13 @@ execute if entity @s[tag=mgs.element.mission_spawn] run data modify storage mgs:
 # Summon permanent marker
 function mgs:v5.0.0/maps/editor/summon_spawn_marker with storage mgs:temp _pos
 
-# Store the player's rotation on the marker
-execute as @n[tag=mgs.new_spawn_marker] store result entity @s data.yaw float 1 run data get entity @p[tag=mgs.map_editor,distance=..6,sort=nearest] Rotation[0]
+# Get player rotation and snap to nearest 45 degrees
+execute store result score #yaw mgs.data run data get entity @p[tag=mgs.map_editor,distance=..6,sort=nearest] Rotation[0]
+scoreboard players add #yaw mgs.data 742
+scoreboard players operation #yaw mgs.data /= #45 mgs.data
+scoreboard players operation #yaw mgs.data *= #45 mgs.data
+scoreboard players remove #yaw mgs.data 720
+execute as @n[tag=mgs.new_spawn_marker] store result entity @s data.yaw float 1 run scoreboard players get #yaw mgs.data
 tag @n[tag=mgs.new_spawn_marker] remove mgs.new_spawn_marker
 
 # Announce

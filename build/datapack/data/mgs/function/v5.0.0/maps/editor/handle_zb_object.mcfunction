@@ -42,8 +42,12 @@ execute as @n[tag=mgs.new_zb_marker] run data modify entity @s data set from sto
 # Apply shared group_id default
 execute as @n[tag=mgs.new_zb_marker] run data modify entity @s data.group_id set from storage mgs:temp map_edit.zb_defaults.group_id
 
-# Get player rotation as yaw
+# Get player rotation and snap to nearest 45 degrees
 execute store result score #yaw mgs.data run data get entity @p[tag=mgs.map_editor,distance=..6,sort=nearest] Rotation[0]
+scoreboard players add #yaw mgs.data 742
+scoreboard players operation #yaw mgs.data /= #45 mgs.data
+scoreboard players operation #yaw mgs.data *= #45 mgs.data
+scoreboard players remove #yaw mgs.data 720
 
 # Apply 180° yaw offset
 scoreboard players add #yaw mgs.data 180
