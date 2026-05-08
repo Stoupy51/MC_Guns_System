@@ -375,6 +375,10 @@ execute store result storage {ns}:temp _pos.y double 1 run scoreboard players ge
 execute store result storage {ns}:temp _pos.z double 1 run scoreboard players get #bz {ns}.data
 function {ns}:v{version}/maps/editor/summon_base_marker with storage {ns}:temp _pos
 
+# Restore start_function and tick_function to the base marker from map data
+execute if data storage {ns}:temp map_edit.map.start_function run data modify entity @n[tag={ns}.element.base_coordinates] data.start_function set from storage {ns}:temp map_edit.map.start_function
+execute if data storage {ns}:temp map_edit.map.tick_function run data modify entity @n[tag={ns}.element.base_coordinates] data.tick_function set from storage {ns}:temp map_edit.map.tick_function
+
 # Mode-specific elements
 {summon_dispatch}
 """)
@@ -790,6 +794,10 @@ execute as @n[tag={ns}.new_element] at @s run function {ns}:v{version}/maps/edit
 
 	# Handle Base Coordinates ────────────────────────────────────
 	write_versioned_function("maps/editor/handle_base", f"""
+# Preserve start_function and tick_function from existing base marker
+execute if data entity @n[tag={ns}.element.base_coordinates] data.start_function run data modify storage {ns}:temp _base_preserve.start_function set from entity @n[tag={ns}.element.base_coordinates] data.start_function
+execute if data entity @n[tag={ns}.element.base_coordinates] data.tick_function run data modify storage {ns}:temp _base_preserve.tick_function set from entity @n[tag={ns}.element.base_coordinates] data.tick_function
+
 # Kill any existing base marker
 kill @e[tag={ns}.element.base_coordinates]
 
@@ -803,6 +811,11 @@ execute store result storage {ns}:temp _pos.x double 1 run scoreboard players ge
 execute store result storage {ns}:temp _pos.y double 1 run scoreboard players get #base_y {ns}.data
 execute store result storage {ns}:temp _pos.z double 1 run scoreboard players get #base_z {ns}.data
 function {ns}:v{version}/maps/editor/summon_base_marker with storage {ns}:temp _pos
+
+# Restore preserved start_function and tick_function
+execute if data storage {ns}:temp _base_preserve.start_function run data modify entity @n[tag={ns}.element.base_coordinates] data.start_function set from storage {ns}:temp _base_preserve.start_function
+execute if data storage {ns}:temp _base_preserve.tick_function run data modify entity @n[tag={ns}.element.base_coordinates] data.tick_function set from storage {ns}:temp _base_preserve.tick_function
+data remove storage {ns}:temp _base_preserve
 
 # Announce
 execute as @a[tag={ns}.map_editor] run tellraw @s [{MGS_TAG},{{"text":"Base coordinates set!","color":"light_purple"}}]
@@ -1252,14 +1265,52 @@ execute at @s unless entity @n[tag={ns}.map_element,distance=..10] run tellraw @
 		f'{{"entity":"@s","nbt":"data.function","color":"white"}}," ",{edit_fn_btn}]'
 	)
 
-	# For point/base types: no configurable fields
+	# For point types: no configurable fields
 	for etype, einfo in ALL_ELEMENTS.items():
-		if einfo["save_type"] not in ("point", "base"):
+		if einfo["save_type"] != "point":
 			continue
 		zb_config_lines.append(
 			f'execute if entity @s[tag={ns}.element.{etype}] run tellraw @a[tag={ns}.map_editor] '
 			f'["  ",{{"text":"{einfo["emoji"]} {einfo["name"]} — no configurable fields","color":"gray","italic":true}}]'
 		)
+
+	# For base_coordinates: show start_function and tick_function
+	edit_start_fn_btn = btn(
+		"✎",
+		f'/data modify entity @n[tag={ns}.element.base_coordinates,distance=..10] data.start_function set value "namespace:path/to/function"',
+		"yellow", "Click to edit start_function (called once when game starts)", action="suggest_command"
+	)
+	clear_start_fn_btn = btn(
+		"✗",
+		f'/data remove entity @n[tag={ns}.element.base_coordinates,distance=..10] data.start_function',
+		"red", "Clear start_function (won't be called)", action="run_command"
+	)
+	edit_tick_fn_btn = btn(
+		"✎",
+		f'/data modify entity @n[tag={ns}.element.base_coordinates,distance=..10] data.tick_function set value "namespace:path/to/function"',
+		"yellow", "Click to edit tick_function (called every game tick)", action="suggest_command"
+	)
+	clear_tick_fn_btn = btn(
+		"✗",
+		f'/data remove entity @n[tag={ns}.element.base_coordinates,distance=..10] data.tick_function',
+		"red", "Clear tick_function (won't be called)", action="run_command"
+	)
+	zb_config_lines.append(
+		f'execute if entity @s[tag={ns}.element.base_coordinates] run tellraw @a[tag={ns}.map_editor] '
+		f'["  ",{{"text":"⬟ Base Coordinates Configuration","color":"light_purple","bold":true}}]'
+	)
+	zb_config_lines.append(
+		f'execute if entity @s[tag={ns}.element.base_coordinates] run tellraw @a[tag={ns}.map_editor] '
+		f'["    ",{{"text":"start_function: ","color":"gray"}},{{"entity":"@s","nbt":"data.start_function","color":"white"}}," ",{edit_start_fn_btn}," ",{clear_start_fn_btn}]'
+	)
+	zb_config_lines.append(
+		f'execute if entity @s[tag={ns}.element.base_coordinates] run tellraw @a[tag={ns}.map_editor] '
+		f'["    ",{{"text":"tick_function: ","color":"gray"}},{{"entity":"@s","nbt":"data.tick_function","color":"white"}}," ",{edit_tick_fn_btn}," ",{clear_tick_fn_btn}]'
+	)
+	zb_config_lines.append(
+		f'execute if entity @s[tag={ns}.element.base_coordinates] run tellraw @a[tag={ns}.map_editor] '
+		f'["    ",{{"text":"💎 start_function is called once when the game starts, tick_function every game tick.","color":"dark_gray","italic":true}}]'
+	)
 
 	zb_config_lines.append(f"tellraw @a[tag={ns}.map_editor] {sep}")
 
@@ -1423,6 +1474,12 @@ function {ns}:v{version}/maps/editor/write_back with storage {ns}:temp map_edit
 execute store result storage {ns}:temp map_edit.map.base_coordinates[0] int 1 run data get entity @s Pos[0]
 execute store result storage {ns}:temp map_edit.map.base_coordinates[1] int 1 run data get entity @s Pos[1]
 execute store result storage {ns}:temp map_edit.map.base_coordinates[2] int 1 run data get entity @s Pos[2]
+
+# Save start_function and tick_function (absent by default, only written if set on marker)
+execute if data entity @s data.start_function run data modify storage {ns}:temp map_edit.map.start_function set from entity @s data.start_function
+execute unless data entity @s data.start_function run data remove storage {ns}:temp map_edit.map.start_function
+execute if data entity @s data.tick_function run data modify storage {ns}:temp map_edit.map.tick_function set from entity @s data.tick_function
+execute unless data entity @s data.tick_function run data remove storage {ns}:temp map_edit.map.tick_function
 """)
 
 	## Save a spawn point (macro: path = red/blue/general/etc.)

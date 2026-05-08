@@ -211,6 +211,7 @@ function {ns}:v{version}/missions/spawn_all_enemies
 
 # Run map-defined start commands after enemies are spawned
 execute if data storage {ns}:missions game.map.start_commands[0] run function {ns}:v{version}/shared/run_start_commands {{mode:"missions"}}
+execute if data storage {ns}:missions game.map.start_function run function {ns}:v{version}/shared/call_map_start_fn with storage {ns}:missions game.map
 
 # Give compass pointing to nearest enemy (hotbar slot 3)
 execute as @a[scores={{{ns}.mi.in_game=1}}] run item replace entity @s hotbar.3 with compass[custom_data={{{ns}:{{compass:true}}}}]
@@ -349,6 +350,9 @@ scoreboard players operation #mi_kills {ns}.data -= #alive {ns}.data
 # Update compass for all players (point to nearest enemy)
 execute as @a[scores={{{ns}.mi.in_game=1}}] at @s run function {ns}:v{version}/missions/update_compass
 execute at @r[scores={{{ns}.mi.in_game=1}}] run kill @e[type=experience_orb,distance=..200]
+
+# Call map-defined tick function if configured
+execute if data storage {ns}:missions game.map.tick_function run function {ns}:v{version}/shared/call_map_tick_fn with storage {ns}:missions game.map
 
 # Check if all enemies are dead → victory
 execute unless entity @e[tag={ns}.mission_enemy] run return run function {ns}:v{version}/missions/victory

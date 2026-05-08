@@ -7,6 +7,9 @@
 # Revive system tick (process downed players)
 function mgs:v5.0.1/zombies/revive/tick
 
+# Call map-defined tick function if configured
+execute if data storage mgs:zombies game.map.tick_function run function mgs:v5.0.1/shared/call_map_tick_fn with storage mgs:zombies game.map
+
 # Zombie Spawning (if there are still zombies to spawn)
 execute if score #zb_to_spawn mgs.data matches 1.. run function mgs:v5.0.1/zombies/spawn_tick
 
