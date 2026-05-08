@@ -6,6 +6,6 @@
 # @within	mgs:v5.0.1/zombies/powerups/entity_tick
 #
 
-kill @e[tag=mgs.pu_text,distance=..3]
+kill @n[tag=mgs.pu_text,distance=..3]
 kill @s
 

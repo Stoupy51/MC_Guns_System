@@ -185,7 +185,7 @@ execute if entity @s[predicate={ns}:v{version}/input/left] as @e[tag={ns}.downed
 execute if entity @s[predicate={ns}:v{version}/input/right] as @e[tag={ns}.downed_mannequin] if score @s {ns}.zb.downed_id = #my_downed_id {ns}.data run scoreboard players set @s bs.vel.x -{int(CRAWL_SPEED * 1000)}
 
 # Convert local velocity (relative to mannequin facing) to canonical (world), then apply motion
-execute as @e[tag={ns}.downed_mannequin] if score @s {ns}.zb.downed_id = #my_downed_id {ns}.data at @s rotated as @s run function #bs.move:local_to_canonical
+execute as @e[tag={ns}.downed_mannequin] if score @s {ns}.zb.downed_id = #my_downed_id {ns}.data at @s run function #bs.move:local_to_canonical
 execute as @e[tag={ns}.downed_mannequin] if score @s {ns}.zb.downed_id = #my_downed_id {ns}.data run function #bs.move:set_motion {{scale:0.001}}
 
 # Keep HUD text_display anchored 2 blocks above the mannequin

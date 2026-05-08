@@ -43,7 +43,7 @@ execute if entity @s[predicate=mgs:v5.0.1/input/left] as @e[tag=mgs.downed_manne
 execute if entity @s[predicate=mgs:v5.0.1/input/right] as @e[tag=mgs.downed_mannequin] if score @s mgs.zb.downed_id = #my_downed_id mgs.data run scoreboard players set @s bs.vel.x -60
 
 # Convert local velocity (relative to mannequin facing) to canonical (world), then apply motion
-execute as @e[tag=mgs.downed_mannequin] if score @s mgs.zb.downed_id = #my_downed_id mgs.data at @s rotated as @s run function #bs.move:local_to_canonical
+execute as @e[tag=mgs.downed_mannequin] if score @s mgs.zb.downed_id = #my_downed_id mgs.data at @s run function #bs.move:local_to_canonical
 execute as @e[tag=mgs.downed_mannequin] if score @s mgs.zb.downed_id = #my_downed_id mgs.data run function #bs.move:set_motion {scale:0.001}
 
 # Keep HUD text_display anchored 2 blocks above the mannequin
