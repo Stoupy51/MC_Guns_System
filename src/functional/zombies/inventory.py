@@ -190,10 +190,8 @@ function {ns}:v{version}/zombies/inventory/scale_magazine_slot {{slot:"inventory
 function {ns}:v{version}/zombies/inventory/apply_slot_tag {{slot:"inventory.1",group:"inventory",index:1}}
 
 # hotbar.7: main equipment (frag by default)
-data modify storage {ns}:temp zb_item_stats set value {{{CAPACITY}:4,{REMAINING_BULLETS}:4}}
 loot replace entity @s hotbar.7 loot {ns}:i/frag_grenade
-item modify entity @s hotbar.7 {ns}:v{version}/zb_item_stats
-function {ns}:v{version}/zombies/inventory/apply_slot_tag {{slot:"hotbar.7",group:"hotbar",index:7}}
+item modify entity @s hotbar.7 {ns}:v{version}/grenade/set_count_4
 
 # hotbar.8: info item
 function {ns}:v{version}/zombies/inventory/refresh_info_item
@@ -227,14 +225,17 @@ function {ns}:v{version}/zombies/inventory/apply_slot_tag {{slot:"hotbar.4",grou
 """)
 
 	write_versioned_function("zombies/inventory/replenish_grenades", f"""
-execute unless items entity @s hotbar.7 {equipment_1_match} run return fail
-execute store result score #nade_rem {ns}.data run data get entity @s Inventory[{{Slot:7b}}].components."minecraft:custom_data".{ns}.stats.{REMAINING_BULLETS}
-scoreboard players add #nade_rem {ns}.data 2
-execute if score #nade_rem {ns}.data matches 5.. run scoreboard players set #nade_rem {ns}.data 4
+# Case 1: player already has grenades in slot 7 - add 2, cap at 4
+execute if items entity @s hotbar.7 {equipment_1_match} run item modify entity @s hotbar.7 {ns}:v{version}/grenade/set_count_add_2
+execute if items entity @s hotbar.7 {equipment_1_match} store result score #nade_count {ns}.data run data get entity @s Inventory[{{Slot:7b}}].count
+execute if items entity @s hotbar.7 {equipment_1_match} if score #nade_count {ns}.data matches 5.. run item modify entity @s hotbar.7 {ns}:v{version}/grenade/set_count_4
+execute if items entity @s hotbar.7 {equipment_1_match} run return 0
 
-execute store result storage {ns}:temp zb_item_stats.{REMAINING_BULLETS} int 1 run scoreboard players get #nade_rem {ns}.data
-data modify storage {ns}:temp zb_item_stats.{CAPACITY} set value 4
-item modify entity @s hotbar.7 {ns}:v{version}/zb_item_stats
+# Case 2: slot 7 is empty (used all grenades) - give 2 fresh grenades
+execute unless items entity @s hotbar.7 * run loot replace entity @s hotbar.7 loot {ns}:i/frag_grenade
+execute unless items entity @s hotbar.7 {equipment_1_match} run return fail
+item modify entity @s hotbar.7 {ns}:v{version}/grenade/set_count_2
+function {ns}:v{version}/zombies/inventory/apply_slot_tag {{slot:"hotbar.7",group:"hotbar",index:7}}
 """)
 
 	inv_changed_adv: JsonDict = {

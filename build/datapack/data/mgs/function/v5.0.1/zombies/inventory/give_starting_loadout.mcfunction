@@ -22,10 +22,8 @@ function mgs:v5.0.1/zombies/inventory/scale_magazine_slot {slot:"inventory.1",in
 function mgs:v5.0.1/zombies/inventory/apply_slot_tag {slot:"inventory.1",group:"inventory",index:1}
 
 # hotbar.7: main equipment (frag by default)
-data modify storage mgs:temp zb_item_stats set value {capacity:4,remaining_bullets:4}
 loot replace entity @s hotbar.7 loot mgs:i/frag_grenade
-item modify entity @s hotbar.7 mgs:v5.0.1/zb_item_stats
-function mgs:v5.0.1/zombies/inventory/apply_slot_tag {slot:"hotbar.7",group:"hotbar",index:7}
+item modify entity @s hotbar.7 mgs:v5.0.1/grenade/set_count_4
 
 # hotbar.8: info item
 function mgs:v5.0.1/zombies/inventory/refresh_info_item
