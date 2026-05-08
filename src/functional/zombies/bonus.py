@@ -156,7 +156,7 @@ tag @s add {ns}.nuke_activator
 execute as @e[tag={ns}.nukable] run tag @s add {ns}.nuked
 
 # Zero attack damage on all nuked entities (multiply base by 0)
-execute as @e[tag={ns}.nuked] run attribute @s minecraft:attack_damage modifier add {ns}:nuke_zero_damage -1 add_multiplied_base
+execute as @e[tag={ns}.nuked] run attribute @s minecraft:attack_damage modifier add {ns}:nuke_zero_damage -1 add_multiplied_total
 
 # Start kill loop (1 entity per tick)
 function {ns}:v{version}/zombies/bonus/nuke_loop

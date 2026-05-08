@@ -7,5 +7,5 @@
 #
 
 # Play 115 for all in-game players at their own position
-execute as @a[scores={mgs.zb.in_game=1}] at @s run playsound mgs:zombies/music/115_song record @s ~ ~ ~ 1 1
+execute as @a[scores={mgs.zb.in_game=1}] at @s run playsound mgs:zombies/music/115_song record @s ~ ~ ~ 0.5 1
 

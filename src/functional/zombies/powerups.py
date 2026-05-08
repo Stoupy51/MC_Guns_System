@@ -11,7 +11,7 @@ from .perks import PERK_DEFINITIONS
 
 # (id, placeholder_item, display_name, color, type_number)
 POWERUP_TYPES: list[tuple[str, str, str, str, int]] = [
-	("max_ammo",       "minecraft:amethyst_shard",       "Max Ammo",        "aqua",         1),
+	("max_ammo",       "minecraft:amethyst_shard",        "Max Ammo",       "aqua",         1),
 	("insta_kill",     "minecraft:fermented_spider_eye",  "Insta Kill",     "red",          2),
 	("double_points",  "minecraft:gold_ingot",            "Double Points",  "gold",         3),
 	("carpenter",      "minecraft:oak_log",               "Carpenter",      "green",        4),
@@ -177,7 +177,8 @@ function {ns}:v{version}/zombies/powerups/spawn_display with storage {ns}:temp _
 	# Per-type spawners (macro: x, y, z)
 	for pu_id, item, display_name, color, type_num in POWERUP_TYPES:
 		write_versioned_function(f"zombies/powerups/spawn_type/{pu_id}", f"""
-$summon minecraft:item_display $(x) $(y) $(z) {{Tags:["{ns}.pu_item","{ns}.pu_item_new","{ns}.gm_entity"],item:{{id:"{item}",count:1,components:{{"minecraft:item_model":"{ns}:zombies/powerup/{pu_id}"}}}},item_display:"ground",billboard:"center",transformation:{{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],translation:[0f,0.25f,0f],scale:[0.7f,0.7f,0.7f]}}}}
+#$summon minecraft:item_display $(x) $(y) $(z) {{Tags:["{ns}.pu_item","{ns}.pu_item_new","{ns}.gm_entity"],item:{{id:"{item}",count:1,components:{{"minecraft:item_model":"{ns}:zombies/powerup/{pu_id}"}}}},item_display:"ground",transformation:{{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],translation:[0f,0.25f,0f],scale:[0.7f,0.7f,0.7f]}}}}
+$summon minecraft:item_display $(x) $(y) $(z) {{Tags:["{ns}.pu_item","{ns}.pu_item_new","{ns}.gm_entity"],item:{{id:"{item}",count:1}},item_display:"ground",transformation:{{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],translation:[0f,0.25f,0f],scale:[0.7f,0.7f,0.7f]}}}}
 scoreboard players set @n[tag={ns}.pu_item_new] {ns}.zb.pu.type {type_num}
 scoreboard players set @n[tag={ns}.pu_item_new] {ns}.zb.pu.timer {POWERUP_LIFETIME}
 tag @n[tag={ns}.pu_item_new] remove {ns}.pu_item_new
@@ -204,7 +205,7 @@ execute if entity @a[scores={{{ns}.zb.in_game=1}},gamemode=!spectator,distance=.
 """)
 
 	write_versioned_function("zombies/powerups/expire", f"""
-kill @e[tag={ns}.pu_text,distance=..3]
+kill @n[tag={ns}.pu_text,distance=..3]
 kill @s
 """)
 
@@ -212,8 +213,8 @@ kill @s
 # Toggle visibility every ~5 ticks using global blink state (managed in game_tick)
 execute if score #zb_blink_state {ns}.data matches 0 run data merge entity @s {{view_range:0.0f}}
 execute if score #zb_blink_state {ns}.data matches 1 run data merge entity @s {{view_range:64.0f}}
-execute if score #zb_blink_state {ns}.data matches 0 as @e[tag={ns}.pu_text,distance=..3] run data merge entity @s {{view_range:0.0f}}
-execute if score #zb_blink_state {ns}.data matches 1 as @e[tag={ns}.pu_text,distance=..3] run data merge entity @s {{view_range:64.0f}}
+execute if score #zb_blink_state {ns}.data matches 0 as @n[tag={ns}.pu_text,distance=..3] run data merge entity @s {{view_range:0.0f}}
+execute if score #zb_blink_state {ns}.data matches 1 as @n[tag={ns}.pu_text,distance=..3] run data merge entity @s {{view_range:64.0f}}
 """)
 
 	# ──────────────────────────────────────────────────────────────────────────
@@ -227,7 +228,7 @@ tag @p[scores={{{ns}.zb.in_game=1}},gamemode=!spectator,distance=..1.5,tag=!{ns}
 scoreboard players operation #pu_type_pickup {ns}.data = @s {ns}.zb.pu.type
 
 # Kill the text display first (we still have a valid position)
-kill @e[tag={ns}.pu_text,distance=..3]
+kill @n[tag={ns}.pu_text,distance=..3]
 
 # Activate the power-up effect (collector tag is still active here)
 function {ns}:v{version}/zombies/powerups/dispatch_activate

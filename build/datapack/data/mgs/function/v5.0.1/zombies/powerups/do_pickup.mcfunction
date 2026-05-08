@@ -13,7 +13,7 @@ tag @p[scores={mgs.zb.in_game=1},gamemode=!spectator,distance=..1.5,tag=!mgs.pu_
 scoreboard players operation #pu_type_pickup mgs.data = @s mgs.zb.pu.type
 
 # Kill the text display first (we still have a valid position)
-kill @e[tag=mgs.pu_text,distance=..3]
+kill @n[tag=mgs.pu_text,distance=..3]
 
 # Activate the power-up effect (collector tag is still active here)
 function mgs:v5.0.1/zombies/powerups/dispatch_activate
