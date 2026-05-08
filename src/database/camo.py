@@ -224,7 +224,7 @@ def main() -> None:
 
             # Define normal and zoom models
             gun_stats: JsonDict = item.components["custom_data"].get(ns, {}).get("stats", {})
-            normal_model: str = f"{ns}:{base_id}"
+            normal_model: str = f"{ns}:{base_id}_{material}"
             zoom_model: str = normal_model + "_zoom"
             gun_stats[MODELS] = {"normal": normal_model, "zoom": zoom_model}
             base_weapon: str = gun_stats.get("base_weapon", base_id)
