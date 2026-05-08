@@ -830,8 +830,13 @@ execute store result storage {ns}:temp _pos.z double 1 run data get entity @s Po
 # Summon permanent marker
 function {ns}:v{version}/maps/editor/summon_spawn_marker with storage {ns}:temp _pos
 
-# Store the player's rotation on the marker
-execute as @n[tag={ns}.new_spawn_marker] store result entity @s data.yaw float 1 run data get entity @p[tag={ns}.map_editor,distance=..6,sort=nearest] Rotation[0]
+# Get player rotation and snap to nearest 45 degrees
+execute store result score #yaw {ns}.data run data get entity @p[tag={ns}.map_editor,distance=..6,sort=nearest] Rotation[0]
+scoreboard players add #yaw {ns}.data 742
+scoreboard players operation #yaw {ns}.data /= #45 {ns}.data
+scoreboard players operation #yaw {ns}.data *= #45 {ns}.data
+scoreboard players remove #yaw {ns}.data 720
+execute as @n[tag={ns}.new_spawn_marker] store result entity @s data.yaw float 1 run scoreboard players get #yaw {ns}.data
 tag @n[tag={ns}.new_spawn_marker] remove {ns}.new_spawn_marker
 
 # Announce
@@ -948,9 +953,6 @@ tellraw @a[tag={ns}.map_editor] ["  ",{edit_respawn_cmd_btn}]
 	for etype, einfo in zb_elements.items():
 		zb_msg_lines.append(f'execute if entity @s[tag={ns}.element.{etype}] run tellraw @a[tag={ns}.map_editor] [{MGS_TAG},{{"text":"{einfo["name"]} placed!","color":"{einfo["color"]}"}}]')
 
-	# All zb_object elements get a 180° yaw offset
-	zb_yaw_offset_line = f'scoreboard players add #yaw {ns}.data 180'
-
 	write_versioned_function("maps/editor/handle_zb_object", f"""
 # Get position for permanent marker
 execute store result storage {ns}:temp _zbpos.x double 1 run data get entity @s Pos[0]
@@ -969,11 +971,15 @@ execute as @n[tag={ns}.new_zb_marker] run data modify entity @s data set from st
 # Apply shared group_id default
 execute as @n[tag={ns}.new_zb_marker] run data modify entity @s data.group_id set from storage {ns}:temp map_edit.zb_defaults.group_id
 
-# Get player rotation as yaw
+# Get player rotation and snap to nearest 45 degrees
 execute store result score #yaw {ns}.data run data get entity @p[tag={ns}.map_editor,distance=..6,sort=nearest] Rotation[0]
+scoreboard players add #yaw {ns}.data 742
+scoreboard players operation #yaw {ns}.data /= #45 {ns}.data
+scoreboard players operation #yaw {ns}.data *= #45 {ns}.data
+scoreboard players remove #yaw {ns}.data 720
 
 # Apply 180° yaw offset
-{zb_yaw_offset_line}
+scoreboard players add #yaw {ns}.data 180
 
 # Store yaw on marker
 execute as @n[tag={ns}.new_zb_marker] store result entity @s data.yaw float 1 run scoreboard players get #yaw {ns}.data
