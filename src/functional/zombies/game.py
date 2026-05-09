@@ -46,6 +46,7 @@ scoreboard objectives add {ns}.zb.prev_kills dummy
 scoreboard objectives add {ns}.zb.stuck_x dummy
 scoreboard objectives add {ns}.zb.stuck_z dummy
 scoreboard objectives add {ns}.zb.stuck_ticks dummy
+scoreboard objectives add {ns}.zb.stuck_dist dummy
 
 # Initialize zombies game state
 execute unless data storage {ns}:zombies game run data modify storage {ns}:zombies game set value {{state:"lobby",map_id:"",round:0}}
@@ -276,7 +277,7 @@ execute unless score #zb_round_grace {ns}.data matches 1.. if score #zb_alive_pl
 # Stuck zombie check (every 20 ticks, 24 random non-rising zombies)
 execute store result score #zb_tick_mod {ns}.data run scoreboard players get #total_tick {ns}.data
 scoreboard players operation #zb_tick_mod {ns}.data %= #20 {ns}.data
-execute if score #zb_tick_mod {ns}.data matches 0 as @e[tag={ns}.zombie_round,tag=!{ns}.zb_rising,limit=24,sort=random] run function {ns}:v{version}/zombies/stuck_zombie_check
+execute if score #zb_tick_mod {ns}.data matches 0 as @e[tag={ns}.zombie_round,tag=!{ns}.zb_rising,limit=24,sort=random] at @s run function {ns}:v{version}/zombies/stuck_zombie_check
 
 # Stuck zombie glow: count up once all spawns are done (60s = 1200 ticks after last spawn)
 execute if score #zb_to_spawn {ns}.data matches 0 run scoreboard players add #zb_stuck_timer {ns}.data 1
@@ -397,6 +398,8 @@ execute if score #zb_has_bounds {ns}.data matches 1 run function {ns}:v{version}
 scoreboard objectives setdisplay sidebar
 scoreboard objectives remove {ns}.zb_sidebar
 {regen_disable_lines(ns)}
+gamerule advance_time true
+
 # Announce
 tellraw @a [{MGS_TAG},{{"text":"Zombies game ended.","color":"red"}}]
 
@@ -404,7 +407,6 @@ tellraw @a [{MGS_TAG},{{"text":"Zombies game ended.","color":"red"}}]
 execute as @a[scores={{{ns}.zb.in_game=1}}] run function {ns}:v{version}/shared/maps/call_leave_script_at_base
 
 # Reset in-game state
-
 scoreboard players set @a {ns}.zb.in_game 0
 scoreboard players set @a {ns}.zb.points 0
 scoreboard players set @a {ns}.zb.kills 0
@@ -515,33 +517,43 @@ execute as @a[scores={{{ns}.zb.in_game=1}},gamemode=!spectator] run function {ns
 
 	# Stuck Zombie Check ────────────────────────────────────────
 	write_versioned_function("zombies/stuck_zombie_check", f"""
-# If no alive player under 48 blocks, respawn zombie
-# TODO # FIXME: If the map is one spawn only, and the player is 64 blocks away, the zombie will always be respawned even tho the nearest zombie spawn is the one it came from and is technically not stuck
-execute unless entity @a[scores={{{ns}.zb.in_game=1,{ns}.zb.downed=0}},gamemode=!spectator,distance=..48] run return run function {ns}:v{version}/zombies/on_stuck_zombie
-
 # @s = zombie_round entity (non-rising), run every 20 ticks on up to 24 random zombies
+# Progress = distance bucket improved OR XZ position changed. Either resets the timer.
+
+# Compute distance bucket to nearest alive player (4=very far, 0=adjacent)
+scoreboard players set #cur_dist_bucket {ns}.data 4
+execute if entity @a[scores={{{ns}.zb.in_game=1,{ns}.zb.downed=0}},gamemode=!spectator,distance=..96] run scoreboard players set #cur_dist_bucket {ns}.data 3
+execute if entity @a[scores={{{ns}.zb.in_game=1,{ns}.zb.downed=0}},gamemode=!spectator,distance=..64] run scoreboard players set #cur_dist_bucket {ns}.data 2
+execute if entity @a[scores={{{ns}.zb.in_game=1,{ns}.zb.downed=0}},gamemode=!spectator,distance=..32] run scoreboard players set #cur_dist_bucket {ns}.data 1
+execute if entity @a[scores={{{ns}.zb.in_game=1,{ns}.zb.downed=0}},gamemode=!spectator,distance=..16] run scoreboard players set #cur_dist_bucket {ns}.data 0
+
+# Compute current XZ position
 execute store result score #cur_x {ns}.data run data get entity @s Pos[0]
 execute store result score #cur_z {ns}.data run data get entity @s Pos[2]
 
-# Check if zombie moved on X or Z
-scoreboard players set #stuck_moved {ns}.data 0
-execute unless score #cur_x {ns}.data = @s {ns}.zb.stuck_x run scoreboard players set #stuck_moved {ns}.data 1
-execute unless score #cur_z {ns}.data = @s {ns}.zb.stuck_z run scoreboard players set #stuck_moved {ns}.data 1
+# Detect any progress: bucket improved, OR bucket == 0 (zombie is in melee range — not stuck)
+# XZ movement is NOT checked: a zombie attacking at close range stands still legitimately
+scoreboard players set #stuck_progress {ns}.data 0
+execute if score #cur_dist_bucket {ns}.data < @s {ns}.zb.stuck_dist run scoreboard players set #stuck_progress {ns}.data 1
+execute if score #cur_dist_bucket {ns}.data matches 0 run scoreboard players set #stuck_progress {ns}.data 1
 
-# If moved: update stored position and timestamp
-execute if score #stuck_moved {ns}.data matches 1 run scoreboard players operation @s {ns}.zb.stuck_x = #cur_x {ns}.data
-execute if score #stuck_moved {ns}.data matches 1 run scoreboard players operation @s {ns}.zb.stuck_z = #cur_z {ns}.data
-execute if score #stuck_moved {ns}.data matches 1 run scoreboard players operation @s {ns}.zb.stuck_ticks = #total_tick {ns}.data
+# If progress: update all stored values and reset timestamp
+execute if score #stuck_progress {ns}.data matches 1 run scoreboard players operation @s {ns}.zb.stuck_dist = #cur_dist_bucket {ns}.data
+execute if score #stuck_progress {ns}.data matches 1 run scoreboard players operation @s {ns}.zb.stuck_x = #cur_x {ns}.data
+execute if score #stuck_progress {ns}.data matches 1 run scoreboard players operation @s {ns}.zb.stuck_z = #cur_z {ns}.data
+execute if score #stuck_progress {ns}.data matches 1 run scoreboard players operation @s {ns}.zb.stuck_ticks = #total_tick {ns}.data
 
-# If still: compute delta ticks and kill if >= 300 (15s)
-execute if score #stuck_moved {ns}.data matches 0 run scoreboard players operation #stuck_delta {ns}.data = #total_tick {ns}.data
-execute if score #stuck_moved {ns}.data matches 0 run scoreboard players operation #stuck_delta {ns}.data -= @s {ns}.zb.stuck_ticks
-execute if score #stuck_moved {ns}.data matches 0 if score #stuck_delta {ns}.data matches 300.. run function {ns}:v{version}/zombies/on_stuck_zombie
+# If no progress: compute elapsed ticks; respawn if >= 300 (15s)
+execute if score #stuck_progress {ns}.data matches 0 run scoreboard players operation #stuck_delta {ns}.data = #total_tick {ns}.data
+execute if score #stuck_progress {ns}.data matches 0 run scoreboard players operation #stuck_delta {ns}.data -= @s {ns}.zb.stuck_ticks
+execute if score #stuck_progress {ns}.data matches 0 if score #stuck_delta {ns}.data matches 300.. run function {ns}:v{version}/zombies/on_stuck_zombie
 """)
 
 	write_versioned_function("zombies/on_stuck_zombie", f"""
 # @s = stuck zombie — silently remove and re-queue for spawning
+# Kill the death_watch rider first so on_zombie_dying never fires (no powerup drop)
 scoreboard players add #zb_to_spawn {ns}.data 1
+execute on passengers run kill @s
 kill @s
 """)
 

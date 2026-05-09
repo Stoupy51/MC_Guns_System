@@ -3,7 +3,7 @@
 #
 # @executed	at @s
 #
-# @within	mgs:v5.0.1/zombies/powerups/check_drop with storage mgs:temp _pu_spawn
+# @within	mgs:v5.0.1/zombies/powerups/spawn_random_at_self with storage mgs:temp _pu_spawn
 #
 # @args		x (int)
 #			y (int)
