@@ -8,7 +8,7 @@
 execute as @a[tag=mgs.kino.in_tp] run function mgs:v5.0.1/maps/zombies/kino_der_toten/teleporter/return_one
 # Keep kino.in_tp tags — needed by return_to_lobby after 5 seconds
 
-# State 4: 5 seconds (100t) before teleporting everyone back to the lobby pad
-scoreboard players set #kino_tp_state mgs.data 4
+# State 5: 5 seconds (100t) before teleporting everyone back to the lobby pad
+scoreboard players set #kino_tp_state mgs.data 5
 scoreboard players set #kino_tp_timer mgs.data 100
 
