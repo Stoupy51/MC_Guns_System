@@ -58,6 +58,7 @@ int detectMarkerMode(vec4 color) {
             if (ic.g >= 1 && ic.g <= 7) return 3;      // Zoom x3: G from 0.02 → [2-5]
             if (ic.g >= 8 && ic.g <= 25) return 4;     // Zoom x4: G from 0.08 → [10-20]
             if (ic.g >= 26 && ic.g <= 80) return 2;    // Zoom center-only: G from 0.25 → [30-63]
+            if (ic.g >= 81) return 10;                 // PaP flash: G from 1.0 → [122-255]
         } else if (ic.g == 0) {
             // Crosshair spread markers: G==0, B>0 encodes movement state
             if (ic.b >= 1 && ic.b <= 5) return 5;     // Sneak: B from 0.02 → [2-5]

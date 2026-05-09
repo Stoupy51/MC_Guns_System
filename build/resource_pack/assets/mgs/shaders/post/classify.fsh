@@ -20,7 +20,8 @@ void main() {
 
     // Sentinel: R == MARKER_RED, A == 255, G == expected mode value
     // B now encodes camera-to-particle distance (not checked for detection)
-    bool flashActive = (p1.r == MARKER_RED && p1.a == 255 && p1.g == 1);
+    bool flashActive    = (p1.r == MARKER_RED && p1.a == 255 && (p1.g == 1 || p1.g == 10));
+    bool papFlashActive = (p1.r == MARKER_RED && p1.a == 255 && p1.g == 10);
     bool zoomActive  = (p4.r == MARKER_RED && p4.a == 255 && (p4.g == 2 || p4.g == 3 || p4.g == 4));
     int zoomLevel = zoomActive ? p4.g : 0;  // 2=center-only, 3=x3 scope, 4=x4 scope
 
@@ -42,10 +43,10 @@ void main() {
     float targetSpread = float(spreadLevel) / 4.0;  // Normalize to [0.0, 1.0] for 8-bit precision
     float smoothSpread = mix(prevSmooth, targetSpread, SPREAD_LERP_SPEED);
 
-    // R = flash, G = zoom, B = (zoomLevel + notFirstPerson*128) / 255, A = smooth spread.
+    // R = flash (1.0=normal, 0.75=PaP, 0.0=none), G = zoom, B = (zoomLevel + notFirstPerson*128) / 255, A = smooth spread.
     // flash.fsh reads R, zoom.fsh reads G, B (with 3rd person flag), and A.
     fragColor = vec4(
-        flashActive ? 1.0 : 0.0,
+        papFlashActive ? 0.75 : (flashActive ? 1.0 : 0.0),
         zoomActive ? 1.0 : 0.0,
         float(zoomLevel + (notFirstPerson ? 128 : 0)) / 255.0,
         smoothSpread

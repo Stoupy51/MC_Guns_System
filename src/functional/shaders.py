@@ -248,6 +248,7 @@ int detectMarkerMode(vec4 color) {
             if (ic.g >= 1 && ic.g <= 7) return 3;      // Zoom x3: G from 0.02 → [2-5]
             if (ic.g >= 8 && ic.g <= 25) return 4;     // Zoom x4: G from 0.08 → [10-20]
             if (ic.g >= 26 && ic.g <= 80) return 2;    // Zoom center-only: G from 0.25 → [30-63]
+            if (ic.g >= 81) return 10;                 // PaP flash: G from 1.0 → [122-255]
         } else if (ic.g == 0) {
             // Crosshair spread markers: G==0, B>0 encodes movement state
             if (ic.b >= 1 && ic.b <= 5) return 5;     // Sneak: B from 0.02 → [2-5]
@@ -342,9 +343,10 @@ void main() {
         ivec2 fc = ivec2(gl_FragCoord.xy);
         ivec2 target;
         if (markerMode == 1) target = ivec2(0, 0);        // Flash
-        else if (markerMode >= 12) target = ivec2(3, 0);   // FOV
-        else if (markerMode >= 5) target = ivec2(2, 0);    // Spread
-        else target = ivec2(1, 0);                          // Zoom (2, 3, 4)
+        else if (markerMode == 10) target = ivec2(0, 0);  // PaP flash (same sentinel pixel, G=10)
+        else if (markerMode >= 12) target = ivec2(3, 0);  // FOV
+        else if (markerMode >= 5) target = ivec2(2, 0);   // Spread
+        else target = ivec2(1, 0);                        // Zoom (2, 3, 4)
         if (fc != target) {
             discard;
         }
@@ -396,7 +398,8 @@ void main() {
 
     // Sentinel: R == MARKER_RED, A == 255, G == expected mode value
     // B now encodes camera-to-particle distance (not checked for detection)
-    bool flashActive = (p1.r == MARKER_RED && p1.a == 255 && p1.g == 1);
+    bool flashActive    = (p1.r == MARKER_RED && p1.a == 255 && (p1.g == 1 || p1.g == 10));
+    bool papFlashActive = (p1.r == MARKER_RED && p1.a == 255 && p1.g == 10);
     bool zoomActive  = (p4.r == MARKER_RED && p4.a == 255 && (p4.g == 2 || p4.g == 3 || p4.g == 4));
     int zoomLevel = zoomActive ? p4.g : 0;  // 2=center-only, 3=x3 scope, 4=x4 scope
 
@@ -418,10 +421,10 @@ void main() {
     float targetSpread = float(spreadLevel) / 4.0;  // Normalize to [0.0, 1.0] for 8-bit precision
     float smoothSpread = mix(prevSmooth, targetSpread, SPREAD_LERP_SPEED);
 
-    // R = flash, G = zoom, B = (zoomLevel + notFirstPerson*128) / 255, A = smooth spread.
+    // R = flash (1.0=normal, 0.75=PaP, 0.0=none), G = zoom, B = (zoomLevel + notFirstPerson*128) / 255, A = smooth spread.
     // flash.fsh reads R, zoom.fsh reads G, B (with 3rd person flag), and A.
     fragColor = vec4(
-        flashActive ? 1.0 : 0.0,
+        papFlashActive ? 0.75 : (flashActive ? 1.0 : 0.0),
         zoomActive ? 1.0 : 0.0,
         float(zoomLevel + (notFirstPerson ? 128 : 0)) / 255.0,
         smoothSpread
@@ -616,6 +619,7 @@ out vec4 fragColor;
 #define BLURR 10.0
 #define FOV 70
 #define CK tan(float(FOV) / 360.0 * 3.14159265358979) * 2.0
+#define PAP_COLOR vec3(0.6, 0.0, 1.0)
 
 float LinearizeDepth(float depth) {
     float z = depth * 2.0 - 1.0;
@@ -624,7 +628,10 @@ float LinearizeDepth(float depth) {
 
 void main() {
     vec2 inSize = vec2(textureSize(InSampler, 0));
-    bool flashMode = texture(ClassifySampler, vec2(0.5, 0.5)).r > 0.5;
+    float classifyR = texture(ClassifySampler, vec2(0.5, 0.5)).r;
+    bool flashMode = classifyR > 0.5;
+    bool papFlash  = flashMode && (classifyR < 0.85);
+    vec3 flashColor = papFlash ? PAP_COLOR : Color;
 
     fragColor = texture(InSampler, texCoord);
 
@@ -645,7 +652,7 @@ void main() {
                 + texture(InSampler, texCoord - vec2(0.0, oneTexel.y * BLURR));
             blurColor /= 5.0;
 
-            vec3 lightColor = clamp((pow(1.0 / (dist + 3.0), 1.5) - 0.01) * 9.0, 0.0, 1.0) * Color;
+            vec3 lightColor = clamp((pow(1.0 / (dist + 3.0), 1.5) - 0.01) * 9.0, 0.0, 1.0) * flashColor;
 
             fragColor.rgb *= (INTENSITY / clamp(length(blurColor.rgb), 0.04, 1.0) * lightColor * 0.9)
                            * (1.0 - clamp(length(blurColor.rgb) / 1.6, 0.0, 1.0)) + vec3(1.0);
@@ -789,6 +796,7 @@ void main() {
     vec2 inSize = vec2(textureSize(InSampler, 0));
     vec4 classifyData = texture(ClassifySampler, vec2(0.5, 0.5));
     bool flashMode = classifyData.r > 0.5;
+    bool papFlash  = flashMode && (classifyData.r < 0.85);  // PaP flash: classifyR=0.75
     bool zoomMode  = classifyData.g > 0.5;
     int rawB = int(round(classifyData.b * 255.0));
     bool notFirstPerson = rawB >= 128;  // 3rd person flag packed in high bit of B
@@ -847,7 +855,14 @@ void main() {
         // Additive overlay within the spark bounding box
         if (screenCoord.x > lb.x && screenCoord.y > lb.y &&
             screenCoord.x < ub.x && screenCoord.y < ub.y) {
-            fragColor += texture(SparkTexSampler, (screenCoord - lb) / sd + spriteOffset);
+            vec4 sparkColor = texture(SparkTexSampler, (screenCoord - lb) / sd + spriteOffset);
+            if (papFlash) {
+                // Randomly tint purple or magenta-red each shot (using same entropy as sprite pick)
+                float rndTint = mod(floor(entropy * 3571.0), 10.0);
+                vec3 tint = (rndTint > 5.0) ? vec3(0.85, 0.1, 1.0) : vec3(1.0, 0.1, 0.45);
+                sparkColor.rgb *= tint;
+            }
+            fragColor += sparkColor;
         }
     }
 
@@ -1061,11 +1076,12 @@ def main() -> None:
     # scale=0.01 → lifetime = 0 (1 game tick minimum) → brief flash for rapid fire
     version: str = Mem.ctx.project_version
     write_versioned_function("player/fire_weapon", f"""
-# Shader: spawn muzzle flash marker (mode 1) - skip for grenades
-# dust R=0.02, G=0, B=0 → particle.vsh detects and places at pixel (0,0)
-# scale 0.01 → lifetime 0 (1 game tick) → flash auto-expires immediately
-execute unless data storage mgs:gun all.stats.grenade_type at @s anchored eyes positioned ^ ^ ^0.001 as @a[distance=..16] run function {ns}:v{version}/player/apply_flash_if_can_see
-""")
+# Shader: spawn muzzle flash marker - skip for grenades
+# PaP guns use mode 10 (purple dust G=1.0 → ic.g ≥ 81), normal guns use mode 1 (dust G=0)
+execute store success score #has_pap_level {ns}.data if data storage {ns}:gun all.stats.pap_level
+execute if score #has_pap_level {ns}.data matches 1 unless data storage mgs:gun all.stats.grenade_type at @s anchored eyes positioned ^ ^ ^0.001 as @a[distance=..16] run function {ns}:v{version}/player/apply_pap_flash_if_can_see
+execute if score #has_pap_level {ns}.data matches 0 unless data storage mgs:gun all.stats.grenade_type at @s anchored eyes positioned ^ ^ ^0.001 as @a[distance=..16] run function {ns}:v{version}/player/apply_flash_if_can_see
+""")  # noqa: E501
     write_versioned_function("player/apply_flash_if_can_see", f"""
 # Stop if player saw flash less than 3 ticks ago (allowing previous flash to expire)
 execute if score @s {ns}.last_muzzle_flash > #total_tick {ns}.data run return 0
@@ -1077,6 +1093,19 @@ scoreboard players set #can_see {ns}.data 0
 execute if entity @s[tag={ns}.ticking] run scoreboard players set #can_see {ns}.data 1
 execute if score #can_see {ns}.data matches 0 store result score #can_see {ns}.data run function #bs.view:can_see_ata {{with:{{}}}}
 execute if score #can_see {ns}.data matches 1 run particle minecraft:dust{{color:[0.02,0.0,0.0],scale:0.01}} ~ ~ ~ 0 0 0 0 1 force @s
+""")
+    write_versioned_function("player/apply_pap_flash_if_can_see", f"""
+# PaP flash: mode 10 - dust G=1.0 → ic.g ∈ [122-255] ≥ 81 → vsh returns 10
+# Stop if player saw flash less than 3 ticks ago (allowing previous flash to expire)
+execute if score @s {ns}.last_muzzle_flash > #total_tick {ns}.data run return 0
+scoreboard players set @s {ns}.last_muzzle_flash 3
+scoreboard players operation @s {ns}.last_muzzle_flash += #total_tick {ns}.data
+
+# Check line of sight to flash position and set #can_see accordingly (score 0 or 1).
+scoreboard players set #can_see {ns}.data 0
+execute if entity @s[tag={ns}.ticking] run scoreboard players set #can_see {ns}.data 1
+execute if score #can_see {ns}.data matches 0 store result score #can_see {ns}.data run function #bs.view:can_see_ata {{with:{{}}}}
+execute if score #can_see {ns}.data matches 1 run particle minecraft:dust{{color:[0.02,1.0,0.0],scale:0.01}} ~ ~ ~ 0 0 0 0 1 force @s
 """)
 
     # Zoom marker: mode 3 (x3) or mode 4 (x4)

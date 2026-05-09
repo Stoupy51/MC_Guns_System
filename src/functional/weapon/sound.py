@@ -74,15 +74,25 @@ execute anchored eyes positioned ^ ^ ^ if block ~ ~ ~ #{ns}:v{version}/sounds/wa
     # Main function
     write_versioned_function("sound/main", f"""
 # Fire sounds
+## PaP: if gun is Pack-a-Punched and has a pap_fire sound, play it instead
+scoreboard players set #do_pap_sound {ns}.data 0
+execute if data storage {ns}:gun all.stats.pap_level if data storage {ns}:gun all.sounds.pap_fire run scoreboard players set #do_pap_sound {ns}.data 1
+execute if score #do_pap_sound {ns}.data matches 1 run function {ns}:v{version}/sound/fire_pap with storage {ns}:gun all.sounds
+
+## Normal fire sounds
 # TODO: Add a mode check to select between fire and fire_alt
-execute if data storage {ns}:gun all.sounds.fire_alt run function {ns}:v{version}/sound/fire_alt with storage {ns}:gun all.sounds
-execute unless data storage {ns}:gun all.sounds.fire_alt run function {ns}:v{version}/sound/fire_simple with storage {ns}:gun all.sounds
+execute if score #do_pap_sound {ns}.data matches 0 if data storage {ns}:gun all.sounds.fire_alt run function {ns}:v{version}/sound/fire_alt with storage {ns}:gun all.sounds
+execute if score #do_pap_sound {ns}.data matches 0 unless data storage {ns}:gun all.sounds.fire_alt run function {ns}:v{version}/sound/fire_simple with storage {ns}:gun all.sounds
 
 # Cycle sound (for sniper rifles)
 execute if data storage {ns}:gun all.sounds.cycle run function {ns}:v{version}/sound/cycle with storage {ns}:gun all.sounds
 
 # Acoustics handling
 execute if data storage {ns}:gun all.sounds.crack run function {ns}:v{version}/sound/acoustics_main with storage {ns}:gun all.sounds
+""")
+    write_versioned_function("sound/fire_pap", f"""
+$playsound {ns}:$(pap_fire) player @s ~ ~ ~ 0.25
+$playsound {ns}:$(pap_fire) player @a[distance=0.01..48] ~ ~ ~ 0.75 1 0.25
 """)
     write_versioned_function("sound/fire_simple", f"""
 $playsound {ns}:$(fire) player @s ~ ~ ~ 0.25

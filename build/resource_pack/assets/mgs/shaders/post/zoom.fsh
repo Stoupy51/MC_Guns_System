@@ -68,6 +68,7 @@ void main() {
     vec2 inSize = vec2(textureSize(InSampler, 0));
     vec4 classifyData = texture(ClassifySampler, vec2(0.5, 0.5));
     bool flashMode = classifyData.r > 0.5;
+    bool papFlash  = flashMode && (classifyData.r < 0.85);  // PaP flash: classifyR=0.75
     bool zoomMode  = classifyData.g > 0.5;
     int rawB = int(round(classifyData.b * 255.0));
     bool notFirstPerson = rawB >= 128;  // 3rd person flag packed in high bit of B
@@ -126,7 +127,14 @@ void main() {
         // Additive overlay within the spark bounding box
         if (screenCoord.x > lb.x && screenCoord.y > lb.y &&
             screenCoord.x < ub.x && screenCoord.y < ub.y) {
-            fragColor += texture(SparkTexSampler, (screenCoord - lb) / sd + spriteOffset);
+            vec4 sparkColor = texture(SparkTexSampler, (screenCoord - lb) / sd + spriteOffset);
+            if (papFlash) {
+                // Randomly tint purple or magenta-red each shot (using same entropy as sprite pick)
+                float rndTint = mod(floor(entropy * 3571.0), 10.0);
+                vec3 tint = (rndTint > 5.0) ? vec3(0.85, 0.1, 1.0) : vec3(1.0, 0.1, 0.45);
+                sparkColor.rgb *= tint;
+            }
+            fragColor += sparkColor;
         }
     }
 
