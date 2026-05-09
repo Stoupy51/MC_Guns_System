@@ -6,10 +6,11 @@
 # @within	mgs:v5.0.1/player/right_click
 #
 
-# Shader: spawn muzzle flash marker (mode 1) - skip for grenades
-# dust R=0.02, G=0, B=0 → particle.vsh detects and places at pixel (0,0)
-# scale 0.01 → lifetime 0 (1 game tick) → flash auto-expires immediately
-execute unless data storage mgs:gun all.stats.grenade_type at @s anchored eyes positioned ^ ^ ^0.001 as @a[distance=..16] run function mgs:v5.0.1/player/apply_flash_if_can_see
+# Shader: spawn muzzle flash marker - skip for grenades
+# PaP guns use mode 10 (purple dust G=1.0 → ic.g ≥ 81), normal guns use mode 1 (dust G=0)
+execute store success score #has_pap_level mgs.data if data storage mgs:gun all.stats.pap_level
+execute if score #has_pap_level mgs.data matches 1 unless data storage mgs:gun all.stats.grenade_type at @s anchored eyes positioned ^ ^ ^0.001 as @a[distance=..16] run function mgs:v5.0.1/player/apply_pap_flash_if_can_see
+execute if score #has_pap_level mgs.data matches 0 unless data storage mgs:gun all.stats.grenade_type at @s anchored eyes positioned ^ ^ ^0.001 as @a[distance=..16] run function mgs:v5.0.1/player/apply_flash_if_can_see
 
 # For weapons with pellet count, set bullets_to_fire appropriately
 execute if data storage mgs:gun all.stats.pellet_count store result score #bullets_to_fire mgs.data run data get storage mgs:gun all.stats.pellet_count

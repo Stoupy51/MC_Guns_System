@@ -19,6 +19,7 @@ out vec4 fragColor;
 #define BLURR 10.0
 #define FOV 70
 #define CK tan(float(FOV) / 360.0 * 3.14159265358979) * 2.0
+#define PAP_COLOR vec3(0.6, 0.0, 1.0)
 
 float LinearizeDepth(float depth) {
     float z = depth * 2.0 - 1.0;
@@ -27,7 +28,10 @@ float LinearizeDepth(float depth) {
 
 void main() {
     vec2 inSize = vec2(textureSize(InSampler, 0));
-    bool flashMode = texture(ClassifySampler, vec2(0.5, 0.5)).r > 0.5;
+    float classifyR = texture(ClassifySampler, vec2(0.5, 0.5)).r;
+    bool flashMode = classifyR > 0.5;
+    bool papFlash  = flashMode && (classifyR < 0.85);
+    vec3 flashColor = papFlash ? PAP_COLOR : Color;
 
     fragColor = texture(InSampler, texCoord);
 
@@ -48,7 +52,7 @@ void main() {
                 + texture(InSampler, texCoord - vec2(0.0, oneTexel.y * BLURR));
             blurColor /= 5.0;
 
-            vec3 lightColor = clamp((pow(1.0 / (dist + 3.0), 1.5) - 0.01) * 9.0, 0.0, 1.0) * Color;
+            vec3 lightColor = clamp((pow(1.0 / (dist + 3.0), 1.5) - 0.01) * 9.0, 0.0, 1.0) * flashColor;
 
             fragColor.rgb *= (INTENSITY / clamp(length(blurColor.rgb), 0.04, 1.0) * lightColor * 0.9)
                            * (1.0 - clamp(length(blurColor.rgb) / 1.6, 0.0, 1.0)) + vec3(1.0);

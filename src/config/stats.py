@@ -317,6 +317,7 @@ M16A4: JsonDict = {
     },
     "sounds": {
         "fire": "m16a4/fire",
+        "pap_fire": "m16a4/pap_fire",
         "reload": "m16a4/reload",
         "playerbegin": "m16a4/playerbegin",
         "playerend": "m16a4/playerend",
@@ -347,6 +348,7 @@ AK47: JsonDict = {
     },
     "sounds": {
         "fire": "ak47/fire",
+        "pap_fire": "ak47/pap_fire",
         "reload": "ak47/reload",
         "playerbegin": "ak47/playerbegin",
         "playerend": "ak47/playerend",
@@ -378,6 +380,7 @@ FNFAL: JsonDict = {
     },
     "sounds": {
         "fire": "fnfal/fire",
+        "pap_fire": "fnfal/pap_fire",
         "reload": "fnfal/reload",
         "playerbegin": "fnfal/playerbegin",
         "playerend": "fnfal/playerend",
@@ -409,6 +412,7 @@ AUG: JsonDict = {
     },
     "sounds": {
         "fire": "aug/fire",
+        "pap_fire": "aug/pap_fire",
         "reload": "aug/reload",
         "playerbegin": "aug/playerbegin",
         "playerend": "aug/playerend",
@@ -440,6 +444,7 @@ M4A1: JsonDict = {
     },
     "sounds": {
         "fire": "m4a1/fire",
+        "pap_fire": "m4a1/pap_fire",
         "reload": "m4a1/reload",
         "playerbegin": "m4a1/playerbegin",
         "playerend": "m4a1/playerend",
@@ -471,6 +476,7 @@ G3A3: JsonDict = {
     },
     "sounds": {
         "fire": "g3a3/fire",
+        "pap_fire": "g3a3/pap_fire",
         "reload": "g3a3/reload",
         "playerbegin": "g3a3/playerbegin",
         "playerend": "g3a3/playerend",
@@ -502,6 +508,7 @@ FAMAS: JsonDict = {
     },
     "sounds": {
         "fire": "famas/fire",
+        "pap_fire": "famas/pap_fire",
         "reload": "famas/reload",
         "playerbegin": "famas/playerbegin",
         "playerend": "famas/playerend",
@@ -534,6 +541,7 @@ SCAR17: JsonDict = {
     },
     "sounds": {
         "fire": "scar17/fire",
+        "pap_fire": "scar17/pap_fire",
         "reload": "scar17/reload",
         "playerbegin": "scar17/playerbegin",
         "playerend": "scar17/playerend",
@@ -572,6 +580,7 @@ M1911: JsonDict = {
     },
     "sounds": {
         "fire": "m1911/fire",
+        "pap_fire": "m1911/pap_fire",
         "reload": "m1911/reload",
         "playerbegin": "m1911/playerbegin",
         "playerend": "m1911/playerend",
@@ -602,6 +611,7 @@ M9: JsonDict = {
     },
     "sounds": {
         "fire": "m9/fire",
+        "pap_fire": "m9/pap_fire",
         "reload": "m9/reload",
         "playerbegin": "m9/playerbegin",
         "playerend": "m9/playerend",
@@ -633,6 +643,7 @@ DEAGLE: JsonDict = {
     },
     "sounds": {
         "fire": "deagle/fire",
+        "pap_fire": "deagle/pap_fire",
         "reload": "deagle/reload",
         "playerbegin": "deagle/playerbegin",
         "playerend": "deagle/playerend",
@@ -663,6 +674,7 @@ MAKAROV: JsonDict = {
     },
     "sounds": {
         "fire": "makarov/fire",
+        "pap_fire": "makarov/pap_fire",
         "reload": "makarov/reload",
         "playerbegin": "makarov/playerbegin",
         "playerend": "makarov/playerend",
@@ -693,6 +705,7 @@ GLOCK17: JsonDict = {
     },
     "sounds": {
         "fire": "glock17/fire",
+        "pap_fire": "glock17/pap_fire",
         "reload": "glock17/reload",
         "playerbegin": "glock17/playerbegin",
         "playerend": "glock17/playerend",
@@ -723,6 +736,7 @@ GLOCK18: JsonDict = {
     },
     "sounds": {
         "fire": "glock18/fire",
+        "pap_fire": "glock18/pap_fire",
         "reload": "glock18/reload",
         "playerbegin": "glock18/playerbegin",
         "playerend": "glock18/playerend",
@@ -754,6 +768,7 @@ VZ61: JsonDict = {
     },
     "sounds": {
         "fire": "vz61/fire",
+        "pap_fire": "vz61/pap_fire",
         "reload": "vz61/reload",
         "playerbegin": "vz61/playerbegin",
         "playerend": "vz61/playerend",
@@ -788,6 +803,7 @@ RAY_GUN: JsonDict = {
     },
     "sounds": {
         "fire": "ray_gun/fire",
+        "pap_fire": "ray_gun/pap_fire",
         "reload": "ray_gun/reload",
         "playerbegin": "ray_gun/playerbegin",
         "playerend": "ray_gun/playerend",
@@ -821,6 +837,7 @@ MP5: JsonDict = {
     },
     "sounds": {
         "fire": "mp5/fire",
+        "pap_fire": "mp5/pap_fire",
         "reload": "mp5/reload",
         "playerbegin": "mp5/playerbegin",
         "playerend": "mp5/playerend",
@@ -853,6 +870,7 @@ MAC10: JsonDict = {
     },
     "sounds": {
         "fire": "mac10/fire",
+        "pap_fire": "mac10/pap_fire",
         "reload": "mac10/reload",
         "playerbegin": "mac10/playerbegin",
         "playerend": "mac10/playerend",
@@ -885,6 +903,7 @@ MP7: JsonDict = {
     },
     "sounds": {
         "fire": "mp7/fire",
+        "pap_fire": "mp7/pap_fire",
         "reload": "mp7/reload",
         "playerbegin": "mp7/playerbegin",
         "playerend": "mp7/playerend",
@@ -916,6 +935,7 @@ PPSH41: JsonDict = {
     },
     "sounds": {
         "fire": "ppsh41/fire",
+        "pap_fire": "ppsh41/pap_fire",
         "reload": "ppsh41/reload",
         "playerbegin": "ppsh41/playerbegin",
         "playerend": "ppsh41/playerend",
@@ -949,6 +969,7 @@ STEN: JsonDict = {
     },
     "sounds": {
         "fire": "sten/fire",
+        "pap_fire": "sten/pap_fire",
         "reload": "sten/reload",
         "playerbegin": "sten/playerbegin",
         "playerend": "sten/playerend",
@@ -982,6 +1003,7 @@ SPAS12: JsonDict = {
     },
     "sounds": {
         "fire": "spas12/fire",
+        "pap_fire": "spas12/pap_fire",
         "fire_alt": "spas12/fire_alt",
         "reload": "spas12/reload",
         "pump": "spas12/pump",
@@ -1013,6 +1035,7 @@ M500: JsonDict = {
     },
     "sounds": {
         "fire": "m500/fire",
+        "pap_fire": "m500/pap_fire",
         "reload": "m500/reload",
         "pump": "m500/pump",
         "crack": "largest"
@@ -1043,6 +1066,7 @@ M590: JsonDict = {
     },
     "sounds": {
         "fire": "m590/fire",
+        "pap_fire": "m590/pap_fire",
         "reload": "m590/reload",
         "pump": "m590/pump",
         "crack": "largest"
@@ -1075,6 +1099,7 @@ SVD: JsonDict = {
     },
     "sounds": {
         "fire": "svd/fire",
+        "pap_fire": "svd/pap_fire",
         "reload": "svd/reload",
         "playerbegin": "svd/playerbegin",
         "playerend": "svd/playerend",
@@ -1108,6 +1133,7 @@ M82: JsonDict = {
     },
     "sounds": {
         "fire": "m82/fire",
+        "pap_fire": "m82/pap_fire",
         "reload": "m82/reload",
         "playerbegin": "m82/playerbegin",
         "playerend": "m82/playerend",
@@ -1140,6 +1166,7 @@ MOSIN: JsonDict = {
     },
     "sounds": {
         "fire": "mosin/fire",
+        "pap_fire": "mosin/pap_fire",
         "reload": "mosin/reload",
         "playerbegin": "mosin/playerbegin",
         "playerend": "mosin/playerend",
@@ -1172,6 +1199,7 @@ M24: JsonDict = {
     },
     "sounds": {
         "fire": "m24/fire",
+        "pap_fire": "m24/pap_fire",
         "reload": "m24/reload",
         "playerbegin": "m24/playerbegin",
         "playerend": "m24/playerend",
@@ -1207,6 +1235,7 @@ RPG7: JsonDict = {
     },
     "sounds": {
         "fire": "rpg7/fire",
+        "pap_fire": "rpg7/pap_fire",
         "reload": "rpg7/reload",
         "playerbegin": "rpg7/playerbegin",
         "playerend": "rpg7/playerend",
@@ -1242,6 +1271,7 @@ RPK: JsonDict = {
     },
     "sounds": {
         "fire": "rpk/fire",
+        "pap_fire": "rpk/pap_fire",
         "reload": "rpk/reload",
         "playerbegin": "rpk/playerbegin",
         "playerend": "rpk/playerend",
@@ -1275,6 +1305,7 @@ M249: JsonDict = {
     },
     "sounds": {
         "fire": "m249/fire",
+        "pap_fire": "m249/pap_fire",
         "reload": "m249/reload",
         "playerbegin": "m249/playerbegin",
         "playerend": "m249/playerend",
