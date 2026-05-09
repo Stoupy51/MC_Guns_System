@@ -16,3 +16,8 @@ summon minecraft:zombie ~ ~-2 ~ {Tags:["mgs.zombie_round","mgs.gm_entity","mgs.n
 # Apply type-specific scaling (health, speed, rise timer)
 $execute as @n[tag=mgs.zombie_round,tag=!mgs.zb_scaled] run function mgs:v5.0.1/zombies/types/$(type) {level:"$(level)"}
 
+# Initialize stuck detection scores (timestamp + XZ snapshot at spawn position)
+execute as @n[tag=mgs.zombie_round,tag=mgs.zb_rising] run scoreboard players operation @s mgs.zb.stuck_ticks = #total_tick mgs.data
+execute as @n[tag=mgs.zombie_round,tag=mgs.zb_rising] store result score @s mgs.zb.stuck_x run data get entity @s Pos[0]
+execute as @n[tag=mgs.zombie_round,tag=mgs.zb_rising] store result score @s mgs.zb.stuck_z run data get entity @s Pos[2]
+
