@@ -8,7 +8,7 @@
 #
 
 # Delegate detection downward if floating (upper barriers in a column share floor-level detection)
-execute if block ~ ~-1 ~ air positioned ~ ~-1 ~ run return run function mgs:v5.0.1/zombies/barriers/intact_tick
+execute positioned ~ ~-1 ~ if block ~ ~ ~ air run return run function mgs:v5.0.1/zombies/barriers/intact_tick
 
 # @s = intact barrier display, at @s
 execute store result score #barrier_id mgs.data run scoreboard players get @s mgs.zb.barrier.id

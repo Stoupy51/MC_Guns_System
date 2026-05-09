@@ -152,6 +152,11 @@ scoreboard objectives add mgs.zb.rise_tick dummy
 scoreboard objectives add mgs.total_kills totalKillCount
 scoreboard objectives add mgs.zb.prev_kills dummy
 
+# Stuck zombie detection per-zombie scores
+scoreboard objectives add mgs.zb.stuck_x dummy
+scoreboard objectives add mgs.zb.stuck_z dummy
+scoreboard objectives add mgs.zb.stuck_ticks dummy
+
 # Initialize zombies game state
 execute unless data storage mgs:zombies game run data modify storage mgs:zombies game set value {state:"lobby",map_id:"",round:0}
 
