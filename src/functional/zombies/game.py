@@ -105,6 +105,8 @@ gamemode spectator @a[scores={{{ns}.zb.in_game=1}}]
 gamerule immediate_respawn true
 gamerule keep_inventory true
 gamerule max_entity_cramming 96
+gamerule advance_time false
+time set 18000
 
 # Initialize round to 0 (first round will be 1)
 data modify storage {ns}:zombies game.round set value 0
@@ -265,6 +267,8 @@ execute unless score #zb_round_grace {ns}.data matches 1.. store result score #z
 execute unless score #zb_round_grace {ns}.data matches 1.. store result score #zb_downed_alive {ns}.data if entity @a[scores={{{ns}.zb.in_game=1,{ns}.zb.downed=1}},gamemode=spectator]
 execute unless score #zb_round_grace {ns}.data matches 1.. run scoreboard players operation #zb_alive_players {ns}.data += #zb_downed_alive {ns}.data
 execute unless score #zb_round_grace {ns}.data matches 1.. if score #zb_alive_players {ns}.data matches 0 run function {ns}:v{version}/zombies/game_over
+
+# TODO: re-spawn zombies that are way too far or didn't move (xz, not y) for 15s (stuck zombies)
 
 # Stuck zombie glow: count up once all spawns are done (60s = 1200 ticks after last spawn)
 execute if score #zb_to_spawn {ns}.data matches 0 run scoreboard players add #zb_stuck_timer {ns}.data 1

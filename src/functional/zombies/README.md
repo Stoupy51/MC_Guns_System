@@ -1,7 +1,6 @@
 
 # TODO:
-- bonuses (max-ammo, insta-kill, double points, barrier repair, unlimited ammo, nuke, random perk, free pap (player only), cash drop)
-- grenades
+- zombie AI: please don't get stuck, look at minecraft source code
 - PAP fire sounds
 - Traps damage:
   - Currently, it does a fixed amount of damage. It should do infinite damage

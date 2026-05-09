@@ -99,6 +99,9 @@ execute as @e[tag={ns}.downed_mannequin,distance=..0.75] positioned as @s run tp
 
 	## Intact barrier tick
 	write_versioned_function("zombies/barriers/intact_tick", f"""
+# Delegate detection downward if floating (upper barriers in a column share floor-level detection)
+execute positioned ~ ~-1 ~ if block ~ ~ ~ air run return run function {ns}:v{version}/zombies/barriers/intact_tick
+
 # @s = intact barrier display, at @s
 execute store result score #barrier_id {ns}.data run scoreboard players get @s {ns}.zb.barrier.id
 execute store result storage {ns}:temp _btick.radius int 1 run scoreboard players get @s {ns}.zb.barrier.radius

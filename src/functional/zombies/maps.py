@@ -40,7 +40,7 @@ scoreboard players set #kino_tp_cd {ns}.data 0
 scoreboard players set #kino_met_count {ns}.data 0
 
 # Set the lobby to theater door closed
-execute positioned ~-19 ~0 ~-1 run fill ~ ~ ~ ~2 ~2 ~ cobblestone
+execute positioned ~-19 ~0 ~-1 run fill ~ ~ ~ ~ ~2 ~2 cobblestone
 
 # Summon all interactions
 ## Teleporter
@@ -231,6 +231,6 @@ execute as @a[scores={{{ns}.zb.in_game=1}}] at @s run playsound {ns}:zombies/mus
 # @within  #{ns}:maps/on_power (via calls/power)
 
 # Open the lobby-to-theater door
-execute positioned ~-19 ~0 ~-1 run fill ~ ~ ~ ~2 ~2 ~ air
+execute positioned ~-19 ~0 ~-1 run fill ~ ~ ~ ~ ~2 ~2 air
 """)
 
