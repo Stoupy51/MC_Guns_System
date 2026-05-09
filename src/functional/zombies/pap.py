@@ -1085,11 +1085,9 @@ execute as @e[tag={ns}.pap_machine,scores={{{ns}.pap_anim=1..}}] at @s run funct
 execute if data storage {ns}:zombies game.map.pap_machines[0] run function {ns}:v{version}/zombies/pap/setup
 """)
 
-	# --- Free PAP power-up upgrade (no animation, no cost) ---
-	write_versioned_function("zombies/pap/on_free_pap", f"""
-# Guard: game must be active
-{game_active_guard_cmd(ns)}
-
+	# --- Shared PAP upgrade core (no game guard, no cost) ---
+	# Called by on_free_pap (in-game, guarded) and apply (any time, unguarded).
+	write_versioned_function("zombies/pap/upgrade_core", f"""
 # Determine selected weapon slot (must be hotbar 1, 2, or 3)
 execute store result score #pap_sel {ns}.data run data get entity @s SelectedItemSlot
 execute unless score #pap_sel {ns}.data matches 1..3 run return run function {ns}:v{version}/zombies/pap/deny_hold_weapon_slot
@@ -1153,7 +1151,7 @@ execute if data storage {ns}:temp _pap_extract.lore[1] run data modify storage {
 execute if data storage {ns}:temp _pap_extract.lore[0] run function {ns}:v{version}/zombies/pap/annotate_lore
 
 # Notify the player
-tellraw @s [{MGS_TAG},{{"text":"✦ Free Pack-a-Punch!","color":"aqua","bold":true}},{{"text":"  Level ","color":"gray"}},{{"score":{{"name":"#pap_next","objective":"{ns}.data"}},"color":"aqua"}},{{"text":"/","color":"dark_gray"}},{{"score":{{"name":"#pap_max","objective":"{ns}.data"}},"color":"aqua"}}]
+tellraw @s [{MGS_TAG},{{"text":"✦ Pack-a-Punch!","color":"aqua","bold":true}},{{"text":"  Level ","color":"gray"}},{{"score":{{"name":"#pap_next","objective":"{ns}.data"}},"color":"aqua"}},{{"text":"/","color":"dark_gray"}},{{"score":{{"name":"#pap_max","objective":"{ns}.data"}},"color":"aqua"}}]
 function {ns}:v{version}/zombies/feedback/sound_success
 
 # Restore unannotated ammo lore (preserves "/" pattern for modify_lore)
@@ -1170,6 +1168,18 @@ function {ns}:v{version}/zombies/pap/pap_upgrade_magazines with storage {ns}:tem
 
 # Refresh ammo HUD
 function {ns}:v{version}/ammo/compute_reserve
+""")
+
+	# --- Free PAP power-up upgrade (in-game only, guarded) ---
+	write_versioned_function("zombies/pap/on_free_pap", f"""
+# Guard: game must be active
+{game_active_guard_cmd(ns)}
+function {ns}:v{version}/zombies/pap/upgrade_core
+""")
+
+	# --- Standalone PAP upgrade (no game required, no cost) ---
+	write_versioned_function("zombies/pap/apply", f"""
+function {ns}:v{version}/zombies/pap/upgrade_core
 """)
 
 	# Free scope/camo reroll when weapon is already at max PAP level (no cost, no animation).

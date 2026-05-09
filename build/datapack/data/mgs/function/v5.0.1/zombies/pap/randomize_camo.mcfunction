@@ -5,7 +5,7 @@
 #
 # @within	mgs:v5.0.1/zombies/pap/repap_scope_only with storage mgs:temp _pap_extract.stats
 #			mgs:v5.0.1/zombies/pap/on_right_click with storage mgs:temp _pap_extract.stats
-#			mgs:v5.0.1/zombies/pap/on_free_pap with storage mgs:temp _pap_extract.stats
+#			mgs:v5.0.1/zombies/pap/upgrade_core with storage mgs:temp _pap_extract.stats
 #			mgs:v5.0.1/zombies/pap/free_scope_reroll with storage mgs:temp _pap_extract.stats
 #
 # @args		base_weapon (unknown)

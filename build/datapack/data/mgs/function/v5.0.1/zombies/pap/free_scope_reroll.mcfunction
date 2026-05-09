@@ -3,7 +3,7 @@
 #
 # @executed	as @p[tag=mgs.pu_collecting]
 #
-# @within	mgs:v5.0.1/zombies/pap/on_free_pap with storage mgs:temp _pap
+# @within	mgs:v5.0.1/zombies/pap/upgrade_core with storage mgs:temp _pap
 #
 
 # Randomize scope (guaranteed different from current)
