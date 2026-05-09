@@ -85,15 +85,8 @@ execute unless score #zb_total_score {ns}.data >= #zb_score_to_drop {ns}.data ru
 execute store result score #pu_rng_roll {ns}.data run random value 1..100
 execute unless score #pu_rng_roll {ns}.data matches 1..20 run return 0
 
-# All checks passed: draw next type from the shuffle bag (no repeats until all 9 used)
-function {ns}:v{version}/zombies/powerups/queue_draw
-
-# Spawn visuals at the pre-stored zombie death position
-data modify storage {ns}:temp _pu_spawn set value {{x:0,y:0,z:0}}
-data modify storage {ns}:temp _pu_spawn.x set from entity @s Pos[0]
-data modify storage {ns}:temp _pu_spawn.y set from entity @s Pos[1]
-data modify storage {ns}:temp _pu_spawn.z set from entity @s Pos[2]
-function {ns}:v{version}/zombies/powerups/do_spawn_random with storage {ns}:temp _pu_spawn
+# All checks passed: draw and spawn at this entity's position
+function {ns}:v{version}/zombies/powerups/spawn_random_at_self
 
 # Multiply threshold by 1.14 so each subsequent drop requires more score
 scoreboard players operation #zb_score_to_drop {ns}.data *= #114 {ns}.data
@@ -101,6 +94,20 @@ scoreboard players operation #zb_score_to_drop {ns}.data /= #100 {ns}.data
 
 # Increment this round's drop counter
 scoreboard players add #zb_drops_this_round {ns}.data 1
+""")
+
+	# Draws a random power-up from the shuffle bag and spawns it at @s's position.
+	# Can be called directly (e.g. as OP) to force-spawn a power-up at your feet.
+	write_versioned_function("zombies/powerups/spawn_random_at_self", f"""
+# Draw next type from the shuffle bag (no repeats until all 9 used)
+function {ns}:v{version}/zombies/powerups/queue_draw
+
+# Spawn visuals at @s's position
+data modify storage {ns}:temp _pu_spawn set value {{x:0,y:0,z:0}}
+data modify storage {ns}:temp _pu_spawn.x set from entity @s Pos[0]
+data modify storage {ns}:temp _pu_spawn.y set from entity @s Pos[1]
+data modify storage {ns}:temp _pu_spawn.z set from entity @s Pos[2]
+function {ns}:v{version}/zombies/powerups/do_spawn_random with storage {ns}:temp _pu_spawn
 """)
 
 	# Macro: dispatch to the correct spawn_type function using the pre-stored coordinates

@@ -20,15 +20,8 @@ execute unless score #zb_total_score mgs.data >= #zb_score_to_drop mgs.data run 
 execute store result score #pu_rng_roll mgs.data run random value 1..100
 execute unless score #pu_rng_roll mgs.data matches 1..20 run return 0
 
-# All checks passed: draw next type from the shuffle bag (no repeats until all 9 used)
-function mgs:v5.0.1/zombies/powerups/queue_draw
-
-# Spawn visuals at the pre-stored zombie death position
-data modify storage mgs:temp _pu_spawn set value {x:0,y:0,z:0}
-data modify storage mgs:temp _pu_spawn.x set from entity @s Pos[0]
-data modify storage mgs:temp _pu_spawn.y set from entity @s Pos[1]
-data modify storage mgs:temp _pu_spawn.z set from entity @s Pos[2]
-function mgs:v5.0.1/zombies/powerups/do_spawn_random with storage mgs:temp _pu_spawn
+# All checks passed: draw and spawn at this entity's position
+function mgs:v5.0.1/zombies/powerups/spawn_random_at_self
 
 # Multiply threshold by 1.14 so each subsequent drop requires more score
 scoreboard players operation #zb_score_to_drop mgs.data *= #114 mgs.data

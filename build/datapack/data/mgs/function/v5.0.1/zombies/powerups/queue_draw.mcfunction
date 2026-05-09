@@ -3,7 +3,7 @@
 #
 # @executed	at @s
 #
-# @within	mgs:v5.0.1/zombies/powerups/check_drop
+# @within	mgs:v5.0.1/zombies/powerups/spawn_random_at_self
 #
 
 # Get current bag size (0 = empty or unset)

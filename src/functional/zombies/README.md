@@ -1,6 +1,7 @@
 
 # TODO:
 - zombie AI: please don't get stuck, look at minecraft source code
+- kino der toten: 30 ticks activation needed for teleporter things + sounds + electric particle (firework spark)
 - PAP fire sounds
 - Traps:
   - Damage: Currently, it does a fixed amount of damage. It should do infinite damage (1000% of zombie health)

@@ -37,7 +37,7 @@ execute unless score #zb_round_grace mgs.data matches 1.. if score #zb_alive_pla
 # Stuck zombie check (every 20 ticks, 24 random non-rising zombies)
 execute store result score #zb_tick_mod mgs.data run scoreboard players get #total_tick mgs.data
 scoreboard players operation #zb_tick_mod mgs.data %= #20 mgs.data
-execute if score #zb_tick_mod mgs.data matches 0 as @e[tag=mgs.zombie_round,tag=!mgs.zb_rising,limit=24,sort=random] run function mgs:v5.0.1/zombies/stuck_zombie_check
+execute if score #zb_tick_mod mgs.data matches 0 as @e[tag=mgs.zombie_round,tag=!mgs.zb_rising,limit=24,sort=random] at @s run function mgs:v5.0.1/zombies/stuck_zombie_check
 
 # Stuck zombie glow: count up once all spawns are done (60s = 1200 ticks after last spawn)
 execute if score #zb_to_spawn mgs.data matches 0 run scoreboard players add #zb_stuck_timer mgs.data 1
