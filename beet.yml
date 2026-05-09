@@ -67,6 +67,10 @@ pipeline:
 
 # Generic dict which holds extra information usable by plugins
 meta:
+    # Enable incremental output: only write new/changed files, delete removed ones
+    output:
+        incremental: true
+
     # Enable custom crosshair rendering in shaders (build time)
     # WARNING: When true, players without "Improved Transparency" setting will not see any crosshair
     mgs_custom_crosshair: True  # Turn off on environments where MGS is not always used (e.g. Minigames Server)
