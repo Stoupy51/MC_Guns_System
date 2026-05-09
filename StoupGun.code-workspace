@@ -8,6 +8,9 @@
 		},
 		{
 			"path": "../stouputils"
+		},
+		{
+			"path": "../beet"
 		}
 	],
 	"settings": {}
