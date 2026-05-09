@@ -17,13 +17,13 @@ execute unless data storage {ns}:maps zombies[{{id:"kino_der_toten"}}] run data 
 """, tags=[f"{ns}:zombies/register_maps"])  # noqa: E501
 
 	# Calls functions — guard then delegate, registered to the shared function tags
-	_guard = (
+	guard = (
 		f'execute if data storage {ns}:zombies game{{state:"active"}}'
 		f' if data storage {ns}:zombies game{{map_id:"kino_der_toten"}}'
 	)
 	for script in ["start", "tick", "join", "leave", "respawn", "power"]:
 		write_versioned_function(f"maps/zombies/kino_der_toten/calls/{script}",
-			f"{_guard} run return run function {ns}:v{version}/maps/zombies/kino_der_toten/{script}",
+			f"{guard} run return run function {ns}:v{version}/maps/zombies/kino_der_toten/{script}",
 			tags=[f"{ns}:maps/{script}_script"]
 		)
 
@@ -48,9 +48,9 @@ execute positioned ~-57 ~-1 ~9 run summon interaction ~ ~ ~ {{Tags:["{ns}.kino",
 execute positioned ~ ~ ~ run summon interaction ~ ~ ~ {{Tags:["{ns}.kino","{ns}.kino.teleporter_lobby","bs.entity.interaction"],width:1.0f,height:1.0f}}
 
 ## Meteorites
-execute positioned ~-12 ~0 ~-5 run summon interaction ~ ~ ~ {{Tags:["{ns}.kino","{ns}.kino.meteorite_1","bs.entity.interaction"],width:1.1f,height:2.0f}}
-execute positioned ~-58 ~-2 ~-22 run summon interaction ~ ~ ~ {{Tags:["{ns}.kino","{ns}.kino.meteorite_2","bs.entity.interaction"],width:1.1f,height:2.0f}}
-execute positioned ~-54 ~4 ~39 run summon interaction ~ ~ ~ {{Tags:["{ns}.kino","{ns}.kino.meteorite_3","bs.entity.interaction"],width:1.1f,height:2.0f}}
+execute positioned ~-12 ~0 ~-5 run summon interaction ~ ~ ~ {{Tags:["{ns}.kino","{ns}.kino.meteorite_1","bs.entity.interaction"],width:1.1f,height:2.1f}}
+execute positioned ~-58 ~-2 ~-22 run summon interaction ~ ~ ~ {{Tags:["{ns}.kino","{ns}.kino.meteorite_2","bs.entity.interaction"],width:1.1f,height:2.1f}}
+execute positioned ~-54 ~4 ~39 run summon interaction ~ ~ ~ {{Tags:["{ns}.kino","{ns}.kino.meteorite_3","bs.entity.interaction"],width:1.1f,height:2.1f}}
 
 # Register right-click events for all kino interactions (target = interaction entity itself)
 execute as @e[tag={ns}.kino] run function #bs.interaction:on_right_click {{run:"function {ns}:v{version}/maps/zombies/kino_der_toten/on_right_click",executor:"target"}}
@@ -137,14 +137,44 @@ playsound minecraft:block.beacon.activate block @a[distance=..50] ~ ~ ~ 1 1
 	# ── teleporter/activate ───────────────────────────────────────────────────
 	write_versioned_function("maps/zombies/kino_der_toten/teleporter/activate", f"""
 # @s = theater interaction entity (armed, state 2)
-# Tag all nearby in-game players (within 3 blocks)
-tag @a[distance=..3,scores={{{ns}.zb.in_game=1}},gamemode=!spectator] add {ns}.kino.in_tp
+# Play activation start sound
+playsound minecraft:entity.lightning_bolt.thunder block @a[distance=..50] ~ ~ ~ 0.25 1
+playsound minecraft:block.portal.trigger block @a[distance=..50] ~ ~ ~ 1 2
 
-# Teleport tagged players to the projection room
-execute positioned ~57 ~1 ~-9 run tp @a[tag={ns}.kino.in_tp] ~-22 ~6 ~0
-
-# State 3: players in projection room, 600t (30s) countdown
+# State 3: 30-tick activation delay (particles + sound build-up)
 scoreboard players set #kino_tp_state {ns}.data 3
+scoreboard players set #kino_tp_timer {ns}.data 30
+""")
+
+	# ── teleporter/activating_tick ─────────────────────────────────────────────
+	write_versioned_function("maps/zombies/kino_der_toten/teleporter/activating_tick", f"""
+# Count down the 30-tick activation delay
+scoreboard players remove #kino_tp_timer {ns}.data 1
+
+# Kill nearby zombies each tick
+kill @e[tag={ns}.zombie_round,distance=..4]
+
+# Spawn electric_spark particles at the theater interaction entity
+particle electric_spark ~ ~1 ~ 0.6 0.6 0.6 0.1 30 normal
+
+# Play firework sound at the midpoint (tick 15)
+execute if score #kino_tp_timer {ns}.data matches 1 run playsound minecraft:entity.firework_rocket.twinkle block @a[distance=..30] ~ ~ ~ 1 1
+execute if score #kino_tp_timer {ns}.data matches 11 run playsound minecraft:entity.firework_rocket.twinkle block @a[distance=..30] ~ ~ ~ 1 1
+execute if score #kino_tp_timer {ns}.data matches 21 run playsound minecraft:entity.firework_rocket.twinkle block @a[distance=..30] ~ ~ ~ 1 1
+
+# When timer reaches 0, execute the actual teleport
+execute if score #kino_tp_timer {ns}.data matches ..0 run function {ns}:v{version}/maps/zombies/kino_der_toten/teleporter/do_teleport
+""")
+
+	# ── teleporter/do_teleport ─────────────────────────────────────────────────
+	write_versioned_function("maps/zombies/kino_der_toten/teleporter/do_teleport", f"""
+# Tag all nearby in-game players (within 3 blocks) and teleport to the projection room
+tag @a[distance=..3,scores={{{ns}.zb.in_game=1}},gamemode=!spectator] add {ns}.kino.in_tp
+execute positioned ~57 ~1 ~-9 run tp @a[tag={ns}.kino.in_tp] ~-22 ~6 ~0
+execute as @a[tag={ns}.kino.in_tp] at @s run playsound minecraft:entity.enderman.teleport block @s ~ ~ ~ 1 1
+
+# State 4: players in projection room, 600t (30s) countdown
+scoreboard players set #kino_tp_state {ns}.data 4
 scoreboard players set #kino_tp_timer {ns}.data 600
 """)
 
@@ -156,18 +186,23 @@ execute on target at @s run function {ns}:v{version}/zombies/feedback/sound_deny
 
 	# ── teleporter/tick ───────────────────────────────────────────────────────
 	write_versioned_function("maps/zombies/kino_der_toten/teleporter/tick", f"""
-# State 3: players in projection room — count down, then scatter to random lobby spots
-execute if score #kino_tp_state {ns}.data matches 3 run scoreboard players remove #kino_tp_timer {ns}.data 1
-execute if score #kino_tp_state {ns}.data matches 3 if score #kino_tp_timer {ns}.data matches ..0 run function {ns}:v{version}/maps/zombies/kino_der_toten/teleporter/return_players
+# State 3: activation delay — electric particles + countdown, then teleport
+execute if score #kino_tp_state {ns}.data matches 3 at @e[tag={ns}.kino.teleporter_theater] run function {ns}:v{version}/maps/zombies/kino_der_toten/teleporter/activating_tick
 
-# State 4: players at random spots — count down 5s (100t), then tp all to lobby
+# State 4: players in projection room — count down, then scatter to random lobby spots
 execute if score #kino_tp_state {ns}.data matches 4 run scoreboard players remove #kino_tp_timer {ns}.data 1
-execute if score #kino_tp_state {ns}.data matches 4 if score #kino_tp_timer {ns}.data matches ..0 run function {ns}:v{version}/maps/zombies/kino_der_toten/teleporter/return_to_lobby
+execute if score #kino_tp_state {ns}.data matches 4 if score #kino_tp_timer {ns}.data matches 30 as @a[tag={ns}.kino.in_tp] at @s run playsound minecraft:block.portal.trigger block @a[distance=..50] ~ ~ ~ 1 2
+execute if score #kino_tp_state {ns}.data matches 4 if score #kino_tp_timer {ns}.data matches ..0 run function {ns}:v{version}/maps/zombies/kino_der_toten/teleporter/return_players
 
-# State 5: cooldown — count down, then reset to idle (state 0)
-execute if score #kino_tp_state {ns}.data matches 5 run scoreboard players remove #kino_tp_cd {ns}.data 1
-execute if score #kino_tp_state {ns}.data matches 5 if score #kino_tp_cd {ns}.data matches ..0 run scoreboard players set #kino_tp_state {ns}.data 0
-""")
+# State 5: players at random spots — count down 5s (100t), then tp all to lobby
+execute if score #kino_tp_state {ns}.data matches 5 run scoreboard players remove #kino_tp_timer {ns}.data 1
+execute if score #kino_tp_state {ns}.data matches 5 if score #kino_tp_timer {ns}.data matches 30 as @a[tag={ns}.kino.in_tp] at @s run playsound minecraft:block.portal.trigger block @a[distance=..50] ~ ~ ~ 1 2
+execute if score #kino_tp_state {ns}.data matches 5 if score #kino_tp_timer {ns}.data matches ..0 run function {ns}:v{version}/maps/zombies/kino_der_toten/teleporter/return_to_lobby
+
+# State 6: cooldown — count down, then reset to idle (state 0)
+execute if score #kino_tp_state {ns}.data matches 6 run scoreboard players remove #kino_tp_cd {ns}.data 1
+execute if score #kino_tp_state {ns}.data matches 6 if score #kino_tp_cd {ns}.data matches ..0 run scoreboard players set #kino_tp_state {ns}.data 0
+""")  # noqa: E501
 
 	# ── teleporter/return_players ─────────────────────────────────────────────
 	write_versioned_function("maps/zombies/kino_der_toten/teleporter/return_players", f"""
@@ -175,8 +210,8 @@ execute if score #kino_tp_state {ns}.data matches 5 if score #kino_tp_cd {ns}.da
 execute as @a[tag={ns}.kino.in_tp] run function {ns}:v{version}/maps/zombies/kino_der_toten/teleporter/return_one
 # Keep kino.in_tp tags — needed by return_to_lobby after 5 seconds
 
-# State 4: 5 seconds (100t) before teleporting everyone back to the lobby pad
-scoreboard players set #kino_tp_state {ns}.data 4
+# State 5: 5 seconds (100t) before teleporting everyone back to the lobby pad
+scoreboard players set #kino_tp_state {ns}.data 5
 scoreboard players set #kino_tp_timer {ns}.data 100
 """)
 
@@ -184,12 +219,14 @@ scoreboard players set #kino_tp_timer {ns}.data 100
 	write_versioned_function("maps/zombies/kino_der_toten/teleporter/return_to_lobby", f"""
 # Teleport all returning players to the lobby teleporter pad position
 execute as @a[tag={ns}.kino.in_tp] at @e[tag={ns}.kino.teleporter_lobby] run tp @s ~ ~ ~
+execute at @n[tag={ns}.kino.in_tp] run playsound minecraft:entity.enderman.teleport block @a[distance=..50] ~ ~ ~ 1 1
+execute at @n[tag={ns}.kino.in_tp] run kill @e[tag={ns}.zombie_round,distance=..4]
 
 # Clean up tags
 tag @a remove {ns}.kino.in_tp
 
-# State 5: enter cooldown (3600t = 3 min)
-scoreboard players set #kino_tp_state {ns}.data 5
+# State 6: enter cooldown (3600t = 3 min)
+scoreboard players set #kino_tp_state {ns}.data 6
 scoreboard players set #kino_tp_cd {ns}.data 3600
 """)
 
@@ -202,6 +239,7 @@ execute if score #tp_random {ns}.data matches 2 run tp @s ~-34 ~4 ~54
 execute if score #tp_random {ns}.data matches 3 run tp @s ~-27 ~4 ~-82
 execute if score #tp_random {ns}.data matches 4 run tp @s ~-97 ~7 ~13
 execute if score #tp_random {ns}.data matches 5 run tp @s ~40 ~4 ~39
+execute at @s run playsound minecraft:entity.enderman.teleport block @s ~ ~ ~ 1 1
 """)
 
 	# ── meteorite/on_click ────────────────────────────────────────────────────

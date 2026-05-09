@@ -13,4 +13,5 @@ execute if score #tp_random mgs.data matches 2 run tp @s ~-34 ~4 ~54
 execute if score #tp_random mgs.data matches 3 run tp @s ~-27 ~4 ~-82
 execute if score #tp_random mgs.data matches 4 run tp @s ~-97 ~7 ~13
 execute if score #tp_random mgs.data matches 5 run tp @s ~40 ~4 ~39
+execute at @s run playsound minecraft:entity.enderman.teleport block @s ~ ~ ~ 1 1
 
