@@ -4,7 +4,7 @@
 # @executed	as @n[tag=mgs.pap_new]
 #
 # @within	mgs:v5.0.1/zombies/pap/on_right_click
-#			mgs:v5.0.1/zombies/pap/on_free_pap
+#			mgs:v5.0.1/zombies/pap/upgrade_core
 #
 
 data modify storage mgs:temp _pap_pick.list set from storage mgs:temp _pap_extract.stats.pap_stats.pap_name
