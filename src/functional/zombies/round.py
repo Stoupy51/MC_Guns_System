@@ -109,7 +109,7 @@ function {ns}:v{version}/zombies/summon_zombie_at with storage {ns}:temp _zpos
 	write_versioned_function("zombies/summon_zombie_at", f"""
 # Summon zombie 2 blocks underground with NoAI (rise animation in progress)
 # Attach a marker passenger so death can be intercepted before vanilla event 60 (poof particles).
-summon minecraft:zombie ~ ~-2 ~ {{Tags:["{ns}.zombie_round","{ns}.gm_entity","{ns}.nukable","{ns}.zb_rising"],CanPickUpLoot:false,PersistenceRequired:true,DeathLootTable:"minecraft:empty",NoAI:1b,Passengers:[{{id:"minecraft:marker",Tags:["{ns}.death_watch","{ns}.gm_entity"]}}]}}
+summon minecraft:zombie ~ ~-2 ~ {{Tags:["{ns}.zombie_round","{ns}.gm_entity","{ns}.nukable","{ns}.zb_rising"],CanPickUpLoot:false,PersistenceRequired:true,DeathLootTable:"minecraft:empty",NoAI:1b,Passengers:[{{id:"minecraft:marker",Tags:["{ns}.death_watch","{ns}.gm_entity"]}}],Attributes:[{{id:"minecraft:follow_range",base:2048.0d}}]}}
 
 # Apply type-specific scaling (health, speed, rise timer)
 $execute as @n[tag={ns}.zombie_round,tag=!{ns}.zb_scaled] run function {ns}:v{version}/zombies/types/$(type) {{level:"$(level)"}}
@@ -130,7 +130,6 @@ scoreboard players set @n[tag={ns}.zombie_round,tag={ns}.zb_rising] {ns}.zb.stuc
 # Add scaled tag, and few data
 tag @s add {ns}.zb_scaled
 data modify entity @s DeathTime set value -16s
-attribute @s minecraft:follow_range base set 512
 
 # Compute BO2-derived HP for this round and apply it to this zombie
 function {ns}:v{version}/zombies/calc_zombie_hp

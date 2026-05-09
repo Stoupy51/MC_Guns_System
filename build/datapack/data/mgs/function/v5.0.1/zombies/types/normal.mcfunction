@@ -9,7 +9,6 @@
 # Add scaled tag, and few data
 tag @s add mgs.zb_scaled
 data modify entity @s DeathTime set value -16s
-attribute @s minecraft:follow_range base set 512
 
 # Compute BO2-derived HP for this round and apply it to this zombie
 function mgs:v5.0.1/zombies/calc_zombie_hp
