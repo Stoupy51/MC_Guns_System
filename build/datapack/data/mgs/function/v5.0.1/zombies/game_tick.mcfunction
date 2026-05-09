@@ -34,6 +34,8 @@ execute unless score #zb_round_grace mgs.data matches 1.. store result score #zb
 execute unless score #zb_round_grace mgs.data matches 1.. run scoreboard players operation #zb_alive_players mgs.data += #zb_downed_alive mgs.data
 execute unless score #zb_round_grace mgs.data matches 1.. if score #zb_alive_players mgs.data matches 0 run function mgs:v5.0.1/zombies/game_over
 
+# TODO: re-spawn zombies that are way too far or didn't move for 15s (stuck zombies)
+
 # Stuck zombie glow: count up once all spawns are done (60s = 1200 ticks after last spawn)
 execute if score #zb_to_spawn mgs.data matches 0 run scoreboard players add #zb_stuck_timer mgs.data 1
 execute if score #zb_to_spawn mgs.data matches 1.. run scoreboard players set #zb_stuck_timer mgs.data 0

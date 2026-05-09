@@ -15,7 +15,7 @@ scoreboard players set #kino_tp_cd mgs.data 0
 scoreboard players set #kino_met_count mgs.data 0
 
 # Set the lobby to theater door closed
-execute positioned ~-19 ~0 ~-1 run fill ~ ~ ~ ~2 ~2 ~ cobblestone
+execute positioned ~-19 ~0 ~-1 run fill ~ ~ ~ ~ ~2 ~2 cobblestone
 
 # Summon all interactions
 ## Teleporter
