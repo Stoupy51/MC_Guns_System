@@ -70,7 +70,7 @@ execute if data storage mgs:temp _pap_extract.lore[1] run data modify storage mg
 execute if data storage mgs:temp _pap_extract.lore[0] run function mgs:v5.0.1/zombies/pap/annotate_lore
 
 # Notify the player
-tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],[{"text":"✦ ","color":"aqua","bold":true}, {"translate":"mgs.pack_a_punch_2"}],[{"text":"  ","color":"gray"}, {"translate":"mgs.level_2"}],{"score":{"name":"#pap_next","objective":"mgs.data"},"color":"aqua"},{"text":"/","color":"dark_gray"},{"score":{"name":"#pap_max","objective":"mgs.data"},"color":"aqua"}]
+tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],[{"text":"✦ ","color":"aqua","bold":true}, {"translate":"mgs.pack_a_punch_3"}],[{"text":"  ","color":"gray"}, {"translate":"mgs.level_2"}],{"score":{"name":"#pap_next","objective":"mgs.data"},"color":"aqua"},{"text":"/","color":"dark_gray"},{"score":{"name":"#pap_max","objective":"mgs.data"},"color":"aqua"}]
 function mgs:v5.0.1/zombies/feedback/sound_success
 
 # Restore unannotated ammo lore (preserves "/" pattern for modify_lore)

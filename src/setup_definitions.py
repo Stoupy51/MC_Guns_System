@@ -43,6 +43,7 @@ from .database.ammo import main as main_ammo
 from .database.camo import main as camo_main
 from .database.casing import main as main_casing
 from .database.grenades import main as main_grenades
+from .database.others import main as main_others
 from .database.rpg7 import main as main_rpg7
 from .database.weapons import main as main_weapons
 
@@ -52,9 +53,10 @@ from .database.weapons import main as main_weapons
 def beet_default(ctx: Context) -> None:
     ns: str = ctx.project_id
 
-    # Add casings and flashes
+    # Add casings, ammo, and other miscellaneous items
     main_casing()
     main_ammo()
+    main_others()
 
     # Special
     main_rpg7()

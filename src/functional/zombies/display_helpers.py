@@ -13,6 +13,6 @@ def generate_display_helpers() -> None:
 	# Must be called via `execute as <entity> at @s run function ...`.
 	# Args: $(tag) - entity tag, $(item_id) - minecraft item id, $(item_model) - item_model component value, $(yaw) - facing rotation.
 	write_versioned_function("zombies/display/summon_machine_display", f"""
-$summon minecraft:item_display ~ ~1.0 ~ {{Rotation:[$(yaw)f,0f],Tags:["$(tag)","{ns}.gm_entity"],item_display:"fixed",billboard:"fixed",item:{{id:"$(item_id)",count:1,components:{{"minecraft:item_model":"$(item_model)"}}}},transformation:{{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[0.85f,0.85f,0.85f]}}}}
+$summon minecraft:item_display ~ ~1.0 ~ {{Rotation:[$(yaw)f,0f],Tags:["$(tag)","{ns}.gm_entity"],item_display:"fixed",billboard:"fixed",item:{{id:"$(item_id)",count:1,components:{{"minecraft:item_model":"$(item_model)"}}}},transformation:{{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[1.25f,1.25f,1.25f]}}}}
 """)
 
