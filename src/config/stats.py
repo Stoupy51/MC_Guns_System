@@ -24,6 +24,8 @@ END_HEX: str = "c77e36"
 # Utility functions
 def json_dump(x: Any) -> str: return stp.json_dump(x, max_level=-1)
 def get_model_path(model_name: str) -> str: return f"{ITEM_MODELS_PATH}/{model_name}.json"
+def load_model(path: str) -> JsonDict:
+    return json.loads(stp.read_file(path).replace("mgs:item", f"{Mem.ctx.project_id}:item"))
 
 # Function
 def add_item(id: str, stats: JsonDict | None = None, model_path: str | None = None, max_stack_size: int = 1, **kwargs: Any) -> Item:
@@ -37,10 +39,7 @@ def add_item(id: str, stats: JsonDict | None = None, model_path: str | None = No
             "custom_data": {Mem.ctx.project_id: {"gun":True, **stats} if stats else {"casing":True}},
             "rarity": "common",
         },
-        override_model=(
-            json.loads(stp.read_file(model_path).replace("mgs:item", f"{Mem.ctx.project_id}:item"))
-            if model_path else None
-        ),
+        override_model=(load_model(model_path) if model_path else None),
         **kwargs
     )
 

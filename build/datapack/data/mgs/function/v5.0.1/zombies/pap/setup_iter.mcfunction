@@ -45,9 +45,9 @@ data modify storage mgs:temp _pap_disp.yaw set value 0.0
 execute if data storage mgs:temp _pap_iter[0].display_item run data modify storage mgs:temp _pap_disp.item_id set from storage mgs:temp _pap_iter[0].display_item
 execute if data storage mgs:temp _pap_iter[0].item_model run data modify storage mgs:temp _pap_disp.item_model set from storage mgs:temp _pap_iter[0].item_model
 execute if data storage mgs:temp _pap_disp{item_id:""} run data modify storage mgs:temp _pap_disp.item_id set value "minecraft:netherite_block"
-execute if data storage mgs:temp _pap_disp{item_model:""} run data modify storage mgs:temp _pap_disp.item_model set value "minecraft:netherite_block"
+execute if data storage mgs:temp _pap_disp{item_model:""} run data modify storage mgs:temp _pap_disp.item_model set value "mgs:pack_a_punch"
 execute if data storage mgs:temp _pap_iter[0].rotation[0] run data modify storage mgs:temp _pap_disp.yaw set from storage mgs:temp _pap_iter[0].rotation[0]
-execute as @n[tag=mgs.pap_new] at @s run function mgs:v5.0.1/zombies/display/summon_machine_display with storage mgs:temp _pap_disp
+execute as @n[tag=mgs.pap_new] at @s positioned ^ ^ ^-0.5 positioned ~ ~-0.4 ~ run function mgs:v5.0.1/zombies/display/summon_machine_display with storage mgs:temp _pap_disp
 
 # Store display metadata for lookup (reuse the computed _pap_disp fields)
 execute store result storage mgs:temp _pap_store.id int 1 run scoreboard players get #pap_counter mgs.data

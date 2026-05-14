@@ -119,9 +119,9 @@ data modify storage {ns}:temp _pap_disp.yaw set value 0.0
 execute if data storage {ns}:temp _pap_iter[0].display_item run data modify storage {ns}:temp _pap_disp.item_id set from storage {ns}:temp _pap_iter[0].display_item
 execute if data storage {ns}:temp _pap_iter[0].item_model run data modify storage {ns}:temp _pap_disp.item_model set from storage {ns}:temp _pap_iter[0].item_model
 execute if data storage {ns}:temp _pap_disp{{item_id:""}} run data modify storage {ns}:temp _pap_disp.item_id set value "minecraft:netherite_block"
-execute if data storage {ns}:temp _pap_disp{{item_model:""}} run data modify storage {ns}:temp _pap_disp.item_model set value "minecraft:netherite_block"
+execute if data storage {ns}:temp _pap_disp{{item_model:""}} run data modify storage {ns}:temp _pap_disp.item_model set value "{ns}:pack_a_punch"
 execute if data storage {ns}:temp _pap_iter[0].rotation[0] run data modify storage {ns}:temp _pap_disp.yaw set from storage {ns}:temp _pap_iter[0].rotation[0]
-execute as @n[tag={ns}.pap_new] at @s run function {ns}:v{version}/zombies/display/summon_machine_display with storage {ns}:temp _pap_disp
+execute as @n[tag={ns}.pap_new] at @s positioned ^ ^ ^-0.5 positioned ~ ~-0.4 ~ run function {ns}:v{version}/zombies/display/summon_machine_display with storage {ns}:temp _pap_disp
 
 # Store display metadata for lookup (reuse the computed _pap_disp fields)
 execute store result storage {ns}:temp _pap_store.id int 1 run scoreboard players get #pap_counter {ns}.data
@@ -801,7 +801,7 @@ execute if score #pap_li {ns}.data < #pap_lore_len {ns}.data run function {ns}:v
 # $(slot) = player weapon slot (hotbar.1 / hotbar.2 / hotbar.3)
 
 # Summon weapon item_display offset ahead of the machine (will slide to center)
-execute positioned ~ ~0.8 ~ run summon minecraft:item_display ^ ^ ^0.5 {{Tags:["{ns}.pap_weapon_display","{ns}.gm_entity"],billboard:"fixed",item_display:"fixed",transformation:{{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[0.6f,0.6f,0.6f]}}}}
+execute positioned ~ ~0.8 ~ run summon minecraft:item_display ^ ^ ^0.6 {{Tags:["{ns}.pap_weapon_display","{ns}.gm_entity"],billboard:"fixed",item_display:"fixed",transformation:{{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[0.6f,0.6f,0.6f]}}}}
 
 # Transfer weapon into display entity via contents slot, then clear player slot
 data modify entity @n[tag={ns}.pap_weapon_display,distance=..2] Rotation set from entity @s Rotation
@@ -884,17 +884,17 @@ execute if score @s {ns}.pap_anim matches 206..219 run function {ns}:v{version}/
 
 # Trigger: weapon fully emerged at timer=205 — start retreat, allow collection
 execute if score @s {ns}.pap_anim matches 205 run function {ns}:v{version}/zombies/pap/anim/trigger_retreat
-execute if score @s {ns}.pap_anim matches 205 as @n[tag={ns}.pap_weapon_display,distance=..2] at @s run tp @s ^ ^ ^-0.06
-execute if score @s {ns}.pap_anim matches 185 as @n[tag={ns}.pap_weapon_display,distance=..2] at @s run tp @s ^ ^ ^-0.06
-execute if score @s {ns}.pap_anim matches 165 as @n[tag={ns}.pap_weapon_display,distance=..2] at @s run tp @s ^ ^ ^-0.06
-execute if score @s {ns}.pap_anim matches 145 as @n[tag={ns}.pap_weapon_display,distance=..2] at @s run tp @s ^ ^ ^-0.06
-execute if score @s {ns}.pap_anim matches 125 as @n[tag={ns}.pap_weapon_display,distance=..2] at @s run tp @s ^ ^ ^-0.06
-execute if score @s {ns}.pap_anim matches 105 as @n[tag={ns}.pap_weapon_display,distance=..2] at @s run tp @s ^ ^ ^-0.06
-execute if score @s {ns}.pap_anim matches 85 as @n[tag={ns}.pap_weapon_display,distance=..2] at @s run tp @s ^ ^ ^-0.06
-execute if score @s {ns}.pap_anim matches 65 as @n[tag={ns}.pap_weapon_display,distance=..2] at @s run tp @s ^ ^ ^-0.06
-execute if score @s {ns}.pap_anim matches 45 as @n[tag={ns}.pap_weapon_display,distance=..2] at @s run tp @s ^ ^ ^-0.06
-execute if score @s {ns}.pap_anim matches 25 as @n[tag={ns}.pap_weapon_display,distance=..2] at @s run tp @s ^ ^ ^-0.06
-execute if score @s {ns}.pap_anim matches 5 as @n[tag={ns}.pap_weapon_display,distance=..2] at @s run tp @s ^ ^ ^-0.06
+execute if score @s {ns}.pap_anim matches 205 as @n[tag={ns}.pap_weapon_display,distance=..2] at @s run tp @s ^ ^ ^-0.04
+execute if score @s {ns}.pap_anim matches 185 as @n[tag={ns}.pap_weapon_display,distance=..2] at @s run tp @s ^ ^ ^-0.04
+execute if score @s {ns}.pap_anim matches 165 as @n[tag={ns}.pap_weapon_display,distance=..2] at @s run tp @s ^ ^ ^-0.04
+execute if score @s {ns}.pap_anim matches 145 as @n[tag={ns}.pap_weapon_display,distance=..2] at @s run tp @s ^ ^ ^-0.04
+execute if score @s {ns}.pap_anim matches 125 as @n[tag={ns}.pap_weapon_display,distance=..2] at @s run tp @s ^ ^ ^-0.04
+execute if score @s {ns}.pap_anim matches 105 as @n[tag={ns}.pap_weapon_display,distance=..2] at @s run tp @s ^ ^ ^-0.04
+execute if score @s {ns}.pap_anim matches 85 as @n[tag={ns}.pap_weapon_display,distance=..2] at @s run tp @s ^ ^ ^-0.04
+execute if score @s {ns}.pap_anim matches 65 as @n[tag={ns}.pap_weapon_display,distance=..2] at @s run tp @s ^ ^ ^-0.04
+execute if score @s {ns}.pap_anim matches 45 as @n[tag={ns}.pap_weapon_display,distance=..2] at @s run tp @s ^ ^ ^-0.04
+execute if score @s {ns}.pap_anim matches 25 as @n[tag={ns}.pap_weapon_display,distance=..2] at @s run tp @s ^ ^ ^-0.04
+execute if score @s {ns}.pap_anim matches 5 as @n[tag={ns}.pap_weapon_display,distance=..2] at @s run tp @s ^ ^ ^-0.04
 
 # Phase: RETREAT (timer 1..205) — smoke particles + looping sound every 20 ticks
 execute if score @s {ns}.pap_anim matches 1..205 run particle smoke ~ ~0.5 ~ 0.2 0.2 0.2 0.05 2 force
@@ -909,7 +909,7 @@ execute if score @s {ns}.pap_anim matches 0 run function {ns}:v{version}/zombies
 	# New function: start going-in interpolation 2 ticks after summon (client sync).
 	write_versioned_function("zombies/pap/anim/trigger_going_in", f"""
 # Slide weapon from ahead ^0.5 to center over 30 ticks (no rotation/size changes)
-execute as @n[tag={ns}.pap_weapon_display,distance=..2] at @s run tp @s ^ ^ ^-0.5
+execute as @n[tag={ns}.pap_weapon_display,distance=..2] at @s run tp @s ^ ^ ^-0.6
 """)
 
 	# Sparse purple particles during the going-in phase (horizontal slide).
@@ -941,7 +941,7 @@ execute if score #pap_t {ns}.data matches 0 run function {ns}:v{version}/zombies
 	# Trigger coming-out interpolation: slide horizontally out over 30 ticks.
 	write_versioned_function("zombies/pap/anim/trigger_coming_out", f"""
 # Slide weapon horizontally out to the left over 30 ticks (no rotation/size changes)
-execute as @n[tag={ns}.pap_weapon_display,distance=..2] at @s run tp @s ^ ^ ^0.5
+execute as @n[tag={ns}.pap_weapon_display,distance=..2] at @s run tp @s ^ ^ ^0.6
 function {ns}:v{version}/zombies/feedback/sound_pap_dispense
 """)
 

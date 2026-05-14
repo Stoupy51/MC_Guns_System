@@ -32,17 +32,17 @@ execute if score @s mgs.pap_anim matches 206..219 run function mgs:v5.0.1/zombie
 
 # Trigger: weapon fully emerged at timer=205 — start retreat, allow collection
 execute if score @s mgs.pap_anim matches 205 run function mgs:v5.0.1/zombies/pap/anim/trigger_retreat
-execute if score @s mgs.pap_anim matches 205 as @n[tag=mgs.pap_weapon_display,distance=..2] at @s run tp @s ^ ^ ^-0.06
-execute if score @s mgs.pap_anim matches 185 as @n[tag=mgs.pap_weapon_display,distance=..2] at @s run tp @s ^ ^ ^-0.06
-execute if score @s mgs.pap_anim matches 165 as @n[tag=mgs.pap_weapon_display,distance=..2] at @s run tp @s ^ ^ ^-0.06
-execute if score @s mgs.pap_anim matches 145 as @n[tag=mgs.pap_weapon_display,distance=..2] at @s run tp @s ^ ^ ^-0.06
-execute if score @s mgs.pap_anim matches 125 as @n[tag=mgs.pap_weapon_display,distance=..2] at @s run tp @s ^ ^ ^-0.06
-execute if score @s mgs.pap_anim matches 105 as @n[tag=mgs.pap_weapon_display,distance=..2] at @s run tp @s ^ ^ ^-0.06
-execute if score @s mgs.pap_anim matches 85 as @n[tag=mgs.pap_weapon_display,distance=..2] at @s run tp @s ^ ^ ^-0.06
-execute if score @s mgs.pap_anim matches 65 as @n[tag=mgs.pap_weapon_display,distance=..2] at @s run tp @s ^ ^ ^-0.06
-execute if score @s mgs.pap_anim matches 45 as @n[tag=mgs.pap_weapon_display,distance=..2] at @s run tp @s ^ ^ ^-0.06
-execute if score @s mgs.pap_anim matches 25 as @n[tag=mgs.pap_weapon_display,distance=..2] at @s run tp @s ^ ^ ^-0.06
-execute if score @s mgs.pap_anim matches 5 as @n[tag=mgs.pap_weapon_display,distance=..2] at @s run tp @s ^ ^ ^-0.06
+execute if score @s mgs.pap_anim matches 205 as @n[tag=mgs.pap_weapon_display,distance=..2] at @s run tp @s ^ ^ ^-0.04
+execute if score @s mgs.pap_anim matches 185 as @n[tag=mgs.pap_weapon_display,distance=..2] at @s run tp @s ^ ^ ^-0.04
+execute if score @s mgs.pap_anim matches 165 as @n[tag=mgs.pap_weapon_display,distance=..2] at @s run tp @s ^ ^ ^-0.04
+execute if score @s mgs.pap_anim matches 145 as @n[tag=mgs.pap_weapon_display,distance=..2] at @s run tp @s ^ ^ ^-0.04
+execute if score @s mgs.pap_anim matches 125 as @n[tag=mgs.pap_weapon_display,distance=..2] at @s run tp @s ^ ^ ^-0.04
+execute if score @s mgs.pap_anim matches 105 as @n[tag=mgs.pap_weapon_display,distance=..2] at @s run tp @s ^ ^ ^-0.04
+execute if score @s mgs.pap_anim matches 85 as @n[tag=mgs.pap_weapon_display,distance=..2] at @s run tp @s ^ ^ ^-0.04
+execute if score @s mgs.pap_anim matches 65 as @n[tag=mgs.pap_weapon_display,distance=..2] at @s run tp @s ^ ^ ^-0.04
+execute if score @s mgs.pap_anim matches 45 as @n[tag=mgs.pap_weapon_display,distance=..2] at @s run tp @s ^ ^ ^-0.04
+execute if score @s mgs.pap_anim matches 25 as @n[tag=mgs.pap_weapon_display,distance=..2] at @s run tp @s ^ ^ ^-0.04
+execute if score @s mgs.pap_anim matches 5 as @n[tag=mgs.pap_weapon_display,distance=..2] at @s run tp @s ^ ^ ^-0.04
 
 # Phase: RETREAT (timer 1..205) — smoke particles + looping sound every 20 ticks
 execute if score @s mgs.pap_anim matches 1..205 run particle smoke ~ ~0.5 ~ 0.2 0.2 0.2 0.05 2 force

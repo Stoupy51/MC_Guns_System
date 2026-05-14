@@ -31,6 +31,7 @@
 		{"rolls": 1,"entries": [{"type": "minecraft:loot_table","value": "mgs:i/m500_shell"}]},
 		{"rolls": 1,"entries": [{"type": "minecraft:loot_table","value": "mgs:i/m590_shell"}]},
 		{"rolls": 1,"entries": [{"type": "minecraft:loot_table","value": "mgs:i/element_115"}]},
+		{"rolls": 1,"entries": [{"type": "minecraft:loot_table","value": "mgs:i/pack_a_punch"}]},
 		{"rolls": 1,"entries": [{"type": "minecraft:loot_table","value": "mgs:i/rpg7"}]},
 		{"rolls": 1,"entries": [{"type": "minecraft:loot_table","value": "mgs:i/rpg7_empty"}]},
 		{"rolls": 1,"entries": [{"type": "minecraft:loot_table","value": "mgs:i/ak47"}]},
