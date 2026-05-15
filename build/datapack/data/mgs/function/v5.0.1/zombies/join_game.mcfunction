@@ -12,6 +12,7 @@ execute if score @s mgs.zb.in_game matches 1 run return run tellraw @s [[{"text"
 
 # Tag as in-game and reset stats
 scoreboard players set @s mgs.zb.in_game 1
+team join mgs.zombies @s
 scoreboard players set @s mgs.zb.points 500
 scoreboard players set @s mgs.zb.kills 0
 scoreboard players set @s mgs.zb.downs 0

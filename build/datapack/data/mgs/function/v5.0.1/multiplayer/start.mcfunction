@@ -27,6 +27,20 @@ execute unless data storage mgs:multiplayer game.map.start_commands run data mod
 # Set state to preparing
 data modify storage mgs:multiplayer game.state set value "preparing"
 
+# Teams setup
+team add mgs.red
+team modify mgs.red color red
+team modify mgs.red friendlyFire false
+team modify mgs.red nametagVisibility hideForOtherTeams
+team add mgs.blue
+team modify mgs.blue color blue
+team modify mgs.blue friendlyFire false
+team modify mgs.blue nametagVisibility hideForOtherTeams
+team add mgs.ffa
+team modify mgs.ffa color yellow
+team modify mgs.ffa friendlyFire true
+team modify mgs.ffa nametagVisibility never
+
 # Reset scores
 scoreboard players set #red mgs.mp.team 0
 scoreboard players set #blue mgs.mp.team 0
@@ -41,8 +55,9 @@ execute store result score #mp_timer mgs.data run data get storage mgs:multiplay
 # Tag all non-spectator players as in-game
 scoreboard players set @a mgs.mp.in_game 1
 
-# Auto-assign teamless players so every participant has a team
-execute as @a[scores={mgs.mp.in_game=1}] unless score @s mgs.mp.team matches 1.. run function mgs:v5.0.1/multiplayer/auto_assign_team
+# Assign to FFA team for ffa mode, otherwise auto-assign to team
+execute if data storage mgs:multiplayer game{gamemode:"ffa"} run team join mgs.ffa @a[scores={mgs.mp.in_game=1}]
+execute unless data storage mgs:multiplayer game{gamemode:"ffa"} as @a[scores={mgs.mp.in_game=1}] unless score @s mgs.mp.team matches 1.. run function mgs:v5.0.1/multiplayer/auto_assign_team
 
 # Enable class menu for multiplayer players
 tag @a[scores={mgs.mp.in_game=1}] add mgs.give_class_menu

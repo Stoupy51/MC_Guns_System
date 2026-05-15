@@ -1,6 +1,6 @@
 
 # Imports
-from stewbeet import Mem, write_load_file, write_versioned_function
+from stewbeet import Mem, write_versioned_function
 
 
 def generate_teams() -> None:
@@ -44,19 +44,4 @@ tellraw @s ["",{{"text":"  Blue Team","color":"blue","bold":true}},{{"text":" ("
 execute unless score #team_total {ns}.data matches 1.. run tellraw @s ["  ",{{"text":"⚠ No players have joined a team yet!","color":"yellow"}}]
 tellraw @s {sep}
 """)  # noqa: E501
-
-	## Team Setup (load)
-	write_load_file(
-f"""
-# Create teams
-execute unless score #mp_teams_created {ns}.data matches 1 run team add {ns}.red
-execute unless score #mp_teams_created {ns}.data matches 1 run team modify {ns}.red color red
-execute unless score #mp_teams_created {ns}.data matches 1 run team modify {ns}.red friendlyFire true
-execute unless score #mp_teams_created {ns}.data matches 1 run team modify {ns}.red nametagVisibility hideForOtherTeams
-execute unless score #mp_teams_created {ns}.data matches 1 run team add {ns}.blue
-execute unless score #mp_teams_created {ns}.data matches 1 run team modify {ns}.blue color blue
-execute unless score #mp_teams_created {ns}.data matches 1 run team modify {ns}.blue friendlyFire true
-execute unless score #mp_teams_created {ns}.data matches 1 run team modify {ns}.blue nametagVisibility hideForOtherTeams
-scoreboard players set #mp_teams_created {ns}.data 1
-""")
 

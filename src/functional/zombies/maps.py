@@ -122,6 +122,7 @@ function {ns}:v{version}/maps/zombies/kino_der_toten/teleporter/deny_recharging
 # State 1: theater clicked — waiting for the lobby pad to be clicked
 scoreboard players set #kino_tp_state {ns}.data 1
 playsound minecraft:block.beacon.power_select block @a[distance=..50] ~ ~ ~ 1 1
+tellraw @a[distance=..50] [{MGS_TAG},{{"text":"Teleporter link started.","color":"green"}}]
 """)
 
 	# ── teleporter/on_lobby_click ─────────────────────────────────────────────
@@ -132,6 +133,7 @@ execute unless score #kino_tp_state {ns}.data matches 1 run return fail
 # State 2: armed — clicking theater again will now trigger the teleport
 scoreboard players set #kino_tp_state {ns}.data 2
 playsound minecraft:block.beacon.activate block @a[distance=..50] ~ ~ ~ 1 1
+tellraw @a[distance=..50] [{MGS_TAG},{{"text":"Teleporter linked! Click the theater pad again to teleport.","color":"green"}}]
 """)
 
 	# ── teleporter/activate ───────────────────────────────────────────────────
@@ -141,14 +143,15 @@ playsound minecraft:block.beacon.activate block @a[distance=..50] ~ ~ ~ 1 1
 playsound minecraft:entity.lightning_bolt.thunder block @a[distance=..50] ~ ~ ~ 0.25 1
 playsound minecraft:block.portal.trigger block @a[distance=..50] ~ ~ ~ 1 2
 
-# State 3: 30-tick activation delay (particles + sound build-up)
+# State 3: 50-tick activation delay (particles + sound build-up)
 scoreboard players set #kino_tp_state {ns}.data 3
-scoreboard players set #kino_tp_timer {ns}.data 30
+scoreboard players set #kino_tp_timer {ns}.data 50
 """)
 
 	# ── teleporter/activating_tick ─────────────────────────────────────────────
 	write_versioned_function("maps/zombies/kino_der_toten/teleporter/activating_tick", f"""
-# Count down the 30-tick activation delay
+
+# Count down the 50-tick activation delay
 scoreboard players remove #kino_tp_timer {ns}.data 1
 
 # Kill nearby zombies each tick
@@ -157,10 +160,10 @@ kill @e[tag={ns}.zombie_round,distance=..4]
 # Spawn electric_spark particles at the theater interaction entity
 particle electric_spark ~ ~1 ~ 0.6 0.6 0.6 0.1 30 normal
 
-# Play firework sound at the midpoint (tick 15)
-execute if score #kino_tp_timer {ns}.data matches 1 run playsound minecraft:entity.firework_rocket.twinkle block @a[distance=..30] ~ ~ ~ 1 1
-execute if score #kino_tp_timer {ns}.data matches 11 run playsound minecraft:entity.firework_rocket.twinkle block @a[distance=..30] ~ ~ ~ 1 1
-execute if score #kino_tp_timer {ns}.data matches 21 run playsound minecraft:entity.firework_rocket.twinkle block @a[distance=..30] ~ ~ ~ 1 1
+# Play firework sound at three points (tick 40, 25, 10)
+execute if score #kino_tp_timer {ns}.data matches 40 run playsound minecraft:entity.firework_rocket.twinkle block @a[distance=..30] ~ ~ ~ 1 1
+execute if score #kino_tp_timer {ns}.data matches 25 run playsound minecraft:entity.firework_rocket.twinkle block @a[distance=..30] ~ ~ ~ 1 1
+execute if score #kino_tp_timer {ns}.data matches 10 run playsound minecraft:entity.firework_rocket.twinkle block @a[distance=..30] ~ ~ ~ 1 1
 
 # When timer reaches 0, execute the actual teleport
 execute if score #kino_tp_timer {ns}.data matches ..0 run function {ns}:v{version}/maps/zombies/kino_der_toten/teleporter/do_teleport
@@ -201,6 +204,7 @@ execute if score #kino_tp_state {ns}.data matches 5 if score #kino_tp_timer {ns}
 
 # State 6: cooldown — count down, then reset to idle (state 0)
 execute if score #kino_tp_state {ns}.data matches 6 run scoreboard players remove #kino_tp_cd {ns}.data 1
+execute if score #kino_tp_state {ns}.data matches 6 if score #kino_tp_cd {ns}.data matches 1 run tellraw @a [{MGS_TAG},{{"text":"The teleporter is ready to use again.","color":"green"}}]
 execute if score #kino_tp_state {ns}.data matches 6 if score #kino_tp_cd {ns}.data matches ..0 run scoreboard players set #kino_tp_state {ns}.data 0
 """)  # noqa: E501
 
@@ -225,9 +229,9 @@ execute at @n[tag={ns}.kino.in_tp] run kill @e[tag={ns}.zombie_round,distance=..
 # Clean up tags
 tag @a remove {ns}.kino.in_tp
 
-# State 6: enter cooldown (3600t = 3 min)
+# State 6: enter cooldown (1800t = 1m30)
 scoreboard players set #kino_tp_state {ns}.data 6
-scoreboard players set #kino_tp_cd {ns}.data 3600
+scoreboard players set #kino_tp_cd {ns}.data 1800
 """)
 
 	# ── teleporter/return_one ─────────────────────────────────────────────────

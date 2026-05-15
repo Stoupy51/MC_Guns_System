@@ -66,6 +66,20 @@ execute unless data storage {ns}:multiplayer game run data modify storage {ns}:m
 
 {mode_start_map_bootstrap_lines(ns, "multiplayer", True)}
 
+# Teams setup
+team add {ns}.red
+team modify {ns}.red color red
+team modify {ns}.red friendlyFire false
+team modify {ns}.red nametagVisibility hideForOtherTeams
+team add {ns}.blue
+team modify {ns}.blue color blue
+team modify {ns}.blue friendlyFire false
+team modify {ns}.blue nametagVisibility hideForOtherTeams
+team add {ns}.ffa
+team modify {ns}.ffa color yellow
+team modify {ns}.ffa friendlyFire true
+team modify {ns}.ffa nametagVisibility never
+
 # Reset scores
 scoreboard players set #red {ns}.mp.team 0
 scoreboard players set #blue {ns}.mp.team 0
@@ -80,8 +94,9 @@ execute store result score #mp_timer {ns}.data run data get storage {ns}:multipl
 # Tag all non-spectator players as in-game
 scoreboard players set @a {ns}.mp.in_game 1
 
-# Auto-assign teamless players so every participant has a team
-execute as @a[scores={{{ns}.mp.in_game=1}}] unless score @s {ns}.mp.team matches 1.. run function {ns}:v{version}/multiplayer/auto_assign_team
+# Assign to FFA team for ffa mode, otherwise auto-assign to team
+execute if data storage {ns}:multiplayer game{{gamemode:"ffa"}} run team join {ns}.ffa @a[scores={{{ns}.mp.in_game=1}}]
+execute unless data storage {ns}:multiplayer game{{gamemode:"ffa"}} as @a[scores={{{ns}.mp.in_game=1}}] unless score @s {ns}.mp.team matches 1.. run function {ns}:v{version}/multiplayer/auto_assign_team
 
 # Enable class menu for multiplayer players
 tag @a[scores={{{ns}.mp.in_game=1}}] add {ns}.give_class_menu
@@ -238,8 +253,9 @@ scoreboard players set @s {ns}.mp.spectate_timer 0
 scoreboard players set @s {ns}.last_hit 0
 execute store result score @s {ns}.hp_prev run data get entity @s Health 1
 
-# Auto-assign team if not already on one
-execute unless score @s {ns}.mp.team matches 1.. run function {ns}:v{version}/multiplayer/auto_assign_team
+# Assign to FFA team for ffa mode, otherwise auto-assign to team
+execute if data storage {ns}:multiplayer game{{gamemode:"ffa"}} run team join {ns}.ffa @s
+execute unless data storage {ns}:multiplayer game{{gamemode:"ffa"}} unless score @s {ns}.mp.team matches 1.. run function {ns}:v{version}/multiplayer/auto_assign_team
 """,
 	f"{ns}:v{version}/multiplayer/respawn_tp",
 	"joined the game!",
@@ -307,31 +323,31 @@ tag @s remove {ns}.temp_victim
 	## Random death message for self-deaths (OOB, environmental)
 	write_versioned_function("multiplayer/random_death_message", f"""
 execute store result score #random_message {ns}.data run random value 1..5
-execute if score #random_message {ns}.data matches 1 run tellraw @a[scores={{{ns}.mp.in_game=1..}}] ["",{{"selector":"@s","color":"red"}}," ",{{"text":"made a terrible mistake","color":"gray"}}]
-execute if score #random_message {ns}.data matches 2 run tellraw @a[scores={{{ns}.mp.in_game=1..}}] ["",{{"selector":"@s","color":"red"}}," ",{{"text":"forgot how gravity works","color":"gray"}}]
-execute if score #random_message {ns}.data matches 3 run tellraw @a[scores={{{ns}.mp.in_game=1..}}] ["",{{"selector":"@s","color":"red"}}," ",{{"text":"played themselves","color":"gray"}}]
-execute if score #random_message {ns}.data matches 4 run tellraw @a[scores={{{ns}.mp.in_game=1..}}] ["",{{"selector":"@s","color":"red"}}," ",{{"text":"left the battlefield","color":"gray"}}]
-execute if score #random_message {ns}.data matches 5 run tellraw @a[scores={{{ns}.mp.in_game=1..}}] ["",{{"selector":"@s","color":"red"}}," ",{{"text":"embraced the void","color":"gray"}}]
+execute if score #random_message {ns}.data matches 1 run tellraw @a[scores={{{ns}.mp.in_game=1..}}] ["",{{"selector":"@s"}}," ",{{"text":"made a terrible mistake","color":"gray"}}]
+execute if score #random_message {ns}.data matches 2 run tellraw @a[scores={{{ns}.mp.in_game=1..}}] ["",{{"selector":"@s"}}," ",{{"text":"forgot how gravity works","color":"gray"}}]
+execute if score #random_message {ns}.data matches 3 run tellraw @a[scores={{{ns}.mp.in_game=1..}}] ["",{{"selector":"@s"}}," ",{{"text":"played themselves","color":"gray"}}]
+execute if score #random_message {ns}.data matches 4 run tellraw @a[scores={{{ns}.mp.in_game=1..}}] ["",{{"selector":"@s"}}," ",{{"text":"left the battlefield","color":"gray"}}]
+execute if score #random_message {ns}.data matches 5 run tellraw @a[scores={{{ns}.mp.in_game=1..}}] ["",{{"selector":"@s"}}," ",{{"text":"embraced the void","color":"gray"}}]
 """)
 
 	## Random self-kill message (grenade, RPG, own explosion)
 	write_versioned_function("multiplayer/random_self_kill_message", f"""
 execute store result score #random_message {ns}.data run random value 1..5
-execute if score #random_message {ns}.data matches 1 run tellraw @a[scores={{{ns}.mp.in_game=1..}}] ["",{{"selector":"@s","color":"red"}}," ",{{"text":"blew themselves up","color":"gray"}}]
-execute if score #random_message {ns}.data matches 2 run tellraw @a[scores={{{ns}.mp.in_game=1..}}] ["",{{"selector":"@s","color":"red"}}," ",{{"text":"got a taste of their own medicine","color":"gray"}}]
-execute if score #random_message {ns}.data matches 3 run tellraw @a[scores={{{ns}.mp.in_game=1..}}] ["",{{"selector":"@s","color":"red"}}," ",{{"text":"found out the blast radius the hard way","color":"gray"}}]
-execute if score #random_message {ns}.data matches 4 run tellraw @a[scores={{{ns}.mp.in_game=1..}}] ["",{{"selector":"@s","color":"red"}}," ",{{"text":"didn't throw the grenade far enough","color":"gray"}}]
-execute if score #random_message {ns}.data matches 5 run tellraw @a[scores={{{ns}.mp.in_game=1..}}] ["",{{"selector":"@s","color":"red"}}," ",{{"text":"is their own worst enemy","color":"gray"}}]
+execute if score #random_message {ns}.data matches 1 run tellraw @a[scores={{{ns}.mp.in_game=1..}}] ["",{{"selector":"@s"}}," ",{{"text":"blew themselves up","color":"gray"}}]
+execute if score #random_message {ns}.data matches 2 run tellraw @a[scores={{{ns}.mp.in_game=1..}}] ["",{{"selector":"@s"}}," ",{{"text":"got a taste of their own medicine","color":"gray"}}]
+execute if score #random_message {ns}.data matches 3 run tellraw @a[scores={{{ns}.mp.in_game=1..}}] ["",{{"selector":"@s"}}," ",{{"text":"found out the blast radius the hard way","color":"gray"}}]
+execute if score #random_message {ns}.data matches 4 run tellraw @a[scores={{{ns}.mp.in_game=1..}}] ["",{{"selector":"@s"}}," ",{{"text":"didn't throw the grenade far enough","color":"gray"}}]
+execute if score #random_message {ns}.data matches 5 run tellraw @a[scores={{{ns}.mp.in_game=1..}}] ["",{{"selector":"@s"}}," ",{{"text":"is their own worst enemy","color":"gray"}}]
 """)
 
 	## Random kill message (uses temp_killer/temp_victim tags, shared by simulate_death + on_respawn)
 	write_versioned_function("multiplayer/random_kill_message", f"""
 execute store result score #random_message {ns}.data run random value 1..5
-execute if score #random_message {ns}.data matches 1 run tellraw @a[scores={{{ns}.mp.in_game=1..}}] ["",{{"selector":"@a[tag={ns}.temp_killer]","color":"red"}}," ",{{"text":"eliminated","color":"gray"}}," ",{{"selector":"@a[tag={ns}.temp_victim]","color":"red"}}]
-execute if score #random_message {ns}.data matches 2 run tellraw @a[scores={{{ns}.mp.in_game=1..}}] ["",{{"selector":"@a[tag={ns}.temp_killer]","color":"red"}}," ",{{"text":"took down","color":"gray"}}," ",{{"selector":"@a[tag={ns}.temp_victim]","color":"red"}}]
-execute if score #random_message {ns}.data matches 3 run tellraw @a[scores={{{ns}.mp.in_game=1..}}] ["",{{"selector":"@a[tag={ns}.temp_killer]","color":"red"}}," ",{{"text":"dispatched","color":"gray"}}," ",{{"selector":"@a[tag={ns}.temp_victim]","color":"red"}}]
-execute if score #random_message {ns}.data matches 4 run tellraw @a[scores={{{ns}.mp.in_game=1..}}] ["",{{"selector":"@a[tag={ns}.temp_killer]","color":"red"}}," ",{{"text":"sent","color":"gray"}}," ",{{"selector":"@a[tag={ns}.temp_victim]","color":"red"}}," ",{{"text":"to the shadow realm","color":"gray"}}]
-execute if score #random_message {ns}.data matches 5 run tellraw @a[scores={{{ns}.mp.in_game=1..}}] ["",{{"selector":"@a[tag={ns}.temp_killer]","color":"red"}}," ",{{"text":"wiped","color":"gray"}}," ",{{"selector":"@a[tag={ns}.temp_victim]","color":"red"}}," ",{{"text":"off the map","color":"gray"}}]
+execute if score #random_message {ns}.data matches 1 run tellraw @a[scores={{{ns}.mp.in_game=1..}}] ["",{{"selector":"@a[tag={ns}.temp_killer]"}}," ",{{"text":"eliminated","color":"gray"}}," ",{{"selector":"@a[tag={ns}.temp_victim]"}}]
+execute if score #random_message {ns}.data matches 2 run tellraw @a[scores={{{ns}.mp.in_game=1..}}] ["",{{"selector":"@a[tag={ns}.temp_killer]"}}," ",{{"text":"took down","color":"gray"}}," ",{{"selector":"@a[tag={ns}.temp_victim]"}}]
+execute if score #random_message {ns}.data matches 3 run tellraw @a[scores={{{ns}.mp.in_game=1..}}] ["",{{"selector":"@a[tag={ns}.temp_killer]"}}," ",{{"text":"dispatched","color":"gray"}}," ",{{"selector":"@a[tag={ns}.temp_victim]"}}]
+execute if score #random_message {ns}.data matches 4 run tellraw @a[scores={{{ns}.mp.in_game=1..}}] ["",{{"selector":"@a[tag={ns}.temp_killer]"}}," ",{{"text":"sent","color":"gray"}}," ",{{"selector":"@a[tag={ns}.temp_victim]"}}," ",{{"text":"to the shadow realm","color":"gray"}}]
+execute if score #random_message {ns}.data matches 5 run tellraw @a[scores={{{ns}.mp.in_game=1..}}] ["",{{"selector":"@a[tag={ns}.temp_killer]"}}," ",{{"text":"wiped","color":"gray"}}," ",{{"selector":"@a[tag={ns}.temp_victim]"}}," ",{{"text":"off the map","color":"gray"}}]
 """)
 
 	## Kill Tracking (Signal Listener) - now dispatches to gamemode

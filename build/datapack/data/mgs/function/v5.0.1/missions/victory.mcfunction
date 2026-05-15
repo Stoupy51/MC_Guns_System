@@ -5,8 +5,8 @@
 #
 
 # Compute per-player mission kills from totalKillCount delta
-	execute as @a[scores={mgs.mi.in_game=1}] run scoreboard players operation @s mgs.mi.kills = @s mgs.mi.kill_total
-	execute as @a[scores={mgs.mi.in_game=1}] run scoreboard players operation @s mgs.mi.kills -= @s mgs.mi.kill_base
+execute as @a[scores={mgs.mi.in_game=1}] run scoreboard players operation @s mgs.mi.kills = @s mgs.mi.kill_total
+execute as @a[scores={mgs.mi.in_game=1}] run scoreboard players operation @s mgs.mi.kills -= @s mgs.mi.kill_base
 
 # Calculate time in seconds
 scoreboard players operation #mi_seconds mgs.data = #mi_timer mgs.data

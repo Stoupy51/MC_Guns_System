@@ -9,4 +9,5 @@
 # State 1: theater clicked — waiting for the lobby pad to be clicked
 scoreboard players set #kino_tp_state mgs.data 1
 playsound minecraft:block.beacon.power_select block @a[distance=..50] ~ ~ ~ 1 1
+tellraw @a[distance=..50] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.teleporter_link_started","color":"green"}]
 

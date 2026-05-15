@@ -19,6 +19,7 @@ data modify storage mgs:temp zb_sb set value [[{translate:"mgs.round_2",color:"r
 
 # Rank players for sidebar display
 scoreboard players set @a mgs.zb.sb_rank 0
+tag @a remove mgs.zb_sb_cand
 tag @a[scores={mgs.zb.in_game=1}] add mgs.zb_sb_cand
 function mgs:v5.0.1/zombies/sidebar_rank_players
 

@@ -42,12 +42,6 @@ scoreboard objectives add {ns}.mp.bx dummy
 scoreboard objectives add {ns}.mp.by dummy
 scoreboard objectives add {ns}.mp.bz dummy
 
-# Mission mob team (created once)
-execute unless score #mi_mob_team_created {ns}.data matches 1 run team add {ns}.mi_mobs
-execute unless score #mi_mob_team_created {ns}.data matches 1 run team modify {ns}.mi_mobs color dark_red
-execute unless score #mi_mob_team_created {ns}.data matches 1 run team modify {ns}.mi_mobs friendlyFire false
-execute unless score #mi_mob_team_created {ns}.data matches 1 run scoreboard players set #mi_mob_team_created {ns}.data 1
-
 # Initialize missions game state
 execute unless data storage {ns}:missions game run data modify storage {ns}:missions game set value {{state:"lobby",map_id:""}}
 """)
@@ -63,6 +57,17 @@ execute unless data storage {ns}:missions game run data modify storage {ns}:miss
 
 {mode_start_map_bootstrap_lines(ns, "missions", True)}
 
+# Blue team for missions
+team add {ns}.blue
+team modify {ns}.blue color blue
+team modify {ns}.blue friendlyFire false
+team modify {ns}.blue nametagVisibility hideForOtherTeams
+
+# Mission mob team (created once)
+team add {ns}.mi_mobs
+team modify {ns}.mi_mobs color dark_red
+team modify {ns}.mi_mobs friendlyFire true
+
 # Reset scores
 scoreboard players set @a {ns}.mi.in_game 0
 scoreboard players set #mi_timer {ns}.data 0
@@ -76,8 +81,9 @@ execute if entity @a[scores={{{ns}.mp.team=1}}] as @a[scores={{{ns}.mp.team=1}}]
 # Fallback: if no team system, tag all players
 execute unless entity @a[scores={{{ns}.mi.in_game=1}}] run scoreboard players set @a {ns}.mi.in_game 1
 
-# Missions are fully cooperative: force all mission players to one shared team id
+# Missions are fully cooperative: all mission players join the blue team
 scoreboard players set @a[scores={{{ns}.mi.in_game=1}}] {ns}.mp.team 1
+team join {ns}.blue @a[scores={{{ns}.mi.in_game=1}}]
 
 # Enable class menu for mission players
 tag @a[scores={{{ns}.mi.in_game=1}}] add {ns}.give_class_menu
@@ -349,9 +355,9 @@ $item replace entity @s hotbar.3 with compass[lodestone_tracker={{target:{{pos:[
 
 	## Victory - all enemies killed!
 	write_versioned_function("missions/victory", f"""
-	# Compute per-player mission kills from totalKillCount delta
-	execute as @a[scores={{{ns}.mi.in_game=1}}] run scoreboard players operation @s {ns}.mi.kills = @s {ns}.mi.kill_total
-	execute as @a[scores={{{ns}.mi.in_game=1}}] run scoreboard players operation @s {ns}.mi.kills -= @s {ns}.mi.kill_base
+# Compute per-player mission kills from totalKillCount delta
+execute as @a[scores={{{ns}.mi.in_game=1}}] run scoreboard players operation @s {ns}.mi.kills = @s {ns}.mi.kill_total
+execute as @a[scores={{{ns}.mi.in_game=1}}] run scoreboard players operation @s {ns}.mi.kills -= @s {ns}.mi.kill_base
 
 # Calculate time in seconds
 scoreboard players operation #mi_seconds {ns}.data = #mi_timer {ns}.data
@@ -432,6 +438,7 @@ tag @a[tag={ns}.give_class_menu] remove {ns}.give_class_menu
 	f"""
 scoreboard players set @s {ns}.mi.in_game 1
 scoreboard players set @s {ns}.mp.team 1
+team join {ns}.blue @s
 scoreboard players set @s {ns}.mi.kills 0
 scoreboard players set @s {ns}.mi.deaths 0
 scoreboard players set @s {ns}.mp.death_count 0
