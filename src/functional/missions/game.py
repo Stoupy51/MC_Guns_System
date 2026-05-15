@@ -8,7 +8,16 @@
 from stewbeet import Mem, write_load_file, write_tag, write_tick_file, write_versioned_function
 
 from ..core.respawn_countdown import respawn_countdown_tick_lines
-from ..helpers import MGS_TAG, game_start_guards, mode_start_map_bootstrap_lines, regen_disable_lines, regen_enable_lines, schedule_preload_complete_line
+from ..helpers import (
+	MGS_TAG,
+	end_prep_transition_lines,
+	game_start_guards,
+	mode_start_map_bootstrap_lines,
+	prep_freeze_lines,
+	regen_disable_lines,
+	regen_enable_lines,
+	schedule_preload_complete_line,
+)
 
 
 def generate_missions_game() -> None:
@@ -128,12 +137,7 @@ function #{ns}:missions/on_mission_start
 function {ns}:v{version}/missions/tp_all_to_spawns
 
 # Freeze players during prep
-effect give @a[scores={{{ns}.mi.in_game=1}}] darkness 25 255 true
-effect give @a[scores={{{ns}.mi.in_game=1}}] blindness 25 255 true
-effect give @a[scores={{{ns}.mi.in_game=1}}] night_vision 25 255 true
-effect give @a[scores={{{ns}.mi.in_game=1}}] saturation infinite 255 true
-execute as @a[scores={{{ns}.mi.in_game=1}}] run attribute @s minecraft:movement_speed base set 0
-execute as @a[scores={{{ns}.mi.in_game=1}}] run attribute @s minecraft:jump_strength base set 0
+{prep_freeze_lines(ns, "mi")}
 execute as @a[scores={{{ns}.mi.in_game=1}}] run attribute @s minecraft:waypoint_receive_range base reset
 
 # Give loadout to players who already have a class
@@ -165,23 +169,7 @@ execute as @a[scores={{{ns}.mi.in_game=1}}] run scoreboard players operation @s 
 
 	## End Prep → Start Mission (spawn all enemies)
 	write_versioned_function("missions/end_prep", f"""
-# Guard: only if still preparing
-execute unless data storage {ns}:missions game{{state:"preparing"}} run return fail
-
-# Transition to active
-data modify storage {ns}:missions game.state set value "active"
-
-# Restore movement
-execute as @a[scores={{{ns}.mi.in_game=1}}] run attribute @s minecraft:movement_speed base set 0.1
-execute as @a[scores={{{ns}.mi.in_game=1}}] run attribute @s minecraft:jump_strength base set 0.42
-
-# Clear prep effects
-effect clear @a[scores={{{ns}.mi.in_game=1}}] darkness
-effect clear @a[scores={{{ns}.mi.in_game=1}}] blindness
-effect clear @a[scores={{{ns}.mi.in_game=1}}] night_vision
-
-# Keep saturation
-effect give @a[scores={{{ns}.mi.in_game=1}}] saturation infinite 255 true
+{end_prep_transition_lines(ns, "missions", "mi")}
 
 # Spawn all enemies from map data
 function {ns}:v{version}/missions/spawn_all_enemies
@@ -395,25 +383,17 @@ function {ns}:v{version}/missions/stop
 
 	## Game Stop
 	write_versioned_function("missions/stop", f"""
-# Set state to lobby
+# Various cleanup and reset tasks to return to lobby state
 data modify storage {ns}:missions game.state set value "lobby"
-
-# Cancel scheduled functions
 schedule clear {ns}:v{version}/missions/end_prep
-
-# Restore movement
-execute as @a[scores={{{ns}.mi.in_game=1}}] run attribute @s minecraft:movement_speed base set 0.1
-execute as @a[scores={{{ns}.mi.in_game=1}}] run attribute @s minecraft:jump_strength base set 0.42
-
-# Clear effects
+execute as @a[scores={{{ns}.mi.in_game=1}}] run attribute @s minecraft:movement_speed base reset
+execute as @a[scores={{{ns}.mi.in_game=1}}] run attribute @s minecraft:jump_strength base reset
 effect clear @a[scores={{{ns}.mi.in_game=1}}] darkness
 effect clear @a[scores={{{ns}.mi.in_game=1}}] blindness
 effect clear @a[scores={{{ns}.mi.in_game=1}}] night_vision
-
-# Remove compass from all players
+gamemode adventure @a[scores={{{ns}.mi.in_game=1}},gamemode=spectator]
 clear @a[scores={{{ns}.mi.in_game=1}}] compass[custom_data~{{{ns}:{{compass:true}}}}]
 
-# Kill all mission entities (enemies + markers)
 kill @e[tag={ns}.mission_enemy]
 kill @e[tag={ns}.gm_entity]
 
@@ -425,10 +405,8 @@ function #{ns}:missions/on_mission_end
 
 {regen_disable_lines(ns)}
 
-# Announce
 tellraw @a [{MGS_TAG},{{"text":"Mission ended.","color":"red"}}]
 
-# Call map leave script for each in-game player (state is still active here)
 execute as @a[scores={{{ns}.mi.in_game=1}}] run function {ns}:v{version}/shared/maps/call_leave_script_at_base
 
 # Reset in-game state
