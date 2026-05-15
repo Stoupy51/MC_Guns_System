@@ -30,10 +30,10 @@ effect give @a[scores={mgs.zb.in_game=1}] darkness 25 255 true
 effect give @a[scores={mgs.zb.in_game=1}] blindness 25 255 true
 effect give @a[scores={mgs.zb.in_game=1}] night_vision 25 255 true
 effect give @a[scores={mgs.zb.in_game=1}] saturation infinite 255 true
-execute as @a[scores={mgs.zb.in_game=1}] run attribute @s minecraft:max_health base reset
 execute as @a[scores={mgs.zb.in_game=1}] run attribute @s minecraft:movement_speed base set 0
 execute as @a[scores={mgs.zb.in_game=1}] run attribute @s minecraft:jump_strength base set 0
 execute as @a[scores={mgs.zb.in_game=1}] run attribute @s minecraft:knockback_resistance base set 1024
+execute as @a[scores={mgs.zb.in_game=1}] run attribute @s minecraft:max_health base reset
 
 # Give starting loadout to all players
 execute as @a[scores={mgs.zb.in_game=1}] at @s run function mgs:v5.0.1/zombies/inventory/give_starting_loadout

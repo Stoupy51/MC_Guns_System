@@ -42,6 +42,42 @@ def schedule_preload_complete_line(ns: str, mode: str) -> str:
     return f'schedule function {ns}:v{version}/{mode}/preload_complete 20t'
 
 
+def prep_freeze_lines(ns: str, score_prefix: str, prepend: str = "", append: str = "") -> str:
+    """ Return shared prep freeze/effects lines for a mode's in-game players. """
+    selector: str = f'@a[scores={{{ns}.{score_prefix}.in_game=1}}]'
+    parts: list[str] = [
+        f'effect give {selector} darkness 25 255 true',
+        f'effect give {selector} blindness 25 255 true',
+        f'effect give {selector} night_vision 25 255 true',
+        f'effect give {selector} saturation infinite 255 true',
+    ]
+    if prepend:
+        parts.append(prepend.strip())
+    parts.extend([
+        f'execute as {selector} run attribute @s minecraft:movement_speed base set 0',
+        f'execute as {selector} run attribute @s minecraft:jump_strength base set 0',
+    ])
+    if append:
+        parts.append(append.strip())
+    return "\n".join(parts)
+
+
+def end_prep_transition_lines(ns: str, storage: str, score_prefix: str) -> str:
+    """Return shared end-prep transition lines (guard, active state, restore, clear effects)."""
+    selector: str = f'@a[scores={{{ns}.{score_prefix}.in_game=1}}]'
+    parts: list[str] = [
+        f'execute unless data storage {ns}:{storage} game{{state:"preparing"}} run return fail',
+        f'data modify storage {ns}:{storage} game.state set value "active"',
+        f'execute as {selector} run attribute @s minecraft:movement_speed base reset',
+        f'execute as {selector} run attribute @s minecraft:jump_strength base reset',
+        f'effect clear {selector} darkness',
+        f'effect clear {selector} blindness',
+        f'effect clear {selector} night_vision',
+        f'effect give {selector} saturation infinite 255 true',
+    ]
+    return "\n".join(parts)
+
+
 def mode_start_map_bootstrap_lines(ns: str, mode: str, normalize_legacy: bool = False) -> str:
     """ Return the shared start bootstrap: selection check, load, copy, and preparing state. """
     parts: list[str] = []

@@ -5,45 +5,33 @@
 #			mgs:v5.0.1/zombies/game_over 100t [ scheduled ]
 #
 
-# Set state to lobby
+# Various cleanup to set to lobby state
 data modify storage mgs:zombies game.state set value "lobby"
-
-# Cancel scheduled functions
 schedule clear mgs:v5.0.1/zombies/end_prep
 schedule clear mgs:v5.0.1/zombies/start_round
-
-# Restore movement
 execute as @a[scores={mgs.zb.in_game=1}] run attribute @s minecraft:max_health base reset
 execute as @a[scores={mgs.zb.in_game=1}] run attribute @s minecraft:movement_speed base reset
 execute as @a[scores={mgs.zb.in_game=1}] run attribute @s minecraft:jump_strength base reset
-
-# Clear effects
 effect clear @a[scores={mgs.zb.in_game=1}] darkness
 effect clear @a[scores={mgs.zb.in_game=1}] blindness
 effect clear @a[scores={mgs.zb.in_game=1}] night_vision
-
-# Restore adventure mode for spectating players
 gamemode adventure @a[scores={mgs.zb.in_game=1},gamemode=spectator]
-
-# Kill all zombies mode entities
 kill @e[tag=mgs.zombie_round]
 kill @e[tag=mgs.gm_entity]
 
 # Remove forceload (only if bounds were set)
 execute if score #zb_has_bounds mgs.data matches 1 run function mgs:v5.0.1/shared/remove_forceload
 
-# Remove sidebar
 scoreboard objectives setdisplay sidebar
 scoreboard objectives remove mgs.zb_sidebar
+gamerule advance_time true
+
 # Re-enable natural regeneration, disable custom regen system
 gamerule natural_health_regeneration true
 scoreboard players set #any_game_active mgs.data 0
-gamerule advance_time true
 
 # Announce
 tellraw @a [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.zombies_game_ended","color":"red"}]
-
-# Call map leave script for each in-game player (state is still active here)
 execute as @a[scores={mgs.zb.in_game=1}] run function mgs:v5.0.1/shared/maps/call_leave_script_at_base
 
 # Reset in-game state

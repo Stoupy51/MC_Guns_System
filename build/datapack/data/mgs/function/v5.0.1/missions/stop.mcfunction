@@ -5,25 +5,17 @@
 #			mgs:v5.0.1/missions/setup "hover_event": {"action": "show_text", "value": "Start the mission"}}, "\u25b6 START", "]"]," ",[{"text": "[", "color": "red", "click_event": {"action": "suggest_command", "command": "/function mgs:v5.0.1/missions/stop"}, "hover_event": {"action": "show_text", "value": "Stop the mission"}}, "\u25a0 STOP", "]"]," ",[{"text": "[", "color": "aqua", "click_event": {"action": "suggest_command", "command": "/function mgs:v5.0.1/multiplayer/select_class"}, "hover_event": {"action": "show_text", "value": "Select your class"}}, "\u2694 Classes", "]"]," ",[{"text": "[", "color": "dark_aqua", "click_event": {"action": "suggest_command", "command": "/function mgs:v5.0.1/multiplayer/show_teams"}, "hover_event": {"action": "show_text", "value": "Show which players have team assignments"}}, "\ud83d\udc65 Roster", "]"]," ",[{"text": "[", "color": "yellow", "click_event": {"action": "suggest_command", "command": "/function mgs:v5.0.1/missions/join_game"}, "hover_event": {"action": "show_text", "value": "Join the ongoing mission as a late joiner"}}, "+ Join", "]"]]
 #
 
-# Set state to lobby
+# Various cleanup and reset tasks to return to lobby state
 data modify storage mgs:missions game.state set value "lobby"
-
-# Cancel scheduled functions
 schedule clear mgs:v5.0.1/missions/end_prep
-
-# Restore movement
-execute as @a[scores={mgs.mi.in_game=1}] run attribute @s minecraft:movement_speed base set 0.1
-execute as @a[scores={mgs.mi.in_game=1}] run attribute @s minecraft:jump_strength base set 0.42
-
-# Clear effects
+execute as @a[scores={mgs.mi.in_game=1}] run attribute @s minecraft:movement_speed base reset
+execute as @a[scores={mgs.mi.in_game=1}] run attribute @s minecraft:jump_strength base reset
 effect clear @a[scores={mgs.mi.in_game=1}] darkness
 effect clear @a[scores={mgs.mi.in_game=1}] blindness
 effect clear @a[scores={mgs.mi.in_game=1}] night_vision
-
-# Remove compass from all players
+gamemode adventure @a[scores={mgs.mi.in_game=1},gamemode=spectator]
 clear @a[scores={mgs.mi.in_game=1}] compass[custom_data~{mgs:{compass:true}}]
 
-# Kill all mission entities (enemies + markers)
 kill @e[tag=mgs.mission_enemy]
 kill @e[tag=mgs.gm_entity]
 
@@ -37,10 +29,8 @@ function #mgs:missions/on_mission_end
 gamerule natural_health_regeneration true
 scoreboard players set #any_game_active mgs.data 0
 
-# Announce
 tellraw @a [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.mission_ended","color":"red"}]
 
-# Call map leave script for each in-game player (state is still active here)
 execute as @a[scores={mgs.mi.in_game=1}] run function mgs:v5.0.1/shared/maps/call_leave_script_at_base
 
 # Reset in-game state

@@ -4,7 +4,14 @@
 from stewbeet import Mem, write_load_file, write_tag, write_tick_file, write_versioned_function
 
 from ..core.respawn_countdown import respawn_countdown_tick_lines
-from ..helpers import MGS_TAG, game_start_guards, mode_start_map_bootstrap_lines, regen_disable_lines, regen_enable_lines
+from ..helpers import (
+	MGS_TAG,
+	game_start_guards,
+	mode_start_map_bootstrap_lines,
+	prep_freeze_lines,
+	regen_disable_lines,
+	regen_enable_lines,
+)
 
 
 def generate_game() -> None:
@@ -149,12 +156,7 @@ scoreboard objectives setdisplay list {ns}.mp.kills
 function {ns}:v{version}/multiplayer/tp_all_to_spawns
 
 # Freeze all players (no movement during prep)
-effect give @a[scores={{{ns}.mp.in_game=1}}] darkness 25 255 true
-effect give @a[scores={{{ns}.mp.in_game=1}}] blindness 25 255 true
-effect give @a[scores={{{ns}.mp.in_game=1}}] night_vision 25 255 true
-effect give @a[scores={{{ns}.mp.in_game=1}}] saturation infinite 255 true
-execute as @a[scores={{{ns}.mp.in_game=1}}] run attribute @s minecraft:movement_speed base set 0
-execute as @a[scores={{{ns}.mp.in_game=1}}] run attribute @s minecraft:jump_strength base set 0
+{prep_freeze_lines(ns, "mp")}
 
 # Give loadout to players who already have a class (positive = standard, negative = custom)
 execute as @a[scores={{{ns}.mp.in_game=1}}] at @s unless score @s {ns}.mp.class matches 0 run function {ns}:v{version}/multiplayer/apply_class
@@ -178,49 +180,33 @@ tellraw @a ["",[{{"text":"","color":"gold","bold":true}},"⚔ ",{{"text":"Prepar
 
 	## Game Stop
 	write_versioned_function("multiplayer/stop", f"""
-# End game
+# Various cleanup to go back to lobby
 data modify storage {ns}:multiplayer game.state set value "lobby"
-
-# Cancel scheduled prep end (in case game stopped during prep)
 schedule clear {ns}:v{version}/multiplayer/end_prep
-
-# Restore movement (in case stopped during prep)
-execute as @a[scores={{{ns}.mp.in_game=1}}] run attribute @s minecraft:movement_speed base set 0.1
-execute as @a[scores={{{ns}.mp.in_game=1}}] run attribute @s minecraft:jump_strength base set 0.42
-
-# Clear prep effects (in case stopped during prep)
+execute as @a[scores={{{ns}.mp.in_game=1}}] run attribute @s minecraft:movement_speed base reset
+execute as @a[scores={{{ns}.mp.in_game=1}}] run attribute @s minecraft:jump_strength base reset
 effect clear @a[scores={{{ns}.mp.in_game=1}}] darkness
 effect clear @a[scores={{{ns}.mp.in_game=1}}] blindness
 effect clear @a[scores={{{ns}.mp.in_game=1}}] night_vision
-
-# Gamemode cleanup
+gamemode adventure @a[scores={{{ns}.mp.in_game=1}},gamemode=spectator]
+kill @e[tag={ns}.gm_entity]
 execute if data storage {ns}:multiplayer game{{gamemode:"ffa"}} run function {ns}:v{version}/multiplayer/gamemodes/ffa/cleanup
 execute if data storage {ns}:multiplayer game{{gamemode:"tdm"}} run function {ns}:v{version}/multiplayer/gamemodes/tdm/cleanup
 execute if data storage {ns}:multiplayer game{{gamemode:"dom"}} run function {ns}:v{version}/multiplayer/gamemodes/dom/cleanup
 execute if data storage {ns}:multiplayer game{{gamemode:"hp"}} run function {ns}:v{version}/multiplayer/gamemodes/hp/cleanup
 execute if data storage {ns}:multiplayer game{{gamemode:"snd"}} run function {ns}:v{version}/multiplayer/gamemodes/snd/cleanup
+function #{ns}:multiplayer/on_game_end
 
 {regen_disable_lines(ns)}
-
-# Restore all spectating players to adventure mode
-gamemode adventure @a[scores={{{ns}.mp.in_game=1}},gamemode=spectator]
-
-# Kill gamemode entities
-kill @e[tag={ns}.gm_entity]
-
-# Signal game end
-function #{ns}:multiplayer/on_game_end
 
 # Announce scores
 tellraw @a ["",[{{"text":"","color":"gold","bold":true}},"⚔ ",{{"text":"Game Over"}},"! "]]
 tellraw @a ["",{{"text":"Red","color":"red"}},{{"text":": "}},{{"score":{{"name":"#red","objective":"{ns}.mp.team"}}}}," | ",{{"text":"Blue","color":"blue"}},{{"text":": "}},{{"score":{{"name":"#blue","objective":"{ns}.mp.team"}}}}]
 
-# Remove sidebar and list displays
+# Remove sidebar and list displays and leave teams
 scoreboard objectives setdisplay sidebar
 scoreboard objectives remove {ns}.sidebar
 scoreboard objectives setdisplay list
-
-# Clear in-game state
 team leave @a[team={ns}.red]
 team leave @a[team={ns}.blue]
 

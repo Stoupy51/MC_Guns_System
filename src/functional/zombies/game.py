@@ -5,7 +5,16 @@
 # Map definitions are dynamic (stored in storage, registered via function tags).
 from stewbeet import Mem, write_load_file, write_tag, write_tick_file, write_versioned_function
 
-from ..helpers import MGS_TAG, game_start_guards, mode_start_map_bootstrap_lines, regen_disable_lines, regen_enable_lines, schedule_preload_complete_line
+from ..helpers import (
+	MGS_TAG,
+	end_prep_transition_lines,
+	game_start_guards,
+	mode_start_map_bootstrap_lines,
+	prep_freeze_lines,
+	regen_disable_lines,
+	regen_enable_lines,
+	schedule_preload_complete_line,
+)
 
 
 def generate_zombies_game() -> None:
@@ -159,14 +168,9 @@ execute if data storage {ns}:zombies game.map.start_commands[0] run function {ns
 function {ns}:v{version}/zombies/tp_all_to_spawns
 
 # Freeze players during prep
-effect give @a[scores={{{ns}.zb.in_game=1}}] darkness 25 255 true
-effect give @a[scores={{{ns}.zb.in_game=1}}] blindness 25 255 true
-effect give @a[scores={{{ns}.zb.in_game=1}}] night_vision 25 255 true
-effect give @a[scores={{{ns}.zb.in_game=1}}] saturation infinite 255 true
-execute as @a[scores={{{ns}.zb.in_game=1}}] run attribute @s minecraft:max_health base reset
-execute as @a[scores={{{ns}.zb.in_game=1}}] run attribute @s minecraft:movement_speed base set 0
-execute as @a[scores={{{ns}.zb.in_game=1}}] run attribute @s minecraft:jump_strength base set 0
+{prep_freeze_lines(ns, "zb")}
 execute as @a[scores={{{ns}.zb.in_game=1}}] run attribute @s minecraft:knockback_resistance base set 1024
+execute as @a[scores={{{ns}.zb.in_game=1}}] run attribute @s minecraft:max_health base reset
 
 # Give starting loadout to all players
 execute as @a[scores={{{ns}.zb.in_game=1}}] at @s run function {ns}:v{version}/zombies/inventory/give_starting_loadout
@@ -191,23 +195,7 @@ tellraw @a ["",{{"text":"","color":"dark_green","bold":true}},"🧟 ",{{"text":"
 
 	## End Prep → Start Round 1
 	write_versioned_function("zombies/end_prep", f"""
-# Guard: only if still preparing
-execute unless data storage {ns}:zombies game{{state:"preparing"}} run return fail
-
-# Transition to active
-data modify storage {ns}:zombies game.state set value "active"
-
-# Restore movement
-execute as @a[scores={{{ns}.zb.in_game=1}}] run attribute @s minecraft:movement_speed base reset
-execute as @a[scores={{{ns}.zb.in_game=1}}] run attribute @s minecraft:jump_strength base reset
-
-# Clear prep effects
-effect clear @a[scores={{{ns}.zb.in_game=1}}] darkness
-effect clear @a[scores={{{ns}.zb.in_game=1}}] blindness
-effect clear @a[scores={{{ns}.zb.in_game=1}}] night_vision
-
-# Keep saturation
-effect give @a[scores={{{ns}.zb.in_game=1}}] saturation infinite 255 true
+{end_prep_transition_lines(ns, "zombies", "zb")}
 
 # Start round 1
 function {ns}:v{version}/zombies/start_round
@@ -330,45 +318,32 @@ schedule function {ns}:v{version}/zombies/stop 100t
 """)
 
 	# Game Stop ─────────────────────────────────────────────────
-
 	write_versioned_function("zombies/stop", f"""
-# Set state to lobby
+# Various cleanup to set to lobby state
 data modify storage {ns}:zombies game.state set value "lobby"
-
-# Cancel scheduled functions
 schedule clear {ns}:v{version}/zombies/end_prep
 schedule clear {ns}:v{version}/zombies/start_round
-
-# Restore movement
 execute as @a[scores={{{ns}.zb.in_game=1}}] run attribute @s minecraft:max_health base reset
 execute as @a[scores={{{ns}.zb.in_game=1}}] run attribute @s minecraft:movement_speed base reset
 execute as @a[scores={{{ns}.zb.in_game=1}}] run attribute @s minecraft:jump_strength base reset
-
-# Clear effects
 effect clear @a[scores={{{ns}.zb.in_game=1}}] darkness
 effect clear @a[scores={{{ns}.zb.in_game=1}}] blindness
 effect clear @a[scores={{{ns}.zb.in_game=1}}] night_vision
-
-# Restore adventure mode for spectating players
 gamemode adventure @a[scores={{{ns}.zb.in_game=1}},gamemode=spectator]
-
-# Kill all zombies mode entities
 kill @e[tag={ns}.zombie_round]
 kill @e[tag={ns}.gm_entity]
 
 # Remove forceload (only if bounds were set)
 execute if score #zb_has_bounds {ns}.data matches 1 run function {ns}:v{version}/shared/remove_forceload
 
-# Remove sidebar
 scoreboard objectives setdisplay sidebar
 scoreboard objectives remove {ns}.zb_sidebar
-{regen_disable_lines(ns)}
 gamerule advance_time true
+
+{regen_disable_lines(ns)}
 
 # Announce
 tellraw @a [{MGS_TAG},{{"text":"Zombies game ended.","color":"red"}}]
-
-# Call map leave script for each in-game player (state is still active here)
 execute as @a[scores={{{ns}.zb.in_game=1}}] run function {ns}:v{version}/shared/maps/call_leave_script_at_base
 
 # Reset in-game state
