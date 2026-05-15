@@ -7,6 +7,7 @@ from ..core.respawn_countdown import respawn_countdown_tick_lines
 from ..helpers import (
 	MGS_TAG,
 	game_start_guards,
+	late_join_flow_lines,
 	mode_start_map_bootstrap_lines,
 	prep_freeze_lines,
 	regen_disable_lines,
@@ -222,13 +223,13 @@ tag @a[tag={ns}.give_class_menu] remove {ns}.give_class_menu
 
 	## Join Ongoing Game (late-joiner support)
 	write_versioned_function("multiplayer/join_game", f"""
-# Require an active or preparing game
-execute unless data storage {ns}:multiplayer game{{state:"active"}} unless data storage {ns}:multiplayer game{{state:"preparing"}} run return run tellraw @s [{MGS_TAG},{{"text":"No active game to join!","color":"red"}}]
-
-# Prevent double-joining
-execute if score @s {ns}.mp.in_game matches 1 run return run tellraw @s [{MGS_TAG},{{"text":"You are already in the game!","color":"red"}}]
-
-# Tag as in-game and reset stats
+{late_join_flow_lines(
+	ns,
+	"multiplayer",
+	f"{ns}.mp.in_game",
+	"No active game to join!",
+	"You are already in the game!",
+	f"""
 scoreboard players set @s {ns}.mp.in_game 1
 scoreboard players set @s {ns}.mp.kills 0
 scoreboard players set @s {ns}.mp.deaths 0
@@ -239,27 +240,13 @@ execute store result score @s {ns}.hp_prev run data get entity @s Health 1
 
 # Auto-assign team if not already on one
 execute unless score @s {ns}.mp.team matches 1.. run function {ns}:v{version}/multiplayer/auto_assign_team
-
-# Setup player (match active game settings)
-gamemode adventure @s
-attribute @s minecraft:waypoint_receive_range base set 0.0
-effect give @s saturation infinite 255 true
-
-# Enable class menu and show class selection
-tag @s add {ns}.give_class_menu
-function {ns}:v{version}/multiplayer/select_class
-
-# Apply class if already chosen
-execute unless score @s {ns}.mp.class matches 0 run function {ns}:v{version}/multiplayer/apply_class
-
-# Teleport to spawn
-function {ns}:v{version}/multiplayer/respawn_tp
-
-# Call map join script (executed as the joining player)
-function {ns}:v{version}/shared/maps/call_join_script_at_base
-
-# Announce
-tellraw @a ["",{{"selector":"@s","color":"yellow"}},{{"text":" joined the game!","color":"yellow"}}]
+""",
+	f"{ns}:v{version}/multiplayer/respawn_tp",
+	"joined the game!",
+	"yellow",
+	allow_preparing=True,
+	setup_extra_lines="attribute @s minecraft:waypoint_receive_range base set 0.0",
+)}
 """)
 
 	# Simulated Death ───────────────────────────────────────────

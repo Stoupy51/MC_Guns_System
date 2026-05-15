@@ -9,6 +9,7 @@ from ..helpers import (
 	MGS_TAG,
 	end_prep_transition_lines,
 	game_start_guards,
+	late_join_flow_lines,
 	mode_start_map_bootstrap_lines,
 	prep_freeze_lines,
 	regen_disable_lines,
@@ -361,13 +362,13 @@ tag @a[tag={ns}.give_class_menu] remove {ns}.give_class_menu
 
 	## Join Ongoing Zombies Game (late-joiner support)
 	write_versioned_function("zombies/join_game", f"""
-# Require an active zombies game
-execute unless data storage {ns}:zombies game{{state:"active"}} run return run tellraw @s [{MGS_TAG},{{"text":"No active zombies game to join!","color":"red"}}]
-
-# Prevent double-joining
-execute if score @s {ns}.zb.in_game matches 1 run return run tellraw @s [{MGS_TAG},{{"text":"You are already in the zombies game!","color":"red"}}]
-
-# Tag as in-game and reset stats
+{late_join_flow_lines(
+	ns,
+	"zombies",
+	f"{ns}.zb.in_game",
+	"No active zombies game to join!",
+	"You are already in the zombies game!",
+	f"""
 scoreboard players set @s {ns}.zb.in_game 1
 scoreboard players set @s {ns}.zb.points 500
 scoreboard players set @s {ns}.zb.kills 0
@@ -377,29 +378,12 @@ scoreboard players set @s {ns}.zb.ability 0
 scoreboard players set @s {ns}.zb.ability_cd 0
 scoreboard players set @s {ns}.mp.spectate_timer 0
 scoreboard players set @s {ns}.mp.death_count 0
-
-# Setup player
-gamemode adventure @s
-effect give @s saturation infinite 255 true
-
-# Initialize kill tracking baseline
-scoreboard players operation @s {ns}.zb.prev_kills = @s {ns}.total_kills
-
-# Enable class menu and show class selection
-tag @s add {ns}.give_class_menu
-function {ns}:v{version}/multiplayer/select_class
-
-# Apply class if already chosen
-execute unless score @s {ns}.mp.class matches 0 run function {ns}:v{version}/multiplayer/apply_class
-
-# Teleport to spawn
-function {ns}:v{version}/zombies/respawn_tp
-
-# Call map join script (executed as the joining player)
-function {ns}:v{version}/shared/maps/call_join_script_at_base
-
-# Announce
-tellraw @a ["",{{"selector":"@s","color":"dark_green"}},{{"text":" joined the zombies game!","color":"dark_green"}}]
+""",
+	f"{ns}:v{version}/zombies/respawn_tp",
+	"joined the zombies game!",
+	"dark_green",
+	post_class_lines=f"scoreboard players operation @s {ns}.zb.prev_kills = @s {ns}.total_kills",
+)}
 """)
 
 	# Kill Points ───────────────────────────────────────────────
