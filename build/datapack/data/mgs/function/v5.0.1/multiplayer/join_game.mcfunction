@@ -4,7 +4,7 @@
 # @within	mgs:v5.0.1/multiplayer/setup "hover_event": {"action": "show_text", "value": "Start the match"}}, "\u25b6 START", "]"]," ",[{"text": "[", "color": "red", "click_event": {"action": "suggest_command", "command": "/function mgs:v5.0.1/multiplayer/stop"}, "hover_event": {"action": "show_text", "value": "Stop the match"}}, "\u25a0 STOP", "]"]," ",[{"text": "[", "color": "aqua", "click_event": {"action": "suggest_command", "command": "/function mgs:v5.0.1/multiplayer/select_class"}, "hover_event": {"action": "show_text", "value": "Select your class"}}, "\u2694 Classes", "]"]," ",[{"text": "[", "color": "yellow", "click_event": {"action": "suggest_command", "command": "/function mgs:v5.0.1/multiplayer/join_game"}, "hover_event": {"action": "show_text", "value": "Join the ongoing game as a late joiner"}}, "+ Join", "]"]]
 #
 
-# Require an active or preparing game
+# Require an active game
 execute unless data storage mgs:multiplayer game{state:"active"} unless data storage mgs:multiplayer game{state:"preparing"} run return run tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.no_active_game_to_join","color":"red"}]
 
 # Prevent double-joining
@@ -22,9 +22,11 @@ execute store result score @s mgs.hp_prev run data get entity @s Health 1
 # Auto-assign team if not already on one
 execute unless score @s mgs.mp.team matches 1.. run function mgs:v5.0.1/multiplayer/auto_assign_team
 
-# Setup player (match active game settings)
+# Setup player
 gamemode adventure @s
+
 attribute @s minecraft:waypoint_receive_range base set 0.0
+
 effect give @s saturation infinite 255 true
 
 # Enable class menu and show class selection

@@ -78,6 +78,55 @@ def end_prep_transition_lines(ns: str, storage: str, score_prefix: str) -> str:
     return "\n".join(parts)
 
 
+def late_join_flow_lines(
+    ns: str,
+    storage: str,
+    in_game_objective: str,
+    no_active_text: str,
+    already_in_text: str,
+    init_lines: str,
+    respawn_function: str,
+    announce_text: str,
+    announce_color: str,
+    *,
+    allow_preparing: bool = False,
+    setup_extra_lines: str = "",
+    post_class_lines: str = "",
+) -> str:
+    """ Return a mode late-join flow with hook points for mode-specific setup. """
+    version: str = Mem.ctx.project_version
+    preparing_guard: str = f' unless data storage {ns}:{storage} game{{state:"preparing"}}' if allow_preparing else ""
+    guard_line: str = (
+        f'execute unless data storage {ns}:{storage} game{{state:"active"}}{preparing_guard} '
+        f'run return run tellraw @s [{MGS_TAG},{{"text":"{no_active_text}","color":"red"}}]'
+    )
+    double_join_guard: str = (
+        f'execute if score @s {in_game_objective} matches 1 '
+        f'run return run tellraw @s [{MGS_TAG},{{"text":"{already_in_text}","color":"red"}}]'
+    )
+    parts: list[str] = [
+        f'# Require an active game\n{guard_line}',
+        f'# Prevent double-joining\n{double_join_guard}',
+        f'# Tag as in-game and reset stats\n{init_lines.strip()}',
+        '# Setup player\ngamemode adventure @s',
+    ]
+    if setup_extra_lines.strip():
+        parts.append(setup_extra_lines.strip())
+    parts.extend([
+        'effect give @s saturation infinite 255 true',
+        f'# Enable class menu and show class selection\ntag @s add {ns}.give_class_menu\nfunction {ns}:v{version}/multiplayer/select_class',
+        f'# Apply class if already chosen\nexecute unless score @s {ns}.mp.class matches 0 run function {ns}:v{version}/multiplayer/apply_class',
+    ])
+    if post_class_lines.strip():
+        parts.append(post_class_lines.strip())
+    parts.extend([
+        f'# Teleport to spawn\nfunction {respawn_function}',
+        f'# Call map join script (executed as the joining player)\nfunction {ns}:v{version}/shared/maps/call_join_script_at_base',
+        f'# Announce\ntellraw @a ["",{{"selector":"@s","color":"{announce_color}"}},{{"text":" {announce_text}","color":"{announce_color}"}}]',
+    ])
+    return "\n\n".join(parts)
+
+
 def mode_start_map_bootstrap_lines(ns: str, mode: str, normalize_legacy: bool = False) -> str:
     """ Return the shared start bootstrap: selection check, load, copy, and preparing state. """
     parts: list[str] = []

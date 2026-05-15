@@ -4,7 +4,7 @@
 # @within	mgs:v5.0.1/zombies/setup "hover_event": {"action": "show_text", "value": "Start the zombies game"}}, "\u25b6 START", "]"]," ",[{"text": "[", "color": "red", "click_event": {"action": "suggest_command", "command": "/function mgs:v5.0.1/zombies/stop"}, "hover_event": {"action": "show_text", "value": "Stop the zombies game"}}, "\u25a0 STOP", "]"]," ",[{"text": "[", "color": "dark_aqua", "click_event": {"action": "suggest_command", "command": "/function mgs:v5.0.1/multiplayer/show_teams"}, "hover_event": {"action": "show_text", "value": "Show which players have team assignments"}}, "\ud83d\udc65 Roster", "]"]," ",[{"text": "[", "color": "yellow", "click_event": {"action": "suggest_command", "command": "/function mgs:v5.0.1/zombies/join_game"}, "hover_event": {"action": "show_text", "value": "Join the ongoing zombies game as a late joiner"}}, "+ Join", "]"]]
 #
 
-# Require an active zombies game
+# Require an active game
 execute unless data storage mgs:zombies game{state:"active"} run return run tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.no_active_zombies_game_to_join","color":"red"}]
 
 # Prevent double-joining
@@ -23,10 +23,8 @@ scoreboard players set @s mgs.mp.death_count 0
 
 # Setup player
 gamemode adventure @s
-effect give @s saturation infinite 255 true
 
-# Initialize kill tracking baseline
-scoreboard players operation @s mgs.zb.prev_kills = @s mgs.total_kills
+effect give @s saturation infinite 255 true
 
 # Enable class menu and show class selection
 tag @s add mgs.give_class_menu
@@ -34,6 +32,8 @@ function mgs:v5.0.1/multiplayer/select_class
 
 # Apply class if already chosen
 execute unless score @s mgs.mp.class matches 0 run function mgs:v5.0.1/multiplayer/apply_class
+
+scoreboard players operation @s mgs.zb.prev_kills = @s mgs.total_kills
 
 # Teleport to spawn
 function mgs:v5.0.1/zombies/respawn_tp
