@@ -302,7 +302,6 @@ execute unless score #blue mgs.mp.team matches -2147483648.. run scoreboard play
 # Initialize game state (only if not yet set)
 execute unless data storage mgs:multiplayer game run data modify storage mgs:multiplayer game set value {state:"lobby",gamemode:"tdm",score_limit:30,time_limit:12000,map_id:"hijacked"}
 
-
 # Gamemode scoreboards
 scoreboard objectives add mgs.mp.dom_progress dummy
 scoreboard objectives add mgs.mp.dom_owner dummy

@@ -25,6 +25,43 @@ execute if data storage {ns}:{storage} game{{state:"preparing"}} run return run 
 """.strip()
 
 
+def normalize_map_command_lines(ns: str, storage: str) -> str:
+    """ Return the legacy respawn/start command normalization block for a map. """
+    return f"""
+execute unless data storage {ns}:{storage} game.map.respawn_commands if data storage {ns}:{storage} game.map.respawn_command[0] run data modify storage {ns}:{storage} game.map.respawn_commands set from storage {ns}:{storage} game.map.respawn_command
+execute unless data storage {ns}:{storage} game.map.respawn_commands if data storage {ns}:{storage} game.map.respawn_command.command run data modify storage {ns}:{storage} game.map.respawn_commands set value []
+execute unless data storage {ns}:{storage} game.map.respawn_commands[0] if data storage {ns}:{storage} game.map.respawn_command.command run data modify storage {ns}:{storage} game.map.respawn_commands append from storage {ns}:{storage} game.map.respawn_command
+execute unless data storage {ns}:{storage} game.map.respawn_commands run data modify storage {ns}:{storage} game.map.respawn_commands set value []
+execute unless data storage {ns}:{storage} game.map.start_commands run data modify storage {ns}:{storage} game.map.start_commands set value []
+""".strip()  # noqa: E501
+
+
+def schedule_preload_complete_line(ns: str, mode: str) -> str:
+    """ Return the preload-complete schedule command for a mode. """
+    version: str = Mem.ctx.project_version
+    return f'schedule function {ns}:v{version}/{mode}/preload_complete 20t'
+
+
+def mode_start_map_bootstrap_lines(ns: str, mode: str, normalize_legacy: bool = False) -> str:
+    """ Return the shared start bootstrap: selection check, load, copy, and preparing state. """
+    parts: list[str] = []
+    parts.append(f"""
+# Check that a map is selected
+execute if data storage {ns}:{mode} game{{map_id:""}} run return run tellraw @s [{MGS_TAG},{{"text":"No map selected! Use the setup menu to select a map.","color":"red"}}]
+
+# Load the selected map
+function {ns}:v{Mem.ctx.project_version}/{mode}/load_map_from_storage with storage {ns}:{mode} game
+execute unless score #map_load_found {ns}.data matches 1 run return run tellraw @s [{MGS_TAG},{{"text":"Map not found! Select a valid map.","color":"red"}}]
+
+# Copy loaded map data into game state
+data modify storage {ns}:{mode} game.map set from storage {ns}:temp map_load.result
+""".strip())
+    if normalize_legacy:
+        parts.append(normalize_map_command_lines(ns, mode))
+    parts.append(f'# Set state to preparing\ndata modify storage {ns}:{mode} game.state set value "preparing"')
+    return "\n\n".join(parts)
+
+
 def regen_enable_lines(ns: str) -> str:
 	""" Lines to add at game start: disable natural regen, activate custom regen system. """
 	return f"""

@@ -4,7 +4,7 @@
 from stewbeet import Mem, write_load_file, write_tag, write_tick_file, write_versioned_function
 
 from ..core.respawn_countdown import respawn_countdown_tick_lines
-from ..helpers import MGS_TAG, game_start_guards, regen_disable_lines, regen_enable_lines
+from ..helpers import MGS_TAG, game_start_guards, mode_start_map_bootstrap_lines, regen_disable_lines, regen_enable_lines
 
 
 def generate_game() -> None:
@@ -45,7 +45,6 @@ execute unless score #blue {ns}.mp.team matches -2147483648.. run scoreboard pla
 
 # Initialize game state (only if not yet set)
 execute unless data storage {ns}:multiplayer game run data modify storage {ns}:multiplayer game set value {{state:"lobby",gamemode:"tdm",score_limit:30,time_limit:12000,map_id:"hijacked"}}
-
 """)
 
 	## Signal function tags
@@ -57,22 +56,7 @@ execute unless data storage {ns}:multiplayer game run data modify storage {ns}:m
 # Prevent starting if already active or preparing
 {game_start_guards(ns, "multiplayer", "Game")}
 
-# Load the selected map (reads map_id from game storage)
-function {ns}:v{version}/multiplayer/load_map_from_storage with storage {ns}:multiplayer game
-execute unless score #map_load_found {ns}.data matches 1 run return run tellraw @s [{MGS_TAG},{{"text":"No map found! Select a map first.","color":"red"}}]
-
-# Copy loaded map data into game state
-data modify storage {ns}:multiplayer game.map set from storage {ns}:temp map_load.result
-
-# Legacy compatibility: normalize respawn command keys
-execute unless data storage {ns}:multiplayer game.map.respawn_commands if data storage {ns}:multiplayer game.map.respawn_command[0] run data modify storage {ns}:multiplayer game.map.respawn_commands set from storage {ns}:multiplayer game.map.respawn_command
-execute unless data storage {ns}:multiplayer game.map.respawn_commands if data storage {ns}:multiplayer game.map.respawn_command.command run data modify storage {ns}:multiplayer game.map.respawn_commands set value []
-execute unless data storage {ns}:multiplayer game.map.respawn_commands[0] if data storage {ns}:multiplayer game.map.respawn_command.command run data modify storage {ns}:multiplayer game.map.respawn_commands append from storage {ns}:multiplayer game.map.respawn_command
-execute unless data storage {ns}:multiplayer game.map.respawn_commands run data modify storage {ns}:multiplayer game.map.respawn_commands set value []
-execute unless data storage {ns}:multiplayer game.map.start_commands run data modify storage {ns}:multiplayer game.map.start_commands set value []
-
-# Initialize game
-data modify storage {ns}:multiplayer game.state set value "preparing"
+{mode_start_map_bootstrap_lines(ns, "multiplayer", True)}
 
 # Reset scores
 scoreboard players set #red {ns}.mp.team 0
@@ -192,11 +176,6 @@ schedule function {ns}:v{version}/multiplayer/end_prep 200t
 tellraw @a ["",[{{"text":"","color":"gold","bold":true}},"⚔ ",{{"text":"Preparing"}},"! "],{{"text":"Choose your class! Game starts in 10 seconds!","color":"yellow"}}]
 """)
 
-	## Load map from storage (reads map_id from game state and passes to load macro)
-	write_versioned_function("multiplayer/load_map_from_storage", f"""
-$function {ns}:v{version}/shared/maps/load {{id:"$(map_id)",mode:"multiplayer",override:{{}}}}
-""")
-
 	## Game Stop
 	write_versioned_function("multiplayer/stop", f"""
 # End game
@@ -269,6 +248,8 @@ scoreboard players set @s {ns}.mp.kills 0
 scoreboard players set @s {ns}.mp.deaths 0
 scoreboard players set @s {ns}.mp.death_count 0
 scoreboard players set @s {ns}.mp.spectate_timer 0
+scoreboard players set @s {ns}.last_hit 0
+execute store result score @s {ns}.hp_prev run data get entity @s Health 1
 
 # Auto-assign team if not already on one
 execute unless score @s {ns}.mp.team matches 1.. run function {ns}:v{version}/multiplayer/auto_assign_team

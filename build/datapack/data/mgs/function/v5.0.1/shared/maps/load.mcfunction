@@ -1,9 +1,9 @@
 
 #> mgs:v5.0.1/shared/maps/load
 #
-# @within	mgs:v5.0.1/zombies/load_map_from_storage {id:"$(map_id)",mode:"zombies",override:{}}
-#			mgs:v5.0.1/multiplayer/load_map_from_storage {id:"$(map_id)",mode:"multiplayer",override:{}}
+# @within	mgs:v5.0.1/multiplayer/load_map_from_storage {id:"$(map_id)",mode:"multiplayer",override:{}}
 #			mgs:v5.0.1/missions/load_map_from_storage {id:"$(map_id)",mode:"missions",override:{}}
+#			mgs:v5.0.1/zombies/load_map_from_storage {id:"$(map_id)",mode:"zombies",override:{}}
 #
 # @args		id (string)
 #			override (compound)

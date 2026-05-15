@@ -8,7 +8,7 @@
 from stewbeet import Mem, write_load_file, write_tag, write_tick_file, write_versioned_function
 
 from ..core.respawn_countdown import respawn_countdown_tick_lines
-from ..helpers import MGS_TAG, game_start_guards, regen_disable_lines, regen_enable_lines
+from ..helpers import MGS_TAG, game_start_guards, mode_start_map_bootstrap_lines, regen_disable_lines, regen_enable_lines, schedule_preload_complete_line
 
 
 def generate_missions_game() -> None:
@@ -51,25 +51,7 @@ execute unless data storage {ns}:missions game run data modify storage {ns}:miss
 # Prevent starting if already active or preparing
 {game_start_guards(ns, "missions", "Mission")}
 
-# Check that a map is selected
-execute if data storage {ns}:missions game{{map_id:""}} run return run tellraw @s [{MGS_TAG},{{"text":"No map selected! Use the setup menu to select a mission map.","color":"red"}}]
-
-# Load the selected map
-function {ns}:v{version}/missions/load_map_from_storage with storage {ns}:missions game
-execute unless score #map_load_found {ns}.data matches 1 run return run tellraw @s [{MGS_TAG},{{"text":"Map not found! Select a valid mission map.","color":"red"}}]
-
-# Copy loaded map data into game state
-data modify storage {ns}:missions game.map set from storage {ns}:temp map_load.result
-
-# Legacy compatibility: normalize respawn command keys
-execute unless data storage {ns}:missions game.map.respawn_commands if data storage {ns}:missions game.map.respawn_command[0] run data modify storage {ns}:missions game.map.respawn_commands set from storage {ns}:missions game.map.respawn_command
-execute unless data storage {ns}:missions game.map.respawn_commands if data storage {ns}:missions game.map.respawn_command.command run data modify storage {ns}:missions game.map.respawn_commands set value []
-execute unless data storage {ns}:missions game.map.respawn_commands[0] if data storage {ns}:missions game.map.respawn_command.command run data modify storage {ns}:missions game.map.respawn_commands append from storage {ns}:missions game.map.respawn_command
-execute unless data storage {ns}:missions game.map.respawn_commands run data modify storage {ns}:missions game.map.respawn_commands set value []
-execute unless data storage {ns}:missions game.map.start_commands run data modify storage {ns}:missions game.map.start_commands set value []
-
-# Set state to preparing
-data modify storage {ns}:missions game.state set value "preparing"
+{mode_start_map_bootstrap_lines(ns, "missions", True)}
 
 # Reset scores
 scoreboard players set @a {ns}.mi.in_game 0
@@ -119,7 +101,7 @@ execute store result storage {ns}:temp _tp.z int 1 run scoreboard players get #g
 execute as @a[scores={{{ns}.mi.in_game=1}}] run function {ns}:v{version}/shared/tp_to_position with storage {ns}:temp _tp
 
 # Schedule preload completion after 1 second
-schedule function {ns}:v{version}/missions/preload_complete 20t
+{schedule_preload_complete_line(ns, "missions")}
 
 # Announce
 tellraw @a ["",{{"text":"","color":"aqua","bold":true}},"🎯 ",{{"text":"Loading mission area...","color":"yellow"}}]
@@ -172,11 +154,6 @@ schedule function {ns}:v{version}/missions/end_prep 180t
 
 # Announce
 tellraw @a ["",{{"text":"","color":"aqua","bold":true}},"🎯 ",{{"text":"Preparing! Choose your class! Mission starts in 9 seconds!","color":"yellow"}}]
-""")
-
-	## Load map from storage
-	write_versioned_function("missions/load_map_from_storage", f"""
-$function {ns}:v{version}/shared/maps/load {{id:"$(map_id)",mode:"missions",override:{{}}}}
 """)
 
 	## Prep Tick (check for class changes during preparation)
