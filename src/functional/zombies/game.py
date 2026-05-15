@@ -5,7 +5,7 @@
 # Map definitions are dynamic (stored in storage, registered via function tags).
 from stewbeet import Mem, write_load_file, write_tag, write_tick_file, write_versioned_function
 
-from ..helpers import MGS_TAG, game_start_guards, regen_disable_lines, regen_enable_lines
+from ..helpers import MGS_TAG, game_start_guards, mode_start_map_bootstrap_lines, regen_disable_lines, regen_enable_lines, schedule_preload_complete_line
 
 
 def generate_zombies_game() -> None:
@@ -70,19 +70,7 @@ execute unless score #zb_mystery_box_price {ns}.config matches 1.. run scoreboar
 # Prevent starting if already active or preparing
 {game_start_guards(ns, "zombies", "Zombies game")}
 
-# Check that a map is selected
-execute unless data storage {ns}:zombies game.map_id run return run tellraw @s [{MGS_TAG},{{"text":"No map selected! Use the setup menu to select a zombies map.","color":"red"}}]
-execute if data storage {ns}:zombies game{{map_id:""}} run return run tellraw @s [{MGS_TAG},{{"text":"No map selected! Use the setup menu to select a zombies map.","color":"red"}}]
-
-# Load the selected map
-function {ns}:v{version}/zombies/load_map_from_storage with storage {ns}:zombies game
-execute unless score #map_load_found {ns}.data matches 1 run return run tellraw @s [{MGS_TAG},{{"text":"Map not found! Select a valid zombies map.","color":"red"}}]
-
-# Copy loaded map data into game state
-data modify storage {ns}:zombies game.map set from storage {ns}:temp map_load.result
-
-# Set state to preparing
-data modify storage {ns}:zombies game.state set value "preparing"
+{mode_start_map_bootstrap_lines(ns, "zombies", False)}
 
 # Reset scores
 scoreboard players set @a {ns}.zb.in_game 0
@@ -141,15 +129,10 @@ function #{ns}:zombies/register_maps
 function #{ns}:zombies/register_mystery_box_item
 
 # Schedule preload completion after 1 second
-schedule function {ns}:v{version}/zombies/preload_complete 20t
+{schedule_preload_complete_line(ns, "zombies")}
 
 # Announce
 tellraw @a ["",{{"text":"","color":"dark_green","bold":true}},"🧟 ",{{"text":"Loading zombies map...","color":"yellow"}}]
-""")
-
-	## Load map from storage
-	write_versioned_function("zombies/load_map_from_storage", f"""
-$function {ns}:v{version}/shared/maps/load {{id:"$(map_id)",mode:"zombies",override:{{}}}}
 """)
 
 	## Preload complete → transition to prep phase

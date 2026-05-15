@@ -16,6 +16,8 @@ scoreboard players set @s mgs.mp.kills 0
 scoreboard players set @s mgs.mp.deaths 0
 scoreboard players set @s mgs.mp.death_count 0
 scoreboard players set @s mgs.mp.spectate_timer 0
+scoreboard players set @s mgs.last_hit 0
+execute store result score @s mgs.hp_prev run data get entity @s Health 1
 
 # Auto-assign team if not already on one
 execute unless score @s mgs.mp.team matches 1.. run function mgs:v5.0.1/multiplayer/auto_assign_team

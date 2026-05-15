@@ -8,21 +8,23 @@
 execute if data storage mgs:multiplayer game{state:"active"} run return run tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.game_already_in_progress","color":"red"}]
 execute if data storage mgs:multiplayer game{state:"preparing"} run return run tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.game_already_preparing","color":"red"}]
 
-# Load the selected map (reads map_id from game storage)
+# Check that a map is selected
+execute if data storage mgs:multiplayer game{map_id:""} run return run tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.no_map_selected_use_the_setup_menu_to_select_a_map","color":"red"}]
+
+# Load the selected map
 function mgs:v5.0.1/multiplayer/load_map_from_storage with storage mgs:multiplayer game
-execute unless score #map_load_found mgs.data matches 1 run return run tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.no_map_found_select_a_map_first","color":"red"}]
+execute unless score #map_load_found mgs.data matches 1 run return run tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.map_not_found_select_a_valid_map","color":"red"}]
 
 # Copy loaded map data into game state
 data modify storage mgs:multiplayer game.map set from storage mgs:temp map_load.result
 
-# Legacy compatibility: normalize respawn command keys
 execute unless data storage mgs:multiplayer game.map.respawn_commands if data storage mgs:multiplayer game.map.respawn_command[0] run data modify storage mgs:multiplayer game.map.respawn_commands set from storage mgs:multiplayer game.map.respawn_command
 execute unless data storage mgs:multiplayer game.map.respawn_commands if data storage mgs:multiplayer game.map.respawn_command.command run data modify storage mgs:multiplayer game.map.respawn_commands set value []
 execute unless data storage mgs:multiplayer game.map.respawn_commands[0] if data storage mgs:multiplayer game.map.respawn_command.command run data modify storage mgs:multiplayer game.map.respawn_commands append from storage mgs:multiplayer game.map.respawn_command
 execute unless data storage mgs:multiplayer game.map.respawn_commands run data modify storage mgs:multiplayer game.map.respawn_commands set value []
 execute unless data storage mgs:multiplayer game.map.start_commands run data modify storage mgs:multiplayer game.map.start_commands set value []
 
-# Initialize game
+# Set state to preparing
 data modify storage mgs:multiplayer game.state set value "preparing"
 
 # Reset scores
