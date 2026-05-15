@@ -67,3 +67,20 @@ function {ns}:v{version}/shared/forceload_remove with storage {ns}:temp _fl
 
 	write_versioned_function("shared/forceload_remove", "$forceload remove $(x1) $(z1) $(x2) $(z2)")
 
+	## Shared boundary check: get @s position, compare against #bound_x1/x2/y1/y2/z1/z2 scores.
+	## Run as an entity at its position. On out-of-bounds: kills via out_of_world damage.
+	## Used by missions and zombies (multiplayer uses bounds_kill for kill-tracking instead).
+	write_versioned_function("shared/check_bounds", f"""
+data modify storage {ns}:temp _player_pos set from entity @s Pos
+execute store result score @s {ns}.mp.bx run data get storage {ns}:temp _player_pos[0]
+execute store result score @s {ns}.mp.by run data get storage {ns}:temp _player_pos[1]
+execute store result score @s {ns}.mp.bz run data get storage {ns}:temp _player_pos[2]
+
+execute if score @s {ns}.mp.bx < #bound_x1 {ns}.data run return run damage @s 10000 out_of_world
+execute if score @s {ns}.mp.bx > #bound_x2 {ns}.data run return run damage @s 10000 out_of_world
+execute if score @s {ns}.mp.by < #bound_y1 {ns}.data run return run damage @s 10000 out_of_world
+execute if score @s {ns}.mp.by > #bound_y2 {ns}.data run return run damage @s 10000 out_of_world
+execute if score @s {ns}.mp.bz < #bound_z1 {ns}.data run return run damage @s 10000 out_of_world
+execute if score @s {ns}.mp.bz > #bound_z2 {ns}.data run return run damage @s 10000 out_of_world
+""")
+

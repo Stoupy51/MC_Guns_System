@@ -5,6 +5,11 @@ from stewbeet import JsonDict
 # Consumable magazine item IDs (stack count = bullet count, uses set_consumable_count modifier)
 CONSUMABLE_MAGS: set[str] = {"rpg7_rocket", "mosin_bullet", "m24_bullet", "spas12_shell", "m500_shell", "m590_shell", "element_115"}
 
+
+def make_slot_snbt(ns: str, slot: str, loot: str, count: int = 1, consumable: bool = False, bullets: int = 0) -> str:
+    """ Build the SNBT string for a single loadout slot entry. """
+    return f'{{slot:"{slot}",loot:"{ns}:i/{loot}",count:{count},consumable:{"1b" if consumable else "0b"},bullets:{bullets}}}'
+
 # Balanced team-vs-team class loadouts (Python-side definitions)
 # Used at build time to generate SNBT for storage initialization
 CLASSES: dict[str, JsonDict] = {
@@ -106,9 +111,7 @@ def build_class_snbt(ns: str, class_id: str, class_data: JsonDict, class_num: in
     # Build the flat slot list (pre-computed slot assignments)
     slots: list[str] = []
     def add_slot(slot: str, loot: str, count: int = 1, consumable: bool = False, bullets: int = 0) -> None:
-        slots.append(
-            f'{{slot:"{slot}",loot:"{ns}:i/{loot}",count:{count},consumable:{"1b" if consumable else "0b"},bullets:{bullets}}}'
-        )
+        slots.append(make_slot_snbt(ns, slot, loot, count, consumable, bullets))
 
     # Primary weapon → hotbar.0
     add_slot("hotbar.0", main_gun)
