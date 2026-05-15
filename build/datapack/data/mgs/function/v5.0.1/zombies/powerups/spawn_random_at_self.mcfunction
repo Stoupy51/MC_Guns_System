@@ -6,7 +6,7 @@
 # @within	mgs:v5.0.1/zombies/powerups/check_drop
 #
 
-# Draw next type from the shuffle bag (no repeats until all 9 used)
+# Draw next type from the shuffle bag (no repeats until the current cycle is exhausted)
 function mgs:v5.0.1/zombies/powerups/queue_draw
 
 # Spawn visuals at @s's position

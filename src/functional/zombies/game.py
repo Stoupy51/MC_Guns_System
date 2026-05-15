@@ -66,7 +66,7 @@ execute unless data storage {ns}:zombies mystery_box_pool run data modify storag
 
 # Config: points per kill, points per hit
 execute unless score #zb_points_kill {ns}.config matches 1.. run scoreboard players set #zb_points_kill {ns}.config 50
-execute unless score #zb_points_hit {ns}.config matches 1.. run scoreboard players set #zb_points_hit {ns}.config 10
+execute unless score #zb_points_hit {ns}.config matches 1.. run scoreboard players set #zb_points_hit {ns}.config 5
 execute unless score #zb_points_knife_kill {ns}.config matches 1.. run scoreboard players set #zb_points_knife_kill {ns}.config 130
 execute unless score #zb_mystery_box_price {ns}.config matches 1.. run scoreboard players set #zb_mystery_box_price {ns}.config 950
 """)
@@ -82,6 +82,12 @@ execute unless score #zb_mystery_box_price {ns}.config matches 1.. run scoreboar
 
 {mode_start_map_bootstrap_lines(ns, "zombies", False)}
 
+# Create zombies team
+team add {ns}.zombies
+team modify {ns}.zombies color yellow
+team modify {ns}.zombies friendlyFire false
+team modify {ns}.zombies nametagVisibility hideForOtherTeams
+
 # Reset scores
 scoreboard players set @a {ns}.zb.in_game 0
 scoreboard players set @a {ns}.zb.points 500
@@ -93,6 +99,9 @@ scoreboard players set @a {ns}.zb.ability_cd 0
 
 # Tag all players as in-game
 scoreboard players set @a {ns}.zb.in_game 1
+
+# Assign all in-game players to zombies team
+team join {ns}.zombies @a[scores={{{ns}.zb.in_game=1}}]
 
 # Initialize kill tracking baseline (so kills before game start don't count)
 execute as @a run scoreboard players operation @s {ns}.zb.prev_kills = @s {ns}.total_kills
@@ -170,7 +179,6 @@ function {ns}:v{version}/zombies/tp_all_to_spawns
 
 # Freeze players during prep
 {prep_freeze_lines(ns, "zb")}
-execute as @a[scores={{{ns}.zb.in_game=1}}] run attribute @s minecraft:knockback_resistance base set 1024
 execute as @a[scores={{{ns}.zb.in_game=1}}] run attribute @s minecraft:max_health base reset
 
 # Give starting loadout to all players
@@ -370,6 +378,7 @@ tag @a[tag={ns}.give_class_menu] remove {ns}.give_class_menu
 	"You are already in the zombies game!",
 	f"""
 scoreboard players set @s {ns}.zb.in_game 1
+team join {ns}.zombies @s
 scoreboard players set @s {ns}.zb.points 500
 scoreboard players set @s {ns}.zb.kills 0
 scoreboard players set @s {ns}.zb.downs 0
@@ -592,6 +601,7 @@ data modify storage {ns}:temp zb_sb set value [[{{text:"Round",color:"red"}},{{s
 
 # Rank players for sidebar display
 scoreboard players set @a {ns}.zb.sb_rank 0
+tag @a remove {ns}.zb_sb_cand
 tag @a[scores={{{ns}.zb.in_game=1}}] add {ns}.zb_sb_cand
 function {ns}:v{version}/zombies/sidebar_rank_players
 
@@ -604,7 +614,7 @@ function {ns}:v{version}/zombies/build_sidebar with storage {ns}:temp
 	for i in range(1, 9):
 		sidebar_rank_code += f"""
 execute unless entity @a[tag={ns}.zb_sb_cand] run return 0
-execute as @r[tag={ns}.zb_sb_cand] run scoreboard players set @s {ns}.zb.sb_rank {i}
+execute as @a[tag={ns}.zb_sb_cand,limit=1] run scoreboard players set @s {ns}.zb.sb_rank {i}
 tag @a[scores={{{ns}.zb.sb_rank={i}}}] remove {ns}.zb_sb_cand
 data modify storage {ns}:temp zb_sb append value [{{selector:"@a[scores={{{ns}.zb.sb_rank={i}}}]",color:"green"}},{{score:{{name:"@a[scores={{{ns}.zb.sb_rank={i}}}]",objective:"{ns}.zb.points"}},color:"yellow"}}]
 """
@@ -612,7 +622,7 @@ data modify storage {ns}:temp zb_sb append value [{{selector:"@a[scores={{{ns}.z
 	write_versioned_function("zombies/sidebar_rank_players", sidebar_rank_code)
 
 	write_versioned_function("zombies/build_sidebar", f"""
-scoreboard objectives remove {ns}.sidebar
+scoreboard objectives remove {ns}.zb_sidebar
 $function #bs.sidebar:create {{objective:"{ns}.zb_sidebar",display_name:{{text:"Zombies",color:"dark_green",bold:true}},contents:$(zb_sb)}}
 """)
 

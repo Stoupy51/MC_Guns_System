@@ -42,7 +42,6 @@ function mgs:v5.0.1/zombies/perks/store_data with storage mgs:temp _pk_store
 execute as @n[tag=mgs.pk_new] run function #bs.interaction:on_right_click {run:"function mgs:v5.0.1/zombies/perks/on_right_click",executor:"source"}
 execute as @n[tag=mgs.pk_new] run function #bs.interaction:on_hover {run:"function mgs:v5.0.1/zombies/perks/on_hover",executor:"source"}
 
-# TODO: Remove visual item_display to the perk machine
 # Spawn visual item_display at machine position (default: potion; overridable via display_item + item_model map fields)
 data modify storage mgs:temp _pk_disp.tag set value "mgs.pk_display"
 data modify storage mgs:temp _pk_disp.item_id set value ""

@@ -9,17 +9,17 @@ from stewbeet import LootTable, Mem, set_json_encoder, write_load_file, write_ve
 from ..helpers import MGS_TAG
 from .perks import PERK_DEFINITIONS
 
-# (id, placeholder_item, display_name, color, type_number)
-POWERUP_TYPES: list[tuple[str, str, str, str, int]] = [
-	("max_ammo",       "minecraft:amethyst_shard",        "Max Ammo",       "aqua",         1),
-	("insta_kill",     "minecraft:fermented_spider_eye",  "Insta Kill",     "red",          2),
-	("double_points",  "minecraft:gold_ingot",            "Double Points",  "gold",         3),
-	("carpenter",      "minecraft:oak_log",               "Carpenter",      "green",        4),
-	("unlimited_ammo", "minecraft:blaze_rod",             "Unlimited Ammo", "yellow",       5),
-	("nuke",           "minecraft:tnt",                   "Nuke",           "red",          6),
-	("random_perk",    "minecraft:glass_bottle",          "Random Perk",    "light_purple", 7),
-	("free_pap",       "minecraft:diamond",               "Free PAP",       "aqua",         8),
-	("cash_drop",      "minecraft:emerald",               "Cash Drop",      "green",        9),
+# (id, placeholder_item, display_name, color, type_number, tier)
+POWERUP_TYPES: list[tuple[str, str, str, str, int, str]] = [
+	("max_ammo",       "minecraft:amethyst_shard",        "Max Ammo",       "aqua",         1, "common"),
+	("insta_kill",     "minecraft:fermented_spider_eye",  "Insta Kill",     "red",          2, "common"),
+	("double_points",  "minecraft:gold_ingot",            "Double Points",  "gold",         3, "common"),
+	("carpenter",      "minecraft:oak_log",               "Carpenter",      "green",        4, "common"),
+	("nuke",           "minecraft:tnt",                   "Nuke",           "red",          5, "common"),
+	("unlimited_ammo", "minecraft:blaze_rod",             "Unlimited Ammo", "yellow",       6, "rare"),
+	("random_perk",    "minecraft:glass_bottle",          "Random Perk",    "light_purple", 7, "rare"),
+	("free_pap",       "minecraft:diamond",               "Free PAP",       "aqua",         8, "rare"),
+	("cash_drop",      "minecraft:emerald",               "Cash Drop",      "green",        9, "rare"),
 ]
 
 POWERUP_LIFETIME: int = 530     # 26.5 seconds in ticks
@@ -62,7 +62,7 @@ scoreboard objectives add {ns}.special.double_points dummy
 						},
 					}],
 				}
-				for pu_id, item, _, _, _ in POWERUP_TYPES
+				for pu_id, item, _, _, _, _ in POWERUP_TYPES
 			],
 		}],
 	}))
@@ -81,9 +81,9 @@ execute if score #zb_drops_this_round {ns}.data matches 4.. run return 0
 # Guard: combined score must meet threshold
 execute unless score #zb_total_score {ns}.data >= #zb_score_to_drop {ns}.data run return 0
 
-# Guard: 2% RNG check
+# Guard: 4% RNG check
 execute store result score #pu_rng_roll {ns}.data run random value 1..100
-execute unless score #pu_rng_roll {ns}.data matches 1..20 run return 0
+execute unless score #pu_rng_roll {ns}.data matches 1..4 run return 0
 
 # All checks passed: draw and spawn at this entity's position
 function {ns}:v{version}/zombies/powerups/spawn_random_at_self
@@ -99,7 +99,7 @@ scoreboard players add #zb_drops_this_round {ns}.data 1
 	# Draws a random power-up from the shuffle bag and spawns it at @s's position.
 	# Can be called directly (e.g. as OP) to force-spawn a power-up at your feet.
 	write_versioned_function("zombies/powerups/spawn_random_at_self", f"""
-# Draw next type from the shuffle bag (no repeats until all 9 used)
+# Draw next type from the shuffle bag (no repeats until the current cycle is exhausted)
 function {ns}:v{version}/zombies/powerups/queue_draw
 
 # Spawn visuals at @s's position
@@ -113,14 +113,14 @@ function {ns}:v{version}/zombies/powerups/do_spawn_random with storage {ns}:temp
 	# Macro: dispatch to the correct spawn_type function using the pre-stored coordinates
 	do_spawn_random_lines: str = "\n".join(
 		f"$execute if score #pu_spawn_type {ns}.data matches {type_num} run function {ns}:v{version}/zombies/powerups/spawn_type/{pu_id} {{x:$(x),y:$(y),z:$(z)}}"
-		for pu_id, _, _, _, type_num in POWERUP_TYPES
+		for pu_id, _, _, _, type_num, _ in POWERUP_TYPES
 	)
 	write_versioned_function("zombies/powerups/do_spawn_random", f"""
 {do_spawn_random_lines}
 """)
 
-	# Shuffle-bag queue: draw one type at a time without replacement;
-	# refills with all 9 types when the bag is empty.
+	# Shuffle-bag queue: draw one type at a time without replacement.
+	# Refill when empty: always all common types + each rare type with 25% chance.
 	num_types: int = len(POWERUP_TYPES)
 	queue_random_lines: str = "\n".join(
 		f"execute if score #pu_q_len {ns}.data matches {i + 1} store result score #pu_q_idx {ns}.data run random value 0..{i}"
@@ -142,8 +142,25 @@ execute store result storage {ns}:temp _pu_q.idx int 1 run scoreboard players ge
 function {ns}:v{version}/zombies/powerups/queue_extract with storage {ns}:temp _pu_q
 """)
 
+	queue_refill_common_lines: str = "\n".join(
+		f"data modify storage {ns}:data _pu_queue append value {type_num}"
+		for _, _, _, _, type_num, tier in POWERUP_TYPES
+		if tier == "common"
+	)
+	queue_refill_rare_lines: str = "\n".join(
+		f"execute store result score #pu_rare_roll_{type_num} {ns}.data run random value 1..100\n"
+		f"execute if score #pu_rare_roll_{type_num} {ns}.data matches 1..25 run data modify storage {ns}:data _pu_queue append value {type_num}"
+		for _, _, _, _, type_num, tier in POWERUP_TYPES
+		if tier == "rare"
+	)
 	write_versioned_function("zombies/powerups/queue_refill", f"""
-data modify storage {ns}:data _pu_queue set value [1,2,3,4,5,6,7,8,9]
+data modify storage {ns}:data _pu_queue set value []
+
+# Always include common power-ups in every cycle
+{queue_refill_common_lines}
+
+# Each rare power-up has an independent 25% chance to join this cycle
+{queue_refill_rare_lines}
 """)
 
 	write_versioned_function("zombies/powerups/queue_extract", f"""
@@ -175,14 +192,14 @@ function {ns}:v{version}/zombies/powerups/spawn_display with storage {ns}:temp _
 	# Dispatch to per-type spawner (macro: x, y, z come from _pu_spawn storage)
 	dispatch_lines: str = "\n".join(
 		f'$execute if data storage {ns}:temp _pu_spawn {{{{"type":"{pu_id}"}}}} run function {ns}:v{version}/zombies/powerups/spawn_type/{pu_id} {{{{x:$(x),y:$(y),z:$(z)}}}}'
-		for pu_id, _, _, _, _ in POWERUP_TYPES
+		for pu_id, _, _, _, _, _ in POWERUP_TYPES
 	)
 	write_versioned_function("zombies/powerups/spawn_display", f"""
 {dispatch_lines}
 """)
 
 	# Per-type spawners (macro: x, y, z)
-	for pu_id, item, display_name, color, type_num in POWERUP_TYPES:
+	for pu_id, item, display_name, color, type_num, _ in POWERUP_TYPES:
 		write_versioned_function(f"zombies/powerups/spawn_type/{pu_id}", f"""
 #$summon minecraft:item_display $(x) $(y) $(z) {{Tags:["{ns}.pu_item","{ns}.pu_item_new","{ns}.gm_entity"],item:{{id:"{item}",count:1,components:{{"minecraft:item_model":"{ns}:zombies/powerup/{pu_id}"}}}},item_display:"ground",transformation:{{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],translation:[0f,0.25f,0f],scale:[0.7f,0.7f,0.7f]}}}}
 $summon minecraft:item_display $(x) $(y) $(z) {{Tags:["{ns}.pu_item","{ns}.pu_item_new","{ns}.gm_entity"],item:{{id:"{item}",count:1}},billboard:"vertical",item_display:"ground",transformation:{{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],translation:[0f,0.25f,0f],scale:[0.7f,0.7f,0.7f]}}}}
@@ -250,7 +267,7 @@ tag @a[tag={ns}.pu_collecting] remove {ns}.pu_collecting
 	# Dispatch to the appropriate activation function by type number
 	dispatch_activate_lines: str = "\n".join(
 		f"execute if score #pu_type_pickup {ns}.data matches {type_num} run function {ns}:v{version}/zombies/powerups/activate/{pu_id}"
-		for pu_id, _, _, _, type_num in POWERUP_TYPES
+		for pu_id, _, _, _, type_num, _ in POWERUP_TYPES
 	)
 	write_versioned_function("zombies/powerups/dispatch_activate", f"""
 {dispatch_activate_lines}
@@ -288,18 +305,18 @@ tellraw @a[scores={{{ns}.zb.in_game=1}}] [{MGS_TAG},{{"text":"Carpenter!","color
 playsound minecraft:entity.player.levelup master @a[scores={{{ns}.zb.in_game=1}}] ~ ~ ~ 1.0 1.0
 """)
 
-	## 5. Unlimited Ammo
-	write_versioned_function("zombies/powerups/activate/unlimited_ammo", f"""
-scoreboard players set @a[scores={{{ns}.zb.in_game=1}},gamemode=!spectator] {ns}.special.infinite_ammo 600
-tellraw @a[scores={{{ns}.zb.in_game=1}}] [{MGS_TAG},{{"text":"Unlimited Ammo!","color":"yellow","bold":true}}]
-playsound minecraft:entity.player.levelup master @a[scores={{{ns}.zb.in_game=1}}] ~ ~ ~ 1.0 1.0
-""")
-
-	## 6. Nuke
+	## 5. Nuke
 	write_versioned_function("zombies/powerups/activate/nuke", f"""
 execute as @a[tag={ns}.pu_collecting,scores={{{ns}.zb.in_game=1}},gamemode=!spectator] run function {ns}:zombies/bonus/nuke
 tellraw @a[scores={{{ns}.zb.in_game=1}}] [{MGS_TAG},{{"text":"Nuke!","color":"red","bold":true}}]
 playsound minecraft:entity.player.levelup master @a[scores={{{ns}.zb.in_game=1}}] ~ ~ ~ 1.0 0.5
+""")
+
+	## 6. Unlimited Ammo
+	write_versioned_function("zombies/powerups/activate/unlimited_ammo", f"""
+scoreboard players set @a[scores={{{ns}.zb.in_game=1}},gamemode=!spectator] {ns}.special.infinite_ammo 600
+tellraw @a[scores={{{ns}.zb.in_game=1}}] [{MGS_TAG},{{"text":"Unlimited Ammo!","color":"yellow","bold":true}}]
+playsound minecraft:entity.player.levelup master @a[scores={{{ns}.zb.in_game=1}}] ~ ~ ~ 1.0 1.0
 """)
 
 	## 7. Random Perk

@@ -27,6 +27,17 @@ execute unless data storage mgs:missions game.map.start_commands run data modify
 # Set state to preparing
 data modify storage mgs:missions game.state set value "preparing"
 
+# Blue team for missions
+team add mgs.blue
+team modify mgs.blue color blue
+team modify mgs.blue friendlyFire false
+team modify mgs.blue nametagVisibility hideForOtherTeams
+
+# Mission mob team (created once)
+team add mgs.mi_mobs
+team modify mgs.mi_mobs color dark_red
+team modify mgs.mi_mobs friendlyFire true
+
 # Reset scores
 scoreboard players set @a mgs.mi.in_game 0
 scoreboard players set #mi_timer mgs.data 0
@@ -40,8 +51,9 @@ execute if entity @a[scores={mgs.mp.team=1}] as @a[scores={mgs.mp.team=1}] run s
 # Fallback: if no team system, tag all players
 execute unless entity @a[scores={mgs.mi.in_game=1}] run scoreboard players set @a mgs.mi.in_game 1
 
-# Missions are fully cooperative: force all mission players to one shared team id
+# Missions are fully cooperative: all mission players join the blue team
 scoreboard players set @a[scores={mgs.mi.in_game=1}] mgs.mp.team 1
+team join mgs.blue @a[scores={mgs.mi.in_game=1}]
 
 # Enable class menu for mission players
 tag @a[scores={mgs.mi.in_game=1}] add mgs.give_class_menu

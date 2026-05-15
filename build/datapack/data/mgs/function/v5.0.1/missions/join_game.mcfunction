@@ -13,6 +13,7 @@ execute if score @s mgs.mi.in_game matches 1 run return run tellraw @s [[{"text"
 # Tag as in-game and reset stats
 scoreboard players set @s mgs.mi.in_game 1
 scoreboard players set @s mgs.mp.team 1
+team join mgs.blue @s
 scoreboard players set @s mgs.mi.kills 0
 scoreboard players set @s mgs.mi.deaths 0
 scoreboard players set @s mgs.mp.death_count 0

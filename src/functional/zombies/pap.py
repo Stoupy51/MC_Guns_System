@@ -1009,8 +1009,15 @@ scoreboard players set @s {ns}.zb.pap_mid 0
 	write_versioned_function("zombies/pap/anim/collect", f"""
 # Tag the clicking player so machine-context functions can target them precisely
 tag @s add {ns}.pap_owner
-execute as @n[tag=bs.interaction.target] at @s run function {ns}:v{version}/zombies/pap/anim/collect_at_machine
+execute store result score #pap_mid {ns}.data run scoreboard players get @n[tag=bs.interaction.target] {ns}.zb.pap.id
+execute if score @s {ns}.zb.pap_mid = #pap_mid {ns}.data as @n[tag=bs.interaction.target] at @s run function {ns}:v{version}/zombies/pap/anim/collect_at_machine
+execute unless score @s {ns}.zb.pap_mid = #pap_mid {ns}.data run function {ns}:v{version}/zombies/pap/anim/deny_not_your_weapon
 tag @s remove {ns}.pap_owner
+""")
+
+	write_versioned_function("zombies/pap/anim/deny_not_your_weapon", f"""
+tellraw @s [{MGS_TAG},{{"text":"This upgraded weapon belongs to another player.","color":"red"}}]
+function {ns}:v{version}/zombies/feedback/sound_deny
 """)
 
 	# Resolve machine ID and call lookup (runs as machine).

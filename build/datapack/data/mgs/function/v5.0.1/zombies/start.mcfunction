@@ -21,6 +21,12 @@ data modify storage mgs:zombies game.map set from storage mgs:temp map_load.resu
 # Set state to preparing
 data modify storage mgs:zombies game.state set value "preparing"
 
+# Create zombies team
+team add mgs.zombies
+team modify mgs.zombies color yellow
+team modify mgs.zombies friendlyFire false
+team modify mgs.zombies nametagVisibility hideForOtherTeams
+
 # Reset scores
 scoreboard players set @a mgs.zb.in_game 0
 scoreboard players set @a mgs.zb.points 500
@@ -32,6 +38,9 @@ scoreboard players set @a mgs.zb.ability_cd 0
 
 # Tag all players as in-game
 scoreboard players set @a mgs.zb.in_game 1
+
+# Assign all in-game players to zombies team
+team join mgs.zombies @a[scores={mgs.zb.in_game=1}]
 
 # Initialize kill tracking baseline (so kills before game start don't count)
 execute as @a run scoreboard players operation @s mgs.zb.prev_kills = @s mgs.total_kills

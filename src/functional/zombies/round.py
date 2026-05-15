@@ -136,15 +136,27 @@ function {ns}:v{version}/zombies/calc_zombie_hp
 execute store result storage {ns}:temp _zb_hp.val int 1 run scoreboard players get #zb_hp {ns}.data
 function {ns}:v{version}/zombies/apply_zombie_hp with storage {ns}:temp _zb_hp
 
-# Speed tiers from BO2 behavior (multiplier 8): walk R1-5, run R6-8, sprint R9+
-execute if score #zb_round {ns}.data matches ..5 run attribute @s minecraft:movement_speed base set 0.20
-execute if score #zb_round {ns}.data matches 6..8 run attribute @s minecraft:movement_speed base set 0.24
-execute if score #zb_round {ns}.data matches 9 run attribute @s minecraft:movement_speed base set 0.32
+# Explicit speed per round, capped at 0.32 from round 13+
+execute if score #zb_round {ns}.data matches 1 run attribute @s minecraft:movement_speed base set 0.20
+execute if score #zb_round {ns}.data matches 2 run attribute @s minecraft:movement_speed base set 0.21
+execute if score #zb_round {ns}.data matches 3 run attribute @s minecraft:movement_speed base set 0.22
+execute if score #zb_round {ns}.data matches 4 run attribute @s minecraft:movement_speed base set 0.23
+execute if score #zb_round {ns}.data matches 5 run attribute @s minecraft:movement_speed base set 0.24
+execute if score #zb_round {ns}.data matches 6 run attribute @s minecraft:movement_speed base set 0.25
+execute if score #zb_round {ns}.data matches 7 run attribute @s minecraft:movement_speed base set 0.26
+execute if score #zb_round {ns}.data matches 8 run attribute @s minecraft:movement_speed base set 0.27
+execute if score #zb_round {ns}.data matches 9 run attribute @s minecraft:movement_speed base set 0.28
+execute if score #zb_round {ns}.data matches 10 run attribute @s minecraft:movement_speed base set 0.29
+execute if score #zb_round {ns}.data matches 11 run attribute @s minecraft:movement_speed base set 0.30
+execute if score #zb_round {ns}.data matches 12 run attribute @s minecraft:movement_speed base set 0.31
+execute if score #zb_round {ns}.data matches 13.. run attribute @s minecraft:movement_speed base set 0.32
 
-# BO2-style walkers: R10+ has 10% chance to spawn as walk speed instead of sprint
-execute if score #zb_round {ns}.data matches 10.. store result score #zb_speed_roll {ns}.data run random value 1..10
-execute if score #zb_round {ns}.data matches 10.. if score #zb_speed_roll {ns}.data matches 1 run attribute @s minecraft:movement_speed base set 0.24
-execute if score #zb_round {ns}.data matches 10.. if score #zb_speed_roll {ns}.data matches 2.. run attribute @s minecraft:movement_speed base set 0.32
+# For round 15+, 10% walkers (0.20 speed)
+execute if score #zb_round {ns}.data matches 15.. store result score #zb_speed_roll {ns}.data run random value 1..10
+execute if score #zb_round {ns}.data matches 15.. if score #zb_speed_roll {ns}.data matches 1 run attribute @s minecraft:movement_speed base set 0.20
+
+# Fixed melee damage: 8.0 HP = 4 hearts
+attribute @s minecraft:attack_damage base set 8.0
 
 # Start rise animation (20 ticks to rise 2 blocks)
 scoreboard players set @s {ns}.zb.rise_tick 20

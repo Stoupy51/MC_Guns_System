@@ -25,6 +25,7 @@ execute if data storage mgs:temp _pap_extract.stats.pap_stats.acc_jump run funct
 execute if data storage mgs:temp _pap_extract.stats.pap_stats.switch run function mgs:v5.0.1/zombies/pap/apply_field/switch
 execute if data storage mgs:temp _pap_extract.stats.pap_stats.kick run function mgs:v5.0.1/zombies/pap/apply_field/kick
 execute if data storage mgs:temp _pap_extract.stats.pap_stats.weight run function mgs:v5.0.1/zombies/pap/apply_field/weight
+execute if data storage mgs:temp _pap_extract.stats.pap_stats.speed_multiply_base run function mgs:v5.0.1/zombies/pap/apply_field/speed_multiply_base
 execute if data storage mgs:temp _pap_extract.stats.pap_stats.proj_speed run function mgs:v5.0.1/zombies/pap/apply_field/proj_speed
 execute if data storage mgs:temp _pap_extract.stats.pap_stats.proj_gravity run function mgs:v5.0.1/zombies/pap/apply_field/proj_gravity
 execute if data storage mgs:temp _pap_extract.stats.pap_stats.proj_lifetime run function mgs:v5.0.1/zombies/pap/apply_field/proj_lifetime

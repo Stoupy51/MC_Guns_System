@@ -16,6 +16,7 @@
 #			mgs:v5.0.1/zombies/pap/deny_not_supported
 #			mgs:v5.0.1/zombies/pap/deny_max_level
 #			mgs:v5.0.1/zombies/pap/deny_not_enough_points_scope
+#			mgs:v5.0.1/zombies/pap/anim/deny_not_your_weapon
 #			mgs:v5.0.1/zombies/pap/anim/deny_processing
 #			mgs:v5.0.1/zombies/power/deny_already_on
 #			mgs:v5.0.1/zombies/doors/deny_not_enough_points

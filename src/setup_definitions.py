@@ -36,6 +36,7 @@ from .config.stats import (
     PELLET_COUNT,
     RELOAD_TIME,
     REMAINING_BULLETS,
+    SPEED_MULTIPLY_BASE,
     START_HEX,
     SWITCH,
 )
@@ -156,6 +157,18 @@ def beet_default(ctx: Context) -> None:
                 "interact_vibrations": False
             }
             obj.components["food"] = {"saturation":0,"nutrition":0,"can_always_eat":True}
+
+            # Apply held weapon movement speed penalty using multiply-base operation.
+            if SPEED_MULTIPLY_BASE in gun_stats:
+                speed_multiply_base: float = gun_stats[SPEED_MULTIPLY_BASE]
+                attribute_modifiers: list[JsonDict] = obj.components.setdefault("attribute_modifiers", [])
+                attribute_modifiers.append({
+                    "type": "movement_speed",
+                    "amount": speed_multiply_base,
+                    "operation": "add_multiplied_base",
+                    "slot": "mainhand",
+                    "id": f"{ns}:weapon_weight_speed",
+                })
 
             # Prepare fire_rate lore
             fire_rate_component: list[TextComponent] = []

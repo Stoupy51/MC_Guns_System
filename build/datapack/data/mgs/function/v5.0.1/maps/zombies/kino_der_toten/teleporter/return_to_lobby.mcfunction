@@ -12,7 +12,7 @@ execute at @n[tag=mgs.kino.in_tp] run kill @e[tag=mgs.zombie_round,distance=..4]
 # Clean up tags
 tag @a remove mgs.kino.in_tp
 
-# State 6: enter cooldown (3600t = 3 min)
+# State 6: enter cooldown (1800t = 1m30)
 scoreboard players set #kino_tp_state mgs.data 6
-scoreboard players set #kino_tp_cd mgs.data 3600
+scoreboard players set #kino_tp_cd mgs.data 1800
 

@@ -19,5 +19,6 @@ execute if score #kino_tp_state mgs.data matches 5 if score #kino_tp_timer mgs.d
 
 # State 6: cooldown — count down, then reset to idle (state 0)
 execute if score #kino_tp_state mgs.data matches 6 run scoreboard players remove #kino_tp_cd mgs.data 1
+execute if score #kino_tp_state mgs.data matches 6 if score #kino_tp_cd mgs.data matches 1 run tellraw @a [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.the_teleporter_is_ready_to_use_again","color":"green"}]
 execute if score #kino_tp_state mgs.data matches 6 if score #kino_tp_cd mgs.data matches ..0 run scoreboard players set #kino_tp_state mgs.data 0
 

@@ -16,9 +16,9 @@ execute if score #zb_drops_this_round mgs.data matches 4.. run return 0
 # Guard: combined score must meet threshold
 execute unless score #zb_total_score mgs.data >= #zb_score_to_drop mgs.data run return 0
 
-# Guard: 2% RNG check
+# Guard: 4% RNG check
 execute store result score #pu_rng_roll mgs.data run random value 1..100
-execute unless score #pu_rng_roll mgs.data matches 1..20 run return 0
+execute unless score #pu_rng_roll mgs.data matches 1..4 run return 0
 
 # All checks passed: draw and spawn at this entity's position
 function mgs:v5.0.1/zombies/powerups/spawn_random_at_self
