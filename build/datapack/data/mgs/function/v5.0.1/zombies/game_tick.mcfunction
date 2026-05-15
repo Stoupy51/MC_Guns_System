@@ -17,8 +17,8 @@ execute if score #zb_to_spawn mgs.data matches 1.. run function mgs:v5.0.1/zombi
 execute as @e[tag=mgs.zb_rising] at @s run function mgs:v5.0.1/zombies/zombie_rise_tick
 
 # Boundary enforcement (skip spectators, only if map has bounds)
-execute if score #zb_has_bounds mgs.data matches 1 as @e[tag=mgs.zombie_round] at @s run function mgs:v5.0.1/zombies/check_bounds
-execute if score #zb_has_bounds mgs.data matches 1 as @e[type=player,scores={mgs.zb.in_game=1},gamemode=!creative,gamemode=!spectator] at @s run function mgs:v5.0.1/zombies/check_bounds
+execute if score #zb_has_bounds mgs.data matches 1 as @e[tag=mgs.zombie_round] at @s run function mgs:v5.0.1/shared/check_bounds
+execute if score #zb_has_bounds mgs.data matches 1 as @e[type=player,scores={mgs.zb.in_game=1},gamemode=!creative,gamemode=!spectator] at @s run function mgs:v5.0.1/shared/check_bounds
 
 # Check round completion
 execute store result score #zb_alive mgs.data if entity @e[tag=mgs.zombie_round]

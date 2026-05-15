@@ -343,8 +343,8 @@ execute if data storage {ns}:missions game{{state:"preparing"}} run function {ns
 scoreboard players add #mi_timer {ns}.data 1
 
 # Boundary enforcement (skip spectators) & OOB Check
-execute if score #mi_has_boundary {ns}.data matches 1 as @e[tag={ns}.mission_enemy] at @s run function {ns}:v{version}/missions/check_bounds
-execute if score #mi_has_boundary {ns}.data matches 1 as @e[type=player,scores={{{ns}.mi.in_game=1}},gamemode=!creative,gamemode=!spectator] at @s run function {ns}:v{version}/missions/check_bounds
+execute if score #mi_has_boundary {ns}.data matches 1 as @e[tag={ns}.mission_enemy] at @s run function {ns}:v{version}/shared/check_bounds
+execute if score #mi_has_boundary {ns}.data matches 1 as @e[type=player,scores={{{ns}.mi.in_game=1}},gamemode=!creative,gamemode=!spectator] at @s run function {ns}:v{version}/shared/check_bounds
 execute as @e[type=player,scores={{{ns}.mi.in_game=1}},gamemode=!creative,gamemode=!spectator] at @s if entity @e[tag={ns}.oob_point,distance=..5] run damage @s 10000 out_of_world
 
 # Track enemy kills (total enemies - alive enemies)
@@ -361,21 +361,6 @@ function {ns}:v{version}/shared/maps/call_tick_script_at_base
 
 # Check if all enemies are dead → victory
 execute unless entity @e[tag={ns}.mission_enemy] run return run function {ns}:v{version}/missions/victory
-""")
-
-	## Boundary check
-	write_versioned_function("missions/check_bounds", f"""
-data modify storage {ns}:temp _player_pos set from entity @s Pos
-execute store result score @s {ns}.mp.bx run data get storage {ns}:temp _player_pos[0]
-execute store result score @s {ns}.mp.by run data get storage {ns}:temp _player_pos[1]
-execute store result score @s {ns}.mp.bz run data get storage {ns}:temp _player_pos[2]
-
-execute if score @s {ns}.mp.bx < #bound_x1 {ns}.data run return run damage @s 10000 out_of_world
-execute if score @s {ns}.mp.bx > #bound_x2 {ns}.data run return run damage @s 10000 out_of_world
-execute if score @s {ns}.mp.by < #bound_y1 {ns}.data run return run damage @s 10000 out_of_world
-execute if score @s {ns}.mp.by > #bound_y2 {ns}.data run return run damage @s 10000 out_of_world
-execute if score @s {ns}.mp.bz < #bound_z1 {ns}.data run return run damage @s 10000 out_of_world
-execute if score @s {ns}.mp.bz > #bound_z2 {ns}.data run return run damage @s 10000 out_of_world
 """)
 
 	## Compass - points toward nearest enemy (runs as player at player)

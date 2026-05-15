@@ -1,7 +1,7 @@
 
 # Imports
 from ....config.catalogs import *
-from ..classes import CONSUMABLE_MAGS
+from ..classes import CONSUMABLE_MAGS, make_slot_snbt
 
 
 def build_custom_loadout_slots_snbt(ns: str, primary_id: str, secondary_id: str, equipment_preset_idx: int) -> str:
@@ -11,9 +11,7 @@ def build_custom_loadout_slots_snbt(ns: str, primary_id: str, secondary_id: str,
 	slots: list[str] = []
 
 	def add_slot(slot: str, loot: str, count: int = 1, consumable: bool = False, bullets: int = 0) -> None:
-		slots.append(
-			f'{{slot:"{slot}",loot:"{ns}:i/{loot}",count:{count},consumable:{"1b" if consumable else "0b"},bullets:{bullets}}}'
-		)
+		slots.append(make_slot_snbt(ns, slot, loot, count, consumable, bullets))
 
 	# Primary weapon → hotbar.0
 	primary = PRIMARY_WEAPONS[PRIMARY_INDEX[primary_id]]
@@ -76,9 +74,7 @@ def build_custom_loadout_slots_pick10(
 	inv_slot = 0
 
 	def add_slot(slot: str, loot: str, count: int = 1, consumable: bool = False, bullets: int = 0) -> None:
-		slots.append(
-			f'{{slot:"{slot}",loot:"{ns}:i/{loot}",count:{count},consumable:{"1b" if consumable else "0b"},bullets:{bullets}}}'
-		)
+		slots.append(make_slot_snbt(ns, slot, loot, count, consumable, bullets))
 
 	# Primary weapon → hotbar.0
 	add_slot("hotbar.0", primary_full)
