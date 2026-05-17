@@ -1,0 +1,10 @@
+{
+	"criteria": {
+		"requirement": {
+			"trigger": "minecraft:entity_hurt_player"
+		}
+	},
+	"rewards": {
+		"function": "mgs:v5.0.1/zombies/hurt_player/on_hurt"
+	}
+}
