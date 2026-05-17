@@ -82,16 +82,14 @@ execute as @e[tag=mgs.barrier_display] at @s run function mgs:v5.0.1/zombies/bar
 # Power-up entity tick (lifetime countdown, blink, pickup detection)
 execute as @e[tag=mgs.pu_item] at @s run function mgs:v5.0.1/zombies/powerups/entity_tick
 
-# Blink state: toggles between 0 and 1 every 5 ticks
+# Blink state: toggles between 0 and 1 every 4 ticks (~0.2s half-cycle, matching BO2's 0.4s full cycle)
 scoreboard players add #zb_blink_counter mgs.data 1
-execute if score #zb_blink_counter mgs.data matches 5.. run scoreboard players set #zb_blink_counter mgs.data 0
+execute if score #zb_blink_counter mgs.data matches 4.. run scoreboard players set #zb_blink_counter mgs.data 0
 execute if score #zb_blink_counter mgs.data matches 0 run scoreboard players add #zb_blink_state mgs.data 1
 execute if score #zb_blink_state mgs.data matches 2.. run scoreboard players set #zb_blink_state mgs.data 0
 
 # Decrement duration scoreboards
-execute as @a[scores={mgs.special.instant_kill=1..}] run scoreboard players remove @s mgs.special.instant_kill 1
 execute as @a[scores={mgs.special.double_points=1..}] run scoreboard players remove @s mgs.special.double_points 1
-execute as @a[scores={mgs.special.infinite_ammo=1..}] run scoreboard players remove @s mgs.special.infinite_ammo 1
 
 # Update bossbars
 function mgs:v5.0.1/zombies/powerups/update_insta_kill_bb

@@ -807,7 +807,7 @@ RAY_GUN: JsonDict = {
     },
     "sounds": {
         "fire": "ray_gun/fire",
-        "pap_fire": "ray_gun/pap_fire",
+        "pap_fire": "ray_gun/fire",
         "reload": "ray_gun/reload",
         "playerbegin": "ray_gun/playerbegin",
         "playerend": "ray_gun/playerend",

@@ -13,5 +13,5 @@ execute if score #pu_max_duration mgs.data matches ..0 run bossbar remove mgs:pu
 execute if score #pu_max_duration mgs.data matches 1.. store result bossbar mgs:pu_insta_kill value run scoreboard players get #pu_max_duration mgs.data
 execute if score #pu_max_duration mgs.data matches 1.. run scoreboard players operation #pu_seconds mgs.data = #pu_max_duration mgs.data
 execute if score #pu_max_duration mgs.data matches 1.. run scoreboard players operation #pu_seconds mgs.data /= #20 mgs.data
-execute if score #pu_max_duration mgs.data matches 1.. run bossbar set mgs:pu_insta_kill name [{"translate":"mgs.insta_kill","color":"red","bold":true,"extra":[{"score":{"name":"#pu_seconds","objective":"mgs.data"},"color":"red","bold":true},{"translate":"s","color":"red","bold":true}]}, " - "]
+execute if score #pu_max_duration mgs.data matches 1.. run bossbar set mgs:pu_insta_kill name [[{"translate":"mgs.insta_kill","color":"red","bold":true}, " - "],{"score":{"name":"#pu_seconds","objective":"mgs.data"},"color":"red"},"s"]
 

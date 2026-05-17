@@ -32,7 +32,7 @@ execute if score #bullets_to_fire {ns}.data matches 1.. run function {ns}:v{vers
 
     ## Summon projectile
     # Called from projectile/summon_loop
-    proj_stats = [EXPLOSION_DAMAGE, EXPLOSION_DECAY, EXPLOSION_RADIUS, DAMAGE, PROJECTILE_GRAVITY, PROJECTILE_SPEED, PROJECTILE_LIFETIME, PROJECTILE_MODEL, BASE_WEAPON]
+    proj_stats = [EXPLOSION_DAMAGE, EXPLOSION_DECAY, EXPLOSION_RADIUS, DAMAGE, PROJECTILE_GRAVITY, PROJECTILE_SPEED, PROJECTILE_LIFETIME, PROJECTILE_MODEL, BASE_WEAPON, "pap_level"]
     proj_copy = "\n".join(f"data modify storage {ns}:temp proj.{s} set from storage {ns}:gun all.stats.{s}" for s in proj_stats)
     write_versioned_function("projectile/summon", f"""
 # Get accuracy value and apply spread
@@ -87,12 +87,16 @@ execute at @s run function {ns}:v{version}/projectile/post_vel
 # If collision was detected, explode and stop processing
 execute if entity @s[tag={ns}.exploding] run return run function {ns}:v{version}/projectile/explode
 
-# Trail particles: ray_gun = green dust swirl, others = flame + smoke
-execute store success score #is_ray_gun {ns}.data if data entity @s data.config{{{BASE_WEAPON}:"ray_gun"}}
-execute if score #is_ray_gun {ns}.data matches 1 run particle dust{{color:[0.0,0.8,0.0],scale:1.5}} ~ ~ ~ 0.1 0.1 0.1 0 8 force @a[distance=..128]
-execute if score #is_ray_gun {ns}.data matches 1 run particle glow ~ ~ ~ 0.1 0.1 0.1 0 3 force @a[distance=..128]
-execute if score #is_ray_gun {ns}.data matches 0 run particle flame ~ ~ ~ 0.05 0.05 0.05 0.02 3 force @a[distance=..128]
-execute if score #is_ray_gun {ns}.data matches 0 run particle smoke ~ ~ ~ 0.1 0.1 0.1 0.01 2 force @a[distance=..128]
+# Trail particles: ray_gun = green dust swirl, upgraded ray_gun = red dust swirl, others = flame + smoke
+scoreboard players set #ray_gun {ns}.data 0
+execute if data entity @s data.config{{{BASE_WEAPON}:"ray_gun"}} run scoreboard players set #ray_gun {ns}.data 1
+execute if score #ray_gun {ns}.data matches 1 if data entity @s data.config.pap_level run scoreboard players set #ray_gun {ns}.data 2
+execute if score #ray_gun {ns}.data matches 2 run particle dust{{color:[0.8,0.0,0.0],scale:1.5}} ~ ~ ~ 0.1 0.1 0.1 0 8 force @a[distance=..128]
+execute if score #ray_gun {ns}.data matches 2 run particle crimson_spore ~ ~ ~ 0.1 0.1 0.1 0 3 force @a[distance=..128]
+execute if score #ray_gun {ns}.data matches 1 run particle dust{{color:[0.0,0.8,0.0],scale:1.5}} ~ ~ ~ 0.1 0.1 0.1 0 8 force @a[distance=..128]
+execute if score #ray_gun {ns}.data matches 1 run particle glow ~ ~ ~ 0.1 0.1 0.1 0 3 force @a[distance=..128]
+execute if score #ray_gun {ns}.data matches 0 run particle flame ~ ~ ~ 0.05 0.05 0.05 0.02 3 force @a[distance=..128]
+execute if score #ray_gun {ns}.data matches 0 run particle smoke ~ ~ ~ 0.1 0.1 0.1 0.01 2 force @a[distance=..128]
 
 # Decrement lifetime
 scoreboard players remove @s {ns}.data 1
@@ -119,21 +123,28 @@ scoreboard players set $move.vel.z bs.lambda 0
 
     ## Explosion effect
     write_versioned_function("projectile/explode", f"""
-# Explosion particles - ray_gun: green energy burst (no smoke)
-execute store success score #is_ray_gun {ns}.data if data entity @s data.config{{{BASE_WEAPON}:"ray_gun"}}
-execute if score #is_ray_gun {ns}.data matches 1 run particle flash{{color:[0.0,0.8,0.0,1.0]}} ~ ~ ~ 0 0 0 0 1 force @a[distance=..128]
-execute if score #is_ray_gun {ns}.data matches 1 run particle dust{{color:[0.0,0.8,0.0],scale:1.5}} ~ ~ ~ 0.5 0.5 0.5 0 200 force @a[distance=..128]
-execute if score #is_ray_gun {ns}.data matches 1 run particle glow ~ ~ ~ 0.5 0.5 0.5 0.1 80 force @a[distance=..128]
-execute if score #is_ray_gun {ns}.data matches 1 run particle electric_spark ~ ~ ~ 0.5 0.5 0.5 0.05 100 force @a[distance=..128]
-# Explosion particles - standard weapons: fire + smoke
-execute if score #is_ray_gun {ns}.data matches 0 run particle explosion ~ ~ ~ 0 0 0 0 1 force @a[distance=..128]
-execute if score #is_ray_gun {ns}.data matches 0 run particle flame ~ ~ ~ 1 1 1 0.1 100 force @a[distance=..128]
-execute if score #is_ray_gun {ns}.data matches 0 run particle large_smoke ~ ~ ~ 1.5 1.5 1.5 0.05 50 force @a[distance=..128]
-execute if score #is_ray_gun {ns}.data matches 0 run particle campfire_signal_smoke ~ ~ ~ 0.5 0.5 0.5 0.05 20 force @a[distance=..128]
-execute if score #is_ray_gun {ns}.data matches 0 run particle lava ~ ~ ~ 1 1 1 0 30 force @a[distance=..128]
+# Explosion particles
+scoreboard players set #ray_gun {ns}.data 0
+execute if data entity @s data.config{{{BASE_WEAPON}:"ray_gun"}} run scoreboard players set #ray_gun {ns}.data 1
+execute if score #ray_gun {ns}.data matches 1 if data entity @s data.config.pap_level run scoreboard players set #ray_gun {ns}.data 2
+## Upgraded ray_gun explosion: red energy burst
+execute if score #ray_gun {ns}.data matches 2 run particle flash{{color:[0.8,0.0,0.0,1.0]}} ~ ~ ~ 0 0 0 0 1 force @a[distance=..128]
+execute if score #ray_gun {ns}.data matches 2 run particle dust_color_transition{{from_color:[1.0,0.0,0.0],to_color:[0.3,0.0,0.0],scale:1.8}} ~ ~ ~ 0.6 0.6 0.6 0 200 force @a[distance=..128]
+execute if score #ray_gun {ns}.data matches 2 run particle crimson_spore ~ ~ ~ 0.5 0.5 0.5 0.05 100 force @a[distance=..128]
+## Normal ray_gun: green energy burst
+execute if score #ray_gun {ns}.data matches 1 run particle flash{{color:[0.0,0.8,0.0,1.0]}} ~ ~ ~ 0 0 0 0 1 force @a[distance=..128]
+execute if score #ray_gun {ns}.data matches 1 run particle dust{{color:[0.0,0.8,0.0],scale:1.5}} ~ ~ ~ 0.5 0.5 0.5 0 200 force @a[distance=..128]
+execute if score #ray_gun {ns}.data matches 1 run particle glow ~ ~ ~ 0.5 0.5 0.5 0.1 80 force @a[distance=..128]
+execute if score #ray_gun {ns}.data matches 1 run particle electric_spark ~ ~ ~ 0.5 0.5 0.5 0.05 100 force @a[distance=..128]
+## Explosion particles - standard weapons: fire + smoke
+execute if score #ray_gun {ns}.data matches 0 run particle explosion ~ ~ ~ 0 0 0 0 1 force @a[distance=..128]
+execute if score #ray_gun {ns}.data matches 0 run particle flame ~ ~ ~ 1 1 1 0.1 100 force @a[distance=..128]
+execute if score #ray_gun {ns}.data matches 0 run particle large_smoke ~ ~ ~ 1.5 1.5 1.5 0.05 50 force @a[distance=..128]
+execute if score #ray_gun {ns}.data matches 0 run particle campfire_signal_smoke ~ ~ ~ 0.5 0.5 0.5 0.05 20 force @a[distance=..128]
+execute if score #ray_gun {ns}.data matches 0 run particle lava ~ ~ ~ 1 1 1 0 30 force @a[distance=..128]
 
 # Explosion sound - ray_gun is silent (no explosion sound)
-execute if score #is_ray_gun {ns}.data matches 0 run playsound minecraft:entity.generic.explode player @a[distance=..64] ~ ~ ~ 2 0.8
+execute if score #ray_gun {ns}.data matches 0 run playsound minecraft:entity.generic.explode player @a[distance=..64] ~ ~ ~ 2 0.8
 
 # Block destruction via RealisticExplosionLibrary (if RPG_EXPLOSION_POWER > 0)
 execute if score #projectile_explosion_power {ns}.config matches 1.. run function {ns}:v{version}/projectile/realistic_explosion

@@ -9,6 +9,7 @@ from ...config.stats import (
 	ALL_SLOTS,
 	BASE_WEAPON,
 	CAPACITY,
+	PAP_STATS,
 	REMAINING_BULLETS,
 	STATS_FIELDS,
 )
@@ -202,13 +203,13 @@ function {ns}:v{version}/zombies/pap/pick_list_value_step
 	compute_max_lines: list[str] = [f"scoreboard players set #pap_max {ns}.data 1"]
 	for field in STATS_FIELDS:
 		compute_max_lines.append(
-			f'execute if data storage {ns}:temp _pap_extract.stats.pap_stats.{field}[0] store result score #pap_len {ns}.data run data get storage {ns}:temp _pap_extract.stats.pap_stats.{field}'
+			f'execute if data storage {ns}:temp _pap_extract.stats.{PAP_STATS}.{field}[0] store result score #pap_len {ns}.data run data get storage {ns}:temp _pap_extract.stats.{PAP_STATS}.{field}'
 		)
 		compute_max_lines.append(
 			f'execute if score #pap_len {ns}.data > #pap_max {ns}.data run scoreboard players operation #pap_max {ns}.data = #pap_len {ns}.data'
 		)
 	compute_max_lines.append(
-		f'execute if data storage {ns}:temp _pap_extract.stats.pap_stats.pap_name[0] store result score #pap_len {ns}.data run data get storage {ns}:temp _pap_extract.stats.pap_stats.pap_name'
+		f'execute if data storage {ns}:temp _pap_extract.stats.{PAP_STATS}.pap_name[0] store result score #pap_len {ns}.data run data get storage {ns}:temp _pap_extract.stats.{PAP_STATS}.pap_name'
 	)
 	compute_max_lines.append(
 		f'execute if score #pap_len {ns}.data > #pap_max {ns}.data run scoreboard players operation #pap_max {ns}.data = #pap_len {ns}.data'
@@ -218,26 +219,26 @@ function {ns}:v{version}/zombies/pap/pick_list_value_step
 	# Apply one PAP field dynamically from stats.pap_stats.<field> for #pap_next_idx.
 	for field in STATS_FIELDS:
 		field_lines: list[str] = [
-			f'data modify storage {ns}:temp _pap_pick.list set from storage {ns}:temp _pap_extract.stats.pap_stats.{field}',
+			f'data modify storage {ns}:temp _pap_pick.list set from storage {ns}:temp _pap_extract.stats.{PAP_STATS}.{field}',
 			f'execute if data storage {ns}:temp _pap_pick.list[0] run function {ns}:v{version}/zombies/pap/pick_list_value',
 			f'execute if data storage {ns}:temp _pap_pick.list[0] run data modify storage {ns}:temp _pap_extract.stats.{field} set from storage {ns}:temp _pap_pick.value',
-			f'execute unless data storage {ns}:temp _pap_pick.list[0] run data modify storage {ns}:temp _pap_extract.stats.{field} set from storage {ns}:temp _pap_extract.stats.pap_stats.{field}',
+			f'execute unless data storage {ns}:temp _pap_pick.list[0] run data modify storage {ns}:temp _pap_extract.stats.{field} set from storage {ns}:temp _pap_extract.stats.{PAP_STATS}.{field}',
 		]
 		write_versioned_function(f"zombies/pap/apply_field/{field}", "\n".join(field_lines))
 
 	apply_lines: list[str] = []
 	for field in STATS_FIELDS:
 		apply_lines.append(
-			f'execute if data storage {ns}:temp _pap_extract.stats.pap_stats.{field} run function {ns}:v{version}/zombies/pap/apply_field/{field}'
+			f'execute if data storage {ns}:temp _pap_extract.stats.{PAP_STATS}.{field} run function {ns}:v{version}/zombies/pap/apply_field/{field}'
 		)
 	write_versioned_function("zombies/pap/apply_runtime_overrides", "\n".join(apply_lines))
 
 	# Resolve optional pap_name dynamically (scalar or list).
 	name_lines: list[str] = [
-		f'data modify storage {ns}:temp _pap_pick.list set from storage {ns}:temp _pap_extract.stats.pap_stats.pap_name',
+		f'data modify storage {ns}:temp _pap_pick.list set from storage {ns}:temp _pap_extract.stats.{PAP_STATS}.pap_name',
 		f'execute if data storage {ns}:temp _pap_pick.list[0] run function {ns}:v{version}/zombies/pap/pick_list_value',
 		f'execute if data storage {ns}:temp _pap_pick.list[0] run data modify storage {ns}:temp _pap_extract.new_name set from storage {ns}:temp _pap_pick.value',
-		f'execute unless data storage {ns}:temp _pap_pick.list[0] run data modify storage {ns}:temp _pap_extract.new_name set from storage {ns}:temp _pap_extract.stats.pap_stats.pap_name',
+		f'execute unless data storage {ns}:temp _pap_pick.list[0] run data modify storage {ns}:temp _pap_extract.new_name set from storage {ns}:temp _pap_extract.stats.{PAP_STATS}.pap_name',
 	]
 	write_versioned_function("zombies/pap/resolve_runtime_name", "\n".join(name_lines))
 
@@ -660,11 +661,11 @@ execute unless score #pap_is_gun {ns}.data matches 1 run return run function {ns
 function {ns}:v{version}/zombies/pap/extract_selected with storage {ns}:temp _pap
 
 # Guard: selected weapon must provide PAP data in its own stats
-execute unless data storage {ns}:temp _pap_extract.stats.pap_stats run return run function {ns}:v{version}/zombies/pap/deny_not_supported
+execute unless data storage {ns}:temp _pap_extract.stats.{PAP_STATS} run return run function {ns}:v{version}/zombies/pap/deny_not_supported
 
 # Compute current and next PAP levels
 scoreboard players set #pap_level {ns}.data 0
-execute if data storage {ns}:temp _pap_extract.stats.pap_level store result score #pap_level {ns}.data run data get storage {ns}:temp _pap_extract.stats.pap_level
+execute if data storage {ns}:temp _pap_extract.stats.{PAP_STATS}.pap_level store result score #pap_level {ns}.data run data get storage {ns}:temp _pap_extract.stats.{PAP_STATS}.pap_level
 scoreboard players operation #pap_next {ns}.data = #pap_level {ns}.data
 scoreboard players add #pap_next {ns}.data 1
 scoreboard players operation #pap_next_idx {ns}.data = #pap_next {ns}.data
@@ -708,7 +709,7 @@ execute if data storage {ns}:temp _pap_old_stats.scope_level run data modify sto
 execute store result storage {ns}:temp _pap_extract.stats.pap_level int 1 run scoreboard players get #pap_next {ns}.data
 
 # Resolve pre-built PAP display name with level suffix
-execute if data storage {ns}:temp _pap_extract.stats.pap_stats.pap_name run function {ns}:v{version}/zombies/pap/resolve_runtime_name
+execute if data storage {ns}:temp _pap_extract.stats.{PAP_STATS}.pap_name run function {ns}:v{version}/zombies/pap/resolve_runtime_name
 
 # Prepare name data: use PAP name if available, otherwise keep original
 execute if data storage {ns}:temp _pap_extract.new_name run data modify storage {ns}:temp _pap_name_data.name set from storage {ns}:temp _pap_extract.new_name
@@ -1115,11 +1116,11 @@ execute if score #pap_sel {ns}.data matches 3 run data modify storage {ns}:temp 
 function {ns}:v{version}/zombies/pap/extract_selected with storage {ns}:temp _pap
 
 # Guard: weapon must support PAP
-execute unless data storage {ns}:temp _pap_extract.stats.pap_stats run return run function {ns}:v{version}/zombies/pap/deny_not_supported
+execute unless data storage {ns}:temp _pap_extract.stats.{PAP_STATS} run return run function {ns}:v{version}/zombies/pap/deny_not_supported
 
 # Compute current and next PAP levels
 scoreboard players set #pap_level {ns}.data 0
-execute if data storage {ns}:temp _pap_extract.stats.pap_level store result score #pap_level {ns}.data run data get storage {ns}:temp _pap_extract.stats.pap_level
+execute if data storage {ns}:temp _pap_extract.stats.{PAP_STATS}.pap_level store result score #pap_level {ns}.data run data get storage {ns}:temp _pap_extract.stats.{PAP_STATS}.pap_level
 scoreboard players operation #pap_next {ns}.data = #pap_level {ns}.data
 scoreboard players add #pap_next {ns}.data 1
 scoreboard players operation #pap_next_idx {ns}.data = #pap_next {ns}.data
@@ -1145,7 +1146,7 @@ function {ns}:v{version}/zombies/pap/randomize_camo with storage {ns}:temp _pap_
 execute store result storage {ns}:temp _pap_extract.stats.pap_level int 1 run scoreboard players get #pap_next {ns}.data
 
 # Resolve display name (PAP-specific name or keep current)
-execute if data storage {ns}:temp _pap_extract.stats.pap_stats.pap_name run function {ns}:v{version}/zombies/pap/resolve_runtime_name
+execute if data storage {ns}:temp _pap_extract.stats.{PAP_STATS}.pap_name run function {ns}:v{version}/zombies/pap/resolve_runtime_name
 execute if data storage {ns}:temp _pap_extract.new_name run data modify storage {ns}:temp _pap_name_data.name set from storage {ns}:temp _pap_extract.new_name
 execute unless data storage {ns}:temp _pap_extract.new_name run data modify storage {ns}:temp _pap_name_data.name set from storage {ns}:temp _pap_extract.current_name
 execute store result storage {ns}:temp _pap_name_data.level int 1 run scoreboard players get #pap_next {ns}.data

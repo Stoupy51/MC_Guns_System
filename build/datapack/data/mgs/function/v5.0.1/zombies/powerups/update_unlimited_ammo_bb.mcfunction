@@ -13,5 +13,5 @@ execute if score #pu_max_duration mgs.data matches ..0 run bossbar remove mgs:pu
 execute if score #pu_max_duration mgs.data matches 1.. store result bossbar mgs:pu_unlimited_ammo value run scoreboard players get #pu_max_duration mgs.data
 execute if score #pu_max_duration mgs.data matches 1.. run scoreboard players operation #pu_seconds mgs.data = #pu_max_duration mgs.data
 execute if score #pu_max_duration mgs.data matches 1.. run scoreboard players operation #pu_seconds mgs.data /= #20 mgs.data
-execute if score #pu_max_duration mgs.data matches 1.. run bossbar set mgs:pu_unlimited_ammo name [{"translate":"mgs.unlimited_ammo","color":"yellow","bold":true,"extra":[{"score":{"name":"#pu_seconds","objective":"mgs.data"},"color":"yellow","bold":true},{"translate":"s","color":"yellow","bold":true}]}, " - "]
+execute if score #pu_max_duration mgs.data matches 1.. run bossbar set mgs:pu_unlimited_ammo name [[{"translate":"mgs.unlimited_ammo","color":"green","bold":true}, " - "],{"score":{"name":"#pu_seconds","objective":"mgs.data"},"color":"green"},"s"]
 
