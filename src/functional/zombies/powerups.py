@@ -2,28 +2,42 @@
 # ruff: noqa: E501
 # Power-up System
 # Drops from zombies via a score-threshold gate (players' combined points vs. a rising threshold)
-# with a secondary 2% per-kill RNG check. Up to 4 drops per round.
+# with a secondary 4% per-kill RNG check. Up to 4 drops per round.
 # Visual: item_display + text_display. Pickup by proximity (1.5 blocks). 26.5s lifetime.
-from stewbeet import LootTable, Mem, set_json_encoder, write_load_file, write_versioned_function
+from stewbeet import JsonDict, LootTable, Mem, set_json_encoder, write_load_file, write_versioned_function
 
 from ..helpers import MGS_TAG
 from .perks import PERK_DEFINITIONS
 
-# (id, placeholder_item, display_name, color, type_number, tier)
-POWERUP_TYPES: list[tuple[str, str, str, str, int, str]] = [
-	("max_ammo",       "minecraft:amethyst_shard",        "Max Ammo",       "aqua",         1, "common"),
-	("insta_kill",     "minecraft:fermented_spider_eye",  "Insta Kill",     "red",          2, "common"),
-	("double_points",  "minecraft:gold_ingot",            "Double Points",  "gold",         3, "common"),
-	("carpenter",      "minecraft:oak_log",               "Carpenter",      "green",        4, "common"),
-	("nuke",           "minecraft:tnt",                   "Nuke",           "red",          5, "common"),
-	("unlimited_ammo", "minecraft:blaze_rod",             "Unlimited Ammo", "yellow",       6, "rare"),
-	("random_perk",    "minecraft:glass_bottle",          "Random Perk",    "light_purple", 7, "rare"),
-	("free_pap",       "minecraft:diamond",               "Free PAP",       "aqua",         8, "rare"),
-	("cash_drop",      "minecraft:emerald",               "Cash Drop",      "green",        9, "rare"),
-]
+# Each power-up is a dict with required keys:
+#   item         - placeholder item id
+#   display      - display name shown in-game
+#   color        - text color
+#   type_num     - integer used in scoreboards/dispatch
+#   tier         - "common" | "rare"  (rare = 25% chance to appear each shuffle cycle)
+#
+# Timed power-ups additionally carry:
+#   duration     - active duration in ticks
+#   scoreboard   - the {ns}.special.<scoreboard> objective name
+#   bossbar_id   - the {ns}:pu_<bossbar_id> bossbar name
+#   bb_color     - bossbar color string
+POWERUP_TYPES: dict[str, JsonDict] = {
+    "max_ammo":       {"item": "minecraft:amethyst_shard",       "display": "Max Ammo",        "color": "aqua",         "type_num": 1, "tier": "common"},
+    "insta_kill":     {"item": "minecraft:fermented_spider_eye", "display": "Insta Kill",      "color": "red",          "type_num": 2, "tier": "common", "duration": 600, "scoreboard": "instant_kill",    "bossbar_id": "pu_insta_kill",      "bb_color": "red"},
+    "double_points":  {"item": "minecraft:gold_ingot",           "display": "Double Points",   "color": "gold",         "type_num": 3, "tier": "common", "duration": 600, "scoreboard": "double_points",   "bossbar_id": "pu_double_points",   "bb_color": "gold"},
+    "carpenter":      {"item": "minecraft:oak_log",              "display": "Carpenter",       "color": "green",        "type_num": 4, "tier": "common"},
+    "nuke":           {"item": "minecraft:tnt",                  "display": "Nuke",            "color": "red",          "type_num": 5, "tier": "common"},
+    "unlimited_ammo": {"item": "minecraft:blaze_rod",            "display": "Unlimited Ammo",  "color": "yellow",       "type_num": 6, "tier": "rare",   "duration": 600, "scoreboard": "infinite_ammo",   "bossbar_id": "pu_unlimited_ammo",  "bb_color": "yellow"},
+    "random_perk":    {"item": "minecraft:glass_bottle",         "display": "Random Perk",     "color": "light_purple", "type_num": 7, "tier": "rare"},
+    "free_pap":       {"item": "minecraft:diamond",              "display": "Free PAP",        "color": "aqua",         "type_num": 8, "tier": "rare"},
+    "cash_drop":      {"item": "minecraft:emerald",              "display": "Cash Drop",       "color": "green",        "type_num": 9, "tier": "rare"},
+}
 
-POWERUP_LIFETIME: int = 530     # 26.5 seconds in ticks
+POWERUP_LIFETIME: int  = 530   # 26.5 seconds in ticks
 POWERUP_BLINK_START: int = 200  # Blink warning when this many ticks remain (~10s)
+
+# Convenience view: only power-ups with a timed duration
+TIMED_POWERUPS: dict[str, JsonDict] = {k: v for k, v in POWERUP_TYPES.items() if "duration" in v}
 
 
 def generate_powerups() -> None:
@@ -39,13 +53,10 @@ def generate_powerups() -> None:
 # Power-up entity scoreboards
 scoreboard objectives add {ns}.zb.pu.type dummy
 scoreboard objectives add {ns}.zb.pu.timer dummy
-
-# Per-player double-points duration (ticks)
-scoreboard objectives add {ns}.special.double_points dummy
 """)
 
 	# ──────────────────────────────────────────────────────────────────────────
-	# Loot table: equal-weight 9-entry pool, each entry tags the item type
+	# Loot table: equal-weight pool, each entry tags the item type
 	# ──────────────────────────────────────────────────────────────────────────
 	Mem.ctx.data[ns].loot_tables["zombies/powerup_drop"] = set_json_encoder(LootTable({
 		"pools": [{
@@ -53,7 +64,7 @@ scoreboard objectives add {ns}.special.double_points dummy
 			"entries": [
 				{
 					"type": "minecraft:item",
-					"name": item,
+					"name": v["item"],
 					"weight": 1,
 					"functions": [{
 						"function": "minecraft:set_components",
@@ -62,7 +73,7 @@ scoreboard objectives add {ns}.special.double_points dummy
 						},
 					}],
 				}
-				for pu_id, item, _, _, _, _ in POWERUP_TYPES
+				for pu_id, v in POWERUP_TYPES.items()
 			],
 		}],
 	}))
@@ -73,7 +84,7 @@ scoreboard objectives add {ns}.special.double_points dummy
 	write_versioned_function("zombies/powerups/check_drop", f"""
 # Compute combined score of all in-game players
 scoreboard players set #zb_total_score {ns}.data 0
-execute as @a[scores={{{ns}.zb.in_game=1}},gamemode=!spectator] run scoreboard players operation #zb_total_score {ns}.data += @s {ns}.zb.points
+scoreboard players operation #zb_total_score {ns}.data += @a[scores={{{ns}.zb.in_game=1}}] {ns}.zb.points
 
 # Guard: max 4 drops per round
 execute if score #zb_drops_this_round {ns}.data matches 4.. run return 0
@@ -112,15 +123,16 @@ function {ns}:v{version}/zombies/powerups/do_spawn_random with storage {ns}:temp
 
 	# Macro: dispatch to the correct spawn_type function using the pre-stored coordinates
 	do_spawn_random_lines: str = "\n".join(
-		f"$execute if score #pu_spawn_type {ns}.data matches {type_num} run function {ns}:v{version}/zombies/powerups/spawn_type/{pu_id} {{x:$(x),y:$(y),z:$(z)}}"
-		for pu_id, _, _, _, type_num, _ in POWERUP_TYPES
+		f"$execute if score #pu_spawn_type {ns}.data matches {v['type_num']} run function {ns}:v{version}/zombies/powerups/spawn_type/{pu_id} {{x:$(x),y:$(y),z:$(z)}}"
+		for pu_id, v in POWERUP_TYPES.items()
 	)
 	write_versioned_function("zombies/powerups/do_spawn_random", f"""
 {do_spawn_random_lines}
 """)
 
-	# Shuffle-bag queue: draw one type at a time without replacement.
-	# Refill when empty: always all common types + each rare type with 25% chance.
+	# ──────────────────────────────────────────────────────────────────────────
+	# Shuffle-bag queue
+	# ──────────────────────────────────────────────────────────────────────────
 	num_types: int = len(POWERUP_TYPES)
 	queue_random_lines: str = "\n".join(
 		f"execute if score #pu_q_len {ns}.data matches {i + 1} store result score #pu_q_idx {ns}.data run random value 0..{i}"
@@ -143,15 +155,15 @@ function {ns}:v{version}/zombies/powerups/queue_extract with storage {ns}:temp _
 """)
 
 	queue_refill_common_lines: str = "\n".join(
-		f"data modify storage {ns}:data _pu_queue append value {type_num}"
-		for _, _, _, _, type_num, tier in POWERUP_TYPES
-		if tier == "common"
+		f"data modify storage {ns}:data _pu_queue append value {v['type_num']}"
+		for _pu_id, v in POWERUP_TYPES.items()
+		if v["tier"] == "common"
 	)
 	queue_refill_rare_lines: str = "\n".join(
-		f"execute store result score #pu_rare_roll_{type_num} {ns}.data run random value 1..100\n"
-		f"execute if score #pu_rare_roll_{type_num} {ns}.data matches 1..25 run data modify storage {ns}:data _pu_queue append value {type_num}"
-		for _, _, _, _, type_num, tier in POWERUP_TYPES
-		if tier == "rare"
+		f"execute store result score #pu_rare_roll_{v['type_num']} {ns}.data run random value 1..100\n"
+		f"execute if score #pu_rare_roll_{v['type_num']} {ns}.data matches 1..25 run data modify storage {ns}:data _pu_queue append value {v['type_num']}"
+		for _pu_id, v in POWERUP_TYPES.items()
+		if v["tier"] == "rare"
 	)
 	write_versioned_function("zombies/powerups/queue_refill", f"""
 data modify storage {ns}:data _pu_queue set value []
@@ -169,8 +181,7 @@ $data remove storage {ns}:data _pu_queue[$(idx)]
 """)
 
 	# ──────────────────────────────────────────────────────────────────────────
-	# Item intercept: replace loot-spawned item entity with displays.
-	# Registered to common_signals so it fires the instant the item is created.
+	# Item intercept: replace loot-spawned item entity with displays
 	# ──────────────────────────────────────────────────────────────────────────
 	write_versioned_function("zombies/powerups/intercept_item", f"""
 # Only handle items tagged as powerups
@@ -189,19 +200,22 @@ kill @s
 function {ns}:v{version}/zombies/powerups/spawn_display with storage {ns}:temp _pu_spawn
 """, tags=["common_signals:signals/on_new_item"])
 
-	# Dispatch to per-type spawner (macro: x, y, z come from _pu_spawn storage)
+	# Dispatch to per-type spawner
 	dispatch_lines: str = "\n".join(
 		f'$execute if data storage {ns}:temp _pu_spawn {{{{"type":"{pu_id}"}}}} run function {ns}:v{version}/zombies/powerups/spawn_type/{pu_id} {{{{x:$(x),y:$(y),z:$(z)}}}}'
-		for pu_id, _, _, _, _, _ in POWERUP_TYPES
+		for pu_id in POWERUP_TYPES
 	)
 	write_versioned_function("zombies/powerups/spawn_display", f"""
 {dispatch_lines}
 """)
 
 	# Per-type spawners (macro: x, y, z)
-	for pu_id, item, display_name, color, type_num, _ in POWERUP_TYPES:
+	for pu_id, v in POWERUP_TYPES.items():
+		item: str = v["item"]
+		display_name: str = v["display"]
+		color: str = v["color"]
+		type_num: int = v["type_num"]
 		write_versioned_function(f"zombies/powerups/spawn_type/{pu_id}", f"""
-#$summon minecraft:item_display $(x) $(y) $(z) {{Tags:["{ns}.pu_item","{ns}.pu_item_new","{ns}.gm_entity"],item:{{id:"{item}",count:1,components:{{"minecraft:item_model":"{ns}:zombies/powerup/{pu_id}"}}}},item_display:"ground",transformation:{{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],translation:[0f,0.25f,0f],scale:[0.7f,0.7f,0.7f]}}}}
 $summon minecraft:item_display $(x) $(y) $(z) {{Tags:["{ns}.pu_item","{ns}.pu_item_new","{ns}.gm_entity"],item:{{id:"{item}",count:1}},billboard:"vertical",item_display:"ground",transformation:{{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],translation:[0f,0.25f,0f],scale:[0.7f,0.7f,0.7f]}}}}
 scoreboard players set @n[tag={ns}.pu_item_new] {ns}.zb.pu.type {type_num}
 scoreboard players set @n[tag={ns}.pu_item_new] {ns}.zb.pu.timer {POWERUP_LIFETIME}
@@ -264,17 +278,16 @@ kill @s
 tag @a[tag={ns}.pu_collecting] remove {ns}.pu_collecting
 """)
 
-	# Dispatch to the appropriate activation function by type number
 	dispatch_activate_lines: str = "\n".join(
-		f"execute if score #pu_type_pickup {ns}.data matches {type_num} run function {ns}:v{version}/zombies/powerups/activate/{pu_id}"
-		for pu_id, _, _, _, type_num, _ in POWERUP_TYPES
+		f"execute if score #pu_type_pickup {ns}.data matches {v['type_num']} run function {ns}:v{version}/zombies/powerups/activate/{pu_id}"
+		for pu_id, v in POWERUP_TYPES.items()
 	)
 	write_versioned_function("zombies/powerups/dispatch_activate", f"""
 {dispatch_activate_lines}
 """)
 
 	# ──────────────────────────────────────────────────────────────────────────
-	# Activation functions (9 power-ups)
+	# Activation functions
 	# ──────────────────────────────────────────────────────────────────────────
 
 	## 1. Max Ammo
@@ -284,45 +297,42 @@ tellraw @a[scores={{{ns}.zb.in_game=1}}] [{MGS_TAG},{{"text":"Max Ammo!","color"
 playsound minecraft:entity.player.levelup master @a[scores={{{ns}.zb.in_game=1}}] ~ ~ ~ 1.0 1.0
 """)
 
-	## 2. Insta Kill
-	write_versioned_function("zombies/powerups/activate/insta_kill", f"""
-effect give @a[scores={{{ns}.zb.in_game=1}},gamemode=!spectator] minecraft:strength 30 255 true
-scoreboard players set @a[scores={{{ns}.zb.in_game=1}},gamemode=!spectator] {ns}.special.instant_kill 600
-tellraw @a[scores={{{ns}.zb.in_game=1}}] [{MGS_TAG},{{"text":"Insta Kill!","color":"red","bold":true}}]
+	## 2-4. Timed power-ups: Insta Kill, Double Points, Unlimited Ammo
+	# All share the same bossbar+scoreboard activation pattern, driven by TIMED_POWERUPS.
+	for pu_id, v in TIMED_POWERUPS.items():
+		duration   = v["duration"]
+		scoreboard = v["scoreboard"]
+		bossbar_id = v["bossbar_id"]
+		display_name    = v["display"]
+		color      = v["color"]
+		bb_color   = v["bb_color"]
+		write_versioned_function(f"zombies/powerups/activate/{pu_id}", f"""
+scoreboard players set @a[scores={{{ns}.zb.in_game=1}}] {ns}.special.{scoreboard} {duration}
+bossbar remove {ns}:{bossbar_id}
+bossbar create {ns}:{bossbar_id} {{"text":"{display_name} - {duration // 20}s","bold":true,"color":"{bb_color}"}}
+bossbar set {ns}:{bossbar_id} max {duration}
+bossbar set {ns}:{bossbar_id} value {duration}
+bossbar set {ns}:{bossbar_id} color {bb_color}
+bossbar set {ns}:{bossbar_id} style progress
+bossbar set {ns}:{bossbar_id} players @a[scores={{{ns}.zb.in_game=1}}]
 playsound minecraft:entity.player.levelup master @a[scores={{{ns}.zb.in_game=1}}] ~ ~ ~ 1.0 1.0
 """)
 
-	## 3. Double Points
-	write_versioned_function("zombies/powerups/activate/double_points", f"""
-scoreboard players set @a[scores={{{ns}.zb.in_game=1}},gamemode=!spectator] {ns}.special.double_points 600
-tellraw @a[scores={{{ns}.zb.in_game=1}}] [{MGS_TAG},{{"text":"Double Points!","color":"gold","bold":true}}]
-playsound minecraft:entity.player.levelup master @a[scores={{{ns}.zb.in_game=1}}] ~ ~ ~ 1.0 1.0
-""")
-
-	## 4. Carpenter (instant barrier repair)
+	## 5. Carpenter (instant barrier repair)
 	write_versioned_function("zombies/powerups/activate/carpenter", f"""
 function {ns}:v{version}/zombies/barriers/repair_all
 tellraw @a[scores={{{ns}.zb.in_game=1}}] [{MGS_TAG},{{"text":"Carpenter!","color":"green","bold":true}}]
 playsound minecraft:entity.player.levelup master @a[scores={{{ns}.zb.in_game=1}}] ~ ~ ~ 1.0 1.0
 """)
 
-	## 5. Nuke
+	## 6. Nuke
 	write_versioned_function("zombies/powerups/activate/nuke", f"""
 execute as @a[tag={ns}.pu_collecting,scores={{{ns}.zb.in_game=1}},gamemode=!spectator] run function {ns}:zombies/bonus/nuke
 tellraw @a[scores={{{ns}.zb.in_game=1}}] [{MGS_TAG},{{"text":"Nuke!","color":"red","bold":true}}]
 playsound minecraft:entity.player.levelup master @a[scores={{{ns}.zb.in_game=1}}] ~ ~ ~ 1.0 0.5
 """)
 
-	## 6. Unlimited Ammo
-	write_versioned_function("zombies/powerups/activate/unlimited_ammo", f"""
-scoreboard players set @a[scores={{{ns}.zb.in_game=1}},gamemode=!spectator] {ns}.special.infinite_ammo 600
-tellraw @a[scores={{{ns}.zb.in_game=1}}] [{MGS_TAG},{{"text":"Unlimited Ammo!","color":"yellow","bold":true}}]
-playsound minecraft:entity.player.levelup master @a[scores={{{ns}.zb.in_game=1}}] ~ ~ ~ 1.0 1.0
-""")
-
 	## 7. Random Perk
-	# Count available (unowned) perks for the collecting player, bail early if all owned.
-	# Then pick a random starting index and walk through the list to find the first unowned perk.
 	count_unowned_lines: str = "\n".join(
 		f"execute if score @p[tag={ns}.pu_collecting] {ns}.zb.perk.{perk_id} matches 0 run scoreboard players add #pu_perk_avail {ns}.data 1"
 		for perk_id in perk_ids
@@ -333,7 +343,7 @@ playsound minecraft:entity.player.levelup master @a[scores={{{ns}.zb.in_game=1}}
 		iter_dispatch_lines += f"execute if score #pu_perk_applied {ns}.data matches 1 run return 0\n"
 
 	write_versioned_function("zombies/powerups/activate/random_perk", f"""
-# Count unowned perks (bail early if all owned — prevents unnecessary iteration)
+# Count unowned perks (bail early if all owned)
 scoreboard players set #pu_perk_avail {ns}.data 0
 {count_unowned_lines}
 execute if score #pu_perk_avail {ns}.data matches 0 run return run tellraw @p[tag={ns}.pu_collecting] [{MGS_TAG},{{"text":"You already own every perk!","color":"yellow"}}]
@@ -391,8 +401,8 @@ scoreboard players operation #pu_cash {ns}.data *= #100 {ns}.data
 # Double the reward if double_points is active for the collecting player
 execute if score @p[tag={ns}.pu_collecting] {ns}.special.double_points matches 1.. run scoreboard players operation #pu_cash {ns}.data *= #2 {ns}.data
 
-# Award to all alive in-game players
-execute as @a[scores={{{ns}.zb.in_game=1}},gamemode=!spectator] run scoreboard players operation @s {ns}.zb.points += #pu_cash {ns}.data
+# Award to all in-game players
+execute as @a[scores={{{ns}.zb.in_game=1}}] run scoreboard players operation @s {ns}.zb.points += #pu_cash {ns}.data
 
 # Announce with amount
 tellraw @a[scores={{{ns}.zb.in_game=1}}] [{MGS_TAG},{{"text":"Cash Drop! ","color":"green","bold":true}},{{"text":"+","color":"gold"}},{{"score":{{"name":"#pu_cash","objective":"{ns}.data"}},"color":"gold","bold":true}},{{"text":" points each!","color":"gold"}}]
@@ -400,10 +410,42 @@ playsound minecraft:entity.player.levelup master @a[scores={{{ns}.zb.in_game=1}}
 """)
 
 	# ──────────────────────────────────────────────────────────────────────────
+	# Bossbar update functions — generated from TIMED_POWERUPS, one per entry
+	# ──────────────────────────────────────────────────────────────────────────
+	for pu_id, v in TIMED_POWERUPS.items():
+		scoreboard = v["scoreboard"]
+		bossbar_id = v["bossbar_id"]
+		display_name    = v["display"]
+		color      = v["color"]
+		write_versioned_function(f"zombies/powerups/update_{pu_id}_bb", f"""
+# Find max remaining duration across all players with active {pu_id}
+scoreboard players set #pu_max_duration {ns}.data 0
+scoreboard players operation #pu_max_duration {ns}.data > @a[scores={{{ns}.special.{scoreboard}=1..}}] {ns}.special.{scoreboard}
+
+# If max duration is 0, remove bossbar; otherwise update value and name with countdown
+execute if score #pu_max_duration {ns}.data matches ..0 run bossbar remove {ns}:{bossbar_id}
+execute if score #pu_max_duration {ns}.data matches 1.. store result bossbar {ns}:{bossbar_id} value run scoreboard players get #pu_max_duration {ns}.data
+execute if score #pu_max_duration {ns}.data matches 1.. run scoreboard players operation #pu_seconds {ns}.data = #pu_max_duration {ns}.data
+execute if score #pu_max_duration {ns}.data matches 1.. run scoreboard players operation #pu_seconds {ns}.data /= #20 {ns}.data
+execute if score #pu_max_duration {ns}.data matches 1.. run bossbar set {ns}:{bossbar_id} name {{"text":"{display_name} - ","color":"{color}","bold":true,"extra":[{{"score":{{"name":"#pu_seconds","objective":"{ns}.data"}},"color":"{color}","bold":true}},{{"text":"s","color":"{color}","bold":true}}]}}
+""")
+
+	# ──────────────────────────────────────────────────────────────────────────
 	# Hooks into existing systems
 	# ──────────────────────────────────────────────────────────────────────────
 
-	## game_tick: run entity ticks, manage blink state, decrement double_points
+	# Bossbar update calls for game_tick, generated from TIMED_POWERUPS
+	bb_update_calls: str = "\n".join(
+		f"function {ns}:v{version}/zombies/powerups/update_{pu_id}_bb"
+		for pu_id in TIMED_POWERUPS
+	)
+
+	# Scoreboard decrement calls for game_tick, generated from TIMED_POWERUPS
+	decrement_calls: str = "\n".join(
+		f"execute as @a[scores={{{ns}.special.{v['scoreboard']}=1..}}] run scoreboard players remove @s {ns}.special.{v['scoreboard']} 1"
+		for v in TIMED_POWERUPS.values()
+	)
+
 	write_versioned_function("zombies/game_tick", f"""
 # Power-up entity tick (lifetime countdown, blink, pickup detection)
 execute as @e[tag={ns}.pu_item] at @s run function {ns}:v{version}/zombies/powerups/entity_tick
@@ -414,41 +456,52 @@ execute if score #zb_blink_counter {ns}.data matches 5.. run scoreboard players 
 execute if score #zb_blink_counter {ns}.data matches 0 run scoreboard players add #zb_blink_state {ns}.data 1
 execute if score #zb_blink_state {ns}.data matches 2.. run scoreboard players set #zb_blink_state {ns}.data 0
 
-# Decrement double_points duration for alive in-game players
-execute as @a[scores={{{ns}.special.double_points=1..}},gamemode=!spectator] run scoreboard players remove @s {ns}.special.double_points 1
+# Decrement duration scoreboards
+{decrement_calls}
+
+# Update bossbars
+{bb_update_calls}
 """)
 
-	## start_round: reset drop counter + calculate new threshold from current player points
-	write_versioned_function("zombies/start_round", f"""
-# Reset per-round power-up drop counter
-scoreboard players set #zb_drops_this_round {ns}.data 0
+	# stop cleanup resets, generated from TIMED_POWERUPS
+	stop_scoreboard_resets: str = "\n".join(
+		f"scoreboard players set @a {ns}.special.{v['scoreboard']} 0"
+		for v in TIMED_POWERUPS.values()
+	)
+	stop_bossbar_removes: str = "\n".join(
+		f"bossbar remove {ns}:{v['bossbar_id']}"
+		for v in TIMED_POWERUPS.values()
+	)
 
-# Threshold = sum of all in-game player points at round start + 2000
-scoreboard players set #zb_score_to_drop {ns}.data 0
-execute as @a[scores={{{ns}.zb.in_game=1}},gamemode=!spectator] run scoreboard players operation #zb_score_to_drop {ns}.data += @s {ns}.zb.points
-scoreboard players add #zb_score_to_drop {ns}.data 2000
-""")
-
-	## check_kill_points: award double points bonus on kills
-	write_versioned_function("zombies/check_kill_points", f"""
-# Double points bonus: award the same kill points again if active
-execute if score @s {ns}.special.double_points matches 1.. run scoreboard players operation @s {ns}.zb.points += #total_kill_points {ns}.data
-""")
-
-	## on_hit_signal: award double points bonus on bullet hits
-	write_versioned_function("zombies/on_hit_signal", f"""
-# Double points bonus for bullet hit points
-execute if score @n[tag={ns}.ticking] {ns}.special.double_points matches 1.. run scoreboard players operation @n[tag={ns}.ticking] {ns}.zb.points += #zb_points_hit {ns}.config
-""")
-
-	## stop: clean up all power-up entities and reset state
 	write_versioned_function("zombies/stop", f"""
 # Power-up cleanup
 kill @e[tag={ns}.pu_item]
 kill @e[tag={ns}.pu_text]
 scoreboard players set #zb_drops_this_round {ns}.data 0
 scoreboard players set #zb_score_to_drop {ns}.data 0
-scoreboard players set @a {ns}.special.double_points 0
+{stop_scoreboard_resets}
 data modify storage {ns}:data _pu_queue set value []
+
+# Remove all duration-based bossbars
+{stop_bossbar_removes}
+""")
+
+	write_versioned_function("zombies/start_round", f"""
+# Reset per-round power-up drop counter
+scoreboard players set #zb_drops_this_round {ns}.data 0
+
+# Threshold = sum of all in-game player points at round start + 2000
+scoreboard players set #zb_score_to_drop {ns}.data 2000
+scoreboard players operation #zb_score_to_drop {ns}.data += @a[scores={{{ns}.zb.in_game=1}}] {ns}.zb.points
+""")
+
+	write_versioned_function("zombies/check_kill_points", f"""
+# Double points bonus: award the same kill points again if active
+execute if score @s {ns}.special.double_points matches 1.. run scoreboard players operation @s {ns}.zb.points += #total_kill_points {ns}.data
+""")
+
+	write_versioned_function("zombies/on_hit_signal", f"""
+# Double points bonus for bullet hit points
+execute if score @n[tag={ns}.ticking] {ns}.special.double_points matches 1.. run scoreboard players operation @n[tag={ns}.ticking] {ns}.zb.points += #zb_points_hit {ns}.config
 """)
 

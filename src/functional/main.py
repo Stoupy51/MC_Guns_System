@@ -82,6 +82,8 @@ scoreboard objectives add {ns}.config dummy
 scoreboard objectives add {ns}.special.instant_kill dummy
 # Infinite ammo: duration in ticks (don't consume ammo, set ammo to max capacity)
 scoreboard objectives add {ns}.special.infinite_ammo dummy
+# Double points: duration in ticks (double points earned from kills/hits in zombies)
+scoreboard objectives add {ns}.special.double_points dummy
 # Quick reload: percentage faster reload (20 = 20% faster, 50 = 50% faster)
 scoreboard objectives add {ns}.special.quick_reload dummy
 # Quick swap: percentage faster weapon switch (20 = 20% faster, 50 = 50% faster)

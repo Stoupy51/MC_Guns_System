@@ -6,7 +6,7 @@
 # @within	mgs:v5.0.1/zombies/powerups/dispatch_activate
 #
 
-# Count unowned perks (bail early if all owned — prevents unnecessary iteration)
+# Count unowned perks (bail early if all owned)
 scoreboard players set #pu_perk_avail mgs.data 0
 execute if score @p[tag=mgs.pu_collecting] mgs.zb.perk.juggernog matches 0 run scoreboard players add #pu_perk_avail mgs.data 1
 execute if score @p[tag=mgs.pu_collecting] mgs.zb.perk.speed_cola matches 0 run scoreboard players add #pu_perk_avail mgs.data 1

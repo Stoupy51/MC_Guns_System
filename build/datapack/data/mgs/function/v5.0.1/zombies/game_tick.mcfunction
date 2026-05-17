@@ -88,8 +88,15 @@ execute if score #zb_blink_counter mgs.data matches 5.. run scoreboard players s
 execute if score #zb_blink_counter mgs.data matches 0 run scoreboard players add #zb_blink_state mgs.data 1
 execute if score #zb_blink_state mgs.data matches 2.. run scoreboard players set #zb_blink_state mgs.data 0
 
-# Decrement double_points duration for alive in-game players
-execute as @a[scores={mgs.special.double_points=1..},gamemode=!spectator] run scoreboard players remove @s mgs.special.double_points 1
+# Decrement duration scoreboards
+execute as @a[scores={mgs.special.instant_kill=1..}] run scoreboard players remove @s mgs.special.instant_kill 1
+execute as @a[scores={mgs.special.double_points=1..}] run scoreboard players remove @s mgs.special.double_points 1
+execute as @a[scores={mgs.special.infinite_ammo=1..}] run scoreboard players remove @s mgs.special.infinite_ammo 1
+
+# Update bossbars
+function mgs:v5.0.1/zombies/powerups/update_insta_kill_bb
+function mgs:v5.0.1/zombies/powerups/update_double_points_bb
+function mgs:v5.0.1/zombies/powerups/update_unlimited_ammo_bb
 
 # Trap active tick (damage + timer)
 execute as @e[tag=mgs.trap_center,scores={mgs.zb.trap.timer=1..}] at @s run function mgs:v5.0.1/zombies/traps/active_tick
