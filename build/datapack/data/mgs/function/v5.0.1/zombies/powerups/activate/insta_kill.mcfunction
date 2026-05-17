@@ -6,6 +6,7 @@
 # @within	mgs:v5.0.1/zombies/powerups/dispatch_activate
 #
 
+effect give @a[scores={mgs.zb.in_game=1},gamemode=!spectator] minecraft:strength 30 255 true
 scoreboard players set @a[scores={mgs.zb.in_game=1},gamemode=!spectator] mgs.special.instant_kill 600
 tellraw @a[scores={mgs.zb.in_game=1}] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.insta_kill","color":"red","bold":true}]
 playsound minecraft:entity.player.levelup master @a[scores={mgs.zb.in_game=1}] ~ ~ ~ 1.0 1.0

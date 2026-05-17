@@ -36,6 +36,12 @@ scoreboard players set @a mgs.zb.passive 0
 scoreboard players set @a mgs.zb.ability 0
 scoreboard players set @a mgs.zb.ability_cd 0
 
+# Config: points per kill, points per hit
+scoreboard players set #zb_points_kill mgs.config 50
+scoreboard players set #zb_points_hit mgs.config 5
+scoreboard players set #zb_points_knife_kill mgs.config 130
+scoreboard players set #zb_mystery_box_price mgs.config 950
+
 # Tag all players as in-game
 scoreboard players set @a mgs.zb.in_game 1
 

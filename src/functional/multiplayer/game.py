@@ -419,12 +419,6 @@ function {ns}:v{version}/shared/maps/call_tick_script_at_base
 """)
 
 	## Timer display (actionbar timer in minutes:seconds for all in-game players)
-	write_versioned_function("multiplayer/game_tick", f"""
-# Always enforce sidebar display (objective may be removed/recreated by refresh functions)
-scoreboard objectives setdisplay sidebar {ns}.sidebar
-""", prepend=True)
-
-	## Timer display (actionbar timer in minutes:seconds for all in-game players)
 	write_versioned_function("multiplayer/timer_display", f"""
 # Convert ticks to seconds
 execute store result score #timer_sec {ns}.data run scoreboard players get #mp_timer {ns}.data
@@ -705,7 +699,7 @@ execute if score @s {ns}.mp.team matches 2 run return run function {ns}:v{versio
 
 	## Team sidebar (TDM/SND) — takes $(title) macro arg
 	write_versioned_function("multiplayer/create_sidebar_team", f"""
-scoreboard objectives remove {ns}.sidebar
+scoreboard players reset * {ns}.sidebar
 $function #bs.sidebar:create {{objective:"{ns}.sidebar",display_name:{{text:"$(title)",color:"gold",bold:true}},contents:[{sb_timer},{sb_spacer},{sb_red},{sb_blue},{sb_spacer},{sb_limit}]}}
 scoreboard objectives setdisplay sidebar {ns}.sidebar
 """)
@@ -747,7 +741,7 @@ function {ns}:v{version}/multiplayer/build_sidebar_ffa with storage {ns}:temp
 	## FFA sidebar build (macro function)
 	write_versioned_function("multiplayer/build_sidebar_ffa", f"""
 tag @a remove {ns}.ffa_candidate
-scoreboard objectives remove {ns}.sidebar
+scoreboard players reset * {ns}.sidebar
 $function #bs.sidebar:create {{objective:"{ns}.sidebar",display_name:{{text:"Free For All",color:"gold",bold:true}},contents:$(ffa_sb)}}
 scoreboard objectives setdisplay sidebar {ns}.sidebar
 """)
@@ -785,28 +779,26 @@ function {ns}:v{version}/multiplayer/build_sidebar_dom with storage {ns}:temp do
 """)
 
 	write_versioned_function("multiplayer/build_sidebar_dom", f"""
-scoreboard objectives remove {ns}.sidebar
+scoreboard players reset * {ns}.sidebar
 $function #bs.sidebar:create {{objective:"{ns}.sidebar",display_name:{{text:"Domination",color:"gold",bold:true}},contents:[{sb_timer},{sb_spacer},{sb_red},{sb_blue},{sb_spacer},$(a),$(b),$(c),{sb_spacer},{sb_limit}]}}
 scoreboard objectives setdisplay sidebar {ns}.sidebar
 """)
 
 	## Hardpoint sidebar — shows team scores + controlling team + time to move
 	write_versioned_function("multiplayer/create_sidebar_hp", f"""
-scoreboard objectives remove {ns}.sidebar
+scoreboard players reset * {ns}.sidebar
 function #bs.sidebar:create {{objective:"{ns}.sidebar",display_name:{{text:"Hardpoint",color:"gold",bold:true}},contents:[{sb_timer},{sb_spacer},{sb_red},{sb_blue},{sb_spacer},[{{text:" Zone: ",color:"dark_purple"}},{{score:{{name:"#hp_rotate_sec",objective:"{ns}.data"}},color:"white"}},{{text:"s left",color:"gray"}}],{sb_spacer},{sb_limit}]}}
 scoreboard objectives setdisplay sidebar {ns}.sidebar
 """)
 
-	# Shooting Block During Prep ────────────────────────────────
-
+	# Shooting Block During Prep
 	## Prepend to right_click: block shooting during prep phase
 	write_versioned_function("player/right_click", f"""
 # Block shooting during multiplayer prep phase
 execute if score @s {ns}.mp.in_game matches 1 if data storage {ns}:multiplayer game{{state:"preparing"}} run return run scoreboard players set @s {ns}.pending_clicks 0
 """, prepend=True)
 
-	# Prep Phase ────────────────────────────────────────────────
-
+	# Prep Phase
 	## Prep tick: during 10s warmup, detect class changes and apply immediately
 	write_versioned_function("multiplayer/prep_tick", f"""
 # Check for class changes and apply immediately

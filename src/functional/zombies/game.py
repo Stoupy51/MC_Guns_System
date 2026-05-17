@@ -63,12 +63,6 @@ execute unless data storage {ns}:zombies game run data modify storage {ns}:zombi
 
 # Initialize mystery box base pool (can be extended via function tag)
 execute unless data storage {ns}:zombies mystery_box_pool run data modify storage {ns}:zombies mystery_box_pool set value []
-
-# Config: points per kill, points per hit
-execute unless score #zb_points_kill {ns}.config matches 1.. run scoreboard players set #zb_points_kill {ns}.config 50
-execute unless score #zb_points_hit {ns}.config matches 1.. run scoreboard players set #zb_points_hit {ns}.config 5
-execute unless score #zb_points_knife_kill {ns}.config matches 1.. run scoreboard players set #zb_points_knife_kill {ns}.config 130
-execute unless score #zb_mystery_box_price {ns}.config matches 1.. run scoreboard players set #zb_mystery_box_price {ns}.config 950
 """)
 
 	## Signal function tags
@@ -96,6 +90,12 @@ scoreboard players set @a {ns}.zb.downs 0
 scoreboard players set @a {ns}.zb.passive 0
 scoreboard players set @a {ns}.zb.ability 0
 scoreboard players set @a {ns}.zb.ability_cd 0
+
+# Config: points per kill, points per hit
+scoreboard players set #zb_points_kill {ns}.config 50
+scoreboard players set #zb_points_hit {ns}.config 5
+scoreboard players set #zb_points_knife_kill {ns}.config 130
+scoreboard players set #zb_mystery_box_price {ns}.config 950
 
 # Tag all players as in-game
 scoreboard players set @a {ns}.zb.in_game 1
@@ -622,13 +622,13 @@ data modify storage {ns}:temp zb_sb append value [{{selector:"@a[scores={{{ns}.z
 	write_versioned_function("zombies/sidebar_rank_players", sidebar_rank_code)
 
 	write_versioned_function("zombies/build_sidebar", f"""
-scoreboard objectives remove {ns}.zb_sidebar
+scoreboard players reset * {ns}.zb_sidebar
 $function #bs.sidebar:create {{objective:"{ns}.zb_sidebar",display_name:{{text:"Zombies",color:"dark_green",bold:true}},contents:$(zb_sb)}}
 """)
 
-	# Block shooting during prep ────────────────────────────────
-
+	# Block shooting during prep
 	write_versioned_function("player/right_click", f"""
 # Block shooting during zombies prep phase
 execute if score @s {ns}.zb.in_game matches 1 if data storage {ns}:zombies game{{state:"preparing"}} run return run scoreboard players set @s {ns}.pending_clicks 0
 """, prepend=True)
+
