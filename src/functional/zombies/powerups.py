@@ -3,7 +3,7 @@
 # Power-up System
 # Drops from zombies via a score-threshold gate (players' combined points vs. a rising threshold)
 # with a secondary 4% per-kill RNG check. Up to 4 drops per round.
-# Visual: item_display + text_display. Pickup by proximity (1.5 blocks). 26.5s lifetime.
+# Visual: item entity + text_display. Pickup by proximity (1.5 blocks). 26.5s lifetime.
 from stewbeet import JsonDict, LootTable, Mem, set_json_encoder, write_load_file, write_versioned_function
 
 from ..helpers import MGS_TAG
@@ -114,16 +114,18 @@ scoreboard players add #zb_drops_this_round {ns}.data 1
 function {ns}:v{version}/zombies/powerups/queue_draw
 
 # Spawn visuals at @s's position
-data modify storage {ns}:temp _pu_spawn set value {{x:0,y:0,z:0}}
+scoreboard players add #pu_uid {ns}.data 1
+data modify storage {ns}:temp _pu_spawn set value {{x:0,y:0,z:0,uid:0}}
 data modify storage {ns}:temp _pu_spawn.x set from entity @s Pos[0]
 data modify storage {ns}:temp _pu_spawn.y set from entity @s Pos[1]
 data modify storage {ns}:temp _pu_spawn.z set from entity @s Pos[2]
+execute store result storage {ns}:temp _pu_spawn.uid int 1 run scoreboard players get #pu_uid {ns}.data
 function {ns}:v{version}/zombies/powerups/do_spawn_random with storage {ns}:temp _pu_spawn
 """)
 
 	# Macro: dispatch to the correct spawn_type function using the pre-stored coordinates
 	do_spawn_random_lines: str = "\n".join(
-		f"$execute if score #pu_spawn_type {ns}.data matches {v['type_num']} run function {ns}:v{version}/zombies/powerups/spawn_type/{pu_id} {{x:$(x),y:$(y),z:$(z)}}"
+		f"$execute if score #pu_spawn_type {ns}.data matches {v['type_num']} run function {ns}:v{version}/zombies/powerups/spawn_type/{pu_id} {{x:$(x),y:$(y),z:$(z),uid:$(uid)}}"
 		for pu_id, v in POWERUP_TYPES.items()
 	)
 	write_versioned_function("zombies/powerups/do_spawn_random", f"""
@@ -181,28 +183,30 @@ $data remove storage {ns}:data _pu_queue[$(idx)]
 """)
 
 	# ──────────────────────────────────────────────────────────────────────────
-	# Item intercept: replace loot-spawned item entity with displays
+	# Item intercept: replace loot-spawned item entity with the managed power-up visuals
 	# ──────────────────────────────────────────────────────────────────────────
 	write_versioned_function("zombies/powerups/intercept_item", f"""
 # Only handle items tagged as powerups
 execute unless data entity @s Item.components."minecraft:custom_data".{ns}.powerup run return 0
 
 # Store type string and integer spawn coordinates in temp storage
+scoreboard players add #pu_uid {ns}.data 1
 data modify storage {ns}:temp _pu_spawn.type set from entity @s Item.components."minecraft:custom_data".{ns}.powerup.type
 execute store result storage {ns}:temp _pu_spawn.x int 1 run data get entity @s Pos[0]
 execute store result storage {ns}:temp _pu_spawn.y int 1 run data get entity @s Pos[1]
 execute store result storage {ns}:temp _pu_spawn.z int 1 run data get entity @s Pos[2]
+execute store result storage {ns}:temp _pu_spawn.uid int 1 run scoreboard players get #pu_uid {ns}.data
 
 # Remove the raw item entity (replaced by visual displays below)
 kill @s
 
-# Spawn the visual item_display + text_display at the stored position
+# Spawn the managed item entity + text_display at the stored position
 function {ns}:v{version}/zombies/powerups/spawn_display with storage {ns}:temp _pu_spawn
 """, tags=["common_signals:signals/on_new_item"])
 
 	# Dispatch to per-type spawner
 	dispatch_lines: str = "\n".join(
-		f'$execute if data storage {ns}:temp _pu_spawn {{{{"type":"{pu_id}"}}}} run function {ns}:v{version}/zombies/powerups/spawn_type/{pu_id} {{{{x:$(x),y:$(y),z:$(z)}}}}'
+		f'$execute if data storage {ns}:temp _pu_spawn {{"type":"{pu_id}"}} run function {ns}:v{version}/zombies/powerups/spawn_type/{pu_id} {{x:$(x),y:$(y),z:$(z),uid:$(uid)}}'
 		for pu_id in POWERUP_TYPES
 	)
 	write_versioned_function("zombies/powerups/spawn_display", f"""
@@ -216,7 +220,7 @@ function {ns}:v{version}/zombies/powerups/spawn_display with storage {ns}:temp _
 		color: str = v["color"]
 		type_num: int = v["type_num"]
 		write_versioned_function(f"zombies/powerups/spawn_type/{pu_id}", f"""
-$summon minecraft:item_display $(x) $(y) $(z) {{Tags:["{ns}.pu_item","{ns}.pu_item_new","{ns}.gm_entity"],item:{{id:"{item}",count:1}},billboard:"vertical",item_display:"ground",brightness:{{block:15,sky:15}},transformation:{{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],translation:[0f,0.25f,0f],scale:[1.5f,1.5f,1.5f]}}}}
+$summon minecraft:item $(x) $(y) $(z) {{Tags:["{ns}.pu_item","{ns}.pu_item_new","{ns}.gm_entity"],PickupDelay:32767,Invulnerable:1b,Item:{{id:"{item}",count:1,components:{{"minecraft:custom_data":{{{ns}:{{powerup_uid:$(uid)}}}}}}}}}}
 scoreboard players set @n[tag={ns}.pu_item_new] {ns}.zb.pu.type {type_num}
 scoreboard players set @n[tag={ns}.pu_item_new] {ns}.zb.pu.timer {POWERUP_LIFETIME}
 tag @n[tag={ns}.pu_item_new] remove {ns}.pu_item_new
@@ -248,15 +252,13 @@ kill @s
 """)
 
 	# Blink implementation matching BO2's ~0.4s full cycle (4 ticks on, 4 ticks off).
-	# item_display uses brightness toggling (dim vs full) for a softer pulse effect,
-	# matching BO2's alpha fade more closely than a hard visibility snap.
-	# text_display falls back to view_range since it has no brightness NBT tag.
 	write_versioned_function("zombies/powerups/blink_tick", f"""
-# "Off" frame: dim item_display to black, hide text_display
-execute if score #zb_blink_state {ns}.data matches 0 run data merge entity @s {{brightness:{{block:0,sky:0}}}}
-# "On" frame: restore item_display to full brightness
-execute if score #zb_blink_state {ns}.data matches 1 run data merge entity @s {{brightness:{{block:15,sky:15}}}}
-# text_display has no brightness tag — use view_range toggle instead
+# "Off" frame: hide the item entity and the text_display
+execute if score #zb_blink_state {ns}.data matches 0 run data modify entity @s Item.components."minecraft:custom_data".{ns}.powerup_model set from entity @s Item.components."minecraft:item_model"
+execute if score #zb_blink_state {ns}.data matches 0 run data modify entity @s Item.components."minecraft:item_model" set value "minecraft:air"
+# "On" frame: show the item entity again
+execute if score #zb_blink_state {ns}.data matches 1 run data modify entity @s Item.components."minecraft:item_model" set from entity @s Item.components."minecraft:custom_data".{ns}.powerup_model
+# text_display has no generic visibility tag — use view_range toggle instead
 execute if score #zb_blink_state {ns}.data matches 0 as @n[tag={ns}.pu_text,distance=..3] run data merge entity @s {{view_range:0.0f}}
 execute if score #zb_blink_state {ns}.data matches 1 as @n[tag={ns}.pu_text,distance=..3] run data merge entity @s {{view_range:64.0f}}
 """)
@@ -277,7 +279,7 @@ kill @n[tag={ns}.pu_text,distance=..3]
 # Activate the power-up effect (collector tag is still active here)
 function {ns}:v{version}/zombies/powerups/dispatch_activate
 
-# Kill this item_display entity
+# Kill this power-up item entity
 kill @s
 
 # Clean up the collector tag so other pickups can proceed

@@ -18,7 +18,7 @@ kill @n[tag=mgs.pu_text,distance=..3]
 # Activate the power-up effect (collector tag is still active here)
 function mgs:v5.0.1/zombies/powerups/dispatch_activate
 
-# Kill this item_display entity
+# Kill this power-up item entity
 kill @s
 
 # Clean up the collector tag so other pickups can proceed
