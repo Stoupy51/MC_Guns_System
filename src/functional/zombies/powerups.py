@@ -286,6 +286,7 @@ playsound minecraft:entity.player.levelup master @a[scores={{{ns}.zb.in_game=1}}
 
 	## 2. Insta Kill
 	write_versioned_function("zombies/powerups/activate/insta_kill", f"""
+effect give @a[scores={{{ns}.zb.in_game=1}},gamemode=!spectator] minecraft:strength 30 255 true
 scoreboard players set @a[scores={{{ns}.zb.in_game=1}},gamemode=!spectator] {ns}.special.instant_kill 600
 tellraw @a[scores={{{ns}.zb.in_game=1}}] [{MGS_TAG},{{"text":"Insta Kill!","color":"red","bold":true}}]
 playsound minecraft:entity.player.levelup master @a[scores={{{ns}.zb.in_game=1}}] ~ ~ ~ 1.0 1.0

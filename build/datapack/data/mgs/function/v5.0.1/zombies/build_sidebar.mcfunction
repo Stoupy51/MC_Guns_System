@@ -6,6 +6,6 @@
 # @args		zb_sb (unknown)
 #
 
-scoreboard objectives remove mgs.zb_sidebar
+scoreboard players reset * mgs.zb_sidebar
 $function #bs.sidebar:create {objective:"mgs.zb_sidebar",display_name:{translate:"mgs.zombies",color:"dark_green",bold:true},contents:$(zb_sb)}
 

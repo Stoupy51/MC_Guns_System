@@ -34,8 +34,9 @@ execute if score #zb_round mgs.data matches 13.. run attribute @s minecraft:move
 execute if score #zb_round mgs.data matches 15.. store result score #zb_speed_roll mgs.data run random value 1..10
 execute if score #zb_round mgs.data matches 15.. if score #zb_speed_roll mgs.data matches 1 run attribute @s minecraft:movement_speed base set 0.20
 
-# Fixed melee damage: 8.0 HP = 4 hearts
-attribute @s minecraft:attack_damage base set 8.0
+# Fixed melee damage: 15.0 HP = 7.5 hearts and no knockback
+attribute @s minecraft:attack_damage base set 15.0
+attribute @s minecraft:knockback_resistance base set 1024
 
 # Start rise animation (20 ticks to rise 2 blocks)
 scoreboard players set @s mgs.zb.rise_tick 20

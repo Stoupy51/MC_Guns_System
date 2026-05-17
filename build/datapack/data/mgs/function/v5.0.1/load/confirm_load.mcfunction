@@ -164,12 +164,6 @@ execute unless data storage mgs:zombies game run data modify storage mgs:zombies
 # Initialize mystery box base pool (can be extended via function tag)
 execute unless data storage mgs:zombies mystery_box_pool run data modify storage mgs:zombies mystery_box_pool set value []
 
-# Config: points per kill, points per hit
-execute unless score #zb_points_kill mgs.config matches 1.. run scoreboard players set #zb_points_kill mgs.config 50
-execute unless score #zb_points_hit mgs.config matches 1.. run scoreboard players set #zb_points_hit mgs.config 5
-execute unless score #zb_points_knife_kill mgs.config matches 1.. run scoreboard players set #zb_points_knife_kill mgs.config 130
-execute unless score #zb_mystery_box_price mgs.config matches 1.. run scoreboard players set #zb_mystery_box_price mgs.config 950
-
 # Pack-a-Punch machine scoreboards
 scoreboard objectives add mgs.zb.pap.id dummy
 scoreboard objectives add mgs.zb.pap.price dummy

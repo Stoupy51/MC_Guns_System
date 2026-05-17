@@ -7,7 +7,7 @@
 #
 
 tag @a remove mgs.ffa_candidate
-scoreboard objectives remove mgs.sidebar
+scoreboard players reset * mgs.sidebar
 $function #bs.sidebar:create {objective:"mgs.sidebar",display_name:{translate:"mgs.free_for_all",color:"gold",bold:true},contents:$(ffa_sb)}
 scoreboard objectives setdisplay sidebar mgs.sidebar
 
