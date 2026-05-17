@@ -31,7 +31,7 @@ execute unless data storage mgs:temp _pap_extract.stats.pap_stats run return run
 
 # Compute current and next PAP levels
 scoreboard players set #pap_level mgs.data 0
-execute if data storage mgs:temp _pap_extract.stats.pap_level store result score #pap_level mgs.data run data get storage mgs:temp _pap_extract.stats.pap_level
+execute if data storage mgs:temp _pap_extract.stats.pap_stats.pap_level store result score #pap_level mgs.data run data get storage mgs:temp _pap_extract.stats.pap_stats.pap_level
 scoreboard players operation #pap_next mgs.data = #pap_level mgs.data
 scoreboard players add #pap_next mgs.data 1
 scoreboard players operation #pap_next_idx mgs.data = #pap_next mgs.data

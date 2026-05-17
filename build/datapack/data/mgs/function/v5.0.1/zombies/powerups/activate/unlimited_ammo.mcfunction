@@ -8,10 +8,10 @@
 
 scoreboard players set @a[scores={mgs.zb.in_game=1}] mgs.special.infinite_ammo 600
 bossbar remove mgs:pu_unlimited_ammo
-bossbar create mgs:pu_unlimited_ammo {"translate":"mgs.unlimited_ammo_30s","bold":true,"color":"yellow"}
+bossbar add mgs:pu_unlimited_ammo {"translate":"mgs.unlimited_ammo_30s","bold":true,"color":"green"}
 bossbar set mgs:pu_unlimited_ammo max 600
 bossbar set mgs:pu_unlimited_ammo value 600
-bossbar set mgs:pu_unlimited_ammo color yellow
+bossbar set mgs:pu_unlimited_ammo color green
 bossbar set mgs:pu_unlimited_ammo style progress
 bossbar set mgs:pu_unlimited_ammo players @a[scores={mgs.zb.in_game=1}]
 playsound minecraft:entity.player.levelup master @a[scores={mgs.zb.in_game=1}] ~ ~ ~ 1.0 1.0

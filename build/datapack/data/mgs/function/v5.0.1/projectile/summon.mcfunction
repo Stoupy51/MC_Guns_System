@@ -20,6 +20,7 @@ data modify storage mgs:temp proj.proj_speed set from storage mgs:gun all.stats.
 data modify storage mgs:temp proj.proj_lifetime set from storage mgs:gun all.stats.proj_lifetime
 data modify storage mgs:temp proj.proj_model set from storage mgs:gun all.stats.proj_model
 data modify storage mgs:temp proj.base_weapon set from storage mgs:gun all.stats.base_weapon
+data modify storage mgs:temp proj.pap_level set from storage mgs:gun all.stats.pap_level
 
 # Summon the projectile entity at the player's eye position
 execute anchored eyes positioned ^ ^ ^0.69 summon item_display run function mgs:v5.0.1/projectile/init

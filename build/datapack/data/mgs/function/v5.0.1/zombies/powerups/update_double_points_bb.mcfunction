@@ -13,5 +13,5 @@ execute if score #pu_max_duration mgs.data matches ..0 run bossbar remove mgs:pu
 execute if score #pu_max_duration mgs.data matches 1.. store result bossbar mgs:pu_double_points value run scoreboard players get #pu_max_duration mgs.data
 execute if score #pu_max_duration mgs.data matches 1.. run scoreboard players operation #pu_seconds mgs.data = #pu_max_duration mgs.data
 execute if score #pu_max_duration mgs.data matches 1.. run scoreboard players operation #pu_seconds mgs.data /= #20 mgs.data
-execute if score #pu_max_duration mgs.data matches 1.. run bossbar set mgs:pu_double_points name [{"translate":"mgs.double_points","color":"gold","bold":true,"extra":[{"score":{"name":"#pu_seconds","objective":"mgs.data"},"color":"gold","bold":true},{"translate":"s","color":"gold","bold":true}]}, " - "]
+execute if score #pu_max_duration mgs.data matches 1.. run bossbar set mgs:pu_double_points name [[{"translate":"mgs.double_points","color":"yellow","bold":true}, " - "],{"score":{"name":"#pu_seconds","objective":"mgs.data"},"color":"yellow"},"s"]
 

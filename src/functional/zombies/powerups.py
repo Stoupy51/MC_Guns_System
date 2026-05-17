@@ -22,18 +22,18 @@ from .perks import PERK_DEFINITIONS
 #   bossbar_id   - the {ns}:pu_<bossbar_id> bossbar name
 #   bb_color     - bossbar color string
 POWERUP_TYPES: dict[str, JsonDict] = {
-    "max_ammo":       {"item": "minecraft:amethyst_shard",       "display": "Max Ammo",        "color": "aqua",         "type_num": 1, "tier": "common"},
-    "insta_kill":     {"item": "minecraft:fermented_spider_eye", "display": "Insta Kill",      "color": "red",          "type_num": 2, "tier": "common", "duration": 600, "scoreboard": "instant_kill",    "bossbar_id": "pu_insta_kill",      "bb_color": "red"},
-    "double_points":  {"item": "minecraft:gold_ingot",           "display": "Double Points",   "color": "gold",         "type_num": 3, "tier": "common", "duration": 600, "scoreboard": "double_points",   "bossbar_id": "pu_double_points",   "bb_color": "gold"},
-    "carpenter":      {"item": "minecraft:oak_log",              "display": "Carpenter",       "color": "green",        "type_num": 4, "tier": "common"},
-    "nuke":           {"item": "minecraft:tnt",                  "display": "Nuke",            "color": "red",          "type_num": 5, "tier": "common"},
-    "unlimited_ammo": {"item": "minecraft:blaze_rod",            "display": "Unlimited Ammo",  "color": "yellow",       "type_num": 6, "tier": "rare",   "duration": 600, "scoreboard": "infinite_ammo",   "bossbar_id": "pu_unlimited_ammo",  "bb_color": "yellow"},
-    "random_perk":    {"item": "minecraft:glass_bottle",         "display": "Random Perk",     "color": "light_purple", "type_num": 7, "tier": "rare"},
-    "free_pap":       {"item": "minecraft:diamond",              "display": "Free PAP",        "color": "aqua",         "type_num": 8, "tier": "rare"},
-    "cash_drop":      {"item": "minecraft:emerald",              "display": "Cash Drop",       "color": "green",        "type_num": 9, "tier": "rare"},
+	"max_ammo":       {"item": "minecraft:amethyst_shard",       "display": "Max Ammo",       "color": "aqua",         "type_num": 1, "tier": "common"},
+	"insta_kill":     {"item": "minecraft:fermented_spider_eye", "display": "Insta Kill",     "color": "red",          "type_num": 2, "tier": "common", "duration": 600, "scoreboard": "instant_kill",  "bossbar_id": "pu_insta_kill",     "bb_color": "red"},
+	"double_points":  {"item": "minecraft:gold_ingot",           "display": "Double Points",  "color": "yellow",       "type_num": 3, "tier": "common", "duration": 600, "scoreboard": "double_points", "bossbar_id": "pu_double_points",  "bb_color": "yellow"},
+	"carpenter":      {"item": "minecraft:oak_log",              "display": "Carpenter",      "color": "gold",         "type_num": 4, "tier": "common"},
+	"nuke":           {"item": "minecraft:tnt",                  "display": "Nuke",           "color": "red",          "type_num": 5, "tier": "common"},
+	"unlimited_ammo": {"item": "minecraft:blaze_rod",            "display": "Unlimited Ammo", "color": "green",        "type_num": 6, "tier": "rare",   "duration": 600, "scoreboard": "infinite_ammo", "bossbar_id": "pu_unlimited_ammo", "bb_color": "green"},
+	"random_perk":    {"item": "minecraft:glass_bottle",         "display": "Random Perk",    "color": "light_purple", "type_num": 7, "tier": "rare"},
+	"free_pap":       {"item": "minecraft:diamond",              "display": "Free PAP",       "color": "aqua",         "type_num": 8, "tier": "rare"},
+	"cash_drop":      {"item": "minecraft:emerald",              "display": "Cash Drop",      "color": "green",        "type_num": 9, "tier": "rare"},
 }
 
-POWERUP_LIFETIME: int  = 530   # 26.5 seconds in ticks
+POWERUP_LIFETIME: int    = 530  # 26.5 seconds in ticks
 POWERUP_BLINK_START: int = 200  # Blink warning when this many ticks remain (~10s)
 
 # Convenience view: only power-ups with a timed duration
@@ -216,11 +216,11 @@ function {ns}:v{version}/zombies/powerups/spawn_display with storage {ns}:temp _
 		color: str = v["color"]
 		type_num: int = v["type_num"]
 		write_versioned_function(f"zombies/powerups/spawn_type/{pu_id}", f"""
-$summon minecraft:item_display $(x) $(y) $(z) {{Tags:["{ns}.pu_item","{ns}.pu_item_new","{ns}.gm_entity"],item:{{id:"{item}",count:1}},billboard:"vertical",item_display:"ground",transformation:{{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],translation:[0f,0.25f,0f],scale:[0.7f,0.7f,0.7f]}}}}
+$summon minecraft:item_display $(x) $(y) $(z) {{Tags:["{ns}.pu_item","{ns}.pu_item_new","{ns}.gm_entity"],item:{{id:"{item}",count:1}},billboard:"vertical",item_display:"ground",brightness:{{block:15,sky:15}},transformation:{{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],translation:[0f,0.25f,0f],scale:[1.5f,1.5f,1.5f]}}}}
 scoreboard players set @n[tag={ns}.pu_item_new] {ns}.zb.pu.type {type_num}
 scoreboard players set @n[tag={ns}.pu_item_new] {ns}.zb.pu.timer {POWERUP_LIFETIME}
 tag @n[tag={ns}.pu_item_new] remove {ns}.pu_item_new
-$execute positioned $(x) $(y) $(z) run summon minecraft:text_display ~ ~1.0 ~ {{Tags:["{ns}.pu_text","{ns}.gm_entity"],text:{{"text":"{display_name}","color":"{color}","bold":true}},billboard:"vertical",background:0,shadow:true,transformation:{{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[1.5f,1.5f,1.5f]}}}}
+$execute positioned $(x) $(y) $(z) run summon minecraft:text_display ~ ~1.0 ~ {{Tags:["{ns}.pu_text","{ns}.gm_entity"],text:{{"text":"{display_name}","color":"{color}","bold":true}},billboard:"vertical",background:0,shadow:true,view_range:64.0f,transformation:{{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[1.5f,1.5f,1.5f]}}}}
 tellraw @a[scores={{{ns}.zb.in_game=1}}] [{{"text":"{display_name}","color":"{color}","bold":true}},{{"text":" has dropped!","color":"white"}}]
 playsound minecraft:entity.experience_orb.pickup master @a[scores={{{ns}.zb.in_game=1}}] ~ ~ ~ 1.0 0.7
 """)
@@ -247,10 +247,16 @@ kill @n[tag={ns}.pu_text,distance=..3]
 kill @s
 """)
 
+	# Blink implementation matching BO2's ~0.4s full cycle (4 ticks on, 4 ticks off).
+	# item_display uses brightness toggling (dim vs full) for a softer pulse effect,
+	# matching BO2's alpha fade more closely than a hard visibility snap.
+	# text_display falls back to view_range since it has no brightness NBT tag.
 	write_versioned_function("zombies/powerups/blink_tick", f"""
-# Toggle visibility every ~5 ticks using global blink state (managed in game_tick)
-execute if score #zb_blink_state {ns}.data matches 0 run data merge entity @s {{view_range:0.0f}}
-execute if score #zb_blink_state {ns}.data matches 1 run data merge entity @s {{view_range:64.0f}}
+# "Off" frame: dim item_display to black, hide text_display
+execute if score #zb_blink_state {ns}.data matches 0 run data merge entity @s {{brightness:{{block:0,sky:0}}}}
+# "On" frame: restore item_display to full brightness
+execute if score #zb_blink_state {ns}.data matches 1 run data merge entity @s {{brightness:{{block:15,sky:15}}}}
+# text_display has no brightness tag — use view_range toggle instead
 execute if score #zb_blink_state {ns}.data matches 0 as @n[tag={ns}.pu_text,distance=..3] run data merge entity @s {{view_range:0.0f}}
 execute if score #zb_blink_state {ns}.data matches 1 as @n[tag={ns}.pu_text,distance=..3] run data merge entity @s {{view_range:64.0f}}
 """)
@@ -300,16 +306,16 @@ playsound minecraft:entity.player.levelup master @a[scores={{{ns}.zb.in_game=1}}
 	## 2-4. Timed power-ups: Insta Kill, Double Points, Unlimited Ammo
 	# All share the same bossbar+scoreboard activation pattern, driven by TIMED_POWERUPS.
 	for pu_id, v in TIMED_POWERUPS.items():
-		duration   = v["duration"]
-		scoreboard = v["scoreboard"]
-		bossbar_id = v["bossbar_id"]
-		display_name    = v["display"]
-		color      = v["color"]
-		bb_color   = v["bb_color"]
+		duration: int     = v["duration"]
+		scoreboard: str   = v["scoreboard"]
+		bossbar_id: str   = v["bossbar_id"]
+		display_name: str = v["display"]
+		color: str        = v["color"]
+		bb_color: str     = v["bb_color"]
 		write_versioned_function(f"zombies/powerups/activate/{pu_id}", f"""
 scoreboard players set @a[scores={{{ns}.zb.in_game=1}}] {ns}.special.{scoreboard} {duration}
 bossbar remove {ns}:{bossbar_id}
-bossbar create {ns}:{bossbar_id} {{"text":"{display_name} - {duration // 20}s","bold":true,"color":"{bb_color}"}}
+bossbar add {ns}:{bossbar_id} {{"text":"{display_name} - {duration // 20}s","bold":true,"color":"{bb_color}"}}
 bossbar set {ns}:{bossbar_id} max {duration}
 bossbar set {ns}:{bossbar_id} value {duration}
 bossbar set {ns}:{bossbar_id} color {bb_color}
@@ -413,10 +419,10 @@ playsound minecraft:entity.player.levelup master @a[scores={{{ns}.zb.in_game=1}}
 	# Bossbar update functions — generated from TIMED_POWERUPS, one per entry
 	# ──────────────────────────────────────────────────────────────────────────
 	for pu_id, v in TIMED_POWERUPS.items():
-		scoreboard = v["scoreboard"]
-		bossbar_id = v["bossbar_id"]
-		display_name    = v["display"]
-		color      = v["color"]
+		scoreboard: str   = v["scoreboard"]
+		bossbar_id: str   = v["bossbar_id"]
+		display_name: str = v["display"]
+		color: str        = v["color"]
 		write_versioned_function(f"zombies/powerups/update_{pu_id}_bb", f"""
 # Find max remaining duration across all players with active {pu_id}
 scoreboard players set #pu_max_duration {ns}.data 0
@@ -427,7 +433,7 @@ execute if score #pu_max_duration {ns}.data matches ..0 run bossbar remove {ns}:
 execute if score #pu_max_duration {ns}.data matches 1.. store result bossbar {ns}:{bossbar_id} value run scoreboard players get #pu_max_duration {ns}.data
 execute if score #pu_max_duration {ns}.data matches 1.. run scoreboard players operation #pu_seconds {ns}.data = #pu_max_duration {ns}.data
 execute if score #pu_max_duration {ns}.data matches 1.. run scoreboard players operation #pu_seconds {ns}.data /= #20 {ns}.data
-execute if score #pu_max_duration {ns}.data matches 1.. run bossbar set {ns}:{bossbar_id} name {{"text":"{display_name} - ","color":"{color}","bold":true,"extra":[{{"score":{{"name":"#pu_seconds","objective":"{ns}.data"}},"color":"{color}","bold":true}},{{"text":"s","color":"{color}","bold":true}}]}}
+execute if score #pu_max_duration {ns}.data matches 1.. run bossbar set {ns}:{bossbar_id} name [{{"text":"{display_name} - ","color":"{color}","bold":true}},{{"score":{{"name":"#pu_seconds","objective":"{ns}.data"}},"color":"{color}"}},"s"]
 """)
 
 	# ──────────────────────────────────────────────────────────────────────────
@@ -443,16 +449,17 @@ execute if score #pu_max_duration {ns}.data matches 1.. run bossbar set {ns}:{bo
 	# Scoreboard decrement calls for game_tick, generated from TIMED_POWERUPS
 	decrement_calls: str = "\n".join(
 		f"execute as @a[scores={{{ns}.special.{v['scoreboard']}=1..}}] run scoreboard players remove @s {ns}.special.{v['scoreboard']} 1"
-		for v in TIMED_POWERUPS.values()
+		for k, v in TIMED_POWERUPS.items()
+		if k not in ("insta_kill", "unlimited_ammo") # They are already handled globally (not zombies)
 	)
 
 	write_versioned_function("zombies/game_tick", f"""
 # Power-up entity tick (lifetime countdown, blink, pickup detection)
 execute as @e[tag={ns}.pu_item] at @s run function {ns}:v{version}/zombies/powerups/entity_tick
 
-# Blink state: toggles between 0 and 1 every 5 ticks
+# Blink state: toggles between 0 and 1 every 4 ticks (~0.2s half-cycle, matching BO2's 0.4s full cycle)
 scoreboard players add #zb_blink_counter {ns}.data 1
-execute if score #zb_blink_counter {ns}.data matches 5.. run scoreboard players set #zb_blink_counter {ns}.data 0
+execute if score #zb_blink_counter {ns}.data matches 4.. run scoreboard players set #zb_blink_counter {ns}.data 0
 execute if score #zb_blink_counter {ns}.data matches 0 run scoreboard players add #zb_blink_state {ns}.data 1
 execute if score #zb_blink_state {ns}.data matches 2.. run scoreboard players set #zb_blink_state {ns}.data 0
 
