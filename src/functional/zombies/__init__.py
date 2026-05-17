@@ -7,6 +7,7 @@ from .display_helpers import generate_display_helpers
 from .doors import generate_doors
 from .feedback import generate_zombies_feedback
 from .game import generate_zombies_game
+from .hurt_player import generate_hurt_player
 from .inventory import generate_zombies_inventory
 from .maps import generate_zombies_maps
 from .menus import generate_zombies_menus
@@ -43,4 +44,5 @@ def main() -> None:
     generate_perks()
     generate_revive()
     generate_traps()
+    generate_hurt_player()
 
