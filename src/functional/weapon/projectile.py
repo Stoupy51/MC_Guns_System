@@ -170,8 +170,17 @@ execute if score #found {ns}.data matches 0 as @e[tag={ns}.armed] run function {
 # Apply bullet direct-hit damage to the entity tagged in on_collision (if entity was hit, not just a block)
 # Give shooter ticking tag so DPS signal can find them
 tag @n[tag={ns}.temp_shooter] add {ns}.ticking
+
+# Get direct-hit damage amount (with 1 decimal)
+execute store result score #direct_dmg {ns}.data run data get entity @s data.config.{DAMAGE} 10
+
+# If zombie game is active: multiply by 5 for zombies, cap for players (15 hp)
+execute if data storage {ns}:zombies game{{state:"active"}} if entity @n[tag={ns}.direct_hit,type=!player] run scoreboard players operation #direct_dmg {ns}.data *= #5 {ns}.data
+execute if data storage {ns}:zombies game{{state:"active"}} if entity @n[tag={ns}.direct_hit,type=player] if score #direct_dmg {ns}.data matches 150.. run scoreboard players set #direct_dmg {ns}.data 150
+
+# Apply direct hit damage using the existing damage utility
 data modify storage {ns}:input with set value {{target:"@s", amount:0.0f, attacker:"@n[tag={ns}.temp_shooter]"}}
-execute store result storage {ns}:input with.amount float 0.1 run data get entity @s data.config.{DAMAGE} 10
+execute store result storage {ns}:input with.amount float 0.1 run scoreboard players get #direct_dmg {ns}.data
 data modify storage {ns}:input with.weapon set from storage {ns}:gun all
 execute as @n[tag={ns}.direct_hit,tag=!{ns}.temp_shooter] run function {ns}:v{version}/utils/signal_and_damage
 tag @e[tag={ns}.direct_hit] remove {ns}.direct_hit
@@ -192,7 +201,7 @@ tag @e[tag={ns}.temp_shooter] remove {ns}.temp_shooter
 
 # Delete the projectile
 function {ns}:v{version}/projectile/delete
-""")
+""")  # noqa: E501
 
     ## Realistic block destruction (calls RealisticExplosionLibrary)
     write_versioned_function("projectile/realistic_explosion", f"""
@@ -278,15 +287,16 @@ execute store result score #decay_factor {ns}.data run data get storage bs:out m
 scoreboard players operation #expl_dmg {ns}.data *= #decay_factor {ns}.data
 scoreboard players operation #expl_dmg {ns}.data /= #1000000 {ns}.data
 
-# If this entity IS the shooter and zombie mode is active, nerf explosion damage to 10 hp (100 in scoreboard since we keep 1 decimal digit)
-execute if score #expl_dmg {ns}.data matches 100.. if entity @s[tag={ns}.temp_shooter] if data storage {ns}:zombies game{{state:"active"}} run scoreboard players set #expl_dmg {ns}.data 100
+# If zombie game is active: multiply by 5 for zombies, cap for players (15 hp)
+execute if data storage {ns}:zombies game{{state:"active"}} if entity @s[type=!player] run scoreboard players operation #expl_dmg {ns}.data *= #5 {ns}.data
+execute if data storage {ns}:zombies game{{state:"active"}} if entity @s[type=player] if score #expl_dmg {ns}.data matches 150.. run scoreboard players set #expl_dmg {ns}.data 150
 
 # Skip if damage is negligible (less than 0.1)
 execute if score #expl_dmg {ns}.data matches ..0 run return fail
 
 # Instant kill: if shooter has active instant kill and target is not immune, set damage to 99999
 tag @n[tag={ns}.temp_shooter] add {ns}.ticking
-execute as @n[tag={ns}.temp_shooter] if score @s {ns}.special.instant_kill matches 1.. as @s[tag=!{ns}.no_instant_kill] run scoreboard players set #expl_dmg {ns}.data 99999
+execute if entity @s[tag=!{ns}.no_instant_kill] as @n[tag={ns}.temp_shooter] if score @s {ns}.special.instant_kill matches 1.. run scoreboard players set #expl_dmg {ns}.data 99999
 
 # Apply damage using the existing damage utility
 # Apply damage, fire damage signal (weapon info included for handlers)

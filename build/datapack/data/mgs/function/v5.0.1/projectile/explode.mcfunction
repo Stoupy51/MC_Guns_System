@@ -53,8 +53,17 @@ execute if score #found mgs.data matches 0 as @e[tag=mgs.armed] run function mgs
 # Apply bullet direct-hit damage to the entity tagged in on_collision (if entity was hit, not just a block)
 # Give shooter ticking tag so DPS signal can find them
 tag @n[tag=mgs.temp_shooter] add mgs.ticking
+
+# Get direct-hit damage amount (with 1 decimal)
+execute store result score #direct_dmg mgs.data run data get entity @s data.config.damage 10
+
+# If zombie game is active: multiply by 5 for zombies, cap for players (15 hp)
+execute if data storage mgs:zombies game{state:"active"} if entity @n[tag=mgs.direct_hit,type=!player] run scoreboard players operation #direct_dmg mgs.data *= #5 mgs.data
+execute if data storage mgs:zombies game{state:"active"} if entity @n[tag=mgs.direct_hit,type=player] if score #direct_dmg mgs.data matches 150.. run scoreboard players set #direct_dmg mgs.data 150
+
+# Apply direct hit damage using the existing damage utility
 data modify storage mgs:input with set value {target:"@s", amount:0.0f, attacker:"@n[tag=mgs.temp_shooter]"}
-execute store result storage mgs:input with.amount float 0.1 run data get entity @s data.config.damage 10
+execute store result storage mgs:input with.amount float 0.1 run scoreboard players get #direct_dmg mgs.data
 data modify storage mgs:input with.weapon set from storage mgs:gun all
 execute as @n[tag=mgs.direct_hit,tag=!mgs.temp_shooter] run function mgs:v5.0.1/utils/signal_and_damage
 tag @e[tag=mgs.direct_hit] remove mgs.direct_hit
