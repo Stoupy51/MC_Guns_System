@@ -65,8 +65,15 @@ kill @e[tag=mgs.pu_item]
 kill @e[tag=mgs.pu_text]
 scoreboard players set #zb_drops_this_round mgs.data 0
 scoreboard players set #zb_score_to_drop mgs.data 0
+scoreboard players set @a mgs.special.instant_kill 0
 scoreboard players set @a mgs.special.double_points 0
+scoreboard players set @a mgs.special.infinite_ammo 0
 data modify storage mgs:data _pu_queue set value []
+
+# Remove all duration-based bossbars
+bossbar remove mgs:pu_insta_kill
+bossbar remove mgs:pu_double_points
+bossbar remove mgs:pu_unlimited_ammo
 
 # Reset perk effects
 execute as @a[scores={mgs.zb.in_game=1}] run attribute @s minecraft:max_health base set 20

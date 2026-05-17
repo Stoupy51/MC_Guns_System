@@ -8,5 +8,5 @@
 # @args		fire (unknown)
 #
 
-$playsound mgs:$(fire) player @a[distance=..48] ~ ~ ~ 0.75
+$playsound mgs:$(fire) player @a[distance=0.01..48] ~ ~ ~ 0.35 1 0.10
 

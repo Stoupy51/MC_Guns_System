@@ -173,7 +173,7 @@ execute if score #bullets_to_fire {ns}.data matches 1.. run function {ns}:v{vers
 
     ## Fire sound for mobs
     write_versioned_function("mob/fire_sound", f"""
-$playsound {ns}:$(fire) player @a[distance=..48] ~ ~ ~ 0.75
+$playsound {ns}:$(fire) player @a[distance=0.01..48] ~ ~ ~ 0.35 1 0.10
 """)
 
     ## Tick file entry for armed mobs

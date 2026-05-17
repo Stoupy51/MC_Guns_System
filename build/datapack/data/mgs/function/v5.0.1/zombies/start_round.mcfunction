@@ -56,7 +56,6 @@ function mgs:v5.0.1/zombies/perks/check_guardian
 scoreboard players set #zb_drops_this_round mgs.data 0
 
 # Threshold = sum of all in-game player points at round start + 2000
-scoreboard players set #zb_score_to_drop mgs.data 0
-execute as @a[scores={mgs.zb.in_game=1},gamemode=!spectator] run scoreboard players operation #zb_score_to_drop mgs.data += @s mgs.zb.points
-scoreboard players add #zb_score_to_drop mgs.data 2000
+scoreboard players set #zb_score_to_drop mgs.data 2000
+scoreboard players operation #zb_score_to_drop mgs.data += @a[scores={mgs.zb.in_game=1}] mgs.zb.points
 

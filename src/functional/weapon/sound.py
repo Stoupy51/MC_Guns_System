@@ -91,16 +91,16 @@ execute if data storage {ns}:gun all.sounds.cycle run function {ns}:v{version}/s
 execute if data storage {ns}:gun all.sounds.crack run function {ns}:v{version}/sound/acoustics_main with storage {ns}:gun all.sounds
 """)
     write_versioned_function("sound/fire_pap", f"""
-$playsound {ns}:$(pap_fire) player @s ~ ~ ~ 0.25
-$playsound {ns}:$(pap_fire) player @a[distance=0.01..48] ~ ~ ~ 0.75 1 0.25
+$playsound {ns}:$(pap_fire) player @s ~ ~ ~ 0.10
+$playsound {ns}:$(pap_fire) player @a[distance=0.01..48] ~ ~ ~ 0.35 1 0.10
 """)
     write_versioned_function("sound/fire_simple", f"""
-$playsound {ns}:$(fire) player @s ~ ~ ~ 0.25
-$playsound {ns}:$(fire) player @a[distance=0.01..48] ~ ~ ~ 0.75 1 0.25
+$playsound {ns}:$(fire) player @s ~ ~ ~ 0.10
+$playsound {ns}:$(fire) player @a[distance=0.01..48] ~ ~ ~ 0.35 1 0.10
 """)
     write_versioned_function("sound/fire_alt", f"""
-$playsound {ns}:$(fire_alt) player @s ~ ~ ~ 0.25
-$playsound {ns}:$(fire_alt) player @a[distance=0.01..48] ~ ~ ~ 0.75 1 0.25
+$playsound {ns}:$(fire_alt) player @s ~ ~ ~ 0.10
+$playsound {ns}:$(fire_alt) player @a[distance=0.01..48] ~ ~ ~ 0.35 1 0.10
 """)
     write_versioned_function("sound/cycle", f"""
 $playsound {ns}:$(cycle) player @s ~ ~ ~ 0.5

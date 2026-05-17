@@ -68,6 +68,8 @@ scoreboard objectives add mgs.config dummy
 scoreboard objectives add mgs.special.instant_kill dummy
 # Infinite ammo: duration in ticks (don't consume ammo, set ammo to max capacity)
 scoreboard objectives add mgs.special.infinite_ammo dummy
+# Double points: duration in ticks (double points earned from kills/hits in zombies)
+scoreboard objectives add mgs.special.double_points dummy
 # Quick reload: percentage faster reload (20 = 20% faster, 50 = 50% faster)
 scoreboard objectives add mgs.special.quick_reload dummy
 # Quick swap: percentage faster weapon switch (20 = 20% faster, 50 = 50% faster)
@@ -210,9 +212,6 @@ scoreboard objectives add mgs.zb.barrier_repairs dummy
 # Power-up entity scoreboards
 scoreboard objectives add mgs.zb.pu.type dummy
 scoreboard objectives add mgs.zb.pu.timer dummy
-
-# Per-player double-points duration (ticks)
-scoreboard objectives add mgs.special.double_points dummy
 
 # Door entity scoreboards
 scoreboard objectives add mgs.zb.door.link dummy

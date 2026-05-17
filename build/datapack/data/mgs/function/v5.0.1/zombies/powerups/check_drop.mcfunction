@@ -8,7 +8,7 @@
 
 # Compute combined score of all in-game players
 scoreboard players set #zb_total_score mgs.data 0
-execute as @a[scores={mgs.zb.in_game=1},gamemode=!spectator] run scoreboard players operation #zb_total_score mgs.data += @s mgs.zb.points
+scoreboard players operation #zb_total_score mgs.data += @a[scores={mgs.zb.in_game=1}] mgs.zb.points
 
 # Guard: max 4 drops per round
 execute if score #zb_drops_this_round mgs.data matches 4.. run return 0

@@ -13,8 +13,8 @@ scoreboard players operation #pu_cash mgs.data *= #100 mgs.data
 # Double the reward if double_points is active for the collecting player
 execute if score @p[tag=mgs.pu_collecting] mgs.special.double_points matches 1.. run scoreboard players operation #pu_cash mgs.data *= #2 mgs.data
 
-# Award to all alive in-game players
-execute as @a[scores={mgs.zb.in_game=1},gamemode=!spectator] run scoreboard players operation @s mgs.zb.points += #pu_cash mgs.data
+# Award to all in-game players
+execute as @a[scores={mgs.zb.in_game=1}] run scoreboard players operation @s mgs.zb.points += #pu_cash mgs.data
 
 # Announce with amount
 tellraw @a[scores={mgs.zb.in_game=1}] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.cash_drop","color":"green","bold":true},{"text":"+","color":"gold"},{"score":{"name":"#pu_cash","objective":"mgs.data"},"color":"gold","bold":true},[{"text":" ","color":"gold"}, {"translate":"mgs.points_each"}]]
