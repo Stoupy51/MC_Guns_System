@@ -35,10 +35,11 @@ execute store result storage mgs:temp _trap.iz int 1 run scoreboard players get 
 # Summon entities
 function mgs:v5.0.1/zombies/traps/place_at with storage mgs:temp _trap
 
-# Set scoreboards on interaction entity
+# Set scoreboards on interaction entity (type is also stored here for the hover text)
 scoreboard players operation @n[tag=_trap_new_i] mgs.zb.trap.id = #trap_counter mgs.data
 execute store result score @n[tag=_trap_new_i] mgs.zb.trap.price run data get storage mgs:temp _trap_iter[0].price
 execute store result score @n[tag=_trap_new_i] mgs.zb.trap.power run data get storage mgs:temp _trap_iter[0].power
+execute store result score @n[tag=_trap_new_i] mgs.zb.trap.type run data get storage mgs:temp _trap_iter[0].type
 tag @e[tag=_trap_new_i] remove _trap_new_i
 
 # Set scoreboards on marker entity

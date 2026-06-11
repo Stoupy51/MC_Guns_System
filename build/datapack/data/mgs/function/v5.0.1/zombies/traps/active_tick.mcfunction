@@ -9,6 +9,7 @@
 # @s = trap center marker, at @s position
 
 # Apply damage based on trap type
+data modify storage mgs:temp _trap_tick set value {rx:0,ry:0,rz:0,sx:0,sy:0,sz:0}
 execute store result storage mgs:temp _trap_tick.rx int 1 run scoreboard players get @s mgs.zb.trap.rx
 execute store result storage mgs:temp _trap_tick.ry int 1 run scoreboard players get @s mgs.zb.trap.ry
 execute store result storage mgs:temp _trap_tick.rz int 1 run scoreboard players get @s mgs.zb.trap.rz
@@ -26,9 +27,15 @@ execute store result storage mgs:temp _trap_tick.sz int 1 run scoreboard players
 execute if score @s mgs.zb.trap.type matches 0 run function mgs:v5.0.1/zombies/traps/damage_fire with storage mgs:temp _trap_tick
 execute if score @s mgs.zb.trap.type matches 1 run function mgs:v5.0.1/zombies/traps/damage_electric with storage mgs:temp _trap_tick
 
+# Turret: fire a shot every 5 ticks at the nearest zombie in range
+scoreboard players operation #turret_mod mgs.data = @s mgs.zb.trap.timer
+scoreboard players operation #turret_mod mgs.data %= #5 mgs.data
+execute if score #turret_mod mgs.data matches 0 if score @s mgs.zb.trap.type matches 2 run function mgs:v5.0.1/zombies/traps/turret_fire with storage mgs:temp _trap_tick
+
 # Particles based on type
 execute if score @s mgs.zb.trap.type matches 0 run particle minecraft:flame ~ ~1 ~ 1.5 0.5 1.5 0.05 10
 execute if score @s mgs.zb.trap.type matches 1 run particle minecraft:electric_spark ~ ~1 ~ 1.5 0.5 1.5 0.1 15
+execute if score @s mgs.zb.trap.type matches 2 run particle minecraft:smoke ~ ~1 ~ 0.2 0.2 0.2 0.01 2
 
 # Decrement timer
 scoreboard players remove @s mgs.zb.trap.timer 1

@@ -2,7 +2,10 @@
 # ruff: noqa: E501
 # Trap System
 # Area-of-effect devices that damage zombies in a radius for a duration, then enter cooldown.
-# Type 0 = fire damage, Type 1 = electric (instant kill).
+# Type 0 = fire: lethal to zombies (1000% of max health), 5 fire damage to players inside.
+# Type 1 = electric: lethal to zombies (1000% of max health), 5 electric damage to players inside.
+# Type 2 = turret: shoots the nearest zombie in range every 5 ticks for 45% of its max health;
+#          the bullet stops at the first entity hit, so players between the turret and zombies take 2 damage instead.
 from stewbeet import Mem, write_load_file, write_versioned_function
 
 from ..helpers import MGS_TAG
@@ -67,10 +70,11 @@ execute store result storage {ns}:temp _trap.iz int 1 run scoreboard players get
 # Summon entities
 function {ns}:v{version}/zombies/traps/place_at with storage {ns}:temp _trap
 
-# Set scoreboards on interaction entity
+# Set scoreboards on interaction entity (type is also stored here for the hover text)
 scoreboard players operation @n[tag=_trap_new_i] {ns}.zb.trap.id = #trap_counter {ns}.data
 execute store result score @n[tag=_trap_new_i] {ns}.zb.trap.price run data get storage {ns}:temp _trap_iter[0].price
 execute store result score @n[tag=_trap_new_i] {ns}.zb.trap.power run data get storage {ns}:temp _trap_iter[0].power
+execute store result score @n[tag=_trap_new_i] {ns}.zb.trap.type run data get storage {ns}:temp _trap_iter[0].type
 tag @e[tag=_trap_new_i] remove _trap_new_i
 
 # Set scoreboards on marker entity
@@ -155,6 +159,7 @@ function {ns}:v{version}/zombies/feedback/sound_deny
 # @s = trap center marker, at @s position
 
 # Apply damage based on trap type
+data modify storage {ns}:temp _trap_tick set value {{rx:0,ry:0,rz:0,sx:0,sy:0,sz:0}}
 execute store result storage {ns}:temp _trap_tick.rx int 1 run scoreboard players get @s {ns}.zb.trap.rx
 execute store result storage {ns}:temp _trap_tick.ry int 1 run scoreboard players get @s {ns}.zb.trap.ry
 execute store result storage {ns}:temp _trap_tick.rz int 1 run scoreboard players get @s {ns}.zb.trap.rz
@@ -172,9 +177,15 @@ execute store result storage {ns}:temp _trap_tick.sz int 1 run scoreboard player
 execute if score @s {ns}.zb.trap.type matches 0 run function {ns}:v{version}/zombies/traps/damage_fire with storage {ns}:temp _trap_tick
 execute if score @s {ns}.zb.trap.type matches 1 run function {ns}:v{version}/zombies/traps/damage_electric with storage {ns}:temp _trap_tick
 
+# Turret: fire a shot every 5 ticks at the nearest zombie in range
+scoreboard players operation #turret_mod {ns}.data = @s {ns}.zb.trap.timer
+scoreboard players operation #turret_mod {ns}.data %= #5 {ns}.data
+execute if score #turret_mod {ns}.data matches 0 if score @s {ns}.zb.trap.type matches 2 run function {ns}:v{version}/zombies/traps/turret_fire with storage {ns}:temp _trap_tick
+
 # Particles based on type
 execute if score @s {ns}.zb.trap.type matches 0 run particle minecraft:flame ~ ~1 ~ 1.5 0.5 1.5 0.05 10
 execute if score @s {ns}.zb.trap.type matches 1 run particle minecraft:electric_spark ~ ~1 ~ 1.5 0.5 1.5 0.1 15
+execute if score @s {ns}.zb.trap.type matches 2 run particle minecraft:smoke ~ ~1 ~ 0.2 0.2 0.2 0.01 2
 
 # Decrement timer
 scoreboard players remove @s {ns}.zb.trap.timer 1
@@ -185,17 +196,82 @@ execute if score @s {ns}.zb.trap.timer matches 0 run scoreboard players operatio
 """)
 
 	write_versioned_function("zombies/traps/damage_fire", f"""
-$execute positioned ~-$(rx) ~-$(ry) ~-$(rz) as @e[tag={ns}.zombie_round,dx=$(sx),dy=$(sy),dz=$(sz)] run damage @s 5 minecraft:on_fire
+# Zombies: lethal damage (1000% of each zombie's max health)
+data modify storage {ns}:temp _trap_dmg.type set value "minecraft:on_fire"
+$execute positioned ~-$(rx) ~-$(ry) ~-$(rz) as @e[tag={ns}.zombie_round,dx=$(sx),dy=$(sy),dz=$(sz)] run function {ns}:v{version}/zombies/traps/kill_zombie
+
+# Players inside the trap: 5 fire damage
+$execute positioned ~-$(rx) ~-$(ry) ~-$(rz) as @a[scores={{{ns}.zb.in_game=1}},gamemode=!creative,gamemode=!spectator,dx=$(sx),dy=$(sy),dz=$(sz)] run damage @s 5 minecraft:on_fire
 """)
 
 	write_versioned_function("zombies/traps/damage_electric", f"""
-$execute positioned ~-$(rx) ~-$(ry) ~-$(rz) as @e[tag={ns}.zombie_round,dx=$(sx),dy=$(sy),dz=$(sz)] run damage @s 99999
+# Zombies: lethal damage (1000% of each zombie's max health)
+data modify storage {ns}:temp _trap_dmg.type set value "minecraft:lightning_bolt"
+$execute positioned ~-$(rx) ~-$(ry) ~-$(rz) as @e[tag={ns}.zombie_round,dx=$(sx),dy=$(sy),dz=$(sz)] run function {ns}:v{version}/zombies/traps/kill_zombie
+
+# Players inside the trap: 5 electric damage
+$execute positioned ~-$(rx) ~-$(ry) ~-$(rz) as @a[scores={{{ns}.zb.in_game=1}},gamemode=!creative,gamemode=!spectator,dx=$(sx),dy=$(sy),dz=$(sz)] run damage @s 5 minecraft:lightning_bolt
+""")
+
+	## Per-zombie lethal damage: 1000% of this zombie's max health (damage type set by caller in _trap_dmg.type)
+	write_versioned_function("zombies/traps/kill_zombie", f"""
+execute store result storage {ns}:temp _trap_dmg.amount int 1 run attribute @s minecraft:max_health get 10
+function {ns}:v{version}/zombies/traps/apply_trap_damage with storage {ns}:temp _trap_dmg
+""")
+
+	write_versioned_function("zombies/traps/apply_trap_damage", """
+$damage @s $(amount) $(type)
+""")
+
+	## Turret trap: pick a zombie in the effect box and fire a simulated bullet at it
+	write_versioned_function("zombies/traps/turret_fire", f"""
+# @s = trap center marker, at @s position
+# Select a zombie in the effect box, then reposition to the turret head (+1) and face it before shooting
+$execute positioned ~-$(rx) ~-$(ry) ~-$(rz) as @e[tag={ns}.zombie_round,tag=!{ns}.zb_rising,dx=$(sx),dy=$(sy),dz=$(sz),limit=1] positioned ~$(rx) ~$(ry) ~$(rz) positioned ~ ~1 ~ facing entity @s eyes run function {ns}:v{version}/zombies/traps/turret_shoot
+""")
+
+	## Fire the turret bullet: raycast that stops at the first entity hit
+	write_versioned_function("zombies/traps/turret_shoot", f"""
+# @s = target zombie (execution position = turret head, facing the target)
+# Tracer particle + shot sound
+particle minecraft:crit ~ ~ ~ ^ ^ ^1000000000 0.00000002 0 force @a[distance=..64]
+playsound minecraft:entity.arrow.shoot block @a[distance=..32] ~ ~ ~ 0.8 1.6
+
+# Raycast with piercing 0: the ray stops at the first entity hit,
+# so a player standing between the turret and the zombies takes the bullet instead
+data modify storage {ns}:input with set value {{}}
+data modify storage {ns}:input with.blocks set value "function #bs.hitbox:callback/get_block_shape_with_fluid"
+data modify storage {ns}:input with.entities set value true
+data modify storage {ns}:input with.piercing set value 0
+data modify storage {ns}:input with.max_distance set value 32
+data modify storage {ns}:input with.ignored_blocks set value "#{ns}:v{version}/empty"
+data modify storage {ns}:input with.ignored_entities set value "#{ns}:ignore"
+data modify storage {ns}:input with.on_targeted_entity set value "function {ns}:v{version}/zombies/traps/turret_hit"
+function #bs.raycast:run with storage {ns}:input
+""")
+
+	## Turret bullet impact (@s = hit entity, positioned at the hit point)
+	write_versioned_function("zombies/traps/turret_hit", f"""
+# Impact particles
+particle minecraft:crit ~ ~1 ~ 0.2 0.3 0.2 0.1 8 force @a[distance=..48]
+
+# Zombie hit: 45% of its max health
+execute if entity @s[tag={ns}.zombie_round] store result storage {ns}:temp _trap_dmg.amount int 1 run attribute @s minecraft:max_health get 0.45
+execute if entity @s[tag={ns}.zombie_round] run data modify storage {ns}:temp _trap_dmg.type set value "minecraft:mob_projectile"
+execute if entity @s[tag={ns}.zombie_round] run return run function {ns}:v{version}/zombies/traps/apply_trap_damage with storage {ns}:temp _trap_dmg
+
+# Player caught between the turret and the zombies: 2 damage
+execute if entity @s[type=player,gamemode=!creative,gamemode=!spectator] if score @s {ns}.zb.in_game matches 1.. run damage @s 2 minecraft:mob_projectile
 """)
 
 	## Hover events (executor: "source" = player)
 	write_versioned_function("zombies/traps/on_hover", f"""
 execute store result score #trap_price {ns}.data run scoreboard players get @n[tag=bs.interaction.target] {ns}.zb.trap.price
+execute store result score #trap_type {ns}.data run scoreboard players get @n[tag=bs.interaction.target] {ns}.zb.trap.type
 data modify storage smithed.actionbar:input message set value {{json:[{{"text":"⚠ Trap","color":"red"}},{{"text":" - Cost: ","color":"gray"}},{{"score":{{"name":"#trap_price","objective":"{ns}.data"}},"color":"yellow"}},{{"text":" points","color":"gray"}}],priority:"conditional",freeze:5}}
+execute if score #trap_type {ns}.data matches 0 run data modify storage smithed.actionbar:input message.json[0] set value {{"text":"🔥 Fire Trap","color":"red"}}
+execute if score #trap_type {ns}.data matches 1 run data modify storage smithed.actionbar:input message.json[0] set value {{"text":"⚡ Electric Trap","color":"aqua"}}
+execute if score #trap_type {ns}.data matches 2 run data modify storage smithed.actionbar:input message.json[0] set value {{"text":"🔫 Turret Trap","color":"gold"}}
 function #smithed.actionbar:message
 """)
 
