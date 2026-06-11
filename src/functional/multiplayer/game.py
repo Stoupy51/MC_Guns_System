@@ -237,8 +237,7 @@ tag @a[tag={ns}.give_class_menu] remove {ns}.give_class_menu
 """)
 
 	## Join Ongoing Game (late-joiner support)
-	write_versioned_function("multiplayer/join_game", f"""
-{late_join_flow_lines(
+	write_versioned_function("multiplayer/join_game", late_join_flow_lines(
 	ns,
 	"multiplayer",
 	f"{ns}.mp.in_game",
@@ -262,8 +261,7 @@ execute unless data storage {ns}:multiplayer game{{gamemode:"ffa"}} unless score
 	"yellow",
 	allow_preparing=True,
 	setup_extra_lines="attribute @s minecraft:waypoint_receive_range base set 0.0",
-)}
-""")
+))
 
 	# Simulated Death ───────────────────────────────────────────
 	# Called when lethal damage is intercepted (bullet/projectile) or for OOB kills

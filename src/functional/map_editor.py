@@ -47,6 +47,7 @@ ALL_ELEMENTS: dict[str, JsonDict] = {
 		"defaults": {"name": "Door", "back_name": "Door", "price": 1000, "link_id": 1, "back_group_id": -1, "block": "", "animation": 0, "sound": ""},
 		"requires_offhand_block": True,
 	},
+	# Trap types: 0 = fire, 1 = electric, 2 = turret
 	"trap":               {"name": "Trap",             "color": "red",          "particle": [1.0, 0.2, 0.2], "particle_scale": 1.0, "has_rotation": True,  "egg_model": "minecraft:cave_spider_spawn_egg", "save_type": "zb_object", "save_path": "traps", "emoji": "🔮",
                            "defaults": {"price": 1000, "type": 0, "duration": 200, "cooldown": 1200, "effect_radius": [3.0, 2.0, 3.0], "offset_pos": [0, 0, 0], "power": True}},
 	"perk_machine":       {"name": "Perk Machine",     "color": "dark_purple",  "particle": [0.5, 0.0, 0.5], "particle_scale": 1.0, "has_rotation": True,  "egg_model": "minecraft:witch_spawn_egg",       "save_type": "zb_object", "save_path": "perks", "emoji": "🧪",
