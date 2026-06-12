@@ -6,6 +6,7 @@ from stewbeet import Mem, write_load_file, write_tag, write_tick_file, write_ver
 from ..core.respawn_countdown import respawn_countdown_tick_lines
 from ..helpers import (
 	MGS_TAG,
+	end_prep_transition_lines,
 	game_start_guards,
 	late_join_flow_lines,
 	mode_start_map_bootstrap_lines,
@@ -14,10 +15,21 @@ from ..helpers import (
 	regen_enable_lines,
 )
 
+# All multiplayer gamemodes (single source of truth for dispatch blocks)
+GAMEMODES: list[str] = ["ffa", "tdm", "dom", "hp", "snd"]
+
 
 def generate_game() -> None:
 	ns: str = Mem.ctx.project_id
 	version: str = Mem.ctx.project_version
+
+	def gm_dispatch(script: str, ret: bool = False) -> str:
+		""" Build the per-gamemode dispatch lines for a given script (setup/cleanup/tick/on_kill). """
+		run: str = "run return run" if ret else "run"
+		return "\n".join(
+			f'execute if data storage {ns}:multiplayer game{{gamemode:"{gm}"}} {run} function {ns}:v{version}/multiplayer/gamemodes/{gm}/{script}'
+			for gm in GAMEMODES
+		)
 
 	## Scoreboards & Storage Setup
 	write_load_file(
@@ -135,11 +147,7 @@ function #{ns}:multiplayer/register_classes
 function #{ns}:multiplayer/on_game_start
 
 # Run gamemode-specific setup
-execute if data storage {ns}:multiplayer game{{gamemode:"ffa"}} run function {ns}:v{version}/multiplayer/gamemodes/ffa/setup
-execute if data storage {ns}:multiplayer game{{gamemode:"tdm"}} run function {ns}:v{version}/multiplayer/gamemodes/tdm/setup
-execute if data storage {ns}:multiplayer game{{gamemode:"dom"}} run function {ns}:v{version}/multiplayer/gamemodes/dom/setup
-execute if data storage {ns}:multiplayer game{{gamemode:"hp"}} run function {ns}:v{version}/multiplayer/gamemodes/hp/setup
-execute if data storage {ns}:multiplayer game{{gamemode:"snd"}} run function {ns}:v{version}/multiplayer/gamemodes/snd/setup
+{gm_dispatch("setup")}
 
 # Run map-defined start commands after entity/setup summons
 execute if data storage {ns}:multiplayer game.map.start_commands[0] run function {ns}:v{version}/shared/run_start_commands {{mode:"multiplayer"}}
@@ -178,7 +186,8 @@ function {ns}:v{version}/multiplayer/tp_all_to_spawns
 execute as @a[scores={{{ns}.mp.in_game=1}}] at @s unless score @s {ns}.mp.class matches 0 run function {ns}:v{version}/multiplayer/apply_class
 
 # For players with no class: auto-apply default custom loadout if set
-scoreboard players add @s {ns}.mp.class 0
+# (add 0 initializes unset scores so the 'matches 0' check below can succeed)
+scoreboard players add @a {ns}.mp.class 0
 execute as @a[scores={{{ns}.mp.in_game=1}}] at @s if score @s {ns}.mp.class matches 0 if score @s {ns}.mp.default matches 1.. run function {ns}:v{version}/multiplayer/auto_apply_default
 
 # Show class selection dialog to EVERYONE (so they can change during prep)
@@ -201,23 +210,20 @@ data modify storage {ns}:multiplayer game.state set value "lobby"
 schedule clear {ns}:v{version}/multiplayer/end_prep
 execute as @a[scores={{{ns}.mp.in_game=1}}] run attribute @s minecraft:movement_speed base reset
 execute as @a[scores={{{ns}.mp.in_game=1}}] run attribute @s minecraft:jump_strength base reset
+execute as @a[scores={{{ns}.mp.in_game=1}}] run attribute @s minecraft:waypoint_receive_range base reset
 effect clear @a[scores={{{ns}.mp.in_game=1}}] darkness
 effect clear @a[scores={{{ns}.mp.in_game=1}}] blindness
 effect clear @a[scores={{{ns}.mp.in_game=1}}] night_vision
 gamemode adventure @a[scores={{{ns}.mp.in_game=1}},gamemode=spectator]
 kill @e[tag={ns}.gm_entity]
-execute if data storage {ns}:multiplayer game{{gamemode:"ffa"}} run function {ns}:v{version}/multiplayer/gamemodes/ffa/cleanup
-execute if data storage {ns}:multiplayer game{{gamemode:"tdm"}} run function {ns}:v{version}/multiplayer/gamemodes/tdm/cleanup
-execute if data storage {ns}:multiplayer game{{gamemode:"dom"}} run function {ns}:v{version}/multiplayer/gamemodes/dom/cleanup
-execute if data storage {ns}:multiplayer game{{gamemode:"hp"}} run function {ns}:v{version}/multiplayer/gamemodes/hp/cleanup
-execute if data storage {ns}:multiplayer game{{gamemode:"snd"}} run function {ns}:v{version}/multiplayer/gamemodes/snd/cleanup
+{gm_dispatch("cleanup")}
 function #{ns}:multiplayer/on_game_end
 
 {regen_disable_lines(ns)}
 
-# Announce scores
+# Announce scores (team scores are meaningless in FFA — the winner is announced by player_wins)
 tellraw @a ["",[{{"text":"","color":"gold","bold":true}},"⚔ ",{{"text":"Game Over"}},"! "]]
-tellraw @a ["",{{"text":"Red","color":"red"}},{{"text":": "}},{{"score":{{"name":"#red","objective":"{ns}.mp.team"}}}}," | ",{{"text":"Blue","color":"blue"}},{{"text":": "}},{{"score":{{"name":"#blue","objective":"{ns}.mp.team"}}}}]
+execute unless data storage {ns}:multiplayer game{{gamemode:"ffa"}} run tellraw @a ["",{{"text":"Red","color":"red"}},{{"text":": "}},{{"score":{{"name":"#red","objective":"{ns}.mp.team"}}}}," | ",{{"text":"Blue","color":"blue"}},{{"text":": "}},{{"score":{{"name":"#blue","objective":"{ns}.mp.team"}}}}]
 
 # Remove sidebar and list displays and leave teams
 scoreboard objectives setdisplay sidebar
@@ -281,9 +287,13 @@ execute if data storage {ns}:input with.attacker run function {ns}:v{version}/mu
 # No attacker: random funny self-death message
 execute unless data storage {ns}:input with.attacker run function {ns}:v{version}/multiplayer/random_death_message
 
-# Increment death stats
-scoreboard players add @s {ns}.mp.deaths 1
+# Enter death spectate (shared with vanilla-death on_respawn)
+function {ns}:v{version}/multiplayer/enter_death_spectate
+""")
 
+	## Shared death-spectate flow (@s = dying player, {ns}.temp_killer may be tagged by the caller)
+	## Used by simulate_death (bullet/OOB deaths) and on_respawn (vanilla deaths)
+	write_versioned_function("multiplayer/enter_death_spectate", f"""
 # S&D: no respawning, mark as dead and go spectator
 execute if data storage {ns}:multiplayer game{{gamemode:"snd"}} run return run function {ns}:v{version}/multiplayer/gamemodes/snd/on_death
 
@@ -291,7 +301,7 @@ execute if data storage {ns}:multiplayer game{{gamemode:"snd"}} run return run f
 gamemode spectator @s
 scoreboard players set @s {ns}.mp.spectate_timer 60
 
-# Spectate attacker (tagged by fire_kill) or random
+# Spectate attacker (if tagged) or random alive player
 spectate @p[tag={ns}.temp_killer,gamemode=!spectator] @s
 execute unless entity @a[tag={ns}.temp_killer] run function {ns}:v{version}/multiplayer/spectate_random_player
 tag @a[tag={ns}.temp_killer] remove {ns}.temp_killer
@@ -354,11 +364,7 @@ execute if score #random_message {ns}.data matches 5 run tellraw @a[scores={{{ns
 execute unless data storage {ns}:multiplayer game{{state:"active"}} run return fail
 
 # Dispatch to gamemode-specific kill handler
-execute if data storage {ns}:multiplayer game{{gamemode:"ffa"}} run return run function {ns}:v{version}/multiplayer/gamemodes/ffa/on_kill
-execute if data storage {ns}:multiplayer game{{gamemode:"tdm"}} run return run function {ns}:v{version}/multiplayer/gamemodes/tdm/on_kill
-execute if data storage {ns}:multiplayer game{{gamemode:"dom"}} run return run function {ns}:v{version}/multiplayer/gamemodes/dom/on_kill
-execute if data storage {ns}:multiplayer game{{gamemode:"hp"}} run return run function {ns}:v{version}/multiplayer/gamemodes/hp/on_kill
-execute if data storage {ns}:multiplayer game{{gamemode:"snd"}} run return run function {ns}:v{version}/multiplayer/gamemodes/snd/on_kill
+{gm_dispatch("on_kill", ret=True)}
 """, tags=[f"{ns}:signals/on_kill"])
 
 	## Check Team Win (shared by TDM, DOM, HP)
@@ -403,14 +409,10 @@ execute if score #mp_timer {ns}.data matches ..0 run function {ns}:v{version}/mu
 execute if score #mp_has_boundary {ns}.data matches 1 as @e[type=player,scores={{{ns}.mp.in_game=1,{ns}.mp.death_count=0}},gamemode=!creative,gamemode=!spectator] at @s run function {ns}:v{version}/multiplayer/check_bounds
 
 # Out-of-bounds check (skip players with respawn protection)
-execute as @e[type=player,scores={{{ns}.mp.in_game=1,{ns}.mp.death_count=0}},gamemode=!creative,gamemode=!spectator] at @s if entity @e[tag={ns}.oob_point,distance=..5] run function {ns}:v{version}/multiplayer/oob_kill
+execute as @e[type=player,scores={{{ns}.mp.in_game=1,{ns}.mp.death_count=0}},gamemode=!creative,gamemode=!spectator] at @s if entity @e[tag={ns}.oob_point,distance=..5] run function {ns}:v{version}/multiplayer/bounds_kill
 
 # Gamemode tick dispatch
-execute if data storage {ns}:multiplayer game{{gamemode:"ffa"}} run function {ns}:v{version}/multiplayer/gamemodes/ffa/tick
-execute if data storage {ns}:multiplayer game{{gamemode:"tdm"}} run function {ns}:v{version}/multiplayer/gamemodes/tdm/tick
-execute if data storage {ns}:multiplayer game{{gamemode:"dom"}} run function {ns}:v{version}/multiplayer/gamemodes/dom/tick
-execute if data storage {ns}:multiplayer game{{gamemode:"hp"}} run function {ns}:v{version}/multiplayer/gamemodes/hp/tick
-execute if data storage {ns}:multiplayer game{{gamemode:"snd"}} run function {ns}:v{version}/multiplayer/gamemodes/snd/tick
+{gm_dispatch("tick")}
 
 # Call map-defined tick script
 function {ns}:v{version}/shared/maps/call_tick_script_at_base
@@ -483,15 +485,8 @@ execute if score @s {ns}.mp.bz < #bound_z1 {ns}.data run return run function {ns
 execute if score @s {ns}.mp.bz > #bound_z2 {ns}.data run return run function {ns}:v{version}/multiplayer/bounds_kill
 """)
 
-	## Kill player out of bounds (simulate death, never /kill)
+	## Environmental kill: out of boundaries or near an OOB marker (simulate death, never /kill)
 	write_versioned_function("multiplayer/bounds_kill", f"""
-# Clear attacker input (environmental death) and simulate death
-data modify storage {ns}:input with set value {{}}
-function {ns}:v{version}/multiplayer/simulate_death
-""")
-
-	## OOB kill (player near an out-of-bounds marker) (simulate death, never /kill)
-	write_versioned_function("multiplayer/oob_kill", f"""
 # Clear attacker input (environmental death) and simulate death
 data modify storage {ns}:input with set value {{}}
 function {ns}:v{version}/multiplayer/simulate_death
@@ -806,24 +801,7 @@ execute as @a[scores={{{ns}.mp.in_game=1}}] run scoreboard players operation @s 
 
 	## End prep: unfreeze players, transition to active
 	write_versioned_function("multiplayer/end_prep", f"""
-# Only if still preparing (game might have been stopped)
-execute unless data storage {ns}:multiplayer game{{state:"preparing"}} run return fail
-
-# Restore movement
-execute as @a[scores={{{ns}.mp.in_game=1}}] run attribute @s minecraft:movement_speed base set 0.1
-execute as @a[scores={{{ns}.mp.in_game=1}}] run attribute @s minecraft:jump_strength base set 0.42
-execute as @a[scores={{{ns}.mi.in_game=1}}] run attribute @s minecraft:waypoint_receive_range base set 0.0
-
-# Clear prep effects
-effect clear @a[scores={{{ns}.mp.in_game=1}}] darkness
-effect clear @a[scores={{{ns}.mp.in_game=1}}] blindness
-effect clear @a[scores={{{ns}.mp.in_game=1}}] night_vision
-
-# Re-apply permanent saturation for the active game
-effect give @a[scores={{{ns}.mp.in_game=1}}] saturation infinite 255 true
-
-# Set state to active
-data modify storage {ns}:multiplayer game.state set value "active"
+{end_prep_transition_lines(ns, "multiplayer", "mp")}
 
 # Call map start scripts (state is now active, chunks had time to load)
 function {ns}:v{version}/shared/maps/call_start_script_at_base

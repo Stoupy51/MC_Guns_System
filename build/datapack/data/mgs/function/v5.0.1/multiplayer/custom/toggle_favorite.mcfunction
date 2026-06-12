@@ -8,7 +8,7 @@
 
 # Extract loadout ID from trigger value
 scoreboard players operation #loadout_id mgs.data = @s mgs.player.config
-scoreboard players remove #loadout_id mgs.data 1100
+scoreboard players remove #loadout_id mgs.data 20000
 
 # Rebuild player_data, toggling favorite in our entry
 data modify storage mgs:temp _pd_src set from storage mgs:multiplayer player_data

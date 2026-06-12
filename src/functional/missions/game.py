@@ -151,7 +151,8 @@ execute as @a[scores={{{ns}.mi.in_game=1}}] run attribute @s minecraft:waypoint_
 execute as @a[scores={{{ns}.mi.in_game=1}}] at @s unless score @s {ns}.mp.class matches 0 run function {ns}:v{version}/multiplayer/apply_class
 
 # Auto-apply default custom loadout if no class set
-scoreboard players add @s {ns}.mp.class 0
+# (add 0 initializes unset scores so the 'matches 0' check below can succeed)
+scoreboard players add @a {ns}.mp.class 0
 execute as @a[scores={{{ns}.mi.in_game=1}}] at @s if score @s {ns}.mp.class matches 0 if score @s {ns}.mp.default matches 1.. run function {ns}:v{version}/multiplayer/auto_apply_default
 
 # Show class selection

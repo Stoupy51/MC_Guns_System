@@ -8,7 +8,7 @@
 
 # Extract loadout ID from trigger value
 scoreboard players operation #loadout_id mgs.data = @s mgs.player.config
-scoreboard players remove #loadout_id mgs.data 1500
+scoreboard players remove #loadout_id mgs.data 60000
 
 # Store as player's default (scoreboard)
 scoreboard players operation @s mgs.mp.default = #loadout_id mgs.data

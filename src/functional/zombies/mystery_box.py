@@ -290,6 +290,13 @@ tellraw @s [{MGS_TAG},{{"text":"You already own all available Mystery Box weapon
 function {ns}:v{version}/zombies/feedback/sound_deny
 """)
 
+	write_versioned_function("zombies/mystery_box/deny_pool_empty", f"""
+# Clear any stale result so downstream checks treat this pull as failed
+data remove storage {ns}:zombies mystery_box.result
+tellraw @s [{MGS_TAG},{{"text":"The Mystery Box has no weapons available.","color":"red"}}]
+function {ns}:v{version}/zombies/feedback/sound_deny
+""")
+
 	## Display entity: spawns at box level, floats up with interpolation
 	write_versioned_function("zombies/mystery_box/spawn_display", f"""
 # Spawn item display at box level with small scale and correct facing

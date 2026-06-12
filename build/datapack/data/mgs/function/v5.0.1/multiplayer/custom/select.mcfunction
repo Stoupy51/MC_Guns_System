@@ -6,9 +6,9 @@
 # @within	mgs:v5.0.1/player/config/process
 #
 
-# Extract loadout ID from trigger value: id = trigger - 1000
+# Extract loadout ID from trigger value: id = trigger - 10000
 scoreboard players operation #loadout_id mgs.data = @s mgs.player.config
-scoreboard players remove #loadout_id mgs.data 1000
+scoreboard players remove #loadout_id mgs.data 10000
 
 # Store as active custom class (negative mp.class = custom loadout ID)
 scoreboard players operation @s mgs.mp.class = #loadout_id mgs.data

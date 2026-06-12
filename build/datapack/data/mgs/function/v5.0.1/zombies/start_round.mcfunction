@@ -21,9 +21,6 @@ execute if score #zb_to_spawn mgs.data matches 97.. run scoreboard players set #
 scoreboard players operation #zb_to_spawn mgs.data *= #zb_player_count mgs.data
 execute if score #zb_to_spawn mgs.data matches 257.. run scoreboard players set #zb_to_spawn mgs.data 256
 
-# Store zombies to spawn and remaining count
-scoreboard players operation #zb_remaining mgs.data = #zb_to_spawn mgs.data
-
 # Calculate initial spawn timer and batch size for this round
 function mgs:v5.0.1/zombies/calc_spawn_timer
 

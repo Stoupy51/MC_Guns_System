@@ -89,9 +89,9 @@ execute if score #hp_score_timer {ns}.data matches ..1 run function #bs.sidebar:
 # Show particles at zone center
 execute at @e[tag={ns}.hp_marker] run particle dust{{color:[0.5,0.0,0.5],scale:1.5}} ~ ~ ~ 4 0.5 4 0 10
 
-# Tag players inside the zone (within 5 blocks horizontally, 4 blocks vertically)
+# Tag players inside the zone (5x5 blocks horizontally, 4 blocks vertically, centered on the marker)
 tag @a remove {ns}.in_hp_zone
-execute at @e[tag={ns}.hp_marker] positioned ~-2 ~ ~-2 run tag @a[dx=5,dy=5,dz=5,gamemode=!spectator,scores={{{ns}.mp.in_game=1}}] add {ns}.in_hp_zone
+execute at @e[tag={ns}.hp_marker] positioned ~-2.5 ~-1 ~-2.5 run tag @a[dx=4,dy=3,dz=4,gamemode=!spectator,scores={{{ns}.mp.in_game=1}}] add {ns}.in_hp_zone
 
 # Count teams in zone
 execute store result score #hp_red {ns}.data if entity @a[tag={ns}.in_hp_zone,scores={{{ns}.mp.team=1}}]

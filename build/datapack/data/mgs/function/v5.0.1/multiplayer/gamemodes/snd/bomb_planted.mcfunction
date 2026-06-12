@@ -8,6 +8,7 @@
 
 scoreboard players set #snd_bomb_state mgs.data 2
 scoreboard players set #snd_bomb_timer mgs.data 900
+scoreboard players set #snd_plant_progress mgs.data 0
 
 # Summon bomb entity at planter's position
 summon minecraft:marker ~ ~ ~ {Tags:["mgs.snd_bomb","mgs.gm_entity"]}

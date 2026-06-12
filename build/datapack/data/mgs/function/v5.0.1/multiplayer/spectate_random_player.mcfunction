@@ -3,8 +3,7 @@
 #
 # @executed	at @s
 #
-# @within	mgs:v5.0.1/multiplayer/simulate_death
-#			mgs:v5.0.1/multiplayer/on_respawn
+# @within	mgs:v5.0.1/multiplayer/enter_death_spectate
 #
 
 # Pick a random alive in-game player (not self, not spectator)

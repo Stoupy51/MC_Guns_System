@@ -181,6 +181,11 @@ $playsound {ns}:$(fire) player @a[distance=0.01..48] ~ ~ ~ 0.35 1 0.10
 f"""
 # Armed mob AI loop
 execute if score #armed_mob_count {ns}.data matches 1.. as @e[tag={ns}.armed] at @s run function {ns}:v{version}/mob/tick
+
+# Resync armed mob count every 5 seconds (mobs dying never decrement the counter)
+scoreboard players operation #armed_mob_phase {ns}.data = #total_tick {ns}.data
+scoreboard players operation #armed_mob_phase {ns}.data %= #100 {ns}.data
+execute if score #armed_mob_count {ns}.data matches 1.. if score #armed_mob_phase {ns}.data matches 0 store result score #armed_mob_count {ns}.data if entity @e[tag={ns}.armed]
 """)
 
     ## Simple default functions

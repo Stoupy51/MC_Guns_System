@@ -26,17 +26,3 @@ $execute if data storage mgs:temp copy[0] run function mgs:v5.0.1/ammo/search_lo
 # Clean up temporary tag
 tag @s remove mgs.modify_lore
 
-## In this context, @s has the right amount of bullets in mgs.remaining_bullets
-# Add temporary tag for item display targeting
-tag @s add mgs.modify_lore
-
-# Get current weapon lore
-$execute summon item_display run function mgs:v5.0.1/ammo/get_current_lore {"slot":"$(slot)"}
-
-# Find and update ammo count in lore
-scoreboard players set #index mgs.data 0
-$execute if data storage mgs:temp copy[0] run function mgs:v5.0.1/ammo/search_lore_loop {"slot":"$(slot)"}
-
-# Clean up temporary tag
-tag @s remove mgs.modify_lore
-

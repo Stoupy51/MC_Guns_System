@@ -136,13 +136,16 @@ TRIG_PERKS_DONE           = 450   # Done selecting perks -> go to confirm
 TRIG_EQUIP_SLOT1_BASE     = 460   # 460 + grenade_index (0=none,1=frag,2=semtex,3=flash,4=smoke)
 TRIG_EQUIP_SLOT2_BASE     = 470   # 470 + grenade_index (0=none,1=frag,2=semtex,3=flash,4=smoke)
 
-TRIG_SELECT_BASE          = 1000  # 1000 + loadout_id -> use as active class
-TRIG_FAVORITE_BASE        = 1100  # 1100 + loadout_id -> toggle favorite
-TRIG_LIKE_BASE            = 1200  # 1200 + loadout_id -> like loadout
-TRIG_DELETE_BASE          = 1300  # 1300 + loadout_id -> delete own loadout
-TRIG_TOGGLE_VIS_BASE      = 1400  # 1400 + loadout_id -> toggle public/private
-TRIG_SET_DEFAULT_BASE     = 1500  # 1500 + loadout_id -> set as default
-TRIG_UNSET_DEFAULT        = 1599  # Unset default loadout
+# Loadout action triggers: base + loadout_id. Loadout IDs auto-increment and are never
+# reused, so each action gets a 10000-wide range (the old 100-wide ranges silently broke
+# once more than 99 loadouts had ever been created).
+TRIG_SELECT_BASE          = 10000  # + loadout_id -> use as active class
+TRIG_FAVORITE_BASE        = 20000  # + loadout_id -> toggle favorite
+TRIG_LIKE_BASE            = 30000  # + loadout_id -> like loadout
+TRIG_DELETE_BASE          = 40000  # + loadout_id -> delete own loadout
+TRIG_TOGGLE_VIS_BASE      = 50000  # + loadout_id -> toggle public/private
+TRIG_SET_DEFAULT_BASE     = 60000  # + loadout_id -> set as default
+TRIG_UNSET_DEFAULT        = 69999  # Unset default loadout
 
 # Filter / Sort view triggers
 TRIG_MARKETPLACE_ALL          = 1600  # Marketplace: show all public (favorites first)

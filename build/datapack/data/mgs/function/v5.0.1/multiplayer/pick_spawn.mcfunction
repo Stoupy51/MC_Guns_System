@@ -9,6 +9,8 @@
 #			mgs:v5.0.1/multiplayer/respawn_tp {type:"general"}
 #			mgs:v5.0.1/multiplayer/respawn_tp {type:"red"}
 #			mgs:v5.0.1/multiplayer/respawn_tp {type:"blue"}
+#			mgs:v5.0.1/multiplayer/gamemodes/snd/start_round {type:"red"} [ as @a[scores={mgs.mp.team=1}] & at @s ]
+#			mgs:v5.0.1/multiplayer/gamemodes/snd/start_round {type:"blue"} [ as @a[scores={mgs.mp.team=2}] & at @s ]
 #
 # @args		type (string)
 #

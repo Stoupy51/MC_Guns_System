@@ -3,7 +3,8 @@
 #
 # @executed	at @s
 #
-# @within	mgs:v5.0.1/multiplayer/check_bounds
+# @within	mgs:v5.0.1/multiplayer/game_tick [ at @s ]
+#			mgs:v5.0.1/multiplayer/check_bounds
 #
 
 # Clear attacker input (environmental death) and simulate death

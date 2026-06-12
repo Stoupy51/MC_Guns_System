@@ -122,6 +122,14 @@ scoreboard players set @s {ns}.grenade_launch 3
 function {ns}:v{version}/shared/calc_velocity
 """)
 
+    ## Set visual model on the item_display (macro function)
+    write_versioned_function("grenade/set_model", f"""
+$data modify entity @s item set value {{id:"minecraft:paper", count:1, components:{{"minecraft:item_model":"{ns}:$({PROJECTILE_MODEL})"}}}}
+data modify entity @s item_display set value "fixed"
+data modify entity @s brightness set value {{sky: 15, block: 15}}
+data modify entity @s teleport_duration set value 1
+""")
+
     ## Tick function for each grenade entity
     write_versioned_function("grenade/tick", f"""
 # Skip if grenade is stuck (semtex on a surface) or in smoke/flash effect phase
