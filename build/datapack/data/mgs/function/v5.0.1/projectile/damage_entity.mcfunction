@@ -62,16 +62,18 @@ execute store result score #decay_factor mgs.data run data get storage bs:out ma
 scoreboard players operation #expl_dmg mgs.data *= #decay_factor mgs.data
 scoreboard players operation #expl_dmg mgs.data /= #1000000 mgs.data
 
-# If zombie game is active: multiply by 5 for zombies, cap for players (15 hp)
+# If zombie game is active: multiply by 5 for zombies, cap for players (6 hp = 3 hearts)
 execute if data storage mgs:zombies game{state:"active"} if entity @s[type=!player] run scoreboard players operation #expl_dmg mgs.data *= #5 mgs.data
-execute if data storage mgs:zombies game{state:"active"} if entity @s[type=player] if score #expl_dmg mgs.data matches 150.. run scoreboard players set #expl_dmg mgs.data 150
+execute if data storage mgs:zombies game{state:"active"} if entity @s[type=player] if score #expl_dmg mgs.data matches 60.. run scoreboard players set #expl_dmg mgs.data 60
 
 # Skip if damage is negligible (less than 0.1)
 execute if score #expl_dmg mgs.data matches ..0 run return fail
 
 # Instant kill: if shooter has active instant kill and target is not immune, set damage to 99999
+# Never applied to players while a zombies game is active (would bypass the explosion cap above)
 tag @n[tag=mgs.temp_shooter] add mgs.ticking
-execute if entity @s[tag=!mgs.no_instant_kill] as @n[tag=mgs.temp_shooter] if score @s mgs.special.instant_kill matches 1.. run scoreboard players set #expl_dmg mgs.data 99999
+execute if entity @s[tag=!mgs.no_instant_kill,type=!player] as @n[tag=mgs.temp_shooter] if score @s mgs.special.instant_kill matches 1.. run scoreboard players set #expl_dmg mgs.data 99999
+execute unless data storage mgs:zombies game{state:"active"} if entity @s[tag=!mgs.no_instant_kill,type=player] as @n[tag=mgs.temp_shooter] if score @s mgs.special.instant_kill matches 1.. run scoreboard players set #expl_dmg mgs.data 99999
 
 # Apply damage using the existing damage utility
 # Apply damage, fire damage signal (weapon info included for handlers)

@@ -102,6 +102,9 @@ scoreboard players add #slow_bullet_count {ns}.data 0
 # Semtex entity pairing: unique ID objective + global counter
 scoreboard objectives add {ns}.grenade_launch dummy
 scoreboard objectives add {ns}.stuck_id dummy
+
+# Per-grenade accumulated tumble angle (1e-4 rad units)
+scoreboard objectives add {ns}.grenade_spin dummy
 scoreboard players set #semtex_id {ns}.data 0
 
 # Initialize global config defaults (only if not already set)

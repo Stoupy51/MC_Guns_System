@@ -7,7 +7,8 @@
 #
 # @args		primary_name (unknown)
 #			primary_scope_name (unknown)
+#			primary_camo_name (unknown)
 #
 
-$data modify storage mgs:temp _new_loadout.main_gun_display set value "$(primary_name) ($(primary_scope_name))"
+$data modify storage mgs:temp _new_loadout.main_gun_display set value "$(primary_name) ($(primary_scope_name), $(primary_camo_name))"
 

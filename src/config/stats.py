@@ -52,6 +52,10 @@ REMAINING_BULLETS: str = "remaining_bullets"
 This value is updated when firing and reloading the weapon. """
 RELOAD_TIME: str = "reload_time"
 """ Time required to reload the weapon, measured in game ticks. """
+SINGLE_RELOAD: str = "single_reload"
+""" Shell-by-shell reload (bolt/tube fed weapons): each reload cycle loads exactly one
+bullet with its own sound and RELOAD_TIME, then chains into the next shell until the
+magazine is full - interrupted by switching weapon or trying to shoot. """
 RELOAD_END: str = "reload_end"
 """ Additional time in ticks after the reload animation completes.
 Used to create a smoother transition between reloading and being able to fire again. """
@@ -985,7 +989,7 @@ STEN: JsonDict = {
 # Shotguns
 SPAS12: JsonDict = {
     "stats": {
-        BASE_WEAPON: "spas12", FIRE_MODE: "semi",
+        BASE_WEAPON: "spas12", FIRE_MODE: "semi", SINGLE_RELOAD: True,
         CAPACITY: 8, RELOAD_TIME: 20, COOLDOWN: 16, PELLET_COUNT: 3, DAMAGE: 13, DECAY: 0.82, WEIGHT: 5,
         ACCURACY_BASE: 230, ACCURACY_SNEAK: 190, ACCURACY_WALK: 300, ACCURACY_SPRINT: 800, ACCURACY_JUMP: 1500,
         SWITCH: 25, KICK: 6, CASING_MODEL: CASING_12GA275IN, CASING_NORMAL: 25, CASING_TANGENT: 100, CASING_BINORMAL: -200,
@@ -1017,7 +1021,7 @@ SPAS12: JsonDict = {
 
 M500: JsonDict = {
     "stats": {
-        BASE_WEAPON: "m500", FIRE_MODE: "semi",
+        BASE_WEAPON: "m500", FIRE_MODE: "semi", SINGLE_RELOAD: True,
         CAPACITY: 5, RELOAD_TIME: 22, COOLDOWN: 18, PELLET_COUNT: 3, DAMAGE: 14, DECAY: 0.82, WEIGHT: 4,
         ACCURACY_BASE: 250, ACCURACY_SNEAK: 200, ACCURACY_WALK: 350, ACCURACY_SPRINT: 900, ACCURACY_JUMP: 1600,
         SWITCH: 20, KICK: 7, CASING_MODEL: CASING_12GA3IN, CASING_NORMAL: 25, CASING_TANGENT: 100, CASING_BINORMAL: -200,
@@ -1048,7 +1052,7 @@ M500: JsonDict = {
 
 M590: JsonDict = {
     "stats": {
-        BASE_WEAPON: "m590", FIRE_MODE: "semi",
+        BASE_WEAPON: "m590", FIRE_MODE: "semi", SINGLE_RELOAD: True,
         CAPACITY: 8, RELOAD_TIME: 22, COOLDOWN: 19, PELLET_COUNT: 3, DAMAGE: 14, DECAY: 0.82, WEIGHT: 4,
         ACCURACY_BASE: 210, ACCURACY_SNEAK: 175, ACCURACY_WALK: 325, ACCURACY_SPRINT: 800, ACCURACY_JUMP: 1500,
         SWITCH: 35, KICK: 5, CASING_MODEL: CASING_12GA3IN, CASING_NORMAL: 50, CASING_TANGENT: 80, CASING_BINORMAL: -220,
@@ -1148,7 +1152,7 @@ M82: JsonDict = {
 
 MOSIN: JsonDict = {
     "stats": {
-        BASE_WEAPON: "mosin", FIRE_MODE: "semi",
+        BASE_WEAPON: "mosin", FIRE_MODE: "semi", SINGLE_RELOAD: True,
         CAPACITY: 5, RELOAD_TIME: 20, RELOAD_MID: 15, COOLDOWN: 40, DAMAGE: 29, DECAY: 0.95, WEIGHT: 4, SPEED_MULTIPLY_BASE: -0.09,
         ACCURACY_BASE: 150, ACCURACY_SNEAK: 3, ACCURACY_WALK: 175, ACCURACY_SPRINT: 1000, ACCURACY_JUMP: 1500,
         SWITCH: 25, KICK: 4, CASING_MODEL: CASING_762X54MM, CASING_NORMAL: 100, CASING_TANGENT: -50, CASING_BINORMAL: -100,
@@ -1181,7 +1185,7 @@ MOSIN: JsonDict = {
 
 M24: JsonDict = {
     "stats": {
-        BASE_WEAPON: "m24", FIRE_MODE: "semi",
+        BASE_WEAPON: "m24", FIRE_MODE: "semi", SINGLE_RELOAD: True,
         CAPACITY: 5, RELOAD_TIME: 25, RELOAD_MID: 14, COOLDOWN: 45, DAMAGE: 36, DECAY: 0.92, WEIGHT: 4, SPEED_MULTIPLY_BASE: -0.1,
         ACCURACY_BASE: 350, ACCURACY_SNEAK: 1, ACCURACY_WALK: 700, ACCURACY_SPRINT: 1500, ACCURACY_JUMP: 3000,
         SWITCH: 39, KICK: 4, CASING_MODEL: CASING_338LAPUA, CASING_NORMAL: 100, CASING_TANGENT: -50, CASING_BINORMAL: -100,

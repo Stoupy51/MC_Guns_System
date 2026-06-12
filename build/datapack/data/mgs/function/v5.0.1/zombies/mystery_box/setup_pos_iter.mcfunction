@@ -20,6 +20,7 @@ execute store result storage mgs:temp _mbpos.z double 1 run scoreboard players g
 data modify storage mgs:temp _mbpos.rotation set from storage mgs:temp _mb_iter[0].rotation
 
 function mgs:v5.0.1/zombies/mystery_box/summon_pos_at with storage mgs:temp _mbpos
+execute as @n[tag=mgs.mb_new] at @s run tp @s ~ ~2 ~
 
 # Tag entities that can_start_on
 data modify storage mgs:temp can_start_on set from storage mgs:temp _mb_iter[0].can_start_on

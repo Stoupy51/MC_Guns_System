@@ -4,7 +4,7 @@
 # @executed	as @e[type=player,sort=random] & at @s
 #
 # @within	mgs:v5.0.1/player/config/process
-#			mgs:v5.0.1/multiplayer/editor/pick_equip_slot2
+#			mgs:v5.0.1/multiplayer/editor/equip2_done
 #			mgs:v5.0.1/multiplayer/editor/pick_perk
 #
 

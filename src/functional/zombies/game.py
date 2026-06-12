@@ -61,6 +61,9 @@ scoreboard objectives add {ns}.zb.stuck_dist dummy
 # Initialize zombies game state
 execute unless data storage {ns}:zombies game run data modify storage {ns}:zombies game set value {{state:"lobby",map_id:"",round:0}}
 
+# Game variant: "vanilla" = classic CoD zombies, "zonweeb" = passives/abilities/special zombies
+execute unless data storage {ns}:zombies game.variant run data modify storage {ns}:zombies game.variant set value "zonweeb"
+
 # Initialize mystery box base pool (can be extended via function tag)
 execute unless data storage {ns}:zombies mystery_box_pool run data modify storage {ns}:zombies mystery_box_pool set value []
 """)
@@ -180,12 +183,13 @@ function {ns}:v{version}/zombies/tp_all_to_spawns
 # Freeze players during prep
 {prep_freeze_lines(ns, "zb")}
 execute as @a[scores={{{ns}.zb.in_game=1}}] run attribute @s minecraft:max_health base reset
+execute as @a[scores={{{ns}.zb.in_game=1}}] run attribute @s minecraft:entity_interaction_range base set 5
 
 # Give starting loadout to all players
 execute as @a[scores={{{ns}.zb.in_game=1}}] at @s run function {ns}:v{version}/zombies/inventory/give_starting_loadout
 
-# Show zombies perk selection menu
-execute as @a[scores={{{ns}.zb.in_game=1}}] run function {ns}:v{version}/zombies/passive_ability_menu
+# Show zombies passive/ability selection menu (Zonweeb variant only)
+execute if data storage {ns}:zombies game{{variant:"zonweeb"}} as @a[scores={{{ns}.zb.in_game=1}}] run function {ns}:v{version}/zombies/passive_ability_menu
 
 # Schedule end of prep (10 seconds remaining)
 schedule function {ns}:v{version}/zombies/end_prep 200t
@@ -193,8 +197,9 @@ schedule function {ns}:v{version}/zombies/end_prep 200t
 # Initialize sidebar
 function {ns}:v{version}/zombies/create_sidebar
 
-# Announce
-tellraw @a ["",{{"text":"","color":"dark_green","bold":true}},"🧟 ",{{"text":"Preparing! Choose your perk! Round 1 starts in 10 seconds!","color":"yellow"}}]
+# Announce (perk wording only applies to Zonweeb)
+execute if data storage {ns}:zombies game{{variant:"zonweeb"}} run tellraw @a ["",{{"text":"","color":"dark_green","bold":true}},"🧟 ",{{"text":"Preparing! Choose your perk! Round 1 starts in 10 seconds!","color":"yellow"}}]
+execute unless data storage {ns}:zombies game{{variant:"zonweeb"}} run tellraw @a ["",{{"text":"","color":"dark_green","bold":true}},"🧟 ",{{"text":"Preparing! Round 1 starts in 10 seconds!","color":"yellow"}}]
 """)
 
 	## Prep Tick (no class to detect, just wait)
@@ -335,6 +340,7 @@ schedule clear {ns}:v{version}/zombies/start_round
 execute as @a[scores={{{ns}.zb.in_game=1}}] run attribute @s minecraft:max_health base reset
 execute as @a[scores={{{ns}.zb.in_game=1}}] run attribute @s minecraft:movement_speed base reset
 execute as @a[scores={{{ns}.zb.in_game=1}}] run attribute @s minecraft:jump_strength base reset
+execute as @a[scores={{{ns}.zb.in_game=1}}] run attribute @s minecraft:entity_interaction_range base reset
 effect clear @a[scores={{{ns}.zb.in_game=1}}] darkness
 effect clear @a[scores={{{ns}.zb.in_game=1}}] blindness
 effect clear @a[scores={{{ns}.zb.in_game=1}}] night_vision
@@ -387,6 +393,8 @@ scoreboard players set @s {ns}.zb.ability 0
 scoreboard players set @s {ns}.zb.ability_cd 0
 scoreboard players set @s {ns}.mp.spectate_timer 0
 scoreboard players set @s {ns}.mp.death_count 0
+attribute @s minecraft:max_health base reset
+attribute @s minecraft:entity_interaction_range base set 5
 """,
 	f"{ns}:v{version}/zombies/respawn_tp",
 	"joined the zombies game!",

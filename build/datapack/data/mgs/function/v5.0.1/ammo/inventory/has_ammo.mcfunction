@@ -4,6 +4,7 @@
 # @executed	as @e[type=player,sort=random] & at @s
 #
 # @within	mgs:v5.0.1/ammo/reload with storage mgs:gun all.stats
+#			mgs:v5.0.1/ammo/single_reload_continue with storage mgs:gun all.stats
 #
 # @args		base_weapon (unknown)
 #

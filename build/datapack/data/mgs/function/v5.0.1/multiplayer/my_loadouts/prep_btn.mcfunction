@@ -21,6 +21,9 @@ execute store result storage mgs:temp _btn_data.vis_trig int 1 run scoreboard pl
 execute store result score #trig mgs.data run data get storage mgs:temp _iter[0].id
 scoreboard players add #trig mgs.data 40000
 execute store result storage mgs:temp _btn_data.delete_trig int 1 run scoreboard players get #trig mgs.data
+execute store result score #trig mgs.data run data get storage mgs:temp _iter[0].id
+scoreboard players add #trig mgs.data 70000
+execute store result storage mgs:temp _btn_data.edit_trig int 1 run scoreboard players get #trig mgs.data
 
 # Normalize and compute perk display
 execute unless data storage mgs:temp _btn_data.perks run data modify storage mgs:temp _btn_data.perks set value []
@@ -34,6 +37,8 @@ execute if data storage mgs:temp _btn_data{perks:["infinite_ammo"]} run data mod
 execute unless data storage mgs:temp _btn_data.points_used run data modify storage mgs:temp _btn_data.points_used set value 0
 execute unless data storage mgs:temp _btn_data.favorites_count run data modify storage mgs:temp _btn_data.favorites_count set value 0
 execute unless data storage mgs:temp _btn_data.likes run data modify storage mgs:temp _btn_data.likes set value 0
+execute unless data storage mgs:temp _btn_data.primary_mag_count run data modify storage mgs:temp _btn_data.primary_mag_count set value 1
+execute unless data storage mgs:temp _btn_data.secondary_mag_count run data modify storage mgs:temp _btn_data.secondary_mag_count set value 0
 execute unless data storage mgs:temp _btn_data.equip_slot1_name run data modify storage mgs:temp _btn_data.equip_slot1_name set value "?"
 execute unless data storage mgs:temp _btn_data.equip_slot2_name run data modify storage mgs:temp _btn_data.equip_slot2_name set value "?"
 execute unless data storage mgs:temp _btn_data.main_gun_display run data modify storage mgs:temp _btn_data.main_gun_display set from storage mgs:temp _btn_data.main_gun

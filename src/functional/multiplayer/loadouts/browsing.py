@@ -8,6 +8,7 @@ from .catalogs import (
 	PERKS,
 	PICK10_TOTAL,
 	TRIG_DELETE_BASE,
+	TRIG_EDIT_BASE,
 	TRIG_EDITOR_START,
 	TRIG_FAVORITE_BASE,
 	TRIG_LIKE_BASE,
@@ -204,6 +205,8 @@ execute if score #pub {ns}.data matches 1 if score #is_fav {ns}.data matches 0 r
 		f'execute unless data storage {ns}:temp _btn_data.points_used run data modify storage {ns}:temp _btn_data.points_used set value 0',
 		f'execute unless data storage {ns}:temp _btn_data.favorites_count run data modify storage {ns}:temp _btn_data.favorites_count set value 0',
 		f'execute unless data storage {ns}:temp _btn_data.likes run data modify storage {ns}:temp _btn_data.likes set value 0',
+		f'execute unless data storage {ns}:temp _btn_data.primary_mag_count run data modify storage {ns}:temp _btn_data.primary_mag_count set value 1',
+		f'execute unless data storage {ns}:temp _btn_data.secondary_mag_count run data modify storage {ns}:temp _btn_data.secondary_mag_count set value 0',
 		f'execute unless data storage {ns}:temp _btn_data.equip_slot1_name run data modify storage {ns}:temp _btn_data.equip_slot1_name set value "?"',
 		f'execute unless data storage {ns}:temp _btn_data.equip_slot2_name run data modify storage {ns}:temp _btn_data.equip_slot2_name set value "?"',
 		f'execute unless data storage {ns}:temp _btn_data.main_gun_display run data modify storage {ns}:temp _btn_data.main_gun_display set from storage {ns}:temp _btn_data.main_gun',
@@ -227,6 +230,7 @@ data modify storage {ns}:temp _btn_data set from storage {ns}:temp _iter[0]
 {_compute_trig("select_trig", TRIG_SELECT_BASE)}
 {_compute_trig("vis_trig", TRIG_TOGGLE_VIS_BASE)}
 {_compute_trig("delete_trig", TRIG_DELETE_BASE)}
+{_compute_trig("edit_trig", TRIG_EDIT_BASE)}
 
 # Normalize and compute perk display
 {_normalize_fields}
@@ -270,12 +274,14 @@ execute if score #pub {ns}.data matches 0 run function {ns}:v{version}/multiplay
 	## my_loadouts/add_btn_public - Macro: green name (public loadout), rich tooltip
 	write_versioned_function("multiplayer/my_loadouts/add_btn_public", f"""$data modify storage {ns}:temp dialog.actions append value {{label:{{text:"$(name)",color:"green"}},tooltip:{_ml_tooltip_pub},action:{{type:"run_command",command:"/trigger {ns}.player.config set $(select_trig)"}}}}
 $data modify storage {ns}:temp dialog.actions append value {{label:{{text:"Public -> Private",color:"dark_aqua"}},tooltip:{{text:"Toggle this loadout to Private",color:"red"}},action:{{type:"run_command",command:"/trigger {ns}.player.config set $(vis_trig)"}}}}
+$data modify storage {ns}:temp dialog.actions append value {{label:{styled_text("✏ Edit", color="gold")},tooltip:{{text:"Re-run the loadout wizard; saving overwrites this loadout",color:"yellow"}},action:{{type:"run_command",command:"/trigger {ns}.player.config set $(edit_trig)"}}}}
 $data modify storage {ns}:temp dialog.actions append value {{label:{styled_text("\U0001f5d1 Delete", color="red")},tooltip:{{text:"Permanently delete this loadout",color:"dark_red"}},action:{{type:"run_command",command:"/trigger {ns}.player.config set $(delete_trig)"}}}}
 """)
 
 	## my_loadouts/add_btn_private - Macro: red name (private loadout), rich tooltip
 	write_versioned_function("multiplayer/my_loadouts/add_btn_private", f"""$data modify storage {ns}:temp dialog.actions append value {{label:{{text:"$(name)",color:"red"}},tooltip:{_ml_tooltip_priv},action:{{type:"run_command",command:"/trigger {ns}.player.config set $(select_trig)"}}}}
 $data modify storage {ns}:temp dialog.actions append value {{label:{{text:"Private -> Public",color:"aqua"}},tooltip:{{text:"Toggle this loadout to Public",color:"green"}},action:{{type:"run_command",command:"/trigger {ns}.player.config set $(vis_trig)"}}}}
+$data modify storage {ns}:temp dialog.actions append value {{label:{styled_text("✏ Edit", color="gold")},tooltip:{{text:"Re-run the loadout wizard; saving overwrites this loadout",color:"yellow"}},action:{{type:"run_command",command:"/trigger {ns}.player.config set $(edit_trig)"}}}}
 $data modify storage {ns}:temp dialog.actions append value {{label:{styled_text("\U0001f5d1 Delete", color="red")},tooltip:{{text:"Permanently delete this loadout",color:"dark_red"}},action:{{type:"run_command",command:"/trigger {ns}.player.config set $(delete_trig)"}}}}
 """)
 

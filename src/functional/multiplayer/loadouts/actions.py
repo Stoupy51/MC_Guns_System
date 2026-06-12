@@ -6,6 +6,7 @@ from stewbeet import Mem, write_versioned_function
 from ...helpers import MGS_TAG
 from .catalogs import (
 	TRIG_DELETE_BASE,
+	TRIG_EDIT_BASE,
 	TRIG_FAVORITE_BASE,
 	TRIG_LIKE_BASE,
 	TRIG_SELECT_BASE,
@@ -360,4 +361,18 @@ tellraw @s ["",{MGS_TAG},{{"text":"Default loadout set! It will auto-apply when 
 # Unset default custom loadout - use standard class instead
 scoreboard players set @s {ns}.mp.default 0
 tellraw @s [{MGS_TAG},{{"text":"Default loadout cleared. Standard class will be used","color":"green"}}]
+""")
+
+	## custom/edit - Re-run the editor wizard targeting an existing loadout (saving overwrites it)
+	write_versioned_function("multiplayer/custom/edit", f"""
+# Extract loadout ID from trigger value
+scoreboard players operation #loadout_id {ns}.data = @s {ns}.player.config
+scoreboard players remove #loadout_id {ns}.data {TRIG_EDIT_BASE}
+
+# Launch a fresh editor flow, then mark it as targeting this loadout
+# (editor/start resets edit_target to 0, so the target is set after)
+function {ns}:v{version}/multiplayer/editor/start
+scoreboard players operation @s {ns}.mp.edit_target = #loadout_id {ns}.data
+
+tellraw @s [{MGS_TAG},{{"text":"Editing loadout: walk through the steps — saving will overwrite it (likes and favorites are kept).","color":"yellow"}}]
 """)

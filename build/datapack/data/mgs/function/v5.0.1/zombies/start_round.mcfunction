@@ -43,11 +43,9 @@ tellraw @a ["",{"text":"","color":"dark_green","bold":true},"🧟 ",{"translate"
 # Replenish grenades for all alive players (+2, cap at 4)
 execute as @a[scores={mgs.zb.in_game=1},gamemode=!spectator] run function mgs:v5.0.1/zombies/inventory/replenish_grenades
 
-# Reduce ability cooldowns
-function mgs:v5.0.1/zombies/perks/reduce_cooldowns
-
-# Check guardian ability (summon golem at round start)
-function mgs:v5.0.1/zombies/perks/check_guardian
+# Ability cooldowns + guardian summon (Zonweeb variant only)
+execute if data storage mgs:zombies game{variant:"zonweeb"} run function mgs:v5.0.1/zombies/perks/reduce_cooldowns
+execute if data storage mgs:zombies game{variant:"zonweeb"} run function mgs:v5.0.1/zombies/perks/check_guardian
 
 # Reset per-round power-up drop counter
 scoreboard players set #zb_drops_this_round mgs.data 0

@@ -181,9 +181,9 @@ tag @n[tag={ns}.temp_shooter] add {ns}.ticking
 # Get direct-hit damage amount (with 1 decimal)
 execute store result score #direct_dmg {ns}.data run data get entity @s data.config.{DAMAGE} 10
 
-# If zombie game is active: multiply by 5 for zombies, cap for players (15 hp)
+# If zombie game is active: multiply by 5 for zombies, cap for players (6 hp = 3 hearts)
 execute if data storage {ns}:zombies game{{state:"active"}} if entity @n[tag={ns}.direct_hit,type=!player] run scoreboard players operation #direct_dmg {ns}.data *= #5 {ns}.data
-execute if data storage {ns}:zombies game{{state:"active"}} if entity @n[tag={ns}.direct_hit,type=player] if score #direct_dmg {ns}.data matches 150.. run scoreboard players set #direct_dmg {ns}.data 150
+execute if data storage {ns}:zombies game{{state:"active"}} if entity @n[tag={ns}.direct_hit,type=player] if score #direct_dmg {ns}.data matches 60.. run scoreboard players set #direct_dmg {ns}.data 60
 
 # Apply direct hit damage using the existing damage utility
 data modify storage {ns}:input with set value {{target:"@s", amount:0.0f, attacker:"@n[tag={ns}.temp_shooter]"}}
@@ -294,16 +294,18 @@ execute store result score #decay_factor {ns}.data run data get storage bs:out m
 scoreboard players operation #expl_dmg {ns}.data *= #decay_factor {ns}.data
 scoreboard players operation #expl_dmg {ns}.data /= #1000000 {ns}.data
 
-# If zombie game is active: multiply by 5 for zombies, cap for players (15 hp)
+# If zombie game is active: multiply by 5 for zombies, cap for players (6 hp = 3 hearts)
 execute if data storage {ns}:zombies game{{state:"active"}} if entity @s[type=!player] run scoreboard players operation #expl_dmg {ns}.data *= #5 {ns}.data
-execute if data storage {ns}:zombies game{{state:"active"}} if entity @s[type=player] if score #expl_dmg {ns}.data matches 150.. run scoreboard players set #expl_dmg {ns}.data 150
+execute if data storage {ns}:zombies game{{state:"active"}} if entity @s[type=player] if score #expl_dmg {ns}.data matches 60.. run scoreboard players set #expl_dmg {ns}.data 60
 
 # Skip if damage is negligible (less than 0.1)
 execute if score #expl_dmg {ns}.data matches ..0 run return fail
 
 # Instant kill: if shooter has active instant kill and target is not immune, set damage to 99999
+# Never applied to players while a zombies game is active (would bypass the explosion cap above)
 tag @n[tag={ns}.temp_shooter] add {ns}.ticking
-execute if entity @s[tag=!{ns}.no_instant_kill] as @n[tag={ns}.temp_shooter] if score @s {ns}.special.instant_kill matches 1.. run scoreboard players set #expl_dmg {ns}.data 99999
+execute if entity @s[tag=!{ns}.no_instant_kill,type=!player] as @n[tag={ns}.temp_shooter] if score @s {ns}.special.instant_kill matches 1.. run scoreboard players set #expl_dmg {ns}.data 99999
+execute unless data storage {ns}:zombies game{{state:"active"}} if entity @s[tag=!{ns}.no_instant_kill,type=player] as @n[tag={ns}.temp_shooter] if score @s {ns}.special.instant_kill matches 1.. run scoreboard players set #expl_dmg {ns}.data 99999
 
 # Apply damage using the existing damage utility
 # Apply damage, fire damage signal (weapon info included for handlers)

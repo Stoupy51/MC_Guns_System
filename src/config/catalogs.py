@@ -136,6 +136,12 @@ TRIG_PERKS_DONE           = 450   # Done selecting perks -> go to confirm
 TRIG_EQUIP_SLOT1_BASE     = 460   # 460 + grenade_index (0=none,1=frag,2=semtex,3=flash,4=smoke)
 TRIG_EQUIP_SLOT2_BASE     = 470   # 470 + grenade_index (0=none,1=frag,2=semtex,3=flash,4=smoke)
 
+# Camo selection triggers (free): base + camo_index into CAMO_VARIANTS
+TRIG_PRIMARY_CAMO_BASE    = 480   # 480-484 = pick primary camo
+TRIG_SECONDARY_CAMO_BASE  = 490   # 490-494 = pick secondary camo
+TRIG_EQUIP1_CAMO_BASE     = 500   # 500-504 = pick grenade slot 1 camo
+TRIG_EQUIP2_CAMO_BASE     = 510   # 510-514 = pick grenade slot 2 camo
+
 # Loadout action triggers: base + loadout_id. Loadout IDs auto-increment and are never
 # reused, so each action gets a 10000-wide range (the old 100-wide ranges silently broke
 # once more than 99 loadouts had ever been created).
@@ -146,6 +152,7 @@ TRIG_DELETE_BASE          = 40000  # + loadout_id -> delete own loadout
 TRIG_TOGGLE_VIS_BASE      = 50000  # + loadout_id -> toggle public/private
 TRIG_SET_DEFAULT_BASE     = 60000  # + loadout_id -> set as default
 TRIG_UNSET_DEFAULT        = 69999  # Unset default loadout
+TRIG_EDIT_BASE            = 70000  # + loadout_id -> edit own loadout (re-runs the wizard, saving overwrites)
 
 # Filter / Sort view triggers
 TRIG_MARKETPLACE_ALL          = 1600  # Marketplace: show all public (favorites first)
@@ -165,6 +172,16 @@ COST_SECONDARY_SCOPE   = 1  # Any scope on secondary (iron sights = 0)
 COST_SECONDARY_MAG     = 1  # Per magazine
 COST_GRENADE           = 1  # Per grenade (slot 1 and slot 2)
 COST_PERK              = 1  # Per perk
+
+# Camo variants: (item_id_suffix, display_name) — free cosmetic selection in the loadout editor
+# The suffix is appended after the scope suffix (e.g. ak47 + _3 + _gold = ak47_3_gold)
+CAMO_VARIANTS: list[tuple[str, str]] = [
+    ("",                     "Default"),
+    ("_autumn",              "Autumn"),
+    ("_galaxy",              "Galaxy"),
+    ("_gold",                "Gold"),
+    ("_red_polymer_stripes", "Red Polymer"),
+]
 
 # Grenade types: (item_id, display_name)
 GRENADE_TYPES: list[tuple[str, str]] = [

@@ -21,6 +21,7 @@ execute if score @s mgs.player.config matches 464 run execute if score @s mgs.mp
 execute if score @s mgs.player.config matches 464 run data modify storage mgs:temp editor.equip_slot1 set value "smoke_grenade"
 execute if score @s mgs.player.config matches 464 run scoreboard players remove @s mgs.mp.edit_points 1
 
-# Show equipment slot 2 dialog
-function mgs:v5.0.1/multiplayer/editor/show_equip_slot2_dialog
+# None → straight to slot 2; otherwise pick a camo for the grenade (free)
+execute if data storage mgs:temp editor{equip_slot1:""} run return run function mgs:v5.0.1/multiplayer/editor/show_equip_slot2_dialog
+function mgs:v5.0.1/multiplayer/editor/show_equip1_camo_dialog
 

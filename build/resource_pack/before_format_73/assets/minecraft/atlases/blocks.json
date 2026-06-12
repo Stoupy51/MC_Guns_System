@@ -1,0 +1,21 @@
+{
+	"sources": [
+		{"type": "minecraft:single","resource": "minecraft:block/black_concrete","sprite": "mgs:atlas/black_concrete"},
+		{"type": "minecraft:single","resource": "minecraft:block/gray_concrete","sprite": "mgs:atlas/gray_concrete"},
+		{"type": "minecraft:single","resource": "minecraft:block/green_concrete","sprite": "mgs:atlas/green_concrete"},
+		{"type": "minecraft:single","resource": "minecraft:block/green_terracotta","sprite": "mgs:atlas/green_terracotta"},
+		{"type": "minecraft:single","resource": "minecraft:block/iron_block","sprite": "mgs:atlas/iron_block"},
+		{"type": "minecraft:single","resource": "minecraft:block/light_blue_concrete","sprite": "mgs:atlas/light_blue_concrete"},
+		{"type": "minecraft:single","resource": "minecraft:block/light_blue_terracotta","sprite": "mgs:atlas/light_blue_terracotta"},
+		{"type": "minecraft:single","resource": "minecraft:block/light_gray_concrete","sprite": "mgs:atlas/light_gray_concrete"},
+		{"type": "minecraft:single","resource": "minecraft:block/light_gray_terracotta","sprite": "mgs:atlas/light_gray_terracotta"},
+		{"type": "minecraft:single","resource": "minecraft:block/lime_concrete","sprite": "mgs:atlas/lime_concrete"},
+		{"type": "minecraft:single","resource": "minecraft:block/lime_terracotta","sprite": "mgs:atlas/lime_terracotta"},
+		{"type": "minecraft:single","resource": "minecraft:block/red_concrete","sprite": "mgs:atlas/red_concrete"},
+		{"type": "minecraft:single","resource": "minecraft:block/red_terracotta","sprite": "mgs:atlas/red_terracotta"},
+		{"type": "minecraft:single","resource": "minecraft:block/sea_lantern","sprite": "mgs:atlas/sea_lantern"},
+		{"type": "minecraft:single","resource": "minecraft:block/tinted_glass","sprite": "mgs:atlas/tinted_glass"},
+		{"type": "minecraft:single","resource": "minecraft:block/yellow_concrete","sprite": "mgs:atlas/yellow_concrete"},
+		{"type": "minecraft:single","resource": "minecraft:block/yellow_terracotta","sprite": "mgs:atlas/yellow_terracotta"}
+	]
+}

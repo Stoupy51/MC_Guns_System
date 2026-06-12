@@ -51,8 +51,15 @@ execute if data storage mgs:temp _pk_iter[0].display_item run data modify storag
 execute if data storage mgs:temp _pk_iter[0].item_model run data modify storage mgs:temp _pk_disp.item_model set from storage mgs:temp _pk_iter[0].item_model
 execute if data storage mgs:temp _pk_disp{item_id:""} run data modify storage mgs:temp _pk_disp.item_id set value "minecraft:potion"
 execute if data storage mgs:temp _pk_disp{item_model:""} run data modify storage mgs:temp _pk_disp.item_model set value "minecraft:potion"
+
+# Per-perk default machine models (only when the map didn't set a custom model)
+# Copy perk_id to a named key first ([0]{...} compound match after an index is invalid NBT path syntax)
+# Other perks: add a child model overriding accent/accent2 (see perk_machine_juggernog.json) and a line here
+data modify storage mgs:temp _pk_disp.perk_id set from storage mgs:temp _pk_iter[0].perk_id
+execute if data storage mgs:temp _pk_disp{item_model:"minecraft:potion"} run function mgs:v5.0.1/zombies/perks/override_perk_model with storage mgs:temp _pk_disp
 execute if data storage mgs:temp _pk_iter[0].rotation[0] run data modify storage mgs:temp _pk_disp.yaw set from storage mgs:temp _pk_iter[0].rotation[0]
-execute as @n[tag=mgs.pk_new] at @s run function mgs:v5.0.1/zombies/display/summon_machine_display with storage mgs:temp _pk_disp
+execute as @n[tag=mgs.pk_new] at @s align xyz positioned ~.5 ~-.5 ~.5 positioned ^ ^ ^-0.5 run function mgs:v5.0.1/zombies/display/summon_machine_display with storage mgs:temp _pk_disp
+execute as @n[tag=mgs.pk_new] at @s run tp @s ~ ~2 ~
 tag @n[tag=mgs.pk_new] add mgs.perk_machine
 tag @n[tag=mgs.pk_new] remove mgs.pk_new
 
