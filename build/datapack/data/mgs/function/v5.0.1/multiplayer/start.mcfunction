@@ -150,7 +150,8 @@ execute as @a[scores={mgs.mp.in_game=1}] run attribute @s minecraft:jump_strengt
 execute as @a[scores={mgs.mp.in_game=1}] at @s unless score @s mgs.mp.class matches 0 run function mgs:v5.0.1/multiplayer/apply_class
 
 # For players with no class: auto-apply default custom loadout if set
-scoreboard players add @s mgs.mp.class 0
+# (add 0 initializes unset scores so the 'matches 0' check below can succeed)
+scoreboard players add @a mgs.mp.class 0
 execute as @a[scores={mgs.mp.in_game=1}] at @s if score @s mgs.mp.class matches 0 if score @s mgs.mp.default matches 1.. run function mgs:v5.0.1/multiplayer/auto_apply_default
 
 # Show class selection dialog to EVERYONE (so they can change during prep)

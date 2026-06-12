@@ -9,6 +9,7 @@
 #			mgs:v5.0.1/zombies/mystery_box/deny_not_enough_points
 #			mgs:v5.0.1/zombies/mystery_box/deny_not_your_result
 #			mgs:v5.0.1/zombies/mystery_box/deny_all_owned
+#			mgs:v5.0.1/zombies/mystery_box/deny_pool_empty
 #			mgs:v5.0.1/zombies/pap/deny_requires_power
 #			mgs:v5.0.1/zombies/pap/deny_not_enough_points
 #			mgs:v5.0.1/zombies/pap/deny_hold_weapon_slot

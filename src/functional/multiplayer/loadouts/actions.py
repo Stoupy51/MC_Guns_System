@@ -64,7 +64,14 @@ data modify storage {ns}:temp _del_src set from storage {ns}:multiplayer custom_
 data modify storage {ns}:multiplayer custom_loadouts set value []
 
 # Rebuild list, skipping the entry that matches both ID and owner (score-based)
+scoreboard players set #del_removed {ns}.data 0
 execute if data storage {ns}:temp _del_src[0] run function {ns}:v{version}/multiplayer/custom/delete_filter
+
+# Clear dangling references: if the deleted loadout was the default or active class, reset them
+scoreboard players operation #del_neg_id {ns}.data = #loadout_id {ns}.data
+scoreboard players operation #del_neg_id {ns}.data *= #minus_one {ns}.data
+execute if score #del_removed {ns}.data matches 1 if score @s {ns}.mp.default = #loadout_id {ns}.data run scoreboard players set @s {ns}.mp.default 0
+execute if score #del_removed {ns}.data matches 1 if score @s {ns}.mp.class = #del_neg_id {ns}.data run scoreboard players set @s {ns}.mp.class 0
 
 # Notify
 tellraw @s ["",{MGS_TAG},{{"text":"Loadout deleted","color":"red"}}]
@@ -80,6 +87,7 @@ execute store result score #entry_id {ns}.data run data get storage {ns}:temp _d
 execute store result score #entry_owner {ns}.data run data get storage {ns}:temp _del_src[0].owner_pid
 scoreboard players set #del_match {ns}.data 0
 execute if score #entry_id {ns}.data = #loadout_id {ns}.data if score #entry_owner {ns}.data = @s {ns}.mp.pid run scoreboard players set #del_match {ns}.data 1
+execute if score #del_match {ns}.data matches 1 run scoreboard players set #del_removed {ns}.data 1
 
 # If NOT a delete match, keep the entry
 execute unless score #del_match {ns}.data matches 1 run data modify storage {ns}:multiplayer custom_loadouts append from storage {ns}:temp _del_src[0]

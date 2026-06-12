@@ -13,13 +13,13 @@ data modify storage mgs:temp _btn_data set from storage mgs:temp _iter[0]
 
 # Compute triggers
 execute store result score #trig mgs.data run data get storage mgs:temp _iter[0].id
-scoreboard players add #trig mgs.data 1000
+scoreboard players add #trig mgs.data 10000
 execute store result storage mgs:temp _btn_data.select_trig int 1 run scoreboard players get #trig mgs.data
 execute store result score #trig mgs.data run data get storage mgs:temp _iter[0].id
-scoreboard players add #trig mgs.data 1200
+scoreboard players add #trig mgs.data 30000
 execute store result storage mgs:temp _btn_data.like_trig int 1 run scoreboard players get #trig mgs.data
 execute store result score #trig mgs.data run data get storage mgs:temp _iter[0].id
-scoreboard players add #trig mgs.data 1100
+scoreboard players add #trig mgs.data 20000
 execute store result storage mgs:temp _btn_data.fav_trig int 1 run scoreboard players get #trig mgs.data
 
 # Normalize and compute perk display

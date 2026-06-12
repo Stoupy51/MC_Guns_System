@@ -15,10 +15,10 @@ function mgs:v5.0.1/multiplayer/apply_class_dynamic
 data modify storage mgs:temp _cur_loadout set from storage mgs:temp _find_iter[0]
 
 # Apply perks from the loadout (new Pick-10 system)
-# Passive perks: set scoreboard scores that are checked by the game logic
-execute if data storage mgs:temp _cur_loadout{perks:["quick_reload"]} run scoreboard players set @s mgs.special.quick_reload 1
+# Passive perks: scores are percentages (50 = 50% faster, matching the catalog descriptions)
+execute if data storage mgs:temp _cur_loadout{perks:["quick_reload"]} run scoreboard players set @s mgs.special.quick_reload 50
 execute unless data storage mgs:temp _cur_loadout{perks:["quick_reload"]} run scoreboard players set @s mgs.special.quick_reload 0
-execute if data storage mgs:temp _cur_loadout{perks:["quick_swap"]} run scoreboard players set @s mgs.special.quick_swap 1
+execute if data storage mgs:temp _cur_loadout{perks:["quick_swap"]} run scoreboard players set @s mgs.special.quick_swap 50
 execute unless data storage mgs:temp _cur_loadout{perks:["quick_swap"]} run scoreboard players set @s mgs.special.quick_swap 0
 
 # Timed perks: grant limited-duration buff (set score to timer ticks)

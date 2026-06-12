@@ -8,7 +8,7 @@
 
 # Extract loadout ID from trigger value
 scoreboard players operation #loadout_id mgs.data = @s mgs.player.config
-scoreboard players remove #loadout_id mgs.data 1200
+scoreboard players remove #loadout_id mgs.data 30000
 
 # Step 1: Check if already liked in our player_data, and add to liked[] if not
 data modify storage mgs:temp _pd_src set from storage mgs:multiplayer player_data

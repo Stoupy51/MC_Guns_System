@@ -138,10 +138,10 @@ function {ns}:v{version}/multiplayer/apply_class_dynamic
 data modify storage {ns}:temp _cur_loadout set from storage {ns}:temp _find_iter[0]
 
 # Apply perks from the loadout (new Pick-10 system)
-# Passive perks: set scoreboard scores that are checked by the game logic
-execute if data storage {ns}:temp _cur_loadout{{perks:["quick_reload"]}} run scoreboard players set @s {ns}.special.quick_reload 1
+# Passive perks: scores are percentages (50 = 50% faster, matching the catalog descriptions)
+execute if data storage {ns}:temp _cur_loadout{{perks:["quick_reload"]}} run scoreboard players set @s {ns}.special.quick_reload 50
 execute unless data storage {ns}:temp _cur_loadout{{perks:["quick_reload"]}} run scoreboard players set @s {ns}.special.quick_reload 0
-execute if data storage {ns}:temp _cur_loadout{{perks:["quick_swap"]}} run scoreboard players set @s {ns}.special.quick_swap 1
+execute if data storage {ns}:temp _cur_loadout{{perks:["quick_swap"]}} run scoreboard players set @s {ns}.special.quick_swap 50
 execute unless data storage {ns}:temp _cur_loadout{{perks:["quick_swap"]}} run scoreboard players set @s {ns}.special.quick_swap 0
 
 # Timed perks: grant limited-duration buff (set score to timer ticks)
@@ -168,25 +168,8 @@ execute if entity @a[tag={ns}.temp_killer] run function {ns}:v{version}/multipla
 execute unless entity @a[tag={ns}.temp_killer] run function {ns}:v{version}/multiplayer/random_death_message
 tag @s remove {ns}.temp_victim
 
-# S&D: no respawning, mark as dead and go spectator
-execute if data storage {ns}:multiplayer game{{gamemode:"snd"}} run return run function {ns}:v{version}/multiplayer/gamemodes/snd/on_death
-
-# Set player to spectator mode for 3 seconds (60 ticks) before actual respawn
-gamemode spectator @s
-scoreboard players set @s {ns}.mp.spectate_timer 60
-
-# Try to spectate the player who killed us (last attacker)
-execute if entity @a[tag={ns}.temp_killer,gamemode=!spectator] run spectate @p[tag={ns}.temp_killer,gamemode=!spectator] @s
-
-# If no killer found (environmental death), spectate a random alive in-game player
-execute unless entity @a[tag={ns}.temp_killer] run function {ns}:v{version}/multiplayer/spectate_random_player
-
-# Clean up killer tag
-tag @a[tag={ns}.temp_killer] remove {ns}.temp_killer
-
-# Announce
-title @s title [{{"text":"☠","color":"red"}}]
-title @s subtitle [{{"text":"Respawning in 3 seconds...","color":"gray"}}]
+# Enter death spectate (shared flow: S&D branch, spectator mode, spectate killer/random, titles)
+function {ns}:v{version}/multiplayer/enter_death_spectate
 """)
 
 	## Spectate a random alive in-game player (fallback when no killer)

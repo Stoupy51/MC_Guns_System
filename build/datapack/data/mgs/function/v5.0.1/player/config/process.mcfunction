@@ -73,20 +73,20 @@ execute if score @s mgs.player.config matches 460..464 run function mgs:v5.0.1/m
 # 470-474 = Editor: pick equipment slot 2 grenade
 execute if score @s mgs.player.config matches 470..474 run function mgs:v5.0.1/multiplayer/editor/pick_equip_slot2
 # === Custom Loadout Actions ===
-# 1000-1099 = Select/use a custom loadout
-execute if score @s mgs.player.config matches 1000..1099 run function mgs:v5.0.1/multiplayer/custom/select
-# 1100-1199 = Toggle favorite on a loadout
-execute if score @s mgs.player.config matches 1100..1199 run function mgs:v5.0.1/multiplayer/custom/toggle_favorite
-# 1200-1299 = Like a loadout
-execute if score @s mgs.player.config matches 1200..1299 run function mgs:v5.0.1/multiplayer/custom/like
-# 1300-1399 = Delete own loadout
-execute if score @s mgs.player.config matches 1300..1399 run function mgs:v5.0.1/multiplayer/custom/delete
-# 1400-1499 = Toggle public/private on own loadout
-execute if score @s mgs.player.config matches 1400..1499 run function mgs:v5.0.1/multiplayer/custom/toggle_visibility
-# 1500-1598 = Set default custom loadout
-execute if score @s mgs.player.config matches 1500..1599 run function mgs:v5.0.1/multiplayer/custom/set_default
-# 1599 = Unset default loadout
-execute if score @s mgs.player.config matches 1599 run function mgs:v5.0.1/multiplayer/custom/unset_default
+# 10000-19999 = Select/use a custom loadout
+execute if score @s mgs.player.config matches 10000..19999 run function mgs:v5.0.1/multiplayer/custom/select
+# 20000-29999 = Toggle favorite on a loadout
+execute if score @s mgs.player.config matches 20000..29999 run function mgs:v5.0.1/multiplayer/custom/toggle_favorite
+# 30000-39999 = Like a loadout
+execute if score @s mgs.player.config matches 30000..39999 run function mgs:v5.0.1/multiplayer/custom/like
+# 40000-49999 = Delete own loadout
+execute if score @s mgs.player.config matches 40000..49999 run function mgs:v5.0.1/multiplayer/custom/delete
+# 50000-59999 = Toggle public/private on own loadout
+execute if score @s mgs.player.config matches 50000..59999 run function mgs:v5.0.1/multiplayer/custom/toggle_visibility
+# 60000-69998 = Set default custom loadout
+execute if score @s mgs.player.config matches 60000..69998 run function mgs:v5.0.1/multiplayer/custom/set_default
+# 69999 = Unset default loadout
+execute if score @s mgs.player.config matches 69999 run function mgs:v5.0.1/multiplayer/custom/unset_default
 # === Marketplace / My Loadouts Filter & Sort ===
 # 1600 = Marketplace: all public (favorites first)
 execute if score @s mgs.player.config matches 1600 run function mgs:v5.0.1/multiplayer/marketplace/browse

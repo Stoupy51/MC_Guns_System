@@ -29,9 +29,6 @@ execute if score #zb_to_spawn {ns}.data matches 97.. run scoreboard players set 
 scoreboard players operation #zb_to_spawn {ns}.data *= #zb_player_count {ns}.data
 execute if score #zb_to_spawn {ns}.data matches 257.. run scoreboard players set #zb_to_spawn {ns}.data 256
 
-# Store zombies to spawn and remaining count
-scoreboard players operation #zb_remaining {ns}.data = #zb_to_spawn {ns}.data
-
 # Calculate initial spawn timer and batch size for this round
 function {ns}:v{version}/zombies/calc_spawn_timer
 

@@ -2,6 +2,8 @@
 # Imports
 from stewbeet import Mem, write_load_file, write_versioned_function
 
+from ..helpers import MGS_TAG
+
 
 def generate_maps() -> None:
 	ns: str = Mem.ctx.project_id
@@ -35,18 +37,18 @@ execute store result storage {ns}:temp map_load.result_idx int 1 run scoreboard 
 
 	# ── Hijacked map scripts ────────────────────────────────────────────────────
 	# Logic functions (actual work)
-	write_versioned_function("maps/multiplayer/hijacked/start", """
+	write_versioned_function("maps/multiplayer/hijacked/start", f"""
 # Hijacked map start script
-tellraw @a [{"text":"","color":"gold"},"[",{"text":"MGS"},"] ",{"text":"Welcome to Hijacked!","color":"yellow"}]
+tellraw @a [{MGS_TAG},{{"text":"Welcome to Hijacked!","color":"yellow"}}]
 """)
 	write_versioned_function("maps/multiplayer/hijacked/tick", "# Hijacked map tick (no-op placeholder)")
-	write_versioned_function("maps/multiplayer/hijacked/join", """
+	write_versioned_function("maps/multiplayer/hijacked/join", f"""
 # Hijacked map join script
-tellraw @a [{"text":"","color":"gold"},"[",{"text":"MGS"},"] ",{"selector":"@s","color":"green"},{"text":" joined Hijacked","color":"green"}]
+tellraw @a [{MGS_TAG},{{"selector":"@s","color":"green"}},{{"text":" joined Hijacked","color":"green"}}]
 """)
-	write_versioned_function("maps/multiplayer/hijacked/leave", """
+	write_versioned_function("maps/multiplayer/hijacked/leave", f"""
 # Hijacked map leave script
-tellraw @a [{"text":"","color":"gold"},"[",{"text":"MGS"},"] ",{"selector":"@s","color":"red"},{"text":" left Hijacked","color":"red"}]
+tellraw @a [{MGS_TAG},{{"selector":"@s","color":"red"}},{{"text":" left Hijacked","color":"red"}}]
 """)
 	write_versioned_function("maps/multiplayer/hijacked/respawn", """
 # Hijacked map respawn script

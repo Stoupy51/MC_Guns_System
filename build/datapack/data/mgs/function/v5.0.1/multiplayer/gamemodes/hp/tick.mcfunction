@@ -18,9 +18,9 @@ execute if score #hp_score_timer mgs.data matches ..1 run function #bs.sidebar:r
 # Show particles at zone center
 execute at @e[tag=mgs.hp_marker] run particle dust{color:[0.5,0.0,0.5],scale:1.5} ~ ~ ~ 4 0.5 4 0 10
 
-# Tag players inside the zone (within 5 blocks horizontally, 4 blocks vertically)
+# Tag players inside the zone (5x5 blocks horizontally, 4 blocks vertically, centered on the marker)
 tag @a remove mgs.in_hp_zone
-execute at @e[tag=mgs.hp_marker] positioned ~-2 ~ ~-2 run tag @a[dx=5,dy=5,dz=5,gamemode=!spectator,scores={mgs.mp.in_game=1}] add mgs.in_hp_zone
+execute at @e[tag=mgs.hp_marker] positioned ~-2.5 ~-1 ~-2.5 run tag @a[dx=4,dy=3,dz=4,gamemode=!spectator,scores={mgs.mp.in_game=1}] add mgs.in_hp_zone
 
 # Count teams in zone
 execute store result score #hp_red mgs.data if entity @a[tag=mgs.in_hp_zone,scores={mgs.mp.team=1}]

@@ -25,9 +25,12 @@ scoreboard players set #snd_blue_wins {ns}.data 0
 # Red starts as attackers
 scoreboard players set #snd_attackers {ns}.data 1
 
-# Bomb state: 0=not planted, 1=planting, 2=planted, 3=defusing
+# Bomb state: 0=not planted, 2=planted (bomb_timer = explosion countdown)
+# Plant/defuse channel progress are tracked separately so the countdown is never clobbered
 scoreboard players set #snd_bomb_state {ns}.data 0
 scoreboard players set #snd_bomb_timer {ns}.data 0
+scoreboard players set #snd_plant_progress {ns}.data 0
+scoreboard players set #snd_defuse_progress {ns}.data 0
 
 # Round timer (90 seconds = 1800 ticks)
 scoreboard players set #snd_round_timer {ns}.data 1800
@@ -64,6 +67,10 @@ $execute positioned $(x) $(y) $(z) run setblock ~ ~1 ~ barrier
 
 	## S&D: Start Round
 	write_versioned_function("multiplayer/gamemodes/snd/start_round", f"""
+# Guard: only while the game is running (a scheduled call may fire after the game ended)
+execute if data storage {ns}:multiplayer game{{state:"lobby"}} run return fail
+execute if data storage {ns}:multiplayer game{{state:"ended"}} run return fail
+
 # Announce round
 tellraw @a [{MGS_TAG},{{"text":"────── Round ","color":"gold"}},{{"score":{{"name":"#snd_round","objective":"{ns}.data"}},"color":"yellow"}},{{"text":" ──────","color":"gold"}}]
 
@@ -72,17 +79,26 @@ execute if score #snd_attackers {ns}.data matches 1 run tellraw @a [{MGS_TAG},{{
 execute if score #snd_attackers {ns}.data matches 2 run tellraw @a [{MGS_TAG},{{"text":"Blue","color":"blue"}},{{"text":" attacks | "}},{{"text":"Red","color":"red"}},{{"text":" defends"}}]
 playsound minecraft:block.note_block.harp player @a ~ ~ ~ 1 1.0
 
-# Reset bomb state
+# Reset bomb state and channel progress
 scoreboard players set #snd_bomb_state {ns}.data 0
 scoreboard players set #snd_bomb_timer {ns}.data 0
+scoreboard players set #snd_plant_progress {ns}.data 0
+scoreboard players set #snd_defuse_progress {ns}.data 0
 
 # Reset round timer
 scoreboard players set #snd_round_timer {ns}.data 1800
 
-# Tag alive players
-tag @a[scores={{{ns}.mp.team=1..2}}] add {ns}.snd_alive
+# Restore players who died last round (S&D deaths skip the respawn countdown)
+execute as @a[scores={{{ns}.mp.team=1..2}},gamemode=spectator] run spectate @s
+gamemode adventure @a[scores={{{ns}.mp.team=1..2}},gamemode=spectator]
 
-# Respawn all players at team spawns
+# Tag alive players
+tag @a[scores={{{ns}.mp.team=1..2}},gamemode=!spectator] add {ns}.snd_alive
+
+# Teleport everyone to their team spawns and re-apply class loadouts
+execute as @a[scores={{{ns}.mp.team=1}}] at @s run function {ns}:v{version}/multiplayer/pick_spawn {{type:"red"}}
+execute as @a[scores={{{ns}.mp.team=2}}] at @s run function {ns}:v{version}/multiplayer/pick_spawn {{type:"blue"}}
+tag @e[tag={ns}.spawn_used] remove {ns}.spawn_used
 execute as @a[scores={{{ns}.mp.team=1..2}}] at @s run function {ns}:v{version}/multiplayer/apply_class
 """)
 
@@ -91,8 +107,8 @@ execute as @a[scores={{{ns}.mp.team=1..2}}] at @s run function {ns}:v{version}/m
 # Round timer
 scoreboard players remove #snd_round_timer {ns}.data 1
 
-# If timer runs out, defenders win
-execute if score #snd_round_timer {ns}.data matches ..0 if score #snd_bomb_state {ns}.data matches ..1 run function {ns}:v{version}/multiplayer/gamemodes/snd/defenders_win
+# If timer runs out before the bomb is planted, defenders win
+execute if score #snd_round_timer {ns}.data matches ..0 if score #snd_bomb_state {ns}.data matches 0 run function {ns}:v{version}/multiplayer/gamemodes/snd/defenders_win
 
 # If bomb planted, tick bomb timer (45 seconds = 900 ticks)
 execute if score #snd_bomb_state {ns}.data matches 2 run scoreboard players remove #snd_bomb_timer {ns}.data 1
@@ -101,7 +117,7 @@ execute if score #snd_bomb_state {ns}.data matches 2 if score #snd_bomb_timer {n
 # Check if all attackers are dead (defenders win)
 execute store result score #snd_atk_alive {ns}.data if entity @a[tag={ns}.snd_alive,scores={{{ns}.mp.team=1}}]
 execute if score #snd_attackers {ns}.data matches 2 store result score #snd_atk_alive {ns}.data if entity @a[tag={ns}.snd_alive,scores={{{ns}.mp.team=2}}]
-execute if score #snd_atk_alive {ns}.data matches 0 if score #snd_bomb_state {ns}.data matches ..1 run function {ns}:v{version}/multiplayer/gamemodes/snd/defenders_win
+execute if score #snd_atk_alive {ns}.data matches 0 if score #snd_bomb_state {ns}.data matches 0 run function {ns}:v{version}/multiplayer/gamemodes/snd/defenders_win
 
 # Check if all defenders are dead and bomb not planted (attackers win)
 execute store result score #snd_def_alive {ns}.data if entity @a[tag={ns}.snd_alive,scores={{{ns}.mp.team=2}}]
@@ -111,11 +127,15 @@ execute if score #snd_def_alive {ns}.data matches 0 run function {ns}:v{version}
 # Particles at objectives
 execute at @e[tag={ns}.snd_obj] run particle dust{{color:[1.0,0.6,0.0],scale:1.0}} ~ ~1 ~ 1.0 0.5 1.0 0 5
 
-# Check planting (attacker near objective and sneaking)
-execute if score #snd_bomb_state {ns}.data matches 0 as @a[tag={ns}.snd_alive,predicate={ns}:v{version}/is_sneaking] at @s if entity @e[tag={ns}.snd_obj,distance=..3] run function {ns}:v{version}/multiplayer/gamemodes/snd/try_plant
+# Check planting (attacker near objective and sneaking); progress resets if nobody is channeling
+scoreboard players set #snd_channeling {ns}.data 0
+execute if score #snd_bomb_state {ns}.data matches 0 as @a[tag={ns}.snd_alive,predicate={ns}:v{version}/is_sneaking,gamemode=!spectator] at @s if entity @e[tag={ns}.snd_obj,distance=..3] run function {ns}:v{version}/multiplayer/gamemodes/snd/try_plant
+execute if score #snd_bomb_state {ns}.data matches 0 if score #snd_channeling {ns}.data matches 0 run scoreboard players set #snd_plant_progress {ns}.data 0
 
-# Check defusing (defender near bomb and sneaking)
-execute if score #snd_bomb_state {ns}.data matches 2 as @a[tag={ns}.snd_alive,predicate={ns}:v{version}/is_sneaking] at @s if entity @e[tag={ns}.snd_bomb,distance=..3] run function {ns}:v{version}/multiplayer/gamemodes/snd/try_defuse
+# Check defusing (defender near bomb and sneaking); progress resets if nobody is channeling
+scoreboard players set #snd_channeling {ns}.data 0
+execute if score #snd_bomb_state {ns}.data matches 2 as @a[tag={ns}.snd_alive,predicate={ns}:v{version}/is_sneaking,gamemode=!spectator] at @s if entity @e[tag={ns}.snd_bomb,distance=..3] run function {ns}:v{version}/multiplayer/gamemodes/snd/try_defuse
+execute if score #snd_bomb_state {ns}.data matches 2 if score #snd_channeling {ns}.data matches 0 run scoreboard players set #snd_defuse_progress {ns}.data 0
 """)
 
 	## S&D: Plant attempt
@@ -124,19 +144,20 @@ execute if score #snd_bomb_state {ns}.data matches 2 as @a[tag={ns}.snd_alive,pr
 execute if score #snd_attackers {ns}.data matches 1 unless score @s {ns}.mp.team matches 1 run return fail
 execute if score #snd_attackers {ns}.data matches 2 unless score @s {ns}.mp.team matches 2 run return fail
 
-# Start or continue planting (5 seconds = 100 ticks)
-scoreboard players set #snd_bomb_state {ns}.data 1
-scoreboard players add #snd_bomb_timer {ns}.data 1
-title @s actionbar [{{"text":"Planting... ","color":"gold"}},{{"score":{{"name":"#snd_bomb_timer","objective":"{ns}.data"}},"color":"yellow"}},{{"text":"/100"}}]
+# Continue planting (5 seconds = 100 ticks)
+scoreboard players set #snd_channeling {ns}.data 1
+scoreboard players add #snd_plant_progress {ns}.data 1
+title @s actionbar [{{"text":"Planting... ","color":"gold"}},{{"score":{{"name":"#snd_plant_progress","objective":"{ns}.data"}},"color":"yellow"}},{{"text":"/100"}}]
 
 # If planted
-execute if score #snd_bomb_timer {ns}.data matches 100.. run function {ns}:v{version}/multiplayer/gamemodes/snd/bomb_planted
+execute if score #snd_plant_progress {ns}.data matches 100.. run function {ns}:v{version}/multiplayer/gamemodes/snd/bomb_planted
 """)
 
 	## S&D: Bomb planted
 	write_versioned_function("multiplayer/gamemodes/snd/bomb_planted", f"""
 scoreboard players set #snd_bomb_state {ns}.data 2
 scoreboard players set #snd_bomb_timer {ns}.data 900
+scoreboard players set #snd_plant_progress {ns}.data 0
 
 # Summon bomb entity at planter's position
 summon minecraft:marker ~ ~ ~ {{Tags:["{ns}.snd_bomb","{ns}.gm_entity"]}}
@@ -151,12 +172,12 @@ playsound minecraft:block.note_block.pling player @a ~ ~ ~ 1 0.5
 execute if score #snd_attackers {ns}.data matches 1 unless score @s {ns}.mp.team matches 2 run return fail
 execute if score #snd_attackers {ns}.data matches 2 unless score @s {ns}.mp.team matches 1 run return fail
 
-# Defuse progress (7.5 seconds = 150 ticks)
-scoreboard players set #snd_bomb_state {ns}.data 3
-scoreboard players add #snd_bomb_timer {ns}.data 1
-title @s actionbar [{{"text":"Defusing... ","color":"aqua"}},{{"score":{{"name":"#snd_bomb_timer","objective":"{ns}.data"}},"color":"yellow"}},{{"text":"/150"}}]
+# Continue defusing (7.5 seconds = 150 ticks); the bomb countdown keeps running in parallel
+scoreboard players set #snd_channeling {ns}.data 1
+scoreboard players add #snd_defuse_progress {ns}.data 1
+title @s actionbar [{{"text":"Defusing... ","color":"aqua"}},{{"score":{{"name":"#snd_defuse_progress","objective":"{ns}.data"}},"color":"yellow"}},{{"text":"/150"}}]
 
-execute if score #snd_bomb_timer {ns}.data matches 150.. run function {ns}:v{version}/multiplayer/gamemodes/snd/bomb_defused
+execute if score #snd_defuse_progress {ns}.data matches 150.. run function {ns}:v{version}/multiplayer/gamemodes/snd/bomb_defused
 """)
 
 	## S&D: Bomb defused → defenders win
@@ -209,10 +230,10 @@ function {ns}:v{version}/multiplayer/gamemodes/snd/next_round
 kill @e[tag={ns}.snd_bomb]
 tag @a remove {ns}.snd_alive
 
-# Check if either team won enough rounds (best of max_rounds)
+# Check if either team won enough rounds (best of max_rounds) — stop here on game win
 scoreboard players set #snd_win_threshold {ns}.data 4
-execute if score #snd_red_wins {ns}.data >= #snd_win_threshold {ns}.data run function {ns}:v{version}/multiplayer/team_wins {{team:"Red"}}
-execute if score #snd_blue_wins {ns}.data >= #snd_win_threshold {ns}.data run function {ns}:v{version}/multiplayer/team_wins {{team:"Blue"}}
+execute if score #snd_red_wins {ns}.data >= #snd_win_threshold {ns}.data run return run function {ns}:v{version}/multiplayer/team_wins {{team:"Red"}}
+execute if score #snd_blue_wins {ns}.data >= #snd_win_threshold {ns}.data run return run function {ns}:v{version}/multiplayer/team_wins {{team:"Blue"}}
 
 # Swap sides at halftime (after round 3)
 scoreboard players add #snd_round {ns}.data 1
@@ -240,6 +261,7 @@ gamemode spectator @s
 
 	## S&D Cleanup
 	write_versioned_function("multiplayer/gamemodes/snd/cleanup", f"""
+schedule clear {ns}:v{version}/multiplayer/gamemodes/snd/start_round
 execute at @e[tag={ns}.snd_obj] run fill ~ ~ ~ ~ ~1 ~ air
 kill @e[tag={ns}.snd_obj]
 kill @e[tag={ns}.snd_bomb]

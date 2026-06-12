@@ -12,6 +12,7 @@ data modify storage mgs:multiplayer game.state set value "lobby"
 schedule clear mgs:v5.0.1/multiplayer/end_prep
 execute as @a[scores={mgs.mp.in_game=1}] run attribute @s minecraft:movement_speed base reset
 execute as @a[scores={mgs.mp.in_game=1}] run attribute @s minecraft:jump_strength base reset
+execute as @a[scores={mgs.mp.in_game=1}] run attribute @s minecraft:waypoint_receive_range base reset
 effect clear @a[scores={mgs.mp.in_game=1}] darkness
 effect clear @a[scores={mgs.mp.in_game=1}] blindness
 effect clear @a[scores={mgs.mp.in_game=1}] night_vision
@@ -28,9 +29,9 @@ function #mgs:multiplayer/on_game_end
 gamerule natural_health_regeneration true
 scoreboard players set #any_game_active mgs.data 0
 
-# Announce scores
+# Announce scores (team scores are meaningless in FFA — the winner is announced by player_wins)
 tellraw @a ["",[{"text":"","color":"gold","bold":true},"⚔ ",{"translate":"mgs.game_over"},"! "]]
-tellraw @a ["",{"translate":"mgs.red","color":"red"},{"text":": "},{"score":{"name":"#red","objective":"mgs.mp.team"}}," | ",{"translate":"mgs.blue","color":"blue"},{"text":": "},{"score":{"name":"#blue","objective":"mgs.mp.team"}}]
+execute unless data storage mgs:multiplayer game{gamemode:"ffa"} run tellraw @a ["",{"translate":"mgs.red","color":"red"},{"text":": "},{"score":{"name":"#red","objective":"mgs.mp.team"}}," | ",{"translate":"mgs.blue","color":"blue"},{"text":": "},{"score":{"name":"#blue","objective":"mgs.mp.team"}}]
 
 # Remove sidebar and list displays and leave teams
 scoreboard objectives setdisplay sidebar

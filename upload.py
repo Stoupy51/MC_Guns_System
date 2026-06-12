@@ -3,9 +3,8 @@
 # Imports
 from beet import ProjectConfig
 from stewbeet import JsonDict
-from stewbeet.continuous_delivery import load_credentials, upload_to_github, upload_to_modrinth, upload_to_pmc, upload_to_smithed
+from stewbeet.continuous_delivery import load_credentials, upload_to_github
 from stewbeet.utils import get_project_config
-from stouputils.io import read_file
 
 # Get credentials and try to find the beet configuration
 credentials: dict[str, str] = load_credentials("~/stewbeet/credentials.yml")

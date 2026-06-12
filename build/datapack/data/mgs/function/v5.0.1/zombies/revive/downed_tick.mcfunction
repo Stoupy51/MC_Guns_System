@@ -75,7 +75,7 @@ execute if score #zb_reviving mgs.data matches 1 as @n[tag=mgs.downed_mannequin]
 
 # Update HUD text_display color based on revive state / bleed timer
 execute if score #zb_reviving mgs.data matches 1.. run function mgs:v5.0.1/zombies/revive/hud_white
-execute if score #zb_reviving mgs.data matches 0 if score @s mgs.zb.bleed matches 400.. run function mgs:v5.0.1/zombies/revive/hud_orange
+execute if score #zb_reviving mgs.data matches 0 if score @s mgs.zb.bleed matches 400.. run function mgs:v5.0.1/zombies/revive/hud_yellow
 execute if score #zb_reviving mgs.data matches 0 if score @s mgs.zb.bleed matches 200..399 run function mgs:v5.0.1/zombies/revive/hud_gold
 execute if score #zb_reviving mgs.data matches 0 if score @s mgs.zb.bleed matches ..199 run function mgs:v5.0.1/zombies/revive/hud_red
 

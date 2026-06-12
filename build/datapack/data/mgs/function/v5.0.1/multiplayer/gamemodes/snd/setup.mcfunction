@@ -18,9 +18,12 @@ scoreboard players set #snd_blue_wins mgs.data 0
 # Red starts as attackers
 scoreboard players set #snd_attackers mgs.data 1
 
-# Bomb state: 0=not planted, 1=planting, 2=planted, 3=defusing
+# Bomb state: 0=not planted, 2=planted (bomb_timer = explosion countdown)
+# Plant/defuse channel progress are tracked separately so the countdown is never clobbered
 scoreboard players set #snd_bomb_state mgs.data 0
 scoreboard players set #snd_bomb_timer mgs.data 0
+scoreboard players set #snd_plant_progress mgs.data 0
+scoreboard players set #snd_defuse_progress mgs.data 0
 
 # Round timer (90 seconds = 1800 ticks)
 scoreboard players set #snd_round_timer mgs.data 1800

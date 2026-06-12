@@ -19,6 +19,11 @@ execute if score #grenade_count mgs.data matches 1.. as @e[tag=mgs.grenade] at @
 # Armed mob AI loop
 execute if score #armed_mob_count mgs.data matches 1.. as @e[tag=mgs.armed] at @s run function mgs:v5.0.1/mob/tick
 
+# Resync armed mob count every 5 seconds (mobs dying never decrement the counter)
+scoreboard players operation #armed_mob_phase mgs.data = #total_tick mgs.data
+scoreboard players operation #armed_mob_phase mgs.data %= #100 mgs.data
+execute if score #armed_mob_count mgs.data matches 1.. if score #armed_mob_phase mgs.data matches 0 store result score #armed_mob_count mgs.data if entity @e[tag=mgs.armed]
+
 # Zombies game tick
 execute if data storage mgs:zombies game{state:"active"} run function mgs:v5.0.1/zombies/game_tick
 execute if data storage mgs:zombies game{state:"preparing"} run function mgs:v5.0.1/zombies/prep_tick

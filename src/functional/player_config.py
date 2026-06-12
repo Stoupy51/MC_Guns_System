@@ -79,12 +79,12 @@ execute if score @s {ns}.mp.map_edit matches 1 run function {ns}:v{version}/maps
     perk_max = TRIG_PERK_BASE + len(PERKS) - 1
     equip1_max = TRIG_EQUIP_SLOT1_BASE + len(GRENADE_TYPES) - 1
     equip2_max = TRIG_EQUIP_SLOT2_BASE + len(GRENADE_TYPES) - 1
-    select_max = TRIG_SELECT_BASE + 99  # Max 99 custom loadouts
-    favorite_max = TRIG_FAVORITE_BASE + 99
-    like_max = TRIG_LIKE_BASE + 99
-    delete_max = TRIG_DELETE_BASE + 99
-    toggle_vis_max = TRIG_TOGGLE_VIS_BASE + 99
-    set_default_max = TRIG_SET_DEFAULT_BASE + 99
+    select_max = TRIG_SELECT_BASE + 9999  # 10000-wide range per loadout action
+    favorite_max = TRIG_FAVORITE_BASE + 9999
+    like_max = TRIG_LIKE_BASE + 9999
+    delete_max = TRIG_DELETE_BASE + 9999
+    toggle_vis_max = TRIG_TOGGLE_VIS_BASE + 9999
+    set_default_max = TRIG_SET_DEFAULT_BASE + 9998  # 69999 is reserved for UNSET_DEFAULT
 
     write_versioned_function("player/config/process", f"""
 # Load per-player editor state (isolates simultaneous editors)
@@ -144,19 +144,19 @@ execute if score @s {ns}.player.config matches {TRIG_EQUIP_SLOT1_BASE}..{equip1_
 # {TRIG_EQUIP_SLOT2_BASE}-{equip2_max} = Editor: pick equipment slot 2 grenade
 execute if score @s {ns}.player.config matches {TRIG_EQUIP_SLOT2_BASE}..{equip2_max} run function {ns}:v{version}/multiplayer/editor/pick_equip_slot2
 # === Custom Loadout Actions ===
-# 1000-1099 = Select/use a custom loadout
+# {TRIG_SELECT_BASE}-{select_max} = Select/use a custom loadout
 execute if score @s {ns}.player.config matches {TRIG_SELECT_BASE}..{select_max} run function {ns}:v{version}/multiplayer/custom/select
-# 1100-1199 = Toggle favorite on a loadout
+# {TRIG_FAVORITE_BASE}-{favorite_max} = Toggle favorite on a loadout
 execute if score @s {ns}.player.config matches {TRIG_FAVORITE_BASE}..{favorite_max} run function {ns}:v{version}/multiplayer/custom/toggle_favorite
-# 1200-1299 = Like a loadout
+# {TRIG_LIKE_BASE}-{like_max} = Like a loadout
 execute if score @s {ns}.player.config matches {TRIG_LIKE_BASE}..{like_max} run function {ns}:v{version}/multiplayer/custom/like
-# 1300-1399 = Delete own loadout
+# {TRIG_DELETE_BASE}-{delete_max} = Delete own loadout
 execute if score @s {ns}.player.config matches {TRIG_DELETE_BASE}..{delete_max} run function {ns}:v{version}/multiplayer/custom/delete
-# 1400-1499 = Toggle public/private on own loadout
+# {TRIG_TOGGLE_VIS_BASE}-{toggle_vis_max} = Toggle public/private on own loadout
 execute if score @s {ns}.player.config matches {TRIG_TOGGLE_VIS_BASE}..{toggle_vis_max} run function {ns}:v{version}/multiplayer/custom/toggle_visibility
-# 1500-1598 = Set default custom loadout
+# {TRIG_SET_DEFAULT_BASE}-{set_default_max} = Set default custom loadout
 execute if score @s {ns}.player.config matches {TRIG_SET_DEFAULT_BASE}..{set_default_max} run function {ns}:v{version}/multiplayer/custom/set_default
-# 1599 = Unset default loadout
+# {TRIG_UNSET_DEFAULT} = Unset default loadout
 execute if score @s {ns}.player.config matches {TRIG_UNSET_DEFAULT} run function {ns}:v{version}/multiplayer/custom/unset_default
 # === Marketplace / My Loadouts Filter & Sort ===
 # {TRIG_MARKETPLACE_ALL} = Marketplace: all public (favorites first)

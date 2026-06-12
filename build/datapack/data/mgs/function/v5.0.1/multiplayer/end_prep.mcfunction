@@ -4,24 +4,14 @@
 # @within	mgs:v5.0.1/multiplayer/start 200t [ scheduled ]
 #
 
-# Only if still preparing (game might have been stopped)
 execute unless data storage mgs:multiplayer game{state:"preparing"} run return fail
-
-# Restore movement
-execute as @a[scores={mgs.mp.in_game=1}] run attribute @s minecraft:movement_speed base set 0.1
-execute as @a[scores={mgs.mp.in_game=1}] run attribute @s minecraft:jump_strength base set 0.42
-execute as @a[scores={mgs.mi.in_game=1}] run attribute @s minecraft:waypoint_receive_range base set 0.0
-
-# Clear prep effects
+data modify storage mgs:multiplayer game.state set value "active"
+execute as @a[scores={mgs.mp.in_game=1}] run attribute @s minecraft:movement_speed base reset
+execute as @a[scores={mgs.mp.in_game=1}] run attribute @s minecraft:jump_strength base reset
 effect clear @a[scores={mgs.mp.in_game=1}] darkness
 effect clear @a[scores={mgs.mp.in_game=1}] blindness
 effect clear @a[scores={mgs.mp.in_game=1}] night_vision
-
-# Re-apply permanent saturation for the active game
 effect give @a[scores={mgs.mp.in_game=1}] saturation infinite 255 true
-
-# Set state to active
-data modify storage mgs:multiplayer game.state set value "active"
 
 # Call map start scripts (state is now active, chunks had time to load)
 function mgs:v5.0.1/shared/maps/call_start_script_at_base
