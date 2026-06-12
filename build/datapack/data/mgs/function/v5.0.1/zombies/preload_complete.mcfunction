@@ -33,12 +33,13 @@ effect give @a[scores={mgs.zb.in_game=1}] saturation infinite 255 true
 execute as @a[scores={mgs.zb.in_game=1}] run attribute @s minecraft:movement_speed base set 0
 execute as @a[scores={mgs.zb.in_game=1}] run attribute @s minecraft:jump_strength base set 0
 execute as @a[scores={mgs.zb.in_game=1}] run attribute @s minecraft:max_health base reset
+execute as @a[scores={mgs.zb.in_game=1}] run attribute @s minecraft:entity_interaction_range base set 5
 
 # Give starting loadout to all players
 execute as @a[scores={mgs.zb.in_game=1}] at @s run function mgs:v5.0.1/zombies/inventory/give_starting_loadout
 
-# Show zombies perk selection menu
-execute as @a[scores={mgs.zb.in_game=1}] run function mgs:v5.0.1/zombies/passive_ability_menu
+# Show zombies passive/ability selection menu (Zonweeb variant only)
+execute if data storage mgs:zombies game{variant:"zonweeb"} as @a[scores={mgs.zb.in_game=1}] run function mgs:v5.0.1/zombies/passive_ability_menu
 
 # Schedule end of prep (10 seconds remaining)
 schedule function mgs:v5.0.1/zombies/end_prep 200t
@@ -46,8 +47,9 @@ schedule function mgs:v5.0.1/zombies/end_prep 200t
 # Initialize sidebar
 function mgs:v5.0.1/zombies/create_sidebar
 
-# Announce
-tellraw @a ["",{"text":"","color":"dark_green","bold":true},"🧟 ",{"translate":"mgs.preparing_choose_your_perk_round_1_starts_in_10_seconds","color":"yellow"}]
+# Announce (perk wording only applies to Zonweeb)
+execute if data storage mgs:zombies game{variant:"zonweeb"} run tellraw @a ["",{"text":"","color":"dark_green","bold":true},"🧟 ",{"translate":"mgs.preparing_choose_your_perk_round_1_starts_in_10_seconds","color":"yellow"}]
+execute unless data storage mgs:zombies game{variant:"zonweeb"} run tellraw @a ["",{"text":"","color":"dark_green","bold":true},"🧟 ",{"translate":"mgs.preparing_round_1_starts_in_10_seconds","color":"yellow"}]
 
 # Setup mystery box positions
 execute if data storage mgs:zombies game.map.mystery_box.positions[0] run function mgs:v5.0.1/zombies/mystery_box/setup_positions

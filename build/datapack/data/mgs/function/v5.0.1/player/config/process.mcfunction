@@ -72,6 +72,14 @@ execute if score @s mgs.player.config matches 450 run function mgs:v5.0.1/multip
 execute if score @s mgs.player.config matches 460..464 run function mgs:v5.0.1/multiplayer/editor/pick_equip_slot1
 # 470-474 = Editor: pick equipment slot 2 grenade
 execute if score @s mgs.player.config matches 470..474 run function mgs:v5.0.1/multiplayer/editor/pick_equip_slot2
+# 480-484 = Editor: pick primary camo (free)
+execute if score @s mgs.player.config matches 480..484 run function mgs:v5.0.1/multiplayer/editor/pick_primary_camo
+# 490-494 = Editor: pick secondary camo (free)
+execute if score @s mgs.player.config matches 490..494 run function mgs:v5.0.1/multiplayer/editor/pick_secondary_camo
+# 500-504 = Editor: pick grenade slot 1 camo (free)
+execute if score @s mgs.player.config matches 500..504 run function mgs:v5.0.1/multiplayer/editor/pick_equip1_camo
+# 510-514 = Editor: pick grenade slot 2 camo (free)
+execute if score @s mgs.player.config matches 510..514 run function mgs:v5.0.1/multiplayer/editor/pick_equip2_camo
 # === Custom Loadout Actions ===
 # 10000-19999 = Select/use a custom loadout
 execute if score @s mgs.player.config matches 10000..19999 run function mgs:v5.0.1/multiplayer/custom/select
@@ -87,6 +95,8 @@ execute if score @s mgs.player.config matches 50000..59999 run function mgs:v5.0
 execute if score @s mgs.player.config matches 60000..69998 run function mgs:v5.0.1/multiplayer/custom/set_default
 # 69999 = Unset default loadout
 execute if score @s mgs.player.config matches 69999 run function mgs:v5.0.1/multiplayer/custom/unset_default
+# 70000-79999 = Edit own loadout (re-runs the wizard; saving overwrites)
+execute if score @s mgs.player.config matches 70000..79999 run function mgs:v5.0.1/multiplayer/custom/edit
 # === Marketplace / My Loadouts Filter & Sort ===
 # 1600 = Marketplace: all public (favorites first)
 execute if score @s mgs.player.config matches 1600 run function mgs:v5.0.1/multiplayer/marketplace/browse

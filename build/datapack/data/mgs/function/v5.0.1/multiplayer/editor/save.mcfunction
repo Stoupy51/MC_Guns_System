@@ -49,13 +49,14 @@ execute if data storage mgs:temp editor{secondary:"vz61"} run data modify storag
 
 # Build the new loadout entry (include new Pick-10 fields)
 data modify storage mgs:temp _new_loadout set value {id:0,owner_pid:0,owner_name:"",name:"",public:0b,likes:0,favorites_count:0,points_used:0,main_gun:"",main_gun_display:"",secondary_gun:"",secondary_gun_display:"None",primary_mag_count:1,secondary_mag_count:0,equip_slot1:"",equip_slot1_name:"None",equip_slot2:"",equip_slot2_name:"None",perks:[],slots:[]}
-# Set loadout ID from counter
-execute store result storage mgs:temp _new_loadout.id int 1 run data get storage mgs:multiplayer next_loadout_id
+# Set loadout ID: from the counter for new loadouts, or keep the edited loadout's id
+execute if score @s mgs.mp.edit_target matches ..0 store result storage mgs:temp _new_loadout.id int 1 run data get storage mgs:multiplayer next_loadout_id
+execute if score @s mgs.mp.edit_target matches 1.. store result storage mgs:temp _new_loadout.id int 1 run scoreboard players get @s mgs.mp.edit_target
 
-# Increment the counter
-execute store result score #temp mgs.data run data get storage mgs:multiplayer next_loadout_id
-scoreboard players add #temp mgs.data 1
-execute store result storage mgs:multiplayer next_loadout_id int 1 run scoreboard players get #temp mgs.data
+# Increment the counter (new loadouts only)
+execute if score @s mgs.mp.edit_target matches ..0 store result score #temp mgs.data run data get storage mgs:multiplayer next_loadout_id
+execute if score @s mgs.mp.edit_target matches ..0 run scoreboard players add #temp mgs.data 1
+execute if score @s mgs.mp.edit_target matches ..0 store result storage mgs:multiplayer next_loadout_id int 1 run scoreboard players get #temp mgs.data
 
 # Set owner info
 execute store result storage mgs:temp _new_loadout.owner_pid int 1 run scoreboard players get @s mgs.mp.pid
@@ -126,11 +127,13 @@ function mgs:v5.0.1/multiplayer/editor/set_main_gun_display with storage mgs:tem
 data modify storage mgs:temp _new_loadout.secondary_gun_display set value "None"
 execute unless data storage mgs:temp editor{secondary:""} run function mgs:v5.0.1/multiplayer/editor/set_sec_gun_display with storage mgs:temp editor
 
-# Append to custom loadouts list
-data modify storage mgs:multiplayer custom_loadouts append from storage mgs:temp _new_loadout
+# Append new loadout, or replace the original when editing
+execute if score @s mgs.mp.edit_target matches ..0 run data modify storage mgs:multiplayer custom_loadouts append from storage mgs:temp _new_loadout
+execute if score @s mgs.mp.edit_target matches 1.. run function mgs:v5.0.1/multiplayer/editor/save_replace
 
 # Reset editor state
 scoreboard players set @s mgs.mp.edit_step 0
+scoreboard players set @s mgs.mp.edit_target 0
 
 # Notify player
 function mgs:v5.0.1/multiplayer/editor/notify_saved with storage mgs:temp editor

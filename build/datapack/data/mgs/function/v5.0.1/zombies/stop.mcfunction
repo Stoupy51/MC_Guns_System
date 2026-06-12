@@ -12,6 +12,7 @@ schedule clear mgs:v5.0.1/zombies/start_round
 execute as @a[scores={mgs.zb.in_game=1}] run attribute @s minecraft:max_health base reset
 execute as @a[scores={mgs.zb.in_game=1}] run attribute @s minecraft:movement_speed base reset
 execute as @a[scores={mgs.zb.in_game=1}] run attribute @s minecraft:jump_strength base reset
+execute as @a[scores={mgs.zb.in_game=1}] run attribute @s minecraft:entity_interaction_range base reset
 effect clear @a[scores={mgs.zb.in_game=1}] darkness
 effect clear @a[scores={mgs.zb.in_game=1}] blindness
 effect clear @a[scores={mgs.zb.in_game=1}] night_vision

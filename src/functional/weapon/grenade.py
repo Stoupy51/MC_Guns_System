@@ -66,6 +66,10 @@ def main() -> None:
 data modify storage {ns}:temp grenade set value {{}}
 {grenade_copy}
 
+# Keep camo variants: use the held item's actual model when thrown by a player
+# (mobs have no SelectedItem in storage and fall back to the base {PROJECTILE_MODEL} stat)
+execute if entity @s[type=player] if data storage {ns}:gun SelectedItem.components."minecraft:item_model" run data modify storage {ns}:temp grenade.model_override set from storage {ns}:gun SelectedItem.components."minecraft:item_model"
+
 # Summon loop (supports pellet_count for multiple grenades)
 function {ns}:v{version}/grenade/summon_loop
 
@@ -109,8 +113,9 @@ data modify entity @s data.shooter set from entity @n[tag={ns}.ticking] UUID
 # Copy grenade config from temp storage
 data modify entity @s data.config set from storage {ns}:temp grenade
 
-# Set the visual model on the item_display entity
+# Set the visual model on the item_display entity (camo variants override the base model)
 function {ns}:v{version}/grenade/set_model with entity @s data.config
+execute if data entity @s data.config.model_override run function {ns}:v{version}/grenade/set_model_override with entity @s data.config
 
 # Set fuse timer from config
 execute store result score @s {ns}.data run data get entity @s data.config.{GRENADE_FUSE}
@@ -130,11 +135,47 @@ data modify entity @s brightness set value {{sky: 15, block: 15}}
 data modify entity @s teleport_duration set value 1
 """)
 
+    ## Override the model with the thrower's actual held item model (keeps camo variants)
+    write_versioned_function("grenade/set_model_override", """
+$data modify entity @s item.components."minecraft:item_model" set value "$(model_override)"
+""")
+
+    ## Tumble animation: accumulate the per-grenade spin angle and apply it with 1-tick interpolation
+    ## (angle wraps at 2π = 62832 units; quaternion slerp keeps the wrap-around seamless)
+    write_versioned_function("grenade/spin_tick", f"""
+scoreboard players add @s {ns}.grenade_spin 0
+scoreboard players operation @s {ns}.grenade_spin += #gr_speed {ns}.data
+scoreboard players operation @s {ns}.grenade_spin %= #62832 {ns}.data
+execute store result storage {ns}:temp _gr_spin.angle float 0.0001 run scoreboard players get @s {ns}.grenade_spin
+function {ns}:v{version}/grenade/apply_spin with storage {ns}:temp _gr_spin
+""")
+
+    write_versioned_function("grenade/apply_spin", """
+$data modify entity @s transformation.left_rotation set value {axis:[1f,0f,0f],angle:$(angle)}
+data merge entity @s {start_interpolation:0,interpolation_duration:1}
+""")
+
     ## Tick function for each grenade entity
     write_versioned_function("grenade/tick", f"""
 # Skip if grenade is stuck (semtex on a surface) or in smoke/flash effect phase
 execute if entity @s[tag={ns}.grenade_stuck] run return run function {ns}:v{version}/grenade/tick_stuck
 execute if entity @s[tag={ns}.grenade_active_effect] run return run function {ns}:v{version}/grenade/tick_effect
+
+# Tumble proportionally to current speed: fast while flying, stops as the grenade comes to rest
+# #gr_speed = |vx| + |vy| + |vz| (thousandths of a block per tick)
+scoreboard players operation #gr_speed {ns}.data = @s bs.vel.x
+execute if score #gr_speed {ns}.data matches ..-1 run scoreboard players operation #gr_speed {ns}.data *= #minus_one {ns}.data
+scoreboard players operation #gr_sv {ns}.data = @s bs.vel.y
+execute if score #gr_sv {ns}.data matches ..-1 run scoreboard players operation #gr_sv {ns}.data *= #minus_one {ns}.data
+scoreboard players operation #gr_speed {ns}.data += #gr_sv {ns}.data
+scoreboard players operation #gr_sv {ns}.data = @s bs.vel.z
+execute if score #gr_sv {ns}.data matches ..-1 run scoreboard players operation #gr_sv {ns}.data *= #minus_one {ns}.data
+scoreboard players operation #gr_speed {ns}.data += #gr_sv {ns}.data
+
+# Angle step ≈ 0.44 rad per (block/tick) of speed, in 1e-4 rad units; skip the update when resting
+scoreboard players operation #gr_speed {ns}.data *= #44 {ns}.data
+scoreboard players operation #gr_speed {ns}.data /= #10 {ns}.data
+execute if score #gr_speed {ns}.data matches 1.. run function {ns}:v{version}/grenade/spin_tick
 
 # Apply gravity (subtract from Y velocity)
 execute store result score #proj_gravity {ns}.data run data get entity @s data.config.{PROJECTILE_GRAVITY}

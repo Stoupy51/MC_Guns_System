@@ -61,8 +61,8 @@ execute as @a[scores={mgs.zb.in_game=1},gamemode=!spectator] run function mgs:v5
 # Intercept dying zombies before vanilla death particles are emitted.
 function mgs:v5.0.1/zombies/death_watch_tick
 
-# Ability tick
-function mgs:v5.0.1/zombies/ability_tick
+# Ability tick (Zonweeb variant only)
+execute if data storage mgs:zombies game{variant:"zonweeb"} run function mgs:v5.0.1/zombies/ability_tick
 
 # Refresh player info item every 5 seconds (100 ticks)
 scoreboard players add #zb_info_timer mgs.data 1

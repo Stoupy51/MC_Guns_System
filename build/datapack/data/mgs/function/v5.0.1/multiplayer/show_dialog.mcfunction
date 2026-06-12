@@ -11,6 +11,10 @@
 #			mgs:v5.0.1/multiplayer/editor/show_primary_mags_dialog_macro with storage mgs:temp
 #			mgs:v5.0.1/multiplayer/editor/show_secondary_dialog_macro with storage mgs:temp
 #			mgs:v5.0.1/multiplayer/editor/scope/secondary_4only_macro with storage mgs:temp
+#			mgs:v5.0.1/multiplayer/editor/show_primary_camo_dialog_macro with storage mgs:temp
+#			mgs:v5.0.1/multiplayer/editor/show_secondary_camo_dialog_macro with storage mgs:temp
+#			mgs:v5.0.1/multiplayer/editor/show_equip1_camo_dialog_macro with storage mgs:temp
+#			mgs:v5.0.1/multiplayer/editor/show_equip2_camo_dialog_macro with storage mgs:temp
 #			mgs:v5.0.1/multiplayer/editor/show_secondary_mags_dialog_macro with storage mgs:temp
 #			mgs:v5.0.1/multiplayer/editor/show_equip_slot1_dialog_macro with storage mgs:temp
 #			mgs:v5.0.1/multiplayer/editor/show_equip_slot2_dialog_macro with storage mgs:temp

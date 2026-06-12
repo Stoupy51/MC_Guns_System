@@ -13,7 +13,8 @@ execute if score #zb_round mgs.data matches 6..10 run data modify storage mgs:te
 execute if score #zb_round mgs.data matches 11..15 run data modify storage mgs:temp _zpos.level set value "3"
 execute if score #zb_round mgs.data matches 16.. run data modify storage mgs:temp _zpos.level set value "4"
 
-# Zombie type (normal for now; future: "armed", "fast", "tank")
+# Zombie type: special types ("armed", "fast", "tank") are Zonweeb-only once implemented;
+# the Vanilla variant must always spawn "normal" zombies.
 data modify storage mgs:temp _zpos.type set value "normal"
 
 # Spawn the zombie (~ ~ ~ is spawn marker position, inherited from at @s in spawn_zombie)

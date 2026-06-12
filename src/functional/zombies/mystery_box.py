@@ -118,6 +118,7 @@ execute store result storage {ns}:temp _mbpos.z double 1 run scoreboard players 
 data modify storage {ns}:temp _mbpos.rotation set from storage {ns}:temp _mb_iter[0].rotation
 
 function {ns}:v{version}/zombies/mystery_box/summon_pos_at with storage {ns}:temp _mbpos
+execute as @n[tag={ns}.mb_new] at @s run tp @s ~ ~2 ~
 
 # Tag entities that can_start_on
 data modify storage {ns}:temp can_start_on set from storage {ns}:temp _mb_iter[0].can_start_on
@@ -133,7 +134,7 @@ execute if data storage {ns}:temp _mb_iter[0] run function {ns}:v{version}/zombi
 """)
 
 	write_versioned_function("zombies/mystery_box/summon_pos_at", f"""
-$summon minecraft:interaction $(x) $(y) $(z) {{width:1.5f,height:2.0f,response:true,Rotation:$(rotation),Tags:["{ns}.mystery_box_pos","{ns}.gm_entity","{ns}.mb_new","bs.entity.interaction"]}}
+$summon minecraft:interaction $(x) $(y) $(z) {{width:1.5f,height:-2.0f,response:true,Rotation:$(rotation),Tags:["{ns}.mystery_box_pos","{ns}.gm_entity","{ns}.mb_new","bs.entity.interaction"]}}
 """)
 
 	write_versioned_function("zombies/mystery_box/sync_presence_display", f"""
@@ -145,7 +146,7 @@ execute as @n[tag={ns}.mystery_box_active] at @s run function {ns}:v{version}/zo
 """)
 
 	write_versioned_function("zombies/mystery_box/summon_presence_display", f"""
-$execute positioned ~ ~0.7 ~ run summon minecraft:item_display ~ ~ ~ {{Rotation:[$(yaw),0f],Tags:["{ns}.mb_presence","{ns}.gm_entity"],item_display:"fixed",billboard:"fixed",item:{{id:"minecraft:chest",count:1}},transformation:{{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[0.85f,0.85f,0.85f]}}}}
+$execute positioned ~ ~-1.3 ~ run summon minecraft:item_display ~ ~ ~ {{Rotation:[$(yaw),0f],Tags:["{ns}.mb_presence","{ns}.gm_entity"],item_display:"fixed",billboard:"fixed",item:{{id:"minecraft:chest",count:1}},transformation:{{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[0.85f,0.85f,0.85f]}}}}
 """)
 
 	write_versioned_function("zombies/mystery_box/move_active_position", f"""

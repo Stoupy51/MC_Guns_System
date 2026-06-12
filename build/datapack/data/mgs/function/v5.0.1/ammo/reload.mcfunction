@@ -6,6 +6,7 @@
 # @within	mgs:v5.0.1/player/right_click
 #			mgs:v5.0.1/switch/reload_to_dropped_weapon
 #			mgs:v5.0.1/ammo/decrease
+#			mgs:v5.0.1/ammo/single_reload_continue
 #
 
 # Stop if already reloading, or already has full ammo

@@ -123,6 +123,7 @@ execute if data storage {ns}:temp _pap_disp{{item_id:""}} run data modify storag
 execute if data storage {ns}:temp _pap_disp{{item_model:""}} run data modify storage {ns}:temp _pap_disp.item_model set value "{ns}:pack_a_punch"
 execute if data storage {ns}:temp _pap_iter[0].rotation[0] run data modify storage {ns}:temp _pap_disp.yaw set from storage {ns}:temp _pap_iter[0].rotation[0]
 execute as @n[tag={ns}.pap_new] at @s positioned ^ ^ ^-0.5 positioned ~ ~-0.4 ~ run function {ns}:v{version}/zombies/display/summon_machine_display with storage {ns}:temp _pap_disp
+execute as @n[tag={ns}.pap_new] at @s run tp @s ~ ~2 ~
 
 # Store display metadata for lookup (reuse the computed _pap_disp fields)
 execute store result storage {ns}:temp _pap_store.id int 1 run scoreboard players get #pap_counter {ns}.data
@@ -142,7 +143,7 @@ execute if data storage {ns}:temp _pap_iter[0] run function {ns}:v{version}/zomb
 """)
 
 	write_versioned_function("zombies/pap/place_at", f"""
-$summon minecraft:interaction $(x) $(y) $(z) {{width:1.2f,height:2.2f,response:true,Rotation:$(rotation),Tags:["{ns}.pap_machine","{ns}.gm_entity","bs.entity.interaction","{ns}.pap_new"]}}
+$summon minecraft:interaction $(x) $(y) $(z) {{width:1.2f,height:-2.0f,response:true,Rotation:$(rotation),Tags:["{ns}.pap_machine","{ns}.gm_entity","bs.entity.interaction","{ns}.pap_new"]}}
 """)
 
 	write_versioned_function("zombies/pap/store_data", f"""
@@ -665,7 +666,7 @@ execute unless data storage {ns}:temp _pap_extract.stats.{PAP_STATS} run return 
 
 # Compute current and next PAP levels
 scoreboard players set #pap_level {ns}.data 0
-execute if data storage {ns}:temp _pap_extract.stats.{PAP_STATS}.pap_level store result score #pap_level {ns}.data run data get storage {ns}:temp _pap_extract.stats.{PAP_STATS}.pap_level
+execute if data storage {ns}:temp _pap_extract.stats.pap_level store result score #pap_level {ns}.data run data get storage {ns}:temp _pap_extract.stats.pap_level
 scoreboard players operation #pap_next {ns}.data = #pap_level {ns}.data
 scoreboard players add #pap_next {ns}.data 1
 scoreboard players operation #pap_next_idx {ns}.data = #pap_next {ns}.data
@@ -1120,7 +1121,7 @@ execute unless data storage {ns}:temp _pap_extract.stats.{PAP_STATS} run return 
 
 # Compute current and next PAP levels
 scoreboard players set #pap_level {ns}.data 0
-execute if data storage {ns}:temp _pap_extract.stats.{PAP_STATS}.pap_level store result score #pap_level {ns}.data run data get storage {ns}:temp _pap_extract.stats.{PAP_STATS}.pap_level
+execute if data storage {ns}:temp _pap_extract.stats.pap_level store result score #pap_level {ns}.data run data get storage {ns}:temp _pap_extract.stats.pap_level
 scoreboard players operation #pap_next {ns}.data = #pap_level {ns}.data
 scoreboard players add #pap_next {ns}.data 1
 scoreboard players operation #pap_next_idx {ns}.data = #pap_next {ns}.data

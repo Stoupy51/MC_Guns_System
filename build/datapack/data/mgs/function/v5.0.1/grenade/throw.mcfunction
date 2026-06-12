@@ -20,6 +20,10 @@ data modify storage mgs:temp grenade.proj_gravity set from storage mgs:gun all.s
 data modify storage mgs:temp grenade.proj_speed set from storage mgs:gun all.stats.proj_speed
 data modify storage mgs:temp grenade.proj_model set from storage mgs:gun all.stats.proj_model
 
+# Keep camo variants: use the held item's actual model when thrown by a player
+# (mobs have no SelectedItem in storage and fall back to the base proj_model stat)
+execute if entity @s[type=player] if data storage mgs:gun SelectedItem.components."minecraft:item_model" run data modify storage mgs:temp grenade.model_override set from storage mgs:gun SelectedItem.components."minecraft:item_model"
+
 # Summon loop (supports pellet_count for multiple grenades)
 function mgs:v5.0.1/grenade/summon_loop
 

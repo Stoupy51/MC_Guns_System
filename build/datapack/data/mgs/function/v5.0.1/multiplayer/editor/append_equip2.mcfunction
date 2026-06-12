@@ -6,7 +6,8 @@
 # @within	mgs:v5.0.1/multiplayer/editor/save with storage mgs:temp editor
 #
 # @args		equip_slot2 (string)
+#			equip_slot2_camo (unknown)
 #
 
-$data modify storage mgs:temp _new_loadout.slots append value {slot:"hotbar.7",loot:"mgs:i/$(equip_slot2)",count:1,consumable:0b,bullets:0}
+$data modify storage mgs:temp _new_loadout.slots append value {slot:"hotbar.7",loot:"mgs:i/$(equip_slot2)$(equip_slot2_camo)",count:1,consumable:0b,bullets:0}
 

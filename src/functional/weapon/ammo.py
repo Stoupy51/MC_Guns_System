@@ -2,7 +2,7 @@
 # Imports
 from stewbeet import ItemModifier, JsonDict, Mem, set_json_encoder, write_versioned_function
 
-from ...config.stats import ALL_SLOTS, BASE_WEAPON, CAPACITY, RELOAD_TIME, REMAINING_BULLETS
+from ...config.stats import ALL_SLOTS, BASE_WEAPON, CAPACITY, RELOAD_TIME, REMAINING_BULLETS, SINGLE_RELOAD
 
 # Magazine IDs that are consumable (stack count = bullet count)
 CONSUMABLE_MAG_DATA_KEY = "consumable"
@@ -281,6 +281,11 @@ execute store result score #capacity {ns}.data run data get storage {ns}:gun all
 execute store result score #initial_ammo {ns}.data run scoreboard players get @s {ns}.{REMAINING_BULLETS}
 scoreboard players operation #found_ammo {ns}.data = #initial_ammo {ns}.data
 
+# Single-shell reload: cap the fill target to current + 1 so only one bullet is loaded per cycle
+execute if data storage {ns}:gun all.stats.{SINGLE_RELOAD} run scoreboard players operation #single_target {ns}.data = #initial_ammo {ns}.data
+execute if data storage {ns}:gun all.stats.{SINGLE_RELOAD} run scoreboard players add #single_target {ns}.data 1
+execute if data storage {ns}:gun all.stats.{SINGLE_RELOAD} if score #capacity {ns}.data > #single_target {ns}.data run scoreboard players operation #capacity {ns}.data = #single_target {ns}.data
+
 # Check all slots for magazines
 {slot_checks}
 
@@ -363,7 +368,9 @@ kill @s
 
     write_versioned_function("ammo/end_reload", f"""
 # Actually consume magazines and update ammo now that reload is complete
-execute if data storage {ns}:config no_magazine store result score @s {ns}.{REMAINING_BULLETS} run data get storage {ns}:gun all.stats.{CAPACITY}
+# (single-shell weapons only load one bullet per cycle, even in no_magazine mode)
+execute if data storage {ns}:config no_magazine unless data storage {ns}:gun all.stats.{SINGLE_RELOAD} store result score @s {ns}.{REMAINING_BULLETS} run data get storage {ns}:gun all.stats.{CAPACITY}
+execute if data storage {ns}:config no_magazine if data storage {ns}:gun all.stats.{SINGLE_RELOAD} run function {ns}:v{version}/ammo/single_reload_add_one
 execute unless data storage {ns}:config no_magazine run function {ns}:v{version}/ammo/inventory/find with storage {ns}:gun all.stats
 
 # Update weapon lore (if still holding weapon)
@@ -371,6 +378,35 @@ execute if data storage {ns}:gun all.gun run function {ns}:v{version}/ammo/modif
 
 # Remove reloading tag
 tag @s remove {ns}.reloading
+
+# Single-shell reload: chain into the next shell unless full, out of ammo, or the player is firing
+execute if data storage {ns}:gun all.stats.{SINGLE_RELOAD} run function {ns}:v{version}/ammo/single_reload_continue
+""")
+
+    ## Single-shell reload (no_magazine mode): add one bullet, clamped to capacity
+    write_versioned_function("ammo/single_reload_add_one", f"""
+execute store result score #capacity {ns}.data run data get storage {ns}:gun all.stats.{CAPACITY}
+scoreboard players add @s {ns}.{REMAINING_BULLETS} 1
+execute if score @s {ns}.{REMAINING_BULLETS} > #capacity {ns}.data run scoreboard players operation @s {ns}.{REMAINING_BULLETS} = #capacity {ns}.data
+""")
+
+    ## Single-shell reload: decide whether to load the next shell
+    ## Chains until full; aborted by firing (pending clicks) — switching weapon already
+    ## cancels the {ns}.reloading tag, which breaks the chain naturally.
+    write_versioned_function("ammo/single_reload_continue", f"""
+# Stop if the player is actively trying to shoot (lets them fire mid-reload)
+execute if score @s {ns}.pending_clicks matches 0.. run return fail
+
+# Stop if the magazine is already full
+execute store result score #capacity {ns}.data run data get storage {ns}:gun all.stats.{CAPACITY}
+execute if score @s {ns}.{REMAINING_BULLETS} >= #capacity {ns}.data run return fail
+
+# Stop silently if no matching ammo remains in the inventory
+execute unless data storage {ns}:config no_magazine store success score #success {ns}.data run function {ns}:v{version}/ammo/inventory/has_ammo with storage {ns}:gun all.stats
+execute unless data storage {ns}:config no_magazine if score #success {ns}.data matches 0 run return fail
+
+# Load the next shell (plays the reload sound and sets a fresh per-shell cooldown)
+function {ns}:v{version}/ammo/reload
 """)
 
     ## ============================

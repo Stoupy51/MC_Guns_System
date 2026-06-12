@@ -19,6 +19,8 @@ execute unless data storage mgs:temp editor{secondary:""} run scoreboard players
 # Clear secondary state
 data modify storage mgs:temp editor.secondary set value ""
 data modify storage mgs:temp editor.secondary_scope set value ""
+data modify storage mgs:temp editor.secondary_camo set value ""
+data modify storage mgs:temp editor.secondary_camo_name set value "Default"
 data modify storage mgs:temp editor.secondary_mag_count set value 0
 # Show secondary dialog
 function mgs:v5.0.1/multiplayer/editor/show_secondary_dialog

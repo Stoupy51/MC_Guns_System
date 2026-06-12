@@ -26,9 +26,6 @@ execute if score @s mgs.player.config matches 264 run data modify storage mgs:te
 execute if score @s mgs.player.config matches 264 run data modify storage mgs:temp editor.secondary_scope_name set value "Mk4 (4x Scope)"
 execute if score @s mgs.player.config matches 264 run scoreboard players remove @s mgs.mp.edit_points 1
 
-# Compute full secondary ID
-function mgs:v5.0.1/multiplayer/editor/set_secondary_full with storage mgs:temp editor
-
-# Show secondary mag count dialog
-function mgs:v5.0.1/multiplayer/editor/show_secondary_mags_dialog
+# Show secondary camo selection dialog (the full secondary ID is computed after the camo pick)
+function mgs:v5.0.1/multiplayer/editor/show_secondary_camo_dialog
 

@@ -21,8 +21,7 @@ execute if score @s mgs.player.config matches 474 run execute if score @s mgs.mp
 execute if score @s mgs.player.config matches 474 run data modify storage mgs:temp editor.equip_slot2 set value "smoke_grenade"
 execute if score @s mgs.player.config matches 474 run scoreboard players remove @s mgs.mp.edit_points 1
 
-# Clear perks list (fresh start)
-data modify storage mgs:temp editor.perks set value []
-# Show perks dialog
-function mgs:v5.0.1/multiplayer/editor/show_perks_dialog
+# None → straight to perks; otherwise pick a camo for the grenade (free)
+execute if data storage mgs:temp editor{equip_slot2:""} run return run function mgs:v5.0.1/multiplayer/editor/equip2_done
+function mgs:v5.0.1/multiplayer/editor/show_equip2_camo_dialog
 

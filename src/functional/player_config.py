@@ -6,6 +6,7 @@ from stewbeet import Mem, write_versioned_function
 from .helpers import MGS_TAG
 from .multiplayer.classes import CLASS_IDS, CLASSES
 from .multiplayer.loadouts import (
+    CAMO_VARIANTS,
     GRENADE_TYPES,
     PERKS,
     PRIMARY_WEAPONS,
@@ -13,7 +14,10 @@ from .multiplayer.loadouts import (
     TRIG_BACK_PERKS,
     TRIG_BACK_SECONDARY,
     TRIG_DELETE_BASE,
+    TRIG_EDIT_BASE,
     TRIG_EDITOR_START,
+    TRIG_EQUIP1_CAMO_BASE,
+    TRIG_EQUIP2_CAMO_BASE,
     TRIG_EQUIP_SLOT1_BASE,
     TRIG_EQUIP_SLOT2_BASE,
     TRIG_FAVORITE_BASE,
@@ -27,11 +31,13 @@ from .multiplayer.loadouts import (
     TRIG_PERK_BASE,
     TRIG_PERKS_DONE,
     TRIG_PRIMARY_BASE,
+    TRIG_PRIMARY_CAMO_BASE,
     TRIG_PRIMARY_MAGS_BASE,
     TRIG_PRIMARY_SCOPE_BASE,
     TRIG_SAVE_PRIVATE,
     TRIG_SAVE_PUBLIC,
     TRIG_SECONDARY_BASE,
+    TRIG_SECONDARY_CAMO_BASE,
     TRIG_SECONDARY_MAGS_BASE,
     TRIG_SECONDARY_NONE,
     TRIG_SECONDARY_SCOPE_BASE,
@@ -79,6 +85,11 @@ execute if score @s {ns}.mp.map_edit matches 1 run function {ns}:v{version}/maps
     perk_max = TRIG_PERK_BASE + len(PERKS) - 1
     equip1_max = TRIG_EQUIP_SLOT1_BASE + len(GRENADE_TYPES) - 1
     equip2_max = TRIG_EQUIP_SLOT2_BASE + len(GRENADE_TYPES) - 1
+    primary_camo_max = TRIG_PRIMARY_CAMO_BASE + len(CAMO_VARIANTS) - 1
+    secondary_camo_max = TRIG_SECONDARY_CAMO_BASE + len(CAMO_VARIANTS) - 1
+    equip1_camo_max = TRIG_EQUIP1_CAMO_BASE + len(CAMO_VARIANTS) - 1
+    equip2_camo_max = TRIG_EQUIP2_CAMO_BASE + len(CAMO_VARIANTS) - 1
+    edit_max = TRIG_EDIT_BASE + 9999
     select_max = TRIG_SELECT_BASE + 9999  # 10000-wide range per loadout action
     favorite_max = TRIG_FAVORITE_BASE + 9999
     like_max = TRIG_LIKE_BASE + 9999
@@ -143,6 +154,14 @@ execute if score @s {ns}.player.config matches {TRIG_PERKS_DONE} run function {n
 execute if score @s {ns}.player.config matches {TRIG_EQUIP_SLOT1_BASE}..{equip1_max} run function {ns}:v{version}/multiplayer/editor/pick_equip_slot1
 # {TRIG_EQUIP_SLOT2_BASE}-{equip2_max} = Editor: pick equipment slot 2 grenade
 execute if score @s {ns}.player.config matches {TRIG_EQUIP_SLOT2_BASE}..{equip2_max} run function {ns}:v{version}/multiplayer/editor/pick_equip_slot2
+# {TRIG_PRIMARY_CAMO_BASE}-{primary_camo_max} = Editor: pick primary camo (free)
+execute if score @s {ns}.player.config matches {TRIG_PRIMARY_CAMO_BASE}..{primary_camo_max} run function {ns}:v{version}/multiplayer/editor/pick_primary_camo
+# {TRIG_SECONDARY_CAMO_BASE}-{secondary_camo_max} = Editor: pick secondary camo (free)
+execute if score @s {ns}.player.config matches {TRIG_SECONDARY_CAMO_BASE}..{secondary_camo_max} run function {ns}:v{version}/multiplayer/editor/pick_secondary_camo
+# {TRIG_EQUIP1_CAMO_BASE}-{equip1_camo_max} = Editor: pick grenade slot 1 camo (free)
+execute if score @s {ns}.player.config matches {TRIG_EQUIP1_CAMO_BASE}..{equip1_camo_max} run function {ns}:v{version}/multiplayer/editor/pick_equip1_camo
+# {TRIG_EQUIP2_CAMO_BASE}-{equip2_camo_max} = Editor: pick grenade slot 2 camo (free)
+execute if score @s {ns}.player.config matches {TRIG_EQUIP2_CAMO_BASE}..{equip2_camo_max} run function {ns}:v{version}/multiplayer/editor/pick_equip2_camo
 # === Custom Loadout Actions ===
 # {TRIG_SELECT_BASE}-{select_max} = Select/use a custom loadout
 execute if score @s {ns}.player.config matches {TRIG_SELECT_BASE}..{select_max} run function {ns}:v{version}/multiplayer/custom/select
@@ -158,6 +177,8 @@ execute if score @s {ns}.player.config matches {TRIG_TOGGLE_VIS_BASE}..{toggle_v
 execute if score @s {ns}.player.config matches {TRIG_SET_DEFAULT_BASE}..{set_default_max} run function {ns}:v{version}/multiplayer/custom/set_default
 # {TRIG_UNSET_DEFAULT} = Unset default loadout
 execute if score @s {ns}.player.config matches {TRIG_UNSET_DEFAULT} run function {ns}:v{version}/multiplayer/custom/unset_default
+# {TRIG_EDIT_BASE}-{edit_max} = Edit own loadout (re-runs the wizard; saving overwrites)
+execute if score @s {ns}.player.config matches {TRIG_EDIT_BASE}..{edit_max} run function {ns}:v{version}/multiplayer/custom/edit
 # === Marketplace / My Loadouts Filter & Sort ===
 # {TRIG_MARKETPLACE_ALL} = Marketplace: all public (favorites first)
 execute if score @s {ns}.player.config matches {TRIG_MARKETPLACE_ALL} run function {ns}:v{version}/multiplayer/marketplace/browse

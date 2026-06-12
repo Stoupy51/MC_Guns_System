@@ -21,11 +21,15 @@ def generate_zombies_abilities() -> None:
 	TRIG_ZB_ABILITY_2: int = 9   # Guardian
 
 	write_versioned_function("zombies/passive_ability_menu", f"""
+# Zonweeb variant only
+execute unless data storage {ns}:zombies game{{variant:"zonweeb"}} run return fail
 # Show the passive selection dialog (ability dialog is shown after)
 dialog show @s {{type:"minecraft:multi_action",title:{{text:"Zonweeb Passive",color:"dark_green"}},body:{{type:"minecraft:plain_message",contents:{{text:"Choose a passive effect for this game.",color:"gray"}}}},columns:1,after_action:"close",exit_action:{{label:"Skip"}},actions:[{{label:[{{"text":"💰 ","color":"gold"}},{{"text":"x1.2 Points"}}],tooltip:{{text:"Earn 20% more points from kills (permanent)"}},action:{{type:"run_command",command:"/trigger {ns}.player.config set {TRIG_ZB_PASSIVE_1}"}}}},{{label:[{{"text":"⏱ ","color":"aqua"}},{{"text":"x1.5 Powerups"}}],tooltip:{{text:"All powerup durations last 50% longer"}},action:{{type:"run_command",command:"/trigger {ns}.player.config set {TRIG_ZB_PASSIVE_2}"}}}}]}}
 """)
 
 	write_versioned_function("zombies/ability_menu", f"""
+# Zonweeb variant only
+execute unless data storage {ns}:zombies game{{variant:"zonweeb"}} run return fail
 # Show the ability selection dialog
 dialog show @s {{type:"minecraft:multi_action",title:{{text:"Zonweeb Ability",color:"dark_green"}},body:{{type:"minecraft:plain_message",contents:{{text:"Choose an ability for this game.",color:"gray"}}}},columns:1,after_action:"close",exit_action:{{label:"Skip"}},actions:[{{label:[{{"text":"🏃 ","color":"yellow"}},{{"text":"Coward"}}],tooltip:{{text:"TP to spawn when under 50% HP (1 round cooldown)"}},action:{{type:"run_command",command:"/trigger {ns}.player.config set {TRIG_ZB_ABILITY_1}"}}}},{{label:[{{"text":"🛡 ","color":"green"}},{{"text":"Guardian"}}],tooltip:{{text:"Summon an Iron Golem ally at round start (1 round cooldown)"}},action:{{type:"run_command",command:"/trigger {ns}.player.config set {TRIG_ZB_ABILITY_2}"}}}}]}}
 """)
@@ -33,12 +37,16 @@ dialog show @s {{type:"minecraft:multi_action",title:{{text:"Zonweeb Ability",co
 	# Passive Selection (called via trigger dispatch) ───────────
 
 	write_versioned_function("zombies/perks/set_passive_1", f"""
+# Zonweeb variant only
+execute unless data storage {ns}:zombies game{{variant:"zonweeb"}} run return fail
 scoreboard players set @s {ns}.zb.passive 1
 tellraw @s [{MGS_TAG},{{"text":"Passive set: ","color":"gray"}},{{"text":"x1.2 Points","color":"gold"}}]
 function {ns}:v{version}/zombies/ability_menu
 """)
 
 	write_versioned_function("zombies/perks/set_passive_2", f"""
+# Zonweeb variant only
+execute unless data storage {ns}:zombies game{{variant:"zonweeb"}} run return fail
 scoreboard players set @s {ns}.zb.passive 2
 tellraw @s [{MGS_TAG},{{"text":"Passive set: ","color":"gray"}},{{"text":"x1.5 Powerups","color":"aqua"}}]
 function {ns}:v{version}/zombies/ability_menu
@@ -47,12 +55,16 @@ function {ns}:v{version}/zombies/ability_menu
 	# Ability Selection (called via trigger dispatch) ────────────
 
 	write_versioned_function("zombies/perks/set_ability_1", f"""
+# Zonweeb variant only
+execute unless data storage {ns}:zombies game{{variant:"zonweeb"}} run return fail
 scoreboard players set @s {ns}.zb.ability 1
 scoreboard players set @s {ns}.zb.ability_cd 0
 tellraw @s [{MGS_TAG},{{"text":"Ability set: ","color":"gray"}},{{"text":"Coward","color":"yellow"}},{{"text":" (TP to spawn when below 50% HP)","color":"gray"}}]
 """)
 
 	write_versioned_function("zombies/perks/set_ability_2", f"""
+# Zonweeb variant only
+execute unless data storage {ns}:zombies game{{variant:"zonweeb"}} run return fail
 scoreboard players set @s {ns}.zb.ability 2
 scoreboard players set @s {ns}.zb.ability_cd 0
 tellraw @s [{MGS_TAG},{{"text":"Ability set: ","color":"gray"}},{{"text":"Guardian","color":"green"}},{{"text":" (Summon an Iron Golem ally)","color":"gray"}}]
@@ -114,16 +126,14 @@ execute as @a[scores={{{ns}.zb.in_game=1,{ns}.zb.ability_cd=1..}}] run scoreboar
 
 	# Hook ability tick into game_tick
 	write_versioned_function("zombies/game_tick", f"""
-# Ability tick
-function {ns}:v{version}/zombies/ability_tick
+# Ability tick (Zonweeb variant only)
+execute if data storage {ns}:zombies game{{variant:"zonweeb"}} run function {ns}:v{version}/zombies/ability_tick
 """)
 
 	# Hook cooldown reduction and guardian into round start
 	write_versioned_function("zombies/start_round", f"""
-# Reduce ability cooldowns
-function {ns}:v{version}/zombies/perks/reduce_cooldowns
-
-# Check guardian ability (summon golem at round start)
-function {ns}:v{version}/zombies/perks/check_guardian
+# Ability cooldowns + guardian summon (Zonweeb variant only)
+execute if data storage {ns}:zombies game{{variant:"zonweeb"}} run function {ns}:v{version}/zombies/perks/reduce_cooldowns
+execute if data storage {ns}:zombies game{{variant:"zonweeb"}} run function {ns}:v{version}/zombies/perks/check_guardian
 """)
 

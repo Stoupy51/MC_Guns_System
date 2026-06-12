@@ -15,8 +15,9 @@ data modify entity @s data.shooter set from entity @n[tag=mgs.ticking] UUID
 # Copy grenade config from temp storage
 data modify entity @s data.config set from storage mgs:temp grenade
 
-# Set the visual model on the item_display entity
+# Set the visual model on the item_display entity (camo variants override the base model)
 function mgs:v5.0.1/grenade/set_model with entity @s data.config
+execute if data entity @s data.config.model_override run function mgs:v5.0.1/grenade/set_model_override with entity @s data.config
 
 # Set fuse timer from config
 execute store result score @s mgs.data run data get entity @s data.config.grenade_fuse

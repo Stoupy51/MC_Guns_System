@@ -17,6 +17,11 @@ def generate_zombies_menus() -> None:
 	map_select_btn = btn("Select Map", f"/function {ns}:v{version}/zombies/map_select", "dark_green", "Browse and select a zombies map")
 	map_line = f'["",["","  ",{{"text":"Map"}},": "],{map_select_btn}]'
 
+	# Variant selection buttons (Vanilla = classic CoD zombies, Zonweeb = passives/abilities/special zombies)
+	vanilla_btn = btn("Vanilla", f'/data modify storage {ns}:zombies game.variant set value "vanilla"', "yellow", "Classic CoD zombies: no passives, abilities, or special zombies")
+	zonweeb_btn = btn("Zonweeb", f'/data modify storage {ns}:zombies game.variant set value "zonweeb"', "green", "Full experience: passives, abilities, and special zombies")
+	variant_line = f'["",["","  ",{{"text":"Variant"}},": "],{vanilla_btn}," ",{zonweeb_btn}]'
+
 	# Action buttons
 	start_btn = btn("▶ START", f"/function {ns}:v{version}/zombies/start", "green", "Start the zombies game")
 	stop_btn = btn("■ STOP", f"/function {ns}:v{version}/zombies/stop", "red", "Stop the zombies game")
@@ -30,6 +35,7 @@ tellraw @s {sep}
 tellraw @s {setup_title}
 tellraw @s {sep}
 tellraw @s {map_line}
+tellraw @s {variant_line}
 tellraw @s ""
 tellraw @s {actions_line}
 tellraw @s {sep}

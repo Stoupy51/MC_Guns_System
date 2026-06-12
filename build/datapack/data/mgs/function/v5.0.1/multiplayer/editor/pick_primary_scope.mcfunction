@@ -26,9 +26,6 @@ execute if score @s mgs.player.config matches 234 run data modify storage mgs:te
 execute if score @s mgs.player.config matches 234 run data modify storage mgs:temp editor.primary_scope_name set value "Mk4 (4x Scope)"
 execute if score @s mgs.player.config matches 234 run scoreboard players remove @s mgs.mp.edit_points 1
 
-# Compute full weapon ID
-function mgs:v5.0.1/multiplayer/editor/set_primary_full with storage mgs:temp editor
-
-# Show primary mag count dialog
-function mgs:v5.0.1/multiplayer/editor/show_primary_mags_dialog
+# Show primary camo selection dialog (the full weapon ID is computed after the camo pick)
+function mgs:v5.0.1/multiplayer/editor/show_primary_camo_dialog
 

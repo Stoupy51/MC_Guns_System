@@ -87,6 +87,9 @@ scoreboard players add #slow_bullet_count mgs.data 0
 # Semtex entity pairing: unique ID objective + global counter
 scoreboard objectives add mgs.grenade_launch dummy
 scoreboard objectives add mgs.stuck_id dummy
+
+# Per-grenade accumulated tumble angle (1e-4 rad units)
+scoreboard objectives add mgs.grenade_spin dummy
 scoreboard players set #semtex_id mgs.data 0
 
 # Initialize global config defaults (only if not already set)
@@ -162,6 +165,9 @@ scoreboard objectives add mgs.zb.stuck_dist dummy
 
 # Initialize zombies game state
 execute unless data storage mgs:zombies game run data modify storage mgs:zombies game set value {state:"lobby",map_id:"",round:0}
+
+# Game variant: "vanilla" = classic CoD zombies, "zonweeb" = passives/abilities/special zombies
+execute unless data storage mgs:zombies game.variant run data modify storage mgs:zombies game.variant set value "zonweeb"
 
 # Initialize mystery box base pool (can be extended via function tag)
 execute unless data storage mgs:zombies mystery_box_pool run data modify storage mgs:zombies mystery_box_pool set value []
@@ -322,6 +328,8 @@ scoreboard objectives add mgs.mp.default dummy
 scoreboard objectives add mgs.mp.edit_step dummy
 # Pick-10 points remaining during loadout editing
 scoreboard objectives add mgs.mp.edit_points dummy
+# Loadout id being edited (0 = creating a new loadout; saving overwrites this id)
+scoreboard objectives add mgs.mp.edit_target dummy
 
 # Constant for negation (used to store custom loadout ID as negative mp.class)
 scoreboard players set #minus_one mgs.data -1
@@ -377,6 +385,7 @@ scoreboard players set #5 mgs.data 5
 scoreboard players set #10 mgs.data 10
 scoreboard players set #15 mgs.data 15
 scoreboard players set #20 mgs.data 20
+scoreboard players set #44 mgs.data 44
 scoreboard players set #45 mgs.data 45
 scoreboard players set #50 mgs.data 50
 scoreboard players set #60 mgs.data 60
@@ -385,5 +394,6 @@ scoreboard players set #114 mgs.data 114
 scoreboard players set #150 mgs.data 150
 scoreboard players set #200 mgs.data 200
 scoreboard players set #1000 mgs.data 1000
+scoreboard players set #62832 mgs.data 62832
 scoreboard players set #1000000 mgs.data 1000000
 

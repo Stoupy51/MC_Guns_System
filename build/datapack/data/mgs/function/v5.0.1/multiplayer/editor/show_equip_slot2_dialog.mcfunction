@@ -3,7 +3,8 @@
 #
 # @executed	as @e[type=player,sort=random] & at @s
 #
-# @within	mgs:v5.0.1/multiplayer/editor/pick_equip_slot1
+# @within	mgs:v5.0.1/multiplayer/editor/pick_equip1_camo
+#			mgs:v5.0.1/multiplayer/editor/pick_equip_slot1
 #			mgs:v5.0.1/multiplayer/editor/back_from_perks
 #
 

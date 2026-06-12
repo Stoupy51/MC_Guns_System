@@ -171,9 +171,11 @@ execute as @n[tag={ns}.downed_mine_temp] run data modify entity @s Rotation[1] s
 tag @e[tag={ns}.downed_mine_temp] remove {ns}.downed_mine_temp
 
 # Move mannequin using Bookshelf motion (smooth, physics-based, no tp stuttering)
-# Zero out velocity first, then accumulate based on active inputs
+# Zero out XZ velocity first, then accumulate based on active inputs.
+# Y gets a constant downward pull: set_motion overrides vanilla gravity every tick,
+# so without this the mannequin would float when crawling off a ledge.
 execute as @e[tag={ns}.downed_mannequin] if score @s {ns}.zb.downed_id = #my_downed_id {ns}.data run scoreboard players set @s bs.vel.x 0
-execute as @e[tag={ns}.downed_mannequin] if score @s {ns}.zb.downed_id = #my_downed_id {ns}.data run scoreboard players set @s bs.vel.y 0
+execute as @e[tag={ns}.downed_mannequin] if score @s {ns}.zb.downed_id = #my_downed_id {ns}.data run scoreboard players set @s bs.vel.y -400
 execute as @e[tag={ns}.downed_mannequin] if score @s {ns}.zb.downed_id = #my_downed_id {ns}.data run scoreboard players set @s bs.vel.z 0
 
 # Forward/backward: local +Z / -Z (scale: 80 = 0.08 blocks/tick at scale:0.001)
