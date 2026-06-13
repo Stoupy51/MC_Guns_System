@@ -3,6 +3,7 @@
 # Imports
 from stewbeet import Mem, write_load_file, write_versioned_function
 
+from ....config.stats import ALL_SLOTS
 from ...helpers import MGS_TAG
 from ..classes import CLASS_IDS
 from .catalogs import TRIG_EDITOR_START, TRIG_MARKETPLACE, TRIG_MY_LOADOUTS
@@ -137,20 +138,61 @@ function {ns}:v{version}/multiplayer/apply_class_dynamic
 # Copy the loadout compound to a flat temp for perk checks (since [0]{{filter}} is invalid syntax)
 data modify storage {ns}:temp _cur_loadout set from storage {ns}:temp _find_iter[0]
 
-# Apply perks from the loadout (new Pick-10 system)
-# Passive perks: scores are percentages (50 = 50% faster, matching the catalog descriptions)
+# Apply perks from the loadout (Pick-10 system)
+# Sleight of Hand / Fast Hands: percentages (50 = 50% faster)
 execute if data storage {ns}:temp _cur_loadout{{perks:["quick_reload"]}} run scoreboard players set @s {ns}.special.quick_reload 50
 execute unless data storage {ns}:temp _cur_loadout{{perks:["quick_reload"]}} run scoreboard players set @s {ns}.special.quick_reload 0
 execute if data storage {ns}:temp _cur_loadout{{perks:["quick_swap"]}} run scoreboard players set @s {ns}.special.quick_swap 50
 execute unless data storage {ns}:temp _cur_loadout{{perks:["quick_swap"]}} run scoreboard players set @s {ns}.special.quick_swap 0
 
-# Timed perks: grant limited-duration buff (set score to timer ticks)
-# Overkill (infinite_ammo): unlimited ammo for 30 seconds (600 ticks)
-execute if data storage {ns}:temp _cur_loadout{{perks:["infinite_ammo"]}} run scoreboard players set @s {ns}.special.infinite_ammo 600
-execute unless data storage {ns}:temp _cur_loadout{{perks:["infinite_ammo"]}} run scoreboard players set @s {ns}.special.infinite_ammo 0
-# Assassin (instant_kill): one-shot kill for 10 seconds (200 ticks)
-execute if data storage {ns}:temp _cur_loadout{{perks:["instant_kill"]}} run scoreboard players set @s {ns}.special.instant_kill 200
-execute unless data storage {ns}:temp _cur_loadout{{perks:["instant_kill"]}} run scoreboard players set @s {ns}.special.instant_kill 0
+# Flag perks (0/1), read by the systems they affect
+execute store success score #has_perk {ns}.data if data storage {ns}:temp _cur_loadout{{perks:["scavenger"]}}
+scoreboard players operation @s {ns}.special.scavenger = #has_perk {ns}.data
+execute store success score #has_perk {ns}.data if data storage {ns}:temp _cur_loadout{{perks:["flak_jacket"]}}
+scoreboard players operation @s {ns}.special.flak_jacket = #has_perk {ns}.data
+execute store success score #has_perk {ns}.data if data storage {ns}:temp _cur_loadout{{perks:["tracker"]}}
+scoreboard players operation @s {ns}.special.tracker = #has_perk {ns}.data
+execute store success score #has_perk {ns}.data if data storage {ns}:temp _cur_loadout{{perks:["tactical_mask"]}}
+scoreboard players operation @s {ns}.special.tactical_mask = #has_perk {ns}.data
+execute store success score #has_perk {ns}.data if data storage {ns}:temp _cur_loadout{{perks:["overkill"]}}
+scoreboard players operation @s {ns}.special.overkill = #has_perk {ns}.data
+execute store success score #has_perk {ns}.data if data storage {ns}:temp _cur_loadout{{perks:["quick_fix"]}}
+scoreboard players operation @s {ns}.special.quick_fix = #has_perk {ns}.data
+
+# Juggernaut: flag + raised max health (24 HP), reset to default 20 otherwise
+execute store success score #has_perk {ns}.data if data storage {ns}:temp _cur_loadout{{perks:["juggernaut"]}}
+scoreboard players operation @s {ns}.special.juggernaut = #has_perk {ns}.data
+execute if score #has_perk {ns}.data matches 1 run attribute @s minecraft:max_health base set 24
+execute if score #has_perk {ns}.data matches 0 run attribute @s minecraft:max_health base reset
+
+# Custom loadouts never grant the admin/powerup buffs — clear any leftovers
+scoreboard players set @s {ns}.special.infinite_ammo 0
+scoreboard players set @s {ns}.special.instant_kill 0
+""")
+
+	## perks/on_kill - Scavenger + Quick Fix fire on the killer (signal listener)
+	write_versioned_function("multiplayer/perks/on_kill", f"""
+# Only relevant for players in an active multiplayer game
+execute unless score @s {ns}.mp.in_game matches 1 run return fail
+
+# Scavenger: refill the player's spare magazines on every kill (the loaded weapon is
+# left untouched, so they still have to reload — they just never run dry on reserve)
+execute if score @s {ns}.special.scavenger matches 1 run function {ns}:v{version}/multiplayer/perks/scavenger_refill
+
+# Quick Fix: kick off health regen immediately (last_hit threshold is 100)
+execute if score @s {ns}.special.quick_fix matches 1 run scoreboard players set @s {ns}.last_hit 100
+execute if score @s {ns}.special.quick_fix matches 1 run effect give @s minecraft:regeneration 3 1 true
+""", tags=[f"{ns}:signals/on_kill"])
+
+	## perks/scavenger_refill - Refill all spare magazines in the inventory to capacity
+	## (reuses the generic per-slot magazine refill; never refills the loaded weapon)
+	scavenger_slot_checks: str = "".join(
+		f'execute if items entity @s {slot} *[custom_data~{{{ns}:{{magazine:true}}}}] run function {ns}:v{version}/zombies/bonus/refill_magazine {{slot:"{slot}"}}\n'
+		for slot in ALL_SLOTS
+	)
+	write_versioned_function("multiplayer/perks/scavenger_refill", f"""
+{scavenger_slot_checks}
+function {ns}:v{version}/ammo/compute_reserve
 """)
 
 	## On respawn (called from player tick when actual vanilla death detected - environmental only)

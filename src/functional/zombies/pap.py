@@ -143,7 +143,7 @@ execute if data storage {ns}:temp _pap_iter[0] run function {ns}:v{version}/zomb
 """)
 
 	write_versioned_function("zombies/pap/place_at", f"""
-$summon minecraft:interaction $(x) $(y) $(z) {{width:1.2f,height:-2.0f,response:true,Rotation:$(rotation),Tags:["{ns}.pap_machine","{ns}.gm_entity","bs.entity.interaction","{ns}.pap_new"]}}
+$summon minecraft:interaction $(x) $(y) $(z) {{width:1.5f,height:-2.0f,response:true,Rotation:$(rotation),Tags:["{ns}.pap_machine","{ns}.gm_entity","bs.entity.interaction","{ns}.pap_new"]}}
 """)
 
 	write_versioned_function("zombies/pap/store_data", f"""

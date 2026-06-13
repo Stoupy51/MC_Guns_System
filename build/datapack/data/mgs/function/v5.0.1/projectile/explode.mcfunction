@@ -61,6 +61,9 @@ execute store result score #direct_dmg mgs.data run data get entity @s data.conf
 execute if data storage mgs:zombies game{state:"active"} if entity @n[tag=mgs.direct_hit,type=!player] run scoreboard players operation #direct_dmg mgs.data *= #5 mgs.data
 execute if data storage mgs:zombies game{state:"active"} if entity @n[tag=mgs.direct_hit,type=player] if score #direct_dmg mgs.data matches 60.. run scoreboard players set #direct_dmg mgs.data 60
 
+# Flak Jacket perk: halve explosive direct-hit damage to a perked MP player
+execute if entity @n[tag=mgs.direct_hit,type=player,scores={mgs.mp.in_game=1,mgs.special.flak_jacket=1}] run scoreboard players operation #direct_dmg mgs.data /= #2 mgs.data
+
 # Apply direct hit damage using the existing damage utility
 data modify storage mgs:input with set value {target:"@s", amount:0.0f, attacker:"@n[tag=mgs.temp_shooter]"}
 execute store result storage mgs:input with.amount float 0.1 run scoreboard players get #direct_dmg mgs.data

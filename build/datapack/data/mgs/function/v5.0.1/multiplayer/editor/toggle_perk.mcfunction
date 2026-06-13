@@ -8,22 +8,15 @@
 # @args		_toggle_perk (unknown)
 #
 
-# Check if already selected → remove (refund) and early-exit
-$execute if data storage mgs:temp editor{perks:["$(_toggle_perk)"]} run scoreboard players add @s mgs.mp.edit_points 1
+# Already selected → remove it (recompute refunds automatically)
 $execute if data storage mgs:temp editor{perks:["$(_toggle_perk)"]} run return run function mgs:v5.0.1/multiplayer/editor/remove_perk
 
 # Check max perks limit
-scoreboard players set #perk_count mgs.data 0
-execute if data storage mgs:temp editor{perks:["quick_reload"]} run scoreboard players add #perk_count mgs.data 1
-execute if data storage mgs:temp editor{perks:["quick_swap"]} run scoreboard players add #perk_count mgs.data 1
-execute if data storage mgs:temp editor{perks:["infinite_ammo"]} run scoreboard players add #perk_count mgs.data 1
-
+execute store result score #perk_count mgs.data run data get storage mgs:temp editor.perks
 execute if score #perk_count mgs.data matches 3.. run return run tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.max_3_perks_allowed","color":"red"}]
 
-# Check points budget
-execute if score @s mgs.mp.edit_points matches ..0 run return run tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.not_enough_points","color":"red"}]
-
-# Add perk and deduct points
+# Snapshot, add, commit (reverts on overflow)
+data modify storage mgs:temp _ed_bak set from storage mgs:temp editor
 $data modify storage mgs:temp editor.perks append value "$(_toggle_perk)"
-scoreboard players remove @s mgs.mp.edit_points 1
+execute store success score #ed_ok mgs.data run function mgs:v5.0.1/multiplayer/editor/commit_check
 

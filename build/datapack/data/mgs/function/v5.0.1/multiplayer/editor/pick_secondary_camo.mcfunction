@@ -6,7 +6,6 @@
 # @within	mgs:v5.0.1/player/config/process
 #
 
-# Store camo choice (free)
 execute if score @s mgs.player.config matches 490 run data modify storage mgs:temp editor.secondary_camo set value ""
 execute if score @s mgs.player.config matches 490 run data modify storage mgs:temp editor.secondary_camo_name set value "Default"
 execute if score @s mgs.player.config matches 491 run data modify storage mgs:temp editor.secondary_camo set value "_autumn"
@@ -18,9 +17,6 @@ execute if score @s mgs.player.config matches 493 run data modify storage mgs:te
 execute if score @s mgs.player.config matches 494 run data modify storage mgs:temp editor.secondary_camo set value "_red_polymer_stripes"
 execute if score @s mgs.player.config matches 494 run data modify storage mgs:temp editor.secondary_camo_name set value "Red Polymer"
 
-# Compute full secondary ID (base + scope + camo)
 function mgs:v5.0.1/multiplayer/editor/set_secondary_full with storage mgs:temp editor
-
-# Show secondary mag count dialog
-function mgs:v5.0.1/multiplayer/editor/show_secondary_mags_dialog
+function mgs:v5.0.1/multiplayer/editor/hub
 

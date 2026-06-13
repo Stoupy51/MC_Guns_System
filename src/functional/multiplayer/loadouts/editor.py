@@ -46,6 +46,7 @@ from .catalogs import (
 	TRIG_HUB_PRIMARY_MAGS,
 	TRIG_HUB_SECONDARY,
 	TRIG_HUB_SECONDARY_MAGS,
+	TRIG_OVERKILL_SEC_BASE,
 	TRIG_PERK_BASE,
 	TRIG_PRIMARY_BASE,
 	TRIG_PRIMARY_CAMO_BASE,
@@ -61,12 +62,13 @@ from .catalogs import (
 	TRIG_SECONDARY_SCOPE_BASE,
 )
 
+
 # Empty editor state (display fields default to readable values so hub rows always render)
 def _empty_state() -> str:
 	return (
 		'{primary:"",primary_name:"None",primary_mag:"",primary_mag_count:1,'
 		'primary_scope:"",primary_scope_name:"Iron Sights",primary_camo:"",primary_camo_name:"Default",primary_full:"",'
-		'secondary:"",secondary_name:"None",secondary_mag:"",secondary_mag_count:1,'
+		'secondary:"",secondary_name:"None",secondary_mag:"",secondary_mag_count:0,'
 		'secondary_scope:"",secondary_scope_name:"Iron Sights",secondary_camo:"",secondary_camo_name:"Default",secondary_full:"",'
 		'equip_slot1:"",equip_slot1_name:"None",equip_slot1_camo:"",'
 		'equip_slot2:"",equip_slot2_name:"None",equip_slot2_camo:"",'
@@ -319,6 +321,13 @@ function {ns}:v{version}/multiplayer/show_dialog with storage {ns}:temp
 	)
 	write_static_dialog("primary_dialog", "Primary Weapon", f"Choose your primary weapon ({COST_PRIMARY_WEAPON} pt + {COST_PRIMARY_MAG} pt per magazine)", ",".join(primary_actions))
 
+	_remove_secondary_btn = (
+		f'{{label:{{text:"\\ud83d\\uddd1 Remove Secondary",color:"red"}},'
+		f'tooltip:{{text:"Clear the secondary weapon (refunds its points)"}},'
+		f'action:{{type:"run_command",command:"/trigger {ns}.player.config set {TRIG_REMOVE_SECONDARY}"}}}}'
+	)
+
+	# Pistol secondary list (default)
 	secondary_actions: list[str] = []
 	for idx, (_gun_id, display, _mag_id, _mc, _il) in enumerate(w for w in SECONDARY_WEAPONS if w[4]):
 		trig = TRIG_SECONDARY_BASE + idx
@@ -327,12 +336,26 @@ function {ns}:v{version}/multiplayer/show_dialog with storage {ns}:temp
 			f'tooltip:["",{{"text":"Pistol","color":"gray"}},["","\\n",{{"text":"Cost"}},": "],[{{"text":"{COST_SECONDARY_WEAPON}","color":"gold"}}]," pt"],'
 			f'action:{{type:"run_command",command:"/trigger {ns}.player.config set {trig}"}}}}'
 		)
-	secondary_actions.append(
-		f'{{label:{{text:"\\ud83d\\uddd1 Remove Secondary",color:"red"}},'
-		f'tooltip:{{text:"Clear the secondary weapon (refunds its points)"}},'
-		f'action:{{type:"run_command",command:"/trigger {ns}.player.config set {TRIG_REMOVE_SECONDARY}"}}}}'
-	)
-	write_static_dialog("secondary_dialog", "Secondary Weapon", f"Choose your secondary weapon ({COST_SECONDARY_WEAPON} pt + {COST_SECONDARY_MAG} pt per magazine)", ",".join(secondary_actions))
+	secondary_actions.append(_remove_secondary_btn)
+	write_static_dialog("secondary_pistol_dialog", "Secondary Weapon", f"Choose your secondary weapon ({COST_SECONDARY_WEAPON} pt + {COST_SECONDARY_MAG} pt per magazine)", ",".join(secondary_actions))
+
+	# Overkill secondary list: primaries (iron sights only, camo selectable)
+	overkill_actions: list[str] = []
+	for idx, (_gun_id, display, category, _mag, _mc, _il) in enumerate(w for w in PRIMARY_WEAPONS if w[5]):
+		trig = TRIG_OVERKILL_SEC_BASE + idx
+		overkill_actions.append(
+			f'{{label:{{text:"{display}",color:"yellow"}},'
+			f'tooltip:["",{{"text":"{category}","color":"gray"}},["","\\n",{{"text":"Cost"}},": "],[{{"text":"{COST_SECONDARY_WEAPON}","color":"gold"}}]," pt"],'
+			f'action:{{type:"run_command",command:"/trigger {ns}.player.config set {trig}"}}}}'
+		)
+	overkill_actions.append(_remove_secondary_btn)
+	write_static_dialog("secondary_overkill_dialog", "Overkill Secondary", f"Choose a second primary ({COST_SECONDARY_WEAPON} pt + {COST_SECONDARY_MAG} pt per magazine)", ",".join(overkill_actions))
+
+	# Router: Overkill holders pick a primary as their secondary, everyone else picks a pistol
+	write_versioned_function("multiplayer/editor/show_secondary_dialog", f"""
+execute if data storage {ns}:temp editor{{perks:["overkill"]}} run return run function {fn}/show_secondary_overkill_dialog
+function {fn}/show_secondary_pistol_dialog
+""")
 
 	# Gun pick handlers: snapshot → merge gun fields (resets scope/camo, mags to 1) → commit →
 	# on success continue to scope (if the gun has variants) or camo; on failure back to hub.
@@ -379,7 +402,7 @@ function {fn}/show_primary_camo_dialog
 		pick_secondary_lines += (
 			f'execute if score @s {ns}.player.config matches {trig} run '
 			f'data modify storage {ns}:temp editor merge value '
-			f'{{secondary:"{gun_id}",secondary_name:"{display}",secondary_mag:"{mag_id}",secondary_mag_count:1,'
+			f'{{secondary:"{gun_id}",secondary_name:"{display}",secondary_mag:"{mag_id}",secondary_mag_count:0,'
 			f'secondary_scope:"",secondary_scope_name:"Iron Sights",secondary_camo:"",secondary_camo_name:"Default",secondary_full:"{gun_id}"}}\n'
 		)
 	secondary_scope_route = (
@@ -388,7 +411,7 @@ function {fn}/show_primary_camo_dialog
 	)
 
 	write_versioned_function("multiplayer/editor/pick_secondary", f"""
-# Snapshot, apply the gun (scope/camo reset, 1 magazine), then commit against the budget
+# Snapshot, apply the gun (scope/camo reset, 0 magazines), then commit against the budget
 data modify storage {ns}:temp _ed_bak set from storage {ns}:temp editor
 {pick_secondary_lines}
 execute store success score #ed_ok {ns}.data run function {fn}/commit_check
@@ -399,13 +422,40 @@ execute if score #ed_ok {ns}.data matches 0 run return run function {fn}/hub
 function {fn}/show_secondary_camo_dialog
 """)
 
+	# Overkill: pick a primary weapon as the secondary (iron sights, camo selectable)
+	pick_overkill_lines = ""
+	for idx, (gun_id, display, _category, mag_id, _mag_count, _il) in enumerate(w for w in PRIMARY_WEAPONS if w[5]):
+		trig = TRIG_OVERKILL_SEC_BASE + idx
+		pick_overkill_lines += (
+			f'execute if score @s {ns}.player.config matches {trig} run '
+			f'data modify storage {ns}:temp editor merge value '
+			f'{{secondary:"{gun_id}",secondary_name:"{display}",secondary_mag:"{mag_id}",secondary_mag_count:0,'
+			f'secondary_scope:"",secondary_scope_name:"Iron Sights",secondary_camo:"",secondary_camo_name:"Default",secondary_full:"{gun_id}"}}\n'
+		)
+
+	write_versioned_function("multiplayer/editor/pick_overkill_secondary", f"""
+# Snapshot, store the chosen primary as the secondary (0 magazines), commit against the budget
+data modify storage {ns}:temp _ed_bak set from storage {ns}:temp editor
+{pick_overkill_lines}
+execute store success score #ed_ok {ns}.data run function {fn}/commit_check
+execute if score #ed_ok {ns}.data matches 0 run return run function {fn}/hub
+
+# Overkill secondaries keep iron sights; go straight to camo
+function {fn}/show_secondary_camo_dialog
+""")
+
+	# Clear-secondary state (no navigation) — reused by remove + the Overkill toggle
+	write_versioned_function("multiplayer/editor/clear_secondary", f"""
+data modify storage {ns}:temp editor merge value {{secondary:"",secondary_name:"None",secondary_mag:"",secondary_mag_count:0,secondary_scope:"",secondary_scope_name:"Iron Sights",secondary_camo:"",secondary_camo_name:"Default",secondary_full:""}}
+""")
+
 	# Remove handlers (recompute makes the refund automatic)
 	write_versioned_function("multiplayer/editor/remove_primary", f"""
 data modify storage {ns}:temp editor merge value {{primary:"",primary_name:"None",primary_mag:"",primary_mag_count:1,primary_scope:"",primary_scope_name:"Iron Sights",primary_camo:"",primary_camo_name:"Default",primary_full:""}}
 function {fn}/hub
 """)
 	write_versioned_function("multiplayer/editor/remove_secondary", f"""
-data modify storage {ns}:temp editor merge value {{secondary:"",secondary_name:"None",secondary_mag:"",secondary_mag_count:1,secondary_scope:"",secondary_scope_name:"Iron Sights",secondary_camo:"",secondary_camo_name:"Default",secondary_full:""}}
+function {fn}/clear_secondary
 function {fn}/hub
 """)
 
@@ -426,7 +476,12 @@ function {fn}/hub
 			)
 		return ",".join(actions)
 
-	for func_suffix, variants in [("full", ("", "_1", "_2", "_3", "_4")), ("no4", ("", "_1", "_2", "_3")), ("1only", ("", "_1"))]:
+	suffix_variants: dict[str, tuple[str, ...]] = {
+		"full": ("", "_1", "_2", "_3", "_4"),
+		"no4": ("", "_1", "_2", "_3"),
+		"1only": ("", "_1"),
+	}
+	for func_suffix, variants in suffix_variants.items():
 		write_static_dialog(
 			f"scope_primary_{func_suffix}", "Primary Scope",
 			f"Choose your optic (-{COST_PRIMARY_SCOPE} pt for any scope, iron sights free)",
@@ -620,38 +675,39 @@ function {fn}/show_equip{slot_num}_camo_dialog
 
 	## ====================================================================
 	## PERKS submenu (toggle, recompute-based budget)
+	## Selected perks are shown green with a ✔; unselected are aqua.
 	## ====================================================================
-	perks_actions: list[str] = []
-	for perk_idx, (_perk_id, perk_name, perk_desc, _score) in enumerate(PERKS):
+	# Per-perk append lines: a selected variant and an unselected variant
+	_perk_tooltip = '["",{{"text":"{desc}","color":"gray"}},["","\\n",{{"text":"Cost"}},": "],[{{"text":"{cost}","color":"gold"}}]," pt",{{"text":"\\nClick to toggle on/off","color":"dark_gray"}}]'
+	perk_button_lines = ""
+	for perk_idx, (perk_id, perk_name, perk_desc, _score) in enumerate(PERKS):
 		trig = TRIG_PERK_BASE + perk_idx
-		perks_actions.append(
-			f'{{label:{{text:"{perk_name}",color:"aqua"}},'
-			f'tooltip:["",{{"text":"{perk_desc}","color":"gray"}},["","\\n",{{"text":"Cost"}},": "],[{{"text":"{COST_PERK}","color":"gold"}}]," pt",{{"text":"\\nClick to toggle on/off","color":"dark_gray"}}],'
-			f'action:{{type:"run_command",command:"/trigger {ns}.player.config set {trig}"}}}}'
+		tip = _perk_tooltip.format(desc=perk_desc, cost=COST_PERK)
+		sel = (
+			f'{{label:{{text:"\\u2714 {perk_name}",color:"green",bold:true}},'
+			f'tooltip:{tip},action:{{type:"run_command",command:"/trigger {ns}.player.config set {trig}"}}}}'
 		)
-	perks_actions_snbt = ",".join(perks_actions)
-
-	perk_status_checks = ""
-	for perk_idx, (perk_id, *_) in enumerate(PERKS):
-		perk_status_checks += (
-			f'execute if data storage {ns}:temp editor{{perks:["{perk_id}"]}} '
-			f'run data modify storage {ns}:temp _perk_{perk_idx} set value 1\n'
-			f'execute unless data storage {ns}:temp editor{{perks:["{perk_id}"]}} '
-			f'run data modify storage {ns}:temp _perk_{perk_idx} set value 0\n'
+		unsel = (
+			f'{{label:{{text:"{perk_name}",color:"aqua"}},'
+			f'tooltip:{tip},action:{{type:"run_command",command:"/trigger {ns}.player.config set {trig}"}}}}'
+		)
+		perk_button_lines += (
+			f'execute if data storage {ns}:temp editor{{perks:["{perk_id}"]}} run data modify storage {ns}:temp dialog.actions append value {sel}\n'
+			f'execute unless data storage {ns}:temp editor{{perks:["{perk_id}"]}} run data modify storage {ns}:temp dialog.actions append value {unsel}\n'
 		)
 
 	write_versioned_function("multiplayer/editor/show_perks_dialog", f"""
 function {fn}/recompute_points
 execute store result storage {ns}:temp _pts int 1 run scoreboard players get @s {ns}.mp.edit_points
-
-# Determine which perks are selected and count them
-{perk_status_checks}
 execute store result storage {ns}:temp _perk_count int 1 run data get storage {ns}:temp editor.perks
 
-function {fn}/show_perks_dialog_macro with storage {ns}:temp
+# Base dialog (no actions yet), then one button per perk (green+✔ if selected, aqua if not)
+function {fn}/show_perks_dialog_base with storage {ns}:temp
+{perk_button_lines}
+function {ns}:v{version}/multiplayer/show_dialog with storage {ns}:temp
 """)
 
-	write_versioned_function("multiplayer/editor/show_perks_dialog_macro", f"""$data modify storage {ns}:temp dialog set value {{\
+	write_versioned_function("multiplayer/editor/show_perks_dialog_base", f"""$data modify storage {ns}:temp dialog set value {{\
 type:"minecraft:multi_action",\
 title:{{text:"Loadout - Perks",color:"gold",bold:true}},\
 body:[{{\
@@ -661,12 +717,11 @@ contents:["",["",{{"text":"Points remaining"}},": "],{{"text":"$(_pts)","color":
 type:"minecraft:plain_message",\
 contents:{{text:"Toggle perks below (max {MAX_PERKS}, {COST_PERK} pt each). Selected: $(_perk_count)/{MAX_PERKS}",color:"gray"}}\
 }}],\
-actions:[{perks_actions_snbt}],\
+actions:[],\
 columns:2,\
 after_action:"close",\
 exit_action:{{label:"Back",action:{{type:"run_command",command:"/trigger {ns}.player.config set {TRIG_HUB}"}}}}\
 }}
-function {ns}:v{version}/multiplayer/show_dialog with storage {ns}:temp
 """)
 
 	## pick_perk - Toggle a perk on/off; re-show perks dialog
@@ -683,6 +738,11 @@ function {ns}:v{version}/multiplayer/show_dialog with storage {ns}:temp
 {pick_perk_dispatch}
 # Toggle the selected perk (generic macro function)
 function {fn}/toggle_perk with storage {ns}:temp
+
+# Overkill changes what the secondary slot means (pistol vs primary), so toggling it
+# always clears the current secondary to avoid an invalid combination
+execute if data storage {ns}:temp {{_toggle_perk:"overkill"}} run function {fn}/clear_secondary
+
 # Re-open the perks dialog to reflect updated state
 function {fn}/show_perks_dialog
 """)
@@ -755,6 +815,12 @@ data modify storage {ns}:multiplayer secondary_slot_table set value [{",".join(s
 			f'execute if data storage {ns}:temp editor{{secondary:"{gun_id}"}} run '
 			f'data modify storage {ns}:temp _build.secondary_data set from storage {ns}:multiplayer secondary_slot_table[{idx}]\n'
 		)
+	# Overkill: the secondary may be a primary weapon — look it up in the primary table instead
+	for idx, (gun_id, *_) in enumerate(PRIMARY_WEAPONS):
+		save_secondary_dispatch += (
+			f'execute if data storage {ns}:temp editor{{secondary:"{gun_id}"}} run '
+			f'data modify storage {ns}:temp _build.secondary_data set from storage {ns}:multiplayer primary_slot_table[{idx}]\n'
+		)
 
 	equip_name_dispatch: dict[int, str] = {}
 	for slot_num, field in [(1, "equip_slot1"), (2, "equip_slot2")]:
@@ -782,6 +848,8 @@ data modify storage {ns}:temp _build set value {{}}
 {save_primary_dispatch}
 # Look up secondary weapon slot data
 {save_secondary_dispatch}
+# Overkill: a primary used as secondary comes from the primary table (slot hotbar.0) — force hotbar.1
+execute if data storage {ns}:temp _build.secondary_data run data modify storage {ns}:temp _build.secondary_data.gun_slot.slot set value "hotbar.1"
 
 # Build the new loadout entry (include new Pick-10 fields)
 data modify storage {ns}:temp _new_loadout set value {{id:0,owner_pid:0,owner_name:"",name:"",public:0b,likes:0,favorites_count:0,points_used:0,main_gun:"",main_gun_display:"",secondary_gun:"",secondary_gun_display:"None",primary_mag_count:1,secondary_mag_count:0,equip_slot1:"",equip_slot1_name:"None",equip_slot2:"",equip_slot2_name:"None",perks:[],slots:[]}}

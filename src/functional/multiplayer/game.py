@@ -414,8 +414,27 @@ execute as @e[type=player,scores={{{ns}.mp.in_game=1,{ns}.mp.death_count=0}},gam
 # Gamemode tick dispatch
 {gm_dispatch("tick")}
 
+# Tracker perk: render enemy footprints to perked players (every 6 ticks)
+execute store result score #tick_mod {ns}.data run scoreboard players get #mp_timer {ns}.data
+scoreboard players operation #tick_mod {ns}.data %= #6 {ns}.data
+execute if score #tick_mod {ns}.data matches 0 if entity @a[scores={{{ns}.mp.in_game=1,{ns}.special.tracker=1..}}] run function {ns}:v{version}/multiplayer/perks/tracker_tick
+
 # Call map-defined tick script
 function {ns}:v{version}/shared/maps/call_tick_script_at_base
+""")
+
+	## perks/tracker_tick - One pass over all live players: drop a footprint at each one's feet
+	write_versioned_function("multiplayer/perks/tracker_tick", f"""
+execute as @a[scores={{{ns}.mp.in_game=1}},gamemode=!spectator] at @s run function {ns}:v{version}/multiplayer/perks/tracker_footprint
+""")
+
+	## perks/tracker_footprint - @s = the tracked player (at their position);
+	## the footprint is forced to enemy Tracker holders only, via a single team-filtered selector.
+	## (Team modes: opposite team. FFA/team 0: every other Tracker holder, excluded via distance.)
+	write_versioned_function("multiplayer/perks/tracker_footprint", f"""
+execute if score @s {ns}.mp.team matches 1 run particle minecraft:dust{{color:[0.95,0.85,0.2],scale:0.8}} ~ ~0.1 ~ 0.15 0.02 0.15 0 3 force @a[scores={{{ns}.special.tracker=1..,{ns}.mp.team=2}}]
+execute if score @s {ns}.mp.team matches 2 run particle minecraft:dust{{color:[0.95,0.85,0.2],scale:0.8}} ~ ~0.1 ~ 0.15 0.02 0.15 0 3 force @a[scores={{{ns}.special.tracker=1..,{ns}.mp.team=1}}]
+execute if score @s {ns}.mp.team matches 0 run particle minecraft:dust{{color:[0.95,0.85,0.2],scale:0.8}} ~ ~0.1 ~ 0.15 0.02 0.15 0 3 force @a[scores={{{ns}.special.tracker=1..}},distance=0.1..]
 """)
 
 	## Timer display (actionbar timer in minutes:seconds for all in-game players)

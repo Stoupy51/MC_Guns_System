@@ -6,6 +6,13 @@
 # @within	mgs:v5.0.1/player/config/process
 #
 
+# Guard: a primary weapon is required (hub grays save out, but triggers can be sent manually)
+execute if data storage mgs:temp editor{primary:""} run tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.a_primary_weapon_is_required_to_save","color":"red"}]
+execute if data storage mgs:temp editor{primary:""} run return run function mgs:v5.0.1/multiplayer/editor/hub
+
+# Refresh the budget so points_used is accurate
+function mgs:v5.0.1/multiplayer/editor/recompute_points
+
 # Determine visibility from trigger value
 scoreboard players set #cl_public mgs.data 0
 execute if score @s mgs.player.config matches 350 run scoreboard players set #cl_public mgs.data 1
@@ -46,6 +53,32 @@ execute if data storage mgs:temp editor{secondary:"makarov"} run data modify sto
 execute if data storage mgs:temp editor{secondary:"glock17"} run data modify storage mgs:temp _build.secondary_data set from storage mgs:multiplayer secondary_slot_table[4]
 execute if data storage mgs:temp editor{secondary:"glock18"} run data modify storage mgs:temp _build.secondary_data set from storage mgs:multiplayer secondary_slot_table[5]
 execute if data storage mgs:temp editor{secondary:"vz61"} run data modify storage mgs:temp _build.secondary_data set from storage mgs:multiplayer secondary_slot_table[6]
+execute if data storage mgs:temp editor{secondary:"ak47"} run data modify storage mgs:temp _build.secondary_data set from storage mgs:multiplayer primary_slot_table[0]
+execute if data storage mgs:temp editor{secondary:"m16a4"} run data modify storage mgs:temp _build.secondary_data set from storage mgs:multiplayer primary_slot_table[1]
+execute if data storage mgs:temp editor{secondary:"famas"} run data modify storage mgs:temp _build.secondary_data set from storage mgs:multiplayer primary_slot_table[2]
+execute if data storage mgs:temp editor{secondary:"aug"} run data modify storage mgs:temp _build.secondary_data set from storage mgs:multiplayer primary_slot_table[3]
+execute if data storage mgs:temp editor{secondary:"m4a1"} run data modify storage mgs:temp _build.secondary_data set from storage mgs:multiplayer primary_slot_table[4]
+execute if data storage mgs:temp editor{secondary:"fnfal"} run data modify storage mgs:temp _build.secondary_data set from storage mgs:multiplayer primary_slot_table[5]
+execute if data storage mgs:temp editor{secondary:"g3a3"} run data modify storage mgs:temp _build.secondary_data set from storage mgs:multiplayer primary_slot_table[6]
+execute if data storage mgs:temp editor{secondary:"scar17"} run data modify storage mgs:temp _build.secondary_data set from storage mgs:multiplayer primary_slot_table[7]
+execute if data storage mgs:temp editor{secondary:"mp5"} run data modify storage mgs:temp _build.secondary_data set from storage mgs:multiplayer primary_slot_table[8]
+execute if data storage mgs:temp editor{secondary:"mp7"} run data modify storage mgs:temp _build.secondary_data set from storage mgs:multiplayer primary_slot_table[9]
+execute if data storage mgs:temp editor{secondary:"mac10"} run data modify storage mgs:temp _build.secondary_data set from storage mgs:multiplayer primary_slot_table[10]
+execute if data storage mgs:temp editor{secondary:"ppsh41"} run data modify storage mgs:temp _build.secondary_data set from storage mgs:multiplayer primary_slot_table[11]
+execute if data storage mgs:temp editor{secondary:"sten"} run data modify storage mgs:temp _build.secondary_data set from storage mgs:multiplayer primary_slot_table[12]
+execute if data storage mgs:temp editor{secondary:"m249"} run data modify storage mgs:temp _build.secondary_data set from storage mgs:multiplayer primary_slot_table[13]
+execute if data storage mgs:temp editor{secondary:"rpk"} run data modify storage mgs:temp _build.secondary_data set from storage mgs:multiplayer primary_slot_table[14]
+execute if data storage mgs:temp editor{secondary:"svd"} run data modify storage mgs:temp _build.secondary_data set from storage mgs:multiplayer primary_slot_table[15]
+execute if data storage mgs:temp editor{secondary:"m82"} run data modify storage mgs:temp _build.secondary_data set from storage mgs:multiplayer primary_slot_table[16]
+execute if data storage mgs:temp editor{secondary:"mosin"} run data modify storage mgs:temp _build.secondary_data set from storage mgs:multiplayer primary_slot_table[17]
+execute if data storage mgs:temp editor{secondary:"m24"} run data modify storage mgs:temp _build.secondary_data set from storage mgs:multiplayer primary_slot_table[18]
+execute if data storage mgs:temp editor{secondary:"spas12"} run data modify storage mgs:temp _build.secondary_data set from storage mgs:multiplayer primary_slot_table[19]
+execute if data storage mgs:temp editor{secondary:"m500"} run data modify storage mgs:temp _build.secondary_data set from storage mgs:multiplayer primary_slot_table[20]
+execute if data storage mgs:temp editor{secondary:"m590"} run data modify storage mgs:temp _build.secondary_data set from storage mgs:multiplayer primary_slot_table[21]
+execute if data storage mgs:temp editor{secondary:"rpg7"} run data modify storage mgs:temp _build.secondary_data set from storage mgs:multiplayer primary_slot_table[22]
+
+# Overkill: a primary used as secondary comes from the primary table (slot hotbar.0) — force hotbar.1
+execute if data storage mgs:temp _build.secondary_data run data modify storage mgs:temp _build.secondary_data.gun_slot.slot set value "hotbar.1"
 
 # Build the new loadout entry (include new Pick-10 fields)
 data modify storage mgs:temp _new_loadout set value {id:0,owner_pid:0,owner_name:"",name:"",public:0b,likes:0,favorites_count:0,points_used:0,main_gun:"",main_gun_display:"",secondary_gun:"",secondary_gun_display:"None",primary_mag_count:1,secondary_mag_count:0,equip_slot1:"",equip_slot1_name:"None",equip_slot2:"",equip_slot2_name:"None",perks:[],slots:[]}
@@ -66,7 +99,7 @@ tag @s add mgs.username_getter
 execute at @s summon item_display run function mgs:v5.0.1/multiplayer/get_username
 tag @s remove mgs.username_getter
 
-# Set weapon IDs (scope-modified)
+# Set weapon IDs (scope/camo-modified)
 data modify storage mgs:temp _new_loadout.main_gun set from storage mgs:temp editor.primary_full
 data modify storage mgs:temp _new_loadout.secondary_gun set from storage mgs:temp editor.secondary_full
 
@@ -76,6 +109,9 @@ data modify storage mgs:temp _new_loadout.secondary_mag_count set from storage m
 data modify storage mgs:temp _new_loadout.equip_slot1 set from storage mgs:temp editor.equip_slot1
 data modify storage mgs:temp _new_loadout.equip_slot2 set from storage mgs:temp editor.equip_slot2
 data modify storage mgs:temp _new_loadout.perks set from storage mgs:temp editor.perks
+
+# Embed the full editor state so the loadout can be re-opened for editing later
+data modify storage mgs:temp _new_loadout.editor_state set from storage mgs:temp editor
 
 # Compute points used = PICK10_TOTAL - remaining
 scoreboard players set #pts_used mgs.data 10
@@ -97,7 +133,7 @@ execute if data storage mgs:temp editor{equip_slot2:"smoke_grenade"} run data mo
 # Set visibility
 execute if score #cl_public mgs.data matches 1 run data modify storage mgs:temp _new_loadout.public set value 1b
 
-# Override weapon loot entries with scope-modified IDs
+# Override weapon loot entries with scope/camo-modified IDs
 function mgs:v5.0.1/multiplayer/editor/fix_primary_loot with storage mgs:temp editor
 execute if data storage mgs:temp _build.secondary_data run function mgs:v5.0.1/multiplayer/editor/fix_secondary_loot with storage mgs:temp editor
 
@@ -135,6 +171,7 @@ execute if score @s mgs.mp.edit_target matches 1.. run function mgs:v5.0.1/multi
 scoreboard players set @s mgs.mp.edit_step 0
 scoreboard players set @s mgs.mp.edit_target 0
 
-# Notify player
+# Notify player and show the updated loadout list
 function mgs:v5.0.1/multiplayer/editor/notify_saved with storage mgs:temp editor
+function mgs:v5.0.1/multiplayer/my_loadouts/browse
 

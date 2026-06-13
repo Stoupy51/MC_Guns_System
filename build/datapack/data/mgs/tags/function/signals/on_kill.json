@@ -1,5 +1,6 @@
 {
 	"values": [
-		"mgs:v5.0.1/multiplayer/on_kill_signal"
+		"mgs:v5.0.1/multiplayer/on_kill_signal",
+		"mgs:v5.0.1/multiplayer/perks/on_kill"
 	]
 }

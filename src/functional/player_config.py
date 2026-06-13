@@ -10,9 +10,7 @@ from .multiplayer.loadouts import (
     GRENADE_TYPES,
     PERKS,
     PRIMARY_WEAPONS,
-    TRIG_BACK_EQUIPMENT,
-    TRIG_BACK_PERKS,
-    TRIG_BACK_SECONDARY,
+    SECONDARY_WEAPONS,
     TRIG_DELETE_BASE,
     TRIG_EDIT_BASE,
     TRIG_EDITOR_START,
@@ -21,25 +19,35 @@ from .multiplayer.loadouts import (
     TRIG_EQUIP_SLOT1_BASE,
     TRIG_EQUIP_SLOT2_BASE,
     TRIG_FAVORITE_BASE,
+    TRIG_HUB,
+    TRIG_HUB_EQUIP1,
+    TRIG_HUB_EQUIP2,
+    TRIG_HUB_PERKS,
+    TRIG_HUB_PRIMARY,
+    TRIG_HUB_PRIMARY_MAGS,
+    TRIG_HUB_SECONDARY,
+    TRIG_HUB_SECONDARY_MAGS,
     TRIG_LIKE_BASE,
+    TRIG_MANAGE_BASE,
     TRIG_MARKETPLACE,
     TRIG_MARKETPLACE_ALL,
     TRIG_MARKETPLACE_FAV_ONLY,
     TRIG_MARKETPLACE_LIKES,
     TRIG_MY_LOADOUTS,
     TRIG_MY_LOADOUTS_FAV_ONLY,
+    TRIG_OVERKILL_SEC_BASE,
     TRIG_PERK_BASE,
-    TRIG_PERKS_DONE,
     TRIG_PRIMARY_BASE,
     TRIG_PRIMARY_CAMO_BASE,
     TRIG_PRIMARY_MAGS_BASE,
     TRIG_PRIMARY_SCOPE_BASE,
+    TRIG_REMOVE_PRIMARY,
+    TRIG_REMOVE_SECONDARY,
     TRIG_SAVE_PRIVATE,
     TRIG_SAVE_PUBLIC,
     TRIG_SECONDARY_BASE,
     TRIG_SECONDARY_CAMO_BASE,
     TRIG_SECONDARY_MAGS_BASE,
-    TRIG_SECONDARY_NONE,
     TRIG_SECONDARY_SCOPE_BASE,
     TRIG_SELECT_BASE,
     TRIG_SET_DEFAULT_BASE,
@@ -80,6 +88,9 @@ execute if score @s {ns}.mp.map_edit matches 1 run function {ns}:v{version}/maps
     ## Process trigger values
     # Pre-compute trigger ranges for custom loadout editor
     primary_max = TRIG_PRIMARY_BASE + len(PRIMARY_WEAPONS) - 1
+    secondary_count = len([w for w in SECONDARY_WEAPONS if w[4]])
+    secondary_max = TRIG_SECONDARY_BASE + secondary_count - 1
+    overkill_sec_max = TRIG_OVERKILL_SEC_BASE + len(PRIMARY_WEAPONS) - 1
     primary_mags_max = TRIG_PRIMARY_MAGS_BASE + 5
     secondary_mags_max = TRIG_SECONDARY_MAGS_BASE + 5
     perk_max = TRIG_PERK_BASE + len(PERKS) - 1
@@ -90,6 +101,7 @@ execute if score @s {ns}.mp.map_edit matches 1 run function {ns}:v{version}/maps
     equip1_camo_max = TRIG_EQUIP1_CAMO_BASE + len(CAMO_VARIANTS) - 1
     equip2_camo_max = TRIG_EQUIP2_CAMO_BASE + len(CAMO_VARIANTS) - 1
     edit_max = TRIG_EDIT_BASE + 9999
+    manage_max = TRIG_MANAGE_BASE + 9999
     select_max = TRIG_SELECT_BASE + 9999  # 10000-wide range per loadout action
     favorite_max = TRIG_FAVORITE_BASE + 9999
     like_max = TRIG_LIKE_BASE + 9999
@@ -118,38 +130,44 @@ execute if score @s {ns}.player.config matches 7 run function {ns}:v{version}/zo
 execute if score @s {ns}.player.config matches 8 run function {ns}:v{version}/zombies/perks/set_ability_1
 execute if score @s {ns}.player.config matches 9 run function {ns}:v{version}/zombies/perks/set_ability_2
 {"".join(f'execute if score @s {ns}.player.config matches {10 + class_num} run function {ns}:v{version}/multiplayer/set_class {{class_num:{class_num},class_name:"{CLASSES[class_id]["name"]}"}}{chr(10)}' for class_id, class_num in CLASS_IDS.items())}
-# === Custom Loadout Editor ===
-# 100 = Open loadout editor (create new)
+# === Custom Loadout Editor (CoD-style hub) ===
+# 100 = Open loadout editor (create new), then show the hub
 execute if score @s {ns}.player.config matches {TRIG_EDITOR_START} run function {ns}:v{version}/multiplayer/editor/start
 # 101 = Open marketplace browser
 execute if score @s {ns}.player.config matches {TRIG_MARKETPLACE} run function {ns}:v{version}/multiplayer/marketplace/browse
 # 102 = Open my loadouts manager
 execute if score @s {ns}.player.config matches {TRIG_MY_LOADOUTS} run function {ns}:v{version}/multiplayer/my_loadouts/browse
+# {TRIG_HUB} = Re-open the editor hub (also the no-op target for grayed-out rows)
+execute if score @s {ns}.player.config matches {TRIG_HUB} run function {ns}:v{version}/multiplayer/editor/hub
+# Hub category rows → open submenus
+execute if score @s {ns}.player.config matches {TRIG_HUB_PRIMARY} run function {ns}:v{version}/multiplayer/editor/show_primary_dialog
+execute if score @s {ns}.player.config matches {TRIG_HUB_PRIMARY_MAGS} run function {ns}:v{version}/multiplayer/editor/show_primary_mags_dialog
+execute if score @s {ns}.player.config matches {TRIG_HUB_SECONDARY} run function {ns}:v{version}/multiplayer/editor/show_secondary_dialog
+execute if score @s {ns}.player.config matches {TRIG_HUB_SECONDARY_MAGS} run function {ns}:v{version}/multiplayer/editor/show_secondary_mags_dialog
+execute if score @s {ns}.player.config matches {TRIG_HUB_EQUIP1} run function {ns}:v{version}/multiplayer/editor/show_equip_slot1_dialog
+execute if score @s {ns}.player.config matches {TRIG_HUB_EQUIP2} run function {ns}:v{version}/multiplayer/editor/show_equip_slot2_dialog
+execute if score @s {ns}.player.config matches {TRIG_HUB_PERKS} run function {ns}:v{version}/multiplayer/editor/show_perks_dialog
+# Remove weapon buttons
+execute if score @s {ns}.player.config matches {TRIG_REMOVE_PRIMARY} run function {ns}:v{version}/multiplayer/editor/remove_primary
+execute if score @s {ns}.player.config matches {TRIG_REMOVE_SECONDARY} run function {ns}:v{version}/multiplayer/editor/remove_secondary
 # 200-{primary_max} = Editor: pick primary weapon
 execute if score @s {ns}.player.config matches {TRIG_PRIMARY_BASE}..{primary_max} run function {ns}:v{version}/multiplayer/editor/pick_primary
 # 230-234 = Editor: pick primary scope
 execute if score @s {ns}.player.config matches {TRIG_PRIMARY_SCOPE_BASE}..{TRIG_PRIMARY_SCOPE_BASE + 4} run function {ns}:v{version}/multiplayer/editor/pick_primary_scope
-# 250-{TRIG_SECONDARY_NONE} = Editor: pick secondary weapon (258 = none)
-execute if score @s {ns}.player.config matches {TRIG_SECONDARY_BASE}..{TRIG_SECONDARY_NONE} run function {ns}:v{version}/multiplayer/editor/pick_secondary
+# 250-{secondary_max} = Editor: pick secondary weapon
+execute if score @s {ns}.player.config matches {TRIG_SECONDARY_BASE}..{secondary_max} run function {ns}:v{version}/multiplayer/editor/pick_secondary
+# {TRIG_OVERKILL_SEC_BASE}-{overkill_sec_max} = Editor: pick a primary as the Overkill secondary
+execute if score @s {ns}.player.config matches {TRIG_OVERKILL_SEC_BASE}..{overkill_sec_max} run function {ns}:v{version}/multiplayer/editor/pick_overkill_secondary
 # 260-264 = Editor: pick secondary scope
 execute if score @s {ns}.player.config matches {TRIG_SECONDARY_SCOPE_BASE}..{TRIG_SECONDARY_SCOPE_BASE + 4} run function {ns}:v{version}/multiplayer/editor/pick_secondary_scope
 # 350-351 = Editor: save loadout (350=public, 351=private)
 execute if score @s {ns}.player.config matches {TRIG_SAVE_PUBLIC}..{TRIG_SAVE_PRIVATE} run function {ns}:v{version}/multiplayer/editor/save
-# 360 = Back to secondary weapon dialog (refunds secondary weapon + scope costs)
-execute if score @s {ns}.player.config matches {TRIG_BACK_SECONDARY} run function {ns}:v{version}/multiplayer/editor/back_to_secondary
-# 370 = Back from equipment area: if in perks step (9) refund equip_slot2+perks, else refund equip_slot1 and go to slot1 dialog
-execute if score @s {ns}.player.config matches {TRIG_BACK_EQUIPMENT} if score @s {ns}.mp.edit_step matches 9 run function {ns}:v{version}/multiplayer/editor/back_from_perks
-execute if score @s {ns}.player.config matches {TRIG_BACK_EQUIPMENT} unless score @s {ns}.mp.edit_step matches 9 run function {ns}:v{version}/multiplayer/editor/back_to_equip1
-# 380 = Back to perks dialog
-execute if score @s {ns}.player.config matches {TRIG_BACK_PERKS} run function {ns}:v{version}/multiplayer/editor/show_perks_dialog
 # {TRIG_PRIMARY_MAGS_BASE+1}-{primary_mags_max} = Editor: pick primary mag count (1-5)
 execute if score @s {ns}.player.config matches {TRIG_PRIMARY_MAGS_BASE + 1}..{primary_mags_max} run function {ns}:v{version}/multiplayer/editor/pick_primary_mags
 # {TRIG_SECONDARY_MAGS_BASE}-{secondary_mags_max} = Editor: pick secondary mag count (0-5)
 execute if score @s {ns}.player.config matches {TRIG_SECONDARY_MAGS_BASE}..{secondary_mags_max} run function {ns}:v{version}/multiplayer/editor/pick_secondary_mags
 # {TRIG_PERK_BASE}-{perk_max} = Editor: toggle perk
 execute if score @s {ns}.player.config matches {TRIG_PERK_BASE}..{perk_max} run function {ns}:v{version}/multiplayer/editor/pick_perk
-# {TRIG_PERKS_DONE} = Editor: done selecting perks → show confirm
-execute if score @s {ns}.player.config matches {TRIG_PERKS_DONE} run function {ns}:v{version}/multiplayer/editor/perks_done
 # {TRIG_EQUIP_SLOT1_BASE}-{equip1_max} = Editor: pick equipment slot 1 grenade
 execute if score @s {ns}.player.config matches {TRIG_EQUIP_SLOT1_BASE}..{equip1_max} run function {ns}:v{version}/multiplayer/editor/pick_equip_slot1
 # {TRIG_EQUIP_SLOT2_BASE}-{equip2_max} = Editor: pick equipment slot 2 grenade
@@ -177,8 +195,10 @@ execute if score @s {ns}.player.config matches {TRIG_TOGGLE_VIS_BASE}..{toggle_v
 execute if score @s {ns}.player.config matches {TRIG_SET_DEFAULT_BASE}..{set_default_max} run function {ns}:v{version}/multiplayer/custom/set_default
 # {TRIG_UNSET_DEFAULT} = Unset default loadout
 execute if score @s {ns}.player.config matches {TRIG_UNSET_DEFAULT} run function {ns}:v{version}/multiplayer/custom/unset_default
-# {TRIG_EDIT_BASE}-{edit_max} = Edit own loadout (re-runs the wizard; saving overwrites)
+# {TRIG_EDIT_BASE}-{edit_max} = Edit own loadout (re-opens the hub pre-filled; saving overwrites)
 execute if score @s {ns}.player.config matches {TRIG_EDIT_BASE}..{edit_max} run function {ns}:v{version}/multiplayer/custom/edit
+# {TRIG_MANAGE_BASE}-{manage_max} = Open the per-loadout manage submenu (My Loadouts)
+execute if score @s {ns}.player.config matches {TRIG_MANAGE_BASE}..{manage_max} run function {ns}:v{version}/multiplayer/my_loadouts/manage
 # === Marketplace / My Loadouts Filter & Sort ===
 # {TRIG_MARKETPLACE_ALL} = Marketplace: all public (favorites first)
 execute if score @s {ns}.player.config matches {TRIG_MARKETPLACE_ALL} run function {ns}:v{version}/multiplayer/marketplace/browse

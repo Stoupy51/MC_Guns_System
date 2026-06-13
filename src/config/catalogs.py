@@ -111,26 +111,33 @@ SCOPE_NAMES: dict[str, str] = {
 ALL_SCOPE_SUFFIXES: list[str] = ["", "_1", "_2", "_3", "_4"]
 
 # Trigger value ranges for custom loadout system
-TRIG_EDITOR_START         = 100   # Open loadout editor
+TRIG_EDITOR_START         = 100   # Open loadout editor (create new), then show the hub
 TRIG_MARKETPLACE          = 101   # Open marketplace browser
 TRIG_MY_LOADOUTS          = 102   # Open my loadouts manager
+
+# Editor hub (CoD-style main page): one trigger per category row + remove buttons
+TRIG_HUB                  = 103   # Re-open the editor hub (also used by "Unavailable" no-op rows)
+TRIG_HUB_PRIMARY          = 104   # Open the primary weapon submenu
+TRIG_HUB_PRIMARY_MAGS     = 105   # Open the primary magazine submenu
+TRIG_HUB_SECONDARY        = 106   # Open the secondary weapon submenu
+TRIG_HUB_SECONDARY_MAGS   = 107   # Open the secondary magazine submenu
+TRIG_HUB_EQUIP1           = 108   # Open the grenade slot 1 submenu
+TRIG_HUB_EQUIP2           = 109   # Open the grenade slot 2 submenu
+TRIG_HUB_PERKS            = 110   # Open the perks submenu
+TRIG_REMOVE_PRIMARY       = 111   # Clear the primary weapon
+TRIG_REMOVE_SECONDARY     = 112   # Clear the secondary weapon
+
 TRIG_PRIMARY_BASE         = 200   # 200 + primary_weapon_index
 TRIG_PRIMARY_SCOPE_BASE   = 230   # 230 + scope_index (0=iron, 1=_1, 2=_2, 3=_3, 4=_4)
-TRIG_SECONDARY_BASE       = 250   # 250 + secondary_weapon_index (258 = None)
-TRIG_SECONDARY_NONE       = 258   # Skip secondary weapon
+TRIG_SECONDARY_BASE       = 250   # 250 + secondary_weapon_index
 TRIG_SECONDARY_SCOPE_BASE = 260   # 260 + scope_index
-TRIG_EQUIPMENT_BASE       = 300   # 300 + equipment_preset_index
 TRIG_SAVE_PUBLIC          = 350   # Save loadout as public
 TRIG_SAVE_PRIVATE         = 351   # Save loadout as private
-TRIG_BACK_SECONDARY       = 360   # Back to secondary weapon dialog
-TRIG_BACK_EQUIPMENT       = 370   # Back to equipment dialog
-TRIG_BACK_PERKS           = 380   # Back to perks dialog
 TRIG_PRIMARY_MAGS_BASE    = 390   # 390 + count (1-5) -> pick primary mag count (391-395)
 TRIG_SECONDARY_MAGS_BASE  = 396   # 396 + count (0-5) -> pick secondary mag count (396-401)
 
 # Perk selection triggers: base + perk index
 TRIG_PERK_BASE            = 410   # 410 + perk_index -> toggle perk (410-414 for 5 perks)
-TRIG_PERKS_DONE           = 450   # Done selecting perks -> go to confirm
 
 # Grenade slot selection triggers
 TRIG_EQUIP_SLOT1_BASE     = 460   # 460 + grenade_index (0=none,1=frag,2=semtex,3=flash,4=smoke)
@@ -141,6 +148,7 @@ TRIG_PRIMARY_CAMO_BASE    = 480   # 480-484 = pick primary camo
 TRIG_SECONDARY_CAMO_BASE  = 490   # 490-494 = pick secondary camo
 TRIG_EQUIP1_CAMO_BASE     = 500   # 500-504 = pick grenade slot 1 camo
 TRIG_EQUIP2_CAMO_BASE     = 510   # 510-514 = pick grenade slot 2 camo
+TRIG_OVERKILL_SEC_BASE    = 520   # 520 + primary_weapon_index = pick a primary as the Overkill secondary
 
 # Loadout action triggers: base + loadout_id. Loadout IDs auto-increment and are never
 # reused, so each action gets a 10000-wide range (the old 100-wide ranges silently broke
@@ -152,7 +160,8 @@ TRIG_DELETE_BASE          = 40000  # + loadout_id -> delete own loadout
 TRIG_TOGGLE_VIS_BASE      = 50000  # + loadout_id -> toggle public/private
 TRIG_SET_DEFAULT_BASE     = 60000  # + loadout_id -> set as default
 TRIG_UNSET_DEFAULT        = 69999  # Unset default loadout
-TRIG_EDIT_BASE            = 70000  # + loadout_id -> edit own loadout (re-runs the wizard, saving overwrites)
+TRIG_EDIT_BASE            = 70000  # + loadout_id -> edit own loadout (re-opens the hub pre-filled)
+TRIG_MANAGE_BASE          = 80000  # + loadout_id -> open the per-loadout manage submenu (My Loadouts)
 
 # Filter / Sort view triggers
 TRIG_MARKETPLACE_ALL          = 1600  # Marketplace: show all public (favorites first)
@@ -193,11 +202,18 @@ GRENADE_TYPES: list[tuple[str, str]] = [
 ]
 
 # Perks: (perk_id, display_name, description, score_name)
-# score_name is the mgs.special.* scoreboard used for each perk effect
+# score_name is the mgs.special.* scoreboard flag (0/1) set when the perk is on the loadout.
+# Effects are wired in functional/multiplayer/loadouts/class_selection.py + the systems they touch.
 PERKS: list[tuple[str, str, str, str]] = [
     ("quick_reload",  "Sleight of Hand", "Reload 50% faster", "quick_reload"),
     ("quick_swap",    "Fast Hands",      "Swap weapons 50% faster", "quick_swap"),
-    ("infinite_ammo", "Overkill",        "Unlimited ammo for 30s on spawn", "infinite_ammo"),
+    ("juggernaut",    "Juggernaut",      "Increases health to survive more damage", "juggernaut"),
+    ("scavenger",     "Scavenger",       "Resupplies ammo on every kill", "scavenger"),
+    ("flak_jacket",   "Flak Jacket",     "Halves damage from explosives", "flak_jacket"),
+    ("tracker",       "Tracker",         "Reveals recent enemy footprints", "tracker"),
+    ("tactical_mask", "Tactical Mask",   "Reduces flash, stun, and gas effects", "tactical_mask"),
+    ("overkill",      "Overkill",        "Carry a second primary weapon", "overkill"),
+    ("quick_fix",     "Quick Fix",       "Health regen starts right after a kill", "quick_fix"),
 ]
 
 # Max number of perks selectable (limited further by available points)

@@ -78,7 +78,7 @@ execute unless score @s {ns}.special.infinite_ammo matches 1.. run item modify e
 
 # Set remaining_bullets to 2 so ammo/decrease (which runs after) reduces it to 1 for the next throw
 scoreboard players set @s {ns}.{REMAINING_BULLETS} 2
-""")
+""")  # noqa: E501
 
     ## Summon loop (supports pellet_count for multiple grenades)
     write_versioned_function("grenade/summon_loop", f"""
@@ -439,12 +439,22 @@ function {ns}:v{version}/grenade/flash_player
 """)
 
     write_versioned_function("grenade/flash_player", f"""
+# Tactical Mask perk (MP): greatly reduced flash — short blindness, no darkness, brief screen
+execute if score @s {ns}.mp.in_game matches 1 if score @s {ns}.special.tactical_mask matches 1 run return run function {ns}:v{version}/grenade/flash_player_masked
+
 # Apply full blindness + darkness
 effect give @s minecraft:blindness 5 0 true
 effect give @s minecraft:darkness 3 0 true
 
 # White screen flash using custom font (1x1 white pixel scaled to fill screen)
 title @s times 5 40 20
+title @s title {{"text":"F","font":"{ns}:flash"}}
+""")
+
+    write_versioned_function("grenade/flash_player_masked", f"""
+# Reduced flash for Tactical Mask holders
+effect give @s minecraft:blindness 1 0 true
+title @s times 2 10 10
 title @s title {{"text":"F","font":"{ns}:flash"}}
 """)
 

@@ -3,12 +3,10 @@
 #
 # @executed	as @e[type=player,sort=random] & at @s
 #
-# @within	mgs:v5.0.1/multiplayer/editor/pick_secondary
-#			mgs:v5.0.1/multiplayer/editor/pick_secondary_mags
-#			mgs:v5.0.1/multiplayer/editor/back_to_equip1
+# @within	mgs:v5.0.1/player/config/process
 #
 
-scoreboard players set @s mgs.mp.edit_step 3
+function mgs:v5.0.1/multiplayer/editor/recompute_points
 execute store result storage mgs:temp _pts int 1 run scoreboard players get @s mgs.mp.edit_points
 function mgs:v5.0.1/multiplayer/editor/show_equip_slot1_dialog_macro with storage mgs:temp
 

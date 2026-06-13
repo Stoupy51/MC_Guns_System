@@ -4,12 +4,13 @@
 # @executed	as @e[type=player,sort=random] & at @s
 #
 # @within	mgs:v5.0.1/player/config/process
+#			mgs:v5.0.1/multiplayer/editor/save
 #			mgs:v5.0.1/multiplayer/custom/delete
 #			mgs:v5.0.1/multiplayer/custom/toggle_visibility
 #
 
 # Initialize dialog
-data modify storage mgs:temp dialog set value {type:"minecraft:multi_action",title:{translate:"mgs.my_loadouts",color:"gold",bold:true},body:{type:"minecraft:item",item:{id:"minecraft:written_book"},description:{contents:{translate:"mgs.manage_your_custom_loadouts",color:"gray"}},show_decoration:false,show_tooltip:true},actions:[],columns:3,after_action:"close",exit_action:{label:"Back",action:{type:"run_command",command:"/trigger mgs.player.config set 4"}}}
+data modify storage mgs:temp dialog set value {type:"minecraft:multi_action",title:{translate:"mgs.my_loadouts",color:"gold",bold:true},body:{type:"minecraft:item",item:{id:"minecraft:written_book"},description:{contents:{translate:"mgs.click_a_loadout_to_manage_it",color:"gray"}},show_decoration:false,show_tooltip:true},actions:[],columns:3,after_action:"close",exit_action:{label:"Back",action:{type:"run_command",command:"/trigger mgs.player.config set 4"}}}
 
 # Add filter/sort buttons (row 1: favorites / all / create)
 data modify storage mgs:temp dialog.actions append value {label:[{text:"",color:"yellow",bold:true},"⭐ ",{translate:"mgs.favorites"}],tooltip:{translate:"mgs.show_only_your_favorited_loadouts"},action:{type:"run_command",command:"/trigger mgs.player.config set 1603"}}

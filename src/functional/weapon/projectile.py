@@ -185,6 +185,9 @@ execute store result score #direct_dmg {ns}.data run data get entity @s data.con
 execute if data storage {ns}:zombies game{{state:"active"}} if entity @n[tag={ns}.direct_hit,type=!player] run scoreboard players operation #direct_dmg {ns}.data *= #5 {ns}.data
 execute if data storage {ns}:zombies game{{state:"active"}} if entity @n[tag={ns}.direct_hit,type=player] if score #direct_dmg {ns}.data matches 60.. run scoreboard players set #direct_dmg {ns}.data 60
 
+# Flak Jacket perk: halve explosive direct-hit damage to a perked MP player
+execute if entity @n[tag={ns}.direct_hit,type=player,scores={{{ns}.mp.in_game=1,{ns}.special.flak_jacket=1}}] run scoreboard players operation #direct_dmg {ns}.data /= #2 {ns}.data
+
 # Apply direct hit damage using the existing damage utility
 data modify storage {ns}:input with set value {{target:"@s", amount:0.0f, attacker:"@n[tag={ns}.temp_shooter]"}}
 execute store result storage {ns}:input with.amount float 0.1 run scoreboard players get #direct_dmg {ns}.data
@@ -298,6 +301,9 @@ scoreboard players operation #expl_dmg {ns}.data /= #1000000 {ns}.data
 execute if data storage {ns}:zombies game{{state:"active"}} if entity @s[type=!player] run scoreboard players operation #expl_dmg {ns}.data *= #5 {ns}.data
 execute if data storage {ns}:zombies game{{state:"active"}} if entity @s[type=player] if score #expl_dmg {ns}.data matches 60.. run scoreboard players set #expl_dmg {ns}.data 60
 
+# Flak Jacket perk: halve explosive area damage to a perked MP player
+execute if entity @s[type=player,scores={{{ns}.mp.in_game=1,{ns}.special.flak_jacket=1}}] run scoreboard players operation #expl_dmg {ns}.data /= #2 {ns}.data
+
 # Skip if damage is negligible (less than 0.1)
 execute if score #expl_dmg {ns}.data matches ..0 run return fail
 
@@ -328,7 +334,7 @@ execute if score #is_new_kill {ns}.data matches 1 as @n[tag={ns}.temp_shooter] r
 
 # Remove temporary tag
 tag @n[tag={ns}.temp_shooter] remove {ns}.ticking
-""")
+""")  # noqa: E501
 
     ## Delete projectile
     write_versioned_function("projectile/delete", f"""
