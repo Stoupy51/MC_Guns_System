@@ -20,6 +20,9 @@ data modify storage mgs:temp slots set from storage mgs:temp current_class.slots
 # Recursively apply all slots
 execute if data storage mgs:temp slots[0] run function mgs:v5.0.1/multiplayer/apply_next_slot
 
+# Apply perks from the selected loadout (standard class or custom)
+function mgs:v5.0.1/multiplayer/apply_perks
+
 # Give class menu item (only in multiplayer)
 execute if entity @s[tag=mgs.give_class_menu] run loot replace entity @s hotbar.4 loot mgs:i/class_menu
 

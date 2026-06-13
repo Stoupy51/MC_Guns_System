@@ -301,8 +301,8 @@ function {ns}:v{version}/zombies/feedback/sound_deny
 	## Display entity: spawns at box level, floats up with interpolation
 	write_versioned_function("zombies/mystery_box/spawn_display", f"""
 # Spawn item display at box level with small scale and correct facing
-summon minecraft:item_display ~ ~0.5 ~ {{Tags:["{ns}.mb_display","{ns}.gm_entity","{ns}.mb_display_new"],item_display:"fixed",item:{{id:"minecraft:nether_star",count:1,components:{{"minecraft:item_model":"air"}}}},transformation:{{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[0.5f,0.5f,0.5f]}},billboard:"fixed"}}
-tp @n[tag={ns}.mb_display_new] ~ ~0.5 ~ ~ ~
+summon minecraft:item_display ~ ~-1.5 ~ {{Tags:["{ns}.mb_display","{ns}.gm_entity","{ns}.mb_display_new"],item_display:"fixed",item:{{id:"minecraft:nether_star",count:1,components:{{"minecraft:item_model":"air"}}}},transformation:{{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[0.5f,0.5f,0.5f]}},billboard:"fixed"}}
+tp @n[tag={ns}.mb_display_new] ~ ~-1.5 ~ ~ ~
 
 # Apply interpolation a few ticks later to avoid same-tick spawn interpolation glitches.
 schedule function {ns}:v{version}/zombies/mystery_box/spawn_display_finalize 5t append
@@ -494,7 +494,7 @@ function {ns}:v{version}/zombies/mystery_box/move_active_position
 
 # Spawn new chest display above the new active position (height = 0.7 + descent total)
 # Fast: 35t * 0.18 = 6.3 blocks, Slow: 34t * 0.06 = 2.04 blocks, Total = 8.34
-execute as @n[tag={ns}.mystery_box_active] at @s positioned ~ ~9.04 ~ run summon minecraft:item_display ~ ~ ~ {{Tags:["{ns}.mb_presence","{ns}.gm_entity"],item_display:"fixed",billboard:"fixed",item:{{id:"minecraft:chest",count:1}},transformation:{{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[0.85f,0.85f,0.85f]}},teleport_duration:5}}
+execute as @n[tag={ns}.mystery_box_active] at @s positioned ~ ~7.04 ~ run summon minecraft:item_display ~ ~ ~ {{Tags:["{ns}.mb_presence","{ns}.gm_entity"],item_display:"fixed",billboard:"fixed",item:{{id:"minecraft:chest",count:1}},transformation:{{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[0.85f,0.85f,0.85f]}},teleport_duration:5}}
 execute as @n[tag={ns}.mystery_box_active] at @s as @n[tag={ns}.mb_presence] run data modify entity @s Rotation set from entity @n[tag={ns}.mystery_box_active] Rotation
 
 # Light beam particles at new location
@@ -517,7 +517,7 @@ execute at @n[tag={ns}.mb_presence] run particle minecraft:end_rod ~ ~-0.5 ~ 0.2
 
 	write_versioned_function("zombies/mystery_box/move_anim_land", f"""
 # Snap the descending chest to exact final position smoothly
-execute as @n[tag={ns}.mystery_box_active] at @s as @n[tag={ns}.mb_presence] run tp @s ~ ~0.7 ~
+execute as @n[tag={ns}.mystery_box_active] at @s as @n[tag={ns}.mb_presence] run tp @s ~ ~-1.3 ~
 
 # Reset move state
 scoreboard players set #mb_move_timer {ns}.data 0
