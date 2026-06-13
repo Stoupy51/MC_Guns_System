@@ -37,3 +37,8 @@ semtex
 flash_grenade
 smoke_grenade
 
+
+# TODO:
+- Multiplayer: drop gun on ground (hotbar.0 or hotbar.1) depending on the SelectedItemSlot
+- Multiplayer: add bonus streaks
+

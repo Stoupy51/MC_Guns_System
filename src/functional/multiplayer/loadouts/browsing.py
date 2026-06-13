@@ -12,12 +12,14 @@ from .catalogs import (
 	TRIG_EDITOR_START,
 	TRIG_FAVORITE_BASE,
 	TRIG_LIKE_BASE,
+	TRIG_MANAGE_BASE,
 	TRIG_MARKETPLACE_ALL,
 	TRIG_MARKETPLACE_FAV_ONLY,
 	TRIG_MARKETPLACE_LIKES,
 	TRIG_MY_LOADOUTS,
 	TRIG_MY_LOADOUTS_FAV_ONLY,
 	TRIG_SELECT_BASE,
+	TRIG_SET_DEFAULT_BASE,
 	TRIG_TOGGLE_VIS_BASE,
 )
 
@@ -75,7 +77,7 @@ execute unless score #is_fav {ns}.data matches 1 if data storage {ns}:temp _fav_
 		return (
 			f'{{type:"minecraft:multi_action",'
 			f'title:{{text:"My Loadouts",color:"gold",bold:true}},'
-			f'body:{{type:"minecraft:item",item:{{id:"minecraft:written_book"}},description:{{contents:{{text:"Manage your custom loadouts",color:"gray"}}}},show_decoration:false,show_tooltip:true}},'
+			f'body:{{type:"minecraft:item",item:{{id:"minecraft:written_book"}},description:{{contents:{{text:"Click a loadout to manage it",color:"gray"}}}},show_decoration:false,show_tooltip:true}},'
 			f'actions:[],'
 			f'columns:3,'
 			f'after_action:"close",'
@@ -196,6 +198,8 @@ execute if score #pub {ns}.data matches 1 if score #is_fav {ns}.data matches 0 r
 			for i, (pid, pname, _, _) in enumerate(PERKS)
 		)
 	)
+	# Concatenation of every perk slot (unselected ones are empty) — shows all chosen perks
+	_perk_concat = "".join(f"$(perk{i})" for i in range(len(PERKS)))
 
 	# Shared: normalize optional fields, compute perks count & display for _btn_data
 	_normalize_fields = "\n".join([
@@ -221,16 +225,42 @@ execute if score #pub {ns}.data matches 1 if score #is_fav {ns}.data matches 0 r
 			f"execute store result storage {ns}:temp _btn_data.{field} int 1 run scoreboard players get #trig {ns}.data"
 		)
 
-	## my_loadouts/prep_btn - Normalize fields, compute triggers, route to correct btn macro
+	# Rich info component shared by the list-row tooltip and the manage-dialog body
+	def _ml_info(public_label: str) -> str:
+		return (
+			'["",{"text":"$(main_gun_display)","color":"green"},'
+			'{"text":" x$(primary_mag_count) mags","color":"dark_green"},'
+			'"\\n",'
+			'{"text":"$(secondary_gun_display)","color":"yellow"},'
+			'{"text":" x$(secondary_mag_count) mags","color":"gold"},'
+			'"\\n",'
+			'[{"text":"","color":"gray"},{"text":"Grenades"},": "],'
+			'{"text":"$(equip_slot1_name)","color":"aqua"},'
+			'{"text":" + $(equip_slot2_name)","color":"aqua"},'
+			'"\\n",'
+			'[{"text":"","color":"white"},{"text":"Points"},": "],'
+			f'{{"text":"$(points_used)/{PICK10_TOTAL}pts","color":"gold"}},'
+			'[{"text":"","color":"white"},"  ",{"text":"Perks"},": "],'
+			'{"text":"$(perks_count)","color":"light_purple"},'
+			'{"text":"' + _perk_concat + '","color":"light_purple"},'
+			'"\\n",'
+			'{"text":"\\u2665 $(likes) likes","color":"red"},'
+			'{"text":"  \\u2b50 $(favorites_count) favs","color":"yellow"},'
+			'"\\n",'
+			+ public_label
+			+ ']'
+		)
+
+	_ml_tooltip_pub = _ml_info('{"text":"Public","color":"green","italic":true},"\\n\\n",{"text":"\\u25b6 Click to manage","color":"dark_gray","italic":true}')
+	_ml_tooltip_priv = _ml_info('{"text":"Private","color":"red","italic":true},"\\n\\n",{"text":"\\u25b6 Click to manage","color":"dark_gray","italic":true}')
+
+	## my_loadouts/prep_btn - Each loadout becomes ONE list row that opens its manage submenu
 	write_versioned_function("multiplayer/my_loadouts/prep_btn", f"""
 # Copy entry data for macro use
 data modify storage {ns}:temp _btn_data set from storage {ns}:temp _iter[0]
 
-# Compute triggers
-{_compute_trig("select_trig", TRIG_SELECT_BASE)}
-{_compute_trig("vis_trig", TRIG_TOGGLE_VIS_BASE)}
-{_compute_trig("delete_trig", TRIG_DELETE_BASE)}
-{_compute_trig("edit_trig", TRIG_EDIT_BASE)}
+# Compute the manage submenu trigger (TRIG_MANAGE_BASE + id)
+{_compute_trig("manage_trig", TRIG_MANAGE_BASE)}
 
 # Normalize and compute perk display
 {_normalize_fields}
@@ -241,48 +271,82 @@ execute if score #pub {ns}.data matches 1 run function {ns}:v{version}/multiplay
 execute if score #pub {ns}.data matches 0 run function {ns}:v{version}/multiplayer/my_loadouts/add_btn_private with storage {ns}:temp _btn_data
 """)
 
-	# Rich tooltip for MY_LOADOUTS buttons
-	_ml_tooltip_pub = (
-		'["",{"text":"$(main_gun_display)","color":"green"},'
-		'{"text":" x$(primary_mag_count) mags","color":"dark_green"},'
-		'"\\n",'
-		'{"text":"$(secondary_gun_display)","color":"yellow"},'
-		'{"text":" x$(secondary_mag_count) mags","color":"gold"},'
-		'"\\n",'
-		'[{"text":"","color":"gray"},{"text":"Grenades"},": "],'
-		'{"text":"$(equip_slot1_name)","color":"aqua"},'
-		'{"text":" + $(equip_slot2_name)","color":"aqua"},'
-		'"\\n",'
-		'[{"text":"","color":"white"},{"text":"Points"},": "],'
-		f'{{"text":"$(points_used)/{PICK10_TOTAL}pts","color":"gold"}},'
-		'[{"text":"","color":"white"},"  ",{"text":"Perks"},": "],'
-		'{"text":"$(perks_count)","color":"light_purple"},'
-		'{"text":"$(perk0)$(perk1)$(perk2)","color":"light_purple"},'
-		'"\\n",'
-		'{"text":"\\u2665 $(likes) likes","color":"red"},'
-		'{"text":"  \\u2b50 $(favorites_count) favs","color":"yellow"},'
-		'"\\n",'
-		'{"text":"Public","color":"green","italic":true},'
-		'"\\n\\n",'
-		'{"text":"\\u25b6 Click to select","color":"dark_gray","italic":true}]'
-	)
-	_ml_tooltip_priv = _ml_tooltip_pub.replace(
-		'{"text":"Public","color":"green","italic":true}',
-		'{"text":"Private","color":"red","italic":true}',
-	)
-
-	## my_loadouts/add_btn_public - Macro: green name (public loadout), rich tooltip
-	write_versioned_function("multiplayer/my_loadouts/add_btn_public", f"""$data modify storage {ns}:temp dialog.actions append value {{label:{{text:"$(name)",color:"green"}},tooltip:{_ml_tooltip_pub},action:{{type:"run_command",command:"/trigger {ns}.player.config set $(select_trig)"}}}}
-$data modify storage {ns}:temp dialog.actions append value {{label:{{text:"Public -> Private",color:"dark_aqua"}},tooltip:{{text:"Toggle this loadout to Private",color:"red"}},action:{{type:"run_command",command:"/trigger {ns}.player.config set $(vis_trig)"}}}}
-$data modify storage {ns}:temp dialog.actions append value {{label:{styled_text("✏ Edit", color="gold")},tooltip:{{text:"Re-run the loadout wizard; saving overwrites this loadout",color:"yellow"}},action:{{type:"run_command",command:"/trigger {ns}.player.config set $(edit_trig)"}}}}
-$data modify storage {ns}:temp dialog.actions append value {{label:{styled_text("\U0001f5d1 Delete", color="red")},tooltip:{{text:"Permanently delete this loadout",color:"dark_red"}},action:{{type:"run_command",command:"/trigger {ns}.player.config set $(delete_trig)"}}}}
+	## add_btn_public / add_btn_private - one row: name + ▶ arrow, opens the manage submenu
+	write_versioned_function("multiplayer/my_loadouts/add_btn_public", f"""$data modify storage {ns}:temp dialog.actions append value {{label:["",{{"text":"$(name)",color:"green"}},{{"text":"  \\u25b6","color":"dark_gray"}}],tooltip:{_ml_tooltip_pub},action:{{type:"run_command",command:"/trigger {ns}.player.config set $(manage_trig)"}}}}
+""")
+	write_versioned_function("multiplayer/my_loadouts/add_btn_private", f"""$data modify storage {ns}:temp dialog.actions append value {{label:["",{{"text":"$(name)",color:"red"}},{{"text":"  \\u25b6","color":"dark_gray"}}],tooltip:{_ml_tooltip_priv},action:{{type:"run_command",command:"/trigger {ns}.player.config set $(manage_trig)"}}}}
 """)
 
-	## my_loadouts/add_btn_private - Macro: red name (private loadout), rich tooltip
-	write_versioned_function("multiplayer/my_loadouts/add_btn_private", f"""$data modify storage {ns}:temp dialog.actions append value {{label:{{text:"$(name)",color:"red"}},tooltip:{_ml_tooltip_priv},action:{{type:"run_command",command:"/trigger {ns}.player.config set $(select_trig)"}}}}
-$data modify storage {ns}:temp dialog.actions append value {{label:{{text:"Private -> Public",color:"aqua"}},tooltip:{{text:"Toggle this loadout to Public",color:"green"}},action:{{type:"run_command",command:"/trigger {ns}.player.config set $(vis_trig)"}}}}
-$data modify storage {ns}:temp dialog.actions append value {{label:{styled_text("✏ Edit", color="gold")},tooltip:{{text:"Re-run the loadout wizard; saving overwrites this loadout",color:"yellow"}},action:{{type:"run_command",command:"/trigger {ns}.player.config set $(edit_trig)"}}}}
-$data modify storage {ns}:temp dialog.actions append value {{label:{styled_text("\U0001f5d1 Delete", color="red")},tooltip:{{text:"Permanently delete this loadout",color:"dark_red"}},action:{{type:"run_command",command:"/trigger {ns}.player.config set $(delete_trig)"}}}}
+	## ====================================================================
+	## MY LOADOUTS - per-loadout manage submenu (Use / Edit / Visibility / Default / Delete)
+	## ====================================================================
+	def _compute_trig_id(field: str, base: int) -> str:
+		"""Compute base + #loadout_id into _btn_data.<field> (manage submenu)."""
+		return (
+			f"scoreboard players operation #trig {ns}.data = #loadout_id {ns}.data\n"
+			f"scoreboard players add #trig {ns}.data {base}\n"
+			f"execute store result storage {ns}:temp _btn_data.{field} int 1 run scoreboard players get #trig {ns}.data"
+		)
+
+	## manage - Find the loadout by id, then build its management dialog
+	write_versioned_function("multiplayer/my_loadouts/manage", f"""
+scoreboard players operation #loadout_id {ns}.data = @s {ns}.player.config
+scoreboard players remove #loadout_id {ns}.data {TRIG_MANAGE_BASE}
+data modify storage {ns}:temp _find_iter set from storage {ns}:multiplayer custom_loadouts
+execute if data storage {ns}:temp _find_iter[0] run function {ns}:v{version}/multiplayer/my_loadouts/manage_find
+""")
+
+	## manage_find - Recursive: locate loadout by id (and ownership), then prep its dialog
+	write_versioned_function("multiplayer/my_loadouts/manage_find", f"""
+execute store result score #entry_id {ns}.data run data get storage {ns}:temp _find_iter[0].id
+execute store result score #entry_owner {ns}.data run data get storage {ns}:temp _find_iter[0].owner_pid
+execute if score #entry_id {ns}.data = #loadout_id {ns}.data if score #entry_owner {ns}.data = @s {ns}.mp.pid run return run function {ns}:v{version}/multiplayer/my_loadouts/manage_prep
+data remove storage {ns}:temp _find_iter[0]
+execute if data storage {ns}:temp _find_iter[0] run function {ns}:v{version}/multiplayer/my_loadouts/manage_find
+""")
+
+	## manage_prep - Copy the found loadout, compute action triggers, normalize, build dialog
+	write_versioned_function("multiplayer/my_loadouts/manage_prep", f"""
+data modify storage {ns}:temp _btn_data set from storage {ns}:temp _find_iter[0]
+{_compute_trig_id("select_trig", TRIG_SELECT_BASE)}
+{_compute_trig_id("edit_trig", TRIG_EDIT_BASE)}
+{_compute_trig_id("vis_trig", TRIG_TOGGLE_VIS_BASE)}
+{_compute_trig_id("delete_trig", TRIG_DELETE_BASE)}
+{_compute_trig_id("default_trig", TRIG_SET_DEFAULT_BASE)}
+{_normalize_fields}
+execute store result score #pub {ns}.data run data get storage {ns}:temp _find_iter[0].public
+execute if score #pub {ns}.data matches 1 run function {ns}:v{version}/multiplayer/my_loadouts/manage_build_public with storage {ns}:temp _btn_data
+execute if score #pub {ns}.data matches 0 run function {ns}:v{version}/multiplayer/my_loadouts/manage_build_private with storage {ns}:temp _btn_data
+""")
+
+	# Manage dialog body (rich info, no "click to manage" hint)
+	_manage_body_pub = _ml_info('{"text":"Public","color":"green","italic":true}')
+	_manage_body_priv = _ml_info('{"text":"Private","color":"red","italic":true}')
+
+	def _manage_dialog(vis_label: str, vis_tip: str, vis_color: str) -> str:
+		""" Shared manage dialog: Use / Edit / Toggle visibility / Set default / Delete + Back """
+		return (
+			'{type:"minecraft:multi_action",'
+			'title:{text:"$(name)",color:"gold",bold:true},'
+			'body:[{type:"minecraft:plain_message",contents:BODY}],'
+			'actions:['
+			f'{{label:{styled_text("▶ Use this loadout", color="green", bold="true")},tooltip:{{text:"Equip this loadout (applies on next spawn)"}},action:{{type:"run_command",command:"/trigger {ns}.player.config set $(select_trig)"}}}},'
+			f'{{label:{styled_text("✏ Edit", color="gold")},tooltip:{{text:"Re-open the loadout editor pre-filled; saving overwrites this loadout",color:"yellow"}},action:{{type:"run_command",command:"/trigger {ns}.player.config set $(edit_trig)"}}}},'
+			f'{{label:{{text:"{vis_label}",color:"{vis_color}"}},tooltip:{{text:"{vis_tip}"}},action:{{type:"run_command",command:"/trigger {ns}.player.config set $(vis_trig)"}}}},'
+			f'{{label:{styled_text("⭐ Set as Default", color="yellow")},tooltip:{{text:"Auto-equip this loadout when a game starts"}},action:{{type:"run_command",command:"/trigger {ns}.player.config set $(default_trig)"}}}},'
+			f'{{label:{styled_text("\U0001f5d1 Delete", color="red")},tooltip:{{text:"Permanently delete this loadout",color:"dark_red"}},action:{{type:"run_command",command:"/trigger {ns}.player.config set $(delete_trig)"}}}}'
+			'],'
+			'columns:1,'
+			'after_action:"close",'
+			f'exit_action:{{label:"Back",action:{{type:"run_command",command:"/trigger {ns}.player.config set {TRIG_MY_LOADOUTS}"}}}}'
+			'}'
+		)
+
+	write_versioned_function("multiplayer/my_loadouts/manage_build_public", f"""$data modify storage {ns}:temp dialog set value {_manage_dialog("Public -> Private", "Toggle this loadout to Private", "dark_aqua").replace("BODY", _manage_body_pub)}
+function {ns}:v{version}/multiplayer/show_dialog with storage {ns}:temp
+""")
+	write_versioned_function("multiplayer/my_loadouts/manage_build_private", f"""$data modify storage {ns}:temp dialog set value {_manage_dialog("Private -> Public", "Toggle this loadout to Public", "aqua").replace("BODY", _manage_body_priv)}
+function {ns}:v{version}/multiplayer/show_dialog with storage {ns}:temp
 """)
 
 	## ====================================================================
@@ -492,7 +556,7 @@ function {ns}:v{version}/multiplayer/marketplace/add_btn with storage {ns}:temp 
 		f'{{"text":"$(points_used)/{PICK10_TOTAL}pts","color":"gold"}},'
 		'[{"text":"","color":"white"},"  ",{"text":"Perks"},": "],'
 		'{"text":"$(perks_count)","color":"light_purple"},'
-		'{"text":"$(perk0)$(perk1)$(perk2)","color":"light_purple"},'
+		'{"text":"' + _perk_concat + '","color":"light_purple"},'
 		'"\\n",'
 		'{"text":"\\u2665 $(likes) likes","color":"red"},'
 		'{"text":"  \\u2b50 $(favorites_count) favs","color":"yellow"},'

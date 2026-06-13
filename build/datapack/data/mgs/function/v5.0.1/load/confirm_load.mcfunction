@@ -76,6 +76,14 @@ scoreboard objectives add mgs.special.quick_reload dummy
 scoreboard objectives add mgs.special.quick_swap dummy
 # Additional shots: number of extra projectiles per shot (Double Tap perk)
 scoreboard objectives add mgs.special.additional_shots dummy
+# Multiplayer loadout perk flags (0/1), set on loadout apply
+scoreboard objectives add mgs.special.juggernaut dummy
+scoreboard objectives add mgs.special.scavenger dummy
+scoreboard objectives add mgs.special.flak_jacket dummy
+scoreboard objectives add mgs.special.tracker dummy
+scoreboard objectives add mgs.special.tactical_mask dummy
+scoreboard objectives add mgs.special.overkill dummy
+scoreboard objectives add mgs.special.quick_fix dummy
 # DPS tracking: accumulates damage dealt per second, snapshot stored for actionbar
 scoreboard objectives add mgs.dps dummy
 scoreboard objectives add mgs.previous_dps dummy
@@ -382,6 +390,7 @@ execute unless data storage mgs:maps missions run data modify storage mgs:maps m
 # Set scoreboard constants for mgs.data
 scoreboard players set #2 mgs.data 2
 scoreboard players set #5 mgs.data 5
+scoreboard players set #6 mgs.data 6
 scoreboard players set #10 mgs.data 10
 scoreboard players set #15 mgs.data 15
 scoreboard players set #20 mgs.data 20

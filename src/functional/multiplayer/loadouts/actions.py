@@ -363,16 +363,37 @@ scoreboard players set @s {ns}.mp.default 0
 tellraw @s [{MGS_TAG},{{"text":"Default loadout cleared. Standard class will be used","color":"green"}}]
 """)
 
-	## custom/edit - Re-run the editor wizard targeting an existing loadout (saving overwrites it)
+	## custom/edit - Re-open the editor HUB pre-filled with an existing loadout (saving overwrites it)
 	write_versioned_function("multiplayer/custom/edit", f"""
 # Extract loadout ID from trigger value
 scoreboard players operation #loadout_id {ns}.data = @s {ns}.player.config
 scoreboard players remove #loadout_id {ns}.data {TRIG_EDIT_BASE}
 
-# Launch a fresh editor flow, then mark it as targeting this loadout
-# (editor/start resets edit_target to 0, so the target is set after)
-function {ns}:v{version}/multiplayer/editor/start
+# Mark the editor active and targeting this loadout
+scoreboard players set @s {ns}.mp.edit_step 1
 scoreboard players operation @s {ns}.mp.edit_target = #loadout_id {ns}.data
 
-tellraw @s [{MGS_TAG},{{"text":"Editing loadout: walk through the steps — saving will overwrite it (likes and favorites are kept).","color":"yellow"}}]
+# Start from an empty state, then overwrite it with the loadout's saved editor_state (if any)
+function {ns}:v{version}/multiplayer/editor/init_state
+data modify storage {ns}:temp _find_iter set from storage {ns}:multiplayer custom_loadouts
+scoreboard players set #edit_found {ns}.data 0
+execute if data storage {ns}:temp _find_iter[0] run function {ns}:v{version}/multiplayer/custom/edit_load_iter
+
+# Legacy loadouts (saved before editor_state existed) can't be pre-filled — warn the player
+execute if score #edit_found {ns}.data matches 0 run tellraw @s [{MGS_TAG},{{"text":"This loadout predates editing support — rebuild it from scratch (saving still overwrites it).","color":"yellow"}}]
+
+# Open the hub (points recompute from the loaded state)
+function {ns}:v{version}/multiplayer/editor/hub
+""")
+
+	## custom/edit_load_iter - Recursive: find loadout by ID, copy its editor_state into the editor
+	write_versioned_function("multiplayer/custom/edit_load_iter", f"""
+execute store result score #entry_id {ns}.data run data get storage {ns}:temp _find_iter[0].id
+execute if score #entry_id {ns}.data = #loadout_id {ns}.data if data storage {ns}:temp _find_iter[0].editor_state run data modify storage {ns}:temp editor set from storage {ns}:temp _find_iter[0].editor_state
+execute if score #entry_id {ns}.data = #loadout_id {ns}.data if data storage {ns}:temp _find_iter[0].editor_state run scoreboard players set #edit_found {ns}.data 1
+execute if score #entry_id {ns}.data = #loadout_id {ns}.data run return 0
+
+# Not found yet, continue search
+data remove storage {ns}:temp _find_iter[0]
+execute if data storage {ns}:temp _find_iter[0] run function {ns}:v{version}/multiplayer/custom/edit_load_iter
 """)

@@ -90,6 +90,14 @@ scoreboard objectives add {ns}.special.quick_reload dummy
 scoreboard objectives add {ns}.special.quick_swap dummy
 # Additional shots: number of extra projectiles per shot (Double Tap perk)
 scoreboard objectives add {ns}.special.additional_shots dummy
+# Multiplayer loadout perk flags (0/1), set on loadout apply
+scoreboard objectives add {ns}.special.juggernaut dummy
+scoreboard objectives add {ns}.special.scavenger dummy
+scoreboard objectives add {ns}.special.flak_jacket dummy
+scoreboard objectives add {ns}.special.tracker dummy
+scoreboard objectives add {ns}.special.tactical_mask dummy
+scoreboard objectives add {ns}.special.overkill dummy
+scoreboard objectives add {ns}.special.quick_fix dummy
 # DPS tracking: accumulates damage dealt per second, snapshot stored for actionbar
 scoreboard objectives add {ns}.dps dummy
 scoreboard objectives add {ns}.previous_dps dummy

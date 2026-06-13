@@ -6,26 +6,15 @@
 # @within	mgs:v5.0.1/player/config/process
 #
 
-# Store secondary scope and deduct cost
-execute if score @s mgs.player.config matches 260 run data modify storage mgs:temp editor.secondary_scope set value ""
-execute if score @s mgs.player.config matches 260 run data modify storage mgs:temp editor.secondary_scope_name set value "Iron Sights"
-execute if score @s mgs.player.config matches 261 run execute if score @s mgs.mp.edit_points matches ..0 run return run tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.not_enough_points_for_a_scope","color":"red"}]
-execute if score @s mgs.player.config matches 261 run data modify storage mgs:temp editor.secondary_scope set value "_1"
-execute if score @s mgs.player.config matches 261 run data modify storage mgs:temp editor.secondary_scope_name set value "Holographic"
-execute if score @s mgs.player.config matches 261 run scoreboard players remove @s mgs.mp.edit_points 1
-execute if score @s mgs.player.config matches 262 run execute if score @s mgs.mp.edit_points matches ..0 run return run tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.not_enough_points_for_a_scope","color":"red"}]
-execute if score @s mgs.player.config matches 262 run data modify storage mgs:temp editor.secondary_scope set value "_2"
-execute if score @s mgs.player.config matches 262 run data modify storage mgs:temp editor.secondary_scope_name set value "Kobra"
-execute if score @s mgs.player.config matches 262 run scoreboard players remove @s mgs.mp.edit_points 1
-execute if score @s mgs.player.config matches 263 run execute if score @s mgs.mp.edit_points matches ..0 run return run tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.not_enough_points_for_a_scope","color":"red"}]
-execute if score @s mgs.player.config matches 263 run data modify storage mgs:temp editor.secondary_scope set value "_3"
-execute if score @s mgs.player.config matches 263 run data modify storage mgs:temp editor.secondary_scope_name set value "ACOG Red Dot (3x Scope)"
-execute if score @s mgs.player.config matches 263 run scoreboard players remove @s mgs.mp.edit_points 1
-execute if score @s mgs.player.config matches 264 run execute if score @s mgs.mp.edit_points matches ..0 run return run tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.not_enough_points_for_a_scope","color":"red"}]
-execute if score @s mgs.player.config matches 264 run data modify storage mgs:temp editor.secondary_scope set value "_4"
-execute if score @s mgs.player.config matches 264 run data modify storage mgs:temp editor.secondary_scope_name set value "Mk4 (4x Scope)"
-execute if score @s mgs.player.config matches 264 run scoreboard players remove @s mgs.mp.edit_points 1
+data modify storage mgs:temp _ed_bak set from storage mgs:temp editor
+execute if score @s mgs.player.config matches 260 run data modify storage mgs:temp editor merge value {secondary_scope:"",secondary_scope_name:"Iron Sights"}
+execute if score @s mgs.player.config matches 261 run data modify storage mgs:temp editor merge value {secondary_scope:"_1",secondary_scope_name:"Holographic"}
+execute if score @s mgs.player.config matches 262 run data modify storage mgs:temp editor merge value {secondary_scope:"_2",secondary_scope_name:"Kobra"}
+execute if score @s mgs.player.config matches 263 run data modify storage mgs:temp editor merge value {secondary_scope:"_3",secondary_scope_name:"ACOG Red Dot (3x Scope)"}
+execute if score @s mgs.player.config matches 264 run data modify storage mgs:temp editor merge value {secondary_scope:"_4",secondary_scope_name:"Mk4 (4x Scope)"}
 
-# Show secondary camo selection dialog (the full secondary ID is computed after the camo pick)
+execute store success score #ed_ok mgs.data run function mgs:v5.0.1/multiplayer/editor/commit_check
+
+# Continue to camo either way (a denied scope simply stays on iron sights)
 function mgs:v5.0.1/multiplayer/editor/show_secondary_camo_dialog
 

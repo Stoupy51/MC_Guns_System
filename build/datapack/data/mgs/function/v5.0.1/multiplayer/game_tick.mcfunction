@@ -34,6 +34,11 @@ execute if data storage mgs:multiplayer game{gamemode:"dom"} run function mgs:v5
 execute if data storage mgs:multiplayer game{gamemode:"hp"} run function mgs:v5.0.1/multiplayer/gamemodes/hp/tick
 execute if data storage mgs:multiplayer game{gamemode:"snd"} run function mgs:v5.0.1/multiplayer/gamemodes/snd/tick
 
+# Tracker perk: render enemy footprints to perked players (every 6 ticks)
+execute store result score #tick_mod mgs.data run scoreboard players get #mp_timer mgs.data
+scoreboard players operation #tick_mod mgs.data %= #6 mgs.data
+execute if score #tick_mod mgs.data matches 0 if entity @a[scores={mgs.mp.in_game=1,mgs.special.tracker=1..}] run function mgs:v5.0.1/multiplayer/perks/tracker_tick
+
 # Call map-defined tick script
 function mgs:v5.0.1/shared/maps/call_tick_script_at_base
 

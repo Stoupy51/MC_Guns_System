@@ -6,7 +6,6 @@
 # @within	mgs:v5.0.1/player/config/process
 #
 
-# Store camo choice for grenade slot 1 (free)
 execute if score @s mgs.player.config matches 500 run data modify storage mgs:temp editor.equip_slot1_camo set value ""
 execute if score @s mgs.player.config matches 500 run data modify storage mgs:temp editor.equip_slot1_camo_name set value "Default"
 execute if score @s mgs.player.config matches 501 run data modify storage mgs:temp editor.equip_slot1_camo set value "_autumn"
@@ -18,6 +17,5 @@ execute if score @s mgs.player.config matches 503 run data modify storage mgs:te
 execute if score @s mgs.player.config matches 504 run data modify storage mgs:temp editor.equip_slot1_camo set value "_red_polymer_stripes"
 execute if score @s mgs.player.config matches 504 run data modify storage mgs:temp editor.equip_slot1_camo_name set value "Red Polymer"
 
-# Show equipment slot 2 dialog
-function mgs:v5.0.1/multiplayer/editor/show_equip_slot2_dialog
+function mgs:v5.0.1/multiplayer/editor/hub
 

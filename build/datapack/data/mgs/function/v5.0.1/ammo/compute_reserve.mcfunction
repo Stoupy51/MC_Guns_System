@@ -9,6 +9,7 @@
 #			mgs:v5.0.1/zombies/pap/on_right_click
 #			mgs:v5.0.1/zombies/pap/anim/collect_give [ as @p[tag=mgs.pap_owner] ]
 #			mgs:v5.0.1/zombies/pap/upgrade_core
+#			mgs:v5.0.1/multiplayer/perks/scavenger_refill
 #
 
 # Skip if not holding a gun
