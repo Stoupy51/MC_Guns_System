@@ -96,6 +96,13 @@ function mgs:v5.0.1/zombies/powerups/update_insta_kill_bb
 function mgs:v5.0.1/zombies/powerups/update_double_points_bb
 function mgs:v5.0.1/zombies/powerups/update_unlimited_ammo_bb
 
+# Fire Sale: global timer countdown + price restore on expiry
+execute if score #zb_fire_sale_timer mgs.data matches 1.. run function mgs:v5.0.1/zombies/powerups/fire_sale_tick
+
+scoreboard players add #qr_price_tick mgs.data 1
+execute if score #qr_price_tick mgs.data matches 20.. run scoreboard players set #qr_price_tick mgs.data 0
+execute if score #qr_price_tick mgs.data matches 0 run function mgs:v5.0.1/zombies/perks/update_quick_revive_price
+
 # Trap active tick (damage + timer)
 execute as @e[tag=mgs.trap_center,scores={mgs.zb.trap.timer=1..}] at @s run function mgs:v5.0.1/zombies/traps/active_tick
 

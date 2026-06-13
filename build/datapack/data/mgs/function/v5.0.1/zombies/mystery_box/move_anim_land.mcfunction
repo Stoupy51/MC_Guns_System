@@ -4,8 +4,8 @@
 # @within	mgs:v5.0.1/zombies/mystery_box/move_anim_tick
 #
 
-# Snap the descending chest to exact final position smoothly
-execute as @n[tag=mgs.mystery_box_active] at @s as @n[tag=mgs.mb_presence] run tp @s ~ ~-1.3 ~
+# Snap the descending chest (base + lid) to exact final position smoothly
+execute as @n[tag=mgs.mystery_box_active] at @s as @e[tag=mgs.mb_presence] run tp @s ~ ~-0.9 ~
 
 # Reset move state
 scoreboard players set #mb_move_timer mgs.data 0

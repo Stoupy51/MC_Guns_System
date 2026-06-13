@@ -28,6 +28,11 @@ function mgs:v5.0.1/zombies/perks/place_at with storage mgs:temp _pk
 # Set scoreboards on entity
 scoreboard players operation @n[tag=mgs.pk_new] mgs.zb.perk.id = #pk_counter mgs.data
 execute store result score @n[tag=mgs.pk_new] mgs.zb.perk.price run data get storage mgs:temp _pk_iter[0].price
+# Remember the map-defined price so solo Quick Revive can be reverted when players join
+scoreboard players operation @n[tag=mgs.pk_new] mgs.zb.perk.base_price = @n[tag=mgs.pk_new] mgs.zb.perk.price
+# Tag Quick Revive machines for dynamic solo pricing (copy [0] to a flat key: [0]{...} is invalid path syntax)
+data modify storage mgs:temp _pk_qr.perk_id set from storage mgs:temp _pk_iter[0].perk_id
+execute if data storage mgs:temp _pk_qr{perk_id:"quick_revive"} run tag @n[tag=mgs.pk_new] add mgs.pk_quick_revive
 # Store power requirement as 1/0 (true stored as 1b in NBT, data get returns 1)
 execute store result score @n[tag=mgs.pk_new] mgs.zb.perk.power run data get storage mgs:temp _pk_iter[0].power
 

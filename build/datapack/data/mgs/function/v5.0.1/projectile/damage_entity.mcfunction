@@ -62,8 +62,8 @@ execute store result score #decay_factor mgs.data run data get storage bs:out ma
 scoreboard players operation #expl_dmg mgs.data *= #decay_factor mgs.data
 scoreboard players operation #expl_dmg mgs.data /= #1000000 mgs.data
 
-# If zombie game is active: multiply by 5 for zombies, cap for players (6 hp = 3 hearts)
-execute if data storage mgs:zombies game{state:"active"} if entity @s[type=!player] run scoreboard players operation #expl_dmg mgs.data *= #5 mgs.data
+# If zombie game is active: explosives hit zombies 8x harder, cap for players (6 hp = 3 hearts)
+execute if data storage mgs:zombies game{state:"active"} if entity @s[type=!player] run scoreboard players operation #expl_dmg mgs.data *= #8 mgs.data
 execute if data storage mgs:zombies game{state:"active"} if entity @s[type=player] if score #expl_dmg mgs.data matches 60.. run scoreboard players set #expl_dmg mgs.data 60
 
 # Flak Jacket perk: halve explosive area damage to a perked MP player
@@ -84,7 +84,12 @@ data modify storage mgs:input with set value {target:"@s", amount:0.0f, attacker
 execute if entity @n[tag=mgs.temp_shooter,type=player] run data modify storage mgs:input with.attacker set value "@p[tag=mgs.temp_shooter]"
 execute store result storage mgs:input with.amount float 0.1 run scoreboard players get #expl_dmg mgs.data
 data modify storage mgs:input with.weapon set from storage mgs:gun all
-function mgs:v5.0.1/utils/signal_and_damage
+
+# If the victim IS the shooter, a self 'by' hit is cancelled by team friendlyFire=false,
+# so the shooter would take no damage from their own blast. Apply plain (unattributed)
+# damage to them instead; everyone else takes normal attributed damage.
+execute if entity @s[tag=mgs.temp_shooter] run function mgs:v5.0.1/utils/signal_and_damage_plain
+execute unless entity @s[tag=mgs.temp_shooter] run function mgs:v5.0.1/utils/signal_and_damage
 
 # Signal: on_kill (check if entity died after explosion damage, guard against double-fire)
 # Initialize to 0 (dead) — if entity no longer exists, score stays 0

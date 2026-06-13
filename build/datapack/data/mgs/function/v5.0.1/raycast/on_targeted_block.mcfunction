@@ -38,7 +38,7 @@ execute if score #is_pass_through mgs.data matches 0 if score #hardness mgs.data
 execute if score #is_pass_through mgs.data matches 0 if score #hardness mgs.data matches 0..299 run scoreboard players remove $raycast.piercing bs.lambda 1
 execute if score #is_pass_through mgs.data matches 0 if score #hardness mgs.data matches 300..999 run scoreboard players remove $raycast.piercing bs.lambda 2
 execute if score #is_pass_through mgs.data matches 0 if score #hardness mgs.data matches 1000..2999 run scoreboard players remove $raycast.piercing bs.lambda 3
-execute if score #is_pass_through mgs.data matches 0 if score #hardness mgs.data matches 3000.. run scoreboard players set $raycast.piercing bs.lambda 0
+execute if score #is_pass_through mgs.data matches 0 if score #hardness mgs.data matches 3000.. unless block ~ ~ ~ minecraft:barrier run scoreboard players set $raycast.piercing bs.lambda 0
 
 # Clamp piercing to 0 (Bookshelf raycast only stops at exactly 0, not negative)
 execute if score #is_pass_through mgs.data matches 0 if score $raycast.piercing bs.lambda matches ..-1 run scoreboard players set $raycast.piercing bs.lambda 0

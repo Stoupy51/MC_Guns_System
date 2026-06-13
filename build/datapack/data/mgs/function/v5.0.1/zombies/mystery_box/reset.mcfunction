@@ -6,6 +6,9 @@
 #			mgs:v5.0.1/zombies/mystery_box/collect
 #
 
+# Close the lid
+function mgs:v5.0.1/zombies/mystery_box/close_lid
+
 # Kill display entity
 kill @e[tag=mgs.mb_display]
 

@@ -21,6 +21,10 @@ execute if score #zb_to_spawn mgs.data matches 97.. run scoreboard players set #
 scoreboard players operation #zb_to_spawn mgs.data *= #zb_player_count mgs.data
 execute if score #zb_to_spawn mgs.data matches 257.. run scoreboard players set #zb_to_spawn mgs.data 256
 
+# Snapshot the round's total zombie count (zb_to_spawn is decremented as they spawn).
+# Used by the power-up drop chance: min(5%, 2/total_round_zombies).
+scoreboard players operation #zb_round_total mgs.data = #zb_to_spawn mgs.data
+
 # Calculate initial spawn timer and batch size for this round
 function mgs:v5.0.1/zombies/calc_spawn_timer
 
@@ -47,10 +51,11 @@ execute as @a[scores={mgs.zb.in_game=1},gamemode=!spectator] run function mgs:v5
 execute if data storage mgs:zombies game{variant:"zonweeb"} run function mgs:v5.0.1/zombies/perks/reduce_cooldowns
 execute if data storage mgs:zombies game{variant:"zonweeb"} run function mgs:v5.0.1/zombies/perks/check_guardian
 
-# Reset per-round power-up drop counter
+# Reset per-round power-up drop tracking
 scoreboard players set #zb_drops_this_round mgs.data 0
+scoreboard players set #zb_cycle_done mgs.data 0
 
-# Threshold = sum of all in-game player points at round start + 2000
-scoreboard players set #zb_score_to_drop mgs.data 2000
-scoreboard players operation #zb_score_to_drop mgs.data += @a[scores={mgs.zb.in_game=1}] mgs.zb.points
+# Start a fresh shuffle bag for the round; its size = one full drop cycle's worth of drops
+function mgs:v5.0.1/zombies/powerups/queue_refill
+execute store result score #zb_cycle_len mgs.data run data get storage mgs:data _pu_queue
 

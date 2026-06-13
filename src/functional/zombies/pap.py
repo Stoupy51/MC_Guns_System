@@ -143,7 +143,7 @@ execute if data storage {ns}:temp _pap_iter[0] run function {ns}:v{version}/zomb
 """)
 
 	write_versioned_function("zombies/pap/place_at", f"""
-$summon minecraft:interaction $(x) $(y) $(z) {{width:1.5f,height:-2.0f,response:true,Rotation:$(rotation),Tags:["{ns}.pap_machine","{ns}.gm_entity","bs.entity.interaction","{ns}.pap_new"]}}
+$summon minecraft:interaction $(x) $(y) $(z) {{width:1.69f,height:-2.0f,response:true,Rotation:$(rotation),Tags:["{ns}.pap_machine","{ns}.gm_entity","bs.entity.interaction","{ns}.pap_new"]}}
 """)
 
 	write_versioned_function("zombies/pap/store_data", f"""
@@ -803,7 +803,7 @@ execute if score #pap_li {ns}.data < #pap_lore_len {ns}.data run function {ns}:v
 # $(slot) = player weapon slot (hotbar.1 / hotbar.2 / hotbar.3)
 
 # Summon weapon item_display offset ahead of the machine (will slide to center)
-execute positioned ~ ~-2 ~ positioned ~ ~0.8 ~ run summon minecraft:item_display ^ ^ ^0.6 {{Tags:["{ns}.pap_weapon_display","{ns}.gm_entity"],billboard:"fixed",item_display:"fixed",transformation:{{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[0.6f,0.6f,0.6f]}}}}
+execute positioned ~ ~-2 ~ positioned ~ ~0.8 ~ run summon minecraft:item_display ^ ^ ^0.6 {{Tags:["{ns}.pap_weapon_display","{ns}.gm_entity"],billboard:"fixed",item_display:"fixed",transformation:{{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[0.4f,0.4f,0.4f]}}}}
 
 # Transfer weapon into display entity via contents slot, then clear player slot
 data modify entity @n[tag={ns}.pap_weapon_display,distance=..2] Rotation set from entity @s Rotation

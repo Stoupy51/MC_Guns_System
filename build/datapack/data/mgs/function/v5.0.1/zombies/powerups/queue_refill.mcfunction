@@ -1,9 +1,8 @@
 
 #> mgs:v5.0.1/zombies/powerups/queue_refill
 #
-# @executed	at @s
-#
-# @within	mgs:v5.0.1/zombies/powerups/queue_draw
+# @within	mgs:v5.0.1/zombies/start_round
+#			mgs:v5.0.1/zombies/powerups/queue_draw
 #
 
 data modify storage mgs:data _pu_queue set value []
@@ -16,12 +15,14 @@ data modify storage mgs:data _pu_queue append value 4
 data modify storage mgs:data _pu_queue append value 5
 
 # Each rare power-up has an independent 25% chance to join this cycle
-execute store result score #pu_rare_roll_6 mgs.data run random value 1..100
-execute if score #pu_rare_roll_6 mgs.data matches 1..25 run data modify storage mgs:data _pu_queue append value 6
-execute store result score #pu_rare_roll_7 mgs.data run random value 1..100
-execute if score #pu_rare_roll_7 mgs.data matches 1..25 run data modify storage mgs:data _pu_queue append value 7
-execute store result score #pu_rare_roll_8 mgs.data run random value 1..100
-execute if score #pu_rare_roll_8 mgs.data matches 1..25 run data modify storage mgs:data _pu_queue append value 8
-execute store result score #pu_rare_roll_9 mgs.data run random value 1..100
-execute if score #pu_rare_roll_9 mgs.data matches 1..25 run data modify storage mgs:data _pu_queue append value 9
+execute if score #zb_round mgs.data matches 6.. store result score #pu_rare_roll_6 mgs.data run random value 1..100
+execute if score #zb_round mgs.data matches 6.. if score #pu_rare_roll_6 mgs.data matches 1..25 run data modify storage mgs:data _pu_queue append value 6
+execute if score #zb_round mgs.data matches 6.. store result score #pu_rare_roll_7 mgs.data run random value 1..100
+execute if score #zb_round mgs.data matches 6.. if score #pu_rare_roll_7 mgs.data matches 1..25 run data modify storage mgs:data _pu_queue append value 7
+execute if score #zb_round mgs.data matches 6.. store result score #pu_rare_roll_8 mgs.data run random value 1..100
+execute if score #zb_round mgs.data matches 6.. if score #pu_rare_roll_8 mgs.data matches 1..25 run data modify storage mgs:data _pu_queue append value 8
+execute if score #zb_round mgs.data matches 6.. store result score #pu_rare_roll_9 mgs.data run random value 1..100
+execute if score #zb_round mgs.data matches 6.. if score #pu_rare_roll_9 mgs.data matches 1..25 run data modify storage mgs:data _pu_queue append value 9
+execute if score #zb_round mgs.data matches 6.. store result score #pu_rare_roll_10 mgs.data run random value 1..100
+execute if score #zb_round mgs.data matches 6.. if score #pu_rare_roll_10 mgs.data matches 1..25 run data modify storage mgs:data _pu_queue append value 10
 

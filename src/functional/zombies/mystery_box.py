@@ -15,7 +15,7 @@ from .common import build_weapon_magazine_data
 
 # Move animation constants
 MOVE_BEAR_TICKS: int = 30		# bear visible before ascend starts
-MOVE_ASCEND_TICKS: int = 80	# ascend at old location
+MOVE_ASCEND_TICKS: int = 80		# ascend at old location
 MOVE_WAIT_TICKS: int = 100		# 5-second wait before descending
 MOVE_DESCEND_TICKS: int = 70	# descend at new location
 MOVE_TOTAL_TICKS: int = MOVE_BEAR_TICKS + MOVE_ASCEND_TICKS + MOVE_WAIT_TICKS + MOVE_DESCEND_TICKS	# 280
@@ -28,6 +28,16 @@ def generate_mystery_box() -> None:
 	ns: str = Mem.ctx.project_id
 	version: str = Mem.ctx.project_version
 	owned_gun_macro_cd: str = "{" + ns + ':{gun:true,stats:{base_weapon:"$(weapon_id)"}}}'
+
+	# Presence box is two item_displays (base + lid) sharing this scale, so the lid can hinge open.
+	# 2.4 uniform scale makes the (full-width) model ~2.4 blocks wide.
+	MB_SCALE: float = 2.4
+	# Closed: identity. Open: hinge ~100° about X at the lid's front-bottom edge (like a real
+	# chest lid opening toward the front). item_display rotates about the model centre, so the
+	# translation cancels that out to keep the front-bottom edge fixed (T = p - R·p, with
+	# p = scaled offset of the hinge from centre = (0, -0.15, -0.6) at scale 2.4; R = -100° about X).
+	mb_closed_tf: str = f"{{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[{MB_SCALE}f,{MB_SCALE}f,{MB_SCALE}f]}}"
+	mb_open_tf: str = f"{{left_rotation:[-0.766f,0f,0f,0.643f],right_rotation:[0f,0f,0f,1f],translation:[0f,0.415f,-0.652f],scale:[{MB_SCALE}f,{MB_SCALE}f,{MB_SCALE}f]}}"
 
 	# Register teddy bear loot table for Mystery Box move animation
 	Mem.ctx.data[ns].loot_tables["zombies/mystery_box_bear"] = set_json_encoder(LootTable({
@@ -118,7 +128,7 @@ execute store result storage {ns}:temp _mbpos.z double 1 run scoreboard players 
 data modify storage {ns}:temp _mbpos.rotation set from storage {ns}:temp _mb_iter[0].rotation
 
 function {ns}:v{version}/zombies/mystery_box/summon_pos_at with storage {ns}:temp _mbpos
-execute as @n[tag={ns}.mb_new] at @s run tp @s ~ ~2 ~
+execute as @n[tag={ns}.mb_new] at @s run tp @s ^ ^2 ^0.3
 
 # Tag entities that can_start_on
 data modify storage {ns}:temp can_start_on set from storage {ns}:temp _mb_iter[0].can_start_on
@@ -134,7 +144,7 @@ execute if data storage {ns}:temp _mb_iter[0] run function {ns}:v{version}/zombi
 """)
 
 	write_versioned_function("zombies/mystery_box/summon_pos_at", f"""
-$summon minecraft:interaction $(x) $(y) $(z) {{width:1.5f,height:-2.0f,response:true,Rotation:$(rotation),Tags:["{ns}.mystery_box_pos","{ns}.gm_entity","{ns}.mb_new","bs.entity.interaction"]}}
+$summon minecraft:interaction $(x) $(y) $(z) {{width:2.0f,height:-2.0f,response:true,Rotation:$(rotation),Tags:["{ns}.mystery_box_pos","{ns}.gm_entity","{ns}.mb_new","bs.entity.interaction"]}}
 """)
 
 	write_versioned_function("zombies/mystery_box/sync_presence_display", f"""
@@ -146,7 +156,17 @@ execute as @n[tag={ns}.mystery_box_active] at @s run function {ns}:v{version}/zo
 """)
 
 	write_versioned_function("zombies/mystery_box/summon_presence_display", f"""
-$execute positioned ~ ~-1.3 ~ run summon minecraft:item_display ~ ~ ~ {{Rotation:[$(yaw),0f],Tags:["{ns}.mb_presence","{ns}.gm_entity"],item_display:"fixed",billboard:"fixed",item:{{id:"minecraft:chest",count:1}},transformation:{{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[0.85f,0.85f,0.85f]}}}}
+# Two-piece presence box: base + lid (both tagged mb_presence so they move/despawn together).
+$execute positioned ~ ~-0.9 ~ run summon minecraft:item_display ~ ~ ~ {{Rotation:[$(yaw),0f],Tags:["{ns}.mb_presence","{ns}.mb_base","{ns}.gm_entity"],item_display:"fixed",billboard:"fixed",item:{{id:"minecraft:chest",count:1,components:{{"minecraft:item_model":"{ns}:mystery_box_base"}}}},transformation:{mb_closed_tf}}}
+$execute positioned ~ ~-0.9 ~ run summon minecraft:item_display ~ ~ ~ {{Rotation:[$(yaw),0f],Tags:["{ns}.mb_presence","{ns}.mb_lid","{ns}.gm_entity"],item_display:"fixed",billboard:"fixed",item:{{id:"minecraft:chest",count:1,components:{{"minecraft:item_model":"{ns}:mystery_box_lid"}}}},transformation:{mb_closed_tf}}}
+""")
+
+	## Lid open/close animation (interpolated). One presence box is active at a time.
+	write_versioned_function("zombies/mystery_box/open_lid", f"""
+execute as @e[tag={ns}.mb_lid] run data merge entity @s {{transformation:{mb_open_tf},start_interpolation:0,interpolation_duration:8}}
+""")
+	write_versioned_function("zombies/mystery_box/close_lid", f"""
+execute as @e[tag={ns}.mb_lid] run data merge entity @s {{transformation:{mb_closed_tf},start_interpolation:0,interpolation_duration:8}}
 """)
 
 	write_versioned_function("zombies/mystery_box/move_active_position", f"""
@@ -231,6 +251,9 @@ scoreboard players set #mb_anim_timer {ns}.data 105
 # Spawn display entity at box position
 execute at @n[tag={ns}.mystery_box_active] run function {ns}:v{version}/zombies/mystery_box/spawn_display
 
+# Open the lid while the box is in use
+function {ns}:v{version}/zombies/mystery_box/open_lid
+
 # Announce
 tellraw @a[scores={{{ns}.zb.in_game=1}}] [{MGS_TAG},{{"text":"Mystery Box spinning...","color":"light_purple"}}]
 execute as @n[tag={ns}.mystery_box_active] at @s run function {ns}:v{version}/zombies/feedback/sound_box_open
@@ -301,7 +324,7 @@ function {ns}:v{version}/zombies/feedback/sound_deny
 	## Display entity: spawns at box level, floats up with interpolation
 	write_versioned_function("zombies/mystery_box/spawn_display", f"""
 # Spawn item display at box level with small scale and correct facing
-summon minecraft:item_display ~ ~-1.5 ~ {{Tags:["{ns}.mb_display","{ns}.gm_entity","{ns}.mb_display_new"],item_display:"fixed",item:{{id:"minecraft:nether_star",count:1,components:{{"minecraft:item_model":"air"}}}},transformation:{{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[0.5f,0.5f,0.5f]}},billboard:"fixed"}}
+summon minecraft:item_display ~ ~-1.5 ~ {{Tags:["{ns}.mb_display","{ns}.gm_entity","{ns}.mb_display_new"],item_display:"fixed",item:{{id:"minecraft:nether_star",count:1,components:{{"minecraft:item_model":"air"}}}},transformation:{{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[0.4f,0.4f,0.4f]}},billboard:"fixed"}}
 tp @n[tag={ns}.mb_display_new] ~ ~-1.5 ~ ~ ~
 
 # Apply interpolation a few ticks later to avoid same-tick spawn interpolation glitches.
@@ -407,12 +430,14 @@ $loot replace entity @n[tag={ns}.mb_display] contents loot {ns}:i/$(weapon_id)
 
 	## Teddy bear result: box is about to move (Black Ops style)
 	write_versioned_function("zombies/mystery_box/show_bear_result", f"""
+# Close the lid before the box moves away
+function {ns}:v{version}/zombies/mystery_box/close_lid
+
 # Replace display with teddy bear
 loot replace entity @n[tag={ns}.mb_display] contents loot {ns}:zombies/mystery_box_bear
 
 # Rise bear out of the box (like normal result)
-data merge entity @n[tag={ns}.mb_display] {{transformation:{{translation:[0f,1.5f,0f]}}}}
-data merge entity @n[tag={ns}.mb_display] {{interpolation_duration:40,transformation:{{translation:[0f,0.5f,0f]}},start_interpolation:0}}
+data merge entity @n[tag={ns}.mb_display] {{transformation:{{translation:[0f,1.25f,0f],scale:[0.75f,0.75f,0.75f]}}}}
 
 # Refund the buyer
 execute as @a[tag={ns}.mb_buyer] run scoreboard players operation @s {ns}.zb.points += #zb_mystery_box_price {ns}.config
@@ -467,8 +492,8 @@ execute if score #mb_move_timer {ns}.data matches 0 run function {ns}:v{version}
 """)
 
 	write_versioned_function("zombies/mystery_box/move_anim_start_ascend", f"""
-# Enable smooth movement on chest and bear displays
-data merge entity @n[tag={ns}.mb_presence] {{teleport_duration:5}}
+# Enable smooth movement on chest (base + lid) and bear displays
+execute as @e[tag={ns}.mb_presence] run data merge entity @s {{teleport_duration:5}}
 data merge entity @n[tag={ns}.mb_display] {{teleport_duration:5}}
 execute as @n[tag={ns}.mystery_box_active] at @s run function {ns}:v{version}/zombies/feedback/sound_box_disappear
 """)
@@ -477,11 +502,11 @@ execute as @n[tag={ns}.mystery_box_active] at @s run function {ns}:v{version}/zo
 	ascend_mid: int = ascend_end + MOVE_ASCEND_TICKS // 2	# 111
 	write_versioned_function("zombies/mystery_box/move_anim_ascend_step", f"""
 # Slow phase (first half): rise ~0.06 blocks/tick
-execute if score #mb_move_timer {ns}.data matches {ascend_mid}..{ascend_start} as @n[tag={ns}.mb_presence] at @s run tp @s ~ ~0.06 ~
+execute if score #mb_move_timer {ns}.data matches {ascend_mid}..{ascend_start} as @e[tag={ns}.mb_presence] at @s run tp @s ~ ~0.06 ~
 execute if score #mb_move_timer {ns}.data matches {ascend_mid}..{ascend_start} as @n[tag={ns}.mb_display] at @s run tp @s ~ ~0.06 ~
 
 # Fast phase (second half): rise ~0.18 blocks/tick
-execute if score #mb_move_timer {ns}.data matches {ascend_end}..{ascend_mid - 1} as @n[tag={ns}.mb_presence] at @s run tp @s ~ ~0.18 ~
+execute if score #mb_move_timer {ns}.data matches {ascend_end}..{ascend_mid - 1} as @e[tag={ns}.mb_presence] at @s run tp @s ~ ~0.18 ~
 execute if score #mb_move_timer {ns}.data matches {ascend_end}..{ascend_mid - 1} as @n[tag={ns}.mb_display] at @s run tp @s ~ ~0.18 ~
 
 # Smoke particles at old location
@@ -492,10 +517,11 @@ execute at @n[tag={ns}.mystery_box_active] run particle minecraft:large_smoke ~ 
 # Pick new active position
 function {ns}:v{version}/zombies/mystery_box/move_active_position
 
-# Spawn new chest display above the new active position (height = 0.7 + descent total)
+# Spawn new chest display (base + lid) above the new active position (height = 0.7 + descent total)
 # Fast: 35t * 0.18 = 6.3 blocks, Slow: 34t * 0.06 = 2.04 blocks, Total = 8.34
-execute as @n[tag={ns}.mystery_box_active] at @s positioned ~ ~7.04 ~ run summon minecraft:item_display ~ ~ ~ {{Tags:["{ns}.mb_presence","{ns}.gm_entity"],item_display:"fixed",billboard:"fixed",item:{{id:"minecraft:chest",count:1}},transformation:{{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[0.85f,0.85f,0.85f]}},teleport_duration:5}}
-execute as @n[tag={ns}.mystery_box_active] at @s as @n[tag={ns}.mb_presence] run data modify entity @s Rotation set from entity @n[tag={ns}.mystery_box_active] Rotation
+execute as @n[tag={ns}.mystery_box_active] at @s positioned ~ ~7.54 ~ run summon minecraft:item_display ~ ~ ~ {{Tags:["{ns}.mb_presence","{ns}.mb_base","{ns}.gm_entity"],item_display:"fixed",billboard:"fixed",item:{{id:"minecraft:chest",count:1,components:{{"minecraft:item_model":"{ns}:mystery_box_base"}}}},transformation:{mb_closed_tf},teleport_duration:5}}
+execute as @n[tag={ns}.mystery_box_active] at @s positioned ~ ~7.54 ~ run summon minecraft:item_display ~ ~ ~ {{Tags:["{ns}.mb_presence","{ns}.mb_lid","{ns}.gm_entity"],item_display:"fixed",billboard:"fixed",item:{{id:"minecraft:chest",count:1,components:{{"minecraft:item_model":"{ns}:mystery_box_lid"}}}},transformation:{mb_closed_tf},teleport_duration:5}}
+execute as @n[tag={ns}.mystery_box_active] at @s as @e[tag={ns}.mb_presence] run data modify entity @s Rotation set from entity @n[tag={ns}.mystery_box_active] Rotation
 
 # Light beam particles at new location
 execute at @n[tag={ns}.mystery_box_active] run particle minecraft:end_rod ~ ~3 ~ 0.1 2 0.1 0.05 20 force
@@ -506,18 +532,18 @@ execute as @n[tag={ns}.mystery_box_active] at @s run function {ns}:v{version}/zo
 	descend_mid: int = MOVE_DESCEND_TICKS // 2		# 35
 	write_versioned_function("zombies/mystery_box/move_anim_descend_step", f"""
 # Fast phase (first half): descend ~0.18 blocks/tick
-execute if score #mb_move_timer {ns}.data matches {descend_mid}..{transition - 1} as @n[tag={ns}.mb_presence] at @s run tp @s ~ ~-0.18 ~
+execute if score #mb_move_timer {ns}.data matches {descend_mid}..{transition - 1} as @e[tag={ns}.mb_presence] at @s run tp @s ~ ~-0.18 ~
 
 # Slow phase (second half, landing): descend ~0.06 blocks/tick
-execute if score #mb_move_timer {ns}.data matches {descend_end}..{descend_mid - 1} as @n[tag={ns}.mb_presence] at @s run tp @s ~ ~-0.06 ~
+execute if score #mb_move_timer {ns}.data matches {descend_end}..{descend_mid - 1} as @e[tag={ns}.mb_presence] at @s run tp @s ~ ~-0.06 ~
 
 # Trailing particles
 execute at @n[tag={ns}.mb_presence] run particle minecraft:end_rod ~ ~-0.5 ~ 0.2 0.1 0.2 0.01 1 force
 """)
 
 	write_versioned_function("zombies/mystery_box/move_anim_land", f"""
-# Snap the descending chest to exact final position smoothly
-execute as @n[tag={ns}.mystery_box_active] at @s as @n[tag={ns}.mb_presence] run tp @s ~ ~-1.3 ~
+# Snap the descending chest (base + lid) to exact final position smoothly
+execute as @n[tag={ns}.mystery_box_active] at @s as @e[tag={ns}.mb_presence] run tp @s ~ ~-0.9 ~
 
 # Reset move state
 scoreboard players set #mb_move_timer {ns}.data 0
@@ -585,6 +611,9 @@ $function $(give_function)
 
 	## Reset mystery box state
 	write_versioned_function("zombies/mystery_box/reset", f"""
+# Close the lid
+function {ns}:v{version}/zombies/mystery_box/close_lid
+
 # Kill display entity
 kill @e[tag={ns}.mb_display]
 

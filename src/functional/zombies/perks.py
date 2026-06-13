@@ -77,6 +77,8 @@ def generate_perks() -> None:
 # Perk machine entity scoreboards
 scoreboard objectives add {ns}.zb.perk.id dummy
 scoreboard objectives add {ns}.zb.perk.price dummy
+# Map-defined price, kept so dynamic discounts (solo Quick Revive) can be reverted
+scoreboard objectives add {ns}.zb.perk.base_price dummy
 scoreboard objectives add {ns}.zb.perk.power dummy
 
 # Perk ownership scoreboards
@@ -118,6 +120,11 @@ function {ns}:v{version}/zombies/perks/place_at with storage {ns}:temp _pk
 # Set scoreboards on entity
 scoreboard players operation @n[tag={ns}.pk_new] {ns}.zb.perk.id = #pk_counter {ns}.data
 execute store result score @n[tag={ns}.pk_new] {ns}.zb.perk.price run data get storage {ns}:temp _pk_iter[0].price
+# Remember the map-defined price so solo Quick Revive can be reverted when players join
+scoreboard players operation @n[tag={ns}.pk_new] {ns}.zb.perk.base_price = @n[tag={ns}.pk_new] {ns}.zb.perk.price
+# Tag Quick Revive machines for dynamic solo pricing (copy [0] to a flat key: [0]{{...}} is invalid path syntax)
+data modify storage {ns}:temp _pk_qr.perk_id set from storage {ns}:temp _pk_iter[0].perk_id
+execute if data storage {ns}:temp _pk_qr{{perk_id:"quick_revive"}} run tag @n[tag={ns}.pk_new] add {ns}.pk_quick_revive
 # Store power requirement as 1/0 (true stored as 1b in NBT, data get returns 1)
 execute store result score @n[tag={ns}.pk_new] {ns}.zb.perk.power run data get storage {ns}:temp _pk_iter[0].power
 
@@ -289,10 +296,32 @@ function #smithed.actionbar:message
 {perk_reset_all_players}
 """)
 
+	## Quick Revive solo pricing: 500 when alone, map price otherwise. Re-checked on join/leave.
+	write_versioned_function("zombies/perks/update_quick_revive_price", f"""
+# Count alive in-game players
+execute store result score #qr_players {ns}.data if entity @a[scores={{{ns}.zb.in_game=1}},gamemode=!spectator]
+
+# Solo (or none): discounted to 500
+execute if score #qr_players {ns}.data matches ..1 run scoreboard players set @e[tag={ns}.pk_quick_revive] {ns}.zb.perk.price 500
+
+# Two or more: restore each machine's map-defined price
+execute if score #qr_players {ns}.data matches 2.. as @e[tag={ns}.pk_quick_revive] run scoreboard players operation @s {ns}.zb.perk.price = @s {ns}.zb.perk.base_price
+""")
+
 	## Hook into preload_complete: setup perk machines
 	write_versioned_function("zombies/preload_complete", f"""
 # Setup perk machines
 execute if data storage {ns}:zombies game.map.perks[0] run function {ns}:v{version}/zombies/perks/setup
+
+# Apply initial Quick Revive solo pricing
+execute if data storage {ns}:zombies game.map.perks[0] run function {ns}:v{version}/zombies/perks/update_quick_revive_price
+""")
+
+	## Hook into game tick: keep Quick Revive solo price in sync as players join/leave (every ~1s)
+	write_versioned_function("zombies/game_tick", f"""
+scoreboard players add #qr_price_tick {ns}.data 1
+execute if score #qr_price_tick {ns}.data matches 20.. run scoreboard players set #qr_price_tick {ns}.data 0
+execute if score #qr_price_tick {ns}.data matches 0 run function {ns}:v{version}/zombies/perks/update_quick_revive_price
 """)
 
 	## Hook into stop: remove perk effects

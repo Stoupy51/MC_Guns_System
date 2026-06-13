@@ -32,9 +32,10 @@ scoreboard players operation @s mgs.cooldown += #total_tick mgs.data
 # Force weapon switch animation
 function mgs:v5.0.1/switch/force_switch_animation
 
-# Play reload sound (and send sounds for macro)
-function mgs:v5.0.1/sound/reload_start with storage mgs:gun all.sounds
-function mgs:v5.0.1/sound/player_begin with storage mgs:gun all.sounds
+# Play reload sound (and send sounds for macro). Each is guarded because not every
+# weapon defines all reload sounds — calling the macro without the arg would error.
+execute if data storage mgs:gun all.sounds.reload run function mgs:v5.0.1/sound/reload_start with storage mgs:gun all.sounds
+execute if data storage mgs:gun all.sounds.playerbegin run function mgs:v5.0.1/sound/player_begin with storage mgs:gun all.sounds
 
 # Add reloading tag
 tag @s add mgs.reloading

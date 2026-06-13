@@ -32,6 +32,8 @@
 		{"rolls": 1,"entries": [{"type": "minecraft:loot_table","value": "mgs:i/m590_shell"}]},
 		{"rolls": 1,"entries": [{"type": "minecraft:loot_table","value": "mgs:i/element_115"}]},
 		{"rolls": 1,"entries": [{"type": "minecraft:loot_table","value": "mgs:i/pack_a_punch"}]},
+		{"rolls": 1,"entries": [{"type": "minecraft:loot_table","value": "mgs:i/mystery_box_base"}]},
+		{"rolls": 1,"entries": [{"type": "minecraft:loot_table","value": "mgs:i/mystery_box_lid"}]},
 		{"rolls": 1,"entries": [{"type": "minecraft:loot_table","value": "mgs:i/perk_machine"}]},
 		{"rolls": 1,"entries": [{"type": "minecraft:loot_table","value": "mgs:i/perk_machine_juggernog"}]},
 		{"rolls": 1,"entries": [{"type": "minecraft:loot_table","value": "mgs:i/perk_machine_speed_cola"}]},
