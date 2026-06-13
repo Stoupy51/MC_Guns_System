@@ -297,8 +297,8 @@ execute store result score #decay_factor {ns}.data run data get storage bs:out m
 scoreboard players operation #expl_dmg {ns}.data *= #decay_factor {ns}.data
 scoreboard players operation #expl_dmg {ns}.data /= #1000000 {ns}.data
 
-# If zombie game is active: multiply by 5 for zombies, cap for players (6 hp = 3 hearts)
-execute if data storage {ns}:zombies game{{state:"active"}} if entity @s[type=!player] run scoreboard players operation #expl_dmg {ns}.data *= #5 {ns}.data
+# If zombie game is active: explosives hit zombies 8x harder, cap for players (6 hp = 3 hearts)
+execute if data storage {ns}:zombies game{{state:"active"}} if entity @s[type=!player] run scoreboard players operation #expl_dmg {ns}.data *= #8 {ns}.data
 execute if data storage {ns}:zombies game{{state:"active"}} if entity @s[type=player] if score #expl_dmg {ns}.data matches 60.. run scoreboard players set #expl_dmg {ns}.data 60
 
 # Flak Jacket perk: halve explosive area damage to a perked MP player
@@ -319,7 +319,12 @@ data modify storage {ns}:input with set value {{target:"@s", amount:0.0f, attack
 execute if entity @n[tag={ns}.temp_shooter,type=player] run data modify storage {ns}:input with.attacker set value "@p[tag={ns}.temp_shooter]"
 execute store result storage {ns}:input with.amount float 0.1 run scoreboard players get #expl_dmg {ns}.data
 data modify storage {ns}:input with.weapon set from storage {ns}:gun all
-function {ns}:v{version}/utils/signal_and_damage
+
+# If the victim IS the shooter, a self 'by' hit is cancelled by team friendlyFire=false,
+# so the shooter would take no damage from their own blast. Apply plain (unattributed)
+# damage to them instead; everyone else takes normal attributed damage.
+execute if entity @s[tag={ns}.temp_shooter] run function {ns}:v{version}/utils/signal_and_damage_plain
+execute unless entity @s[tag={ns}.temp_shooter] run function {ns}:v{version}/utils/signal_and_damage
 
 # Signal: on_kill (check if entity died after explosion damage, guard against double-fire)
 # Initialize to 0 (dead) — if entity no longer exists, score stays 0

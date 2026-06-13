@@ -55,6 +55,10 @@ execute as @a run scoreboard players operation @s mgs.zb.prev_kills = @s mgs.tot
 scoreboard players set @a mgs.mp.death_count 0
 scoreboard players set @a mgs.mp.spectate_timer 0
 
+# Clear other modes' in-game flags so their ticks/logic don't conflict with zombies
+scoreboard players set @a mgs.mp.in_game 0
+scoreboard players set @a mgs.mi.in_game 0
+
 # Disable natural regeneration, enable custom regen system
 # Disable natural regeneration, enable custom regen system
 gamerule natural_health_regeneration false

@@ -6,27 +6,24 @@
 # @within	mgs:v5.0.1/zombies/on_zombie_dying
 #
 
-# Compute combined score of all in-game players
-scoreboard players set #zb_total_score mgs.data 0
-scoreboard players operation #zb_total_score mgs.data += @a[scores={mgs.zb.in_game=1}] mgs.zb.points
+# Stop once a full drop cycle (one shuffle-bag worth) has dropped this round
+execute if score #zb_cycle_done mgs.data matches 1 run return 0
 
-# Guard: max 4 drops per round
-execute if score #zb_drops_this_round mgs.data matches 4.. run return 0
+# Drop chance = min(5%, 2/total_round_zombies), expressed in basis points (per 10000).
+# 5% = 500 bp; 2/total = 20000/total bp. Take the smaller of the two.
+scoreboard players set #pu_chance_bp mgs.data 500
+execute if score #zb_round_total mgs.data matches 1.. run scoreboard players set #pu_chance_tmp mgs.data 20000
+execute if score #zb_round_total mgs.data matches 1.. run scoreboard players operation #pu_chance_tmp mgs.data /= #zb_round_total mgs.data
+execute if score #zb_round_total mgs.data matches 1.. if score #pu_chance_tmp mgs.data < #pu_chance_bp mgs.data run scoreboard players operation #pu_chance_bp mgs.data = #pu_chance_tmp mgs.data
 
-# Guard: combined score must meet threshold
-execute unless score #zb_total_score mgs.data >= #zb_score_to_drop mgs.data run return 0
+# Roll against the chance
+execute store result score #pu_rng_roll mgs.data run random value 1..10000
+execute unless score #pu_rng_roll mgs.data <= #pu_chance_bp mgs.data run return 0
 
-# Guard: 4% RNG check
-execute store result score #pu_rng_roll mgs.data run random value 1..100
-execute unless score #pu_rng_roll mgs.data matches 1..4 run return 0
-
-# All checks passed: draw and spawn at this entity's position
+# Passed: draw and spawn at this entity's position
 function mgs:v5.0.1/zombies/powerups/spawn_random_at_self
 
-# Multiply threshold by 1.14 so each subsequent drop requires more score
-scoreboard players operation #zb_score_to_drop mgs.data *= #114 mgs.data
-scoreboard players operation #zb_score_to_drop mgs.data /= #100 mgs.data
-
-# Increment this round's drop counter
+# Count the drop; once a full cycle has dropped, no more drops this round
 scoreboard players add #zb_drops_this_round mgs.data 1
+execute if score #zb_drops_this_round mgs.data >= #zb_cycle_len mgs.data run scoreboard players set #zb_cycle_done mgs.data 1
 

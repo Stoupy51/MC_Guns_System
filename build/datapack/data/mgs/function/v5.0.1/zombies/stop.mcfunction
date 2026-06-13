@@ -65,11 +65,16 @@ scoreboard players reset @a mgs.zb.barrier_repairs
 kill @e[tag=mgs.pu_item]
 kill @e[tag=mgs.pu_text]
 scoreboard players set #zb_drops_this_round mgs.data 0
-scoreboard players set #zb_score_to_drop mgs.data 0
+scoreboard players set #zb_cycle_done mgs.data 0
+scoreboard players set #zb_cycle_len mgs.data 0
 scoreboard players set @a mgs.special.instant_kill 0
 scoreboard players set @a mgs.special.double_points 0
 scoreboard players set @a mgs.special.infinite_ammo 0
 data modify storage mgs:data _pu_queue set value []
+
+# Fire Sale cleanup (reset the global timer + remove its bossbar)
+scoreboard players set #zb_fire_sale_timer mgs.data 0
+bossbar remove mgs:pu_fire_sale
 
 # Remove all duration-based bossbars
 bossbar remove mgs:pu_insta_kill

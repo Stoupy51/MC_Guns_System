@@ -1,8 +1,8 @@
 
 # ruff: noqa: E501
 # Power-up System
-# Drops from zombies via a score-threshold gate (players' combined points vs. a rising threshold)
-# with a secondary 4% per-kill RNG check. Up to 4 drops per round.
+# On each zombie death there is a min(5%, 2/total_round_zombies) chance to drop a power-up,
+# until one full shuffle-bag cycle has dropped this round. Rares only appear after round 5.
 # Visual: item entity + text_display. Pickup by proximity (1.5 blocks). 26.5s lifetime.
 from stewbeet import JsonDict, LootTable, Mem, set_json_encoder, write_load_file, write_versioned_function
 
@@ -31,10 +31,12 @@ POWERUP_TYPES: dict[str, JsonDict] = {
 	"random_perk":    {"item": "minecraft:glass_bottle",         "display": "Random Perk",    "color": "light_purple", "type_num": 7, "tier": "rare"},
 	"free_pap":       {"item": "minecraft:diamond",              "display": "Free PAP",       "color": "aqua",         "type_num": 8, "tier": "rare"},
 	"cash_drop":      {"item": "minecraft:emerald",              "display": "Cash Drop",      "color": "green",        "type_num": 9, "tier": "rare"},
+	"fire_sale":      {"item": "minecraft:firework_star",        "display": "Fire Sale",      "color": "light_purple", "type_num": 10, "tier": "rare"},
 }
 
 POWERUP_LIFETIME: int    = 530  # 26.5 seconds in ticks
 POWERUP_BLINK_START: int = 200  # Blink warning when this many ticks remain (~10s)
+FIRE_SALE_DURATION: int  = 600  # 30 seconds in ticks: Mystery Box costs 10 points
 
 # Convenience view: only power-ups with a timed duration
 TIMED_POWERUPS: dict[str, JsonDict] = {k: v for k, v in POWERUP_TYPES.items() if "duration" in v}
@@ -82,29 +84,26 @@ scoreboard objectives add {ns}.zb.pu.timer dummy
 	# Drop check — called from on_zombie_dying after position is stored
 	# ──────────────────────────────────────────────────────────────────────────
 	write_versioned_function("zombies/powerups/check_drop", f"""
-# Compute combined score of all in-game players
-scoreboard players set #zb_total_score {ns}.data 0
-scoreboard players operation #zb_total_score {ns}.data += @a[scores={{{ns}.zb.in_game=1}}] {ns}.zb.points
+# Stop once a full drop cycle (one shuffle-bag worth) has dropped this round
+execute if score #zb_cycle_done {ns}.data matches 1 run return 0
 
-# Guard: max 4 drops per round
-execute if score #zb_drops_this_round {ns}.data matches 4.. run return 0
+# Drop chance = min(5%, 2/total_round_zombies), expressed in basis points (per 10000).
+# 5% = 500 bp; 2/total = 20000/total bp. Take the smaller of the two.
+scoreboard players set #pu_chance_bp {ns}.data 500
+execute if score #zb_round_total {ns}.data matches 1.. run scoreboard players set #pu_chance_tmp {ns}.data 20000
+execute if score #zb_round_total {ns}.data matches 1.. run scoreboard players operation #pu_chance_tmp {ns}.data /= #zb_round_total {ns}.data
+execute if score #zb_round_total {ns}.data matches 1.. if score #pu_chance_tmp {ns}.data < #pu_chance_bp {ns}.data run scoreboard players operation #pu_chance_bp {ns}.data = #pu_chance_tmp {ns}.data
 
-# Guard: combined score must meet threshold
-execute unless score #zb_total_score {ns}.data >= #zb_score_to_drop {ns}.data run return 0
+# Roll against the chance
+execute store result score #pu_rng_roll {ns}.data run random value 1..10000
+execute unless score #pu_rng_roll {ns}.data <= #pu_chance_bp {ns}.data run return 0
 
-# Guard: 4% RNG check
-execute store result score #pu_rng_roll {ns}.data run random value 1..100
-execute unless score #pu_rng_roll {ns}.data matches 1..4 run return 0
-
-# All checks passed: draw and spawn at this entity's position
+# Passed: draw and spawn at this entity's position
 function {ns}:v{version}/zombies/powerups/spawn_random_at_self
 
-# Multiply threshold by 1.14 so each subsequent drop requires more score
-scoreboard players operation #zb_score_to_drop {ns}.data *= #114 {ns}.data
-scoreboard players operation #zb_score_to_drop {ns}.data /= #100 {ns}.data
-
-# Increment this round's drop counter
+# Count the drop; once a full cycle has dropped, no more drops this round
 scoreboard players add #zb_drops_this_round {ns}.data 1
+execute if score #zb_drops_this_round {ns}.data >= #zb_cycle_len {ns}.data run scoreboard players set #zb_cycle_done {ns}.data 1
 """)
 
 	# Draws a random power-up from the shuffle bag and spawns it at @s's position.
@@ -161,9 +160,10 @@ function {ns}:v{version}/zombies/powerups/queue_extract with storage {ns}:temp _
 		for _pu_id, v in POWERUP_TYPES.items()
 		if v["tier"] == "common"
 	)
+	# Rares are gated to after round 5 (round 6+), then each has an independent 25% chance.
 	queue_refill_rare_lines: str = "\n".join(
-		f"execute store result score #pu_rare_roll_{v['type_num']} {ns}.data run random value 1..100\n"
-		f"execute if score #pu_rare_roll_{v['type_num']} {ns}.data matches 1..25 run data modify storage {ns}:data _pu_queue append value {v['type_num']}"
+		f"execute if score #zb_round {ns}.data matches 6.. store result score #pu_rare_roll_{v['type_num']} {ns}.data run random value 1..100\n"
+		f"execute if score #zb_round {ns}.data matches 6.. if score #pu_rare_roll_{v['type_num']} {ns}.data matches 1..25 run data modify storage {ns}:data _pu_queue append value {v['type_num']}"
 		for _pu_id, v in POWERUP_TYPES.items()
 		if v["tier"] == "rare"
 	)
@@ -225,8 +225,6 @@ scoreboard players set @n[tag={ns}.pu_item_new] {ns}.zb.pu.type {type_num}
 scoreboard players set @n[tag={ns}.pu_item_new] {ns}.zb.pu.timer {POWERUP_LIFETIME}
 tag @n[tag={ns}.pu_item_new] remove {ns}.pu_item_new
 $execute positioned $(x) $(y) $(z) run summon minecraft:text_display ~ ~1.0 ~ {{Tags:["{ns}.pu_text","{ns}.gm_entity"],text:{{"text":"{display_name}","color":"{color}","bold":true}},billboard:"vertical",background:0,shadow:true,view_range:64.0f,transformation:{{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[1.5f,1.5f,1.5f]}}}}
-tellraw @a[scores={{{ns}.zb.in_game=1}}] [{{"text":"{display_name}","color":"{color}","bold":true}},{{"text":" has dropped!","color":"white"}}]
-playsound minecraft:entity.experience_orb.pickup master @a[scores={{{ns}.zb.in_game=1}}] ~ ~ ~ 1.0 0.7
 """)
 
 	# ──────────────────────────────────────────────────────────────────────────
@@ -331,6 +329,7 @@ playsound minecraft:entity.player.levelup master @a[scores={{{ns}.zb.in_game=1}}
 function {ns}:v{version}/zombies/barriers/repair_all
 tellraw @a[scores={{{ns}.zb.in_game=1}}] [{MGS_TAG},{{"text":"Carpenter!","color":"green","bold":true}}]
 playsound minecraft:entity.player.levelup master @a[scores={{{ns}.zb.in_game=1}}] ~ ~ ~ 1.0 1.0
+scoreboard players add @a[scores={{{ns}.zb.in_game=1}}] {ns}.zb.points 200
 """)
 
 	## 6. Nuke
@@ -417,6 +416,44 @@ tellraw @a[scores={{{ns}.zb.in_game=1}}] [{MGS_TAG},{{"text":"Cash Drop! ","colo
 playsound minecraft:entity.player.levelup master @a[scores={{{ns}.zb.in_game=1}}] ~ ~ ~ 1.0 1.0
 """)
 
+	## 10. Fire Sale: Mystery Box costs 10 points for {FIRE_SALE_DURATION // 20}s (global timer + bossbar)
+	write_versioned_function("zombies/powerups/activate/fire_sale", f"""
+# Save the normal price only when no Fire Sale is already running (so we don't snapshot the discount)
+execute if score #zb_fire_sale_timer {ns}.data matches ..0 run scoreboard players operation #zb_fire_sale_saved {ns}.data = #zb_mystery_box_price {ns}.config
+
+# Apply the discount and (re)start the timer
+scoreboard players set #zb_mystery_box_price {ns}.config 10
+scoreboard players set #zb_fire_sale_timer {ns}.data {FIRE_SALE_DURATION}
+
+# Bossbar
+bossbar remove {ns}:pu_fire_sale
+bossbar add {ns}:pu_fire_sale {{"text":"Fire Sale - {FIRE_SALE_DURATION // 20}s","bold":true,"color":"light_purple"}}
+bossbar set {ns}:pu_fire_sale max {FIRE_SALE_DURATION}
+bossbar set {ns}:pu_fire_sale value {FIRE_SALE_DURATION}
+bossbar set {ns}:pu_fire_sale color pink
+bossbar set {ns}:pu_fire_sale style progress
+bossbar set {ns}:pu_fire_sale players @a[scores={{{ns}.zb.in_game=1}}]
+
+tellraw @a[scores={{{ns}.zb.in_game=1}}] [{MGS_TAG},{{"text":"Fire Sale! ","color":"light_purple","bold":true}},{{"text":"Mystery Box costs 10 points!","color":"white"}}]
+playsound minecraft:entity.player.levelup master @a[scores={{{ns}.zb.in_game=1}}] ~ ~ ~ 1.0 1.0
+""")
+
+	## Fire Sale global tick: countdown, bossbar update, restore price on expiry
+	write_versioned_function("zombies/powerups/fire_sale_tick", f"""
+# Decrement the shared timer
+scoreboard players remove #zb_fire_sale_timer {ns}.data 1
+
+# Expired: restore the saved price and remove the bossbar
+execute if score #zb_fire_sale_timer {ns}.data matches ..0 run scoreboard players operation #zb_mystery_box_price {ns}.config = #zb_fire_sale_saved {ns}.data
+execute if score #zb_fire_sale_timer {ns}.data matches ..0 run bossbar remove {ns}:pu_fire_sale
+
+# Still active: update bossbar value + countdown label
+execute if score #zb_fire_sale_timer {ns}.data matches 1.. store result bossbar {ns}:pu_fire_sale value run scoreboard players get #zb_fire_sale_timer {ns}.data
+execute if score #zb_fire_sale_timer {ns}.data matches 1.. run scoreboard players operation #zb_fs_seconds {ns}.data = #zb_fire_sale_timer {ns}.data
+execute if score #zb_fire_sale_timer {ns}.data matches 1.. run scoreboard players operation #zb_fs_seconds {ns}.data /= #20 {ns}.data
+execute if score #zb_fire_sale_timer {ns}.data matches 1.. run bossbar set {ns}:pu_fire_sale name [{{"text":"Fire Sale - ","color":"light_purple","bold":true}},{{"score":{{"name":"#zb_fs_seconds","objective":"{ns}.data"}},"color":"light_purple"}},"s"]
+""")
+
 	# ──────────────────────────────────────────────────────────────────────────
 	# Bossbar update functions — generated from TIMED_POWERUPS, one per entry
 	# ──────────────────────────────────────────────────────────────────────────
@@ -470,6 +507,9 @@ execute if score #zb_blink_state {ns}.data matches 2.. run scoreboard players se
 
 # Update bossbars
 {bb_update_calls}
+
+# Fire Sale: global timer countdown + price restore on expiry
+execute if score #zb_fire_sale_timer {ns}.data matches 1.. run function {ns}:v{version}/zombies/powerups/fire_sale_tick
 """)
 
 	# stop cleanup resets, generated from TIMED_POWERUPS
@@ -487,21 +527,27 @@ execute if score #zb_blink_state {ns}.data matches 2.. run scoreboard players se
 kill @e[tag={ns}.pu_item]
 kill @e[tag={ns}.pu_text]
 scoreboard players set #zb_drops_this_round {ns}.data 0
-scoreboard players set #zb_score_to_drop {ns}.data 0
+scoreboard players set #zb_cycle_done {ns}.data 0
+scoreboard players set #zb_cycle_len {ns}.data 0
 {stop_scoreboard_resets}
 data modify storage {ns}:data _pu_queue set value []
+
+# Fire Sale cleanup (reset the global timer + remove its bossbar)
+scoreboard players set #zb_fire_sale_timer {ns}.data 0
+bossbar remove {ns}:pu_fire_sale
 
 # Remove all duration-based bossbars
 {stop_bossbar_removes}
 """)
 
 	write_versioned_function("zombies/start_round", f"""
-# Reset per-round power-up drop counter
+# Reset per-round power-up drop tracking
 scoreboard players set #zb_drops_this_round {ns}.data 0
+scoreboard players set #zb_cycle_done {ns}.data 0
 
-# Threshold = sum of all in-game player points at round start + 2000
-scoreboard players set #zb_score_to_drop {ns}.data 2000
-scoreboard players operation #zb_score_to_drop {ns}.data += @a[scores={{{ns}.zb.in_game=1}}] {ns}.zb.points
+# Start a fresh shuffle bag for the round; its size = one full drop cycle's worth of drops
+function {ns}:v{version}/zombies/powerups/queue_refill
+execute store result score #zb_cycle_len {ns}.data run data get storage {ns}:data _pu_queue
 """)
 
 	write_versioned_function("zombies/check_kill_points", f"""

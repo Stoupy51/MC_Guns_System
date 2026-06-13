@@ -1,0 +1,58 @@
+{
+	"format_version": "1.21.11",
+	"credit": "MGS Mystery Box - lid (vanilla textures)",
+	"textures": {
+		"particle": "minecraft:block/stripped_dark_oak_log",
+		"frame": "minecraft:block/stripped_dark_oak_log",
+		"gold": "minecraft:block/gold_block"
+	},
+	"elements": [
+		{
+			"name": "lid",
+			"from": [0, 7, 8],
+			"to": [16, 9, 16],
+			"rotation": {"x": 0, "y": -180, "z": 0, "origin": [8, 7.9, 9.925]},
+			"faces": {
+				"north": {"uv": [0, 10, 16, 15], "texture": "#frame"},
+				"east": {"uv": [0, 10, 16, 15], "texture": "#frame"},
+				"south": {"uv": [0, 10, 16, 15], "texture": "#frame"},
+				"west": {"uv": [0, 10, 16, 15], "texture": "#frame"},
+				"up": {"uv": [1, 1, 15, 15], "texture": "#frame"},
+				"down": {"uv": [1, 1, 15, 15], "texture": "#frame"}
+			}
+		},
+		{
+			"name": "lid front band",
+			"from": [0, 7.8, 7.85],
+			"to": [16, 8.2, 8],
+			"rotation": {"x": 0, "y": -180, "z": 0, "origin": [8, 7.9, 9.925]},
+			"faces": {
+				"north": {"uv": [1, 7, 15, 10], "texture": "#gold"},
+				"east": {"uv": [15, 0, 16, 1], "texture": "#gold"},
+				"west": {"uv": [15, 0, 16, 1], "texture": "#gold"},
+				"up": {"uv": [0, 0, 16, 16], "texture": "#gold"},
+				"down": {"uv": [0, 0, 16, 16], "texture": "#gold"}
+			}
+		},
+		{
+			"name": "latch",
+			"from": [7, 7.2, 7.7],
+			"to": [9, 8.4, 8],
+			"rotation": {"x": 0, "y": -180, "z": 0, "origin": [8, 7.9, 9.925]},
+			"faces": {
+				"north": {"uv": [0, 0, 16, 16], "texture": "#gold"},
+				"east": {"uv": [15, 0, 16, 1], "texture": "#gold"},
+				"west": {"uv": [15, 0, 16, 1], "texture": "#gold"},
+				"up": {"uv": [15, 0, 16, 1], "texture": "#gold"},
+				"down": {"uv": [15, 0, 16, 1], "texture": "#gold"}
+			}
+		}
+	],
+	"display": {
+		"gui": {
+			"rotation": [30, 45, 0],
+			"translation": [0, 2, 0],
+			"scale": [0.75, 0.75, 0.75]
+		}
+	}
+}

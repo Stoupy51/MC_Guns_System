@@ -4,12 +4,14 @@
 # @within	mgs:v5.0.1/zombies/mystery_box/show_result
 #
 
+# Close the lid before the box moves away
+function mgs:v5.0.1/zombies/mystery_box/close_lid
+
 # Replace display with teddy bear
 loot replace entity @n[tag=mgs.mb_display] contents loot mgs:zombies/mystery_box_bear
 
 # Rise bear out of the box (like normal result)
-data merge entity @n[tag=mgs.mb_display] {transformation:{translation:[0f,1.5f,0f]}}
-data merge entity @n[tag=mgs.mb_display] {interpolation_duration:40,transformation:{translation:[0f,0.5f,0f]},start_interpolation:0}
+data merge entity @n[tag=mgs.mb_display] {transformation:{translation:[0f,1.25f,0f],scale:[0.75f,0.75f,0.75f]}}
 
 # Refund the buyer
 execute as @a[tag=mgs.mb_buyer] run scoreboard players operation @s mgs.zb.points += #zb_mystery_box_price mgs.config

@@ -44,6 +44,9 @@ scoreboard players set #mb_anim_timer mgs.data 105
 # Spawn display entity at box position
 execute at @n[tag=mgs.mystery_box_active] run function mgs:v5.0.1/zombies/mystery_box/spawn_display
 
+# Open the lid while the box is in use
+function mgs:v5.0.1/zombies/mystery_box/open_lid
+
 # Announce
 tellraw @a[scores={mgs.zb.in_game=1}] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.mystery_box_spinning","color":"light_purple"}]
 execute as @n[tag=mgs.mystery_box_active] at @s run function mgs:v5.0.1/zombies/feedback/sound_box_open

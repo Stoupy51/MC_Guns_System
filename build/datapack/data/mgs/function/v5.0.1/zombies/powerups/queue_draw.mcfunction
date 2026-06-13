@@ -23,6 +23,7 @@ execute if score #pu_q_len mgs.data matches 6 store result score #pu_q_idx mgs.d
 execute if score #pu_q_len mgs.data matches 7 store result score #pu_q_idx mgs.data run random value 0..6
 execute if score #pu_q_len mgs.data matches 8 store result score #pu_q_idx mgs.data run random value 0..7
 execute if score #pu_q_len mgs.data matches 9 store result score #pu_q_idx mgs.data run random value 0..8
+execute if score #pu_q_len mgs.data matches 10 store result score #pu_q_idx mgs.data run random value 0..9
 
 # Store index into temp storage for macro call, then extract and remove
 execute store result storage mgs:temp _pu_q.idx int 1 run scoreboard players get #pu_q_idx mgs.data

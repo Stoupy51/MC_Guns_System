@@ -29,6 +29,10 @@ execute if score #zb_to_spawn {ns}.data matches 97.. run scoreboard players set 
 scoreboard players operation #zb_to_spawn {ns}.data *= #zb_player_count {ns}.data
 execute if score #zb_to_spawn {ns}.data matches 257.. run scoreboard players set #zb_to_spawn {ns}.data 256
 
+# Snapshot the round's total zombie count (zb_to_spawn is decremented as they spawn).
+# Used by the power-up drop chance: min(5%, 2/total_round_zombies).
+scoreboard players operation #zb_round_total {ns}.data = #zb_to_spawn {ns}.data
+
 # Calculate initial spawn timer and batch size for this round
 function {ns}:v{version}/zombies/calc_spawn_timer
 

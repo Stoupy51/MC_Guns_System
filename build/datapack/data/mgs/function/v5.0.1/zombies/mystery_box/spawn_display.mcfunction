@@ -7,7 +7,7 @@
 #
 
 # Spawn item display at box level with small scale and correct facing
-summon minecraft:item_display ~ ~-1.5 ~ {Tags:["mgs.mb_display","mgs.gm_entity","mgs.mb_display_new"],item_display:"fixed",item:{id:"minecraft:nether_star",count:1,components:{"minecraft:item_model":"air"}},transformation:{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[0.5f,0.5f,0.5f]},billboard:"fixed"}
+summon minecraft:item_display ~ ~-1.5 ~ {Tags:["mgs.mb_display","mgs.gm_entity","mgs.mb_display_new"],item_display:"fixed",item:{id:"minecraft:nether_star",count:1,components:{"minecraft:item_model":"air"}},transformation:{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[0.4f,0.4f,0.4f]},billboard:"fixed"}
 tp @n[tag=mgs.mb_display_new] ~ ~-1.5 ~ ~ ~
 
 # Apply interpolation a few ticks later to avoid same-tick spawn interpolation glitches.

@@ -244,6 +244,8 @@ scoreboard objectives add mgs.zb.wb.rfpap dummy
 # Perk machine entity scoreboards
 scoreboard objectives add mgs.zb.perk.id dummy
 scoreboard objectives add mgs.zb.perk.price dummy
+# Map-defined price, kept so dynamic discounts (solo Quick Revive) can be reverted
+scoreboard objectives add mgs.zb.perk.base_price dummy
 scoreboard objectives add mgs.zb.perk.power dummy
 
 # Perk ownership scoreboards
@@ -391,6 +393,7 @@ execute unless data storage mgs:maps missions run data modify storage mgs:maps m
 scoreboard players set #2 mgs.data 2
 scoreboard players set #5 mgs.data 5
 scoreboard players set #6 mgs.data 6
+scoreboard players set #8 mgs.data 8
 scoreboard players set #10 mgs.data 10
 scoreboard players set #15 mgs.data 15
 scoreboard players set #20 mgs.data 20
@@ -399,7 +402,6 @@ scoreboard players set #45 mgs.data 45
 scoreboard players set #50 mgs.data 50
 scoreboard players set #60 mgs.data 60
 scoreboard players set #100 mgs.data 100
-scoreboard players set #114 mgs.data 114
 scoreboard players set #150 mgs.data 150
 scoreboard players set #200 mgs.data 200
 scoreboard players set #1000 mgs.data 1000

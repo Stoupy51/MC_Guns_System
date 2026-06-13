@@ -4,6 +4,7 @@
 # @executed	at @s
 #
 # @within	mgs:v5.0.1/utils/signal_and_damage
+#			mgs:v5.0.1/utils/signal_and_damage_plain
 #			mgs:v5.0.1/multiplayer/bounds_kill
 #			mgs:v5.0.1/multiplayer/gamemodes/snd/bomb_explodes [ at @e[tag=mgs.snd_bomb] & as @a[distance=..10,gamemode=!creative,scores={mgs.mp.in_game=1..}] ]
 #

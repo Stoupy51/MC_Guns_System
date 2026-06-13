@@ -242,9 +242,10 @@ scoreboard players operation @s {ns}.cooldown += #total_tick {ns}.data
 # Force weapon switch animation
 function {ns}:v{version}/switch/force_switch_animation
 
-# Play reload sound (and send sounds for macro)
-function {ns}:v{version}/sound/reload_start with storage {ns}:gun all.sounds
-function {ns}:v{version}/sound/player_begin with storage {ns}:gun all.sounds
+# Play reload sound (and send sounds for macro). Each is guarded because not every
+# weapon defines all reload sounds — calling the macro without the arg would error.
+execute if data storage {ns}:gun all.sounds.reload run function {ns}:v{version}/sound/reload_start with storage {ns}:gun all.sounds
+execute if data storage {ns}:gun all.sounds.playerbegin run function {ns}:v{version}/sound/player_begin with storage {ns}:gun all.sounds
 
 # Add reloading tag
 tag @s add {ns}.reloading

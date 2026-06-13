@@ -5,11 +5,11 @@
 #
 
 # Slow phase (first half): rise ~0.06 blocks/tick
-execute if score #mb_move_timer mgs.data matches 211..251 as @n[tag=mgs.mb_presence] at @s run tp @s ~ ~0.06 ~
+execute if score #mb_move_timer mgs.data matches 211..251 as @e[tag=mgs.mb_presence] at @s run tp @s ~ ~0.06 ~
 execute if score #mb_move_timer mgs.data matches 211..251 as @n[tag=mgs.mb_display] at @s run tp @s ~ ~0.06 ~
 
 # Fast phase (second half): rise ~0.18 blocks/tick
-execute if score #mb_move_timer mgs.data matches 171..210 as @n[tag=mgs.mb_presence] at @s run tp @s ~ ~0.18 ~
+execute if score #mb_move_timer mgs.data matches 171..210 as @e[tag=mgs.mb_presence] at @s run tp @s ~ ~0.18 ~
 execute if score #mb_move_timer mgs.data matches 171..210 as @n[tag=mgs.mb_display] at @s run tp @s ~ ~0.18 ~
 
 # Smoke particles at old location

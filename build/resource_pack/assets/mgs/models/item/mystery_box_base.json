@@ -1,0 +1,336 @@
+{
+	"parent": "item/generated",
+	"textures": {
+		"particle": "minecraft:block/oak_planks",
+		"crate": "minecraft:block/oak_planks",
+		"frame": "minecraft:block/stripped_dark_oak_log",
+		"gold": "minecraft:block/gold_block",
+		"glow": "minecraft:block/sea_lantern",
+		"hay_top": "minecraft:block/hay_block_top"
+	},
+	"format_version": "1.21.11",
+	"credit": "MGS Mystery Box - base/crate (vanilla textures, hollow)",
+	"elements": [
+		{
+			"name": "base plinth",
+			"from": [
+				0,
+				0,
+				5
+			],
+			"to": [
+				16,
+				1.5,
+				13
+			],
+			"rotation": {
+				"x": 0,
+				"y": -180,
+				"z": 0,
+				"origin": [8,2.625,8.575]
+			},
+			"faces": {
+				"north": {"uv": [0,13,16,16],"texture": "#frame"},
+				"east": {"uv": [0,13,16,16],"texture": "#frame"},
+				"south": {"uv": [0,13,16,16],"texture": "#frame"},
+				"west": {"uv": [0,13,16,16],"texture": "#frame"},
+				"up": {"uv": [0,0,16,16],"texture": "#frame"},
+				"down": {"uv": [0,0,16,16],"texture": "#frame"}
+			}
+		},
+		{
+			"name": "hay floor",
+			"from": [
+				1.5,
+				1.5,
+				6.5
+			],
+			"to": [
+				14.5,
+				3,
+				11.5
+			],
+			"rotation": {
+				"x": 0,
+				"y": -180,
+				"z": 0,
+				"origin": [8,2.625,8.575]
+			},
+			"faces": {
+				"up": {"uv": [0,0,16,16],"texture": "#hay_top"}
+			}
+		},
+		{
+			"name": "wall front",
+			"from": [
+				0.5,
+				1.5,
+				5.5
+			],
+			"to": [
+				15.5,
+				7,
+				6.5
+			],
+			"rotation": {
+				"x": 0,
+				"y": -180,
+				"z": 0,
+				"origin": [8,2.625,8.575]
+			},
+			"faces": {
+				"north": {"uv": [0,0,16,16],"texture": "#crate"},
+				"south": {"uv": [0,0,16,16],"texture": "#crate"},
+				"up": {"uv": [0,6,16,10],"texture": "#crate"}
+			}
+		},
+		{
+			"name": "wall back",
+			"from": [
+				0.5,
+				1.5,
+				11.5
+			],
+			"to": [
+				15.5,
+				7,
+				12.5
+			],
+			"rotation": {
+				"x": 0,
+				"y": -180,
+				"z": 0,
+				"origin": [8,2.625,8.575]
+			},
+			"faces": {
+				"north": {"uv": [0,0,16,16],"texture": "#crate"},
+				"south": {"uv": [0,0,16,16],"texture": "#crate"},
+				"up": {"uv": [0,6,16,10],"texture": "#crate"}
+			}
+		},
+		{
+			"name": "wall left",
+			"from": [
+				0.5,
+				1.5,
+				6.5
+			],
+			"to": [
+				1.5,
+				7,
+				11.5
+			],
+			"rotation": {
+				"x": 0,
+				"y": -180,
+				"z": 0,
+				"origin": [8,2.625,8.575]
+			},
+			"faces": {
+				"east": {"uv": [0,0,16,16],"texture": "#crate"},
+				"west": {"uv": [0,0,16,16],"texture": "#crate"},
+				"up": {"uv": [6,0,10,16],"texture": "#crate"}
+			}
+		},
+		{
+			"name": "wall right",
+			"from": [
+				14.5,
+				1.5,
+				6.5
+			],
+			"to": [
+				15.5,
+				7,
+				11.5
+			],
+			"rotation": {
+				"x": 0,
+				"y": -180,
+				"z": 0,
+				"origin": [8,2.625,8.575]
+			},
+			"faces": {
+				"east": {"uv": [0,0,16,16],"texture": "#crate"},
+				"west": {"uv": [0,0,16,16],"texture": "#crate"},
+				"up": {"uv": [6,0,10,16],"texture": "#crate"}
+			}
+		},
+		{
+			"name": "corner nw",
+			"from": [
+				0.2,
+				1.5,
+				5.2
+			],
+			"to": [
+				1.8,
+				7.1,
+				6.8
+			],
+			"rotation": {
+				"x": 0,
+				"y": -180,
+				"z": 0,
+				"origin": [8,2.625,8.575]
+			},
+			"faces": {
+				"north": {"uv": [0,0,16,16],"texture": "#gold"},
+				"east": {"uv": [0,0,16,16],"texture": "#gold"},
+				"south": {"uv": [0,0,16,16],"texture": "#gold"},
+				"west": {"uv": [0,0,16,16],"texture": "#gold"},
+				"up": {"uv": [0,0,16,16],"texture": "#gold"}
+			}
+		},
+		{
+			"name": "corner ne",
+			"from": [
+				14.2,
+				1.5,
+				5.2
+			],
+			"to": [
+				15.8,
+				7.1,
+				6.8
+			],
+			"rotation": {
+				"x": 0,
+				"y": -180,
+				"z": 0,
+				"origin": [8,2.625,8.575]
+			},
+			"faces": {
+				"north": {"uv": [0,0,16,16],"texture": "#gold"},
+				"east": {"uv": [0,0,16,16],"texture": "#gold"},
+				"south": {"uv": [0,0,16,16],"texture": "#gold"},
+				"west": {"uv": [0,0,16,16],"texture": "#gold"},
+				"up": {"uv": [0,0,16,16],"texture": "#gold"}
+			}
+		},
+		{
+			"name": "corner sw",
+			"from": [
+				0.2,
+				1.5,
+				11.2
+			],
+			"to": [
+				1.8,
+				7.1,
+				12.8
+			],
+			"rotation": {
+				"x": 0,
+				"y": -180,
+				"z": 0,
+				"origin": [8,2.625,8.575]
+			},
+			"faces": {
+				"north": {"uv": [0,0,16,16],"texture": "#gold"},
+				"east": {"uv": [0,0,16,16],"texture": "#gold"},
+				"south": {"uv": [0,0,16,16],"texture": "#gold"},
+				"west": {"uv": [0,0,16,16],"texture": "#gold"},
+				"up": {"uv": [0,0,16,16],"texture": "#gold"}
+			}
+		},
+		{
+			"name": "corner se",
+			"from": [
+				14.2,
+				1.5,
+				11.2
+			],
+			"to": [
+				15.8,
+				7.1,
+				12.8
+			],
+			"rotation": {
+				"x": 0,
+				"y": -180,
+				"z": 0,
+				"origin": [8,2.625,8.575]
+			},
+			"faces": {
+				"north": {"uv": [0,0,16,16],"texture": "#gold"},
+				"east": {"uv": [0,0,16,16],"texture": "#gold"},
+				"south": {"uv": [0,0,16,16],"texture": "#gold"},
+				"west": {"uv": [0,0,16,16],"texture": "#gold"},
+				"up": {"uv": [0,0,16,16],"texture": "#gold"}
+			}
+		},
+		{
+			"name": "question sign",
+			"from": [
+				5,
+				2.5,
+				5.2
+			],
+			"to": [
+				11,
+				6.5,
+				5.4
+			],
+			"rotation": {
+				"x": 0,
+				"y": -180,
+				"z": 0,
+				"origin": [8,2.625,8.575]
+			},
+			"faces": {
+				"east": {"uv": [0,0,16,16],"texture": "#glow"},
+				"south": {"uv": [0,0,16,16],"texture": "#glow"},
+				"west": {"uv": [0,0,16,16],"texture": "#glow"},
+				"up": {"uv": [0,0,16,16],"texture": "#glow"},
+				"down": {"uv": [0,0,16,16],"texture": "#glow"}
+			}
+		},
+		{
+			"name": "question frame",
+			"from": [
+				4.5,
+				2,
+				5.1
+			],
+			"to": [
+				11.5,
+				7,
+				5.2
+			],
+			"rotation": {
+				"x": 0,
+				"y": -180,
+				"z": 0,
+				"origin": [8,2.625,8.575]
+			},
+			"faces": {
+				"north": {"uv": [0,0,16,16],"texture": "#gold"},
+				"east": {"uv": [0,0,16,16],"texture": "#gold"},
+				"south": {"uv": [0,0,16,16],"texture": "#gold"},
+				"west": {"uv": [0,0,16,16],"texture": "#gold"},
+				"up": {"uv": [0,0,16,16],"texture": "#gold"},
+				"down": {"uv": [0,0,16,16],"texture": "#gold"}
+			}
+		}
+	],
+	"display": {
+		"gui": {
+			"rotation": [
+				30,
+				45,
+				0
+			],
+			"translation": [
+				0,
+				2,
+				0
+			],
+			"scale": [
+				0.75,
+				0.75,
+				0.75
+			]
+		}
+	}
+}

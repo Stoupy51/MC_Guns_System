@@ -206,6 +206,9 @@ execute unless score #hp_cur {ns}.data >= #hp_max {ns}.data run effect give @s m
     for tag in ["bypasses_cooldown", "no_knockback"]:
         write_tag(tag, Mem.ctx.data["minecraft"].damage_type_tags, [f"{ns}:bullet"])
     write_versioned_function("utils/damage", f"$damage $(target) $(amount) {ns}:bullet by $(attacker)")
+    # Unattributed variant: no "by <attacker>", so team friendlyFire=false can't cancel it
+    # (used for self-inflicted explosion damage, where the shooter and victim share a team).
+    write_versioned_function("utils/damage_plain", "$damage $(target) $(amount) minecraft:explosion")
     write_versioned_function("utils/signal_and_damage", f"""
 # Check if target is a player in active MP game and damage would be lethal -> simulate death
 execute store result score #incoming_dmg {ns}.data run data get storage {ns}:input with.amount 10
@@ -214,6 +217,17 @@ execute if entity @s[type=player,scores={{{ns}.mp.in_game=1..}}] if score #incom
 
 # Non-lethal or non-MP: normal damage + signals
 function {ns}:v{version}/utils/damage with storage {ns}:input with
+function #{ns}:signals/damage with storage {ns}:input with
+""")
+    # Same flow as signal_and_damage but applies plain (unattributed) damage.
+    write_versioned_function("utils/signal_and_damage_plain", f"""
+# Check if target is a player in active MP game and damage would be lethal -> simulate death
+execute store result score #incoming_dmg {ns}.data run data get storage {ns}:input with.amount 10
+execute store result score #victim_hp {ns}.data run data get entity @s Health 10
+execute if entity @s[type=player,scores={{{ns}.mp.in_game=1..}}] if score #incoming_dmg {ns}.data >= #victim_hp {ns}.data run return run function {ns}:v{version}/multiplayer/simulate_death
+
+# Non-lethal or non-MP: plain damage + signals
+function {ns}:v{version}/utils/damage_plain with storage {ns}:input with
 function #{ns}:signals/damage with storage {ns}:input with
 """)
 
