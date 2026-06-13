@@ -113,6 +113,10 @@ execute as @a run scoreboard players operation @s {ns}.zb.prev_kills = @s {ns}.t
 scoreboard players set @a {ns}.mp.death_count 0
 scoreboard players set @a {ns}.mp.spectate_timer 0
 
+# Clear other modes' in-game flags so their ticks/logic don't conflict with zombies
+scoreboard players set @a {ns}.mp.in_game 0
+scoreboard players set @a {ns}.mi.in_game 0
+
 # Disable natural regeneration, enable custom regen system
 {regen_enable_lines(ns)}
 

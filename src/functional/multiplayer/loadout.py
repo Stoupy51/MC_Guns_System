@@ -67,7 +67,45 @@ data modify storage {ns}:temp slots set from storage {ns}:temp current_class.slo
 # Recursively apply all slots
 execute if data storage {ns}:temp slots[0] run function {ns}:v{version}/multiplayer/apply_next_slot
 
+# Apply perks from the selected loadout (standard class or custom)
+function {ns}:v{version}/multiplayer/apply_perks
+
 # Give class menu item (only in multiplayer)
 execute if entity @s[tag={ns}.give_class_menu] run loot replace entity @s hotbar.4 loot {ns}:i/class_menu
+""")
+
+	## apply_perks: reads the perks list from temp current_class and sets the special.* flags.
+	## Shared by both standard classes and custom loadouts so every loadout starts from a clean
+	## perk state (any perk not on the loadout is reset to 0 / defaults).
+	write_versioned_function("multiplayer/apply_perks", f"""
+# Sleight of Hand / Fast Hands: percentages (50 = 50% faster), 0 when absent
+execute if data storage {ns}:temp current_class{{perks:["quick_reload"]}} run scoreboard players set @s {ns}.special.quick_reload 50
+execute unless data storage {ns}:temp current_class{{perks:["quick_reload"]}} run scoreboard players set @s {ns}.special.quick_reload 0
+execute if data storage {ns}:temp current_class{{perks:["quick_swap"]}} run scoreboard players set @s {ns}.special.quick_swap 50
+execute unless data storage {ns}:temp current_class{{perks:["quick_swap"]}} run scoreboard players set @s {ns}.special.quick_swap 0
+
+# Flag perks (0/1), read by the systems they affect
+execute store success score #has_perk {ns}.data if data storage {ns}:temp current_class{{perks:["scavenger"]}}
+scoreboard players operation @s {ns}.special.scavenger = #has_perk {ns}.data
+execute store success score #has_perk {ns}.data if data storage {ns}:temp current_class{{perks:["flak_jacket"]}}
+scoreboard players operation @s {ns}.special.flak_jacket = #has_perk {ns}.data
+execute store success score #has_perk {ns}.data if data storage {ns}:temp current_class{{perks:["tracker"]}}
+scoreboard players operation @s {ns}.special.tracker = #has_perk {ns}.data
+execute store success score #has_perk {ns}.data if data storage {ns}:temp current_class{{perks:["tactical_mask"]}}
+scoreboard players operation @s {ns}.special.tactical_mask = #has_perk {ns}.data
+execute store success score #has_perk {ns}.data if data storage {ns}:temp current_class{{perks:["overkill"]}}
+scoreboard players operation @s {ns}.special.overkill = #has_perk {ns}.data
+execute store success score #has_perk {ns}.data if data storage {ns}:temp current_class{{perks:["quick_fix"]}}
+scoreboard players operation @s {ns}.special.quick_fix = #has_perk {ns}.data
+
+# Juggernaut: flag + raised max health (24 HP), reset to default 20 otherwise
+execute store success score #has_perk {ns}.data if data storage {ns}:temp current_class{{perks:["juggernaut"]}}
+scoreboard players operation @s {ns}.special.juggernaut = #has_perk {ns}.data
+execute if score #has_perk {ns}.data matches 1 run attribute @s minecraft:max_health base set 24
+execute if score #has_perk {ns}.data matches 0 run attribute @s minecraft:max_health base reset
+
+# Loadouts never grant the admin/powerup buffs — clear any leftovers
+scoreboard players set @s {ns}.special.infinite_ammo 0
+scoreboard players set @s {ns}.special.instant_kill 0
 """)
 

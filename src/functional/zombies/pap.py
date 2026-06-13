@@ -803,7 +803,7 @@ execute if score #pap_li {ns}.data < #pap_lore_len {ns}.data run function {ns}:v
 # $(slot) = player weapon slot (hotbar.1 / hotbar.2 / hotbar.3)
 
 # Summon weapon item_display offset ahead of the machine (will slide to center)
-execute positioned ~ ~0.8 ~ run summon minecraft:item_display ^ ^ ^0.6 {{Tags:["{ns}.pap_weapon_display","{ns}.gm_entity"],billboard:"fixed",item_display:"fixed",transformation:{{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[0.6f,0.6f,0.6f]}}}}
+execute positioned ~ ~-2 ~ positioned ~ ~0.8 ~ run summon minecraft:item_display ^ ^ ^0.6 {{Tags:["{ns}.pap_weapon_display","{ns}.gm_entity"],billboard:"fixed",item_display:"fixed",transformation:{{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[0.6f,0.6f,0.6f]}}}}
 
 # Transfer weapon into display entity via contents slot, then clear player slot
 data modify entity @n[tag={ns}.pap_weapon_display,distance=..2] Rotation set from entity @s Rotation
@@ -899,7 +899,7 @@ execute if score @s {ns}.pap_anim matches 25 as @n[tag={ns}.pap_weapon_display,d
 execute if score @s {ns}.pap_anim matches 5 as @n[tag={ns}.pap_weapon_display,distance=..2] at @s run tp @s ^ ^ ^-0.04
 
 # Phase: RETREAT (timer 1..205) — smoke particles + looping sound every 20 ticks
-execute if score @s {ns}.pap_anim matches 1..205 run particle smoke ~ ~0.5 ~ 0.2 0.2 0.2 0.05 2 force
+execute if score @s {ns}.pap_anim matches 1..205 positioned ~ ~-2 ~ run particle smoke ~ ~0.5 ~ 0.2 0.2 0.2 0.05 2 force
 execute store result score #pap_t {ns}.data run scoreboard players get @s {ns}.pap_anim
 scoreboard players operation #pap_t {ns}.data %= #20 {ns}.data
 execute if score @s {ns}.pap_anim matches 1..205 if score #pap_t {ns}.data matches 0 run function {ns}:v{version}/zombies/feedback/sound_pap_retreat_loop
@@ -919,7 +919,7 @@ execute as @n[tag={ns}.pap_weapon_display,distance=..2] at @s run tp @s ^ ^ ^-0.
 # Sparse purple dust every 2 ticks along the horizontal path
 execute store result score #pap_t {ns}.data run scoreboard players get @s {ns}.pap_anim
 scoreboard players operation #pap_t {ns}.data %= #2 {ns}.data
-execute if score #pap_t {ns}.data matches 0 run particle dust{{color:[0.565,0.0,1.0],scale:1.5}} ~ ~0.8 ~ 0.4 0.2 0.2 0 4 force
+execute if score #pap_t {ns}.data matches 0 positioned ~ ~-2 ~ run particle dust{{color:[0.565,0.0,1.0],scale:1.5}} ~ ~0.8 ~ 0.4 0.2 0.2 0 4 force
 """)
 
 	# Trigger inside processing (weapon already at center, no transformation change needed).
@@ -931,8 +931,8 @@ function {ns}:v{version}/zombies/feedback/sound_pap_upgrade
 	# Dense particles and sounds while the weapon is being processed inside the machine.
 	write_versioned_function("zombies/pap/anim/inside", f"""
 # Dense purple dust + end_rod particles every tick
-particle dust{{color:[0.565,0.0,1.0],scale:1.5}} ~ ~0.8 ~ 0.4 0.3 0.4 0 1 force
-particle end_rod ~ ~0.8 ~ 0.3 0.2 0.3 0.05 1 force
+execute positioned ~ ~-2 ~ run particle dust{{color:[0.565,0.0,1.0],scale:1.5}} ~ ~0.8 ~ 0.4 0.3 0.4 0 1 force
+execute positioned ~ ~-2 ~ run particle end_rod ~ ~0.8 ~ 0.3 0.2 0.3 0.05 1 force
 
 # Periodic processing sound every 20 ticks
 execute store result score #pap_t {ns}.data run scoreboard players get @s {ns}.pap_anim
@@ -949,8 +949,8 @@ function {ns}:v{version}/zombies/feedback/sound_pap_dispense
 
 	# End_rod and purple particles during the coming-out phase.
 	write_versioned_function("zombies/pap/anim/coming_out", """
-particle end_rod ~ ~0.8 ~ 0.4 0.3 0.3 0.05 3 force
-particle dust{color:[0.565,0.0,1.0],scale:1.5} ~ ~1.0 ~ 0.4 0.3 0.4 0 2 force
+execute positioned ~ ~-2 ~ run particle end_rod ~ ~0.8 ~ 0.4 0.3 0.3 0.05 3 force
+execute positioned ~ ~-2 ~ run particle dust{color:[0.565,0.0,1.0],scale:1.5} ~ ~1.0 ~ 0.4 0.3 0.4 0 2 force
 """)
 
 	# Trigger: weapon fully emerged — start slow retreat (BO style).
@@ -960,7 +960,7 @@ particle dust{color:[0.565,0.0,1.0],scale:1.5} ~ ~1.0 ~ 0.4 0.3 0.4 0 2 force
 data merge entity @n[tag={ns}.pap_weapon_display,distance=..2] {{Glowing:true}}
 
 # Sound + particle burst
-particle end_rod ~ ~1.0 ~ 0.5 0.3 0.5 0.1 20 force
+execute positioned ~ ~-2 ~ run particle end_rod ~ ~1.0 ~ 0.5 0.3 0.5 0.1 20 force
 function {ns}:v{version}/zombies/feedback/sound_pap_ready
 tellraw @a[scores={{{ns}.zb.in_game=1}}] [{MGS_TAG},{{"text":"Weapon upgraded! Collect it before it retreats!","color":"aqua"}}]
 """)
