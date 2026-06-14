@@ -21,22 +21,28 @@ from .perks import PERK_DEFINITIONS
 #   scoreboard   - the {ns}.special.<scoreboard> objective name
 #   bossbar_id   - the {ns}:pu_<bossbar_id> bossbar name
 #   bb_color     - bossbar color string
+# Optional sound keys (all relative to {ns}:zombies/powerups/):
+#   sound       - activation sound
+#   additional  - a second sound played simultaneously with `sound`
+#   end_sound    - (timed power-ups) played once when the effect expires
 POWERUP_TYPES: dict[str, JsonDict] = {
-	"max_ammo":       {"item": "minecraft:amethyst_shard",       "display": "Max Ammo",       "color": "aqua",         "type_num": 1, "tier": "common"},
-	"insta_kill":     {"item": "minecraft:fermented_spider_eye", "display": "Insta Kill",     "color": "red",          "type_num": 2, "tier": "common", "duration": 600, "scoreboard": "instant_kill",  "bossbar_id": "pu_insta_kill",     "bb_color": "red"},
-	"double_points":  {"item": "minecraft:gold_ingot",           "display": "Double Points",  "color": "yellow",       "type_num": 3, "tier": "common", "duration": 600, "scoreboard": "double_points", "bossbar_id": "pu_double_points",  "bb_color": "yellow"},
-	"carpenter":      {"item": "minecraft:oak_log",              "display": "Carpenter",      "color": "gold",         "type_num": 4, "tier": "common"},
-	"nuke":           {"item": "minecraft:tnt",                  "display": "Nuke",           "color": "red",          "type_num": 5, "tier": "common"},
+	"max_ammo":       {"item": "minecraft:amethyst_shard",       "display": "Max Ammo",       "color": "aqua",         "type_num": 1, "tier": "common", "sound": "max_ammo", "additional": "max_ammo_additional"},
+	"insta_kill":     {"item": "minecraft:fermented_spider_eye", "display": "Insta Kill",     "color": "red",          "type_num": 2, "tier": "common", "duration": 600, "scoreboard": "instant_kill",  "bossbar_id": "pu_insta_kill",     "bb_color": "red",    "sound": "insta_kill", "end_sound": "insta_kill_off"},
+	"double_points":  {"item": "minecraft:gold_ingot",           "display": "Double Points",  "color": "yellow",       "type_num": 3, "tier": "common", "duration": 600, "scoreboard": "double_points", "bossbar_id": "pu_double_points",  "bb_color": "yellow", "sound": "double_points", "end_sound": "double_points_off"},
+	"carpenter":      {"item": "minecraft:oak_log",              "display": "Carpenter",      "color": "gold",         "type_num": 4, "tier": "common", "sound": "carpenter"},
+	"nuke":           {"item": "minecraft:tnt",                  "display": "Nuke",           "color": "red",          "type_num": 5, "tier": "common", "sound": "nuke", "additional": "nuke_additional"},
 	"unlimited_ammo": {"item": "minecraft:blaze_rod",            "display": "Unlimited Ammo", "color": "green",        "type_num": 6, "tier": "rare",   "duration": 600, "scoreboard": "infinite_ammo", "bossbar_id": "pu_unlimited_ammo", "bb_color": "green"},
-	"random_perk":    {"item": "minecraft:glass_bottle",         "display": "Random Perk",    "color": "light_purple", "type_num": 7, "tier": "rare"},
+	"random_perk":    {"item": "minecraft:glass_bottle",         "display": "Random Perk",    "color": "light_purple", "type_num": 7, "tier": "rare",   "sound": "random_perk"},
 	"free_pap":       {"item": "minecraft:diamond",              "display": "Free PAP",       "color": "aqua",         "type_num": 8, "tier": "rare"},
-	"cash_drop":      {"item": "minecraft:emerald",              "display": "Cash Drop",      "color": "green",        "type_num": 9, "tier": "rare"},
-	"fire_sale":      {"item": "minecraft:firework_star",        "display": "Fire Sale",      "color": "light_purple", "type_num": 10, "tier": "rare"},
+	"cash_drop":      {"item": "minecraft:emerald",              "display": "Cash Drop",      "color": "green",        "type_num": 9, "tier": "rare",   "sound": "bonus_points"},
+	"fire_sale":      {"item": "minecraft:firework_star",        "display": "Fire Sale",      "color": "light_purple", "type_num": 10, "tier": "rare",  "sound": "fire_sale"},
+	"bonfire_sale":   {"item": "minecraft:campfire",             "display": "Bonfire Sale",   "color": "gold",         "type_num": 11, "tier": "rare",  "sound": "bonfire_sale"},
 }
 
 POWERUP_LIFETIME: int    = 530  # 26.5 seconds in ticks
 POWERUP_BLINK_START: int = 200  # Blink warning when this many ticks remain (~10s)
 FIRE_SALE_DURATION: int  = 600  # 30 seconds in ticks: Mystery Box costs 10 points
+BONFIRE_SALE_DURATION: int = 600  # 30 seconds in ticks: Pack-a-Punch costs 200 points (1000/5)
 
 # Convenience view: only power-ups with a timed duration
 TIMED_POWERUPS: dict[str, JsonDict] = {k: v for k, v in POWERUP_TYPES.items() if "duration" in v}
@@ -48,6 +54,21 @@ def generate_powerups() -> None:
 	perk_ids: list[str] = list(PERK_DEFINITIONS.keys())
 	num_perks: int = len(perk_ids)
 
+	# Helper: a power-up sound played for all in-game players (volume kept modest on purpose).
+	def pu_snd(name: str, vol: float = 1.0, pitch: float = 1.0, at_s: bool = False) -> str:
+		if at_s:
+			return f"as @a[scores={{{ns}.zb.in_game=1}}] at @s run playsound {ns}:zombies/powerups/{name} ambient @s ~ ~ ~ {vol} {pitch}"
+		return f"playsound {ns}:zombies/powerups/{name} ambient @a[scores={{{ns}.zb.in_game=1}}] ~ ~ ~ {vol} {pitch}"
+
+	# Activation sound line(s) for a power-up entry, including its "additional" layer if present.
+	def pu_activate_sound(v: JsonDict, vol: float = 1.0) -> str:
+		if "sound" not in v:
+			return f"playsound minecraft:entity.player.levelup ambient @a[scores={{{ns}.zb.in_game=1}}] ~ ~ ~ 1.0 1.0"
+		lines = [pu_snd(v["sound"], vol)]
+		if "additional" in v:
+			lines.append(pu_snd(v["additional"], vol))
+		return "\n".join(lines)
+
 	# ──────────────────────────────────────────────────────────────────────────
 	# Scoreboards
 	# ──────────────────────────────────────────────────────────────────────────
@@ -55,6 +76,8 @@ def generate_powerups() -> None:
 # Power-up entity scoreboards
 scoreboard objectives add {ns}.zb.pu.type dummy
 scoreboard objectives add {ns}.zb.pu.timer dummy
+# Per-zombie: tick of the last time a player's weapon hit it (gates drops to player kills)
+scoreboard objectives add {ns}.zb.player_hit dummy
 """)
 
 	# ──────────────────────────────────────────────────────────────────────────
@@ -84,13 +107,19 @@ scoreboard objectives add {ns}.zb.pu.timer dummy
 	# Drop check — called from on_zombie_dying after position is stored
 	# ──────────────────────────────────────────────────────────────────────────
 	write_versioned_function("zombies/powerups/check_drop", f"""
+# Only drop when a player's weapon killed this zombie (hit within the last 100 ticks),
+# never from nukes/traps/environmental deaths. @s = the dying zombie.
+scoreboard players operation #pu_hit_cutoff {ns}.data = #total_tick {ns}.data
+scoreboard players remove #pu_hit_cutoff {ns}.data 100
+execute unless score @s {ns}.zb.player_hit >= #pu_hit_cutoff {ns}.data run return 0
+
 # Stop once a full drop cycle (one shuffle-bag worth) has dropped this round
 execute if score #zb_cycle_done {ns}.data matches 1 run return 0
 
-# Drop chance = min(5%, 2/total_round_zombies), expressed in basis points (per 10000).
-# 5% = 500 bp; 2/total = 20000/total bp. Take the smaller of the two.
-scoreboard players set #pu_chance_bp {ns}.data 500
-execute if score #zb_round_total {ns}.data matches 1.. run scoreboard players set #pu_chance_tmp {ns}.data 20000
+# Drop chance = min(2%, 2/total_round_zombies), expressed in basis points (per 10000).
+# 2% = 200 bp; 1/total = 10000/total bp. Take the smaller of the two.
+scoreboard players set #pu_chance_bp {ns}.data 200
+execute if score #zb_round_total {ns}.data matches 1.. run scoreboard players set #pu_chance_tmp {ns}.data 10000
 execute if score #zb_round_total {ns}.data matches 1.. run scoreboard players operation #pu_chance_tmp {ns}.data /= #zb_round_total {ns}.data
 execute if score #zb_round_total {ns}.data matches 1.. if score #pu_chance_tmp {ns}.data < #pu_chance_bp {ns}.data run scoreboard players operation #pu_chance_bp {ns}.data = #pu_chance_tmp {ns}.data
 
@@ -225,6 +254,9 @@ scoreboard players set @n[tag={ns}.pu_item_new] {ns}.zb.pu.type {type_num}
 scoreboard players set @n[tag={ns}.pu_item_new] {ns}.zb.pu.timer {POWERUP_LIFETIME}
 tag @n[tag={ns}.pu_item_new] remove {ns}.pu_item_new
 $execute positioned $(x) $(y) $(z) run summon minecraft:text_display ~ ~1.0 ~ {{Tags:["{ns}.pu_text","{ns}.gm_entity"],text:{{"text":"{display_name}","color":"{color}","bold":true}},billboard:"vertical",background:0,shadow:true,view_range:64.0f,transformation:{{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[1.5f,1.5f,1.5f]}}}}
+
+# Drop spawn cue
+{pu_snd("item/spawn", 0.7)}
 """)
 
 	# ──────────────────────────────────────────────────────────────────────────
@@ -239,6 +271,11 @@ execute if score @s {ns}.zb.pu.timer matches ..0 run return run function {ns}:v{
 
 # Blink warning in the last {POWERUP_BLINK_START // 20} seconds
 execute if score @s {ns}.zb.pu.timer matches 1..{POWERUP_BLINK_START - 1} run function {ns}:v{version}/zombies/powerups/blink_tick
+
+# Ambient loop: play loop_2s at the item every 2 seconds (40 ticks)
+scoreboard players operation #pu_loop_phase {ns}.data = @s {ns}.zb.pu.timer
+scoreboard players operation #pu_loop_phase {ns}.data %= #40 {ns}.data
+execute if score #pu_loop_phase {ns}.data matches 0 run playsound {ns}:zombies/powerups/item/loop_2s ambient @a[scores={{{ns}.zb.in_game=1}},distance=..24] ~ ~ ~ 0.5 1.0
 
 # Pickup check (do_pickup kills @s, so this must be the last command)
 execute if entity @a[scores={{{ns}.zb.in_game=1}},gamemode=!spectator,distance=..1.5,tag=!{ns}.pu_collecting] run function {ns}:v{version}/zombies/powerups/do_pickup
@@ -274,6 +311,9 @@ scoreboard players operation #pu_type_pickup {ns}.data = @s {ns}.zb.pu.type
 # Kill the text display first (we still have a valid position)
 kill @n[tag={ns}.pu_text,distance=..3]
 
+# Grab cue
+{pu_snd("item/grab", 0.4)}
+
 # Activate the power-up effect (collector tag is still active here)
 function {ns}:v{version}/zombies/powerups/dispatch_activate
 
@@ -296,11 +336,10 @@ tag @a[tag={ns}.pu_collecting] remove {ns}.pu_collecting
 	# Activation functions
 	# ──────────────────────────────────────────────────────────────────────────
 
-	## 1. Max Ammo
+	## 1. Max Ammo (no chat message — the sound is enough)
 	write_versioned_function("zombies/powerups/activate/max_ammo", f"""
 execute as @a[scores={{{ns}.zb.in_game=1}},gamemode=!spectator] run function {ns}:zombies/bonus/max_ammo
-tellraw @a[scores={{{ns}.zb.in_game=1}}] [{MGS_TAG},{{"text":"Max Ammo!","color":"aqua","bold":true}}]
-playsound minecraft:entity.player.levelup master @a[scores={{{ns}.zb.in_game=1}}] ~ ~ ~ 1.0 1.0
+{pu_activate_sound(POWERUP_TYPES["max_ammo"])}
 """)
 
 	## 2-4. Timed power-ups: Insta Kill, Double Points, Unlimited Ammo
@@ -315,28 +354,52 @@ playsound minecraft:entity.player.levelup master @a[scores={{{ns}.zb.in_game=1}}
 		write_versioned_function(f"zombies/powerups/activate/{pu_id}", f"""
 scoreboard players set @a[scores={{{ns}.zb.in_game=1}}] {ns}.special.{scoreboard} {duration}
 bossbar remove {ns}:{bossbar_id}
-bossbar add {ns}:{bossbar_id} {{"text":"{display_name} - {duration // 20}s","bold":true,"color":"{bb_color}"}}
+bossbar add {ns}:{bossbar_id} {{"text":"{display_name}","bold":true,"color":"{bb_color}"}}
 bossbar set {ns}:{bossbar_id} max {duration}
 bossbar set {ns}:{bossbar_id} value {duration}
 bossbar set {ns}:{bossbar_id} color {bb_color}
 bossbar set {ns}:{bossbar_id} style progress
 bossbar set {ns}:{bossbar_id} players @a[scores={{{ns}.zb.in_game=1}}]
-playsound minecraft:entity.player.levelup master @a[scores={{{ns}.zb.in_game=1}}] ~ ~ ~ 1.0 1.0
+{pu_activate_sound(v)}
 """)
 
-	## 5. Carpenter (instant barrier repair)
+	## 5. Carpenter (instant barrier repair) — no chat message; +200 points, doubled with Double Points
 	write_versioned_function("zombies/powerups/activate/carpenter", f"""
 function {ns}:v{version}/zombies/barriers/repair_all
-tellraw @a[scores={{{ns}.zb.in_game=1}}] [{MGS_TAG},{{"text":"Carpenter!","color":"green","bold":true}}]
-playsound minecraft:entity.player.levelup master @a[scores={{{ns}.zb.in_game=1}}] ~ ~ ~ 1.0 1.0
+{pu_snd("carpenter")}
 scoreboard players add @a[scores={{{ns}.zb.in_game=1}}] {ns}.zb.points 200
+scoreboard players add @a[scores={{{ns}.zb.in_game=1,{ns}.special.double_points=1..}}] {ns}.zb.points 200
 """)
 
-	## 6. Nuke
+	## 6. Nuke — kaboom + soul layer, white screen flash, zombies catch fire (no chat message).
+	## +400 points to everyone, doubled to +800 for players with Double Points.
 	write_versioned_function("zombies/powerups/activate/nuke", f"""
 execute as @a[tag={ns}.pu_collecting,scores={{{ns}.zb.in_game=1}},gamemode=!spectator] run function {ns}:zombies/bonus/nuke
-tellraw @a[scores={{{ns}.zb.in_game=1}}] [{MGS_TAG},{{"text":"Nuke!","color":"red","bold":true}}]
-playsound minecraft:entity.player.levelup master @a[scores={{{ns}.zb.in_game=1}}] ~ ~ ~ 1.0 0.5
+scoreboard players add @a[scores={{{ns}.zb.in_game=1}}] {ns}.zb.points 400
+scoreboard players add @a[scores={{{ns}.zb.in_game=1,{ns}.special.double_points=1..}}] {ns}.zb.points 400
+
+# Kaboom + additional layer + soul whoosh (played together)
+{pu_snd("nuke")}
+{pu_snd("nuke_additional")}
+{pu_snd("nuke_soul", 0.8)}
+
+# White screen flash for ~1s (blindness fades to white), and set every zombie on fire
+execute as @a[scores={{{ns}.zb.in_game=1}}] run function {ns}:v{version}/zombies/powerups/nuke_flash
+execute as @e[tag={ns}.nukable] at @s run function {ns}:v{version}/zombies/powerups/nuke_fire_one
+""")
+
+	## Nuke white-flash for a player: the firework 'flash' particle renders a brief white fullscreen
+	## flash when emitted at the camera (Black Ops nuke screen flash).
+	write_versioned_function("zombies/powerups/nuke_flash", """
+execute at @s anchored eyes run particle minecraft:flash{color:[1.0,1.0,1.0,1.0]} ^ ^ ^0.4 0 0 0 0 1 force @s
+""")
+
+	## Set one zombie on fire + emit fire particles (called as @s = nukable entity)
+	write_versioned_function("zombies/powerups/nuke_fire_one", f"""
+data merge entity @s {{Fire:1200s}}
+effect give @s minecraft:fire_resistance infinite 0 true
+particle minecraft:flame ~ ~1 ~ 0.3 0.5 0.3 0.02 12 force @a[scores={{{ns}.zb.in_game=1}},distance=..48]
+particle minecraft:soul_fire_flame ~ ~1 ~ 0.3 0.5 0.3 0.02 6 force @a[scores={{{ns}.zb.in_game=1}},distance=..48]
 """)
 
 	## 7. Random Perk
@@ -363,7 +426,7 @@ function {ns}:v{version}/zombies/powerups/random_perk_iter
 
 # Announce if a perk was successfully granted
 execute if score #pu_perk_applied {ns}.data matches 1 run tellraw @a[scores={{{ns}.zb.in_game=1}}] [{MGS_TAG},{{"text":"Random Perk dropped for ","color":"light_purple"}},{{"selector":"@p[tag={ns}.pu_collecting]","color":"light_purple","bold":true}},{{"text":"!","color":"light_purple"}}]
-execute if score #pu_perk_applied {ns}.data matches 1 run playsound minecraft:entity.player.levelup master @a[scores={{{ns}.zb.in_game=1}}] ~ ~ ~ 1.0 1.0
+execute if score #pu_perk_applied {ns}.data matches 1 run {pu_snd("random_perk")}
 """)
 
 	write_versioned_function("zombies/powerups/random_perk_iter", f"""
@@ -413,11 +476,15 @@ execute as @a[scores={{{ns}.zb.in_game=1}}] run scoreboard players operation @s 
 
 # Announce with amount
 tellraw @a[scores={{{ns}.zb.in_game=1}}] [{MGS_TAG},{{"text":"Cash Drop! ","color":"green","bold":true}},{{"text":"+","color":"gold"}},{{"score":{{"name":"#pu_cash","objective":"{ns}.data"}},"color":"gold","bold":true}},{{"text":" points each!","color":"gold"}}]
-playsound minecraft:entity.player.levelup master @a[scores={{{ns}.zb.in_game=1}}] ~ ~ ~ 1.0 1.0
+{pu_snd("bonus_points")}
 """)
 
 	## 10. Fire Sale: Mystery Box costs 10 points for {FIRE_SALE_DURATION // 20}s (global timer + bossbar)
 	write_versioned_function("zombies/powerups/activate/fire_sale", f"""
+# Remember whether a Fire Sale was already running (so we don't re-trigger song/temp boxes)
+scoreboard players set #fs_was_active {ns}.data 0
+execute if score #zb_fire_sale_timer {ns}.data matches 1.. run scoreboard players set #fs_was_active {ns}.data 1
+
 # Save the normal price only when no Fire Sale is already running (so we don't snapshot the discount)
 execute if score #zb_fire_sale_timer {ns}.data matches ..0 run scoreboard players operation #zb_fire_sale_saved {ns}.data = #zb_mystery_box_price {ns}.config
 
@@ -427,15 +494,17 @@ scoreboard players set #zb_fire_sale_timer {ns}.data {FIRE_SALE_DURATION}
 
 # Bossbar
 bossbar remove {ns}:pu_fire_sale
-bossbar add {ns}:pu_fire_sale {{"text":"Fire Sale - {FIRE_SALE_DURATION // 20}s","bold":true,"color":"light_purple"}}
+bossbar add {ns}:pu_fire_sale {{"text":"Fire Sale","bold":true,"color":"light_purple"}}
 bossbar set {ns}:pu_fire_sale max {FIRE_SALE_DURATION}
 bossbar set {ns}:pu_fire_sale value {FIRE_SALE_DURATION}
 bossbar set {ns}:pu_fire_sale color pink
 bossbar set {ns}:pu_fire_sale style progress
 bossbar set {ns}:pu_fire_sale players @a[scores={{{ns}.zb.in_game=1}}]
 
-tellraw @a[scores={{{ns}.zb.in_game=1}}] [{MGS_TAG},{{"text":"Fire Sale! ","color":"light_purple","bold":true}},{{"text":"Mystery Box costs 10 points!","color":"white"}}]
-playsound minecraft:entity.player.levelup master @a[scores={{{ns}.zb.in_game=1}}] ~ ~ ~ 1.0 1.0
+# Only on a NEW Fire Sale: jingle + song (don't restack the song) + temp boxes everywhere
+execute if score #fs_was_active {ns}.data matches 0 run {pu_snd("fire_sale")}
+execute if score #fs_was_active {ns}.data matches 0 as @a[scores={{{ns}.zb.in_game=1}}] run playsound {ns}:zombies/powerups/fire_sale_song ambient @s ~ ~ ~ 0.3 1.0
+execute if score #fs_was_active {ns}.data matches 0 run function {ns}:v{version}/zombies/mystery_box/fire_sale_start
 """)
 
 	## Fire Sale global tick: countdown, bossbar update, restore price on expiry
@@ -443,15 +512,36 @@ playsound minecraft:entity.player.levelup master @a[scores={{{ns}.zb.in_game=1}}
 # Decrement the shared timer
 scoreboard players remove #zb_fire_sale_timer {ns}.data 1
 
-# Expired: restore the saved price and remove the bossbar
+# Expired: restore the saved price, remove the bossbar, stop the song, remove temp boxes
 execute if score #zb_fire_sale_timer {ns}.data matches ..0 run scoreboard players operation #zb_mystery_box_price {ns}.config = #zb_fire_sale_saved {ns}.data
 execute if score #zb_fire_sale_timer {ns}.data matches ..0 run bossbar remove {ns}:pu_fire_sale
+execute if score #zb_fire_sale_timer {ns}.data matches ..0 run stopsound @a[scores={{{ns}.zb.in_game=1}}] ambient {ns}:zombies/powerups/fire_sale_song
+execute if score #zb_fire_sale_timer {ns}.data matches ..0 run function {ns}:v{version}/zombies/mystery_box/fire_sale_end
 
-# Still active: update bossbar value + countdown label
+# Still active: update bossbar value
 execute if score #zb_fire_sale_timer {ns}.data matches 1.. store result bossbar {ns}:pu_fire_sale value run scoreboard players get #zb_fire_sale_timer {ns}.data
-execute if score #zb_fire_sale_timer {ns}.data matches 1.. run scoreboard players operation #zb_fs_seconds {ns}.data = #zb_fire_sale_timer {ns}.data
-execute if score #zb_fire_sale_timer {ns}.data matches 1.. run scoreboard players operation #zb_fs_seconds {ns}.data /= #20 {ns}.data
-execute if score #zb_fire_sale_timer {ns}.data matches 1.. run bossbar set {ns}:pu_fire_sale name [{{"text":"Fire Sale - ","color":"light_purple","bold":true}},{{"score":{{"name":"#zb_fs_seconds","objective":"{ns}.data"}},"color":"light_purple"}},"s"]
+""")
+
+	## 11. Bonfire Sale: Pack-a-Punch costs 200 (1000/5) for {BONFIRE_SALE_DURATION // 20}s
+	write_versioned_function("zombies/powerups/activate/bonfire_sale", f"""
+scoreboard players set #zb_bonfire_sale_timer {ns}.data {BONFIRE_SALE_DURATION}
+
+# Bossbar
+bossbar remove {ns}:pu_bonfire_sale
+bossbar add {ns}:pu_bonfire_sale {{"text":"Bonfire Sale","bold":true,"color":"gold"}}
+bossbar set {ns}:pu_bonfire_sale max {BONFIRE_SALE_DURATION}
+bossbar set {ns}:pu_bonfire_sale value {BONFIRE_SALE_DURATION}
+bossbar set {ns}:pu_bonfire_sale color yellow
+bossbar set {ns}:pu_bonfire_sale style progress
+bossbar set {ns}:pu_bonfire_sale players @a[scores={{{ns}.zb.in_game=1}}]
+{pu_snd("bonfire_sale")}
+""")
+
+	## Bonfire Sale global tick: countdown + bossbar, clears itself on expiry
+	write_versioned_function("zombies/powerups/bonfire_sale_tick", f"""
+scoreboard players remove #zb_bonfire_sale_timer {ns}.data 1
+execute if score #zb_bonfire_sale_timer {ns}.data matches ..0 run bossbar remove {ns}:pu_bonfire_sale
+execute if score #zb_bonfire_sale_timer {ns}.data matches 1.. store result bossbar {ns}:pu_bonfire_sale value run scoreboard players get #zb_bonfire_sale_timer {ns}.data
 """)
 
 	# ──────────────────────────────────────────────────────────────────────────
@@ -462,17 +552,23 @@ execute if score #zb_fire_sale_timer {ns}.data matches 1.. run bossbar set {ns}:
 		bossbar_id: str   = v["bossbar_id"]
 		display_name: str = v["display"]
 		color: str        = v["color"]
+		# Play the end sound once when the effect transitions from active to expired
+		end_sound_line: str = ""
+		if "end_sound" in v:
+			end_sound: str = pu_snd(v["end_sound"], at_s=True)
+			end_sound_line = (
+				f"execute if score #pu_prev_{pu_id} {ns}.data matches 1.. if score #pu_max_duration {ns}.data matches ..0 {end_sound}\n"
+				f"scoreboard players operation #pu_prev_{pu_id} {ns}.data = #pu_max_duration {ns}.data"
+			)
 		write_versioned_function(f"zombies/powerups/update_{pu_id}_bb", f"""
 # Find max remaining duration across all players with active {pu_id}
 scoreboard players set #pu_max_duration {ns}.data 0
 scoreboard players operation #pu_max_duration {ns}.data > @a[scores={{{ns}.special.{scoreboard}=1..}}] {ns}.special.{scoreboard}
 
-# If max duration is 0, remove bossbar; otherwise update value and name with countdown
+# If max duration is 0, remove bossbar; otherwise update value
 execute if score #pu_max_duration {ns}.data matches ..0 run bossbar remove {ns}:{bossbar_id}
 execute if score #pu_max_duration {ns}.data matches 1.. store result bossbar {ns}:{bossbar_id} value run scoreboard players get #pu_max_duration {ns}.data
-execute if score #pu_max_duration {ns}.data matches 1.. run scoreboard players operation #pu_seconds {ns}.data = #pu_max_duration {ns}.data
-execute if score #pu_max_duration {ns}.data matches 1.. run scoreboard players operation #pu_seconds {ns}.data /= #20 {ns}.data
-execute if score #pu_max_duration {ns}.data matches 1.. run bossbar set {ns}:{bossbar_id} name [{{"text":"{display_name} - ","color":"{color}","bold":true}},{{"score":{{"name":"#pu_seconds","objective":"{ns}.data"}},"color":"{color}"}},"s"]
+{end_sound_line}
 """)
 
 	# ──────────────────────────────────────────────────────────────────────────
@@ -496,6 +592,17 @@ execute if score #pu_max_duration {ns}.data matches 1.. run bossbar set {ns}:{bo
 # Power-up entity tick (lifetime countdown, blink, pickup detection)
 execute as @e[tag={ns}.pu_item] at @s run function {ns}:v{version}/zombies/powerups/entity_tick
 
+# Orphan cleanup: a text_display whose item entity was destroyed (burned/exploded) would never
+# be removed by expire/pickup — kill any pu_text that no longer has a pu_item beneath it.
+execute as @e[tag={ns}.pu_text] at @s unless entity @e[tag={ns}.pu_item,distance=..4] run kill @s
+
+# Insta Kill also works with the knife: give active players a huge melee attack damage so a single
+# melee hit one-shots zombies (guns already insta-kill via the raycast path). remove+add keeps it
+# idempotent each tick; the modifier is removed once the effect wears off.
+execute as @a[scores={{{ns}.special.instant_kill=1..}}] run attribute @s minecraft:attack_damage modifier remove {ns}:insta_kill
+execute as @a[scores={{{ns}.special.instant_kill=1..}}] run attribute @s minecraft:attack_damage modifier add {ns}:insta_kill 100000 add_value
+execute as @a[scores={{{ns}.special.instant_kill=..0}}] run attribute @s minecraft:attack_damage modifier remove {ns}:insta_kill
+
 # Blink state: toggles between 0 and 1 every 4 ticks (~0.2s half-cycle, matching BO2's 0.4s full cycle)
 scoreboard players add #zb_blink_counter {ns}.data 1
 execute if score #zb_blink_counter {ns}.data matches 4.. run scoreboard players set #zb_blink_counter {ns}.data 0
@@ -510,6 +617,9 @@ execute if score #zb_blink_state {ns}.data matches 2.. run scoreboard players se
 
 # Fire Sale: global timer countdown + price restore on expiry
 execute if score #zb_fire_sale_timer {ns}.data matches 1.. run function {ns}:v{version}/zombies/powerups/fire_sale_tick
+
+# Bonfire Sale: global timer countdown
+execute if score #zb_bonfire_sale_timer {ns}.data matches 1.. run function {ns}:v{version}/zombies/powerups/bonfire_sale_tick
 """)
 
 	# stop cleanup resets, generated from TIMED_POWERUPS
@@ -532,9 +642,18 @@ scoreboard players set #zb_cycle_len {ns}.data 0
 {stop_scoreboard_resets}
 data modify storage {ns}:data _pu_queue set value []
 
-# Fire Sale cleanup (reset the global timer + remove its bossbar)
+# Fire Sale cleanup (reset the global timer + remove its bossbar + stop the song)
 scoreboard players set #zb_fire_sale_timer {ns}.data 0
+scoreboard players set #mb_fs_cleanup_pending {ns}.data 0
 bossbar remove {ns}:pu_fire_sale
+stopsound @a ambient {ns}:zombies/powerups/fire_sale_song
+tag @e remove {ns}.mb_fs_active
+tag @e remove {ns}.mb_orig_active
+kill @e[tag={ns}.mb_temp]
+
+# Bonfire Sale cleanup (reset the global timer + remove its bossbar)
+scoreboard players set #zb_bonfire_sale_timer {ns}.data 0
+bossbar remove {ns}:pu_bonfire_sale
 
 # Remove all duration-based bossbars
 {stop_bossbar_removes}

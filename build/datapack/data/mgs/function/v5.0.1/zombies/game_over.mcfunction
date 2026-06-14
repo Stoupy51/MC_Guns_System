@@ -26,6 +26,10 @@ tellraw @a ["",{"text":"══════════════════�
 # Signal game end
 function #mgs:zombies/on_game_end
 
+# Stop all sounds and play gameover sound
+stopsound @a
+execute as @a[scores={mgs.zb.in_game=1}] at @s run playsound mgs:zombies/game_over ambient @s ~ ~ ~ 0.6 1.0
+
 # End game after 5 seconds
 schedule function mgs:v5.0.1/zombies/stop 100t
 

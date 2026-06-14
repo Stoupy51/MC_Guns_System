@@ -6,13 +6,11 @@ import os
 import subprocess
 from multiprocessing import Pool
 
-from compress_ogg import COMPRESSION
-
 
 def convert_file(args: tuple[str, str]) -> None:
 	src, dst = args
 	previous_size: int = os.path.getsize(src)
-	subprocess.run(["ffmpeg", "-i", src, "-b:a", COMPRESSION, "-ac", "2", dst], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+	subprocess.run(["ffmpeg", "-i", src, "-b:a", "64k", "-ac", "2", dst], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
 	# Remove original & rename temp
 	file_size: int = os.path.getsize(dst)
@@ -28,7 +26,7 @@ if __name__ == "__main__":
 	files_to_compress: list[tuple[str, str]] = []
 	for root, _, files in os.walk(py_path):
 		for file in files:
-			if file.endswith(".ogg") and file.startswith("reload"):		# ONLY RELOAD.OGG FILES
+			if file.endswith(".ogg"):
 				src: str = f"{root}/{file}"
 				dst: str = src.replace(".ogg", ".temp.ogg")
 				files_to_compress.append((src, dst))

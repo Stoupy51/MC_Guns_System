@@ -1,9 +1,9 @@
 
 #> mgs:v5.0.1/zombies/mystery_box/try_use
 #
-# @executed	as @n[tag=mgs.mb_new]
+# @executed	at @n[tag=bs.interaction.target]
 #
-# @within	mgs:v5.0.1/zombies/mystery_box/on_right_click
+# @within	mgs:v5.0.1/zombies/mystery_box/box_click
 #
 
 # Check if player has enough points
@@ -12,43 +12,28 @@ execute unless score @s mgs.zb.points >= #zb_mystery_box_price mgs.config run re
 # Ensure at least a default pool exists.
 function mgs:v5.0.1/zombies/mystery_box/ensure_default_pool
 
-# Deduct points
+# Deduct points and mark this player as the buyer of this box
 scoreboard players operation @s mgs.zb.points -= #zb_mystery_box_price mgs.config
+scoreboard players operation @s mgs.mb.buying = #cur_box mgs.data
 
-# Tag buyer for potential bear-result refund
-tag @s add mgs.mb_buyer
-
-# Pre-determine if box will move (replaces maybe_move_after_pull)
+# Pre-determine if the box will move (teddy bear) — only the active box, never during a Fire Sale
 scoreboard players set #mb_will_move mgs.data 0
 scoreboard players add #mb_pulls mgs.data 1
-execute if score #mb_pulls mgs.data matches 4.. store result score #mb_move_roll mgs.data run random value 0..2
-execute if score #mb_pulls mgs.data matches 4.. if score #mb_move_roll mgs.data matches 0 run scoreboard players set #mb_will_move mgs.data 1
+execute if score #mb_pulls mgs.data matches 4.. if entity @n[tag=bs.interaction.target,tag=mgs.mystery_box_active] store result score #mb_move_roll mgs.data run random value 0..2
+execute if score #mb_pulls mgs.data matches 4.. if entity @n[tag=bs.interaction.target,tag=mgs.mystery_box_active] if score #mb_move_roll mgs.data matches 0 run scoreboard players set #mb_will_move mgs.data 1
+execute if score #zb_fire_sale_timer mgs.data matches 1.. run scoreboard players set #mb_will_move mgs.data 0
 execute if score #mb_will_move mgs.data matches 1 run scoreboard players set #mb_pulls mgs.data 0
 
-# Start spinning
-data modify storage mgs:zombies mystery_box.spinning set value true
+# Spawn the pull display here and stamp it with the box id, animation timer, and will-move flag
+function mgs:v5.0.1/zombies/mystery_box/spawn_display
+scoreboard players operation @n[tag=mgs.mb_display_new] mgs.mb.box = #cur_box mgs.data
+scoreboard players set @n[tag=mgs.mb_display_new] mgs.mb.anim 105
+scoreboard players operation @n[tag=mgs.mb_display_new] mgs.mb.willmove = #mb_will_move mgs.data
+tag @n[tag=mgs.mb_display_new] remove mgs.mb_display_new
 
-# Pick a random weapon from the pool and reroll if player already owns it.
-function mgs:v5.0.1/zombies/mystery_box/pick_random_result
-scoreboard players set #mb_reroll mgs.data 0
-function mgs:v5.0.1/zombies/mystery_box/reroll_owned
-
-# If still owned after rerolls, refund and fail.
-execute if score #mb_owned mgs.data matches 1 run scoreboard players operation @s mgs.zb.points += #zb_mystery_box_price mgs.config
-execute if score #mb_owned mgs.data matches 1 run tag @s remove mgs.mb_buyer
-execute if score #mb_owned mgs.data matches 1 run return run function mgs:v5.0.1/zombies/mystery_box/deny_all_owned
-
-# Start animation timer (100 ticks cycling with slowdown + 150 ticks display window)
-scoreboard players set #mb_anim_timer mgs.data 105
-
-# Spawn display entity at box position
-execute at @n[tag=mgs.mystery_box_active] run function mgs:v5.0.1/zombies/mystery_box/spawn_display
-
-# Open the lid while the box is in use
+# Open this box's lid + open/spin sounds + a private announce to the buyer
 function mgs:v5.0.1/zombies/mystery_box/open_lid
-
-# Announce
-tellraw @a[scores={mgs.zb.in_game=1}] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.mystery_box_spinning","color":"light_purple"}]
-execute as @n[tag=mgs.mystery_box_active] at @s run function mgs:v5.0.1/zombies/feedback/sound_box_open
-execute as @n[tag=mgs.mystery_box_active] at @s run function mgs:v5.0.1/zombies/feedback/sound_box_spin
+function mgs:v5.0.1/zombies/feedback/sound_box_open
+function mgs:v5.0.1/zombies/feedback/sound_box_spin
+tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.mystery_box_spinning","color":"light_purple"}]
 

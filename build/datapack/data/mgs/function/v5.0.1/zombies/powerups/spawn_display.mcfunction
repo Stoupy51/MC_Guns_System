@@ -19,4 +19,5 @@ $execute if data storage mgs:temp _pu_spawn {"type":"random_perk"} run function 
 $execute if data storage mgs:temp _pu_spawn {"type":"free_pap"} run function mgs:v5.0.1/zombies/powerups/spawn_type/free_pap {x:$(x),y:$(y),z:$(z),uid:$(uid)}
 $execute if data storage mgs:temp _pu_spawn {"type":"cash_drop"} run function mgs:v5.0.1/zombies/powerups/spawn_type/cash_drop {x:$(x),y:$(y),z:$(z),uid:$(uid)}
 $execute if data storage mgs:temp _pu_spawn {"type":"fire_sale"} run function mgs:v5.0.1/zombies/powerups/spawn_type/fire_sale {x:$(x),y:$(y),z:$(z),uid:$(uid)}
+$execute if data storage mgs:temp _pu_spawn {"type":"bonfire_sale"} run function mgs:v5.0.1/zombies/powerups/spawn_type/bonfire_sale {x:$(x),y:$(y),z:$(z),uid:$(uid)}
 

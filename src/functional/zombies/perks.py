@@ -181,9 +181,11 @@ $data modify storage {ns}:zombies perk_data."$(id)" set value {{perk_id:"$(perk_
 # Guard: game must be active
 {game_active_guard_cmd(ns)}
 
-# Check power requirement
+# Check power requirement. Quick Revive is exempt while solo (Black Ops rule).
 execute store result score #pk_power {ns}.data run scoreboard players get @n[tag=bs.interaction.target] {ns}.zb.perk.power
-execute if score #pk_power {ns}.data matches 1 unless score #zb_power {ns}.data matches 1 run return run function {ns}:v{version}/zombies/perks/deny_requires_power
+execute store result score #qr_solo {ns}.data if entity @a[scores={{{ns}.zb.in_game=1}},gamemode=!spectator]
+execute if score #pk_power {ns}.data matches 1 unless score #zb_power {ns}.data matches 1 unless entity @n[tag=bs.interaction.target,tag={ns}.pk_quick_revive] run return run function {ns}:v{version}/zombies/perks/deny_requires_power
+execute if score #pk_power {ns}.data matches 1 unless score #zb_power {ns}.data matches 1 if entity @n[tag=bs.interaction.target,tag={ns}.pk_quick_revive] if score #qr_solo {ns}.data matches 2.. run return run function {ns}:v{version}/zombies/perks/deny_requires_power
 
 # Look up perk_id
 execute store result storage {ns}:temp _pk_buy.id int 1 run scoreboard players get @n[tag=bs.interaction.target] {ns}.zb.perk.id
@@ -208,7 +210,7 @@ function #{ns}:zombies/on_new_perk
 
 # Sound
 function {ns}:v{version}/zombies/feedback/sound_success
-""")
+""")  # noqa: E501
 
 	write_versioned_function("zombies/perks/deny_requires_power", f"""
 {deny_requires_power_body(ns, version, "perk machine")}

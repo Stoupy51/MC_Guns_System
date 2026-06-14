@@ -331,6 +331,10 @@ tellraw @a ["",{{"text":"══════════════════�
 # Signal game end
 function #{ns}:zombies/on_game_end
 
+# Stop all sounds and play gameover sound
+stopsound @a
+execute as @a[scores={{{ns}.zb.in_game=1}}] at @s run playsound {ns}:zombies/game_over ambient @s ~ ~ ~ 0.6 1.0
+
 # End game after 5 seconds
 schedule function {ns}:v{version}/zombies/stop 100t
 """)
@@ -445,6 +449,9 @@ function {ns}:v{version}/zombies/refresh_sidebar
 # Only process if zombies game is active & If the hit target is a live round zombie
 execute unless data storage {ns}:zombies game{{state:"active"}} run return fail
 execute unless entity @s[tag={ns}.zombie_round] run return fail
+
+# Mark this zombie as hit by a player this tick (gates power-up drops to player kills)
+scoreboard players operation @s {ns}.zb.player_hit = #total_tick {ns}.data
 
 # Award +10 bullet hit points to the shooter
 scoreboard players operation @n[tag={ns}.ticking] {ns}.zb.points += #zb_points_hit {ns}.config

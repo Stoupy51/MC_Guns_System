@@ -1,27 +1,29 @@
 
 #> mgs:v5.0.1/zombies/mystery_box/show_bear_result
 #
-# @within	mgs:v5.0.1/zombies/mystery_box/show_result
+# @executed	as @e[tag=...] & at @s
+#
+# @within	mgs:v5.0.1/zombies/mystery_box/show_result_one
 #
 
-# Close the lid before the box moves away
+# Close this box's lid before it moves away
 function mgs:v5.0.1/zombies/mystery_box/close_lid
 
+# Mark this display as the moving bear so the move animation only touches it (not other pulls)
+tag @s add mgs.mb_bear
+
 # Replace display with teddy bear
-loot replace entity @n[tag=mgs.mb_display] contents loot mgs:zombies/mystery_box_bear
+loot replace entity @s contents loot mgs:zombies/mystery_box_bear
+data merge entity @s {transformation:{translation:[0f,1.25f,0f],scale:[0.75f,0.75f,0.75f]}}
 
-# Rise bear out of the box (like normal result)
-data merge entity @n[tag=mgs.mb_display] {transformation:{translation:[0f,1.25f,0f],scale:[0.75f,0.75f,0.75f]}}
+# Refund this box's buyer and clear their pull state
+scoreboard players operation #this_box mgs.data = @s mgs.mb.box
+execute as @a[scores={mgs.zb.in_game=1}] if score @s mgs.mb.buying = #this_box mgs.data run scoreboard players operation @s mgs.zb.points += #zb_mystery_box_price mgs.config
+execute as @a[scores={mgs.zb.in_game=1}] if score @s mgs.mb.buying = #this_box mgs.data run scoreboard players set @s mgs.mb.buying 0
 
-# Refund the buyer
-execute as @a[tag=mgs.mb_buyer] run scoreboard players operation @s mgs.zb.points += #zb_mystery_box_price mgs.config
-tag @a[tag=mgs.mb_buyer] remove mgs.mb_buyer
-
-# Stop spin, start move animation timer
-data modify storage mgs:zombies mystery_box.spinning set value false
+# Start move animation timer (this display is killed by the move at the ascend phase)
 scoreboard players set #mb_move_timer mgs.data 280
 
-# Announce
 tellraw @a[scores={mgs.zb.in_game=1}] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.the_mystery_box_is_moving_2","color":"yellow","bold":true}]
-execute as @n[tag=mgs.mystery_box_active] at @s run function mgs:v5.0.1/zombies/feedback/sound_box_bye_bye
+function mgs:v5.0.1/zombies/feedback/sound_box_bye_bye
 

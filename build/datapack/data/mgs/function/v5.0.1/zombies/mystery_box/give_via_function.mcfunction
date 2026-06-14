@@ -1,7 +1,7 @@
 
 #> mgs:v5.0.1/zombies/mystery_box/give_via_function
 #
-# @executed	as @n[tag=mgs.mb_new]
+# @executed	at @n[tag=bs.interaction.target]
 #
 # @within	mgs:v5.0.1/zombies/mystery_box/collect function mgs:v5.0.1/zombies/mystery_box/give_via_function
 #

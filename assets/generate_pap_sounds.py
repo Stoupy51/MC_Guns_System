@@ -98,6 +98,7 @@ def apply_pap_processing(audio: AudioSegment) -> AudioSegment:
 
     # 1 -- Slight pitch up so the gun itself sits higher
     gun = pitch_shift(audio, PITCH_SEMITONES)
+    gun = gun - 8   # Reduce gun volume by 8dB so the pew is louder
 
     # 2 -- Synthesize the "pew" laser sweep
     pew = generate_pew_sweep()

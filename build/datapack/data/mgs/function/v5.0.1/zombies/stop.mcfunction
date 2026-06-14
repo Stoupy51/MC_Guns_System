@@ -49,12 +49,16 @@ tag @a[tag=mgs.give_class_menu] remove mgs.give_class_menu
 
 kill @e[type=minecraft:marker,tag=mgs.death_watch]
 
-# Reset mystery box
-function mgs:v5.0.1/zombies/mystery_box/reset
+# Remove all pull displays and presence boxes, reset all per-box state
+kill @e[tag=mgs.mb_display]
 kill @e[tag=mgs.mb_presence]
+kill @e[tag=mgs.mb_temp]
 scoreboard players set #mb_pulls mgs.data 0
 scoreboard players set #mb_move_timer mgs.data 0
-tag @a remove mgs.mb_buyer
+scoreboard players set #mb_fs_cleanup_pending mgs.data 0
+scoreboard players set @a mgs.mb.buying 0
+tag @e remove mgs.mb_fs_active
+tag @e remove mgs.mb_orig_active
 
 # Barriers cleanup
 tag @e[tag=mgs.barrier_removing] remove mgs.barrier_removing
@@ -72,9 +76,18 @@ scoreboard players set @a mgs.special.double_points 0
 scoreboard players set @a mgs.special.infinite_ammo 0
 data modify storage mgs:data _pu_queue set value []
 
-# Fire Sale cleanup (reset the global timer + remove its bossbar)
+# Fire Sale cleanup (reset the global timer + remove its bossbar + stop the song)
 scoreboard players set #zb_fire_sale_timer mgs.data 0
+scoreboard players set #mb_fs_cleanup_pending mgs.data 0
 bossbar remove mgs:pu_fire_sale
+stopsound @a ambient mgs:zombies/powerups/fire_sale_song
+tag @e remove mgs.mb_fs_active
+tag @e remove mgs.mb_orig_active
+kill @e[tag=mgs.mb_temp]
+
+# Bonfire Sale cleanup (reset the global timer + remove its bossbar)
+scoreboard players set #zb_bonfire_sale_timer mgs.data 0
+bossbar remove mgs:pu_bonfire_sale
 
 # Remove all duration-based bossbars
 bossbar remove mgs:pu_insta_kill

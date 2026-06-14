@@ -56,6 +56,9 @@ scoreboard objectives add {ns}.mp.prev_class dummy
 # Spectate timer (ticks remaining before respawn, 0 = not spectating)
 scoreboard objectives add {ns}.mp.spectate_timer dummy
 
+# Dropped-weapon lifetime (ticks remaining before the on-death dropped gun despawns)
+scoreboard objectives add {ns}.mp.drop_timer dummy
+
 # FFA ranking (1 = most kills, 2 = second, ..., 0 = unranked)
 scoreboard objectives add {ns}.mp.ffa_rank dummy
 
@@ -294,6 +297,9 @@ function {ns}:v{version}/multiplayer/enter_death_spectate
 	## Shared death-spectate flow (@s = dying player, {ns}.temp_killer may be tagged by the caller)
 	## Used by simulate_death (bullet/OOB deaths) and on_respawn (vanilla deaths)
 	write_versioned_function("multiplayer/enter_death_spectate", f"""
+# Drop the held gun on the ground (pickable for 30s) before anything else, while still holding it
+execute at @s run function {ns}:v{version}/multiplayer/drop_held_weapon
+
 # S&D: no respawning, mark as dead and go spectator
 execute if data storage {ns}:multiplayer game{{gamemode:"snd"}} run return run function {ns}:v{version}/multiplayer/gamemodes/snd/on_death
 
@@ -326,6 +332,58 @@ tag @s add {ns}.temp_victim
 $execute as $(attacker) run function #{ns}:signals/on_kill
 function {ns}:v{version}/multiplayer/random_kill_message
 tag @s remove {ns}.temp_victim
+""")
+
+	## ── On-death weapon drop ────────────────────────────────────────────────
+	## Drops the gun in the player's selected weapon slot (hotbar.0/1) as a static, no-movement
+	## item_display with a small interaction hitbox that other players can pick up for 30s.
+	write_versioned_function("multiplayer/drop_held_weapon", f"""
+# Only drop a gun held in the selected weapon slot (hotbar.0 or hotbar.1)
+execute store result score #drop_sel {ns}.data run data get entity @s SelectedItemSlot
+execute unless score #drop_sel {ns}.data matches 0..1 run scoreboard players set #drop_sel {ns}.data 0
+execute if score #drop_sel {ns}.data matches 0 unless items entity @s hotbar.0 *[custom_data~{{{ns}:{{gun:true}}}}] run return 0
+execute if score #drop_sel {ns}.data matches 1 unless items entity @s hotbar.1 *[custom_data~{{{ns}:{{gun:true}}}}] run return 0
+
+# Capture the held gun item (strip the inventory Slot tag so it fits an item_display / item entity)
+execute if score #drop_sel {ns}.data matches 0 run data modify storage {ns}:temp _dropw set from entity @s Inventory[{{Slot:0b}}]
+execute if score #drop_sel {ns}.data matches 1 run data modify storage {ns}:temp _dropw set from entity @s Inventory[{{Slot:1b}}]
+data remove storage {ns}:temp _dropw.Slot
+
+# Static item display resting on the ground (no gravity, never moves)
+summon minecraft:item_display ~ ~0.1 ~ {{Tags:["{ns}.mp_dropped_gun","{ns}.gm_entity","{ns}.mp_drop_new"],item_display:"ground",transformation:{{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[0.75f,0.75f,0.75f]}}}}
+data modify entity @n[tag={ns}.mp_drop_new] item set from storage {ns}:temp _dropw
+scoreboard players set @n[tag={ns}.mp_drop_new] {ns}.mp.drop_timer 600
+tag @n[tag={ns}.mp_drop_new] remove {ns}.mp_drop_new
+
+# Small interaction hitbox for pickup (Bookshelf right-click)
+summon minecraft:interaction ~ ~ ~ {{width:0.9f,height:0.6f,response:true,Tags:["{ns}.mp_drop_int","{ns}.gm_entity","bs.entity.interaction","{ns}.mp_drop_new"]}}
+scoreboard players set @n[tag={ns}.mp_drop_new] {ns}.mp.drop_timer 600
+execute as @n[tag={ns}.mp_drop_new] run function #bs.interaction:on_right_click {{run:"function {ns}:v{version}/multiplayer/pickup_dropped_weapon",executor:"source"}}
+tag @n[tag={ns}.mp_drop_new] remove {ns}.mp_drop_new
+""")
+
+	## Pickup (Bookshelf callback, @s = clicking player)
+	write_versioned_function("multiplayer/pickup_dropped_weapon", f"""
+execute unless score @s {ns}.mp.in_game matches 1 run return fail
+tag @s add {ns}.mp_drop_picker
+execute at @e[tag=bs.interaction.target] run function {ns}:v{version}/multiplayer/pickup_collect
+tag @s remove {ns}.mp_drop_picker
+""")
+
+	## Collect: copy the dropped gun item and give it to the picker, then remove the drop
+	write_versioned_function("multiplayer/pickup_collect", f"""
+execute unless entity @n[tag={ns}.mp_dropped_gun,distance=..3] run return fail
+data modify storage {ns}:temp _give set value {{}}
+data modify storage {ns}:temp _give.Item set from entity @n[tag={ns}.mp_dropped_gun,distance=..3] item
+data modify storage {ns}:temp _give.Owner set from entity @p[tag={ns}.mp_drop_picker] UUID
+execute at @p[tag={ns}.mp_drop_picker] run function {ns}:v{version}/multiplayer/pickup_give with storage {ns}:temp _give
+kill @n[tag={ns}.mp_dropped_gun,distance=..3]
+kill @e[tag=bs.interaction.target]
+""")
+
+	## Give the captured gun to the picker via a zero-delay, owner-locked item entity at their feet
+	write_versioned_function("multiplayer/pickup_give", f"""
+$summon minecraft:item ~ ~0.2 ~ {{Item:$(Item),Owner:$(Owner),PickupDelay:0s,Tags:["{ns}.gm_entity"]}}
 """)
 
 	## Random death message for self-deaths (OOB, environmental)
@@ -393,6 +451,12 @@ execute if data storage {ns}:multiplayer game{{state:"preparing"}} run function 
 
 	write_versioned_function("multiplayer/game_tick", f"""
 {respawn_countdown_tick_lines(ns, "mp", f"{ns}:v{version}/multiplayer/actual_respawn")}
+
+# Dropped-weapon lifetime: count down and remove expired drops (display + interaction together)
+execute as @e[tag={ns}.mp_dropped_gun] run scoreboard players remove @s {ns}.mp.drop_timer 1
+execute as @e[tag={ns}.mp_drop_int] run scoreboard players remove @s {ns}.mp.drop_timer 1
+kill @e[tag={ns}.mp_dropped_gun,scores={{{ns}.mp.drop_timer=..0}}]
+kill @e[tag={ns}.mp_drop_int,scores={{{ns}.mp.drop_timer=..0}}]
 
 # Timer
 scoreboard players remove #mp_timer {ns}.data 1

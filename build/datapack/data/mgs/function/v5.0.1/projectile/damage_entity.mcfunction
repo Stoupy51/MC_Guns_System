@@ -62,8 +62,8 @@ execute store result score #decay_factor mgs.data run data get storage bs:out ma
 scoreboard players operation #expl_dmg mgs.data *= #decay_factor mgs.data
 scoreboard players operation #expl_dmg mgs.data /= #1000000 mgs.data
 
-# If zombie game is active: explosives hit zombies 8x harder, cap for players (6 hp = 3 hearts)
-execute if data storage mgs:zombies game{state:"active"} if entity @s[type=!player] run scoreboard players operation #expl_dmg mgs.data *= #8 mgs.data
+# If zombie game is active: explosives hit zombies 5x harder, cap for players (6 hp = 3 hearts)
+execute if data storage mgs:zombies game{state:"active"} if entity @s[type=!player] run scoreboard players operation #expl_dmg mgs.data *= #5 mgs.data
 execute if data storage mgs:zombies game{state:"active"} if entity @s[type=player] if score #expl_dmg mgs.data matches 60.. run scoreboard players set #expl_dmg mgs.data 60
 
 # Flak Jacket perk: halve explosive area damage to a perked MP player

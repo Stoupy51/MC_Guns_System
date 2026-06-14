@@ -863,9 +863,17 @@
 		"subtitle": "vz61/reload",
 		"sounds": ["mgs:vz61/reload"]
 	},
+	"zombies/game_over": {
+		"subtitle": "zombies/game_over",
+		"sounds": [{"name": "mgs:zombies/game_over","stream": true}]
+	},
 	"zombies/music/115_song": {
 		"subtitle": "zombies/music/115_song",
 		"sounds": [{"name": "mgs:zombies/music/115_song","stream": true}]
+	},
+	"zombies/music/damned_100ae": {
+		"subtitle": "zombies/music/damned_100ae",
+		"sounds": [{"name": "mgs:zombies/music/damned_100ae","stream": true}]
 	},
 	"zombies/mystery_box/box_spin": {
 		"subtitle": "zombies/mystery_box/box_spin",
@@ -942,5 +950,85 @@
 	"zombies/pap/upgrade": {
 		"subtitle": "zombies/pap/upgrade",
 		"sounds": ["mgs:zombies/pap/upgrade"]
+	},
+	"zombies/powerups/bonfire_sale": {
+		"subtitle": "zombies/powerups/bonfire_sale",
+		"sounds": ["mgs:zombies/powerups/bonfire_sale"]
+	},
+	"zombies/powerups/bonus_points": {
+		"subtitle": "zombies/powerups/bonus_points",
+		"sounds": ["mgs:zombies/powerups/bonus_points"]
+	},
+	"zombies/powerups/carpenter": {
+		"subtitle": "zombies/powerups/carpenter",
+		"sounds": ["mgs:zombies/powerups/carpenter"]
+	},
+	"zombies/powerups/double_points": {
+		"subtitle": "zombies/powerups/double_points",
+		"sounds": ["mgs:zombies/powerups/double_points"]
+	},
+	"zombies/powerups/double_points_off": {
+		"subtitle": "zombies/powerups/double_points_off",
+		"sounds": ["mgs:zombies/powerups/double_points_off"]
+	},
+	"zombies/powerups/fire_sale": {
+		"subtitle": "zombies/powerups/fire_sale",
+		"sounds": ["mgs:zombies/powerups/fire_sale"]
+	},
+	"zombies/powerups/fire_sale_song": {
+		"subtitle": "zombies/powerups/fire_sale_song",
+		"sounds": [{"name": "mgs:zombies/powerups/fire_sale_song","stream": true}]
+	},
+	"zombies/powerups/insta_kill": {
+		"subtitle": "zombies/powerups/insta_kill",
+		"sounds": ["mgs:zombies/powerups/insta_kill"]
+	},
+	"zombies/powerups/insta_kill_off": {
+		"subtitle": "zombies/powerups/insta_kill_off",
+		"sounds": ["mgs:zombies/powerups/insta_kill_off"]
+	},
+	"zombies/powerups/item/grab": {
+		"subtitle": "zombies/powerups/item/grab",
+		"sounds": ["mgs:zombies/powerups/item/grab"]
+	},
+	"zombies/powerups/item/loop_2s": {
+		"subtitle": "zombies/powerups/item/loop_2s",
+		"sounds": ["mgs:zombies/powerups/item/loop_2s"]
+	},
+	"zombies/powerups/item/spawn": {
+		"subtitle": "zombies/powerups/item/spawn",
+		"sounds": ["mgs:zombies/powerups/item/spawn"]
+	},
+	"zombies/powerups/max_ammo": {
+		"subtitle": "zombies/powerups/max_ammo",
+		"sounds": ["mgs:zombies/powerups/max_ammo"]
+	},
+	"zombies/powerups/max_ammo_additional": {
+		"subtitle": "zombies/powerups/max_ammo_additional",
+		"sounds": ["mgs:zombies/powerups/max_ammo_additional"]
+	},
+	"zombies/powerups/nuke": {
+		"subtitle": "zombies/powerups/nuke",
+		"sounds": ["mgs:zombies/powerups/nuke"]
+	},
+	"zombies/powerups/nuke_additional": {
+		"subtitle": "zombies/powerups/nuke_additional",
+		"sounds": ["mgs:zombies/powerups/nuke_additional"]
+	},
+	"zombies/powerups/nuke_soul": {
+		"subtitle": "zombies/powerups/nuke_soul",
+		"sounds": ["mgs:zombies/powerups/nuke_soul"]
+	},
+	"zombies/powerups/random_perk": {
+		"subtitle": "zombies/powerups/random_perk",
+		"sounds": ["mgs:zombies/powerups/random_perk"]
+	},
+	"zombies/round_end_generic": {
+		"subtitle": "zombies/round_end_generic",
+		"sounds": ["mgs:zombies/round_end_generic"]
+	},
+	"zombies/round_start_generic": {
+		"subtitle": "zombies/round_start_generic",
+		"sounds": [{"name": "mgs:zombies/round_start_generic","stream": true}]
 	}
 }

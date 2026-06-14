@@ -182,7 +182,8 @@ tag @s remove {ns}.nuked
 # Remove attack damage modifier (restore normal damage)
 attribute @s minecraft:attack_damage modifier remove {ns}:nuke_zero_damage
 
-# Deal lethal damage from the nuke activator player
-damage @s 999999 {ns}:bullet by @n[tag={ns}.nuke_activator]
+# Deal lethal damage WITHOUT a player attacker, so nuke kills don't credit kill points
+# (the player didn't really kill them — the flat Nuke point bonus is handled separately).
+damage @s 999999 {ns}:bullet
 """)
 

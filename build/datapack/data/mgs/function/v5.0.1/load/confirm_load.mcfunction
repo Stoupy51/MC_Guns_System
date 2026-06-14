@@ -180,6 +180,15 @@ execute unless data storage mgs:zombies game.variant run data modify storage mgs
 # Initialize mystery box base pool (can be extended via function tag)
 execute unless data storage mgs:zombies mystery_box_pool run data modify storage mgs:zombies mystery_box_pool set value []
 
+# Box id shared by a box's interaction entity and its active pull display
+scoreboard objectives add mgs.mb.box dummy
+# Spin animation timer carried by each pull display (>0 spinning, <=0 ready window)
+scoreboard objectives add mgs.mb.anim dummy
+# Whether this pull will end in a box move (teddy bear) — only the active box, never Fire Sale
+scoreboard objectives add mgs.mb.willmove dummy
+# Player: id of the box they are currently pulling (0 = none)
+scoreboard objectives add mgs.mb.buying dummy
+
 # Pack-a-Punch machine scoreboards
 scoreboard objectives add mgs.zb.pap.id dummy
 scoreboard objectives add mgs.zb.pap.price dummy
@@ -226,6 +235,8 @@ scoreboard objectives add mgs.zb.barrier_repairs dummy
 # Power-up entity scoreboards
 scoreboard objectives add mgs.zb.pu.type dummy
 scoreboard objectives add mgs.zb.pu.timer dummy
+# Per-zombie: tick of the last time a player's weapon hit it (gates drops to player kills)
+scoreboard objectives add mgs.zb.player_hit dummy
 
 # Door entity scoreboards
 scoreboard objectives add mgs.zb.door.link dummy
@@ -300,6 +311,9 @@ scoreboard objectives add mgs.mp.prev_class dummy
 
 # Spectate timer (ticks remaining before respawn, 0 = not spectating)
 scoreboard objectives add mgs.mp.spectate_timer dummy
+
+# Dropped-weapon lifetime (ticks remaining before the on-death dropped gun despawns)
+scoreboard objectives add mgs.mp.drop_timer dummy
 
 # FFA ranking (1 = most kills, 2 = second, ..., 0 = unranked)
 scoreboard objectives add mgs.mp.ffa_rank dummy
@@ -393,10 +407,10 @@ execute unless data storage mgs:maps missions run data modify storage mgs:maps m
 scoreboard players set #2 mgs.data 2
 scoreboard players set #5 mgs.data 5
 scoreboard players set #6 mgs.data 6
-scoreboard players set #8 mgs.data 8
 scoreboard players set #10 mgs.data 10
 scoreboard players set #15 mgs.data 15
 scoreboard players set #20 mgs.data 20
+scoreboard players set #40 mgs.data 40
 scoreboard players set #44 mgs.data 44
 scoreboard players set #45 mgs.data 45
 scoreboard players set #50 mgs.data 50

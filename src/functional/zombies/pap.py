@@ -156,6 +156,8 @@ $data modify storage {ns}:temp _pap_machine set from storage {ns}:zombies pap_da
 
 	write_versioned_function("zombies/pap/on_hover", f"""
 execute store result score #pap_price {ns}.data run scoreboard players get @n[tag=bs.interaction.target] {ns}.zb.pap.price
+# Bonfire Sale: Pack-a-Punch costs 1000 while active
+execute if score #zb_bonfire_sale_timer {ns}.data matches 1.. run scoreboard players set #pap_price {ns}.data 1000
 execute store result storage {ns}:temp _pap_hover.id int 1 run scoreboard players get @n[tag=bs.interaction.target] {ns}.zb.pap.id
 function {ns}:v{version}/zombies/pap/lookup_machine with storage {ns}:temp _pap_hover
 data modify storage smithed.actionbar:input message set value {{json:[{{"text":"⚙ ","color":"dark_red"}},{{"storage":"{ns}:temp","nbt":"_pap_machine.name","color":"gold","interpret":true}},{{"text":" - Cost: ","color":"gray"}},{{"score":{{"name":"#pap_price","objective":"{ns}.data"}},"color":"yellow"}},{{"text":" points","color":"gray"}}],priority:"conditional",freeze:5}}
@@ -641,6 +643,8 @@ execute if score #pap_power {ns}.data matches 1 unless score #zb_power {ns}.data
 
 # Guard: player has enough points
 execute store result score #pap_price {ns}.data run scoreboard players get @n[tag=bs.interaction.target] {ns}.zb.pap.price
+# Bonfire Sale: Pack-a-Punch costs 1000 while active
+execute if score #zb_bonfire_sale_timer {ns}.data matches 1.. run scoreboard players set #pap_price {ns}.data 1000
 execute unless score @s {ns}.zb.points >= #pap_price {ns}.data run return run function {ns}:v{version}/zombies/pap/deny_not_enough_points
 
 # Determine selected zombies weapon slot (must be hotbar.1/2/3)

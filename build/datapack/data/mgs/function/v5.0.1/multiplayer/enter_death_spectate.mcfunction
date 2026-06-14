@@ -7,6 +7,9 @@
 #			mgs:v5.0.1/multiplayer/on_respawn
 #
 
+# Drop the held gun on the ground (pickable for 30s) before anything else, while still holding it
+execute at @s run function mgs:v5.0.1/multiplayer/drop_held_weapon
+
 # S&D: no respawning, mark as dead and go spectator
 execute if data storage mgs:multiplayer game{gamemode:"snd"} run return run function mgs:v5.0.1/multiplayer/gamemodes/snd/on_death
 

@@ -1,10 +1,10 @@
 
 #> mgs:v5.0.1/zombies/feedback/sound_box_close
 #
-# @executed	as @n[tag=mgs.mystery_box_active] & at @s
+# @executed	at @n[tag=bs.interaction.target]
 #
-# @within	mgs:v5.0.1/zombies/mystery_box/collect [ as @n[tag=mgs.mystery_box_active] & at @s ]
+# @within	mgs:v5.0.1/zombies/mystery_box/collect
 #
 
-playsound mgs:zombies/mystery_box/close ambient @a[scores={mgs.zb.in_game=1}] ~ ~ ~ 0.9 1.0
+playsound mgs:zombies/mystery_box/close ambient @a[scores={mgs.zb.in_game=1}] ~ ~ ~ 1.0 1.0
 

@@ -21,4 +21,5 @@ $execute if score #pu_spawn_type mgs.data matches 7 run function mgs:v5.0.1/zomb
 $execute if score #pu_spawn_type mgs.data matches 8 run function mgs:v5.0.1/zombies/powerups/spawn_type/free_pap {x:$(x),y:$(y),z:$(z),uid:$(uid)}
 $execute if score #pu_spawn_type mgs.data matches 9 run function mgs:v5.0.1/zombies/powerups/spawn_type/cash_drop {x:$(x),y:$(y),z:$(z),uid:$(uid)}
 $execute if score #pu_spawn_type mgs.data matches 10 run function mgs:v5.0.1/zombies/powerups/spawn_type/fire_sale {x:$(x),y:$(y),z:$(z),uid:$(uid)}
+$execute if score #pu_spawn_type mgs.data matches 11 run function mgs:v5.0.1/zombies/powerups/spawn_type/bonfire_sale {x:$(x),y:$(y),z:$(z),uid:$(uid)}
 
