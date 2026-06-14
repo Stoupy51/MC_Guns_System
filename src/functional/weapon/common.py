@@ -5,35 +5,40 @@ from typing import Any
 from stewbeet import Advancement, ItemModifier, JsonDict, Mem, Predicate, set_json_encoder, write_versioned_function
 
 from ...config.stats import BURST, REMAINING_BULLETS
+from ..generator import McfunctionGenerator
 
 
 # Main function
-def main() -> None:
-    ns: str = Mem.ctx.project_id
-    version: str = Mem.ctx.project_version
 
-    # Advancement detecting right click using using_item trigger
-    adv: JsonDict = {
-        "criteria": {
-            "requirement": {
-                "trigger": "minecraft:using_item",
-                "conditions": {
-                    "item": {
-                        "predicates": {
-                            "minecraft:custom_data": f"{{{ns}:{{gun:true}}}}"
+class CommonGenerator(McfunctionGenerator):
+    """ Generates the common datapack functions. """
+
+    def generate(self) -> None:
+        ns: str = self.ns
+        version: str = self.version
+
+        # Advancement detecting right click using using_item trigger
+        adv: JsonDict = {
+            "criteria": {
+                "requirement": {
+                    "trigger": "minecraft:using_item",
+                    "conditions": {
+                        "item": {
+                            "predicates": {
+                                "minecraft:custom_data": f"{{{ns}:{{gun:true}}}}"
+                            }
                         }
                     }
                 }
+            },
+            "rewards": {
+                "function": f"{ns}:v{version}/player/set_pending_clicks"
             }
-        },
-        "rewards": {
-            "function": f"{ns}:v{version}/player/set_pending_clicks"
         }
-    }
-    Mem.ctx.data[ns].advancements[f"v{version}/right_click"] = set_json_encoder(Advancement(adv), max_level=-1)
+        Mem.ctx.data[ns].advancements[f"v{version}/right_click"] = set_json_encoder(Advancement(adv), max_level=-1)
 
-    # Function to set pending clicks
-    write_versioned_function("player/set_pending_clicks", f"""
+        # Function to set pending clicks
+        self.func("player/set_pending_clicks", f"""
 # Revoke advancement
 advancement revoke @s only {ns}:v{version}/right_click
 
@@ -54,8 +59,8 @@ execute if score #is_mid_burst {ns}.data matches 1 run scoreboard players add @s
 execute unless score #is_mid_burst {ns}.data matches 1 run scoreboard players set @s {ns}.pending_clicks 1
 """)
 
-    # Check if burst is mid-progress (not complete)
-    write_versioned_function("player/check_mid_burst", f"""
+        # Check if burst is mid-progress (not complete)
+        self.func("player/check_mid_burst", f"""
 # Get burst limit
 execute store result score #burst_limit {ns}.data run data get storage {ns}:gun all.stats.{BURST}
 
@@ -63,8 +68,8 @@ execute store result score #burst_limit {ns}.data run data get storage {ns}:gun 
 execute if score @s {ns}.burst_count < #burst_limit {ns}.data run scoreboard players set #is_mid_burst {ns}.data 1
 """)
 
-    # Copy gun data function
-    write_versioned_function("utils/copy_gun_data", f"""
+        # Copy gun data function
+        self.func("utils/copy_gun_data", f"""
 # Copy gun data
 data remove storage {ns}:gun all
 data modify storage {ns}:gun SelectedItem set value {{id:""}}
@@ -72,8 +77,8 @@ data modify storage {ns}:gun SelectedItem set from entity @s SelectedItem
 data modify storage {ns}:gun all set from storage {ns}:gun SelectedItem.components."minecraft:custom_data".{ns}
 """)
 
-    # Player tick function
-    write_versioned_function("player/tick", f"""
+        # Player tick function
+        self.func("player/tick", f"""
 # Add temporary tag
 tag @s add {ns}.ticking
 
@@ -137,8 +142,8 @@ tag @s remove {ns}.ticking
 execute store result score @s {ns}.previous_selected run data get storage {ns}:gun SelectedItem.id
 """)
 
-    # Handle pending clicks
-    write_versioned_function("player/right_click", f"""
+        # Handle pending clicks
+        self.func("player/right_click", f"""
 # Decrease pending clicks by 1
 scoreboard players remove @s {ns}.pending_clicks 1
 
@@ -154,31 +159,31 @@ execute unless data storage {ns}:gun all.gun run return fail
 execute unless score @s {ns}.special.infinite_ammo matches 1.. if score @s {ns}.{REMAINING_BULLETS} matches ..0 run return run function {ns}:v{version}/ammo/reload
 """)
 
-    # Prepare predicates for movement checks
-    # (Can't use flag 'is_on_ground' because /tp @s ~ ~ ~ makes it false for two ticks)
-    def json_enc(x: Any) -> Any: return set_json_encoder(x, max_level=-1)
-    Mem.ctx.data[ns].predicates[f"v{version}/is_on_ground"] = json_enc(Predicate({"condition":"minecraft:entity_properties","entity":"this","predicate":{"movement":{"vertical_speed":{"max":0.1}}}}))
-    Mem.ctx.data[ns].predicates[f"v{version}/is_sprinting"] = json_enc(Predicate({"condition":"minecraft:entity_properties","entity":"this","predicate":{"flags":{"is_sprinting":True}}}))
-    Mem.ctx.data[ns].predicates[f"v{version}/is_sneaking"] = json_enc(Predicate({"condition":"minecraft:entity_properties","entity":"this","predicate":{"flags":{"is_sneaking":True}}}))
-    Mem.ctx.data[ns].predicates[f"v{version}/is_moving"] = json_enc(Predicate({"condition":"minecraft:entity_properties","entity":"this","predicate":{"movement":{"horizontal_speed":{"min":0.1}}}}))
+        # Prepare predicates for movement checks
+        # (Can't use flag 'is_on_ground' because /tp @s ~ ~ ~ makes it false for two ticks)
+        def json_enc(x: Any) -> Any: return set_json_encoder(x, max_level=-1)
+        Mem.ctx.data[ns].predicates[f"v{version}/is_on_ground"] = json_enc(Predicate({"condition":"minecraft:entity_properties","entity":"this","predicate":{"movement":{"vertical_speed":{"max":0.1}}}}))
+        Mem.ctx.data[ns].predicates[f"v{version}/is_sprinting"] = json_enc(Predicate({"condition":"minecraft:entity_properties","entity":"this","predicate":{"flags":{"is_sprinting":True}}}))
+        Mem.ctx.data[ns].predicates[f"v{version}/is_sneaking"] = json_enc(Predicate({"condition":"minecraft:entity_properties","entity":"this","predicate":{"flags":{"is_sneaking":True}}}))
+        Mem.ctx.data[ns].predicates[f"v{version}/is_moving"] = json_enc(Predicate({"condition":"minecraft:entity_properties","entity":"this","predicate":{"movement":{"horizontal_speed":{"min":0.1}}}}))
 
-    # Update weapon stats item modifier
-    modifier: dict[str, Any] = {"function":"minecraft:copy_custom_data","source":{"type":"minecraft:storage","source":f"{ns}:gun"},"ops":[{"source":"all.stats","target":f"{ns}.stats","op":"replace"}]}
-    Mem.ctx.data[ns].item_modifiers[f"v{version}/update_stats"] = json_enc(ItemModifier(modifier))
+        # Update weapon stats item modifier
+        modifier: dict[str, Any] = {"function":"minecraft:copy_custom_data","source":{"type":"minecraft:storage","source":f"{ns}:gun"},"ops":[{"source":"all.stats","target":f"{ns}.stats","op":"replace"}]}
+        Mem.ctx.data[ns].item_modifiers[f"v{version}/update_stats"] = json_enc(ItemModifier(modifier))
 
-    # Update weapon model item modifier
-    write_versioned_function("utils/update_model", """
+        # Update weapon model item modifier
+        self.func("utils/update_model", """
 $item modify entity @s weapon.mainhand {"function": "minecraft:set_components","components": {"minecraft:item_model": "$(item_model)"}}
 """)
 
-    # Offhand swap now toggles fire mode (swap -> toggle)
-    write_versioned_function("player/mode_check", f"""
+        # Offhand swap now toggles fire mode (swap -> toggle)
+        self.func("player/mode_check", f"""
 # If mainhand is empty and offhand has a weapon, move it to mainhand and toggle fire mode
 execute unless items entity @s weapon.mainhand * if items entity @s weapon.offhand *[custom_data~{{{ns}:{{gun:true}}}}] run function {ns}:v{version}/player/swap_and_toggle
 """)
 
-    # Swap offhand to mainhand and toggle fire mode
-    write_versioned_function("player/swap_and_toggle", f"""
+        # Swap offhand to mainhand and toggle fire mode
+        self.func("player/swap_and_toggle", f"""
 # Move offhand item to mainhand
 item replace entity @s weapon.mainhand from entity @s weapon.offhand
 item replace entity @s weapon.offhand with air
@@ -187,8 +192,8 @@ item replace entity @s weapon.offhand with air
 function {ns}:v{version}/switch/do_toggle_fire_mode
 """)
 
-    # Reset burst count only if burst is complete
-    write_versioned_function("player/reset_burst_if_complete", f"""
+        # Reset burst count only if burst is complete
+        self.func("player/reset_burst_if_complete", f"""
 # Check if in burst mode
 execute store result score #fire_mode_is_burst {ns}.data if data storage {ns}:gun all.stats{{fire_mode:"burst"}}
 
@@ -201,22 +206,28 @@ execute store result score #burst_limit {ns}.data run data get storage {ns}:gun 
 execute if score @s {ns}.burst_count >= #burst_limit {ns}.data run scoreboard players set @s {ns}.burst_count 0
 """)
 
-    # DPS snapshot: copy accumulated damage to previous_dps, then reset
-    write_versioned_function("player/dps_snapshot", f"""
+        # DPS snapshot: copy accumulated damage to previous_dps, then reset
+        self.func("player/dps_snapshot", f"""
 # Snapshot current DPS accumulator and reset for the next second
 scoreboard players operation @s {ns}.previous_dps = @s {ns}.dps
 scoreboard players set @s {ns}.dps 0
 scoreboard players set @s {ns}.dps_timer 0
 """)
 
-    # DPS signal: damage - add actual damage dealt to the shooter's mgs.dps
-    # @s = hit entity, the shooter is the ticking player (has mgs.ticking tag)
-    # $(amount) is the damage float from the damage signal macro (e.g. 24.0)
-    write_versioned_function("weapon/dps_collect", f"""
+        # DPS signal: damage - add actual damage dealt to the shooter's mgs.dps
+        # @s = hit entity, the shooter is the ticking player (has mgs.ticking tag)
+        # $(amount) is the damage float from the damage signal macro (e.g. 24.0)
+        self.func("weapon/dps_collect", f"""
 # @s = hit entity; add damage (x10) to the shooter's DPS accumulator
 # Store $(amount) float then read back x10 to get integer tenths (same unit as dps accumulator)
 $data modify storage {ns}:temp dps_amount set value $(amount)
 execute store result score #sent_damage {ns}.data run data get storage {ns}:temp dps_amount 10
 scoreboard players operation @n[tag={ns}.ticking] {ns}.dps += #sent_damage {ns}.data
 """, tags=[f"{ns}:signals/damage"])
+
+
+def main() -> None:
+    """ Module-level entry (preserved signature); delegates to :class:`CommonGenerator`. """
+    CommonGenerator()()
+
 
