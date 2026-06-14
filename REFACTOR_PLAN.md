@@ -5,6 +5,22 @@
 
 ---
 
+## Current Status (live)
+
+- ✅ **P0 Foundation** — `McfunctionGenerator` base class + verification harness.
+- ✅ **P1 Game modes** — all 5 variants converted, build byte-identical.
+- 🟡 **P5 Feature modules** — pattern proven on `weapon/kick.py` + `core/teleport.py`;
+  ~35 generators remain (mechanical, one class per file, diff after each).
+- ⏸️ **P2 Catalog dataclasses**, **P4 shared lifecycle** — designed, not yet executed
+  (P4 is the largest/riskiest; attempt only with the harness green).
+- ⏭️ **P3 utilities** — deferred by design (already cohesive free functions).
+
+Every completed step was verified with `beet build && diff -r /tmp/mgs_baseline/data
+build/datapack/data` → identical. This is a large refactor (23k LOC); remaining items are
+tracked as checkboxes below and can be picked up incrementally without rework.
+
+---
+
 ## Executive Summary
 
 The codebase is entirely procedural. Every generator follows the same skeleton and there is heavy structural repetition:
@@ -206,9 +222,10 @@ classDiagram
   `setup_definitions.py` readers to attribute access. Verify diff after each.
 
 ### Priority 3 — Command/text utilities
-- [ ] **T3.1** Introduce `Snbt` utility class (or namespaced module) wrapping `MGS_TAG`,
-  `btn`, `styled_text`, plus `tellraw_mgs`. Keep the existing free functions as thin
-  delegators in `helpers.py` (external callers untouched). Verify diff.
+- [~] **T3.1** *Deferred (low value).* `helpers.py` / `zombies/common.py` are already cohesive,
+  stateless string builders. Wrapping `MGS_TAG` / `btn` / `styled_text` in a class adds
+  ceremony without state or polymorphism — it violates "composition where it *makes sense*."
+  Left as free functions intentionally. Revisit only if shared mutable state appears.
 
 ### Priority 4 — Shared game-mode lifecycle (largest, highest risk — do last)
 - [ ] **T4.1** Create `src/functional/game_mode.py` with `GameMode(Generator)` +
@@ -221,11 +238,14 @@ classDiagram
   are provably identical; keep mode-specific overrides. Verify diff. Commit.
 
 ### Priority 5 — Feature modules (incremental, opportunistic)
-- [ ] **T5.1** Convert `functional/weapon/*` `main()` generators to `Generator` subclasses
-  (one class per file), wrappers preserved. Verify diff per file.
-- [ ] **T5.2** Convert `functional/zombies/*` `generate_*()` generators likewise. Verify diff.
-- [ ] **T5.3** Convert `functional/core/*` shared writers to a `SharedFunctions(Generator)`
-  group. Verify diff.
+- [~] **T5.1** Convert `functional/weapon/*` `main()` generators to `McfunctionGenerator`
+  subclasses (one class per file), wrappers preserved. **In progress:** `weapon/kick.py` →
+  `KickGenerator` ✅ (diff clean). Remaining: actionbar, ammo, casing, common, grenade,
+  projectile, raycast, sound, switch, update_lore, zoom.
+- [ ] **T5.2** Convert `functional/zombies/*` `generate_*()` generators likewise. Not started.
+- [~] **T5.3** Convert `functional/core/*` shared writers to `McfunctionGenerator` subclasses.
+  **In progress:** `core/teleport.py` → `SharedTeleport` ✅ (diff clean). Remaining: bounds,
+  commands, map_loading, map_menus, spawning.
 
 ### Final
 - [ ] **TF.1** Full `beet build && diff -r` clean. Confirm 1155 mcfunctions unchanged.
