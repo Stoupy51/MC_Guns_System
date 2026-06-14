@@ -67,6 +67,25 @@ ALL_ELEMENTS: dict[str, JsonDict] = {
                            }},
 }
 
+# Field documentation ───────────────────────────────────────────
+# Tooltips shown (as a hover "ⓘ") next to constant/enum config fields in the element editor,
+# so map makers don't have to guess what the magic numbers mean. Keyed by (element_type, field);
+# a plain field-name key acts as a fallback shared across element types (e.g. "power").
+FIELD_DOCS: dict[tuple[str, str] | str, str] = {
+	("trap", "type"): "Trap behaviour:\n0 = Fire — lethal to zombies, burns players inside\n1 = Electric — lethal to zombies, shocks players inside\n2 = Turret — auto-fires at the nearest zombie every 5 ticks",
+	("trap", "duration"): "How long the trap stays active, in ticks (20 ticks = 1 second).",
+	("trap", "cooldown"): "Cooldown before the trap can be re-triggered, in ticks (20 = 1s).",
+	("door", "animation"): "Open animation:\n0 = Destroy — block-break particles + sound\n1+ = Silent — blocks instantly replaced with air",
+	("door", "link_id"): "Doors that share a link_id open together as a single purchase.",
+	("door", "back_group_id"): "Zombie spawn group_id unlocked behind this door (-1 = none).",
+	("perk_machine", "perk_id"): "Perk granted by this machine:\njuggernog · speed_cola · double_tap · quick_revive · mule_kick",
+	("wallbuy", "weapon_id"): "Catalog weapon id given on purchase (e.g. m1911, ak47, mp5).",
+	("barrier", "radius"): "Block radius the barrier toggles open/closed around its marker.",
+	# Shared fallbacks (any element type):
+	"power": "true = requires the map's power to be switched on before it works\nfalse = always usable",
+	"price": "Cost in points to buy/use this element.",
+}
+
 # Mode Definitions ──────────────────────────────────────────────
 # Each mode defines which elements are available and their slot assignments.
 # storage_key: key in {ns}:maps storage (e.g., multiplayer, zombies, missions)
@@ -1227,10 +1246,16 @@ execute at @s unless entity @n[tag={ns}.map_element,distance=..10] run tellraw @
     				edit_cmd,
     				"yellow", hover_text, action="suggest_command"
     			)
+    			# Optional info tooltip for constant/enum fields (e.g. trap type, door animation).
+    			doc: str | None = FIELD_DOCS.get((etype, field)) or FIELD_DOCS.get(field)
+    			info_component: str = ""
+    			if doc:
+    				doc_escaped = doc.replace("\\", "\\\\").replace('"', '\\"').replace("\n", "\\n")
+    				info_component = f',"  ",{{"text":"ⓘ","color":"aqua","hover_event":{{"action":"show_text","value":"{doc_escaped}"}}}}'
     			zb_config_lines.append(
     				f'execute if entity @s[tag={ns}.element.{etype}] run tellraw @a[tag={ns}.map_editor] '
     				f'["    ",{{"text":"{field}: ","color":"gray"}},'
-    				f'{{"entity":"@s","nbt":"data.{field}","color":"white"}}," ",{edit_btn}]'
+    				f'{{"entity":"@s","nbt":"data.{field}","color":"white"}}," ",{edit_btn}{info_component}]'
     			)
 
     	# For spawn types: show yaw

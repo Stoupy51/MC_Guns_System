@@ -116,7 +116,7 @@ function {ns}:v{version}/zombies/summon_zombie_at with storage {ns}:temp _zpos
     	self.func("zombies/summon_zombie_at", f"""
 # Summon zombie 2 blocks underground with NoAI (rise animation in progress)
 # Attach a marker passenger so death can be intercepted before vanilla event 60 (poof particles).
-summon minecraft:zombie ~ ~-2 ~ {{Tags:["{ns}.zombie_round","{ns}.gm_entity","{ns}.nukable","{ns}.zb_rising"],CanPickUpLoot:false,PersistenceRequired:true,DeathLootTable:"minecraft:empty",NoAI:1b,Passengers:[{{id:"minecraft:marker",Tags:["{ns}.death_watch","{ns}.gm_entity"]}}],Attributes:[{{id:"minecraft:follow_range",base:2048.0d}}]}}
+summon minecraft:zombie ~ ~-2 ~ {{Tags:["{ns}.zombie_round","{ns}.gm_entity","{ns}.nukable","{ns}.zb_rising"],CanPickUpLoot:false,PersistenceRequired:true,DeathLootTable:"minecraft:empty",NoAI:1b,Silent:1b,Passengers:[{{id:"minecraft:marker",Tags:["{ns}.death_watch","{ns}.gm_entity"]}}],Attributes:[{{id:"minecraft:follow_range",base:2048.0d}}]}}
 
 # Apply type-specific scaling (health, speed, rise timer)
 $execute as @n[tag={ns}.zombie_round,tag=!{ns}.zb_scaled] run function {ns}:v{version}/zombies/types/$(type) {{level:"$(level)"}}
@@ -355,10 +355,43 @@ effect give @e[tag={ns}.zombie_round,tag=!{ns}.zb_near_player] glowing 6 0 true
 tag @e[tag={ns}.zb_near_player] remove {ns}.zb_near_player
 """)
 
-    	## Hook death watch into the main zombies game tick
+    	# Managed Horde Ambience ─────────────────────────────────────
+    	# Round zombies are summoned Silent (no per-entity vanilla sounds), so a 50-zombie horde
+    	# can't stack into an ear-splitting wall of groans. Instead, each player periodically hears
+    	# ONE controlled groan whose volume scales gently with the nearby zombie count and is hard
+    	# capped — a full horde sounds full without blowing out the player's ears.
+    	self.func("zombies/horde_ambient", f"""
+# @s = an in-game player. Count zombies within earshot.
+execute store result score #horde_count {ns}.data if entity @e[tag={ns}.zombie_round,distance=..32]
+execute if score #horde_count {ns}.data matches ..0 run return 0
+
+# Volume (hundredths) = 0.25 + count*0.03, hard-capped at 0.80 (so ~18+ zombies all sound the same).
+scoreboard players set #horde_vol {ns}.data 25
+scoreboard players operation #horde_tmp {ns}.data = #horde_count {ns}.data
+scoreboard players operation #horde_tmp {ns}.data *= #3 {ns}.data
+scoreboard players operation #horde_vol {ns}.data += #horde_tmp {ns}.data
+execute if score #horde_vol {ns}.data matches 80.. run scoreboard players set #horde_vol {ns}.data 80
+
+# Random pitch 0.70..1.05 for variety so the loop doesn't sound metronomic.
+execute store result score #horde_pitch {ns}.data run random value 70..105
+
+# Hand volume/pitch to the macro as doubles (value/100).
+execute store result storage {ns}:temp _horde.vol double 0.01 run scoreboard players get #horde_vol {ns}.data
+execute store result storage {ns}:temp _horde.pitch double 0.01 run scoreboard players get #horde_pitch {ns}.data
+function {ns}:v{version}/zombies/horde_ambient_play with storage {ns}:temp _horde
+""")
+
+    	self.func("zombies/horde_ambient_play", "$playsound minecraft:entity.zombie.ambient hostile @s ~ ~ ~ $(vol) $(pitch)")
+
+    	## Hook death watch + horde ambience into the main zombies game tick
     	self.func("zombies/game_tick", f"""
 # Intercept dying zombies before vanilla death particles are emitted.
 function {ns}:v{version}/zombies/death_watch_tick
+
+# Managed horde ambience: ~every 35 ticks, give each player one controlled, count-scaled groan.
+scoreboard players add #zb_horde_timer {ns}.data 1
+execute if score #zb_horde_timer {ns}.data matches 35.. run scoreboard players set #zb_horde_timer {ns}.data 0
+execute if score #zb_horde_timer {ns}.data matches 0 as @a[scores={{{ns}.zb.in_game=1}},gamemode=!spectator] at @s run function {ns}:v{version}/zombies/horde_ambient
 """)
 
     	## Cleanup for round/end bulk-kill paths
