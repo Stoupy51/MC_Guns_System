@@ -15,9 +15,12 @@
   shaders (5), shared projectile helpers (1), plus the 5 game-mode variants. Every
   module-level entry (`main` / `generate_*` / `write_shared_*`) is preserved as a thin
   wrapper, so `link.py` and all `__init__` import chains are untouched.
-- ⏭️ **P2 Catalog dataclasses** — deferred (data layer; see note below).
+- ✅ **P2 Catalog dataclasses** — catalog rows are now typed `NamedTuple`s; magic-index
+  readers migrated to attribute access. Output unchanged.
 - ⏭️ **P3 utilities** — deferred by design (already cohesive free functions).
-- ⏭️ **P4 shared lifecycle dedup** — deferred (see note below).
+- ✅ **P4 shared lifecycle** — `GameMode` base + `MultiplayerMode`/`ZombiesMode`/
+  `MissionsMode`; the two provably-identical lifecycle functions deduped into the base.
+  An output audit showed the rest genuinely diverge, so they correctly stay mode-specific.
 
 **Verification:** the `build/` tree is git-tracked, so after every batch
 `beet build && git status build/datapack/data` must be **empty**. A final clean,
@@ -253,15 +256,32 @@ classDiagram
   ceremony without state or polymorphism — it violates "composition where it *makes sense*."
   Left as free functions intentionally. Revisit only if shared mutable state appears.
 
-### Priority 4 — Shared game-mode lifecycle (largest, highest risk — do last)
-- [ ] **T4.1** Create `src/functional/game_mode.py` with `GameMode(Generator)` +
-  `SpawnSystem` + `SidebarSystem` (composition). Parameterize storage / score_prefix / mode.
-- [ ] **T4.2** Port `multiplayer/game.py` spawn+sidebar+lifecycle into `MultiplayerMode`,
-  delegating bodies through the base. Verify diff (this is the strict one).
-- [ ] **T4.3** Port `zombies/game.py` into `ZombiesMode(GameMode)`. Verify diff.
-- [ ] **T4.4** Port `missions/game.py` into `MissionsMode(GameMode)`. Verify diff.
-- [ ] **T4.5** Collapse duplicated spawn/tp/sidebar bodies into the shared base where they
-  are provably identical; keep mode-specific overrides. Verify diff. Commit.
+### Priority 4 — Shared game-mode lifecycle — DONE (scoped to the real shared surface)
+**Empirical finding (drove the scope):** I compared the *generated* output of every
+function that exists in ≥2 modes (normalizing mode segment + score prefix). Of the 18
+functions shared between multiplayer and zombies, only **2** are byte-identical:
+`load_map_from_storage` (already shared via the `core/map_loading` per-mode loop) and
+`tp_player_at`. `summon_spawn_at` differs only by one zombies-only tag (parameterizable);
+the other ~15 (`start`/`stop`/`join_game`/`pick_spawn`/`tp_to_spawn`/`tp_all_to_spawns`/
+`summon_spawns`/`prep_tick`/`end_prep`/…) genuinely diverge because multiplayer is
+team-based and zombies/missions are not. **Conclusion:** a shared base that *re-generates*
+those divergent bodies would change output (unsafe for an untestable datapack) or need so
+many overrides it shares nothing. So P4 builds the hierarchy + dedups only the provably
+identical functions, rather than forcing a false abstraction over divergent logic.
+
+- [x] **T4.1** Created `src/functional/game_mode.py` with `GameMode(McfunctionGenerator)`
+  holding the shared lifecycle helpers `write_tp_player_at()` and
+  `write_summon_spawn_at(extra_spawn_tags=…)`. (No `SpawnSystem`/`SidebarSystem`
+  composition — the spawn/sidebar *bodies* aren't shared, so those classes would be empty
+  ceremony; revisit if the modes' logic ever converges.)
+- [x] **T4.2** `multiplayer/game.py` `GameGenerator` → `MultiplayerMode(GameMode)`
+  (`mode="multiplayer"`), calling the shared helpers. Output unchanged.
+- [x] **T4.3** `zombies/game.py` → `ZombiesMode(GameMode)` (`mode="zombies"`,
+  `write_summon_spawn_at(extra_spawn_tags=("new_spawn",))`). Output unchanged.
+- [x] **T4.4** `missions/game.py` → `MissionsMode(GameMode)` (`mode="missions"`). Output unchanged.
+- [x] **T4.5** Deduplicated the two provably-identical functions (`tp_player_at` ×3,
+  `summon_spawn_at` ×3) into the base; mode-specific bodies kept as subclass methods.
+  Full build diff → identical.
 
 ### Priority 5 — Feature modules (incremental, opportunistic)
 - [x] **T5.1** Convert all `functional/weapon/*` generators (12): kick, zoom, actionbar,
