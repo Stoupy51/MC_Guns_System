@@ -3,16 +3,20 @@
 # Zombies Round System
 # Wave-based round progression with zombie spawning, scaling, and round completion.
 from stewbeet import Mem, write_versioned_function
+from ..generator import McfunctionGenerator
 
 
-def generate_zombies_rounds() -> None:
-	ns: str = Mem.ctx.project_id
-	version: str = Mem.ctx.project_version
+class RoundGenerator(McfunctionGenerator):
+    """ Generates the round datapack functions. """
 
-	# Round System ──────────────────────────────────────────────
+    def generate(self) -> None:
+    	ns: str = self.ns
+    	version: str = self.version
 
-	## Start a new round
-	write_versioned_function("zombies/start_round", f"""
+    	# Round System ──────────────────────────────────────────────
+
+    	## Start a new round
+    	self.func("zombies/start_round", f"""
 # Increment round number
 execute store result score #zb_round {ns}.data run data get storage {ns}:zombies game.round
 scoreboard players add #zb_round {ns}.data 1
@@ -54,10 +58,10 @@ tellraw @a ["",{{"text":"","color":"dark_green","bold":true}},"🧟 ",{{"text":"
 execute as @a[scores={{{ns}.zb.in_game=1}}] at @s run playsound {ns}:zombies/round_start_generic ambient @s ~ ~ ~ 0.6 1.0
 """)
 
-	## Calculate spawn timer and batch size based on current round
-	# Timer formula: max(1, 20 - round) → R1=38t, R10=20t, R20=1t+
-	# Batch formula: floor((round - 1) / 50) + 1 → R1-50=1, R51-100=2, R101-150=3 ...
-	write_versioned_function("zombies/calc_spawn_timer", f"""
+    	## Calculate spawn timer and batch size based on current round
+    	# Timer formula: max(1, 20 - round) → R1=38t, R10=20t, R20=1t+
+    	# Batch formula: floor((round - 1) / 50) + 1 → R1-50=1, R51-100=2, R101-150=3 ...
+    	self.func("zombies/calc_spawn_timer", f"""
 # Timer: start at 20, clamp to minimum 1
 scoreboard players set #zb_spawn_timer {ns}.data 20
 scoreboard players operation #zb_spawn_timer {ns}.data -= #zb_round {ns}.data
@@ -70,8 +74,8 @@ scoreboard players operation #zb_spawn_batch {ns}.data /= #50 {ns}.data
 scoreboard players add #zb_spawn_batch {ns}.data 1
 """)
 
-	## Spawn a single zombie using proximity-based selection from spawn markers
-	write_versioned_function("zombies/spawn_zombie", f"""
+    	## Spawn a single zombie using proximity-based selection from spawn markers
+    	self.func("zombies/spawn_zombie", f"""
 # Tag nearby unlocked zombie spawns
 # First pass: 32 blocks from any alive player
 execute as @a[scores={{{ns}.zb.in_game=1}},gamemode=!spectator] at @s run tag @e[tag={ns}.spawn_zb,tag={ns}.spawn_unlocked,distance=..32] add {ns}.zb_near
@@ -89,8 +93,8 @@ execute as @n[tag={ns}.zb_near,sort=random] at @s run function {ns}:v{version}/z
 tag @e[tag={ns}.zb_near] remove {ns}.zb_near
 """)
 
-	## Actually spawn the zombie at the marker position (@s = spawn marker, at @s)
-	write_versioned_function("zombies/do_spawn_zombie", f"""
+    	## Actually spawn the zombie at the marker position (@s = spawn marker, at @s)
+    	self.func("zombies/do_spawn_zombie", f"""
 # Determine zombie level based on round
 # Rounds 1-5: level 1, 6-10: level 2, 11-15: level 3, 16+: level 4
 execute if score #zb_round {ns}.data matches ..5 run data modify storage {ns}:temp _zpos.level set value "1"
@@ -106,10 +110,10 @@ data modify storage {ns}:temp _zpos.type set value "normal"
 function {ns}:v{version}/zombies/summon_zombie_at with storage {ns}:temp _zpos
 """)
 
-	## Summon zombie at execution position (macro for level/type dispatch)
-	# Uses ~ ~-2 ~ so zombie spawns 2 blocks underground for the rise animation.
-	# Execution context comes from: spawn_zombie → at @s (spawn marker) → do_spawn_zombie → here.
-	write_versioned_function("zombies/summon_zombie_at", f"""
+    	## Summon zombie at execution position (macro for level/type dispatch)
+    	# Uses ~ ~-2 ~ so zombie spawns 2 blocks underground for the rise animation.
+    	# Execution context comes from: spawn_zombie → at @s (spawn marker) → do_spawn_zombie → here.
+    	self.func("zombies/summon_zombie_at", f"""
 # Summon zombie 2 blocks underground with NoAI (rise animation in progress)
 # Attach a marker passenger so death can be intercepted before vanilla event 60 (poof particles).
 summon minecraft:zombie ~ ~-2 ~ {{Tags:["{ns}.zombie_round","{ns}.gm_entity","{ns}.nukable","{ns}.zb_rising"],CanPickUpLoot:false,PersistenceRequired:true,DeathLootTable:"minecraft:empty",NoAI:1b,Passengers:[{{id:"minecraft:marker",Tags:["{ns}.death_watch","{ns}.gm_entity"]}}],Attributes:[{{id:"minecraft:follow_range",base:2048.0d}}]}}
@@ -124,12 +128,12 @@ execute as @n[tag={ns}.zombie_round,tag={ns}.zb_rising] store result score @s {n
 scoreboard players set @n[tag={ns}.zombie_round,tag={ns}.zb_rising] {ns}.zb.stuck_dist 4
 """)
 
-	# Enemy Types ───────────────────────────────────────────────
-	# Each type function receives {level:"1"|"2"|"3"|"4"} as macro argument.
-	# All types call the shared scale logic; stubs fall through to normal scaling.
+    	# Enemy Types ───────────────────────────────────────────────
+    	# Each type function receives {level:"1"|"2"|"3"|"4"} as macro argument.
+    	# All types call the shared scale logic; stubs fall through to normal scaling.
 
-	## Normal zombie: scale health/speed by level + start rise animation
-	write_versioned_function("zombies/types/normal", f"""
+    	## Normal zombie: scale health/speed by level + start rise animation
+    	self.func("zombies/types/normal", f"""
 # Add scaled tag, and few data
 tag @s add {ns}.zb_scaled
 data modify entity @s DeathTime set value -16s
@@ -166,8 +170,8 @@ attribute @s minecraft:knockback_resistance base set 1024
 scoreboard players set @s {ns}.zb.rise_tick 20
 """)
 
-	## Compute zombie HP for current round (BO2 formula adapted to Minecraft scale)
-	write_versioned_function("zombies/calc_zombie_hp", f"""
+    	## Compute zombie HP for current round (BO2 formula adapted to Minecraft scale)
+    	self.func("zombies/calc_zombie_hp", f"""
 # R1-9: linear growth
 execute if score #zb_round {ns}.data matches ..9 run function {ns}:v{version}/zombies/calc_zombie_hp_linear
 
@@ -178,8 +182,8 @@ execute if score #zb_round {ns}.data matches 10.. run function {ns}:v{version}/z
 execute unless score #zb_hp {ns}.data matches 15..2048 run scoreboard players set #zb_hp {ns}.data 2048
 """)
 
-	## R1-9: (150 + (round - 1) * 100) * 2 / 15
-	write_versioned_function("zombies/calc_zombie_hp_linear", f"""
+    	## R1-9: (150 + (round - 1) * 100) * 2 / 15
+    	self.func("zombies/calc_zombie_hp_linear", f"""
 scoreboard players operation #zb_hp {ns}.data = #zb_round {ns}.data
 scoreboard players remove #zb_hp {ns}.data 1
 scoreboard players operation #zb_hp {ns}.data *= #100 {ns}.data
@@ -188,8 +192,8 @@ scoreboard players operation #zb_hp {ns}.data *= #2 {ns}.data
 scoreboard players operation #zb_hp {ns}.data /= #15 {ns}.data
 """)
 
-	## R10+: 950 * 1.1^(round - 9) * 2 / 15
-	write_versioned_function("zombies/calc_zombie_hp_exp", f"""
+    	## R10+: 950 * 1.1^(round - 9) * 2 / 15
+    	self.func("zombies/calc_zombie_hp_exp", f"""
 scoreboard players operation #zb_exp_round {ns}.data = #zb_round {ns}.data
 scoreboard players remove #zb_exp_round {ns}.data 9
 
@@ -202,37 +206,37 @@ scoreboard players operation #zb_hp {ns}.data *= #2 {ns}.data
 scoreboard players operation #zb_hp {ns}.data /= #15 {ns}.data
 """)
 
-	## Apply computed HP to the current zombie (@s)
-	write_versioned_function("zombies/apply_zombie_hp", """
+    	## Apply computed HP to the current zombie (@s)
+    	self.func("zombies/apply_zombie_hp", """
 $attribute @s minecraft:max_health base set $(val)
 execute store result entity @s Health float 1 run attribute @s minecraft:max_health get
 """)
 
-	## Armed zombie stub (TODO: carries weapon, drops ammo on death)
-	write_versioned_function("zombies/types/armed", f"""
+    	## Armed zombie stub (TODO: carries weapon, drops ammo on death)
+    	self.func("zombies/types/armed", f"""
 # TODO: armed zombie — unique AI goal: ranged attack, drops ammo powerup on death
 # Falls through to normal scaling until implemented
 $function {ns}:v{version}/zombies/types/normal {{level:"$(level)"}}
 """)
 
-	## Fast zombie stub (TODO: higher movement speed, less health)
-	write_versioned_function("zombies/types/fast", f"""
+    	## Fast zombie stub (TODO: higher movement speed, less health)
+    	self.func("zombies/types/fast", f"""
 # TODO: fast zombie — higher base movement speed, reduced health pool
 # Falls through to normal scaling until implemented
 $function {ns}:v{version}/zombies/types/normal {{level:"$(level)"}}
 """)
 
-	## Tank zombie stub (TODO: very high health, slow movement)
-	write_versioned_function("zombies/types/tank", f"""
+    	## Tank zombie stub (TODO: very high health, slow movement)
+    	self.func("zombies/types/tank", f"""
 # TODO: tank zombie — very high health, reduced movement speed
 # Falls through to normal scaling until implemented
 $function {ns}:v{version}/zombies/types/normal {{level:"$(level)"}}
 """)
 
-	# Rise Animation ─────────────────────────────────────────────
+    	# Rise Animation ─────────────────────────────────────────────
 
-	## Per-tick rise: called from game_tick for all zb_rising entities
-	write_versioned_function("zombies/zombie_rise_tick", f"""
+    	## Per-tick rise: called from game_tick for all zb_rising entities
+    	self.func("zombies/zombie_rise_tick", f"""
 # Rise 0.1 blocks per tick
 tp @s ~ ~0.1 ~
 
@@ -247,25 +251,25 @@ scoreboard players remove @s {ns}.zb.rise_tick 1
 execute if score @s {ns}.zb.rise_tick matches ..0 run function {ns}:v{version}/zombies/zombie_finish_rise
 """)
 
-	## Macro: emit block-textured particles at current position
-	write_versioned_function("zombies/zombie_rise_particles", r"""
+    	## Macro: emit block-textured particles at current position
+    	self.func("zombies/zombie_rise_particles", r"""
 $execute align xyz run particle block{block_state:"$(block)"} ~.5 ~1 ~.5 0.3 0.1 0.3 0.5 15 force @a[distance=..64]
 """)
 
-	## Finish rise: activate AI and remove rising state
-	write_versioned_function("zombies/zombie_finish_rise", f"""
+    	## Finish rise: activate AI and remove rising state
+    	self.func("zombies/zombie_finish_rise", f"""
 data modify entity @s NoAI set value 0b
 tag @s remove {ns}.zb_rising
 """)
 
-	## Per-tick death watch: intercept zombie death before vanilla event 60 (poof particles)
-	write_versioned_function("zombies/death_watch_tick", f"""
+    	## Per-tick death watch: intercept zombie death before vanilla event 60 (poof particles)
+    	self.func("zombies/death_watch_tick", f"""
 # Move execution from marker passenger -> vehicle (zombie), then intercept once DeathTime starts.
 execute as @e[type=minecraft:marker,tag={ns}.death_watch] at @s on vehicle if data entity @s {{DeathTime:1s}} run function {ns}:v{version}/zombies/on_zombie_dying
 """)
 
-	## Intercept a dying zombie before DeathTime reaches 20
-	write_versioned_function("zombies/on_zombie_dying", f"""
+    	## Intercept a dying zombie before DeathTime reaches 20
+    	self.func("zombies/on_zombie_dying", f"""
 # Guard: only process round zombies.
 execute unless entity @s[tag={ns}.zombie_round] run return 0
 
@@ -279,8 +283,8 @@ function {ns}:v{version}/zombies/powerups/check_drop
 tp @s ~ -10000 ~
 """)
 
-	## Spawn tick: spawn zombies on a timer
-	write_versioned_function("zombies/spawn_tick", f"""
+    	## Spawn tick: spawn zombies on a timer
+    	self.func("zombies/spawn_tick", f"""
 # Decrease spawn timer
 scoreboard players remove #zb_spawn_timer {ns}.data 1
 execute if score #zb_spawn_timer {ns}.data matches 1.. run return 0
@@ -293,8 +297,8 @@ scoreboard players operation #zb_spawn_batch_remaining {ns}.data = #zb_spawn_bat
 function {ns}:v{version}/zombies/spawn_batch_tick
 """)
 
-	## Spawn batch tick: spawn up to #zb_spawn_batch zombies, one per call (recursive)
-	write_versioned_function("zombies/spawn_batch_tick", f"""
+    	## Spawn batch tick: spawn up to #zb_spawn_batch zombies, one per call (recursive)
+    	self.func("zombies/spawn_batch_tick", f"""
 # Guard: nothing left to spawn
 execute if score #zb_to_spawn {ns}.data matches ..0 run return 0
 
@@ -307,9 +311,9 @@ scoreboard players remove #zb_spawn_batch_remaining {ns}.data 1
 execute if score #zb_spawn_batch_remaining {ns}.data matches 1.. if score #zb_to_spawn {ns}.data matches 1.. run function {ns}:v{version}/zombies/spawn_batch_tick
 """)
 
-	# Round Completion ──────────────────────────────────────────
+    	# Round Completion ──────────────────────────────────────────
 
-	write_versioned_function("zombies/round_complete", f"""
+    	self.func("zombies/round_complete", f"""
 # Guard: prevent re-triggering every tick
 scoreboard players set #zb_to_spawn {ns}.data -1
 
@@ -328,19 +332,19 @@ schedule function {ns}:v{version}/zombies/start_round 5s
 function {ns}:v{version}/zombies/revive/round_respawn
 """)
 
-	# Grenade Replenishment (appended to start_round) ───────────
+    	# Grenade Replenishment (appended to start_round) ───────────
 
-	write_versioned_function("zombies/start_round", f"""
+    	self.func("zombies/start_round", f"""
 # Replenish grenades for all alive players (+2, cap at 4)
 execute as @a[scores={{{ns}.zb.in_game=1}},gamemode=!spectator] run function {ns}:v{version}/zombies/inventory/replenish_grenades
 """)
 
-	# Stuck Zombie Glow ──────────────────────────────────────────
+    	# Stuck Zombie Glow ──────────────────────────────────────────
 
-	## Apply glowing to zombies far from all players (stuck/unreachable).
-	## Called every 5s (100 ticks) once 60s have passed since the last zombie spawned.
-	## Applies glowing for 6s (120 ticks) and clears it on zombies that moved near a player.
-	write_versioned_function("zombies/glow_stuck_zombies", f"""
+    	## Apply glowing to zombies far from all players (stuck/unreachable).
+    	## Called every 5s (100 ticks) once 60s have passed since the last zombie spawned.
+    	## Applies glowing for 6s (120 ticks) and clears it on zombies that moved near a player.
+    	self.func("zombies/glow_stuck_zombies", f"""
 # Tag zombies currently within 32 blocks of any alive player
 execute as @a[scores={{{ns}.zb.in_game=1}},gamemode=!spectator] at @s run tag @e[tag={ns}.zombie_round,distance=..32] add {ns}.zb_near_player
 
@@ -351,14 +355,20 @@ effect give @e[tag={ns}.zombie_round,tag=!{ns}.zb_near_player] glowing 6 0 true
 tag @e[tag={ns}.zb_near_player] remove {ns}.zb_near_player
 """)
 
-	## Hook death watch into the main zombies game tick
-	write_versioned_function("zombies/game_tick", f"""
+    	## Hook death watch into the main zombies game tick
+    	self.func("zombies/game_tick", f"""
 # Intercept dying zombies before vanilla death particles are emitted.
 function {ns}:v{version}/zombies/death_watch_tick
 """)
 
-	## Cleanup for round/end bulk-kill paths
-	write_versioned_function("zombies/stop", f"""
+    	## Cleanup for round/end bulk-kill paths
+    	self.func("zombies/stop", f"""
 kill @e[type=minecraft:marker,tag={ns}.death_watch]
 """)
+
+
+def generate_zombies_rounds() -> None:
+	""" Module-level entry (preserved signature); delegates to :class:`RoundGenerator`. """
+	RoundGenerator()()
+
 
