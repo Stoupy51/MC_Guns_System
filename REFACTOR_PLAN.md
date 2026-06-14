@@ -8,19 +8,36 @@
 ## Current Status (live)
 
 - ✅ **P0 Foundation** — `McfunctionGenerator` base class + verification harness.
-- ✅ **P1 Game modes** — all 5 variants converted, build byte-identical.
-- 🟡 **P5 Feature modules** — converted so far: all of `core/*` (bounds, commands,
-  map_loading, map_menus, spawning, teleport) + `weapon/` kick, zoom, actionbar.
-  ~27 generators remain (mechanical, one class per file, build-diff after each).
-  Verification switched from a `/tmp` snapshot to `git status build/datapack/data`
-  (build output is git-tracked, so an empty status = output unchanged).
-- ⏸️ **P2 Catalog dataclasses**, **P4 shared lifecycle** — designed, not yet executed
-  (P4 is the largest/riskiest; attempt only with the harness green).
+- ✅ **P1 Game modes** — all 5 variants converted.
+- ✅ **P5 Feature modules** — **every mcfunction generator in `src/functional/` is now a
+  class** (58 `McfunctionGenerator` subclasses). core (6), weapon (12), zombies (20),
+  multiplayer + loadouts (10), missions (3), top-level main/map_editor/mob_ai/player_config/
+  shaders (5), shared projectile helpers (1), plus the 5 game-mode variants. Every
+  module-level entry (`main` / `generate_*` / `write_shared_*`) is preserved as a thin
+  wrapper, so `link.py` and all `__init__` import chains are untouched.
+- ⏭️ **P2 Catalog dataclasses** — deferred (data layer; see note below).
 - ⏭️ **P3 utilities** — deferred by design (already cohesive free functions).
+- ⏭️ **P4 shared lifecycle dedup** — deferred (see note below).
 
-Every completed step was verified with `beet build && diff -r /tmp/mgs_baseline/data
-build/datapack/data` → identical. This is a large refactor (23k LOC); remaining items are
-tracked as checkboxes below and can be picked up incrementally without rework.
+**Verification:** the `build/` tree is git-tracked, so after every batch
+`beet build && git status build/datapack/data` must be **empty**. A final clean,
+from-scratch build (`rm -rf build && beet build`) produced **zero** output changes vs. the
+committed baseline — the entire refactor is byte-for-byte output-identical.
+
+**Bulk transform:** the ~47 single-entry modules were converted with a one-shot,
+string-aware script (`convert_oo.py`, since removed) that nested only *code* lines into the
+new `generate()` method and never re-indented multi-line mcfunction string literals
+(it accounts for PEP 701 f-string tokenization). Each batch was build-verified, then the
+script was deleted — it is scaffolding, not shipped.
+
+**Intentionally left as functions (not entry generators):** `helpers.py` /
+`zombies/common.py` / `core/respawn_countdown.py` line-builders; `multiplayer/classes.py`
+data+builders; `weapon/ammo.py::create_lore_functions` (a parameterized helper the class
+calls); and the `__init__.py` orchestrators (incl. `gamemodes/__init__.py`). `config/*`
+and `database/*` are the **data/definition layer**, not mcfunction generators, and are out
+of scope for `McfunctionGenerator` — P2 (turning catalog tuples into dataclasses) and P4
+(deduplicating the multiplayer/zombies/missions lifecycle into a shared `GameMode`) remain
+as the next, independent pieces of work and are fully specified below.
 
 ---
 
@@ -241,21 +258,23 @@ classDiagram
   are provably identical; keep mode-specific overrides. Verify diff. Commit.
 
 ### Priority 5 — Feature modules (incremental, opportunistic)
-- [~] **T5.1** Convert `functional/weapon/*` `main()` generators to `McfunctionGenerator`
-  subclasses (one class per file), wrappers preserved. **Done:** kick → `KickGenerator`,
-  zoom → `ZoomGenerator`, actionbar → `ActionbarGenerator` (all diff-clean).
-  **Remaining:** ammo, casing, common, grenade, projectile, raycast, sound, switch, update_lore.
-- [ ] **T5.2** Convert `functional/zombies/*` `generate_*()` generators likewise. Not started
-  (~19 files).
-- [x] **T5.3** Convert `functional/core/*` shared writers to `McfunctionGenerator` subclasses.
-  **Done:** teleport → `SharedTeleport`, bounds → `SharedBounds`, commands → `SharedCommands`,
-  map_loading → `SharedMapLoading`, map_menus → `SharedMapMenus`, spawning → `SharedSpawning`.
-  All diff-clean. (`commands` keeps a direct `write_tag` import for the map-script function tags.)
+- [x] **T5.1** Convert all `functional/weapon/*` generators (12): kick, zoom, actionbar,
+  ammo, casing, common, grenade, projectile, raycast, sound, switch, update_lore → `*Generator`.
+- [x] **T5.2** Convert all `functional/zombies/*` generators (20): ability, barriers, bonus,
+  display_helpers, doors, feedback, game, hurt_player, inventory, maps, menus, mystery_box,
+  pap, perks, power, powerups, revive, round, traps, wallbuys → `*Generator`.
+- [x] **T5.3** Convert all `functional/core/*` shared writers (6) → `Shared*` classes.
+  (`commands` keeps a direct `write_tag` import for the map-script function tags.)
+- [x] **T5.4** Convert `functional/multiplayer/*` + `loadouts/*` (10), `missions/*` (3),
+  top-level `main`/`map_editor`/`mob_ai`/`player_config`/`shaders` (5), and the shared
+  projectile helper in `helpers.py` (1) → `*Generator`.
 
 ### Final
-- [ ] **TF.1** Full `beet build && diff -r` clean. Confirm 1155 mcfunctions unchanged.
-- [ ] **TF.2** Confirm no remaining `ns = Mem.ctx.project_id` boilerplate in converted files.
-- [ ] **TF.3** Update this plan: all boxes checked or explicitly deferred with reason.
+- [x] **TF.1** Full clean `rm -rf build && beet build` → `git status build/datapack/data`
+  empty. 1155 mcfunctions unchanged.
+- [x] **TF.2** No `ns = Mem.ctx.project_id` boilerplate remains in any entry generator
+  (only in the two intentional parameterized helpers / orchestrators noted above).
+- [x] **TF.3** Plan updated: P5 + foundation complete; P2/P3/P4 explicitly deferred with reason.
 
 ---
 

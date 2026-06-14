@@ -4,6 +4,7 @@ import json
 import re
 
 from stewbeet import Mem, TextComponent, write_versioned_function
+from .generator import McfunctionGenerator
 
 # [MGS] prefix as a nested list component (gold colored, lang-safe).
 # Use in tellraw arrays: tellraw @s ["",{MGS_TAG},...]
@@ -223,17 +224,20 @@ def btn(label: str, command: str, color: str = "yellow", hover: str = "", action
     return json.dumps(obj)
 
 
-def write_shared_projectile_functions() -> None:
-    """ Write shared mcfunctions used by both projectile and grenade systems. """
-    ns: str = Mem.ctx.project_id
-    version: str = Mem.ctx.project_version
+class SharedProjectileGenerator(McfunctionGenerator):
+    """ Generates the shared projectile/grenade helper functions (velocity calc, tp-back). """
 
-    from ..config.stats import PROJECTILE_SPEED
+    def generate(self) -> None:
+        """ Write shared mcfunctions used by both projectile and grenade systems. """
+        ns: str = self.ns
+        version: str = self.version
 
-    # Shared: Calculate velocity from look direction and apply to bs.vel, then teleport back
-    # Requires: entity @s at summon position, data.config.PROJECTILE_SPEED set on entity
-    # Uses raycast/accuracy/apply_spread for spread
-    write_versioned_function("shared/calc_velocity", f"""
+        from ..config.stats import PROJECTILE_SPEED
+
+        # Shared: Calculate velocity from look direction and apply to bs.vel, then teleport back
+        # Requires: entity @s at summon position, data.config.PROJECTILE_SPEED set on entity
+        # Uses raycast/accuracy/apply_spread for spread
+        self.func("shared/calc_velocity", f"""
 # Record current position for teleporting back later
 execute store result score #proj_ox {ns}.data run data get entity @s Pos[0] 1000
 execute store result score #proj_oy {ns}.data run data get entity @s Pos[1] 1000
@@ -267,9 +271,15 @@ execute store result storage {ns}:temp _tp_pos.z double 0.001 run scoreboard pla
 function {ns}:v{version}/shared/tp_back with storage {ns}:temp _tp_pos
 """)
 
-    # Shared: Teleport back to original position (macro)
-    write_versioned_function("shared/tp_back",
-"""
+        # Shared: Teleport back to original position (macro)
+        self.func("shared/tp_back",
+    """
 $tp @s $(x) $(y) $(z)
 """)
+
+
+def write_shared_projectile_functions() -> None:
+    """ Module-level entry (preserved signature); delegates to :class:`SharedProjectileGenerator`. """
+    SharedProjectileGenerator()()
+
 
