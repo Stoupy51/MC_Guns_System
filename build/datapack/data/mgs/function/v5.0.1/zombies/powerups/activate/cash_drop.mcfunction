@@ -18,5 +18,5 @@ execute as @a[scores={mgs.zb.in_game=1}] run scoreboard players operation @s mgs
 
 # Announce with amount
 tellraw @a[scores={mgs.zb.in_game=1}] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.cash_drop","color":"green","bold":true},{"text":"+","color":"gold"},{"score":{"name":"#pu_cash","objective":"mgs.data"},"color":"gold","bold":true},[{"text":" ","color":"gold"}, {"translate":"mgs.points_each"}]]
-playsound minecraft:entity.player.levelup master @a[scores={mgs.zb.in_game=1}] ~ ~ ~ 1.0 1.0
+playsound mgs:zombies/powerups/bonus_points ambient @a[scores={mgs.zb.in_game=1}] ~ ~ ~ 1.0 1.0
 

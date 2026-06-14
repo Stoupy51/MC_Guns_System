@@ -22,6 +22,10 @@ data modify storage mgs:temp _mbpos.rotation set from storage mgs:temp _mb_iter[
 function mgs:v5.0.1/zombies/mystery_box/summon_pos_at with storage mgs:temp _mbpos
 execute as @n[tag=mgs.mb_new] at @s run tp @s ^ ^2 ^0.3
 
+# Assign this box a unique id (shared later by its pull display)
+scoreboard players add #mb_box_counter mgs.data 1
+scoreboard players operation @n[tag=mgs.mb_new] mgs.mb.box = #mb_box_counter mgs.data
+
 # Tag entities that can_start_on
 data modify storage mgs:temp can_start_on set from storage mgs:temp _mb_iter[0].can_start_on
 execute if data storage mgs:temp {can_start_on:1b} run tag @n[tag=mgs.mb_new] add mgs.mb_can_start

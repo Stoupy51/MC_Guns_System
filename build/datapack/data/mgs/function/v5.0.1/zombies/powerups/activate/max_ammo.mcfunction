@@ -7,6 +7,6 @@
 #
 
 execute as @a[scores={mgs.zb.in_game=1},gamemode=!spectator] run function mgs:zombies/bonus/max_ammo
-tellraw @a[scores={mgs.zb.in_game=1}] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.max_ammo","color":"aqua","bold":true}]
-playsound minecraft:entity.player.levelup master @a[scores={mgs.zb.in_game=1}] ~ ~ ~ 1.0 1.0
+playsound mgs:zombies/powerups/max_ammo ambient @a[scores={mgs.zb.in_game=1}] ~ ~ ~ 1.0 1.0
+playsound mgs:zombies/powerups/max_ammo_additional ambient @a[scores={mgs.zb.in_game=1}] ~ ~ ~ 1.0 1.0
 

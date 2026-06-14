@@ -20,6 +20,8 @@ execute if score #pap_power mgs.data matches 1 unless score #zb_power mgs.data m
 
 # Guard: player has enough points
 execute store result score #pap_price mgs.data run scoreboard players get @n[tag=bs.interaction.target] mgs.zb.pap.price
+# Bonfire Sale: Pack-a-Punch costs 1000 while active
+execute if score #zb_bonfire_sale_timer mgs.data matches 1.. run scoreboard players set #pap_price mgs.data 1000
 execute unless score @s mgs.zb.points >= #pap_price mgs.data run return run function mgs:v5.0.1/zombies/pap/deny_not_enough_points
 
 # Determine selected zombies weapon slot (must be hotbar.1/2/3)

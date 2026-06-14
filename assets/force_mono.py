@@ -6,13 +6,11 @@ import os
 import subprocess
 from multiprocessing import Pool
 
-from compress_ogg import COMPRESSION
-
 
 def convert_file(args):
 	src, dst = args
 	previous_size = os.path.getsize(src)
-	subprocess.run(["ffmpeg", "-i", src, "-b:a", COMPRESSION, "-ac", "1", dst], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+	subprocess.run(["ffmpeg", "-i", src, "-b:a", "64k", "-ac", "1", dst], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
 	# Remove original & rename temp
 	file_size = os.path.getsize(dst)

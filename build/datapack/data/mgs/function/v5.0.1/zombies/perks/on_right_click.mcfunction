@@ -9,9 +9,11 @@
 # Guard: game must be active
 execute unless data storage mgs:zombies game{state:"active"} run return fail
 
-# Check power requirement
+# Check power requirement. Quick Revive is exempt while solo (Black Ops rule).
 execute store result score #pk_power mgs.data run scoreboard players get @n[tag=bs.interaction.target] mgs.zb.perk.power
-execute if score #pk_power mgs.data matches 1 unless score #zb_power mgs.data matches 1 run return run function mgs:v5.0.1/zombies/perks/deny_requires_power
+execute store result score #qr_solo mgs.data if entity @a[scores={mgs.zb.in_game=1},gamemode=!spectator]
+execute if score #pk_power mgs.data matches 1 unless score #zb_power mgs.data matches 1 unless entity @n[tag=bs.interaction.target,tag=mgs.pk_quick_revive] run return run function mgs:v5.0.1/zombies/perks/deny_requires_power
+execute if score #pk_power mgs.data matches 1 unless score #zb_power mgs.data matches 1 if entity @n[tag=bs.interaction.target,tag=mgs.pk_quick_revive] if score #qr_solo mgs.data matches 2.. run return run function mgs:v5.0.1/zombies/perks/deny_requires_power
 
 # Look up perk_id
 execute store result storage mgs:temp _pk_buy.id int 1 run scoreboard players get @n[tag=bs.interaction.target] mgs.zb.perk.id

@@ -10,6 +10,12 @@ execute as @a[scores={mgs.mp.in_game=1,mgs.mp.spectate_timer=40},gamemode=specta
 execute as @a[scores={mgs.mp.in_game=1,mgs.mp.spectate_timer=20},gamemode=spectator] run title @s subtitle [{"translate":"mgs.respawning_in_1_second","color":"gray"}]
 execute as @a[scores={mgs.mp.in_game=1,mgs.mp.spectate_timer=0},gamemode=spectator] at @s run function mgs:v5.0.1/multiplayer/actual_respawn
 
+# Dropped-weapon lifetime: count down and remove expired drops (display + interaction together)
+execute as @e[tag=mgs.mp_dropped_gun] run scoreboard players remove @s mgs.mp.drop_timer 1
+execute as @e[tag=mgs.mp_drop_int] run scoreboard players remove @s mgs.mp.drop_timer 1
+kill @e[tag=mgs.mp_dropped_gun,scores={mgs.mp.drop_timer=..0}]
+kill @e[tag=mgs.mp_drop_int,scores={mgs.mp.drop_timer=..0}]
+
 # Timer
 scoreboard players remove #mp_timer mgs.data 1
 

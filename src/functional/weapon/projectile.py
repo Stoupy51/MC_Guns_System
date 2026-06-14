@@ -297,8 +297,8 @@ execute store result score #decay_factor {ns}.data run data get storage bs:out m
 scoreboard players operation #expl_dmg {ns}.data *= #decay_factor {ns}.data
 scoreboard players operation #expl_dmg {ns}.data /= #1000000 {ns}.data
 
-# If zombie game is active: explosives hit zombies 8x harder, cap for players (6 hp = 3 hearts)
-execute if data storage {ns}:zombies game{{state:"active"}} if entity @s[type=!player] run scoreboard players operation #expl_dmg {ns}.data *= #8 {ns}.data
+# If zombie game is active: explosives hit zombies 5x harder, cap for players (6 hp = 3 hearts)
+execute if data storage {ns}:zombies game{{state:"active"}} if entity @s[type=!player] run scoreboard players operation #expl_dmg {ns}.data *= #5 {ns}.data
 execute if data storage {ns}:zombies game{{state:"active"}} if entity @s[type=player] if score #expl_dmg {ns}.data matches 60.. run scoreboard players set #expl_dmg {ns}.data 60
 
 # Flak Jacket perk: halve explosive area damage to a perked MP player

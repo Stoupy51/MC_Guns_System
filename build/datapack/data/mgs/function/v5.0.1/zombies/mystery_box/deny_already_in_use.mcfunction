@@ -1,9 +1,9 @@
 
 #> mgs:v5.0.1/zombies/mystery_box/deny_already_in_use
 #
-# @executed	as @n[tag=mgs.mb_new]
+# @executed	at @n[tag=bs.interaction.target]
 #
-# @within	mgs:v5.0.1/zombies/mystery_box/on_right_click
+# @within	mgs:v5.0.1/zombies/mystery_box/box_click
 #
 
 tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.mystery_box_is_already_in_use","color":"red"}]

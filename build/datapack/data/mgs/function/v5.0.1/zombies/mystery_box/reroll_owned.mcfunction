@@ -1,10 +1,8 @@
 
 #> mgs:v5.0.1/zombies/mystery_box/reroll_owned
 #
-# @executed	as @n[tag=mgs.mb_new]
-#
-# @within	mgs:v5.0.1/zombies/mystery_box/try_use
-#			mgs:v5.0.1/zombies/mystery_box/reroll_owned
+# @within	mgs:v5.0.1/zombies/mystery_box/reroll_owned
+#			mgs:v5.0.1/zombies/mystery_box/pick_for_buyer
 #
 
 scoreboard players set #mb_owned mgs.data 0

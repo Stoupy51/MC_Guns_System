@@ -82,6 +82,17 @@ execute as @e[tag=mgs.barrier_display] at @s run function mgs:v5.0.1/zombies/bar
 # Power-up entity tick (lifetime countdown, blink, pickup detection)
 execute as @e[tag=mgs.pu_item] at @s run function mgs:v5.0.1/zombies/powerups/entity_tick
 
+# Orphan cleanup: a text_display whose item entity was destroyed (burned/exploded) would never
+# be removed by expire/pickup — kill any pu_text that no longer has a pu_item beneath it.
+execute as @e[tag=mgs.pu_text] at @s unless entity @e[tag=mgs.pu_item,distance=..4] run kill @s
+
+# Insta Kill also works with the knife: give active players a huge melee attack damage so a single
+# melee hit one-shots zombies (guns already insta-kill via the raycast path). remove+add keeps it
+# idempotent each tick; the modifier is removed once the effect wears off.
+execute as @a[scores={mgs.special.instant_kill=1..}] run attribute @s minecraft:attack_damage modifier remove mgs:insta_kill
+execute as @a[scores={mgs.special.instant_kill=1..}] run attribute @s minecraft:attack_damage modifier add mgs:insta_kill 100000 add_value
+execute as @a[scores={mgs.special.instant_kill=..0}] run attribute @s minecraft:attack_damage modifier remove mgs:insta_kill
+
 # Blink state: toggles between 0 and 1 every 4 ticks (~0.2s half-cycle, matching BO2's 0.4s full cycle)
 scoreboard players add #zb_blink_counter mgs.data 1
 execute if score #zb_blink_counter mgs.data matches 4.. run scoreboard players set #zb_blink_counter mgs.data 0
@@ -98,6 +109,9 @@ function mgs:v5.0.1/zombies/powerups/update_unlimited_ammo_bb
 
 # Fire Sale: global timer countdown + price restore on expiry
 execute if score #zb_fire_sale_timer mgs.data matches 1.. run function mgs:v5.0.1/zombies/powerups/fire_sale_tick
+
+# Bonfire Sale: global timer countdown
+execute if score #zb_bonfire_sale_timer mgs.data matches 1.. run function mgs:v5.0.1/zombies/powerups/bonfire_sale_tick
 
 scoreboard players add #qr_price_tick mgs.data 1
 execute if score #qr_price_tick mgs.data matches 20.. run scoreboard players set #qr_price_tick mgs.data 0

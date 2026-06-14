@@ -1,8 +1,6 @@
 
 #> mgs:v5.0.1/zombies/mystery_box/check_ray_gun_cap
 #
-# @executed	as @n[tag=mgs.mb_new]
-#
 # @within	mgs:v5.0.1/zombies/mystery_box/check_owned_result
 #
 

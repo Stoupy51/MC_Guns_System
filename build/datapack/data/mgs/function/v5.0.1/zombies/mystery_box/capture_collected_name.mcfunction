@@ -1,7 +1,7 @@
 
 #> mgs:v5.0.1/zombies/mystery_box/capture_collected_name
 #
-# @executed	as @n[tag=mgs.mb_new]
+# @executed	at @n[tag=bs.interaction.target]
 #
 # @within	mgs:v5.0.1/zombies/mystery_box/collect with storage mgs:zombies mystery_box.result
 #

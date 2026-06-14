@@ -1,7 +1,7 @@
 
 #> mgs:v5.0.1/zombies/feedback/sound_success
 #
-# @executed	as @n[tag=mgs.mb_new]
+# @executed	at @n[tag=bs.interaction.target]
 #
 # @within	mgs:v5.0.1/zombies/mystery_box/collect
 #			mgs:v5.0.1/zombies/pap/anim/collect_give [ as @p[tag=mgs.pap_owner] ]

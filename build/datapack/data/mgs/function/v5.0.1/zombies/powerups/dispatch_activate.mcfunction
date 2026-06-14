@@ -16,4 +16,5 @@ execute if score #pu_type_pickup mgs.data matches 7 run function mgs:v5.0.1/zomb
 execute if score #pu_type_pickup mgs.data matches 8 run function mgs:v5.0.1/zombies/powerups/activate/free_pap
 execute if score #pu_type_pickup mgs.data matches 9 run function mgs:v5.0.1/zombies/powerups/activate/cash_drop
 execute if score #pu_type_pickup mgs.data matches 10 run function mgs:v5.0.1/zombies/powerups/activate/fire_sale
+execute if score #pu_type_pickup mgs.data matches 11 run function mgs:v5.0.1/zombies/powerups/activate/bonfire_sale
 

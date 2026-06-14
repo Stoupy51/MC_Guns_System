@@ -40,5 +40,6 @@ smoke_grenade
 
 # TODO:
 - Multiplayer: drop gun on ground (hotbar.0 or hotbar.1) depending on the SelectedItemSlot
+- Multiplayer: When a player dies, a mannequin is spawned at the player with same nbt "equipment" and selected item and kill it instantly so we have a death animation
 - Multiplayer: add bonus streaks
 

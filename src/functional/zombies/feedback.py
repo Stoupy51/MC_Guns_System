@@ -35,10 +35,10 @@ playsound minecraft:entity.player.levelup ambient @a[scores={{{ns}.zb.in_game=1}
 
 	## Mystery Box: Black Ops-style sound effects
 	write_versioned_function("zombies/feedback/sound_box_open", f"""
-playsound {ns}:zombies/mystery_box/open ambient @a[scores={{{ns}.zb.in_game=1}}] ~ ~ ~ 0.9 1.0
+playsound {ns}:zombies/mystery_box/open ambient @a[scores={{{ns}.zb.in_game=1}}] ~ ~ ~ 1.0 1.0
 """)
 	write_versioned_function("zombies/feedback/sound_box_close", f"""
-playsound {ns}:zombies/mystery_box/close ambient @a[scores={{{ns}.zb.in_game=1}}] ~ ~ ~ 0.9 1.0
+playsound {ns}:zombies/mystery_box/close ambient @a[scores={{{ns}.zb.in_game=1}}] ~ ~ ~ 1.0 1.0
 """)
 	write_versioned_function("zombies/feedback/sound_box_bye_bye", f"""
 execute as @a[scores={{{ns}.zb.in_game=1}}] at @s run playsound {ns}:zombies/mystery_box/bye_bye ambient @s ~ ~ ~ 1.0 1.0

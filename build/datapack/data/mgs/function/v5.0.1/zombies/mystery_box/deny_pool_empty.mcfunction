@@ -1,8 +1,6 @@
 
 #> mgs:v5.0.1/zombies/mystery_box/deny_pool_empty
 #
-# @executed	as @n[tag=mgs.mb_new]
-#
 # @within	mgs:v5.0.1/zombies/mystery_box/pick_random_result
 #
 

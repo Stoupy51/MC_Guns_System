@@ -5,7 +5,7 @@
 #
 
 # Snap the descending chest (base + lid) to exact final position smoothly
-execute as @n[tag=mgs.mystery_box_active] at @s as @e[tag=mgs.mb_presence] run tp @s ~ ~-0.9 ~
+execute as @n[tag=mgs.mystery_box_active] at @s as @e[tag=mgs.mb_presence,tag=!mgs.mb_temp] run tp @s ~ ~-0.9 ~
 
 # Reset move state
 scoreboard players set #mb_move_timer mgs.data 0
