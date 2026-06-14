@@ -3,32 +3,36 @@
 from stewbeet import Mem, write_versioned_function
 
 from ..helpers import MGS_TAG
+from ..generator import McfunctionGenerator
 
 
-def generate_zombies_maps() -> None:
-	ns: str = Mem.ctx.project_id
-	version: str = Mem.ctx.project_version
+class MapsGenerator(McfunctionGenerator):
+    """ Generates the maps datapack functions. """
 
-	# ── Kino der Toten ──────────────────────────────────────────────────────────
-	# Map registration: placeholder data (base_coordinates and spawn arrays TBD)
-	write_versioned_function("maps/zombies/kino_der_toten/register", f"""
+    def generate(self) -> None:
+    	ns: str = self.ns
+    	version: str = self.version
+
+    	# ── Kino der Toten ──────────────────────────────────────────────────────────
+    	# Map registration: placeholder data (base_coordinates and spawn arrays TBD)
+    	self.func("maps/zombies/kino_der_toten/register", f"""
 # Kino der Toten map registration
 execute unless data storage {ns}:maps zombies[{{id:"kino_der_toten"}}] run data modify storage {ns}:maps zombies append value {{id:"kino_der_toten", name:"Kino der Toten", description:"Black Ops 1 | Classic Zombies", base_coordinates:[0,0,0], spawning_points:{{zombies:[],players:[]}}, out_of_bounds:[], boundaries:[]}}
 """, tags=[f"{ns}:zombies/register_maps"])  # noqa: E501
 
-	# Calls functions — guard then delegate, registered to the shared function tags
-	guard = (
-		f'execute if data storage {ns}:zombies game{{state:"active"}}'
-		f' if data storage {ns}:zombies game{{map_id:"kino_der_toten"}}'
-	)
-	for script in ["start", "tick", "join", "leave", "respawn", "power"]:
-		write_versioned_function(f"maps/zombies/kino_der_toten/calls/{script}",
-			f"{guard} run return run function {ns}:v{version}/maps/zombies/kino_der_toten/{script}",
-			tags=[f"{ns}:maps/{script}_script"]
-		)
+    	# Calls functions — guard then delegate, registered to the shared function tags
+    	guard = (
+    		f'execute if data storage {ns}:zombies game{{state:"active"}}'
+    		f' if data storage {ns}:zombies game{{map_id:"kino_der_toten"}}'
+    	)
+    	for script in ["start", "tick", "join", "leave", "respawn", "power"]:
+    		self.func(f"maps/zombies/kino_der_toten/calls/{script}",
+    			f"{guard} run return run function {ns}:v{version}/maps/zombies/kino_der_toten/{script}",
+    			tags=[f"{ns}:maps/{script}_script"]
+    		)
 
-	# Logic functions (actual work)
-	write_versioned_function("maps/zombies/kino_der_toten/start", f"""
+    	# Logic functions (actual work)
+    	self.func("maps/zombies/kino_der_toten/start", f"""
 # Kino der Toten map start script
 # Called once when zombies game transitions to active
 # @within  #{ns}:maps/start_script (via calls/start)
@@ -56,23 +60,23 @@ execute positioned ~-54 ~4 ~39 run summon interaction ~ ~ ~ {{Tags:["{ns}.kino",
 execute as @e[tag={ns}.kino] run function #bs.interaction:on_right_click {{run:"function {ns}:v{version}/maps/zombies/kino_der_toten/on_right_click",executor:"target"}}
 """)
 
-	# ── tick ──────────────────────────────────────────────────────────────────
-	write_versioned_function("maps/zombies/kino_der_toten/tick", f"""
+    	# ── tick ──────────────────────────────────────────────────────────────────
+    	self.func("maps/zombies/kino_der_toten/tick", f"""
 # Kino der Toten map tick (runs every game tick while active)
 # @within  #{ns}:maps/tick_script (via calls/tick)
 
 function {ns}:v{version}/maps/zombies/kino_der_toten/teleporter/tick
 """)
 
-	# ── join ──────────────────────────────────────────────────────────────────
-	write_versioned_function("maps/zombies/kino_der_toten/join", f"""
+    	# ── join ──────────────────────────────────────────────────────────────────
+    	self.func("maps/zombies/kino_der_toten/join", f"""
 # Kino der Toten map join script
 # @s = joining player
 # @within  #{ns}:maps/join_script (via calls/join)
 """)
 
-	# ── leave ─────────────────────────────────────────────────────────────────
-	write_versioned_function("maps/zombies/kino_der_toten/leave", f"""
+    	# ── leave ─────────────────────────────────────────────────────────────────
+    	self.func("maps/zombies/kino_der_toten/leave", f"""
 # Kino der Toten map leave script (game ended / cleanup)
 # @within  #{ns}:maps/leave_script (via calls/leave)
 
@@ -89,15 +93,15 @@ scoreboard players set #kino_tp_cd {ns}.data 0
 scoreboard players set #kino_met_count {ns}.data 0
 """)
 
-	# ── respawn ───────────────────────────────────────────────────────────────
-	write_versioned_function("maps/zombies/kino_der_toten/respawn", """
+    	# ── respawn ───────────────────────────────────────────────────────────────
+    	self.func("maps/zombies/kino_der_toten/respawn", """
 # Kino der Toten map respawn script
 # @s = respawning player
 # @within  #mgs:maps/respawn_script (via calls/respawn)
 """)
 
-	# ── on_right_click ────────────────────────────────────────────────────────
-	write_versioned_function("maps/zombies/kino_der_toten/on_right_click", f"""
+    	# ── on_right_click ────────────────────────────────────────────────────────
+    	self.func("maps/zombies/kino_der_toten/on_right_click", f"""
 # Route right-click to the correct sub-handler based on which entity was clicked
 # @s = interaction entity itself; use 'execute on target' to reach the clicking player
 execute if entity @s[tag={ns}.kino.teleporter_theater] run return run function {ns}:v{version}/maps/zombies/kino_der_toten/teleporter/on_theater_click
@@ -107,8 +111,8 @@ execute if entity @s[tag={ns}.kino.meteorite_2] run return run function {ns}:v{v
 execute if entity @s[tag={ns}.kino.meteorite_3] run return run function {ns}:v{version}/maps/zombies/kino_der_toten/meteorite/on_click
 """)
 
-	# ── teleporter/on_theater_click ────────────────────────────────────────────
-	write_versioned_function("maps/zombies/kino_der_toten/teleporter/on_theater_click", f"""
+    	# ── teleporter/on_theater_click ────────────────────────────────────────────
+    	self.func("maps/zombies/kino_der_toten/teleporter/on_theater_click", f"""
 # State 0 (idle): start linking — player must now click the lobby pad
 execute if score #kino_tp_state {ns}.data matches 0 run return run function {ns}:v{version}/maps/zombies/kino_der_toten/teleporter/start_link
 # State 2 (armed): lobby was linked, execute the actual teleport
@@ -117,16 +121,16 @@ execute if score #kino_tp_state {ns}.data matches 2 at @s run return run functio
 function {ns}:v{version}/maps/zombies/kino_der_toten/teleporter/deny_recharging
 """)
 
-	# ── teleporter/start_link ───────────────────────────────────────────────────
-	write_versioned_function("maps/zombies/kino_der_toten/teleporter/start_link", f"""
+    	# ── teleporter/start_link ───────────────────────────────────────────────────
+    	self.func("maps/zombies/kino_der_toten/teleporter/start_link", f"""
 # State 1: theater clicked — waiting for the lobby pad to be clicked
 scoreboard players set #kino_tp_state {ns}.data 1
 playsound minecraft:block.beacon.power_select block @a[distance=..50] ~ ~ ~ 1 1
 tellraw @a[distance=..50] [{MGS_TAG},{{"text":"Teleporter link started.","color":"green"}}]
 """)
 
-	# ── teleporter/on_lobby_click ─────────────────────────────────────────────
-	write_versioned_function("maps/zombies/kino_der_toten/teleporter/on_lobby_click", f"""
+    	# ── teleporter/on_lobby_click ─────────────────────────────────────────────
+    	self.func("maps/zombies/kino_der_toten/teleporter/on_lobby_click", f"""
 # Only arm when we are in the linking state
 execute unless score #kino_tp_state {ns}.data matches 1 run return fail
 
@@ -136,8 +140,8 @@ playsound minecraft:block.beacon.activate block @a[distance=..50] ~ ~ ~ 1 1
 tellraw @a[distance=..50] [{MGS_TAG},{{"text":"Teleporter linked! Click the theater pad again to teleport.","color":"green"}}]
 """)
 
-	# ── teleporter/activate ───────────────────────────────────────────────────
-	write_versioned_function("maps/zombies/kino_der_toten/teleporter/activate", f"""
+    	# ── teleporter/activate ───────────────────────────────────────────────────
+    	self.func("maps/zombies/kino_der_toten/teleporter/activate", f"""
 # @s = theater interaction entity (armed, state 2)
 # Play activation start sound
 playsound minecraft:entity.lightning_bolt.thunder block @a[distance=..50] ~ ~ ~ 0.25 1
@@ -148,8 +152,8 @@ scoreboard players set #kino_tp_state {ns}.data 3
 scoreboard players set #kino_tp_timer {ns}.data 50
 """)
 
-	# ── teleporter/activating_tick ─────────────────────────────────────────────
-	write_versioned_function("maps/zombies/kino_der_toten/teleporter/activating_tick", f"""
+    	# ── teleporter/activating_tick ─────────────────────────────────────────────
+    	self.func("maps/zombies/kino_der_toten/teleporter/activating_tick", f"""
 
 # Count down the 50-tick activation delay
 scoreboard players remove #kino_tp_timer {ns}.data 1
@@ -169,8 +173,8 @@ execute if score #kino_tp_timer {ns}.data matches 10 run playsound minecraft:ent
 execute if score #kino_tp_timer {ns}.data matches ..0 run function {ns}:v{version}/maps/zombies/kino_der_toten/teleporter/do_teleport
 """)
 
-	# ── teleporter/do_teleport ─────────────────────────────────────────────────
-	write_versioned_function("maps/zombies/kino_der_toten/teleporter/do_teleport", f"""
+    	# ── teleporter/do_teleport ─────────────────────────────────────────────────
+    	self.func("maps/zombies/kino_der_toten/teleporter/do_teleport", f"""
 # Tag all nearby in-game players (within 3 blocks) and teleport to the projection room
 tag @a[distance=..3,scores={{{ns}.zb.in_game=1}},gamemode=!spectator] add {ns}.kino.in_tp
 execute positioned ~57 ~1 ~-9 run tp @a[tag={ns}.kino.in_tp] ~-22 ~6 ~0
@@ -181,14 +185,14 @@ scoreboard players set #kino_tp_state {ns}.data 4
 scoreboard players set #kino_tp_timer {ns}.data 600
 """)
 
-	write_versioned_function("maps/zombies/kino_der_toten/teleporter/deny_recharging", f"""
+    	self.func("maps/zombies/kino_der_toten/teleporter/deny_recharging", f"""
 # @s = interaction entity; reach the player via 'on target'
 execute on target run tellraw @s [{MGS_TAG},{{"text":"The teleporter is recharging...","color":"yellow"}}]
 execute on target at @s run function {ns}:v{version}/zombies/feedback/sound_deny
 """)
 
-	# ── teleporter/tick ───────────────────────────────────────────────────────
-	write_versioned_function("maps/zombies/kino_der_toten/teleporter/tick", f"""
+    	# ── teleporter/tick ───────────────────────────────────────────────────────
+    	self.func("maps/zombies/kino_der_toten/teleporter/tick", f"""
 # State 3: activation delay — electric particles + countdown, then teleport
 execute if score #kino_tp_state {ns}.data matches 3 at @e[tag={ns}.kino.teleporter_theater] run function {ns}:v{version}/maps/zombies/kino_der_toten/teleporter/activating_tick
 
@@ -208,8 +212,8 @@ execute if score #kino_tp_state {ns}.data matches 6 if score #kino_tp_cd {ns}.da
 execute if score #kino_tp_state {ns}.data matches 6 if score #kino_tp_cd {ns}.data matches ..0 run scoreboard players set #kino_tp_state {ns}.data 0
 """)  # noqa: E501
 
-	# ── teleporter/return_players ─────────────────────────────────────────────
-	write_versioned_function("maps/zombies/kino_der_toten/teleporter/return_players", f"""
+    	# ── teleporter/return_players ─────────────────────────────────────────────
+    	self.func("maps/zombies/kino_der_toten/teleporter/return_players", f"""
 # Scatter each tagged player to a random lobby position
 execute as @a[tag={ns}.kino.in_tp] run function {ns}:v{version}/maps/zombies/kino_der_toten/teleporter/return_one
 # Keep kino.in_tp tags — needed by return_to_lobby after 5 seconds
@@ -219,8 +223,8 @@ scoreboard players set #kino_tp_state {ns}.data 5
 scoreboard players set #kino_tp_timer {ns}.data 100
 """)
 
-	# ── teleporter/return_to_lobby ─────────────────────────────────────────────
-	write_versioned_function("maps/zombies/kino_der_toten/teleporter/return_to_lobby", f"""
+    	# ── teleporter/return_to_lobby ─────────────────────────────────────────────
+    	self.func("maps/zombies/kino_der_toten/teleporter/return_to_lobby", f"""
 # Teleport all returning players to the lobby teleporter pad position
 execute as @a[tag={ns}.kino.in_tp] at @e[tag={ns}.kino.teleporter_lobby] run tp @s ~ ~ ~
 execute at @n[tag={ns}.kino.in_tp] run playsound minecraft:entity.enderman.teleport block @a[distance=..50] ~ ~ ~ 1 1
@@ -234,8 +238,8 @@ scoreboard players set #kino_tp_state {ns}.data 6
 scoreboard players set #kino_tp_cd {ns}.data 1800
 """)
 
-	# ── teleporter/return_one ─────────────────────────────────────────────────
-	write_versioned_function("maps/zombies/kino_der_toten/teleporter/return_one", f"""
+    	# ── teleporter/return_one ─────────────────────────────────────────────────
+    	self.func("maps/zombies/kino_der_toten/teleporter/return_one", f"""
 # @s = player returning from theater — pick a random lobby spot
 execute store result score #tp_random {ns}.data run random value 1..5
 execute if score #tp_random {ns}.data matches 1 run tp @s ~9 ~-4 ~-40
@@ -246,8 +250,8 @@ execute if score #tp_random {ns}.data matches 5 run tp @s ~40 ~4 ~39
 execute at @s run playsound minecraft:entity.enderman.teleport block @s ~ ~ ~ 1 1
 """)
 
-	# ── meteorite/on_click ────────────────────────────────────────────────────
-	write_versioned_function("maps/zombies/kino_der_toten/meteorite/on_click", f"""
+    	# ── meteorite/on_click ────────────────────────────────────────────────────
+    	self.func("maps/zombies/kino_der_toten/meteorite/on_click", f"""
 # @s = interaction entity itself
 # Guard: this meteorite is already activated
 execute if entity @s[tag={ns}.kino.met_active] run return fail
@@ -260,8 +264,8 @@ scoreboard players add #kino_met_count {ns}.data 1
 execute if score #kino_met_count {ns}.data matches 3 run function {ns}:v{version}/maps/zombies/kino_der_toten/meteorite/play_song
 """)
 
-	# ── meteorite/play_song ───────────────────────────────────────────────────
-	write_versioned_function("maps/zombies/kino_der_toten/meteorite/play_song", f"""
+    	# ── meteorite/play_song ───────────────────────────────────────────────────
+    	self.func("maps/zombies/kino_der_toten/meteorite/play_song", f"""
 # Play 115 for all in-game players at their own position
 execute as @a[scores={{{ns}.zb.in_game=1}}] at @s run playsound {ns}:zombies/music/115_song record @s ~ ~ ~ 0.5 1
 
@@ -270,8 +274,8 @@ tag @e[tag={ns}.kino.met_active] remove {ns}.kino.met_active
 scoreboard players set #kino_met_count {ns}.data 0
 """)
 
-	# ── power ─────────────────────────────────────────────────────────────────
-	write_versioned_function("maps/zombies/kino_der_toten/power", f"""
+    	# ── power ─────────────────────────────────────────────────────────────────
+    	self.func("maps/zombies/kino_der_toten/power", f"""
 # Kino der Toten power-on script
 # Called once when the power switch is activated
 # @within  #{ns}:maps/on_power (via calls/power)
@@ -279,4 +283,10 @@ scoreboard players set #kino_met_count {ns}.data 0
 # Open the lobby-to-theater door
 execute positioned ~-19 ~0 ~-1 run fill ~ ~ ~ ~ ~2 ~2 air
 """)
+
+
+def generate_zombies_maps() -> None:
+	""" Module-level entry (preserved signature); delegates to :class:`MapsGenerator`. """
+	MapsGenerator()()
+
 
