@@ -233,13 +233,19 @@ classDiagram
 - [x] **T1.7** `gamemodes/__init__.py` left untouched — the preserved wrapper functions keep
   the import/call chain working with zero churn. Full build diff → ✅ IDENTICAL.
 
-### Priority 2 — Catalog dataclasses (readability, type-safety)
-- [ ] **T2.1** Add frozen dataclasses to `config/catalogs.py`: `Weapon`, `SecondaryWeapon`,
-  `Perk`, `GrenadeType`, `CamoVariant`, `EquipmentPreset`. Provide `__iter__`/`__getitem__`
-  shims so existing positional unpacking keeps working (zero-churn migration), OR migrate
-  call sites. Decide per-type; default to shims first, then migrate readers incrementally.
-- [ ] **T2.2** Migrate `functional/zombies/common.py::build_weapon_magazine_data` and
-  `setup_definitions.py` readers to attribute access. Verify diff after each.
+### Priority 2 — Catalog dataclasses (readability, type-safety) — DONE
+- [x] **T2.1** Added typed catalog rows to `config/catalogs.py`: `Weapon`, `SecondaryWeapon`,
+  `Perk`, `GrenadeType`, `CamoVariant`, `EquipmentPreset`. **Used `typing.NamedTuple` rather
+  than frozen dataclasses** — the catalogs are unpacked positionally and index-accessed
+  (`w[0]`, `w[5]`, `for a,b,*_ in ...`) everywhere; a NamedTuple *is* a tuple, so it is a
+  true drop-in (no `__iter__`/`__getitem__` shims needed) that still adds named-attribute
+  access and static typing. Lists built as `[Weapon(*_row) for _row in [ ...rows... ]]` so
+  the data rows stay verbatim.
+- [x] **T2.2** Migrated the magic-index readers to attribute access: `PRIMARY_INDEX`/
+  `SECONDARY_INDEX` (`w[0]`→`w.item_id`), `classes.py PERK_NAMES` (`perk[0]/[1]`→
+  `.perk_id/.display_name`), `player_config.py` and `loadouts/editor.py` loadout filters
+  (`w[5]`/`w[4]`→`w.in_loadout`). Output verified unchanged. Remaining positional unpacks
+  (which already read cleanly with named locals) were left as-is — backward-compatible.
 
 ### Priority 3 — Command/text utilities
 - [~] **T3.1** *Deferred (low value).* `helpers.py` / `zombies/common.py` are already cohesive,
