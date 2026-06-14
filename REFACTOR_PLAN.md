@@ -9,8 +9,11 @@
 
 - ✅ **P0 Foundation** — `McfunctionGenerator` base class + verification harness.
 - ✅ **P1 Game modes** — all 5 variants converted, build byte-identical.
-- 🟡 **P5 Feature modules** — pattern proven on `weapon/kick.py` + `core/teleport.py`;
-  ~35 generators remain (mechanical, one class per file, diff after each).
+- 🟡 **P5 Feature modules** — converted so far: all of `core/*` (bounds, commands,
+  map_loading, map_menus, spawning, teleport) + `weapon/` kick, zoom, actionbar.
+  ~27 generators remain (mechanical, one class per file, build-diff after each).
+  Verification switched from a `/tmp` snapshot to `git status build/datapack/data`
+  (build output is git-tracked, so an empty status = output unchanged).
 - ⏸️ **P2 Catalog dataclasses**, **P4 shared lifecycle** — designed, not yet executed
   (P4 is the largest/riskiest; attempt only with the harness green).
 - ⏭️ **P3 utilities** — deferred by design (already cohesive free functions).
@@ -239,13 +242,15 @@ classDiagram
 
 ### Priority 5 — Feature modules (incremental, opportunistic)
 - [~] **T5.1** Convert `functional/weapon/*` `main()` generators to `McfunctionGenerator`
-  subclasses (one class per file), wrappers preserved. **In progress:** `weapon/kick.py` →
-  `KickGenerator` ✅ (diff clean). Remaining: actionbar, ammo, casing, common, grenade,
-  projectile, raycast, sound, switch, update_lore, zoom.
-- [ ] **T5.2** Convert `functional/zombies/*` `generate_*()` generators likewise. Not started.
-- [~] **T5.3** Convert `functional/core/*` shared writers to `McfunctionGenerator` subclasses.
-  **In progress:** `core/teleport.py` → `SharedTeleport` ✅ (diff clean). Remaining: bounds,
-  commands, map_loading, map_menus, spawning.
+  subclasses (one class per file), wrappers preserved. **Done:** kick → `KickGenerator`,
+  zoom → `ZoomGenerator`, actionbar → `ActionbarGenerator` (all diff-clean).
+  **Remaining:** ammo, casing, common, grenade, projectile, raycast, sound, switch, update_lore.
+- [ ] **T5.2** Convert `functional/zombies/*` `generate_*()` generators likewise. Not started
+  (~19 files).
+- [x] **T5.3** Convert `functional/core/*` shared writers to `McfunctionGenerator` subclasses.
+  **Done:** teleport → `SharedTeleport`, bounds → `SharedBounds`, commands → `SharedCommands`,
+  map_loading → `SharedMapLoading`, map_menus → `SharedMapMenus`, spawning → `SharedSpawning`.
+  All diff-clean. (`commands` keeps a direct `write_tag` import for the map-script function tags.)
 
 ### Final
 - [ ] **TF.1** Full `beet build && diff -r` clean. Confirm 1155 mcfunctions unchanged.
