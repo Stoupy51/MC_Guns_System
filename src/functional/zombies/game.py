@@ -16,11 +16,13 @@ from ..helpers import (
 	regen_enable_lines,
 	schedule_preload_complete_line,
 )
-from ..generator import McfunctionGenerator
+from ..game_mode import GameMode
 
 
-class GameGenerator(McfunctionGenerator):
-    """ Generates the game datapack functions. """
+class ZombiesMode(GameMode):
+    """ Generates the zombies game lifecycle (rounds, co-op spawns, sidebar). """
+
+    mode = "zombies"
 
     def generate(self) -> None:
     	ns: str = self.ns
@@ -557,9 +559,7 @@ data remove storage {ns}:temp _spawn_iter[0]
 execute if data storage {ns}:temp _spawn_iter[0] run function {ns}:v{version}/zombies/summon_spawn_iter
 """)
 
-    	self.func("zombies/summon_spawn_at", f"""
-$summon minecraft:marker $(x) $(y) $(z) {{Tags:["{ns}.spawn_point","$(tag)","{ns}.gm_entity","{ns}.new_spawn"],data:{{yaw:$(yaw)}}}}
-""")
+    	self.write_summon_spawn_at(extra_spawn_tags=("new_spawn",))
 
     	# Smart Spawn Selection ─────────────────────────────────────
 
@@ -596,7 +596,7 @@ execute as @p[tag={ns}.spawn_pending] run function {ns}:v{version}/zombies/tp_pl
 execute unless data storage {ns}:zombies game{{state:"active"}} run tag @s add {ns}.spawn_used
 """)
 
-    	self.func("zombies/tp_player_at", "$tp @s $(x) $(y) $(z) $(yaw) 0")
+    	self.write_tp_player_at()
 
     	## Respawn TP for zombies
     	self.func("zombies/respawn_tp", f"""
@@ -655,7 +655,7 @@ execute if score @s {ns}.zb.in_game matches 1 if data storage {ns}:zombies game{
 
 
 def generate_zombies_game() -> None:
-	""" Module-level entry (preserved signature); delegates to :class:`GameGenerator`. """
-	GameGenerator()()
+	""" Module-level entry (preserved signature); delegates to :class:`ZombiesMode`. """
+	ZombiesMode()()
 
 

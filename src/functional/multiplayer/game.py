@@ -14,14 +14,16 @@ from ..helpers import (
 	regen_disable_lines,
 	regen_enable_lines,
 )
-from ..generator import McfunctionGenerator
+from ..game_mode import GameMode
 
 # All multiplayer gamemodes (single source of truth for dispatch blocks)
 GAMEMODES: list[str] = ["ffa", "tdm", "dom", "hp", "snd"]
 
 
-class GameGenerator(McfunctionGenerator):
-    """ Generates the game datapack functions. """
+class MultiplayerMode(GameMode):
+    """ Generates the multiplayer game lifecycle (team-based modes, spawns, sidebars). """
+
+    mode = "multiplayer"
 
     def generate(self) -> None:
     	ns: str = self.ns
@@ -626,9 +628,7 @@ data remove storage {ns}:temp _spawn_iter[0]
 execute if data storage {ns}:temp _spawn_iter[0] run function {ns}:v{version}/multiplayer/summon_spawn_iter
 """)
 
-    	self.func("multiplayer/summon_spawn_at", f"""
-$summon minecraft:marker $(x) $(y) $(z) {{Tags:["{ns}.spawn_point","$(tag)","{ns}.gm_entity"],data:{{yaw:$(yaw)}}}}
-""")
+    	self.write_summon_spawn_at()
 
     	# Smart Spawn Selection ─────────────────────────────────────
 
@@ -750,7 +750,7 @@ execute unless data storage {ns}:multiplayer game{{state:"active"}} run tag @s a
 """)
 
     	## TP macro (run as the player to TP)
-    	self.func("multiplayer/tp_player_at", "$tp @s $(x) $(y) $(z) $(yaw) 0")
+    	self.write_tp_player_at()
 
     	## Respawn TP: use general spawns on respawn to prevent spawn camping (run as the respawning player)
     	self.func("multiplayer/respawn_tp", f"""
@@ -899,7 +899,7 @@ tellraw @a [{{"text":"","color":"green","bold":true}},"⚔ ",{{"text":"GO! GO! G
 
 
 def generate_game() -> None:
-	""" Module-level entry (preserved signature); delegates to :class:`GameGenerator`. """
-	GameGenerator()()
+	""" Module-level entry (preserved signature); delegates to :class:`MultiplayerMode`. """
+	MultiplayerMode()()
 
 
