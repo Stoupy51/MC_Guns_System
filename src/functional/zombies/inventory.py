@@ -6,6 +6,7 @@ from stewbeet import Advancement, ItemModifier, JsonDict, Mem, set_json_encoder,
 
 from ...config.stats import ALL_SLOTS, CAPACITY, REMAINING_BULLETS
 from ..generator import McfunctionGenerator
+from .perks import PERK_DEFINITIONS
 
 
 class InventoryGenerator(McfunctionGenerator):
@@ -209,6 +210,15 @@ execute if score @s {ns}.zb.ability matches 3.. run function {ns}:v{version}/zom
 function {ns}:v{version}/zombies/inventory/give_starting_loadout
 """)
 
+    	# Perk list for the info paper (one lore line per owned perk, themed by perk color).
+    	perk_count_lines: str = "\n".join(
+    		f"execute if score @s {ns}.zb.perk.{pid} matches 1 run scoreboard players add #info_perk_count {ns}.data 1"
+    		for pid in PERK_DEFINITIONS
+    	)
+    	perk_item_lines: str = "\n".join(
+    		f'execute if score @s {ns}.zb.perk.{pid} matches 1 run data modify storage {ns}:temp info.lore append value {{"text":"\\u2022 {pdata["display_name"]}","color":"{pdata["message_color"]}","italic":false}}'
+    		for pid, pdata in PERK_DEFINITIONS.items()
+    	)
     	self.func("zombies/inventory/refresh_info_item", f"""
 # Resolve scoreboard values into storage so lore lines render concrete numbers.
 execute store result storage {ns}:temp info.round int 1 run scoreboard players get #zb_round {ns}.data
@@ -216,12 +226,26 @@ execute store result storage {ns}:temp info.points int 1 run scoreboard players 
 execute store result storage {ns}:temp info.kills int 1 run scoreboard players get @s {ns}.zb.kills
 execute store result storage {ns}:temp info.downs int 1 run scoreboard players get @s {ns}.zb.downs
 
+# Build the base lore list with baked numbers, then append a line per owned perk.
+function {ns}:v{version}/zombies/inventory/build_info_lore with storage {ns}:temp info
+scoreboard players set #info_perk_count {ns}.data 0
+{perk_count_lines}
+execute if score #info_perk_count {ns}.data matches 1.. run data modify storage {ns}:temp info.lore append value {{"text":"","italic":false}}
+execute if score #info_perk_count {ns}.data matches 1.. run data modify storage {ns}:temp info.lore append value {{"text":"Perks:","color":"light_purple","italic":false}}
+{perk_item_lines}
+
 function {ns}:v{version}/zombies/inventory/refresh_info_item_render with storage {ns}:temp info
 function {ns}:v{version}/zombies/inventory/apply_slot_tag {{slot:"hotbar.8",group:"hotbar",index:8}}
 """)
 
+    	# Macro: build the 4 base lore lines (with concrete numbers) as an NBT list.
+    	self.func("zombies/inventory/build_info_lore", f"""
+$data modify storage {ns}:temp info.lore set value [{{"text":"Round: $(round)","color":"gray","italic":false}},{{"text":"Points: $(points)","color":"gray","italic":false}},{{"text":"Kills: $(kills)","color":"gray","italic":false}},{{"text":"Downs: $(downs)","color":"gray","italic":false}}]
+""")
+
+    	# Macro: render the paper with the pre-built lore list ($(lore) substitutes the list SNBT).
     	self.func("zombies/inventory/refresh_info_item_render", f"""
-$item replace entity @s hotbar.8 with minecraft:paper[custom_data={{{ns}:{{zb_info:true}}}},item_name={{"text":"\\u2139 Player Info","color":"gold","italic":false}},lore=[{{"text":"Round: $(round)","color":"gray","italic":false}},{{"text":"Points: $(points)","color":"gray","italic":false}},{{"text":"Kills: $(kills)","color":"gray","italic":false}},{{"text":"Downs: $(downs)","color":"gray","italic":false}}]]
+$item replace entity @s hotbar.8 with minecraft:paper[custom_data={{{ns}:{{zb_info:true}}}},item_name={{"text":"\\u2139 Player Info","color":"gold","italic":false}},lore=$(lore)]
 """)
 
     	self.func("zombies/inventory/give_ability_item", f"""

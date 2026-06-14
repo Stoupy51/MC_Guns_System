@@ -405,6 +405,7 @@ execute unless data storage mgs:maps missions run data modify storage mgs:maps m
 
 # Set scoreboard constants for mgs.data
 scoreboard players set #2 mgs.data 2
+scoreboard players set #3 mgs.data 3
 scoreboard players set #5 mgs.data 5
 scoreboard players set #6 mgs.data 6
 scoreboard players set #10 mgs.data 10

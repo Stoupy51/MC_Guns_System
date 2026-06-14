@@ -283,6 +283,10 @@ execute if score #pu_loop_phase {ns}.data matches 0 run playsound {ns}:zombies/p
 
 # Pickup check (do_pickup kills @s, so this must be the last command)
 execute if entity @a[scores={{{ns}.zb.in_game=1}},gamemode=!spectator,distance=..1.5,tag=!{ns}.pu_collecting] run function {ns}:v{version}/zombies/powerups/do_pickup
+
+# Downed players pick up power-ups by crawling their mannequin over them (Black Ops rule).
+# Only fires when no alive player is in range (alive players take priority and already ran above).
+execute unless entity @a[scores={{{ns}.zb.in_game=1}},gamemode=!spectator,distance=..1.5] if entity @e[tag={ns}.downed_mannequin,distance=..1.5] run function {ns}:v{version}/zombies/powerups/do_pickup
 """)
 
     	self.func("zombies/powerups/expire", f"""
@@ -309,6 +313,9 @@ execute if score #zb_blink_state {ns}.data matches 1 as @n[tag={ns}.pu_text,dist
 # Tag the nearest eligible player as the collector for this activation
 tag @p[scores={{{ns}.zb.in_game=1}},gamemode=!spectator,distance=..1.5,tag=!{ns}.pu_collecting] add {ns}.pu_collecting
 
+# If no alive player collected, a downed player crawled their mannequin over it: credit them.
+execute unless entity @a[tag={ns}.pu_collecting] if entity @e[tag={ns}.downed_mannequin,distance=..1.5] run function {ns}:v{version}/zombies/powerups/pickup_downed_collector
+
 # Store power-up type before killing the entity
 scoreboard players operation #pu_type_pickup {ns}.data = @s {ns}.zb.pu.type
 
@@ -326,6 +333,14 @@ kill @s
 
 # Clean up the collector tag so other pickups can proceed
 tag @a[tag={ns}.pu_collecting] remove {ns}.pu_collecting
+""")
+
+    	# Tag the owner of the nearest downed mannequin (a downed spectator) as the collector,
+    	# so a crawling downed player can grab power-ups. @s = the power-up item entity.
+    	self.func("zombies/powerups/pickup_downed_collector", f"""
+scoreboard players set #pu_downed_id {ns}.data -1
+execute as @e[tag={ns}.downed_mannequin,sort=nearest,limit=1,distance=..1.5] run scoreboard players operation #pu_downed_id {ns}.data = @s {ns}.zb.downed_id
+execute as @a[tag={ns}.downed_spectator,scores={{{ns}.zb.in_game=1}}] if score @s {ns}.zb.downed_id = #pu_downed_id {ns}.data run tag @s add {ns}.pu_collecting
 """)
 
     	dispatch_activate_lines: str = "\n".join(
@@ -408,7 +423,10 @@ particle minecraft:soul_fire_flame ~ ~1 ~ 0.3 0.5 0.3 0.02 6 force @a[scores={{{
 
     	## 7. Random Perk
     	count_unowned_lines: str = "\n".join(
-    		f"execute if score @p[tag={ns}.pu_collecting] {ns}.zb.perk.{perk_id} matches 0 run scoreboard players add #pu_perk_avail {ns}.data 1"
+    		# A perk is "available" when the player does NOT own it. Perk scores are *reset*
+    		# (unset) at game start, so a freshly-reset perk does not `matches 0` — we must
+    		# test `unless ... matches 1` to treat unset (and 0) as not-owned.
+    		f"execute unless score @p[tag={ns}.pu_collecting] {ns}.zb.perk.{perk_id} matches 1 run scoreboard players add #pu_perk_avail {ns}.data 1"
     		for perk_id in perk_ids
     	)
     	iter_dispatch_lines: str = ""

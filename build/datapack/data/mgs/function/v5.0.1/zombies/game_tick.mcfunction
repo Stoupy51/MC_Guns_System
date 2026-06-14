@@ -61,6 +61,11 @@ execute as @a[scores={mgs.zb.in_game=1},gamemode=!spectator] run function mgs:v5
 # Intercept dying zombies before vanilla death particles are emitted.
 function mgs:v5.0.1/zombies/death_watch_tick
 
+# Managed horde ambience: ~every 35 ticks, give each player one controlled, count-scaled groan.
+scoreboard players add #zb_horde_timer mgs.data 1
+execute if score #zb_horde_timer mgs.data matches 35.. run scoreboard players set #zb_horde_timer mgs.data 0
+execute if score #zb_horde_timer mgs.data matches 0 as @a[scores={mgs.zb.in_game=1},gamemode=!spectator] at @s run function mgs:v5.0.1/zombies/horde_ambient
+
 # Ability tick (Zonweeb variant only)
 execute if data storage mgs:zombies game{variant:"zonweeb"} run function mgs:v5.0.1/zombies/ability_tick
 
