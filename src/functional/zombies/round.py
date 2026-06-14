@@ -116,7 +116,12 @@ function {ns}:v{version}/zombies/summon_zombie_at with storage {ns}:temp _zpos
     	self.func("zombies/summon_zombie_at", f"""
 # Summon zombie 2 blocks underground with NoAI (rise animation in progress)
 # Attach a marker passenger so death can be intercepted before vanilla event 60 (poof particles).
-summon minecraft:zombie ~ ~-2 ~ {{Tags:["{ns}.zombie_round","{ns}.gm_entity","{ns}.nukable","{ns}.zb_rising"],CanPickUpLoot:false,PersistenceRequired:true,DeathLootTable:"minecraft:empty",NoAI:1b,Silent:1b,Passengers:[{{id:"minecraft:marker",Tags:["{ns}.death_watch","{ns}.gm_entity"]}}],Attributes:[{{id:"minecraft:follow_range",base:2048.0d}}]}}
+# follow_range drives BOTH target acquisition AND the pathfinding region/node budget
+# (region radius = follow_range+16, nodes = follow_range*16). A huge value (2048) made every
+# repath build a multi-thousand-block region and explore 32k+ nodes, so paths failed and zombies
+# froze. A sane value (40, just above vanilla's 35) keeps pathfinding cheap and reliable; long-range
+# targeting is unnecessary because zombies spawn next to players and stuck ones are teleport-rescued.
+summon minecraft:zombie ~ ~-2 ~ {{Tags:["{ns}.zombie_round","{ns}.gm_entity","{ns}.nukable","{ns}.zb_rising"],CanPickUpLoot:false,PersistenceRequired:true,DeathLootTable:"minecraft:empty",NoAI:1b,Silent:1b,Passengers:[{{id:"minecraft:marker",Tags:["{ns}.death_watch","{ns}.gm_entity"]}}],Attributes:[{{id:"minecraft:follow_range",base:40.0d}}]}}
 
 # Apply type-specific scaling (health, speed, rise timer)
 $execute as @n[tag={ns}.zombie_round,tag=!{ns}.zb_scaled] run function {ns}:v{version}/zombies/types/$(type) {{level:"$(level)"}}
