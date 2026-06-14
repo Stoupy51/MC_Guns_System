@@ -92,7 +92,7 @@ execute if score @s {ns}.mp.map_edit matches 1 run function {ns}:v{version}/maps
         ## Process trigger values
         # Pre-compute trigger ranges for custom loadout editor
         primary_max = TRIG_PRIMARY_BASE + len(PRIMARY_WEAPONS) - 1
-        secondary_count = len([w for w in SECONDARY_WEAPONS if w[4]])
+        secondary_count = len([w for w in SECONDARY_WEAPONS if w.in_loadout])
         secondary_max = TRIG_SECONDARY_BASE + secondary_count - 1
         overkill_sec_max = TRIG_OVERKILL_SEC_BASE + len(PRIMARY_WEAPONS) - 1
         primary_mags_max = TRIG_PRIMARY_MAGS_BASE + 5

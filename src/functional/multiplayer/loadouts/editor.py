@@ -311,7 +311,7 @@ function {ns}:v{version}/multiplayer/show_dialog with storage {ns}:temp
 
     	# Gun action lists (+ Remove button)
     	primary_actions: list[str] = []
-    	for idx, (_gun_id, display, category, _mag, _mc, _il) in enumerate(w for w in PRIMARY_WEAPONS if w[5]):
+    	for idx, (_gun_id, display, category, _mag, _mc, _il) in enumerate(w for w in PRIMARY_WEAPONS if w.in_loadout):
     		trig = TRIG_PRIMARY_BASE + idx
     		primary_actions.append(
     			f'{{label:{{text:"{display}",color:"yellow"}},'
@@ -333,7 +333,7 @@ function {ns}:v{version}/multiplayer/show_dialog with storage {ns}:temp
 
     	# Pistol secondary list (default)
     	secondary_actions: list[str] = []
-    	for idx, (_gun_id, display, _mag_id, _mc, _il) in enumerate(w for w in SECONDARY_WEAPONS if w[4]):
+    	for idx, (_gun_id, display, _mag_id, _mc, _il) in enumerate(w for w in SECONDARY_WEAPONS if w.in_loadout):
     		trig = TRIG_SECONDARY_BASE + idx
     		secondary_actions.append(
     			f'{{label:{{text:"{display}",color:"yellow"}},'
@@ -345,7 +345,7 @@ function {ns}:v{version}/multiplayer/show_dialog with storage {ns}:temp
 
     	# Overkill secondary list: primaries (iron sights only, camo selectable)
     	overkill_actions: list[str] = []
-    	for idx, (_gun_id, display, category, _mag, _mc, _il) in enumerate(w for w in PRIMARY_WEAPONS if w[5]):
+    	for idx, (_gun_id, display, category, _mag, _mc, _il) in enumerate(w for w in PRIMARY_WEAPONS if w.in_loadout):
     		trig = TRIG_OVERKILL_SEC_BASE + idx
     		overkill_actions.append(
     			f'{{label:{{text:"{display}",color:"yellow"}},'
@@ -379,7 +379,7 @@ function {fn}/show_secondary_pistol_dialog
     			)
 
     	pick_primary_lines = ""
-    	for idx, (gun_id, display, _category, mag_id, _mag_count, _il) in enumerate(w for w in PRIMARY_WEAPONS if w[5]):
+    	for idx, (gun_id, display, _category, mag_id, _mag_count, _il) in enumerate(w for w in PRIMARY_WEAPONS if w.in_loadout):
     		trig = TRIG_PRIMARY_BASE + idx
     		pick_primary_lines += (
     			f'execute if score @s {ns}.player.config matches {trig} run '
@@ -401,7 +401,7 @@ function {fn}/show_primary_camo_dialog
 """)
 
     	pick_secondary_lines = ""
-    	for idx, (gun_id, display, mag_id, _mag_count, _il) in enumerate(w for w in SECONDARY_WEAPONS if w[4]):
+    	for idx, (gun_id, display, mag_id, _mag_count, _il) in enumerate(w for w in SECONDARY_WEAPONS if w.in_loadout):
     		trig = TRIG_SECONDARY_BASE + idx
     		pick_secondary_lines += (
     			f'execute if score @s {ns}.player.config matches {trig} run '
@@ -428,7 +428,7 @@ function {fn}/show_secondary_camo_dialog
 
     	# Overkill: pick a primary weapon as the secondary (iron sights, camo selectable)
     	pick_overkill_lines = ""
-    	for idx, (gun_id, display, _category, mag_id, _mag_count, _il) in enumerate(w for w in PRIMARY_WEAPONS if w[5]):
+    	for idx, (gun_id, display, _category, mag_id, _mag_count, _il) in enumerate(w for w in PRIMARY_WEAPONS if w.in_loadout):
     		trig = TRIG_OVERKILL_SEC_BASE + idx
     		pick_overkill_lines += (
     			f'execute if score @s {ns}.player.config matches {trig} run '
@@ -793,7 +793,7 @@ function {fn}/rebuild_perks with storage {ns}:temp
     			f'{{id:"{gun_id}",gun_slot:{gun_slot},mag_id:"{mag_id}",mag_consumable:{is_consumable},mag_bullets:{bullets}}}'
     		)
     	secondary_slot_entries: list[str] = []
-    	for gun_id, _display, mag_id, mag_count, _il in (w for w in SECONDARY_WEAPONS if w[4]):
+    	for gun_id, _display, mag_id, mag_count, _il in (w for w in SECONDARY_WEAPONS if w.in_loadout):
     		gun_slot = f'{{slot:"hotbar.1",loot:"{ns}:i/{gun_id}",count:1,consumable:0b,bullets:0}}'
     		is_consumable = "1b" if mag_id in CONSUMABLE_MAGS else "0b"
     		bullets = mag_count if mag_id in CONSUMABLE_MAGS else 0
@@ -814,7 +814,7 @@ data modify storage {ns}:multiplayer secondary_slot_table set value [{",".join(s
     			f'data modify storage {ns}:temp _build.primary_data set from storage {ns}:multiplayer primary_slot_table[{idx}]\n'
     		)
     	save_secondary_dispatch = ""
-    	for idx, (gun_id, *_) in enumerate(w for w in SECONDARY_WEAPONS if w[4]):
+    	for idx, (gun_id, *_) in enumerate(w for w in SECONDARY_WEAPONS if w.in_loadout):
     		save_secondary_dispatch += (
     			f'execute if data storage {ns}:temp editor{{secondary:"{gun_id}"}} run '
     			f'data modify storage {ns}:temp _build.secondary_data set from storage {ns}:multiplayer secondary_slot_table[{idx}]\n'
