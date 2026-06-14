@@ -1,16 +1,21 @@
 
 # ruff: noqa: E501
-from stewbeet import Mem, write_versioned_function
-
 from ...helpers import MGS_TAG
+from .base import GameModeVariant
 
 
-def generate_search_and_destroy() -> None:
-	ns: str = Mem.ctx.project_id
-	version: str = Mem.ctx.project_version
+class SearchAndDestroy(GameModeVariant):
+	""" Search & Destroy: round-based; attackers plant a bomb, defenders defuse it.
+	No respawns within a round; best-of-six with a side swap at halftime. """
 
-	## S&D Setup
-	write_versioned_function("multiplayer/gamemodes/snd/setup", f"""
+	key = "snd"
+
+	def generate(self) -> None:
+		ns: str = self.ns
+		version: str = self.version
+
+		## S&D Setup
+		self.sub("setup", f"""
 tellraw @a [{MGS_TAG},{{"text":"Search & Destroy! Attackers plant, defenders defuse!","color":"yellow"}}]
 
 # Store base coordinates for offset
@@ -43,8 +48,8 @@ execute if data storage {ns}:temp _snd_iter[0] run function {ns}:v{version}/mult
 function {ns}:v{version}/multiplayer/gamemodes/snd/start_round
 """)
 
-	## S&D: Summon objective markers (relative → absolute)
-	write_versioned_function("multiplayer/gamemodes/snd/summon_obj", f"""
+		## S&D: Summon objective markers (relative → absolute)
+		self.sub("summon_obj", f"""
 execute store result score #rx {ns}.data run data get storage {ns}:temp _snd_iter[0][0]
 execute store result score #ry {ns}.data run data get storage {ns}:temp _snd_iter[0][1]
 execute store result score #rz {ns}.data run data get storage {ns}:temp _snd_iter[0][2]
@@ -59,14 +64,14 @@ data remove storage {ns}:temp _snd_iter[0]
 execute if data storage {ns}:temp _snd_iter[0] run function {ns}:v{version}/multiplayer/gamemodes/snd/summon_obj
 """)
 
-	write_versioned_function("multiplayer/gamemodes/snd/summon_obj_at", f"""
+		self.sub("summon_obj_at", f"""
 $summon minecraft:marker $(x) $(y) $(z) {{Tags:["{ns}.snd_obj","{ns}.gm_entity"]}}
 $execute positioned $(x) $(y) $(z) run setblock ~ ~ ~ chest
 $execute positioned $(x) $(y) $(z) run setblock ~ ~1 ~ barrier
 """)
 
-	## S&D: Start Round
-	write_versioned_function("multiplayer/gamemodes/snd/start_round", f"""
+		## S&D: Start Round
+		self.sub("start_round", f"""
 # Guard: only while the game is running (a scheduled call may fire after the game ended)
 execute if data storage {ns}:multiplayer game{{state:"lobby"}} run return fail
 execute if data storage {ns}:multiplayer game{{state:"ended"}} run return fail
@@ -102,8 +107,8 @@ tag @e[tag={ns}.spawn_used] remove {ns}.spawn_used
 execute as @a[scores={{{ns}.mp.team=1..2}}] at @s run function {ns}:v{version}/multiplayer/apply_class
 """)
 
-	## S&D Tick
-	write_versioned_function("multiplayer/gamemodes/snd/tick", f"""
+		## S&D Tick
+		self.sub("tick", f"""
 # Round timer
 scoreboard players remove #snd_round_timer {ns}.data 1
 
@@ -138,8 +143,8 @@ execute if score #snd_bomb_state {ns}.data matches 2 as @a[tag={ns}.snd_alive,pr
 execute if score #snd_bomb_state {ns}.data matches 2 if score #snd_channeling {ns}.data matches 0 run scoreboard players set #snd_defuse_progress {ns}.data 0
 """)
 
-	## S&D: Plant attempt
-	write_versioned_function("multiplayer/gamemodes/snd/try_plant", f"""
+		## S&D: Plant attempt
+		self.sub("try_plant", f"""
 # Only attackers can plant
 execute if score #snd_attackers {ns}.data matches 1 unless score @s {ns}.mp.team matches 1 run return fail
 execute if score #snd_attackers {ns}.data matches 2 unless score @s {ns}.mp.team matches 2 run return fail
@@ -153,8 +158,8 @@ title @s actionbar [{{"text":"Planting... ","color":"gold"}},{{"score":{{"name":
 execute if score #snd_plant_progress {ns}.data matches 100.. run function {ns}:v{version}/multiplayer/gamemodes/snd/bomb_planted
 """)
 
-	## S&D: Bomb planted
-	write_versioned_function("multiplayer/gamemodes/snd/bomb_planted", f"""
+		## S&D: Bomb planted
+		self.sub("bomb_planted", f"""
 scoreboard players set #snd_bomb_state {ns}.data 2
 scoreboard players set #snd_bomb_timer {ns}.data 900
 scoreboard players set #snd_plant_progress {ns}.data 0
@@ -166,8 +171,8 @@ tellraw @a [{MGS_TAG},{{"text":"💣 BOMB PLANTED!","color":"red","bold":true}}]
 playsound minecraft:block.note_block.pling player @a ~ ~ ~ 1 0.5
 """)
 
-	## S&D: Defuse attempt
-	write_versioned_function("multiplayer/gamemodes/snd/try_defuse", f"""
+		## S&D: Defuse attempt
+		self.sub("try_defuse", f"""
 # Only defenders can defuse
 execute if score #snd_attackers {ns}.data matches 1 unless score @s {ns}.mp.team matches 2 run return fail
 execute if score #snd_attackers {ns}.data matches 2 unless score @s {ns}.mp.team matches 1 run return fail
@@ -180,15 +185,15 @@ title @s actionbar [{{"text":"Defusing... ","color":"aqua"}},{{"score":{{"name":
 execute if score #snd_defuse_progress {ns}.data matches 150.. run function {ns}:v{version}/multiplayer/gamemodes/snd/bomb_defused
 """)
 
-	## S&D: Bomb defused → defenders win
-	write_versioned_function("multiplayer/gamemodes/snd/bomb_defused", f"""
+		## S&D: Bomb defused → defenders win
+		self.sub("bomb_defused", f"""
 tellraw @a [{MGS_TAG},{{"text":"💣 BOMB DEFUSED!","color":"aqua","bold":true}}]
 kill @e[tag={ns}.snd_bomb]
 function {ns}:v{version}/multiplayer/gamemodes/snd/defenders_win
 """)
 
-	## S&D: Bomb explodes → attackers win
-	write_versioned_function("multiplayer/gamemodes/snd/bomb_explodes", f"""
+		## S&D: Bomb explodes → attackers win
+		self.sub("bomb_explodes", f"""
 # Explosion effect at bomb
 execute at @e[tag={ns}.snd_bomb] run particle minecraft:explosion_emitter ~ ~1 ~ 2 2 2 0 5
 execute at @e[tag={ns}.snd_bomb] run playsound minecraft:entity.generic.explode player @a ~ ~ ~ 2 0.8
@@ -202,8 +207,8 @@ kill @e[tag={ns}.snd_bomb]
 function {ns}:v{version}/multiplayer/gamemodes/snd/attackers_win
 """)
 
-	## S&D: Attackers win round
-	write_versioned_function("multiplayer/gamemodes/snd/attackers_win", f"""
+		## S&D: Attackers win round
+		self.sub("attackers_win", f"""
 execute if score #snd_attackers {ns}.data matches 1 run scoreboard players add #snd_red_wins {ns}.data 1
 execute if score #snd_attackers {ns}.data matches 1 run tellraw @a [{MGS_TAG},{{"text":"Red","color":"red"}},{{"text":" (Attackers) win the round!","color":"yellow"}}]
 execute if score #snd_attackers {ns}.data matches 2 run scoreboard players add #snd_blue_wins {ns}.data 1
@@ -213,8 +218,8 @@ playsound minecraft:entity.player.levelup player @a ~ ~ ~ 1 1.0
 function {ns}:v{version}/multiplayer/gamemodes/snd/next_round
 """)
 
-	## S&D: Defenders win round
-	write_versioned_function("multiplayer/gamemodes/snd/defenders_win", f"""
+		## S&D: Defenders win round
+		self.sub("defenders_win", f"""
 execute if score #snd_attackers {ns}.data matches 1 run scoreboard players add #snd_blue_wins {ns}.data 1
 execute if score #snd_attackers {ns}.data matches 1 run tellraw @a [{MGS_TAG},{{"text":"Blue","color":"blue"}},{{"text":" (Defenders) win the round!","color":"yellow"}}]
 execute if score #snd_attackers {ns}.data matches 2 run scoreboard players add #snd_red_wins {ns}.data 1
@@ -224,8 +229,8 @@ playsound minecraft:entity.player.levelup player @a ~ ~ ~ 1 1.0
 function {ns}:v{version}/multiplayer/gamemodes/snd/next_round
 """)
 
-	## S&D: Next round or game over
-	write_versioned_function("multiplayer/gamemodes/snd/next_round", f"""
+		## S&D: Next round or game over
+		self.sub("next_round", f"""
 # Clean round state
 kill @e[tag={ns}.snd_bomb]
 tag @a remove {ns}.snd_alive
@@ -245,22 +250,22 @@ execute if score #snd_round {ns}.data matches 4 run playsound minecraft:block.no
 schedule function {ns}:v{version}/multiplayer/gamemodes/snd/start_round 60t
 """)
 
-	## S&D Kill Hook: No team scoring from kills, only round wins
-	write_versioned_function("multiplayer/gamemodes/snd/on_kill", f"""
+		## S&D Kill Hook: No team scoring from kills, only round wins
+		self.sub("on_kill", f"""
 scoreboard players add @s {ns}.mp.kills 1
 # Remove snd_alive from dead player (dead players detected by death_count in on_respawn)
 """)
 
-	## S&D Death Hook: Mark dead (called from on_respawn override)
-	write_versioned_function("multiplayer/gamemodes/snd/on_death", f"""
+		## S&D Death Hook: Mark dead (called from on_respawn override)
+		self.sub("on_death", f"""
 # Remove alive tag (no respawn in S&D)
 tag @s remove {ns}.snd_alive
 # Set to spectator mode
 gamemode spectator @s
 """)
 
-	## S&D Cleanup
-	write_versioned_function("multiplayer/gamemodes/snd/cleanup", f"""
+		## S&D Cleanup
+		self.sub("cleanup", f"""
 schedule clear {ns}:v{version}/multiplayer/gamemodes/snd/start_round
 execute at @e[tag={ns}.snd_obj] run fill ~ ~ ~ ~ ~1 ~ air
 kill @e[tag={ns}.snd_obj]
@@ -268,3 +273,7 @@ kill @e[tag={ns}.snd_bomb]
 tag @a remove {ns}.snd_alive
 """)
 
+
+def generate_search_and_destroy() -> None:
+	""" Module-level entry point (preserved signature); delegates to :class:`SearchAndDestroy`. """
+	SearchAndDestroy()()

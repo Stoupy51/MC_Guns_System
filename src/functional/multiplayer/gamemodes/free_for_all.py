@@ -1,31 +1,35 @@
 
 # Imports
-from stewbeet import Mem, write_versioned_function
-
 from ...helpers import MGS_TAG
+from .base import GameModeVariant
 
 
-def generate_free_for_all() -> None:
-	ns: str = Mem.ctx.project_id
-	version: str = Mem.ctx.project_version
+class FreeForAll(GameModeVariant):
+	""" Free-For-All: no teams, first player to the personal kill limit wins. """
 
-	## FFA Setup: Remove team coloring, use general spawns only
-	write_versioned_function("multiplayer/gamemodes/ffa/setup", f"""
+	key = "ffa"
+
+	def generate(self) -> None:
+		ns: str = self.ns
+		version: str = self.version
+
+		## FFA Setup: Remove team coloring, use general spawns only
+		self.sub("setup", f"""
 # Reset all teams (no teams in FFA)
 team leave @a
 scoreboard players set @a {ns}.mp.team 0
 tellraw @a [{MGS_TAG},{{"text":"Free-For-All! Everyone for themselves!","color":"yellow"}}]
 """)
 
-	## FFA Tick: Check personal score limit
-	write_versioned_function("multiplayer/gamemodes/ffa/tick", f"""
+		## FFA Tick: Check personal score limit
+		self.sub("tick", f"""
 # Check each player's kill count against score limit
 execute store result score #score_limit {ns}.data run data get storage {ns}:multiplayer game.score_limit
 execute as @a if score @s {ns}.mp.kills >= #score_limit {ns}.data run function {ns}:v{version}/multiplayer/gamemodes/ffa/player_wins
 """)
 
-	## FFA Player Wins
-	write_versioned_function("multiplayer/gamemodes/ffa/player_wins", f"""
+		## FFA Player Wins
+		self.sub("player_wins", f"""
 # Announce winner using player's name
 tellraw @a ["",{{"text":"🏆 ","color":"gold"}},{{"selector":"@s","color":"gold","bold":true}}," ",{{"text":"wins!","color":"gold","bold":true}}]
 tellraw @a ["","  ",{{"text":"Score: ","color":"gray"}},{{"score":{{"name":"@s","objective":"{ns}.mp.kills"}},"color":"yellow"}}," ",{{"text":"kills","color":"gray"}}]
@@ -34,8 +38,8 @@ tellraw @a ["","  ",{{"text":"Score: ","color":"gray"}},{{"score":{{"name":"@s",
 function {ns}:v{version}/multiplayer/stop
 """)
 
-	## FFA Kill Hook: +1 personal score (no team score)
-	write_versioned_function("multiplayer/gamemodes/ffa/on_kill", f"""
+		## FFA Kill Hook: +1 personal score (no team score)
+		self.sub("on_kill", f"""
 # Only personal kill tracking (no team scoring)
 scoreboard players add @s {ns}.mp.kills 1
 
@@ -47,5 +51,10 @@ execute store result score #score_limit {ns}.data run data get storage {ns}:mult
 execute if score @s {ns}.mp.kills >= #score_limit {ns}.data run function {ns}:v{version}/multiplayer/gamemodes/ffa/player_wins
 """)
 
-	## FFA Cleanup: Re-allow team joining
-	write_versioned_function("multiplayer/gamemodes/ffa/cleanup", "# Nothing to clean up for FFA")
+		## FFA Cleanup: Re-allow team joining
+		self.sub("cleanup", "# Nothing to clean up for FFA")
+
+
+def generate_free_for_all() -> None:
+	""" Module-level entry point (preserved signature); delegates to :class:`FreeForAll`. """
+	FreeForAll()()
