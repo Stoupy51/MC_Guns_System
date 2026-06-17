@@ -2,7 +2,6 @@
 # Power Switch System
 # A one-time activatable wall lever that enables power for the map.
 # Elements with power:true (perk machines, traps) require power to be active.
-from stewbeet import Mem, write_versioned_function
 
 from ..helpers import MGS_TAG
 from .common import game_active_guard_cmd

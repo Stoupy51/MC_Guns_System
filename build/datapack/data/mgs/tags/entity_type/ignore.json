@@ -1,6 +1,7 @@
 {
 	"values": [
 		"#bs.hitbox:intangible",
-		"minecraft:interaction"
+		"minecraft:interaction",
+		"minecraft:experience_orb"
 	]
 }

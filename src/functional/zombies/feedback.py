@@ -1,7 +1,6 @@
 
 # Zombies Interaction Feedback
 # Shared sound cues used by interaction systems (wallbuys, doors, perks, traps, mystery box).
-from stewbeet import Mem, write_versioned_function
 from ..generator import McfunctionGenerator
 
 

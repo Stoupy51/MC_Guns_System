@@ -10,7 +10,7 @@
 clear @s
 
 # hotbar.0: knife
-item replace entity @s hotbar.0 with minecraft:iron_sword[unbreakable={},custom_data={mgs:{knife:true}},item_name={"translate":"mgs.knife","color":"white","italic":false},attribute_modifiers=[{type:"attack_damage",amount:20,operation:"add_value",slot:"mainhand",id:"minecraft:base_attack_damage"}]]
+item replace entity @s hotbar.0 with minecraft:iron_sword[unbreakable={},custom_data={mgs:{knife:true}},item_name={"translate":"mgs.knife","color":"white","italic":false},attribute_modifiers=[{type:"attack_damage",amount:20,operation:"add_value",slot:"mainhand",id:"minecraft:base_attack_damage"},{type:"attack_speed",amount:-2.5,operation:"add_value",slot:"mainhand",id:"minecraft:base_attack_speed"}]]
 function mgs:v5.0.1/zombies/inventory/apply_slot_tag {slot:"hotbar.0",group:"hotbar",index:0}
 
 # hotbar.1 + inventory.1: starting weapon and scaled magazine

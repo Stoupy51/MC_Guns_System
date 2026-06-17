@@ -2,7 +2,6 @@
 # Door System
 # Physical block barriers that players purchase to open.
 # Doors with the same link_id open together. Opening doors unlocks new map areas via the group system.
-from stewbeet import Mem, write_load_file, write_versioned_function
 
 from ..helpers import MGS_TAG
 from .common import deny_not_enough_points_body, game_active_guard_cmd

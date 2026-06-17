@@ -4,11 +4,11 @@
 # On each zombie death there is a min(5%, 2/total_round_zombies) chance to drop a power-up,
 # until one full shuffle-bag cycle has dropped this round. Rares only appear after round 5.
 # Visual: item entity + text_display. Pickup by proximity (1.5 blocks). 26.5s lifetime.
-from stewbeet import JsonDict, LootTable, Mem, set_json_encoder, write_load_file, write_versioned_function
+from stewbeet import JsonDict, LootTable, Mem, set_json_encoder
 
+from ..generator import McfunctionGenerator
 from ..helpers import MGS_TAG
 from .perks import PERK_DEFINITIONS
-from ..generator import McfunctionGenerator
 
 # Each power-up is a dict with required keys:
 #   item         - placeholder item id
@@ -59,7 +59,7 @@ class PowerupsGenerator(McfunctionGenerator):
     	num_perks: int = len(perk_ids)
 
     	# Helper: a power-up sound played for all in-game players (volume kept modest on purpose).
-    	def pu_snd(name: str, vol: float = 1.0, pitch: float = 1.0, at_s: bool = False) -> str:
+    	def pu_snd(name: str, vol: float = 0.7, pitch: float = 1.0, at_s: bool = False) -> str:
     		if at_s:
     			return f"as @a[scores={{{ns}.zb.in_game=1}}] at @s run playsound {ns}:zombies/powerups/{name} ambient @s ~ ~ ~ {vol} {pitch}"
     		return f"playsound {ns}:zombies/powerups/{name} ambient @a[scores={{{ns}.zb.in_game=1}}] ~ ~ ~ {vol} {pitch}"

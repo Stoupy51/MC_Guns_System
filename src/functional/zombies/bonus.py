@@ -1,6 +1,5 @@
 
 # Imports
-from stewbeet import Mem, write_function, write_versioned_function
 
 from ...config.stats import ALL_SLOTS, BASE_WEAPON, CAPACITY, REMAINING_BULLETS
 from ..generator import McfunctionGenerator

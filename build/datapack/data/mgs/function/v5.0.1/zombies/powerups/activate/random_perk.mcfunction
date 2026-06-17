@@ -23,5 +23,5 @@ function mgs:v5.0.1/zombies/powerups/random_perk_iter
 
 # Announce if a perk was successfully granted
 execute if score #pu_perk_applied mgs.data matches 1 run tellraw @a[scores={mgs.zb.in_game=1}] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.random_perk_dropped_for","color":"light_purple"},{"selector":"@p[tag=mgs.pu_collecting]","color":"light_purple","bold":true},{"text":"!","color":"light_purple"}]
-execute if score #pu_perk_applied mgs.data matches 1 run playsound mgs:zombies/powerups/random_perk ambient @a[scores={mgs.zb.in_game=1}] ~ ~ ~ 1.0 1.0
+execute if score #pu_perk_applied mgs.data matches 1 run playsound mgs:zombies/powerups/random_perk ambient @a[scores={mgs.zb.in_game=1}] ~ ~ ~ 0.7 1.0
 

@@ -2,7 +2,6 @@
 # Wallbuy System
 # Wall-mounted weapon stations. Players interact to buy weapons.
 # Each wallbuy displays its weapon on the wall and shows info on hover.
-from stewbeet import Mem, write_load_file, write_versioned_function
 
 from ..helpers import MGS_TAG
 from .common import build_weapon_magazine_data, deny_not_enough_points_body, game_active_guard_cmd

@@ -2,7 +2,7 @@
 # Imports
 from typing import Any
 
-from stewbeet import Advancement, ItemModifier, JsonDict, Mem, Predicate, set_json_encoder, write_versioned_function
+from stewbeet import Advancement, ItemModifier, JsonDict, Mem, Predicate, set_json_encoder
 
 from ...config.stats import BURST, REMAINING_BULLETS
 from ..generator import McfunctionGenerator

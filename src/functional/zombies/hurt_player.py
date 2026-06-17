@@ -1,6 +1,6 @@
 
 # Imports
-from stewbeet import Mem, write_advancement, write_versioned_function
+from stewbeet import write_advancement
 from ..generator import McfunctionGenerator
 
 

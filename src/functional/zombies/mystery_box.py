@@ -6,7 +6,7 @@
 # Pool can be extended via function tag #mgs:zombies/register_mystery_box_item
 # Uses Bookshelf interaction module for click/hover detection.
 # Positions use compound format: {pos:[x,y,z], rotation:[yaw,0.0f], group_id:N, can_start_on:1b}
-from stewbeet import LootTable, Mem, set_json_encoder, write_load_file, write_versioned_function
+from stewbeet import LootTable, Mem, set_json_encoder
 
 from ...config.stats import WEIGHT
 from ...database.weapons import WEAPON_STATS

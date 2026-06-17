@@ -5,7 +5,7 @@
 # Enemy positions and spawn functions are stored per-map via the editor.
 # When all enemies are killed, the game ends with a performance score.
 
-from stewbeet import Mem, write_load_file, write_tag, write_tick_file, write_versioned_function
+from stewbeet import Mem, write_tag
 
 from ..core.respawn_countdown import respawn_countdown_tick_lines
 from ..helpers import (

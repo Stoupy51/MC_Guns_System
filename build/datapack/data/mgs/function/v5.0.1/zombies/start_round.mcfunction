@@ -43,7 +43,7 @@ function mgs:v5.0.1/zombies/refresh_sidebar
 
 # Announce
 tellraw @a ["",{"text":"","color":"dark_green","bold":true},"🧟 ",{"translate":"mgs.round","color":"red"},{"score":{"name":"#zb_round","objective":"mgs.data"},"color":"gold","bold":true},[{"text":" ","color":"red"}, {"translate":"mgs.has_begun"}]]
-execute as @a[scores={mgs.zb.in_game=1}] at @s run playsound mgs:zombies/round_start_generic ambient @s ~ ~ ~ 0.6 1.0
+execute as @a[scores={mgs.zb.in_game=1}] at @s run playsound mgs:zombies/round_start_generic ambient @s ~ ~ ~ 0.3 1.0
 
 # Replenish grenades for all alive players (+2, cap at 4)
 execute as @a[scores={mgs.zb.in_game=1},gamemode=!spectator] run function mgs:v5.0.1/zombies/inventory/replenish_grenades
