@@ -1,12 +1,17 @@
 
 # Shared teleport macro
-from stewbeet import Mem, write_versioned_function
+from ..generator import McfunctionGenerator
+
+
+class SharedTeleport(McfunctionGenerator):
+	""" Writes the shared teleport-to-position macro used across modes. """
+
+	def generate(self) -> None:
+		## Teleport to position (macro)
+		## Usage: function shared/tp_to_position with storage {ns}:temp _tp
+		self.func("shared/tp_to_position", "$tp @s $(x) $(y) $(z)")
 
 
 def write_shared_teleport_functions() -> None:
-	Mem.ctx.project_id  # ensure context is available  # noqa: B018
-
-	## Teleport to position (macro)
-	## Usage: function shared/tp_to_position with storage {ns}:temp _tp
-	write_versioned_function("shared/tp_to_position", "$tp @s $(x) $(y) $(z)")
-
+	""" Module-level entry point (preserved signature); delegates to :class:`SharedTeleport`. """
+	SharedTeleport()()

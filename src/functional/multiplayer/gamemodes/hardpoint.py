@@ -1,16 +1,20 @@
 
 # Imports
-from stewbeet import Mem, write_versioned_function
-
 from ...helpers import MGS_TAG
+from .base import GameModeVariant
 
 
-def generate_hardpoint() -> None:
-	ns: str = Mem.ctx.project_id
-	version: str = Mem.ctx.project_version
+class Hardpoint(GameModeVariant):
+	""" Hardpoint: a rotating zone; the team that exclusively holds it scores over time. """
 
-	## HP Setup: Initialize zone data from map
-	write_versioned_function("multiplayer/gamemodes/hp/setup", f"""
+	key = "hp"
+
+	def generate(self) -> None:
+		ns: str = self.ns
+		version: str = self.version
+
+		## HP Setup: Initialize zone data from map
+		self.sub("setup", f"""
 tellraw @a [{MGS_TAG},{{"text":"Hardpoint! Control the zone to score!","color":"yellow"}}]
 
 # Store base coordinates for offset
@@ -35,8 +39,8 @@ scoreboard players set #hp_score_timer {ns}.data 20
 function {ns}:v{version}/multiplayer/gamemodes/hp/load_zone
 """)
 
-	## HP: Load zone from first entry → summon single marker with base offset
-	write_versioned_function("multiplayer/gamemodes/hp/load_zone", f"""
+		## HP: Load zone from first entry → summon single marker with base offset
+		self.sub("load_zone", f"""
 # Kill old zone marker
 kill @e[tag={ns}.hp_marker]
 kill @e[tag={ns}.hp_label]
@@ -67,14 +71,14 @@ tellraw @a [{MGS_TAG},{{"text":"⚡ Hardpoint ","color":"dark_purple"}},{{"stora
 playsound minecraft:block.note_block.chime player @a ~ ~ ~ 1 1.0
 """)
 
-	## HP: Summon zone marker (macro)
-	write_versioned_function("multiplayer/gamemodes/hp/summon_marker", f"""
+		## HP: Summon zone marker (macro)
+		self.sub("summon_marker", f"""
 $summon minecraft:marker $(x) $(y) $(z) {{Tags:["{ns}.hp_marker","{ns}.gm_entity"]}}
 $summon minecraft:text_display $(x) $(y) $(z) {{Tags:["{ns}.hp_label","{ns}.gm_entity","{ns}.hp_$(label)"],billboard:"vertical",text:{{"text":"$(label)","color":"dark_purple","bold":true}},transformation:{{translation:[0.0f,2.0f,0.0f],left_rotation:[0.0f,0.0f,0.0f,1.0f],scale:[3.0f,3.0f,3.0f],right_rotation:[0.0f,0.0f,0.0f,1.0f]}},shadow:true,see_through:true}}
 """)  # noqa: E501
 
-	## HP Tick: Zone particles, scoring, rotation
-	write_versioned_function("multiplayer/gamemodes/hp/tick", f"""
+		## HP Tick: Zone particles, scoring, rotation
+		self.sub("tick", f"""
 # Rotation timer
 scoreboard players remove #hp_rotate_timer {ns}.data 1
 execute if score #hp_rotate_timer {ns}.data matches ..0 run function {ns}:v{version}/multiplayer/gamemodes/hp/rotate
@@ -103,8 +107,8 @@ execute if score #hp_score_timer {ns}.data matches ..0 run function {ns}:v{versi
 execute if score #hp_score_timer {ns}.data matches ..0 run scoreboard players set #hp_score_timer {ns}.data 20
 """)
 
-	## HP: Score tick
-	write_versioned_function("multiplayer/gamemodes/hp/score_tick", f"""
+		## HP: Score tick
+		self.sub("score_tick", f"""
 # Only score if one team exclusively holds the zone (not contested)
 # Red alone in zone
 execute if score #hp_red {ns}.data matches 1.. unless score #hp_blue {ns}.data matches 1.. at @e[tag={ns}.hp_marker] run playsound minecraft:block.note_block.bell player @a ~ ~ ~ 1 1.2
@@ -118,8 +122,8 @@ execute if score #hp_blue {ns}.data matches 1.. unless score #hp_red {ns}.data m
 function {ns}:v{version}/multiplayer/check_team_win
 """)
 
-	## HP: Rotate zone
-	write_versioned_function("multiplayer/gamemodes/hp/rotate", f"""
+		## HP: Rotate zone
+		self.sub("rotate", f"""
 # Remove the first entry (current zone) from the zones list
 data remove storage {ns}:multiplayer game.hp_zones[0]
 
@@ -134,15 +138,15 @@ scoreboard players set #hp_rotate_sec {ns}.data 60
 function {ns}:v{version}/multiplayer/gamemodes/hp/load_zone
 """)
 
-	## HP: Reset zones (cycle back to beginning)
-	write_versioned_function("multiplayer/gamemodes/hp/reset_zones", f"""
+		## HP: Reset zones (cycle back to beginning)
+		self.sub("reset_zones", f"""
 # Refill zones from map data
 data modify storage {ns}:multiplayer game.hp_zones set from storage {ns}:multiplayer game.map.hardpoint
 scoreboard players set #hp_zone_idx {ns}.data 0
 """)
 
-	## HP Kill Hook: Same as TDM (+1 team)
-	write_versioned_function("multiplayer/gamemodes/hp/on_kill", f"""
+		## HP Kill Hook: Same as TDM (+1 team)
+		self.sub("on_kill", f"""
 scoreboard players add @s {ns}.mp.kills 1
 execute if score @s {ns}.mp.team matches 1 run scoreboard players add #red {ns}.mp.team 1
 execute if score @s {ns}.mp.team matches 2 run scoreboard players add #blue {ns}.mp.team 1
@@ -151,10 +155,14 @@ execute if score @s {ns}.mp.team matches 2 run scoreboard players add #blue {ns}
 function #bs.sidebar:refresh {{objective:"{ns}.sidebar"}}
 """)
 
-	## HP Cleanup
-	write_versioned_function("multiplayer/gamemodes/hp/cleanup", f"""
+		## HP Cleanup
+		self.sub("cleanup", f"""
 kill @e[tag={ns}.hp_marker]
 kill @e[tag={ns}.hp_label]
 tag @a remove {ns}.in_hp_zone
 """)
 
+
+def generate_hardpoint() -> None:
+	""" Module-level entry point (preserved signature); delegates to :class:`Hardpoint`. """
+	Hardpoint()()

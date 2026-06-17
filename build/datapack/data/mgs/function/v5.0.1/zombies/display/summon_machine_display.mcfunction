@@ -5,7 +5,7 @@
 #
 # @within	mgs:v5.0.1/zombies/pap/setup_iter with storage mgs:temp _pap_disp [ as @n[tag=mgs.pap_new] & at @s & positioned ^ ^ ^-0.5 & positioned ~ ~-0.4 ~ ]
 #			mgs:v5.0.1/zombies/pap/anim/restore_display_lookup with storage mgs:temp _pap_restore_disp
-#			mgs:v5.0.1/zombies/perks/setup_iter with storage mgs:temp _pk_disp [ as @n[tag=mgs.pk_new] & at @s & align xyz & positioned ~.5 ~-.5 ~.5 & positioned ^ ^ ^-0.5 ]
+#			mgs:v5.0.1/zombies/perks/setup_iter with storage mgs:temp _pk_disp [ as @n[tag=mgs.pk_new] & at @s & align xyz & positioned ~.5 ~-.37 ~.5 & positioned ^ ^ ^-0.5 ]
 #
 # @args		yaw (unknown)
 #			tag (unknown)

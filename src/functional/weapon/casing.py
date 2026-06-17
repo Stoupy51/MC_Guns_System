@@ -3,24 +3,29 @@
 from stewbeet import Mem, write_versioned_function
 
 from ...config.stats import CASING_BINORMAL, CASING_MODEL, CASING_NORMAL, CASING_OFFSET, CASING_TANGENT
+from ..generator import McfunctionGenerator
 
 
 # Main function
-def main() -> None:
-    ns: str = Mem.ctx.project_id
-    version: str = Mem.ctx.project_version
 
-    # Handle pending clicks
-    write_versioned_function("player/right_click", f"""
+class CasingGenerator(McfunctionGenerator):
+    """ Generates the casing datapack functions. """
+
+    def generate(self) -> None:
+        ns: str = self.ns
+        version: str = self.version
+
+        # Handle pending clicks
+        self.func("player/right_click", f"""
 # Drop casing
 function {ns}:v{version}/casing/main
 """)
 
-    # Prepare
-    item_nbt: str = f"""{{Tags:["{ns}.new","{ns}.casing"],Item:{{id:"minecraft:stone",count:1,components:{{"minecraft:item_model":"air"}}}},PickupDelay:32767,Age:5990}}"""
+        # Prepare
+        item_nbt: str = f"""{{Tags:["{ns}.new","{ns}.casing"],Item:{{id:"minecraft:stone",count:1,components:{{"minecraft:item_model":"air"}}}},PickupDelay:32767,Age:5990}}"""
 
-    # Main function
-    write_versioned_function("casing/main", f"""
+        # Main function
+        self.func("casing/main", f"""
 # Get if player is zooming or not
 scoreboard players set #is_zoom {ns}.data 0
 execute if data storage {ns}:gun all.stats.is_zoom run scoreboard players set #is_zoom {ns}.data 1
@@ -62,14 +67,14 @@ summon item ~ ~ ~ {item_nbt}
 execute as @n[type=item,tag={ns}.new] run function {ns}:v{version}/casing/update_item
 """)
 
-    # Apply updates to the item
-    write_versioned_function("casing/update_item", f"""
+        # Apply updates to the item
+        self.func("casing/update_item", f"""
 data modify entity @s {{}} merge from storage {ns}:temp casing
 tag @s remove {ns}.new
 """)
 
-    # Process vectors - main handler that calls the 3 sub-functions
-    write_versioned_function("casing/process_vectors", f"""
+        # Process vectors - main handler that calls the 3 sub-functions
+        self.func("casing/process_vectors", f"""
 # 1. Calculate base vectors
 function {ns}:v{version}/casing/calculate_vectors
 
@@ -83,8 +88,8 @@ function {ns}:v{version}/casing/calculate_offset
 kill @s
 """)
 
-    # 1. Calculate normal, tangent, and binormal vectors
-    write_versioned_function("casing/calculate_vectors", f"""
+        # 1. Calculate normal, tangent, and binormal vectors
+        self.func("casing/calculate_vectors", f"""
 ### Calculate base vectors (normal, tangent, binormal) from player's look direction
 
 # Store the initial position of the marker (before movement)
@@ -153,8 +158,8 @@ scoreboard players operation #scaled_binormal_z {ns}.data = #binormal_z {ns}.dat
 scoreboard players operation #scaled_binormal_z {ns}.data *= #casing_binormal {ns}.data
 """)
 
-    # 2. Calculate motion based on vectors
-    write_versioned_function("casing/calculate_motion", f"""
+        # 2. Calculate motion based on vectors
+        self.func("casing/calculate_motion", f"""
 ### Calculate motion based on scaled normal, tangent, and binormal vectors
 
 # Start from scaled normals
@@ -179,8 +184,8 @@ scoreboard players operation #motion_y {ns}.data /= #1000 {ns}.data
 scoreboard players operation #motion_z {ns}.data /= #1000 {ns}.data
 """)
 
-    # 3. Calculate offset based on vectors
-    write_versioned_function("casing/calculate_offset", f"""
+        # 3. Calculate offset based on vectors
+        self.func("casing/calculate_offset", f"""
 ### Transform local casing offsets into world-space coordinates using the gun's orientation vectors
 
 # 1) Load local offset values from storage and scale to integers (x1000)
@@ -246,4 +251,10 @@ scoreboard players operation #pos_new_z {ns}.data += #off_tz {ns}.data
 scoreboard players operation #pos_new_z {ns}.data /= #1000 {ns}.data
 scoreboard players operation #pos_new_z {ns}.data += #pos_initial_z {ns}.data
 """)
+
+
+def main() -> None:
+    """ Module-level entry (preserved signature); delegates to :class:`CasingGenerator`. """
+    CasingGenerator()()
+
 

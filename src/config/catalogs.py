@@ -1,9 +1,61 @@
 
 # Weapon & Equipment Catalog constants
+from typing import NamedTuple
+
+
+# Typed catalog rows. These are NamedTuples (not frozen dataclasses) on purpose: the catalogs
+# are unpacked positionally and index-accessed (w[0], w[5], `for a, b, *_ in ...`) all over the
+# codebase, and a NamedTuple stays a tuple — so it is a drop-in upgrade that adds named-attribute
+# access (w.in_loadout) and static typing without touching a single reader.
+class Weapon(NamedTuple):
+    """ A primary weapon catalog entry. """
+    item_id: str
+    display_name: str
+    category: str
+    magazine_id: str
+    default_mag_count: int  # for consumable mags, total bullets in one stack slot
+    in_loadout: bool
+
+
+class SecondaryWeapon(NamedTuple):
+    """ A secondary (sidearm) catalog entry. """
+    item_id: str
+    display_name: str
+    magazine_id: str
+    default_mag_count: int
+    in_loadout: bool
+
+
+class EquipmentPreset(NamedTuple):
+    """ A grenade/equipment preset: maps equipment item_id -> count. """
+    preset_id: str
+    display_name: str
+    items: dict[str, int]
+
+
+class CamoVariant(NamedTuple):
+    """ A free cosmetic camo: suffix appended after the scope suffix. """
+    suffix: str
+    display_name: str
+
+
+class GrenadeType(NamedTuple):
+    """ A throwable grenade slot option ("" = None). """
+    item_id: str
+    display_name: str
+
+
+class Perk(NamedTuple):
+    """ A loadout perk; score_name is the mgs.special.* flag set when on the loadout. """
+    perk_id: str
+    display_name: str
+    description: str
+    score_name: str
+
 
 # Primary weapons: (item_id, display_name, category, magazine_id, default_mag_count, in_loadout)
 # For consumable mags (shells/bullets), default_mag_count = total bullets in one stack slot
-PRIMARY_WEAPONS: list[tuple[str, str, str, str, int, bool]] = [
+PRIMARY_WEAPONS: list[Weapon] = [Weapon(*_row) for _row in [
     # Assault Rifles
     ("ak47",   "AK-47",       "Assault Rifle", "ak47_mag",   3, True),
     ("m16a4",  "M16A4",       "Assault Rifle", "m16a4_mag",  3, True),
@@ -34,13 +86,13 @@ PRIMARY_WEAPONS: list[tuple[str, str, str, str, int, bool]] = [
     ("m590",   "M590",        "Shotgun",       "m590_shell",   16, True),
     # Launchers
     ("rpg7",   "RPG-7",       "Launcher",      "rpg7_rocket",  3, True),
-]
+]]
 
 # Index lookup: weapon_id -> index in PRIMARY_WEAPONS
-PRIMARY_INDEX: dict[str, int] = {w[0]: i for i, w in enumerate(PRIMARY_WEAPONS)}
+PRIMARY_INDEX: dict[str, int] = {w.item_id: i for i, w in enumerate(PRIMARY_WEAPONS)}
 
 # Secondary weapons: (item_id, display_name, magazine_id, default_mag_count, in_loadout)
-SECONDARY_WEAPONS: list[tuple[str, str, str, int, bool]] = [
+SECONDARY_WEAPONS: list[SecondaryWeapon] = [SecondaryWeapon(*_row) for _row in [
     ("m1911",   "M1911",   "m1911_mag",   2, True),
     ("m9",      "M9",      "m9_mag",      2, True),
     ("deagle",  "Deagle",  "deagle_mag",  2, True),
@@ -49,14 +101,14 @@ SECONDARY_WEAPONS: list[tuple[str, str, str, int, bool]] = [
     ("glock18", "Glock 18", "glock18_mag", 2, True),
     ("vz61",    "VZ-61",   "vz61_mag",    2, True),
     ("ray_gun", "Ray Gun", "element_115",  3, False),
-]
+]]
 
 # Index lookup: weapon_id -> index in SECONDARY_WEAPONS
-SECONDARY_INDEX: dict[str, int] = {w[0]: i for i, w in enumerate(SECONDARY_WEAPONS)}
+SECONDARY_INDEX: dict[str, int] = {w.item_id: i for i, w in enumerate(SECONDARY_WEAPONS)}
 
 # Equipment presets: (preset_id, display_name, items_dict)
 # items_dict maps equipment item_id -> count
-EQUIPMENT_PRESETS: list[tuple[str, str, dict[str, int]]] = [
+EQUIPMENT_PRESETS: list[EquipmentPreset] = [EquipmentPreset(*_row) for _row in [
     ("frag2",        "2x Frag Grenade",          {"frag_grenade": 2}),
     ("semtex2",      "2x Semtex",                {"semtex": 2}),
     ("flash2",       "2x Flash Grenade",         {"flash_grenade": 2}),
@@ -67,7 +119,7 @@ EQUIPMENT_PRESETS: list[tuple[str, str, dict[str, int]]] = [
     ("semtex_smoke", "Semtex + Smoke",           {"semtex": 1, "smoke_grenade": 1}),
     ("flash_smoke",  "Flash + Smoke",            {"flash_grenade": 1, "smoke_grenade": 1}),
     ("none",         "No Equipment",             {}),
-]
+]]
 
 # Scope variant definitions per weapon base ID
 # Maps base weapon ID -> tuple of available scope suffixes ("" = iron sights)
@@ -184,27 +236,27 @@ COST_PERK              = 1  # Per perk
 
 # Camo variants: (item_id_suffix, display_name) — free cosmetic selection in the loadout editor
 # The suffix is appended after the scope suffix (e.g. ak47 + _3 + _gold = ak47_3_gold)
-CAMO_VARIANTS: list[tuple[str, str]] = [
+CAMO_VARIANTS: list[CamoVariant] = [CamoVariant(*_row) for _row in [
     ("",                     "Default"),
     ("_autumn",              "Autumn"),
     ("_galaxy",              "Galaxy"),
     ("_gold",                "Gold"),
     ("_red_polymer_stripes", "Red Polymer"),
-]
+]]
 
 # Grenade types: (item_id, display_name)
-GRENADE_TYPES: list[tuple[str, str]] = [
+GRENADE_TYPES: list[GrenadeType] = [GrenadeType(*_row) for _row in [
     ("",              "None"),
     ("frag_grenade",  "Frag Grenade"),
     ("semtex",        "Semtex"),
     ("flash_grenade", "Flash"),
     ("smoke_grenade", "Smoke"),
-]
+]]
 
 # Perks: (perk_id, display_name, description, score_name)
 # score_name is the mgs.special.* scoreboard flag (0/1) set when the perk is on the loadout.
 # Effects are wired in functional/multiplayer/loadouts/class_selection.py + the systems they touch.
-PERKS: list[tuple[str, str, str, str]] = [
+PERKS: list[Perk] = [Perk(*_row) for _row in [
     ("quick_reload",  "Sleight of Hand", "Reload 50% faster", "quick_reload"),
     ("quick_swap",    "Fast Hands",      "Swap weapons 50% faster", "quick_swap"),
     ("juggernaut",    "Juggernaut",      "Increases health to survive more damage", "juggernaut"),
@@ -214,7 +266,7 @@ PERKS: list[tuple[str, str, str, str]] = [
     ("tactical_mask", "Tactical Mask",   "Reduces flash, stun, and gas effects", "tactical_mask"),
     ("overkill",      "Overkill",        "Carry a second primary weapon", "overkill"),
     ("quick_fix",     "Quick Fix",       "Health regen starts right after a kill", "quick_fix"),
-]
+]]
 
 # Max number of perks selectable (limited further by available points)
 MAX_PERKS = 3

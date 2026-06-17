@@ -23,3 +23,7 @@ execute if score #pu_loop_phase mgs.data matches 0 run playsound mgs:zombies/pow
 # Pickup check (do_pickup kills @s, so this must be the last command)
 execute if entity @a[scores={mgs.zb.in_game=1},gamemode=!spectator,distance=..1.5,tag=!mgs.pu_collecting] run function mgs:v5.0.1/zombies/powerups/do_pickup
 
+# Downed players pick up power-ups by crawling their mannequin over them (Black Ops rule).
+# Only fires when no alive player is in range (alive players take priority and already ran above).
+execute unless entity @a[scores={mgs.zb.in_game=1},gamemode=!spectator,distance=..1.5] if entity @e[tag=mgs.downed_mannequin,distance=..1.5] run function mgs:v5.0.1/zombies/powerups/do_pickup
+

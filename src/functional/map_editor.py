@@ -10,6 +10,7 @@ from typing import Any, cast
 from stewbeet import Advancement, JsonDict, Mem, set_json_encoder, write_load_file, write_versioned_function
 
 from .helpers import MGS_TAG, btn
+from .generator import McfunctionGenerator
 
 MAX_MAPS = 50
 
@@ -64,6 +65,25 @@ ALL_ELEMENTS: dict[str, JsonDict] = {
                                 "block_disabled": {"Name": "minecraft:oak_fence_gate", "Properties": {"open": "true"}},
                                 "radius": 2,
                            }},
+}
+
+# Field documentation ───────────────────────────────────────────
+# Tooltips shown (as a hover "ⓘ") next to constant/enum config fields in the element editor,
+# so map makers don't have to guess what the magic numbers mean. Keyed by (element_type, field);
+# a plain field-name key acts as a fallback shared across element types (e.g. "power").
+FIELD_DOCS: dict[tuple[str, str] | str, str] = {
+	("trap", "type"): "Trap behaviour:\n0 = Fire — lethal to zombies, burns players inside\n1 = Electric — lethal to zombies, shocks players inside\n2 = Turret — auto-fires at the nearest zombie every 5 ticks",
+	("trap", "duration"): "How long the trap stays active, in ticks (20 ticks = 1 second).",
+	("trap", "cooldown"): "Cooldown before the trap can be re-triggered, in ticks (20 = 1s).",
+	("door", "animation"): "Open animation:\n0 = Destroy — block-break particles + sound\n1+ = Silent — blocks instantly replaced with air",
+	("door", "link_id"): "Doors that share a link_id open together as a single purchase.",
+	("door", "back_group_id"): "Zombie spawn group_id unlocked behind this door (-1 = none).",
+	("perk_machine", "perk_id"): "Perk granted by this machine:\njuggernog · speed_cola · double_tap · quick_revive · mule_kick",
+	("wallbuy", "weapon_id"): "Catalog weapon id given on purchase (e.g. m1911, ak47, mp5).",
+	("barrier", "radius"): "Block radius the barrier toggles open/closed around its marker.",
+	# Shared fallbacks (any element type):
+	"power": "true = requires the map's power to be switched on before it works\nfalse = always usable",
+	"price": "Cost in points to buy/use this element.",
 }
 
 # Mode Definitions ──────────────────────────────────────────────
@@ -129,14 +149,17 @@ EDITOR_MODES: dict[str, JsonDict] = {
 MODE_LIST: list[str] = list(EDITOR_MODES.keys())
 
 
-def generate_map_editor() -> None:
-	ns: str = Mem.ctx.project_id
-	version: str = Mem.ctx.project_version
+class MapEditorGenerator(McfunctionGenerator):
+    """ Generates the mapeditor datapack functions. """
 
-	sep = '{"text":"============================================","color":"dark_gray"}'
+    def generate(self) -> None:
+    	ns: str = self.ns
+    	version: str = self.version
 
-	# Scoreboards & Storage Init ─────────────────────────────────
-	write_load_file(f"""
+    	sep = '{"text":"============================================","color":"dark_gray"}'
+
+    	# Scoreboards & Storage Init ─────────────────────────────────
+    	self.load(f"""
 # Map editor scoreboards
 scoreboard objectives add {ns}.mp.map_edit dummy
 scoreboard objectives add {ns}.mp.map_idx dummy
@@ -147,58 +170,58 @@ scoreboard objectives add {ns}.mp.map_disp dummy
 scoreboard objectives add {ns}.class_menu minecraft.used:minecraft.warped_fungus_on_a_stick
 """)
 
-	storage_init_lines = "\n".join(
-		f'execute unless data storage {ns}:maps {mode_info["storage_key"]} run data modify storage {ns}:maps {mode_info["storage_key"]} set value []'
-		for mode_info in EDITOR_MODES.values()
-	)
-	write_load_file(f"""
+    	storage_init_lines = "\n".join(
+    		f'execute unless data storage {ns}:maps {mode_info["storage_key"]} run data modify storage {ns}:maps {mode_info["storage_key"]} set value []'
+    		for mode_info in EDITOR_MODES.values()
+    	)
+    	self.load(f"""
 # Initialize maps storage for all modes
 {storage_init_lines}
 """)
 
-	# Advancement for egg placement detection ─────────────────────
-	adv: JsonDict = {
-		"criteria": {
-			"requirement": {
-				"trigger": "minecraft:item_used_on_block",
-				"conditions": {
-					"location": [
-						{
-							"condition": "minecraft:match_tool",
-							"predicate": {
-								"predicates": {
-									"minecraft:custom_data": {ns: {"editor": True}}
-								}
-							}
-						}
-					]
-				}
-			}
-		},
-		"rewards": {
-			"function": f"{ns}:v{version}/maps/editor/on_place"
-		}
-	}
-	Mem.ctx.data[ns].advancements[f"v{version}/maps/editor/on_place"] = set_json_encoder(Advancement(adv), max_level=-1)
+    	# Advancement for egg placement detection ─────────────────────
+    	adv: JsonDict = {
+    		"criteria": {
+    			"requirement": {
+    				"trigger": "minecraft:item_used_on_block",
+    				"conditions": {
+    					"location": [
+    						{
+    							"condition": "minecraft:match_tool",
+    							"predicate": {
+    								"predicates": {
+    									"minecraft:custom_data": {ns: {"editor": True}}
+    								}
+    							}
+    						}
+    					]
+    				}
+    			}
+    		},
+    		"rewards": {
+    			"function": f"{ns}:v{version}/maps/editor/on_place"
+    		}
+    	}
+    	Mem.ctx.data[ns].advancements[f"v{version}/maps/editor/on_place"] = set_json_encoder(Advancement(adv), max_level=-1)
 
-	# Mode tab buttons (used in all list views) ──────────────────
-	mode_tabs = ",".join(
-		btn(mode_info["name"], f"/function {ns}:v{version}/maps/editor/list/{mode_key}", mode_info["color"], f"View {mode_info['name']} maps")
-		for mode_key, mode_info in EDITOR_MODES.items()
-	)
+    	# Mode tab buttons (used in all list views) ──────────────────
+    	mode_tabs = ",".join(
+    		btn(mode_info["name"], f"/function {ns}:v{version}/maps/editor/list/{mode_key}", mode_info["color"], f"View {mode_info['name']} maps")
+    		for mode_key, mode_info in EDITOR_MODES.items()
+    	)
 
-	# Menu Entry Point ───────────────────────────────────────────
-	write_versioned_function("maps/editor/menu", f"""
+    	# Menu Entry Point ───────────────────────────────────────────
+    	self.func("maps/editor/menu", f"""
 # Default: show multiplayer maps
 function {ns}:v{version}/maps/editor/list/multiplayer
 """)
 
-	# Per-Mode Map List ──────────────────────────────────────────
-	for mode_key, mode_info in EDITOR_MODES.items():
-		sk = mode_info["storage_key"]
-		create_btn = btn("+ Create New Map", f"/function {ns}:v{version}/maps/editor/create/{mode_key}", "green", f"Create a new {mode_info['name']} map")
+    	# Per-Mode Map List ──────────────────────────────────────────
+    	for mode_key, mode_info in EDITOR_MODES.items():
+    		sk = mode_info["storage_key"]
+    		create_btn = btn("+ Create New Map", f"/function {ns}:v{version}/maps/editor/create/{mode_key}", "green", f"Create a new {mode_info['name']} map")
 
-		write_versioned_function(f"maps/editor/list/{mode_key}", f"""
+    		self.func(f"maps/editor/list/{mode_key}", f"""
 tellraw @s {sep}
 tellraw @s [{{"text":"","color":"gold","bold":true}},"       🗺 ",{{"text":"Map Editor"}}," 🗺"]
 tellraw @s {sep}
@@ -221,8 +244,8 @@ tellraw @s ["  ",{create_btn}]
 tellraw @s {sep}
 """)
 
-	# Menu Entry (recursive - one map per call) ──────────────────
-	write_versioned_function("maps/editor/menu_entry", f"""
+    	# Menu Entry (recursive - one map per call) ──────────────────
+    	self.func("maps/editor/menu_entry", f"""
 # Read current map name and id
 data modify storage {ns}:temp map_menu.current set from storage {ns}:temp map_menu.list[0]
 
@@ -242,17 +265,17 @@ scoreboard players add #map_menu_idx {ns}.data 1
 execute if data storage {ns}:temp map_menu.list[0] run function {ns}:v{version}/maps/editor/menu_entry
 """)
 
-	write_versioned_function("maps/editor/menu_entry_display", f"""
+    	self.func("maps/editor/menu_entry_display", f"""
 $tellraw @s ["  ",{{"text":"$(name)","color":"white"}},{{"text":" ($(id))","color":"gray"}}," ",[{{"text":"[","color":"yellow","click_event":{{"action":"suggest_command","command":"/function {ns}:v{version}/maps/editor/enter {{idx:$(idx),mode:$(mode)}}"}},"hover_event":{{"action":"show_text","value":"Edit this map"}}}},{{"text":"Edit"}},"]"]," ",[{{"text":"[","color":"red","click_event":{{"action":"suggest_command","command":"/function {ns}:v{version}/maps/editor/delete {{idx:$(idx),mode:$(mode)}}"}},"hover_event":{{"action":"show_text","value":"Delete this map"}}}},{{"text":"Delete"}},"]"]]
 """)
 
-	# Map Creation (per mode) ────────────────────────────────────
-	for mode_key, mode_info in EDITOR_MODES.items():
-		sk = mode_info["storage_key"]
-		create_snbt = r"id:'my_map',name:'My Map',description:'A new map',base_coordinates:[0,64,0],start_commands:[],respawn_commands:[]"
-		back_btn = btn("◀ Back", f"/function {ns}:v{version}/maps/editor/list/{mode_key}", "yellow", "Back to map list")
+    	# Map Creation (per mode) ────────────────────────────────────
+    	for mode_key, mode_info in EDITOR_MODES.items():
+    		sk = mode_info["storage_key"]
+    		create_snbt = r"id:'my_map',name:'My Map',description:'A new map',base_coordinates:[0,64,0],start_commands:[],respawn_commands:[]"
+    		back_btn = btn("◀ Back", f"/function {ns}:v{version}/maps/editor/list/{mode_key}", "yellow", "Back to map list")
 
-		write_versioned_function(f"maps/editor/create/{mode_key}", f"""
+    		self.func(f"maps/editor/create/{mode_key}", f"""
 tellraw @s {sep}
 tellraw @s [{{"text":"","color":"gold","bold":true}},"  📝 ",{{"text":"Create New {mode_info['name']} Map"}}]
 tellraw @s {sep}
@@ -264,8 +287,8 @@ tellraw @s ["  ",{back_btn}]
 tellraw @s {sep}
 """)
 
-	# Delete Map (macro with mode) ───────────────────────────────
-	write_versioned_function("maps/editor/delete", f"""
+    	# Delete Map (macro with mode) ───────────────────────────────
+    	self.func("maps/editor/delete", f"""
 $data remove storage {ns}:maps $(mode)[$(idx)]
 tellraw @s [{MGS_TAG},{{"text":"Map deleted.","color":"red"}}]
 
@@ -273,13 +296,13 @@ tellraw @s [{MGS_TAG},{{"text":"Map deleted.","color":"red"}}]
 $function {ns}:v{version}/maps/editor/list/$(mode)
 """)
 
-	# Enter Editor Mode (macro with mode+idx) ────────────────────
-	mode_score_lines = "\n".join(
-		f'execute if data storage {ns}:temp map_edit{{mode:"{mk}"}} run scoreboard players set @s {ns}.mp.map_mode {i}'
-		for i, mk in enumerate(MODE_LIST)
-	)
+    	# Enter Editor Mode (macro with mode+idx) ────────────────────
+    	mode_score_lines = "\n".join(
+    		f'execute if data storage {ns}:temp map_edit{{mode:"{mk}"}} run scoreboard players set @s {ns}.mp.map_mode {i}'
+    		for i, mk in enumerate(MODE_LIST)
+    	)
 
-	write_versioned_function("maps/editor/enter", f"""
+    	self.func("maps/editor/enter", f"""
 # Store mode and index
 $scoreboard players set @s {ns}.mp.map_idx $(idx)
 $data modify storage {ns}:temp map_edit.mode set value "$(mode)"
@@ -331,7 +354,7 @@ tellraw @s [{MGS_TAG},{{"text":"Need collaborators? ","color":"gray"}},{btn("Inv
 tellraw @s [{MGS_TAG},{{"text":"Use ","color":"gray"}},{btn("Save & Exit", f"/function {ns}:v{version}/maps/editor/save_exit", "green", "Save changes and exit editor")},{{"text":" or "}},{btn("Exit", f"/function {ns}:v{version}/maps/editor/exit", "red", "Discard changes and exit editor")}]
 """)
 
-	write_versioned_function("maps/editor/invite_all", f"""
+    	self.func("maps/editor/invite_all", f"""
 # Must be called by a player already in editor mode
 execute unless score @s {ns}.mp.map_edit matches 1 run return run tellraw @s [{MGS_TAG},{{"text":"You must be in map editor to invite players.","color":"red"}}]
 
@@ -356,17 +379,17 @@ execute as @a[scores={{{ns}.mp.map_edit=1}}] run function {ns}:v{version}/shared
 tellraw @a[scores={{{ns}.mp.map_edit=1}}] [{MGS_TAG},{{"text":"Editor session synced for all players.","color":"aqua"}}]
 """)
 
-	write_versioned_function("maps/editor/load_map_data", f"""
+    	self.func("maps/editor/load_map_data", f"""
 $data modify storage {ns}:temp map_edit.map set from storage {ns}:maps $(mode)[$(idx)]
 """)
 
-	# Summon Existing Elements ───────────────────────────────────
-	summon_dispatch = "\n".join(
-		f'execute if score @s {ns}.mp.map_mode matches {i} run function {ns}:v{version}/maps/editor/summon_existing/{mk}'
-		for i, mk in enumerate(MODE_LIST)
-	)
+    	# Summon Existing Elements ───────────────────────────────────
+    	summon_dispatch = "\n".join(
+    		f'execute if score @s {ns}.mp.map_mode matches {i} run function {ns}:v{version}/maps/editor/summon_existing/{mk}'
+    		for i, mk in enumerate(MODE_LIST)
+    	)
 
-	write_versioned_function("maps/editor/summon_existing", f"""
+    	self.func("maps/editor/summon_existing", f"""
 # Summon base coordinates marker (common to all modes)
 execute store result score #bx {ns}.data run data get storage {ns}:temp map_edit.map.base_coordinates[0]
 execute store result score #by {ns}.data run data get storage {ns}:temp map_edit.map.base_coordinates[1]
@@ -384,55 +407,55 @@ execute if data storage {ns}:temp map_edit.map.tick_function run data modify ent
 {summon_dispatch}
 """)
 
-	# Per-mode summon functions
-	for mode_key, mode_info in EDITOR_MODES.items():
-		summon_lines: list[str] = []
-		for etype in mode_info["slots"]:
-			einfo = ALL_ELEMENTS[etype]
-			if einfo["save_type"] in ("base", "config"):
-				continue  # handled in parent / no markers
-			save_path = einfo["save_path"]
-			if einfo["save_type"] == "spawn":
-				summon_lines.append(f'data modify storage {ns}:temp _spawn_iter set from storage {ns}:temp map_edit.map.{save_path}')
-				summon_lines.append(f'data modify storage {ns}:temp _spawn_iter_tag set value "{ns}.element.{etype}"')
-				summon_lines.append(f'execute if data storage {ns}:temp _spawn_iter[0] run function {ns}:v{version}/maps/editor/summon_spawn_iter')
-				summon_lines.append("")
-			elif einfo["save_type"] == "point":
-				summon_lines.append(f'data modify storage {ns}:temp _point_iter set from storage {ns}:temp map_edit.map.{save_path}')
-				summon_lines.append(f'data modify storage {ns}:temp _point_iter_tag set value "{ns}.element.{etype}"')
-				summon_lines.append(f'execute if data storage {ns}:temp _point_iter[0] run function {ns}:v{version}/maps/editor/summon_point_iter')
-				summon_lines.append("")
-			elif einfo["save_type"] == "enemy":
-				summon_lines.append(f'data modify storage {ns}:temp _enemy_edit_iter set from storage {ns}:temp map_edit.map.{save_path}')
-				summon_lines.append(f'execute if data storage {ns}:temp _enemy_edit_iter[0] run function {ns}:v{version}/maps/editor/summon_enemy_edit_iter')
-				summon_lines.append("")
-			elif einfo["save_type"] == "start_command":
-				summon_lines.append(f'data modify storage {ns}:temp _start_cmd_iter set from storage {ns}:temp map_edit.map.{save_path}')
-				summon_lines.append(f'execute if data storage {ns}:temp _start_cmd_iter[0] run function {ns}:v{version}/maps/editor/summon_start_command_iter')
-				summon_lines.append("")
-			elif einfo["save_type"] == "respawn_command":
-				summon_lines.append(f'data modify storage {ns}:temp _respawn_cmd_iter set from storage {ns}:temp map_edit.map.{save_path}')
-				summon_lines.append(f'execute if data storage {ns}:temp _respawn_cmd_iter[0] run function {ns}:v{version}/maps/editor/summon_respawn_command_iter')
-				summon_lines.append("")
-			elif einfo["save_type"] == "zb_object":
-				summon_lines.append(f'data modify storage {ns}:temp _zb_iter set from storage {ns}:temp map_edit.map.{save_path}')
-				summon_lines.append(f'data modify storage {ns}:temp _zb_iter_tag set value "{ns}.element.{etype}"')
-				summon_lines.append(f'execute if data storage {ns}:temp _zb_iter[0] run function {ns}:v{version}/maps/editor/summon_zb_object_iter')
-				summon_lines.append("")
+    	# Per-mode summon functions
+    	for mode_key, mode_info in EDITOR_MODES.items():
+    		summon_lines: list[str] = []
+    		for etype in mode_info["slots"]:
+    			einfo = ALL_ELEMENTS[etype]
+    			if einfo["save_type"] in ("base", "config"):
+    				continue  # handled in parent / no markers
+    			save_path = einfo["save_path"]
+    			if einfo["save_type"] == "spawn":
+    				summon_lines.append(f'data modify storage {ns}:temp _spawn_iter set from storage {ns}:temp map_edit.map.{save_path}')
+    				summon_lines.append(f'data modify storage {ns}:temp _spawn_iter_tag set value "{ns}.element.{etype}"')
+    				summon_lines.append(f'execute if data storage {ns}:temp _spawn_iter[0] run function {ns}:v{version}/maps/editor/summon_spawn_iter')
+    				summon_lines.append("")
+    			elif einfo["save_type"] == "point":
+    				summon_lines.append(f'data modify storage {ns}:temp _point_iter set from storage {ns}:temp map_edit.map.{save_path}')
+    				summon_lines.append(f'data modify storage {ns}:temp _point_iter_tag set value "{ns}.element.{etype}"')
+    				summon_lines.append(f'execute if data storage {ns}:temp _point_iter[0] run function {ns}:v{version}/maps/editor/summon_point_iter')
+    				summon_lines.append("")
+    			elif einfo["save_type"] == "enemy":
+    				summon_lines.append(f'data modify storage {ns}:temp _enemy_edit_iter set from storage {ns}:temp map_edit.map.{save_path}')
+    				summon_lines.append(f'execute if data storage {ns}:temp _enemy_edit_iter[0] run function {ns}:v{version}/maps/editor/summon_enemy_edit_iter')
+    				summon_lines.append("")
+    			elif einfo["save_type"] == "start_command":
+    				summon_lines.append(f'data modify storage {ns}:temp _start_cmd_iter set from storage {ns}:temp map_edit.map.{save_path}')
+    				summon_lines.append(f'execute if data storage {ns}:temp _start_cmd_iter[0] run function {ns}:v{version}/maps/editor/summon_start_command_iter')
+    				summon_lines.append("")
+    			elif einfo["save_type"] == "respawn_command":
+    				summon_lines.append(f'data modify storage {ns}:temp _respawn_cmd_iter set from storage {ns}:temp map_edit.map.{save_path}')
+    				summon_lines.append(f'execute if data storage {ns}:temp _respawn_cmd_iter[0] run function {ns}:v{version}/maps/editor/summon_respawn_command_iter')
+    				summon_lines.append("")
+    			elif einfo["save_type"] == "zb_object":
+    				summon_lines.append(f'data modify storage {ns}:temp _zb_iter set from storage {ns}:temp map_edit.map.{save_path}')
+    				summon_lines.append(f'data modify storage {ns}:temp _zb_iter_tag set value "{ns}.element.{etype}"')
+    				summon_lines.append(f'execute if data storage {ns}:temp _zb_iter[0] run function {ns}:v{version}/maps/editor/summon_zb_object_iter')
+    				summon_lines.append("")
 
-		write_versioned_function(
-			f"maps/editor/summon_existing/{mode_key}",
-			"\n".join(summon_lines) if summon_lines else "# No mode-specific elements to summon"
-		)
+    		self.func(
+    			f"maps/editor/summon_existing/{mode_key}",
+    			"\n".join(summon_lines) if summon_lines else "# No mode-specific elements to summon"
+    		)
 
-	# Summon helpers (shared) ────────────────────────────────────
-	write_versioned_function("maps/editor/summon_base_marker", f"""
+    	# Summon helpers (shared) ────────────────────────────────────
+    	self.func("maps/editor/summon_base_marker", f"""
 $summon minecraft:marker $(x) $(y) $(z) {{Tags:["{ns}.map_element","{ns}.element.base_coordinates"]}}
 """)
 
-	# Summon spawn markers - iterates list of [x,y,z,yaw] relative coords
-	# Tag is read from {ns}:temp _spawn_iter_tag (set before calling)
-	write_versioned_function("maps/editor/summon_spawn_iter", f"""
+    	# Summon spawn markers - iterates list of [x,y,z,yaw] relative coords
+    	# Tag is read from {ns}:temp _spawn_iter_tag (set before calling)
+    	self.func("maps/editor/summon_spawn_iter", f"""
 # Read relative coordinates from first entry
 execute store result score #rx {ns}.data run data get storage {ns}:temp _spawn_iter[0][0]
 execute store result score #ry {ns}.data run data get storage {ns}:temp _spawn_iter[0][1]
@@ -466,13 +489,13 @@ data remove storage {ns}:temp _spawn_iter[0]
 execute if data storage {ns}:temp _spawn_iter[0] run function {ns}:v{version}/maps/editor/summon_spawn_iter
 """)
 
-	write_versioned_function("maps/editor/summon_spawn_marker", f"""
+    	self.func("maps/editor/summon_spawn_marker", f"""
 $summon minecraft:marker $(x) $(y) $(z) {{Tags:["{ns}.map_element","$(tag)","{ns}.new_spawn_marker"]}}
 """)
 
-	# Summon point markers - iterates list of [x,y,z] relative coords
-	# Tag is read from {ns}:temp _point_iter_tag (set before calling)
-	write_versioned_function("maps/editor/summon_point_iter", f"""
+    	# Summon point markers - iterates list of [x,y,z] relative coords
+    	# Tag is read from {ns}:temp _point_iter_tag (set before calling)
+    	self.func("maps/editor/summon_point_iter", f"""
 # Read relative coordinates
 execute store result score #rx {ns}.data run data get storage {ns}:temp _point_iter[0][0]
 execute store result score #ry {ns}.data run data get storage {ns}:temp _point_iter[0][1]
@@ -498,12 +521,12 @@ data remove storage {ns}:temp _point_iter[0]
 execute if data storage {ns}:temp _point_iter[0] run function {ns}:v{version}/maps/editor/summon_point_iter
 """)
 
-	write_versioned_function("maps/editor/summon_point_marker", f"""
+    	self.func("maps/editor/summon_point_marker", f"""
 $summon minecraft:marker $(x) $(y) $(z) {{Tags:["{ns}.map_element","$(tag)"]}}
 """)
 
-	# Summon enemy markers - iterates list of {pos:[x,y,z], function:"..."} entries
-	write_versioned_function("maps/editor/summon_enemy_edit_iter", f"""
+    	# Summon enemy markers - iterates list of {pos:[x,y,z], function:"..."} entries
+    	self.func("maps/editor/summon_enemy_edit_iter", f"""
 # Read relative position from first entry
 execute store result score #rx {ns}.data run data get storage {ns}:temp _enemy_edit_iter[0].pos[0]
 execute store result score #ry {ns}.data run data get storage {ns}:temp _enemy_edit_iter[0].pos[1]
@@ -531,12 +554,12 @@ data remove storage {ns}:temp _enemy_edit_iter[0]
 execute if data storage {ns}:temp _enemy_edit_iter[0] run function {ns}:v{version}/maps/editor/summon_enemy_edit_iter
 """)
 
-	write_versioned_function("maps/editor/summon_enemy_marker", f"""
+    	self.func("maps/editor/summon_enemy_marker", f"""
 $summon minecraft:marker $(x) $(y) $(z) {{Tags:["{ns}.map_element","{ns}.element.enemy","{ns}.new_enemy_marker"]}}
 """)
 
-	# Summon start command markers - iterates list of {pos:[x,y,z], command:"..."} entries
-	write_versioned_function("maps/editor/summon_start_command_iter", f"""
+    	# Summon start command markers - iterates list of {pos:[x,y,z], command:"..."} entries
+    	self.func("maps/editor/summon_start_command_iter", f"""
 # Read relative position from first entry
 execute store result score #rx {ns}.data run data get storage {ns}:temp _start_cmd_iter[0].pos[0]
 execute store result score #ry {ns}.data run data get storage {ns}:temp _start_cmd_iter[0].pos[1]
@@ -564,12 +587,12 @@ data remove storage {ns}:temp _start_cmd_iter[0]
 execute if data storage {ns}:temp _start_cmd_iter[0] run function {ns}:v{version}/maps/editor/summon_start_command_iter
 """)
 
-	write_versioned_function("maps/editor/summon_start_command_marker", f"""
+    	self.func("maps/editor/summon_start_command_marker", f"""
 $summon minecraft:marker $(x) $(y) $(z) {{Tags:["{ns}.map_element","{ns}.element.start_command","{ns}.new_start_cmd_marker"]}}
 """)
 
-	# Summon respawn command markers - iterates list of {pos:[x,y,z], command:"..."} entries
-	write_versioned_function("maps/editor/summon_respawn_command_iter", f"""
+    	# Summon respawn command markers - iterates list of {pos:[x,y,z], command:"..."} entries
+    	self.func("maps/editor/summon_respawn_command_iter", f"""
 # Read relative position from first entry
 execute store result score #rx {ns}.data run data get storage {ns}:temp _respawn_cmd_iter[0].pos[0]
 execute store result score #ry {ns}.data run data get storage {ns}:temp _respawn_cmd_iter[0].pos[1]
@@ -597,13 +620,13 @@ data remove storage {ns}:temp _respawn_cmd_iter[0]
 execute if data storage {ns}:temp _respawn_cmd_iter[0] run function {ns}:v{version}/maps/editor/summon_respawn_command_iter
 """)
 
-	write_versioned_function("maps/editor/summon_respawn_command_marker", f"""
+    	self.func("maps/editor/summon_respawn_command_marker", f"""
 $summon minecraft:marker $(x) $(y) $(z) {{Tags:["{ns}.map_element","{ns}.element.respawn_command","{ns}.new_respawn_cmd_marker"]}}
 """)
 
-	# Summon zb_object markers - iterates list of compound objects {pos:[x,y,z], rotation:[yaw,pitch], ...}
-	# Tag is read from {ns}:temp _zb_iter_tag (set before calling)
-	write_versioned_function("maps/editor/summon_zb_object_iter", f"""
+    	# Summon zb_object markers - iterates list of compound objects {pos:[x,y,z], rotation:[yaw,pitch], ...}
+    	# Tag is read from {ns}:temp _zb_iter_tag (set before calling)
+    	self.func("maps/editor/summon_zb_object_iter", f"""
 # Read relative position from first entry
 execute store result score #rx {ns}.data run data get storage {ns}:temp _zb_iter[0].pos[0]
 execute store result score #ry {ns}.data run data get storage {ns}:temp _zb_iter[0].pos[1]
@@ -638,57 +661,57 @@ data remove storage {ns}:temp _zb_iter[0]
 execute if data storage {ns}:temp _zb_iter[0] run function {ns}:v{version}/maps/editor/summon_zb_object_iter
 """)
 
-	write_versioned_function("maps/editor/summon_zb_marker", f"""
+    	self.func("maps/editor/summon_zb_marker", f"""
 $summon minecraft:marker $(x) $(y) $(z) {{Tags:["{ns}.map_element","$(tag)","{ns}.new_zb_marker"]}}
 """)
 
-	# Give Editor Tools (dispatch by mode score) ─────────────────
-	destroy_cmd = (
-		f'item replace entity @s hotbar.8 with minecraft:bat_spawn_egg'
-		f'[minecraft:item_name={{"text":"✘ DESTROY","color":"dark_red","italic":false,"bold":true}},'
-		f'minecraft:item_model="minecraft:wither_skeleton_spawn_egg",'
-		f'minecraft:custom_data={{{ns}:{{editor:true,type:"destroy"}}}},'
-		f'minecraft:entity_data={{id:"minecraft:bat",NoAI:1b,Silent:1b,Invulnerable:1b,Tags:["{ns}.new_element","{ns}.element.destroy"]}}]'
-	)
+    	# Give Editor Tools (dispatch by mode score) ─────────────────
+    	destroy_cmd = (
+    		f'item replace entity @s hotbar.8 with minecraft:bat_spawn_egg'
+    		f'[minecraft:item_name={{"text":"✘ DESTROY","color":"dark_red","italic":false,"bold":true}},'
+    		f'minecraft:item_model="minecraft:wither_skeleton_spawn_egg",'
+    		f'minecraft:custom_data={{{ns}:{{editor:true,type:"destroy"}}}},'
+    		f'minecraft:entity_data={{id:"minecraft:bat",NoAI:1b,Silent:1b,Invulnerable:1b,Tags:["{ns}.new_element","{ns}.element.destroy"]}}]'
+    	)
 
-	give_dispatch = "\n".join(
-		f'execute if score @s {ns}.mp.map_disp matches {i} run function {ns}:v{version}/maps/editor/give_tools/{mk}'
-		for i, mk in enumerate(MODE_LIST)
-	)
+    	give_dispatch = "\n".join(
+    		f'execute if score @s {ns}.mp.map_disp matches {i} run function {ns}:v{version}/maps/editor/give_tools/{mk}'
+    		for i, mk in enumerate(MODE_LIST)
+    	)
 
-	save_exit_cmd = (
-		f'item replace entity @s inventory.26 with minecraft:bat_spawn_egg'
-		f'[minecraft:item_name={{"text":"💾 Save & Exit","color":"green","italic":false,"bold":true}},'
-		f'minecraft:item_model="minecraft:turtle_spawn_egg",'
-		f'minecraft:custom_data={{{ns}:{{editor:true,type:"editor_save_exit"}}}},'
-		f'minecraft:entity_data={{id:"minecraft:bat",NoAI:1b,Silent:1b,Invulnerable:1b,Tags:["{ns}.new_element","{ns}.element.editor_save_exit"]}}]'
-	)
+    	save_exit_cmd = (
+    		f'item replace entity @s inventory.26 with minecraft:bat_spawn_egg'
+    		f'[minecraft:item_name={{"text":"💾 Save & Exit","color":"green","italic":false,"bold":true}},'
+    		f'minecraft:item_model="minecraft:turtle_spawn_egg",'
+    		f'minecraft:custom_data={{{ns}:{{editor:true,type:"editor_save_exit"}}}},'
+    		f'minecraft:entity_data={{id:"minecraft:bat",NoAI:1b,Silent:1b,Invulnerable:1b,Tags:["{ns}.new_element","{ns}.element.editor_save_exit"]}}]'
+    	)
 
-	exit_cmd = (
-		f'item replace entity @s inventory.25 with minecraft:bat_spawn_egg'
-		f'[minecraft:item_name={{"text":"✘ Exit","color":"red","italic":false,"bold":true}},'
-		f'minecraft:item_model="minecraft:ghast_spawn_egg",'
-		f'minecraft:custom_data={{{ns}:{{editor:true,type:"editor_exit"}}}},'
-		f'minecraft:entity_data={{id:"minecraft:bat",NoAI:1b,Silent:1b,Invulnerable:1b,Tags:["{ns}.new_element","{ns}.element.editor_exit"]}}]'
-	)
+    	exit_cmd = (
+    		f'item replace entity @s inventory.25 with minecraft:bat_spawn_egg'
+    		f'[minecraft:item_name={{"text":"✘ Exit","color":"red","italic":false,"bold":true}},'
+    		f'minecraft:item_model="minecraft:ghast_spawn_egg",'
+    		f'minecraft:custom_data={{{ns}:{{editor:true,type:"editor_exit"}}}},'
+    		f'minecraft:entity_data={{id:"minecraft:bat",NoAI:1b,Silent:1b,Invulnerable:1b,Tags:["{ns}.new_element","{ns}.element.editor_exit"]}}]'
+    	)
 
-	save_only_cmd = (
-		f'item replace entity @s inventory.24 with minecraft:bat_spawn_egg'
-		f'[minecraft:item_name={{"text":"💾 Save","color":"aqua","italic":false,"bold":true}},'
-		f'minecraft:item_model="minecraft:axolotl_spawn_egg",'
-		f'minecraft:custom_data={{{ns}:{{editor:true,type:"editor_save"}}}},'
-		f'minecraft:entity_data={{id:"minecraft:bat",NoAI:1b,Silent:1b,Invulnerable:1b,Tags:["{ns}.new_element","{ns}.element.editor_save"]}}]'
-	)
+    	save_only_cmd = (
+    		f'item replace entity @s inventory.24 with minecraft:bat_spawn_egg'
+    		f'[minecraft:item_name={{"text":"💾 Save","color":"aqua","italic":false,"bold":true}},'
+    		f'minecraft:item_model="minecraft:axolotl_spawn_egg",'
+    		f'minecraft:custom_data={{{ns}:{{editor:true,type:"editor_save"}}}},'
+    		f'minecraft:entity_data={{id:"minecraft:bat",NoAI:1b,Silent:1b,Invulnerable:1b,Tags:["{ns}.new_element","{ns}.element.editor_save"]}}]'
+    	)
 
-	coord_stick_cmd = (
-		f'item replace entity @s inventory.23 with minecraft:warped_fungus_on_a_stick'
-		f'[minecraft:item_name={{"text":"📐 Coord Stick","color":"yellow","italic":false,"bold":true}},'
-		f'minecraft:custom_data={{{ns}:{{coord_stick:true}}}},'
-		f'minecraft:item_model="minecraft:stick",'
-		f'minecraft:enchantment_glint_override=true]'
-	)
+    	coord_stick_cmd = (
+    		f'item replace entity @s inventory.23 with minecraft:warped_fungus_on_a_stick'
+    		f'[minecraft:item_name={{"text":"📐 Coord Stick","color":"yellow","italic":false,"bold":true}},'
+    		f'minecraft:custom_data={{{ns}:{{coord_stick:true}}}},'
+    		f'minecraft:item_model="minecraft:stick",'
+    		f'minecraft:enchantment_glint_override=true]'
+    	)
 
-	write_versioned_function("maps/editor/give_tools", f"""
+    	self.func("maps/editor/give_tools", f"""
 # Destroy egg (always in hotbar.8)
 {destroy_cmd}
 
@@ -704,41 +727,41 @@ $summon minecraft:marker $(x) $(y) $(z) {{Tags:["{ns}.map_element","$(tag)","{ns
 {give_dispatch}
 """)
 
-	# Per-mode give_tools
-	for mode_key, mode_info in EDITOR_MODES.items():
-		egg_cmds: list[str] = []
-		for etype, eslot in mode_info["slots"].items():
-			einfo = ALL_ELEMENTS[etype]
-			egg_cmds.append(
-				f'item replace entity @s {eslot} with minecraft:bat_spawn_egg'
-				f'[minecraft:item_name={{"text":"{einfo["name"]}","color":"{einfo["color"]}","italic":false}},'
-				f'minecraft:item_model="{einfo["egg_model"]}",'
-				f'minecraft:custom_data={{{ns}:{{editor:true,type:"{etype}"}}}},'
-				f'minecraft:entity_data={{id:"minecraft:bat",NoAI:1b,Silent:1b,Invulnerable:1b,Tags:["{ns}.new_element","{ns}.element.{etype}"]}}]'
-			)
-		# Zombies mode: add defaults config (hotbar.6) and configure element (hotbar.7) tools
-		if mode_key == "zombies":
-			egg_cmds.append(
-				f'item replace entity @s hotbar.6 with minecraft:bat_spawn_egg'
-				f'[minecraft:item_name={{"text":"⚙ Defaults","color":"white","italic":false,"bold":true}},'
-				f'minecraft:item_model="minecraft:allay_spawn_egg",'
-				f'minecraft:custom_data={{{ns}:{{editor:true,type:"zb_defaults"}}}},'
-				f'minecraft:entity_data={{id:"minecraft:bat",NoAI:1b,Silent:1b,Invulnerable:1b,Tags:["{ns}.new_element","{ns}.element.zb_defaults"]}}]'
-			)
-			egg_cmds.append(
-				f'item replace entity @s hotbar.7 with minecraft:bat_spawn_egg'
-				f'[minecraft:item_name={{"text":"🔧 Configure","color":"aqua","italic":false,"bold":true}},'
-				f'minecraft:item_model="minecraft:breeze_spawn_egg",'
-				f'minecraft:custom_data={{{ns}:{{editor:true,type:"zb_configure"}}}},'
-				f'minecraft:entity_data={{id:"minecraft:bat",NoAI:1b,Silent:1b,Invulnerable:1b,Tags:["{ns}.new_element","{ns}.element.zb_configure"]}}]'
-			)
-		write_versioned_function(
-			f"maps/editor/give_tools/{mode_key}",
-			"\n".join(egg_cmds) if egg_cmds else "# No eggs for this mode"
-		)
+    	# Per-mode give_tools
+    	for mode_key, mode_info in EDITOR_MODES.items():
+    		egg_cmds: list[str] = []
+    		for etype, eslot in mode_info["slots"].items():
+    			einfo = ALL_ELEMENTS[etype]
+    			egg_cmds.append(
+    				f'item replace entity @s {eslot} with minecraft:bat_spawn_egg'
+    				f'[minecraft:item_name={{"text":"{einfo["name"]}","color":"{einfo["color"]}","italic":false}},'
+    				f'minecraft:item_model="{einfo["egg_model"]}",'
+    				f'minecraft:custom_data={{{ns}:{{editor:true,type:"{etype}"}}}},'
+    				f'minecraft:entity_data={{id:"minecraft:bat",NoAI:1b,Silent:1b,Invulnerable:1b,Tags:["{ns}.new_element","{ns}.element.{etype}"]}}]'
+    			)
+    		# Zombies mode: add defaults config (hotbar.6) and configure element (hotbar.7) tools
+    		if mode_key == "zombies":
+    			egg_cmds.append(
+    				f'item replace entity @s hotbar.6 with minecraft:bat_spawn_egg'
+    				f'[minecraft:item_name={{"text":"⚙ Defaults","color":"white","italic":false,"bold":true}},'
+    				f'minecraft:item_model="minecraft:allay_spawn_egg",'
+    				f'minecraft:custom_data={{{ns}:{{editor:true,type:"zb_defaults"}}}},'
+    				f'minecraft:entity_data={{id:"minecraft:bat",NoAI:1b,Silent:1b,Invulnerable:1b,Tags:["{ns}.new_element","{ns}.element.zb_defaults"]}}]'
+    			)
+    			egg_cmds.append(
+    				f'item replace entity @s hotbar.7 with minecraft:bat_spawn_egg'
+    				f'[minecraft:item_name={{"text":"🔧 Configure","color":"aqua","italic":false,"bold":true}},'
+    				f'minecraft:item_model="minecraft:breeze_spawn_egg",'
+    				f'minecraft:custom_data={{{ns}:{{editor:true,type:"zb_configure"}}}},'
+    				f'minecraft:entity_data={{id:"minecraft:bat",NoAI:1b,Silent:1b,Invulnerable:1b,Tags:["{ns}.new_element","{ns}.element.zb_configure"]}}]'
+    			)
+    		self.func(
+    			f"maps/editor/give_tools/{mode_key}",
+    			"\n".join(egg_cmds) if egg_cmds else "# No eggs for this mode"
+    		)
 
-	# On Place (Advancement Reward) ──────────────────────────────
-	write_versioned_function("maps/editor/on_place", f"""
+    	# On Place (Advancement Reward) ──────────────────────────────
+    	self.func("maps/editor/on_place", f"""
 # Revoke advancement immediately so it can trigger again
 advancement revoke @s only {ns}:v{version}/maps/editor/on_place
 
@@ -749,63 +772,63 @@ execute unless score @s {ns}.mp.map_edit matches 1 run return fail
 execute as @n[tag={ns}.new_element] at @s run function {ns}:v{version}/maps/editor/process_element
 """)
 
-	# Process Placed Element (universal - handles all types) ─────
-	process_lines: list[str] = []
-	# Destroy handler first
-	process_lines.append('# DESTROY handler')
-	process_lines.append(f'execute if entity @s[tag={ns}.element.destroy] run function {ns}:v{version}/maps/editor/handle_destroy')
-	process_lines.append(f'execute if entity @s[tag={ns}.element.destroy] run return run kill @s')
-	process_lines.append("")
+    	# Process Placed Element (universal - handles all types) ─────
+    	process_lines: list[str] = []
+    	# Destroy handler first
+    	process_lines.append('# DESTROY handler')
+    	process_lines.append(f'execute if entity @s[tag={ns}.element.destroy] run function {ns}:v{version}/maps/editor/handle_destroy')
+    	process_lines.append(f'execute if entity @s[tag={ns}.element.destroy] run return run kill @s')
+    	process_lines.append("")
 
-	for etype, einfo in ALL_ELEMENTS.items():
-		save_type = einfo["save_type"]
-		if save_type == "base":
-			handler = "handle_base"
-		elif save_type == "spawn":
-			handler = "handle_spawn"
-		elif save_type == "point":
-			handler = "handle_point"
-		elif save_type == "config":
-			handler = "handle_config"
-		elif save_type == "enemy":
-			handler = "handle_enemy"
-		elif save_type == "start_command":
-			handler = "handle_start_command"
-		elif save_type == "respawn_command":
-			handler = "handle_respawn_command"
-		elif save_type == "zb_object":
-			handler = "handle_zb_object"
-		else:
-			continue
-		process_lines.append(f'execute if entity @s[tag={ns}.element.{etype}] run function {ns}:v{version}/maps/editor/{handler}')
-		process_lines.append(f'execute if entity @s[tag={ns}.element.{etype}] run return run kill @s')
-		process_lines.append("")
+    	for etype, einfo in ALL_ELEMENTS.items():
+    		save_type = einfo["save_type"]
+    		if save_type == "base":
+    			handler = "handle_base"
+    		elif save_type == "spawn":
+    			handler = "handle_spawn"
+    		elif save_type == "point":
+    			handler = "handle_point"
+    		elif save_type == "config":
+    			handler = "handle_config"
+    		elif save_type == "enemy":
+    			handler = "handle_enemy"
+    		elif save_type == "start_command":
+    			handler = "handle_start_command"
+    		elif save_type == "respawn_command":
+    			handler = "handle_respawn_command"
+    		elif save_type == "zb_object":
+    			handler = "handle_zb_object"
+    		else:
+    			continue
+    		process_lines.append(f'execute if entity @s[tag={ns}.element.{etype}] run function {ns}:v{version}/maps/editor/{handler}')
+    		process_lines.append(f'execute if entity @s[tag={ns}.element.{etype}] run return run kill @s')
+    		process_lines.append("")
 
-	# Zombies utility tool handlers
-	process_lines.append("# Zombies utility tool handlers")
-	process_lines.append(f'execute if entity @s[tag={ns}.element.zb_defaults] run function {ns}:v{version}/maps/editor/handle_zb_defaults')
-	process_lines.append(f'execute if entity @s[tag={ns}.element.zb_defaults] run return run kill @s')
-	process_lines.append(f'execute if entity @s[tag={ns}.element.zb_configure] run function {ns}:v{version}/maps/editor/handle_zb_configure')
-	process_lines.append(f'execute if entity @s[tag={ns}.element.zb_configure] run return run kill @s')
-	process_lines.append("")
+    	# Zombies utility tool handlers
+    	process_lines.append("# Zombies utility tool handlers")
+    	process_lines.append(f'execute if entity @s[tag={ns}.element.zb_defaults] run function {ns}:v{version}/maps/editor/handle_zb_defaults')
+    	process_lines.append(f'execute if entity @s[tag={ns}.element.zb_defaults] run return run kill @s')
+    	process_lines.append(f'execute if entity @s[tag={ns}.element.zb_configure] run function {ns}:v{version}/maps/editor/handle_zb_configure')
+    	process_lines.append(f'execute if entity @s[tag={ns}.element.zb_configure] run return run kill @s')
+    	process_lines.append("")
 
-	# Editor utility handlers (save, exit, save & exit)
-	process_lines.append("# Editor utility handlers")
-	process_lines.append(f'execute if entity @s[tag={ns}.element.editor_save_exit] as @p[tag={ns}.map_editor,distance=..6,sort=nearest] run function {ns}:v{version}/maps/editor/save_exit')
-	process_lines.append(f'execute if entity @s[tag={ns}.element.editor_save_exit] run return run kill @s')
-	process_lines.append(f'execute if entity @s[tag={ns}.element.editor_exit] as @p[tag={ns}.map_editor,distance=..6,sort=nearest] run function {ns}:v{version}/maps/editor/exit')
-	process_lines.append(f'execute if entity @s[tag={ns}.element.editor_exit] run return run kill @s')
-	process_lines.append(f'execute if entity @s[tag={ns}.element.editor_save] as @p[tag={ns}.map_editor,distance=..6,sort=nearest] run function {ns}:v{version}/maps/editor/save_only')
-	process_lines.append(f'execute if entity @s[tag={ns}.element.editor_save] run return run kill @s')
-	process_lines.append("")
+    	# Editor utility handlers (save, exit, save & exit)
+    	process_lines.append("# Editor utility handlers")
+    	process_lines.append(f'execute if entity @s[tag={ns}.element.editor_save_exit] as @p[tag={ns}.map_editor,distance=..6,sort=nearest] run function {ns}:v{version}/maps/editor/save_exit')
+    	process_lines.append(f'execute if entity @s[tag={ns}.element.editor_save_exit] run return run kill @s')
+    	process_lines.append(f'execute if entity @s[tag={ns}.element.editor_exit] as @p[tag={ns}.map_editor,distance=..6,sort=nearest] run function {ns}:v{version}/maps/editor/exit')
+    	process_lines.append(f'execute if entity @s[tag={ns}.element.editor_exit] run return run kill @s')
+    	process_lines.append(f'execute if entity @s[tag={ns}.element.editor_save] as @p[tag={ns}.map_editor,distance=..6,sort=nearest] run function {ns}:v{version}/maps/editor/save_only')
+    	process_lines.append(f'execute if entity @s[tag={ns}.element.editor_save] run return run kill @s')
+    	process_lines.append("")
 
-	process_lines.append("# Fallback: unknown type")
-	process_lines.append("kill @s")
+    	process_lines.append("# Fallback: unknown type")
+    	process_lines.append("kill @s")
 
-	write_versioned_function("maps/editor/process_element", "\n".join(process_lines))
+    	self.func("maps/editor/process_element", "\n".join(process_lines))
 
-	# Handle Base Coordinates ────────────────────────────────────
-	write_versioned_function("maps/editor/handle_base", f"""
+    	# Handle Base Coordinates ────────────────────────────────────
+    	self.func("maps/editor/handle_base", f"""
 # Preserve start_function and tick_function from existing base marker
 execute if data entity @n[tag={ns}.element.base_coordinates] data.start_function run data modify storage {ns}:temp _base_preserve.start_function set from entity @n[tag={ns}.element.base_coordinates] data.start_function
 execute if data entity @n[tag={ns}.element.base_coordinates] data.tick_function run data modify storage {ns}:temp _base_preserve.tick_function set from entity @n[tag={ns}.element.base_coordinates] data.tick_function
@@ -833,17 +856,17 @@ data remove storage {ns}:temp _base_preserve
 execute as @a[tag={ns}.map_editor] run tellraw @s [{MGS_TAG},{{"text":"Base coordinates set!","color":"light_purple"}}]
 """)
 
-	# Handle Spawn Point (universal) ─────────────────────────────
-	spawn_tag_lines = "\n".join(
-		f'execute if entity @s[tag={ns}.element.{etype}] run data modify storage {ns}:temp _pos.tag set value "{ns}.element.{etype}"'
-		for etype, einfo in ALL_ELEMENTS.items() if einfo["save_type"] == "spawn"
-	)
-	spawn_msg_lines = "\n".join(
-		f'execute if entity @s[tag={ns}.element.{etype}] run tellraw @a[tag={ns}.map_editor] [{MGS_TAG},{{"text":"{einfo["name"]} placed!","color":"{einfo["color"]}"}}]'
-		for etype, einfo in ALL_ELEMENTS.items() if einfo["save_type"] == "spawn"
-	)
+    	# Handle Spawn Point (universal) ─────────────────────────────
+    	spawn_tag_lines = "\n".join(
+    		f'execute if entity @s[tag={ns}.element.{etype}] run data modify storage {ns}:temp _pos.tag set value "{ns}.element.{etype}"'
+    		for etype, einfo in ALL_ELEMENTS.items() if einfo["save_type"] == "spawn"
+    	)
+    	spawn_msg_lines = "\n".join(
+    		f'execute if entity @s[tag={ns}.element.{etype}] run tellraw @a[tag={ns}.map_editor] [{MGS_TAG},{{"text":"{einfo["name"]} placed!","color":"{einfo["color"]}"}}]'
+    		for etype, einfo in ALL_ELEMENTS.items() if einfo["save_type"] == "spawn"
+    	)
 
-	write_versioned_function("maps/editor/handle_spawn", f"""
+    	self.func("maps/editor/handle_spawn", f"""
 # Get position for the permanent marker
 execute store result storage {ns}:temp _pos.x double 1 run data get entity @s Pos[0]
 execute store result storage {ns}:temp _pos.y double 1 run data get entity @s Pos[1]
@@ -868,17 +891,17 @@ tag @n[tag={ns}.new_spawn_marker] remove {ns}.new_spawn_marker
 {spawn_msg_lines}
 """)
 
-	# Handle Point Element (universal) ───────────────────────────
-	point_tag_lines = "\n".join(
-		f'execute if entity @s[tag={ns}.element.{etype}] run data modify storage {ns}:temp _pos.tag set value "{ns}.element.{etype}"'
-		for etype, einfo in ALL_ELEMENTS.items() if einfo["save_type"] == "point"
-	)
-	point_msg_lines = "\n".join(
-		f'execute if entity @s[tag={ns}.element.{etype}] run tellraw @a[tag={ns}.map_editor] [{MGS_TAG},{{"text":"{einfo["name"]} placed!","color":"{einfo["color"]}"}}]'
-		for etype, einfo in ALL_ELEMENTS.items() if einfo["save_type"] == "point"
-	)
+    	# Handle Point Element (universal) ───────────────────────────
+    	point_tag_lines = "\n".join(
+    		f'execute if entity @s[tag={ns}.element.{etype}] run data modify storage {ns}:temp _pos.tag set value "{ns}.element.{etype}"'
+    		for etype, einfo in ALL_ELEMENTS.items() if einfo["save_type"] == "point"
+    	)
+    	point_msg_lines = "\n".join(
+    		f'execute if entity @s[tag={ns}.element.{etype}] run tellraw @a[tag={ns}.map_editor] [{MGS_TAG},{{"text":"{einfo["name"]} placed!","color":"{einfo["color"]}"}}]'
+    		for etype, einfo in ALL_ELEMENTS.items() if einfo["save_type"] == "point"
+    	)
 
-	write_versioned_function("maps/editor/handle_point", f"""
+    	self.func("maps/editor/handle_point", f"""
 # Get position for permanent marker
 execute store result storage {ns}:temp _pos.x double 1 run data get entity @s Pos[0]
 execute store result storage {ns}:temp _pos.y double 1 run data get entity @s Pos[1]
@@ -894,8 +917,8 @@ function {ns}:v{version}/maps/editor/summon_point_marker with storage {ns}:temp 
 {point_msg_lines}
 """)
 
-	# Handle Enemy Element (missions) ────────────────────────────
-	write_versioned_function("maps/editor/handle_enemy", f"""
+    	# Handle Enemy Element (missions) ────────────────────────────
+    	self.func("maps/editor/handle_enemy", f"""
 # Initialize default function if missing
 execute unless data storage {ns}:temp map_edit.map.default_enemy_function run data modify storage {ns}:temp map_edit.map.default_enemy_function set value "{ns}:v{version}/mob/default/level_1 {{\\"entity\\":\\"pillager\\"}}"
 
@@ -915,13 +938,13 @@ tag @e[tag={ns}.new_enemy_marker] remove {ns}.new_enemy_marker
 tellraw @a[tag={ns}.map_editor] [{MGS_TAG},{{"text":"Enemy placed!","color":"red"}}]
 """)
 
-	# Handle Start Command Element (all modes) ──────────────────
-	edit_cmd_btn = btn(
-		"Edit Command",
-		f'/data modify entity @n[tag={ns}.element.start_command,distance=..10] data.command set value "say Hello from start command"',
-		"aqua", "Click to edit the command to run at game start", action="suggest_command"
-	)
-	write_versioned_function("maps/editor/handle_start_command", f"""
+    	# Handle Start Command Element (all modes) ──────────────────
+    	edit_cmd_btn = btn(
+    		"Edit Command",
+    		f'/data modify entity @n[tag={ns}.element.start_command,distance=..10] data.command set value "say Hello from start command"',
+    		"aqua", "Click to edit the command to run at game start", action="suggest_command"
+    	)
+    	self.func("maps/editor/handle_start_command", f"""
 # Get position for permanent marker
 execute store result storage {ns}:temp _pos.x double 1 run data get entity @s Pos[0]
 execute store result storage {ns}:temp _pos.y double 1 run data get entity @s Pos[1]
@@ -939,13 +962,13 @@ tellraw @a[tag={ns}.map_editor] [{MGS_TAG},{{"text":"Start Command placed!","col
 tellraw @a[tag={ns}.map_editor] ["  ",{edit_cmd_btn}]
 """)
 
-	# Handle Respawn Command Element (multiplayer + missions) ───
-	edit_respawn_cmd_btn = btn(
-		"Edit Command",
-		f'/data modify entity @n[tag={ns}.element.respawn_command,distance=..10] data.command set value "effect give @s minecraft:speed 5 0 true"',
-		"dark_aqua", "Click to edit the command to run when players respawn", action="suggest_command"
-	)
-	write_versioned_function("maps/editor/handle_respawn_command", f"""
+    	# Handle Respawn Command Element (multiplayer + missions) ───
+    	edit_respawn_cmd_btn = btn(
+    		"Edit Command",
+    		f'/data modify entity @n[tag={ns}.element.respawn_command,distance=..10] data.command set value "effect give @s minecraft:speed 5 0 true"',
+    		"dark_aqua", "Click to edit the command to run when players respawn", action="suggest_command"
+    	)
+    	self.func("maps/editor/handle_respawn_command", f"""
 # Get position for permanent marker
 execute store result storage {ns}:temp _pos.x double 1 run data get entity @s Pos[0]
 execute store result storage {ns}:temp _pos.y double 1 run data get entity @s Pos[1]
@@ -963,22 +986,22 @@ tellraw @a[tag={ns}.map_editor] [{MGS_TAG},{{"text":"Respawn Command placed!","c
 tellraw @a[tag={ns}.map_editor] ["  ",{edit_respawn_cmd_btn}]
 """)
 
-	# Handle ZB Object (zombies compound elements) ───────────────
-	# Detect type, copy defaults, get rotation, summon marker with data
-	zb_elements = {etype: einfo for etype, einfo in ALL_ELEMENTS.items() if einfo["save_type"] == "zb_object"}
+    	# Handle ZB Object (zombies compound elements) ───────────────
+    	# Detect type, copy defaults, get rotation, summon marker with data
+    	zb_elements = {etype: einfo for etype, einfo in ALL_ELEMENTS.items() if einfo["save_type"] == "zb_object"}
 
-	# Build tag detection lines
-	zb_tag_lines: list[str] = []
-	for etype in zb_elements:
-		zb_tag_lines.append(f'execute if entity @s[tag={ns}.element.{etype}] run data modify storage {ns}:temp _zbpos.tag set value "{ns}.element.{etype}"')
-		zb_tag_lines.append(f'execute if entity @s[tag={ns}.element.{etype}] run data modify storage {ns}:temp _zb_new set from storage {ns}:temp map_edit.zb_defaults.{etype}')
+    	# Build tag detection lines
+    	zb_tag_lines: list[str] = []
+    	for etype in zb_elements:
+    		zb_tag_lines.append(f'execute if entity @s[tag={ns}.element.{etype}] run data modify storage {ns}:temp _zbpos.tag set value "{ns}.element.{etype}"')
+    		zb_tag_lines.append(f'execute if entity @s[tag={ns}.element.{etype}] run data modify storage {ns}:temp _zb_new set from storage {ns}:temp map_edit.zb_defaults.{etype}')
 
-	# Build announce lines
-	zb_msg_lines: list[str] = []
-	for etype, einfo in zb_elements.items():
-		zb_msg_lines.append(f'execute if entity @s[tag={ns}.element.{etype}] run tellraw @a[tag={ns}.map_editor] [{MGS_TAG},{{"text":"{einfo["name"]} placed!","color":"{einfo["color"]}"}}]')
+    	# Build announce lines
+    	zb_msg_lines: list[str] = []
+    	for etype, einfo in zb_elements.items():
+    		zb_msg_lines.append(f'execute if entity @s[tag={ns}.element.{etype}] run tellraw @a[tag={ns}.map_editor] [{MGS_TAG},{{"text":"{einfo["name"]} placed!","color":"{einfo["color"]}"}}]')
 
-	write_versioned_function("maps/editor/handle_zb_object", f"""
+    	self.func("maps/editor/handle_zb_object", f"""
 # Get position for permanent marker
 execute store result storage {ns}:temp _zbpos.x double 1 run data get entity @s Pos[0]
 execute store result storage {ns}:temp _zbpos.y double 1 run data get entity @s Pos[1]
@@ -1023,20 +1046,20 @@ tag @e[tag={ns}.new_zb_marker] remove {ns}.new_zb_marker
 {chr(10).join(zb_msg_lines)}
 """)
 
-	# Handle DESTROY ─────────────────────────────────────────────
-	write_versioned_function("maps/editor/handle_destroy", f"""
+    	# Handle DESTROY ─────────────────────────────────────────────
+    	self.func("maps/editor/handle_destroy", f"""
 # Find the nearest map element marker (within 3 blocks)
 execute at @s unless entity @n[tag={ns}.map_element,distance=..3] run tellraw @a[tag={ns}.map_editor] [{MGS_TAG},{{"text":"No element found within 3 blocks!","color":"red"}}]
 execute at @s as @n[tag={ns}.map_element,distance=..3] run function {ns}:v{version}/maps/editor/destroy_element
 """)
 
-	# Destroy Element (universal) ────────────────────────────────
-	destroy_msg_lines = "\n".join(
-		f'execute if entity @s[tag={ns}.element.{etype}] run tellraw @a[tag={ns}.map_editor] [{MGS_TAG},{{"text":"{einfo["name"]} removed!","color":"{einfo["color"]}"}}]'
-		for etype, einfo in ALL_ELEMENTS.items() if einfo["save_type"] != "config"
-	)
+    	# Destroy Element (universal) ────────────────────────────────
+    	destroy_msg_lines = "\n".join(
+    		f'execute if entity @s[tag={ns}.element.{etype}] run tellraw @a[tag={ns}.map_editor] [{MGS_TAG},{{"text":"{einfo["name"]} removed!","color":"{einfo["color"]}"}}]'
+    		for etype, einfo in ALL_ELEMENTS.items() if einfo["save_type"] != "config"
+    	)
 
-	write_versioned_function("maps/editor/destroy_element", f"""
+    	self.func("maps/editor/destroy_element", f"""
 # @s = the map_element marker to destroy
 # Announce what was removed
 {destroy_msg_lines}
@@ -1048,345 +1071,351 @@ execute if data entity @s data run tellraw @a[tag={ns}.map_editor] ["  ",{{"text
 kill @s
 """)
 
-	# Handle Config (missions utility) ───────────────────────────
-	config_target = f"@p[tag={ns}.map_editor,distance=..6,sort=nearest]"
-	config_lines: list[str] = []
-	config_lines.append("# Initialize default enemy function if missing")
-	config_lines.append(f'execute unless data storage {ns}:temp map_edit.map.default_enemy_function run data modify storage {ns}:temp map_edit.map.default_enemy_function set value "{ns}:v{version}/mob/default/level_1 {{\\"entity\\":\\"pillager\\"}}"')
-	config_lines.append("")
-	config_lines.append(f"tellraw {config_target} {sep}")
-	config_lines.append(f'tellraw {config_target} [{{"text":"","color":"white","bold":true}},"  ⚙ ",{{"text":"Enemy Configuration"}}]')
-	config_lines.append(f"tellraw {config_target} {sep}")
-	config_lines.append(
-		f'tellraw {config_target} '
-		f'["  ",{{"text":"Default Function: ","color":"gray"}},'
-		f'{{"storage":"{ns}:temp","nbt":"map_edit.map.default_enemy_function","color":"white"}}]'
-	)
-	config_lines.append(f'data modify storage {ns}:temp _cfg.default_fn set from storage {ns}:temp map_edit.map.default_enemy_function')
-	config_lines.append(f'function {ns}:v{version}/maps/editor/handle_config_default_btn with storage {ns}:temp _cfg')
-	config_lines.append(f'tellraw {config_target} ["  ",{{"text":"ℹ Edit the function path above, then run the command.","color":"dark_gray","italic":true}}]')  # noqa: RUF001
-	config_lines.append("")
+    	# Handle Config (missions utility) ───────────────────────────
+    	config_target = f"@p[tag={ns}.map_editor,distance=..6,sort=nearest]"
+    	config_lines: list[str] = []
+    	config_lines.append("# Initialize default enemy function if missing")
+    	config_lines.append(f'execute unless data storage {ns}:temp map_edit.map.default_enemy_function run data modify storage {ns}:temp map_edit.map.default_enemy_function set value "{ns}:v{version}/mob/default/level_1 {{\\"entity\\":\\"pillager\\"}}"')
+    	config_lines.append("")
+    	config_lines.append(f"tellraw {config_target} {sep}")
+    	config_lines.append(f'tellraw {config_target} [{{"text":"","color":"white","bold":true}},"  ⚙ ",{{"text":"Enemy Configuration"}}]')
+    	config_lines.append(f"tellraw {config_target} {sep}")
+    	config_lines.append(
+    		f'tellraw {config_target} '
+    		f'["  ",{{"text":"Default Function: ","color":"gray"}},'
+    		f'{{"storage":"{ns}:temp","nbt":"map_edit.map.default_enemy_function","color":"white"}}]'
+    	)
+    	config_lines.append(f'data modify storage {ns}:temp _cfg.default_fn set from storage {ns}:temp map_edit.map.default_enemy_function')
+    	config_lines.append(f'function {ns}:v{version}/maps/editor/handle_config_default_btn with storage {ns}:temp _cfg')
+    	config_lines.append(f'tellraw {config_target} ["  ",{{"text":"ℹ Edit the function path above, then run the command.","color":"dark_gray","italic":true}}]')  # noqa: RUF001
+    	config_lines.append("")
 
-	# Show nearest configurable elements that can use the default function.
-	for etype, einfo in ALL_ELEMENTS.items():
-		if not cast(bool, einfo.get("config_uses_default_function", False)):
-			continue
-		config_lines.append(f'execute if entity @e[tag={ns}.element.{etype},distance=..10] run data modify storage {ns}:temp _cfg.default_fn set from storage {ns}:temp map_edit.map.default_enemy_function')
-		config_lines.append(f'execute if entity @e[tag={ns}.element.{etype},distance=..10] run data modify storage {ns}:temp _cfg.nearest_fn set from entity @n[tag={ns}.element.{etype},distance=..10] data.function')
-		config_lines.append(f'execute if entity @e[tag={ns}.element.{etype},distance=..10] run function {ns}:v{version}/maps/editor/handle_config_nearest_{etype}_btn with storage {ns}:temp _cfg')
+    	# Show nearest configurable elements that can use the default function.
+    	for etype, einfo in ALL_ELEMENTS.items():
+    		if not cast(bool, einfo.get("config_uses_default_function", False)):
+    			continue
+    		config_lines.append(f'execute if entity @e[tag={ns}.element.{etype},distance=..10] run data modify storage {ns}:temp _cfg.default_fn set from storage {ns}:temp map_edit.map.default_enemy_function')
+    		config_lines.append(f'execute if entity @e[tag={ns}.element.{etype},distance=..10] run data modify storage {ns}:temp _cfg.nearest_fn set from entity @n[tag={ns}.element.{etype},distance=..10] data.function')
+    		config_lines.append(f'execute if entity @e[tag={ns}.element.{etype},distance=..10] run function {ns}:v{version}/maps/editor/handle_config_nearest_{etype}_btn with storage {ns}:temp _cfg')
 
-	# Show nearest command-based mission objects.
-	for etype in ("start_command", "respawn_command"):
-		einfo = ALL_ELEMENTS[etype]
-		config_lines.append(f'execute if entity @e[tag={ns}.element.{etype},distance=..10] run data modify storage {ns}:temp _cfg.nearest_cmd set from entity @n[tag={ns}.element.{etype},distance=..10] data.command')
-		config_lines.append(f'execute if entity @e[tag={ns}.element.{etype},distance=..10] run function {ns}:v{version}/maps/editor/handle_config_nearest_{etype}_btn with storage {ns}:temp _cfg')
+    	# Show nearest command-based mission objects.
+    	for etype in ("start_command", "respawn_command"):
+    		einfo = ALL_ELEMENTS[etype]
+    		config_lines.append(f'execute if entity @e[tag={ns}.element.{etype},distance=..10] run data modify storage {ns}:temp _cfg.nearest_cmd set from entity @n[tag={ns}.element.{etype},distance=..10] data.command')
+    		config_lines.append(f'execute if entity @e[tag={ns}.element.{etype},distance=..10] run function {ns}:v{version}/maps/editor/handle_config_nearest_{etype}_btn with storage {ns}:temp _cfg')
 
-	config_lines.append(f"tellraw {config_target} {sep}")
+    	config_lines.append(f"tellraw {config_target} {sep}")
 
-	write_versioned_function("maps/editor/handle_config", "\n".join(config_lines))
+    	self.func("maps/editor/handle_config", "\n".join(config_lines))
 
-	write_versioned_function("maps/editor/handle_config_default_btn", f"""
+    	self.func("maps/editor/handle_config_default_btn", f"""
 $tellraw {config_target} ["    ",{{"text":"[Edit Function]","color":"aqua","click_event":{{"action":"suggest_command","command":"/data modify storage {ns}:temp map_edit.map.default_enemy_function set value \\"$(default_fn)\\""}},"hover_event":{{"action":"show_text","value":"Click to edit the default spawn function for new enemies"}}}}]
 """)
 
-	for etype, einfo in ALL_ELEMENTS.items():
-		if not cast(bool, einfo.get("config_uses_default_function", False)):
-			continue
-		write_versioned_function(f"maps/editor/handle_config_nearest_{etype}_btn", f"""
+    	for etype, einfo in ALL_ELEMENTS.items():
+    		if not cast(bool, einfo.get("config_uses_default_function", False)):
+    			continue
+    		self.func(f"maps/editor/handle_config_nearest_{etype}_btn", f"""
 tellraw {config_target} {sep}
 tellraw {config_target} ["  ",{{"text":"Nearest {einfo["name"]}: ","color":"yellow","bold":true}},{{"entity":"@n[tag={ns}.element.{etype},distance=..10]","nbt":"data.function","color":"white"}}]
 $tellraw {config_target} ["    ",{{"text":"[Edit Nearest {einfo["name"]}]","color":"yellow","click_event":{{"action":"suggest_command","command":"/data modify entity @n[tag={ns}.element.{etype},distance=..10] data.function set value \\"$(nearest_fn)\\""}},"hover_event":{{"action":"show_text","value":"Edit nearest {einfo["name"].lower()} using its current function"}}}}]
 """)
 
-	for etype in ("start_command", "respawn_command"):
-		einfo = ALL_ELEMENTS[etype]
-		write_versioned_function(f"maps/editor/handle_config_nearest_{etype}_btn", f"""
+    	for etype in ("start_command", "respawn_command"):
+    		einfo = ALL_ELEMENTS[etype]
+    		self.func(f"maps/editor/handle_config_nearest_{etype}_btn", f"""
 tellraw {config_target} {sep}
 tellraw {config_target} ["  ",{{"text":"Nearest {einfo["name"]}: ","color":"yellow","bold":true}},{{"entity":"@n[tag={ns}.element.{etype},distance=..10]","nbt":"data.command","color":"white"}}]
 $tellraw {config_target} ["    ",{{"text":"[Edit Nearest {einfo["name"]}]","color":"yellow","click_event":{{"action":"suggest_command","command":"/data modify entity @n[tag={ns}.element.{etype},distance=..10] data.command set value \\"$(nearest_cmd)\\""}},"hover_event":{{"action":"show_text","value":"Edit nearest {einfo["name"].lower()} command using its current value"}}}}]
 """)
 
-	# Handle ZB Defaults (configure defaults for new zombies elements)
-	def snbt_suggest(val: Any) -> str:
-		"""Format a Python value as SNBT for MC commands."""
-		if isinstance(val, bool):
-			return "1b" if val else "0b"
-		elif isinstance(val, int):
-			return str(val)
-		elif isinstance(val, float):
-			return f"{val}f"
-		elif isinstance(val, str):
-			return f'"{val}"'
-		elif isinstance(val, list):
-			return "[" + ",".join(snbt_suggest(v) for v in cast(list[Any], val)) + "]"
-		elif isinstance(val, dict):
-			return "{" + ",".join(f"{k}:{snbt_suggest(v)}" for k, v in cast(dict[str, Any], val).items()) + "}"
-		return str(val)
-	def snbt_compound(d: JsonDict) -> str:
-		"""Convert a Python dict to an SNBT compound string."""
-		return "{" + ",".join(f"{k}:{snbt_suggest(v)}" for k, v in d.items()) + "}"
+    	# Handle ZB Defaults (configure defaults for new zombies elements)
+    	def snbt_suggest(val: Any) -> str:
+    		"""Format a Python value as SNBT for MC commands."""
+    		if isinstance(val, bool):
+    			return "1b" if val else "0b"
+    		elif isinstance(val, int):
+    			return str(val)
+    		elif isinstance(val, float):
+    			return f"{val}f"
+    		elif isinstance(val, str):
+    			return f'"{val}"'
+    		elif isinstance(val, list):
+    			return "[" + ",".join(snbt_suggest(v) for v in cast(list[Any], val)) + "]"
+    		elif isinstance(val, dict):
+    			return "{" + ",".join(f"{k}:{snbt_suggest(v)}" for k, v in cast(dict[str, Any], val).items()) + "}"
+    		return str(val)
+    	def snbt_compound(d: JsonDict) -> str:
+    		"""Convert a Python dict to an SNBT compound string."""
+    		return "{" + ",".join(f"{k}:{snbt_suggest(v)}" for k, v in d.items()) + "}"
 
-	zb_defaults_lines: list[str] = []
-	zb_defaults_lines.append(f"tellraw @a[tag={ns}.map_editor] {sep}")
-	zb_defaults_lines.append(f'tellraw @a[tag={ns}.map_editor] [{{"text":"","color":"white","bold":true}},"  ⚙ ",{{"text":"Zombies Element Defaults"}}]')
-	zb_defaults_lines.append(f'tellraw @a[tag={ns}.map_editor] ["  ",{{"text":"New elements use these values on placement","color":"gray","italic":true}}]')
-	zb_defaults_lines.append(f"tellraw @a[tag={ns}.map_editor] {sep}")
-	zb_defaults_lines.append("")
+    	zb_defaults_lines: list[str] = []
+    	zb_defaults_lines.append(f"tellraw @a[tag={ns}.map_editor] {sep}")
+    	zb_defaults_lines.append(f'tellraw @a[tag={ns}.map_editor] [{{"text":"","color":"white","bold":true}},"  ⚙ ",{{"text":"Zombies Element Defaults"}}]')
+    	zb_defaults_lines.append(f'tellraw @a[tag={ns}.map_editor] ["  ",{{"text":"New elements use these values on placement","color":"gray","italic":true}}]')
+    	zb_defaults_lines.append(f"tellraw @a[tag={ns}.map_editor] {sep}")
+    	zb_defaults_lines.append("")
 
-	# Shared group_id default
-	group_id_btn = btn(
-		"\u270e",
-		f"/data modify storage {ns}:temp map_edit.zb_defaults.group_id set value 0",
-		"aqua", "Click to edit group_id", action="suggest_command"
-	)
-	zb_defaults_lines.append(
-		f'tellraw @a[tag={ns}.map_editor] '
-		f'["  ",{{"text":"group_id: ","color":"gray"}},'
-		f'{{"storage":"{ns}:temp","nbt":"map_edit.zb_defaults.group_id","color":"white"}}," ",{group_id_btn}]'
-	)
-	zb_defaults_lines.append(f'tellraw @a[tag={ns}.map_editor] ["  ",{{"text":"Applies to Zombie Spawn & Player Spawn.","color":"dark_gray","italic":true}}]')
-	zb_defaults_lines.append("")
+    	# Shared group_id default
+    	group_id_btn = btn(
+    		"\u270e",
+    		f"/data modify storage {ns}:temp map_edit.zb_defaults.group_id set value 0",
+    		"aqua", "Click to edit group_id", action="suggest_command"
+    	)
+    	zb_defaults_lines.append(
+    		f'tellraw @a[tag={ns}.map_editor] '
+    		f'["  ",{{"text":"group_id: ","color":"gray"}},'
+    		f'{{"storage":"{ns}:temp","nbt":"map_edit.zb_defaults.group_id","color":"white"}}," ",{group_id_btn}]'
+    	)
+    	zb_defaults_lines.append(f'tellraw @a[tag={ns}.map_editor] ["  ",{{"text":"Applies to Zombie Spawn & Player Spawn.","color":"dark_gray","italic":true}}]')
+    	zb_defaults_lines.append("")
 
-	for etype, einfo in zb_elements.items():
-		if not einfo["defaults"]:
-			continue  # Skip elements with no type-specific defaults
-		zb_defaults_lines.append(
-			f'tellraw @a[tag={ns}.map_editor] ["  ",{{"text":"{einfo["emoji"]} {einfo["name"]}","color":"{einfo["color"]}","bold":true}}]'
-		)
-		for field, default_val in einfo["defaults"].items():
-			snbt_val = snbt_suggest(default_val)
-			edit_btn = btn(
-				"✎",
-				f"/data modify storage {ns}:temp map_edit.zb_defaults.{etype}.{field} set value {snbt_val}",
-				"aqua", f"Click to edit {field}", action="suggest_command"
-			)
-			zb_defaults_lines.append(
-				f'tellraw @a[tag={ns}.map_editor] '
-				f'["    ",{{"text":"{field}: ","color":"gray"}},'
-				f'{{"storage":"{ns}:temp","nbt":"map_edit.zb_defaults.{etype}.{field}","color":"white"}}," ",{edit_btn}]'
-			)
-		zb_defaults_lines.append("")
+    	for etype, einfo in zb_elements.items():
+    		if not einfo["defaults"]:
+    			continue  # Skip elements with no type-specific defaults
+    		zb_defaults_lines.append(
+    			f'tellraw @a[tag={ns}.map_editor] ["  ",{{"text":"{einfo["emoji"]} {einfo["name"]}","color":"{einfo["color"]}","bold":true}}]'
+    		)
+    		for field, default_val in einfo["defaults"].items():
+    			snbt_val = snbt_suggest(default_val)
+    			edit_btn = btn(
+    				"✎",
+    				f"/data modify storage {ns}:temp map_edit.zb_defaults.{etype}.{field} set value {snbt_val}",
+    				"aqua", f"Click to edit {field}", action="suggest_command"
+    			)
+    			zb_defaults_lines.append(
+    				f'tellraw @a[tag={ns}.map_editor] '
+    				f'["    ",{{"text":"{field}: ","color":"gray"}},'
+    				f'{{"storage":"{ns}:temp","nbt":"map_edit.zb_defaults.{etype}.{field}","color":"white"}}," ",{edit_btn}]'
+    			)
+    		zb_defaults_lines.append("")
 
-	zb_defaults_lines.append(f"tellraw @a[tag={ns}.map_editor] {sep}")
+    	zb_defaults_lines.append(f"tellraw @a[tag={ns}.map_editor] {sep}")
 
-	write_versioned_function("maps/editor/handle_zb_defaults", "\n".join(zb_defaults_lines))
+    	self.func("maps/editor/handle_zb_defaults", "\n".join(zb_defaults_lines))
 
-	# Init ZB Defaults (called on editor enter for zombies mode) ─
-	init_defaults_lines: list[str] = []
-	init_defaults_lines.append(f'data modify storage {ns}:temp map_edit.zb_defaults.group_id set value 0')
-	for etype, einfo in zb_elements.items():
-		compound = snbt_compound(einfo["defaults"])
-		init_defaults_lines.append(f'data modify storage {ns}:temp map_edit.zb_defaults.{etype} set value {compound}')
+    	# Init ZB Defaults (called on editor enter for zombies mode) ─
+    	init_defaults_lines: list[str] = []
+    	init_defaults_lines.append(f'data modify storage {ns}:temp map_edit.zb_defaults.group_id set value 0')
+    	for etype, einfo in zb_elements.items():
+    		compound = snbt_compound(einfo["defaults"])
+    		init_defaults_lines.append(f'data modify storage {ns}:temp map_edit.zb_defaults.{etype} set value {compound}')
 
-	write_versioned_function("maps/editor/init_zb_defaults", "\n".join(init_defaults_lines))
+    	self.func("maps/editor/init_zb_defaults", "\n".join(init_defaults_lines))
 
-	# Handle ZB Configure (configure nearest element) ────────────
-	write_versioned_function("maps/editor/handle_zb_configure", f"""
+    	# Handle ZB Configure (configure nearest element) ────────────
+    	self.func("maps/editor/handle_zb_configure", f"""
 # Find the nearest map element marker (within 10 blocks)
 execute at @s as @n[tag={ns}.map_element,distance=..10] run function {ns}:v{version}/maps/editor/show_element_config
 execute at @s unless entity @n[tag={ns}.map_element,distance=..10] run tellraw @a[tag={ns}.map_editor] [{MGS_TAG},{{"text":"No element found within 10 blocks!","color":"red"}}]
 """)
 
-	# show_element_config: runs as the nearest marker, shows type-specific fields
-	zb_config_lines: list[str] = []
-	zb_config_lines.append(f"tellraw @a[tag={ns}.map_editor] {sep}")
+    	# show_element_config: runs as the nearest marker, shows type-specific fields
+    	zb_config_lines: list[str] = []
+    	zb_config_lines.append(f"tellraw @a[tag={ns}.map_editor] {sep}")
 
-	# For each zb_object type, show its fields
-	for etype, einfo in zb_elements.items():
-		zb_config_lines.append(
-			f'execute if entity @s[tag={ns}.element.{etype}] run tellraw @a[tag={ns}.map_editor] '
-			f'["  ",{{"text":"{einfo["emoji"]} {einfo["name"]} Configuration","color":"{einfo["color"]}","bold":true}}]'
-		)
-		# group_id only shown for spawn-type zombies elements
-		if etype in ("zombie_spawn", "player_spawn_zb"):
-			group_id_edit_btn = btn(
-				"✎",
-				f"/data modify entity @n[tag={ns}.element.{etype},distance=..10] data.group_id set value 0",
-				"yellow", "Click to edit group_id", action="suggest_command"
-			)
-			zb_config_lines.append(
-				f'execute if entity @s[tag={ns}.element.{etype}] run tellraw @a[tag={ns}.map_editor] '
-				f'["    ",{{"text":"group_id: ","color":"gray"}},'
-				f'{{"entity":"@s","nbt":"data.group_id","color":"white"}}," ",{group_id_edit_btn}]'
-			)
-		for field, default_val in einfo["defaults"].items():
-			snbt_val = snbt_suggest(default_val)
-			# Door fields (except link_id) use propagation to all doors with same link_id.
-			if etype == "door" and field != "link_id":
-				edit_cmd = f"/function {ns}:v{version}/maps/editor/set_door_link_{field} {{{field}:{snbt_val}}}"
-				hover_text = f"Sets {field} on ALL doors with same link_id"
-			else:
-				edit_cmd = f"/data modify entity @n[tag={ns}.element.{etype},distance=..10] data.{field} set value {snbt_val}"
-				hover_text = f"Click to edit {field}"
-			edit_btn = btn(
-				"✎",
-				edit_cmd,
-				"yellow", hover_text, action="suggest_command"
-			)
-			zb_config_lines.append(
-				f'execute if entity @s[tag={ns}.element.{etype}] run tellraw @a[tag={ns}.map_editor] '
-				f'["    ",{{"text":"{field}: ","color":"gray"}},'
-				f'{{"entity":"@s","nbt":"data.{field}","color":"white"}}," ",{edit_btn}]'
-			)
+    	# For each zb_object type, show its fields
+    	for etype, einfo in zb_elements.items():
+    		zb_config_lines.append(
+    			f'execute if entity @s[tag={ns}.element.{etype}] run tellraw @a[tag={ns}.map_editor] '
+    			f'["  ",{{"text":"{einfo["emoji"]} {einfo["name"]} Configuration","color":"{einfo["color"]}","bold":true}}]'
+    		)
+    		# group_id only shown for spawn-type zombies elements
+    		if etype in ("zombie_spawn", "player_spawn_zb"):
+    			group_id_edit_btn = btn(
+    				"✎",
+    				f"/data modify entity @n[tag={ns}.element.{etype},distance=..10] data.group_id set value 0",
+    				"yellow", "Click to edit group_id", action="suggest_command"
+    			)
+    			zb_config_lines.append(
+    				f'execute if entity @s[tag={ns}.element.{etype}] run tellraw @a[tag={ns}.map_editor] '
+    				f'["    ",{{"text":"group_id: ","color":"gray"}},'
+    				f'{{"entity":"@s","nbt":"data.group_id","color":"white"}}," ",{group_id_edit_btn}]'
+    			)
+    		for field, default_val in einfo["defaults"].items():
+    			snbt_val = snbt_suggest(default_val)
+    			# Door fields (except link_id) use propagation to all doors with same link_id.
+    			if etype == "door" and field != "link_id":
+    				edit_cmd = f"/function {ns}:v{version}/maps/editor/set_door_link_{field} {{{field}:{snbt_val}}}"
+    				hover_text = f"Sets {field} on ALL doors with same link_id"
+    			else:
+    				edit_cmd = f"/data modify entity @n[tag={ns}.element.{etype},distance=..10] data.{field} set value {snbt_val}"
+    				hover_text = f"Click to edit {field}"
+    			edit_btn = btn(
+    				"✎",
+    				edit_cmd,
+    				"yellow", hover_text, action="suggest_command"
+    			)
+    			# Optional info tooltip for constant/enum fields (e.g. trap type, door animation).
+    			doc: str | None = FIELD_DOCS.get((etype, field)) or FIELD_DOCS.get(field)
+    			info_component: str = ""
+    			if doc:
+    				doc_escaped = doc.replace("\\", "\\\\").replace('"', '\\"').replace("\n", "\\n")
+    				info_component = f',"  ",{{"text":"ⓘ","color":"aqua","hover_event":{{"action":"show_text","value":"{doc_escaped}"}}}}'
+    			zb_config_lines.append(
+    				f'execute if entity @s[tag={ns}.element.{etype}] run tellraw @a[tag={ns}.map_editor] '
+    				f'["    ",{{"text":"{field}: ","color":"gray"}},'
+    				f'{{"entity":"@s","nbt":"data.{field}","color":"white"}}," ",{edit_btn}{info_component}]'
+    			)
 
-	# For spawn types: show yaw
-	for etype, einfo in ALL_ELEMENTS.items():
-		if einfo["save_type"] != "spawn":
-			continue
-		edit_yaw_btn = btn(
-			"✎",
-			f"/data modify entity @n[tag={ns}.element.{etype},distance=..10] data.yaw set value 0.0f",
-			"yellow", "Click to edit yaw", action="suggest_command"
-		)
-		zb_config_lines.append(
-			f'execute if entity @s[tag={ns}.element.{etype}] run tellraw @a[tag={ns}.map_editor] '
-			f'["  ",{{"text":"{einfo["emoji"]} {einfo["name"]}","color":"{einfo["color"]}","bold":true}}]'
-		)
-		zb_config_lines.append(
-			f'execute if entity @s[tag={ns}.element.{etype}] run tellraw @a[tag={ns}.map_editor] '
-			f'["    ",{{"text":"yaw: ","color":"gray"}},'
-			f'{{"entity":"@s","nbt":"data.yaw","color":"white"}}," ",{edit_yaw_btn}]'
-		)
+    	# For spawn types: show yaw
+    	for etype, einfo in ALL_ELEMENTS.items():
+    		if einfo["save_type"] != "spawn":
+    			continue
+    		edit_yaw_btn = btn(
+    			"✎",
+    			f"/data modify entity @n[tag={ns}.element.{etype},distance=..10] data.yaw set value 0.0f",
+    			"yellow", "Click to edit yaw", action="suggest_command"
+    		)
+    		zb_config_lines.append(
+    			f'execute if entity @s[tag={ns}.element.{etype}] run tellraw @a[tag={ns}.map_editor] '
+    			f'["  ",{{"text":"{einfo["emoji"]} {einfo["name"]}","color":"{einfo["color"]}","bold":true}}]'
+    		)
+    		zb_config_lines.append(
+    			f'execute if entity @s[tag={ns}.element.{etype}] run tellraw @a[tag={ns}.map_editor] '
+    			f'["    ",{{"text":"yaw: ","color":"gray"}},'
+    			f'{{"entity":"@s","nbt":"data.yaw","color":"white"}}," ",{edit_yaw_btn}]'
+    		)
 
-	# For zb_object types: show yaw (rotation)
-	for etype, _ in zb_elements.items():
-		edit_yaw_btn = btn(
-			"✎",
-			f"/data modify entity @n[tag={ns}.element.{etype},distance=..10] data.yaw set value 0.0f",
-			"yellow", "Click to edit yaw", action="suggest_command"
-		)
-		zb_config_lines.append(
-			f'execute if entity @s[tag={ns}.element.{etype}] run tellraw @a[tag={ns}.map_editor] '
-			f'["    ",{{"text":"yaw: ","color":"gray"}},'
-			f'{{"entity":"@s","nbt":"data.yaw","color":"white"}}," ",{edit_yaw_btn}]'
-		)
+    	# For zb_object types: show yaw (rotation)
+    	for etype, _ in zb_elements.items():
+    		edit_yaw_btn = btn(
+    			"✎",
+    			f"/data modify entity @n[tag={ns}.element.{etype},distance=..10] data.yaw set value 0.0f",
+    			"yellow", "Click to edit yaw", action="suggest_command"
+    		)
+    		zb_config_lines.append(
+    			f'execute if entity @s[tag={ns}.element.{etype}] run tellraw @a[tag={ns}.map_editor] '
+    			f'["    ",{{"text":"yaw: ","color":"gray"}},'
+    			f'{{"entity":"@s","nbt":"data.yaw","color":"white"}}," ",{edit_yaw_btn}]'
+    		)
 
-	# For enemy types: show function
-	edit_fn_btn = btn(
-		"✎",
-		f"/data modify entity @n[tag={ns}.element.enemy,distance=..10] data.function set value '{ns}:v{version}/mob/default/level_1'",
-		"yellow", "Click to edit function", action="suggest_command"
-	)
-	zb_config_lines.append(
-		f'execute if entity @s[tag={ns}.element.enemy] run tellraw @a[tag={ns}.map_editor] '
-		f'["  ",{{"text":"👤 Enemy Configuration","color":"red","bold":true}}]'
-	)
-	zb_config_lines.append(
-		f'execute if entity @s[tag={ns}.element.enemy] run tellraw @a[tag={ns}.map_editor] '
-		f'["    ",{{"text":"function: ","color":"gray"}},'
-		f'{{"entity":"@s","nbt":"data.function","color":"white"}}," ",{edit_fn_btn}]'
-	)
+    	# For enemy types: show function
+    	edit_fn_btn = btn(
+    		"✎",
+    		f"/data modify entity @n[tag={ns}.element.enemy,distance=..10] data.function set value '{ns}:v{version}/mob/default/level_1'",
+    		"yellow", "Click to edit function", action="suggest_command"
+    	)
+    	zb_config_lines.append(
+    		f'execute if entity @s[tag={ns}.element.enemy] run tellraw @a[tag={ns}.map_editor] '
+    		f'["  ",{{"text":"👤 Enemy Configuration","color":"red","bold":true}}]'
+    	)
+    	zb_config_lines.append(
+    		f'execute if entity @s[tag={ns}.element.enemy] run tellraw @a[tag={ns}.map_editor] '
+    		f'["    ",{{"text":"function: ","color":"gray"}},'
+    		f'{{"entity":"@s","nbt":"data.function","color":"white"}}," ",{edit_fn_btn}]'
+    	)
 
-	# For point types: no configurable fields
-	for etype, einfo in ALL_ELEMENTS.items():
-		if einfo["save_type"] != "point":
-			continue
-		zb_config_lines.append(
-			f'execute if entity @s[tag={ns}.element.{etype}] run tellraw @a[tag={ns}.map_editor] '
-			f'["  ",{{"text":"{einfo["emoji"]} {einfo["name"]} — no configurable fields","color":"gray","italic":true}}]'
-		)
+    	# For point types: no configurable fields
+    	for etype, einfo in ALL_ELEMENTS.items():
+    		if einfo["save_type"] != "point":
+    			continue
+    		zb_config_lines.append(
+    			f'execute if entity @s[tag={ns}.element.{etype}] run tellraw @a[tag={ns}.map_editor] '
+    			f'["  ",{{"text":"{einfo["emoji"]} {einfo["name"]} — no configurable fields","color":"gray","italic":true}}]'
+    		)
 
-	# For base_coordinates: show start_function and tick_function
-	edit_start_fn_btn = btn(
-		"✎",
-		f'/data modify entity @n[tag={ns}.element.base_coordinates,distance=..10] data.start_function set value "namespace:path/to/function"',
-		"yellow", "Click to edit start_function (called once when game starts)", action="suggest_command"
-	)
-	clear_start_fn_btn = btn(
-		"✗",
-		f'/data remove entity @n[tag={ns}.element.base_coordinates,distance=..10] data.start_function',
-		"red", "Clear start_function (won't be called)", action="run_command"
-	)
-	edit_tick_fn_btn = btn(
-		"✎",
-		f'/data modify entity @n[tag={ns}.element.base_coordinates,distance=..10] data.tick_function set value "namespace:path/to/function"',
-		"yellow", "Click to edit tick_function (called every game tick)", action="suggest_command"
-	)
-	clear_tick_fn_btn = btn(
-		"✗",
-		f'/data remove entity @n[tag={ns}.element.base_coordinates,distance=..10] data.tick_function',
-		"red", "Clear tick_function (won't be called)", action="run_command"
-	)
-	zb_config_lines.append(
-		f'execute if entity @s[tag={ns}.element.base_coordinates] run tellraw @a[tag={ns}.map_editor] '
-		f'["  ",{{"text":"⬟ Base Coordinates Configuration","color":"light_purple","bold":true}}]'
-	)
-	zb_config_lines.append(
-		f'execute if entity @s[tag={ns}.element.base_coordinates] run tellraw @a[tag={ns}.map_editor] '
-		f'["    ",{{"text":"start_function: ","color":"gray"}},{{"entity":"@s","nbt":"data.start_function","color":"white"}}," ",{edit_start_fn_btn}," ",{clear_start_fn_btn}]'
-	)
-	zb_config_lines.append(
-		f'execute if entity @s[tag={ns}.element.base_coordinates] run tellraw @a[tag={ns}.map_editor] '
-		f'["    ",{{"text":"tick_function: ","color":"gray"}},{{"entity":"@s","nbt":"data.tick_function","color":"white"}}," ",{edit_tick_fn_btn}," ",{clear_tick_fn_btn}]'
-	)
-	zb_config_lines.append(
-		f'execute if entity @s[tag={ns}.element.base_coordinates] run tellraw @a[tag={ns}.map_editor] '
-		f'["    ",{{"text":"💎 start_function is called once when the game starts, tick_function every game tick.","color":"dark_gray","italic":true}}]'
-	)
+    	# For base_coordinates: show start_function and tick_function
+    	edit_start_fn_btn = btn(
+    		"✎",
+    		f'/data modify entity @n[tag={ns}.element.base_coordinates,distance=..10] data.start_function set value "namespace:path/to/function"',
+    		"yellow", "Click to edit start_function (called once when game starts)", action="suggest_command"
+    	)
+    	clear_start_fn_btn = btn(
+    		"✗",
+    		f'/data remove entity @n[tag={ns}.element.base_coordinates,distance=..10] data.start_function',
+    		"red", "Clear start_function (won't be called)", action="run_command"
+    	)
+    	edit_tick_fn_btn = btn(
+    		"✎",
+    		f'/data modify entity @n[tag={ns}.element.base_coordinates,distance=..10] data.tick_function set value "namespace:path/to/function"',
+    		"yellow", "Click to edit tick_function (called every game tick)", action="suggest_command"
+    	)
+    	clear_tick_fn_btn = btn(
+    		"✗",
+    		f'/data remove entity @n[tag={ns}.element.base_coordinates,distance=..10] data.tick_function',
+    		"red", "Clear tick_function (won't be called)", action="run_command"
+    	)
+    	zb_config_lines.append(
+    		f'execute if entity @s[tag={ns}.element.base_coordinates] run tellraw @a[tag={ns}.map_editor] '
+    		f'["  ",{{"text":"⬟ Base Coordinates Configuration","color":"light_purple","bold":true}}]'
+    	)
+    	zb_config_lines.append(
+    		f'execute if entity @s[tag={ns}.element.base_coordinates] run tellraw @a[tag={ns}.map_editor] '
+    		f'["    ",{{"text":"start_function: ","color":"gray"}},{{"entity":"@s","nbt":"data.start_function","color":"white"}}," ",{edit_start_fn_btn}," ",{clear_start_fn_btn}]'
+    	)
+    	zb_config_lines.append(
+    		f'execute if entity @s[tag={ns}.element.base_coordinates] run tellraw @a[tag={ns}.map_editor] '
+    		f'["    ",{{"text":"tick_function: ","color":"gray"}},{{"entity":"@s","nbt":"data.tick_function","color":"white"}}," ",{edit_tick_fn_btn}," ",{clear_tick_fn_btn}]'
+    	)
+    	zb_config_lines.append(
+    		f'execute if entity @s[tag={ns}.element.base_coordinates] run tellraw @a[tag={ns}.map_editor] '
+    		f'["    ",{{"text":"💎 start_function is called once when the game starts, tick_function every game tick.","color":"dark_gray","italic":true}}]'
+    	)
 
-	zb_config_lines.append(f"tellraw @a[tag={ns}.map_editor] {sep}")
+    	zb_config_lines.append(f"tellraw @a[tag={ns}.map_editor] {sep}")
 
-	write_versioned_function("maps/editor/show_element_config", "\n".join(zb_config_lines))
+    	self.func("maps/editor/show_element_config", "\n".join(zb_config_lines))
 
-	# Door Link Propagation (set selected field on all doors with same link_id)
-	write_versioned_function("maps/editor/set_door_link_apply", f"""
+    	# Door Link Propagation (set selected field on all doors with same link_id)
+    	self.func("maps/editor/set_door_link_apply", f"""
 execute unless entity @n[tag={ns}.element.door,distance=..10] run return run tellraw @a[tag={ns}.map_editor] [{MGS_TAG},{{"text":"No door found within 10 blocks!","color":"red"}}]
 execute store result score #link_id {ns}.data run data get entity @n[tag={ns}.element.door,distance=..10] data.link_id
 execute as @e[tag={ns}.element.door] run function {ns}:v{version}/maps/editor/door_set_if_match
 tellraw @a[tag={ns}.map_editor] [{MGS_TAG},{{"text":"Updated ","color":"green"}},{{"storage":"{ns}:temp","nbt":"_door_set.field","color":"yellow"}},{{"text":" for all doors with matching link_id","color":"green"}}]
 """)
 
-	write_versioned_function("maps/editor/door_set_if_match", f"""
+    	self.func("maps/editor/door_set_if_match", f"""
 execute store result score #check {ns}.data run data get entity @s data.link_id
 execute if score #check {ns}.data = #link_id {ns}.data run function {ns}:v{version}/maps/editor/door_apply_field with storage {ns}:temp _door_set
 """)
 
-	write_versioned_function("maps/editor/door_apply_field", f"""
+    	self.func("maps/editor/door_apply_field", f"""
 $data modify entity @s data.$(field) set from storage {ns}:temp _door_set.value
 """)
 
-	write_versioned_function("maps/editor/set_door_link_price", f"""
+    	self.func("maps/editor/set_door_link_price", f"""
 $data modify storage {ns}:temp _door_set set value {{field:"price",value:$(price)}}
 function {ns}:v{version}/maps/editor/set_door_link_apply
 """)
 
-	write_versioned_function("maps/editor/set_door_link_back_group_id", f"""
+    	self.func("maps/editor/set_door_link_back_group_id", f"""
 $data modify storage {ns}:temp _door_set set value {{field:"back_group_id",value:$(back_group_id)}}
 function {ns}:v{version}/maps/editor/set_door_link_apply
 """)
 
-	write_versioned_function("maps/editor/set_door_link_block", f"""
+    	self.func("maps/editor/set_door_link_block", f"""
 $data modify storage {ns}:temp _door_set set value {{field:"block",value:"$(block)"}}
 function {ns}:v{version}/maps/editor/set_door_link_apply
 """)
 
-	write_versioned_function("maps/editor/set_door_link_animation", f"""
+    	self.func("maps/editor/set_door_link_animation", f"""
 $data modify storage {ns}:temp _door_set set value {{field:"animation",value:$(animation)}}
 function {ns}:v{version}/maps/editor/set_door_link_apply
 """)
 
-	write_versioned_function("maps/editor/set_door_link_sound", f"""
+    	self.func("maps/editor/set_door_link_sound", f"""
 $data modify storage {ns}:temp _door_set set value {{field:"sound",value:"$(sound)"}}
 function {ns}:v{version}/maps/editor/set_door_link_apply
 """)
 
-	write_versioned_function("maps/editor/set_door_link_name", f"""
+    	self.func("maps/editor/set_door_link_name", f"""
 $data modify storage {ns}:temp _door_set set value {{field:"name",value:"$(name)"}}
 function {ns}:v{version}/maps/editor/set_door_link_apply
 """)
 
-	write_versioned_function("maps/editor/set_door_link_back_name", f"""
+    	self.func("maps/editor/set_door_link_back_name", f"""
 $data modify storage {ns}:temp _door_set set value {{field:"back_name",value:"$(back_name)"}}
 function {ns}:v{version}/maps/editor/set_door_link_apply
 """)
 
-	# Save and Exit Editor
-	save_dispatch = "\n".join(
-		f'execute if score @s {ns}.mp.map_mode matches {i} run function {ns}:v{version}/maps/editor/save_lists/{mk}'
-		for i, mk in enumerate(MODE_LIST)
-	)
+    	# Save and Exit Editor
+    	save_dispatch = "\n".join(
+    		f'execute if score @s {ns}.mp.map_mode matches {i} run function {ns}:v{version}/maps/editor/save_lists/{mk}'
+    		for i, mk in enumerate(MODE_LIST)
+    	)
 
-	write_versioned_function("maps/editor/save_exit", f"""
+    	self.func("maps/editor/save_exit", f"""
 # Only process if in editor mode
 execute unless score @s {ns}.mp.map_edit matches 1 run return fail
 
@@ -1398,7 +1427,7 @@ function {ns}:v{version}/maps/editor/cleanup
 tellraw @s [{MGS_TAG},{{"text":"Map saved and editor closed!","color":"green"}}]
 """)
 
-	write_versioned_function("maps/editor/save_only", f"""
+    	self.func("maps/editor/save_only", f"""
 # Only process if in editor mode
 execute unless score @s {ns}.mp.map_edit matches 1 run return fail
 
@@ -1411,7 +1440,7 @@ function {ns}:v{version}/maps/editor/give_tools
 tellraw @s [{MGS_TAG},{{"text":"Map saved!","color":"green"}}]
 """)
 
-	write_versioned_function("maps/editor/do_save", f"""
+    	self.func("maps/editor/do_save", f"""
 # Preserve session-modified default enemy function before reloading
 data modify storage {ns}:temp _session_enemy_fn set from storage {ns}:temp map_edit.map.default_enemy_function
 
@@ -1438,50 +1467,50 @@ execute store result score #base_z {ns}.data run data get storage {ns}:temp map_
 function {ns}:v{version}/maps/editor/write_back with storage {ns}:temp map_edit
 """)
 
-	# Per-mode save lists functions
-	for mode_key, mode_info in EDITOR_MODES.items():
-		reset_lines: list[str] = []
-		rebuild_lines: list[str] = []
-		for etype in mode_info["slots"]:
-			einfo = ALL_ELEMENTS[etype]
-			if einfo["save_type"] in ("base", "config"):
-				continue  # handled by save_base / no save data
+    	# Per-mode save lists functions
+    	for mode_key, mode_info in EDITOR_MODES.items():
+    		reset_lines: list[str] = []
+    		rebuild_lines: list[str] = []
+    		for etype in mode_info["slots"]:
+    			einfo = ALL_ELEMENTS[etype]
+    			if einfo["save_type"] in ("base", "config"):
+    				continue  # handled by save_base / no save data
 
-			save_path = einfo["save_path"]
-			if einfo["save_type"] == "spawn":
-				reset_lines.append(f'data modify storage {ns}:temp map_edit.map.{save_path} set value []')
-				path_suffix = save_path.split(".")[-1]
-				rebuild_lines.append(f'execute as @e[tag={ns}.element.{etype}] at @s run function {ns}:v{version}/maps/editor/save_spawn {{path:"{path_suffix}"}}')
-			elif einfo["save_type"] == "point":
-				reset_lines.append(f'data modify storage {ns}:temp map_edit.map.{save_path} set value []')
-				rebuild_lines.append(f'execute as @e[tag={ns}.element.{etype}] at @s run function {ns}:v{version}/maps/editor/save_point {{path:"{save_path}"}}')
-			elif einfo["save_type"] == "enemy":
-				reset_lines.append(f'data modify storage {ns}:temp map_edit.map.{save_path} set value []')
-				rebuild_lines.append(f'execute as @e[tag={ns}.element.{etype}] at @s run function {ns}:v{version}/maps/editor/save_enemy')
-			elif einfo["save_type"] == "start_command":
-				reset_lines.append(f'data modify storage {ns}:temp map_edit.map.{save_path} set value []')
-				rebuild_lines.append(f'execute as @e[tag={ns}.element.{etype}] at @s run function {ns}:v{version}/maps/editor/save_start_command {{path:"{save_path}"}}')
-			elif einfo["save_type"] == "respawn_command":
-				reset_lines.append(f'data modify storage {ns}:temp map_edit.map.{save_path} set value []')
-				rebuild_lines.append(f'execute as @e[tag={ns}.element.{etype}] at @s run function {ns}:v{version}/maps/editor/save_respawn_command {{path:"{save_path}"}}')
-			elif einfo["save_type"] == "zb_object":
-				reset_lines.append(f'data modify storage {ns}:temp map_edit.map.{save_path} set value []')
-				rebuild_lines.append(f'execute as @e[tag={ns}.element.{etype}] at @s run function {ns}:v{version}/maps/editor/save_zb_object {{path:"{save_path}"}}')
-		all_lines: list[str] = []
-		if reset_lines:
-			all_lines.append("# Reset lists")
-			all_lines.extend(reset_lines)
-			all_lines.append("")
-			all_lines.append("# Rebuild from markers")
-			all_lines.extend(rebuild_lines)
+    			save_path = einfo["save_path"]
+    			if einfo["save_type"] == "spawn":
+    				reset_lines.append(f'data modify storage {ns}:temp map_edit.map.{save_path} set value []')
+    				path_suffix = save_path.split(".")[-1]
+    				rebuild_lines.append(f'execute as @e[tag={ns}.element.{etype}] at @s run function {ns}:v{version}/maps/editor/save_spawn {{path:"{path_suffix}"}}')
+    			elif einfo["save_type"] == "point":
+    				reset_lines.append(f'data modify storage {ns}:temp map_edit.map.{save_path} set value []')
+    				rebuild_lines.append(f'execute as @e[tag={ns}.element.{etype}] at @s run function {ns}:v{version}/maps/editor/save_point {{path:"{save_path}"}}')
+    			elif einfo["save_type"] == "enemy":
+    				reset_lines.append(f'data modify storage {ns}:temp map_edit.map.{save_path} set value []')
+    				rebuild_lines.append(f'execute as @e[tag={ns}.element.{etype}] at @s run function {ns}:v{version}/maps/editor/save_enemy')
+    			elif einfo["save_type"] == "start_command":
+    				reset_lines.append(f'data modify storage {ns}:temp map_edit.map.{save_path} set value []')
+    				rebuild_lines.append(f'execute as @e[tag={ns}.element.{etype}] at @s run function {ns}:v{version}/maps/editor/save_start_command {{path:"{save_path}"}}')
+    			elif einfo["save_type"] == "respawn_command":
+    				reset_lines.append(f'data modify storage {ns}:temp map_edit.map.{save_path} set value []')
+    				rebuild_lines.append(f'execute as @e[tag={ns}.element.{etype}] at @s run function {ns}:v{version}/maps/editor/save_respawn_command {{path:"{save_path}"}}')
+    			elif einfo["save_type"] == "zb_object":
+    				reset_lines.append(f'data modify storage {ns}:temp map_edit.map.{save_path} set value []')
+    				rebuild_lines.append(f'execute as @e[tag={ns}.element.{etype}] at @s run function {ns}:v{version}/maps/editor/save_zb_object {{path:"{save_path}"}}')
+    		all_lines: list[str] = []
+    		if reset_lines:
+    			all_lines.append("# Reset lists")
+    			all_lines.extend(reset_lines)
+    			all_lines.append("")
+    			all_lines.append("# Rebuild from markers")
+    			all_lines.extend(rebuild_lines)
 
-		write_versioned_function(
-			f"maps/editor/save_lists/{mode_key}",
-			"\n".join(all_lines) if all_lines else "# No mode-specific elements to save"
-		)
+    		self.func(
+    			f"maps/editor/save_lists/{mode_key}",
+    			"\n".join(all_lines) if all_lines else "# No mode-specific elements to save"
+    		)
 
-	## Save base coordinates from marker
-	write_versioned_function("maps/editor/save_base", f"""
+    	## Save base coordinates from marker
+    	self.func("maps/editor/save_base", f"""
 # @s = base_coordinates marker, at its position
 execute store result storage {ns}:temp map_edit.map.base_coordinates[0] int 1 run data get entity @s Pos[0]
 execute store result storage {ns}:temp map_edit.map.base_coordinates[1] int 1 run data get entity @s Pos[1]
@@ -1494,8 +1523,8 @@ execute if data entity @s data.tick_function run data modify storage {ns}:temp m
 execute unless data entity @s data.tick_function run data remove storage {ns}:temp map_edit.map.tick_function
 """)
 
-	## Save a spawn point (macro: path = red/blue/general/etc.)
-	write_versioned_function("maps/editor/save_spawn", f"""
+    	## Save a spawn point (macro: path = red/blue/general/etc.)
+    	self.func("maps/editor/save_spawn", f"""
 # @s = marker entity, at its position
 # Get absolute position
 execute store result score #ax {ns}.data run data get entity @s Pos[0]
@@ -1518,8 +1547,8 @@ data modify storage {ns}:temp _save_coord[3] set from entity @s data.yaw
 $data modify storage {ns}:temp map_edit.map.spawning_points.$(path) append from storage {ns}:temp _save_coord
 """)
 
-	## Save a point element (macro: path = boundaries/out_of_bounds/etc.)
-	write_versioned_function("maps/editor/save_point", f"""
+    	## Save a point element (macro: path = boundaries/out_of_bounds/etc.)
+    	self.func("maps/editor/save_point", f"""
 # @s = marker entity, at its position
 # Get absolute position
 execute store result score #ax {ns}.data run data get entity @s Pos[0]
@@ -1541,8 +1570,8 @@ execute store result storage {ns}:temp _save_coord[2] int 1 run scoreboard playe
 $data modify storage {ns}:temp map_edit.map.$(path) append from storage {ns}:temp _save_coord
 """)
 
-	## Save an enemy element (pos + function)
-	write_versioned_function("maps/editor/save_enemy", f"""
+    	## Save an enemy element (pos + function)
+    	self.func("maps/editor/save_enemy", f"""
 # @s = enemy marker, at its position
 # Get absolute position
 execute store result score #ax {ns}.data run data get entity @s Pos[0]
@@ -1565,8 +1594,8 @@ data modify storage {ns}:temp _save_enemy.function set from entity @s data.funct
 data modify storage {ns}:temp map_edit.map.enemies append from storage {ns}:temp _save_enemy
 """)
 
-	## Save a start command element (pos + command)
-	write_versioned_function("maps/editor/save_start_command", f"""
+    	## Save a start command element (pos + command)
+    	self.func("maps/editor/save_start_command", f"""
 # @s = start command marker, at its position
 # Get absolute position
 execute store result score #ax {ns}.data run data get entity @s Pos[0]
@@ -1589,8 +1618,8 @@ data modify storage {ns}:temp _save_start_cmd.command set from entity @s data.co
 $data modify storage {ns}:temp map_edit.map.$(path) append from storage {ns}:temp _save_start_cmd
 """)
 
-	## Save a respawn command element (pos + command)
-	write_versioned_function("maps/editor/save_respawn_command", f"""
+    	## Save a respawn command element (pos + command)
+    	self.func("maps/editor/save_respawn_command", f"""
 # @s = respawn command marker, at its position
 # Get absolute position
 execute store result score #ax {ns}.data run data get entity @s Pos[0]
@@ -1613,8 +1642,8 @@ data modify storage {ns}:temp _save_respawn_cmd.command set from entity @s data.
 $data modify storage {ns}:temp map_edit.map.$(path) append from storage {ns}:temp _save_respawn_cmd
 """)
 
-	## Save a zb_object element (macro: path = wallbuys/doors/etc.)
-	write_versioned_function("maps/editor/save_zb_object", f"""
+    	## Save a zb_object element (macro: path = wallbuys/doors/etc.)
+    	self.func("maps/editor/save_zb_object", f"""
 # @s = marker entity, at its position
 # Get absolute position
 execute store result score #ax {ns}.data run data get entity @s Pos[0]
@@ -1646,20 +1675,20 @@ data remove storage {ns}:temp _save_zb.yaw
 $data modify storage {ns}:temp map_edit.map.$(path) append from storage {ns}:temp _save_zb
 """)
 
-	## Write map back to storage at the correct index and mode
-	write_versioned_function("maps/editor/write_back", f"""
+    	## Write map back to storage at the correct index and mode
+    	self.func("maps/editor/write_back", f"""
 $data modify storage {ns}:maps $(mode)[$(idx)] set from storage {ns}:temp map_edit.map
 """)
 
-	# Exit Without Saving ────────────────────────────────────────
-	write_versioned_function("maps/editor/exit", f"""
+    	# Exit Without Saving ────────────────────────────────────────
+    	self.func("maps/editor/exit", f"""
 execute unless score @s {ns}.mp.map_edit matches 1 run return fail
 function {ns}:v{version}/maps/editor/cleanup
 tellraw @s [{MGS_TAG},{{"text":"Exited map editor (changes discarded).","color":"red"}}]
 """)
 
-	# Cleanup (shared by save_exit and exit) ─────────────────────
-	write_versioned_function("maps/editor/cleanup", f"""
+    	# Cleanup (shared by save_exit and exit) ─────────────────────
+    	self.func("maps/editor/cleanup", f"""
 # Kill all editor markers
 kill @e[tag={ns}.map_element]
 
@@ -1671,31 +1700,31 @@ tag @s remove {ns}.map_editor
 clear @s
 """)
 
-	# Editor Tick (universal - shows all element types) ──────────
-	particle_lines: list[str] = []
-	for etype, einfo in ALL_ELEMENTS.items():
-		if einfo["save_type"] == "config":
-			continue
-		r, g, b = einfo["particle"]
-		scale = einfo["particle_scale"]
-		spread = "0.2 0.5 0.2" if einfo["save_type"] == "spawn" else "0.3 0.5 0.3"
-		count = 2 if etype == "base_coordinates" else 1
-		particle_lines.append(
-			f'execute at @e[tag={ns}.element.{etype}] run particle dust{{color:[{r},{g},{b}],scale:{scale}}} ~ ~1 ~ {spread} 0 {count}'
-		)
+    	# Editor Tick (universal - shows all element types) ──────────
+    	particle_lines: list[str] = []
+    	for etype, einfo in ALL_ELEMENTS.items():
+    		if einfo["save_type"] == "config":
+    			continue
+    		r, g, b = einfo["particle"]
+    		scale = einfo["particle_scale"]
+    		spread = "0.2 0.5 0.2" if einfo["save_type"] == "spawn" else "0.3 0.5 0.3"
+    		count = 2 if etype == "base_coordinates" else 1
+    		particle_lines.append(
+    			f'execute at @e[tag={ns}.element.{etype}] run particle dust{{color:[{r},{g},{b}],scale:{scale}}} ~ ~1 ~ {spread} 0 {count}'
+    		)
 
-	actionbar_type_lines: list[str] = []
-	for etype, einfo in ALL_ELEMENTS.items():
-		if einfo["save_type"] == "config":
-			continue
-		actionbar_type_lines.append(
-			f'execute if entity @s[tag={ns}.element.{etype}] run return run title @a[tag={ns}.check_nearest] actionbar [{{"text":"{einfo["emoji"]} ","color":"{einfo["color"]}"}},{{"text":"{einfo["name"]}"}}]'
-		)
+    	actionbar_type_lines: list[str] = []
+    	for etype, einfo in ALL_ELEMENTS.items():
+    		if einfo["save_type"] == "config":
+    			continue
+    		actionbar_type_lines.append(
+    			f'execute if entity @s[tag={ns}.element.{etype}] run return run title @a[tag={ns}.check_nearest] actionbar [{{"text":"{einfo["emoji"]} ","color":"{einfo["color"]}"}},{{"text":"{einfo["name"]}"}}]'
+    		)
 
-	# Show nearest element name in actionbar (runs as the nearest marker)
-	write_versioned_function("maps/editor/actionbar_nearest", "\n".join(actionbar_type_lines))
+    	# Show nearest element name in actionbar (runs as the nearest marker)
+    	self.func("maps/editor/actionbar_nearest", "\n".join(actionbar_type_lines))
 
-	write_versioned_function("maps/editor/tick", f"""
+    	self.func("maps/editor/tick", f"""
 # Only run for players in editor mode
 execute unless score @s {ns}.mp.map_edit matches 1 run return fail
 
@@ -1712,23 +1741,23 @@ execute as @n[tag={ns}.map_element,distance=..5] run function {ns}:v{version}/ma
 tag @s remove {ns}.check_nearest
 """)
 
-	# Coord Stick ─────────────────────────────────────────────────
-	# Detection in player/tick (prepend so it runs before scoreboard reset)
-	write_versioned_function("player/tick", f"""
+    	# Coord Stick ─────────────────────────────────────────────────
+    	# Detection in player/tick (prepend so it runs before scoreboard reset)
+    	self.func("player/tick", f"""
 # Coord stick: detect right-click on coord stick
 execute if score @s {ns}.class_menu matches 1.. if items entity @s weapon.mainhand *[custom_data~{{{ns}:{{coord_stick:true}}}}] run function {ns}:v{version}/utils/coord_stick
 """, prepend=True)
 
-	## Entry point (runs as player)
-	write_versioned_function("utils/coord_stick", f"""
+    	## Entry point (runs as player)
+    	self.func("utils/coord_stick", f"""
 # Tag the player so tellraw can target them from inside the at-aimed-block context
 tag @s add {ns}.coord_stick_user
 function #bs.view:at_aimed_block {{run:"function {ns}:v{version}/utils/coord_stick_relative",with:{{}}}}
 tag @s remove {ns}.coord_stick_user
 """)
 
-	## State machine — runs at the aimed block
-	write_versioned_function("utils/coord_stick_relative", f"""
+    	## State machine — runs at the aimed block
+    	self.func("utils/coord_stick_relative", f"""
 # State: 0 = first click, 1 = second click (origin already saved)
 scoreboard players set #cs_state {ns}.data 0
 execute if data storage {ns}:temp coord_stick.origin run scoreboard players set #cs_state {ns}.data 1
@@ -1764,16 +1793,22 @@ execute if score #cs_state {ns}.data matches 0 store result storage {ns}:temp co
 execute if score #cs_state {ns}.data matches 0 as @a[tag={ns}.coord_stick_user,limit=1] run tellraw @s [{MGS_TAG},{{"text":"First position saved! Right-click again to get the offset.","color":"yellow"}}]
 """)
 
-	## Stores current entity Pos into #cs_pos_x/y/z scores, then kills the marker
-	write_versioned_function("utils/coord_stick_store_pos", f"""
+    	## Stores current entity Pos into #cs_pos_x/y/z scores, then kills the marker
+    	self.func("utils/coord_stick_store_pos", f"""
 execute store result score #cs_pos_x {ns}.data run data get entity @s Pos[0]
 execute store result score #cs_pos_y {ns}.data run data get entity @s Pos[1]
 execute store result score #cs_pos_z {ns}.data run data get entity @s Pos[2]
 kill @s
 """)
 
-	## Macro print: outputs "positioned ~X ~Y ~Z" with copy-to-clipboard click event
-	write_versioned_function("utils/coord_stick_print", f"""
+    	## Macro print: outputs "positioned ~X ~Y ~Z" with copy-to-clipboard click event
+    	self.func("utils/coord_stick_print", f"""
 $tellraw @s [{MGS_TAG},{{"text":"positioned ~$(x) ~$(y) ~$(z)","color":"aqua","click_event":{{"action":"copy_to_clipboard","value":"positioned ~$(x) ~$(y) ~$(z)"}},"hover_event":{{"action":"show_text","value":"Click to copy"}}}}]
 """)
+
+
+def generate_map_editor() -> None:
+	""" Module-level entry (preserved signature); delegates to :class:`MapEditorGenerator`. """
+	MapEditorGenerator()()
+
 

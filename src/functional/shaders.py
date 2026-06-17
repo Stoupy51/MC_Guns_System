@@ -3,6 +3,7 @@
 from beet import FragmentShader, PostEffect, Texture, VertexShader
 from PIL import Image
 from stewbeet import JsonDict, Mem, set_json_encoder, write_versioned_function
+from .generator import McfunctionGenerator
 
 # ============================================================================ #
 #                        SHADER SYSTEM OVERVIEW                                #
@@ -1050,39 +1051,43 @@ def get_post_effect_json(ns: str) -> JsonDict:
 # Main entry point
 # ============================================================================
 
-def main() -> None:
-    """ Register all shader files and write marker particle commands """
-    ns: str = Mem.ctx.project_id
-    custom_crosshair: bool = Mem.ctx.meta.get("mgs_custom_crosshair", False)
 
-    Mem.ctx.assets["minecraft"].vertex_shaders["core/particle"]   = VertexShader(PARTICLE_VSH)
-    Mem.ctx.assets["minecraft"].fragment_shaders["core/particle"] = FragmentShader(PARTICLE_FSH)
+class ShadersGenerator(McfunctionGenerator):
+    """ Generates the shaders datapack functions. """
 
-    Mem.ctx.assets[ns].fragment_shaders["post/classify"]     = FragmentShader(CLASSIFY_FSH)
-    Mem.ctx.assets[ns].fragment_shaders["post/spread_copy"]  = FragmentShader(SPREAD_COPY_FSH)
-    Mem.ctx.assets[ns].fragment_shaders["post/zoom_lerp"]    = FragmentShader(ZOOM_LERP_FSH)
-    Mem.ctx.assets[ns].fragment_shaders["post/transparency"] = FragmentShader(TRANSPARENCY_FSH)
-    Mem.ctx.assets[ns].fragment_shaders["post/flash"]       = FragmentShader(FLASH_FSH)
-    Mem.ctx.assets[ns].fragment_shaders["post/zoom"]        = FragmentShader(ZOOM_FSH.replace("__MGS_CUSTOM_CROSSHAIR__", "true" if custom_crosshair else "false"))
+    def generate(self) -> None:
+        """ Register all shader files and write marker particle commands """
+        ns: str = self.ns
+        custom_crosshair: bool = Mem.ctx.meta.get("mgs_custom_crosshair", False)
 
-    Mem.ctx.assets["minecraft"].post_effects["transparency"] = set_json_encoder(PostEffect(get_post_effect_json(ns)), max_level=4)
+        Mem.ctx.assets["minecraft"].vertex_shaders["core/particle"]   = VertexShader(PARTICLE_VSH)
+        Mem.ctx.assets["minecraft"].fragment_shaders["core/particle"] = FragmentShader(PARTICLE_FSH)
 
-    # Register flash spark texture for post-effect overlay (1536x1536 additive spark)
-    textures_folder: str = Mem.ctx.meta.get("stewbeet", {}).get("textures_folder", "")
-    Mem.ctx.assets[ns].textures["effect/flash"] = Texture(source_path=f"{textures_folder}/flash.png")
+        Mem.ctx.assets[ns].fragment_shaders["post/classify"]     = FragmentShader(CLASSIFY_FSH)
+        Mem.ctx.assets[ns].fragment_shaders["post/spread_copy"]  = FragmentShader(SPREAD_COPY_FSH)
+        Mem.ctx.assets[ns].fragment_shaders["post/zoom_lerp"]    = FragmentShader(ZOOM_LERP_FSH)
+        Mem.ctx.assets[ns].fragment_shaders["post/transparency"] = FragmentShader(TRANSPARENCY_FSH)
+        Mem.ctx.assets[ns].fragment_shaders["post/flash"]       = FragmentShader(FLASH_FSH)
+        Mem.ctx.assets[ns].fragment_shaders["post/zoom"]        = FragmentShader(ZOOM_FSH.replace("__MGS_CUSTOM_CROSSHAIR__", "true" if custom_crosshair else "false"))
 
-    # Flash marker: mode 1
-    # dust color:[R,0,0] with R=0.02 → vsh detects R∈[1-10], G==0, B==0
-    # scale=0.01 → lifetime = 0 (1 game tick minimum) → brief flash for rapid fire
-    version: str = Mem.ctx.project_version
-    write_versioned_function("player/fire_weapon", f"""
+        Mem.ctx.assets["minecraft"].post_effects["transparency"] = set_json_encoder(PostEffect(get_post_effect_json(ns)), max_level=4)
+
+        # Register flash spark texture for post-effect overlay (1536x1536 additive spark)
+        textures_folder: str = Mem.ctx.meta.get("stewbeet", {}).get("textures_folder", "")
+        Mem.ctx.assets[ns].textures["effect/flash"] = Texture(source_path=f"{textures_folder}/flash.png")
+
+        # Flash marker: mode 1
+        # dust color:[R,0,0] with R=0.02 → vsh detects R∈[1-10], G==0, B==0
+        # scale=0.01 → lifetime = 0 (1 game tick minimum) → brief flash for rapid fire
+        version: str = self.version
+        self.func("player/fire_weapon", f"""
 # Shader: spawn muzzle flash marker - skip for grenades
 # PaP guns use mode 10 (purple dust G=1.0 → ic.g ≥ 81), normal guns use mode 1 (dust G=0)
 execute store success score #has_pap_level {ns}.data if data storage {ns}:gun all.stats.pap_level
 execute if score #has_pap_level {ns}.data matches 1 unless data storage mgs:gun all.stats.grenade_type at @s anchored eyes positioned ^ ^ ^0.001 as @a[distance=..16] run function {ns}:v{version}/player/apply_pap_flash_if_can_see
 execute if score #has_pap_level {ns}.data matches 0 unless data storage mgs:gun all.stats.grenade_type at @s anchored eyes positioned ^ ^ ^0.001 as @a[distance=..16] run function {ns}:v{version}/player/apply_flash_if_can_see
 """)  # noqa: E501
-    write_versioned_function("player/apply_flash_if_can_see", f"""
+        self.func("player/apply_flash_if_can_see", f"""
 # Stop if player saw flash less than 3 ticks ago (allowing previous flash to expire)
 execute if score @s {ns}.last_muzzle_flash > #total_tick {ns}.data run return 0
 scoreboard players set @s {ns}.last_muzzle_flash 3
@@ -1094,7 +1099,7 @@ execute if entity @s[tag={ns}.ticking] run scoreboard players set #can_see {ns}.
 execute if score #can_see {ns}.data matches 0 store result score #can_see {ns}.data run function #bs.view:can_see_ata {{with:{{}}}}
 execute if score #can_see {ns}.data matches 1 run particle minecraft:dust{{color:[0.02,0.0,0.0],scale:0.01}} ~ ~ ~ 0 0 0 0 1 force @s
 """)
-    write_versioned_function("player/apply_pap_flash_if_can_see", f"""
+        self.func("player/apply_pap_flash_if_can_see", f"""
 # PaP flash: mode 10 - dust G=1.0 → ic.g ∈ [122-255] ≥ 81 → vsh returns 10
 # Stop if player saw flash less than 3 ticks ago (allowing previous flash to expire)
 execute if score @s {ns}.last_muzzle_flash > #total_tick {ns}.data run return 0
@@ -1108,15 +1113,21 @@ execute if score #can_see {ns}.data matches 0 store result score #can_see {ns}.d
 execute if score #can_see {ns}.data matches 1 run particle minecraft:dust{{color:[0.02,1.0,0.0],scale:0.01}} ~ ~ ~ 0 0 0 0 1 force @s
 """)
 
-    # Zoom marker: mode 3 (x3) or mode 4 (x4)
-    # Zoom x3: color:[0.02, 0.02, 0] → G∈[2-5] after randomization → mode 3
-    # Zoom x4: color:[0.02, 0.08, 0] → G∈[10-20] after randomization → mode 4
-    # Zoom marker spawning is handled in zoom/main (zoom.py) after zoom state
-    # resolution, with cooldown guard and 5-tick delay.
+        # Zoom marker: mode 3 (x3) or mode 4 (x4)
+        # Zoom x3: color:[0.02, 0.02, 0] → G∈[2-5] after randomization → mode 3
+        # Zoom x4: color:[0.02, 0.08, 0] → G∈[10-20] after randomization → mode 4
+        # Zoom marker spawning is handled in zoom/main (zoom.py) after zoom state
+        # resolution, with cooldown guard and 5-tick delay.
 
-    # Replace crosshair texture with transparent one (shader draws custom crosshair conditionally)
-    if custom_crosshair:
-        textures_folder: str = Mem.ctx.meta.get("stewbeet", {}).get("textures_folder", "")
-        transparent_crosshair = Image.new("RGBA", (1, 1), (0, 0, 0, 0))
-        Mem.ctx.assets["minecraft"].textures["gui/sprites/hud/crosshair"] = Texture(transparent_crosshair)
+        # Replace crosshair texture with transparent one (shader draws custom crosshair conditionally)
+        if custom_crosshair:
+            textures_folder: str = Mem.ctx.meta.get("stewbeet", {}).get("textures_folder", "")
+            transparent_crosshair = Image.new("RGBA", (1, 1), (0, 0, 0, 0))
+            Mem.ctx.assets["minecraft"].textures["gui/sprites/hud/crosshair"] = Texture(transparent_crosshair)
+
+
+def main() -> None:
+    """ Module-level entry (preserved signature); delegates to :class:`ShadersGenerator`. """
+    ShadersGenerator()()
+
 
