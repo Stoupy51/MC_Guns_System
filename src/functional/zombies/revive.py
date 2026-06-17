@@ -32,7 +32,7 @@ class ReviveGenerator(McfunctionGenerator):
 
     	## Input predicates (used to move the mannequin via spectator player input)
     	def player_input(key: str) -> JsonDict:
-    		return {"condition": "minecraft:entity_properties", "entity": "this", "predicate": {"type_specific": {"type": "minecraft:player", "input": {key: True}}}}
+    		return {"condition": "minecraft:entity_properties", "entity": "this", "predicate": {"type_specific": {"entity_type": "minecraft:player", "input": {key: True}}}}
     	Mem.ctx.data[ns].predicates[f"v{version}/input/forward"]  = set_json_encoder(Predicate(player_input("forward")))
     	Mem.ctx.data[ns].predicates[f"v{version}/input/backward"] = set_json_encoder(Predicate(player_input("backward")))
     	Mem.ctx.data[ns].predicates[f"v{version}/input/left"]     = set_json_encoder(Predicate(player_input("left")))
