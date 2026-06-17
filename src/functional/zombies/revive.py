@@ -6,7 +6,7 @@
 # The player spectates the mannequin and can crawl (slow movement via WASD input predicates).
 # Teammates revive by standing near the mannequin. After 60s without revive, player bleed out.
 # Solo + Quick Revive: auto-revive after 10s, up to 3 times.
-from stewbeet import JsonDict, Mem, Predicate, set_json_encoder, write_load_file, write_versioned_function
+from stewbeet import JsonDict, Mem, Predicate, set_json_encoder
 
 from ..helpers import MGS_TAG
 from ..generator import McfunctionGenerator
@@ -32,7 +32,7 @@ class ReviveGenerator(McfunctionGenerator):
 
     	## Input predicates (used to move the mannequin via spectator player input)
     	def player_input(key: str) -> JsonDict:
-    		return {"condition": "minecraft:entity_properties", "entity": "this", "predicate": {"type_specific": {"entity_type": "minecraft:player", "input": {key: True}}}}
+    		return {"condition": "minecraft:entity_properties", "entity": "this", "predicate": {"minecraft:type_specific/player": {"input": {key: True}}}}
     	Mem.ctx.data[ns].predicates[f"v{version}/input/forward"]  = set_json_encoder(Predicate(player_input("forward")))
     	Mem.ctx.data[ns].predicates[f"v{version}/input/backward"] = set_json_encoder(Predicate(player_input("backward")))
     	Mem.ctx.data[ns].predicates[f"v{version}/input/left"]     = set_json_encoder(Predicate(player_input("left")))

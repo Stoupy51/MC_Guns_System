@@ -1,6 +1,6 @@
 
 # Imports
-from stewbeet import Conventions, Mem, write_tick_file, write_versioned_function
+from stewbeet import Conventions
 
 from ...config.stats import (
     BASE_WEAPON,

@@ -1,6 +1,5 @@
 
 # Imports
-from stewbeet import Mem, write_versioned_function
 
 from ..helpers import MGS_TAG
 from ..generator import McfunctionGenerator
@@ -267,7 +266,7 @@ execute if score #kino_met_count {ns}.data matches 3 run function {ns}:v{version
     	# ── meteorite/play_song ───────────────────────────────────────────────────
     	self.func("maps/zombies/kino_der_toten/meteorite/play_song", f"""
 # Play 115 for all in-game players at their own position
-execute as @a[scores={{{ns}.zb.in_game=1}}] at @s run playsound {ns}:zombies/music/115_song record @s ~ ~ ~ 0.5 1
+execute as @a[scores={{{ns}.zb.in_game=1}}] at @s run playsound {ns}:zombies/music/115_song record @s ~ ~ ~ 0.2 1
 
 # Allow replaying the song by resetting meteorite states and counter
 tag @e[tag={ns}.kino.met_active] remove {ns}.kino.met_active

@@ -6,17 +6,12 @@ from stewbeet import (
     Mem,
     set_json_encoder,
     texture_mcmeta,
-    write_function,
-    write_load_file,
     write_tag,
-    write_tick_file,
-    write_versioned_function,
 )
 
 from ..config.blocks import main as write_block_tags
 from ..config.stats import REMAINING_BULLETS
 from .generator import McfunctionGenerator
-
 
 # Main function
 
@@ -163,7 +158,7 @@ execute unless score #hp_cur {ns}.data >= #hp_max {ns}.data run effect give @s m
         write_block_tags()
 
         # Entity tags to ignore when shooting
-        write_tag(f"{ns}:ignore", Mem.ctx.data.entity_type_tags, ["#bs.hitbox:intangible", "minecraft:interaction"])
+        write_tag(f"{ns}:ignore", Mem.ctx.data.entity_type_tags, ["#bs.hitbox:intangible", "minecraft:interaction", "minecraft:experience_orb"])
 
         # Loot table for getting username
         Mem.ctx.data[ns].loot_tables["get_username"] = set_json_encoder(LootTable({

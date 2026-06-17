@@ -2,7 +2,7 @@
 # ruff: noqa: E501
 # Zombies Inventory Management
 # Handles strict zombies slot layout, slot-tagged items, and recovery from moved/dropped items.
-from stewbeet import Advancement, ItemModifier, JsonDict, Mem, set_json_encoder, write_versioned_function
+from stewbeet import Advancement, ItemModifier, JsonDict, Mem, set_json_encoder
 
 from ...config.stats import ALL_SLOTS, CAPACITY, REMAINING_BULLETS
 from ..generator import McfunctionGenerator
@@ -36,7 +36,7 @@ class InventoryGenerator(McfunctionGenerator):
     	knife_item = (
     		f"minecraft:iron_sword[unbreakable={{}},custom_data={knife_cd},"
     		f'item_name={{"text":"Knife","color":"white","italic":false}},'
-    		f'attribute_modifiers=[{{type:"attack_damage",amount:20,operation:"add_value",slot:"mainhand",id:"minecraft:base_attack_damage"}}]'
+    		f'attribute_modifiers=[{{type:"attack_damage",amount:20,operation:"add_value",slot:"mainhand",id:"minecraft:base_attack_damage"}},{{type:"attack_speed",amount:-2.5,operation:"add_value",slot:"mainhand",id:"minecraft:base_attack_speed"}}]'
     		f"]"
     	)
 

@@ -6,7 +6,6 @@
 # Type 1 = electric: lethal to zombies (1000% of max health), 5 electric damage to players inside.
 # Type 2 = turret: shoots the nearest zombie in range every 5 ticks for 45% of its max health;
 #          the bullet stops at the first entity hit, so players between the turret and zombies take 2 damage instead.
-from stewbeet import Mem, write_load_file, write_versioned_function
 
 from ..helpers import MGS_TAG
 from .common import deny_not_enough_points_body, deny_requires_power_body, game_active_guard_cmd

@@ -2,7 +2,6 @@
 # ruff: noqa: E501
 # Zombies Round System
 # Wave-based round progression with zombie spawning, scaling, and round completion.
-from stewbeet import Mem, write_versioned_function
 from ..generator import McfunctionGenerator
 
 
@@ -55,7 +54,7 @@ function {ns}:v{version}/zombies/refresh_sidebar
 
 # Announce
 tellraw @a ["",{{"text":"","color":"dark_green","bold":true}},"🧟 ",{{"text":"Round ","color":"red"}},{{"score":{{"name":"#zb_round","objective":"{ns}.data"}},"color":"gold","bold":true}},{{"text":" has begun!","color":"red"}}]
-execute as @a[scores={{{ns}.zb.in_game=1}}] at @s run playsound {ns}:zombies/round_start_generic ambient @s ~ ~ ~ 0.6 1.0
+execute as @a[scores={{{ns}.zb.in_game=1}}] at @s run playsound {ns}:zombies/round_start_generic ambient @s ~ ~ ~ 0.3 1.0
 """)
 
     	## Calculate spawn timer and batch size based on current round
@@ -328,7 +327,7 @@ function #{ns}:zombies/on_round_end
 # Announce
 execute store result score #completed_round {ns}.data run data get storage {ns}:zombies game.round
 tellraw @a ["",{{"text":"","color":"dark_green","bold":true}},"🧟 ",{{"text":"Round ","color":"green"}},{{"score":{{"name":"#completed_round","objective":"{ns}.data"}},"color":"gold","bold":true}},{{"text":" complete! Next round in 5 seconds...","color":"green"}}]
-execute as @a[scores={{{ns}.zb.in_game=1}}] at @s run playsound {ns}:zombies/round_end_generic ambient @s ~ ~ ~ 0.6 1.0
+execute as @a[scores={{{ns}.zb.in_game=1}}] at @s run playsound {ns}:zombies/round_end_generic ambient @s ~ ~ ~ 0.3 1.0
 
 # Schedule next round after 5 seconds
 schedule function {ns}:v{version}/zombies/start_round 5s

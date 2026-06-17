@@ -2,7 +2,7 @@
 # Perk Machine System
 # Stationary machines where players buy gameplay-enhancing perks.
 # Available perks and their behavior are defined in PERK_DEFINITIONS.
-from stewbeet import JsonDict, Mem, write_load_file, write_tag, write_versioned_function
+from stewbeet import JsonDict, Mem, write_tag
 
 from ..helpers import MGS_TAG
 from .common import deny_not_enough_points_body, deny_requires_power_body, game_active_guard_cmd

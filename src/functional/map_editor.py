@@ -7,7 +7,7 @@
 
 from typing import Any, cast
 
-from stewbeet import Advancement, JsonDict, Mem, set_json_encoder, write_load_file, write_versioned_function
+from stewbeet import Advancement, JsonDict, Mem, set_json_encoder
 
 from .helpers import MGS_TAG, btn
 from .generator import McfunctionGenerator

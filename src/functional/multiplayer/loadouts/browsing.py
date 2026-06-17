@@ -1,7 +1,6 @@
 
 # ruff: noqa: E501
 # Imports
-from stewbeet import Mem, write_versioned_function
 
 from ...helpers import styled_text
 from .catalogs import (

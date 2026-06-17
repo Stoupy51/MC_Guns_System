@@ -3,7 +3,7 @@
 import json
 import re
 
-from stewbeet import Mem, TextComponent, write_versioned_function
+from stewbeet import Mem, TextComponent
 from .generator import McfunctionGenerator
 
 # [MGS] prefix as a nested list component (gold colored, lang-safe).

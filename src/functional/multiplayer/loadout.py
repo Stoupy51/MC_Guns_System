@@ -1,6 +1,5 @@
 
 # Imports
-from stewbeet import Mem, write_load_file, write_versioned_function
 
 from .classes import CLASS_IDS, CLASSES, build_class_snbt
 from ..generator import McfunctionGenerator

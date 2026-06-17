@@ -7,7 +7,7 @@
 #
 
 # Play 115 for all in-game players at their own position
-execute as @a[scores={mgs.zb.in_game=1}] at @s run playsound mgs:zombies/music/115_song record @s ~ ~ ~ 0.5 1
+execute as @a[scores={mgs.zb.in_game=1}] at @s run playsound mgs:zombies/music/115_song record @s ~ ~ ~ 0.2 1
 
 # Allow replaying the song by resetting meteorite states and counter
 tag @e[tag=mgs.kino.met_active] remove mgs.kino.met_active

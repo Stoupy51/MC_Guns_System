@@ -2,7 +2,6 @@
 # ruff: noqa: E501
 # Shared helper for spawning item_display entities at machine positions.
 # Used by perks, PAP, and any other zombies machine system.
-from stewbeet import Mem, write_versioned_function
 from ..generator import McfunctionGenerator
 
 

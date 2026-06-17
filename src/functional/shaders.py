@@ -2,7 +2,7 @@
 # Imports
 from beet import FragmentShader, PostEffect, Texture, VertexShader
 from PIL import Image
-from stewbeet import JsonDict, Mem, set_json_encoder, write_versioned_function
+from stewbeet import JsonDict, Mem, set_json_encoder
 from .generator import McfunctionGenerator
 
 # ============================================================================ #

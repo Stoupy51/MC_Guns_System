@@ -2,7 +2,7 @@
 # ruff: noqa: E501
 # Pack-a-Punch machine system for zombies mode.
 # Resolves PAP upgrades at runtime from the selected gun's own stats.pap_stats.
-from stewbeet import ItemModifier, JsonDict, Mem, set_json_encoder, write_load_file, write_versioned_function
+from stewbeet import ItemModifier, JsonDict, Mem, set_json_encoder
 
 from ...config.catalogs import SCOPE_VARIANTS
 from ...config.stats import (

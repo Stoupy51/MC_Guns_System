@@ -4,7 +4,6 @@
 # Provides passive effects and activatable abilities for the zombies game mode.
 # Passives: x1.2 Points, x1.5 Powerups
 # Abilities: Coward (TP to spawn), Guardian (summon Iron Golem)
-from stewbeet import Mem, write_versioned_function
 
 from ..helpers import MGS_TAG
 from ..generator import McfunctionGenerator

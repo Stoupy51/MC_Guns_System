@@ -3,7 +3,7 @@
 # Zombies Game System
 # Wave-based survival mode with zombie spawning, points, perks, mystery box, wallbuys, doors, and traps.
 # Map definitions are dynamic (stored in storage, registered via function tags).
-from stewbeet import Mem, write_load_file, write_tag, write_tick_file, write_versioned_function
+from stewbeet import Mem, write_tag
 
 from ..helpers import (
 	MGS_TAG,

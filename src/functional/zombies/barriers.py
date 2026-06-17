@@ -7,7 +7,6 @@
 # Players can repair a destroyed barrier by sneaking nearby for 1.5 seconds.
 # Block state is swapped in-place on destroy/repair — single block_display per barrier.
 
-from stewbeet import Mem, write_load_file, write_versioned_function
 from ..generator import McfunctionGenerator
 
 

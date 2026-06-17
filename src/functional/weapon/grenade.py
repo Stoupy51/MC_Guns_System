@@ -2,7 +2,7 @@
 # Imports
 from beet import Font, Texture
 from PIL import Image
-from stewbeet import Conventions, ItemModifier, Mem, set_json_encoder, write_tick_file, write_versioned_function
+from stewbeet import Conventions, ItemModifier, Mem, set_json_encoder
 
 from ...config.stats import (
     EXPLOSION_DAMAGE,
