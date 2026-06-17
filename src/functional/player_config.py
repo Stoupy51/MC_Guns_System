@@ -54,16 +54,20 @@ from .multiplayer.loadouts import (
     TRIG_TOGGLE_VIS_BASE,
     TRIG_UNSET_DEFAULT,
 )
+from .generator import McfunctionGenerator
 
 
-def main() -> None:
-    ns: str = Mem.ctx.project_id
-    version: str = Mem.ctx.project_version
+class PlayerConfigGenerator(McfunctionGenerator):
+    """ Generates the playerconfig datapack functions. """
 
-    ## Setup scoreboards
-    # Per-player config trigger (players use /trigger mgs.player.config set <value>)
-    # Per-player toggle scoreboards (0 = disabled, 1 = enabled)
-    write_versioned_function("load/confirm_load", f"""
+    def generate(self) -> None:
+        ns: str = self.ns
+        version: str = self.version
+
+        ## Setup scoreboards
+        # Per-player config trigger (players use /trigger mgs.player.config set <value>)
+        # Per-player toggle scoreboards (0 = disabled, 1 = enabled)
+        self.func("load/confirm_load", f"""
 # Player config: trigger objective for /trigger command
 scoreboard objectives add {ns}.player.config trigger
 
@@ -72,8 +76,8 @@ scoreboard objectives add {ns}.player.hitmarker dummy
 scoreboard objectives add {ns}.player.damage_debug dummy
 """, prepend=True)
 
-    ## In player tick: enable trigger and process if set
-    write_versioned_function("player/tick", f"""
+        ## In player tick: enable trigger and process if set
+        self.func("player/tick", f"""
 # Assign unique player ID (Bookshelf SUID) if not yet assigned
 execute unless score @s bs.id matches 0.. run function #bs.id:give_suid
 
@@ -85,31 +89,31 @@ execute if score @s {ns}.player.config matches 1.. run function {ns}:v{version}/
 execute if score @s {ns}.mp.map_edit matches 1 run function {ns}:v{version}/maps/editor/tick
 """)
 
-    ## Process trigger values
-    # Pre-compute trigger ranges for custom loadout editor
-    primary_max = TRIG_PRIMARY_BASE + len(PRIMARY_WEAPONS) - 1
-    secondary_count = len([w for w in SECONDARY_WEAPONS if w[4]])
-    secondary_max = TRIG_SECONDARY_BASE + secondary_count - 1
-    overkill_sec_max = TRIG_OVERKILL_SEC_BASE + len(PRIMARY_WEAPONS) - 1
-    primary_mags_max = TRIG_PRIMARY_MAGS_BASE + 5
-    secondary_mags_max = TRIG_SECONDARY_MAGS_BASE + 5
-    perk_max = TRIG_PERK_BASE + len(PERKS) - 1
-    equip1_max = TRIG_EQUIP_SLOT1_BASE + len(GRENADE_TYPES) - 1
-    equip2_max = TRIG_EQUIP_SLOT2_BASE + len(GRENADE_TYPES) - 1
-    primary_camo_max = TRIG_PRIMARY_CAMO_BASE + len(CAMO_VARIANTS) - 1
-    secondary_camo_max = TRIG_SECONDARY_CAMO_BASE + len(CAMO_VARIANTS) - 1
-    equip1_camo_max = TRIG_EQUIP1_CAMO_BASE + len(CAMO_VARIANTS) - 1
-    equip2_camo_max = TRIG_EQUIP2_CAMO_BASE + len(CAMO_VARIANTS) - 1
-    edit_max = TRIG_EDIT_BASE + 9999
-    manage_max = TRIG_MANAGE_BASE + 9999
-    select_max = TRIG_SELECT_BASE + 9999  # 10000-wide range per loadout action
-    favorite_max = TRIG_FAVORITE_BASE + 9999
-    like_max = TRIG_LIKE_BASE + 9999
-    delete_max = TRIG_DELETE_BASE + 9999
-    toggle_vis_max = TRIG_TOGGLE_VIS_BASE + 9999
-    set_default_max = TRIG_SET_DEFAULT_BASE + 9998  # 69999 is reserved for UNSET_DEFAULT
+        ## Process trigger values
+        # Pre-compute trigger ranges for custom loadout editor
+        primary_max = TRIG_PRIMARY_BASE + len(PRIMARY_WEAPONS) - 1
+        secondary_count = len([w for w in SECONDARY_WEAPONS if w.in_loadout])
+        secondary_max = TRIG_SECONDARY_BASE + secondary_count - 1
+        overkill_sec_max = TRIG_OVERKILL_SEC_BASE + len(PRIMARY_WEAPONS) - 1
+        primary_mags_max = TRIG_PRIMARY_MAGS_BASE + 5
+        secondary_mags_max = TRIG_SECONDARY_MAGS_BASE + 5
+        perk_max = TRIG_PERK_BASE + len(PERKS) - 1
+        equip1_max = TRIG_EQUIP_SLOT1_BASE + len(GRENADE_TYPES) - 1
+        equip2_max = TRIG_EQUIP_SLOT2_BASE + len(GRENADE_TYPES) - 1
+        primary_camo_max = TRIG_PRIMARY_CAMO_BASE + len(CAMO_VARIANTS) - 1
+        secondary_camo_max = TRIG_SECONDARY_CAMO_BASE + len(CAMO_VARIANTS) - 1
+        equip1_camo_max = TRIG_EQUIP1_CAMO_BASE + len(CAMO_VARIANTS) - 1
+        equip2_camo_max = TRIG_EQUIP2_CAMO_BASE + len(CAMO_VARIANTS) - 1
+        edit_max = TRIG_EDIT_BASE + 9999
+        manage_max = TRIG_MANAGE_BASE + 9999
+        select_max = TRIG_SELECT_BASE + 9999  # 10000-wide range per loadout action
+        favorite_max = TRIG_FAVORITE_BASE + 9999
+        like_max = TRIG_LIKE_BASE + 9999
+        delete_max = TRIG_DELETE_BASE + 9999
+        toggle_vis_max = TRIG_TOGGLE_VIS_BASE + 9999
+        set_default_max = TRIG_SET_DEFAULT_BASE + 9998  # 69999 is reserved for UNSET_DEFAULT
 
-    write_versioned_function("player/config/process", f"""
+        self.func("player/config/process", f"""
 # Load per-player editor state (isolates simultaneous editors)
 execute store result storage {ns}:temp _pid int 1 run scoreboard players get @s bs.id
 function {ns}:v{version}/multiplayer/editor/load_state with storage {ns}:temp
@@ -216,9 +220,9 @@ function {ns}:v{version}/multiplayer/editor/save_state with storage {ns}:temp
 scoreboard players set @s {ns}.player.config 0
 """)
 
-    ## Toggle functions (hitmarker, damage_debug)
-    for score_name, display_name in [("hitmarker", "Hitmarker Sound"), ("damage_debug", "Damage Debug")]:
-        write_versioned_function(f"player/config/toggle_{score_name}", f"""
+        ## Toggle functions (hitmarker, damage_debug)
+        for score_name, display_name in [("hitmarker", "Hitmarker Sound"), ("damage_debug", "Damage Debug")]:
+            self.func(f"player/config/toggle_{score_name}", f"""
 # If currently OFF (0), turn ON (1)
 execute store success score #toggle {ns}.data unless score @s {ns}.player.{score_name} matches 1
 execute if score #toggle {ns}.data matches 1 run scoreboard players set @s {ns}.player.{score_name} 1
@@ -229,30 +233,30 @@ scoreboard players set @s {ns}.player.{score_name} 0
 tellraw @s [{MGS_TAG},["",{{"text":"{display_name}"}},": "],{{"text":"OFF","color":"red"}},{{"text":" ✘","color":"red"}}]
 """)
 
-    ## Player config menu (clickable chat buttons)
-    from .helpers import btn
+        ## Player config menu (clickable chat buttons)
+        from .helpers import btn
 
-    sep = '{"text":"=======================================","color":"dark_gray"}'
-    title = '["",[{"text":"","color":"gold","bold":true},"       🎮 ",{"text":"Player Settings"}," 🎮"]]'
+        sep = '{"text":"=======================================","color":"dark_gray"}'
+        title = '["",[{"text":"","color":"gold","bold":true},"       🎮 ",{"text":"Player Settings"}," 🎮"]]'
 
-    # Hitmarker toggle button
-    hm_btn = btn("Toggle", f"/trigger {ns}.player.config set 2", "yellow", "Toggle hitmarker Sound on entity hit")
-    hm_on  = f'["  ",{{"text":"Hitmarker Sound"}},": ",{{"text":"ON","color":"green"}},{{"text":" ✔ ","color":"green"}},{hm_btn}]'
-    hm_off = f'["  ",{{"text":"Hitmarker Sound"}},": ",{{"text":"OFF","color":"red"}},{{"text":" ✘","color":"red"}},{hm_btn}]'
+        # Hitmarker toggle button
+        hm_btn = btn("Toggle", f"/trigger {ns}.player.config set 2", "yellow", "Toggle hitmarker Sound on entity hit")
+        hm_on  = f'["  ",{{"text":"Hitmarker Sound"}},": ",{{"text":"ON","color":"green"}},{{"text":" ✔ ","color":"green"}},{hm_btn}]'
+        hm_off = f'["  ",{{"text":"Hitmarker Sound"}},": ",{{"text":"OFF","color":"red"}},{{"text":" ✘","color":"red"}},{hm_btn}]'
 
-    # Damage Debug toggle button
-    dd_btn = btn("Toggle", f"/trigger {ns}.player.config set 3", "yellow", "Toggle damage numbers in chat")
-    dd_on  = f'["  ",{{"text":"Damage Debug"}},": ",{{"text":"ON","color":"green"}},{{"text":" ✔ ","color":"green"}},{dd_btn}]'
-    dd_off = f'["  ",{{"text":"Damage Debug"}},": ",{{"text":"OFF","color":"red"}},{{"text":" ✘","color":"red"}},{dd_btn}]'
+        # Damage Debug toggle button
+        dd_btn = btn("Toggle", f"/trigger {ns}.player.config set 3", "yellow", "Toggle damage numbers in chat")
+        dd_on  = f'["  ",{{"text":"Damage Debug"}},": ",{{"text":"ON","color":"green"}},{{"text":" ✔ ","color":"green"}},{dd_btn}]'
+        dd_off = f'["  ",{{"text":"Damage Debug"}},": ",{{"text":"OFF","color":"red"}},{{"text":" ✘","color":"red"}},{dd_btn}]'
 
-    # Multiplayer class selection button
-    mp_btn = btn("Select Class", f"/trigger {ns}.player.config set 4", "aqua", "Open multiplayer class selection menu")
-    mp_line = f'["  ",{{"text":"Multiplayer"}},": ",{mp_btn}]'
+        # Multiplayer class selection button
+        mp_btn = btn("Select Class", f"/trigger {ns}.player.config set 4", "aqua", "Open multiplayer class selection menu")
+        mp_line = f'["  ",{{"text":"Multiplayer"}},": ",{mp_btn}]'
 
-    # Info line
-    info_line = f'["  ",{{"text":"Use","color":"gray","italic":true}}," ",{{"text":"/trigger {ns}.player.config","color":"aqua","italic":true}}," ",{{"text":"to reopen","color":"gray","italic":true}}]'
+        # Info line
+        info_line = f'["  ",{{"text":"Use","color":"gray","italic":true}}," ",{{"text":"/trigger {ns}.player.config","color":"aqua","italic":true}}," ",{{"text":"to reopen","color":"gray","italic":true}}]'
 
-    write_versioned_function("player/config/menu", f"""tellraw @s {sep}
+        self.func("player/config/menu", f"""tellraw @s {sep}
 tellraw @s {title}
 tellraw @s {sep}
 execute if score @s {ns}.player.hitmarker matches 1 run tellraw @s {hm_on}
@@ -264,7 +268,7 @@ tellraw @s {sep}
 tellraw @s {info_line}
 """)
 
-    write_versioned_function("player/config/damage_debug", f"""
+        self.func("player/config/damage_debug", f"""
 # Round amount to 1 decimal: store (amount * 10) as int score, then split into whole + decimal parts
 $data modify storage {ns}:temp amount set value $(amount)
 execute store result score #dmg_x10 {ns}.data run data get storage {ns}:temp amount 10
@@ -278,13 +282,19 @@ $execute if score #damage_debug {ns}.config matches 1 run tellraw @a ["",[{{"tex
 $execute unless score #damage_debug {ns}.config matches 1 at @s as $(attacker) if score @s {ns}.player.damage_debug matches 1 run tellraw @s ["",[{{"text":"","color":"red"}},"[",{{"text":"DMG"}},"] "],[{{"score":{{"name":"#dmg_whole","objective":"{ns}.data"}},"color":"gold"}},".",{{"score":{{"name":"#dmg_dec","objective":"{ns}.data"}}}}]," ",{{"text":"HP to","color":"gray"}}," ",{{"selector":"@n"}}]
 """, tags=[f"{ns}:signals/damage"])
 
-    ## Hitmarker Sound on entity hit (added to damage signal)
-    # Plays for both hitscan (@p[tag=ticking]) and explosion (@p[tag=temp_shooter]) hits
-    write_versioned_function("player/config/hitmarker_sound", f"""
+        ## Hitmarker Sound on entity hit (added to damage signal)
+        # Plays for both hitscan (@p[tag=ticking]) and explosion (@p[tag=temp_shooter]) hits
+        self.func("player/config/hitmarker_sound", f"""
 # Play hitmarker Sound to the shooter if their personal config has it enabled
 # For hitscan: shooter has tag {ns}.ticking
 execute as @a[tag={ns}.ticking] if score @s {ns}.player.hitmarker matches 1 at @s run playsound minecraft:entity.experience_orb.pickup player @s ~ ~ ~ 1.0 2.0
 # For explosions: shooter has tag {ns}.temp_shooter (skip if already played via ticking)
 execute as @a[tag={ns}.temp_shooter,tag=!{ns}.ticking] if score @s {ns}.player.hitmarker matches 1 at @s run playsound minecraft:entity.experience_orb.pickup player @s ~ ~ ~ 1.0 2.0
 """, tags=[f"{ns}:signals/damage"])
+
+
+def main() -> None:
+    """ Module-level entry (preserved signature); delegates to :class:`PlayerConfigGenerator`. """
+    PlayerConfigGenerator()()
+
 

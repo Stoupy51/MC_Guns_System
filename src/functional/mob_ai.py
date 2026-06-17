@@ -2,16 +2,21 @@
 from stewbeet import Mem, write_load_file, write_tick_file, write_versioned_function
 
 from ..config.stats import ACCURACY_BASE, COOLDOWN, GRENADE_TYPE, PELLET_COUNT, PROJECTILE_SPEED
+from .generator import McfunctionGenerator
 
 
 # Main function
-def main() -> None:
-    ns: str = Mem.ctx.project_id
-    version: str = Mem.ctx.project_version
 
-    # Scoreboards for mob AI
-    write_load_file(
-f"""
+class MobAiGenerator(McfunctionGenerator):
+    """ Generates the mobai datapack functions. """
+
+    def generate(self) -> None:
+        ns: str = self.ns
+        version: str = self.version
+
+        # Scoreboards for mob AI
+        self.load(
+    f"""
 # Armed mob counter (skip tick loop if 0)
 scoreboard players add #armed_mob_count {ns}.data 0
 
@@ -21,8 +26,8 @@ scoreboard objectives add {ns}.mob.active_time dummy
 scoreboard objectives add {ns}.mob.sleep_time dummy
 """)
 
-    ## Mob tick function
-    write_versioned_function("mob/tick", f"""
+        ## Mob tick function
+        self.func("mob/tick", f"""
 # Initialize mob if not yet initialized
 execute unless entity @s[tag={ns}.mob_init] run function {ns}:v{version}/mob/init
 
@@ -71,8 +76,8 @@ tag @e[tag={ns}.target] remove {ns}.target
 tag @s remove {ns}.ticking
 """)
 
-    ## Initialize a newly tagged armed mob
-    write_versioned_function("mob/init", f"""
+        ## Initialize a newly tagged armed mob
+        self.func("mob/init", f"""
 # Mark as initialized
 tag @s add {ns}.mob_init
 
@@ -89,42 +94,42 @@ scoreboard players set @s {ns}.cooldown 20
 function {ns}:v{version}/mob/wake_up
 """)
 
-    ## Transition from sleeping to active phase
-    write_versioned_function("mob/wake_up", f"""
+        ## Transition from sleeping to active phase
+        self.func("mob/wake_up", f"""
 # Remove sleeping tag and set timer to active duration
 tag @s remove {ns}.mob_sleeping
 scoreboard players operation @s {ns}.mob.timer = @s {ns}.mob.active_time
 """)
 
-    ## Transition from active to sleeping phase
-    write_versioned_function("mob/go_sleep", f"""
+        ## Transition from active to sleeping phase
+        self.func("mob/go_sleep", f"""
 # Add sleeping tag and set timer to sleep duration
 tag @s add {ns}.mob_sleeping
 scoreboard players operation @s {ns}.mob.timer = @s {ns}.mob.sleep_time
 """)
 
-    ## Copy gun data from mob's equipment mainhand to shared storage
-    write_versioned_function("mob/copy_gun_data", f"""
+        ## Copy gun data from mob's equipment mainhand to shared storage
+        self.func("mob/copy_gun_data", f"""
 # Copy gun data from equipment mainhand
 data remove storage {ns}:gun all
 data modify storage {ns}:gun all set from entity @s equipment.mainhand.components."minecraft:custom_data".{ns}
 """)
 
-    ## Apply random rotation offset for inaccuracy (non-level-5 mobs only)
-    write_versioned_function("mob/apply_inaccuracy", f"""
+        ## Apply random rotation offset for inaccuracy (non-level-5 mobs only)
+        self.func("mob/apply_inaccuracy", f"""
 # Random yaw offset: -20.0 to +20.0 degrees (stored as -200..200, applied with 0.1 scale)
 execute store result storage {ns}:temp _rot.yaw double 0.1 run random value -200..200
 execute store result storage {ns}:temp _rot.pitch double 0.1 run random value -200..200
 function {ns}:v{version}/mob/apply_rotation_offset with storage {ns}:temp _rot
 """)
 
-    ## Apply rotation offset (macro)
-    write_versioned_function("mob/apply_rotation_offset", """
+        ## Apply rotation offset (macro)
+        self.func("mob/apply_rotation_offset", """
 $rotate @s ~$(yaw) ~$(pitch)
 """)
 
-    ## Fire weapon routing
-    write_versioned_function("mob/fire_weapon", f"""
+        ## Fire weapon routing
+        self.func("mob/fire_weapon", f"""
 # Rotate to face the target eyes
 rotate @s facing entity @n[tag={ns}.target] eyes
 
@@ -156,8 +161,8 @@ data modify storage {ns}:signals on_shoot.weapon set from storage {ns}:gun all
 function #{ns}:signals/on_shoot
 """)
 
-    ## Mob shoot function
-    write_versioned_function("mob/shoot", f"""
+        ## Mob shoot function
+        self.func("mob/shoot", f"""
 # Set accuracy (mobs use base accuracy)
 data modify storage {ns}:gun accuracy set from storage {ns}:gun all.stats.{ACCURACY_BASE}
 
@@ -171,14 +176,14 @@ scoreboard players remove #bullets_to_fire {ns}.data 1
 execute if score #bullets_to_fire {ns}.data matches 1.. run function {ns}:v{version}/mob/shoot
 """)
 
-    ## Fire sound for mobs
-    write_versioned_function("mob/fire_sound", f"""
+        ## Fire sound for mobs
+        self.func("mob/fire_sound", f"""
 $playsound {ns}:$(fire) player @a[distance=0.01..48] ~ ~ ~ 0.35 1 0.10
 """)
 
-    ## Tick file entry for armed mobs
-    write_tick_file(
-f"""
+        ## Tick file entry for armed mobs
+        self.tick(
+    f"""
 # Armed mob AI loop
 execute if score #armed_mob_count {ns}.data matches 1.. as @e[tag={ns}.armed] at @s run function {ns}:v{version}/mob/tick
 
@@ -188,8 +193,8 @@ scoreboard players operation #armed_mob_phase {ns}.data %= #100 {ns}.data
 execute if score #armed_mob_count {ns}.data matches 1.. if score #armed_mob_phase {ns}.data matches 0 store result score #armed_mob_count {ns}.data if entity @e[tag={ns}.armed]
 """)
 
-    ## Simple default functions
-    write_versioned_function("mob/default/on_new", f"""
+        ## Simple default functions
+        self.func("mob/default/on_new", f"""
 # Tags, data, and attributes
 tag @s add {ns}.armed
 $data modify entity @s CustomName set value {{"text":"Armed $(entity) [Lv.$(level)]","color":"red"}}
@@ -208,20 +213,26 @@ $scoreboard players set @s {ns}.mob.sleep_time $(sleep_time)
 # Increment armed mob count
 scoreboard players add #armed_mob_count {ns}.data 1
 """)
-    for level, active, sleep in [(1, 50, 100), (2, 50, 50), (3, 60, 20), (4, 72000, 1)]:
-        write_versioned_function(
-            f"mob/default/level_{level}",
-            f"""$execute summon $(entity) run function {ns}:v{version}/mob/default/on_new {{entity:"$(entity)",level:{level},active_time:{active},sleep_time:{sleep}}}"""
-        )
+        for level, active, sleep in [(1, 50, 100), (2, 50, 50), (3, 60, 20), (4, 72000, 1)]:
+            self.func(
+                f"mob/default/level_{level}",
+                f"""$execute summon $(entity) run function {ns}:v{version}/mob/default/on_new {{entity:"$(entity)",level:{level},active_time:{active},sleep_time:{sleep}}}"""
+            )
 
-    # Level 5: perfect accuracy (always active, no sleep, tagged to skip inaccuracy)
-    write_versioned_function(
-        "mob/default/level_5",
-        f"""$execute summon $(entity) run function {ns}:v{version}/mob/default/on_new_lv5 {{entity:"$(entity)"}}"""
-    )
-    write_versioned_function("mob/default/on_new_lv5", f"""
+        # Level 5: perfect accuracy (always active, no sleep, tagged to skip inaccuracy)
+        self.func(
+            "mob/default/level_5",
+            f"""$execute summon $(entity) run function {ns}:v{version}/mob/default/on_new_lv5 {{entity:"$(entity)"}}"""
+        )
+        self.func("mob/default/on_new_lv5", f"""
 # Tags, data, and attributes
 $function {ns}:v{version}/mob/default/on_new {{entity:"$(entity)",level:5,active_time:72000,sleep_time:0}}
 tag @s add {ns}.mob_lv5
 """)
+
+
+def main() -> None:
+    """ Module-level entry (preserved signature); delegates to :class:`MobAiGenerator`. """
+    MobAiGenerator()()
+
 

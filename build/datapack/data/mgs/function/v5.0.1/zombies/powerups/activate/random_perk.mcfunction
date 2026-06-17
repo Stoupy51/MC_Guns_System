@@ -8,11 +8,11 @@
 
 # Count unowned perks (bail early if all owned)
 scoreboard players set #pu_perk_avail mgs.data 0
-execute if score @p[tag=mgs.pu_collecting] mgs.zb.perk.juggernog matches 0 run scoreboard players add #pu_perk_avail mgs.data 1
-execute if score @p[tag=mgs.pu_collecting] mgs.zb.perk.speed_cola matches 0 run scoreboard players add #pu_perk_avail mgs.data 1
-execute if score @p[tag=mgs.pu_collecting] mgs.zb.perk.double_tap matches 0 run scoreboard players add #pu_perk_avail mgs.data 1
-execute if score @p[tag=mgs.pu_collecting] mgs.zb.perk.quick_revive matches 0 run scoreboard players add #pu_perk_avail mgs.data 1
-execute if score @p[tag=mgs.pu_collecting] mgs.zb.perk.mule_kick matches 0 run scoreboard players add #pu_perk_avail mgs.data 1
+execute unless score @p[tag=mgs.pu_collecting] mgs.zb.perk.juggernog matches 1 run scoreboard players add #pu_perk_avail mgs.data 1
+execute unless score @p[tag=mgs.pu_collecting] mgs.zb.perk.speed_cola matches 1 run scoreboard players add #pu_perk_avail mgs.data 1
+execute unless score @p[tag=mgs.pu_collecting] mgs.zb.perk.double_tap matches 1 run scoreboard players add #pu_perk_avail mgs.data 1
+execute unless score @p[tag=mgs.pu_collecting] mgs.zb.perk.quick_revive matches 1 run scoreboard players add #pu_perk_avail mgs.data 1
+execute unless score @p[tag=mgs.pu_collecting] mgs.zb.perk.mule_kick matches 1 run scoreboard players add #pu_perk_avail mgs.data 1
 execute if score #pu_perk_avail mgs.data matches 0 run return run tellraw @p[tag=mgs.pu_collecting] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.you_already_own_every_perk","color":"yellow"}]
 
 # Pick a random starting index and walk through the list to find an unowned perk

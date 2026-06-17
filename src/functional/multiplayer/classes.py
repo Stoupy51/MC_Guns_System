@@ -98,7 +98,7 @@ CLASSES: dict[str, JsonDict] = {
 }
 
 # Lookup: perk_id -> display name (from the shared PERKS catalog)
-PERK_NAMES: dict[str, str] = {perk[0]: perk[1] for perk in PERKS}
+PERK_NAMES: dict[str, str] = {perk.perk_id: perk.display_name for perk in PERKS}
 
 # Class number assignments (1-indexed, used for scoreboard mgs.mp.class)
 CLASS_IDS: dict[str, int] = {class_id: idx + 1 for idx, class_id in enumerate(CLASSES)}

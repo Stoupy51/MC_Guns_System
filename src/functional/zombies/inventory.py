@@ -5,92 +5,97 @@
 from stewbeet import Advancement, ItemModifier, JsonDict, Mem, set_json_encoder, write_versioned_function
 
 from ...config.stats import ALL_SLOTS, CAPACITY, REMAINING_BULLETS
+from ..generator import McfunctionGenerator
+from .perks import PERK_DEFINITIONS
 
 
-def generate_zombies_inventory() -> None:
-	ns: str = Mem.ctx.project_id
-	version: str = Mem.ctx.project_version
+class InventoryGenerator(McfunctionGenerator):
+    """ Generates the inventory datapack functions. """
 
-	knife_cd = "{" + ns + ":{knife:true}}"
-	gun_cd = "{" + ns + ":{gun:true}}"
-	mag_cd = "{" + ns + ":{magazine:true}}"
-	zb_tagged_cd = "{" + ns + ":{zombies:{}}}"
+    def generate(self) -> None:
+    	ns: str = self.ns
+    	version: str = self.version
 
-	knife_slot_cd = "{" + ns + ":{knife:true,zombies:{hotbar:0}}}"
-	gun_1_slot_cd = "{" + ns + ":{gun:true,zombies:{hotbar:1}}}"
-	gun_2_slot_cd = "{" + ns + ":{gun:true,zombies:{hotbar:2}}}"
-	gun_3_slot_cd = "{" + ns + ":{gun:true,zombies:{hotbar:3}}}"
-	ability_slot_cd = "{" + ns + ":{zb_ability_item:true,zombies:{hotbar:4}}}"
-	equipment_2_slot_cd = "{" + ns + ":{gun:true,zombies:{hotbar:6}}}"
-	equipment_1_slot_cd = "{" + ns + ":{gun:true,zombies:{hotbar:7}}}"
-	info_slot_cd = "{" + ns + ":{zb_info:true,zombies:{hotbar:8}}}"
-	mag_1_slot_cd = "{" + ns + ":{magazine:true,zombies:{inventory:1}}}"
-	mag_2_slot_cd = "{" + ns + ":{magazine:true,zombies:{inventory:2}}}"
-	mag_3_slot_cd = "{" + ns + ":{magazine:true,zombies:{inventory:3}}}"
+    	knife_cd = "{" + ns + ":{knife:true}}"
+    	gun_cd = "{" + ns + ":{gun:true}}"
+    	mag_cd = "{" + ns + ":{magazine:true}}"
+    	zb_tagged_cd = "{" + ns + ":{zombies:{}}}"
 
-	knife_item = (
-		f"minecraft:iron_sword[unbreakable={{}},custom_data={knife_cd},"
-		f'item_name={{"text":"Knife","color":"white","italic":false}},'
-		f'attribute_modifiers=[{{type:"attack_damage",amount:20,operation:"add_value",slot:"mainhand",id:"minecraft:base_attack_damage"}}]'
-		f"]"
-	)
+    	knife_slot_cd = "{" + ns + ":{knife:true,zombies:{hotbar:0}}}"
+    	gun_1_slot_cd = "{" + ns + ":{gun:true,zombies:{hotbar:1}}}"
+    	gun_2_slot_cd = "{" + ns + ":{gun:true,zombies:{hotbar:2}}}"
+    	gun_3_slot_cd = "{" + ns + ":{gun:true,zombies:{hotbar:3}}}"
+    	ability_slot_cd = "{" + ns + ":{zb_ability_item:true,zombies:{hotbar:4}}}"
+    	equipment_2_slot_cd = "{" + ns + ":{gun:true,zombies:{hotbar:6}}}"
+    	equipment_1_slot_cd = "{" + ns + ":{gun:true,zombies:{hotbar:7}}}"
+    	info_slot_cd = "{" + ns + ":{zb_info:true,zombies:{hotbar:8}}}"
+    	mag_1_slot_cd = "{" + ns + ":{magazine:true,zombies:{inventory:1}}}"
+    	mag_2_slot_cd = "{" + ns + ":{magazine:true,zombies:{inventory:2}}}"
+    	mag_3_slot_cd = "{" + ns + ":{magazine:true,zombies:{inventory:3}}}"
 
-	zb_tagged_match = f"*[custom_data~{zb_tagged_cd}]"
-	equipment_1_match = f"*[custom_data~{equipment_1_slot_cd}]"
+    	knife_item = (
+    		f"minecraft:iron_sword[unbreakable={{}},custom_data={knife_cd},"
+    		f'item_name={{"text":"Knife","color":"white","italic":false}},'
+    		f'attribute_modifiers=[{{type:"attack_damage",amount:20,operation:"add_value",slot:"mainhand",id:"minecraft:base_attack_damage"}}]'
+    		f"]"
+    	)
 
-	zb_stats_modifier: JsonDict = {
-		"function": "minecraft:copy_custom_data",
-		"source": {"type": "minecraft:storage", "source": f"{ns}:temp"},
-		"ops": [
-			{"source": f"zb_item_stats.{CAPACITY}", "target": f"{ns}.stats.{CAPACITY}", "op": "replace"},
-			{"source": f"zb_item_stats.{REMAINING_BULLETS}", "target": f"{ns}.stats.{REMAINING_BULLETS}", "op": "replace"},
-		],
-	}
-	Mem.ctx.data[ns].item_modifiers[f"v{version}/zb_item_stats"] = set_json_encoder(ItemModifier(zb_stats_modifier), max_level=-1)
+    	zb_tagged_match = f"*[custom_data~{zb_tagged_cd}]"
+    	equipment_1_match = f"*[custom_data~{equipment_1_slot_cd}]"
 
-	zb_slot_modifier: JsonDict = {
-		"function": "minecraft:copy_custom_data",
-		"source": {"type": "minecraft:storage", "source": f"{ns}:temp"},
-		"ops": [
-			{"source": "zb_slot", "target": f"{ns}.zombies", "op": "replace"},
-		],
-	}
-	Mem.ctx.data[ns].item_modifiers[f"v{version}/zb_slot_tag"] = set_json_encoder(ItemModifier(zb_slot_modifier), max_level=-1)
+    	zb_stats_modifier: JsonDict = {
+    		"function": "minecraft:copy_custom_data",
+    		"source": {"type": "minecraft:storage", "source": f"{ns}:temp"},
+    		"ops": [
+    			{"source": f"zb_item_stats.{CAPACITY}", "target": f"{ns}.stats.{CAPACITY}", "op": "replace"},
+    			{"source": f"zb_item_stats.{REMAINING_BULLETS}", "target": f"{ns}.stats.{REMAINING_BULLETS}", "op": "replace"},
+    		],
+    	}
+    	Mem.ctx.data[ns].item_modifiers[f"v{version}/zb_item_stats"] = set_json_encoder(ItemModifier(zb_stats_modifier), max_level=-1)
 
-	# Marks a magazine as zombies-converted by setting consumable to 2b.
-	# Value 1b = true consumable (stack count = bullets), 2b = zombies non-consumable (custom_data only).
-	zb_mark_converted_modifier: list[JsonDict] = [
-		{
-			"function": "minecraft:set_custom_data",
-			"tag": f'{{{ns}: {{consumable: 2b}}}}',
-		},
-		{
-			"function": "minecraft:set_components",
-			"components": {"minecraft:max_stack_size": 1}
-		}
-	]
-	Mem.ctx.data[ns].item_modifiers[f"v{version}/zb_mark_converted"] = set_json_encoder(ItemModifier(zb_mark_converted_modifier), max_level=-1) # type: ignore
+    	zb_slot_modifier: JsonDict = {
+    		"function": "minecraft:copy_custom_data",
+    		"source": {"type": "minecraft:storage", "source": f"{ns}:temp"},
+    		"ops": [
+    			{"source": "zb_slot", "target": f"{ns}.zombies", "op": "replace"},
+    		],
+    	}
+    	Mem.ctx.data[ns].item_modifiers[f"v{version}/zb_slot_tag"] = set_json_encoder(ItemModifier(zb_slot_modifier), max_level=-1)
 
-	all_slot_scans: str = ""
-	for slot in ALL_SLOTS:
-		all_slot_scans += (
-			f'$execute if score #zb_inv_found {ns}.data matches 0 if items entity @s {slot} $(match) '
-			f'run function {ns}:v{version}/zombies/inventory/move_found_slot {{from:"{slot}",to:"$(slot)"}}\n'
-		)
+    	# Marks a magazine as zombies-converted by setting consumable to 2b.
+    	# Value 1b = true consumable (stack count = bullets), 2b = zombies non-consumable (custom_data only).
+    	zb_mark_converted_modifier: list[JsonDict] = [
+    		{
+    			"function": "minecraft:set_custom_data",
+    			"tag": f'{{{ns}: {{consumable: 2b}}}}',
+    		},
+    		{
+    			"function": "minecraft:set_components",
+    			"components": {"minecraft:max_stack_size": 1}
+    		}
+    	]
+    	Mem.ctx.data[ns].item_modifiers[f"v{version}/zb_mark_converted"] = set_json_encoder(ItemModifier(zb_mark_converted_modifier), max_level=-1) # type: ignore
 
-	write_versioned_function("zombies/inventory/apply_slot_tag", f"""
+    	all_slot_scans: str = ""
+    	for slot in ALL_SLOTS:
+    		all_slot_scans += (
+    			f'$execute if score #zb_inv_found {ns}.data matches 0 if items entity @s {slot} $(match) '
+    			f'run function {ns}:v{version}/zombies/inventory/move_found_slot {{from:"{slot}",to:"$(slot)"}}\n'
+    		)
+
+    	self.func("zombies/inventory/apply_slot_tag", f"""
 data modify storage {ns}:temp zb_slot set value {{}}
 $data modify storage {ns}:temp zb_slot.$(group) set value $(index)
 $item modify entity @s $(slot) {ns}:v{version}/zb_slot_tag
 """)
 
-	write_versioned_function("zombies/inventory/read_capacity", f"""
+    	self.func("zombies/inventory/read_capacity", f"""
 $item replace entity @s contents from entity @p[tag={ns}.zb_scaling_mag] $(slot)
 $execute store result score #zb_cap {ns}.data run data get entity @s item.components."minecraft:custom_data".{ns}.stats.{CAPACITY} $(multiplier)
 kill @s
 """)
 
-	write_versioned_function("zombies/inventory/scale_magazine_slot", f"""
+    	self.func("zombies/inventory/scale_magazine_slot", f"""
 # Read capacity from the paired weapon at hotbar.$(index) (inventory.N always pairs with hotbar.N)
 tag @s add {ns}.zb_scaling_mag
 $execute summon item_display run function {ns}:v{version}/zombies/inventory/read_capacity {{slot:"hotbar.$(index)",multiplier:6}}
@@ -114,7 +119,7 @@ execute store result score #bullets {ns}.data run data get storage {ns}:temp zb_
 $function {ns}:v{version}/ammo/modify_mag_lore {{slot:"$(slot)"}}
 """)
 
-	write_versioned_function("zombies/inventory/enforce_slot", f"""
+    	self.func("zombies/inventory/enforce_slot", f"""
 $execute if items entity @s $(slot) $(match) run return 1
 
 # Scan all inventory slots for the correct item and swap it into place
@@ -132,7 +137,7 @@ tag @s remove {ns}.inv_slot_owner
 return 0
 """)
 
-	write_versioned_function("zombies/inventory/move_found_slot", f"""
+    	self.func("zombies/inventory/move_found_slot", f"""
 # Swap source and target via temp item_display (handles empty target too)
 tag @s add {ns}.inv_swapping
 $execute summon item_display run function {ns}:v{version}/zombies/inventory/swap_slots {{from:"$(from)",to:"$(to)"}}
@@ -140,7 +145,7 @@ tag @s remove {ns}.inv_swapping
 scoreboard players set #zb_inv_found {ns}.data 1
 """)
 
-	write_versioned_function("zombies/inventory/swap_slots", f"""
+    	self.func("zombies/inventory/swap_slots", f"""
 # @s = temp item_display, player = @p[tag={ns}.inv_swapping]
 # Save target item to temp display
 $item replace entity @s contents from entity @p[tag={ns}.inv_swapping] $(to)
@@ -152,7 +157,7 @@ $execute unless items entity @s contents * run item replace entity @p[tag={ns}.i
 kill @s
 """)
 
-	write_versioned_function("zombies/inventory/drop_wrong_slot_item", f"""
+    	self.func("zombies/inventory/drop_wrong_slot_item", f"""
 tag @s add {ns}.inv_slot_owner
 summon minecraft:item ~ ~ ~ {{Item:{{id:"minecraft:stone",count:1}},Tags:["{ns}.inv_new_drop"]}}
 $execute as @n[type=item,tag={ns}.inv_new_drop,distance=..1] run function {ns}:v{version}/zombies/inventory/copy_slot_item_to_drop {{slot:"$(slot)"}}
@@ -160,7 +165,7 @@ tag @s remove {ns}.inv_slot_owner
 $item replace entity @s $(slot) with air
 """)
 
-	write_versioned_function("zombies/inventory/copy_slot_item_to_drop", f"""
+    	self.func("zombies/inventory/copy_slot_item_to_drop", f"""
 $item replace entity @s contents from entity @p[tag={ns}.inv_slot_owner] $(slot)
 data modify entity @s PickupDelay set value 0s
 data modify entity @s Thrower set from entity @p[tag={ns}.inv_slot_owner] UUID
@@ -168,13 +173,13 @@ data modify entity @s Owner set from entity @s Thrower
 tag @s remove {ns}.inv_new_drop
 """)
 
-	write_versioned_function("zombies/inventory/try_pick_dropped_item", f"""
+    	self.func("zombies/inventory/try_pick_dropped_item", f"""
 $execute if score #zb_inv_found {ns}.data matches 0 run item replace entity @p[tag={ns}.inv_slot_owner] $(slot) from entity @n[type=item,distance=..8,nbt={{Item:{{components:{{"minecraft:custom_data":$(expected_nbt)}}}}}}] contents
 $execute if score #zb_inv_found {ns}.data matches 0 run kill @n[type=item,distance=..8,nbt={{Item:{{components:{{"minecraft:custom_data":$(expected_nbt)}}}}}}]
 scoreboard players set #zb_inv_found {ns}.data 1
 """)
 
-	write_versioned_function("zombies/inventory/give_starting_loadout", f"""
+    	self.func("zombies/inventory/give_starting_loadout", f"""
 clear @s
 
 # hotbar.0: knife
@@ -201,31 +206,54 @@ function {ns}:v{version}/zombies/inventory/refresh_info_item
 execute if score @s {ns}.zb.ability matches 3.. run function {ns}:v{version}/zombies/inventory/give_ability_item
 """)
 
-	write_versioned_function("zombies/inventory/give_respawn_loadout", f"""
+    	self.func("zombies/inventory/give_respawn_loadout", f"""
 function {ns}:v{version}/zombies/inventory/give_starting_loadout
 """)
 
-	write_versioned_function("zombies/inventory/refresh_info_item", f"""
+    	# Perk list for the info paper (one lore line per owned perk, themed by perk color).
+    	perk_count_lines: str = "\n".join(
+    		f"execute if score @s {ns}.zb.perk.{pid} matches 1 run scoreboard players add #info_perk_count {ns}.data 1"
+    		for pid in PERK_DEFINITIONS
+    	)
+    	perk_item_lines: str = "\n".join(
+    		f'execute if score @s {ns}.zb.perk.{pid} matches 1 run data modify storage {ns}:temp info.lore append value {{"text":"\\u2022 {pdata["display_name"]}","color":"{pdata["message_color"]}","italic":false}}'
+    		for pid, pdata in PERK_DEFINITIONS.items()
+    	)
+    	self.func("zombies/inventory/refresh_info_item", f"""
 # Resolve scoreboard values into storage so lore lines render concrete numbers.
 execute store result storage {ns}:temp info.round int 1 run scoreboard players get #zb_round {ns}.data
 execute store result storage {ns}:temp info.points int 1 run scoreboard players get @s {ns}.zb.points
 execute store result storage {ns}:temp info.kills int 1 run scoreboard players get @s {ns}.zb.kills
 execute store result storage {ns}:temp info.downs int 1 run scoreboard players get @s {ns}.zb.downs
 
+# Build the base lore list with baked numbers, then append a line per owned perk.
+function {ns}:v{version}/zombies/inventory/build_info_lore with storage {ns}:temp info
+scoreboard players set #info_perk_count {ns}.data 0
+{perk_count_lines}
+execute if score #info_perk_count {ns}.data matches 1.. run data modify storage {ns}:temp info.lore append value {{"text":"","italic":false}}
+execute if score #info_perk_count {ns}.data matches 1.. run data modify storage {ns}:temp info.lore append value {{"text":"Perks:","color":"light_purple","italic":false}}
+{perk_item_lines}
+
 function {ns}:v{version}/zombies/inventory/refresh_info_item_render with storage {ns}:temp info
 function {ns}:v{version}/zombies/inventory/apply_slot_tag {{slot:"hotbar.8",group:"hotbar",index:8}}
 """)
 
-	write_versioned_function("zombies/inventory/refresh_info_item_render", f"""
-$item replace entity @s hotbar.8 with minecraft:paper[custom_data={{{ns}:{{zb_info:true}}}},item_name={{"text":"\\u2139 Player Info","color":"gold","italic":false}},lore=[{{"text":"Round: $(round)","color":"gray","italic":false}},{{"text":"Points: $(points)","color":"gray","italic":false}},{{"text":"Kills: $(kills)","color":"gray","italic":false}},{{"text":"Downs: $(downs)","color":"gray","italic":false}}]]
+    	# Macro: build the 4 base lore lines (with concrete numbers) as an NBT list.
+    	self.func("zombies/inventory/build_info_lore", f"""
+$data modify storage {ns}:temp info.lore set value [{{"text":"Round: $(round)","color":"gray","italic":false}},{{"text":"Points: $(points)","color":"gray","italic":false}},{{"text":"Kills: $(kills)","color":"gray","italic":false}},{{"text":"Downs: $(downs)","color":"gray","italic":false}}]
 """)
 
-	write_versioned_function("zombies/inventory/give_ability_item", f"""
+    	# Macro: render the paper with the pre-built lore list ($(lore) substitutes the list SNBT).
+    	self.func("zombies/inventory/refresh_info_item_render", f"""
+$item replace entity @s hotbar.8 with minecraft:paper[custom_data={{{ns}:{{zb_info:true}}}},item_name={{"text":"\\u2139 Player Info","color":"gold","italic":false}},lore=$(lore)]
+""")
+
+    	self.func("zombies/inventory/give_ability_item", f"""
 item replace entity @s hotbar.4 with minecraft:paper[custom_data={{{ns}:{{zb_ability_item:true}}}},consumable={{consume_seconds:1000000,animation:"spear",sound:"minecraft:intentionally_empty",has_consume_particles:false}},food={{saturation:0,nutrition:0,can_always_eat:true}},use_effects={{can_sprint:true,speed_multiplier:1.0,interact_vibrations:false}},item_name={{"text":"Use Ability","color":"green","italic":false}},lore=[{{"text":"Right-click to activate","color":"gray","italic":false}}]]
 function {ns}:v{version}/zombies/inventory/apply_slot_tag {{slot:"hotbar.4",group:"hotbar",index:4}}
 """)
 
-	write_versioned_function("zombies/inventory/replenish_grenades", f"""
+    	self.func("zombies/inventory/replenish_grenades", f"""
 # Case 1: player already has grenades in slot 7 - add 2, cap at 4
 execute if items entity @s hotbar.7 {equipment_1_match} run item modify entity @s hotbar.7 {ns}:v{version}/grenade/set_count_add_2
 execute if items entity @s hotbar.7 {equipment_1_match} store result score #nade_count {ns}.data run data get entity @s Inventory[{{Slot:7b}}].count
@@ -239,19 +267,19 @@ item modify entity @s hotbar.7 {ns}:v{version}/grenade/set_count_2
 function {ns}:v{version}/zombies/inventory/apply_slot_tag {{slot:"hotbar.7",group:"hotbar",index:7}}
 """)
 
-	inv_changed_adv: JsonDict = {
-		"criteria": {
-			"change": {
-				"trigger": "minecraft:inventory_changed",
-			},
-		},
-		"rewards": {
-			"function": f"{ns}:v{version}/zombies/inventory/on_change",
-		},
-	}
-	Mem.ctx.data[ns].advancements[f"v{version}/zombies/inventory_changed"] = set_json_encoder(Advancement(inv_changed_adv), max_level=-1)
+    	inv_changed_adv: JsonDict = {
+    		"criteria": {
+    			"change": {
+    				"trigger": "minecraft:inventory_changed",
+    			},
+    		},
+    		"rewards": {
+    			"function": f"{ns}:v{version}/zombies/inventory/on_change",
+    		},
+    	}
+    	Mem.ctx.data[ns].advancements[f"v{version}/zombies/inventory_changed"] = set_json_encoder(Advancement(inv_changed_adv), max_level=-1)
 
-	write_versioned_function("zombies/inventory/on_change", f"""
+    	self.func("zombies/inventory/on_change", f"""
 advancement revoke @s only {ns}:v{version}/zombies/inventory_changed
 execute unless score @s {ns}.zb.in_game matches 1 run return fail
 execute if data storage {ns}:zombies game{{state:"lobby"}} run return fail
@@ -264,7 +292,7 @@ function {ns}:v{version}/zombies/inventory/check_slots
 tag @s remove {ns}.inv_checking
 """)
 
-	write_versioned_function("zombies/inventory/check_slots", f"""
+    	self.func("zombies/inventory/check_slots", f"""
 # hard forbidden slot
 execute if items entity @s hotbar.5 * run function {ns}:v{version}/zombies/inventory/drop_wrong_slot_item {{slot:"hotbar.5"}}
 
@@ -297,19 +325,19 @@ execute unless score @s {ns}.zb.pap_s matches 2 unless items entity @s hotbar.2 
 execute unless score @s {ns}.zb.pap_s matches 3 unless items entity @s hotbar.3 *[custom_data~{gun_cd}] if items entity @s inventory.3 *[custom_data~{mag_cd}] run item replace entity @s inventory.3 with air
 """)
 
-	write_versioned_function("zombies/game_tick", f"""
+    	self.func("zombies/game_tick", f"""
 # Refresh player info item every 5 seconds (100 ticks)
 scoreboard players add #zb_info_timer {ns}.data 1
 execute if score #zb_info_timer {ns}.data matches 100.. run scoreboard players set #zb_info_timer {ns}.data 0
 execute if score #zb_info_timer {ns}.data matches 0 as @a[scores={{{ns}.zb.in_game=1}},gamemode=!spectator] if items entity @s hotbar.8 *[custom_data~{info_slot_cd}] run function {ns}:v{version}/zombies/inventory/refresh_info_item
 """)
 
-	write_versioned_function("zombies/inventory/on_new_item", f"""
+    	self.func("zombies/inventory/on_new_item", f"""
 # Kill any non-zombies-slot managed drop from zombies players.
 execute if data entity @s Item.components."minecraft:custom_data".{ns} on origin if score @s {ns}.zb.in_game matches 1 unless data entity @s Item.components."minecraft:custom_data".{ns}.zombies run kill @s
 """, tags=["common_signals:signals/on_new_item"])
 
-	write_versioned_function("zombies/inventory/recreate_critical_items", f"""
+    	self.func("zombies/inventory/recreate_critical_items", f"""
 execute unless items entity @s hotbar.0 *[custom_data~{knife_slot_cd}] run item replace entity @s hotbar.0 with {knife_item}
 execute unless items entity @s hotbar.0 *[custom_data~{knife_slot_cd}] run function {ns}:v{version}/zombies/inventory/apply_slot_tag {{slot:"hotbar.0",group:"hotbar",index:0}}
 
@@ -318,4 +346,10 @@ execute unless items entity @s hotbar.7 *[custom_data~{equipment_1_slot_cd}] run
 
 execute unless items entity @s hotbar.8 *[custom_data~{info_slot_cd}] run function {ns}:v{version}/zombies/inventory/refresh_info_item
 """)
+
+
+def generate_zombies_inventory() -> None:
+	""" Module-level entry (preserved signature); delegates to :class:`InventoryGenerator`. """
+	InventoryGenerator()()
+
 

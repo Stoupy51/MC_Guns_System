@@ -3,7 +3,7 @@
 #
 # @executed	at @s & as @n[tag=mgs.map_element,distance=..10]
 #
-# @within	mgs:v5.0.1/maps/editor/show_element_config {back_group_id:-1}"}, "hover_event": {"action": "show_text", "value": "Sets back_group_id on ALL doors with same link_id"}}, "\u270e", "]"]]
+# @within	mgs:v5.0.1/maps/editor/show_element_config {back_group_id:-1}"}, "hover_event": {"action": "show_text", "value": "Sets back_group_id on ALL doors with same link_id"}}, "\u270e", "]"],"  ",{"text":"ⓘ","color":"aqua","hover_event":{"action":"show_text","value":"Zombie spawn group_id unlocked behind this door (-1 = none)."}}]
 #
 # @args		back_group_id (int)
 #

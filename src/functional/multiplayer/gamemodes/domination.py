@@ -1,17 +1,21 @@
 
 # ruff: noqa: E501
 # Imports
-from stewbeet import Mem, write_versioned_function
-
 from ...helpers import MGS_TAG
+from .base import GameModeVariant
 
 
-def generate_domination() -> None:
-	ns: str = Mem.ctx.project_id
-	version: str = Mem.ctx.project_version
+class Domination(GameModeVariant):
+	""" Domination: capture and hold lettered zones (A-E) to earn points over time. """
 
-	## DOM Setup: Summon capture point markers from loaded map
-	write_versioned_function("multiplayer/gamemodes/dom/setup", f"""
+	key = "dom"
+
+	def generate(self) -> None:
+		ns: str = self.ns
+		version: str = self.version
+
+		## DOM Setup: Summon capture point markers from loaded map
+		self.sub("setup", f"""
 tellraw @a [{MGS_TAG},{{"text":"Domination! Capture and hold zones to earn points!","color":"yellow"}}]
 
 # Store base coordinates for offset computation
@@ -41,8 +45,8 @@ execute store result score #dom_point_count {ns}.data if entity @e[tag={ns}.dom_
 scoreboard players set #dom_score_timer {ns}.data 100
 """)
 
-	## DOM: Summon a single capture point marker (convert relative to absolute)
-	write_versioned_function("multiplayer/gamemodes/dom/summon_point", f"""
+		## DOM: Summon a single capture point marker (convert relative to absolute)
+		self.sub("summon_point", f"""
 # Read relative coords
 execute store result score #rx {ns}.data run data get storage {ns}:temp _dom_iter[0][0]
 execute store result score #ry {ns}.data run data get storage {ns}:temp _dom_iter[0][1]
@@ -74,14 +78,14 @@ data remove storage {ns}:temp _dom_iter[0]
 execute if data storage {ns}:temp _dom_iter[0] run function {ns}:v{version}/multiplayer/gamemodes/dom/summon_point
 """)
 
-	## DOM: Summon marker + text label at computed absolute coords (macro)
-	write_versioned_function("multiplayer/gamemodes/dom/summon_point_at", f"""
+		## DOM: Summon marker + text label at computed absolute coords (macro)
+		self.sub("summon_point_at", f"""
 $summon minecraft:marker $(x) $(y) $(z) {{Tags:["{ns}.dom_point","{ns}.gm_entity","{ns}.dom_label_$(label)"]}}
 $summon minecraft:text_display $(x) $(y) $(z) {{Tags:["{ns}.dom_label","{ns}.gm_entity","{ns}.dom_$(label)"],billboard:"vertical",text:{{"text":"$(label)","color":"yellow","bold":true}},transformation:{{translation:[0.0f,2.0f,0.0f],left_rotation:[0.0f,0.0f,0.0f,1.0f],scale:[3.0f,3.0f,3.0f],right_rotation:[0.0f,0.0f,0.0f,1.0f]}},shadow:true,see_through:true}}
 """)
 
-	## DOM Tick: Check capture progress + score
-	write_versioned_function("multiplayer/gamemodes/dom/tick", f"""
+		## DOM Tick: Check capture progress + score
+		self.sub("tick", f"""
 # Process each domination point
 execute as @e[tag={ns}.dom_point] at @s run function {ns}:v{version}/multiplayer/gamemodes/dom/point_tick
 
@@ -101,8 +105,8 @@ execute if score #dom_score_timer {ns}.data matches ..0 run scoreboard players s
 execute as @e[tag={ns}.dom_point] at @s run function {ns}:v{version}/multiplayer/gamemodes/dom/point_particles
 """)
 
-	## DOM: Per-point tick - check nearby players and adjust capture
-	write_versioned_function("multiplayer/gamemodes/dom/point_tick", f"""
+		## DOM: Per-point tick - check nearby players and adjust capture
+		self.sub("point_tick", f"""
 # Visual capture progress particles (smooth blue <-> yellow <-> red gradient)
 execute if score @s {ns}.mp.dom_progress matches -65..65 run particle dust{{color:[1.0,1.0,0.0],scale:1.0}} ~ ~1 ~ 1 1 1 0 5
 execute if score @s {ns}.mp.dom_progress matches 34..65 run particle dust{{color:[1.0,0.75,0.25],scale:1.0}} ~ ~1 ~ 1 1 1 0 5
@@ -126,23 +130,23 @@ execute if score #dom_red {ns}.data matches 1.. unless score #dom_blue {ns}.data
 execute if score #dom_blue {ns}.data matches 1.. unless score #dom_red {ns}.data matches 1.. run function {ns}:v{version}/multiplayer/gamemodes/dom/capture_blue
 """)
 
-	## DOM: Capture for red/blue (parameterized mirror)
-	DOM_LABELS: list[str] = ["A", "B", "C", "D", "E"]
-	for color, team_name, owner_id, op, cap, cap_match, neut_old, neut_new, pitch in [
-		("red",  "Red",  1, "add",    100,  "101..",  "..-1", "0..",  "1.2"),
-		("blue", "Blue", 2, "remove", -100, "..-101", "1..",  "..0",  "0.8"),
-	]:
-		neutralize_labels: str = "\n".join(
-			f'execute if score #dom_prog {ns}.data matches {neut_old} if score @s {ns}.mp.dom_progress matches {neut_new} '
-			f'if entity @s[tag={ns}.dom_label_{lbl}] run tellraw @a [{MGS_TAG},{{"text":"Point {lbl} neutralized!","color":"yellow"}}]'
-			for lbl in DOM_LABELS
-		)
-		capture_labels: str = "\n".join(
-			f'execute if score @s {ns}.mp.dom_progress matches {cap} unless score @s {ns}.mp.dom_owner matches {owner_id} '
-			f'if entity @s[tag={ns}.dom_label_{lbl}] run tellraw @a [{MGS_TAG},{{"text":"{team_name}","color":"{color}"}}," ",{{"text":"captured point {lbl}!","color":"yellow"}}]'
-			for lbl in DOM_LABELS
-		)
-		write_versioned_function(f"multiplayer/gamemodes/dom/capture_{color}", f"""
+		## DOM: Capture for red/blue (parameterized mirror)
+		DOM_LABELS: list[str] = ["A", "B", "C", "D", "E"]
+		for color, team_name, owner_id, op, cap, cap_match, neut_old, neut_new, pitch in [
+			("red",  "Red",  1, "add",    100,  "101..",  "..-1", "0..",  "1.2"),
+			("blue", "Blue", 2, "remove", -100, "..-101", "1..",  "..0",  "0.8"),
+		]:
+			neutralize_labels: str = "\n".join(
+				f'execute if score #dom_prog {ns}.data matches {neut_old} if score @s {ns}.mp.dom_progress matches {neut_new} '
+				f'if entity @s[tag={ns}.dom_label_{lbl}] run tellraw @a [{MGS_TAG},{{"text":"Point {lbl} neutralized!","color":"yellow"}}]'
+				for lbl in DOM_LABELS
+			)
+			capture_labels: str = "\n".join(
+				f'execute if score @s {ns}.mp.dom_progress matches {cap} unless score @s {ns}.mp.dom_owner matches {owner_id} '
+				f'if entity @s[tag={ns}.dom_label_{lbl}] run tellraw @a [{MGS_TAG},{{"text":"{team_name}","color":"{color}"}}," ",{{"text":"captured point {lbl}!","color":"yellow"}}]'
+				for lbl in DOM_LABELS
+			)
+			self.sub(f"capture_{color}", f"""
 execute store result score #dom_prog {ns}.data run scoreboard players get @s {ns}.mp.dom_progress
 scoreboard players {op} @s {ns}.mp.dom_progress 2
 
@@ -162,8 +166,8 @@ execute if score @s {ns}.mp.dom_progress matches {cap} unless score @s {ns}.mp.d
 execute if score @s {ns}.mp.dom_progress matches {cap} unless score @s {ns}.mp.dom_owner matches {owner_id} run scoreboard players set @s {ns}.mp.dom_owner {owner_id}
 """)
 
-	## DOM: Score tick - +1 per owned point
-	write_versioned_function("multiplayer/gamemodes/dom/score_tick", f"""
+		## DOM: Score tick - +1 per owned point
+		self.sub("score_tick", f"""
 # Count red-owned and blue-owned points
 execute store result score #dom_r {ns}.data if entity @e[tag={ns}.dom_point,scores={{{ns}.mp.dom_owner=1}}]
 execute store result score #dom_b {ns}.data if entity @e[tag={ns}.dom_point,scores={{{ns}.mp.dom_owner=2}}]
@@ -179,8 +183,8 @@ function {ns}:v{version}/multiplayer/refresh_sidebar_dom
 function {ns}:v{version}/multiplayer/check_team_win
 """)
 
-	## DOM: Point particles (colored by owner) - base ring + vertical beam
-	write_versioned_function("multiplayer/gamemodes/dom/point_particles", f"""
+		## DOM: Point particles (colored by owner) - base ring + vertical beam
+		self.sub("point_particles", f"""
 # Base ring around zone
 scoreboard players add @s {ns}.mp.dom_owner 0
 execute if score @s {ns}.mp.dom_owner matches 0 run particle dust{{color:[1.0,1.0,1.0],scale:1.5}} ~ ~0.5 ~ 2.5 0.3 2.5 0 10
@@ -193,8 +197,8 @@ execute if score @s {ns}.mp.dom_owner matches 1 run particle dust{{color:[1.0,0.
 execute if score @s {ns}.mp.dom_owner matches 2 run particle dust{{color:[0.2,0.2,1.0],scale:2.0}} ~ ~8 ~ 0.1 2.0 0.1 0 3
 """)
 
-	## DOM Kill Hook: Kills also give +1 to team
-	write_versioned_function("multiplayer/gamemodes/dom/on_kill", f"""
+		## DOM Kill Hook: Kills also give +1 to team
+		self.sub("on_kill", f"""
 scoreboard players add @s {ns}.mp.kills 1
 execute if score @s {ns}.mp.team matches 1 run scoreboard players add #red {ns}.mp.team 1
 execute if score @s {ns}.mp.team matches 2 run scoreboard players add #blue {ns}.mp.team 1
@@ -203,9 +207,13 @@ execute if score @s {ns}.mp.team matches 2 run scoreboard players add #blue {ns}
 function {ns}:v{version}/multiplayer/refresh_sidebar_dom
 """)
 
-	## DOM Cleanup: Kill markers and labels
-	write_versioned_function("multiplayer/gamemodes/dom/cleanup", f"""
+		## DOM Cleanup: Kill markers and labels
+		self.sub("cleanup", f"""
 kill @e[tag={ns}.dom_point]
 kill @e[tag={ns}.dom_label]
 """)
 
+
+def generate_domination() -> None:
+	""" Module-level entry point (preserved signature); delegates to :class:`Domination`. """
+	Domination()()

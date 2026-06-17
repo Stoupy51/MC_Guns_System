@@ -3,34 +3,38 @@
 from stewbeet import Mem, write_versioned_function
 
 from ..helpers import btn
+from ..generator import McfunctionGenerator
 
 
-def generate_zombies_menus() -> None:
-	ns: str = Mem.ctx.project_id
-	version: str = Mem.ctx.project_version
-	sep = '{"text":"============================================","color":"dark_gray"}'
+class MenusGenerator(McfunctionGenerator):
+    """ Generates the menus datapack functions. """
 
-	## Zombies Setup Menu
-	setup_title = '[{"text":"","color":"dark_green","bold":true},"       🧟 ",{"text":"Zombies Setup"}," 🧟"]'
+    def generate(self) -> None:
+    	ns: str = self.ns
+    	version: str = self.version
+    	sep = '{"text":"============================================","color":"dark_gray"}'
 
-	# Map selection button
-	map_select_btn = btn("Select Map", f"/function {ns}:v{version}/zombies/map_select", "dark_green", "Browse and select a zombies map")
-	map_line = f'["",["","  ",{{"text":"Map"}},": "],{map_select_btn}]'
+    	## Zombies Setup Menu
+    	setup_title = '[{"text":"","color":"dark_green","bold":true},"       🧟 ",{"text":"Zombies Setup"}," 🧟"]'
 
-	# Variant selection buttons (Vanilla = classic CoD zombies, Zonweeb = passives/abilities/special zombies)
-	vanilla_btn = btn("Vanilla", f'/data modify storage {ns}:zombies game.variant set value "vanilla"', "yellow", "Classic CoD zombies: no passives, abilities, or special zombies")
-	zonweeb_btn = btn("Zonweeb", f'/data modify storage {ns}:zombies game.variant set value "zonweeb"', "green", "Full experience: passives, abilities, and special zombies")
-	variant_line = f'["",["","  ",{{"text":"Variant"}},": "],{vanilla_btn}," ",{zonweeb_btn}]'
+    	# Map selection button
+    	map_select_btn = btn("Select Map", f"/function {ns}:v{version}/zombies/map_select", "dark_green", "Browse and select a zombies map")
+    	map_line = f'["",["","  ",{{"text":"Map"}},": "],{map_select_btn}]'
 
-	# Action buttons
-	start_btn = btn("▶ START", f"/function {ns}:v{version}/zombies/start", "green", "Start the zombies game")
-	stop_btn = btn("■ STOP", f"/function {ns}:v{version}/zombies/stop", "red", "Stop the zombies game")
-	teams_btn = btn("👥 Roster", f"/function {ns}:v{version}/multiplayer/show_teams", "dark_aqua", "Show which players have team assignments")
-	join_btn = btn("+ Join", f"/function {ns}:v{version}/zombies/join_game", "yellow", "Join the ongoing zombies game as a late joiner")
+    	# Variant selection buttons (Vanilla = classic CoD zombies, Zonweeb = passives/abilities/special zombies)
+    	vanilla_btn = btn("Vanilla", f'/data modify storage {ns}:zombies game.variant set value "vanilla"', "yellow", "Classic CoD zombies: no passives, abilities, or special zombies")
+    	zonweeb_btn = btn("Zonweeb", f'/data modify storage {ns}:zombies game.variant set value "zonweeb"', "green", "Full experience: passives, abilities, and special zombies")
+    	variant_line = f'["",["","  ",{{"text":"Variant"}},": "],{vanilla_btn}," ",{zonweeb_btn}]'
 
-	actions_line = f'["",["","  ",{{"text":"Actions"}},": "],{start_btn}," ",{stop_btn}," ",{teams_btn}," ",{join_btn}]'
+    	# Action buttons
+    	start_btn = btn("▶ START", f"/function {ns}:v{version}/zombies/start", "green", "Start the zombies game")
+    	stop_btn = btn("■ STOP", f"/function {ns}:v{version}/zombies/stop", "red", "Stop the zombies game")
+    	teams_btn = btn("👥 Roster", f"/function {ns}:v{version}/multiplayer/show_teams", "dark_aqua", "Show which players have team assignments")
+    	join_btn = btn("+ Join", f"/function {ns}:v{version}/zombies/join_game", "yellow", "Join the ongoing zombies game as a late joiner")
 
-	write_versioned_function("zombies/setup", f"""
+    	actions_line = f'["",["","  ",{{"text":"Actions"}},": "],{start_btn}," ",{stop_btn}," ",{teams_btn}," ",{join_btn}]'
+
+    	self.func("zombies/setup", f"""
 tellraw @s {sep}
 tellraw @s {setup_title}
 tellraw @s {sep}
@@ -41,8 +45,8 @@ tellraw @s {actions_line}
 tellraw @s {sep}
 """)
 
-	## Map selection menu: list all available zombies maps
-	write_versioned_function("zombies/map_select", f"""
+    	## Map selection menu: list all available zombies maps
+    	self.func("zombies/map_select", f"""
 tellraw @s {sep}
 tellraw @s [{{"text":"","color":"dark_green","bold":true}},"  🗺 ",{{"text":"Select Zombies Map"}}]
 tellraw @s {sep}
@@ -57,5 +61,9 @@ execute unless data storage {ns}:maps zombies[0] run tellraw @s ["  ",{{"text":"
 tellraw @s {sep}
 """)
 
+
+def generate_zombies_menus() -> None:
+	""" Module-level entry (preserved signature); delegates to :class:`MenusGenerator`. """
+	MenusGenerator()()
 
 
