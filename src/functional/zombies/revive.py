@@ -296,18 +296,23 @@ function {ns}:v{version}/zombies/revive/revive_complete
     	## Reviver actionbar (run as the reviving player, context @s = reviver, nearest downed = target)
     	# ──────────────────────────────────────────────────────────────────────────
     	self.func("zombies/revive/show_reviver_bar", f"""
+# Resolve the nearest downed player's revive progress into a stable fake-player holder. A selector
+# used as a score component's "name" does not reliably resolve in the actionbar packet (it rendered
+# blank -> "/30t"), so we read the value here and display the holder instead.
+execute store result score #rv_reviver_disp {ns}.data run scoreboard players get @p[tag={ns}.downed_spectator,sort=nearest,distance=..{REVIVE_RANGE}] {ns}.zb.revive_p
+
 # Check if reviver has Quick Revive perk
 execute if entity @s[tag={ns}.perk.quick_revive] run function {ns}:v{version}/zombies/revive/show_reviver_bar_quick
 execute unless entity @s[tag={ns}.perk.quick_revive] run function {ns}:v{version}/zombies/revive/show_reviver_bar_normal
 """)
 
     	self.func("zombies/revive/show_reviver_bar_normal", f"""
-data modify storage smithed.actionbar:input message set value {{json:[{{"text":"Reviving... ","color":"yellow"}},{{"score":{{"name":"@p[tag={ns}.downed_spectator,sort=nearest,distance=..{REVIVE_RANGE}]","objective":"{ns}.zb.revive_p"}},"color":"green"}},{{"text":"/{REVIVE_TICKS}t","color":"gray"}}],priority:"override",freeze:2}}
+data modify storage smithed.actionbar:input message set value {{json:[{{"text":"Reviving... ","color":"yellow"}},{{"score":{{"name":"#rv_reviver_disp","objective":"{ns}.data"}},"color":"green"}},{{"text":"/{REVIVE_TICKS}t","color":"gray"}}],priority:"override",freeze:2}}
 function #smithed.actionbar:message
 """)
 
     	self.func("zombies/revive/show_reviver_bar_quick", f"""
-data modify storage smithed.actionbar:input message set value {{json:[{{"text":"⚡ Reviving... ","color":"aqua"}},{{"score":{{"name":"@p[tag={ns}.downed_spectator,sort=nearest,distance=..{REVIVE_RANGE}]","objective":"{ns}.zb.revive_p"}},"color":"green"}},{{"text":"/{QUICK_REVIVE_TICKS}t","color":"gray"}}],priority:"override",freeze:2}}
+data modify storage smithed.actionbar:input message set value {{json:[{{"text":"⚡ Reviving... ","color":"aqua"}},{{"score":{{"name":"#rv_reviver_disp","objective":"{ns}.data"}},"color":"green"}},{{"text":"/{QUICK_REVIVE_TICKS}t","color":"gray"}}],priority:"override",freeze:2}}
 function #smithed.actionbar:message
 """)
 
@@ -418,12 +423,16 @@ execute as @a[scores={{{ns}.zb.in_game=1}},gamemode=spectator] run function {ns}
 """)
 
     	self.func("zombies/revive/do_round_respawn", f"""
+# If this player was still DOWNED (mannequin alive) when the round ended, fully tear that state
+# down first — otherwise their mannequin/HUD/camera would be orphaned and they'd stay "downed".
+execute if entity @s[tag={ns}.downed_spectator] run function {ns}:v{version}/zombies/revive/clear_downed_state
+
 # Restore adventure mode
 spectate @s
 gamemode adventure @s
 
-# Teleport to random player spawn
-function {ns}:v{version}/zombies/respawn_tp
+# Teleport to a player spawn near a random alive teammate
+function {ns}:v{version}/zombies/revive/respawn_near_player
 
 # Re-apply saturation and heal
 effect give @s minecraft:saturation infinite 255 true
@@ -441,6 +450,56 @@ function {ns}:v{version}/shared/maps/call_respawn_script_at_base
 
 # Announce
 tellraw @a[scores={{{ns}.zb.in_game=1}}] [{MGS_TAG},{{"selector":"@s","color":"green"}},{{"text":" has respawned!","color":"gray"}}]
+""")
+
+    	## Fully tear down @s's downed mannequin/HUD/camera (matched by downed_id) and dismount.
+    	## Used when a still-downed player is force-revived at round end.
+    	self.func("zombies/revive/clear_downed_state", f"""
+scoreboard players operation #my_downed_id {ns}.data = @s {ns}.zb.downed_id
+execute as @e[tag={ns}.downed_mannequin] if score @s {ns}.zb.downed_id = #my_downed_id {ns}.data at @s run kill @n[tag={ns}.downed_hud,distance=..3]
+execute as @e[tag={ns}.downed_mannequin] if score @s {ns}.zb.downed_id = #my_downed_id {ns}.data run kill @s
+execute as @e[tag={ns}.downed_cam] if score @s {ns}.zb.downed_id = #my_downed_id {ns}.data run kill @s
+ride @s dismount
+scoreboard players set @s {ns}.zb.downed 0
+scoreboard players set @s {ns}.zb.revive_p 0
+tag @s remove {ns}.downed_spectator
+""")
+
+    	## Teleport @s to the unlocked player spawn nearest to a random alive teammate (so respawned
+    	## players rejoin near the action rather than at an arbitrary spawn).
+    	self.func("zombies/revive/respawn_near_player", f"""
+tag @s add {ns}.spawn_pending
+execute as @r[scores={{{ns}.zb.in_game=1,{ns}.zb.downed=0}},gamemode=!spectator,limit=1] at @s run tag @n[tag={ns}.spawn_point,tag={ns}.spawn_zb_player,tag={ns}.spawn_unlocked] add {ns}.spawn_candidate
+# Fallback: if no alive teammate, use the unlocked player spawn nearest to @s
+execute unless entity @e[tag={ns}.spawn_candidate] run tag @n[tag={ns}.spawn_point,tag={ns}.spawn_zb_player,tag={ns}.spawn_unlocked] add {ns}.spawn_candidate
+execute as @n[tag={ns}.spawn_candidate] run function {ns}:v{version}/zombies/tp_to_spawn
+tag @e[tag={ns}.spawn_candidate] remove {ns}.spawn_candidate
+tag @a[tag={ns}.spawn_pending] remove {ns}.spawn_pending
+""")
+
+    	# ──────────────────────────────────────────────────────────────────────────
+    	## Full death: instant elimination with NO mannequin (e.g. falling out of the world).
+    	## The player goes straight to bled-out spectator and is respawned at the next round end.
+    	# ──────────────────────────────────────────────────────────────────────────
+    	self.func("zombies/revive/full_death", f"""
+# Count it as a down and strip perks (same as a normal down/bleed-out)
+scoreboard players add @s {ns}.zb.downs 1
+function {ns}:v{version}/zombies/perks/lose_all
+
+# Defensively clear any downed state (no mannequin is created on this path)
+scoreboard players set @s {ns}.zb.downed 0
+scoreboard players set @s {ns}.zb.revive_p 0
+tag @s remove {ns}.downed_spectator
+
+# Enter spectator and watch a random alive teammate (respawn handled at round end)
+gamemode spectator @s
+execute as @r[scores={{{ns}.zb.in_game=1,{ns}.zb.downed=0}},gamemode=!spectator,limit=1] run spectate @s
+execute unless entity @a[scores={{{ns}.zb.in_game=1,{ns}.zb.downed=0}},gamemode=!spectator] run tp @s ~ ~ ~
+
+# Announce
+title @s title [{{"text":"☠","color":"dark_red"}}]
+title @s subtitle [{{"text":"You fell out of the world!","color":"gray"}}]
+tellraw @a[scores={{{ns}.zb.in_game=1}}] [{MGS_TAG},{{"selector":"@s","color":"dark_red"}},{{"text":" fell out of the world.","color":"gray"}}]
 """)
 
     	# ──────────────────────────────────────────────────────────────────────────

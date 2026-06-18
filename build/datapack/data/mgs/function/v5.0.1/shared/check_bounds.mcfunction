@@ -4,7 +4,6 @@
 # @executed	as @e[tag=mgs.zombie_round] & at @s
 #
 # @within	mgs:v5.0.1/zombies/game_tick [ as @e[tag=mgs.zombie_round] & at @s ]
-#			mgs:v5.0.1/zombies/game_tick [ at @s ]
 #			mgs:v5.0.1/missions/game_tick [ as @e[tag=mgs.mission_enemy] & at @s ]
 #			mgs:v5.0.1/missions/game_tick [ at @s ]
 #

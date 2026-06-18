@@ -6,12 +6,16 @@
 # @within	mgs:v5.0.1/zombies/revive/round_respawn [ as @a[scores={mgs.zb.in_game=1},gamemode=spectator] ]
 #
 
+# If this player was still DOWNED (mannequin alive) when the round ended, fully tear that state
+# down first — otherwise their mannequin/HUD/camera would be orphaned and they'd stay "downed".
+execute if entity @s[tag=mgs.downed_spectator] run function mgs:v5.0.1/zombies/revive/clear_downed_state
+
 # Restore adventure mode
 spectate @s
 gamemode adventure @s
 
-# Teleport to random player spawn
-function mgs:v5.0.1/zombies/respawn_tp
+# Teleport to a player spawn near a random alive teammate
+function mgs:v5.0.1/zombies/revive/respawn_near_player
 
 # Re-apply saturation and heal
 effect give @s minecraft:saturation infinite 255 true

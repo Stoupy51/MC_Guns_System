@@ -252,7 +252,7 @@ execute as @e[tag={ns}.zb_rising] at @s run function {ns}:v{version}/zombies/zom
 
 # Boundary enforcement (skip spectators, only if map has bounds)
 execute if score #zb_has_bounds {ns}.data matches 1 as @e[tag={ns}.zombie_round] at @s run function {ns}:v{version}/shared/check_bounds
-execute if score #zb_has_bounds {ns}.data matches 1 as @e[type=player,scores={{{ns}.zb.in_game=1}},gamemode=!creative,gamemode=!spectator] at @s run function {ns}:v{version}/shared/check_bounds
+execute if score #zb_has_bounds {ns}.data matches 1 as @e[type=player,scores={{{ns}.zb.in_game=1}},gamemode=!creative,gamemode=!spectator] at @s run function {ns}:v{version}/zombies/check_bounds_player
 
 # Check round completion
 execute store result score #zb_alive {ns}.data if entity @e[tag={ns}.zombie_round]
@@ -525,6 +525,23 @@ scoreboard players set @s {ns}.zb.stuck_dist 4
 execute store result score @s {ns}.zb.stuck_x run data get entity @s Pos[0]
 execute store result score @s {ns}.zb.stuck_z run data get entity @s Pos[2]
 scoreboard players operation @s {ns}.zb.stuck_ticks = #total_tick {ns}.data
+""")
+
+    	## Player boundary check (zombies): unlike zombies (out_of_world damage -> down + mannequin),
+    	## a player leaving the play area is a TOTAL elimination with no mannequin, respawning at the
+    	## next round end. Uses the same #bound_* scores loaded by shared/load_bounds.
+    	self.func("zombies/check_bounds_player", f"""
+data modify storage {ns}:temp _player_pos set from entity @s Pos
+execute store result score @s {ns}.mp.bx run data get storage {ns}:temp _player_pos[0]
+execute store result score @s {ns}.mp.by run data get storage {ns}:temp _player_pos[1]
+execute store result score @s {ns}.mp.bz run data get storage {ns}:temp _player_pos[2]
+
+execute if score @s {ns}.mp.bx < #bound_x1 {ns}.data run return run function {ns}:v{version}/zombies/revive/full_death
+execute if score @s {ns}.mp.bx > #bound_x2 {ns}.data run return run function {ns}:v{version}/zombies/revive/full_death
+execute if score @s {ns}.mp.by < #bound_y1 {ns}.data run return run function {ns}:v{version}/zombies/revive/full_death
+execute if score @s {ns}.mp.by > #bound_y2 {ns}.data run return run function {ns}:v{version}/zombies/revive/full_death
+execute if score @s {ns}.mp.bz < #bound_z1 {ns}.data run return run function {ns}:v{version}/zombies/revive/full_death
+execute if score @s {ns}.mp.bz > #bound_z2 {ns}.data run return run function {ns}:v{version}/zombies/revive/full_death
 """)
 
     	# Spawn Point Markers ───────────────────────────────────────

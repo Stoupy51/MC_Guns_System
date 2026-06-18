@@ -7,6 +7,6 @@
 #
 
 execute as @a[scores={mgs.zb.in_game=1},gamemode=!spectator] run function mgs:zombies/bonus/max_ammo
-playsound mgs:zombies/powerups/max_ammo ambient @a[scores={mgs.zb.in_game=1}] ~ ~ ~ 1.0 1.0
-playsound mgs:zombies/powerups/max_ammo_additional ambient @a[scores={mgs.zb.in_game=1}] ~ ~ ~ 1.0 1.0
+execute as @a[scores={mgs.zb.in_game=1}] at @s run playsound mgs:zombies/powerups/max_ammo ambient @s ~ ~ ~ 1.0 1.0
+execute as @a[scores={mgs.zb.in_game=1}] at @s run playsound mgs:zombies/powerups/max_ammo_additional ambient @s ~ ~ ~ 1.0 1.0
 
