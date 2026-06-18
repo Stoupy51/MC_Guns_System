@@ -280,10 +280,13 @@ void main() {
         vec2 base = vec2(-1.0, -1.0);
         vec2 size = vec2(MARKER_NDC_SIZE);
 
-        // z = -1.0 puts the marker at the NEAR PLANE (depth 0.0).
-        // Dust uses OPAQUE_PARTICLE pipeline: depth test LEQUAL, depth
-        // write ON. Our depth 0.0 always passes (≤ any scene depth).
-        gl_Position = vec4(base + corners[gl_VertexID % 4] * size, -1.0, 1.0);
+        // Put the marker at the NEAR PLANE so it always passes the depth test.
+        // 26.2 switched to a REVERSED-Z depth buffer: the depth buffer now clears to
+        // 0.0 (far) and OPAQUE_PARTICLE's DepthStencilState.DEFAULT test flipped from
+        // LEQUAL to GEQUAL — so the near plane is depth 1.0, not 0.0. NDC z = +1.0
+        // (gl_Position.z == w) → window depth 1.0, which is >= any scene depth, so the
+        // marker is never occluded. (Pre-26.2 this was z = -1.0 → depth 0.0 under LEQUAL.)
+        gl_Position = vec4(base + corners[gl_VertexID % 4] * size, 1.0, 1.0);
 
         // Camera distance for 3rd person detection:
         // Position is camera-relative → length(Position) ≈ 1.0 in 1st person, ≈ 5.0 in 3rd person
