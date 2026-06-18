@@ -3,30 +3,27 @@
 # Physical block barriers that players purchase to open.
 # Doors with the same link_id open together. Opening doors unlocks new map areas via the group system.
 
+from stewbeet import Mem, write_load_file, write_versioned_function
 from ..helpers import MGS_TAG
 from .common import deny_not_enough_points_body, game_active_guard_cmd
-from ..generator import McfunctionGenerator
 
 
-class DoorsGenerator(McfunctionGenerator):
-    """ Generates the doors datapack functions. """
+def generate_doors() -> None:
+	ns: str = Mem.ctx.project_id
+	version: str = Mem.ctx.project_version
+	interaction_offset: float = 0.75  # Distance in front of door block to place interaction entities
+	front_door_tags: str = f'["{ns}.door","{ns}.door_front","{ns}.gm_entity","bs.entity.interaction","{ns}.door_new"]'
+	back_door_tags: str = f'["{ns}.door","{ns}.door_back","{ns}.gm_entity","bs.entity.interaction","{ns}.door_new"]'
+	door_hover_message: str = (
+		f'[{{"text":"🛠 ","color":"gold"}},'
+		f'{{"storage":"{ns}:temp","nbt":"_door_hover_name","color":"yellow","interpret":true}},'
+		f'{{"text":" - Cost: ","color":"gray"}},'
+		f'{{"score":{{"name":"#door_price","objective":"{ns}.data"}},"color":"yellow"}},'
+		f'{{"text":" points","color":"gray"}}]'
+	)
 
-    def generate(self) -> None:
-    	ns: str = self.ns
-    	version: str = self.version
-    	interaction_offset: float = 0.75  # Distance in front of door block to place interaction entities
-    	front_door_tags: str = f'["{ns}.door","{ns}.door_front","{ns}.gm_entity","bs.entity.interaction","{ns}.door_new"]'
-    	back_door_tags: str = f'["{ns}.door","{ns}.door_back","{ns}.gm_entity","bs.entity.interaction","{ns}.door_new"]'
-    	door_hover_message: str = (
-    		f'[{{"text":"🛠 ","color":"gold"}},'
-    		f'{{"storage":"{ns}:temp","nbt":"_door_hover_name","color":"yellow","interpret":true}},'
-    		f'{{"text":" - Cost: ","color":"gray"}},'
-    		f'{{"score":{{"name":"#door_price","objective":"{ns}.data"}},"color":"yellow"}},'
-    		f'{{"text":" points","color":"gray"}}]'
-    	)
-
-    	## Door entity scoreboards
-    	self.load(f"""
+	## Door entity scoreboards
+	write_load_file(f"""
 # Door entity scoreboards
 scoreboard objectives add {ns}.zb.door.link dummy
 scoreboard objectives add {ns}.zb.door.price dummy
@@ -36,13 +33,13 @@ scoreboard objectives add {ns}.zb.door.anim dummy
 scoreboard objectives add {ns}.zb.door.rot dummy
 """)
 
-    	## Setup: iterate door compounds, place blocks, summon interaction entities
-    	self.func("zombies/doors/setup", f"""
+	## Setup: iterate door compounds, place blocks, summon interaction entities
+	write_versioned_function("zombies/doors/setup", f"""
 data modify storage {ns}:temp _door_iter set from storage {ns}:zombies game.map.doors
 execute if data storage {ns}:temp _door_iter[0] run function {ns}:v{version}/zombies/doors/setup_iter
 """)
 
-    	self.func("zombies/doors/setup_iter", f"""
+	write_versioned_function("zombies/doors/setup_iter", f"""
 # Read relative position and convert to absolute
 execute store result score #dx {ns}.data run data get storage {ns}:temp _door_iter[0].pos[0]
 execute store result score #dy {ns}.data run data get storage {ns}:temp _door_iter[0].pos[1]
@@ -91,7 +88,7 @@ data remove storage {ns}:temp _door_iter[0]
 execute if data storage {ns}:temp _door_iter[0] run function {ns}:v{version}/zombies/doors/setup_iter
 """)
 
-    	self.func("zombies/doors/place_at", f"""
+	write_versioned_function("zombies/doors/place_at", f"""
 # Place door block at position
 $setblock $(x) $(y) $(z) $(block)
 
@@ -102,8 +99,8 @@ $execute positioned $(x) $(y) $(z) rotated $(facing) 0 run summon minecraft:inte
 $execute positioned $(x) $(y) $(z) rotated $(facing) 0 run summon minecraft:interaction ^ ^ ^-{interaction_offset} {{width:1.5f,height:1.1f,response:true,Tags:{back_door_tags}}}
 """)
 
-    	## Right-click handler (executor: "source" = player)
-    	self.func("zombies/doors/on_right_click", f"""
+	## Right-click handler (executor: "source" = player)
+	write_versioned_function("zombies/doors/on_right_click", f"""
 # Guard: game must be active
 {game_active_guard_cmd(ns)}
 
@@ -132,12 +129,12 @@ tellraw @a [{MGS_TAG},{{"selector":"@s","color":"yellow"}},{{"text":" opened ","
 function {ns}:v{version}/zombies/feedback/sound_announce
 """)  # noqa: E501
 
-    	self.func("zombies/doors/deny_not_enough_points", f"""
+	write_versioned_function("zombies/doors/deny_not_enough_points", f"""
 {deny_not_enough_points_body(ns, version, "#door_price")}
 """)
 
-    	## Open a single door entity (@s = door entity, at @s position)
-    	self.func("zombies/doors/open_one", f"""
+	## Open a single door entity (@s = door entity, at @s position)
+	write_versioned_function("zombies/doors/open_one", f"""
 # Use stored rotation and side-aware local offset so both front/back interactions
 # target the same door block position.
 execute store result storage {ns}:temp _door_open.rot int 1 run scoreboard players get @s {ns}.zb.door.rot
@@ -159,23 +156,23 @@ execute unless score @s {ns}.zb.door.bgid matches -1 run function {ns}:v{version
 kill @s
 """)
 
-    	self.func("zombies/doors/remove_block_destroy", """
+	write_versioned_function("zombies/doors/remove_block_destroy", """
 $execute positioned ~ ~ ~ rotated $(rot) 0 positioned ^ ^ ^$(offset) run setblock ~ ~ ~ air destroy
 $execute positioned ~ ~ ~ rotated $(rot) 0 positioned ^ ^ ^$(offset) run kill @e[type=item,distance=..1.5]
 """)
 
-    	self.func("zombies/doors/remove_block_silent", """
+	write_versioned_function("zombies/doors/remove_block_silent", """
 $execute positioned ~ ~ ~ rotated $(rot) 0 positioned ^ ^ ^$(offset) run setblock ~ ~ ~ air
 """)
 
-    	## Unlock back group helper (@s = door entity)
-    	self.func("zombies/doors/unlock_back_group", f"""
+	## Unlock back group helper (@s = door entity)
+	write_versioned_function("zombies/doors/unlock_back_group", f"""
 execute store result storage {ns}:temp _door_unlock.gid int 1 run scoreboard players get @s {ns}.zb.door.bgid
 function {ns}:v{version}/zombies/doors/unlock_group with storage {ns}:temp _door_unlock
 """)
 
-    	## Unlock group (macro): add group to unlocked set and tag spawn markers
-    	self.func("zombies/doors/unlock_group", f"""
+	## Unlock group (macro): add group to unlocked set and tag spawn markers
+	write_versioned_function("zombies/doors/unlock_group", f"""
 $data modify storage {ns}:zombies game.unlocked_groups."$(gid)" set value 1b
 
 # Tag spawn markers with matching group_id as unlocked
@@ -183,20 +180,20 @@ $scoreboard players set #unlock_gid {ns}.data $(gid)
 execute as @e[tag={ns}.spawn_point] if score @s {ns}.zb.spawn.gid = #unlock_gid {ns}.data run tag @s add {ns}.spawn_unlocked
 """)
 
-    	self.func("zombies/doors/store_name", f"""
+	write_versioned_function("zombies/doors/store_name", f"""
 $data modify storage {ns}:zombies door_names."$(id)" set value {{name:"$(name)",back_name:"$(back_name)"}}
 """)
 
-    	self.func("zombies/doors/get_hover_name", f"""
+	write_versioned_function("zombies/doors/get_hover_name", f"""
 $data modify storage {ns}:temp _door_hover_name set from storage {ns}:zombies door_names."$(id)".name
 """)
 
-    	self.func("zombies/doors/get_hover_name_back", f"""
+	write_versioned_function("zombies/doors/get_hover_name_back", f"""
 $data modify storage {ns}:temp _door_hover_name set from storage {ns}:zombies door_names."$(id)".back_name
 """)
 
-    	## Hover events (executor: "source" = player)
-    	self.func("zombies/doors/on_hover", f"""
+	## Hover events (executor: "source" = player)
+	write_versioned_function("zombies/doors/on_hover", f"""
 execute store result score #door_price {ns}.data run scoreboard players get @n[tag=bs.interaction.target] {ns}.zb.door.price
 execute store result score #door_link {ns}.data run scoreboard players get @n[tag=bs.interaction.target] {ns}.zb.door.link
 execute store result storage {ns}:temp _door_hover.id int 1 run scoreboard players get #door_link {ns}.data
@@ -206,21 +203,14 @@ data modify storage smithed.actionbar:input message set value {{json:{door_hover
 function #smithed.actionbar:message
 """)
 
-    	## Hook into game start: initialize unlocked groups
-    	self.func("zombies/start", f"""
+	## Hook into game start: initialize unlocked groups
+	write_versioned_function("zombies/start", f"""
 # Initialize unlocked groups (group 0 = starting area, compound keys for quick lookup)
 data modify storage {ns}:zombies game.unlocked_groups set value {{"0": 1b}}
 """)
 
-    	## Hook into preload_complete: setup doors
-    	self.func("zombies/preload_complete", f"""
+	## Hook into preload_complete: setup doors
+	write_versioned_function("zombies/preload_complete", f"""
 # Setup doors
 execute if data storage {ns}:zombies game.map.doors[0] run function {ns}:v{version}/zombies/doors/setup
 """)
-
-
-def generate_doors() -> None:
-	""" Module-level entry (preserved signature); delegates to :class:`DoorsGenerator`. """
-	DoorsGenerator()()
-
-

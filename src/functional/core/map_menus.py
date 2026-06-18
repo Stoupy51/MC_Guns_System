@@ -1,19 +1,15 @@
 
 # Shared map selection menu entry (recursive tellraw)
-from ..generator import McfunctionGenerator
+from stewbeet import Mem, write_versioned_function
 
 
-class SharedMapMenus(McfunctionGenerator):
-	""" Writes the shared map-selection menu: a recursive iterator that renders one
-	clickable tellraw entry per map. """
-
-	def generate(self) -> None:
-		ns: str = self.ns
-		version: str = self.version
+def write_shared_map_menus() -> None:
+		ns: str = Mem.ctx.project_id
+		version: str = Mem.ctx.project_version
 
 		## Map select iterator: injects mode into each entry, then calls select_entry
 		## Caller must set: _map_iter (list), _map_select_mode (string)
-		self.func("shared/maps/select_iter", f"""
+		write_versioned_function("shared/maps/select_iter", f"""
 execute unless data storage {ns}:temp _map_iter[0] run return fail
 
 # Inject mode into the first entry for the macro
@@ -30,11 +26,6 @@ execute if data storage {ns}:temp _map_iter[0] run function {ns}:v{version}/shar
 """)
 
 		## Map select entry (macro: mode, id, name, description)
-		self.func("shared/maps/select_entry", f"""
+		write_versioned_function("shared/maps/select_entry", f"""
 $tellraw @s ["","  ",{{"text":""}},{{"text":"[$(name)]","color":"green","click_event":{{"action":"suggest_command","command":"/data modify storage {ns}:$(mode) game.map_id set value \\"$(id)\\""}},"hover_event":{{"action":"show_text","value":"Click to select '$(name)'"}}}},{{"text":" - $(description)","color":"gray"}}]
 """)  # noqa: E501
-
-
-def write_shared_map_menus() -> None:
-	""" Module-level entry point (preserved signature); delegates to :class:`SharedMapMenus`. """
-	SharedMapMenus()()

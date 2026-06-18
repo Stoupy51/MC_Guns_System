@@ -1,26 +1,20 @@
 
 # Shared start/respawn command iteration functions
-from stewbeet import Mem, write_tag
-
-from ..generator import McfunctionGenerator
+from stewbeet import Mem, write_tag, write_versioned_function
 
 
-class SharedCommands(McfunctionGenerator):
-	""" Writes the shared map start/respawn command iterators, the generic map script
-	function tags (start/tick/join/leave/respawn/power), and the base-coordinate helpers. """
-
-	def generate(self) -> None:
-		ns: str = self.ns
-		version: str = self.version
+def write_shared_command_functions() -> None:
+		ns: str = Mem.ctx.project_id
+		version: str = Mem.ctx.project_version
 
 		## Run map start commands (relative pos + command string)
 		## Usage: function shared/run_start_commands {mode:"multiplayer"}
-		self.func("shared/run_start_commands", f"""
+		write_versioned_function("shared/run_start_commands", f"""
 $data modify storage {ns}:temp _start_cmd_iter set from storage {ns}:$(mode) game.map.start_commands
 execute if data storage {ns}:temp _start_cmd_iter[0] run function {ns}:v{version}/shared/run_start_commands_iter
 """)
 
-		self.func("shared/run_start_commands_iter", f"""
+		write_versioned_function("shared/run_start_commands_iter", f"""
 # Read relative position
 execute store result score #cx {ns}.data run data get storage {ns}:temp _start_cmd_iter[0].pos[0]
 execute store result score #cy {ns}.data run data get storage {ns}:temp _start_cmd_iter[0].pos[1]
@@ -43,16 +37,16 @@ data remove storage {ns}:temp _start_cmd_iter[0]
 execute if data storage {ns}:temp _start_cmd_iter[0] run function {ns}:v{version}/shared/run_start_commands_iter
 """)
 
-		self.func("shared/run_start_command", "$execute positioned $(x) $(y) $(z) run $(command)")
+		write_versioned_function("shared/run_start_command", "$execute positioned $(x) $(y) $(z) run $(command)")
 
 		## Run map respawn commands as the respawned player
 		## Usage: function shared/run_respawn_commands {mode:"multiplayer"}
-		self.func("shared/run_respawn_commands", f"""
+		write_versioned_function("shared/run_respawn_commands", f"""
 $data modify storage {ns}:temp _respawn_cmd_iter set from storage {ns}:$(mode) game.map.respawn_commands
 execute if data storage {ns}:temp _respawn_cmd_iter[0] at @s run function {ns}:v{version}/shared/run_respawn_commands_iter
 """)
 
-		self.func("shared/run_respawn_commands_iter", f"""
+		write_versioned_function("shared/run_respawn_commands_iter", f"""
 # Copy command string
 data modify storage {ns}:temp _respawn_cmd.command set from storage {ns}:temp _respawn_cmd_iter[0].command
 
@@ -62,7 +56,7 @@ data remove storage {ns}:temp _respawn_cmd_iter[0]
 execute if data storage {ns}:temp _respawn_cmd_iter[0] at @s run function {ns}:v{version}/shared/run_respawn_commands_iter
 """)
 
-		self.func("shared/run_respawn_command", "$execute at @s run $(command)")
+		write_versioned_function("shared/run_respawn_command", "$execute at @s run $(command)")
 
 		## Generic map script function tags (all modes register to these)
 		## start_script: called once when game transitions to active
@@ -75,14 +69,14 @@ execute if data storage {ns}:temp _respawn_cmd_iter[0] at @s run function {ns}:v
 			write_tag(f"maps/{script}_script", Mem.ctx.data[ns].function_tags, [])
 
 		## Shared macro: execute a function positioned at base coordinates
-		self.func("shared/call_at_base", """
+		write_versioned_function("shared/call_at_base", """
 $execute positioned $(x) $(y) $(z) run function $(fn)
 """)
 
 		## Wrappers: call a map function tag positioned at map base coordinates
 		## Usage: function shared/maps/call_start_script_at_base
 		for script in ["start", "tick", "join", "leave", "respawn", "power"]:
-			self.func(f"shared/maps/call_{script}_script_at_base", f"""
+			write_versioned_function(f"shared/maps/call_{script}_script_at_base", f"""
 execute store result storage {ns}:temp _base.x int 1 run scoreboard players get #gm_base_x {ns}.data
 execute store result storage {ns}:temp _base.y int 1 run scoreboard players get #gm_base_y {ns}.data
 execute store result storage {ns}:temp _base.z int 1 run scoreboard players get #gm_base_z {ns}.data
@@ -92,13 +86,8 @@ function {ns}:v{version}/shared/call_at_base with storage {ns}:temp _base
 
 		## Load map base coordinates into scoreboard (3-line triplet)
 		## Usage: function shared/load_base_coordinates {mode:"multiplayer"}
-		self.func("shared/load_base_coordinates", f"""
+		write_versioned_function("shared/load_base_coordinates", f"""
 $execute store result score #gm_base_x {ns}.data run data get storage {ns}:$(mode) game.map.base_coordinates[0]
 $execute store result score #gm_base_y {ns}.data run data get storage {ns}:$(mode) game.map.base_coordinates[1]
 $execute store result score #gm_base_z {ns}.data run data get storage {ns}:$(mode) game.map.base_coordinates[2]
 """)
-
-
-def write_shared_command_functions() -> None:
-	""" Module-level entry point (preserved signature); delegates to :class:`SharedCommands`. """
-	SharedCommands()()

@@ -2,7 +2,7 @@
 # Imports
 import json
 
-from stewbeet import create_gradient_text as new_hex
+from stewbeet import Mem, create_gradient_text as new_hex, write_load_file, write_versioned_function
 
 from ...config.stats import (
 	CAPACITY,
@@ -20,46 +20,42 @@ from ...config.stats import (
 	START_HEX,
 	SWITCH,
 )
-from ..generator import McfunctionGenerator
 
 
-class UpdateLoreGenerator(McfunctionGenerator):
-    """ Generates the updatelore datapack functions. """
+def main() -> None:
+	ns: str = Mem.ctx.project_id
+	version: str = Mem.ctx.project_version
 
-    def generate(self) -> None:
-    	ns: str = self.ns
-    	version: str = self.version
+	# Generate gradient text labels for each stat line (stored in load file as templates)
+	templates: dict[str, str] = {
+		# Regular gun labels
+		"damage":           json.dumps([*new_hex("Damage Per Bullet  ➤ ", START_HEX, END_HEX)]),
+		"ammo":             json.dumps([*new_hex("Ammo Remaining      ➤ ", START_HEX, END_HEX)]),
+		"reload":           json.dumps([*new_hex("Reloading Time       ➤ ", START_HEX, END_HEX)]),
+		"fire_rate":        json.dumps([*new_hex("Fire Rate             ➤ ", START_HEX, END_HEX)]),
+		"pellets":          json.dumps([*new_hex("Pellets Per Shot    ➤ ", START_HEX, END_HEX)]),
+		"decay":            json.dumps([*new_hex("Damage Decay       ➤ ", START_HEX, END_HEX)]),
+		"switch_time":      json.dumps([*new_hex("Switch Time           ➤ ", START_HEX, END_HEX)]),
+		# Fire rate unit gradients (appended as nested arrays)
+		"fire_rate_sps":    json.dumps([*new_hex("shots/s", END_HEX, START_HEX, text_length=10)]),
+		"fire_rate_spshot": json.dumps([*new_hex("s/shot", END_HEX, START_HEX, text_length=10)]),
+		# Grenade labels
+		"grenade_type":     json.dumps([*new_hex("Type                  ➤ ", START_HEX, END_HEX)]),
+		"grenade_fuse":     json.dumps([*new_hex("Fuse Time            ➤ ", START_HEX, END_HEX)]),
+		"expl_damage":      json.dumps([*new_hex("Explosion Damage  ➤ ", START_HEX, END_HEX)]),
+		"expl_radius":      json.dumps([*new_hex("Explosion Radius   ➤ ", START_HEX, END_HEX)]),
+	}
 
-    	# Generate gradient text labels for each stat line (stored in load file as templates)
-    	templates: dict[str, str] = {
-    		# Regular gun labels
-    		"damage":           json.dumps([*new_hex("Damage Per Bullet  ➤ ", START_HEX, END_HEX)]),
-    		"ammo":             json.dumps([*new_hex("Ammo Remaining      ➤ ", START_HEX, END_HEX)]),
-    		"reload":           json.dumps([*new_hex("Reloading Time       ➤ ", START_HEX, END_HEX)]),
-    		"fire_rate":        json.dumps([*new_hex("Fire Rate             ➤ ", START_HEX, END_HEX)]),
-    		"pellets":          json.dumps([*new_hex("Pellets Per Shot    ➤ ", START_HEX, END_HEX)]),
-    		"decay":            json.dumps([*new_hex("Damage Decay       ➤ ", START_HEX, END_HEX)]),
-    		"switch_time":      json.dumps([*new_hex("Switch Time           ➤ ", START_HEX, END_HEX)]),
-    		# Fire rate unit gradients (appended as nested arrays)
-    		"fire_rate_sps":    json.dumps([*new_hex("shots/s", END_HEX, START_HEX, text_length=10)]),
-    		"fire_rate_spshot": json.dumps([*new_hex("s/shot", END_HEX, START_HEX, text_length=10)]),
-    		# Grenade labels
-    		"grenade_type":     json.dumps([*new_hex("Type                  ➤ ", START_HEX, END_HEX)]),
-    		"grenade_fuse":     json.dumps([*new_hex("Fuse Time            ➤ ", START_HEX, END_HEX)]),
-    		"expl_damage":      json.dumps([*new_hex("Explosion Damage  ➤ ", START_HEX, END_HEX)]),
-    		"expl_radius":      json.dumps([*new_hex("Explosion Radius   ➤ ", START_HEX, END_HEX)]),
-    	}
+	# Store templates in load file
+	template_commands: str = "\n".join(
+		f"data modify storage {ns}:lore_templates {key} set value {value}"
+		for key, value in templates.items()
+	)
+	write_load_file(f"\n## Lore label templates for utils/update_all_lore\n{template_commands}")
 
-    	# Store templates in load file
-    	template_commands: str = "\n".join(
-    		f"data modify storage {ns}:lore_templates {key} set value {value}"
-    		for key, value in templates.items()
-    	)
-    	self.load(f"\n## Lore label templates for utils/update_all_lore\n{template_commands}")
-
-    	# Main entry point: utils/update_all_lore {slot:"weapon.mainhand"}
-    	# Rebuilds ALL lore lines from the weapon's current stats in custom_data
-    	self.func("utils/update_all_lore", f"""
+	# Main entry point: utils/update_all_lore {slot:"weapon.mainhand"}
+	# Rebuilds ALL lore lines from the weapon's current stats in custom_data
+	write_versioned_function("utils/update_all_lore", f"""
 # Rebuild all lore lines for the weapon in the given slot from its current stats
 # Usage: function {ns}:v{version}/utils/update_all_lore {{slot:"weapon.mainhand"}}
 
@@ -89,9 +85,9 @@ $execute summon item_display run function {ns}:v{version}/lore/apply {{"slot":"$
 tag @s remove {ns}.update_lore
 """)
 
-    	# Extract all stats from item into scores
-    	cd: str = f'"minecraft:custom_data".{ns}.stats'
-    	self.func("lore/extract_stats", f"""
+	# Extract all stats from item into scores
+	cd: str = f'"minecraft:custom_data".{ns}.stats'
+	write_versioned_function("lore/extract_stats", f"""
 # Copy item from player to item_display
 $item replace entity @s contents from entity @p[tag={ns}.update_lore] $(slot)
 
@@ -130,8 +126,8 @@ data modify storage {ns}:temp lore_footer set from entity @s item.components."mi
 kill @s
 """)
 
-    	# Compute formatted display values from raw scores
-    	self.func("lore/compute_values", f"""
+	# Compute formatted display values from raw scores
+	write_versioned_function("lore/compute_values", f"""
 # Initialize input storage for macro functions
 data modify storage {ns}:input lore set value {{}}
 
@@ -202,8 +198,8 @@ execute if data storage {ns}:temp {{grenade_type:"smoke"}} run data modify stora
 execute if data storage {ns}:temp {{grenade_type:"flash"}} run data modify storage {ns}:input lore.type_display set value "Flash"
 """)
 
-    	# Build gun lore (macro function, called with storage mgs:input lore)
-    	self.func("lore/build_gun", f"""
+	# Build gun lore (macro function, called with storage mgs:input lore)
+	write_versioned_function("lore/build_gun", f"""
 # Initialize new lore array
 data modify storage {ns}:temp new_lore set value []
 
@@ -251,15 +247,15 @@ data modify storage {ns}:temp new_lore append from storage {ns}:temp lore_line
 data modify storage {ns}:temp new_lore append value ""
 """)
 
-    	# Append pellet line (separate function for conditional execution)
-    	self.func("lore/append_pellet_line", f"""
+	# Append pellet line (separate function for conditional execution)
+	write_versioned_function("lore/append_pellet_line", f"""
 data modify storage {ns}:temp lore_line set from storage {ns}:lore_templates pellets
 $data modify storage {ns}:temp lore_line append value "$(pellets)"
 data modify storage {ns}:temp new_lore append from storage {ns}:temp lore_line
 """)
 
-    	# Build grenade lore (macro function)
-    	self.func("lore/build_grenade", f"""
+	# Build grenade lore (macro function)
+	write_versioned_function("lore/build_grenade", f"""
 # Initialize new lore array
 data modify storage {ns}:temp new_lore set value []
 
@@ -284,23 +280,23 @@ data modify storage {ns}:temp new_lore append from storage {ns}:temp lore_line
 data modify storage {ns}:temp new_lore append value ""
 """)
 
-    	# Append explosion damage line
-    	self.func("lore/append_expl_damage", f"""
+	# Append explosion damage line
+	write_versioned_function("lore/append_expl_damage", f"""
 data modify storage {ns}:temp lore_line set from storage {ns}:lore_templates expl_damage
 $data modify storage {ns}:temp lore_line append value "$(expl_damage)"
 data modify storage {ns}:temp new_lore append from storage {ns}:temp lore_line
 """)
 
-    	# Append explosion radius line
-    	self.func("lore/append_expl_radius", f"""
+	# Append explosion radius line
+	write_versioned_function("lore/append_expl_radius", f"""
 data modify storage {ns}:temp lore_line set from storage {ns}:lore_templates expl_radius
 $data modify storage {ns}:temp lore_line append value "$(expl_radius)"
 data modify storage {ns}:temp lore_line append value {{"text":" blocks","color":"#{END_HEX}"}}
 data modify storage {ns}:temp new_lore append from storage {ns}:temp lore_line
 """)
 
-    	# Apply new lore to item
-    	self.func("lore/apply", f"""
+	# Apply new lore to item
+	write_versioned_function("lore/apply", f"""
 # Copy item from player to item_display
 $item replace entity @s contents from entity @p[tag={ns}.update_lore] $(slot)
 
@@ -313,9 +309,3 @@ $item replace entity @p[tag={ns}.update_lore] $(slot) from entity @s contents
 # Clean up
 kill @s
 """)
-
-
-def main() -> None:
-	""" Module-level entry (preserved signature); delegates to :class:`UpdateLoreGenerator`. """
-	UpdateLoreGenerator()()
-

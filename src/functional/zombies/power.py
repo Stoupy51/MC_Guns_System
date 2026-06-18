@@ -3,26 +3,23 @@
 # A one-time activatable wall lever that enables power for the map.
 # Elements with power:true (perk machines, traps) require power to be active.
 
+from stewbeet import Mem, write_versioned_function
 from ..helpers import MGS_TAG
 from .common import game_active_guard_cmd
-from ..generator import McfunctionGenerator
 
 
-class PowerGenerator(McfunctionGenerator):
-    """ Generates the power datapack functions. """
+def generate_power_switch() -> None:
+	ns: str = Mem.ctx.project_id
+	version: str = Mem.ctx.project_version
 
-    def generate(self) -> None:
-    	ns: str = self.ns
-    	version: str = self.version
-
-    	## Setup: iterate power switch compounds, place levers, summon interaction entities
-    	self.func("zombies/power/setup", f"""
+	## Setup: iterate power switch compounds, place levers, summon interaction entities
+	write_versioned_function("zombies/power/setup", f"""
 # Iterate power switch compounds from map data
 data modify storage {ns}:temp _pw_iter set from storage {ns}:zombies game.map.power_switch
 execute if data storage {ns}:temp _pw_iter[0] run function {ns}:v{version}/zombies/power/setup_iter
 """)
 
-    	self.func("zombies/power/setup_iter", f"""
+	write_versioned_function("zombies/power/setup_iter", f"""
 # Read relative position and convert to absolute
 execute store result score #pwx {ns}.data run data get storage {ns}:temp _pw_iter[0].pos[0]
 execute store result score #pwy {ns}.data run data get storage {ns}:temp _pw_iter[0].pos[1]
@@ -52,7 +49,7 @@ data remove storage {ns}:temp _pw_iter[0]
 execute if data storage {ns}:temp _pw_iter[0] run function {ns}:v{version}/zombies/power/setup_iter
 """)
 
-    	self.func("zombies/power/place_at", f"""
+	write_versioned_function("zombies/power/place_at", f"""
 # Place lever block
 $setblock $(x) $(y) $(z) minecraft:lever[face=wall,facing=$(facing),powered=false]
 
@@ -65,8 +62,8 @@ execute as @e[tag=_pw_new] run function #bs.interaction:on_hover {{run:"function
 tag @e[tag=_pw_new] remove _pw_new
 """)
 
-    	## On right-click: activate power (runs as the clicking player)
-    	self.func("zombies/power/on_activate", f"""
+	## On right-click: activate power (runs as the clicking player)
+	write_versioned_function("zombies/power/on_activate", f"""
 # Guard: game must be active
 {game_active_guard_cmd(ns)}
 
@@ -97,32 +94,25 @@ function {ns}:v{version}/zombies/feedback/sound_power_on
 function {ns}:v{version}/shared/maps/call_power_script_at_base
 """)
 
-    	self.func("zombies/power/deny_already_on", f"""
+	write_versioned_function("zombies/power/deny_already_on", f"""
 tellraw @s [{MGS_TAG},{{"text":"Power is already on.","color":"yellow"}}]
 function {ns}:v{version}/zombies/feedback/sound_deny
 """)
 
-    	## Hover events (run as the player looking at the power switch)
-    	self.func("zombies/power/on_hover", """
+	## Hover events (run as the player looking at the power switch)
+	write_versioned_function("zombies/power/on_hover", """
 data modify storage smithed.actionbar:input message set value {json:[{"text":"⚡ Power Switch","color":"yellow"}],priority:"conditional",freeze:5}
 function #smithed.actionbar:message
 """)
 
-    	## Hook into game start: reset power scoreboard
-    	self.func("zombies/start", f"""
+	## Hook into game start: reset power scoreboard
+	write_versioned_function("zombies/start", f"""
 # Initialize power state
 scoreboard players set #zb_power {ns}.data 0
 """)
 
-    	## Hook into preload_complete: setup power switches
-    	self.func("zombies/preload_complete", f"""
+	## Hook into preload_complete: setup power switches
+	write_versioned_function("zombies/preload_complete", f"""
 # Setup power switches
 execute if data storage {ns}:zombies game.map.power_switch[0] run function {ns}:v{version}/zombies/power/setup
 """)
-
-
-def generate_power_switch() -> None:
-	""" Module-level entry (preserved signature); delegates to :class:`PowerGenerator`. """
-	PowerGenerator()()
-
-

@@ -1,26 +1,22 @@
 
 # Shared OOB marker summoning functions
-from ..generator import McfunctionGenerator
+from stewbeet import Mem, write_versioned_function
 
 
-class SharedSpawning(McfunctionGenerator):
-	""" Writes the shared out-of-bounds marker summoning helpers (load map data,
-	convert relative coords to absolute, summon markers). """
-
-	def generate(self) -> None:
-		ns: str = self.ns
-		version: str = self.version
+def write_shared_spawning_functions() -> None:
+		ns: str = Mem.ctx.project_id
+		version: str = Mem.ctx.project_version
 
 		## Summon OOB markers from map data (relative → absolute)
 		## Usage: function shared/summon_oob {mode:"multiplayer"}
-		self.func("shared/summon_oob", f"""
+		write_versioned_function("shared/summon_oob", f"""
 $function {ns}:v{version}/shared/load_base_coordinates {{mode:"$(mode)"}}
 
 $data modify storage {ns}:temp _oob_iter set from storage {ns}:$(mode) game.map.out_of_bounds
 execute if data storage {ns}:temp _oob_iter[0] run function {ns}:v{version}/shared/summon_oob_iter
 """)
 
-		self.func("shared/summon_oob_iter", f"""
+		write_versioned_function("shared/summon_oob_iter", f"""
 execute store result score #rx {ns}.data run data get storage {ns}:temp _oob_iter[0][0]
 execute store result score #ry {ns}.data run data get storage {ns}:temp _oob_iter[0][1]
 execute store result score #rz {ns}.data run data get storage {ns}:temp _oob_iter[0][2]
@@ -35,11 +31,6 @@ data remove storage {ns}:temp _oob_iter[0]
 execute if data storage {ns}:temp _oob_iter[0] run function {ns}:v{version}/shared/summon_oob_iter
 """)
 
-		self.func("shared/summon_oob_at", f"""
+		write_versioned_function("shared/summon_oob_at", f"""
 $summon minecraft:marker $(x) $(y) $(z) {{Tags:["{ns}.oob_point","{ns}.gm_entity"]}}
 """)
-
-
-def write_shared_spawning_functions() -> None:
-	""" Module-level entry point (preserved signature); delegates to :class:`SharedSpawning`. """
-	SharedSpawning()()

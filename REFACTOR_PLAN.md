@@ -5,6 +5,24 @@
 
 ---
 
+## Update — solo classes reverted to functions
+
+The P5 "one class per file" conversion was walked back: wrapping a single `generate()` in a
+class adds nothing when a file shares no code with others. **54 solo `*Generator` classes
+were reverted to plain `def …()` module functions** (the original style). Classes are kept
+**only where multiple files genuinely share emitted code**:
+- `GameMode` (`game_mode.py`) — `MultiplayerMode`/`ZombiesMode`/`MissionsMode` share
+  `write_tp_player_at` / `write_summon_spawn_at`.
+- `GameModeVariant` (`gamemodes/base.py`) — the 5 gamemodes share the `sub()` path-prefix
+  helper + setup/tick/on_kill/cleanup contract.
+- `McfunctionGenerator` (`generator.py`) — the base the two hierarchies extend.
+
+The revert was a pure refactor: `rm -rf build && beet build` → generated datapack
+byte-identical. P2 (catalog `NamedTuple`s) is unaffected and kept — it's data typing, not
+generator ceremony. The sections below are retained for history.
+
+---
+
 ## Current Status (live)
 
 - ✅ **P0 Foundation** — `McfunctionGenerator` base class + verification harness.

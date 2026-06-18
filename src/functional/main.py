@@ -1,30 +1,19 @@
 # Imports
-from stewbeet import (
-    DamageType,
-    Font,
-    LootTable,
-    Mem,
-    set_json_encoder,
-    texture_mcmeta,
-    write_tag,
-)
+from stewbeet import DamageType, Font, LootTable, Mem, set_json_encoder, texture_mcmeta, write_function, write_load_file, write_tag, write_tick_file, write_versioned_function
 
 from ..config.blocks import main as write_block_tags
 from ..config.stats import REMAINING_BULLETS
-from .generator import McfunctionGenerator
 
 # Main function
 
-class MainGenerator(McfunctionGenerator):
-    """ Generates the main datapack functions. """
 
-    def generate(self) -> None:
-        ns: str = self.ns
-        version: str = self.version
+def main() -> None:
+    ns: str = Mem.ctx.project_id
+    version: str = Mem.ctx.project_version
 
-        # Write to load file
-        self.load(
-    f"""
+    # Write to load file
+    write_load_file(
+f"""
 ## Define objectives
 # Used to tag players that should be selected by Multiplayer/Mission/Zombies functions (@a)
 # We use a scoreboard instead of tag so we can reset offline players
@@ -126,9 +115,9 @@ scoreboard objectives add {ns}.last_hit dummy
 scoreboard objectives add {ns}.hp_prev dummy
 """, prepend=True)
 
-        # Write to tick file
-        self.tick(
-    f"""
+    # Write to tick file
+    write_tick_file(
+f"""
 # Infinitely incrementing tick counter for general timing purposes
 scoreboard players add #total_tick {ns}.data 1
 
@@ -136,13 +125,13 @@ scoreboard players add #total_tick {ns}.data 1
 execute as @e[type=player,sort=random] at @s run function {ns}:v{version}/player/tick
 """)
 
-        # Health regeneration tick hook (global — only runs during an active game)
-        self.func("player/tick", f"""
+    # Health regeneration tick hook (global — only runs during an active game)
+    write_versioned_function("player/tick", f"""
 # Health regeneration: Black Ops style — only active during a game
 execute if score #any_game_active {ns}.data matches 1 run function {ns}:v{version}/player/regen_tick
 """)
 
-        self.func("player/regen_tick", f"""
+    write_versioned_function("player/regen_tick", f"""
 # @s = any player during an active game
 execute store result score #hp_cur {ns}.data run data get entity @s Health 1
 execute if score #hp_cur {ns}.data < @s {ns}.hp_prev run scoreboard players set @s {ns}.last_hit 0
@@ -154,62 +143,62 @@ execute if score #hp_cur {ns}.data >= #hp_max {ns}.data run effect clear @s mine
 execute unless score #hp_cur {ns}.data >= #hp_max {ns}.data run effect give @s minecraft:regeneration 3 2 true
 """)
 
-        # Add block tags
-        write_block_tags()
+    # Add block tags
+    write_block_tags()
 
-        # Entity tags to ignore when shooting
-        write_tag(f"{ns}:ignore", Mem.ctx.data.entity_type_tags, ["#bs.hitbox:intangible", "minecraft:interaction", "minecraft:experience_orb"])
+    # Entity tags to ignore when shooting
+    write_tag(f"{ns}:ignore", Mem.ctx.data.entity_type_tags, ["#bs.hitbox:intangible", "minecraft:interaction", "minecraft:experience_orb"])
 
-        # Loot table for getting username
-        Mem.ctx.data[ns].loot_tables["get_username"] = set_json_encoder(LootTable({
-            "type": "minecraft:block",
-            "pools": [
-                {
-                    "rolls": 1,
-                    "bonus_rolls": 0,
-                    "entries": [
-                        {
-                            "type": "minecraft:item",
-                            "name": "minecraft:player_head",
-                            "functions": [
-                                {
-                                    "function": "minecraft:fill_player_head",
-                                    "entity": "this"
-                                }
-                            ]
-                        }
-                    ]
-                }
-            ]
-        }))
-
-        ## Register signal function tags (empty by default, other datapacks can add listeners)
-        # These are called at various events in the system, with relevant data stored in mgs:signals storage
-        signal_events: list[str] = [
-            "on_shoot",             # @s = shooter player, weapon data in mgs:signals
-            "on_hit_block",         # @s = raycast marker, block/position/weapon in mgs:signals
-            "on_reload",            # @s = reloading player, weapon data in mgs:signals
-            "on_zoom",              # @s = zooming player, weapon data in mgs:signals
-            "on_unzoom",            # @s = unzooming player, weapon data in mgs:signals
-            "on_switch",            # @s = player, weapon data in mgs:signals
-            "on_kill",              # @s = killer player, victim/weapon data in mgs:signals
-            "damage",           # @s = damaged entity, damage/weapon/attacker in mgs:input with
-            "on_explosion",         # @s = projectile entity, explosion data in mgs:signals
-            "on_headshot",          # @s = hit entity, damage/weapon in mgs:signals
-            "on_fire_mode_change",  # @s = player, weapon/new fire mode in mgs:signals
+    # Loot table for getting username
+    Mem.ctx.data[ns].loot_tables["get_username"] = set_json_encoder(LootTable({
+        "type": "minecraft:block",
+        "pools": [
+            {
+                "rolls": 1,
+                "bonus_rolls": 0,
+                "entries": [
+                    {
+                        "type": "minecraft:item",
+                        "name": "minecraft:player_head",
+                        "functions": [
+                            {
+                                "function": "minecraft:fill_player_head",
+                                "entity": "this"
+                            }
+                        ]
+                    }
+                ]
+            }
         ]
-        for event in signal_events:
-            write_tag(f"signals/{event}", Mem.ctx.data[ns].function_tags, [])
+    }))
 
-        ## Setup special damage type
-        Mem.ctx.data[ns].damage_type["bullet"] = set_json_encoder(DamageType({"exhaustion": 0, "message_id": "player", "scaling": "when_caused_by_living_non_player"}))
-        for tag in ["bypasses_cooldown", "no_knockback"]:
-            write_tag(tag, Mem.ctx.data["minecraft"].damage_type_tags, [f"{ns}:bullet"])
-        self.func("utils/damage", f"$damage $(target) $(amount) {ns}:bullet by $(attacker)")
-        # Unattributed variant: no "by <attacker>", so team friendlyFire=false can't cancel it
-        # (used for self-inflicted explosion damage, where the shooter and victim share a team).
-        self.func("utils/damage_plain", "$damage $(target) $(amount) minecraft:explosion")
-        self.func("utils/signal_and_damage", f"""
+    ## Register signal function tags (empty by default, other datapacks can add listeners)
+    # These are called at various events in the system, with relevant data stored in mgs:signals storage
+    signal_events: list[str] = [
+        "on_shoot",             # @s = shooter player, weapon data in mgs:signals
+        "on_hit_block",         # @s = raycast marker, block/position/weapon in mgs:signals
+        "on_reload",            # @s = reloading player, weapon data in mgs:signals
+        "on_zoom",              # @s = zooming player, weapon data in mgs:signals
+        "on_unzoom",            # @s = unzooming player, weapon data in mgs:signals
+        "on_switch",            # @s = player, weapon data in mgs:signals
+        "on_kill",              # @s = killer player, victim/weapon data in mgs:signals
+        "damage",           # @s = damaged entity, damage/weapon/attacker in mgs:input with
+        "on_explosion",         # @s = projectile entity, explosion data in mgs:signals
+        "on_headshot",          # @s = hit entity, damage/weapon in mgs:signals
+        "on_fire_mode_change",  # @s = player, weapon/new fire mode in mgs:signals
+    ]
+    for event in signal_events:
+        write_tag(f"signals/{event}", Mem.ctx.data[ns].function_tags, [])
+
+    ## Setup special damage type
+    Mem.ctx.data[ns].damage_type["bullet"] = set_json_encoder(DamageType({"exhaustion": 0, "message_id": "player", "scaling": "when_caused_by_living_non_player"}))
+    for tag in ["bypasses_cooldown", "no_knockback"]:
+        write_tag(tag, Mem.ctx.data["minecraft"].damage_type_tags, [f"{ns}:bullet"])
+    write_versioned_function("utils/damage", f"$damage $(target) $(amount) {ns}:bullet by $(attacker)")
+    # Unattributed variant: no "by <attacker>", so team friendlyFire=false can't cancel it
+    # (used for self-inflicted explosion damage, where the shooter and victim share a team).
+    write_versioned_function("utils/damage_plain", "$damage $(target) $(amount) minecraft:explosion")
+    write_versioned_function("utils/signal_and_damage", f"""
 # Check if target is a player in active MP game and damage would be lethal -> simulate death
 execute store result score #incoming_dmg {ns}.data run data get storage {ns}:input with.amount 10
 execute store result score #victim_hp {ns}.data run data get entity @s Health 10
@@ -219,8 +208,8 @@ execute if entity @s[type=player,scores={{{ns}.mp.in_game=1..}}] if score #incom
 function {ns}:v{version}/utils/damage with storage {ns}:input with
 function #{ns}:signals/damage with storage {ns}:input with
 """)
-        # Same flow as signal_and_damage but applies plain (unattributed) damage.
-        self.func("utils/signal_and_damage_plain", f"""
+    # Same flow as signal_and_damage but applies plain (unattributed) damage.
+    write_versioned_function("utils/signal_and_damage_plain", f"""
 # Check if target is a player in active MP game and damage would be lethal -> simulate death
 execute store result score #incoming_dmg {ns}.data run data get storage {ns}:input with.amount 10
 execute store result score #victim_hp {ns}.data run data get entity @s Health 10
@@ -231,18 +220,18 @@ function {ns}:v{version}/utils/damage_plain with storage {ns}:input with
 function #{ns}:signals/damage with storage {ns}:input with
 """)
 
-        # Add bullet font (for actionbar)
-        textures_folder: str = Mem.ctx.meta.get("stewbeet", {}).get("textures_folder", "")
-        font: Font = Mem.ctx.assets.fonts.setdefault(f"{ns}:icons", Font({"providers": []}))
-        font.data["providers"].extend([
-            {"type": "bitmap","file": f"{ns}:font/bullet_full.png","ascent": 7,"height": 9,"chars": ["A"]},
-            {"type": "bitmap","file": f"{ns}:font/bullet_outline.png","ascent": 7,"height": 9,"chars": ["B"]},
-        ])
-        for icon_name in ["bullet_outline", "bullet_full"]:
-            Mem.ctx.assets[ns].textures[f"font/{icon_name}"] = texture_mcmeta(f"{textures_folder}/{icon_name}.png")
+    # Add bullet font (for actionbar)
+    textures_folder: str = Mem.ctx.meta.get("stewbeet", {}).get("textures_folder", "")
+    font: Font = Mem.ctx.assets.fonts.setdefault(f"{ns}:icons", Font({"providers": []}))
+    font.data["providers"].extend([
+        {"type": "bitmap","file": f"{ns}:font/bullet_full.png","ascent": 7,"height": 9,"chars": ["A"]},
+        {"type": "bitmap","file": f"{ns}:font/bullet_outline.png","ascent": 7,"height": 9,"chars": ["B"]},
+    ])
+    for icon_name in ["bullet_outline", "bullet_full"]:
+        Mem.ctx.assets[ns].textures[f"font/{icon_name}"] = texture_mcmeta(f"{textures_folder}/{icon_name}.png")
 
-        # Random weapon function
-        self.func("utils/random_weapon", f"""
+    # Random weapon function
+    write_versioned_function("utils/random_weapon", f"""
 execute store result score #random {ns}.data run random value 1..31
 $execute if score #random {ns}.data matches 1 run loot replace entity @s $(slot) loot {ns}:i/m16a4
 $execute if score #random {ns}.data matches 2 run loot replace entity @s $(slot) loot {ns}:i/m16a4
@@ -277,109 +266,109 @@ $execute if score #random {ns}.data matches 30 run loot replace entity @s $(slot
 $execute if score #random {ns}.data matches 31 run loot replace entity @s $(slot) loot {ns}:i/m249
 """)
 
-        # Config menu: /function mgs:config
-        # Build clickable chat menu for server configuration
-        from .helpers import btn as _btn
-        def btn(label: str, command: str, color: str = "yellow", hover: str = "") -> str:
-            return _btn(label, command, color, hover, action="suggest_command")
+    # Config menu: /function mgs:config
+    # Build clickable chat menu for server configuration
+    from .helpers import btn as _btn
+    def btn(label: str, command: str, color: str = "yellow", hover: str = "") -> str:
+        return _btn(label, command, color, hover, action="suggest_command")
 
-        # Separator line
-        sep = r'{"text":"============================================","color":"dark_gray"}'
+    # Separator line
+    sep = r'{"text":"============================================","color":"dark_gray"}'
 
-        # Title
-        title = '["  ",[{"text":"","color":"gold","bold":true},"     ☣ ",{"text":"MGS Configuration Menu"}," ☣"]]'
+    # Title
+    title = '["  ",[{"text":"","color":"gold","bold":true},"     ☣ ",{"text":"MGS Configuration Menu"}," ☣"]]'
 
-        # --- Global Settings ---
-        global_header = '["",[{"text":"","color":"aqua","bold":true},"⚙ ",{"text":"Global Settings"}],[{"text":"","color":"gray","italic":true}," (",{"text":"server-wide"},")"]]'
+    # --- Global Settings ---
+    global_header = '["",[{"text":"","color":"aqua","bold":true},"⚙ ",{"text":"Global Settings"}],[{"text":"","color":"gray","italic":true}," (",{"text":"server-wide"},")"]]'
 
-        # RPG Explosion Power
-        rpg_btns = ",".join([
-            btn(str(i), f"/scoreboard players set #projectile_explosion_power {ns}.config {i}",
-                "green" if i == 0 else "yellow",
-                f"Set Projectile Explosion Power to {i}" + (" (disabled)" if i == 0 else ""))
-            for i in range(6)
-        ])
-        rpg_line = f'["  ",{{"text":"RPG Explosion Power"}},": ",{rpg_btns}]'
+    # RPG Explosion Power
+    rpg_btns = ",".join([
+        btn(str(i), f"/scoreboard players set #projectile_explosion_power {ns}.config {i}",
+            "green" if i == 0 else "yellow",
+            f"Set Projectile Explosion Power to {i}" + (" (disabled)" if i == 0 else ""))
+        for i in range(6)
+    ])
+    rpg_line = f'["  ",{{"text":"RPG Explosion Power"}},": ",{rpg_btns}]'
 
-        # Grenade Explosion Power
-        gren_btns = ",".join([
-            btn(str(i), f"/scoreboard players set #grenade_explosion_power {ns}.config {i}",
-                "green" if i == 0 else "yellow",
-                f"Set Grenade Explosion Power to {i}" + (" (disabled)" if i == 0 else ""))
-            for i in range(6)
-        ])
-        gren_line = f'["  ",{{"text":"Grenade Explosion Power"}},": ",{gren_btns}]'
+    # Grenade Explosion Power
+    gren_btns = ",".join([
+        btn(str(i), f"/scoreboard players set #grenade_explosion_power {ns}.config {i}",
+            "green" if i == 0 else "yellow",
+            f"Set Grenade Explosion Power to {i}" + (" (disabled)" if i == 0 else ""))
+        for i in range(6)
+    ])
+    gren_line = f'["  ",{{"text":"Grenade Explosion Power"}},": ",{gren_btns}]'
 
-        # Max Ammo Mode: OG (magazines only) or Recent (also reload weapons)
-        ma_btns = ",".join([
-            btn("OG", f"/scoreboard players set #max_ammo_reload_weapons {ns}.config 0",
-                "yellow", "Only refill magazines in inventory (OG zombies)"),
-            btn("Recent", f"/scoreboard players set #max_ammo_reload_weapons {ns}.config 1",
-                "green", "Also reload current weapon (recent zombies)"),
-        ])
-        ma_line = f'["  ",{{"text":"Max Ammo Mode"}},": ",{ma_btns}]'
+    # Max Ammo Mode: OG (magazines only) or Recent (also reload weapons)
+    ma_btns = ",".join([
+        btn("OG", f"/scoreboard players set #max_ammo_reload_weapons {ns}.config 0",
+            "yellow", "Only refill magazines in inventory (OG zombies)"),
+        btn("Recent", f"/scoreboard players set #max_ammo_reload_weapons {ns}.config 1",
+            "green", "Also reload current weapon (recent zombies)"),
+    ])
+    ma_line = f'["  ",{{"text":"Max Ammo Mode"}},": ",{ma_btns}]'
 
-        # Damage Debug (global): OFF or ON (tellraw @a all damage)
-        dd_btns = ",".join([
-            btn("OFF", f"/scoreboard players set #damage_debug {ns}.config 0",
-                "red", "Disable global damage debug"),
-            btn("ON", f"/scoreboard players set #damage_debug {ns}.config 1",
-                "green", "Enable global damage debug (tellraw @a every hit)"),
-        ])
-        dd_line = f'["  ",{{"text":"Damage Debug"}},": ",{dd_btns}]'
+    # Damage Debug (global): OFF or ON (tellraw @a all damage)
+    dd_btns = ",".join([
+        btn("OFF", f"/scoreboard players set #damage_debug {ns}.config 0",
+            "red", "Disable global damage debug"),
+        btn("ON", f"/scoreboard players set #damage_debug {ns}.config 1",
+            "green", "Enable global damage debug (tellraw @a every hit)"),
+    ])
+    dd_line = f'["  ",{{"text":"Damage Debug"}},": ",{dd_btns}]'
 
-        # --- Player Specials ---
-        special_header = '["",[{"text":"","color":"aqua","bold":true},"⚡ ",{"text":"Player Specials"}],[{"text":"","color":"gray","italic":true}," (",{"text":"self only"},")"]]'
+    # --- Player Specials ---
+    special_header = '["",[{"text":"","color":"aqua","bold":true},"⚡ ",{"text":"Player Specials"}],[{"text":"","color":"gray","italic":true}," (",{"text":"self only"},")"]]'
 
-        # Instant Kill durations: OFF, 10s, 30s, 60s, ∞
-        ik_options = [("OFF", 0, "red"), ("10s", 200, "yellow"), ("30s", 600, "yellow"), ("60s", 1200, "yellow"), ("∞", 72000, "light_purple")]
-        ik_btns = ",".join([
-            btn(label, f"/scoreboard players set @s {ns}.special.instant_kill {ticks}",
-                color, f"Set instant kill {'off' if ticks == 0 else f'for {label}'}")
-            for label, ticks, color in ik_options
-        ])
-        ik_line = f'["  ",[{{"text":"Instant Kill"}},": ",{ik_btns}]]'
+    # Instant Kill durations: OFF, 10s, 30s, 60s, ∞
+    ik_options = [("OFF", 0, "red"), ("10s", 200, "yellow"), ("30s", 600, "yellow"), ("60s", 1200, "yellow"), ("∞", 72000, "light_purple")]
+    ik_btns = ",".join([
+        btn(label, f"/scoreboard players set @s {ns}.special.instant_kill {ticks}",
+            color, f"Set instant kill {'off' if ticks == 0 else f'for {label}'}")
+        for label, ticks, color in ik_options
+    ])
+    ik_line = f'["  ",[{{"text":"Instant Kill"}},": ",{ik_btns}]]'
 
-        # Infinite Ammo durations: OFF, 10s, 30s, 60s, ∞
-        ia_options = [("OFF", 0, "red"), ("10s", 200, "yellow"), ("30s", 600, "yellow"), ("60s", 1200, "yellow"), ("∞", 72000, "light_purple")]
-        ia_btns = ",".join([
-            btn(label, f"/scoreboard players set @s {ns}.special.infinite_ammo {ticks}",
-                color, f"Set infinite ammo {'off' if ticks == 0 else f'for {label}'}")
-            for label, ticks, color in ia_options
-        ])
-        ia_line = f'["  ",[{{"text":"Infinite Ammo"}},": ",{ia_btns}]]'
+    # Infinite Ammo durations: OFF, 10s, 30s, 60s, ∞
+    ia_options = [("OFF", 0, "red"), ("10s", 200, "yellow"), ("30s", 600, "yellow"), ("60s", 1200, "yellow"), ("∞", 72000, "light_purple")]
+    ia_btns = ",".join([
+        btn(label, f"/scoreboard players set @s {ns}.special.infinite_ammo {ticks}",
+            color, f"Set infinite ammo {'off' if ticks == 0 else f'for {label}'}")
+        for label, ticks, color in ia_options
+    ])
+    ia_line = f'["  ",[{{"text":"Infinite Ammo"}},": ",{ia_btns}]]'
 
-        # Quick Reload: 0%, 20%, 50%, 80%
-        qr_options = [("0%", 0, "red"), ("20%", 20, "yellow"), ("50%", 50, "yellow"), ("80%", 80, "green")]
-        qr_btns = ",".join([
-            btn(label, f"/scoreboard players set @s {ns}.special.quick_reload {val}",
-                color, f"Set quick reload to {label}")
-            for label, val, color in qr_options
-        ])
-        qr_line = f'["  ",[{{"text":"Quick Reload"}},": ",{qr_btns}]]'
+    # Quick Reload: 0%, 20%, 50%, 80%
+    qr_options = [("0%", 0, "red"), ("20%", 20, "yellow"), ("50%", 50, "yellow"), ("80%", 80, "green")]
+    qr_btns = ",".join([
+        btn(label, f"/scoreboard players set @s {ns}.special.quick_reload {val}",
+            color, f"Set quick reload to {label}")
+        for label, val, color in qr_options
+    ])
+    qr_line = f'["  ",[{{"text":"Quick Reload"}},": ",{qr_btns}]]'
 
-        # Quick Swap: 0%, 20%, 50%, 80%
-        qs_options = [("0%", 0, "red"), ("20%", 20, "yellow"), ("50%", 50, "yellow"), ("80%", 80, "green")]
-        qs_btns = ",".join([
-            btn(label, f"/scoreboard players set @s {ns}.special.quick_swap {val}",
-                color, f"Set quick swap to {label}")
-            for label, val, color in qs_options
-        ])
-        qs_line = f'["  ",[{{"text":"Quick Swap"}},": ",{qs_btns}]]'
+    # Quick Swap: 0%, 20%, 50%, 80%
+    qs_options = [("0%", 0, "red"), ("20%", 20, "yellow"), ("50%", 50, "yellow"), ("80%", 80, "green")]
+    qs_btns = ",".join([
+        btn(label, f"/scoreboard players set @s {ns}.special.quick_swap {val}",
+            color, f"Set quick swap to {label}")
+        for label, val, color in qs_options
+    ])
+    qs_line = f'["  ",[{{"text":"Quick Swap"}},": ",{qs_btns}]]'
 
-        # --- Map Editor ---
-        map_header = '[{"text":"","color":"aqua","bold":true},"🗺 ",{"text":"Map Editor"}]'
-        map_editor_btn = btn("Open Map Editor", f"/function {ns}:v{version}/maps/editor/menu", "green", "Open the map editor")
-        map_line = f'["  ",{map_editor_btn}]'
+    # --- Map Editor ---
+    map_header = '[{"text":"","color":"aqua","bold":true},"🗺 ",{"text":"Map Editor"}]'
+    map_editor_btn = btn("Open Map Editor", f"/function {ns}:v{version}/maps/editor/menu", "green", "Open the map editor")
+    map_line = f'["  ",{map_editor_btn}]'
 
-        # --- Multiplayer & Missions ---
-        mp_header = '[{"text":"","color":"aqua","bold":true},"⚔ ",{"text":"Multiplayer, Zombies, Missions"}]'
-        mp_setup_btn = btn("Game Setup", f"/function {ns}:v{version}/multiplayer/setup", "green", "Open the multiplayer game setup menu")
-        zb_setup_btn = btn("Zombies Setup", f"/function {ns}:v{version}/zombies/setup", "green", "Open the zombies setup menu")
-        missions_setup_btn = btn("Mission Setup", f"/function {ns}:v{version}/missions/setup", "green", "Open the mission setup menu")
-        mp_line = f'["  ",{mp_setup_btn}," ",{zb_setup_btn}," ",{missions_setup_btn}]'
+    # --- Multiplayer & Missions ---
+    mp_header = '[{"text":"","color":"aqua","bold":true},"⚔ ",{"text":"Multiplayer, Zombies, Missions"}]'
+    mp_setup_btn = btn("Game Setup", f"/function {ns}:v{version}/multiplayer/setup", "green", "Open the multiplayer game setup menu")
+    zb_setup_btn = btn("Zombies Setup", f"/function {ns}:v{version}/zombies/setup", "green", "Open the zombies setup menu")
+    missions_setup_btn = btn("Mission Setup", f"/function {ns}:v{version}/missions/setup", "green", "Open the mission setup menu")
+    mp_line = f'["  ",{mp_setup_btn}," ",{zb_setup_btn}," ",{missions_setup_btn}]'
 
-        self.raw_function(f"{ns}:config", f"""
+    write_function(f"{ns}:config", f"""
 tellraw @s {sep}
 tellraw @s {title}
 tellraw @s {sep}
@@ -402,10 +391,3 @@ tellraw @s {mp_header}
 tellraw @s {mp_line}
 tellraw @s {sep}
 """)
-
-
-def main() -> None:
-    """ Module-level entry (preserved signature); delegates to :class:`MainGenerator`. """
-    MainGenerator()()
-
-

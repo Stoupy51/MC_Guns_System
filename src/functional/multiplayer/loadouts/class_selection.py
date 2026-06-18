@@ -2,23 +2,21 @@
 # ruff: noqa: E501
 # Imports
 
+from stewbeet import Mem, write_load_file, write_versioned_function
+
 from ....config.stats import ALL_SLOTS
 from ...helpers import MGS_TAG
 from ..classes import CLASS_IDS
 from .catalogs import TRIG_EDITOR_START, TRIG_MARKETPLACE, TRIG_MY_LOADOUTS
-from ...generator import McfunctionGenerator
 
 
-class ClassSelectionGenerator(McfunctionGenerator):
-    """ Generates the classselection datapack functions. """
+def generate_class_selection() -> None:
+	ns: str = Mem.ctx.project_id
+	version: str = Mem.ctx.project_version
 
-    def generate(self) -> None:
-    	ns: str = self.ns
-    	version: str = self.version
-
-    	## Scoreboards for class selection
-    	self.load(
-    f"""
+	## Scoreboards for class selection
+	write_load_file(
+f"""
 # Class selection scoreboard (1-10 = class id, 0 = none)
 scoreboard objectives add {ns}.mp.class dummy
 
@@ -29,18 +27,18 @@ scoreboard objectives add {ns}.mp.death_count deathCount
 scoreboard objectives add {ns}.class_menu minecraft.used:minecraft.warped_fungus_on_a_stick
 """)
 
-    	## Detect class menu right-click in player tick
-    	self.func("player/tick", f"""
+	## Detect class menu right-click in player tick
+	write_versioned_function("player/tick", f"""
 # Class menu: detect right-click on warped fungus on a stick
 execute if score @s {ns}.class_menu matches 1.. if items entity @s weapon.mainhand *[custom_data~{{{ns}:{{class_menu:true}}}}] run function {ns}:v{version}/multiplayer/select_class
 scoreboard players set @s {ns}.class_menu 0
 """)
 
-    	## show_dialog macro: passes inline SNBT dialog to /dialog show
-    	self.func("multiplayer/show_dialog", "$dialog show @s $(dialog)")
+	## show_dialog macro: passes inline SNBT dialog to /dialog show
+	write_versioned_function("multiplayer/show_dialog", "$dialog show @s $(dialog)")
 
-    	## build_class_btn: recursive - appends one action entry per class to the dialog
-    	self.func("multiplayer/build_class_btn", f"""
+	## build_class_btn: recursive - appends one action entry per class to the dialog
+	write_versioned_function("multiplayer/build_class_btn", f"""
 # Build rich tooltip from current class data (includes mag counts and equipment)
 $data modify storage {ns}:temp _btn set value {{label:{{text:"$(name)",color:"green"}},tooltip:["",{{text:"$(lore)","color":"gray"}},{{"text":"\\n"}},{{"text":"Primary"}},": ",{{"text":"$(main_gun)","color":"green"}},{{"text":" x$(main_mag_count) mags","color":"dark_green"}},{{"text":"\\n"}},["",{{"text":"Secondary"}},": "],{{"text":"$(secondary_gun)","color":"yellow"}},{{"text":" x$(secondary_mag_count) mags","color":"gold"}},{{"text":"\\n"}},["",{{"text":"Grenades"}},": "],{{"text":"$(equip_display)","color":"aqua"}},{{"text":"\\n"}},["",{{"text":"Perks"}},": "],{{"text":"$(perks_display)","color":"light_purple"}},"\\n\\n",{{"text":"\u25b6 Click to select","color":"dark_gray","italic":true}}],action:{{type:"run_command",command:"/trigger {ns}.player.config set $(trigger_value)"}}}}
 
@@ -52,8 +50,8 @@ data remove storage {ns}:temp class_iter[0]
 execute if data storage {ns}:temp class_iter[0] run function {ns}:v{version}/multiplayer/build_class_btn with storage {ns}:temp class_iter[0]
 """)
 
-    	## select_class: builds the class selection dialog dynamically and shows it
-    	self.func("multiplayer/select_class", f"""
+	## select_class: builds the class selection dialog dynamically and shows it
+	write_versioned_function("multiplayer/select_class", f"""
 # Initialize dialog structure
 data modify storage {ns}:temp dialog set value {{type:"minecraft:multi_action",title:{{text:"Select Your Class",color:"gold",bold:true}},body:{{type:"minecraft:item",item:{{id:"minecraft:crossbow"}},description:{{contents:{{text:"Choose a class for multiplayer",color:"gray"}}}},show_decoration:false,show_tooltip:true}},actions:[],columns:2,after_action:"close",exit_action:{{label:"Cancel"}}}}
 
@@ -72,10 +70,10 @@ data modify storage {ns}:temp dialog.actions append value {{label:[{{text:"🌍 
 function {ns}:v{version}/multiplayer/show_dialog with storage {ns}:temp
 """)
 
-    	## set_class macro: sets the class score and notifies player
-    	## Called from trigger dispatch (trigger values 11-20 → class 1-10)
-    	apply_now: str = f"""{{"text":" [✔]","color":"gold","hover_event":{{"action":"show_text","value":{{"text":"Click here to apply immediately (OP only)","color":"yellow"}}}},"click_event":{{"action":"run_command","command":"/function {ns}:v{version}/multiplayer/apply_class"}}}}"""
-    	self.func("multiplayer/set_class", f"""
+	## set_class macro: sets the class score and notifies player
+	## Called from trigger dispatch (trigger values 11-20 → class 1-10)
+	apply_now: str = f"""{{"text":" [✔]","color":"gold","hover_event":{{"action":"show_text","value":{{"text":"Click here to apply immediately (OP only)","color":"yellow"}}}},"click_event":{{"action":"run_command","command":"/function {ns}:v{version}/multiplayer/apply_class"}}}}"""
+	write_versioned_function("multiplayer/set_class", f"""
 $scoreboard players set @s {ns}.mp.class $(class_num)
 
 # If game active: queue for next respawn
@@ -85,28 +83,28 @@ $execute if data storage {ns}:multiplayer game{{state:"active"}} run tellraw @s 
 $execute unless data storage {ns}:multiplayer game{{state:"active"}} run tellraw @s ["",{MGS_TAG},["",{{"text":"Class set to"}}," "],{{"text":"$(class_name)","color":"green","bold":true}},{apply_now}]
 """)
 
-    	## apply_class: looks up class by score from storage, copies to temp, applies dynamically
-    	# We need to map class_num (score) to an entry in classes_list.
-    	# Since classes_list is ordered and 1-indexed via class_num, index = class_num - 1.
-    	# We use a helper that copies the correct class to temp using indexed access.
-    	apply_commands: str = f"""
+	## apply_class: looks up class by score from storage, copies to temp, applies dynamically
+	# We need to map class_num (score) to an entry in classes_list.
+	# Since classes_list is ordered and 1-indexed via class_num, index = class_num - 1.
+	# We use a helper that copies the correct class to temp using indexed access.
+	apply_commands: str = f"""
 # Check for custom loadout (negative mp.class = custom loadout ID)
 execute if score @s {ns}.mp.class matches ..-1 run return run function {ns}:v{version}/multiplayer/apply_custom_class
 
 # Standard class lookup by class_num score
 """
-    	for class_num in CLASS_IDS.values():
-    		apply_commands += f"execute if score @s {ns}.mp.class matches {class_num} run data modify storage {ns}:temp current_class set from storage {ns}:multiplayer classes_list[{class_num - 1}]\n"
+	for class_num in CLASS_IDS.values():
+		apply_commands += f"execute if score @s {ns}.mp.class matches {class_num} run data modify storage {ns}:temp current_class set from storage {ns}:multiplayer classes_list[{class_num - 1}]\n"
 
-    	apply_commands += f"""
+	apply_commands += f"""
 # Apply the loadout dynamically from the selected class
 function {ns}:v{version}/multiplayer/apply_class_dynamic
 """
 
-    	self.func("multiplayer/apply_class", apply_commands)
+	write_versioned_function("multiplayer/apply_class", apply_commands)
 
-    	## apply_custom_class: find custom loadout by ID stored in mp.custom_class, then apply
-    	self.func("multiplayer/apply_custom_class", f"""
+	## apply_custom_class: find custom loadout by ID stored in mp.custom_class, then apply
+	write_versioned_function("multiplayer/apply_custom_class", f"""
 # Store target loadout ID (negate to get positive ID)
 scoreboard players operation #loadout_id {ns}.data = @s {ns}.mp.class
 scoreboard players operation #loadout_id {ns}.data *= #minus_one {ns}.data
@@ -118,8 +116,8 @@ data modify storage {ns}:temp _find_iter set from storage {ns}:multiplayer custo
 execute if data storage {ns}:temp _find_iter[0] run function {ns}:v{version}/multiplayer/apply_custom_found
 """)
 
-    	## apply_custom_found - Recursive: find loadout by ID and apply it
-    	self.func("multiplayer/apply_custom_found", f"""
+	## apply_custom_found - Recursive: find loadout by ID and apply it
+	write_versioned_function("multiplayer/apply_custom_found", f"""
 # Check if this entry's ID matches the target
 execute store result score #entry_id {ns}.data run data get storage {ns}:temp _find_iter[0].id
 execute if score #entry_id {ns}.data = #loadout_id {ns}.data run return run function {ns}:v{version}/multiplayer/apply_custom_match
@@ -129,8 +127,8 @@ data remove storage {ns}:temp _find_iter[0]
 execute if data storage {ns}:temp _find_iter[0] run function {ns}:v{version}/multiplayer/apply_custom_found
 """)
 
-    	## apply_custom_match - Apply the found loadout (slots + perks)
-    	self.func("multiplayer/apply_custom_match", f"""
+	## apply_custom_match - Apply the found loadout (slots + perks)
+	write_versioned_function("multiplayer/apply_custom_match", f"""
 # Copy found loadout's slots + perks to the format expected by apply_class_dynamic.
 # apply_class_dynamic applies the slots and then calls apply_perks, which reads
 # current_class.perks — so both standard classes and custom loadouts share one path.
@@ -142,8 +140,8 @@ data modify storage {ns}:temp current_class.perks set from storage {ns}:temp _fi
 function {ns}:v{version}/multiplayer/apply_class_dynamic
 """)
 
-    	## perks/on_kill - Scavenger + Quick Fix fire on the killer (signal listener)
-    	self.func("multiplayer/perks/on_kill", f"""
+	## perks/on_kill - Scavenger + Quick Fix fire on the killer (signal listener)
+	write_versioned_function("multiplayer/perks/on_kill", f"""
 # Only relevant for players in an active multiplayer game
 execute unless score @s {ns}.mp.in_game matches 1 run return fail
 
@@ -156,19 +154,19 @@ execute if score @s {ns}.special.quick_fix matches 1 run scoreboard players set 
 execute if score @s {ns}.special.quick_fix matches 1 run effect give @s minecraft:regeneration 3 1 true
 """, tags=[f"{ns}:signals/on_kill"])
 
-    	## perks/scavenger_refill - Refill all spare magazines in the inventory to capacity
-    	## (reuses the generic per-slot magazine refill; never refills the loaded weapon)
-    	scavenger_slot_checks: str = "".join(
-    		f'execute if items entity @s {slot} *[custom_data~{{{ns}:{{magazine:true}}}}] run function {ns}:v{version}/zombies/bonus/refill_magazine {{slot:"{slot}"}}\n'
-    		for slot in ALL_SLOTS
-    	)
-    	self.func("multiplayer/perks/scavenger_refill", f"""
+	## perks/scavenger_refill - Refill all spare magazines in the inventory to capacity
+	## (reuses the generic per-slot magazine refill; never refills the loaded weapon)
+	scavenger_slot_checks: str = "".join(
+		f'execute if items entity @s {slot} *[custom_data~{{{ns}:{{magazine:true}}}}] run function {ns}:v{version}/zombies/bonus/refill_magazine {{slot:"{slot}"}}\n'
+		for slot in ALL_SLOTS
+	)
+	write_versioned_function("multiplayer/perks/scavenger_refill", f"""
 {scavenger_slot_checks}
 function {ns}:v{version}/ammo/compute_reserve
 """)
 
-    	## On respawn (called from player tick when actual vanilla death detected - environmental only)
-    	self.func("multiplayer/on_respawn", f"""
+	## On respawn (called from player tick when actual vanilla death detected - environmental only)
+	write_versioned_function("multiplayer/on_respawn", f"""
 # Reset death counter
 scoreboard players set @s {ns}.mp.death_count 0
 
@@ -186,14 +184,14 @@ tag @s remove {ns}.temp_victim
 function {ns}:v{version}/multiplayer/enter_death_spectate
 """)
 
-    	## Spectate a random alive in-game player (fallback when no killer)
-    	self.func("multiplayer/spectate_random_player", f"""
+	## Spectate a random alive in-game player (fallback when no killer)
+	write_versioned_function("multiplayer/spectate_random_player", f"""
 # Pick a random alive in-game player (not self, not spectator)
 execute as @r[scores={{{ns}.mp.in_game=1}},gamemode=!spectator] run spectate @s @p[scores={{{ns}.mp.spectate_timer=1..}},sort=nearest]
 """)
 
-    	## Actual respawn: called when spectate timer reaches 0
-    	self.func("multiplayer/actual_respawn", f"""
+	## Actual respawn: called when spectate timer reaches 0
+	write_versioned_function("multiplayer/actual_respawn", f"""
 # Stop spectating
 spectate @s
 
@@ -216,9 +214,9 @@ execute if data storage {ns}:multiplayer game.map.respawn_commands[0] at @s run 
 function {ns}:v{version}/shared/maps/call_respawn_script_at_base
 """)
 
-    	## auto_apply_default: apply default custom loadout on game start
-    	## Sets mp.class = -(mp.default) then applies
-    	self.func("multiplayer/auto_apply_default", f"""
+	## auto_apply_default: apply default custom loadout on game start
+	## Sets mp.class = -(mp.default) then applies
+	write_versioned_function("multiplayer/auto_apply_default", f"""
 # Set mp.class to negative default ID (custom loadout)
 scoreboard players operation @s {ns}.mp.class = @s {ns}.mp.default
 scoreboard players operation @s {ns}.mp.class *= #minus_one {ns}.data
@@ -227,18 +225,11 @@ scoreboard players operation @s {ns}.mp.class *= #minus_one {ns}.data
 function {ns}:v{version}/multiplayer/apply_class
 """)
 
-    	## Player tick hooks
-    	self.func("player/tick", f"""
+	## Player tick hooks
+	write_versioned_function("player/tick", f"""
 # Multiplayer: detect respawn (death_count incremented by deathCount criterion)
 execute if data storage {ns}:multiplayer game{{state:"active"}} if score @s {ns}.mp.death_count matches 1.. run function {ns}:v{version}/multiplayer/on_respawn
 
 # Missions: detect respawn
 execute if data storage {ns}:missions game{{state:"active"}} if score @s {ns}.mi.in_game matches 1.. if score @s {ns}.mp.death_count matches 1.. run function {ns}:v{version}/missions/on_respawn
 """)
-
-
-def generate_class_selection() -> None:
-	""" Module-level entry (preserved signature); delegates to :class:`ClassSelectionGenerator`. """
-	ClassSelectionGenerator()()
-
-
