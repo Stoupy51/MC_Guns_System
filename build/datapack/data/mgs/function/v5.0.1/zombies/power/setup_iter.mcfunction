@@ -18,15 +18,12 @@ execute store result storage mgs:temp _pw.x int 1 run scoreboard players get #pw
 execute store result storage mgs:temp _pw.y int 1 run scoreboard players get #pwy mgs.data
 execute store result storage mgs:temp _pw.z int 1 run scoreboard players get #pwz mgs.data
 
-# Determine lever facing from stored yaw (stored = player_yaw + 180)
-execute store result score #pw_yaw mgs.data run data get storage mgs:temp _pw_iter[0].rotation[0]
-data modify storage mgs:temp _pw.facing set value "north"
-execute if score #pw_yaw mgs.data matches 0..44 run data modify storage mgs:temp _pw.facing set value "south"
-execute if score #pw_yaw mgs.data matches 315..360 run data modify storage mgs:temp _pw.facing set value "south"
-execute if score #pw_yaw mgs.data matches 45..134 run data modify storage mgs:temp _pw.facing set value "west"
-execute if score #pw_yaw mgs.data matches 225..314 run data modify storage mgs:temp _pw.facing set value "east"
+# Store yaw for the display (stored = player_yaw + 180; the model's fixed rotation -180 compensates,
+# so the switch faces the placer just like the perk/PAP machine displays)
+data modify storage mgs:temp _pw.yaw set value 0.0f
+execute if data storage mgs:temp _pw_iter[0].rotation[0] run data modify storage mgs:temp _pw.yaw set from storage mgs:temp _pw_iter[0].rotation[0]
 
-# Place lever and summon interaction entity
+# Summon interaction entity + custom-model display
 function mgs:v5.0.1/zombies/power/place_at with storage mgs:temp _pw
 
 # Continue iteration

@@ -36,7 +36,7 @@ ALL_ELEMENTS: dict[str, JsonDict] = {
 	"config":             {"name": "⚙ Config",         "color": "white",        "particle": [1.0, 1.0, 1.0], "particle_scale": 0.5, "has_rotation": False, "egg_model": "minecraft:allay_spawn_egg", "save_type": "config", "emoji": "⚙"},
 	# Zombies elements (zb_object: compound data with pos/rotation/group_id + extra fields)
 	"zombie_spawn":       {"name": "Zombie Spawn",     "color": "dark_green",   "particle": [0.0, 0.5, 0.0], "particle_scale": 1.0, "has_rotation": True,  "egg_model": "minecraft:zombie_spawn_egg",      "save_type": "zb_object", "save_path": "spawning_points.zombies", "emoji": "🧟",
-                           "defaults": {}},
+                           "defaults": {"activation_box": []}},
 	"player_spawn_zb":    {"name": "Player Spawn",     "color": "aqua",         "particle": [0.0, 1.0, 1.0], "particle_scale": 1.0, "has_rotation": True,  "egg_model": "minecraft:villager_spawn_egg",    "save_type": "zb_object", "save_path": "spawning_points.players", "emoji": "●",
                            "defaults": {}},
 	"wallbuy":            {"name": "Wallbuy",          "color": "yellow",       "particle": [1.0, 1.0, 0.0], "particle_scale": 1.0, "has_rotation": True,  "egg_model": "minecraft:iron_golem_spawn_egg",  "save_type": "zb_object", "save_path": "wallbuys", "emoji": "🔫",
@@ -80,6 +80,7 @@ FIELD_DOCS: dict[tuple[str, str] | str, str] = {
 	("perk_machine", "perk_id"): "Perk granted by this machine:\njuggernog · speed_cola · double_tap · quick_revive · mule_kick",
 	("wallbuy", "weapon_id"): "Catalog weapon id given on purchase (e.g. m1911, ak47, mp5).",
 	("barrier", "radius"): "Block radius the barrier toggles open/closed around its marker.",
+	("zombie_spawn", "activation_box"): "Optional [x, y, z, dx, dy, dz] box (relative to this spawn, in blocks).\nWhen set, this spawn only produces zombies while a player stands inside the box.\nx/y/z = corner offset from the spawn, dx/dy/dz = size. Empty [] = always active.",
 	# Shared fallbacks (any element type):
 	"power": "true = requires the map's power to be switched on before it works\nfalse = always usable",
 	"price": "Cost in points to buy/use this element.",
@@ -1230,18 +1231,32 @@ execute at @s unless entity @n[tag={ns}.map_element,distance=..10] run tellraw @
 			)
 		for field, default_val in einfo["defaults"].items():
 			snbt_val = snbt_suggest(default_val)
+			# Edit button suggests the current default value; optional list fields suggest a
+			# usable template instead of empty brackets so they're easy to fill in.
+			edit_value = snbt_val
+			if field == "activation_box":
+				edit_value = "[0, 0, 0, 5, 3, 5]"
 			# Door fields (except link_id) use propagation to all doors with same link_id.
 			if etype == "door" and field != "link_id":
 				edit_cmd = f"/function {ns}:v{version}/maps/editor/set_door_link_{field} {{{field}:{snbt_val}}}"
 				hover_text = f"Sets {field} on ALL doors with same link_id"
 			else:
-				edit_cmd = f"/data modify entity @n[tag={ns}.element.{etype},distance=..10] data.{field} set value {snbt_val}"
+				edit_cmd = f"/data modify entity @n[tag={ns}.element.{etype},distance=..10] data.{field} set value {edit_value}"
 				hover_text = f"Click to edit {field}"
 			edit_btn = btn(
 				"✎",
 				edit_cmd,
 				"yellow", hover_text, action="suggest_command"
 			)
+			# Optional list fields get a "✗" button to clear/disable them (set back to []).
+			clear_component: str = ""
+			if field == "activation_box":
+				clear_btn = btn(
+					"✗",
+					f"/data modify entity @n[tag={ns}.element.{etype},distance=..10] data.{field} set value []",
+					"red", "Clear (disable) the activation box", action="run_command"
+				)
+				clear_component = f'," ",{clear_btn}'
 			# Optional info tooltip for constant/enum fields (e.g. trap type, door animation).
 			doc: str | None = FIELD_DOCS.get((etype, field)) or FIELD_DOCS.get(field)
 			info_component: str = ""
@@ -1251,7 +1266,7 @@ execute at @s unless entity @n[tag={ns}.map_element,distance=..10] run tellraw @
 			zb_config_lines.append(
 				f'execute if entity @s[tag={ns}.element.{etype}] run tellraw @a[tag={ns}.map_editor] '
 				f'["    ",{{"text":"{field}: ","color":"gray"}},'
-				f'{{"entity":"@s","nbt":"data.{field}","color":"white"}}," ",{edit_btn}{info_component}]'
+				f'{{"entity":"@s","nbt":"data.{field}","color":"white"}}," ",{edit_btn}{clear_component}{info_component}]'
 			)
 
 	# For spawn types: show yaw

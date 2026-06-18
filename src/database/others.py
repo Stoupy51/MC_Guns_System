@@ -35,4 +35,15 @@ def main() -> None:
     Item(id="perk_machine_quick_revive", override_model=override_model("light_blue"))
     Item(id="perk_machine_mule_kick", override_model=override_model("green"))
 
+    # Power switch / breaker box (vanilla textures). "_on" is a child model that just
+    # recolors the handle + indicator light to green/lit; the geometry is shared.
+    Item(id="power_switch", override_model=load_model(get_model_path("power_switch")))
+    Item(id="power_switch_on", override_model={
+        "parent": "mgs:item/power_switch",
+        "textures": {
+            "handle": "minecraft:block/lime_terracotta",
+            "light": "minecraft:block/sea_lantern",
+        },
+    })
+
 

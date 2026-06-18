@@ -19,13 +19,10 @@ scoreboard players set #zb_power mgs.data 1
 execute as @e[tag=mgs.power_switch] at @s run particle minecraft:electric_spark ~ ~1 ~ 0.5 0.5 0.5 0.1 20
 execute as @e[tag=mgs.power_switch] at @s run playsound minecraft:entity.firework_rocket.twinkle_far ambient @a ~ ~ ~ 2 1
 
-# Toggle lever blocks to powered state
-execute as @e[tag=mgs.power_switch] at @s if entity @s[tag=mgs.pw_face_north] run setblock ~ ~ ~ minecraft:lever[face=wall,facing=north,powered=true]
-execute as @e[tag=mgs.power_switch] at @s if entity @s[tag=mgs.pw_face_south] run setblock ~ ~ ~ minecraft:lever[face=wall,facing=south,powered=true]
-execute as @e[tag=mgs.power_switch] at @s if entity @s[tag=mgs.pw_face_east] run setblock ~ ~ ~ minecraft:lever[face=wall,facing=east,powered=true]
-execute as @e[tag=mgs.power_switch] at @s if entity @s[tag=mgs.pw_face_west] run setblock ~ ~ ~ minecraft:lever[face=wall,facing=west,powered=true]
+# Switch every display model to its powered ("on") variant (handle + light go green/lit)
+execute as @e[tag=mgs.power_switch_disp] run data modify entity @s item.components."minecraft:item_model" set value "mgs:power_switch_on"
 
-# Kill power switch interaction entities (one-time use)
+# Kill power switch interaction entities (one-time use); displays stay to show the "on" state
 kill @e[tag=mgs.power_switch]
 
 # Announce

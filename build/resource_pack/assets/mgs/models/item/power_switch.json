@@ -1,0 +1,211 @@
+{
+	"parent": "item/generated",
+	"textures": {
+		"trim": "minecraft:block/iron_block",
+		"dark": "minecraft:block/gray_concrete",
+		"darker": "minecraft:block/black_concrete",
+		"accent": "minecraft:block/light_gray_concrete",
+		"handle": "minecraft:block/red_terracotta",
+		"light": "minecraft:block/red_concrete",
+		"particle": "minecraft:block/iron_block"
+	},
+	"format_version": "1.21.11",
+	"credit": "MGS power switch / breaker box (vanilla textures)",
+	"elements": [
+		{
+			"name": "mounting plate",
+			"from": [
+				3,
+				2,
+				13
+			],
+			"to": [
+				13,
+				14,
+				15.5
+			],
+			"faces": {
+				"north": {"uv": [0,0,16,16],"texture": "#trim"},
+				"east": {"uv": [0,0,16,16],"texture": "#trim"},
+				"south": {"uv": [0,0,16,16],"texture": "#trim"},
+				"west": {"uv": [0,0,16,16],"texture": "#trim"},
+				"up": {"uv": [0,0,16,16],"texture": "#trim"},
+				"down": {"uv": [0,0,16,16],"texture": "#trim"}
+			}
+		},
+		{
+			"name": "box body",
+			"from": [
+				4,
+				3,
+				9.5
+			],
+			"to": [
+				12,
+				13,
+				13.5
+			],
+			"faces": {
+				"north": {"uv": [0,0,16,16],"texture": "#dark"},
+				"east": {"uv": [0,0,16,16],"texture": "#dark"},
+				"south": {"uv": [0,0,16,16],"texture": "#dark"},
+				"west": {"uv": [0,0,16,16],"texture": "#dark"},
+				"up": {"uv": [0,0,16,16],"texture": "#dark"},
+				"down": {"uv": [0,0,16,16],"texture": "#dark"}
+			}
+		},
+		{
+			"name": "front panel",
+			"from": [
+				4.5,
+				3.5,
+				9
+			],
+			"to": [
+				11.5,
+				12.5,
+				9.6
+			],
+			"faces": {
+				"north": {"uv": [0,0,16,16],"texture": "#accent"},
+				"east": {"uv": [0,0,16,16],"texture": "#accent"},
+				"south": {"uv": [0,0,16,16],"texture": "#accent"},
+				"west": {"uv": [0,0,16,16],"texture": "#accent"},
+				"up": {"uv": [0,0,16,16],"texture": "#accent"},
+				"down": {"uv": [0,0,16,16],"texture": "#accent"}
+			}
+		},
+		{
+			"name": "lever housing",
+			"from": [
+				6.5,
+				5.5,
+				8.4
+			],
+			"to": [
+				9.5,
+				8.5,
+				9.4
+			],
+			"faces": {
+				"north": {"uv": [0,0,16,16],"texture": "#darker"},
+				"east": {"uv": [0,0,16,16],"texture": "#darker"},
+				"south": {"uv": [0,0,16,16],"texture": "#darker"},
+				"west": {"uv": [0,0,16,16],"texture": "#darker"},
+				"up": {"uv": [0,0,16,16],"texture": "#darker"},
+				"down": {"uv": [0,0,16,16],"texture": "#darker"}
+			}
+		},
+		{
+			"name": "lever handle",
+			"from": [
+				7.3,
+				6.5,
+				8.4
+			],
+			"to": [
+				8.7,
+				11.5,
+				9.4
+			],
+			"faces": {
+				"north": {"uv": [0,0,16,16],"texture": "#handle"},
+				"east": {"uv": [0,0,16,16],"texture": "#handle"},
+				"south": {"uv": [0,0,16,16],"texture": "#handle"},
+				"west": {"uv": [0,0,16,16],"texture": "#handle"},
+				"up": {"uv": [0,0,16,16],"texture": "#handle"},
+				"down": {"uv": [0,0,16,16],"texture": "#handle"}
+			}
+		},
+		{
+			"name": "lever knob",
+			"from": [
+				7,
+				10.8,
+				8.1
+			],
+			"to": [
+				9,
+				12.8,
+				9.7
+			],
+			"faces": {
+				"north": {"uv": [0,0,16,16],"texture": "#handle"},
+				"east": {"uv": [0,0,16,16],"texture": "#handle"},
+				"south": {"uv": [0,0,16,16],"texture": "#handle"},
+				"west": {"uv": [0,0,16,16],"texture": "#handle"},
+				"up": {"uv": [0,0,16,16],"texture": "#handle"},
+				"down": {"uv": [0,0,16,16],"texture": "#handle"}
+			}
+		},
+		{
+			"name": "indicator light",
+			"from": [
+				9.2,
+				9.5,
+				8.9
+			],
+			"to": [
+				11,
+				11.3,
+				9.5
+			],
+			"faces": {
+				"north": {"uv": [0,0,16,16],"texture": "#light"},
+				"east": {"uv": [0,0,16,16],"texture": "#light"},
+				"south": {"uv": [0,0,16,16],"texture": "#light"},
+				"west": {"uv": [0,0,16,16],"texture": "#light"},
+				"up": {"uv": [0,0,16,16],"texture": "#light"},
+				"down": {"uv": [0,0,16,16],"texture": "#light"}
+			}
+		}
+	],
+	"display": {
+		"gui": {
+			"rotation": [
+				30,
+				200,
+				0
+			],
+			"translation": [
+				0,
+				-1,
+				0
+			],
+			"scale": [
+				0.55,
+				0.55,
+				0.55
+			]
+		},
+		"head": {
+			"rotation": [
+				0,
+				-180,
+				0
+			],
+			"translation": [
+				0,
+				9.5,
+				0
+			],
+			"scale": [
+				0.6,
+				0.6,
+				0.6
+			]
+		},
+		"fixed": {
+			"rotation": [
+				0,
+				-180,
+				0
+			],
+			"translation": [
+				0,
+				0,
+				-3
+			]
+		}
+	}
+}

@@ -82,11 +82,29 @@ execute unless entity @e[tag={ns}.zb_near] as @a[scores={{{ns}.zb.in_game=1}},ga
 # Fallback: any unlocked spawn
 execute unless entity @e[tag={ns}.zb_near] run tag @e[tag={ns}.spawn_zb,tag={ns}.spawn_unlocked] add {ns}.zb_near
 
+# Activation-box gating: a spawn that defines an activation box is only usable while an alive
+# player stands inside that box. Drop box-gated candidates whose box is currently empty.
+execute as @e[tag={ns}.zb_near] if data entity @s data.abox run function {ns}:v{version}/zombies/filter_spawn_abox
+
 # Pick random from tagged set and spawn
 execute as @n[tag={ns}.zb_near,sort=random] at @s run function {ns}:v{version}/zombies/do_spawn_zombie
 
 # Cleanup
 tag @e[tag={ns}.zb_near] remove {ns}.zb_near
+""")
+
+	## Activation-box filter (runs as a candidate spawn marker that has data.abox).
+	## Removes the marker from the candidate set unless an alive in-game player is inside its box.
+	write_versioned_function("zombies/filter_spawn_abox", f"""
+data modify storage {ns}:temp _abox_chk set from entity @s data.abox
+scoreboard players set #abox_ok {ns}.data 0
+function {ns}:v{version}/zombies/test_spawn_abox with storage {ns}:temp _abox_chk
+execute if score #abox_ok {ns}.data matches 0 run tag @s remove {ns}.zb_near
+""")
+
+	## Macro: set #abox_ok to 1 if any alive in-game player is within the absolute box volume.
+	write_versioned_function("zombies/test_spawn_abox", f"""
+$execute if entity @a[scores={{{ns}.zb.in_game=1}},gamemode=!spectator,x=$(x),y=$(y),z=$(z),dx=$(dx),dy=$(dy),dz=$(dz)] run scoreboard players set #abox_ok {ns}.data 1
 """)
 
 	## Actually spawn the zombie at the marker position (@s = spawn marker, at @s)

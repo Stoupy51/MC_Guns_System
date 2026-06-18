@@ -8,8 +8,7 @@ def generate_storage() -> None:
 	version: str = Mem.ctx.project_version
 
 	## Scoreboards & Storage for custom loadouts
-	write_load_file(
-f"""
+	write_load_file(f"""
 ## Custom loadout system
 # Unique player IDs (auto-increment, used to identify loadout ownership)
 # Global next-pid counter
@@ -29,8 +28,7 @@ scoreboard players set #minus_one {ns}.data -1
 """)
 
 	## Initialize custom loadout storage (only if not already set)
-	write_load_file(
-f"""
+	write_load_file(f"""
 # Custom loadouts list (persists across reloads)
 execute unless data storage {ns}:multiplayer custom_loadouts run data modify storage {ns}:multiplayer custom_loadouts set value []
 # Per-player preference data (persists across reloads)
