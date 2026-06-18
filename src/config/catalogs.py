@@ -1,13 +1,11 @@
 
 # Weapon & Equipment Catalog constants
-from typing import NamedTuple
+from dataclasses import dataclass
 
 
-# Typed catalog rows. These are NamedTuples (not frozen dataclasses) on purpose: the catalogs
-# are unpacked positionally and index-accessed (w[0], w[5], `for a, b, *_ in ...`) all over the
-# codebase, and a NamedTuple stays a tuple — so it is a drop-in upgrade that adds named-attribute
-# access (w.in_loadout) and static typing without touching a single reader.
-class Weapon(NamedTuple):
+# Typed catalog rows (frozen dataclasses — accessed by name, e.g. w.in_loadout).
+@dataclass(frozen=True)
+class Weapon:
     """ A primary weapon catalog entry. """
     item_id: str
     display_name: str
@@ -17,7 +15,8 @@ class Weapon(NamedTuple):
     in_loadout: bool
 
 
-class SecondaryWeapon(NamedTuple):
+@dataclass(frozen=True)
+class SecondaryWeapon:
     """ A secondary (sidearm) catalog entry. """
     item_id: str
     display_name: str
@@ -26,26 +25,30 @@ class SecondaryWeapon(NamedTuple):
     in_loadout: bool
 
 
-class EquipmentPreset(NamedTuple):
+@dataclass(frozen=True)
+class EquipmentPreset:
     """ A grenade/equipment preset: maps equipment item_id -> count. """
     preset_id: str
     display_name: str
     items: dict[str, int]
 
 
-class CamoVariant(NamedTuple):
+@dataclass(frozen=True)
+class CamoVariant:
     """ A free cosmetic camo: suffix appended after the scope suffix. """
     suffix: str
     display_name: str
 
 
-class GrenadeType(NamedTuple):
+@dataclass(frozen=True)
+class GrenadeType:
     """ A throwable grenade slot option ("" = None). """
     item_id: str
     display_name: str
 
 
-class Perk(NamedTuple):
+@dataclass(frozen=True)
+class Perk:
     """ A loadout perk; score_name is the mgs.special.* flag set when on the loadout. """
     perk_id: str
     display_name: str
