@@ -1,8 +1,8 @@
+
 # Imports
-
 from stewbeet import Mem, write_load_file, write_tick_file, write_versioned_function
-from ..config.stats import ACCURACY_BASE, COOLDOWN, GRENADE_TYPE, PELLET_COUNT, PROJECTILE_SPEED
 
+from ..config.stats import ACCURACY_BASE, COOLDOWN, GRENADE_TYPE, PELLET_COUNT, PROJECTILE_SPEED
 
 # Main function
 
@@ -12,8 +12,7 @@ def main() -> None:
     version: str = Mem.ctx.project_version
 
     # Scoreboards for mob AI
-    write_load_file(
-f"""
+    write_load_file(f"""
 # Armed mob counter (skip tick loop if 0)
 scoreboard players add #armed_mob_count {ns}.data 0
 

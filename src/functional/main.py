@@ -12,8 +12,7 @@ def main() -> None:
     version: str = Mem.ctx.project_version
 
     # Write to load file
-    write_load_file(
-f"""
+    write_load_file(f"""
 ## Define objectives
 # Used to tag players that should be selected by Multiplayer/Mission/Zombies functions (@a)
 # We use a scoreboard instead of tag so we can reset offline players

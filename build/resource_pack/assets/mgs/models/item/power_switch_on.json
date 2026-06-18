@@ -1,0 +1,7 @@
+{
+	"parent": "mgs:item/power_switch",
+	"textures": {
+		"handle": "minecraft:block/lime_terracotta",
+		"light": "minecraft:block/sea_lantern"
+	}
+}

@@ -529,3 +529,4 @@ kill @e[tag={ns}.downed_mannequin]
 kill @e[tag={ns}.downed_hud]
 kill @e[tag={ns}.downed_cam]
 """)
+

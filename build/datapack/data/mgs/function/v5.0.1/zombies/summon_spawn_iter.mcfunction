@@ -26,6 +26,12 @@ function mgs:v5.0.1/zombies/summon_spawn_at with storage mgs:temp _spos
 # Set group_id score on newly spawned marker (default 0 if not defined)
 scoreboard players set @n[tag=mgs.new_spawn] mgs.zb.spawn.gid 0
 execute store result score @n[tag=mgs.new_spawn] mgs.zb.spawn.gid run data get storage mgs:temp _spawn_iter[0].group_id
+
+# Optional activation box (zombie spawns only): store the ABSOLUTE box on the marker so the
+# round spawner can gate this spawn on a player standing inside it. Only present when the map
+# data defines all 6 elements [x,y,z,dx,dy,dz] (relative to this spawn).
+execute if data storage mgs:temp _spawn_iter[0].activation_box[5] run function mgs:v5.0.1/zombies/store_spawn_abox
+
 tag @n[tag=mgs.new_spawn] remove mgs.new_spawn
 
 data remove storage mgs:temp _spawn_iter[0]

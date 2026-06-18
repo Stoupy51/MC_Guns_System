@@ -15,8 +15,7 @@ def generate_class_selection() -> None:
 	version: str = Mem.ctx.project_version
 
 	## Scoreboards for class selection
-	write_load_file(
-f"""
+	write_load_file(f"""
 # Class selection scoreboard (1-10 = class id, 0 = none)
 scoreboard objectives add {ns}.mp.class dummy
 

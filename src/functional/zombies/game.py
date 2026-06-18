@@ -5,6 +5,7 @@
 # Map definitions are dynamic (stored in storage, registered via function tags).
 from stewbeet import Mem, write_tag
 
+from ..game_mode import GameMode
 from ..helpers import (
 	MGS_TAG,
 	end_prep_transition_lines,
@@ -16,21 +17,20 @@ from ..helpers import (
 	regen_enable_lines,
 	schedule_preload_complete_line,
 )
-from ..game_mode import GameMode
 
 
 class ZombiesMode(GameMode):
-    """ Generates the zombies game lifecycle (rounds, co-op spawns, sidebar). """
+	""" Generates the zombies game lifecycle (rounds, co-op spawns, sidebar). """
 
-    mode = "zombies"
+	mode = "zombies"
 
-    def generate(self) -> None:
-    	ns: str = self.ns
-    	version: str = self.version
+	def generate(self) -> None:
+		ns: str = self.ns
+		version: str = self.version
 
-    	## Scoreboards & Storage Setup
-    	self.load(
-    f"""
+		## Scoreboards & Storage Setup
+		self.load(
+	f"""
 ## Zombies scoreboards
 scoreboard objectives add {ns}.zb.in_game dummy
 scoreboard objectives add {ns}.zb.points dummy
@@ -74,12 +74,12 @@ execute unless data storage {ns}:zombies game.variant run data modify storage {n
 execute unless data storage {ns}:zombies mystery_box_pool run data modify storage {ns}:zombies mystery_box_pool set value []
 """)
 
-    	## Signal function tags
-    	for event in ["register_maps", "register_mystery_box_item", "on_round_start", "on_round_end", "on_game_start", "on_game_end"]:
-    		write_tag(f"zombies/{event}", Mem.ctx.data[ns].function_tags, [])
+		## Signal function tags
+		for event in ["register_maps", "register_mystery_box_item", "on_round_start", "on_round_end", "on_game_start", "on_game_end"]:
+			write_tag(f"zombies/{event}", Mem.ctx.data[ns].function_tags, [])
 
-    	## Game Start
-    	self.func("zombies/start", f"""
+		## Game Start
+		self.func("zombies/start", f"""
 # Prevent starting if already active or preparing
 {game_start_guards(ns, "zombies", "Zombies game")}
 
@@ -167,8 +167,8 @@ function #{ns}:zombies/register_mystery_box_item
 tellraw @a ["",{{"text":"","color":"dark_green","bold":true}},"🧟 ",{{"text":"Loading zombies map...","color":"yellow"}}]
 """)
 
-    	## Preload complete → transition to prep phase
-    	self.func("zombies/preload_complete", f"""
+		## Preload complete → transition to prep phase
+		self.func("zombies/preload_complete", f"""
 # Guard: only if still preparing
 execute unless data storage {ns}:zombies game{{state:"preparing"}} run return fail
 
@@ -212,13 +212,13 @@ execute if data storage {ns}:zombies game{{variant:"zonweeb"}} run tellraw @a ["
 execute unless data storage {ns}:zombies game{{variant:"zonweeb"}} run tellraw @a ["",{{"text":"","color":"dark_green","bold":true}},"🧟 ",{{"text":"Preparing! Round 1 starts in 10 seconds!","color":"yellow"}}]
 """)
 
-    	## Prep Tick (no class to detect, just wait)
-    	self.func("zombies/prep_tick", """
+		## Prep Tick (no class to detect, just wait)
+		self.func("zombies/prep_tick", """
 # Nothing to process during prep (perk selection is instant via chat click)
 """)
 
-    	## End Prep → Start Round 1
-    	self.func("zombies/end_prep", f"""
+		## End Prep → Start Round 1
+		self.func("zombies/end_prep", f"""
 {end_prep_transition_lines(ns, "zombies", "zb")}
 
 # Start round 1
@@ -229,15 +229,15 @@ function {ns}:v{version}/shared/maps/call_start_script_at_base
 """)
 
 
-    	# Game Tick ─────────────────────────────────────────────────
+		# Game Tick ─────────────────────────────────────────────────
 
-    	self.tick(f"""
+		self.tick(f"""
 # Zombies game tick
 execute if data storage {ns}:zombies game{{state:"active"}} run function {ns}:v{version}/zombies/game_tick
 execute if data storage {ns}:zombies game{{state:"preparing"}} run function {ns}:v{version}/zombies/prep_tick
 """)
 
-    	self.func("zombies/game_tick", f"""
+		self.func("zombies/game_tick", f"""
 # Revive system tick (process downed players)
 function {ns}:v{version}/zombies/revive/tick
 
@@ -291,9 +291,9 @@ kill @e[type=experience_orb]
 """)
 
 
-    	# Death & Respawn ───────────────────────────────────────────
-    	## On Respawn (zombies death handling → enter downed state)
-    	self.func("zombies/on_respawn", f"""
+		# Death & Respawn ───────────────────────────────────────────
+		## On Respawn (zombies death handling → enter downed state)
+		self.func("zombies/on_respawn", f"""
 # Reset death counter
 scoreboard players set @s {ns}.mp.death_count 0
 
@@ -304,15 +304,15 @@ scoreboard players add @s {ns}.zb.downs 1
 function {ns}:v{version}/zombies/revive/on_down
 """)
 
-    	## Add player tick hook for zombies death detection
-    	self.func("player/tick", f"""
+		## Add player tick hook for zombies death detection
+		self.func("player/tick", f"""
 # Zombies: detect respawn
 execute if data storage {ns}:zombies game{{state:"active"}} if score @s {ns}.zb.in_game matches 1.. if score @s {ns}.mp.death_count matches 1.. run function {ns}:v{version}/zombies/on_respawn
 """)
 
-    	# Game Over ─────────────────────────────────────────────────
+		# Game Over ─────────────────────────────────────────────────
 
-    	self.func("zombies/game_over", f"""
+		self.func("zombies/game_over", f"""
 # Set state to ended
 data modify storage {ns}:zombies game.state set value "ended"
 
@@ -343,8 +343,8 @@ execute as @a[scores={{{ns}.zb.in_game=1}}] at @s run playsound {ns}:zombies/gam
 schedule function {ns}:v{version}/zombies/stop 100t
 """)
 
-    	# Game Stop ─────────────────────────────────────────────────
-    	self.func("zombies/stop", f"""
+		# Game Stop ─────────────────────────────────────────────────
+		self.func("zombies/stop", f"""
 # Various cleanup to set to lobby state
 data modify storage {ns}:zombies game.state set value "lobby"
 schedule clear {ns}:v{version}/zombies/end_prep
@@ -353,9 +353,7 @@ execute as @a[scores={{{ns}.zb.in_game=1}}] run attribute @s minecraft:max_healt
 execute as @a[scores={{{ns}.zb.in_game=1}}] run attribute @s minecraft:movement_speed base reset
 execute as @a[scores={{{ns}.zb.in_game=1}}] run attribute @s minecraft:jump_strength base reset
 execute as @a[scores={{{ns}.zb.in_game=1}}] run attribute @s minecraft:entity_interaction_range base reset
-effect clear @a[scores={{{ns}.zb.in_game=1}}] darkness
-effect clear @a[scores={{{ns}.zb.in_game=1}}] blindness
-effect clear @a[scores={{{ns}.zb.in_game=1}}] night_vision
+effect clear @a[scores={{{ns}.zb.in_game=1}}]
 gamemode adventure @a[scores={{{ns}.zb.in_game=1}},gamemode=spectator]
 kill @e[tag={ns}.zombie_round]
 kill @e[tag={ns}.gm_entity]
@@ -386,8 +384,8 @@ scoreboard players set @a {ns}.mp.spectate_timer 0
 tag @a[tag={ns}.give_class_menu] remove {ns}.give_class_menu
 """)
 
-    	## Join Ongoing Zombies Game (late-joiner support)
-    	self.func("zombies/join_game", f"""
+		## Join Ongoing Zombies Game (late-joiner support)
+		self.func("zombies/join_game", f"""
 {late_join_flow_lines(
 	ns,
 	"zombies",
@@ -415,9 +413,9 @@ attribute @s minecraft:entity_interaction_range base set 5
 )}
 """)
 
-    	# Kill Points ───────────────────────────────────────────────
-    	# Track kills via totalKillCount stat delta — catches all kill types (bullets, knife, etc.)
-    	self.func("zombies/check_kill_points", f"""
+		# Kill Points ───────────────────────────────────────────────
+		# Track kills via totalKillCount stat delta — catches all kill types (bullets, knife, etc.)
+		self.func("zombies/check_kill_points", f"""
 # Calculate delta kills since last check
 scoreboard players operation #zb_kills_delta {ns}.data = @s {ns}.total_kills
 scoreboard players operation #zb_kills_delta {ns}.data -= @s {ns}.zb.prev_kills
@@ -448,8 +446,8 @@ scoreboard players operation @s {ns}.zb.kills += #zb_kills_delta {ns}.data
 function {ns}:v{version}/zombies/refresh_sidebar
 """)
 
-    	# Bullet hit points (+10 per bullet hit on a live zombie)
-    	self.func("zombies/on_hit_signal", f"""
+		# Bullet hit points (+10 per bullet hit on a live zombie)
+		self.func("zombies/on_hit_signal", f"""
 # Only process if zombies game is active & If the hit target is a live round zombie
 execute unless data storage {ns}:zombies game{{state:"active"}} run return fail
 execute unless entity @s[tag={ns}.zombie_round] run return fail
@@ -464,15 +462,15 @@ scoreboard players operation @n[tag={ns}.ticking] {ns}.zb.points += #zb_points_h
 function {ns}:v{version}/zombies/refresh_sidebar
 """, tags=[f"{ns}:signals/damage"])
 
-    	# Hook kill check into game_tick (per in-game player, non-spectator)
-    	self.func("zombies/game_tick", f"""
+		# Hook kill check into game_tick (per in-game player, non-spectator)
+		self.func("zombies/game_tick", f"""
 # Award kill points from totalKillCount delta
 execute as @a[scores={{{ns}.zb.in_game=1}},gamemode=!spectator] run function {ns}:v{version}/zombies/check_kill_points
 """)
 
 
-    	# Stuck Zombie Check ────────────────────────────────────────
-    	self.func("zombies/stuck_zombie_check", f"""
+		# Stuck Zombie Check ────────────────────────────────────────
+		self.func("zombies/stuck_zombie_check", f"""
 # @s = zombie_round entity (non-rising), run every 20 ticks on up to 24 random zombies
 # Progress = distance bucket improved OR XZ position changed. Either resets the timer.
 
@@ -505,7 +503,7 @@ execute if score #stuck_progress {ns}.data matches 0 run scoreboard players oper
 execute if score #stuck_progress {ns}.data matches 0 if score #stuck_delta {ns}.data matches 300.. run function {ns}:v{version}/zombies/on_stuck_zombie
 """)
 
-    	self.func("zombies/on_stuck_zombie", f"""
+		self.func("zombies/on_stuck_zombie", f"""
 # @s = stuck zombie — teleport it to a zombie spawn point near a player instead of killing it
 # (keeps the horde intact and drops it back onto walkable navmesh so it can path again).
 
@@ -527,10 +525,10 @@ execute store result score @s {ns}.zb.stuck_z run data get entity @s Pos[2]
 scoreboard players operation @s {ns}.zb.stuck_ticks = #total_tick {ns}.data
 """)
 
-    	## Player boundary check (zombies): unlike zombies (out_of_world damage -> down + mannequin),
-    	## a player leaving the play area is a TOTAL elimination with no mannequin, respawning at the
-    	## next round end. Uses the same #bound_* scores loaded by shared/load_bounds.
-    	self.func("zombies/check_bounds_player", f"""
+		## Player boundary check (zombies): unlike zombies (out_of_world damage -> down + mannequin),
+		## a player leaving the play area is a TOTAL elimination with no mannequin, respawning at the
+		## next round end. Uses the same #bound_* scores loaded by shared/load_bounds.
+		self.func("zombies/check_bounds_player", f"""
 data modify storage {ns}:temp _player_pos set from entity @s Pos
 execute store result score @s {ns}.mp.bx run data get storage {ns}:temp _player_pos[0]
 execute store result score @s {ns}.mp.by run data get storage {ns}:temp _player_pos[1]
@@ -544,9 +542,9 @@ execute if score @s {ns}.mp.bz < #bound_z1 {ns}.data run return run function {ns
 execute if score @s {ns}.mp.bz > #bound_z2 {ns}.data run return run function {ns}:v{version}/zombies/revive/full_death
 """)
 
-    	# Spawn Point Markers ───────────────────────────────────────
+		# Spawn Point Markers ───────────────────────────────────────
 
-    	self.func("zombies/summon_spawns", f"""
+		self.func("zombies/summon_spawns", f"""
 # Player spawns
 data modify storage {ns}:temp _spawn_iter set from storage {ns}:zombies game.map.spawning_points.players
 data modify storage {ns}:temp _spawn_tag set value "{ns}.spawn_zb_player"
@@ -562,7 +560,7 @@ scoreboard players set #unlock_gid {ns}.data 0
 execute as @e[tag={ns}.spawn_point] if score @s {ns}.zb.spawn.gid = #unlock_gid {ns}.data run tag @s add {ns}.spawn_unlocked
 """)
 
-    	self.func("zombies/summon_spawn_iter", f"""
+		self.func("zombies/summon_spawn_iter", f"""
 # Read position from compound format
 execute store result score #sx {ns}.data run data get storage {ns}:temp _spawn_iter[0].pos[0]
 execute store result score #sy {ns}.data run data get storage {ns}:temp _spawn_iter[0].pos[1]
@@ -584,22 +582,47 @@ function {ns}:v{version}/zombies/summon_spawn_at with storage {ns}:temp _spos
 # Set group_id score on newly spawned marker (default 0 if not defined)
 scoreboard players set @n[tag={ns}.new_spawn] {ns}.zb.spawn.gid 0
 execute store result score @n[tag={ns}.new_spawn] {ns}.zb.spawn.gid run data get storage {ns}:temp _spawn_iter[0].group_id
+
+# Optional activation box (zombie spawns only): store the ABSOLUTE box on the marker so the
+# round spawner can gate this spawn on a player standing inside it. Only present when the map
+# data defines all 6 elements [x,y,z,dx,dy,dz] (relative to this spawn).
+execute if data storage {ns}:temp _spawn_iter[0].activation_box[5] run function {ns}:v{version}/zombies/store_spawn_abox
+
 tag @n[tag={ns}.new_spawn] remove {ns}.new_spawn
 
 data remove storage {ns}:temp _spawn_iter[0]
 execute if data storage {ns}:temp _spawn_iter[0] run function {ns}:v{version}/zombies/summon_spawn_iter
 """)
 
-    	self.write_summon_spawn_at(extra_spawn_tags=("new_spawn",))
+		## Store the absolute activation box {x,y,z,dx,dy,dz} on the just-summoned spawn marker.
+		## #sx/#sy/#sz hold the marker's absolute coords; activation_box[0..2] are the relative
+		## corner offset and [3..5] the box size (all in blocks).
+		self.func("zombies/store_spawn_abox", f"""
+execute store result score #abx {ns}.data run data get storage {ns}:temp _spawn_iter[0].activation_box[0]
+execute store result score #aby {ns}.data run data get storage {ns}:temp _spawn_iter[0].activation_box[1]
+execute store result score #abz {ns}.data run data get storage {ns}:temp _spawn_iter[0].activation_box[2]
+scoreboard players operation #abx {ns}.data += #sx {ns}.data
+scoreboard players operation #aby {ns}.data += #sy {ns}.data
+scoreboard players operation #abz {ns}.data += #sz {ns}.data
+execute store result storage {ns}:temp _abox.x double 1 run scoreboard players get #abx {ns}.data
+execute store result storage {ns}:temp _abox.y double 1 run scoreboard players get #aby {ns}.data
+execute store result storage {ns}:temp _abox.z double 1 run scoreboard players get #abz {ns}.data
+execute store result storage {ns}:temp _abox.dx double 1 run data get storage {ns}:temp _spawn_iter[0].activation_box[3]
+execute store result storage {ns}:temp _abox.dy double 1 run data get storage {ns}:temp _spawn_iter[0].activation_box[4]
+execute store result storage {ns}:temp _abox.dz double 1 run data get storage {ns}:temp _spawn_iter[0].activation_box[5]
+data modify entity @n[tag={ns}.new_spawn] data.abox set from storage {ns}:temp _abox
+""")
 
-    	# Smart Spawn Selection ─────────────────────────────────────
+		self.write_summon_spawn_at(extra_spawn_tags=("new_spawn",))
 
-    	self.func("zombies/tp_all_to_spawns", f"""
+		# Smart Spawn Selection ─────────────────────────────────────
+
+		self.func("zombies/tp_all_to_spawns", f"""
 execute as @a[scores={{{ns}.zb.in_game=1}}] at @s run function {ns}:v{version}/zombies/pick_spawn
 tag @e[tag={ns}.spawn_used] remove {ns}.spawn_used
 """)
 
-    	self.func("zombies/pick_spawn", f"""
+		self.func("zombies/pick_spawn", f"""
 tag @s add {ns}.spawn_pending
 
 # Tag candidate spawns (unlocked, exclude used)
@@ -616,7 +639,7 @@ tag @e[tag={ns}.spawn_candidate] remove {ns}.spawn_candidate
 tag @a[tag={ns}.spawn_pending] remove {ns}.spawn_pending
 """)
 
-    	self.func("zombies/tp_to_spawn", f"""
+		self.func("zombies/tp_to_spawn", f"""
 execute store result storage {ns}:temp _tp.x double 1 run data get entity @s Pos[0]
 execute store result storage {ns}:temp _tp.y double 1 run data get entity @s Pos[1]
 execute store result storage {ns}:temp _tp.z double 1 run data get entity @s Pos[2]
@@ -627,21 +650,21 @@ execute as @p[tag={ns}.spawn_pending] run function {ns}:v{version}/zombies/tp_pl
 execute unless data storage {ns}:zombies game{{state:"active"}} run tag @s add {ns}.spawn_used
 """)
 
-    	self.write_tp_player_at()
+		self.write_tp_player_at()
 
-    	## Respawn TP for zombies
-    	self.func("zombies/respawn_tp", f"""
+		## Respawn TP for zombies
+		self.func("zombies/respawn_tp", f"""
 execute if entity @e[tag={ns}.spawn_point,tag={ns}.spawn_zb_player] run function {ns}:v{version}/zombies/pick_spawn
 """)
 
-    	# Sidebar HUD ───────────────────────────────────────────────
-    	self.func("zombies/create_sidebar", f"""
+		# Sidebar HUD ───────────────────────────────────────────────
+		self.func("zombies/create_sidebar", f"""
 scoreboard objectives add {ns}.zb_sidebar dummy
 function {ns}:v{version}/zombies/refresh_sidebar
 scoreboard objectives setdisplay sidebar {ns}.zb_sidebar
 """)
 
-    	self.func("zombies/refresh_sidebar", f"""
+		self.func("zombies/refresh_sidebar", f"""
 # Count alive zombies
 execute store result score #zb_alive {ns}.data if entity @e[tag={ns}.zombie_round]
 scoreboard players operation #zb_total {ns}.data = #zb_alive {ns}.data
@@ -661,25 +684,25 @@ function {ns}:v{version}/zombies/sidebar_rank_players
 function {ns}:v{version}/zombies/build_sidebar with storage {ns}:temp
 """)
 
-    	# Rank players and append to sidebar (up to 8 players)
-    	sidebar_rank_code = ""
-    	for i in range(1, 9):
-    		sidebar_rank_code += f"""
+		# Rank players and append to sidebar (up to 8 players)
+		sidebar_rank_code = ""
+		for i in range(1, 9):
+			sidebar_rank_code += f"""
 execute unless entity @a[tag={ns}.zb_sb_cand] run return 0
 execute as @a[tag={ns}.zb_sb_cand,limit=1] run scoreboard players set @s {ns}.zb.sb_rank {i}
 tag @a[scores={{{ns}.zb.sb_rank={i}}}] remove {ns}.zb_sb_cand
 data modify storage {ns}:temp zb_sb append value [{{selector:"@a[scores={{{ns}.zb.sb_rank={i}}}]",color:"green"}},{{score:{{name:"@a[scores={{{ns}.zb.sb_rank={i}}}]",objective:"{ns}.zb.points"}},color:"yellow"}}]
 """
-    	sidebar_rank_code += f"\ntag @a remove {ns}.zb_sb_cand\n"
-    	self.func("zombies/sidebar_rank_players", sidebar_rank_code)
+		sidebar_rank_code += f"\ntag @a remove {ns}.zb_sb_cand\n"
+		self.func("zombies/sidebar_rank_players", sidebar_rank_code)
 
-    	self.func("zombies/build_sidebar", f"""
+		self.func("zombies/build_sidebar", f"""
 scoreboard players reset * {ns}.zb_sidebar
 $function #bs.sidebar:create {{objective:"{ns}.zb_sidebar",display_name:{{text:"Zombies",color:"dark_green",bold:true}},contents:$(zb_sb)}}
 """)
 
-    	# Block shooting during prep
-    	self.func("player/right_click", f"""
+		# Block shooting during prep
+		self.func("player/right_click", f"""
 # Block shooting during zombies prep phase
 execute if score @s {ns}.zb.in_game matches 1 if data storage {ns}:zombies game{{state:"preparing"}} run return run scoreboard players set @s {ns}.pending_clicks 0
 """, prepend=True)

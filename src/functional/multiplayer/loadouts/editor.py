@@ -13,6 +13,7 @@
 # that reverts and denies when the budget would be exceeded.
 
 from stewbeet import Mem, write_load_file, write_versioned_function
+
 from ...helpers import MGS_TAG
 from ..classes import CONSUMABLE_MAGS
 from .catalogs import (

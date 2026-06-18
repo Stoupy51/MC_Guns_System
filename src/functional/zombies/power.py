@@ -1,9 +1,12 @@
 
 # Power Switch System
-# A one-time activatable wall lever that enables power for the map.
+# A one-time activatable wall switch (custom breaker-box model) that enables power for the map.
 # Elements with power:true (perk machines, traps) require power to be active.
-
+# The switch is rendered as an item_display using the {ns}:power_switch model (see
+# database/models/power_switch.json + database/others.py); on activation it swaps to
+# {ns}:power_switch_on (handle + indicator light recolored green/lit).
 from stewbeet import Mem, write_versioned_function
+
 from ..helpers import MGS_TAG
 from .common import game_active_guard_cmd
 
@@ -12,7 +15,7 @@ def generate_power_switch() -> None:
 	ns: str = Mem.ctx.project_id
 	version: str = Mem.ctx.project_version
 
-	## Setup: iterate power switch compounds, place levers, summon interaction entities
+	## Setup: iterate power switch compounds, summon interaction entities + custom-model displays
 	write_versioned_function("zombies/power/setup", f"""
 # Iterate power switch compounds from map data
 data modify storage {ns}:temp _pw_iter set from storage {ns}:zombies game.map.power_switch
@@ -33,15 +36,12 @@ execute store result storage {ns}:temp _pw.x int 1 run scoreboard players get #p
 execute store result storage {ns}:temp _pw.y int 1 run scoreboard players get #pwy {ns}.data
 execute store result storage {ns}:temp _pw.z int 1 run scoreboard players get #pwz {ns}.data
 
-# Determine lever facing from stored yaw (stored = player_yaw + 180)
-execute store result score #pw_yaw {ns}.data run data get storage {ns}:temp _pw_iter[0].rotation[0]
-data modify storage {ns}:temp _pw.facing set value "north"
-execute if score #pw_yaw {ns}.data matches 0..44 run data modify storage {ns}:temp _pw.facing set value "south"
-execute if score #pw_yaw {ns}.data matches 315..360 run data modify storage {ns}:temp _pw.facing set value "south"
-execute if score #pw_yaw {ns}.data matches 45..134 run data modify storage {ns}:temp _pw.facing set value "west"
-execute if score #pw_yaw {ns}.data matches 225..314 run data modify storage {ns}:temp _pw.facing set value "east"
+# Store yaw for the display (stored = player_yaw + 180; the model's fixed rotation -180 compensates,
+# so the switch faces the placer just like the perk/PAP machine displays)
+data modify storage {ns}:temp _pw.yaw set value 0.0f
+execute if data storage {ns}:temp _pw_iter[0].rotation[0] run data modify storage {ns}:temp _pw.yaw set from storage {ns}:temp _pw_iter[0].rotation[0]
 
-# Place lever and summon interaction entity
+# Summon interaction entity + custom-model display
 function {ns}:v{version}/zombies/power/place_at with storage {ns}:temp _pw
 
 # Continue iteration
@@ -50,17 +50,17 @@ execute if data storage {ns}:temp _pw_iter[0] run function {ns}:v{version}/zombi
 """)
 
 	write_versioned_function("zombies/power/place_at", f"""
-# Place lever block
-$setblock $(x) $(y) $(z) minecraft:lever[face=wall,facing=$(facing),powered=false]
+# Summon interaction entity (clickable hitbox) with Bookshelf tag
+$summon minecraft:interaction $(x) $(y) $(z) {{width:0.9f,height:0.9f,response:true,Tags:["{ns}.power_switch","{ns}.gm_entity","bs.entity.interaction","_pw_new"]}}
 
-# Summon interaction entity with Bookshelf tag and facing tag
-$summon minecraft:interaction $(x) $(y) $(z) {{width:0.9f,height:0.9f,response:true,Tags:["{ns}.power_switch","{ns}.gm_entity","bs.entity.interaction","{ns}.pw_face_$(facing)","_pw_new"]}}
+# Summon the custom-model display, centered in the switch block, facing the placer (yaw)
+$execute positioned $(x) $(y) $(z) align xyz positioned ~.5 ~.5 ~.5 run summon minecraft:item_display ~ ~ ~ {{Rotation:[$(yaw)f,0f],Tags:["{ns}.power_switch_disp","{ns}.gm_entity"],item_display:"fixed",billboard:"fixed",item:{{id:"minecraft:lever",count:1,components:{{"minecraft:item_model":"{ns}:power_switch"}}}},transformation:{{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[1f,1f,1f]}}}}
 
-# Register Bookshelf events on newly spawned entity
+# Register Bookshelf events on newly spawned interaction entity
 execute as @e[tag=_pw_new] run function #bs.interaction:on_right_click {{run:"function {ns}:v{version}/zombies/power/on_activate",executor:"source"}}
 execute as @e[tag=_pw_new] run function #bs.interaction:on_hover {{run:"function {ns}:v{version}/zombies/power/on_hover",executor:"source"}}
 tag @e[tag=_pw_new] remove _pw_new
-""")
+""")  # noqa: E501
 
 	## On right-click: activate power (runs as the clicking player)
 	write_versioned_function("zombies/power/on_activate", f"""
@@ -77,13 +77,10 @@ scoreboard players set #zb_power {ns}.data 1
 execute as @e[tag={ns}.power_switch] at @s run particle minecraft:electric_spark ~ ~1 ~ 0.5 0.5 0.5 0.1 20
 execute as @e[tag={ns}.power_switch] at @s run playsound minecraft:entity.firework_rocket.twinkle_far ambient @a ~ ~ ~ 2 1
 
-# Toggle lever blocks to powered state
-execute as @e[tag={ns}.power_switch] at @s if entity @s[tag={ns}.pw_face_north] run setblock ~ ~ ~ minecraft:lever[face=wall,facing=north,powered=true]
-execute as @e[tag={ns}.power_switch] at @s if entity @s[tag={ns}.pw_face_south] run setblock ~ ~ ~ minecraft:lever[face=wall,facing=south,powered=true]
-execute as @e[tag={ns}.power_switch] at @s if entity @s[tag={ns}.pw_face_east] run setblock ~ ~ ~ minecraft:lever[face=wall,facing=east,powered=true]
-execute as @e[tag={ns}.power_switch] at @s if entity @s[tag={ns}.pw_face_west] run setblock ~ ~ ~ minecraft:lever[face=wall,facing=west,powered=true]
+# Switch every display model to its powered ("on") variant (handle + light go green/lit)
+execute as @e[tag={ns}.power_switch_disp] run data modify entity @s item.components."minecraft:item_model" set value "{ns}:power_switch_on"
 
-# Kill power switch interaction entities (one-time use)
+# Kill power switch interaction entities (one-time use); displays stay to show the "on" state
 kill @e[tag={ns}.power_switch]
 
 # Announce

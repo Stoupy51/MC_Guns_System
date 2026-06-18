@@ -14,6 +14,10 @@ execute unless entity @e[tag=mgs.zb_near] as @a[scores={mgs.zb.in_game=1},gamemo
 # Fallback: any unlocked spawn
 execute unless entity @e[tag=mgs.zb_near] run tag @e[tag=mgs.spawn_zb,tag=mgs.spawn_unlocked] add mgs.zb_near
 
+# Activation-box gating: a spawn that defines an activation box is only usable while an alive
+# player stands inside that box. Drop box-gated candidates whose box is currently empty.
+execute as @e[tag=mgs.zb_near] if data entity @s data.abox run function mgs:v5.0.1/zombies/filter_spawn_abox
+
 # Pick random from tagged set and spawn
 execute as @n[tag=mgs.zb_near,sort=random] at @s run function mgs:v5.0.1/zombies/do_spawn_zombie
 
