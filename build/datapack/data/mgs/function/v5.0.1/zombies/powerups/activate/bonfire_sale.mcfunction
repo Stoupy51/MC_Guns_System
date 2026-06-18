@@ -16,5 +16,5 @@ bossbar set mgs:pu_bonfire_sale value 600
 bossbar set mgs:pu_bonfire_sale color yellow
 bossbar set mgs:pu_bonfire_sale style progress
 bossbar set mgs:pu_bonfire_sale players @a[scores={mgs.zb.in_game=1}]
-playsound mgs:zombies/powerups/bonfire_sale ambient @a[scores={mgs.zb.in_game=1}] ~ ~ ~ 0.7 1.0
+execute as @a[scores={mgs.zb.in_game=1}] at @s run playsound mgs:zombies/powerups/bonfire_sale ambient @s ~ ~ ~ 0.7 1.0
 

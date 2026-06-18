@@ -23,5 +23,8 @@ execute store result score #horde_pitch mgs.data run random value 70..105
 # Hand volume/pitch to the macro as doubles (value/100).
 execute store result storage mgs:temp _horde.vol double 0.01 run scoreboard players get #horde_vol mgs.data
 execute store result storage mgs:temp _horde.pitch double 0.01 run scoreboard players get #horde_pitch mgs.data
-function mgs:v5.0.1/zombies/horde_ambient_play with storage mgs:temp _horde
+
+# Play the groan FROM a random nearby zombie's position (positional audio), so the player hears
+# the horde coming from the right direction/distance rather than centred on themselves.
+execute at @e[tag=mgs.zombie_round,distance=..32,sort=random,limit=1] run function mgs:v5.0.1/zombies/horde_ambient_play with storage mgs:temp _horde
 

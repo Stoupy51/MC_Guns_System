@@ -19,5 +19,5 @@ tag @n[tag=mgs.pu_item_new] remove mgs.pu_item_new
 $execute positioned $(x) $(y) $(z) run summon minecraft:text_display ~ ~1.0 ~ {Tags:["mgs.pu_text","mgs.gm_entity"],text:{"translate":"mgs.random_perk","color":"light_purple","bold":true},billboard:"vertical",background:0,shadow:true,view_range:64.0f,transformation:{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[1.5f,1.5f,1.5f]}}
 
 # Drop spawn cue
-playsound mgs:zombies/powerups/item/spawn ambient @a[scores={mgs.zb.in_game=1}] ~ ~ ~ 0.7 1.0
+execute as @a[scores={mgs.zb.in_game=1}] at @s run playsound mgs:zombies/powerups/item/spawn ambient @s ~ ~ ~ 0.7 1.0
 

@@ -19,7 +19,7 @@ scoreboard players operation #pu_type_pickup mgs.data = @s mgs.zb.pu.type
 kill @n[tag=mgs.pu_text,distance=..3]
 
 # Grab cue
-playsound mgs:zombies/powerups/item/grab ambient @a[scores={mgs.zb.in_game=1}] ~ ~ ~ 0.4 1.0
+execute as @a[scores={mgs.zb.in_game=1}] at @s run playsound mgs:zombies/powerups/item/grab ambient @s ~ ~ ~ 0.4 1.0
 
 # Activate the power-up effect (collector tag is still active here)
 function mgs:v5.0.1/zombies/powerups/dispatch_activate

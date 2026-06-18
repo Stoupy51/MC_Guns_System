@@ -4,6 +4,7 @@
 # @executed	as @e[type=player,sort=random] & at @s
 #
 # @within	mgs:v5.0.1/zombies/revive/on_down
+#			mgs:v5.0.1/zombies/revive/full_death
 #
 
 # Remove all perk effects and reset scoreboard tracking

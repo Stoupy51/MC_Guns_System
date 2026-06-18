@@ -60,9 +60,11 @@ class PowerupsGenerator(McfunctionGenerator):
 
     	# Helper: a power-up sound played for all in-game players (volume kept modest on purpose).
     	def pu_snd(name: str, vol: float = 0.7, pitch: float = 1.0, at_s: bool = False) -> str:
-    		if at_s:
-    			return f"as @a[scores={{{ns}.zb.in_game=1}}] at @s run playsound {ns}:zombies/powerups/{name} ambient @s ~ ~ ~ {vol} {pitch}"
-    		return f"playsound {ns}:zombies/powerups/{name} ambient @a[scores={{{ns}.zb.in_game=1}}] ~ ~ ~ {vol} {pitch}"
+    		# Power-ups affect everyone, so their cues must be GLOBAL (non-positional): play the sound at
+    		# each in-game player's OWN position so all players hear it at full volume regardless of how far
+    		# they were from the power-up. `at_s` returns a bare fragment for use after `execute if ...`.
+    		body = f"as @a[scores={{{ns}.zb.in_game=1}}] at @s run playsound {ns}:zombies/powerups/{name} ambient @s ~ ~ ~ {vol} {pitch}"
+    		return body if at_s else f"execute {body}"
 
     	# Activation sound line(s) for a power-up entry, including its "additional" layer if present.
     	def pu_activate_sound(v: JsonDict, vol: float = 1.0) -> str:

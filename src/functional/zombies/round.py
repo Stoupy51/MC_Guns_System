@@ -382,9 +382,13 @@ execute store result score #horde_pitch {ns}.data run random value 70..105
 # Hand volume/pitch to the macro as doubles (value/100).
 execute store result storage {ns}:temp _horde.vol double 0.01 run scoreboard players get #horde_vol {ns}.data
 execute store result storage {ns}:temp _horde.pitch double 0.01 run scoreboard players get #horde_pitch {ns}.data
-function {ns}:v{version}/zombies/horde_ambient_play with storage {ns}:temp _horde
+
+# Play the groan FROM a random nearby zombie's position (positional audio), so the player hears
+# the horde coming from the right direction/distance rather than centred on themselves.
+execute at @e[tag={ns}.zombie_round,distance=..32,sort=random,limit=1] run function {ns}:v{version}/zombies/horde_ambient_play with storage {ns}:temp _horde
 """)
 
+    	# @s = the player; execution position = a nearby zombie, so the sound is directional.
     	self.func("zombies/horde_ambient_play", "$playsound minecraft:entity.zombie.ambient hostile @s ~ ~ ~ $(vol) $(pitch)")
 
     	## Hook death watch + horde ambience into the main zombies game tick

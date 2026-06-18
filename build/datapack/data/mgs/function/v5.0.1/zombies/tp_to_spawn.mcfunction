@@ -4,6 +4,7 @@
 # @executed	as @n[tag=mgs.spawn_candidate,sort=random]
 #
 # @within	mgs:v5.0.1/zombies/pick_spawn [ as @n[tag=mgs.spawn_candidate,sort=random] ]
+#			mgs:v5.0.1/zombies/revive/respawn_near_player [ as @n[tag=mgs.spawn_candidate] ]
 #
 
 execute store result storage mgs:temp _tp.x double 1 run data get entity @s Pos[0]

@@ -27,7 +27,7 @@ bossbar set mgs:pu_fire_sale style progress
 bossbar set mgs:pu_fire_sale players @a[scores={mgs.zb.in_game=1}]
 
 # Only on a NEW Fire Sale: jingle + song (don't restack the song) + temp boxes everywhere
-execute if score #fs_was_active mgs.data matches 0 run playsound mgs:zombies/powerups/fire_sale ambient @a[scores={mgs.zb.in_game=1}] ~ ~ ~ 0.7 1.0
+execute if score #fs_was_active mgs.data matches 0 run execute as @a[scores={mgs.zb.in_game=1}] at @s run playsound mgs:zombies/powerups/fire_sale ambient @s ~ ~ ~ 0.7 1.0
 execute if score #fs_was_active mgs.data matches 0 as @a[scores={mgs.zb.in_game=1}] run playsound mgs:zombies/powerups/fire_sale_song ambient @s ~ ~ ~ 0.3 1.0
 execute if score #fs_was_active mgs.data matches 0 run function mgs:v5.0.1/zombies/mystery_box/fire_sale_start
 

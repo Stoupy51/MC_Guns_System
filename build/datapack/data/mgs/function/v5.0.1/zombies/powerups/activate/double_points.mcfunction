@@ -14,5 +14,5 @@ bossbar set mgs:pu_double_points value 600
 bossbar set mgs:pu_double_points color yellow
 bossbar set mgs:pu_double_points style progress
 bossbar set mgs:pu_double_points players @a[scores={mgs.zb.in_game=1}]
-playsound mgs:zombies/powerups/double_points ambient @a[scores={mgs.zb.in_game=1}] ~ ~ ~ 1.0 1.0
+execute as @a[scores={mgs.zb.in_game=1}] at @s run playsound mgs:zombies/powerups/double_points ambient @s ~ ~ ~ 1.0 1.0
 
