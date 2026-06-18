@@ -1,6 +1,6 @@
 
 # Imports
-from stewbeet import Conventions
+from stewbeet import Conventions, Mem, write_tick_file, write_versioned_function
 
 from ...config.stats import (
     BASE_WEAPON,
@@ -13,20 +13,17 @@ from ...config.stats import (
     PROJECTILE_MODEL,
     PROJECTILE_SPEED,
 )
-from ..generator import McfunctionGenerator
 
 
 # Main function
 
-class ProjectileGenerator(McfunctionGenerator):
-    """ Generates the projectile datapack functions. """
 
-    def generate(self) -> None:
-        ns: str = self.ns
-        version: str = self.version
+def main() -> None:
+    ns: str = Mem.ctx.project_id
+    version: str = Mem.ctx.project_version
 
-        ## Summon loop (supports pellet_count for multiple projectiles)
-        self.func("projectile/summon_loop", f"""
+    ## Summon loop (supports pellet_count for multiple projectiles)
+    write_versioned_function("projectile/summon_loop", f"""
 # Summon a projectile
 function {ns}:v{version}/projectile/summon
 
@@ -35,11 +32,11 @@ scoreboard players remove #bullets_to_fire {ns}.data 1
 execute if score #bullets_to_fire {ns}.data matches 1.. run function {ns}:v{version}/projectile/summon_loop
 """)
 
-        ## Summon projectile
-        # Called from projectile/summon_loop
-        proj_stats = [EXPLOSION_DAMAGE, EXPLOSION_DECAY, EXPLOSION_RADIUS, DAMAGE, PROJECTILE_GRAVITY, PROJECTILE_SPEED, PROJECTILE_LIFETIME, PROJECTILE_MODEL, BASE_WEAPON, "pap_level"]
-        proj_copy = "\n".join(f"data modify storage {ns}:temp proj.{s} set from storage {ns}:gun all.stats.{s}" for s in proj_stats)
-        self.func("projectile/summon", f"""
+    ## Summon projectile
+    # Called from projectile/summon_loop
+    proj_stats = [EXPLOSION_DAMAGE, EXPLOSION_DECAY, EXPLOSION_RADIUS, DAMAGE, PROJECTILE_GRAVITY, PROJECTILE_SPEED, PROJECTILE_LIFETIME, PROJECTILE_MODEL, BASE_WEAPON, "pap_level"]
+    proj_copy = "\n".join(f"data modify storage {ns}:temp proj.{s} set from storage {ns}:gun all.stats.{s}" for s in proj_stats)
+    write_versioned_function("projectile/summon", f"""
 # Get accuracy value and apply spread
 function {ns}:v{version}/raycast/accuracy/get_value
 
@@ -54,8 +51,8 @@ execute anchored eyes positioned ^ ^ ^0.69 summon item_display run function {ns}
 scoreboard players add #slow_bullet_count {ns}.data 1
 """)
 
-        ## Initialize the newly summoned projectile marker
-        self.func("projectile/init", f"""
+    ## Initialize the newly summoned projectile marker
+    write_versioned_function("projectile/init", f"""
 # Tag as slow bullet
 tag @s add {ns}.slow_bullet
 
@@ -76,15 +73,15 @@ execute store result score @s {ns}.data run data get storage {ns}:temp proj.{PRO
 function {ns}:v{version}/shared/calc_velocity
 """)
 
-        ## Set visual model on the item_display (macro function)
-        self.func("projectile/set_model", f"""
+    ## Set visual model on the item_display (macro function)
+    write_versioned_function("projectile/set_model", f"""
 $data modify entity @s item set value {{id:"minecraft:paper", count:1, components:{{"minecraft:item_model":"{ns}:$({PROJECTILE_MODEL})"}}}}
 data modify entity @s item_display set value "fixed"
 data modify entity @s brightness set value {{sky: 15, block: 15}}
 """)
 
-        ## Tick function for each projectile entity
-        self.func("projectile/tick", f"""
+    ## Tick function for each projectile entity
+    write_versioned_function("projectile/tick", f"""
 # Apply gravity (subtract from Y velocity)
 execute store result score #proj_gravity {ns}.data run data get entity @s data.config.{PROJECTILE_GRAVITY}
 scoreboard players operation @s bs.vel.y -= #proj_gravity {ns}.data
@@ -95,7 +92,7 @@ function #bs.move:apply_vel {{scale:0.001,with:{{blocks:true,entities:true,on_co
 # If collision was detected, explode and stop processing
 execute at @s run function {ns}:v{version}/projectile/post_vel
 """)
-        self.func("projectile/post_vel", f"""
+    write_versioned_function("projectile/post_vel", f"""
 # If collision was detected, explode and stop processing
 execute if entity @s[tag={ns}.exploding] run return run function {ns}:v{version}/projectile/explode
 
@@ -117,8 +114,8 @@ scoreboard players remove @s {ns}.data 1
 execute if score @s {ns}.data matches ..0 run function {ns}:v{version}/projectile/explode
 """)
 
-        ## Collision callback (called by bs.move:apply_vel when hitting a block or entity)
-        self.func("projectile/on_collision", f"""
+    ## Collision callback (called by bs.move:apply_vel when hitting a block or entity)
+    write_versioned_function("projectile/on_collision", f"""
 # Tag the nearest non-immune entity as directly hit (for bullet damage in explode)
 # distance=..2.5 covers feet-to-head hit at any entity height up to 2.5 blocks
 tag @e[tag={ns}.direct_hit] remove {ns}.direct_hit
@@ -133,8 +130,8 @@ scoreboard players set $move.vel.y bs.lambda 0
 scoreboard players set $move.vel.z bs.lambda 0
 """)
 
-        ## Explosion effect
-        self.func("projectile/explode", f"""
+    ## Explosion effect
+    write_versioned_function("projectile/explode", f"""
 # Explosion particles
 scoreboard players set #ray_gun {ns}.data 0
 execute if data entity @s data.config{{{BASE_WEAPON}:"ray_gun"}} run scoreboard players set #ray_gun {ns}.data 1
@@ -218,8 +215,8 @@ tag @e[tag={ns}.temp_shooter] remove {ns}.temp_shooter
 function {ns}:v{version}/projectile/delete
 """)  # noqa: E501
 
-        ## Realistic block destruction (calls RealisticExplosionLibrary)
-        self.func("projectile/realistic_explosion", f"""
+    ## Realistic block destruction (calls RealisticExplosionLibrary)
+    write_versioned_function("projectile/realistic_explosion", f"""
 # Set explosion power from config and call the library
 scoreboard players operation #explosion_power realistic_explosion.data = #projectile_explosion_power {ns}.config
 execute if score #projectile_explosion_power {ns}.config matches 1.. run scoreboard players set #falling_fire realistic_explosion.data 1
@@ -227,8 +224,8 @@ execute unless score #projectile_explosion_power {ns}.config matches 1.. run sco
 function realistic_explosion:explode
 """)
 
-        ## Match shooter by UUID comparison
-        self.func("projectile/match_shooter", f"""
+    ## Match shooter by UUID comparison
+    write_versioned_function("projectile/match_shooter", f"""
 # Compare this player's UUID with the stored shooter UUID
 # data modify returns 0 (no change) when values are identical, 1 when modified
 data modify storage {ns}:temp copy_uuid set from entity @s UUID
@@ -239,13 +236,13 @@ execute if score #is_match {ns}.data matches 0 run scoreboard players set #found
 execute if score #is_match {ns}.data matches 0 run tag @s add {ns}.temp_shooter
 """)
 
-        ## Area damage (macro function for configurable radius)
-        self.func("projectile/damage_area", f"""
+    ## Area damage (macro function for configurable radius)
+    write_versioned_function("projectile/damage_area", f"""
 $execute as @e[type=!#{ns}:ignore,distance=..$(radius_float),{Conventions.GLOBAL_KILL.avoid},nbt=!{{Invulnerable:true}}] run function {ns}:v{version}/projectile/damage_entity
 """)
 
-        ## Per-entity damage with distance-based falloff
-        self.func("projectile/damage_entity", f"""
+    ## Per-entity damage with distance-based falloff
+    write_versioned_function("projectile/damage_entity", f"""
 # Skip non-living entities and other projectiles
 execute if entity @s[tag={ns}.slow_bullet] run return fail
 
@@ -346,23 +343,16 @@ execute if score #is_new_kill {ns}.data matches 1 as @n[tag={ns}.temp_shooter] r
 tag @n[tag={ns}.temp_shooter] remove {ns}.ticking
 """)  # noqa: E501
 
-        ## Delete projectile
-        self.func("projectile/delete", f"""
+    ## Delete projectile
+    write_versioned_function("projectile/delete", f"""
 # Decrease slow bullet counter and kill entity
 scoreboard players remove #slow_bullet_count {ns}.data 1
 kill @s
 """)
 
-        ## Tick file entry for projectile movement
-        self.tick(
-    f"""
+    ## Tick file entry for projectile movement
+    write_tick_file(
+f"""
 # Tick function for slow bullets (projectiles)
 execute if score #slow_bullet_count {ns}.data matches 1.. as @e[tag={ns}.slow_bullet] at @s run function {ns}:v{version}/projectile/tick
 """)
-
-
-def main() -> None:
-    """ Module-level entry (preserved signature); delegates to :class:`ProjectileGenerator`. """
-    ProjectileGenerator()()
-
-

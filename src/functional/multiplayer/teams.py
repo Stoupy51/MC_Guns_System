@@ -1,29 +1,26 @@
 
 # Imports
-from ..generator import McfunctionGenerator
+from stewbeet import Mem, write_versioned_function
 
 
-class TeamsGenerator(McfunctionGenerator):
-    """ Generates the teams datapack functions. """
+def generate_teams() -> None:
+	ns: str = Mem.ctx.project_id
+	version: str = Mem.ctx.project_version
 
-    def generate(self) -> None:
-    	ns: str = self.ns
-    	version: str = self.version
-
-    	## Join Teams
-    	self.func("multiplayer/join_red", f"""
+	## Join Teams
+	write_versioned_function("multiplayer/join_red", f"""
 scoreboard players set @s {ns}.mp.team 1
 team join {ns}.red @s
 tellraw @s ["",{{"text":"You joined ","color":"white"}},{{"text":"Red Team","color":"red","bold":true}}]
 """)
 
-    	self.func("multiplayer/join_blue", f"""
+	write_versioned_function("multiplayer/join_blue", f"""
 scoreboard players set @s {ns}.mp.team 2
 team join {ns}.blue @s
 tellraw @s ["",{{"text":"You joined ","color":"white"}},{{"text":"Blue Team","color":"blue","bold":true}}]
 """)
 
-    	self.func("multiplayer/auto_assign_team", f"""
+	write_versioned_function("multiplayer/auto_assign_team", f"""
 # Count players on each team
 execute store result score #red_count {ns}.data if entity @a[scores={{{ns}.mp.team=1}}]
 execute store result score #blue_count {ns}.data if entity @a[scores={{{ns}.mp.team=2}}]
@@ -33,9 +30,9 @@ execute if score #red_count {ns}.data <= #blue_count {ns}.data run function {ns}
 execute if score #red_count {ns}.data > #blue_count {ns}.data run function {ns}:v{version}/multiplayer/join_blue
 """)
 
-    	## Show Team Roster
-    	sep = '{"text":"============================================","color":"dark_gray"}'
-    	self.func("multiplayer/show_teams", f"""
+	## Show Team Roster
+	sep = '{"text":"============================================","color":"dark_gray"}'
+	write_versioned_function("multiplayer/show_teams", f"""
 tellraw @s {sep}
 tellraw @s ["",["","  👥 ",{{"text":"Team Roster","bold":true}}]]
 tellraw @s {sep}
@@ -47,10 +44,3 @@ tellraw @s ["",{{"text":"  Blue Team","color":"blue","bold":true}},{{"text":" ("
 execute unless score #team_total {ns}.data matches 1.. run tellraw @s ["  ",{{"text":"⚠ No players have joined a team yet!","color":"yellow"}}]
 tellraw @s {sep}
 """)  # noqa: E501
-
-
-def generate_teams() -> None:
-	""" Module-level entry (preserved signature); delegates to :class:`TeamsGenerator`. """
-	TeamsGenerator()()
-
-

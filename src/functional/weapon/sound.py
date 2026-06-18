@@ -2,27 +2,25 @@
 # ruff: noqa: E501
 # Imports
 
+from stewbeet import Mem, write_versioned_function
 from ...config.stats import COOLDOWN, RELOAD_END, RELOAD_TIME
-from ..generator import McfunctionGenerator
 
 
 # Main function
 
-class SoundGenerator(McfunctionGenerator):
-    """ Generates the sound datapack functions. """
 
-    def generate(self) -> None:
-        ns: str = self.ns
-        version: str = self.version
+def main() -> None:
+    ns: str = Mem.ctx.project_id
+    version: str = Mem.ctx.project_version
 
-        # Handle pending clicks
-        self.func("player/right_click", f"""
+    # Handle pending clicks
+    write_versioned_function("player/right_click", f"""
 # Advanced Playsound
 function {ns}:v{version}/sound/main
 """)
 
-        # Compute acoustics function
-        self.func("sound/compute_acoustics", f"""
+    # Compute acoustics function
+    write_versioned_function("sound/compute_acoustics", f"""
 # Initialize acoustics score
 scoreboard players set #acoustics {ns}.data 0
 
@@ -75,8 +73,8 @@ execute if score #acoustics {ns}.data matches ..50 run scoreboard players set @s
 execute anchored eyes positioned ^ ^ ^ if block ~ ~ ~ #{ns}:v{version}/sounds/water run scoreboard players set @s {ns}.acoustics_level 5
 """)
 
-        # Main function
-        self.func("sound/main", f"""
+    # Main function
+    write_versioned_function("sound/main", f"""
 # Fire sounds
 ## PaP: if gun is Pack-a-Punched and has a pap_fire sound, play it instead
 scoreboard players set #do_pap_sound {ns}.data 0
@@ -94,23 +92,23 @@ execute if data storage {ns}:gun all.sounds.cycle run function {ns}:v{version}/s
 # Acoustics handling
 execute if data storage {ns}:gun all.sounds.crack run function {ns}:v{version}/sound/acoustics_main with storage {ns}:gun all.sounds
 """)
-        self.func("sound/fire_pap", f"""
+    write_versioned_function("sound/fire_pap", f"""
 $playsound {ns}:$(pap_fire) player @s ~ ~ ~ 0.10
 $playsound {ns}:$(pap_fire) player @a[distance=0.01..48] ~ ~ ~ 0.35 1 0.10
 """)
-        self.func("sound/fire_simple", f"""
+    write_versioned_function("sound/fire_simple", f"""
 $playsound {ns}:$(fire) player @s ~ ~ ~ 0.10
 $playsound {ns}:$(fire) player @a[distance=0.01..48] ~ ~ ~ 0.35 1 0.10
 """)
-        self.func("sound/fire_alt", f"""
+    write_versioned_function("sound/fire_alt", f"""
 $playsound {ns}:$(fire_alt) player @s ~ ~ ~ 0.10
 $playsound {ns}:$(fire_alt) player @a[distance=0.01..48] ~ ~ ~ 0.35 1 0.10
 """)
-        self.func("sound/cycle", f"""
+    write_versioned_function("sound/cycle", f"""
 $playsound {ns}:$(cycle) player @s ~ ~ ~ 0.5
 $playsound {ns}:$(cycle) player @a[distance=0.01..48] ~ ~ ~ 1.0 1 0.5
 """)
-        self.func("sound/acoustics_main", f"""
+    write_versioned_function("sound/acoustics_main", f"""
 # Playsound depending on acoustics level
 $execute if score @s {ns}.acoustics_level matches 0 run playsound {ns}:common/$(crack)_crack_0_distant player @s ~ ~ ~ 1.0
 $execute if score @s {ns}.acoustics_level matches 1 run playsound {ns}:common/$(crack)_crack_1_far player @s ~ ~ ~ 1.0
@@ -124,8 +122,8 @@ scoreboard players operation #origin_acoustics_level {ns}.data = @s {ns}.acousti
 execute as @a[distance=0.001..224] facing entity @s eyes run function {ns}:v{version}/sound/propagation
 """)
 
-        # Check mid cooldown
-        self.func("sound/check/pump", f"""
+    # Check mid cooldown
+    write_versioned_function("sound/check/pump", f"""
 # Calculate half of weapon cooldown
 scoreboard players set #divisor {ns}.data 2
 execute store result score #half {ns}.data run data get storage {ns}:gun all.stats.{COOLDOWN}
@@ -135,8 +133,8 @@ scoreboard players operation #half {ns}.data /= #divisor {ns}.data
 execute if score @s {ns}.cooldown = #half {ns}.data run function {ns}:v{version}/sound/pump with storage {ns}:gun all.sounds
 """)
 
-        # Check mid reload
-        self.func("sound/check/reload_mid", f"""
+    # Check mid reload
+    write_versioned_function("sound/check/reload_mid", f"""
 # Calculate half of weapon cooldown
 scoreboard players set #divisor {ns}.data 2
 execute store result score #half {ns}.data run data get storage {ns}:gun all.stats.{RELOAD_TIME}
@@ -146,14 +144,14 @@ scoreboard players operation #half {ns}.data /= #divisor {ns}.data
 execute if score @s {ns}.cooldown = #half {ns}.data run function {ns}:v{version}/sound/player_mid with storage {ns}:gun all.sounds
 """)
 
-        # Check reload end
-        self.func("sound/check/reload_end", f"""
+    # Check reload end
+    write_versioned_function("sound/check/reload_end", f"""
 # If cooldown is reload end, and player was reloading, playsound
 execute store result score #{RELOAD_END} {ns}.data run data get storage {ns}:gun all.stats.{RELOAD_END}
 execute if score @s {ns}.cooldown = #{RELOAD_END} {ns}.data run function {ns}:v{version}/sound/player_end with storage {ns}:gun all.sounds
 """)
 
-        self.func("sound/propagation", f"""
+    write_versioned_function("sound/propagation", f"""
 # Make copies of the original acoustics level to work on
 scoreboard players operation #processed_acoustics {ns}.data = #origin_acoustics_level {ns}.data
 scoreboard players operation #attenuation_acoustics {ns}.data = #origin_acoustics_level {ns}.data
@@ -182,47 +180,40 @@ execute if score #processed_acoustics {ns}.data matches 3 run function {ns}:v{ve
 execute if score #processed_acoustics {ns}.data matches 4 run function {ns}:v{version}/sound/hearing/4_closest with storage {ns}:gun all.sounds
 execute if score #processed_acoustics {ns}.data matches 5 run function {ns}:v{version}/sound/hearing/5_water with storage {ns}:gun all.sounds
 """)
-        sound_levels: list[tuple[str, list[tuple[int, int, float]]]] = [
-            ("distant",  [(0, 32, 0.6), (32, 48, 0.55), (48, 64, 0.5), (64, 80, 0.45), (80, 96, 0.4), (96, 112, 0.35), (112, 128, 0.3), (128, 144, 0.25), (144, 160, 0.2), (160, 176, 0.15), (176, 192, 0.1), (192, 208, 0.05)]),
-            ("far",      [(0, 16, 0.6), (16, 32, 0.55), (32, 48, 0.5), (48, 64, 0.45), (64, 80, 0.4), (80, 96, 0.35), (96, 112, 0.3), (112, 128, 0.25), (128, 144, 0.2), (144, 160, 0.15), (160, 176, 0.1), (176, 192, 0.05)]),
-            ("midrange", [(0, 16, 0.55), (16, 32, 0.5), (32, 48, 0.45), (48, 64, 0.4), (64, 80, 0.35), (80, 96, 0.3), (96, 112, 0.25), (112, 128, 0.2), (128, 144, 0.15), (144, 160, 0.1), (160, 176, 0.05)]),
-            ("near",     [(0, 16, 0.5), (16, 32, 0.45), (32, 48, 0.4), (48, 64, 0.35), (64, 80, 0.3), (80, 96, 0.25), (96, 112, 0.2), (112, 128, 0.15), (128, 144, 0.1), (144, 160, 0.05)]),
-            ("closest",  [(0, 16, 0.45), (16, 32, 0.4), (32, 48, 0.35), (48, 64, 0.3), (64, 80, 0.25), (80, 96, 0.2), (96, 112, 0.15), (112, 128, 0.1), (128, 144, 0.05)]),
-            ("water",    [(0, 16, 0.15), (16, 32, 0.1), (32, 48, 0.05)])
-        ]
-        for i, (level, pairs) in enumerate(sound_levels):
-            for mini, maxi, volume in pairs:
-                self.func(
-                    f"sound/hearing/{i}_{level}",
-                    f"$execute if entity @s[distance={mini}..{maxi}] positioned as @s run playsound {ns}:common/$(crack)_crack_{i}_{level} player @s ^ ^ ^-6 {round(volume * 1.5, 3)}"
-                )
+    sound_levels: list[tuple[str, list[tuple[int, int, float]]]] = [
+        ("distant",  [(0, 32, 0.6), (32, 48, 0.55), (48, 64, 0.5), (64, 80, 0.45), (80, 96, 0.4), (96, 112, 0.35), (112, 128, 0.3), (128, 144, 0.25), (144, 160, 0.2), (160, 176, 0.15), (176, 192, 0.1), (192, 208, 0.05)]),
+        ("far",      [(0, 16, 0.6), (16, 32, 0.55), (32, 48, 0.5), (48, 64, 0.45), (64, 80, 0.4), (80, 96, 0.35), (96, 112, 0.3), (112, 128, 0.25), (128, 144, 0.2), (144, 160, 0.15), (160, 176, 0.1), (176, 192, 0.05)]),
+        ("midrange", [(0, 16, 0.55), (16, 32, 0.5), (32, 48, 0.45), (48, 64, 0.4), (64, 80, 0.35), (80, 96, 0.3), (96, 112, 0.25), (112, 128, 0.2), (128, 144, 0.15), (144, 160, 0.1), (160, 176, 0.05)]),
+        ("near",     [(0, 16, 0.5), (16, 32, 0.45), (32, 48, 0.4), (48, 64, 0.35), (64, 80, 0.3), (80, 96, 0.25), (96, 112, 0.2), (112, 128, 0.15), (128, 144, 0.1), (144, 160, 0.05)]),
+        ("closest",  [(0, 16, 0.45), (16, 32, 0.4), (32, 48, 0.35), (48, 64, 0.3), (64, 80, 0.25), (80, 96, 0.2), (96, 112, 0.15), (112, 128, 0.1), (128, 144, 0.05)]),
+        ("water",    [(0, 16, 0.15), (16, 32, 0.1), (32, 48, 0.05)])
+    ]
+    for i, (level, pairs) in enumerate(sound_levels):
+        for mini, maxi, volume in pairs:
+            write_versioned_function(
+                f"sound/hearing/{i}_{level}",
+                f"$execute if entity @s[distance={mini}..{maxi}] positioned as @s run playsound {ns}:common/$(crack)_crack_{i}_{level} player @s ^ ^ ^-6 {round(volume * 1.5, 3)}"
+            )
 
-        # Missing sounds
-        self.func("sound/reload_start", f"""
+    # Missing sounds
+    write_versioned_function("sound/reload_start", f"""
 # Full reload sound for the player
 $playsound {ns}:$(reload) player @s
 """)
-        self.func("sound/player_begin", f"""
+    write_versioned_function("sound/player_begin", f"""
 # Play the begin reload sound for all nearby players
 $playsound {ns}:$(playerbegin) player @a[distance=0.01..16] ~ ~ ~ 0.3
 """)
-        self.func("sound/player_mid", f"""
+    write_versioned_function("sound/player_mid", f"""
 # Play the mid reload sound for all nearby players
 $playsound {ns}:$(playermid) player @a[distance=0.01..16] ~ ~ ~ 0.3
 """)
-        self.func("sound/player_end", f"""
+    write_versioned_function("sound/player_end", f"""
 # Play the end reload sound for all nearby players
 $playsound {ns}:$(playerend) player @a[distance=0.01..16] ~ ~ ~ 0.3
 """)
-        self.func("sound/pump", f"""
+    write_versioned_function("sound/pump", f"""
 # Play the pump sound for the player and nearby players
 $playsound {ns}:$(pump) player @s
 $playsound {ns}:$(pump) player @a[distance=0.01..16] ~ ~ ~ 0.3
 """)
-
-
-def main() -> None:
-    """ Module-level entry (preserved signature); delegates to :class:`SoundGenerator`. """
-    SoundGenerator()()
-
-

@@ -2,11 +2,10 @@
 # Perk Machine System
 # Stationary machines where players buy gameplay-enhancing perks.
 # Available perks and their behavior are defined in PERK_DEFINITIONS.
-from stewbeet import JsonDict, Mem, write_tag
+from stewbeet import JsonDict, Mem, write_load_file, write_tag, write_versioned_function
 
 from ..helpers import MGS_TAG
 from .common import deny_not_enough_points_body, deny_requires_power_body, game_active_guard_cmd
-from ..generator import McfunctionGenerator
 
 PERK_DEFINITIONS: dict[str, JsonDict] = {
 	"juggernog": {
@@ -61,23 +60,20 @@ PERK_DEFINITIONS: dict[str, JsonDict] = {
 }
 
 
-class PerksGenerator(McfunctionGenerator):
-    """ Generates the perks datapack functions. """
+def generate_perks() -> None:
+	ns: str = Mem.ctx.project_id
+	version: str = Mem.ctx.project_version
+	perk_objectives_add: str = "\n".join(
+		f"scoreboard objectives add {ns}.zb.perk.{perk_id} dummy"
+		for perk_id in PERK_DEFINITIONS
+	)
+	perk_reset_all_players: str = "\n".join(
+		f"scoreboard players reset * {ns}.zb.perk.{perk_id}"
+		for perk_id in PERK_DEFINITIONS
+	)
 
-    def generate(self) -> None:
-    	ns: str = self.ns
-    	version: str = self.version
-    	perk_objectives_add: str = "\n".join(
-    		f"scoreboard objectives add {ns}.zb.perk.{perk_id} dummy"
-    		for perk_id in PERK_DEFINITIONS
-    	)
-    	perk_reset_all_players: str = "\n".join(
-    		f"scoreboard players reset * {ns}.zb.perk.{perk_id}"
-    		for perk_id in PERK_DEFINITIONS
-    	)
-
-    	## Perk machine entity scoreboards
-    	self.load(f"""
+	## Perk machine entity scoreboards
+	write_load_file(f"""
 # Perk machine entity scoreboards
 scoreboard objectives add {ns}.zb.perk.id dummy
 scoreboard objectives add {ns}.zb.perk.price dummy
@@ -89,18 +85,18 @@ scoreboard objectives add {ns}.zb.perk.power dummy
 {perk_objectives_add}
 """)
 
-    	## Signal function tag for extensibility
-    	write_tag("zombies/on_new_perk", Mem.ctx.data[ns].function_tags, [])
+	## Signal function tag for extensibility
+	write_tag("zombies/on_new_perk", Mem.ctx.data[ns].function_tags, [])
 
-    	## Setup: iterate perk compounds, summon interaction entities
-    	self.func("zombies/perks/setup", f"""
+	## Setup: iterate perk compounds, summon interaction entities
+	write_versioned_function("zombies/perks/setup", f"""
 scoreboard players set #pk_counter {ns}.data 0
 data modify storage {ns}:zombies perk_data set value {{}}
 data modify storage {ns}:temp _pk_iter set from storage {ns}:zombies game.map.perks
 execute if data storage {ns}:temp _pk_iter[0] run function {ns}:v{version}/zombies/perks/setup_iter
 """)
 
-    	self.func("zombies/perks/setup_iter", f"""
+	write_versioned_function("zombies/perks/setup_iter", f"""
 # Assign incrementing ID
 scoreboard players add #pk_counter {ns}.data 1
 
@@ -168,20 +164,20 @@ tag @n[tag={ns}.pk_new] remove {ns}.pk_new
 data remove storage {ns}:temp _pk_iter[0]
 execute if data storage {ns}:temp _pk_iter[0] run function {ns}:v{version}/zombies/perks/setup_iter
 """)
-    	self.func("zombies/perks/override_perk_model", f"""
+	write_versioned_function("zombies/perks/override_perk_model", f"""
 $data modify storage {ns}:temp _pk_disp.item_model set value "{ns}:perk_machine_$(perk_id)"
 """)
 
-    	self.func("zombies/perks/place_at", f"""
+	write_versioned_function("zombies/perks/place_at", f"""
 $summon minecraft:interaction $(x) $(y) $(z) {{width:1.2f,height:-2.0f,response:true,Rotation:$(rotation),Tags:["{ns}.perk_machine","{ns}.gm_entity","bs.entity.interaction","{ns}.pk_new"]}}
 """)
 
-    	self.func("zombies/perks/store_data", f"""
+	write_versioned_function("zombies/perks/store_data", f"""
 $data modify storage {ns}:zombies perk_data."$(id)" set value {{perk_id:"$(perk_id)",name:"$(name)"}}
 """)
 
-    	## Right-click handler (executor: "source" = player)
-    	self.func("zombies/perks/on_right_click", f"""
+	## Right-click handler (executor: "source" = player)
+	write_versioned_function("zombies/perks/on_right_click", f"""
 # Guard: game must be active
 {game_active_guard_cmd(ns)}
 
@@ -216,39 +212,39 @@ function #{ns}:zombies/on_new_perk
 function {ns}:v{version}/zombies/feedback/sound_success
 """)  # noqa: E501
 
-    	self.func("zombies/perks/deny_requires_power", f"""
+	write_versioned_function("zombies/perks/deny_requires_power", f"""
 {deny_requires_power_body(ns, version, "perk machine")}
 """)
 
-    	self.func("zombies/perks/deny_already_owned", f"""
+	write_versioned_function("zombies/perks/deny_already_owned", f"""
 tellraw @s [{MGS_TAG},{{"text":"You already own this perk.","color":"yellow"}}]
 function {ns}:v{version}/zombies/feedback/sound_deny
 """)
 
-    	self.func("zombies/perks/deny_not_enough_points", f"""
+	write_versioned_function("zombies/perks/deny_not_enough_points", f"""
 {deny_not_enough_points_body(ns, version, "#pk_price")}
 """)
 
-    	self.func("zombies/perks/lookup_perk", f"""
+	write_versioned_function("zombies/perks/lookup_perk", f"""
 $data modify storage {ns}:temp _pk_data set from storage {ns}:zombies perk_data."$(id)"
 """)
 
-    	hover_name_lines: str = "\n".join(
-    		f'execute unless data storage {ns}:temp _pk_data.name if data storage {ns}:temp _pk_data{{perk_id:"{perk_id}"}} run data modify storage {ns}:temp _pk_hover_name set value "{perk_data["display_name"]}"'  # noqa: E501
-    		for perk_id, perk_data in PERK_DEFINITIONS.items()
-    	)
-    	self.func("zombies/perks/get_hover_name", f"""
+	hover_name_lines: str = "\n".join(
+		f'execute unless data storage {ns}:temp _pk_data.name if data storage {ns}:temp _pk_data{{perk_id:"{perk_id}"}} run data modify storage {ns}:temp _pk_hover_name set value "{perk_data["display_name"]}"'  # noqa: E501
+		for perk_id, perk_data in PERK_DEFINITIONS.items()
+	)
+	write_versioned_function("zombies/perks/get_hover_name", f"""
 data modify storage {ns}:temp _pk_hover_name set value "Perk"
 execute if data storage {ns}:temp _pk_data.name run data modify storage {ns}:temp _pk_hover_name set from storage {ns}:temp _pk_data.name
 {hover_name_lines}
 """)
 
-    	self.func("zombies/perks/check_owned", f"""
+	write_versioned_function("zombies/perks/check_owned", f"""
 scoreboard players set #pk_owned {ns}.data 0
 $execute if score @s {ns}.zb.perk.$(perk_id) matches 1 run scoreboard players set #pk_owned {ns}.data 1
 """)
 
-    	self.func("zombies/perks/apply", f"""
+	write_versioned_function("zombies/perks/apply", f"""
 # Set perk scoreboard for the player
 $scoreboard players set @s {ns}.zb.perk.$(perk_id) 1
 
@@ -256,38 +252,38 @@ $scoreboard players set @s {ns}.zb.perk.$(perk_id) 1
 $function {ns}:v{version}/zombies/perks/apply/$(perk_id)
 """)
 
-    	## Per-perk effect functions (generated from top-level metadata)
-    	for perk_id, perk_data in PERK_DEFINITIONS.items():
-    		extra_commands: str = "\n".join(
-    			command.replace("{ns}", ns)
-    			for command in perk_data.get("commands", [])
-    		)
-    		self.func(f"zombies/perks/apply/{perk_id}", f"""
+	## Per-perk effect functions (generated from top-level metadata)
+	for perk_id, perk_data in PERK_DEFINITIONS.items():
+		extra_commands: str = "\n".join(
+			command.replace("{ns}", ns)
+			for command in perk_data.get("commands", [])
+		)
+		write_versioned_function(f"zombies/perks/apply/{perk_id}", f"""
 {extra_commands}
 tellraw @s [{MGS_TAG},{{"text":"{perk_data["message"]}","color":"{perk_data["message_color"]}"}}]
 """)
 
-    	## Lose all perks: called when a player goes down
-    	lose_all_lines: list[str] = []
-    	for perk_id, perk_data in PERK_DEFINITIONS.items():
-    		removal = perk_data.get("removal_commands", [])
-    		if removal:
-    			for cmd in removal:
-    				lose_all_lines.append(
-    					f"execute if score @s {ns}.zb.perk.{perk_id} matches 1 run {cmd.replace('{ns}', ns)}"
-    				)
-    		# Skip score reset for perks with persistent_score=True (e.g. quick_revive manages its own score)
-    		if not perk_data.get("persistent_score", False):
-    			lose_all_lines.append(f"scoreboard players set @s {ns}.zb.perk.{perk_id} 0")
-    	lose_all_body = "\n".join(lose_all_lines)
-    	self.func("zombies/perks/lose_all", f"""
+	## Lose all perks: called when a player goes down
+	lose_all_lines: list[str] = []
+	for perk_id, perk_data in PERK_DEFINITIONS.items():
+		removal = perk_data.get("removal_commands", [])
+		if removal:
+			for cmd in removal:
+				lose_all_lines.append(
+					f"execute if score @s {ns}.zb.perk.{perk_id} matches 1 run {cmd.replace('{ns}', ns)}"
+				)
+		# Skip score reset for perks with persistent_score=True (e.g. quick_revive manages its own score)
+		if not perk_data.get("persistent_score", False):
+			lose_all_lines.append(f"scoreboard players set @s {ns}.zb.perk.{perk_id} 0")
+	lose_all_body = "\n".join(lose_all_lines)
+	write_versioned_function("zombies/perks/lose_all", f"""
 # Remove all perk effects and reset scoreboard tracking
 {lose_all_body}
 tellraw @s [{MGS_TAG},{{"text":"All perks lost!","color":"red"}}]
 """)
 
-    	## Hover events (executor: "source" = player)
-    	self.func("zombies/perks/on_hover", f"""
+	## Hover events (executor: "source" = player)
+	write_versioned_function("zombies/perks/on_hover", f"""
 execute store result score #pk_price {ns}.data run scoreboard players get @n[tag=bs.interaction.target] {ns}.zb.perk.price
 execute store result storage {ns}:temp _pk_hover.id int 1 run scoreboard players get @n[tag=bs.interaction.target] {ns}.zb.perk.id
 function {ns}:v{version}/zombies/perks/lookup_perk with storage {ns}:temp _pk_hover
@@ -296,14 +292,14 @@ data modify storage smithed.actionbar:input message set value {{json:[{{"text":"
 function #smithed.actionbar:message
 """)  # noqa: E501
 
-    	## Hook into game start: reset perk scoreboards
-    	self.func("zombies/start", f"""
+	## Hook into game start: reset perk scoreboards
+	write_versioned_function("zombies/start", f"""
 # Reset perk scoreboards for all known score holders (including offline players).
 {perk_reset_all_players}
 """)
 
-    	## Quick Revive solo pricing: 500 when alone, map price otherwise. Re-checked on join/leave.
-    	self.func("zombies/perks/update_quick_revive_price", f"""
+	## Quick Revive solo pricing: 500 when alone, map price otherwise. Re-checked on join/leave.
+	write_versioned_function("zombies/perks/update_quick_revive_price", f"""
 # Count alive in-game players
 execute store result score #qr_players {ns}.data if entity @a[scores={{{ns}.zb.in_game=1}},gamemode=!spectator]
 
@@ -314,8 +310,8 @@ execute if score #qr_players {ns}.data matches ..1 run scoreboard players set @e
 execute if score #qr_players {ns}.data matches 2.. as @e[tag={ns}.pk_quick_revive] run scoreboard players operation @s {ns}.zb.perk.price = @s {ns}.zb.perk.base_price
 """)
 
-    	## Hook into preload_complete: setup perk machines
-    	self.func("zombies/preload_complete", f"""
+	## Hook into preload_complete: setup perk machines
+	write_versioned_function("zombies/preload_complete", f"""
 # Setup perk machines
 execute if data storage {ns}:zombies game.map.perks[0] run function {ns}:v{version}/zombies/perks/setup
 
@@ -323,15 +319,15 @@ execute if data storage {ns}:zombies game.map.perks[0] run function {ns}:v{versi
 execute if data storage {ns}:zombies game.map.perks[0] run function {ns}:v{version}/zombies/perks/update_quick_revive_price
 """)
 
-    	## Hook into game tick: keep Quick Revive solo price in sync as players join/leave (every ~1s)
-    	self.func("zombies/game_tick", f"""
+	## Hook into game tick: keep Quick Revive solo price in sync as players join/leave (every ~1s)
+	write_versioned_function("zombies/game_tick", f"""
 scoreboard players add #qr_price_tick {ns}.data 1
 execute if score #qr_price_tick {ns}.data matches 20.. run scoreboard players set #qr_price_tick {ns}.data 0
 execute if score #qr_price_tick {ns}.data matches 0 run function {ns}:v{version}/zombies/perks/update_quick_revive_price
 """)
 
-    	## Hook into stop: remove perk effects
-    	self.func("zombies/stop", f"""
+	## Hook into stop: remove perk effects
+	write_versioned_function("zombies/stop", f"""
 # Reset perk effects
 execute as @a[scores={{{ns}.zb.in_game=1}}] run attribute @s minecraft:max_health base set 20
 tag @a remove {ns}.perk.speed_cola
@@ -348,9 +344,3 @@ scoreboard players set @a {ns}.special.quick_swap 0
 # Reset perk scoreboards for all known score holders (including offline players).
 {perk_reset_all_players}
 """)
-
-
-def generate_perks() -> None:
-	""" Module-level entry (preserved signature); delegates to :class:`PerksGenerator`. """
-	PerksGenerator()()
-

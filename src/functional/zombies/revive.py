@@ -6,10 +6,9 @@
 # The player spectates the mannequin and can crawl (slow movement via WASD input predicates).
 # Teammates revive by standing near the mannequin. After 60s without revive, player bleed out.
 # Solo + Quick Revive: auto-revive after 10s, up to 3 times.
-from stewbeet import JsonDict, Mem, Predicate, set_json_encoder
+from stewbeet import JsonDict, Mem, Predicate, set_json_encoder, write_load_file, write_versioned_function
 
 from ..helpers import MGS_TAG
-from ..generator import McfunctionGenerator
 
 # Revive configuration
 BLEED_OUT_TICKS: int = 1200		# 60 seconds to be revived before bleed out
@@ -23,24 +22,21 @@ CRAWL_SPEED: float = 0.06		# Blocks per tick for downed crawl movement
 HUD_OFFSET_Y_THOUSANDTHS: int = 2000  # 2.0 blocks * 1000 (for scoreboard math)
 
 
-class ReviveGenerator(McfunctionGenerator):
-    """ Generates the revive datapack functions. """
+def generate_revive() -> None:
+	ns: str = Mem.ctx.project_id
+	version: str = Mem.ctx.project_version
 
-    def generate(self) -> None:
-    	ns: str = self.ns
-    	version: str = self.version
+	## Input predicates (used to move the mannequin via spectator player input)
+	def player_input(key: str) -> JsonDict:
+		return {"condition": "minecraft:entity_properties", "entity": "this", "predicate": {"minecraft:type_specific/player": {"input": {key: True}}}}
+	Mem.ctx.data[ns].predicates[f"v{version}/input/forward"]  = set_json_encoder(Predicate(player_input("forward")))
+	Mem.ctx.data[ns].predicates[f"v{version}/input/backward"] = set_json_encoder(Predicate(player_input("backward")))
+	Mem.ctx.data[ns].predicates[f"v{version}/input/left"]     = set_json_encoder(Predicate(player_input("left")))
+	Mem.ctx.data[ns].predicates[f"v{version}/input/right"]    = set_json_encoder(Predicate(player_input("right")))
+	Mem.ctx.data[ns].predicates[f"v{version}/input/any"]      = set_json_encoder(Predicate({"condition": "minecraft:any_of", "terms": [player_input("forward"), player_input("backward"), player_input("left"), player_input("right")]}))
 
-    	## Input predicates (used to move the mannequin via spectator player input)
-    	def player_input(key: str) -> JsonDict:
-    		return {"condition": "minecraft:entity_properties", "entity": "this", "predicate": {"minecraft:type_specific/player": {"input": {key: True}}}}
-    	Mem.ctx.data[ns].predicates[f"v{version}/input/forward"]  = set_json_encoder(Predicate(player_input("forward")))
-    	Mem.ctx.data[ns].predicates[f"v{version}/input/backward"] = set_json_encoder(Predicate(player_input("backward")))
-    	Mem.ctx.data[ns].predicates[f"v{version}/input/left"]     = set_json_encoder(Predicate(player_input("left")))
-    	Mem.ctx.data[ns].predicates[f"v{version}/input/right"]    = set_json_encoder(Predicate(player_input("right")))
-    	Mem.ctx.data[ns].predicates[f"v{version}/input/any"]      = set_json_encoder(Predicate({"condition": "minecraft:any_of", "terms": [player_input("forward"), player_input("backward"), player_input("left"), player_input("right")]}))
-
-    	## Scoreboards
-    	self.load(f"""
+	## Scoreboards
+	write_load_file(f"""
 # Revive system scoreboards
 scoreboard objectives add {ns}.zb.downed dummy
 scoreboard objectives add {ns}.zb.bleed dummy
@@ -53,10 +49,10 @@ scoreboard objectives add {ns}.zb.qr_uses dummy
 scoreboard objectives add {ns}.zb.downed_id dummy
 """)
 
-    	# ──────────────────────────────────────────────────────────────────────────
-    	## On Down: called from on_respawn when player dies in zombies
-    	# ──────────────────────────────────────────────────────────────────────────
-    	self.func("zombies/revive/on_down", f"""
+	# ──────────────────────────────────────────────────────────────────────────
+	## On Down: called from on_respawn when player dies in zombies
+	# ──────────────────────────────────────────────────────────────────────────
+	write_versioned_function("zombies/revive/on_down", f"""
 # Mark player as downed
 scoreboard players set @s {ns}.zb.downed 1
 scoreboard players set @s {ns}.zb.bleed {BLEED_OUT_TICKS}
@@ -131,27 +127,27 @@ title @s subtitle [{{"text":"You are down! A teammate can revive you.","color":"
 tellraw @a[scores={{{ns}.zb.in_game=1}}] [{MGS_TAG},{{"selector":"@s","color":"red"}},{{"text":" is down!","color":"gray"}}]
 """)
 
-    	## Macro: teleport mannequin and HUD to death location
-    	self.func("zombies/revive/tp_to_death", f"""
+	## Macro: teleport mannequin and HUD to death location
+	write_versioned_function("zombies/revive/tp_to_death", f"""
 $tp @n[tag={ns}.downed_new] $(rv_x) $(rv_y) $(rv_z)
 $tp @n[tag={ns}.downed_hud_new] $(rv_x) $(rv_y_hud) $(rv_z)
 """)
 
-    	## Macro: teleport revived player to the mannequin's last position
-    	self.func("zombies/revive/tp_revive_pos", """
+	## Macro: teleport revived player to the mannequin's last position
+	write_versioned_function("zombies/revive/tp_revive_pos", """
 $tp @s $(rv_x) $(rv_y) $(rv_z)
 """)
 
-    	# ──────────────────────────────────────────────────────────────────────────
-    	## Tick: process all downed spectating players
-    	# ──────────────────────────────────────────────────────────────────────────
-    	self.func("zombies/revive/tick", f"""
+	# ──────────────────────────────────────────────────────────────────────────
+	## Tick: process all downed spectating players
+	# ──────────────────────────────────────────────────────────────────────────
+	write_versioned_function("zombies/revive/tick", f"""
 # Process each spectating (downed) player
 execute as @a[tag={ns}.downed_spectator,scores={{{ns}.zb.in_game=1}}] at @s run function {ns}:v{version}/zombies/revive/downed_tick
 """)
 
-    	## Downed tick: per-player (run as the spectating downed player)
-    	self.func("zombies/revive/downed_tick", f"""
+	## Downed tick: per-player (run as the spectating downed player)
+	write_versioned_function("zombies/revive/downed_tick", f"""
 # Decrement bleed timer
 scoreboard players remove @s {ns}.zb.bleed 1
 
@@ -240,17 +236,17 @@ execute if score @s {ns}.zb.bleed matches ..0 run function {ns}:v{version}/zombi
 execute if score #zb_reviving {ns}.data matches 0 unless entity @a[scores={{{ns}.zb.in_game=1,{ns}.zb.downed=0}},gamemode=!spectator] run function {ns}:v{version}/zombies/revive/bleed_out
 """)
 
-    	# ──────────────────────────────────────────────────────────────────────────
-    	## Solo Quick Revive check: auto-revive if alone in game
-    	# ──────────────────────────────────────────────────────────────────────────
-    	self.func("zombies/revive/check_solo_qr", f"""
+	# ──────────────────────────────────────────────────────────────────────────
+	## Solo Quick Revive check: auto-revive if alone in game
+	# ──────────────────────────────────────────────────────────────────────────
+	write_versioned_function("zombies/revive/check_solo_qr", f"""
 # Only trigger if there are no other alive in-game players besides this downed player
 execute store result score #zb_other_alive {ns}.data if entity @a[scores={{{ns}.zb.in_game=1,{ns}.zb.downed=0}},gamemode=!spectator]
 execute if score #zb_other_alive {ns}.data matches 0 run function {ns}:v{version}/zombies/revive/solo_qr_tick
 """)
 
-    	## Solo QR tick: auto-increment revive progress (uses {SOLO_QR_TICKS} ticks total)
-    	self.func("zombies/revive/solo_qr_tick", f"""
+	## Solo QR tick: auto-increment revive progress (uses {SOLO_QR_TICKS} ticks total)
+	write_versioned_function("zombies/revive/solo_qr_tick", f"""
 # Check player has uses remaining
 execute if score @s {ns}.zb.qr_uses matches {SOLO_QR_MAX}.. run return 0
 
@@ -273,8 +269,8 @@ function #smithed.actionbar:message
 execute if score @s {ns}.zb.revive_p matches {SOLO_QR_TICKS}.. run function {ns}:v{version}/zombies/revive/solo_qr_complete
 """)
 
-    	## Solo QR complete: consume one use then revive
-    	self.func("zombies/revive/solo_qr_complete", f"""
+	## Solo QR complete: consume one use then revive
+	write_versioned_function("zombies/revive/solo_qr_complete", f"""
 # Consume one Quick Revive use
 scoreboard players add @s {ns}.zb.qr_uses 1
 
@@ -292,10 +288,10 @@ execute unless score @s {ns}.zb.qr_uses matches {SOLO_QR_MAX}.. run tellraw @s [
 function {ns}:v{version}/zombies/revive/revive_complete
 """)
 
-    	# ──────────────────────────────────────────────────────────────────────────
-    	## Reviver actionbar (run as the reviving player, context @s = reviver, nearest downed = target)
-    	# ──────────────────────────────────────────────────────────────────────────
-    	self.func("zombies/revive/show_reviver_bar", f"""
+	# ──────────────────────────────────────────────────────────────────────────
+	## Reviver actionbar (run as the reviving player, context @s = reviver, nearest downed = target)
+	# ──────────────────────────────────────────────────────────────────────────
+	write_versioned_function("zombies/revive/show_reviver_bar", f"""
 # Resolve the nearest downed player's revive progress into a stable fake-player holder. A selector
 # used as a score component's "name" does not reliably resolve in the actionbar packet (it rendered
 # blank -> "/30t"), so we read the value here and display the holder instead.
@@ -306,43 +302,43 @@ execute if entity @s[tag={ns}.perk.quick_revive] run function {ns}:v{version}/zo
 execute unless entity @s[tag={ns}.perk.quick_revive] run function {ns}:v{version}/zombies/revive/show_reviver_bar_normal
 """)
 
-    	self.func("zombies/revive/show_reviver_bar_normal", f"""
+	write_versioned_function("zombies/revive/show_reviver_bar_normal", f"""
 data modify storage smithed.actionbar:input message set value {{json:[{{"text":"Reviving... ","color":"yellow"}},{{"score":{{"name":"#rv_reviver_disp","objective":"{ns}.data"}},"color":"green"}},{{"text":"/{REVIVE_TICKS}t","color":"gray"}}],priority:"override",freeze:2}}
 function #smithed.actionbar:message
 """)
 
-    	self.func("zombies/revive/show_reviver_bar_quick", f"""
+	write_versioned_function("zombies/revive/show_reviver_bar_quick", f"""
 data modify storage smithed.actionbar:input message set value {{json:[{{"text":"⚡ Reviving... ","color":"aqua"}},{{"score":{{"name":"#rv_reviver_disp","objective":"{ns}.data"}},"color":"green"}},{{"text":"/{QUICK_REVIVE_TICKS}t","color":"gray"}}],priority:"override",freeze:2}}
 function #smithed.actionbar:message
 """)
 
-    	# ──────────────────────────────────────────────────────────────────────────
-    	## HUD color update helpers (run as downed spectator, update nearest downed_hud)
-    	# ──────────────────────────────────────────────────────────────────────────
-    	self.func("zombies/revive/hud_white", f"""
+	# ──────────────────────────────────────────────────────────────────────────
+	## HUD color update helpers (run as downed spectator, update nearest downed_hud)
+	# ──────────────────────────────────────────────────────────────────────────
+	write_versioned_function("zombies/revive/hud_white", f"""
 data modify entity @n[tag={ns}.downed_hud] text[0] set value {{"selector":"@a[tag={ns}.downed_spectator,sort=nearest,limit=1]","color":"white"}}
 data modify entity @n[tag={ns}.downed_hud] text[1] set value {{"text":" ↓","color":"white"}}
 """)
 
-    	self.func("zombies/revive/hud_yellow", f"""
+	write_versioned_function("zombies/revive/hud_yellow", f"""
 data modify entity @n[tag={ns}.downed_hud] text[0] set value {{"selector":"@a[tag={ns}.downed_spectator,sort=nearest,limit=1]","color":"yellow"}}
 data modify entity @n[tag={ns}.downed_hud] text[1] set value {{"text":" ↓","color":"yellow"}}
 """)
 
-    	self.func("zombies/revive/hud_gold", f"""
+	write_versioned_function("zombies/revive/hud_gold", f"""
 data modify entity @n[tag={ns}.downed_hud] text[0] set value {{"selector":"@a[tag={ns}.downed_spectator,sort=nearest,limit=1]","color":"gold"}}
 data modify entity @n[tag={ns}.downed_hud] text[1] set value {{"text":" ↓","color":"gold"}}
 """)
 
-    	self.func("zombies/revive/hud_red", f"""
+	write_versioned_function("zombies/revive/hud_red", f"""
 data modify entity @n[tag={ns}.downed_hud] text[0] set value {{"selector":"@a[tag={ns}.downed_spectator,sort=nearest,limit=1]","color":"red"}}
 data modify entity @n[tag={ns}.downed_hud] text[1] set value {{"text":" ↓","color":"red"}}
 """)
 
-    	# ──────────────────────────────────────────────────────────────────────────
-    	## Revive complete: restore the downed player (run as downed spectator)
-    	# ──────────────────────────────────────────────────────────────────────────
-    	self.func("zombies/revive/revive_complete", f"""
+	# ──────────────────────────────────────────────────────────────────────────
+	## Revive complete: restore the downed player (run as downed spectator)
+	# ──────────────────────────────────────────────────────────────────────────
+	write_versioned_function("zombies/revive/revive_complete", f"""
 # Remove downed state
 scoreboard players set @s {ns}.zb.downed 0
 scoreboard players set @s {ns}.zb.revive_p 0
@@ -382,10 +378,10 @@ title @s subtitle [{{"text":"You have been revived!","color":"green"}}]
 tellraw @a[scores={{{ns}.zb.in_game=1}}] [{MGS_TAG},{{"selector":"@s","color":"green"}},{{"text":" has been revived!","color":"gray"}}]
 """)
 
-    	# ──────────────────────────────────────────────────────────────────────────
-    	## Bleed out: player couldn't be revived in time (run as downed spectator)
-    	# ──────────────────────────────────────────────────────────────────────────
-    	self.func("zombies/revive/bleed_out", f"""
+	# ──────────────────────────────────────────────────────────────────────────
+	## Bleed out: player couldn't be revived in time (run as downed spectator)
+	# ──────────────────────────────────────────────────────────────────────────
+	write_versioned_function("zombies/revive/bleed_out", f"""
 # Remove downed state
 scoreboard players set @s {ns}.zb.downed 0
 scoreboard players set @s {ns}.zb.revive_p 0
@@ -414,15 +410,15 @@ title @s subtitle [{{"text":"You bled out. Respawning next round...","color":"gr
 tellraw @a[scores={{{ns}.zb.in_game=1}}] [{MGS_TAG},{{"selector":"@s","color":"dark_red"}},{{"text":" has bled out.","color":"gray"}}]
 """)
 
-    	# ──────────────────────────────────────────────────────────────────────────
-    	## Round end respawn: revive all spectating (bled-out) players
-    	# ──────────────────────────────────────────────────────────────────────────
-    	self.func("zombies/revive/round_respawn", f"""
+	# ──────────────────────────────────────────────────────────────────────────
+	## Round end respawn: revive all spectating (bled-out) players
+	# ──────────────────────────────────────────────────────────────────────────
+	write_versioned_function("zombies/revive/round_respawn", f"""
 # Respawn all spectator (bled-out) players
 execute as @a[scores={{{ns}.zb.in_game=1}},gamemode=spectator] run function {ns}:v{version}/zombies/revive/do_round_respawn
 """)
 
-    	self.func("zombies/revive/do_round_respawn", f"""
+	write_versioned_function("zombies/revive/do_round_respawn", f"""
 # If this player was still DOWNED (mannequin alive) when the round ended, fully tear that state
 # down first — otherwise their mannequin/HUD/camera would be orphaned and they'd stay "downed".
 execute if entity @s[tag={ns}.downed_spectator] run function {ns}:v{version}/zombies/revive/clear_downed_state
@@ -452,9 +448,9 @@ function {ns}:v{version}/shared/maps/call_respawn_script_at_base
 tellraw @a[scores={{{ns}.zb.in_game=1}}] [{MGS_TAG},{{"selector":"@s","color":"green"}},{{"text":" has respawned!","color":"gray"}}]
 """)
 
-    	## Fully tear down @s's downed mannequin/HUD/camera (matched by downed_id) and dismount.
-    	## Used when a still-downed player is force-revived at round end.
-    	self.func("zombies/revive/clear_downed_state", f"""
+	## Fully tear down @s's downed mannequin/HUD/camera (matched by downed_id) and dismount.
+	## Used when a still-downed player is force-revived at round end.
+	write_versioned_function("zombies/revive/clear_downed_state", f"""
 scoreboard players operation #my_downed_id {ns}.data = @s {ns}.zb.downed_id
 execute as @e[tag={ns}.downed_mannequin] if score @s {ns}.zb.downed_id = #my_downed_id {ns}.data at @s run kill @n[tag={ns}.downed_hud,distance=..3]
 execute as @e[tag={ns}.downed_mannequin] if score @s {ns}.zb.downed_id = #my_downed_id {ns}.data run kill @s
@@ -465,9 +461,9 @@ scoreboard players set @s {ns}.zb.revive_p 0
 tag @s remove {ns}.downed_spectator
 """)
 
-    	## Teleport @s to the unlocked player spawn nearest to a random alive teammate (so respawned
-    	## players rejoin near the action rather than at an arbitrary spawn).
-    	self.func("zombies/revive/respawn_near_player", f"""
+	## Teleport @s to the unlocked player spawn nearest to a random alive teammate (so respawned
+	## players rejoin near the action rather than at an arbitrary spawn).
+	write_versioned_function("zombies/revive/respawn_near_player", f"""
 tag @s add {ns}.spawn_pending
 execute as @r[scores={{{ns}.zb.in_game=1,{ns}.zb.downed=0}},gamemode=!spectator,limit=1] at @s run tag @n[tag={ns}.spawn_point,tag={ns}.spawn_zb_player,tag={ns}.spawn_unlocked] add {ns}.spawn_candidate
 # Fallback: if no alive teammate, use the unlocked player spawn nearest to @s
@@ -477,11 +473,11 @@ tag @e[tag={ns}.spawn_candidate] remove {ns}.spawn_candidate
 tag @a[tag={ns}.spawn_pending] remove {ns}.spawn_pending
 """)
 
-    	# ──────────────────────────────────────────────────────────────────────────
-    	## Full death: instant elimination with NO mannequin (e.g. falling out of the world).
-    	## The player goes straight to bled-out spectator and is respawned at the next round end.
-    	# ──────────────────────────────────────────────────────────────────────────
-    	self.func("zombies/revive/full_death", f"""
+	# ──────────────────────────────────────────────────────────────────────────
+	## Full death: instant elimination with NO mannequin (e.g. falling out of the world).
+	## The player goes straight to bled-out spectator and is respawned at the next round end.
+	# ──────────────────────────────────────────────────────────────────────────
+	write_versioned_function("zombies/revive/full_death", f"""
 # Count it as a down and strip perks (same as a normal down/bleed-out)
 scoreboard players add @s {ns}.zb.downs 1
 function {ns}:v{version}/zombies/perks/lose_all
@@ -502,10 +498,10 @@ title @s subtitle [{{"text":"You fell out of the world!","color":"gray"}}]
 tellraw @a[scores={{{ns}.zb.in_game=1}}] [{MGS_TAG},{{"selector":"@s","color":"dark_red"}},{{"text":" fell out of the world.","color":"gray"}}]
 """)
 
-    	# ──────────────────────────────────────────────────────────────────────────
-    	## Hook: reset revive state on game start
-    	# ──────────────────────────────────────────────────────────────────────────
-    	self.func("zombies/start", f"""
+	# ──────────────────────────────────────────────────────────────────────────
+	## Hook: reset revive state on game start
+	# ──────────────────────────────────────────────────────────────────────────
+	write_versioned_function("zombies/start", f"""
 # Reset revive state
 scoreboard players set @a {ns}.zb.downed 0
 scoreboard players set @a {ns}.zb.bleed 0
@@ -519,8 +515,8 @@ kill @e[tag={ns}.downed_hud]
 kill @e[tag={ns}.downed_cam]
 """)
 
-    	## Hook: reset revive state on game stop
-    	self.func("zombies/stop", f"""
+	## Hook: reset revive state on game stop
+	write_versioned_function("zombies/stop", f"""
 # Reset revive state
 scoreboard players set @a {ns}.zb.downed 0
 scoreboard players set @a {ns}.zb.bleed 0
@@ -533,10 +529,3 @@ kill @e[tag={ns}.downed_mannequin]
 kill @e[tag={ns}.downed_hud]
 kill @e[tag={ns}.downed_cam]
 """)
-
-
-def generate_revive() -> None:
-	""" Module-level entry (preserved signature); delegates to :class:`ReviveGenerator`. """
-	ReviveGenerator()()
-
-
