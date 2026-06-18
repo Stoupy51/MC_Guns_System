@@ -625,6 +625,11 @@ out vec4 fragColor;
 #define PAP_COLOR vec3(0.6, 0.0, 1.0)
 
 float LinearizeDepth(float depth) {
+    // 26.2 uses a REVERSED-Z depth buffer (near = 1.0, far/sky = 0.0). Un-reverse it back to
+    // forward-Z (near = 0.0, far = 1.0) so the classic perspective linearization below is valid.
+    // Without this, the sky (depth 0.0) linearizes to ~near and the muzzle flash floods the whole
+    // screen instead of lighting only nearby blocks.
+    depth = 1.0 - depth;
     float z = depth * 2.0 - 1.0;
     return (NEAR * FAR) / (FAR + NEAR - z * (FAR - NEAR));
 }
