@@ -83,11 +83,11 @@ def beet_default(ctx: Context) -> None:
 
     # Name maps sourced from shared loadout catalogs
     weapon_display_names: dict[str, str] = {
-        **{item_id: display for item_id, display, *_ in PRIMARY_WEAPONS},
-        **{item_id: display for item_id, display, *_ in SECONDARY_WEAPONS},
+        **{w.item_id: w.display_name for w in PRIMARY_WEAPONS},
+        **{w.item_id: w.display_name for w in SECONDARY_WEAPONS},
     }
     grenade_display_names: dict[str, str] = {
-        item_id: display for item_id, display in GRENADE_TYPES if item_id
+        g.item_id: g.display_name for g in GRENADE_TYPES if g.item_id
     }
 
     # Adjust guns data

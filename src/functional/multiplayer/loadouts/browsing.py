@@ -194,8 +194,8 @@ execute if score #pub {ns}.data matches 1 if score #is_fav {ns}.data matches 0 r
 		"\n".join(f"data modify storage {ns}:temp _btn_data.perk{i} set value \"\"" for i in range(len(PERKS)))
 		+ "\n"
 		+ "\n".join(
-			f'execute if data storage {ns}:temp _btn_data{{perks:["{pid}"]}} run data modify storage {ns}:temp _btn_data.perk{i} set value "\\\\n- {pname}"'
-			for i, (pid, pname, _, _) in enumerate(PERKS)
+			f'execute if data storage {ns}:temp _btn_data{{perks:["{p.perk_id}"]}} run data modify storage {ns}:temp _btn_data.perk{i} set value "\\\\n- {p.display_name}"'
+			for i, p in enumerate(PERKS)
 		)
 	)
 	# Concatenation of every perk slot (unselected ones are empty) — shows all chosen perks

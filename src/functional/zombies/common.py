@@ -30,15 +30,15 @@ def build_weapon_magazine_data() -> dict[str, tuple[str, int, bool]]:
 	""" Build a mapping of weapon_id -> (magazine_id, magazine_count, is_consumable). """
 	weapon_mag_data: dict[str, tuple[str, int, bool]] = {}
 
-	# Process PRIMARY_WEAPONS: (item_id, display_name, category, magazine_id, default_mag_count, in_loadout)
-	for weapon_id, _, _, mag_id, mag_count, *_ in PRIMARY_WEAPONS:
-		is_consumable = mag_id in CONSUMABLE_MAGS
-		weapon_mag_data[weapon_id] = (mag_id, mag_count, is_consumable)
+	# Process PRIMARY_WEAPONS
+	for w in PRIMARY_WEAPONS:
+		is_consumable = w.magazine_id in CONSUMABLE_MAGS
+		weapon_mag_data[w.item_id] = (w.magazine_id, w.default_mag_count, is_consumable)
 
-	# Process SECONDARY_WEAPONS: (item_id, display_name, magazine_id, default_mag_count, in_loadout)
-	for weapon_id, _, mag_id, mag_count, *_ in SECONDARY_WEAPONS:
-		is_consumable = mag_id in CONSUMABLE_MAGS
-		weapon_mag_data[weapon_id] = (mag_id, mag_count, is_consumable)
+	# Process SECONDARY_WEAPONS
+	for w in SECONDARY_WEAPONS:
+		is_consumable = w.magazine_id in CONSUMABLE_MAGS
+		weapon_mag_data[w.item_id] = (w.magazine_id, w.default_mag_count, is_consumable)
 
 	return weapon_mag_data
 

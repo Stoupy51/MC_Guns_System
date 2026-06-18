@@ -307,7 +307,8 @@ function {ns}:v{version}/multiplayer/show_dialog with storage {ns}:temp
 
 	# Gun action lists (+ Remove button)
 	primary_actions: list[str] = []
-	for idx, (_gun_id, display, category, _mag, _mc, _il) in enumerate(w for w in PRIMARY_WEAPONS if w.in_loadout):
+	for idx, wp in enumerate(w for w in PRIMARY_WEAPONS if w.in_loadout):
+		display, category = wp.display_name, wp.category
 		trig = TRIG_PRIMARY_BASE + idx
 		primary_actions.append(
 			f'{{label:{{text:"{display}",color:"yellow"}},'
@@ -329,7 +330,8 @@ function {ns}:v{version}/multiplayer/show_dialog with storage {ns}:temp
 
 	# Pistol secondary list (default)
 	secondary_actions: list[str] = []
-	for idx, (_gun_id, display, _mag_id, _mc, _il) in enumerate(w for w in SECONDARY_WEAPONS if w.in_loadout):
+	for idx, wp in enumerate(w for w in SECONDARY_WEAPONS if w.in_loadout):
+		display = wp.display_name
 		trig = TRIG_SECONDARY_BASE + idx
 		secondary_actions.append(
 			f'{{label:{{text:"{display}",color:"yellow"}},'
@@ -341,7 +343,8 @@ function {ns}:v{version}/multiplayer/show_dialog with storage {ns}:temp
 
 	# Overkill secondary list: primaries (iron sights only, camo selectable)
 	overkill_actions: list[str] = []
-	for idx, (_gun_id, display, category, _mag, _mc, _il) in enumerate(w for w in PRIMARY_WEAPONS if w.in_loadout):
+	for idx, wp in enumerate(w for w in PRIMARY_WEAPONS if w.in_loadout):
+		display, category = wp.display_name, wp.category
 		trig = TRIG_OVERKILL_SEC_BASE + idx
 		overkill_actions.append(
 			f'{{label:{{text:"{display}",color:"yellow"}},'
@@ -365,7 +368,8 @@ function {fn}/show_secondary_pistol_dialog
 		("", "_1"):                   "scope/primary_1only",
 	}
 	scope_route_lines = ""
-	for gun_id, *_ in PRIMARY_WEAPONS:
+	for wp in PRIMARY_WEAPONS:
+		gun_id = wp.item_id
 		if gun_id in SCOPE_VARIANTS:
 			variants = SCOPE_VARIANTS[gun_id]
 			func_name = scope_set_func[variants]
@@ -375,7 +379,8 @@ function {fn}/show_secondary_pistol_dialog
 			)
 
 	pick_primary_lines = ""
-	for idx, (gun_id, display, _category, mag_id, _mag_count, _il) in enumerate(w for w in PRIMARY_WEAPONS if w.in_loadout):
+	for idx, wp in enumerate(w for w in PRIMARY_WEAPONS if w.in_loadout):
+		gun_id, display, mag_id = wp.item_id, wp.display_name, wp.magazine_id
 		trig = TRIG_PRIMARY_BASE + idx
 		pick_primary_lines += (
 			f'execute if score @s {ns}.player.config matches {trig} run '
@@ -397,7 +402,8 @@ function {fn}/show_primary_camo_dialog
 """)
 
 	pick_secondary_lines = ""
-	for idx, (gun_id, display, mag_id, _mag_count, _il) in enumerate(w for w in SECONDARY_WEAPONS if w.in_loadout):
+	for idx, wp in enumerate(w for w in SECONDARY_WEAPONS if w.in_loadout):
+		gun_id, display, mag_id = wp.item_id, wp.display_name, wp.magazine_id
 		trig = TRIG_SECONDARY_BASE + idx
 		pick_secondary_lines += (
 			f'execute if score @s {ns}.player.config matches {trig} run '
@@ -424,7 +430,8 @@ function {fn}/show_secondary_camo_dialog
 
 	# Overkill: pick a primary weapon as the secondary (iron sights, camo selectable)
 	pick_overkill_lines = ""
-	for idx, (gun_id, display, _category, mag_id, _mag_count, _il) in enumerate(w for w in PRIMARY_WEAPONS if w.in_loadout):
+	for idx, wp in enumerate(w for w in PRIMARY_WEAPONS if w.in_loadout):
+		gun_id, display, mag_id = wp.item_id, wp.display_name, wp.magazine_id
 		trig = TRIG_OVERKILL_SEC_BASE + idx
 		pick_overkill_lines += (
 			f'execute if score @s {ns}.player.config matches {trig} run '
@@ -532,7 +539,8 @@ function {fn}/show_secondary_camo_dialog
 	## Camo dialogs (free) — finish the weapon submenu and return to the hub
 	def camo_actions_snbt(trig_base: int) -> str:
 		actions: list[str] = []
-		for camo_idx, (suffix, camo_name) in enumerate(CAMO_VARIANTS):
+		for camo_idx, c in enumerate(CAMO_VARIANTS):
+			suffix, camo_name = c.suffix, c.display_name
 			label_color = "green" if suffix == "" else "yellow"
 			actions.append(
 				f'{{label:{{text:"{camo_name}",color:"{label_color}"}},'
@@ -551,7 +559,8 @@ function {fn}/show_secondary_camo_dialog
 
 	def gen_pick_camo_lines(field: str, trig_base: int) -> str:
 		lines = ""
-		for camo_idx, (suffix, camo_name) in enumerate(CAMO_VARIANTS):
+		for camo_idx, c in enumerate(CAMO_VARIANTS):
+			suffix, camo_name = c.suffix, c.display_name
 			trig = trig_base + camo_idx
 			lines += (
 				f'execute if score @s {ns}.player.config matches {trig} run '
@@ -641,7 +650,8 @@ function {fn}/hub
 	for slot_num, field, trig_base in [(1, "equip_slot1", TRIG_EQUIP_SLOT1_BASE), (2, "equip_slot2", TRIG_EQUIP_SLOT2_BASE)]:
 		actions: list[str] = []
 		pick = ""
-		for grenade_idx, (item_id, display) in enumerate(GRENADE_TYPES):
+		for grenade_idx, g in enumerate(GRENADE_TYPES):
+			item_id, display = g.item_id, g.display_name
 			trig = trig_base + grenade_idx
 			tooltip = '{text:"Free"}' if not item_id else f'[{{text:"-{COST_GRENADE}"}}, " pt"]'
 			label_color = "yellow" if item_id else "green"
@@ -680,7 +690,8 @@ function {fn}/show_equip{slot_num}_camo_dialog
 	# Per-perk append lines: a selected variant and an unselected variant
 	_perk_tooltip = '["",{{"text":"{desc}","color":"gray"}},["","\\n",{{"text":"Cost"}},": "],[{{"text":"{cost}","color":"gold"}}]," pt",{{"text":"\\nClick to toggle on/off","color":"dark_gray"}}]'
 	perk_button_lines = ""
-	for perk_idx, (perk_id, perk_name, perk_desc, _score) in enumerate(PERKS):
+	for perk_idx, p in enumerate(PERKS):
+		perk_id, perk_name, perk_desc = p.perk_id, p.display_name, p.description
 		trig = TRIG_PERK_BASE + perk_idx
 		tip = _perk_tooltip.format(desc=perk_desc, cost=COST_PERK)
 		sel = (
@@ -726,7 +737,8 @@ exit_action:{{label:"Back",action:{{type:"run_command",command:"/trigger {ns}.pl
 
 	## pick_perk - Toggle a perk on/off; re-show perks dialog
 	pick_perk_dispatch = ""
-	for perk_idx, (perk_id, *_) in enumerate(PERKS):
+	for perk_idx, p in enumerate(PERKS):
+		perk_id = p.perk_id
 		trig = TRIG_PERK_BASE + perk_idx
 		pick_perk_dispatch += (
 			f'execute if score @s {ns}.player.config matches {trig} run '
@@ -781,7 +793,8 @@ function {fn}/rebuild_perks with storage {ns}:temp
 	## ====================================================================
 	# Pre-generate weapon slot lookup tables
 	primary_slot_entries: list[str] = []
-	for gun_id, _display, _category, mag_id, mag_count, *_ in PRIMARY_WEAPONS:
+	for wp in PRIMARY_WEAPONS:
+		gun_id, mag_id, mag_count = wp.item_id, wp.magazine_id, wp.default_mag_count
 		gun_slot = f'{{slot:"hotbar.0",loot:"{ns}:i/{gun_id}",count:1,consumable:0b,bullets:0}}'
 		is_consumable = "1b" if mag_id in CONSUMABLE_MAGS else "0b"
 		bullets = mag_count if mag_id in CONSUMABLE_MAGS else 0
@@ -789,7 +802,8 @@ function {fn}/rebuild_perks with storage {ns}:temp
 			f'{{id:"{gun_id}",gun_slot:{gun_slot},mag_id:"{mag_id}",mag_consumable:{is_consumable},mag_bullets:{bullets}}}'
 		)
 	secondary_slot_entries: list[str] = []
-	for gun_id, _display, mag_id, mag_count, _il in (w for w in SECONDARY_WEAPONS if w.in_loadout):
+	for wp in (w for w in SECONDARY_WEAPONS if w.in_loadout):
+		gun_id, mag_id, mag_count = wp.item_id, wp.magazine_id, wp.default_mag_count
 		gun_slot = f'{{slot:"hotbar.1",loot:"{ns}:i/{gun_id}",count:1,consumable:0b,bullets:0}}'
 		is_consumable = "1b" if mag_id in CONSUMABLE_MAGS else "0b"
 		bullets = mag_count if mag_id in CONSUMABLE_MAGS else 0
@@ -804,19 +818,22 @@ data modify storage {ns}:multiplayer secondary_slot_table set value [{",".join(s
 """)
 
 	save_primary_dispatch = ""
-	for idx, (gun_id, *_) in enumerate(PRIMARY_WEAPONS):
+	for idx, wp in enumerate(PRIMARY_WEAPONS):
+		gun_id = wp.item_id
 		save_primary_dispatch += (
 			f'execute if data storage {ns}:temp editor{{primary:"{gun_id}"}} run '
 			f'data modify storage {ns}:temp _build.primary_data set from storage {ns}:multiplayer primary_slot_table[{idx}]\n'
 		)
 	save_secondary_dispatch = ""
-	for idx, (gun_id, *_) in enumerate(w for w in SECONDARY_WEAPONS if w.in_loadout):
+	for idx, wp in enumerate(w for w in SECONDARY_WEAPONS if w.in_loadout):
+		gun_id = wp.item_id
 		save_secondary_dispatch += (
 			f'execute if data storage {ns}:temp editor{{secondary:"{gun_id}"}} run '
 			f'data modify storage {ns}:temp _build.secondary_data set from storage {ns}:multiplayer secondary_slot_table[{idx}]\n'
 		)
 	# Overkill: the secondary may be a primary weapon — look it up in the primary table instead
-	for idx, (gun_id, *_) in enumerate(PRIMARY_WEAPONS):
+	for idx, wp in enumerate(PRIMARY_WEAPONS):
+		gun_id = wp.item_id
 		save_secondary_dispatch += (
 			f'execute if data storage {ns}:temp editor{{secondary:"{gun_id}"}} run '
 			f'data modify storage {ns}:temp _build.secondary_data set from storage {ns}:multiplayer primary_slot_table[{idx}]\n'
@@ -825,8 +842,8 @@ data modify storage {ns}:multiplayer secondary_slot_table set value [{",".join(s
 	equip_name_dispatch: dict[int, str] = {}
 	for slot_num, field in [(1, "equip_slot1"), (2, "equip_slot2")]:
 		equip_name_dispatch[slot_num] = "\n".join(
-			f'execute if data storage {ns}:temp editor{{{field}:"{item_id}"}} run data modify storage {ns}:temp _new_loadout.{field}_name set value "{display}"'
-			for item_id, display in GRENADE_TYPES if item_id
+			f'execute if data storage {ns}:temp editor{{{field}:"{g.item_id}"}} run data modify storage {ns}:temp _new_loadout.{field}_name set value "{g.display_name}"'
+			for g in GRENADE_TYPES if g.item_id
 		)
 
 	write_versioned_function("multiplayer/editor/save", f"""
