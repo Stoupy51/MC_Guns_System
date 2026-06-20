@@ -2,7 +2,7 @@
 # ruff: noqa: E501
 # Imports
 
-from stewbeet import Mem, write_load_file, write_versioned_function
+from stewbeet import Dialog, DialogTag, Mem, set_json_encoder, write_load_file, write_versioned_function
 
 from ....config.stats import ALL_SLOTS
 from ...helpers import MGS_TAG
@@ -68,6 +68,36 @@ data modify storage {ns}:temp dialog.actions append value {{label:[{{text:"🌍 
 # Show the completed dialog via macro
 function {ns}:v{version}/multiplayer/show_dialog with storage {ns}:temp
 """)
+
+	## Quick Action launcher: a static dialog registered to #minecraft:quick_actions so
+	## players can open the class menu from the pause screen / Quick Actions keybind (1.21.6+).
+	## The class menu is built dynamically per-player, so this is a thin launcher that fires
+	## trigger 4 (-> select_class). external_title is the pack name, which is what Minecraft
+	## shows in the shared list when several datapacks each add a quick action.
+	pack_name: str = Mem.ctx.project_name
+	Mem.ctx.data[ns].dialogs["open_class_menu"] = set_json_encoder(Dialog({
+		"type": "minecraft:multi_action",
+		"external_title": pack_name,
+		"title": {"text": pack_name, "color": "gold", "bold": True},
+		"body": [{"type": "minecraft:plain_message", "contents": {"text": "Open the class & loadouts menu", "color": "gray"}}],
+		"actions": [{
+			"label": {"text": "Open Class Menu", "color": "green"},
+			"action": {"type": "run_command", "command": f"/trigger {ns}.player.config set 4"},
+		}],
+		"columns": 1,
+		"exit_action": {"label": {"translate": "gui.cancel"}},
+	}))
+
+	# Register to the quick actions tag (merge so we don't clobber other packs' entries, e.g. the manual)
+	dialog_ref: str = f"{ns}:open_class_menu"
+	qa_values: list[str] = []
+	if "quick_actions" in Mem.ctx.data["minecraft"].dialogs_tags:
+		qa_values = list(Mem.ctx.data["minecraft"].dialogs_tags["quick_actions"].data.get("values", []))
+	if dialog_ref not in qa_values:
+		qa_values.append(dialog_ref)
+	Mem.ctx.data["minecraft"].dialogs_tags["quick_actions"] = set_json_encoder(
+		DialogTag({"replace": False, "values": qa_values})
+	)
 
 	## set_class macro: sets the class score and notifies player
 	## Called from trigger dispatch (trigger values 11-20 → class 1-10)
