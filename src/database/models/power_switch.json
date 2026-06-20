@@ -67,6 +67,7 @@
 			"name": "lever handle",
 			"from": [7.3, 6.5, 8.4],
 			"to": [8.7, 11.5, 9.4],
+			"rotation": {"origin": [8, 7, 8.9], "axis": "x", "angle": -45},
 			"faces": {
 				"north": {"uv": [0, 0, 16, 16], "texture": "#handle"},
 				"east": {"uv": [0, 0, 16, 16], "texture": "#handle"},
@@ -80,6 +81,7 @@
 			"name": "lever knob",
 			"from": [7, 10.8, 8.1],
 			"to": [9, 12.8, 9.7],
+			"rotation": {"origin": [8, 7, 8.9], "axis": "x", "angle": -45},
 			"faces": {
 				"north": {"uv": [0, 0, 16, 16], "texture": "#handle"},
 				"east": {"uv": [0, 0, 16, 16], "texture": "#handle"},
@@ -115,8 +117,8 @@
 			"scale": [0.6, 0.6, 0.6]
 		},
 		"fixed": {
-			"rotation": [0, -180, 0],
-			"translation": [0, 0, -3]
+			"rotation": [0, 0, 0],
+			"translation": [0, 0, 3]
 		}
 	}
 }

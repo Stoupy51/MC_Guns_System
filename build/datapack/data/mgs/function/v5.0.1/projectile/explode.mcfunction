@@ -64,6 +64,12 @@ execute if data storage mgs:zombies game{state:"active"} if entity @n[tag=mgs.di
 # Flak Jacket perk: halve explosive direct-hit damage to a perked MP player
 execute if entity @n[tag=mgs.direct_hit,type=player,scores={mgs.mp.in_game=1,mgs.special.flak_jacket=1}] run scoreboard players operation #direct_dmg mgs.data /= #2 mgs.data
 
+# Instant kill: one-shot a non-immune victim when the shooter has it active (mirrors the area path).
+# Without this, explosives with little/no blast radius (or a direct projectile strike) never instant-kill.
+# Never applied to players while a zombies game is active (would bypass the explosion cap above).
+execute if entity @n[tag=mgs.direct_hit,tag=!mgs.no_instant_kill,type=!player] if score @n[tag=mgs.temp_shooter] mgs.special.instant_kill matches 1.. run scoreboard players set #direct_dmg mgs.data 99999
+execute unless data storage mgs:zombies game{state:"active"} if entity @n[tag=mgs.direct_hit,tag=!mgs.no_instant_kill,type=player] if score @n[tag=mgs.temp_shooter] mgs.special.instant_kill matches 1.. run scoreboard players set #direct_dmg mgs.data 99999
+
 # Apply direct hit damage using the existing damage utility
 data modify storage mgs:input with set value {target:"@s", amount:0.0f, attacker:"@n[tag=mgs.temp_shooter]"}
 execute store result storage mgs:input with.amount float 0.1 run scoreboard players get #direct_dmg mgs.data

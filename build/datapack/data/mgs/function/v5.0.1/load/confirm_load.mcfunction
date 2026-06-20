@@ -130,6 +130,16 @@ data modify storage mgs:lore_templates grenade_fuse set value [{"text": "F", "co
 data modify storage mgs:lore_templates expl_damage set value [{"text": "E", "color": "#c24a17", "italic": false}, {"text": "x", "color": "#c24c18"}, {"text": "p", "color": "#c24f1a"}, {"text": "l", "color": "#c2521b"}, {"text": "o", "color": "#c3541d"}, {"text": "s", "color": "#c3571f"}, {"text": "i", "color": "#c35a20"}, {"text": "o", "color": "#c35d22"}, {"text": "n", "color": "#c45f24"}, {"text": " ", "color": "#c46225"}, {"text": "D", "color": "#c46527"}, {"text": "a", "color": "#c46828"}, {"text": "m", "color": "#c56a2a"}, {"text": "a", "color": "#c56d2c"}, {"text": "g", "color": "#c5702d"}, {"text": "e", "color": "#c5732f"}, {"text": " ", "color": "#c67531"}, {"text": " ", "color": "#c67832"}, {"text": "\u27a4", "color": "#c67b34"}, {"text": " ", "color": "#c77e36"}]
 data modify storage mgs:lore_templates expl_radius set value [{"text": "E", "color": "#c24a17", "italic": false}, {"text": "x", "color": "#c24c18"}, {"text": "p", "color": "#c24f1a"}, {"text": "l", "color": "#c2511b"}, {"text": "o", "color": "#c3541d"}, {"text": "s", "color": "#c3571e"}, {"text": "i", "color": "#c35920"}, {"text": "o", "color": "#c35c21"}, {"text": "n", "color": "#c45e23"}, {"text": " ", "color": "#c46124"}, {"text": "R", "color": "#c46426"}, {"text": "a", "color": "#c46628"}, {"text": "d", "color": "#c56929"}, {"text": "i", "color": "#c56b2b"}, {"text": "u", "color": "#c56e2c"}, {"text": "s", "color": "#c5712e"}, {"text": " ", "color": "#c6732f"}, {"text": " ", "color": "#c67631"}, {"text": " ", "color": "#c67832"}, {"text": "\u27a4", "color": "#c67b34"}, {"text": " ", "color": "#c77e36"}]
 
+# Stamina system (Black Ops style)
+# Distance-sprinted stat (cm) — increments only while the player is sprinting and moving
+scoreboard objectives add mgs.sprint minecraft.custom:minecraft.sprint_one_cm
+# Per-player stamina state
+scoreboard objectives add mgs.stam dummy
+scoreboard objectives add mgs.stam_prev dummy
+scoreboard objectives add mgs.stam_rest dummy
+scoreboard objectives add mgs.stam_out dummy
+scoreboard objectives add mgs.stam_seen dummy
+
 # Armed mob counter (skip tick loop if 0)
 scoreboard players add #armed_mob_count mgs.data 0
 
@@ -241,7 +251,6 @@ scoreboard objectives add mgs.zb.player_hit dummy
 # Door entity scoreboards
 scoreboard objectives add mgs.zb.door.link dummy
 scoreboard objectives add mgs.zb.door.price dummy
-scoreboard objectives add mgs.zb.door.gid dummy
 scoreboard objectives add mgs.zb.door.bgid dummy
 scoreboard objectives add mgs.zb.door.anim dummy
 scoreboard objectives add mgs.zb.door.rot dummy

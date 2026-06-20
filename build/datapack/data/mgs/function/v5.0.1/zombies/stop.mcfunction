@@ -13,9 +13,7 @@ execute as @a[scores={mgs.zb.in_game=1}] run attribute @s minecraft:max_health b
 execute as @a[scores={mgs.zb.in_game=1}] run attribute @s minecraft:movement_speed base reset
 execute as @a[scores={mgs.zb.in_game=1}] run attribute @s minecraft:jump_strength base reset
 execute as @a[scores={mgs.zb.in_game=1}] run attribute @s minecraft:entity_interaction_range base reset
-effect clear @a[scores={mgs.zb.in_game=1}] darkness
-effect clear @a[scores={mgs.zb.in_game=1}] blindness
-effect clear @a[scores={mgs.zb.in_game=1}] night_vision
+effect clear @a[scores={mgs.zb.in_game=1}]
 gamemode adventure @a[scores={mgs.zb.in_game=1},gamemode=spectator]
 kill @e[tag=mgs.zombie_round]
 kill @e[tag=mgs.gm_entity]
@@ -30,6 +28,12 @@ gamerule advance_time true
 # Re-enable natural regeneration, disable custom regen system
 gamerule natural_health_regeneration true
 scoreboard players set #any_game_active mgs.data 0
+
+# Tear down stamina state: stop any hunger drain and refill the bar so nobody is left winded
+effect clear @a minecraft:hunger
+effect give @a minecraft:saturation 5 20 true
+scoreboard players set @a mgs.stam_out 0
+scoreboard players set @a mgs.stam_seen 0
 
 # Announce
 tellraw @a [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.zombies_game_ended","color":"red"}]

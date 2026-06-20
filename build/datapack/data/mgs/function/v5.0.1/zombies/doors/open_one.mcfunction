@@ -16,11 +16,11 @@ execute if entity @s[tag=mgs.door_back] run data modify storage mgs:temp _door_o
 execute if score @s mgs.zb.door.anim matches 0 run function mgs:v5.0.1/zombies/doors/remove_block_destroy with storage mgs:temp _door_open
 execute unless score @s mgs.zb.door.anim matches 0 run function mgs:v5.0.1/zombies/doors/remove_block_silent with storage mgs:temp _door_open
 
-# Unlock primary group
-execute store result storage mgs:temp _door_unlock.gid int 1 run scoreboard players get @s mgs.zb.door.gid
+# Unlock the front-room group (link_id is the door's group_id)
+execute store result storage mgs:temp _door_unlock.gid int 1 run scoreboard players get @s mgs.zb.door.link
 function mgs:v5.0.1/zombies/doors/unlock_group with storage mgs:temp _door_unlock
 
-# Unlock back group if applicable (back_group_id != -1)
+# Unlock the back-room group too if applicable (back_group_id != -1)
 execute unless score @s mgs.zb.door.bgid matches -1 run function mgs:v5.0.1/zombies/doors/unlock_back_group
 
 # Kill door interaction entity

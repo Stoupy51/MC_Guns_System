@@ -29,6 +29,12 @@ function #mgs:multiplayer/on_game_end
 gamerule natural_health_regeneration true
 scoreboard players set #any_game_active mgs.data 0
 
+# Tear down stamina state: stop any hunger drain and refill the bar so nobody is left winded
+effect clear @a minecraft:hunger
+effect give @a minecraft:saturation 5 20 true
+scoreboard players set @a mgs.stam_out 0
+scoreboard players set @a mgs.stam_seen 0
+
 # Announce scores (team scores are meaningless in FFA — the winner is announced by player_wins)
 tellraw @a ["",[{"text":"","color":"gold","bold":true},"⚔ ",{"translate":"mgs.game_over"},"! "]]
 execute unless data storage mgs:multiplayer game{gamemode:"ffa"} run tellraw @a ["",{"translate":"mgs.red","color":"red"},{"text":": "},{"score":{"name":"#red","objective":"mgs.mp.team"}}," | ",{"translate":"mgs.blue","color":"blue"},{"text":": "},{"score":{"name":"#blue","objective":"mgs.mp.team"}}]
