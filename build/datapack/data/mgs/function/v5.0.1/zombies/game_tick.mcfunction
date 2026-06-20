@@ -125,5 +125,3 @@ execute if score #qr_price_tick mgs.data matches 0 run function mgs:v5.0.1/zombi
 # Trap active tick (damage + timer)
 execute as @e[tag=mgs.trap_center,scores={mgs.zb.trap.timer=1..}] at @s run function mgs:v5.0.1/zombies/traps/active_tick
 
-# Trap cooldown uses expiration tick comparison (no per-tick decrements needed)
-

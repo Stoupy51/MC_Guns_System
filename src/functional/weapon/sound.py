@@ -122,6 +122,45 @@ scoreboard players operation #origin_acoustics_level {ns}.data = @s {ns}.acousti
 execute as @a[distance=0.001..224] facing entity @s eyes run function {ns}:v{version}/sound/propagation
 """)
 
+    # Turret gunshot: reuse the g3a3 weapon sound (close mechanical report + the 'large' acoustics
+    # crack), so the zombies turret trap sounds exactly like a player firing a G3A3.
+    # @s = sound source entity (the turret center marker); executed at the muzzle, facing the target.
+    write_versioned_function("sound/turret_fire", f"""
+# Compute the source environment acoustics at the turret, exactly like a firing player
+function {ns}:v{version}/sound/compute_acoustics
+scoreboard players operation #origin_acoustics_level {ns}.data = @s {ns}.acoustics_level
+
+# Close-range g3a3 mechanical report for nearby players (same mix as sound/fire_simple)
+playsound {ns}:g3a3/fire player @a[distance=0.01..48] ~ ~ ~ 0.35 1 0.10
+
+# Propagate the 'large' crack to every listener, using each listener's own acoustics level
+data modify storage {ns}:temp _turret_snd set value {{crack:"large"}}
+execute as @a[distance=0.001..224] facing entity @s eyes run function {ns}:v{version}/sound/turret_propagation
+""")
+
+    # Per-listener crack propagation for the turret. Mirrors sound/propagation, but reads the crack
+    # from a dedicated storage ({ns}:temp _turret_snd) instead of the player gun storage ({ns}:gun).
+    write_versioned_function("sound/turret_propagation", f"""
+# Make copies of the original (turret) acoustics level to work on
+scoreboard players operation #processed_acoustics {ns}.data = #origin_acoustics_level {ns}.data
+scoreboard players operation #attenuation_acoustics {ns}.data = #origin_acoustics_level {ns}.data
+scoreboard players add #attenuation_acoustics {ns}.data 1
+
+# Same acoustics blending as the player propagation, against each listener's own acoustics level
+execute if score #origin_acoustics_level {ns}.data matches 0..4 if score #origin_acoustics_level {ns}.data > @s {ns}.acoustics_level run scoreboard players remove #processed_acoustics {ns}.data 1
+execute if score #origin_acoustics_level {ns}.data < @s {ns}.acoustics_level run scoreboard players add #processed_acoustics {ns}.data 1
+execute if score #attenuation_acoustics {ns}.data < @s {ns}.acoustics_level run scoreboard players add #processed_acoustics {ns}.data 1
+execute if score @s {ns}.acoustics_level matches 5 run scoreboard players set #processed_acoustics {ns}.data 5
+
+# Play the appropriate crack variant (reuses the shared hearing/* distance table)
+execute if score #processed_acoustics {ns}.data matches 0 run function {ns}:v{version}/sound/hearing/0_distant with storage {ns}:temp _turret_snd
+execute if score #processed_acoustics {ns}.data matches 1 run function {ns}:v{version}/sound/hearing/1_far with storage {ns}:temp _turret_snd
+execute if score #processed_acoustics {ns}.data matches 2 run function {ns}:v{version}/sound/hearing/2_midrange with storage {ns}:temp _turret_snd
+execute if score #processed_acoustics {ns}.data matches 3 run function {ns}:v{version}/sound/hearing/3_near with storage {ns}:temp _turret_snd
+execute if score #processed_acoustics {ns}.data matches 4 run function {ns}:v{version}/sound/hearing/4_closest with storage {ns}:temp _turret_snd
+execute if score #processed_acoustics {ns}.data matches 5 run function {ns}:v{version}/sound/hearing/5_water with storage {ns}:temp _turret_snd
+""")
+
     # Check mid cooldown
     write_versioned_function("sound/check/pump", f"""
 # Calculate half of weapon cooldown

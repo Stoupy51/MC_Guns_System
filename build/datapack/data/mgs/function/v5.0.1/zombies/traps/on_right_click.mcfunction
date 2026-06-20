@@ -1,9 +1,9 @@
 
 #> mgs:v5.0.1/zombies/traps/on_right_click
 #
-# @executed	as @e[tag=_trap_new_bs]
+# @executed	as @e[tag=mgs._trap_new_bs]
 #
-# @within	mgs:v5.0.1/zombies/traps/setup_iter {run:"function mgs:v5.0.1/zombies/traps/on_right_click",executor:"source"} [ as @e[tag=_trap_new_bs] ]
+# @within	mgs:v5.0.1/zombies/traps/setup_iter {run:"function mgs:v5.0.1/zombies/traps/on_right_click",executor:"source"} [ as @e[tag=mgs._trap_new_bs] ]
 #
 
 # Guard: game must be active

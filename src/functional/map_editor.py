@@ -1016,11 +1016,18 @@ execute as @n[tag={ns}.new_zb_marker] run data modify entity @s data set from st
 # Apply shared group_id default
 execute as @n[tag={ns}.new_zb_marker] run data modify entity @s data.group_id set from storage {ns}:temp map_edit.zb_defaults.group_id
 
-# Get player rotation and snap to nearest 45 degrees
+# Get player rotation
 execute store result score #yaw {ns}.data run data get entity @p[tag={ns}.map_editor,distance=..6,sort=nearest] Rotation[0]
-scoreboard players add #yaw {ns}.data 742
-scoreboard players operation #yaw {ns}.data /= #45 {ns}.data
-scoreboard players operation #yaw {ns}.data *= #45 {ns}.data
+
+# Snap yaw: the power switch is mounted on a block face, so it only allows the 4 cardinal facings
+# (snap to 90°). Every other zb_object snaps to the nearest 45°. (742 = 720 + 45/2 and 765 = 720 + 90/2
+# offset the value positive for rounding; 720 is a multiple of both 45 and 90 and is removed again after.)
+execute unless entity @s[tag={ns}.element.power_switch] run scoreboard players add #yaw {ns}.data 742
+execute unless entity @s[tag={ns}.element.power_switch] run scoreboard players operation #yaw {ns}.data /= #45 {ns}.data
+execute unless entity @s[tag={ns}.element.power_switch] run scoreboard players operation #yaw {ns}.data *= #45 {ns}.data
+execute if entity @s[tag={ns}.element.power_switch] run scoreboard players add #yaw {ns}.data 765
+execute if entity @s[tag={ns}.element.power_switch] run scoreboard players operation #yaw {ns}.data /= #90 {ns}.data
+execute if entity @s[tag={ns}.element.power_switch] run scoreboard players operation #yaw {ns}.data *= #90 {ns}.data
 scoreboard players remove #yaw {ns}.data 720
 
 # Apply 180° yaw offset

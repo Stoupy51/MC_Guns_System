@@ -1,0 +1,41 @@
+{
+	"pools": [
+		{
+			"rolls": 1,
+			"entries": [
+				{
+					"type": "minecraft:item",
+					"name": "minecraft:command_block",
+					"functions": [
+						{
+							"function": "minecraft:set_components",
+							"components": {
+								"minecraft:custom_data": {
+									"mgs": {
+										"turret_head": true
+									},
+									"smithed": {
+										"id": "mgs:turret_head",
+										"origin": "mgs",
+										"ignore": {"functionality": true,"crafting": true}
+									}
+								},
+								"minecraft:item_model": "mgs:turret_head",
+								"minecraft:item_name": {
+									"translate": "mgs.turret_head"
+								},
+								"minecraft:lore": [
+									[
+										"",
+										{"text": "I","color": "white","italic": false,"font": "mgs:icons"},
+										[{"text":" ","italic": true,"color": "blue"}, {"translate": "mgs.mc_guns_system"}]
+									]
+								]
+							}
+						}
+					]
+				}
+			]
+		}
+	]
+}

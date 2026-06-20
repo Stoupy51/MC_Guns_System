@@ -1,0 +1,222 @@
+{
+	"parent": "block/cube_all",
+	"textures": {
+		"particle": "minecraft:block/iron_block",
+		"metal": "minecraft:block/iron_block",
+		"dark": "minecraft:block/gray_concrete",
+		"darker": "minecraft:block/black_concrete"
+	},
+	"format_version": "1.21.11",
+	"credit": "MGS turret trap - stationary base/mount (vanilla textures). Centred on the origin in X/Z (geometry from -8..8) so the item_display, placed at the block centre, renders centred and rotates about its centre. Y runs upward from 0 so the base sits on the floor; the pedestal is ~2 blocks tall (yoke top at 28px) with a cradle for the head.",
+	"elements": [
+		{
+			"name": "base plate",
+			"from": [
+				3,
+				0,
+				3
+			],
+			"to": [
+				13,
+				2,
+				13
+			],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8,13.5,8]
+			},
+			"faces": {
+				"north": {"uv": [0,0,16,16],"texture": "#metal"},
+				"east": {"uv": [0,0,16,16],"texture": "#metal"},
+				"south": {"uv": [0,0,16,16],"texture": "#metal"},
+				"west": {"uv": [0,0,16,16],"texture": "#metal"},
+				"up": {"uv": [0,0,16,16],"texture": "#metal"},
+				"down": {"uv": [0,0,16,16],"texture": "#metal"}
+			}
+		},
+		{
+			"name": "anchor bolts",
+			"from": [
+				4,
+				2,
+				4
+			],
+			"to": [
+				12,
+				4.5,
+				12
+			],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8,13.5,8]
+			},
+			"faces": {
+				"north": {"uv": [0,0,16,16],"texture": "#darker"},
+				"east": {"uv": [0,0,16,16],"texture": "#darker"},
+				"south": {"uv": [0,0,16,16],"texture": "#darker"},
+				"west": {"uv": [0,0,16,16],"texture": "#darker"},
+				"up": {"uv": [0,0,16,16],"texture": "#darker"}
+			}
+		},
+		{
+			"name": "post",
+			"from": [
+				5,
+				4,
+				5
+			],
+			"to": [
+				11,
+				22,
+				11
+			],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8,13.5,8]
+			},
+			"faces": {
+				"north": {"uv": [0,0,16,16],"texture": "#dark"},
+				"east": {"uv": [0,0,16,16],"texture": "#dark"},
+				"south": {"uv": [0,0,16,16],"texture": "#dark"},
+				"west": {"uv": [0,0,16,16],"texture": "#dark"},
+				"up": {"uv": [0,0,16,16],"texture": "#dark"},
+				"down": {"uv": [0,0,16,16],"texture": "#dark"}
+			}
+		},
+		{
+			"name": "collar",
+			"from": [
+				4,
+				22,
+				4
+			],
+			"to": [
+				12,
+				24,
+				12
+			],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8,13.5,8]
+			},
+			"faces": {
+				"north": {"uv": [0,0,16,16],"texture": "#metal"},
+				"east": {"uv": [0,0,16,16],"texture": "#metal"},
+				"south": {"uv": [0,0,16,16],"texture": "#metal"},
+				"west": {"uv": [0,0,16,16],"texture": "#metal"},
+				"up": {"uv": [0,0,16,16],"texture": "#metal"},
+				"down": {"uv": [0,0,16,16],"texture": "#metal"}
+			}
+		},
+		{
+			"name": "yoke left",
+			"from": [
+				4,
+				24,
+				5
+			],
+			"to": [
+				6,
+				28,
+				11
+			],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8,13.5,8]
+			},
+			"faces": {
+				"north": {"uv": [0,0,16,16],"texture": "#metal"},
+				"east": {"uv": [0,0,16,16],"texture": "#metal"},
+				"south": {"uv": [0,0,16,16],"texture": "#metal"},
+				"west": {"uv": [0,0,16,16],"texture": "#metal"},
+				"up": {"uv": [0,0,16,16],"texture": "#metal"},
+				"down": {"uv": [0,0,16,16],"texture": "#metal"}
+			}
+		},
+		{
+			"name": "yoke right",
+			"from": [
+				10,
+				24,
+				5
+			],
+			"to": [
+				12,
+				28,
+				11
+			],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [8,13.5,8]
+			},
+			"faces": {
+				"north": {"uv": [0,0,16,16],"texture": "#metal"},
+				"east": {"uv": [0,0,16,16],"texture": "#metal"},
+				"south": {"uv": [0,0,16,16],"texture": "#metal"},
+				"west": {"uv": [0,0,16,16],"texture": "#metal"},
+				"up": {"uv": [0,0,16,16],"texture": "#metal"},
+				"down": {"uv": [0,0,16,16],"texture": "#metal"}
+			}
+		}
+	],
+	"display": {
+		"thirdperson_righthand": {
+			"scale": [
+				0.5,
+				0.5,
+				0.5
+			]
+		},
+		"thirdperson_lefthand": {
+			"scale": [
+				0.5,
+				0.5,
+				0.5
+			]
+		},
+		"firstperson_righthand": {
+			"scale": [
+				0.5,
+				0.5,
+				0.5
+			]
+		},
+		"firstperson_lefthand": {
+			"scale": [
+				0.5,
+				0.5,
+				0.5
+			]
+		},
+		"gui": {
+			"rotation": [
+				30,
+				-135,
+				0
+			],
+			"translation": [
+				0,
+				-2.25,
+				0
+			],
+			"scale": [
+				0.5,
+				0.5,
+				0.5
+			]
+		},
+		"head": {
+			"translation": [
+				0,
+				14.25,
+				0
+			]
+		}
+	}
+}

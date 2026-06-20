@@ -4,6 +4,7 @@
 # @executed	as @e[type=player,sort=random] & at @s
 #
 # @within	mgs:v5.0.1/player/tick
+#			mgs:v5.0.1/sound/turret_fire
 #
 
 # Initialize acoustics score

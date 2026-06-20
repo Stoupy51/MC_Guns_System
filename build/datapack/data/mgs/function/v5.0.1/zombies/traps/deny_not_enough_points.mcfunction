@@ -1,7 +1,7 @@
 
 #> mgs:v5.0.1/zombies/traps/deny_not_enough_points
 #
-# @executed	as @e[tag=_trap_new_bs]
+# @executed	as @e[tag=mgs._trap_new_bs]
 #
 # @within	mgs:v5.0.1/zombies/traps/on_right_click
 #

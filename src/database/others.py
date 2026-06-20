@@ -60,4 +60,11 @@ def main() -> None:
     Item(id="power_switch", override_model=load_model(get_model_path("power_switch")))
     Item(id="power_switch_on", override_model=power_switch_on_model())
 
+    # Turret trap (vanilla textures), split into a stationary base + a rotating head so the head
+    # can be aimed at the zombie it is shooting (see zombies/traps.py turret_fire). The head model
+    # is built centred on [8,8,8] with barrels along +Z so a fixed item_display facing-entity
+    # rotation points the barrels at the target.
+    Item(id="turret_base", override_model=load_model(get_model_path("turret_base")))
+    Item(id="turret_head", override_model=load_model(get_model_path("turret_head")))
+
 
