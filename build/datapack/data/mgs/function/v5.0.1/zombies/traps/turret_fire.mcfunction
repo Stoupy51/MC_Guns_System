@@ -14,22 +14,25 @@
 #
 
 # @s = trap center marker, at @s position
-# Remember this trap's id so we can rotate the matching head display
+# Remember this trap's id so we can find/rotate the matching head display and use it as the muzzle
 scoreboard players operation #turret_tid mgs.data = @s mgs.zb.trap.id
 
-# Tag every zombie inside the effect box as a candidate, then keep the one nearest the turret center
+# Tag every zombie inside the effect box as a candidate, keep only those the head has line of sight to,
+# then pick the one nearest the turret center
 $execute positioned ~-$(rx) ~-$(ry) ~-$(rz) as @e[tag=mgs.zombie_round,tag=!mgs.zb_rising,dx=$(sx),dy=$(sy),dz=$(sz)] run tag @s add mgs._turret_cand
-execute as @e[tag=mgs._turret_cand,sort=nearest,limit=1] run tag @s add mgs._turret_target
+execute as @e[tag=mgs._turret_cand] run function mgs:v5.0.1/zombies/traps/turret_check_los
+execute as @e[tag=mgs._turret_visible,sort=nearest,limit=1] run tag @s add mgs._turret_target
 tag @e[tag=mgs._turret_cand] remove mgs._turret_cand
+tag @e[tag=mgs._turret_visible] remove mgs._turret_visible
 
-# No zombie in range: nothing to aim at or shoot
+# No visible zombie in range: nothing to aim at or shoot
 execute unless entity @e[tag=mgs._turret_target] run return 0
 
 # Aim this turret's head display at the target (yaw + pitch via facing entity, smoothed by teleport_duration)
-execute as @e[tag=mgs.trap_head] if score @s mgs.zb.trap.id = #turret_tid mgs.data at @s run tp @s ~ ~ ~ facing entity @n[tag=mgs._turret_target] eyes
+execute as @e[tag=mgs.trap_head,predicate=mgs:v5.0.1/zombies/traps/turret_id_match] at @s run tp @s ~ ~ ~ facing entity @n[tag=mgs._turret_target] eyes
 
-# Fire the bullet from the barrel (block centre, ~1.6 up = head muzzle height) toward the target
-execute positioned ~.5 ~1.6 ~.5 facing entity @n[tag=mgs._turret_target] eyes run function mgs:v5.0.1/zombies/traps/turret_shoot
+# Fire the bullet straight from the head display itself (no manual offset) toward the target
+execute as @e[tag=mgs.trap_head,predicate=mgs:v5.0.1/zombies/traps/turret_id_match] at @s facing entity @n[tag=mgs._turret_target] eyes positioned ^ ^ ^1 run function mgs:v5.0.1/zombies/traps/turret_shoot
 
 # Clear the temporary target tag
 tag @e[tag=mgs._turret_target] remove mgs._turret_target

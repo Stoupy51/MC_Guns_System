@@ -6,7 +6,7 @@
 # Type 1 = electric: lethal to zombies (1000% of max health), 5 electric damage to players inside.
 # Type 2 = turret: shoots the nearest zombie in range every 5 ticks for 45% of its max health;
 #          the bullet stops at the first entity hit, so players between the turret and zombies take 2 damage instead.
-from stewbeet import Mem, write_load_file, write_versioned_function
+from stewbeet import JsonDict, Mem, Predicate, set_json_encoder, write_load_file, write_versioned_function
 
 from ..helpers import MGS_TAG
 from .common import deny_not_enough_points_body, deny_requires_power_body, game_active_guard_cmd
@@ -15,6 +15,16 @@ from .common import deny_not_enough_points_body, deny_requires_power_body, game_
 def generate_traps() -> None:
 	ns: str = Mem.ctx.project_id
 	version: str = Mem.ctx.project_version
+
+	## Predicate: does `this` entity's trap id match the turret currently being processed?
+	## Used to select the matching head/interaction by score directly in a selector (predicate=...),
+	## which is cheaper than `execute as @e[...] if score @s ... = #turret_tid ...`.
+	id_ref: JsonDict = {"type": "minecraft:score", "target": {"type": "minecraft:fixed", "name": "#turret_tid"}, "score": f"{ns}.data"}
+	Mem.ctx.data[ns].predicates[f"v{version}/zombies/traps/turret_id_match"] = set_json_encoder(Predicate({
+		"condition": "minecraft:entity_scores",
+		"entity": "this",
+		"scores": {f"{ns}.zb.trap.id": {"min": id_ref, "max": id_ref}},
+	}), max_level=-1)
 
 	## Trap entity scoreboards
 	write_load_file(f"""
@@ -244,28 +254,42 @@ function {ns}:v{version}/zombies/traps/apply_trap_damage with storage {ns}:temp 
 $damage @s $(amount) $(type)
 """)
 
-	## Turret trap: pick the nearest zombie in the effect box, aim the head at it, then fire a bullet
+	## Turret trap: pick the nearest *visible* zombie in the effect box, aim the head at it, then fire a bullet
 	write_versioned_function("zombies/traps/turret_fire", f"""
 # @s = trap center marker, at @s position
-# Remember this trap's id so we can rotate the matching head display
+# Remember this trap's id so we can find/rotate the matching head display and use it as the muzzle
 scoreboard players operation #turret_tid {ns}.data = @s {ns}.zb.trap.id
 
-# Tag every zombie inside the effect box as a candidate, then keep the one nearest the turret center
+# Tag every zombie inside the effect box as a candidate, keep only those the head has line of sight to,
+# then pick the one nearest the turret center
 $execute positioned ~-$(rx) ~-$(ry) ~-$(rz) as @e[tag={ns}.zombie_round,tag=!{ns}.zb_rising,dx=$(sx),dy=$(sy),dz=$(sz)] run tag @s add {ns}._turret_cand
-execute as @e[tag={ns}._turret_cand,sort=nearest,limit=1] run tag @s add {ns}._turret_target
+execute as @e[tag={ns}._turret_cand] run function {ns}:v{version}/zombies/traps/turret_check_los
+execute as @e[tag={ns}._turret_visible,sort=nearest,limit=1] run tag @s add {ns}._turret_target
 tag @e[tag={ns}._turret_cand] remove {ns}._turret_cand
+tag @e[tag={ns}._turret_visible] remove {ns}._turret_visible
 
-# No zombie in range: nothing to aim at or shoot
+# No visible zombie in range: nothing to aim at or shoot
 execute unless entity @e[tag={ns}._turret_target] run return 0
 
 # Aim this turret's head display at the target (yaw + pitch via facing entity, smoothed by teleport_duration)
-execute as @e[tag={ns}.trap_head] if score @s {ns}.zb.trap.id = #turret_tid {ns}.data at @s run tp @s ~ ~ ~ facing entity @n[tag={ns}._turret_target] eyes
+execute as @e[tag={ns}.trap_head,predicate={ns}:v{version}/zombies/traps/turret_id_match] at @s run tp @s ~ ~ ~ facing entity @n[tag={ns}._turret_target] eyes
 
-# Fire the bullet from the barrel (block centre, ~1.6 up = head muzzle height) toward the target
-execute positioned ~.5 ~1.6 ~.5 facing entity @n[tag={ns}._turret_target] eyes run function {ns}:v{version}/zombies/traps/turret_shoot
+# Fire the bullet straight from the head display itself (no manual offset) toward the target
+execute as @e[tag={ns}.trap_head,predicate={ns}:v{version}/zombies/traps/turret_id_match] at @s facing entity @n[tag={ns}._turret_target] eyes positioned ^ ^ ^1 run function {ns}:v{version}/zombies/traps/turret_shoot
 
 # Clear the temporary target tag
 tag @e[tag={ns}._turret_target] remove {ns}._turret_target
+""")
+
+	## Line-of-sight gate: tag the candidate zombie as visible only if the turret can see it.
+	## can_see_ata raycasts from the execution position to @s (the zombie), returning 1 if unobstructed.
+	## The turret head sits half inside a barrier block, so casting from there would self-block; instead we
+	## cast from 1.5 blocks below the interaction entity (clear of the barrier) - matched by id via predicate.
+	write_versioned_function("zombies/traps/turret_check_los", f"""
+# @s = candidate zombie
+scoreboard players set #turret_vis {ns}.data 0
+execute at @e[tag={ns}.trap_interact,predicate={ns}:v{version}/zombies/traps/turret_id_match] positioned ~ ~-1.5 ~ store result score #turret_vis {ns}.data run function #bs.view:can_see_ata {{with:{{}}}}
+execute if score #turret_vis {ns}.data matches 1 run tag @s add {ns}._turret_visible
 """)
 
 	## Fire the turret bullet: raycast that stops at the first entity hit

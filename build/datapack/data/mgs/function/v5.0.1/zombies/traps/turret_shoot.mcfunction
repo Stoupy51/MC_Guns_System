@@ -1,9 +1,9 @@
 
 #> mgs:v5.0.1/zombies/traps/turret_shoot
 #
-# @executed	positioned ~.5 ~1.6 ~.5 & facing entity @n[tag=mgs._turret_target] eyes
+# @executed	as @e[tag=mgs.trap_head,predicate=mgs:v5.0.1/zombies/traps/turret_id_match] & at @s & facing entity @n[tag=mgs._turret_target] eyes & positioned ^ ^ ^1
 #
-# @within	mgs:v5.0.1/zombies/traps/turret_fire [ positioned ~.5 ~1.6 ~.5 & facing entity @n[tag=mgs._turret_target] eyes ]
+# @within	mgs:v5.0.1/zombies/traps/turret_fire [ as @e[tag=mgs.trap_head,predicate=mgs:v5.0.1/zombies/traps/turret_id_match] & at @s & facing entity @n[tag=mgs._turret_target] eyes & positioned ^ ^ ^1 ]
 #
 
 # @s = trap center marker (execution position = turret muzzle, facing the target)
