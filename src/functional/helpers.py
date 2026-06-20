@@ -157,6 +157,9 @@ scoreboard players set #any_game_active {ns}.data 1
 # Reset per-player regen state
 scoreboard players set @a {ns}.last_hit 0
 execute as @a run execute store result score @s {ns}.hp_prev run data get entity @s Health 1
+
+# Reset stamina state so every player re-inits to full on their next stamina tick (also covers late-joiners)
+scoreboard players set @a {ns}.stam_seen 0
 """.strip()
 
 
@@ -166,6 +169,12 @@ def regen_disable_lines(ns: str) -> str:
 # Re-enable natural regeneration, disable custom regen system
 gamerule natural_health_regeneration true
 scoreboard players set #any_game_active {ns}.data 0
+
+# Tear down stamina state: stop any hunger drain and refill the bar so nobody is left winded
+effect clear @a minecraft:hunger
+effect give @a minecraft:saturation 5 20 true
+scoreboard players set @a {ns}.stam_out 0
+scoreboard players set @a {ns}.stam_seen 0
 """.strip()
 
 

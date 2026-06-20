@@ -29,6 +29,12 @@ function #mgs:missions/on_mission_end
 gamerule natural_health_regeneration true
 scoreboard players set #any_game_active mgs.data 0
 
+# Tear down stamina state: stop any hunger drain and refill the bar so nobody is left winded
+effect clear @a minecraft:hunger
+effect give @a minecraft:saturation 5 20 true
+scoreboard players set @a mgs.stam_out 0
+scoreboard players set @a mgs.stam_seen 0
+
 tellraw @a [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.mission_ended","color":"red"}]
 
 execute as @a[scores={mgs.mi.in_game=1}] run function mgs:v5.0.1/shared/maps/call_leave_script_at_base

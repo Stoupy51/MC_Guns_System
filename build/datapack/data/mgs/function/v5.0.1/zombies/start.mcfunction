@@ -68,6 +68,9 @@ scoreboard players set #any_game_active mgs.data 1
 scoreboard players set @a mgs.last_hit 0
 execute as @a run execute store result score @s mgs.hp_prev run data get entity @s Health 1
 
+# Reset stamina state so every player re-inits to full on their next stamina tick (also covers late-joiners)
+scoreboard players set @a mgs.stam_seen 0
+
 # Set gamerules
 gamemode spectator @a[scores={mgs.zb.in_game=1}]
 gamerule immediate_respawn true

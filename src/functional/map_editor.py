@@ -1217,7 +1217,8 @@ execute at @s unless entity @n[tag={ns}.map_element,distance=..10] run tellraw @
 			f'execute if entity @s[tag={ns}.element.{etype}] run tellraw @a[tag={ns}.map_editor] '
 			f'["  ",{{"text":"{einfo["emoji"]} {einfo["name"]} Configuration","color":"{einfo["color"]}","bold":true}}]'
 		)
-		# group_id only shown for spawn-type zombies elements
+		# group_id only shown for spawn-type zombies elements. Doors don't carry a separate
+		# group_id: a door's link_id is its front-room group, and back_group_id is the back room.
 		if etype in ("zombie_spawn", "player_spawn_zb"):
 			group_id_edit_btn = btn(
 				"✎",

@@ -18,8 +18,9 @@ execute store result storage mgs:temp _pw.x int 1 run scoreboard players get #pw
 execute store result storage mgs:temp _pw.y int 1 run scoreboard players get #pwy mgs.data
 execute store result storage mgs:temp _pw.z int 1 run scoreboard players get #pwz mgs.data
 
-# Store yaw for the display (stored = player_yaw + 180; the model's fixed rotation -180 compensates,
-# so the switch faces the placer just like the perk/PAP machine displays)
+# Store yaw for the display (stored = player_yaw + 180 so the switch faces the placer, just like
+# the perk/PAP machine displays; this model is built front-facing the opposite way, so its fixed
+# display rotation is 0 instead of -180 — see database/models/power_switch.json)
 data modify storage mgs:temp _pw.yaw set value 0.0f
 execute if data storage mgs:temp _pw_iter[0].rotation[0] run data modify storage mgs:temp _pw.yaw set from storage mgs:temp _pw_iter[0].rotation[0]
 

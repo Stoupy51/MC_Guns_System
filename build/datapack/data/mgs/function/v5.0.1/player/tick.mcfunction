@@ -87,6 +87,11 @@ execute if score @s mgs.player.config matches 1.. run function mgs:v5.0.1/player
 # Map editor tick (particles + actionbar) for players in editor mode
 execute if score @s mgs.mp.map_edit matches 1 run function mgs:v5.0.1/maps/editor/tick
 
+# Stamina (Black Ops style): drain while sprinting, block sprint when winded, regen while resting
+execute if score #any_game_active mgs.data matches 1 unless entity @s[gamemode=spectator] if score @s mgs.mp.in_game matches 1 run function mgs:v5.0.1/player/stamina_tick
+execute if score #any_game_active mgs.data matches 1 unless entity @s[gamemode=spectator] if score @s mgs.mi.in_game matches 1 run function mgs:v5.0.1/player/stamina_tick
+execute if score #any_game_active mgs.data matches 1 unless entity @s[gamemode=spectator] if score @s mgs.zb.in_game matches 1 run function mgs:v5.0.1/player/stamina_tick
+
 # Zombies: detect respawn
 execute if data storage mgs:zombies game{state:"active"} if score @s mgs.zb.in_game matches 1.. if score @s mgs.mp.death_count matches 1.. run function mgs:v5.0.1/zombies/on_respawn
 

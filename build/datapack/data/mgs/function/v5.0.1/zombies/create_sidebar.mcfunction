@@ -5,6 +5,12 @@
 #
 
 scoreboard objectives add mgs.zb_sidebar dummy
+
+# Seed the displayed round to the upcoming round (game.round + 1) so the sidebar
+# shows "Round 1" immediately during prep instead of a stale value until start_round runs
+execute store result score #zb_round mgs.data run data get storage mgs:zombies game.round
+scoreboard players add #zb_round mgs.data 1
+
 function mgs:v5.0.1/zombies/refresh_sidebar
 scoreboard objectives setdisplay sidebar mgs.zb_sidebar
 

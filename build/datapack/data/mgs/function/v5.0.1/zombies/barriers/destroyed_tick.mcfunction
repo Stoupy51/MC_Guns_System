@@ -4,7 +4,12 @@
 # @executed	as @e[tag=mgs.barrier_display] & at @s
 #
 # @within	mgs:v5.0.1/zombies/barriers/tick
+#			mgs:v5.0.1/zombies/barriers/destroyed_tick [ positioned ~ ~-1 ~ ]
 #
+
+# Delegate detection downward if floating (upper barriers in a column share floor-level repair
+# detection) so a player standing on the ground can reach and repair a barrier stacked above them.
+execute positioned ~ ~-1 ~ if block ~ ~ ~ air run return run function mgs:v5.0.1/zombies/barriers/destroyed_tick
 
 # @s = destroyed barrier display, at @s
 execute store result score #barrier_id mgs.data run scoreboard players get @s mgs.zb.barrier.id

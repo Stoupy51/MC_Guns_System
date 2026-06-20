@@ -660,6 +660,12 @@ execute if entity @e[tag={ns}.spawn_point,tag={ns}.spawn_zb_player] run function
 		# Sidebar HUD ───────────────────────────────────────────────
 		self.func("zombies/create_sidebar", f"""
 scoreboard objectives add {ns}.zb_sidebar dummy
+
+# Seed the displayed round to the upcoming round (game.round + 1) so the sidebar
+# shows "Round 1" immediately during prep instead of a stale value until start_round runs
+execute store result score #zb_round {ns}.data run data get storage {ns}:zombies game.round
+scoreboard players add #zb_round {ns}.data 1
+
 function {ns}:v{version}/zombies/refresh_sidebar
 scoreboard objectives setdisplay sidebar {ns}.zb_sidebar
 """)

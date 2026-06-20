@@ -190,6 +190,12 @@ execute if data storage {ns}:zombies game{{state:"active"}} if entity @n[tag={ns
 # Flak Jacket perk: halve explosive direct-hit damage to a perked MP player
 execute if entity @n[tag={ns}.direct_hit,type=player,scores={{{ns}.mp.in_game=1,{ns}.special.flak_jacket=1}}] run scoreboard players operation #direct_dmg {ns}.data /= #2 {ns}.data
 
+# Instant kill: one-shot a non-immune victim when the shooter has it active (mirrors the area path).
+# Without this, explosives with little/no blast radius (or a direct projectile strike) never instant-kill.
+# Never applied to players while a zombies game is active (would bypass the explosion cap above).
+execute if entity @n[tag={ns}.direct_hit,tag=!{ns}.no_instant_kill,type=!player] if score @n[tag={ns}.temp_shooter] {ns}.special.instant_kill matches 1.. run scoreboard players set #direct_dmg {ns}.data 99999
+execute unless data storage {ns}:zombies game{{state:"active"}} if entity @n[tag={ns}.direct_hit,tag=!{ns}.no_instant_kill,type=player] if score @n[tag={ns}.temp_shooter] {ns}.special.instant_kill matches 1.. run scoreboard players set #direct_dmg {ns}.data 99999
+
 # Apply direct hit damage using the existing damage utility
 data modify storage {ns}:input with set value {{target:"@s", amount:0.0f, attacker:"@n[tag={ns}.temp_shooter]"}}
 execute store result storage {ns}:input with.amount float 0.1 run scoreboard players get #direct_dmg {ns}.data

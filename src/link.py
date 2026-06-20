@@ -10,6 +10,7 @@ from .functional.mob_ai import main as main_mob_ai
 from .functional.multiplayer import main as main_multiplayer
 from .functional.player_config import main as main_player_config
 from .functional.shaders import main as main_shaders
+from .functional.stamina import main as main_stamina
 from .functional.weapon import main as main_weapon
 from .functional.zombies import main as main_zombies
 
@@ -20,6 +21,7 @@ def beet_default(ctx: Context) -> None:
     main_shaders()
     main_weapon()
     main_player_config()
+    main_stamina()
     main_mob_ai()
 
     # Shared core functions (bounds, teleport, maps, commands, spawning)

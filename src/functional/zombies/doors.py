@@ -1,7 +1,8 @@
 
 # Door System
 # Physical block barriers that players purchase to open.
-# Doors with the same link_id open together. Opening doors unlocks new map areas via the group system.
+# Doors with the same link_id open together. A door's link_id is also its front-room spawn group,
+# and back_group_id is its back-room spawn group; opening a door unlocks both groups' zombie spawns.
 
 from stewbeet import Mem, write_load_file, write_versioned_function
 from ..helpers import MGS_TAG
@@ -27,7 +28,6 @@ def generate_doors() -> None:
 # Door entity scoreboards
 scoreboard objectives add {ns}.zb.door.link dummy
 scoreboard objectives add {ns}.zb.door.price dummy
-scoreboard objectives add {ns}.zb.door.gid dummy
 scoreboard objectives add {ns}.zb.door.bgid dummy
 scoreboard objectives add {ns}.zb.door.anim dummy
 scoreboard objectives add {ns}.zb.door.rot dummy
@@ -69,7 +69,6 @@ function {ns}:v{version}/zombies/doors/place_at with storage {ns}:temp _door
 # Set scoreboards on newly spawned door entity
 execute store result score @e[tag={ns}.door_new] {ns}.zb.door.link run data get storage {ns}:temp _door_iter[0].link_id
 execute store result score @e[tag={ns}.door_new] {ns}.zb.door.price run data get storage {ns}:temp _door_iter[0].price
-execute store result score @e[tag={ns}.door_new] {ns}.zb.door.gid run data get storage {ns}:temp _door_iter[0].group_id
 execute store result score @e[tag={ns}.door_new] {ns}.zb.door.bgid run data get storage {ns}:temp _door_iter[0].back_group_id
 execute store result score @e[tag={ns}.door_new] {ns}.zb.door.anim run data get storage {ns}:temp _door_iter[0].animation
 execute store result score @e[tag={ns}.door_new] {ns}.zb.door.rot run data get storage {ns}:temp _door_iter[0].rotation[0]
@@ -145,11 +144,11 @@ execute if entity @s[tag={ns}.door_back] run data modify storage {ns}:temp _door
 execute if score @s {ns}.zb.door.anim matches 0 run function {ns}:v{version}/zombies/doors/remove_block_destroy with storage {ns}:temp _door_open
 execute unless score @s {ns}.zb.door.anim matches 0 run function {ns}:v{version}/zombies/doors/remove_block_silent with storage {ns}:temp _door_open
 
-# Unlock primary group
-execute store result storage {ns}:temp _door_unlock.gid int 1 run scoreboard players get @s {ns}.zb.door.gid
+# Unlock the front-room group (link_id is the door's group_id)
+execute store result storage {ns}:temp _door_unlock.gid int 1 run scoreboard players get @s {ns}.zb.door.link
 function {ns}:v{version}/zombies/doors/unlock_group with storage {ns}:temp _door_unlock
 
-# Unlock back group if applicable (back_group_id != -1)
+# Unlock the back-room group too if applicable (back_group_id != -1)
 execute unless score @s {ns}.zb.door.bgid matches -1 run function {ns}:v{version}/zombies/doors/unlock_back_group
 
 # Kill door interaction entity

@@ -178,6 +178,10 @@ playsound minecraft:entity.zombie.break_wooden_door block @a ~ ~ ~ 1.0 1.0
 
 	## Destroyed barrier tick
 	write_versioned_function("zombies/barriers/destroyed_tick", f"""
+# Delegate detection downward if floating (upper barriers in a column share floor-level repair
+# detection) so a player standing on the ground can reach and repair a barrier stacked above them.
+execute positioned ~ ~-1 ~ if block ~ ~ ~ air run return run function {ns}:v{version}/zombies/barriers/destroyed_tick
+
 # @s = destroyed barrier display, at @s
 execute store result score #barrier_id {ns}.data run scoreboard players get @s {ns}.zb.barrier.id
 execute store result storage {ns}:temp _brptick.radius int 1 run scoreboard players get @s {ns}.zb.barrier.radius
