@@ -1,15 +1,15 @@
 
 #> mgs:v5.0.1/zombies/traps/turret_shoot
 #
-# @executed	as @e[tag=mgs.trap_center,scores={mgs.zb.trap.timer=1..}] & at @s
+# @executed	positioned ~.5 ~1.6 ~.5 & facing entity @n[tag=mgs._turret_target] eyes
 #
-# @within	mgs:v5.0.1/zombies/traps/turret_fire
+# @within	mgs:v5.0.1/zombies/traps/turret_fire [ positioned ~.5 ~1.6 ~.5 & facing entity @n[tag=mgs._turret_target] eyes ]
 #
 
-# @s = target zombie (execution position = turret head, facing the target)
-# Tracer particle + shot sound
+# @s = trap center marker (execution position = turret muzzle, facing the target)
+# Tracer particle + G3A3 gunshot (close report + 'large' acoustics crack, same as a player firing a G3A3)
 particle minecraft:crit ~ ~ ~ ^ ^ ^1000000000 0.00000002 0 force @a[distance=..64]
-playsound minecraft:entity.arrow.shoot block @a[distance=..32] ~ ~ ~ 0.8 1.6
+function mgs:v5.0.1/sound/turret_fire
 
 # Raycast with piercing 0: the ray stops at the first entity hit,
 # so a player standing between the turret and the zombies takes the bullet instead

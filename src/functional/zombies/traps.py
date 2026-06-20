@@ -6,8 +6,8 @@
 # Type 1 = electric: lethal to zombies (1000% of max health), 5 electric damage to players inside.
 # Type 2 = turret: shoots the nearest zombie in range every 5 ticks for 45% of its max health;
 #          the bullet stops at the first entity hit, so players between the turret and zombies take 2 damage instead.
-
 from stewbeet import Mem, write_load_file, write_versioned_function
+
 from ..helpers import MGS_TAG
 from .common import deny_not_enough_points_body, deny_requires_power_body, game_active_guard_cmd
 
@@ -71,30 +71,39 @@ execute store result storage {ns}:temp _trap.iz int 1 run scoreboard players get
 function {ns}:v{version}/zombies/traps/place_at with storage {ns}:temp _trap
 
 # Set scoreboards on interaction entity (type is also stored here for the hover text)
-scoreboard players operation @n[tag=_trap_new_i] {ns}.zb.trap.id = #trap_counter {ns}.data
-execute store result score @n[tag=_trap_new_i] {ns}.zb.trap.price run data get storage {ns}:temp _trap_iter[0].price
-execute store result score @n[tag=_trap_new_i] {ns}.zb.trap.power run data get storage {ns}:temp _trap_iter[0].power
-execute store result score @n[tag=_trap_new_i] {ns}.zb.trap.type run data get storage {ns}:temp _trap_iter[0].type
-tag @e[tag=_trap_new_i] remove _trap_new_i
+scoreboard players operation @n[tag={ns}._trap_new_i] {ns}.zb.trap.id = #trap_counter {ns}.data
+execute store result score @n[tag={ns}._trap_new_i] {ns}.zb.trap.price run data get storage {ns}:temp _trap_iter[0].price
+execute store result score @n[tag={ns}._trap_new_i] {ns}.zb.trap.power run data get storage {ns}:temp _trap_iter[0].power
+execute store result score @n[tag={ns}._trap_new_i] {ns}.zb.trap.type run data get storage {ns}:temp _trap_iter[0].type
+tag @e[tag={ns}._trap_new_i] remove {ns}._trap_new_i
 
 # Set scoreboards on marker entity
-scoreboard players operation @n[tag=_trap_new_m] {ns}.zb.trap.id = #trap_counter {ns}.data
-execute store result score @n[tag=_trap_new_m] {ns}.zb.trap.type run data get storage {ns}:temp _trap_iter[0].type
-execute store result score @n[tag=_trap_new_m] {ns}.zb.trap.dur run data get storage {ns}:temp _trap_iter[0].duration
-execute store result score @n[tag=_trap_new_m] {ns}.zb.trap.cd_max run data get storage {ns}:temp _trap_iter[0].cooldown
-scoreboard players set @n[tag=_trap_new_m] {ns}.zb.trap.timer 0
-scoreboard players set @n[tag=_trap_new_m] {ns}.zb.trap.cd 0
+scoreboard players operation @n[tag={ns}._trap_new_m] {ns}.zb.trap.id = #trap_counter {ns}.data
+execute store result score @n[tag={ns}._trap_new_m] {ns}.zb.trap.type run data get storage {ns}:temp _trap_iter[0].type
+execute store result score @n[tag={ns}._trap_new_m] {ns}.zb.trap.dur run data get storage {ns}:temp _trap_iter[0].duration
+execute store result score @n[tag={ns}._trap_new_m] {ns}.zb.trap.cd_max run data get storage {ns}:temp _trap_iter[0].cooldown
+scoreboard players set @n[tag={ns}._trap_new_m] {ns}.zb.trap.timer 0
+scoreboard players set @n[tag={ns}._trap_new_m] {ns}.zb.trap.cd 0
 
 # Store per-axis effect radius
-execute store result score @n[tag=_trap_new_m] {ns}.zb.trap.rx run data get storage {ns}:temp _trap_iter[0].effect_radius[0]
-execute store result score @n[tag=_trap_new_m] {ns}.zb.trap.ry run data get storage {ns}:temp _trap_iter[0].effect_radius[1]
-execute store result score @n[tag=_trap_new_m] {ns}.zb.trap.rz run data get storage {ns}:temp _trap_iter[0].effect_radius[2]
-tag @e[tag=_trap_new_m] remove _trap_new_m
+execute store result score @n[tag={ns}._trap_new_m] {ns}.zb.trap.rx run data get storage {ns}:temp _trap_iter[0].effect_radius[0]
+execute store result score @n[tag={ns}._trap_new_m] {ns}.zb.trap.ry run data get storage {ns}:temp _trap_iter[0].effect_radius[1]
+execute store result score @n[tag={ns}._trap_new_m] {ns}.zb.trap.rz run data get storage {ns}:temp _trap_iter[0].effect_radius[2]
+tag @e[tag={ns}._trap_new_m] remove {ns}._trap_new_m
 
 # Register Bookshelf events on interaction entity
-execute as @e[tag=_trap_new_bs] run function #bs.interaction:on_right_click {{run:"function {ns}:v{version}/zombies/traps/on_right_click",executor:"source"}}
-execute as @e[tag=_trap_new_bs] run function #bs.interaction:on_hover {{run:"function {ns}:v{version}/zombies/traps/on_hover",executor:"source"}}
-tag @e[tag=_trap_new_bs] remove _trap_new_bs
+execute as @e[tag={ns}._trap_new_bs] run function #bs.interaction:on_right_click {{run:"function {ns}:v{version}/zombies/traps/on_right_click",executor:"source"}}
+execute as @e[tag={ns}._trap_new_bs] run function #bs.interaction:on_hover {{run:"function {ns}:v{version}/zombies/traps/on_hover",executor:"source"}}
+tag @e[tag={ns}._trap_new_bs] remove {ns}._trap_new_bs
+
+# Turret traps (type 2) get a visible two-part model: a stationary base + a head that aims at its
+# target. The head carries this trap's id so turret_fire can find and rotate the matching head.
+execute store result score #trap_type {ns}.data run data get storage {ns}:temp _trap_iter[0].type
+data modify storage {ns}:temp _trap.yaw set value 0.0f
+execute if data storage {ns}:temp _trap_iter[0].rotation[0] run data modify storage {ns}:temp _trap.yaw set from storage {ns}:temp _trap_iter[0].rotation[0]
+execute if score #trap_type {ns}.data matches 2 run function {ns}:v{version}/zombies/traps/place_turret_at with storage {ns}:temp _trap
+execute if score #trap_type {ns}.data matches 2 run scoreboard players operation @n[tag={ns}._trap_new_head] {ns}.zb.trap.id = #trap_counter {ns}.data
+execute if score #trap_type {ns}.data matches 2 run tag @e[tag={ns}._trap_new_head] remove {ns}._trap_new_head
 
 # Continue iteration
 data remove storage {ns}:temp _trap_iter[0]
@@ -102,11 +111,23 @@ execute if data storage {ns}:temp _trap_iter[0] run function {ns}:v{version}/zom
 """)
 
 	write_versioned_function("zombies/traps/place_at", f"""
-# Summon interaction entity at offset position
-$summon minecraft:interaction $(ix) $(iy) $(iz) {{width:1.0f,height:1.0f,response:true,Tags:["{ns}.trap_interact","{ns}.gm_entity","bs.entity.interaction","_trap_new_i","_trap_new_bs"]}}
+# Summon interaction entity centred on the block, at the floor. height:-2.0 makes a downward 2-block
+# hitbox; setup_iter then raises it 2 blocks (tp ~ ~2 ~) so it covers the 2-block turret from the floor
+# up - the same trick the perk machine uses.
+$execute positioned $(ix) $(iy) $(iz) run summon minecraft:interaction ~ ~2 ~ {{width:1.1f,height:-2.0f,response:true,Tags:["{ns}.trap_interact","{ns}.gm_entity","bs.entity.interaction","{ns}._trap_new_i","{ns}._trap_new_bs"]}}
 
 # Summon marker entity at trap center
-$summon minecraft:marker $(cx) $(cy) $(cz) {{Tags:["{ns}.trap_center","{ns}.gm_entity","_trap_new_m"]}}
+$summon minecraft:marker $(cx) $(cy) $(cz) {{Tags:["{ns}.trap_center","{ns}.gm_entity","{ns}._trap_new_m"]}}
+""")
+
+	## Turret model: a stationary base + an aiming head. Both models are built around the origin
+	## (the head around its mount/pivot), so the displays are simply summoned at their real world
+	## position with an identity transform - no translation offsets. The base sits at the block centre
+	## on the floor; the head's mount sits ~1.625 up so it seats in the base's yoke (yoke at 1.5..1.75),
+	## and the head pivots about its own mount when aimed. teleport_duration smooths the re-aim rotation.
+	write_versioned_function("zombies/traps/place_turret_at", f"""
+$execute positioned $(cx) $(cy) $(cz) run summon minecraft:item_display ~ ~.5 ~ {{Rotation:[$(yaw)f,0f],Tags:["{ns}.trap_base","{ns}.gm_entity"],item_display:"fixed",billboard:"fixed",item:{{id:"minecraft:iron_block",count:1,components:{{"minecraft:item_model":"{ns}:turret_base"}}}},transformation:{{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[2f,2f,2f]}}}}
+$execute positioned $(cx) $(cy) $(cz) positioned ~ ~1.625 ~ run summon minecraft:item_display ~ ~ ~ {{Rotation:[$(yaw)f,0f],Tags:["{ns}.trap_head","{ns}.gm_entity","{ns}._trap_new_head"],item_display:"fixed",billboard:"fixed",teleport_duration:5,item:{{id:"minecraft:netherite_block",count:1,components:{{"minecraft:item_model":"{ns}:turret_head"}}}},transformation:{{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[1f,1f,1f]}}}}
 """)
 
 	## Right-click handler (executor: "source" = player)
@@ -223,19 +244,36 @@ function {ns}:v{version}/zombies/traps/apply_trap_damage with storage {ns}:temp 
 $damage @s $(amount) $(type)
 """)
 
-	## Turret trap: pick a zombie in the effect box and fire a simulated bullet at it
+	## Turret trap: pick the nearest zombie in the effect box, aim the head at it, then fire a bullet
 	write_versioned_function("zombies/traps/turret_fire", f"""
 # @s = trap center marker, at @s position
-# Select a zombie in the effect box, then reposition to the turret head (+1) and face it before shooting
-$execute positioned ~-$(rx) ~-$(ry) ~-$(rz) as @e[tag={ns}.zombie_round,tag=!{ns}.zb_rising,dx=$(sx),dy=$(sy),dz=$(sz),limit=1] positioned ~$(rx) ~$(ry) ~$(rz) positioned ~ ~1 ~ facing entity @s eyes run function {ns}:v{version}/zombies/traps/turret_shoot
+# Remember this trap's id so we can rotate the matching head display
+scoreboard players operation #turret_tid {ns}.data = @s {ns}.zb.trap.id
+
+# Tag every zombie inside the effect box as a candidate, then keep the one nearest the turret center
+$execute positioned ~-$(rx) ~-$(ry) ~-$(rz) as @e[tag={ns}.zombie_round,tag=!{ns}.zb_rising,dx=$(sx),dy=$(sy),dz=$(sz)] run tag @s add {ns}._turret_cand
+execute as @e[tag={ns}._turret_cand,sort=nearest,limit=1] run tag @s add {ns}._turret_target
+tag @e[tag={ns}._turret_cand] remove {ns}._turret_cand
+
+# No zombie in range: nothing to aim at or shoot
+execute unless entity @e[tag={ns}._turret_target] run return 0
+
+# Aim this turret's head display at the target (yaw + pitch via facing entity, smoothed by teleport_duration)
+execute as @e[tag={ns}.trap_head] if score @s {ns}.zb.trap.id = #turret_tid {ns}.data at @s run tp @s ~ ~ ~ facing entity @n[tag={ns}._turret_target] eyes
+
+# Fire the bullet from the barrel (block centre, ~1.6 up = head muzzle height) toward the target
+execute positioned ~.5 ~1.6 ~.5 facing entity @n[tag={ns}._turret_target] eyes run function {ns}:v{version}/zombies/traps/turret_shoot
+
+# Clear the temporary target tag
+tag @e[tag={ns}._turret_target] remove {ns}._turret_target
 """)
 
 	## Fire the turret bullet: raycast that stops at the first entity hit
 	write_versioned_function("zombies/traps/turret_shoot", f"""
-# @s = target zombie (execution position = turret head, facing the target)
-# Tracer particle + shot sound
+# @s = trap center marker (execution position = turret muzzle, facing the target)
+# Tracer particle + G3A3 gunshot (close report + 'large' acoustics crack, same as a player firing a G3A3)
 particle minecraft:crit ~ ~ ~ ^ ^ ^1000000000 0.00000002 0 force @a[distance=..64]
-playsound minecraft:entity.arrow.shoot block @a[distance=..32] ~ ~ ~ 0.8 1.6
+function {ns}:v{version}/sound/turret_fire
 
 # Raycast with piercing 0: the ray stops at the first entity hit,
 # so a player standing between the turret and the zombies takes the bullet instead
@@ -257,11 +295,11 @@ particle minecraft:crit ~ ~1 ~ 0.2 0.3 0.2 0.1 8 force @a[distance=..48]
 
 # Zombie hit: 45% of its max health
 execute if entity @s[tag={ns}.zombie_round] store result storage {ns}:temp _trap_dmg.amount int 1 run attribute @s minecraft:max_health get 0.45
-execute if entity @s[tag={ns}.zombie_round] run data modify storage {ns}:temp _trap_dmg.type set value "minecraft:mob_projectile"
+execute if entity @s[tag={ns}.zombie_round] run data modify storage {ns}:temp _trap_dmg.type set value "{ns}:bullet"
 execute if entity @s[tag={ns}.zombie_round] run return run function {ns}:v{version}/zombies/traps/apply_trap_damage with storage {ns}:temp _trap_dmg
 
 # Player caught between the turret and the zombies: 2 damage
-execute if entity @s[type=player,gamemode=!creative,gamemode=!spectator] if score @s {ns}.zb.in_game matches 1.. run damage @s 2 minecraft:mob_projectile
+execute if entity @s[type=player,gamemode=!creative,gamemode=!spectator] if score @s {ns}.zb.in_game matches 1.. run damage @s 2 {ns}:bullet
 """)
 
 	## Hover events (executor: "source" = player)
@@ -279,8 +317,6 @@ function #smithed.actionbar:message
 	write_versioned_function("zombies/game_tick", f"""
 # Trap active tick (damage + timer)
 execute as @e[tag={ns}.trap_center,scores={{{ns}.zb.trap.timer=1..}}] at @s run function {ns}:v{version}/zombies/traps/active_tick
-
-# Trap cooldown uses expiration tick comparison (no per-tick decrements needed)
 """)
 
 	## Hook into preload_complete: setup traps
@@ -288,3 +324,4 @@ execute as @e[tag={ns}.trap_center,scores={{{ns}.zb.trap.timer=1..}}] at @s run 
 # Setup traps
 execute if data storage {ns}:zombies game.map.traps[0] run function {ns}:v{version}/zombies/traps/setup
 """)
+

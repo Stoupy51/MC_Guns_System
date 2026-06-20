@@ -13,6 +13,7 @@
 		{"type": "minecraft:single","resource": "minecraft:block/light_gray_terracotta","sprite": "mgs:atlas/light_gray_terracotta"},
 		{"type": "minecraft:single","resource": "minecraft:block/lime_concrete","sprite": "mgs:atlas/lime_concrete"},
 		{"type": "minecraft:single","resource": "minecraft:block/lime_terracotta","sprite": "mgs:atlas/lime_terracotta"},
+		{"type": "minecraft:single","resource": "minecraft:block/netherite_block","sprite": "mgs:atlas/netherite_block"},
 		{"type": "minecraft:single","resource": "minecraft:block/oak_planks","sprite": "mgs:atlas/oak_planks"},
 		{"type": "minecraft:single","resource": "minecraft:block/red_concrete","sprite": "mgs:atlas/red_concrete"},
 		{"type": "minecraft:single","resource": "minecraft:block/red_terracotta","sprite": "mgs:atlas/red_terracotta"},

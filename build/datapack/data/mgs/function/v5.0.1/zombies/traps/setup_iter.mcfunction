@@ -36,30 +36,39 @@ execute store result storage mgs:temp _trap.iz int 1 run scoreboard players get 
 function mgs:v5.0.1/zombies/traps/place_at with storage mgs:temp _trap
 
 # Set scoreboards on interaction entity (type is also stored here for the hover text)
-scoreboard players operation @n[tag=_trap_new_i] mgs.zb.trap.id = #trap_counter mgs.data
-execute store result score @n[tag=_trap_new_i] mgs.zb.trap.price run data get storage mgs:temp _trap_iter[0].price
-execute store result score @n[tag=_trap_new_i] mgs.zb.trap.power run data get storage mgs:temp _trap_iter[0].power
-execute store result score @n[tag=_trap_new_i] mgs.zb.trap.type run data get storage mgs:temp _trap_iter[0].type
-tag @e[tag=_trap_new_i] remove _trap_new_i
+scoreboard players operation @n[tag=mgs._trap_new_i] mgs.zb.trap.id = #trap_counter mgs.data
+execute store result score @n[tag=mgs._trap_new_i] mgs.zb.trap.price run data get storage mgs:temp _trap_iter[0].price
+execute store result score @n[tag=mgs._trap_new_i] mgs.zb.trap.power run data get storage mgs:temp _trap_iter[0].power
+execute store result score @n[tag=mgs._trap_new_i] mgs.zb.trap.type run data get storage mgs:temp _trap_iter[0].type
+tag @e[tag=mgs._trap_new_i] remove mgs._trap_new_i
 
 # Set scoreboards on marker entity
-scoreboard players operation @n[tag=_trap_new_m] mgs.zb.trap.id = #trap_counter mgs.data
-execute store result score @n[tag=_trap_new_m] mgs.zb.trap.type run data get storage mgs:temp _trap_iter[0].type
-execute store result score @n[tag=_trap_new_m] mgs.zb.trap.dur run data get storage mgs:temp _trap_iter[0].duration
-execute store result score @n[tag=_trap_new_m] mgs.zb.trap.cd_max run data get storage mgs:temp _trap_iter[0].cooldown
-scoreboard players set @n[tag=_trap_new_m] mgs.zb.trap.timer 0
-scoreboard players set @n[tag=_trap_new_m] mgs.zb.trap.cd 0
+scoreboard players operation @n[tag=mgs._trap_new_m] mgs.zb.trap.id = #trap_counter mgs.data
+execute store result score @n[tag=mgs._trap_new_m] mgs.zb.trap.type run data get storage mgs:temp _trap_iter[0].type
+execute store result score @n[tag=mgs._trap_new_m] mgs.zb.trap.dur run data get storage mgs:temp _trap_iter[0].duration
+execute store result score @n[tag=mgs._trap_new_m] mgs.zb.trap.cd_max run data get storage mgs:temp _trap_iter[0].cooldown
+scoreboard players set @n[tag=mgs._trap_new_m] mgs.zb.trap.timer 0
+scoreboard players set @n[tag=mgs._trap_new_m] mgs.zb.trap.cd 0
 
 # Store per-axis effect radius
-execute store result score @n[tag=_trap_new_m] mgs.zb.trap.rx run data get storage mgs:temp _trap_iter[0].effect_radius[0]
-execute store result score @n[tag=_trap_new_m] mgs.zb.trap.ry run data get storage mgs:temp _trap_iter[0].effect_radius[1]
-execute store result score @n[tag=_trap_new_m] mgs.zb.trap.rz run data get storage mgs:temp _trap_iter[0].effect_radius[2]
-tag @e[tag=_trap_new_m] remove _trap_new_m
+execute store result score @n[tag=mgs._trap_new_m] mgs.zb.trap.rx run data get storage mgs:temp _trap_iter[0].effect_radius[0]
+execute store result score @n[tag=mgs._trap_new_m] mgs.zb.trap.ry run data get storage mgs:temp _trap_iter[0].effect_radius[1]
+execute store result score @n[tag=mgs._trap_new_m] mgs.zb.trap.rz run data get storage mgs:temp _trap_iter[0].effect_radius[2]
+tag @e[tag=mgs._trap_new_m] remove mgs._trap_new_m
 
 # Register Bookshelf events on interaction entity
-execute as @e[tag=_trap_new_bs] run function #bs.interaction:on_right_click {run:"function mgs:v5.0.1/zombies/traps/on_right_click",executor:"source"}
-execute as @e[tag=_trap_new_bs] run function #bs.interaction:on_hover {run:"function mgs:v5.0.1/zombies/traps/on_hover",executor:"source"}
-tag @e[tag=_trap_new_bs] remove _trap_new_bs
+execute as @e[tag=mgs._trap_new_bs] run function #bs.interaction:on_right_click {run:"function mgs:v5.0.1/zombies/traps/on_right_click",executor:"source"}
+execute as @e[tag=mgs._trap_new_bs] run function #bs.interaction:on_hover {run:"function mgs:v5.0.1/zombies/traps/on_hover",executor:"source"}
+tag @e[tag=mgs._trap_new_bs] remove mgs._trap_new_bs
+
+# Turret traps (type 2) get a visible two-part model: a stationary base + a head that aims at its
+# target. The head carries this trap's id so turret_fire can find and rotate the matching head.
+execute store result score #trap_type mgs.data run data get storage mgs:temp _trap_iter[0].type
+data modify storage mgs:temp _trap.yaw set value 0.0f
+execute if data storage mgs:temp _trap_iter[0].rotation[0] run data modify storage mgs:temp _trap.yaw set from storage mgs:temp _trap_iter[0].rotation[0]
+execute if score #trap_type mgs.data matches 2 run function mgs:v5.0.1/zombies/traps/place_turret_at with storage mgs:temp _trap
+execute if score #trap_type mgs.data matches 2 run scoreboard players operation @n[tag=mgs._trap_new_head] mgs.zb.trap.id = #trap_counter mgs.data
+execute if score #trap_type mgs.data matches 2 run tag @e[tag=mgs._trap_new_head] remove mgs._trap_new_head
 
 # Continue iteration
 data remove storage mgs:temp _trap_iter[0]

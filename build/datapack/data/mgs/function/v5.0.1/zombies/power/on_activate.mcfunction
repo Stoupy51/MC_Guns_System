@@ -19,7 +19,7 @@ scoreboard players set #zb_power mgs.data 1
 execute as @e[tag=mgs.power_switch] at @s run particle minecraft:electric_spark ~ ~1 ~ 0.5 0.5 0.5 0.1 20
 execute as @e[tag=mgs.power_switch] at @s run playsound minecraft:entity.firework_rocket.twinkle_far ambient @a ~ ~ ~ 2 1
 
-# Switch every display model to its powered ("on") variant (handle + light go green/lit)
+# Switch every display model to its powered ('on') variant (handle + light go green/lit)
 execute as @e[tag=mgs.power_switch_disp] run data modify entity @s item.components."minecraft:item_model" set value "mgs:power_switch_on"
 
 # Kill power switch interaction entities (one-time use); displays stay to show the "on" state

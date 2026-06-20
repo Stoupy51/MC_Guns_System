@@ -14,6 +14,23 @@
 #
 
 # @s = trap center marker, at @s position
-# Select a zombie in the effect box, then reposition to the turret head (+1) and face it before shooting
-$execute positioned ~-$(rx) ~-$(ry) ~-$(rz) as @e[tag=mgs.zombie_round,tag=!mgs.zb_rising,dx=$(sx),dy=$(sy),dz=$(sz),limit=1] positioned ~$(rx) ~$(ry) ~$(rz) positioned ~ ~1 ~ facing entity @s eyes run function mgs:v5.0.1/zombies/traps/turret_shoot
+# Remember this trap's id so we can rotate the matching head display
+scoreboard players operation #turret_tid mgs.data = @s mgs.zb.trap.id
+
+# Tag every zombie inside the effect box as a candidate, then keep the one nearest the turret center
+$execute positioned ~-$(rx) ~-$(ry) ~-$(rz) as @e[tag=mgs.zombie_round,tag=!mgs.zb_rising,dx=$(sx),dy=$(sy),dz=$(sz)] run tag @s add mgs._turret_cand
+execute as @e[tag=mgs._turret_cand,sort=nearest,limit=1] run tag @s add mgs._turret_target
+tag @e[tag=mgs._turret_cand] remove mgs._turret_cand
+
+# No zombie in range: nothing to aim at or shoot
+execute unless entity @e[tag=mgs._turret_target] run return 0
+
+# Aim this turret's head display at the target (yaw + pitch via facing entity, smoothed by teleport_duration)
+execute as @e[tag=mgs.trap_head] if score @s mgs.zb.trap.id = #turret_tid mgs.data at @s run tp @s ~ ~ ~ facing entity @n[tag=mgs._turret_target] eyes
+
+# Fire the bullet from the barrel (block centre, ~1.6 up = head muzzle height) toward the target
+execute positioned ~.5 ~1.6 ~.5 facing entity @n[tag=mgs._turret_target] eyes run function mgs:v5.0.1/zombies/traps/turret_shoot
+
+# Clear the temporary target tag
+tag @e[tag=mgs._turret_target] remove mgs._turret_target
 

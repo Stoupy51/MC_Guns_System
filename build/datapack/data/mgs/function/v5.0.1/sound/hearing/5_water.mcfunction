@@ -3,7 +3,8 @@
 #
 # @executed	as @a[distance=0.001..224] & facing entity @s eyes
 #
-# @within	mgs:v5.0.1/sound/propagation with storage mgs:gun all.sounds
+# @within	mgs:v5.0.1/sound/turret_propagation with storage mgs:temp _turret_snd
+#			mgs:v5.0.1/sound/propagation with storage mgs:gun all.sounds
 #
 # @args		crack (unknown)
 #

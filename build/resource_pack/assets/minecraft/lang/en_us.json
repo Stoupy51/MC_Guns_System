@@ -729,6 +729,8 @@
 	"mgs.trap_placed": "Trap placed!",
 	"mgs.trap_removed": "Trap removed!",
 	"mgs.trigger_mgs_player_config": "trigger mgs.player.config",
+	"mgs.turret_base": "Turret Base",
+	"mgs.turret_head": "Turret Head",
 	"mgs.turret_trap": "Turret Trap",
 	"mgs.type": "type: ",
 	"mgs.unlimited_ammo": "Unlimited Ammo",
