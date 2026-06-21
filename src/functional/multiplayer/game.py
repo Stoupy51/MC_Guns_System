@@ -662,14 +662,16 @@ execute if score @s {ns}.mp.team matches 2 run tag @a[scores={{{ns}.mp.in_game=1
 # Never count self as an enemy
 tag @s remove {ns}.spawn_enemy
 
-# Tag candidate spawn markers of the right type (exclude already-used spawns)
-$tag @e[tag={ns}.spawn_point,tag={ns}.spawn_$(type),tag=!{ns}.spawn_used] add {ns}.spawn_candidate
+# Tag candidate spawn markers of the right type (exclude already-used spawns). #mp_cand_count
+# tracks how many candidates currently carry the tag, so the "all contested" fallback below can
+# branch on a score instead of a global @e existence scan. Seed it with the count just tagged.
+$execute store result score #mp_cand_count {ns}.data run tag @e[tag={ns}.spawn_point,tag={ns}.spawn_$(type),tag=!{ns}.spawn_used] add {ns}.spawn_candidate
 
-# Remove candidates that have an enemy player within 5 blocks
-execute as @e[tag={ns}.spawn_candidate] at @s if entity @a[tag={ns}.spawn_enemy,distance=..5] run tag @s remove {ns}.spawn_candidate
+# Remove candidates that have an enemy player within 5 blocks (each removal decrements the count)
+execute as @e[tag={ns}.spawn_candidate] at @s if entity @a[tag={ns}.spawn_enemy,distance=..5] run function {ns}:v{version}/multiplayer/uncontest_spawn
 
 # If all were removed (all spawns used or contested), re-tag all as candidates
-$execute unless entity @e[tag={ns}.spawn_candidate] run tag @e[tag={ns}.spawn_point,tag={ns}.spawn_$(type)] add {ns}.spawn_candidate
+$execute if score #mp_cand_count {ns}.data matches 0 run tag @e[tag={ns}.spawn_point,tag={ns}.spawn_$(type)] add {ns}.spawn_candidate
 
 # If no enemies, pick random candidate directly (skip expensive distance calc)
 execute unless entity @a[tag={ns}.spawn_enemy] run return run function {ns}:v{version}/multiplayer/pick_spawn_random
@@ -693,6 +695,14 @@ execute as @e[tag={ns}.spawn_candidate,sort=random] if score @s {ns}.data = #bes
 tag @e[tag={ns}.spawn_candidate] remove {ns}.spawn_candidate
 tag @a[tag={ns}.spawn_pending] remove {ns}.spawn_pending
 tag @a[tag={ns}.spawn_enemy] remove {ns}.spawn_enemy
+""")
+
+    	## Drop a contested candidate marker and keep #mp_cand_count in sync (@s = the spawn marker).
+    	## The tag is always present here (we only iterate spawn_candidate markers), so the decrement
+    	## is exactly 1:1 with a removal — letting pick_spawn's fallback test a score, not scan @e.
+    	self.func("multiplayer/uncontest_spawn", f"""
+tag @s remove {ns}.spawn_candidate
+scoreboard players remove #mp_cand_count {ns}.data 1
 """)
 
     	## Pick random spawn (no enemies — skip distance calc entirely)

@@ -45,7 +45,7 @@ execute if score #zb_to_spawn mgs.data matches 1.. run scoreboard players set #z
 # Once threshold reached, tick glow refresh timer (every 5s = 100 ticks → apply glowing for 6s = 120 ticks)
 execute if score #zb_stuck_timer mgs.data matches 1200.. run scoreboard players add #zb_glow_timer mgs.data 1
 execute if score #zb_glow_timer mgs.data matches 100.. run scoreboard players set #zb_glow_timer mgs.data 0
-execute if score #zb_stuck_timer mgs.data matches 1200.. if score #zb_glow_timer mgs.data matches 0 if entity @e[tag=mgs.zombie_round] run function mgs:v5.0.1/zombies/glow_stuck_zombies
+execute if score #zb_stuck_timer mgs.data matches 1200.. if score #zb_glow_timer mgs.data matches 0 if score #zb_alive mgs.data matches 1.. run function mgs:v5.0.1/zombies/glow_stuck_zombies
 
 # Refresh sidebar every second (20 ticks)
 scoreboard players add #zb_sidebar_timer mgs.data 1

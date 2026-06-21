@@ -9,16 +9,14 @@
 # @s = stuck zombie — teleport it to a zombie spawn point near a player instead of killing it
 # (keeps the horde intact and drops it back onto walkable navmesh so it can path again).
 
-# Build the rescue pool: unlocked zombie spawn markers near any in-game player — same selection
-# the spawner uses (within 32, widening to 64, then any unlocked spawn as a final fallback).
-tag @e[tag=mgs.spawn_zb] remove mgs.zb_rescue
-execute as @a[scores={mgs.zb.in_game=1},gamemode=!spectator] at @s run tag @e[tag=mgs.spawn_zb,tag=mgs.spawn_unlocked,distance=..32] add mgs.zb_rescue
-execute unless entity @e[tag=mgs.zb_rescue] as @a[scores={mgs.zb.in_game=1},gamemode=!spectator] at @s run tag @e[tag=mgs.spawn_zb,tag=mgs.spawn_unlocked,distance=..64] add mgs.zb_rescue
-execute unless entity @e[tag=mgs.zb_rescue] run tag @e[tag=mgs.spawn_zb,tag=mgs.spawn_unlocked] add mgs.zb_rescue
+# Build the rescue pool via the shared spawn-proximity tagger (same 32 -> 64 -> any unlocked
+# selection the round spawner uses). #zb_near_found is 0 iff nothing was tagged, so the teleport
+# gate below needs no global @e existence scan.
+function mgs:v5.0.1/zombies/tag_spawns_near_players
 
 # Teleport to the nearest rescue spawn (passenger death_watch marker follows automatically)
-execute if entity @e[tag=mgs.zb_rescue] run tp @s @n[tag=mgs.zb_rescue]
-tag @e[tag=mgs.zb_rescue] remove mgs.zb_rescue
+execute if score #zb_near_found mgs.data matches 1.. run tp @s @n[tag=mgs.zb_near]
+tag @e[tag=mgs.zb_near] remove mgs.zb_near
 
 # Reset stuck tracking from the new position so it gets a fresh window
 scoreboard players set @s mgs.zb.stuck_dist 4

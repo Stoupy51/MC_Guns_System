@@ -465,9 +465,12 @@ tag @s remove {ns}.downed_spectator
 	## players rejoin near the action rather than at an arbitrary spawn).
 	write_versioned_function("zombies/revive/respawn_near_player", f"""
 tag @s add {ns}.spawn_pending
-execute as @r[scores={{{ns}.zb.in_game=1,{ns}.zb.downed=0}},gamemode=!spectator,limit=1] at @s run tag @n[tag={ns}.spawn_point,tag={ns}.spawn_zb_player,tag={ns}.spawn_unlocked] add {ns}.spawn_candidate
+# #has_candidate stays 0 if there is no alive teammate (the `as @r` body never runs, so its
+# `store success` never writes); the success flag then replaces a global @e existence scan.
+scoreboard players set #has_candidate {ns}.data 0
+execute as @r[scores={{{ns}.zb.in_game=1,{ns}.zb.downed=0}},gamemode=!spectator,limit=1] at @s store success score #has_candidate {ns}.data run tag @n[tag={ns}.spawn_point,tag={ns}.spawn_zb_player,tag={ns}.spawn_unlocked] add {ns}.spawn_candidate
 # Fallback: if no alive teammate, use the unlocked player spawn nearest to @s
-execute unless entity @e[tag={ns}.spawn_candidate] run tag @n[tag={ns}.spawn_point,tag={ns}.spawn_zb_player,tag={ns}.spawn_unlocked] add {ns}.spawn_candidate
+execute if score #has_candidate {ns}.data matches 0 run tag @n[tag={ns}.spawn_point,tag={ns}.spawn_zb_player,tag={ns}.spawn_unlocked] add {ns}.spawn_candidate
 execute as @n[tag={ns}.spawn_candidate] run function {ns}:v{version}/zombies/tp_to_spawn
 tag @e[tag={ns}.spawn_candidate] remove {ns}.spawn_candidate
 tag @a[tag={ns}.spawn_pending] remove {ns}.spawn_pending
