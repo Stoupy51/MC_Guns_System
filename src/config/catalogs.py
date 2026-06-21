@@ -111,7 +111,7 @@ SECONDARY_INDEX: dict[str, int] = {w.item_id: i for i, w in enumerate(SECONDARY_
 
 # Equipment presets: (preset_id, display_name, items_dict)
 # items_dict maps equipment item_id -> count
-EQUIPMENT_PRESETS: list[EquipmentPreset] = [EquipmentPreset(*_row) for _row in [
+_EQUIPMENT_ROWS: list[tuple[str, str, dict[str, int]]] = [
     ("frag2",        "2x Frag Grenade",          {"frag_grenade": 2}),
     ("semtex2",      "2x Semtex",                {"semtex": 2}),
     ("flash2",       "2x Flash Grenade",         {"flash_grenade": 2}),
@@ -122,7 +122,8 @@ EQUIPMENT_PRESETS: list[EquipmentPreset] = [EquipmentPreset(*_row) for _row in [
     ("semtex_smoke", "Semtex + Smoke",           {"semtex": 1, "smoke_grenade": 1}),
     ("flash_smoke",  "Flash + Smoke",            {"flash_grenade": 1, "smoke_grenade": 1}),
     ("none",         "No Equipment",             {}),
-]]
+]
+EQUIPMENT_PRESETS: list[EquipmentPreset] = [EquipmentPreset(*_row) for _row in _EQUIPMENT_ROWS]
 
 # Scope variant definitions per weapon base ID
 # Maps base weapon ID -> tuple of available scope suffixes ("" = iron sights)

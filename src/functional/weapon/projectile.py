@@ -14,7 +14,6 @@ from ...config.stats import (
     PROJECTILE_SPEED,
 )
 
-
 # Main function
 
 

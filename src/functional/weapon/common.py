@@ -6,7 +6,6 @@ from stewbeet import Advancement, ItemModifier, JsonDict, Mem, Predicate, set_js
 
 from ...config.stats import BURST, REMAINING_BULLETS
 
-
 # Main function
 
 

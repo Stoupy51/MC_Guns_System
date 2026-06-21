@@ -1,5 +1,4 @@
 
-# ruff: noqa: E501
 # Stamina system (Call of Duty: Black Ops style)
 #
 # Shared across all three modes (multiplayer, missions, zombies). Sprinting for too long drains

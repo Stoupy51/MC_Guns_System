@@ -1,6 +1,7 @@
 
 # Imports
 from stewbeet import Mem, write_versioned_function
+
 from ...config.stats import CAPACITY, END_HEX, FIRE_MODE, REMAINING_BULLETS, START_HEX
 
 

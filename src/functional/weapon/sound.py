@@ -3,8 +3,8 @@
 # Imports
 
 from stewbeet import Mem, write_versioned_function
-from ...config.stats import COOLDOWN, RELOAD_END, RELOAD_TIME
 
+from ...config.stats import COOLDOWN, RELOAD_END, RELOAD_TIME
 
 # Main function
 

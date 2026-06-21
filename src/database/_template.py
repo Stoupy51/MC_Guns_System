@@ -1,6 +1,11 @@
 
 # Imports
-from ..config.stats import TEMPLATE, add_item
+from stewbeet import JsonDict
+
+from ..config.stats import add_item
+
+# Example stats for a new item — replace with real values (see the other database/*.py files).
+TEMPLATE: JsonDict = {}
 
 
 # Main function should return a database

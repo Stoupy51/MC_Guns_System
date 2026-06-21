@@ -2,6 +2,7 @@
 # ruff: noqa: E501
 # Imports
 from stewbeet import Mem, write_versioned_function
+
 from ...config.stats import IS_ZOOM, MODELS
 
 

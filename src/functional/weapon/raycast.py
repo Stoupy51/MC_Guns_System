@@ -2,6 +2,7 @@
 # Imports
 
 from stewbeet import Mem, write_versioned_function
+
 from ...config.stats import (
     ACCURACY_BASE,
     ACCURACY_JUMP,
@@ -17,7 +18,6 @@ from ...config.stats import (
     PELLET_COUNT,
     PROJECTILE_SPEED,
 )
-
 
 # Main function
 

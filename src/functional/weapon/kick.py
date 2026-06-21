@@ -1,6 +1,7 @@
 
 # Imports
 from stewbeet import Mem, write_versioned_function
+
 from ...config.stats import KICK
 
 
