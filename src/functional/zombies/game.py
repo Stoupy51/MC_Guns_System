@@ -279,7 +279,7 @@ execute if score #zb_to_spawn {ns}.data matches 1.. run scoreboard players set #
 # Once threshold reached, tick glow refresh timer (every 5s = 100 ticks → apply glowing for 6s = 120 ticks)
 execute if score #zb_stuck_timer {ns}.data matches 1200.. run scoreboard players add #zb_glow_timer {ns}.data 1
 execute if score #zb_glow_timer {ns}.data matches 100.. run scoreboard players set #zb_glow_timer {ns}.data 0
-execute if score #zb_stuck_timer {ns}.data matches 1200.. if score #zb_glow_timer {ns}.data matches 0 if entity @e[tag={ns}.zombie_round] run function {ns}:v{version}/zombies/glow_stuck_zombies
+execute if score #zb_stuck_timer {ns}.data matches 1200.. if score #zb_glow_timer {ns}.data matches 0 if score #zb_alive {ns}.data matches 1.. run function {ns}:v{version}/zombies/glow_stuck_zombies
 
 # Refresh sidebar every second (20 ticks)
 scoreboard players add #zb_sidebar_timer {ns}.data 1
@@ -507,16 +507,14 @@ execute if score #stuck_progress {ns}.data matches 0 if score #stuck_delta {ns}.
 # @s = stuck zombie — teleport it to a zombie spawn point near a player instead of killing it
 # (keeps the horde intact and drops it back onto walkable navmesh so it can path again).
 
-# Build the rescue pool: unlocked zombie spawn markers near any in-game player — same selection
-# the spawner uses (within 32, widening to 64, then any unlocked spawn as a final fallback).
-tag @e[tag={ns}.spawn_zb] remove {ns}.zb_rescue
-execute as @a[scores={{{ns}.zb.in_game=1}},gamemode=!spectator] at @s run tag @e[tag={ns}.spawn_zb,tag={ns}.spawn_unlocked,distance=..32] add {ns}.zb_rescue
-execute unless entity @e[tag={ns}.zb_rescue] as @a[scores={{{ns}.zb.in_game=1}},gamemode=!spectator] at @s run tag @e[tag={ns}.spawn_zb,tag={ns}.spawn_unlocked,distance=..64] add {ns}.zb_rescue
-execute unless entity @e[tag={ns}.zb_rescue] run tag @e[tag={ns}.spawn_zb,tag={ns}.spawn_unlocked] add {ns}.zb_rescue
+# Build the rescue pool via the shared spawn-proximity tagger (same 32 -> 64 -> any unlocked
+# selection the round spawner uses). #zb_near_found is 0 iff nothing was tagged, so the teleport
+# gate below needs no global @e existence scan.
+function {ns}:v{version}/zombies/tag_spawns_near_players
 
 # Teleport to the nearest rescue spawn (passenger death_watch marker follows automatically)
-execute if entity @e[tag={ns}.zb_rescue] run tp @s @n[tag={ns}.zb_rescue]
-tag @e[tag={ns}.zb_rescue] remove {ns}.zb_rescue
+execute if score #zb_near_found {ns}.data matches 1.. run tp @s @n[tag={ns}.zb_near]
+tag @e[tag={ns}.zb_near] remove {ns}.zb_near
 
 # Reset stuck tracking from the new position so it gets a fresh window
 scoreboard players set @s {ns}.zb.stuck_dist 4
@@ -625,11 +623,12 @@ tag @e[tag={ns}.spawn_used] remove {ns}.spawn_used
 		self.func("zombies/pick_spawn", f"""
 tag @s add {ns}.spawn_pending
 
-# Tag candidate spawns (unlocked, exclude used)
-tag @e[tag={ns}.spawn_point,tag={ns}.spawn_zb_player,tag={ns}.spawn_unlocked,tag=!{ns}.spawn_used] add {ns}.spawn_candidate
+# Tag candidate spawns (unlocked, exclude used). Capture via command success whether any marker
+# was tagged, so the "all used" fallback can branch on a score instead of a global @e scan.
+execute store success score #has_candidate {ns}.data run tag @e[tag={ns}.spawn_point,tag={ns}.spawn_zb_player,tag={ns}.spawn_unlocked,tag=!{ns}.spawn_used] add {ns}.spawn_candidate
 
 # If all used, re-tag all unlocked
-execute unless entity @e[tag={ns}.spawn_candidate] run tag @e[tag={ns}.spawn_point,tag={ns}.spawn_zb_player,tag={ns}.spawn_unlocked] add {ns}.spawn_candidate
+execute if score #has_candidate {ns}.data matches 0 run tag @e[tag={ns}.spawn_point,tag={ns}.spawn_zb_player,tag={ns}.spawn_unlocked] add {ns}.spawn_candidate
 
 # Pick random candidate
 execute as @n[tag={ns}.spawn_candidate,sort=random] run function {ns}:v{version}/zombies/tp_to_spawn
@@ -666,13 +665,19 @@ scoreboard objectives add {ns}.zb_sidebar dummy
 execute store result score #zb_round {ns}.data run data get storage {ns}:zombies game.round
 scoreboard players add #zb_round {ns}.data 1
 
+# Prep context: game_tick isn't maintaining #zb_alive yet (and a previous game may have left a
+# stale value), so seed it once here before the (now rescan-free) refresh_sidebar.
+execute store result score #zb_alive {ns}.data if entity @e[tag={ns}.zombie_round]
+
 function {ns}:v{version}/zombies/refresh_sidebar
 scoreboard objectives setdisplay sidebar {ns}.zb_sidebar
 """)
 
 		self.func("zombies/refresh_sidebar", f"""
-# Count alive zombies
-execute store result score #zb_alive {ns}.data if entity @e[tag={ns}.zombie_round]
+# Zombie count (#zb_alive) is recomputed every tick by game_tick. Reuse it here instead of
+# rescanning @e[tag={ns}.zombie_round]: refresh_sidebar runs on every bullet hit (on_hit_signal)
+# and every kill (check_kill_points), so the old rescan was a full entity scan per hit/kill during
+# combat. Non-tick callers (create_sidebar during prep) seed #zb_alive themselves before calling.
 scoreboard players operation #zb_total {ns}.data = #zb_alive {ns}.data
 scoreboard players operation #zb_total {ns}.data += #zb_to_spawn {ns}.data
 execute if score #zb_total {ns}.data matches ..-1 run scoreboard players set #zb_total {ns}.data 0

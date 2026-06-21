@@ -4,15 +4,9 @@
 # @within	mgs:v5.0.1/zombies/spawn_batch_tick
 #
 
-# Tag nearby unlocked zombie spawns
-# First pass: 32 blocks from any alive player
-execute as @a[scores={mgs.zb.in_game=1},gamemode=!spectator] at @s run tag @e[tag=mgs.spawn_zb,tag=mgs.spawn_unlocked,distance=..32] add mgs.zb_near
-
-# Second pass: 64 blocks if none found
-execute unless entity @e[tag=mgs.zb_near] as @a[scores={mgs.zb.in_game=1},gamemode=!spectator] at @s run tag @e[tag=mgs.spawn_zb,tag=mgs.spawn_unlocked,distance=..64] add mgs.zb_near
-
-# Fallback: any unlocked spawn
-execute unless entity @e[tag=mgs.zb_near] run tag @e[tag=mgs.spawn_zb,tag=mgs.spawn_unlocked] add mgs.zb_near
+# Tag unlocked zombie spawns near any alive player (shared 32->64->any helper). On return,
+# #zb_near_found is 0 iff nothing was tagged, so no global @e existence scan is needed here.
+function mgs:v5.0.1/zombies/tag_spawns_near_players
 
 # Activation-box gating: a spawn that defines an activation box is only usable while an alive
 # player stands inside that box. Drop box-gated candidates whose box is currently empty.

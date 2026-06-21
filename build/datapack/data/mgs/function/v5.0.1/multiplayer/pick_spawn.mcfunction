@@ -27,14 +27,16 @@ execute if score @s mgs.mp.team matches 2 run tag @a[scores={mgs.mp.in_game=1,mg
 # Never count self as an enemy
 tag @s remove mgs.spawn_enemy
 
-# Tag candidate spawn markers of the right type (exclude already-used spawns)
-$tag @e[tag=mgs.spawn_point,tag=mgs.spawn_$(type),tag=!mgs.spawn_used] add mgs.spawn_candidate
+# Tag candidate spawn markers of the right type (exclude already-used spawns). #mp_cand_count
+# tracks how many candidates currently carry the tag, so the "all contested" fallback below can
+# branch on a score instead of a global @e existence scan. Seed it with the count just tagged.
+$execute store result score #mp_cand_count mgs.data run tag @e[tag=mgs.spawn_point,tag=mgs.spawn_$(type),tag=!mgs.spawn_used] add mgs.spawn_candidate
 
-# Remove candidates that have an enemy player within 5 blocks
-execute as @e[tag=mgs.spawn_candidate] at @s if entity @a[tag=mgs.spawn_enemy,distance=..5] run tag @s remove mgs.spawn_candidate
+# Remove candidates that have an enemy player within 5 blocks (each removal decrements the count)
+execute as @e[tag=mgs.spawn_candidate] at @s if entity @a[tag=mgs.spawn_enemy,distance=..5] run function mgs:v5.0.1/multiplayer/uncontest_spawn
 
 # If all were removed (all spawns used or contested), re-tag all as candidates
-$execute unless entity @e[tag=mgs.spawn_candidate] run tag @e[tag=mgs.spawn_point,tag=mgs.spawn_$(type)] add mgs.spawn_candidate
+$execute if score #mp_cand_count mgs.data matches 0 run tag @e[tag=mgs.spawn_point,tag=mgs.spawn_$(type)] add mgs.spawn_candidate
 
 # If no enemies, pick random candidate directly (skip expensive distance calc)
 execute unless entity @a[tag=mgs.spawn_enemy] run return run function mgs:v5.0.1/multiplayer/pick_spawn_random

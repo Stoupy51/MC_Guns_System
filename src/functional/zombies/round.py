@@ -72,15 +72,9 @@ scoreboard players add #zb_spawn_batch {ns}.data 1
 
 	## Spawn a single zombie using proximity-based selection from spawn markers
 	write_versioned_function("zombies/spawn_zombie", f"""
-# Tag nearby unlocked zombie spawns
-# First pass: 32 blocks from any alive player
-execute as @a[scores={{{ns}.zb.in_game=1}},gamemode=!spectator] at @s run tag @e[tag={ns}.spawn_zb,tag={ns}.spawn_unlocked,distance=..32] add {ns}.zb_near
-
-# Second pass: 64 blocks if none found
-execute unless entity @e[tag={ns}.zb_near] as @a[scores={{{ns}.zb.in_game=1}},gamemode=!spectator] at @s run tag @e[tag={ns}.spawn_zb,tag={ns}.spawn_unlocked,distance=..64] add {ns}.zb_near
-
-# Fallback: any unlocked spawn
-execute unless entity @e[tag={ns}.zb_near] run tag @e[tag={ns}.spawn_zb,tag={ns}.spawn_unlocked] add {ns}.zb_near
+# Tag unlocked zombie spawns near any alive player (shared 32->64->any helper). On return,
+# #zb_near_found is 0 iff nothing was tagged, so no global @e existence scan is needed here.
+function {ns}:v{version}/zombies/tag_spawns_near_players
 
 # Activation-box gating: a spawn that defines an activation box is only usable while an alive
 # player stands inside that box. Drop box-gated candidates whose box is currently empty.
@@ -91,6 +85,43 @@ execute as @n[tag={ns}.zb_near,sort=random] at @s run function {ns}:v{version}/z
 
 # Cleanup
 tag @e[tag={ns}.zb_near] remove {ns}.zb_near
+""")
+
+	## Shared spawn-proximity tagger: tag unlocked zombie spawn markers into {ns}.zb_near, choosing the
+	## closest available ring to any alive in-game player (32 -> 64 -> any unlocked fallback). Reused by
+	## round spawning AND stuck-zombie rescue so the selection logic lives in exactly one place.
+	##
+	## Each radius pass dispatches a per-player subfunction that records — via its own `tag` command's
+	## result — whether it tagged anything, summed into #zb_near_found. This replaces the old global
+	## `unless entity @e[tag={ns}.zb_near]` existence checks (a full entity scan each) with a free score
+	## compare. (You cannot `store` the aggregate on the `as @a ... run tag` line directly: `store` keeps
+	## only the last iteration, so the subfunction is what lets each player OR its success into the score.)
+	## On return #zb_near_found is 0 iff zb_near is empty, so callers can gate on it without any @e scan.
+	## Assumes zb_near is clean on entry — every caller clears it after consuming the tagged set.
+	write_versioned_function("zombies/tag_spawns_near_players", f"""
+scoreboard players set #zb_near_found {ns}.data 0
+
+# First pass: 32 blocks from any alive player
+execute as @a[scores={{{ns}.zb.in_game=1}},gamemode=!spectator] at @s run function {ns}:v{version}/zombies/tag_zb_near_32
+
+# Second pass: 64 blocks if none found
+execute if score #zb_near_found {ns}.data matches 0 as @a[scores={{{ns}.zb.in_game=1}},gamemode=!spectator] at @s run function {ns}:v{version}/zombies/tag_zb_near_64
+
+# Fallback: any unlocked spawn. `store success` so #zb_near_found also reflects the fallback,
+# letting callers gate "did we tag anything at all" purely on the score.
+execute if score #zb_near_found {ns}.data matches 0 store success score #zb_near_found {ns}.data run tag @e[tag={ns}.spawn_zb,tag={ns}.spawn_unlocked] add {ns}.zb_near
+""")
+
+	## Per-player spawn-tagging passes. @s = an alive in-game player, executed at their position.
+	## #zb_near_hit = how many markers THIS player newly tagged; accumulated into #zb_near_found so
+	## the caller can tell whether any player tagged a spawn without a global @e scan.
+	write_versioned_function("zombies/tag_zb_near_32", f"""
+execute store result score #zb_near_hit {ns}.data run tag @e[tag={ns}.spawn_zb,tag={ns}.spawn_unlocked,distance=..32] add {ns}.zb_near
+scoreboard players operation #zb_near_found {ns}.data += #zb_near_hit {ns}.data
+""")
+	write_versioned_function("zombies/tag_zb_near_64", f"""
+execute store result score #zb_near_hit {ns}.data run tag @e[tag={ns}.spawn_zb,tag={ns}.spawn_unlocked,distance=..64] add {ns}.zb_near
+scoreboard players operation #zb_near_found {ns}.data += #zb_near_hit {ns}.data
 """)
 
 	## Activation-box filter (runs as a candidate spawn marker that has data.abox).

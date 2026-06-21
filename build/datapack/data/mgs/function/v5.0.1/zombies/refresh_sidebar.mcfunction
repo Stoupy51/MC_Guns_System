@@ -8,8 +8,10 @@
 #			mgs:v5.0.1/zombies/start_round
 #
 
-# Count alive zombies
-execute store result score #zb_alive mgs.data if entity @e[tag=mgs.zombie_round]
+# Zombie count (#zb_alive) is recomputed every tick by game_tick. Reuse it here instead of
+# rescanning @e[tag=mgs.zombie_round]: refresh_sidebar runs on every bullet hit (on_hit_signal)
+# and every kill (check_kill_points), so the old rescan was a full entity scan per hit/kill during
+# combat. Non-tick callers (create_sidebar during prep) seed #zb_alive themselves before calling.
 scoreboard players operation #zb_total mgs.data = #zb_alive mgs.data
 scoreboard players operation #zb_total mgs.data += #zb_to_spawn mgs.data
 execute if score #zb_total mgs.data matches ..-1 run scoreboard players set #zb_total mgs.data 0
