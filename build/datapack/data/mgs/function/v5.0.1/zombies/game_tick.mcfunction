@@ -84,12 +84,19 @@ execute as @e[tag=mgs.pap_machine,scores={mgs.pap_anim=1..}] at @s run function 
 execute as @e[tag=mgs.zombie_round,tag=mgs.barrier_frozen] run function mgs:v5.0.1/zombies/barriers/restore_zombie_speed
 execute as @e[tag=mgs.barrier_display] at @s run function mgs:v5.0.1/zombies/barriers/tick
 
+# Power-up entities exist only after a drop. #pu_active (maintained on spawn/expire/pickup) gates the
+# two per-tick scans below so an empty board costs nothing. Resync once every 40 ticks as a safety net
+# (the count is already exact since pu_item is Invulnerable and only dies through tracked paths).
+execute store result score #pu_active_phase mgs.data run scoreboard players get #total_tick mgs.data
+scoreboard players operation #pu_active_phase mgs.data %= #40 mgs.data
+execute if score #pu_active_phase mgs.data matches 0 store result score #pu_active mgs.data if entity @e[tag=mgs.pu_item]
+
 # Power-up entity tick (lifetime countdown, blink, pickup detection)
-execute as @e[tag=mgs.pu_item] at @s run function mgs:v5.0.1/zombies/powerups/entity_tick
+execute if score #pu_active mgs.data matches 1.. as @e[tag=mgs.pu_item] at @s run function mgs:v5.0.1/zombies/powerups/entity_tick
 
 # Orphan cleanup: a text_display whose item entity was destroyed (burned/exploded) would never
 # be removed by expire/pickup — kill any pu_text that no longer has a pu_item beneath it.
-execute as @e[tag=mgs.pu_text] at @s unless entity @e[tag=mgs.pu_item,distance=..4] run kill @s
+execute if score #pu_active mgs.data matches 1.. as @e[tag=mgs.pu_text] at @s unless entity @e[tag=mgs.pu_item,distance=..4] run kill @s
 
 # Insta Kill also works with the knife: give active players a huge melee attack damage so a single
 # melee hit one-shots zombies (guns already insta-kill via the raycast path). remove+add keeps it

@@ -255,6 +255,11 @@ $summon minecraft:item $(x) $(y) $(z) {{Tags:["{ns}.pu_item","{ns}.pu_item_new",
 scoreboard players set @n[tag={ns}.pu_item_new] {ns}.zb.pu.type {type_num}
 scoreboard players set @n[tag={ns}.pu_item_new] {ns}.zb.pu.timer {POWERUP_LIFETIME}
 tag @n[tag={ns}.pu_item_new] remove {ns}.pu_item_new
+
+# Track live power-up count so game_tick can gate the per-item scans (decremented on expire/pickup,
+# reset to 0 by the bulk cleanup, resynced periodically). pu_item is Invulnerable, so it can only die
+# through those tracked paths — the count can never under-count and freeze a live power-up.
+scoreboard players add #pu_active {ns}.data 1
 $execute positioned $(x) $(y) $(z) run summon minecraft:text_display ~ ~1.0 ~ {{Tags:["{ns}.pu_text","{ns}.gm_entity"],text:{{"text":"{display_name}","color":"{color}","bold":true}},billboard:"vertical",background:0,shadow:true,view_range:64.0f,transformation:{{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[1.5f,1.5f,1.5f]}}}}
 
 # Drop spawn cue
@@ -290,6 +295,7 @@ execute unless entity @a[scores={{{ns}.zb.in_game=1}},gamemode=!spectator,distan
 	write_versioned_function("zombies/powerups/expire", f"""
 kill @n[tag={ns}.pu_text,distance=..3]
 kill @s
+scoreboard players remove #pu_active {ns}.data 1
 """)
 
 	# Blink implementation matching BO2's ~0.4s full cycle (4 ticks on, 4 ticks off).
@@ -328,6 +334,7 @@ function {ns}:v{version}/zombies/powerups/dispatch_activate
 
 # Kill this power-up item entity
 kill @s
+scoreboard players remove #pu_active {ns}.data 1
 
 # Clean up the collector tag so other pickups can proceed
 tag @a[tag={ns}.pu_collecting] remove {ns}.pu_collecting
@@ -609,12 +616,19 @@ execute if score #pu_max_duration {ns}.data matches 1.. store result bossbar {ns
 	)
 
 	write_versioned_function("zombies/game_tick", f"""
+# Power-up entities exist only after a drop. #pu_active (maintained on spawn/expire/pickup) gates the
+# two per-tick scans below so an empty board costs nothing. Resync once every 40 ticks as a safety net
+# (the count is already exact since pu_item is Invulnerable and only dies through tracked paths).
+execute store result score #pu_active_phase {ns}.data run scoreboard players get #total_tick {ns}.data
+scoreboard players operation #pu_active_phase {ns}.data %= #40 {ns}.data
+execute if score #pu_active_phase {ns}.data matches 0 store result score #pu_active {ns}.data if entity @e[tag={ns}.pu_item]
+
 # Power-up entity tick (lifetime countdown, blink, pickup detection)
-execute as @e[tag={ns}.pu_item] at @s run function {ns}:v{version}/zombies/powerups/entity_tick
+execute if score #pu_active {ns}.data matches 1.. as @e[tag={ns}.pu_item] at @s run function {ns}:v{version}/zombies/powerups/entity_tick
 
 # Orphan cleanup: a text_display whose item entity was destroyed (burned/exploded) would never
 # be removed by expire/pickup — kill any pu_text that no longer has a pu_item beneath it.
-execute as @e[tag={ns}.pu_text] at @s unless entity @e[tag={ns}.pu_item,distance=..4] run kill @s
+execute if score #pu_active {ns}.data matches 1.. as @e[tag={ns}.pu_text] at @s unless entity @e[tag={ns}.pu_item,distance=..4] run kill @s
 
 # Insta Kill also works with the knife: give active players a huge melee attack damage so a single
 # melee hit one-shots zombies (guns already insta-kill via the raycast path). remove+add keeps it
@@ -656,6 +670,7 @@ execute if score #zb_bonfire_sale_timer {ns}.data matches 1.. run function {ns}:
 # Power-up cleanup
 kill @e[tag={ns}.pu_item]
 kill @e[tag={ns}.pu_text]
+scoreboard players set #pu_active {ns}.data 0
 scoreboard players set #zb_drops_this_round {ns}.data 0
 scoreboard players set #zb_cycle_done {ns}.data 0
 scoreboard players set #zb_cycle_len {ns}.data 0

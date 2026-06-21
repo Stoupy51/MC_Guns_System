@@ -72,6 +72,7 @@ scoreboard players reset @a mgs.zb.barrier_repairs
 # Power-up cleanup
 kill @e[tag=mgs.pu_item]
 kill @e[tag=mgs.pu_text]
+scoreboard players set #pu_active mgs.data 0
 scoreboard players set #zb_drops_this_round mgs.data 0
 scoreboard players set #zb_cycle_done mgs.data 0
 scoreboard players set #zb_cycle_len mgs.data 0
