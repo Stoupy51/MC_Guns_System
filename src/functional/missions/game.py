@@ -5,7 +5,7 @@
 # Enemy positions and spawn functions are stored per-map via the editor.
 # When all enemies are killed, the game ends with a performance score.
 
-from stewbeet import Mem, write_tag
+from stewbeet import Mem, write_tag, write_versioned_function
 
 from ..core.respawn_countdown import respawn_countdown_tick_lines
 from ..helpers import (
@@ -57,7 +57,7 @@ execute unless data storage {ns}:missions game run data modify storage {ns}:miss
 			write_tag(f"missions/{event}", Mem.ctx.data[ns].function_tags, [])
 
 		## Game Start
-		self.func("missions/start", f"""
+		write_versioned_function("missions/start", f"""
 # Prevent starting if already active or preparing
 {game_start_guards(ns, "missions", "Mission")}
 
@@ -130,7 +130,7 @@ tellraw @a ["",{{"text":"","color":"aqua","bold":true}},"🎯 ",{{"text":"Loadin
 """)
 
 		## Preload complete → transition to prep phase
-		self.func("missions/preload_complete", f"""
+		write_versioned_function("missions/preload_complete", f"""
 # Guard: only if still preparing
 execute unless data storage {ns}:missions game{{state:"preparing"}} run return fail
 
@@ -175,14 +175,14 @@ tellraw @a ["",{{"text":"","color":"aqua","bold":true}},"🎯 ",{{"text":"Prepar
 """)
 
 		## Prep Tick (check for class changes during preparation)
-		self.func("missions/prep_tick", f"""
+		write_versioned_function("missions/prep_tick", f"""
 # Detect class changes during prep
 execute as @a[scores={{{ns}.mi.in_game=1}}] unless score @s {ns}.mp.prev_class = @s {ns}.mp.class at @s run function {ns}:v{version}/multiplayer/apply_class
 execute as @a[scores={{{ns}.mi.in_game=1}}] run scoreboard players operation @s {ns}.mp.prev_class = @s {ns}.mp.class
 """)
 
 		## End Prep → Start Mission (spawn all enemies)
-		self.func("missions/end_prep", f"""
+		write_versioned_function("missions/end_prep", f"""
 {end_prep_transition_lines(ns, "missions", "mi")}
 
 # Spawn all enemies from map data
@@ -205,7 +205,7 @@ tellraw @a ["",{{"text":"","color":"aqua","bold":true}},"🎯 ",{{"text":"GO! GO
 """)
 
 		## Spawn all enemies at once from map data
-		self.func("missions/spawn_all_enemies", f"""
+		write_versioned_function("missions/spawn_all_enemies", f"""
 # Copy enemy list for iteration
 data modify storage {ns}:temp _enemy_iter set from storage {ns}:missions game.map.enemies
 
@@ -225,7 +225,7 @@ tellraw @a [{MGS_TAG},{{"score":{{"name":"#mi_total_enemies","objective":"{ns}.d
 """)
 
 		## Spawn enemy iterator
-		self.func("missions/spawn_enemy_iter", f"""
+		write_versioned_function("missions/spawn_enemy_iter", f"""
 # Read relative position
 execute store result score #ex {ns}.data run data get storage {ns}:temp _enemy_iter[0].pos[0]
 execute store result score #ey {ns}.data run data get storage {ns}:temp _enemy_iter[0].pos[1]
@@ -253,12 +253,12 @@ execute if data storage {ns}:temp _enemy_iter[0] run function {ns}:v{version}/mi
 """)
 
 		## Call the stored mob function at a given position (macro)
-		self.func("missions/call_enemy_function", """
+		write_versioned_function("missions/call_enemy_function", """
 $execute positioned $(x) $(y) $(z) run function $(function)
 """)
 
 		## On Respawn (missions death handling - now with cooldown like multiplayer)
-		self.func("missions/on_respawn", f"""
+		write_versioned_function("missions/on_respawn", f"""
 # Reset death counter & Increment mission death stats
 scoreboard players set @s {ns}.mp.death_count 0
 scoreboard players add @s {ns}.mi.deaths 1
@@ -276,13 +276,13 @@ title @s subtitle [{{"text":"Respawning in 3 seconds...","color":"gray"}}]
 """)
 
 		## Spectate a random alive in-game player (fallback)
-		self.func("missions/spectate_random_player", f"""
+		write_versioned_function("missions/spectate_random_player", f"""
 # Pick a random alive in-game player (not self, not spectator)
 execute as @r[scores={{{ns}.mi.in_game=1}},gamemode=!spectator] run spectate @s @p[scores={{{ns}.mp.spectate_timer=1..}},sort=nearest]
 """)
 
 		## Actual respawn: called when spectate timer reaches 0
-		self.func("missions/actual_respawn", f"""
+		write_versioned_function("missions/actual_respawn", f"""
 # Stop spectating
 spectate @s
 
@@ -315,7 +315,7 @@ execute if data storage {ns}:missions game{{state:"active"}} run function {ns}:v
 execute if data storage {ns}:missions game{{state:"preparing"}} run function {ns}:v{version}/missions/prep_tick
 """)
 
-		self.func("missions/game_tick", f"""
+		write_versioned_function("missions/game_tick", f"""
 {respawn_countdown_tick_lines(ns, "mi", f"{ns}:v{version}/missions/actual_respawn")}
 
 # Increment mission timer
@@ -343,7 +343,7 @@ execute unless entity @e[tag={ns}.mission_enemy] run return run function {ns}:v{
 """)
 
 		## Compass - points toward nearest enemy (runs as player at player)
-		self.func("missions/update_compass", f"""
+		write_versioned_function("missions/update_compass", f"""
 # Skip if no enemies remain
 execute unless entity @e[tag={ns}.mission_enemy] run return fail
 
@@ -356,12 +356,12 @@ execute store result storage {ns}:temp _compass.z int 1 run data get entity @n[t
 function {ns}:v{version}/missions/set_compass_target with storage {ns}:temp _compass
 """)
 
-		self.func("missions/set_compass_target", f"""
+		write_versioned_function("missions/set_compass_target", f"""
 $item replace entity @s hotbar.3 with compass[lodestone_tracker={{target:{{pos:[I;$(x),$(y),$(z)],dimension:"minecraft:overworld"}},tracked:false}},custom_data={{{ns}:{{compass:true}}}}]
 """)
 
 		## Victory - all enemies killed!
-		self.func("missions/victory", f"""
+		write_versioned_function("missions/victory", f"""
 # Compute per-player mission kills from totalKillCount delta
 execute as @a[scores={{{ns}.mi.in_game=1}}] run scoreboard players operation @s {ns}.mi.kills = @s {ns}.mi.kill_total
 execute as @a[scores={{{ns}.mi.in_game=1}}] run scoreboard players operation @s {ns}.mi.kills -= @s {ns}.mi.kill_base
@@ -396,7 +396,7 @@ function {ns}:v{version}/missions/stop
 """)
 
 		## Game Stop
-		self.func("missions/stop", f"""
+		write_versioned_function("missions/stop", f"""
 # Various cleanup and reset tasks to return to lobby state
 data modify storage {ns}:missions game.state set value "lobby"
 schedule clear {ns}:v{version}/missions/end_prep
@@ -435,7 +435,7 @@ tag @a[tag={ns}.give_class_menu] remove {ns}.give_class_menu
 """)
 
 		## Join Ongoing Mission (late-joiner support)
-		self.func("missions/join_game", f"""
+		write_versioned_function("missions/join_game", f"""
 {late_join_flow_lines(
 	ns,
 	"missions",
@@ -459,14 +459,14 @@ scoreboard players set @s {ns}.mp.spectate_timer 0
 """)
 
 		# Spawn Point Markers ───────────────────────────────────────
-		self.func("missions/summon_spawns", f"""
+		write_versioned_function("missions/summon_spawns", f"""
 # Mission spawns
 data modify storage {ns}:temp _spawn_iter set from storage {ns}:missions game.map.spawning_points.mission
 data modify storage {ns}:temp _spawn_tag set value "{ns}.spawn_mission"
 execute if data storage {ns}:temp _spawn_iter[0] run function {ns}:v{version}/missions/summon_spawn_iter
 """)
 
-		self.func("missions/summon_spawn_iter", f"""
+		write_versioned_function("missions/summon_spawn_iter", f"""
 execute store result score #sx {ns}.data run data get storage {ns}:temp _spawn_iter[0][0]
 execute store result score #sy {ns}.data run data get storage {ns}:temp _spawn_iter[0][1]
 execute store result score #sz {ns}.data run data get storage {ns}:temp _spawn_iter[0][2]
@@ -491,13 +491,13 @@ execute if data storage {ns}:temp _spawn_iter[0] run function {ns}:v{version}/mi
 		self.write_summon_spawn_at()
 
 		# Smart Spawn Teleportation ─────────────────────────────────
-		self.func("missions/tp_all_to_spawns", f"""
+		write_versioned_function("missions/tp_all_to_spawns", f"""
 # Teleport all players to mission spawns (random selection)
 execute as @a[scores={{{ns}.mi.in_game=1}}] at @s run function {ns}:v{version}/missions/pick_spawn
 tag @e[tag={ns}.spawn_used] remove {ns}.spawn_used
 """)
 
-		self.func("missions/pick_spawn", f"""
+		write_versioned_function("missions/pick_spawn", f"""
 tag @s add {ns}.spawn_pending
 
 # Tag candidate spawns (exclude used). Capture via command success whether any marker was tagged,
@@ -515,7 +515,7 @@ tag @e[tag={ns}.spawn_candidate] remove {ns}.spawn_candidate
 tag @a[tag={ns}.spawn_pending] remove {ns}.spawn_pending
 """)
 
-		self.func("missions/tp_to_spawn", f"""
+		write_versioned_function("missions/tp_to_spawn", f"""
 execute store result storage {ns}:temp _tp.x double 1 run data get entity @s Pos[0]
 execute store result storage {ns}:temp _tp.y double 1 run data get entity @s Pos[1]
 execute store result storage {ns}:temp _tp.z double 1 run data get entity @s Pos[2]
@@ -529,7 +529,7 @@ execute unless data storage {ns}:missions game{{state:"active"}} run tag @s add 
 		self.write_tp_player_at()
 
 		## Respawn TP for missions (run as the respawning player)
-		self.func("missions/respawn_tp", f"""
+		write_versioned_function("missions/respawn_tp", f"""
 execute if entity @e[tag={ns}.spawn_point,tag={ns}.spawn_mission] run function {ns}:v{version}/missions/pick_spawn
 """)
 

@@ -10,6 +10,8 @@
 # Truly shared (identical generated output modulo the mode segment):
 #   - <mode>/tp_player_at        : the spawn teleport macro
 #   - <mode>/summon_spawn_at      : the spawn marker (zombies adds one extra tag)
+from stewbeet import write_versioned_function
+
 from .generator import McfunctionGenerator
 
 
@@ -28,7 +30,7 @@ class GameMode(McfunctionGenerator):
     def write_tp_player_at(self) -> None:
         """ Write ``<mode>/tp_player_at`` — the macro that teleports @s to a spawn
         position and yaw. Identical across all modes. """
-        self.func(f"{self.mode}/tp_player_at", "$tp @s $(x) $(y) $(z) $(yaw) 0")
+        write_versioned_function(f"{self.mode}/tp_player_at", "$tp @s $(x) $(y) $(z) $(yaw) 0")
 
     def write_summon_spawn_at(self, extra_spawn_tags: tuple[str, ...] = ()) -> None:
         """ Write ``<mode>/summon_spawn_at`` — the macro that summons a spawn-point marker.
@@ -41,6 +43,6 @@ class GameMode(McfunctionGenerator):
         tags: str = f'"{ns}.spawn_point","$(tag)","{ns}.gm_entity"'
         for tag in extra_spawn_tags:
             tags += f',"{ns}.{tag}"'
-        self.func(f"{self.mode}/summon_spawn_at", f"""
+        write_versioned_function(f"{self.mode}/summon_spawn_at", f"""
 $summon minecraft:marker $(x) $(y) $(z) {{Tags:[{tags}],data:{{yaw:$(yaw)}}}}
 """)

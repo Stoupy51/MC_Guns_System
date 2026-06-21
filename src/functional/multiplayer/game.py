@@ -1,7 +1,7 @@
 
 # ruff: noqa: E501
 # Imports
-from stewbeet import Mem, write_tag
+from stewbeet import Mem, write_tag, write_versioned_function
 
 from ..core.respawn_countdown import respawn_countdown_tick_lines
 from ..game_mode import GameMode
@@ -81,7 +81,7 @@ execute unless data storage {ns}:multiplayer game run data modify storage {ns}:m
     		write_tag(f"multiplayer/{event}", Mem.ctx.data[ns].function_tags, [])
 
     	## Game Start (requires a map to be loaded first)
-    	self.func("multiplayer/start", f"""
+    	write_versioned_function("multiplayer/start", f"""
 # Prevent starting if already active or preparing
 {game_start_guards(ns, "multiplayer", "Game")}
 
@@ -213,7 +213,7 @@ tellraw @a ["",[{{"text":"","color":"gold","bold":true}},"⚔ ",{{"text":"Prepar
 """)
 
     	## Game Stop
-    	self.func("multiplayer/stop", f"""
+    	write_versioned_function("multiplayer/stop", f"""
 # Various cleanup to go back to lobby
 data modify storage {ns}:multiplayer game.state set value "lobby"
 schedule clear {ns}:v{version}/multiplayer/end_prep
@@ -252,7 +252,7 @@ tag @a[tag={ns}.give_class_menu] remove {ns}.give_class_menu
 """)
 
     	## Join Ongoing Game (late-joiner support)
-    	self.func("multiplayer/join_game", late_join_flow_lines(
+    	write_versioned_function("multiplayer/join_game", late_join_flow_lines(
     	ns,
     	"multiplayer",
     	f"{ns}.mp.in_game",
@@ -282,7 +282,7 @@ execute unless data storage {ns}:multiplayer game{{gamemode:"ffa"}} unless score
     	# Called when lethal damage is intercepted (bullet/projectile) or for OOB kills
     	# @s = victim player; storage mgs:input with.attacker may or may not exist
 
-    	self.func("multiplayer/simulate_death", f"""
+    	write_versioned_function("multiplayer/simulate_death", f"""
 # Heal to prevent actual death & Increment death stats
 effect give @s instant_health 1 100 true
 scoreboard players add @s {ns}.mp.deaths 1
@@ -302,7 +302,7 @@ function {ns}:v{version}/multiplayer/enter_death_spectate
 
     	## Shared death-spectate flow (@s = dying player, {ns}.temp_killer may be tagged by the caller)
     	## Used by simulate_death (bullet/OOB deaths) and on_respawn (vanilla deaths)
-    	self.func("multiplayer/enter_death_spectate", f"""
+    	write_versioned_function("multiplayer/enter_death_spectate", f"""
 # Drop the held gun on the ground (pickable for 30s) before anything else, while still holding it
 execute at @s run function {ns}:v{version}/multiplayer/drop_held_weapon
 
@@ -326,7 +326,7 @@ execute at @s run playsound minecraft:entity.player.hurt ambient @s
 
     	## Fire kill signal as attacker + death message (macro function)
     	## @s = victim, $(attacker) = attacker selector from storage
-    	self.func("multiplayer/simulate_death_fire_kill", f"""
+    	write_versioned_function("multiplayer/simulate_death_fire_kill", f"""
 $tag $(attacker) add {ns}.temp_killer
 
 # Self-kill check: if victim(@s) is also tagged as killer, it's self-damage
@@ -343,7 +343,7 @@ tag @s remove {ns}.temp_victim
     	## ── On-death weapon drop ────────────────────────────────────────────────
     	## Drops the gun in the player's selected weapon slot (hotbar.0/1) as a static, no-movement
     	## item_display with a small interaction hitbox that other players can pick up for 30s.
-    	self.func("multiplayer/drop_held_weapon", f"""
+    	write_versioned_function("multiplayer/drop_held_weapon", f"""
 # Only drop a gun held in the selected weapon slot (hotbar.0 or hotbar.1)
 execute store result score #drop_sel {ns}.data run data get entity @s SelectedItemSlot
 execute unless score #drop_sel {ns}.data matches 0..1 run scoreboard players set #drop_sel {ns}.data 0
@@ -369,7 +369,7 @@ tag @n[tag={ns}.mp_drop_new] remove {ns}.mp_drop_new
 """)
 
     	## Pickup (Bookshelf callback, @s = clicking player)
-    	self.func("multiplayer/pickup_dropped_weapon", f"""
+    	write_versioned_function("multiplayer/pickup_dropped_weapon", f"""
 execute unless score @s {ns}.mp.in_game matches 1 run return fail
 tag @s add {ns}.mp_drop_picker
 execute at @e[tag=bs.interaction.target] run function {ns}:v{version}/multiplayer/pickup_collect
@@ -377,7 +377,7 @@ tag @s remove {ns}.mp_drop_picker
 """)
 
     	## Collect: copy the dropped gun item and give it to the picker, then remove the drop
-    	self.func("multiplayer/pickup_collect", f"""
+    	write_versioned_function("multiplayer/pickup_collect", f"""
 execute unless entity @n[tag={ns}.mp_dropped_gun,distance=..3] run return fail
 data modify storage {ns}:temp _give set value {{}}
 data modify storage {ns}:temp _give.Item set from entity @n[tag={ns}.mp_dropped_gun,distance=..3] item
@@ -388,12 +388,12 @@ kill @e[tag=bs.interaction.target]
 """)
 
     	## Give the captured gun to the picker via a zero-delay, owner-locked item entity at their feet
-    	self.func("multiplayer/pickup_give", f"""
+    	write_versioned_function("multiplayer/pickup_give", f"""
 $summon minecraft:item ~ ~0.2 ~ {{Item:$(Item),Owner:$(Owner),PickupDelay:0s,Tags:["{ns}.gm_entity"]}}
 """)
 
     	## Random death message for self-deaths (OOB, environmental)
-    	self.func("multiplayer/random_death_message", f"""
+    	write_versioned_function("multiplayer/random_death_message", f"""
 execute store result score #random_message {ns}.data run random value 1..5
 execute if score #random_message {ns}.data matches 1 run tellraw @a[scores={{{ns}.mp.in_game=1..}}] ["",{{"selector":"@s"}}," ",{{"text":"made a terrible mistake","color":"gray"}}]
 execute if score #random_message {ns}.data matches 2 run tellraw @a[scores={{{ns}.mp.in_game=1..}}] ["",{{"selector":"@s"}}," ",{{"text":"forgot how gravity works","color":"gray"}}]
@@ -403,7 +403,7 @@ execute if score #random_message {ns}.data matches 5 run tellraw @a[scores={{{ns
 """)
 
     	## Random self-kill message (grenade, RPG, own explosion)
-    	self.func("multiplayer/random_self_kill_message", f"""
+    	write_versioned_function("multiplayer/random_self_kill_message", f"""
 execute store result score #random_message {ns}.data run random value 1..5
 execute if score #random_message {ns}.data matches 1 run tellraw @a[scores={{{ns}.mp.in_game=1..}}] ["",{{"selector":"@s"}}," ",{{"text":"blew themselves up","color":"gray"}}]
 execute if score #random_message {ns}.data matches 2 run tellraw @a[scores={{{ns}.mp.in_game=1..}}] ["",{{"selector":"@s"}}," ",{{"text":"got a taste of their own medicine","color":"gray"}}]
@@ -413,7 +413,7 @@ execute if score #random_message {ns}.data matches 5 run tellraw @a[scores={{{ns
 """)
 
     	## Random kill message (uses temp_killer/temp_victim tags, shared by simulate_death + on_respawn)
-    	self.func("multiplayer/random_kill_message", f"""
+    	write_versioned_function("multiplayer/random_kill_message", f"""
 execute store result score #random_message {ns}.data run random value 1..5
 execute if score #random_message {ns}.data matches 1 run tellraw @a[scores={{{ns}.mp.in_game=1..}}] ["",{{"selector":"@a[tag={ns}.temp_killer]"}}," ",{{"text":"eliminated","color":"gray"}}," ",{{"selector":"@a[tag={ns}.temp_victim]"}}]
 execute if score #random_message {ns}.data matches 2 run tellraw @a[scores={{{ns}.mp.in_game=1..}}] ["",{{"selector":"@a[tag={ns}.temp_killer]"}}," ",{{"text":"took down","color":"gray"}}," ",{{"selector":"@a[tag={ns}.temp_victim]"}}]
@@ -423,7 +423,7 @@ execute if score #random_message {ns}.data matches 5 run tellraw @a[scores={{{ns
 """)
 
     	## Kill Tracking (Signal Listener) - now dispatches to gamemode
-    	self.func("multiplayer/on_kill_signal", f"""
+    	write_versioned_function("multiplayer/on_kill_signal", f"""
 # Only process if multiplayer game is active
 execute unless data storage {ns}:multiplayer game{{state:"active"}} run return fail
 
@@ -432,14 +432,14 @@ execute unless data storage {ns}:multiplayer game{{state:"active"}} run return f
 """, tags=[f"{ns}:signals/on_kill"])
 
     	## Check Team Win (shared by TDM, DOM, HP)
-    	self.func("multiplayer/check_team_win", f"""
+    	write_versioned_function("multiplayer/check_team_win", f"""
 execute store result score #score_limit {ns}.data run data get storage {ns}:multiplayer game.score_limit
 execute if score #red {ns}.mp.team >= #score_limit {ns}.data run function {ns}:v{version}/multiplayer/team_wins {{team:"Red"}}
 execute if score #blue {ns}.mp.team >= #score_limit {ns}.data run function {ns}:v{version}/multiplayer/team_wins {{team:"Blue"}}
 """)
 
     	## Team Wins
-    	self.func("multiplayer/team_wins", f"""
+    	write_versioned_function("multiplayer/team_wins", f"""
 # Announce winner
 $tellraw @a ["",{{"text":"🏆 ","color":"gold"}},{{"text":"$(team) Team Wins!","color":"gold","bold":true}}]
 tellraw @a ["",[{{"text":"","color":"gray"}},"  ",{{"text":"Final Score - Red"}},": "],{{"score":{{"name":"#red","objective":"{ns}.mp.team"}},"color":"red"}},[{{"text":"","color":"gray"}}," ",{{"text":"vs Blue"}},": "],{{"score":{{"name":"#blue","objective":"{ns}.mp.team"}},"color":"blue"}}]
@@ -455,7 +455,7 @@ execute if data storage {ns}:multiplayer game{{state:"active"}} run function {ns
 execute if data storage {ns}:multiplayer game{{state:"preparing"}} run function {ns}:v{version}/multiplayer/prep_tick
 """)
 
-    	self.func("multiplayer/game_tick", f"""
+    	write_versioned_function("multiplayer/game_tick", f"""
 {respawn_countdown_tick_lines(ns, "mp", f"{ns}:v{version}/multiplayer/actual_respawn")}
 
 # Dropped-weapon lifetime: count down and remove expired drops (display + interaction together)
@@ -492,21 +492,21 @@ function {ns}:v{version}/shared/maps/call_tick_script_at_base
 """)
 
     	## perks/tracker_tick - One pass over all live players: drop a footprint at each one's feet
-    	self.func("multiplayer/perks/tracker_tick", f"""
+    	write_versioned_function("multiplayer/perks/tracker_tick", f"""
 execute as @a[scores={{{ns}.mp.in_game=1}},gamemode=!spectator] at @s run function {ns}:v{version}/multiplayer/perks/tracker_footprint
 """)
 
     	## perks/tracker_footprint - @s = the tracked player (at their position);
     	## the footprint is forced to enemy Tracker holders only, via a single team-filtered selector.
     	## (Team modes: opposite team. FFA/team 0: every other Tracker holder, excluded via distance.)
-    	self.func("multiplayer/perks/tracker_footprint", f"""
+    	write_versioned_function("multiplayer/perks/tracker_footprint", f"""
 execute if score @s {ns}.mp.team matches 1 run particle minecraft:dust{{color:[0.95,0.85,0.2],scale:0.8}} ~ ~0.1 ~ 0.15 0.02 0.15 0 3 force @a[scores={{{ns}.special.tracker=1..,{ns}.mp.team=2}}]
 execute if score @s {ns}.mp.team matches 2 run particle minecraft:dust{{color:[0.95,0.85,0.2],scale:0.8}} ~ ~0.1 ~ 0.15 0.02 0.15 0 3 force @a[scores={{{ns}.special.tracker=1..,{ns}.mp.team=1}}]
 execute if score @s {ns}.mp.team matches 0 run particle minecraft:dust{{color:[0.95,0.85,0.2],scale:0.8}} ~ ~0.1 ~ 0.15 0.02 0.15 0 3 force @a[scores={{{ns}.special.tracker=1..}},distance=0.1..]
 """)
 
     	## Timer display (actionbar timer in minutes:seconds for all in-game players)
-    	self.func("multiplayer/timer_display", f"""
+    	write_versioned_function("multiplayer/timer_display", f"""
 # Convert ticks to seconds
 execute store result score #timer_sec {ns}.data run scoreboard players get #mp_timer {ns}.data
 scoreboard players operation #timer_sec {ns}.data /= #20 {ns}.data
@@ -527,7 +527,7 @@ execute if data storage {ns}:multiplayer game{{gamemode:"ffa"}} run function {ns
 """)
 
     	## Time up → determine winner
-    	self.func("multiplayer/time_up", f"""
+    	write_versioned_function("multiplayer/time_up", f"""
 # FFA: player with most kills wins
 execute if data storage {ns}:multiplayer game{{gamemode:"ffa"}} run function {ns}:v{version}/multiplayer/ffa_time_up
 
@@ -538,7 +538,7 @@ execute unless data storage {ns}:multiplayer game{{gamemode:"ffa"}} if score #re
 """)
 
     	## FFA time up: find player with most kills
-    	self.func("multiplayer/ffa_time_up", f"""
+    	write_versioned_function("multiplayer/ffa_time_up", f"""
 tellraw @a [{MGS_TAG},{{"text":"Time's up!","color":"gold"}}]
 
 # Store max kills into a score
@@ -550,13 +550,13 @@ execute as @a[scores={{{ns}.mp.in_game=1}}] if score @s {ns}.mp.kills = #max_kil
 """)
 
     	## Game draw
-    	self.func("multiplayer/game_draw", f"""
+    	write_versioned_function("multiplayer/game_draw", f"""
 tellraw @a ["",{{"text":"🤝 ","color":"gold"}},{{"text":"Draw!","color":"gold","bold":true}}]
 function {ns}:v{version}/multiplayer/stop
 """)
 
     	## Boundary check (run as each in-game player at their position)
-    	self.func("multiplayer/check_bounds", f"""
+    	write_versioned_function("multiplayer/check_bounds", f"""
 # Get player position as integers
 data modify storage {ns}:temp _player_pos set from entity @s Pos
 execute store result score @s {ns}.mp.bx run data get storage {ns}:temp _player_pos[0]
@@ -574,7 +574,7 @@ execute if score @s {ns}.mp.bz > #bound_z2 {ns}.data run return run function {ns
 
     	## Per-player boundary + OOB enforcement (one scan in game_tick dispatches this). @s = a playing
     	## player. Merges the former two separate game_tick passes over the same selector.
-    	self.func("multiplayer/enforce_bounds", f"""
+    	write_versioned_function("multiplayer/enforce_bounds", f"""
 # Coordinate bounds (only when the map defines a boundary box). May eliminate @s -> spectator.
 execute if score #mp_has_boundary {ns}.data matches 1 run function {ns}:v{version}/multiplayer/check_bounds
 
@@ -585,7 +585,7 @@ execute if entity @s[gamemode=!spectator] if entity @e[tag={ns}.oob_point,distan
 """)
 
     	## Environmental kill: out of boundaries or near an OOB marker (simulate death, never /kill)
-    	self.func("multiplayer/bounds_kill", f"""
+    	write_versioned_function("multiplayer/bounds_kill", f"""
 # Clear attacker input (environmental death) and simulate death
 data modify storage {ns}:input with set value {{}}
 function {ns}:v{version}/multiplayer/simulate_death
@@ -594,7 +594,7 @@ function {ns}:v{version}/multiplayer/simulate_death
     	# Spawn Point Markers ───────────────────────────────────────
 
     	## Summon spawn markers from map data (called at game start)
-    	self.func("multiplayer/summon_spawns", f"""
+    	write_versioned_function("multiplayer/summon_spawns", f"""
 # Red spawns
 data modify storage {ns}:temp _spawn_iter set from storage {ns}:multiplayer game.map.spawning_points.red
 data modify storage {ns}:temp _spawn_tag set value "{ns}.spawn_red"
@@ -611,7 +611,7 @@ data modify storage {ns}:temp _spawn_tag set value "{ns}.spawn_general"
 execute if data storage {ns}:temp _spawn_iter[0] run function {ns}:v{version}/multiplayer/summon_spawn_iter
 """)
 
-    	self.func("multiplayer/summon_spawn_iter", f"""
+    	write_versioned_function("multiplayer/summon_spawn_iter", f"""
 # Read relative coords
 execute store result score #sx {ns}.data run data get storage {ns}:temp _spawn_iter[0][0]
 execute store result score #sy {ns}.data run data get storage {ns}:temp _spawn_iter[0][1]
@@ -643,7 +643,7 @@ execute if data storage {ns}:temp _spawn_iter[0] run function {ns}:v{version}/mu
     	# Smart Spawn Selection ─────────────────────────────────────
 
     	## TP all players to spawn points at game start
-    	self.func("multiplayer/tp_all_to_spawns", f"""
+    	write_versioned_function("multiplayer/tp_all_to_spawns", f"""
 # FFA: everyone uses general spawns
 execute if data storage {ns}:multiplayer game{{gamemode:"ffa"}} as @a[scores={{{ns}.mp.in_game=1}}] at @s run function {ns}:v{version}/multiplayer/pick_spawn {{type:"general"}}
 
@@ -659,7 +659,7 @@ tag @e[tag={ns}.spawn_used] remove {ns}.spawn_used
 """)
 
     	## Pick best spawn: find spawn marker farthest from any enemy player (run as player)
-    	self.func("multiplayer/pick_spawn", f"""
+    	write_versioned_function("multiplayer/pick_spawn", f"""
 # Mark this player as needing a spawn
 tag @s add {ns}.spawn_pending
 
@@ -710,13 +710,13 @@ tag @a[tag={ns}.spawn_enemy] remove {ns}.spawn_enemy
     	## Drop a contested candidate marker and keep #mp_cand_count in sync (@s = the spawn marker).
     	## The tag is always present here (we only iterate spawn_candidate markers), so the decrement
     	## is exactly 1:1 with a removal — letting pick_spawn's fallback test a score, not scan @e.
-    	self.func("multiplayer/uncontest_spawn", f"""
+    	write_versioned_function("multiplayer/uncontest_spawn", f"""
 tag @s remove {ns}.spawn_candidate
 scoreboard players remove #mp_cand_count {ns}.data 1
 """)
 
     	## Pick random spawn (no enemies — skip distance calc entirely)
-    	self.func("multiplayer/pick_spawn_random", f"""
+    	write_versioned_function("multiplayer/pick_spawn_random", f"""
 execute as @n[tag={ns}.spawn_candidate,sort=random] run function {ns}:v{version}/multiplayer/tp_to_spawn
 
 # Clean up
@@ -726,7 +726,7 @@ tag @a[tag={ns}.spawn_enemy] remove {ns}.spawn_enemy
 """)
 
     	## Calculate distance² from spawn marker to nearest enemy player (run as marker at marker)
-    	self.func("multiplayer/spawn_calc_dist", f"""
+    	write_versioned_function("multiplayer/spawn_calc_dist", f"""
 # Get marker position
 execute store result score #mx {ns}.data run data get entity @s Pos[0]
 execute store result score #my {ns}.data run data get entity @s Pos[1]
@@ -755,7 +755,7 @@ scoreboard players operation @s {ns}.data = #mx {ns}.data
 """)
 
     	## TP player to chosen spawn marker (run as the marker)
-    	self.func("multiplayer/tp_to_spawn", f"""
+    	write_versioned_function("multiplayer/tp_to_spawn", f"""
 # Store marker position and yaw for macro
 execute store result storage {ns}:temp _tp.x double 1 run data get entity @s Pos[0]
 execute store result storage {ns}:temp _tp.y double 1 run data get entity @s Pos[1]
@@ -773,7 +773,7 @@ execute unless data storage {ns}:multiplayer game{{state:"active"}} run tag @s a
     	self.write_tp_player_at()
 
     	## Respawn TP: use general spawns on respawn to prevent spawn camping (run as the respawning player)
-    	self.func("multiplayer/respawn_tp", f"""
+    	write_versioned_function("multiplayer/respawn_tp", f"""
 # Try general spawns first (prevents spawn camping)
 execute if entity @e[tag={ns}.spawn_point,tag={ns}.spawn_general] run return run function {ns}:v{version}/multiplayer/pick_spawn {{type:"general"}}
 
@@ -798,14 +798,14 @@ execute if score @s {ns}.mp.team matches 2 run return run function {ns}:v{versio
     	sb_spacer = '" "'
 
     	## Team sidebar (TDM/SND) — takes $(title) macro arg
-    	self.func("multiplayer/create_sidebar_team", f"""
+    	write_versioned_function("multiplayer/create_sidebar_team", f"""
 scoreboard players reset * {ns}.sidebar
 $function #bs.sidebar:create {{objective:"{ns}.sidebar",display_name:{{text:"$(title)",color:"gold",bold:true}},contents:[{sb_timer},{sb_spacer},{sb_red},{sb_blue},{sb_spacer},{sb_limit}]}}
 scoreboard objectives setdisplay sidebar {ns}.sidebar
 """)
 
     	## FFA sidebar — ranked players with kills using bs.sidebar
-    	self.func("multiplayer/create_sidebar_ffa", f"""
+    	write_versioned_function("multiplayer/create_sidebar_ffa", f"""
 function {ns}:v{version}/multiplayer/refresh_sidebar_ffa
 """)
 
@@ -836,10 +836,10 @@ data modify storage {ns}:temp ffa_sb append value [[{{text:" {i}. ",color:"gold"
 # Build
 function {ns}:v{version}/multiplayer/build_sidebar_ffa with storage {ns}:temp
 """
-    	self.func("multiplayer/refresh_sidebar_ffa", ffa_rank_code)
+    	write_versioned_function("multiplayer/refresh_sidebar_ffa", ffa_rank_code)
 
     	## FFA sidebar build (macro function)
-    	self.func("multiplayer/build_sidebar_ffa", f"""
+    	write_versioned_function("multiplayer/build_sidebar_ffa", f"""
 tag @a remove {ns}.ffa_candidate
 scoreboard players reset * {ns}.sidebar
 $function #bs.sidebar:create {{objective:"{ns}.sidebar",display_name:{{text:"Free For All",color:"gold",bold:true}},contents:$(ffa_sb)}}
@@ -850,14 +850,14 @@ scoreboard objectives setdisplay sidebar {ns}.sidebar
     	# Point status display helper (0=⚪, 1=🔴, 2=🔵) — updated each tick via refresh
     	# We build DOM point lines that reference #dom_owner_X scores
     	# Since sidebar can't do conditionals, we use a helper function to rebuild sidebar each score_tick
-    	self.func("multiplayer/create_sidebar_dom", f"""
+    	write_versioned_function("multiplayer/create_sidebar_dom", f"""
 function {ns}:v{version}/multiplayer/refresh_sidebar_dom
 scoreboard objectives setdisplay sidebar {ns}.sidebar
 """)
 
     	# DOM sidebar refresh: rebuilds the sidebar content with current point ownership
     	# Called every score_tick (every 5 seconds) and on point captures
-    	self.func("multiplayer/refresh_sidebar_dom", f"""
+    	write_versioned_function("multiplayer/refresh_sidebar_dom", f"""
 # Build point status strings based on ownership scores
 # Zone A
 execute if score #dom_owner_a {ns}.data matches 0 run data modify storage {ns}:temp dom_sb.a set value '[" ",{{"text":"A: ⚪ Neutral","color":"gray"}}]'
@@ -878,14 +878,14 @@ execute if score #dom_owner_c {ns}.data matches 2 run data modify storage {ns}:t
 function {ns}:v{version}/multiplayer/build_sidebar_dom with storage {ns}:temp dom_sb
 """)
 
-    	self.func("multiplayer/build_sidebar_dom", f"""
+    	write_versioned_function("multiplayer/build_sidebar_dom", f"""
 scoreboard players reset * {ns}.sidebar
 $function #bs.sidebar:create {{objective:"{ns}.sidebar",display_name:{{text:"Domination",color:"gold",bold:true}},contents:[{sb_timer},{sb_spacer},{sb_red},{sb_blue},{sb_spacer},$(a),$(b),$(c),{sb_spacer},{sb_limit}]}}
 scoreboard objectives setdisplay sidebar {ns}.sidebar
 """)
 
     	## Hardpoint sidebar — shows team scores + controlling team + time to move
-    	self.func("multiplayer/create_sidebar_hp", f"""
+    	write_versioned_function("multiplayer/create_sidebar_hp", f"""
 scoreboard players reset * {ns}.sidebar
 function #bs.sidebar:create {{objective:"{ns}.sidebar",display_name:{{text:"Hardpoint",color:"gold",bold:true}},contents:[{sb_timer},{sb_spacer},{sb_red},{sb_blue},{sb_spacer},[{{text:" Zone: ",color:"dark_purple"}},{{score:{{name:"#hp_rotate_sec",objective:"{ns}.data"}},color:"white"}},{{text:"s left",color:"gray"}}],{sb_spacer},{sb_limit}]}}
 scoreboard objectives setdisplay sidebar {ns}.sidebar
@@ -893,21 +893,21 @@ scoreboard objectives setdisplay sidebar {ns}.sidebar
 
     	# Shooting Block During Prep
     	## Prepend to right_click: block shooting during prep phase
-    	self.func("player/right_click", f"""
+    	write_versioned_function("player/right_click", f"""
 # Block shooting during multiplayer prep phase
 execute if score @s {ns}.mp.in_game matches 1 if data storage {ns}:multiplayer game{{state:"preparing"}} run return run scoreboard players set @s {ns}.pending_clicks 0
 """, prepend=True)
 
     	# Prep Phase
     	## Prep tick: during 10s warmup, detect class changes and apply immediately
-    	self.func("multiplayer/prep_tick", f"""
+    	write_versioned_function("multiplayer/prep_tick", f"""
 # Check for class changes and apply immediately
 execute as @a[scores={{{ns}.mp.in_game=1}}] unless score @s {ns}.mp.class = @s {ns}.mp.prev_class unless score @s {ns}.mp.class matches 0 at @s run function {ns}:v{version}/multiplayer/apply_class
 execute as @a[scores={{{ns}.mp.in_game=1}}] run scoreboard players operation @s {ns}.mp.prev_class = @s {ns}.mp.class
 """)
 
     	## End prep: unfreeze players, transition to active
-    	self.func("multiplayer/end_prep", f"""
+    	write_versioned_function("multiplayer/end_prep", f"""
 {end_prep_transition_lines(ns, "multiplayer", "mp")}
 
 # Call map start scripts (state is now active, chunks had time to load)

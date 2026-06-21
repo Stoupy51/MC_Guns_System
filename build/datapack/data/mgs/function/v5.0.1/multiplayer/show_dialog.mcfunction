@@ -3,7 +3,8 @@
 #
 # @executed	as @e[type=player,sort=random] & at @s
 #
-# @within	mgs:v5.0.1/multiplayer/select_class with storage mgs:temp
+# @within	mgs:v5.0.1/player/config/menu with storage mgs:temp
+#			mgs:v5.0.1/multiplayer/select_class with storage mgs:temp
 #			mgs:v5.0.1/multiplayer/editor/hub with storage mgs:temp
 #			mgs:v5.0.1/multiplayer/editor/show_primary_dialog_macro with storage mgs:temp
 #			mgs:v5.0.1/multiplayer/editor/show_secondary_pistol_dialog_macro with storage mgs:temp

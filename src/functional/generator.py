@@ -13,10 +13,8 @@ from abc import ABC, abstractmethod
 
 from stewbeet import (
     Mem,
-    write_function,
     write_load_file,
     write_tick_file,
-    write_versioned_function,
 )
 
 
@@ -38,25 +36,6 @@ class McfunctionGenerator(ABC):
     def version(self) -> str:
         """ The project version string (e.g. ``"5.0.1"``), read lazily from the context. """
         return Mem.ctx.project_version
-
-    def func(self, path: str, body: str, **kwargs: object) -> None:
-        """ Write a versioned function at ``<ns>:v<version>/<path>``.
-
-        Thin wrapper around :func:`stewbeet.write_versioned_function`.
-
-        Args:
-            path  (str): Versioned function path (without namespace/version prefix).
-            body  (str): The mcfunction body.
-            kwargs: Forwarded to ``write_versioned_function`` (e.g. ``prepend``, ``tags``).
-        """
-        write_versioned_function(path, body, **kwargs)  # type: ignore[arg-type]
-
-    def raw_function(self, path: str, body: str, **kwargs: object) -> None:
-        """ Write a non-versioned function at the exact ``path`` given (e.g. ``"mgs:config"``).
-
-        Thin wrapper around :func:`stewbeet.write_function`.
-        """
-        write_function(path, body, **kwargs)  # type: ignore[arg-type]
 
     def load(self, body: str, **kwargs: object) -> None:
         """ Append (or prepend) lines to the datapack load function. """
