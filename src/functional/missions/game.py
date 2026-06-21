@@ -8,6 +8,7 @@
 from stewbeet import Mem, write_tag, write_versioned_function
 
 from ..core.respawn_countdown import respawn_countdown_tick_lines
+from ..game_mode import GameMode
 from ..helpers import (
 	MGS_TAG,
 	end_prep_transition_lines,
@@ -19,7 +20,6 @@ from ..helpers import (
 	regen_enable_lines,
 	schedule_preload_complete_line,
 )
-from ..game_mode import GameMode
 
 
 class MissionsMode(GameMode):

@@ -5,6 +5,7 @@
 # and back_group_id is its back-room spawn group; opening a door unlocks both groups' zombie spawns.
 
 from stewbeet import Mem, write_load_file, write_versioned_function
+
 from ..helpers import MGS_TAG
 from .common import deny_not_enough_points_body, game_active_guard_cmd
 

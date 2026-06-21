@@ -87,8 +87,10 @@ def pitch_shift(audio: AudioSegment, semitones: float) -> AudioSegment:
         return AudioSegment.from_ogg(dst)
     finally:
         for p in (src, dst):
-            try: os.unlink(p)
-            except FileNotFoundError: pass
+            try:
+                os.unlink(p)
+            except FileNotFoundError:
+                pass
 
 
 def apply_pap_processing(audio: AudioSegment) -> AudioSegment:
@@ -105,8 +107,10 @@ def apply_pap_processing(audio: AudioSegment) -> AudioSegment:
 
     # 3 -- Layer pew on top of gun
     total = max(len(gun), len(pew))
-    if len(gun) < total: gun = gun + AudioSegment.silent(total - len(gun))
-    if len(pew) < total: pew = pew + AudioSegment.silent(total - len(pew))
+    if len(gun) < total:
+        gun = gun + AudioSegment.silent(total - len(gun))
+    if len(pew) < total:
+        pew = pew + AudioSegment.silent(total - len(pew))
     result = gun.overlay(pew)
 
     # 4 -- Normalize

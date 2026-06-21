@@ -6,7 +6,6 @@ from stewbeet import ItemModifier, Mem, set_json_encoder, write_versioned_functi
 
 from ...config.stats import CAN_AUTO, CAN_BURST, FIRE_MODE, SWITCH, WEAPON_ID
 
-
 # Main function
 
 

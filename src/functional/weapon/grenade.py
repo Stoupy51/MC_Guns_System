@@ -18,7 +18,6 @@ from ...config.stats import (
     REMAINING_BULLETS,
 )
 
-
 # Main function
 
 
