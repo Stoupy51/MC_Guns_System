@@ -21,12 +21,16 @@ scoreboard players operation #turret_tid mgs.data = @s mgs.zb.trap.id
 # then pick the one nearest the turret center
 $execute positioned ~-$(rx) ~-$(ry) ~-$(rz) as @e[tag=mgs.zombie_round,tag=!mgs.zb_rising,dx=$(sx),dy=$(sy),dz=$(sz)] run tag @s add mgs._turret_cand
 execute as @e[tag=mgs._turret_cand] run function mgs:v5.0.1/zombies/traps/turret_check_los
-execute as @e[tag=mgs._turret_visible,sort=nearest,limit=1] run tag @s add mgs._turret_target
+# Capture, via the tag command's success, whether a target was selected — avoids the global
+# `unless entity @e[tag=mgs._turret_target]` scan below. limit=1 means this runs at most once;
+# #turret_has_target stays 0 if there was no visible zombie (the body never executes).
+scoreboard players set #turret_has_target mgs.data 0
+execute as @e[tag=mgs._turret_visible,sort=nearest,limit=1] store success score #turret_has_target mgs.data run tag @s add mgs._turret_target
 tag @e[tag=mgs._turret_cand] remove mgs._turret_cand
 tag @e[tag=mgs._turret_visible] remove mgs._turret_visible
 
 # No visible zombie in range: nothing to aim at or shoot
-execute unless entity @e[tag=mgs._turret_target] run return 0
+execute if score #turret_has_target mgs.data matches 0 run return 0
 
 # Aim this turret's head display at the target (yaw + pitch via facing entity, smoothed by teleport_duration)
 execute as @e[tag=mgs.trap_head,predicate=mgs:v5.0.1/zombies/traps/turret_id_match] at @s run tp @s ~ ~ ~ facing entity @n[tag=mgs._turret_target] eyes

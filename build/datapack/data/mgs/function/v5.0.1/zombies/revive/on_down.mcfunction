@@ -70,7 +70,7 @@ tag @e[tag=mgs.downed_cam_new] remove mgs.downed_cam_new
 
 # Mount the spectator player into the camera entity (locks them in place)
 scoreboard players operation #my_downed_id mgs.data = @s mgs.zb.downed_id
-execute as @e[tag=mgs.downed_cam] if score @s mgs.zb.downed_id = #my_downed_id mgs.data run tag @s add mgs.downed_mine_temp
+execute as @e[tag=mgs.downed_cam,predicate=mgs:v5.0.1/zombies/revive/downed_id_match] run tag @s add mgs.downed_mine_temp
 ride @s mount @n[tag=mgs.downed_mine_temp]
 tag @e[tag=mgs.downed_mine_temp] remove mgs.downed_mine_temp
 

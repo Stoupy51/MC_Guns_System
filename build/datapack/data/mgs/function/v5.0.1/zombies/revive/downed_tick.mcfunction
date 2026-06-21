@@ -9,47 +9,33 @@
 # Decrement bleed timer
 scoreboard players remove @s mgs.zb.bleed 1
 
-# Third-person view: teleport camera item_display to 3 blocks behind and 2 above the mannequin
-# Player rides the item_display, so camera follows it automatically
+# Identify THIS player's downed entities for the id-matching predicate, then tag the mannequin ONCE
+# as downed_mine_temp. Every per-mannequin command below reuses that tag (or a single dispatch into
+# move_mannequin) instead of re-selecting the mannequin ~11x per tick.
 scoreboard players operation #my_downed_id mgs.data = @s mgs.zb.downed_id
-execute as @e[tag=mgs.downed_mannequin] if score @s mgs.zb.downed_id = #my_downed_id mgs.data run tag @s add mgs.downed_mine_temp
-execute as @n[tag=mgs.downed_mine_temp] at @s as @e[tag=mgs.downed_cam] if score @s mgs.zb.downed_id = #my_downed_id mgs.data at @n[tag=mgs.downed_mine_temp] run tp @s ^ ^2 ^-3
+tag @e[tag=mgs.downed_mannequin,predicate=mgs:v5.0.1/zombies/revive/downed_id_match] add mgs.downed_mine_temp
+
+# Read crawl inputs into scratch scores while @s is still the player (predicate self-checks on @s,
+# no entity scan). These drive the mannequin's local velocity inside move_mannequin.
+scoreboard players set #crawl_vx mgs.data 0
+scoreboard players set #crawl_vz mgs.data 0
+execute if entity @s[predicate=mgs:v5.0.1/input/forward]  run scoreboard players set #crawl_vz mgs.data 60
+execute if entity @s[predicate=mgs:v5.0.1/input/backward] run scoreboard players set #crawl_vz mgs.data -60
+execute if entity @s[predicate=mgs:v5.0.1/input/left]     run scoreboard players set #crawl_vx mgs.data 60
+execute if entity @s[predicate=mgs:v5.0.1/input/right]    run scoreboard players set #crawl_vx mgs.data -60
+
+# Third-person camera: position the cam item_display 2 up / 3 behind the mannequin (using the
+# mannequin's CURRENT rotation, i.e. before this tick's yaw sync — same order as before), then
+# re-mount the player onto the cam so the view follows it.
+execute at @n[tag=mgs.downed_mine_temp] as @e[tag=mgs.downed_cam,predicate=mgs:v5.0.1/zombies/revive/downed_id_match] run tp @s ^ ^2 ^-3
+ride @s mount @n[tag=mgs.downed_cam,predicate=mgs:v5.0.1/zombies/revive/downed_id_match]
+
+# All remaining per-mannequin work (yaw sync, crawl motion, HUD anchor) in ONE pass over the tagged
+# mannequin instead of re-selecting it for each command.
+execute as @n[tag=mgs.downed_mine_temp] at @s run function mgs:v5.0.1/zombies/revive/move_mannequin
+
+# Done with the per-tick mannequin tag
 tag @e[tag=mgs.downed_mine_temp] remove mgs.downed_mine_temp
-
-# Re-mount player onto camera entity every tick (ensures no accidental dismount)
-scoreboard players operation #my_downed_id mgs.data = @s mgs.zb.downed_id
-execute as @e[tag=mgs.downed_cam] if score @s mgs.zb.downed_id = #my_downed_id mgs.data run tag @s add mgs.downed_mine_temp
-ride @s mount @n[tag=mgs.downed_mine_temp]
-tag @e[tag=mgs.downed_mine_temp] remove mgs.downed_mine_temp
-
-# Sync mannequin yaw from player look direction — use downed_id to target correct mannequin
-execute as @e[tag=mgs.downed_mannequin] if score @s mgs.zb.downed_id = #my_downed_id mgs.data run tag @s add mgs.downed_mine_temp
-execute as @n[tag=mgs.downed_mine_temp] run data modify entity @s Rotation[0] set from entity @p[tag=mgs.downed_spectator] Rotation[0]
-execute as @n[tag=mgs.downed_mine_temp] run data modify entity @s Rotation[1] set value 0.0f
-tag @e[tag=mgs.downed_mine_temp] remove mgs.downed_mine_temp
-
-# Move mannequin using Bookshelf motion (smooth, physics-based, no tp stuttering)
-# Zero out XZ velocity first, then accumulate based on active inputs.
-# Y gets a constant downward pull: set_motion overrides vanilla gravity every tick,
-# so without this the mannequin would float when crawling off a ledge.
-execute as @e[tag=mgs.downed_mannequin] if score @s mgs.zb.downed_id = #my_downed_id mgs.data run scoreboard players set @s bs.vel.x 0
-execute as @e[tag=mgs.downed_mannequin] if score @s mgs.zb.downed_id = #my_downed_id mgs.data run scoreboard players set @s bs.vel.y -400
-execute as @e[tag=mgs.downed_mannequin] if score @s mgs.zb.downed_id = #my_downed_id mgs.data run scoreboard players set @s bs.vel.z 0
-
-# Forward/backward: local +Z / -Z (scale: 80 = 0.08 blocks/tick at scale:0.001)
-execute if entity @s[predicate=mgs:v5.0.1/input/forward] as @e[tag=mgs.downed_mannequin] if score @s mgs.zb.downed_id = #my_downed_id mgs.data run scoreboard players set @s bs.vel.z 60
-execute if entity @s[predicate=mgs:v5.0.1/input/backward] as @e[tag=mgs.downed_mannequin] if score @s mgs.zb.downed_id = #my_downed_id mgs.data run scoreboard players set @s bs.vel.z -60
-
-# Left/right: local +X / -X
-execute if entity @s[predicate=mgs:v5.0.1/input/left] as @e[tag=mgs.downed_mannequin] if score @s mgs.zb.downed_id = #my_downed_id mgs.data run scoreboard players set @s bs.vel.x 60
-execute if entity @s[predicate=mgs:v5.0.1/input/right] as @e[tag=mgs.downed_mannequin] if score @s mgs.zb.downed_id = #my_downed_id mgs.data run scoreboard players set @s bs.vel.x -60
-
-# Convert local velocity (relative to mannequin facing) to canonical (world), then apply motion
-execute as @e[tag=mgs.downed_mannequin] if score @s mgs.zb.downed_id = #my_downed_id mgs.data at @s run function #bs.move:local_to_canonical
-execute as @e[tag=mgs.downed_mannequin] if score @s mgs.zb.downed_id = #my_downed_id mgs.data run function #bs.move:set_motion {scale:0.001}
-
-# Keep HUD text_display anchored 2 blocks above the mannequin
-execute as @n[tag=mgs.downed_mannequin] at @s run tp @n[tag=mgs.downed_hud] ~ ~2 ~
 
 # Check for revivers (alive non-downed players within range of mannequin)
 scoreboard players set #zb_reviving mgs.data 0

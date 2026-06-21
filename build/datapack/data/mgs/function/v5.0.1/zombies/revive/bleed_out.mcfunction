@@ -17,7 +17,7 @@ tp @n[tag=mgs.downed_hud] ~ -10000 ~
 tag @n[tag=mgs.downed_mannequin] remove mgs.downed_mannequin
 tag @n[tag=mgs.downed_hud] remove mgs.downed_hud
 scoreboard players operation #my_downed_id mgs.data = @s mgs.zb.downed_id
-execute as @e[tag=mgs.downed_cam] if score @s mgs.zb.downed_id = #my_downed_id mgs.data run kill @s
+execute as @e[tag=mgs.downed_cam,predicate=mgs:v5.0.1/zombies/revive/downed_id_match] run kill @s
 
 # Dismount then enter full spectator mode to watch until next round
 ride @s dismount

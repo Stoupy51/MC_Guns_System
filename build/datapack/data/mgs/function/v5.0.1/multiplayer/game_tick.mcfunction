@@ -27,11 +27,9 @@ execute if score #tick_mod mgs.data matches 0 run function mgs:v5.0.1/multiplaye
 # Time's up
 execute if score #mp_timer mgs.data matches ..0 run function mgs:v5.0.1/multiplayer/time_up
 
-# Boundary enforcement (skip players with respawn protection)
-execute if score #mp_has_boundary mgs.data matches 1 as @e[type=player,scores={mgs.mp.in_game=1,mgs.mp.death_count=0},gamemode=!creative,gamemode=!spectator] at @s run function mgs:v5.0.1/multiplayer/check_bounds
-
-# Out-of-bounds check (skip players with respawn protection)
-execute as @e[type=player,scores={mgs.mp.in_game=1,mgs.mp.death_count=0},gamemode=!creative,gamemode=!spectator] at @s if entity @e[tag=mgs.oob_point,distance=..5] run function mgs:v5.0.1/multiplayer/bounds_kill
+# Boundary + out-of-bounds enforcement in ONE pass over the playing-players selector (was two
+# scans over the identical, multi-filter selector). Skips respawn-protected/non-playing players.
+execute as @e[type=player,scores={mgs.mp.in_game=1,mgs.mp.death_count=0},gamemode=!creative,gamemode=!spectator] at @s run function mgs:v5.0.1/multiplayer/enforce_bounds
 
 # Gamemode tick dispatch
 execute if data storage mgs:multiplayer game{gamemode:"ffa"} run function mgs:v5.0.1/multiplayer/gamemodes/ffa/tick
