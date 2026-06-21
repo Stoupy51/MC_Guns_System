@@ -219,49 +219,36 @@ scoreboard players set @s {ns}.player.config 0
     ## Toggle functions (hitmarker, damage_debug)
     for score_name, display_name in [("hitmarker", "Hitmarker Sound"), ("damage_debug", "Damage Debug")]:
         write_versioned_function(f"player/config/toggle_{score_name}", f"""
-# If currently OFF (0), turn ON (1)
+# Flip the toggle: #toggle = 1 when it was OFF (so we turn it ON), 0 when it was already ON
 execute store success score #toggle {ns}.data unless score @s {ns}.player.{score_name} matches 1
 execute if score #toggle {ns}.data matches 1 run scoreboard players set @s {ns}.player.{score_name} 1
-execute if score #toggle {ns}.data matches 1 run return run tellraw @s [{MGS_TAG},["",{{"text":"{display_name}"}},": "],{{"text":"ON","color":"green"}},{{"text":" ✔","color":"green"}}]
+execute unless score #toggle {ns}.data matches 1 run scoreboard players set @s {ns}.player.{score_name} 0
+execute if score #toggle {ns}.data matches 1 run tellraw @s [{MGS_TAG},["",{{"text":"{display_name}"}},": "],{{"text":"ON","color":"green"}},{{"text":" ✔","color":"green"}}]
+execute unless score #toggle {ns}.data matches 1 run tellraw @s [{MGS_TAG},["",{{"text":"{display_name}"}},": "],{{"text":"OFF","color":"red"}},{{"text":" ✘","color":"red"}}]
 
-# Otherwise it was ON, turn OFF
-scoreboard players set @s {ns}.player.{score_name} 0
-tellraw @s [{MGS_TAG},["",{{"text":"{display_name}"}},": "],{{"text":"OFF","color":"red"}},{{"text":" ✘","color":"red"}}]
+# Reopen the settings dialog so the updated state is reflected immediately
+function {ns}:v{version}/player/config/menu
 """)
 
-    ## Player config menu (clickable chat buttons)
-    from .helpers import btn
+    ## Player config menu — a quick-action dialog (built per-player so toggle states show live).
+    ## Replaces the old clickable-chat menu: /trigger set 1 now opens this dialog instead.
+    write_versioned_function("player/config/menu", f"""
+# Build the Player Settings dialog in storage, then show it via /dialog
+data modify storage {ns}:temp dialog set value {{type:"minecraft:multi_action",title:{{text:"🎮 Player Settings",color:"gold",bold:true}},body:[{{type:"minecraft:plain_message",contents:{{text:"Toggle your personal settings","color":"gray"}}}}],actions:[],columns:1,after_action:"close",exit_action:{{label:{{translate:"gui.done"}}}}}}
 
-    sep = '{"text":"=======================================","color":"dark_gray"}'
-    title = '["",[{"text":"","color":"gold","bold":true},"       🎮 ",{"text":"Player Settings"}," 🎮"]]'
+# Hitmarker Sound toggle (label reflects the current ON/OFF state)
+execute if score @s {ns}.player.hitmarker matches 1 run data modify storage {ns}:temp dialog.actions append value {{label:["",{{text:"Hitmarker Sound: "}},{{text:"ON ✔",color:"green"}}],tooltip:{{text:"Toggle hitmarker sound on entity hit"}},action:{{type:"run_command",command:"/trigger {ns}.player.config set 2"}}}}
+execute unless score @s {ns}.player.hitmarker matches 1 run data modify storage {ns}:temp dialog.actions append value {{label:["",{{text:"Hitmarker Sound: "}},{{text:"OFF ✘",color:"red"}}],tooltip:{{text:"Toggle hitmarker sound on entity hit"}},action:{{type:"run_command",command:"/trigger {ns}.player.config set 2"}}}}
 
-    # Hitmarker toggle button
-    hm_btn = btn("Toggle", f"/trigger {ns}.player.config set 2", "yellow", "Toggle hitmarker Sound on entity hit")
-    hm_on  = f'["  ",{{"text":"Hitmarker Sound"}},": ",{{"text":"ON","color":"green"}},{{"text":" ✔ ","color":"green"}},{hm_btn}]'
-    hm_off = f'["  ",{{"text":"Hitmarker Sound"}},": ",{{"text":"OFF","color":"red"}},{{"text":" ✘","color":"red"}},{hm_btn}]'
+# Damage Debug toggle
+execute if score @s {ns}.player.damage_debug matches 1 run data modify storage {ns}:temp dialog.actions append value {{label:["",{{text:"Damage Debug: "}},{{text:"ON ✔",color:"green"}}],tooltip:{{text:"Toggle damage numbers in chat"}},action:{{type:"run_command",command:"/trigger {ns}.player.config set 3"}}}}
+execute unless score @s {ns}.player.damage_debug matches 1 run data modify storage {ns}:temp dialog.actions append value {{label:["",{{text:"Damage Debug: "}},{{text:"OFF ✘",color:"red"}}],tooltip:{{text:"Toggle damage numbers in chat"}},action:{{type:"run_command",command:"/trigger {ns}.player.config set 3"}}}}
 
-    # Damage Debug toggle button
-    dd_btn = btn("Toggle", f"/trigger {ns}.player.config set 3", "yellow", "Toggle damage numbers in chat")
-    dd_on  = f'["  ",{{"text":"Damage Debug"}},": ",{{"text":"ON","color":"green"}},{{"text":" ✔ ","color":"green"}},{dd_btn}]'
-    dd_off = f'["  ",{{"text":"Damage Debug"}},": ",{{"text":"OFF","color":"red"}},{{"text":" ✘","color":"red"}},{dd_btn}]'
+# Multiplayer class selection
+data modify storage {ns}:temp dialog.actions append value {{label:[{{text:"⚔ ",color:"aqua",bold:true}},{{text:"Multiplayer Class"}}],tooltip:{{text:"Open multiplayer class selection menu"}},action:{{type:"run_command",command:"/trigger {ns}.player.config set 4"}}}}
 
-    # Multiplayer class selection button
-    mp_btn = btn("Select Class", f"/trigger {ns}.player.config set 4", "aqua", "Open multiplayer class selection menu")
-    mp_line = f'["  ",{{"text":"Multiplayer"}},": ",{mp_btn}]'
-
-    # Info line
-    info_line = f'["  ",{{"text":"Use","color":"gray","italic":true}}," ",{{"text":"/trigger {ns}.player.config","color":"aqua","italic":true}}," ",{{"text":"to reopen","color":"gray","italic":true}}]'
-
-    write_versioned_function("player/config/menu", f"""tellraw @s {sep}
-tellraw @s {title}
-tellraw @s {sep}
-execute if score @s {ns}.player.hitmarker matches 1 run tellraw @s {hm_on}
-execute unless score @s {ns}.player.hitmarker matches 1 run tellraw @s {hm_off}
-execute if score @s {ns}.player.damage_debug matches 1 run tellraw @s {dd_on}
-execute unless score @s {ns}.player.damage_debug matches 1 run tellraw @s {dd_off}
-tellraw @s {mp_line}
-tellraw @s {sep}
-tellraw @s {info_line}
+# Show the completed dialog (reuses the multiplayer show_dialog macro)
+function {ns}:v{version}/multiplayer/show_dialog with storage {ns}:temp
 """)
 
     write_versioned_function("player/config/damage_debug", f"""

@@ -5,6 +5,8 @@
 # same lifecycle contract (at minimum: setup, tick, on_kill, cleanup; plus mode-specific
 # helpers). `GameModeVariant` removes the per-file `ns`/`version` boilerplate and the
 # repeated `multiplayer/gamemodes/<key>/` path prefix.
+from stewbeet import write_versioned_function
+
 from ...generator import McfunctionGenerator
 
 
@@ -26,4 +28,4 @@ class GameModeVariant(McfunctionGenerator):
 
     def sub(self, name: str, body: str) -> None:
         """ Write one of this variant's functions at ``<prefix>/<name>``. """
-        self.func(f"{self.prefix}/{name}", body)
+        write_versioned_function(f"{self.prefix}/{name}", body)

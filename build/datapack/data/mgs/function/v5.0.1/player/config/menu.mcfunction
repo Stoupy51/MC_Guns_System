@@ -4,16 +4,24 @@
 # @executed	as @e[type=player,sort=random] & at @s
 #
 # @within	mgs:v5.0.1/player/config/process
+#			mgs:v5.0.1/player/config/toggle_hitmarker
+#			mgs:v5.0.1/player/config/toggle_damage_debug
 #
 
-tellraw @s {"text":"=======================================","color":"dark_gray"}
-tellraw @s ["",[{"text":"","color":"gold","bold":true},"       🎮 ",{"translate":"mgs.player_settings"}," 🎮"]]
-tellraw @s {"text":"=======================================","color":"dark_gray"}
-execute if score @s mgs.player.hitmarker matches 1 run tellraw @s ["  ",{"translate":"mgs.hitmarker_sound"},": ",{"text":"ON","color":"green"},{"text":" ✔ ","color":"green"},[{"text": "[", "color": "yellow", "click_event": {"action": "suggest_command", "command": "/trigger mgs.player.config set 2"}, "hover_event": {"action": "show_text", "value": "Toggle hitmarker Sound on entity hit"}}, "Toggle", "]"]]
-execute unless score @s mgs.player.hitmarker matches 1 run tellraw @s ["  ",{"translate":"mgs.hitmarker_sound"},": ",{"translate":"mgs.off","color":"red"},{"text":" ✘","color":"red"},[{"text": "[", "color": "yellow", "click_event": {"action": "suggest_command", "command": "/trigger mgs.player.config set 2"}, "hover_event": {"action": "show_text", "value": "Toggle hitmarker Sound on entity hit"}}, "Toggle", "]"]]
-execute if score @s mgs.player.damage_debug matches 1 run tellraw @s ["  ",{"translate":"mgs.damage_debug"},": ",{"text":"ON","color":"green"},{"text":" ✔ ","color":"green"},[{"text": "[", "color": "yellow", "click_event": {"action": "suggest_command", "command": "/trigger mgs.player.config set 3"}, "hover_event": {"action": "show_text", "value": "Toggle damage numbers in chat"}}, "Toggle", "]"]]
-execute unless score @s mgs.player.damage_debug matches 1 run tellraw @s ["  ",{"translate":"mgs.damage_debug"},": ",{"translate":"mgs.off","color":"red"},{"text":" ✘","color":"red"},[{"text": "[", "color": "yellow", "click_event": {"action": "suggest_command", "command": "/trigger mgs.player.config set 3"}, "hover_event": {"action": "show_text", "value": "Toggle damage numbers in chat"}}, "Toggle", "]"]]
-tellraw @s ["  ",{"translate":"mgs.multiplayer"},": ",[{"text": "[", "color": "aqua", "click_event": {"action": "suggest_command", "command": "/trigger mgs.player.config set 4"}, "hover_event": {"action": "show_text", "value": "Open multiplayer class selection menu"}}, "Select Class", "]"]]
-tellraw @s {"text":"=======================================","color":"dark_gray"}
-tellraw @s ["  ",{"translate":"mgs.use_2","color":"gray","italic":true}," ",[{"text":"/","color":"aqua","italic":true}, {"translate":"mgs.trigger_mgs_player_config"}]," ",{"translate":"mgs.to_reopen","color":"gray","italic":true}]
+# Build the Player Settings dialog in storage, then show it via /dialog
+data modify storage mgs:temp dialog set value {type:"minecraft:multi_action",title:[{text:"🎮 ",color:"gold",bold:true}, {translate:"mgs.player_settings"}],body:[{type:"minecraft:plain_message",contents:{translate:"mgs.toggle_your_personal_settings","color":"gray"}}],actions:[],columns:1,after_action:"close",exit_action:{label:{translate:"gui.done"}}}
+
+# Hitmarker Sound toggle (label reflects the current ON/OFF state)
+execute if score @s mgs.player.hitmarker matches 1 run data modify storage mgs:temp dialog.actions append value {label:["",{translate:"mgs.hitmarker_sound"},{text:"ON ✔",color:"green"}],tooltip:{translate:"mgs.toggle_hitmarker_sound_on_entity_hit"},action:{type:"run_command",command:"/trigger mgs.player.config set 2"}}
+execute unless score @s mgs.player.hitmarker matches 1 run data modify storage mgs:temp dialog.actions append value {label:["",{translate:"mgs.hitmarker_sound"},[{translate:"mgs.off",color:"red"}, " ✘"]],tooltip:{translate:"mgs.toggle_hitmarker_sound_on_entity_hit"},action:{type:"run_command",command:"/trigger mgs.player.config set 2"}}
+
+# Damage Debug toggle
+execute if score @s mgs.player.damage_debug matches 1 run data modify storage mgs:temp dialog.actions append value {label:["",{translate:"mgs.damage_debug_2"},{text:"ON ✔",color:"green"}],tooltip:{translate:"mgs.toggle_damage_numbers_in_chat"},action:{type:"run_command",command:"/trigger mgs.player.config set 3"}}
+execute unless score @s mgs.player.damage_debug matches 1 run data modify storage mgs:temp dialog.actions append value {label:["",{translate:"mgs.damage_debug_2"},[{translate:"mgs.off",color:"red"}, " ✘"]],tooltip:{translate:"mgs.toggle_damage_numbers_in_chat"},action:{type:"run_command",command:"/trigger mgs.player.config set 3"}}
+
+# Multiplayer class selection
+data modify storage mgs:temp dialog.actions append value {label:[{text:"⚔ ",color:"aqua",bold:true},{translate:"mgs.multiplayer_class"}],tooltip:{translate:"mgs.open_multiplayer_class_selection_menu"},action:{type:"run_command",command:"/trigger mgs.player.config set 4"}}
+
+# Show the completed dialog (reuses the multiplayer show_dialog macro)
+function mgs:v5.0.1/multiplayer/show_dialog with storage mgs:temp
 
