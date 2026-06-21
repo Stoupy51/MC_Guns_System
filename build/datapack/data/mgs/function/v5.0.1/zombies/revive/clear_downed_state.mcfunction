@@ -7,9 +7,9 @@
 #
 
 scoreboard players operation #my_downed_id mgs.data = @s mgs.zb.downed_id
-execute as @e[tag=mgs.downed_mannequin] if score @s mgs.zb.downed_id = #my_downed_id mgs.data at @s run kill @n[tag=mgs.downed_hud,distance=..3]
-execute as @e[tag=mgs.downed_mannequin] if score @s mgs.zb.downed_id = #my_downed_id mgs.data run kill @s
-execute as @e[tag=mgs.downed_cam] if score @s mgs.zb.downed_id = #my_downed_id mgs.data run kill @s
+execute as @e[tag=mgs.downed_mannequin,predicate=mgs:v5.0.1/zombies/revive/downed_id_match] at @s run kill @n[tag=mgs.downed_hud,distance=..3]
+execute as @e[tag=mgs.downed_mannequin,predicate=mgs:v5.0.1/zombies/revive/downed_id_match] run kill @s
+execute as @e[tag=mgs.downed_cam,predicate=mgs:v5.0.1/zombies/revive/downed_id_match] run kill @s
 ride @s dismount
 scoreboard players set @s mgs.zb.downed 0
 scoreboard players set @s mgs.zb.revive_p 0

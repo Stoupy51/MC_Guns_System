@@ -4,17 +4,17 @@
 from stewbeet import Mem, write_tag
 
 from ..core.respawn_countdown import respawn_countdown_tick_lines
-from ..helpers import (
-	MGS_TAG,
-	end_prep_transition_lines,
-	game_start_guards,
-	late_join_flow_lines,
-	mode_start_map_bootstrap_lines,
-	prep_freeze_lines,
-	regen_disable_lines,
-	regen_enable_lines,
-)
 from ..game_mode import GameMode
+from ..helpers import (
+    MGS_TAG,
+    end_prep_transition_lines,
+    game_start_guards,
+    late_join_flow_lines,
+    mode_start_map_bootstrap_lines,
+    prep_freeze_lines,
+    regen_disable_lines,
+    regen_enable_lines,
+)
 
 # All multiplayer gamemodes (single source of truth for dispatch blocks)
 GAMEMODES: list[str] = ["ffa", "tdm", "dom", "hp", "snd"]
@@ -475,11 +475,9 @@ execute if score #tick_mod {ns}.data matches 0 run function {ns}:v{version}/mult
 # Time's up
 execute if score #mp_timer {ns}.data matches ..0 run function {ns}:v{version}/multiplayer/time_up
 
-# Boundary enforcement (skip players with respawn protection)
-execute if score #mp_has_boundary {ns}.data matches 1 as @e[type=player,scores={{{ns}.mp.in_game=1,{ns}.mp.death_count=0}},gamemode=!creative,gamemode=!spectator] at @s run function {ns}:v{version}/multiplayer/check_bounds
-
-# Out-of-bounds check (skip players with respawn protection)
-execute as @e[type=player,scores={{{ns}.mp.in_game=1,{ns}.mp.death_count=0}},gamemode=!creative,gamemode=!spectator] at @s if entity @e[tag={ns}.oob_point,distance=..5] run function {ns}:v{version}/multiplayer/bounds_kill
+# Boundary + out-of-bounds enforcement in ONE pass over the playing-players selector (was two
+# scans over the identical, multi-filter selector). Skips respawn-protected/non-playing players.
+execute as @e[type=player,scores={{{ns}.mp.in_game=1,{ns}.mp.death_count=0}},gamemode=!creative,gamemode=!spectator] at @s run function {ns}:v{version}/multiplayer/enforce_bounds
 
 # Gamemode tick dispatch
 {gm_dispatch("tick")}
@@ -572,6 +570,18 @@ execute if score @s {ns}.mp.by < #bound_y1 {ns}.data run return run function {ns
 execute if score @s {ns}.mp.by > #bound_y2 {ns}.data run return run function {ns}:v{version}/multiplayer/bounds_kill
 execute if score @s {ns}.mp.bz < #bound_z1 {ns}.data run return run function {ns}:v{version}/multiplayer/bounds_kill
 execute if score @s {ns}.mp.bz > #bound_z2 {ns}.data run return run function {ns}:v{version}/multiplayer/bounds_kill
+""")
+
+    	## Per-player boundary + OOB enforcement (one scan in game_tick dispatches this). @s = a playing
+    	## player. Merges the former two separate game_tick passes over the same selector.
+    	self.func("multiplayer/enforce_bounds", f"""
+# Coordinate bounds (only when the map defines a boundary box). May eliminate @s -> spectator.
+execute if score #mp_has_boundary {ns}.data matches 1 run function {ns}:v{version}/multiplayer/check_bounds
+
+# OOB markers. Skip if the coordinate check just eliminated @s this tick (now a spectator) — the
+# original two-pass form excluded such players via its gamemode=!spectator selector, so doing the
+# OOB kill here too would double-count the death.
+execute if entity @s[gamemode=!spectator] if entity @e[tag={ns}.oob_point,distance=..5] run function {ns}:v{version}/multiplayer/bounds_kill
 """)
 
     	## Environmental kill: out of boundaries or near an OOB marker (simulate death, never /kill)

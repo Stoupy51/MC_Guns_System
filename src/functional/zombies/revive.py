@@ -33,6 +33,17 @@ def generate_revive() -> None:
 	Mem.ctx.data[ns].predicates[f"v{version}/input/backward"] = set_json_encoder(Predicate(player_input("backward")))
 	Mem.ctx.data[ns].predicates[f"v{version}/input/left"]     = set_json_encoder(Predicate(player_input("left")))
 	Mem.ctx.data[ns].predicates[f"v{version}/input/right"]    = set_json_encoder(Predicate(player_input("right")))
+
+	## Predicate: does `this` entity's downed_id match the downed player currently being processed?
+	## Lets a selector pick the matching mannequin/cam/hud directly via predicate=... instead of
+	## `as @e[tag=...] if score @s {ns}.zb.downed_id = #my_downed_id ...` — one selector pass, the
+	## id test folded into selection (same trick as zombies/traps/turret_id_match).
+	downed_id_ref: JsonDict = {"type": "minecraft:score", "target": {"type": "minecraft:fixed", "name": "#my_downed_id"}, "score": f"{ns}.data"}
+	Mem.ctx.data[ns].predicates[f"v{version}/zombies/revive/downed_id_match"] = set_json_encoder(Predicate({
+		"condition": "minecraft:entity_scores",
+		"entity": "this",
+		"scores": {f"{ns}.zb.downed_id": {"min": downed_id_ref, "max": downed_id_ref}},
+	}), max_level=-1)
 	Mem.ctx.data[ns].predicates[f"v{version}/input/any"]      = set_json_encoder(Predicate({"condition": "minecraft:any_of", "terms": [player_input("forward"), player_input("backward"), player_input("left"), player_input("right")]}))
 
 	## Scoreboards
@@ -117,7 +128,7 @@ tag @e[tag={ns}.downed_cam_new] remove {ns}.downed_cam_new
 
 # Mount the spectator player into the camera entity (locks them in place)
 scoreboard players operation #my_downed_id {ns}.data = @s {ns}.zb.downed_id
-execute as @e[tag={ns}.downed_cam] if score @s {ns}.zb.downed_id = #my_downed_id {ns}.data run tag @s add {ns}.downed_mine_temp
+execute as @e[tag={ns}.downed_cam,predicate={ns}:v{version}/zombies/revive/downed_id_match] run tag @s add {ns}.downed_mine_temp
 ride @s mount @n[tag={ns}.downed_mine_temp]
 tag @e[tag={ns}.downed_mine_temp] remove {ns}.downed_mine_temp
 
@@ -151,47 +162,33 @@ execute as @a[tag={ns}.downed_spectator,scores={{{ns}.zb.in_game=1}}] at @s run 
 # Decrement bleed timer
 scoreboard players remove @s {ns}.zb.bleed 1
 
-# Third-person view: teleport camera item_display to 3 blocks behind and 2 above the mannequin
-# Player rides the item_display, so camera follows it automatically
+# Identify THIS player's downed entities for the id-matching predicate, then tag the mannequin ONCE
+# as downed_mine_temp. Every per-mannequin command below reuses that tag (or a single dispatch into
+# move_mannequin) instead of re-selecting the mannequin ~11x per tick.
 scoreboard players operation #my_downed_id {ns}.data = @s {ns}.zb.downed_id
-execute as @e[tag={ns}.downed_mannequin] if score @s {ns}.zb.downed_id = #my_downed_id {ns}.data run tag @s add {ns}.downed_mine_temp
-execute as @n[tag={ns}.downed_mine_temp] at @s as @e[tag={ns}.downed_cam] if score @s {ns}.zb.downed_id = #my_downed_id {ns}.data at @n[tag={ns}.downed_mine_temp] run tp @s ^ ^2 ^-3
+tag @e[tag={ns}.downed_mannequin,predicate={ns}:v{version}/zombies/revive/downed_id_match] add {ns}.downed_mine_temp
+
+# Read crawl inputs into scratch scores while @s is still the player (predicate self-checks on @s,
+# no entity scan). These drive the mannequin's local velocity inside move_mannequin.
+scoreboard players set #crawl_vx {ns}.data 0
+scoreboard players set #crawl_vz {ns}.data 0
+execute if entity @s[predicate={ns}:v{version}/input/forward]  run scoreboard players set #crawl_vz {ns}.data {int(CRAWL_SPEED * 1000)}
+execute if entity @s[predicate={ns}:v{version}/input/backward] run scoreboard players set #crawl_vz {ns}.data -{int(CRAWL_SPEED * 1000)}
+execute if entity @s[predicate={ns}:v{version}/input/left]     run scoreboard players set #crawl_vx {ns}.data {int(CRAWL_SPEED * 1000)}
+execute if entity @s[predicate={ns}:v{version}/input/right]    run scoreboard players set #crawl_vx {ns}.data -{int(CRAWL_SPEED * 1000)}
+
+# Third-person camera: position the cam item_display 2 up / 3 behind the mannequin (using the
+# mannequin's CURRENT rotation, i.e. before this tick's yaw sync — same order as before), then
+# re-mount the player onto the cam so the view follows it.
+execute at @n[tag={ns}.downed_mine_temp] as @e[tag={ns}.downed_cam,predicate={ns}:v{version}/zombies/revive/downed_id_match] run tp @s ^ ^2 ^-3
+ride @s mount @n[tag={ns}.downed_cam,predicate={ns}:v{version}/zombies/revive/downed_id_match]
+
+# All remaining per-mannequin work (yaw sync, crawl motion, HUD anchor) in ONE pass over the tagged
+# mannequin instead of re-selecting it for each command.
+execute as @n[tag={ns}.downed_mine_temp] at @s run function {ns}:v{version}/zombies/revive/move_mannequin
+
+# Done with the per-tick mannequin tag
 tag @e[tag={ns}.downed_mine_temp] remove {ns}.downed_mine_temp
-
-# Re-mount player onto camera entity every tick (ensures no accidental dismount)
-scoreboard players operation #my_downed_id {ns}.data = @s {ns}.zb.downed_id
-execute as @e[tag={ns}.downed_cam] if score @s {ns}.zb.downed_id = #my_downed_id {ns}.data run tag @s add {ns}.downed_mine_temp
-ride @s mount @n[tag={ns}.downed_mine_temp]
-tag @e[tag={ns}.downed_mine_temp] remove {ns}.downed_mine_temp
-
-# Sync mannequin yaw from player look direction — use downed_id to target correct mannequin
-execute as @e[tag={ns}.downed_mannequin] if score @s {ns}.zb.downed_id = #my_downed_id {ns}.data run tag @s add {ns}.downed_mine_temp
-execute as @n[tag={ns}.downed_mine_temp] run data modify entity @s Rotation[0] set from entity @p[tag={ns}.downed_spectator] Rotation[0]
-execute as @n[tag={ns}.downed_mine_temp] run data modify entity @s Rotation[1] set value 0.0f
-tag @e[tag={ns}.downed_mine_temp] remove {ns}.downed_mine_temp
-
-# Move mannequin using Bookshelf motion (smooth, physics-based, no tp stuttering)
-# Zero out XZ velocity first, then accumulate based on active inputs.
-# Y gets a constant downward pull: set_motion overrides vanilla gravity every tick,
-# so without this the mannequin would float when crawling off a ledge.
-execute as @e[tag={ns}.downed_mannequin] if score @s {ns}.zb.downed_id = #my_downed_id {ns}.data run scoreboard players set @s bs.vel.x 0
-execute as @e[tag={ns}.downed_mannequin] if score @s {ns}.zb.downed_id = #my_downed_id {ns}.data run scoreboard players set @s bs.vel.y -400
-execute as @e[tag={ns}.downed_mannequin] if score @s {ns}.zb.downed_id = #my_downed_id {ns}.data run scoreboard players set @s bs.vel.z 0
-
-# Forward/backward: local +Z / -Z (scale: 80 = 0.08 blocks/tick at scale:0.001)
-execute if entity @s[predicate={ns}:v{version}/input/forward] as @e[tag={ns}.downed_mannequin] if score @s {ns}.zb.downed_id = #my_downed_id {ns}.data run scoreboard players set @s bs.vel.z {int(CRAWL_SPEED * 1000)}
-execute if entity @s[predicate={ns}:v{version}/input/backward] as @e[tag={ns}.downed_mannequin] if score @s {ns}.zb.downed_id = #my_downed_id {ns}.data run scoreboard players set @s bs.vel.z -{int(CRAWL_SPEED * 1000)}
-
-# Left/right: local +X / -X
-execute if entity @s[predicate={ns}:v{version}/input/left] as @e[tag={ns}.downed_mannequin] if score @s {ns}.zb.downed_id = #my_downed_id {ns}.data run scoreboard players set @s bs.vel.x {int(CRAWL_SPEED * 1000)}
-execute if entity @s[predicate={ns}:v{version}/input/right] as @e[tag={ns}.downed_mannequin] if score @s {ns}.zb.downed_id = #my_downed_id {ns}.data run scoreboard players set @s bs.vel.x -{int(CRAWL_SPEED * 1000)}
-
-# Convert local velocity (relative to mannequin facing) to canonical (world), then apply motion
-execute as @e[tag={ns}.downed_mannequin] if score @s {ns}.zb.downed_id = #my_downed_id {ns}.data at @s run function #bs.move:local_to_canonical
-execute as @e[tag={ns}.downed_mannequin] if score @s {ns}.zb.downed_id = #my_downed_id {ns}.data run function #bs.move:set_motion {{scale:0.001}}
-
-# Keep HUD text_display anchored 2 blocks above the mannequin
-execute as @n[tag={ns}.downed_mannequin] at @s run tp @n[tag={ns}.downed_hud] ~ ~2 ~
 
 # Check for revivers (alive non-downed players within range of mannequin)
 scoreboard players set #zb_reviving {ns}.data 0
@@ -234,6 +231,29 @@ execute if score @s {ns}.zb.bleed matches ..0 run function {ns}:v{version}/zombi
 # Instant bleed out: if no healthy players remain and no solo QR auto-revive is active,
 # there is no hope of revive — end the suspense immediately
 execute if score #zb_reviving {ns}.data matches 0 unless entity @a[scores={{{ns}.zb.in_game=1,{ns}.zb.downed=0}},gamemode=!spectator] run function {ns}:v{version}/zombies/revive/bleed_out
+""")
+
+	## All per-mannequin downed work in one pass. @s = the downed player's mannequin, executed at it
+	## (dispatched once per downed player from downed_tick after tagging the mannequin downed_mine_temp).
+	## Folds the former ~11 separate `@e[tag=downed_mannequin,predicate=...]` selections into a single
+	## entity selection; everything here is @s (the mannequin) or a local @p/@n lookup. Crawl direction
+	## arrives via #crawl_vx/#crawl_vz (set on the player before dispatch). Order matches the old inline
+	## version: yaw sync first, then velocity, then local->canonical, then motion, then HUD anchor.
+	write_versioned_function("zombies/revive/move_mannequin", f"""
+# Sync mannequin yaw from the owner's look direction (nearest downed spectator = this mannequin's owner)
+data modify entity @s Rotation[0] set from entity @p[tag={ns}.downed_spectator] Rotation[0]
+data modify entity @s Rotation[1] set value 0.0f
+
+# Crawl motion via Bookshelf physics. XZ from the crawl-input scratch scores (0 when no input is held);
+# Y a constant downward pull so the mannequin doesn't float off ledges (set_motion overrides gravity).
+scoreboard players operation @s bs.vel.x = #crawl_vx {ns}.data
+scoreboard players set @s bs.vel.y -400
+scoreboard players operation @s bs.vel.z = #crawl_vz {ns}.data
+function #bs.move:local_to_canonical
+function #bs.move:set_motion {{scale:0.001}}
+
+# Keep the HUD text_display anchored 2 blocks above the mannequin
+tp @n[tag={ns}.downed_hud] ~ ~2 ~
 """)
 
 	# ──────────────────────────────────────────────────────────────────────────
@@ -355,7 +375,7 @@ tp @n[tag={ns}.downed_hud] ~ -10000 ~
 tag @n[tag={ns}.downed_mannequin] remove {ns}.downed_mannequin
 tag @n[tag={ns}.downed_hud] remove {ns}.downed_hud
 scoreboard players operation #my_downed_id {ns}.data = @s {ns}.zb.downed_id
-execute as @e[tag={ns}.downed_cam] if score @s {ns}.zb.downed_id = #my_downed_id {ns}.data run kill @s
+execute as @e[tag={ns}.downed_cam,predicate={ns}:v{version}/zombies/revive/downed_id_match] run kill @s
 
 # Dismount from camera entity and restore adventure mode
 ride @s dismount
@@ -393,7 +413,7 @@ tp @n[tag={ns}.downed_hud] ~ -10000 ~
 tag @n[tag={ns}.downed_mannequin] remove {ns}.downed_mannequin
 tag @n[tag={ns}.downed_hud] remove {ns}.downed_hud
 scoreboard players operation #my_downed_id {ns}.data = @s {ns}.zb.downed_id
-execute as @e[tag={ns}.downed_cam] if score @s {ns}.zb.downed_id = #my_downed_id {ns}.data run kill @s
+execute as @e[tag={ns}.downed_cam,predicate={ns}:v{version}/zombies/revive/downed_id_match] run kill @s
 
 # Dismount then enter full spectator mode to watch until next round
 ride @s dismount
@@ -452,9 +472,9 @@ tellraw @a[scores={{{ns}.zb.in_game=1}}] [{MGS_TAG},{{"selector":"@s","color":"g
 	## Used when a still-downed player is force-revived at round end.
 	write_versioned_function("zombies/revive/clear_downed_state", f"""
 scoreboard players operation #my_downed_id {ns}.data = @s {ns}.zb.downed_id
-execute as @e[tag={ns}.downed_mannequin] if score @s {ns}.zb.downed_id = #my_downed_id {ns}.data at @s run kill @n[tag={ns}.downed_hud,distance=..3]
-execute as @e[tag={ns}.downed_mannequin] if score @s {ns}.zb.downed_id = #my_downed_id {ns}.data run kill @s
-execute as @e[tag={ns}.downed_cam] if score @s {ns}.zb.downed_id = #my_downed_id {ns}.data run kill @s
+execute as @e[tag={ns}.downed_mannequin,predicate={ns}:v{version}/zombies/revive/downed_id_match] at @s run kill @n[tag={ns}.downed_hud,distance=..3]
+execute as @e[tag={ns}.downed_mannequin,predicate={ns}:v{version}/zombies/revive/downed_id_match] run kill @s
+execute as @e[tag={ns}.downed_cam,predicate={ns}:v{version}/zombies/revive/downed_id_match] run kill @s
 ride @s dismount
 scoreboard players set @s {ns}.zb.downed 0
 scoreboard players set @s {ns}.zb.revive_p 0

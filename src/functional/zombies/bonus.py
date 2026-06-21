@@ -1,9 +1,8 @@
 
 # Imports
-
 from stewbeet import Mem, write_function, write_versioned_function
-from ...config.stats import ALL_SLOTS, BASE_WEAPON, CAPACITY, REMAINING_BULLETS
 
+from ...config.stats import ALL_SLOTS, BASE_WEAPON, CAPACITY, REMAINING_BULLETS
 
 # Main function
 
@@ -170,10 +169,10 @@ function {ns}:v{version}/zombies/bonus/nuke_loop
 execute as @n[tag={ns}.nuked,sort=random] at @s run function {ns}:v{version}/zombies/bonus/nuke_damage_one
 
 # Continue loop if more nuked entities exist
-execute if entity @e[tag={ns}.nuked] run schedule function {ns}:v{version}/zombies/bonus/nuke_loop 1t
+execute if entity @e[tag={ns}.nuked] run return run schedule function {ns}:v{version}/zombies/bonus/nuke_loop 1t
 
 # Clean up when all nuked entities are processed
-execute unless entity @e[tag={ns}.nuked] run tag @a[tag={ns}.nuke_activator] remove {ns}.nuke_activator
+tag @a[tag={ns}.nuke_activator] remove {ns}.nuke_activator
 """)
 
     # Damage one nuked entity (@s = nuked entity, positioned at entity)
