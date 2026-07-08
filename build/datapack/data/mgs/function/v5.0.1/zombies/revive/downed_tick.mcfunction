@@ -19,10 +19,10 @@ tag @e[tag=mgs.downed_mannequin,predicate=mgs:v5.0.1/zombies/revive/downed_id_ma
 # no entity scan). These drive the mannequin's local velocity inside move_mannequin.
 scoreboard players set #crawl_vx mgs.data 0
 scoreboard players set #crawl_vz mgs.data 0
-execute if entity @s[predicate=mgs:v5.0.1/input/forward]  run scoreboard players set #crawl_vz mgs.data 60
+execute if entity @s[predicate=mgs:v5.0.1/input/forward] run scoreboard players set #crawl_vz mgs.data 60
 execute if entity @s[predicate=mgs:v5.0.1/input/backward] run scoreboard players set #crawl_vz mgs.data -60
-execute if entity @s[predicate=mgs:v5.0.1/input/left]     run scoreboard players set #crawl_vx mgs.data 60
-execute if entity @s[predicate=mgs:v5.0.1/input/right]    run scoreboard players set #crawl_vx mgs.data -60
+execute if entity @s[predicate=mgs:v5.0.1/input/left] run scoreboard players set #crawl_vx mgs.data 60
+execute if entity @s[predicate=mgs:v5.0.1/input/right] run scoreboard players set #crawl_vx mgs.data -60
 
 # Third-person camera: position the cam item_display 2 up / 3 behind the mannequin (using the
 # mannequin's CURRENT rotation, i.e. before this tick's yaw sync — same order as before), then

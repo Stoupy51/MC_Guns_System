@@ -44,7 +44,14 @@ def beet_default(ctx: Context) -> None:
 
     # Generate 3D renders (excluding _zoom variants)
     from stewbeet import Item, Mem
+    from stewbeet.plugins.ingame_manual.config import ManualConfig  # pyright: ignore[reportMissingTypeStubs]
     from stewbeet.plugins.ingame_manual.iso_renders import generate_all_iso_renders  # pyright: ignore[reportMissingTypeStubs]
     [Item.from_id(x).components.pop("item_model", None) for x in Mem.definitions.keys() if x.endswith("_zoom")]
-    generate_all_iso_renders(override_cache_path=f"{Mem.ctx.directory}/iso_renders", ignore_vanilla=True, ignore_painting=True)
+    config = ManualConfig(
+        project_id=ctx.project_id,
+        project_name=ctx.project_name,
+        project_author=ctx.project_author,
+        cache_path=f"{Mem.ctx.directory}/manual_cache",
+    )
+    generate_all_iso_renders(config, override_cache_path=f"{Mem.ctx.directory}/iso_renders", ignore_vanilla=True, ignore_painting=True)
 

@@ -172,10 +172,10 @@ tag @e[tag={ns}.downed_mannequin,predicate={ns}:v{version}/zombies/revive/downed
 # no entity scan). These drive the mannequin's local velocity inside move_mannequin.
 scoreboard players set #crawl_vx {ns}.data 0
 scoreboard players set #crawl_vz {ns}.data 0
-execute if entity @s[predicate={ns}:v{version}/input/forward]  run scoreboard players set #crawl_vz {ns}.data {int(CRAWL_SPEED * 1000)}
+execute if entity @s[predicate={ns}:v{version}/input/forward] run scoreboard players set #crawl_vz {ns}.data {int(CRAWL_SPEED * 1000)}
 execute if entity @s[predicate={ns}:v{version}/input/backward] run scoreboard players set #crawl_vz {ns}.data -{int(CRAWL_SPEED * 1000)}
-execute if entity @s[predicate={ns}:v{version}/input/left]     run scoreboard players set #crawl_vx {ns}.data {int(CRAWL_SPEED * 1000)}
-execute if entity @s[predicate={ns}:v{version}/input/right]    run scoreboard players set #crawl_vx {ns}.data -{int(CRAWL_SPEED * 1000)}
+execute if entity @s[predicate={ns}:v{version}/input/left] run scoreboard players set #crawl_vx {ns}.data {int(CRAWL_SPEED * 1000)}
+execute if entity @s[predicate={ns}:v{version}/input/right] run scoreboard players set #crawl_vx {ns}.data -{int(CRAWL_SPEED * 1000)}
 
 # Third-person camera: position the cam item_display 2 up / 3 behind the mannequin (using the
 # mannequin's CURRENT rotation, i.e. before this tick's yaw sync — same order as before), then
