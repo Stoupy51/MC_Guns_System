@@ -10,7 +10,7 @@
 tag @s add mgs.zb_scaled
 data modify entity @s DeathTime set value -16s
 
-# Compute BO2-derived HP for this round and apply it to this zombie
+# Compute round-scaled HP (base_health * 1.1^(round - 1)) and apply it to this zombie
 function mgs:v5.0.1/zombies/calc_zombie_hp
 execute store result storage mgs:temp _zb_hp.val int 1 run scoreboard players get #zb_hp mgs.data
 function mgs:v5.0.1/zombies/apply_zombie_hp with storage mgs:temp _zb_hp
