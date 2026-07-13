@@ -69,6 +69,10 @@ function #{ns}:signals/on_shoot
 # For weapons with pellet count, set bullets_to_fire appropriately
 execute if data storage {ns}:gun all.stats.{PELLET_COUNT} store result score #bullets_to_fire {ns}.data run data get storage {ns}:gun all.stats.{PELLET_COUNT}
 
+# Per-shot budget for entity hit particles: only the first 3 entities hit by this shot
+# (all pellets included) emit blood particles, to avoid lag when piercing a whole horde
+scoreboard players set #hit_particles_left {ns}.data 3
+
 # If weapon is a grenade, throw it instead
 execute if data storage {ns}:gun all.stats.{GRENADE_TYPE} run return run function {ns}:v{version}/grenade/throw
 
@@ -201,7 +205,8 @@ execute if score #is_pass_through {ns}.data matches 1 store result storage {ns}:
 execute if score #is_pass_through {ns}.data matches 0 run function #bs.block:lookup_type with storage bs:out block
 execute if score #is_pass_through {ns}.data matches 0 store result score #hardness {ns}.data run data get storage bs:out block.hardness 1000
 
-# Indestructible blocks (bedrock, barriers, hardness=-1): stop bullet completely
+# Indestructible blocks (bedrock, hardness=-1): stop bullet completely
+# (barrier is NOT hit here: it's in the raycast's ignored_blocks tag, so bullets fly through untouched)
 execute if score #is_pass_through {ns}.data matches 0 if score #hardness {ns}.data matches ..-1 run data modify storage {ns}:temp damage set value 0.0d
 execute if score #is_pass_through {ns}.data matches 0 if score #hardness {ns}.data matches ..-1 run return 0
 
@@ -211,7 +216,7 @@ execute if score #is_pass_through {ns}.data matches 0 if score #hardness {ns}.da
 execute if score #is_pass_through {ns}.data matches 0 if score #hardness {ns}.data matches 0..299 run scoreboard players remove $raycast.piercing bs.lambda 1
 execute if score #is_pass_through {ns}.data matches 0 if score #hardness {ns}.data matches 300..999 run scoreboard players remove $raycast.piercing bs.lambda 2
 execute if score #is_pass_through {ns}.data matches 0 if score #hardness {ns}.data matches 1000..2999 run scoreboard players remove $raycast.piercing bs.lambda 3
-execute if score #is_pass_through {ns}.data matches 0 if score #hardness {ns}.data matches 3000.. unless block ~ ~ ~ minecraft:barrier run scoreboard players set $raycast.piercing bs.lambda 0
+execute if score #is_pass_through {ns}.data matches 0 if score #hardness {ns}.data matches 3000.. run scoreboard players set $raycast.piercing bs.lambda 0
 
 # Clamp piercing to 0 (Bookshelf raycast only stops at exactly 0, not negative)
 execute if score #is_pass_through {ns}.data matches 0 if score $raycast.piercing bs.lambda matches ..-1 run scoreboard players set $raycast.piercing bs.lambda 0
@@ -276,8 +281,9 @@ execute if entity @s[type=player] unless entity @s[tag={ns}.ticking] if score #s
 scoreboard players set #is_entity_hit {ns}.data 1
 tag @s add {ns}.raycast_target
 
-# Blood particles
-execute at @s run particle block{{block_state:"redstone_wire"}} ~ ~1 ~ 0.35 0.5 0.35 0 100 force @a[distance=..128]
+# Blood particles (capped: only the first 3 entities hit per shot emit particles)
+execute if score #hit_particles_left {ns}.data matches 1.. at @s run particle block{{block_state:"redstone_wire"}} ~ ~1 ~ 0.35 0.5 0.35 0 100 force @a[distance=..128]
+scoreboard players remove #hit_particles_left {ns}.data 1
 
 # Store attack info and calculate decay
 data modify storage {ns}:input with set value {{target:"@s", amount:0.0f, attacker:"@n[tag={ns}.ticking]"}}

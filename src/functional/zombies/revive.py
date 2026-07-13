@@ -103,6 +103,9 @@ item replace entity @n[tag={ns}.downed_new] weapon.mainhand with minecraft:air
 # Summon text_display HUD above mannequin (temp tag, teleported below)
 summon minecraft:text_display ~ ~ ~ {{Tags:["{ns}.downed_hud","{ns}.downed_hud_new","{ns}.gm_entity"],billboard:"vertical",shadow:1b,see_through:0b,teleport_duration:1,transformation:{{translation:[0.0f,0.0f,0.0f],left_rotation:[0.0f,0.0f,0.0f,1.0f],scale:[1.5f,1.5f,1.5f],right_rotation:[0.0f,0.0f,0.0f,1.0f]}},text:[{{"selector":"@a[tag={ns}.downed_spectator,sort=nearest,limit=1]","color":"yellow"}},{{"text":" ↓","color":"yellow"}}]}}
 
+# Copy the player's downed_id to the HUD so it can be id-matched (never "nearest") later
+scoreboard players operation @n[tag={ns}.downed_hud_new] {ns}.zb.downed_id = @s {ns}.zb.downed_id
+
 # Teleport mannequin and HUD to death location
 function {ns}:v{version}/zombies/revive/tp_to_death with storage {ns}:temp
 
@@ -190,9 +193,10 @@ execute as @n[tag={ns}.downed_mine_temp] at @s run function {ns}:v{version}/zomb
 # Done with the per-tick mannequin tag
 tag @e[tag={ns}.downed_mine_temp] remove {ns}.downed_mine_temp
 
-# Check for revivers (alive non-downed players within range of mannequin)
+# Check for revivers (alive non-downed players within range of THIS player's mannequin —
+# id-matched, since with several downed players 'nearest mannequin' could be someone else''s)
 scoreboard players set #zb_reviving {ns}.data 0
-execute as @n[tag={ns}.downed_mannequin] at @s run execute as @a[scores={{{ns}.zb.in_game=1,{ns}.zb.downed=0}},gamemode=!spectator,distance=..{REVIVE_RANGE}] run scoreboard players set #zb_reviving {ns}.data 1
+execute as @e[tag={ns}.downed_mannequin,predicate={ns}:v{version}/zombies/revive/downed_id_match] at @s run execute as @a[scores={{{ns}.zb.in_game=1,{ns}.zb.downed=0}},gamemode=!spectator,distance=..{REVIVE_RANGE}] run scoreboard players set #zb_reviving {ns}.data 1
 
 # Solo Quick Revive auto-revive: if no teammates in-game and player has quick_revive + uses left
 execute if score #zb_reviving {ns}.data matches 0 if entity @s[tag={ns}.perk.quick_revive] unless score #zb_solo_revive_block {ns}.data matches 1 run function {ns}:v{version}/zombies/revive/check_solo_qr
@@ -211,8 +215,12 @@ execute if score #zb_reviving {ns}.data matches ..1 run scoreboard players opera
 execute if score #zb_reviving {ns}.data matches ..1 run data modify storage smithed.actionbar:input message set value {{json:[{{"text":"☠ Bleeding out: ","color":"red"}},{{"score":{{"name":"#rv_disp_sec","objective":"{ns}.data"}},"color":"gray"}},{{"text":".","color":"gray"}},{{"score":{{"name":"#rv_disp_tenth","objective":"{ns}.data"}},"color":"gray"}},{{"text":"s","color":"dark_gray"}}],priority:"override",freeze:2}}
 execute if score #zb_reviving {ns}.data matches ..1 run function #smithed.actionbar:message
 
-# Show revive progress bar to nearby alive players (from mannequin position)
-execute if score #zb_reviving {ns}.data matches 1 as @n[tag={ns}.downed_mannequin] at @s run execute as @a[scores={{{ns}.zb.in_game=1,{ns}.zb.downed=0}},gamemode=!spectator,distance=..{REVIVE_RANGE}] run function {ns}:v{version}/zombies/revive/show_reviver_bar
+# Show revive progress bar to nearby alive players (from THIS player's mannequin position).
+# Snapshot @s's revive progress first: the reviver bar runs as the reviver, who cannot reliably
+# re-select the downed player (they spectate a camera >2.5 blocks from the mannequin, which is
+# why the bar used to display a stuck '0/60t').
+scoreboard players operation #rv_reviver_disp {ns}.data = @s {ns}.zb.revive_p
+execute if score #zb_reviving {ns}.data matches 1 as @e[tag={ns}.downed_mannequin,predicate={ns}:v{version}/zombies/revive/downed_id_match] at @s run execute as @a[scores={{{ns}.zb.in_game=1,{ns}.zb.downed=0}},gamemode=!spectator,distance=..{REVIVE_RANGE}] run function {ns}:v{version}/zombies/revive/show_reviver_bar
 
 # Update HUD text_display color based on revive state / bleed timer
 execute if score #zb_reviving {ns}.data matches 1.. run function {ns}:v{version}/zombies/revive/hud_white
@@ -252,17 +260,20 @@ scoreboard players operation @s bs.vel.z = #crawl_vz {ns}.data
 function #bs.move:local_to_canonical
 function #bs.move:set_motion {{scale:0.001}}
 
-# Keep the HUD text_display anchored 2 blocks above the mannequin
-tp @n[tag={ns}.downed_hud] ~ ~2 ~
+# Keep the HUD text_display anchored 2 blocks above the mannequin (id-matched via #my_downed_id)
+tp @n[tag={ns}.downed_hud,predicate={ns}:v{version}/zombies/revive/downed_id_match] ~ ~2 ~
 """)
 
 	# ──────────────────────────────────────────────────────────────────────────
 	## Solo Quick Revive check: auto-revive if alone in game
 	# ──────────────────────────────────────────────────────────────────────────
 	write_versioned_function("zombies/revive/check_solo_qr", f"""
-# Only trigger if there are no other alive in-game players besides this downed player
-execute store result score #zb_other_alive {ns}.data if entity @a[scores={{{ns}.zb.in_game=1,{ns}.zb.downed=0}},gamemode=!spectator]
-execute if score #zb_other_alive {ns}.data matches 0 run function {ns}:v{version}/zombies/revive/solo_qr_tick
+# Only trigger in a TRUE solo game: @s must be the only in-game player. Teammates being
+# downed or bled-out does NOT make the game solo — in co-op, a downed player with Quick
+# Revive must never self-revive (all players down with no reviver = game over instead).
+execute store result score #zb_ingame_total {ns}.data if entity @a[scores={{{ns}.zb.in_game=1}}]
+execute if score #zb_ingame_total {ns}.data matches 2.. run return 0
+function {ns}:v{version}/zombies/revive/solo_qr_tick
 """)
 
 	## Solo QR tick: auto-increment revive progress (uses {SOLO_QR_TICKS} ticks total)
@@ -312,10 +323,15 @@ function {ns}:v{version}/zombies/revive/revive_complete
 	## Reviver actionbar (run as the reviving player, context @s = reviver, nearest downed = target)
 	# ──────────────────────────────────────────────────────────────────────────
 	write_versioned_function("zombies/revive/show_reviver_bar", f"""
-# Resolve the nearest downed player's revive progress into a stable fake-player holder. A selector
-# used as a score component's "name" does not reliably resolve in the actionbar packet (it rendered
-# blank -> "/30t"), so we read the value here and display the holder instead.
-execute store result score #rv_reviver_disp {ns}.data run scoreboard players get @p[tag={ns}.downed_spectator,sort=nearest,distance=..{REVIVE_RANGE}] {ns}.zb.revive_p
+# #rv_reviver_disp holds the downed player's revive progress (snapshotted in downed_tick while
+# @s was the downed player — the reviver cannot re-select them: they spectate a camera entity
+# that sits outside the revive range, which used to make this display a stuck "0").
+# Convert ticks to seconds for display: sec = p/20, tenth = (p%20)/2
+scoreboard players operation #rv_rev_sec {ns}.data = #rv_reviver_disp {ns}.data
+scoreboard players operation #rv_rev_sec {ns}.data /= #20 {ns}.data
+scoreboard players operation #rv_rev_tenth {ns}.data = #rv_reviver_disp {ns}.data
+scoreboard players operation #rv_rev_tenth {ns}.data %= #20 {ns}.data
+scoreboard players operation #rv_rev_tenth {ns}.data /= #2 {ns}.data
 
 # Check if reviver has Quick Revive perk
 execute if entity @s[tag={ns}.perk.quick_revive] run function {ns}:v{version}/zombies/revive/show_reviver_bar_quick
@@ -323,12 +339,12 @@ execute unless entity @s[tag={ns}.perk.quick_revive] run function {ns}:v{version
 """)
 
 	write_versioned_function("zombies/revive/show_reviver_bar_normal", f"""
-data modify storage smithed.actionbar:input message set value {{json:[{{"text":"Reviving... ","color":"yellow"}},{{"score":{{"name":"#rv_reviver_disp","objective":"{ns}.data"}},"color":"green"}},{{"text":"/{REVIVE_TICKS}t","color":"gray"}}],priority:"override",freeze:2}}
+data modify storage smithed.actionbar:input message set value {{json:[{{"text":"Reviving... ","color":"yellow"}},{{"score":{{"name":"#rv_rev_sec","objective":"{ns}.data"}},"color":"green"}},{{"text":".","color":"green"}},{{"score":{{"name":"#rv_rev_tenth","objective":"{ns}.data"}},"color":"green"}},{{"text":"s / {REVIVE_TICKS // 20}.{(REVIVE_TICKS % 20) // 2}s","color":"gray"}}],priority:"override",freeze:2}}
 function #smithed.actionbar:message
 """)
 
 	write_versioned_function("zombies/revive/show_reviver_bar_quick", f"""
-data modify storage smithed.actionbar:input message set value {{json:[{{"text":"⚡ Reviving... ","color":"aqua"}},{{"score":{{"name":"#rv_reviver_disp","objective":"{ns}.data"}},"color":"green"}},{{"text":"/{QUICK_REVIVE_TICKS}t","color":"gray"}}],priority:"override",freeze:2}}
+data modify storage smithed.actionbar:input message set value {{json:[{{"text":"⚡ Reviving... ","color":"aqua"}},{{"score":{{"name":"#rv_rev_sec","objective":"{ns}.data"}},"color":"green"}},{{"text":".","color":"green"}},{{"score":{{"name":"#rv_rev_tenth","objective":"{ns}.data"}},"color":"green"}},{{"text":"s / {QUICK_REVIVE_TICKS // 20}.{(QUICK_REVIVE_TICKS % 20) // 2}s","color":"gray"}}],priority:"override",freeze:2}}
 function #smithed.actionbar:message
 """)
 
@@ -336,23 +352,23 @@ function #smithed.actionbar:message
 	## HUD color update helpers (run as downed spectator, update nearest downed_hud)
 	# ──────────────────────────────────────────────────────────────────────────
 	write_versioned_function("zombies/revive/hud_white", f"""
-data modify entity @n[tag={ns}.downed_hud] text[0] set value {{"selector":"@a[tag={ns}.downed_spectator,sort=nearest,limit=1]","color":"white"}}
-data modify entity @n[tag={ns}.downed_hud] text[1] set value {{"text":" ↓","color":"white"}}
+data modify entity @n[tag={ns}.downed_hud,predicate={ns}:v{version}/zombies/revive/downed_id_match] text[0] set value {{"selector":"@a[tag={ns}.downed_spectator,sort=nearest,limit=1]","color":"white"}}
+data modify entity @n[tag={ns}.downed_hud,predicate={ns}:v{version}/zombies/revive/downed_id_match] text[1] set value {{"text":" ↓","color":"white"}}
 """)
 
 	write_versioned_function("zombies/revive/hud_yellow", f"""
-data modify entity @n[tag={ns}.downed_hud] text[0] set value {{"selector":"@a[tag={ns}.downed_spectator,sort=nearest,limit=1]","color":"yellow"}}
-data modify entity @n[tag={ns}.downed_hud] text[1] set value {{"text":" ↓","color":"yellow"}}
+data modify entity @n[tag={ns}.downed_hud,predicate={ns}:v{version}/zombies/revive/downed_id_match] text[0] set value {{"selector":"@a[tag={ns}.downed_spectator,sort=nearest,limit=1]","color":"yellow"}}
+data modify entity @n[tag={ns}.downed_hud,predicate={ns}:v{version}/zombies/revive/downed_id_match] text[1] set value {{"text":" ↓","color":"yellow"}}
 """)
 
 	write_versioned_function("zombies/revive/hud_gold", f"""
-data modify entity @n[tag={ns}.downed_hud] text[0] set value {{"selector":"@a[tag={ns}.downed_spectator,sort=nearest,limit=1]","color":"gold"}}
-data modify entity @n[tag={ns}.downed_hud] text[1] set value {{"text":" ↓","color":"gold"}}
+data modify entity @n[tag={ns}.downed_hud,predicate={ns}:v{version}/zombies/revive/downed_id_match] text[0] set value {{"selector":"@a[tag={ns}.downed_spectator,sort=nearest,limit=1]","color":"gold"}}
+data modify entity @n[tag={ns}.downed_hud,predicate={ns}:v{version}/zombies/revive/downed_id_match] text[1] set value {{"text":" ↓","color":"gold"}}
 """)
 
 	write_versioned_function("zombies/revive/hud_red", f"""
-data modify entity @n[tag={ns}.downed_hud] text[0] set value {{"selector":"@a[tag={ns}.downed_spectator,sort=nearest,limit=1]","color":"red"}}
-data modify entity @n[tag={ns}.downed_hud] text[1] set value {{"text":" ↓","color":"red"}}
+data modify entity @n[tag={ns}.downed_hud,predicate={ns}:v{version}/zombies/revive/downed_id_match] text[0] set value {{"selector":"@a[tag={ns}.downed_spectator,sort=nearest,limit=1]","color":"red"}}
+data modify entity @n[tag={ns}.downed_hud,predicate={ns}:v{version}/zombies/revive/downed_id_match] text[1] set value {{"text":" ↓","color":"red"}}
 """)
 
 	# ──────────────────────────────────────────────────────────────────────────
@@ -364,25 +380,35 @@ scoreboard players set @s {ns}.zb.downed 0
 scoreboard players set @s {ns}.zb.revive_p 0
 tag @s remove {ns}.downed_spectator
 
-# Store mannequin position before killing it
-execute store result storage {ns}:temp rv_x double 0.001 run data get entity @n[tag={ns}.downed_mannequin] Pos[0] 1000
-execute store result storage {ns}:temp rv_y double 0.001 run data get entity @n[tag={ns}.downed_mannequin] Pos[1] 1000
-execute store result storage {ns}:temp rv_z double 0.001 run data get entity @n[tag={ns}.downed_mannequin] Pos[2] 1000
+# Identify THIS player's mannequin by downed_id — with several downed players,
+# a 'nearest mannequin' lookup could consume someone else's mannequin and revive at the wrong place
+scoreboard players operation #my_downed_id {ns}.data = @s {ns}.zb.downed_id
+tag @e[tag={ns}.downed_mannequin,predicate={ns}:v{version}/zombies/revive/downed_id_match] add {ns}.downed_mine_temp
+
+# Store mannequin position before hiding it. Track read success: if the mannequin is missing,
+# the storage would keep a stale position (this is how players ended up respawning at 0 0 0)
+scoreboard players set #rv_pos_ok {ns}.data 0
+execute store success score #rv_pos_ok {ns}.data run data get entity @n[tag={ns}.downed_mine_temp] Pos
+execute store result storage {ns}:temp rv_x double 0.001 run data get entity @n[tag={ns}.downed_mine_temp] Pos[0] 1000
+execute store result storage {ns}:temp rv_y double 0.001 run data get entity @n[tag={ns}.downed_mine_temp] Pos[1] 1000
+execute store result storage {ns}:temp rv_z double 0.001 run data get entity @n[tag={ns}.downed_mine_temp] Pos[2] 1000
 
 # Hide mannequin and HUD by teleporting far below the world (avoids kill animation/drops)
-tp @n[tag={ns}.downed_mannequin] ~ -10000 ~
-tp @n[tag={ns}.downed_hud] ~ -10000 ~
-tag @n[tag={ns}.downed_mannequin] remove {ns}.downed_mannequin
-tag @n[tag={ns}.downed_hud] remove {ns}.downed_hud
-scoreboard players operation #my_downed_id {ns}.data = @s {ns}.zb.downed_id
+tp @n[tag={ns}.downed_mine_temp] ~ -10000 ~
+execute as @e[tag={ns}.downed_hud,predicate={ns}:v{version}/zombies/revive/downed_id_match] run tp @s ~ -10000 ~
+tag @n[tag={ns}.downed_mine_temp] remove {ns}.downed_mannequin
+execute as @e[tag={ns}.downed_hud,predicate={ns}:v{version}/zombies/revive/downed_id_match] run tag @s remove {ns}.downed_hud
+tag @e[tag={ns}.downed_mine_temp] remove {ns}.downed_mine_temp
 execute as @e[tag={ns}.downed_cam,predicate={ns}:v{version}/zombies/revive/downed_id_match] run kill @s
 
 # Dismount from camera entity and restore adventure mode
 ride @s dismount
 gamemode adventure @s
 
-# Teleport player to where the mannequin was
-function {ns}:v{version}/zombies/revive/tp_revive_pos with storage {ns}:temp
+# Teleport player to where the mannequin was; if it couldn't be found, fall back to a safe
+# spawn point near a teammate instead of teleporting to a stale position (e.g. 0 0 0)
+execute if score #rv_pos_ok {ns}.data matches 1 run function {ns}:v{version}/zombies/revive/tp_revive_pos with storage {ns}:temp
+execute unless score #rv_pos_ok {ns}.data matches 1 run function {ns}:v{version}/zombies/revive/respawn_near_player
 
 # Restore max health (check for Juggernog perk)
 execute if score @s {ns}.zb.perk.juggernog matches 1.. run attribute @s minecraft:max_health base set 40
@@ -407,12 +433,15 @@ scoreboard players set @s {ns}.zb.downed 0
 scoreboard players set @s {ns}.zb.revive_p 0
 tag @s remove {ns}.downed_spectator
 
-# Hide mannequin and HUD by teleporting far below the world
-tp @n[tag={ns}.downed_mannequin] ~ -10000 ~
-tp @n[tag={ns}.downed_hud] ~ -10000 ~
-tag @n[tag={ns}.downed_mannequin] remove {ns}.downed_mannequin
-tag @n[tag={ns}.downed_hud] remove {ns}.downed_hud
+# Hide THIS player's mannequin and HUD by teleporting far below the world (id-matched: a
+# "nearest" lookup could hide another downed player's mannequin when both went down together)
 scoreboard players operation #my_downed_id {ns}.data = @s {ns}.zb.downed_id
+tag @e[tag={ns}.downed_mannequin,predicate={ns}:v{version}/zombies/revive/downed_id_match] add {ns}.downed_mine_temp
+tp @n[tag={ns}.downed_mine_temp] ~ -10000 ~
+execute as @e[tag={ns}.downed_hud,predicate={ns}:v{version}/zombies/revive/downed_id_match] run tp @s ~ -10000 ~
+tag @n[tag={ns}.downed_mine_temp] remove {ns}.downed_mannequin
+execute as @e[tag={ns}.downed_hud,predicate={ns}:v{version}/zombies/revive/downed_id_match] run tag @s remove {ns}.downed_hud
+tag @e[tag={ns}.downed_mine_temp] remove {ns}.downed_mine_temp
 execute as @e[tag={ns}.downed_cam,predicate={ns}:v{version}/zombies/revive/downed_id_match] run kill @s
 
 # Dismount then enter full spectator mode to watch until next round
@@ -472,7 +501,7 @@ tellraw @a[scores={{{ns}.zb.in_game=1}}] [{MGS_TAG},{{"selector":"@s","color":"g
 	## Used when a still-downed player is force-revived at round end.
 	write_versioned_function("zombies/revive/clear_downed_state", f"""
 scoreboard players operation #my_downed_id {ns}.data = @s {ns}.zb.downed_id
-execute as @e[tag={ns}.downed_mannequin,predicate={ns}:v{version}/zombies/revive/downed_id_match] at @s run kill @n[tag={ns}.downed_hud,distance=..3]
+execute as @e[tag={ns}.downed_hud,predicate={ns}:v{version}/zombies/revive/downed_id_match] run kill @s
 execute as @e[tag={ns}.downed_mannequin,predicate={ns}:v{version}/zombies/revive/downed_id_match] run kill @s
 execute as @e[tag={ns}.downed_cam,predicate={ns}:v{version}/zombies/revive/downed_id_match] run kill @s
 ride @s dismount

@@ -86,7 +86,8 @@ execute store result score #proj_gravity {ns}.data run data get entity @s data.c
 scoreboard players operation @s bs.vel.y -= #proj_gravity {ns}.data
 
 # Move the projectile using Bookshelf's move module with collision detection
-function #bs.move:apply_vel {{scale:0.001,with:{{blocks:true,entities:true,on_collision:"function {ns}:v{version}/projectile/on_collision"}}}}
+# (custom ignored_blocks so barrier blocks never stop projectiles)
+function #bs.move:apply_vel {{scale:0.001,with:{{blocks:true,entities:true,ignored_blocks:"#{ns}:v{version}/projectile_pass_through",on_collision:"function {ns}:v{version}/projectile/on_collision"}}}}
 
 # If collision was detected, explode and stop processing
 execute at @s run function {ns}:v{version}/projectile/post_vel

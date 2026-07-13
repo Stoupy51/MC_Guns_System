@@ -4,6 +4,9 @@
 # @within	mgs:v5.0.1/zombies/preload_complete
 #
 
+# Reset the unique spawn id counter (each summoned marker gets the next id)
+scoreboard players set #zb_spawn_sid mgs.data 0
+
 # Player spawns
 data modify storage mgs:temp _spawn_iter set from storage mgs:zombies game.map.spawning_points.players
 data modify storage mgs:temp _spawn_tag set value "mgs.spawn_zb_player"

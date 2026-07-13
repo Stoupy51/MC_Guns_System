@@ -48,6 +48,10 @@ scoreboard objectives add {ns}.zb.ability_cd dummy
 # Spawn point group_id scoreboard
 scoreboard objectives add {ns}.zb.spawn.gid dummy
 
+# Spawn point unique id: held by spawn markers, and by zombies as "last spawn point used"
+# (initial spawn or stuck-rescue) so a rescue never reuses the previous spawn point.
+scoreboard objectives add {ns}.zb.spawn.sid dummy
+
 # Sidebar rank scoreboard
 scoreboard objectives add {ns}.zb.sb_rank dummy
 
@@ -472,7 +476,10 @@ execute as @a[scores={{{ns}.zb.in_game=1}},gamemode=!spectator] run function {ns
 		# Stuck Zombie Check ────────────────────────────────────────
 		write_versioned_function("zombies/stuck_zombie_check", f"""
 # @s = zombie_round entity (non-rising), run every 20 ticks on up to 24 random zombies
-# Progress = distance bucket improved OR XZ position changed. Either resets the timer.
+# Progress = distance bucket improved (or zombie is in melee range). Resets the timer.
+# Timeout depends on HOW the zombie is stuck:
+# - hasn't moved at all: 400t (20s), only 100t (5s) once it has already been rescued
+# - moved since last progress but not getting closer to a player: 300t (15s)
 
 # Compute distance bucket to nearest alive player (4=very far, 0=adjacent)
 scoreboard players set #cur_dist_bucket {ns}.data 4
@@ -491,16 +498,27 @@ scoreboard players set #stuck_progress {ns}.data 0
 execute if score #cur_dist_bucket {ns}.data < @s {ns}.zb.stuck_dist run scoreboard players set #stuck_progress {ns}.data 1
 execute if score #cur_dist_bucket {ns}.data matches 0 run scoreboard players set #stuck_progress {ns}.data 1
 
-# If progress: update all stored values and reset timestamp
+# If progress: update all stored values, reset timestamp, and clear the rescued flag
 execute if score #stuck_progress {ns}.data matches 1 run scoreboard players operation @s {ns}.zb.stuck_dist = #cur_dist_bucket {ns}.data
 execute if score #stuck_progress {ns}.data matches 1 run scoreboard players operation @s {ns}.zb.stuck_x = #cur_x {ns}.data
 execute if score #stuck_progress {ns}.data matches 1 run scoreboard players operation @s {ns}.zb.stuck_z = #cur_z {ns}.data
 execute if score #stuck_progress {ns}.data matches 1 run scoreboard players operation @s {ns}.zb.stuck_ticks = #total_tick {ns}.data
+execute if score #stuck_progress {ns}.data matches 1 run tag @s remove {ns}.zb_rescued
+execute if score #stuck_progress {ns}.data matches 1 run return 0
 
-# If no progress: compute elapsed ticks; respawn if >= 300 (15s)
-execute if score #stuck_progress {ns}.data matches 0 run scoreboard players operation #stuck_delta {ns}.data = #total_tick {ns}.data
-execute if score #stuck_progress {ns}.data matches 0 run scoreboard players operation #stuck_delta {ns}.data -= @s {ns}.zb.stuck_ticks
-execute if score #stuck_progress {ns}.data matches 0 if score #stuck_delta {ns}.data matches 300.. run function {ns}:v{version}/zombies/on_stuck_zombie
+# No progress: pick the timeout for this stuck mode
+# Moved = XZ differs from the snapshot taken at the last progress (block precision)
+scoreboard players set #stuck_moved {ns}.data 0
+execute unless score #cur_x {ns}.data = @s {ns}.zb.stuck_x run scoreboard players set #stuck_moved {ns}.data 1
+execute unless score #cur_z {ns}.data = @s {ns}.zb.stuck_z run scoreboard players set #stuck_moved {ns}.data 1
+scoreboard players set #stuck_threshold {ns}.data 400
+execute if score #stuck_moved {ns}.data matches 1 run scoreboard players set #stuck_threshold {ns}.data 300
+execute if score #stuck_moved {ns}.data matches 0 if entity @s[tag={ns}.zb_rescued] run scoreboard players set #stuck_threshold {ns}.data 100
+
+# Compute elapsed ticks since last progress; respawn once the timeout is reached
+scoreboard players operation #stuck_delta {ns}.data = #total_tick {ns}.data
+scoreboard players operation #stuck_delta {ns}.data -= @s {ns}.zb.stuck_ticks
+execute if score #stuck_delta {ns}.data >= #stuck_threshold {ns}.data run function {ns}:v{version}/zombies/on_stuck_zombie
 """)
 
 		write_versioned_function("zombies/on_stuck_zombie", f"""
@@ -512,8 +530,19 @@ execute if score #stuck_progress {ns}.data matches 0 if score #stuck_delta {ns}.
 # gate below needs no global @e existence scan.
 function {ns}:v{version}/zombies/tag_spawns_near_players
 
-# Teleport to the nearest rescue spawn (passenger death_watch marker follows automatically)
+# Never rescue to the spawn point this zombie last used (initial spawn or previous rescue),
+# unless it is the only candidate left.
+scoreboard players operation #zb_last_sid {ns}.data = @s {ns}.zb.spawn.sid
+execute as @e[tag={ns}.zb_near] if score @s {ns}.zb.spawn.sid = #zb_last_sid {ns}.data run tag @s add {ns}.zb_near_prev
+execute store result score #zb_near_alt {ns}.data if entity @e[tag={ns}.zb_near,tag=!{ns}.zb_near_prev]
+execute if score #zb_near_alt {ns}.data matches 1.. run tag @e[tag={ns}.zb_near_prev] remove {ns}.zb_near
+tag @e[tag={ns}.zb_near_prev] remove {ns}.zb_near_prev
+
+# Teleport to the nearest rescue spawn (passenger death_watch marker follows automatically),
+# remember its id, and flag the zombie as rescued (shortens the next "not moved" timeout to 5s)
 execute if score #zb_near_found {ns}.data matches 1.. run tp @s @n[tag={ns}.zb_near]
+execute if score #zb_near_found {ns}.data matches 1.. run scoreboard players operation @s {ns}.zb.spawn.sid = @n[tag={ns}.zb_near] {ns}.zb.spawn.sid
+execute if score #zb_near_found {ns}.data matches 1.. run tag @s add {ns}.zb_rescued
 tag @e[tag={ns}.zb_near] remove {ns}.zb_near
 
 # Reset stuck tracking from the new position so it gets a fresh window
@@ -543,6 +572,9 @@ execute if score @s {ns}.mp.bz > #bound_z2 {ns}.data run return run function {ns
 		# Spawn Point Markers ───────────────────────────────────────
 
 		write_versioned_function("zombies/summon_spawns", f"""
+# Reset the unique spawn id counter (each summoned marker gets the next id)
+scoreboard players set #zb_spawn_sid {ns}.data 0
+
 # Player spawns
 data modify storage {ns}:temp _spawn_iter set from storage {ns}:zombies game.map.spawning_points.players
 data modify storage {ns}:temp _spawn_tag set value "{ns}.spawn_zb_player"
@@ -580,6 +612,10 @@ function {ns}:v{version}/zombies/summon_spawn_at with storage {ns}:temp _spos
 # Set group_id score on newly spawned marker (default 0 if not defined)
 scoreboard players set @n[tag={ns}.new_spawn] {ns}.zb.spawn.gid 0
 execute store result score @n[tag={ns}.new_spawn] {ns}.zb.spawn.gid run data get storage {ns}:temp _spawn_iter[0].group_id
+
+# Assign a unique spawn id (lets zombies remember their previous spawn point and never reuse it)
+scoreboard players add #zb_spawn_sid {ns}.data 1
+scoreboard players operation @n[tag={ns}.new_spawn] {ns}.zb.spawn.sid = #zb_spawn_sid {ns}.data
 
 # Optional activation box (zombie spawns only): store the ABSOLUTE box on the marker so the
 # round spawner can gate this spawn on a player standing inside it. Only present when the map

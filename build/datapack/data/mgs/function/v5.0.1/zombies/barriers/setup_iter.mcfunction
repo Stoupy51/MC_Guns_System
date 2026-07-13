@@ -41,6 +41,9 @@ scoreboard players set @n[tag=mgs._barrier_new_d] mgs.zb.barrier.state 0
 scoreboard players set @n[tag=mgs._barrier_new_d] mgs.zb.barrier.r_timer 0
 scoreboard players set @n[tag=mgs._barrier_new_d] mgs.zb.barrier.rp_timer 0
 
+# Initial brightness from the local light level
+execute as @n[tag=mgs._barrier_new_d] at @s run function mgs:v5.0.1/zombies/barriers/compute_brightness
+
 # Remove temporary tag
 tag @e[tag=mgs._barrier_new_d] remove mgs._barrier_new_d
 

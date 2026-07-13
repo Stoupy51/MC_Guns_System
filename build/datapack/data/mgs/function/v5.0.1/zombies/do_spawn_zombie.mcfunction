@@ -20,3 +20,6 @@ data modify storage mgs:temp _zpos.type set value "normal"
 # Spawn the zombie (~ ~ ~ is spawn marker position, inherited from at @s in spawn_zombie)
 function mgs:v5.0.1/zombies/summon_zombie_at with storage mgs:temp _zpos
 
+# Remember which spawn point (@s) this zombie used, so a stuck-rescue never reuses it
+scoreboard players operation @n[tag=mgs.zombie_round,tag=mgs.zb_rising] mgs.zb.spawn.sid = @s mgs.zb.spawn.sid
+

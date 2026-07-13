@@ -18,6 +18,6 @@ scoreboard players operation @s bs.vel.z = #crawl_vz mgs.data
 function #bs.move:local_to_canonical
 function #bs.move:set_motion {scale:0.001}
 
-# Keep the HUD text_display anchored 2 blocks above the mannequin
-tp @n[tag=mgs.downed_hud] ~ ~2 ~
+# Keep the HUD text_display anchored 2 blocks above the mannequin (id-matched via #my_downed_id)
+tp @n[tag=mgs.downed_hud,predicate=mgs:v5.0.1/zombies/revive/downed_id_match] ~ ~2 ~
 

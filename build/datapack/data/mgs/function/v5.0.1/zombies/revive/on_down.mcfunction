@@ -45,6 +45,9 @@ item replace entity @n[tag=mgs.downed_new] weapon.mainhand with minecraft:air
 # Summon text_display HUD above mannequin (temp tag, teleported below)
 summon minecraft:text_display ~ ~ ~ {Tags:["mgs.downed_hud","mgs.downed_hud_new","mgs.gm_entity"],billboard:"vertical",shadow:1b,see_through:0b,teleport_duration:1,transformation:{translation:[0.0f,0.0f,0.0f],left_rotation:[0.0f,0.0f,0.0f,1.0f],scale:[1.5f,1.5f,1.5f],right_rotation:[0.0f,0.0f,0.0f,1.0f]},text:[{"selector":"@a[tag=mgs.downed_spectator,sort=nearest,limit=1]","color":"yellow"},{"text":" ↓","color":"yellow"}]}
 
+# Copy the player's downed_id to the HUD so it can be id-matched (never "nearest") later
+scoreboard players operation @n[tag=mgs.downed_hud_new] mgs.zb.downed_id = @s mgs.zb.downed_id
+
 # Teleport mannequin and HUD to death location
 function mgs:v5.0.1/zombies/revive/tp_to_death with storage mgs:temp
 

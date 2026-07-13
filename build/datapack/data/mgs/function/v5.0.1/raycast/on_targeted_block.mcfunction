@@ -28,7 +28,8 @@ execute if score #is_pass_through mgs.data matches 1 store result storage mgs:te
 execute if score #is_pass_through mgs.data matches 0 run function #bs.block:lookup_type with storage bs:out block
 execute if score #is_pass_through mgs.data matches 0 store result score #hardness mgs.data run data get storage bs:out block.hardness 1000
 
-# Indestructible blocks (bedrock, barriers, hardness=-1): stop bullet completely
+# Indestructible blocks (bedrock, hardness=-1): stop bullet completely
+# (barrier is NOT hit here: it's in the raycast's ignored_blocks tag, so bullets fly through untouched)
 execute if score #is_pass_through mgs.data matches 0 if score #hardness mgs.data matches ..-1 run data modify storage mgs:temp damage set value 0.0d
 execute if score #is_pass_through mgs.data matches 0 if score #hardness mgs.data matches ..-1 run return 0
 
@@ -38,7 +39,7 @@ execute if score #is_pass_through mgs.data matches 0 if score #hardness mgs.data
 execute if score #is_pass_through mgs.data matches 0 if score #hardness mgs.data matches 0..299 run scoreboard players remove $raycast.piercing bs.lambda 1
 execute if score #is_pass_through mgs.data matches 0 if score #hardness mgs.data matches 300..999 run scoreboard players remove $raycast.piercing bs.lambda 2
 execute if score #is_pass_through mgs.data matches 0 if score #hardness mgs.data matches 1000..2999 run scoreboard players remove $raycast.piercing bs.lambda 3
-execute if score #is_pass_through mgs.data matches 0 if score #hardness mgs.data matches 3000.. unless block ~ ~ ~ minecraft:barrier run scoreboard players set $raycast.piercing bs.lambda 0
+execute if score #is_pass_through mgs.data matches 0 if score #hardness mgs.data matches 3000.. run scoreboard players set $raycast.piercing bs.lambda 0
 
 # Clamp piercing to 0 (Bookshelf raycast only stops at exactly 0, not negative)
 execute if score #is_pass_through mgs.data matches 0 if score $raycast.piercing bs.lambda matches ..-1 run scoreboard players set $raycast.piercing bs.lambda 0
