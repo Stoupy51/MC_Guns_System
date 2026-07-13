@@ -84,6 +84,11 @@ execute as @e[tag=mgs.pap_machine,scores={mgs.pap_anim=1..}] at @s run function 
 execute as @e[tag=mgs.zombie_round,tag=mgs.barrier_frozen] run function mgs:v5.0.1/zombies/barriers/restore_zombie_speed
 execute as @e[tag=mgs.barrier_display] at @s run function mgs:v5.0.1/zombies/barriers/tick
 
+# Refresh barricade brightness every 5s (local light can change: doors, power, placed lights)
+scoreboard players add #barrier_bright_timer mgs.data 1
+execute if score #barrier_bright_timer mgs.data matches 100.. run scoreboard players set #barrier_bright_timer mgs.data 0
+execute if score #barrier_bright_timer mgs.data matches 0 as @e[tag=mgs.barrier_display] at @s run function mgs:v5.0.1/zombies/barriers/compute_brightness
+
 # Power-up entities exist only after a drop. #pu_active (maintained on spawn/expire/pickup) gates the
 # two per-tick scans below so an empty board costs nothing. Resync once every 40 ticks as a safety net
 # (the count is already exact since pu_item is Invulnerable and only dies through tracked paths).

@@ -15,6 +15,10 @@ execute if score #has_pap_level mgs.data matches 0 unless data storage mgs:gun a
 # For weapons with pellet count, set bullets_to_fire appropriately
 execute if data storage mgs:gun all.stats.pellet_count store result score #bullets_to_fire mgs.data run data get storage mgs:gun all.stats.pellet_count
 
+# Per-shot budget for entity hit particles: only the first 3 entities hit by this shot
+# (all pellets included) emit blood particles, to avoid lag when piercing a whole horde
+scoreboard players set #hit_particles_left mgs.data 3
+
 # If weapon is a grenade, throw it instead
 execute if data storage mgs:gun all.stats.grenade_type run return run function mgs:v5.0.1/grenade/throw
 

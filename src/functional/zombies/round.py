@@ -153,6 +153,9 @@ data modify storage {ns}:temp _zpos.type set value "normal"
 
 # Spawn the zombie (~ ~ ~ is spawn marker position, inherited from at @s in spawn_zombie)
 function {ns}:v{version}/zombies/summon_zombie_at with storage {ns}:temp _zpos
+
+# Remember which spawn point (@s) this zombie used, so a stuck-rescue never reuses it
+scoreboard players operation @n[tag={ns}.zombie_round,tag={ns}.zb_rising] {ns}.zb.spawn.sid = @s {ns}.zb.spawn.sid
 """)
 
 	## Summon zombie at execution position (macro for level/type dispatch)

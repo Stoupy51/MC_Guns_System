@@ -1,9 +1,10 @@
 
 #> mgs:v5.0.1/zombies/revive/respawn_near_player
 #
-# @executed	as @a[scores={mgs.zb.in_game=1},gamemode=spectator]
+# @executed	at @s
 #
-# @within	mgs:v5.0.1/zombies/revive/do_round_respawn
+# @within	mgs:v5.0.1/zombies/revive/revive_complete
+#			mgs:v5.0.1/zombies/revive/do_round_respawn
 #
 
 tag @s add mgs.spawn_pending

@@ -17,14 +17,19 @@ def generate_zombies_maps() -> None:
 execute unless data storage {ns}:maps zombies[{{id:"kino_der_toten"}}] run data modify storage {ns}:maps zombies append value {{id:"kino_der_toten", name:"Kino der Toten", description:"Black Ops 1 | Classic Zombies", base_coordinates:[0,0,0], spawning_points:{{zombies:[],players:[]}}, out_of_bounds:[], boundaries:[]}}
 """, tags=[f"{ns}:zombies/register_maps"])  # noqa: E501
 
-	# Calls functions — guard then delegate, registered to the shared function tags
+	# Calls functions — guard then delegate, registered to the shared function tags.
+	# "leave" must NOT require state "active": it fires from zombies/stop, by which point the
+	# state is already "ended"/"lobby" — requiring "active" made the cleanup silently never run
+	# (interactions were left behind after game over). map_id alone gates it to this map.
 	guard = (
 		f'execute if data storage {ns}:zombies game{{state:"active"}}'
 		f' if data storage {ns}:zombies game{{map_id:"kino_der_toten"}}'
 	)
+	leave_guard = f'execute if data storage {ns}:zombies game{{map_id:"kino_der_toten"}}'
 	for script in ["start", "tick", "join", "leave", "respawn", "power"]:
+		script_guard = leave_guard if script == "leave" else guard
 		write_versioned_function(f"maps/zombies/kino_der_toten/calls/{script}",
-			f"{guard} run return run function {ns}:v{version}/maps/zombies/kino_der_toten/{script}",
+			f"{script_guard} run return run function {ns}:v{version}/maps/zombies/kino_der_toten/{script}",
 			tags=[f"{ns}:maps/{script}_script"]
 		)
 
@@ -45,13 +50,13 @@ execute positioned ~-19 ~0 ~-1 run fill ~ ~ ~ ~ ~2 ~2 cobblestone
 
 # Summon all interactions
 ## Teleporter
-execute positioned ~-57 ~-1 ~9 run summon interaction ~ ~ ~ {{Tags:["{ns}.kino","{ns}.kino.teleporter_theater","bs.entity.interaction"],width:1.0f,height:2.0f}}
-execute positioned ~ ~ ~ run summon interaction ~ ~ ~ {{Tags:["{ns}.kino","{ns}.kino.teleporter_lobby","bs.entity.interaction"],width:1.0f,height:1.0f}}
+execute positioned ~-57 ~-1 ~9 run summon interaction ~ ~ ~ {{Tags:["{ns}.kino","{ns}.gm_entity","{ns}.kino.teleporter_theater","bs.entity.interaction"],width:1.0f,height:2.0f}}
+execute positioned ~ ~ ~ run summon interaction ~ ~ ~ {{Tags:["{ns}.kino","{ns}.gm_entity","{ns}.kino.teleporter_lobby","bs.entity.interaction"],width:1.0f,height:1.0f}}
 
 ## Meteorites
-execute positioned ~-12 ~0 ~-5 run summon interaction ~ ~ ~ {{Tags:["{ns}.kino","{ns}.kino.meteorite_1","bs.entity.interaction"],width:1.1f,height:2.1f}}
-execute positioned ~-58 ~-2 ~-22 run summon interaction ~ ~ ~ {{Tags:["{ns}.kino","{ns}.kino.meteorite_2","bs.entity.interaction"],width:1.1f,height:2.1f}}
-execute positioned ~-54 ~4 ~39 run summon interaction ~ ~ ~ {{Tags:["{ns}.kino","{ns}.kino.meteorite_3","bs.entity.interaction"],width:1.1f,height:2.1f}}
+execute positioned ~-12 ~0 ~-5 run summon interaction ~ ~ ~ {{Tags:["{ns}.kino","{ns}.gm_entity","{ns}.kino.meteorite_1","bs.entity.interaction"],width:1.1f,height:2.1f}}
+execute positioned ~-58 ~-2 ~-22 run summon interaction ~ ~ ~ {{Tags:["{ns}.kino","{ns}.gm_entity","{ns}.kino.meteorite_2","bs.entity.interaction"],width:1.1f,height:2.1f}}
+execute positioned ~-54 ~4 ~39 run summon interaction ~ ~ ~ {{Tags:["{ns}.kino","{ns}.gm_entity","{ns}.kino.meteorite_3","bs.entity.interaction"],width:1.1f,height:2.1f}}
 
 # Register right-click events for all kino interactions (target = interaction entity itself)
 execute as @e[tag={ns}.kino] run function #bs.interaction:on_right_click {{run:"function {ns}:v{version}/maps/zombies/kino_der_toten/on_right_click",executor:"target"}}

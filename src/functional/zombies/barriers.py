@@ -7,12 +7,18 @@
 # Players can repair a destroyed barrier by sneaking nearby for 1.5 seconds.
 # Block state is swapped in-place on destroy/repair — single block_display per barrier.
 
-from stewbeet import Mem, write_load_file, write_versioned_function
+from stewbeet import JsonDict, Mem, Predicate, set_json_encoder, write_load_file, write_versioned_function
 
 
 def generate_barriers() -> None:
 	ns: str = Mem.ctx.project_id
 	version: str = Mem.ctx.project_version
+
+	## Light level predicates (dynamic barricade brightness, same technique as the
+	## stewbeet custom_blocks plugin — one exact-match predicate per light level)
+	for level in range(1, 16):
+		light_pred: JsonDict = {"condition": "minecraft:location_check", "predicate": {"light": {"light": level}}}
+		Mem.ctx.data[ns].predicates[f"v{version}/light/{level}"] = set_json_encoder(Predicate(light_pred), max_level=-1)
 
 	## Scoreboards
 	write_load_file(f"""
@@ -72,6 +78,9 @@ scoreboard players set @n[tag={ns}._barrier_new_d] {ns}.zb.barrier.state 0
 scoreboard players set @n[tag={ns}._barrier_new_d] {ns}.zb.barrier.r_timer 0
 scoreboard players set @n[tag={ns}._barrier_new_d] {ns}.zb.barrier.rp_timer 0
 
+# Initial brightness from the local light level
+execute as @n[tag={ns}._barrier_new_d] at @s run function {ns}:v{version}/zombies/barriers/compute_brightness
+
 # Remove temporary tag
 tag @e[tag={ns}._barrier_new_d] remove {ns}._barrier_new_d
 
@@ -81,7 +90,34 @@ execute if data storage {ns}:temp _barrier_iter[0] run function {ns}:v{version}/
 """)
 
 	write_versioned_function("zombies/barriers/place_at", f"""
-$execute positioned $(x) $(y) $(z) align xyz positioned ~.5 ~.5 ~.5 run summon minecraft:block_display ~ ~ ~ {{Rotation:[$(yaw)f,0f],block_state:{{Name:"minecraft:air"}},transformation:{{left_rotation:[0f,0f,0f,1f],scale:[1f,1f,1f],translation:[-0.5f,-0.5f,-0.5f],right_rotation:[0f,0f,0f,1f]}},brightness:{{sky:15,block:15}},Tags:["{ns}.barrier_display","{ns}.gm_entity","{ns}._barrier_new_d"]}}
+$execute positioned $(x) $(y) $(z) align xyz positioned ~.5 ~.5 ~.5 run summon minecraft:block_display ~ ~ ~ {{Rotation:[$(yaw)f,0f],block_state:{{Name:"minecraft:air"}},transformation:{{left_rotation:[0f,0f,0f,1f],scale:[1f,1f,1f],translation:[-0.5f,-0.5f,-0.5f],right_rotation:[0f,0f,0f,1f]}},Tags:["{ns}.barrier_display","{ns}.gm_entity","{ns}._barrier_new_d"]}}
+""")
+
+	## Raise #light to the light level at the current position (exact-match predicates, early exit)
+	check_light_lines: str = "".join(
+		f"execute if score #light {ns}.data matches ..{level - 1} if predicate {ns}:v{version}/light/{level} run return run scoreboard players set #light {ns}.data {level}\n"
+		for level in range(1, 16)
+	)
+	write_versioned_function("zombies/barriers/check_light", f"""
+# Check light level at current position and update #light if higher
+{check_light_lines}""")
+
+	## Compute a barricade display's brightness from the light at its position and the 6
+	## neighboring positions (max), instead of the old hardcoded sky/block 15 which made
+	## boards glow in dark rooms. @s = barrier display, executed at @s.
+	brightness_faces: list[str] = ["~ ~ ~", "~ ~1 ~", "~ ~-1 ~", "~1 ~ ~", "~-1 ~ ~", "~ ~ ~1", "~ ~ ~-1"]
+	compute_brightness_lines: str = "".join(
+		f"execute if score #light {ns}.data matches ..14 positioned {face} run function {ns}:v{version}/zombies/barriers/check_light\n"
+		for face in brightness_faces
+	)
+	write_versioned_function("zombies/barriers/compute_brightness", f"""
+# Reset light score, then sample own position and all 6 neighbors (stop early at 15)
+scoreboard players set #light {ns}.data 0
+{compute_brightness_lines}
+# Apply computed brightness to the display
+data merge entity @s {{brightness:{{block:0,sky:0}}}}
+execute store result entity @s brightness.block int 1 run scoreboard players get #light {ns}.data
+execute store result entity @s brightness.sky int 1 run scoreboard players get #light {ns}.data
 """)
 
 	## Single tick dispatch (optimization: ONE @e sweep for all barrier displays)
@@ -275,6 +311,11 @@ tag @s remove {ns}.barrier_frozen
 # Barriers: restore frozen speeds from last tick, then dispatch all display ticks
 execute as @e[tag={ns}.zombie_round,tag={ns}.barrier_frozen] run function {ns}:v{version}/zombies/barriers/restore_zombie_speed
 execute as @e[tag={ns}.barrier_display] at @s run function {ns}:v{version}/zombies/barriers/tick
+
+# Refresh barricade brightness every 5s (local light can change: doors, power, placed lights)
+scoreboard players add #barrier_bright_timer {ns}.data 1
+execute if score #barrier_bright_timer {ns}.data matches 100.. run scoreboard players set #barrier_bright_timer {ns}.data 0
+execute if score #barrier_bright_timer {ns}.data matches 0 as @e[tag={ns}.barrier_display] at @s run function {ns}:v{version}/zombies/barriers/compute_brightness
 """)
 
 	## Hook into preload_complete — setup barriers if map has any

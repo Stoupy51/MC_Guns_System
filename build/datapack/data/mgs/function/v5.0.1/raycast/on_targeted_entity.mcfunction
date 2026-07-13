@@ -15,8 +15,9 @@ execute if entity @s[type=player] unless entity @s[tag=mgs.ticking] if score #sh
 scoreboard players set #is_entity_hit mgs.data 1
 tag @s add mgs.raycast_target
 
-# Blood particles
-execute at @s run particle block{block_state:"redstone_wire"} ~ ~1 ~ 0.35 0.5 0.35 0 100 force @a[distance=..128]
+# Blood particles (capped: only the first 3 entities hit per shot emit particles)
+execute if score #hit_particles_left mgs.data matches 1.. at @s run particle block{block_state:"redstone_wire"} ~ ~1 ~ 0.35 0.5 0.35 0 100 force @a[distance=..128]
+scoreboard players remove #hit_particles_left mgs.data 1
 
 # Store attack info and calculate decay
 data modify storage mgs:input with set value {target:"@s", amount:0.0f, attacker:"@n[tag=mgs.ticking]"}

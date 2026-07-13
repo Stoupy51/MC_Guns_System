@@ -165,6 +165,10 @@ scoreboard objectives add mgs.zb.ability_cd dummy
 # Spawn point group_id scoreboard
 scoreboard objectives add mgs.zb.spawn.gid dummy
 
+# Spawn point unique id: held by spawn markers, and by zombies as "last spawn point used"
+# (initial spawn or stuck-rescue) so a rescue never reuses the previous spawn point.
+scoreboard objectives add mgs.zb.spawn.sid dummy
+
 # Sidebar rank scoreboard
 scoreboard objectives add mgs.zb.sb_rank dummy
 

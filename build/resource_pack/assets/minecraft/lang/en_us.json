@@ -623,6 +623,8 @@
 	"mgs.rpk_mk4_4x_scope": "RPK (Mk4 (4x Scope))",
 	"mgs.run_this_command_to_create_a_new_map": "Run this command to create a new map:",
 	"mgs.s_10_0s": "s / 10.0s",
+	"mgs.s_1_5s": "s / 1.5s",
+	"mgs.s_3_0s": "s / 3.0s",
 	"mgs.s_left": "s left",
 	"mgs.save": "Save",
 	"mgs.save_exit": "Save & Exit",
