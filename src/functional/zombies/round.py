@@ -191,7 +191,7 @@ scoreboard players set @n[tag={ns}.zombie_round,tag={ns}.zb_rising] {ns}.zb.stuc
 tag @s add {ns}.zb_scaled
 data modify entity @s DeathTime set value -16s
 
-# Compute BO2-derived HP for this round and apply it to this zombie
+# Compute round-scaled HP (base_health * 1.1^(round - 1)) and apply it to this zombie
 function {ns}:v{version}/zombies/calc_zombie_hp
 execute store result storage {ns}:temp _zb_hp.val int 1 run scoreboard players get #zb_hp {ns}.data
 function {ns}:v{version}/zombies/apply_zombie_hp with storage {ns}:temp _zb_hp
@@ -223,40 +223,23 @@ attribute @s minecraft:knockback_resistance base set 1024
 scoreboard players set @s {ns}.zb.rise_tick 20
 """)
 
-	## Compute zombie HP for current round (BO2 formula adapted to Minecraft scale)
+	## Compute zombie HP for current round: health = base_health * 1.1^(round - 1)
+	## base_health = 20 (vanilla zombie HP, i.e. BO2's 150 HP scaled by 2/15 to Minecraft scale)
 	write_versioned_function("zombies/calc_zombie_hp", f"""
-# R1-9: linear growth
-execute if score #zb_round {ns}.data matches ..9 run function {ns}:v{version}/zombies/calc_zombie_hp_linear
-
-# R10+: exponential growth
-execute if score #zb_round {ns}.data matches 10.. run function {ns}:v{version}/zombies/calc_zombie_hp_exp
-
-# Cap at Minecraft-safe gameplay max
-execute unless score #zb_hp {ns}.data matches 15..2048 run scoreboard players set #zb_hp {ns}.data 2048
-""")
-
-	## R1-9: (150 + (round - 1) * 100) * 2 / 15
-	write_versioned_function("zombies/calc_zombie_hp_linear", f"""
-scoreboard players operation #zb_hp {ns}.data = #zb_round {ns}.data
-scoreboard players remove #zb_hp {ns}.data 1
-scoreboard players operation #zb_hp {ns}.data *= #100 {ns}.data
-scoreboard players operation #zb_hp {ns}.data += #150 {ns}.data
-scoreboard players operation #zb_hp {ns}.data *= #2 {ns}.data
-scoreboard players operation #zb_hp {ns}.data /= #15 {ns}.data
-""")
-
-	## R10+: 950 * 1.1^(round - 9) * 2 / 15
-	write_versioned_function("zombies/calc_zombie_hp_exp", f"""
+# Exponent: round - 1
 scoreboard players operation #zb_exp_round {ns}.data = #zb_round {ns}.data
-scoreboard players remove #zb_exp_round {ns}.data 9
+scoreboard players remove #zb_exp_round {ns}.data 1
 
+# 1.1^(round - 1)
 data modify storage bs:in math.pow.x set value 1.1f
 execute store result storage bs:in math.pow.y float 1 run scoreboard players get #zb_exp_round {ns}.data
 function #bs.math:pow
 
-execute store result score #zb_hp {ns}.data run data get storage bs:out math.pow 950
-scoreboard players operation #zb_hp {ns}.data *= #2 {ns}.data
-scoreboard players operation #zb_hp {ns}.data /= #15 {ns}.data
+# health = base_health (20) * 1.1^(round - 1)
+execute store result score #zb_hp {ns}.data run data get storage bs:out math.pow 20
+
+# Cap at Minecraft-safe gameplay max
+execute unless score #zb_hp {ns}.data matches 15..2048 run scoreboard players set #zb_hp {ns}.data 2048
 """)
 
 	## Apply computed HP to the current zombie (@s)
