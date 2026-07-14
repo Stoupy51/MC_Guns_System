@@ -83,7 +83,7 @@ Major differences in 5.0 (Minecraft 26.2+) compared to MGS 4.2:
 - Runtime lore rebuilding from weapon stats.
 - Advanced firing and environment-aware sound logic.
 
-![Weapon framework](https://github.com/user-attachments/assets/a8094f23-320a-4708-8b7c-132a2f3dc7c4)
+https://github.com/user-attachments/assets/a8094f23-320a-4708-8b7c-132a2f3dc7c4
 
 ## 🧩 Custom Loadouts And Classes
 
@@ -153,7 +153,7 @@ Implemented gamemodes:
 - Passive and active ability system.
 - Bonus systems (max ammo refill, nuke kill loop).
 
-![Zombies video](https://github.com/user-attachments/assets/69d14336-9af0-47ef-a5da-538b0f668787)
+https://github.com/user-attachments/assets/69d14336-9af0-47ef-a5da-538b0f668787
 
 ## 🗺️ Map Editor
 
