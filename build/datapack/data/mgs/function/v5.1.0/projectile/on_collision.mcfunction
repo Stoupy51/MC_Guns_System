@@ -1,0 +1,21 @@
+
+#> mgs:v5.1.0/projectile/on_collision
+#
+# @executed	as @e[tag=mgs.slow_bullet] & at @s
+#
+# @within	mgs:v5.1.0/projectile/tick {scale:0.001,with:{blocks:true,entities:true,ignored_blocks:"#mgs:v5.1.0/projectile_pass_through",on_collision:"function mgs:v5.1.0/projectile/on_collision"}}
+#
+
+# Tag the nearest non-immune entity as directly hit (for bullet damage in explode)
+# distance=..2.5 covers feet-to-head hit at any entity height up to 2.5 blocks
+tag @e[tag=mgs.direct_hit] remove mgs.direct_hit
+execute as @n[distance=..2.5,type=!#mgs:ignore,tag=!mgs.slow_bullet,tag=!global.ignore.kill,tag=!global.ignore,nbt=!{Invulnerable:true}] run tag @s add mgs.direct_hit
+
+# Mark for explosion
+tag @s add mgs.exploding
+
+# Stop all remaining velocity to prevent further movement
+scoreboard players set $move.vel.x bs.lambda 0
+scoreboard players set $move.vel.y bs.lambda 0
+scoreboard players set $move.vel.z bs.lambda 0
+
