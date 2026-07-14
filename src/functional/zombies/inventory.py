@@ -212,7 +212,7 @@ function {ns}:v{version}/zombies/inventory/give_starting_loadout
 		for pid in PERK_DEFINITIONS
 	)
 	perk_item_lines: str = "\n".join(
-		f'execute if score @s {ns}.zb.perk.{pid} matches 1 run data modify storage {ns}:temp info.lore append value {{"text":"\\u2022 {pdata["display_name"]}","color":"{pdata["message_color"]}","italic":false}}'
+		f'execute if score @s {ns}.zb.perk.{pid} matches 1 run data modify storage {ns}:temp info.lore append value {{"text":"\\u2022 {pdata["display_name"]}","color":"{pdata["text_color"]}","italic":false}}'
 		for pid, pdata in PERK_DEFINITIONS.items()
 	)
 	write_versioned_function("zombies/inventory/refresh_info_item", f"""
@@ -232,6 +232,9 @@ execute if score #info_perk_count {ns}.data matches 1.. run data modify storage 
 
 function {ns}:v{version}/zombies/inventory/refresh_info_item_render with storage {ns}:temp info
 function {ns}:v{version}/zombies/inventory/apply_slot_tag {{slot:"hotbar.8",group:"hotbar",index:8}}
+
+# Keep the perk display items (inventory.26 and down) in sync with the same cadence
+function {ns}:v{version}/zombies/inventory/refresh_perk_items
 """)
 
 	# Macro: build the 4 base lore lines (with concrete numbers) as an NBT list.
@@ -242,6 +245,40 @@ $data modify storage {ns}:temp info.lore set value [{{"text":"Round: $(round)","
 	# Macro: render the paper with the pre-built lore list ($(lore) substitutes the list SNBT).
 	write_versioned_function("zombies/inventory/refresh_info_item_render", f"""
 $item replace entity @s hotbar.8 with minecraft:paper[custom_data={{{ns}:{{zb_info:true}}}},item_name={{"text":"\\u2139 Player Info","color":"gold","italic":false}},lore=$(lore)]
+""")
+
+	# Perk display items: one mini perk-machine item per owned perk, filling the LAST main
+	# inventory row from inventory.26 going down (purely visual; rebuilt from scoreboards).
+	# custom_data has NO "zombies" key on purpose: on_new_item kills any {ns}-tagged drop
+	# without it, so a thrown perk item silently despawns and reappears on the next refresh.
+	perk_display_slots: list[int] = [26 - i for i in range(len(PERK_DEFINITIONS))]
+	perk_display_clear: str = "\n".join(
+		f"execute if items entity @s inventory.{slot} *[custom_data~{{{ns}:{{zb_perk_display:true}}}}] run item replace entity @s inventory.{slot} with air"
+		for slot in perk_display_slots
+	)
+	perk_display_place: str = "\n".join(
+		f'execute if score @s {ns}.zb.perk.{pid} matches 1 run function {ns}:v{version}/zombies/inventory/place_perk_item {{id:"{pid}",name:"{pdata["display_name"]}",color:"{pdata["text_color"]}"}}'
+		for pid, pdata in PERK_DEFINITIONS.items()
+	)
+	# Tagged into the on_new_perk signal (@s = buying player) so a purchase shows up instantly.
+	write_versioned_function("zombies/inventory/refresh_perk_items", f"""
+# Wipe previous perk display items (owned set may have shrunk), then re-place from slot 26 down
+{perk_display_clear}
+scoreboard players set #perk_inv_slot {ns}.data 26
+{perk_display_place}
+""", tags=[f"{ns}:zombies/on_new_perk"])
+
+	# Macro step 1: resolve the next free display slot into storage, then render
+	write_versioned_function("zombies/inventory/place_perk_item", f"""
+$data modify storage {ns}:temp _perk_place set value {{id:"$(id)",name:"$(name)",color:"$(color)"}}
+execute store result storage {ns}:temp _perk_place.slot int 1 run scoreboard players get #perk_inv_slot {ns}.data
+function {ns}:v{version}/zombies/inventory/place_perk_item_at with storage {ns}:temp _perk_place
+scoreboard players remove #perk_inv_slot {ns}.data 1
+""")
+
+	# Macro step 2: place the item (model = the recolored perk machine from the item database)
+	write_versioned_function("zombies/inventory/place_perk_item_at", f"""
+$item replace entity @s inventory.$(slot) with minecraft:paper[item_model="{ns}:perk_machine_$(id)",custom_data={{{ns}:{{zb_perk_display:true}}}},item_name={{"text":"$(name)","color":"$(color)","italic":false}},lore=[{{"text":"Owned perk","color":"gray","italic":false}}]]
 """)
 
 	write_versioned_function("zombies/inventory/give_ability_item", f"""

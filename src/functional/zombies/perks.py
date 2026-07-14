@@ -8,11 +8,16 @@ from ..helpers import MGS_TAG
 from ..stamina import STAM_MAX
 from .common import deny_not_enough_points_body, deny_requires_power_body, game_active_guard_cmd
 
+# Each perk defines:
+# - message/message_color: chat feedback on purchase
+# - text_color: text color matching the perk MACHINE model's dye color (others.py override_model),
+#   used everywhere the perk is listed (info paper, perk display items) so colors stay consistent
 PERK_DEFINITIONS: dict[str, JsonDict] = {
 	"juggernog": {
 		"display_name": "Juggernog",
 		"message": "🍺 Juggernog! Max HP: 40",
 		"message_color": "dark_red",
+		"text_color": "red",
 		"commands": [
 			"attribute @s minecraft:max_health base set 40",
 		],
@@ -24,6 +29,7 @@ PERK_DEFINITIONS: dict[str, JsonDict] = {
 		"display_name": "Speed Cola",
 		"message": "⚡ Speed Cola! Faster reload",
 		"message_color": "green",
+		"text_color": "green",
 		"commands": [
 			"scoreboard players set @s {ns}.special.quick_reload 50",
 		],
@@ -35,6 +41,7 @@ PERK_DEFINITIONS: dict[str, JsonDict] = {
 		"display_name": "Double Tap",
 		"message": "🔥 Double Tap! More damage",
 		"message_color": "gold",
+		"text_color": "yellow",
 		"commands": [
 			"scoreboard players set @s {ns}.special.additional_shots 1",
 		],
@@ -46,6 +53,7 @@ PERK_DEFINITIONS: dict[str, JsonDict] = {
 		"display_name": "Quick Revive",
 		"message": "💚 Quick Revive! You can revive teammates",
 		"message_color": "aqua",
+		"text_color": "aqua",
 		"commands": [
 			"tag @s add {ns}.perk.quick_revive",
 		],
@@ -57,11 +65,13 @@ PERK_DEFINITIONS: dict[str, JsonDict] = {
 		"display_name": "Mule Kick",
 		"message": "🎒 Mule Kick! Third weapon slot unlocked",
 		"message_color": "gold",
+		"text_color": "dark_green",
 	},
 	"stamin_up": {
 		"display_name": "Stamin-Up",
 		"message": "🏃 Stamin-Up! Sprint longer, move faster",
 		"message_color": "yellow",
+		"text_color": "gold",
 		# BO1 Zombies Stamin-Up (see zombies/stamina.md): double sprint endurance + 7% move speed
 		# (multiplicative, on top of the weapon/base movement model). The stam bump refills the
 		# new headroom instantly so the visible bar doesn't drop at purchase.
@@ -298,6 +308,9 @@ tellraw @s [{MGS_TAG},{{"text":"{perk_data["message"]}","color":"{perk_data["mes
 # Remove all perk effects and reset scoreboard tracking
 {lose_all_body}
 tellraw @s [{MGS_TAG},{{"text":"All perks lost!","color":"red"}}]
+
+# Remove the perk display items from the inventory right away
+function {ns}:v{version}/zombies/inventory/refresh_perk_items
 """)
 
 	## Hover events (executor: "source" = player)

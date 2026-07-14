@@ -70,6 +70,12 @@ execute if score #zb_horde_timer mgs.data matches 0 as @a[scores={mgs.zb.in_game
 # Escort system (escort.py): drag escorted zombies behind their pathfinding traders
 execute if score #zb_escort_count mgs.data matches 1.. as @e[tag=mgs.zb_escorted] at @s run function mgs:v5.0.1/zombies/escort/zombie_tick
 
+# Interaction safeguard (count-INDEPENDENT, every tick): if the escort counter ever drifts, the
+# gated loop above stops running and a trader can walk into a player and become right-clickable.
+# This ungated pass over the (usually empty) trader set discards any trader that gets within reach
+# of an alive player regardless of the counter, so an interactable trader can never linger.
+execute as @e[type=minecraft:wandering_trader,tag=mgs.zb_escort] at @s if entity @p[scores={mgs.zb.in_game=1,mgs.zb.downed=0},gamemode=!spectator,distance=..6] run function mgs:v5.0.1/zombies/escort/discard_near_player
+
 # Every 2s: resync the escort counter from reality — start/detach keep it accurate in between,
 # but any drift (e.g. an escorted zombie dying the same tick its trader vanishes) would wedge
 # the max-escort gate shut forever, silently disabling all future escorts. Then discard

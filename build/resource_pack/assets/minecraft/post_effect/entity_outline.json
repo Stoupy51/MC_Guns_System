@@ -1,0 +1,64 @@
+{
+	"targets": {
+		"swap": {},
+		"smooth_zoom": {
+			"width": 1,
+			"height": 1,
+			"persistent": true
+		}
+	},
+	"passes": [
+		{
+			"vertex_shader": "minecraft:core/screenquad",
+			"fragment_shader": "mgs:post/zoom_lerp",
+			"inputs": [
+				{"sampler_name": "Main","target": "minecraft:main"},
+				{"sampler_name": "SmoothZoom","target": "smooth_zoom"}
+			],
+			"output": "smooth_zoom"
+		},
+		{
+			"vertex_shader": "minecraft:core/screenquad",
+			"fragment_shader": "minecraft:post/entity_sobel",
+			"inputs": [
+				{"sampler_name": "In","target": "minecraft:entity_outline"}
+			],
+			"output": "swap"
+		},
+		{
+			"vertex_shader": "minecraft:core/screenquad",
+			"fragment_shader": "minecraft:post/entity_outline_box_blur",
+			"inputs": [
+				{"sampler_name": "In","target": "swap","bilinear": true}
+			],
+			"output": "minecraft:entity_outline",
+			"uniforms": {
+				"BlurConfig": [{"name": "BlurDir","type": "vec2","value": [1.0,0.0]},{"name": "Radius","type": "float","value": 2.0}]
+			}
+		},
+		{
+			"vertex_shader": "minecraft:core/screenquad",
+			"fragment_shader": "minecraft:post/entity_outline_box_blur",
+			"inputs": [
+				{"sampler_name": "In","target": "minecraft:entity_outline","bilinear": true}
+			],
+			"output": "swap",
+			"uniforms": {
+				"BlurConfig": [{"name": "BlurDir","type": "vec2","value": [0.0,1.0]},{"name": "Radius","type": "float","value": 2.0}]
+			}
+		},
+		{
+			"vertex_shader": "minecraft:core/screenquad",
+			"fragment_shader": "mgs:post/outline_zoom",
+			"inputs": [
+				{"sampler_name": "In","target": "swap","bilinear": true},
+				{"sampler_name": "Main","target": "minecraft:main"},
+				{"sampler_name": "SmoothZoom","target": "smooth_zoom"}
+			],
+			"output": "minecraft:entity_outline",
+			"uniforms": {
+				"ZoomConfig": [{"name": "Distortion","type": "float","value": 0.55}]
+			}
+		}
+	]
+}

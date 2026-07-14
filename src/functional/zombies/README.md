@@ -13,6 +13,9 @@
 - When a mystery box is not active, move out the interaction entity please
 - /execute as airdox_ run function mgs:v5.0.1/zombies/join_game
   - this join game is running the multiplayer join. It says to choose a loadout, which is totally wrong in zombies. it should give starting pistol and knife (see start function)
+- wandering traders are not stopped by barriers, they should be stopped
+- when there is only one zombie left starting round 10
+- max ammo doesn't refill grenades when you have 0 grenade
 
 # Zonweeb:
 - special zombie that gives resistance to near zombies

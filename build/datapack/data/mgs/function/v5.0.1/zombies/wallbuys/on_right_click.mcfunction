@@ -38,3 +38,9 @@ execute if score #wb_purchase_mode mgs.data matches 3 run function mgs:v5.0.1/zo
 execute if score #wb_purchase_mode mgs.data matches 4 run scoreboard players operation @s mgs.zb.points += #wb_price mgs.data
 execute if score #wb_purchase_mode mgs.data matches 4 run function mgs:v5.0.1/zombies/wallbuys/msg_refund_full
 
+# Refresh the reserve-ammo HUD after a buy/refill/replace. reload_pair fills the magazines but
+# the actionbar reads @s mgs.reserve_ammo, which is otherwise only recomputed on reload/idle/
+# weapon-switch — so without this the reserve count stayed stale until the next weapon swap.
+execute if score #wb_purchase_mode mgs.data matches 1..3 run function mgs:v5.0.1/utils/copy_gun_data
+execute if score #wb_purchase_mode mgs.data matches 1..3 run function mgs:v5.0.1/ammo/compute_reserve
+
