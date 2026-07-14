@@ -1,6 +1,5 @@
 
 # TODO:
-- The stamina system is very wrong: need to add the Stamin-Up perk. ("stamin_up" id). Then, read stamina.md for real implementation.
 - shaders.py bug with the zoom: the glowing effect on entities is not zoomed, leading to a weird effect
 - Perks in the player_info paper.
   - Would be nice also if they were placed in the inventory starting from inventory.26 and going down as single items

@@ -15,6 +15,8 @@
 		{"type": "minecraft:single","resource": "minecraft:block/lime_terracotta","sprite": "mgs:atlas/lime_terracotta"},
 		{"type": "minecraft:single","resource": "minecraft:block/netherite_block","sprite": "mgs:atlas/netherite_block"},
 		{"type": "minecraft:single","resource": "minecraft:block/oak_planks","sprite": "mgs:atlas/oak_planks"},
+		{"type": "minecraft:single","resource": "minecraft:block/orange_concrete","sprite": "mgs:atlas/orange_concrete"},
+		{"type": "minecraft:single","resource": "minecraft:block/orange_terracotta","sprite": "mgs:atlas/orange_terracotta"},
 		{"type": "minecraft:single","resource": "minecraft:block/red_concrete","sprite": "mgs:atlas/red_concrete"},
 		{"type": "minecraft:single","resource": "minecraft:block/red_terracotta","sprite": "mgs:atlas/red_terracotta"},
 		{"type": "minecraft:single","resource": "minecraft:block/sea_lantern","sprite": "mgs:atlas/sea_lantern"},

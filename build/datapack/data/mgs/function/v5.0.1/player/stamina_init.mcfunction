@@ -6,9 +6,10 @@
 # @within	mgs:v5.0.1/player/stamina_tick
 #
 
-scoreboard players set @s mgs.stam 100
+scoreboard players set @s mgs.stam_max 200
+scoreboard players operation @s mgs.stam_max += @s mgs.stam_bonus
+scoreboard players operation @s mgs.stam = @s mgs.stam_max
 scoreboard players set @s mgs.stam_out 0
 scoreboard players set @s mgs.stam_rest 0
-scoreboard players operation @s mgs.stam_prev = @s mgs.sprint
 scoreboard players set @s mgs.stam_seen 1
 

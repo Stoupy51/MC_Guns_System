@@ -292,8 +292,8 @@ gamemode adventure @s
 # Teleport to random mission spawn point
 function {ns}:v{version}/missions/respawn_tp
 
-# Re-apply saturation
-effect give @s saturation infinite 255 true
+# Reset stamina to full (the stamina system owns the hunger bar)
+scoreboard players set @s {ns}.stam_seen 0
 
 # Re-apply class loadout (lost on death)
 execute unless score @s {ns}.mp.class matches 0 run function {ns}:v{version}/multiplayer/apply_class

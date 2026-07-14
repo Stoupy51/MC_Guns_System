@@ -15,8 +15,8 @@ gamemode adventure @s
 # Teleport to random mission spawn point
 function mgs:v5.0.1/missions/respawn_tp
 
-# Re-apply saturation
-effect give @s saturation infinite 255 true
+# Reset stamina to full (the stamina system owns the hunger bar)
+scoreboard players set @s mgs.stam_seen 0
 
 # Re-apply class loadout (lost on death)
 execute unless score @s mgs.mp.class matches 0 run function mgs:v5.0.1/multiplayer/apply_class

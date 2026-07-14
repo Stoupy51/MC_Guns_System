@@ -105,6 +105,8 @@ bossbar remove mgs:pu_unlimited_ammo
 
 # Reset perk effects
 execute as @a[scores={mgs.zb.in_game=1}] run attribute @s minecraft:max_health base set 20
+execute as @a[scores={mgs.zb.in_game=1}] run attribute @s minecraft:movement_speed modifier remove mgs:stamin_up
+scoreboard players set @a mgs.stam_bonus 0
 tag @a remove mgs.perk.speed_cola
 tag @a remove mgs.perk.double_tap
 tag @a remove mgs.perk.quick_revive
@@ -122,6 +124,7 @@ scoreboard players reset * mgs.zb.perk.speed_cola
 scoreboard players reset * mgs.zb.perk.double_tap
 scoreboard players reset * mgs.zb.perk.quick_revive
 scoreboard players reset * mgs.zb.perk.mule_kick
+scoreboard players reset * mgs.zb.perk.stamin_up
 
 # Reset revive state
 scoreboard players set @a mgs.zb.downed 0

@@ -28,7 +28,8 @@ gamemode adventure @s
 
 attribute @s minecraft:waypoint_receive_range base set 0.0
 
-effect give @s saturation infinite 255 true
+# Reset stamina so the stamina system re-inits this player at full (it owns the hunger bar)
+scoreboard players set @s mgs.stam_seen 0
 
 # Enable class menu and show class selection
 tag @s add mgs.give_class_menu

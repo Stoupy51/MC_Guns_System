@@ -13,4 +13,5 @@ execute unless data storage mgs:temp _pk_data.name if data storage mgs:temp _pk_
 execute unless data storage mgs:temp _pk_data.name if data storage mgs:temp _pk_data{perk_id:"double_tap"} run data modify storage mgs:temp _pk_hover_name set value "Double Tap"
 execute unless data storage mgs:temp _pk_data.name if data storage mgs:temp _pk_data{perk_id:"quick_revive"} run data modify storage mgs:temp _pk_hover_name set value "Quick Revive"
 execute unless data storage mgs:temp _pk_data.name if data storage mgs:temp _pk_data{perk_id:"mule_kick"} run data modify storage mgs:temp _pk_hover_name set value "Mule Kick"
+execute unless data storage mgs:temp _pk_data.name if data storage mgs:temp _pk_data{perk_id:"stamin_up"} run data modify storage mgs:temp _pk_hover_name set value "Stamin-Up"
 

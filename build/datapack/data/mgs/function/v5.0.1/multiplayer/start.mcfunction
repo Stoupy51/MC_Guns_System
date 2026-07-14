@@ -145,7 +145,6 @@ function mgs:v5.0.1/multiplayer/tp_all_to_spawns
 effect give @a[scores={mgs.mp.in_game=1}] darkness 25 255 true
 effect give @a[scores={mgs.mp.in_game=1}] blindness 25 255 true
 effect give @a[scores={mgs.mp.in_game=1}] night_vision 25 255 true
-effect give @a[scores={mgs.mp.in_game=1}] saturation infinite 255 true
 execute as @a[scores={mgs.mp.in_game=1}] run attribute @s minecraft:movement_speed base set 0
 execute as @a[scores={mgs.mp.in_game=1}] run attribute @s minecraft:jump_strength base set 0
 

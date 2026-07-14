@@ -54,6 +54,7 @@ def main() -> None:
     Item(id="perk_machine_double_tap", override_model=override_model("yellow"))
     Item(id="perk_machine_quick_revive", override_model=override_model("light_blue"))
     Item(id="perk_machine_mule_kick", override_model=override_model("green"))
+    Item(id="perk_machine_stamin_up", override_model=override_model("orange"))
 
     # Power switch / breaker box (vanilla textures). "_on" shares the box geometry but flips the
     # lever to the down position and recolors the handle + indicator light to green/lit.

@@ -77,7 +77,7 @@ FIELD_DOCS: dict[tuple[str, str] | str, str] = {
 	("door", "animation"): "Open animation:\n0 = Destroy — block-break particles + sound\n1+ = Silent — blocks instantly replaced with air",
 	("door", "link_id"): "Doors that share a link_id open together as a single purchase.",
 	("door", "back_group_id"): "Zombie spawn group_id unlocked behind this door (-1 = none).",
-	("perk_machine", "perk_id"): "Perk granted by this machine:\njuggernog · speed_cola · double_tap · quick_revive · mule_kick",
+	("perk_machine", "perk_id"): "Perk granted by this machine:\njuggernog · speed_cola · double_tap · quick_revive · mule_kick · stamin_up",
 	("wallbuy", "weapon_id"): "Catalog weapon id given on purchase (e.g. m1911, ak47, mp5).",
 	("barrier", "radius"): "Block radius the barrier toggles open/closed around its marker.",
 	("zombie_spawn", "activation_box"): "Optional [x, y, z, dx, dy, dz] box (relative to this spawn, in blocks).\nWhen set, this spawn only produces zombies while a player stands inside the box.\nx/y/z = corner offset from the spawn, dx/dy/dz = size. Empty [] = always active.",
