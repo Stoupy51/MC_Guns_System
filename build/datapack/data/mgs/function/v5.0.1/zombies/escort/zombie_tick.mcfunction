@@ -13,6 +13,10 @@ execute unless entity @n[type=minecraft:wandering_trader,tag=mgs.zb_escort,dista
 # spot, and the horde's pushOtherTeams collision rule keeps the overlap from pushing the trader
 execute at @n[type=minecraft:wandering_trader,tag=mgs.zb_escort,distance=..8] run tp @s ~ ~ ~ ~ ~
 
+# Point-blank → release NOW, no line-of-sight needed: the visibility check below aims at the
+# player's feet and corner/slab geometry can fail it forever while the taxi orbits the player
+execute if entity @p[scores={mgs.zb.in_game=1,mgs.zb.downed=0},gamemode=!spectator,distance=..6] run return run function mgs:v5.0.1/zombies/escort/release
+
 # Hand off to vanilla AI once a player is close AND in the zombie's line of sight: a player
 # 3 blocks above through a floor is "close" but the zombie still can't path there — keep riding
 scoreboard players set #zb_esc_see mgs.data 0
