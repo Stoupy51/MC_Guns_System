@@ -31,13 +31,8 @@ Quick config commands:
 - Open player config menu: `/trigger mgs.player.config set 1`
 - Open admin/server config menu: `/function mgs:config`
 
-<details>
-<summary>🧩 Gameplay Overview</summary>
-
 ![Gameplay overview](./assets/img/gameplay_overview.gif)
 ![Config Menu](./assets/img/config_menu.png)
-
-</details>
 
 ## 📊 Feature Matrix By Mode
 
@@ -158,7 +153,7 @@ Implemented gamemodes:
 - Passive and active ability system.
 - Bonus systems (max ammo refill, nuke kill loop).
 
-![Zombies](./assets/img/zombies.mp4)
+<video src="./assets/img/zombies.mp4" width="100%" controls></video>
 
 ## 🗺️ Map Editor
 
