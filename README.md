@@ -169,7 +169,8 @@ Available elements per mode:
 
 Tips: place base coordinates first, validate boundaries early, ensure enough spawn points, verify door group/link consistency, and save frequently.
 
-![Map editor in action](./assets/img/map_editor.gif)
+https://github.com/user-attachments/assets/7b429b68-c476-4b08-98ce-0fa53cb72608
+
 ![Editor elements](./assets/img/editor_elements.png)
 
 ## 🗂️ Data-Driven Definitions
