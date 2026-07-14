@@ -46,9 +46,9 @@ execute unless score #rv_pos_ok mgs.data matches 1 run function mgs:v5.0.1/zombi
 execute if score @s mgs.zb.perk.juggernog matches 1.. run attribute @s minecraft:max_health base set 40
 execute unless score @s mgs.zb.perk.juggernog matches 1.. run attribute @s minecraft:max_health base set 20
 
-# Heal to full and re-apply saturation
+# Heal to full and reset stamina to full (the stamina system owns the hunger bar)
 effect give @s minecraft:instant_health 1 255 true
-effect give @s minecraft:saturation infinite 255 true
+scoreboard players set @s mgs.stam_seen 0
 
 # Announce
 title @s title [{"text":"❤","color":"green"}]

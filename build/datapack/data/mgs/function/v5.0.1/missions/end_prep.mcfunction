@@ -11,7 +11,6 @@ execute as @a[scores={mgs.mi.in_game=1}] run attribute @s minecraft:jump_strengt
 effect clear @a[scores={mgs.mi.in_game=1}] darkness
 effect clear @a[scores={mgs.mi.in_game=1}] blindness
 effect clear @a[scores={mgs.mi.in_game=1}] night_vision
-effect give @a[scores={mgs.mi.in_game=1}] saturation infinite 255 true
 
 # Spawn all enemies from map data
 function mgs:v5.0.1/missions/spawn_all_enemies

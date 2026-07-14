@@ -414,9 +414,9 @@ execute unless score #rv_pos_ok {ns}.data matches 1 run function {ns}:v{version}
 execute if score @s {ns}.zb.perk.juggernog matches 1.. run attribute @s minecraft:max_health base set 40
 execute unless score @s {ns}.zb.perk.juggernog matches 1.. run attribute @s minecraft:max_health base set 20
 
-# Heal to full and re-apply saturation
+# Heal to full and reset stamina to full (the stamina system owns the hunger bar)
 effect give @s minecraft:instant_health 1 255 true
-effect give @s minecraft:saturation infinite 255 true
+scoreboard players set @s {ns}.stam_seen 0
 
 # Announce
 title @s title [{{"text":"❤","color":"green"}}]
@@ -479,8 +479,8 @@ gamemode adventure @s
 # Teleport to a player spawn near a random alive teammate
 function {ns}:v{version}/zombies/revive/respawn_near_player
 
-# Re-apply saturation and heal
-effect give @s minecraft:saturation infinite 255 true
+# Heal and reset stamina to full (the stamina system owns the hunger bar)
+scoreboard players set @s {ns}.stam_seen 0
 effect give @s minecraft:instant_health 1 255 true
 
 # Restore max health (check for Juggernog perk)

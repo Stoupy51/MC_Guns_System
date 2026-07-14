@@ -227,8 +227,8 @@ spectate @s
 # Teleport to best spawn point
 function {ns}:v{version}/multiplayer/respawn_tp
 
-# Re-apply permanent saturation (lost on death)
-effect give @s saturation infinite 255 true
+# Reset stamina to full on respawn (the stamina system owns the hunger bar)
+scoreboard players set @s {ns}.stam_seen 0
 
 # Apply current class loadout (positive = standard, negative = custom)
 execute unless score @s {ns}.mp.class matches 0 run function {ns}:v{version}/multiplayer/apply_class

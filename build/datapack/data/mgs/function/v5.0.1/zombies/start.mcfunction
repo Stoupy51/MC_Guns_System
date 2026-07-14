@@ -127,6 +127,7 @@ scoreboard players reset * mgs.zb.perk.speed_cola
 scoreboard players reset * mgs.zb.perk.double_tap
 scoreboard players reset * mgs.zb.perk.quick_revive
 scoreboard players reset * mgs.zb.perk.mule_kick
+scoreboard players reset * mgs.zb.perk.stamin_up
 
 # Reset revive state
 scoreboard players set @a mgs.zb.downed 0

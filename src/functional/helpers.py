@@ -49,7 +49,6 @@ def prep_freeze_lines(ns: str, score_prefix: str, prepend: str = "", append: str
         f'effect give {selector} darkness 25 255 true',
         f'effect give {selector} blindness 25 255 true',
         f'effect give {selector} night_vision 25 255 true',
-        f'effect give {selector} saturation infinite 255 true',
     ]
     if prepend:
         parts.append(prepend.strip())
@@ -73,7 +72,6 @@ def end_prep_transition_lines(ns: str, storage: str, score_prefix: str) -> str:
         f'effect clear {selector} darkness',
         f'effect clear {selector} blindness',
         f'effect clear {selector} night_vision',
-        f'effect give {selector} saturation infinite 255 true',
     ]
     return "\n".join(parts)
 
@@ -113,7 +111,7 @@ def late_join_flow_lines(
     if setup_extra_lines.strip():
         parts.append(setup_extra_lines.strip())
     parts.extend([
-        'effect give @s saturation infinite 255 true',
+        f'# Reset stamina so the stamina system re-inits this player at full (it owns the hunger bar)\nscoreboard players set @s {ns}.stam_seen 0',
         f'# Enable class menu and show class selection\ntag @s add {ns}.give_class_menu\nfunction {ns}:v{version}/multiplayer/select_class',
         f'# Apply class if already chosen\nexecute unless score @s {ns}.mp.class matches 0 run function {ns}:v{version}/multiplayer/apply_class',
     ])

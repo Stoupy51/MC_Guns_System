@@ -40,6 +40,7 @@
 		{"rolls": 1,"entries": [{"type": "minecraft:loot_table","value": "mgs:i/perk_machine_double_tap"}]},
 		{"rolls": 1,"entries": [{"type": "minecraft:loot_table","value": "mgs:i/perk_machine_quick_revive"}]},
 		{"rolls": 1,"entries": [{"type": "minecraft:loot_table","value": "mgs:i/perk_machine_mule_kick"}]},
+		{"rolls": 1,"entries": [{"type": "minecraft:loot_table","value": "mgs:i/perk_machine_stamin_up"}]},
 		{"rolls": 1,"entries": [{"type": "minecraft:loot_table","value": "mgs:i/power_switch"}]},
 		{"rolls": 1,"entries": [{"type": "minecraft:loot_table","value": "mgs:i/power_switch_on"}]},
 		{"rolls": 1,"entries": [{"type": "minecraft:loot_table","value": "mgs:i/turret_base"}]},

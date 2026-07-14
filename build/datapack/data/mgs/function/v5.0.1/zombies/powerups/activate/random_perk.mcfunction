@@ -13,10 +13,11 @@ execute unless score @p[tag=mgs.pu_collecting] mgs.zb.perk.speed_cola matches 1 
 execute unless score @p[tag=mgs.pu_collecting] mgs.zb.perk.double_tap matches 1 run scoreboard players add #pu_perk_avail mgs.data 1
 execute unless score @p[tag=mgs.pu_collecting] mgs.zb.perk.quick_revive matches 1 run scoreboard players add #pu_perk_avail mgs.data 1
 execute unless score @p[tag=mgs.pu_collecting] mgs.zb.perk.mule_kick matches 1 run scoreboard players add #pu_perk_avail mgs.data 1
+execute unless score @p[tag=mgs.pu_collecting] mgs.zb.perk.stamin_up matches 1 run scoreboard players add #pu_perk_avail mgs.data 1
 execute if score #pu_perk_avail mgs.data matches 0 run return run tellraw @p[tag=mgs.pu_collecting] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.you_already_own_every_perk","color":"yellow"}]
 
 # Pick a random starting index and walk through the list to find an unowned perk
-execute store result score #pu_perk_roll mgs.data run random value 0..4
+execute store result score #pu_perk_roll mgs.data run random value 0..5
 scoreboard players set #pu_perk_applied mgs.data 0
 scoreboard players set #pu_perk_tries mgs.data 0
 function mgs:v5.0.1/zombies/powerups/random_perk_iter

@@ -12,8 +12,8 @@ spectate @s
 # Teleport to best spawn point
 function mgs:v5.0.1/multiplayer/respawn_tp
 
-# Re-apply permanent saturation (lost on death)
-effect give @s saturation infinite 255 true
+# Reset stamina to full on respawn (the stamina system owns the hunger bar)
+scoreboard players set @s mgs.stam_seen 0
 
 # Apply current class loadout (positive = standard, negative = custom)
 execute unless score @s mgs.mp.class matches 0 run function mgs:v5.0.1/multiplayer/apply_class

@@ -7,9 +7,9 @@
 #			mgs:v5.0.1/zombies/powerups/random_perk_iter
 #
 
-# Safety counter: prevent infinite recursion (max 6 iterations)
+# Safety counter: prevent infinite recursion (max 7 iterations)
 scoreboard players add #pu_perk_tries mgs.data 1
-execute if score #pu_perk_tries mgs.data matches 6.. run return 0
+execute if score #pu_perk_tries mgs.data matches 7.. run return 0
 
 # Stop if a perk has already been applied in a previous iteration
 execute if score #pu_perk_applied mgs.data matches 1 run return 0
@@ -25,9 +25,11 @@ execute if score #pu_perk_roll mgs.data matches 3 run function mgs:v5.0.1/zombie
 execute if score #pu_perk_applied mgs.data matches 1 run return 0
 execute if score #pu_perk_roll mgs.data matches 4 run function mgs:v5.0.1/zombies/powerups/try_perk/mule_kick
 execute if score #pu_perk_applied mgs.data matches 1 run return 0
+execute if score #pu_perk_roll mgs.data matches 5 run function mgs:v5.0.1/zombies/powerups/try_perk/stamin_up
+execute if score #pu_perk_applied mgs.data matches 1 run return 0
 
 # No perk applied at this index (already owned): advance roll and recurse
 scoreboard players add #pu_perk_roll mgs.data 1
-execute if score #pu_perk_roll mgs.data matches 5.. run scoreboard players set #pu_perk_roll mgs.data 0
+execute if score #pu_perk_roll mgs.data matches 6.. run scoreboard players set #pu_perk_roll mgs.data 0
 function mgs:v5.0.1/zombies/powerups/random_perk_iter
 

@@ -5,6 +5,7 @@
 from stewbeet import JsonDict, Mem, write_load_file, write_tag, write_versioned_function
 
 from ..helpers import MGS_TAG
+from ..stamina import STAM_MAX
 from .common import deny_not_enough_points_body, deny_requires_power_body, game_active_guard_cmd
 
 PERK_DEFINITIONS: dict[str, JsonDict] = {
@@ -56,6 +57,23 @@ PERK_DEFINITIONS: dict[str, JsonDict] = {
 		"display_name": "Mule Kick",
 		"message": "🎒 Mule Kick! Third weapon slot unlocked",
 		"message_color": "gold",
+	},
+	"stamin_up": {
+		"display_name": "Stamin-Up",
+		"message": "🏃 Stamin-Up! Sprint longer, move faster",
+		"message_color": "yellow",
+		# BO1 Zombies Stamin-Up (see zombies/stamina.md): double sprint endurance + 7% move speed
+		# (multiplicative, on top of the weapon/base movement model). The stam bump refills the
+		# new headroom instantly so the visible bar doesn't drop at purchase.
+		"commands": [
+			"attribute @s minecraft:movement_speed modifier add {ns}:stamin_up 0.07 add_multiplied_total",
+			f"scoreboard players set @s {{ns}}.stam_bonus {STAM_MAX}",
+			f"scoreboard players add @s {{ns}}.stam {STAM_MAX}",
+		],
+		"removal_commands": [
+			"attribute @s minecraft:movement_speed modifier remove {ns}:stamin_up",
+			"scoreboard players set @s {ns}.stam_bonus 0",
+		],
 	},
 }
 
@@ -330,6 +348,8 @@ execute if score #qr_price_tick {ns}.data matches 0 run function {ns}:v{version}
 	write_versioned_function("zombies/stop", f"""
 # Reset perk effects
 execute as @a[scores={{{ns}.zb.in_game=1}}] run attribute @s minecraft:max_health base set 20
+execute as @a[scores={{{ns}.zb.in_game=1}}] run attribute @s minecraft:movement_speed modifier remove {ns}:stamin_up
+scoreboard players set @a {ns}.stam_bonus 0
 tag @a remove {ns}.perk.speed_cola
 tag @a remove {ns}.perk.double_tap
 tag @a remove {ns}.perk.quick_revive

@@ -17,8 +17,8 @@ gamemode adventure @s
 # Teleport to a player spawn near a random alive teammate
 function mgs:v5.0.1/zombies/revive/respawn_near_player
 
-# Re-apply saturation and heal
-effect give @s minecraft:saturation infinite 255 true
+# Heal and reset stamina to full (the stamina system owns the hunger bar)
+scoreboard players set @s mgs.stam_seen 0
 effect give @s minecraft:instant_health 1 255 true
 
 # Restore max health (check for Juggernog perk)

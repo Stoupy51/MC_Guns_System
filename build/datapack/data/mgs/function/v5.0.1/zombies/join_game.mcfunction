@@ -27,7 +27,8 @@ attribute @s minecraft:entity_interaction_range base set 5
 # Setup player
 gamemode adventure @s
 
-effect give @s saturation infinite 255 true
+# Reset stamina so the stamina system re-inits this player at full (it owns the hunger bar)
+scoreboard players set @s mgs.stam_seen 0
 
 # Enable class menu and show class selection
 tag @s add mgs.give_class_menu
