@@ -94,7 +94,7 @@ https://github.com/user-attachments/assets/a8094f23-320a-4708-8b7c-132a2f3dc7c4
 - Favorite/like/public-private/default loadout actions.
 - Dynamic class apply pipeline across game modes.
 
-![Loadout editor](./assets/img/loadout_editor.gif)
+https://github.com/user-attachments/assets/e6f96ed9-383e-48d2-8c2b-bb47300bba42
 
 ## ⚔️ Multiplayer Systems
 
