@@ -13,8 +13,8 @@ scoreboard players operation @s bs.vel.y -= #proj_gravity mgs.data
 # Move with stick callback (semtex sticks to first surface or entity hit)
 # During launch grace period, skip entity collision to avoid sticking to the thrower
 scoreboard players remove @s mgs.grenade_launch 1
-execute if score @s mgs.grenade_launch matches 0.. run function #bs.move:apply_vel {scale:0.001,with:{blocks:true,entities:false,on_collision:"function mgs:v5.0.1/grenade/on_stick"}}
-execute unless score @s mgs.grenade_launch matches 0.. run function #bs.move:apply_vel {scale:0.001,with:{blocks:true,entities:true,on_collision:"function mgs:v5.0.1/grenade/on_stick"}}
+execute if score @s mgs.grenade_launch matches 0.. run function #bs.move:apply_vel {scale:0.001,with:{blocks:true,entities:false,ignored_blocks:"#mgs:v5.0.1/projectile_pass_through",on_collision:"function mgs:v5.0.1/grenade/on_stick"}}
+execute unless score @s mgs.grenade_launch matches 0.. run function #bs.move:apply_vel {scale:0.001,with:{blocks:true,entities:true,ignored_blocks:"#mgs:v5.0.1/projectile_pass_through",on_collision:"function mgs:v5.0.1/grenade/on_stick"}}
 
 # Trail particle (white_smoke avoids false-positive with shader marker detection)
 particle white_smoke ~ ~ ~ 0.05 0.05 0.05 0.01 1 force @a[distance=..64]
