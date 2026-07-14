@@ -1,0 +1,47 @@
+
+#> mgs:v5.1.0/ammo/reload
+#
+# @executed	as @e[type=player,sort=random] & at @s
+#
+# @within	mgs:v5.1.0/player/right_click
+#			mgs:v5.1.0/switch/reload_to_dropped_weapon
+#			mgs:v5.1.0/ammo/decrease
+#			mgs:v5.1.0/ammo/single_reload_continue
+#
+
+# Stop if already reloading, or already has full ammo
+execute if entity @s[tag=mgs.reloading] run return fail
+execute store result score #capacity mgs.data run data get storage mgs:gun all.stats.capacity
+execute if score @s mgs.remaining_bullets >= #capacity mgs.data run return fail
+
+# Check if magazines are available (without consuming them)
+scoreboard players set @s mgs.cooldown 5
+scoreboard players operation @s mgs.cooldown += #total_tick mgs.data
+execute unless data storage mgs:config no_magazine store success score #success mgs.data run function mgs:v5.1.0/ammo/inventory/has_ammo with storage mgs:gun all.stats
+execute unless data storage mgs:config no_magazine if score #success mgs.data matches 0 run return run playsound mgs:common/empty ambient @s
+
+# Set cooldown as expiration tick: get reload duration and apply quick_reload reduction
+execute store result score @s mgs.cooldown run data get storage mgs:gun all.stats.reload_time
+
+# Apply quick reload: reduce cooldown by quick_reload% (e.g. 20 = 20% faster)
+execute if score @s mgs.special.quick_reload matches 1.. run function mgs:v5.1.0/ammo/apply_quick_reload
+
+# Convert to expiration tick
+scoreboard players operation @s mgs.cooldown += #total_tick mgs.data
+
+# Force weapon switch animation
+function mgs:v5.1.0/switch/force_switch_animation
+
+# Play reload sound (and send sounds for macro). Each is guarded because not every
+# weapon defines all reload sounds — calling the macro without the arg would error.
+execute if data storage mgs:gun all.sounds.reload run function mgs:v5.1.0/sound/reload_start with storage mgs:gun all.sounds
+execute if data storage mgs:gun all.sounds.playerbegin run function mgs:v5.1.0/sound/player_begin with storage mgs:gun all.sounds
+
+# Add reloading tag
+tag @s add mgs.reloading
+
+# Signal: on_reload (@s = reloading player, weapon data in mgs:signals)
+data modify storage mgs:signals on_reload set value {}
+data modify storage mgs:signals on_reload.weapon set from storage mgs:gun all
+function #mgs:signals/on_reload
+

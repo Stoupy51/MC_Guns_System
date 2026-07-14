@@ -1,0 +1,38 @@
+
+#> mgs:v5.1.0/maps/editor/save_point
+#
+# @executed	as @e[tag=mgs.element.out_of_bounds] & at @s
+#
+# @within	mgs:v5.1.0/maps/editor/save_lists/multiplayer {path:"out_of_bounds"} [ as @e[tag=mgs.element.out_of_bounds] & at @s ]
+#			mgs:v5.1.0/maps/editor/save_lists/multiplayer {path:"boundaries"} [ as @e[tag=mgs.element.boundary] & at @s ]
+#			mgs:v5.1.0/maps/editor/save_lists/multiplayer {path:"search_and_destroy"} [ as @e[tag=mgs.element.search_and_destroy] & at @s ]
+#			mgs:v5.1.0/maps/editor/save_lists/multiplayer {path:"domination"} [ at @s ]
+#			mgs:v5.1.0/maps/editor/save_lists/multiplayer {path:"hardpoint"} [ at @s ]
+#			mgs:v5.1.0/maps/editor/save_lists/zombies {path:"out_of_bounds"} [ as @e[tag=mgs.element.out_of_bounds] & at @s ]
+#			mgs:v5.1.0/maps/editor/save_lists/zombies {path:"boundaries"} [ as @e[tag=mgs.element.boundary] & at @s ]
+#			mgs:v5.1.0/maps/editor/save_lists/missions {path:"out_of_bounds"} [ as @e[tag=mgs.element.out_of_bounds] & at @s ]
+#			mgs:v5.1.0/maps/editor/save_lists/missions {path:"boundaries"} [ as @e[tag=mgs.element.boundary] & at @s ]
+#
+# @args		path (string)
+#
+
+# @s = marker entity, at its position
+# Get absolute position
+execute store result score #ax mgs.data run data get entity @s Pos[0]
+execute store result score #ay mgs.data run data get entity @s Pos[1]
+execute store result score #az mgs.data run data get entity @s Pos[2]
+
+# Compute relative coordinates
+scoreboard players operation #ax mgs.data -= #base_x mgs.data
+scoreboard players operation #ay mgs.data -= #base_y mgs.data
+scoreboard players operation #az mgs.data -= #base_z mgs.data
+
+# Build coordinate array [x, y, z]
+data modify storage mgs:temp _save_coord set value [0, 0, 0]
+execute store result storage mgs:temp _save_coord[0] int 1 run scoreboard players get #ax mgs.data
+execute store result storage mgs:temp _save_coord[1] int 1 run scoreboard players get #ay mgs.data
+execute store result storage mgs:temp _save_coord[2] int 1 run scoreboard players get #az mgs.data
+
+# Append to the correct list
+$data modify storage mgs:temp map_edit.map.$(path) append from storage mgs:temp _save_coord
+

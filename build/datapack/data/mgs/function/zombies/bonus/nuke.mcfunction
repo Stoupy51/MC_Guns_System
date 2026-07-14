@@ -3,7 +3,7 @@
 #
 # @executed	as @a[tag=mgs.pu_collecting,scores={mgs.zb.in_game=1},gamemode=!spectator]
 #
-# @within	mgs:v5.0.1/zombies/powerups/activate/nuke [ as @a[tag=mgs.pu_collecting,scores={mgs.zb.in_game=1},gamemode=!spectator] ]
+# @within	mgs:v5.1.0/zombies/powerups/activate/nuke [ as @a[tag=mgs.pu_collecting,scores={mgs.zb.in_game=1},gamemode=!spectator] ]
 #
 
 # Remove any existing nuke activator (in case of concurrent nukes)
@@ -19,5 +19,5 @@ execute as @e[tag=mgs.nukable] run tag @s add mgs.nuked
 execute as @e[tag=mgs.nuked] run attribute @s minecraft:attack_damage modifier add mgs:nuke_zero_damage -1 add_multiplied_total
 
 # Start kill loop (1 entity per tick)
-function mgs:v5.0.1/zombies/bonus/nuke_loop
+function mgs:v5.1.0/zombies/bonus/nuke_loop
 
