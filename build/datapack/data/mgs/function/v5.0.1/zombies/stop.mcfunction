@@ -53,6 +53,10 @@ tag @a[tag=mgs.give_class_menu] remove mgs.give_class_menu
 
 kill @e[type=minecraft:marker,tag=mgs.death_watch]
 
+# Escort cleanup (escort.py); the traders themselves die with the mgs.gm_entity kill above
+scoreboard players set #zb_escort_count mgs.data 0
+gamerule spawn_wandering_traders true
+
 # Remove all pull displays and presence boxes, reset all per-box state
 kill @e[tag=mgs.mb_display]
 kill @e[tag=mgs.mb_presence]

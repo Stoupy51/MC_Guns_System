@@ -34,10 +34,11 @@ execute unless score #zb_round_grace mgs.data matches 1.. store result score #zb
 execute unless score #zb_round_grace mgs.data matches 1.. run scoreboard players operation #zb_alive_players mgs.data += #zb_downed_alive mgs.data
 execute unless score #zb_round_grace mgs.data matches 1.. if score #zb_alive_players mgs.data matches 0 run function mgs:v5.0.1/zombies/game_over
 
-# Stuck zombie check (every 20 ticks, 24 random non-rising zombies)
+# Stuck zombie check (every 20 ticks, 24 random non-rising zombies; escorted ones are NoAI
+# and already being rescued by their trader — see escort.py)
 execute store result score #zb_tick_mod mgs.data run scoreboard players get #total_tick mgs.data
 scoreboard players operation #zb_tick_mod mgs.data %= #20 mgs.data
-execute if score #zb_tick_mod mgs.data matches 0 as @e[tag=mgs.zombie_round,tag=!mgs.zb_rising,limit=24,sort=random] at @s run function mgs:v5.0.1/zombies/stuck_zombie_check
+execute if score #zb_tick_mod mgs.data matches 0 as @e[tag=mgs.zombie_round,tag=!mgs.zb_rising,tag=!mgs.zb_escorted,limit=24,sort=random] at @s run function mgs:v5.0.1/zombies/stuck_zombie_check
 
 # Stuck zombie glow: count up once all spawns are done (60s = 1200 ticks after last spawn)
 execute if score #zb_to_spawn mgs.data matches 0 run scoreboard players add #zb_stuck_timer mgs.data 1
@@ -65,6 +66,19 @@ function mgs:v5.0.1/zombies/death_watch_tick
 scoreboard players add #zb_horde_timer mgs.data 1
 execute if score #zb_horde_timer mgs.data matches 35.. run scoreboard players set #zb_horde_timer mgs.data 0
 execute if score #zb_horde_timer mgs.data matches 0 as @a[scores={mgs.zb.in_game=1},gamemode=!spectator] at @s run function mgs:v5.0.1/zombies/horde_ambient
+
+# Escort system (escort.py): drag escorted zombies behind their pathfinding traders
+execute if score #zb_escort_count mgs.data matches 1.. as @e[tag=mgs.zb_escorted] at @s run function mgs:v5.0.1/zombies/escort/zombie_tick
+
+# Every 2s: resync the escort counter from reality — start/detach keep it accurate in between,
+# but any drift (e.g. an escorted zombie dying the same tick its trader vanishes) would wedge
+# the max-escort gate shut forever, silently disabling all future escorts. Then discard
+# orphaned traders whose escorted zombie died mid-transit (shot, nuked...) — the resync above
+# already dropped those escorts from the count.
+scoreboard players operation #zb_esc_sweep mgs.data = #total_tick mgs.data
+scoreboard players operation #zb_esc_sweep mgs.data %= #40 mgs.data
+execute if score #zb_esc_sweep mgs.data matches 0 store result score #zb_escort_count mgs.data if entity @e[tag=mgs.zb_escorted]
+execute if score #zb_esc_sweep mgs.data matches 0 as @e[type=minecraft:wandering_trader,tag=mgs.zb_escort] at @s unless entity @e[tag=mgs.zb_escorted,distance=..8] run function mgs:v5.0.1/zombies/escort/discard_trader
 
 # Ability tick (Zonweeb variant only)
 execute if data storage mgs:zombies game{variant:"zonweeb"} run function mgs:v5.0.1/zombies/ability_tick

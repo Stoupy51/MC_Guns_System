@@ -7,7 +7,7 @@
 #
 
 # @s = zombie_round entity (non-rising), run every 20 ticks on up to 24 random zombies
-# Progress = distance bucket improved (or zombie is in melee range). Resets the timer.
+# Progress = distance bucket improved (or a player in melee range is VISIBLE). Resets the timer.
 # Timeout depends on HOW the zombie is stuck:
 # - hasn't moved at all: 400t (20s), only 100t (5s) once it has already been rescued
 # - moved since last progress but not getting closer to a player: 300t (15s)
@@ -23,11 +23,16 @@ execute if entity @a[scores={mgs.zb.in_game=1,mgs.zb.downed=0},gamemode=!spectat
 execute store result score #cur_x mgs.data run data get entity @s Pos[0]
 execute store result score #cur_z mgs.data run data get entity @s Pos[2]
 
-# Detect any progress: bucket improved, OR bucket == 0 (zombie is in melee range — not stuck)
+# Detect any progress: bucket improved, OR bucket == 0 AND the nearby player is actually
+# VISIBLE (real melee range). Proximity alone is not enough: a player a few blocks above or
+# below through a floor kept the zombie permanently "not stuck" while it could never reach
+# them — the LOS gate lets the timer run so the escort picks it up (see escort.py).
 # XZ movement is NOT checked: a zombie attacking at close range stands still legitimately
 scoreboard players set #stuck_progress mgs.data 0
 execute if score #cur_dist_bucket mgs.data < @s mgs.zb.stuck_dist run scoreboard players set #stuck_progress mgs.data 1
-execute if score #cur_dist_bucket mgs.data matches 0 run scoreboard players set #stuck_progress mgs.data 1
+scoreboard players set #zb_stuck_see mgs.data 0
+execute if score #cur_dist_bucket mgs.data matches 0 positioned as @p[scores={mgs.zb.in_game=1,mgs.zb.downed=0},gamemode=!spectator,distance=..16] store result score #zb_stuck_see mgs.data run function #bs.view:can_see_ata {with:{}}
+execute if score #zb_stuck_see mgs.data matches 1 run scoreboard players set #stuck_progress mgs.data 1
 
 # If progress: update all stored values, reset timestamp, and clear the rescued flag
 execute if score #stuck_progress mgs.data matches 1 run scoreboard players operation @s mgs.zb.stuck_dist = #cur_dist_bucket mgs.data

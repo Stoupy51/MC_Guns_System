@@ -194,6 +194,20 @@ execute unless data storage mgs:zombies game.variant run data modify storage mgs
 # Initialize mystery box base pool (can be extended via function tag)
 execute unless data storage mgs:zombies mystery_box_pool run data modify storage mgs:zombies mystery_box_pool set value []
 
+# Escort TTL per escorted zombie (ticks left before the teleport-rescue fallback)
+scoreboard objectives add mgs.zb.escort_ttl dummy
+
+# Live escort counter (gates the per-tick escorted-zombie scan)
+scoreboard players add #zb_escort_count mgs.data 0
+
+# Horde alliance team: round zombies and escort traders are allied, so the trader's
+# AvoidEntityGoal(Zombie) never fires (it flees at SPRINT speed otherwise!) and zombies never
+# attack the taxi. Created at load, not game start, so a mid-game /reload can't leave it missing.
+# pushOtherTeams = no pushing WITHIN the horde (the zombie overlaps its trader without shoving
+# it off its path) while members still push players and everything else.
+team add mgs.horde
+team modify mgs.horde collisionRule pushOtherTeams
+
 # Box id shared by a box's interaction entity and its active pull display
 scoreboard objectives add mgs.mb.box dummy
 # Spin animation timer carried by each pull display (>0 spinning, <=0 ready window)

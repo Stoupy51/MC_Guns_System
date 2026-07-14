@@ -135,7 +135,7 @@ scoreboard players set #next_air_particle {ns}.data 0
 # Prepare arguments
 data modify storage {ns}:input with set value {{}}
 data modify storage {ns}:input with.blocks set value "function #bs.hitbox:callback/get_block_shape_with_fluid"
-data modify storage {ns}:input with.entities set value true
+data modify storage {ns}:input with.entities set value "!global.ignore"
 data modify storage {ns}:input with.piercing set value 10
 data modify storage {ns}:input with.max_distance set value 128
 data modify storage {ns}:input with.ignored_blocks set value "#{ns}:v{version}/empty"

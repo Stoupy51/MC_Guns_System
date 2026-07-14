@@ -307,7 +307,7 @@ function {ns}:v{version}/sound/turret_fire
 # so a player standing between the turret and the zombies takes the bullet instead
 data modify storage {ns}:input with set value {{}}
 data modify storage {ns}:input with.blocks set value "function #bs.hitbox:callback/get_block_shape_with_fluid"
-data modify storage {ns}:input with.entities set value true
+data modify storage {ns}:input with.entities set value "!global.ignore"
 data modify storage {ns}:input with.piercing set value 0
 data modify storage {ns}:input with.max_distance set value 32
 data modify storage {ns}:input with.ignored_blocks set value "#{ns}:v{version}/empty"

@@ -21,6 +21,10 @@ summon minecraft:zombie ~ ~-2 ~ {Tags:["mgs.zombie_round","mgs.gm_entity","mgs.n
 # Apply type-specific scaling (health, speed, rise timer)
 $execute as @n[tag=mgs.zombie_round,tag=!mgs.zb_scaled] run function mgs:v5.0.1/zombies/types/$(type) {level:"$(level)"}
 
+# Ally with escort traders (escort.py: forCombat targeting fails between allies, so the trader
+# never flees the horde and zombies never attack the pathfinding taxi)
+team join mgs.horde @n[tag=mgs.zombie_round,tag=mgs.zb_rising]
+
 # Initialize stuck detection scores (timestamp + XZ snapshot + distance bucket at spawn)
 execute as @n[tag=mgs.zombie_round,tag=mgs.zb_rising] run scoreboard players operation @s mgs.zb.stuck_ticks = #total_tick mgs.data
 execute as @n[tag=mgs.zombie_round,tag=mgs.zb_rising] store result score @s mgs.zb.stuck_x run data get entity @s Pos[0]

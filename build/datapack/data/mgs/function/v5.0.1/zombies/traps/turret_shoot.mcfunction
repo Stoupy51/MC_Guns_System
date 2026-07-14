@@ -15,7 +15,7 @@ function mgs:v5.0.1/sound/turret_fire
 # so a player standing between the turret and the zombies takes the bullet instead
 data modify storage mgs:input with set value {}
 data modify storage mgs:input with.blocks set value "function #bs.hitbox:callback/get_block_shape_with_fluid"
-data modify storage mgs:input with.entities set value true
+data modify storage mgs:input with.entities set value "!global.ignore"
 data modify storage mgs:input with.piercing set value 0
 data modify storage mgs:input with.max_distance set value 32
 data modify storage mgs:input with.ignored_blocks set value "#mgs:v5.0.1/empty"
