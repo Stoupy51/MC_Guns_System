@@ -41,7 +41,7 @@
 #   and the corpse happen where nobody can see them.
 # - gamerule spawn_wandering_traders is turned off during games so no natural trader (not on the
 #   team) wanders in, flees the horde, and gets chewed on.
-from stewbeet import Mem, write_load_file, write_versioned_function
+from stewbeet import Mem, write_load_file, write_tag, write_versioned_function
 
 # Max simultaneous escorts; stuck zombies beyond this use the teleport rescue instead.
 MAX_ESCORTS: int = 8
@@ -59,6 +59,14 @@ WATCHDOG_GIVE_UP: int = 5
 PATHFINDING_RANGE: int = 96
 # Hand back to vanilla zombie AI once an alive player is within this radius AND visible.
 RELEASE_RADIUS: int = 10
+# PaP-room lure (Kino-style QoL): when EVERY alive player is inside the PaP room (within
+# PAP_ROOM_RADIUS of a PaP machine), escorts aim at the map-defined lure centre instead of a
+# player, so the horde spreads to the middle of the map rather than piling at the PaP door. The
+# centre is OPTIONAL and map-defined via the #<ns>:zombies/setup_lure function tag (see below):
+# a map that registers nothing places no marker and the whole system stays inert. A lured zombie
+# is released once it reaches within LURE_RELEASE of the centre marker.
+PAP_ROOM_RADIUS: int = 14
+LURE_RELEASE: int = 8
 # Within this radius, release unconditionally (no line-of-sight needed): vanilla AI handles this
 # range even around corners, and the visibility check aims at the player's FEET — slabs, stairs
 # or a corner can fail it forever, leaving the taxi orbiting a player it already reached.
@@ -145,9 +153,19 @@ $attribute @s minecraft:movement_speed base set $(speed)
 	## every second rather than set once. If nobody is targetable (everyone downed), the data
 	## gets fail and the trader keeps its previous heading until the TTL fallback.
 	write_versioned_function("zombies/escort/retarget", f"""
+# PaP-room lure active: aim at the theatre centre marker instead of a player (see escort.py)
+execute if score #zb_lure {ns}.data matches 1 if entity @e[tag={ns}.lure_center] run return run function {ns}:v{version}/zombies/escort/retarget_lure
 execute store result storage {ns}:temp _escort.x int 1 run data get entity {nearest_alive} Pos[0]
 execute store result storage {ns}:temp _escort.y int 1 run data get entity {nearest_alive} Pos[1]
 execute store result storage {ns}:temp _escort.z int 1 run data get entity {nearest_alive} Pos[2]
+function {ns}:v{version}/zombies/escort/set_wander_target with storage {ns}:temp _escort
+""")
+
+	## Aim the trader at the theatre centre marker (PaP-room lure). @s = trader, at @s.
+	write_versioned_function("zombies/escort/retarget_lure", f"""
+execute store result storage {ns}:temp _escort.x int 1 run data get entity @n[tag={ns}.lure_center] Pos[0]
+execute store result storage {ns}:temp _escort.y int 1 run data get entity @n[tag={ns}.lure_center] Pos[1]
+execute store result storage {ns}:temp _escort.z int 1 run data get entity @n[tag={ns}.lure_center] Pos[2]
 function {ns}:v{version}/zombies/escort/set_wander_target with storage {ns}:temp _escort
 """)
 
@@ -164,6 +182,10 @@ execute unless entity {my_trader} run return run function {ns}:v{version}/zombie
 # Glue the zombie exactly onto the trader (same position AND rotation): always a path-valid
 # spot, and the horde's pushOtherTeams collision rule keeps the overlap from pushing the trader
 execute at {my_trader} run tp @s ~ ~ ~ ~ ~
+
+# PaP-room lure active: release once the zombie reaches the theatre centre (no player will be
+# nearby there to trigger the player-based releases below)
+execute if score #zb_lure {ns}.data matches 1 if entity @e[tag={ns}.lure_center,distance=..{LURE_RELEASE}] run return run function {ns}:v{version}/zombies/escort/release
 
 # Point-blank → release NOW, no line-of-sight needed: the visibility check below aims at the
 # player's feet and corner/slab geometry can fail it forever while the taxi orbits the player
@@ -311,6 +333,54 @@ scoreboard players operation #zb_esc_sweep {ns}.data = #total_tick {ns}.data
 scoreboard players operation #zb_esc_sweep {ns}.data %= #40 {ns}.data
 execute if score #zb_esc_sweep {ns}.data matches 0 store result score #zb_escort_count {ns}.data if entity @e[tag={ns}.zb_escorted]
 execute if score #zb_esc_sweep {ns}.data matches 0 as @e[type=minecraft:wandering_trader,tag={ns}.zb_escort] at @s unless entity @e[tag={ns}.zb_escorted,distance=..8] run function {ns}:v{version}/zombies/escort/discard_trader
+
+# PaP-room lure: recompute lure state every 2s (inert unless the map defined a lure centre)
+execute if score #zb_esc_sweep {ns}.data matches 20 if score #zb_pap_has {ns}.data matches 1 run function {ns}:v{version}/zombies/escort/update_lure
+""")
+
+	## ── PaP-room lure ──────────────────────────────────────────────────────────────────────────
+	## The lure centre (the point the horde gathers at while everyone hides in the PaP room) is
+	## defined by the MAP, not derived: a map opts in by registering a function into the
+	## #{ns}:zombies/setup_lure tag that summons a {ns}.lure_center marker. That tag is run once
+	## positioned at the map base (so registered functions can use relative coords like ~-49 ~-3 ~0).
+	## Entirely OPTIONAL — a map that registers nothing leaves no marker and the lure stays off.
+	write_tag("zombies/setup_lure", Mem.ctx.data[ns].function_tags, [])
+	write_versioned_function("zombies/escort/setup_lure_center", f"""
+kill @e[tag={ns}.lure_center]
+
+# Let the map place its lure centre marker, run positioned at the map base
+execute store result storage {ns}:temp _base.x int 1 run scoreboard players get #gm_base_x {ns}.data
+execute store result storage {ns}:temp _base.y int 1 run scoreboard players get #gm_base_y {ns}.data
+execute store result storage {ns}:temp _base.z int 1 run scoreboard players get #gm_base_z {ns}.data
+data modify storage {ns}:temp _base.fn set value "#{ns}:zombies/setup_lure"
+function {ns}:v{version}/shared/call_at_base with storage {ns}:temp _base
+
+# Enable the lure only if the map actually placed a centre marker (its opt-in)
+scoreboard players set #zb_pap_has {ns}.data 0
+execute if entity @e[tag={ns}.lure_center] run scoreboard players set #zb_pap_has {ns}.data 1
+scoreboard players set #zb_lure {ns}.data 0
+""")
+
+	## Recomputed each second: lure is on only when at least one player is alive and EVERY alive
+	## player is inside the PaP room. While on, proactively escort a couple of stray zombies (far
+	## from the centre, not already escorted) toward it — bounded by the normal escort cap.
+	write_versioned_function("zombies/escort/update_lure", f"""
+execute store result score #zb_lure_alive {ns}.data if entity @a[scores={{{ns}.zb.in_game=1,{ns}.zb.downed=0}},gamemode=!spectator]
+scoreboard players set #zb_lure_inpap {ns}.data 0
+execute as @a[scores={{{ns}.zb.in_game=1,{ns}.zb.downed=0}},gamemode=!spectator] at @s if entity @e[tag={ns}.pap_machine,distance=..{PAP_ROOM_RADIUS}] run scoreboard players add #zb_lure_inpap {ns}.data 1
+
+scoreboard players set #zb_lure {ns}.data 0
+execute if score #zb_lure_alive {ns}.data matches 1.. if score #zb_lure_inpap {ns}.data = #zb_lure_alive {ns}.data run scoreboard players set #zb_lure {ns}.data 1
+
+# Start center-bound escorts on a few stray zombies while luring (cap-gated; the retarget in
+# escort/start reads #zb_lure and aims at the centre marker)
+execute if score #zb_lure {ns}.data matches 1 if score #zb_escort_count {ns}.data matches ..{MAX_ESCORTS - 1} as @e[tag={ns}.zombie_round,tag=!{ns}.zb_rising,tag=!{ns}.zb_escorted,tag=!{ns}.zb_escort_failed,limit=2,sort=random] at @s unless entity @e[tag={ns}.lure_center,distance=..16] run function {ns}:v{version}/zombies/escort/start
+""")
+
+	## Place the map's lure center at preload (base coords are loaded by then) — see escort.py.
+	write_versioned_function("zombies/preload_complete", f"""
+# PaP-room lure setup (escort.py)
+function {ns}:v{version}/zombies/escort/setup_lure_center
 """)
 
 	## Game start: no natural traders wandering into the map (they'd flee the horde, being
@@ -318,6 +388,7 @@ execute if score #zb_esc_sweep {ns}.data matches 0 as @e[type=minecraft:wanderin
 	write_versioned_function("zombies/start", f"""
 # Escort system (escort.py)
 scoreboard players set #zb_escort_count {ns}.data 0
+scoreboard players set #zb_lure {ns}.data 0
 gamerule spawn_wandering_traders false
 """)
 

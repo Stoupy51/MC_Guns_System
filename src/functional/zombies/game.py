@@ -286,6 +286,14 @@ execute if score #zb_stuck_timer {ns}.data matches 1200.. run scoreboard players
 execute if score #zb_glow_timer {ns}.data matches 100.. run scoreboard players set #zb_glow_timer {ns}.data 0
 execute if score #zb_stuck_timer {ns}.data matches 1200.. if score #zb_glow_timer {ns}.data matches 0 if score #zb_alive {ns}.data matches 1.. run function {ns}:v{version}/zombies/glow_stuck_zombies
 
+# Last-zombies fast path: once every zombie has spawned and only a handful remain, don't make
+# players wait the full 60s before stragglers glow — glow them immediately (every 100t) so a
+# single hard-to-find zombie can't drag the round out (common complaint from ~round 10 on).
+execute unless score #zb_alive {ns}.data matches 1..3 run scoreboard players set #zb_fewleft_timer {ns}.data 0
+execute if score #zb_to_spawn {ns}.data matches 0 if score #zb_alive {ns}.data matches 1..3 run scoreboard players add #zb_fewleft_timer {ns}.data 1
+execute if score #zb_fewleft_timer {ns}.data matches 1 run function {ns}:v{version}/zombies/glow_stuck_zombies
+execute if score #zb_fewleft_timer {ns}.data matches 100.. run scoreboard players set #zb_fewleft_timer {ns}.data 0
+
 # Refresh sidebar every second (20 ticks)
 scoreboard players add #zb_sidebar_timer {ns}.data 1
 execute if score #zb_sidebar_timer {ns}.data matches 20.. run scoreboard players set #zb_sidebar_timer {ns}.data 0
@@ -415,6 +423,11 @@ attribute @s minecraft:entity_interaction_range base set 5
 	"joined the zombies game!",
 	"dark_green",
 	post_class_lines=f"scoreboard players operation @s {ns}.zb.prev_kills = @s {ns}.total_kills",
+	class_menu_lines=(
+		"# Zombies has no class selection: give the fixed starting loadout (knife + pistol), matching "
+		"the start function\n"
+		f"function {ns}:v{version}/zombies/inventory/give_starting_loadout"
+	),
 )}
 """)
 
@@ -504,6 +517,11 @@ scoreboard players set #zb_stuck_see {ns}.data 0
 execute if score #cur_dist_bucket {ns}.data matches 0 positioned as @p[scores={{{ns}.zb.in_game=1,{ns}.zb.downed=0}},gamemode=!spectator,distance=..16] store result score #zb_stuck_see {ns}.data run function #bs.view:can_see_ata {{with:{{}}}}
 execute if score #zb_stuck_see {ns}.data matches 1 run scoreboard players set #stuck_progress {ns}.data 1
 
+# During a PaP-room lure, a zombie that has reached the theatre centre is exactly where we want it
+# (all players are hiding in the PaP room). Count that as progress so the stuck-rescue doesn't drag
+# it back to the PaP door (see escort.py lure mode).
+execute if score #zb_lure {ns}.data matches 1 if entity @e[tag={ns}.lure_center,distance=..12] run scoreboard players set #stuck_progress {ns}.data 1
+
 # If progress: update all stored values, reset timestamp, and clear the rescued flag
 execute if score #stuck_progress {ns}.data matches 1 run scoreboard players operation @s {ns}.zb.stuck_dist = #cur_dist_bucket {ns}.data
 execute if score #stuck_progress {ns}.data matches 1 run scoreboard players operation @s {ns}.zb.stuck_x = #cur_x {ns}.data
@@ -520,6 +538,10 @@ execute unless score #cur_z {ns}.data = @s {ns}.zb.stuck_z run scoreboard player
 scoreboard players set #stuck_threshold {ns}.data 400
 execute if score #stuck_moved {ns}.data matches 1 run scoreboard players set #stuck_threshold {ns}.data 300
 execute if score #stuck_moved {ns}.data matches 0 if entity @s[tag={ns}.zb_rescued] run scoreboard players set #stuck_threshold {ns}.data 100
+
+# Down to the last couple of zombies: cut the stuck timeout to 5s so a single hard-to-reach zombie
+# is escorted/teleported to the players quickly instead of dragging the round on (round 10+ complaint).
+execute if score #zb_alive {ns}.data matches ..2 if score #stuck_threshold {ns}.data matches 101.. run scoreboard players set #stuck_threshold {ns}.data 100
 
 # Compute elapsed ticks since last progress; respawn once the timeout is reached
 scoreboard players operation #stuck_delta {ns}.data = #total_tick {ns}.data

@@ -13,6 +13,10 @@ execute unless entity @n[type=minecraft:wandering_trader,tag=mgs.zb_escort,dista
 # spot, and the horde's pushOtherTeams collision rule keeps the overlap from pushing the trader
 execute at @n[type=minecraft:wandering_trader,tag=mgs.zb_escort,distance=..8] run tp @s ~ ~ ~ ~ ~
 
+# PaP-room lure active: release once the zombie reaches the theatre centre (no player will be
+# nearby there to trigger the player-based releases below)
+execute if score #zb_lure mgs.data matches 1 if entity @e[tag=mgs.lure_center,distance=..8] run return run function mgs:v5.1.0/zombies/escort/release
+
 # Point-blank → release NOW, no line-of-sight needed: the visibility check below aims at the
 # player's feet and corner/slab geometry can fail it forever while the taxi orbits the player
 execute if entity @p[scores={mgs.zb.in_game=1,mgs.zb.downed=0},gamemode=!spectator,distance=..6] run return run function mgs:v5.1.0/zombies/escort/release

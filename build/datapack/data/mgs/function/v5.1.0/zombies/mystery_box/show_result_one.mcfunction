@@ -9,11 +9,12 @@
 # Box will move (active box only): teddy bear path
 execute if score @s mgs.mb.willmove matches 1 run return run function mgs:v5.1.0/zombies/mystery_box/show_bear_result
 
-# Remember this box's id, then pick + reroll the result as its buyer
+# Remember this box's id and buyer, then pick + reroll the result as its buyer
 scoreboard players operation #this_box mgs.data = @s mgs.mb.box
+scoreboard players operation #this_buyer mgs.data = @s mgs.mb.buyer
 data remove storage mgs:zombies mystery_box.result
 scoreboard players set #mb_owned mgs.data 0
-execute as @a[scores={mgs.zb.in_game=1}] if score @s mgs.mb.buying = #this_box mgs.data run function mgs:v5.1.0/zombies/mystery_box/pick_for_buyer
+execute as @a[scores={mgs.zb.in_game=1}] if score @s mgs.mb.pid = #this_buyer mgs.data run function mgs:v5.1.0/zombies/mystery_box/pick_for_buyer
 
 # All owned / empty pool: refund the buyer and cancel this pull
 execute if score #mb_owned mgs.data matches 1 run function mgs:v5.1.0/zombies/mystery_box/result_all_owned
@@ -29,5 +30,5 @@ data merge entity @s {transformation:{translation:[0f,1.5f,0f]}}
 data merge entity @s {interpolation_duration:150,transformation:{translation:[0f,0f,0f]},start_interpolation:0}
 
 # Tell only the buyer it is ready
-execute as @a[scores={mgs.zb.in_game=1}] if score @s mgs.mb.buying = #this_box mgs.data run tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.mystery_box_result_ready","color":"light_purple"},{"translate":"mgs.right_click_to_collect","color":"green","bold":true}]
+execute as @a[scores={mgs.zb.in_game=1}] if score @s mgs.mb.pid = #this_buyer mgs.data run tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.mystery_box_result_ready","color":"light_purple"},{"translate":"mgs.right_click_to_collect","color":"green","bold":true}]
 

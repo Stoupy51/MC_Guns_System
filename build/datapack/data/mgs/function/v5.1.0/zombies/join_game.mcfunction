@@ -30,12 +30,8 @@ gamemode adventure @s
 # Reset stamina so the stamina system re-inits this player at full (it owns the hunger bar)
 scoreboard players set @s mgs.stam_seen 0
 
-# Enable class menu and show class selection
-tag @s add mgs.give_class_menu
-function mgs:v5.1.0/multiplayer/select_class
-
-# Apply class if already chosen
-execute unless score @s mgs.mp.class matches 0 run function mgs:v5.1.0/multiplayer/apply_class
+# Zombies has no class selection: give the fixed starting loadout (knife + pistol), matching the start function
+function mgs:v5.1.0/zombies/inventory/give_starting_loadout
 
 scoreboard players operation @s mgs.zb.prev_kills = @s mgs.total_kills
 

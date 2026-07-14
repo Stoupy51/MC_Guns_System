@@ -50,6 +50,9 @@ function mgs:v5.1.0/zombies/create_sidebar
 execute if data storage mgs:zombies game{variant:"zonweeb"} run tellraw @a ["",{"text":"","color":"dark_green","bold":true},"🧟 ",{"translate":"mgs.preparing_choose_your_perk_round_1_starts_in_10_seconds","color":"yellow"}]
 execute unless data storage mgs:zombies game{variant:"zonweeb"} run tellraw @a ["",{"text":"","color":"dark_green","bold":true},"🧟 ",{"translate":"mgs.preparing_round_1_starts_in_10_seconds","color":"yellow"}]
 
+# PaP-room lure setup (escort.py)
+function mgs:v5.1.0/zombies/escort/setup_lure_center
+
 # Setup mystery box positions
 execute if data storage mgs:zombies game.map.mystery_box.positions[0] run function mgs:v5.1.0/zombies/mystery_box/setup_positions
 

@@ -47,8 +47,13 @@ scoreboard objectives add {ns}.mb.box dummy
 scoreboard objectives add {ns}.mb.anim dummy
 # Whether this pull will end in a box move (teddy bear) — only the active box, never Fire Sale
 scoreboard objectives add {ns}.mb.willmove dummy
-# Player: id of the box they are currently pulling (0 = none)
-scoreboard objectives add {ns}.mb.buying dummy
+# Stable per-player id, assigned lazily on first pull, so a pull display can record WHICH player
+# bought it. During a Fire Sale one player can have several pulls running at once, so the buyer
+# must be tracked per-display (mb.buyer below) — a single "which box am I buying" value on the
+# player would be overwritten by the second pull and orphan the first box's collectible.
+scoreboard objectives add {ns}.mb.pid dummy
+# Buyer's pid, stamped on each pull display
+scoreboard objectives add {ns}.mb.buyer dummy
 """)
 
 	# Register teddy bear loot table for Mystery Box move animation
@@ -124,6 +129,9 @@ execute unless entity @e[tag={ns}.mystery_box_active] as @n[tag={ns}.mystery_box
 scoreboard players set #mb_pulls {ns}.data 0
 scoreboard players set #mb_box_counter {ns}.data 0
 function {ns}:v{version}/zombies/mystery_box/sync_presence_display
+
+# Tuck away the interaction entities of every non-active box
+function {ns}:v{version}/zombies/mystery_box/sync_interaction_visibility
 """)
 
 	write_versioned_function("zombies/mystery_box/setup_pos_iter", f"""
@@ -163,6 +171,37 @@ execute if data storage {ns}:temp _mb_iter[0] run function {ns}:v{version}/zombi
 
 	write_versioned_function("zombies/mystery_box/summon_pos_at", f"""
 $summon minecraft:interaction $(x) $(y) $(z) {{width:2.0f,height:-2.0f,response:true,Rotation:$(rotation),Tags:["{ns}.mystery_box_pos","{ns}.gm_entity","{ns}.mb_new","bs.entity.interaction"]}}
+""")
+
+	## Move each box's interaction entity out of reach unless its box is usable, so players can't
+	## hover or right-click a dead box position (an unreachable interaction entity also can't eat a
+	## gun click there). A box is usable when it's the active box, any box during a Fire Sale, or a
+	## box with a pull still in progress (so the buyer can always collect). Each entity is offset by
+	## exactly ±512 blocks so its real position stays exact across box moves. Called on every state
+	## change (setup, box move, Fire Sale start/end/cleanup, pull collect/reset) — never per tick.
+	write_versioned_function("zombies/mystery_box/sync_interaction_visibility", f"""
+execute as @e[tag={ns}.mystery_box_pos] at @s run function {ns}:v{version}/zombies/mystery_box/sync_interaction_one
+""")
+
+	write_versioned_function("zombies/mystery_box/sync_interaction_one", f"""
+# @s = a box interaction entity, at @s. Decide if it should be reachable.
+scoreboard players set #mb_vis {ns}.data 0
+execute if entity @s[tag={ns}.mystery_box_active] run scoreboard players set #mb_vis {ns}.data 1
+execute if score #zb_fire_sale_timer {ns}.data matches 1.. if entity @s[tag={ns}.mb_fs_active] run scoreboard players set #mb_vis {ns}.data 1
+execute if entity @n[tag={ns}.mb_display,distance=..3] run scoreboard players set #mb_vis {ns}.data 1
+
+execute if score #mb_vis {ns}.data matches 1 if entity @s[tag={ns}.mb_hidden] run function {ns}:v{version}/zombies/mystery_box/interaction_show
+execute if score #mb_vis {ns}.data matches 0 unless entity @s[tag={ns}.mb_hidden] run function {ns}:v{version}/zombies/mystery_box/interaction_hide
+""")
+
+	write_versioned_function("zombies/mystery_box/interaction_show", f"""
+tp @s ~ ~512 ~
+tag @s remove {ns}.mb_hidden
+""")
+
+	write_versioned_function("zombies/mystery_box/interaction_hide", f"""
+tp @s ~ ~-512 ~
+tag @s add {ns}.mb_hidden
 """)
 
 	write_versioned_function("zombies/mystery_box/sync_presence_display", f"""
@@ -226,8 +265,8 @@ execute at @n[tag=bs.interaction.target] run function {ns}:v{version}/zombies/my
 # Spinning (a pull display here with anim > 0): already in use
 execute if entity @n[tag={ns}.mb_display,distance=..3,scores={{{ns}.mb.anim=1..}}] run return run function {ns}:v{version}/zombies/mystery_box/deny_already_in_use
 
-# Ready (a display here, anim <= 0): only the buyer of this box may collect
-execute if entity @n[tag={ns}.mb_display,distance=..3] if score @s {ns}.mb.buying = @n[tag={ns}.mb_display,distance=..3] {ns}.mb.box run return run function {ns}:v{version}/zombies/mystery_box/collect
+# Ready (a display here, anim <= 0): only the buyer of this box may collect (buyer pid matches)
+execute if entity @n[tag={ns}.mb_display,distance=..3] if score @s {ns}.mb.pid = @n[tag={ns}.mb_display,distance=..3] {ns}.mb.buyer run return run function {ns}:v{version}/zombies/mystery_box/collect
 execute if entity @n[tag={ns}.mb_display,distance=..3] run return run function {ns}:v{version}/zombies/mystery_box/deny_not_your_result
 
 # No pull on this box yet: start one
@@ -239,6 +278,9 @@ function {ns}:v{version}/zombies/mystery_box/try_use
 tag @e[tag={ns}.mystery_box_active] add {ns}.mb_orig_active
 tag @e[tag={ns}.mystery_box_pos] add {ns}.mb_fs_active
 execute as @e[tag={ns}.mystery_box_pos,tag=!{ns}.mystery_box_active] at @s run function {ns}:v{version}/zombies/mystery_box/fire_sale_summon_box
+
+# Every box is usable now: bring all interaction entities back into reach
+function {ns}:v{version}/zombies/mystery_box/sync_interaction_visibility
 """)
 
 	write_versioned_function("zombies/mystery_box/fire_sale_summon_box", f"""
@@ -256,6 +298,9 @@ $execute positioned ~ ~-0.9 ~ run summon minecraft:item_display ~ ~ ~ {{Rotation
 	# in-progress pull resets (so a box being used isn't yanked mid-spin).
 	write_versioned_function("zombies/mystery_box/fire_sale_end", f"""
 tag @e[tag={ns}.mb_fs_active] remove {ns}.mb_fs_active
+# Re-hide interaction entities of boxes that are no longer usable (boxes with a pull still in
+# progress stay reachable via the sync's pull-in-progress check, so buyers can still collect).
+function {ns}:v{version}/zombies/mystery_box/sync_interaction_visibility
 # If any pull is in progress, defer cleanup until the last display resets; otherwise clean up now.
 execute if entity @e[tag={ns}.mb_display] run return run scoreboard players set #mb_fs_cleanup_pending {ns}.data 1
 function {ns}:v{version}/zombies/mystery_box/fire_sale_cleanup
@@ -268,6 +313,9 @@ function {ns}:v{version}/zombies/mystery_box/fire_sale_cleanup
 tag @e[tag={ns}.mb_orig_active] remove {ns}.mb_orig_active
 kill @e[tag={ns}.mb_temp]
 scoreboard players set #mb_fs_cleanup_pending {ns}.data 0
+
+# Non-active boxes are dead again: tuck their interaction entities away
+function {ns}:v{version}/zombies/mystery_box/sync_interaction_visibility
 """)
 
 	write_versioned_function("zombies/mystery_box/deny_moving", f"""
@@ -288,9 +336,10 @@ execute unless score @s {ns}.zb.points >= #zb_mystery_box_price {ns}.config run 
 # Ensure at least a default pool exists.
 function {ns}:v{version}/zombies/mystery_box/ensure_default_pool
 
-# Deduct points and mark this player as the buyer of this box
+# Deduct points, then ensure this player has a stable id so the pull display can record them as
+# its buyer (set on the display below). Supports several concurrent pulls by the same player.
 scoreboard players operation @s {ns}.zb.points -= #zb_mystery_box_price {ns}.config
-scoreboard players operation @s {ns}.mb.buying = #cur_box {ns}.data
+execute unless score @s {ns}.mb.pid matches 1.. run function {ns}:v{version}/zombies/mystery_box/assign_pid
 
 # Pre-determine if the box will move (teddy bear) — only the active box, never during a Fire Sale
 scoreboard players set #mb_will_move {ns}.data 0
@@ -305,6 +354,7 @@ function {ns}:v{version}/zombies/mystery_box/spawn_display
 scoreboard players operation @n[tag={ns}.mb_display_new] {ns}.mb.box = #cur_box {ns}.data
 scoreboard players set @n[tag={ns}.mb_display_new] {ns}.mb.anim 105
 scoreboard players operation @n[tag={ns}.mb_display_new] {ns}.mb.willmove = #mb_will_move {ns}.data
+scoreboard players operation @n[tag={ns}.mb_display_new] {ns}.mb.buyer = @s {ns}.mb.pid
 tag @n[tag={ns}.mb_display_new] remove {ns}.mb_display_new
 
 # Open this box's lid + open/spin sounds + a private announce to the buyer
@@ -312,6 +362,12 @@ function {ns}:v{version}/zombies/mystery_box/open_lid
 function {ns}:v{version}/zombies/feedback/sound_box_open
 function {ns}:v{version}/zombies/feedback/sound_box_spin
 tellraw @s [{MGS_TAG},{{"text":"Mystery Box spinning...","color":"light_purple"}}]
+""")
+
+	## Assign a stable unique id to a player the first time they pull (@s = player).
+	write_versioned_function("zombies/mystery_box/assign_pid", f"""
+scoreboard players add #mb_pid_counter {ns}.data 1
+scoreboard players operation @s {ns}.mb.pid = #mb_pid_counter {ns}.data
 """)
 
 	write_versioned_function("zombies/mystery_box/pick_random_result", f"""
@@ -448,11 +504,12 @@ $loot replace entity @s contents loot {ns}:i/$(weapon_id)
 # Box will move (active box only): teddy bear path
 execute if score @s {ns}.mb.willmove matches 1 run return run function {ns}:v{version}/zombies/mystery_box/show_bear_result
 
-# Remember this box's id, then pick + reroll the result as its buyer
+# Remember this box's id and buyer, then pick + reroll the result as its buyer
 scoreboard players operation #this_box {ns}.data = @s {ns}.mb.box
+scoreboard players operation #this_buyer {ns}.data = @s {ns}.mb.buyer
 data remove storage {ns}:zombies mystery_box.result
 scoreboard players set #mb_owned {ns}.data 0
-execute as @a[scores={{{ns}.zb.in_game=1}}] if score @s {ns}.mb.buying = #this_box {ns}.data run function {ns}:v{version}/zombies/mystery_box/pick_for_buyer
+execute as @a[scores={{{ns}.zb.in_game=1}}] if score @s {ns}.mb.pid = #this_buyer {ns}.data run function {ns}:v{version}/zombies/mystery_box/pick_for_buyer
 
 # All owned / empty pool: refund the buyer and cancel this pull
 execute if score #mb_owned {ns}.data matches 1 run function {ns}:v{version}/zombies/mystery_box/result_all_owned
@@ -468,7 +525,7 @@ data merge entity @s {{transformation:{{translation:[0f,1.5f,0f]}}}}
 data merge entity @s {{interpolation_duration:150,transformation:{{translation:[0f,0f,0f]}},start_interpolation:0}}
 
 # Tell only the buyer it is ready
-execute as @a[scores={{{ns}.zb.in_game=1}}] if score @s {ns}.mb.buying = #this_box {ns}.data run tellraw @s [{MGS_TAG},{{"text":"Mystery Box result ready! ","color":"light_purple"}},{{"text":"Right-click to collect!","color":"green","bold":true}}]
+execute as @a[scores={{{ns}.zb.in_game=1}}] if score @s {ns}.mb.pid = #this_buyer {ns}.data run tellraw @s [{MGS_TAG},{{"text":"Mystery Box result ready! ","color":"light_purple"}},{{"text":"Right-click to collect!","color":"green","bold":true}}]
 """)
 
 	## Pick + reroll the result against the buyer's owned weapons (@s = the buyer)
@@ -480,10 +537,10 @@ function {ns}:v{version}/zombies/mystery_box/reroll_owned
 execute unless data storage {ns}:zombies mystery_box.result.weapon_id run scoreboard players set #mb_owned {ns}.data 1
 """)
 
-	## Refund the buyer of this box (#this_box set) and clear their pull state
+	## Refund the buyer of this box (#this_buyer set by show_result_one) and notify them
 	write_versioned_function("zombies/mystery_box/result_all_owned", f"""
-execute as @a[scores={{{ns}.zb.in_game=1}}] if score @s {ns}.mb.buying = #this_box {ns}.data run scoreboard players operation @s {ns}.zb.points += #zb_mystery_box_price {ns}.config
-execute as @a[scores={{{ns}.zb.in_game=1}}] if score @s {ns}.mb.buying = #this_box {ns}.data run function {ns}:v{version}/zombies/mystery_box/deny_all_owned
+execute as @a[scores={{{ns}.zb.in_game=1}}] if score @s {ns}.mb.pid = #this_buyer {ns}.data run scoreboard players operation @s {ns}.zb.points += #zb_mystery_box_price {ns}.config
+execute as @a[scores={{{ns}.zb.in_game=1}}] if score @s {ns}.mb.pid = #this_buyer {ns}.data run function {ns}:v{version}/zombies/mystery_box/deny_all_owned
 """)
 
 	write_versioned_function("zombies/mystery_box/show_result_weapon_one", f"""
@@ -502,10 +559,9 @@ tag @s add {ns}.mb_bear
 loot replace entity @s contents loot {ns}:zombies/mystery_box_bear
 data merge entity @s {{transformation:{{translation:[0f,1.25f,0f],scale:[0.75f,0.75f,0.75f]}}}}
 
-# Refund this box's buyer and clear their pull state
-scoreboard players operation #this_box {ns}.data = @s {ns}.mb.box
-execute as @a[scores={{{ns}.zb.in_game=1}}] if score @s {ns}.mb.buying = #this_box {ns}.data run scoreboard players operation @s {ns}.zb.points += #zb_mystery_box_price {ns}.config
-execute as @a[scores={{{ns}.zb.in_game=1}}] if score @s {ns}.mb.buying = #this_box {ns}.data run scoreboard players set @s {ns}.mb.buying 0
+# Refund this box's buyer (the moving box eats the pull, no weapon given)
+scoreboard players operation #this_buyer {ns}.data = @s {ns}.mb.buyer
+execute as @a[scores={{{ns}.zb.in_game=1}}] if score @s {ns}.mb.pid = #this_buyer {ns}.data run scoreboard players operation @s {ns}.zb.points += #zb_mystery_box_price {ns}.config
 
 # Start move animation timer (this display is killed by the move at the ascend phase)
 scoreboard players set #mb_move_timer {ns}.data {MOVE_TOTAL_TICKS}
@@ -581,6 +637,10 @@ execute at @n[tag={ns}.mystery_box_active] run particle minecraft:large_smoke ~ 
 # Pick new active position
 function {ns}:v{version}/zombies/mystery_box/move_active_position
 
+# Bring the new active box's interaction entity into reach (and hide the old one) BEFORE the chest
+# is positioned relative to it below — otherwise the chest would spawn at the hidden -512 offset.
+function {ns}:v{version}/zombies/mystery_box/sync_interaction_visibility
+
 # Spawn new chest display (base + lid) above the new active position (height = 0.7 + descent total)
 # Fast: 35t * 0.18 = 6.3 blocks, Slow: 34t * 0.06 = 2.04 blocks, Total = 8.34
 execute as @n[tag={ns}.mystery_box_active] at @s positioned ~ ~7.54 ~ run summon minecraft:item_display ~ ~ ~ {{Tags:["{ns}.mb_presence","{ns}.mb_base","{ns}.gm_entity"],item_display:"fixed",billboard:"fixed",item:{{id:"minecraft:chest",count:1,components:{{"minecraft:item_model":"{ns}:mystery_box_base"}}}},transformation:{mb_closed_tf},teleport_duration:5}}
@@ -639,13 +699,15 @@ tellraw @s [{MGS_TAG},{{"text":"You collected ","color":"green"}},{{"storage":"{
 function {ns}:v{version}/zombies/feedback/sound_success
 function {ns}:v{version}/zombies/feedback/sound_box_close
 
-# Clear this player's pull state, close this box's lid, and remove its display
-scoreboard players set @s {ns}.mb.buying 0
+# Close this box's lid and remove its display (buyer is tracked per-display, nothing to clear)
 function {ns}:v{version}/zombies/mystery_box/close_lid
 kill @n[tag={ns}.mb_display,distance=..3]
 
 # If a Fire Sale ended while pulls were in progress, finish temp-box cleanup once none remain
 execute if score #mb_fs_cleanup_pending {ns}.data matches 1 unless entity @e[tag={ns}.mb_display] run function {ns}:v{version}/zombies/mystery_box/fire_sale_cleanup
+
+# This box's pull is done: if it's no longer usable (e.g. a Fire-Sale box after the sale), hide it
+function {ns}:v{version}/zombies/mystery_box/sync_interaction_visibility
 """)
 
 	write_versioned_function("zombies/mystery_box/capture_collected_name", f"""
@@ -683,15 +745,14 @@ $function $(give_function)
 # Close this box's lid
 function {ns}:v{version}/zombies/mystery_box/close_lid
 
-# Clear any buyer still pointing at this box
-scoreboard players operation #this_box {ns}.data = @s {ns}.mb.box
-execute as @a[scores={{{ns}.zb.in_game=1}}] if score @s {ns}.mb.buying = #this_box {ns}.data run scoreboard players set @s {ns}.mb.buying 0
-
-# Remove the display
+# Remove the display (buyer is tracked per-display, nothing to clear on the player)
 kill @s
 
 # If a Fire Sale ended while pulls were in progress, finish temp-box cleanup once none remain
 execute if score #mb_fs_cleanup_pending {ns}.data matches 1 unless entity @e[tag={ns}.mb_display] run function {ns}:v{version}/zombies/mystery_box/fire_sale_cleanup
+
+# This box's pull ended: if it's no longer usable (e.g. a Fire-Sale box after the sale), hide it
+function {ns}:v{version}/zombies/mystery_box/sync_interaction_visibility
 """)
 
 	## Hover functions for active mystery box
@@ -759,7 +820,8 @@ kill @e[tag={ns}.mb_temp]
 scoreboard players set #mb_pulls {ns}.data 0
 scoreboard players set #mb_move_timer {ns}.data 0
 scoreboard players set #mb_fs_cleanup_pending {ns}.data 0
-scoreboard players set @a {ns}.mb.buying 0
+scoreboard players reset @a {ns}.mb.pid
+scoreboard players set #mb_pid_counter {ns}.data 0
 tag @e remove {ns}.mb_fs_active
 tag @e remove {ns}.mb_orig_active
 """)

@@ -64,7 +64,8 @@ kill @e[tag=mgs.mb_temp]
 scoreboard players set #mb_pulls mgs.data 0
 scoreboard players set #mb_move_timer mgs.data 0
 scoreboard players set #mb_fs_cleanup_pending mgs.data 0
-scoreboard players set @a mgs.mb.buying 0
+scoreboard players reset @a mgs.mb.pid
+scoreboard players set #mb_pid_counter mgs.data 0
 tag @e remove mgs.mb_fs_active
 tag @e remove mgs.mb_orig_active
 

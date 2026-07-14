@@ -1,8 +1,9 @@
 
 #> mgs:v5.1.0/multiplayer/apply_class
 #
-# @within	mgs:v5.1.0/zombies/join_game
-#			mgs:v5.1.0/multiplayer/start [ at @s ]
+# @executed	at @s
+#
+# @within	mgs:v5.1.0/multiplayer/start [ at @s ]
 #			mgs:v5.1.0/multiplayer/join_game
 #			mgs:v5.1.0/multiplayer/prep_tick [ at @s ]
 #			mgs:v5.1.0/multiplayer/gamemodes/snd/start_round [ as @a[scores={mgs.mp.team=1..2}] & at @s ]

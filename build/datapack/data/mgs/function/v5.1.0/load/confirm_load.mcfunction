@@ -212,8 +212,13 @@ scoreboard objectives add mgs.mb.box dummy
 scoreboard objectives add mgs.mb.anim dummy
 # Whether this pull will end in a box move (teddy bear) — only the active box, never Fire Sale
 scoreboard objectives add mgs.mb.willmove dummy
-# Player: id of the box they are currently pulling (0 = none)
-scoreboard objectives add mgs.mb.buying dummy
+# Stable per-player id, assigned lazily on first pull, so a pull display can record WHICH player
+# bought it. During a Fire Sale one player can have several pulls running at once, so the buyer
+# must be tracked per-display (mb.buyer below) — a single "which box am I buying" value on the
+# player would be overwritten by the second pull and orphan the first box's collectible.
+scoreboard objectives add mgs.mb.pid dummy
+# Buyer's pid, stamped on each pull display
+scoreboard objectives add mgs.mb.buyer dummy
 
 # Pack-a-Punch machine scoreboards
 scoreboard objectives add mgs.zb.pap.id dummy

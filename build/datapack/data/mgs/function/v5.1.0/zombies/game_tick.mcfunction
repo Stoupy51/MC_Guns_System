@@ -48,6 +48,14 @@ execute if score #zb_stuck_timer mgs.data matches 1200.. run scoreboard players 
 execute if score #zb_glow_timer mgs.data matches 100.. run scoreboard players set #zb_glow_timer mgs.data 0
 execute if score #zb_stuck_timer mgs.data matches 1200.. if score #zb_glow_timer mgs.data matches 0 if score #zb_alive mgs.data matches 1.. run function mgs:v5.1.0/zombies/glow_stuck_zombies
 
+# Last-zombies fast path: once every zombie has spawned and only a handful remain, don't make
+# players wait the full 60s before stragglers glow — glow them immediately (every 100t) so a
+# single hard-to-find zombie can't drag the round out (common complaint from ~round 10 on).
+execute unless score #zb_alive mgs.data matches 1..3 run scoreboard players set #zb_fewleft_timer mgs.data 0
+execute if score #zb_to_spawn mgs.data matches 0 if score #zb_alive mgs.data matches 1..3 run scoreboard players add #zb_fewleft_timer mgs.data 1
+execute if score #zb_fewleft_timer mgs.data matches 1 run function mgs:v5.1.0/zombies/glow_stuck_zombies
+execute if score #zb_fewleft_timer mgs.data matches 100.. run scoreboard players set #zb_fewleft_timer mgs.data 0
+
 # Refresh sidebar every second (20 ticks)
 scoreboard players add #zb_sidebar_timer mgs.data 1
 execute if score #zb_sidebar_timer mgs.data matches 20.. run scoreboard players set #zb_sidebar_timer mgs.data 0
@@ -85,6 +93,9 @@ scoreboard players operation #zb_esc_sweep mgs.data = #total_tick mgs.data
 scoreboard players operation #zb_esc_sweep mgs.data %= #40 mgs.data
 execute if score #zb_esc_sweep mgs.data matches 0 store result score #zb_escort_count mgs.data if entity @e[tag=mgs.zb_escorted]
 execute if score #zb_esc_sweep mgs.data matches 0 as @e[type=minecraft:wandering_trader,tag=mgs.zb_escort] at @s unless entity @e[tag=mgs.zb_escorted,distance=..8] run function mgs:v5.1.0/zombies/escort/discard_trader
+
+# PaP-room lure: recompute lure state every 2s (inert unless the map defined a lure centre)
+execute if score #zb_esc_sweep mgs.data matches 20 if score #zb_pap_has mgs.data matches 1 run function mgs:v5.1.0/zombies/escort/update_lure
 
 # Ability tick (Zonweeb variant only)
 execute if data storage mgs:zombies game{variant:"zonweeb"} run function mgs:v5.1.0/zombies/ability_tick

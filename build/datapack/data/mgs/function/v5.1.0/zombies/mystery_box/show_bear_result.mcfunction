@@ -16,10 +16,9 @@ tag @s add mgs.mb_bear
 loot replace entity @s contents loot mgs:zombies/mystery_box_bear
 data merge entity @s {transformation:{translation:[0f,1.25f,0f],scale:[0.75f,0.75f,0.75f]}}
 
-# Refund this box's buyer and clear their pull state
-scoreboard players operation #this_box mgs.data = @s mgs.mb.box
-execute as @a[scores={mgs.zb.in_game=1}] if score @s mgs.mb.buying = #this_box mgs.data run scoreboard players operation @s mgs.zb.points += #zb_mystery_box_price mgs.config
-execute as @a[scores={mgs.zb.in_game=1}] if score @s mgs.mb.buying = #this_box mgs.data run scoreboard players set @s mgs.mb.buying 0
+# Refund this box's buyer (the moving box eats the pull, no weapon given)
+scoreboard players operation #this_buyer mgs.data = @s mgs.mb.buyer
+execute as @a[scores={mgs.zb.in_game=1}] if score @s mgs.mb.pid = #this_buyer mgs.data run scoreboard players operation @s mgs.zb.points += #zb_mystery_box_price mgs.config
 
 # Start move animation timer (this display is killed by the move at the ascend phase)
 scoreboard players set #mb_move_timer mgs.data 280
