@@ -153,7 +153,7 @@ Implemented gamemodes:
 - Passive and active ability system.
 - Bonus systems (max ammo refill, nuke kill loop).
 
-<video src="./assets/img/zombies.mp4" width="100%" controls></video>
+<video src="https://github.com/Stoupy51/MC_Guns_System/raw/refs/heads/main/assets/img/zombies_original.mp4" width="100%" controls alt="Zombies"></video>
 
 ## 🗺️ Map Editor
 
