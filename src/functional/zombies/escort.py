@@ -59,6 +59,10 @@ WATCHDOG_GIVE_UP: int = 5
 PATHFINDING_RANGE: int = 96
 # Hand back to vanilla zombie AI once an alive player is within this radius AND visible.
 RELEASE_RADIUS: int = 10
+# Within this radius, release unconditionally (no line-of-sight needed): vanilla AI handles this
+# range even around corners, and the visibility check aims at the player's FEET — slabs, stairs
+# or a corner can fail it forever, leaving the taxi orbiting a player it already reached.
+RELEASE_RADIUS_CLOSE: int = 6
 
 
 def generate_zombies_escort() -> None:
@@ -161,6 +165,10 @@ execute unless entity {my_trader} run return run function {ns}:v{version}/zombie
 # spot, and the horde's pushOtherTeams collision rule keeps the overlap from pushing the trader
 execute at {my_trader} run tp @s ~ ~ ~ ~ ~
 
+# Point-blank → release NOW, no line-of-sight needed: the visibility check below aims at the
+# player's feet and corner/slab geometry can fail it forever while the taxi orbits the player
+execute if entity @p[scores={{{ns}.zb.in_game=1,{ns}.zb.downed=0}},gamemode=!spectator,distance=..{RELEASE_RADIUS_CLOSE}] run return run function {ns}:v{version}/zombies/escort/release
+
 # Hand off to vanilla AI once a player is close AND in the zombie's line of sight: a player
 # 3 blocks above through a floor is "close" but the zombie still can't path there — keep riding
 scoreboard players set #zb_esc_see {ns}.data 0
@@ -236,6 +244,23 @@ tag @s add {ns}.zb_escort_failed
 execute as {my_trader} run function {ns}:v{version}/zombies/escort/discard_trader
 function {ns}:v{version}/zombies/escort/detach
 function {ns}:v{version}/zombies/on_stuck_zombie
+""")
+
+	## Escorted zombie killed mid-transit: discard its taxi THIS tick instead of leaving an
+	## orphaned trader wandering around for up to 2s until the game_tick sweep catches it.
+	## Runs inside on_zombie_dying (round.py) before the zombie is tp'd away, so the dying
+	## zombie is still glued to its trader and the nearest-trader selector resolves.
+	write_versioned_function("zombies/on_zombie_dying", f"""
+# Escorted zombie died: remove its escort trader immediately (escort.py)
+execute if entity @s[tag={ns}.zb_escorted] at @s run function {ns}:v{version}/zombies/escort/on_escorted_killed
+""", prepend=True)
+
+	## @s = dying escorted zombie, at @s. No detach: the zombie is being removed anyway, just
+	## drop it from the escort bookkeeping and delete the trader.
+	write_versioned_function("zombies/escort/on_escorted_killed", f"""
+tag @s remove {ns}.zb_escorted
+scoreboard players remove #zb_escort_count {ns}.data 1
+execute as {my_trader} run function {ns}:v{version}/zombies/escort/discard_trader
 """)
 
 	## Hook the escort loop into the zombies game tick (count-gated: zero cost with no escort)

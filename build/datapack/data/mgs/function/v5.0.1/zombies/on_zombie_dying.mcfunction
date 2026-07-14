@@ -6,6 +6,9 @@
 # @within	mgs:v5.0.1/zombies/death_watch_tick [ at @s ]
 #
 
+# Escorted zombie died: remove its escort trader immediately (escort.py)
+execute if entity @s[tag=mgs.zb_escorted] at @s run function mgs:v5.0.1/zombies/escort/on_escorted_killed
+
 # Guard: only process round zombies.
 execute unless entity @s[tag=mgs.zombie_round] run return 0
 
