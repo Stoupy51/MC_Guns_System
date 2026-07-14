@@ -34,6 +34,11 @@ scoreboard players set #zb_stuck_see mgs.data 0
 execute if score #cur_dist_bucket mgs.data matches 0 positioned as @p[scores={mgs.zb.in_game=1,mgs.zb.downed=0},gamemode=!spectator,distance=..16] store result score #zb_stuck_see mgs.data run function #bs.view:can_see_ata {with:{}}
 execute if score #zb_stuck_see mgs.data matches 1 run scoreboard players set #stuck_progress mgs.data 1
 
+# During a PaP-room lure, a zombie that has reached the theatre centre is exactly where we want it
+# (all players are hiding in the PaP room). Count that as progress so the stuck-rescue doesn't drag
+# it back to the PaP door (see escort.py lure mode).
+execute if score #zb_lure mgs.data matches 1 if entity @e[tag=mgs.lure_center,distance=..12] run scoreboard players set #stuck_progress mgs.data 1
+
 # If progress: update all stored values, reset timestamp, and clear the rescued flag
 execute if score #stuck_progress mgs.data matches 1 run scoreboard players operation @s mgs.zb.stuck_dist = #cur_dist_bucket mgs.data
 execute if score #stuck_progress mgs.data matches 1 run scoreboard players operation @s mgs.zb.stuck_x = #cur_x mgs.data
@@ -50,6 +55,10 @@ execute unless score #cur_z mgs.data = @s mgs.zb.stuck_z run scoreboard players 
 scoreboard players set #stuck_threshold mgs.data 400
 execute if score #stuck_moved mgs.data matches 1 run scoreboard players set #stuck_threshold mgs.data 300
 execute if score #stuck_moved mgs.data matches 0 if entity @s[tag=mgs.zb_rescued] run scoreboard players set #stuck_threshold mgs.data 100
+
+# Down to the last couple of zombies: cut the stuck timeout to 5s so a single hard-to-reach zombie
+# is escorted/teleported to the players quickly instead of dragging the round on (round 10+ complaint).
+execute if score #zb_alive mgs.data matches ..2 if score #stuck_threshold mgs.data matches 101.. run scoreboard players set #stuck_threshold mgs.data 100
 
 # Compute elapsed ticks since last progress; respawn once the timeout is reached
 scoreboard players operation #stuck_delta mgs.data = #total_tick mgs.data

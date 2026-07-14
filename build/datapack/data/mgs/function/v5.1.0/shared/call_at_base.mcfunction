@@ -7,6 +7,7 @@
 #			mgs:v5.1.0/shared/maps/call_leave_script_at_base with storage mgs:temp _base
 #			mgs:v5.1.0/shared/maps/call_respawn_script_at_base with storage mgs:temp _base
 #			mgs:v5.1.0/shared/maps/call_power_script_at_base with storage mgs:temp _base
+#			mgs:v5.1.0/zombies/escort/setup_lure_center with storage mgs:temp _base
 #
 # @args		x (unknown)
 #			y (unknown)

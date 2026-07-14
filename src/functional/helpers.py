@@ -90,8 +90,13 @@ def late_join_flow_lines(
     allow_preparing: bool = False,
     setup_extra_lines: str = "",
     post_class_lines: str = "",
+    class_menu_lines: str = "",
 ) -> str:
-    """ Return a mode late-join flow with hook points for mode-specific setup. """
+    """ Return a mode late-join flow with hook points for mode-specific setup.
+
+    class_menu_lines: replaces the default multiplayer class/loadout selection block. Modes
+    without loadouts (zombies gives a fixed knife + starting pistol) pass their own giving
+    logic here so a late-joiner isn't prompted to pick a multiplayer class. """
     version: str = Mem.ctx.project_version
     preparing_guard: str = f' unless data storage {ns}:{storage} game{{state:"preparing"}}' if allow_preparing else ""
     guard_line: str = (
@@ -110,11 +115,15 @@ def late_join_flow_lines(
     ]
     if setup_extra_lines.strip():
         parts.append(setup_extra_lines.strip())
-    parts.extend([
-        f'# Reset stamina so the stamina system re-inits this player at full (it owns the hunger bar)\nscoreboard players set @s {ns}.stam_seen 0',
-        f'# Enable class menu and show class selection\ntag @s add {ns}.give_class_menu\nfunction {ns}:v{version}/multiplayer/select_class',
-        f'# Apply class if already chosen\nexecute unless score @s {ns}.mp.class matches 0 run function {ns}:v{version}/multiplayer/apply_class',
-    ])
+    parts.append(f'# Reset stamina so the stamina system re-inits this player at full (it owns the hunger bar)\nscoreboard players set @s {ns}.stam_seen 0')
+    if class_menu_lines.strip():
+        # Mode-specific loadout (e.g. zombies gives a fixed knife + pistol, no class prompt)
+        parts.append(class_menu_lines.strip())
+    else:
+        parts.extend([
+            f'# Enable class menu and show class selection\ntag @s add {ns}.give_class_menu\nfunction {ns}:v{version}/multiplayer/select_class',
+            f'# Apply class if already chosen\nexecute unless score @s {ns}.mp.class matches 0 run function {ns}:v{version}/multiplayer/apply_class',
+        ])
     if post_class_lines.strip():
         parts.append(post_class_lines.strip())
     parts.extend([

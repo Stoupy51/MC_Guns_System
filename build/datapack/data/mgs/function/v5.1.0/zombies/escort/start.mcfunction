@@ -4,6 +4,7 @@
 # @executed	as @e[tag=...,limit=24,sort=random] & at @s
 #
 # @within	mgs:v5.1.0/zombies/on_stuck_zombie
+#			mgs:v5.1.0/zombies/escort/update_lure [ as @e[tag=...,limit=2,sort=random] & at @s ]
 #
 
 # Freeze the zombie: the trader does the walking from here, the zombie is dragged behind it.

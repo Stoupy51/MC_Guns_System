@@ -4,6 +4,7 @@
 # @executed	at @s
 #
 # @within	mgs:v5.1.0/zombies/preload_complete [ at @s ]
+#			mgs:v5.1.0/zombies/join_game
 #			mgs:v5.1.0/zombies/inventory/give_respawn_loadout
 #
 

@@ -276,6 +276,16 @@ tag @e[tag={ns}.kino.met_active] remove {ns}.kino.met_active
 scoreboard players set #kino_met_count {ns}.data 0
 """)
 
+	# ── setup_lure ────────────────────────────────────────────────────────────
+	# PaP-room lure centre (see escort.py): when every player is hiding in the PaP room, the horde
+	# gathers here — the centre of the theater — instead of piling at the PaP door. Registered into
+	# the optional #{ns}:zombies/setup_lure tag, which the escort system runs positioned at the map
+	# base, so the marker sits at base + (~-49 ~-3 ~0).
+	write_versioned_function("maps/zombies/kino_der_toten/setup_lure",
+		f'execute if data storage {ns}:zombies game{{map_id:"kino_der_toten"}} positioned ~-49 ~-3 ~0 run summon minecraft:marker ~ ~ ~ {{Tags:["{ns}.lure_center","{ns}.gm_entity"]}}',
+		tags=[f"{ns}:zombies/setup_lure"]
+	)
+
 	# ── power ─────────────────────────────────────────────────────────────────
 	write_versioned_function("maps/zombies/kino_der_toten/power", f"""
 # Kino der Toten power-on script

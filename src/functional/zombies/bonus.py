@@ -37,8 +37,24 @@ function {ns}:v{version}/utils/copy_gun_data
 # Also reload all weapons in inventory if config allows (1 = recent zombies, 0 = OG magazines only)
 execute if score #max_ammo_reload_weapons {ns}.config matches 1.. run function {ns}:v{version}/zombies/bonus/max_ammo_reload_weapons
 
+# Refill the grenade/equipment slot to full — including when the player has 0 left (empty slot)
+function {ns}:v{version}/zombies/bonus/max_ammo_grenades
+
 # Recompute reserve ammo display after refilling all magazines
 function {ns}:v{version}/ammo/compute_reserve
+""")
+
+    # Max Ammo grenade refill: top the equipment slot (hotbar.7) to full. The magazine/weapon
+    # passes above never touch grenades (they use item count, not a magazine), so without this
+    # Max Ammo left a player with 0 grenades empty-handed.
+    write_versioned_function("zombies/bonus/max_ammo_grenades", f"""
+# Has grenades: set the stack to full (4) and stop
+execute if items entity @s hotbar.7 *[custom_data~{{{ns}:{{gun:true}}}}] run return run item modify entity @s hotbar.7 {ns}:v{version}/grenade/set_count_4
+
+# Empty slot (all grenades used): give a fresh frag, fill to 4, and re-tag the slot
+execute unless items entity @s hotbar.7 * run loot replace entity @s hotbar.7 loot {ns}:i/frag_grenade
+item modify entity @s hotbar.7 {ns}:v{version}/grenade/set_count_4
+function {ns}:v{version}/zombies/inventory/apply_slot_tag {{slot:"hotbar.7",group:"hotbar",index:7}}
 """)
 
     # Reload ALL weapon slots (iterates all inventory)

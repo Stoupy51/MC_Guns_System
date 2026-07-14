@@ -19,3 +19,6 @@ scoreboard players set #mb_pulls mgs.data 0
 scoreboard players set #mb_box_counter mgs.data 0
 function mgs:v5.1.0/zombies/mystery_box/sync_presence_display
 
+# Tuck away the interaction entities of every non-active box
+function mgs:v5.1.0/zombies/mystery_box/sync_interaction_visibility
+

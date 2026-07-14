@@ -1,9 +1,10 @@
 
 #> mgs:v5.1.0/zombies/inventory/apply_slot_tag
 #
-# @executed	at @s
+# @executed	as @a[scores={mgs.zb.in_game=1},gamemode=!spectator]
 #
-# @within	mgs:v5.1.0/zombies/inventory/give_starting_loadout {slot:"hotbar.0",group:"hotbar",index:0}
+# @within	mgs:v5.1.0/zombies/bonus/max_ammo_grenades {slot:"hotbar.7",group:"hotbar",index:7}
+#			mgs:v5.1.0/zombies/inventory/give_starting_loadout {slot:"hotbar.0",group:"hotbar",index:0}
 #			mgs:v5.1.0/zombies/inventory/give_starting_loadout {slot:"hotbar.1",group:"hotbar",index:1}
 #			mgs:v5.1.0/zombies/inventory/give_starting_loadout {slot:"inventory.1",group:"inventory",index:1}
 #			mgs:v5.1.0/zombies/inventory/give_starting_loadout {slot:"hotbar.7",group:"hotbar",index:7}

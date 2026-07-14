@@ -1,6 +1,8 @@
 
 #> mgs:v5.1.0/multiplayer/apply_perks
 #
+# @executed	at @s
+#
 # @within	mgs:v5.1.0/multiplayer/apply_class_dynamic
 #
 
