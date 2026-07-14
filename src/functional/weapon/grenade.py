@@ -185,7 +185,7 @@ scoreboard players operation @s bs.vel.y -= #proj_gravity {ns}.data
 # Move the grenade using Bookshelf's move module with collision detection
 # Grenades use damped_bounce by default (frag/smoke/flash) or stick (semtex)
 execute if data entity @s data.config{{{GRENADE_TYPE}:"semtex"}} run return run function {ns}:v{version}/grenade/move_semtex
-function #bs.move:apply_vel {{scale:0.001,with:{{blocks:true,entities:false,on_collision:"function {ns}:v{version}/grenade/on_bounce"}}}}
+function #bs.move:apply_vel {{scale:0.001,with:{{blocks:true,entities:false,ignored_blocks:"#{ns}:v{version}/projectile_pass_through",on_collision:"function {ns}:v{version}/grenade/on_bounce"}}}}
 
 # Trail particle (white_smoke avoids false-positive with shader marker detection)
 particle white_smoke ~ ~ ~ 0.05 0.05 0.05 0.01 1 force @a[distance=..64]
@@ -206,8 +206,8 @@ scoreboard players operation @s bs.vel.y -= #proj_gravity {ns}.data
 # Move with stick callback (semtex sticks to first surface or entity hit)
 # During launch grace period, skip entity collision to avoid sticking to the thrower
 scoreboard players remove @s {ns}.grenade_launch 1
-execute if score @s {ns}.grenade_launch matches 0.. run function #bs.move:apply_vel {{scale:0.001,with:{{blocks:true,entities:false,on_collision:"function {ns}:v{version}/grenade/on_stick"}}}}
-execute unless score @s {ns}.grenade_launch matches 0.. run function #bs.move:apply_vel {{scale:0.001,with:{{blocks:true,entities:true,on_collision:"function {ns}:v{version}/grenade/on_stick"}}}}
+execute if score @s {ns}.grenade_launch matches 0.. run function #bs.move:apply_vel {{scale:0.001,with:{{blocks:true,entities:false,ignored_blocks:"#{ns}:v{version}/projectile_pass_through",on_collision:"function {ns}:v{version}/grenade/on_stick"}}}}
+execute unless score @s {ns}.grenade_launch matches 0.. run function #bs.move:apply_vel {{scale:0.001,with:{{blocks:true,entities:true,ignored_blocks:"#{ns}:v{version}/projectile_pass_through",on_collision:"function {ns}:v{version}/grenade/on_stick"}}}}
 
 # Trail particle (white_smoke avoids false-positive with shader marker detection)
 particle white_smoke ~ ~ ~ 0.05 0.05 0.05 0.01 1 force @a[distance=..64]
@@ -217,7 +217,7 @@ scoreboard players remove @s {ns}.data 1
 
 # If fuse expired, detonate
 execute if score @s {ns}.data matches ..0 run function {ns}:v{version}/grenade/detonate
-""")
+""")  # noqa: E501
 
     ## Bounce collision callback (for frag/smoke/flash grenades)
     write_versioned_function("grenade/on_bounce",

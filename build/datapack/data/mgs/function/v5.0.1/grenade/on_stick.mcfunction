@@ -3,8 +3,8 @@
 #
 # @executed	as @e[tag=mgs.grenade] & at @s
 #
-# @within	mgs:v5.0.1/grenade/move_semtex {scale:0.001,with:{blocks:true,entities:false,on_collision:"function mgs:v5.0.1/grenade/on_stick"}}
-#			mgs:v5.0.1/grenade/move_semtex {scale:0.001,with:{blocks:true,entities:true,on_collision:"function mgs:v5.0.1/grenade/on_stick"}}
+# @within	mgs:v5.0.1/grenade/move_semtex {scale:0.001,with:{blocks:true,entities:false,ignored_blocks:"#mgs:v5.0.1/projectile_pass_through",on_collision:"function mgs:v5.0.1/grenade/on_stick"}}
+#			mgs:v5.0.1/grenade/move_semtex {scale:0.001,with:{blocks:true,entities:true,ignored_blocks:"#mgs:v5.0.1/projectile_pass_through",on_collision:"function mgs:v5.0.1/grenade/on_stick"}}
 #
 
 # Stop all velocity (stick to the surface)
