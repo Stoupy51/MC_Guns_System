@@ -8,6 +8,7 @@
 #			mgs:v5.0.1/switch/reload_to_dropped_weapon
 #			mgs:v5.0.1/switch/do_toggle_fire_mode
 #			mgs:zombies/bonus/max_ammo
+#			mgs:v5.0.1/zombies/wallbuys/on_right_click
 #
 
 # Copy gun data

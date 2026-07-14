@@ -20,3 +20,6 @@ execute if score @s mgs.zb.perk.stamin_up matches 1 run scoreboard players set @
 scoreboard players set @s mgs.zb.perk.stamin_up 0
 tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.all_perks_lost","color":"red"}]
 
+# Remove the perk display items from the inventory right away
+function mgs:v5.0.1/zombies/inventory/refresh_perk_items
+

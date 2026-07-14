@@ -215,6 +215,15 @@ tag @s remove {ns}.zb_escorted
 data modify entity @s NoAI set value 0b
 scoreboard players remove #zb_escort_count {ns}.data 1
 
+# Kickstart vanilla AI. A zombie fresh off NoAI won't re-scan for a target for up to ~0.5s
+# (NearestAttackableTargetGoal's mustSee re-scan interval) and looks braindead standing still.
+# Turn it to face the nearest player and clear its NoActionTime so the goal selector re-evaluates
+# immediately, then a brief speed nudge so it lunges the instant it acquires the target instead
+# of pausing. (NoActionTime being high after the frozen transport is what stalls the first scan.)
+data modify entity @s NoActionTime set value 0
+execute at @s facing entity {nearest_alive} eyes run tp @s ~ ~ ~ ~ ~
+effect give @s minecraft:speed 2 0 true
+
 # Fresh stuck-tracking window from wherever the escort left the zombie
 scoreboard players set @s {ns}.zb.stuck_dist 4
 execute store result score @s {ns}.zb.stuck_x run data get entity @s Pos[0]
@@ -263,10 +272,35 @@ scoreboard players remove #zb_escort_count {ns}.data 1
 execute as {my_trader} run function {ns}:v{version}/zombies/escort/discard_trader
 """)
 
+	## Trader too close to a player: the escort trader is invisible but still RIGHT-CLICKABLE, and a
+	## trader with empty offers returns InteractionResult.CONSUME — eating the player's click (so
+	## ADS/fire silently fails) while it stands in their face. WanderingTrader force-clamps itself to
+	## adult on every NBT load (readAdditionalSaveData: setAge(max(0, age))), so the usual "make it a
+	## baby to disable mobInteract" trick is impossible; the only reliable defense is to never let a
+	## trader be within reach. @s = trader, at @s. Player interaction reach is ~3 blocks, so a
+	## {RELEASE_RADIUS_CLOSE}-block guard leaves margin even with the trader's <1 block/tick movement.
+	write_versioned_function("zombies/escort/discard_near_player", f"""
+function {ns}:v{version}/zombies/escort/end_at_trader
+""")
+
+	## End an escort from the TRADER's context (@s = trader, at @s): unfreeze the glued zombie so
+	## vanilla AI takes over, then remove the trader. Shared by the interaction safeguard and the
+	## barrier hand-off (barriers.py) so both end an escort the same way.
+	write_versioned_function("zombies/escort/end_at_trader", f"""
+execute as @e[tag={ns}.zb_escorted,distance=..8,limit=1,sort=nearest] run function {ns}:v{version}/zombies/escort/detach
+function {ns}:v{version}/zombies/escort/discard_trader
+""")
+
 	## Hook the escort loop into the zombies game tick (count-gated: zero cost with no escort)
 	write_versioned_function("zombies/game_tick", f"""
 # Escort system (escort.py): drag escorted zombies behind their pathfinding traders
 execute if score #zb_escort_count {ns}.data matches 1.. as @e[tag={ns}.zb_escorted] at @s run function {ns}:v{version}/zombies/escort/zombie_tick
+
+# Interaction safeguard (count-INDEPENDENT, every tick): if the escort counter ever drifts, the
+# gated loop above stops running and a trader can walk into a player and become right-clickable.
+# This ungated pass over the (usually empty) trader set discards any trader that gets within reach
+# of an alive player regardless of the counter, so an interactable trader can never linger.
+execute as @e[type=minecraft:wandering_trader,tag={ns}.zb_escort] at @s if entity @p[scores={{{ns}.zb.in_game=1,{ns}.zb.downed=0}},gamemode=!spectator,distance=..{RELEASE_RADIUS_CLOSE}] run function {ns}:v{version}/zombies/escort/discard_near_player
 
 # Every 2s: resync the escort counter from reality — start/detach keep it accurate in between,
 # but any drift (e.g. an escorted zombie dying the same tick its trader vanishes) would wedge

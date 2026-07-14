@@ -155,6 +155,12 @@ execute if score #wb_purchase_mode {ns}.data matches 2 run function {ns}:v{versi
 execute if score #wb_purchase_mode {ns}.data matches 3 run function {ns}:v{version}/zombies/wallbuys/msg_replaced
 execute if score #wb_purchase_mode {ns}.data matches 4 run scoreboard players operation @s {ns}.zb.points += #wb_price {ns}.data
 execute if score #wb_purchase_mode {ns}.data matches 4 run function {ns}:v{version}/zombies/wallbuys/msg_refund_full
+
+# Refresh the reserve-ammo HUD after a buy/refill/replace. reload_pair fills the magazines but
+# the actionbar reads @s {ns}.reserve_ammo, which is otherwise only recomputed on reload/idle/
+# weapon-switch — so without this the reserve count stayed stale until the next weapon swap.
+execute if score #wb_purchase_mode {ns}.data matches 1..3 run function {ns}:v{version}/utils/copy_gun_data
+execute if score #wb_purchase_mode {ns}.data matches 1..3 run function {ns}:v{version}/ammo/compute_reserve
 """)
 
 	write_versioned_function("zombies/wallbuys/deny_not_enough_points", f"""
