@@ -272,10 +272,11 @@ execute unless score #zb_round_grace {ns}.data matches 1.. store result score #z
 execute unless score #zb_round_grace {ns}.data matches 1.. run scoreboard players operation #zb_alive_players {ns}.data += #zb_downed_alive {ns}.data
 execute unless score #zb_round_grace {ns}.data matches 1.. if score #zb_alive_players {ns}.data matches 0 run function {ns}:v{version}/zombies/game_over
 
-# Stuck zombie check (every 20 ticks, 24 random non-rising zombies)
+# Stuck zombie check (every 20 ticks, 24 random non-rising zombies; escorted ones are NoAI
+# and already being rescued by their trader — see escort.py)
 execute store result score #zb_tick_mod {ns}.data run scoreboard players get #total_tick {ns}.data
 scoreboard players operation #zb_tick_mod {ns}.data %= #20 {ns}.data
-execute if score #zb_tick_mod {ns}.data matches 0 as @e[tag={ns}.zombie_round,tag=!{ns}.zb_rising,limit=24,sort=random] at @s run function {ns}:v{version}/zombies/stuck_zombie_check
+execute if score #zb_tick_mod {ns}.data matches 0 as @e[tag={ns}.zombie_round,tag=!{ns}.zb_rising,tag=!{ns}.zb_escorted,limit=24,sort=random] at @s run function {ns}:v{version}/zombies/stuck_zombie_check
 
 # Stuck zombie glow: count up once all spawns are done (60s = 1200 ticks after last spawn)
 execute if score #zb_to_spawn {ns}.data matches 0 run scoreboard players add #zb_stuck_timer {ns}.data 1
@@ -301,7 +302,7 @@ kill @e[type=experience_orb]
 # Reset death counter
 scoreboard players set @s {ns}.mp.death_count 0
 
-# Increment down count
+# Increment "down count
 scoreboard players add @s {ns}.zb.downs 1
 
 # Enter downed state (revive system)
@@ -476,7 +477,7 @@ execute as @a[scores={{{ns}.zb.in_game=1}},gamemode=!spectator] run function {ns
 		# Stuck Zombie Check ────────────────────────────────────────
 		write_versioned_function("zombies/stuck_zombie_check", f"""
 # @s = zombie_round entity (non-rising), run every 20 ticks on up to 24 random zombies
-# Progress = distance bucket improved (or zombie is in melee range). Resets the timer.
+# Progress = distance bucket improved (or a player in melee range is VISIBLE). Resets the timer.
 # Timeout depends on HOW the zombie is stuck:
 # - hasn't moved at all: 400t (20s), only 100t (5s) once it has already been rescued
 # - moved since last progress but not getting closer to a player: 300t (15s)
@@ -492,11 +493,16 @@ execute if entity @a[scores={{{ns}.zb.in_game=1,{ns}.zb.downed=0}},gamemode=!spe
 execute store result score #cur_x {ns}.data run data get entity @s Pos[0]
 execute store result score #cur_z {ns}.data run data get entity @s Pos[2]
 
-# Detect any progress: bucket improved, OR bucket == 0 (zombie is in melee range — not stuck)
+# Detect any progress: bucket improved, OR bucket == 0 AND the nearby player is actually
+# VISIBLE (real melee range). Proximity alone is not enough: a player a few blocks above or
+# below through a floor kept the zombie permanently "not stuck" while it could never reach
+# them — the LOS gate lets the timer run so the escort picks it up (see escort.py).
 # XZ movement is NOT checked: a zombie attacking at close range stands still legitimately
 scoreboard players set #stuck_progress {ns}.data 0
 execute if score #cur_dist_bucket {ns}.data < @s {ns}.zb.stuck_dist run scoreboard players set #stuck_progress {ns}.data 1
-execute if score #cur_dist_bucket {ns}.data matches 0 run scoreboard players set #stuck_progress {ns}.data 1
+scoreboard players set #zb_stuck_see {ns}.data 0
+execute if score #cur_dist_bucket {ns}.data matches 0 positioned as @p[scores={{{ns}.zb.in_game=1,{ns}.zb.downed=0}},gamemode=!spectator,distance=..16] store result score #zb_stuck_see {ns}.data run function #bs.view:can_see_ata {{with:{{}}}}
+execute if score #zb_stuck_see {ns}.data matches 1 run scoreboard players set #stuck_progress {ns}.data 1
 
 # If progress: update all stored values, reset timestamp, and clear the rescued flag
 execute if score #stuck_progress {ns}.data matches 1 run scoreboard players operation @s {ns}.zb.stuck_dist = #cur_dist_bucket {ns}.data
@@ -544,6 +550,11 @@ execute if score #zb_near_found {ns}.data matches 1.. run tp @s @n[tag={ns}.zb_n
 execute if score #zb_near_found {ns}.data matches 1.. run scoreboard players operation @s {ns}.zb.spawn.sid = @n[tag={ns}.zb_near] {ns}.zb.spawn.sid
 execute if score #zb_near_found {ns}.data matches 1.. run tag @s add {ns}.zb_rescued
 tag @e[tag={ns}.zb_near] remove {ns}.zb_near
+
+# The teleport moved the zombie somewhere new, so a past escort failure no longer applies:
+# clear the flag so a future stuck timeout gets a trader again. It only needs to survive long
+# enough to route the give_up -> on_stuck_zombie call past the escort router (see escort.py).
+execute if score #zb_near_found {ns}.data matches 1.. run tag @s remove {ns}.zb_escort_failed
 
 # Reset stuck tracking from the new position so it gets a fresh window
 scoreboard players set @s {ns}.zb.stuck_dist 4

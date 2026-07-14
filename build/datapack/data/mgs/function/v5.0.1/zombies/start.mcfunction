@@ -111,6 +111,10 @@ schedule function mgs:v5.0.1/zombies/preload_complete 20t
 # Announce
 tellraw @a ["",{"text":"","color":"dark_green","bold":true},"🧟 ",{"translate":"mgs.loading_zombies_map","color":"yellow"}]
 
+# Escort system (escort.py)
+scoreboard players set #zb_escort_count mgs.data 0
+gamerule spawn_wandering_traders false
+
 # Initialize power state
 scoreboard players set #zb_power mgs.data 0
 
