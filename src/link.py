@@ -53,5 +53,15 @@ def beet_default(ctx: Context) -> None:
         project_author=ctx.project_author,
         cache_path=f"{Mem.ctx.directory}/manual_cache",
     )
-    generate_all_iso_renders(config, override_cache_path=f"{Mem.ctx.directory}/iso_renders", ignore_vanilla=True, ignore_painting=True)
+    iso_renders_cache: str = f"{Mem.ctx.directory}/iso_renders"
+    generate_all_iso_renders(config, override_cache_path=f"{iso_renders_cache}/items", ignore_vanilla=True, ignore_painting=True)
+
+    # Generate all_items.png showcase grid, excluding _zoom/_empty variants (which have no iso render, see above).
+    # Reads renders from "{iso_renders_cache}/items/{project_id}" and saves to the output directory.
+    from PIL import Image
+    from stewbeet.plugins.ingame_manual.paths import template_path  # pyright: ignore[reportMissingTypeStubs]
+    from stewbeet.plugins.ingame_manual.showcase import generate_showcase_images  # pyright: ignore[reportMissingTypeStubs]
+    simple_case: Image.Image = Image.open(template_path("simple_case_no_border.png"))
+    showcase_items: list[str] = [x for x in Mem.definitions.keys() if not x.endswith(("_zoom", "_empty"))]
+    generate_showcase_images(2, {}, simple_case, iso_renders_cache, all_items=showcase_items)
 
