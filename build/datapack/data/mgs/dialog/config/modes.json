@@ -1,0 +1,19 @@
+{
+	"type": "minecraft:multi_action",
+	"title": [{
+		"text":"🎮 ",
+		"color": "gold",
+		"bold": true
+	}, {"translate": "mgs.game_modes"}],
+	"actions": [
+		{"label": [{"text":"⚔ ","color": "red"}, {"translate": "mgs.multiplayer_setup"}],"tooltip": {"translate": "mgs.open_the_multiplayer_game_setup_menu"},"action": {"type": "show_dialog","dialog": "mgs:multiplayer/setup"}},
+		{"label": [{"text":"🧟 ","color": "green"}, {"translate": "mgs.zombies_setup"}],"tooltip": {"translate": "mgs.open_the_zombies_setup_menu"},"action": {"type": "show_dialog","dialog": "mgs:zombies/setup"}},
+		{"label": [{"text":"🎯 ","color": "gold"}, {"translate": "mgs.mission_setup"}],"tooltip": {"translate": "mgs.open_the_mission_setup_menu"},"action": {"type": "show_dialog","dialog": "mgs:missions/setup"}}
+	],
+	"columns": 1,
+	"exit_action": {
+		"label": [{"text":"◀ ","color": "gray"}, {"translate": "mgs.back"}],
+		"tooltip": {"translate": "mgs.return_to_configuration"},
+		"action": {"type": "show_dialog","dialog": "mgs:config"}
+	}
+}

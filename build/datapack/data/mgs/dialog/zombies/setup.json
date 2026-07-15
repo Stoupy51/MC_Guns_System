@@ -1,0 +1,25 @@
+{
+	"type": "minecraft:multi_action",
+	"title": [{
+		"text":"🧟 ",
+		"color": "dark_green",
+		"bold": true
+	}, {"translate": "mgs.zombies_setup"}, " 🧟"],
+	"body": [
+		{"type": "minecraft:plain_message","contents": {"translate": "mgs.pick_a_map_and_variant_then_start","color": "gray"}}
+	],
+	"actions": [
+		{"label": [{"text":"🗺 ","color": "dark_green"}, {"translate": "mgs.select_map"}],"tooltip": {"translate": "mgs.browse_and_select_a_zombies_map"},"action": {"type": "run_command","command": "/function mgs:v5.1.0/zombies/map_select"}},
+		{"label": [{"text":"🧬 "}, {"translate": "mgs.variant"}],"tooltip": {"translate": "mgs.choose_the_zombies_experience"},"action": {"type": "show_dialog","dialog": "mgs:zombies/setup/variant"}},
+		{"label": [{"text":"▶ ","color": "green"}, {"translate": "mgs.start"}],"tooltip": {"translate": "mgs.start_the_zombies_game"},"action": {"type": "run_command","command": "/function mgs:v5.1.0/zombies/start"}},
+		{"label": [{"text":"■ ","color": "red"}, {"translate": "mgs.stop"}],"tooltip": {"translate": "mgs.stop_the_zombies_game"},"action": {"type": "run_command","command": "/function mgs:v5.1.0/zombies/stop"}},
+		{"label": [{"text":"👥 ","color": "dark_aqua"}, {"translate": "mgs.manage_players"}],"tooltip": {"translate": "mgs.add_or_remove_players_from_the_zombies_game"},"action": {"type": "run_command","command": "/function mgs:v5.1.0/players/list_zombies"}},
+		{"label": [{"text":"+ ","color": "yellow"}, {"translate": "mgs.join"}],"tooltip": {"translate": "mgs.join_the_ongoing_zombies_game_as_a_late_joiner"},"action": {"type": "run_command","command": "/function mgs:v5.1.0/zombies/join_game"}}
+	],
+	"columns": 2,
+	"exit_action": {
+		"label": [{"text":"◀ ","color": "gray"}, {"translate": "mgs.back"}],
+		"tooltip": {"translate": "mgs.return_to_the_game_modes_menu"},
+		"action": {"type": "show_dialog","dialog": "mgs:config/modes"}
+	}
+}

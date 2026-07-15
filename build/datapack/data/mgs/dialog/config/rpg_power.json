@@ -1,0 +1,27 @@
+{
+	"type": "minecraft:multi_action",
+	"title": {
+		"translate": "mgs.rpg_explosion_power",
+		"color": "gold",
+		"bold": true
+	},
+	"body": [
+		{"type": "minecraft:plain_message","contents": {"translate": "mgs.server_wide_projectile_explosion_power","color": "gray"}}
+	],
+	"actions": [
+		{"label": {"text": "0","color": "green"},"tooltip": {"translate": "mgs.set_projectile_explosion_power_to_0_disabled"},"action": {"type": "run_command","command": "/scoreboard players set #projectile_explosion_power mgs.config 0"}},
+		{"label": {"text": "1","color": "yellow"},"tooltip": [{"translate":"mgs.set_projectile_explosion_power_to"}, " 1"],"action": {"type": "run_command","command": "/scoreboard players set #projectile_explosion_power mgs.config 1"}},
+		{"label": {"text": "2","color": "yellow"},"tooltip": [{"translate":"mgs.set_projectile_explosion_power_to"}, " 2"],"action": {"type": "run_command","command": "/scoreboard players set #projectile_explosion_power mgs.config 2"}},
+		{"label": {"text": "3","color": "yellow"},"tooltip": [{"translate":"mgs.set_projectile_explosion_power_to"}, " 3"],"action": {"type": "run_command","command": "/scoreboard players set #projectile_explosion_power mgs.config 3"}},
+		{"label": {"text": "4","color": "yellow"},"tooltip": [{"translate":"mgs.set_projectile_explosion_power_to"}, " 4"],"action": {"type": "run_command","command": "/scoreboard players set #projectile_explosion_power mgs.config 4"}},
+		{"label": {"text": "5","color": "yellow"},"tooltip": [{"translate":"mgs.set_projectile_explosion_power_to"}, " 5"],"action": {"type": "run_command","command": "/scoreboard players set #projectile_explosion_power mgs.config 5"}}
+	],
+	"columns": 1,
+	"pause": false,
+	"after_action": "none",
+	"exit_action": {
+		"label": [{"text":"◀ ","color": "gray"}, {"translate": "mgs.back"}],
+		"tooltip": {"translate": "mgs.return_to_the_previous_menu"},
+		"action": {"type": "show_dialog","dialog": "mgs:config/global"}
+	}
+}

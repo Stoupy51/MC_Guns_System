@@ -1,0 +1,19 @@
+{
+	"type": "minecraft:multi_action",
+	"title": [{
+		"text":"👥 ",
+		"color": "gold",
+		"bold": true
+	}, {"translate": "mgs.players_teams"}],
+	"actions": [
+		{"label": [{"text":"⚔ ","color": "red"}, {"translate": "mgs.multiplayer_players"}],"tooltip": {"translate": "mgs.assign_players_to_red_blue_teams"},"action": {"type": "run_command","command": "/function mgs:v5.1.0/players/list_multiplayer"}},
+		{"label": [{"text":"🧟 ","color": "green"}, {"translate": "mgs.zombies_players"}],"tooltip": {"translate": "mgs.add_or_remove_players_from_the_zombies_game"},"action": {"type": "run_command","command": "/function mgs:v5.1.0/players/list_zombies"}},
+		{"label": [{"text":"🎯 ","color": "gold"}, {"translate": "mgs.mission_players"}],"tooltip": {"translate": "mgs.add_or_remove_players_from_the_mission"},"action": {"type": "run_command","command": "/function mgs:v5.1.0/players/list_missions"}}
+	],
+	"columns": 1,
+	"exit_action": {
+		"label": [{"text":"◀ ","color": "gray"}, {"translate": "mgs.back"}],
+		"tooltip": {"translate": "mgs.return_to_configuration"},
+		"action": {"type": "show_dialog","dialog": "mgs:config"}
+	}
+}

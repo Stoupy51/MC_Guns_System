@@ -3,7 +3,8 @@
 import json
 import re
 
-from stewbeet import Mem, TextComponent, write_versioned_function
+from stewbeet import Dialog, Mem, TextComponent, set_json_encoder, write_versioned_function
+from stouputils.typing import JsonDict
 
 # [MGS] prefix as a nested list component (gold colored, lang-safe).
 # Use in tellraw arrays: tellraw @s ["",{MGS_TAG},...]
@@ -237,6 +238,64 @@ def btn(label: str, command: str, color: str = "yellow", hover: str = "", action
     if hover:
         obj[0]["hover_event"] = {"action": "show_text", "value": hover}
     return json.dumps(obj)
+
+
+def register_dialog(dialog_id: str, data: JsonDict) -> None:
+    """ Register a dialog resource under the project namespace.
+
+    Args:
+        dialog_id (str): Path within the namespace, e.g. "config" or "multiplayer/setup".
+        data      (dict): The dialog SNBT/JSON structure.
+    """
+    ns: str = Mem.ctx.project_id
+    Mem.ctx.data[ns].dialogs[dialog_id] = set_json_encoder(Dialog(data))
+
+
+def dialog_show_btn(dialog_ref: str, label: str, hover: str, color: str | None = None) -> JsonDict:
+    """ A dialog action button that opens another (registered) dialog via show_dialog. """
+    label_component: JsonDict = {"text": label, "color": color} if color else {"text": label}
+    return {"label": label_component, "tooltip": {"text": hover}, "action": {"type": "show_dialog", "dialog": dialog_ref}}
+
+
+def dialog_run_btn(label: str, command: str, hover: str, color: str = "green") -> JsonDict:
+    """ A dialog action button that runs a command as the clicking player via run_command. """
+    return {"label": {"text": label, "color": color}, "tooltip": {"text": hover}, "action": {"type": "run_command", "command": command}}
+
+
+def register_value_picker(dialog_id: str, title: str, desc: str, options: list[tuple[str, str, str, str]], back_dialog: str) -> None:
+    """ Register a sub-dialog whose buttons each apply one value, then a Back button returns to back_dialog.
+
+    Each value button is independent (no submit step), so opening the picker never resets untouched
+    settings. after_action "none" keeps the picker open after a pick (requires pause=false).
+
+    Args:
+        dialog_id   (str): Path within the namespace for this picker.
+        title       (str): Dialog title text.
+        desc        (str): Short body description.
+        options     (list): (label, command, color, hover) tuples, one per value button.
+        back_dialog (str): Path within the namespace of the dialog the Back button returns to.
+    """
+    ns: str = Mem.ctx.project_id
+    actions: list[JsonDict] = [{
+        "label": {"text": label, "color": color},
+        "tooltip": {"text": hover},
+        "action": {"type": "run_command", "command": command},
+    } for label, command, color, hover in options]
+    register_dialog(dialog_id, {
+        "type": "minecraft:multi_action",
+        "title": {"text": title, "color": "gold", "bold": True},
+        "body": [{"type": "minecraft:plain_message", "contents": {"text": desc, "color": "gray"}}],
+        "actions": actions,
+        # Value pickers list options of a single setting (all the same kind) → one column reads cleaner.
+        "columns": 1,
+        "pause": False,
+        "after_action": "none",
+        "exit_action": {
+            "label": {"text": "◀ Back", "color": "gray"},
+            "tooltip": {"text": "Return to the previous menu"},
+            "action": {"type": "show_dialog", "dialog": f"{ns}:{back_dialog}"},
+        },
+    })
 
 
 def write_shared_projectile_functions() -> None:

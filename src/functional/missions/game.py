@@ -61,6 +61,9 @@ execute unless data storage {ns}:missions game run data modify storage {ns}:miss
 # Prevent starting if already active or preparing
 {game_start_guards(ns, "missions", "Mission")}
 
+# Require at least one opted-in player (players are independent until added via Manage Players / + Join)
+execute unless entity @a[scores={{{ns}.mi.in_game=1}}] run return run tellraw @s [{MGS_TAG},{{"text":"No players have joined the mission — use Manage Players first.","color":"red"}}]
+
 {mode_start_map_bootstrap_lines(ns, "missions", True)}
 
 # Blue team for missions
@@ -74,20 +77,14 @@ team add {ns}.mi_mobs
 team modify {ns}.mi_mobs color dark_red
 team modify {ns}.mi_mobs friendlyFire true
 
-# Reset scores
-scoreboard players set @a {ns}.mi.in_game 0
+# Reset scores (in_game is left untouched: it's the opt-in flag, set via Manage Players / + Join)
 scoreboard players set #mi_timer {ns}.data 0
 scoreboard players set #mi_total_enemies {ns}.data 0
 scoreboard players set #mi_has_boundary {ns}.data 0
 scoreboard players set @a {ns}.mi.kills 0
 scoreboard players set @a {ns}.mi.deaths 0
 
-# Tag all team 1 players as in-game (multiplayer support)
-execute if entity @a[scores={{{ns}.mp.team=1}}] as @a[scores={{{ns}.mp.team=1}}] run scoreboard players set @s {ns}.mi.in_game 1
-# Fallback: if no team system, tag all players
-execute unless entity @a[scores={{{ns}.mi.in_game=1}}] run scoreboard players set @a {ns}.mi.in_game 1
-
-# Missions are fully cooperative: all mission players join the blue team
+# Missions are fully cooperative: all opted-in players join the blue team
 scoreboard players set @a[scores={{{ns}.mi.in_game=1}}] {ns}.mp.team 1
 team join {ns}.blue @a[scores={{{ns}.mi.in_game=1}}]
 

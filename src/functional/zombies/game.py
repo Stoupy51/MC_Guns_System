@@ -87,6 +87,9 @@ execute unless data storage {ns}:zombies mystery_box_pool run data modify storag
 # Prevent starting if already active or preparing
 {game_start_guards(ns, "zombies", "Zombies game")}
 
+# Require at least one opted-in player (players are independent until added via Manage Players / + Join)
+execute unless entity @a[scores={{{ns}.zb.in_game=1}}] run return run tellraw @s [{MGS_TAG},{{"text":"No players have joined the zombies game — use Manage Players first.","color":"red"}}]
+
 {mode_start_map_bootstrap_lines(ns, "zombies", False)}
 
 # Create zombies team
@@ -95,8 +98,7 @@ team modify {ns}.zombies color yellow
 team modify {ns}.zombies friendlyFire false
 team modify {ns}.zombies nametagVisibility hideForOtherTeams
 
-# Reset scores
-scoreboard players set @a {ns}.zb.in_game 0
+# Reset scores (in_game is left untouched: it's the opt-in flag, set via Manage Players / + Join)
 scoreboard players set @a {ns}.zb.points 500
 scoreboard players set @a {ns}.zb.kills 0
 scoreboard players set @a {ns}.zb.downs 0
@@ -110,10 +112,7 @@ scoreboard players set #zb_points_hit {ns}.config 5
 scoreboard players set #zb_points_knife_kill {ns}.config 130
 scoreboard players set #zb_mystery_box_price {ns}.config 950
 
-# Tag all players as in-game
-scoreboard players set @a {ns}.zb.in_game 1
-
-# Assign all in-game players to zombies team
+# Assign opted-in players to the zombies team
 team join {ns}.zombies @a[scores={{{ns}.zb.in_game=1}}]
 
 # Initialize kill tracking baseline (so kills before game start don't count)
