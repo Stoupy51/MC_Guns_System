@@ -1,0 +1,20 @@
+{
+	"type": "minecraft:multi_action",
+	"title": [{
+		"text":"⚡ ",
+		"color": "gold",
+		"bold": true
+	}, {"translate": "mgs.personal_cheats"}],
+	"actions": [
+		{"label": {"translate": "mgs.instant_kill","color": "red"},"tooltip": {"translate": "mgs.one_shot_kills_for_a_duration_self_only"},"action": {"type": "show_dialog","dialog": "mgs:config/instant_kill"}},
+		{"label": {"translate": "mgs.infinite_ammo","color": "gold"},"tooltip": {"translate": "mgs.no_reloads_needed_for_a_duration_self_only"},"action": {"type": "show_dialog","dialog": "mgs:config/infinite_ammo"}},
+		{"label": {"translate": "mgs.quick_reload","color": "green"},"tooltip": {"translate": "mgs.reduce_reload_time_self_only"},"action": {"type": "show_dialog","dialog": "mgs:config/quick_reload"}},
+		{"label": {"translate": "mgs.quick_swap","color": "aqua"},"tooltip": {"translate": "mgs.reduce_weapon_swap_time_self_only"},"action": {"type": "show_dialog","dialog": "mgs:config/quick_swap"}}
+	],
+	"columns": 1,
+	"exit_action": {
+		"label": [{"text":"◀ ","color": "gray"}, {"translate": "mgs.back"}],
+		"tooltip": {"translate": "mgs.return_to_configuration"},
+		"action": {"type": "show_dialog","dialog": "mgs:config"}
+	}
+}

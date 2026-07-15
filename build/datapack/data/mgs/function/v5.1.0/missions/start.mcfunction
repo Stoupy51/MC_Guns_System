@@ -1,12 +1,15 @@
 
 #> mgs:v5.1.0/missions/start
 #
-# @within	mgs:v5.1.0/missions/setup "hover_event": {"action": "show_text", "value": "Start the mission"}}, "\u25b6 START", "]"]," ",[{"text": "[", "color": "red", "click_event": {"action": "suggest_command", "command": "/function mgs:v5.1.0/missions/stop"}, "hover_event": {"action": "show_text", "value": "Stop the mission"}}, "\u25a0 STOP", "]"]," ",[{"text": "[", "color": "aqua", "click_event": {"action": "suggest_command", "command": "/function mgs:v5.1.0/multiplayer/select_class"}, "hover_event": {"action": "show_text", "value": "Select your class"}}, "\u2694 Classes", "]"]," ",[{"text": "[", "color": "dark_aqua", "click_event": {"action": "suggest_command", "command": "/function mgs:v5.1.0/multiplayer/show_teams"}, "hover_event": {"action": "show_text", "value": "Show which players have team assignments"}}, "\ud83d\udc65 Roster", "]"]," ",[{"text": "[", "color": "yellow", "click_event": {"action": "suggest_command", "command": "/function mgs:v5.1.0/missions/join_game"}, "hover_event": {"action": "show_text", "value": "Join the ongoing mission as a late joiner"}}, "+ Join", "]"]]
+# @within	???
 #
 
 # Prevent starting if already active or preparing
 execute if data storage mgs:missions game{state:"active"} run return run tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.mission_already_in_progress","color":"red"}]
 execute if data storage mgs:missions game{state:"preparing"} run return run tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.mission_already_preparing","color":"red"}]
+
+# Require at least one opted-in player (players are independent until added via Manage Players / + Join)
+execute unless entity @a[scores={mgs.mi.in_game=1}] run return run tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.no_players_have_joined_the_mission_use_manage_players_first","color":"red"}]
 
 # Check that a map is selected
 execute if data storage mgs:missions game{map_id:""} run return run tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.no_map_selected_use_the_setup_menu_to_select_a_map","color":"red"}]
@@ -38,20 +41,14 @@ team add mgs.mi_mobs
 team modify mgs.mi_mobs color dark_red
 team modify mgs.mi_mobs friendlyFire true
 
-# Reset scores
-scoreboard players set @a mgs.mi.in_game 0
+# Reset scores (in_game is left untouched: it's the opt-in flag, set via Manage Players / + Join)
 scoreboard players set #mi_timer mgs.data 0
 scoreboard players set #mi_total_enemies mgs.data 0
 scoreboard players set #mi_has_boundary mgs.data 0
 scoreboard players set @a mgs.mi.kills 0
 scoreboard players set @a mgs.mi.deaths 0
 
-# Tag all team 1 players as in-game (multiplayer support)
-execute if entity @a[scores={mgs.mp.team=1}] as @a[scores={mgs.mp.team=1}] run scoreboard players set @s mgs.mi.in_game 1
-# Fallback: if no team system, tag all players
-execute unless entity @a[scores={mgs.mi.in_game=1}] run scoreboard players set @a mgs.mi.in_game 1
-
-# Missions are fully cooperative: all mission players join the blue team
+# Missions are fully cooperative: all opted-in players join the blue team
 scoreboard players set @a[scores={mgs.mi.in_game=1}] mgs.mp.team 1
 team join mgs.blue @a[scores={mgs.mi.in_game=1}]
 

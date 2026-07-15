@@ -1,12 +1,15 @@
 
 #> mgs:v5.1.0/multiplayer/start
 #
-# @within	mgs:v5.1.0/multiplayer/setup "hover_event": {"action": "show_text", "value": "Start the match"}}, "\u25b6 START", "]"]," ",[{"text": "[", "color": "red", "click_event": {"action": "suggest_command", "command": "/function mgs:v5.1.0/multiplayer/stop"}, "hover_event": {"action": "show_text", "value": "Stop the match"}}, "\u25a0 STOP", "]"]," ",[{"text": "[", "color": "aqua", "click_event": {"action": "suggest_command", "command": "/function mgs:v5.1.0/multiplayer/select_class"}, "hover_event": {"action": "show_text", "value": "Select your class"}}, "\u2694 Classes", "]"]," ",[{"text": "[", "color": "yellow", "click_event": {"action": "suggest_command", "command": "/function mgs:v5.1.0/multiplayer/join_game"}, "hover_event": {"action": "show_text", "value": "Join the ongoing game as a late joiner"}}, "+ Join", "]"]]
+# @within	???
 #
 
 # Prevent starting if already active or preparing
 execute if data storage mgs:multiplayer game{state:"active"} run return run tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.game_already_in_progress","color":"red"}]
 execute if data storage mgs:multiplayer game{state:"preparing"} run return run tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.game_already_preparing","color":"red"}]
+
+# Require at least one opted-in player (players are independent until assigned via Manage Players / + Join)
+execute unless entity @a[scores={mgs.mp.in_game=1}] run return run tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.no_players_have_joined_a_team_use_manage_players_first","color":"red"}]
 
 # Check that a map is selected
 execute if data storage mgs:multiplayer game{map_id:""} run return run tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.no_map_selected_use_the_setup_menu_to_select_a_map","color":"red"}]
@@ -52,11 +55,11 @@ scoreboard players set @a mgs.mp.death_count 0
 # Set timer from time_limit
 execute store result score #mp_timer mgs.data run data get storage mgs:multiplayer game.time_limit
 
-# Tag all non-spectator players as in-game
-scoreboard players set @a mgs.mp.in_game 1
-
-# Assign to FFA team for ffa mode, otherwise auto-assign to team
+# Assign vanilla teams to opted-in players only: FFA joins everyone; otherwise honor each player's
+# chosen side (set via Manage Players), auto-assigning anyone who opted in without picking a team.
 execute if data storage mgs:multiplayer game{gamemode:"ffa"} run team join mgs.ffa @a[scores={mgs.mp.in_game=1}]
+execute unless data storage mgs:multiplayer game{gamemode:"ffa"} as @a[scores={mgs.mp.in_game=1}] if score @s mgs.mp.team matches 1 run team join mgs.red @s
+execute unless data storage mgs:multiplayer game{gamemode:"ffa"} as @a[scores={mgs.mp.in_game=1}] if score @s mgs.mp.team matches 2 run team join mgs.blue @s
 execute unless data storage mgs:multiplayer game{gamemode:"ffa"} as @a[scores={mgs.mp.in_game=1}] unless score @s mgs.mp.team matches 1.. run function mgs:v5.1.0/multiplayer/auto_assign_team
 
 # Enable class menu for multiplayer players

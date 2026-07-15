@@ -266,127 +266,124 @@ $execute if score #random {ns}.data matches 31 run loot replace entity @s $(slot
 """)
 
     # Config menu: /function mgs:config
-    # Build clickable chat menu for server configuration
-    from .helpers import btn as _btn
-    def btn(label: str, command: str, color: str = "yellow", hover: str = "") -> str:
-        return _btn(label, command, color, hover, action="suggest_command")
+    # A dialog-based settings menu (replaces the old clickable-chat tellraw menu).
+    # The main dialog lists every setting as a button that opens its own sub-dialog of value
+    # buttons; picking a value runs the scoreboard command directly. Each value button is
+    # independent (no submit step), so opening the menu never resets untouched settings — the
+    # same "click the value you want" model as the old menu, just rendered as native dialogs.
+    from .helpers import dialog_run_btn, dialog_show_btn, register_dialog, register_value_picker
 
-    # Separator line
-    sep = r'{"text":"============================================","color":"dark_gray"}'
-
-    # Title
-    title = '["  ",[{"text":"","color":"gold","bold":true},"     ☣ ",{"text":"MGS Configuration Menu"}," ☣"]]'
-
-    # --- Global Settings ---
-    global_header = '["",[{"text":"","color":"aqua","bold":true},"⚙ ",{"text":"Global Settings"}],[{"text":"","color":"gray","italic":true}," (",{"text":"server-wide"},")"]]'
-
-    # RPG Explosion Power
-    rpg_btns = ",".join([
-        btn(str(i), f"/scoreboard players set #projectile_explosion_power {ns}.config {i}",
-            "green" if i == 0 else "yellow",
-            f"Set Projectile Explosion Power to {i}" + (" (disabled)" if i == 0 else ""))
+    # --- Global Settings (server-wide fake-player scores) ---
+    rpg_opts = [
+        (str(i), f"/scoreboard players set #projectile_explosion_power {ns}.config {i}",
+         "green" if i == 0 else "yellow",
+         f"Set Projectile Explosion Power to {i}" + (" (disabled)" if i == 0 else ""))
         for i in range(6)
-    ])
-    rpg_line = f'["  ",{{"text":"RPG Explosion Power"}},": ",{rpg_btns}]'
-
-    # Grenade Explosion Power
-    gren_btns = ",".join([
-        btn(str(i), f"/scoreboard players set #grenade_explosion_power {ns}.config {i}",
-            "green" if i == 0 else "yellow",
-            f"Set Grenade Explosion Power to {i}" + (" (disabled)" if i == 0 else ""))
+    ]
+    gren_opts = [
+        (str(i), f"/scoreboard players set #grenade_explosion_power {ns}.config {i}",
+         "green" if i == 0 else "yellow",
+         f"Set Grenade Explosion Power to {i}" + (" (disabled)" if i == 0 else ""))
         for i in range(6)
+    ]
+    ma_opts = [
+        ("OG", f"/scoreboard players set #max_ammo_reload_weapons {ns}.config 0", "yellow", "Only refill magazines in inventory (OG zombies)"),
+        ("Recent", f"/scoreboard players set #max_ammo_reload_weapons {ns}.config 1", "green", "Also reload current weapon (recent zombies)"),
+    ]
+    dd_opts = [
+        ("OFF", f"/scoreboard players set #damage_debug {ns}.config 0", "red", "Disable global damage debug"),
+        ("ON", f"/scoreboard players set #damage_debug {ns}.config 1", "green", "Enable global damage debug (tellraw @a every hit)"),
+    ]
+
+    # --- Player Specials (self-only scores; commands run as the clicking player) ---
+    duration_opts = [("OFF", 0, "red"), ("10s", 200, "yellow"), ("30s", 600, "yellow"), ("60s", 1200, "yellow"), ("∞", 72000, "light_purple")]
+    percent_opts = [("0%", 0, "red"), ("20%", 20, "yellow"), ("50%", 50, "yellow"), ("80%", 80, "green")]
+    ik_opts = [(label, f"/scoreboard players set @s {ns}.special.instant_kill {v}", color,
+                f"Set instant kill {'off' if v == 0 else f'for {label}'}") for label, v, color in duration_opts]
+    ia_opts = [(label, f"/scoreboard players set @s {ns}.special.infinite_ammo {v}", color,
+                f"Set infinite ammo {'off' if v == 0 else f'for {label}'}") for label, v, color in duration_opts]
+    qr_opts = [(label, f"/scoreboard players set @s {ns}.special.quick_reload {v}", color,
+                f"Set quick reload to {label}") for label, v, color in percent_opts]
+    qs_opts = [(label, f"/scoreboard players set @s {ns}.special.quick_swap {v}", color,
+                f"Set quick swap to {label}") for label, v, color in percent_opts]
+
+    # Register every value sub-dialog: (sub_id, title, description, options)
+    value_dialogs = [
+        ("config/rpg_power", "RPG Explosion Power", "Server-wide projectile explosion power", rpg_opts),
+        ("config/grenade_power", "Grenade Explosion Power", "Server-wide grenade explosion power", gren_opts),
+        ("config/max_ammo", "Max Ammo Mode", "How the Max Ammo powerup refills weapons", ma_opts),
+        ("config/damage_debug", "Damage Debug", "Broadcast every hit's damage to chat", dd_opts),
+        ("config/instant_kill", "Instant Kill", "One-shot kills for a duration (self only)", ik_opts),
+        ("config/infinite_ammo", "Infinite Ammo", "No reloads needed for a duration (self only)", ia_opts),
+        ("config/quick_reload", "Quick Reload", "Reduce reload time (self only)", qr_opts),
+        ("config/quick_swap", "Quick Swap", "Reduce weapon-swap time (self only)", qs_opts),
+    ]
+    # Each value picker's Back button returns to its parent category (global / personal).
+    picker_back = {
+        "config/rpg_power": "config/global", "config/grenade_power": "config/global",
+        "config/max_ammo": "config/global", "config/damage_debug": "config/global",
+        "config/instant_kill": "config/personal", "config/infinite_ammo": "config/personal",
+        "config/quick_reload": "config/personal", "config/quick_swap": "config/personal",
+    }
+    for sub_id, title_text, desc, options in value_dialogs:
+        register_value_picker(sub_id, title_text, desc, options, back_dialog=picker_back[sub_id])
+
+    # --- Configuration dialog, organized into categories (by scope) ---
+    # The top-level menu is a short list of categories; each opens its own sub-dialog whose Back
+    # button returns to the top-level config. Leaf value pickers Back to their category (above).
+    def register_category(sub_id: str, title: str, actions: list) -> None:
+        register_dialog(sub_id, {
+            "type": "minecraft:multi_action",
+            "title": {"text": title, "color": "gold", "bold": True},
+            "actions": actions,
+            # Each category lists items of a single kind (settings / mode links) → one column.
+            "columns": 1,
+            "exit_action": {
+                "label": {"text": "◀ Back", "color": "gray"},
+                "tooltip": {"text": "Return to configuration"},
+                "action": {"type": "show_dialog", "dialog": f"{ns}:config"},
+            },
+        })
+
+    register_category("config/global", "⚙ Global Settings", [
+        dialog_show_btn(f"{ns}:config/rpg_power", "RPG Explosion Power", "Server-wide projectile explosion power", "red"),
+        dialog_show_btn(f"{ns}:config/grenade_power", "Grenade Explosion Power", "Server-wide grenade explosion power", "gold"),
+        dialog_show_btn(f"{ns}:config/max_ammo", "Max Ammo Mode", "How the Max Ammo powerup refills weapons", "aqua"),
+        dialog_show_btn(f"{ns}:config/damage_debug", "Damage Debug", "Broadcast every hit's damage to chat", "yellow"),
     ])
-    gren_line = f'["  ",{{"text":"Grenade Explosion Power"}},": ",{gren_btns}]'
-
-    # Max Ammo Mode: OG (magazines only) or Recent (also reload weapons)
-    ma_btns = ",".join([
-        btn("OG", f"/scoreboard players set #max_ammo_reload_weapons {ns}.config 0",
-            "yellow", "Only refill magazines in inventory (OG zombies)"),
-        btn("Recent", f"/scoreboard players set #max_ammo_reload_weapons {ns}.config 1",
-            "green", "Also reload current weapon (recent zombies)"),
+    register_category("config/personal", "⚡ Personal Cheats", [
+        dialog_show_btn(f"{ns}:config/instant_kill", "Instant Kill", "One-shot kills for a duration (self only)", "red"),
+        dialog_show_btn(f"{ns}:config/infinite_ammo", "Infinite Ammo", "No reloads needed for a duration (self only)", "gold"),
+        dialog_show_btn(f"{ns}:config/quick_reload", "Quick Reload", "Reduce reload time (self only)", "green"),
+        dialog_show_btn(f"{ns}:config/quick_swap", "Quick Swap", "Reduce weapon-swap time (self only)", "aqua"),
     ])
-    ma_line = f'["  ",{{"text":"Max Ammo Mode"}},": ",{ma_btns}]'
-
-    # Damage Debug (global): OFF or ON (tellraw @a all damage)
-    dd_btns = ",".join([
-        btn("OFF", f"/scoreboard players set #damage_debug {ns}.config 0",
-            "red", "Disable global damage debug"),
-        btn("ON", f"/scoreboard players set #damage_debug {ns}.config 1",
-            "green", "Enable global damage debug (tellraw @a every hit)"),
+    register_category("config/modes", "🎮 Game Modes", [
+        dialog_show_btn(f"{ns}:multiplayer/setup", "⚔ Multiplayer Setup", "Open the multiplayer game setup menu", "red"),
+        dialog_show_btn(f"{ns}:zombies/setup", "🧟 Zombies Setup", "Open the zombies setup menu", "green"),
+        dialog_show_btn(f"{ns}:missions/setup", "🎯 Mission Setup", "Open the mission setup menu", "gold"),
     ])
-    dd_line = f'["  ",{{"text":"Damage Debug"}},": ",{dd_btns}]'
-
-    # --- Player Specials ---
-    special_header = '["",[{"text":"","color":"aqua","bold":true},"⚡ ",{"text":"Player Specials"}],[{"text":"","color":"gray","italic":true}," (",{"text":"self only"},")"]]'
-
-    # Instant Kill durations: OFF, 10s, 30s, 60s, ∞
-    ik_options = [("OFF", 0, "red"), ("10s", 200, "yellow"), ("30s", 600, "yellow"), ("60s", 1200, "yellow"), ("∞", 72000, "light_purple")]
-    ik_btns = ",".join([
-        btn(label, f"/scoreboard players set @s {ns}.special.instant_kill {ticks}",
-            color, f"Set instant kill {'off' if ticks == 0 else f'for {label}'}")
-        for label, ticks, color in ik_options
+    register_category("config/players", "👥 Players & Teams", [
+        dialog_run_btn("⚔ Multiplayer Players", f"/function {ns}:v{version}/players/list_multiplayer", "Assign players to Red/Blue teams", "red"),
+        dialog_run_btn("🧟 Zombies Players", f"/function {ns}:v{version}/players/list_zombies", "Add or remove players from the zombies game", "green"),
+        dialog_run_btn("🎯 Mission Players", f"/function {ns}:v{version}/players/list_missions", "Add or remove players from the mission", "gold"),
     ])
-    ik_line = f'["  ",[{{"text":"Instant Kill"}},": ",{ik_btns}]]'
 
-    # Infinite Ammo durations: OFF, 10s, 30s, 60s, ∞
-    ia_options = [("OFF", 0, "red"), ("10s", 200, "yellow"), ("30s", 600, "yellow"), ("60s", 1200, "yellow"), ("∞", 72000, "light_purple")]
-    ia_btns = ",".join([
-        btn(label, f"/scoreboard players set @s {ns}.special.infinite_ammo {ticks}",
-            color, f"Set infinite ammo {'off' if ticks == 0 else f'for {label}'}")
-        for label, ticks, color in ia_options
-    ])
-    ia_line = f'["  ",[{{"text":"Infinite Ammo"}},": ",{ia_btns}]]'
+    config_actions = [
+        dialog_show_btn(f"{ns}:config/global", "⚙ Global Settings", "Server-wide gameplay settings", "gold"),
+        dialog_show_btn(f"{ns}:config/personal", "⚡ Personal Cheats", "Self-only powerups", "light_purple"),
+        dialog_show_btn(f"{ns}:config/modes", "🎮 Game Modes", "Multiplayer, Zombies & Mission setup", "green"),
+        dialog_show_btn(f"{ns}:config/players", "👥 Players & Teams", "Assign players to teams per game mode", "aqua"),
+        dialog_run_btn("🗺 Open Map Editor", f"/function {ns}:v{version}/maps/editor/menu", "Open the map editor", "yellow"),
+    ]
+    register_dialog("config", {
+        "type": "minecraft:multi_action",
+        "title": {"text": "☣ MGS Configuration ☣", "color": "gold", "bold": True},
+        "body": [{"type": "minecraft:plain_message", "contents": {"text": "Pick a category", "color": "gray"}}],
+        "actions": config_actions,
+        # A clean vertical list of categories → one column.
+        "columns": 1,
+        "exit_action": {"label": {"translate": "gui.done"}},
+    })
 
-    # Quick Reload: 0%, 20%, 50%, 80%
-    qr_options = [("0%", 0, "red"), ("20%", 20, "yellow"), ("50%", 50, "yellow"), ("80%", 80, "green")]
-    qr_btns = ",".join([
-        btn(label, f"/scoreboard players set @s {ns}.special.quick_reload {val}",
-            color, f"Set quick reload to {label}")
-        for label, val, color in qr_options
-    ])
-    qr_line = f'["  ",[{{"text":"Quick Reload"}},": ",{qr_btns}]]'
-
-    # Quick Swap: 0%, 20%, 50%, 80%
-    qs_options = [("0%", 0, "red"), ("20%", 20, "yellow"), ("50%", 50, "yellow"), ("80%", 80, "green")]
-    qs_btns = ",".join([
-        btn(label, f"/scoreboard players set @s {ns}.special.quick_swap {val}",
-            color, f"Set quick swap to {label}")
-        for label, val, color in qs_options
-    ])
-    qs_line = f'["  ",[{{"text":"Quick Swap"}},": ",{qs_btns}]]'
-
-    # --- Map Editor ---
-    map_header = '[{"text":"","color":"aqua","bold":true},"🗺 ",{"text":"Map Editor"}]'
-    map_editor_btn = btn("Open Map Editor", f"/function {ns}:v{version}/maps/editor/menu", "green", "Open the map editor")
-    map_line = f'["  ",{map_editor_btn}]'
-
-    # --- Multiplayer & Missions ---
-    mp_header = '[{"text":"","color":"aqua","bold":true},"⚔ ",{"text":"Multiplayer, Zombies, Missions"}]'
-    mp_setup_btn = btn("Game Setup", f"/function {ns}:v{version}/multiplayer/setup", "green", "Open the multiplayer game setup menu")
-    zb_setup_btn = btn("Zombies Setup", f"/function {ns}:v{version}/zombies/setup", "green", "Open the zombies setup menu")
-    missions_setup_btn = btn("Mission Setup", f"/function {ns}:v{version}/missions/setup", "green", "Open the mission setup menu")
-    mp_line = f'["  ",{mp_setup_btn}," ",{zb_setup_btn}," ",{missions_setup_btn}]'
-
-    write_function(f"{ns}:config", f"""
-tellraw @s {sep}
-tellraw @s {title}
-tellraw @s {sep}
-tellraw @s {global_header}
-tellraw @s {rpg_line}
-tellraw @s {gren_line}
-tellraw @s {ma_line}
-tellraw @s {dd_line}
-tellraw @s ""
-tellraw @s {special_header}
-tellraw @s {ik_line}
-tellraw @s {ia_line}
-tellraw @s {qr_line}
-tellraw @s {qs_line}
-tellraw @s ""
-tellraw @s {map_header}
-tellraw @s {map_line}
-tellraw @s ""
-tellraw @s {mp_header}
-tellraw @s {mp_line}
-tellraw @s {sep}
-""")
+    # /function mgs:config now opens the dialog
+    write_function(f"{ns}:config", f"dialog show @s {ns}:config")

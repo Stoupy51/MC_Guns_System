@@ -85,6 +85,9 @@ execute unless data storage {ns}:multiplayer game run data modify storage {ns}:m
 # Prevent starting if already active or preparing
 {game_start_guards(ns, "multiplayer", "Game")}
 
+# Require at least one opted-in player (players are independent until assigned via Manage Players / + Join)
+execute unless entity @a[scores={{{ns}.mp.in_game=1}}] run return run tellraw @s [{MGS_TAG},{{"text":"No players have joined a team — use Manage Players first.","color":"red"}}]
+
 {mode_start_map_bootstrap_lines(ns, "multiplayer", True)}
 
 # Teams setup
@@ -112,11 +115,11 @@ scoreboard players set @a {ns}.mp.death_count 0
 # Set timer from time_limit
 execute store result score #mp_timer {ns}.data run data get storage {ns}:multiplayer game.time_limit
 
-# Tag all non-spectator players as in-game
-scoreboard players set @a {ns}.mp.in_game 1
-
-# Assign to FFA team for ffa mode, otherwise auto-assign to team
+# Assign vanilla teams to opted-in players only: FFA joins everyone; otherwise honor each player's
+# chosen side (set via Manage Players), auto-assigning anyone who opted in without picking a team.
 execute if data storage {ns}:multiplayer game{{gamemode:"ffa"}} run team join {ns}.ffa @a[scores={{{ns}.mp.in_game=1}}]
+execute unless data storage {ns}:multiplayer game{{gamemode:"ffa"}} as @a[scores={{{ns}.mp.in_game=1}}] if score @s {ns}.mp.team matches 1 run team join {ns}.red @s
+execute unless data storage {ns}:multiplayer game{{gamemode:"ffa"}} as @a[scores={{{ns}.mp.in_game=1}}] if score @s {ns}.mp.team matches 2 run team join {ns}.blue @s
 execute unless data storage {ns}:multiplayer game{{gamemode:"ffa"}} as @a[scores={{{ns}.mp.in_game=1}}] unless score @s {ns}.mp.team matches 1.. run function {ns}:v{version}/multiplayer/auto_assign_team
 
 # Enable class menu for multiplayer players

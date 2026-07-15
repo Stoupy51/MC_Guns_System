@@ -4,6 +4,13 @@
 # @executed	as @e[type=player,sort=random] & at @s
 #
 # @within	mgs:v5.1.0/player/config/menu with storage mgs:temp
+#			mgs:v5.1.0/players/list_multiplayer with storage mgs:temp
+#			mgs:v5.1.0/players/list_zombies with storage mgs:temp
+#			mgs:v5.1.0/players/list_missions with storage mgs:temp
+#			mgs:v5.1.0/players/multiplayer_menu with storage mgs:temp
+#			mgs:v5.1.0/players/zombies_menu with storage mgs:temp
+#			mgs:v5.1.0/players/missions_menu with storage mgs:temp
+#			mgs:v5.1.0/zombies/map_select with storage mgs:temp
 #			mgs:v5.1.0/multiplayer/select_class with storage mgs:temp
 #			mgs:v5.1.0/multiplayer/editor/hub with storage mgs:temp
 #			mgs:v5.1.0/multiplayer/editor/show_primary_dialog_macro with storage mgs:temp
@@ -29,6 +36,8 @@
 #			mgs:v5.1.0/multiplayer/marketplace/browse with storage mgs:temp
 #			mgs:v5.1.0/multiplayer/marketplace/browse_fav_only with storage mgs:temp
 #			mgs:v5.1.0/multiplayer/marketplace/browse_likes with storage mgs:temp
+#			mgs:v5.1.0/multiplayer/map_select with storage mgs:temp
+#			mgs:v5.1.0/missions/map_select with storage mgs:temp
 #
 # @args		dialog (unknown)
 #

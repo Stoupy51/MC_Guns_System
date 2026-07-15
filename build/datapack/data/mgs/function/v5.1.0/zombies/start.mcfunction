@@ -1,12 +1,15 @@
 
 #> mgs:v5.1.0/zombies/start
 #
-# @within	mgs:v5.1.0/zombies/setup "hover_event": {"action": "show_text", "value": "Start the zombies game"}}, "\u25b6 START", "]"]," ",[{"text": "[", "color": "red", "click_event": {"action": "suggest_command", "command": "/function mgs:v5.1.0/zombies/stop"}, "hover_event": {"action": "show_text", "value": "Stop the zombies game"}}, "\u25a0 STOP", "]"]," ",[{"text": "[", "color": "dark_aqua", "click_event": {"action": "suggest_command", "command": "/function mgs:v5.1.0/multiplayer/show_teams"}, "hover_event": {"action": "show_text", "value": "Show which players have team assignments"}}, "\ud83d\udc65 Roster", "]"]," ",[{"text": "[", "color": "yellow", "click_event": {"action": "suggest_command", "command": "/function mgs:v5.1.0/zombies/join_game"}, "hover_event": {"action": "show_text", "value": "Join the ongoing zombies game as a late joiner"}}, "+ Join", "]"]]
+# @within	???
 #
 
 # Prevent starting if already active or preparing
 execute if data storage mgs:zombies game{state:"active"} run return run tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.zombies_game_already_in_progress","color":"red"}]
 execute if data storage mgs:zombies game{state:"preparing"} run return run tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.zombies_game_already_preparing","color":"red"}]
+
+# Require at least one opted-in player (players are independent until added via Manage Players / + Join)
+execute unless entity @a[scores={mgs.zb.in_game=1}] run return run tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.no_players_have_joined_the_zombies_game_use_manage_players_first","color":"red"}]
 
 # Check that a map is selected
 execute if data storage mgs:zombies game{map_id:""} run return run tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.no_map_selected_use_the_setup_menu_to_select_a_map","color":"red"}]
@@ -27,8 +30,7 @@ team modify mgs.zombies color yellow
 team modify mgs.zombies friendlyFire false
 team modify mgs.zombies nametagVisibility hideForOtherTeams
 
-# Reset scores
-scoreboard players set @a mgs.zb.in_game 0
+# Reset scores (in_game is left untouched: it's the opt-in flag, set via Manage Players / + Join)
 scoreboard players set @a mgs.zb.points 500
 scoreboard players set @a mgs.zb.kills 0
 scoreboard players set @a mgs.zb.downs 0
@@ -42,10 +44,7 @@ scoreboard players set #zb_points_hit mgs.config 5
 scoreboard players set #zb_points_knife_kill mgs.config 130
 scoreboard players set #zb_mystery_box_price mgs.config 950
 
-# Tag all players as in-game
-scoreboard players set @a mgs.zb.in_game 1
-
-# Assign all in-game players to zombies team
+# Assign opted-in players to the zombies team
 team join mgs.zombies @a[scores={mgs.zb.in_game=1}]
 
 # Initialize kill tracking baseline (so kills before game start don't count)

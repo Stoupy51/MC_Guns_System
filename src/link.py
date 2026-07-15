@@ -17,6 +17,8 @@ from .functional.zombies import main as main_zombies
 
 # Main function is run just before making finalyzing the build process (zip, headers, lang, ...)
 def beet_default(ctx: Context) -> None:
+    ns: str = ctx.project_id
+
     main_datapack()
     main_shaders()
     main_weapon()
@@ -62,6 +64,9 @@ def beet_default(ctx: Context) -> None:
     from stewbeet.plugins.ingame_manual.paths import template_path  # pyright: ignore[reportMissingTypeStubs]
     from stewbeet.plugins.ingame_manual.showcase import generate_showcase_images  # pyright: ignore[reportMissingTypeStubs]
     simple_case: Image.Image = Image.open(template_path("simple_case_no_border.png"))
-    showcase_items: list[str] = [x for x in Mem.definitions.keys() if not x.endswith(("_zoom", "_empty"))]
+    showcase_items: list[str] = [
+        x for x in Mem.definitions.keys()
+        if not x.endswith(("_zoom", "_empty")) and Item.from_id(x).components.get("item_model", "").startswith(f"{ns}:")
+    ]
     generate_showcase_images(2, {}, simple_case, iso_renders_cache, all_items=showcase_items)
 

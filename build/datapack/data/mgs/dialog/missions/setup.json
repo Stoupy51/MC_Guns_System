@@ -1,0 +1,25 @@
+{
+	"type": "minecraft:multi_action",
+	"title": [{
+		"text":"🎯 ",
+		"color": "aqua",
+		"bold": true
+	}, {"translate": "mgs.missions_setup"}, " 🎯"],
+	"body": [
+		{"type": "minecraft:plain_message","contents": {"translate": "mgs.pick_a_map_then_start","color": "gray"}}
+	],
+	"actions": [
+		{"label": [{"text":"🗺 ","color": "aqua"}, {"translate": "mgs.select_map"}],"tooltip": {"translate": "mgs.browse_and_select_a_mission_map"},"action": {"type": "run_command","command": "/function mgs:v5.1.0/missions/map_select"}},
+		{"label": [{"text":"▶ ","color": "green"}, {"translate": "mgs.start"}],"tooltip": {"translate": "mgs.start_the_mission"},"action": {"type": "run_command","command": "/function mgs:v5.1.0/missions/start"}},
+		{"label": [{"text":"■ ","color": "red"}, {"translate": "mgs.stop"}],"tooltip": {"translate": "mgs.stop_the_mission"},"action": {"type": "run_command","command": "/function mgs:v5.1.0/missions/stop"}},
+		{"label": [{"text":"⚔ ","color": "aqua"}, {"translate": "mgs.classes"}],"tooltip": {"translate": "mgs.select_your_class"},"action": {"type": "run_command","command": "/function mgs:v5.1.0/multiplayer/select_class"}},
+		{"label": [{"text":"👥 ","color": "dark_aqua"}, {"translate": "mgs.manage_players"}],"tooltip": {"translate": "mgs.add_or_remove_players_from_the_mission"},"action": {"type": "run_command","command": "/function mgs:v5.1.0/players/list_missions"}},
+		{"label": [{"text":"+ ","color": "yellow"}, {"translate": "mgs.join"}],"tooltip": {"translate": "mgs.join_the_ongoing_mission_as_a_late_joiner"},"action": {"type": "run_command","command": "/function mgs:v5.1.0/missions/join_game"}}
+	],
+	"columns": 2,
+	"exit_action": {
+		"label": [{"text":"◀ ","color": "gray"}, {"translate": "mgs.back"}],
+		"tooltip": {"translate": "mgs.return_to_the_game_modes_menu"},
+		"action": {"type": "show_dialog","dialog": "mgs:config/modes"}
+	}
+}

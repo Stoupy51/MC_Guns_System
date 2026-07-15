@@ -22,6 +22,7 @@ ignore: ["build", "manual_cache", "definitions_debug.json"]
 # A list of importable plugin strings
 require:
     - "stewbeet"
+    - "stewbeet.plugins.livereload"
 
 # Takes a nested pack config, see PackConfig() documentation
 data_pack:
@@ -82,6 +83,9 @@ meta:
 
     # StewBeet specific configuration
     stewbeet:
+        # Path to the Minecraft installation folder (for auto /reload)
+        livereload:
+            minecraft: "D:/minecraft/latest"
         # Directory containing all project textures
         textures_folder: "assets/textures"
         # Directory containing all custom sounds
@@ -98,7 +102,7 @@ meta:
             # Paths to copy the datapack(s) to
             datapack: ["D:/latest_snapshot/world/datapacks"]
             # Paths to copy the resource pack(s) to
-            resource_pack: ["D:/minecraft/snapshot/resourcepacks"]
+            resource_pack: ["D:/minecraft/latest/resourcepacks"]
         # Custom item lore configuration. If set to "auto" or unset, uses project icon followed by PROJECT_NAME
         source_lore: "auto"
         # Automagically checks for dependencies and their minimum required versions at runtime.

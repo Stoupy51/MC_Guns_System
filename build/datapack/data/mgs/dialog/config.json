@@ -1,0 +1,22 @@
+{
+	"type": "minecraft:multi_action",
+	"title": {
+		"text": "☣ MGS Configuration ☣",
+		"color": "gold",
+		"bold": true
+	},
+	"body": [
+		{"type": "minecraft:plain_message","contents": {"text": "Pick a category","color": "gray"}}
+	],
+	"actions": [
+		{"label": {"text": "⚙ Global Settings","color": "gold"},"tooltip": {"text": "Server-wide gameplay settings"},"action": {"type": "show_dialog","dialog": "mgs:config/global"}},
+		{"label": {"text": "⚡ Personal Cheats","color": "light_purple"},"tooltip": {"text": "Self-only powerups"},"action": {"type": "show_dialog","dialog": "mgs:config/personal"}},
+		{"label": {"text": "🎮 Game Modes","color": "green"},"tooltip": {"text": "Multiplayer, Zombies & Mission setup"},"action": {"type": "show_dialog","dialog": "mgs:config/modes"}},
+		{"label": {"text": "👥 Players & Teams","color": "aqua"},"tooltip": {"text": "Assign players to teams per game mode"},"action": {"type": "show_dialog","dialog": "mgs:config/players"}},
+		{"label": {"text": "🗺 Open Map Editor","color": "yellow"},"tooltip": {"text": "Open the map editor"},"action": {"type": "run_command","command": "/function mgs:v5.1.0/maps/editor/menu"}}
+	],
+	"columns": 1,
+	"exit_action": {
+		"label": {"translate": "gui.done"}
+	}
+}

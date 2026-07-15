@@ -1,0 +1,29 @@
+{
+	"type": "minecraft:multi_action",
+	"title": {
+		"translate": "mgs.score_limit",
+		"color": "gold",
+		"bold": true
+	},
+	"body": [
+		{"type": "minecraft:plain_message","contents": {"translate": "mgs.set_the_score_needed_to_win","color": "gray"}}
+	],
+	"actions": [
+		{"label": {"text": "10","color": "yellow"},"tooltip": [{"translate":"mgs.set_score_limit_to"}, " 10"],"action": {"type": "run_command","command": "/data modify storage mgs:multiplayer game.score_limit set value 10"}},
+		{"label": {"text": "20","color": "yellow"},"tooltip": [{"translate":"mgs.set_score_limit_to"}, " 20"],"action": {"type": "run_command","command": "/data modify storage mgs:multiplayer game.score_limit set value 20"}},
+		{"label": {"text": "30","color": "yellow"},"tooltip": [{"translate":"mgs.set_score_limit_to"}, " 30"],"action": {"type": "run_command","command": "/data modify storage mgs:multiplayer game.score_limit set value 30"}},
+		{"label": {"text": "50","color": "green"},"tooltip": [{"translate":"mgs.set_score_limit_to"}, " 50"],"action": {"type": "run_command","command": "/data modify storage mgs:multiplayer game.score_limit set value 50"}},
+		{"label": {"translate": "mgs.100","color": "yellow"},"tooltip": [{"translate":"mgs.set_score_limit_to"}, " 100"],"action": {"type": "run_command","command": "/data modify storage mgs:multiplayer game.score_limit set value 100"}},
+		{"label": {"translate": "mgs.200","color": "yellow"},"tooltip": [{"translate":"mgs.set_score_limit_to"}, " 200"],"action": {"type": "run_command","command": "/data modify storage mgs:multiplayer game.score_limit set value 200"}},
+		{"label": {"translate": "mgs.300","color": "yellow"},"tooltip": [{"translate":"mgs.set_score_limit_to"}, " 300"],"action": {"type": "run_command","command": "/data modify storage mgs:multiplayer game.score_limit set value 300"}},
+		{"label": {"translate": "mgs.500","color": "yellow"},"tooltip": [{"translate":"mgs.set_score_limit_to"}, " 500"],"action": {"type": "run_command","command": "/data modify storage mgs:multiplayer game.score_limit set value 500"}}
+	],
+	"columns": 1,
+	"pause": false,
+	"after_action": "none",
+	"exit_action": {
+		"label": [{"text":"◀ ","color": "gray"}, {"translate": "mgs.back"}],
+		"tooltip": {"translate": "mgs.return_to_the_previous_menu"},
+		"action": {"type": "show_dialog","dialog": "mgs:multiplayer/setup"}
+	}
+}

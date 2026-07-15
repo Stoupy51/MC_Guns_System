@@ -7,14 +7,12 @@
 #			mgs:v5.1.0/player/config/process
 #			mgs:v5.1.0/multiplayer/start [ as @a[scores={mgs.mp.in_game=1}] ]
 #			mgs:v5.1.0/multiplayer/join_game
-#			mgs:v5.1.0/multiplayer/setup "hover_event": {"action": "show_text", "value": "Start the match"}}, "\u25b6 START", "]"]," ",[{"text": "[", "color": "red", "click_event": {"action": "suggest_command", "command": "/function mgs:v5.1.0/multiplayer/stop"}, "hover_event": {"action": "show_text", "value": "Stop the match"}}, "\u25a0 STOP", "]"]," ",[{"text": "[", "color": "aqua", "click_event": {"action": "suggest_command", "command": "/function mgs:v5.1.0/multiplayer/select_class"}, "hover_event": {"action": "show_text", "value": "Select your class"}}, "\u2694 Classes", "]"]," ",[{"text": "[", "color": "yellow", "click_event": {"action": "suggest_command", "command": "/function mgs:v5.1.0/multiplayer/join_game"}, "hover_event": {"action": "show_text", "value": "Join the ongoing game as a late joiner"}}, "+ Join", "]"]]
 #			mgs:v5.1.0/missions/preload_complete [ as @a[scores={mgs.mi.in_game=1}] ]
 #			mgs:v5.1.0/missions/join_game
-#			mgs:v5.1.0/missions/setup "hover_event": {"action": "show_text", "value": "Start the mission"}}, "\u25b6 START", "]"]," ",[{"text": "[", "color": "red", "click_event": {"action": "suggest_command", "command": "/function mgs:v5.1.0/missions/stop"}, "hover_event": {"action": "show_text", "value": "Stop the mission"}}, "\u25a0 STOP", "]"]," ",[{"text": "[", "color": "aqua", "click_event": {"action": "suggest_command", "command": "/function mgs:v5.1.0/multiplayer/select_class"}, "hover_event": {"action": "show_text", "value": "Select your class"}}, "\u2694 Classes", "]"]," ",[{"text": "[", "color": "dark_aqua", "click_event": {"action": "suggest_command", "command": "/function mgs:v5.1.0/multiplayer/show_teams"}, "hover_event": {"action": "show_text", "value": "Show which players have team assignments"}}, "\ud83d\udc65 Roster", "]"]," ",[{"text": "[", "color": "yellow", "click_event": {"action": "suggest_command", "command": "/function mgs:v5.1.0/missions/join_game"}, "hover_event": {"action": "show_text", "value": "Join the ongoing mission as a late joiner"}}, "+ Join", "]"]]
 #
 
 # Initialize dialog structure
-data modify storage mgs:temp dialog set value {type:"minecraft:multi_action",title:{translate:"mgs.select_your_class",color:"gold",bold:true},body:{type:"minecraft:item",item:{id:"minecraft:crossbow"},description:{contents:{translate:"mgs.choose_a_class_for_multiplayer",color:"gray"}},show_decoration:false,show_tooltip:true},actions:[],columns:2,after_action:"close",exit_action:{label:"Cancel"}}
+data modify storage mgs:temp dialog set value {type:"minecraft:multi_action",title:{translate:"mgs.select_your_class_2",color:"gold",bold:true},body:{type:"minecraft:item",item:{id:"minecraft:crossbow"},description:{contents:{translate:"mgs.choose_a_class_for_multiplayer",color:"gray"}},show_decoration:false,show_tooltip:true},actions:[],columns:2,after_action:"close",exit_action:{label:"Cancel"}}
 
 # Copy class list for iteration
 data modify storage mgs:temp class_iter set from storage mgs:multiplayer classes_list

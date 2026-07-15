@@ -13,7 +13,7 @@ execute if score #snd_attackers mgs.data matches 2 unless score @s mgs.mp.team m
 # Continue planting (5 seconds = 100 ticks)
 scoreboard players set #snd_channeling mgs.data 1
 scoreboard players add #snd_plant_progress mgs.data 1
-title @s actionbar [{"translate":"mgs.planting","color":"gold"},{"score":{"name":"#snd_plant_progress","objective":"mgs.data"},"color":"yellow"},{"translate":"mgs.100"}]
+title @s actionbar [{"translate":"mgs.planting","color":"gold"},{"score":{"name":"#snd_plant_progress","objective":"mgs.data"},"color":"yellow"},{"translate":"mgs.100_2"}]
 
 # If planted
 execute if score #snd_plant_progress mgs.data matches 100.. run function mgs:v5.1.0/multiplayer/gamemodes/snd/bomb_planted
