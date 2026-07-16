@@ -45,6 +45,13 @@ execute if entity @s[tag={ns}.reloading] run tag @s remove {ns}.reloading
 execute if entity @s[tag={ns}.pump_sound] run tag @s remove {ns}.pump_sound
 execute if entity @s[tag={ns}.reload_mid_sound] run tag @s remove {ns}.reload_mid_sound
 
+# If player was zoomed on the previous weapon, clear the zoom state (score + slowness);
+# otherwise switching gun->gun while zoomed leaves the zoom stuck forever
+execute if score @s {ns}.zoom matches 1 run function {ns}:v{version}/zoom/clear_state
+
+# Cancel any in-progress burst from the previous weapon
+scoreboard players set @s {ns}.burst_count 0
+
 # Apply weapon switch cooldown from stats
 execute store result score #cooldown {ns}.data run data get storage {ns}:gun all.stats.{SWITCH}
 

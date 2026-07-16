@@ -32,7 +32,7 @@ execute as @r[scores={mgs.zb.in_game=1,mgs.zb.downed=0},gamemode=!spectator,limi
 execute unless entity @a[scores={mgs.zb.in_game=1,mgs.zb.downed=0},gamemode=!spectator] run tp @s ~ ~ ~
 
 # Announce
-title @s title [{"text":"☠","color":"dark_red"}]
+title @s title ["☠"]
 title @s subtitle [{"translate":"mgs.you_bled_out_respawning_next_round","color":"gray"}]
 tellraw @a[scores={mgs.zb.in_game=1}] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"selector":"@s","color":"dark_red"},[{"text":" ","color":"gray"}, {"translate":"mgs.has_bled_out"}]]
 

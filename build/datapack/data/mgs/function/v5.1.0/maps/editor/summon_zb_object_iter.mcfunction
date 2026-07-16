@@ -29,8 +29,9 @@ function mgs:v5.1.0/maps/editor/summon_zb_marker with storage mgs:temp _zbpos
 # Copy all compound data onto the marker
 execute as @n[tag=mgs.new_zb_marker] run data modify entity @s data set from storage mgs:temp _zb_iter[0]
 
-# Set yaw from rotation for the direction indicator
+# Set yaw from rotation for the direction indicator (sync entity Rotation too for model displays)
 execute if data storage mgs:temp _zb_iter[0].rotation as @n[tag=mgs.new_zb_marker] run data modify entity @s data.yaw set from storage mgs:temp _zb_iter[0].rotation[0]
+execute as @n[tag=mgs.new_zb_marker] run data modify entity @s Rotation[0] set from entity @s data.yaw
 
 tag @e[tag=mgs.new_zb_marker] remove mgs.new_zb_marker
 

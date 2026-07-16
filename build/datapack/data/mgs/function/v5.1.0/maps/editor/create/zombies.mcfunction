@@ -5,7 +5,7 @@
 #
 
 tellraw @s {"text":"============================================","color":"dark_gray"}
-tellraw @s [{"text":"","color":"gold","bold":true},"  📝 ",{"translate":"mgs.create_new_zombies_map"}]
+tellraw @s ["","  📝 ",[{"text":"","color":"gold","bold":true},{"translate":"mgs.create_new_zombies_map"}]]
 tellraw @s {"text":"============================================","color":"dark_gray"}
 tellraw @s {"translate":"mgs.run_this_command_to_create_a_new_map","color":"yellow"}
 tellraw @s [{"text":"","color":"aqua","click_event":{"action":"suggest_command","command":"/data modify storage mgs:maps zombies append value {id:'my_map',name:'My Map',description:'A new map',base_coordinates:[0,64,0],start_commands:[],respawn_commands:[]}"}},"/data modify storage mgs:maps zombies append value {...}"]

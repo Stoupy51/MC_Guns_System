@@ -212,7 +212,7 @@ execute as @a[scores={{{ns}.mp.in_game=1}}] run scoreboard players operation @s 
 schedule function {ns}:v{version}/multiplayer/end_prep 200t
 
 # Announce
-tellraw @a ["",[{{"text":"","color":"gold","bold":true}},"⚔ ",{{"text":"Preparing"}},"! "],{{"text":"Choose your class! Game starts in 10 seconds!","color":"yellow"}}]
+tellraw @a ["","⚔ ",[{{"text":"","color":"gold","bold":true}},{{"text":"Preparing"}},"! "],{{"text":"Choose your class! Game starts in 10 seconds!","color":"yellow"}}]
 """)
 
 		## Game Stop
@@ -234,7 +234,7 @@ function #{ns}:multiplayer/on_game_end
 {regen_disable_lines(ns)}
 
 # Announce scores (team scores are meaningless in FFA — the winner is announced by player_wins)
-tellraw @a ["",[{{"text":"","color":"gold","bold":true}},"⚔ ",{{"text":"Game Over"}},"! "]]
+tellraw @a ["","⚔ ",[{{"text":"","color":"gold","bold":true}},{{"text":"Game Over"}},"! "]]
 execute unless data storage {ns}:multiplayer game{{gamemode:"ffa"}} run tellraw @a ["",{{"text":"Red","color":"red"}},{{"text":": "}},{{"score":{{"name":"#red","objective":"{ns}.mp.team"}}}}," | ",{{"text":"Blue","color":"blue"}},{{"text":": "}},{{"score":{{"name":"#blue","objective":"{ns}.mp.team"}}}}]
 
 # Remove sidebar and list displays and leave teams
@@ -322,7 +322,7 @@ execute unless entity @a[tag={ns}.temp_killer] run function {ns}:v{version}/mult
 tag @a[tag={ns}.temp_killer] remove {ns}.temp_killer
 
 # Announce death & playsound
-title @s title [{{"text":"☠","color":"red"}}]
+title @s title ["☠"]
 title @s subtitle [{{"text":"Respawning in 3 seconds...","color":"gray"}}]
 execute at @s run playsound minecraft:entity.player.hurt ambient @s
 """)
@@ -444,7 +444,7 @@ execute if score #blue {ns}.mp.team >= #score_limit {ns}.data run function {ns}:
 		## Team Wins
 		write_versioned_function("multiplayer/team_wins", f"""
 # Announce winner
-$tellraw @a ["",{{"text":"🏆 ","color":"gold"}},{{"text":"$(team) Team Wins!","color":"gold","bold":true}}]
+$tellraw @a ["","🏆 ",{{"text":"$(team) Team Wins!","color":"gold","bold":true}}]
 tellraw @a ["",[{{"text":"","color":"gray"}},"  ",{{"text":"Final Score - Red"}},": "],{{"score":{{"name":"#red","objective":"{ns}.mp.team"}},"color":"red"}},[{{"text":"","color":"gray"}}," ",{{"text":"vs Blue"}},": "],{{"score":{{"name":"#blue","objective":"{ns}.mp.team"}},"color":"blue"}}]
 
 # End game
@@ -554,7 +554,7 @@ execute as @a[scores={{{ns}.mp.in_game=1}}] if score @s {ns}.mp.kills = #max_kil
 
 		## Game draw
 		write_versioned_function("multiplayer/game_draw", f"""
-tellraw @a ["",{{"text":"🤝 ","color":"gold"}},{{"text":"Draw!","color":"gold","bold":true}}]
+tellraw @a ["","🤝 ",{{"text":"Draw!","color":"gold","bold":true}}]
 function {ns}:v{version}/multiplayer/stop
 """)
 
@@ -789,14 +789,14 @@ execute if score @s {ns}.mp.team matches 2 run return run function {ns}:v{versio
 
 		# Build sidebar content components for reuse
 		sb_timer = (
-			f'[{{text:" ⏱ ",color:"yellow"}},'
+			f'["", " ⏱ ",'
 			f'[{{score:{{name:"#timer_min",objective:"{ns}.data"}},"color":"yellow"}},'
 			f'{{text:":"}},'
 			f'{{score:{{name:"#timer_tens",objective:"{ns}.data"}}}},'
 			f'{{score:{{name:"#timer_ones",objective:"{ns}.data"}}}}]]'
 		)
-		sb_red = f'[[{{text:" 🔴 ",color:"red"}},{{text:"Red"}}],[" ",{{score:{{name:"#red",objective:"{ns}.mp.team"}},color:"white"}}]]'
-		sb_blue = f'[[{{text:" 🔵 ",color:"blue"}},{{text:"Blue"}}],[" ",{{score:{{name:"#blue",objective:"{ns}.mp.team"}},color:"white"}}]]'
+		sb_red = f'[["", " 🔴 ",{{text:"Red",color:"red"}}],[" ",{{score:{{name:"#red",objective:"{ns}.mp.team"}},color:"white"}}]]'
+		sb_blue = f'[["", " 🔵 ",{{text:"Blue",color:"blue"}}],[" ",{{score:{{name:"#blue",objective:"{ns}.mp.team"}},color:"white"}}]]'
 		sb_limit = f'[{{text:" First to ",color:"gray"}},{{score:{{name:"#score_limit",objective:"{ns}.data"}},color:"white"}}]'
 		sb_spacer = '" "'
 
@@ -863,19 +863,19 @@ scoreboard objectives setdisplay sidebar {ns}.sidebar
 		write_versioned_function("multiplayer/refresh_sidebar_dom", f"""
 # Build point status strings based on ownership scores
 # Zone A
-execute if score #dom_owner_a {ns}.data matches 0 run data modify storage {ns}:temp dom_sb.a set value '[" ",{{"text":"A: ⚪ Neutral","color":"gray"}}]'
-execute if score #dom_owner_a {ns}.data matches 1 run data modify storage {ns}:temp dom_sb.a set value '[" ",{{"text":"A: 🔴 Red","color":"red"}}]'
-execute if score #dom_owner_a {ns}.data matches 2 run data modify storage {ns}:temp dom_sb.a set value '[" ",{{"text":"A: 🔵 Blue","color":"blue"}}]'
+execute if score #dom_owner_a {ns}.data matches 0 run data modify storage {ns}:temp dom_sb.a set value '[" ",{{"text":"A: ","color":"gray"}},"⚪ ",{{"text":"Neutral","color":"gray"}}]'
+execute if score #dom_owner_a {ns}.data matches 1 run data modify storage {ns}:temp dom_sb.a set value '[" ",{{"text":"A: ","color":"red"}},"🔴 ",{{"text":"Red","color":"red"}}]'
+execute if score #dom_owner_a {ns}.data matches 2 run data modify storage {ns}:temp dom_sb.a set value '[" ",{{"text":"A: ","color":"blue"}},"🔵 ",{{"text":"Blue","color":"blue"}}]'
 
 # Zone B
-execute if score #dom_owner_b {ns}.data matches 0 run data modify storage {ns}:temp dom_sb.b set value '[" ",{{"text":"B: ⚪ Neutral","color":"gray"}}]'
-execute if score #dom_owner_b {ns}.data matches 1 run data modify storage {ns}:temp dom_sb.b set value '[" ",{{"text":"B: 🔴 Red","color":"red"}}]'
-execute if score #dom_owner_b {ns}.data matches 2 run data modify storage {ns}:temp dom_sb.b set value '[" ",{{"text":"B: 🔵 Blue","color":"blue"}}]'
+execute if score #dom_owner_b {ns}.data matches 0 run data modify storage {ns}:temp dom_sb.b set value '[" ",{{"text":"B: ","color":"gray"}},"⚪ ",{{"text":"Neutral","color":"gray"}}]'
+execute if score #dom_owner_b {ns}.data matches 1 run data modify storage {ns}:temp dom_sb.b set value '[" ",{{"text":"B: ","color":"red"}},"🔴 ",{{"text":"Red","color":"red"}}]'
+execute if score #dom_owner_b {ns}.data matches 2 run data modify storage {ns}:temp dom_sb.b set value '[" ",{{"text":"B: ","color":"blue"}},"🔵 ",{{"text":"Blue","color":"blue"}}]'
 
 # Zone C
-execute if score #dom_owner_c {ns}.data matches 0 run data modify storage {ns}:temp dom_sb.c set value '[" ",{{"text":"C: ⚪ Neutral","color":"gray"}}]'
-execute if score #dom_owner_c {ns}.data matches 1 run data modify storage {ns}:temp dom_sb.c set value '[" ",{{"text":"C: 🔴 Red","color":"red"}}]'
-execute if score #dom_owner_c {ns}.data matches 2 run data modify storage {ns}:temp dom_sb.c set value '[" ",{{"text":"C: 🔵 Blue","color":"blue"}}]'
+execute if score #dom_owner_c {ns}.data matches 0 run data modify storage {ns}:temp dom_sb.c set value '[" ",{{"text":"C: ","color":"gray"}},"⚪ ",{{"text":"Neutral","color":"gray"}}]'
+execute if score #dom_owner_c {ns}.data matches 1 run data modify storage {ns}:temp dom_sb.c set value '[" ",{{"text":"C: ","color":"red"}},"🔴 ",{{"text":"Red","color":"red"}}]'
+execute if score #dom_owner_c {ns}.data matches 2 run data modify storage {ns}:temp dom_sb.c set value '[" ",{{"text":"C: ","color":"blue"}},"🔵 ",{{"text":"Blue","color":"blue"}}]'
 
 # Build sidebar with dynamic point entries
 function {ns}:v{version}/multiplayer/build_sidebar_dom with storage {ns}:temp dom_sb
@@ -917,7 +917,7 @@ execute as @a[scores={{{ns}.mp.in_game=1}}] run scoreboard players operation @s 
 function {ns}:v{version}/shared/maps/call_start_script_at_base
 
 # Announce
-tellraw @a [{{"text":"","color":"green","bold":true}},"⚔ ",{{"text":"GO! GO! GO!"}}]
+tellraw @a ["","⚔ ",[{{"text":"","color":"green","bold":true}},{{"text":"GO! GO! GO!"}}]]
 """)
 
 

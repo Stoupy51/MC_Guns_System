@@ -16,5 +16,5 @@ effect clear @a[scores={mgs.mp.in_game=1}] night_vision
 function mgs:v5.1.0/shared/maps/call_start_script_at_base
 
 # Announce
-tellraw @a [{"text":"","color":"green","bold":true},"⚔ ",{"translate":"mgs.go_go_go"}]
+tellraw @a ["","⚔ ",[{"text":"","color":"green","bold":true},{"translate":"mgs.go_go_go"}]]
 

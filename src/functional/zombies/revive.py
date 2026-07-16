@@ -136,7 +136,7 @@ ride @s mount @n[tag={ns}.downed_mine_temp]
 tag @e[tag={ns}.downed_mine_temp] remove {ns}.downed_mine_temp
 
 # Announce
-title @s title [{{"text":"☠","color":"red"}}]
+title @s title ["☠"]
 title @s subtitle [{{"text":"You are down! A teammate can revive you.","color":"gray"}}]
 tellraw @a[scores={{{ns}.zb.in_game=1}}] [{MGS_TAG},{{"selector":"@s","color":"red"}},{{"text":" is down!","color":"gray"}}]
 """)
@@ -419,7 +419,7 @@ effect give @s minecraft:instant_health 1 255 true
 scoreboard players set @s {ns}.stam_seen 0
 
 # Announce
-title @s title [{{"text":"❤","color":"green"}}]
+title @s title ["❤"]
 title @s subtitle [{{"text":"You have been revived!","color":"green"}}]
 tellraw @a[scores={{{ns}.zb.in_game=1}}] [{MGS_TAG},{{"selector":"@s","color":"green"}},{{"text":" has been revived!","color":"gray"}}]
 """)
@@ -454,7 +454,7 @@ execute as @r[scores={{{ns}.zb.in_game=1,{ns}.zb.downed=0}},gamemode=!spectator,
 execute unless entity @a[scores={{{ns}.zb.in_game=1,{ns}.zb.downed=0}},gamemode=!spectator] run tp @s ~ ~ ~
 
 # Announce
-title @s title [{{"text":"☠","color":"dark_red"}}]
+title @s title ["☠"]
 title @s subtitle [{{"text":"You bled out. Respawning next round...","color":"gray"}}]
 tellraw @a[scores={{{ns}.zb.in_game=1}}] [{MGS_TAG},{{"selector":"@s","color":"dark_red"}},{{"text":" has bled out.","color":"gray"}}]
 """)
@@ -545,7 +545,7 @@ execute as @r[scores={{{ns}.zb.in_game=1,{ns}.zb.downed=0}},gamemode=!spectator,
 execute unless entity @a[scores={{{ns}.zb.in_game=1,{ns}.zb.downed=0}},gamemode=!spectator] run tp @s ~ ~ ~
 
 # Announce
-title @s title [{{"text":"☠","color":"dark_red"}}]
+title @s title ["☠"]
 title @s subtitle [{{"text":"You fell out of the world!","color":"gray"}}]
 tellraw @a[scores={{{ns}.zb.in_game=1}}] [{MGS_TAG},{{"selector":"@s","color":"dark_red"}},{{"text":" fell out of the world.","color":"gray"}}]
 """)

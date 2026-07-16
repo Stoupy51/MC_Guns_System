@@ -4,5 +4,5 @@
 # @within	???
 #
 
-tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.mule_kick_third_weapon_slot_unlocked","color":"gold"}]
+tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],"🎒 ",{"translate":"mgs.mule_kick_third_weapon_slot_unlocked","color":"gold"}]
 

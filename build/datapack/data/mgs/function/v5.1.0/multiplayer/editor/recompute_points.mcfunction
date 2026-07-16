@@ -35,7 +35,8 @@ execute unless data storage mgs:temp editor{secondary:""} store result score #lc
 execute unless data storage mgs:temp editor{secondary:""} run scoreboard players operation #lc_cost mgs.data += #lc_t mgs.data
 execute unless data storage mgs:temp editor{equip_slot1:""} run scoreboard players add #lc_cost mgs.data 1
 execute unless data storage mgs:temp editor{equip_slot2:""} run scoreboard players add #lc_cost mgs.data 1
-execute store result score #lc_t mgs.data run data get storage mgs:temp editor.perks 1
+execute store result score #lc_t mgs.data run data get storage mgs:temp editor.perks
+scoreboard players operation #lc_t mgs.data *= #1 mgs.data
 scoreboard players operation #lc_cost mgs.data += #lc_t mgs.data
 scoreboard players set @s mgs.mp.edit_points 10
 scoreboard players operation @s mgs.mp.edit_points -= #lc_cost mgs.data

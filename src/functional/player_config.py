@@ -235,7 +235,7 @@ function {ns}:v{version}/player/config/menu
     ## Replaces the old clickable-chat menu: /trigger set 1 now opens this dialog instead.
     write_versioned_function("player/config/menu", f"""
 # Build the Player Settings dialog in storage, then show it via /dialog
-data modify storage {ns}:temp dialog set value {{type:"minecraft:multi_action",title:{{text:"🎮 Player Settings",color:"gold",bold:true}},body:[{{type:"minecraft:plain_message",contents:{{text:"Toggle your personal settings","color":"gray"}}}}],actions:[],columns:1,after_action:"close",exit_action:{{label:{{translate:"gui.done"}}}}}}
+data modify storage {ns}:temp dialog set value {{type:"minecraft:multi_action",title:["","🎮 ",{{text:"Player Settings",color:"gold",bold:true}}],body:[{{type:"minecraft:plain_message",contents:{{text:"Toggle your personal settings","color":"gray"}}}}],actions:[],columns:1,after_action:"close",exit_action:{{label:{{translate:"gui.done"}}}}}}
 
 # Hitmarker Sound toggle (label reflects the current ON/OFF state)
 execute if score @s {ns}.player.hitmarker matches 1 run data modify storage {ns}:temp dialog.actions append value {{label:["",{{text:"Hitmarker Sound: "}},{{text:"ON ✔",color:"green"}}],tooltip:{{text:"Toggle hitmarker sound on entity hit"}},action:{{type:"run_command",command:"/trigger {ns}.player.config set 2"}}}}
@@ -246,7 +246,7 @@ execute if score @s {ns}.player.damage_debug matches 1 run data modify storage {
 execute unless score @s {ns}.player.damage_debug matches 1 run data modify storage {ns}:temp dialog.actions append value {{label:["",{{text:"Damage Debug: "}},{{text:"OFF ✘",color:"red"}}],tooltip:{{text:"Toggle damage numbers in chat"}},action:{{type:"run_command",command:"/trigger {ns}.player.config set 3"}}}}
 
 # Multiplayer class selection
-data modify storage {ns}:temp dialog.actions append value {{label:[{{text:"⚔ ",color:"aqua",bold:true}},{{text:"Multiplayer Class"}}],tooltip:{{text:"Open multiplayer class selection menu"}},action:{{type:"run_command",command:"/trigger {ns}.player.config set 4"}}}}
+data modify storage {ns}:temp dialog.actions append value {{label:["","⚔ ",{{text:"Multiplayer Class",color:"aqua",bold:true}}],tooltip:{{text:"Open multiplayer class selection menu"}},action:{{type:"run_command",command:"/trigger {ns}.player.config set 4"}}}}
 
 # Show the completed dialog (reuses the multiplayer show_dialog macro)
 function {ns}:v{version}/multiplayer/show_dialog with storage {ns}:temp

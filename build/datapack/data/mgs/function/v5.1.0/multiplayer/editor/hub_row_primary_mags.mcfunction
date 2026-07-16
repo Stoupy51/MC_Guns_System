@@ -8,5 +8,5 @@
 # @args		primary_mag_count (unknown)
 #
 
-$data modify storage mgs:temp dialog.actions append value {label:[{text:"\ud83d\udce6 ",color:"gold"},{translate:"mgs.primary_mags",color:"white"},{text:"$(primary_mag_count)x",color:"green"}],tooltip:[{text:"1 ",color:"gray"}, {translate:"mgs.pt_per_magazine"}],action:{type:"run_command",command:"/trigger mgs.player.config set 105"}}
+$data modify storage mgs:temp dialog.actions append value {label:["",{text:"\ud83d\udce6 "},{translate:"mgs.primary_mags",color:"white"},{text:"$(primary_mag_count)x",color:"green"}],tooltip:[{text:"1 ",color:"gray"}, {translate:"mgs.pt_per_magazine"}],action:{type:"run_command",command:"/trigger mgs.player.config set 105"}}
 

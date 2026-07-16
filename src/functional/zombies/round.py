@@ -195,7 +195,7 @@ scoreboard players set @n[tag={ns}.zombie_round,tag={ns}.zb_rising] {ns}.zb.stuc
 tag @s add {ns}.zb_scaled
 data modify entity @s DeathTime set value -16s
 
-# Compute round-scaled HP (base_health * 1.1^(round - 1)) and apply it to this zombie
+# Compute round-scaled HP (BO1 curve: +100 BO-HP per round until R9, then x1.1 per round) and apply it to this zombie
 function {ns}:v{version}/zombies/calc_zombie_hp
 execute store result storage {ns}:temp _zb_hp.val int 1 run scoreboard players get #zb_hp {ns}.data
 function {ns}:v{version}/zombies/apply_zombie_hp with storage {ns}:temp _zb_hp
@@ -227,22 +227,31 @@ attribute @s minecraft:knockback_resistance base set 1024
 scoreboard players set @s {ns}.zb.rise_tick 20
 """)
 
-	## Compute zombie HP for current round: health = base_health * 1.1^(round - 1)
-	## base_health = 20 (vanilla zombie HP, i.e. BO2's 150 HP scaled by 2/15 to Minecraft scale)
+	## Compute zombie HP for current round, using the classic Treyarch (BO1) two-phase curve:
+	##   Rounds 1-9:  bo_hp = 50 + 100 * round        (R1=150, R2=250, ..., R9=950)
+	##   Round 10+:   bo_hp = 950 * 1.1^(round - 9)   (R10=1045, R11=1150, ...)
+	## BO HP is then converted to Minecraft scale with a 2/15 factor (BO 150 HP = MC 20 HP, vanilla zombie)
 	write_versioned_function("zombies/calc_zombie_hp", f"""
-# Exponent: round - 1
-scoreboard players operation #zb_exp_round {ns}.data = #zb_round {ns}.data
-scoreboard players remove #zb_exp_round {ns}.data 1
+# Rounds 1-9: bo_hp = 50 + 100 * round
+execute if score #zb_round {ns}.data matches ..9 run scoreboard players operation #zb_hp {ns}.data = #zb_round {ns}.data
+execute if score #zb_round {ns}.data matches ..9 run scoreboard players operation #zb_hp {ns}.data *= #100 {ns}.data
+execute if score #zb_round {ns}.data matches ..9 run scoreboard players add #zb_hp {ns}.data 50
 
-# 1.1^(round - 1)
-data modify storage bs:in math.pow.x set value 1.1f
-execute store result storage bs:in math.pow.y float 1 run scoreboard players get #zb_exp_round {ns}.data
-function #bs.math:pow
+# Round 10+: exponent = round - 9
+execute if score #zb_round {ns}.data matches 10.. run scoreboard players operation #zb_exp_round {ns}.data = #zb_round {ns}.data
+execute if score #zb_round {ns}.data matches 10.. run scoreboard players remove #zb_exp_round {ns}.data 9
 
-# health = base_health (20) * 1.1^(round - 1)
-execute store result score #zb_hp {ns}.data run data get storage bs:out math.pow 20
+# Round 10+: bo_hp = 950 * 1.1^(round - 9)
+execute if score #zb_round {ns}.data matches 10.. run data modify storage bs:in math.pow.x set value 1.1f
+execute if score #zb_round {ns}.data matches 10.. store result storage bs:in math.pow.y float 1 run scoreboard players get #zb_exp_round {ns}.data
+execute if score #zb_round {ns}.data matches 10.. run function #bs.math:pow
+execute if score #zb_round {ns}.data matches 10.. store result score #zb_hp {ns}.data run data get storage bs:out math.pow 950
 
-# Cap at Minecraft-safe gameplay max
+# Convert BO HP to Minecraft scale: hp = bo_hp * 2 / 15 (R1: 150 -> 20 HP)
+scoreboard players operation #zb_hp {ns}.data *= #2 {ns}.data
+scoreboard players operation #zb_hp {ns}.data /= #15 {ns}.data
+
+# Cap at Minecraft-safe gameplay max (also catches int overflow on very high rounds)
 execute unless score #zb_hp {ns}.data matches 15..2048 run scoreboard players set #zb_hp {ns}.data 2048
 """)
 

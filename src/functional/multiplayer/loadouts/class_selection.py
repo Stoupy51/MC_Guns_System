@@ -62,8 +62,8 @@ execute if data storage {ns}:temp class_iter[0] run function {ns}:v{version}/mul
 
 # Append custom loadout buttons
 data modify storage {ns}:temp dialog.actions append value {{label:[{{text:"✚ ",color:"aqua",bold:true}},{{text:"Create Loadout"}}],tooltip:{{text:"Build a custom loadout from scratch"}},action:{{type:"run_command",command:"/trigger {ns}.player.config set {TRIG_EDITOR_START}"}}}}
-data modify storage {ns}:temp dialog.actions append value {{label:[{{text:"📦 ",color:"yellow",bold:true}},{{text:"My Loadouts"}}],tooltip:{{text:"Manage your custom loadouts"}},action:{{type:"run_command",command:"/trigger {ns}.player.config set {TRIG_MY_LOADOUTS}"}}}}
-data modify storage {ns}:temp dialog.actions append value {{label:[{{text:"🌍 ",color:"light_purple",bold:true}},{{text:"Marketplace"}}],tooltip:{{text:"Browse public loadouts from other players"}},action:{{type:"run_command",command:"/trigger {ns}.player.config set {TRIG_MARKETPLACE}"}}}}
+data modify storage {ns}:temp dialog.actions append value {{label:["","📦 ",{{text:"My Loadouts",color:"yellow",bold:true}}],tooltip:{{text:"Manage your custom loadouts"}},action:{{type:"run_command",command:"/trigger {ns}.player.config set {TRIG_MY_LOADOUTS}"}}}}
+data modify storage {ns}:temp dialog.actions append value {{label:["","🌍 ",{{text:"Marketplace",color:"light_purple",bold:true}}],tooltip:{{text:"Browse public loadouts from other players"}},action:{{type:"run_command",command:"/trigger {ns}.player.config set {TRIG_MARKETPLACE}"}}}}
 
 # Show the completed dialog via macro
 function {ns}:v{version}/multiplayer/show_dialog with storage {ns}:temp
@@ -71,6 +71,8 @@ function {ns}:v{version}/multiplayer/show_dialog with storage {ns}:temp
 
 	## Quick Action launcher: a static dialog registered to #minecraft:quick_actions so
 	## players can open the class menu from the pause screen / Quick Actions keybind (1.21.6+).
+	## NOTE: this is the ONLY dialog kept as a resource file — dialog tags can only reference
+	## registered dialogs, so it cannot be inlined like every other dialog in the pack.
 	## The class menu is built dynamically per-player, so this is a thin launcher that fires
 	## trigger 4 (-> select_class). external_title is the pack name, which is what Minecraft
 	## shows in the shared list when several datapacks each add a quick action.

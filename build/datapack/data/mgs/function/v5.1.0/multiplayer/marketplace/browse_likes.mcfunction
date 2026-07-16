@@ -11,9 +11,9 @@ data modify storage mgs:temp dialog set value {type:"minecraft:multi_action",tit
 data modify storage mgs:temp dialog.title set value [{text:"",color:"light_purple",bold:true},{translate:"mgs.marketplace"}," — ",{translate:"mgs.best_liked"}]
 
 # Add filter/sort buttons (likes tab active)
-data modify storage mgs:temp dialog.actions append value {label:[{text:"",color:"white",bold:true},"📋 ",{translate:"mgs.all"}],tooltip:{translate:"mgs.show_all_public_loadouts_your_favorites_first"},action:{type:"run_command",command:"/trigger mgs.player.config set 1600"}}
-data modify storage mgs:temp dialog.actions append value {label:[{text:"",color:"yellow",bold:true},"⭐ ",{translate:"mgs.favorites"}],tooltip:{translate:"mgs.show_only_loadouts_you_favorited"},action:{type:"run_command",command:"/trigger mgs.player.config set 1601"}}
-data modify storage mgs:temp dialog.actions append value {label:[{text:"",color:"red",bold:true},"❤ ",{translate:"mgs.best_liked"}],tooltip:{translate:"mgs.show_all_public_loadouts_sorted_by_most_likes"},action:{type:"run_command",command:"/trigger mgs.player.config set 1602"}}
+data modify storage mgs:temp dialog.actions append value {label:["","📋 ",{translate:"mgs.all",color:"white",bold:true}],tooltip:{translate:"mgs.show_all_public_loadouts_your_favorites_first"},action:{type:"run_command",command:"/trigger mgs.player.config set 1600"}}
+data modify storage mgs:temp dialog.actions append value {label:["","⭐ ",{translate:"mgs.favorites",color:"yellow",bold:true}],tooltip:{translate:"mgs.show_only_loadouts_you_favorited"},action:{type:"run_command",command:"/trigger mgs.player.config set 1601"}}
+data modify storage mgs:temp dialog.actions append value {label:["","❤ ",{translate:"mgs.best_liked",color:"red",bold:true}],tooltip:{translate:"mgs.show_all_public_loadouts_sorted_by_most_likes"},action:{type:"run_command",command:"/trigger mgs.player.config set 1602"}}
 
 # Load player favorites (used in prep_btn normalization)
 function mgs:v5.1.0/multiplayer/shared/load_player_favorites

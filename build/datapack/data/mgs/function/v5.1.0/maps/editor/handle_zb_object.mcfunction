@@ -59,18 +59,22 @@ scoreboard players remove #yaw mgs.data 720
 # Apply 180° yaw offset
 scoreboard players add #yaw mgs.data 180
 
-# Store yaw on marker
+# Store yaw on marker (and sync entity Rotation immediately so the model display below is oriented right away)
 execute as @n[tag=mgs.new_zb_marker] store result entity @s data.yaw float 1 run scoreboard players get #yaw mgs.data
+execute as @n[tag=mgs.new_zb_marker] run data modify entity @s Rotation[0] set from entity @s data.yaw
 
 # For doors: capture block from player's offhand (required)
 execute if entity @s[tag=mgs.element.door] as @p[tag=mgs.map_editor,distance=..6,sort=nearest] run data modify storage mgs:temp _zb_offhand_block set from entity @s equipment.offhand.id
-execute if entity @s[tag=mgs.element.door] unless data storage mgs:temp _zb_offhand_block run tellraw @a[tag=mgs.map_editor] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.door_cancelled_hold_a_block_in_offhand","color":"red"}]
+execute if entity @s[tag=mgs.element.door] unless data storage mgs:temp _zb_offhand_block run tellraw @a[tag=mgs.map_editor] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],"⚠ ",{"translate":"mgs.door_cancelled_hold_a_block_in_offhand","color":"red"}]
 execute if entity @s[tag=mgs.element.door] unless data storage mgs:temp _zb_offhand_block run kill @e[tag=mgs.new_zb_marker]
 execute if entity @s[tag=mgs.element.door] unless data storage mgs:temp _zb_offhand_block run return fail
 execute if entity @s[tag=mgs.element.door] as @n[tag=mgs.new_zb_marker] run data modify entity @s data.block set from storage mgs:temp _zb_offhand_block
 data remove storage mgs:temp _zb_offhand_block
 
 tag @e[tag=mgs.new_zb_marker] remove mgs.new_zb_marker
+
+# Refresh model displays right away (wallbuy/perk/pap/mystery box/power switch)
+function mgs:v5.1.0/maps/editor/refresh_displays
 
 # Announce
 execute if entity @s[tag=mgs.element.zombie_spawn] run tellraw @a[tag=mgs.map_editor] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.zombie_spawn_placed","color":"dark_green"}]

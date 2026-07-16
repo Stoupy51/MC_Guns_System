@@ -98,13 +98,13 @@ data modify storage %NS%:temp _plr_iter set value []
 execute as @a run function %NS%:v%VER%/players/append_self
 
 # Base dialog (3-column grid, stays open after a pick, Back returns to setup)
-data modify storage %NS%:temp dialog set value {type:"minecraft:multi_action",title:{text:"👥 Manage Players",color:"%COLOR%",bold:true},body:[{type:"minecraft:plain_message",contents:{text:"Click a player to assign them a team",color:"gray"}}],actions:[],columns:3,pause:false,after_action:"none",exit_action:{label:{text:"◀ Back",color:"gray"},tooltip:{text:"Return to setup"},action:{type:"show_dialog",dialog:"%NS%:%BACK%"}}}
+data modify storage %NS%:temp dialog set value {type:"minecraft:multi_action",title:["","👥 ",{text:"Manage Players",color:"%COLOR%",bold:true}],body:[{type:"minecraft:plain_message",contents:{text:"Click a player to assign them a team",color:"gray"}}],actions:[],columns:3,pause:false,after_action:"none",exit_action:{label:{text:"◀ Back",color:"gray"},tooltip:{text:"Return to setup"},action:{type:"run_command",command:"/function %NS%:v%VER%/%BACK%"}}}
 
 # Append one button per player
 execute if data storage %NS%:temp _plr_iter[0] run function %NS%:v%VER%/players/list_iter
 
 # Empty fallback: multi_action requires a non-empty actions list
-execute unless data storage %NS%:temp dialog.actions[0] run data modify storage %NS%:temp dialog.actions append value {label:{text:"No players online",color:"red"},tooltip:{text:"Nobody to manage"},action:{type:"show_dialog",dialog:"%NS%:%BACK%"}}
+execute unless data storage %NS%:temp dialog.actions[0] run data modify storage %NS%:temp dialog.actions append value {label:{text:"No players online",color:"red"},tooltip:{text:"Nobody to manage"},action:{type:"run_command",command:"/function %NS%:v%VER%/%BACK%"}}
 
 # Show the completed dialog
 function %NS%:v%VER%/multiplayer/show_dialog with storage %NS%:temp

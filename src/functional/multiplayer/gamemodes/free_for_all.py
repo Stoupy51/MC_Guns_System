@@ -31,7 +31,7 @@ execute as @a if score @s {ns}.mp.kills >= #score_limit {ns}.data run function {
 		## FFA Player Wins
 		self.sub("player_wins", f"""
 # Announce winner using player's name
-tellraw @a ["",{{"text":"🏆 ","color":"gold"}},{{"selector":"@s","color":"gold","bold":true}}," ",{{"text":"wins!","color":"gold","bold":true}}]
+tellraw @a ["","🏆 ",{{"selector":"@s","color":"gold","bold":true}}," ",{{"text":"wins!","color":"gold","bold":true}}]
 tellraw @a ["","  ",{{"text":"Score: ","color":"gray"}},{{"score":{{"name":"@s","objective":"{ns}.mp.kills"}},"color":"yellow"}}," ",{{"text":"kills","color":"gray"}}]
 
 # End game

@@ -435,12 +435,14 @@ execute unless data storage mgs:maps zombies run data modify storage mgs:maps zo
 execute unless data storage mgs:maps missions run data modify storage mgs:maps missions set value []
 
 # Set scoreboard constants for mgs.data
+scoreboard players set #1 mgs.data 1
 scoreboard players set #2 mgs.data 2
 scoreboard players set #3 mgs.data 3
 scoreboard players set #5 mgs.data 5
 scoreboard players set #6 mgs.data 6
 scoreboard players set #10 mgs.data 10
 scoreboard players set #14 mgs.data 14
+scoreboard players set #15 mgs.data 15
 scoreboard players set #20 mgs.data 20
 scoreboard players set #40 mgs.data 40
 scoreboard players set #44 mgs.data 44

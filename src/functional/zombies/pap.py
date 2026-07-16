@@ -1171,7 +1171,7 @@ execute if data storage {ns}:temp _pap_extract.lore[1] run data modify storage {
 execute if data storage {ns}:temp _pap_extract.lore[0] run function {ns}:v{version}/zombies/pap/annotate_lore
 
 # Notify the player
-tellraw @s [{MGS_TAG},{{"text":"✦ Pack-a-Punch!","color":"aqua","bold":true}},{{"text":"  Level ","color":"gray"}},{{"score":{{"name":"#pap_next","objective":"{ns}.data"}},"color":"aqua"}},{{"text":"/","color":"dark_gray"}},{{"score":{{"name":"#pap_max","objective":"{ns}.data"}},"color":"aqua"}}]
+tellraw @s [{MGS_TAG},"✦ ",{{"text":"Pack-a-Punch!","color":"aqua","bold":true}},{{"text":"  Level ","color":"gray"}},{{"score":{{"name":"#pap_next","objective":"{ns}.data"}},"color":"aqua"}},{{"text":"/","color":"dark_gray"}},{{"score":{{"name":"#pap_max","objective":"{ns}.data"}},"color":"aqua"}}]
 function {ns}:v{version}/zombies/feedback/sound_success
 
 # Restore unannotated ammo lore (preserves "/" pattern for modify_lore)
@@ -1219,6 +1219,6 @@ execute store result storage {ns}:temp _pap_name_data.max int 1 run scoreboard p
 function {ns}:v{version}/zombies/pap/apply_to_slot with storage {ns}:temp _pap
 
 # Notify the player
-tellraw @s [{MGS_TAG},{{"text":"✦ Free scope/camo reroll! (already at max PAP level)","color":"aqua"}}]
+tellraw @s [{MGS_TAG},"✦ ",{{"text":"Free scope/camo reroll! (already at max PAP level)","color":"aqua"}}]
 function {ns}:v{version}/zombies/feedback/sound_success
 """)

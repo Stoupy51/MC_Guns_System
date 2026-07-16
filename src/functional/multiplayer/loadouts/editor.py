@@ -120,8 +120,11 @@ data modify storage {ns}:temp editor set value {_empty_state()}
 		recompute_lines.append(
 			f'execute unless data storage {ns}:temp editor{{{field}:""}} run scoreboard players add #lc_cost {ns}.data {COST_GRENADE}'
 		)
+	# Perks: data get on a LIST cannot take a scale (throws "not a number", silently costing 0 points
+	# and letting players overspend the budget) — get the count, then multiply by the cost constant.
 	recompute_lines += [
-		f"execute store result score #lc_t {ns}.data run data get storage {ns}:temp editor.perks {COST_PERK}",
+		f"execute store result score #lc_t {ns}.data run data get storage {ns}:temp editor.perks",
+		f"scoreboard players operation #lc_t {ns}.data *= #{COST_PERK} {ns}.data",
 		f"scoreboard players operation #lc_cost {ns}.data += #lc_t {ns}.data",
 		f"scoreboard players set @s {ns}.mp.edit_points {PICK10_TOTAL}",
 		f"scoreboard players operation @s {ns}.mp.edit_points -= #lc_cost {ns}.data",
@@ -183,63 +186,63 @@ exit_action:{{label:"Cancel",action:{{type:"run_command",command:"/trigger {ns}.
 
 	write_versioned_function("multiplayer/editor/hub_row_primary", _row(
 		TRIG_HUB_PRIMARY,
-		'[{text:"\\ud83d\\udd2b ",color:"gold"},{text:"Primary: ",color:"white"},{text:"$(primary_name)",color:"green"}]',
+		'["",{text:"\\ud83d\\udd2b "},{text:"Primary: ",color:"white"},{text:"$(primary_name)",color:"green"}]',
 		'{text:"$(primary_scope_name), $(primary_camo_name)\\nClick to change",color:"gray"}',
 	))
 	write_versioned_function("multiplayer/editor/hub_row_primary_mags", _row(
 		TRIG_HUB_PRIMARY_MAGS,
-		'[{text:"\\ud83d\\udce6 ",color:"gold"},{text:"Primary Mags: ",color:"white"},{text:"$(primary_mag_count)x",color:"green"}]',
+		'["",{text:"\\ud83d\\udce6 "},{text:"Primary Mags: ",color:"white"},{text:"$(primary_mag_count)x",color:"green"}]',
 		f'{{text:"{COST_PRIMARY_MAG} pt per magazine",color:"gray"}}',
 	))
 	write_versioned_function("multiplayer/editor/hub_row_secondary", _row(
 		TRIG_HUB_SECONDARY,
-		'[{text:"\\ud83d\\udd2b ",color:"yellow"},{text:"Secondary: ",color:"white"},{text:"$(secondary_name)",color:"green"}]',
+		'["",{text:"\\ud83d\\udd2b "},{text:"Secondary: ",color:"white"},{text:"$(secondary_name)",color:"green"}]',
 		'{text:"$(secondary_scope_name), $(secondary_camo_name)\\nClick to change",color:"gray"}',
 	))
 	write_versioned_function("multiplayer/editor/hub_row_secondary_mags", _row(
 		TRIG_HUB_SECONDARY_MAGS,
-		'[{text:"\\ud83d\\udce6 ",color:"yellow"},{text:"Secondary Mags: ",color:"white"},{text:"$(secondary_mag_count)x",color:"green"}]',
+		'["",{text:"\\ud83d\\udce6 "},{text:"Secondary Mags: ",color:"white"},{text:"$(secondary_mag_count)x",color:"green"}]',
 		f'{{text:"{COST_SECONDARY_MAG} pt per magazine",color:"gray"}}',
 	))
 	write_versioned_function("multiplayer/editor/hub_row_equip1", _row(
 		TRIG_HUB_EQUIP1,
-		'[{text:"\\ud83d\\udca3 ",color:"red"},{text:"Grenade 1: ",color:"white"},{text:"$(equip_slot1_name)",color:"green"}]',
+		'["",{text:"\\ud83d\\udca3 "},{text:"Grenade 1: ",color:"white"},{text:"$(equip_slot1_name)",color:"green"}]',
 		f'{{text:"{COST_GRENADE} pt\\nClick to change",color:"gray"}}',
 	))
 	write_versioned_function("multiplayer/editor/hub_row_equip2", _row(
 		TRIG_HUB_EQUIP2,
-		'[{text:"\\ud83d\\udca3 ",color:"red"},{text:"Grenade 2: ",color:"white"},{text:"$(equip_slot2_name)",color:"green"}]',
+		'["",{text:"\\ud83d\\udca3 "},{text:"Grenade 2: ",color:"white"},{text:"$(equip_slot2_name)",color:"green"}]',
 		f'{{text:"{COST_GRENADE} pt\\nClick to change",color:"gray"}}',
 	))
 	write_versioned_function("multiplayer/editor/hub_row_perks", _row(
 		TRIG_HUB_PERKS,
-		f'[{{text:"\\u2b50 ",color:"aqua"}},{{text:"Perks: ",color:"white"}},{{text:"$(perks)/{MAX_PERKS}",color:"green"}}]',
+		f'["",{{text:"\\u2b50 "}},{{text:"Perks: ",color:"white"}},{{text:"$(perks)/{MAX_PERKS}",color:"green"}}]',
 		f'{{text:"{COST_PERK} pt per perk",color:"gray"}}',
 	))
 
 	# Static hub buttons
 	_unavailable_mags_primary = (
-		f'{{label:{{text:"\\ud83d\\udce6 Primary Mags \\u2014 Unavailable",color:"dark_gray"}},'
+		f'{{label:["","\\ud83d\\udce6 ",{{text:"Primary Mags \\u2014 Unavailable",color:"dark_gray"}}],'
 		f'tooltip:{{text:"Pick a primary weapon first",color:"red"}},'
 		f'action:{{type:"run_command",command:"/trigger {ns}.player.config set {TRIG_HUB}"}}}}'
 	)
 	_unavailable_mags_secondary = (
-		f'{{label:{{text:"\\ud83d\\udce6 Secondary Mags \\u2014 Unavailable",color:"dark_gray"}},'
+		f'{{label:["","\\ud83d\\udce6 ",{{text:"Secondary Mags \\u2014 Unavailable",color:"dark_gray"}}],'
 		f'tooltip:{{text:"Pick a secondary weapon first",color:"red"}},'
 		f'action:{{type:"run_command",command:"/trigger {ns}.player.config set {TRIG_HUB}"}}}}'
 	)
 	_save_public_btn = (
-		f'{{label:{{text:"\\ud83d\\udcbe Save as Public",color:"green",bold:true}},'
+		f'{{label:["","\\ud83d\\udcbe ",{{text:"Save as Public",color:"green",bold:true}}],'
 		f'tooltip:{{text:"Everyone can see and use this loadout"}},'
 		f'action:{{type:"run_command",command:"/trigger {ns}.player.config set {TRIG_SAVE_PUBLIC}"}}}}'
 	)
 	_save_private_btn = (
-		f'{{label:{{text:"\\ud83d\\udcbe Save as Private",color:"yellow",bold:true}},'
+		f'{{label:["","\\ud83d\\udcbe ",{{text:"Save as Private",color:"yellow",bold:true}}],'
 		f'tooltip:{{text:"Only you can see and use this loadout"}},'
 		f'action:{{type:"run_command",command:"/trigger {ns}.player.config set {TRIG_SAVE_PRIVATE}"}}}}'
 	)
 	_unavailable_save = (
-		f'{{label:{{text:"\\ud83d\\udcbe Save \\u2014 Unavailable",color:"dark_gray"}},'
+		f'{{label:["","\\ud83d\\udcbe ",{{text:"Save \\u2014 Unavailable",color:"dark_gray"}}],'
 		f'tooltip:{{text:"A primary weapon is required",color:"red"}},'
 		f'action:{{type:"run_command",command:"/trigger {ns}.player.config set {TRIG_HUB}"}}}}'
 	)
@@ -317,14 +320,14 @@ function {ns}:v{version}/multiplayer/show_dialog with storage {ns}:temp
 			f'action:{{type:"run_command",command:"/trigger {ns}.player.config set {trig}"}}}}'
 		)
 	primary_actions.append(
-		f'{{label:{{text:"\\ud83d\\uddd1 Remove Primary",color:"red"}},'
+		f'{{label:["","\\ud83d\\uddd1 ",{{text:"Remove Primary",color:"red"}}],'
 		f'tooltip:{{text:"Clear the primary weapon (refunds its points)"}},'
 		f'action:{{type:"run_command",command:"/trigger {ns}.player.config set {TRIG_REMOVE_PRIMARY}"}}}}'
 	)
 	write_static_dialog("primary_dialog", "Primary Weapon", f"Choose your primary weapon ({COST_PRIMARY_WEAPON} pt + {COST_PRIMARY_MAG} pt per magazine)", ",".join(primary_actions))
 
 	_remove_secondary_btn = (
-		f'{{label:{{text:"\\ud83d\\uddd1 Remove Secondary",color:"red"}},'
+		f'{{label:["","\\ud83d\\uddd1 ",{{text:"Remove Secondary",color:"red"}}],'
 		f'tooltip:{{text:"Clear the secondary weapon (refunds its points)"}},'
 		f'action:{{type:"run_command",command:"/trigger {ns}.player.config set {TRIG_REMOVE_SECONDARY}"}}}}'
 	)

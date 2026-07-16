@@ -44,8 +44,9 @@ execute store result storage mgs:temp _tp.y int 1 run scoreboard players get #ba
 execute store result storage mgs:temp _tp.z int 1 run scoreboard players get #base_z mgs.data
 function mgs:v5.1.0/shared/tp_to_position with storage mgs:temp _tp
 
-# Summon markers for existing elements
+# Summon markers for existing elements, then build their model displays
 function mgs:v5.1.0/maps/editor/summon_existing
+function mgs:v5.1.0/maps/editor/refresh_displays
 
 # Give editor tools (dispatch by mode)
 function mgs:v5.1.0/maps/editor/give_tools

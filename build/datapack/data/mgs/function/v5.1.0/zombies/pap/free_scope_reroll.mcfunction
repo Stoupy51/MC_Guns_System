@@ -21,6 +21,6 @@ execute store result storage mgs:temp _pap_name_data.max int 1 run scoreboard pl
 function mgs:v5.1.0/zombies/pap/apply_to_slot with storage mgs:temp _pap
 
 # Notify the player
-tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.free_scope_camo_reroll_already_at_max_pap_level","color":"aqua"}]
+tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],"✦ ",{"translate":"mgs.free_scope_camo_reroll_already_at_max_pap_level","color":"aqua"}]
 function mgs:v5.1.0/zombies/feedback/sound_success
 

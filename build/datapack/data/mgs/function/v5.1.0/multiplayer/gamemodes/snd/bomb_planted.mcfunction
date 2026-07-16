@@ -13,6 +13,6 @@ scoreboard players set #snd_plant_progress mgs.data 0
 # Summon bomb entity at planter's position
 summon minecraft:marker ~ ~ ~ {Tags:["mgs.snd_bomb","mgs.gm_entity"]}
 
-tellraw @a [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],[{"text":"💣 ","color":"red","bold":true}, {"translate":"mgs.bomb_planted"}]]
+tellraw @a [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],"💣 ",{"translate":"mgs.bomb_planted","color":"red","bold":true}]
 playsound minecraft:block.note_block.pling player @a ~ ~ ~ 1 0.5
 

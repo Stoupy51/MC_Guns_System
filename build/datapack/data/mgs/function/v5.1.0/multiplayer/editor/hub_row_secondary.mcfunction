@@ -10,5 +10,5 @@
 #			secondary_camo_name (unknown)
 #
 
-$data modify storage mgs:temp dialog.actions append value {label:[{text:"\ud83d\udd2b ",color:"yellow"},{translate:"mgs.secondary_2",color:"white"},{text:"$(secondary_name)",color:"green"}],tooltip:{text:"$(secondary_scope_name), $(secondary_camo_name)\nClick to change",color:"gray"},action:{type:"run_command",command:"/trigger mgs.player.config set 106"}}
+$data modify storage mgs:temp dialog.actions append value {label:["",{text:"\ud83d\udd2b "},{translate:"mgs.secondary_2",color:"white"},{text:"$(secondary_name)",color:"green"}],tooltip:{text:"$(secondary_scope_name), $(secondary_camo_name)\nClick to change",color:"gray"},action:{type:"run_command",command:"/trigger mgs.player.config set 106"}}
 

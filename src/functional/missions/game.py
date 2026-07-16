@@ -268,7 +268,7 @@ scoreboard players set @s {ns}.mp.spectate_timer 60
 function {ns}:v{version}/missions/spectate_random_player
 
 # Announce respawn delay to the dying player
-title @s title [{{"text":"☠","color":"red"}}]
+title @s title ["☠"]
 title @s subtitle [{{"text":"Respawning in 3 seconds...","color":"gray"}}]
 """)
 
@@ -380,11 +380,11 @@ title @a[scores={{{ns}.mi.in_game=1}}] subtitle {{"text":"All enemies eliminated
 
 # Performance summary
 tellraw @a ["","\\n",{{"text":"═══════ MISSION COMPLETE ═══════","color":"gold","bold":true}}]
-tellraw @a ["","  ",{{"text":"⏱ Time: ","color":"gray"}},{{"score":{{"name":"#mi_minutes","objective":"{ns}.data"}},"color":"yellow"}},"m ",{{"score":{{"name":"#mi_rem_sec","objective":"{ns}.data"}},"color":"yellow"}},"s"]
-tellraw @a ["","  ",{{"text":"💀 Enemies killed: ","color":"gray"}},{{"score":{{"name":"#mi_total_enemies","objective":"{ns}.data"}},"color":"red"}}]
+tellraw @a ["","  ","⏱ ",{{"text":"Time: ","color":"gray"}},{{"score":{{"name":"#mi_minutes","objective":"{ns}.data"}},"color":"yellow"}},"m ",{{"score":{{"name":"#mi_rem_sec","objective":"{ns}.data"}},"color":"yellow"}},"s"]
+tellraw @a ["","  ","💀 ",{{"text":"Enemies killed: ","color":"gray"}},{{"score":{{"name":"#mi_total_enemies","objective":"{ns}.data"}},"color":"red"}}]
 
 # Per-player stats
-execute as @a[scores={{{ns}.mi.in_game=1}}] run tellraw @a ["","  ",{{"text":"🎖 ","color":"gray"}},{{"selector":"@s","color":"yellow"}}," — Kills: ",{{"score":{{"name":"@s","objective":"{ns}.mi.kills"}},"color":"green"}}," | Deaths: ",{{"score":{{"name":"@s","objective":"{ns}.mi.deaths"}},"color":"red"}}]
+execute as @a[scores={{{ns}.mi.in_game=1}}] run tellraw @a ["","  ","🎖 ",{{"selector":"@s","color":"yellow"}}," — Kills: ",{{"score":{{"name":"@s","objective":"{ns}.mi.kills"}},"color":"green"}}," | Deaths: ",{{"score":{{"name":"@s","objective":"{ns}.mi.deaths"}},"color":"red"}}]
 
 tellraw @a ["",{{"text":"═══════════════════════════════","color":"gold","bold":true}},"\\n"]
 

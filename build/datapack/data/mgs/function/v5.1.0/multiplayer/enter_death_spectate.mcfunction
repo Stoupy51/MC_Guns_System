@@ -23,7 +23,7 @@ execute unless entity @a[tag=mgs.temp_killer] run function mgs:v5.1.0/multiplaye
 tag @a[tag=mgs.temp_killer] remove mgs.temp_killer
 
 # Announce death & playsound
-title @s title [{"text":"☠","color":"red"}]
+title @s title ["☠"]
 title @s subtitle [{"translate":"mgs.respawning_in_3_seconds","color":"gray"}]
 execute at @s run playsound minecraft:entity.player.hurt ambient @s
 

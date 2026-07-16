@@ -167,7 +167,7 @@ scoreboard players set #snd_plant_progress {ns}.data 0
 # Summon bomb entity at planter's position
 summon minecraft:marker ~ ~ ~ {{Tags:["{ns}.snd_bomb","{ns}.gm_entity"]}}
 
-tellraw @a [{MGS_TAG},{{"text":"💣 BOMB PLANTED!","color":"red","bold":true}}]
+tellraw @a [{MGS_TAG},"💣 ",{{"text":"BOMB PLANTED!","color":"red","bold":true}}]
 playsound minecraft:block.note_block.pling player @a ~ ~ ~ 1 0.5
 """)
 
@@ -187,7 +187,7 @@ execute if score #snd_defuse_progress {ns}.data matches 150.. run function {ns}:
 
 		## S&D: Bomb defused → defenders win
 		self.sub("bomb_defused", f"""
-tellraw @a [{MGS_TAG},{{"text":"💣 BOMB DEFUSED!","color":"aqua","bold":true}}]
+tellraw @a [{MGS_TAG},"💣 ",{{"text":"BOMB DEFUSED!","color":"aqua","bold":true}}]
 kill @e[tag={ns}.snd_bomb]
 function {ns}:v{version}/multiplayer/gamemodes/snd/defenders_win
 """)
@@ -202,7 +202,7 @@ execute at @e[tag={ns}.snd_bomb] run playsound minecraft:entity.generic.explode 
 execute at @e[tag={ns}.snd_bomb] as @a[distance=..10,gamemode=!creative,gamemode=!spectator,scores={{{ns}.mp.in_game=1..}}] run data modify storage {ns}:input with set value {{}}
 execute at @e[tag={ns}.snd_bomb] as @a[distance=..10,gamemode=!creative,gamemode=!spectator,scores={{{ns}.mp.in_game=1..}}] run function {ns}:v{version}/multiplayer/simulate_death
 
-tellraw @a [{MGS_TAG},{{"text":"💥 BOMB EXPLODED!","color":"red","bold":true}}]
+tellraw @a [{MGS_TAG},"💥 ",{{"text":"BOMB EXPLODED!","color":"red","bold":true}}]
 kill @e[tag={ns}.snd_bomb]
 function {ns}:v{version}/multiplayer/gamemodes/snd/attackers_win
 """)
@@ -244,7 +244,7 @@ execute if score #snd_blue_wins {ns}.data >= #snd_win_threshold {ns}.data run re
 scoreboard players add #snd_round {ns}.data 1
 execute if score #snd_round {ns}.data matches 4 if score #snd_attackers {ns}.data matches 1 run scoreboard players set #snd_attackers {ns}.data 2
 execute if score #snd_round {ns}.data matches 4 if score #snd_attackers {ns}.data matches 2 run scoreboard players set #snd_attackers {ns}.data 1
-execute if score #snd_round {ns}.data matches 4 run tellraw @a [{MGS_TAG},{{"text":"⚔ Sides swapped!","color":"gold"}}]
+execute if score #snd_round {ns}.data matches 4 run tellraw @a [{MGS_TAG},"⚔ ",{{"text":"Sides swapped!","color":"gold"}}]
 execute if score #snd_round {ns}.data matches 4 run playsound minecraft:block.note_block.xylophone player @a ~ ~ ~ 1 1.0
 # Start next round (delay 3 seconds = 60 ticks via schedule)
 schedule function {ns}:v{version}/multiplayer/gamemodes/snd/start_round 60t

@@ -2,8 +2,9 @@
 # Shared utility functions for functional modules
 import json
 import re
+from typing import Any
 
-from stewbeet import Dialog, Mem, TextComponent, set_json_encoder, write_versioned_function
+from stewbeet import Mem, TextComponent, write_versioned_function
 from stouputils.typing import JsonDict
 
 # [MGS] prefix as a nested list component (gold colored, lang-safe).
@@ -188,14 +189,15 @@ scoreboard players set @a {ns}.stam_seen 0
 
 def styled_text(text: str, **attrs: str) -> str:
     """ Create a styled text component, automatically splitting non-alphanumeric
-    prefixes/suffixes into raw strings so the lang plugin only sees clean alpha text.
+    prefixes/suffixes into raw strings so the lang plugin only sees clean alpha text
+    and emojis are NOT tinted by the style (emojis always render with default color).
 
     Args:
         text    (str): The text to display (may contain leading/trailing emoji/symbols).
         **attrs (str): SNBT attributes like color, bold, italic.
 
     Returns:
-        str: SNBT text component (single object or list with style inheritance).
+        str: SNBT text component (single object or list with a neutral head).
     """
     # Check if text has non-alphanumeric content (besides spaces)
     m = re.match(r'^([^a-zA-Z0-9]*)(.*?)([^a-zA-Z0-9]*)$', text, re.DOTALL)
@@ -208,16 +210,40 @@ def styled_text(text: str, **attrs: str) -> str:
         # Pure alphanumeric - single component
         return f'{{text:"{alpha}",{attr_str}}}' if attr_str else f'{{text:"{alpha}"}}'
 
-    # Build list: base element with style, raw prefix, alpha text, raw suffix
-    base = f'{{text:"",{attr_str}}}' if attr_str else '""'
-    parts = [base]
+    # Build list: neutral head (so emoji prefix/suffix stay uncolored), styled alpha text
+    parts = ['""']
     if prefix:
         parts.append(f'"{prefix}"')
     if alpha:
-        parts.append(f'{{text:"{alpha}"}}')
+        parts.append(f'{{text:"{alpha}",{attr_str}}}' if attr_str else f'{{text:"{alpha}"}}')
     if suffix:
         parts.append(f'"{suffix}"')
     return f'[{",".join(parts)}]'
+
+
+def split_emoji(text: str, **style: str | bool) -> "JsonDict | list[Any]":
+    """ Build a (Python) text component where any non-alphanumeric prefix/suffix (emojis)
+    renders uncolored/unstyled, while the alphanumeric core keeps the given style.
+
+    Args:
+        text    (str): The text to display (may contain leading/trailing emoji/symbols).
+        **style (str | bool): Component attributes like color or bold.
+
+    Returns:
+        JsonDict | list: A single styled component, or a list with a neutral head.
+    """
+    m = re.match(r'^([^a-zA-Z0-9]*)(.*?)([^a-zA-Z0-9]*)$', text, re.DOTALL)
+    prefix, alpha, suffix = m.groups() if m else ("", text, "")
+    if not alpha or (not prefix and not suffix):
+        # Pure alphanumeric or pure symbols: keep as a single styled component
+        return {"text": text, **style}
+    parts: list[Any] = ["", ]
+    if prefix:
+        parts.append(prefix)
+    parts.append({"text": alpha, **style} if style else {"text": alpha})
+    if suffix:
+        parts.append(suffix)
+    return parts
 
 
 def btn(label: str, command: str, color: str = "yellow", hover: str = "", action: str = "suggest_command") -> str:
@@ -240,26 +266,34 @@ def btn(label: str, command: str, color: str = "yellow", hover: str = "", action
     return json.dumps(obj)
 
 
+def dialog_function(dialog_id: str) -> str:
+    """ Return the versioned function path that shows the inline dialog for dialog_id. """
+    return f"{Mem.ctx.project_id}:v{Mem.ctx.project_version}/dialogs/{dialog_id}"
+
+
 def register_dialog(dialog_id: str, data: JsonDict) -> None:
-    """ Register a dialog resource under the project namespace.
+    """ Register a dialog as an INLINE dialog: instead of emitting a dialog resource file,
+    this writes a versioned function `dialogs/<dialog_id>` that shows the dialog via
+    inline SNBT on the /dialog command. Open it with `function {dialog_function(dialog_id)}`.
 
     Args:
         dialog_id (str): Path within the namespace, e.g. "config" or "multiplayer/setup".
         data      (dict): The dialog SNBT/JSON structure.
     """
-    ns: str = Mem.ctx.project_id
-    Mem.ctx.data[ns].dialogs[dialog_id] = set_json_encoder(Dialog(data))
+    write_versioned_function(f"dialogs/{dialog_id}", f"dialog show @s {json.dumps(data)}")
 
 
 def dialog_show_btn(dialog_ref: str, label: str, hover: str, color: str | None = None) -> JsonDict:
-    """ A dialog action button that opens another (registered) dialog via show_dialog. """
-    label_component: JsonDict = {"text": label, "color": color} if color else {"text": label}
-    return {"label": label_component, "tooltip": {"text": hover}, "action": {"type": "show_dialog", "dialog": dialog_ref}}
+    """ A dialog action button that opens another (inline-registered) dialog by running its
+    dialogs/<id> function (dialogs are inline, so there is no resource to show_dialog to). """
+    label_component: Any = split_emoji(label, color=color) if color else split_emoji(label)
+    dialog_id: str = dialog_ref.split(":", 1)[-1]
+    return {"label": label_component, "tooltip": {"text": hover}, "action": {"type": "run_command", "command": f"/function {dialog_function(dialog_id)}"}}
 
 
 def dialog_run_btn(label: str, command: str, hover: str, color: str = "green") -> JsonDict:
     """ A dialog action button that runs a command as the clicking player via run_command. """
-    return {"label": {"text": label, "color": color}, "tooltip": {"text": hover}, "action": {"type": "run_command", "command": command}}
+    return {"label": split_emoji(label, color=color), "tooltip": {"text": hover}, "action": {"type": "run_command", "command": command}}
 
 
 def register_value_picker(dialog_id: str, title: str, desc: str, options: list[tuple[str, str, str, str]], back_dialog: str) -> None:
@@ -275,7 +309,6 @@ def register_value_picker(dialog_id: str, title: str, desc: str, options: list[t
         options     (list): (label, command, color, hover) tuples, one per value button.
         back_dialog (str): Path within the namespace of the dialog the Back button returns to.
     """
-    ns: str = Mem.ctx.project_id
     actions: list[JsonDict] = [{
         "label": {"text": label, "color": color},
         "tooltip": {"text": hover},
@@ -293,7 +326,7 @@ def register_value_picker(dialog_id: str, title: str, desc: str, options: list[t
         "exit_action": {
             "label": {"text": "◀ Back", "color": "gray"},
             "tooltip": {"text": "Return to the previous menu"},
-            "action": {"type": "show_dialog", "dialog": f"{ns}:{back_dialog}"},
+            "action": {"type": "run_command", "command": f"/function {dialog_function(back_dialog)}"},
         },
     })
 
