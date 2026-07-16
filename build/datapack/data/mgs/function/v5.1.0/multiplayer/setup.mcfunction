@@ -1,8 +1,9 @@
 
 #> mgs:v5.1.0/multiplayer/setup
 #
-# @within	???
+# @within	mgs:v5.1.0/players/list_multiplayer
+#			mgs:v5.1.0/multiplayer/map_select
 #
 
-dialog show @s mgs:multiplayer/setup
+function mgs:v5.1.0/dialogs/multiplayer/setup
 

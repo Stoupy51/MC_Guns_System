@@ -43,6 +43,12 @@ advancement revoke @s only {ns}:v{version}/right_click
 execute if score @s {ns}.pending_clicks matches 0.. run scoreboard players set @s {ns}.held_click 1
 execute if score @s {ns}.pending_clicks matches ..-1 run scoreboard players set @s {ns}.held_click 0
 
+# A leftover partial burst counter with negative pending_clicks means the burst was interrupted
+# (e.g. the magazine emptied into an auto-reload before the burst finished). Reset it so this
+# click starts a fresh burst — otherwise the mid-burst path below would keep adding +1 to a
+# deeply negative pending_clicks and the weapon could never fire again (weapon lock).
+execute if score @s {ns}.pending_clicks matches ..-1 run scoreboard players set @s {ns}.burst_count 0
+
 # Check if we're mid-burst (burst started but not yet complete)
 scoreboard players set #is_mid_burst {ns}.data 0
 execute if score @s {ns}.burst_count matches 1.. run function {ns}:v{version}/utils/copy_gun_data

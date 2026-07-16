@@ -286,9 +286,11 @@ $function {ns}:v{version}/zombies/perks/apply/$(perk_id)
 			command.replace("{ns}", ns)
 			for command in perk_data.get("commands", [])
 		)
+		# Split the emoji prefix out of the colored component (emojis stay uncolored in chat)
+		msg_emoji, msg_text = perk_data["message"].split(" ", 1)
 		write_versioned_function(f"zombies/perks/apply/{perk_id}", f"""
 {extra_commands}
-tellraw @s [{MGS_TAG},{{"text":"{perk_data["message"]}","color":"{perk_data["message_color"]}"}}]
+tellraw @s [{MGS_TAG},"{msg_emoji} ",{{"text":"{msg_text}","color":"{perk_data["message_color"]}"}}]
 """)
 
 	## Lose all perks: called when a player goes down

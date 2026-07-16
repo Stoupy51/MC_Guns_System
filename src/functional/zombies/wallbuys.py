@@ -411,7 +411,7 @@ $data modify storage {ns}:temp _wb_weapon set from storage {ns}:zombies wallbuy_
 """)
 
 	write_versioned_function("zombies/wallbuys/render_hover_title", f"""
-title @s title [{{"text":"🔫 ","color":"gold"}},{{"storage":"{ns}:temp","nbt":"_wb_weapon.item_name","color":"gold","interpret":true}}]
+title @s title ["","🔫 ",{{"storage":"{ns}:temp","nbt":"_wb_weapon.item_name","color":"gold","interpret":true}}]
 """)
 
 	write_versioned_function("zombies/wallbuys/on_hover", f"""

@@ -11,6 +11,13 @@ execute if entity @s[tag=mgs.reloading] run tag @s remove mgs.reloading
 execute if entity @s[tag=mgs.pump_sound] run tag @s remove mgs.pump_sound
 execute if entity @s[tag=mgs.reload_mid_sound] run tag @s remove mgs.reload_mid_sound
 
+# If player was zoomed on the previous weapon, clear the zoom state (score + slowness);
+# otherwise switching gun->gun while zoomed leaves the zoom stuck forever
+execute if score @s mgs.zoom matches 1 run function mgs:v5.1.0/zoom/clear_state
+
+# Cancel any in-progress burst from the previous weapon
+scoreboard players set @s mgs.burst_count 0
+
 # Apply weapon switch cooldown from stats
 execute store result score #cooldown mgs.data run data get storage mgs:gun all.stats.switch
 

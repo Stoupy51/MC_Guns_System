@@ -271,7 +271,7 @@ $execute if score #random {ns}.data matches 31 run loot replace entity @s $(slot
     # buttons; picking a value runs the scoreboard command directly. Each value button is
     # independent (no submit step), so opening the menu never resets untouched settings — the
     # same "click the value you want" model as the old menu, just rendered as native dialogs.
-    from .helpers import dialog_run_btn, dialog_show_btn, register_dialog, register_value_picker
+    from .helpers import dialog_function, dialog_run_btn, dialog_show_btn, register_dialog, register_value_picker, split_emoji
 
     # --- Global Settings (server-wide fake-player scores) ---
     rpg_opts = [
@@ -334,14 +334,14 @@ $execute if score #random {ns}.data matches 31 run loot replace entity @s $(slot
     def register_category(sub_id: str, title: str, actions: list) -> None:
         register_dialog(sub_id, {
             "type": "minecraft:multi_action",
-            "title": {"text": title, "color": "gold", "bold": True},
+            "title": split_emoji(title, color="gold", bold=True),
             "actions": actions,
             # Each category lists items of a single kind (settings / mode links) → one column.
             "columns": 1,
             "exit_action": {
                 "label": {"text": "◀ Back", "color": "gray"},
                 "tooltip": {"text": "Return to configuration"},
-                "action": {"type": "show_dialog", "dialog": f"{ns}:config"},
+                "action": {"type": "run_command", "command": f"/function {dialog_function('config')}"},
             },
         })
 
@@ -377,7 +377,7 @@ $execute if score #random {ns}.data matches 31 run loot replace entity @s $(slot
     ]
     register_dialog("config", {
         "type": "minecraft:multi_action",
-        "title": {"text": "☣ MGS Configuration ☣", "color": "gold", "bold": True},
+        "title": split_emoji("☣ MGS Configuration ☣", color="gold", bold=True),
         "body": [{"type": "minecraft:plain_message", "contents": {"text": "Pick a category", "color": "gray"}}],
         "actions": config_actions,
         # A clean vertical list of categories → one column.
@@ -385,5 +385,5 @@ $execute if score #random {ns}.data matches 31 run loot replace entity @s $(slot
         "exit_action": {"label": {"translate": "gui.done"}},
     })
 
-    # /function mgs:config now opens the dialog
-    write_function(f"{ns}:config", f"dialog show @s {ns}:config")
+    # /function mgs:config now opens the (inline) dialog
+    write_function(f"{ns}:config", f"function {dialog_function('config')}")

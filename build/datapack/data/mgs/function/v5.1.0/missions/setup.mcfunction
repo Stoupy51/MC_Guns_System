@@ -1,8 +1,9 @@
 
 #> mgs:v5.1.0/missions/setup
 #
-# @within	???
+# @within	mgs:v5.1.0/players/list_missions
+#			mgs:v5.1.0/missions/map_select
 #
 
-dialog show @s mgs:missions/setup
+function mgs:v5.1.0/dialogs/missions/setup
 

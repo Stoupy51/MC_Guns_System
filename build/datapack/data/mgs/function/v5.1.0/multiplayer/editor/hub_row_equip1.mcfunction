@@ -8,5 +8,5 @@
 # @args		equip_slot1_name (unknown)
 #
 
-$data modify storage mgs:temp dialog.actions append value {label:[{text:"\ud83d\udca3 ",color:"red"},[{translate:"mgs.grenade",color:"white"}, " 1: "],{text:"$(equip_slot1_name)",color:"green"}],tooltip:[{text:"1 ",color:"gray"}, {translate:"mgs.ptclick_to_change"}],action:{type:"run_command",command:"/trigger mgs.player.config set 108"}}
+$data modify storage mgs:temp dialog.actions append value {label:["",{text:"\ud83d\udca3 "},[{translate:"mgs.grenade",color:"white"}, " 1: "],{text:"$(equip_slot1_name)",color:"green"}],tooltip:[{text:"1 ",color:"gray"}, {translate:"mgs.ptclick_to_change"}],action:{type:"run_command",command:"/trigger mgs.player.config set 108"}}
 

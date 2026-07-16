@@ -18,6 +18,6 @@ scoreboard players set @s mgs.mp.spectate_timer 60
 function mgs:v5.1.0/missions/spectate_random_player
 
 # Announce respawn delay to the dying player
-title @s title [{"text":"☠","color":"red"}]
+title @s title ["☠"]
 title @s subtitle [{"translate":"mgs.respawning_in_3_seconds","color":"gray"}]
 

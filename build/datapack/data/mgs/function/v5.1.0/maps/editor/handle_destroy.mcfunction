@@ -10,3 +10,6 @@
 execute at @s unless entity @n[tag=mgs.map_element,distance=..3] run tellraw @a[tag=mgs.map_editor] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.no_element_found_within_3_blocks","color":"red"}]
 execute at @s as @n[tag=mgs.map_element,distance=..3] run function mgs:v5.1.0/maps/editor/destroy_element
 
+# Refresh model displays so a destroyed machine's model disappears right away
+function mgs:v5.1.0/maps/editor/refresh_displays
+

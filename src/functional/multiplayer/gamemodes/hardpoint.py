@@ -67,7 +67,7 @@ scoreboard players add #hp_zone_idx {ns}.data 1
 
 function {ns}:v{version}/multiplayer/gamemodes/hp/summon_marker with storage {ns}:temp _hp_pos
 
-tellraw @a [{MGS_TAG},{{"text":"⚡ Hardpoint ","color":"dark_purple"}},{{"storage":"{ns}:temp","nbt":"_hp_pos.label","color":"yellow","interpret":true}},{{"text":" active!","color":"dark_purple"}}]
+tellraw @a [{MGS_TAG},"⚡ ",{{"text":"Hardpoint ","color":"dark_purple"}},{{"storage":"{ns}:temp","nbt":"_hp_pos.label","color":"yellow","interpret":true}},{{"text":" active!","color":"dark_purple"}}]
 playsound minecraft:block.note_block.chime player @a ~ ~ ~ 1 1.0
 """)
 

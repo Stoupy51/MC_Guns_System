@@ -11,9 +11,9 @@ data modify storage mgs:temp dialog set value {type:"minecraft:multi_action",tit
 data modify storage mgs:temp dialog.title set value [{text:"",color:"gold",bold:true},{translate:"mgs.my_loadouts"}," — ",{translate:"mgs.favorites"}]
 
 # Add filter/sort buttons (favorites tab active)
-data modify storage mgs:temp dialog.actions append value {label:[{text:"",color:"gold",bold:true},"⭐ ",{translate:"mgs.favorites"}],tooltip:{translate:"mgs.show_only_your_favorited_loadouts"},action:{type:"run_command",command:"/trigger mgs.player.config set 1603"}}
-data modify storage mgs:temp dialog.actions append value {label:[{text:"",color:"white",bold:true},"📋 ",{translate:"mgs.all"}],tooltip:{translate:"mgs.show_all_your_loadouts_favorites_first_then_private_then_public"},action:{type:"run_command",command:"/trigger mgs.player.config set 102"}}
-data modify storage mgs:temp dialog.actions append value {label:[{text:"",color:"green",bold:true},"✚ ",{translate:"mgs.create"}],tooltip:{translate:"mgs.build_a_new_custom_loadout_from_scratch"},action:{type:"run_command",command:"/trigger mgs.player.config set 100"}}
+data modify storage mgs:temp dialog.actions append value {label:["","⭐ ",{translate:"mgs.favorites",color:"gold",bold:true}],tooltip:{translate:"mgs.show_only_your_favorited_loadouts"},action:{type:"run_command",command:"/trigger mgs.player.config set 1603"}}
+data modify storage mgs:temp dialog.actions append value {label:["","📋 ",{translate:"mgs.all",color:"white",bold:true}],tooltip:{translate:"mgs.show_all_your_loadouts_favorites_first_then_private_then_public"},action:{type:"run_command",command:"/trigger mgs.player.config set 102"}}
+data modify storage mgs:temp dialog.actions append value {label:["","✚ ",{translate:"mgs.create",color:"green",bold:true}],tooltip:{translate:"mgs.build_a_new_custom_loadout_from_scratch"},action:{type:"run_command",command:"/trigger mgs.player.config set 100"}}
 
 # Load player favorites
 function mgs:v5.1.0/multiplayer/shared/load_player_favorites

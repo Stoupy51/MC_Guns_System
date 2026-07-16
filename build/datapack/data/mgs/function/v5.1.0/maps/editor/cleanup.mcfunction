@@ -5,8 +5,9 @@
 #			mgs:v5.1.0/maps/editor/exit
 #
 
-# Kill all editor markers
+# Kill all editor markers and model displays
 kill @e[tag=mgs.map_element]
+kill @e[tag=mgs.editor_display]
 
 # Reset editor state
 scoreboard players set @s mgs.mp.map_edit 0

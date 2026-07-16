@@ -127,6 +127,19 @@ data modify storage {ns}:signals on_zoom.weapon set from storage {ns}:gun all
 function #{ns}:signals/on_zoom
 """)
 
+    # Clear the player-side zoom state without touching the held item.
+    # Called on weapon switch: zoom/main only unzooms when the HELD gun has the zoom stat, so
+    # switching from a zoomed gun to another gun would otherwise leave the player stuck with
+    # zoom=1 and infinite slowness. The old item's zoomed model/stats self-heal via zoom/remove
+    # the next time it is held while not sneaking. (mgs:gun storage already holds the NEW
+    # weapon here, so zoom/remove itself must not be used — it would corrupt the new weapon.)
+    write_versioned_function("zoom/clear_state", f"""
+playsound {ns}:common/lean_out player @s
+scoreboard players reset @s {ns}.zoom
+scoreboard players set @s {ns}.zoom_timer 0
+effect clear @s slowness
+""")
+
     # Function to check and handle slowness effect
     write_versioned_function("zoom/check_slowness", f"""
 # If player was zooming and switched slot so no longer holding a gun, remove slowness effect

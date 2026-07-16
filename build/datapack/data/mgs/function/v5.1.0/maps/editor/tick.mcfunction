@@ -13,6 +13,11 @@ execute unless score @s mgs.mp.map_edit matches 1 run return fail
 execute as @e[tag=mgs.map_element] run data modify entity @s Rotation[0] set from entity @s data.yaw
 execute as @e[tag=mgs.map_element] at @s positioned ^ ^ ^0.5 run particle dust{color:[1.0,1.0,1.0],scale:0.5} ~ ~1.69 ~ 0.1 0.1 0.1 0 5
 
+# Model displays: rebuild once per second so rotation/config edits on markers stay in sync
+scoreboard players operation #ed_disp_phase mgs.data = #total_tick mgs.data
+scoreboard players operation #ed_disp_phase mgs.data %= #20 mgs.data
+execute if score #ed_disp_phase mgs.data matches 0 run function mgs:v5.1.0/maps/editor/refresh_displays
+
 # Per-element particles
 execute at @e[tag=mgs.element.base_coordinates] run particle dust{color:[1.0,0.0,1.0],scale:1.5} ~ ~1 ~ 0.3 0.5 0.3 0 2
 execute at @e[tag=mgs.element.red_spawn] run particle dust{color:[1.0,0.2,0.2],scale:1.0} ~ ~1 ~ 0.2 0.5 0.2 0 1
@@ -29,13 +34,8 @@ execute at @e[tag=mgs.element.mission_spawn] run particle dust{color:[0.0,1.0,1.
 execute at @e[tag=mgs.element.enemy] run particle dust{color:[1.0,0.2,0.2],scale:1.0} ~ ~1 ~ 0.3 0.5 0.3 0 1
 execute at @e[tag=mgs.element.zombie_spawn] run particle dust{color:[0.0,0.5,0.0],scale:1.0} ~ ~1 ~ 0.3 0.5 0.3 0 1
 execute at @e[tag=mgs.element.player_spawn_zb] run particle dust{color:[0.0,1.0,1.0],scale:1.0} ~ ~1 ~ 0.3 0.5 0.3 0 1
-execute at @e[tag=mgs.element.wallbuy] run particle dust{color:[1.0,1.0,0.0],scale:1.0} ~ ~1 ~ 0.3 0.5 0.3 0 1
 execute at @e[tag=mgs.element.door] run particle dust{color:[1.0,0.6,0.0],scale:1.0} ~ ~1 ~ 0.3 0.5 0.3 0 1
 execute at @e[tag=mgs.element.trap] run particle dust{color:[1.0,0.2,0.2],scale:1.0} ~ ~1 ~ 0.3 0.5 0.3 0 1
-execute at @e[tag=mgs.element.perk_machine] run particle dust{color:[0.5,0.0,0.5],scale:1.0} ~ ~1 ~ 0.3 0.5 0.3 0 1
-execute at @e[tag=mgs.element.pap_machine] run particle dust{color:[0.8,0.1,0.1],scale:1.0} ~ ~1 ~ 0.3 0.5 0.3 0 1
-execute at @e[tag=mgs.element.mystery_box_pos] run particle dust{color:[1.0,0.0,1.0],scale:1.0} ~ ~1 ~ 0.3 0.5 0.3 0 1
-execute at @e[tag=mgs.element.power_switch] run particle dust{color:[0.0,1.0,0.0],scale:1.0} ~ ~1 ~ 0.3 0.5 0.3 0 1
 execute at @e[tag=mgs.element.barrier] run particle dust{color:[0.0,1.0,1.0],scale:1.0} ~ ~1 ~ 0.3 0.5 0.3 0 1
 
 # Actionbar: show nearest element info (within 5 blocks)

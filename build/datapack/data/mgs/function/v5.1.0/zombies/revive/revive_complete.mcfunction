@@ -51,7 +51,7 @@ effect give @s minecraft:instant_health 1 255 true
 scoreboard players set @s mgs.stam_seen 0
 
 # Announce
-title @s title [{"text":"❤","color":"green"}]
+title @s title ["❤"]
 title @s subtitle [{"translate":"mgs.you_have_been_revived","color":"green"}]
 tellraw @a[scores={mgs.zb.in_game=1}] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"selector":"@s","color":"green"},[{"text":" ","color":"gray"}, {"translate":"mgs.has_been_revived"}]]
 

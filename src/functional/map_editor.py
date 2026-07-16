@@ -66,6 +66,11 @@ ALL_ELEMENTS: dict[str, JsonDict] = {
                            }},
 }
 
+# Elements rendered as real in-game models in the editor (instead of dust particles).
+# Each has a maps/editor/displays/<etype> function mirroring the game's own display setup,
+# rebuilt every second so rotation/config edits on the marker stay in sync.
+MODEL_DISPLAY_ELEMENTS: tuple[str, ...] = ("wallbuy", "perk_machine", "pap_machine", "mystery_box_pos", "power_switch")
+
 # Field documentation ───────────────────────────────────────────
 # Tooltips shown (as a hover "ⓘ") next to constant/enum config fields in the element editor,
 # so map makers don't have to guess what the magic numbers mean. Keyed by (element_type, field);
@@ -220,7 +225,7 @@ function {ns}:v{version}/maps/editor/list/multiplayer
 
 		write_versioned_function(f"maps/editor/list/{mode_key}", f"""
 tellraw @s {sep}
-tellraw @s [{{"text":"","color":"gold","bold":true}},"       🗺 ",{{"text":"Map Editor"}}," 🗺"]
+tellraw @s ["","       🗺 ",[{{"text":"","color":"gold","bold":true}},{{"text":"Map Editor"}}]," 🗺"]
 tellraw @s {sep}
 tellraw @s ["  ",{mode_tabs}]
 tellraw @s ""
@@ -274,7 +279,7 @@ $tellraw @s ["  ",{{"text":"$(name)","color":"white"}},{{"text":" ($(id))","colo
 
 		write_versioned_function(f"maps/editor/create/{mode_key}", f"""
 tellraw @s {sep}
-tellraw @s [{{"text":"","color":"gold","bold":true}},"  📝 ",{{"text":"Create New {mode_info['name']} Map"}}]
+tellraw @s ["","  📝 ",[{{"text":"","color":"gold","bold":true}},{{"text":"Create New {mode_info['name']} Map"}}]]
 tellraw @s {sep}
 tellraw @s {{"text":"Run this command to create a new map:","color":"yellow"}}
 tellraw @s [{{"text":"","color":"aqua","click_event":{{"action":"suggest_command","command":"/data modify storage {ns}:maps {sk} append value {{{create_snbt}}}"}}}},"/data modify storage {ns}:maps {sk} append value {{...}}"]
@@ -335,8 +340,9 @@ execute store result storage {ns}:temp _tp.y int 1 run scoreboard players get #b
 execute store result storage {ns}:temp _tp.z int 1 run scoreboard players get #base_z {ns}.data
 function {ns}:v{version}/shared/tp_to_position with storage {ns}:temp _tp
 
-# Summon markers for existing elements
+# Summon markers for existing elements, then build their model displays
 function {ns}:v{version}/maps/editor/summon_existing
+function {ns}:v{version}/maps/editor/refresh_displays
 
 # Give editor tools (dispatch by mode)
 function {ns}:v{version}/maps/editor/give_tools
@@ -648,8 +654,9 @@ function {ns}:v{version}/maps/editor/summon_zb_marker with storage {ns}:temp _zb
 # Copy all compound data onto the marker
 execute as @n[tag={ns}.new_zb_marker] run data modify entity @s data set from storage {ns}:temp _zb_iter[0]
 
-# Set yaw from rotation for the direction indicator
+# Set yaw from rotation for the direction indicator (sync entity Rotation too for model displays)
 execute if data storage {ns}:temp _zb_iter[0].rotation as @n[tag={ns}.new_zb_marker] run data modify entity @s data.yaw set from storage {ns}:temp _zb_iter[0].rotation[0]
+execute as @n[tag={ns}.new_zb_marker] run data modify entity @s Rotation[0] set from entity @s data.yaw
 
 tag @e[tag={ns}.new_zb_marker] remove {ns}.new_zb_marker
 
@@ -678,7 +685,7 @@ $summon minecraft:marker $(x) $(y) $(z) {{Tags:["{ns}.map_element","$(tag)","{ns
 
 	save_exit_cmd = (
 		f'item replace entity @s inventory.26 with minecraft:bat_spawn_egg'
-		f'[minecraft:item_name={{"text":"💾 Save & Exit","color":"green","italic":false,"bold":true}},'
+		f'[minecraft:item_name=["","💾 ",{{"text":"Save & Exit","color":"green","italic":false,"bold":true}}],'
 		f'minecraft:item_model="minecraft:turtle_spawn_egg",'
 		f'minecraft:custom_data={{{ns}:{{editor:true,type:"editor_save_exit"}}}},'
 		f'minecraft:entity_data={{id:"minecraft:bat",NoAI:1b,Silent:1b,Invulnerable:1b,Tags:["{ns}.new_element","{ns}.element.editor_save_exit"]}}]'
@@ -694,7 +701,7 @@ $summon minecraft:marker $(x) $(y) $(z) {{Tags:["{ns}.map_element","$(tag)","{ns
 
 	save_only_cmd = (
 		f'item replace entity @s inventory.24 with minecraft:bat_spawn_egg'
-		f'[minecraft:item_name={{"text":"💾 Save","color":"aqua","italic":false,"bold":true}},'
+		f'[minecraft:item_name=["","💾 ",{{"text":"Save","color":"aqua","italic":false,"bold":true}}],'
 		f'minecraft:item_model="minecraft:axolotl_spawn_egg",'
 		f'minecraft:custom_data={{{ns}:{{editor:true,type:"editor_save"}}}},'
 		f'minecraft:entity_data={{id:"minecraft:bat",NoAI:1b,Silent:1b,Invulnerable:1b,Tags:["{ns}.new_element","{ns}.element.editor_save"]}}]'
@@ -702,7 +709,7 @@ $summon minecraft:marker $(x) $(y) $(z) {{Tags:["{ns}.map_element","$(tag)","{ns
 
 	coord_stick_cmd = (
 		f'item replace entity @s inventory.23 with minecraft:warped_fungus_on_a_stick'
-		f'[minecraft:item_name={{"text":"📐 Coord Stick","color":"yellow","italic":false,"bold":true}},'
+		f'[minecraft:item_name=["","📐 ",{{"text":"Coord Stick","color":"yellow","italic":false,"bold":true}}],'
 		f'minecraft:custom_data={{{ns}:{{coord_stick:true}}}},'
 		f'minecraft:item_model="minecraft:stick",'
 		f'minecraft:enchantment_glint_override=true]'
@@ -747,7 +754,7 @@ $summon minecraft:marker $(x) $(y) $(z) {{Tags:["{ns}.map_element","$(tag)","{ns
 			)
 			egg_cmds.append(
 				f'item replace entity @s hotbar.7 with minecraft:bat_spawn_egg'
-				f'[minecraft:item_name={{"text":"🔧 Configure","color":"aqua","italic":false,"bold":true}},'
+				f'[minecraft:item_name=["","🔧 ",{{"text":"Configure","color":"aqua","italic":false,"bold":true}}],'
 				f'minecraft:item_model="minecraft:breeze_spawn_egg",'
 				f'minecraft:custom_data={{{ns}:{{editor:true,type:"zb_configure"}}}},'
 				f'minecraft:entity_data={{id:"minecraft:bat",NoAI:1b,Silent:1b,Invulnerable:1b,Tags:["{ns}.new_element","{ns}.element.zb_configure"]}}]'
@@ -1033,18 +1040,22 @@ scoreboard players remove #yaw {ns}.data 720
 # Apply 180° yaw offset
 scoreboard players add #yaw {ns}.data 180
 
-# Store yaw on marker
+# Store yaw on marker (and sync entity Rotation immediately so the model display below is oriented right away)
 execute as @n[tag={ns}.new_zb_marker] store result entity @s data.yaw float 1 run scoreboard players get #yaw {ns}.data
+execute as @n[tag={ns}.new_zb_marker] run data modify entity @s Rotation[0] set from entity @s data.yaw
 
 # For doors: capture block from player's offhand (required)
 execute if entity @s[tag={ns}.element.door] as @p[tag={ns}.map_editor,distance=..6,sort=nearest] run data modify storage {ns}:temp _zb_offhand_block set from entity @s equipment.offhand.id
-execute if entity @s[tag={ns}.element.door] unless data storage {ns}:temp _zb_offhand_block run tellraw @a[tag={ns}.map_editor] [{MGS_TAG},{{"text":"⚠ Door cancelled! Hold a block in offhand.","color":"red"}}]
+execute if entity @s[tag={ns}.element.door] unless data storage {ns}:temp _zb_offhand_block run tellraw @a[tag={ns}.map_editor] [{MGS_TAG},"⚠ ",{{"text":"Door cancelled! Hold a block in offhand.","color":"red"}}]
 execute if entity @s[tag={ns}.element.door] unless data storage {ns}:temp _zb_offhand_block run kill @e[tag={ns}.new_zb_marker]
 execute if entity @s[tag={ns}.element.door] unless data storage {ns}:temp _zb_offhand_block run return fail
 execute if entity @s[tag={ns}.element.door] as @n[tag={ns}.new_zb_marker] run data modify entity @s data.block set from storage {ns}:temp _zb_offhand_block
 data remove storage {ns}:temp _zb_offhand_block
 
 tag @e[tag={ns}.new_zb_marker] remove {ns}.new_zb_marker
+
+# Refresh model displays right away (wallbuy/perk/pap/mystery box/power switch)
+function {ns}:v{version}/maps/editor/refresh_displays
 
 # Announce
 {chr(10).join(zb_msg_lines)}
@@ -1055,6 +1066,9 @@ tag @e[tag={ns}.new_zb_marker] remove {ns}.new_zb_marker
 # Find the nearest map element marker (within 3 blocks)
 execute at @s unless entity @n[tag={ns}.map_element,distance=..3] run tellraw @a[tag={ns}.map_editor] [{MGS_TAG},{{"text":"No element found within 3 blocks!","color":"red"}}]
 execute at @s as @n[tag={ns}.map_element,distance=..3] run function {ns}:v{version}/maps/editor/destroy_element
+
+# Refresh model displays so a destroyed machine's model disappears right away
+function {ns}:v{version}/maps/editor/refresh_displays
 """)
 
 	# Destroy Element (universal) ────────────────────────────────
@@ -1178,7 +1192,7 @@ $tellraw {config_target} ["    ",{{"text":"[Edit Nearest {einfo["name"]}]","colo
 		if not einfo["defaults"]:
 			continue  # Skip elements with no type-specific defaults
 		zb_defaults_lines.append(
-			f'tellraw @a[tag={ns}.map_editor] ["  ",{{"text":"{einfo["emoji"]} {einfo["name"]}","color":"{einfo["color"]}","bold":true}}]'
+			f'tellraw @a[tag={ns}.map_editor] ["  ","{einfo["emoji"]} ",{{"text":"{einfo["name"]}","color":"{einfo["color"]}","bold":true}}]'
 		)
 		for field, default_val in einfo["defaults"].items():
 			snbt_val = snbt_suggest(default_val)
@@ -1222,7 +1236,7 @@ execute at @s unless entity @n[tag={ns}.map_element,distance=..10] run tellraw @
 	for etype, einfo in zb_elements.items():
 		zb_config_lines.append(
 			f'execute if entity @s[tag={ns}.element.{etype}] run tellraw @a[tag={ns}.map_editor] '
-			f'["  ",{{"text":"{einfo["emoji"]} {einfo["name"]} Configuration","color":"{einfo["color"]}","bold":true}}]'
+			f'["  ","{einfo["emoji"]} ",{{"text":"{einfo["name"]} Configuration","color":"{einfo["color"]}","bold":true}}]'
 		)
 		# group_id only shown for spawn-type zombies elements. Doors don't carry a separate
 		# group_id: a door's link_id is its front-room group, and back_group_id is the back room.
@@ -1288,7 +1302,7 @@ execute at @s unless entity @n[tag={ns}.map_element,distance=..10] run tellraw @
 		)
 		zb_config_lines.append(
 			f'execute if entity @s[tag={ns}.element.{etype}] run tellraw @a[tag={ns}.map_editor] '
-			f'["  ",{{"text":"{einfo["emoji"]} {einfo["name"]}","color":"{einfo["color"]}","bold":true}}]'
+			f'["  ","{einfo["emoji"]} ",{{"text":"{einfo["name"]}","color":"{einfo["color"]}","bold":true}}]'
 		)
 		zb_config_lines.append(
 			f'execute if entity @s[tag={ns}.element.{etype}] run tellraw @a[tag={ns}.map_editor] '
@@ -1317,7 +1331,7 @@ execute at @s unless entity @n[tag={ns}.map_element,distance=..10] run tellraw @
 	)
 	zb_config_lines.append(
 		f'execute if entity @s[tag={ns}.element.enemy] run tellraw @a[tag={ns}.map_editor] '
-		f'["  ",{{"text":"👤 Enemy Configuration","color":"red","bold":true}}]'
+		f'["  ","👤 ",{{"text":"Enemy Configuration","color":"red","bold":true}}]'
 	)
 	zb_config_lines.append(
 		f'execute if entity @s[tag={ns}.element.enemy] run tellraw @a[tag={ns}.map_editor] '
@@ -1331,7 +1345,7 @@ execute at @s unless entity @n[tag={ns}.map_element,distance=..10] run tellraw @
 			continue
 		zb_config_lines.append(
 			f'execute if entity @s[tag={ns}.element.{etype}] run tellraw @a[tag={ns}.map_editor] '
-			f'["  ",{{"text":"{einfo["emoji"]} {einfo["name"]} — no configurable fields","color":"gray","italic":true}}]'
+			f'["  ","{einfo["emoji"]} ",{{"text":"{einfo["name"]} — no configurable fields","color":"gray","italic":true}}]'
 		)
 
 	# For base_coordinates: show start_function and tick_function
@@ -1357,7 +1371,7 @@ execute at @s unless entity @n[tag={ns}.map_element,distance=..10] run tellraw @
 	)
 	zb_config_lines.append(
 		f'execute if entity @s[tag={ns}.element.base_coordinates] run tellraw @a[tag={ns}.map_editor] '
-		f'["  ",{{"text":"⬟ Base Coordinates Configuration","color":"light_purple","bold":true}}]'
+		f'["  ","⬟ ",{{"text":"Base Coordinates Configuration","color":"light_purple","bold":true}}]'
 	)
 	zb_config_lines.append(
 		f'execute if entity @s[tag={ns}.element.base_coordinates] run tellraw @a[tag={ns}.map_editor] '
@@ -1369,7 +1383,7 @@ execute at @s unless entity @n[tag={ns}.map_element,distance=..10] run tellraw @
 	)
 	zb_config_lines.append(
 		f'execute if entity @s[tag={ns}.element.base_coordinates] run tellraw @a[tag={ns}.map_editor] '
-		f'["    ",{{"text":"💎 start_function is called once when the game starts, tick_function every game tick.","color":"dark_gray","italic":true}}]'
+		f'["    ","💎 ",{{"text":"start_function is called once when the game starts, tick_function every game tick.","color":"dark_gray","italic":true}}]'
 	)
 
 	zb_config_lines.append(f"tellraw @a[tag={ns}.map_editor] {sep}")
@@ -1708,8 +1722,9 @@ tellraw @s [{MGS_TAG},{{"text":"Exited map editor (changes discarded).","color":
 
 	# Cleanup (shared by save_exit and exit) ─────────────────────
 	write_versioned_function("maps/editor/cleanup", f"""
-# Kill all editor markers
+# Kill all editor markers and model displays
 kill @e[tag={ns}.map_element]
+kill @e[tag={ns}.editor_display]
 
 # Reset editor state
 scoreboard players set @s {ns}.mp.map_edit 0
@@ -1719,10 +1734,99 @@ tag @s remove {ns}.map_editor
 clear @s
 """)
 
+	# Model Displays ─────────────────────────────────────────────
+	# Show the real in-game models for wallbuys, perk machines, PAP, mystery boxes, and the
+	# power switch while editing. Displays are rebuilt from the markers every second (and on
+	# placement/destroy), so edits like rotation or item_model changes stay in sync.
+	# Each displays/<etype> function mirrors that system's own setup placement exactly.
+	write_versioned_function("maps/editor/refresh_displays", f"""
+# Rebuild all editor model displays from the current markers
+kill @e[tag={ns}.editor_display]
+execute as @e[tag={ns}.element.wallbuy] at @s run function {ns}:v{version}/maps/editor/displays/wallbuy
+execute as @e[tag={ns}.element.perk_machine] at @s run function {ns}:v{version}/maps/editor/displays/perk_machine
+execute as @e[tag={ns}.element.pap_machine] at @s run function {ns}:v{version}/maps/editor/displays/pap_machine
+execute as @e[tag={ns}.element.mystery_box_pos] at @s run function {ns}:v{version}/maps/editor/displays/mystery_box_pos
+execute as @e[tag={ns}.element.power_switch] at @s run function {ns}:v{version}/maps/editor/displays/power_switch
+""")
+
+	## Wallbuy: weapon item display against the wall (same placement/scale as zombies/wallbuys setup)
+	write_versioned_function("maps/editor/displays/wallbuy", f"""
+# @s = wallbuy marker, at @s (marker Rotation is synced from data.yaw)
+data modify storage {ns}:temp _ed_disp.weapon_id set from entity @s data.weapon_id
+data modify storage {ns}:temp _ed_disp.yaw set value 0.0f
+data modify storage {ns}:temp _ed_disp.yaw set from entity @s data.yaw
+function {ns}:v{version}/maps/editor/displays/summon_wallbuy with storage {ns}:temp _ed_disp
+""")
+	write_versioned_function("maps/editor/displays/summon_wallbuy", f"""
+# Display offset up + toward the wall face, scale 0.6 (mirrors zombies/wallbuys/place_at + tp)
+$summon minecraft:item_display ^ ^0.5 ^-0.49 {{Rotation:[$(yaw),0f],billboard:"fixed",item_display:"fixed",Tags:["{ns}.editor_display","{ns}._ed_new_disp"],transformation:{{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[0.6f,0.6f,0.6f]}}}}
+$execute as @n[tag={ns}._ed_new_disp] run loot replace entity @s contents loot {ns}:i/$(weapon_id)
+tag @e[tag={ns}._ed_new_disp] remove {ns}._ed_new_disp
+""")
+
+	## Perk machine: mirror zombies/perks/setup_iter display logic (default potion model with
+	## per-perk override; map-defined display_item/item_model take precedence)
+	write_versioned_function("maps/editor/displays/perk_machine", f"""
+# @s = perk machine marker, at @s
+data modify storage {ns}:temp _pk_disp.tag set value "{ns}.editor_display"
+data modify storage {ns}:temp _pk_disp.item_id set value ""
+data modify storage {ns}:temp _pk_disp.item_model set value ""
+data modify storage {ns}:temp _pk_disp.yaw set value 0.0f
+execute if data entity @s data.display_item run data modify storage {ns}:temp _pk_disp.item_id set from entity @s data.display_item
+execute if data entity @s data.item_model run data modify storage {ns}:temp _pk_disp.item_model set from entity @s data.item_model
+execute if data storage {ns}:temp _pk_disp{{item_id:""}} run data modify storage {ns}:temp _pk_disp.item_id set value "minecraft:potion"
+execute if data storage {ns}:temp _pk_disp{{item_model:""}} run data modify storage {ns}:temp _pk_disp.item_model set value "minecraft:potion"
+data modify storage {ns}:temp _pk_disp.perk_id set from entity @s data.perk_id
+execute if data storage {ns}:temp _pk_disp{{item_model:"minecraft:potion"}} run function {ns}:v{version}/zombies/perks/override_perk_model with storage {ns}:temp _pk_disp
+execute if data entity @s data.yaw run data modify storage {ns}:temp _pk_disp.yaw set from entity @s data.yaw
+execute align xyz positioned ~.5 ~-.37 ~.5 positioned ^ ^ ^-0.5 run function {ns}:v{version}/zombies/display/summon_machine_display with storage {ns}:temp _pk_disp
+""")
+
+	## Pack-a-Punch: mirror zombies/pap/setup_iter display logic
+	write_versioned_function("maps/editor/displays/pap_machine", f"""
+# @s = pap machine marker, at @s
+data modify storage {ns}:temp _pap_disp.tag set value "{ns}.editor_display"
+data modify storage {ns}:temp _pap_disp.item_id set value ""
+data modify storage {ns}:temp _pap_disp.item_model set value ""
+data modify storage {ns}:temp _pap_disp.yaw set value 0.0f
+execute if data entity @s data.display_item run data modify storage {ns}:temp _pap_disp.item_id set from entity @s data.display_item
+execute if data entity @s data.item_model run data modify storage {ns}:temp _pap_disp.item_model set from entity @s data.item_model
+execute if data storage {ns}:temp _pap_disp{{item_id:""}} run data modify storage {ns}:temp _pap_disp.item_id set value "minecraft:netherite_block"
+execute if data storage {ns}:temp _pap_disp{{item_model:""}} run data modify storage {ns}:temp _pap_disp.item_model set value "{ns}:pack_a_punch"
+execute if data entity @s data.yaw run data modify storage {ns}:temp _pap_disp.yaw set from entity @s data.yaw
+execute positioned ^ ^ ^-0.5 positioned ~ ~-0.4 ~ run function {ns}:v{version}/zombies/display/summon_machine_display with storage {ns}:temp _pap_disp
+""")
+
+	## Mystery box: two-piece chest (base + lid). The in-game box interaction sits at ^ ^2 ^0.3
+	## from the map position and the presence chest is drawn 0.9 below it (see zombies/mystery_box).
+	write_versioned_function("maps/editor/displays/mystery_box_pos", f"""
+# @s = mystery box marker, at @s
+data modify storage {ns}:temp _ed_mb.yaw set value 0.0f
+data modify storage {ns}:temp _ed_mb.yaw set from entity @s data.yaw
+execute positioned ^ ^2 ^0.3 run function {ns}:v{version}/maps/editor/displays/summon_mystery_box with storage {ns}:temp _ed_mb
+""")
+	write_versioned_function("maps/editor/displays/summon_mystery_box", f"""
+# Same models/scale as zombies/mystery_box/summon_presence_display
+$execute positioned ~ ~-0.9 ~ run summon minecraft:item_display ~ ~ ~ {{Rotation:[$(yaw),0f],Tags:["{ns}.editor_display"],item_display:"fixed",billboard:"fixed",item:{{id:"minecraft:chest",count:1,components:{{"minecraft:item_model":"{ns}:mystery_box_base"}}}},transformation:{{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[2.4f,2.4f,2.4f]}}}}
+$execute positioned ~ ~-0.9 ~ run summon minecraft:item_display ~ ~ ~ {{Rotation:[$(yaw),0f],Tags:["{ns}.editor_display"],item_display:"fixed",billboard:"fixed",item:{{id:"minecraft:chest",count:1,components:{{"minecraft:item_model":"{ns}:mystery_box_lid"}}}},transformation:{{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[2.4f,2.4f,2.4f]}}}}
+""")
+
+	## Power switch: block-centered lever display (same as zombies/power setup)
+	write_versioned_function("maps/editor/displays/power_switch", f"""
+# @s = power switch marker, at @s
+data modify storage {ns}:temp _ed_ps.yaw set value 0.0f
+data modify storage {ns}:temp _ed_ps.yaw set from entity @s data.yaw
+execute align xyz positioned ~.5 ~.5 ~.5 run function {ns}:v{version}/maps/editor/displays/summon_power_switch with storage {ns}:temp _ed_ps
+""")
+	write_versioned_function("maps/editor/displays/summon_power_switch", f"""
+$summon minecraft:item_display ~ ~ ~ {{Rotation:[$(yaw),0f],Tags:["{ns}.editor_display"],item_display:"fixed",billboard:"fixed",item:{{id:"minecraft:lever",count:1,components:{{"minecraft:item_model":"{ns}:power_switch"}}}},transformation:{{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[1f,1f,1f]}}}}
+""")
+
 	# Editor Tick (universal - shows all element types) ──────────
 	particle_lines: list[str] = []
 	for etype, einfo in ALL_ELEMENTS.items():
-		if einfo["save_type"] == "config":
+		# Elements with a real model display don't need a dust particle marker
+		if einfo["save_type"] == "config" or etype in MODEL_DISPLAY_ELEMENTS:
 			continue
 		r, g, b = einfo["particle"]
 		scale = einfo["particle_scale"]
@@ -1750,6 +1854,11 @@ execute unless score @s {ns}.mp.map_edit matches 1 run return fail
 # Show rotation indicator for all markers
 execute as @e[tag={ns}.map_element] run data modify entity @s Rotation[0] set from entity @s data.yaw
 execute as @e[tag={ns}.map_element] at @s positioned ^ ^ ^0.5 run particle dust{{color:[1.0,1.0,1.0],scale:0.5}} ~ ~1.69 ~ 0.1 0.1 0.1 0 5
+
+# Model displays: rebuild once per second so rotation/config edits on markers stay in sync
+scoreboard players operation #ed_disp_phase {ns}.data = #total_tick {ns}.data
+scoreboard players operation #ed_disp_phase {ns}.data %= #20 {ns}.data
+execute if score #ed_disp_phase {ns}.data matches 0 run function {ns}:v{version}/maps/editor/refresh_displays
 
 # Per-element particles
 {chr(10).join(particle_lines)}
