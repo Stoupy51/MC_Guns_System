@@ -3,6 +3,7 @@
 # Imports
 from stewbeet import Mem, write_tag, write_versioned_function
 
+from ...config.stats import CAPACITY, GRENADE_TYPE, REMAINING_BULLETS
 from ..core.respawn_countdown import respawn_countdown_tick_lines
 from ..game_mode import GameMode
 from ..helpers import (
@@ -358,9 +359,21 @@ execute if score #drop_sel {ns}.data matches 0 run data modify storage {ns}:temp
 execute if score #drop_sel {ns}.data matches 1 run data modify storage {ns}:temp _dropw set from entity @s Inventory[{{Slot:1b}}]
 data remove storage {ns}:temp _dropw.Slot
 
-# Static item display resting on the ground (no gravity, never moves)
-summon minecraft:item_display ~ ~0.1 ~ {{Tags:["{ns}.mp_dropped_gun","{ns}.gm_entity","{ns}.mp_drop_new"],item_display:"ground",transformation:{{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[0.75f,0.75f,0.75f]}}}}
+# Never drop grenades
+execute if data storage {ns}:temp _dropw.components."minecraft:custom_data".{ns}.stats.{GRENADE_TYPE} run return 0
+
+# Sync live ammo into the drop (the item's custom data only refreshes a few seconds after shooting stops);
+# empty guns drop with 50% of their magazine capacity instead
+scoreboard players operation #drop_ammo {ns}.data = @s {ns}.{REMAINING_BULLETS}
+execute store result score #drop_half {ns}.data run data get storage {ns}:temp _dropw.components."minecraft:custom_data".{ns}.stats.{CAPACITY}
+scoreboard players operation #drop_half {ns}.data /= #2 {ns}.data
+execute if score #drop_ammo {ns}.data matches ..0 run scoreboard players operation #drop_ammo {ns}.data = #drop_half {ns}.data
+execute store result storage {ns}:temp _dropw.components."minecraft:custom_data".{ns}.stats.{REMAINING_BULLETS} int 1 run scoreboard players get #drop_ammo {ns}.data
+
+# Static item display lying flat on the ground (left_rotation = 90° around X), oriented by the dying player's yaw
+summon minecraft:item_display ~ ~0.05 ~ {{Tags:["{ns}.mp_dropped_gun","{ns}.gm_entity","{ns}.mp_drop_new"],item_display:"ground",transformation:{{left_rotation:[0.7071068f,0f,0f,0.7071068f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[0.75f,0.75f,0.75f]}}}}
 data modify entity @n[tag={ns}.mp_drop_new] item set from storage {ns}:temp _dropw
+data modify entity @n[tag={ns}.mp_drop_new] Rotation[0] set from entity @s Rotation[0]
 scoreboard players set @n[tag={ns}.mp_drop_new] {ns}.mp.drop_timer 600
 tag @n[tag={ns}.mp_drop_new] remove {ns}.mp_drop_new
 
@@ -372,27 +385,52 @@ tag @n[tag={ns}.mp_drop_new] remove {ns}.mp_drop_new
 """)
 
 		## Pickup (Bookshelf callback, @s = clicking player)
+		## Requires holding a primary/secondary gun (hotbar.0/1, grenades excluded)
 		write_versioned_function("multiplayer/pickup_dropped_weapon", f"""
 execute unless score @s {ns}.mp.in_game matches 1 run return fail
+execute store result score #pick_sel {ns}.data run data get entity @s SelectedItemSlot
+execute unless score #pick_sel {ns}.data matches 0..1 run return fail
+execute unless items entity @s weapon.mainhand *[custom_data~{{{ns}:{{gun:true}}}}] run return fail
+execute if data entity @s SelectedItem.components."minecraft:custom_data".{ns}.stats.{GRENADE_TYPE} run return fail
 tag @s add {ns}.mp_drop_picker
 execute at @e[tag=bs.interaction.target] run function {ns}:v{version}/multiplayer/pickup_collect
 tag @s remove {ns}.mp_drop_picker
 """)
 
-		## Collect: copy the dropped gun item and give it to the picker, then remove the drop
+		## Collect (@s = picker, positioned at the drop):
+		## 2 guns -> swap the held gun with the drop; 1 gun -> take the drop into the free weapon slot
 		write_versioned_function("multiplayer/pickup_collect", f"""
 execute unless entity @n[tag={ns}.mp_dropped_gun,distance=..3] run return fail
-data modify storage {ns}:temp _give set value {{}}
-data modify storage {ns}:temp _give.Item set from entity @n[tag={ns}.mp_dropped_gun,distance=..3] item
-data modify storage {ns}:temp _give.Owner set from entity @p[tag={ns}.mp_drop_picker] UUID
-execute at @p[tag={ns}.mp_drop_picker] run function {ns}:v{version}/multiplayer/pickup_give with storage {ns}:temp _give
+execute store success score #pick_g0 {ns}.data if items entity @s hotbar.0 *[custom_data~{{{ns}:{{gun:true}}}}]
+execute store success score #pick_g1 {ns}.data if items entity @s hotbar.1 *[custom_data~{{{ns}:{{gun:true}}}}]
+execute if score #pick_g0 {ns}.data matches 1 if score #pick_g1 {ns}.data matches 1 run return run function {ns}:v{version}/multiplayer/pickup_swap
+function {ns}:v{version}/multiplayer/pickup_take
+""")
+
+		## Take: only one gun owned -> the drop fills the other weapon slot, then the drop is removed
+		write_versioned_function("multiplayer/pickup_take", f"""
+execute if score #pick_g0 {ns}.data matches 0 run item replace entity @s hotbar.0 from entity @n[tag={ns}.mp_dropped_gun,distance=..3] contents
+execute if score #pick_g0 {ns}.data matches 1 run item replace entity @s hotbar.1 from entity @n[tag={ns}.mp_dropped_gun,distance=..3] contents
+playsound minecraft:entity.item.pickup player @a ~ ~ ~
 kill @n[tag={ns}.mp_dropped_gun,distance=..3]
 kill @e[tag=bs.interaction.target]
 """)
 
-		## Give the captured gun to the picker via a zero-delay, owner-locked item entity at their feet
-		write_versioned_function("multiplayer/pickup_give", f"""
-$summon minecraft:item ~ ~0.2 ~ {{Item:$(Item),Owner:$(Owner),PickupDelay:0s,Tags:["{ns}.gm_entity"]}}
+		## Swap: capture the held gun, hand over the drop, then the old gun becomes the new drop (timer refreshed)
+		write_versioned_function("multiplayer/pickup_swap", f"""
+data modify storage {ns}:temp _swapw set from entity @s Inventory[{{Slot:0b}}]
+execute if score #pick_sel {ns}.data matches 1 run data modify storage {ns}:temp _swapw set from entity @s Inventory[{{Slot:1b}}]
+data remove storage {ns}:temp _swapw.Slot
+
+# Held guns carry remaining_bullets:-1 in their item NBT (the live count is on the scoreboard), so sync it in
+execute store result storage {ns}:temp _swapw.components."minecraft:custom_data".{ns}.stats.{REMAINING_BULLETS} int 1 run scoreboard players get @s {ns}.{REMAINING_BULLETS}
+
+execute if score #pick_sel {ns}.data matches 0 run item replace entity @s hotbar.0 from entity @n[tag={ns}.mp_dropped_gun,distance=..3] contents
+execute if score #pick_sel {ns}.data matches 1 run item replace entity @s hotbar.1 from entity @n[tag={ns}.mp_dropped_gun,distance=..3] contents
+data modify entity @n[tag={ns}.mp_dropped_gun,distance=..3] item set from storage {ns}:temp _swapw
+playsound minecraft:entity.item.pickup player @a ~ ~ ~
+scoreboard players set @n[tag={ns}.mp_dropped_gun,distance=..3] {ns}.mp.drop_timer 600
+scoreboard players set @n[tag={ns}.mp_drop_int,distance=..3] {ns}.mp.drop_timer 600
 """)
 
 		## Random death message for self-deaths (OOB, environmental)
@@ -789,7 +827,7 @@ execute if score @s {ns}.mp.team matches 2 run return run function {ns}:v{versio
 
 		# Build sidebar content components for reuse
 		sb_timer = (
-			f'["", " ⏱ ",'
+			f'[" ⏱ ",'
 			f'[{{score:{{name:"#timer_min",objective:"{ns}.data"}},"color":"yellow"}},'
 			f'{{text:":"}},'
 			f'{{score:{{name:"#timer_tens",objective:"{ns}.data"}}}},'
