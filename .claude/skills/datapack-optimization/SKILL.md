@@ -22,6 +22,23 @@ of that (1–5 ms), because you are not the only thing running.
 Don't hesitate to tell the user that their pack is trash and that they should be more aware of
 performance. It's your job to make them feel bad about doing shit!
 
+> **⚠ Version drift — re-verify the internals once per target version.** Mojang changes this code
+> often. The engine-level claims in this guide were last verified against the **MC "26.2"
+> decompiled source**. The first time you use this skill against a *newer* Minecraft version,
+> re-check the version-sensitive claims against up-to-date references and **rewrite this file**
+> where they changed, updating the version stamp above. How to check, in order of preference:
+> 1. A decompiled-source folder already in the project (here: `minecraft_source_code/`) — check
+>    for one before assuming it exists; most projects won't have it.
+> 2. **minecraft.wiki** (fetch the live pages — do not answer from memory, that's the whole
+>    point): the wiki documents current behavior and tags every mechanic with the version it
+>    changed in. Relevant pages per claim: `Commands/function` (macros), `Scoreboard#Criteria`
+>    (auto-updated criteria), `Target selectors` (arguments + evaluation notes), `Commands/execute`
+>    (subcommands), `Commands/particle` (viewer defaults / `force`), and the per-version pages
+>    (`Java Edition <version>` + its "Technical changelog" section) diffed from the last verified
+>    version up to the target one for anything that moved.
+> 3. Still unclear (the wiki rarely documents *costs*): re-confirm the top offenders empirically
+>    with an F3+L profile before trusting the cost table on the new version.
+
 ---
 
 ## 1. Profiling — measure before and after, always
