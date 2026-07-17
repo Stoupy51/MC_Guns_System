@@ -28,16 +28,25 @@ scoreboard players operation #drop_half mgs.data /= #2 mgs.data
 execute if score #drop_ammo mgs.data matches ..0 run scoreboard players operation #drop_ammo mgs.data = #drop_half mgs.data
 execute store result storage mgs:temp _dropw.components."minecraft:custom_data".mgs.stats.remaining_bullets int 1 run scoreboard players get #drop_ammo mgs.data
 
-# Static item display lying flat on the ground (left_rotation = 90° around X), oriented by the dying player's yaw
-summon minecraft:item_display ~ ~0.05 ~ {Tags:["mgs.mp_dropped_gun","mgs.gm_entity","mgs.mp_drop_new"],item_display:"ground",transformation:{left_rotation:[0.7071068f,0f,0f,0.7071068f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[0.75f,0.75f,0.75f]}}
-data modify entity @n[tag=mgs.mp_drop_new] item set from storage mgs:temp _dropw
-data modify entity @n[tag=mgs.mp_drop_new] Rotation[0] set from entity @s Rotation[0]
-scoreboard players set @n[tag=mgs.mp_drop_new] mgs.mp.drop_timer 600
-tag @n[tag=mgs.mp_drop_new] remove mgs.mp_drop_new
+# Death drops carry one spare magazine at 50% capacity, embedded in the gun's custom data
+# (swap drops never run this, so a swapped-away gun is not halved and carries no free magazine)
+data modify storage mgs:temp _dropmag_args set value {}
+data modify storage mgs:temp _dropmag_args.bw set from storage mgs:temp _dropw.components."minecraft:custom_data".mgs.stats.base_weapon
+data remove storage mgs:temp _dropmag
+function mgs:v5.1.0/multiplayer/drop_mag_lookup
+execute if data storage mgs:temp _dropmag_args.mag run function mgs:v5.1.0/multiplayer/drop_capture_mag with storage mgs:temp _dropmag_args
+execute if data storage mgs:temp _dropmag run data modify storage mgs:temp _dropw.components."minecraft:custom_data".mgs.drop_mag set from storage mgs:temp _dropmag
 
-# Small interaction hitbox for pickup (Bookshelf right-click)
-summon minecraft:interaction ~ ~ ~ {width:0.9f,height:0.6f,response:true,Tags:["mgs.mp_drop_int","mgs.gm_entity","bs.entity.interaction","mgs.mp_drop_new"]}
-scoreboard players set @n[tag=mgs.mp_drop_new] mgs.mp.drop_timer 600
-execute as @n[tag=mgs.mp_drop_new] run function #bs.interaction:on_right_click {run:"function mgs:v5.1.0/multiplayer/pickup_dropped_weapon",executor:"source"}
-tag @n[tag=mgs.mp_drop_new] remove mgs.mp_drop_new
+# Mid-air deaths: Bookshelf raycast straight down, the drop spawns on the first block surface below
+data modify storage mgs:input with set value {}
+data modify storage mgs:input with.blocks set value "function #bs.hitbox:callback/get_block_shape_with_fluid"
+data modify storage mgs:input with.piercing set value 0
+data modify storage mgs:input with.max_distance set value 100
+data modify storage mgs:input with.ignored_blocks set value "#mgs:v5.1.0/empty"
+data modify storage mgs:input with.on_entry_point set value "function mgs:v5.1.0/multiplayer/drop_spawn"
+scoreboard players set #drop_spawned mgs.data 0
+execute rotated ~ 90 run function #bs.raycast:run with storage mgs:input
+
+# Nothing below within range (died over the void) -> drop at the death position
+execute if score #drop_spawned mgs.data matches 0 run function mgs:v5.1.0/multiplayer/drop_spawn
 

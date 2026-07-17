@@ -39,12 +39,16 @@ scoreboard players set @a mgs.stam_seen 0
 tellraw @a ["","⚔ ",[{"text":"","color":"gold","bold":true},{"translate":"mgs.game_over"},"! "]]
 execute unless data storage mgs:multiplayer game{gamemode:"ffa"} run tellraw @a ["",{"translate":"mgs.red","color":"red"},{"text":": "},{"score":{"name":"#red","objective":"mgs.mp.team"}}," | ",{"translate":"mgs.blue","color":"blue"},{"text":": "},{"score":{"name":"#blue","objective":"mgs.mp.team"}}]
 
+# Per-player match stats
+execute as @a[scores={mgs.mp.in_game=1}] run tellraw @a ["","  ",{"selector":"@s","color":"yellow"},{"text":" ➤ ","color":"dark_gray"},{"score":{"name":"@s","objective":"mgs.mp.kills"},"color":"green"},[{"text":" ","color":"gray"}, {"translate":"mgs.kills"}],{"text":" · ","color":"dark_gray"},{"score":{"name":"@s","objective":"mgs.mp.deaths"},"color":"red"},[{"text":" ","color":"gray"}, {"translate":"mgs.deaths"}]]
+
 # Remove sidebar and list displays and leave teams
 scoreboard objectives setdisplay sidebar
 scoreboard objectives remove mgs.sidebar
 scoreboard objectives setdisplay list
 team leave @a[team=mgs.red]
 team leave @a[team=mgs.blue]
+team leave @a[team=mgs.ffa]
 
 # Call map leave script for each in-game player (state is still active/preparing here)
 execute as @a[scores={mgs.mp.in_game=1}] run function mgs:v5.1.0/shared/maps/call_leave_script_at_base
