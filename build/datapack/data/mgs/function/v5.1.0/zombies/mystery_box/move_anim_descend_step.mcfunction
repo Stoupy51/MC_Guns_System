@@ -11,5 +11,5 @@ execute if score #mb_move_timer mgs.data matches 35..69 as @e[tag=mgs.mb_presenc
 execute if score #mb_move_timer mgs.data matches 1..34 as @e[tag=mgs.mb_presence,tag=!mgs.mb_temp] at @s run tp @s ~ ~-0.06 ~
 
 # Trailing particles
-execute at @n[tag=mgs.mb_presence,tag=!mgs.mb_temp] run particle minecraft:end_rod ~ ~-0.5 ~ 0.2 0.1 0.2 0.01 1 force
+execute at @n[tag=mgs.mb_presence,tag=!mgs.mb_temp] run particle minecraft:end_rod ~ ~-0.5 ~ 0.2 0.1 0.2 0.01 1 force @a[distance=..48]
 

@@ -522,7 +522,7 @@ function {ns}:v{version}/zombies/feedback/sound_deny
 		write_versioned_function("multiplayer/pickup_take", f"""
 execute if score #pick_g0 {ns}.data matches 0 run item replace entity @s hotbar.0 from entity @n[tag={ns}.mp_dropped_gun,distance=..3] contents
 execute if score #pick_g0 {ns}.data matches 1 run item replace entity @s hotbar.1 from entity @n[tag={ns}.mp_dropped_gun,distance=..3] contents
-playsound minecraft:entity.item.pickup player @a ~ ~ ~
+playsound minecraft:entity.item.pickup player @a[distance=..24] ~ ~ ~
 kill @n[tag={ns}.mp_dropped_gun,distance=..3]
 kill @e[tag=bs.interaction.target]
 """)
@@ -553,7 +553,7 @@ execute store result storage {ns}:temp _swapw.components."minecraft:custom_data"
 execute if score #pick_sel {ns}.data matches 0 run item replace entity @s hotbar.0 from entity @n[tag={ns}.mp_dropped_gun,distance=..3] contents
 execute if score #pick_sel {ns}.data matches 1 run item replace entity @s hotbar.1 from entity @n[tag={ns}.mp_dropped_gun,distance=..3] contents
 data modify entity @n[tag={ns}.mp_dropped_gun,distance=..3] item set from storage {ns}:temp _swapw
-playsound minecraft:entity.item.pickup player @a ~ ~ ~
+playsound minecraft:entity.item.pickup player @a[distance=..24] ~ ~ ~
 scoreboard players set @n[tag={ns}.mp_dropped_gun,distance=..3] {ns}.mp.drop_timer 600
 scoreboard players set @n[tag={ns}.mp_drop_int,distance=..3] {ns}.mp.drop_timer 600
 """)

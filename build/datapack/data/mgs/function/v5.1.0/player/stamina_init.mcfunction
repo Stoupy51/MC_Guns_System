@@ -13,3 +13,7 @@ scoreboard players set @s mgs.stam_out 0
 scoreboard players set @s mgs.stam_rest 0
 scoreboard players set @s mgs.stam_seen 1
 
+# Assume leftover invisible saturation from before the game (e.g. the game-stop refill pin),
+# so the first at-target ticks verify and burn it off
+scoreboard players set @s mgs.stam_dirty 1
+

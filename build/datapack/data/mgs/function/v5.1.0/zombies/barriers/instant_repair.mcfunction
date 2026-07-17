@@ -22,5 +22,5 @@ data modify entity @s block_state set from entity @s data.block_enabled
 
 # Visual feedback
 particle minecraft:happy_villager ~ ~ ~ 0.5 0.5 0.5 0.05 10 normal
-playsound minecraft:block.wood.place block @a ~ ~ ~ 1.0 1.0
+playsound minecraft:block.wood.place block @a[distance=..32] ~ ~ ~ 1.0 1.0
 

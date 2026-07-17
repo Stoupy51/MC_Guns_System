@@ -14,6 +14,7 @@
 # Copy gun data
 data remove storage mgs:gun all
 data modify storage mgs:gun SelectedItem set value {id:""}
+execute unless items entity @s weapon.mainhand *[custom_data~{mgs:{}}] run return 0
 data modify storage mgs:gun SelectedItem set from entity @s SelectedItem
 data modify storage mgs:gun all set from storage mgs:gun SelectedItem.components."minecraft:custom_data".mgs
 

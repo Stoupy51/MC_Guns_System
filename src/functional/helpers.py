@@ -163,9 +163,11 @@ def regen_enable_lines(ns: str) -> str:
 gamerule natural_health_regeneration false
 scoreboard players set #any_game_active {ns}.data 1
 
-# Reset per-player regen state
+# Reset per-player regen state (hp_prev seeded from the auto-updated health criterion; a player
+# whose criterion score is still unset just misses this seed and syncs on their first health change)
 scoreboard players set @a {ns}.last_hit 0
-execute as @a run execute store result score @s {ns}.hp_prev run data get entity @s Health 1
+scoreboard players set @a {ns}.hp_prev 0
+execute as @a run scoreboard players operation @s {ns}.hp_prev = @s {ns}.health
 
 # Reset stamina state so every player re-inits to full on their next stamina tick (also covers late-joiners)
 scoreboard players set @a {ns}.stam_seen 0

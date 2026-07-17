@@ -41,6 +41,6 @@ data modify storage mgs:signals on_fire_mode_change.weapon set from storage mgs:
 data modify storage mgs:signals on_fire_mode_change.fire_mode set from storage mgs:gun all.stats.fire_mode
 function #mgs:signals/on_fire_mode_change
 
-# Play feedback sound
-playsound minecraft:block.note_block.hat ambient @p
+# Play feedback sound (@s = the toggling player; @p would pay a needless distance sort)
+playsound minecraft:block.note_block.hat ambient @s
 

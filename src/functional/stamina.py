@@ -45,6 +45,10 @@ scoreboard objectives add {ns}.stam_bonus dummy
 scoreboard objectives add {ns}.stam_rest dummy
 scoreboard objectives add {ns}.stam_out dummy
 scoreboard objectives add {ns}.stam_seen dummy
+
+# Set while refill pulses may have left invisible saturation; only then does the at-target
+# branch pay the foodSaturationLevel NBT read to burn it off (see stamina_bar)
+scoreboard objectives add {ns}.stam_dirty dummy
 """)
 
     ## Hook into the global player tick. player/tick runs `as @e[type=player] at @s`, so @s is each
@@ -110,6 +114,10 @@ scoreboard players operation @s {ns}.stam = @s {ns}.stam_max
 scoreboard players set @s {ns}.stam_out 0
 scoreboard players set @s {ns}.stam_rest 0
 scoreboard players set @s {ns}.stam_seen 1
+
+# Assume leftover invisible saturation from before the game (e.g. the game-stop refill pin),
+# so the first at-target ticks verify and burn it off
+scoreboard players set @s {ns}.stam_dirty 1
 """)
 
     ## Drive the hunger bar toward #stam_t with 1-tick effect pulses (@s = in-game player).
@@ -118,16 +126,23 @@ scoreboard players set @s {ns}.stam_seen 1
     write_versioned_function("player/stamina_bar", f"""
 effect clear @s minecraft:saturation
 effect clear @s minecraft:hunger
-execute store result score #stam_food {ns}.data run data get entity @s foodLevel
-execute store result score #stam_sat {ns}.data run data get entity @s foodSaturationLevel
 
+# The bar is read from the auto-updated 'food' criterion — no player-NBT read on this path.
 # Below target → refill pulse (+1 food this tick). Never given at/above target so the invisible
-# saturation side effect (+2/tick) can't stack past what's visible (stamina.md).
-execute if score #stam_food {ns}.data < #stam_t {ns}.data run effect give @s minecraft:saturation 1 0 true
+# saturation side effect (+2/tick) can't stack past what's visible (stamina.md). The pulse may
+# leave invisible saturation behind, so flag it for the at-target burn-off below.
+execute if score @s {ns}.food < #stam_t {ns}.data run scoreboard players set @s {ns}.stam_dirty 1
+execute if score @s {ns}.food < #stam_t {ns}.data run return run effect give @s minecraft:saturation 1 0 true
 
 # Above target → hunger pulse slowly drains the bar, showing the player they sprint too much
-execute if score #stam_food {ns}.data > #stam_t {ns}.data run effect give @s minecraft:hunger 1 255 true
+execute if score @s {ns}.food > #stam_t {ns}.data run return run effect give @s minecraft:hunger 1 255 true
 
-# At target with leftover invisible saturation → burn it off so the next drain shows immediately
-execute if score #stam_food {ns}.data = #stam_t {ns}.data if score #stam_sat {ns}.data matches 1.. run effect give @s minecraft:hunger 1 255 true
+# At target: only while flagged dirty, pay the saturation NBT read and burn leftovers off with
+# hunger pulses so the next drain shows immediately; once it reads 0 the flag clears and the
+# steady state costs no NBT read at all
+execute unless score @s {ns}.stam_dirty matches 1 run return 0
+execute store result score #stam_sat {ns}.data run data get entity @s foodSaturationLevel
+execute if score #stam_sat {ns}.data matches 1.. run return run effect give @s minecraft:hunger 1 255 true
+scoreboard players set @s {ns}.stam_dirty 0
 """)
+

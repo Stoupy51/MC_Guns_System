@@ -112,6 +112,13 @@ execute unless score #damage_debug {ns}.config matches -2147483648.. run scorebo
 # Health regeneration tracking (global, shared across all game modes)
 scoreboard objectives add {ns}.last_hit dummy
 scoreboard objectives add {ns}.hp_prev dummy
+
+# Read-only criteria objectives, auto-updated by the server every tick a value changes.
+# Reading these replaces per-tick `data get entity @s Health/foodLevel` (full player-NBT
+# serialization) with a plain score read. NOTE: {ns}.health = ceil(health + absorption);
+# this pack has no absorption sources, so it tracks health exactly.
+scoreboard objectives add {ns}.health health
+scoreboard objectives add {ns}.food food
 """, prepend=True)
 
     # Write to tick file
@@ -132,14 +139,17 @@ execute if score #any_game_active {ns}.data matches 1 run function {ns}:v{versio
 
     write_versioned_function("player/regen_tick", f"""
 # @s = any player during an active game
-execute store result score #hp_cur {ns}.data run data get entity @s Health 1
-execute if score #hp_cur {ns}.data < @s {ns}.hp_prev run scoreboard players set @s {ns}.last_hit 0
-execute unless score #hp_cur {ns}.data < @s {ns}.hp_prev run scoreboard players add @s {ns}.last_hit 1
-scoreboard players operation @s {ns}.hp_prev = #hp_cur {ns}.data
+# Damage detection via the auto-updated 'health' criterion (no player-NBT read)
+execute if score @s {ns}.health < @s {ns}.hp_prev run scoreboard players set @s {ns}.last_hit 0
+execute unless score @s {ns}.health < @s {ns}.hp_prev run scoreboard players add @s {ns}.last_hit 1
+scoreboard players operation @s {ns}.hp_prev = @s {ns}.health
 execute unless score @s {ns}.last_hit matches 100.. run return 0
+
+# At full health there is nothing to refresh; a still-running 3s pulse finishes any half-heart
+# (regeneration can't overheal, so letting it expire replaces the old per-tick `effect clear`)
 execute store result score #hp_max {ns}.data run attribute @s minecraft:max_health get 1
-execute if score #hp_cur {ns}.data >= #hp_max {ns}.data run effect clear @s minecraft:regeneration
-execute unless score #hp_cur {ns}.data >= #hp_max {ns}.data run effect give @s minecraft:regeneration 3 2 true
+execute if score @s {ns}.health >= #hp_max {ns}.data run return 0
+effect give @s minecraft:regeneration 3 2 true
 """)
 
     # Add block tags
@@ -331,7 +341,7 @@ $execute if score #random {ns}.data matches 31 run loot replace entity @s $(slot
     # --- Configuration dialog, organized into categories (by scope) ---
     # The top-level menu is a short list of categories; each opens its own sub-dialog whose Back
     # button returns to the top-level config. Leaf value pickers Back to their category (above).
-    def register_category(sub_id: str, title: str, actions: list) -> None:
+    def register_category(sub_id: str, title: str, actions: list[dict[str, str]]) -> None:
         register_dialog(sub_id, {
             "type": "minecraft:multi_action",
             "title": split_emoji(title, color="gold", bold=True),

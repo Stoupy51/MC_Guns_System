@@ -6,6 +6,6 @@
 # @within	mgs:v5.1.0/zombies/pap/anim/step
 #
 
-execute positioned ~ ~-2 ~ run particle end_rod ~ ~0.8 ~ 0.4 0.3 0.3 0.05 3 force
-execute positioned ~ ~-2 ~ run particle dust{color:[0.565,0.0,1.0],scale:1.5} ~ ~1.0 ~ 0.4 0.3 0.4 0 2 force
+execute positioned ~ ~-2 ~ run particle end_rod ~ ~0.8 ~ 0.4 0.3 0.3 0.05 3 force @a[distance=..48]
+execute positioned ~ ~-2 ~ run particle dust{color:[0.565,0.0,1.0],scale:1.5} ~ ~1.0 ~ 0.4 0.3 0.4 0 2 force @a[distance=..48]
 

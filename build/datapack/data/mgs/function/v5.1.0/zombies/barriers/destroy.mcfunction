@@ -19,5 +19,5 @@ data modify entity @s block_state set from entity @s data.block_disabled
 # Sound + particles
 particle minecraft:large_smoke ~ ~0.5 ~ 0.4 0.4 0.4 0.02 6
 particle minecraft:crit ~ ~0.5 ~ 0.4 0.4 0.4 0.05 8
-playsound minecraft:entity.zombie.break_wooden_door block @a ~ ~ ~ 1.0 1.0
+playsound minecraft:entity.zombie.break_wooden_door block @a[distance=..32] ~ ~ ~ 1.0 1.0
 

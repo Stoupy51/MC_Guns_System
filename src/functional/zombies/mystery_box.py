@@ -630,7 +630,7 @@ execute if score #mb_move_timer {ns}.data matches {ascend_end}..{ascend_mid - 1}
 execute if score #mb_move_timer {ns}.data matches {ascend_end}..{ascend_mid - 1} as @e[tag={ns}.mb_bear] at @s run tp @s ~ ~0.18 ~
 
 # Smoke particles at old location
-execute at @n[tag={ns}.mystery_box_active] run particle minecraft:large_smoke ~ ~1 ~ 0.3 0.5 0.3 0.02 2 force
+execute at @n[tag={ns}.mystery_box_active] run particle minecraft:large_smoke ~ ~1 ~ 0.3 0.5 0.3 0.02 2 force @a[distance=..48]
 """)
 
 	write_versioned_function("zombies/mystery_box/move_anim_transition", f"""
@@ -648,7 +648,7 @@ execute as @n[tag={ns}.mystery_box_active] at @s positioned ~ ~7.54 ~ run summon
 execute as @n[tag={ns}.mystery_box_active] at @s as @e[tag={ns}.mb_presence,tag=!{ns}.mb_temp] run data modify entity @s Rotation set from entity @n[tag={ns}.mystery_box_active] Rotation
 
 # Light beam particles at new location
-execute at @n[tag={ns}.mystery_box_active] run particle minecraft:end_rod ~ ~3 ~ 0.1 2 0.1 0.05 20 force
+execute at @n[tag={ns}.mystery_box_active] run particle minecraft:end_rod ~ ~3 ~ 0.1 2 0.1 0.05 20 force @a[distance=..64]
 execute as @n[tag={ns}.mystery_box_active] at @s run function {ns}:v{version}/zombies/feedback/sound_box_poof
 """)
 
@@ -662,7 +662,7 @@ execute if score #mb_move_timer {ns}.data matches {descend_mid}..{transition - 1
 execute if score #mb_move_timer {ns}.data matches {descend_end}..{descend_mid - 1} as @e[tag={ns}.mb_presence,tag=!{ns}.mb_temp] at @s run tp @s ~ ~-0.06 ~
 
 # Trailing particles
-execute at @n[tag={ns}.mb_presence,tag=!{ns}.mb_temp] run particle minecraft:end_rod ~ ~-0.5 ~ 0.2 0.1 0.2 0.01 1 force
+execute at @n[tag={ns}.mb_presence,tag=!{ns}.mb_temp] run particle minecraft:end_rod ~ ~-0.5 ~ 0.2 0.1 0.2 0.01 1 force @a[distance=..48]
 """)
 
 	write_versioned_function("zombies/mystery_box/move_anim_land", f"""

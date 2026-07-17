@@ -110,6 +110,13 @@ execute unless score #damage_debug mgs.config matches -2147483648.. run scoreboa
 scoreboard objectives add mgs.last_hit dummy
 scoreboard objectives add mgs.hp_prev dummy
 
+# Read-only criteria objectives, auto-updated by the server every tick a value changes.
+# Reading these replaces per-tick `data get entity @s Health/foodLevel` (full player-NBT
+# serialization) with a plain score read. NOTE: mgs.health = ceil(health + absorption);
+# this pack has no absorption sources, so it tracks health exactly.
+scoreboard objectives add mgs.health health
+scoreboard objectives add mgs.food food
+
 # Confirm load
 tellraw @a[tag=convention.debug] {"translate":"mgs.loaded_mc_guns_system_v5_1_0","color":"green"}
 scoreboard players set #mgs.loaded load.status 1
@@ -137,6 +144,10 @@ scoreboard objectives add mgs.stam_bonus dummy
 scoreboard objectives add mgs.stam_rest dummy
 scoreboard objectives add mgs.stam_out dummy
 scoreboard objectives add mgs.stam_seen dummy
+
+# Set while refill pulses may have left invisible saturation; only then does the at-target
+# branch pay the foodSaturationLevel NBT read to burn it off (see stamina_bar)
+scoreboard objectives add mgs.stam_dirty dummy
 
 # Armed mob counter (skip tick loop if 0)
 scoreboard players add #armed_mob_count mgs.data 0

@@ -21,5 +21,5 @@ execute as @e[tag=mgs.barrier_removing] if score @s mgs.zb.barrier.removing_id =
 
 # Sound + particles
 particle minecraft:happy_villager ~ ~1 ~ 0.5 0.5 0.5 0 10
-playsound minecraft:block.anvil.use block @a ~ ~ ~ 1.0 1.5
+playsound minecraft:block.anvil.use block @a[distance=..32] ~ ~ ~ 1.0 1.5
 
