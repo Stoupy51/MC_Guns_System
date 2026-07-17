@@ -9,6 +9,10 @@
 #			mgs:v5.1.0/multiplayer/gamemodes/snd/bomb_explodes [ at @e[tag=mgs.snd_bomb] & as @a[distance=..10,gamemode=!creative,scores={mgs.mp.in_game=1..}] ]
 #
 
+# Ignore duplicate deaths (second bullet / OOB / vanilla death landing in the same tick as another death)
+execute if score @s mgs.mp.spectate_timer matches 1.. run return 0
+execute if entity @s[gamemode=spectator] run return 0
+
 # Heal to prevent actual death & Increment death stats
 effect give @s instant_health 1 100 true
 scoreboard players add @s mgs.mp.deaths 1

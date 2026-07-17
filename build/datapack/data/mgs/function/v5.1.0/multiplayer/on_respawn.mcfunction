@@ -9,6 +9,11 @@
 # Reset death counter
 scoreboard players set @s mgs.mp.death_count 0
 
+# Already in death spectate -> this vanilla death was already processed as a simulated death
+# (prevents double kill/death messages when a bullet kill and the vanilla death land on the same tick)
+execute if score @s mgs.mp.spectate_timer matches 1.. run return 0
+execute if entity @s[gamemode=spectator] run return 0
+
 # Increment death stats
 scoreboard players add @s mgs.mp.deaths 1
 

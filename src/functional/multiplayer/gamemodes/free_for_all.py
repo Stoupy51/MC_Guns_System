@@ -15,8 +15,10 @@ class FreeForAll(GameModeVariant):
 
 		## FFA Setup: Remove team coloring, use general spawns only
 		self.sub("setup", f"""
-# Reset all teams (no teams in FFA)
-team leave @a
+# Clear leftover red/blue assignments only — players must STAY on the {ns}.ffa team
+# (it carries nametagVisibility never + friendlyFire true; a bare 'team leave @a' made nametags visible)
+team leave @a[team={ns}.red]
+team leave @a[team={ns}.blue]
 scoreboard players set @a {ns}.mp.team 0
 tellraw @a [{MGS_TAG},{{"text":"Free-For-All! Everyone for themselves!","color":"yellow"}}]
 """)

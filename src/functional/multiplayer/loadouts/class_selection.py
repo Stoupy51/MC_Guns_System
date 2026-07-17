@@ -201,6 +201,11 @@ function {ns}:v{version}/ammo/compute_reserve
 # Reset death counter
 scoreboard players set @s {ns}.mp.death_count 0
 
+# Already in death spectate -> this vanilla death was already processed as a simulated death
+# (prevents double kill/death messages when a bullet kill and the vanilla death land on the same tick)
+execute if score @s {ns}.mp.spectate_timer matches 1.. run return 0
+execute if entity @s[gamemode=spectator] run return 0
+
 # Increment death stats
 scoreboard players add @s {ns}.mp.deaths 1
 

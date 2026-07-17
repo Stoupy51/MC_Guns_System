@@ -3,7 +3,8 @@
 # Imports
 from stewbeet import Mem, write_tag, write_versioned_function
 
-from ...config.stats import CAPACITY, GRENADE_TYPE, REMAINING_BULLETS
+from ...config.catalogs import PRIMARY_WEAPONS, SECONDARY_WEAPONS
+from ...config.stats import BASE_WEAPON, CAPACITY, GRENADE_TYPE, REMAINING_BULLETS
 from ..core.respawn_countdown import respawn_countdown_tick_lines
 from ..game_mode import GameMode
 from ..helpers import (
@@ -238,12 +239,16 @@ function #{ns}:multiplayer/on_game_end
 tellraw @a ["","⚔ ",[{{"text":"","color":"gold","bold":true}},{{"text":"Game Over"}},"! "]]
 execute unless data storage {ns}:multiplayer game{{gamemode:"ffa"}} run tellraw @a ["",{{"text":"Red","color":"red"}},{{"text":": "}},{{"score":{{"name":"#red","objective":"{ns}.mp.team"}}}}," | ",{{"text":"Blue","color":"blue"}},{{"text":": "}},{{"score":{{"name":"#blue","objective":"{ns}.mp.team"}}}}]
 
+# Per-player match stats
+execute as @a[scores={{{ns}.mp.in_game=1}}] run tellraw @a ["","  ",{{"selector":"@s","color":"yellow"}},{{"text":" ➤ ","color":"dark_gray"}},{{"score":{{"name":"@s","objective":"{ns}.mp.kills"}},"color":"green"}},{{"text":" kills","color":"gray"}},{{"text":" · ","color":"dark_gray"}},{{"score":{{"name":"@s","objective":"{ns}.mp.deaths"}},"color":"red"}},{{"text":" deaths","color":"gray"}}]
+
 # Remove sidebar and list displays and leave teams
 scoreboard objectives setdisplay sidebar
 scoreboard objectives remove {ns}.sidebar
 scoreboard objectives setdisplay list
 team leave @a[team={ns}.red]
 team leave @a[team={ns}.blue]
+team leave @a[team={ns}.ffa]
 
 # Call map leave script for each in-game player (state is still active/preparing here)
 execute as @a[scores={{{ns}.mp.in_game=1}}] run function {ns}:v{version}/shared/maps/call_leave_script_at_base
@@ -287,6 +292,10 @@ execute unless data storage {ns}:multiplayer game{{gamemode:"ffa"}} unless score
 		# @s = victim player; storage mgs:input with.attacker may or may not exist
 
 		write_versioned_function("multiplayer/simulate_death", f"""
+# Ignore duplicate deaths (second bullet / OOB / vanilla death landing in the same tick as another death)
+execute if score @s {ns}.mp.spectate_timer matches 1.. run return 0
+execute if entity @s[gamemode=spectator] run return 0
+
 # Heal to prevent actual death & Increment death stats
 effect give @s instant_health 1 100 true
 scoreboard players add @s {ns}.mp.deaths 1
@@ -370,6 +379,34 @@ scoreboard players operation #drop_half {ns}.data /= #2 {ns}.data
 execute if score #drop_ammo {ns}.data matches ..0 run scoreboard players operation #drop_ammo {ns}.data = #drop_half {ns}.data
 execute store result storage {ns}:temp _dropw.components."minecraft:custom_data".{ns}.stats.{REMAINING_BULLETS} int 1 run scoreboard players get #drop_ammo {ns}.data
 
+# Death drops carry one spare magazine at 50% capacity, embedded in the gun's custom data
+# (swap drops never run this, so a swapped-away gun is not halved and carries no free magazine)
+data modify storage {ns}:temp _dropmag_args set value {{}}
+data modify storage {ns}:temp _dropmag_args.bw set from storage {ns}:temp _dropw.components."minecraft:custom_data".{ns}.stats.{BASE_WEAPON}
+data remove storage {ns}:temp _dropmag
+function {ns}:v{version}/multiplayer/drop_mag_lookup
+execute if data storage {ns}:temp _dropmag_args.mag run function {ns}:v{version}/multiplayer/drop_capture_mag with storage {ns}:temp _dropmag_args
+execute if data storage {ns}:temp _dropmag run data modify storage {ns}:temp _dropw.components."minecraft:custom_data".{ns}.drop_mag set from storage {ns}:temp _dropmag
+
+# Mid-air deaths: Bookshelf raycast straight down, the drop spawns on the first block surface below
+data modify storage {ns}:input with set value {{}}
+data modify storage {ns}:input with.blocks set value "function #bs.hitbox:callback/get_block_shape_with_fluid"
+data modify storage {ns}:input with.piercing set value 0
+data modify storage {ns}:input with.max_distance set value 100
+data modify storage {ns}:input with.ignored_blocks set value "#{ns}:v{version}/empty"
+data modify storage {ns}:input with.on_entry_point set value "function {ns}:v{version}/multiplayer/drop_spawn"
+scoreboard players set #drop_spawned {ns}.data 0
+execute rotated ~ 90 run function #bs.raycast:run with storage {ns}:input
+
+# Nothing below within range (died over the void) -> drop at the death position
+execute if score #drop_spawned {ns}.data matches 0 run function {ns}:v{version}/multiplayer/drop_spawn
+""")
+
+		## Spawn the drop entities at the current position (@s = dying player, item in {ns}:temp _dropw)
+		## Called as the raycast's on_entry_point (positioned at the ground hit point) or directly as a fallback
+		write_versioned_function("multiplayer/drop_spawn", f"""
+scoreboard players set #drop_spawned {ns}.data 1
+
 # Static item display lying flat on the ground (left_rotation = 90° around X), oriented by the dying player's yaw
 summon minecraft:item_display ~ ~0.05 ~ {{Tags:["{ns}.mp_dropped_gun","{ns}.gm_entity","{ns}.mp_drop_new"],item_display:"ground",transformation:{{left_rotation:[0.7071068f,0f,0f,0.7071068f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[0.75f,0.75f,0.75f]}}}}
 data modify entity @n[tag={ns}.mp_drop_new] item set from storage {ns}:temp _dropw
@@ -382,6 +419,32 @@ summon minecraft:interaction ~ ~ ~ {{width:0.9f,height:0.6f,response:true,Tags:[
 scoreboard players set @n[tag={ns}.mp_drop_new] {ns}.mp.drop_timer 600
 execute as @n[tag={ns}.mp_drop_new] run function #bs.interaction:on_right_click {{run:"function {ns}:v{version}/multiplayer/pickup_dropped_weapon",executor:"source"}}
 tag @n[tag={ns}.mp_drop_new] remove {ns}.mp_drop_new
+""")
+
+		## Magazine lookup: base_weapon -> magazine item id + half of one full stack for consumable ammo
+		mag_lookup_lines: str = "\n".join(
+			f'execute if data storage {ns}:temp _dropmag_args{{bw:"{w.item_id}"}} run '
+			f'data modify storage {ns}:temp _dropmag_args merge value {{mag:"{w.magazine_id}",halfc:{max(1, w.default_mag_count // 2)}}}'
+			for w in (*PRIMARY_WEAPONS, *SECONDARY_WEAPONS)
+		)
+		write_versioned_function("multiplayer/drop_mag_lookup", mag_lookup_lines)
+
+		## Capture a fresh magazine from the item loot table into {ns}:temp _dropmag, filled to 50%
+		write_versioned_function("multiplayer/drop_capture_mag", f"""
+summon minecraft:item_display ~ ~ ~ {{Tags:["{ns}.mp_mag_helper"]}}
+$loot replace entity @n[tag={ns}.mp_mag_helper] contents loot {ns}:i/$(mag)
+data modify storage {ns}:temp _dropmag set from entity @n[tag={ns}.mp_mag_helper] item
+kill @n[tag={ns}.mp_mag_helper]
+execute unless data storage {ns}:temp _dropmag run return 0
+
+# Regular magazines: fill to 50% of their capacity (never a full magazine)
+execute store result score #mag_half {ns}.data run data get storage {ns}:temp _dropmag.components."minecraft:custom_data".{ns}.stats.{CAPACITY}
+scoreboard players operation #mag_half {ns}.data /= #2 {ns}.data
+execute if score #mag_half {ns}.data matches ..0 run scoreboard players set #mag_half {ns}.data 1
+execute unless data storage {ns}:temp _dropmag.components."minecraft:custom_data".{ns}.consumable store result storage {ns}:temp _dropmag.components."minecraft:custom_data".{ns}.stats.{REMAINING_BULLETS} int 1 run scoreboard players get #mag_half {ns}.data
+
+# Consumable ammo (stack count = bullets): half of one full stack
+$execute if data storage {ns}:temp _dropmag.components."minecraft:custom_data".{ns}.consumable run data modify storage {ns}:temp _dropmag.count set value $(halfc)
 """)
 
 		## Pickup (Bookshelf callback, @s = clicking player)
@@ -403,8 +466,56 @@ tag @s remove {ns}.mp_drop_picker
 execute unless entity @n[tag={ns}.mp_dropped_gun,distance=..3] run return fail
 execute store success score #pick_g0 {ns}.data if items entity @s hotbar.0 *[custom_data~{{{ns}:{{gun:true}}}}]
 execute store success score #pick_g1 {ns}.data if items entity @s hotbar.1 *[custom_data~{{{ns}:{{gun:true}}}}]
+
+# Without the Overkill perk, a pickup may not leave the player with two primary weapons
+scoreboard players set #pick_deny {ns}.data 0
+function {ns}:v{version}/multiplayer/pickup_overkill_check
+execute if score #pick_deny {ns}.data matches 1 run return fail
+
+# Death drops carry a spare magazine inside the gun's custom data: hand it over and strip it from the gun
+execute if data entity @n[tag={ns}.mp_dropped_gun,distance=..3] item.components."minecraft:custom_data".{ns}.drop_mag run function {ns}:v{version}/multiplayer/pickup_give_mag
+
 execute if score #pick_g0 {ns}.data matches 1 if score #pick_g1 {ns}.data matches 1 run return run function {ns}:v{version}/multiplayer/pickup_swap
 function {ns}:v{version}/multiplayer/pickup_take
+""")
+
+		## Primary-weapon lookup: sets #is_primary from the base_weapon string in {ns}:temp _isp.bw
+		is_primary_lines: str = "\n".join(
+			f'execute if data storage {ns}:temp _isp{{bw:"{w.item_id}"}} run scoreboard players set #is_primary {ns}.data 1'
+			for w in PRIMARY_WEAPONS
+		)
+		write_versioned_function("multiplayer/is_primary_lookup", f"""
+scoreboard players set #is_primary {ns}.data 0
+{is_primary_lines}
+""")
+
+		## Overkill gate (@s = picker, positioned at the drop): deny when the result would be two primaries
+		write_versioned_function("multiplayer/pickup_overkill_check", f"""
+# Only primary drops are restricted
+data modify storage {ns}:temp _isp set value {{}}
+data modify storage {ns}:temp _isp.bw set from entity @n[tag={ns}.mp_dropped_gun,distance=..3] item.components."minecraft:custom_data".{ns}.stats.{BASE_WEAPON}
+function {ns}:v{version}/multiplayer/is_primary_lookup
+execute if score #is_primary {ns}.data matches 0 run return 0
+
+# Overkill lets you carry two primary weapons
+scoreboard players add @s {ns}.special.overkill 0
+execute if score @s {ns}.special.overkill matches 1.. run return 0
+
+# The slot that keeps its gun after this pickup: the held slot when taking, the other slot when swapping
+scoreboard players operation #pick_keep {ns}.data = #pick_sel {ns}.data
+execute if score #pick_g0 {ns}.data matches 1 if score #pick_g1 {ns}.data matches 1 run scoreboard players set #pick_keep {ns}.data 1
+execute if score #pick_g0 {ns}.data matches 1 if score #pick_g1 {ns}.data matches 1 run scoreboard players operation #pick_keep {ns}.data -= #pick_sel {ns}.data
+
+# If the kept gun is also a primary, deny the pickup
+data modify storage {ns}:temp _isp set value {{}}
+execute if score #pick_keep {ns}.data matches 0 run data modify storage {ns}:temp _isp.bw set from entity @s Inventory[{{Slot:0b}}].components."minecraft:custom_data".{ns}.stats.{BASE_WEAPON}
+execute if score #pick_keep {ns}.data matches 1 run data modify storage {ns}:temp _isp.bw set from entity @s Inventory[{{Slot:1b}}].components."minecraft:custom_data".{ns}.stats.{BASE_WEAPON}
+function {ns}:v{version}/multiplayer/is_primary_lookup
+execute if score #is_primary {ns}.data matches 0 run return 0
+
+scoreboard players set #pick_deny {ns}.data 1
+tellraw @s [{MGS_TAG},{{"text":"You need the Overkill perk to carry two primary weapons.","color":"red"}}]
+function {ns}:v{version}/zombies/feedback/sound_deny
 """)
 
 		## Take: only one gun owned -> the drop fills the other weapon slot, then the drop is removed
@@ -414,6 +525,20 @@ execute if score #pick_g0 {ns}.data matches 1 run item replace entity @s hotbar.
 playsound minecraft:entity.item.pickup player @a ~ ~ ~
 kill @n[tag={ns}.mp_dropped_gun,distance=..3]
 kill @e[tag=bs.interaction.target]
+""")
+
+		## Give the drop's embedded spare magazine to the picker (@s = picker, positioned at the drop)
+		write_versioned_function("multiplayer/pickup_give_mag", f"""
+data modify storage {ns}:temp _give set value {{}}
+data modify storage {ns}:temp _give.Item set from entity @n[tag={ns}.mp_dropped_gun,distance=..3] item.components."minecraft:custom_data".{ns}.drop_mag
+data modify storage {ns}:temp _give.Owner set from entity @s UUID
+execute at @s run function {ns}:v{version}/multiplayer/pickup_give with storage {ns}:temp _give
+data remove entity @n[tag={ns}.mp_dropped_gun,distance=..3] item.components."minecraft:custom_data".{ns}.drop_mag
+""")
+
+		## Zero-delay, owner-locked item entity at the picker's position
+		write_versioned_function("multiplayer/pickup_give", f"""
+$summon minecraft:item ~ ~0.2 ~ {{Item:$(Item),Owner:$(Owner),PickupDelay:0s,Tags:["{ns}.gm_entity"]}}
 """)
 
 		## Swap: capture the held gun, hand over the drop, then the old gun becomes the new drop (timer refreshed)

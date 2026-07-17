@@ -30,6 +30,7 @@
 #			mgs:v5.1.0/zombies/traps/deny_requires_power
 #			mgs:v5.1.0/zombies/traps/deny_not_ready
 #			mgs:v5.1.0/zombies/traps/deny_not_enough_points
+#			mgs:v5.1.0/multiplayer/pickup_overkill_check
 #
 
 playsound minecraft:entity.villager.no ambient @s ~ ~ ~ 0.8 1.0
