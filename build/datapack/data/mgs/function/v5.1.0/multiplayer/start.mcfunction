@@ -80,9 +80,11 @@ scoreboard players set @a mgs.mp.spectate_timer 0
 gamerule natural_health_regeneration false
 scoreboard players set #any_game_active mgs.data 1
 
-# Reset per-player regen state
+# Reset per-player regen state (hp_prev seeded from the auto-updated health criterion; a player
+# whose criterion score is still unset just misses this seed and syncs on their first health change)
 scoreboard players set @a mgs.last_hit 0
-execute as @a run execute store result score @s mgs.hp_prev run data get entity @s Health 1
+scoreboard players set @a mgs.hp_prev 0
+execute as @a run scoreboard players operation @s mgs.hp_prev = @s mgs.health
 
 # Reset stamina state so every player re-inits to full on their next stamina tick (also covers late-joiners)
 scoreboard players set @a mgs.stam_seen 0

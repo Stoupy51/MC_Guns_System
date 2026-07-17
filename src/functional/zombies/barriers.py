@@ -215,7 +215,7 @@ data modify entity @s block_state set from entity @s data.block_disabled
 # Sound + particles
 particle minecraft:large_smoke ~ ~0.5 ~ 0.4 0.4 0.4 0.02 6
 particle minecraft:crit ~ ~0.5 ~ 0.4 0.4 0.4 0.05 8
-playsound minecraft:entity.zombie.break_wooden_door block @a ~ ~ ~ 1.0 1.0
+playsound minecraft:entity.zombie.break_wooden_door block @a[distance=..32] ~ ~ ~ 1.0 1.0
 """)
 
 	## Destroyed barrier tick
@@ -290,7 +290,7 @@ execute as @e[tag={ns}.barrier_removing] if score @s {ns}.zb.barrier.removing_id
 
 # Sound + particles
 particle minecraft:happy_villager ~ ~1 ~ 0.5 0.5 0.5 0 10
-playsound minecraft:block.anvil.use block @a ~ ~ ~ 1.0 1.5
+playsound minecraft:block.anvil.use block @a[distance=..32] ~ ~ ~ 1.0 1.5
 """)
 
 	write_versioned_function("zombies/barriers/on_repair_complete_player", f"""
@@ -367,5 +367,5 @@ data modify entity @s block_state set from entity @s data.block_enabled
 
 # Visual feedback
 particle minecraft:happy_villager ~ ~ ~ 0.5 0.5 0.5 0.05 10 normal
-playsound minecraft:block.wood.place block @a ~ ~ ~ 1.0 1.0
+playsound minecraft:block.wood.place block @a[distance=..32] ~ ~ ~ 1.0 1.0
 """)

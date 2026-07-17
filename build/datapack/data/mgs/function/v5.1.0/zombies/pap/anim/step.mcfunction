@@ -45,7 +45,7 @@ execute if score @s mgs.pap_anim matches 25 as @n[tag=mgs.pap_weapon_display,dis
 execute if score @s mgs.pap_anim matches 5 as @n[tag=mgs.pap_weapon_display,distance=..2] at @s run tp @s ^ ^ ^-0.04
 
 # Phase: RETREAT (timer 1..205) — smoke particles + looping sound every 20 ticks
-execute if score @s mgs.pap_anim matches 1..205 positioned ~ ~-2 ~ run particle smoke ~ ~0.5 ~ 0.2 0.2 0.2 0.05 2 force
+execute if score @s mgs.pap_anim matches 1..205 positioned ~ ~-2 ~ run particle smoke ~ ~0.5 ~ 0.2 0.2 0.2 0.05 2 force @a[distance=..48]
 execute store result score #pap_t mgs.data run scoreboard players get @s mgs.pap_anim
 scoreboard players operation #pap_t mgs.data %= #20 mgs.data
 execute if score @s mgs.pap_anim matches 1..205 if score #pap_t mgs.data matches 0 run function mgs:v5.1.0/zombies/feedback/sound_pap_retreat_loop

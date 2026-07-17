@@ -7,8 +7,8 @@
 #
 
 # Dense purple dust + end_rod particles every tick
-execute positioned ~ ~-2 ~ run particle dust{color:[0.565,0.0,1.0],scale:1.5} ~ ~0.8 ~ 0.4 0.3 0.4 0 1 force
-execute positioned ~ ~-2 ~ run particle end_rod ~ ~0.8 ~ 0.3 0.2 0.3 0.05 1 force
+execute positioned ~ ~-2 ~ run particle dust{color:[0.565,0.0,1.0],scale:1.5} ~ ~0.8 ~ 0.4 0.3 0.4 0 1 force @a[distance=..48]
+execute positioned ~ ~-2 ~ run particle end_rod ~ ~0.8 ~ 0.3 0.2 0.3 0.05 1 force @a[distance=..48]
 
 # Periodic processing sound every 20 ticks
 execute store result score #pap_t mgs.data run scoreboard players get @s mgs.pap_anim

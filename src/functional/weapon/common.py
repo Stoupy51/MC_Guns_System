@@ -71,10 +71,14 @@ execute if score @s {ns}.burst_count < #burst_limit {ns}.data run scoreboard pla
 """)
 
     # Copy gun data function
+    # The SelectedItem copy serializes the whole player NBT — only pay it when the mainhand
+    # actually holds one of our items (guns, grenades, knives, menu items all carry {ns} custom
+    # data). For anything else the cleared storage is exactly what every consumer expects.
     write_versioned_function("utils/copy_gun_data", f"""
 # Copy gun data
 data remove storage {ns}:gun all
 data modify storage {ns}:gun SelectedItem set value {{id:""}}
+execute unless items entity @s weapon.mainhand *[custom_data~{{{ns}:{{}}}}] run return 0
 data modify storage {ns}:gun SelectedItem set from entity @s SelectedItem
 data modify storage {ns}:gun all set from storage {ns}:gun SelectedItem.components."minecraft:custom_data".{ns}
 """)
@@ -124,7 +128,8 @@ execute if score @s {ns}.pending_clicks matches -100.. run function {ns}:v{versi
 execute if score @s {ns}.pending_clicks matches ..-1 run scoreboard players set @s {ns}.held_click 0
 
 # Reset burst_count only if burst completed or player switched weapons
-execute if score @s {ns}.pending_clicks matches ..-1 run function {ns}:v{version}/player/reset_burst_if_complete
+# (burst_count gate: with no burst in progress the function would be a no-op anyway)
+execute if score @s {ns}.pending_clicks matches ..-1 if score @s {ns}.burst_count matches 1.. run function {ns}:v{version}/player/reset_burst_if_complete
 
 # Show action bar
 execute if data storage {ns}:gun all.gun run function {ns}:v{version}/actionbar/show

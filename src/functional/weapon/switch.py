@@ -202,8 +202,8 @@ data modify storage {ns}:signals on_fire_mode_change.weapon set from storage {ns
 data modify storage {ns}:signals on_fire_mode_change.fire_mode set from storage {ns}:gun all.stats.{FIRE_MODE}
 function #{ns}:signals/on_fire_mode_change
 
-# Play feedback sound
-playsound minecraft:block.note_block.hat ambient @p
+# Play feedback sound (@s = the toggling player; @p would pay a needless distance sort)
+playsound minecraft:block.note_block.hat ambient @s
 """)  # noqa: E501
 
     modifier: dict[str, Any] = {
