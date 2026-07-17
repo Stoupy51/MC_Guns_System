@@ -29,7 +29,7 @@ performance. It's your job to make them feel bad about doing shit!
 - **F3 + L** (singleplayer): records a 10-second profile, drops a `.zip` in `debug/`. Drag it into
   **Misode's Report Analyzer** (https://misode.github.io/report/). Open the command tab to see
   per-function sub-trees.
-- **Alt + F3**: live MSPT graph. Good for spotting spikes vs. flat load.
+- **F3 + 2**: live MSPT graph. Good for spotting spikes vs. flat load. (requires being OP)
 - **`/profile`** on servers (less detailed than F3+L).
 - In the report, look at: **% of parent**, **% of total tick**, **ms**, and the **count** column.
   Absolute ms is hardware-dependent — reason in *relative* terms. One command at 80% of a subtree is
