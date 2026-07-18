@@ -16,6 +16,7 @@ from ..helpers import (
 	regen_disable_lines,
 	regen_enable_lines,
 	schedule_preload_complete_line,
+	write_ranked_stats_functions,
 )
 
 
@@ -324,6 +325,16 @@ execute if data storage {ns}:zombies game{{state:"active"}} if score @s {ns}.zb.
 
 		# Game Over ─────────────────────────────────────────────────
 
+		zb_stat_line: str = (
+			'tellraw @a ["","  ","🎖 ",{"selector":"@s"}," — Kills: ",'
+			f'{{"score":{{"name":"@s","objective":"{ns}.zb.kills"}},"color":"green"}}," | Downs: ",'
+			f'{{"score":{{"name":"@s","objective":"{ns}.zb.downs"}},"color":"red"}}," | Points: ",'
+			f'{{"score":{{"name":"@s","objective":"{ns}.zb.points"}},"color":"gold"}}]'
+		)
+		zb_ranked_stats: str = write_ranked_stats_functions(
+			ns, version, "zombies/announce_stats", "zb.in_game", "zb.kills", zb_stat_line
+		)
+
 		write_versioned_function("zombies/game_over", f"""
 # Set state to ended
 data modify storage {ns}:zombies game.state set value "ended"
@@ -339,8 +350,8 @@ execute store result score #final_round {ns}.data run data get storage {ns}:zomb
 tellraw @a ["","\\n",{{"text":"═══════ GAME OVER ═══════","color":"dark_red","bold":true}}]
 tellraw @a ["","  ","🧟 ",{{"text":"Final Round: ","color":"gray"}},{{"score":{{"name":"#final_round","objective":"{ns}.data"}},"color":"red","bold":true}}]
 
-# Per-player stats
-execute as @a[scores={{{ns}.zb.in_game=1}}] run tellraw @a ["","  ","🎖 ",{{"selector":"@s","color":"yellow"}}," — Kills: ",{{"score":{{"name":"@s","objective":"{ns}.zb.kills"}},"color":"green"}}," | Downs: ",{{"score":{{"name":"@s","objective":"{ns}.zb.downs"}},"color":"red"}}," | Points: ",{{"score":{{"name":"@s","objective":"{ns}.zb.points"}},"color":"gold"}}]
+# Per-player stats, best first. The bare selector component renders the player's team colour.
+{zb_ranked_stats}
 
 tellraw @a ["",{{"text":"═════════════════════════","color":"dark_red","bold":true}},"\\n"]
 

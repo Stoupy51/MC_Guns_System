@@ -16,6 +16,7 @@ from ..helpers import (
 	prep_freeze_lines,
 	regen_disable_lines,
 	regen_enable_lines,
+	write_ranked_stats_functions,
 )
 
 # All multiplayer gamemodes (single source of truth for dispatch blocks)
@@ -223,6 +224,17 @@ tellraw @a ["","⚔ ",[{{"text":"","color":"gold","bold":true}},{{"text":"Prepar
 """)
 
 		## Game Stop
+		mp_stat_line: str = (
+			'tellraw @a ["","  ",{"selector":"@s"},{"text":" ➤ ","color":"dark_gray"},'
+			f'{{"score":{{"name":"@s","objective":"{ns}.mp.kills"}},"color":"green"}},'
+			'{"text":" kills","color":"gray"},{"text":" · ","color":"dark_gray"},'
+			f'{{"score":{{"name":"@s","objective":"{ns}.mp.deaths"}},"color":"red"}},'
+			'{"text":" deaths","color":"gray"}]'
+		)
+		mp_ranked_stats: str = write_ranked_stats_functions(
+			ns, version, "multiplayer/announce_stats", "mp.in_game", "mp.kills", mp_stat_line
+		)
+
 		write_versioned_function("multiplayer/stop", f"""
 # Various cleanup to go back to lobby
 data modify storage {ns}:multiplayer game.state set value "lobby"
@@ -244,8 +256,9 @@ function #{ns}:multiplayer/on_game_end
 tellraw @a ["","⚔ ",[{{"text":"","color":"gold","bold":true}},{{"text":"Game Over"}},"! "]]
 execute unless data storage {ns}:multiplayer game{{gamemode:"ffa"}} run tellraw @a ["",{{"text":"Red","color":"red"}},{{"text":": "}},{{"score":{{"name":"#red","objective":"{ns}.mp.team"}}}}," | ",{{"text":"Blue","color":"blue"}},{{"text":": "}},{{"score":{{"name":"#blue","objective":"{ns}.mp.team"}}}}]
 
-# Per-player match stats
-execute as @a[scores={{{ns}.mp.in_game=1}}] run tellraw @a ["","  ",{{"selector":"@s","color":"yellow"}},{{"text":" ➤ ","color":"dark_gray"}},{{"score":{{"name":"@s","objective":"{ns}.mp.kills"}},"color":"green"}},{{"text":" kills","color":"gray"}},{{"text":" · ","color":"dark_gray"}},{{"score":{{"name":"@s","objective":"{ns}.mp.deaths"}},"color":"red"}},{{"text":" deaths","color":"gray"}}]
+# Per-player match stats, best first. The name is a bare selector component so it renders in the
+# player's team colour; this runs before the team leave below, while that colour still applies.
+{mp_ranked_stats}
 
 # Remove sidebar and list displays and leave teams
 scoreboard objectives setdisplay sidebar
