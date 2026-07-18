@@ -69,7 +69,7 @@ ALL_ELEMENTS: dict[str, JsonDict] = {
 # Elements rendered as real in-game models in the editor (instead of dust particles).
 # Each has a maps/editor/displays/<etype> function mirroring the game's own display setup,
 # rebuilt every second so rotation/config edits on the marker stay in sync.
-MODEL_DISPLAY_ELEMENTS: tuple[str, ...] = ("wallbuy", "perk_machine", "pap_machine", "mystery_box_pos", "power_switch")
+MODEL_DISPLAY_ELEMENTS: tuple[str, ...] = ("wallbuy", "perk_machine", "pap_machine", "mystery_box_pos", "power_switch", "barrier")
 
 # Field documentation ───────────────────────────────────────────
 # Tooltips shown (as a hover "ⓘ") next to constant/enum config fields in the element editor,
@@ -1747,6 +1747,25 @@ execute as @e[tag={ns}.element.perk_machine] at @s run function {ns}:v{version}/
 execute as @e[tag={ns}.element.pap_machine] at @s run function {ns}:v{version}/maps/editor/displays/pap_machine
 execute as @e[tag={ns}.element.mystery_box_pos] at @s run function {ns}:v{version}/maps/editor/displays/mystery_box_pos
 execute as @e[tag={ns}.element.power_switch] at @s run function {ns}:v{version}/maps/editor/displays/power_switch
+execute as @e[tag={ns}.element.barrier] at @s run function {ns}:v{version}/maps/editor/displays/barrier
+""")
+
+	## Barrier: block_display of the "enabled" (intact) block, mirroring zombies/barriers/place_at
+	## so a map maker sees the boards exactly where they will stand in game.
+	write_versioned_function("maps/editor/displays/barrier", f"""
+# @s = barrier marker, at @s
+data modify storage {ns}:temp _ed_bar.yaw set value 0.0f
+execute if data entity @s data.yaw run data modify storage {ns}:temp _ed_bar.yaw set from entity @s data.yaw
+
+# Fall back to the element default when the marker has no block configured yet
+data modify storage {ns}:temp _ed_bar.block set value {{Name:"minecraft:oak_fence_gate",Properties:{{open:"false"}}}}
+execute if data entity @s data.block_enabled run data modify storage {ns}:temp _ed_bar.block set from entity @s data.block_enabled
+
+execute align xyz positioned ~.5 ~.5 ~.5 run function {ns}:v{version}/maps/editor/displays/summon_barrier with storage {ns}:temp _ed_bar
+""")
+	write_versioned_function("maps/editor/displays/summon_barrier", f"""
+# Same placement and transform as zombies/barriers/place_at
+$summon minecraft:block_display ~ ~ ~ {{Rotation:[$(yaw),0f],block_state:$(block),transformation:{{left_rotation:[0f,0f,0f,1f],scale:[1f,1f,1f],translation:[-0.5f,-0.5f,-0.5f],right_rotation:[0f,0f,0f,1f]}},Tags:["{ns}.editor_display"]}}
 """)
 
 	## Wallbuy: weapon item display against the wall (same placement/scale as zombies/wallbuys setup)
@@ -1823,6 +1842,11 @@ $summon minecraft:item_display ~ ~ ~ {{Rotation:[$(yaw),0f],Tags:["{ns}.editor_d
 """)
 
 	# Editor Tick (universal - shows all element types) ──────────
+	# Editor particles go only to players actually in editor mode. A particle command with no viewer
+	# selector is transmitted to every player on the server, so the markers were costing bandwidth
+	# and client FPS for everyone in the game, not just the map maker.
+	editor_viewers: str = f"@a[scores={{{ns}.mp.map_edit=1}},distance=..48]"
+
 	particle_lines: list[str] = []
 	for etype, einfo in ALL_ELEMENTS.items():
 		# Elements with a real model display don't need a dust particle marker
@@ -1833,8 +1857,11 @@ $summon minecraft:item_display ~ ~ ~ {{Rotation:[$(yaw),0f],Tags:["{ns}.editor_d
 		spread = "0.2 0.5 0.2" if einfo["save_type"] == "spawn" else "0.3 0.5 0.3"
 		count = 2 if etype == "base_coordinates" else 1
 		particle_lines.append(
-			f'execute at @e[tag={ns}.element.{etype}] run particle dust{{color:[{r},{g},{b}],scale:{scale}}} ~ ~1 ~ {spread} 0 {count}'
+			f'execute at @e[tag={ns}.element.{etype}] run particle dust{{color:[{r},{g},{b}],scale:{scale}}} ~ ~1 ~ {spread} 0 {count} normal {editor_viewers}'
 		)
+
+	# Markers that already draw a real model don't get the white rotation tick either
+	model_excluded: str = "".join(f",tag=!{ns}.element.{etype}" for etype in MODEL_DISPLAY_ELEMENTS)
 
 	actionbar_type_lines: list[str] = []
 	for etype, einfo in ALL_ELEMENTS.items():
@@ -1851,22 +1878,43 @@ $summon minecraft:item_display ~ ~ ~ {{Rotation:[$(yaw),0f],Tags:["{ns}.editor_d
 # Only run for players in editor mode
 execute unless score @s {ns}.mp.map_edit matches 1 run return fail
 
-# Show rotation indicator for all markers
-execute as @e[tag={ns}.map_element] run data modify entity @s Rotation[0] set from entity @s data.yaw
-execute as @e[tag={ns}.map_element] at @s positioned ^ ^ ^0.5 run particle dust{{color:[1.0,1.0,1.0],scale:0.5}} ~ ~1.69 ~ 0.1 0.1 0.1 0 5
+# Actionbar: show nearest element info (within 5 blocks). Genuinely per-player, stays here.
+tag @s add {ns}.check_nearest
+execute as @n[type=minecraft:marker,tag={ns}.map_element,distance=..5] run function {ns}:v{version}/maps/editor/actionbar_nearest
+tag @s remove {ns}.check_nearest
 
-# Model displays: rebuild once per second so rotation/config edits on markers stay in sync
+# Everything else the editor draws is map-wide, not per-player, but this function runs once per
+# editing player — so marker rotation syncing, the display rebuild and every particle used to be
+# repeated for each of them. Do that work once per tick instead, whoever gets here first.
+execute unless score #ed_global_tick {ns}.data = #total_tick {ns}.data run function {ns}:v{version}/maps/editor/global_tick
+""")
+
+	## Map-wide editor rendering: runs at most once per tick regardless of how many players edit
+	write_versioned_function("maps/editor/global_tick", f"""
+# Claim this tick so the remaining editors skip straight past the call above
+scoreboard players operation #ed_global_tick {ns}.data = #total_tick {ns}.data
+
+# Model displays: rebuild once per second so rotation/config edits on markers stay in sync.
+# The marker rotation sync is an NBT read plus an NBT write per marker, which is far too expensive
+# to run every tick — and yaw only ever changes when someone edits it, so once a second is plenty.
 scoreboard players operation #ed_disp_phase {ns}.data = #total_tick {ns}.data
 scoreboard players operation #ed_disp_phase {ns}.data %= #20 {ns}.data
+execute if score #ed_disp_phase {ns}.data matches 0 as @e[type=minecraft:marker,tag={ns}.map_element] run data modify entity @s Rotation[0] set from entity @s data.yaw
 execute if score #ed_disp_phase {ns}.data matches 0 run function {ns}:v{version}/maps/editor/refresh_displays
 
-# Per-element particles
-{chr(10).join(particle_lines)}
+# Marker particles every 4 ticks: dust lingers about a second, so this looks identical to emitting
+# them every tick while cutting the particle commands (and the packets they generate) by 4x.
+scoreboard players operation #ed_part_phase {ns}.data = #total_tick {ns}.data
+scoreboard players operation #ed_part_phase {ns}.data %= #4 {ns}.data
+execute if score #ed_part_phase {ns}.data matches 0 run function {ns}:v{version}/maps/editor/particles
+""")
 
-# Actionbar: show nearest element info (within 5 blocks)
-tag @s add {ns}.check_nearest
-execute as @n[tag={ns}.map_element,distance=..5] run function {ns}:v{version}/maps/editor/actionbar_nearest
-tag @s remove {ns}.check_nearest
+	write_versioned_function("maps/editor/particles", f"""
+# Rotation indicator, skipped for markers that already draw a real model
+execute as @e[type=minecraft:marker,tag={ns}.map_element{model_excluded}] at @s positioned ^ ^ ^0.5 run particle dust{{color:[1.0,1.0,1.0],scale:0.5}} ~ ~1.69 ~ 0.1 0.1 0.1 0 5 normal {editor_viewers}
+
+# Per-element markers
+{chr(10).join(particle_lines)}
 """)
 
 	# Coord Stick ─────────────────────────────────────────────────
