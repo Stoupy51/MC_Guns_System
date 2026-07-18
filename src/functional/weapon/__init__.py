@@ -8,6 +8,7 @@ from .common import main as common_main
 from .grenade import main as grenade_main
 from .hit_indicator import main as hit_indicator_main
 from .kick import main as kick_main
+from .left_click import main as left_click_main
 from .projectile import main as projectile_main
 from .raycast import main as raycast_main
 from .sound import main as sound_main
@@ -24,6 +25,9 @@ def main() -> None:
 
     # Detect right click base
     common_main()
+
+    # Detect left click (reload), via the piercing-attack enchantment
+    left_click_main()
 
     # Handle zoom functionality
     zoom_main()

@@ -349,7 +349,7 @@ function #{ns}:zombies/on_game_end
 
 # Stop all sounds and play gameover sound
 stopsound @a
-execute as @a[scores={{{ns}.zb.in_game=1}}] at @s run playsound {ns}:zombies/game_over ambient @s ~ ~ ~ 0.6 1.0
+execute as @a[scores={{{ns}.zb.in_game=1}}] at @s run playsound {ns}:zombies/game_over ambient @s ~ ~ ~ 0.25 1.0
 
 # End game after 5 seconds
 schedule function {ns}:v{version}/zombies/stop 100t

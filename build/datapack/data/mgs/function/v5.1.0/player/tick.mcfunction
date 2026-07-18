@@ -24,8 +24,8 @@ scoreboard players operation #acoustics_phase mgs.data %= #20 mgs.data
 execute if score #acoustics_phase mgs.data matches 0 if predicate mgs:v5.1.0/is_moving run function mgs:v5.1.0/sound/compute_acoustics
 execute if score #acoustics_phase mgs.data matches 0 unless predicate mgs:v5.1.0/is_on_ground run function mgs:v5.1.0/sound/compute_acoustics
 
-# Change mode if weapon is in offhand
-execute if items entity @s weapon.offhand * run function mgs:v5.1.0/player/mode_check
+# Reload if the hand-swap key parked the weapon in the offhand
+execute if items entity @s weapon.offhand * run function mgs:v5.1.0/player/offhand_swap_check
 
 # Check if player dropped weapon to reload
 function mgs:v5.1.0/switch/check_reload_on_drop

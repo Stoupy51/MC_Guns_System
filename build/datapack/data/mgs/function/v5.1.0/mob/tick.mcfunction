@@ -26,10 +26,21 @@ execute if score @s mgs.cooldown matches 1.. run scoreboard players remove @s mg
 execute if score @s mgs.cooldown matches 1.. run return 0
 
 # Pick target BEFORE paying the equipment-NBT gun copy: last attacker, otherwise nearest player.
-# store success captures "did we tag anyone" so no unbounded @e[tag=] existence rescans are needed.
+# Scores (not @e[tag=] existence rescans) carry "did we find anyone" between the two paths.
 scoreboard players set #mob_has_target mgs.data 0
 execute store success score #mob_has_target mgs.data on attacker run tag @s add mgs.target
-execute if score #mob_has_target mgs.data matches 0 store success score #mob_has_target mgs.data run tag @p[distance=..64,gamemode=!spectator,gamemode=!creative] add mgs.target
+
+# Fall back to the nearest player. Two rules this block has to respect, both of which silently
+# broke mobs before:
+#  - the result goes to a scratch score, because `execute store success` writes 0 whenever a guard
+#    on the same chain filters the command out. Writing straight to #mob_has_target zeroed the
+#    attacker hit above, so any mob that had ever been shot never fired again.
+#  - "is a player in range" is asked separately from `tag ... add`, which reports failure when the
+#    tag is merely already present — otherwise one leaked tag wedges the mob permanently.
+scoreboard players set #mob_near_target mgs.data 0
+execute if score #mob_has_target mgs.data matches 0 if entity @p[distance=..64,gamemode=!spectator,gamemode=!creative] run scoreboard players set #mob_near_target mgs.data 1
+execute if score #mob_near_target mgs.data matches 1 run tag @p[distance=..64,gamemode=!spectator,gamemode=!creative] add mgs.target
+scoreboard players operation #mob_has_target mgs.data > #mob_near_target mgs.data
 
 # No target in range, skip
 execute if score #mob_has_target mgs.data matches 0 run return 0

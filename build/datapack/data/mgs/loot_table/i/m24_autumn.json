@@ -25,6 +25,20 @@
 									}
 								},
 								"minecraft:rarity": "common",
+								"minecraft:piercing_weapon": {
+									"min_reach": 0.0,
+									"max_reach": 0.0,
+									"hitbox_margin": 0.0
+								},
+								"minecraft:enchantments": {
+									"mgs:left_click": 1
+								},
+								"minecraft:enchantment_glint_override": false,
+								"minecraft:tooltip_display": {
+									"hidden_components": [
+										"minecraft:enchantments"
+									]
+								},
 								"minecraft:item_name": [
 									{
 										"text": "M24",

@@ -1,7 +1,8 @@
 
 # Imports
+import numpy as np
 from beet import Font, Texture
-from PIL import Image, ImageDraw
+from PIL import Image
 from stewbeet import Mem, write_versioned_function
 
 # BO2-style hit direction indicator: a red arc ringing the crosshair, pointing toward the shooter.
@@ -26,20 +27,32 @@ def main() -> None:
 	# Generate the 8 arc textures: sector 0 = shooter in front (arc at top), clockwise.
 	# PIL arc angles: 0° = 3 o'clock, increasing clockwise (y axis points down) -> top = -90°.
 	font: Font = Mem.ctx.assets.fonts.setdefault(f"{ns}:hit_dir", Font({"providers": []}))
+
+	# Alpha is computed per-pixel rather than with ImageDraw.arc(), which can only flat-fill: the arc
+	# has to fade out toward its two ends, and (softly) at its inner/outer edges. Geometry is shared
+	# by all 8 sectors, so the polar grid is built once and only the angular term varies below.
+	big: int = CANVAS * 2
+	radius: float = ARC_RADIUS * big / 512
+	width: float = ARC_WIDTH * big / 512
+	yy, xx = np.mgrid[0:big, 0:big]
+	centre: float = (big - 1) / 2.0
+	dx, dy = xx - centre, yy - centre
+	# 0° = 3 o'clock, increasing clockwise (image y axis points down) -> top = -90°, matching sectors.
+	angle = np.degrees(np.arctan2(dy, dx))
+	# Radial profile: a solid core with soft edges. The 2.5 factor widens the plateau so the ring keeps its
+	# thickness instead of reading as a thin blur; the clip is what anti-aliases the edges.
+	radial = np.clip((1.0 - np.abs(np.hypot(dx, dy) - radius) / (width / 2.0)) * 2.5, 0.0, 1.0)
+
 	for sector in range(8):
-		big: int = CANVAS * 2
-		img = Image.new("RGBA", (big, big), (0, 0, 0, 0))
-		draw = ImageDraw.Draw(img)
-		radius: int = round(ARC_RADIUS * big / 512)
-		width: int = max(1, round(ARC_WIDTH * big / 512))
-		margin: int = big // 2 - radius
-		center_angle: int = -90 + 45 * sector
-		draw.arc(
-			(margin, margin, big - margin, big - margin),
-			start=center_angle - ARC_SPAN // 2, end=center_angle + ARC_SPAN // 2,
-			fill=(255, 255, 255, 255), width=width,
-		)
-		img = img.resize((CANVAS, CANVAS), Image.Resampling.LANCZOS)
+		center_angle: float = -90.0 + 45.0 * sector
+		# Signed angular distance from the arc's centre, wrapped into -180..180 so the seam at ±180°
+		# doesn't produce a hard cut, then faded linearly to fully transparent at both ends.
+		delta = np.abs((angle - center_angle + 180.0) % 360.0 - 180.0)
+		tangential = np.clip(1.0 - delta / (ARC_SPAN / 2.0), 0.0, 1.0)
+		rgba = np.empty((big, big, 4), dtype=np.uint8)
+		rgba[..., :3] = 255  # white; the title's text colour tints it red at display time
+		rgba[..., 3] = (radial * tangential * 255.0).astype(np.uint8)
+		img = Image.fromarray(rgba, "RGBA").resize((CANVAS, CANVAS), Image.Resampling.LANCZOS)
 		Mem.ctx.assets.textures[f"{ns}:font/hit_dir_{sector}"] = Texture(img)
 		font.data["providers"].append({
 			"type": "bitmap",

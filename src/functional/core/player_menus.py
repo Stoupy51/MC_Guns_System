@@ -132,7 +132,7 @@ data modify storage %NS%:temp _plr_iter set value []
 execute as @a run function %NS%:v%VER%/players/append_self
 
 # Base dialog (one row per player, stays open after a pick, Back returns to setup)
-data modify storage %NS%:temp dialog set value {type:"minecraft:multi_action",title:["","👥 ",{text:"Manage Players",color:"%COLOR%",bold:true}],body:[{type:"minecraft:plain_message",contents:{text:"One row per player — click a name to refresh",color:"gray"}}],actions:[],columns:%COLUMNS%,pause:false,after_action:"none",exit_action:{label:{text:"◀ Back",color:"gray"},tooltip:{text:"Return to setup"},action:{type:"run_command",command:"/function %NS%:v%VER%/%BACK%"}}}
+data modify storage %NS%:temp dialog set value {type:"minecraft:multi_action",title:["","👥 ",{text:"Manage Players",color:"%COLOR%",bold:true}],body:[{type:"minecraft:plain_message",contents:{text:"One row per player — click a name to refresh",color:"gray"}}],actions:[],columns:%COLUMNS%,pause:false,after_action:"none",exit_action:{label:["","◀ ",{text:"Back",color:"gray"}],tooltip:{text:"Return to setup"},action:{type:"run_command",command:"/function %NS%:v%VER%/%BACK%"}}}
 
 # Append one button per player
 execute if data storage %NS%:temp _plr_iter[0] run function %NS%:v%VER%/players/list_iter
