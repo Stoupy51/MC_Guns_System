@@ -3,8 +3,8 @@
     {
       "type": "bitmap",
       "file": "mgs:font/hit_dir_0.png",
-      "ascent": 33,
-      "height": 56,
+      "ascent": 20,
+      "height": 48,
       "chars": [
         "A"
       ]
@@ -12,8 +12,8 @@
     {
       "type": "bitmap",
       "file": "mgs:font/hit_dir_1.png",
-      "ascent": 33,
-      "height": 56,
+      "ascent": 20,
+      "height": 48,
       "chars": [
         "B"
       ]
@@ -21,8 +21,8 @@
     {
       "type": "bitmap",
       "file": "mgs:font/hit_dir_2.png",
-      "ascent": 33,
-      "height": 56,
+      "ascent": 20,
+      "height": 48,
       "chars": [
         "C"
       ]
@@ -30,8 +30,8 @@
     {
       "type": "bitmap",
       "file": "mgs:font/hit_dir_3.png",
-      "ascent": 33,
-      "height": 56,
+      "ascent": 20,
+      "height": 48,
       "chars": [
         "D"
       ]
@@ -39,8 +39,8 @@
     {
       "type": "bitmap",
       "file": "mgs:font/hit_dir_4.png",
-      "ascent": 33,
-      "height": 56,
+      "ascent": 20,
+      "height": 48,
       "chars": [
         "E"
       ]
@@ -48,8 +48,8 @@
     {
       "type": "bitmap",
       "file": "mgs:font/hit_dir_5.png",
-      "ascent": 33,
-      "height": 56,
+      "ascent": 20,
+      "height": 48,
       "chars": [
         "F"
       ]
@@ -57,8 +57,8 @@
     {
       "type": "bitmap",
       "file": "mgs:font/hit_dir_6.png",
-      "ascent": 33,
-      "height": 56,
+      "ascent": 20,
+      "height": 48,
       "chars": [
         "G"
       ]
@@ -66,10 +66,262 @@
     {
       "type": "bitmap",
       "file": "mgs:font/hit_dir_7.png",
-      "ascent": 33,
-      "height": 56,
+      "ascent": 20,
+      "height": 48,
       "chars": [
         "H"
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "mgs:font/hit_dir_8.png",
+      "ascent": 20,
+      "height": 48,
+      "chars": [
+        "I"
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "mgs:font/hit_dir_9.png",
+      "ascent": 20,
+      "height": 48,
+      "chars": [
+        "J"
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "mgs:font/hit_dir_10.png",
+      "ascent": 20,
+      "height": 48,
+      "chars": [
+        "K"
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "mgs:font/hit_dir_11.png",
+      "ascent": 20,
+      "height": 48,
+      "chars": [
+        "L"
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "mgs:font/hit_dir_12.png",
+      "ascent": 20,
+      "height": 48,
+      "chars": [
+        "M"
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "mgs:font/hit_dir_13.png",
+      "ascent": 20,
+      "height": 48,
+      "chars": [
+        "N"
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "mgs:font/hit_dir_14.png",
+      "ascent": 20,
+      "height": 48,
+      "chars": [
+        "O"
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "mgs:font/hit_dir_15.png",
+      "ascent": 20,
+      "height": 48,
+      "chars": [
+        "P"
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "mgs:font/hit_dir_16.png",
+      "ascent": 20,
+      "height": 48,
+      "chars": [
+        "Q"
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "mgs:font/hit_dir_17.png",
+      "ascent": 20,
+      "height": 48,
+      "chars": [
+        "R"
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "mgs:font/hit_dir_18.png",
+      "ascent": 20,
+      "height": 48,
+      "chars": [
+        "S"
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "mgs:font/hit_dir_19.png",
+      "ascent": 20,
+      "height": 48,
+      "chars": [
+        "T"
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "mgs:font/hit_dir_20.png",
+      "ascent": 20,
+      "height": 48,
+      "chars": [
+        "U"
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "mgs:font/hit_dir_21.png",
+      "ascent": 20,
+      "height": 48,
+      "chars": [
+        "V"
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "mgs:font/hit_dir_22.png",
+      "ascent": 20,
+      "height": 48,
+      "chars": [
+        "W"
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "mgs:font/hit_dir_23.png",
+      "ascent": 20,
+      "height": 48,
+      "chars": [
+        "X"
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "mgs:font/hit_dir_24.png",
+      "ascent": 20,
+      "height": 48,
+      "chars": [
+        "Y"
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "mgs:font/hit_dir_25.png",
+      "ascent": 20,
+      "height": 48,
+      "chars": [
+        "Z"
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "mgs:font/hit_dir_26.png",
+      "ascent": 20,
+      "height": 48,
+      "chars": [
+        "a"
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "mgs:font/hit_dir_27.png",
+      "ascent": 20,
+      "height": 48,
+      "chars": [
+        "b"
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "mgs:font/hit_dir_28.png",
+      "ascent": 20,
+      "height": 48,
+      "chars": [
+        "c"
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "mgs:font/hit_dir_29.png",
+      "ascent": 20,
+      "height": 48,
+      "chars": [
+        "d"
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "mgs:font/hit_dir_30.png",
+      "ascent": 20,
+      "height": 48,
+      "chars": [
+        "e"
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "mgs:font/hit_dir_31.png",
+      "ascent": 20,
+      "height": 48,
+      "chars": [
+        "f"
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "mgs:font/hit_dir_32.png",
+      "ascent": 20,
+      "height": 48,
+      "chars": [
+        "g"
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "mgs:font/hit_dir_33.png",
+      "ascent": 20,
+      "height": 48,
+      "chars": [
+        "h"
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "mgs:font/hit_dir_34.png",
+      "ascent": 20,
+      "height": 48,
+      "chars": [
+        "i"
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "mgs:font/hit_dir_35.png",
+      "ascent": 20,
+      "height": 48,
+      "chars": [
+        "j"
       ]
     }
   ]
