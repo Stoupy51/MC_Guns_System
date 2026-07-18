@@ -15,6 +15,10 @@ effect clear @a[scores={mgs.mi.in_game=1}] night_vision
 # Spawn all enemies from map data
 function mgs:v5.1.0/missions/spawn_all_enemies
 
+# A mission with no enemies would instantly "complete" — abort instead (empty map or broken enemy functions)
+execute if score #mi_total_enemies mgs.data matches ..0 run tellraw @a [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.no_enemies_could_be_spawned_check_the_maps_enemy_markers_functio","color":"red"}]
+execute if score #mi_total_enemies mgs.data matches ..0 run return run function mgs:v5.1.0/missions/stop
+
 # Run map-defined start commands after enemies are spawned
 execute if data storage mgs:missions game.map.start_commands[0] run function mgs:v5.1.0/shared/run_start_commands {mode:"missions"}
 

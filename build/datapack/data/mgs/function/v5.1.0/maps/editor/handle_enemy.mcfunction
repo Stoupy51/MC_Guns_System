@@ -7,7 +7,7 @@
 #
 
 # Initialize default function if missing
-execute unless data storage mgs:temp map_edit.map.default_enemy_function run data modify storage mgs:temp map_edit.map.default_enemy_function set value "mgs:v5.1.0/mob/default/level_1 {\"entity\":\"pillager\"}"
+execute unless data storage mgs:temp map_edit.map.default_enemy_function run data modify storage mgs:temp map_edit.map.default_enemy_function set value "mgs:mob/default/level_1 {\"entity\":\"pillager\"}"
 
 # Get position for permanent marker
 execute store result storage mgs:temp _pos.x double 1 run data get entity @s Pos[0]

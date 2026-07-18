@@ -1,6 +1,6 @@
 
 # Imports
-from stewbeet import Mem, write_load_file, write_tick_file, write_versioned_function
+from stewbeet import Mem, write_function, write_load_file, write_tick_file, write_versioned_function
 
 from ..config.stats import ACCURACY_BASE, COOLDOWN, GRENADE_TYPE, PELLET_COUNT, PROJECTILE_SPEED
 
@@ -228,3 +228,11 @@ scoreboard players add #armed_mob_count {ns}.data 1
 $function {ns}:v{version}/mob/default/on_new {{entity:"$(entity)",level:5,active_time:72000,sleep_time:0}}
 tag @s add {ns}.mob_lv5
 """)
+
+    # Version-independent entrypoints: map storage persists across version bumps, so saved enemy
+    # functions must not embed the pack version (a map saved on v5.0.1 kept calling a dead path,
+    # spawning 0 enemies and instantly completing the mission).
+    for level in range(1, 6):
+        forward: str = f"""$function {ns}:v{version}/mob/default/level_{level} {{entity:"$(entity)"}}"""
+        write_function(f"{ns}:mob/default/level_{level}", forward)
+

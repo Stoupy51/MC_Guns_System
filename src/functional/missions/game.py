@@ -185,6 +185,10 @@ execute as @a[scores={{{ns}.mi.in_game=1}}] run scoreboard players operation @s 
 # Spawn all enemies from map data
 function {ns}:v{version}/missions/spawn_all_enemies
 
+# A mission with no enemies would instantly "complete" — abort instead (empty map or broken enemy functions)
+execute if score #mi_total_enemies {ns}.data matches ..0 run tellraw @a [{MGS_TAG},{{"text":"No enemies could be spawned — check the map's enemy markers/functions in the editor.","color":"red"}}]
+execute if score #mi_total_enemies {ns}.data matches ..0 run return run function {ns}:v{version}/missions/stop
+
 # Run map-defined start commands after enemies are spawned
 execute if data storage {ns}:missions game.map.start_commands[0] run function {ns}:v{version}/shared/run_start_commands {{mode:"missions"}}
 
@@ -341,8 +345,9 @@ execute at @a[scores={{{ns}.mi.in_game=1}},limit=1] run kill @e[type=experience_
 function {ns}:v{version}/shared/maps/call_tick_script_at_base
 
 # Check if all enemies are dead → victory (reuses #alive counted above instead of a second
-# full-entity scan; a kill from the map tick script above is caught one tick later)
-execute if score #alive {ns}.data matches 0 run return run function {ns}:v{version}/missions/victory
+# full-entity scan; a kill from the map tick script above is caught one tick later).
+# Requires at least one spawned enemy so a broken spawn can never instantly end the game.
+execute if score #mi_total_enemies {ns}.data matches 1.. if score #alive {ns}.data matches 0 run return run function {ns}:v{version}/missions/victory
 """)
 
 		## Compass - points toward nearest enemy (runs as player at player; caller guarantees

@@ -14,9 +14,9 @@ HIT_DIR_HEIGHT: int = 56
 HIT_DIR_ASCENT: int = 33
 
 # Texture geometry (drawn at 2x then downscaled for anti-aliasing)
-CANVAS: int = 512
-ARC_RADIUS: int = 220        # outer radius at 512px canvas
-ARC_WIDTH: int = 26          # ring thickness
+CANVAS: int = 256
+ARC_RADIUS: int = 220        # outer radius, in 512ths of the canvas size
+ARC_WIDTH: int = 26          # ring thickness, in 512ths of the canvas size
 ARC_SPAN: int = 90           # degrees covered by the arc
 
 
@@ -30,12 +30,14 @@ def main() -> None:
 		big: int = CANVAS * 2
 		img = Image.new("RGBA", (big, big), (0, 0, 0, 0))
 		draw = ImageDraw.Draw(img)
-		margin: int = big // 2 - ARC_RADIUS * 2
+		radius: int = round(ARC_RADIUS * big / 512)
+		width: int = max(1, round(ARC_WIDTH * big / 512))
+		margin: int = big // 2 - radius
 		center_angle: int = -90 + 45 * sector
 		draw.arc(
 			(margin, margin, big - margin, big - margin),
 			start=center_angle - ARC_SPAN // 2, end=center_angle + ARC_SPAN // 2,
-			fill=(255, 255, 255, 255), width=ARC_WIDTH * 2,
+			fill=(255, 255, 255, 255), width=width,
 		)
 		img = img.resize((CANVAS, CANVAS), Image.Resampling.LANCZOS)
 		Mem.ctx.assets.textures[f"{ns}:font/hit_dir_{sector}"] = Texture(img)

@@ -512,6 +512,7 @@
 	"mgs.no_door_found_within_10_blocks": "No door found within 10 blocks!",
 	"mgs.no_element_found_within_10_blocks": "No element found within 10 blocks!",
 	"mgs.no_element_found_within_3_blocks": "No element found within 3 blocks!",
+	"mgs.no_enemies_could_be_spawned_check_the_maps_enemy_markers_functio": "No enemies could be spawned — check the map's enemy markers/functions in the editor.",
 	"mgs.no_mags": "No Mags",
 	"mgs.no_map_selected_use_the_setup_menu_to_select_a_map": "No map selected! Use the setup menu to select a map.",
 	"mgs.no_maps_created_yet": "No maps created yet.",

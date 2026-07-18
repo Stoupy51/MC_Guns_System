@@ -38,6 +38,7 @@ execute at @a[scores={mgs.mi.in_game=1},limit=1] run kill @e[type=experience_orb
 function mgs:v5.1.0/shared/maps/call_tick_script_at_base
 
 # Check if all enemies are dead → victory (reuses #alive counted above instead of a second
-# full-entity scan; a kill from the map tick script above is caught one tick later)
-execute if score #alive mgs.data matches 0 run return run function mgs:v5.1.0/missions/victory
+# full-entity scan; a kill from the map tick script above is caught one tick later).
+# Requires at least one spawned enemy so a broken spawn can never instantly end the game.
+execute if score #mi_total_enemies mgs.data matches 1.. if score #alive mgs.data matches 0 run return run function mgs:v5.1.0/missions/victory
 
