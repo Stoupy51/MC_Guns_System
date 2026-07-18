@@ -18,8 +18,10 @@ execute store result score #final_round mgs.data run data get storage mgs:zombie
 tellraw @a ["","\n",[{"text":"═══════ ","color":"dark_red","bold":true}, {"translate":"mgs.game_over_2"}, " ═══════"]]
 tellraw @a ["","  ","🧟 ",{"translate":"mgs.final_round","color":"gray"},{"score":{"name":"#final_round","objective":"mgs.data"},"color":"red","bold":true}]
 
-# Per-player stats
-execute as @a[scores={mgs.zb.in_game=1}] run tellraw @a ["","  ","🎖 ",{"selector":"@s","color":"yellow"}," — Kills: ",{"score":{"name":"@s","objective":"mgs.zb.kills"},"color":"green"}," | Downs: ",{"score":{"name":"@s","objective":"mgs.zb.downs"},"color":"red"}," | Points: ",{"score":{"name":"@s","objective":"mgs.zb.points"},"color":"gold"}]
+# Per-player stats, best first. The bare selector component renders the player's team colour.
+tag @a[scores={mgs.zb.in_game=1}] add mgs.stat_cand
+function mgs:v5.1.0/zombies/announce_stats_iter
+tag @a remove mgs.stat_cand
 
 tellraw @a ["",{"text":"═════════════════════════","color":"dark_red","bold":true},"\n"]
 

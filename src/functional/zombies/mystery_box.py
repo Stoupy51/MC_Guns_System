@@ -163,6 +163,7 @@ execute if data storage {ns}:temp {{can_start_on:1b}} run tag @n[tag={ns}.mb_new
 # Register Bookshelf events on newly spawned entity
 execute as @n[tag={ns}.mb_new] run function #bs.interaction:on_right_click {{run:"function {ns}:v{version}/zombies/mystery_box/on_right_click",executor:"source"}}
 execute as @n[tag={ns}.mb_new] run function #bs.interaction:on_hover {{run:"function {ns}:v{version}/zombies/mystery_box/on_hover",executor:"source"}}
+execute as @n[tag={ns}.mb_new] run function #bs.interaction:on_left_click {{run:"function {ns}:v{version}/zombies/mystery_box/on_left_click",executor:"source"}}
 tag @n[tag={ns}.mb_new] remove {ns}.mb_new
 
 data remove storage {ns}:temp _mb_iter[0]
@@ -260,10 +261,38 @@ scoreboard players operation #cur_box {ns}.data = @n[tag=bs.interaction.target] 
 execute at @n[tag=bs.interaction.target] run function {ns}:v{version}/zombies/mystery_box/box_click
 """)
 
+	## Shift + left click: hand your finished pull to the team (@s = player)
+	write_versioned_function("zombies/mystery_box/on_left_click", f"""
+# Plain left click is a normal swing, only sneaking means "share this"
+execute unless predicate {ns}:v{version}/is_sneaking run return fail
+execute unless data storage {ns}:zombies game{{state:"active"}} run return fail
+execute at @n[tag=bs.interaction.target] run function {ns}:v{version}/zombies/mystery_box/share_at_box
+""")
+
+	## Mark this box's finished pull as free for anyone to collect (@s = player, at the box)
+	write_versioned_function("zombies/mystery_box/share_at_box", f"""
+# Nothing to share unless a finished pull is sitting here (a spinning one has no weapon yet)
+execute unless entity @n[tag={ns}.mb_display,distance=..3] run return fail
+execute if entity @n[tag={ns}.mb_display,distance=..3,scores={{{ns}.mb.anim=1..}}] run return fail
+
+# Sharing twice is a no-op rather than a second announcement
+execute if entity @n[tag={ns}.mb_display,distance=..3,tag={ns}.mb_shared] run return fail
+
+# Only the buyer can give their own pull away
+execute unless score @s {ns}.mb.pid = @n[tag={ns}.mb_display,distance=..3] {ns}.mb.buyer run return run function {ns}:v{version}/zombies/mystery_box/deny_not_your_result
+
+tag @n[tag={ns}.mb_display,distance=..3] add {ns}.mb_shared
+function {ns}:v{version}/zombies/feedback/sound_success
+tellraw @a[scores={{{ns}.zb.in_game=1}}] [{MGS_TAG},{{"selector":"@s"}},{{"text":" shared their Mystery Box weapon — anyone can take it!","color":"green"}}]
+""")
+
 	## Dispatch a click at a specific box (@s = player, positioned at the box)
 	write_versioned_function("zombies/mystery_box/box_click", f"""
 # Spinning (a pull display here with anim > 0): already in use
 execute if entity @n[tag={ns}.mb_display,distance=..3,scores={{{ns}.mb.anim=1..}}] run return run function {ns}:v{version}/zombies/mystery_box/deny_already_in_use
+
+# Shared by its buyer (shift + left click): anyone may collect it
+execute if entity @n[tag={ns}.mb_display,distance=..3,tag={ns}.mb_shared] run return run function {ns}:v{version}/zombies/mystery_box/collect
 
 # Ready (a display here, anim <= 0): only the buyer of this box may collect (buyer pid matches)
 execute if entity @n[tag={ns}.mb_display,distance=..3] if score @s {ns}.mb.pid = @n[tag={ns}.mb_display,distance=..3] {ns}.mb.buyer run return run function {ns}:v{version}/zombies/mystery_box/collect
