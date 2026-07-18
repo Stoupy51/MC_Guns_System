@@ -5,7 +5,7 @@
 #
 
 # Rotation timer
-scoreboard players remove #hp_rotate_timer mgs.data 1
+scoreboard players operation #hp_rotate_timer mgs.data -= #tick_delta mgs.data
 execute if score #hp_rotate_timer mgs.data matches ..0 run function mgs:v5.1.0/multiplayer/gamemodes/hp/rotate
 
 # Update seconds display for sidebar (ticks / 20)

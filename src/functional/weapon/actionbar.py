@@ -11,6 +11,20 @@ def main() -> None:
 
     # Main actionbar display function
     write_versioned_function("actionbar/show", f"""
+# Idle gate: everything on the bar (ammo, cooldown dot, fire mode, dps) can only change while
+# the weapon is in use, so while idle we refresh every 10 ticks instead of rebuilding the whole
+# bar (~50 commands + a macro parse) every tick. ab_force (set by the fire-mode toggle) forces
+# an immediate refresh for changes the use-detection below can't see.
+scoreboard players set #ab_active {ns}.data 0
+execute if score @s {ns}.cooldown > #total_tick {ns}.data run scoreboard players set #ab_active {ns}.data 1
+execute if score @s {ns}.pending_clicks matches 0.. run scoreboard players set #ab_active {ns}.data 1
+execute if score @s {ns}.previous_dps matches 1.. run scoreboard players set #ab_active {ns}.data 1
+execute if score @s {ns}.ab_force matches 1 run scoreboard players set #ab_active {ns}.data 1
+scoreboard players operation #ab_phase {ns}.data = #total_tick {ns}.data
+scoreboard players operation #ab_phase {ns}.data %= #10 {ns}.data
+execute if score #ab_active {ns}.data matches 0 unless score #ab_phase {ns}.data matches 0 run return 0
+scoreboard players set @s {ns}.ab_force 0
+
 # Initialize actionbar with fire mode indicator
 function {ns}:v{version}/actionbar/build_fire_mode_indicator
 

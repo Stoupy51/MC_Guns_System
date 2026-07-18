@@ -6,6 +6,7 @@ from .ammo import main as ammo_main
 from .casing import main as casing_main
 from .common import main as common_main
 from .grenade import main as grenade_main
+from .hit_indicator import main as hit_indicator_main
 from .kick import main as kick_main
 from .projectile import main as projectile_main
 from .raycast import main as raycast_main
@@ -56,4 +57,7 @@ def main() -> None:
 
     # Advanced sound system
     sound_main()
+
+    # BO2-style 8-way hit direction indicator
+    hit_indicator_main()
 

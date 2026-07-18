@@ -271,7 +271,7 @@ $execute positioned $(x) $(y) $(z) run summon minecraft:text_display ~ ~1.0 ~ {{
 	# ──────────────────────────────────────────────────────────────────────────
 	write_versioned_function("zombies/powerups/entity_tick", f"""
 # Decrement lifetime timer
-scoreboard players remove @s {ns}.zb.pu.timer 1
+scoreboard players operation @s {ns}.zb.pu.timer -= #tick_delta {ns}.data
 
 # Expired: remove visuals and stop processing this entity
 execute if score @s {ns}.zb.pu.timer matches ..0 run return run function {ns}:v{version}/zombies/powerups/expire
@@ -289,7 +289,7 @@ execute if entity @a[scores={{{ns}.zb.in_game=1}},gamemode=!spectator,distance=.
 
 # Downed players pick up power-ups by crawling their mannequin over them (Black Ops rule).
 # Only fires when no alive player is in range (alive players take priority and already ran above).
-execute unless entity @a[scores={{{ns}.zb.in_game=1}},gamemode=!spectator,distance=..1.5] if entity @e[tag={ns}.downed_mannequin,distance=..1.5] run function {ns}:v{version}/zombies/powerups/do_pickup
+execute unless entity @a[scores={{{ns}.zb.in_game=1}},gamemode=!spectator,distance=..1.5] if entity @e[type=minecraft:mannequin,tag={ns}.downed_mannequin,distance=..1.5] run function {ns}:v{version}/zombies/powerups/do_pickup
 """)
 
 	write_versioned_function("zombies/powerups/expire", f"""
@@ -318,7 +318,7 @@ execute if score #zb_blink_state {ns}.data matches 1 as @n[tag={ns}.pu_text,dist
 tag @p[scores={{{ns}.zb.in_game=1}},gamemode=!spectator,distance=..1.5,tag=!{ns}.pu_collecting] add {ns}.pu_collecting
 
 # If no alive player collected, a downed player crawled their mannequin over it: credit them.
-execute unless entity @a[tag={ns}.pu_collecting] if entity @e[tag={ns}.downed_mannequin,distance=..1.5] run function {ns}:v{version}/zombies/powerups/pickup_downed_collector
+execute unless entity @a[tag={ns}.pu_collecting] if entity @e[type=minecraft:mannequin,tag={ns}.downed_mannequin,distance=..1.5] run function {ns}:v{version}/zombies/powerups/pickup_downed_collector
 
 # Store power-up type before killing the entity
 scoreboard players operation #pu_type_pickup {ns}.data = @s {ns}.zb.pu.type
@@ -344,7 +344,7 @@ tag @a[tag={ns}.pu_collecting] remove {ns}.pu_collecting
 	# so a crawling downed player can grab power-ups. @s = the power-up item entity.
 	write_versioned_function("zombies/powerups/pickup_downed_collector", f"""
 scoreboard players set #pu_downed_id {ns}.data -1
-execute as @e[tag={ns}.downed_mannequin,sort=nearest,limit=1,distance=..1.5] run scoreboard players operation #pu_downed_id {ns}.data = @s {ns}.zb.downed_id
+execute as @e[type=minecraft:mannequin,tag={ns}.downed_mannequin,distance=..1.5,sort=nearest,limit=1] run scoreboard players operation #pu_downed_id {ns}.data = @s {ns}.zb.downed_id
 execute as @a[tag={ns}.downed_spectator,scores={{{ns}.zb.in_game=1}}] if score @s {ns}.zb.downed_id = #pu_downed_id {ns}.data run tag @s add {ns}.pu_collecting
 """)
 
@@ -537,7 +537,7 @@ execute if score #fs_was_active {ns}.data matches 0 run function {ns}:v{version}
 	## Fire Sale global tick: countdown, bossbar update, restore price on expiry
 	write_versioned_function("zombies/powerups/fire_sale_tick", f"""
 # Decrement the shared timer
-scoreboard players remove #zb_fire_sale_timer {ns}.data 1
+scoreboard players operation #zb_fire_sale_timer {ns}.data -= #tick_delta {ns}.data
 
 # Expired: restore the saved price, remove the bossbar, stop the song, remove temp boxes
 execute if score #zb_fire_sale_timer {ns}.data matches ..0 run scoreboard players operation #zb_mystery_box_price {ns}.config = #zb_fire_sale_saved {ns}.data
@@ -566,7 +566,7 @@ bossbar set {ns}:pu_bonfire_sale players @a[scores={{{ns}.zb.in_game=1}}]
 
 	## Bonfire Sale global tick: countdown + bossbar, clears itself on expiry
 	write_versioned_function("zombies/powerups/bonfire_sale_tick", f"""
-scoreboard players remove #zb_bonfire_sale_timer {ns}.data 1
+scoreboard players operation #zb_bonfire_sale_timer {ns}.data -= #tick_delta {ns}.data
 execute if score #zb_bonfire_sale_timer {ns}.data matches ..0 run bossbar remove {ns}:pu_bonfire_sale
 execute if score #zb_bonfire_sale_timer {ns}.data matches 1.. store result bossbar {ns}:pu_bonfire_sale value run scoreboard players get #zb_bonfire_sale_timer {ns}.data
 """)
@@ -583,24 +583,37 @@ execute if score #zb_bonfire_sale_timer {ns}.data matches 1.. store result bossb
 		end_sound_line: str = ""
 		if "end_sound" in v:
 			end_sound: str = pu_snd(v["end_sound"], at_s=True)
-			end_sound_line = (
-				f"execute if score #pu_prev_{pu_id} {ns}.data matches 1.. if score #pu_max_duration {ns}.data matches ..0 {end_sound}\n"
-				f"scoreboard players operation #pu_prev_{pu_id} {ns}.data = #pu_max_duration {ns}.data"
-			)
+			end_sound_line = f"execute if score #pu_prev_{pu_id} {ns}.data matches 1.. if score #pu_max_duration {ns}.data matches ..0 {end_sound}\n"
 		write_versioned_function(f"zombies/powerups/update_{pu_id}_bb", f"""
 # Find max remaining duration across all players with active {pu_id}
 scoreboard players set #pu_max_duration {ns}.data 0
 scoreboard players operation #pu_max_duration {ns}.data > @a[scores={{{ns}.special.{scoreboard}=1..}}] {ns}.special.{scoreboard}
 
-# If max duration is 0, remove bossbar; otherwise update value
+# Steady-off fast path: inactive now AND last tick -> no bossbar command at all
+# (the bossbar remove used to run every single tick while the powerup was inactive)
+execute if score #pu_max_duration {ns}.data matches ..0 if score #pu_prev_{pu_id} {ns}.data matches ..0 run return 0
+
+# If max duration just hit 0, remove bossbar (once); otherwise update value
 execute if score #pu_max_duration {ns}.data matches ..0 run bossbar remove {ns}:{bossbar_id}
 execute if score #pu_max_duration {ns}.data matches 1.. store result bossbar {ns}:{bossbar_id} value run scoreboard players get #pu_max_duration {ns}.data
-{end_sound_line}
+{end_sound_line}scoreboard players operation #pu_prev_{pu_id} {ns}.data = #pu_max_duration {ns}.data
 """)
 
 	# ──────────────────────────────────────────────────────────────────────────
 	# Hooks into existing systems
 	# ──────────────────────────────────────────────────────────────────────────
+
+	## Insta-kill melee modifier transitions (tag-gated from game_tick above)
+	write_versioned_function("zombies/powerups/insta_kill_melee_on", f"""
+# remove-then-add keeps this idempotent even if a stale modifier survived a game crash
+attribute @s minecraft:attack_damage modifier remove {ns}:insta_kill
+attribute @s minecraft:attack_damage modifier add {ns}:insta_kill 100000 add_value
+tag @s add {ns}.ik_melee
+""")
+	write_versioned_function("zombies/powerups/insta_kill_melee_off", f"""
+attribute @s minecraft:attack_damage modifier remove {ns}:insta_kill
+tag @s remove {ns}.ik_melee
+""")
 
 	# Bossbar update calls for game_tick, generated from TIMED_POWERUPS
 	bb_update_calls: str = "\n".join(
@@ -610,7 +623,7 @@ execute if score #pu_max_duration {ns}.data matches 1.. store result bossbar {ns
 
 	# Scoreboard decrement calls for game_tick, generated from TIMED_POWERUPS
 	decrement_calls: str = "\n".join(
-		f"execute as @a[scores={{{ns}.special.{v['scoreboard']}=1..}}] run scoreboard players remove @s {ns}.special.{v['scoreboard']} 1"
+		f"execute as @a[scores={{{ns}.special.{v['scoreboard']}=1..}}] run scoreboard players operation @s {ns}.special.{v['scoreboard']} -= #tick_delta {ns}.data"
 		for k, v in TIMED_POWERUPS.items()
 		if k not in ("insta_kill", "unlimited_ammo") # They are already handled globally (not zombies)
 	)
@@ -631,11 +644,11 @@ execute if score #pu_active {ns}.data matches 1.. as @e[tag={ns}.pu_item] at @s 
 execute if score #pu_active {ns}.data matches 1.. as @e[tag={ns}.pu_text] at @s unless entity @e[tag={ns}.pu_item,distance=..4] run kill @s
 
 # Insta Kill also works with the knife: give active players a huge melee attack damage so a single
-# melee hit one-shots zombies (guns already insta-kill via the raycast path). remove+add keeps it
-# idempotent each tick; the modifier is removed once the effect wears off.
-execute as @a[scores={{{ns}.special.instant_kill=1..}}] run attribute @s minecraft:attack_damage modifier remove {ns}:insta_kill
-execute as @a[scores={{{ns}.special.instant_kill=1..}}] run attribute @s minecraft:attack_damage modifier add {ns}:insta_kill 100000 add_value
-execute as @a[scores={{{ns}.special.instant_kill=..0}}] run attribute @s minecraft:attack_damage modifier remove {ns}:insta_kill
+# melee hit one-shots zombies (guns already insta-kill via the raycast path). The {ns}.ik_melee tag
+# tracks who currently carries the modifier, so the attribute commands only run on state
+# transitions (they used to run for EVERY player EVERY tick, mostly as guaranteed failures).
+execute as @a[tag=!{ns}.ik_melee,scores={{{ns}.special.instant_kill=1..}}] run function {ns}:v{version}/zombies/powerups/insta_kill_melee_on
+execute as @a[tag={ns}.ik_melee,scores={{{ns}.special.instant_kill=..0}}] run function {ns}:v{version}/zombies/powerups/insta_kill_melee_off
 
 # Blink state: toggles between 0 and 1 every 4 ticks (~0.2s half-cycle, matching BO2's 0.4s full cycle)
 scoreboard players add #zb_blink_counter {ns}.data 1

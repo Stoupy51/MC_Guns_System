@@ -7,7 +7,7 @@
 #
 
 # Decrement lifetime timer
-scoreboard players remove @s mgs.zb.pu.timer 1
+scoreboard players operation @s mgs.zb.pu.timer -= #tick_delta mgs.data
 
 # Expired: remove visuals and stop processing this entity
 execute if score @s mgs.zb.pu.timer matches ..0 run return run function mgs:v5.1.0/zombies/powerups/expire
@@ -25,5 +25,5 @@ execute if entity @a[scores={mgs.zb.in_game=1},gamemode=!spectator,distance=..1.
 
 # Downed players pick up power-ups by crawling their mannequin over them (Black Ops rule).
 # Only fires when no alive player is in range (alive players take priority and already ran above).
-execute unless entity @a[scores={mgs.zb.in_game=1},gamemode=!spectator,distance=..1.5] if entity @e[tag=mgs.downed_mannequin,distance=..1.5] run function mgs:v5.1.0/zombies/powerups/do_pickup
+execute unless entity @a[scores={mgs.zb.in_game=1},gamemode=!spectator,distance=..1.5] if entity @e[type=minecraft:mannequin,tag=mgs.downed_mannequin,distance=..1.5] run function mgs:v5.1.0/zombies/powerups/do_pickup
 

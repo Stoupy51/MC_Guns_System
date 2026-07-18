@@ -6,8 +6,8 @@
 # @within	mgs:v5.1.0/zombies/revive/downed_tick [ at @s ]
 #
 
-# Sync mannequin yaw from the owner's look direction (nearest downed spectator = this mannequin's owner)
-data modify entity @s Rotation[0] set from entity @p[tag=mgs.downed_spectator] Rotation[0]
+# Sync mannequin yaw from the owner's look direction (snapshotted into #rv_yaw x100 by downed_tick)
+execute store result entity @s Rotation[0] float 0.01 run scoreboard players get #rv_yaw mgs.data
 data modify entity @s Rotation[1] set value 0.0f
 
 # Crawl motion via Bookshelf physics. XZ from the crawl-input scratch scores (0 when no input is held);

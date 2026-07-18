@@ -198,19 +198,24 @@ execute on target at @s run function {ns}:v{version}/zombies/feedback/sound_deny
 # State 3: activation delay — electric particles + countdown, then teleport
 execute if score #kino_tp_state {ns}.data matches 3 at @e[tag={ns}.kino.teleporter_theater] run function {ns}:v{version}/maps/zombies/kino_der_toten/teleporter/activating_tick
 
+# States 4-6 count down in real time (#tick_delta). One-shot cues fire on a threshold CROSSING
+# (prev above / now at-or-below): an exact-value check can be jumped over when the delta is 2+
 # State 4: players in projection room — count down, then scatter to random lobby spots
-execute if score #kino_tp_state {ns}.data matches 4 run scoreboard players remove #kino_tp_timer {ns}.data 1
-execute if score #kino_tp_state {ns}.data matches 4 if score #kino_tp_timer {ns}.data matches 30 as @a[tag={ns}.kino.in_tp] at @s run playsound minecraft:block.portal.trigger block @a[distance=..50] ~ ~ ~ 1 2
+execute if score #kino_tp_state {ns}.data matches 4 run scoreboard players operation #kino_prev_t {ns}.data = #kino_tp_timer {ns}.data
+execute if score #kino_tp_state {ns}.data matches 4 run scoreboard players operation #kino_tp_timer {ns}.data -= #tick_delta {ns}.data
+execute if score #kino_tp_state {ns}.data matches 4 if score #kino_prev_t {ns}.data matches 31.. if score #kino_tp_timer {ns}.data matches ..30 as @a[tag={ns}.kino.in_tp] at @s run playsound minecraft:block.portal.trigger block @a[distance=..50] ~ ~ ~ 1 2
 execute if score #kino_tp_state {ns}.data matches 4 if score #kino_tp_timer {ns}.data matches ..0 run function {ns}:v{version}/maps/zombies/kino_der_toten/teleporter/return_players
 
 # State 5: players at random spots — count down 5s (100t), then tp all to lobby
-execute if score #kino_tp_state {ns}.data matches 5 run scoreboard players remove #kino_tp_timer {ns}.data 1
-execute if score #kino_tp_state {ns}.data matches 5 if score #kino_tp_timer {ns}.data matches 30 as @a[tag={ns}.kino.in_tp] at @s run playsound minecraft:block.portal.trigger block @a[distance=..50] ~ ~ ~ 1 2
+execute if score #kino_tp_state {ns}.data matches 5 run scoreboard players operation #kino_prev_t {ns}.data = #kino_tp_timer {ns}.data
+execute if score #kino_tp_state {ns}.data matches 5 run scoreboard players operation #kino_tp_timer {ns}.data -= #tick_delta {ns}.data
+execute if score #kino_tp_state {ns}.data matches 5 if score #kino_prev_t {ns}.data matches 31.. if score #kino_tp_timer {ns}.data matches ..30 as @a[tag={ns}.kino.in_tp] at @s run playsound minecraft:block.portal.trigger block @a[distance=..50] ~ ~ ~ 1 2
 execute if score #kino_tp_state {ns}.data matches 5 if score #kino_tp_timer {ns}.data matches ..0 run function {ns}:v{version}/maps/zombies/kino_der_toten/teleporter/return_to_lobby
 
 # State 6: cooldown — count down, then reset to idle (state 0)
-execute if score #kino_tp_state {ns}.data matches 6 run scoreboard players remove #kino_tp_cd {ns}.data 1
-execute if score #kino_tp_state {ns}.data matches 6 if score #kino_tp_cd {ns}.data matches 1 run tellraw @a [{MGS_TAG},{{"text":"The teleporter is ready to use again.","color":"green"}}]
+execute if score #kino_tp_state {ns}.data matches 6 run scoreboard players operation #kino_prev_t {ns}.data = #kino_tp_cd {ns}.data
+execute if score #kino_tp_state {ns}.data matches 6 run scoreboard players operation #kino_tp_cd {ns}.data -= #tick_delta {ns}.data
+execute if score #kino_tp_state {ns}.data matches 6 if score #kino_prev_t {ns}.data matches 2.. if score #kino_tp_cd {ns}.data matches ..1 run tellraw @a [{MGS_TAG},{{"text":"The teleporter is ready to use again.","color":"green"}}]
 execute if score #kino_tp_state {ns}.data matches 6 if score #kino_tp_cd {ns}.data matches ..0 run scoreboard players set #kino_tp_state {ns}.data 0
 """)  # noqa: E501
 

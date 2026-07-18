@@ -5,13 +5,13 @@
 #
 
 # Round timer
-scoreboard players remove #snd_round_timer mgs.data 1
+scoreboard players operation #snd_round_timer mgs.data -= #tick_delta mgs.data
 
 # If timer runs out before the bomb is planted, defenders win
 execute if score #snd_round_timer mgs.data matches ..0 if score #snd_bomb_state mgs.data matches 0 run function mgs:v5.1.0/multiplayer/gamemodes/snd/defenders_win
 
 # If bomb planted, tick bomb timer (45 seconds = 900 ticks)
-execute if score #snd_bomb_state mgs.data matches 2 run scoreboard players remove #snd_bomb_timer mgs.data 1
+execute if score #snd_bomb_state mgs.data matches 2 run scoreboard players operation #snd_bomb_timer mgs.data -= #tick_delta mgs.data
 execute if score #snd_bomb_state mgs.data matches 2 if score #snd_bomb_timer mgs.data matches ..0 run function mgs:v5.1.0/multiplayer/gamemodes/snd/bomb_explodes
 
 # Check if all attackers are dead (defenders win)

@@ -80,7 +80,7 @@ $summon minecraft:text_display $(x) $(y) $(z) {{Tags:["{ns}.hp_label","{ns}.gm_e
 		## HP Tick: Zone particles, scoring, rotation
 		self.sub("tick", f"""
 # Rotation timer
-scoreboard players remove #hp_rotate_timer {ns}.data 1
+scoreboard players operation #hp_rotate_timer {ns}.data -= #tick_delta {ns}.data
 execute if score #hp_rotate_timer {ns}.data matches ..0 run function {ns}:v{version}/multiplayer/gamemodes/hp/rotate
 
 # Update seconds display for sidebar (ticks / 20)

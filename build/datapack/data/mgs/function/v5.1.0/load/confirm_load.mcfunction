@@ -89,6 +89,9 @@ scoreboard objectives add mgs.dps dummy
 scoreboard objectives add mgs.previous_dps dummy
 scoreboard objectives add mgs.dps_timer dummy
 
+# Forces an immediate actionbar refresh (set by events its idle gate can't detect, e.g. fire-mode toggle)
+scoreboard objectives add mgs.ab_force dummy
+
 # Initialize slow bullet (projectile) counter
 scoreboard players add #slow_bullet_count mgs.data 0
 
@@ -116,6 +119,12 @@ scoreboard objectives add mgs.hp_prev dummy
 # this pack has no absorption sources, so it tracks health exactly.
 scoreboard objectives add mgs.health health
 scoreboard objectives add mgs.food food
+
+# Real-time clock: global stopwatch queried every tick (lag-immune wall-clock time).
+# Recreated on every load — only per-tick deltas are consumed, so the reset is harmless.
+stopwatch remove mgs:clock
+stopwatch create mgs:clock
+scoreboard players set #real_prev mgs.data 0
 
 # Confirm load
 tellraw @a[tag=convention.debug] {"translate":"mgs.loaded_mc_guns_system_v5_1_0","color":"green"}
@@ -463,7 +472,9 @@ scoreboard players set #60 mgs.data 60
 scoreboard players set #90 mgs.data 90
 scoreboard players set #100 mgs.data 100
 scoreboard players set #200 mgs.data 200
+scoreboard players set #450 mgs.data 450
 scoreboard players set #1000 mgs.data 1000
+scoreboard players set #3600 mgs.data 3600
 scoreboard players set #62832 mgs.data 62832
 scoreboard players set #1000000 mgs.data 1000000
 

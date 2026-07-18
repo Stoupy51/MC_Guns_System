@@ -7,6 +7,18 @@
 # Infinitely incrementing tick counter for general timing purposes
 scoreboard players add #total_tick mgs.data 1
 
+# Real-time tick equivalents from the mgs:clock stopwatch (scale 20 = seconds x20).
+# #tick_delta = real ticks elapsed since the previous game tick: ~1 at 20 TPS, 2+ under lag.
+# Mode timers subtract #tick_delta instead of 1 so durations stay wall-clock accurate.
+# No lower clamp to 1: ms rounding jitters deltas between 0/1/2 but their SUM stays exact.
+# Upper clamp 40 (2s) bounds the jump after a singleplayer pause or a world freeze.
+execute store result score #real_tick mgs.data run stopwatch query mgs:clock 20
+scoreboard players operation #tick_delta mgs.data = #real_tick mgs.data
+scoreboard players operation #tick_delta mgs.data -= #real_prev mgs.data
+scoreboard players operation #real_prev mgs.data = #real_tick mgs.data
+execute unless score #tick_delta mgs.data matches 0.. run scoreboard players set #tick_delta mgs.data 0
+execute if score #tick_delta mgs.data matches 41.. run scoreboard players set #tick_delta mgs.data 40
+
 # Player loop
 execute as @e[type=player,sort=random] at @s run function mgs:v5.1.0/player/tick
 

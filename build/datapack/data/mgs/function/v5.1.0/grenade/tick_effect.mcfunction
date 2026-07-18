@@ -6,8 +6,8 @@
 # @within	mgs:v5.1.0/grenade/tick
 #
 
-# Decrement effect duration
-scoreboard players remove @s mgs.data 1
+# Decrement effect duration (real-time via #tick_delta)
+scoreboard players operation @s mgs.data -= #tick_delta mgs.data
 
 # Emit smoke cloud particles
 execute store result score #effect_r mgs.data run data get entity @s data.config.grenade_effect_radius

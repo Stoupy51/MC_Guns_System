@@ -190,8 +190,8 @@ function #bs.move:apply_vel {{scale:0.001,with:{{blocks:true,entities:false,igno
 # Trail particle (white_smoke avoids false-positive with shader marker detection)
 particle white_smoke ~ ~ ~ 0.05 0.05 0.05 0.01 1 force @a[distance=..64]
 
-# Decrement fuse timer
-scoreboard players remove @s {ns}.data 1
+# Decrement fuse timer (real-time via #tick_delta)
+scoreboard players operation @s {ns}.data -= #tick_delta {ns}.data
 
 # If fuse expired, detonate
 execute if score @s {ns}.data matches ..0 run function {ns}:v{version}/grenade/detonate
@@ -212,8 +212,8 @@ execute unless score @s {ns}.grenade_launch matches 0.. run function #bs.move:ap
 # Trail particle (white_smoke avoids false-positive with shader marker detection)
 particle white_smoke ~ ~ ~ 0.05 0.05 0.05 0.01 1 force @a[distance=..64]
 
-# Decrement fuse timer
-scoreboard players remove @s {ns}.data 1
+# Decrement fuse timer (real-time via #tick_delta)
+scoreboard players operation @s {ns}.data -= #tick_delta {ns}.data
 
 # If fuse expired, detonate
 execute if score @s {ns}.data matches ..0 run function {ns}:v{version}/grenade/detonate
@@ -262,8 +262,8 @@ tag @s add {ns}.stuck_to_entity
 # If stuck to an entity, follow it
 execute if entity @s[tag={ns}.stuck_to_entity] run function {ns}:v{version}/grenade/follow_entity
 
-# Decrement fuse timer
-scoreboard players remove @s {ns}.data 1
+# Decrement fuse timer (real-time via #tick_delta)
+scoreboard players operation @s {ns}.data -= #tick_delta {ns}.data
 
 # Blinking particle to indicate it's about to explode
 particle small_flame ~ ~0.3 ~ 0 0 0 0 1 force @a[distance=..32]
@@ -461,8 +461,8 @@ title @s title {{"text":"F","font":"{ns}:flash"}}
 
     ## Tick for active effect grenades (smoke particles)
     write_versioned_function("grenade/tick_effect", f"""
-# Decrement effect duration
-scoreboard players remove @s {ns}.data 1
+# Decrement effect duration (real-time via #tick_delta)
+scoreboard players operation @s {ns}.data -= #tick_delta {ns}.data
 
 # Emit smoke cloud particles
 execute store result score #effect_r {ns}.data run data get entity @s data.config.{GRENADE_EFFECT_RADIUS}
