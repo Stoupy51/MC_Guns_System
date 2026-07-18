@@ -154,7 +154,7 @@ execute store result score #trap_id {ns}.data run scoreboard players get @n[tag=
 
 # Check if trap is ready (not active, not on cooldown)
 scoreboard players set #trap_ready {ns}.data 0
-execute as @e[tag={ns}.trap_center] if score @s {ns}.zb.trap.id = #trap_id {ns}.data if score @s {ns}.zb.trap.timer matches 0 unless score @s {ns}.zb.trap.cd > #total_tick {ns}.data run scoreboard players set #trap_ready {ns}.data 1
+execute as @e[tag={ns}.trap_center] if score @s {ns}.zb.trap.id = #trap_id {ns}.data if score @s {ns}.zb.trap.timer matches 0 unless score @s {ns}.zb.trap.cd > #real_tick {ns}.data run scoreboard players set #trap_ready {ns}.data 1
 execute unless score #trap_ready {ns}.data matches 1 run return run function {ns}:v{version}/zombies/traps/deny_not_ready
 
 # Check price
@@ -218,12 +218,13 @@ execute if score @s {ns}.zb.trap.type matches 0 run particle minecraft:flame ~ ~
 execute if score @s {ns}.zb.trap.type matches 1 run particle minecraft:electric_spark ~ ~1 ~ 1.5 0.5 1.5 0.1 15
 execute if score @s {ns}.zb.trap.type matches 2 run particle minecraft:smoke ~ ~1 ~ 0.2 0.2 0.2 0.01 2
 
-# Decrement timer
-scoreboard players remove @s {ns}.zb.trap.timer 1
+# Decrement timer (real-time via #tick_delta, clamped at 0 so the exact-0 checks below still hit)
+scoreboard players operation @s {ns}.zb.trap.timer -= #tick_delta {ns}.data
+execute unless score @s {ns}.zb.trap.timer matches 0.. run scoreboard players set @s {ns}.zb.trap.timer 0
 
-# Check if deactivated: set cooldown as expiration tick
+# Check if deactivated: set cooldown as expiration on the real-time clock
 execute if score @s {ns}.zb.trap.timer matches 0 run scoreboard players operation @s {ns}.zb.trap.cd = @s {ns}.zb.trap.cd_max
-execute if score @s {ns}.zb.trap.timer matches 0 run scoreboard players operation @s {ns}.zb.trap.cd += #total_tick {ns}.data
+execute if score @s {ns}.zb.trap.timer matches 0 run scoreboard players operation @s {ns}.zb.trap.cd += #real_tick {ns}.data
 """)
 
 	write_versioned_function("zombies/traps/damage_fire", f"""

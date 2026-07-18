@@ -97,7 +97,7 @@ execute as @e[tag={ns}.dom_point,tag={ns}.dom_label_D] store result score #dom_o
 execute as @e[tag={ns}.dom_point,tag={ns}.dom_label_E] store result score #dom_owner_e {ns}.data run scoreboard players get @s {ns}.mp.dom_owner
 
 # Scoring interval
-scoreboard players remove #dom_score_timer {ns}.data 1
+scoreboard players operation #dom_score_timer {ns}.data -= #tick_delta {ns}.data
 execute if score #dom_score_timer {ns}.data matches ..0 run function {ns}:v{version}/multiplayer/gamemodes/dom/score_tick
 execute if score #dom_score_timer {ns}.data matches ..0 run scoreboard players set #dom_score_timer {ns}.data 100
 

@@ -15,6 +15,7 @@ scoreboard players set #barrier_repair_valid mgs.data 0
 $execute as @a[tag=mgs.barrier_repairing,distance=..$(radius)] if score @s mgs.zb.barrier.repairing_id = #barrier_id mgs.data if predicate mgs:v5.1.0/is_sneaking run function mgs:v5.1.0/zombies/barriers/on_repairer_valid
 
 execute if score #barrier_repair_valid mgs.data matches 0 run function mgs:v5.1.0/zombies/barriers/cancel_repair
-execute if score #barrier_repair_valid mgs.data matches 1 run scoreboard players remove @s mgs.zb.barrier.rp_timer 1
+execute if score #barrier_repair_valid mgs.data matches 1 run scoreboard players operation @s mgs.zb.barrier.rp_timer -= #tick_delta mgs.data
+execute if score #barrier_repair_valid mgs.data matches 1 unless score @s mgs.zb.barrier.rp_timer matches 0.. run scoreboard players set @s mgs.zb.barrier.rp_timer 0
 execute if score #barrier_repair_valid mgs.data matches 1 if score @s mgs.zb.barrier.rp_timer matches 0 run function mgs:v5.1.0/zombies/barriers/repair
 

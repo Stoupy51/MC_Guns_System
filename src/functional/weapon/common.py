@@ -138,9 +138,9 @@ execute if data storage {ns}:gun all.gun run function {ns}:v{version}/actionbar/
 scoreboard players add @s {ns}.dps_timer 1
 execute if score @s {ns}.dps_timer matches 20.. run function {ns}:v{version}/player/dps_snapshot
 
-# Decrement special durations (instant_kill, infinite_ammo)
-execute if score @s {ns}.special.instant_kill matches 1.. run scoreboard players remove @s {ns}.special.instant_kill 1
-execute if score @s {ns}.special.infinite_ammo matches 1.. run scoreboard players remove @s {ns}.special.infinite_ammo 1
+# Decrement special durations (instant_kill, infinite_ammo) in real time via #tick_delta
+execute if score @s {ns}.special.instant_kill matches 1.. run scoreboard players operation @s {ns}.special.instant_kill -= #tick_delta {ns}.data
+execute if score @s {ns}.special.infinite_ammo matches 1.. run scoreboard players operation @s {ns}.special.infinite_ammo -= #tick_delta {ns}.data
 
 # Remove temporary tag
 tag @s remove {ns}.ticking

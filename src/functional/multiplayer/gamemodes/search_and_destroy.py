@@ -110,13 +110,13 @@ execute as @a[scores={{{ns}.mp.team=1..2}}] at @s run function {ns}:v{version}/m
 		## S&D Tick
 		self.sub("tick", f"""
 # Round timer
-scoreboard players remove #snd_round_timer {ns}.data 1
+scoreboard players operation #snd_round_timer {ns}.data -= #tick_delta {ns}.data
 
 # If timer runs out before the bomb is planted, defenders win
 execute if score #snd_round_timer {ns}.data matches ..0 if score #snd_bomb_state {ns}.data matches 0 run function {ns}:v{version}/multiplayer/gamemodes/snd/defenders_win
 
 # If bomb planted, tick bomb timer (45 seconds = 900 ticks)
-execute if score #snd_bomb_state {ns}.data matches 2 run scoreboard players remove #snd_bomb_timer {ns}.data 1
+execute if score #snd_bomb_state {ns}.data matches 2 run scoreboard players operation #snd_bomb_timer {ns}.data -= #tick_delta {ns}.data
 execute if score #snd_bomb_state {ns}.data matches 2 if score #snd_bomb_timer {ns}.data matches ..0 run function {ns}:v{version}/multiplayer/gamemodes/snd/bomb_explodes
 
 # Check if all attackers are dead (defenders win)
@@ -151,7 +151,7 @@ execute if score #snd_attackers {ns}.data matches 2 unless score @s {ns}.mp.team
 
 # Continue planting (5 seconds = 100 ticks)
 scoreboard players set #snd_channeling {ns}.data 1
-scoreboard players add #snd_plant_progress {ns}.data 1
+scoreboard players operation #snd_plant_progress {ns}.data += #tick_delta {ns}.data
 title @s actionbar [{{"text":"Planting... ","color":"gold"}},{{"score":{{"name":"#snd_plant_progress","objective":"{ns}.data"}},"color":"yellow"}},{{"text":"/100"}}]
 
 # If planted
@@ -179,7 +179,7 @@ execute if score #snd_attackers {ns}.data matches 2 unless score @s {ns}.mp.team
 
 # Continue defusing (7.5 seconds = 150 ticks); the bomb countdown keeps running in parallel
 scoreboard players set #snd_channeling {ns}.data 1
-scoreboard players add #snd_defuse_progress {ns}.data 1
+scoreboard players operation #snd_defuse_progress {ns}.data += #tick_delta {ns}.data
 title @s actionbar [{{"text":"Defusing... ","color":"aqua"}},{{"score":{{"name":"#snd_defuse_progress","objective":"{ns}.data"}},"color":"yellow"}},{{"text":"/150"}}]
 
 execute if score #snd_defuse_progress {ns}.data matches 150.. run function {ns}:v{version}/multiplayer/gamemodes/snd/bomb_defused

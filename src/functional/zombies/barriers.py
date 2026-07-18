@@ -130,7 +130,7 @@ execute if score @s {ns}.zb.barrier.state matches 1 run function {ns}:v{version}
 execute as @a[scores={{{ns}.zb.in_game=1}},distance=..0.75] positioned as @s run tp @s ^ ^ ^0.8
 
 # Downed mannequin collision: same push so crawling players can't clip through barriers
-execute as @e[tag={ns}.downed_mannequin,distance=..0.75] positioned as @s run tp @s ^ ^ ^0.8
+execute as @e[type=minecraft:mannequin,tag={ns}.downed_mannequin,distance=..0.75] positioned as @s run tp @s ^ ^ ^0.8
 """)
 
 	## Intact barrier tick
@@ -182,7 +182,8 @@ scoreboard players set #barrier_found_remover {ns}.data 1
 scoreboard players set #barrier_remover_valid {ns}.data 0
 $execute as @e[tag={ns}.barrier_removing,distance=..$(radius)] at @s if score @s {ns}.zb.barrier.removing_id = #barrier_id {ns}.data run function {ns}:v{version}/zombies/barriers/on_remover_valid
 
-execute if score #barrier_remover_valid {ns}.data matches 1 run scoreboard players remove @s {ns}.zb.barrier.r_timer 1
+execute if score #barrier_remover_valid {ns}.data matches 1 run scoreboard players operation @s {ns}.zb.barrier.r_timer -= #tick_delta {ns}.data
+execute if score #barrier_remover_valid {ns}.data matches 1 unless score @s {ns}.zb.barrier.r_timer matches 0.. run scoreboard players set @s {ns}.zb.barrier.r_timer 0
 execute if score #barrier_remover_valid {ns}.data matches 1 if score @s {ns}.zb.barrier.r_timer matches 0 run function {ns}:v{version}/zombies/barriers/destroy
 
 # Not in range (dead or pushed out): always cancel so the zombie is freed
@@ -256,7 +257,8 @@ scoreboard players set #barrier_repair_valid {ns}.data 0
 $execute as @a[tag={ns}.barrier_repairing,distance=..$(radius)] if score @s {ns}.zb.barrier.repairing_id = #barrier_id {ns}.data if predicate {ns}:v{version}/is_sneaking run function {ns}:v{version}/zombies/barriers/on_repairer_valid
 
 execute if score #barrier_repair_valid {ns}.data matches 0 run function {ns}:v{version}/zombies/barriers/cancel_repair
-execute if score #barrier_repair_valid {ns}.data matches 1 run scoreboard players remove @s {ns}.zb.barrier.rp_timer 1
+execute if score #barrier_repair_valid {ns}.data matches 1 run scoreboard players operation @s {ns}.zb.barrier.rp_timer -= #tick_delta {ns}.data
+execute if score #barrier_repair_valid {ns}.data matches 1 unless score @s {ns}.zb.barrier.rp_timer matches 0.. run scoreboard players set @s {ns}.zb.barrier.rp_timer 0
 execute if score #barrier_repair_valid {ns}.data matches 1 if score @s {ns}.zb.barrier.rp_timer matches 0 run function {ns}:v{version}/zombies/barriers/repair
 """)
 

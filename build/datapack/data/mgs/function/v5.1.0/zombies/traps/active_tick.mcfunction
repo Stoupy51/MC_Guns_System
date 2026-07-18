@@ -37,10 +37,11 @@ execute if score @s mgs.zb.trap.type matches 0 run particle minecraft:flame ~ ~1
 execute if score @s mgs.zb.trap.type matches 1 run particle minecraft:electric_spark ~ ~1 ~ 1.5 0.5 1.5 0.1 15
 execute if score @s mgs.zb.trap.type matches 2 run particle minecraft:smoke ~ ~1 ~ 0.2 0.2 0.2 0.01 2
 
-# Decrement timer
-scoreboard players remove @s mgs.zb.trap.timer 1
+# Decrement timer (real-time via #tick_delta, clamped at 0 so the exact-0 checks below still hit)
+scoreboard players operation @s mgs.zb.trap.timer -= #tick_delta mgs.data
+execute unless score @s mgs.zb.trap.timer matches 0.. run scoreboard players set @s mgs.zb.trap.timer 0
 
-# Check if deactivated: set cooldown as expiration tick
+# Check if deactivated: set cooldown as expiration on the real-time clock
 execute if score @s mgs.zb.trap.timer matches 0 run scoreboard players operation @s mgs.zb.trap.cd = @s mgs.zb.trap.cd_max
-execute if score @s mgs.zb.trap.timer matches 0 run scoreboard players operation @s mgs.zb.trap.cd += #total_tick mgs.data
+execute if score @s mgs.zb.trap.timer matches 0 run scoreboard players operation @s mgs.zb.trap.cd += #real_tick mgs.data
 

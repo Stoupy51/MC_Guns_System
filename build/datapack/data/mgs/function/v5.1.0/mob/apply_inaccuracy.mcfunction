@@ -1,7 +1,7 @@
 
 #> mgs:v5.1.0/mob/apply_inaccuracy
 #
-# @executed	anchored eyes & facing entity @n[tag=mgs.target] feet
+# @executed	anchored eyes & facing entity @e[tag=mgs.target,limit=1] feet
 #
 # @within	mgs:v5.1.0/mob/fire_weapon
 #

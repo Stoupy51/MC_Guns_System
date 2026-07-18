@@ -15,7 +15,7 @@ execute as @e[tag=mgs.dom_point,tag=mgs.dom_label_D] store result score #dom_own
 execute as @e[tag=mgs.dom_point,tag=mgs.dom_label_E] store result score #dom_owner_e mgs.data run scoreboard players get @s mgs.mp.dom_owner
 
 # Scoring interval
-scoreboard players remove #dom_score_timer mgs.data 1
+scoreboard players operation #dom_score_timer mgs.data -= #tick_delta mgs.data
 execute if score #dom_score_timer mgs.data matches ..0 run function mgs:v5.1.0/multiplayer/gamemodes/dom/score_tick
 execute if score #dom_score_timer mgs.data matches ..0 run scoreboard players set #dom_score_timer mgs.data 100
 

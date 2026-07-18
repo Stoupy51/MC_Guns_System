@@ -98,10 +98,17 @@ data modify entity @n[tag={ns}.downed_new] equipment set from entity @s equipmen
 # Use the get_username loot table to generate a player_head with profile, then copy profile from it
 loot replace entity @n[tag={ns}.downed_new] weapon.mainhand loot {ns}:get_username
 data modify entity @n[tag={ns}.downed_new] profile set from entity @n[tag={ns}.downed_new] equipment.mainhand.components."minecraft:profile"
+
+# Capture the owner's literal name for the HUD before clearing the hand. A "nearest downed
+# spectator" selector must never be used for the name: on_down runs at the shared respawn
+# point, so same-tick batch downs all resolve the selector to the same tied player
+data modify storage {ns}:temp rv_name set from entity @n[tag={ns}.downed_new] equipment.mainhand.components."minecraft:profile".name
+execute unless data storage {ns}:temp rv_name run data modify storage {ns}:temp rv_name set value "???"
 item replace entity @n[tag={ns}.downed_new] weapon.mainhand with minecraft:air
 
-# Summon text_display HUD above mannequin (temp tag, teleported below)
-summon minecraft:text_display ~ ~ ~ {{Tags:["{ns}.downed_hud","{ns}.downed_hud_new","{ns}.gm_entity"],billboard:"vertical",shadow:1b,see_through:0b,teleport_duration:1,transformation:{{translation:[0.0f,0.0f,0.0f],left_rotation:[0.0f,0.0f,0.0f,1.0f],scale:[1.5f,1.5f,1.5f],right_rotation:[0.0f,0.0f,0.0f,1.0f]}},text:[{{"selector":"@a[tag={ns}.downed_spectator,sort=nearest,limit=1]","color":"yellow"}},{{"text":" ↓","color":"yellow"}}]}}
+# Summon text_display HUD above mannequin (temp tag, teleported below; name set right after via macro)
+summon minecraft:text_display ~ ~ ~ {{Tags:["{ns}.downed_hud","{ns}.downed_hud_new","{ns}.gm_entity"],billboard:"vertical",shadow:1b,see_through:0b,teleport_duration:1,transformation:{{translation:[0.0f,0.0f,0.0f],left_rotation:[0.0f,0.0f,0.0f,1.0f],scale:[1.5f,1.5f,1.5f],right_rotation:[0.0f,0.0f,0.0f,1.0f]}},text:[{{"text":"...","color":"yellow"}},{{"text":" ↓","color":"yellow"}}]}}
+function {ns}:v{version}/zombies/revive/set_hud_name with storage {ns}:temp
 
 # Copy the player's downed_id to the HUD so it can be id-matched (never "nearest") later
 scoreboard players operation @n[tag={ns}.downed_hud_new] {ns}.zb.downed_id = @s {ns}.zb.downed_id
@@ -141,6 +148,11 @@ title @s subtitle [{{"text":"You are down! A teammate can revive you.","color":"
 tellraw @a[scores={{{ns}.zb.in_game=1}}] [{MGS_TAG},{{"selector":"@s","color":"red"}},{{"text":" is down!","color":"gray"}}]
 """)
 
+	## Macro: write the owner's literal name into the freshly summoned HUD (player names are [A-Za-z0-9_])
+	write_versioned_function("zombies/revive/set_hud_name", f"""
+$data modify entity @n[tag={ns}.downed_hud_new] text set value [{{"text":"$(rv_name)","color":"yellow"}},{{"text":" ↓","color":"yellow"}}]
+""")
+
 	## Macro: teleport mannequin and HUD to death location
 	write_versioned_function("zombies/revive/tp_to_death", f"""
 $tp @n[tag={ns}.downed_new] $(rv_x) $(rv_y) $(rv_z)
@@ -162,8 +174,8 @@ execute as @a[tag={ns}.downed_spectator,scores={{{ns}.zb.in_game=1}}] at @s run 
 
 	## Downed tick: per-player (run as the spectating downed player)
 	write_versioned_function("zombies/revive/downed_tick", f"""
-# Decrement bleed timer
-scoreboard players remove @s {ns}.zb.bleed 1
+# Decrement bleed timer (real-time via #tick_delta)
+scoreboard players operation @s {ns}.zb.bleed -= #tick_delta {ns}.data
 
 # Identify THIS player's downed entities for the id-matching predicate, then tag the mannequin ONCE
 # as downed_mine_temp. Every per-mannequin command below reuses that tag (or a single dispatch into
@@ -173,6 +185,9 @@ tag @e[tag={ns}.downed_mannequin,predicate={ns}:v{version}/zombies/revive/downed
 
 # Read crawl inputs into scratch scores while @s is still the player (predicate self-checks on @s,
 # no entity scan). These drive the mannequin's local velocity inside move_mannequin.
+# Also snapshot the owner's yaw (x100): move_mannequin must not use a "nearest downed spectator"
+# lookup, which binds to the wrong owner when several mannequins are close together.
+execute store result score #rv_yaw {ns}.data run data get entity @s Rotation[0] 100
 scoreboard players set #crawl_vx {ns}.data 0
 scoreboard players set #crawl_vz {ns}.data 0
 execute if entity @s[predicate={ns}:v{version}/input/forward] run scoreboard players set #crawl_vz {ns}.data {int(CRAWL_SPEED * 1000)}
@@ -202,8 +217,11 @@ execute as @e[tag={ns}.downed_mannequin,predicate={ns}:v{version}/zombies/revive
 execute if score #zb_reviving {ns}.data matches 0 if entity @s[tag={ns}.perk.quick_revive] unless score #zb_solo_revive_block {ns}.data matches 1 run function {ns}:v{version}/zombies/revive/check_solo_qr
 
 # If teammate is reviving (=1), increment progress; if solo QR (=2), skip (solo_qr_tick handles it); if none (=0), decay
-execute if score #zb_reviving {ns}.data matches 1 run scoreboard players add @s {ns}.zb.revive_p 1
-execute if score #zb_reviving {ns}.data matches 0 if score @s {ns}.zb.revive_p matches 1.. run scoreboard players remove @s {ns}.zb.revive_p 2
+# Real-time: progress moves by #tick_delta per tick, decay at double speed
+execute if score #zb_reviving {ns}.data matches 1 run scoreboard players operation @s {ns}.zb.revive_p += #tick_delta {ns}.data
+scoreboard players operation #rv_decay {ns}.data = #tick_delta {ns}.data
+scoreboard players operation #rv_decay {ns}.data *= #2 {ns}.data
+execute if score #zb_reviving {ns}.data matches 0 if score @s {ns}.zb.revive_p matches 1.. run scoreboard players operation @s {ns}.zb.revive_p -= #rv_decay {ns}.data
 
 # Show bleed timer on downed player's actionbar ONLY when not in solo QR (which has its own actionbar)
 # Compute display: whole seconds and tenths digit (sec = bleed/20, tenth = (bleed%20)/2)
@@ -248,8 +266,8 @@ execute if score #zb_reviving {ns}.data matches 0 unless entity @a[scores={{{ns}
 	## arrives via #crawl_vx/#crawl_vz (set on the player before dispatch). Order matches the old inline
 	## version: yaw sync first, then velocity, then local->canonical, then motion, then HUD anchor.
 	write_versioned_function("zombies/revive/move_mannequin", f"""
-# Sync mannequin yaw from the owner's look direction (nearest downed spectator = this mannequin's owner)
-data modify entity @s Rotation[0] set from entity @p[tag={ns}.downed_spectator] Rotation[0]
+# Sync mannequin yaw from the owner's look direction (snapshotted into #rv_yaw x100 by downed_tick)
+execute store result entity @s Rotation[0] float 0.01 run scoreboard players get #rv_yaw {ns}.data
 data modify entity @s Rotation[1] set value 0.0f
 
 # Crawl motion via Bookshelf physics. XZ from the crawl-input scratch scores (0 when no input is held);
@@ -284,8 +302,8 @@ execute if score @s {ns}.zb.qr_uses matches {SOLO_QR_MAX}.. run return 0
 # Signal solo reviving so decay logic is skipped (set #zb_reviving=2)
 scoreboard players set #zb_reviving {ns}.data 2
 
-# Increment revive_p at normal speed (1/tick)
-scoreboard players add @s {ns}.zb.revive_p 1
+# Increment revive_p at normal speed (real-time via #tick_delta)
+scoreboard players operation @s {ns}.zb.revive_p += #tick_delta {ns}.data
 
 # Show solo QR auto-revive actionbar with seconds display
 scoreboard players operation #rv_qr_sec {ns}.data = @s {ns}.zb.revive_p
@@ -351,24 +369,12 @@ function #smithed.actionbar:message
 	# ──────────────────────────────────────────────────────────────────────────
 	## HUD color update helpers (run as downed spectator, update nearest downed_hud)
 	# ──────────────────────────────────────────────────────────────────────────
-	write_versioned_function("zombies/revive/hud_white", f"""
-data modify entity @n[tag={ns}.downed_hud,predicate={ns}:v{version}/zombies/revive/downed_id_match] text[0] set value {{"selector":"@a[tag={ns}.downed_spectator,sort=nearest,limit=1]","color":"white"}}
-data modify entity @n[tag={ns}.downed_hud,predicate={ns}:v{version}/zombies/revive/downed_id_match] text[1] set value {{"text":" ↓","color":"white"}}
-""")
-
-	write_versioned_function("zombies/revive/hud_yellow", f"""
-data modify entity @n[tag={ns}.downed_hud,predicate={ns}:v{version}/zombies/revive/downed_id_match] text[0] set value {{"selector":"@a[tag={ns}.downed_spectator,sort=nearest,limit=1]","color":"yellow"}}
-data modify entity @n[tag={ns}.downed_hud,predicate={ns}:v{version}/zombies/revive/downed_id_match] text[1] set value {{"text":" ↓","color":"yellow"}}
-""")
-
-	write_versioned_function("zombies/revive/hud_gold", f"""
-data modify entity @n[tag={ns}.downed_hud,predicate={ns}:v{version}/zombies/revive/downed_id_match] text[0] set value {{"selector":"@a[tag={ns}.downed_spectator,sort=nearest,limit=1]","color":"gold"}}
-data modify entity @n[tag={ns}.downed_hud,predicate={ns}:v{version}/zombies/revive/downed_id_match] text[1] set value {{"text":" ↓","color":"gold"}}
-""")
-
-	write_versioned_function("zombies/revive/hud_red", f"""
-data modify entity @n[tag={ns}.downed_hud,predicate={ns}:v{version}/zombies/revive/downed_id_match] text[0] set value {{"selector":"@a[tag={ns}.downed_spectator,sort=nearest,limit=1]","color":"red"}}
-data modify entity @n[tag={ns}.downed_hud,predicate={ns}:v{version}/zombies/revive/downed_id_match] text[1] set value {{"text":" ↓","color":"red"}}
+	# Recolor only: the name was written once as a literal string in on_down (set_hud_name) and
+	# must never be replaced by a "nearest" selector (wrong-owner ties, see on_down)
+	for hud_color in ("white", "yellow", "gold", "red"):
+		write_versioned_function(f"zombies/revive/hud_{hud_color}", f"""
+data modify entity @n[tag={ns}.downed_hud,predicate={ns}:v{version}/zombies/revive/downed_id_match] text[0].color set value "{hud_color}"
+data modify entity @n[tag={ns}.downed_hud,predicate={ns}:v{version}/zombies/revive/downed_id_match] text[1].color set value "{hud_color}"
 """)
 
 	# ──────────────────────────────────────────────────────────────────────────

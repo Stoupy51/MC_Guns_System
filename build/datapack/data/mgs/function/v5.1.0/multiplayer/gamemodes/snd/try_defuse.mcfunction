@@ -12,7 +12,7 @@ execute if score #snd_attackers mgs.data matches 2 unless score @s mgs.mp.team m
 
 # Continue defusing (7.5 seconds = 150 ticks); the bomb countdown keeps running in parallel
 scoreboard players set #snd_channeling mgs.data 1
-scoreboard players add #snd_defuse_progress mgs.data 1
+scoreboard players operation #snd_defuse_progress mgs.data += #tick_delta mgs.data
 title @s actionbar [{"translate":"mgs.defusing","color":"aqua"},{"score":{"name":"#snd_defuse_progress","objective":"mgs.data"},"color":"yellow"},{"translate":"mgs.150"}]
 
 execute if score #snd_defuse_progress mgs.data matches 150.. run function mgs:v5.1.0/multiplayer/gamemodes/snd/bomb_defused

@@ -91,6 +91,9 @@ scoreboard objectives add {ns}.dps dummy
 scoreboard objectives add {ns}.previous_dps dummy
 scoreboard objectives add {ns}.dps_timer dummy
 
+# Forces an immediate actionbar refresh (set by events its idle gate can't detect, e.g. fire-mode toggle)
+scoreboard objectives add {ns}.ab_force dummy
+
 
 # Initialize slow bullet (projectile) counter
 scoreboard players add #slow_bullet_count {ns}.data 0
@@ -119,6 +122,12 @@ scoreboard objectives add {ns}.hp_prev dummy
 # this pack has no absorption sources, so it tracks health exactly.
 scoreboard objectives add {ns}.health health
 scoreboard objectives add {ns}.food food
+
+# Real-time clock: global stopwatch queried every tick (lag-immune wall-clock time).
+# Recreated on every load — only per-tick deltas are consumed, so the reset is harmless.
+stopwatch remove {ns}:clock
+stopwatch create {ns}:clock
+scoreboard players set #real_prev {ns}.data 0
 """, prepend=True)
 
     # Write to tick file
@@ -126,6 +135,18 @@ scoreboard objectives add {ns}.food food
 f"""
 # Infinitely incrementing tick counter for general timing purposes
 scoreboard players add #total_tick {ns}.data 1
+
+# Real-time tick equivalents from the {ns}:clock stopwatch (scale 20 = seconds x20).
+# #tick_delta = real ticks elapsed since the previous game tick: ~1 at 20 TPS, 2+ under lag.
+# Mode timers subtract #tick_delta instead of 1 so durations stay wall-clock accurate.
+# No lower clamp to 1: ms rounding jitters deltas between 0/1/2 but their SUM stays exact.
+# Upper clamp 40 (2s) bounds the jump after a singleplayer pause or a world freeze.
+execute store result score #real_tick {ns}.data run stopwatch query {ns}:clock 20
+scoreboard players operation #tick_delta {ns}.data = #real_tick {ns}.data
+scoreboard players operation #tick_delta {ns}.data -= #real_prev {ns}.data
+scoreboard players operation #real_prev {ns}.data = #real_tick {ns}.data
+execute unless score #tick_delta {ns}.data matches 0.. run scoreboard players set #tick_delta {ns}.data 0
+execute if score #tick_delta {ns}.data matches 41.. run scoreboard players set #tick_delta {ns}.data 40
 
 # Player loop
 execute as @e[type=player,sort=random] at @s run function {ns}:v{version}/player/tick

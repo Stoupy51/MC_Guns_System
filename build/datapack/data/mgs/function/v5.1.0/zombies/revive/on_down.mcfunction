@@ -40,10 +40,17 @@ data modify entity @n[tag=mgs.downed_new] equipment set from entity @s equipment
 # Use the get_username loot table to generate a player_head with profile, then copy profile from it
 loot replace entity @n[tag=mgs.downed_new] weapon.mainhand loot mgs:get_username
 data modify entity @n[tag=mgs.downed_new] profile set from entity @n[tag=mgs.downed_new] equipment.mainhand.components."minecraft:profile"
+
+# Capture the owner's literal name for the HUD before clearing the hand. A "nearest downed
+# spectator" selector must never be used for the name: on_down runs at the shared respawn
+# point, so same-tick batch downs all resolve the selector to the same tied player
+data modify storage mgs:temp rv_name set from entity @n[tag=mgs.downed_new] equipment.mainhand.components."minecraft:profile".name
+execute unless data storage mgs:temp rv_name run data modify storage mgs:temp rv_name set value "???"
 item replace entity @n[tag=mgs.downed_new] weapon.mainhand with minecraft:air
 
-# Summon text_display HUD above mannequin (temp tag, teleported below)
-summon minecraft:text_display ~ ~ ~ {Tags:["mgs.downed_hud","mgs.downed_hud_new","mgs.gm_entity"],billboard:"vertical",shadow:1b,see_through:0b,teleport_duration:1,transformation:{translation:[0.0f,0.0f,0.0f],left_rotation:[0.0f,0.0f,0.0f,1.0f],scale:[1.5f,1.5f,1.5f],right_rotation:[0.0f,0.0f,0.0f,1.0f]},text:[{"selector":"@a[tag=mgs.downed_spectator,sort=nearest,limit=1]","color":"yellow"},{"text":" ↓","color":"yellow"}]}
+# Summon text_display HUD above mannequin (temp tag, teleported below; name set right after via macro)
+summon minecraft:text_display ~ ~ ~ {Tags:["mgs.downed_hud","mgs.downed_hud_new","mgs.gm_entity"],billboard:"vertical",shadow:1b,see_through:0b,teleport_duration:1,transformation:{translation:[0.0f,0.0f,0.0f],left_rotation:[0.0f,0.0f,0.0f,1.0f],scale:[1.5f,1.5f,1.5f],right_rotation:[0.0f,0.0f,0.0f,1.0f]},text:[{"text":"...","color":"yellow"},{"text":" ↓","color":"yellow"}]}
+function mgs:v5.1.0/zombies/revive/set_hud_name with storage mgs:temp
 
 # Copy the player's downed_id to the HUD so it can be id-matched (never "nearest") later
 scoreboard players operation @n[tag=mgs.downed_hud_new] mgs.zb.downed_id = @s mgs.zb.downed_id

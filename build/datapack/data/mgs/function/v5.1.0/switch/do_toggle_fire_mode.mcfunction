@@ -44,3 +44,6 @@ function #mgs:signals/on_fire_mode_change
 # Play feedback sound (@s = the toggling player; @p would pay a needless distance sort)
 playsound minecraft:block.note_block.hat ambient @s
 
+# Refresh the actionbar immediately so the fire-mode highlight doesn't lag behind the toggle
+scoreboard players set @s mgs.ab_force 1
+

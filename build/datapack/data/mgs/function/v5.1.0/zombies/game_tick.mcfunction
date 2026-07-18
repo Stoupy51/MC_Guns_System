@@ -135,11 +135,11 @@ execute if score #pu_active mgs.data matches 1.. as @e[tag=mgs.pu_item] at @s ru
 execute if score #pu_active mgs.data matches 1.. as @e[tag=mgs.pu_text] at @s unless entity @e[tag=mgs.pu_item,distance=..4] run kill @s
 
 # Insta Kill also works with the knife: give active players a huge melee attack damage so a single
-# melee hit one-shots zombies (guns already insta-kill via the raycast path). remove+add keeps it
-# idempotent each tick; the modifier is removed once the effect wears off.
-execute as @a[scores={mgs.special.instant_kill=1..}] run attribute @s minecraft:attack_damage modifier remove mgs:insta_kill
-execute as @a[scores={mgs.special.instant_kill=1..}] run attribute @s minecraft:attack_damage modifier add mgs:insta_kill 100000 add_value
-execute as @a[scores={mgs.special.instant_kill=..0}] run attribute @s minecraft:attack_damage modifier remove mgs:insta_kill
+# melee hit one-shots zombies (guns already insta-kill via the raycast path). The mgs.ik_melee tag
+# tracks who currently carries the modifier, so the attribute commands only run on state
+# transitions (they used to run for EVERY player EVERY tick, mostly as guaranteed failures).
+execute as @a[tag=!mgs.ik_melee,scores={mgs.special.instant_kill=1..}] run function mgs:v5.1.0/zombies/powerups/insta_kill_melee_on
+execute as @a[tag=mgs.ik_melee,scores={mgs.special.instant_kill=..0}] run function mgs:v5.1.0/zombies/powerups/insta_kill_melee_off
 
 # Blink state: toggles between 0 and 1 every 4 ticks (~0.2s half-cycle, matching BO2's 0.4s full cycle)
 scoreboard players add #zb_blink_counter mgs.data 1
@@ -148,7 +148,7 @@ execute if score #zb_blink_counter mgs.data matches 0 run scoreboard players add
 execute if score #zb_blink_state mgs.data matches 2.. run scoreboard players set #zb_blink_state mgs.data 0
 
 # Decrement duration scoreboards
-execute as @a[scores={mgs.special.double_points=1..}] run scoreboard players remove @s mgs.special.double_points 1
+execute as @a[scores={mgs.special.double_points=1..}] run scoreboard players operation @s mgs.special.double_points -= #tick_delta mgs.data
 
 # Update bossbars
 function mgs:v5.1.0/zombies/powerups/update_insta_kill_bb

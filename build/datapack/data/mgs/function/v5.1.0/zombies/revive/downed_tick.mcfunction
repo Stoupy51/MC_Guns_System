@@ -6,8 +6,8 @@
 # @within	mgs:v5.1.0/zombies/revive/tick [ at @s ]
 #
 
-# Decrement bleed timer
-scoreboard players remove @s mgs.zb.bleed 1
+# Decrement bleed timer (real-time via #tick_delta)
+scoreboard players operation @s mgs.zb.bleed -= #tick_delta mgs.data
 
 # Identify THIS player's downed entities for the id-matching predicate, then tag the mannequin ONCE
 # as downed_mine_temp. Every per-mannequin command below reuses that tag (or a single dispatch into
@@ -17,6 +17,9 @@ tag @e[tag=mgs.downed_mannequin,predicate=mgs:v5.1.0/zombies/revive/downed_id_ma
 
 # Read crawl inputs into scratch scores while @s is still the player (predicate self-checks on @s,
 # no entity scan). These drive the mannequin's local velocity inside move_mannequin.
+# Also snapshot the owner's yaw (x100): move_mannequin must not use a "nearest downed spectator"
+# lookup, which binds to the wrong owner when several mannequins are close together.
+execute store result score #rv_yaw mgs.data run data get entity @s Rotation[0] 100
 scoreboard players set #crawl_vx mgs.data 0
 scoreboard players set #crawl_vz mgs.data 0
 execute if entity @s[predicate=mgs:v5.1.0/input/forward] run scoreboard players set #crawl_vz mgs.data 60
@@ -46,8 +49,11 @@ execute as @e[tag=mgs.downed_mannequin,predicate=mgs:v5.1.0/zombies/revive/downe
 execute if score #zb_reviving mgs.data matches 0 if entity @s[tag=mgs.perk.quick_revive] unless score #zb_solo_revive_block mgs.data matches 1 run function mgs:v5.1.0/zombies/revive/check_solo_qr
 
 # If teammate is reviving (=1), increment progress; if solo QR (=2), skip (solo_qr_tick handles it); if none (=0), decay
-execute if score #zb_reviving mgs.data matches 1 run scoreboard players add @s mgs.zb.revive_p 1
-execute if score #zb_reviving mgs.data matches 0 if score @s mgs.zb.revive_p matches 1.. run scoreboard players remove @s mgs.zb.revive_p 2
+# Real-time: progress moves by #tick_delta per tick, decay at double speed
+execute if score #zb_reviving mgs.data matches 1 run scoreboard players operation @s mgs.zb.revive_p += #tick_delta mgs.data
+scoreboard players operation #rv_decay mgs.data = #tick_delta mgs.data
+scoreboard players operation #rv_decay mgs.data *= #2 mgs.data
+execute if score #zb_reviving mgs.data matches 0 if score @s mgs.zb.revive_p matches 1.. run scoreboard players operation @s mgs.zb.revive_p -= #rv_decay mgs.data
 
 # Show bleed timer on downed player's actionbar ONLY when not in solo QR (which has its own actionbar)
 # Compute display: whole seconds and tenths digit (sec = bleed/20, tenth = (bleed%20)/2)

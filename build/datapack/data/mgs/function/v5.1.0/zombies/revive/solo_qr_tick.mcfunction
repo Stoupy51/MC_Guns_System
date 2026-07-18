@@ -12,8 +12,8 @@ execute if score @s mgs.zb.qr_uses matches 3.. run return 0
 # Signal solo reviving so decay logic is skipped (set #zb_reviving=2)
 scoreboard players set #zb_reviving mgs.data 2
 
-# Increment revive_p at normal speed (1/tick)
-scoreboard players add @s mgs.zb.revive_p 1
+# Increment revive_p at normal speed (real-time via #tick_delta)
+scoreboard players operation @s mgs.zb.revive_p += #tick_delta mgs.data
 
 # Show solo QR auto-revive actionbar with seconds display
 scoreboard players operation #rv_qr_sec mgs.data = @s mgs.zb.revive_p

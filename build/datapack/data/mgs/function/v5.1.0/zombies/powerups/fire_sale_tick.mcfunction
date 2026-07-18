@@ -5,7 +5,7 @@
 #
 
 # Decrement the shared timer
-scoreboard players remove #zb_fire_sale_timer mgs.data 1
+scoreboard players operation #zb_fire_sale_timer mgs.data -= #tick_delta mgs.data
 
 # Expired: restore the saved price, remove the bossbar, stop the song, remove temp boxes
 execute if score #zb_fire_sale_timer mgs.data matches ..0 run scoreboard players operation #zb_mystery_box_price mgs.config = #zb_fire_sale_saved mgs.data

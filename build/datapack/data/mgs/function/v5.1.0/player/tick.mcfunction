@@ -68,9 +68,9 @@ execute if data storage mgs:gun all.gun run function mgs:v5.1.0/actionbar/show
 scoreboard players add @s mgs.dps_timer 1
 execute if score @s mgs.dps_timer matches 20.. run function mgs:v5.1.0/player/dps_snapshot
 
-# Decrement special durations (instant_kill, infinite_ammo)
-execute if score @s mgs.special.instant_kill matches 1.. run scoreboard players remove @s mgs.special.instant_kill 1
-execute if score @s mgs.special.infinite_ammo matches 1.. run scoreboard players remove @s mgs.special.infinite_ammo 1
+# Decrement special durations (instant_kill, infinite_ammo) in real time via #tick_delta
+execute if score @s mgs.special.instant_kill matches 1.. run scoreboard players operation @s mgs.special.instant_kill -= #tick_delta mgs.data
+execute if score @s mgs.special.infinite_ammo matches 1.. run scoreboard players operation @s mgs.special.infinite_ammo -= #tick_delta mgs.data
 
 # Remove temporary tag
 tag @s remove mgs.ticking

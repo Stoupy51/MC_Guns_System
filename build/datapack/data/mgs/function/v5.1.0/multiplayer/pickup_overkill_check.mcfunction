@@ -8,7 +8,7 @@
 
 # Only primary drops are restricted
 data modify storage mgs:temp _isp set value {}
-data modify storage mgs:temp _isp.bw set from entity @n[tag=mgs.mp_dropped_gun,distance=..3] item.components."minecraft:custom_data".mgs.stats.base_weapon
+data modify storage mgs:temp _isp.bw set from entity @n[type=minecraft:item_display,tag=mgs.mp_dropped_gun,distance=..3] item.components."minecraft:custom_data".mgs.stats.base_weapon
 function mgs:v5.1.0/multiplayer/is_primary_lookup
 execute if score #is_primary mgs.data matches 0 run return 0
 
