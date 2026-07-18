@@ -1,7 +1,7 @@
 
 #> mgs:v5.1.0/zombies/powerups/do_pickup
 #
-# @executed	as @e[tag=mgs.pu_item] & at @s
+# @executed	at @s
 #
 # @within	mgs:v5.1.0/zombies/powerups/entity_tick
 #
@@ -16,7 +16,7 @@ execute unless entity @a[tag=mgs.pu_collecting] if entity @e[type=minecraft:mann
 scoreboard players operation #pu_type_pickup mgs.data = @s mgs.zb.pu.type
 
 # Kill the text display first (we still have a valid position)
-kill @n[tag=mgs.pu_text,distance=..3]
+kill @n[type=minecraft:text_display,tag=mgs.pu_text,distance=..3]
 
 # Grab cue
 execute as @a[scores={mgs.zb.in_game=1}] at @s run playsound mgs:zombies/powerups/item/grab ambient @s ~ ~ ~ 0.4 1.0

@@ -1,7 +1,7 @@
 
 #> mgs:v5.1.0/zombies/traps/kill_zombie
 #
-# @executed	as @e[tag=mgs.trap_center,scores={mgs.zb.trap.timer=1..}] & at @s
+# @executed	at @s
 #
 # @within	mgs:v5.1.0/zombies/traps/damage_fire
 #			mgs:v5.1.0/zombies/traps/damage_electric

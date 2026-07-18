@@ -1,9 +1,9 @@
 
 #> mgs:v5.1.0/zombies/barriers/instant_repair
 #
-# @executed	as @e[tag=mgs.barrier_display,scores={mgs.zb.barrier.state=1}] & at @s
+# @executed	at @s
 #
-# @within	mgs:v5.1.0/zombies/barriers/repair_all [ as @e[tag=mgs.barrier_display,scores={mgs.zb.barrier.state=1}] & at @s ]
+# @within	mgs:v5.1.0/zombies/barriers/repair_all [ at @s ]
 #
 
 # Set barrier to intact state

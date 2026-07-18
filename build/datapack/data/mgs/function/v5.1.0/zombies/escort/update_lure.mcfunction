@@ -6,7 +6,7 @@
 
 execute store result score #zb_lure_alive mgs.data if entity @a[scores={mgs.zb.in_game=1,mgs.zb.downed=0},gamemode=!spectator]
 scoreboard players set #zb_lure_inpap mgs.data 0
-execute as @a[scores={mgs.zb.in_game=1,mgs.zb.downed=0},gamemode=!spectator] at @s if entity @e[tag=mgs.pap_machine,distance=..14] run scoreboard players add #zb_lure_inpap mgs.data 1
+execute as @a[scores={mgs.zb.in_game=1,mgs.zb.downed=0},gamemode=!spectator] at @s if entity @e[type=minecraft:interaction,tag=mgs.pap_machine,distance=..14] run scoreboard players add #zb_lure_inpap mgs.data 1
 
 scoreboard players set #zb_lure mgs.data 0
 execute if score #zb_lure_alive mgs.data matches 1.. if score #zb_lure_inpap mgs.data = #zb_lure_alive mgs.data run scoreboard players set #zb_lure mgs.data 1

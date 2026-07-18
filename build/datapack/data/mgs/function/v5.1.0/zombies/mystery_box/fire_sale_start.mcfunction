@@ -1,7 +1,7 @@
 
 #> mgs:v5.1.0/zombies/mystery_box/fire_sale_start
 #
-# @executed	as @e[tag=mgs.pu_item] & at @s
+# @executed	at @s
 #
 # @within	mgs:v5.1.0/zombies/powerups/activate/fire_sale
 #

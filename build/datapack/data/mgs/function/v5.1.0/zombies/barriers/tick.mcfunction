@@ -1,9 +1,9 @@
 
 #> mgs:v5.1.0/zombies/barriers/tick
 #
-# @executed	as @e[tag=mgs.barrier_display] & at @s
+# @executed	at @s
 #
-# @within	mgs:v5.1.0/zombies/game_tick [ as @e[tag=mgs.barrier_display] & at @s ]
+# @within	mgs:v5.1.0/zombies/game_tick [ at @s ]
 #
 
 # @s = barrier display, at @s — dispatch by state

@@ -1,7 +1,7 @@
 
 #> mgs:v5.1.0/zombies/barriers/destroyed_tick
 #
-# @executed	as @e[tag=mgs.barrier_display] & at @s
+# @executed	at @s
 #
 # @within	mgs:v5.1.0/zombies/barriers/tick
 #			mgs:v5.1.0/zombies/barriers/destroyed_tick [ positioned ~ ~-1 ~ ]

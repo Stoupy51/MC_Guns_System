@@ -1,7 +1,7 @@
 
 #> mgs:v5.1.0/zombies/barriers/cancel_repair
 #
-# @executed	as @e[tag=mgs.barrier_display] & at @s
+# @executed	at @s
 #
 # @within	mgs:v5.1.0/zombies/barriers/handle_repair
 #

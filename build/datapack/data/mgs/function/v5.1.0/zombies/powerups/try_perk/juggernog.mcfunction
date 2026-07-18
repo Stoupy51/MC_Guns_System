@@ -1,7 +1,7 @@
 
 #> mgs:v5.1.0/zombies/powerups/try_perk/juggernog
 #
-# @executed	as @e[tag=mgs.pu_item] & at @s
+# @executed	at @s
 #
 # @within	mgs:v5.1.0/zombies/powerups/random_perk_iter
 #

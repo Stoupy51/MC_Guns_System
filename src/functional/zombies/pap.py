@@ -1081,7 +1081,7 @@ function {ns}:v{version}/zombies/feedback/sound_deny
 	# Hook PAP animation into the game tick loop.
 	write_versioned_function("zombies/game_tick", f"""
 # PAP animation tick (all phases use positive timer: 240→0)
-execute as @e[tag={ns}.pap_machine,scores={{{ns}.pap_anim=1..}}] at @s run function {ns}:v{version}/zombies/pap/anim/step
+execute as @e[type=minecraft:interaction,tag={ns}.pap_machine,scores={{{ns}.pap_anim=1..}}] at @s run function {ns}:v{version}/zombies/pap/anim/step
 """)
 
 	# Hook into preload_complete to spawn PAP machine interactions.

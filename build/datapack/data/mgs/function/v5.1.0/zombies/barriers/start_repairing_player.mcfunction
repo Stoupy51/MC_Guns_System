@@ -1,7 +1,7 @@
 
 #> mgs:v5.1.0/zombies/barriers/start_repairing_player
 #
-# @executed	as @e[tag=mgs.barrier_display] & at @s
+# @executed	at @s
 #
 # @within	mgs:v5.1.0/zombies/barriers/find_repairer
 #
