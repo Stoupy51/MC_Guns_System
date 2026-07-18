@@ -293,9 +293,9 @@ execute if score #zb_to_spawn {ns}.data matches 0 if score #zb_alive {ns}.data m
 execute if score #zb_fewleft_timer {ns}.data matches 1 run function {ns}:v{version}/zombies/glow_stuck_zombies
 execute if score #zb_fewleft_timer {ns}.data matches 100.. run scoreboard players set #zb_fewleft_timer {ns}.data 0
 
-# Refresh sidebar every second (20 ticks)
+# Refresh sidebar every 5 ticks.
 scoreboard players add #zb_sidebar_timer {ns}.data 1
-execute if score #zb_sidebar_timer {ns}.data matches 20.. run scoreboard players set #zb_sidebar_timer {ns}.data 0
+execute if score #zb_sidebar_timer {ns}.data matches 5.. run scoreboard players set #zb_sidebar_timer {ns}.data 0
 execute if score #zb_sidebar_timer {ns}.data matches 0 run function {ns}:v{version}/zombies/refresh_sidebar
 
 # Cleanup
@@ -458,9 +458,6 @@ execute if score @s {ns}.zb.passive matches 1 run scoreboard players operation @
 
 # Accumulate kill count
 scoreboard players operation @s {ns}.zb.kills += #zb_kills_delta {ns}.data
-
-# Refresh sidebar
-function {ns}:v{version}/zombies/refresh_sidebar
 """)
 
 		# Bullet hit points (+10 per bullet hit on a live zombie)
@@ -474,9 +471,6 @@ scoreboard players operation @s {ns}.zb.player_hit = #total_tick {ns}.data
 
 # Award +10 bullet hit points to the shooter
 scoreboard players operation @n[tag={ns}.ticking] {ns}.zb.points += #zb_points_hit {ns}.config
-
-# Refresh sidebar
-function {ns}:v{version}/zombies/refresh_sidebar
 """, tags=[f"{ns}:signals/damage"])
 
 		# Hook kill check into game_tick (per in-game player, non-spectator)
@@ -742,10 +736,7 @@ scoreboard objectives setdisplay sidebar {ns}.zb_sidebar
 """)
 
 		write_versioned_function("zombies/refresh_sidebar", f"""
-# Zombie count (#zb_alive) is recomputed every tick by game_tick. Reuse it here instead of
-# rescanning @e[tag={ns}.zombie_round]: refresh_sidebar runs on every bullet hit (on_hit_signal)
-# and every kill (check_kill_points), so the old rescan was a full entity scan per hit/kill during
-# combat. Non-tick callers (create_sidebar during prep) seed #zb_alive themselves before calling.
+# Zombie count (#zb_alive) is recomputed every tick by game_tick.
 scoreboard players operation #zb_total {ns}.data = #zb_alive {ns}.data
 scoreboard players operation #zb_total {ns}.data += #zb_to_spawn {ns}.data
 execute if score #zb_total {ns}.data matches ..-1 run scoreboard players set #zb_total {ns}.data 0

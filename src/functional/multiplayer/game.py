@@ -58,6 +58,11 @@ scoreboard objectives add {ns}.mp.bx dummy
 scoreboard objectives add {ns}.mp.by dummy
 scoreboard objectives add {ns}.mp.bz dummy
 
+# Which of the 4 boundary-check phases a player belongs to (see multiplayer/enforce_bounds).
+# #bphase_next is the round-robin cursor; seed it so the first assignment reads a real value.
+scoreboard objectives add {ns}.mp.bphase dummy
+scoreboard players set #bphase_next {ns}.data 0
+
 # Class change detection (for prep phase)
 scoreboard objectives add {ns}.mp.prev_class dummy
 
@@ -669,6 +674,10 @@ execute if score #tick_mod {ns}.data matches 0 run function {ns}:v{version}/mult
 # Time's up
 execute if score #mp_timer {ns}.data matches ..0 run function {ns}:v{version}/multiplayer/time_up
 
+# Which boundary-check phase runs this tick (see multiplayer/enforce_bounds)
+execute store result score #bounds_phase {ns}.data run scoreboard players get #total_tick {ns}.data
+scoreboard players operation #bounds_phase {ns}.data %= #4 {ns}.data
+
 # Boundary + out-of-bounds enforcement in ONE pass over the playing-players selector (was two
 # scans over the identical, multi-filter selector). Skips respawn-protected/non-playing players.
 execute as @e[type=player,scores={{{ns}.mp.in_game=1,{ns}.mp.death_count=0}},gamemode=!creative,gamemode=!spectator] at @s run function {ns}:v{version}/multiplayer/enforce_bounds
@@ -770,12 +779,22 @@ execute if score @s {ns}.mp.bz > #bound_z2 {ns}.data run return run function {ns
 		## player. Merges the former two separate game_tick passes over the same selector.
 		write_versioned_function("multiplayer/enforce_bounds", f"""
 # Coordinate bounds (only when the map defines a boundary box). May eliminate @s -> spectator.
-execute if score #mp_has_boundary {ns}.data matches 1 run function {ns}:v{version}/multiplayer/check_bounds
+execute unless score @s {ns}.mp.bphase matches 0..3 run function {ns}:v{version}/multiplayer/assign_bphase
+execute if score #mp_has_boundary {ns}.data matches 1 if score @s {ns}.mp.bphase = #bounds_phase {ns}.data run function {ns}:v{version}/multiplayer/check_bounds
 
 # OOB markers. Skip if the coordinate check just eliminated @s this tick (now a spectator) — the
 # original two-pass form excluded such players via its gamemode=!spectator selector, so doing the
 # OOB kill here too would double-count the death.
 execute if entity @s[gamemode=!spectator] if entity @e[tag={ns}.oob_point,distance=..5] run function {ns}:v{version}/multiplayer/bounds_kill
+""")
+
+		## Give @s the next boundary-check phase, round-robin so the 4 phases stay evenly filled.
+		## Runs once per player (the score persists), so an uneven split can only come from players
+		## leaving mid-game, which at worst unbalances a handful of position reads per tick.
+		write_versioned_function("multiplayer/assign_bphase", f"""
+scoreboard players operation @s {ns}.mp.bphase = #bphase_next {ns}.data
+scoreboard players add #bphase_next {ns}.data 1
+scoreboard players operation #bphase_next {ns}.data %= #4 {ns}.data
 """)
 
 		## Environmental kill: out of boundaries or near an OOB marker (simulate death, never /kill)

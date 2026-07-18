@@ -56,9 +56,9 @@ execute if score #zb_to_spawn mgs.data matches 0 if score #zb_alive mgs.data mat
 execute if score #zb_fewleft_timer mgs.data matches 1 run function mgs:v5.1.0/zombies/glow_stuck_zombies
 execute if score #zb_fewleft_timer mgs.data matches 100.. run scoreboard players set #zb_fewleft_timer mgs.data 0
 
-# Refresh sidebar every second (20 ticks)
+# Refresh sidebar every 5 ticks.
 scoreboard players add #zb_sidebar_timer mgs.data 1
-execute if score #zb_sidebar_timer mgs.data matches 20.. run scoreboard players set #zb_sidebar_timer mgs.data 0
+execute if score #zb_sidebar_timer mgs.data matches 5.. run scoreboard players set #zb_sidebar_timer mgs.data 0
 execute if score #zb_sidebar_timer mgs.data matches 0 run function mgs:v5.1.0/zombies/refresh_sidebar
 
 # Cleanup
