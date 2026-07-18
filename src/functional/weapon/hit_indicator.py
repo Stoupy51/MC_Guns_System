@@ -20,7 +20,7 @@ ARC_RADIUS: int = 220        # outer radius, in 512ths of the canvas size
 ARC_WIDTH: int = 26          # ring thickness, in 512ths of the canvas size
 ARC_SPAN: int = 90           # degrees covered by the arc
 
-
+# TODO: Later in 26.3, use post shader new command instead. Do not add it yet.
 def main() -> None:
 	ns: str = Mem.ctx.project_id
 
