@@ -7,7 +7,7 @@
 #
 
 # Initialize default enemy function if missing
-execute unless data storage mgs:temp map_edit.map.default_enemy_function run data modify storage mgs:temp map_edit.map.default_enemy_function set value "mgs:v5.1.0/mob/default/level_1 {\"entity\":\"pillager\"}"
+execute unless data storage mgs:temp map_edit.map.default_enemy_function run data modify storage mgs:temp map_edit.map.default_enemy_function set value "mgs:mob/default/level_1 {\"entity\":\"pillager\"}"
 
 tellraw @p[tag=mgs.map_editor,distance=..6,sort=nearest] {"text":"============================================","color":"dark_gray"}
 tellraw @p[tag=mgs.map_editor,distance=..6,sort=nearest] [{"text":"","color":"white","bold":true},"  ⚙ ",{"translate":"mgs.enemy_configuration"}]

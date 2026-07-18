@@ -924,7 +924,7 @@ function {ns}:v{version}/maps/editor/summon_point_marker with storage {ns}:temp 
 	# Handle Enemy Element (missions) ────────────────────────────
 	write_versioned_function("maps/editor/handle_enemy", f"""
 # Initialize default function if missing
-execute unless data storage {ns}:temp map_edit.map.default_enemy_function run data modify storage {ns}:temp map_edit.map.default_enemy_function set value "{ns}:v{version}/mob/default/level_1 {{\\"entity\\":\\"pillager\\"}}"
+execute unless data storage {ns}:temp map_edit.map.default_enemy_function run data modify storage {ns}:temp map_edit.map.default_enemy_function set value "{ns}:mob/default/level_1 {{\\"entity\\":\\"pillager\\"}}"
 
 # Get position for permanent marker
 execute store result storage {ns}:temp _pos.x double 1 run data get entity @s Pos[0]
@@ -1093,7 +1093,7 @@ kill @s
 	config_target = f"@p[tag={ns}.map_editor,distance=..6,sort=nearest]"
 	config_lines: list[str] = []
 	config_lines.append("# Initialize default enemy function if missing")
-	config_lines.append(f'execute unless data storage {ns}:temp map_edit.map.default_enemy_function run data modify storage {ns}:temp map_edit.map.default_enemy_function set value "{ns}:v{version}/mob/default/level_1 {{\\"entity\\":\\"pillager\\"}}"')
+	config_lines.append(f'execute unless data storage {ns}:temp map_edit.map.default_enemy_function run data modify storage {ns}:temp map_edit.map.default_enemy_function set value "{ns}:mob/default/level_1 {{\\"entity\\":\\"pillager\\"}}"')
 	config_lines.append("")
 	config_lines.append(f"tellraw {config_target} {sep}")
 	config_lines.append(f'tellraw {config_target} [{{"text":"","color":"white","bold":true}},"  ⚙ ",{{"text":"Enemy Configuration"}}]')
