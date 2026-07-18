@@ -7,9 +7,6 @@
 #			mgs:v5.1.0/players/list_multiplayer with storage mgs:temp
 #			mgs:v5.1.0/players/list_zombies with storage mgs:temp
 #			mgs:v5.1.0/players/list_missions with storage mgs:temp
-#			mgs:v5.1.0/players/multiplayer_menu with storage mgs:temp
-#			mgs:v5.1.0/players/zombies_menu with storage mgs:temp
-#			mgs:v5.1.0/players/missions_menu with storage mgs:temp
 #			mgs:v5.1.0/zombies/map_select with storage mgs:temp
 #			mgs:v5.1.0/multiplayer/select_class with storage mgs:temp
 #			mgs:v5.1.0/multiplayer/editor/hub with storage mgs:temp

@@ -183,7 +183,7 @@ execute if data storage {ns}:temp _pk_disp{{item_model:""}} run data modify stor
 data modify storage {ns}:temp _pk_disp.perk_id set from storage {ns}:temp _pk_iter[0].perk_id
 execute if data storage {ns}:temp _pk_disp{{item_model:"minecraft:potion"}} run function {ns}:v{version}/zombies/perks/override_perk_model with storage {ns}:temp _pk_disp
 execute if data storage {ns}:temp _pk_iter[0].rotation[0] run data modify storage {ns}:temp _pk_disp.yaw set from storage {ns}:temp _pk_iter[0].rotation[0]
-execute as @n[tag={ns}.pk_new] at @s align xyz positioned ~.5 ~-.37 ~.5 positioned ^ ^ ^-0.5 run function {ns}:v{version}/zombies/display/summon_machine_display with storage {ns}:temp _pk_disp
+execute as @n[tag={ns}.pk_new] at @s align xyz positioned ~.5 ~-.37 ~.5 positioned ^ ^ ^-0.49 run function {ns}:v{version}/zombies/display/summon_machine_display with storage {ns}:temp _pk_disp
 execute as @n[tag={ns}.pk_new] at @s run tp @s ~ ~2 ~
 tag @n[tag={ns}.pk_new] add {ns}.perk_machine
 tag @n[tag={ns}.pk_new] remove {ns}.pk_new

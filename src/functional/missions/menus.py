@@ -18,6 +18,8 @@ def generate_missions_menus() -> None:
 		dialog_run_btn("■ STOP", f"/function {ns}:v{version}/missions/stop", "Stop the mission", "red"),
 		dialog_run_btn("⚔ Classes", f"/function {ns}:v{version}/multiplayer/select_class", "Select your class", "aqua"),
 		dialog_run_btn("👥 Manage Players", f"/function {ns}:v{version}/players/list_missions", "Add or remove players from the mission", "dark_aqua"),
+		# Multiplayer has "Auto Team" to seat everyone at once; this is the missions equivalent.
+		dialog_run_btn("👥 All Players Join", f"/execute as @a run function {ns}:v{version}/players/mi_join", "Add every online player to the mission", "green"),
 		dialog_run_btn("+ Join", f"/function {ns}:v{version}/missions/join_game", "Join the ongoing mission as a late joiner", "yellow"),
 	]
 	register_dialog("missions/setup", {
@@ -28,8 +30,8 @@ def generate_missions_menus() -> None:
 		"columns": 2,
 		"exit_action": {
 			"label": {"text": "◀ Back", "color": "gray"},
-			"tooltip": {"text": "Return to the game modes menu"},
-			"action": {"type": "run_command", "command": f"/function {dialog_function('config/modes')}"},
+			"tooltip": {"text": "Return to the configuration menu"},
+			"action": {"type": "run_command", "command": f"/function {dialog_function('config')}"},
 		},
 	})
 

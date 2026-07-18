@@ -47,7 +47,7 @@ def generate_menus() -> None:
 		dialog_run_btn("+ Join", f"/function {ns}:v{version}/multiplayer/join_game", "Join the ongoing game as a late joiner", "yellow"),
 		dialog_run_btn("Red Team", f"/function {ns}:v{version}/multiplayer/join_red", "Join Red Team", "red"),
 		dialog_run_btn("Blue Team", f"/function {ns}:v{version}/multiplayer/join_blue", "Join Blue Team", "blue"),
-		dialog_run_btn("Auto Team", f"/execute as @a[sort=random] run function {ns}:v{version}/multiplayer/auto_assign_team", "Auto-balance assign", "yellow"),
+		dialog_run_btn("Auto Team", f"/execute as @a[sort=random] run function {ns}:v{version}/multiplayer/auto_assign_team", "Auto-balance across Red/Blue (in FFA, seats everyone on the single FFA team)", "yellow"),
 		dialog_run_btn("👥 Manage Players", f"/function {ns}:v{version}/players/list_multiplayer", "Assign players to Red/Blue teams", "dark_aqua"),
 	]
 	register_dialog("multiplayer/setup", {
@@ -58,8 +58,8 @@ def generate_menus() -> None:
 		"columns": 2,
 		"exit_action": {
 			"label": {"text": "◀ Back", "color": "gray"},
-			"tooltip": {"text": "Return to the game modes menu"},
-			"action": {"type": "run_command", "command": f"/function {dialog_function('config/modes')}"},
+			"tooltip": {"text": "Return to the configuration menu"},
+			"action": {"type": "run_command", "command": f"/function {dialog_function('config')}"},
 		},
 	})
 

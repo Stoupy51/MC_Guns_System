@@ -122,7 +122,7 @@ execute if data storage {ns}:temp _pap_iter[0].item_model run data modify storag
 execute if data storage {ns}:temp _pap_disp{{item_id:""}} run data modify storage {ns}:temp _pap_disp.item_id set value "minecraft:netherite_block"
 execute if data storage {ns}:temp _pap_disp{{item_model:""}} run data modify storage {ns}:temp _pap_disp.item_model set value "{ns}:pack_a_punch"
 execute if data storage {ns}:temp _pap_iter[0].rotation[0] run data modify storage {ns}:temp _pap_disp.yaw set from storage {ns}:temp _pap_iter[0].rotation[0]
-execute as @n[tag={ns}.pap_new] at @s positioned ^ ^ ^-0.5 positioned ~ ~-0.4 ~ run function {ns}:v{version}/zombies/display/summon_machine_display with storage {ns}:temp _pap_disp
+execute as @n[tag={ns}.pap_new] at @s positioned ^ ^ ^-0.49 positioned ~ ~-0.4 ~ run function {ns}:v{version}/zombies/display/summon_machine_display with storage {ns}:temp _pap_disp
 execute as @n[tag={ns}.pap_new] at @s run tp @s ~ ~2 ~
 
 # Store display metadata for lookup (reuse the computed _pap_disp fields)
@@ -1070,21 +1070,6 @@ $data remove storage {ns}:zombies pap_anim_slot."$(id)"
 
 # Notify the player
 execute as @p[tag={ns}.pap_owner] run function {ns}:v{version}/zombies/feedback/sound_success
-""")
-
-	# Re-summon the static item_display for the machine (runs as machine).
-	write_versioned_function("zombies/pap/anim/restore_display", f"""
-execute store result storage {ns}:temp _pap_restore.id int 1 run scoreboard players get @s {ns}.zb.pap.id
-function {ns}:v{version}/zombies/pap/anim/restore_display_lookup with storage {ns}:temp _pap_restore
-""")
-
-	# Macro $(id): fetch stored display metadata and call summon_machine_display.
-	write_versioned_function("zombies/pap/anim/restore_display_lookup", f"""
-$data modify storage {ns}:temp _pap_restore_disp.tag set from storage {ns}:zombies pap_data."$(id)".display_tag
-$data modify storage {ns}:temp _pap_restore_disp.item_id set from storage {ns}:zombies pap_data."$(id)".display_item_id
-$data modify storage {ns}:temp _pap_restore_disp.item_model set from storage {ns}:zombies pap_data."$(id)".display_item_model
-$data modify storage {ns}:temp _pap_restore_disp.yaw set from storage {ns}:zombies pap_data."$(id)".display_yaw
-function {ns}:v{version}/zombies/display/summon_machine_display with storage {ns}:temp _pap_restore_disp
 """)
 
 	# Deny message when machine is busy.
