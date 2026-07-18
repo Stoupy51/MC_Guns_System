@@ -252,9 +252,9 @@ function {ns}:v{version}/zombies/powerups/spawn_display with storage {ns}:temp _
 		type_num: int = v["type_num"]
 		write_versioned_function(f"zombies/powerups/spawn_type/{pu_id}", f"""
 $summon minecraft:item $(x) $(y) $(z) {{Tags:["{ns}.pu_item","{ns}.pu_item_new","{ns}.gm_entity"],PickupDelay:32767,Invulnerable:1b,Item:{{id:"{item}",count:1,components:{{"minecraft:custom_data":{{{ns}:{{powerup_uid:$(uid)}}}}}}}}}}
-scoreboard players set @n[tag={ns}.pu_item_new] {ns}.zb.pu.type {type_num}
-scoreboard players set @n[tag={ns}.pu_item_new] {ns}.zb.pu.timer {POWERUP_LIFETIME}
-tag @n[tag={ns}.pu_item_new] remove {ns}.pu_item_new
+scoreboard players set @n[type=minecraft:item,tag={ns}.pu_item_new] {ns}.zb.pu.type {type_num}
+scoreboard players set @n[type=minecraft:item,tag={ns}.pu_item_new] {ns}.zb.pu.timer {POWERUP_LIFETIME}
+tag @n[type=minecraft:item,tag={ns}.pu_item_new] remove {ns}.pu_item_new
 
 # Track live power-up count so game_tick can gate the per-item scans (decremented on expire/pickup,
 # reset to 0 by the bulk cleanup, resynced periodically). pu_item is Invulnerable, so it can only die
@@ -293,7 +293,7 @@ execute unless entity @a[scores={{{ns}.zb.in_game=1}},gamemode=!spectator,distan
 """)
 
 	write_versioned_function("zombies/powerups/expire", f"""
-kill @n[tag={ns}.pu_text,distance=..3]
+kill @n[type=minecraft:text_display,tag={ns}.pu_text,distance=..3]
 kill @s
 scoreboard players remove #pu_active {ns}.data 1
 """)
@@ -306,8 +306,8 @@ execute if score #zb_blink_state {ns}.data matches 0 run data modify entity @s I
 # "On" frame: show the item entity again
 execute if score #zb_blink_state {ns}.data matches 1 run data modify entity @s Item.components."minecraft:item_model" set from entity @s Item.components."minecraft:custom_data".{ns}.powerup_model
 # text_display has no generic visibility tag — use view_range toggle instead
-execute if score #zb_blink_state {ns}.data matches 0 as @n[tag={ns}.pu_text,distance=..3] run data merge entity @s {{view_range:0.0f}}
-execute if score #zb_blink_state {ns}.data matches 1 as @n[tag={ns}.pu_text,distance=..3] run data merge entity @s {{view_range:64.0f}}
+execute if score #zb_blink_state {ns}.data matches 0 as @n[type=minecraft:text_display,tag={ns}.pu_text,distance=..3] run data merge entity @s {{view_range:0.0f}}
+execute if score #zb_blink_state {ns}.data matches 1 as @n[type=minecraft:text_display,tag={ns}.pu_text,distance=..3] run data merge entity @s {{view_range:64.0f}}
 """)
 
 	# ──────────────────────────────────────────────────────────────────────────
@@ -324,7 +324,7 @@ execute unless entity @a[tag={ns}.pu_collecting] if entity @e[type=minecraft:man
 scoreboard players operation #pu_type_pickup {ns}.data = @s {ns}.zb.pu.type
 
 # Kill the text display first (we still have a valid position)
-kill @n[tag={ns}.pu_text,distance=..3]
+kill @n[type=minecraft:text_display,tag={ns}.pu_text,distance=..3]
 
 # Grab cue
 {pu_snd("item/grab", 0.4)}
@@ -634,14 +634,14 @@ tag @s remove {ns}.ik_melee
 # (the count is already exact since pu_item is Invulnerable and only dies through tracked paths).
 execute store result score #pu_active_phase {ns}.data run scoreboard players get #total_tick {ns}.data
 scoreboard players operation #pu_active_phase {ns}.data %= #40 {ns}.data
-execute if score #pu_active_phase {ns}.data matches 0 store result score #pu_active {ns}.data if entity @e[tag={ns}.pu_item]
+execute if score #pu_active_phase {ns}.data matches 0 store result score #pu_active {ns}.data if entity @e[type=minecraft:item,tag={ns}.pu_item]
 
 # Power-up entity tick (lifetime countdown, blink, pickup detection)
-execute if score #pu_active {ns}.data matches 1.. as @e[tag={ns}.pu_item] at @s run function {ns}:v{version}/zombies/powerups/entity_tick
+execute if score #pu_active {ns}.data matches 1.. as @e[type=minecraft:item,tag={ns}.pu_item] at @s run function {ns}:v{version}/zombies/powerups/entity_tick
 
 # Orphan cleanup: a text_display whose item entity was destroyed (burned/exploded) would never
 # be removed by expire/pickup — kill any pu_text that no longer has a pu_item beneath it.
-execute if score #pu_active {ns}.data matches 1.. as @e[tag={ns}.pu_text] at @s unless entity @e[tag={ns}.pu_item,distance=..4] run kill @s
+execute if score #pu_active {ns}.data matches 1.. as @e[type=minecraft:text_display,tag={ns}.pu_text] at @s unless entity @e[type=minecraft:item,tag={ns}.pu_item,distance=..4] run kill @s
 
 # Insta Kill also works with the knife: give active players a huge melee attack damage so a single
 # melee hit one-shots zombies (guns already insta-kill via the raycast path). The {ns}.ik_melee tag
@@ -681,8 +681,8 @@ execute if score #zb_bonfire_sale_timer {ns}.data matches 1.. run function {ns}:
 
 	write_versioned_function("zombies/stop", f"""
 # Power-up cleanup
-kill @e[tag={ns}.pu_item]
-kill @e[tag={ns}.pu_text]
+kill @e[type=minecraft:item,tag={ns}.pu_item]
+kill @e[type=minecraft:text_display,tag={ns}.pu_text]
 scoreboard players set #pu_active {ns}.data 0
 scoreboard players set #zb_drops_this_round {ns}.data 0
 scoreboard players set #zb_cycle_done {ns}.data 0

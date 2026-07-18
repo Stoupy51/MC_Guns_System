@@ -77,8 +77,8 @@ tag @a[tag=mgs.barrier_repairing] remove mgs.barrier_repairing
 scoreboard players reset @a mgs.zb.barrier_repairs
 
 # Power-up cleanup
-kill @e[tag=mgs.pu_item]
-kill @e[tag=mgs.pu_text]
+kill @e[type=minecraft:item,tag=mgs.pu_item]
+kill @e[type=minecraft:text_display,tag=mgs.pu_text]
 scoreboard players set #pu_active mgs.data 0
 scoreboard players set #zb_drops_this_round mgs.data 0
 scoreboard players set #zb_cycle_done mgs.data 0

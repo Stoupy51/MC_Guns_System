@@ -1,9 +1,9 @@
 
 #> mgs:v5.1.0/zombies/powerups/entity_tick
 #
-# @executed	as @e[tag=mgs.pu_item] & at @s
+# @executed	at @s
 #
-# @within	mgs:v5.1.0/zombies/game_tick [ as @e[tag=mgs.pu_item] & at @s ]
+# @within	mgs:v5.1.0/zombies/game_tick [ at @s ]
 #
 
 # Decrement lifetime timer

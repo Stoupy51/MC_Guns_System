@@ -154,7 +154,7 @@ execute store result score #trap_id {ns}.data run scoreboard players get @n[tag=
 
 # Check if trap is ready (not active, not on cooldown)
 scoreboard players set #trap_ready {ns}.data 0
-execute as @e[tag={ns}.trap_center] if score @s {ns}.zb.trap.id = #trap_id {ns}.data if score @s {ns}.zb.trap.timer matches 0 unless score @s {ns}.zb.trap.cd > #real_tick {ns}.data run scoreboard players set #trap_ready {ns}.data 1
+execute as @e[type=minecraft:marker,tag={ns}.trap_center] if score @s {ns}.zb.trap.id = #trap_id {ns}.data if score @s {ns}.zb.trap.timer matches 0 unless score @s {ns}.zb.trap.cd > #real_tick {ns}.data run scoreboard players set #trap_ready {ns}.data 1
 execute unless score #trap_ready {ns}.data matches 1 run return run function {ns}:v{version}/zombies/traps/deny_not_ready
 
 # Check price
@@ -165,7 +165,7 @@ execute unless score @s {ns}.zb.points >= #trap_price {ns}.data run return run f
 scoreboard players operation @s {ns}.zb.points -= #trap_price {ns}.data
 
 # Activate trap (set timer = duration on the marker)
-execute as @e[tag={ns}.trap_center] if score @s {ns}.zb.trap.id = #trap_id {ns}.data run scoreboard players operation @s {ns}.zb.trap.timer = @s {ns}.zb.trap.dur
+execute as @e[type=minecraft:marker,tag={ns}.trap_center] if score @s {ns}.zb.trap.id = #trap_id {ns}.data run scoreboard players operation @s {ns}.zb.trap.timer = @s {ns}.zb.trap.dur
 
 # Announce
 tellraw @a[scores={{{ns}.zb.in_game=1}}] [{MGS_TAG},{{"text":"Trap activated for ","color":"gold"}},{{"score":{{"name":"#trap_price","objective":"{ns}.data"}},"color":"yellow"}},{{"text":" points.","color":"gold"}}]
@@ -345,7 +345,7 @@ function #smithed.actionbar:message
 	## Hook into game tick: process active traps and cooldowns
 	write_versioned_function("zombies/game_tick", f"""
 # Trap active tick (damage + timer)
-execute as @e[tag={ns}.trap_center,scores={{{ns}.zb.trap.timer=1..}}] at @s run function {ns}:v{version}/zombies/traps/active_tick
+execute as @e[type=minecraft:marker,tag={ns}.trap_center,scores={{{ns}.zb.trap.timer=1..}}] at @s run function {ns}:v{version}/zombies/traps/active_tick
 """)
 
 	## Hook into preload_complete: setup traps

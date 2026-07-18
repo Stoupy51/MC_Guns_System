@@ -318,12 +318,12 @@ tag @s remove {ns}.barrier_frozen
 	write_versioned_function("zombies/game_tick", f"""
 # Barriers: restore frozen speeds from last tick, then dispatch all display ticks
 execute as @e[tag={ns}.zombie_round,tag={ns}.barrier_frozen] run function {ns}:v{version}/zombies/barriers/restore_zombie_speed
-execute as @e[tag={ns}.barrier_display] at @s run function {ns}:v{version}/zombies/barriers/tick
+execute as @e[type=minecraft:block_display,tag={ns}.barrier_display] at @s run function {ns}:v{version}/zombies/barriers/tick
 
 # Refresh barricade brightness every 5s (local light can change: doors, power, placed lights)
 scoreboard players add #barrier_bright_timer {ns}.data 1
 execute if score #barrier_bright_timer {ns}.data matches 100.. run scoreboard players set #barrier_bright_timer {ns}.data 0
-execute if score #barrier_bright_timer {ns}.data matches 0 as @e[tag={ns}.barrier_display] at @s run function {ns}:v{version}/zombies/barriers/compute_brightness
+execute if score #barrier_bright_timer {ns}.data matches 0 as @e[type=minecraft:block_display,tag={ns}.barrier_display] at @s run function {ns}:v{version}/zombies/barriers/compute_brightness
 """)
 
 	## Hook into preload_complete — setup barriers if map has any
@@ -348,7 +348,7 @@ scoreboard players reset @a {ns}.zb.barrier_repairs
 
 	## Carpenter: instantly repair every barrier in the broken state
 	write_versioned_function("zombies/barriers/repair_all", f"""
-execute as @e[tag={ns}.barrier_display,scores={{{ns}.zb.barrier.state=1}}] at @s run function {ns}:v{version}/zombies/barriers/instant_repair
+execute as @e[type=minecraft:block_display,tag={ns}.barrier_display,scores={{{ns}.zb.barrier.state=1}}] at @s run function {ns}:v{version}/zombies/barriers/instant_repair
 """)
 
 	## Instantly repair a single barrier entity (run as the item_display entity, at @s)

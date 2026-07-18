@@ -1,7 +1,7 @@
 
 #> mgs:v5.1.0/zombies/powerups/activate/bonfire_sale
 #
-# @executed	as @e[tag=mgs.pu_item] & at @s
+# @executed	at @s
 #
 # @within	mgs:v5.1.0/zombies/powerups/dispatch_activate
 #

@@ -367,7 +367,7 @@ scoreboard players set #zb_lure {ns}.data 0
 	write_versioned_function("zombies/escort/update_lure", f"""
 execute store result score #zb_lure_alive {ns}.data if entity @a[scores={{{ns}.zb.in_game=1,{ns}.zb.downed=0}},gamemode=!spectator]
 scoreboard players set #zb_lure_inpap {ns}.data 0
-execute as @a[scores={{{ns}.zb.in_game=1,{ns}.zb.downed=0}},gamemode=!spectator] at @s if entity @e[tag={ns}.pap_machine,distance=..{PAP_ROOM_RADIUS}] run scoreboard players add #zb_lure_inpap {ns}.data 1
+execute as @a[scores={{{ns}.zb.in_game=1,{ns}.zb.downed=0}},gamemode=!spectator] at @s if entity @e[type=minecraft:interaction,tag={ns}.pap_machine,distance=..{PAP_ROOM_RADIUS}] run scoreboard players add #zb_lure_inpap {ns}.data 1
 
 scoreboard players set #zb_lure {ns}.data 0
 execute if score #zb_lure_alive {ns}.data matches 1.. if score #zb_lure_inpap {ns}.data = #zb_lure_alive {ns}.data run scoreboard players set #zb_lure {ns}.data 1

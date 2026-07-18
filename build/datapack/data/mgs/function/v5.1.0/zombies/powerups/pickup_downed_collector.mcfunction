@@ -1,7 +1,7 @@
 
 #> mgs:v5.1.0/zombies/powerups/pickup_downed_collector
 #
-# @executed	as @e[tag=mgs.pu_item] & at @s
+# @executed	at @s
 #
 # @within	mgs:v5.1.0/zombies/powerups/do_pickup
 #

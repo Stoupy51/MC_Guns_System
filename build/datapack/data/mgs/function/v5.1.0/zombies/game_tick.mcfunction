@@ -109,30 +109,30 @@ execute if score #zb_info_timer mgs.data matches 0 as @a[scores={mgs.zb.in_game=
 function mgs:v5.1.0/zombies/mystery_box/tick
 
 # PAP animation tick (all phases use positive timer: 240→0)
-execute as @e[tag=mgs.pap_machine,scores={mgs.pap_anim=1..}] at @s run function mgs:v5.1.0/zombies/pap/anim/step
+execute as @e[type=minecraft:interaction,tag=mgs.pap_machine,scores={mgs.pap_anim=1..}] at @s run function mgs:v5.1.0/zombies/pap/anim/step
 
 # Barriers: restore frozen speeds from last tick, then dispatch all display ticks
 execute as @e[tag=mgs.zombie_round,tag=mgs.barrier_frozen] run function mgs:v5.1.0/zombies/barriers/restore_zombie_speed
-execute as @e[tag=mgs.barrier_display] at @s run function mgs:v5.1.0/zombies/barriers/tick
+execute as @e[type=minecraft:block_display,tag=mgs.barrier_display] at @s run function mgs:v5.1.0/zombies/barriers/tick
 
 # Refresh barricade brightness every 5s (local light can change: doors, power, placed lights)
 scoreboard players add #barrier_bright_timer mgs.data 1
 execute if score #barrier_bright_timer mgs.data matches 100.. run scoreboard players set #barrier_bright_timer mgs.data 0
-execute if score #barrier_bright_timer mgs.data matches 0 as @e[tag=mgs.barrier_display] at @s run function mgs:v5.1.0/zombies/barriers/compute_brightness
+execute if score #barrier_bright_timer mgs.data matches 0 as @e[type=minecraft:block_display,tag=mgs.barrier_display] at @s run function mgs:v5.1.0/zombies/barriers/compute_brightness
 
 # Power-up entities exist only after a drop. #pu_active (maintained on spawn/expire/pickup) gates the
 # two per-tick scans below so an empty board costs nothing. Resync once every 40 ticks as a safety net
 # (the count is already exact since pu_item is Invulnerable and only dies through tracked paths).
 execute store result score #pu_active_phase mgs.data run scoreboard players get #total_tick mgs.data
 scoreboard players operation #pu_active_phase mgs.data %= #40 mgs.data
-execute if score #pu_active_phase mgs.data matches 0 store result score #pu_active mgs.data if entity @e[tag=mgs.pu_item]
+execute if score #pu_active_phase mgs.data matches 0 store result score #pu_active mgs.data if entity @e[type=minecraft:item,tag=mgs.pu_item]
 
 # Power-up entity tick (lifetime countdown, blink, pickup detection)
-execute if score #pu_active mgs.data matches 1.. as @e[tag=mgs.pu_item] at @s run function mgs:v5.1.0/zombies/powerups/entity_tick
+execute if score #pu_active mgs.data matches 1.. as @e[type=minecraft:item,tag=mgs.pu_item] at @s run function mgs:v5.1.0/zombies/powerups/entity_tick
 
 # Orphan cleanup: a text_display whose item entity was destroyed (burned/exploded) would never
 # be removed by expire/pickup — kill any pu_text that no longer has a pu_item beneath it.
-execute if score #pu_active mgs.data matches 1.. as @e[tag=mgs.pu_text] at @s unless entity @e[tag=mgs.pu_item,distance=..4] run kill @s
+execute if score #pu_active mgs.data matches 1.. as @e[type=minecraft:text_display,tag=mgs.pu_text] at @s unless entity @e[type=minecraft:item,tag=mgs.pu_item,distance=..4] run kill @s
 
 # Insta Kill also works with the knife: give active players a huge melee attack damage so a single
 # melee hit one-shots zombies (guns already insta-kill via the raycast path). The mgs.ik_melee tag
@@ -166,5 +166,5 @@ execute if score #qr_price_tick mgs.data matches 20.. run scoreboard players set
 execute if score #qr_price_tick mgs.data matches 0 run function mgs:v5.1.0/zombies/perks/update_quick_revive_price
 
 # Trap active tick (damage + timer)
-execute as @e[tag=mgs.trap_center,scores={mgs.zb.trap.timer=1..}] at @s run function mgs:v5.1.0/zombies/traps/active_tick
+execute as @e[type=minecraft:marker,tag=mgs.trap_center,scores={mgs.zb.trap.timer=1..}] at @s run function mgs:v5.1.0/zombies/traps/active_tick
 

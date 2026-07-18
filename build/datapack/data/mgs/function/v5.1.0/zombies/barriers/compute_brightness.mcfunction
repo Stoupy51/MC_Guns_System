@@ -1,9 +1,9 @@
 
 #> mgs:v5.1.0/zombies/barriers/compute_brightness
 #
-# @executed	as @e[tag=mgs.barrier_display] & at @s
+# @executed	at @s
 #
-# @within	mgs:v5.1.0/zombies/game_tick [ as @e[tag=mgs.barrier_display] & at @s ]
+# @within	mgs:v5.1.0/zombies/game_tick [ at @s ]
 #			mgs:v5.1.0/zombies/barriers/setup_iter [ as @n[tag=mgs._barrier_new_d] & at @s ]
 #
 

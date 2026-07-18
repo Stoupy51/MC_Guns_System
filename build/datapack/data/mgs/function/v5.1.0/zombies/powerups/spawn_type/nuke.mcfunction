@@ -13,9 +13,9 @@
 #
 
 $summon minecraft:item $(x) $(y) $(z) {Tags:["mgs.pu_item","mgs.pu_item_new","mgs.gm_entity"],PickupDelay:32767,Invulnerable:1b,Item:{id:"minecraft:tnt",count:1,components:{"minecraft:custom_data":{mgs:{powerup_uid:$(uid)}}}}}
-scoreboard players set @n[tag=mgs.pu_item_new] mgs.zb.pu.type 5
-scoreboard players set @n[tag=mgs.pu_item_new] mgs.zb.pu.timer 530
-tag @n[tag=mgs.pu_item_new] remove mgs.pu_item_new
+scoreboard players set @n[type=minecraft:item,tag=mgs.pu_item_new] mgs.zb.pu.type 5
+scoreboard players set @n[type=minecraft:item,tag=mgs.pu_item_new] mgs.zb.pu.timer 530
+tag @n[type=minecraft:item,tag=mgs.pu_item_new] remove mgs.pu_item_new
 
 # Track live power-up count so game_tick can gate the per-item scans (decremented on expire/pickup,
 # reset to 0 by the bulk cleanup, resynced periodically). pu_item is Invulnerable, so it can only die
