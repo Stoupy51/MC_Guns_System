@@ -357,6 +357,11 @@ scoreboard objectives add mgs.mp.bx dummy
 scoreboard objectives add mgs.mp.by dummy
 scoreboard objectives add mgs.mp.bz dummy
 
+# Which of the 4 boundary-check phases a player belongs to (see multiplayer/enforce_bounds).
+# #bphase_next is the round-robin cursor; seed it so the first assignment reads a real value.
+scoreboard objectives add mgs.mp.bphase dummy
+scoreboard players set #bphase_next mgs.data 0
+
 # Class change detection (for prep phase)
 scoreboard objectives add mgs.mp.prev_class dummy
 
@@ -458,6 +463,7 @@ execute unless data storage mgs:maps missions run data modify storage mgs:maps m
 scoreboard players set #1 mgs.data 1
 scoreboard players set #2 mgs.data 2
 scoreboard players set #3 mgs.data 3
+scoreboard players set #4 mgs.data 4
 scoreboard players set #5 mgs.data 5
 scoreboard players set #6 mgs.data 6
 scoreboard players set #10 mgs.data 10

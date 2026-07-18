@@ -32,9 +32,6 @@ execute if score @s mgs.zb.passive matches 1 run scoreboard players operation @s
 # Accumulate kill count
 scoreboard players operation @s mgs.zb.kills += #zb_kills_delta mgs.data
 
-# Refresh sidebar
-function mgs:v5.1.0/zombies/refresh_sidebar
-
 # Double points bonus: award the same kill points again if active
 execute if score @s mgs.special.double_points matches 1.. run scoreboard players operation @s mgs.zb.points += #total_kill_points mgs.data
 

@@ -34,6 +34,10 @@ execute if score #tick_mod mgs.data matches 0 run function mgs:v5.1.0/multiplaye
 # Time's up
 execute if score #mp_timer mgs.data matches ..0 run function mgs:v5.1.0/multiplayer/time_up
 
+# Which boundary-check phase runs this tick (see multiplayer/enforce_bounds)
+execute store result score #bounds_phase mgs.data run scoreboard players get #total_tick mgs.data
+scoreboard players operation #bounds_phase mgs.data %= #4 mgs.data
+
 # Boundary + out-of-bounds enforcement in ONE pass over the playing-players selector (was two
 # scans over the identical, multi-filter selector). Skips respawn-protected/non-playing players.
 execute as @e[type=player,scores={mgs.mp.in_game=1,mgs.mp.death_count=0},gamemode=!creative,gamemode=!spectator] at @s run function mgs:v5.1.0/multiplayer/enforce_bounds

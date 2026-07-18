@@ -7,7 +7,8 @@
 #
 
 # Coordinate bounds (only when the map defines a boundary box). May eliminate @s -> spectator.
-execute if score #mp_has_boundary mgs.data matches 1 run function mgs:v5.1.0/multiplayer/check_bounds
+execute unless score @s mgs.mp.bphase matches 0..3 run function mgs:v5.1.0/multiplayer/assign_bphase
+execute if score #mp_has_boundary mgs.data matches 1 if score @s mgs.mp.bphase = #bounds_phase mgs.data run function mgs:v5.1.0/multiplayer/check_bounds
 
 # OOB markers. Skip if the coordinate check just eliminated @s this tick (now a spectator) — the
 # original two-pass form excluded such players via its gamemode=!spectator selector, so doing the
