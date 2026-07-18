@@ -2,9 +2,9 @@
 # ruff: noqa: E501
 # Player/team management menus (shared across multiplayer, zombies, and missions)
 #
-# Admins open a "Manage Players" dialog from each mode's setup menu. It lists every online player
-# in a 3-column grid; clicking a player opens a per-player menu whose buttons assign that player to
-# a team (Red/Blue/Remove for multiplayer, Join/Remove for zombies & missions).
+# Admins open a "Manage Players" dialog from each mode's setup menu. It renders one row per online
+# player: their name (tinted by status, click to refresh) followed by that mode's assignment buttons
+# — Red/Blue/Remove for multiplayer, Join/Remove for zombies & missions. Assigning is one click.
 #
 # Players are independent of a game until assigned here (or via the self-service "+ Join" button):
 # assignment sets the mode's *.in_game flag (the opt-in link) plus the vanilla team, and — if a game
@@ -82,12 +82,46 @@ data remove storage %NS%:temp _plr_iter[0]
 execute if data storage %NS%:temp _plr_iter[0] run function %NS%:v%VER%/players/list_iter
 """)
 
-	# list_entry (macro {id, name, color, mode}): append a 3-column button labeled with the player's
-	# resolved name, tinted by their status color; clicking opens that mode's per-player menu, passing
-	# both the id (to target them) and the name (to title the menu).
+	# list_entry (macro {id, name, color, mode}): dispatch to that mode's row builder.
 	wf("players/list_entry", """
-$data modify storage %NS%:temp dialog.actions append value {label:{text:"$(name)",color:"$(color)"},tooltip:{text:"Click to manage this player"},action:{type:"run_command",command:"/function %NS%:v%VER%/players/$(mode)_menu {id:$(id),name:\\"$(name)\\"}"}}
+$function %NS%:v%VER%/players/row_$(mode) {id:$(id),name:"$(name)",color:"$(color)"}
 """)
+
+	# Row builders (macro {id, name, color}): append one button per grid cell, left to right, so each
+	# player occupies one full row — their name followed by their assignment buttons. Assigning a team
+	# is therefore a single click from the list, instead of list → per-player menu → button.
+	# The leading name button just re-opens the list: the dialog stays open after a click
+	# (after_action:"none"), so the status colors need a manual refresh to catch up.
+	# The number of buttons per row MUST equal the dialog's `columns` in list_body below.
+	name_btn: str = '{label:{text:"$(name)",color:"$(color)"},tooltip:{text:"Refresh the list"},action:{type:"run_command",command:"/function %NS%:v%VER%/players/list_%MODE%"}}'
+
+	def action_btn(label: str, color: str, tooltip: str, fn: str) -> str:
+		""" A row button that redirects onto the target player via their SUID (it runs as the clicker). """
+		return (
+			f'{{label:{{text:"{label}",color:"{color}"}},tooltip:{{text:"{tooltip}"}},action:{{type:"run_command",'
+			f'command:"/execute as @a[scores={{bs.id=$(id)}}] run function %NS%:v%VER%/players/{fn}"}}}}'
+		)
+
+	rows: dict[str, list[str]] = {
+		"multiplayer": [
+			action_btn("Red", "red", "Move to Red team", "mp_to_red"),
+			action_btn("Blue", "blue", "Move to Blue team", "mp_to_blue"),
+			action_btn("Remove", "gray", "Remove from the game (spectator)", "mp_remove"),
+		],
+		"zombies": [
+			action_btn("Join", "green", "Add to the zombies game", "zb_join"),
+			action_btn("Remove", "gray", "Remove from the game (spectator)", "zb_remove"),
+		],
+		"missions": [
+			action_btn("Join", "green", "Add to the mission", "mi_join"),
+			action_btn("Remove", "gray", "Remove from the game (spectator)", "mi_remove"),
+		],
+	}
+	for mode, buttons in rows.items():
+		wf(f"players/row_{mode}", "\n".join(
+			f"$data modify storage %NS%:temp dialog.actions append value {b}"
+			for b in [name_btn.replace("%MODE%", mode), *buttons]
+		))
 
 	# Per-mode list wrappers: materialize online players, build the base dialog, iterate, then show it.
 	# Only the mode string, title color, and Back target differ between the three.
@@ -97,8 +131,8 @@ data modify storage %NS%:temp _plr_mode set value "%MODE%"
 data modify storage %NS%:temp _plr_iter set value []
 execute as @a run function %NS%:v%VER%/players/append_self
 
-# Base dialog (3-column grid, stays open after a pick, Back returns to setup)
-data modify storage %NS%:temp dialog set value {type:"minecraft:multi_action",title:["","👥 ",{text:"Manage Players",color:"%COLOR%",bold:true}],body:[{type:"minecraft:plain_message",contents:{text:"Click a player to assign them a team",color:"gray"}}],actions:[],columns:3,pause:false,after_action:"none",exit_action:{label:{text:"◀ Back",color:"gray"},tooltip:{text:"Return to setup"},action:{type:"run_command",command:"/function %NS%:v%VER%/%BACK%"}}}
+# Base dialog (one row per player, stays open after a pick, Back returns to setup)
+data modify storage %NS%:temp dialog set value {type:"minecraft:multi_action",title:["","👥 ",{text:"Manage Players",color:"%COLOR%",bold:true}],body:[{type:"minecraft:plain_message",contents:{text:"One row per player — click a name to refresh",color:"gray"}}],actions:[],columns:%COLUMNS%,pause:false,after_action:"none",exit_action:{label:{text:"◀ Back",color:"gray"},tooltip:{text:"Return to setup"},action:{type:"run_command",command:"/function %NS%:v%VER%/%BACK%"}}}
 
 # Append one button per player
 execute if data storage %NS%:temp _plr_iter[0] run function %NS%:v%VER%/players/list_iter
@@ -109,29 +143,15 @@ execute unless data storage %NS%:temp dialog.actions[0] run data modify storage 
 # Show the completed dialog
 function %NS%:v%VER%/multiplayer/show_dialog with storage %NS%:temp
 """
-	for mode, color, back in [("multiplayer", "gold", "multiplayer/setup"), ("zombies", "dark_green", "zombies/setup"), ("missions", "aqua", "missions/setup")]:
-		wf(f"players/list_{mode}", list_body.replace("%MODE%", mode).replace("%COLOR%", color).replace("%BACK%", back))
-
-	## ---- Per-player assignment menus (macro {id}) ----
-	# Each destination button redirects onto the target player via execute as @a[scores={bs.id=$(id)}].
-
-	# Multiplayer: Red / Blue / Remove
-	wf("players/multiplayer_menu", """
-$data modify storage %NS%:temp dialog set value {type:"minecraft:multi_action",title:{text:"$(name)",color:"gold",bold:true},body:[{type:"minecraft:plain_message",contents:{text:"Assign this player to a team",color:"gray"}}],columns:3,pause:false,after_action:"none",actions:[{label:{text:"Red",color:"red"},tooltip:{text:"Move to Red team"},action:{type:"run_command",command:"/execute as @a[scores={bs.id=$(id)}] run function %NS%:v%VER%/players/mp_to_red"}},{label:{text:"Blue",color:"blue"},tooltip:{text:"Move to Blue team"},action:{type:"run_command",command:"/execute as @a[scores={bs.id=$(id)}] run function %NS%:v%VER%/players/mp_to_blue"}},{label:{text:"Remove",color:"gray"},tooltip:{text:"Remove from the game (spectator)"},action:{type:"run_command",command:"/execute as @a[scores={bs.id=$(id)}] run function %NS%:v%VER%/players/mp_remove"}}],exit_action:{label:{text:"◀ Back",color:"gray"},tooltip:{text:"Back to player list"},action:{type:"run_command",command:"/function %NS%:v%VER%/players/list_multiplayer"}}}
-function %NS%:v%VER%/multiplayer/show_dialog with storage %NS%:temp
-""")
-
-	# Zombies: Join / Remove
-	wf("players/zombies_menu", """
-$data modify storage %NS%:temp dialog set value {type:"minecraft:multi_action",title:{text:"$(name)",color:"dark_green",bold:true},body:[{type:"minecraft:plain_message",contents:{text:"Manage this player",color:"gray"}}],columns:2,pause:false,after_action:"none",actions:[{label:{text:"Join",color:"green"},tooltip:{text:"Add to the zombies game"},action:{type:"run_command",command:"/execute as @a[scores={bs.id=$(id)}] run function %NS%:v%VER%/players/zb_join"}},{label:{text:"Remove",color:"gray"},tooltip:{text:"Remove from the game (spectator)"},action:{type:"run_command",command:"/execute as @a[scores={bs.id=$(id)}] run function %NS%:v%VER%/players/zb_remove"}}],exit_action:{label:{text:"◀ Back",color:"gray"},tooltip:{text:"Back to player list"},action:{type:"run_command",command:"/function %NS%:v%VER%/players/list_zombies"}}}
-function %NS%:v%VER%/multiplayer/show_dialog with storage %NS%:temp
-""")
-
-	# Missions: Join / Remove
-	wf("players/missions_menu", """
-$data modify storage %NS%:temp dialog set value {type:"minecraft:multi_action",title:{text:"$(name)",color:"aqua",bold:true},body:[{type:"minecraft:plain_message",contents:{text:"Manage this player",color:"gray"}}],columns:2,pause:false,after_action:"none",actions:[{label:{text:"Join",color:"green"},tooltip:{text:"Add to the mission"},action:{type:"run_command",command:"/execute as @a[scores={bs.id=$(id)}] run function %NS%:v%VER%/players/mi_join"}},{label:{text:"Remove",color:"gray"},tooltip:{text:"Remove from the game (spectator)"},action:{type:"run_command",command:"/execute as @a[scores={bs.id=$(id)}] run function %NS%:v%VER%/players/mi_remove"}}],exit_action:{label:{text:"◀ Back",color:"gray"},tooltip:{text:"Back to player list"},action:{type:"run_command",command:"/function %NS%:v%VER%/players/list_missions"}}}
-function %NS%:v%VER%/multiplayer/show_dialog with storage %NS%:temp
-""")
+	# columns == buttons per row in that mode's row builder above (name + assignment buttons).
+	for mode, color, back, columns in [
+		("multiplayer", "gold", "multiplayer/setup", 4),
+		("zombies", "dark_green", "zombies/setup", 3),
+		("missions", "aqua", "missions/setup", 3),
+	]:
+		wf(f"players/list_{mode}", list_body
+			.replace("%MODE%", mode).replace("%COLOR%", color)
+			.replace("%BACK%", back).replace("%COLUMNS%", str(columns)))
 
 	## ---- Assignment actions (run AS the target @s) ----
 	# If a game is live and the player isn't in it yet, run that mode's late-join flow (full setup),

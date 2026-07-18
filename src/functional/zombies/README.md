@@ -1,19 +1,6 @@
 
 # TODO:
 
-- function mgs:config menu:
-  - there are too many clicks.
-  - Move out the game modes directly to the first menu, not in a submenu. put them on the same line.
-  - Do the same for global settings and Personal Cheats each one on their own line.
-  - "Players & Teams" is useless in the first page, only on a gamemode page.
-  - Multiplayer:
-    - If we click auto team and we select a FFA game, it should join everyone the same team not red/blue.
-  - Missions and Zombies:
-    - We do not have an easy way to put all players in the same team in one button like in multiplayer.
-  - Common to all game modes:
-    - We need too many clicks to put a player in a team.
-    - Idea: show the user name and two buttons to put the player in a team or remove him on the same line.
-
 - Zombies: sound too loud (start round and stop game sounds)
 - Editor: it's laggy for players, too much particles. Also don't need particles if there is the model. Also I want to see the barriers models too
 

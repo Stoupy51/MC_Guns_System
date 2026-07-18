@@ -1779,7 +1779,7 @@ execute if data storage {ns}:temp _pk_disp{{item_model:""}} run data modify stor
 data modify storage {ns}:temp _pk_disp.perk_id set from entity @s data.perk_id
 execute if data storage {ns}:temp _pk_disp{{item_model:"minecraft:potion"}} run function {ns}:v{version}/zombies/perks/override_perk_model with storage {ns}:temp _pk_disp
 execute if data entity @s data.yaw run data modify storage {ns}:temp _pk_disp.yaw set from entity @s data.yaw
-execute align xyz positioned ~.5 ~-.37 ~.5 positioned ^ ^ ^-0.5 run function {ns}:v{version}/zombies/display/summon_machine_display with storage {ns}:temp _pk_disp
+execute align xyz positioned ~.5 ~-.37 ~.5 positioned ^ ^ ^-0.49 run function {ns}:v{version}/zombies/display/summon_machine_display with storage {ns}:temp _pk_disp
 """)
 
 	## Pack-a-Punch: mirror zombies/pap/setup_iter display logic
@@ -1794,7 +1794,7 @@ execute if data entity @s data.item_model run data modify storage {ns}:temp _pap
 execute if data storage {ns}:temp _pap_disp{{item_id:""}} run data modify storage {ns}:temp _pap_disp.item_id set value "minecraft:netherite_block"
 execute if data storage {ns}:temp _pap_disp{{item_model:""}} run data modify storage {ns}:temp _pap_disp.item_model set value "{ns}:pack_a_punch"
 execute if data entity @s data.yaw run data modify storage {ns}:temp _pap_disp.yaw set from entity @s data.yaw
-execute positioned ^ ^ ^-0.5 positioned ~ ~-0.4 ~ run function {ns}:v{version}/zombies/display/summon_machine_display with storage {ns}:temp _pap_disp
+execute positioned ^ ^ ^-0.49 positioned ~ ~-0.4 ~ run function {ns}:v{version}/zombies/display/summon_machine_display with storage {ns}:temp _pap_disp
 """)
 
 	## Mystery box: two-piece chest (base + lid). The in-game box interaction sits at ^ ^2 ^0.3

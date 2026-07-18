@@ -388,31 +388,27 @@ $execute if score #random {ns}.data matches 31 run loot replace entity @s $(slot
         dialog_show_btn(f"{ns}:config/quick_reload", "Quick Reload", "Reduce reload time (self only)", "green"),
         dialog_show_btn(f"{ns}:config/quick_swap", "Quick Swap", "Reduce weapon-swap time (self only)", "aqua"),
     ])
-    register_category("config/modes", "🎮 Game Modes", [
-        dialog_show_btn(f"{ns}:multiplayer/setup", "⚔ Multiplayer Setup", "Open the multiplayer game setup menu", "red"),
-        dialog_show_btn(f"{ns}:zombies/setup", "🧟 Zombies Setup", "Open the zombies setup menu", "green"),
-        dialog_show_btn(f"{ns}:missions/setup", "🎯 Mission Setup", "Open the mission setup menu", "gold"),
-    ])
-    register_category("config/players", "👥 Players & Teams", [
-        dialog_run_btn("⚔ Multiplayer Players", f"/function {ns}:v{version}/players/list_multiplayer", "Assign players to Red/Blue teams", "red"),
-        dialog_run_btn("🧟 Zombies Players", f"/function {ns}:v{version}/players/list_zombies", "Add or remove players from the zombies game", "green"),
-        dialog_run_btn("🎯 Mission Players", f"/function {ns}:v{version}/players/list_missions", "Add or remove players from the mission", "gold"),
-    ])
-
+    # The three game-mode setups sit directly on the first page instead of behind a "Game Modes"
+    # category — opening a mode used to cost two clicks for no benefit. There is no "Players & Teams"
+    # category either: team assignment only makes sense in the context of one mode, and every mode's
+    # setup dialog already carries its own "Manage Players" button.
     config_actions = [
+        # Row 1: the game modes, side by side (see columns=3 below)
+        dialog_show_btn(f"{ns}:multiplayer/setup", "⚔ Multiplayer", "Open the multiplayer game setup menu", "red"),
+        dialog_show_btn(f"{ns}:zombies/setup", "🧟 Zombies", "Open the zombies setup menu", "green"),
+        dialog_show_btn(f"{ns}:missions/setup", "🎯 Missions", "Open the mission setup menu", "gold"),
+        # Row 2: settings and tools
         dialog_show_btn(f"{ns}:config/global", "⚙ Global Settings", "Server-wide gameplay settings", "gold"),
         dialog_show_btn(f"{ns}:config/personal", "⚡ Personal Cheats", "Self-only powerups", "light_purple"),
-        dialog_show_btn(f"{ns}:config/modes", "🎮 Game Modes", "Multiplayer, Zombies & Mission setup", "green"),
-        dialog_show_btn(f"{ns}:config/players", "👥 Players & Teams", "Assign players to teams per game mode", "aqua"),
-        dialog_run_btn("🗺 Open Map Editor", f"/function {ns}:v{version}/maps/editor/menu", "Open the map editor", "yellow"),
+        dialog_run_btn("🗺 Map Editor", f"/function {ns}:v{version}/maps/editor/menu", "Open the map editor", "yellow"),
     ]
     register_dialog("config", {
         "type": "minecraft:multi_action",
         "title": split_emoji("☣ MGS Configuration ☣", color="gold", bold=True),
-        "body": [{"type": "minecraft:plain_message", "contents": {"text": "Pick a category", "color": "gray"}}],
+        "body": [{"type": "minecraft:plain_message", "contents": {"text": "Pick a game mode, or a settings category", "color": "gray"}}],
         "actions": config_actions,
-        # A clean vertical list of categories → one column.
-        "columns": 1,
+        # 3 columns lays the actions out as two rows: the game modes, then settings + tools.
+        "columns": 3,
         "exit_action": {"label": {"translate": "gui.done"}},
     })
 

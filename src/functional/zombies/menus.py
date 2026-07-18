@@ -24,6 +24,8 @@ def generate_zombies_menus() -> None:
 		dialog_run_btn("▶ START", f"/function {ns}:v{version}/zombies/start", "Start the zombies game", "green"),
 		dialog_run_btn("■ STOP", f"/function {ns}:v{version}/zombies/stop", "Stop the zombies game", "red"),
 		dialog_run_btn("👥 Manage Players", f"/function {ns}:v{version}/players/list_zombies", "Add or remove players from the zombies game", "dark_aqua"),
+		# Multiplayer has "Auto Team" to seat everyone at once; this is the zombies equivalent.
+		dialog_run_btn("👥 All Players Join", f"/execute as @a run function {ns}:v{version}/players/zb_join", "Add every online player to the zombies game", "green"),
 		dialog_run_btn("+ Join", f"/function {ns}:v{version}/zombies/join_game", "Join the ongoing zombies game as a late joiner", "yellow"),
 	]
 	register_dialog("zombies/setup", {
@@ -34,8 +36,8 @@ def generate_zombies_menus() -> None:
 		"columns": 2,
 		"exit_action": {
 			"label": {"text": "◀ Back", "color": "gray"},
-			"tooltip": {"text": "Return to the game modes menu"},
-			"action": {"type": "run_command", "command": f"/function {dialog_function('config/modes')}"},
+			"tooltip": {"text": "Return to the configuration menu"},
+			"action": {"type": "run_command", "command": f"/function {dialog_function('config')}"},
 		},
 	})
 

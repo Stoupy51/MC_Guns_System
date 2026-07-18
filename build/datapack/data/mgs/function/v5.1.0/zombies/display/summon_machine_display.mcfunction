@@ -1,13 +1,12 @@
 
 #> mgs:v5.1.0/zombies/display/summon_machine_display
 #
-# @executed	as @n[tag=mgs.pap_new] & at @s & positioned ^ ^ ^-0.5 & positioned ~ ~-0.4 ~
+# @executed	as @n[tag=mgs.pap_new] & at @s & positioned ^ ^ ^-0.49 & positioned ~ ~-0.4 ~
 #
-# @within	mgs:v5.1.0/zombies/pap/setup_iter with storage mgs:temp _pap_disp [ as @n[tag=mgs.pap_new] & at @s & positioned ^ ^ ^-0.5 & positioned ~ ~-0.4 ~ ]
-#			mgs:v5.1.0/zombies/pap/anim/restore_display_lookup with storage mgs:temp _pap_restore_disp
-#			mgs:v5.1.0/zombies/perks/setup_iter with storage mgs:temp _pk_disp [ as @n[tag=mgs.pk_new] & at @s & align xyz & positioned ~.5 ~-.37 ~.5 & positioned ^ ^ ^-0.5 ]
-#			mgs:v5.1.0/maps/editor/displays/perk_machine with storage mgs:temp _pk_disp [ align xyz & positioned ~.5 ~-.37 ~.5 & positioned ^ ^ ^-0.5 ]
-#			mgs:v5.1.0/maps/editor/displays/pap_machine with storage mgs:temp _pap_disp [ positioned ^ ^ ^-0.5 & positioned ~ ~-0.4 ~ ]
+# @within	mgs:v5.1.0/zombies/pap/setup_iter with storage mgs:temp _pap_disp [ as @n[tag=mgs.pap_new] & at @s & positioned ^ ^ ^-0.49 & positioned ~ ~-0.4 ~ ]
+#			mgs:v5.1.0/zombies/perks/setup_iter with storage mgs:temp _pk_disp [ as @n[tag=mgs.pk_new] & at @s & align xyz & positioned ~.5 ~-.37 ~.5 & positioned ^ ^ ^-0.49 ]
+#			mgs:v5.1.0/maps/editor/displays/perk_machine with storage mgs:temp _pk_disp [ align xyz & positioned ~.5 ~-.37 ~.5 & positioned ^ ^ ^-0.49 ]
+#			mgs:v5.1.0/maps/editor/displays/pap_machine with storage mgs:temp _pap_disp [ positioned ^ ^ ^-0.49 & positioned ~ ~-0.4 ~ ]
 #
 # @args		yaw (unknown)
 #			tag (unknown)

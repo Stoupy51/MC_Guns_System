@@ -18,5 +18,5 @@ execute if data storage mgs:temp _pk_disp{item_model:""} run data modify storage
 data modify storage mgs:temp _pk_disp.perk_id set from entity @s data.perk_id
 execute if data storage mgs:temp _pk_disp{item_model:"minecraft:potion"} run function mgs:v5.1.0/zombies/perks/override_perk_model with storage mgs:temp _pk_disp
 execute if data entity @s data.yaw run data modify storage mgs:temp _pk_disp.yaw set from entity @s data.yaw
-execute align xyz positioned ~.5 ~-.37 ~.5 positioned ^ ^ ^-0.5 run function mgs:v5.1.0/zombies/display/summon_machine_display with storage mgs:temp _pk_disp
+execute align xyz positioned ~.5 ~-.37 ~.5 positioned ^ ^ ^-0.49 run function mgs:v5.1.0/zombies/display/summon_machine_display with storage mgs:temp _pk_disp
 

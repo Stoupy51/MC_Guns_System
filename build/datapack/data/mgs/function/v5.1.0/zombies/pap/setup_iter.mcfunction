@@ -47,7 +47,7 @@ execute if data storage mgs:temp _pap_iter[0].item_model run data modify storage
 execute if data storage mgs:temp _pap_disp{item_id:""} run data modify storage mgs:temp _pap_disp.item_id set value "minecraft:netherite_block"
 execute if data storage mgs:temp _pap_disp{item_model:""} run data modify storage mgs:temp _pap_disp.item_model set value "mgs:pack_a_punch"
 execute if data storage mgs:temp _pap_iter[0].rotation[0] run data modify storage mgs:temp _pap_disp.yaw set from storage mgs:temp _pap_iter[0].rotation[0]
-execute as @n[tag=mgs.pap_new] at @s positioned ^ ^ ^-0.5 positioned ~ ~-0.4 ~ run function mgs:v5.1.0/zombies/display/summon_machine_display with storage mgs:temp _pap_disp
+execute as @n[tag=mgs.pap_new] at @s positioned ^ ^ ^-0.49 positioned ~ ~-0.4 ~ run function mgs:v5.1.0/zombies/display/summon_machine_display with storage mgs:temp _pap_disp
 execute as @n[tag=mgs.pap_new] at @s run tp @s ~ ~2 ~
 
 # Store display metadata for lookup (reuse the computed _pap_disp fields)
