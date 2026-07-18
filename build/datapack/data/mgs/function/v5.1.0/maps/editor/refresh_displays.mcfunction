@@ -4,7 +4,7 @@
 # @within	mgs:v5.1.0/maps/editor/enter
 #			mgs:v5.1.0/maps/editor/handle_zb_object
 #			mgs:v5.1.0/maps/editor/handle_destroy
-#			mgs:v5.1.0/maps/editor/tick
+#			mgs:v5.1.0/maps/editor/global_tick
 #
 
 # Rebuild all editor model displays from the current markers
@@ -14,4 +14,5 @@ execute as @e[tag=mgs.element.perk_machine] at @s run function mgs:v5.1.0/maps/e
 execute as @e[tag=mgs.element.pap_machine] at @s run function mgs:v5.1.0/maps/editor/displays/pap_machine
 execute as @e[tag=mgs.element.mystery_box_pos] at @s run function mgs:v5.1.0/maps/editor/displays/mystery_box_pos
 execute as @e[tag=mgs.element.power_switch] at @s run function mgs:v5.1.0/maps/editor/displays/power_switch
+execute as @e[tag=mgs.element.barrier] at @s run function mgs:v5.1.0/maps/editor/displays/barrier
 

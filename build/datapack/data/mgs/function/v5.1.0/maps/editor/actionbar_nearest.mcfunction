@@ -1,9 +1,9 @@
 
 #> mgs:v5.1.0/maps/editor/actionbar_nearest
 #
-# @executed	as @n[tag=mgs.map_element,distance=..5]
+# @executed	as @n[type=minecraft:marker,tag=mgs.map_element,distance=..5]
 #
-# @within	mgs:v5.1.0/maps/editor/tick [ as @n[tag=mgs.map_element,distance=..5] ]
+# @within	mgs:v5.1.0/maps/editor/tick [ as @n[type=minecraft:marker,tag=mgs.map_element,distance=..5] ]
 #
 
 execute if entity @s[tag=mgs.element.base_coordinates] run return run title @a[tag=mgs.check_nearest] actionbar [{"text":"⬟ ","color":"light_purple"},{"translate":"mgs.base_coordinates"}]
