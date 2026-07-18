@@ -472,9 +472,8 @@ scoreboard players set #60 mgs.data 60
 scoreboard players set #90 mgs.data 90
 scoreboard players set #100 mgs.data 100
 scoreboard players set #200 mgs.data 200
-scoreboard players set #450 mgs.data 450
 scoreboard players set #1000 mgs.data 1000
-scoreboard players set #3600 mgs.data 3600
+scoreboard players set #36000 mgs.data 36000
 scoreboard players set #62832 mgs.data 62832
 scoreboard players set #1000000 mgs.data 1000000
 

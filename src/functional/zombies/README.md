@@ -8,12 +8,8 @@
 - Multiplayer: add in loadouts the possibility to choose a knife skin/camo like guns do.
 - Multiplayer: when a game ends, it shows the kill and deaths of players but arbitrary, I would like to show players ordered by kills and show the team's color of the player. Same applies for all modes.
 
-- Zombies mystery box: shift left click to allow teammates to take the weapon
+- Zombies mystery box: shift left click to allow teammates to take the weapon (add a leftclick event with bookshelf interaction)
 - Zombies: add dogs rounds
-
-- Emojis with a color: dialog Back buttons + zombies Player Info are done. The chat-based `btn()`
-  helper (map editor, etc.) still tints its label — the whole button's click_event is inherited from
-  the first component, so splitting the label out needs btn() restructured without breaking clicks.
 
 # Zonweeb:
 - special zombie that gives resistance to near zombies
