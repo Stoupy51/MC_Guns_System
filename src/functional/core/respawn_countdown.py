@@ -12,6 +12,10 @@ def respawn_countdown_tick_lines(ns: str, mode_prefix: str, actual_respawn_funct
 execute as @a[scores={{{ns}.{mode_prefix}.in_game=1,{ns}.mp.spectate_timer=1..}}] run scoreboard players operation @s {ns}.mp.spectate_timer -= #tick_delta {ns}.data
 execute as @a[scores={{{ns}.{mode_prefix}.in_game=1,{ns}.mp.spectate_timer=21..40}},gamemode=spectator] run title @s subtitle [{{"text":"Respawning in 2 seconds...","color":"gray"}}]
 execute as @a[scores={{{ns}.{mode_prefix}.in_game=1,{ns}.mp.spectate_timer=1..20}},gamemode=spectator] run title @s subtitle [{{"text":"Respawning in 1 second...","color":"gray"}}]
+# Clear the countdown subtitle on respawn: Minecraft keeps the last subtitle until something
+# replaces it, so any later `title` (a round banner, the hit indicator) would redisplay a stale
+# "Respawning in 1 second..." underneath it.
+execute as @a[scores={{{ns}.{mode_prefix}.in_game=1,{ns}.mp.spectate_timer=..0}},gamemode=spectator] run title @s subtitle {{"text":""}}
 execute as @a[scores={{{ns}.{mode_prefix}.in_game=1,{ns}.mp.spectate_timer=..0}},gamemode=spectator] at @s run function {actual_respawn_function}
 """.strip()
 

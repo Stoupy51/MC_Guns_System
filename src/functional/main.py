@@ -370,7 +370,7 @@ $execute if score #random {ns}.data matches 31 run loot replace entity @s $(slot
             # Each category lists items of a single kind (settings / mode links) → one column.
             "columns": 1,
             "exit_action": {
-                "label": {"text": "◀ Back", "color": "gray"},
+                "label": split_emoji("◀ Back", color="gray"),
                 "tooltip": {"text": "Return to configuration"},
                 "action": {"type": "run_command", "command": f"/function {dialog_function('config')}"},
             },

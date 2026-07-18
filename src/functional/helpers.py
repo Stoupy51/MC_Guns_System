@@ -326,7 +326,7 @@ def register_value_picker(dialog_id: str, title: str, desc: str, options: list[t
         "pause": False,
         "after_action": "none",
         "exit_action": {
-            "label": {"text": "◀ Back", "color": "gray"},
+            "label": split_emoji("◀ Back", color="gray"),
             "tooltip": {"text": "Return to the previous menu"},
             "action": {"type": "run_command", "command": f"/function {dialog_function(back_dialog)}"},
         },

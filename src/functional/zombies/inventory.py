@@ -244,7 +244,7 @@ $data modify storage {ns}:temp info.lore set value [{{"text":"Round: $(round)","
 
 	# Macro: render the paper with the pre-built lore list ($(lore) substitutes the list SNBT).
 	write_versioned_function("zombies/inventory/refresh_info_item_render", f"""
-$item replace entity @s hotbar.8 with minecraft:paper[custom_data={{{ns}:{{zb_info:true}}}},item_name={{"text":"\\u2139 Player Info","color":"gold","italic":false}},lore=$(lore)]
+$item replace entity @s hotbar.8 with minecraft:paper[custom_data={{{ns}:{{zb_info:true}}}},item_name=["",{{"text":"\\u2139 ","italic":false}},{{"text":"Player Info","color":"gold","italic":false}}],lore=$(lore)]
 """)
 
 	# Perk display items: one mini perk-machine item per owned perk, filling the LAST main

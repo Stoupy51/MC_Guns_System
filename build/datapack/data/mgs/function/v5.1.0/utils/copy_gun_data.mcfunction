@@ -5,6 +5,8 @@
 #
 # @within	mgs:v5.1.0/player/tick
 #			mgs:v5.1.0/player/set_pending_clicks
+#			mgs:v5.1.0/player/swap_and_reload
+#			mgs:v5.1.0/weapon/left_click
 #			mgs:v5.1.0/switch/reload_to_dropped_weapon
 #			mgs:v5.1.0/switch/do_toggle_fire_mode
 #			mgs:zombies/bonus/max_ammo

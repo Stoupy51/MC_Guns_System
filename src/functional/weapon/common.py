@@ -4,7 +4,7 @@ from typing import Any
 
 from stewbeet import Advancement, ItemModifier, JsonDict, Mem, Predicate, set_json_encoder, write_versioned_function
 
-from ...config.stats import BURST, REMAINING_BULLETS
+from ...config.stats import BURST, RELOAD_TIME, REMAINING_BULLETS
 
 # Main function
 
@@ -94,8 +94,8 @@ scoreboard players operation #acoustics_phase {ns}.data %= #20 {ns}.data
 execute if score #acoustics_phase {ns}.data matches 0 if predicate {ns}:v{version}/is_moving run function {ns}:v{version}/sound/compute_acoustics
 execute if score #acoustics_phase {ns}.data matches 0 unless predicate {ns}:v{version}/is_on_ground run function {ns}:v{version}/sound/compute_acoustics
 
-# Change mode if weapon is in offhand
-execute if items entity @s weapon.offhand * run function {ns}:v{version}/player/mode_check
+# Reload if the hand-swap key parked the weapon in the offhand
+execute if items entity @s weapon.offhand * run function {ns}:v{version}/player/offhand_swap_check
 
 # Check if player dropped weapon to reload
 function {ns}:v{version}/switch/check_reload_on_drop
@@ -183,20 +183,25 @@ execute unless score @s {ns}.special.infinite_ammo matches 1.. if score @s {ns}.
 $item modify entity @s weapon.mainhand {"function": "minecraft:set_components","components": {"minecraft:item_model": "$(item_model)"}}
 """)
 
-    # Offhand swap now toggles fire mode (swap -> toggle)
-    write_versioned_function("player/mode_check", f"""
-# If mainhand is empty and offhand has a weapon, move it to mainhand and toggle fire mode
-execute unless items entity @s weapon.mainhand * if items entity @s weapon.offhand *[custom_data~{{{ns}:{{gun:true}}}}] run function {ns}:v{version}/player/swap_and_toggle
+    # Hand swap (F) is the reload key. Pressing it puts the gun in the offhand, which is what we
+    # detect here — the weapon is put straight back so the swap never visibly happens.
+    # (Fire mode moved to left click, see weapon/left_click.py.)
+    write_versioned_function("player/offhand_swap_check", f"""
+# If mainhand is empty and offhand has a weapon, move it back to mainhand and reload
+execute unless items entity @s weapon.mainhand * if items entity @s weapon.offhand *[custom_data~{{{ns}:{{gun:true}}}}] run function {ns}:v{version}/player/swap_and_reload
 """)
 
-    # Swap offhand to mainhand and toggle fire mode
-    write_versioned_function("player/swap_and_toggle", f"""
-# Move offhand item to mainhand
+    # Undo the swap, then reload
+    write_versioned_function("player/swap_and_reload", f"""
+# Move offhand item back to mainhand
 item replace entity @s weapon.mainhand from entity @s weapon.offhand
 item replace entity @s weapon.offhand with air
 
-# Toggle fire mode for the swapped weapon (storage-level)
-function {ns}:v{version}/switch/do_toggle_fire_mode
+# Reload the weapon. Throwables carry {{gun:true}} but no {RELOAD_TIME}, and ammo/reload would store
+# a result from that missing field, leaving a garbage cooldown that locks the item.
+function {ns}:v{version}/utils/copy_gun_data
+execute unless data storage {ns}:gun all.stats.{RELOAD_TIME} run return 0
+function {ns}:v{version}/ammo/reload
 """)
 
     # Reset burst count only if burst is complete

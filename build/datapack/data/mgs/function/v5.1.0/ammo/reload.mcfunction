@@ -4,6 +4,7 @@
 # @executed	as @e[type=player,sort=random] & at @s
 #
 # @within	mgs:v5.1.0/player/right_click
+#			mgs:v5.1.0/player/swap_and_reload
 #			mgs:v5.1.0/switch/reload_to_dropped_weapon
 #			mgs:v5.1.0/ammo/decrease
 #			mgs:v5.1.0/ammo/single_reload_continue

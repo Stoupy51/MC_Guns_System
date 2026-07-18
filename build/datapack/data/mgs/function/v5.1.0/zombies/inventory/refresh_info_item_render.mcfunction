@@ -8,5 +8,5 @@
 # @args		lore (unknown)
 #
 
-$item replace entity @s hotbar.8 with minecraft:paper[custom_data={mgs:{zb_info:true}},item_name={"text":"\u2139 Player Info","color":"gold","italic":false},lore=$(lore)]
+$item replace entity @s hotbar.8 with minecraft:paper[custom_data={mgs:{zb_info:true}},item_name=["",{"text":"\u2139 ","italic":false},{"translate":"mgs.player_info","color":"gold","italic":false}],lore=$(lore)]
 

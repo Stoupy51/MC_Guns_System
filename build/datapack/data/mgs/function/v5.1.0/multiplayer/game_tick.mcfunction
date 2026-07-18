@@ -10,6 +10,10 @@
 execute as @a[scores={mgs.mp.in_game=1,mgs.mp.spectate_timer=1..}] run scoreboard players operation @s mgs.mp.spectate_timer -= #tick_delta mgs.data
 execute as @a[scores={mgs.mp.in_game=1,mgs.mp.spectate_timer=21..40},gamemode=spectator] run title @s subtitle [{"translate":"mgs.respawning_in_2_seconds","color":"gray"}]
 execute as @a[scores={mgs.mp.in_game=1,mgs.mp.spectate_timer=1..20},gamemode=spectator] run title @s subtitle [{"translate":"mgs.respawning_in_1_second","color":"gray"}]
+# Clear the countdown subtitle on respawn: Minecraft keeps the last subtitle until something
+# replaces it, so any later `title` (a round banner, the hit indicator) would redisplay a stale
+# "Respawning in 1 second..." underneath it.
+execute as @a[scores={mgs.mp.in_game=1,mgs.mp.spectate_timer=..0},gamemode=spectator] run title @s subtitle {"text":""}
 execute as @a[scores={mgs.mp.in_game=1,mgs.mp.spectate_timer=..0},gamemode=spectator] at @s run function mgs:v5.1.0/multiplayer/actual_respawn
 
 # Dropped-weapon lifetime: count down (real-time via #tick_delta) and remove expired drops

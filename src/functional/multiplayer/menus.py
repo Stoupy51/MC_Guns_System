@@ -4,7 +4,7 @@
 
 from stewbeet import Mem, write_versioned_function
 
-from ..helpers import dialog_function, dialog_run_btn, dialog_show_btn, register_dialog, register_value_picker
+from ..helpers import dialog_function, dialog_run_btn, dialog_show_btn, register_dialog, register_value_picker, split_emoji
 
 
 def generate_menus() -> None:
@@ -57,7 +57,7 @@ def generate_menus() -> None:
 		"actions": setup_actions,
 		"columns": 2,
 		"exit_action": {
-			"label": {"text": "◀ Back", "color": "gray"},
+			"label": split_emoji("◀ Back", color="gray"),
 			"tooltip": {"text": "Return to the configuration menu"},
 			"action": {"type": "run_command", "command": f"/function {dialog_function('config')}"},
 		},
@@ -69,7 +69,7 @@ def generate_menus() -> None:
 	## Map selection menu: build a dialog listing all available multiplayer maps
 	write_versioned_function("multiplayer/map_select", f"""
 # Build the base map-select dialog (empty actions), then append one button per map
-data modify storage {ns}:temp dialog set value {{type:"minecraft:multi_action",title:["","🗺 ",{{text:"Select Map",color:"aqua",bold:true}}],body:[{{type:"minecraft:plain_message",contents:{{text:"Click a map to select it",color:"gray"}}}}],actions:[],columns:1,pause:false,after_action:"none",exit_action:{{label:{{text:"◀ Back",color:"gray"}},tooltip:{{text:"Return to setup"}},action:{{type:"run_command",command:"/function {ns}:v{version}/multiplayer/setup"}}}}}}
+data modify storage {ns}:temp dialog set value {{type:"minecraft:multi_action",title:["","🗺 ",{{text:"Select Map",color:"aqua",bold:true}}],body:[{{type:"minecraft:plain_message",contents:{{text:"Click a map to select it",color:"gray"}}}}],actions:[],columns:1,pause:false,after_action:"none",exit_action:{{label:["","◀ ",{{text:"Back",color:"gray"}}],tooltip:{{text:"Return to setup"}},action:{{type:"run_command",command:"/function {ns}:v{version}/multiplayer/setup"}}}}}}
 
 # Copy maps list and iterate (select_entry appends one button per map)
 data modify storage {ns}:temp _map_iter set from storage {ns}:maps multiplayer
