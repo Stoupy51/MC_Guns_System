@@ -1,8 +1,8 @@
 
 #> mgs:v5.1.0/dialogs/config/damage_debug
 #
-# @within	mgs:v5.1.0/dialogs/config/global {"label": {"translate": "mgs.grenade_explosion_power", "color": "gold"}, "tooltip": {"translate": "mgs.server_wide_grenade_explosion_power"}, "action": {"type": "run_command", "command": "/function mgs:v5.1.0/dialogs/config/grenade_power"}}, {"label": {"translate": "mgs.max_ammo_mode", "color": "aqua"}, "tooltip": {"translate": "mgs.how_the_max_ammo_powerup_refills_weapons"}, "action": {"type": "run_command", "command": "/function mgs:v5.1.0/dialogs/config/max_ammo"}}, {"label": {"translate": "mgs.damage_debug", "color": "yellow"}, "tooltip": {"translate": "mgs.broadcast_every_hits_damage_to_chat"}, "action": {"type": "run_command", "command": "/function mgs:v5.1.0/dialogs/config/damage_debug"}}], "columns": 1, "exit_action": {"label": ["", "\u25c0 ", {"translate": "mgs.back", "color": "gray"}], "tooltip": {"translate": "mgs.return_to_configuration"}, "action": {"type": "run_command", "command": "/function mgs:v5.1.0/dialogs/config"}}}
+# @within	???
 #
 
-dialog show @s {"type": "minecraft:multi_action", "title": {"translate": "mgs.damage_debug", "color": "gold", "bold": true}, "body": [{"type": "minecraft:plain_message", "contents": {"translate": "mgs.broadcast_every_hits_damage_to_chat", "color": "gray"}}], "actions": [{"label": {"translate": "mgs.off", "color": "red"}, "tooltip": {"translate": "mgs.disable_global_damage_debug"}, "action": {"type": "run_command", "command": "/scoreboard players set #damage_debug mgs.config 0"}}, {"label": {"text": "ON", "color": "green"}, "tooltip": {"translate": "mgs.enable_global_damage_debug_tellraw_a_every_hit"}, "action": {"type": "run_command", "command": "/scoreboard players set #damage_debug mgs.config 1"}}], "columns": 1, "pause": false, "after_action": "none", "exit_action": {"label": ["", "\u25c0 ", {"translate": "mgs.back", "color": "gray"}], "tooltip": {"translate": "mgs.return_to_the_previous_menu"}, "action": {"type": "run_command", "command": "/function mgs:v5.1.0/dialogs/config/global"}}}
+dialog show @s mgs:v5.1.0/config/damage_debug
 

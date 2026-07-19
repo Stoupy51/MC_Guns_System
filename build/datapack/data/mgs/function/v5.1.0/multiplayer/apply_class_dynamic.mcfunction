@@ -16,6 +16,10 @@ item replace entity @s armor.chest with leather_chestplate[dyed_color=10263702,u
 item replace entity @s armor.legs with chainmail_leggings[unbreakable={}]
 item replace entity @s armor.feet with iron_boots[unbreakable={}]
 
+# Knife in hotbar.0 for every loadout: it is not part of the class slot list because no class can
+# choose it away. Weapons therefore start at hotbar.1 (primary) and hotbar.2 (secondary).
+item replace entity @s hotbar.0 with minecraft:iron_sword[unbreakable={},custom_data={mgs:{knife:true}},item_name={"translate":"mgs.knife","color":"white","italic":false},attribute_modifiers=[{type:"attack_damage",amount:20,operation:"add_value",slot:"mainhand",id:"minecraft:base_attack_damage"},{type:"attack_speed",amount:-2.5,operation:"add_value",slot:"mainhand",id:"minecraft:base_attack_speed"},{type:"entity_interaction_range",amount:-1.0,operation:"add_value",slot:"mainhand",id:"mgs:knife_range"}]]
+
 # Copy class slots to iteration temp
 data modify storage mgs:temp slots set from storage mgs:temp current_class.slots
 

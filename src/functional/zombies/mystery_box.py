@@ -306,10 +306,14 @@ function {ns}:v{version}/zombies/mystery_box/try_use
 	write_versioned_function("zombies/mystery_box/fire_sale_start", f"""
 tag @e[tag={ns}.mystery_box_active] add {ns}.mb_orig_active
 tag @e[tag={ns}.mystery_box_pos] add {ns}.mb_fs_active
-execute as @e[tag={ns}.mystery_box_pos,tag=!{ns}.mystery_box_active] at @s run function {ns}:v{version}/zombies/mystery_box/fire_sale_summon_box
 
-# Every box is usable now: bring all interaction entities back into reach
+# Every box is usable now: bring all interaction entities back into reach. This MUST happen before
+# the temp boxes are summoned below — a hidden interaction entity is parked 512 blocks under its
+# real position (see interaction_hide), and the chest models are summoned `at @s`, so summoning
+# first buried every fire-sale chest underground: the box was usable but its model was invisible.
 function {ns}:v{version}/zombies/mystery_box/sync_interaction_visibility
+
+execute as @e[tag={ns}.mystery_box_pos,tag=!{ns}.mystery_box_active] at @s run function {ns}:v{version}/zombies/mystery_box/fire_sale_summon_box
 """)
 
 	write_versioned_function("zombies/mystery_box/fire_sale_summon_box", f"""

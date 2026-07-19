@@ -1,0 +1,28 @@
+{
+	"type": "minecraft:multi_action",
+	"title": [
+		"",
+		"🧟 ",
+		{"text": "Zombies Setup","color": "dark_green","bold": true},
+		" 🧟"
+	],
+	"body": [
+		{"type": "minecraft:plain_message","contents": {"text": "Pick a map and variant, then Start","color": "gray"}}
+	],
+	"actions": [
+		{"label": ["","🗺 ",{"text": "Select Map","color": "dark_green"}],"tooltip": {"text": "Browse and select a zombies map"},"action": {"type": "run_command","command": "/function mgs:v5.1.0/zombies/map_select"}},
+		{"label": ["","🧬 ",{"text": "Variant"}],"tooltip": {"text": "Choose the zombies experience"},"action": {"type": "minecraft:show_dialog","dialog": "mgs:v5.1.0/zombies/setup/variant"}},
+		{"label": ["","▶ ",{"text": "START","color": "green"}],"tooltip": {"text": "Start the zombies game"},"action": {"type": "run_command","command": "/function mgs:v5.1.0/zombies/start"}},
+		{"label": ["","■ ",{"text": "STOP","color": "red"}],"tooltip": {"text": "Stop the zombies game"},"action": {"type": "run_command","command": "/function mgs:v5.1.0/zombies/stop"}},
+		{"label": ["","👥 ",{"text": "Manage Players","color": "dark_aqua"}],"tooltip": {"text": "Add or remove players from the zombies game"},"action": {"type": "run_command","command": "/function mgs:v5.1.0/players/list_zombies"}},
+		{"label": ["","👥 ",{"text": "All Players Join","color": "green"}],"tooltip": {"text": "Add every online player to the zombies game"},"action": {"type": "run_command","command": "/execute as @a run function mgs:v5.1.0/players/zb_join"}},
+		{"label": ["","+ ",{"text": "Join","color": "yellow"}],"tooltip": {"text": "Join the ongoing zombies game as a late joiner"},"action": {"type": "run_command","command": "/function mgs:v5.1.0/zombies/join_game"}},
+		{"label": ["","🛠 ",{"text": "Admin / Debug"}],"tooltip": {"text": "Skip rounds, grant points and force power-ups (operators only)"},"action": {"type": "minecraft:show_dialog","dialog": "mgs:v5.1.0/zombies/admin"}}
+	],
+	"columns": 2,
+	"exit_action": {
+		"label": ["","◀ ",{"text": "Back","color": "gray"}],
+		"tooltip": {"text": "Return to the configuration menu"},
+		"action": {"type": "minecraft:show_dialog","dialog": "mgs:v5.1.0/config"}
+	}
+}

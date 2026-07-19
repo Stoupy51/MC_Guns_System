@@ -10,5 +10,5 @@
 # Zonweeb variant only
 execute unless data storage mgs:zombies game{variant:"zonweeb"} run return fail
 # Show the ability selection dialog
-dialog show @s {type:"minecraft:multi_action",title:{translate:"mgs.zonweeb_ability",color:"dark_green"},body:{type:"minecraft:plain_message",contents:{translate:"mgs.choose_an_ability_for_this_game",color:"gray"}},columns:1,after_action:"close",exit_action:{label:"Skip"},actions:[{label:["","🏃 ",{"translate":"mgs.coward","color":"yellow"}],tooltip:{translate:"mgs.tp_to_spawn_when_under_50_hp_1_round_cooldown"},action:{type:"run_command",command:"/trigger mgs.player.config set 8"}},{label:["","🛡 ",{"translate":"mgs.guardian","color":"green"}],tooltip:{translate:"mgs.summon_an_iron_golem_ally_at_round_start_1_round_cooldown"},action:{type:"run_command",command:"/trigger mgs.player.config set 9"}}]}
+dialog show @s mgs:v5.1.0/zombies/ability
 

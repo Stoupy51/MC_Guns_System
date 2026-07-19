@@ -6,7 +6,7 @@
 # Abilities: Coward (TP to spawn), Guardian (summon Iron Golem)
 from stewbeet import Mem, write_versioned_function
 
-from ..helpers import MGS_TAG
+from ..helpers import MGS_TAG, dialog_ref, register_dialog
 
 
 def generate_zombies_abilities() -> None:
@@ -20,18 +20,50 @@ def generate_zombies_abilities() -> None:
 	TRIG_ZB_ABILITY_1: int = 8   # Coward
 	TRIG_ZB_ABILITY_2: int = 9   # Guardian
 
+	## Registered as real dialog resources; the functions below keep the variant guard that has to
+	## run before the dialog is shown, so these need no opener wrapper of their own.
+	register_dialog("zombies/passive_ability", {
+		"type": "minecraft:multi_action",
+		"title": {"text": "Zonweeb Passive", "color": "dark_green"},
+		"body": {"type": "minecraft:plain_message", "contents": {"text": "Choose a passive effect for this game.", "color": "gray"}},
+		"columns": 1,
+		"after_action": "close",
+		"exit_action": {"label": "Skip"},
+		"actions": [
+			{"label": ["", "💰 ", {"text": "x1.2 Points", "color": "gold"}], "tooltip": {"text": "Earn 20% more points from kills (permanent)"},
+			 "action": {"type": "run_command", "command": f"/trigger {ns}.player.config set {TRIG_ZB_PASSIVE_1}"}},
+			{"label": ["", "⏱ ", {"text": "x1.5 Powerups", "color": "aqua"}], "tooltip": {"text": "All powerup durations last 50% longer"},
+			 "action": {"type": "run_command", "command": f"/trigger {ns}.player.config set {TRIG_ZB_PASSIVE_2}"}},
+		],
+	}, wrapper=False)
+
 	write_versioned_function("zombies/passive_ability_menu", f"""
 # Zonweeb variant only
 execute unless data storage {ns}:zombies game{{variant:"zonweeb"}} run return fail
 # Show the passive selection dialog (ability dialog is shown after)
-dialog show @s {{type:"minecraft:multi_action",title:{{text:"Zonweeb Passive",color:"dark_green"}},body:{{type:"minecraft:plain_message",contents:{{text:"Choose a passive effect for this game.",color:"gray"}}}},columns:1,after_action:"close",exit_action:{{label:"Skip"}},actions:[{{label:["","💰 ",{{"text":"x1.2 Points","color":"gold"}}],tooltip:{{text:"Earn 20% more points from kills (permanent)"}},action:{{type:"run_command",command:"/trigger {ns}.player.config set {TRIG_ZB_PASSIVE_1}"}}}},{{label:["","⏱ ",{{"text":"x1.5 Powerups","color":"aqua"}}],tooltip:{{text:"All powerup durations last 50% longer"}},action:{{type:"run_command",command:"/trigger {ns}.player.config set {TRIG_ZB_PASSIVE_2}"}}}}]}}
+dialog show @s {dialog_ref('zombies/passive_ability')}
 """)
+
+	register_dialog("zombies/ability", {
+		"type": "minecraft:multi_action",
+		"title": {"text": "Zonweeb Ability", "color": "dark_green"},
+		"body": {"type": "minecraft:plain_message", "contents": {"text": "Choose an ability for this game.", "color": "gray"}},
+		"columns": 1,
+		"after_action": "close",
+		"exit_action": {"label": "Skip"},
+		"actions": [
+			{"label": ["", "🏃 ", {"text": "Coward", "color": "yellow"}], "tooltip": {"text": "TP to spawn when under 50% HP (1 round cooldown)"},
+			 "action": {"type": "run_command", "command": f"/trigger {ns}.player.config set {TRIG_ZB_ABILITY_1}"}},
+			{"label": ["", "🛡 ", {"text": "Guardian", "color": "green"}], "tooltip": {"text": "Summon an Iron Golem ally at round start (1 round cooldown)"},
+			 "action": {"type": "run_command", "command": f"/trigger {ns}.player.config set {TRIG_ZB_ABILITY_2}"}},
+		],
+	}, wrapper=False)
 
 	write_versioned_function("zombies/ability_menu", f"""
 # Zonweeb variant only
 execute unless data storage {ns}:zombies game{{variant:"zonweeb"}} run return fail
 # Show the ability selection dialog
-dialog show @s {{type:"minecraft:multi_action",title:{{text:"Zonweeb Ability",color:"dark_green"}},body:{{type:"minecraft:plain_message",contents:{{text:"Choose an ability for this game.",color:"gray"}}}},columns:1,after_action:"close",exit_action:{{label:"Skip"}},actions:[{{label:["","🏃 ",{{"text":"Coward","color":"yellow"}}],tooltip:{{text:"TP to spawn when under 50% HP (1 round cooldown)"}},action:{{type:"run_command",command:"/trigger {ns}.player.config set {TRIG_ZB_ABILITY_1}"}}}},{{label:["","🛡 ",{{"text":"Guardian","color":"green"}}],tooltip:{{text:"Summon an Iron Golem ally at round start (1 round cooldown)"}},action:{{type:"run_command",command:"/trigger {ns}.player.config set {TRIG_ZB_ABILITY_2}"}}}}]}}
+dialog show @s {dialog_ref('zombies/ability')}
 """)
 
 	# Passive Selection (called via trigger dispatch) ───────────

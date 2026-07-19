@@ -1,0 +1,20 @@
+{
+	"type": "minecraft:multi_action",
+	"title": [
+		"",
+		"⚙ ",
+		{"translate": "mgs.global_settings","color": "gold","bold": true}
+	],
+	"actions": [
+		{"label": {"translate": "mgs.rpg_explosion_power","color": "red"},"tooltip": {"translate": "mgs.server_wide_projectile_explosion_power"},"action": {"type": "minecraft:show_dialog","dialog": "mgs:v5.1.0/config/rpg_power"}},
+		{"label": {"translate": "mgs.grenade_explosion_power","color": "gold"},"tooltip": {"translate": "mgs.server_wide_grenade_explosion_power"},"action": {"type": "minecraft:show_dialog","dialog": "mgs:v5.1.0/config/grenade_power"}},
+		{"label": {"translate": "mgs.max_ammo_mode","color": "aqua"},"tooltip": {"translate": "mgs.how_the_max_ammo_powerup_refills_weapons"},"action": {"type": "minecraft:show_dialog","dialog": "mgs:v5.1.0/config/max_ammo"}},
+		{"label": {"translate": "mgs.damage_debug","color": "yellow"},"tooltip": {"translate": "mgs.broadcast_every_hits_damage_to_chat"},"action": {"type": "minecraft:show_dialog","dialog": "mgs:v5.1.0/config/damage_debug"}}
+	],
+	"columns": 1,
+	"exit_action": {
+		"label": ["","◀ ",{"translate": "mgs.back","color": "gray"}],
+		"tooltip": {"translate": "mgs.return_to_configuration"},
+		"action": {"type": "minecraft:show_dialog","dialog": "mgs:v5.1.0/config"}
+	}
+}

@@ -1,12 +1,8 @@
 
 #> mgs:v5.1.0/dialogs/config/personal
 #
-# @within	mgs:v5.1.0/dialogs/config/instant_kill
-#			mgs:v5.1.0/dialogs/config/infinite_ammo
-#			mgs:v5.1.0/dialogs/config/quick_reload
-#			mgs:v5.1.0/dialogs/config/quick_swap
-#			mgs:v5.1.0/dialogs/config {"label": ["", "\ud83e\udddf ", {"translate": "mgs.zombies", "color": "green"}], "tooltip": {"translate": "mgs.open_the_zombies_setup_menu"}, "action": {"type": "run_command", "command": "/function mgs:v5.1.0/dialogs/zombies/setup"}}, {"label": ["", "\ud83c\udfaf ", {"translate": "mgs.missions", "color": "gold"}], "tooltip": {"translate": "mgs.open_the_mission_setup_menu"}, "action": {"type": "run_command", "command": "/function mgs:v5.1.0/dialogs/missions/setup"}}, {"label": ["", "\u2699 ", {"translate": "mgs.global_settings", "color": "gold"}], "tooltip": {"translate": "mgs.server_wide_gameplay_settings"}, "action": {"type": "run_command", "command": "/function mgs:v5.1.0/dialogs/config/global"}}, {"label": ["", "\u26a1 ", {"translate": "mgs.personal_cheats", "color": "light_purple"}], "tooltip": {"translate": "mgs.self_only_powerups"}, "action": {"type": "run_command", "command": "/function mgs:v5.1.0/dialogs/config/personal"}}, {"label": ["", "\ud83d\uddfa ", {"translate": "mgs.map_editor", "color": "yellow"}], "tooltip": {"translate": "mgs.open_the_map_editor"}, "action": {"type": "run_command", "command": "/function mgs:v5.1.0/maps/editor/menu"}}], "columns": 3, "exit_action": {"label": {"translate": "gui.done"}}}
+# @within	???
 #
 
-dialog show @s {"type": "minecraft:multi_action", "title": ["", "\u26a1 ", {"translate": "mgs.personal_cheats", "color": "gold", "bold": true}], "actions": [{"label": {"translate": "mgs.instant_kill", "color": "red"}, "tooltip": {"translate": "mgs.one_shot_kills_for_a_duration_self_only"}, "action": {"type": "run_command", "command": "/function mgs:v5.1.0/dialogs/config/instant_kill"}}, {"label": {"translate": "mgs.infinite_ammo", "color": "gold"}, "tooltip": {"translate": "mgs.no_reloads_needed_for_a_duration_self_only"}, "action": {"type": "run_command", "command": "/function mgs:v5.1.0/dialogs/config/infinite_ammo"}}, {"label": {"translate": "mgs.quick_reload", "color": "green"}, "tooltip": {"translate": "mgs.reduce_reload_time_self_only"}, "action": {"type": "run_command", "command": "/function mgs:v5.1.0/dialogs/config/quick_reload"}}, {"label": {"translate": "mgs.quick_swap", "color": "aqua"}, "tooltip": {"translate": "mgs.reduce_weapon_swap_time_self_only"}, "action": {"type": "run_command", "command": "/function mgs:v5.1.0/dialogs/config/quick_swap"}}], "columns": 1, "exit_action": {"label": ["", "\u25c0 ", {"translate": "mgs.back", "color": "gray"}], "tooltip": {"translate": "mgs.return_to_configuration"}, "action": {"type": "run_command", "command": "/function mgs:v5.1.0/dialogs/config"}}}
+dialog show @s mgs:v5.1.0/config/personal
 

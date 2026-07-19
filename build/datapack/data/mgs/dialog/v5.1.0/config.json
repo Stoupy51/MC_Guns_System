@@ -1,0 +1,24 @@
+{
+	"type": "minecraft:multi_action",
+	"title": [
+		"",
+		"☣ ",
+		{"translate": "mgs_configuration","color": "gold","bold": true},
+		" ☣"
+	],
+	"body": [
+		{"type": "minecraft:plain_message","contents": {"translate": "mgs.pick_a_game_mode_or_a_settings_category","color": "gray"}}
+	],
+	"actions": [
+		{"label": ["","⚔ ",{"translate": "mgs.multiplayer","color": "red"}],"tooltip": {"translate": "mgs.open_the_multiplayer_game_setup_menu"},"action": {"type": "minecraft:show_dialog","dialog": "mgs:v5.1.0/multiplayer/setup"}},
+		{"label": ["","🧟 ",{"translate": "mgs.zombies","color": "green"}],"tooltip": {"translate": "mgs.open_the_zombies_setup_menu"},"action": {"type": "minecraft:show_dialog","dialog": "mgs:v5.1.0/zombies/setup"}},
+		{"label": ["","🎯 ",{"translate": "mgs.missions","color": "gold"}],"tooltip": {"translate": "mgs.open_the_mission_setup_menu"},"action": {"type": "minecraft:show_dialog","dialog": "mgs:v5.1.0/missions/setup"}},
+		{"label": ["","⚙ ",{"translate": "mgs.global_settings","color": "gold"}],"tooltip": {"translate": "mgs.server_wide_gameplay_settings"},"action": {"type": "minecraft:show_dialog","dialog": "mgs:v5.1.0/config/global"}},
+		{"label": ["","⚡ ",{"translate": "mgs.personal_cheats","color": "light_purple"}],"tooltip": {"translate": "mgs.self_only_powerups"},"action": {"type": "minecraft:show_dialog","dialog": "mgs:v5.1.0/config/personal"}},
+		{"label": ["","🗺 ",{"translate": "mgs.map_editor","color": "yellow"}],"tooltip": {"translate": "mgs.open_the_map_editor"},"action": {"type": "run_command","command": "/function mgs:v5.1.0/maps/editor/menu"}}
+	],
+	"columns": 3,
+	"exit_action": {
+		"label": {"translate": "gui.done"}
+	}
+}

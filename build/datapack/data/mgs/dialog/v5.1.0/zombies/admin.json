@@ -1,0 +1,27 @@
+{
+	"type": "minecraft:multi_action",
+	"title": [
+		"",
+		"🛠 ",
+		{"translate": "mgs.zombies_admin","color": "dark_red","bold": true}
+	],
+	"body": [
+		{"type": "minecraft:plain_message","contents": {"translate": "mgs.debug_tools_operators_only","color": "gray"}}
+	],
+	"actions": [
+		{"label": ["","⏭ ",{"translate": "mgs.skip_round","color": "yellow"}],"tooltip": {"translate": "mgs.end_this_round_and_start_the_next_one"},"action": {"type": "run_command","command": "/function mgs:v5.1.0/zombies/admin/round_skip_1"}},
+		{"label": ["","⏩ ",{"translate": "mgs.skip_5_rounds","color": "gold"}],"tooltip": {"translate": "mgs.jump_forward_5_rounds"},"action": {"type": "run_command","command": "/function mgs:v5.1.0/zombies/admin/round_skip_5"}},
+		{"label": ["","⏩ ",{"translate": "mgs.skip_10_rounds","color": "gold"}],"tooltip": {"translate": "mgs.jump_forward_10_rounds"},"action": {"type": "run_command","command": "/function mgs:v5.1.0/zombies/admin/round_skip_10"}},
+		{"label": ["","⏩ ",{"translate": "mgs.skip_50_rounds","color": "gold"}],"tooltip": {"translate": "mgs.jump_forward_50_rounds"},"action": {"type": "run_command","command": "/function mgs:v5.1.0/zombies/admin/round_skip_50"}},
+		{"label": ["","⚡ ",{"translate": "mgs.force_power_up"}],"tooltip": {"translate": "mgs.trigger_any_power_up_for_everyone"},"action": {"type": "minecraft:show_dialog","dialog": "mgs:v5.1.0/zombies/admin/powerups"}},
+		{"label": ["","⟲ ",{"translate": "mgs.reset_points","color": "red"}],"tooltip": {"translate": "mgs.set_every_players_points_back_to_0"},"action": {"type": "run_command","command": "/function mgs:v5.1.0/zombies/admin/points_reset"}},
+		{"label": ["","+",[{"text":"2500 ","color": "green"}, {"translate": "mgs.points"}]],"tooltip": {"translate": "mgs.give_every_player_2500_points"},"action": {"type": "run_command","command": "/function mgs:v5.1.0/zombies/admin/points_add_2500"}},
+		{"label": ["","+",[{"text":"500000 ","color": "green"}, {"translate": "mgs.points"}]],"tooltip": {"translate": "mgs.give_every_player_500000_points"},"action": {"type": "run_command","command": "/function mgs:v5.1.0/zombies/admin/points_add_500000"}}
+	],
+	"columns": 2,
+	"exit_action": {
+		"label": ["","◀ ",{"translate": "mgs.back","color": "gray"}],
+		"tooltip": {"translate": "mgs.return_to_the_zombies_setup_menu"},
+		"action": {"type": "minecraft:show_dialog","dialog": "mgs:v5.1.0/zombies/setup"}
+	}
+}

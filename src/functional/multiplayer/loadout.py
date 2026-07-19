@@ -1,8 +1,8 @@
 
 # Imports
-
 from stewbeet import Mem, write_load_file, write_versioned_function
 
+from ..helpers import knife_item_snbt
 from .classes import CLASS_IDS, CLASSES, build_class_snbt
 
 
@@ -61,6 +61,10 @@ item replace entity @s armor.head with air
 item replace entity @s armor.chest with leather_chestplate[dyed_color=10263702,unbreakable={{}}]
 item replace entity @s armor.legs with chainmail_leggings[unbreakable={{}}]
 item replace entity @s armor.feet with iron_boots[unbreakable={{}}]
+
+# Knife in hotbar.0 for every loadout: it is not part of the class slot list because no class can
+# choose it away. Weapons therefore start at hotbar.1 (primary) and hotbar.2 (secondary).
+item replace entity @s hotbar.0 with {knife_item_snbt(ns, short_range=True)}
 
 # Copy class slots to iteration temp
 data modify storage {ns}:temp slots set from storage {ns}:temp current_class.slots
