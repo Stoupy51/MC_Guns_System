@@ -39,6 +39,10 @@ ALL_ELEMENTS: dict[str, JsonDict] = {
                            "defaults": {"activation_box": []}},
 	"player_spawn_zb":    {"name": "Player Spawn",     "color": "aqua",         "particle": [0.0, 1.0, 1.0], "particle_scale": 1.0, "has_rotation": True,  "egg_model": "minecraft:villager_spawn_egg",    "save_type": "zb_object", "save_path": "spawning_points.players", "emoji": "●",
                            "defaults": {}},
+	# Special spawns are the "not a regular zombie" spawn set: dog rounds use them today, mini-bosses
+	# and other scripted arrivals can reuse them later. A map without any simply never gets those rounds.
+	"special_spawn":      {"name": "Special Spawn",    "color": "dark_red",     "particle": [0.6, 0.0, 0.2], "particle_scale": 1.0, "has_rotation": True,  "egg_model": "minecraft:wolf_spawn_egg",        "save_type": "zb_object", "save_path": "spawning_points.special", "emoji": "🐺",
+                           "defaults": {"activation_box": []}},
 	"wallbuy":            {"name": "Wallbuy",          "color": "yellow",       "particle": [1.0, 1.0, 0.0], "particle_scale": 1.0, "has_rotation": True,  "egg_model": "minecraft:iron_golem_spawn_egg",  "save_type": "zb_object", "save_path": "wallbuys", "emoji": "🔫",
                            "defaults": {"name": "", "price": 1000, "refill_price": 500, "refill_price_pap": 4500, "weapon_id": "m1911", "magazine_id": "m1911_mag"}},
 	"door":               {
@@ -85,7 +89,7 @@ FIELD_DOCS: dict[tuple[str, str] | str, str] = {
 	("perk_machine", "perk_id"): "Perk granted by this machine:\njuggernog · speed_cola · double_tap · quick_revive · mule_kick · stamin_up",
 	("wallbuy", "weapon_id"): "Catalog weapon id given on purchase (e.g. m1911, ak47, mp5).",
 	("barrier", "radius"): "Block radius the barrier toggles open/closed around its marker.",
-	("zombie_spawn", "activation_box"): "Optional [x, y, z, dx, dy, dz] box (relative to this spawn, in blocks).\nWhen set, this spawn only produces zombies while a player stands inside the box.\nx/y/z = corner offset from the spawn, dx/dy/dz = size. Empty [] = always active.",
+	"activation_box": "Optional [x, y, z, dx, dy, dz] box (relative to this spawn, in blocks).\nWhen set, this spawn only produces enemies while a player stands inside the box.\nx/y/z = corner offset from the spawn, dx/dy/dz = size. Empty [] = always active.",
 	# Shared fallbacks (any element type):
 	"power": "true = requires the map's power to be switched on before it works\nfalse = always usable",
 	"price": "Cost in points to buy/use this element.",
@@ -131,6 +135,7 @@ EDITOR_MODES: dict[str, JsonDict] = {
 			"boundary": "inventory.4",
 			"pap_machine": "inventory.5",
 			"start_command": "inventory.6",
+			"special_spawn": "inventory.7",
 			"barrier": "inventory.8",
 		},
 	},
@@ -1240,7 +1245,7 @@ execute at @s unless entity @n[tag={ns}.map_element,distance=..10] run tellraw @
 		)
 		# group_id only shown for spawn-type zombies elements. Doors don't carry a separate
 		# group_id: a door's link_id is its front-room group, and back_group_id is the back room.
-		if etype in ("zombie_spawn", "player_spawn_zb"):
+		if etype in ("zombie_spawn", "player_spawn_zb", "special_spawn"):
 			group_id_edit_btn = btn(
 				"✎",
 				f"/data modify entity @n[tag={ns}.element.{etype},distance=..10] data.group_id set value 0",

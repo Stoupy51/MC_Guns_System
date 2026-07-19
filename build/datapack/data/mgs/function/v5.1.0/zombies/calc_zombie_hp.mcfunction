@@ -2,6 +2,7 @@
 #> mgs:v5.1.0/zombies/calc_zombie_hp
 #
 # @within	mgs:v5.1.0/zombies/types/normal
+#			mgs:v5.1.0/zombies/types/dog
 #
 
 # Rounds 1-9: bo_hp = 50 + 100 * round

@@ -12,6 +12,7 @@
 #			mgs:v5.1.0/maps/editor/save_lists/zombies {path:"mystery_box.positions"} [ as @e[tag=mgs.element.mystery_box_pos] & at @s ]
 #			mgs:v5.1.0/maps/editor/save_lists/zombies {path:"power_switch"} [ as @e[tag=mgs.element.power_switch] & at @s ]
 #			mgs:v5.1.0/maps/editor/save_lists/zombies {path:"pap_machines"} [ at @s ]
+#			mgs:v5.1.0/maps/editor/save_lists/zombies {path:"spawning_points.special"} [ as @e[tag=mgs.element.special_spawn] & at @s ]
 #			mgs:v5.1.0/maps/editor/save_lists/zombies {path:"barriers"} [ as @e[tag=mgs.element.barrier] & at @s ]
 #
 # @args		path (string)

@@ -17,6 +17,7 @@ data modify storage mgs:temp map_edit.map.out_of_bounds set value []
 data modify storage mgs:temp map_edit.map.boundaries set value []
 data modify storage mgs:temp map_edit.map.pap_machines set value []
 data modify storage mgs:temp map_edit.map.start_commands set value []
+data modify storage mgs:temp map_edit.map.spawning_points.special set value []
 data modify storage mgs:temp map_edit.map.barriers set value []
 
 # Rebuild from markers
@@ -32,5 +33,6 @@ execute as @e[tag=mgs.element.out_of_bounds] at @s run function mgs:v5.1.0/maps/
 execute as @e[tag=mgs.element.boundary] at @s run function mgs:v5.1.0/maps/editor/save_point {path:"boundaries"}
 execute as @e[tag=mgs.element.pap_machine] at @s run function mgs:v5.1.0/maps/editor/save_zb_object {path:"pap_machines"}
 execute as @e[tag=mgs.element.start_command] at @s run function mgs:v5.1.0/maps/editor/save_start_command {path:"start_commands"}
+execute as @e[tag=mgs.element.special_spawn] at @s run function mgs:v5.1.0/maps/editor/save_zb_object {path:"spawning_points.special"}
 execute as @e[tag=mgs.element.barrier] at @s run function mgs:v5.1.0/maps/editor/save_zb_object {path:"barriers"}
 

@@ -159,6 +159,7 @@ tag @a[tag={ns}.pu_collecting] remove {ns}.pu_collecting
 			dialog_run_btn("⟲ Reset Points", f"/function {ns}:v{version}/zombies/admin/points_reset", "Set every player's points back to 0", "red"),
 			dialog_run_btn("+2500 Points", f"/function {ns}:v{version}/zombies/admin/points_add_2500", "Give every player 2500 points", "green"),
 			dialog_run_btn("+500000 Points", f"/function {ns}:v{version}/zombies/admin/points_add_500000", "Give every player 500000 points", "green"),
+			dialog_run_btn("🔧 Unfreeze Round", f"/function {ns}:zombies/recover", "Rebuild a round that has stopped advancing (stuck at 0 zombies)", "aqua"),
 		],
 		"columns": 2,
 		"exit_action": dialog_back_action("zombies/setup", tooltip="Return to the zombies setup menu"),

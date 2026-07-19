@@ -154,7 +154,7 @@ execute store result score #trap_id {ns}.data run scoreboard players get @n[tag=
 
 # Check if trap is ready (not active, not on cooldown)
 scoreboard players set #trap_ready {ns}.data 0
-execute as @e[type=minecraft:marker,tag={ns}.trap_center] if score @s {ns}.zb.trap.id = #trap_id {ns}.data if score @s {ns}.zb.trap.timer matches 0 unless score @s {ns}.zb.trap.cd > #real_tick {ns}.data run scoreboard players set #trap_ready {ns}.data 1
+execute as @e[type=minecraft:marker,tag={ns}.trap_center] if score @s {ns}.zb.trap.id = #trap_id {ns}.data if score @s {ns}.zb.trap.timer matches 0 if score @s {ns}.zb.trap.cd matches ..0 run scoreboard players set #trap_ready {ns}.data 1
 execute unless score #trap_ready {ns}.data matches 1 run return run function {ns}:v{version}/zombies/traps/deny_not_ready
 
 # Check price
@@ -222,9 +222,19 @@ execute if score @s {ns}.zb.trap.type matches 2 run particle minecraft:smoke ~ ~
 scoreboard players operation @s {ns}.zb.trap.timer -= #tick_delta {ns}.data
 execute unless score @s {ns}.zb.trap.timer matches 0.. run scoreboard players set @s {ns}.zb.trap.timer 0
 
-# Check if deactivated: set cooldown as expiration on the real-time clock
+# Check if deactivated: start the cooldown as a countdown. NOT an absolute #real_tick deadline —
+# that clock is a stopwatch recreated on every datapack load, so a stored deadline outlived its
+# clock and left the trap permanently unusable after any /reload.
 execute if score @s {ns}.zb.trap.timer matches 0 run scoreboard players operation @s {ns}.zb.trap.cd = @s {ns}.zb.trap.cd_max
-execute if score @s {ns}.zb.trap.timer matches 0 run scoreboard players operation @s {ns}.zb.trap.cd += #real_tick {ns}.data
+""")
+
+	## Count a trap's cooldown down. @s = trap center marker.
+	write_versioned_function("zombies/traps/cooldown_tick", f"""
+# A countdown can never exceed its own maximum, so anything larger is a stale absolute deadline
+# left by the old #real_tick scheme — clear it rather than make players wait out a dead timestamp.
+execute if score @s {ns}.zb.trap.cd > @s {ns}.zb.trap.cd_max run scoreboard players set @s {ns}.zb.trap.cd 0
+
+scoreboard players operation @s {ns}.zb.trap.cd -= #tick_delta {ns}.data
 """)
 
 	write_versioned_function("zombies/traps/damage_fire", f"""
@@ -346,6 +356,9 @@ function #smithed.actionbar:message
 	write_versioned_function("zombies/game_tick", f"""
 # Trap active tick (damage + timer)
 execute as @e[type=minecraft:marker,tag={ns}.trap_center,scores={{{ns}.zb.trap.timer=1..}}] at @s run function {ns}:v{version}/zombies/traps/active_tick
+
+# Trap cooldown tick (wall-clock via #tick_delta, same basis as the active timer)
+execute as @e[type=minecraft:marker,tag={ns}.trap_center,scores={{{ns}.zb.trap.cd=1..}}] run function {ns}:v{version}/zombies/traps/cooldown_tick
 """)
 
 	## Hook into preload_complete: setup traps

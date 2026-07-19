@@ -260,7 +260,11 @@ execute if score #zb_has_bounds {ns}.data matches 1 as @e[type=player,scores={{{
 
 # Check round completion
 execute store result score #zb_alive {ns}.data if entity @e[tag={ns}.zombie_round]
-execute if score #zb_alive {ns}.data matches 0 if score #zb_to_spawn {ns}.data matches 0 run function {ns}:v{version}/zombies/round_complete
+# Dogs still telegraphing aren't entities yet, so #zb_alive can't see them. #zb_dog_pending is only
+# a fast gate though: whenever it claims dogs are pending, resync it from the real portal count so a
+# desynced counter can't freeze the run. That scan only runs on the tick the round would complete.
+execute if score #zb_alive {ns}.data matches 0 if score #zb_to_spawn {ns}.data matches 0 if score #zb_dog_pending {ns}.data matches 1.. store result score #zb_dog_pending {ns}.data if entity @e[tag={ns}.dog_portal]
+execute if score #zb_alive {ns}.data matches 0 if score #zb_to_spawn {ns}.data matches 0 if score #zb_dog_pending {ns}.data matches ..0 run function {ns}:v{version}/zombies/round_complete
 
 # Check game over: only trigger when no healthy AND no downed players remain
 # - Healthy: downed=0, gamemode=!spectator (playing normally)
@@ -621,6 +625,19 @@ execute if data storage {ns}:temp _spawn_iter[0] run function {ns}:v{version}/zo
 data modify storage {ns}:temp _spawn_iter set from storage {ns}:zombies game.map.spawning_points.zombies
 data modify storage {ns}:temp _spawn_tag set value "{ns}.spawn_zb"
 execute if data storage {ns}:temp _spawn_iter[0] run function {ns}:v{version}/zombies/summon_spawn_iter
+
+# Special spawns (dog rounds today, mini-bosses later). Same plumbing as zombie spawns — group_id
+# gating, activation boxes, unique spawn ids — only the tag differs.
+data modify storage {ns}:temp _spawn_iter set from storage {ns}:zombies game.map.spawning_points.special
+data modify storage {ns}:temp _spawn_tag set value "{ns}.spawn_special"
+execute if data storage {ns}:temp _spawn_iter[0] run function {ns}:v{version}/zombies/summon_spawn_iter
+
+# Read off the map data, not an entity scan, so start_round can gate dog rounds on a score
+execute store success score #zb_has_special {ns}.data if data storage {ns}:zombies game.map.spawning_points.special[0]
+
+# Both flags must exist before the first tick: game_tick and round completion gate on them
+scoreboard players set #zb_dog_round {ns}.data 0
+scoreboard players set #zb_dog_pending {ns}.data 0
 
 # Tag group 0 spawns as unlocked (starting area)
 scoreboard players set #unlock_gid {ns}.data 0

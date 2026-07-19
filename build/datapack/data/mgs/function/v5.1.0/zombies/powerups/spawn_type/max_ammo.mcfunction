@@ -3,7 +3,8 @@
 #
 # @executed	at @s
 #
-# @within	mgs:v5.1.0/zombies/powerups/do_spawn_random {x:$(x),y:$(y),z:$(z),uid:$(uid)}
+# @within	mgs:v5.1.0/zombies/dog_max_ammo_at_self with storage mgs:temp _pu_spawn
+#			mgs:v5.1.0/zombies/powerups/do_spawn_random {x:$(x),y:$(y),z:$(z),uid:$(uid)}
 #			mgs:v5.1.0/zombies/powerups/spawn_display {x:$(x),y:$(y),z:$(z),uid:$(uid)}
 #
 # @args		x (int)
