@@ -41,7 +41,8 @@ execute if score @s mgs.zb.trap.type matches 2 run particle minecraft:smoke ~ ~1
 scoreboard players operation @s mgs.zb.trap.timer -= #tick_delta mgs.data
 execute unless score @s mgs.zb.trap.timer matches 0.. run scoreboard players set @s mgs.zb.trap.timer 0
 
-# Check if deactivated: set cooldown as expiration on the real-time clock
+# Check if deactivated: start the cooldown as a countdown. NOT an absolute #real_tick deadline —
+# that clock is a stopwatch recreated on every datapack load, so a stored deadline outlived its
+# clock and left the trap permanently unusable after any /reload.
 execute if score @s mgs.zb.trap.timer matches 0 run scoreboard players operation @s mgs.zb.trap.cd = @s mgs.zb.trap.cd_max
-execute if score @s mgs.zb.trap.timer matches 0 run scoreboard players operation @s mgs.zb.trap.cd += #real_tick mgs.data
 

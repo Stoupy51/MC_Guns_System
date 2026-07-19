@@ -22,7 +22,11 @@ execute if score #zb_has_bounds mgs.data matches 1 as @e[type=player,scores={mgs
 
 # Check round completion
 execute store result score #zb_alive mgs.data if entity @e[tag=mgs.zombie_round]
-execute if score #zb_alive mgs.data matches 0 if score #zb_to_spawn mgs.data matches 0 run function mgs:v5.1.0/zombies/round_complete
+# Dogs still telegraphing aren't entities yet, so #zb_alive can't see them. #zb_dog_pending is only
+# a fast gate though: whenever it claims dogs are pending, resync it from the real portal count so a
+# desynced counter can't freeze the run. That scan only runs on the tick the round would complete.
+execute if score #zb_alive mgs.data matches 0 if score #zb_to_spawn mgs.data matches 0 if score #zb_dog_pending mgs.data matches 1.. store result score #zb_dog_pending mgs.data if entity @e[tag=mgs.dog_portal]
+execute if score #zb_alive mgs.data matches 0 if score #zb_to_spawn mgs.data matches 0 if score #zb_dog_pending mgs.data matches ..0 run function mgs:v5.1.0/zombies/round_complete
 
 # Check game over: only trigger when no healthy AND no downed players remain
 # - Healthy: downed=0, gamemode=!spectator (playing normally)
@@ -70,10 +74,25 @@ execute as @a[scores={mgs.zb.in_game=1},gamemode=!spectator] run function mgs:v5
 # Intercept dying zombies before vanilla death particles are emitted.
 function mgs:v5.1.0/zombies/death_watch_tick
 
+# Freeze watchdog: auto-recover a round that has stopped advancing (see watchdog_tick).
+function mgs:v5.1.0/zombies/watchdog_tick
+
+# Dog spawn portals: 1.5s of sparks, then the bolt. Gated on the round kind, NOT on
+# #zb_dog_pending — a portal orphaned by a desynced counter would then never tick, never strike and
+# never die, which is the freeze the resync in game_tick pairs with this to rule out.
+execute if score #zb_dog_round mgs.data matches 1 as @e[tag=mgs.dog_portal] at @s run function mgs:v5.1.0/zombies/dog_portal_tick
+
+# Wolves are neutral mobs and hunt nothing without an anger target. Writing `angry_at` alone is
+# enough (the game calls setTarget() from it on reload, then sustains the timer); writing AngerTime
+# does nothing, as the always-saved `anger_end_time` outranks it. The `unless data` guard means a
+# dog already locked on costs a read and no write. #zb_tick_mod is total_tick % 20 from earlier.
+execute if score #zb_dog_round mgs.data matches 1 if score #zb_tick_mod mgs.data matches 0 as @e[tag=mgs.zb_dog,tag=!mgs.zb_rising] at @s unless data entity @s angry_at run data modify entity @s angry_at set from entity @p[scores={mgs.zb.in_game=1},gamemode=!spectator,gamemode=!creative] UUID
+
 # Managed horde ambience: ~every 35 ticks, give each player one controlled, count-scaled groan.
+# Skipped on dog rounds: dogs aren't summoned Silent, so their own growls are the ambience.
 scoreboard players add #zb_horde_timer mgs.data 1
 execute if score #zb_horde_timer mgs.data matches 35.. run scoreboard players set #zb_horde_timer mgs.data 0
-execute if score #zb_horde_timer mgs.data matches 0 as @a[scores={mgs.zb.in_game=1},gamemode=!spectator] at @s run function mgs:v5.1.0/zombies/horde_ambient
+execute if score #zb_dog_round mgs.data matches 0 if score #zb_horde_timer mgs.data matches 0 as @a[scores={mgs.zb.in_game=1},gamemode=!spectator] at @s run function mgs:v5.1.0/zombies/horde_ambient
 
 # Escort system (escort.py): drag escorted zombies behind their pathfinding traders
 execute if score #zb_escort_count mgs.data matches 1.. as @e[tag=mgs.zb_escorted] at @s run function mgs:v5.1.0/zombies/escort/zombie_tick
@@ -167,4 +186,7 @@ execute if score #qr_price_tick mgs.data matches 0 run function mgs:v5.1.0/zombi
 
 # Trap active tick (damage + timer)
 execute as @e[type=minecraft:marker,tag=mgs.trap_center,scores={mgs.zb.trap.timer=1..}] at @s run function mgs:v5.1.0/zombies/traps/active_tick
+
+# Trap cooldown tick (wall-clock via #tick_delta, same basis as the active timer)
+execute as @e[type=minecraft:marker,tag=mgs.trap_center,scores={mgs.zb.trap.cd=1..}] run function mgs:v5.1.0/zombies/traps/cooldown_tick
 

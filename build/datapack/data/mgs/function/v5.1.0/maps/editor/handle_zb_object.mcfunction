@@ -16,6 +16,8 @@ execute if entity @s[tag=mgs.element.zombie_spawn] run data modify storage mgs:t
 execute if entity @s[tag=mgs.element.zombie_spawn] run data modify storage mgs:temp _zb_new set from storage mgs:temp map_edit.zb_defaults.zombie_spawn
 execute if entity @s[tag=mgs.element.player_spawn_zb] run data modify storage mgs:temp _zbpos.tag set value "mgs.element.player_spawn_zb"
 execute if entity @s[tag=mgs.element.player_spawn_zb] run data modify storage mgs:temp _zb_new set from storage mgs:temp map_edit.zb_defaults.player_spawn_zb
+execute if entity @s[tag=mgs.element.special_spawn] run data modify storage mgs:temp _zbpos.tag set value "mgs.element.special_spawn"
+execute if entity @s[tag=mgs.element.special_spawn] run data modify storage mgs:temp _zb_new set from storage mgs:temp map_edit.zb_defaults.special_spawn
 execute if entity @s[tag=mgs.element.wallbuy] run data modify storage mgs:temp _zbpos.tag set value "mgs.element.wallbuy"
 execute if entity @s[tag=mgs.element.wallbuy] run data modify storage mgs:temp _zb_new set from storage mgs:temp map_edit.zb_defaults.wallbuy
 execute if entity @s[tag=mgs.element.door] run data modify storage mgs:temp _zbpos.tag set value "mgs.element.door"
@@ -79,6 +81,7 @@ function mgs:v5.1.0/maps/editor/refresh_displays
 # Announce
 execute if entity @s[tag=mgs.element.zombie_spawn] run tellraw @a[tag=mgs.map_editor] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.zombie_spawn_placed","color":"dark_green"}]
 execute if entity @s[tag=mgs.element.player_spawn_zb] run tellraw @a[tag=mgs.map_editor] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.player_spawn_placed","color":"aqua"}]
+execute if entity @s[tag=mgs.element.special_spawn] run tellraw @a[tag=mgs.map_editor] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.special_spawn_placed","color":"dark_red"}]
 execute if entity @s[tag=mgs.element.wallbuy] run tellraw @a[tag=mgs.map_editor] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.wallbuy_placed","color":"yellow"}]
 execute if entity @s[tag=mgs.element.door] run tellraw @a[tag=mgs.map_editor] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.door_placed","color":"gold"}]
 execute if entity @s[tag=mgs.element.trap] run tellraw @a[tag=mgs.map_editor] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.trap_placed","color":"red"}]

@@ -16,7 +16,8 @@
 		{"label": ["","⚡ ",{"translate": "mgs.force_power_up"}],"tooltip": {"translate": "mgs.trigger_any_power_up_for_everyone"},"action": {"type": "minecraft:show_dialog","dialog": "mgs:v5.1.0/zombies/admin/powerups"}},
 		{"label": ["","⟲ ",{"translate": "mgs.reset_points","color": "red"}],"tooltip": {"translate": "mgs.set_every_players_points_back_to_0"},"action": {"type": "run_command","command": "/function mgs:v5.1.0/zombies/admin/points_reset"}},
 		{"label": ["","+",[{"text":"2500 ","color": "green"}, {"translate": "mgs.points"}]],"tooltip": {"translate": "mgs.give_every_player_2500_points"},"action": {"type": "run_command","command": "/function mgs:v5.1.0/zombies/admin/points_add_2500"}},
-		{"label": ["","+",[{"text":"500000 ","color": "green"}, {"translate": "mgs.points"}]],"tooltip": {"translate": "mgs.give_every_player_500000_points"},"action": {"type": "run_command","command": "/function mgs:v5.1.0/zombies/admin/points_add_500000"}}
+		{"label": ["","+",[{"text":"500000 ","color": "green"}, {"translate": "mgs.points"}]],"tooltip": {"translate": "mgs.give_every_player_500000_points"},"action": {"type": "run_command","command": "/function mgs:v5.1.0/zombies/admin/points_add_500000"}},
+		{"label": ["","🔧 ",{"translate": "mgs.unfreeze_round","color": "aqua"}],"tooltip": {"translate": "mgs.rebuild_a_round_that_has_stopped_advancing_stuck_at_0_zombies"},"action": {"type": "run_command","command": "/function mgs:zombies/recover"}}
 	],
 	"columns": 2,
 	"exit_action": {

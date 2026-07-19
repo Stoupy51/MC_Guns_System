@@ -52,6 +52,11 @@ tag @a[tag=mgs.give_class_menu] remove mgs.give_class_menu
 
 kill @e[type=minecraft:marker,tag=mgs.death_watch]
 
+# Portals are gm_entity so the bulk cleanup already removes them; the counter they feed has to be
+# zeroed by hand or a stale value would block the next game's round completion forever.
+kill @e[type=minecraft:marker,tag=mgs.dog_portal]
+scoreboard players set #zb_dog_pending mgs.data 0
+
 # Escort cleanup (escort.py); the traders themselves die with the mgs.gm_entity kill above
 scoreboard players set #zb_escort_count mgs.data 0
 gamerule spawn_wandering_traders true

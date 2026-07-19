@@ -2,7 +2,9 @@
 # ruff: noqa: E501
 # Zombies Round System
 # Wave-based round progression with zombie spawning, scaling, and round completion.
-from stewbeet import Mem, write_versioned_function
+from stewbeet import Mem, write_function, write_versioned_function
+
+from ..helpers import MGS_TAG
 
 
 def generate_zombies_rounds() -> None:
@@ -18,16 +20,19 @@ execute store result score #zb_round {ns}.data run data get storage {ns}:zombies
 scoreboard players add #zb_round {ns}.data 1
 execute store result storage {ns}:zombies game.round int 1 run scoreboard players get #zb_round {ns}.data
 
-# Calculate zombies to spawn this round: min(256, min(96, 7 + round) * min(4, player_count))
-# Solo player: r1=8,  r5=12, r10=17, r20=27,  r40=47,  r41+ caps at 96
-# 4+ players:  r1=32, r5=48, r10=68, r20=108, r40=188, r41+ caps at 256
+# Dog round: every 5th round from 5 on, and only on maps that placed special spawn markers
+scoreboard players set #zb_dog_round {ns}.data 0
+scoreboard players operation #zb_dog_mod {ns}.data = #zb_round {ns}.data
+scoreboard players operation #zb_dog_mod {ns}.data %= #5 {ns}.data
+execute if score #zb_has_special {ns}.data matches 1 if score #zb_round {ns}.data matches 5.. if score #zb_dog_mod {ns}.data matches 0 run scoreboard players set #zb_dog_round {ns}.data 1
+
+# Player count, clamped at 4, drives both round-size formulas
 execute store result score #zb_player_count {ns}.data if entity @a[scores={{{ns}.zb.in_game=1}},gamemode=!spectator]
 execute if score #zb_player_count {ns}.data matches 5.. run scoreboard players set #zb_player_count {ns}.data 4
-scoreboard players operation #zb_to_spawn {ns}.data = #zb_round {ns}.data
-scoreboard players add #zb_to_spawn {ns}.data 7
-execute if score #zb_to_spawn {ns}.data matches 97.. run scoreboard players set #zb_to_spawn {ns}.data 96
-scoreboard players operation #zb_to_spawn {ns}.data *= #zb_player_count {ns}.data
-execute if score #zb_to_spawn {ns}.data matches 257.. run scoreboard players set #zb_to_spawn {ns}.data 256
+
+# Enemy count for this round — see each subfunction for its curve
+execute if score #zb_dog_round {ns}.data matches 0 run function {ns}:v{version}/zombies/calc_round_count_zombies
+execute if score #zb_dog_round {ns}.data matches 1 run function {ns}:v{version}/zombies/calc_round_count_dogs
 
 # Snapshot the round's total zombie count (zb_to_spawn is decremented as they spawn).
 # Used by the power-up drop chance: min(5%, 2/total_round_zombies).
@@ -43,6 +48,9 @@ scoreboard players set #zb_round_grace {ns}.data 60
 scoreboard players set #zb_stuck_timer {ns}.data 0
 scoreboard players set #zb_glow_timer {ns}.data 0
 
+# Reset the freeze watchdog: its counter survives between matches and would trip recovery early
+scoreboard players set #zb_wd_ticks {ns}.data 0
+
 # Signal round start
 function #{ns}:zombies/on_round_start
 
@@ -50,8 +58,44 @@ function #{ns}:zombies/on_round_start
 function {ns}:v{version}/zombies/refresh_sidebar
 
 # Announce
-tellraw @a ["",{{"text":"","color":"dark_green","bold":true}},"🧟 ",{{"text":"Round ","color":"red"}},{{"score":{{"name":"#zb_round","objective":"{ns}.data"}},"color":"gold","bold":true}},{{"text":" has begun!","color":"red"}}]
-execute as @a[scores={{{ns}.zb.in_game=1}}] at @s run playsound {ns}:zombies/round_start_generic ambient @s ~ ~ ~ 0.15 1.0
+execute if score #zb_dog_round {ns}.data matches 0 run tellraw @a ["",{{"text":"","color":"dark_green","bold":true}},"🧟 ",{{"text":"Round ","color":"red"}},{{"score":{{"name":"#zb_round","objective":"{ns}.data"}},"color":"gold","bold":true}},{{"text":" has begun!","color":"red"}}]
+execute if score #zb_dog_round {ns}.data matches 0 as @a[scores={{{ns}.zb.in_game=1}}] at @s run playsound {ns}:zombies/round_start_generic ambient @s ~ ~ ~ 0.15 1.0
+
+# Dog rounds get their own announcement + howl instead of the usual round jingle
+execute if score #zb_dog_round {ns}.data matches 1 run tellraw @a ["",{{"text":"","color":"dark_red","bold":true}},"🐺 ",{{"text":"Round ","color":"dark_red"}},{{"score":{{"name":"#zb_round","objective":"{ns}.data"}},"color":"gold","bold":true}},{{"text":" — the hounds are loose!","color":"dark_red"}}]
+execute if score #zb_dog_round {ns}.data matches 1 as @a[scores={{{ns}.zb.in_game=1}}] at @s run playsound minecraft:entity.wolf.howl ambient @s ~ ~ ~ 1.0 0.6
+""")
+
+	## Standard round size: min(256, min(96, 7 + round) * min(4, player_count))
+	# Solo player: r1=8,  r5=12, r10=17, r20=27,  r40=47,  r41+ caps at 96
+	# 4+ players:  r1=32, r5=48, r10=68, r20=108, r40=188, r41+ caps at 256
+	write_versioned_function("zombies/calc_round_count_zombies", f"""
+scoreboard players operation #zb_to_spawn {ns}.data = #zb_round {ns}.data
+scoreboard players add #zb_to_spawn {ns}.data 7
+execute if score #zb_to_spawn {ns}.data matches 97.. run scoreboard players set #zb_to_spawn {ns}.data 96
+scoreboard players operation #zb_to_spawn {ns}.data *= #zb_player_count {ns}.data
+execute if score #zb_to_spawn {ns}.data matches 257.. run scoreboard players set #zb_to_spawn {ns}.data 256
+""")
+
+	## Dog round size: min(48, min(12, 4 + round/3) * min(4, player_count)).
+	# Far below the zombie curve on purpose: short frantic bursts, not another attrition wave.
+	# Solo player: r5=5,  r10=7,  r20=10, r25+ caps at 12
+	# 4+ players:  r5=20, r10=28, r20=40, r25+ caps at 48
+	write_versioned_function("zombies/calc_round_count_dogs", f"""
+scoreboard players operation #zb_to_spawn {ns}.data = #zb_round {ns}.data
+scoreboard players operation #zb_to_spawn {ns}.data /= #3 {ns}.data
+scoreboard players add #zb_to_spawn {ns}.data 4
+execute if score #zb_to_spawn {ns}.data matches 13.. run scoreboard players set #zb_to_spawn {ns}.data 12
+scoreboard players operation #zb_to_spawn {ns}.data *= #zb_player_count {ns}.data
+execute if score #zb_to_spawn {ns}.data matches 49.. run scoreboard players set #zb_to_spawn {ns}.data 48
+
+# Concurrent pack size: BO sends hounds in packs of 2-4 scaled by players, refilled as they die,
+# rather than releasing the round's whole count at once. Solo 3 -> 4 players 6.
+scoreboard players operation #zb_dog_cap {ns}.data = #zb_player_count {ns}.data
+scoreboard players add #zb_dog_cap {ns}.data 2
+
+# Arm this round's guaranteed Max Ammo
+scoreboard players set #zb_dog_ammo_done {ns}.data 0
 """)
 
 	## Calculate spawn timer and batch size based on current round
@@ -68,6 +112,12 @@ scoreboard players operation #zb_spawn_batch {ns}.data = #zb_round {ns}.data
 scoreboard players remove #zb_spawn_batch {ns}.data 1
 scoreboard players operation #zb_spawn_batch {ns}.data /= #50 {ns}.data
 scoreboard players add #zb_spawn_batch {ns}.data 1
+
+# Dog rounds ignore the zombie curve entirely: flat 1s between hounds, with the concurrency cap in
+# spawn_dog_capped doing the real pacing. The zombie formula bottoms out at 1 tick / batch 2 by
+# round 20, which dumped a whole pack in a single second.
+execute if score #zb_dog_round {ns}.data matches 1 run scoreboard players set #zb_spawn_timer {ns}.data 20
+execute if score #zb_dog_round {ns}.data matches 1 run scoreboard players set #zb_spawn_batch {ns}.data 1
 """)
 
 	## Spawn a single zombie using proximity-based selection from spawn markers
@@ -98,29 +148,36 @@ tag @e[tag={ns}.zb_near] remove {ns}.zb_near
 	## only the last iteration, so the subfunction is what lets each player OR its success into the score.)
 	## On return #zb_near_found is 0 iff zb_near is empty, so callers can gate on it without any @e scan.
 	## Assumes zb_near is clean on entry — every caller clears it after consuming the tagged set.
-	write_versioned_function("zombies/tag_spawns_near_players", f"""
+	##
+	## Generated per marker kind — zombie spawns and the special spawns dog rounds draw from. The
+	## two paths differ only in the marker tag, so the ring logic stays written once.
+	for kind, marker_tag, entry_point in (
+		("zb", f"{ns}.spawn_zb", "zombies/tag_spawns_near_players"),
+		("special", f"{ns}.spawn_special", "zombies/tag_special_spawns_near_players"),
+	):
+		write_versioned_function(entry_point, f"""
 scoreboard players set #zb_near_found {ns}.data 0
 
 # First pass: 32 blocks from any alive player
-execute as @a[scores={{{ns}.zb.in_game=1}},gamemode=!spectator] at @s run function {ns}:v{version}/zombies/tag_zb_near_32
+execute as @a[scores={{{ns}.zb.in_game=1}},gamemode=!spectator] at @s run function {ns}:v{version}/zombies/tag_{kind}_near_32
 
 # Second pass: 64 blocks if none found
-execute if score #zb_near_found {ns}.data matches 0 as @a[scores={{{ns}.zb.in_game=1}},gamemode=!spectator] at @s run function {ns}:v{version}/zombies/tag_zb_near_64
+execute if score #zb_near_found {ns}.data matches 0 as @a[scores={{{ns}.zb.in_game=1}},gamemode=!spectator] at @s run function {ns}:v{version}/zombies/tag_{kind}_near_64
 
 # Fallback: any unlocked spawn. `store success` so #zb_near_found also reflects the fallback,
 # letting callers gate "did we tag anything at all" purely on the score.
-execute if score #zb_near_found {ns}.data matches 0 store success score #zb_near_found {ns}.data run tag @e[tag={ns}.spawn_zb,tag={ns}.spawn_unlocked] add {ns}.zb_near
+execute if score #zb_near_found {ns}.data matches 0 store success score #zb_near_found {ns}.data run tag @e[tag={marker_tag},tag={ns}.spawn_unlocked] add {ns}.zb_near
 """)
 
-	## Per-player spawn-tagging passes. @s = an alive in-game player, executed at their position.
-	## #zb_near_hit = how many markers THIS player newly tagged; accumulated into #zb_near_found so
-	## the caller can tell whether any player tagged a spawn without a global @e scan.
-	write_versioned_function("zombies/tag_zb_near_32", f"""
-execute store result score #zb_near_hit {ns}.data run tag @e[tag={ns}.spawn_zb,tag={ns}.spawn_unlocked,distance=..32] add {ns}.zb_near
+		## Per-player spawn-tagging passes. @s = an alive in-game player, executed at their position.
+		## #zb_near_hit = how many markers THIS player newly tagged; accumulated into #zb_near_found so
+		## the caller can tell whether any player tagged a spawn without a global @e scan.
+		write_versioned_function(f"zombies/tag_{kind}_near_32", f"""
+execute store result score #zb_near_hit {ns}.data run tag @e[tag={marker_tag},tag={ns}.spawn_unlocked,distance=..32] add {ns}.zb_near
 scoreboard players operation #zb_near_found {ns}.data += #zb_near_hit {ns}.data
 """)
-	write_versioned_function("zombies/tag_zb_near_64", f"""
-execute store result score #zb_near_hit {ns}.data run tag @e[tag={ns}.spawn_zb,tag={ns}.spawn_unlocked,distance=..64] add {ns}.zb_near
+		write_versioned_function(f"zombies/tag_{kind}_near_64", f"""
+execute store result score #zb_near_hit {ns}.data run tag @e[tag={marker_tag},tag={ns}.spawn_unlocked,distance=..64] add {ns}.zb_near
 scoreboard players operation #zb_near_found {ns}.data += #zb_near_hit {ns}.data
 """)
 
@@ -156,6 +213,115 @@ function {ns}:v{version}/zombies/summon_zombie_at with storage {ns}:temp _zpos
 
 # Remember which spawn point (@s) this zombie used, so a stuck-rescue never reuses it
 scoreboard players operation @n[tag={ns}.zombie_round,tag={ns}.zb_rising] {ns}.zb.spawn.sid = @s {ns}.zb.spawn.sid
+""")
+
+	## Release one hound, unless the pack is already at full strength. Skipping without touching
+	## #zb_to_spawn leaves it queued for the next timer tick, so the round still spawns its full
+	## count — it just refills the pack as hounds die instead of dumping them all at once.
+	write_versioned_function("zombies/spawn_dog_capped", f"""
+scoreboard players operation #zb_dog_live {ns}.data = #zb_alive {ns}.data
+scoreboard players operation #zb_dog_live {ns}.data += #zb_dog_pending {ns}.data
+execute if score #zb_dog_live {ns}.data >= #zb_dog_cap {ns}.data run return 0
+
+function {ns}:v{version}/zombies/spawn_dog
+scoreboard players remove #zb_to_spawn {ns}.data 1
+""")
+
+	## Spawn a single dog, mirroring spawn_zombie but drawing from the special spawn markers.
+	write_versioned_function("zombies/spawn_dog", f"""
+# Tag unlocked special spawns near any alive player (32->64->any helper)
+function {ns}:v{version}/zombies/tag_special_spawns_near_players
+
+# Activation-box gating works exactly as it does for zombie spawns.
+execute as @e[tag={ns}.zb_near] if data entity @s data.abox run function {ns}:v{version}/zombies/filter_spawn_abox
+
+# Pick random from tagged set and spawn
+execute as @n[tag={ns}.zb_near,sort=random] at @s run function {ns}:v{version}/zombies/do_spawn_dog
+
+# Cleanup
+tag @e[tag={ns}.zb_near] remove {ns}.zb_near
+""")
+
+	## Open a spawn portal at the marker position (@s = special spawn marker, at @s).
+	## Dogs don't rise from the ground like zombies: BO2-style, the spot sparks for 1.5s and then a
+	## lightning strike delivers the dog. This marker is the sparking phase.
+	write_versioned_function("zombies/do_spawn_dog", f"""
+summon minecraft:marker ~ ~ ~ {{Tags:["{ns}.dog_portal","{ns}.gm_entity"]}}
+
+# 30 ticks (1.5s) of telegraph before the strike
+scoreboard players set @n[tag={ns}.dog_portal,tag=!{ns}.dog_portal_armed] {ns}.zb.rise_tick 30
+
+# Carry the spawn point id through, so a stuck-rescue never reuses the spawn the dog came from
+scoreboard players operation @n[tag={ns}.dog_portal,tag=!{ns}.dog_portal_armed] {ns}.zb.spawn.sid = @s {ns}.zb.spawn.sid
+tag @n[tag={ns}.dog_portal,tag=!{ns}.dog_portal_armed] add {ns}.dog_portal_armed
+
+# A telegraphing dog isn't an entity yet, so #zb_alive can't see it — count it or the round
+# completes early with the last dog still mid-portal (see game_tick).
+scoreboard players add #zb_dog_pending {ns}.data 1
+
+# Opening cue: a crackle at the strike point. Volume 2.0 = 32 blocks of reach to match the
+# selector, with a minVolume floor so the telegraph carries to players further out.
+playsound minecraft:block.beacon.deactivate weather @a[distance=..32] ~ ~ ~ 2.0 1.9 0.25
+""")
+
+	## Per-tick telegraph: sparks gathering at the strike point, counting down to the bolt.
+	write_versioned_function("zombies/dog_portal_tick", f"""
+particle minecraft:electric_spark ~ ~0.3 ~ 0.25 0.4 0.25 0.06 4 normal @a[distance=..48]
+particle minecraft:crit ~ ~0.1 ~ 0.3 0.05 0.3 0.02 2 normal @a[distance=..32]
+
+scoreboard players remove @s {ns}.zb.rise_tick 1
+execute if score @s {ns}.zb.rise_tick matches ..0 run function {ns}:v{version}/zombies/dog_portal_strike
+""")
+
+	## The bolt lands: flash + thunder, then the dog. Deliberately NOT a lightning_bolt entity — that
+	## would ignite the map, shock players and traders, and carry its thunder dimension-wide.
+	write_versioned_function("zombies/dog_portal_strike", f"""
+# flash is a ColorParticleOption type, so the ARGB color is mandatory. Cold blue-white.
+particle minecraft:flash{{color:[1.0f,0.82f,0.90f,1.0f]}} ~ ~1 ~ 0 0 0 0 1 force @a[distance=..64]
+particle minecraft:electric_spark ~ ~1.2 ~ 0.25 1.4 0.25 0.35 70 force @a[distance=..48]
+particle minecraft:end_rod ~ ~1 ~ 0.1 0.8 0.1 0.02 12 force @a[distance=..48]
+# weather category: where lightning belongs, and a slider players rarely turn down (hostile is
+# commonly lowered to mute zombie groans).
+# Volume sets the audible RADIUS (1.0 = 16 blocks), not loudness, so it has to cover the selector
+# range or distant players are targeted but hear nothing. The trailing minVolume is the floor
+# players outside that radius still hear, so a hound spawning across the map is never silent.
+playsound minecraft:entity.lightning_bolt.impact weather @a[distance=..48] ~ ~ ~ 3.0 1.2 0.5
+playsound minecraft:entity.lightning_bolt.thunder weather @a[distance=..64] ~ ~ ~ 4.0 1.5 0.4
+
+# Same level buckets as zombies, so the type dispatch signature stays uniform
+execute if score #zb_round {ns}.data matches ..5 run data modify storage {ns}:temp _zpos.level set value "1"
+execute if score #zb_round {ns}.data matches 6..10 run data modify storage {ns}:temp _zpos.level set value "2"
+execute if score #zb_round {ns}.data matches 11..15 run data modify storage {ns}:temp _zpos.level set value "3"
+execute if score #zb_round {ns}.data matches 16.. run data modify storage {ns}:temp _zpos.level set value "4"
+function {ns}:v{version}/zombies/summon_dog_at with storage {ns}:temp _zpos
+
+# Hand the spawn point id over to the dog, then retire the portal
+scoreboard players operation @n[tag={ns}.zb_dog_new] {ns}.zb.spawn.sid = @s {ns}.zb.spawn.sid
+tag @n[tag={ns}.zb_dog_new] remove {ns}.zb_dog_new
+scoreboard players remove #zb_dog_pending {ns}.data 1
+kill @s
+""")
+
+	## Summon dog at execution position (macro for level dispatch)
+	# Wolves carry {ns}.zombie_round like every other enemy, so alive counts, round completion, traps,
+	# barriers, nukes and the stuck-rescue all apply with no extra wiring. Unlike zombies they are NOT
+	# Silent — a pack is small enough that its own growls are the ambience (horde_ambient is skipped).
+	write_versioned_function("zombies/summon_dog_at", f"""
+# Delivered by the bolt at ground level, AI live immediately — no rise animation, so no zb_rising.
+# zb_dog_new is a scratch tag the strike removes once setup is done.
+summon minecraft:wolf ~ ~ ~ {{Tags:["{ns}.zombie_round","{ns}.zb_dog","{ns}.zb_dog_new","{ns}.gm_entity","{ns}.nukable"],variant:"minecraft:black",PersistenceRequired:true,DeathLootTable:"minecraft:empty",Passengers:[{{id:"minecraft:marker",Tags:["{ns}.death_watch","{ns}.gm_entity"]}}],Attributes:[{{id:"minecraft:follow_range",base:40.0d}}]}}
+
+# Apply level scaling (health, speed)
+$execute as @n[tag={ns}.zb_dog_new] run function {ns}:v{version}/zombies/types/dog {{level:"$(level)"}}
+
+# Ally with escort traders, same reason as zombies (escort.py)
+team join {ns}.horde @n[tag={ns}.zb_dog_new]
+
+# Initialize stuck detection scores (timestamp + XZ snapshot + distance bucket at spawn)
+execute as @n[tag={ns}.zb_dog_new] run scoreboard players operation @s {ns}.zb.stuck_ticks = #total_tick {ns}.data
+execute as @n[tag={ns}.zb_dog_new] store result score @s {ns}.zb.stuck_x run data get entity @s Pos[0]
+execute as @n[tag={ns}.zb_dog_new] store result score @s {ns}.zb.stuck_z run data get entity @s Pos[2]
+scoreboard players set @n[tag={ns}.zb_dog_new] {ns}.zb.stuck_dist 4
 """)
 
 	## Summon zombie at execution position (macro for level/type dispatch)
@@ -261,6 +427,36 @@ $attribute @s minecraft:max_health base set $(val)
 execute store result entity @s Health float 1 run attribute @s minecraft:max_health get
 """)
 
+	## Dog: fast, tanky, hits hard. 1.5x the round's zombie HP — at 60% a sniper one-shot them on the
+	## early dog rounds, which made a pack trivial. They still die faster in practice than the number
+	## suggests, since they close to melee range where every weapon connects.
+	write_versioned_function("zombies/types/dog", f"""
+# Add scaled tag, and few data
+tag @s add {ns}.zb_scaled
+data modify entity @s DeathTime set value -16s
+
+# 150% of the round's zombie HP, floored at 2x a vanilla zombie so round 5 dogs aren't one-shot
+function {ns}:v{version}/zombies/calc_zombie_hp
+scoreboard players operation #zb_hp {ns}.data *= #3 {ns}.data
+scoreboard players operation #zb_hp {ns}.data /= #2 {ns}.data
+execute if score #zb_hp {ns}.data matches ..39 run scoreboard players set #zb_hp {ns}.data 40
+execute if score #zb_hp {ns}.data matches 2049.. run scoreboard players set #zb_hp {ns}.data 2048
+execute store result storage {ns}:temp _zb_hp.val int 1 run scoreboard players get #zb_hp {ns}.data
+function {ns}:v{version}/zombies/apply_zombie_hp with storage {ns}:temp _zb_hp
+
+# Always faster than the zombie cap (0.32) — outrunning a dog pack should not be an option
+execute if score #zb_round {ns}.data matches ..9 run attribute @s minecraft:movement_speed base set 0.36
+execute if score #zb_round {ns}.data matches 10..19 run attribute @s minecraft:movement_speed base set 0.40
+execute if score #zb_round {ns}.data matches 20.. run attribute @s minecraft:movement_speed base set 0.44
+
+# Slightly below zombie melee (15.0), because dogs reach you far more often
+attribute @s minecraft:attack_damage base set 12.0
+attribute @s minecraft:knockback_resistance base set 1024
+
+# Hellhound build: 1.5x a vanilla wolf, which also scales the hitbox so they're easier to hit
+attribute @s minecraft:scale base set 1.5
+""")
+
 	## Armed zombie stub (TODO: carries weapon, drops ammo on death)
 	write_versioned_function("zombies/types/armed", f"""
 # TODO: armed zombie — unique AI goal: ranged attack, drops ammo powerup on death
@@ -325,8 +521,12 @@ execute unless entity @s[tag={ns}.zombie_round] run return 0
 # Kill the attached death-watch marker while still mounted to avoid orphan buildup.
 kill @n[type=minecraft:marker,tag={ns}.death_watch,distance=..1]
 
-# Check if a power-up should drop at this zombie's position.
-function {ns}:v{version}/zombies/powerups/check_drop
+# Check if a power-up should drop at this zombie's position. Dogs never roll the random table — a
+# dog round's only drop is the guaranteed Max Ammo from the last hound.
+execute unless entity @s[tag={ns}.zb_dog] run function {ns}:v{version}/zombies/powerups/check_drop
+
+# Dogs: handle the death separately, since "was this the last one" needs an exact count.
+execute if entity @s[tag={ns}.zb_dog] run function {ns}:v{version}/zombies/dog_death
 
 # Remove zombie before vanilla death event 60 can fire.
 tp @s ~ -10000 ~
@@ -351,6 +551,9 @@ function {ns}:v{version}/zombies/spawn_batch_tick
 # Guard: nothing left to spawn
 execute if score #zb_to_spawn {ns}.data matches ..0 run return 0
 
+# Dog rounds spawn one hound per timer tick, capped by how many are already out
+execute if score #zb_dog_round {ns}.data matches 1 run return run function {ns}:v{version}/zombies/spawn_dog_capped
+
 # Spawn one zombie
 function {ns}:v{version}/zombies/spawn_zombie
 scoreboard players remove #zb_to_spawn {ns}.data 1
@@ -366,6 +569,10 @@ execute if score #zb_spawn_batch_remaining {ns}.data matches 1.. if score #zb_to
 # Guard: prevent re-triggering every tick
 scoreboard players set #zb_to_spawn {ns}.data -1
 
+# Dog rounds always end with a Max Ammo. Normally the last hound already dropped it as it died;
+# this only covers the cases where that path didn't fire.
+execute if score #zb_dog_round {ns}.data matches 1 if score #zb_dog_ammo_done {ns}.data matches 0 run function {ns}:v{version}/zombies/dog_max_ammo_fallback
+
 # Signal round end
 function #{ns}:zombies/on_round_end
 
@@ -379,6 +586,42 @@ schedule function {ns}:v{version}/zombies/start_round 5s
 
 # Respawn all bled-out (spectator) players for the next round
 function {ns}:v{version}/zombies/revive/round_respawn
+""")
+
+	## Dog death. #zb_alive is the wrong thing to test here: it only counts materialized dogs, so once
+	## #zb_to_spawn hits 0 with portals still telegraphing it reads 1 while several hounds are still
+	## inbound — which made each of the last few kills look like "the last one". Count the live pack
+	## directly instead, after dropping this corpse out of it, and add the portals that haven't struck.
+	write_versioned_function("zombies/dog_death", f"""
+tag @s remove {ns}.zb_dog
+
+scoreboard players operation #zb_dog_left {ns}.data = #zb_dog_pending {ns}.data
+scoreboard players operation #zb_dog_left {ns}.data += #zb_to_spawn {ns}.data
+execute store result score #zb_dog_alive {ns}.data if entity @e[tag={ns}.zb_dog]
+scoreboard players operation #zb_dog_left {ns}.data += #zb_dog_alive {ns}.data
+
+# ammo_done also covers the same-tick case: two hounds dying together both see the pack empty.
+execute if score #zb_dog_left {ns}.data matches ..0 if score #zb_dog_ammo_done {ns}.data matches 0 run function {ns}:v{version}/zombies/dog_max_ammo_at_self
+""")
+
+	## Primary path: @s is the last hound, still standing where it died. Bypasses the shuffle bag and
+	## drop roll — it's a fixed reward, so it calls the per-type spawner directly.
+	write_versioned_function("zombies/dog_max_ammo_at_self", f"""
+scoreboard players set #zb_dog_ammo_done {ns}.data 1
+scoreboard players add #pu_uid {ns}.data 1
+data modify storage {ns}:temp _pu_spawn set value {{x:0,y:0,z:0,uid:0}}
+data modify storage {ns}:temp _pu_spawn.x set from entity @s Pos[0]
+data modify storage {ns}:temp _pu_spawn.y set from entity @s Pos[1]
+data modify storage {ns}:temp _pu_spawn.z set from entity @s Pos[2]
+execute store result storage {ns}:temp _pu_spawn.uid int 1 run scoreboard players get #pu_uid {ns}.data
+function {ns}:v{version}/zombies/powerups/spawn_type/max_ammo with storage {ns}:temp _pu_spawn
+""")
+
+	## Fallback, for a dog round that ends without any hound running the at-death path — a Nuke, or a
+	## death that skipped the death watch. Drops at a player rather than at a remembered position:
+	## a stored position is what let a stale record pay out a second time at an earlier dog's corpse.
+	write_versioned_function("zombies/dog_max_ammo_fallback", f"""
+execute as @r[scores={{{ns}.zb.in_game=1}},gamemode=!spectator] at @s run function {ns}:v{version}/zombies/dog_max_ammo_at_self
 """)
 
 	# Grenade Replenishment (appended to start_round) ───────────
@@ -436,18 +679,91 @@ execute at @e[tag={ns}.zombie_round,distance=..32,sort=random,limit=1] run funct
 	# @s = the player; execution position = a nearby zombie, so the sound is directional.
 	write_versioned_function("zombies/horde_ambient_play", "$playsound minecraft:entity.zombie.ambient hostile @s ~ ~ ~ $(vol) $(pitch)")
 
+	# Freeze Watchdog ────────────────────────────────────────────
+	# A round advances through one handoff chain: spawn -> die -> round_complete -> (5s) ->
+	# start_round. Any link can go missing (function that failed to load, schedule dropped on
+	# /reload, desynced counter, spawn pass that tagged nothing) and the match then sits at
+	# "0 zombies" forever. Rather than enumerating those, watch the property they all share:
+	# nothing alive, nothing queued, nothing changing — impossible during real play, where the
+	# longest legitimate pause is the 5s handoff.
+	write_versioned_function("zombies/watchdog_tick", f"""
+# Progress fingerprint: any spawn, kill, or portal strike moves it.
+scoreboard players operation #zb_wd_fp {ns}.data = #zb_alive {ns}.data
+scoreboard players operation #zb_wd_fp {ns}.data += #zb_to_spawn {ns}.data
+scoreboard players operation #zb_wd_fp {ns}.data += #zb_dog_pending {ns}.data
+
+# Anything alive counts as progress on its own: kiting a horde is a normal, arbitrarily long state,
+# and unreachable zombies are already handled by the stuck escort/glow system.
+scoreboard players set #zb_wd_moved {ns}.data 0
+execute if score #zb_alive {ns}.data matches 1.. run scoreboard players set #zb_wd_moved {ns}.data 1
+execute unless score #zb_wd_fp {ns}.data = #zb_wd_last {ns}.data run scoreboard players set #zb_wd_moved {ns}.data 1
+scoreboard players operation #zb_wd_last {ns}.data = #zb_wd_fp {ns}.data
+
+execute if score #zb_wd_moved {ns}.data matches 1 run scoreboard players set #zb_wd_ticks {ns}.data 0
+execute if score #zb_wd_moved {ns}.data matches 0 run scoreboard players add #zb_wd_ticks {ns}.data 1
+
+# 400 ticks = 20s, well past the 5s handoff so a healthy round can't trip it.
+execute if score #zb_wd_ticks {ns}.data matches 400.. run function {ns}:zombies/recover
+""")
+
+	## Rebuild a frozen round. Also the manual escape hatch (admin button / typed in chat), so a
+	## stuck game never needs a restart — version-less so it stays typeable without the pack version.
+	write_function(f"{ns}:zombies/recover", f"""
+execute unless data storage {ns}:zombies game{{state:"active"}} run return run tellraw @s [{MGS_TAG},{{"text":"No zombies game is active.","color":"red"}}]
+
+scoreboard players set #zb_wd_ticks {ns}.data 0
+
+# Blockers that hold a round open without showing in the sidebar: a desynced dog-portal counter,
+# and portals that never struck (their dogs are lost either way).
+scoreboard players set #zb_dog_pending {ns}.data 0
+kill @e[tag={ns}.dog_portal]
+
+# Drop any handoff still in flight so recovery can't race a schedule landing a tick later
+schedule clear {ns}:v{version}/zombies/start_round
+
+tellraw @a [{MGS_TAG},{{"text":"Round was frozen — recovering.","color":"yellow"}}]
+
+# Case A: round_complete ran (it parks #zb_to_spawn at -1) but start_round never landed
+execute if score #zb_to_spawn {ns}.data matches ..-1 run return run function {ns}:v{version}/zombies/start_round
+
+# Case B: map empty and nothing queued, but the round never closed — close it
+kill @e[tag={ns}.zombie_round]
+scoreboard players set #zb_to_spawn {ns}.data 0
+function {ns}:v{version}/zombies/round_complete
+""")
+
 	## Hook death watch + horde ambience into the main zombies game tick
 	write_versioned_function("zombies/game_tick", f"""
 # Intercept dying zombies before vanilla death particles are emitted.
 function {ns}:v{version}/zombies/death_watch_tick
 
+# Freeze watchdog: auto-recover a round that has stopped advancing (see watchdog_tick).
+function {ns}:v{version}/zombies/watchdog_tick
+
+# Dog spawn portals: 1.5s of sparks, then the bolt. Gated on the round kind, NOT on
+# #zb_dog_pending — a portal orphaned by a desynced counter would then never tick, never strike and
+# never die, which is the freeze the resync in game_tick pairs with this to rule out.
+execute if score #zb_dog_round {ns}.data matches 1 as @e[tag={ns}.dog_portal] at @s run function {ns}:v{version}/zombies/dog_portal_tick
+
+# Wolves are neutral mobs and hunt nothing without an anger target. Writing `angry_at` alone is
+# enough (the game calls setTarget() from it on reload, then sustains the timer); writing AngerTime
+# does nothing, as the always-saved `anger_end_time` outranks it. The `unless data` guard means a
+# dog already locked on costs a read and no write. #zb_tick_mod is total_tick % 20 from earlier.
+execute if score #zb_dog_round {ns}.data matches 1 if score #zb_tick_mod {ns}.data matches 0 as @e[tag={ns}.zb_dog,tag=!{ns}.zb_rising] at @s unless data entity @s angry_at run data modify entity @s angry_at set from entity @p[scores={{{ns}.zb.in_game=1}},gamemode=!spectator,gamemode=!creative] UUID
+
 # Managed horde ambience: ~every 35 ticks, give each player one controlled, count-scaled groan.
+# Skipped on dog rounds: dogs aren't summoned Silent, so their own growls are the ambience.
 scoreboard players add #zb_horde_timer {ns}.data 1
 execute if score #zb_horde_timer {ns}.data matches 35.. run scoreboard players set #zb_horde_timer {ns}.data 0
-execute if score #zb_horde_timer {ns}.data matches 0 as @a[scores={{{ns}.zb.in_game=1}},gamemode=!spectator] at @s run function {ns}:v{version}/zombies/horde_ambient
+execute if score #zb_dog_round {ns}.data matches 0 if score #zb_horde_timer {ns}.data matches 0 as @a[scores={{{ns}.zb.in_game=1}},gamemode=!spectator] at @s run function {ns}:v{version}/zombies/horde_ambient
 """)
 
 	## Cleanup for round/end bulk-kill paths
 	write_versioned_function("zombies/stop", f"""
 kill @e[type=minecraft:marker,tag={ns}.death_watch]
+
+# Portals are gm_entity so the bulk cleanup already removes them; the counter they feed has to be
+# zeroed by hand or a stale value would block the next game's round completion forever.
+kill @e[type=minecraft:marker,tag={ns}.dog_portal]
+scoreboard players set #zb_dog_pending {ns}.data 0
 """)

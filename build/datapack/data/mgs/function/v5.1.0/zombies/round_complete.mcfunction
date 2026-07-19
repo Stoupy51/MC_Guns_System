@@ -2,10 +2,15 @@
 #> mgs:v5.1.0/zombies/round_complete
 #
 # @within	mgs:v5.1.0/zombies/game_tick
+#			mgs:zombies/recover
 #
 
 # Guard: prevent re-triggering every tick
 scoreboard players set #zb_to_spawn mgs.data -1
+
+# Dog rounds always end with a Max Ammo. Normally the last hound already dropped it as it died;
+# this only covers the cases where that path didn't fire.
+execute if score #zb_dog_round mgs.data matches 1 if score #zb_dog_ammo_done mgs.data matches 0 run function mgs:v5.1.0/zombies/dog_max_ammo_fallback
 
 # Signal round end
 function #mgs:zombies/on_round_end

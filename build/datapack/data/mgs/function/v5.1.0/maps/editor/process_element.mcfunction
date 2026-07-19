@@ -58,6 +58,9 @@ execute if entity @s[tag=mgs.element.zombie_spawn] run return run kill @s
 execute if entity @s[tag=mgs.element.player_spawn_zb] run function mgs:v5.1.0/maps/editor/handle_zb_object
 execute if entity @s[tag=mgs.element.player_spawn_zb] run return run kill @s
 
+execute if entity @s[tag=mgs.element.special_spawn] run function mgs:v5.1.0/maps/editor/handle_zb_object
+execute if entity @s[tag=mgs.element.special_spawn] run return run kill @s
+
 execute if entity @s[tag=mgs.element.wallbuy] run function mgs:v5.1.0/maps/editor/handle_zb_object
 execute if entity @s[tag=mgs.element.wallbuy] run return run kill @s
 

@@ -4,6 +4,7 @@
 # @executed	as @e[tag=mgs.zb_near]
 #
 # @within	mgs:v5.1.0/zombies/spawn_zombie [ as @e[tag=mgs.zb_near] ]
+#			mgs:v5.1.0/zombies/spawn_dog [ as @e[tag=mgs.zb_near] ]
 #
 
 data modify storage mgs:temp _abox_chk set from entity @s data.abox

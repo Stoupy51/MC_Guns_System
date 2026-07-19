@@ -8,6 +8,9 @@
 # Guard: nothing left to spawn
 execute if score #zb_to_spawn mgs.data matches ..0 run return 0
 
+# Dog rounds spawn one hound per timer tick, capped by how many are already out
+execute if score #zb_dog_round mgs.data matches 1 run return run function mgs:v5.1.0/zombies/spawn_dog_capped
+
 # Spawn one zombie
 function mgs:v5.1.0/zombies/spawn_zombie
 scoreboard players remove #zb_to_spawn mgs.data 1
