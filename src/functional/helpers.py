@@ -4,7 +4,7 @@ import json
 import re
 from typing import Any
 
-from stewbeet import Mem, TextComponent, write_versioned_function
+from stewbeet import Dialog, Mem, TextComponent, set_json_encoder, write_versioned_function
 from stouputils.typing import JsonDict
 
 # [MGS] prefix as a nested list component (gold colored, lang-safe).
@@ -189,6 +189,35 @@ scoreboard players set @a {ns}.stam_seen 0
 """.strip()
 
 
+def knife_item_snbt(ns: str, short_range: bool = False) -> str:
+	""" The melee knife item, shared by zombies (hotbar.0) and multiplayer (hotbar.0).
+
+	Args:
+		ns          (str):  The project namespace.
+		short_range (bool): Clamp the wielder's entity interaction range down to melee distance.
+			Guns hit at whatever range their raycast reaches, so multiplayer wants the knife to be
+			an explicit close-quarters trade; zombies keeps vanilla reach for its starting knife.
+
+	Returns:
+		str: The item SNBT, ready for `item replace entity @s <slot> with <this>`.
+	"""
+	modifiers: list[str] = [
+		'{type:"attack_damage",amount:20,operation:"add_value",slot:"mainhand",id:"minecraft:base_attack_damage"}',
+		'{type:"attack_speed",amount:-2.5,operation:"add_value",slot:"mainhand",id:"minecraft:base_attack_speed"}',
+	]
+	if short_range:
+		# Vanilla entity interaction range is 3; add_value of -1.0 leaves 2.0 blocks of reach
+		modifiers.append(
+			f'{{type:"entity_interaction_range",amount:-1.0,operation:"add_value",slot:"mainhand",id:"{ns}:knife_range"}}'
+		)
+	return (
+		f"minecraft:iron_sword[unbreakable={{}},custom_data={{{ns}:{{knife:true}}}},"
+		f'item_name={{"text":"Knife","color":"white","italic":false}},'
+		f"attribute_modifiers=[{','.join(modifiers)}]"
+		f"]"
+	)
+
+
 def write_ranked_stats_functions(ns: str, version: str, name: str, in_game_score: str, rank_objective: str, line: str) -> str:
 	""" Generate the function pair that announces every in-game player once, highest score first.
 
@@ -323,28 +352,59 @@ def btn(label: str, command: str, color: str = "yellow", hover: str = "", action
 
 
 def dialog_function(dialog_id: str) -> str:
-    """ Return the versioned function path that shows the inline dialog for dialog_id. """
+    """ Return the versioned function path that opens the dialog for dialog_id.
+
+    Kept so existing `/function <ns>:v<version>/dialogs/<id>` entry points (menu items, commands)
+    still work; the function is now a one-liner that shows the registered dialog resource.
+    """
     return f"{Mem.ctx.project_id}:v{Mem.ctx.project_version}/dialogs/{dialog_id}"
 
 
-def register_dialog(dialog_id: str, data: JsonDict) -> None:
-    """ Register a dialog as an INLINE dialog: instead of emitting a dialog resource file,
-    this writes a versioned function `dialogs/<dialog_id>` that shows the dialog via
-    inline SNBT on the /dialog command. Open it with `function {dialog_function(dialog_id)}`.
+def dialog_ref(dialog_id: str) -> str:
+    """ Return the resource id of a registered dialog, e.g. "mgs:v5.1.0/config".
+
+    This is what `minecraft:show_dialog` actions point at. Navigating between menus through
+    show_dialog rather than a run_command matters for more than tidiness: a run_command button
+    makes the client ask the player to confirm running the command every single time.
+    """
+    return f"{Mem.ctx.project_id}:v{Mem.ctx.project_version}/{dialog_id}"
+
+
+def register_dialog(dialog_id: str, data: JsonDict, wrapper: bool = True) -> None:
+    """ Register a dialog as a real dialog resource under `data/<ns>/dialog/v<version>/<id>.json`.
+
+    A thin `dialogs/<dialog_id>` function is written alongside it so every existing
+    `/function .../dialogs/<id>` entry point keeps working. Note that dialog resources are loaded
+    at datapack load, so editing one needs a `/reload` to take effect — unlike the inline SNBT
+    form this replaces, which was rebuilt into the command every time.
 
     Args:
         dialog_id (str): Path within the namespace, e.g. "config" or "multiplayer/setup".
-        data      (dict): The dialog SNBT/JSON structure.
+        data      (dict): The dialog structure.
+        wrapper   (bool): Also write the `dialogs/<id>` opener function. Pass False when the dialog
+            is only ever shown from a function that has its own guards to run first.
     """
-    write_versioned_function(f"dialogs/{dialog_id}", f"dialog show @s {json.dumps(data)}")
+    ns: str = Mem.ctx.project_id
+    version: str = Mem.ctx.project_version
+    Mem.ctx.data[ns].dialogs[f"v{version}/{dialog_id}"] = set_json_encoder(Dialog(data))
+    if wrapper:
+        write_versioned_function(f"dialogs/{dialog_id}", f"dialog show @s {dialog_ref(dialog_id)}")
 
 
-def dialog_show_btn(dialog_ref: str, label: str, hover: str, color: str | None = None) -> JsonDict:
-    """ A dialog action button that opens another (inline-registered) dialog by running its
-    dialogs/<id> function (dialogs are inline, so there is no resource to show_dialog to). """
+def dialog_back_action(dialog_id: str, label: str = "◀ Back", tooltip: str = "Return to the previous menu") -> JsonDict:
+    """ The `exit_action` entry that returns to another registered dialog without a confirm prompt. """
+    return {
+        "label": split_emoji(label, color="gray"),
+        "tooltip": {"text": tooltip},
+        "action": {"type": "minecraft:show_dialog", "dialog": dialog_ref(dialog_id)},
+    }
+
+
+def dialog_show_btn(dialog_reference: str, label: str, hover: str, color: str | None = None) -> JsonDict:
+    """ A dialog action button that opens another registered dialog directly via show_dialog. """
     label_component: Any = split_emoji(label, color=color) if color else split_emoji(label)
-    dialog_id: str = dialog_ref.split(":", 1)[-1]
-    return {"label": label_component, "tooltip": {"text": hover}, "action": {"type": "run_command", "command": f"/function {dialog_function(dialog_id)}"}}
+    dialog_id: str = dialog_reference.split(":", 1)[-1]
+    return {"label": label_component, "tooltip": {"text": hover}, "action": {"type": "minecraft:show_dialog", "dialog": dialog_ref(dialog_id)}}
 
 
 def dialog_run_btn(label: str, command: str, hover: str, color: str = "green") -> JsonDict:
@@ -379,11 +439,7 @@ def register_value_picker(dialog_id: str, title: str, desc: str, options: list[t
         "columns": 1,
         "pause": False,
         "after_action": "none",
-        "exit_action": {
-            "label": split_emoji("◀ Back", color="gray"),
-            "tooltip": {"text": "Return to the previous menu"},
-            "action": {"type": "run_command", "command": f"/function {dialog_function(back_dialog)}"},
-        },
+        "exit_action": dialog_back_action(back_dialog),
     })
 
 

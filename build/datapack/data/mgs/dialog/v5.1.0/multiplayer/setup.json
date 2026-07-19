@@ -1,0 +1,32 @@
+{
+	"type": "minecraft:multi_action",
+	"title": [
+		"",
+		"⚙ ",
+		{"text": "Multiplayer Setup","color": "gold","bold": true},
+		" ⚙"
+	],
+	"body": [
+		{"type": "minecraft:plain_message","contents": {"text": "Configure the match, then Start","color": "gray"}}
+	],
+	"actions": [
+		{"label": ["","🎮 ",{"text": "Gamemode"}],"tooltip": {"text": "Choose the multiplayer gamemode"},"action": {"type": "minecraft:show_dialog","dialog": "mgs:v5.1.0/multiplayer/setup/gamemode"}},
+		{"label": ["","🏆 ",{"text": "Score Limit"}],"tooltip": {"text": "Set the score needed to win"},"action": {"type": "minecraft:show_dialog","dialog": "mgs:v5.1.0/multiplayer/setup/score_limit"}},
+		{"label": ["","⏱ ",{"text": "Time Limit"}],"tooltip": {"text": "Set the match time limit"},"action": {"type": "minecraft:show_dialog","dialog": "mgs:v5.1.0/multiplayer/setup/time_limit"}},
+		{"label": ["","🗺 ",{"text": "Select Map","color": "aqua"}],"tooltip": {"text": "Browse and select a map"},"action": {"type": "run_command","command": "/function mgs:v5.1.0/multiplayer/map_select"}},
+		{"label": ["","▶ ",{"text": "START","color": "green"}],"tooltip": {"text": "Start the match"},"action": {"type": "run_command","command": "/function mgs:v5.1.0/multiplayer/start"}},
+		{"label": ["","■ ",{"text": "STOP","color": "red"}],"tooltip": {"text": "Stop the match"},"action": {"type": "run_command","command": "/function mgs:v5.1.0/multiplayer/stop"}},
+		{"label": ["","⚔ ",{"text": "Classes","color": "aqua"}],"tooltip": {"text": "Select your class"},"action": {"type": "run_command","command": "/function mgs:v5.1.0/multiplayer/select_class"}},
+		{"label": ["","+ ",{"text": "Join","color": "yellow"}],"tooltip": {"text": "Join the ongoing game as a late joiner"},"action": {"type": "run_command","command": "/function mgs:v5.1.0/multiplayer/join_game"}},
+		{"label": {"text": "Red Team","color": "red"},"tooltip": {"text": "Join Red Team"},"action": {"type": "run_command","command": "/function mgs:v5.1.0/multiplayer/join_red"}},
+		{"label": {"text": "Blue Team","color": "blue"},"tooltip": {"text": "Join Blue Team"},"action": {"type": "run_command","command": "/function mgs:v5.1.0/multiplayer/join_blue"}},
+		{"label": {"text": "Auto Team","color": "yellow"},"tooltip": {"text": "Auto-balance across Red/Blue (in FFA, seats everyone on the single FFA team)"},"action": {"type": "run_command","command": "/execute as @a[sort=random] run function mgs:v5.1.0/multiplayer/auto_assign_team"}},
+		{"label": ["","👥 ",{"text": "Manage Players","color": "dark_aqua"}],"tooltip": {"text": "Assign players to Red/Blue teams"},"action": {"type": "run_command","command": "/function mgs:v5.1.0/players/list_multiplayer"}}
+	],
+	"columns": 2,
+	"exit_action": {
+		"label": ["","◀ ",{"text": "Back","color": "gray"}],
+		"tooltip": {"text": "Return to the configuration menu"},
+		"action": {"type": "minecraft:show_dialog","dialog": "mgs:v5.1.0/config"}
+	}
+}

@@ -1,0 +1,27 @@
+{
+	"type": "minecraft:multi_action",
+	"title": [
+		"",
+		"🎯 ",
+		{"text": "Missions Setup","color": "aqua","bold": true},
+		" 🎯"
+	],
+	"body": [
+		{"type": "minecraft:plain_message","contents": {"text": "Pick a map, then Start","color": "gray"}}
+	],
+	"actions": [
+		{"label": ["","🗺 ",{"text": "Select Map","color": "aqua"}],"tooltip": {"text": "Browse and select a mission map"},"action": {"type": "run_command","command": "/function mgs:v5.1.0/missions/map_select"}},
+		{"label": ["","▶ ",{"text": "START","color": "green"}],"tooltip": {"text": "Start the mission"},"action": {"type": "run_command","command": "/function mgs:v5.1.0/missions/start"}},
+		{"label": ["","■ ",{"text": "STOP","color": "red"}],"tooltip": {"text": "Stop the mission"},"action": {"type": "run_command","command": "/function mgs:v5.1.0/missions/stop"}},
+		{"label": ["","⚔ ",{"text": "Classes","color": "aqua"}],"tooltip": {"text": "Select your class"},"action": {"type": "run_command","command": "/function mgs:v5.1.0/multiplayer/select_class"}},
+		{"label": ["","👥 ",{"text": "Manage Players","color": "dark_aqua"}],"tooltip": {"text": "Add or remove players from the mission"},"action": {"type": "run_command","command": "/function mgs:v5.1.0/players/list_missions"}},
+		{"label": ["","👥 ",{"text": "All Players Join","color": "green"}],"tooltip": {"text": "Add every online player to the mission"},"action": {"type": "run_command","command": "/execute as @a run function mgs:v5.1.0/players/mi_join"}},
+		{"label": ["","+ ",{"text": "Join","color": "yellow"}],"tooltip": {"text": "Join the ongoing mission as a late joiner"},"action": {"type": "run_command","command": "/function mgs:v5.1.0/missions/join_game"}}
+	],
+	"columns": 2,
+	"exit_action": {
+		"label": ["","◀ ",{"text": "Back","color": "gray"}],
+		"tooltip": {"text": "Return to the configuration menu"},
+		"action": {"type": "minecraft:show_dialog","dialog": "mgs:v5.1.0/config"}
+	}
+}

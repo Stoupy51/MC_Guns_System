@@ -1,0 +1,23 @@
+{
+	"type": "minecraft:multi_action",
+	"title": {
+		"translate": "mgs.variant",
+		"color": "gold",
+		"bold": true
+	},
+	"body": [
+		{"type": "minecraft:plain_message","contents": {"translate": "mgs.choose_the_zombies_experience","color": "gray"}}
+	],
+	"actions": [
+		{"label": {"translate": "mgs.vanilla","color": "yellow"},"tooltip": {"translate": "mgs.classic_cod_zombies_no_passives_abilities_or_special_zombies"},"action": {"type": "run_command","command": "/data modify storage mgs:zombies game.variant set value \"vanilla\""}},
+		{"label": {"translate": "mgs.zonweeb","color": "green"},"tooltip": {"translate": "mgs.full_experience_passives_abilities_and_special_zombies"},"action": {"type": "run_command","command": "/data modify storage mgs:zombies game.variant set value \"zonweeb\""}}
+	],
+	"columns": 1,
+	"pause": false,
+	"after_action": "none",
+	"exit_action": {
+		"label": ["","◀ ",{"translate": "mgs.back","color": "gray"}],
+		"tooltip": {"translate": "mgs.return_to_the_previous_menu"},
+		"action": {"type": "minecraft:show_dialog","dialog": "mgs:v5.1.0/zombies/setup"}
+	}
+}

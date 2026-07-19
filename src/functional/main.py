@@ -302,7 +302,7 @@ $execute if score #random {ns}.data matches 31 run loot replace entity @s $(slot
     # buttons; picking a value runs the scoreboard command directly. Each value button is
     # independent (no submit step), so opening the menu never resets untouched settings — the
     # same "click the value you want" model as the old menu, just rendered as native dialogs.
-    from .helpers import dialog_function, dialog_run_btn, dialog_show_btn, register_dialog, register_value_picker, split_emoji
+    from .helpers import dialog_back_action, dialog_function, dialog_run_btn, dialog_show_btn, register_dialog, register_value_picker, split_emoji
 
     # --- Global Settings (server-wide fake-player scores) ---
     rpg_opts = [
@@ -369,11 +369,7 @@ $execute if score #random {ns}.data matches 31 run loot replace entity @s $(slot
             "actions": actions,
             # Each category lists items of a single kind (settings / mode links) → one column.
             "columns": 1,
-            "exit_action": {
-                "label": split_emoji("◀ Back", color="gray"),
-                "tooltip": {"text": "Return to configuration"},
-                "action": {"type": "run_command", "command": f"/function {dialog_function('config')}"},
-            },
+            "exit_action": dialog_back_action("config", tooltip="Return to configuration"),
         })
 
     register_category("config/global", "⚙ Global Settings", [

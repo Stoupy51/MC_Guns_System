@@ -4,7 +4,7 @@
 
 from stewbeet import Mem, write_versioned_function
 
-from ..helpers import dialog_function, dialog_run_btn, register_dialog, split_emoji
+from ..helpers import dialog_back_action, dialog_function, dialog_run_btn, register_dialog
 
 
 def generate_missions_menus() -> None:
@@ -28,11 +28,7 @@ def generate_missions_menus() -> None:
 		"body": [{"type": "minecraft:plain_message", "contents": {"text": "Pick a map, then Start", "color": "gray"}}],
 		"actions": setup_actions,
 		"columns": 2,
-		"exit_action": {
-			"label": split_emoji("◀ Back", color="gray"),
-			"tooltip": {"text": "Return to the configuration menu"},
-			"action": {"type": "run_command", "command": f"/function {dialog_function('config')}"},
-		},
+		"exit_action": dialog_back_action("config", tooltip="Return to the configuration menu"),
 	})
 
 	# /function .../missions/setup now opens the dialog
@@ -41,7 +37,7 @@ def generate_missions_menus() -> None:
 	## Map selection menu: build a dialog listing all available mission maps
 	write_versioned_function("missions/map_select", f"""
 # Build the base map-select dialog (empty actions), then append one button per map
-data modify storage {ns}:temp dialog set value {{type:"minecraft:multi_action",title:["","🗺 ",{{text:"Select Mission Map",color:"aqua",bold:true}}],body:[{{type:"minecraft:plain_message",contents:{{text:"Click a map to select it",color:"gray"}}}}],actions:[],columns:1,pause:false,after_action:"none",exit_action:{{label:["","◀ ",{{text:"Back",color:"gray"}}],tooltip:{{text:"Return to setup"}},action:{{type:"run_command",command:"/function {ns}:v{version}/missions/setup"}}}}}}
+data modify storage {ns}:temp dialog set value {{type:"minecraft:multi_action",title:["","🗺 ",{{text:"Select Mission Map",color:"aqua",bold:true}}],body:[{{type:"minecraft:plain_message",contents:{{text:"Click a map to select it",color:"gray"}}}}],actions:[],columns:1,pause:false,after_action:"none",exit_action:{{label:["","◀ ",{{text:"Back",color:"gray"}}],tooltip:{{text:"Return to setup"}},action:{{type:"show_dialog",dialog:"{ns}:v{version}/missions/setup"}}}}}}
 
 # Copy maps list and iterate (select_entry appends one button per map)
 data modify storage {ns}:temp _map_iter set from storage {ns}:maps missions
@@ -50,7 +46,7 @@ data modify storage {ns}:temp _map_select_mode set value "missions"
 execute if data storage {ns}:temp _map_iter[0] run function {ns}:v{version}/shared/maps/select_iter
 
 # Empty fallback: multi_action requires a non-empty actions list
-execute unless data storage {ns}:temp dialog.actions[0] run data modify storage {ns}:temp dialog.actions append value {{label:{{text:"No mission maps",color:"red"}},tooltip:{{text:"Create one in the map editor first"}},action:{{type:"run_command",command:"/function {ns}:v{version}/missions/setup"}}}}
+execute unless data storage {ns}:temp dialog.actions[0] run data modify storage {ns}:temp dialog.actions append value {{label:{{text:"No mission maps",color:"red"}},tooltip:{{text:"Create one in the map editor first"}},action:{{type:"show_dialog",dialog:"{ns}:v{version}/missions/setup"}}}}
 
 # Show the completed dialog
 function {ns}:v{version}/multiplayer/show_dialog with storage {ns}:temp

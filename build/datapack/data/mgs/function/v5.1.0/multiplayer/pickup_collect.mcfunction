@@ -7,8 +7,8 @@
 #
 
 execute unless entity @n[type=minecraft:item_display,tag=mgs.mp_dropped_gun,distance=..3] run return fail
-execute store success score #pick_g0 mgs.data if items entity @s hotbar.0 *[custom_data~{mgs:{gun:true}}]
-execute store success score #pick_g1 mgs.data if items entity @s hotbar.1 *[custom_data~{mgs:{gun:true}}]
+execute store success score #pick_g0 mgs.data if items entity @s hotbar.1 *[custom_data~{mgs:{gun:true}}]
+execute store success score #pick_g1 mgs.data if items entity @s hotbar.2 *[custom_data~{mgs:{gun:true}}]
 
 # Without the Overkill perk, a pickup may not leave the player with two primary weapons
 scoreboard players set #pick_deny mgs.data 0

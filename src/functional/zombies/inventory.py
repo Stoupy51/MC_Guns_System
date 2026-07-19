@@ -5,6 +5,7 @@
 from stewbeet import Advancement, ItemModifier, JsonDict, Mem, set_json_encoder, write_versioned_function
 
 from ...config.stats import ALL_SLOTS, CAPACITY, REMAINING_BULLETS
+from ..helpers import knife_item_snbt
 from .perks import PERK_DEFINITIONS
 
 
@@ -12,7 +13,6 @@ def generate_zombies_inventory() -> None:
 	ns: str = Mem.ctx.project_id
 	version: str = Mem.ctx.project_version
 
-	knife_cd = "{" + ns + ":{knife:true}}"
 	gun_cd = "{" + ns + ":{gun:true}}"
 	mag_cd = "{" + ns + ":{magazine:true}}"
 	zb_tagged_cd = "{" + ns + ":{zombies:{}}}"
@@ -29,12 +29,8 @@ def generate_zombies_inventory() -> None:
 	mag_2_slot_cd = "{" + ns + ":{magazine:true,zombies:{inventory:2}}}"
 	mag_3_slot_cd = "{" + ns + ":{magazine:true,zombies:{inventory:3}}}"
 
-	knife_item = (
-		f"minecraft:iron_sword[unbreakable={{}},custom_data={knife_cd},"
-		f'item_name={{"text":"Knife","color":"white","italic":false}},'
-		f'attribute_modifiers=[{{type:"attack_damage",amount:20,operation:"add_value",slot:"mainhand",id:"minecraft:base_attack_damage"}},{{type:"attack_speed",amount:-2.5,operation:"add_value",slot:"mainhand",id:"minecraft:base_attack_speed"}}]'
-		f"]"
-	)
+	# Zombies keeps vanilla reach: its knife is the fallback weapon once ammo runs out
+	knife_item = knife_item_snbt(ns)
 
 	zb_tagged_match = f"*[custom_data~{zb_tagged_cd}]"
 	equipment_1_match = f"*[custom_data~{equipment_1_slot_cd}]"

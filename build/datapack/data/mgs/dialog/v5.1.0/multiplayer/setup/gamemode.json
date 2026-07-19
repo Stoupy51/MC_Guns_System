@@ -1,0 +1,26 @@
+{
+	"type": "minecraft:multi_action",
+	"title": {
+		"translate": "mgs.gamemode",
+		"color": "gold",
+		"bold": true
+	},
+	"body": [
+		{"type": "minecraft:plain_message","contents": {"translate": "mgs.choose_the_multiplayer_gamemode","color": "gray"}}
+	],
+	"actions": [
+		{"label": {"translate": "mgs.ffa","color": "green"},"tooltip": {"translate": "mgs.set_gamemode_to_ffa"},"action": {"type": "run_command","command": "/data modify storage mgs:multiplayer game.gamemode set value \"ffa\""}},
+		{"label": {"translate": "mgs.tdm","color": "yellow"},"tooltip": {"translate": "mgs.set_gamemode_to_tdm"},"action": {"type": "run_command","command": "/data modify storage mgs:multiplayer game.gamemode set value \"tdm\""}},
+		{"label": {"translate": "mgs.dom","color": "aqua"},"tooltip": {"translate": "mgs.set_gamemode_to_dom"},"action": {"type": "run_command","command": "/data modify storage mgs:multiplayer game.gamemode set value \"dom\""}},
+		{"label": {"text": "HP","color": "dark_purple"},"tooltip": {"translate": "mgs.set_gamemode_to_hp"},"action": {"type": "run_command","command": "/data modify storage mgs:multiplayer game.gamemode set value \"hp\""}},
+		{"label": {"text": "S&D","color": "gold"},"tooltip": {"translate": "mgs.set_gamemode_to_sd"},"action": {"type": "run_command","command": "/data modify storage mgs:multiplayer game.gamemode set value \"snd\""}}
+	],
+	"columns": 1,
+	"pause": false,
+	"after_action": "none",
+	"exit_action": {
+		"label": ["","◀ ",{"translate": "mgs.back","color": "gray"}],
+		"tooltip": {"translate": "mgs.return_to_the_previous_menu"},
+		"action": {"type": "minecraft:show_dialog","dialog": "mgs:v5.1.0/multiplayer/setup"}
+	}
+}
