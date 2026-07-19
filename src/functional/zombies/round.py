@@ -261,13 +261,27 @@ scoreboard players add #zb_dog_pending {ns}.data 1
 
 # Opening cue: a crackle at the strike point. Volume 2.0 = 32 blocks of reach to match the
 # selector, with a minVolume floor so the telegraph carries to players further out.
-playsound minecraft:block.beacon.deactivate weather @a[distance=..32] ~ ~ ~ 2.0 1.9 0.25
+playsound minecraft:block.beacon.deactivate ambient @a[distance=..32] ~ ~ ~ 2.0 1.9 0.25
 """)
 
-	## Per-tick telegraph: sparks gathering at the strike point, counting down to the bolt.
+	## Per-tick telegraph: charge gathering at the strike point over 3 escalating phases, so the spot
+	## reads as "something lands HERE" from across the map rather than as ambient sparkle.
 	write_versioned_function("zombies/dog_portal_tick", f"""
-particle minecraft:electric_spark ~ ~0.3 ~ 0.25 0.4 0.25 0.06 4 normal @a[distance=..48]
-particle minecraft:crit ~ ~0.1 ~ 0.3 0.05 0.3 0.02 2 normal @a[distance=..32]
+# Phase 1 (all 30 ticks): a flat ring crawling along the floor marks the footprint
+particle minecraft:electric_spark ~ ~0.1 ~ 1.1 0.02 1.1 0.0 5 force @a[distance=..48]
+
+# Phase 2 (last 20): the charge starts climbing out of the floor
+execute if score @s {ns}.zb.rise_tick matches ..20 run particle minecraft:electric_spark ~ ~0.7 ~ 0.35 0.9 0.35 0.03 8 force @a[distance=..48]
+
+# Phase 3 (last 10): a column forms and the ring tightens — the last beat before the bolt
+execute if score @s {ns}.zb.rise_tick matches ..10 run particle minecraft:end_rod ~ ~1.2 ~ 0.12 1.3 0.12 0.01 5 force @a[distance=..48]
+execute if score @s {ns}.zb.rise_tick matches ..10 run particle minecraft:crit ~ ~0.2 ~ 0.45 0.08 0.45 0.06 8 force @a[distance=..32]
+
+# Charging crackle every 5 ticks. Same audible-radius rule as the strike: volume covers the
+# selector range, minVolume is the floor for anyone further out.
+scoreboard players operation #zb_portal_mod {ns}.data = @s {ns}.zb.rise_tick
+scoreboard players operation #zb_portal_mod {ns}.data %= #5 {ns}.data
+execute if score #zb_portal_mod {ns}.data matches 0 run playsound minecraft:block.amethyst_block.resonate ambient @a[distance=..32] ~ ~ ~ 2.0 0.6 0.3
 
 scoreboard players remove @s {ns}.zb.rise_tick 1
 execute if score @s {ns}.zb.rise_tick matches ..0 run function {ns}:v{version}/zombies/dog_portal_strike
@@ -276,24 +290,21 @@ execute if score @s {ns}.zb.rise_tick matches ..0 run function {ns}:v{version}/z
 	## The bolt lands: flash + thunder, then the dog. Deliberately NOT a lightning_bolt entity — that
 	## would ignite the map, shock players and traders, and carry its thunder dimension-wide.
 	write_versioned_function("zombies/dog_portal_strike", f"""
+# The bolt itself: a tall, thin column drawn in one command — a wide Y spread with near-zero XZ
+# spread and speed 0, so the particles fill a vertical shaft instead of puffing outward.
+particle minecraft:electric_spark ~ ~4 ~ 0.06 4.0 0.06 0.0 160 force @a[distance=..64]
+particle minecraft:end_rod ~ ~4 ~ 0.04 4.0 0.04 0.0 40 force @a[distance=..64]
+
 # flash is a ColorParticleOption type, so the ARGB color is mandatory. Cold blue-white.
 particle minecraft:flash{{color:[1.0f,0.82f,0.90f,1.0f]}} ~ ~1 ~ 0 0 0 0 1 force @a[distance=..64]
-particle minecraft:electric_spark ~ ~1.2 ~ 0.25 1.4 0.25 0.35 70 force @a[distance=..48]
-particle minecraft:end_rod ~ ~1 ~ 0.1 0.8 0.1 0.02 12 force @a[distance=..48]
-# weather category: where lightning belongs, and a slider players rarely turn down (hostile is
-# commonly lowered to mute zombie groans).
-# Volume sets the audible RADIUS (1.0 = 16 blocks), not loudness, so it has to cover the selector
-# range or distant players are targeted but hear nothing. The trailing minVolume is the floor
-# players outside that radius still hear, so a hound spawning across the map is never silent.
-playsound minecraft:entity.lightning_bolt.impact weather @a[distance=..48] ~ ~ ~ 3.0 1.2 0.5
-playsound minecraft:entity.lightning_bolt.thunder weather @a[distance=..64] ~ ~ ~ 4.0 1.5 0.4
 
-# Same level buckets as zombies, so the type dispatch signature stays uniform
-execute if score #zb_round {ns}.data matches ..5 run data modify storage {ns}:temp _zpos.level set value "1"
-execute if score #zb_round {ns}.data matches 6..10 run data modify storage {ns}:temp _zpos.level set value "2"
-execute if score #zb_round {ns}.data matches 11..15 run data modify storage {ns}:temp _zpos.level set value "3"
-execute if score #zb_round {ns}.data matches 16.. run data modify storage {ns}:temp _zpos.level set value "4"
-function {ns}:v{version}/zombies/summon_dog_at with storage {ns}:temp _zpos
+# Ground shockwave: a flat disc kicked outward along the floor where the bolt lands
+particle minecraft:electric_spark ~ ~0.15 ~ 1.6 0.02 1.6 0.5 90 force @a[distance=..48]
+particle minecraft:crit ~ ~0.15 ~ 1.2 0.02 1.2 0.3 30 force @a[distance=..48]
+playsound minecraft:entity.lightning_bolt.impact ambient @a[distance=..48] ~ ~ ~ 3.0 1.2 0.5
+playsound minecraft:entity.lightning_bolt.thunder ambient @a[distance=..64] ~ ~ ~ 4.0 1.5 0.4
+
+function {ns}:v{version}/zombies/summon_dog_at
 
 # Hand the spawn point id over to the dog, then retire the portal
 scoreboard players operation @n[tag={ns}.zb_dog_new] {ns}.zb.spawn.sid = @s {ns}.zb.spawn.sid
@@ -311,8 +322,9 @@ kill @s
 # zb_dog_new is a scratch tag the strike removes once setup is done.
 summon minecraft:wolf ~ ~ ~ {{Tags:["{ns}.zombie_round","{ns}.zb_dog","{ns}.zb_dog_new","{ns}.gm_entity","{ns}.nukable"],variant:"minecraft:black",PersistenceRequired:true,DeathLootTable:"minecraft:empty",Passengers:[{{id:"minecraft:marker",Tags:["{ns}.death_watch","{ns}.gm_entity"]}}],Attributes:[{{id:"minecraft:follow_range",base:40.0d}}]}}
 
-# Apply level scaling (health, speed)
-$execute as @n[tag={ns}.zb_dog_new] run function {ns}:v{version}/zombies/types/dog {{level:"$(level)"}}
+# Apply scaling (health, speed). Not a macro call: types/dog reads #zb_round itself and never used
+# the level argument, so passing one only added a way for the call to be skipped.
+execute as @n[tag={ns}.zb_dog_new] run function {ns}:v{version}/zombies/types/dog
 
 # Ally with escort traders, same reason as zombies (escort.py)
 team join {ns}.horde @n[tag={ns}.zb_dog_new]
@@ -427,22 +439,30 @@ $attribute @s minecraft:max_health base set $(val)
 execute store result entity @s Health float 1 run attribute @s minecraft:max_health get
 """)
 
-	## Dog: fast, tanky, hits hard. 1.5x the round's zombie HP — at 60% a sniper one-shot them on the
-	## early dog rounds, which made a pack trivial. They still die faster in practice than the number
-	## suggests, since they close to melee range where every weapon connects.
+	## Same, for dogs: $(val) is the amount ABOVE a wolf's base 8, added as a modifier the taming
+	## side-effect reset can't clear (see types/dog). Health is filled from the resulting effective max.
+	write_versioned_function("zombies/apply_dog_hp", f"""
+$attribute @s minecraft:max_health modifier add {ns}:dog_hp $(val) add_value
+execute store result entity @s Health float 1 run attribute @s minecraft:max_health get
+""")
+
+	## Dog: fast, hits hard, same HP as the round's zombie.
 	write_versioned_function("zombies/types/dog", f"""
 # Add scaled tag, and few data
 tag @s add {ns}.zb_scaled
 data modify entity @s DeathTime set value -16s
 
-# 150% of the round's zombie HP, floored at 2x a vanilla zombie so round 5 dogs aren't one-shot
+# Same HP as the round's zombie — dogs get their threat from speed and damage, not durability
 function {ns}:v{version}/zombies/calc_zombie_hp
-scoreboard players operation #zb_hp {ns}.data *= #3 {ns}.data
-scoreboard players operation #zb_hp {ns}.data /= #2 {ns}.data
-execute if score #zb_hp {ns}.data matches ..39 run scoreboard players set #zb_hp {ns}.data 40
-execute if score #zb_hp {ns}.data matches 2049.. run scoreboard players set #zb_hp {ns}.data 2048
+
+# Carried as a MODIFIER, not a base value. Wolf extends TamableAnimal, whose readAdditionalSaveData
+# calls setTame(false, true) on any untamed wolf -> applyTamingSideEffects() -> MAX_HEALTH base is
+# hard-reset to 8.0. Every /data modify entity and every `store result entity` round-trips the entity
+# through save/load, so the angry_at retarget silently reset each dog's base to 8 and Health then
+# clamped to it — hence the one-hit kills. Modifiers survive that reset; base values cannot.
+scoreboard players remove #zb_hp {ns}.data 8
 execute store result storage {ns}:temp _zb_hp.val int 1 run scoreboard players get #zb_hp {ns}.data
-function {ns}:v{version}/zombies/apply_zombie_hp with storage {ns}:temp _zb_hp
+function {ns}:v{version}/zombies/apply_dog_hp with storage {ns}:temp _zb_hp
 
 # Always faster than the zombie cap (0.32) — outrunning a dog pack should not be an option
 execute if score #zb_round {ns}.data matches ..9 run attribute @s minecraft:movement_speed base set 0.36
@@ -569,9 +589,9 @@ execute if score #zb_spawn_batch_remaining {ns}.data matches 1.. if score #zb_to
 # Guard: prevent re-triggering every tick
 scoreboard players set #zb_to_spawn {ns}.data -1
 
-# Dog rounds always end with a Max Ammo. Normally the last hound already dropped it as it died;
-# this only covers the cases where that path didn't fire.
-execute if score #zb_dog_round {ns}.data matches 1 if score #zb_dog_ammo_done {ns}.data matches 0 run function {ns}:v{version}/zombies/dog_max_ammo_fallback
+# NOTE: no Max Ammo fallback here on purpose. The drop belongs at the last hound's body, so it is
+# only ever spawned by dog_death. A round that ends without one (Nuke, death watch missed) simply
+# doesn't get it — better than granting it at a player, which reads as an automatic refill.
 
 # Signal round end
 function #{ns}:zombies/on_round_end
@@ -617,12 +637,6 @@ execute store result storage {ns}:temp _pu_spawn.uid int 1 run scoreboard player
 function {ns}:v{version}/zombies/powerups/spawn_type/max_ammo with storage {ns}:temp _pu_spawn
 """)
 
-	## Fallback, for a dog round that ends without any hound running the at-death path — a Nuke, or a
-	## death that skipped the death watch. Drops at a player rather than at a remembered position:
-	## a stored position is what let a stale record pay out a second time at an earlier dog's corpse.
-	write_versioned_function("zombies/dog_max_ammo_fallback", f"""
-execute as @r[scores={{{ns}.zb.in_game=1}},gamemode=!spectator] at @s run function {ns}:v{version}/zombies/dog_max_ammo_at_self
-""")
 
 	# Grenade Replenishment (appended to start_round) ───────────
 
@@ -744,6 +758,11 @@ function {ns}:v{version}/zombies/watchdog_tick
 # #zb_dog_pending — a portal orphaned by a desynced counter would then never tick, never strike and
 # never die, which is the freeze the resync in game_tick pairs with this to rule out.
 execute if score #zb_dog_round {ns}.data matches 1 as @e[tag={ns}.dog_portal] at @s run function {ns}:v{version}/zombies/dog_portal_tick
+
+# Safety net: a dog that missed its scaling call is a vanilla 8-HP wolf, which reads as a bug
+# (one-punch kills) rather than as a difficulty setting. types/dog is idempotent and tags what it
+# scales, so this costs one tag-filtered scan and normally matches nothing.
+execute if score #zb_dog_round {ns}.data matches 1 as @e[tag={ns}.zb_dog,tag=!{ns}.zb_scaled] run function {ns}:v{version}/zombies/types/dog
 
 # Wolves are neutral mobs and hunt nothing without an anger target. Writing `angry_at` alone is
 # enough (the game calls setTarget() from it on reload, then sustains the timer); writing AngerTime

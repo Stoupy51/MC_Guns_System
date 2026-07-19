@@ -21,5 +21,5 @@ scoreboard players add #zb_dog_pending mgs.data 1
 
 # Opening cue: a crackle at the strike point. Volume 2.0 = 32 blocks of reach to match the
 # selector, with a minVolume floor so the telegraph carries to players further out.
-playsound minecraft:block.beacon.deactivate weather @a[distance=..32] ~ ~ ~ 2.0 1.9 0.25
+playsound minecraft:block.beacon.deactivate ambient @a[distance=..32] ~ ~ ~ 2.0 1.9 0.25
 

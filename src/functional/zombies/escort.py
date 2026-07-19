@@ -103,8 +103,12 @@ team modify {ns}.horde collisionRule pushOtherTeams
 	## Route stuck zombies to an escort BEFORE the teleport-rescue body in on_stuck_zombie
 	## (game.py). Saturated escorts or a previously failed escort fall through to the teleport.
 	write_versioned_function("zombies/on_stuck_zombie", f"""
-# Prefer a wandering-trader escort over the teleport rescue below (see escort.py)
-execute unless entity @s[tag={ns}.zb_escort_failed] if score #zb_escort_count {ns}.data matches ..{MAX_ESCORTS - 1} run return run function {ns}:v{version}/zombies/escort/start
+# Prefer a wandering-trader escort over the teleport rescue below (see escort.py).
+# Dogs are excluded: the escort freezes its passenger with `data modify entity @s NoAI`, and every
+# NBT write on a wolf runs readAdditionalSaveData -> setTame(false,true) -> MAX_HEALTH base reset
+# to 8 (TamableAnimal/Wolf). A dog dragged by a taxi arrives at 8 HP, dying to anything it touches.
+# They also don't need one — they outrun the trader, so the direct teleport below is strictly better.
+execute unless entity @s[tag={ns}.zb_dog] unless entity @s[tag={ns}.zb_escort_failed] if score #zb_escort_count {ns}.data matches ..{MAX_ESCORTS - 1} run return run function {ns}:v{version}/zombies/escort/start
 """, prepend=True)
 
 	## Start an escort. @s = stuck zombie, at @s.

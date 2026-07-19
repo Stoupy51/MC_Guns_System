@@ -8,9 +8,9 @@
 # Guard: prevent re-triggering every tick
 scoreboard players set #zb_to_spawn mgs.data -1
 
-# Dog rounds always end with a Max Ammo. Normally the last hound already dropped it as it died;
-# this only covers the cases where that path didn't fire.
-execute if score #zb_dog_round mgs.data matches 1 if score #zb_dog_ammo_done mgs.data matches 0 run function mgs:v5.1.0/zombies/dog_max_ammo_fallback
+# NOTE: no Max Ammo fallback here on purpose. The drop belongs at the last hound's body, so it is
+# only ever spawned by dog_death. A round that ends without one (Nuke, death watch missed) simply
+# doesn't get it — better than granting it at a player, which reads as an automatic refill.
 
 # Signal round end
 function #mgs:zombies/on_round_end
