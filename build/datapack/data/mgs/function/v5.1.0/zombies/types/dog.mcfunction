@@ -1,23 +1,27 @@
 
 #> mgs:v5.1.0/zombies/types/dog
 #
-# @executed	as @e[tag=mgs.dog_portal] & at @s
+# @executed	as @e[tag=...]
 #
-# @within	mgs:v5.1.0/zombies/summon_dog_at {level:"$(level)"}
+# @within	mgs:v5.1.0/zombies/game_tick [ as @e[tag=...] ]
+#			mgs:v5.1.0/zombies/summon_dog_at [ as @n[tag=mgs.zb_dog_new] ]
 #
 
 # Add scaled tag, and few data
 tag @s add mgs.zb_scaled
 data modify entity @s DeathTime set value -16s
 
-# 150% of the round's zombie HP, floored at 2x a vanilla zombie so round 5 dogs aren't one-shot
+# Same HP as the round's zombie — dogs get their threat from speed and damage, not durability
 function mgs:v5.1.0/zombies/calc_zombie_hp
-scoreboard players operation #zb_hp mgs.data *= #3 mgs.data
-scoreboard players operation #zb_hp mgs.data /= #2 mgs.data
-execute if score #zb_hp mgs.data matches ..39 run scoreboard players set #zb_hp mgs.data 40
-execute if score #zb_hp mgs.data matches 2049.. run scoreboard players set #zb_hp mgs.data 2048
+
+# Carried as a MODIFIER, not a base value. Wolf extends TamableAnimal, whose readAdditionalSaveData
+# calls setTame(false, true) on any untamed wolf -> applyTamingSideEffects() -> MAX_HEALTH base is
+# hard-reset to 8.0. Every /data modify entity and every `store result entity` round-trips the entity
+# through save/load, so the angry_at retarget silently reset each dog's base to 8 and Health then
+# clamped to it — hence the one-hit kills. Modifiers survive that reset; base values cannot.
+scoreboard players remove #zb_hp mgs.data 8
 execute store result storage mgs:temp _zb_hp.val int 1 run scoreboard players get #zb_hp mgs.data
-function mgs:v5.1.0/zombies/apply_zombie_hp with storage mgs:temp _zb_hp
+function mgs:v5.1.0/zombies/apply_dog_hp with storage mgs:temp _zb_hp
 
 # Always faster than the zombie cap (0.32) — outrunning a dog pack should not be an option
 execute if score #zb_round mgs.data matches ..9 run attribute @s minecraft:movement_speed base set 0.36

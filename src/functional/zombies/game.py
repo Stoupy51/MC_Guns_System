@@ -563,8 +563,10 @@ execute if score #stuck_delta {ns}.data >= #stuck_threshold {ns}.data run functi
 
 # Build the rescue pool via the shared spawn-proximity tagger (same 32 -> 64 -> any unlocked
 # selection the round spawner uses). #zb_near_found is 0 iff nothing was tagged, so the teleport
-# gate below needs no global @e existence scan.
-function {ns}:v{version}/zombies/tag_spawns_near_players
+# gate below needs no global @e existence scan. Dogs draw from their own markers: a zombie spawn can
+# sit somewhere only a walker is meant to come from, and it may not even be inside the play bounds.
+execute unless entity @s[tag={ns}.zb_dog] run function {ns}:v{version}/zombies/tag_spawns_near_players
+execute if entity @s[tag={ns}.zb_dog] run function {ns}:v{version}/zombies/tag_special_spawns_near_players
 
 # Never rescue to the spawn point this zombie last used (initial spawn or previous rescue),
 # unless it is the only candidate left.
@@ -574,10 +576,12 @@ execute store result score #zb_near_alt {ns}.data if entity @e[tag={ns}.zb_near,
 execute if score #zb_near_alt {ns}.data matches 1.. run tag @e[tag={ns}.zb_near_prev] remove {ns}.zb_near
 tag @e[tag={ns}.zb_near_prev] remove {ns}.zb_near_prev
 
-# Teleport to the nearest rescue spawn (passenger death_watch marker follows automatically),
-# remember its id, and flag the zombie as rescued (shortens the next "not moved" timeout to 5s)
-execute if score #zb_near_found {ns}.data matches 1.. run tp @s @n[tag={ns}.zb_near]
-execute if score #zb_near_found {ns}.data matches 1.. run scoreboard players operation @s {ns}.zb.spawn.sid = @n[tag={ns}.zb_near] {ns}.zb.spawn.sid
+# Teleport to the rescue spawn nearest the PLAYER, not the one nearest the stuck enemy. Picking
+# from @s meant an enemy stranded far from everyone kept choosing the markers closest to itself,
+# and the anti-reuse rule above then bounced it between the same two distant spawns indefinitely.
+execute if score #zb_near_found {ns}.data matches 1.. at @p[scores={{{ns}.zb.in_game=1,{ns}.zb.downed=0}},gamemode=!spectator] run function {ns}:v{version}/zombies/rescue_tp
+# Everyone downed: no player to measure from, so fall back to the enemy's own position.
+execute if score #zb_near_found {ns}.data matches 1.. unless entity @p[scores={{{ns}.zb.in_game=1,{ns}.zb.downed=0}},gamemode=!spectator] run function {ns}:v{version}/zombies/rescue_tp
 execute if score #zb_near_found {ns}.data matches 1.. run tag @s add {ns}.zb_rescued
 tag @e[tag={ns}.zb_near] remove {ns}.zb_near
 
@@ -591,6 +595,13 @@ scoreboard players set @s {ns}.zb.stuck_dist 4
 execute store result score @s {ns}.zb.stuck_x run data get entity @s Pos[0]
 execute store result score @s {ns}.zb.stuck_z run data get entity @s Pos[2]
 scoreboard players operation @s {ns}.zb.stuck_ticks = #total_tick {ns}.data
+""")
+
+		## @s = the stuck enemy, execution POSITION = the player it should end up near (see caller).
+		## Both selectors resolve from that position, so they agree on which marker was chosen.
+		write_versioned_function("zombies/rescue_tp", f"""
+tp @s @n[tag={ns}.zb_near]
+scoreboard players operation @s {ns}.zb.spawn.sid = @n[tag={ns}.zb_near] {ns}.zb.spawn.sid
 """)
 
 		## Player boundary check (zombies): unlike zombies (out_of_world damage -> down + mannequin),

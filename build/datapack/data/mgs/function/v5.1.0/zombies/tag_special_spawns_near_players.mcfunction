@@ -1,7 +1,10 @@
 
 #> mgs:v5.1.0/zombies/tag_special_spawns_near_players
 #
-# @within	mgs:v5.1.0/zombies/spawn_dog
+# @executed	as @e[tag=...,limit=24,sort=random] & at @s
+#
+# @within	mgs:v5.1.0/zombies/on_stuck_zombie
+#			mgs:v5.1.0/zombies/spawn_dog
 #
 
 scoreboard players set #zb_near_found mgs.data 0

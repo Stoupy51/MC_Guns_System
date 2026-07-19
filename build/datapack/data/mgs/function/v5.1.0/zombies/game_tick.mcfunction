@@ -82,6 +82,11 @@ function mgs:v5.1.0/zombies/watchdog_tick
 # never die, which is the freeze the resync in game_tick pairs with this to rule out.
 execute if score #zb_dog_round mgs.data matches 1 as @e[tag=mgs.dog_portal] at @s run function mgs:v5.1.0/zombies/dog_portal_tick
 
+# Safety net: a dog that missed its scaling call is a vanilla 8-HP wolf, which reads as a bug
+# (one-punch kills) rather than as a difficulty setting. types/dog is idempotent and tags what it
+# scales, so this costs one tag-filtered scan and normally matches nothing.
+execute if score #zb_dog_round mgs.data matches 1 as @e[tag=mgs.zb_dog,tag=!mgs.zb_scaled] run function mgs:v5.1.0/zombies/types/dog
+
 # Wolves are neutral mobs and hunt nothing without an anger target. Writing `angry_at` alone is
 # enough (the game calls setTarget() from it on reload, then sustains the timer); writing AngerTime
 # does nothing, as the always-saved `anger_end_time` outranks it. The `unless data` guard means a

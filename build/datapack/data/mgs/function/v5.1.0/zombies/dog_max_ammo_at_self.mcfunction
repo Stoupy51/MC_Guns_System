@@ -4,7 +4,6 @@
 # @executed	at @s
 #
 # @within	mgs:v5.1.0/zombies/dog_death
-#			mgs:v5.1.0/zombies/dog_max_ammo_fallback [ at @s ]
 #
 
 scoreboard players set #zb_dog_ammo_done mgs.data 1
