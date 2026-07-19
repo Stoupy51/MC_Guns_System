@@ -799,7 +799,7 @@ function {fn}/rebuild_perks with storage {ns}:temp
 	primary_slot_entries: list[str] = []
 	for wp in PRIMARY_WEAPONS:
 		gun_id, mag_id, mag_count = wp.item_id, wp.magazine_id, wp.default_mag_count
-		gun_slot = f'{{slot:"hotbar.0",loot:"{ns}:i/{gun_id}",count:1,consumable:0b,bullets:0}}'
+		gun_slot = f'{{slot:"hotbar.1",loot:"{ns}:i/{gun_id}",count:1,consumable:0b,bullets:0}}'
 		is_consumable = "1b" if mag_id in CONSUMABLE_MAGS else "0b"
 		bullets = mag_count if mag_id in CONSUMABLE_MAGS else 0
 		primary_slot_entries.append(
@@ -808,7 +808,7 @@ function {fn}/rebuild_perks with storage {ns}:temp
 	secondary_slot_entries: list[str] = []
 	for wp in (w for w in SECONDARY_WEAPONS if w.in_loadout):
 		gun_id, mag_id, mag_count = wp.item_id, wp.magazine_id, wp.default_mag_count
-		gun_slot = f'{{slot:"hotbar.1",loot:"{ns}:i/{gun_id}",count:1,consumable:0b,bullets:0}}'
+		gun_slot = f'{{slot:"hotbar.2",loot:"{ns}:i/{gun_id}",count:1,consumable:0b,bullets:0}}'
 		is_consumable = "1b" if mag_id in CONSUMABLE_MAGS else "0b"
 		bullets = mag_count if mag_id in CONSUMABLE_MAGS else 0
 		secondary_slot_entries.append(
@@ -869,8 +869,8 @@ data modify storage {ns}:temp _build set value {{}}
 {save_primary_dispatch}
 # Look up secondary weapon slot data
 {save_secondary_dispatch}
-# Overkill: a primary used as secondary comes from the primary table (slot hotbar.0) — force hotbar.1
-execute if data storage {ns}:temp _build.secondary_data run data modify storage {ns}:temp _build.secondary_data.gun_slot.slot set value "hotbar.1"
+# Overkill: a primary used as secondary comes from the primary table (slot hotbar.1) — force hotbar.2
+execute if data storage {ns}:temp _build.secondary_data run data modify storage {ns}:temp _build.secondary_data.gun_slot.slot set value "hotbar.2"
 
 # Build the new loadout entry (include new Pick-10 fields)
 data modify storage {ns}:temp _new_loadout set value {{id:0,owner_pid:0,owner_name:"",name:"",public:0b,likes:0,favorites_count:0,points_used:0,main_gun:"",main_gun_display:"",secondary_gun:"",secondary_gun_display:"None",primary_mag_count:1,secondary_mag_count:0,equip_slot1:"",equip_slot1_name:"None",equip_slot2:"",equip_slot2_name:"None",perks:[],slots:[]}}
@@ -924,10 +924,10 @@ function {fn}/fix_primary_loot with storage {ns}:temp editor
 execute if data storage {ns}:temp _build.secondary_data run function {fn}/fix_secondary_loot with storage {ns}:temp editor
 
 # Build slot list
-# 1. Primary weapon (hotbar.0)
+# 1. Primary weapon (hotbar.1)
 data modify storage {ns}:temp _new_loadout.slots append from storage {ns}:temp _build.primary_data.gun_slot
 
-# 2. Secondary weapon (hotbar.1) - if selected
+# 2. Secondary weapon (hotbar.2) - if selected
 execute if data storage {ns}:temp _build.secondary_data run data modify storage {ns}:temp _new_loadout.slots append from storage {ns}:temp _build.secondary_data.gun_slot
 
 # 3. Equipment slots (hotbar.8 and hotbar.7)

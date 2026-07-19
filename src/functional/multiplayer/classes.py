@@ -128,12 +128,12 @@ def build_class_snbt(ns: str, class_id: str, class_data: JsonDict, class_num: in
     def add_slot(slot: str, loot: str, count: int = 1, consumable: bool = False, bullets: int = 0) -> None:
         slots.append(make_slot_snbt(ns, slot, loot, count, consumable, bullets))
 
-    # Primary weapon → hotbar.0
-    add_slot("hotbar.0", main_gun)
+    # Primary weapon → hotbar.1 (hotbar.0 is reserved for the knife, given in apply_class_dynamic)
+    add_slot("hotbar.1", main_gun)
 
-    # Secondary weapon → hotbar.1
+    # Secondary weapon → hotbar.2
     if secondary_gun:
-        add_slot("hotbar.1", secondary_gun)
+        add_slot("hotbar.2", secondary_gun)
 
     # Equipment (grenades) → hotbar.8, hotbar.7, ...
     equip_slot: int = 8
