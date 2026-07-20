@@ -38,6 +38,10 @@ scoreboard objectives add {ns}.zb.points dummy
 scoreboard objectives add {ns}.zb.kills dummy
 scoreboard objectives add {ns}.zb.downs dummy
 
+# Bought lethal grenade type (index into LETHAL_GRENADE_IDS, 0 = frag): re-gives the RIGHT type
+# when the lethal slot is emptied (round-end replenish / Max Ammo / recovery). See inventory.py.
+scoreboard objectives add {ns}.zb.lethal_type dummy
+
 # Perk scoreboards
 # zb.passive: 0=none, 1=points_x1.2, 2=powerup_x1.5
 # zb.ability: 0=none, 1=coward, 2=guardian

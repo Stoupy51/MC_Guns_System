@@ -213,8 +213,12 @@ function {ns}:v{version}/zombies/feedback/sound_deny
 	## full, BEFORE charging), otherwise full price for a fresh full stack of the bought type.
 	for kind_name, eq_slot, eq_count in (("lethal", 7, 4), ("tactical", 6, 3)):
 		widows_note: str = ""
+		record_line: str = ""
 		if kind_name == "lethal":
 			widows_note = "\n# NOTE Widow's Wine (README task 5): once webs exist, a web owner's lethal buy must refill\n# web grenades instead of switching the type — branch here on the perk score."
+			# Remember the bought lethal type so an emptied slot refills THIS type (not always frag)
+			# on round-end replenish / Max Ammo (inventory.py). Not needed for tacticals (refill-only).
+			record_line = f"function {ns}:v{version}/zombies/inventory/record_lethal_type\n"
 		write_versioned_function(f"zombies/wallbuys/buy_{kind_name}", f"""
 # Same equipment already in the slot: refill flow
 $execute if items entity @s hotbar.{eq_slot} *[custom_data~{{{ns}:{{$(weapon_id):true}}}}] run return run function {ns}:v{version}/zombies/wallbuys/refill_{kind_name} with storage {ns}:temp _wb_weapon
@@ -226,7 +230,7 @@ scoreboard players operation @s {ns}.zb.points -= #wb_price {ns}.data
 $loot replace entity @s hotbar.{eq_slot} loot {ns}:i/$(weapon_id)
 item modify entity @s hotbar.{eq_slot} {ns}:v{version}/grenade/set_count_{eq_count}
 function {ns}:v{version}/zombies/inventory/apply_slot_tag {{slot:"hotbar.{eq_slot}",group:"hotbar",index:{eq_slot}}}
-function {ns}:v{version}/zombies/wallbuys/msg_purchased
+{record_line}function {ns}:v{version}/zombies/wallbuys/msg_purchased
 """)
 
 		write_versioned_function(f"zombies/wallbuys/refill_{kind_name}", f"""

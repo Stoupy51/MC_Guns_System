@@ -22,10 +22,12 @@ loot replace entity @s inventory.1 loot mgs:i/m1911_mag
 function mgs:v5.1.0/zombies/inventory/scale_magazine_slot {slot:"inventory.1",index:1,remaining_multiplier:0.5}
 function mgs:v5.1.0/zombies/inventory/apply_slot_tag {slot:"inventory.1",group:"inventory",index:1}
 
-# hotbar.7: main equipment (frag by default)
+# hotbar.7: main equipment (frag by default). Record the lethal type so an empty slot later
+# refills with frag (index 0), not some stale value from a previous life.
 loot replace entity @s hotbar.7 loot mgs:i/frag_grenade
 item modify entity @s hotbar.7 mgs:v5.1.0/grenade/set_count_4
 function mgs:v5.1.0/zombies/inventory/apply_slot_tag {slot:"hotbar.7",group:"hotbar",index:7}
+scoreboard players set @s mgs.zb.lethal_type 0
 
 # hotbar.8: info item
 function mgs:v5.1.0/zombies/inventory/refresh_info_item

@@ -5,6 +5,7 @@
 #
 # @within	mgs:v5.1.0/zombies/escort/retarget with storage mgs:temp _escort
 #			mgs:v5.1.0/zombies/escort/retarget_lure with storage mgs:temp _escort
+#			mgs:v5.1.0/zombies/escort/retarget_monkey with storage mgs:temp _escort
 #
 # @args		x (unknown)
 #			y (unknown)

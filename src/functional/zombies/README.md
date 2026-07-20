@@ -197,13 +197,22 @@ Max Ammo or a wall-buy — not per-round.
   framework type `"monkey_bomb"`, 180t fuse, frag-style blast (damage 130 = BO ~1000 via the 2/15
   HP conversion, one-shots the horde to ~round 10). Carries `tactical:true` (routes wallbuy/
   inventory flows, excluded from the camo pipeline) + `stats.base_weapon` (box duplicate check).
-- [x] Attraction: `zombies/monkey_bomb.py` — a tiny invulnerable NoAI iron golem taunt follows the
-  thrown monkey; every second it deals 0.01 damage BY itself to every round enemy within 40 blocks,
-  so HurtByTarget (priority above player-targeting; also writes wolves' `angry_at`) makes them path
-  to the monkey. Hooks live in `weapon/grenade.py` init/tick/detonate. Explosion kills go through
-  the normal frag attribution (kill points work). ⚠ VERIFY IN-GAME: aggro steal on zombies + dogs,
-  taunt not clickable, crowd gathering looks right.
-  - Human feedback: first the iron golem is visible that's but, second we have escort.py that you could've used to make zombies focus a specific point. <= Use it, make sure you correctly handle with existing/non-existing escorts.
+- [x] Attraction: `zombies/monkey_bomb.py` — reuses the escort taxi (`escort.py`) instead of the
+  old visible-iron-golem + fake-damage aggro hack. Twice a second the thrown monkey (`monkey/attract`,
+  radius 40) redirects zombies that ALREADY have an escort by flagging their trader
+  (`escort/redirect_to_monkey`) and starts fresh monkey-targeted escorts on the nearest un-escorted
+  ones (`monkey/pull_one` → `escort/start` with `#zb_escort_mode 1`), capped by escort's
+  `MAX_ESCORTS`. A monkey-flagged trader's `retarget` routes to `escort/retarget_monkey` (aims at the
+  nearest `monkey_bomb`); `escort/zombie_tick` rides toward it (`monkey_ride`, skips the player
+  releases) and releases within `MONKEY_RELEASE` (4) so the horde gathers on the monkey; the fuse
+  blast then clears the crowd via the normal frag attribution (kill points work). Everything reverts
+  automatically once the monkey is gone (zombie_tick drops the flag when no `monkey_bomb` remains).
+  Hooks still live in `weapon/grenade.py` init/tick/detonate. Note: dogs are NOT attracted — the
+  escort freezes its passenger with NoAI, which resets a wolf's max HP (see `escort.py`). ⚠ VERIFY
+  IN-GAME: crowd gathering on the monkey looks right, escort budget not starved on big rounds.
+  - Human feedback (addressed): visible iron golem removed entirely (no taunt entity now); zombies
+    are pulled to the monkey through escort.py, handling both existing escorts (redirect their
+    trader) and non-existing ones (start a capped monkey escort).
 - [x] Mystery Box: pool entry + `default_give/monkey_bomb` → shared `wallbuys/give_tactical`
   (3 in `hotbar.6`, slot-tagged). Holding any monkeys = owned → rerolls like duplicate guns
   (`check_owned_result` + `capture_collected_name` now scan hotbar.6).
@@ -235,9 +244,17 @@ stored in `wallbuy_data.<id>.kind`: 0 gun (+magazine, unchanged flow) · 1 knife
   then frags cut to **2** — game start keeps 4.
 - [x] Max Ammo parity: lethals to 4, tacticals to 3, both only when owned; per-round
   `replenish_grenades` (+2) stays lethal-only.
+- [x] Empty-slot refills give the RIGHT lethal type. A per-player `mgs.zb.lethal_type` score
+  (index into `config/stats.py::LETHAL_GRENADE_IDS`, 0=frag) is set on give (starting loadout=frag)
+  and on a lethal wall-buy (`inventory/record_lethal_type`, from the bought `weapon_id`). When the
+  slot is empty, `inventory/give_lethal_type`/`loot_replace_lethal` re-give that type — used by
+  round-end `replenish_grenades` (count 2), `bonus/max_ammo_grenades` (count 4), and
+  `recreate_critical_items` (recovery). Previously all three hardcoded `frag_grenade`.
 - [ ] Playtest: knife/grenade/semtex/monkey wallbuys on a real map (place via editor with empty
   `magazine_id`), hover prices, refill/full/deny paths, slot enforcement after purchases.
-  - Human feedback: I bought semtex on a map, used all of them, then when the round ended I got 2 normal grenades instead of 2 semtex. When I have at least 1 semtex it correctly adds 2 on round end.
+  - Human feedback (addressed): bought semtex, used all, round ended → now gives 2 semtex, not 2
+    frag. Cause was the empty-slot branch always giving frag; the ≥1-left path was already correct
+    because it just increments the existing stack. Fixed via the `lethal_type` tracking above.
 
 
 ## 10. Zonweeb — ideas backlog

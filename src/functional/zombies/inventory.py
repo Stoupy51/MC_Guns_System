@@ -4,7 +4,7 @@
 # Handles strict zombies slot layout, slot-tagged items, and recovery from moved/dropped items.
 from stewbeet import Advancement, ItemModifier, JsonDict, Mem, set_json_encoder, write_versioned_function
 
-from ...config.stats import ALL_SLOTS, CAPACITY, REMAINING_BULLETS
+from ...config.stats import ALL_SLOTS, CAPACITY, LETHAL_GRENADE_IDS, REMAINING_BULLETS
 from ..helpers import knife_item_snbt
 from .perks import PERK_DEFINITIONS
 
@@ -186,10 +186,12 @@ loot replace entity @s inventory.1 loot {ns}:i/m1911_mag
 function {ns}:v{version}/zombies/inventory/scale_magazine_slot {{slot:"inventory.1",index:1,remaining_multiplier:0.5}}
 function {ns}:v{version}/zombies/inventory/apply_slot_tag {{slot:"inventory.1",group:"inventory",index:1}}
 
-# hotbar.7: main equipment (frag by default)
+# hotbar.7: main equipment (frag by default). Record the lethal type so an empty slot later
+# refills with frag (index 0), not some stale value from a previous life.
 loot replace entity @s hotbar.7 loot {ns}:i/frag_grenade
 item modify entity @s hotbar.7 {ns}:v{version}/grenade/set_count_4
 function {ns}:v{version}/zombies/inventory/apply_slot_tag {{slot:"hotbar.7",group:"hotbar",index:7}}
+scoreboard players set @s {ns}.zb.lethal_type 0
 
 # hotbar.8: info item
 function {ns}:v{version}/zombies/inventory/refresh_info_item
@@ -293,11 +295,37 @@ execute if items entity @s hotbar.7 {equipment_1_match} store result score #nade
 execute if items entity @s hotbar.7 {equipment_1_match} if score #nade_count {ns}.data matches 5.. run item modify entity @s hotbar.7 {ns}:v{version}/grenade/set_count_4
 execute if items entity @s hotbar.7 {equipment_1_match} run return 0
 
-# Case 2: slot 7 is empty (used all grenades) - give 2 fresh grenades
-execute unless items entity @s hotbar.7 * run loot replace entity @s hotbar.7 loot {ns}:i/frag_grenade
-execute unless items entity @s hotbar.7 * run return fail
-item modify entity @s hotbar.7 {ns}:v{version}/grenade/set_count_2
+# Case 2: slot 7 is empty (used all grenades) - give 2 of the player's BOUGHT lethal type, not a
+# hardcoded frag (a player who bought semtex and used them all should get 2 semtex back).
+execute unless items entity @s hotbar.7 * run function {ns}:v{version}/zombies/inventory/give_lethal_type {{count:2}}
+""")
+
+	# Re-give the player's recorded lethal type (frag / semtex / …) into the empty hotbar.7. The
+	# per-player {ns}.zb.lethal_type score is set on give (starting loadout = frag) and on a lethal
+	# wall-buy (wallbuys.py). frag is the fallback for an unset/0 score.
+	lethal_loot_lines: str = f"execute unless score @s {ns}.zb.lethal_type matches 1.. run loot replace entity @s hotbar.7 loot {ns}:i/{LETHAL_GRENADE_IDS[0]}\n"
+	lethal_loot_lines += "\n".join(
+		f"execute if score @s {ns}.zb.lethal_type matches {i} run loot replace entity @s hotbar.7 loot {ns}:i/{gid}"
+		for i, gid in enumerate(LETHAL_GRENADE_IDS) if i > 0
+	)
+	write_versioned_function("zombies/inventory/loot_replace_lethal", lethal_loot_lines)
+
+	# Fill hotbar.7 with $(count) grenades of the player's lethal type, then re-tag the slot.
+	write_versioned_function("zombies/inventory/give_lethal_type", f"""
+function {ns}:v{version}/zombies/inventory/loot_replace_lethal
+$item modify entity @s hotbar.7 {ns}:v{version}/grenade/set_count_$(count)
 function {ns}:v{version}/zombies/inventory/apply_slot_tag {{slot:"hotbar.7",group:"hotbar",index:7}}
+""")
+
+	# Record the player's lethal type from a wall-buy (called by wallbuys.py buy_lethal after the
+	# new-purchase give). Reads the bought weapon_id out of the {ns}:temp _wb_weapon storage.
+	lethal_record_lines: str = "\n".join(
+		f'execute if data storage {ns}:temp _wb_weapon{{weapon_id:"{gid}"}} run scoreboard players set @s {ns}.zb.lethal_type {i}'
+		for i, gid in enumerate(LETHAL_GRENADE_IDS) if i > 0
+	)
+	write_versioned_function("zombies/inventory/record_lethal_type", f"""
+scoreboard players set @s {ns}.zb.lethal_type 0
+{lethal_record_lines}
 """)
 
 	inv_changed_adv: JsonDict = {
@@ -374,7 +402,7 @@ execute if data entity @s Item.components."minecraft:custom_data".{ns} on origin
 execute unless items entity @s hotbar.0 *[custom_data~{knife_slot_cd}] run item replace entity @s hotbar.0 with {knife_item}
 execute unless items entity @s hotbar.0 *[custom_data~{knife_slot_cd}] run function {ns}:v{version}/zombies/inventory/apply_slot_tag {{slot:"hotbar.0",group:"hotbar",index:0}}
 
-execute unless items entity @s hotbar.7 *[custom_data~{equipment_1_slot_cd}] run loot replace entity @s hotbar.7 loot {ns}:i/frag_grenade
+execute unless items entity @s hotbar.7 *[custom_data~{equipment_1_slot_cd}] run function {ns}:v{version}/zombies/inventory/loot_replace_lethal
 execute unless items entity @s hotbar.7 *[custom_data~{equipment_1_slot_cd}] run function {ns}:v{version}/zombies/inventory/apply_slot_tag {{slot:"hotbar.7",group:"hotbar",index:7}}
 
 execute unless items entity @s hotbar.8 *[custom_data~{info_slot_cd}] run function {ns}:v{version}/zombies/inventory/refresh_info_item

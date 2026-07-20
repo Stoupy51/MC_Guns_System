@@ -13,8 +13,7 @@ execute if items entity @s hotbar.6 *[custom_data~{mgs:{gun:true}}] run item mod
 # Has grenades: set the stack to full (4) and stop
 execute if items entity @s hotbar.7 *[custom_data~{mgs:{gun:true}}] run return run item modify entity @s hotbar.7 mgs:v5.1.0/grenade/set_count_4
 
-# Empty slot (all grenades used): give a fresh frag, fill to 4, and re-tag the slot
-execute unless items entity @s hotbar.7 * run loot replace entity @s hotbar.7 loot mgs:i/frag_grenade
-item modify entity @s hotbar.7 mgs:v5.1.0/grenade/set_count_4
-function mgs:v5.1.0/zombies/inventory/apply_slot_tag {slot:"hotbar.7",group:"hotbar",index:7}
+# Empty slot (all grenades used): give 4 of the player's BOUGHT lethal type (semtex stays semtex),
+# not a hardcoded frag; give_lethal_type re-tags the slot too.
+execute unless items entity @s hotbar.7 * run function mgs:v5.1.0/zombies/inventory/give_lethal_type {count:4}
 

@@ -3,7 +3,7 @@
 #
 # @executed	as @e[tag=mgs.zb_escorted] & at @s
 #
-# @within	mgs:v5.1.0/zombies/escort/zombie_tick
+# @within	mgs:v5.1.0/zombies/escort/escort_tail
 #
 
 execute store result score #zb_esc_x mgs.data run data get entity @s Pos[0]

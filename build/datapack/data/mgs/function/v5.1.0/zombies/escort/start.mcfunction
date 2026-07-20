@@ -5,6 +5,7 @@
 #
 # @within	mgs:v5.1.0/zombies/on_stuck_zombie
 #			mgs:v5.1.0/zombies/escort/update_lure [ as @e[tag=...,limit=2,sort=random] & at @s ]
+#			mgs:v5.1.0/zombies/monkey/pull_one
 #
 
 # Freeze the zombie: the trader does the walking from here, the zombie is dragged behind it.
@@ -35,7 +36,12 @@ execute as @n[tag=mgs.zb_escort_new] run function mgs:v5.1.0/zombies/escort/set_
 # (see PATHFINDING_RANGE in escort.py; the command triggers the live budget recompute)
 execute as @n[tag=mgs.zb_escort_new] run attribute @s minecraft:follow_range base set 96
 
-# Aim it at the nearest alive player immediately
+# Monkey-bomb escorts (monkey_bomb.py) target the thrown monkey instead of a player: flag the
+# trader so retarget routes to retarget_monkey. #zb_escort_mode is the caller's one-shot signal.
+execute if score #zb_escort_mode mgs.data matches 1 run tag @n[tag=mgs.zb_escort_new] add mgs.zb_escort_monkey
+scoreboard players set #zb_escort_mode mgs.data 0
+
+# Aim it at its target immediately (nearest player, PaP-room lure, or thrown monkey per the flag)
 execute as @n[tag=mgs.zb_escort_new] at @s run function mgs:v5.1.0/zombies/escort/retarget
 
 tag @n[tag=mgs.zb_escort_new] remove mgs.zb_escort_new

@@ -172,6 +172,10 @@ scoreboard objectives add mgs.zb.points dummy
 scoreboard objectives add mgs.zb.kills dummy
 scoreboard objectives add mgs.zb.downs dummy
 
+# Bought lethal grenade type (index into LETHAL_GRENADE_IDS, 0 = frag): re-gives the RIGHT type
+# when the lethal slot is emptied (round-end replenish / Max Ammo / recovery). See inventory.py.
+scoreboard objectives add mgs.zb.lethal_type dummy
+
 # Perk scoreboards
 # zb.passive: 0=none, 1=points_x1.2, 2=powerup_x1.5
 # zb.ability: 0=none, 1=coward, 2=guardian
@@ -218,6 +222,10 @@ scoreboard objectives add mgs.zb.escort_ttl dummy
 # Live escort counter (gates the per-tick escorted-zombie scan)
 scoreboard players add #zb_escort_count mgs.data 0
 
+# One-shot target mode for the NEXT escort/start, consumed (reset to 0) inside start:
+# 0 = aim at the nearest player (stuck rescue / PaP lure), 1 = aim at a thrown monkey bomb.
+scoreboard players add #zb_escort_mode mgs.data 0
+
 # Horde alliance team: round zombies and escort traders are allied, so the trader's
 # AvoidEntityGoal(Zombie) never fires (it flees at SPRINT speed otherwise!) and zombies never
 # attack the taxi. Created at load, not game start, so a mid-game /reload can't leave it missing.
@@ -239,9 +247,6 @@ scoreboard objectives add mgs.mb.willmove dummy
 scoreboard objectives add mgs.mb.pid dummy
 # Buyer's pid, stamped on each pull display
 scoreboard objectives add mgs.mb.buyer dummy
-
-# Monkey bomb grenade <-> attraction taunt pairing
-scoreboard objectives add mgs.monkey_id dummy
 
 # Pack-a-Punch machine scoreboards
 scoreboard objectives add mgs.zb.pap.id dummy
