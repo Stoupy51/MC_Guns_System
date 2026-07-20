@@ -1,10 +1,14 @@
 # ruff: noqa: E501
 # Wallbuy System
-# Wall-mounted weapon stations. Players interact to buy weapons.
-# Each wallbuy displays its weapon on the wall and shows info on hover.
+# Wall-mounted stations. Players interact to buy items.
+# Each wallbuy displays its item on the wall and shows info on hover.
+# The item KIND is probed from the item's custom_data at setup and routes the purchase flow:
+#   0 = gun (+magazine, hotbar.1-3)        1 = knife (hotbar.0, no refill)
+#   2 = lethal grenade (hotbar.7, max 4)   3 = tactical e.g. monkey bomb (hotbar.6, max 3)
 
 from stewbeet import Mem, write_load_file, write_versioned_function
 
+from ...config.stats import GRENADE_TYPE
 from ..helpers import MGS_TAG
 from .common import build_weapon_magazine_data, deny_not_enough_points_body, game_active_guard_cmd
 
@@ -82,8 +86,11 @@ execute store result score @n[tag={ns}.wb_new] {ns}.zb.wb.rfprice run data get s
 execute store result score @n[tag={ns}.wb_new] {ns}.zb.wb.rfpap run data get storage {ns}:temp _wb_iter[0].refill_price_pap
 
 # Store weapon_id, magazine_id, and name in indexed storage for later lookup
+# (magazine_id is optional on non-gun wallbuys: pre-clear so a missing field can't leak the
+# previous iteration's value)
 execute store result storage {ns}:temp _wb_store.id int 1 run scoreboard players get #wb_counter {ns}.data
 data modify storage {ns}:temp _wb_store.weapon_id set from storage {ns}:temp _wb_iter[0].weapon_id
+data modify storage {ns}:temp _wb_store.magazine_id set value ""
 data modify storage {ns}:temp _wb_store.magazine_id set from storage {ns}:temp _wb_iter[0].magazine_id
 data modify storage {ns}:temp _wb_store.name set from storage {ns}:temp _wb.name
 
@@ -97,6 +104,14 @@ function {ns}:v{version}/zombies/wallbuys/set_display_item with storage {ns}:tem
 
 # Capture displayed item_name for hover title
 data modify storage {ns}:temp _wb_store.item_name set from entity @n[tag={ns}.wb_new_display] item.components."minecraft:item_name"
+
+# Probe the item KIND from the display item's custom_data (0 gun, 1 knife, 2 lethal, 3 tactical).
+# Grenade check first so the tactical flag can override it (monkey bombs carry both).
+scoreboard players set #wb_kind {ns}.data 0
+execute if data entity @n[tag={ns}.wb_new_display] item.components."minecraft:custom_data".{ns}.stats.{GRENADE_TYPE} run scoreboard players set #wb_kind {ns}.data 2
+execute if data entity @n[tag={ns}.wb_new_display] item.components."minecraft:custom_data".{ns}.tactical run scoreboard players set #wb_kind {ns}.data 3
+execute if data entity @n[tag={ns}.wb_new_display] item.components."minecraft:custom_data".{ns}.knife run scoreboard players set #wb_kind {ns}.data 1
+execute store result storage {ns}:temp _wb_store.kind int 1 run scoreboard players get #wb_kind {ns}.data
 function {ns}:v{version}/zombies/wallbuys/store_data with storage {ns}:temp _wb_store
 
 tag @e[tag={ns}.wb_new_display] remove {ns}.wb_new_display
@@ -115,7 +130,7 @@ $summon minecraft:item_display $(x) $(y) $(z) {{billboard:"fixed",item_display:"
 """)
 
 	write_versioned_function("zombies/wallbuys/store_data", f"""
-$data modify storage {ns}:zombies wallbuy_data."$(id)" set value {{weapon_id:"$(weapon_id)",name:"$(name)",magazine_id:"$(magazine_id)",item_name:$(item_name)}}
+$data modify storage {ns}:zombies wallbuy_data."$(id)" set value {{weapon_id:"$(weapon_id)",name:"$(name)",magazine_id:"$(magazine_id)",kind:$(kind),item_name:$(item_name)}}
 """)
 
 	write_versioned_function("zombies/wallbuys/set_display_item", f"""
@@ -136,6 +151,11 @@ function {ns}:v{version}/zombies/wallbuys/get_display_name
 execute store result score #wb_buy_price {ns}.data run scoreboard players get @n[tag=bs.interaction.target] {ns}.zb.wb.price
 execute store result score #wb_rfprice {ns}.data run scoreboard players get @n[tag=bs.interaction.target] {ns}.zb.wb.rfprice
 execute store result score #wb_rfpap {ns}.data run scoreboard players get @n[tag=bs.interaction.target] {ns}.zb.wb.rfpap
+
+# Non-gun wallbuys (knife / lethal grenade / tactical): dedicated purchase flows
+execute if data storage {ns}:temp _wb_weapon{{kind:1}} run return run function {ns}:v{version}/zombies/wallbuys/buy_knife with storage {ns}:temp _wb_weapon
+execute if data storage {ns}:temp _wb_weapon{{kind:2}} run return run function {ns}:v{version}/zombies/wallbuys/buy_lethal with storage {ns}:temp _wb_weapon
+execute if data storage {ns}:temp _wb_weapon{{kind:3}} run return run function {ns}:v{version}/zombies/wallbuys/buy_tactical with storage {ns}:temp _wb_weapon
 
 # Compute effective price for this interaction (buy vs refill vs PAP refill)
 scoreboard players operation #wb_price {ns}.data = #wb_buy_price {ns}.data
@@ -165,6 +185,83 @@ execute if score #wb_purchase_mode {ns}.data matches 1..3 run function {ns}:v{ve
 
 	write_versioned_function("zombies/wallbuys/deny_not_enough_points", f"""
 {deny_not_enough_points_body(ns, version, "#wb_price")}
+""")
+
+	## Knife wallbuy (kind 1): replaces hotbar.0, no refill concept (macro with _wb_weapon, @s = player)
+	write_versioned_function("zombies/wallbuys/buy_knife", f"""
+# Already own this exact knife: nothing to buy
+$execute if items entity @s hotbar.0 *[custom_data~{{{ns}:{{$(weapon_id):true}}}}] run return run function {ns}:v{version}/zombies/wallbuys/deny_knife_owned
+
+# Full price
+scoreboard players operation #wb_price {ns}.data = #wb_buy_price {ns}.data
+execute unless score @s {ns}.zb.points >= #wb_price {ns}.data run return run function {ns}:v{version}/zombies/wallbuys/deny_not_enough_points
+scoreboard players operation @s {ns}.zb.points -= #wb_price {ns}.data
+
+# Replace the knife slot and re-tag it for the zombies slot enforcement (inventory/check_slots)
+$loot replace entity @s hotbar.0 loot {ns}:i/$(weapon_id)
+function {ns}:v{version}/zombies/inventory/apply_slot_tag {{slot:"hotbar.0",group:"hotbar",index:0}}
+function {ns}:v{version}/zombies/wallbuys/msg_purchased
+""")
+
+	write_versioned_function("zombies/wallbuys/deny_knife_owned", f"""
+tellraw @s [{MGS_TAG},{{"text":"You already own this knife.","color":"yellow"}}]
+function {ns}:v{version}/zombies/feedback/sound_deny
+""")
+
+	## Equipment wallbuys: lethal grenades (hotbar.7, max 4) and tacticals (hotbar.6, max 3).
+	## Same flow, generated per kind: same-item-in-slot -> refill at refill_price (deny when already
+	## full, BEFORE charging), otherwise full price for a fresh full stack of the bought type.
+	for kind_name, eq_slot, eq_count in (("lethal", 7, 4), ("tactical", 6, 3)):
+		widows_note: str = ""
+		if kind_name == "lethal":
+			widows_note = "\n# NOTE Widow's Wine (README task 5): once webs exist, a web owner's lethal buy must refill\n# web grenades instead of switching the type — branch here on the perk score."
+		write_versioned_function(f"zombies/wallbuys/buy_{kind_name}", f"""
+# Same equipment already in the slot: refill flow
+$execute if items entity @s hotbar.{eq_slot} *[custom_data~{{{ns}:{{$(weapon_id):true}}}}] run return run function {ns}:v{version}/zombies/wallbuys/refill_{kind_name} with storage {ns}:temp _wb_weapon
+{widows_note}
+# New purchase (empty slot or different equipment type): full price for {eq_count} fresh ones
+scoreboard players operation #wb_price {ns}.data = #wb_buy_price {ns}.data
+execute unless score @s {ns}.zb.points >= #wb_price {ns}.data run return run function {ns}:v{version}/zombies/wallbuys/deny_not_enough_points
+scoreboard players operation @s {ns}.zb.points -= #wb_price {ns}.data
+$loot replace entity @s hotbar.{eq_slot} loot {ns}:i/$(weapon_id)
+item modify entity @s hotbar.{eq_slot} {ns}:v{version}/grenade/set_count_{eq_count}
+function {ns}:v{version}/zombies/inventory/apply_slot_tag {{slot:"hotbar.{eq_slot}",group:"hotbar",index:{eq_slot}}}
+function {ns}:v{version}/zombies/wallbuys/msg_purchased
+""")
+
+		write_versioned_function(f"zombies/wallbuys/refill_{kind_name}", f"""
+# Already at max: deny without charging (no points were deducted yet on this path)
+execute store result score #wb_eq_count {ns}.data run data get entity @s Inventory[{{Slot:{eq_slot}b}}].count
+execute if score #wb_eq_count {ns}.data matches {eq_count}.. run return run function {ns}:v{version}/zombies/wallbuys/deny_equipment_full
+
+# Refill price
+scoreboard players operation #wb_price {ns}.data = #wb_rfprice {ns}.data
+execute unless score @s {ns}.zb.points >= #wb_price {ns}.data run return run function {ns}:v{version}/zombies/wallbuys/deny_not_enough_points
+scoreboard players operation @s {ns}.zb.points -= #wb_price {ns}.data
+item modify entity @s hotbar.{eq_slot} {ns}:v{version}/grenade/set_count_{eq_count}
+function {ns}:v{version}/zombies/wallbuys/msg_refilled
+""")
+
+	write_versioned_function("zombies/wallbuys/deny_equipment_full", f"""
+tellraw @s [{MGS_TAG},{{"text":"Your equipment is already full.","color":"yellow"}}]
+function {ns}:v{version}/zombies/feedback/sound_deny
+""")
+
+	## Silent tactical give/refill (no pricing, no messages): shared by the Mystery Box collect flow
+	## (default_give/monkey_bomb) and any future scripted givers. Sets the usual purchase flags so
+	## the box collect's retry logic sees a completed give.
+	write_versioned_function("zombies/wallbuys/give_tactical", f"""
+scoreboard players set #wb_purchase_done {ns}.data 1
+scoreboard players set #wb_purchase_mode {ns}.data 2
+
+# Already carrying the same tactical: top it back up to 3
+$execute if items entity @s hotbar.6 *[custom_data~{{{ns}:{{$(weapon_id):true}}}}] run return run item modify entity @s hotbar.6 {ns}:v{version}/grenade/set_count_3
+
+# Fresh give: 3 in the tactical slot (hotbar.6), tagged for the zombies slot enforcement
+$loot replace entity @s hotbar.6 loot {ns}:i/$(weapon_id)
+item modify entity @s hotbar.6 {ns}:v{version}/grenade/set_count_3
+function {ns}:v{version}/zombies/inventory/apply_slot_tag {{slot:"hotbar.6",group:"hotbar",index:6}}
+scoreboard players set #wb_purchase_mode {ns}.data 1
 """)
 
 	write_versioned_function("zombies/wallbuys/msg_purchased", f"""
@@ -424,11 +521,35 @@ execute store result score #wb_buy_price {ns}.data run scoreboard players get @n
 execute store result score #wb_rfprice {ns}.data run scoreboard players get @n[tag=bs.interaction.target] {ns}.zb.wb.rfprice
 execute store result score #wb_rfpap {ns}.data run scoreboard players get @n[tag=bs.interaction.target] {ns}.zb.wb.rfpap
 scoreboard players operation #wb_price {ns}.data = #wb_buy_price {ns}.data
+data modify storage {ns}:temp _wb_price_suffix set value ""
+
+# Non-gun wallbuys: kind-specific effective price + suffix
+execute if data storage {ns}:temp _wb_weapon{{kind:1}} run return run function {ns}:v{version}/zombies/wallbuys/hover_knife with storage {ns}:temp _wb_weapon
+execute if data storage {ns}:temp _wb_weapon{{kind:2}} run return run function {ns}:v{version}/zombies/wallbuys/hover_lethal with storage {ns}:temp _wb_weapon
+execute if data storage {ns}:temp _wb_weapon{{kind:3}} run return run function {ns}:v{version}/zombies/wallbuys/hover_tactical with storage {ns}:temp _wb_weapon
+
 function {ns}:v{version}/zombies/wallbuys/compute_effective_price with storage {ns}:temp _wb_weapon
 function {ns}:v{version}/zombies/wallbuys/set_hover_price_suffix
+function {ns}:v{version}/zombies/wallbuys/render_hover
+""")
 
+	## Shared actionbar render (title + effective #wb_price + suffix, all prepared by the caller)
+	write_versioned_function("zombies/wallbuys/render_hover", f"""
 data modify storage smithed.actionbar:input message set value {{json:{wallbuy_hover_message},priority:"conditional",freeze:5}}
 function #smithed.actionbar:message
+""")
+
+	## Kind-specific hovers (macro with _wb_weapon, @s = player)
+	write_versioned_function("zombies/wallbuys/hover_knife", f"""
+$execute if items entity @s hotbar.0 *[custom_data~{{{ns}:{{$(weapon_id):true}}}}] run data modify storage {ns}:temp _wb_price_suffix set value " (Owned)"
+function {ns}:v{version}/zombies/wallbuys/render_hover
+""")
+
+	for kind_name, eq_slot in (("lethal", 7), ("tactical", 6)):
+		write_versioned_function(f"zombies/wallbuys/hover_{kind_name}", f"""
+$execute if items entity @s hotbar.{eq_slot} *[custom_data~{{{ns}:{{$(weapon_id):true}}}}] run scoreboard players operation #wb_price {ns}.data = #wb_rfprice {ns}.data
+$execute if items entity @s hotbar.{eq_slot} *[custom_data~{{{ns}:{{$(weapon_id):true}}}}] run data modify storage {ns}:temp _wb_price_suffix set value " (Refill)"
+function {ns}:v{version}/zombies/wallbuys/render_hover
 """)
 
 	## Hook into preload_complete: setup wallbuys

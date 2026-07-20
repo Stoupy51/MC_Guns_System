@@ -1379,3 +1379,20 @@ FLASH_GRENADE: JsonDict = {
     }
 }
 
+# Zombies-exclusive tactical (hotbar.6): attracts zombies during the fuse, then explodes.
+# "tactical": True keeps it out of the camo pipeline and lets wallbuys/inventory route it to the
+# tactical slot. base_weapon is set so the mystery box duplicate check can match it in hotbar.6.
+# Damage follows the BO->MC 2/15 HP conversion used by calc_zombie_hp (BO ~1000 -> MC ~130),
+# so the blast one-shots the horde up to roughly round 10 like the original.
+MONKEY_BOMB: JsonDict = {
+    "tactical": True,
+    "stats": {
+        GRENADE_TYPE: "monkey_bomb", FIRE_MODE: "semi",
+        BASE_WEAPON: "monkey_bomb",
+        CAPACITY: 1, REMAINING_BULLETS: 1, COOLDOWN: 20,
+        PROJECTILE_SPEED: 800, PROJECTILE_GRAVITY: 60, PROJECTILE_MODEL: "monkey_bomb",
+        GRENADE_FUSE: 180,  # 9 seconds (BO timing: lands, attracts ~7s, then detonates)
+        EXPLOSION_RADIUS: 7, EXPLOSION_DAMAGE: 130, EXPLOSION_DECAY: 0.8,
+    }
+}
+

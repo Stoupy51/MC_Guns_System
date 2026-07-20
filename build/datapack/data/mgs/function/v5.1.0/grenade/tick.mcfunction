@@ -38,6 +38,9 @@ function #bs.move:apply_vel {scale:0.001,with:{blocks:true,entities:false,ignore
 # Trail particle (white_smoke avoids false-positive with shader marker detection)
 particle white_smoke ~ ~ ~ 0.05 0.05 0.05 0.01 1 force @a[distance=..64]
 
+# Monkey bomb: per-tick attraction (taunt follow + periodic aggro pulses; no-op outside zombies)
+execute if entity @s[tag=mgs.monkey_bomb] at @s run function mgs:v5.1.0/zombies/monkey/tick
+
 # Decrement fuse timer (real-time via #tick_delta)
 scoreboard players operation @s mgs.data -= #tick_delta mgs.data
 

@@ -2,7 +2,7 @@
 # Imports
 import copy
 
-from stewbeet import Item, JsonDict
+from stewbeet import Item, JsonDict, Mem
 
 from ..config.stats import get_model_path, load_model
 
@@ -37,6 +37,29 @@ def power_switch_on_model() -> JsonDict:
 
 # Main function should return a database
 def main() -> None:
+    ns: str = Mem.ctx.project_id
+
+    # Bowie Knife: zombies wall-buy knife upgrade for hotbar.0 (see zombies/wallbuys.py buy_knife).
+    # Damage follows the same BO->MC 2/15 conversion as the zombie HP curve: BO Bowie 1150 -> MC 153,
+    # one-hit kills until ~round 11 like the original (plain knife is BO 150 -> MC 20, helpers.py).
+    # Netherite sword texture as placeholder until real knife art exists (see zombies README task 1).
+    Item(
+        id="bowie_knife",
+        base_item="minecraft:iron_sword",
+        components={
+            "max_stack_size": 1,
+            "rarity": "rare",
+            "unbreakable": {},
+            "custom_data": {ns: {"knife": True, "bowie_knife": True}},
+            "item_name": [{"text": "Bowie Knife", "color": "gold", "italic": False}],
+            "lore": [[{"text": "One-hit kills until ~round 11", "color": "gray", "italic": False}]],
+            "attribute_modifiers": [
+                {"type": "attack_damage", "amount": 153, "operation": "add_value", "slot": "mainhand", "id": "minecraft:base_attack_damage"},
+                {"type": "attack_speed", "amount": -2.5, "operation": "add_value", "slot": "mainhand", "id": "minecraft:base_attack_speed"},
+            ],
+        },
+        override_model=load_model(get_model_path("bowie_knife")),
+    )
 
     # Add Pack-a-Punch
     Item(id="pack_a_punch", override_model=load_model(get_model_path("pack_a_punch")))

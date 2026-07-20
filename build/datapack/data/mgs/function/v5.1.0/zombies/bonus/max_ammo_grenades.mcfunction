@@ -6,6 +6,10 @@
 # @within	mgs:zombies/bonus/max_ammo
 #
 
+# Tactical slot (hotbar.6, e.g. Monkey Bombs): top back to 3 — refill only, never granted from
+# an empty slot (tacticals come exclusively from the Mystery Box or a wall-buy)
+execute if items entity @s hotbar.6 *[custom_data~{mgs:{gun:true}}] run item modify entity @s hotbar.6 mgs:v5.1.0/grenade/set_count_3
+
 # Has grenades: set the stack to full (4) and stop
 execute if items entity @s hotbar.7 *[custom_data~{mgs:{gun:true}}] run return run item modify entity @s hotbar.7 mgs:v5.1.0/grenade/set_count_4
 

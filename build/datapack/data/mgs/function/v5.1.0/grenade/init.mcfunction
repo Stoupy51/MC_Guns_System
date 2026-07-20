@@ -22,6 +22,9 @@ execute if data entity @s data.config.model_override run function mgs:v5.1.0/gre
 # Set fuse timer from config
 execute store result score @s mgs.data run data get entity @s data.config.grenade_fuse
 
+# Monkey bomb: tag + summon its zombie-attraction taunt (zombies module owns the behavior)
+execute if data entity @s data.config{grenade_type:"monkey_bomb"} run function mgs:v5.1.0/zombies/monkey/on_throw
+
 # Launch grace period: disable entity collision for 3 ticks to avoid sticking to the thrower
 scoreboard players set @s mgs.grenade_launch 3
 

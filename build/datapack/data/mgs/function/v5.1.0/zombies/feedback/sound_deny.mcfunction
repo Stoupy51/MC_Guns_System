@@ -22,6 +22,8 @@
 #			mgs:v5.1.0/zombies/power/deny_already_on
 #			mgs:v5.1.0/zombies/doors/deny_not_enough_points
 #			mgs:v5.1.0/zombies/wallbuys/deny_not_enough_points
+#			mgs:v5.1.0/zombies/wallbuys/deny_knife_owned
+#			mgs:v5.1.0/zombies/wallbuys/deny_equipment_full
 #			mgs:v5.1.0/zombies/wallbuys/msg_refund_full
 #			mgs:v5.1.0/zombies/wallbuys/deny_hold_valid_slot
 #			mgs:v5.1.0/zombies/perks/deny_requires_power

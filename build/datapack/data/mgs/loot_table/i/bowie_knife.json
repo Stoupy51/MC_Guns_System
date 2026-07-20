@@ -1,0 +1,68 @@
+{
+	"pools": [
+		{
+			"rolls": 1,
+			"entries": [
+				{
+					"type": "minecraft:item",
+					"name": "minecraft:iron_sword",
+					"functions": [
+						{
+							"function": "minecraft:set_components",
+							"components": {
+								"minecraft:max_stack_size": 1,
+								"minecraft:rarity": "rare",
+								"minecraft:unbreakable": {},
+								"minecraft:custom_data": {
+									"mgs": {
+										"knife": true,
+										"bowie_knife": true
+									},
+									"smithed": {
+										"id": "mgs:bowie_knife",
+										"origin": "mgs",
+										"ignore": {"functionality": true,"crafting": true}
+									}
+								},
+								"minecraft:item_name": [
+									{
+										"translate": "mgs.bowie_knife",
+										"color": "gold",
+										"italic": false
+									}
+								],
+								"minecraft:lore": [
+									[
+										[{"translate":"mgs.one_hit_kills_until_round","color": "gray","italic": false}, " 11"]
+									],
+									[
+										"",
+										{"text": "I","color": "white","italic": false,"font": "mgs:icons"},
+										[{"text":" ","italic": true,"color": "blue"}, {"translate": "mgs.mc_guns_system"}]
+									]
+								],
+								"minecraft:attribute_modifiers": [
+									{
+										"type": "attack_damage",
+										"amount": 153,
+										"operation": "add_value",
+										"slot": "mainhand",
+										"id": "minecraft:base_attack_damage"
+									},
+									{
+										"type": "attack_speed",
+										"amount": -2.5,
+										"operation": "add_value",
+										"slot": "mainhand",
+										"id": "minecraft:base_attack_speed"
+									}
+								],
+								"minecraft:item_model": "mgs:bowie_knife"
+							}
+						}
+					]
+				}
+			]
+		}
+	]
+}

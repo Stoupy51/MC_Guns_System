@@ -41,8 +41,11 @@ execute store result score @n[tag=mgs.wb_new] mgs.zb.wb.rfprice run data get sto
 execute store result score @n[tag=mgs.wb_new] mgs.zb.wb.rfpap run data get storage mgs:temp _wb_iter[0].refill_price_pap
 
 # Store weapon_id, magazine_id, and name in indexed storage for later lookup
+# (magazine_id is optional on non-gun wallbuys: pre-clear so a missing field can't leak the
+# previous iteration's value)
 execute store result storage mgs:temp _wb_store.id int 1 run scoreboard players get #wb_counter mgs.data
 data modify storage mgs:temp _wb_store.weapon_id set from storage mgs:temp _wb_iter[0].weapon_id
+data modify storage mgs:temp _wb_store.magazine_id set value ""
 data modify storage mgs:temp _wb_store.magazine_id set from storage mgs:temp _wb_iter[0].magazine_id
 data modify storage mgs:temp _wb_store.name set from storage mgs:temp _wb.name
 
@@ -56,6 +59,14 @@ function mgs:v5.1.0/zombies/wallbuys/set_display_item with storage mgs:temp _wb
 
 # Capture displayed item_name for hover title
 data modify storage mgs:temp _wb_store.item_name set from entity @n[tag=mgs.wb_new_display] item.components."minecraft:item_name"
+
+# Probe the item KIND from the display item's custom_data (0 gun, 1 knife, 2 lethal, 3 tactical).
+# Grenade check first so the tactical flag can override it (monkey bombs carry both).
+scoreboard players set #wb_kind mgs.data 0
+execute if data entity @n[tag=mgs.wb_new_display] item.components."minecraft:custom_data".mgs.stats.grenade_type run scoreboard players set #wb_kind mgs.data 2
+execute if data entity @n[tag=mgs.wb_new_display] item.components."minecraft:custom_data".mgs.tactical run scoreboard players set #wb_kind mgs.data 3
+execute if data entity @n[tag=mgs.wb_new_display] item.components."minecraft:custom_data".mgs.knife run scoreboard players set #wb_kind mgs.data 1
+execute store result storage mgs:temp _wb_store.kind int 1 run scoreboard players get #wb_kind mgs.data
 function mgs:v5.1.0/zombies/wallbuys/store_data with storage mgs:temp _wb_store
 
 tag @e[tag=mgs.wb_new_display] remove mgs.wb_new_display
