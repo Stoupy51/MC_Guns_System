@@ -87,7 +87,8 @@ FIELD_DOCS: dict[tuple[str, str] | str, str] = {
 	("door", "link_id"): "Doors that share a link_id open together as a single purchase.",
 	("door", "back_group_id"): "Zombie spawn group_id unlocked behind this door (-1 = none).",
 	("perk_machine", "perk_id"): "Perk granted by this machine:\njuggernog · speed_cola · double_tap · quick_revive · mule_kick · stamin_up",
-	("wallbuy", "weapon_id"): "Catalog weapon id given on purchase (e.g. m1911, ak47, mp5).",
+	("wallbuy", "weapon_id"): "Item id given on purchase. Guns (e.g. m1911, ak47, mp5),\nknives (bowie_knife, ~3000 pts), lethal grenades (frag_grenade,\nsemtex...), or tacticals (monkey_bomb). Non-guns route to their\nown slot: knife hotbar.0, lethals hotbar.7 (x4), tacticals hotbar.6 (x3).",
+	("wallbuy", "magazine_id"): "Magazine item paired with the gun (e.g. m1911_mag).\nLeave empty for knife/grenade/tactical wallbuys.",
 	("barrier", "radius"): "Block radius the barrier toggles open/closed around its marker.",
 	"activation_box": "Optional [x, y, z, dx, dy, dz] box (relative to this spawn, in blocks).\nWhen set, this spawn only produces enemies while a player stands inside the box.\nx/y/z = corner offset from the spawn, dx/dy/dz = size. Empty [] = always active.",
 	# Shared fallbacks (any element type):

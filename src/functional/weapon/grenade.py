@@ -32,14 +32,11 @@ def main() -> None:
     )
 
     # Create item modifiers to set grenade count (for initial give and replenishment)
-    Mem.ctx.data[ns].item_modifiers[f"v{version}/grenade/set_count_4"] = set_json_encoder(
-        ItemModifier({"function": "minecraft:set_count", "count": 4}),
-        max_level=-1
-    )
-    Mem.ctx.data[ns].item_modifiers[f"v{version}/grenade/set_count_2"] = set_json_encoder(
-        ItemModifier({"function": "minecraft:set_count", "count": 2}),
-        max_level=-1
-    )
+    for i in (4, 3, 2):
+        Mem.ctx.data[ns].item_modifiers[f"v{version}/grenade/set_count_{i}"] = set_json_encoder(
+            ItemModifier({"function": "minecraft:set_count", "count": i}),
+            max_level=-1
+        )
     Mem.ctx.data[ns].item_modifiers[f"v{version}/grenade/set_count_add_2"] = set_json_encoder(
         ItemModifier({"function": "minecraft:set_count", "count": 2, "add": True}),
         max_level=-1
@@ -121,6 +118,9 @@ execute if data entity @s data.config.model_override run function {ns}:v{version
 # Set fuse timer from config
 execute store result score @s {ns}.data run data get entity @s data.config.{GRENADE_FUSE}
 
+# Monkey bomb: tag + summon its zombie-attraction taunt (zombies module owns the behavior)
+execute if data entity @s data.config{{{GRENADE_TYPE}:"monkey_bomb"}} run function {ns}:v{version}/zombies/monkey/on_throw
+
 # Launch grace period: disable entity collision for 3 ticks to avoid sticking to the thrower
 scoreboard players set @s {ns}.grenade_launch 3
 
@@ -189,6 +189,9 @@ function #bs.move:apply_vel {{scale:0.001,with:{{blocks:true,entities:false,igno
 
 # Trail particle (white_smoke avoids false-positive with shader marker detection)
 particle white_smoke ~ ~ ~ 0.05 0.05 0.05 0.01 1 force @a[distance=..64]
+
+# Monkey bomb: per-tick attraction (taunt follow + periodic aggro pulses; no-op outside zombies)
+execute if entity @s[tag={ns}.monkey_bomb] at @s run function {ns}:v{version}/zombies/monkey/tick
 
 # Decrement fuse timer (real-time via #tick_delta)
 scoreboard players operation @s {ns}.data -= #tick_delta {ns}.data
@@ -292,6 +295,7 @@ tag @s remove {ns}.tp_me
 # Route to the appropriate detonation effect based on grenade type
 execute if data entity @s data.config{{{GRENADE_TYPE}:"frag"}} run return run function {ns}:v{version}/grenade/detonate_frag
 execute if data entity @s data.config{{{GRENADE_TYPE}:"semtex"}} run return run function {ns}:v{version}/grenade/detonate_frag
+execute if data entity @s data.config{{{GRENADE_TYPE}:"monkey_bomb"}} run return run function {ns}:v{version}/zombies/monkey/detonate
 execute if data entity @s data.config{{{GRENADE_TYPE}:"smoke"}} run return run function {ns}:v{version}/grenade/detonate_smoke
 execute if data entity @s data.config{{{GRENADE_TYPE}:"flash"}} run return run function {ns}:v{version}/grenade/detonate_flash
 """)

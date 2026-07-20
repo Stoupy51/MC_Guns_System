@@ -12,6 +12,7 @@ from .hurt_player import generate_hurt_player
 from .inventory import generate_zombies_inventory
 from .maps import generate_zombies_maps
 from .menus import generate_zombies_menus
+from .monkey_bomb import generate_monkey_bomb
 from .mystery_box import generate_mystery_box
 from .pap import generate_pap
 from .perks import generate_perks
@@ -37,6 +38,7 @@ def main() -> None:
     generate_zombies_inventory()
     generate_display_helpers()
     generate_mystery_box()
+    generate_monkey_bomb()
     generate_pap()
     generate_barriers()
     generate_powerups()

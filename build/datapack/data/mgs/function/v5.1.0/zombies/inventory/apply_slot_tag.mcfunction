@@ -13,6 +13,10 @@
 #			mgs:v5.1.0/zombies/inventory/replenish_grenades {slot:"hotbar.7",group:"hotbar",index:7}
 #			mgs:v5.1.0/zombies/inventory/recreate_critical_items {slot:"hotbar.0",group:"hotbar",index:0}
 #			mgs:v5.1.0/zombies/inventory/recreate_critical_items {slot:"hotbar.7",group:"hotbar",index:7}
+#			mgs:v5.1.0/zombies/wallbuys/buy_knife {slot:"hotbar.0",group:"hotbar",index:0}
+#			mgs:v5.1.0/zombies/wallbuys/buy_lethal {slot:"hotbar.7",group:"hotbar",index:7}
+#			mgs:v5.1.0/zombies/wallbuys/buy_tactical {slot:"hotbar.6",group:"hotbar",index:6}
+#			mgs:v5.1.0/zombies/wallbuys/give_tactical {slot:"hotbar.6",group:"hotbar",index:6}
 #			mgs:v5.1.0/zombies/wallbuys/give_to_slot {slot:"hotbar.$(hotbar)",group:"hotbar",index:$(hotbar)}
 #			mgs:v5.1.0/zombies/wallbuys/give_to_slot {slot:"inventory.$(inventory)",group:"inventory",index:$(inventory)}
 #			mgs:v5.1.0/zombies/wallbuys/reload_pair {slot:"hotbar.$(hotbar)",group:"hotbar",index:$(hotbar)}

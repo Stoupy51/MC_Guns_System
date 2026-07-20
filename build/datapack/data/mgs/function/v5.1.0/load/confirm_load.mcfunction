@@ -240,6 +240,9 @@ scoreboard objectives add mgs.mb.pid dummy
 # Buyer's pid, stamped on each pull display
 scoreboard objectives add mgs.mb.buyer dummy
 
+# Monkey bomb grenade <-> attraction taunt pairing
+scoreboard objectives add mgs.monkey_id dummy
+
 # Pack-a-Punch machine scoreboards
 scoreboard objectives add mgs.zb.pap.id dummy
 scoreboard objectives add mgs.zb.pap.price dummy

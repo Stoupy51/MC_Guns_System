@@ -203,10 +203,13 @@ def main() -> None:
     queue: list[tuple[str, str, str, str, str]] = []  # (weapon_texture_path, material_texture_path, out_path, base_weapon, material)
 
     # For each weapon, make variants with only one material (e.g. wood, metal, gold, etc.)
+    # Tacticals (e.g. monkey_bomb) are skipped: they get no camos, and their models use vanilla
+    # block textures that don't exist in the textures folder the blender reads from.
     weapons: list[Item] = [
         Item.from_id(item)
         for item in Mem.definitions.keys()
         if Item.from_id(item).components.get("custom_data", {}).get(ns, {}).get("gun")
+        and not Item.from_id(item).components.get("custom_data", {}).get(ns, {}).get("tactical")
     ]
     for material in MATERIALS:
         material_texture_path: str = f"{textures_folder}/{material}.png"

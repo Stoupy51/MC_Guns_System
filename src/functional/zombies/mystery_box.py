@@ -23,6 +23,10 @@ MOVE_TOTAL_TICKS: int = MOVE_BEAR_TICKS + MOVE_ASCEND_TICKS + MOVE_WAIT_TICKS + 
 # Teddy bear player head texture (Black Ops easter egg)
 BEAR_HEAD_TEXTURE: str = "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvY2RiNjZjZjlmMTdlMTQ4OTMxMGM3YWNjNjgxMDE2MDUxMTk2YTg0OGUwNzZkYjZmYzA5MzkxYjkyODcyYTc3NyJ9fX0="
 
+# Monkey Bomb pool weight (weapon weights come from the catalog; the monkey is a non-catalog
+# tactical added to the pool manually — BO-style fairly common roll)
+MONKEY_BOMB_WEIGHT: int = 5
+
 
 def generate_mystery_box() -> None:
 	ns: str = Mem.ctx.project_id
@@ -97,6 +101,17 @@ scoreboard objectives add {ns}.mb.buyer dummy
 			f'consumable:{"1b" if is_consumable else "0b"}}}'
 		)
 		pool_weights.append(weight)
+
+	# Monkey Bomb: zombies-exclusive tactical (no magazine, given to hotbar.6 via the shared
+	# wallbuys/give_tactical — holding any monkeys counts as "owned" so duplicates reroll)
+	pool_entries.append(
+		f'{{weapon_id:"monkey_bomb",'
+		f'give_function:"{ns}:v{version}/zombies/mystery_box/default_give/monkey_bomb",'
+		f'magazine_id:"",'
+		f'mag_count:0,'
+		f'consumable:0b}}'
+	)
+	pool_weights.append(MONKEY_BOMB_WEIGHT)
 	default_pool_entries: str = ",".join(pool_entries)
 	default_pool_weights: str = ",".join(str(w) for w in pool_weights)
 
@@ -106,6 +121,12 @@ scoreboard objectives add {ns}.mb.buyer dummy
 data modify storage {ns}:temp _wb_weapon set value {{weapon_id:"{weapon_id}",name:"{weapon_id}",consumable:{"1b" if is_consumable else "0b"},magazine_id:"{magazine_id}",mag_count:{mag_count}}}
 scoreboard players set #wb_price {ns}.data 0
 function {ns}:v{version}/zombies/wallbuys/process_purchase with storage {ns}:temp _wb_weapon
+""")
+
+	## Monkey Bomb give: routes to the tactical slot (hotbar.6) instead of the gun flow
+	write_versioned_function("zombies/mystery_box/default_give/monkey_bomb", f"""
+scoreboard players set #wb_price {ns}.data 0
+function {ns}:v{version}/zombies/wallbuys/give_tactical {{weapon_id:"monkey_bomb"}}
 """)
 
 	write_versioned_function("zombies/mystery_box/ensure_default_pool", f"""
@@ -417,6 +438,8 @@ scoreboard players set #mb_owned {ns}.data 0
 $execute if items entity @s hotbar.1 *[custom_data~{owned_gun_macro_cd}] run scoreboard players set #mb_owned {ns}.data 1
 $execute if items entity @s hotbar.2 *[custom_data~{owned_gun_macro_cd}] run scoreboard players set #mb_owned {ns}.data 1
 $execute if items entity @s hotbar.3 *[custom_data~{owned_gun_macro_cd}] run scoreboard players set #mb_owned {ns}.data 1
+# Tactical slot (monkey bombs): holding any counts as owned, so the box rerolls like duplicate guns
+$execute if items entity @s hotbar.6 *[custom_data~{owned_gun_macro_cd}] run scoreboard players set #mb_owned {ns}.data 1
 
 # Also treat as owned if Ray Gun cap (max 2 players) is reached and result is Ray Gun (special case to limit 2 Ray Guns per game)
 execute if score #mb_owned {ns}.data matches 0 run function {ns}:v{version}/zombies/mystery_box/check_ray_gun_cap
@@ -750,6 +773,7 @@ scoreboard players set #mb_name_found {ns}.data 0
 $execute if score #mb_name_found {ns}.data matches 0 if items entity @s hotbar.1 *[custom_data~{owned_gun_macro_cd}] run function {ns}:v{version}/zombies/mystery_box/capture_collected_name_slot {{slot:"hotbar.1"}}
 $execute if score #mb_name_found {ns}.data matches 0 if items entity @s hotbar.2 *[custom_data~{owned_gun_macro_cd}] run function {ns}:v{version}/zombies/mystery_box/capture_collected_name_slot {{slot:"hotbar.2"}}
 $execute if score #mb_name_found {ns}.data matches 0 if items entity @s hotbar.3 *[custom_data~{owned_gun_macro_cd}] run function {ns}:v{version}/zombies/mystery_box/capture_collected_name_slot {{slot:"hotbar.3"}}
+$execute if score #mb_name_found {ns}.data matches 0 if items entity @s hotbar.6 *[custom_data~{owned_gun_macro_cd}] run function {ns}:v{version}/zombies/mystery_box/capture_collected_name_slot {{slot:"hotbar.6"}}
 """)
 
 	write_versioned_function("zombies/mystery_box/capture_collected_name_slot", f"""

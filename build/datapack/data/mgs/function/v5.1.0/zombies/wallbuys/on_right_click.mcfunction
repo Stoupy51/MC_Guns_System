@@ -19,6 +19,11 @@ execute store result score #wb_buy_price mgs.data run scoreboard players get @n[
 execute store result score #wb_rfprice mgs.data run scoreboard players get @n[tag=bs.interaction.target] mgs.zb.wb.rfprice
 execute store result score #wb_rfpap mgs.data run scoreboard players get @n[tag=bs.interaction.target] mgs.zb.wb.rfpap
 
+# Non-gun wallbuys (knife / lethal grenade / tactical): dedicated purchase flows
+execute if data storage mgs:temp _wb_weapon{kind:1} run return run function mgs:v5.1.0/zombies/wallbuys/buy_knife with storage mgs:temp _wb_weapon
+execute if data storage mgs:temp _wb_weapon{kind:2} run return run function mgs:v5.1.0/zombies/wallbuys/buy_lethal with storage mgs:temp _wb_weapon
+execute if data storage mgs:temp _wb_weapon{kind:3} run return run function mgs:v5.1.0/zombies/wallbuys/buy_tactical with storage mgs:temp _wb_weapon
+
 # Compute effective price for this interaction (buy vs refill vs PAP refill)
 scoreboard players operation #wb_price mgs.data = #wb_buy_price mgs.data
 function mgs:v5.1.0/zombies/wallbuys/compute_effective_price with storage mgs:temp _wb_weapon

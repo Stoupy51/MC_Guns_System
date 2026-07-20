@@ -6,6 +6,7 @@
 # @within	mgs:v5.1.0/zombies/mystery_box/capture_collected_name {slot:"hotbar.1"}
 #			mgs:v5.1.0/zombies/mystery_box/capture_collected_name {slot:"hotbar.2"}
 #			mgs:v5.1.0/zombies/mystery_box/capture_collected_name {slot:"hotbar.3"}
+#			mgs:v5.1.0/zombies/mystery_box/capture_collected_name {slot:"hotbar.6"}
 #
 # @args		slot (string)
 #

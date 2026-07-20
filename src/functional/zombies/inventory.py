@@ -200,6 +200,10 @@ execute if score @s {ns}.zb.ability matches 3.. run function {ns}:v{version}/zom
 
 	write_versioned_function("zombies/inventory/give_respawn_loadout", f"""
 function {ns}:v{version}/zombies/inventory/give_starting_loadout
+
+# Bleed-out respawns come back lighter than a fresh game start: knife + M1911 + only 2 frags.
+# The starting-loadout clear also strips any bought knife/grenade-type/tactical (intended).
+item modify entity @s hotbar.7 {ns}:v{version}/grenade/set_count_2
 """)
 
 	# Perk list for the info paper (one lore line per owned perk, themed by perk color).

@@ -48,6 +48,10 @@ function {ns}:v{version}/ammo/compute_reserve
     # passes above never touch grenades (they use item count, not a magazine), so without this
     # Max Ammo left a player with 0 grenades empty-handed.
     write_versioned_function("zombies/bonus/max_ammo_grenades", f"""
+# Tactical slot (hotbar.6, e.g. Monkey Bombs): top back to 3 — refill only, never granted from
+# an empty slot (tacticals come exclusively from the Mystery Box or a wall-buy)
+execute if items entity @s hotbar.6 *[custom_data~{{{ns}:{{gun:true}}}}] run item modify entity @s hotbar.6 {ns}:v{version}/grenade/set_count_3
+
 # Has grenades: set the stack to full (4) and stop
 execute if items entity @s hotbar.7 *[custom_data~{{{ns}:{{gun:true}}}}] run return run item modify entity @s hotbar.7 {ns}:v{version}/grenade/set_count_4
 
