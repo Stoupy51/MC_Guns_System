@@ -13,6 +13,12 @@ execute unless entity @n[type=minecraft:wandering_trader,tag=mgs.zb_escort,dista
 # spot, and the horde's pushOtherTeams collision rule keeps the overlap from pushing the trader
 execute at @n[type=minecraft:wandering_trader,tag=mgs.zb_escort,distance=..8] run tp @s ~ ~ ~ ~ ~
 
+# Monkey-bomb lure (monkey_bomb.py): while the trader is flagged, this escort pulls the zombie to
+# a thrown monkey. Drop the flag once every monkey is gone (revert to a normal player escort);
+# otherwise ride toward the monkey and release on arrival, ignoring the player releases below.
+execute if entity @n[type=minecraft:wandering_trader,tag=mgs.zb_escort,tag=mgs.zb_escort_monkey,distance=..8] unless entity @e[tag=mgs.monkey_bomb] run tag @n[type=minecraft:wandering_trader,tag=mgs.zb_escort,distance=..8] remove mgs.zb_escort_monkey
+execute if entity @n[type=minecraft:wandering_trader,tag=mgs.zb_escort,tag=mgs.zb_escort_monkey,distance=..8] run return run function mgs:v5.1.0/zombies/escort/monkey_ride
+
 # PaP-room lure active: release once the zombie reaches the theatre centre (no player will be
 # nearby there to trigger the player-based releases below)
 execute if score #zb_lure mgs.data matches 1 if entity @e[tag=mgs.lure_center,distance=..8] run return run function mgs:v5.1.0/zombies/escort/release
@@ -27,15 +33,6 @@ scoreboard players set #zb_esc_see mgs.data 0
 execute positioned as @p[scores={mgs.zb.in_game=1,mgs.zb.downed=0},gamemode=!spectator,distance=..10] store result score #zb_esc_see mgs.data run function #bs.view:can_see_ata {with:{}}
 execute if score #zb_esc_see mgs.data matches 1 run return run function mgs:v5.1.0/zombies/escort/release
 
-# TTL countdown; the trader could not reach anyone in time -> teleport-rescue fallback
-scoreboard players remove @s mgs.zb.escort_ttl 1
-execute if score @s mgs.zb.escort_ttl matches ..0 run return run function mgs:v5.1.0/zombies/escort/give_up
-
-# Re-aim the trader at the nearest alive player every second
-scoreboard players operation #zb_esc_mod mgs.data = @s mgs.zb.escort_ttl
-scoreboard players operation #zb_esc_mod mgs.data %= #20 mgs.data
-execute if score #zb_esc_mod mgs.data matches 0 as @n[type=minecraft:wandering_trader,tag=mgs.zb_escort,distance=..8] at @s run function mgs:v5.1.0/zombies/escort/retarget
-
-# Watchdog every second: a trader that can't move is caught in 5s, not 45s
-execute if score #zb_esc_mod mgs.data matches 0 run function mgs:v5.1.0/zombies/escort/watchdog
+# Ride tail: TTL fallback + periodic retarget/watchdog (shared with the monkey-bomb ride below)
+function mgs:v5.1.0/zombies/escort/escort_tail
 

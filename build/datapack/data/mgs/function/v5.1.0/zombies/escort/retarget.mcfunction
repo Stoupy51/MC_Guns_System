@@ -4,8 +4,12 @@
 # @executed	as @n[tag=mgs.zb_escort_new] & at @s
 #
 # @within	mgs:v5.1.0/zombies/escort/start [ as @n[tag=mgs.zb_escort_new] & at @s ]
-#			mgs:v5.1.0/zombies/escort/zombie_tick [ at @s ]
+#			mgs:v5.1.0/zombies/escort/escort_tail [ at @s ]
 #
+
+# Monkey-bomb lure (monkey_bomb.py): aim at the nearest thrown monkey — takes priority over both
+# the PaP lure and player targeting while the trader carries the mgs.zb_escort_monkey flag.
+execute if entity @s[tag=mgs.zb_escort_monkey] run return run function mgs:v5.1.0/zombies/escort/retarget_monkey
 
 # PaP-room lure active: aim at the theatre centre marker instead of a player (see escort.py)
 execute if score #zb_lure mgs.data matches 1 if entity @e[tag=mgs.lure_center] run return run function mgs:v5.1.0/zombies/escort/retarget_lure

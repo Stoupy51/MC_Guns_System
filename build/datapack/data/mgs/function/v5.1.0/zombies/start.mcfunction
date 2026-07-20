@@ -114,6 +114,7 @@ tellraw @a ["",{"text":"","color":"dark_green","bold":true},"🧟 ",{"translate"
 
 # Escort system (escort.py)
 scoreboard players set #zb_escort_count mgs.data 0
+scoreboard players set #zb_escort_mode mgs.data 0
 scoreboard players set #zb_lure mgs.data 0
 gamerule spawn_wandering_traders false
 

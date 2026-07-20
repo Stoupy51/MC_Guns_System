@@ -12,7 +12,7 @@
 # NBT write on a wolf runs readAdditionalSaveData -> setTame(false,true) -> MAX_HEALTH base reset
 # to 8 (TamableAnimal/Wolf). A dog dragged by a taxi arrives at 8 HP, dying to anything it touches.
 # They also don't need one — they outrun the trader, so the direct teleport below is strictly better.
-execute unless entity @s[tag=mgs.zb_dog] unless entity @s[tag=mgs.zb_escort_failed] if score #zb_escort_count mgs.data matches ..7 run return run function mgs:v5.1.0/zombies/escort/start
+execute unless entity @s[tag=mgs.zb_dog] unless entity @s[tag=mgs.zb_escort_failed] if score #zb_escort_count mgs.data matches ..15 run return run function mgs:v5.1.0/zombies/escort/start
 
 # @s = stuck zombie — teleport it to a zombie spawn point near a player instead of killing it
 # (keeps the horde intact and drops it back onto walkable navmesh so it can path again).

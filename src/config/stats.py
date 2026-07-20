@@ -1396,3 +1396,9 @@ MONKEY_BOMB: JsonDict = {
     }
 }
 
+# Lethal grenades occupy the zombies lethal slot (hotbar.7, wallbuy kind 2). Their order here
+# defines the per-player {ns}.zb.lethal_type enum (list index, 0 = frag_grenade default) that lets
+# an EMPTY slot be refilled with the type the player actually bought — on round-end replenish, Max
+# Ammo, and item recovery — instead of always defaulting to frag. See zombies/inventory.py.
+LETHAL_GRENADE_IDS: list[str] = ["frag_grenade", "semtex", "smoke_grenade", "flash_grenade"] # TODO: smoke and flash should be tactical instead (like monkeys)
+

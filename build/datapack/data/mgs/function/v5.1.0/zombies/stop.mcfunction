@@ -73,10 +73,6 @@ scoreboard players set #mb_pid_counter mgs.data 0
 tag @e remove mgs.mb_fs_active
 tag @e remove mgs.mb_orig_active
 
-# Monkey bomb cleanup
-kill @e[tag=mgs.monkey_taunt]
-scoreboard players set #monkey_id_next mgs.data 0
-
 # Barriers cleanup
 tag @e[tag=mgs.barrier_removing] remove mgs.barrier_removing
 tag @a[tag=mgs.barrier_repairing] remove mgs.barrier_repairing

@@ -44,7 +44,7 @@
 from stewbeet import Mem, write_load_file, write_tag, write_versioned_function
 
 # Max simultaneous escorts; stuck zombies beyond this use the teleport rescue instead.
-MAX_ESCORTS: int = 8
+MAX_ESCORTS: int = 16
 # Escort lifetime in ticks before giving up (45s; then teleport-rescue fallback). Hard cap only:
 # a trader that is itself stuck is caught much earlier by the watchdog below.
 ESCORT_TTL: int = 900
@@ -71,6 +71,10 @@ LURE_RELEASE: int = 8
 # range even around corners, and the visibility check aims at the player's FEET — slabs, stairs
 # or a corner can fail it forever, leaving the taxi orbiting a player it already reached.
 RELEASE_RADIUS_CLOSE: int = 6
+# Monkey-bomb lure (monkey_bomb.py): a monkey-escorted zombie is released once within this many
+# blocks of the thrown monkey. Kept below monkey_bomb.py's re-grab floor so a zombie loitering at
+# the monkey after release is not instantly re-escorted.
+MONKEY_RELEASE: int = 4
 
 
 def generate_zombies_escort() -> None:
@@ -82,6 +86,8 @@ def generate_zombies_escort() -> None:
 	# 8 blocks of slack covers lag spikes. If two escorts cross paths and momentarily swap
 	# traders, both zombies still get dragged toward the nearest player — harmless.
 	my_trader: str = f"@n[type=minecraft:wandering_trader,tag={ns}.zb_escort,distance=..8]"
+	# Same trader, but only when it is flagged for the monkey-bomb lure (monkey_bomb.py).
+	my_trader_monkey: str = f"@n[type=minecraft:wandering_trader,tag={ns}.zb_escort,tag={ns}.zb_escort_monkey,distance=..8]"
 	nearest_alive: str = f"@p[scores={{{ns}.zb.in_game=1,{ns}.zb.downed=0}},gamemode=!spectator]"
 
 	write_load_file(f"""
@@ -90,6 +96,10 @@ scoreboard objectives add {ns}.zb.escort_ttl dummy
 
 # Live escort counter (gates the per-tick escorted-zombie scan)
 scoreboard players add #zb_escort_count {ns}.data 0
+
+# One-shot target mode for the NEXT escort/start, consumed (reset to 0) inside start:
+# 0 = aim at the nearest player (stuck rescue / PaP lure), 1 = aim at a thrown monkey bomb.
+scoreboard players add #zb_escort_mode {ns}.data 0
 
 # Horde alliance team: round zombies and escort traders are allied, so the trader's
 # AvoidEntityGoal(Zombie) never fires (it flees at SPRINT speed otherwise!) and zombies never
@@ -141,7 +151,12 @@ execute as @n[tag={ns}.zb_escort_new] run function {ns}:v{version}/zombies/escor
 # (see PATHFINDING_RANGE in escort.py; the command triggers the live budget recompute)
 execute as @n[tag={ns}.zb_escort_new] run attribute @s minecraft:follow_range base set {PATHFINDING_RANGE}
 
-# Aim it at the nearest alive player immediately
+# Monkey-bomb escorts (monkey_bomb.py) target the thrown monkey instead of a player: flag the
+# trader so retarget routes to retarget_monkey. #zb_escort_mode is the caller's one-shot signal.
+execute if score #zb_escort_mode {ns}.data matches 1 run tag @n[tag={ns}.zb_escort_new] add {ns}.zb_escort_monkey
+scoreboard players set #zb_escort_mode {ns}.data 0
+
+# Aim it at its target immediately (nearest player, PaP-room lure, or thrown monkey per the flag)
 execute as @n[tag={ns}.zb_escort_new] at @s run function {ns}:v{version}/zombies/escort/retarget
 
 tag @n[tag={ns}.zb_escort_new] remove {ns}.zb_escort_new
@@ -157,6 +172,10 @@ $attribute @s minecraft:movement_speed base set $(speed)
 	## every second rather than set once. If nobody is targetable (everyone downed), the data
 	## gets fail and the trader keeps its previous heading until the TTL fallback.
 	write_versioned_function("zombies/escort/retarget", f"""
+# Monkey-bomb lure (monkey_bomb.py): aim at the nearest thrown monkey — takes priority over both
+# the PaP lure and player targeting while the trader carries the {ns}.zb_escort_monkey flag.
+execute if entity @s[tag={ns}.zb_escort_monkey] run return run function {ns}:v{version}/zombies/escort/retarget_monkey
+
 # PaP-room lure active: aim at the theatre centre marker instead of a player (see escort.py)
 execute if score #zb_lure {ns}.data matches 1 if entity @e[tag={ns}.lure_center] run return run function {ns}:v{version}/zombies/escort/retarget_lure
 execute store result storage {ns}:temp _escort.x int 1 run data get entity {nearest_alive} Pos[0]
@@ -173,6 +192,24 @@ execute store result storage {ns}:temp _escort.z int 1 run data get entity @n[ta
 function {ns}:v{version}/zombies/escort/set_wander_target with storage {ns}:temp _escort
 """)
 
+	## Aim the trader at the nearest thrown monkey bomb (monkey-bomb lure). @s = trader, at @s.
+	## Only reached while a monkey exists — zombie_tick drops the flag otherwise. If the monkey
+	## detonates between that check and here, the data get fails and the trader keeps its heading
+	## (next tick the flag is dropped and it reverts to a normal player escort).
+	write_versioned_function("zombies/escort/retarget_monkey", f"""
+execute store result storage {ns}:temp _escort.x int 1 run data get entity @n[tag={ns}.monkey_bomb] Pos[0]
+execute store result storage {ns}:temp _escort.y int 1 run data get entity @n[tag={ns}.monkey_bomb] Pos[1]
+execute store result storage {ns}:temp _escort.z int 1 run data get entity @n[tag={ns}.monkey_bomb] Pos[2]
+function {ns}:v{version}/zombies/escort/set_wander_target with storage {ns}:temp _escort
+""")
+
+	## Redirect an already-running escort toward a thrown monkey (monkey_bomb.py, "existing escort"
+	## case). @s = escorted zombie, at @s: flag its trader so retarget switches to the monkey.
+	## Idempotent (safe to call every monkey pulse); reverts on its own once the monkey is gone.
+	write_versioned_function("zombies/escort/redirect_to_monkey", f"""
+tag {my_trader} add {ns}.zb_escort_monkey
+""")
+
 	write_versioned_function("zombies/escort/set_wander_target", """
 $data modify entity @s wander_target set value [I;$(x),$(y),$(z)]
 """)
@@ -186,6 +223,12 @@ execute unless entity {my_trader} run return run function {ns}:v{version}/zombie
 # Glue the zombie exactly onto the trader (same position AND rotation): always a path-valid
 # spot, and the horde's pushOtherTeams collision rule keeps the overlap from pushing the trader
 execute at {my_trader} run tp @s ~ ~ ~ ~ ~
+
+# Monkey-bomb lure (monkey_bomb.py): while the trader is flagged, this escort pulls the zombie to
+# a thrown monkey. Drop the flag once every monkey is gone (revert to a normal player escort);
+# otherwise ride toward the monkey and release on arrival, ignoring the player releases below.
+execute if entity {my_trader_monkey} unless entity @e[tag={ns}.monkey_bomb] run tag {my_trader} remove {ns}.zb_escort_monkey
+execute if entity {my_trader_monkey} run return run function {ns}:v{version}/zombies/escort/monkey_ride
 
 # PaP-room lure active: release once the zombie reaches the theatre centre (no player will be
 # nearby there to trigger the player-based releases below)
@@ -201,17 +244,33 @@ scoreboard players set #zb_esc_see {ns}.data 0
 execute positioned as @p[scores={{{ns}.zb.in_game=1,{ns}.zb.downed=0}},gamemode=!spectator,distance=..{RELEASE_RADIUS}] store result score #zb_esc_see {ns}.data run function #bs.view:can_see_ata {{with:{{}}}}
 execute if score #zb_esc_see {ns}.data matches 1 run return run function {ns}:v{version}/zombies/escort/release
 
-# TTL countdown; the trader could not reach anyone in time -> teleport-rescue fallback
+# Ride tail: TTL fallback + periodic retarget/watchdog (shared with the monkey-bomb ride below)
+function {ns}:v{version}/zombies/escort/escort_tail
+""")
+
+	## Shared escort "keep riding" tail (@s = escorted zombie, at @s): count the TTL down to the
+	## teleport-rescue fallback, and once a second re-aim the trader at its target and run the
+	## stuck watchdog. Called by both the normal escort tick and the monkey-bomb ride.
+	write_versioned_function("zombies/escort/escort_tail", f"""
+# TTL countdown; the trader could not reach its target in time -> teleport-rescue fallback
 scoreboard players remove @s {ns}.zb.escort_ttl 1
 execute if score @s {ns}.zb.escort_ttl matches ..0 run return run function {ns}:v{version}/zombies/escort/give_up
 
-# Re-aim the trader at the nearest alive player every second
+# Re-aim the trader at its target every second (retarget picks player / PaP lure / monkey)
 scoreboard players operation #zb_esc_mod {ns}.data = @s {ns}.zb.escort_ttl
 scoreboard players operation #zb_esc_mod {ns}.data %= #20 {ns}.data
 execute if score #zb_esc_mod {ns}.data matches 0 as {my_trader} at @s run function {ns}:v{version}/zombies/escort/retarget
 
 # Watchdog every second: a trader that can't move is caught in {WATCHDOG_GIVE_UP}s, not {ESCORT_TTL // 20}s
 execute if score #zb_esc_mod {ns}.data matches 0 run function {ns}:v{version}/zombies/escort/watchdog
+""")
+
+	## Monkey-bomb ride (@s = escorted zombie, at @s): the trader is aimed at the nearest monkey by
+	## retarget_monkey; release the zombie once it reaches the monkey so vanilla AI takes over at the
+	## gathering point (it mills/attacks there until the monkey detonates and kills the crowd).
+	write_versioned_function("zombies/escort/monkey_ride", f"""
+execute if entity @e[tag={ns}.monkey_bomb,distance=..{MONKEY_RELEASE}] run return run function {ns}:v{version}/zombies/escort/release
+function {ns}:v{version}/zombies/escort/escort_tail
 """)
 
 	## Early give-up for a trader that is itself stuck. @s = escorted zombie (glued to the
@@ -392,6 +451,7 @@ function {ns}:v{version}/zombies/escort/setup_lure_center
 	write_versioned_function("zombies/start", f"""
 # Escort system (escort.py)
 scoreboard players set #zb_escort_count {ns}.data 0
+scoreboard players set #zb_escort_mode {ns}.data 0
 scoreboard players set #zb_lure {ns}.data 0
 gamerule spawn_wandering_traders false
 """)
