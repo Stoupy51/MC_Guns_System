@@ -106,7 +106,10 @@ execute if score #zb_escort_count mgs.data matches 1.. as @e[tag=mgs.zb_escorted
 # gated loop above stops running and a trader can walk into a player and become right-clickable.
 # This ungated pass over the (usually empty) trader set discards any trader that gets within reach
 # of an alive player regardless of the counter, so an interactable trader can never linger.
-execute as @e[type=minecraft:wandering_trader,tag=mgs.zb_escort] at @s if entity @p[scores={mgs.zb.in_game=1,mgs.zb.downed=0},gamemode=!spectator,distance=..6] run function mgs:v5.1.0/zombies/escort/discard_near_player
+# Monkey-bomb traders are exempt: their whole job is to drag zombies off the player, so they MUST
+# be allowed into their face. The click they would eat is given back by the right_click_entity
+# advancement (weapon/common.py) instead of by keeping them at arm's length.
+execute as @e[type=minecraft:wandering_trader,tag=mgs.zb_escort,tag=!mgs.zb_escort_monkey] at @s if entity @p[scores={mgs.zb.in_game=1,mgs.zb.downed=0},gamemode=!spectator,distance=..6] run function mgs:v5.1.0/zombies/escort/discard_near_player
 
 # Every 2s: resync the escort counter from reality — start/detach keep it accurate in between,
 # but any drift (e.g. an escorted zombie dying the same tick its trader vanishes) would wedge

@@ -71,9 +71,18 @@ LURE_RELEASE: int = 8
 # range even around corners, and the visibility check aims at the player's FEET — slabs, stairs
 # or a corner can fail it forever, leaving the taxi orbiting a player it already reached.
 RELEASE_RADIUS_CLOSE: int = 6
-# Monkey-bomb lure (monkey_bomb.py): a monkey-escorted zombie is released once within this many
-# blocks of the thrown monkey. Kept below monkey_bomb.py's re-grab floor so a zombie loitering at
-# the monkey after release is not instantly re-escorted.
+# Radius of the "a trader must never be right-clickable" safeguard (see discard_near_player).
+# Do NOT lower this: entity reach is Player.entityInteractionRange(), i.e. the
+# minecraft:entity_interaction_range attribute, and zombies raises it to 5 for its players
+# (game.py, for barrier/buyable use) — the vanilla 3 does not apply here. 6 is one block of margin
+# over that, with the check running every tick against a trader moving ~0.25 blocks/tick.
+# Monkey-bomb traders are exempt from the safeguard entirely; the eaten click is recovered by the
+# right_click_entity advancement instead (weapon/common.py).
+TRADER_REACH_GUARD: int = 6
+# Monkey-bomb lure (monkey_bomb.py): a monkey-escorted zombie stops riding and HOLDS (stays frozen
+# on its trader, see monkey_hold) once within this many blocks of the thrown monkey. Zombies freeze
+# on first contact with this radius, i.e. spread around the monkey along their approach paths
+# instead of stacking on it — and well inside the 7-block blast (stats.py MONKEY_BOMB).
 MONKEY_RELEASE: int = 4
 
 
@@ -266,11 +275,29 @@ execute if score #zb_esc_mod {ns}.data matches 0 run function {ns}:v{version}/zo
 """)
 
 	## Monkey-bomb ride (@s = escorted zombie, at @s): the trader is aimed at the nearest monkey by
-	## retarget_monkey; release the zombie once it reaches the monkey so vanilla AI takes over at the
-	## gathering point (it mills/attacks there until the monkey detonates and kills the crowd).
+	## retarget_monkey; once the zombie reaches the monkey it HOLDS there until the monkey is gone.
+	## It is deliberately NOT released: the monkey has no aggro of its own (the visible iron-golem
+	## fake-damage hack it replaced did), so a released zombie's vanilla AI re-targets the player
+	## within the tick and walks straight back out — which the next attract pulse re-grabs, giving
+	## the chase/stop/chase loop with a trader blinking in and out (human feedback #3).
 	write_versioned_function("zombies/escort/monkey_ride", f"""
-execute if entity @e[tag={ns}.monkey_bomb,distance=..{MONKEY_RELEASE}] run return run function {ns}:v{version}/zombies/escort/release
+execute if entity @e[tag={ns}.monkey_bomb,distance=..{MONKEY_RELEASE}] run return run function {ns}:v{version}/zombies/escort/monkey_hold
 function {ns}:v{version}/zombies/escort/escort_tail
+""")
+
+	## Gathered at the monkey (@s = escorted zombie, at @s). Deliberately does NOT run escort_tail:
+	## - TTL: nothing is going wrong, so refresh it instead of counting down into give_up.
+	## - Watchdog: standing still at the monkey is the GOAL here, not a stuck trader — leaving it
+	##   armed would give up after {WATCHDOG_GIVE_UP}s and hand the zombie back to the player.
+	## - Retarget: the trader is already within WanderToPositionGoal's 2-block stop distance, so
+	##   re-aiming does nothing; if the monkey moves, the ride resumes on its own once the zombie
+	##   falls outside MONKEY_RELEASE again.
+	## The zombie stays frozen (NoAI, so it can't attack) until the monkey detonates and the blast
+	## clears the crowd. If the monkey disappears without killing it, zombie_tick drops the trader's
+	## monkey flag and the normal player escort resumes from a clean watchdog window.
+	write_versioned_function("zombies/escort/monkey_hold", f"""
+scoreboard players set @s {ns}.zb.escort_ttl {ESCORT_TTL}
+scoreboard players set @s {ns}.zb.stuck_ticks 0
 """)
 
 	## Early give-up for a trader that is itself stuck. @s = escorted zombie (glued to the
@@ -334,10 +361,26 @@ kill @s
 	## teleport body; the teleport clears the flag again once it lands (game.py), so it only
 	## routes THIS call — escorts may retry from the new position later.
 	write_versioned_function("zombies/escort/give_up", f"""
+# A MONKEY escort must never fall through to the teleport rescue: that rescue drops the zombie next
+# to a player, which is the exact opposite of what a monkey bomb is for. It also doesn't earn the
+# failure flag — nothing would ever clear it (only the teleport does), and the zombie would be
+# locked out of every future escort for the rest of the game.
+execute if entity {my_trader_monkey} run return run function {ns}:v{version}/zombies/escort/give_up_monkey
+
 tag @s add {ns}.zb_escort_failed
 execute as {my_trader} run function {ns}:v{version}/zombies/escort/discard_trader
 function {ns}:v{version}/zombies/escort/detach
 function {ns}:v{version}/zombies/on_stuck_zombie
+""")
+
+	## Monkey escort gave up: the trader stopped moving before reaching the monkey (watchdog; the TTL
+	## can't realistically expire on a ~9s monkey). @s = escorted zombie.
+	## Treated as "arrived" rather than as a failure: handing the zombie back to vanilla AI here would
+	## send it at the player, the next attract pulse would re-grab it, and the trader would blink in
+	## and out for the rest of the fuse. Freezing it where it stands is also what the monkey is FOR —
+	## the zombie is off the player either way, it just doesn't make the pile (and survives the blast).
+	write_versioned_function("zombies/escort/give_up_monkey", f"""
+function {ns}:v{version}/zombies/escort/monkey_hold
 """)
 
 	## Escorted zombie killed mid-transit: discard its taxi THIS tick instead of leaving an
@@ -363,7 +406,7 @@ execute as {my_trader} run function {ns}:v{version}/zombies/escort/discard_trade
 	## adult on every NBT load (readAdditionalSaveData: setAge(max(0, age))), so the usual "make it a
 	## baby to disable mobInteract" trick is impossible; the only reliable defense is to never let a
 	## trader be within reach. @s = trader, at @s. Player interaction reach is ~3 blocks, so a
-	## {RELEASE_RADIUS_CLOSE}-block guard leaves margin even with the trader's <1 block/tick movement.
+	## {TRADER_REACH_GUARD}-block guard leaves margin even with the trader's <1 block/tick movement.
 	write_versioned_function("zombies/escort/discard_near_player", f"""
 function {ns}:v{version}/zombies/escort/end_at_trader
 """)
@@ -385,7 +428,10 @@ execute if score #zb_escort_count {ns}.data matches 1.. as @e[tag={ns}.zb_escort
 # gated loop above stops running and a trader can walk into a player and become right-clickable.
 # This ungated pass over the (usually empty) trader set discards any trader that gets within reach
 # of an alive player regardless of the counter, so an interactable trader can never linger.
-execute as @e[type=minecraft:wandering_trader,tag={ns}.zb_escort] at @s if entity @p[scores={{{ns}.zb.in_game=1,{ns}.zb.downed=0}},gamemode=!spectator,distance=..{RELEASE_RADIUS_CLOSE}] run function {ns}:v{version}/zombies/escort/discard_near_player
+# Monkey-bomb traders are exempt: their whole job is to drag zombies off the player, so they MUST
+# be allowed into their face. The click they would eat is given back by the right_click_entity
+# advancement (weapon/common.py) instead of by keeping them at arm's length.
+execute as @e[type=minecraft:wandering_trader,tag={ns}.zb_escort,tag=!{ns}.zb_escort_monkey] at @s if entity @p[scores={{{ns}.zb.in_game=1,{ns}.zb.downed=0}},gamemode=!spectator,distance=..{TRADER_REACH_GUARD}] run function {ns}:v{version}/zombies/escort/discard_near_player
 
 # Every 2s: resync the escort counter from reality — start/detach keep it accurate in between,
 # but any drift (e.g. an escorted zombie dying the same tick its trader vanishes) would wedge
