@@ -7,6 +7,7 @@ from .map_menus import write_shared_map_menus
 from .player_menus import write_player_menus
 from .spawning import write_shared_spawning_functions
 from .teleport import write_shared_teleport_functions
+from .weapon_drop import write_shared_weapon_drop_functions
 
 
 def main() -> None:
@@ -17,4 +18,5 @@ def main() -> None:
 	write_player_menus()
 	write_shared_command_functions()
 	write_shared_spawning_functions()
+	write_shared_weapon_drop_functions()
 

@@ -4,7 +4,7 @@ import json
 from typing import Any, cast
 
 import stouputils as stp
-from stewbeet import Item, JsonDict, Mem
+from stewbeet import CUSTOM_ITEM_VANILLA, Item, JsonDict, Mem
 
 # Constants
 SRC_ROOT: str = stp.get_root_path(__file__, go_up=1)
@@ -50,7 +50,7 @@ def add_item(id: str, stats: JsonDict | None = None, model_path: str | None = No
         }
     return Item(
         id=id,
-        base_item="minecraft:poisonous_potato" if stats else Item.base_item,
+        base_item="minecraft:poisonous_potato" if stats else CUSTOM_ITEM_VANILLA,
         components=components,
         override_model=(load_model(model_path) if model_path else None),
         **kwargs
