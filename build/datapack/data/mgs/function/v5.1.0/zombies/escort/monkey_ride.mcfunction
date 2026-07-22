@@ -6,6 +6,6 @@
 # @within	mgs:v5.1.0/zombies/escort/zombie_tick
 #
 
-execute if entity @e[tag=mgs.monkey_bomb,distance=..4] run return run function mgs:v5.1.0/zombies/escort/release
+execute if entity @e[tag=mgs.monkey_bomb,distance=..4] run return run function mgs:v5.1.0/zombies/escort/monkey_hold
 function mgs:v5.1.0/zombies/escort/escort_tail
 

@@ -4,6 +4,7 @@
 # @executed	as the player & at current position
 #
 # @within	advancement mgs:v5.1.0/right_click
+#			mgs:v5.1.0/player/set_pending_clicks_entity
 #
 
 # Revoke advancement

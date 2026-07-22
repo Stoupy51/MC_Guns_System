@@ -6,21 +6,24 @@
 # Attraction reuses the escort taxi (escort.py) instead of the old visible iron-golem + fake-damage
 # aggro hack: every half-second the thrown monkey (re)directs nearby zombies to itself. Zombies that
 # already have an escort (stuck rescue / PaP lure) are redirected by flagging their trader; zombies
-# without one get a fresh monkey-targeted escort (capped by escort's MAX_ESCORTS). The invisible
-# wandering-trader taxi paths each zombie to the monkey and releases it on arrival, so the horde
-# gathers on the monkey and the fuse blast clears the crowd. Everything reverts automatically once
-# the monkey is gone — escort.py's zombie_tick drops the monkey flag when no monkey_bomb remains.
+# without one get a fresh monkey-targeted escort (uncapped, see the attract pulse below). The
+# invisible wandering-trader taxi paths each zombie to the monkey and, on arrival, HOLDS it there
+# frozen (escort/monkey_hold) rather than releasing it — the monkey has no aggro of its own, so a
+# released zombie immediately walks back to the player. The horde therefore gathers and stays on the
+# monkey until the fuse blast clears it. Everything reverts automatically once the monkey is gone —
+# escort.py's zombie_tick drops the monkey flag when no monkey_bomb remains.
 #
 # Dogs are excluded: the escort freezes its passenger with NoAI, and every NBT write on a wolf
 # resets its max health to 8 (see escort.py). Dogs are fast and rarely stuck anyway.
 from stewbeet import Mem, write_versioned_function
 
-from .escort import MAX_ESCORTS, MONKEY_RELEASE
+from .escort import MONKEY_RELEASE
 
 # How far a thrown monkey pulls zombies (matches the enemies' 40-block follow_range).
 MONKEY_ATTRACT_RADIUS: int = 40
-# Don't (re)grab zombies already gathered right at the monkey: kept above MONKEY_RELEASE so a
-# just-released zombie loitering at the monkey isn't immediately re-escorted into a jitter loop.
+# Don't grab zombies already standing right at the monkey: gathered ones are held by their escort
+# (so the tag filters below already skip them), but this also leaves alone anything that wandered in
+# on its own — grabbing it would summon a taxi just to walk it zero blocks.
 MONKEY_REGRAB_FLOOR: int = MONKEY_RELEASE + 2
 
 
@@ -56,19 +59,32 @@ execute if score #monkey_phase {ns}.data matches 0 run function {ns}:v{version}/
 """)
 
 	## Attraction pulse (@s = monkey grenade, at @s = the monkey's position).
+	## Every eligible zombie in radius gets a taxi — no MAX_ESCORTS gate and no limit= on the
+	## selector. The cap exists to bound the cost of the STUCK-RESCUE escorts, which run for the
+	## whole game; a monkey lives ~9s and its whole point is that the entire horde comes to it, so a
+	## half-attracted crowd is worse than the extra traders. Cost while a monkey is out: one
+	## wandering trader per zombie in radius, each pathing with PATHFINDING_RANGE (escort.py).
+	pull_candidates: str = (
+		f"@e[tag={ns}.zombie_round,tag=!{ns}.zb_dog,tag=!{ns}.zb_rising,tag=!{ns}.zb_escorted,"
+		f"tag=!{ns}.zb_escort_failed,distance={MONKEY_REGRAB_FLOOR}..{MONKEY_ATTRACT_RADIUS}]"
+	)
 	write_versioned_function("zombies/monkey/attract", f"""
 # Existing escorts near the monkey (stuck rescue / PaP lure): redirect them to it by flagging
 # their trader — the "existing escort" case, handled without summoning a second taxi.
 execute as @e[tag={ns}.zombie_round,tag={ns}.zb_escorted,distance=..{MONKEY_ATTRACT_RADIUS}] at @s run function {ns}:v{version}/zombies/escort/redirect_to_monkey
 
-# Un-escorted zombies: start a fresh monkey-targeted escort on the nearest ones (cap-gated by
-# escort's MAX_ESCORTS). Dogs excluded (escort can't freeze a wolf); the re-grab floor skips
-# zombies already gathered at the monkey (they were released within MONKEY_RELEASE).
-execute as @e[tag={ns}.zombie_round,tag=!{ns}.zb_dog,tag=!{ns}.zb_rising,tag=!{ns}.zb_escorted,tag=!{ns}.zb_escort_failed,distance={MONKEY_REGRAB_FLOOR}..{MONKEY_ATTRACT_RADIUS},sort=nearest,limit={MAX_ESCORTS}] at @s if score #zb_escort_count {ns}.data matches ..{MAX_ESCORTS - 1} run function {ns}:v{version}/zombies/monkey/pull_one
+# Un-escorted zombies: start a fresh monkey-targeted escort on every one of them. Dogs excluded
+# (escort can't freeze a wolf — see the header); the re-grab floor skips whatever is already at the
+# monkey.
+execute as {pull_candidates} at @s run function {ns}:v{version}/zombies/monkey/pull_one
 """)
 
 	## Start one monkey-targeted escort. @s = zombie, at @s. The one-shot mode flag makes
 	## escort/start tag the new trader for retarget_monkey (escort.py).
+	## No distance-to-player check: a zombie stood on a player is exactly the one a monkey has to
+	## drag away. Its trader spawns inside the player's reach, which is why monkey traders are exempt
+	## from escort's discard_near_player safeguard and why the click they would eat is handed back by
+	## the right_click_entity advancement (weapon/common.py).
 	write_versioned_function("zombies/monkey/pull_one", f"""
 scoreboard players set #zb_escort_mode {ns}.data 1
 function {ns}:v{version}/zombies/escort/start

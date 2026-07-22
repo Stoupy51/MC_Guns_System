@@ -289,6 +289,67 @@ Max Ammo or a wall-buy — not per-round.
   - Human feedback (addressed): visible iron golem removed entirely (no taunt entity now); zombies
     are pulled to the monkey through escort.py, handling both existing escorts (redirect their
     trader) and non-existing ones (start a capped monkey escort).
+  - Human feedback #2 (addressed): *"some zombies are not really attracted, they chase me, stop,
+    chase me, stop, while the monkey is 7-10 blocks beside"*. Cause: `escort/start` summons the
+    trader **at the zombie**, so a zombie stood next to the player put an invisible trader inside the
+    player's reach and escort's right-click safeguard (`discard_near_player`) deleted it within a
+    tick or two. The pulse retried twice a second, and each abort froze the zombie (NoAI) then
+    unfroze it facing the player with a 2 s speed boost — the stutter exactly. Then: *"make every
+    zombie under the distance be escorted despite the limit, even if they are close to players"*.
+    Now:
+    - `monkey/attract` has **no `MAX_ESCORTS` gate and no `limit=`** on its candidate selector: every
+      eligible zombie in the 40-block radius gets its own taxi. The cap bounds the cost of the
+      stuck-rescue escorts, which run all game; a monkey lives ~9 s and a half-attracted crowd is
+      worse than the extra traders. It does mean one wandering trader per zombie in radius, each
+      pathing at `PATHFINDING_RANGE` — watch the tick rate on a big round.
+    - Monkey traders are **exempt from `discard_near_player`**, so they may walk right into a
+      player's face. Only monkey ones — the safeguard is unchanged for stuck-rescue escorts.
+    - The click that exemption would cost is given back: `WanderingTrader.mobInteract` returns
+      `CONSUME` on empty offers (`WanderingTrader.java:118`), and a right-click aimed at an entity
+      never falls through to item use, so the gun silently didn't fire. The new
+      `right_click_entity` advancement (`weapon/common.py`) catches
+      `player_interacted_with_entity` on a `mgs.zb_escort` trader while holding a gun and runs the
+      normal `set_pending_clicks` path. `CONSUME` carries `ItemContext.DEFAULT`, so `handleInteract`
+      really does report the gun stack and the item predicate matches.
+    - `TRADER_REACH_GUARD` (the safeguard radius) is its own constant now, but stays at **6**: entity
+      reach is the `minecraft:entity_interaction_range` attribute, which zombies raises to **5** for
+      its players — the vanilla 3 does not apply, so 6 is one block of margin, not three.
+    - A monkey escort that gives up (`escort/give_up_monkey`) detaches quietly instead of falling
+      through to the teleport rescue, which would have dropped the zombie next to a player — the
+      opposite of the monkey's job — and instead of taking the `zb_escort_failed` flag, which only
+      the teleport ever clears and would have locked that zombie out of escorts for the whole game.
+  - Human feedback #3 (addressed): *"the zombie is escorted to the monkey, then the trader
+    disappears (should not until the monkey explodes), so the zombie goes to me, then the trader
+    reappears, the zombie goes to the monkey, etc."*. Cause: **arrival released the zombie**. The
+    escort taxi was built for stuck rescue, where release hands a zombie to a player it can now see;
+    at a monkey there is nothing to hold it — the monkey has no aggro of its own (the visible
+    iron-golem fake-damage hack it replaced did), so `detach` turned it to face the nearest player,
+    gave it a speed nudge, and vanilla `NearestAttackableTargetGoal` did the rest. It walked out past
+    the 6-block re-grab floor, the next attract pulse grabbed it again — one trader summon/kill per
+    round trip, which is the blinking the report describes. Now:
+    - Arrival calls `escort/monkey_hold` instead of `escort/release`: the zombie stays frozen on its
+      trader (NoAI, so it can't attack either) until the monkey is gone. Zombies freeze on first
+      contact with `MONKEY_RELEASE`, i.e. spread around the monkey along their approach paths rather
+      than stacking on it, and well inside the 7-block blast (`stats.py MONKEY_BOMB`).
+    - `monkey_hold` deliberately skips `escort_tail`: standing still at the monkey is the goal, so
+      the watchdog would otherwise call it stuck after 5 s and hand the zombie back. It refreshes the
+      TTL and clears `stuck_ticks`, so the normal escort resumes on a clean window if the monkey
+      vanishes without killing it (`zombie_tick` drops the trader's monkey flag then).
+    - `give_up_monkey` now *also* holds rather than detaching: a trader that stalls short of the
+      monkey was the second copy of the same loop (detach → runs at player → re-grabbed). Freezing
+      the zombie where it stands is what the monkey is for anyway; it just misses the pile and
+      survives the blast.
+  - [ ] Playtest the above: crowd gathers **and stays** with a monkey thrown at your feet, no trader
+    blinking, guns still fire while a monkey-escorted zombie is in your face, and the tick rate holds
+    on a round-20+ horde.
+  - [ ] Known side effect, unverified: the trader shares the zombie's exact hitbox, so a **knife
+    swing** at a monkey-escorted zombie may land on the invisible (invulnerable) trader instead.
+    Bullets are unaffected — the raycast skips `global.ignore`. If this bites, the fix is the same
+    recovery trick on the attack path, or a pull that isn't the taxi at all: the only vanilla lever
+    that outranks player targeting is `HurtByTargetGoal` (priority 1 vs 2, `Zombie.java:138-142`),
+    i.e. an invisible living bait at the monkey plus a token `damage … by` tick — and that bait
+    cannot be `Invulnerable`, since `canBeSeenAsEnemy()` is false for invulnerable entities and the
+    target would drop instantly.
 - [x] Mystery Box: pool entry + `default_give/monkey_bomb` → shared `wallbuys/give_tactical`
   (3 in `hotbar.6`, slot-tagged). Holding any monkeys = owned → rerolls like duplicate guns
   (`check_owned_result` + `capture_collected_name` now scan hotbar.6).
@@ -350,4 +411,7 @@ these are gameplay ideas from Zonweeb, not necessarily tied to the variant.)
 
 # Inbox (quick notes — dump anything here, unorganized "basic" format is fine)
 
--
+- Make left clicking a gun reload it, and dropping the gun switch the firemode. So we end up with offhand or leftclick = reload, drop = switch firemode.
+- Something is strange with weapon lore in zombies: sometimes the first lore line is 'text: ""' an empty line. This is not normal.
+- Something is strange about escorts in zombies: sometimes it seems like the wandering traders are hyper fast, faster than sonic. Investigate source code to understand why.
+

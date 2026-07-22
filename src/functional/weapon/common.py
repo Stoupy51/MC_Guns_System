@@ -33,6 +33,49 @@ def main() -> None:
     }
     Mem.ctx.data[ns].advancements[f"v{version}/right_click"] = set_json_encoder(Advancement(adv), max_level=-1)
 
+    # Same click, recovered when an escort trader ate it.
+    # A right-click whose crosshair is on an ENTITY sends ServerboundInteractPacket instead of
+    # ServerboundUseItemPacket, and the client only falls through to the item use when the entity
+    # interaction did NOT consume (Minecraft.startUseItem). The zombies escort taxi is an invisible
+    # wandering trader with empty offers, and WanderingTrader.mobInteract returns CONSUME for those
+    # (WanderingTrader.java:118) — so aiming at a trader silently swallowed the shot. It is glued
+    # onto its escorted zombie, so during a monkey bomb that trader is in the player's face.
+    # handleInteract fires this trigger for any consuming result, and CONSUME carries
+    # ItemContext.DEFAULT, so the gun stack really is reported here and the item predicate matches.
+    adv_entity: JsonDict = {
+        "criteria": {
+            "requirement": {
+                "trigger": "minecraft:player_interacted_with_entity",
+                "conditions": {
+                    "item": {
+                        "predicates": {
+                            "minecraft:custom_data": f"{{{ns}:{{gun:true}}}}"
+                        }
+                    },
+                    # EntityPredicate is a flat map DISPATCHED on the entity_sub_predicate_type
+                    # registry (EntityPredicate.java: Codec.dispatchedMap), so each condition is
+                    # keyed by its registry id — "entity_type"/"nbt", NOT the old "type"/"nbt"
+                    # fields. Writing "type" makes the game look for a sub-predicate named
+                    # minecraft:type and reject the whole advancement.
+                    "entity": {
+                        "entity_type": "minecraft:wandering_trader",
+                        "nbt": f'{{Tags:["{ns}.zb_escort"]}}'
+                    }
+                }
+            }
+        },
+        "rewards": {
+            "function": f"{ns}:v{version}/player/set_pending_clicks_entity"
+        }
+    }
+    Mem.ctx.data[ns].advancements[f"v{version}/right_click_entity"] = set_json_encoder(Advancement(adv_entity), max_level=-1)
+
+    write_versioned_function("player/set_pending_clicks_entity", f"""
+# Revoke this advancement, then run the normal click path (which revokes its own)
+advancement revoke @s only {ns}:v{version}/right_click_entity
+function {ns}:v{version}/player/set_pending_clicks
+""")
+
     # Function to set pending clicks
     write_versioned_function("player/set_pending_clicks", f"""
 # Revoke advancement
