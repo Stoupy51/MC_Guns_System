@@ -14,6 +14,43 @@ from stouputils.typing import JsonDict
 MGS_TAG: str = r'[{"text":"","color":"gold"},"[",{"text":"MGS"},"] "]'
 
 
+# Per-player "special" flags/timers, mapping objective suffix -> its documentation comment.
+# Several unrelated systems write these: multiplayer/missions loadout perks (loadout.py::apply_perks),
+# zombies perks and power-ups, and the debug menu. Each one only ever clears what it sets, so a mode
+# MUST wipe the whole set when its game starts — otherwise Quick Reload bought as a multiplayer perk
+# (or handed out by the debug menu) is still active when the next zombies game begins.
+SPECIAL_SCORES: dict[str, str] = {
+	"instant_kill": "Instant kill: duration in ticks (kills entities in one hit, except {ns}.no_instant_kill tagged)",
+	"infinite_ammo": "Infinite ammo: duration in ticks (don't consume ammo, set ammo to max capacity)",
+	"double_points": "Double points: duration in ticks (double points earned from kills/hits in zombies)",
+	"quick_reload": "Quick reload: percentage faster reload (20 = 20% faster, 50 = 50% faster)",
+	"quick_swap": "Quick swap: percentage faster weapon switch (20 = 20% faster, 50 = 50% faster)",
+	"additional_shots": "Additional shots: number of extra projectiles per shot (Double Tap perk)",
+	"juggernaut": "Multiplayer loadout perk flags (0/1), set on loadout apply",
+	"scavenger": "",
+	"flak_jacket": "",
+	"tracker": "",
+	"tactical_mask": "",
+	"overkill": "",
+	"quick_fix": "",
+}
+
+
+def special_objectives_lines(ns: str) -> str:
+	""" Return the `scoreboard objectives add` block for every special score, with its comment. """
+	parts: list[str] = []
+	for name, comment in SPECIAL_SCORES.items():
+		if comment:
+			parts.append(f"# {comment.format(ns=ns)}")
+		parts.append(f"scoreboard objectives add {ns}.special.{name} dummy")
+	return "\n".join(parts)
+
+
+def reset_special_scores_lines(ns: str, selector: str) -> str:
+	""" Return the lines zeroing every special score for `selector` (clean slate on game start). """
+	return "\n".join(f"scoreboard players set {selector} {ns}.special.{name} 0" for name in SPECIAL_SCORES)
+
+
 def game_active_guard(ns: str, storage: str) -> str:
 	""" Return the standard guard command for active games. """
 	return f'execute unless data storage {ns}:{storage} game{{state:"active"}} run return fail'

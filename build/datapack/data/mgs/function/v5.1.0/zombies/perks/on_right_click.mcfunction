@@ -23,12 +23,18 @@ function mgs:v5.1.0/zombies/perks/lookup_perk with storage mgs:temp _pk_buy
 function mgs:v5.1.0/zombies/perks/check_owned with storage mgs:temp _pk_data
 execute if score #pk_owned mgs.data matches 1 run return run function mgs:v5.1.0/zombies/perks/deny_already_owned
 
-# Get price and check points
-execute store result score #pk_price mgs.data run scoreboard players get @n[tag=bs.interaction.target] mgs.zb.perk.price
+# Get price and check points (chip-in machines charge one chunk per click)
+function mgs:v5.1.0/zombies/perks/read_price with storage mgs:temp _pk_data
 execute unless score @s mgs.zb.points >= #pk_price mgs.data run return run function mgs:v5.1.0/zombies/perks/deny_not_enough_points
 
 # Deduct points
 scoreboard players operation @s mgs.zb.points -= #pk_price mgs.data
+
+# Chip-in: progress is LOCAL, each player pays down their own perk. Stop here unless this
+# payment was the one that completed it.
+scoreboard players operation #pk_paid mgs.data += #pk_price mgs.data
+execute if score #pk_partial mgs.data matches 1.. run function mgs:v5.1.0/zombies/perks/store_progress with storage mgs:temp _pk_data
+execute if score #pk_partial mgs.data matches 1.. if score #pk_paid mgs.data < #pk_total mgs.data run return run function mgs:v5.1.0/zombies/perks/announce_progress
 
 # Apply perk effect (sets scoreboard + calls specific perk function)
 function mgs:v5.1.0/zombies/perks/apply with storage mgs:temp _pk_data

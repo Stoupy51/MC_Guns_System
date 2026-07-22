@@ -4,7 +4,7 @@
 # Available perks and their behavior are defined in PERK_DEFINITIONS.
 from stewbeet import JsonDict, Mem, write_load_file, write_tag, write_versioned_function
 
-from ..helpers import MGS_TAG
+from ..helpers import MGS_TAG, reset_special_scores_lines
 from ..stamina import STAM_MAX
 from .common import deny_not_enough_points_body, deny_requires_power_body, game_active_guard_cmd
 
@@ -88,6 +88,26 @@ PERK_DEFINITIONS: dict[str, JsonDict] = {
 }
 
 
+def perk_effects_teardown(ns: str, selector: str) -> str:
+	""" Return the lines stripping every effect a zombies perk can leave on a player.
+
+	Run at BOTH ends of a game: at stop to hand players back a clean profile, and at start because
+	the effects can also arrive from outside zombies entirely — the multiplayer/missions loadout
+	perks and the debug menu write the same `special.*` scores, and nothing else clears them for a
+	zombies player. Wiping the whole `SPECIAL_SCORES` set (not just the ones perks grant) is what
+	keeps e.g. a multiplayer Quick Reload class from handing out free Speed Cola in zombies.
+	"""
+	return f"""
+execute as {selector} run attribute @s minecraft:max_health base reset
+execute as {selector} run attribute @s minecraft:movement_speed modifier remove {ns}:stamin_up
+scoreboard players set {selector} {ns}.stam_bonus 0
+tag {selector} remove {ns}.perk.speed_cola
+tag {selector} remove {ns}.perk.double_tap
+tag {selector} remove {ns}.perk.quick_revive
+{reset_special_scores_lines(ns, selector)}
+""".strip()
+
+
 def generate_perks() -> None:
 	ns: str = Mem.ctx.project_id
 	version: str = Mem.ctx.project_version
@@ -99,6 +119,16 @@ def generate_perks() -> None:
 		f"scoreboard players reset * {ns}.zb.perk.{perk_id}"
 		for perk_id in PERK_DEFINITIONS
 	)
+	# Chip-in progress is per-player (nobody pays for someone else's perk), so it mirrors the
+	# ownership objectives one-for-one and is cleared at the same points they are.
+	perkpaid_objectives_add: str = "\n".join(
+		f"scoreboard objectives add {ns}.zb.perkpaid.{perk_id} dummy"
+		for perk_id in PERK_DEFINITIONS
+	)
+	perkpaid_reset_all_players: str = "\n".join(
+		f"scoreboard players reset * {ns}.zb.perkpaid.{perk_id}"
+		for perk_id in PERK_DEFINITIONS
+	)
 
 	## Perk machine entity scoreboards
 	write_load_file(f"""
@@ -108,9 +138,14 @@ scoreboard objectives add {ns}.zb.perk.price dummy
 # Map-defined price, kept so dynamic discounts (solo Quick Revive) can be reverted
 scoreboard objectives add {ns}.zb.perk.base_price dummy
 scoreboard objectives add {ns}.zb.perk.power dummy
+# Chip-in chunk size (0 = disabled, buy in one payment)
+scoreboard objectives add {ns}.zb.perk.partial dummy
 
 # Perk ownership scoreboards
 {perk_objectives_add}
+
+# Per-player chip-in progress
+{perkpaid_objectives_add}
 """)
 
 	## Signal function tag for extensibility
@@ -155,6 +190,8 @@ data modify storage {ns}:temp _pk_qr.perk_id set from storage {ns}:temp _pk_iter
 execute if data storage {ns}:temp _pk_qr{{perk_id:"quick_revive"}} run tag @n[tag={ns}.pk_new] add {ns}.pk_quick_revive
 # Store power requirement as 1/0 (true stored as 1b in NBT, data get returns 1)
 execute store result score @n[tag={ns}.pk_new] {ns}.zb.perk.power run data get storage {ns}:temp _pk_iter[0].power
+# Chip-in chunk (absent on maps saved before the field existed -> the failed read stores 0 = disabled)
+execute store result score @n[tag={ns}.pk_new] {ns}.zb.perk.partial run data get storage {ns}:temp _pk_iter[0].partial_price
 
 # Store perk_id in indexed storage for later lookup
 execute store result storage {ns}:temp _pk_store.id int 1 run scoreboard players get #pk_counter {ns}.data
@@ -223,12 +260,18 @@ function {ns}:v{version}/zombies/perks/lookup_perk with storage {ns}:temp _pk_bu
 function {ns}:v{version}/zombies/perks/check_owned with storage {ns}:temp _pk_data
 execute if score #pk_owned {ns}.data matches 1 run return run function {ns}:v{version}/zombies/perks/deny_already_owned
 
-# Get price and check points
-execute store result score #pk_price {ns}.data run scoreboard players get @n[tag=bs.interaction.target] {ns}.zb.perk.price
+# Get price and check points (chip-in machines charge one chunk per click)
+function {ns}:v{version}/zombies/perks/read_price with storage {ns}:temp _pk_data
 execute unless score @s {ns}.zb.points >= #pk_price {ns}.data run return run function {ns}:v{version}/zombies/perks/deny_not_enough_points
 
 # Deduct points
 scoreboard players operation @s {ns}.zb.points -= #pk_price {ns}.data
+
+# Chip-in: progress is LOCAL, each player pays down their own perk. Stop here unless this
+# payment was the one that completed it.
+scoreboard players operation #pk_paid {ns}.data += #pk_price {ns}.data
+execute if score #pk_partial {ns}.data matches 1.. run function {ns}:v{version}/zombies/perks/store_progress with storage {ns}:temp _pk_data
+execute if score #pk_partial {ns}.data matches 1.. if score #pk_paid {ns}.data < #pk_total {ns}.data run return run function {ns}:v{version}/zombies/perks/announce_progress
 
 # Apply perk effect (sets scoreboard + calls specific perk function)
 function {ns}:v{version}/zombies/perks/apply with storage {ns}:temp _pk_data
@@ -272,9 +315,44 @@ scoreboard players set #pk_owned {ns}.data 0
 $execute if score @s {ns}.zb.perk.$(perk_id) matches 1 run scoreboard players set #pk_owned {ns}.data 1
 """)
 
+	## Price of the next click on the hovered/clicked machine (macro: $(perk_id) selects the
+	## player's chip-in progress). #pk_total = full price, #pk_price = what THIS click costs
+	## (one chunk when chip-in is on, the last chunk being whatever is left), #pk_paid = progress.
+	write_versioned_function("zombies/perks/read_price", f"""
+execute store result score #pk_price {ns}.data run scoreboard players get @n[tag=bs.interaction.target] {ns}.zb.perk.price
+execute store result score #pk_partial {ns}.data run scoreboard players get @n[tag=bs.interaction.target] {ns}.zb.perk.partial
+$execute store result score #pk_paid {ns}.data run scoreboard players get @s {ns}.zb.perkpaid.$(perk_id)
+scoreboard players operation #pk_total {ns}.data = #pk_price {ns}.data
+
+# Remaining, clamped at 0: solo Quick Revive rewrites the price live, so it can drop below the
+# progress already paid. Clamping makes that last click free instead of refunding points.
+scoreboard players operation #pk_left {ns}.data = #pk_total {ns}.data
+scoreboard players operation #pk_left {ns}.data -= #pk_paid {ns}.data
+execute if score #pk_left {ns}.data matches ..0 run scoreboard players set #pk_left {ns}.data 0
+
+# Fixed chunks, last one is the remainder
+execute if score #pk_partial {ns}.data matches 1.. run scoreboard players operation #pk_price {ns}.data = #pk_partial {ns}.data
+execute if score #pk_partial {ns}.data matches 1.. run scoreboard players operation #pk_price {ns}.data < #pk_left {ns}.data
+""")
+
+	write_versioned_function("zombies/perks/store_progress", f"""
+$scoreboard players operation @s {ns}.zb.perkpaid.$(perk_id) = #pk_paid {ns}.data
+""")
+
+	## Chip-in payment that didn't finish the perk (@s = paying player, _pk_data = the machine's perk)
+	write_versioned_function("zombies/perks/announce_progress", f"""
+function {ns}:v{version}/zombies/perks/get_hover_name
+tellraw @s [{MGS_TAG},{{"text":"🥤 ","color":"dark_purple"}},{{"storage":"{ns}:temp","nbt":"_pk_hover_name","color":"light_purple","interpret":true}},{{"text":": ","color":"gray"}},{{"score":{{"name":"#pk_paid","objective":"{ns}.data"}},"color":"green"}},{{"text":"/","color":"gray"}},{{"score":{{"name":"#pk_total","objective":"{ns}.data"}},"color":"yellow"}},{{"text":" points paid","color":"gray"}}]
+function {ns}:v{version}/zombies/feedback/sound_refill
+""")  # noqa: E501
+
 	write_versioned_function("zombies/perks/apply", f"""
 # Set perk scoreboard for the player
 $scoreboard players set @s {ns}.zb.perk.$(perk_id) 1
+
+# Owning the perk voids any chip-in progress toward it (including perks granted for free by the
+# random-perk power-up), so a re-purchase after going down starts from zero.
+$scoreboard players set @s {ns}.zb.perkpaid.$(perk_id) 0
 
 # Call perk-specific effect function
 $function {ns}:v{version}/zombies/perks/apply/$(perk_id)
@@ -316,12 +394,32 @@ function {ns}:v{version}/zombies/inventory/refresh_perk_items
 """)
 
 	## Hover events (executor: "source" = player)
+	perk_hover_message: str = (
+		f'[{{"text":"🥤 ","color":"dark_purple"}},'
+		f'{{"storage":"{ns}:temp","nbt":"_pk_hover_name","color":"light_purple","interpret":true}},'
+		f'{{"text":" - Cost: ","color":"gray"}},'
+		f'{{"score":{{"name":"#pk_price","objective":"{ns}.data"}},"color":"yellow"}},'
+		f'{{"text":" points","color":"gray"}}]'
+	)
+	# Chip-in machines show the next chunk plus the hovering player's own progress
+	perk_hover_partial_message: str = (
+		f'[{{"text":"🥤 ","color":"dark_purple"}},'
+		f'{{"storage":"{ns}:temp","nbt":"_pk_hover_name","color":"light_purple","interpret":true}},'
+		f'{{"text":" - Chip in: ","color":"gray"}},'
+		f'{{"score":{{"name":"#pk_price","objective":"{ns}.data"}},"color":"yellow"}},'
+		f'{{"text":" points  (","color":"gray"}},'
+		f'{{"score":{{"name":"#pk_paid","objective":"{ns}.data"}},"color":"green"}},'
+		f'{{"text":"/","color":"gray"}},'
+		f'{{"score":{{"name":"#pk_total","objective":"{ns}.data"}},"color":"yellow"}},'
+		f'{{"text":")","color":"gray"}}]'
+	)
 	write_versioned_function("zombies/perks/on_hover", f"""
-execute store result score #pk_price {ns}.data run scoreboard players get @n[tag=bs.interaction.target] {ns}.zb.perk.price
 execute store result storage {ns}:temp _pk_hover.id int 1 run scoreboard players get @n[tag=bs.interaction.target] {ns}.zb.perk.id
 function {ns}:v{version}/zombies/perks/lookup_perk with storage {ns}:temp _pk_hover
 function {ns}:v{version}/zombies/perks/get_hover_name
-data modify storage smithed.actionbar:input message set value {{json:[{{"text":"🥤 ","color":"dark_purple"}},{{"storage":"{ns}:temp","nbt":"_pk_hover_name","color":"light_purple","interpret":true}},{{"text":" - Cost: ","color":"gray"}},{{"score":{{"name":"#pk_price","objective":"{ns}.data"}},"color":"yellow"}},{{"text":" points","color":"gray"}}],priority:"conditional",freeze:5}}
+function {ns}:v{version}/zombies/perks/read_price with storage {ns}:temp _pk_data
+execute unless score #pk_partial {ns}.data matches 1.. run data modify storage smithed.actionbar:input message set value {{json:{perk_hover_message},priority:"conditional",freeze:5}}
+execute if score #pk_partial {ns}.data matches 1.. run data modify storage smithed.actionbar:input message set value {{json:{perk_hover_partial_message},priority:"conditional",freeze:5}}
 function #smithed.actionbar:message
 """)  # noqa: E501
 
@@ -329,6 +427,13 @@ function #smithed.actionbar:message
 	write_versioned_function("zombies/start", f"""
 # Reset perk scoreboards for all known score holders (including offline players).
 {perk_reset_all_players}
+
+# Chip-in progress never carries between games
+{perkpaid_reset_all_players}
+
+# Clean slate for the joining players: perk effects survive a game that ended without a proper stop,
+# and the special.* scores can just as well have come from a multiplayer class or the debug menu.
+{perk_effects_teardown(ns, f"@a[scores={{{ns}.zb.in_game=1}}]")}
 """)
 
 	## Quick Revive solo pricing: 500 when alone, map price otherwise. Re-checked on join/leave.
@@ -359,23 +464,15 @@ execute if score #qr_price_tick {ns}.data matches 20.. run scoreboard players se
 execute if score #qr_price_tick {ns}.data matches 0 run function {ns}:v{version}/zombies/perks/update_quick_revive_price
 """)
 
-	## Hook into stop: remove perk effects
+	## Hook into stop: remove perk effects.
+	## Selector note: game.py's stop hook has already zeroed zb.in_game by the time these lines run,
+	## so a `scores={zb.in_game=1}` selector here matches nobody. The zombies team is never left, so
+	## it is what still identifies the players of the game being torn down.
 	write_versioned_function("zombies/stop", f"""
 # Reset perk effects
-execute as @a[scores={{{ns}.zb.in_game=1}}] run attribute @s minecraft:max_health base set 20
-execute as @a[scores={{{ns}.zb.in_game=1}}] run attribute @s minecraft:movement_speed modifier remove {ns}:stamin_up
-scoreboard players set @a {ns}.stam_bonus 0
-tag @a remove {ns}.perk.speed_cola
-tag @a remove {ns}.perk.double_tap
-tag @a remove {ns}.perk.quick_revive
-
-# Reset special scoreboards granted by perks
-scoreboard players set @a {ns}.special.quick_reload 0
-scoreboard players set @a {ns}.special.additional_shots 0
-scoreboard players set @a {ns}.special.instant_kill 0
-scoreboard players set @a {ns}.special.infinite_ammo 0
-scoreboard players set @a {ns}.special.quick_swap 0
+{perk_effects_teardown(ns, f"@a[team={ns}.zombies]")}
 
 # Reset perk scoreboards for all known score holders (including offline players).
 {perk_reset_all_players}
+{perkpaid_reset_all_players}
 """)

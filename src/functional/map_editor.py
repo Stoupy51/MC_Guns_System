@@ -48,14 +48,14 @@ ALL_ELEMENTS: dict[str, JsonDict] = {
 	"door":               {
 		"name": "Door", "color": "gold", "particle": [1.0, 0.6, 0.0], "particle_scale": 1.0, "has_rotation": True,
 		"egg_model": "minecraft:hoglin_spawn_egg", "save_type": "zb_object", "save_path": "doors", "emoji": "🚪",
-		"defaults": {"name": "Door", "back_name": "Door", "price": 1000, "link_id": 1, "back_group_id": -1, "block": "", "animation": 0, "sound": ""},
+		"defaults": {"name": "Door", "back_name": "Door", "price": 1000, "partial_price": 0, "link_id": 1, "back_group_id": -1, "block": "", "animation": 0, "sound": ""},
 		"requires_offhand_block": True,
 	},
 	# Trap types: 0 = fire, 1 = electric, 2 = turret
 	"trap":               {"name": "Trap",             "color": "red",          "particle": [1.0, 0.2, 0.2], "particle_scale": 1.0, "has_rotation": True,  "egg_model": "minecraft:cave_spider_spawn_egg", "save_type": "zb_object", "save_path": "traps", "emoji": "🔮",
                            "defaults": {"price": 1000, "type": 0, "duration": 200, "cooldown": 1200, "effect_radius": [3.0, 2.0, 3.0], "offset_pos": [0, 0, 0], "power": True}},
 	"perk_machine":       {"name": "Perk Machine",     "color": "dark_purple",  "particle": [0.5, 0.0, 0.5], "particle_scale": 1.0, "has_rotation": True,  "egg_model": "minecraft:witch_spawn_egg",       "save_type": "zb_object", "save_path": "perks", "emoji": "🧪",
-                           "defaults": {"name": "Juggernog", "price": 2500, "perk_id": "juggernog", "power": True, "display_item": "", "item_model": ""}},
+                           "defaults": {"name": "Juggernog", "price": 2500, "partial_price": 0, "perk_id": "juggernog", "power": True, "display_item": "", "item_model": ""}},
 	"pap_machine":        {"name": "Pack-a-Punch",     "color": "dark_red",     "particle": [0.8, 0.1, 0.1], "particle_scale": 1.0, "has_rotation": True,  "egg_model": "minecraft:creaking_spawn_egg",    "save_type": "zb_object", "save_path": "pap_machines", "emoji": "🔥",
                            "defaults": {"name": "Pack-a-Punch", "price": 5000, "power": True, "display_item": "", "item_model": ""}},
 	"mystery_box_pos":    {"name": "Mystery Box Pos",  "color": "light_purple", "particle": [1.0, 0.0, 1.0], "particle_scale": 1.0, "has_rotation": True,  "egg_model": "minecraft:evoker_spawn_egg",      "save_type": "zb_object", "save_path": "mystery_box.positions", "emoji": "📦",
@@ -85,6 +85,8 @@ FIELD_DOCS: dict[tuple[str, str] | str, str] = {
 	("trap", "cooldown"): "Cooldown before the trap can be re-triggered, in ticks (20 = 1s).",
 	("door", "animation"): "Open animation:\n0 = Destroy — block-break particles + sound\n1+ = Silent — blocks instantly replaced with air",
 	("door", "link_id"): "Doors that share a link_id open together as a single purchase.",
+	("door", "partial_price"): "Chip-in payments: points taken per right-click (0 = pay the full price at once).\nExample: price 5000 + partial_price 500 = 10 payments.\nDoor progress is GLOBAL — any mix of players can contribute, and the last\npayment is just whatever is left. Progress is shared by every linked door.",
+	("perk_machine", "partial_price"): "Chip-in payments: points taken per right-click (0 = pay the full price at once).\nExample: price 2500 + partial_price 500 = 5 payments.\nPerk progress is LOCAL — each player pays down their own perk, nobody can\ncontribute to someone else's. Progress is lost when the perk is obtained.",
 	("door", "back_group_id"): "Zombie spawn group_id unlocked behind this door (-1 = none).",
 	("perk_machine", "perk_id"): "Perk granted by this machine:\njuggernog · speed_cola · double_tap · quick_revive · mule_kick · stamin_up",
 	("wallbuy", "weapon_id"): "Item id given on purchase. Guns (e.g. m1911, ak47, mp5),\nknives (bowie_knife, ~3000 pts), lethal grenades (frag_grenade,\nsemtex...), or tacticals (monkey_bomb). Non-guns route to their\nown slot: knife hotbar.0, lethals hotbar.7 (x4), tacticals hotbar.6 (x3).",
@@ -659,6 +661,9 @@ function {ns}:v{version}/maps/editor/summon_zb_marker with storage {ns}:temp _zb
 
 # Copy all compound data onto the marker
 execute as @n[tag={ns}.new_zb_marker] run data modify entity @s data set from storage {ns}:temp _zb_iter[0]
+
+# Fill in fields the map predates (config UI would otherwise show a blank row)
+execute as @n[tag={ns}.new_zb_marker] run function {ns}:v{version}/maps/editor/backfill_zb_defaults
 
 # Set yaw from rotation for the direction indicator (sync entity Rotation too for model displays)
 execute if data storage {ns}:temp _zb_iter[0].rotation as @n[tag={ns}.new_zb_marker] run data modify entity @s data.yaw set from storage {ns}:temp _zb_iter[0].rotation[0]
@@ -1297,6 +1302,18 @@ execute at @s unless entity @n[tag={ns}.map_element,distance=..10] run tellraw @
 				f'{{"entity":"@s","nbt":"data.{field}","color":"white"}}," ",{edit_btn}{clear_component}{info_component}]'
 			)
 
+	# Backfill missing config fields on markers summoned from an already-saved map, so a field added
+	# to `defaults` after the map was written shows its default in the config UI instead of a blank
+	# row (e.g. partial_price on doors/perk machines). Absent-only: never touches a set value.
+	backfill_lines: list[str] = []
+	for etype, einfo in zb_elements.items():
+		for field, default_val in einfo["defaults"].items():
+			backfill_lines.append(
+				f"execute if entity @s[tag={ns}.element.{etype}] unless data entity @s data.{field} "
+				f"run data modify entity @s data.{field} set value {snbt_suggest(default_val)}"
+			)
+	write_versioned_function("maps/editor/backfill_zb_defaults", "\n".join(backfill_lines))
+
 	# For spawn types: show yaw
 	for etype, einfo in ALL_ELEMENTS.items():
 		if einfo["save_type"] != "spawn":
@@ -1415,6 +1432,11 @@ $data modify entity @s data.$(field) set from storage {ns}:temp _door_set.value
 
 	write_versioned_function("maps/editor/set_door_link_price", f"""
 $data modify storage {ns}:temp _door_set set value {{field:"price",value:$(price)}}
+function {ns}:v{version}/maps/editor/set_door_link_apply
+""")
+
+	write_versioned_function("maps/editor/set_door_link_partial_price", f"""
+$data modify storage {ns}:temp _door_set set value {{field:"partial_price",value:$(partial_price)}}
 function {ns}:v{version}/maps/editor/set_door_link_apply
 """)
 
