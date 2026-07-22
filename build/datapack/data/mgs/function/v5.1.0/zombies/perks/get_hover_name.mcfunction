@@ -3,7 +3,8 @@
 #
 # @executed	as @n[tag=mgs.pk_new]
 #
-# @within	mgs:v5.1.0/zombies/perks/on_hover
+# @within	mgs:v5.1.0/zombies/perks/announce_progress
+#			mgs:v5.1.0/zombies/perks/on_hover
 #
 
 data modify storage mgs:temp _pk_hover_name set value "Perk"

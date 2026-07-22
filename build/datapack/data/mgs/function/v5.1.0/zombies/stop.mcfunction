@@ -109,19 +109,25 @@ bossbar remove mgs:pu_double_points
 bossbar remove mgs:pu_unlimited_ammo
 
 # Reset perk effects
-execute as @a[scores={mgs.zb.in_game=1}] run attribute @s minecraft:max_health base set 20
-execute as @a[scores={mgs.zb.in_game=1}] run attribute @s minecraft:movement_speed modifier remove mgs:stamin_up
-scoreboard players set @a mgs.stam_bonus 0
-tag @a remove mgs.perk.speed_cola
-tag @a remove mgs.perk.double_tap
-tag @a remove mgs.perk.quick_revive
-
-# Reset special scoreboards granted by perks
-scoreboard players set @a mgs.special.quick_reload 0
-scoreboard players set @a mgs.special.additional_shots 0
-scoreboard players set @a mgs.special.instant_kill 0
-scoreboard players set @a mgs.special.infinite_ammo 0
-scoreboard players set @a mgs.special.quick_swap 0
+execute as @a[team=mgs.zombies] run attribute @s minecraft:max_health base reset
+execute as @a[team=mgs.zombies] run attribute @s minecraft:movement_speed modifier remove mgs:stamin_up
+scoreboard players set @a[team=mgs.zombies] mgs.stam_bonus 0
+tag @a[team=mgs.zombies] remove mgs.perk.speed_cola
+tag @a[team=mgs.zombies] remove mgs.perk.double_tap
+tag @a[team=mgs.zombies] remove mgs.perk.quick_revive
+scoreboard players set @a[team=mgs.zombies] mgs.special.instant_kill 0
+scoreboard players set @a[team=mgs.zombies] mgs.special.infinite_ammo 0
+scoreboard players set @a[team=mgs.zombies] mgs.special.double_points 0
+scoreboard players set @a[team=mgs.zombies] mgs.special.quick_reload 0
+scoreboard players set @a[team=mgs.zombies] mgs.special.quick_swap 0
+scoreboard players set @a[team=mgs.zombies] mgs.special.additional_shots 0
+scoreboard players set @a[team=mgs.zombies] mgs.special.juggernaut 0
+scoreboard players set @a[team=mgs.zombies] mgs.special.scavenger 0
+scoreboard players set @a[team=mgs.zombies] mgs.special.flak_jacket 0
+scoreboard players set @a[team=mgs.zombies] mgs.special.tracker 0
+scoreboard players set @a[team=mgs.zombies] mgs.special.tactical_mask 0
+scoreboard players set @a[team=mgs.zombies] mgs.special.overkill 0
+scoreboard players set @a[team=mgs.zombies] mgs.special.quick_fix 0
 
 # Reset perk scoreboards for all known score holders (including offline players).
 scoreboard players reset * mgs.zb.perk.juggernog
@@ -130,6 +136,12 @@ scoreboard players reset * mgs.zb.perk.double_tap
 scoreboard players reset * mgs.zb.perk.quick_revive
 scoreboard players reset * mgs.zb.perk.mule_kick
 scoreboard players reset * mgs.zb.perk.stamin_up
+scoreboard players reset * mgs.zb.perkpaid.juggernog
+scoreboard players reset * mgs.zb.perkpaid.speed_cola
+scoreboard players reset * mgs.zb.perkpaid.double_tap
+scoreboard players reset * mgs.zb.perkpaid.quick_revive
+scoreboard players reset * mgs.zb.perkpaid.mule_kick
+scoreboard players reset * mgs.zb.perkpaid.stamin_up
 
 # Reset revive state
 scoreboard players set @a mgs.zb.downed 0

@@ -38,6 +38,10 @@ execute store result score @e[tag=mgs.door_new] mgs.zb.door.bgid run data get st
 execute store result score @e[tag=mgs.door_new] mgs.zb.door.anim run data get storage mgs:temp _door_iter[0].animation
 execute store result score @e[tag=mgs.door_new] mgs.zb.door.rot run data get storage mgs:temp _door_iter[0].rotation[0]
 
+# Chip-in config (absent on maps saved before the field existed -> the failed read stores 0 = disabled)
+scoreboard players set @e[tag=mgs.door_new] mgs.zb.door.paid 0
+execute store result score @e[tag=mgs.door_new] mgs.zb.door.partial run data get storage mgs:temp _door_iter[0].partial_price
+
 # Store name indexed by link_id
 execute store result storage mgs:temp _door_name.id int 1 run data get storage mgs:temp _door_iter[0].link_id
 function mgs:v5.1.0/zombies/doors/store_name with storage mgs:temp _door_name

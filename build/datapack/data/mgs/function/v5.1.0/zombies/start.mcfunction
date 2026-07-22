@@ -132,6 +132,36 @@ scoreboard players reset * mgs.zb.perk.quick_revive
 scoreboard players reset * mgs.zb.perk.mule_kick
 scoreboard players reset * mgs.zb.perk.stamin_up
 
+# Chip-in progress never carries between games
+scoreboard players reset * mgs.zb.perkpaid.juggernog
+scoreboard players reset * mgs.zb.perkpaid.speed_cola
+scoreboard players reset * mgs.zb.perkpaid.double_tap
+scoreboard players reset * mgs.zb.perkpaid.quick_revive
+scoreboard players reset * mgs.zb.perkpaid.mule_kick
+scoreboard players reset * mgs.zb.perkpaid.stamin_up
+
+# Clean slate for the joining players: perk effects survive a game that ended without a proper stop,
+# and the special.* scores can just as well have come from a multiplayer class or the debug menu.
+execute as @a[scores={mgs.zb.in_game=1}] run attribute @s minecraft:max_health base reset
+execute as @a[scores={mgs.zb.in_game=1}] run attribute @s minecraft:movement_speed modifier remove mgs:stamin_up
+scoreboard players set @a[scores={mgs.zb.in_game=1}] mgs.stam_bonus 0
+tag @a[scores={mgs.zb.in_game=1}] remove mgs.perk.speed_cola
+tag @a[scores={mgs.zb.in_game=1}] remove mgs.perk.double_tap
+tag @a[scores={mgs.zb.in_game=1}] remove mgs.perk.quick_revive
+scoreboard players set @a[scores={mgs.zb.in_game=1}] mgs.special.instant_kill 0
+scoreboard players set @a[scores={mgs.zb.in_game=1}] mgs.special.infinite_ammo 0
+scoreboard players set @a[scores={mgs.zb.in_game=1}] mgs.special.double_points 0
+scoreboard players set @a[scores={mgs.zb.in_game=1}] mgs.special.quick_reload 0
+scoreboard players set @a[scores={mgs.zb.in_game=1}] mgs.special.quick_swap 0
+scoreboard players set @a[scores={mgs.zb.in_game=1}] mgs.special.additional_shots 0
+scoreboard players set @a[scores={mgs.zb.in_game=1}] mgs.special.juggernaut 0
+scoreboard players set @a[scores={mgs.zb.in_game=1}] mgs.special.scavenger 0
+scoreboard players set @a[scores={mgs.zb.in_game=1}] mgs.special.flak_jacket 0
+scoreboard players set @a[scores={mgs.zb.in_game=1}] mgs.special.tracker 0
+scoreboard players set @a[scores={mgs.zb.in_game=1}] mgs.special.tactical_mask 0
+scoreboard players set @a[scores={mgs.zb.in_game=1}] mgs.special.overkill 0
+scoreboard players set @a[scores={mgs.zb.in_game=1}] mgs.special.quick_fix 0
+
 # Reset revive state
 scoreboard players set @a mgs.zb.downed 0
 scoreboard players set @a mgs.zb.bleed 0

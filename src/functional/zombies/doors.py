@@ -23,6 +23,18 @@ def generate_doors() -> None:
 		f'{{"score":{{"name":"#door_price","objective":"{ns}.data"}},"color":"yellow"}},'
 		f'{{"text":" points","color":"gray"}}]'
 	)
+	# Chip-in doors show the next chunk plus the group's progress instead of the full price
+	door_hover_partial_message: str = (
+		f'[{{"text":"🛠 ","color":"gold"}},'
+		f'{{"storage":"{ns}:temp","nbt":"_door_hover_name","color":"yellow","interpret":true}},'
+		f'{{"text":" - Chip in: ","color":"gray"}},'
+		f'{{"score":{{"name":"#door_price","objective":"{ns}.data"}},"color":"yellow"}},'
+		f'{{"text":" points  (","color":"gray"}},'
+		f'{{"score":{{"name":"#door_paid","objective":"{ns}.data"}},"color":"green"}},'
+		f'{{"text":"/","color":"gray"}},'
+		f'{{"score":{{"name":"#door_total","objective":"{ns}.data"}},"color":"yellow"}},'
+		f'{{"text":")","color":"gray"}}]'
+	)
 
 	## Door entity scoreboards
 	write_load_file(f"""
@@ -32,6 +44,10 @@ scoreboard objectives add {ns}.zb.door.price dummy
 scoreboard objectives add {ns}.zb.door.bgid dummy
 scoreboard objectives add {ns}.zb.door.anim dummy
 scoreboard objectives add {ns}.zb.door.rot dummy
+# Chip-in purchases: chunk size (0 = disabled) and how much the group has paid so far.
+# Door progress is global, so `paid` is mirrored on every entity of the link group.
+scoreboard objectives add {ns}.zb.door.partial dummy
+scoreboard objectives add {ns}.zb.door.paid dummy
 """)
 
 	## Setup: iterate door compounds, place blocks, summon interaction entities
@@ -74,6 +90,10 @@ execute store result score @e[tag={ns}.door_new] {ns}.zb.door.bgid run data get 
 execute store result score @e[tag={ns}.door_new] {ns}.zb.door.anim run data get storage {ns}:temp _door_iter[0].animation
 execute store result score @e[tag={ns}.door_new] {ns}.zb.door.rot run data get storage {ns}:temp _door_iter[0].rotation[0]
 
+# Chip-in config (absent on maps saved before the field existed -> the failed read stores 0 = disabled)
+scoreboard players set @e[tag={ns}.door_new] {ns}.zb.door.paid 0
+execute store result score @e[tag={ns}.door_new] {ns}.zb.door.partial run data get storage {ns}:temp _door_iter[0].partial_price
+
 # Store name indexed by link_id
 execute store result storage {ns}:temp _door_name.id int 1 run data get storage {ns}:temp _door_iter[0].link_id
 function {ns}:v{version}/zombies/doors/store_name with storage {ns}:temp _door_name
@@ -99,13 +119,32 @@ $execute positioned $(x) $(y) $(z) rotated $(facing) 0 run summon minecraft:inte
 $execute positioned $(x) $(y) $(z) rotated $(facing) 0 run summon minecraft:interaction ^ ^ ^-{interaction_offset} {{width:1.5f,height:1.1f,response:true,Tags:{back_door_tags}}}
 """)
 
+	## Read the interacted door's pricing into scores (shared by the click and hover handlers).
+	## #door_total = full price, #door_price = what THIS click costs (a chunk when chip-in is on,
+	## the last chunk being whatever is left), #door_paid = the group's progress.
+	write_versioned_function("zombies/doors/read_price", f"""
+execute store result score #door_price {ns}.data run scoreboard players get @n[tag=bs.interaction.target] {ns}.zb.door.price
+execute store result score #door_partial {ns}.data run scoreboard players get @n[tag=bs.interaction.target] {ns}.zb.door.partial
+execute store result score #door_paid {ns}.data run scoreboard players get @n[tag=bs.interaction.target] {ns}.zb.door.paid
+scoreboard players operation #door_total {ns}.data = #door_price {ns}.data
+
+# Remaining, clamped at 0 so a price lowered below the progress can't hand out points
+scoreboard players operation #door_left {ns}.data = #door_total {ns}.data
+scoreboard players operation #door_left {ns}.data -= #door_paid {ns}.data
+execute if score #door_left {ns}.data matches ..0 run scoreboard players set #door_left {ns}.data 0
+
+# Fixed chunks, last one is the remainder
+execute if score #door_partial {ns}.data matches 1.. run scoreboard players operation #door_price {ns}.data = #door_partial {ns}.data
+execute if score #door_partial {ns}.data matches 1.. run scoreboard players operation #door_price {ns}.data < #door_left {ns}.data
+""")
+
 	## Right-click handler (executor: "source" = player)
 	write_versioned_function("zombies/doors/on_right_click", f"""
 # Guard: game must be active
 {game_active_guard_cmd(ns)}
 
 # Get door price from interacted entity
-execute store result score #door_price {ns}.data run scoreboard players get @n[tag=bs.interaction.target] {ns}.zb.door.price
+function {ns}:v{version}/zombies/doors/read_price
 
 # Check player has enough points
 execute unless score @s {ns}.zb.points >= #door_price {ns}.data run return run function {ns}:v{version}/zombies/doors/deny_not_enough_points
@@ -121,11 +160,23 @@ execute store result storage {ns}:temp _door_hover.id int 1 run scoreboard playe
 execute if entity @e[tag=bs.interaction.target,tag={ns}.door_back] run function {ns}:v{version}/zombies/doors/get_hover_name_back with storage {ns}:temp _door_hover
 execute unless entity @e[tag=bs.interaction.target,tag={ns}.door_back] run function {ns}:v{version}/zombies/doors/get_hover_name with storage {ns}:temp _door_hover
 
+# Chip-in: door progress is GLOBAL, so the payment is mirrored onto every entity of the link group
+# (both sides of every linked door) and anyone can pay the next chunk.
+scoreboard players operation #door_paid {ns}.data += #door_price {ns}.data
+execute if score #door_partial {ns}.data matches 1.. as @e[tag={ns}.door] if score @s {ns}.zb.door.link = #door_link {ns}.data run scoreboard players operation @s {ns}.zb.door.paid = #door_paid {ns}.data
+execute if score #door_partial {ns}.data matches 1.. if score #door_paid {ns}.data < #door_total {ns}.data run return run function {ns}:v{version}/zombies/doors/announce_progress
+
 # Open all doors with matching link_id
 execute as @e[tag={ns}.door] if score @s {ns}.zb.door.link = #door_link {ns}.data at @s run function {ns}:v{version}/zombies/doors/open_one
 
-# Announce
-tellraw @a [{MGS_TAG},{{"selector":"@s","color":"yellow"}},{{"text":" opened ","color":"green"}},{{"storage":"{ns}:temp","nbt":"_door_hover_name","color":"gold","interpret":true}},{{"text":" for ","color":"green"}},{{"score":{{"name":"#door_price","objective":"{ns}.data"}},"color":"yellow"}},{{"text":" points.","color":"green"}}]
+# Announce (the total, not the last chunk: it's what the door cost the team)
+tellraw @a [{MGS_TAG},{{"selector":"@s","color":"yellow"}},{{"text":" opened ","color":"green"}},{{"storage":"{ns}:temp","nbt":"_door_hover_name","color":"gold","interpret":true}},{{"text":" for ","color":"green"}},{{"score":{{"name":"#door_total","objective":"{ns}.data"}},"color":"yellow"}},{{"text":" points.","color":"green"}}]
+function {ns}:v{version}/zombies/feedback/sound_announce
+""")  # noqa: E501
+
+	## Chip-in payment that didn't finish the door (@s = paying player)
+	write_versioned_function("zombies/doors/announce_progress", f"""
+tellraw @a [{MGS_TAG},{{"selector":"@s","color":"yellow"}},{{"text":" chipped in ","color":"green"}},{{"score":{{"name":"#door_price","objective":"{ns}.data"}},"color":"yellow"}},{{"text":" points for ","color":"green"}},{{"storage":"{ns}:temp","nbt":"_door_hover_name","color":"gold","interpret":true}},{{"text":"  (","color":"gray"}},{{"score":{{"name":"#door_paid","objective":"{ns}.data"}},"color":"green"}},{{"text":"/","color":"gray"}},{{"score":{{"name":"#door_total","objective":"{ns}.data"}},"color":"yellow"}},{{"text":")","color":"gray"}}]
 function {ns}:v{version}/zombies/feedback/sound_announce
 """)  # noqa: E501
 
@@ -194,14 +245,15 @@ $data modify storage {ns}:temp _door_hover_name set from storage {ns}:zombies do
 
 	## Hover events (executor: "source" = player)
 	write_versioned_function("zombies/doors/on_hover", f"""
-execute store result score #door_price {ns}.data run scoreboard players get @n[tag=bs.interaction.target] {ns}.zb.door.price
+function {ns}:v{version}/zombies/doors/read_price
 execute store result score #door_link {ns}.data run scoreboard players get @n[tag=bs.interaction.target] {ns}.zb.door.link
 execute store result storage {ns}:temp _door_hover.id int 1 run scoreboard players get #door_link {ns}.data
 execute if entity @e[tag=bs.interaction.target,tag={ns}.door_back] run function {ns}:v{version}/zombies/doors/get_hover_name_back with storage {ns}:temp _door_hover
 execute unless entity @e[tag=bs.interaction.target,tag={ns}.door_back] run function {ns}:v{version}/zombies/doors/get_hover_name with storage {ns}:temp _door_hover
-data modify storage smithed.actionbar:input message set value {{json:{door_hover_message},priority:"conditional",freeze:5}}
+execute unless score #door_partial {ns}.data matches 1.. run data modify storage smithed.actionbar:input message set value {{json:{door_hover_message},priority:"conditional",freeze:5}}
+execute if score #door_partial {ns}.data matches 1.. run data modify storage smithed.actionbar:input message set value {{json:{door_hover_partial_message},priority:"conditional",freeze:5}}
 function #smithed.actionbar:message
-""")
+""")  # noqa: E501
 
 	## Hook into game start: initialize unlocked groups
 	write_versioned_function("zombies/start", f"""

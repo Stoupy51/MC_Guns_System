@@ -93,16 +93,44 @@ The whole drop (static `item_display` + interaction hitbox, 30 s pickup, spare 5
   3 s countdown with a fresh loadout.
 
 
-## 3. Zombies — partial ("chip-in") purchases for doors & perks
+## 3. Zombies — partial ("chip-in") purchases for doors & perks  [IMPLEMENTED — needs playtest]
 
 Editor-configurable partial payments: e.g. a 5000-point door with `partial_price: 500` takes 10
 payments of 500 (from any mix of players). **Doors = global** progress (any player can contribute).
 **Perks = local** progress (each player pays their own perk; no contributing to someone else's).
 
-- [ ] Editor (`map_editor.py`): add `partial_price: 0` to `door` and `perk_machine` `defaults` (0/absent = disabled, buy in one payment). Add `FIELD_DOCS` entries explaining the semantics. For doors, register the field in the link-propagation macros (`maps/editor/set_door_link_<field>` family) so it propagates across the same `link_id` like `price` does.
-- [ ] Doors (`zombies/doors.py`): store `partial_price` + a `paid` score on the door interaction entities (both front/back, all linked doors — sync on every payment like `open_one` loops over `link_id`). Right-click with partial enabled: deduct `min(partial_price, remaining, player points)`(decide: fixed chunks vs cap-at-remaining — suggest fixed `partial_price` chunks, last chunk = remainder), announce progress, open when paid ≥ price. Hover shows `remaining` instead of full price once progress > 0.
-- [ ] Perks (`zombies/perks.py`): per-player progress. Perk ownership already uses one objective per perk (`mgs.zb.perk.<perk_id>`); mirror that with `mgs.zb.perkpaid.<perk_id>` player objectives (reset in `zombies/start`/`stop` alongside the ownership resets). On right-click with partial enabled: pay chunk, grant when paid ≥ machine price. Hover shows per-player remaining.
-- [ ] Solo Quick Revive dynamic pricing (`update_quick_revive_price`) interacts with partials — decide: partial progress persists through a price change (clamp remaining ≥ 0), simplest is to keep `paid` and compare against the *current* price.
+Chunking rule (decided): fixed `partial_price` chunks, the last one being whatever is left. The
+payer must afford the whole chunk — no pay-what-you-have.
+
+- [x] Editor (`map_editor.py`): `partial_price: 0` on `door` and `perk_machine` `defaults`
+  (0/absent = disabled, buy in one payment), `FIELD_DOCS` entries for both (global vs local is
+  spelled out in the tooltip), and `maps/editor/set_door_link_partial_price` so it propagates
+  across the `link_id` like every other door field.
+- [x] Old maps: `maps/editor/backfill_zb_defaults` fills any `defaults` field the saved map
+  predates onto the summoned marker (absent-only), so `partial_price` shows `0` instead of a blank
+  row. Generic — every future field addition gets the same treatment for free.
+- [x] Doors (`zombies/doors.py`): `mgs.zb.door.partial` + `mgs.zb.door.paid` on the interaction
+  entities. `doors/read_price` (shared by click + hover) resolves `#door_total` (full price),
+  `#door_price` (this click) and `#door_paid`. A payment is mirrored onto every entity of the link
+  group, so both sides of every linked door agree; `doors/announce_progress` reports
+  `<player> chipped in N points for <door> (paid/total)` to everyone, and the door opens on the
+  chunk that reaches the total (announced with the total, not the last chunk).
+- [x] Perks (`zombies/perks.py`): `mgs.zb.perk.partial` on the machine + per-player
+  `mgs.zb.perkpaid.<perk_id>` objectives generated from `PERK_DEFINITIONS` and reset in
+  `zombies/start`/`stop` next to the ownership resets. `perks/read_price` is the macro twin of the
+  door one; `perks/store_progress` records the payment, `perks/announce_progress` reports
+  `<Perk>: paid/total points paid` to the payer only. `perks/apply` clears the progress score, so
+  a perk obtained any other way (random-perk power-up) voids it too and a re-buy after a down
+  starts from zero.
+- [x] Solo Quick Revive dynamic pricing: kept `paid` and compared against the *current* price, as
+  suggested. Both `read_price` functions clamp remaining at 0, so a price that drops below the
+  progress makes the next click free instead of refunding points.
+- [x] Hovers: both show `Chip in: <chunk> points  (paid/total)` when enabled, the plain
+  `Cost: <price> points` otherwise. The perk one shows the hovering player's own progress.
+- [ ] Playtest: a linked multi-door paid by two players (both sides show the same progress, one
+  announcement per chunk, opens on the last one); a perk machine where two players each build their
+  own progress; the last chunk being a remainder (price not a multiple of `partial_price`); a
+  chip-in Quick Revive while the solo discount flips on a player joining.
 
 
 ## 4. Zombies — new placeable: Der Wunderfizz (random perk machine)

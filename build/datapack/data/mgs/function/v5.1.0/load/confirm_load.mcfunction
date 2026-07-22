@@ -64,6 +64,7 @@ scoreboard objectives add mgs.last_muzzle_flash dummy
 scoreboard objectives add mgs.config dummy
 
 ## Per-player special scoreboards (for zombies bonuses, testing, etc.)
+## Generated from helpers.SPECIAL_SCORES, which is also what game starts wipe to get a clean slate.
 # Instant kill: duration in ticks (kills entities in one hit, except mgs.no_instant_kill tagged)
 scoreboard objectives add mgs.special.instant_kill dummy
 # Infinite ammo: duration in ticks (don't consume ammo, set ammo to max capacity)
@@ -306,6 +307,10 @@ scoreboard objectives add mgs.zb.door.price dummy
 scoreboard objectives add mgs.zb.door.bgid dummy
 scoreboard objectives add mgs.zb.door.anim dummy
 scoreboard objectives add mgs.zb.door.rot dummy
+# Chip-in purchases: chunk size (0 = disabled) and how much the group has paid so far.
+# Door progress is global, so `paid` is mirrored on every entity of the link group.
+scoreboard objectives add mgs.zb.door.partial dummy
+scoreboard objectives add mgs.zb.door.paid dummy
 
 # Wallbuy entity scoreboards
 scoreboard objectives add mgs.zb.wb.id dummy
@@ -319,6 +324,8 @@ scoreboard objectives add mgs.zb.perk.price dummy
 # Map-defined price, kept so dynamic discounts (solo Quick Revive) can be reverted
 scoreboard objectives add mgs.zb.perk.base_price dummy
 scoreboard objectives add mgs.zb.perk.power dummy
+# Chip-in chunk size (0 = disabled, buy in one payment)
+scoreboard objectives add mgs.zb.perk.partial dummy
 
 # Perk ownership scoreboards
 scoreboard objectives add mgs.zb.perk.juggernog dummy
@@ -327,6 +334,14 @@ scoreboard objectives add mgs.zb.perk.double_tap dummy
 scoreboard objectives add mgs.zb.perk.quick_revive dummy
 scoreboard objectives add mgs.zb.perk.mule_kick dummy
 scoreboard objectives add mgs.zb.perk.stamin_up dummy
+
+# Per-player chip-in progress
+scoreboard objectives add mgs.zb.perkpaid.juggernog dummy
+scoreboard objectives add mgs.zb.perkpaid.speed_cola dummy
+scoreboard objectives add mgs.zb.perkpaid.double_tap dummy
+scoreboard objectives add mgs.zb.perkpaid.quick_revive dummy
+scoreboard objectives add mgs.zb.perkpaid.mule_kick dummy
+scoreboard objectives add mgs.zb.perkpaid.stamin_up dummy
 
 # Revive system scoreboards
 scoreboard objectives add mgs.zb.downed dummy

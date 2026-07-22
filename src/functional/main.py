@@ -3,6 +3,7 @@ from stewbeet import DamageType, Font, LootTable, Mem, set_json_encoder, texture
 
 from ..config.blocks import main as write_block_tags
 from ..config.stats import REMAINING_BULLETS
+from .helpers import special_objectives_lines
 
 # Main function
 
@@ -66,26 +67,8 @@ scoreboard objectives add {ns}.last_muzzle_flash dummy
 scoreboard objectives add {ns}.config dummy
 
 ## Per-player special scoreboards (for zombies bonuses, testing, etc.)
-# Instant kill: duration in ticks (kills entities in one hit, except {ns}.no_instant_kill tagged)
-scoreboard objectives add {ns}.special.instant_kill dummy
-# Infinite ammo: duration in ticks (don't consume ammo, set ammo to max capacity)
-scoreboard objectives add {ns}.special.infinite_ammo dummy
-# Double points: duration in ticks (double points earned from kills/hits in zombies)
-scoreboard objectives add {ns}.special.double_points dummy
-# Quick reload: percentage faster reload (20 = 20% faster, 50 = 50% faster)
-scoreboard objectives add {ns}.special.quick_reload dummy
-# Quick swap: percentage faster weapon switch (20 = 20% faster, 50 = 50% faster)
-scoreboard objectives add {ns}.special.quick_swap dummy
-# Additional shots: number of extra projectiles per shot (Double Tap perk)
-scoreboard objectives add {ns}.special.additional_shots dummy
-# Multiplayer loadout perk flags (0/1), set on loadout apply
-scoreboard objectives add {ns}.special.juggernaut dummy
-scoreboard objectives add {ns}.special.scavenger dummy
-scoreboard objectives add {ns}.special.flak_jacket dummy
-scoreboard objectives add {ns}.special.tracker dummy
-scoreboard objectives add {ns}.special.tactical_mask dummy
-scoreboard objectives add {ns}.special.overkill dummy
-scoreboard objectives add {ns}.special.quick_fix dummy
+## Generated from helpers.SPECIAL_SCORES, which is also what game starts wipe to get a clean slate.
+{special_objectives_lines(ns)}
 # DPS tracking: accumulates damage dealt per second, snapshot stored for actionbar
 scoreboard objectives add {ns}.dps dummy
 scoreboard objectives add {ns}.previous_dps dummy

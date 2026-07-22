@@ -35,6 +35,8 @@ data modify storage mgs:temp _pk_qr.perk_id set from storage mgs:temp _pk_iter[0
 execute if data storage mgs:temp _pk_qr{perk_id:"quick_revive"} run tag @n[tag=mgs.pk_new] add mgs.pk_quick_revive
 # Store power requirement as 1/0 (true stored as 1b in NBT, data get returns 1)
 execute store result score @n[tag=mgs.pk_new] mgs.zb.perk.power run data get storage mgs:temp _pk_iter[0].power
+# Chip-in chunk (absent on maps saved before the field existed -> the failed read stores 0 = disabled)
+execute store result score @n[tag=mgs.pk_new] mgs.zb.perk.partial run data get storage mgs:temp _pk_iter[0].partial_price
 
 # Store perk_id in indexed storage for later lookup
 execute store result storage mgs:temp _pk_store.id int 1 run scoreboard players get #pk_counter mgs.data
