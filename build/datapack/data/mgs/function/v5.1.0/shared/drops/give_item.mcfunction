@@ -1,9 +1,9 @@
 
-#> mgs:v5.1.0/multiplayer/pickup_give
+#> mgs:v5.1.0/shared/drops/give_item
 #
 # @executed	at @s
 #
-# @within	mgs:v5.1.0/multiplayer/pickup_give_mag with storage mgs:temp _give [ at @s ]
+# @within	mgs:v5.1.0/shared/drops/give_mag with storage mgs:temp _give [ at @s ]
 #
 # @args		Item (unknown)
 #			Owner (unknown)

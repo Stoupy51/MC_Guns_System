@@ -166,6 +166,9 @@ scoreboard objectives add mgs.mob.timer dummy
 scoreboard objectives add mgs.mob.active_time dummy
 scoreboard objectives add mgs.mob.sleep_time dummy
 
+# Dropped-weapon lifetime (ticks remaining before a dropped gun despawns)
+scoreboard objectives add mgs.drop_timer dummy
+
 ## Zombies scoreboards
 scoreboard objectives add mgs.zb.in_game dummy
 scoreboard objectives add mgs.zb.points dummy
@@ -376,9 +379,6 @@ scoreboard objectives add mgs.mp.prev_class dummy
 # Spectate timer (ticks remaining before respawn, 0 = not spectating)
 scoreboard objectives add mgs.mp.spectate_timer dummy
 
-# Dropped-weapon lifetime (ticks remaining before the on-death dropped gun despawns)
-scoreboard objectives add mgs.mp.drop_timer dummy
-
 # FFA ranking (1 = most kills, 2 = second, ..., 0 = unranked)
 scoreboard objectives add mgs.mp.ffa_rank dummy
 
@@ -444,6 +444,9 @@ scoreboard objectives add mgs.mi.kills dummy
 scoreboard objectives add mgs.mi.deaths dummy
 scoreboard objectives add mgs.mi.kill_total totalKillCount
 scoreboard objectives add mgs.mi.kill_base dummy
+
+# Was the death simulated? Then the body never moved and spectator mode already looks at the spot
+scoreboard objectives add mgs.mi.died_here dummy
 
 # Boundary checking coords (reuse mp prefix scores)
 scoreboard objectives add mgs.mp.bx dummy

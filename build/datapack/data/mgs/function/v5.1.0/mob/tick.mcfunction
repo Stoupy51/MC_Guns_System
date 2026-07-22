@@ -30,6 +30,15 @@ execute if score @s mgs.cooldown matches 1.. run return 0
 scoreboard players set #mob_has_target mgs.data 0
 execute store success score #mob_has_target mgs.data on attacker run tag @s add mgs.target
 
+# `on attacker` outlives the fight: a player who shot this mob and then died stays its attacker, so
+# the mob kept firing at the corpse-camera. Drop a target that is no longer a live participant
+# (spectator = dead and waiting to respawn, creative = admin) and fall through to the search below.
+# The untag scan is gated on the rare bad case instead of running on every mob tick.
+scoreboard players set #mob_dead_target mgs.data 0
+execute if score #mob_has_target mgs.data matches 1 if entity @a[tag=mgs.target,gamemode=!adventure,gamemode=!survival] run scoreboard players set #mob_dead_target mgs.data 1
+execute if score #mob_dead_target mgs.data matches 1 run scoreboard players set #mob_has_target mgs.data 0
+execute if score #mob_dead_target mgs.data matches 1 run tag @a[tag=mgs.target] remove mgs.target
+
 # Fall back to the nearest player. Two rules this block has to respect, both of which silently
 # broke mobs before:
 #  - the result goes to a scratch score, because `execute store success` writes 0 whenever a guard

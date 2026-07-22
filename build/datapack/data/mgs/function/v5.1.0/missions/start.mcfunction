@@ -47,6 +47,13 @@ scoreboard players set #mi_total_enemies mgs.data 0
 scoreboard players set #mi_has_boundary mgs.data 0
 scoreboard players set @a mgs.mi.kills 0
 scoreboard players set @a mgs.mi.deaths 0
+scoreboard players set @a mgs.mp.spectate_timer 0
+
+# The deathCount criterion keeps counting outside of games, so a death taken back in the lobby would
+# still be sitting on the score when the state flips to active — player/tick would then fire
+# missions/on_respawn immediately, killing everyone for real the instant the prep countdown ends.
+# Multiplayer and zombies clear it at start for the same reason.
+scoreboard players set @a mgs.mp.death_count 0
 
 # Missions are fully cooperative: all opted-in players join the blue team
 scoreboard players set @a[scores={mgs.mi.in_game=1}] mgs.mp.team 1

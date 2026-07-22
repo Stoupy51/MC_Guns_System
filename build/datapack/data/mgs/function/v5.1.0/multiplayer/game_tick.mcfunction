@@ -17,10 +17,10 @@ execute as @a[scores={mgs.mp.in_game=1,mgs.mp.spectate_timer=..0},gamemode=spect
 execute as @a[scores={mgs.mp.in_game=1,mgs.mp.spectate_timer=..0},gamemode=spectator] at @s run function mgs:v5.1.0/multiplayer/actual_respawn
 
 # Dropped-weapon lifetime: count down (real-time via #tick_delta) and remove expired drops
-execute as @e[type=minecraft:item_display,tag=mgs.mp_dropped_gun] run scoreboard players operation @s mgs.mp.drop_timer -= #tick_delta mgs.data
-execute as @e[type=minecraft:interaction,tag=mgs.mp_drop_int] run scoreboard players operation @s mgs.mp.drop_timer -= #tick_delta mgs.data
-kill @e[type=minecraft:item_display,tag=mgs.mp_dropped_gun,scores={mgs.mp.drop_timer=..0}]
-kill @e[type=minecraft:interaction,tag=mgs.mp_drop_int,scores={mgs.mp.drop_timer=..0}]
+execute as @e[type=minecraft:item_display,tag=mgs.dropped_gun] run scoreboard players operation @s mgs.drop_timer -= #tick_delta mgs.data
+execute as @e[type=minecraft:interaction,tag=mgs.drop_int] run scoreboard players operation @s mgs.drop_timer -= #tick_delta mgs.data
+kill @e[type=minecraft:item_display,tag=mgs.dropped_gun,scores={mgs.drop_timer=..0}]
+kill @e[type=minecraft:interaction,tag=mgs.drop_int,scores={mgs.drop_timer=..0}]
 
 # Timer (real-time via #tick_delta)
 scoreboard players operation #mp_timer mgs.data -= #tick_delta mgs.data

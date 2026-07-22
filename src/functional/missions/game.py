@@ -44,6 +44,9 @@ scoreboard objectives add {ns}.mi.deaths dummy
 scoreboard objectives add {ns}.mi.kill_total totalKillCount
 scoreboard objectives add {ns}.mi.kill_base dummy
 
+# Was the death simulated? Then the body never moved and spectator mode already looks at the spot
+scoreboard objectives add {ns}.mi.died_here dummy
+
 # Boundary checking coords (reuse mp prefix scores)
 scoreboard objectives add {ns}.mp.bx dummy
 scoreboard objectives add {ns}.mp.by dummy
@@ -84,6 +87,13 @@ scoreboard players set #mi_total_enemies {ns}.data 0
 scoreboard players set #mi_has_boundary {ns}.data 0
 scoreboard players set @a {ns}.mi.kills 0
 scoreboard players set @a {ns}.mi.deaths 0
+scoreboard players set @a {ns}.mp.spectate_timer 0
+
+# The deathCount criterion keeps counting outside of games, so a death taken back in the lobby would
+# still be sitting on the score when the state flips to active — player/tick would then fire
+# missions/on_respawn immediately, killing everyone for real the instant the prep countdown ends.
+# Multiplayer and zombies clear it at start for the same reason.
+scoreboard players set @a {ns}.mp.death_count 0
 
 # Missions are fully cooperative: all opted-in players join the blue team
 scoreboard players set @a[scores={{{ns}.mi.in_game=1}}] {ns}.mp.team 1
@@ -260,20 +270,31 @@ $execute positioned $(x) $(y) $(z) run function $(function)
 """)
 
 		# Enemy weapon drops ────────────────────────────────────────
-		## Per-tick death watch. Missions has no per-mob death hook (the game tick only polls the
-		## alive count), so catch enemies during their death animation: DeathTime counts up from 0
-		## once the mob dies, so `DeathTime:1s` matches exactly one tick per corpse — early enough
-		## that equipment.mainhand still holds the gun.
+		## Backup death watch. The drop normally fires from raycast/apply_damage the moment the
+		## killing shot lands (@s = victim, gun still in hand); this catches enemies killed by
+		## anything that doesn't route through there, e.g. the boundary kill.
 		## Cost: one entity-NBT read per living enemy per tick, the same deal zombies pays in
 		## zombies/death_watch_tick. There is no cheaper "did anything die" signal to gate it on.
 		write_versioned_function("missions/death_watch_tick", f"""
-execute as @e[tag={ns}.mission_enemy] at @s if data entity @s {{DeathTime:1s}} run function {ns}:v{version}/missions/drop_enemy_weapon
+execute as @e[tag={ns}.mission_enemy,tag=!{ns}.drop_done] at @s run function {ns}:v{version}/missions/check_enemy_dead
+""")
+
+		## Is this enemy dead? Read the health into a score rather than NBT-matching the corpse:
+		## `{Health:0.0f}` and `{DeathTime:1s}` were both tried here and each went 0-for-34 in
+		## playtest, while this `data get entity @s Health` read is exactly what raycast/apply_damage
+		## uses for kill detection. The sentinel keeps a failed read from reusing the last mob's score.
+		write_versioned_function("missions/check_enemy_dead", f"""
+scoreboard players set #mi_enemy_hp {ns}.data 1000
+execute store result score #mi_enemy_hp {ns}.data run data get entity @s Health 100
+execute if score #mi_enemy_hp {ns}.data matches ..0 run function {ns}:v{version}/missions/drop_enemy_weapon
 """)
 
 		## Capture step for the shared drop (@s = dying enemy, at its position).
 		## Mobs hold their gun in equipment.mainhand instead of an Inventory slot; everything after
 		## the capture (ammo bake, spare magazine, ground spawn, pickup) is core/weapon_drop.py.
 		write_versioned_function("missions/drop_enemy_weapon", f"""
+tag @s add {ns}.drop_done
+
 data remove storage {ns}:temp _dropw
 data modify storage {ns}:temp _dropw set from entity @s equipment.mainhand
 
@@ -283,22 +304,65 @@ scoreboard players set #drop_ammo {ns}.data 0
 function {ns}:v{version}/shared/drops/drop
 """)
 
-		## On Respawn (missions death handling - now with cooldown like multiplayer)
-		write_versioned_function("missions/on_respawn", f"""
-# Reset death counter & Increment mission death stats
-scoreboard players set @s {ns}.mp.death_count 0
+		# Death handling ────────────────────────────────────────────
+		## Simulated death (@s = victim, `{ns}:input with` may hold amount/attacker).
+		## Called from utils/signal_and_damage when a bullet/explosion would be lethal, exactly like
+		## multiplayer: the player is healed instead of dying, so vanilla never respawns them at the
+		## world spawn and their position stays valid for the respawn teleport below.
+		write_versioned_function("missions/simulate_death", f"""
+# Ignore duplicate deaths (a second bullet landing in the same tick, or an OOB kill on top of one)
+execute if score @s {ns}.mp.spectate_timer matches 1.. run return 0
+execute if entity @s[gamemode=spectator] run return 0
+
+# Heal to prevent the actual death & Increment mission death stats
+effect give @s instant_health 1 100 true
 scoreboard players add @s {ns}.mi.deaths 1
+
+# Fire the damage signal (hit effects, hitmarker, DPS) if this came from a hit
+execute if data storage {ns}:input with.amount run function #{ns}:signals/damage with storage {ns}:input with
+
+# No vanilla death happened, so the body is still standing where it fell: the spectate flow below
+# leaves the camera right there instead of snapping to a teammate
+scoreboard players set @s {ns}.mi.died_here 1
+
+function {ns}:v{version}/missions/enter_death_spectate
+""")
+
+		## On Respawn: the vanilla-death fallback (fall damage, lava, drowning, the OOB kill) for
+		## everything the simulated path can't intercept. Vanilla already respawned the player
+		## elsewhere by now, so their position is worthless — these respawn at a mission spawn.
+		write_versioned_function("missions/on_respawn", f"""
+# Reset death counter
+scoreboard players set @s {ns}.mp.death_count 0
+
+# Already in death spectate -> this vanilla death was already processed as a simulated death
+execute if score @s {ns}.mp.spectate_timer matches 1.. run return 0
+execute if entity @s[gamemode=spectator] run return 0
+
+# Increment mission death stats
+scoreboard players add @s {ns}.mi.deaths 1
+scoreboard players set @s {ns}.mi.died_here 0
+
+function {ns}:v{version}/missions/enter_death_spectate
+""")
+
+		## Shared death-spectate flow (@s = dying player), used by both paths above
+		write_versioned_function("missions/enter_death_spectate", f"""
+# Drop the held gun on the ground (pickable for 30s) before anything else, while still holding it
+execute at @s run function {ns}:v{version}/multiplayer/drop_held_weapon
 
 # Set player to spectator mode for 3 seconds (60 ticks) before actual respawn
 gamemode spectator @s
 scoreboard players set @s {ns}.mp.spectate_timer 60
 
-# Spectate a random alive in-game player
-function {ns}:v{version}/missions/spectate_random_player
+# Simulated death: the camera is already at the death point, leave it there. A vanilla death has
+# teleported the player to the world spawn by now, so those fall back to spectating a teammate.
+execute unless score @s {ns}.mi.died_here matches 1 run function {ns}:v{version}/missions/spectate_random_player
 
 # Announce respawn delay to the dying player
 title @s title ["☠"]
 title @s subtitle [{{"text":"Respawning in 3 seconds...","color":"gray"}}]
+execute at @s run playsound minecraft:entity.player.hurt ambient @s
 """)
 
 		## Spectate a random alive in-game player (fallback)
@@ -317,6 +381,7 @@ gamemode adventure @s
 
 # Teleport to random mission spawn point
 function {ns}:v{version}/missions/respawn_tp
+scoreboard players set @s {ns}.mi.died_here 0
 
 # Reset stamina to full (the stamina system owns the hunger bar)
 scoreboard players set @s {ns}.stam_seen 0

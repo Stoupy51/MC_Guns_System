@@ -1,9 +1,9 @@
 
-#> mgs:v5.1.0/multiplayer/drop_mag_lookup
+#> mgs:v5.1.0/shared/drops/mag_lookup
 #
 # @executed	at @s
 #
-# @within	mgs:v5.1.0/multiplayer/drop_held_weapon
+# @within	mgs:v5.1.0/shared/drops/drop
 #
 
 execute if data storage mgs:temp _dropmag_args{bw:"ak47"} run data modify storage mgs:temp _dropmag_args merge value {mag:"ak47_mag",halfc:1}

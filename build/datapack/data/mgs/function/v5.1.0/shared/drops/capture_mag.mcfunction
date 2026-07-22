@@ -1,18 +1,18 @@
 
-#> mgs:v5.1.0/multiplayer/drop_capture_mag
+#> mgs:v5.1.0/shared/drops/capture_mag
 #
 # @executed	at @s
 #
-# @within	mgs:v5.1.0/multiplayer/drop_held_weapon with storage mgs:temp _dropmag_args
+# @within	mgs:v5.1.0/shared/drops/drop with storage mgs:temp _dropmag_args
 #
 # @args		mag (unknown)
 #			halfc (unknown)
 #
 
-summon minecraft:item_display ~ ~ ~ {Tags:["mgs.mp_mag_helper"]}
-$loot replace entity @n[tag=mgs.mp_mag_helper] contents loot mgs:i/$(mag)
-data modify storage mgs:temp _dropmag set from entity @n[tag=mgs.mp_mag_helper] item
-kill @n[tag=mgs.mp_mag_helper]
+summon minecraft:item_display ~ ~ ~ {Tags:["mgs.drop_mag_helper"]}
+$loot replace entity @n[tag=mgs.drop_mag_helper] contents loot mgs:i/$(mag)
+data modify storage mgs:temp _dropmag set from entity @n[tag=mgs.drop_mag_helper] item
+kill @n[tag=mgs.drop_mag_helper]
 execute unless data storage mgs:temp _dropmag run return 0
 
 # Regular magazines: fill to 50% of their capacity (never a full magazine)

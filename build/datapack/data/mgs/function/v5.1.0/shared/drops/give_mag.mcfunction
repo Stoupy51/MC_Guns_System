@@ -1,18 +1,18 @@
 
-#> mgs:v5.1.0/multiplayer/pickup_give_mag
+#> mgs:v5.1.0/shared/drops/give_mag
 #
 # @executed	at @e[tag=bs.interaction.target]
 #
-# @within	mgs:v5.1.0/multiplayer/pickup_collect
+# @within	mgs:v5.1.0/shared/drops/collect
 #
 
 data modify storage mgs:temp _give set value {}
-data modify storage mgs:temp _give.Item set from entity @n[type=minecraft:item_display,tag=mgs.mp_dropped_gun,distance=..3] item.components."minecraft:custom_data".mgs.drop_mag
+data modify storage mgs:temp _give.Item set from entity @n[type=minecraft:item_display,tag=mgs.dropped_gun,distance=..3] item.components."minecraft:custom_data".mgs.drop_mag
 data modify storage mgs:temp _give.Owner set from entity @s UUID
 
 # Load the magazine into a helper display so `item replace ... from entity` can read it
-summon minecraft:item_display ~ ~ ~ {Tags:["mgs.mp_mag_helper"]}
-data modify entity @n[tag=mgs.mp_mag_helper] item set from storage mgs:temp _give.Item
+summon minecraft:item_display ~ ~ ~ {Tags:["mgs.drop_mag_helper"]}
+data modify entity @n[tag=mgs.drop_mag_helper] item set from storage mgs:temp _give.Item
 
 # First free main-inventory slot
 scoreboard players set #mag_slot mgs.data -1
@@ -44,11 +44,11 @@ execute if score #mag_slot mgs.data matches -1 unless items entity @s inventory.
 execute if score #mag_slot mgs.data matches -1 unless items entity @s inventory.25 * run scoreboard players set #mag_slot mgs.data 25
 execute if score #mag_slot mgs.data matches -1 unless items entity @s inventory.26 * run scoreboard players set #mag_slot mgs.data 26
 execute store result storage mgs:temp _give.slot int 1 run scoreboard players get #mag_slot mgs.data
-execute if score #mag_slot mgs.data matches 0.. run function mgs:v5.1.0/multiplayer/pickup_place_mag with storage mgs:temp _give
+execute if score #mag_slot mgs.data matches 0.. run function mgs:v5.1.0/shared/drops/place_mag with storage mgs:temp _give
 
 # Main inventory full -> fall back to an owner-locked ground item (may land in the hotbar)
-execute if score #mag_slot mgs.data matches -1 at @s run function mgs:v5.1.0/multiplayer/pickup_give with storage mgs:temp _give
+execute if score #mag_slot mgs.data matches -1 at @s run function mgs:v5.1.0/shared/drops/give_item with storage mgs:temp _give
 
-kill @n[tag=mgs.mp_mag_helper]
-data remove entity @n[type=minecraft:item_display,tag=mgs.mp_dropped_gun,distance=..3] item.components."minecraft:custom_data".mgs.drop_mag
+kill @n[tag=mgs.drop_mag_helper]
+data remove entity @n[type=minecraft:item_display,tag=mgs.dropped_gun,distance=..3] item.components."minecraft:custom_data".mgs.drop_mag
 

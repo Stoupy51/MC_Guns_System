@@ -24,6 +24,14 @@ execute if score #mi_has_boundary mgs.data matches 1 as @e[tag=mgs.mission_enemy
 execute if score #mi_has_boundary mgs.data matches 1 as @e[type=player,scores={mgs.mi.in_game=1},gamemode=!creative,gamemode=!spectator] at @s run function mgs:v5.1.0/shared/check_bounds
 execute as @e[type=player,scores={mgs.mi.in_game=1},gamemode=!creative,gamemode=!spectator] at @s if entity @e[tag=mgs.oob_point,distance=..5] run damage @s 10000 out_of_world
 
+# Enemies drop their weapon at the corpse; the drops then live for 30s
+function mgs:v5.1.0/missions/death_watch_tick
+# Dropped-weapon lifetime: count down (real-time via #tick_delta) and remove expired drops
+execute as @e[type=minecraft:item_display,tag=mgs.dropped_gun] run scoreboard players operation @s mgs.drop_timer -= #tick_delta mgs.data
+execute as @e[type=minecraft:interaction,tag=mgs.drop_int] run scoreboard players operation @s mgs.drop_timer -= #tick_delta mgs.data
+kill @e[type=minecraft:item_display,tag=mgs.dropped_gun,scores={mgs.drop_timer=..0}]
+kill @e[type=minecraft:interaction,tag=mgs.drop_int,scores={mgs.drop_timer=..0}]
+
 # Track enemy kills (total enemies - alive enemies)
 execute store result score #alive mgs.data if entity @e[tag=mgs.mission_enemy]
 scoreboard players operation #mi_kills mgs.data = #mi_total_enemies mgs.data
