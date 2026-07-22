@@ -1,9 +1,9 @@
 
 #> mgs:v5.1.0/missions/spectate_random_player
 #
-# @executed	as @e[type=player,sort=random] & at @s
+# @executed	at @s
 #
-# @within	mgs:v5.1.0/missions/on_respawn
+# @within	mgs:v5.1.0/missions/enter_death_spectate
 #
 
 # Pick a random alive in-game player (not self, not spectator)

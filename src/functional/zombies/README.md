@@ -32,17 +32,65 @@ Once art exists:
 - Zombies keeps its plain knife (separate give in `zombies/inventory.py`), until a zombies knife wall-buy exists (task 9).
 
 
-## 2. Missions — mobs drop their weapon on death
+## 2. Missions — mobs drop their weapon on death  [DONE]
 
-Multiplayer already has the exact mechanic to copy: `multiplayer/game.py::drop_held_weapon`
-(~line 377) — drops the gun as a static `item_display` + interaction hitbox, 30 s pickup,
-live-ammo sync (empty gun drops with 50% mag), one spare 50% mag embedded as `drop_mag`,
-raycast straight down so mid-air deaths land on the floor.
+The whole drop (static `item_display` + interaction hitbox, 30 s pickup, spare 50% mag embedded as
+`drop_mag`, raycast straight down so mid-air deaths land on the floor) now lives in
+`src/functional/core/weapon_drop.py` as `shared/drops/*`; only the capture step is per-caller.
 
-- [ ] Refactor the MP drop into a shared helper (it is written against `@s` = dying player; mission mobs hold their gun in `equipment.mainhand` instead of `Inventory` — the capture step differs, the spawn/pickup steps are reusable).
-- [ ] Mission enemies are the `mgs.armed`/`mgs.mission_enemy` mobs (`missions/game.py` spawn iter; gun stats read from `equipment.mainhand` by `mob_ai.py::copy_gun_data`). There is currently **no per-mob death hook** — missions only polls the alive count (`missions/game.py` ~line 330). Add a death watch (same pattern as `zombies/round.py::death_watch_tick` / `on_zombie_dying`) to fire the drop at the corpse.
-- [ ] Decide drop ammo rule for mobs: suggest same as MP (50% mag + one spare 50% mag).
-- [ ] Pickup should respect the missions loadout slots (same MP hotbar rules apply since missions uses MP classes).
+- [x] Refactor: `core/weapon_drop.py::write_shared_weapon_drop_functions` emits `shared/drops/drop`
+  (entry) + spawn/mag/pickup/collect/take/swap/overkill. Callers fill `mgs:temp _dropw` (the gun
+  item, no `Slot` tag) and `#drop_ammo mgs.data`, then call `shared/drops/drop` positioned at the
+  corpse. `weapon_drop_tick_lines(ns)` is the lifetime countdown, called from both game ticks.
+  Tags/objective are no longer mp-prefixed: `mgs.dropped_gun` · `mgs.drop_int` · `mgs.drop_timer`.
+- [x] MP capture (`multiplayer/drop_held_weapon`) is now just the hotbar.1/2 slot pick + the live
+  ammo score; everything else moved out.
+- [x] Mission capture: `missions/drop_enemy_weapon` reads `equipment.mainhand` into `_dropw`
+  (verified in-game: `/data get entity @n[tag=mgs.mission_enemy] equipment.mainhand` returns the
+  full gun stack). It tags the mob `mgs.drop_done`, so every trigger below is idempotent.
+- [x] Primary trigger: `raycast/apply_damage` (and `projectile/damage_entity`) fire the drop on the
+  killing shot, where `@s` is the victim and still holds the gun. No corpse scan involved.
+- [x] Backup trigger: `missions/death_watch_tick` → `missions/check_enemy_dead` reads
+  `data get entity @s Health` into a score and drops at `..0`, the same read raycast uses for kill
+  detection. Two NBT compound matches were tried there first and each went 0-for-34 in playtest
+  (`DeathTime:1s`, then `Health:0.0f`) — never use one of those as the death signal here.
+- [x] Mob drop ammo: `#drop_ammo 0` → the shared path's "half a magazine" branch, so mobs drop the
+  same 50% mag + one spare 50% mag a player's empty gun leaves behind.
+- [x] Vanilla drop removed: `mob_ai.py::mob/default/on_new` set `HandDropChances`, a key that no
+  longer exists (renamed `drop_chances` in 1.21.5), so armed mobs were silently rolling the vanilla
+  8.5% mainhand drop. Now `drop_chances {mainhand:0.0f,offhand:0.0f}` — the explicit drop is the
+  only one.
+- [x] Pickup gate accepts missions players (`mgs.mi.in_game`) alongside MP; hotbar rules and the
+  Overkill two-primaries check are unchanged, which is what missions wants since it runs MP classes.
+- [x] Playtested: mobs drop their gun at the corpse.
+- [ ] Still unverified in the field: a mob killed mid-air / on a rooftop, the 30 s despawn, pickup
+  take/swap, the spare mag landing in the main inventory, and the Overkill deny.
+
+
+## 2b. Missions — death handling  [IMPLEMENTED — needs playtest]
+
+- [x] Fake death at the end of prep: `mgs.mp.death_count` (the `deathCount` criterion) kept counting
+  in the lobby, and `player/tick` fires `missions/on_respawn` as soon as the state turns active — so
+  any death taken before the mission killed the player the instant the countdown ended.
+  `missions/start` now clears it (and `mp.spectate_timer`), like multiplayer and zombies already did.
+- [x] Simulated death, as in multiplayer: `utils/signal_and_damage(_plain)` routes lethal damage on a
+  `mgs.mi.in_game` player (state must be `active` — `mi.in_game` is an opt-in flag set in the lobby)
+  to `missions/simulate_death`, which heals instead of dying. No vanilla death → no world-spawn
+  teleport, and the corpse position stays meaningful.
+- [x] Spectate from the death point: a simulated death leaves the body where it fell, so
+  `enter_death_spectate` skips `spectate_random_player` when `mgs.mi.died_here` is set and the
+  camera simply stays there. Vanilla deaths (fall, lava, the OOB kill) have already been teleported
+  to the world spawn by then, so those still spectate a teammate. Respawning always goes back to a
+  mission spawn via `missions/respawn_tp` — respawning at the death point was tried and rejected.
+- [x] Mobs stop shooting a dead player: `mob/tick` picks its target with `on attacker`, which has no
+  gamemode filter and outlives the fight, so a mob kept firing at the spectator camera of whoever
+  last shot it. It now drops a target that is not in adventure/survival and falls through to the
+  nearest-live-player search (which already excluded spectators).
+- [x] `missions/enter_death_spectate` is now shared by both paths, and drops the held gun at the
+  corpse the same way multiplayer does.
+- [ ] Playtest: die to an enemy bullet (no death screen, camera stays at the body, mobs stop firing
+  at it), die to fall damage (spectates a teammate), both respawning at a mission spawn after the
+  3 s countdown with a fresh loadout.
 
 
 ## 3. Zombies — partial ("chip-in") purchases for doors & perks

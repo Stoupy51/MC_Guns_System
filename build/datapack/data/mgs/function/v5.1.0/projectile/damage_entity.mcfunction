@@ -98,6 +98,10 @@ execute store result score #victim_hp mgs.data run data get entity @s Health 100
 scoreboard players set #is_new_kill mgs.data 0
 execute if score #victim_hp mgs.data matches ..0 unless entity @s[tag=mgs.already_killed] run scoreboard players set #is_new_kill mgs.data 1
 execute if score #victim_hp mgs.data matches ..0 unless entity @s[tag=mgs.already_killed] run tag @s add mgs.already_killed
+
+# Same drop hook as raycast/apply_damage: @s is the victim, killed here by an explosion
+execute if score #is_new_kill mgs.data matches 1 if entity @s[tag=mgs.mission_enemy] at @s run function mgs:v5.1.0/missions/drop_enemy_weapon
+
 execute if score #is_new_kill mgs.data matches 1 run data modify storage mgs:signals on_kill set value {}
 execute if score #is_new_kill mgs.data matches 1 run data modify storage mgs:signals on_kill.explosion set value true
 execute if score #is_new_kill mgs.data matches 1 as @n[tag=mgs.temp_shooter] run function #mgs:signals/on_kill

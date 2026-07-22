@@ -48,6 +48,15 @@ execute if score @s {ns}.cooldown matches 1.. run return 0
 scoreboard players set #mob_has_target {ns}.data 0
 execute store success score #mob_has_target {ns}.data on attacker run tag @s add {ns}.target
 
+# `on attacker` outlives the fight: a player who shot this mob and then died stays its attacker, so
+# the mob kept firing at the corpse-camera. Drop a target that is no longer a live participant
+# (spectator = dead and waiting to respawn, creative = admin) and fall through to the search below.
+# The untag scan is gated on the rare bad case instead of running on every mob tick.
+scoreboard players set #mob_dead_target {ns}.data 0
+execute if score #mob_has_target {ns}.data matches 1 if entity @a[tag={ns}.target,gamemode=!adventure,gamemode=!survival] run scoreboard players set #mob_dead_target {ns}.data 1
+execute if score #mob_dead_target {ns}.data matches 1 run scoreboard players set #mob_has_target {ns}.data 0
+execute if score #mob_dead_target {ns}.data matches 1 run tag @a[tag={ns}.target] remove {ns}.target
+
 # Fall back to the nearest player. Two rules this block has to respect, both of which silently
 # broke mobs before:
 #  - the result goes to a scratch score, because `execute store success` writes 0 whenever a guard
@@ -209,7 +218,7 @@ execute if score #armed_mob_count {ns}.data matches 1.. if score #armed_mob_phas
 tag @s add {ns}.armed
 $data modify entity @s CustomName set value {{"text":"Armed $(entity) [Lv.$(level)]","color":"red"}}
 data modify entity @s DeathLootTable set value "minecraft:empty"
-data modify entity @s HandDropChances set value [0.2f,0.0f]
+data modify entity @s drop_chances set value {{mainhand:0.0f,offhand:0.0f}}
 data modify entity @s PersistenceRequired set value true
 attribute @s minecraft:waypoint_transmit_range base set 32
 

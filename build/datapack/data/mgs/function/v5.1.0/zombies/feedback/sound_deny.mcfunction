@@ -1,9 +1,10 @@
 
 #> mgs:v5.1.0/zombies/feedback/sound_deny
 #
-# @executed	at @s
+# @executed	at @e[tag=bs.interaction.target]
 #
-# @within	mgs:v5.1.0/maps/zombies/kino_der_toten/teleporter/deny_recharging [ at @s ]
+# @within	mgs:v5.1.0/shared/drops/overkill_check
+#			mgs:v5.1.0/maps/zombies/kino_der_toten/teleporter/deny_recharging [ at @s ]
 #			mgs:v5.1.0/zombies/mystery_box/deny_moving
 #			mgs:v5.1.0/zombies/mystery_box/deny_already_in_use
 #			mgs:v5.1.0/zombies/mystery_box/deny_not_enough_points
@@ -32,7 +33,6 @@
 #			mgs:v5.1.0/zombies/traps/deny_requires_power
 #			mgs:v5.1.0/zombies/traps/deny_not_ready
 #			mgs:v5.1.0/zombies/traps/deny_not_enough_points
-#			mgs:v5.1.0/multiplayer/pickup_overkill_check
 #
 
 playsound minecraft:entity.villager.no ambient @s ~ ~ ~ 0.8 1.0

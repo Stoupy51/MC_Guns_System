@@ -14,6 +14,7 @@ gamemode adventure @s
 
 # Teleport to random mission spawn point
 function mgs:v5.1.0/missions/respawn_tp
+scoreboard players set @s mgs.mi.died_here 0
 
 # Reset stamina to full (the stamina system owns the hunger bar)
 scoreboard players set @s mgs.stam_seen 0

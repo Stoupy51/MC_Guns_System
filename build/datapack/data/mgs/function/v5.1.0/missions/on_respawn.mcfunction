@@ -6,18 +6,16 @@
 # @within	mgs:v5.1.0/player/tick
 #
 
-# Reset death counter & Increment mission death stats
+# Reset death counter
 scoreboard players set @s mgs.mp.death_count 0
+
+# Already in death spectate -> this vanilla death was already processed as a simulated death
+execute if score @s mgs.mp.spectate_timer matches 1.. run return 0
+execute if entity @s[gamemode=spectator] run return 0
+
+# Increment mission death stats
 scoreboard players add @s mgs.mi.deaths 1
+scoreboard players set @s mgs.mi.died_here 0
 
-# Set player to spectator mode for 3 seconds (60 ticks) before actual respawn
-gamemode spectator @s
-scoreboard players set @s mgs.mp.spectate_timer 60
-
-# Spectate a random alive in-game player
-function mgs:v5.1.0/missions/spectate_random_player
-
-# Announce respawn delay to the dying player
-title @s title ["☠"]
-title @s subtitle [{"translate":"mgs.respawning_in_3_seconds","color":"gray"}]
+function mgs:v5.1.0/missions/enter_death_spectate
 
