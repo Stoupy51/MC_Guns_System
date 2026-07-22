@@ -10,10 +10,9 @@ execute unless items entity @s weapon.mainhand *[custom_data~{mgs:{gun:true}}] r
 
 function mgs:v5.1.0/utils/copy_gun_data
 
-# Only weapons that actually have a second mode respond. Throwables carry a fire_mode too, so
-# without this the toggle would pointlessly rewrite the item and fire the change signal on grenades.
-execute unless data storage mgs:gun all.stats.can_auto unless data storage mgs:gun all.stats.can_burst run return 0
+# Guard throwables/knives: no reload_time -> ammo/reload would set a garbage cooldown and lock the item
+execute unless data storage mgs:gun all.stats.reload_time run return 0
 
-# Cycle the mode (auto -> semi -> burst -> auto, narrowed to whatever the weapon supports).
-function mgs:v5.1.0/switch/do_toggle_fire_mode
+# Safe to spam: ammo/reload returns fail while reloading or already full
+function mgs:v5.1.0/ammo/reload
 

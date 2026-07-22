@@ -140,8 +140,8 @@ execute if score #acoustics_phase {ns}.data matches 0 unless predicate {ns}:v{ve
 # Reload if the hand-swap key parked the weapon in the offhand
 execute if items entity @s weapon.offhand * run function {ns}:v{version}/player/offhand_swap_check
 
-# Check if player dropped weapon to reload
-function {ns}:v{version}/switch/check_reload_on_drop
+# Check if player dropped weapon to switch fire mode
+function {ns}:v{version}/switch/check_fire_mode_on_drop
 
 # Copy gun data
 function {ns}:v{version}/utils/copy_gun_data
@@ -226,9 +226,9 @@ execute unless score @s {ns}.special.infinite_ammo matches 1.. if score @s {ns}.
 $item modify entity @s weapon.mainhand {"function": "minecraft:set_components","components": {"minecraft:item_model": "$(item_model)"}}
 """)
 
-    # Hand swap (F) is the reload key. Pressing it puts the gun in the offhand, which is what we
-    # detect here — the weapon is put straight back so the swap never visibly happens.
-    # (Fire mode moved to left click, see weapon/left_click.py.)
+    # Hand swap (F) is a reload key (left click is the other one, see weapon/left_click.py).
+    # Pressing it puts the gun in the offhand, which is what we detect here — the weapon is put
+    # straight back so the swap never visibly happens. (Fire mode is on the drop key, switch.py.)
     write_versioned_function("player/offhand_swap_check", f"""
 # If mainhand is empty and offhand has a weapon, move it back to mainhand and reload
 execute unless items entity @s weapon.mainhand * if items entity @s weapon.offhand *[custom_data~{{{ns}:{{gun:true}}}}] run function {ns}:v{version}/player/swap_and_reload

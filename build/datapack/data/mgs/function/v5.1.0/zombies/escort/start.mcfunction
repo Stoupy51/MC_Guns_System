@@ -28,8 +28,10 @@ summon minecraft:wandering_trader ~ ~ ~ {Tags:["mgs.zb_escort","mgs.gm_entity","
 # Allied with the horde so its AvoidEntityGoal(Zombie) never fires and zombies never target it
 team join mgs.horde @n[tag=mgs.zb_escort_new]
 
-# Trader base speed = zombie_speed / 0.35 (WanderToPositionGoal modifier) => same effective speed
-execute store result storage mgs:temp _escort.speed double 0.0028571 run attribute @s minecraft:movement_speed get 1000
+# Trader base speed = zombie_speed / 0.35 (WanderToPositionGoal modifier) => same effective speed.
+# BASE get, not effective: a barrier-frozen zombie's mgs:freeze modifier (-1024) would read negative
+# and clamp the taxi to 0 speed; a just-detached zombie's Speed I would read 20% high.
+execute store result storage mgs:temp _escort.speed double 0.0028571 run attribute @s minecraft:movement_speed base get 1000
 execute as @n[tag=mgs.zb_escort_new] run function mgs:v5.1.0/zombies/escort/set_trader_speed with storage mgs:temp _escort
 
 # Big pathfinding budget so it can afford stair detours instead of camping below the player

@@ -39,8 +39,9 @@
 #   and the zombie always sits on a path-valid position (no wall/floor clipping when released).
 # - Trader removal tp's it 1000 blocks straight down before the kill: the death poof particles
 #   and the corpse happen where nobody can see them.
-# - gamerule spawn_wandering_traders is turned off during games so no natural trader (not on the
-#   team) wanders in, flees the horde, and gets chewed on.
+# - gamerules spawn_wandering_traders + spawn_mobs are off during games: a natural trader would flee
+#   the horde and get chewed on, and a natural (teamless) zombie re-arms the taxi's AvoidEntityGoal
+#   and sends it sprinting off-route (see zombies/start below).
 from stewbeet import Mem, write_load_file, write_tag, write_versioned_function
 
 # Max simultaneous escorts; stuck zombies beyond this use the teleport rescue instead.
@@ -152,8 +153,10 @@ summon minecraft:wandering_trader ~ ~ ~ {{Tags:["{ns}.zb_escort","{ns}.gm_entity
 # Allied with the horde so its AvoidEntityGoal(Zombie) never fires and zombies never target it
 team join {ns}.horde @n[tag={ns}.zb_escort_new]
 
-# Trader base speed = zombie_speed / 0.35 (WanderToPositionGoal modifier) => same effective speed
-execute store result storage {ns}:temp _escort.speed double 0.0028571 run attribute @s minecraft:movement_speed get 1000
+# Trader base speed = zombie_speed / 0.35 (WanderToPositionGoal modifier) => same effective speed.
+# BASE get, not effective: a barrier-frozen zombie's {ns}:freeze modifier (-1024) would read negative
+# and clamp the taxi to 0 speed; a just-detached zombie's Speed I would read 20% high.
+execute store result storage {ns}:temp _escort.speed double 0.0028571 run attribute @s minecraft:movement_speed base get 1000
 execute as @n[tag={ns}.zb_escort_new] run function {ns}:v{version}/zombies/escort/set_trader_speed with storage {ns}:temp _escort
 
 # Big pathfinding budget so it can afford stair detours instead of camping below the player
@@ -492,14 +495,19 @@ execute if score #zb_lure {ns}.data matches 1 if score #zb_escort_count {ns}.dat
 function {ns}:v{version}/zombies/escort/setup_lure_center
 """)
 
-	## Game start: no natural traders wandering into the map (they'd flee the horde, being
-	## teamless). The horde team itself is created in the load file above.
+	## Game start: no natural traders wandering in (they'd flee the horde, being teamless).
+	## spawn_mobs off too, for SPEED: a naturally spawned zombie isn't on the horde team, so it
+	## re-arms the taxi's AvoidEntityGoal (priority 1, above WanderToPositionGoal); the taxi flees at
+	## 0.5, and its base speed is inflated to zombie_speed/0.35, so it drags its passenger off-route
+	## at ~1.43x zombie speed — the "traders faster than sonic" report. (Game runs at permanent
+	## midnight — game.py advance_time false — so mobs would otherwise spawn all game.)
 	write_versioned_function("zombies/start", f"""
 # Escort system (escort.py)
 scoreboard players set #zb_escort_count {ns}.data 0
 scoreboard players set #zb_escort_mode {ns}.data 0
 scoreboard players set #zb_lure {ns}.data 0
 gamerule spawn_wandering_traders false
+gamerule spawn_mobs false
 """)
 
 	## Game stop: traders themselves are killed with {ns}.gm_entity in game.py's stop
@@ -507,5 +515,6 @@ gamerule spawn_wandering_traders false
 # Escort cleanup (escort.py); the traders themselves die with the {ns}.gm_entity kill above
 scoreboard players set #zb_escort_count {ns}.data 0
 gamerule spawn_wandering_traders true
+gamerule spawn_mobs true
 """)
 

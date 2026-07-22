@@ -117,6 +117,7 @@ scoreboard players set #zb_escort_count mgs.data 0
 scoreboard players set #zb_escort_mode mgs.data 0
 scoreboard players set #zb_lure mgs.data 0
 gamerule spawn_wandering_traders false
+gamerule spawn_mobs false
 
 # Initialize power state
 scoreboard players set #zb_power mgs.data 0

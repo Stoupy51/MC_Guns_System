@@ -26,8 +26,8 @@ scoreboard players operation #pap_delta mgs.data = #pap_new mgs.data
 scoreboard players operation #pap_delta mgs.data -= #pap_old mgs.data
 execute unless score #pap_delta mgs.data matches 0 run function mgs:v5.1.0/zombies/pap/annotate_time_delta
 scoreboard players add #pap_li mgs.data 1
-execute if data storage mgs:temp _pap_extract.stats.cooldown run function mgs:v5.1.0/zombies/pap/annotate_fire_rate_line
-execute if data storage mgs:temp _pap_extract.stats.pellet_count run function mgs:v5.1.0/zombies/pap/annotate_pellets_line
+execute if data storage mgs:temp _pap_old_stats.cooldown run function mgs:v5.1.0/zombies/pap/annotate_fire_rate_line
+execute if data storage mgs:temp _pap_old_stats.pellet_count run function mgs:v5.1.0/zombies/pap/annotate_pellets_line
 execute store result score #pap_old mgs.data run data get storage mgs:temp _pap_old_stats.decay 100
 execute store result score #pap_new mgs.data run data get storage mgs:temp _pap_extract.stats.decay 100
 scoreboard players operation #pap_delta mgs.data = #pap_new mgs.data

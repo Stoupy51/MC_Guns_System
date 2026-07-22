@@ -128,8 +128,10 @@ execute unless data entity @s item.components."minecraft:attribute_modifiers" ru
 execute unless data entity @s item.components."minecraft:attribute_modifiers"[{{"type":"minecraft:attack_speed"}}] run data modify entity @s item.components."minecraft:attribute_modifiers" append value {{"type":"attack_speed","amount":0.0d,"operation":"add_value","slot":"mainhand","id":"minecraft:base_attack_speed"}}
 execute store result entity @s item.components."minecraft:attribute_modifiers"[{{"type":"minecraft:attack_speed"}}].amount double 0.001 run scoreboard players get #attack_speed {ns}.data
 
-# Modify tooltip display
-data modify entity @s item.components."minecraft:tooltip_display" set value {{"hide_tooltip":false,"hidden_components":["minecraft:attribute_modifiers"]}}
+# Modify tooltip display. Hide enchantments too: this overwrites the whole component, and the
+# item ships hiding "minecraft:enchantments" (the functional, empty-named mgs:left_click ench).
+# Dropping it here would un-hide that enchantment, rendering it as a blank first tooltip line.
+data modify entity @s item.components."minecraft:tooltip_display" set value {{"hide_tooltip":false,"hidden_components":["minecraft:attribute_modifiers","minecraft:enchantments"]}}
 
 # Copy back weapon to player's mainhand slot
 item replace entity @p[tag={ns}.to_modify] weapon.mainhand from entity @s contents
@@ -139,29 +141,33 @@ kill @s
 """)  # noqa: E501
 
 
-    # Check for reload (weapon drop)
-    write_versioned_function("switch/check_reload_on_drop", f"""
+    # Drop key = fire-mode switch. No "key pressed" event, so the drop really happens (detected via
+    # the minecraft.drop stat) and is undone below. Reload is on hand-swap + left click.
+    write_versioned_function("switch/check_fire_mode_on_drop", f"""
 # Check if player dropped a weapon
-execute if score @s {ns}.dropped matches 1.. run function {ns}:v{version}/switch/reload_to_dropped_weapon
+execute if score @s {ns}.dropped matches 1.. run function {ns}:v{version}/switch/fire_mode_on_dropped_weapon
 scoreboard players reset @s {ns}.dropped
 """)
 
-    # Reload dropped function
-    write_versioned_function("switch/reload_to_dropped_weapon", f"""
+    # Undo the drop, then cycle the fire mode
+    write_versioned_function("switch/fire_mode_on_dropped_weapon", f"""
 # Find nearest dropped gun item and execute as it (only if mainhand is empty)
-tag @s add {ns}.to_reload
+tag @s add {ns}.to_pickup
 execute unless items entity @s weapon.mainhand * as @n[type=item,distance=..3,nbt={{Item:{{components:{{"minecraft:custom_data":{{{ns}:{{gun:true}}}}}}}}}}] run function {ns}:v{version}/switch/weapon_back_to_mainhand
-tag @s remove {ns}.to_reload
+tag @s remove {ns}.to_pickup
 
-# Copy gun data
+# Copy gun data (the weapon is back in the mainhand by now)
 function {ns}:v{version}/utils/copy_gun_data
 
-# Reload
-function {ns}:v{version}/ammo/reload
+# Skip weapons without a second mode (throwables carry a fire_mode but shouldn't toggle)
+execute unless data storage {ns}:gun all.stats.{CAN_AUTO} unless data storage {ns}:gun all.stats.{CAN_BURST} run return 0
+
+# Cycle auto -> semi -> burst -> auto (narrowed to what the weapon supports)
+function {ns}:v{version}/switch/do_toggle_fire_mode
 """)  # noqa: E501
     write_versioned_function("switch/weapon_back_to_mainhand", f"""
-# Move reloaded item back to player's mainhand
-item replace entity @p[tag={ns}.to_reload] weapon.mainhand from entity @s contents
+# Move the dropped item back to player's mainhand
+item replace entity @p[tag={ns}.to_pickup] weapon.mainhand from entity @s contents
 kill @s
 """)
 

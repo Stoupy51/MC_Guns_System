@@ -60,6 +60,7 @@ scoreboard players set #zb_dog_pending mgs.data 0
 # Escort cleanup (escort.py); the traders themselves die with the mgs.gm_entity kill above
 scoreboard players set #zb_escort_count mgs.data 0
 gamerule spawn_wandering_traders true
+gamerule spawn_mobs true
 
 # Remove all pull displays and presence boxes, reset all per-box state
 kill @e[tag=mgs.mb_display]

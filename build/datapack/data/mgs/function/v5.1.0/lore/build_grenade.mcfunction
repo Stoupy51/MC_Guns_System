@@ -28,6 +28,6 @@ $data modify storage mgs:temp lore_line append value "$(fuse_int).$(fuse_dec)"
 data modify storage mgs:temp lore_line append value {"text":"s","color":"#c77e36"}
 data modify storage mgs:temp new_lore append from storage mgs:temp lore_line
 
-# -- Empty line separator --
-data modify storage mgs:temp new_lore append value ""
+# -- Empty separator (compound, not bare "" — keeps lore NBT homogeneous, see EMPTY_LORE_LINE) --
+data modify storage mgs:temp new_lore append value {"text":"","italic":false}
 
