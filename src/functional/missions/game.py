@@ -8,6 +8,7 @@
 from stewbeet import Mem, write_tag, write_versioned_function
 
 from ..core.respawn_countdown import respawn_countdown_tick_lines
+from ..core.weapon_drop import weapon_drop_tick_lines
 from ..game_mode import GameMode
 from ..helpers import (
 	MGS_TAG,
@@ -258,6 +259,30 @@ execute if data storage {ns}:temp _enemy_iter[0] run function {ns}:v{version}/mi
 $execute positioned $(x) $(y) $(z) run function $(function)
 """)
 
+		# Enemy weapon drops ────────────────────────────────────────
+		## Per-tick death watch. Missions has no per-mob death hook (the game tick only polls the
+		## alive count), so catch enemies during their death animation: DeathTime counts up from 0
+		## once the mob dies, so `DeathTime:1s` matches exactly one tick per corpse — early enough
+		## that equipment.mainhand still holds the gun.
+		## Cost: one entity-NBT read per living enemy per tick, the same deal zombies pays in
+		## zombies/death_watch_tick. There is no cheaper "did anything die" signal to gate it on.
+		write_versioned_function("missions/death_watch_tick", f"""
+execute as @e[tag={ns}.mission_enemy] at @s if data entity @s {{DeathTime:1s}} run function {ns}:v{version}/missions/drop_enemy_weapon
+""")
+
+		## Capture step for the shared drop (@s = dying enemy, at its position).
+		## Mobs hold their gun in equipment.mainhand instead of an Inventory slot; everything after
+		## the capture (ammo bake, spare magazine, ground spawn, pickup) is core/weapon_drop.py.
+		write_versioned_function("missions/drop_enemy_weapon", f"""
+data remove storage {ns}:temp _dropw
+data modify storage {ns}:temp _dropw set from entity @s equipment.mainhand
+
+# Mob guns never track live ammo on a scoreboard: 0 makes the drop carry half a magazine,
+# the same deal a player's empty gun leaves behind
+scoreboard players set #drop_ammo {ns}.data 0
+function {ns}:v{version}/shared/drops/drop
+""")
+
 		## On Respawn (missions death handling - now with cooldown like multiplayer)
 		write_versioned_function("missions/on_respawn", f"""
 # Reset death counter & Increment mission death stats
@@ -326,6 +351,10 @@ scoreboard players operation #mi_timer {ns}.data += #tick_delta {ns}.data
 execute if score #mi_has_boundary {ns}.data matches 1 as @e[tag={ns}.mission_enemy] at @s run function {ns}:v{version}/shared/check_bounds
 execute if score #mi_has_boundary {ns}.data matches 1 as @e[type=player,scores={{{ns}.mi.in_game=1}},gamemode=!creative,gamemode=!spectator] at @s run function {ns}:v{version}/shared/check_bounds
 execute as @e[type=player,scores={{{ns}.mi.in_game=1}},gamemode=!creative,gamemode=!spectator] at @s if entity @e[tag={ns}.oob_point,distance=..5] run damage @s 10000 out_of_world
+
+# Enemies drop their weapon at the corpse; the drops then live for 30s
+function {ns}:v{version}/missions/death_watch_tick
+{weapon_drop_tick_lines(ns)}
 
 # Track enemy kills (total enemies - alive enemies)
 execute store result score #alive {ns}.data if entity @e[tag={ns}.mission_enemy]
