@@ -411,7 +411,5 @@ these are gameplay ideas from Zonweeb, not necessarily tied to the variant.)
 
 # Inbox (quick notes — dump anything here, unorganized "basic" format is fine)
 
-- Make left clicking a gun reload it, and dropping the gun switch the firemode. So we end up with offhand or leftclick = reload, drop = switch firemode.
-- Something is strange with weapon lore in zombies: sometimes the first lore line is 'text: ""' an empty line. This is not normal.
-- Something is strange about escorts in zombies: sometimes it seems like the wandering traders are hyper fast, faster than sonic. Investigate source code to understand why.
+- Zombies: fast restart button in menu, AND when game ends (OP only as suggest command)
 

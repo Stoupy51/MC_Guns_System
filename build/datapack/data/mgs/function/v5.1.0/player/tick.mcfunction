@@ -27,8 +27,8 @@ execute if score #acoustics_phase mgs.data matches 0 unless predicate mgs:v5.1.0
 # Reload if the hand-swap key parked the weapon in the offhand
 execute if items entity @s weapon.offhand * run function mgs:v5.1.0/player/offhand_swap_check
 
-# Check if player dropped weapon to reload
-function mgs:v5.1.0/switch/check_reload_on_drop
+# Check if player dropped weapon to switch fire mode
+function mgs:v5.1.0/switch/check_fire_mode_on_drop
 
 # Copy gun data
 function mgs:v5.1.0/utils/copy_gun_data

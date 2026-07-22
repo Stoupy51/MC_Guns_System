@@ -401,14 +401,16 @@ $item modify entity @s $(slot) {"function":"minecraft:set_components","component
 		f'scoreboard players add #pap_li {ns}.data 1',
 	])
 
-	# Line 3 (conditional): Fire Rate — only if weapon has cooldown
+	# Line 3 (conditional): Fire Rate. Gate on OLD stats — the extracted lore has a Fire Rate line
+	# only if the weapon had a cooldown BEFORE this PAP. pap_stats can add cooldown (e.g. m1911),
+	# which would otherwise annotate a line that isn't there and shift decay/switch down one.
 	annotate_lore_lines.append(
-		f'execute if data storage {ns}:temp _pap_extract.stats.cooldown run function {ns}:v{version}/zombies/pap/annotate_fire_rate_line'
+		f'execute if data storage {ns}:temp _pap_old_stats.cooldown run function {ns}:v{version}/zombies/pap/annotate_fire_rate_line'
 	)
 
-	# Line N (conditional): Pellets — only if weapon has pellet_count
+	# Line N (conditional): Pellets — same reasoning, gate on old stats
 	annotate_lore_lines.append(
-		f'execute if data storage {ns}:temp _pap_extract.stats.pellet_count run function {ns}:v{version}/zombies/pap/annotate_pellets_line'
+		f'execute if data storage {ns}:temp _pap_old_stats.pellet_count run function {ns}:v{version}/zombies/pap/annotate_pellets_line'
 	)
 
 	# Line N: Damage Decay (percentage, scaled x100)

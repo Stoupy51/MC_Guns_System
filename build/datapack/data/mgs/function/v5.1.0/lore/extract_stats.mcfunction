@@ -23,6 +23,7 @@ execute store result score #lore_pellets mgs.data run data get entity @s item.co
 execute store result score #lore_decay mgs.data run data get entity @s item.components."minecraft:custom_data".mgs.stats.decay 10000
 execute store result score #lore_switch mgs.data run data get entity @s item.components."minecraft:custom_data".mgs.stats.switch
 execute store result score #has_pellets mgs.data if data entity @s item.components."minecraft:custom_data".mgs.stats.pellet_count
+execute store result score #has_cooldown mgs.data if data entity @s item.components."minecraft:custom_data".mgs.stats.cooldown
 
 # If remaining_bullets is -1 (weapon-switch marker), use player's scoreboard value instead
 execute if score #lore_remaining mgs.data matches -1 store result score #lore_remaining mgs.data run scoreboard players get @p[tag=mgs.update_lore] mgs.remaining_bullets

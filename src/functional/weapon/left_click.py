@@ -3,16 +3,13 @@
 from beet import Enchantment
 from stewbeet import Mem, write_versioned_function
 
-from ...config.stats import CAN_AUTO, CAN_BURST
+from ...config.stats import RELOAD_TIME
 
 # Left-click detection.
 #
-# Minecraft has no "player swung" event, but an enchantment's `post_piercing_attack` effect fires a
-# function on every piercing attack, and a `piercing_weapon` component with zero reach makes the
-# attack connect with nothing while still firing the effect. Combining the two turns any left click
-# — including a swing at empty air — into a function call. Right click is already taken by firing
-# (the `using_item` advancement in common.py), so left click drives the fire-mode toggle. Reload
-# lives on the hand-swap key instead (player/offhand_swap_check in common.py).
+# Minecraft has no "player swung" event, but a zero-reach `piercing_weapon` + a `post_piercing_attack`
+# enchantment turns any left click (even a swing at air) into a function call. Left click is a RELOAD
+# key here, alongside hand-swap (player/offhand_swap_check). Fire mode is on the drop key (switch.py).
 #
 # The two halves live in different places: the enchantment + function are here, while the item
 # components that arm it are attached to every gun in config/stats.py (see add_item).
@@ -54,10 +51,9 @@ execute unless items entity @s weapon.mainhand *[custom_data~{{{ns}:{{gun:true}}
 
 function {ns}:v{version}/utils/copy_gun_data
 
-# Only weapons that actually have a second mode respond. Throwables carry a fire_mode too, so
-# without this the toggle would pointlessly rewrite the item and fire the change signal on grenades.
-execute unless data storage {ns}:gun all.stats.{CAN_AUTO} unless data storage {ns}:gun all.stats.{CAN_BURST} run return 0
+# Guard throwables/knives: no {RELOAD_TIME} -> ammo/reload would set a garbage cooldown and lock the item
+execute unless data storage {ns}:gun all.stats.{RELOAD_TIME} run return 0
 
-# Cycle the mode (auto -> semi -> burst -> auto, narrowed to whatever the weapon supports).
-function {ns}:v{version}/switch/do_toggle_fire_mode
+# Safe to spam: ammo/reload returns fail while reloading or already full
+function {ns}:v{version}/ammo/reload
 """)

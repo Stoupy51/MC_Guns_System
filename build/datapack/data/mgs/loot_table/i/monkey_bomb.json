@@ -166,7 +166,10 @@
 										"9.0",
 										{"text": "s","color": "#c77e36"}
 									],
-									"",
+									{
+										"text": "",
+										"italic": false
+									},
 									[
 										"",
 										{"text": "I","color": "white","italic": false,"font": "mgs:icons"},

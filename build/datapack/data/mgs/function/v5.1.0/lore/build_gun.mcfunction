@@ -8,8 +8,6 @@
 #			capacity (unknown)
 #			reload_int (unknown)
 #			reload_dec (unknown)
-#			rate_int (unknown)
-#			rate_dec (unknown)
 #			decay_pct (unknown)
 #			switch_int (unknown)
 #			switch_dec (unknown)
@@ -36,12 +34,8 @@ $data modify storage mgs:temp lore_line append value "$(reload_int).$(reload_dec
 data modify storage mgs:temp lore_line append value {"text":"s","color":"#c77e36"}
 data modify storage mgs:temp new_lore append from storage mgs:temp lore_line
 
-# -- Fire Rate (conditional unit: shots/s or s/shot) --
-data modify storage mgs:temp lore_line set from storage mgs:lore_templates fire_rate
-$data modify storage mgs:temp lore_line append value "$(rate_int).$(rate_dec) "
-execute if score #fire_rate_tenths mgs.data matches 10.. run data modify storage mgs:temp lore_line append from storage mgs:lore_templates fire_rate_sps
-execute if score #fire_rate_tenths mgs.data matches ..9 run data modify storage mgs:temp lore_line append from storage mgs:lore_templates fire_rate_spshot
-data modify storage mgs:temp new_lore append from storage mgs:temp lore_line
+# -- Fire Rate (optional, only if the weapon has a cooldown) --
+execute if score #has_cooldown mgs.data matches 1 run function mgs:v5.1.0/lore/append_fire_rate_line with storage mgs:input lore
 
 # -- Pellets Per Shot (optional, only for shotguns) --
 execute if score #has_pellets mgs.data matches 1 run function mgs:v5.1.0/lore/append_pellet_line with storage mgs:input lore
@@ -58,6 +52,6 @@ $data modify storage mgs:temp lore_line append value "$(switch_int).$(switch_dec
 data modify storage mgs:temp lore_line append value {"text":"s","color":"#c77e36"}
 data modify storage mgs:temp new_lore append from storage mgs:temp lore_line
 
-# -- Empty line separator --
-data modify storage mgs:temp new_lore append value ""
+# -- Empty separator (compound, not bare "" — keeps lore NBT homogeneous, see EMPTY_LORE_LINE) --
+data modify storage mgs:temp new_lore append value {"text":"","italic":false}
 

@@ -106,6 +106,7 @@ execute store result score #lore_pellets {ns}.data run data get entity @s item.c
 execute store result score #lore_decay {ns}.data run data get entity @s item.components.{cd}.{DECAY} 10000
 execute store result score #lore_switch {ns}.data run data get entity @s item.components.{cd}.{SWITCH}
 execute store result score #has_pellets {ns}.data if data entity @s item.components.{cd}.{PELLET_COUNT}
+execute store result score #has_cooldown {ns}.data if data entity @s item.components.{cd}.{COOLDOWN}
 
 # If remaining_bullets is -1 (weapon-switch marker), use player's scoreboard value instead
 execute if score #lore_remaining {ns}.data matches -1 store result score #lore_remaining {ns}.data run scoreboard players get @p[tag={ns}.update_lore] {ns}.{REMAINING_BULLETS}
@@ -222,12 +223,8 @@ $data modify storage {ns}:temp lore_line append value "$(reload_int).$(reload_de
 data modify storage {ns}:temp lore_line append value {{"text":"s","color":"#{END_HEX}"}}
 data modify storage {ns}:temp new_lore append from storage {ns}:temp lore_line
 
-# -- Fire Rate (conditional unit: shots/s or s/shot) --
-data modify storage {ns}:temp lore_line set from storage {ns}:lore_templates fire_rate
-$data modify storage {ns}:temp lore_line append value "$(rate_int).$(rate_dec) "
-execute if score #fire_rate_tenths {ns}.data matches 10.. run data modify storage {ns}:temp lore_line append from storage {ns}:lore_templates fire_rate_sps
-execute if score #fire_rate_tenths {ns}.data matches ..9 run data modify storage {ns}:temp lore_line append from storage {ns}:lore_templates fire_rate_spshot
-data modify storage {ns}:temp new_lore append from storage {ns}:temp lore_line
+# -- Fire Rate (optional, only if the weapon has a cooldown) --
+execute if score #has_cooldown {ns}.data matches 1 run function {ns}:v{version}/lore/append_fire_rate_line with storage {ns}:input lore
 
 # -- Pellets Per Shot (optional, only for shotguns) --
 execute if score #has_pellets {ns}.data matches 1 run function {ns}:v{version}/lore/append_pellet_line with storage {ns}:input lore
@@ -244,8 +241,17 @@ $data modify storage {ns}:temp lore_line append value "$(switch_int).$(switch_de
 data modify storage {ns}:temp lore_line append value {{"text":"s","color":"#{END_HEX}"}}
 data modify storage {ns}:temp new_lore append from storage {ns}:temp lore_line
 
-# -- Empty line separator --
-data modify storage {ns}:temp new_lore append value ""
+# -- Empty separator (compound, not bare "" — keeps lore NBT homogeneous, see EMPTY_LORE_LINE) --
+data modify storage {ns}:temp new_lore append value {{"text":"","italic":false}}
+""")
+
+	# Append fire rate line (separate function for conditional execution; unit depends on rate)
+	write_versioned_function("lore/append_fire_rate_line", f"""
+data modify storage {ns}:temp lore_line set from storage {ns}:lore_templates fire_rate
+$data modify storage {ns}:temp lore_line append value "$(rate_int).$(rate_dec) "
+execute if score #fire_rate_tenths {ns}.data matches 10.. run data modify storage {ns}:temp lore_line append from storage {ns}:lore_templates fire_rate_sps
+execute if score #fire_rate_tenths {ns}.data matches ..9 run data modify storage {ns}:temp lore_line append from storage {ns}:lore_templates fire_rate_spshot
+data modify storage {ns}:temp new_lore append from storage {ns}:temp lore_line
 """)
 
 	# Append pellet line (separate function for conditional execution)
@@ -277,8 +283,8 @@ $data modify storage {ns}:temp lore_line append value "$(fuse_int).$(fuse_dec)"
 data modify storage {ns}:temp lore_line append value {{"text":"s","color":"#{END_HEX}"}}
 data modify storage {ns}:temp new_lore append from storage {ns}:temp lore_line
 
-# -- Empty line separator --
-data modify storage {ns}:temp new_lore append value ""
+# -- Empty separator (compound, not bare "" — keeps lore NBT homogeneous, see EMPTY_LORE_LINE) --
+data modify storage {ns}:temp new_lore append value {{"text":"","italic":false}}
 """)
 
 	# Append explosion damage line

@@ -48,6 +48,11 @@ from .database.others import main as main_others
 from .database.rpg7 import main as main_rpg7
 from .database.weapons import main as main_weapons
 
+# Blank lore separator. NOT a bare "": that's a StringTag while the styled stat lines are
+# CompoundTags, and NBT lists are homogeneous — the mix makes NbtOps wrap every line as {"": <line>},
+# which zombies/pap re-parses as a text component and renders blank. A style keeps it a CompoundTag.
+EMPTY_LORE_LINE: JsonDict = {"text": "", "italic": False}
+
 
 # Main function should return a database
 @stp.measure_time(printer=stp.progress, message="Set up item definitions")
@@ -201,7 +206,7 @@ def beet_default(ctx: Context) -> None:
                     lore.insert(-1,
                         [*new_hex("Explosion Radius   ➤ ", START_HEX, END_HEX), str(gun_stats[EXPLOSION_RADIUS])," ",{"text":"blocks","color":f"#{END_HEX}"}]
                     )
-                obj.components["lore"] = [*lore, ""]
+                obj.components["lore"] = [*lore, EMPTY_LORE_LINE]
             else:
                 # Set custom lore for regular guns
                 obj.components["lore"] = [
@@ -212,7 +217,7 @@ def beet_default(ctx: Context) -> None:
                     *pellet_component,
                     [*new_hex("Damage Decay       ➤ ", START_HEX, END_HEX),    f"{gun_stats[DECAY] * 100:.0f}",        {"text":"%","color":f"#{END_HEX}"}],
                     [*new_hex("Switch Time           ➤ ", START_HEX, END_HEX), f"{gun_stats[SWITCH] / 20:.1f}",        {"text":"s","color":f"#{END_HEX}"}],
-                    "",
+                    EMPTY_LORE_LINE,
                 ]
 
         # Adjust magazines data

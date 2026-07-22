@@ -1,7 +1,9 @@
 
 #> mgs:v5.1.0/switch/do_toggle_fire_mode
 #
-# @within	mgs:v5.1.0/weapon/left_click
+# @executed	as @e[type=player,sort=random] & at @s
+#
+# @within	mgs:v5.1.0/switch/fire_mode_on_dropped_weapon
 #
 
 # Copy gun data & Get current fire mode

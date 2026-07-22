@@ -29,7 +29,7 @@ def generate_doors() -> None:
 		f'{{"storage":"{ns}:temp","nbt":"_door_hover_name","color":"yellow","interpret":true}},'
 		f'{{"text":" - Chip in: ","color":"gray"}},'
 		f'{{"score":{{"name":"#door_price","objective":"{ns}.data"}},"color":"yellow"}},'
-		f'{{"text":" points  (","color":"gray"}},'
+		f'{{"text":" points (","color":"gray"}},'
 		f'{{"score":{{"name":"#door_paid","objective":"{ns}.data"}},"color":"green"}},'
 		f'{{"text":"/","color":"gray"}},'
 		f'{{"score":{{"name":"#door_total","objective":"{ns}.data"}},"color":"yellow"}},'
@@ -253,7 +253,7 @@ execute unless entity @e[tag=bs.interaction.target,tag={ns}.door_back] run funct
 execute unless score #door_partial {ns}.data matches 1.. run data modify storage smithed.actionbar:input message set value {{json:{door_hover_message},priority:"conditional",freeze:5}}
 execute if score #door_partial {ns}.data matches 1.. run data modify storage smithed.actionbar:input message set value {{json:{door_hover_partial_message},priority:"conditional",freeze:5}}
 function #smithed.actionbar:message
-""")  # noqa: E501
+""")
 
 	## Hook into game start: initialize unlocked groups
 	write_versioned_function("zombies/start", f"""
