@@ -4,6 +4,7 @@
 # @executed	as @e[type=player,sort=random] & at @s
 #
 # @within	mgs:v5.1.0/zombies/revive/on_down
+#			mgs:v5.1.0/zombies/revive/void_revive_whos_who
 #
 
 # Snapshot perks + inventory (for recovery on revive) — BEFORE anything is stripped

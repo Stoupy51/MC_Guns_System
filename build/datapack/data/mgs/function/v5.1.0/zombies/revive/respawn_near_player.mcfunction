@@ -5,6 +5,8 @@
 #
 # @within	mgs:v5.1.0/zombies/revive/revive_complete
 #			mgs:v5.1.0/zombies/revive/do_round_respawn
+#			mgs:v5.1.0/zombies/revive/void_revive_whos_who
+#			mgs:v5.1.0/zombies/revive/void_revive_solo_qr
 #
 
 tag @s add mgs.spawn_pending

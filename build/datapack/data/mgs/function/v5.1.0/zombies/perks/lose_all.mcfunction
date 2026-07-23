@@ -6,6 +6,7 @@
 # @within	mgs:v5.1.0/zombies/whos_who/on_down
 #			mgs:v5.1.0/zombies/revive/on_down
 #			mgs:v5.1.0/zombies/revive/full_death
+#			mgs:v5.1.0/zombies/revive/void_revive_solo_qr
 #
 
 # Remove all perk effects and reset scoreboard tracking

@@ -7,13 +7,17 @@
 #			mgs:v5.1.0/zombies/revive/on_down
 #
 
-# Read death position at full float precision (multiply by 1000, store as double 0.001)
-execute store result score #rv_y_raw mgs.data run data get entity @s LastDeathLocation.pos[1] 1000
+# Body position: an explicit mgs:temp _body_at overrides the default LastDeathLocation
+execute unless data storage mgs:temp _body_at run data modify storage mgs:temp _body_at set from entity @s LastDeathLocation.pos
+
+# Read the position at full float precision (multiply by 1000, store as double 0.001)
+execute store result score #rv_y_raw mgs.data run data get storage mgs:temp _body_at[1] 1000
 scoreboard players add #rv_y_raw mgs.data 2000
-execute store result storage mgs:temp rv_x double 0.001 run data get entity @s LastDeathLocation.pos[0] 1000
-execute store result storage mgs:temp rv_y double 0.001 run data get entity @s LastDeathLocation.pos[1] 1000
-execute store result storage mgs:temp rv_z double 0.001 run data get entity @s LastDeathLocation.pos[2] 1000
+execute store result storage mgs:temp rv_x double 0.001 run data get storage mgs:temp _body_at[0] 1000
+execute store result storage mgs:temp rv_y double 0.001 run data get storage mgs:temp _body_at[1] 1000
+execute store result storage mgs:temp rv_z double 0.001 run data get storage mgs:temp _body_at[2] 1000
 execute store result storage mgs:temp rv_y_hud double 0.001 run scoreboard players get #rv_y_raw mgs.data
+data remove storage mgs:temp _body_at
 
 # Summon mannequin (crouching pose, invulnerable, temp tag for targeting)
 summon minecraft:mannequin ~ ~.5 ~ {Invulnerable:1b,pose:"swimming",hide_description:true,Tags:["mgs.downed_mannequin","mgs.downed_new","mgs.gm_entity"]}
