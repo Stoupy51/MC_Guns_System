@@ -95,6 +95,16 @@ def main() -> None:
     Item(id="perk_machine_deadshot", override_model=override_model_2tone(
         "minecraft:block/green_terracotta", "minecraft:block/dark_prismarine"))
     Item(id="perk_machine_timeslip", override_model=override_model("magenta"))
+    Item(id="perk_machine_electric_cherry", override_model=override_model("blue"))
+    Item(id="perk_machine_widows_wine", override_model=override_model_2tone(
+        "minecraft:block/black_concrete", "minecraft:block/red_terracotta"))
+    Item(id="perk_machine_dying_wish", override_model=override_model_2tone(
+        "minecraft:block/blue_concrete", "minecraft:block/white_terracotta"))
+    Item(id="perk_machine_tombstone", override_model=override_model("brown"))
+    Item(id="perk_machine_whos_who", override_model=override_model("cyan"))
+    # Dedicated model (not a perk-machine recolor): gold/purple cabinet with an OPEN middle alcove
+    # where the spinning perk bottle floats (see zombies/wunderfizz.py spawn_orb).
+    Item(id="der_wunderfizz", override_model=load_model(get_model_path("der_wunderfizz")))
 
     # Power switch / breaker box (vanilla textures). "_on" shares the box geometry but flips the
     # lever to the down position and recolors the handle + indicator light to green/lit.

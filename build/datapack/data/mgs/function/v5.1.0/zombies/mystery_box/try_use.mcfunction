@@ -41,6 +41,8 @@ tag @n[tag=mgs.mb_display_new] remove mgs.mb_display_new
 # Open this box's lid + open/spin sounds + a private announce to the buyer
 function mgs:v5.1.0/zombies/mystery_box/open_lid
 function mgs:v5.1.0/zombies/feedback/sound_box_open
-function mgs:v5.1.0/zombies/feedback/sound_box_spin
+# Timeslip owners get the sped-up spin tune to match their 2x pull
+execute unless score @s mgs.special.timeslip matches 1.. run function mgs:v5.1.0/zombies/feedback/sound_box_spin
+execute if score @s mgs.special.timeslip matches 1.. run function mgs:v5.1.0/zombies/feedback/sound_box_spin_short
 tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.mystery_box_spinning","color":"light_purple"}]
 
