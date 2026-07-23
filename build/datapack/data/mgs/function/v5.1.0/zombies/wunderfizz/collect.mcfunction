@@ -6,7 +6,7 @@
 # @within	mgs:v5.1.0/zombies/wunderfizz/machine_click
 #
 
-scoreboard players operation #wf_pick mgs.data = @n[tag=mgs.wunderfizz_orb,distance=..3] mgs.zb.wf.perk
+scoreboard players operation #wf_pick mgs.data = @n[type=item_display,tag=mgs.wunderfizz_orb,distance=..3] mgs.zb.wf.perk
 execute if score #wf_pick mgs.data matches 0 run function mgs:v5.1.0/zombies/wunderfizz/grant/juggernog
 execute if score #wf_pick mgs.data matches 1 run function mgs:v5.1.0/zombies/wunderfizz/grant/speed_cola
 execute if score #wf_pick mgs.data matches 2 run function mgs:v5.1.0/zombies/wunderfizz/grant/double_tap
@@ -21,6 +21,6 @@ execute if score #wf_pick mgs.data matches 10 run function mgs:v5.1.0/zombies/wu
 execute if score #wf_pick mgs.data matches 11 run function mgs:v5.1.0/zombies/wunderfizz/grant/whos_who
 execute if score #wf_pick mgs.data matches 12 run function mgs:v5.1.0/zombies/wunderfizz/grant/dying_wish
 execute if score #wf_pick mgs.data matches 13 run function mgs:v5.1.0/zombies/wunderfizz/grant/widows_wine
-kill @n[tag=mgs.wunderfizz_orb,distance=..3]
+kill @n[type=item_display,tag=mgs.wunderfizz_orb,distance=..3]
 function mgs:v5.1.0/zombies/feedback/sound_success
 

@@ -207,7 +207,7 @@ scoreboard players set @a[scores={mgs.zb.in_game=1}] mgs.special.tactical_mask 0
 scoreboard players set @a[scores={mgs.zb.in_game=1}] mgs.special.overkill 0
 scoreboard players set @a[scores={mgs.zb.in_game=1}] mgs.special.quick_fix 0
 
-kill @e[tag=mgs.wunderfizz_orb]
+kill @e[type=item_display,tag=mgs.wunderfizz_orb]
 
 kill @e[tag=mgs.ww_body]
 kill @e[tag=mgs.ww_hud]

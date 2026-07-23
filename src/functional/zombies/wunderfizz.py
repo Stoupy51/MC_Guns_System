@@ -113,11 +113,11 @@ execute at @n[tag=bs.interaction.target] run function {ns}:v{version}/zombies/wu
 	## Dispatch a click at a specific machine (@s = player, positioned at the machine)
 	write_versioned_function("zombies/wunderfizz/machine_click", f"""
 # Spinning here → in use
-execute if entity @n[tag={ns}.wunderfizz_orb,distance=..3,scores={{{ns}.zb.wf.anim=1..}}] run return run function {ns}:v{version}/zombies/wunderfizz/deny_in_use
+execute if entity @n[type=item_display,tag={ns}.wunderfizz_orb,distance=..3,scores={{{ns}.zb.wf.anim=1..}}] run return run function {ns}:v{version}/zombies/wunderfizz/deny_in_use
 
 # A ready orb here → only the buyer may collect
-execute if entity @n[tag={ns}.wunderfizz_orb,distance=..3] if score @s {ns}.zb.wf_pid = @n[tag={ns}.wunderfizz_orb,distance=..3] {ns}.zb.wf.buyer run return run function {ns}:v{version}/zombies/wunderfizz/collect
-execute if entity @n[tag={ns}.wunderfizz_orb,distance=..3] run return run function {ns}:v{version}/zombies/wunderfizz/deny_not_your_result
+execute if entity @n[type=item_display,tag={ns}.wunderfizz_orb,distance=..3] if score @s {ns}.zb.wf_pid = @n[type=item_display,tag={ns}.wunderfizz_orb,distance=..3] {ns}.zb.wf.buyer run return run function {ns}:v{version}/zombies/wunderfizz/collect
+execute if entity @n[type=item_display,tag={ns}.wunderfizz_orb,distance=..3] run return run function {ns}:v{version}/zombies/wunderfizz/deny_not_your_result
 
 # Nothing here yet: start a spin
 function {ns}:v{version}/zombies/wunderfizz/try_use
@@ -241,16 +241,16 @@ kill @s
 		for i, pid in enumerate(perk_ids)
 	)
 	write_versioned_function("zombies/wunderfizz/collect", f"""
-scoreboard players operation #wf_pick {ns}.data = @n[tag={ns}.wunderfizz_orb,distance=..3] {ns}.zb.wf.perk
+scoreboard players operation #wf_pick {ns}.data = @n[type=item_display,tag={ns}.wunderfizz_orb,distance=..3] {ns}.zb.wf.perk
 {collect_dispatch}
-kill @n[tag={ns}.wunderfizz_orb,distance=..3]
+kill @n[type=item_display,tag={ns}.wunderfizz_orb,distance=..3]
 function {ns}:v{version}/zombies/feedback/sound_success
 """)
 
 	## Hover
 	write_versioned_function("zombies/wunderfizz/on_hover", f"""
 # If this player's perk is ready to collect here, prompt the pick-up (with the perk name) instead of the cost
-execute at @n[tag=bs.interaction.target] if entity @n[tag={ns}.wunderfizz_orb,distance=..3,scores={{{ns}.zb.wf.anim=..0}}] if score @s {ns}.zb.wf_pid = @n[tag={ns}.wunderfizz_orb,distance=..3] {ns}.zb.wf.buyer run return run function {ns}:v{version}/zombies/wunderfizz/hover_result
+execute at @n[tag=bs.interaction.target] if entity @n[type=item_display,tag={ns}.wunderfizz_orb,distance=..3,scores={{{ns}.zb.wf.anim=..0}}] if score @s {ns}.zb.wf_pid = @n[type=item_display,tag={ns}.wunderfizz_orb,distance=..3] {ns}.zb.wf.buyer run return run function {ns}:v{version}/zombies/wunderfizz/hover_result
 
 execute store result score #wf_price {ns}.data run scoreboard players get @n[tag=bs.interaction.target] {ns}.zb.wf.price
 data modify storage smithed.actionbar:input message set value {{json:[{{"text":"🎰 Der Wunderfizz","color":"gold"}},{{"text":" - Cost: ","color":"gray"}},{{"score":{{"name":"#wf_price","objective":"{ns}.data"}},"color":"yellow"}},{{"text":" points  (random perk)","color":"gray"}}],priority:"conditional",freeze:5}}
@@ -264,7 +264,7 @@ function #smithed.actionbar:message
 		for i, pid in enumerate(perk_ids)
 	)
 	write_versioned_function("zombies/wunderfizz/hover_result", f"""
-scoreboard players operation #wf_pick {ns}.data = @n[tag={ns}.wunderfizz_orb,distance=..3] {ns}.zb.wf.perk
+scoreboard players operation #wf_pick {ns}.data = @n[type=item_display,tag={ns}.wunderfizz_orb,distance=..3] {ns}.zb.wf.perk
 {hover_result_dispatch}
 function #smithed.actionbar:message
 """)
@@ -296,13 +296,13 @@ execute if data storage {ns}:zombies game.map.wunderfizz[0] run function {ns}:v{
 
 	## Hook: tick orbs
 	write_versioned_function("zombies/game_tick", f"""
-execute as @e[tag={ns}.wunderfizz_orb] at @s run function {ns}:v{version}/zombies/wunderfizz/orb_tick
+execute as @e[type=item_display,tag={ns}.wunderfizz_orb] at @s run function {ns}:v{version}/zombies/wunderfizz/orb_tick
 """)
 
 	## Hook: clean up orbs on game start/stop
 	write_versioned_function("zombies/start", f"""
-kill @e[tag={ns}.wunderfizz_orb]
+kill @e[type=item_display,tag={ns}.wunderfizz_orb]
 """)
 	write_versioned_function("zombies/stop", f"""
-kill @e[tag={ns}.wunderfizz_orb]
+kill @e[type=item_display,tag={ns}.wunderfizz_orb]
 """)
