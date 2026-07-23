@@ -6,7 +6,7 @@
 # @within	mgs:v5.1.0/zombies/wunderfizz/on_hover [ at @n[tag=bs.interaction.target] ]
 #
 
-scoreboard players operation #wf_pick mgs.data = @n[tag=mgs.wunderfizz_orb,distance=..3] mgs.zb.wf.perk
+scoreboard players operation #wf_pick mgs.data = @n[type=item_display,tag=mgs.wunderfizz_orb,distance=..3] mgs.zb.wf.perk
 execute if score #wf_pick mgs.data matches 0 run data modify storage smithed.actionbar:input message set value {json:[{"text":"🎰 ","color":"gold"},{"translate":"mgs.pick_up","color":"green"},{"translate":"mgs.juggernog","color":"red","bold":true}],priority:"conditional",freeze:5}
 execute if score #wf_pick mgs.data matches 1 run data modify storage smithed.actionbar:input message set value {json:[{"text":"🎰 ","color":"gold"},{"translate":"mgs.pick_up","color":"green"},{"translate":"mgs.speed_cola","color":"green","bold":true}],priority:"conditional",freeze:5}
 execute if score #wf_pick mgs.data matches 2 run data modify storage smithed.actionbar:input message set value {json:[{"text":"🎰 ","color":"gold"},{"translate":"mgs.pick_up","color":"green"},{"translate":"mgs.double_tap","color":"yellow","bold":true}],priority:"conditional",freeze:5}

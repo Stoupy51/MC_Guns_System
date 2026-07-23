@@ -1,9 +1,9 @@
 
 #> mgs:v5.1.0/zombies/wunderfizz/orb_tick
 #
-# @executed	as @e[tag=mgs.wunderfizz_orb] & at @s
+# @executed	as @e[type=item_display,tag=mgs.wunderfizz_orb] & at @s
 #
-# @within	mgs:v5.1.0/zombies/game_tick [ as @e[tag=mgs.wunderfizz_orb] & at @s ]
+# @within	mgs:v5.1.0/zombies/game_tick [ as @e[type=item_display,tag=mgs.wunderfizz_orb] & at @s ]
 #
 
 particle minecraft:end_rod ~ ~ ~ 0.25 0.25 0.25 0.02 1 force @a[distance=..48]

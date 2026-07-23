@@ -249,44 +249,48 @@ $data modify storage {ns}:temp info.lore set value [{{"text":"Round: $(round)","
 $item replace entity @s hotbar.8 with minecraft:paper[custom_data={{{ns}:{{zb_info:true}}}},item_name=["",{{"text":"\\u2139 ","italic":false}},{{"text":"Player Info","color":"gold","italic":false}}],lore=$(lore)]
 """)
 
-	# Perk display items: one mini perk-machine item per owned perk, filling the LAST main
-	# inventory row from inventory.26 going down (purely visual; rebuilt from scoreboards).
-	# custom_data has NO "zombies" key on purpose: on_new_item kills any {ns}-tagged drop
-	# without it, so a thrown perk item silently despawns and reappears on the next refresh.
-	perk_display_slots: list[int] = [26 - i for i in range(len(PERK_DEFINITIONS))]
-	perk_display_clear: str = "\n".join(
-		f"execute if items entity @s inventory.{slot} *[custom_data~{{{ns}:{{zb_perk_display:true}}}}] run item replace entity @s inventory.{slot} with air"
-		for slot in perk_display_slots
-	)
-	perk_display_place: str = "\n".join(
-		f"execute if score @s {ns}.zb.perk.{pid} matches 1 run function {ns}:v{version}/zombies/inventory/place_perk/{pid}"
-		for pid in PERK_DEFINITIONS
-	)
-	# Tagged into the on_new_perk signal (@s = buying player) so a purchase shows up instantly.
-	write_versioned_function("zombies/inventory/refresh_perk_items", f"""
-# Wipe previous perk display items (owned set may have shrunk), then re-place from slot 26 down
-{perk_display_clear}
-scoreboard players set #perk_inv_slot {ns}.data 26
-{perk_display_place}
-""", tags=[f"{ns}:zombies/on_new_perk"])
-
-	# One placement pair per perk: resolve the next free slot, then render the mini item with its
-	# baked name/color/model and detailed description lore (PERK_DESCRIPTIONS).
-	for pid, pdata in PERK_DEFINITIONS.items():
+	# Perk display items: one mini perk-machine item per owned perk, on the LAST main inventory row.
+	# custom_data has NO "zombies" key on purpose: on_new_item kills any {ns}-tagged drop without it,
+	# so a thrown perk item silently despawns and reappears on the next refresh.
+	#
+	# PERF: each perk owns a FIXED slot (26 - its index) instead of packing from 26 down. This keeps
+	# placement fully STATIC — no per-slot macro (the old place_perk_at was a dynamic `with storage`
+	# macro whose slot varied, so it missed the macro cache and re-parsed a ~250-char item string on
+	# every call) and no clear-all-then-place-all churn. refresh now writes the inventory only when a
+	# perk is actually gained or lost: steady state (incl. the 5s cadence + on_new_perk on a re-grant
+	# of an already-shown perk) is just cheap score / `if items` checks with zero item mutations.
+	# Trade-off: unowned perks leave a gap rather than the row staying packed.
+	perk_display_lines: list[str] = []
+	for i, (pid, pdata) in enumerate(PERK_DEFINITIONS.items()):
+		slot: int = 26 - i
 		lore_parts: list[str] = [
 			f'{{"text":"{line}","color":"gray","italic":false}}'
 			for line in PERK_DESCRIPTIONS.get(pid, [])
 		]
 		lore_parts.append('{"text":"Owned perk","color":"dark_gray","italic":false}')
 		lore_snbt: str = "[" + ",".join(lore_parts) + "]"
-		write_versioned_function(f"zombies/inventory/place_perk/{pid}", f"""
-execute store result storage {ns}:temp _perk_place.slot int 1 run scoreboard players get #perk_inv_slot {ns}.data
-function {ns}:v{version}/zombies/inventory/place_perk_at/{pid} with storage {ns}:temp _perk_place
-scoreboard players remove #perk_inv_slot {ns}.data 1
-""")
-		write_versioned_function(f"zombies/inventory/place_perk_at/{pid}", f"""
-$item replace entity @s inventory.$(slot) with minecraft:paper[item_model="{ns}:perk_machine_{pid}",custom_data={{{ns}:{{zb_perk_display:true}}}},item_name={{"text":"{pdata["display_name"]}","color":"{pdata["text_color"]}","italic":false}},lore={lore_snbt}]
-""")
+		perk_item: str = (
+			f'minecraft:paper[item_model="{ns}:perk_machine_{pid}",'
+			f"custom_data={{{ns}:{{zb_perk_display:true}}}},"
+			f'item_name={{"text":"{pdata["display_name"]}","color":"{pdata["text_color"]}","italic":false}},'
+			f"lore={lore_snbt}]"
+		)
+		# Owned but not yet shown -> place it once. Not owned but a stale display is here -> clear it.
+		perk_display_lines.append(
+			f"execute if score @s {ns}.zb.perk.{pid} matches 1 unless items entity @s inventory.{slot} "
+			f"*[custom_data~{{{ns}:{{zb_perk_display:true}}}}] run item replace entity @s inventory.{slot} with {perk_item}"
+		)
+		perk_display_lines.append(
+			f"execute unless score @s {ns}.zb.perk.{pid} matches 1 if items entity @s inventory.{slot} "
+			f"*[custom_data~{{{ns}:{{zb_perk_display:true}}}}] run item replace entity @s inventory.{slot} with air"
+		)
+	perk_display_sync: str = "\n".join(perk_display_lines)
+	# Tagged into the on_new_perk signal (@s = buying player) so a purchase shows up instantly.
+	write_versioned_function("zombies/inventory/refresh_perk_items", f"""
+# Diff each perk's fixed slot against ownership: place a newly-gained perk, clear a lost one, and
+# leave already-correct slots untouched (no inventory writes in steady state).
+{perk_display_sync}
+""", tags=[f"{ns}:zombies/on_new_perk"])
 
 	write_versioned_function("zombies/inventory/give_ability_item", f"""
 item replace entity @s hotbar.4 with minecraft:paper[custom_data={{{ns}:{{zb_ability_item:true}}}},consumable={{consume_seconds:1000000,animation:"spear",sound:"minecraft:intentionally_empty",has_consume_particles:false}},food={{saturation:0,nutrition:0,can_always_eat:true}},use_effects={{can_sprint:true,speed_multiplier:1.0,interact_vibrations:false}},item_name={{"text":"Use Ability","color":"green","italic":false}},lore=[{{"text":"Right-click to activate","color":"gray","italic":false}}]]

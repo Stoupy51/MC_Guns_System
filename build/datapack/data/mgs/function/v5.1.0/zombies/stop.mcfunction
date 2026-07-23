@@ -171,7 +171,7 @@ scoreboard players reset * mgs.zb.perkpaid.whos_who
 scoreboard players reset * mgs.zb.perkpaid.dying_wish
 scoreboard players reset * mgs.zb.perkpaid.widows_wine
 
-kill @e[tag=mgs.wunderfizz_orb]
+kill @e[type=item_display,tag=mgs.wunderfizz_orb]
 
 kill @e[tag=mgs.ww_body]
 kill @e[tag=mgs.ww_hud]

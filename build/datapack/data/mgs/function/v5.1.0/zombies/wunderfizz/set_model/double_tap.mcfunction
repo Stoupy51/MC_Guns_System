@@ -1,7 +1,7 @@
 
 #> mgs:v5.1.0/zombies/wunderfizz/set_model/double_tap
 #
-# @executed	as @e[tag=mgs.wunderfizz_orb] & at @s
+# @executed	as @e[type=item_display,tag=mgs.wunderfizz_orb] & at @s
 #
 # @within	mgs:v5.1.0/zombies/wunderfizz/spin_cycle
 #			mgs:v5.1.0/zombies/wunderfizz/land
