@@ -16,6 +16,9 @@ tag @s add mgs.grenade_stuck
 # If we hit an entity (hit_flag = -1 for entities), pair the grenade with the target
 execute if score $move.hit_flag bs.lambda matches -1 run function mgs:v5.1.0/grenade/stick_to_entity
 
+# Web grenade bursts instantly on a mob hit (hit_flag -1), but sticks to surfaces and waits its fuse
+execute if score $move.hit_flag bs.lambda matches -1 if data entity @s data.config{grenade_type:"web"} run return run function mgs:v5.1.0/grenade/detonate
+
 # Play stick sound
 playsound minecraft:block.honey_block.place player @a[distance=..32] ~ ~ ~ 1 1.2
 

@@ -212,17 +212,22 @@ function {ns}:v{version}/zombies/feedback/sound_deny
 	## Same flow, generated per kind: same-item-in-slot -> refill at refill_price (deny when already
 	## full, BEFORE charging), otherwise full price for a fresh full stack of the bought type.
 	for kind_name, eq_slot, eq_count in (("lethal", 7, 4), ("tactical", 6, 3)):
-		widows_note: str = ""
+		widows_gate: str = ""
 		record_line: str = ""
 		if kind_name == "lethal":
-			widows_note = "\n# NOTE Widow's Wine (README task 5): once webs exist, a web owner's lethal buy must refill\n# web grenades instead of switching the type — branch here on the perk score."
+			# Widow's Wine owners keep web grenades: any lethal buy refills webs instead of switching
+			# the bought type. Reroute before the normal buy/refill flow (buy_lethal_web below).
+			widows_gate = (
+				f"execute if score @s {ns}.special.widows_wine matches 1 run "
+				f"return run function {ns}:v{version}/zombies/wallbuys/buy_lethal_web with storage {ns}:temp _wb_weapon\n"
+			)
 			# Remember the bought lethal type so an emptied slot refills THIS type (not always frag)
 			# on round-end replenish / Max Ammo (inventory.py). Not needed for tacticals (refill-only).
 			record_line = f"function {ns}:v{version}/zombies/inventory/record_lethal_type\n"
 		write_versioned_function(f"zombies/wallbuys/buy_{kind_name}", f"""
-# Same equipment already in the slot: refill flow
+{widows_gate}# Same equipment already in the slot: refill flow
 $execute if items entity @s hotbar.{eq_slot} *[custom_data~{{{ns}:{{$(weapon_id):true}}}}] run return run function {ns}:v{version}/zombies/wallbuys/refill_{kind_name} with storage {ns}:temp _wb_weapon
-{widows_note}
+
 # New purchase (empty slot or different equipment type): full price for {eq_count} fresh ones
 scoreboard players operation #wb_price {ns}.data = #wb_buy_price {ns}.data
 execute unless score @s {ns}.zb.points >= #wb_price {ns}.data run return run function {ns}:v{version}/zombies/wallbuys/deny_not_enough_points
@@ -249,6 +254,19 @@ function {ns}:v{version}/zombies/wallbuys/msg_refilled
 	write_versioned_function("zombies/wallbuys/deny_equipment_full", f"""
 tellraw @s [{MGS_TAG},{{"text":"Your equipment is already full.","color":"yellow"}}]
 function {ns}:v{version}/zombies/feedback/sound_deny
+""")
+
+	## Widow's Wine lethal buy: refill/purchase web grenades regardless of the bought lethal type.
+	## Already holding webs -> refill flow (deny if full); otherwise full price for 4 fresh webs.
+	write_versioned_function("zombies/wallbuys/buy_lethal_web", f"""
+execute if items entity @s hotbar.7 *[custom_data~{{{ns}:{{grenade_type:"web"}}}}] run return run function {ns}:v{version}/zombies/wallbuys/refill_lethal with storage {ns}:temp _wb_weapon
+scoreboard players operation #wb_price {ns}.data = #wb_buy_price {ns}.data
+execute unless score @s {ns}.zb.points >= #wb_price {ns}.data run return run function {ns}:v{version}/zombies/wallbuys/deny_not_enough_points
+scoreboard players operation @s {ns}.zb.points -= #wb_price {ns}.data
+loot replace entity @s hotbar.7 loot {ns}:i/web_grenade
+item modify entity @s hotbar.7 {ns}:v{version}/grenade/set_count_4
+function {ns}:v{version}/zombies/inventory/apply_slot_tag {{slot:"hotbar.7",group:"hotbar",index:7}}
+function {ns}:v{version}/zombies/wallbuys/msg_purchased
 """)
 
 	## Silent tactical give/refill (no pricing, no messages): shared by the Mystery Box collect flow

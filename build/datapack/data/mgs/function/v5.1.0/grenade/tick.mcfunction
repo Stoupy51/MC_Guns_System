@@ -31,8 +31,9 @@ execute store result score #proj_gravity mgs.data run data get entity @s data.co
 scoreboard players operation @s bs.vel.y -= #proj_gravity mgs.data
 
 # Move the grenade using Bookshelf's move module with collision detection
-# Grenades use damped_bounce by default (frag/smoke/flash) or stick (semtex)
+# Grenades use damped_bounce by default (frag/smoke/flash) or stick (semtex + web)
 execute if data entity @s data.config{grenade_type:"semtex"} run return run function mgs:v5.1.0/grenade/move_semtex
+execute if data entity @s data.config{grenade_type:"web"} run return run function mgs:v5.1.0/grenade/move_semtex
 function #bs.move:apply_vel {scale:0.001,with:{blocks:true,entities:false,ignored_blocks:"#mgs:v5.1.0/projectile_pass_through",on_collision:"function mgs:v5.1.0/grenade/on_bounce"}}
 
 # Trail particle (white_smoke avoids false-positive with shader marker detection)

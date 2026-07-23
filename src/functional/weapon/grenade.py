@@ -95,9 +95,6 @@ function {ns}:v{version}/raycast/accuracy/get_value
 
 # Summon the grenade entity at the player's eye position
 execute anchored eyes positioned ^ ^ ^0.5 summon item_display run function {ns}:v{version}/grenade/init
-
-# Increment grenade counter
-scoreboard players add #grenade_count {ns}.data 1
 """)
 
     ## Initialize the newly summoned grenade entity
@@ -183,8 +180,9 @@ execute store result score #proj_gravity {ns}.data run data get entity @s data.c
 scoreboard players operation @s bs.vel.y -= #proj_gravity {ns}.data
 
 # Move the grenade using Bookshelf's move module with collision detection
-# Grenades use damped_bounce by default (frag/smoke/flash) or stick (semtex)
+# Grenades use damped_bounce by default (frag/smoke/flash) or stick (semtex + web)
 execute if data entity @s data.config{{{GRENADE_TYPE}:"semtex"}} run return run function {ns}:v{version}/grenade/move_semtex
+execute if data entity @s data.config{{{GRENADE_TYPE}:"web"}} run return run function {ns}:v{version}/grenade/move_semtex
 function #bs.move:apply_vel {{scale:0.001,with:{{blocks:true,entities:false,ignored_blocks:"#{ns}:v{version}/projectile_pass_through",on_collision:"function {ns}:v{version}/grenade/on_bounce"}}}}
 
 # Trail particle (white_smoke avoids false-positive with shader marker detection)
@@ -243,6 +241,9 @@ tag @s add {ns}.grenade_stuck
 # If we hit an entity (hit_flag = -1 for entities), pair the grenade with the target
 execute if score $move.hit_flag bs.lambda matches -1 run function {ns}:v{version}/grenade/stick_to_entity
 
+# Web grenade bursts instantly on a mob hit (hit_flag -1), but sticks to surfaces and waits its fuse
+execute if score $move.hit_flag bs.lambda matches -1 if data entity @s data.config{{{GRENADE_TYPE}:"web"}} run return run function {ns}:v{version}/grenade/detonate
+
 # Play stick sound
 playsound minecraft:block.honey_block.place player @a[distance=..32] ~ ~ ~ 1 1.2
 """)
@@ -298,6 +299,26 @@ execute if data entity @s data.config{{{GRENADE_TYPE}:"semtex"}} run return run 
 execute if data entity @s data.config{{{GRENADE_TYPE}:"monkey_bomb"}} run return run function {ns}:v{version}/zombies/monkey/detonate
 execute if data entity @s data.config{{{GRENADE_TYPE}:"smoke"}} run return run function {ns}:v{version}/grenade/detonate_smoke
 execute if data entity @s data.config{{{GRENADE_TYPE}:"flash"}} run return run function {ns}:v{version}/grenade/detonate_flash
+execute if data entity @s data.config{{{GRENADE_TYPE}:"web"}} run return run function {ns}:v{version}/grenade/detonate_web
+""")
+
+    ## Web grenade detonation (Widow's Wine): burst of webbing that roots + lightly damages zombies.
+    ## The actual webbing effect lives in the zombies module (widows_web_burst); this is the throwable
+    ## delivery. No-op outside zombies since there are no zombie_round entities to web.
+    write_versioned_function("grenade/detonate_web", f"""
+# Webbing burst visuals + sound
+particle minecraft:item{{item:"minecraft:cobweb"}} ~ ~0.5 ~ 1.2 0.8 1.2 0.1 80 force @a[distance=..64]
+particle minecraft:block{{block_state:"minecraft:cobweb"}} ~ ~0.5 ~ 1.5 1 1.5 0.05 40 force @a[distance=..64]
+playsound minecraft:block.wool.place player @a[distance=..48] ~ ~ ~ 1 0.7
+playsound minecraft:entity.spider.step player @a[distance=..48] ~ ~ ~ 1 0.6
+
+# Root + damage nearby zombies (radius from the grenade's effect radius stat)
+execute store result score #web_r {ns}.data run data get entity @s data.config.{GRENADE_EFFECT_RADIUS}
+execute store result storage {ns}:temp _web.radius float 1 run scoreboard players get #web_r {ns}.data
+execute at @s run function {ns}:v{version}/zombies/perks/widows_web_burst with storage {ns}:temp _web
+
+# Delete the grenade
+function {ns}:v{version}/grenade/delete
 """)
 
     ## Frag/Semtex detonation - explosion with area damage (reuses projectile explosion logic)
@@ -495,8 +516,7 @@ particle campfire_cosy_smoke ~ ~0.3 ~ 2 0.5 2 0.005 10 force @a[distance=..128]
 # If stuck to an entity, clean up the target's stuck_id
 execute if entity @s[tag={ns}.stuck_to_entity] run function {ns}:v{version}/grenade/cleanup_stuck_entity
 
-# Decrease grenade counter and kill entity
-scoreboard players remove #grenade_count {ns}.data 1
+# Remove the grenade entity
 kill @s
 """)
 
@@ -512,6 +532,9 @@ execute as @e[scores={{{ns}.stuck_id=1..}}] if score @s {ns}.stuck_id = #my_stuc
     ## Tick file entry for grenade movement
     write_tick_file(
 f"""
-# Tick function for active grenades
-execute if score #grenade_count {ns}.data matches 1.. as @e[tag={ns}.grenade] at @s run function {ns}:v{version}/grenade/tick
+# Tick every live grenade. This is intentionally NOT gated on a running count: a counter desync
+# (e.g. a grenade removed outside grenade/delete, or a double-detonate) used to drop the count to 0
+# and freeze EVERY projectile's ticking ("no more items to tick", monkey bombs included). Selecting
+# by tag each tick is cheap and self-correcting.
+execute as @e[tag={ns}.grenade] at @s run function {ns}:v{version}/grenade/tick
 """)
