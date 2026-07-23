@@ -6,8 +6,8 @@
 # @within	mgs:v5.1.0/zombies/perks/widows_web_burst
 #
 
-effect give @s minecraft:slowness 400 5 true
-effect give @s minecraft:weakness 400 2 true
+effect give @s minecraft:slowness 5 5 true
+effect give @s minecraft:weakness 5 2 true
 particle minecraft:item{item:"minecraft:cobweb"} ~ ~0.5 ~ 0.3 0.5 0.3 0.05 8
 execute store result storage mgs:temp _ww_dmg.amount int 1 run attribute @s minecraft:max_health get 0.15
 data modify storage mgs:temp _ww_dmg.type set value "minecraft:generic"
