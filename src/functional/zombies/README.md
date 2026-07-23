@@ -32,47 +32,6 @@ Once art exists:
 - Zombies keeps its plain knife (separate give in `zombies/inventory.py`), until a zombies knife wall-buy exists (task 9).
 
 
-## 4. Zombies — new placeable: Der Wunderfizz (random perk machine)  [DONE]
-
-Implemented in `src/functional/zombies/wunderfizz.py`. Editor element `wunderfizz` (slot `inventory.9`,
-`all_perks` flag, `can_start_on` flag, price 1500), machine model `der_wunderfizz` (gold/purple), editor
-model-display + FIELD_DOCS added. Uses the shared `zombies/perks/pool/*` helper for the "available perk"
-roll; on land the perk is collectable by the buyer only for 10s (orb despawns after).
-
-**Now roams like the Mystery Box** (shared primitives in `src/functional/zombies/roaming.py`: teddy-bear
-loot table, ±512 interaction hide/show, "after N uses roll 1-in-3 to move"). A map can hold several
-Wunderfizz spots — only one is ACTIVE at a time; the rest show a grayed-out `der_wunderfizz_disabled`
-cabinet. After 4+ uses a pull can land on the teddy bear (buyer refunded) and the machine roams to
-another spot; the roam is a model-swap (old spot → disabled, new spot → live) with the bear as the
-visual cue rather than physically flying the cabinet. The Mystery Box was refactored onto the same
-shared primitives and now shows the `mystery_box_disabled` crate at its inactive spots too.
-⚠ In-engine polish (roam timing, disabled model look, orb float) is a HUMAN eyeball pass.
-
-
-Reference (BO2 Origins, callofduty.fandom.com/wiki/Der_Wunderfizz): 1500/use; behaves like a
-Mystery Box for perks; in Origins it could grant perks that have **no machine on the map** (PhD,
-Deadshot, Electric Cherry existed only through it, with higher odds).
-
-Spec (decided):
-- Cost **1500** (configurable per machine via editor `price`).
-- On buy: cycles perk icons like the Mystery Box spin, lands on one random perk, then it is
-  collectable **by the buyer only**, and despawns after **10 s** uncollected (mirror the MB
-  ready-window pattern — MB uses `mb.anim` counting down to −150 for its window).
-- Pool = perks the buyer doesn't own, **restricted to perks with a machine on this map** by
-  default; editor option `all_perks: false` — when true, rolls across every defined perk
-  (Origins behavior). ⚠ Code fact: the `random_perk` **power-up** currently does NOT filter by
-  map — `powerups.py::activate/random_perk` iterates all of `PERK_DEFINITIONS`. Build one shared
-  "available perk pool" helper (map machines → available set; flag widens to all) and use it for
-  BOTH the power-up and the Wunderfizz, then document the behavior in editor tooltips (task 6).
-
-Implementation notes:
-- [ ] Editor: new `ALL_ELEMENTS` entry (`save_type: "zb_object"`, `save_path: "wunderfizz"`, defaults `{price: 1500, power: True, all_perks: False}`), zombies slot `inventory.9`, add to `MODEL_DISPLAY_ELEMENTS` + a `maps/editor/displays/wunderfizz` mirror.
-- [ ] Model: base the machine on the perk-machine display pipeline (`zombies/perks/setup_iter` → `display/summon_machine_display`, transforms/rotation identical). New `wunderfizz` item model in `src/database/others.py` (perk machines are `Item(id=..., override_model=...)` with vanilla textures). Look, per the wiki: mystery-box-sized machine with a glass **orb/globe on top** where perk bottles swirl; struck by lightning periodically (particle idea: `end_rod`/`electric_spark` bursts). During the spin, show tiny perk-machine models cycling at the orb center — reuse the mini perk items (`perk_machine_<id>` models, same ones the inventory perk display items use) on a small `item_display`.
-- [ ] Refactor before building: the MB spin/cadence/land/collect flow (`mystery_box.py::spin_tick_one`, `cycle_step_one`, buyer-pid tracking) and the perk grant path (`perks/apply` + `on_new_perk` signal) both get reused here. Extract shared Python helpers that emit the spin/collect functions parametrized by pool + on-collect — avoid duplicating the mcfunction bodies AND the Python that writes them.
-- [ ] Power gating: reuse `mgs.zb.perk.power`-style check + `deny_requires_power_body`.
-- [ ] Sound: play **`assets/sounds/zombies/mystery_box/music_box_short.ogg`** (`mgs:zombies/mystery_box/music_box_short`) as the spin/use jingle for the Wunderfizz (user-picked).
-
-
 ## 7. Zombies — perk purchase songs  (mostly HUMAN)
 
 State: `assets/zombies_perk_songs/` already holds 10 staged .oggs — deadshot, doubletap,
@@ -103,4 +62,6 @@ these are gameplay ideas from Zonweeb, not necessarily tied to the variant.)
 ---
 
 # Inbox (quick notes — dump anything here, unorganized "basic" format is fine)
+
+- a
 
