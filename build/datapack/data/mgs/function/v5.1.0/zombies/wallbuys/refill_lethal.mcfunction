@@ -4,6 +4,7 @@
 # @executed	as @n[tag=mgs.wb_new]
 #
 # @within	mgs:v5.1.0/zombies/wallbuys/buy_lethal with storage mgs:temp _wb_weapon
+#			mgs:v5.1.0/zombies/wallbuys/buy_lethal_web with storage mgs:temp _wb_weapon
 #
 
 # Already at max: deny without charging (no points were deducted yet on this path)

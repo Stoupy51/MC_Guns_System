@@ -77,13 +77,17 @@ scoreboard objectives add mgs.special.quick_reload dummy
 scoreboard objectives add mgs.special.quick_swap dummy
 # Additional shots: number of extra projectiles per shot (Double Tap perk)
 scoreboard objectives add mgs.special.additional_shots dummy
-# PhD Flopper perk (0/1): immune to explosive self-damage (fall damage handled by attribute)
+# PhD Flopper perk: immune to explosive self-damage (fall damage handled by attribute)
 scoreboard objectives add mgs.special.phd_flopper dummy
-# Deadshot Daiquiri perk (0/1): 65% weapon spread + recoil
+# Deadshot Daiquiri perk: 65% weapon spread + recoil
 scoreboard objectives add mgs.special.deadshot dummy
-# Timeslip perk (0/1): faster traps / Mystery Box / Pack-a-Punch for the owner
+# Timeslip perk: faster traps / Mystery Box / Pack-a-Punch for the owner
 scoreboard objectives add mgs.special.timeslip dummy
-# Multiplayer loadout perk flags (0/1), set on loadout apply
+# Electric Cherry perk: reload discharges a shock that damages/stuns nearby zombies
+scoreboard objectives add mgs.special.electric_cherry dummy
+# Widow's Wine perk: web grenades + web-on-hurt passive + stronger knife
+scoreboard objectives add mgs.special.widows_wine dummy
+# Multiplayer loadout perk flags, set on loadout apply
 scoreboard objectives add mgs.special.juggernaut dummy
 scoreboard objectives add mgs.special.scavenger dummy
 scoreboard objectives add mgs.special.flak_jacket dummy
@@ -265,6 +269,8 @@ scoreboard objectives add mgs.zb.pap.id dummy
 scoreboard objectives add mgs.zb.pap.price dummy
 scoreboard objectives add mgs.zb.pap.power dummy
 scoreboard objectives add mgs.pap_anim dummy
+# 1 when the player who started this PAP owns Timeslip (animation runs 3x faster)
+scoreboard objectives add mgs.zb.pap.timeslip dummy
 
 # Per-player PAP tracking (for cleanup when weapon is lost/collected)
 scoreboard objectives add mgs.zb.pap_s dummy
@@ -345,6 +351,11 @@ scoreboard objectives add mgs.zb.perk.stamin_up dummy
 scoreboard objectives add mgs.zb.perk.phd_flopper dummy
 scoreboard objectives add mgs.zb.perk.deadshot dummy
 scoreboard objectives add mgs.zb.perk.timeslip dummy
+scoreboard objectives add mgs.zb.perk.electric_cherry dummy
+scoreboard objectives add mgs.zb.perk.tombstone dummy
+scoreboard objectives add mgs.zb.perk.whos_who dummy
+scoreboard objectives add mgs.zb.perk.dying_wish dummy
+scoreboard objectives add mgs.zb.perk.widows_wine dummy
 
 # Per-player chip-in progress
 scoreboard objectives add mgs.zb.perkpaid.juggernog dummy
@@ -356,6 +367,72 @@ scoreboard objectives add mgs.zb.perkpaid.stamin_up dummy
 scoreboard objectives add mgs.zb.perkpaid.phd_flopper dummy
 scoreboard objectives add mgs.zb.perkpaid.deadshot dummy
 scoreboard objectives add mgs.zb.perkpaid.timeslip dummy
+scoreboard objectives add mgs.zb.perkpaid.electric_cherry dummy
+scoreboard objectives add mgs.zb.perkpaid.tombstone dummy
+scoreboard objectives add mgs.zb.perkpaid.whos_who dummy
+scoreboard objectives add mgs.zb.perkpaid.dying_wish dummy
+scoreboard objectives add mgs.zb.perkpaid.widows_wine dummy
+
+# Electric Cherry: last-discharge gametime stamp (anti-spam cooldown)
+scoreboard objectives add mgs.zb.ec_last dummy
+# Widow's Wine: last web-on-hurt burst gametime stamp (passive cooldown)
+scoreboard objectives add mgs.zb.ww_last dummy
+# Dying Wish: use count (escalates cooldown), cooldown countdown, and active berserk timer
+scoreboard objectives add mgs.zb.dw_uses dummy
+scoreboard objectives add mgs.zb.dw_cd dummy
+scoreboard objectives add mgs.zb.dw_timer dummy
+# Tombstone: marker state (0 pending / 1 active) + recovery countdown; the marker also carries the
+# owner's zb.downed_id so the existing downed_id_match predicate can select it.
+scoreboard objectives add mgs.zb.ts.state dummy
+scoreboard objectives add mgs.zb.ts.timer dummy
+# Tombstone: per-perk snapshot of what the owner had when they went down (restored on recovery)
+scoreboard objectives add mgs.zb.tsp.juggernog dummy
+scoreboard objectives add mgs.zb.tsp.speed_cola dummy
+scoreboard objectives add mgs.zb.tsp.double_tap dummy
+scoreboard objectives add mgs.zb.tsp.quick_revive dummy
+scoreboard objectives add mgs.zb.tsp.mule_kick dummy
+scoreboard objectives add mgs.zb.tsp.stamin_up dummy
+scoreboard objectives add mgs.zb.tsp.phd_flopper dummy
+scoreboard objectives add mgs.zb.tsp.deadshot dummy
+scoreboard objectives add mgs.zb.tsp.timeslip dummy
+scoreboard objectives add mgs.zb.tsp.electric_cherry dummy
+scoreboard objectives add mgs.zb.tsp.tombstone dummy
+scoreboard objectives add mgs.zb.tsp.whos_who dummy
+scoreboard objectives add mgs.zb.tsp.dying_wish dummy
+scoreboard objectives add mgs.zb.tsp.widows_wine dummy
+
+# Der Wunderfizz machine + spin state
+scoreboard objectives add mgs.zb.wf.id dummy
+scoreboard objectives add mgs.zb.wf.price dummy
+scoreboard objectives add mgs.zb.wf.power dummy
+scoreboard objectives add mgs.zb.wf.allperks dummy
+# Spin display (orb): countdown timer (>0 spinning, <=0 ready window), buyer pid, chosen perk index
+scoreboard objectives add mgs.zb.wf.anim dummy
+scoreboard objectives add mgs.zb.wf.buyer dummy
+scoreboard objectives add mgs.zb.wf.perk dummy
+# 1 when the buyer owns Timeslip (this orb spins 2x faster, like the Mystery Box)
+scoreboard objectives add mgs.zb.wf.timeslip dummy
+# Stable per-player buyer id (lazy)
+scoreboard objectives add mgs.zb.wf_pid dummy
+
+# Who's Who: doppelganger bleed timer + revive progress (on the owner), perk snapshot for recovery.
+# The body mannequin carries the owner's zb.downed_id (reuses the revive downed_id_match predicate).
+scoreboard objectives add mgs.zb.ww.bleed dummy
+scoreboard objectives add mgs.zb.ww.rev dummy
+scoreboard objectives add mgs.zb.wwp.juggernog dummy
+scoreboard objectives add mgs.zb.wwp.speed_cola dummy
+scoreboard objectives add mgs.zb.wwp.double_tap dummy
+scoreboard objectives add mgs.zb.wwp.quick_revive dummy
+scoreboard objectives add mgs.zb.wwp.mule_kick dummy
+scoreboard objectives add mgs.zb.wwp.stamin_up dummy
+scoreboard objectives add mgs.zb.wwp.phd_flopper dummy
+scoreboard objectives add mgs.zb.wwp.deadshot dummy
+scoreboard objectives add mgs.zb.wwp.timeslip dummy
+scoreboard objectives add mgs.zb.wwp.electric_cherry dummy
+scoreboard objectives add mgs.zb.wwp.tombstone dummy
+scoreboard objectives add mgs.zb.wwp.whos_who dummy
+scoreboard objectives add mgs.zb.wwp.dying_wish dummy
+scoreboard objectives add mgs.zb.wwp.widows_wine dummy
 
 # Revive system scoreboards
 scoreboard objectives add mgs.zb.downed dummy
@@ -521,6 +598,8 @@ scoreboard players set #90 mgs.data 90
 scoreboard players set #100 mgs.data 100
 scoreboard players set #200 mgs.data 200
 scoreboard players set #1000 mgs.data 1000
+scoreboard players set #1200 mgs.data 1200
+scoreboard players set #3500 mgs.data 3500
 scoreboard players set #36000 mgs.data 36000
 scoreboard players set #62832 mgs.data 62832
 scoreboard players set #1000000 mgs.data 1000000

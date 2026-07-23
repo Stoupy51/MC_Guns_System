@@ -25,8 +25,11 @@ execute as @e[type=player,sort=random] at @s run function mgs:v5.1.0/player/tick
 # Tick function for slow bullets (projectiles)
 execute if score #slow_bullet_count mgs.data matches 1.. as @e[tag=mgs.slow_bullet] at @s run function mgs:v5.1.0/projectile/tick
 
-# Tick function for active grenades
-execute if score #grenade_count mgs.data matches 1.. as @e[tag=mgs.grenade] at @s run function mgs:v5.1.0/grenade/tick
+# Tick every live grenade. This is intentionally NOT gated on a running count: a counter desync
+# (e.g. a grenade removed outside grenade/delete, or a double-detonate) used to drop the count to 0
+# and freeze EVERY projectile's ticking ("no more items to tick", monkey bombs included). Selecting
+# by tag each tick is cheap and self-correcting.
+execute as @e[tag=mgs.grenade] at @s run function mgs:v5.1.0/grenade/tick
 
 # Armed mob AI loop
 execute if score #armed_mob_count mgs.data matches 1.. as @e[tag=mgs.armed] at @s run function mgs:v5.1.0/mob/tick

@@ -60,8 +60,6 @@ scoreboard players set #zb_dog_pending mgs.data 0
 
 # Escort cleanup (escort.py); the traders themselves die with the mgs.gm_entity kill above
 scoreboard players set #zb_escort_count mgs.data 0
-gamerule spawn_wandering_traders true
-gamerule spawn_mobs true
 
 # Remove all pull displays and presence boxes, reset all per-box state
 kill @e[tag=mgs.mb_display]
@@ -114,6 +112,12 @@ bossbar remove mgs:pu_unlimited_ammo
 execute as @a[team=mgs.zombies] run attribute @s minecraft:max_health base reset
 execute as @a[team=mgs.zombies] run attribute @s minecraft:movement_speed modifier remove mgs:stamin_up
 execute as @a[team=mgs.zombies] run attribute @s minecraft:fall_damage_multiplier base reset
+execute as @a[team=mgs.zombies] run attribute @s minecraft:attack_damage modifier remove mgs:widows_wine
+execute as @a[team=mgs.zombies] run attribute @s minecraft:attack_damage modifier remove mgs:dying_wish
+tag @a[team=mgs.zombies] remove mgs.dying_wish_active
+scoreboard players set @a[team=mgs.zombies] mgs.zb.dw_uses 0
+scoreboard players set @a[team=mgs.zombies] mgs.zb.dw_cd 0
+scoreboard players set @a[team=mgs.zombies] mgs.zb.dw_timer 0
 scoreboard players set @a[team=mgs.zombies] mgs.stam_bonus 0
 tag @a[team=mgs.zombies] remove mgs.perk.speed_cola
 tag @a[team=mgs.zombies] remove mgs.perk.double_tap
@@ -127,6 +131,8 @@ scoreboard players set @a[team=mgs.zombies] mgs.special.additional_shots 0
 scoreboard players set @a[team=mgs.zombies] mgs.special.phd_flopper 0
 scoreboard players set @a[team=mgs.zombies] mgs.special.deadshot 0
 scoreboard players set @a[team=mgs.zombies] mgs.special.timeslip 0
+scoreboard players set @a[team=mgs.zombies] mgs.special.electric_cherry 0
+scoreboard players set @a[team=mgs.zombies] mgs.special.widows_wine 0
 scoreboard players set @a[team=mgs.zombies] mgs.special.juggernaut 0
 scoreboard players set @a[team=mgs.zombies] mgs.special.scavenger 0
 scoreboard players set @a[team=mgs.zombies] mgs.special.flak_jacket 0
@@ -145,6 +151,11 @@ scoreboard players reset * mgs.zb.perk.stamin_up
 scoreboard players reset * mgs.zb.perk.phd_flopper
 scoreboard players reset * mgs.zb.perk.deadshot
 scoreboard players reset * mgs.zb.perk.timeslip
+scoreboard players reset * mgs.zb.perk.electric_cherry
+scoreboard players reset * mgs.zb.perk.tombstone
+scoreboard players reset * mgs.zb.perk.whos_who
+scoreboard players reset * mgs.zb.perk.dying_wish
+scoreboard players reset * mgs.zb.perk.widows_wine
 scoreboard players reset * mgs.zb.perkpaid.juggernog
 scoreboard players reset * mgs.zb.perkpaid.speed_cola
 scoreboard players reset * mgs.zb.perkpaid.double_tap
@@ -154,6 +165,18 @@ scoreboard players reset * mgs.zb.perkpaid.stamin_up
 scoreboard players reset * mgs.zb.perkpaid.phd_flopper
 scoreboard players reset * mgs.zb.perkpaid.deadshot
 scoreboard players reset * mgs.zb.perkpaid.timeslip
+scoreboard players reset * mgs.zb.perkpaid.electric_cherry
+scoreboard players reset * mgs.zb.perkpaid.tombstone
+scoreboard players reset * mgs.zb.perkpaid.whos_who
+scoreboard players reset * mgs.zb.perkpaid.dying_wish
+scoreboard players reset * mgs.zb.perkpaid.widows_wine
+
+kill @e[tag=mgs.wunderfizz_orb]
+
+kill @e[tag=mgs.ww_body]
+kill @e[tag=mgs.ww_hud]
+tag @a remove mgs.ww_active
+data modify storage mgs:zombies ww_inv set value {}
 
 # Reset revive state
 scoreboard players set @a mgs.zb.downed 0
@@ -166,4 +189,6 @@ tag @a remove mgs.downed_spectator
 kill @e[tag=mgs.downed_mannequin]
 kill @e[tag=mgs.downed_hud]
 kill @e[tag=mgs.downed_cam]
+kill @e[tag=mgs.tombstone]
+data modify storage mgs:zombies tombstone_inv set value {}
 

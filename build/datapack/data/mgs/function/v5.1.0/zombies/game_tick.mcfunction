@@ -135,8 +135,11 @@ execute if score #zb_info_timer mgs.data matches 0 as @a[scores={mgs.zb.in_game=
 # Mystery box animation tick
 function mgs:v5.1.0/zombies/mystery_box/tick
 
-# PAP animation tick (all phases use positive timer: 240→0)
+# PAP animation tick (all phases use positive timer: 300→0)
 execute as @e[type=minecraft:interaction,tag=mgs.pap_machine,scores={mgs.pap_anim=1..}] at @s run function mgs:v5.1.0/zombies/pap/anim/step
+
+# Timeslip: two extra steps this tick for Timeslip-owned machines (3x total speed)
+execute as @e[type=minecraft:interaction,tag=mgs.pap_machine,scores={mgs.zb.pap.timeslip=1,mgs.pap_anim=1..}] at @s run function mgs:v5.1.0/zombies/pap/anim/step_timeslip
 
 # Barriers: restore frozen speeds from last tick, then dispatch all display ticks
 execute as @e[tag=mgs.zombie_round,tag=mgs.barrier_frozen] run function mgs:v5.1.0/zombies/barriers/restore_zombie_speed
@@ -188,9 +191,15 @@ execute if score #zb_fire_sale_timer mgs.data matches 1.. run function mgs:v5.1.
 # Bonfire Sale: global timer countdown
 execute if score #zb_bonfire_sale_timer mgs.data matches 1.. run function mgs:v5.1.0/zombies/powerups/bonfire_sale_tick
 
+execute as @e[tag=mgs.tombstone,scores={mgs.zb.ts.state=1}] at @s run function mgs:v5.1.0/zombies/perks/tombstone_marker_tick
+
 scoreboard players add #qr_price_tick mgs.data 1
 execute if score #qr_price_tick mgs.data matches 20.. run scoreboard players set #qr_price_tick mgs.data 0
 execute if score #qr_price_tick mgs.data matches 0 run function mgs:v5.1.0/zombies/perks/update_quick_revive_price
+
+execute as @e[tag=mgs.wunderfizz_orb] at @s run function mgs:v5.1.0/zombies/wunderfizz/orb_tick
+
+execute if data storage mgs:zombies game{state:"active"} run function mgs:v5.1.0/zombies/whos_who/tick
 
 # Trap active tick (damage + timer)
 execute as @e[type=minecraft:marker,tag=mgs.trap_center,scores={mgs.zb.trap.timer=1..}] at @s run function mgs:v5.1.0/zombies/traps/active_tick

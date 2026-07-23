@@ -164,7 +164,7 @@ type:"minecraft:multi_action",\
 title:{{text:"Loadout",color:"gold",bold:true}},\
 body:[{{\
 type:"minecraft:plain_message",\
-contents:["",["",{{"text":"Points used"}},": "],{{"text":"$(used)","color":"gold","bold":true}},{{"text":" / {PICK10_TOTAL}","color":"dark_gray"}},{{"text":"  ($(pts) left)","color":"gray"}}]\
+contents:["",["",{{"text":"Points used"}},": "],{{"text":"$(used)","color":"gold","bold":true}},{{"text":" / {PICK10_TOTAL}","color":"dark_gray"}},{{"text":" ($(pts) left)","color":"gray"}}]\
 }},{{\
 type:"minecraft:plain_message",\
 contents:{{text:"Click a category to change it",color:"gray"}}\

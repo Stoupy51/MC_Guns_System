@@ -5,7 +5,9 @@
 #
 # @within	mgs:v5.1.0/zombies/pap/setup_iter with storage mgs:temp _pap_disp [ as @n[tag=mgs.pap_new] & at @s & positioned ^ ^ ^-0.49 & positioned ~ ~-0.4 ~ ]
 #			mgs:v5.1.0/zombies/perks/setup_iter with storage mgs:temp _pk_disp [ as @n[tag=mgs.pk_new] & at @s & align xyz & positioned ~.5 ~-.37 ~.5 & positioned ^ ^ ^-0.49 ]
+#			mgs:v5.1.0/zombies/wunderfizz/setup_iter with storage mgs:temp _wf_disp [ as @n[tag=mgs.wf_new] & at @s & align xyz & positioned ~.5 ~-.37 ~.5 & positioned ^ ^ ^-0.49 ]
 #			mgs:v5.1.0/maps/editor/displays/perk_machine with storage mgs:temp _pk_disp [ align xyz & positioned ~.5 ~-.37 ~.5 & positioned ^ ^ ^-0.49 ]
+#			mgs:v5.1.0/maps/editor/displays/wunderfizz with storage mgs:temp _wf_disp [ align xyz & positioned ~.5 ~-.37 ~.5 & positioned ^ ^ ^-0.49 ]
 #			mgs:v5.1.0/maps/editor/displays/pap_machine with storage mgs:temp _pap_disp [ positioned ^ ^ ^-0.49 & positioned ~ ~-0.4 ~ ]
 #
 # @args		yaw (unknown)

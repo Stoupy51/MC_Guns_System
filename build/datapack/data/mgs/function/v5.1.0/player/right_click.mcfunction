@@ -50,6 +50,8 @@ execute if score #fire_mode_is_burst mgs.data matches 1 run scoreboard players a
 
 # Set cooldown as expiration tick: end_tick = current_tick + cooldown_duration
 execute store result score #cooldown mgs.data run data get storage mgs:gun all.stats.cooldown
+# Timeslip (zombies perk): halve the grenade/equipment throw cooldown for the owner (grenades only)
+execute if score @s mgs.special.timeslip matches 1 if data storage mgs:gun all.stats.grenade_type run scoreboard players operation #cooldown mgs.data /= #2 mgs.data
 scoreboard players operation #cooldown mgs.data += #total_tick mgs.data
 scoreboard players operation @s mgs.cooldown = #cooldown mgs.data
 
