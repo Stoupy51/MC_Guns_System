@@ -7,7 +7,7 @@
 #
 
 # Rotation indicator, skipped for markers that already draw a real model
-execute as @e[type=minecraft:marker,tag=mgs.map_element,tag=!mgs.element.wallbuy,tag=!mgs.element.perk_machine,tag=!mgs.element.pap_machine,tag=!mgs.element.mystery_box_pos,tag=!mgs.element.power_switch,tag=!mgs.element.barrier] at @s positioned ^ ^ ^0.5 run particle dust{color:[1.0,1.0,1.0],scale:0.5} ~ ~1.69 ~ 0.1 0.1 0.1 0 5 normal @a[scores={mgs.mp.map_edit=1},distance=..48]
+execute as @e[type=minecraft:marker,tag=mgs.map_element,tag=!mgs.element.wallbuy,tag=!mgs.element.perk_machine,tag=!mgs.element.wunderfizz,tag=!mgs.element.pap_machine,tag=!mgs.element.mystery_box_pos,tag=!mgs.element.power_switch,tag=!mgs.element.barrier] at @s positioned ^ ^ ^0.5 run particle dust{color:[1.0,1.0,1.0],scale:0.5} ~ ~1.69 ~ 0.1 0.1 0.1 0 5 normal @a[scores={mgs.mp.map_edit=1},distance=..48]
 
 # Per-element markers
 execute at @e[tag=mgs.element.base_coordinates] run particle dust{color:[1.0,0.0,1.0],scale:1.5} ~ ~1 ~ 0.3 0.5 0.3 0 2 normal @a[scores={mgs.mp.map_edit=1},distance=..48]

@@ -73,6 +73,9 @@ execute if entity @s[tag=mgs.element.trap] run return run kill @s
 execute if entity @s[tag=mgs.element.perk_machine] run function mgs:v5.1.0/maps/editor/handle_zb_object
 execute if entity @s[tag=mgs.element.perk_machine] run return run kill @s
 
+execute if entity @s[tag=mgs.element.wunderfizz] run function mgs:v5.1.0/maps/editor/handle_zb_object
+execute if entity @s[tag=mgs.element.wunderfizz] run return run kill @s
+
 execute if entity @s[tag=mgs.element.pap_machine] run function mgs:v5.1.0/maps/editor/handle_zb_object
 execute if entity @s[tag=mgs.element.pap_machine] run return run kill @s
 
