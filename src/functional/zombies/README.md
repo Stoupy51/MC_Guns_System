@@ -34,12 +34,19 @@ Once art exists:
 
 ## 4. Zombies — new placeable: Der Wunderfizz (random perk machine)  [DONE]
 
-Implemented in `src/functional/zombies/wunderfizz.py` (self-contained mini-spin, does NOT refactor the
-Mystery Box internals). Editor element `wunderfizz` (slot `inventory.9`, `all_perks` flag, price 1500),
-machine model `der_wunderfizz` (gold/purple), editor model-display + FIELD_DOCS added. Uses the
-shared `zombies/perks/pool/*` helper for the "available perk" roll; on land the perk is collectable by the
-buyer only for 10s (orb despawns after), sound = `music_box_short`. ⚠ Needs in-engine polish (orb float
-visual is a simple hover, not the MB-style rise). Original spec kept below for reference.
+Implemented in `src/functional/zombies/wunderfizz.py`. Editor element `wunderfizz` (slot `inventory.9`,
+`all_perks` flag, `can_start_on` flag, price 1500), machine model `der_wunderfizz` (gold/purple), editor
+model-display + FIELD_DOCS added. Uses the shared `zombies/perks/pool/*` helper for the "available perk"
+roll; on land the perk is collectable by the buyer only for 10s (orb despawns after).
+
+**Now roams like the Mystery Box** (shared primitives in `src/functional/zombies/roaming.py`: teddy-bear
+loot table, ±512 interaction hide/show, "after N uses roll 1-in-3 to move"). A map can hold several
+Wunderfizz spots — only one is ACTIVE at a time; the rest show a grayed-out `der_wunderfizz_disabled`
+cabinet. After 4+ uses a pull can land on the teddy bear (buyer refunded) and the machine roams to
+another spot; the roam is a model-swap (old spot → disabled, new spot → live) with the bear as the
+visual cue rather than physically flying the cabinet. The Mystery Box was refactored onto the same
+shared primitives and now shows the `mystery_box_disabled` crate at its inactive spots too.
+⚠ In-engine polish (roam timing, disabled model look, orb float) is a HUMAN eyeball pass.
 
 
 Reference (BO2 Origins, callofduty.fandom.com/wiki/Der_Wunderfizz): 1500/use; behaves like a
@@ -64,135 +71,6 @@ Implementation notes:
 - [ ] Refactor before building: the MB spin/cadence/land/collect flow (`mystery_box.py::spin_tick_one`, `cycle_step_one`, buyer-pid tracking) and the perk grant path (`perks/apply` + `on_new_perk` signal) both get reused here. Extract shared Python helpers that emit the spin/collect functions parametrized by pool + on-collect — avoid duplicating the mcfunction bodies AND the Python that writes them.
 - [ ] Power gating: reuse `mgs.zb.perk.power`-style check + `deny_requires_power_body`.
 - [ ] Sound: play **`assets/sounds/zombies/mystery_box/music_box_short.ogg`** (`mgs:zombies/mystery_box/music_box_short`) as the spin/use jingle for the Wunderfizz (user-picked).
-
-
-## 5. Zombies — add the 8 missing perks
-
-Perk definitions live in `PERK_DEFINITIONS` (`zombies/perks.py`); everything downstream
-(scoreboards, apply/lose_all, info-paper lore, inventory mini-items, random-perk power-up)
-is generated from it. Machine recolors: `src/database/others.py::override_model(<dye>)`
-(accent = `<dye>_concrete`, accent2 = `<dye>_terracotta`) + one default-model line comment in
-`perks.py` `setup_iter`. Editor: extend `FIELD_DOCS[("perk_machine","perk_id")]` list.
-
-Color plan (user-picked; dyes already used: red=jugg, lime=speed, yellow=dtap, light_blue=QR,
-green=mule, orange=stamin):
-| Perk | Color wanted | Dye suggestion |
-|---|---|---|
-| PhD Flopper | purple | `purple` |
-| Deadshot Daiquiri | really dark green | no darker vanilla green dye free (`green` is Mule Kick) → custom accent textures or `gray`+green accent2 — (HUMAN) taste call |
-| Tombstone | brown | `brown` |
-| Who's Who | cyan | `cyan` |
-| Electric Cherry | dark blue | `blue` |
-| Widow's Wine | black + red | two-tone: hand-written child model (accent=black_concrete, accent2=red_terracotta) instead of the single-dye helper |
-| Timeslip | purple, lighter than PhD | `magenta` |
-| Dying Wish | blue | `blue` taken by Cherry → custom texture or two-tone blue/white — (HUMAN) taste call |
-
-- [ ] **PhD Flopper** — immune to explosions and fall damage.
-  Fall: `attribute @s minecraft:fall_damage_multiplier base set 0` (removal: reset). Explosions:
-  self-damage from our own grenades/launchers is dealt by the custom explosion path
-  (`weapon/grenade.py` / `projectile.py`, `#grenade_explosion_power` / `#projectile_explosion_power` configs) — gate player damage there on the perk score; check trap fire too.
-- [ ] **Deadshot Daiquiri** — +35% accuracy, −35% recoil.
-  Accuracy: spread comes from `mgs:gun accuracy` (from `ACCURACY_BASE` stat) in the raycast path — scale by 0.65 when perk owned (pattern: a `mgs.special.*` score like Speed Cola's `quick_reload`). Recoil: `weapon/kick.py`, scale by 0.65 the same way.
-- [x] **Tombstone** — DONE (`perks.py` tombstone_* + hooks in `revive.py`): on down a soul-skull marker
-  spawns at the death spot with a perk snapshot; revived → discarded; bled out → inventory snapshotted, and
-  after the round respawn a 60s marker lets the owner walk back to recover perks + weapons (Tombstone
-  excluded). id-matched to the owner, disabled solo, no marker on full_death. Original spec below.
-- [ ] ~~**Tombstone**~~ — on going down, a tombstone marker (fake power-up) spawns at the down
-  position; revived → it silently despawns; bled out → after the round-end respawn the player has
-  **60 s** to reach it and recover **all perks + weapons** they had (BO2 uses ~90 s and excludes
-  Tombstone itself from the recovery — follow that exclusion). Only the owner can see the pickup as
-  theirs / collect it (id-match pattern: `revive.py` `downed_id` predicate or MB `mb.buyer` score).
-  Hooks: snapshot perk scores in `revive/on_down` **before** `perks/lose_all` runs; snapshot
-  `Inventory` to storage in `revive/bleed_out` (items survive the downed phase — they're only
-  cleared by `give_respawn_loadout` at round respawn); spawn the marker entity in `on_down`,
-  despawn in `revive_complete`, start the 60 s timer in `do_round_respawn`. No marker if the player
-  died out of the map (`revive/full_death` path). Not a `powerups.py` drop — separate entity/tag so
-  the shuffle-bag/pickup loop never touches it. Solo: BO2 disables Tombstone solo (a solo bleed-out
-  is game over anyway) — hide/deny purchase when solo like the QR-solo special case.
-- [x] **Who's Who** — DONE (`whos_who.py`, hooked from `revive/on_down` above Tombstone): the owner keeps
-  playing as an alive doppelganger (knife + pistol, `ww_active` tag), teleported to the unlocked player spawn
-  nearest their body but ≥10 blocks away, while their body drops via the SHARED `revive/spawn_downed_body`
-  (a normal `downed_mannequin` + HUD — same visuals, same revive code). The body link lives in `zb.ww.id`
-  (survives a later normal down overwriting `zb.downed_id`), and the owner's tick reuses the shared revive
-  core (`revive_body_detect`/`revive_body_progress`), so any alive player — doppelgangers included, and the
-  owner themselves (solo self-revive) — revives it. Revive → perks (minus Who's Who) + exact inventory slots
-  restored via `inventory/restore_inventory`; body bleeds out → fight on with the pistol (perks lost); down
-  again as a doppelganger → the unrevived body is forfeited (BO2), then a normal down. Works solo and takes
-  priority over solo Quick Revive. Original spec below.
-- [ ] ~~**Who's Who**~~ — on going down, instead of the crawl/spectate flow the player keeps playing
-  as a "doppelganger": teleported near (not at) their body with only knife + M1911, alive, and can
-  revive their own mannequin (existing reviver proximity loop already works for any alive player).
-  BO2 rules (wiki): revive succeeds → keep everything from before minus Who's Who; body bleeds out
-  → keep playing as doppelganger with just the pistol (perks lost); down again *as* doppelganger →
-  normal down; solo → doppelganger down = game over. Hooks: branch at `revive/on_down` (skip
-  spectator+camera, still summon mannequin+HUD+bleed timer), snapshot perks/items like Tombstone.
-  Mutual exclusion with Tombstone/Quick-Revive-solo interactions must be defined: suggest priority
-  Who's Who > Tombstone (a Tombstone marker only spawns if Who's Who is not owned).
-- [x] **Electric Cherry** — DONE (`perks.py` electric_cherry_* via the `on_reload` signal): discharge scales
-  radius (2.5–6) + damage (40–100% of zombie max HP) with `capacity - remaining`. Anti-spam: 10s cooldown, or
-  5s + a dry reload (gametime stamp). Also fires a full discharge when the owner goes down. Original spec below.
-- [ ] ~~**Electric Cherry**~~ — electric shock around the player on reload; the emptier the magazine
-  at reload start, the bigger the shock (radius+damage scale with `capacity - remaining_bullets`,
-  read where the reload begins in `weapon/ammo.py`). Anti-spam (user spec, to confirm in play):
-  after a shock, the next one requires 5 s cooldown + a genuinely full reload, OR fires again after
-  a 10 s cooldown regardless. BO2 extra worth copying: emit one shock when the owner goes down.
-  Visual: `electric_spark` particles + damage/stun (slowness) to zombies in radius.
-- [x] **Widow's Wine** — DONE. Web grenade (`WEB_GRENADE` stat + `web_grenade` item, cobweb texture,
-  `grenade/detonate_web` → `zombies/perks/widows_web_burst`: 20s heavy slowness + weakness + light damage).
-  Passive web burst when hurt (`hurt_player` → `widows_on_hurt`, 2s cd, consumes a web). Melee bump via
-  attack_damage attribute in the perk def. Lethal-slot routing: `loot_replace_lethal` + `buy_lethal_web`
-  hand out webs for a Widow's Wine owner on every refill / Max Ammo / wall-buy. ⚠ Web-grenade art is a
-  placeholder (reuses the frag model + a cobweb layer). Original spec below.
-- [ ] ~~**Widow's Wine**~~ — replaces the grenade slot with web grenades (`hotbar.7`):
-  - Web grenade: new grenade weapon item (grenade framework: `GRENADE_TYPE` stat, `weapon/grenade.py`); explosion webs zombies — slow (heavy slowness or movement_speed modifier) for **20 s** (BO3 value), light damage.
-  - Passive: when a zombie damages the owner and they have ≥1 web grenade, consume one → web burst centered on the player, no damage to the player (hook: `zombies/hurt_player.py::on_hurt`).
-  - Melee: increased knife damage while owned (attribute pattern like `insta_kill_melee_on`, smaller value; BO3 also slows knifed zombies — optional).
-  - Ammo rules: cannot be swapped away; any grenade wall-buy refills webs instead of the bought type (task 9's wall-buy work must respect this); Max Ammo refills to 4 (`inventory/replenish_grenades` + `bonus.py::max_ammo_grenades` currently hardcode `frag_grenade` when the slot is empty — parametrize by owned-perk).
-- [x] **Timeslip** — speed-ups (BO4 perk; no exact published numbers, user-decided multipliers). DONE:
-  - Base speed factor is **×2**, not ×3 (only quantified reference "about half the time" ≈2×, matching
-    the `music_box`→`music_box_short` jingle ratio). **Pack-a-Punch is the exception at ×3** (long anim).
-  - Grenade/equipment throw cooldown **×0.5**: DONE — `raycast.py::raycast/main` halves the fire
-    cooldown for the owner when the held weapon is a grenade (`stats.grenade_type` present).
-  - Mystery Box spin **×2** for pulls bought by the owner: DONE — `mb.timeslip` flag stamped on the
-    pull display at `mystery_box.py::try_use`, extra −1/tick in `spin_tick_one` (preserves the 104
-    float trigger + exact anim==0 landing).
-  - Pack-a-Punch animation **×3**: DONE — `pap.py` flags the machine `zb.pap.timeslip` off the owner at
-    `anim/start`, and `game_tick` runs `anim/step` **three times per tick** for flagged machines
-    (`anim/step_timeslip` = 2 extra gated steps). Stepping instead of decrementing-by-3 preserves every
-    exact-tick phase trigger (298/280/252/225/205…). The jingle swaps to the 3× asset
-    `jingle_sting_short` and the display slide interpolation shortens to 7t so the slides keep up.
-    ⚠ In-engine timing polish (slide sync at 3×) still worth an eyeball, but logic is complete.
-  - Trap cooldown **×0.75**: DONE — `traps.py::apply_timeslip_cd`, scaled at activation when the
-    activator owns Timeslip.
-  - "Fast Travel" from BO4 has no equivalent system here — traps only.
-- [x] **Dying Wish** — DONE (`perks.py` dying_wish_* + `revive/on_down` intercept, highest priority):
-  off cooldown, teleport back to the death spot, restore, 9s Berserk (resistance V + strength V + big melee
-  attribute + speed), then left at 1 HP; skips lose_all. Escalating cooldown (60s × uses), ticked in
-  `player/tick`. Original spec below.
-- [ ] ~~**Dying Wish**~~ — instead of entering the downed state: 9 s Berserk (invulnerable, melee
-  greatly increased — reuse the `insta_kill` melee attribute pattern), then left at 1 HP; per-use
-  increasing cooldown. Wiki confirms 9 s / invuln / 1 HP / growing cooldown but publishes no
-  numbers → suggest 60 s first use, +60 s each subsequent (bossbar or actionbar for cooldown).
-  Hook: the down decision point — zombies deaths route `game.py::on_respawn` → `revive/on_down`;
-  intercept there when off cooldown: teleport back to `LastDeathLocation`, restore, berserk,
-  after 9 s set to 1 HP (skip `perks/lose_all` entirely on that path). Priority above Who's Who.
-
-Shared checklist for EVERY perk above:
-- [ ] `PERK_DEFINITIONS` entry (+ `commands`/`removal_commands` where the effect is attribute/score-based; `lose_all` and `zombies/stop` handle removal generated from it — verify stop resets any new `mgs.special.*` scores/attributes/tags it introduces).
-- [ ] Machine model line in `others.py` + default-model mapping (automatic: `perks/override_perk_model` uses `perk_machine_$(perk_id)`).
-- [ ] `FIELD_DOCS[("perk_machine","perk_id")]` list + task 6 price tooltip.
-- [ ] Song wiring once assets exist (task 7).
-
-
-## 6. Zombies — editor tooltips for perk machines
-
-- [ ] Add `FIELD_DOCS[("perk_machine", "price")]` with the suggested prices (overrides the generic
-  "price" fallback): Juggernog 2500 · Speed Cola 3000 · Double Tap 2000 · Quick Revive 1500 ·
-  Stamin-Up 2000 · PhD Flopper 2000 · Deadshot Daiquiri 1500 · Mule Kick 4000 · Tombstone 2000 ·
-  Who's Who 2000 · Electric Cherry 2000 · Widow's Wine 4000 · Timeslip 1500 · Dying Wish 4000.
-- [ ] Document the random-perk pool behavior (task 4): tooltip on the perk machine (and the
-  Wunderfizz element) explaining that the random-perk power-up / Wunderfizz draw from the perks
-  placed on the map (unless the Wunderfizz `all_perks` option is set).
 
 
 ## 7. Zombies — perk purchase songs  (mostly HUMAN)
@@ -225,10 +103,4 @@ these are gameplay ideas from Zonweeb, not necessarily tied to the variant.)
 ---
 
 # Inbox (quick notes — dump anything here, unorganized "basic" format is fine)
-
-- [x] With Quick Revive (solo) or Who's Who, you should be able to respawn if you fall in the void.
-      DONE — revive/full_death (the "fell out of the world" out-of-bounds elimination) now routes to a revive perk before stripping perks, Who's Who first then solo Quick Revive (same priority as revive/on_down). The death spot is the void, so both respawn at a safe player spawn: Who's Who drops the body there (spawn_downed_body gained an optional {ns}:temp _body_at position override; default is still LastDeathLocation, so normal downs are unchanged) and the doppelganger relocates ≥10 blocks away as usual; solo Quick Revive spends one use (same rebuy bookkeeping as solo_qr_complete) and respawns healthy. Perks are still lost on the down (except what Who's Who restores), consistent with every other down. Applies to any out-of-bounds face, not just the floor.
-- Der Wunderfizz: You need to be able to place multiple on the map and they should act like a mystery box: only one can be active at a time, and changes location after a few uses (same as Mystery Box !). The machine should be able to select a bear like the mystery box.
-- Also, would be nice if we had a "disabled" box model that is just the base model (without the top) but grayed out.
-- Also, would be nice we had the same for the Der Wunderfizz.
 

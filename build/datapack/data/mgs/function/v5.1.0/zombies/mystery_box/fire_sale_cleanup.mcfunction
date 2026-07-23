@@ -17,3 +17,6 @@ scoreboard players set #mb_fs_cleanup_pending mgs.data 0
 # Non-active boxes are dead again: tuck their interaction entities away
 function mgs:v5.1.0/zombies/mystery_box/sync_interaction_visibility
 
+# The temp boxes are gone: restore the grayed disabled crates at the inactive spots
+function mgs:v5.1.0/zombies/mystery_box/refresh_disabled
+

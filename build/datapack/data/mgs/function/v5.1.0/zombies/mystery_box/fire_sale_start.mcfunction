@@ -7,6 +7,9 @@
 tag @e[tag=mgs.mystery_box_active] add mgs.mb_orig_active
 tag @e[tag=mgs.mystery_box_pos] add mgs.mb_fs_active
 
+# Inactive spots become real temp boxes during the sale — clear their grayed disabled crates first.
+kill @e[tag=mgs.mb_disabled]
+
 # Every box is usable now: bring all interaction entities back into reach. This MUST happen before
 # the temp boxes are summoned below — a hidden interaction entity is parked 512 blocks under its
 # real position (see interaction_hide), and the chest models are summoned `at @s`, so summoning

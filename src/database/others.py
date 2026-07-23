@@ -31,6 +31,38 @@ def override_model_2tone(accent: str, accent2: str) -> JsonDict:
     }
 
 
+def mystery_box_disabled_model() -> JsonDict:
+    """ Grayed-out Mystery Box crate (the base without the lid) shown at inactive roam spots so
+    players can see where the box might travel to. Same geometry as mystery_box_base, every vanilla
+    texture remapped to a muted grayscale block (no gold, no lit lantern). """
+    model: JsonDict = load_model(get_model_path("mystery_box_base"))
+    gray_map: JsonDict = {
+        "minecraft:block/oak_planks": "minecraft:block/gray_concrete",
+        "minecraft:block/stripped_dark_oak_log": "minecraft:block/deepslate",
+        "minecraft:block/gold_block": "minecraft:block/iron_block",
+        "minecraft:block/sea_lantern": "minecraft:block/light_gray_concrete",
+        "minecraft:block/hay_block_top": "minecraft:block/light_gray_concrete",
+    }
+    for key, tex in model["textures"].items():
+        model["textures"][key] = gray_map.get(tex, "minecraft:block/gray_concrete")
+    return model
+
+
+def der_wunderfizz_disabled_model() -> JsonDict:
+    """ Grayed-out Der Wunderfizz cabinet shown at inactive roam spots (see mystery_box_disabled_model).
+    Gold/purple accents remapped to iron/gray; the lit lantern goes dark; the already-gray/black
+    structural textures are kept. """
+    model: JsonDict = load_model(get_model_path("der_wunderfizz"))
+    gray_map: JsonDict = {
+        "minecraft:block/gold_block": "minecraft:block/iron_block",
+        "minecraft:block/purple_concrete": "minecraft:block/gray_concrete",
+        "minecraft:block/sea_lantern": "minecraft:block/light_gray_concrete",
+    }
+    for key, tex in model["textures"].items():
+        model["textures"][key] = gray_map.get(tex, tex)
+    return model
+
+
 def power_switch_on_model() -> JsonDict:
     """ "On" breaker model: same box as the base, but the lever is flipped to the DOWN position
     and the handle + indicator light recolored green/lit. The lever bar is physically mirrored
@@ -80,6 +112,8 @@ def main() -> None:
     # Mystery Box crate (vanilla textures), split into base + lid so the lid can animate open.
     Item(id="mystery_box_base", override_model=load_model(get_model_path("mystery_box_base")))
     Item(id="mystery_box_lid", override_model=load_model(get_model_path("mystery_box_lid")))
+    # Grayed-out crate (base only) shown at inactive roam spots (see zombies/roaming.py).
+    Item(id="mystery_box_disabled", override_model=mystery_box_disabled_model())
 
     # Generic perk machine (vanilla textures) + per-perk recolors.
     # New perks only need a small child model overriding the "accent"/"accent2" textures
@@ -105,6 +139,8 @@ def main() -> None:
     # Dedicated model (not a perk-machine recolor): gold/purple cabinet with an OPEN middle alcove
     # where the spinning perk bottle floats (see zombies/wunderfizz.py spawn_orb).
     Item(id="der_wunderfizz", override_model=load_model(get_model_path("der_wunderfizz")))
+    # Grayed-out cabinet shown at inactive roam spots (see zombies/roaming.py).
+    Item(id="der_wunderfizz_disabled", override_model=der_wunderfizz_disabled_model())
 
     # Power switch / breaker box (vanilla textures). "_on" shares the box geometry but flips the
     # lever to the down position and recolors the handle + indicator light to green/lit.
@@ -117,5 +153,4 @@ def main() -> None:
     # rotation points the barrels at the target.
     Item(id="turret_base", override_model=load_model(get_model_path("turret_base")))
     Item(id="turret_head", override_model=load_model(get_model_path("turret_head")))
-
 

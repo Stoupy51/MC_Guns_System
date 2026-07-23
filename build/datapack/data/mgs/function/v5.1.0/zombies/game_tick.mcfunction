@@ -198,6 +198,7 @@ execute if score #qr_price_tick mgs.data matches 20.. run scoreboard players set
 execute if score #qr_price_tick mgs.data matches 0 run function mgs:v5.1.0/zombies/perks/update_quick_revive_price
 
 execute as @e[type=item_display,tag=mgs.wunderfizz_orb] at @s run function mgs:v5.1.0/zombies/wunderfizz/orb_tick
+execute if score #wf_move_timer mgs.data matches 1.. run function mgs:v5.1.0/zombies/wunderfizz/move_tick
 
 execute if data storage mgs:zombies game{state:"active"} run function mgs:v5.1.0/zombies/whos_who/tick
 

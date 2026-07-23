@@ -6,6 +6,9 @@
 # @within	mgs:v5.1.0/zombies/wunderfizz/orb_tick
 #
 
+# Roam pull: the machine is about to move — show the bear, refund the buyer, no perk
+execute if score @s mgs.zb.wf.willmove matches 1 run return run function mgs:v5.1.0/zombies/wunderfizz/land_bear
+
 execute if score @s mgs.zb.wf.perk matches 0 run function mgs:v5.1.0/zombies/wunderfizz/set_model/juggernog
 execute if score @s mgs.zb.wf.perk matches 1 run function mgs:v5.1.0/zombies/wunderfizz/set_model/speed_cola
 execute if score @s mgs.zb.wf.perk matches 2 run function mgs:v5.1.0/zombies/wunderfizz/set_model/double_tap

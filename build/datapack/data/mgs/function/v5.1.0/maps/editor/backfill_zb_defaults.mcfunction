@@ -41,6 +41,7 @@ execute if entity @s[tag=mgs.element.wunderfizz] unless data entity @s data.name
 execute if entity @s[tag=mgs.element.wunderfizz] unless data entity @s data.price run data modify entity @s data.price set value 1500
 execute if entity @s[tag=mgs.element.wunderfizz] unless data entity @s data.power run data modify entity @s data.power set value 1b
 execute if entity @s[tag=mgs.element.wunderfizz] unless data entity @s data.all_perks run data modify entity @s data.all_perks set value 0b
+execute if entity @s[tag=mgs.element.wunderfizz] unless data entity @s data.can_start_on run data modify entity @s data.can_start_on set value 1b
 execute if entity @s[tag=mgs.element.wunderfizz] unless data entity @s data.display_item run data modify entity @s data.display_item set value ""
 execute if entity @s[tag=mgs.element.wunderfizz] unless data entity @s data.item_model run data modify entity @s data.item_model set value ""
 execute if entity @s[tag=mgs.element.pap_machine] unless data entity @s data.name run data modify entity @s data.name set value "Pack-a-Punch"

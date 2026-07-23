@@ -6,7 +6,7 @@
 # Pool can be extended via function tag #mgs:zombies/register_mystery_box_item
 # Uses Bookshelf interaction module for click/hover detection.
 # Positions use compound format: {pos:[x,y,z], rotation:[yaw,0.0f], group_id:N, can_start_on:1b}
-from stewbeet import LootTable, Mem, set_json_encoder, write_load_file, write_versioned_function
+from stewbeet import Mem, write_load_file, write_versioned_function
 
 from ...config.stats import WEIGHT
 from ...database.weapons import WEAPON_STATS
@@ -19,9 +19,6 @@ MOVE_ASCEND_TICKS: int = 80		# ascend at old location
 MOVE_WAIT_TICKS: int = 100		# 5-second wait before descending
 MOVE_DESCEND_TICKS: int = 70	# descend at new location
 MOVE_TOTAL_TICKS: int = MOVE_BEAR_TICKS + MOVE_ASCEND_TICKS + MOVE_WAIT_TICKS + MOVE_DESCEND_TICKS	# 280
-
-# Teddy bear player head texture (Black Ops easter egg)
-BEAR_HEAD_TEXTURE: str = "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvY2RiNjZjZjlmMTdlMTQ4OTMxMGM3YWNjNjgxMDE2MDUxMTk2YTg0OGUwNzZkYjZmYzA5MzkxYjkyODcyYTc3NyJ9fX0="
 
 # Monkey Bomb pool weight (weapon weights come from the catalog; the monkey is a non-catalog
 # tactical added to the pool manually — BO-style fairly common roll)
@@ -62,27 +59,8 @@ scoreboard objectives add {ns}.mb.pid dummy
 scoreboard objectives add {ns}.mb.buyer dummy
 """)
 
-	# Register teddy bear loot table for Mystery Box move animation
-	Mem.ctx.data[ns].loot_tables["zombies/mystery_box_bear"] = set_json_encoder(LootTable({
-		"pools": [{
-			"rolls": 1,
-			"entries": [{
-				"type": "minecraft:item",
-				"name": "minecraft:player_head",
-				"functions": [{
-					"function": "minecraft:set_components",
-					"components": {
-						"minecraft:profile": {
-							"properties": [{
-								"name": "textures",
-								"value": BEAR_HEAD_TEXTURE,
-							}],
-						},
-					},
-				}],
-			}],
-		}],
-	}))
+	# Teddy bear loot table for the move animation is shared (see zombies/roaming.py) and referenced
+	# below as mgs:zombies/roaming_bear.
 
 	# Use common helper to build weapon->magazine mappings from catalogs
 	weapon_mag_data: dict[str, tuple[str, int, bool]] = build_weapon_magazine_data()
@@ -214,26 +192,49 @@ execute if entity @s[tag={ns}.mystery_box_active] run scoreboard players set #mb
 execute if score #zb_fire_sale_timer {ns}.data matches 1.. if entity @s[tag={ns}.mb_fs_active] run scoreboard players set #mb_vis {ns}.data 1
 execute if entity @n[tag={ns}.mb_display,distance=..3] run scoreboard players set #mb_vis {ns}.data 1
 
-execute if score #mb_vis {ns}.data matches 1 if entity @s[tag={ns}.mb_hidden] run function {ns}:v{version}/zombies/mystery_box/interaction_show
-execute if score #mb_vis {ns}.data matches 0 unless entity @s[tag={ns}.mb_hidden] run function {ns}:v{version}/zombies/mystery_box/interaction_hide
+execute if score #mb_vis {ns}.data matches 1 if entity @s[tag={ns}.roam_hidden] run function {ns}:v{version}/zombies/roaming/interaction_show
+execute if score #mb_vis {ns}.data matches 0 unless entity @s[tag={ns}.roam_hidden] run function {ns}:v{version}/zombies/roaming/interaction_hide
 """)
 
-	write_versioned_function("zombies/mystery_box/interaction_show", f"""
-tp @s ~ ~512 ~
-tag @s remove {ns}.mb_hidden
-""")
-
-	write_versioned_function("zombies/mystery_box/interaction_hide", f"""
-tp @s ~ ~-512 ~
-tag @s add {ns}.mb_hidden
-""")
-
+	## Refresh presence: one open chest at the active box, and a grayed-out disabled crate at every
+	## other (inactive) box position so players can see where the box might roam to. During a Fire Sale
+	## the inactive spots host real temp boxes instead, so the disabled crates are suppressed then.
 	write_versioned_function("zombies/mystery_box/sync_presence_display", f"""
 # Keep one chest display at the currently active mystery box.
 kill @e[tag={ns}.mb_presence]
+kill @e[tag={ns}.mb_disabled]
 execute as @n[tag={ns}.mystery_box_active] at @s run data modify storage {ns}:temp _mb_chest.yaw set value 0.0f
 execute as @n[tag={ns}.mystery_box_active] at @s run data modify storage {ns}:temp _mb_chest.yaw set from entity @s Rotation[0]
 execute as @n[tag={ns}.mystery_box_active] at @s run function {ns}:v{version}/zombies/mystery_box/summon_presence_display with storage {ns}:temp _mb_chest
+
+# Grayed-out disabled crate at each inactive position
+function {ns}:v{version}/zombies/mystery_box/refresh_disabled
+""")
+
+	## Rebuild only the grayed-out disabled crates (leaves the active chest untouched, so it can be
+	## called after a move lands without disturbing the freshly-placed presence chest). During a Fire
+	## Sale the inactive spots host real temp boxes, so the disabled crates are suppressed then.
+	write_versioned_function("zombies/mystery_box/refresh_disabled", f"""
+kill @e[tag={ns}.mb_disabled]
+execute if score #zb_fire_sale_timer {ns}.data matches ..0 as @e[tag={ns}.mystery_box_pos,tag=!{ns}.mystery_box_active] at @s run function {ns}:v{version}/zombies/mystery_box/summon_disabled_display
+""")
+
+	## Grayed-out disabled crate at an inactive box (@s = a non-active box interaction entity, at @s).
+	## Same base model/scale as the presence chest, 0.9 below the interaction entity, no lid.
+	## Two wrinkles: (1) a non-active box that still has a pull in progress is reachable and shows its
+	## result display — skip it so a crate isn't stacked underneath; (2) a hidden box's interaction
+	## entity is parked exactly 512 below its real spot (see roaming/interaction_hide), so bring the
+	## execution position back up by 512 before drawing the crate at the real location.
+	write_versioned_function("zombies/mystery_box/summon_disabled_display", f"""
+execute if entity @n[tag={ns}.mb_display,distance=..3] run return 0
+data modify storage {ns}:temp _mb_dis.yaw set value 0.0f
+data modify storage {ns}:temp _mb_dis.yaw set from entity @s Rotation[0]
+execute unless entity @s[tag={ns}.roam_hidden] run function {ns}:v{version}/zombies/mystery_box/summon_disabled_at with storage {ns}:temp _mb_dis
+execute if entity @s[tag={ns}.roam_hidden] positioned ~ ~512 ~ run function {ns}:v{version}/zombies/mystery_box/summon_disabled_at with storage {ns}:temp _mb_dis
+""")
+
+	write_versioned_function("zombies/mystery_box/summon_disabled_at", f"""
+$execute positioned ~ ~-0.9 ~ run summon minecraft:item_display ~ ~ ~ {{Rotation:[$(yaw),0f],Tags:["{ns}.mb_disabled","{ns}.gm_entity"],item_display:"fixed",billboard:"fixed",item:{{id:"minecraft:chest",count:1,components:{{"minecraft:item_model":"{ns}:mystery_box_disabled"}}}},transformation:{mb_closed_tf}}}
 """)
 
 	write_versioned_function("zombies/mystery_box/summon_presence_display", f"""
@@ -330,6 +331,9 @@ function {ns}:v{version}/zombies/mystery_box/try_use
 tag @e[tag={ns}.mystery_box_active] add {ns}.mb_orig_active
 tag @e[tag={ns}.mystery_box_pos] add {ns}.mb_fs_active
 
+# Inactive spots become real temp boxes during the sale — clear their grayed disabled crates first.
+kill @e[tag={ns}.mb_disabled]
+
 # Every box is usable now: bring all interaction entities back into reach. This MUST happen before
 # the temp boxes are summoned below — a hidden interaction entity is parked 512 blocks under its
 # real position (see interaction_hide), and the chest models are summoned `at @s`, so summoning
@@ -372,6 +376,9 @@ scoreboard players set #mb_fs_cleanup_pending {ns}.data 0
 
 # Non-active boxes are dead again: tuck their interaction entities away
 function {ns}:v{version}/zombies/mystery_box/sync_interaction_visibility
+
+# The temp boxes are gone: restore the grayed disabled crates at the inactive spots
+function {ns}:v{version}/zombies/mystery_box/refresh_disabled
 """)
 
 	write_versioned_function("zombies/mystery_box/deny_moving", f"""
@@ -397,11 +404,15 @@ function {ns}:v{version}/zombies/mystery_box/ensure_default_pool
 scoreboard players operation @s {ns}.zb.points -= #zb_mystery_box_price {ns}.config
 execute unless score @s {ns}.mb.pid matches 1.. run function {ns}:v{version}/zombies/mystery_box/assign_pid
 
-# Pre-determine if the box will move (teddy bear) — only the active box, never during a Fire Sale
-scoreboard players set #mb_will_move {ns}.data 0
+# Pre-determine if the box will move (teddy bear) — only the active box, never during a Fire Sale.
+# The "after N uses, 1-in-3 chance" rule is shared with Der Wunderfizz (zombies/roaming/roll_move).
 scoreboard players add #mb_pulls {ns}.data 1
-execute if score #mb_pulls {ns}.data matches 4.. if entity @n[tag=bs.interaction.target,tag={ns}.mystery_box_active] store result score #mb_move_roll {ns}.data run random value 0..2
-execute if score #mb_pulls {ns}.data matches 4.. if entity @n[tag=bs.interaction.target,tag={ns}.mystery_box_active] if score #mb_move_roll {ns}.data matches 0 run scoreboard players set #mb_will_move {ns}.data 1
+scoreboard players operation #roam_uses {ns}.data = #mb_pulls {ns}.data
+scoreboard players set #roam_threshold {ns}.data 4
+function {ns}:v{version}/zombies/roaming/roll_move
+scoreboard players operation #mb_will_move {ns}.data = #roam_will_move {ns}.data
+# Gate: only the active box moves, and never during a Fire Sale
+execute unless entity @n[tag=bs.interaction.target,tag={ns}.mystery_box_active] run scoreboard players set #mb_will_move {ns}.data 0
 execute if score #zb_fire_sale_timer {ns}.data matches 1.. run scoreboard players set #mb_will_move {ns}.data 0
 execute if score #mb_will_move {ns}.data matches 1 run scoreboard players set #mb_pulls {ns}.data 0
 
@@ -625,8 +636,12 @@ function {ns}:v{version}/zombies/mystery_box/close_lid
 # Mark this display as the moving bear so the move animation only touches it (not other pulls)
 tag @s add {ns}.mb_bear
 
+# Hide every grayed disabled crate for the duration of the move (rebuilt when the box lands) so the
+# destination spot doesn't show a disabled crate underneath the arriving chest.
+kill @e[tag={ns}.mb_disabled]
+
 # Replace display with teddy bear
-loot replace entity @s contents loot {ns}:zombies/mystery_box_bear
+loot replace entity @s contents loot {ns}:zombies/roaming_bear
 data merge entity @s {{transformation:{{translation:[0f,1.25f,0f],scale:[0.75f,0.75f,0.75f]}}}}
 
 # Refund this box's buyer (the moving box eats the pull, no weapon given)
@@ -742,6 +757,9 @@ execute as @n[tag={ns}.mystery_box_active] at @s as @e[tag={ns}.mb_presence,tag=
 # Reset move state
 scoreboard players set #mb_move_timer {ns}.data 0
 data remove storage {ns}:zombies mystery_box.result
+
+# The old active spot is now inactive: (re)build the grayed disabled crates at every inactive spot
+function {ns}:v{version}/zombies/mystery_box/refresh_disabled
 
 # Announce arrival
 tellraw @a[scores={{{ns}.zb.in_game=1}}] [{MGS_TAG},{{"text":"The Mystery Box has arrived at a new location!","color":"yellow"}}]
@@ -898,6 +916,7 @@ execute if data storage {ns}:zombies game.map.mystery_box.positions[0] run funct
 # Remove all pull displays and presence boxes, reset all per-box state
 kill @e[tag={ns}.mb_display]
 kill @e[tag={ns}.mb_presence]
+kill @e[tag={ns}.mb_disabled]
 kill @e[tag={ns}.mb_temp]
 scoreboard players set #mb_pulls {ns}.data 0
 scoreboard players set #mb_move_timer {ns}.data 0

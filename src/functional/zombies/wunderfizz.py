@@ -1,16 +1,28 @@
 
 # ruff: noqa: E501
 # Der Wunderfizz — a Mystery-Box-style machine that grants a RANDOM perk.
+# Like the Mystery Box, a map can hold SEVERAL Wunderfizz spots but only ONE is active at a time; the
+# rest show a grayed-out "disabled" cabinet (der_wunderfizz_disabled) marking where it might roam to.
+# After a few uses the active machine can roam to another spot (teddy-bear move easter egg, shared with
+# the Mystery Box via zombies/roaming.py). The roam is a model-swap (old spot → disabled, new spot →
+# live) rather than physically flying the big cabinet, with the bear as the visual cue.
 # On use it cycles perk bottles, lands on a random perk the buyer doesn't own, and leaves it
 # collectable by the buyer only for 10s. The pool is the shared "available perk pool" helper
 # (zombies/perks/pool/*): perks with a machine on this map, widened to every perk when the editor
-# `all_perks` flag is set (BO2 Origins behaviour). Mirrors the perk-machine display pipeline for the
-# body and a floating orb display for the spin, rather than refactoring the Mystery Box internals.
+# `all_perks` flag is set (BO2 Origins behaviour).
 from stewbeet import Mem, write_load_file, write_versioned_function
 
 from ..helpers import MGS_TAG
 from .common import deny_not_enough_points_body, deny_requires_power_body, game_active_guard_cmd
 from .perks import PERK_DEFINITIONS
+
+# Roam move animation length (ticks). The bear rises, the machine relocates (model swap) at the
+# midpoint, then settles. In-engine timing polish is a HUMAN eyeball pass.
+WF_MOVE_TICKS: int = 100
+WF_MOVE_RELOCATE: int = 55		# tick the active spot actually changes (model swap + visibility)
+WF_MOVE_BEAR_POOF: int = 48		# tick the bear despawns
+# Uses on the active machine before it may roll to roam (mirrors the Mystery Box's 4-pull threshold)
+WF_MOVE_THRESHOLD: int = 4
 
 
 def generate_wunderfizz() -> None:
@@ -32,15 +44,31 @@ scoreboard objectives add {ns}.zb.wf.buyer dummy
 scoreboard objectives add {ns}.zb.wf.perk dummy
 # 1 when the buyer owns Timeslip (this orb spins 2x faster, like the Mystery Box)
 scoreboard objectives add {ns}.zb.wf.timeslip dummy
+# 1 when this pull will roam the machine (teddy bear) instead of granting a perk
+scoreboard objectives add {ns}.zb.wf.willmove dummy
+# Points paid for this pull, so a roam (bear) can refund the buyer
+scoreboard objectives add {ns}.zb.wf.paid dummy
 # Stable per-player buyer id (lazy)
 scoreboard objectives add {ns}.zb.wf_pid dummy
 """)
 
-	## Setup: iterate wunderfizz compounds and summon interaction + machine display
+	## Setup: iterate wunderfizz compounds, summon interaction + a persistent machine display each,
+	## then pick ONE active spot (prefer can_start_on markers), light it up and park the rest.
 	write_versioned_function("zombies/wunderfizz/setup", f"""
 scoreboard players set #wf_counter {ns}.data 0
 data modify storage {ns}:temp _wf_iter set from storage {ns}:zombies game.map.wunderfizz
 execute if data storage {ns}:temp _wf_iter[0] run function {ns}:v{version}/zombies/wunderfizz/setup_iter
+
+# Pick the active spot: a random can_start_on marker, else any marker
+execute as @n[tag={ns}.wunderfizz_machine,tag={ns}.wf_can_start,sort=random] run tag @s add {ns}.wf_active
+execute unless entity @e[tag={ns}.wf_active] as @n[tag={ns}.wunderfizz_machine,sort=random] run tag @s add {ns}.wf_active
+
+scoreboard players set #wf_uses {ns}.data 0
+scoreboard players set #wf_move_timer {ns}.data 0
+
+# Live model on the active cabinet, grayed disabled model on the rest, and park inactive interactions
+function {ns}:v{version}/zombies/wunderfizz/sync_displays
+function {ns}:v{version}/zombies/wunderfizz/sync_visibility
 """)
 
 	write_versioned_function("zombies/wunderfizz/setup_iter", f"""
@@ -67,11 +95,18 @@ execute store result score @n[tag={ns}.wf_new] {ns}.zb.wf.price run data get sto
 execute store result score @n[tag={ns}.wf_new] {ns}.zb.wf.power run data get storage {ns}:temp _wf_iter[0].power
 execute store result score @n[tag={ns}.wf_new] {ns}.zb.wf.allperks run data get storage {ns}:temp _wf_iter[0].all_perks
 
+# Roam start-eligibility (default eligible when the field is absent, like the Mystery Box)
+execute unless data storage {ns}:temp _wf_iter[0].can_start_on run tag @n[tag={ns}.wf_new] add {ns}.wf_can_start
+data modify storage {ns}:temp _wf_cso set value 0b
+execute if data storage {ns}:temp _wf_iter[0].can_start_on run data modify storage {ns}:temp _wf_cso set from storage {ns}:temp _wf_iter[0].can_start_on
+execute if data storage {ns}:temp {{_wf_cso:1b}} run tag @n[tag={ns}.wf_new] add {ns}.wf_can_start
+
 # Bookshelf events
 execute as @n[tag={ns}.wf_new] run function #bs.interaction:on_right_click {{run:"function {ns}:v{version}/zombies/wunderfizz/on_right_click",executor:"source"}}
 execute as @n[tag={ns}.wf_new] run function #bs.interaction:on_hover {{run:"function {ns}:v{version}/zombies/wunderfizz/on_hover",executor:"source"}}
 
-# Machine display (perk-machine pipeline, custom Wunderfizz model unless the map overrode it)
+# Machine display (perk-machine pipeline, custom Wunderfizz model unless the map overrode it).
+# Summoned as the DEFAULT (disabled) model; sync_displays lights up the active one afterwards.
 data modify storage {ns}:temp _wf_disp.tag set value "{ns}.wf_display"
 data modify storage {ns}:temp _wf_disp.item_id set value ""
 data modify storage {ns}:temp _wf_disp.item_model set value ""
@@ -82,6 +117,11 @@ execute if data storage {ns}:temp _wf_disp{{item_id:""}} run data modify storage
 execute if data storage {ns}:temp _wf_disp{{item_model:""}} run data modify storage {ns}:temp _wf_disp.item_model set value "{ns}:der_wunderfizz"
 execute if data storage {ns}:temp _wf_iter[0].rotation[0] run data modify storage {ns}:temp _wf_disp.yaw set from storage {ns}:temp _wf_iter[0].rotation[0]
 execute as @n[tag={ns}.wf_new] at @s align xyz positioned ~.5 ~-.37 ~.5 positioned ^ ^ ^-0.49 run function {ns}:v{version}/zombies/display/summon_machine_display with storage {ns}:temp _wf_disp
+
+# Link the freshly summoned display to this position id (there is exactly one unlinked display now)
+scoreboard players operation @e[tag={ns}.wf_display,tag=!{ns}.wf_linked] {ns}.zb.wf.id = @n[tag={ns}.wf_new] {ns}.zb.wf.id
+tag @e[tag={ns}.wf_display,tag=!{ns}.wf_linked] add {ns}.wf_linked
+
 execute as @n[tag={ns}.wf_new] at @s run tp @s ~ ~2 ~
 tag @n[tag={ns}.wf_new] add {ns}.wunderfizz_machine
 tag @n[tag={ns}.wf_new] remove {ns}.wf_new
@@ -94,9 +134,44 @@ execute if data storage {ns}:temp _wf_iter[0] run function {ns}:v{version}/zombi
 $summon minecraft:interaction $(x) $(y) $(z) {{width:1.2f,height:-2.0f,response:true,Rotation:$(rotation),Tags:["{ns}.wunderfizz_machine","{ns}.gm_entity","bs.entity.interaction","{ns}.wf_new"]}}
 """)
 
+	## Light up the active cabinet (live model), gray out every other (disabled model). Displays are
+	## persistent and id-linked to their spot, so roaming is just a model swap.
+	write_versioned_function("zombies/wunderfizz/sync_displays", f"""
+execute as @e[tag={ns}.wf_display] run function {ns}:v{version}/zombies/wunderfizz/set_display_disabled
+scoreboard players set #wf_active_id {ns}.data -1
+execute as @n[tag={ns}.wf_active] run scoreboard players operation #wf_active_id {ns}.data = @s {ns}.zb.wf.id
+execute as @e[tag={ns}.wf_display] if score @s {ns}.zb.wf.id = #wf_active_id {ns}.data run function {ns}:v{version}/zombies/wunderfizz/set_display_live
+""")
+
+	write_versioned_function("zombies/wunderfizz/set_display_live", f"""
+data modify entity @s item.components."minecraft:item_model" set value "{ns}:der_wunderfizz"
+""")
+	write_versioned_function("zombies/wunderfizz/set_display_disabled", f"""
+data modify entity @s item.components."minecraft:item_model" set value "{ns}:der_wunderfizz_disabled"
+""")
+
+	## Keep only the active machine's interaction entity reachable; park the rest ±512 out of reach
+	## (shared roaming primitive) so an inactive cabinet can't be hovered/clicked.
+	write_versioned_function("zombies/wunderfizz/sync_visibility", f"""
+execute as @e[tag={ns}.wunderfizz_machine] at @s run function {ns}:v{version}/zombies/wunderfizz/sync_visibility_one
+""")
+	write_versioned_function("zombies/wunderfizz/sync_visibility_one", f"""
+execute if entity @s[tag={ns}.wf_active] if entity @s[tag={ns}.roam_hidden] run function {ns}:v{version}/zombies/roaming/interaction_show
+execute unless entity @s[tag={ns}.wf_active] unless entity @s[tag={ns}.roam_hidden] run function {ns}:v{version}/zombies/roaming/interaction_hide
+""")
+
 	## Right-click (executor "source" = player)
 	write_versioned_function("zombies/wunderfizz/on_right_click", f"""
 {game_active_guard_cmd(ns)}
+
+# Usable only on the active machine, or a machine that still has an orb here to collect
+scoreboard players set #wf_usable {ns}.data 0
+execute if entity @e[tag=bs.interaction.target,tag={ns}.wf_active] run scoreboard players set #wf_usable {ns}.data 1
+execute at @n[tag=bs.interaction.target] if entity @n[type=item_display,tag={ns}.wunderfizz_orb,distance=..3] run scoreboard players set #wf_usable {ns}.data 1
+execute if score #wf_usable {ns}.data matches 0 run return fail
+
+# The active machine can be mid-roam: deny
+execute if score #wf_move_timer {ns}.data matches 1.. if entity @e[tag=bs.interaction.target,tag={ns}.wf_active] run return run function {ns}:v{version}/zombies/wunderfizz/deny_moving
 
 # Power requirement
 execute store result score #wf_power {ns}.data run scoreboard players get @n[tag=bs.interaction.target] {ns}.zb.wf.power
@@ -141,10 +216,24 @@ tag @s remove {ns}.pool_target
 execute if score #pool_chosen {ns}.data matches ..-1 run scoreboard players operation @s {ns}.zb.points += #wf_price {ns}.data
 execute if score #pool_chosen {ns}.data matches ..-1 run return run function {ns}:v{version}/zombies/wunderfizz/deny_all_owned
 
+# Decide whether this pull roams the machine (teddy bear) instead of granting a perk. Shared rule
+# with the Mystery Box (roaming/roll_move): after WF_MOVE_THRESHOLD uses, 1-in-3 chance. Needs >=2
+# placed spots to have somewhere to go.
+scoreboard players add #wf_uses {ns}.data 1
+scoreboard players operation #roam_uses {ns}.data = #wf_uses {ns}.data
+scoreboard players set #roam_threshold {ns}.data {WF_MOVE_THRESHOLD}
+function {ns}:v{version}/zombies/roaming/roll_move
+scoreboard players operation #wf_will_move {ns}.data = #roam_will_move {ns}.data
+execute store result score #wf_pos_count {ns}.data run data get storage {ns}:zombies game.map.wunderfizz
+execute if score #wf_pos_count {ns}.data matches ..1 run scoreboard players set #wf_will_move {ns}.data 0
+execute if score #wf_will_move {ns}.data matches 1 run scoreboard players set #wf_uses {ns}.data 0
+
 # Spawn the spinning orb above the machine and stamp it
 function {ns}:v{version}/zombies/wunderfizz/spawn_orb
 scoreboard players operation @n[tag={ns}.wf_orb_new] {ns}.zb.wf.buyer = @s {ns}.zb.wf_pid
 scoreboard players operation @n[tag={ns}.wf_orb_new] {ns}.zb.wf.perk = #pool_chosen {ns}.data
+scoreboard players operation @n[tag={ns}.wf_orb_new] {ns}.zb.wf.paid = #wf_price {ns}.data
+scoreboard players operation @n[tag={ns}.wf_orb_new] {ns}.zb.wf.willmove = #wf_will_move {ns}.data
 scoreboard players set @n[tag={ns}.wf_orb_new] {ns}.zb.wf.anim 100
 # Timeslip: this buyer's spin runs 2x faster (see orb_tick)
 scoreboard players set @n[tag={ns}.wf_orb_new] {ns}.zb.wf.timeslip 0
@@ -202,12 +291,15 @@ particle minecraft:electric_spark ~ ~ ~ 0.25 0.3 0.25 0.05 3 force @a[distance=.
 playsound minecraft:block.conduit.ambient.short ambient @a[scores={{{ns}.zb.in_game=1}}] ~ ~ ~ 0.5 1.4
 """)
 
-	## Landing (@s = orb): show the chosen perk bottle and notify the buyer
+	## Landing (@s = orb): a roam pull turns into a teddy bear; otherwise show the chosen perk bottle.
 	land_dispatch: str = "\n".join(
 		f"execute if score @s {ns}.zb.wf.perk matches {i} run function {ns}:v{version}/zombies/wunderfizz/set_model/{pid}"
 		for i, pid in enumerate(perk_ids)
 	)
 	write_versioned_function("zombies/wunderfizz/land", f"""
+# Roam pull: the machine is about to move — show the bear, refund the buyer, no perk
+execute if score @s {ns}.zb.wf.willmove matches 1 run return run function {ns}:v{version}/zombies/wunderfizz/land_bear
+
 {land_dispatch}
 particle minecraft:totem_of_undying ~ ~ ~ 0.3 0.4 0.3 0.2 10 force @a[distance=..48]
 particle minecraft:electric_spark ~ ~ ~ 0.4 0.5 0.4 0.15 10 force @a[distance=..48]
@@ -216,6 +308,72 @@ playsound minecraft:entity.lightning_bolt.impact ambient @a[scores={{{ns}.zb.in_
 function {ns}:v{version}/zombies/feedback/sound_announce
 scoreboard players operation #wf_b {ns}.data = @s {ns}.zb.wf.buyer
 execute as @a[scores={{{ns}.zb.in_game=1}}] if score @s {ns}.zb.wf_pid = #wf_b {ns}.data run tellraw @s [{MGS_TAG},{{"text":"Perk ready! ","color":"gold"}},{{"text":"Right-click Der Wunderfizz to collect!","color":"green","bold":true}}]
+""")
+
+	## Roam landing (@s = orb, positioned at the active machine): refund the buyer, then start the move.
+	write_versioned_function("zombies/wunderfizz/land_bear", f"""
+# Refund the buyer (the machine roams away instead of granting a perk — Black Ops teddy-bear rule)
+scoreboard players operation #wf_b {ns}.data = @s {ns}.zb.wf.buyer
+scoreboard players operation #wf_refund {ns}.data = @s {ns}.zb.wf.paid
+execute as @a[scores={{{ns}.zb.in_game=1}}] if score @s {ns}.zb.wf_pid = #wf_b {ns}.data run scoreboard players operation @s {ns}.zb.points += #wf_refund {ns}.data
+
+tellraw @a[scores={{{ns}.zb.in_game=1}}] [{MGS_TAG},{{"text":"Der Wunderfizz is moving!","color":"yellow","bold":true}}]
+function {ns}:v{version}/zombies/feedback/sound_box_bye_bye
+
+# Spawn the teddy bear at the active machine and start the roam timer, then remove the orb
+execute as @n[tag={ns}.wf_active] at @s run function {ns}:v{version}/zombies/wunderfizz/move_start
+kill @s
+""")
+
+	## Begin the roam (@s = active interaction entity, at @s). Spawn a rising teddy bear near the
+	## cabinet and start the move timer.
+	write_versioned_function("zombies/wunderfizz/move_start", f"""
+execute positioned ~ ~-1.5 ~ run summon minecraft:item_display ~ ~ ~ {{Tags:["{ns}.wf_bear","{ns}.gm_entity","{ns}.wf_bear_new"],item_display:"fixed",billboard:"fixed",transformation:{{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[0.75f,0.75f,0.75f]}}}}
+loot replace entity @n[tag={ns}.wf_bear_new] contents loot {ns}:zombies/roaming_bear
+data merge entity @n[tag={ns}.wf_bear_new] {{teleport_duration:2}}
+tag @e[tag={ns}.wf_bear_new] remove {ns}.wf_bear_new
+scoreboard players set #wf_move_timer {ns}.data {WF_MOVE_TICKS}
+""")
+
+	## Roam tick (hooked into game_tick while #wf_move_timer > 0)
+	write_versioned_function("zombies/wunderfizz/move_tick", f"""
+scoreboard players remove #wf_move_timer {ns}.data 1
+
+# Bear rises before the swap
+execute if score #wf_move_timer {ns}.data matches {WF_MOVE_RELOCATE + 1}.. as @e[tag={ns}.wf_bear] at @s run tp @s ~ ~0.06 ~
+
+# Midpoint: relocate the active spot (model swap + interaction visibility)
+execute if score #wf_move_timer {ns}.data matches {WF_MOVE_RELOCATE} run function {ns}:v{version}/zombies/wunderfizz/do_relocate
+
+# Bear poofs shortly after
+execute if score #wf_move_timer {ns}.data matches {WF_MOVE_BEAR_POOF} as @e[tag={ns}.wf_bear] at @s run particle minecraft:smoke ~ ~ ~ 0.3 0.3 0.3 0.02 15 force @a[distance=..48]
+execute if score #wf_move_timer {ns}.data matches {WF_MOVE_BEAR_POOF} run kill @e[tag={ns}.wf_bear]
+
+# Arrival
+execute if score #wf_move_timer {ns}.data matches 0 run function {ns}:v{version}/zombies/wunderfizz/move_land
+""")
+
+	## Swap the active spot to a new random position (@s not required). Old cabinet grays out, new one
+	## lights up, interaction reachability follows.
+	write_versioned_function("zombies/wunderfizz/do_relocate", f"""
+tag @e[tag={ns}.wf_active] add {ns}.wf_prev_active
+tag @e[tag={ns}.wf_active] remove {ns}.wf_active
+execute as @n[tag={ns}.wunderfizz_machine,tag=!{ns}.wf_prev_active,sort=random] run tag @s add {ns}.wf_active
+tag @e[tag={ns}.wf_prev_active] remove {ns}.wf_prev_active
+
+function {ns}:v{version}/zombies/wunderfizz/sync_displays
+function {ns}:v{version}/zombies/wunderfizz/sync_visibility
+
+# Arrival particles/sound at the new active cabinet
+execute as @n[tag={ns}.wf_active] at @s run particle minecraft:end_rod ~ ~-1 ~ 0.3 1.5 0.3 0.05 25 force @a[distance=..64]
+execute as @n[tag={ns}.wf_active] at @s run playsound minecraft:entity.lightning_bolt.impact ambient @a[scores={{{ns}.zb.in_game=1}}] ~ ~ ~ 0.6 1.6
+""")
+
+	write_versioned_function("zombies/wunderfizz/move_land", f"""
+scoreboard players set #wf_move_timer {ns}.data 0
+kill @e[tag={ns}.wf_bear]
+tellraw @a[scores={{{ns}.zb.in_game=1}}] [{MGS_TAG},{{"text":"Der Wunderfizz has arrived at a new location!","color":"yellow"}}]
+execute as @n[tag={ns}.wf_active] at @s run function {ns}:v{version}/zombies/feedback/sound_announce
 """)
 
 	## Orb model setters + grant functions, one per perk
@@ -280,6 +438,10 @@ function #smithed.actionbar:message
 tellraw @s [{MGS_TAG},{{"text":"Der Wunderfizz is already spinning.","color":"red"}}]
 function {ns}:v{version}/zombies/feedback/sound_deny
 """)
+	write_versioned_function("zombies/wunderfizz/deny_moving", f"""
+tellraw @s [{MGS_TAG},{{"text":"Der Wunderfizz is moving...","color":"yellow"}}]
+function {ns}:v{version}/zombies/feedback/sound_deny
+""")
 	write_versioned_function("zombies/wunderfizz/deny_not_your_result", f"""
 tellraw @s [{MGS_TAG},{{"text":"Wait for the buyer to collect their perk.","color":"red"}}]
 function {ns}:v{version}/zombies/feedback/sound_deny
@@ -294,15 +456,24 @@ function {ns}:v{version}/zombies/feedback/sound_deny
 execute if data storage {ns}:zombies game.map.wunderfizz[0] run function {ns}:v{version}/zombies/wunderfizz/setup
 """)
 
-	## Hook: tick orbs
+	## Hook: tick orbs + any active roam
 	write_versioned_function("zombies/game_tick", f"""
 execute as @e[type=item_display,tag={ns}.wunderfizz_orb] at @s run function {ns}:v{version}/zombies/wunderfizz/orb_tick
+execute if score #wf_move_timer {ns}.data matches 1.. run function {ns}:v{version}/zombies/wunderfizz/move_tick
 """)
 
-	## Hook: clean up orbs on game start/stop
+	## Hook: clean up machines/orbs/bears on game start/stop
 	write_versioned_function("zombies/start", f"""
 kill @e[type=item_display,tag={ns}.wunderfizz_orb]
+kill @e[tag={ns}.wf_display]
+kill @e[tag={ns}.wf_bear]
+scoreboard players set #wf_uses {ns}.data 0
+scoreboard players set #wf_move_timer {ns}.data 0
 """)
 	write_versioned_function("zombies/stop", f"""
 kill @e[type=item_display,tag={ns}.wunderfizz_orb]
+kill @e[tag={ns}.wf_display]
+kill @e[tag={ns}.wf_bear]
+scoreboard players set #wf_uses {ns}.data 0
+scoreboard players set #wf_move_timer {ns}.data 0
 """)
