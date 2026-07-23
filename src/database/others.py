@@ -1,7 +1,5 @@
 
 # Imports
-import copy
-
 from stewbeet import Item, JsonDict, Mem
 
 from ..config.stats import get_model_path, load_model
@@ -68,7 +66,7 @@ def power_switch_on_model() -> JsonDict:
     and the handle + indicator light recolored green/lit. The lever bar is physically mirrored
     about the housing pivot (y=7) and tilted forward-down, because Minecraft caps element
     rotations at ±45° and so the bar can't simply be rotated 180° from the up (off) position. """
-    model: JsonDict = copy.deepcopy(load_model(get_model_path("power_switch")))
+    model: JsonDict = load_model(get_model_path("power_switch"))
     model["textures"]["handle"] = "minecraft:block/lime_terracotta"
     model["textures"]["light"] = "minecraft:block/sea_lantern"
     pivot_y = 7
