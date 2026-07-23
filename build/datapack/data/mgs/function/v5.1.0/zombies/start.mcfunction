@@ -86,9 +86,10 @@ data modify storage mgs:zombies game.round set value 0
 # Store base coordinates for offset
 function mgs:v5.1.0/shared/load_base_coordinates {mode:"zombies"}
 
-# Check if map has boundaries defined
+# Check if map has boundaries defined (need at least 2 corners to form a box — a lone corner would
+# collapse to a degenerate point that eliminates everyone; matches multiplayer/missions)
 scoreboard players set #zb_has_bounds mgs.data 0
-execute if data storage mgs:zombies game.map.boundaries[0] run scoreboard players set #zb_has_bounds mgs.data 1
+execute if data storage mgs:zombies game.map.boundaries[0] if data storage mgs:zombies game.map.boundaries[1] run scoreboard players set #zb_has_bounds mgs.data 1
 
 # Normalize and store boundaries (only if defined)
 execute if score #zb_has_bounds mgs.data matches 1 run function mgs:v5.1.0/shared/load_bounds {mode:"zombies"}
