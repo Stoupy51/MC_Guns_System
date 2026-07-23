@@ -4,8 +4,9 @@
 # pistol, while their body drops as a revivable mannequin. Any alive player (including the
 # doppelganger themselves) can revive that body: on revive the owner gets everything back minus
 # Who's Who; if the body bleeds out, the doppelganger fights on with just the pistol (perks stay
-# lost). Down again as a doppelganger → normal down (Who's Who was already lost). Disabled solo
-# (a solo doppelganger down is game over). Priority above Tombstone. Called from revive/on_down.
+# lost). Down again as a doppelganger → normal down (Who's Who was already lost). Works solo too:
+# a solo owner self-revives their own body, and Who's Who takes priority over solo Quick Revive.
+# Priority above Tombstone. Called from revive/on_down.
 #
 # This is a self-contained subsystem (not the spectator-based normal downed flow): a Who's Who owner
 # stays a normal ALIVE player (never zb.downed), tagged {ns}.ww_active, ticked from game_tick.

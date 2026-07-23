@@ -68,11 +68,11 @@ scoreboard objectives add {ns}.zb.downed_id dummy
 # going down. Returns before any downed state is set. Must stay ABOVE the Who's Who branch.
 execute if score @s {ns}.zb.perk.dying_wish matches 1 if score @s {ns}.zb.dw_cd matches ..0 run return run function {ns}:v{version}/zombies/perks/dying_wish_trigger
 
-# Who's Who (co-op only): keep playing as a doppelganger with a pistol instead of entering the
-# downed state; the body drops as a revivable mannequin. Above Tombstone. Disabled solo (a solo
-# doppelganger down is game over — falls through to the normal down below).
-execute store result score #ww_ingame {ns}.data if entity @a[scores={{{ns}.zb.in_game=1}}]
-execute if score @s {ns}.zb.perk.whos_who matches 1 if score #ww_ingame {ns}.data matches 2.. run return run function {ns}:v{version}/zombies/whos_who/on_down
+# Who's Who: keep playing as a doppelganger with a pistol instead of entering the downed state; the
+# body drops as a revivable mannequin the owner can revive themselves. Works solo AND co-op. Because
+# this sits above the normal-down path (where solo Quick Revive's auto-revive lives), owning Who's
+# Who takes priority over Quick Revive in solo. Above Tombstone.
+execute if score @s {ns}.zb.perk.whos_who matches 1 run return run function {ns}:v{version}/zombies/whos_who/on_down
 
 # Mark player as downed
 scoreboard players set @s {ns}.zb.downed 1
