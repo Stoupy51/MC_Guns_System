@@ -10,8 +10,27 @@ from typing import Any, cast
 from stewbeet import Advancement, JsonDict, Mem, set_json_encoder, write_load_file, write_versioned_function
 
 from .helpers import MGS_TAG, btn
+from .zombies.perks import PERK_DEFINITIONS, RECOMMENDED_PRICES
 
 MAX_MAPS = 50
+
+# Perk reference lines for the perk_machine tooltips, generated from the perk registry so they can
+# never drift out of sync with the actual perks (ids grouped 5/line, prices as "Name N" grouped 3/line).
+_PERK_IDS: list[str] = list(PERK_DEFINITIONS.keys())
+_PERK_ID_DOC: str = (
+	"Perk granted by this machine:\n"
+	+ "\n".join(" · ".join(_PERK_IDS[i:i + 5]) for i in range(0, len(_PERK_IDS), 5))
+	+ "\n\nThe Random Perk power-up and Der Wunderfizz only roll perks that have a\n"
+	"machine placed on this map (unless a Wunderfizz has all_perks set), so\n"
+	"which perks you place here shapes what they can grant."
+)
+_PERK_PRICE_PAIRS: list[str] = [f'{PERK_DEFINITIONS[pid]["display_name"]} {RECOMMENDED_PRICES.get(pid, 2000)}' for pid in _PERK_IDS]
+_PERK_PRICE_DOC: str = (
+	"Cost in points to buy this perk.\n"
+	"Leave at -1 to auto-resolve the recommended price from perk_id.\n"
+	"Recommended prices:\n"
+	+ "\n".join(" · ".join(_PERK_PRICE_PAIRS[i:i + 3]) for i in range(0, len(_PERK_PRICE_PAIRS), 3))
+)
 
 # Element Definitions ───────────────────────────────────────────
 # All element types across all modes. Each has display properties, save info, and egg model.
@@ -55,7 +74,9 @@ ALL_ELEMENTS: dict[str, JsonDict] = {
 	"trap":               {"name": "Trap",             "color": "red",          "particle": [1.0, 0.2, 0.2], "particle_scale": 1.0, "has_rotation": True,  "egg_model": "minecraft:cave_spider_spawn_egg", "save_type": "zb_object", "save_path": "traps", "emoji": "🔮",
                            "defaults": {"price": 1000, "type": 0, "duration": 200, "cooldown": 1200, "effect_radius": [3.0, 2.0, 3.0], "offset_pos": [0, 0, 0], "power": True}},
 	"perk_machine":       {"name": "Perk Machine",     "color": "dark_purple",  "particle": [0.5, 0.0, 0.5], "particle_scale": 1.0, "has_rotation": True,  "egg_model": "minecraft:witch_spawn_egg",       "save_type": "zb_object", "save_path": "perks", "emoji": "🧪",
-                           "defaults": {"name": "Juggernog", "price": 2500, "partial_price": 0, "perk_id": "juggernog", "power": True, "display_item": "", "item_model": ""}},
+                           "defaults": {"name": "", "price": -1, "partial_price": 0, "perk_id": "juggernog", "power": True, "display_item": "", "item_model": ""}},
+	"wunderfizz":         {"name": "Der Wunderfizz",   "color": "gold",         "particle": [1.0, 0.7, 0.0], "particle_scale": 1.0, "has_rotation": True,  "egg_model": "minecraft:bee_spawn_egg",         "save_type": "zb_object", "save_path": "wunderfizz", "emoji": "🎰",
+                           "defaults": {"name": "Der Wunderfizz", "price": 1500, "power": True, "all_perks": False, "display_item": "", "item_model": ""}},
 	"pap_machine":        {"name": "Pack-a-Punch",     "color": "dark_red",     "particle": [0.8, 0.1, 0.1], "particle_scale": 1.0, "has_rotation": True,  "egg_model": "minecraft:creaking_spawn_egg",    "save_type": "zb_object", "save_path": "pap_machines", "emoji": "🔥",
                            "defaults": {"name": "Pack-a-Punch", "price": 5000, "power": True, "display_item": "", "item_model": ""}},
 	"mystery_box_pos":    {"name": "Mystery Box Pos",  "color": "light_purple", "particle": [1.0, 0.0, 1.0], "particle_scale": 1.0, "has_rotation": True,  "egg_model": "minecraft:evoker_spawn_egg",      "save_type": "zb_object", "save_path": "mystery_box.positions", "emoji": "📦",
@@ -73,7 +94,7 @@ ALL_ELEMENTS: dict[str, JsonDict] = {
 # Elements rendered as real in-game models in the editor (instead of dust particles).
 # Each has a maps/editor/displays/<etype> function mirroring the game's own display setup,
 # rebuilt every second so rotation/config edits on the marker stay in sync.
-MODEL_DISPLAY_ELEMENTS: tuple[str, ...] = ("wallbuy", "perk_machine", "pap_machine", "mystery_box_pos", "power_switch", "barrier")
+MODEL_DISPLAY_ELEMENTS: tuple[str, ...] = ("wallbuy", "perk_machine", "wunderfizz", "pap_machine", "mystery_box_pos", "power_switch", "barrier")
 
 # Field documentation ───────────────────────────────────────────
 # Tooltips shown (as a hover "ⓘ") next to constant/enum config fields in the element editor,
@@ -88,7 +109,11 @@ FIELD_DOCS: dict[tuple[str, str] | str, str] = {
 	("door", "partial_price"): "Chip-in payments: points taken per right-click (0 = pay the full price at once).\nExample: price 5000 + partial_price 500 = 10 payments.\nDoor progress is GLOBAL — any mix of players can contribute, and the last\npayment is just whatever is left. Progress is shared by every linked door.",
 	("perk_machine", "partial_price"): "Chip-in payments: points taken per right-click (0 = pay the full price at once).\nExample: price 2500 + partial_price 500 = 5 payments.\nPerk progress is LOCAL — each player pays down their own perk, nobody can\ncontribute to someone else's. Progress is lost when the perk is obtained.",
 	("door", "back_group_id"): "Zombie spawn group_id unlocked behind this door (-1 = none).",
-	("perk_machine", "perk_id"): "Perk granted by this machine:\njuggernog · speed_cola · double_tap · quick_revive · mule_kick · stamin_up\nphd_flopper · deadshot · timeslip\n\nThe Random Perk power-up only rolls perks that have a machine placed\non this map, so which perks you place here shapes what it can grant.",
+	("perk_machine", "name"): "Display label shown when hovering the machine.\nLeave EMPTY to auto-resolve the perk's canonical name from perk_id\n(e.g. juggernog -> Juggernog). Only set this to override that name.",
+	("perk_machine", "perk_id"): _PERK_ID_DOC,
+	("perk_machine", "price"): _PERK_PRICE_DOC,
+	("wunderfizz", "all_perks"): "false = the machine only rolls perks that have a machine placed on\nthis map (like the Random Perk power-up).\ntrue = rolls across EVERY defined perk (BO2 Origins behaviour), so it\ncan grant perks with no machine on the map.",
+	("wunderfizz", "price"): "Points per use. Cycles perk bottles and grants one random perk the\nbuyer doesn't already own, collectable by the buyer for 10s. Suggested: 1500.",
 	("wallbuy", "weapon_id"): "Item id given on purchase. Guns (e.g. m1911, ak47, mp5),\nknives (bowie_knife, ~3000 pts), lethal grenades (frag_grenade,\nsemtex...), or tacticals (monkey_bomb). Non-guns route to their\nown slot: knife hotbar.0, lethals hotbar.7 (x4), tacticals hotbar.6 (x3).",
 	("wallbuy", "magazine_id"): "Magazine item paired with the gun (e.g. m1911_mag).\nLeave empty for knife/grenade/tactical wallbuys.",
 	("barrier", "radius"): "Block radius the barrier toggles open/closed around its marker.",
@@ -140,6 +165,7 @@ EDITOR_MODES: dict[str, JsonDict] = {
 			"start_command": "inventory.6",
 			"special_spawn": "inventory.7",
 			"barrier": "inventory.8",
+			"wunderfizz": "inventory.9",
 		},
 	},
 	"missions": {
@@ -1772,6 +1798,7 @@ clear @s
 kill @e[tag={ns}.editor_display]
 execute as @e[tag={ns}.element.wallbuy] at @s run function {ns}:v{version}/maps/editor/displays/wallbuy
 execute as @e[tag={ns}.element.perk_machine] at @s run function {ns}:v{version}/maps/editor/displays/perk_machine
+execute as @e[tag={ns}.element.wunderfizz] at @s run function {ns}:v{version}/maps/editor/displays/wunderfizz
 execute as @e[tag={ns}.element.pap_machine] at @s run function {ns}:v{version}/maps/editor/displays/pap_machine
 execute as @e[tag={ns}.element.mystery_box_pos] at @s run function {ns}:v{version}/maps/editor/displays/mystery_box_pos
 execute as @e[tag={ns}.element.power_switch] at @s run function {ns}:v{version}/maps/editor/displays/power_switch
@@ -1827,6 +1854,21 @@ data modify storage {ns}:temp _pk_disp.perk_id set from entity @s data.perk_id
 execute if data storage {ns}:temp _pk_disp{{item_model:"minecraft:potion"}} run function {ns}:v{version}/zombies/perks/override_perk_model with storage {ns}:temp _pk_disp
 execute if data entity @s data.yaw run data modify storage {ns}:temp _pk_disp.yaw set from entity @s data.yaw
 execute align xyz positioned ~.5 ~-.37 ~.5 positioned ^ ^ ^-0.49 run function {ns}:v{version}/zombies/display/summon_machine_display with storage {ns}:temp _pk_disp
+""")
+
+	## Der Wunderfizz: mirror zombies/wunderfizz/setup_iter display logic (perk-machine pipeline)
+	write_versioned_function("maps/editor/displays/wunderfizz", f"""
+# @s = wunderfizz marker, at @s
+data modify storage {ns}:temp _wf_disp.tag set value "{ns}.editor_display"
+data modify storage {ns}:temp _wf_disp.item_id set value ""
+data modify storage {ns}:temp _wf_disp.item_model set value ""
+data modify storage {ns}:temp _wf_disp.yaw set value 0.0f
+execute if data entity @s data.display_item run data modify storage {ns}:temp _wf_disp.item_id set from entity @s data.display_item
+execute if data entity @s data.item_model run data modify storage {ns}:temp _wf_disp.item_model set from entity @s data.item_model
+execute if data storage {ns}:temp _wf_disp{{item_id:""}} run data modify storage {ns}:temp _wf_disp.item_id set value "minecraft:potion"
+execute if data storage {ns}:temp _wf_disp{{item_model:""}} run data modify storage {ns}:temp _wf_disp.item_model set value "{ns}:der_wunderfizz"
+execute if data entity @s data.yaw run data modify storage {ns}:temp _wf_disp.yaw set from entity @s data.yaw
+execute align xyz positioned ~.5 ~-.37 ~.5 positioned ^ ^ ^-0.49 run function {ns}:v{version}/zombies/display/summon_machine_display with storage {ns}:temp _wf_disp
 """)
 
 	## Pack-a-Punch: mirror zombies/pap/setup_iter display logic

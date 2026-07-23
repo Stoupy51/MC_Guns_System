@@ -26,6 +26,8 @@ execute if entity @s[tag=mgs.element.trap] run data modify storage mgs:temp _zbp
 execute if entity @s[tag=mgs.element.trap] run data modify storage mgs:temp _zb_new set from storage mgs:temp map_edit.zb_defaults.trap
 execute if entity @s[tag=mgs.element.perk_machine] run data modify storage mgs:temp _zbpos.tag set value "mgs.element.perk_machine"
 execute if entity @s[tag=mgs.element.perk_machine] run data modify storage mgs:temp _zb_new set from storage mgs:temp map_edit.zb_defaults.perk_machine
+execute if entity @s[tag=mgs.element.wunderfizz] run data modify storage mgs:temp _zbpos.tag set value "mgs.element.wunderfizz"
+execute if entity @s[tag=mgs.element.wunderfizz] run data modify storage mgs:temp _zb_new set from storage mgs:temp map_edit.zb_defaults.wunderfizz
 execute if entity @s[tag=mgs.element.pap_machine] run data modify storage mgs:temp _zbpos.tag set value "mgs.element.pap_machine"
 execute if entity @s[tag=mgs.element.pap_machine] run data modify storage mgs:temp _zb_new set from storage mgs:temp map_edit.zb_defaults.pap_machine
 execute if entity @s[tag=mgs.element.mystery_box_pos] run data modify storage mgs:temp _zbpos.tag set value "mgs.element.mystery_box_pos"
@@ -86,6 +88,7 @@ execute if entity @s[tag=mgs.element.wallbuy] run tellraw @a[tag=mgs.map_editor]
 execute if entity @s[tag=mgs.element.door] run tellraw @a[tag=mgs.map_editor] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.door_placed","color":"gold"}]
 execute if entity @s[tag=mgs.element.trap] run tellraw @a[tag=mgs.map_editor] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.trap_placed","color":"red"}]
 execute if entity @s[tag=mgs.element.perk_machine] run tellraw @a[tag=mgs.map_editor] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.perk_machine_placed","color":"dark_purple"}]
+execute if entity @s[tag=mgs.element.wunderfizz] run tellraw @a[tag=mgs.map_editor] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.der_wunderfizz_placed","color":"gold"}]
 execute if entity @s[tag=mgs.element.pap_machine] run tellraw @a[tag=mgs.map_editor] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.pack_a_punch_placed","color":"dark_red"}]
 execute if entity @s[tag=mgs.element.mystery_box_pos] run tellraw @a[tag=mgs.map_editor] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.mystery_box_pos_placed","color":"light_purple"}]
 execute if entity @s[tag=mgs.element.power_switch] run tellraw @a[tag=mgs.map_editor] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.power_switch_placed","color":"green"}]

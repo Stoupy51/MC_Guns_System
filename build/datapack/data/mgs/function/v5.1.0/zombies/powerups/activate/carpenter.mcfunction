@@ -1,9 +1,8 @@
 
 #> mgs:v5.1.0/zombies/powerups/activate/carpenter
 #
-# @executed	at @s
-#
-# @within	mgs:v5.1.0/zombies/powerups/dispatch_activate
+# @within	mgs:v5.1.0/zombies/admin/powerup_carpenter
+#			mgs:v5.1.0/zombies/powerups/dispatch_activate
 #
 
 function mgs:v5.1.0/zombies/barriers/repair_all

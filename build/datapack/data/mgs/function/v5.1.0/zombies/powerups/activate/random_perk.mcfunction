@@ -1,9 +1,8 @@
 
 #> mgs:v5.1.0/zombies/powerups/activate/random_perk
 #
-# @executed	at @s
-#
-# @within	mgs:v5.1.0/zombies/powerups/dispatch_activate
+# @within	mgs:v5.1.0/zombies/admin/powerup_random_perk
+#			mgs:v5.1.0/zombies/powerups/dispatch_activate
 #
 
 # Pick a random unowned perk from the map's placed perks for the collecting player

@@ -1,9 +1,8 @@
 
 #> mgs:v5.1.0/zombies/powerups/activate/bonfire_sale
 #
-# @executed	at @s
-#
-# @within	mgs:v5.1.0/zombies/powerups/dispatch_activate
+# @within	mgs:v5.1.0/zombies/admin/powerup_bonfire_sale
+#			mgs:v5.1.0/zombies/powerups/dispatch_activate
 #
 
 scoreboard players set #zb_bonfire_sale_timer mgs.data 600
