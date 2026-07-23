@@ -14,3 +14,6 @@ execute unless score @s mgs.zb.in_game matches 1.. run return fail
 # Launch player downward to counter the slight jump boost from knockback.
 function mgs:v5.1.0/zombies/hurt_player/launch_downward
 
+# Widow's Wine passive: consume a web grenade and burst webbing around the hurt owner.
+execute if score @s mgs.special.widows_wine matches 1 run function mgs:v5.1.0/zombies/perks/widows_on_hurt
+

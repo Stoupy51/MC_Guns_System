@@ -18,4 +18,9 @@ execute unless data storage mgs:temp _pk_data.name if data storage mgs:temp _pk_
 execute unless data storage mgs:temp _pk_data.name if data storage mgs:temp _pk_data{perk_id:"phd_flopper"} run data modify storage mgs:temp _pk_hover_name set value "PhD Flopper"
 execute unless data storage mgs:temp _pk_data.name if data storage mgs:temp _pk_data{perk_id:"deadshot"} run data modify storage mgs:temp _pk_hover_name set value "Deadshot Daiquiri"
 execute unless data storage mgs:temp _pk_data.name if data storage mgs:temp _pk_data{perk_id:"timeslip"} run data modify storage mgs:temp _pk_hover_name set value "Timeslip"
+execute unless data storage mgs:temp _pk_data.name if data storage mgs:temp _pk_data{perk_id:"electric_cherry"} run data modify storage mgs:temp _pk_hover_name set value "Electric Cherry"
+execute unless data storage mgs:temp _pk_data.name if data storage mgs:temp _pk_data{perk_id:"tombstone"} run data modify storage mgs:temp _pk_hover_name set value "Tombstone"
+execute unless data storage mgs:temp _pk_data.name if data storage mgs:temp _pk_data{perk_id:"whos_who"} run data modify storage mgs:temp _pk_hover_name set value "Who's Who"
+execute unless data storage mgs:temp _pk_data.name if data storage mgs:temp _pk_data{perk_id:"dying_wish"} run data modify storage mgs:temp _pk_hover_name set value "Dying Wish"
+execute unless data storage mgs:temp _pk_data.name if data storage mgs:temp _pk_data{perk_id:"widows_wine"} run data modify storage mgs:temp _pk_hover_name set value "Widow's Wine"
 

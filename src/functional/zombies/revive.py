@@ -64,6 +64,16 @@ scoreboard objectives add {ns}.zb.downed_id dummy
 	## On Down: called from on_respawn when player dies in zombies
 	# ──────────────────────────────────────────────────────────────────────────
 	write_versioned_function("zombies/revive/on_down", f"""
+# Dying Wish (highest priority): if owned and off cooldown, cheat death with a berserk instead of
+# going down. Returns before any downed state is set. Must stay ABOVE the Who's Who branch.
+execute if score @s {ns}.zb.perk.dying_wish matches 1 if score @s {ns}.zb.dw_cd matches ..0 run return run function {ns}:v{version}/zombies/perks/dying_wish_trigger
+
+# Who's Who (co-op only): keep playing as a doppelganger with a pistol instead of entering the
+# downed state; the body drops as a revivable mannequin. Above Tombstone. Disabled solo (a solo
+# doppelganger down is game over — falls through to the normal down below).
+execute store result score #ww_ingame {ns}.data if entity @a[scores={{{ns}.zb.in_game=1}}]
+execute if score @s {ns}.zb.perk.whos_who matches 1 if score #ww_ingame {ns}.data matches 2.. run return run function {ns}:v{version}/zombies/whos_who/on_down
+
 # Mark player as downed
 scoreboard players set @s {ns}.zb.downed 1
 scoreboard players set @s {ns}.zb.bleed {BLEED_OUT_TICKS}
@@ -119,6 +129,17 @@ function {ns}:v{version}/zombies/revive/tp_to_death with storage {ns}:temp
 # Remove temp tags so future queries don't accidentally match
 tag @e[tag={ns}.downed_new] remove {ns}.downed_new
 tag @e[tag={ns}.downed_hud_new] remove {ns}.downed_hud_new
+
+# Electric Cherry: discharge a full-strength shock at the down spot (BO behavior), before the
+# perk is stripped. used==cap==1 makes it the maximum-size discharge.
+scoreboard players set #ec_used {ns}.data 1
+scoreboard players set #ec_cap {ns}.data 1
+execute if score @s {ns}.special.electric_cherry matches 1 at @s run function {ns}:v{version}/zombies/perks/electric_cherry_shock
+
+# Tombstone: spawn a recovery marker at the death spot (snapshots the owner's perks HERE, before
+# they are stripped). No-op solo or when unowned. Only reached on the normal-down path (Who's Who,
+# which returns earlier, takes priority so a marker never spawns for a doppelganger).
+execute if score @s {ns}.zb.perk.tombstone matches 1 run function {ns}:v{version}/zombies/perks/tombstone_on_down
 
 # Remove all perks when going down
 function {ns}:v{version}/zombies/perks/lose_all
@@ -424,6 +445,9 @@ execute unless score @s {ns}.zb.perk.juggernog matches 1.. run attribute @s mine
 effect give @s minecraft:instant_health 1 255 true
 scoreboard players set @s {ns}.stam_seen 0
 
+# Tombstone: revived → discard the pending marker + perk snapshot (nothing to recover)
+function {ns}:v{version}/zombies/perks/tombstone_on_revived
+
 # Announce
 title @s title ["❤"]
 title @s subtitle [{{"text":"You have been revived!","color":"green"}}]
@@ -442,6 +466,10 @@ tag @s remove {ns}.downed_spectator
 # Hide THIS player's mannequin and HUD by teleporting far below the world (id-matched: a
 # "nearest" lookup could hide another downed player's mannequin when both went down together)
 scoreboard players operation #my_downed_id {ns}.data = @s {ns}.zb.downed_id
+
+# Tombstone: snapshot the inventory now (still intact) if a marker is waiting for this player
+function {ns}:v{version}/zombies/perks/tombstone_on_bleed_out
+
 tag @e[tag={ns}.downed_mannequin,predicate={ns}:v{version}/zombies/revive/downed_id_match] add {ns}.downed_mine_temp
 tp @n[tag={ns}.downed_mine_temp] ~ -10000 ~
 execute as @e[tag={ns}.downed_hud,predicate={ns}:v{version}/zombies/revive/downed_id_match] run tp @s ~ -10000 ~
@@ -495,6 +523,9 @@ execute unless score @s {ns}.zb.perk.juggernog matches 1.. run attribute @s mine
 
 # Re-give starting weapon on respawn
 function {ns}:v{version}/zombies/inventory/give_respawn_loadout
+
+# Tombstone: if this player bled out with a Tombstone marker, activate it + start the 60s recovery timer
+function {ns}:v{version}/zombies/perks/tombstone_on_respawn
 
 # Call map respawn script (executed as the respawning player)
 function {ns}:v{version}/shared/maps/call_respawn_script_at_base
@@ -571,6 +602,8 @@ tag @a remove {ns}.downed_spectator
 kill @e[tag={ns}.downed_mannequin]
 kill @e[tag={ns}.downed_hud]
 kill @e[tag={ns}.downed_cam]
+kill @e[tag={ns}.tombstone]
+data modify storage {ns}:zombies tombstone_inv set value {{}}
 """)
 
 	## Hook: reset revive state on game stop
@@ -586,5 +619,7 @@ tag @a remove {ns}.downed_spectator
 kill @e[tag={ns}.downed_mannequin]
 kill @e[tag={ns}.downed_hud]
 kill @e[tag={ns}.downed_cam]
+kill @e[tag={ns}.tombstone]
+data modify storage {ns}:zombies tombstone_inv set value {{}}
 """)
 

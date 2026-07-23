@@ -28,6 +28,23 @@ function mgs:v5.1.0/zombies/perks/place_at with storage mgs:temp _pk
 # Set scoreboards on entity
 scoreboard players operation @n[tag=mgs.pk_new] mgs.zb.perk.id = #pk_counter mgs.data
 execute store result score @n[tag=mgs.pk_new] mgs.zb.perk.price run data get storage mgs:temp _pk_iter[0].price
+# price -1 = auto: resolve the recommended price for this machine's perk_id (compound match needs a
+# flat key: [0]{...} after an index is invalid NBT path syntax)
+data modify storage mgs:temp _pk_price.perk_id set from storage mgs:temp _pk_iter[0].perk_id
+execute if score @n[tag=mgs.pk_new] mgs.zb.perk.price matches -1 if data storage mgs:temp _pk_price{perk_id:"juggernog"} run scoreboard players set @n[tag=mgs.pk_new] mgs.zb.perk.price 2500
+execute if score @n[tag=mgs.pk_new] mgs.zb.perk.price matches -1 if data storage mgs:temp _pk_price{perk_id:"speed_cola"} run scoreboard players set @n[tag=mgs.pk_new] mgs.zb.perk.price 3000
+execute if score @n[tag=mgs.pk_new] mgs.zb.perk.price matches -1 if data storage mgs:temp _pk_price{perk_id:"double_tap"} run scoreboard players set @n[tag=mgs.pk_new] mgs.zb.perk.price 2000
+execute if score @n[tag=mgs.pk_new] mgs.zb.perk.price matches -1 if data storage mgs:temp _pk_price{perk_id:"quick_revive"} run scoreboard players set @n[tag=mgs.pk_new] mgs.zb.perk.price 1500
+execute if score @n[tag=mgs.pk_new] mgs.zb.perk.price matches -1 if data storage mgs:temp _pk_price{perk_id:"mule_kick"} run scoreboard players set @n[tag=mgs.pk_new] mgs.zb.perk.price 4000
+execute if score @n[tag=mgs.pk_new] mgs.zb.perk.price matches -1 if data storage mgs:temp _pk_price{perk_id:"stamin_up"} run scoreboard players set @n[tag=mgs.pk_new] mgs.zb.perk.price 2000
+execute if score @n[tag=mgs.pk_new] mgs.zb.perk.price matches -1 if data storage mgs:temp _pk_price{perk_id:"phd_flopper"} run scoreboard players set @n[tag=mgs.pk_new] mgs.zb.perk.price 2000
+execute if score @n[tag=mgs.pk_new] mgs.zb.perk.price matches -1 if data storage mgs:temp _pk_price{perk_id:"deadshot"} run scoreboard players set @n[tag=mgs.pk_new] mgs.zb.perk.price 1500
+execute if score @n[tag=mgs.pk_new] mgs.zb.perk.price matches -1 if data storage mgs:temp _pk_price{perk_id:"timeslip"} run scoreboard players set @n[tag=mgs.pk_new] mgs.zb.perk.price 1500
+execute if score @n[tag=mgs.pk_new] mgs.zb.perk.price matches -1 if data storage mgs:temp _pk_price{perk_id:"electric_cherry"} run scoreboard players set @n[tag=mgs.pk_new] mgs.zb.perk.price 2000
+execute if score @n[tag=mgs.pk_new] mgs.zb.perk.price matches -1 if data storage mgs:temp _pk_price{perk_id:"tombstone"} run scoreboard players set @n[tag=mgs.pk_new] mgs.zb.perk.price 2000
+execute if score @n[tag=mgs.pk_new] mgs.zb.perk.price matches -1 if data storage mgs:temp _pk_price{perk_id:"whos_who"} run scoreboard players set @n[tag=mgs.pk_new] mgs.zb.perk.price 2000
+execute if score @n[tag=mgs.pk_new] mgs.zb.perk.price matches -1 if data storage mgs:temp _pk_price{perk_id:"dying_wish"} run scoreboard players set @n[tag=mgs.pk_new] mgs.zb.perk.price 2000
+execute if score @n[tag=mgs.pk_new] mgs.zb.perk.price matches -1 if data storage mgs:temp _pk_price{perk_id:"widows_wine"} run scoreboard players set @n[tag=mgs.pk_new] mgs.zb.perk.price 4000
 # Remember the map-defined price so solo Quick Revive can be reverted when players join
 scoreboard players operation @n[tag=mgs.pk_new] mgs.zb.perk.base_price = @n[tag=mgs.pk_new] mgs.zb.perk.price
 # Tag Quick Revive machines for dynamic solo pricing (copy [0] to a flat key: [0]{...} is invalid path syntax)
@@ -41,9 +58,13 @@ execute store result score @n[tag=mgs.pk_new] mgs.zb.perk.partial run data get s
 # Store perk_id in indexed storage for later lookup
 execute store result storage mgs:temp _pk_store.id int 1 run scoreboard players get #pk_counter mgs.data
 data modify storage mgs:temp _pk_store.perk_id set from storage mgs:temp _pk_iter[0].perk_id
-data modify storage mgs:temp _pk_store.name set from storage mgs:temp _pk_iter[0].perk_id
-execute if data storage mgs:temp _pk_iter[0].name run data modify storage mgs:temp _pk_store.name set from storage mgs:temp _pk_iter[0].name
+# Optional custom label: kept only when the map set a non-empty name; otherwise left absent so the
+# hover/label logic falls back to the perk's canonical name (PERK_DEFINITIONS display_name).
+data remove storage mgs:temp _pk_store.name
+data modify storage mgs:temp _pk_store.name set from storage mgs:temp _pk_iter[0].name
+execute if data storage mgs:temp _pk_store{name:""} run data remove storage mgs:temp _pk_store.name
 function mgs:v5.1.0/zombies/perks/store_data with storage mgs:temp _pk_store
+execute if data storage mgs:temp _pk_store.name run function mgs:v5.1.0/zombies/perks/store_data_name with storage mgs:temp _pk_store
 
 # Mark this perk as present on the map (shared random-perk pool: power-up + Der Wunderfizz)
 function mgs:v5.1.0/zombies/perks/pool/mark with storage mgs:temp _pk_store

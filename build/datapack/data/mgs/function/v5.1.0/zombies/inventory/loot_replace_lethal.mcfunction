@@ -5,8 +5,11 @@
 #
 # @within	mgs:v5.1.0/zombies/inventory/give_lethal_type
 #			mgs:v5.1.0/zombies/inventory/recreate_critical_items
+#			mgs:v5.1.0/zombies/perks/apply/widows_wine
+#			mgs:v5.1.0/zombies/perks/reapply/widows_wine
 #
 
+execute if score @s mgs.special.widows_wine matches 1 run return run loot replace entity @s hotbar.7 loot mgs:i/web_grenade
 execute unless score @s mgs.zb.lethal_type matches 1.. run loot replace entity @s hotbar.7 loot mgs:i/frag_grenade
 execute if score @s mgs.zb.lethal_type matches 1 run loot replace entity @s hotbar.7 loot mgs:i/semtex
 execute if score @s mgs.zb.lethal_type matches 2 run loot replace entity @s hotbar.7 loot mgs:i/smoke_grenade

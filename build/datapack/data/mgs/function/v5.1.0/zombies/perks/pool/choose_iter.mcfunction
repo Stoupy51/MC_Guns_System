@@ -1,15 +1,13 @@
 
 #> mgs:v5.1.0/zombies/perks/pool/choose_iter
 #
-# @executed	at @s
-#
 # @within	mgs:v5.1.0/zombies/perks/pool/choose
 #			mgs:v5.1.0/zombies/perks/pool/choose_iter
 #
 
 # Safety counter: at most one full loop over the perk list
 scoreboard players add #pool_tries mgs.data 1
-execute if score #pool_tries mgs.data matches 10.. run return 0
+execute if score #pool_tries mgs.data matches 15.. run return 0
 execute if score #pool_chosen mgs.data matches 0.. run return 0
 
 execute if score #pool_roll mgs.data matches 0 run function mgs:v5.1.0/zombies/perks/pool/try_index/juggernog
@@ -30,9 +28,19 @@ execute if score #pool_roll mgs.data matches 7 run function mgs:v5.1.0/zombies/p
 execute if score #pool_chosen mgs.data matches 0.. run return 0
 execute if score #pool_roll mgs.data matches 8 run function mgs:v5.1.0/zombies/perks/pool/try_index/timeslip
 execute if score #pool_chosen mgs.data matches 0.. run return 0
+execute if score #pool_roll mgs.data matches 9 run function mgs:v5.1.0/zombies/perks/pool/try_index/electric_cherry
+execute if score #pool_chosen mgs.data matches 0.. run return 0
+execute if score #pool_roll mgs.data matches 10 run function mgs:v5.1.0/zombies/perks/pool/try_index/tombstone
+execute if score #pool_chosen mgs.data matches 0.. run return 0
+execute if score #pool_roll mgs.data matches 11 run function mgs:v5.1.0/zombies/perks/pool/try_index/whos_who
+execute if score #pool_chosen mgs.data matches 0.. run return 0
+execute if score #pool_roll mgs.data matches 12 run function mgs:v5.1.0/zombies/perks/pool/try_index/dying_wish
+execute if score #pool_chosen mgs.data matches 0.. run return 0
+execute if score #pool_roll mgs.data matches 13 run function mgs:v5.1.0/zombies/perks/pool/try_index/widows_wine
+execute if score #pool_chosen mgs.data matches 0.. run return 0
 
 # Nothing available at this index: advance and recurse
 scoreboard players add #pool_roll mgs.data 1
-execute if score #pool_roll mgs.data matches 9.. run scoreboard players set #pool_roll mgs.data 0
+execute if score #pool_roll mgs.data matches 14.. run scoreboard players set #pool_roll mgs.data 0
 function mgs:v5.1.0/zombies/perks/pool/choose_iter
 

@@ -6,7 +6,7 @@ from stewbeet import Advancement, ItemModifier, JsonDict, Mem, set_json_encoder,
 
 from ...config.stats import ALL_SLOTS, CAPACITY, LETHAL_GRENADE_IDS, REMAINING_BULLETS
 from ..helpers import knife_item_snbt
-from .perks import PERK_DEFINITIONS
+from .perks import PERK_DEFINITIONS, PERK_DESCRIPTIONS
 
 
 def generate_zombies_inventory() -> None:
@@ -259,8 +259,8 @@ $item replace entity @s hotbar.8 with minecraft:paper[custom_data={{{ns}:{{zb_in
 		for slot in perk_display_slots
 	)
 	perk_display_place: str = "\n".join(
-		f'execute if score @s {ns}.zb.perk.{pid} matches 1 run function {ns}:v{version}/zombies/inventory/place_perk_item {{id:"{pid}",name:"{pdata["display_name"]}",color:"{pdata["text_color"]}"}}'
-		for pid, pdata in PERK_DEFINITIONS.items()
+		f"execute if score @s {ns}.zb.perk.{pid} matches 1 run function {ns}:v{version}/zombies/inventory/place_perk/{pid}"
+		for pid in PERK_DEFINITIONS
 	)
 	# Tagged into the on_new_perk signal (@s = buying player) so a purchase shows up instantly.
 	write_versioned_function("zombies/inventory/refresh_perk_items", f"""
@@ -270,17 +270,22 @@ scoreboard players set #perk_inv_slot {ns}.data 26
 {perk_display_place}
 """, tags=[f"{ns}:zombies/on_new_perk"])
 
-	# Macro step 1: resolve the next free display slot into storage, then render
-	write_versioned_function("zombies/inventory/place_perk_item", f"""
-$data modify storage {ns}:temp _perk_place set value {{id:"$(id)",name:"$(name)",color:"$(color)"}}
+	# One placement pair per perk: resolve the next free slot, then render the mini item with its
+	# baked name/color/model and detailed description lore (PERK_DESCRIPTIONS).
+	for pid, pdata in PERK_DEFINITIONS.items():
+		lore_parts: list[str] = [
+			f'{{"text":"{line}","color":"gray","italic":false}}'
+			for line in PERK_DESCRIPTIONS.get(pid, [])
+		]
+		lore_parts.append('{"text":"Owned perk","color":"dark_gray","italic":false}')
+		lore_snbt: str = "[" + ",".join(lore_parts) + "]"
+		write_versioned_function(f"zombies/inventory/place_perk/{pid}", f"""
 execute store result storage {ns}:temp _perk_place.slot int 1 run scoreboard players get #perk_inv_slot {ns}.data
-function {ns}:v{version}/zombies/inventory/place_perk_item_at with storage {ns}:temp _perk_place
+function {ns}:v{version}/zombies/inventory/place_perk_at/{pid} with storage {ns}:temp _perk_place
 scoreboard players remove #perk_inv_slot {ns}.data 1
 """)
-
-	# Macro step 2: place the item (model = the recolored perk machine from the item database)
-	write_versioned_function("zombies/inventory/place_perk_item_at", f"""
-$item replace entity @s inventory.$(slot) with minecraft:paper[item_model="{ns}:perk_machine_$(id)",custom_data={{{ns}:{{zb_perk_display:true}}}},item_name={{"text":"$(name)","color":"$(color)","italic":false}},lore=[{{"text":"Owned perk","color":"gray","italic":false}}]]
+		write_versioned_function(f"zombies/inventory/place_perk_at/{pid}", f"""
+$item replace entity @s inventory.$(slot) with minecraft:paper[item_model="{ns}:perk_machine_{pid}",custom_data={{{ns}:{{zb_perk_display:true}}}},item_name={{"text":"{pdata["display_name"]}","color":"{pdata["text_color"]}","italic":false}},lore={lore_snbt}]
 """)
 
 	write_versioned_function("zombies/inventory/give_ability_item", f"""
@@ -303,7 +308,11 @@ execute unless items entity @s hotbar.7 * run function {ns}:v{version}/zombies/i
 	# Re-give the player's recorded lethal type (frag / semtex / …) into the empty hotbar.7. The
 	# per-player {ns}.zb.lethal_type score is set on give (starting loadout = frag) and on a lethal
 	# wall-buy (wallbuys.py). frag is the fallback for an unset/0 score.
-	lethal_loot_lines: str = f"execute unless score @s {ns}.zb.lethal_type matches 1.. run loot replace entity @s hotbar.7 loot {ns}:i/{LETHAL_GRENADE_IDS[0]}\n"
+	# Widow's Wine owners always get web grenades in the lethal slot, regardless of the recorded
+	# lethal type — so every refill path (respawn replenish, Max Ammo, give_lethal_type) hands out
+	# webs. `return run` short-circuits the frag/semtex fallback below.
+	lethal_loot_lines: str = f"execute if score @s {ns}.special.widows_wine matches 1 run return run loot replace entity @s hotbar.7 loot {ns}:i/web_grenade\n"
+	lethal_loot_lines += f"execute unless score @s {ns}.zb.lethal_type matches 1.. run loot replace entity @s hotbar.7 loot {ns}:i/{LETHAL_GRENADE_IDS[0]}\n"
 	lethal_loot_lines += "\n".join(
 		f"execute if score @s {ns}.zb.lethal_type matches {i} run loot replace entity @s hotbar.7 loot {ns}:i/{gid}"
 		for i, gid in enumerate(LETHAL_GRENADE_IDS) if i > 0

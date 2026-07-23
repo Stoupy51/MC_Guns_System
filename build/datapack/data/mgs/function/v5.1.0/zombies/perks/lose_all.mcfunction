@@ -3,7 +3,8 @@
 #
 # @executed	as @e[type=player,sort=random] & at @s
 #
-# @within	mgs:v5.1.0/zombies/revive/on_down
+# @within	mgs:v5.1.0/zombies/whos_who/on_down
+#			mgs:v5.1.0/zombies/revive/on_down
 #			mgs:v5.1.0/zombies/revive/full_death
 #
 
@@ -25,6 +26,14 @@ execute if score @s mgs.zb.perk.deadshot matches 1 run scoreboard players set @s
 scoreboard players set @s mgs.zb.perk.deadshot 0
 execute if score @s mgs.zb.perk.timeslip matches 1 run scoreboard players set @s mgs.special.timeslip 0
 scoreboard players set @s mgs.zb.perk.timeslip 0
+execute if score @s mgs.zb.perk.electric_cherry matches 1 run scoreboard players set @s mgs.special.electric_cherry 0
+scoreboard players set @s mgs.zb.perk.electric_cherry 0
+scoreboard players set @s mgs.zb.perk.tombstone 0
+scoreboard players set @s mgs.zb.perk.whos_who 0
+scoreboard players set @s mgs.zb.perk.dying_wish 0
+execute if score @s mgs.zb.perk.widows_wine matches 1 run scoreboard players set @s mgs.special.widows_wine 0
+execute if score @s mgs.zb.perk.widows_wine matches 1 run attribute @s minecraft:attack_damage modifier remove mgs:widows_wine
+scoreboard players set @s mgs.zb.perk.widows_wine 0
 tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.all_perks_lost","color":"red"}]
 
 # Remove the perk display items from the inventory right away

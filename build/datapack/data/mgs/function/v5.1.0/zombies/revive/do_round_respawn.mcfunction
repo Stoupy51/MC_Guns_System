@@ -28,6 +28,9 @@ execute unless score @s mgs.zb.perk.juggernog matches 1.. run attribute @s minec
 # Re-give starting weapon on respawn
 function mgs:v5.1.0/zombies/inventory/give_respawn_loadout
 
+# Tombstone: if this player bled out with a Tombstone marker, activate it + start the 60s recovery timer
+function mgs:v5.1.0/zombies/perks/tombstone_on_respawn
+
 # Call map respawn script (executed as the respawning player)
 function mgs:v5.1.0/shared/maps/call_respawn_script_at_base
 
