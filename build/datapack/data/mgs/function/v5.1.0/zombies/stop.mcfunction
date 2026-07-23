@@ -2,6 +2,7 @@
 #> mgs:v5.1.0/zombies/stop
 #
 # @within	mgs:v5.1.0/zombies/game_over 100t [ scheduled ]
+#			mgs:v5.1.0/zombies/restart
 #
 
 # Various cleanup to set to lobby state

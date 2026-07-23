@@ -3,7 +3,8 @@
 #
 # @executed	at @s
 #
-# @within	mgs:v5.1.0/shared/drops/drop
+# @within	string in mgs:v5.1.0/shared/drops/drop
+#			mgs:v5.1.0/shared/drops/drop
 #
 
 scoreboard players set #drop_spawned mgs.data 1

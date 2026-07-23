@@ -2,10 +2,10 @@
 #> mgs:v5.1.0/maps/editor/list/multiplayer
 #
 # @within	mgs:v5.1.0/maps/editor/menu
-#			mgs:v5.1.0/maps/editor/list/multiplayer "hover_event": {"action": "show_text", "value": "View Multiplayer maps"}}, "Multiplayer", "]"],[{"text": "[", "color": "dark_green", "click_event": {"action": "suggest_command", "command": "/function mgs:v5.1.0/maps/editor/list/zombies"}, "hover_event": {"action": "show_text", "value": "View Zombies maps"}}, "Zombies", "]"],[{"text": "[", "color": "aqua", "click_event": {"action": "suggest_command", "command": "/function mgs:v5.1.0/maps/editor/list/missions"}, "hover_event": {"action": "show_text", "value": "View Missions maps"}}, "Missions", "]"]]
-#			mgs:v5.1.0/maps/editor/list/zombies "hover_event": {"action": "show_text", "value": "View Multiplayer maps"}}, "Multiplayer", "]"],[{"text": "[", "color": "dark_green", "click_event": {"action": "suggest_command", "command": "/function mgs:v5.1.0/maps/editor/list/zombies"}, "hover_event": {"action": "show_text", "value": "View Zombies maps"}}, "Zombies", "]"],[{"text": "[", "color": "aqua", "click_event": {"action": "suggest_command", "command": "/function mgs:v5.1.0/maps/editor/list/missions"}, "hover_event": {"action": "show_text", "value": "View Missions maps"}}, "Missions", "]"]]
-#			mgs:v5.1.0/maps/editor/list/missions "hover_event": {"action": "show_text", "value": "View Multiplayer maps"}}, "Multiplayer", "]"],[{"text": "[", "color": "dark_green", "click_event": {"action": "suggest_command", "command": "/function mgs:v5.1.0/maps/editor/list/zombies"}, "hover_event": {"action": "show_text", "value": "View Zombies maps"}}, "Zombies", "]"],[{"text": "[", "color": "aqua", "click_event": {"action": "suggest_command", "command": "/function mgs:v5.1.0/maps/editor/list/missions"}, "hover_event": {"action": "show_text", "value": "View Missions maps"}}, "Missions", "]"]]
-#			mgs:v5.1.0/maps/editor/create/multiplayer "hover_event": {"action": "show_text", "value": "Back to map list"}}, "\u25c0 Back", "]"]]
+#			string in mgs:v5.1.0/maps/editor/list/multiplayer
+#			string in mgs:v5.1.0/maps/editor/list/zombies
+#			string in mgs:v5.1.0/maps/editor/list/missions
+#			string in mgs:v5.1.0/maps/editor/create/multiplayer
 #
 
 tellraw @s {"text":"============================================","color":"dark_gray"}

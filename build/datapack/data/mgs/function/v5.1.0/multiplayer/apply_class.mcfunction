@@ -7,10 +7,10 @@
 #			mgs:v5.1.0/multiplayer/join_game
 #			mgs:v5.1.0/multiplayer/prep_tick [ at @s ]
 #			mgs:v5.1.0/multiplayer/gamemodes/snd/start_round [ as @a[scores={mgs.mp.team=1..2}] & at @s ]
-#			mgs:v5.1.0/multiplayer/set_class
+#			string in mgs:v5.1.0/multiplayer/set_class
 #			mgs:v5.1.0/multiplayer/actual_respawn
 #			mgs:v5.1.0/multiplayer/auto_apply_default
-#			mgs:v5.1.0/multiplayer/custom/notify_selected
+#			string in mgs:v5.1.0/multiplayer/custom/notify_selected
 #			mgs:v5.1.0/missions/preload_complete [ at @s ]
 #			mgs:v5.1.0/missions/prep_tick [ at @s ]
 #			mgs:v5.1.0/missions/actual_respawn

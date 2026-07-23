@@ -1,9 +1,7 @@
 
 #> mgs:v5.1.0/raycast/on_targeted_entity
 #
-# @executed	anchored eyes & positioned ^ ^ ^
-#
-# @within	mgs:v5.1.0/raycast/main
+# @within	string in mgs:v5.1.0/raycast/main
 #
 
 # Friendly fire check: skip if target is a teammate (but not the shooter themselves)

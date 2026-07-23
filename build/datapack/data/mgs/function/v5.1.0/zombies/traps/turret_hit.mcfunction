@@ -1,9 +1,7 @@
 
 #> mgs:v5.1.0/zombies/traps/turret_hit
 #
-# @executed	as @e[tag=mgs.trap_head,predicate=mgs:v5.1.0/zombies/traps/turret_id_match] & at @s & facing entity @n[tag=mgs._turret_target] eyes & positioned ^ ^ ^1
-#
-# @within	mgs:v5.1.0/zombies/traps/turret_shoot
+# @within	string in mgs:v5.1.0/zombies/traps/turret_shoot
 #
 
 # Impact particles

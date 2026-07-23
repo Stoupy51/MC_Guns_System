@@ -1,7 +1,7 @@
 
 #> mgs:v5.1.0/maps/editor/invite_all
 #
-# @within	mgs:v5.1.0/maps/editor/enter "hover_event": {"action": "show_text", "value": "Put all online players into this editor session"}}, "Invite All Players", "]"]]
+# @within	string in mgs:v5.1.0/maps/editor/enter
 #
 
 # Must be called by a player already in editor mode

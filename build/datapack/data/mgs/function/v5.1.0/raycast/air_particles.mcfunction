@@ -1,8 +1,6 @@
 
 #> mgs:v5.1.0/raycast/air_particles
 #
-# @executed	anchored eyes & positioned ^ ^ ^
-#
 # @within	mgs:v5.1.0/raycast/on_entry_point with storage mgs:input with
 #
 # @args		block (string)
