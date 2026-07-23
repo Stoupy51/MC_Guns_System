@@ -1379,6 +1379,20 @@ FLASH_GRENADE: JsonDict = {
     }
 }
 
+# Widow's Wine web grenade (zombies perk-exclusive, hotbar.7). Bursts into webbing that roots and
+# lightly damages nearby zombies. PROJECTILE_MODEL/model reuse the frag grenade art as a placeholder
+# until a dedicated web-grenade texture exists (README task 5 = HUMAN art follow-up).
+WEB_GRENADE: JsonDict = {
+    "stats": {
+        GRENADE_TYPE: "web", FIRE_MODE: "semi",
+        BASE_WEAPON: "web_grenade",
+        CAPACITY: 1, REMAINING_BULLETS: 1, COOLDOWN: 20,
+        PROJECTILE_SPEED: 1500, PROJECTILE_GRAVITY: 60, PROJECTILE_MODEL: "frag_grenade",  # 1.5x throw motion
+        GRENADE_FUSE: 40,  # 2 seconds
+        GRENADE_EFFECT_RADIUS: 5,
+    }
+}
+
 # Zombies-exclusive tactical (hotbar.6): attracts zombies during the fuse, then explodes.
 # "tactical": True keeps it out of the camo pipeline and lets wallbuys/inventory route it to the
 # tactical slot. base_weapon is set so the mystery box duplicate check can match it in hotbar.6.

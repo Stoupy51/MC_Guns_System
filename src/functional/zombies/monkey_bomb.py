@@ -40,8 +40,8 @@ tag @s add {ns}.monkey_bomb
 playsound minecraft:block.note_block.chime ambient @a[distance=..24] ~ ~ ~ 0.8 1.6
 """)
 
-	## Per-tick hook (called from grenade/tick, @s = monkey grenade, at @s). Cheap: the whole
-	## grenade loop is gated by #grenade_count, and the attraction/jingle only fire on a cadence.
+	## Per-tick hook (called from grenade/tick, @s = monkey grenade, at @s). Cheap: it only runs
+	## while a monkey grenade is live, and the attraction/jingle only fire on a cadence.
 	write_versioned_function("zombies/monkey/tick", f"""
 # Attraction is a zombies-game mechanic only (elsewhere the monkey is just a long-fuse frag)
 execute unless data storage {ns}:zombies game{{state:"active"}} run return 0
