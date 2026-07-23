@@ -6,8 +6,8 @@
 # @within	mgs:v5.1.0/zombies/game_tick [ as @e[tag=mgs.wunderfizz_orb] & at @s ]
 #
 
-particle minecraft:end_rod ~ ~ ~ 0.25 0.25 0.25 0.02 3 force @a[distance=..48]
-particle minecraft:electric_spark ~ ~0.3 ~ 0.3 0.3 0.3 0.05 2 force @a[distance=..48]
+particle minecraft:end_rod ~ ~ ~ 0.25 0.25 0.25 0.02 1 force @a[distance=..48]
+particle minecraft:electric_spark ~ ~0.3 ~ 0.3 0.3 0.3 0.05 1 force @a[distance=..48]
 
 scoreboard players remove @s mgs.zb.wf.anim 1
 # Timeslip: 2x spin speed. The extra -1 only fires while still spinning (anim>0), and anim starts

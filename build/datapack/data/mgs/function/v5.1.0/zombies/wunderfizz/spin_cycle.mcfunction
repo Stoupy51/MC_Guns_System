@@ -25,6 +25,6 @@ execute if score #wf_roll mgs.data matches 11 run function mgs:v5.1.0/zombies/wu
 execute if score #wf_roll mgs.data matches 12 run function mgs:v5.1.0/zombies/wunderfizz/set_model/dying_wish
 execute if score #wf_roll mgs.data matches 13 run function mgs:v5.1.0/zombies/wunderfizz/set_model/widows_wine
 # Electric spin feedback (vanilla sounds): a spark + a short conduit zap each cycle
-particle minecraft:electric_spark ~ ~ ~ 0.25 0.3 0.25 0.05 12 force @a[distance=..32]
+particle minecraft:electric_spark ~ ~ ~ 0.25 0.3 0.25 0.05 3 force @a[distance=..32]
 playsound minecraft:block.conduit.ambient.short ambient @a[scores={mgs.zb.in_game=1}] ~ ~ ~ 0.5 1.4
 

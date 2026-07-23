@@ -224,5 +224,9 @@ these are gameplay ideas from Zonweeb, not necessarily tied to the variant.)
 
 - [x] Dying Wish: I was not at 1hp when the effect finished, I was at full health. Fix that.
       DONE — /data can't write player Health; dying_wish_end now clamps max_health to 1 then restores it.
+  - Human update: I tried again, and no the player health is still not at 1 when the effect ends. Use a calculated /damage instead with a damage type that bypasses resistances.
 - [x] Web grenades: it is bugged, sometimes the item displays stays frozen until I launch a new one. it also affect other projectiles (like monkey bomb when I throw them). Like it thinks there are no more items to tick.
       DONE — retired the fragile #grenade_count gate; grenade/tick now iterates @e[tag=grenade] directly.
+- Der Wunderfizz: There is a lag spike when I retrieve the perk from the machine. I'm not sure it's for every perk machine or just the Der Wunderfizz. Find and optimize it! (remember the optimisation skill in this repo)
+- Who's Who: Should work in Single player, and if the player died and have both Quick Revive and Who's Who in solo, Who's Who should have the priority.
+
