@@ -2,7 +2,13 @@
 	"sources": [
 		{"type": "minecraft:single","resource": "minecraft:block/birch_planks","sprite": "mgs:atlas/birch_planks"},
 		{"type": "minecraft:single","resource": "minecraft:block/black_concrete","sprite": "mgs:atlas/black_concrete"},
+		{"type": "minecraft:single","resource": "minecraft:block/blue_concrete","sprite": "mgs:atlas/blue_concrete"},
+		{"type": "minecraft:single","resource": "minecraft:block/blue_terracotta","sprite": "mgs:atlas/blue_terracotta"},
+		{"type": "minecraft:single","resource": "minecraft:block/brown_concrete","sprite": "mgs:atlas/brown_concrete"},
+		{"type": "minecraft:single","resource": "minecraft:block/brown_terracotta","sprite": "mgs:atlas/brown_terracotta"},
 		{"type": "minecraft:single","resource": "minecraft:block/brown_wool","sprite": "mgs:atlas/brown_wool"},
+		{"type": "minecraft:single","resource": "minecraft:block/cyan_concrete","sprite": "mgs:atlas/cyan_concrete"},
+		{"type": "minecraft:single","resource": "minecraft:block/cyan_terracotta","sprite": "mgs:atlas/cyan_terracotta"},
 		{"type": "minecraft:single","resource": "minecraft:block/dark_prismarine","sprite": "mgs:atlas/dark_prismarine"},
 		{"type": "minecraft:single","resource": "minecraft:block/gold_block","sprite": "mgs:atlas/gold_block"},
 		{"type": "minecraft:single","resource": "minecraft:block/gray_concrete","sprite": "mgs:atlas/gray_concrete"},
@@ -31,6 +37,7 @@
 		{"type": "minecraft:single","resource": "minecraft:block/stripped_dark_oak_log","sprite": "mgs:atlas/stripped_dark_oak_log"},
 		{"type": "minecraft:single","resource": "minecraft:block/tinted_glass","sprite": "mgs:atlas/tinted_glass"},
 		{"type": "minecraft:single","resource": "minecraft:block/tnt_side","sprite": "mgs:atlas/tnt_side"},
+		{"type": "minecraft:single","resource": "minecraft:block/white_terracotta","sprite": "mgs:atlas/white_terracotta"},
 		{"type": "minecraft:single","resource": "minecraft:block/yellow_concrete","sprite": "mgs:atlas/yellow_concrete"},
 		{"type": "minecraft:single","resource": "minecraft:block/yellow_terracotta","sprite": "mgs:atlas/yellow_terracotta"}
 	]

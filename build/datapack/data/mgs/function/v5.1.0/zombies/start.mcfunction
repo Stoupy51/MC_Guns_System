@@ -135,6 +135,11 @@ scoreboard players reset * mgs.zb.perk.stamin_up
 scoreboard players reset * mgs.zb.perk.phd_flopper
 scoreboard players reset * mgs.zb.perk.deadshot
 scoreboard players reset * mgs.zb.perk.timeslip
+scoreboard players reset * mgs.zb.perk.electric_cherry
+scoreboard players reset * mgs.zb.perk.tombstone
+scoreboard players reset * mgs.zb.perk.whos_who
+scoreboard players reset * mgs.zb.perk.dying_wish
+scoreboard players reset * mgs.zb.perk.widows_wine
 
 # Chip-in progress never carries between games
 scoreboard players reset * mgs.zb.perkpaid.juggernog
@@ -146,6 +151,11 @@ scoreboard players reset * mgs.zb.perkpaid.stamin_up
 scoreboard players reset * mgs.zb.perkpaid.phd_flopper
 scoreboard players reset * mgs.zb.perkpaid.deadshot
 scoreboard players reset * mgs.zb.perkpaid.timeslip
+scoreboard players reset * mgs.zb.perkpaid.electric_cherry
+scoreboard players reset * mgs.zb.perkpaid.tombstone
+scoreboard players reset * mgs.zb.perkpaid.whos_who
+scoreboard players reset * mgs.zb.perkpaid.dying_wish
+scoreboard players reset * mgs.zb.perkpaid.widows_wine
 
 # Shared random-perk pool: clear the "perk present on map" flags (repopulated by perks/setup)
 scoreboard players set #map_perk_juggernog mgs.data 0
@@ -157,12 +167,23 @@ scoreboard players set #map_perk_stamin_up mgs.data 0
 scoreboard players set #map_perk_phd_flopper mgs.data 0
 scoreboard players set #map_perk_deadshot mgs.data 0
 scoreboard players set #map_perk_timeslip mgs.data 0
+scoreboard players set #map_perk_electric_cherry mgs.data 0
+scoreboard players set #map_perk_tombstone mgs.data 0
+scoreboard players set #map_perk_whos_who mgs.data 0
+scoreboard players set #map_perk_dying_wish mgs.data 0
+scoreboard players set #map_perk_widows_wine mgs.data 0
 
 # Clean slate for the joining players: perk effects survive a game that ended without a proper stop,
 # and the special.* scores can just as well have come from a multiplayer class or the debug menu.
 execute as @a[scores={mgs.zb.in_game=1}] run attribute @s minecraft:max_health base reset
 execute as @a[scores={mgs.zb.in_game=1}] run attribute @s minecraft:movement_speed modifier remove mgs:stamin_up
 execute as @a[scores={mgs.zb.in_game=1}] run attribute @s minecraft:fall_damage_multiplier base reset
+execute as @a[scores={mgs.zb.in_game=1}] run attribute @s minecraft:attack_damage modifier remove mgs:widows_wine
+execute as @a[scores={mgs.zb.in_game=1}] run attribute @s minecraft:attack_damage modifier remove mgs:dying_wish
+tag @a[scores={mgs.zb.in_game=1}] remove mgs.dying_wish_active
+scoreboard players set @a[scores={mgs.zb.in_game=1}] mgs.zb.dw_uses 0
+scoreboard players set @a[scores={mgs.zb.in_game=1}] mgs.zb.dw_cd 0
+scoreboard players set @a[scores={mgs.zb.in_game=1}] mgs.zb.dw_timer 0
 scoreboard players set @a[scores={mgs.zb.in_game=1}] mgs.stam_bonus 0
 tag @a[scores={mgs.zb.in_game=1}] remove mgs.perk.speed_cola
 tag @a[scores={mgs.zb.in_game=1}] remove mgs.perk.double_tap
@@ -176,6 +197,8 @@ scoreboard players set @a[scores={mgs.zb.in_game=1}] mgs.special.additional_shot
 scoreboard players set @a[scores={mgs.zb.in_game=1}] mgs.special.phd_flopper 0
 scoreboard players set @a[scores={mgs.zb.in_game=1}] mgs.special.deadshot 0
 scoreboard players set @a[scores={mgs.zb.in_game=1}] mgs.special.timeslip 0
+scoreboard players set @a[scores={mgs.zb.in_game=1}] mgs.special.electric_cherry 0
+scoreboard players set @a[scores={mgs.zb.in_game=1}] mgs.special.widows_wine 0
 scoreboard players set @a[scores={mgs.zb.in_game=1}] mgs.special.juggernaut 0
 scoreboard players set @a[scores={mgs.zb.in_game=1}] mgs.special.scavenger 0
 scoreboard players set @a[scores={mgs.zb.in_game=1}] mgs.special.flak_jacket 0
@@ -183,6 +206,13 @@ scoreboard players set @a[scores={mgs.zb.in_game=1}] mgs.special.tracker 0
 scoreboard players set @a[scores={mgs.zb.in_game=1}] mgs.special.tactical_mask 0
 scoreboard players set @a[scores={mgs.zb.in_game=1}] mgs.special.overkill 0
 scoreboard players set @a[scores={mgs.zb.in_game=1}] mgs.special.quick_fix 0
+
+kill @e[tag=mgs.wunderfizz_orb]
+
+kill @e[tag=mgs.ww_body]
+kill @e[tag=mgs.ww_hud]
+tag @a remove mgs.ww_active
+data modify storage mgs:zombies ww_inv set value {}
 
 # Reset revive state
 scoreboard players set @a mgs.zb.downed 0
@@ -195,4 +225,6 @@ tag @a remove mgs.downed_spectator
 kill @e[tag=mgs.downed_mannequin]
 kill @e[tag=mgs.downed_hud]
 kill @e[tag=mgs.downed_cam]
+kill @e[tag=mgs.tombstone]
+data modify storage mgs:zombies tombstone_inv set value {}
 

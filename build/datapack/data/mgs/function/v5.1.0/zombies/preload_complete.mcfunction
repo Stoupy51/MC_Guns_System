@@ -77,6 +77,8 @@ execute if data storage mgs:zombies game.map.perks[0] run function mgs:v5.1.0/zo
 # Apply initial Quick Revive solo pricing
 execute if data storage mgs:zombies game.map.perks[0] run function mgs:v5.1.0/zombies/perks/update_quick_revive_price
 
+execute if data storage mgs:zombies game.map.wunderfizz[0] run function mgs:v5.1.0/zombies/wunderfizz/setup
+
 # Setup traps
 execute if data storage mgs:zombies game.map.traps[0] run function mgs:v5.1.0/zombies/traps/setup
 

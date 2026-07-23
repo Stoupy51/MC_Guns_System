@@ -96,6 +96,10 @@ execute if score #any_game_active mgs.data matches 1 unless entity @s[gamemode=s
 # Zombies: detect respawn
 execute if data storage mgs:zombies game{state:"active"} if score @s mgs.zb.in_game matches 1.. if score @s mgs.mp.death_count matches 1.. run function mgs:v5.1.0/zombies/on_respawn
 
+# Dying Wish: tick down the escalating cooldown, and run the active berserk timer
+execute if data storage mgs:zombies game{state:"active"} if score @s mgs.zb.in_game matches 1.. if score @s mgs.zb.dw_cd matches 1.. run scoreboard players remove @s mgs.zb.dw_cd 1
+execute if data storage mgs:zombies game{state:"active"} if score @s mgs.zb.in_game matches 1.. if score @s mgs.zb.dw_timer matches 1.. run function mgs:v5.1.0/zombies/perks/dying_wish_tick
+
 # Class menu: detect right-click on warped fungus on a stick
 execute if score @s mgs.class_menu matches 1.. if items entity @s weapon.mainhand *[custom_data~{mgs:{class_menu:true}}] run function mgs:v5.1.0/multiplayer/select_class
 scoreboard players set @s mgs.class_menu 0
