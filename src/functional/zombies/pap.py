@@ -974,6 +974,11 @@ execute positioned ~ ~-2 ~ run particle dust{color:[0.565,0.0,1.0],scale:1.5} ~ 
 # Weapon glows while collectible, start retreat: slide back to center over 119 ticks (no rotation/size changes)
 data merge entity @n[tag={ns}.pap_weapon_display,distance=..2] {{Glowing:true}}
 
+# Retreat runs at the normal 1x rate even for Timeslip machines (only the upgrade is sped up), and
+# its slides are 20 real ticks apart — restore the full 20-tick interpolation so the retreat glides
+# smoothly (anim/start shortens it to 7 for the sped-up upgrade slides on Timeslip machines)
+data modify entity @n[tag={ns}.pap_weapon_display,distance=..2] teleport_duration set value 20
+
 # Sound + particle burst
 execute positioned ~ ~-2 ~ run particle end_rod ~ ~1.0 ~ 0.5 0.3 0.5 0.1 20 force @a[distance=..48]
 function {ns}:v{version}/zombies/feedback/sound_pap_ready
@@ -1089,14 +1094,17 @@ tellraw @s [{MGS_TAG},{{"text":"Already processing a weapon...","color":"yellow"
 function {ns}:v{version}/zombies/feedback/sound_deny
 """)
 
-	# Timeslip: run two EXTRA anim steps this tick for a Timeslip-owned machine, so the animation
+	# Timeslip: run two EXTRA anim steps this tick for a Timeslip-owned machine, so the UPGRADE
 	# advances 3 ticks per real tick. Stepping (rather than decrementing by 3) preserves every
-	# exact-tick phase trigger — each intermediate timer value is still processed. Each extra step is
-	# re-gated on pap_anim>=1 so a step that just finished the animation (pap_anim set to -1) is not
-	# double-run into negative territory.
+	# exact-tick phase trigger — each intermediate timer value is still processed.
+	# Gated on pap_anim>=206 (the going-in/inside/coming-out upgrade phase, timer 300→206): Timeslip
+	# only speeds up the UPGRADE, never the retreat/collectible phase (1..205). Once the weapon has
+	# emerged and is collectible it retreats at the normal 1x rate, so the collect window is the full
+	# ~10s for Timeslip owners too (this also stops the extras running into the retreat or past the
+	# animation end at -1). The base step still runs it once from game_tick regardless.
 	write_versioned_function("zombies/pap/anim/step_timeslip", f"""
-execute if score @s {ns}.pap_anim matches 1.. run function {ns}:v{version}/zombies/pap/anim/step
-execute if score @s {ns}.pap_anim matches 1.. run function {ns}:v{version}/zombies/pap/anim/step
+execute if score @s {ns}.pap_anim matches 206.. run function {ns}:v{version}/zombies/pap/anim/step
+execute if score @s {ns}.pap_anim matches 206.. run function {ns}:v{version}/zombies/pap/anim/step
 """)
 
 	# Hook PAP animation into the game tick loop.
