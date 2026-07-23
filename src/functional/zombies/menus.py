@@ -23,6 +23,7 @@ def generate_zombies_menus() -> None:
 		dialog_show_btn(f"{ns}:zombies/setup/variant", "🧬 Variant", "Choose the zombies experience"),
 		dialog_run_btn("▶ START", f"/function {ns}:v{version}/zombies/start", "Start the zombies game", "green"),
 		dialog_run_btn("■ STOP", f"/function {ns}:v{version}/zombies/stop", "Stop the zombies game", "red"),
+		dialog_run_btn("⟲ Fast Restart", f"/function {ns}:v{version}/zombies/restart", "Stop and immediately restart with the same map, variant and players", "gold"),
 		dialog_run_btn("👥 Manage Players", f"/function {ns}:v{version}/players/list_zombies", "Add or remove players from the zombies game", "dark_aqua"),
 		# Multiplayer has "Auto Team" to seat everyone at once; this is the zombies equivalent.
 		dialog_run_btn("👥 All Players Join", f"/execute as @a run function {ns}:v{version}/players/zb_join", "Add every online player to the zombies game", "green"),

@@ -1,9 +1,7 @@
 
 #> mgs:v5.1.0/raycast/on_targeted_block
 #
-# @executed	anchored eyes & positioned ^ ^ ^
-#
-# @within	mgs:v5.1.0/raycast/main
+# @within	string in mgs:v5.1.0/raycast/main
 #
 
 # Get current block (https://docs.mcbookshelf.dev/en/latest/modules/block.html#get)

@@ -1,9 +1,9 @@
 
 #> mgs:v5.1.0/utils/update_all_lore
 #
-# @within	mgs:v5.1.0/utils/update_all_lore {slot:"weapon.mainhand"}
+# @within	string in mgs:v5.1.0/utils/update_all_lore
 #
-# @args		slot (string)
+# @args		slot (unknown)
 #
 
 # Rebuild all lore lines for the weapon in the given slot from its current stats

@@ -1,9 +1,7 @@
 
 #> mgs:v5.1.0/raycast/on_exit_point
 #
-# @executed	anchored eyes & positioned ^ ^ ^
-#
-# @within	mgs:v5.1.0/raycast/main
+# @within	string in mgs:v5.1.0/raycast/main
 #
 
 # If entity, calculate headshot and apply damage to entity

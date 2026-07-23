@@ -14,6 +14,7 @@
 		{"label": ["","🧬 ",{"text": "Variant"}],"tooltip": {"text": "Choose the zombies experience"},"action": {"type": "minecraft:show_dialog","dialog": "mgs:v5.1.0/zombies/setup/variant"}},
 		{"label": ["","▶ ",{"text": "START","color": "green"}],"tooltip": {"text": "Start the zombies game"},"action": {"type": "run_command","command": "/function mgs:v5.1.0/zombies/start"}},
 		{"label": ["","■ ",{"text": "STOP","color": "red"}],"tooltip": {"text": "Stop the zombies game"},"action": {"type": "run_command","command": "/function mgs:v5.1.0/zombies/stop"}},
+		{"label": ["","⟲ ",{"text": "Fast Restart","color": "gold"}],"tooltip": {"text": "Stop and immediately restart with the same map, variant and players"},"action": {"type": "run_command","command": "/function mgs:v5.1.0/zombies/restart"}},
 		{"label": ["","👥 ",{"text": "Manage Players","color": "dark_aqua"}],"tooltip": {"text": "Add or remove players from the zombies game"},"action": {"type": "run_command","command": "/function mgs:v5.1.0/players/list_zombies"}},
 		{"label": ["","👥 ",{"text": "All Players Join","color": "green"}],"tooltip": {"text": "Add every online player to the zombies game"},"action": {"type": "run_command","command": "/execute as @a run function mgs:v5.1.0/players/zb_join"}},
 		{"label": ["","+ ",{"text": "Join","color": "yellow"}],"tooltip": {"text": "Join the ongoing zombies game as a late joiner"},"action": {"type": "run_command","command": "/function mgs:v5.1.0/zombies/join_game"}},

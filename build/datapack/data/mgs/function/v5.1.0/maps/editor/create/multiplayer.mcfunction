@@ -1,7 +1,7 @@
 
 #> mgs:v5.1.0/maps/editor/create/multiplayer
 #
-# @within	mgs:v5.1.0/maps/editor/list/multiplayer "hover_event": {"action": "show_text", "value": "Create a new Multiplayer map"}}, "+ Create New Map", "]"]]
+# @within	string in mgs:v5.1.0/maps/editor/list/multiplayer
 #
 
 tellraw @s {"text":"============================================","color":"dark_gray"}

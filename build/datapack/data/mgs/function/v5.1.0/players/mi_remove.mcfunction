@@ -1,7 +1,7 @@
 
 #> mgs:v5.1.0/players/mi_remove
 #
-# @within	mgs:v5.1.0/players/row_missions
+# @within	string in mgs:v5.1.0/players/row_missions
 #
 
 scoreboard players set @s mgs.mi.in_game 0

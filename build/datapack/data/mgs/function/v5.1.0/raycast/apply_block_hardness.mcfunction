@@ -1,8 +1,6 @@
 
 #> mgs:v5.1.0/raycast/apply_block_hardness
 #
-# @executed	anchored eyes & positioned ^ ^ ^
-#
 # @within	mgs:v5.1.0/raycast/on_targeted_block
 #
 

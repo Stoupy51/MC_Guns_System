@@ -1,8 +1,6 @@
 
 #> mgs:v5.1.0/maps/editor/set_door_link_apply
 #
-# @executed	at @s & as @n[tag=mgs.map_element,distance=..10]
-#
 # @within	mgs:v5.1.0/maps/editor/set_door_link_price
 #			mgs:v5.1.0/maps/editor/set_door_link_partial_price
 #			mgs:v5.1.0/maps/editor/set_door_link_back_group_id

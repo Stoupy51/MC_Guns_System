@@ -411,5 +411,5 @@ these are gameplay ideas from Zonweeb, not necessarily tied to the variant.)
 
 # Inbox (quick notes — dump anything here, unorganized "basic" format is fine)
 
-- Zombies: fast restart button in menu, AND when game ends (OP only as suggest command)
+- A
 
