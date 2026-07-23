@@ -20,8 +20,8 @@ execute if score @s mgs.zb.wf.perk matches 10 run function mgs:v5.1.0/zombies/wu
 execute if score @s mgs.zb.wf.perk matches 11 run function mgs:v5.1.0/zombies/wunderfizz/set_model/whos_who
 execute if score @s mgs.zb.wf.perk matches 12 run function mgs:v5.1.0/zombies/wunderfizz/set_model/dying_wish
 execute if score @s mgs.zb.wf.perk matches 13 run function mgs:v5.1.0/zombies/wunderfizz/set_model/widows_wine
-particle minecraft:totem_of_undying ~ ~ ~ 0.3 0.4 0.3 0.2 40 force @a[distance=..48]
-particle minecraft:electric_spark ~ ~ ~ 0.4 0.5 0.4 0.15 40 force @a[distance=..48]
+particle minecraft:totem_of_undying ~ ~ ~ 0.3 0.4 0.3 0.2 10 force @a[distance=..48]
+particle minecraft:electric_spark ~ ~ ~ 0.4 0.5 0.4 0.15 10 force @a[distance=..48]
 playsound minecraft:block.beacon.deactivate ambient @a[scores={mgs.zb.in_game=1}] ~ ~ ~ 0.8 1.4
 playsound minecraft:entity.lightning_bolt.impact ambient @a[scores={mgs.zb.in_game=1}] ~ ~ ~ 0.5 1.7
 function mgs:v5.1.0/zombies/feedback/sound_announce

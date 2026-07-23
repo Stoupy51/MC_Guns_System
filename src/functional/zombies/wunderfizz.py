@@ -168,13 +168,13 @@ scoreboard players operation @s {ns}.zb.wf_pid = #wf_pid_counter {ns}.data
 	## interaction_final - 0.78, hence the negative Y. scale 0.4 keeps the bottle clear of the
 	## alcove walls. Nudge Y ±0.15 if it drifts.
 	write_versioned_function("zombies/wunderfizz/spawn_orb", f"""
-summon minecraft:item_display ~ ~-0.78 ~ {{Tags:["{ns}.wunderfizz_orb","{ns}.wf_orb_new","{ns}.gm_entity"],Glowing:true,billboard:"center",item_display:"fixed",item:{{id:"minecraft:potion",count:1}},transformation:{{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[0.4f,0.4f,0.4f]}}}}
+summon minecraft:item_display ~ ~-0.78 ~ {{Tags:["{ns}.wunderfizz_orb","{ns}.wf_orb_new","{ns}.gm_entity"],Glowing:true,billboard:"center",item_display:"fixed",item:{{id:"minecraft:potion",count:1}},transformation:{{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[0.2f,0.2f,0.2f]}}}}
 """)
 
 	## Per-tick orb processing (hooked into game_tick)
 	write_versioned_function("zombies/wunderfizz/orb_tick", f"""
-particle minecraft:end_rod ~ ~ ~ 0.25 0.25 0.25 0.02 3 force @a[distance=..48]
-particle minecraft:electric_spark ~ ~0.3 ~ 0.3 0.3 0.3 0.05 2 force @a[distance=..48]
+particle minecraft:end_rod ~ ~ ~ 0.25 0.25 0.25 0.02 1 force @a[distance=..48]
+particle minecraft:electric_spark ~ ~0.3 ~ 0.3 0.3 0.3 0.05 1 force @a[distance=..48]
 
 scoreboard players remove @s {ns}.zb.wf.anim 1
 # Timeslip: 2x spin speed. The extra -1 only fires while still spinning (anim>0), and anim starts
@@ -198,7 +198,7 @@ execute unless score #wf_mod {ns}.data matches 0 run return 0
 execute store result score #wf_roll {ns}.data run random value 0..{num_perks - 1}
 {roll_dispatch}
 # Electric spin feedback (vanilla sounds): a spark + a short conduit zap each cycle
-particle minecraft:electric_spark ~ ~ ~ 0.25 0.3 0.25 0.05 12 force @a[distance=..32]
+particle minecraft:electric_spark ~ ~ ~ 0.25 0.3 0.25 0.05 3 force @a[distance=..32]
 playsound minecraft:block.conduit.ambient.short ambient @a[scores={{{ns}.zb.in_game=1}}] ~ ~ ~ 0.5 1.4
 """)
 
@@ -209,8 +209,8 @@ playsound minecraft:block.conduit.ambient.short ambient @a[scores={{{ns}.zb.in_g
 	)
 	write_versioned_function("zombies/wunderfizz/land", f"""
 {land_dispatch}
-particle minecraft:totem_of_undying ~ ~ ~ 0.3 0.4 0.3 0.2 40 force @a[distance=..48]
-particle minecraft:electric_spark ~ ~ ~ 0.4 0.5 0.4 0.15 40 force @a[distance=..48]
+particle minecraft:totem_of_undying ~ ~ ~ 0.3 0.4 0.3 0.2 10 force @a[distance=..48]
+particle minecraft:electric_spark ~ ~ ~ 0.4 0.5 0.4 0.15 10 force @a[distance=..48]
 playsound minecraft:block.beacon.deactivate ambient @a[scores={{{ns}.zb.in_game=1}}] ~ ~ ~ 0.8 1.4
 playsound minecraft:entity.lightning_bolt.impact ambient @a[scores={{{ns}.zb.in_game=1}}] ~ ~ ~ 0.5 1.7
 function {ns}:v{version}/zombies/feedback/sound_announce
@@ -230,7 +230,7 @@ function #{ns}:zombies/on_new_perk
 """)
 
 	## Uncollected after the 10s window (@s = orb): despawn (no refund — the spin already happened)
-	write_versioned_function("zombies/wunderfizz/orb_expire", f"""
+	write_versioned_function("zombies/wunderfizz/orb_expire", """
 particle minecraft:smoke ~ ~ ~ 0.2 0.2 0.2 0.02 10 force @a[distance=..48]
 kill @s
 """)
