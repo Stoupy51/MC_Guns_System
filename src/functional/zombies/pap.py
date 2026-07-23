@@ -41,6 +41,8 @@ scoreboard objectives add {ns}.zb.pap.id dummy
 scoreboard objectives add {ns}.zb.pap.price dummy
 scoreboard objectives add {ns}.zb.pap.power dummy
 scoreboard objectives add {ns}.pap_anim dummy
+# 1 when the player who started this PAP owns Timeslip (animation runs 3x faster)
+scoreboard objectives add {ns}.zb.pap.timeslip dummy
 
 # Per-player PAP tracking (for cleanup when weapon is lost/collected)
 scoreboard objectives add {ns}.zb.pap_s dummy
@@ -815,7 +817,13 @@ execute positioned ~ ~-2 ~ positioned ~ ~0.8 ~ run summon minecraft:item_display
 data modify entity @n[tag={ns}.pap_weapon_display,distance=..2] Rotation set from entity @s Rotation
 $item replace entity @n[tag={ns}.pap_weapon_display,distance=..2] contents from entity @p[tag={ns}.pap_owner] $(slot)
 $item replace entity @p[tag={ns}.pap_owner] $(slot) with minecraft:air
-data modify entity @n[tag={ns}.pap_weapon_display,distance=..2] teleport_duration set value 20
+
+# Timeslip: this PAP runs 3x faster (anim/step called 3x/tick). Flag the machine off the owner and
+# shorten the display's slide interpolation so the going-in/coming-out/retreat slides keep up.
+scoreboard players set @s {ns}.zb.pap.timeslip 0
+execute if score @p[tag={ns}.pap_owner] {ns}.special.timeslip matches 1 run scoreboard players set @s {ns}.zb.pap.timeslip 1
+execute if score @s {ns}.zb.pap.timeslip matches 1 run data modify entity @n[tag={ns}.pap_weapon_display,distance=..2] teleport_duration set value 7
+execute unless score @s {ns}.zb.pap.timeslip matches 1 run data modify entity @n[tag={ns}.pap_weapon_display,distance=..2] teleport_duration set value 20
 
 # Store this machine's slot for later retrieval when player collects the weapon
 execute store result storage {ns}:temp _pap_anim_slot.id int 1 run scoreboard players get @s {ns}.zb.pap.id
@@ -825,9 +833,10 @@ function {ns}:v{version}/zombies/pap/anim/store_slot with storage {ns}:temp _pap
 # Start animation timer: 300 ticks total
 scoreboard players set @s {ns}.pap_anim 300
 
-# Sound: machine accepting weapon
+# Sound: machine accepting weapon (Timeslip owners hear the 3x-speed jingle sting)
 function {ns}:v{version}/zombies/feedback/sound_pap_knuckle_crack
-function {ns}:v{version}/zombies/feedback/sound_pap_jingle_sting
+execute if score @s {ns}.zb.pap.timeslip matches 1 run function {ns}:v{version}/zombies/feedback/sound_pap_jingle_sting_short
+execute unless score @s {ns}.zb.pap.timeslip matches 1 run function {ns}:v{version}/zombies/feedback/sound_pap_jingle_sting
 """)
 
 	# Persist weapon slot keyed by machine ID in zombies storage.
@@ -1080,10 +1089,23 @@ tellraw @s [{MGS_TAG},{{"text":"Already processing a weapon...","color":"yellow"
 function {ns}:v{version}/zombies/feedback/sound_deny
 """)
 
+	# Timeslip: run two EXTRA anim steps this tick for a Timeslip-owned machine, so the animation
+	# advances 3 ticks per real tick. Stepping (rather than decrementing by 3) preserves every
+	# exact-tick phase trigger — each intermediate timer value is still processed. Each extra step is
+	# re-gated on pap_anim>=1 so a step that just finished the animation (pap_anim set to -1) is not
+	# double-run into negative territory.
+	write_versioned_function("zombies/pap/anim/step_timeslip", f"""
+execute if score @s {ns}.pap_anim matches 1.. run function {ns}:v{version}/zombies/pap/anim/step
+execute if score @s {ns}.pap_anim matches 1.. run function {ns}:v{version}/zombies/pap/anim/step
+""")
+
 	# Hook PAP animation into the game tick loop.
 	write_versioned_function("zombies/game_tick", f"""
-# PAP animation tick (all phases use positive timer: 240→0)
+# PAP animation tick (all phases use positive timer: 300→0)
 execute as @e[type=minecraft:interaction,tag={ns}.pap_machine,scores={{{ns}.pap_anim=1..}}] at @s run function {ns}:v{version}/zombies/pap/anim/step
+
+# Timeslip: two extra steps this tick for Timeslip-owned machines (3x total speed)
+execute as @e[type=minecraft:interaction,tag={ns}.pap_machine,scores={{{ns}.zb.pap.timeslip=1,{ns}.pap_anim=1..}}] at @s run function {ns}:v{version}/zombies/pap/anim/step_timeslip
 """)
 
 	# Hook into preload_complete to spawn PAP machine interactions.

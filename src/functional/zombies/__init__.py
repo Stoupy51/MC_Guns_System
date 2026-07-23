@@ -22,6 +22,8 @@ from .revive import generate_revive
 from .round import generate_zombies_rounds
 from .traps import generate_traps
 from .wallbuys import generate_wallbuys
+from .whos_who import generate_whos_who
+from .wunderfizz import generate_wunderfizz
 
 
 # Main function
@@ -46,6 +48,8 @@ def main() -> None:
     generate_doors()
     generate_wallbuys()
     generate_perks()
+    generate_wunderfizz()
+    generate_whos_who()
     generate_revive()
     generate_traps()
     generate_hurt_player()

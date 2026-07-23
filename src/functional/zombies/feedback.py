@@ -29,6 +29,11 @@ playsound minecraft:block.beacon.activate ambient @a[scores={{{ns}.zb.in_game=1}
 playsound {ns}:zombies/mystery_box/box_spin ambient @a[scores={{{ns}.zb.in_game=1}}] ~ ~ ~ 0.1 1.0
 playsound {ns}:zombies/mystery_box/music_box ambient @a[scores={{{ns}.zb.in_game=1}}] ~ ~ ~ 1.0 1.0
 """)
+	# Timeslip spin: the box tune sped up to match the 2x pull (music_box_short is exclusive to this)
+	write_versioned_function("zombies/feedback/sound_box_spin_short", f"""
+playsound {ns}:zombies/mystery_box/box_spin ambient @a[scores={{{ns}.zb.in_game=1}}] ~ ~ ~ 0.1 1.0
+playsound {ns}:zombies/mystery_box/music_box_short ambient @a[scores={{{ns}.zb.in_game=1}}] ~ ~ ~ 1.0 1.0
+""")
 	write_versioned_function("zombies/feedback/sound_box_ready", f"""
 playsound minecraft:entity.player.levelup ambient @a[scores={{{ns}.zb.in_game=1}}] ~ ~ ~ 0.7 1.0
 """)
@@ -71,6 +76,10 @@ playsound {ns}:zombies/pap/upgrade ambient @a[scores={{{ns}.zb.in_game=1}}] ~ ~ 
 """)
 	write_versioned_function("zombies/feedback/sound_pap_jingle_sting", f"""
 playsound {ns}:zombies/pap/jingle_sting ambient @a[scores={{{ns}.zb.in_game=1}}] ~ ~ ~ 1.0 1.0
+""")
+	# Timeslip ×3 PAP: the 3×-speed jingle asset (ffmpeg atempo=1.5,2.0) so the sting fits the shorter animation.
+	write_versioned_function("zombies/feedback/sound_pap_jingle_sting_short", f"""
+playsound {ns}:zombies/pap/jingle_sting_short ambient @a[scores={{{ns}.zb.in_game=1}}] ~ ~ ~ 1.0 1.0
 """)
 	write_versioned_function("zombies/feedback/sound_pap_ready", f"""
 playsound {ns}:zombies/pap/ready ambient @a[scores={{{ns}.zb.in_game=1}}] ~ ~ ~ 1.0 1.0

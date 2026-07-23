@@ -5,6 +5,7 @@
 #
 # @within	mgs:v5.1.0/zombies/doors/on_right_click
 #			mgs:v5.1.0/zombies/doors/announce_progress
+#			mgs:v5.1.0/zombies/wunderfizz/land
 #			mgs:v5.1.0/zombies/traps/on_right_click
 #
 

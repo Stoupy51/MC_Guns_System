@@ -19,7 +19,13 @@ execute positioned ~ ~-2 ~ positioned ~ ~0.8 ~ run summon minecraft:item_display
 data modify entity @n[tag=mgs.pap_weapon_display,distance=..2] Rotation set from entity @s Rotation
 $item replace entity @n[tag=mgs.pap_weapon_display,distance=..2] contents from entity @p[tag=mgs.pap_owner] $(slot)
 $item replace entity @p[tag=mgs.pap_owner] $(slot) with minecraft:air
-data modify entity @n[tag=mgs.pap_weapon_display,distance=..2] teleport_duration set value 20
+
+# Timeslip: this PAP runs 3x faster (anim/step called 3x/tick). Flag the machine off the owner and
+# shorten the display's slide interpolation so the going-in/coming-out/retreat slides keep up.
+scoreboard players set @s mgs.zb.pap.timeslip 0
+execute if score @p[tag=mgs.pap_owner] mgs.special.timeslip matches 1 run scoreboard players set @s mgs.zb.pap.timeslip 1
+execute if score @s mgs.zb.pap.timeslip matches 1 run data modify entity @n[tag=mgs.pap_weapon_display,distance=..2] teleport_duration set value 7
+execute unless score @s mgs.zb.pap.timeslip matches 1 run data modify entity @n[tag=mgs.pap_weapon_display,distance=..2] teleport_duration set value 20
 
 # Store this machine's slot for later retrieval when player collects the weapon
 execute store result storage mgs:temp _pap_anim_slot.id int 1 run scoreboard players get @s mgs.zb.pap.id
@@ -29,7 +35,8 @@ function mgs:v5.1.0/zombies/pap/anim/store_slot with storage mgs:temp _pap_anim_
 # Start animation timer: 300 ticks total
 scoreboard players set @s mgs.pap_anim 300
 
-# Sound: machine accepting weapon
+# Sound: machine accepting weapon (Timeslip owners hear the 3x-speed jingle sting)
 function mgs:v5.1.0/zombies/feedback/sound_pap_knuckle_crack
-function mgs:v5.1.0/zombies/feedback/sound_pap_jingle_sting
+execute if score @s mgs.zb.pap.timeslip matches 1 run function mgs:v5.1.0/zombies/feedback/sound_pap_jingle_sting_short
+execute unless score @s mgs.zb.pap.timeslip matches 1 run function mgs:v5.1.0/zombies/feedback/sound_pap_jingle_sting
 

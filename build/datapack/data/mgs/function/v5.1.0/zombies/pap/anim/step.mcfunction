@@ -4,6 +4,7 @@
 # @executed	at @s
 #
 # @within	mgs:v5.1.0/zombies/game_tick [ at @s ]
+#			mgs:v5.1.0/zombies/pap/anim/step_timeslip
 #
 
 # Decrement timer

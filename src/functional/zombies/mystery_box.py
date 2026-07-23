@@ -421,7 +421,9 @@ tag @n[tag={ns}.mb_display_new] remove {ns}.mb_display_new
 # Open this box's lid + open/spin sounds + a private announce to the buyer
 function {ns}:v{version}/zombies/mystery_box/open_lid
 function {ns}:v{version}/zombies/feedback/sound_box_open
-function {ns}:v{version}/zombies/feedback/sound_box_spin
+# Timeslip owners get the sped-up spin tune to match their 2x pull
+execute unless score @s {ns}.special.timeslip matches 1.. run function {ns}:v{version}/zombies/feedback/sound_box_spin
+execute if score @s {ns}.special.timeslip matches 1.. run function {ns}:v{version}/zombies/feedback/sound_box_spin_short
 tellraw @s [{MGS_TAG},{{"text":"Mystery Box spinning...","color":"light_purple"}}]
 """)
 
@@ -830,6 +832,13 @@ data modify storage smithed.actionbar:input message set value {json:[{"text":"�
 function #smithed.actionbar:message
 """)
 
+	# Ready + the weapon name is known: prompt the pick-up by name, e.g. "🎲 Pick-up Ray Gun"
+	# (_mb_hover_name is the ready display item's item_name, read in hover_at_box)
+	write_versioned_function("zombies/mystery_box/hud_ready_named", f"""
+data modify storage smithed.actionbar:input message set value {{json:[{{"text":"🎲 ","color":"light_purple"}},{{"text":"Pick-up ","color":"green"}},{{"storage":"{ns}:temp","nbt":"_mb_hover_name","interpret":true}}],priority:"conditional",freeze:5}}
+function #smithed.actionbar:message
+""")
+
 	write_versioned_function("zombies/mystery_box/hud_spinning", """
 data modify storage smithed.actionbar:input message set value {json:[{"text":"🎲 Mystery Box","color":"light_purple"},{"text":" - ","color":"gray"},{"text":"Spinning...","color":"yellow"}],priority:"conditional",freeze:5}
 function #smithed.actionbar:message
@@ -864,6 +873,10 @@ execute at @n[tag=bs.interaction.target] run function {ns}:v{version}/zombies/my
 	## Per-box hover state (@s = player, positioned at the box)
 	write_versioned_function("zombies/mystery_box/hover_at_box", f"""
 execute if entity @n[tag={ns}.mb_display,distance=..3,scores={{{ns}.mb.anim=1..}}] run return run function {ns}:v{version}/zombies/mystery_box/hud_spinning
+# Ready: name the weapon waiting to be collected (read its item_name; fall back to a generic prompt)
+data remove storage {ns}:temp _mb_hover_name
+execute if entity @n[tag={ns}.mb_display,distance=..3] run data modify storage {ns}:temp _mb_hover_name set from entity @n[tag={ns}.mb_display,distance=..3] item.components."minecraft:item_name"
+execute if entity @n[tag={ns}.mb_display,distance=..3] if data storage {ns}:temp _mb_hover_name run return run function {ns}:v{version}/zombies/mystery_box/hud_ready_named
 execute if entity @n[tag={ns}.mb_display,distance=..3] run return run function {ns}:v{version}/zombies/mystery_box/hud_ready
 function {ns}:v{version}/zombies/mystery_box/hud_price
 """)

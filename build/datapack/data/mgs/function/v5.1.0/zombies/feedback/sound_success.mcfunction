@@ -10,6 +10,8 @@
 #			mgs:v5.1.0/zombies/pap/free_scope_reroll
 #			mgs:v5.1.0/zombies/wallbuys/msg_purchased
 #			mgs:v5.1.0/zombies/perks/on_right_click
+#			mgs:v5.1.0/zombies/wunderfizz/collect
+#			mgs:v5.1.0/zombies/whos_who/revive_complete
 #
 
 playsound minecraft:entity.experience_orb.pickup ambient @s ~ ~ ~ 0.8 1.25
