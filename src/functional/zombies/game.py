@@ -330,6 +330,10 @@ function {ns}:v{version}/zombies/revive/on_down
 		write_versioned_function("player/tick", f"""
 # Zombies: detect respawn
 execute if data storage {ns}:zombies game{{state:"active"}} if score @s {ns}.zb.in_game matches 1.. if score @s {ns}.mp.death_count matches 1.. run function {ns}:v{version}/zombies/on_respawn
+
+# Dying Wish: tick down the escalating cooldown, and run the active berserk timer
+execute if data storage {ns}:zombies game{{state:"active"}} if score @s {ns}.zb.in_game matches 1.. if score @s {ns}.zb.dw_cd matches 1.. run scoreboard players remove @s {ns}.zb.dw_cd 1
+execute if data storage {ns}:zombies game{{state:"active"}} if score @s {ns}.zb.in_game matches 1.. if score @s {ns}.zb.dw_timer matches 1.. run function {ns}:v{version}/zombies/perks/dying_wish_tick
 """)
 
 		# Game Over ─────────────────────────────────────────────────

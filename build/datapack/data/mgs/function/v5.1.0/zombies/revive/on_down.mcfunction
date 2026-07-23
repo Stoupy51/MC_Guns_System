@@ -6,6 +6,16 @@
 # @within	mgs:v5.1.0/zombies/on_respawn
 #
 
+# Dying Wish (highest priority): if owned and off cooldown, cheat death with a berserk instead of
+# going down. Returns before any downed state is set. Must stay ABOVE the Who's Who branch.
+execute if score @s mgs.zb.perk.dying_wish matches 1 if score @s mgs.zb.dw_cd matches ..0 run return run function mgs:v5.1.0/zombies/perks/dying_wish_trigger
+
+# Who's Who (co-op only): keep playing as a doppelganger with a pistol instead of entering the
+# downed state; the body drops as a revivable mannequin. Above Tombstone. Disabled solo (a solo
+# doppelganger down is game over — falls through to the normal down below).
+execute store result score #ww_ingame mgs.data if entity @a[scores={mgs.zb.in_game=1}]
+execute if score @s mgs.zb.perk.whos_who matches 1 if score #ww_ingame mgs.data matches 2.. run return run function mgs:v5.1.0/zombies/whos_who/on_down
+
 # Mark player as downed
 scoreboard players set @s mgs.zb.downed 1
 scoreboard players set @s mgs.zb.bleed 1200
@@ -61,6 +71,17 @@ function mgs:v5.1.0/zombies/revive/tp_to_death with storage mgs:temp
 # Remove temp tags so future queries don't accidentally match
 tag @e[tag=mgs.downed_new] remove mgs.downed_new
 tag @e[tag=mgs.downed_hud_new] remove mgs.downed_hud_new
+
+# Electric Cherry: discharge a full-strength shock at the down spot (BO behavior), before the
+# perk is stripped. used==cap==1 makes it the maximum-size discharge.
+scoreboard players set #ec_used mgs.data 1
+scoreboard players set #ec_cap mgs.data 1
+execute if score @s mgs.special.electric_cherry matches 1 at @s run function mgs:v5.1.0/zombies/perks/electric_cherry_shock
+
+# Tombstone: spawn a recovery marker at the death spot (snapshots the owner's perks HERE, before
+# they are stripped). No-op solo or when unowned. Only reached on the normal-down path (Who's Who,
+# which returns earlier, takes priority so a marker never spawns for a doppelganger).
+execute if score @s mgs.zb.perk.tombstone matches 1 run function mgs:v5.1.0/zombies/perks/tombstone_on_down
 
 # Remove all perks when going down
 function mgs:v5.1.0/zombies/perks/lose_all

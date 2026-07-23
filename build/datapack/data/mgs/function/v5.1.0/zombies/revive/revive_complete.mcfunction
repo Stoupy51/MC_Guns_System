@@ -50,6 +50,9 @@ execute unless score @s mgs.zb.perk.juggernog matches 1.. run attribute @s minec
 effect give @s minecraft:instant_health 1 255 true
 scoreboard players set @s mgs.stam_seen 0
 
+# Tombstone: revived → discard the pending marker + perk snapshot (nothing to recover)
+function mgs:v5.1.0/zombies/perks/tombstone_on_revived
+
 # Announce
 title @s title ["❤"]
 title @s subtitle [{"translate":"mgs.you_have_been_revived","color":"green"}]

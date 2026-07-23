@@ -1,9 +1,10 @@
 
 #> mgs:v5.1.0/zombies/inventory/give_respawn_loadout
 #
-# @executed	as @a[scores={mgs.zb.in_game=1},gamemode=spectator]
+# @executed	as @e[type=player,sort=random] & at @s
 #
-# @within	mgs:v5.1.0/zombies/revive/do_round_respawn
+# @within	mgs:v5.1.0/zombies/whos_who/on_down
+#			mgs:v5.1.0/zombies/revive/do_round_respawn
 #
 
 function mgs:v5.1.0/zombies/inventory/give_starting_loadout

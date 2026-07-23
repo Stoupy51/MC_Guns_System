@@ -1,8 +1,6 @@
 
 #> mgs:v5.1.0/zombies/perks/pool/try_index/deadshot
 #
-# @executed	at @s
-#
 # @within	mgs:v5.1.0/zombies/perks/pool/choose_iter
 #
 

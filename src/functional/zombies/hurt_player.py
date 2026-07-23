@@ -28,6 +28,9 @@ execute unless score @s {ns}.zb.in_game matches 1.. run return fail
 
 # Launch player downward to counter the slight jump boost from knockback.
 function {ns}:v{version}/zombies/hurt_player/launch_downward
+
+# Widow's Wine passive: consume a web grenade and burst webbing around the hurt owner.
+execute if score @s {ns}.special.widows_wine matches 1 run function {ns}:v{version}/zombies/perks/widows_on_hurt
 """)
 
 	# Function to apply downward motion to the player
