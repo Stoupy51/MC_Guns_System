@@ -164,7 +164,8 @@ PERK_DEFINITIONS: dict[str, JsonDict] = {
 		"message_color": "aqua",
 		"text_color": "dark_aqua",
 		# No purchase-time effect. On going down the owner keeps playing as a doppelganger (revive/on_down
-		# branch) with just a pistol and can revive their own body. Disabled solo. See whos_who_* below.
+		# branch) with just a pistol and can revive their own body. Works solo (and takes priority over
+		# solo Quick Revive). See whos_who_* below.
 	},
 	"dying_wish": {
 		"display_name": "Dying Wish",
@@ -222,7 +223,7 @@ PERK_DESCRIPTIONS: dict[str, list[str]] = {
 	"timeslip": ["Machines and power-ups spin faster.", "Pack-a-Punch, box & Wunderfizz speed up.", "Grenades throw on a shorter cooldown."],
 	"electric_cherry": ["Reloading discharges a shockwave.", "Damages and stuns nearby zombies.", "Stronger the emptier your magazine."],
 	"tombstone": ["If you bleed out, leave a Tombstone.", "Return to it the next round to recover", "your perks and full inventory."],
-	"whos_who": ["When downed, fight on as a clone.", "Revive your own body to fully recover.", "Co-op only."],
+	"whos_who": ["When downed, fight on as a clone.", "Revive your own body to fully recover.", "Works solo or co-op."],
 	"dying_wish": ["Cheat death when you would go down.", "Brief berserk (resistance & strength),", "then drop to 1 HP. Long cooldown."],
 	"widows_wine": ["Grenades become sticky web grenades.", "Being hit bursts webbing around you.", "Stronger melee knife."],
 }
