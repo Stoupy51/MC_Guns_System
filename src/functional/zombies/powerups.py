@@ -7,7 +7,6 @@
 from stewbeet import JsonDict, LootTable, Mem, set_json_encoder, write_load_file, write_versioned_function
 
 from ..helpers import MGS_TAG
-from .perks import PERK_DEFINITIONS
 
 # Each power-up is a dict with required keys:
 #   item         - placeholder item id
@@ -51,8 +50,6 @@ TIMED_POWERUPS: dict[str, JsonDict] = {k: v for k, v in POWERUP_TYPES.items() if
 def generate_powerups() -> None:
 	ns: str = Mem.ctx.project_id
 	version: str = Mem.ctx.project_version
-	perk_ids: list[str] = list(PERK_DEFINITIONS.keys())
-	num_perks: int = len(perk_ids)
 
 	# Helper: a power-up sound played for all in-game players (volume kept modest on purpose).
 	def pu_snd(name: str, vol: float = 0.7, pitch: float = 1.0, at_s: bool = False) -> str:
@@ -426,62 +423,24 @@ particle minecraft:flame ~ ~1 ~ 0.3 0.5 0.3 0.02 12 force @a[scores={{{ns}.zb.in
 particle minecraft:soul_fire_flame ~ ~1 ~ 0.3 0.5 0.3 0.02 6 force @a[scores={{{ns}.zb.in_game=1}},distance=..48]
 """)
 
-	## 7. Random Perk
-	count_unowned_lines: str = "\n".join(
-		# A perk is "available" when the player does NOT own it. Perk scores are *reset*
-		# (unset) at game start, so a freshly-reset perk does not `matches 0` — we must
-		# test `unless ... matches 1` to treat unset (and 0) as not-owned.
-		f"execute unless score @p[tag={ns}.pu_collecting] {ns}.zb.perk.{perk_id} matches 1 run scoreboard players add #pu_perk_avail {ns}.data 1"
-		for perk_id in perk_ids
-	)
-	iter_dispatch_lines: str = ""
-	for i, perk_id in enumerate(perk_ids):
-		iter_dispatch_lines += f"execute if score #pu_perk_roll {ns}.data matches {i} run function {ns}:v{version}/zombies/powerups/try_perk/{perk_id}\n"
-		iter_dispatch_lines += f"execute if score #pu_perk_applied {ns}.data matches 1 run return 0\n"
-
+	## 7. Random Perk — draws from the shared available-perk pool (perks placed on THIS map,
+	## unowned by the collector). See zombies/perks.py `pool/*` (README task 4).
 	write_versioned_function("zombies/powerups/activate/random_perk", f"""
-# Count unowned perks (bail early if all owned)
-scoreboard players set #pu_perk_avail {ns}.data 0
-{count_unowned_lines}
-execute if score #pu_perk_avail {ns}.data matches 0 run return run tellraw @p[tag={ns}.pu_collecting] [{MGS_TAG},{{"text":"You already own every perk!","color":"yellow"}}]
+# Pick a random unowned perk from the map's placed perks for the collecting player
+tag @p[tag={ns}.pu_collecting] add {ns}.pool_target
+scoreboard players set #pool_all_perks {ns}.data 0
+function {ns}:v{version}/zombies/perks/pool/choose
+tag @a[tag={ns}.pool_target] remove {ns}.pool_target
 
-# Pick a random starting index and walk through the list to find an unowned perk
-execute store result score #pu_perk_roll {ns}.data run random value 0..{num_perks - 1}
-scoreboard players set #pu_perk_applied {ns}.data 0
-scoreboard players set #pu_perk_tries {ns}.data 0
-function {ns}:v{version}/zombies/powerups/random_perk_iter
+# Nothing available: the collector already owns every perk placed on this map
+execute if score #pool_chosen {ns}.data matches ..-1 run return run tellraw @p[tag={ns}.pu_collecting] [{MGS_TAG},{{"text":"You already own every perk on the map!","color":"yellow"}}]
 
-# Announce if a perk was successfully granted
-execute if score #pu_perk_applied {ns}.data matches 1 run tellraw @a[scores={{{ns}.zb.in_game=1}}] [{MGS_TAG},{{"text":"Random Perk dropped for ","color":"light_purple"}},{{"selector":"@p[tag={ns}.pu_collecting]","color":"light_purple","bold":true}},{{"text":"!","color":"light_purple"}}]
-execute if score #pu_perk_applied {ns}.data matches 1 run {pu_snd("random_perk")}
-""")
+# Grant the chosen perk to the collector
+execute as @p[tag={ns}.pu_collecting] run function {ns}:v{version}/zombies/perks/apply with storage {ns}:temp _pool
 
-	write_versioned_function("zombies/powerups/random_perk_iter", f"""
-# Safety counter: prevent infinite recursion (max {num_perks + 1} iterations)
-scoreboard players add #pu_perk_tries {ns}.data 1
-execute if score #pu_perk_tries {ns}.data matches {num_perks + 1}.. run return 0
-
-# Stop if a perk has already been applied in a previous iteration
-execute if score #pu_perk_applied {ns}.data matches 1 run return 0
-
-# Try the perk at the current roll index; each try_perk function sets #pu_perk_applied on success
-{iter_dispatch_lines}
-# No perk applied at this index (already owned): advance roll and recurse
-scoreboard players add #pu_perk_roll {ns}.data 1
-execute if score #pu_perk_roll {ns}.data matches {num_perks}.. run scoreboard players set #pu_perk_roll {ns}.data 0
-function {ns}:v{version}/zombies/powerups/random_perk_iter
-""")
-
-	for perk_id in perk_ids:
-		write_versioned_function(f"zombies/powerups/try_perk/{perk_id}", f"""
-# Return early if the collecting player already owns this perk
-execute if score @p[tag={ns}.pu_collecting] {ns}.zb.perk.{perk_id} matches 1 run return 0
-
-# Apply the perk as the collecting player
-execute as @p[tag={ns}.pu_collecting] run function {ns}:v{version}/zombies/perks/apply {{perk_id:"{perk_id}"}}
-
-# Mark as applied so the iteration stops
-scoreboard players set #pu_perk_applied {ns}.data 1
+# Announce + sound
+tellraw @a[scores={{{ns}.zb.in_game=1}}] [{MGS_TAG},{{"text":"Random Perk dropped for ","color":"light_purple"}},{{"selector":"@p[tag={ns}.pu_collecting]","color":"light_purple","bold":true}},{{"text":"!","color":"light_purple"}}]
+{pu_snd("random_perk")}
 """)
 
 	## 8. Free PAP

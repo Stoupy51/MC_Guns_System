@@ -85,6 +85,56 @@ PERK_DEFINITIONS: dict[str, JsonDict] = {
 			"scoreboard players set @s {ns}.stam_bonus 0",
 		],
 	},
+	"phd_flopper": {
+		"display_name": "PhD Flopper",
+		"message": "🧪 PhD Flopper! Immune to explosions & fall damage",
+		"message_color": "dark_purple",
+		"text_color": "dark_purple",
+		# Fall damage is nulled by an attribute; explosive self-damage is gated on the special score
+		# in the shared explosion paths (weapon/projectile.py, weapon/grenade.py) and trap damage.
+		"commands": [
+			"attribute @s minecraft:fall_damage_multiplier base set 0",
+			"scoreboard players set @s {ns}.special.phd_flopper 1",
+		],
+		"removal_commands": [
+			"attribute @s minecraft:fall_damage_multiplier base reset",
+			"scoreboard players set @s {ns}.special.phd_flopper 0",
+		],
+	},
+	"deadshot": {
+		"display_name": "Deadshot Daiquiri",
+		"message": "🎯 Deadshot Daiquiri! +Accuracy, -Recoil",
+		"message_color": "dark_green",
+		"text_color": "dark_green",
+		# Read in the weapon spread path (raycast.py) and the recoil path (kick.py): both scale to 65%.
+		"commands": [
+			"scoreboard players set @s {ns}.special.deadshot 1",
+		],
+		"removal_commands": [
+			"scoreboard players set @s {ns}.special.deadshot 0",
+		],
+	},
+	"timeslip": {
+		"display_name": "Timeslip",
+		"message": "⏳ Timeslip! Faster traps & Mystery Box",
+		"message_color": "light_purple",
+		"text_color": "light_purple",
+		# Owner-only speed-ups keyed off the special score: trap cooldown x0.75 (traps.py) and Mystery
+		# Box spin x2 (mystery_box.py). Base factor is x2 (no official BO4 number; "about half the time"
+		# ≈ 2x, matching the music_box_short jingle ratio) — EXCEPT Pack-a-Punch, which is x3 because its
+		# 300-tick animation is already long.
+		# TODO(zombies README task 5): Pack-a-Punch x3 (rescale the 300-tick anim phases + swap the
+		# jingle to zombies/pap/jingle_sting_short, the 3x asset already generated) and grenade throw
+		# cooldown x0.5 are still pending — both need in-engine timing verification (PAP has many
+		# exact-tick phase triggers; the grenade throw-cooldown score the README points at does not exist
+		# yet and needs to be located/clarified first).
+		"commands": [
+			"scoreboard players set @s {ns}.special.timeslip 1",
+		],
+		"removal_commands": [
+			"scoreboard players set @s {ns}.special.timeslip 0",
+		],
+	},
 }
 
 
@@ -100,6 +150,7 @@ def perk_effects_teardown(ns: str, selector: str) -> str:
 	return f"""
 execute as {selector} run attribute @s minecraft:max_health base reset
 execute as {selector} run attribute @s minecraft:movement_speed modifier remove {ns}:stamin_up
+execute as {selector} run attribute @s minecraft:fall_damage_multiplier base reset
 scoreboard players set {selector} {ns}.stam_bonus 0
 tag {selector} remove {ns}.perk.speed_cola
 tag {selector} remove {ns}.perk.double_tap
@@ -200,6 +251,9 @@ data modify storage {ns}:temp _pk_store.name set from storage {ns}:temp _pk_iter
 execute if data storage {ns}:temp _pk_iter[0].name run data modify storage {ns}:temp _pk_store.name set from storage {ns}:temp _pk_iter[0].name
 function {ns}:v{version}/zombies/perks/store_data with storage {ns}:temp _pk_store
 
+# Mark this perk as present on the map (shared random-perk pool: power-up + Der Wunderfizz)
+function {ns}:v{version}/zombies/perks/pool/mark with storage {ns}:temp _pk_store
+
 # Register Bookshelf events
 execute as @n[tag={ns}.pk_new] run function #bs.interaction:on_right_click {{run:"function {ns}:v{version}/zombies/perks/on_right_click",executor:"source"}}
 execute as @n[tag={ns}.pk_new] run function #bs.interaction:on_hover {{run:"function {ns}:v{version}/zombies/perks/on_hover",executor:"source"}}
@@ -239,6 +293,79 @@ $summon minecraft:interaction $(x) $(y) $(z) {{width:1.2f,height:-2.0f,response:
 
 	write_versioned_function("zombies/perks/store_data", f"""
 $data modify storage {ns}:zombies perk_data."$(id)" set value {{perk_id:"$(perk_id)",name:"$(name)"}}
+""")
+
+	## ── Shared "available perk pool" helper ─────────────────────────────────────
+	# One source of truth for "which perks can this player still be given", used by BOTH the
+	# random-perk power-up (powerups.py) and Der Wunderfizz (zombies README task 4).
+	# A perk is available for the target player when:
+	#   - the perk has a machine placed on this map (#map_perk_<id> == 1), OR the caller set
+	#     #pool_all_perks (Origins-style "roll across every perk"), AND
+	#   - the target player (tagged {ns}.pool_target) does not already own it.
+	# `mark` is called once per placed machine during setup; the flags are cleared at game start.
+	perk_ids: list[str] = list(PERK_DEFINITIONS.keys())
+	num_perks: int = len(perk_ids)
+
+	def pool_avail_block(perk_id: str) -> str:
+		""" Set #pool_slot to 1 iff `perk_id` is available for @n[tag=pool_target], else 0. """
+		return (
+			f"scoreboard players set #pool_slot {ns}.data 0\n"
+			f"execute if score #map_perk_{perk_id} {ns}.data matches 1 run scoreboard players set #pool_slot {ns}.data 1\n"
+			f"execute if score #pool_all_perks {ns}.data matches 1 run scoreboard players set #pool_slot {ns}.data 1\n"
+			f"execute if score @n[tag={ns}.pool_target] {ns}.zb.perk.{perk_id} matches 1 run scoreboard players set #pool_slot {ns}.data 0"
+		)
+
+	## Mark a placed perk as present on the map (macro: perk_id)
+	write_versioned_function("zombies/perks/pool/mark", f"""
+$scoreboard players set #map_perk_$(perk_id) {ns}.data 1
+""")
+
+	## Count available perks into #pool_avail (target = @n[tag={ns}.pool_target], mode = #pool_all_perks)
+	count_lines: str = "\n".join(
+		f"{pool_avail_block(perk_id)}\nscoreboard players operation #pool_avail {ns}.data += #pool_slot {ns}.data"
+		for perk_id in perk_ids
+	)
+	write_versioned_function("zombies/perks/pool/count", f"""
+scoreboard players set #pool_avail {ns}.data 0
+{count_lines}
+""")
+
+	## Pick one random available perk. Output: #pool_chosen (0..n-1 index, or -1 if none) and
+	## storage {ns}:temp _pool.perk_id (only set on success). Caller tags the target + sets #pool_all_perks.
+	write_versioned_function("zombies/perks/pool/choose", f"""
+function {ns}:v{version}/zombies/perks/pool/count
+scoreboard players set #pool_chosen {ns}.data -1
+data modify storage {ns}:temp _pool set value {{}}
+execute if score #pool_avail {ns}.data matches ..0 run return 0
+
+# Random start index, then walk the list until an available perk is found
+execute store result score #pool_roll {ns}.data run random value 0..{num_perks - 1}
+scoreboard players set #pool_tries {ns}.data 0
+function {ns}:v{version}/zombies/perks/pool/choose_iter
+""")
+
+	iter_lines: str = ""
+	for i, perk_id in enumerate(perk_ids):
+		iter_lines += f"execute if score #pool_roll {ns}.data matches {i} run function {ns}:v{version}/zombies/perks/pool/try_index/{perk_id}\n"
+		iter_lines += f"execute if score #pool_chosen {ns}.data matches 0.. run return 0\n"
+	write_versioned_function("zombies/perks/pool/choose_iter", f"""
+# Safety counter: at most one full loop over the perk list
+scoreboard players add #pool_tries {ns}.data 1
+execute if score #pool_tries {ns}.data matches {num_perks + 1}.. run return 0
+execute if score #pool_chosen {ns}.data matches 0.. run return 0
+
+{iter_lines}
+# Nothing available at this index: advance and recurse
+scoreboard players add #pool_roll {ns}.data 1
+execute if score #pool_roll {ns}.data matches {num_perks}.. run scoreboard players set #pool_roll {ns}.data 0
+function {ns}:v{version}/zombies/perks/pool/choose_iter
+""")
+
+	for i, perk_id in enumerate(perk_ids):
+		write_versioned_function(f"zombies/perks/pool/try_index/{perk_id}", f"""
+{pool_avail_block(perk_id)}
+execute if score #pool_slot {ns}.data matches 1 run scoreboard players set #pool_chosen {ns}.data {i}
+execute if score #pool_slot {ns}.data matches 1 run data modify storage {ns}:temp _pool.perk_id set value "{perk_id}"
 """)
 
 	## Right-click handler (executor: "source" = player)
@@ -424,12 +551,19 @@ function #smithed.actionbar:message
 """)  # noqa: E501
 
 	## Hook into game start: reset perk scoreboards
+	map_pool_reset: str = "\n".join(
+		f"scoreboard players set #map_perk_{perk_id} {ns}.data 0"
+		for perk_id in PERK_DEFINITIONS
+	)
 	write_versioned_function("zombies/start", f"""
 # Reset perk scoreboards for all known score holders (including offline players).
 {perk_reset_all_players}
 
 # Chip-in progress never carries between games
 {perkpaid_reset_all_players}
+
+# Shared random-perk pool: clear the "perk present on map" flags (repopulated by perks/setup)
+{map_pool_reset}
 
 # Clean slate for the joining players: perk effects survive a game that ended without a proper stop,
 # and the special.* scores can just as well have come from a multiplayer class or the debug menu.

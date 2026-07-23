@@ -190,6 +190,9 @@ execute if data storage {ns}:zombies game{{state:"active"}} if entity @n[tag={ns
 # Flak Jacket perk: halve explosive direct-hit damage to a perked MP player
 execute if entity @n[tag={ns}.direct_hit,type=player,scores={{{ns}.mp.in_game=1,{ns}.special.flak_jacket=1}}] run scoreboard players operation #direct_dmg {ns}.data /= #2 {ns}.data
 
+# PhD Flopper perk: a perked (zombies) player takes no explosive direct-hit damage
+execute if entity @n[tag={ns}.direct_hit,type=player,scores={{{ns}.special.phd_flopper=1}}] run scoreboard players set #direct_dmg {ns}.data 0
+
 # Instant kill: one-shot a non-immune victim when the shooter has it active (mirrors the area path).
 # Without this, explosives with little/no blast radius (or a direct projectile strike) never instant-kill.
 # Never applied to players while a zombies game is active (would bypass the explosion cap above).
@@ -311,6 +314,9 @@ execute if data storage {ns}:zombies game{{state:"active"}} if entity @s[type=pl
 
 # Flak Jacket perk: halve explosive area damage to a perked MP player
 execute if entity @s[type=player,scores={{{ns}.mp.in_game=1,{ns}.special.flak_jacket=1}}] run scoreboard players operation #expl_dmg {ns}.data /= #2 {ns}.data
+
+# PhD Flopper perk: a perked (zombies) player takes no explosive area damage
+execute if entity @s[type=player,scores={{{ns}.special.phd_flopper=1}}] run scoreboard players set #expl_dmg {ns}.data 0
 
 # Skip if damage is negligible (less than 0.1)
 execute if score #expl_dmg {ns}.data matches ..0 run return fail

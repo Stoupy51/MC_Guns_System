@@ -100,6 +100,9 @@ scoreboard players operation @s {ns}.pending_clicks = #burst_clicks {ns}.data
 # Check which type of movement the player is doing
 function {ns}:v{version}/raycast/accuracy/get_value
 
+# Deadshot Daiquiri (zombies perk): tighten weapon spread to 65%
+execute if score @s {ns}.special.deadshot matches 1 run function {ns}:v{version}/raycast/accuracy/deadshot_scale
+
 # Shoot with raycast & launch cloud particle forward
 tag @s add bs.raycast.omit
 execute anchored eyes positioned ^ ^ ^2 run particle minecraft:cloud ~ ~ ~ ^ ^ ^1000000000 0.00000002 0 force @a[tag=!bs.raycast.omit,distance=..32]
@@ -421,6 +424,16 @@ execute if predicate {ns}:v{version}/is_moving run return run data modify storag
 
 # Else, return base accuracy
 data modify storage {ns}:gun accuracy set from storage {ns}:gun all.stats.{ACCURACY_BASE}
+""")
+
+    # Deadshot Daiquiri: scale the resolved spread value to 65% (read back by apply_spread per pellet)
+    write_versioned_function("raycast/accuracy/deadshot_scale", f"""
+execute store result score #ds_acc {ns}.data run data get storage {ns}:gun accuracy 1000
+scoreboard players set #ds_num {ns}.data 65
+scoreboard players set #ds_den {ns}.data 100
+scoreboard players operation #ds_acc {ns}.data *= #ds_num {ns}.data
+scoreboard players operation #ds_acc {ns}.data /= #ds_den {ns}.data
+execute store result storage {ns}:gun accuracy double 0.001 run scoreboard players get #ds_acc {ns}.data
 """)
 
     # Apply random rotation spread

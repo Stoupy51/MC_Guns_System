@@ -77,6 +77,12 @@ scoreboard objectives add mgs.special.quick_reload dummy
 scoreboard objectives add mgs.special.quick_swap dummy
 # Additional shots: number of extra projectiles per shot (Double Tap perk)
 scoreboard objectives add mgs.special.additional_shots dummy
+# PhD Flopper perk (0/1): immune to explosive self-damage (fall damage handled by attribute)
+scoreboard objectives add mgs.special.phd_flopper dummy
+# Deadshot Daiquiri perk (0/1): 65% weapon spread + recoil
+scoreboard objectives add mgs.special.deadshot dummy
+# Timeslip perk (0/1): faster traps / Mystery Box / Pack-a-Punch for the owner
+scoreboard objectives add mgs.special.timeslip dummy
 # Multiplayer loadout perk flags (0/1), set on loadout apply
 scoreboard objectives add mgs.special.juggernaut dummy
 scoreboard objectives add mgs.special.scavenger dummy
@@ -242,6 +248,8 @@ team modify mgs.horde collisionRule pushOtherTeams
 scoreboard objectives add mgs.mb.box dummy
 # Spin animation timer carried by each pull display (>0 spinning, <=0 ready window)
 scoreboard objectives add mgs.mb.anim dummy
+# 1 when the buyer of this pull owns Timeslip (spin runs 2x faster for their display)
+scoreboard objectives add mgs.mb.timeslip dummy
 # Whether this pull will end in a box move (teddy bear) — only the active box, never Fire Sale
 scoreboard objectives add mgs.mb.willmove dummy
 # Stable per-player id, assigned lazily on first pull, so a pull display can record WHICH player
@@ -334,6 +342,9 @@ scoreboard objectives add mgs.zb.perk.double_tap dummy
 scoreboard objectives add mgs.zb.perk.quick_revive dummy
 scoreboard objectives add mgs.zb.perk.mule_kick dummy
 scoreboard objectives add mgs.zb.perk.stamin_up dummy
+scoreboard objectives add mgs.zb.perk.phd_flopper dummy
+scoreboard objectives add mgs.zb.perk.deadshot dummy
+scoreboard objectives add mgs.zb.perk.timeslip dummy
 
 # Per-player chip-in progress
 scoreboard objectives add mgs.zb.perkpaid.juggernog dummy
@@ -342,6 +353,9 @@ scoreboard objectives add mgs.zb.perkpaid.double_tap dummy
 scoreboard objectives add mgs.zb.perkpaid.quick_revive dummy
 scoreboard objectives add mgs.zb.perkpaid.mule_kick dummy
 scoreboard objectives add mgs.zb.perkpaid.stamin_up dummy
+scoreboard objectives add mgs.zb.perkpaid.phd_flopper dummy
+scoreboard objectives add mgs.zb.perkpaid.deadshot dummy
+scoreboard objectives add mgs.zb.perkpaid.timeslip dummy
 
 # Revive system scoreboards
 scoreboard objectives add mgs.zb.downed dummy
@@ -361,6 +375,8 @@ scoreboard objectives add mgs.zb.trap.power dummy
 scoreboard objectives add mgs.zb.trap.type dummy
 scoreboard objectives add mgs.zb.trap.dur dummy
 scoreboard objectives add mgs.zb.trap.cd_max dummy
+# 1 when the player who activated this trap owns Timeslip (its cooldown is scaled to 75%)
+scoreboard objectives add mgs.zb.trap.timeslip dummy
 scoreboard objectives add mgs.zb.trap.timer dummy
 scoreboard objectives add mgs.zb.trap.cd dummy
 scoreboard objectives add mgs.zb.trap.rx dummy

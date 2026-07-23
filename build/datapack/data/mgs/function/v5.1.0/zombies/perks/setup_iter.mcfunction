@@ -45,6 +45,9 @@ data modify storage mgs:temp _pk_store.name set from storage mgs:temp _pk_iter[0
 execute if data storage mgs:temp _pk_iter[0].name run data modify storage mgs:temp _pk_store.name set from storage mgs:temp _pk_iter[0].name
 function mgs:v5.1.0/zombies/perks/store_data with storage mgs:temp _pk_store
 
+# Mark this perk as present on the map (shared random-perk pool: power-up + Der Wunderfizz)
+function mgs:v5.1.0/zombies/perks/pool/mark with storage mgs:temp _pk_store
+
 # Register Bookshelf events
 execute as @n[tag=mgs.pk_new] run function #bs.interaction:on_right_click {run:"function mgs:v5.1.0/zombies/perks/on_right_click",executor:"source"}
 execute as @n[tag=mgs.pk_new] run function #bs.interaction:on_hover {run:"function mgs:v5.1.0/zombies/perks/on_hover",executor:"source"}

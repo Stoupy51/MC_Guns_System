@@ -31,6 +31,10 @@ scoreboard players operation @s mgs.zb.points -= #trap_price mgs.data
 # Activate trap (set timer = duration on the marker)
 execute as @e[type=minecraft:marker,tag=mgs.trap_center] if score @s mgs.zb.trap.id = #trap_id mgs.data run scoreboard players operation @s mgs.zb.trap.timer = @s mgs.zb.trap.dur
 
+# Timeslip: remember whether this activator earns the reduced cooldown (checked at deactivation)
+execute unless score @s mgs.special.timeslip matches 1.. as @e[type=minecraft:marker,tag=mgs.trap_center] if score @s mgs.zb.trap.id = #trap_id mgs.data run scoreboard players set @s mgs.zb.trap.timeslip 0
+execute if score @s mgs.special.timeslip matches 1.. as @e[type=minecraft:marker,tag=mgs.trap_center] if score @s mgs.zb.trap.id = #trap_id mgs.data run scoreboard players set @s mgs.zb.trap.timeslip 1
+
 # Announce
 tellraw @a[scores={mgs.zb.in_game=1}] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.trap_activated_for","color":"gold"},{"score":{"name":"#trap_price","objective":"mgs.data"},"color":"yellow"},[{"text":" ","color":"gold"}, {"translate":"mgs.points_3"}]]
 function mgs:v5.1.0/zombies/feedback/sound_announce

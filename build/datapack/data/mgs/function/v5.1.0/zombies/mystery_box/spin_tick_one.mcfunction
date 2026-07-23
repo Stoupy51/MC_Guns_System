@@ -8,6 +8,11 @@
 
 scoreboard players remove @s mgs.mb.anim 1
 
+# Timeslip: 2x spin speed. The extra -1 only fires inside the cycling phase (1..103), so the 104
+# float-up trigger still runs; anim is even every tick after the first, so the doubled step always
+# lands exactly on the anim==0 result and never overshoots into the reset window.
+execute if score @s mgs.mb.timeslip matches 1 if score @s mgs.mb.anim matches 1..103 run scoreboard players remove @s mgs.mb.anim 1
+
 # Start the float-up one tick after spawn (avoids same-tick interpolation glitches)
 execute if score @s mgs.mb.anim matches 104 run data merge entity @s {transformation:{translation:[0f,0.8f,0f]},start_interpolation:0,interpolation_duration:200}
 

@@ -15,11 +15,9 @@ execute store result score #random mgs.data run random value 1..5
 scoreboard players set #has_vehicle mgs.data 0
 execute on vehicle run scoreboard players set #has_vehicle mgs.data 1
 
+# Deadshot Daiquiri (zombies perk): route to the reduced-recoil (65%) kick variants
+execute if score @s mgs.special.deadshot matches 1 run return run function mgs:v5.1.0/kicks/apply_ds
+
 # Switch case
-execute if score #kick mgs.data matches ..0 run function mgs:v5.1.0/kicks/type_0
-execute if score #kick mgs.data matches 1 run function mgs:v5.1.0/kicks/type_1
-execute if score #kick mgs.data matches 2 run function mgs:v5.1.0/kicks/type_2
-execute if score #kick mgs.data matches 3 run function mgs:v5.1.0/kicks/type_3
-execute if score #kick mgs.data matches 4 run function mgs:v5.1.0/kicks/type_4
-execute if score #kick mgs.data matches 5.. run function mgs:v5.1.0/kicks/type_5
+function mgs:v5.1.0/kicks/apply
 

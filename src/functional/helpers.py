@@ -20,19 +20,24 @@ MGS_TAG: str = r'[{"text":"","color":"gold"},"[",{"text":"MGS"},"] "]'
 # MUST wipe the whole set when its game starts — otherwise Quick Reload bought as a multiplayer perk
 # (or handed out by the debug menu) is still active when the next zombies game begins.
 SPECIAL_SCORES: dict[str, str] = {
-	"instant_kill": "Instant kill: duration in ticks (kills entities in one hit, except {ns}.no_instant_kill tagged)",
-	"infinite_ammo": "Infinite ammo: duration in ticks (don't consume ammo, set ammo to max capacity)",
-	"double_points": "Double points: duration in ticks (double points earned from kills/hits in zombies)",
-	"quick_reload": "Quick reload: percentage faster reload (20 = 20% faster, 50 = 50% faster)",
-	"quick_swap": "Quick swap: percentage faster weapon switch (20 = 20% faster, 50 = 50% faster)",
-	"additional_shots": "Additional shots: number of extra projectiles per shot (Double Tap perk)",
-	"juggernaut": "Multiplayer loadout perk flags (0/1), set on loadout apply",
-	"scavenger": "",
-	"flak_jacket": "",
-	"tracker": "",
-	"tactical_mask": "",
-	"overkill": "",
-	"quick_fix": "",
+	"instant_kill": r"Instant kill: duration in ticks (kills entities in one hit, except {ns}.no_instant_kill tagged)",
+	"infinite_ammo": r"Infinite ammo: duration in ticks (don't consume ammo, set ammo to max capacity)",
+	"double_points": r"Double points: duration in ticks (double points earned from kills/hits in zombies)",
+	"quick_reload": r"Quick reload: percentage faster reload (20 = 20% faster, 50 = 50% faster)",
+	"quick_swap": r"Quick swap: percentage faster weapon switch (20 = 20% faster, 50 = 50% faster)",
+	"additional_shots": r"Additional shots: number of extra projectiles per shot (Double Tap perk)",
+	"phd_flopper": r"PhD Flopper perk: immune to explosive self-damage (fall damage handled by attribute)",
+	"deadshot": r"Deadshot Daiquiri perk: 65% weapon spread + recoil",
+	"timeslip": r"Timeslip perk: faster traps / Mystery Box / Pack-a-Punch for the owner",
+	"electric_cherry": r"Electric Cherry perk: reload discharges a shock that damages/stuns nearby zombies",
+	"widows_wine": r"Widow's Wine perk: web grenades + web-on-hurt passive + stronger knife",
+	"juggernaut": r"Multiplayer loadout perk flags, set on loadout apply",
+	"scavenger": r"",
+	"flak_jacket": r"",
+	"tracker": r"",
+	"tactical_mask": r"",
+	"overkill": r"",
+	"quick_fix": r"",
 }
 
 

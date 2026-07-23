@@ -6,23 +6,19 @@
 # @within	mgs:v5.1.0/zombies/powerups/dispatch_activate
 #
 
-# Count unowned perks (bail early if all owned)
-scoreboard players set #pu_perk_avail mgs.data 0
-execute unless score @p[tag=mgs.pu_collecting] mgs.zb.perk.juggernog matches 1 run scoreboard players add #pu_perk_avail mgs.data 1
-execute unless score @p[tag=mgs.pu_collecting] mgs.zb.perk.speed_cola matches 1 run scoreboard players add #pu_perk_avail mgs.data 1
-execute unless score @p[tag=mgs.pu_collecting] mgs.zb.perk.double_tap matches 1 run scoreboard players add #pu_perk_avail mgs.data 1
-execute unless score @p[tag=mgs.pu_collecting] mgs.zb.perk.quick_revive matches 1 run scoreboard players add #pu_perk_avail mgs.data 1
-execute unless score @p[tag=mgs.pu_collecting] mgs.zb.perk.mule_kick matches 1 run scoreboard players add #pu_perk_avail mgs.data 1
-execute unless score @p[tag=mgs.pu_collecting] mgs.zb.perk.stamin_up matches 1 run scoreboard players add #pu_perk_avail mgs.data 1
-execute if score #pu_perk_avail mgs.data matches 0 run return run tellraw @p[tag=mgs.pu_collecting] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.you_already_own_every_perk","color":"yellow"}]
+# Pick a random unowned perk from the map's placed perks for the collecting player
+tag @p[tag=mgs.pu_collecting] add mgs.pool_target
+scoreboard players set #pool_all_perks mgs.data 0
+function mgs:v5.1.0/zombies/perks/pool/choose
+tag @a[tag=mgs.pool_target] remove mgs.pool_target
 
-# Pick a random starting index and walk through the list to find an unowned perk
-execute store result score #pu_perk_roll mgs.data run random value 0..5
-scoreboard players set #pu_perk_applied mgs.data 0
-scoreboard players set #pu_perk_tries mgs.data 0
-function mgs:v5.1.0/zombies/powerups/random_perk_iter
+# Nothing available: the collector already owns every perk placed on this map
+execute if score #pool_chosen mgs.data matches ..-1 run return run tellraw @p[tag=mgs.pu_collecting] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.you_already_own_every_perk_on_the_map","color":"yellow"}]
 
-# Announce if a perk was successfully granted
-execute if score #pu_perk_applied mgs.data matches 1 run tellraw @a[scores={mgs.zb.in_game=1}] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.random_perk_dropped_for","color":"light_purple"},{"selector":"@p[tag=mgs.pu_collecting]","color":"light_purple","bold":true},{"text":"!","color":"light_purple"}]
-execute if score #pu_perk_applied mgs.data matches 1 run execute as @a[scores={mgs.zb.in_game=1}] at @s run playsound mgs:zombies/powerups/random_perk ambient @s ~ ~ ~ 0.7 1.0
+# Grant the chosen perk to the collector
+execute as @p[tag=mgs.pu_collecting] run function mgs:v5.1.0/zombies/perks/apply with storage mgs:temp _pool
+
+# Announce + sound
+tellraw @a[scores={mgs.zb.in_game=1}] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.random_perk_dropped_for","color":"light_purple"},{"selector":"@p[tag=mgs.pu_collecting]","color":"light_purple","bold":true},{"text":"!","color":"light_purple"}]
+execute as @a[scores={mgs.zb.in_game=1}] at @s run playsound mgs:zombies/powerups/random_perk ambient @s ~ ~ ~ 0.7 1.0
 

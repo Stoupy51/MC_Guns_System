@@ -18,6 +18,13 @@ scoreboard players set @s mgs.zb.perk.mule_kick 0
 execute if score @s mgs.zb.perk.stamin_up matches 1 run attribute @s minecraft:movement_speed modifier remove mgs:stamin_up
 execute if score @s mgs.zb.perk.stamin_up matches 1 run scoreboard players set @s mgs.stam_bonus 0
 scoreboard players set @s mgs.zb.perk.stamin_up 0
+execute if score @s mgs.zb.perk.phd_flopper matches 1 run attribute @s minecraft:fall_damage_multiplier base reset
+execute if score @s mgs.zb.perk.phd_flopper matches 1 run scoreboard players set @s mgs.special.phd_flopper 0
+scoreboard players set @s mgs.zb.perk.phd_flopper 0
+execute if score @s mgs.zb.perk.deadshot matches 1 run scoreboard players set @s mgs.special.deadshot 0
+scoreboard players set @s mgs.zb.perk.deadshot 0
+execute if score @s mgs.zb.perk.timeslip matches 1 run scoreboard players set @s mgs.special.timeslip 0
+scoreboard players set @s mgs.zb.perk.timeslip 0
 tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.all_perks_lost","color":"red"}]
 
 # Remove the perk display items from the inventory right away

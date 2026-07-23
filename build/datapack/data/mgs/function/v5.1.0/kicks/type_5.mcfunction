@@ -3,7 +3,7 @@
 #
 # @executed	as @e[type=player,sort=random] & at @s
 #
-# @within	mgs:v5.1.0/kicks/main
+# @within	mgs:v5.1.0/kicks/apply
 #
 
 execute if score #has_vehicle mgs.data matches 0 if score #random mgs.data matches 1 run tp @s ~ ~ ~ ~-0.17 ~-2.5

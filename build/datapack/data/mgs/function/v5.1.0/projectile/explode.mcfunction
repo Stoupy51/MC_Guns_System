@@ -64,6 +64,9 @@ execute if data storage mgs:zombies game{state:"active"} if entity @n[tag=mgs.di
 # Flak Jacket perk: halve explosive direct-hit damage to a perked MP player
 execute if entity @n[tag=mgs.direct_hit,type=player,scores={mgs.mp.in_game=1,mgs.special.flak_jacket=1}] run scoreboard players operation #direct_dmg mgs.data /= #2 mgs.data
 
+# PhD Flopper perk: a perked (zombies) player takes no explosive direct-hit damage
+execute if entity @n[tag=mgs.direct_hit,type=player,scores={mgs.special.phd_flopper=1}] run scoreboard players set #direct_dmg mgs.data 0
+
 # Instant kill: one-shot a non-immune victim when the shooter has it active (mirrors the area path).
 # Without this, explosives with little/no blast radius (or a direct projectile strike) never instant-kill.
 # Never applied to players while a zombies game is active (would bypass the explosion cap above).

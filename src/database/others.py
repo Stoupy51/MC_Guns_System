@@ -18,6 +18,19 @@ def override_model(color: str) -> JsonDict:
     }
 
 
+def override_model_2tone(accent: str, accent2: str) -> JsonDict:
+    """ Perk-machine recolor when no single dye reads right (README task 5 taste calls). Pass the
+    full block texture paths for the two accent slots directly. """
+    return {
+        "parent": "mgs:item/perk_machine",
+        "textures": {
+            "accent": accent,
+            "accent2": accent2,
+            "particle": accent2,
+        }
+    }
+
+
 def power_switch_on_model() -> JsonDict:
     """ "On" breaker model: same box as the base, but the lever is flipped to the DOWN position
     and the handle + indicator light recolored green/lit. The lever bar is physically mirrored
@@ -78,6 +91,10 @@ def main() -> None:
     Item(id="perk_machine_quick_revive", override_model=override_model("light_blue"))
     Item(id="perk_machine_mule_kick", override_model=override_model("green"))
     Item(id="perk_machine_stamin_up", override_model=override_model("orange"))
+    Item(id="perk_machine_phd_flopper", override_model=override_model("purple"))
+    Item(id="perk_machine_deadshot", override_model=override_model_2tone(
+        "minecraft:block/green_terracotta", "minecraft:block/dark_prismarine"))
+    Item(id="perk_machine_timeslip", override_model=override_model("magenta"))
 
     # Power switch / breaker box (vanilla textures). "_on" shares the box geometry but flips the
     # lever to the down position and recolors the handle + indicator light to green/lit.

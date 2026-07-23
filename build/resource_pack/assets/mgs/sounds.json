@@ -927,6 +927,10 @@
 		"subtitle": "zombies/pap/jingle_sting",
 		"sounds": [{"name": "mgs:zombies/pap/jingle_sting","stream": true}]
 	},
+	"zombies/pap/jingle_sting_short": {
+		"subtitle": "zombies/pap/jingle_sting_short",
+		"sounds": ["mgs:zombies/pap/jingle_sting_short"]
+	},
 	"zombies/pap/knuckle_crack": {
 		"subtitle": "zombies/pap/knuckle_crack",
 		"sounds": ["mgs:zombies/pap/knuckle_crack"]

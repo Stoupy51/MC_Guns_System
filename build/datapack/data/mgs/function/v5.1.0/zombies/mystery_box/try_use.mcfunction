@@ -31,6 +31,11 @@ scoreboard players operation @n[tag=mgs.mb_display_new] mgs.mb.box = #cur_box mg
 scoreboard players set @n[tag=mgs.mb_display_new] mgs.mb.anim 105
 scoreboard players operation @n[tag=mgs.mb_display_new] mgs.mb.willmove = #mb_will_move mgs.data
 scoreboard players operation @n[tag=mgs.mb_display_new] mgs.mb.buyer = @s mgs.mb.pid
+
+# Timeslip: this buyer's pull spins 2x faster
+scoreboard players set @n[tag=mgs.mb_display_new] mgs.mb.timeslip 0
+execute if score @s mgs.special.timeslip matches 1.. run scoreboard players set @n[tag=mgs.mb_display_new] mgs.mb.timeslip 1
+
 tag @n[tag=mgs.mb_display_new] remove mgs.mb_display_new
 
 # Open this box's lid + open/spin sounds + a private announce to the buyer

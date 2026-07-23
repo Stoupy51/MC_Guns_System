@@ -69,6 +69,9 @@ execute if data storage mgs:zombies game{state:"active"} if entity @s[type=playe
 # Flak Jacket perk: halve explosive area damage to a perked MP player
 execute if entity @s[type=player,scores={mgs.mp.in_game=1,mgs.special.flak_jacket=1}] run scoreboard players operation #expl_dmg mgs.data /= #2 mgs.data
 
+# PhD Flopper perk: a perked (zombies) player takes no explosive area damage
+execute if entity @s[type=player,scores={mgs.special.phd_flopper=1}] run scoreboard players set #expl_dmg mgs.data 0
+
 # Skip if damage is negligible (less than 0.1)
 execute if score #expl_dmg mgs.data matches ..0 run return fail
 

@@ -35,6 +35,8 @@ scoreboard objectives add {ns}.zb.trap.power dummy
 scoreboard objectives add {ns}.zb.trap.type dummy
 scoreboard objectives add {ns}.zb.trap.dur dummy
 scoreboard objectives add {ns}.zb.trap.cd_max dummy
+# 1 when the player who activated this trap owns Timeslip (its cooldown is scaled to 75%)
+scoreboard objectives add {ns}.zb.trap.timeslip dummy
 scoreboard objectives add {ns}.zb.trap.timer dummy
 scoreboard objectives add {ns}.zb.trap.cd dummy
 scoreboard objectives add {ns}.zb.trap.rx dummy
@@ -167,6 +169,10 @@ scoreboard players operation @s {ns}.zb.points -= #trap_price {ns}.data
 # Activate trap (set timer = duration on the marker)
 execute as @e[type=minecraft:marker,tag={ns}.trap_center] if score @s {ns}.zb.trap.id = #trap_id {ns}.data run scoreboard players operation @s {ns}.zb.trap.timer = @s {ns}.zb.trap.dur
 
+# Timeslip: remember whether this activator earns the reduced cooldown (checked at deactivation)
+execute unless score @s {ns}.special.timeslip matches 1.. as @e[type=minecraft:marker,tag={ns}.trap_center] if score @s {ns}.zb.trap.id = #trap_id {ns}.data run scoreboard players set @s {ns}.zb.trap.timeslip 0
+execute if score @s {ns}.special.timeslip matches 1.. as @e[type=minecraft:marker,tag={ns}.trap_center] if score @s {ns}.zb.trap.id = #trap_id {ns}.data run scoreboard players set @s {ns}.zb.trap.timeslip 1
+
 # Announce
 tellraw @a[scores={{{ns}.zb.in_game=1}}] [{MGS_TAG},{{"text":"Trap activated for ","color":"gold"}},{{"score":{{"name":"#trap_price","objective":"{ns}.data"}},"color":"yellow"}},{{"text":" points.","color":"gold"}}]
 function {ns}:v{version}/zombies/feedback/sound_announce
@@ -226,6 +232,17 @@ execute unless score @s {ns}.zb.trap.timer matches 0.. run scoreboard players se
 # that clock is a stopwatch recreated on every datapack load, so a stored deadline outlived its
 # clock and left the trap permanently unusable after any /reload.
 execute if score @s {ns}.zb.trap.timer matches 0 run scoreboard players operation @s {ns}.zb.trap.cd = @s {ns}.zb.trap.cd_max
+
+# Timeslip: the activator's trap cooldown is scaled to 75%
+execute if score @s {ns}.zb.trap.timer matches 0 if score @s {ns}.zb.trap.timeslip matches 1 run function {ns}:v{version}/zombies/traps/apply_timeslip_cd
+""")
+
+	## Scale the just-set cooldown to 75% (Timeslip). @s = trap center marker.
+	write_versioned_function("zombies/traps/apply_timeslip_cd", f"""
+scoreboard players set #ts_num {ns}.data 3
+scoreboard players set #ts_den {ns}.data 4
+scoreboard players operation @s {ns}.zb.trap.cd *= #ts_num {ns}.data
+scoreboard players operation @s {ns}.zb.trap.cd /= #ts_den {ns}.data
 """)
 
 	## Count a trap's cooldown down. @s = trap center marker.
@@ -242,8 +259,8 @@ scoreboard players operation @s {ns}.zb.trap.cd -= #tick_delta {ns}.data
 data modify storage {ns}:temp _trap_dmg.type set value "minecraft:on_fire"
 $execute positioned ~-$(rx) ~-$(ry) ~-$(rz) as @e[tag={ns}.zombie_round,dx=$(sx),dy=$(sy),dz=$(sz)] run function {ns}:v{version}/zombies/traps/kill_zombie
 
-# Players inside the trap: 5 fire damage
-$execute positioned ~-$(rx) ~-$(ry) ~-$(rz) as @a[scores={{{ns}.zb.in_game=1}},gamemode=!creative,gamemode=!spectator,dx=$(sx),dy=$(sy),dz=$(sz)] run damage @s 5 minecraft:on_fire
+# Players inside the trap: 5 fire damage (PhD Flopper owners are immune)
+$execute positioned ~-$(rx) ~-$(ry) ~-$(rz) as @a[scores={{{ns}.zb.in_game=1,{ns}.special.phd_flopper=0}},gamemode=!creative,gamemode=!spectator,dx=$(sx),dy=$(sy),dz=$(sz)] run damage @s 5 minecraft:on_fire
 """)
 
 	write_versioned_function("zombies/traps/damage_electric", f"""
@@ -251,8 +268,8 @@ $execute positioned ~-$(rx) ~-$(ry) ~-$(rz) as @a[scores={{{ns}.zb.in_game=1}},g
 data modify storage {ns}:temp _trap_dmg.type set value "minecraft:lightning_bolt"
 $execute positioned ~-$(rx) ~-$(ry) ~-$(rz) as @e[tag={ns}.zombie_round,dx=$(sx),dy=$(sy),dz=$(sz)] run function {ns}:v{version}/zombies/traps/kill_zombie
 
-# Players inside the trap: 5 electric damage
-$execute positioned ~-$(rx) ~-$(ry) ~-$(rz) as @a[scores={{{ns}.zb.in_game=1}},gamemode=!creative,gamemode=!spectator,dx=$(sx),dy=$(sy),dz=$(sz)] run damage @s 5 minecraft:lightning_bolt
+# Players inside the trap: 5 electric damage (PhD Flopper owners are immune)
+$execute positioned ~-$(rx) ~-$(ry) ~-$(rz) as @a[scores={{{ns}.zb.in_game=1,{ns}.special.phd_flopper=0}},gamemode=!creative,gamemode=!spectator,dx=$(sx),dy=$(sy),dz=$(sz)] run damage @s 5 minecraft:lightning_bolt
 """)
 
 	## Per-zombie lethal damage: 1000% of this zombie's max health (damage type set by caller in _trap_dmg.type)
