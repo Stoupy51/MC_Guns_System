@@ -9,6 +9,14 @@
 # A doppelganger's unrevived body is forfeited (same rule as going down again)
 execute if entity @s[tag=mgs.ww_active] run function mgs:v5.1.0/zombies/whos_who/forfeit
 
+# A revive perk saves you from the void instead of a full elimination. Checked BEFORE lose_all
+# strips the perks. Who's Who takes priority over solo Quick Revive (same order as revive/on_down):
+# - Who's Who: keep playing as a doppelganger; the body can't live in the void, so it drops at a spawn.
+# - Solo Quick Revive: in a solo game with uses left, spend one and respawn at a spawn point.
+execute if score @s mgs.zb.perk.whos_who matches 1 run return run function mgs:v5.1.0/zombies/revive/void_revive_whos_who
+execute store result score #zb_ingame_total mgs.data if entity @a[scores={mgs.zb.in_game=1}]
+execute if entity @s[tag=mgs.perk.quick_revive] if score #zb_ingame_total mgs.data matches ..1 unless score @s mgs.zb.qr_uses matches 3.. run return run function mgs:v5.1.0/zombies/revive/void_revive_solo_qr
+
 # Count it as a down and strip perks (same as a normal down/bleed-out)
 scoreboard players add @s mgs.zb.downs 1
 function mgs:v5.1.0/zombies/perks/lose_all
