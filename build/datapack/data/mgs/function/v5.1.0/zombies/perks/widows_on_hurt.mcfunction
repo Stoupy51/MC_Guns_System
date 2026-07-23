@@ -6,8 +6,8 @@
 # @within	mgs:v5.1.0/zombies/hurt_player/on_hurt
 #
 
-# Need at least one web grenade in the lethal slot
-execute unless items entity @s hotbar.7 *[custom_data~{mgs:{grenade_type:"web"}}] run return fail
+# Need at least one web grenade in the lethal slot (grenade_type lives under the item's stats compound)
+execute unless items entity @s hotbar.7 *[custom_data~{mgs:{stats:{grenade_type:"web"}}}] run return fail
 
 # 2s (40t) internal cooldown
 execute store result score #ww_now mgs.data run time query gametime

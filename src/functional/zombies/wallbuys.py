@@ -259,7 +259,7 @@ function {ns}:v{version}/zombies/feedback/sound_deny
 	## Widow's Wine lethal buy: refill/purchase web grenades regardless of the bought lethal type.
 	## Already holding webs -> refill flow (deny if full); otherwise full price for 4 fresh webs.
 	write_versioned_function("zombies/wallbuys/buy_lethal_web", f"""
-execute if items entity @s hotbar.7 *[custom_data~{{{ns}:{{grenade_type:"web"}}}}] run return run function {ns}:v{version}/zombies/wallbuys/refill_lethal with storage {ns}:temp _wb_weapon
+execute if items entity @s hotbar.7 *[custom_data~{{{ns}:{{stats:{{grenade_type:"web"}}}}}}] run return run function {ns}:v{version}/zombies/wallbuys/refill_lethal with storage {ns}:temp _wb_weapon
 scoreboard players operation #wb_price {ns}.data = #wb_buy_price {ns}.data
 execute unless score @s {ns}.zb.points >= #wb_price {ns}.data run return run function {ns}:v{version}/zombies/wallbuys/deny_not_enough_points
 scoreboard players operation @s {ns}.zb.points -= #wb_price {ns}.data

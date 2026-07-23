@@ -713,10 +713,11 @@ function {ns}:v{version}/zombies/traps/apply_trap_damage with storage {ns}:temp 
 $execute as @e[tag={ns}.zombie_round,distance=..$(radius)] run function {ns}:v{version}/zombies/perks/widows_web_hit
 """)
 
-	## Per-zombie webbing: 20s heavy slowness + weakness, cobweb particle, light damage. @s = zombie.
+	## Per-zombie webbing: 5s stun (heavy slowness) + weakness, cobweb particle, light damage. @s = zombie.
+	## NOTE /effect give durations are in SECONDS, not ticks — 5 = 5s (was 400 = ~6.7min "frozen forever").
 	write_versioned_function("zombies/perks/widows_web_hit", f"""
-effect give @s minecraft:slowness 400 5 true
-effect give @s minecraft:weakness 400 2 true
+effect give @s minecraft:slowness 5 5 true
+effect give @s minecraft:weakness 5 2 true
 particle minecraft:item{{item:"minecraft:cobweb"}} ~ ~0.5 ~ 0.3 0.5 0.3 0.05 8
 execute store result storage {ns}:temp _ww_dmg.amount int 1 run attribute @s minecraft:max_health get 0.15
 data modify storage {ns}:temp _ww_dmg.type set value "minecraft:generic"
@@ -727,8 +728,8 @@ function {ns}:v{version}/zombies/traps/apply_trap_damage with storage {ns}:temp 
 	## themselves (no self-damage — the burst only targets zombies). Called from hurt_player on_hurt.
 	## Internal 2s cooldown (gametime stamp) so a single flurry of hits doesn't drain the whole stock.
 	write_versioned_function("zombies/perks/widows_on_hurt", f"""
-# Need at least one web grenade in the lethal slot
-execute unless items entity @s hotbar.7 *[custom_data~{{{ns}:{{grenade_type:"web"}}}}] run return fail
+# Need at least one web grenade in the lethal slot (grenade_type lives under the item's stats compound)
+execute unless items entity @s hotbar.7 *[custom_data~{{{ns}:{{stats:{{grenade_type:"web"}}}}}}] run return fail
 
 # 2s (40t) internal cooldown
 execute store result score #ww_now {ns}.data run time query gametime
