@@ -3,7 +3,8 @@
 #
 # @executed	at @s
 #
-# @within	mgs:v5.1.0/zombies/revive/downed_tick [ at @s ]
+# @within	mgs:v5.1.0/zombies/whos_who/owner_tick [ at @s ]
+#			mgs:v5.1.0/zombies/revive/downed_tick [ at @s ]
 #
 
 # #rv_reviver_disp holds the downed player's revive progress (snapshotted in downed_tick while

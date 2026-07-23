@@ -34,9 +34,11 @@ execute if score @s mgs.zb.tsp.widows_wine matches 1 run function mgs:v5.1.0/zom
 # Restore max health for the restored Juggernog state
 execute if score @s mgs.zb.perk.juggernog matches 1.. run attribute @s minecraft:max_health base set 40
 
-# Restore the snapshotted inventory (weapons/mags/grenades), then drop the snapshot
+# Restore the snapshotted inventory (weapons/mags/grenades) into the exact original slots via the
+# shared restore system (players can't be data-modified), then drop the snapshot
 execute store result storage mgs:temp _ts_id.id int 1 run scoreboard players get @s mgs.zb.downed_id
-function mgs:v5.1.0/zombies/perks/tombstone_restore_inv with storage mgs:temp _ts_id
+function mgs:v5.1.0/zombies/perks/tombstone_load_snapshot with storage mgs:temp _ts_id
+function mgs:v5.1.0/zombies/inventory/restore_inventory
 
 # Rebuild the perk display items now that ownership is restored
 function mgs:v5.1.0/zombies/inventory/refresh_perk_items

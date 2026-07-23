@@ -208,6 +208,46 @@ function {ns}:v{version}/zombies/inventory/give_starting_loadout
 item modify entity @s hotbar.7 {ns}:v{version}/grenade/set_count_2
 """)
 
+	# ── Inventory snapshot restore (Who's Who body revive, Tombstone recovery) ──
+	# Players cannot be data-modified (`data modify entity <player> Inventory` silently fails), so a
+	# stored Inventory snapshot is given back one stack at a time: each entry is loaded into a
+	# single-slot shuttle item_display (kill drops nothing), then `item replace`d into its ORIGINAL
+	# slot — hotbar/main via a container.N macro, armor + offhand via their named slots.
+	## Entry point: @s = the player (executed at them). Caller fills storage {ns}:temp _restore.items
+	## with a copied player Inventory NBT list. Replaces the whole inventory (clear first).
+	write_versioned_function("zombies/inventory/restore_inventory", f"""
+clear @s
+summon minecraft:item_display ~ ~ ~ {{Tags:["{ns}.inv_restore","{ns}.gm_entity"]}}
+execute if data storage {ns}:temp _restore.items[0] run function {ns}:v{version}/zombies/inventory/restore_loop
+kill @e[type=minecraft:item_display,tag={ns}.inv_restore]
+data remove storage {ns}:temp _restore
+""")
+
+	## One snapshot entry per pass: load it into the shuttle, place it into its slot, pop, recurse.
+	write_versioned_function("zombies/inventory/restore_loop", f"""
+data modify storage {ns}:temp _restore.item set from storage {ns}:temp _restore.items[0]
+execute store result score #inv_slot {ns}.data run data get storage {ns}:temp _restore.item.Slot
+data remove storage {ns}:temp _restore.item.Slot
+data modify entity @n[type=minecraft:item_display,tag={ns}.inv_restore] item set from storage {ns}:temp _restore.item
+
+# Slot mapping: 0..35 = container.N (hotbar + main inventory), 100..103 = armor, -106 = offhand
+execute if score #inv_slot {ns}.data matches 0..35 store result storage {ns}:temp _restore.slot int 1 run scoreboard players get #inv_slot {ns}.data
+execute if score #inv_slot {ns}.data matches 0..35 run function {ns}:v{version}/zombies/inventory/restore_slot with storage {ns}:temp _restore
+execute if score #inv_slot {ns}.data matches 100 run item replace entity @s armor.feet from entity @n[type=minecraft:item_display,tag={ns}.inv_restore] contents
+execute if score #inv_slot {ns}.data matches 101 run item replace entity @s armor.legs from entity @n[type=minecraft:item_display,tag={ns}.inv_restore] contents
+execute if score #inv_slot {ns}.data matches 102 run item replace entity @s armor.chest from entity @n[type=minecraft:item_display,tag={ns}.inv_restore] contents
+execute if score #inv_slot {ns}.data matches 103 run item replace entity @s armor.head from entity @n[type=minecraft:item_display,tag={ns}.inv_restore] contents
+execute if score #inv_slot {ns}.data matches -106 run item replace entity @s weapon.offhand from entity @n[type=minecraft:item_display,tag={ns}.inv_restore] contents
+
+data remove storage {ns}:temp _restore.items[0]
+execute if data storage {ns}:temp _restore.items[0] run function {ns}:v{version}/zombies/inventory/restore_loop
+""")
+
+	## Macro: place the shuttle item into a numeric container slot (rare event — macro cost is fine).
+	write_versioned_function("zombies/inventory/restore_slot", f"""
+$item replace entity @s container.$(slot) from entity @n[type=minecraft:item_display,tag={ns}.inv_restore] contents
+""")
+
 	# Perk list for the info paper (one lore line per owned perk, themed by perk color).
 	perk_count_lines: str = "\n".join(
 		f"execute if score @s {ns}.zb.perk.{pid} matches 1 run scoreboard players add #info_perk_count {ns}.data 1"

@@ -415,10 +415,10 @@ scoreboard objectives add mgs.zb.wf.timeslip dummy
 # Stable per-player buyer id (lazy)
 scoreboard objectives add mgs.zb.wf_pid dummy
 
-# Who's Who: doppelganger bleed timer + revive progress (on the owner), perk snapshot for recovery.
-# The body mannequin carries the owner's zb.downed_id (reuses the revive downed_id_match predicate).
-scoreboard objectives add mgs.zb.ww.bleed dummy
-scoreboard objectives add mgs.zb.ww.rev dummy
+# Who's Who: the owner's body link (zb.ww.id survives later normal downs, unlike zb.downed_id) +
+# perk snapshot for recovery. Bleed/revive progress live on the owner's normal zb.bleed /
+# zb.revive_p scores (the shared revive core reads those).
+scoreboard objectives add mgs.zb.ww.id dummy
 scoreboard objectives add mgs.zb.wwp.juggernog dummy
 scoreboard objectives add mgs.zb.wwp.speed_cola dummy
 scoreboard objectives add mgs.zb.wwp.double_tap dummy

@@ -1,20 +1,23 @@
 
 # ruff: noqa: E501
 # Who's Who — instead of going down, the owner keeps playing as a "doppelganger" with only a knife +
-# pistol, while their body drops as a revivable mannequin. Any alive player (including the
-# doppelganger themselves) can revive that body: on revive the owner gets everything back minus
-# Who's Who; if the body bleeds out, the doppelganger fights on with just the pistol (perks stay
-# lost). Down again as a doppelganger → normal down (Who's Who was already lost). Works solo too:
-# a solo owner self-revives their own body, and Who's Who takes priority over solo Quick Revive.
-# Priority above Tombstone. Called from revive/on_down.
+# pistol, while their body drops as a NORMAL revivable downed body (revive/spawn_downed_body): same
+# mannequin, same HUD, same revive interactions — any alive player (doppelgangers included, and the
+# owner themselves) revives it through the shared revive core. On revive the owner gets everything
+# back (exact inventory slots + perks minus Who's Who); if the body bleeds out, the doppelganger
+# fights on with just the pistol (perks stay lost). Going down again as a doppelganger forfeits the
+# unrevived body (BO2 rule), then downs normally. Works solo (self-revive), takes priority over solo
+# Quick Revive and Tombstone. Called from revive/on_down.
 #
-# This is a self-contained subsystem (not the spectator-based normal downed flow): a Who's Who owner
-# stays a normal ALIVE player (never zb.downed), tagged {ns}.ww_active, ticked from game_tick.
+# The owner stays a normal ALIVE player (never zb.downed), tagged {ns}.ww_active, ticked from
+# game_tick. The body link lives in {ns}.zb.ww.id — NOT zb.downed_id, which a later normal down
+# overwrites (that used to orphan the mannequin). Bleed/revive progress reuse the owner's normal
+# zb.bleed / zb.revive_p scores so the shared revive core works unchanged.
 from stewbeet import Mem, write_load_file, write_versioned_function
 
 from ..helpers import MGS_TAG
 from .perks import PERK_DEFINITIONS
-from .revive import BLEED_OUT_TICKS, REVIVE_RANGE, REVIVE_TICKS
+from .revive import BLEED_OUT_TICKS, revive_body_detect, revive_body_progress
 
 
 def generate_whos_who() -> None:
@@ -22,7 +25,14 @@ def generate_whos_who() -> None:
 	version: str = Mem.ctx.project_version
 	perk_ids: list[str] = list(PERK_DEFINITIONS)
 
-	ww_snapshot: str = "\n".join(f"scoreboard players operation @s {ns}.zb.wwp.{pid} = @s {ns}.zb.perk.{pid}" for pid in perk_ids)
+	# quick_revive: score 1 can also mean "solo uses exhausted" (rebuy-block) with no active tag —
+	# only snapshot a QR that is actually active, or the revive would grant one back for free.
+	ww_snapshot: str = "\n".join(
+		f"execute store success score @s {ns}.zb.wwp.{pid} if entity @s[tag={ns}.perk.quick_revive]"
+		if pid == "quick_revive"
+		else f"scoreboard players operation @s {ns}.zb.wwp.{pid} = @s {ns}.zb.perk.{pid}"
+		for pid in perk_ids
+	)
 	ww_clear: str = "\n".join(f"scoreboard players set @s {ns}.zb.wwp.{pid} 0" for pid in perk_ids)
 	ww_restore_lines: list[str] = []
 	for pid, pdata in PERK_DEFINITIONS.items():
@@ -36,45 +46,29 @@ def generate_whos_who() -> None:
 
 	## State objectives
 	write_load_file(f"""
-# Who's Who: doppelganger bleed timer + revive progress (on the owner), perk snapshot for recovery.
-# The body mannequin carries the owner's zb.downed_id (reuses the revive downed_id_match predicate).
-scoreboard objectives add {ns}.zb.ww.bleed dummy
-scoreboard objectives add {ns}.zb.ww.rev dummy
+# Who's Who: the owner's body link (zb.ww.id survives later normal downs, unlike zb.downed_id) +
+# perk snapshot for recovery. Bleed/revive progress live on the owner's normal zb.bleed /
+# zb.revive_p scores (the shared revive core reads those).
+scoreboard objectives add {ns}.zb.ww.id dummy
 {chr(10).join(f"scoreboard objectives add {ns}.zb.wwp.{pid} dummy" for pid in perk_ids)}
 """)
 
-	## Called from revive/on_down (@s = player, death pos in temp rv_x/rv_y/rv_z). Only reached in
-	## co-op when the owner has Who's Who. Takes over the down entirely.
+	## Called from revive/on_down (@s = player). Takes over the down entirely.
 	write_versioned_function("zombies/whos_who/on_down", f"""
-# Read the death location (branch runs before the normal flow computes it)
-execute store result storage {ns}:temp rv_x double 0.001 run data get entity @s LastDeathLocation.pos[0] 1000
-execute store result storage {ns}:temp rv_y double 0.001 run data get entity @s LastDeathLocation.pos[1] 1000
-execute store result storage {ns}:temp rv_z double 0.001 run data get entity @s LastDeathLocation.pos[2] 1000
-
 # Snapshot perks + inventory (for recovery on revive) — BEFORE anything is stripped
 {ww_snapshot}
 
-# Assign a fresh downed_id for the body mannequin (same counter as the revive system)
+# Fresh body id, kept in zb.ww.id: a later normal down assigns a new zb.downed_id, and the body
+# link must survive that (this used to orphan the mannequin)
 scoreboard players add #downed_id_next {ns}.data 1
 scoreboard players operation @s {ns}.zb.downed_id = #downed_id_next {ns}.data
-execute store result storage {ns}:temp _ww_id.id int 1 run scoreboard players get @s {ns}.zb.downed_id
+scoreboard players operation @s {ns}.zb.ww.id = #downed_id_next {ns}.data
+execute store result storage {ns}:temp _ww_id.id int 1 run scoreboard players get @s {ns}.zb.ww.id
 function {ns}:v{version}/zombies/whos_who/snapshot_inv with storage {ns}:temp _ww_id
 
-# Summon the body mannequin wearing the owner's armor/skin, and a HUD above it, at the death spot
-summon minecraft:mannequin ~ ~.5 ~ {{Invulnerable:1b,pose:"swimming",hide_description:true,Tags:["{ns}.ww_body","{ns}.ww_body_new","{ns}.gm_entity"]}}
-scoreboard players operation @n[tag={ns}.ww_body_new] {ns}.zb.downed_id = @s {ns}.zb.downed_id
-data modify entity @n[tag={ns}.ww_body_new] equipment set from entity @s equipment
-loot replace entity @n[tag={ns}.ww_body_new] weapon.mainhand loot {ns}:get_username
-data modify entity @n[tag={ns}.ww_body_new] profile set from entity @n[tag={ns}.ww_body_new] equipment.mainhand.components."minecraft:profile"
-data modify storage {ns}:temp rv_name set from entity @n[tag={ns}.ww_body_new] equipment.mainhand.components."minecraft:profile".name
-execute unless data storage {ns}:temp rv_name run data modify storage {ns}:temp rv_name set value "???"
-item replace entity @n[tag={ns}.ww_body_new] weapon.mainhand with minecraft:air
-summon minecraft:text_display ~ ~ ~ {{Tags:["{ns}.ww_hud","{ns}.ww_hud_new","{ns}.gm_entity"],billboard:"vertical",shadow:1b,see_through:0b,teleport_duration:1,transformation:{{translation:[0.0f,0.0f,0.0f],left_rotation:[0.0f,0.0f,0.0f,1.0f],scale:[1.5f,1.5f,1.5f],right_rotation:[0.0f,0.0f,0.0f,1.0f]}},text:[{{"text":"...","color":"dark_aqua"}},{{"text":" ↓","color":"dark_aqua"}}]}}
-scoreboard players operation @n[tag={ns}.ww_hud_new] {ns}.zb.downed_id = @s {ns}.zb.downed_id
-function {ns}:v{version}/zombies/whos_who/set_hud_name with storage {ns}:temp
-function {ns}:v{version}/zombies/whos_who/tp_body with storage {ns}:temp
-tag @e[tag={ns}.ww_body_new] remove {ns}.ww_body_new
-tag @e[tag={ns}.ww_hud_new] remove {ns}.ww_hud_new
+# Drop the body at the death spot: the EXACT same revivable mannequin + HUD as a normal down
+# (same tags, same visuals, same revive interactions)
+function {ns}:v{version}/zombies/revive/spawn_downed_body
 
 # Strip perks (the doppelganger starts fresh)
 function {ns}:v{version}/zombies/perks/lose_all
@@ -84,14 +78,21 @@ clear @s
 gamemode adventure @s
 function {ns}:v{version}/zombies/inventory/give_respawn_loadout
 
-# Keep the player where they respawned near a teammate is jarring — put them at their body so they
-# can choose to self-revive or fight on
-function {ns}:v{version}/zombies/revive/tp_revive_pos with storage {ns}:temp
+# Respawn the doppelganger at the unlocked player spawn nearest to the body but at least 10 blocks
+# away from it (falls back to the nearest one at all if none is that far)
+tag @s add {ns}.spawn_pending
+scoreboard players operation #my_downed_id {ns}.data = @s {ns}.zb.ww.id
+scoreboard players set #has_candidate {ns}.data 0
+execute as @e[type=minecraft:mannequin,tag={ns}.downed_mannequin,predicate={ns}:v{version}/zombies/revive/downed_id_match] at @s store success score #has_candidate {ns}.data run tag @n[tag={ns}.spawn_point,tag={ns}.spawn_zb_player,tag={ns}.spawn_unlocked,distance=10..] add {ns}.spawn_candidate
+execute if score #has_candidate {ns}.data matches 0 as @e[type=minecraft:mannequin,tag={ns}.downed_mannequin,predicate={ns}:v{version}/zombies/revive/downed_id_match] at @s run tag @n[tag={ns}.spawn_point,tag={ns}.spawn_zb_player,tag={ns}.spawn_unlocked] add {ns}.spawn_candidate
+execute as @n[tag={ns}.spawn_candidate] run function {ns}:v{version}/zombies/tp_to_spawn
+tag @e[tag={ns}.spawn_candidate] remove {ns}.spawn_candidate
+tag @a[tag={ns}.spawn_pending] remove {ns}.spawn_pending
 
-# Enter doppelganger state
+# Enter doppelganger state (the shared revive core reads zb.bleed / zb.revive_p on the owner)
 tag @s add {ns}.ww_active
-scoreboard players set @s {ns}.zb.ww.bleed {BLEED_OUT_TICKS}
-scoreboard players set @s {ns}.zb.ww.rev 0
+scoreboard players set @s {ns}.zb.bleed {BLEED_OUT_TICKS}
+scoreboard players set @s {ns}.zb.revive_p 0
 
 # Announce
 title @s times 5 40 15
@@ -100,113 +101,93 @@ title @s subtitle [{{"text":"Who's Who — revive your body, or fight on!","colo
 tellraw @a[scores={{{ns}.zb.in_game=1}}] [{MGS_TAG},{{"selector":"@s","color":"aqua"}},{{"text":" went down — but plays on as a doppelganger!","color":"gray"}}]
 """)
 
-	## Macro: write the owner's literal name into the HUD (avoids "nearest" ties, same as revive)
-	write_versioned_function("zombies/whos_who/set_hud_name", f"""
-$data modify entity @n[tag={ns}.ww_hud_new] text set value [{{"text":"$(rv_name)","color":"dark_aqua"}},{{"text":" ↓","color":"dark_aqua"}}]
-""")
-
-	## Macro: teleport the freshly-summoned body + HUD to the death location
-	write_versioned_function("zombies/whos_who/tp_body", f"""
-$tp @n[tag={ns}.ww_body_new] $(rv_x) $(rv_y) $(rv_z)
-$tp @n[tag={ns}.ww_hud_new] $(rv_x) $(rv_y) $(rv_z)
-tp @n[tag={ns}.ww_hud_new] ~ ~2 ~
-""")
-
-	## Macro: store @s Inventory keyed by downed_id (for recovery on revive)
+	## Macro: store @s Inventory keyed by body id (for recovery on revive)
 	write_versioned_function("zombies/whos_who/snapshot_inv", f"""
 $data modify storage {ns}:zombies ww_inv."$(id)" set from entity @s Inventory
 """)
 
+	## Macro: load a snapshot by id into the shared restore buffer, then drop the snapshot
+	write_versioned_function("zombies/whos_who/load_snapshot", f"""
+$data modify storage {ns}:temp _restore.items set from storage {ns}:zombies ww_inv."$(id)"
+$data remove storage {ns}:zombies ww_inv."$(id)"
+""")
+
+	## Macro: discard a snapshot by id (bleed out / forfeit — nothing is recovered)
+	write_versioned_function("zombies/whos_who/discard_snapshot", f"""
+$data remove storage {ns}:zombies ww_inv."$(id)"
+""")
+
 	## Per-tick, per doppelganger (hooked into game_tick). @s = the ww_active owner.
 	write_versioned_function("zombies/whos_who/tick", f"""
-execute as @a[tag={ns}.ww_active,scores={{{ns}.zb.in_game=1}}] run function {ns}:v{version}/zombies/whos_who/owner_tick
+execute as @a[tag={ns}.ww_active,scores={{{ns}.zb.in_game=1}}] at @s run function {ns}:v{version}/zombies/whos_who/owner_tick
 """)
 
+	## Owner tick: the body is a normal downed mannequin, so the whole revive flow (reviver
+	## detection incl. the owner themselves, progress bar, HUD colors, Quick Revive threshold)
+	## is the shared revive core — only the completion/bleed-out outcomes are Who's Who-specific.
 	write_versioned_function("zombies/whos_who/owner_tick", f"""
-# Bleed timer on the body
-scoreboard players operation @s {ns}.zb.ww.bleed -= #tick_delta {ns}.data
+# The body is id-linked via zb.ww.id (NOT zb.downed_id, which a later normal down overwrites)
+scoreboard players operation #my_downed_id {ns}.data = @s {ns}.zb.ww.id
 
-# Identify this owner's body/HUD
-scoreboard players operation #my_downed_id {ns}.data = @s {ns}.zb.downed_id
+{revive_body_detect()}
 
-# Any alive in-game player (including the doppelganger themselves) within range of the body = reviving
-scoreboard players set #ww_reviving {ns}.data 0
-execute as @e[tag={ns}.ww_body,predicate={ns}:v{version}/zombies/revive/downed_id_match] at @s run execute as @a[scores={{{ns}.zb.in_game=1}},gamemode=!spectator,distance=..{REVIVE_RANGE}] run scoreboard players set #ww_reviving {ns}.data 1
-
-# Progress / decay
-scoreboard players operation #ww_decay {ns}.data = #tick_delta {ns}.data
-scoreboard players operation #ww_decay {ns}.data *= #2 {ns}.data
-execute if score #ww_reviving {ns}.data matches 1 run scoreboard players operation @s {ns}.zb.ww.rev += #tick_delta {ns}.data
-execute if score #ww_reviving {ns}.data matches 0 if score @s {ns}.zb.ww.rev matches 1.. run scoreboard players operation @s {ns}.zb.ww.rev -= #ww_decay {ns}.data
-
-# Body particles + keep the HUD anchored above the body
-execute as @e[tag={ns}.ww_body,predicate={ns}:v{version}/zombies/revive/downed_id_match] at @s run particle minecraft:soul ~ ~1 ~ 0.2 0.4 0.2 0.01 2 force @a[distance=..48]
-
-# Reviving actionbar for the doppelganger
-execute if score #ww_reviving {ns}.data matches 1 run data modify storage smithed.actionbar:input message set value {{json:[{{"text":"Reviving your body...","color":"dark_aqua"}}],priority:"override",freeze:2}}
-execute if score #ww_reviving {ns}.data matches 1 run function #smithed.actionbar:message
-
-# Revive complete
-execute if score @s {ns}.zb.ww.rev matches {REVIVE_TICKS}.. run function {ns}:v{version}/zombies/whos_who/revive_complete
+{revive_body_progress(f"{ns}:v{version}/zombies/whos_who/revive_complete")}
 
 # Body bled out: doppelganger fights on with just the pistol (perks stay lost)
-execute if score @s {ns}.zb.ww.bleed matches ..0 run function {ns}:v{version}/zombies/whos_who/bleed_out
+execute if score @s {ns}.zb.bleed matches ..0 run function {ns}:v{version}/zombies/whos_who/bleed_out
 """)
 
-	## Revive complete (@s = doppelganger owner): restore perks (minus Who's Who) + inventory + health
+	## Revive complete (@s = doppelganger owner, whoever revived the body): restore perks (minus
+	## Who's Who) + the exact snapshotted inventory + health, then drop body + doppelganger state.
 	write_versioned_function("zombies/whos_who/revive_complete", f"""
 {ww_restore}
 execute if score @s {ns}.zb.perk.juggernog matches 1.. run attribute @s minecraft:max_health base set 40
 
-# Restore the snapshotted inventory
-execute store result storage {ns}:temp _ww_id.id int 1 run scoreboard players get @s {ns}.zb.downed_id
-function {ns}:v{version}/zombies/whos_who/restore_inv with storage {ns}:temp _ww_id
+# Restore the snapshotted inventory into the exact original slots (players can't be data-modified,
+# so this goes through the shared inventory/restore_inventory system)
+execute store result storage {ns}:temp _ww_id.id int 1 run scoreboard players get @s {ns}.zb.ww.id
+function {ns}:v{version}/zombies/whos_who/load_snapshot with storage {ns}:temp _ww_id
+function {ns}:v{version}/zombies/inventory/restore_inventory
 function {ns}:v{version}/zombies/inventory/refresh_perk_items
 effect give @s minecraft:instant_health 1 255 true
 
-# Clear doppelganger state + snapshot, remove the body
+# Remove the body and clear doppelganger state + snapshot
+scoreboard players operation #my_downed_id {ns}.data = @s {ns}.zb.ww.id
+function {ns}:v{version}/zombies/revive/hide_body
 {ww_clear}
 tag @s remove {ns}.ww_active
-scoreboard players set @s {ns}.zb.ww.bleed 0
-scoreboard players set @s {ns}.zb.ww.rev 0
-function {ns}:v{version}/zombies/whos_who/despawn_body
+scoreboard players set @s {ns}.zb.ww.id 0
+scoreboard players set @s {ns}.zb.bleed 0
+scoreboard players set @s {ns}.zb.revive_p 0
 
 title @s times 5 40 15
 title @s title ["❤"]
 title @s subtitle [{{"text":"Body revived — you are whole again!","color":"green"}}]
-tellraw @a[scores={{{ns}.zb.in_game=1}}] [{MGS_TAG},{{"selector":"@s","color":"green"}},{{"text":" revived their own body!","color":"gray"}}]
+tellraw @a[scores={{{ns}.zb.in_game=1}}] [{MGS_TAG},{{"selector":"@s","color":"green"}},{{"text":"'s body was revived — they are whole again!","color":"gray"}}]
 function {ns}:v{version}/zombies/feedback/sound_success
 """)
 
 	## Body bled out (@s = doppelganger owner): keep playing with the pistol, perks stay lost
 	write_versioned_function("zombies/whos_who/bleed_out", f"""
-{ww_clear}
-execute store result storage {ns}:temp _ww_id.id int 1 run scoreboard players get @s {ns}.zb.downed_id
-function {ns}:v{version}/zombies/whos_who/drop_inv with storage {ns}:temp _ww_id
-tag @s remove {ns}.ww_active
-scoreboard players set @s {ns}.zb.ww.bleed 0
-scoreboard players set @s {ns}.zb.ww.rev 0
-function {ns}:v{version}/zombies/whos_who/despawn_body
-
+function {ns}:v{version}/zombies/whos_who/forfeit
 title @s title ["☠"]
 title @s subtitle [{{"text":"Your body bled out — fight on with your pistol.","color":"gray"}}]
 tellraw @a[scores={{{ns}.zb.in_game=1}}] [{MGS_TAG},{{"selector":"@s","color":"dark_aqua"}},{{"text":"'s body bled out.","color":"gray"}}]
 """)
 
-	## Despawn this owner's body + HUD (id-matched)
-	write_versioned_function("zombies/whos_who/despawn_body", f"""
-scoreboard players operation #my_downed_id {ns}.data = @s {ns}.zb.downed_id
-kill @e[tag={ns}.ww_body,predicate={ns}:v{version}/zombies/revive/downed_id_match]
-kill @e[tag={ns}.ww_hud,predicate={ns}:v{version}/zombies/revive/downed_id_match]
-""")
-
-	## Macros: restore / drop the inventory snapshot by id
-	write_versioned_function("zombies/whos_who/restore_inv", f"""
-$data modify entity @s Inventory set from storage {ns}:zombies ww_inv."$(id)"
-$data remove storage {ns}:zombies ww_inv."$(id)"
-""")
-	write_versioned_function("zombies/whos_who/drop_inv", f"""
-$data remove storage {ns}:zombies ww_inv."$(id)"
+	## Silently discard @s's body + snapshot and leave doppelganger state (no revive, no restore).
+	## Used by bleed_out, and by revive/on_down + full_death when a doppelganger goes down again
+	## (BO2 rule: downing again forfeits the unrevived body — it must never outlive its owner state).
+	write_versioned_function("zombies/whos_who/forfeit", f"""
+scoreboard players operation #my_downed_id {ns}.data = @s {ns}.zb.ww.id
+function {ns}:v{version}/zombies/revive/hide_body
+execute store result storage {ns}:temp _ww_id.id int 1 run scoreboard players get @s {ns}.zb.ww.id
+function {ns}:v{version}/zombies/whos_who/discard_snapshot with storage {ns}:temp _ww_id
+{ww_clear}
+tag @s remove {ns}.ww_active
+scoreboard players set @s {ns}.zb.ww.id 0
+scoreboard players set @s {ns}.zb.bleed 0
+scoreboard players set @s {ns}.zb.revive_p 0
 """)
 
 	## Hook: tick doppelgangers
@@ -214,16 +195,15 @@ $data remove storage {ns}:zombies ww_inv."$(id)"
 execute if data storage {ns}:zombies game{{state:"active"}} run function {ns}:v{version}/zombies/whos_who/tick
 """)
 
-	## Hook: cleanup on game start/stop
+	## Hook: cleanup on game start/stop (the bodies share the downed_mannequin/downed_hud tags and
+	## are already killed by revive.py's start/stop hooks)
 	write_versioned_function("zombies/start", f"""
-kill @e[tag={ns}.ww_body]
-kill @e[tag={ns}.ww_hud]
 tag @a remove {ns}.ww_active
+scoreboard players set @a {ns}.zb.ww.id 0
 data modify storage {ns}:zombies ww_inv set value {{}}
 """)
 	write_versioned_function("zombies/stop", f"""
-kill @e[tag={ns}.ww_body]
-kill @e[tag={ns}.ww_hud]
 tag @a remove {ns}.ww_active
+scoreboard players set @a {ns}.zb.ww.id 0
 data modify storage {ns}:zombies ww_inv set value {{}}
 """)

@@ -1,7 +1,7 @@
 
 #> mgs:v5.1.0/zombies/whos_who/revive_complete
 #
-# @executed	as @a[tag=mgs.ww_active,scores={mgs.zb.in_game=1}]
+# @executed	at @s
 #
 # @within	mgs:v5.1.0/zombies/whos_who/owner_tick
 #
@@ -31,13 +31,17 @@ execute if score @s mgs.zb.wwp.widows_wine matches 1 run scoreboard players set 
 execute if score @s mgs.zb.wwp.widows_wine matches 1 run function mgs:v5.1.0/zombies/perks/reapply/widows_wine
 execute if score @s mgs.zb.perk.juggernog matches 1.. run attribute @s minecraft:max_health base set 40
 
-# Restore the snapshotted inventory
-execute store result storage mgs:temp _ww_id.id int 1 run scoreboard players get @s mgs.zb.downed_id
-function mgs:v5.1.0/zombies/whos_who/restore_inv with storage mgs:temp _ww_id
+# Restore the snapshotted inventory into the exact original slots (players can't be data-modified,
+# so this goes through the shared inventory/restore_inventory system)
+execute store result storage mgs:temp _ww_id.id int 1 run scoreboard players get @s mgs.zb.ww.id
+function mgs:v5.1.0/zombies/whos_who/load_snapshot with storage mgs:temp _ww_id
+function mgs:v5.1.0/zombies/inventory/restore_inventory
 function mgs:v5.1.0/zombies/inventory/refresh_perk_items
 effect give @s minecraft:instant_health 1 255 true
 
-# Clear doppelganger state + snapshot, remove the body
+# Remove the body and clear doppelganger state + snapshot
+scoreboard players operation #my_downed_id mgs.data = @s mgs.zb.ww.id
+function mgs:v5.1.0/zombies/revive/hide_body
 scoreboard players set @s mgs.zb.wwp.juggernog 0
 scoreboard players set @s mgs.zb.wwp.speed_cola 0
 scoreboard players set @s mgs.zb.wwp.double_tap 0
@@ -53,13 +57,13 @@ scoreboard players set @s mgs.zb.wwp.whos_who 0
 scoreboard players set @s mgs.zb.wwp.dying_wish 0
 scoreboard players set @s mgs.zb.wwp.widows_wine 0
 tag @s remove mgs.ww_active
-scoreboard players set @s mgs.zb.ww.bleed 0
-scoreboard players set @s mgs.zb.ww.rev 0
-function mgs:v5.1.0/zombies/whos_who/despawn_body
+scoreboard players set @s mgs.zb.ww.id 0
+scoreboard players set @s mgs.zb.bleed 0
+scoreboard players set @s mgs.zb.revive_p 0
 
 title @s times 5 40 15
 title @s title ["❤"]
 title @s subtitle [{"translate":"mgs.body_revived_you_are_whole_again","color":"green"}]
-tellraw @a[scores={mgs.zb.in_game=1}] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"selector":"@s","color":"green"},[{"text":" ","color":"gray"}, {"translate":"mgs.revived_their_own_body"}]]
+tellraw @a[scores={mgs.zb.in_game=1}] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"selector":"@s","color":"green"},{"translate":"mgs.s_body_was_revived_they_are_whole_again","color":"gray"}]
 function mgs:v5.1.0/zombies/feedback/sound_success
 

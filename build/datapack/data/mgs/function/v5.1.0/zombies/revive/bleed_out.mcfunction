@@ -11,20 +11,14 @@ scoreboard players set @s mgs.zb.downed 0
 scoreboard players set @s mgs.zb.revive_p 0
 tag @s remove mgs.downed_spectator
 
-# Hide THIS player's mannequin and HUD by teleporting far below the world (id-matched: a
-# "nearest" lookup could hide another downed player's mannequin when both went down together)
+# Hide THIS player's mannequin and HUD (id-matched: a "nearest" lookup could hide another downed
+# player's mannequin when both went down together)
 scoreboard players operation #my_downed_id mgs.data = @s mgs.zb.downed_id
 
 # Tombstone: snapshot the inventory now (still intact) if a marker is waiting for this player
 function mgs:v5.1.0/zombies/perks/tombstone_on_bleed_out
 
-tag @e[tag=mgs.downed_mannequin,predicate=mgs:v5.1.0/zombies/revive/downed_id_match] add mgs.downed_mine_temp
-tp @n[tag=mgs.downed_mine_temp] ~ -10000 ~
-execute as @e[tag=mgs.downed_hud,predicate=mgs:v5.1.0/zombies/revive/downed_id_match] run tp @s ~ -10000 ~
-tag @n[tag=mgs.downed_mine_temp] remove mgs.downed_mannequin
-execute as @e[tag=mgs.downed_hud,predicate=mgs:v5.1.0/zombies/revive/downed_id_match] run tag @s remove mgs.downed_hud
-tag @e[tag=mgs.downed_mine_temp] remove mgs.downed_mine_temp
-execute as @e[tag=mgs.downed_cam,predicate=mgs:v5.1.0/zombies/revive/downed_id_match] run kill @s
+function mgs:v5.1.0/zombies/revive/hide_body
 
 # Dismount then enter full spectator mode to watch until next round
 ride @s dismount

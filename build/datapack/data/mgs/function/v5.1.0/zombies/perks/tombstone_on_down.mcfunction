@@ -14,7 +14,7 @@ execute if score #ts_ingame mgs.data matches ..1 run return 0
 scoreboard players operation @s mgs.zb.tsp.juggernog = @s mgs.zb.perk.juggernog
 scoreboard players operation @s mgs.zb.tsp.speed_cola = @s mgs.zb.perk.speed_cola
 scoreboard players operation @s mgs.zb.tsp.double_tap = @s mgs.zb.perk.double_tap
-scoreboard players operation @s mgs.zb.tsp.quick_revive = @s mgs.zb.perk.quick_revive
+execute store success score @s mgs.zb.tsp.quick_revive if entity @s[tag=mgs.perk.quick_revive]
 scoreboard players operation @s mgs.zb.tsp.mule_kick = @s mgs.zb.perk.mule_kick
 scoreboard players operation @s mgs.zb.tsp.stamin_up = @s mgs.zb.perk.stamin_up
 scoreboard players operation @s mgs.zb.tsp.phd_flopper = @s mgs.zb.perk.phd_flopper

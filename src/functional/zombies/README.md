@@ -109,12 +109,16 @@ green=mule, orange=stamin):
   died out of the map (`revive/full_death` path). Not a `powerups.py` drop — separate entity/tag so
   the shuffle-bag/pickup loop never touches it. Solo: BO2 disables Tombstone solo (a solo bleed-out
   is game over anyway) — hide/deny purchase when solo like the QR-solo special case.
-- [x] **Who's Who** — DONE (`whos_who.py`, self-contained; hooked from `revive/on_down` above Tombstone):
-  co-op only; the owner keeps playing as an alive doppelganger (knife + pistol, `ww_active` tag) while their
-  body drops as a revivable mannequin (id-matched, reuses the revive downed_id_match predicate). Any alive
-  player (incl. the doppelganger) revives it → everything restored minus Who's Who; body bleeds out → fight
-  on with the pistol (perks lost); down again as a doppelganger → normal down; solo → normal down (game
-  over). ⚠ Needs in-engine verification. Original spec below.
+- [x] **Who's Who** — DONE (`whos_who.py`, hooked from `revive/on_down` above Tombstone): the owner keeps
+  playing as an alive doppelganger (knife + pistol, `ww_active` tag), teleported to the unlocked player spawn
+  nearest their body but ≥10 blocks away, while their body drops via the SHARED `revive/spawn_downed_body`
+  (a normal `downed_mannequin` + HUD — same visuals, same revive code). The body link lives in `zb.ww.id`
+  (survives a later normal down overwriting `zb.downed_id`), and the owner's tick reuses the shared revive
+  core (`revive_body_detect`/`revive_body_progress`), so any alive player — doppelgangers included, and the
+  owner themselves (solo self-revive) — revives it. Revive → perks (minus Who's Who) + exact inventory slots
+  restored via `inventory/restore_inventory`; body bleeds out → fight on with the pistol (perks lost); down
+  again as a doppelganger → the unrevived body is forfeited (BO2), then a normal down. Works solo and takes
+  priority over solo Quick Revive. Original spec below.
 - [ ] ~~**Who's Who**~~ — on going down, instead of the crawl/spectate flow the player keeps playing
   as a "doppelganger": teleported near (not at) their body with only knife + M1911, alive, and can
   revive their own mannequin (existing reviver proximity loop already works for any alive player).
@@ -233,3 +237,31 @@ these are gameplay ideas from Zonweeb, not necessarily tied to the variant.)
 - [x] Who's Who: Should work in Single player, and if the player died and have both Quick Revive and Who's Who in solo, Who's Who should have the priority.
       DONE — removed the co-op-only gate on the Who's Who branch in revive/on_down. It already sat above the normal-down path where solo Quick Revive lives, so owning Who's Who now fires in solo and takes priority over Quick Revive; the solo owner self-revives their own body.
 
+
+- [x] Bugs with Who's Who: First I respawned at the same position as my death (and not the nearest player spawn (minimum 10 blocks distance)). Second, when I revived myself, I did not get my guns back and it says "Stoupy51's body bled out.". Third, the mannequin should use the same code as when a player is down so that another player can revive them and visually it looks the same. Fourth, a doppelganger should be able to revive any player, including downed players clones (who's who), same for normal players then can revive any downed player/clone. Fifth, I had Who's Who and Quick Revive in solo, died: that created the downed player clone, then died again and it consumes a Quick Revive I didn't have on this doppelganger, and when I got solo revived by quick revive, I couldn't revive the player clone from who's who, the entity mannequin is still there but nothing happens (Update: waited 60s and got "Stoupy51's body bled out." but the mannequin still exists).
+      DONE — Who's Who rebuilt on the shared downed-body system:
+      1. The doppelganger now spawns at the unlocked player spawn nearest their body but ≥10 blocks away (fallback: nearest at all).
+      2. Guns are back: `data modify entity <player> Inventory` silently FAILS on players — the snapshot is now given back slot-exact through the new shared `inventory/restore_inventory` (shuttle item_display + `item replace`, armor/offhand included). Same latent bug fixed in Tombstone's recovery. The bogus "body bled out" right after the revive is gone too (completion now `return run`s, so the bleed-out check can't fire on the same tick).
+      3. The body is spawned by the SAME `revive/spawn_downed_body` as a normal down (same `downed_mannequin`/`downed_hud` tags, same look), and its revive runs through the shared revive core (same progress bar, HUD colors, Quick Revive threshold).
+      4. Reviver detection is one shared selector: any alive non-downed player — doppelgangers included — revives any body, normal or clone.
+      5. Quick Revive now has removal_commands, so lose_all strips the active tag (a doppelganger can no longer consume a QR it doesn't own; rebuy after a down works again unless solo uses are exhausted). The clone can't be orphaned anymore: the body link lives in `zb.ww.id` (a later normal down overwrote `zb.downed_id`), and going down again as a doppelganger forfeits the unrevived body (BO2 rule) instead of leaving a dead mannequin around.
+22:23:05.900
+net.minecraft.client.gui.components.ChatComponent
+Render thread
+[System] [CHAT] Stoupy51 was slain by Zombie
+22:23:06.020
+net.minecraft.client.gui.components.ChatComponent
+Render thread
+[System] [CHAT] [MGS] All perks lost!
+22:23:06.030
+net.minecraft.client.gui.components.ChatComponent
+Render thread
+[System] [CHAT] [MGS] Stoupy51 went down — but plays on as a doppelganger!
+22:23:16.323
+net.minecraft.client.gui.components.ChatComponent
+Render thread
+[System] [CHAT] [MGS] Stoupy51 revived their own body!
+22:23:16.324
+net.minecraft.client.gui.components.ChatComponent
+Render thread
+[System] [CHAT] [MGS] Stoupy51's body bled out.
