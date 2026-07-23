@@ -6,16 +6,11 @@
 # @within	mgs:v5.1.0/zombies/revive/on_down
 #
 
-# Read the death location (branch runs before the normal flow computes it)
-execute store result storage mgs:temp rv_x double 0.001 run data get entity @s LastDeathLocation.pos[0] 1000
-execute store result storage mgs:temp rv_y double 0.001 run data get entity @s LastDeathLocation.pos[1] 1000
-execute store result storage mgs:temp rv_z double 0.001 run data get entity @s LastDeathLocation.pos[2] 1000
-
 # Snapshot perks + inventory (for recovery on revive) — BEFORE anything is stripped
 scoreboard players operation @s mgs.zb.wwp.juggernog = @s mgs.zb.perk.juggernog
 scoreboard players operation @s mgs.zb.wwp.speed_cola = @s mgs.zb.perk.speed_cola
 scoreboard players operation @s mgs.zb.wwp.double_tap = @s mgs.zb.perk.double_tap
-scoreboard players operation @s mgs.zb.wwp.quick_revive = @s mgs.zb.perk.quick_revive
+execute store success score @s mgs.zb.wwp.quick_revive if entity @s[tag=mgs.perk.quick_revive]
 scoreboard players operation @s mgs.zb.wwp.mule_kick = @s mgs.zb.perk.mule_kick
 scoreboard players operation @s mgs.zb.wwp.stamin_up = @s mgs.zb.perk.stamin_up
 scoreboard players operation @s mgs.zb.wwp.phd_flopper = @s mgs.zb.perk.phd_flopper
@@ -27,27 +22,17 @@ scoreboard players operation @s mgs.zb.wwp.whos_who = @s mgs.zb.perk.whos_who
 scoreboard players operation @s mgs.zb.wwp.dying_wish = @s mgs.zb.perk.dying_wish
 scoreboard players operation @s mgs.zb.wwp.widows_wine = @s mgs.zb.perk.widows_wine
 
-# Assign a fresh downed_id for the body mannequin (same counter as the revive system)
+# Fresh body id, kept in zb.ww.id: a later normal down assigns a new zb.downed_id, and the body
+# link must survive that (this used to orphan the mannequin)
 scoreboard players add #downed_id_next mgs.data 1
 scoreboard players operation @s mgs.zb.downed_id = #downed_id_next mgs.data
-execute store result storage mgs:temp _ww_id.id int 1 run scoreboard players get @s mgs.zb.downed_id
+scoreboard players operation @s mgs.zb.ww.id = #downed_id_next mgs.data
+execute store result storage mgs:temp _ww_id.id int 1 run scoreboard players get @s mgs.zb.ww.id
 function mgs:v5.1.0/zombies/whos_who/snapshot_inv with storage mgs:temp _ww_id
 
-# Summon the body mannequin wearing the owner's armor/skin, and a HUD above it, at the death spot
-summon minecraft:mannequin ~ ~.5 ~ {Invulnerable:1b,pose:"swimming",hide_description:true,Tags:["mgs.ww_body","mgs.ww_body_new","mgs.gm_entity"]}
-scoreboard players operation @n[tag=mgs.ww_body_new] mgs.zb.downed_id = @s mgs.zb.downed_id
-data modify entity @n[tag=mgs.ww_body_new] equipment set from entity @s equipment
-loot replace entity @n[tag=mgs.ww_body_new] weapon.mainhand loot mgs:get_username
-data modify entity @n[tag=mgs.ww_body_new] profile set from entity @n[tag=mgs.ww_body_new] equipment.mainhand.components."minecraft:profile"
-data modify storage mgs:temp rv_name set from entity @n[tag=mgs.ww_body_new] equipment.mainhand.components."minecraft:profile".name
-execute unless data storage mgs:temp rv_name run data modify storage mgs:temp rv_name set value "???"
-item replace entity @n[tag=mgs.ww_body_new] weapon.mainhand with minecraft:air
-summon minecraft:text_display ~ ~ ~ {Tags:["mgs.ww_hud","mgs.ww_hud_new","mgs.gm_entity"],billboard:"vertical",shadow:1b,see_through:0b,teleport_duration:1,transformation:{translation:[0.0f,0.0f,0.0f],left_rotation:[0.0f,0.0f,0.0f,1.0f],scale:[1.5f,1.5f,1.5f],right_rotation:[0.0f,0.0f,0.0f,1.0f]},text:[{"text":"...","color":"dark_aqua"},{"text":" ↓","color":"dark_aqua"}]}
-scoreboard players operation @n[tag=mgs.ww_hud_new] mgs.zb.downed_id = @s mgs.zb.downed_id
-function mgs:v5.1.0/zombies/whos_who/set_hud_name with storage mgs:temp
-function mgs:v5.1.0/zombies/whos_who/tp_body with storage mgs:temp
-tag @e[tag=mgs.ww_body_new] remove mgs.ww_body_new
-tag @e[tag=mgs.ww_hud_new] remove mgs.ww_hud_new
+# Drop the body at the death spot: the EXACT same revivable mannequin + HUD as a normal down
+# (same tags, same visuals, same revive interactions)
+function mgs:v5.1.0/zombies/revive/spawn_downed_body
 
 # Strip perks (the doppelganger starts fresh)
 function mgs:v5.1.0/zombies/perks/lose_all
@@ -57,14 +42,21 @@ clear @s
 gamemode adventure @s
 function mgs:v5.1.0/zombies/inventory/give_respawn_loadout
 
-# Keep the player where they respawned near a teammate is jarring — put them at their body so they
-# can choose to self-revive or fight on
-function mgs:v5.1.0/zombies/revive/tp_revive_pos with storage mgs:temp
+# Respawn the doppelganger at the unlocked player spawn nearest to the body but at least 10 blocks
+# away from it (falls back to the nearest one at all if none is that far)
+tag @s add mgs.spawn_pending
+scoreboard players operation #my_downed_id mgs.data = @s mgs.zb.ww.id
+scoreboard players set #has_candidate mgs.data 0
+execute as @e[type=minecraft:mannequin,tag=mgs.downed_mannequin,predicate=mgs:v5.1.0/zombies/revive/downed_id_match] at @s store success score #has_candidate mgs.data run tag @n[tag=mgs.spawn_point,tag=mgs.spawn_zb_player,tag=mgs.spawn_unlocked,distance=10..] add mgs.spawn_candidate
+execute if score #has_candidate mgs.data matches 0 as @e[type=minecraft:mannequin,tag=mgs.downed_mannequin,predicate=mgs:v5.1.0/zombies/revive/downed_id_match] at @s run tag @n[tag=mgs.spawn_point,tag=mgs.spawn_zb_player,tag=mgs.spawn_unlocked] add mgs.spawn_candidate
+execute as @n[tag=mgs.spawn_candidate] run function mgs:v5.1.0/zombies/tp_to_spawn
+tag @e[tag=mgs.spawn_candidate] remove mgs.spawn_candidate
+tag @a[tag=mgs.spawn_pending] remove mgs.spawn_pending
 
-# Enter doppelganger state
+# Enter doppelganger state (the shared revive core reads zb.bleed / zb.revive_p on the owner)
 tag @s add mgs.ww_active
-scoreboard players set @s mgs.zb.ww.bleed 1200
-scoreboard players set @s mgs.zb.ww.rev 0
+scoreboard players set @s mgs.zb.bleed 1200
+scoreboard players set @s mgs.zb.revive_p 0
 
 # Announce
 title @s times 5 40 15

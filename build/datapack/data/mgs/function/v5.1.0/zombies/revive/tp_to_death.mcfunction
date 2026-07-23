@@ -3,7 +3,7 @@
 #
 # @executed	as @e[type=player,sort=random] & at @s
 #
-# @within	mgs:v5.1.0/zombies/revive/on_down with storage mgs:temp
+# @within	mgs:v5.1.0/zombies/revive/spawn_downed_body with storage mgs:temp
 #
 # @args		rv_x (unknown)
 #			rv_y (unknown)

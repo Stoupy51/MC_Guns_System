@@ -6,6 +6,9 @@
 # @within	mgs:v5.1.0/zombies/check_bounds_player
 #
 
+# A doppelganger's unrevived body is forfeited (same rule as going down again)
+execute if entity @s[tag=mgs.ww_active] run function mgs:v5.1.0/zombies/whos_who/forfeit
+
 # Count it as a down and strip perks (same as a normal down/bleed-out)
 scoreboard players add @s mgs.zb.downs 1
 function mgs:v5.1.0/zombies/perks/lose_all

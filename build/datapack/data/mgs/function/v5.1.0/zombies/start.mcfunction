@@ -209,9 +209,8 @@ scoreboard players set @a[scores={mgs.zb.in_game=1}] mgs.special.quick_fix 0
 
 kill @e[type=item_display,tag=mgs.wunderfizz_orb]
 
-kill @e[tag=mgs.ww_body]
-kill @e[tag=mgs.ww_hud]
 tag @a remove mgs.ww_active
+scoreboard players set @a mgs.zb.ww.id 0
 data modify storage mgs:zombies ww_inv set value {}
 
 # Reset revive state

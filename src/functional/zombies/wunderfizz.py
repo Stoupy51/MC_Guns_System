@@ -168,7 +168,7 @@ scoreboard players operation @s {ns}.zb.wf_pid = #wf_pid_counter {ns}.data
 	## interaction_final - 0.78, hence the negative Y. scale 0.4 keeps the bottle clear of the
 	## alcove walls. Nudge Y ±0.15 if it drifts.
 	write_versioned_function("zombies/wunderfizz/spawn_orb", f"""
-summon minecraft:item_display ~ ~-0.78 ~ {{Tags:["{ns}.wunderfizz_orb","{ns}.wf_orb_new","{ns}.gm_entity"],Glowing:true,billboard:"center",item_display:"fixed",item:{{id:"minecraft:potion",count:1}},transformation:{{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[0.2f,0.2f,0.2f]}}}}
+summon minecraft:item_display ~ ~-0.78 ~ {{Tags:["{ns}.wunderfizz_orb","{ns}.wf_orb_new","{ns}.gm_entity"],Glowing:true,billboard:"vertical",item_display:"fixed",item:{{id:"minecraft:potion",count:1}},transformation:{{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[0.2f,0.2f,0.2f]}}}}
 """)
 
 	## Per-tick orb processing (hooked into game_tick)

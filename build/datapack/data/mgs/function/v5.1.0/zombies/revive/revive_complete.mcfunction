@@ -24,14 +24,10 @@ execute store success score #rv_pos_ok mgs.data run data get entity @n[tag=mgs.d
 execute store result storage mgs:temp rv_x double 0.001 run data get entity @n[tag=mgs.downed_mine_temp] Pos[0] 1000
 execute store result storage mgs:temp rv_y double 0.001 run data get entity @n[tag=mgs.downed_mine_temp] Pos[1] 1000
 execute store result storage mgs:temp rv_z double 0.001 run data get entity @n[tag=mgs.downed_mine_temp] Pos[2] 1000
-
-# Hide mannequin and HUD by teleporting far below the world (avoids kill animation/drops)
-tp @n[tag=mgs.downed_mine_temp] ~ -10000 ~
-execute as @e[tag=mgs.downed_hud,predicate=mgs:v5.1.0/zombies/revive/downed_id_match] run tp @s ~ -10000 ~
-tag @n[tag=mgs.downed_mine_temp] remove mgs.downed_mannequin
-execute as @e[tag=mgs.downed_hud,predicate=mgs:v5.1.0/zombies/revive/downed_id_match] run tag @s remove mgs.downed_hud
 tag @e[tag=mgs.downed_mine_temp] remove mgs.downed_mine_temp
-execute as @e[tag=mgs.downed_cam,predicate=mgs:v5.1.0/zombies/revive/downed_id_match] run kill @s
+
+# Hide mannequin + HUD and kill the camera
+function mgs:v5.1.0/zombies/revive/hide_body
 
 # Dismount from camera entity and restore adventure mode
 ride @s dismount

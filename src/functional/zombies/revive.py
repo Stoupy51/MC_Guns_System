@@ -22,6 +22,69 @@ CRAWL_SPEED: float = 0.06		# Blocks per tick for downed crawl movement
 HUD_OFFSET_Y_THOUSANDTHS: int = 2000  # 2.0 blocks * 1000 (for scoreboard math)
 
 
+def revive_body_detect() -> str:
+	"""Shared per-tick upkeep for one revivable body (normal down AND Who's Who).
+
+	Emitted into the caller's tick function. Contract: @s = the downed-state holder (a spectating
+	downed player, or an alive Who's Who doppelganger) carrying `zb.bleed`/`zb.revive_p`, with
+	#my_downed_id already set to the body's downed_id. Decrements the bleed timer and detects
+	revivers around the id-matched mannequin into #zb_reviving. The reviver selector excludes
+	downed/spectating players but includes doppelgangers — and for a Who's Who body, the owner
+	themselves (self-revive).
+	"""
+	ns: str = Mem.ctx.project_id
+	version: str = Mem.ctx.project_version
+	return f"""
+# ── Shared body upkeep (revive.py::revive_body_detect) ──
+# Decrement bleed timer (real-time via #tick_delta)
+scoreboard players operation @s {ns}.zb.bleed -= #tick_delta {ns}.data
+
+# Check for revivers: alive non-downed players within range of THIS body (id-matched, since with
+# several bodies 'nearest mannequin' could be someone else's)
+scoreboard players set #zb_reviving {ns}.data 0
+execute as @e[type=minecraft:mannequin,tag={ns}.downed_mannequin,predicate={ns}:v{version}/zombies/revive/downed_id_match] at @s run execute as @a[scores={{{ns}.zb.in_game=1,{ns}.zb.downed=0}},gamemode=!spectator,distance=..{REVIVE_RANGE}] run scoreboard players set #zb_reviving {ns}.data 1
+""".strip()
+
+
+def revive_body_progress(complete_function: str) -> str:
+	"""Shared revive progress for one revivable body: progress/decay on `zb.revive_p`, the reviver
+	progress bar, HUD recolor by urgency, and the (Quick Revive-aware) completion thresholds.
+
+	Same contract as revive_body_detect (which must be emitted above this block). On completion the
+	block `return run`s `complete_function`, so the caller's lines below (bleed-out checks) are
+	skipped on the revive tick.
+	"""
+	ns: str = Mem.ctx.project_id
+	version: str = Mem.ctx.project_version
+	return f"""
+# ── Shared revive progress (revive.py::revive_body_progress) ──
+# If someone is reviving (=1), increment progress; if solo QR (=2), skip (solo_qr_tick handles it);
+# if none (=0), decay at double speed. Real-time via #tick_delta.
+execute if score #zb_reviving {ns}.data matches 1 run scoreboard players operation @s {ns}.zb.revive_p += #tick_delta {ns}.data
+scoreboard players operation #rv_decay {ns}.data = #tick_delta {ns}.data
+scoreboard players operation #rv_decay {ns}.data *= #2 {ns}.data
+execute if score #zb_reviving {ns}.data matches 0 if score @s {ns}.zb.revive_p matches 1.. run scoreboard players operation @s {ns}.zb.revive_p -= #rv_decay {ns}.data
+
+# Show the revive progress bar to the revivers (snapshot @s's progress first: a reviver cannot
+# reliably re-select the downed player, see show_reviver_bar)
+scoreboard players operation #rv_reviver_disp {ns}.data = @s {ns}.zb.revive_p
+execute if score #zb_reviving {ns}.data matches 1 as @e[type=minecraft:mannequin,tag={ns}.downed_mannequin,predicate={ns}:v{version}/zombies/revive/downed_id_match] at @s run execute as @a[scores={{{ns}.zb.in_game=1,{ns}.zb.downed=0}},gamemode=!spectator,distance=..{REVIVE_RANGE}] run function {ns}:v{version}/zombies/revive/show_reviver_bar
+
+# Update HUD text_display color based on revive state / bleed timer
+execute if score #zb_reviving {ns}.data matches 1.. run function {ns}:v{version}/zombies/revive/hud_white
+execute if score #zb_reviving {ns}.data matches 0 if score @s {ns}.zb.bleed matches 400.. run function {ns}:v{version}/zombies/revive/hud_yellow
+execute if score #zb_reviving {ns}.data matches 0 if score @s {ns}.zb.bleed matches 200..399 run function {ns}:v{version}/zombies/revive/hud_gold
+execute if score #zb_reviving {ns}.data matches 0 if score @s {ns}.zb.bleed matches ..199 run function {ns}:v{version}/zombies/revive/hud_red
+
+# Revive complete (faster threshold if a reviver AT THE BODY has Quick Revive). return run: the
+# caller's bleed-out checks below must not run on the completion tick (zb.bleed was reset to 0)
+execute if score #zb_reviving {ns}.data matches 1 run scoreboard players set #rv_qr_near {ns}.data 0
+execute if score #zb_reviving {ns}.data matches 1 as @e[type=minecraft:mannequin,tag={ns}.downed_mannequin,predicate={ns}:v{version}/zombies/revive/downed_id_match] at @s run execute if entity @a[scores={{{ns}.zb.in_game=1,{ns}.zb.downed=0}},gamemode=!spectator,distance=..{REVIVE_RANGE},tag={ns}.perk.quick_revive] run scoreboard players set #rv_qr_near {ns}.data 1
+execute if score #zb_reviving {ns}.data matches 1 if score #rv_qr_near {ns}.data matches 1 if score @s {ns}.zb.revive_p matches {QUICK_REVIVE_TICKS}.. run return run function {complete_function}
+execute if score #zb_reviving {ns}.data matches 1 if score #rv_qr_near {ns}.data matches 0 if score @s {ns}.zb.revive_p matches {REVIVE_TICKS}.. run return run function {complete_function}
+""".strip()
+
+
 def generate_revive() -> None:
 	ns: str = Mem.ctx.project_id
 	version: str = Mem.ctx.project_version
@@ -68,10 +131,15 @@ scoreboard objectives add {ns}.zb.downed_id dummy
 # going down. Returns before any downed state is set. Must stay ABOVE the Who's Who branch.
 execute if score @s {ns}.zb.perk.dying_wish matches 1 if score @s {ns}.zb.dw_cd matches ..0 run return run function {ns}:v{version}/zombies/perks/dying_wish_trigger
 
+# A doppelganger going down again forfeits their unrevived body first (BO2 rule): the body and its
+# inventory snapshot are silently discarded, then this down proceeds (as a normal down — or as a
+# fresh Who's Who if the perk was rebought meanwhile)
+execute if entity @s[tag={ns}.ww_active] run function {ns}:v{version}/zombies/whos_who/forfeit
+
 # Who's Who: keep playing as a doppelganger with a pistol instead of entering the downed state; the
-# body drops as a revivable mannequin the owner can revive themselves. Works solo AND co-op. Because
-# this sits above the normal-down path (where solo Quick Revive's auto-revive lives), owning Who's
-# Who takes priority over Quick Revive in solo. Above Tombstone.
+# body drops as a revivable mannequin anyone (including the owner) can revive. Works solo AND co-op.
+# Because this sits above the normal-down path (where solo Quick Revive's auto-revive lives), owning
+# Who's Who takes priority over Quick Revive in solo. Above Tombstone.
 execute if score @s {ns}.zb.perk.whos_who matches 1 run return run function {ns}:v{version}/zombies/whos_who/on_down
 
 # Mark player as downed
@@ -83,6 +151,58 @@ tag @s add {ns}.downed_spectator
 # Reset death counter (already set 0 by on_respawn caller, but be safe)
 scoreboard players set @s {ns}.mp.death_count 0
 
+# Assign a unique downed ID and drop the revivable body (mannequin + name HUD) at the death spot
+scoreboard players add #downed_id_next {ns}.data 1
+scoreboard players operation @s {ns}.zb.downed_id = #downed_id_next {ns}.data
+scoreboard players operation #my_downed_id {ns}.data = @s {ns}.zb.downed_id
+function {ns}:v{version}/zombies/revive/spawn_downed_body
+
+# Electric Cherry: discharge a full-strength shock at the down spot (BO behavior), before the
+# perk is stripped. used==cap==1 makes it the maximum-size discharge.
+scoreboard players set #ec_used {ns}.data 1
+scoreboard players set #ec_cap {ns}.data 1
+execute if score @s {ns}.special.electric_cherry matches 1 at @s run function {ns}:v{version}/zombies/perks/electric_cherry_shock
+
+# Tombstone: spawn a recovery marker at the death spot (snapshots the owner's perks HERE, before
+# they are stripped). No-op solo or when unowned. Only reached on the normal-down path (Who's Who,
+# which returns earlier, takes priority so a marker never spawns for a doppelganger).
+execute if score @s {ns}.zb.perk.tombstone matches 1 run function {ns}:v{version}/zombies/perks/tombstone_on_down
+
+# Remove all perks when going down
+function {ns}:v{version}/zombies/perks/lose_all
+
+# Player enters spectator mode
+gamemode spectator @s
+
+# Summon invisible item_display as camera vehicle (spectator will ride it for locked third-person view)
+summon minecraft:item_display ~ ~ ~ {{Tags:["{ns}.downed_cam","{ns}.downed_cam_new","{ns}.gm_entity"],teleport_duration:1}}
+
+# Copy downed_id to camera entity for unique identification
+scoreboard players operation @n[tag={ns}.downed_cam_new] {ns}.zb.downed_id = @s {ns}.zb.downed_id
+
+# Teleport camera to THIS player's mannequin (id-matched: with Who's Who bodies around, "nearest
+# mannequin" could be someone else's), will be offset each tick
+scoreboard players operation #my_downed_id {ns}.data = @s {ns}.zb.downed_id
+execute as @e[type=minecraft:mannequin,tag={ns}.downed_mannequin,predicate={ns}:v{version}/zombies/revive/downed_id_match] at @s run tp @n[tag={ns}.downed_cam_new] ^ ^2 ^-3
+tag @e[tag={ns}.downed_cam_new] remove {ns}.downed_cam_new
+
+# Mount the spectator player into the camera entity (locks them in place)
+execute as @e[tag={ns}.downed_cam,predicate={ns}:v{version}/zombies/revive/downed_id_match] run tag @s add {ns}.downed_mine_temp
+ride @s mount @n[tag={ns}.downed_mine_temp]
+tag @e[tag={ns}.downed_mine_temp] remove {ns}.downed_mine_temp
+
+# Announce
+title @s title ["☠"]
+title @s subtitle [{{"text":"You are down! A teammate can revive you.","color":"gray"}}]
+tellraw @a[scores={{{ns}.zb.in_game=1}}] [{MGS_TAG},{{"selector":"@s","color":"red"}},{{"text":" is down!","color":"gray"}}]
+""")
+
+	## Spawn the revivable body for @s at their LastDeathLocation: a mannequin wearing their armor +
+	## skin, with the name HUD above it. Shared by the normal down AND Who's Who — the body is the
+	## exact same entity kind either way (same tags, same visuals, same revive interactions).
+	## Requires @s {ns}.zb.downed_id already set to a fresh id; leaves the death position in
+	## storage temp rv_x/rv_y/rv_z for the caller.
+	write_versioned_function("zombies/revive/spawn_downed_body", f"""
 # Read death position at full float precision (multiply by 1000, store as double 0.001)
 execute store result score #rv_y_raw {ns}.data run data get entity @s LastDeathLocation.pos[1] 1000
 scoreboard players add #rv_y_raw {ns}.data {HUD_OFFSET_Y_THOUSANDTHS}
@@ -90,10 +210,6 @@ execute store result storage {ns}:temp rv_x double 0.001 run data get entity @s 
 execute store result storage {ns}:temp rv_y double 0.001 run data get entity @s LastDeathLocation.pos[1] 1000
 execute store result storage {ns}:temp rv_z double 0.001 run data get entity @s LastDeathLocation.pos[2] 1000
 execute store result storage {ns}:temp rv_y_hud double 0.001 run scoreboard players get #rv_y_raw {ns}.data
-
-# Assign a unique downed ID to this player and their mannequin
-scoreboard players add #downed_id_next {ns}.data 1
-scoreboard players operation @s {ns}.zb.downed_id = #downed_id_next {ns}.data
 
 # Summon mannequin (crouching pose, invulnerable, temp tag for targeting)
 summon minecraft:mannequin ~ ~.5 ~ {{Invulnerable:1b,pose:"swimming",hide_description:true,Tags:["{ns}.downed_mannequin","{ns}.downed_new","{ns}.gm_entity"]}}
@@ -129,44 +245,6 @@ function {ns}:v{version}/zombies/revive/tp_to_death with storage {ns}:temp
 # Remove temp tags so future queries don't accidentally match
 tag @e[tag={ns}.downed_new] remove {ns}.downed_new
 tag @e[tag={ns}.downed_hud_new] remove {ns}.downed_hud_new
-
-# Electric Cherry: discharge a full-strength shock at the down spot (BO behavior), before the
-# perk is stripped. used==cap==1 makes it the maximum-size discharge.
-scoreboard players set #ec_used {ns}.data 1
-scoreboard players set #ec_cap {ns}.data 1
-execute if score @s {ns}.special.electric_cherry matches 1 at @s run function {ns}:v{version}/zombies/perks/electric_cherry_shock
-
-# Tombstone: spawn a recovery marker at the death spot (snapshots the owner's perks HERE, before
-# they are stripped). No-op solo or when unowned. Only reached on the normal-down path (Who's Who,
-# which returns earlier, takes priority so a marker never spawns for a doppelganger).
-execute if score @s {ns}.zb.perk.tombstone matches 1 run function {ns}:v{version}/zombies/perks/tombstone_on_down
-
-# Remove all perks when going down
-function {ns}:v{version}/zombies/perks/lose_all
-
-# Player enters spectator mode
-gamemode spectator @s
-
-# Summon invisible item_display as camera vehicle (spectator will ride it for locked third-person view)
-summon minecraft:item_display ~ ~ ~ {{Tags:["{ns}.downed_cam","{ns}.downed_cam_new","{ns}.gm_entity"],teleport_duration:1}}
-
-# Copy downed_id to camera entity for unique identification
-scoreboard players operation @n[tag={ns}.downed_cam_new] {ns}.zb.downed_id = @s {ns}.zb.downed_id
-
-# Teleport camera to mannequin position (will be offset each tick)
-execute as @n[tag={ns}.downed_mannequin] at @s run tp @n[tag={ns}.downed_cam_new] ^ ^2 ^-3
-tag @e[tag={ns}.downed_cam_new] remove {ns}.downed_cam_new
-
-# Mount the spectator player into the camera entity (locks them in place)
-scoreboard players operation #my_downed_id {ns}.data = @s {ns}.zb.downed_id
-execute as @e[tag={ns}.downed_cam,predicate={ns}:v{version}/zombies/revive/downed_id_match] run tag @s add {ns}.downed_mine_temp
-ride @s mount @n[tag={ns}.downed_mine_temp]
-tag @e[tag={ns}.downed_mine_temp] remove {ns}.downed_mine_temp
-
-# Announce
-title @s title ["☠"]
-title @s subtitle [{{"text":"You are down! A teammate can revive you.","color":"gray"}}]
-tellraw @a[scores={{{ns}.zb.in_game=1}}] [{MGS_TAG},{{"selector":"@s","color":"red"}},{{"text":" is down!","color":"gray"}}]
 """)
 
 	## Macro: write the owner's literal name into the freshly summoned HUD (player names are [A-Za-z0-9_])
@@ -195,9 +273,6 @@ execute as @a[tag={ns}.downed_spectator,scores={{{ns}.zb.in_game=1}}] at @s run 
 
 	## Downed tick: per-player (run as the spectating downed player)
 	write_versioned_function("zombies/revive/downed_tick", f"""
-# Decrement bleed timer (real-time via #tick_delta)
-scoreboard players operation @s {ns}.zb.bleed -= #tick_delta {ns}.data
-
 # Identify THIS player's downed entities for the id-matching predicate, then tag the mannequin ONCE
 # as downed_mine_temp. Every per-mannequin command below reuses that tag (or a single dispatch into
 # move_mannequin) instead of re-selecting the mannequin ~11x per tick.
@@ -229,20 +304,10 @@ execute as @n[tag={ns}.downed_mine_temp] at @s run function {ns}:v{version}/zomb
 # Done with the per-tick mannequin tag
 tag @e[tag={ns}.downed_mine_temp] remove {ns}.downed_mine_temp
 
-# Check for revivers (alive non-downed players within range of THIS player's mannequin —
-# id-matched, since with several downed players 'nearest mannequin' could be someone else''s)
-scoreboard players set #zb_reviving {ns}.data 0
-execute as @e[tag={ns}.downed_mannequin,predicate={ns}:v{version}/zombies/revive/downed_id_match] at @s run execute as @a[scores={{{ns}.zb.in_game=1,{ns}.zb.downed=0}},gamemode=!spectator,distance=..{REVIVE_RANGE}] run scoreboard players set #zb_reviving {ns}.data 1
+{revive_body_detect()}
 
 # Solo Quick Revive auto-revive: if no teammates in-game and player has quick_revive + uses left
 execute if score #zb_reviving {ns}.data matches 0 if entity @s[tag={ns}.perk.quick_revive] unless score #zb_solo_revive_block {ns}.data matches 1 run function {ns}:v{version}/zombies/revive/check_solo_qr
-
-# If teammate is reviving (=1), increment progress; if solo QR (=2), skip (solo_qr_tick handles it); if none (=0), decay
-# Real-time: progress moves by #tick_delta per tick, decay at double speed
-execute if score #zb_reviving {ns}.data matches 1 run scoreboard players operation @s {ns}.zb.revive_p += #tick_delta {ns}.data
-scoreboard players operation #rv_decay {ns}.data = #tick_delta {ns}.data
-scoreboard players operation #rv_decay {ns}.data *= #2 {ns}.data
-execute if score #zb_reviving {ns}.data matches 0 if score @s {ns}.zb.revive_p matches 1.. run scoreboard players operation @s {ns}.zb.revive_p -= #rv_decay {ns}.data
 
 # Show bleed timer on downed player's actionbar ONLY when not in solo QR (which has its own actionbar)
 # Compute display: whole seconds and tenths digit (sec = bleed/20, tenth = (bleed%20)/2)
@@ -254,23 +319,7 @@ execute if score #zb_reviving {ns}.data matches ..1 run scoreboard players opera
 execute if score #zb_reviving {ns}.data matches ..1 run data modify storage smithed.actionbar:input message set value {{json:[{{"text":"☠ Bleeding out: ","color":"red"}},{{"score":{{"name":"#rv_disp_sec","objective":"{ns}.data"}},"color":"gray"}},{{"text":".","color":"gray"}},{{"score":{{"name":"#rv_disp_tenth","objective":"{ns}.data"}},"color":"gray"}},{{"text":"s","color":"dark_gray"}}],priority:"override",freeze:2}}
 execute if score #zb_reviving {ns}.data matches ..1 run function #smithed.actionbar:message
 
-# Show revive progress bar to nearby alive players (from THIS player's mannequin position).
-# Snapshot @s's revive progress first: the reviver bar runs as the reviver, who cannot reliably
-# re-select the downed player (they spectate a camera >2.5 blocks from the mannequin, which is
-# why the bar used to display a stuck '0/60t').
-scoreboard players operation #rv_reviver_disp {ns}.data = @s {ns}.zb.revive_p
-execute if score #zb_reviving {ns}.data matches 1 as @e[tag={ns}.downed_mannequin,predicate={ns}:v{version}/zombies/revive/downed_id_match] at @s run execute as @a[scores={{{ns}.zb.in_game=1,{ns}.zb.downed=0}},gamemode=!spectator,distance=..{REVIVE_RANGE}] run function {ns}:v{version}/zombies/revive/show_reviver_bar
-
-# Update HUD text_display color based on revive state / bleed timer
-execute if score #zb_reviving {ns}.data matches 1.. run function {ns}:v{version}/zombies/revive/hud_white
-execute if score #zb_reviving {ns}.data matches 0 if score @s {ns}.zb.bleed matches 400.. run function {ns}:v{version}/zombies/revive/hud_yellow
-execute if score #zb_reviving {ns}.data matches 0 if score @s {ns}.zb.bleed matches 200..399 run function {ns}:v{version}/zombies/revive/hud_gold
-execute if score #zb_reviving {ns}.data matches 0 if score @s {ns}.zb.bleed matches ..199 run function {ns}:v{version}/zombies/revive/hud_red
-
-# Check revive complete (Quick Revive threshold if reviver nearby has perk; normal otherwise)
-# Use matches 1 (exactly) to exclude solo QR mode (which sets #zb_reviving=2)
-execute if score #zb_reviving {ns}.data matches 1 if entity @a[scores={{{ns}.zb.in_game=1,{ns}.zb.downed=0}},gamemode=!spectator,distance=..{REVIVE_RANGE},tag={ns}.perk.quick_revive] if score @s {ns}.zb.revive_p matches {QUICK_REVIVE_TICKS}.. run function {ns}:v{version}/zombies/revive/revive_complete
-execute if score #zb_reviving {ns}.data matches 1 unless entity @a[scores={{{ns}.zb.in_game=1,{ns}.zb.downed=0}},gamemode=!spectator,distance=..{REVIVE_RANGE},tag={ns}.perk.quick_revive] if score @s {ns}.zb.revive_p matches {REVIVE_TICKS}.. run function {ns}:v{version}/zombies/revive/revive_complete
+{revive_body_progress(f"{ns}:v{version}/zombies/revive/revive_complete")}
 
 # Bleed out: time's up
 execute if score @s {ns}.zb.bleed matches ..0 run function {ns}:v{version}/zombies/revive/bleed_out
@@ -419,14 +468,10 @@ execute store success score #rv_pos_ok {ns}.data run data get entity @n[tag={ns}
 execute store result storage {ns}:temp rv_x double 0.001 run data get entity @n[tag={ns}.downed_mine_temp] Pos[0] 1000
 execute store result storage {ns}:temp rv_y double 0.001 run data get entity @n[tag={ns}.downed_mine_temp] Pos[1] 1000
 execute store result storage {ns}:temp rv_z double 0.001 run data get entity @n[tag={ns}.downed_mine_temp] Pos[2] 1000
-
-# Hide mannequin and HUD by teleporting far below the world (avoids kill animation/drops)
-tp @n[tag={ns}.downed_mine_temp] ~ -10000 ~
-execute as @e[tag={ns}.downed_hud,predicate={ns}:v{version}/zombies/revive/downed_id_match] run tp @s ~ -10000 ~
-tag @n[tag={ns}.downed_mine_temp] remove {ns}.downed_mannequin
-execute as @e[tag={ns}.downed_hud,predicate={ns}:v{version}/zombies/revive/downed_id_match] run tag @s remove {ns}.downed_hud
 tag @e[tag={ns}.downed_mine_temp] remove {ns}.downed_mine_temp
-execute as @e[tag={ns}.downed_cam,predicate={ns}:v{version}/zombies/revive/downed_id_match] run kill @s
+
+# Hide mannequin + HUD and kill the camera
+function {ns}:v{version}/zombies/revive/hide_body
 
 # Dismount from camera entity and restore adventure mode
 ride @s dismount
@@ -463,20 +508,14 @@ scoreboard players set @s {ns}.zb.downed 0
 scoreboard players set @s {ns}.zb.revive_p 0
 tag @s remove {ns}.downed_spectator
 
-# Hide THIS player's mannequin and HUD by teleporting far below the world (id-matched: a
-# "nearest" lookup could hide another downed player's mannequin when both went down together)
+# Hide THIS player's mannequin and HUD (id-matched: a "nearest" lookup could hide another downed
+# player's mannequin when both went down together)
 scoreboard players operation #my_downed_id {ns}.data = @s {ns}.zb.downed_id
 
 # Tombstone: snapshot the inventory now (still intact) if a marker is waiting for this player
 function {ns}:v{version}/zombies/perks/tombstone_on_bleed_out
 
-tag @e[tag={ns}.downed_mannequin,predicate={ns}:v{version}/zombies/revive/downed_id_match] add {ns}.downed_mine_temp
-tp @n[tag={ns}.downed_mine_temp] ~ -10000 ~
-execute as @e[tag={ns}.downed_hud,predicate={ns}:v{version}/zombies/revive/downed_id_match] run tp @s ~ -10000 ~
-tag @n[tag={ns}.downed_mine_temp] remove {ns}.downed_mannequin
-execute as @e[tag={ns}.downed_hud,predicate={ns}:v{version}/zombies/revive/downed_id_match] run tag @s remove {ns}.downed_hud
-tag @e[tag={ns}.downed_mine_temp] remove {ns}.downed_mine_temp
-execute as @e[tag={ns}.downed_cam,predicate={ns}:v{version}/zombies/revive/downed_id_match] run kill @s
+function {ns}:v{version}/zombies/revive/hide_body
 
 # Dismount then enter full spectator mode to watch until next round
 ride @s dismount
@@ -491,6 +530,19 @@ execute unless entity @a[scores={{{ns}.zb.in_game=1,{ns}.zb.downed=0}},gamemode=
 title @s title ["☠"]
 title @s subtitle [{{"text":"You bled out. Respawning next round...","color":"gray"}}]
 tellraw @a[scores={{{ns}.zb.in_game=1}}] [{MGS_TAG},{{"selector":"@s","color":"dark_red"}},{{"text":" has bled out.","color":"gray"}}]
+""")
+
+	## Hide @s's body (mannequin + HUD, id-matched via #my_downed_id) by teleporting it far below
+	## the world (avoids the kill animation/drops), strip the tags, and kill the camera if any.
+	## Shared by revive_complete, bleed_out and the Who's Who paths (no camera there — no-op).
+	write_versioned_function("zombies/revive/hide_body", f"""
+tag @e[tag={ns}.downed_mannequin,predicate={ns}:v{version}/zombies/revive/downed_id_match] add {ns}.downed_mine_temp
+tp @n[tag={ns}.downed_mine_temp] ~ -10000 ~
+execute as @e[tag={ns}.downed_hud,predicate={ns}:v{version}/zombies/revive/downed_id_match] run tp @s ~ -10000 ~
+tag @n[tag={ns}.downed_mine_temp] remove {ns}.downed_mannequin
+execute as @e[tag={ns}.downed_hud,predicate={ns}:v{version}/zombies/revive/downed_id_match] run tag @s remove {ns}.downed_hud
+tag @e[tag={ns}.downed_mine_temp] remove {ns}.downed_mine_temp
+execute as @e[tag={ns}.downed_cam,predicate={ns}:v{version}/zombies/revive/downed_id_match] run kill @s
 """)
 
 	# ──────────────────────────────────────────────────────────────────────────
@@ -567,6 +619,9 @@ tag @a[tag={ns}.spawn_pending] remove {ns}.spawn_pending
 	## The player goes straight to bled-out spectator and is respawned at the next round end.
 	# ──────────────────────────────────────────────────────────────────────────
 	write_versioned_function("zombies/revive/full_death", f"""
+# A doppelganger's unrevived body is forfeited (same rule as going down again)
+execute if entity @s[tag={ns}.ww_active] run function {ns}:v{version}/zombies/whos_who/forfeit
+
 # Count it as a down and strip perks (same as a normal down/bleed-out)
 scoreboard players add @s {ns}.zb.downs 1
 function {ns}:v{version}/zombies/perks/lose_all

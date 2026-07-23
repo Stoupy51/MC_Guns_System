@@ -8,6 +8,7 @@ from ...config.stats import CAPACITY, REMAINING_BULLETS
 from ..helpers import MGS_TAG, reset_special_scores_lines
 from ..stamina import STAM_MAX
 from .common import deny_not_enough_points_body, deny_requires_power_body, game_active_guard_cmd
+from .revive import SOLO_QR_MAX
 
 # Each perk defines:
 # - message/message_color: chat feedback on purchase
@@ -58,8 +59,14 @@ PERK_DEFINITIONS: dict[str, JsonDict] = {
 		"commands": [
 			"tag @s add {ns}.perk.quick_revive",
 		],
-		# No removal_commands: tag removal and score management handled by solo_qr_complete
-		# persistent_score=True: lose_all does NOT reset this score (solo_qr_complete manages it)
+		# Going down strips the active tag (or a doppelganger would still auto-revive off a Quick
+		# Revive they no longer own). The score drops to 0 (rebuy allowed) UNLESS the solo uses are
+		# exhausted, where score 1 keeps the machine blocked (solo_qr_complete manages that state) —
+		# which is also why persistent_score=True: lose_all must not blanket-reset the score.
+		"removal_commands": [
+			"tag @s remove {ns}.perk.quick_revive",
+			f"execute unless score @s {{ns}}.zb.qr_uses matches {SOLO_QR_MAX}.. run scoreboard players set @s {{ns}}.zb.perk.quick_revive 0",
+		],
 		"persistent_score": True,
 	},
 	"mule_kick": {
@@ -164,8 +171,9 @@ PERK_DEFINITIONS: dict[str, JsonDict] = {
 		"message_color": "aqua",
 		"text_color": "dark_aqua",
 		# No purchase-time effect. On going down the owner keeps playing as a doppelganger (revive/on_down
-		# branch) with just a pistol and can revive their own body. Works solo (and takes priority over
-		# solo Quick Revive). See whos_who_* below.
+		# branch) with just a pistol; the body drops as a NORMAL revivable downed mannequin that any
+		# alive player — including the owner — can revive. Works solo (and takes priority over solo
+		# Quick Revive). See whos_who.py.
 	},
 	"dying_wish": {
 		"display_name": "Dying Wish",
@@ -836,7 +844,14 @@ function {ns}:v{version}/zombies/traps/apply_trap_damage with storage {ns}:temp 
 	# round respawn the owner has 60s to walk back to the marker and recover their perks + weapons
 	# (Tombstone itself excluded). Disabled solo. Called from revive/on_down, revive_complete,
 	# bleed_out, and do_round_respawn.
-	ts_snapshot: str = "\n".join(f"scoreboard players operation @s {ns}.zb.tsp.{pid} = @s {ns}.zb.perk.{pid}" for pid in PERK_DEFINITIONS)
+	# quick_revive: score 1 can also mean "solo uses exhausted" (rebuy-block) with no active tag —
+	# only snapshot a QR that is actually active, or the recovery would grant one back for free.
+	ts_snapshot: str = "\n".join(
+		f"execute store success score @s {ns}.zb.tsp.{pid} if entity @s[tag={ns}.perk.quick_revive]"
+		if pid == "quick_revive"
+		else f"scoreboard players operation @s {ns}.zb.tsp.{pid} = @s {ns}.zb.perk.{pid}"
+		for pid in PERK_DEFINITIONS
+	)
 	ts_clear: str = "\n".join(f"scoreboard players set @s {ns}.zb.tsp.{pid} 0" for pid in PERK_DEFINITIONS)
 
 	# Reapply-effect (no chat message) for perks with commands — used when recovering from a tombstone.
@@ -944,9 +959,11 @@ $data remove storage {ns}:zombies tombstone_inv."$(id)"
 # Restore max health for the restored Juggernog state
 execute if score @s {ns}.zb.perk.juggernog matches 1.. run attribute @s minecraft:max_health base set 40
 
-# Restore the snapshotted inventory (weapons/mags/grenades), then drop the snapshot
+# Restore the snapshotted inventory (weapons/mags/grenades) into the exact original slots via the
+# shared restore system (players can't be data-modified), then drop the snapshot
 execute store result storage {ns}:temp _ts_id.id int 1 run scoreboard players get @s {ns}.zb.downed_id
-function {ns}:v{version}/zombies/perks/tombstone_restore_inv with storage {ns}:temp _ts_id
+function {ns}:v{version}/zombies/perks/tombstone_load_snapshot with storage {ns}:temp _ts_id
+function {ns}:v{version}/zombies/inventory/restore_inventory
 
 # Rebuild the perk display items now that ownership is restored
 function {ns}:v{version}/zombies/inventory/refresh_perk_items
@@ -964,9 +981,9 @@ playsound minecraft:block.respawn_anchor.charge player @a[distance=..24] ~ ~ ~ 1
 tellraw @a[scores={{{ns}.zb.in_game=1}}] [{MGS_TAG},{{"selector":"@s","color":"green"}},{{"text":" recovered their gear from a tombstone!","color":"gray"}}]
 """)
 
-	## Macro: restore @s Inventory from a snapshot by id, then drop the snapshot.
-	write_versioned_function("zombies/perks/tombstone_restore_inv", f"""
-$data modify entity @s Inventory set from storage {ns}:zombies tombstone_inv."$(id)"
+	## Macro: load a snapshot by id into the shared restore buffer, then drop the snapshot.
+	write_versioned_function("zombies/perks/tombstone_load_snapshot", f"""
+$data modify storage {ns}:temp _restore.items set from storage {ns}:zombies tombstone_inv."$(id)"
 $data remove storage {ns}:zombies tombstone_inv."$(id)"
 """)
 

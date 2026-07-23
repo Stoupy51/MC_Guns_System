@@ -1,5 +1,5 @@
 
-#> mgs:v5.1.0/zombies/perks/tombstone_restore_inv
+#> mgs:v5.1.0/zombies/perks/tombstone_load_snapshot
 #
 # @executed	as @a[distance=..2,gamemode=!spectator,scores={mgs.zb.in_game=1,mgs.zb.downed=0}]
 #
@@ -8,6 +8,6 @@
 # @args		id (unknown)
 #
 
-$data modify entity @s Inventory set from storage mgs:zombies tombstone_inv."$(id)"
+$data modify storage mgs:temp _restore.items set from storage mgs:zombies tombstone_inv."$(id)"
 $data remove storage mgs:zombies tombstone_inv."$(id)"
 

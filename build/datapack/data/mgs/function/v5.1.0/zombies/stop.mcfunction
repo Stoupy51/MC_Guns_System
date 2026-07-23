@@ -173,9 +173,8 @@ scoreboard players reset * mgs.zb.perkpaid.widows_wine
 
 kill @e[type=item_display,tag=mgs.wunderfizz_orb]
 
-kill @e[tag=mgs.ww_body]
-kill @e[tag=mgs.ww_hud]
 tag @a remove mgs.ww_active
+scoreboard players set @a mgs.zb.ww.id 0
 data modify storage mgs:zombies ww_inv set value {}
 
 # Reset revive state

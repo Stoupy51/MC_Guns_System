@@ -4,6 +4,7 @@
 # @executed	as @n[tag=mgs.spawn_candidate,sort=random]
 #
 # @within	mgs:v5.1.0/zombies/pick_spawn [ as @n[tag=mgs.spawn_candidate,sort=random] ]
+#			mgs:v5.1.0/zombies/whos_who/on_down [ as @n[tag=mgs.spawn_candidate] ]
 #			mgs:v5.1.0/zombies/revive/respawn_near_player [ as @n[tag=mgs.spawn_candidate] ]
 #
 
