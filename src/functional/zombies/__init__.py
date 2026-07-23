@@ -19,6 +19,7 @@ from .perks import generate_perks
 from .power import generate_power_switch
 from .powerups import generate_powerups
 from .revive import generate_revive
+from .roaming import generate_roaming
 from .round import generate_zombies_rounds
 from .traps import generate_traps
 from .wallbuys import generate_wallbuys
@@ -39,6 +40,7 @@ def main() -> None:
     generate_zombies_feedback()
     generate_zombies_inventory()
     generate_display_helpers()
+    generate_roaming()
     generate_mystery_box()
     generate_monkey_bomb()
     generate_pap()

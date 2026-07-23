@@ -64,6 +64,7 @@ scoreboard players set #zb_escort_count mgs.data 0
 # Remove all pull displays and presence boxes, reset all per-box state
 kill @e[tag=mgs.mb_display]
 kill @e[tag=mgs.mb_presence]
+kill @e[tag=mgs.mb_disabled]
 kill @e[tag=mgs.mb_temp]
 scoreboard players set #mb_pulls mgs.data 0
 scoreboard players set #mb_move_timer mgs.data 0
@@ -172,6 +173,10 @@ scoreboard players reset * mgs.zb.perkpaid.dying_wish
 scoreboard players reset * mgs.zb.perkpaid.widows_wine
 
 kill @e[type=item_display,tag=mgs.wunderfizz_orb]
+kill @e[tag=mgs.wf_display]
+kill @e[tag=mgs.wf_bear]
+scoreboard players set #wf_uses mgs.data 0
+scoreboard players set #wf_move_timer mgs.data 0
 
 tag @a remove mgs.ww_active
 scoreboard players set @a mgs.zb.ww.id 0

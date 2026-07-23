@@ -76,7 +76,7 @@ ALL_ELEMENTS: dict[str, JsonDict] = {
 	"perk_machine":       {"name": "Perk Machine",     "color": "dark_purple",  "particle": [0.5, 0.0, 0.5], "particle_scale": 1.0, "has_rotation": True,  "egg_model": "minecraft:witch_spawn_egg",       "save_type": "zb_object", "save_path": "perks", "emoji": "🧪",
                            "defaults": {"name": "", "price": -1, "partial_price": 0, "perk_id": "juggernog", "power": True, "display_item": "", "item_model": ""}},
 	"wunderfizz":         {"name": "Der Wunderfizz",   "color": "gold",         "particle": [1.0, 0.7, 0.0], "particle_scale": 1.0, "has_rotation": True,  "egg_model": "minecraft:bee_spawn_egg",         "save_type": "zb_object", "save_path": "wunderfizz", "emoji": "🎰",
-                           "defaults": {"name": "Der Wunderfizz", "price": 1500, "power": True, "all_perks": False, "display_item": "", "item_model": ""}},
+                           "defaults": {"name": "Der Wunderfizz", "price": 1500, "power": True, "all_perks": False, "can_start_on": True, "display_item": "", "item_model": ""}},
 	"pap_machine":        {"name": "Pack-a-Punch",     "color": "dark_red",     "particle": [0.8, 0.1, 0.1], "particle_scale": 1.0, "has_rotation": True,  "egg_model": "minecraft:creaking_spawn_egg",    "save_type": "zb_object", "save_path": "pap_machines", "emoji": "🔥",
                            "defaults": {"name": "Pack-a-Punch", "price": 5000, "power": True, "display_item": "", "item_model": ""}},
 	"mystery_box_pos":    {"name": "Mystery Box Pos",  "color": "light_purple", "particle": [1.0, 0.0, 1.0], "particle_scale": 1.0, "has_rotation": True,  "egg_model": "minecraft:evoker_spawn_egg",      "save_type": "zb_object", "save_path": "mystery_box.positions", "emoji": "📦",
@@ -119,6 +119,7 @@ FIELD_DOCS: dict[tuple[str, str] | str, str] = {
 	("barrier", "radius"): "Block radius the barrier toggles open/closed around its marker.",
 	"activation_box": "Optional [x, y, z, dx, dy, dz] box (relative to this spawn, in blocks).\nWhen set, this spawn only produces enemies while a player stands inside the box.\nx/y/z = corner offset from the spawn, dx/dy/dz = size. Empty [] = always active.",
 	# Shared fallbacks (any element type):
+	"can_start_on": "true = the machine is allowed to be the ACTIVE (usable) spot at game\nstart and after it roams. false = a valid roam destination, but never\nthe first active spot. Only one spot is active at a time; the rest show\na grayed-out disabled model. At least one spot must allow starting.",
 	"power": "true = requires the map's power to be switched on before it works\nfalse = always usable",
 	"price": "Cost in points to buy/use this element.",
 }

@@ -1,0 +1,41 @@
+{
+	"pools": [
+		{
+			"rolls": 1,
+			"entries": [
+				{
+					"type": "minecraft:item",
+					"name": "minecraft:recovery_compass",
+					"functions": [
+						{
+							"function": "minecraft:set_components",
+							"components": {
+								"minecraft:custom_data": {
+									"mgs": {
+										"der_wunderfizz_disabled": true
+									},
+									"smithed": {
+										"id": "mgs:der_wunderfizz_disabled",
+										"origin": "mgs",
+										"ignore": {"functionality": true,"crafting": true}
+									}
+								},
+								"minecraft:item_model": "mgs:der_wunderfizz_disabled",
+								"minecraft:item_name": {
+									"translate": "mgs.der_wunderfizz_disabled"
+								},
+								"minecraft:lore": [
+									[
+										"",
+										{"text": "I","color": "white","italic": false,"font": "mgs:icons"},
+										[{"text":" ","italic": true,"color": "blue"}, {"translate": "mgs.mc_guns_system"}]
+									]
+								]
+							}
+						}
+					]
+				}
+			]
+		}
+	]
+}

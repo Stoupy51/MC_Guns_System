@@ -4,6 +4,7 @@
 # @executed	as @e[tag=...] & at @s
 #
 # @within	mgs:v5.1.0/zombies/mystery_box/show_bear_result
+#			mgs:v5.1.0/zombies/wunderfizz/land_bear
 #
 
 execute as @a[scores={mgs.zb.in_game=1}] at @s run playsound mgs:zombies/mystery_box/bye_bye ambient @s ~ ~ ~ 1.0 1.0

@@ -412,6 +412,10 @@ scoreboard objectives add mgs.zb.wf.buyer dummy
 scoreboard objectives add mgs.zb.wf.perk dummy
 # 1 when the buyer owns Timeslip (this orb spins 2x faster, like the Mystery Box)
 scoreboard objectives add mgs.zb.wf.timeslip dummy
+# 1 when this pull will roam the machine (teddy bear) instead of granting a perk
+scoreboard objectives add mgs.zb.wf.willmove dummy
+# Points paid for this pull, so a roam (bear) can refund the buyer
+scoreboard objectives add mgs.zb.wf.paid dummy
 # Stable per-player buyer id (lazy)
 scoreboard objectives add mgs.zb.wf_pid dummy
 

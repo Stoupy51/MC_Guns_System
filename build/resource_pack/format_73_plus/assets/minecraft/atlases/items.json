@@ -10,6 +10,7 @@
 		{"type": "minecraft:single","resource": "minecraft:block/cyan_concrete","sprite": "mgs:atlas/cyan_concrete"},
 		{"type": "minecraft:single","resource": "minecraft:block/cyan_terracotta","sprite": "mgs:atlas/cyan_terracotta"},
 		{"type": "minecraft:single","resource": "minecraft:block/dark_prismarine","sprite": "mgs:atlas/dark_prismarine"},
+		{"type": "minecraft:single","resource": "minecraft:block/deepslate","sprite": "mgs:atlas/deepslate"},
 		{"type": "minecraft:single","resource": "minecraft:block/gold_block","sprite": "mgs:atlas/gold_block"},
 		{"type": "minecraft:single","resource": "minecraft:block/gray_concrete","sprite": "mgs:atlas/gray_concrete"},
 		{"type": "minecraft:single","resource": "minecraft:block/green_concrete","sprite": "mgs:atlas/green_concrete"},

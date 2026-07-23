@@ -33,6 +33,7 @@
 #			mgs:v5.1.0/zombies/wunderfizz/deny_requires_power
 #			mgs:v5.1.0/zombies/wunderfizz/deny_not_enough_points
 #			mgs:v5.1.0/zombies/wunderfizz/deny_in_use
+#			mgs:v5.1.0/zombies/wunderfizz/deny_moving
 #			mgs:v5.1.0/zombies/wunderfizz/deny_not_your_result
 #			mgs:v5.1.0/zombies/wunderfizz/deny_all_owned
 #			mgs:v5.1.0/zombies/traps/deny_requires_power

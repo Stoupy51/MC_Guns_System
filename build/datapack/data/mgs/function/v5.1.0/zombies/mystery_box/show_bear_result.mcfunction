@@ -12,8 +12,12 @@ function mgs:v5.1.0/zombies/mystery_box/close_lid
 # Mark this display as the moving bear so the move animation only touches it (not other pulls)
 tag @s add mgs.mb_bear
 
+# Hide every grayed disabled crate for the duration of the move (rebuilt when the box lands) so the
+# destination spot doesn't show a disabled crate underneath the arriving chest.
+kill @e[tag=mgs.mb_disabled]
+
 # Replace display with teddy bear
-loot replace entity @s contents loot mgs:zombies/mystery_box_bear
+loot replace entity @s contents loot mgs:zombies/roaming_bear
 data merge entity @s {transformation:{translation:[0f,1.25f,0f],scale:[0.75f,0.75f,0.75f]}}
 
 # Refund this box's buyer (the moving box eats the pull, no weapon given)

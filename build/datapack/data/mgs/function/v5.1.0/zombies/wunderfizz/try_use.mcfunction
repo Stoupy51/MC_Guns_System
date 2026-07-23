@@ -22,10 +22,24 @@ tag @s remove mgs.pool_target
 execute if score #pool_chosen mgs.data matches ..-1 run scoreboard players operation @s mgs.zb.points += #wf_price mgs.data
 execute if score #pool_chosen mgs.data matches ..-1 run return run function mgs:v5.1.0/zombies/wunderfizz/deny_all_owned
 
+# Decide whether this pull roams the machine (teddy bear) instead of granting a perk. Shared rule
+# with the Mystery Box (roaming/roll_move): after WF_MOVE_THRESHOLD uses, 1-in-3 chance. Needs >=2
+# placed spots to have somewhere to go.
+scoreboard players add #wf_uses mgs.data 1
+scoreboard players operation #roam_uses mgs.data = #wf_uses mgs.data
+scoreboard players set #roam_threshold mgs.data 4
+function mgs:v5.1.0/zombies/roaming/roll_move
+scoreboard players operation #wf_will_move mgs.data = #roam_will_move mgs.data
+execute store result score #wf_pos_count mgs.data run data get storage mgs:zombies game.map.wunderfizz
+execute if score #wf_pos_count mgs.data matches ..1 run scoreboard players set #wf_will_move mgs.data 0
+execute if score #wf_will_move mgs.data matches 1 run scoreboard players set #wf_uses mgs.data 0
+
 # Spawn the spinning orb above the machine and stamp it
 function mgs:v5.1.0/zombies/wunderfizz/spawn_orb
 scoreboard players operation @n[tag=mgs.wf_orb_new] mgs.zb.wf.buyer = @s mgs.zb.wf_pid
 scoreboard players operation @n[tag=mgs.wf_orb_new] mgs.zb.wf.perk = #pool_chosen mgs.data
+scoreboard players operation @n[tag=mgs.wf_orb_new] mgs.zb.wf.paid = #wf_price mgs.data
+scoreboard players operation @n[tag=mgs.wf_orb_new] mgs.zb.wf.willmove = #wf_will_move mgs.data
 scoreboard players set @n[tag=mgs.wf_orb_new] mgs.zb.wf.anim 100
 # Timeslip: this buyer's spin runs 2x faster (see orb_tick)
 scoreboard players set @n[tag=mgs.wf_orb_new] mgs.zb.wf.timeslip 0
