@@ -9,6 +9,9 @@
 #			mgs:v5.1.0/zombies/inventory/refresh_perk_items {id:"quick_revive",name:"Quick Revive",color:"aqua"}
 #			mgs:v5.1.0/zombies/inventory/refresh_perk_items {id:"mule_kick",name:"Mule Kick",color:"dark_green"}
 #			mgs:v5.1.0/zombies/inventory/refresh_perk_items {id:"stamin_up",name:"Stamin-Up",color:"gold"}
+#			mgs:v5.1.0/zombies/inventory/refresh_perk_items {id:"phd_flopper",name:"PhD Flopper",color:"dark_purple"}
+#			mgs:v5.1.0/zombies/inventory/refresh_perk_items {id:"deadshot",name:"Deadshot Daiquiri",color:"dark_green"}
+#			mgs:v5.1.0/zombies/inventory/refresh_perk_items {id:"timeslip",name:"Timeslip",color:"light_purple"}
 #
 # @args		id (string)
 #			name (string)

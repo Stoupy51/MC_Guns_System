@@ -1,0 +1,8 @@
+{
+	"parent": "mgs:item/perk_machine",
+	"textures": {
+		"accent": "minecraft:block/magenta_concrete",
+		"accent2": "minecraft:block/magenta_terracotta",
+		"particle": "minecraft:block/magenta_terracotta"
+	}
+}

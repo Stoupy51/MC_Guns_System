@@ -113,6 +113,7 @@ bossbar remove mgs:pu_unlimited_ammo
 # Reset perk effects
 execute as @a[team=mgs.zombies] run attribute @s minecraft:max_health base reset
 execute as @a[team=mgs.zombies] run attribute @s minecraft:movement_speed modifier remove mgs:stamin_up
+execute as @a[team=mgs.zombies] run attribute @s minecraft:fall_damage_multiplier base reset
 scoreboard players set @a[team=mgs.zombies] mgs.stam_bonus 0
 tag @a[team=mgs.zombies] remove mgs.perk.speed_cola
 tag @a[team=mgs.zombies] remove mgs.perk.double_tap
@@ -123,6 +124,9 @@ scoreboard players set @a[team=mgs.zombies] mgs.special.double_points 0
 scoreboard players set @a[team=mgs.zombies] mgs.special.quick_reload 0
 scoreboard players set @a[team=mgs.zombies] mgs.special.quick_swap 0
 scoreboard players set @a[team=mgs.zombies] mgs.special.additional_shots 0
+scoreboard players set @a[team=mgs.zombies] mgs.special.phd_flopper 0
+scoreboard players set @a[team=mgs.zombies] mgs.special.deadshot 0
+scoreboard players set @a[team=mgs.zombies] mgs.special.timeslip 0
 scoreboard players set @a[team=mgs.zombies] mgs.special.juggernaut 0
 scoreboard players set @a[team=mgs.zombies] mgs.special.scavenger 0
 scoreboard players set @a[team=mgs.zombies] mgs.special.flak_jacket 0
@@ -138,12 +142,18 @@ scoreboard players reset * mgs.zb.perk.double_tap
 scoreboard players reset * mgs.zb.perk.quick_revive
 scoreboard players reset * mgs.zb.perk.mule_kick
 scoreboard players reset * mgs.zb.perk.stamin_up
+scoreboard players reset * mgs.zb.perk.phd_flopper
+scoreboard players reset * mgs.zb.perk.deadshot
+scoreboard players reset * mgs.zb.perk.timeslip
 scoreboard players reset * mgs.zb.perkpaid.juggernog
 scoreboard players reset * mgs.zb.perkpaid.speed_cola
 scoreboard players reset * mgs.zb.perkpaid.double_tap
 scoreboard players reset * mgs.zb.perkpaid.quick_revive
 scoreboard players reset * mgs.zb.perkpaid.mule_kick
 scoreboard players reset * mgs.zb.perkpaid.stamin_up
+scoreboard players reset * mgs.zb.perkpaid.phd_flopper
+scoreboard players reset * mgs.zb.perkpaid.deadshot
+scoreboard players reset * mgs.zb.perkpaid.timeslip
 
 # Reset revive state
 scoreboard players set @a mgs.zb.downed 0

@@ -15,4 +15,7 @@ execute unless data storage mgs:temp _pk_data.name if data storage mgs:temp _pk_
 execute unless data storage mgs:temp _pk_data.name if data storage mgs:temp _pk_data{perk_id:"quick_revive"} run data modify storage mgs:temp _pk_hover_name set value "Quick Revive"
 execute unless data storage mgs:temp _pk_data.name if data storage mgs:temp _pk_data{perk_id:"mule_kick"} run data modify storage mgs:temp _pk_hover_name set value "Mule Kick"
 execute unless data storage mgs:temp _pk_data.name if data storage mgs:temp _pk_data{perk_id:"stamin_up"} run data modify storage mgs:temp _pk_hover_name set value "Stamin-Up"
+execute unless data storage mgs:temp _pk_data.name if data storage mgs:temp _pk_data{perk_id:"phd_flopper"} run data modify storage mgs:temp _pk_hover_name set value "PhD Flopper"
+execute unless data storage mgs:temp _pk_data.name if data storage mgs:temp _pk_data{perk_id:"deadshot"} run data modify storage mgs:temp _pk_hover_name set value "Deadshot Daiquiri"
+execute unless data storage mgs:temp _pk_data.name if data storage mgs:temp _pk_data{perk_id:"timeslip"} run data modify storage mgs:temp _pk_hover_name set value "Timeslip"
 

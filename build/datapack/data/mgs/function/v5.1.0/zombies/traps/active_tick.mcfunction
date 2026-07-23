@@ -46,3 +46,6 @@ execute unless score @s mgs.zb.trap.timer matches 0.. run scoreboard players set
 # clock and left the trap permanently unusable after any /reload.
 execute if score @s mgs.zb.trap.timer matches 0 run scoreboard players operation @s mgs.zb.trap.cd = @s mgs.zb.trap.cd_max
 
+# Timeslip: the activator's trap cooldown is scaled to 75%
+execute if score @s mgs.zb.trap.timer matches 0 if score @s mgs.zb.trap.timeslip matches 1 run function mgs:v5.1.0/zombies/traps/apply_timeslip_cd
+

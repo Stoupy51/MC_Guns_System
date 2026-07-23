@@ -17,6 +17,6 @@
 data modify storage mgs:temp _trap_dmg.type set value "minecraft:lightning_bolt"
 $execute positioned ~-$(rx) ~-$(ry) ~-$(rz) as @e[tag=mgs.zombie_round,dx=$(sx),dy=$(sy),dz=$(sz)] run function mgs:v5.1.0/zombies/traps/kill_zombie
 
-# Players inside the trap: 5 electric damage
-$execute positioned ~-$(rx) ~-$(ry) ~-$(rz) as @a[scores={mgs.zb.in_game=1},gamemode=!creative,gamemode=!spectator,dx=$(sx),dy=$(sy),dz=$(sz)] run damage @s 5 minecraft:lightning_bolt
+# Players inside the trap: 5 electric damage (PhD Flopper owners are immune)
+$execute positioned ~-$(rx) ~-$(ry) ~-$(rz) as @a[scores={mgs.zb.in_game=1,mgs.special.phd_flopper=0},gamemode=!creative,gamemode=!spectator,dx=$(sx),dy=$(sy),dz=$(sz)] run damage @s 5 minecraft:lightning_bolt
 

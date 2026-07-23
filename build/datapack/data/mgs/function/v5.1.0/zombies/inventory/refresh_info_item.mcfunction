@@ -23,6 +23,9 @@ execute if score @s mgs.zb.perk.double_tap matches 1 run scoreboard players add 
 execute if score @s mgs.zb.perk.quick_revive matches 1 run scoreboard players add #info_perk_count mgs.data 1
 execute if score @s mgs.zb.perk.mule_kick matches 1 run scoreboard players add #info_perk_count mgs.data 1
 execute if score @s mgs.zb.perk.stamin_up matches 1 run scoreboard players add #info_perk_count mgs.data 1
+execute if score @s mgs.zb.perk.phd_flopper matches 1 run scoreboard players add #info_perk_count mgs.data 1
+execute if score @s mgs.zb.perk.deadshot matches 1 run scoreboard players add #info_perk_count mgs.data 1
+execute if score @s mgs.zb.perk.timeslip matches 1 run scoreboard players add #info_perk_count mgs.data 1
 execute if score #info_perk_count mgs.data matches 1.. run data modify storage mgs:temp info.lore append value {"text":"","italic":false}
 execute if score #info_perk_count mgs.data matches 1.. run data modify storage mgs:temp info.lore append value {"translate":"mgs.perks_3","color":"light_purple","italic":false}
 execute if score @s mgs.zb.perk.juggernog matches 1 run data modify storage mgs:temp info.lore append value {"text":"\u2022 Juggernog","color":"red","italic":false}
@@ -31,6 +34,9 @@ execute if score @s mgs.zb.perk.double_tap matches 1 run data modify storage mgs
 execute if score @s mgs.zb.perk.quick_revive matches 1 run data modify storage mgs:temp info.lore append value {"text":"\u2022 Quick Revive","color":"aqua","italic":false}
 execute if score @s mgs.zb.perk.mule_kick matches 1 run data modify storage mgs:temp info.lore append value {"text":"\u2022 Mule Kick","color":"dark_green","italic":false}
 execute if score @s mgs.zb.perk.stamin_up matches 1 run data modify storage mgs:temp info.lore append value {"text":"\u2022 Stamin-Up","color":"gold","italic":false}
+execute if score @s mgs.zb.perk.phd_flopper matches 1 run data modify storage mgs:temp info.lore append value {"text":"\u2022 PhD Flopper","color":"dark_purple","italic":false}
+execute if score @s mgs.zb.perk.deadshot matches 1 run data modify storage mgs:temp info.lore append value {"text":"\u2022 Deadshot Daiquiri","color":"dark_green","italic":false}
+execute if score @s mgs.zb.perk.timeslip matches 1 run data modify storage mgs:temp info.lore append value {"text":"\u2022 Timeslip","color":"light_purple","italic":false}
 
 function mgs:v5.1.0/zombies/inventory/refresh_info_item_render with storage mgs:temp info
 function mgs:v5.1.0/zombies/inventory/apply_slot_tag {slot:"hotbar.8",group:"hotbar",index:8}

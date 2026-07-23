@@ -132,6 +132,9 @@ scoreboard players reset * mgs.zb.perk.double_tap
 scoreboard players reset * mgs.zb.perk.quick_revive
 scoreboard players reset * mgs.zb.perk.mule_kick
 scoreboard players reset * mgs.zb.perk.stamin_up
+scoreboard players reset * mgs.zb.perk.phd_flopper
+scoreboard players reset * mgs.zb.perk.deadshot
+scoreboard players reset * mgs.zb.perk.timeslip
 
 # Chip-in progress never carries between games
 scoreboard players reset * mgs.zb.perkpaid.juggernog
@@ -140,11 +143,26 @@ scoreboard players reset * mgs.zb.perkpaid.double_tap
 scoreboard players reset * mgs.zb.perkpaid.quick_revive
 scoreboard players reset * mgs.zb.perkpaid.mule_kick
 scoreboard players reset * mgs.zb.perkpaid.stamin_up
+scoreboard players reset * mgs.zb.perkpaid.phd_flopper
+scoreboard players reset * mgs.zb.perkpaid.deadshot
+scoreboard players reset * mgs.zb.perkpaid.timeslip
+
+# Shared random-perk pool: clear the "perk present on map" flags (repopulated by perks/setup)
+scoreboard players set #map_perk_juggernog mgs.data 0
+scoreboard players set #map_perk_speed_cola mgs.data 0
+scoreboard players set #map_perk_double_tap mgs.data 0
+scoreboard players set #map_perk_quick_revive mgs.data 0
+scoreboard players set #map_perk_mule_kick mgs.data 0
+scoreboard players set #map_perk_stamin_up mgs.data 0
+scoreboard players set #map_perk_phd_flopper mgs.data 0
+scoreboard players set #map_perk_deadshot mgs.data 0
+scoreboard players set #map_perk_timeslip mgs.data 0
 
 # Clean slate for the joining players: perk effects survive a game that ended without a proper stop,
 # and the special.* scores can just as well have come from a multiplayer class or the debug menu.
 execute as @a[scores={mgs.zb.in_game=1}] run attribute @s minecraft:max_health base reset
 execute as @a[scores={mgs.zb.in_game=1}] run attribute @s minecraft:movement_speed modifier remove mgs:stamin_up
+execute as @a[scores={mgs.zb.in_game=1}] run attribute @s minecraft:fall_damage_multiplier base reset
 scoreboard players set @a[scores={mgs.zb.in_game=1}] mgs.stam_bonus 0
 tag @a[scores={mgs.zb.in_game=1}] remove mgs.perk.speed_cola
 tag @a[scores={mgs.zb.in_game=1}] remove mgs.perk.double_tap
@@ -155,6 +173,9 @@ scoreboard players set @a[scores={mgs.zb.in_game=1}] mgs.special.double_points 0
 scoreboard players set @a[scores={mgs.zb.in_game=1}] mgs.special.quick_reload 0
 scoreboard players set @a[scores={mgs.zb.in_game=1}] mgs.special.quick_swap 0
 scoreboard players set @a[scores={mgs.zb.in_game=1}] mgs.special.additional_shots 0
+scoreboard players set @a[scores={mgs.zb.in_game=1}] mgs.special.phd_flopper 0
+scoreboard players set @a[scores={mgs.zb.in_game=1}] mgs.special.deadshot 0
+scoreboard players set @a[scores={mgs.zb.in_game=1}] mgs.special.timeslip 0
 scoreboard players set @a[scores={mgs.zb.in_game=1}] mgs.special.juggernaut 0
 scoreboard players set @a[scores={mgs.zb.in_game=1}] mgs.special.scavenger 0
 scoreboard players set @a[scores={mgs.zb.in_game=1}] mgs.special.flak_jacket 0

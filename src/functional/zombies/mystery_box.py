@@ -49,6 +49,8 @@ def generate_mystery_box() -> None:
 scoreboard objectives add {ns}.mb.box dummy
 # Spin animation timer carried by each pull display (>0 spinning, <=0 ready window)
 scoreboard objectives add {ns}.mb.anim dummy
+# 1 when the buyer of this pull owns Timeslip (spin runs 2x faster for their display)
+scoreboard objectives add {ns}.mb.timeslip dummy
 # Whether this pull will end in a box move (teddy bear) — only the active box, never Fire Sale
 scoreboard objectives add {ns}.mb.willmove dummy
 # Stable per-player id, assigned lazily on first pull, so a pull display can record WHICH player
@@ -409,6 +411,11 @@ scoreboard players operation @n[tag={ns}.mb_display_new] {ns}.mb.box = #cur_box 
 scoreboard players set @n[tag={ns}.mb_display_new] {ns}.mb.anim 105
 scoreboard players operation @n[tag={ns}.mb_display_new] {ns}.mb.willmove = #mb_will_move {ns}.data
 scoreboard players operation @n[tag={ns}.mb_display_new] {ns}.mb.buyer = @s {ns}.mb.pid
+
+# Timeslip: this buyer's pull spins 2x faster
+scoreboard players set @n[tag={ns}.mb_display_new] {ns}.mb.timeslip 0
+execute if score @s {ns}.special.timeslip matches 1.. run scoreboard players set @n[tag={ns}.mb_display_new] {ns}.mb.timeslip 1
+
 tag @n[tag={ns}.mb_display_new] remove {ns}.mb_display_new
 
 # Open this box's lid + open/spin sounds + a private announce to the buyer
@@ -505,6 +512,11 @@ execute if score #mb_move_timer {ns}.data matches 1.. run function {ns}:v{versio
 	## Per-display spin tick (@s = a pull display, never the moving bear)
 	write_versioned_function("zombies/mystery_box/spin_tick_one", f"""
 scoreboard players remove @s {ns}.mb.anim 1
+
+# Timeslip: 2x spin speed. The extra -1 only fires inside the cycling phase (1..103), so the 104
+# float-up trigger still runs; anim is even every tick after the first, so the doubled step always
+# lands exactly on the anim==0 result and never overshoots into the reset window.
+execute if score @s {ns}.mb.timeslip matches 1 if score @s {ns}.mb.anim matches 1..103 run scoreboard players remove @s {ns}.mb.anim 1
 
 # Start the float-up one tick after spawn (avoids same-tick interpolation glitches)
 execute if score @s {ns}.mb.anim matches 104 run data merge entity @s {{transformation:{{translation:[0f,0.8f,0f]}},start_interpolation:0,interpolation_duration:200}}
