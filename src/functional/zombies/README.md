@@ -226,42 +226,8 @@ these are gameplay ideas from Zonweeb, not necessarily tied to the variant.)
 
 # Inbox (quick notes — dump anything here, unorganized "basic" format is fine)
 
-- [x] Dying Wish: I was not at 1hp when the effect finished, I was at full health. Fix that.
-      DONE — /data can't write player Health; dying_wish_end now clamps max_health to 1 then restores it.
-  - Human update: I tried again, and no the player health is still not at 1 when the effect ends. Use a calculated /damage instead with a damage type that bypasses resistances.
-      DONE — max-health clamp was unreliable (both attribute sets collapse in one tick). dying_wish_end now deals exact (Health-1) damage with minecraft:generic_kill (bypasses armor/resistance/effects), landing on 1 HP. Sourceless, so it never trips the entity_hurt_player passive.
-- [x] Web grenades: it is bugged, sometimes the item displays stays frozen until I launch a new one. it also affect other projectiles (like monkey bomb when I throw them). Like it thinks there are no more items to tick.
-      DONE — retired the fragile #grenade_count gate; grenade/tick now iterates @e[tag=grenade] directly.
-- [x] Der Wunderfizz: There is a lag spike when I retrieve the perk from the machine. I'm not sure it's for every perk machine or just the Der Wunderfizz. Find and optimize it! (remember the optimisation skill in this repo)
-      DONE — the shared perk-display panel (refresh_perk_items, fired on every acquisition AND every 5s) cleared+re-placed all owned perks through a dynamic `with storage` macro whose slot varied → macro-cache miss re-parsing a ~250-char item string per perk. Rewrote to a fixed slot per perk with fully static item replaces that only write when a perk is actually gained/lost (steady state = cheap checks, zero inventory writes). Also gave the Wunderfizz orb selectors a type=item_display so the per-tick scan is index-backed. NOTE this is common to every perk machine; confirm the spike is gone with F3+L → Misode report analyzer. Trade-off: owned perks now sit in a fixed slot (gap for unowned) instead of packing.
-- [x] Who's Who: Should work in Single player, and if the player died and have both Quick Revive and Who's Who in solo, Who's Who should have the priority.
-      DONE — removed the co-op-only gate on the Who's Who branch in revive/on_down. It already sat above the normal-down path where solo Quick Revive lives, so owning Who's Who now fires in solo and takes priority over Quick Revive; the solo owner self-revives their own body.
+- [x] Timeslip with PaP machine: it should only speed up the upgrading, not the going back inside the machine when the weapon is ready to collect
+      DONE — pap/anim/step_timeslip now gates its two extra steps on pap_anim>=206 (the going-in/inside/coming-out upgrade phase) instead of >=1, so Timeslip only 3x's the upgrade. The retreat/collectible phase (1..205) runs at the normal 1x rate, giving Timeslip owners the full ~10s collect window. trigger_retreat also restores the weapon display's teleport_duration to 20 (anim/start shortens it to 7 for the sped-up upgrade slides) so the now-1x retreat glides smoothly.
+- [x] The Boundary corners in zombies does not seems to work at all, I can go out of the map and zombies too.
+      DONE — shared/load_bounds only ever read boundaries[0] and boundaries[1], so placing the 4 corners of a rectangular play area built the box from just the first two (an adjacent edge) → a thin sliver that enforced nothing useful. It now folds a min/max AABB over ALL placed corners (new shared/fold_bounds), so any count >= 2 in any order gives the correct enclosing box (dropped the old normalize_bounds — the fold is pre-ordered). Zombies now also requires >= 2 corners before enforcing (matches multiplayer/missions; a lone corner would collapse to a point and eliminate everyone). NOTE the box is 3D: place opposite corners that span the play volume including height (both corners at the same Y makes a flat plane). Verified the whole pipeline (editor save → map load → base offset → per-tick enforce for players via full_death and zombies via out_of_world) is otherwise correct; if it still lets you out, check the corners actually saved on the played map and that you're not testing in creative (creative/spectator are exempt by design).
 
-
-- [x] Bugs with Who's Who: First I respawned at the same position as my death (and not the nearest player spawn (minimum 10 blocks distance)). Second, when I revived myself, I did not get my guns back and it says "Stoupy51's body bled out.". Third, the mannequin should use the same code as when a player is down so that another player can revive them and visually it looks the same. Fourth, a doppelganger should be able to revive any player, including downed players clones (who's who), same for normal players then can revive any downed player/clone. Fifth, I had Who's Who and Quick Revive in solo, died: that created the downed player clone, then died again and it consumes a Quick Revive I didn't have on this doppelganger, and when I got solo revived by quick revive, I couldn't revive the player clone from who's who, the entity mannequin is still there but nothing happens (Update: waited 60s and got "Stoupy51's body bled out." but the mannequin still exists).
-      DONE — Who's Who rebuilt on the shared downed-body system:
-      1. The doppelganger now spawns at the unlocked player spawn nearest their body but ≥10 blocks away (fallback: nearest at all).
-      2. Guns are back: `data modify entity <player> Inventory` silently FAILS on players — the snapshot is now given back slot-exact through the new shared `inventory/restore_inventory` (shuttle item_display + `item replace`, armor/offhand included). Same latent bug fixed in Tombstone's recovery. The bogus "body bled out" right after the revive is gone too (completion now `return run`s, so the bleed-out check can't fire on the same tick).
-      3. The body is spawned by the SAME `revive/spawn_downed_body` as a normal down (same `downed_mannequin`/`downed_hud` tags, same look), and its revive runs through the shared revive core (same progress bar, HUD colors, Quick Revive threshold).
-      4. Reviver detection is one shared selector: any alive non-downed player — doppelgangers included — revives any body, normal or clone.
-      5. Quick Revive now has removal_commands, so lose_all strips the active tag (a doppelganger can no longer consume a QR it doesn't own; rebuy after a down works again unless solo uses are exhausted). The clone can't be orphaned anymore: the body link lives in `zb.ww.id` (a later normal down overwrote `zb.downed_id`), and going down again as a doppelganger forfeits the unrevived body (BO2 rule) instead of leaving a dead mannequin around.
-22:23:05.900
-net.minecraft.client.gui.components.ChatComponent
-Render thread
-[System] [CHAT] Stoupy51 was slain by Zombie
-22:23:06.020
-net.minecraft.client.gui.components.ChatComponent
-Render thread
-[System] [CHAT] [MGS] All perks lost!
-22:23:06.030
-net.minecraft.client.gui.components.ChatComponent
-Render thread
-[System] [CHAT] [MGS] Stoupy51 went down — but plays on as a doppelganger!
-22:23:16.323
-net.minecraft.client.gui.components.ChatComponent
-Render thread
-[System] [CHAT] [MGS] Stoupy51 revived their own body!
-22:23:16.324
-net.minecraft.client.gui.components.ChatComponent
-Render thread
-[System] [CHAT] [MGS] Stoupy51's body bled out.
