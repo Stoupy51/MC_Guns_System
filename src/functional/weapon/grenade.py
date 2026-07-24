@@ -296,7 +296,7 @@ tag @s remove {ns}.tp_me
 # Route to the appropriate detonation effect based on grenade type
 execute if data entity @s data.config{{{GRENADE_TYPE}:"frag"}} run return run function {ns}:v{version}/grenade/detonate_frag
 execute if data entity @s data.config{{{GRENADE_TYPE}:"semtex"}} run return run function {ns}:v{version}/grenade/detonate_frag
-execute if data entity @s data.config{{{GRENADE_TYPE}:"monkey_bomb"}} run return run function {ns}:v{version}/zombies/monkey/detonate
+execute if data entity @s data.config{{{GRENADE_TYPE}:"monkey_bomb"}} run return run function {ns}:v{version}/grenade/detonate_frag
 execute if data entity @s data.config{{{GRENADE_TYPE}:"smoke"}} run return run function {ns}:v{version}/grenade/detonate_smoke
 execute if data entity @s data.config{{{GRENADE_TYPE}:"flash"}} run return run function {ns}:v{version}/grenade/detonate_flash
 execute if data entity @s data.config{{{GRENADE_TYPE}:"web"}} run return run function {ns}:v{version}/grenade/detonate_web

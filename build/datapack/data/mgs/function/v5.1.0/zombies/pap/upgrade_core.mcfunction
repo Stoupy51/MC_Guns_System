@@ -4,7 +4,6 @@
 # @executed	as @p[tag=mgs.pu_collecting]
 #
 # @within	mgs:v5.1.0/zombies/pap/on_free_pap
-#			mgs:v5.1.0/zombies/pap/apply
 #
 
 # Determine selected weapon slot (must be hotbar 1, 2, or 3)

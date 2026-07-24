@@ -3,7 +3,7 @@
 #
 # @executed	at @s
 #
-# @within	mgs:v5.1.0/zombies/escort/discard_near_player
+# @within	mgs:v5.1.0/zombies/game_tick [ at @s ]
 #			mgs:v5.1.0/zombies/barriers/freeze_zombies
 #
 
