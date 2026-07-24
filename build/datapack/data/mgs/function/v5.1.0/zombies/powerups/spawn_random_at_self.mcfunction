@@ -16,5 +16,5 @@ data modify storage mgs:temp _pu_spawn.x set from entity @s Pos[0]
 data modify storage mgs:temp _pu_spawn.y set from entity @s Pos[1]
 data modify storage mgs:temp _pu_spawn.z set from entity @s Pos[2]
 execute store result storage mgs:temp _pu_spawn.uid int 1 run scoreboard players get #pu_uid mgs.data
-function mgs:v5.1.0/zombies/powerups/do_spawn_random with storage mgs:temp _pu_spawn
+function mgs:v5.1.0/zombies/powerups/do_spawn_random
 

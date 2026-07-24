@@ -430,37 +430,18 @@ $data modify storage {ns}:zombies perk_data."$(id)".name set value "$(name)"
 	perk_ids: list[str] = list(PERK_DEFINITIONS.keys())
 	num_perks: int = len(perk_ids)
 
-	def pool_avail_block(perk_id: str) -> str:
-		""" Set #pool_slot to 1 iff `perk_id` is available for @n[tag=pool_target], else 0. """
-		return (
-			f"scoreboard players set #pool_slot {ns}.data 0\n"
-			f"execute if score #map_perk_{perk_id} {ns}.data matches 1 run scoreboard players set #pool_slot {ns}.data 1\n"
-			f"execute if score #pool_all_perks {ns}.data matches 1 run scoreboard players set #pool_slot {ns}.data 1\n"
-			f"execute if score @n[tag={ns}.pool_target] {ns}.zb.perk.{perk_id} matches 1 run scoreboard players set #pool_slot {ns}.data 0"
-		)
-
 	## Mark a placed perk as present on the map (macro: perk_id)
 	write_versioned_function("zombies/perks/pool/mark", f"""
 $scoreboard players set #map_perk_$(perk_id) {ns}.data 1
 """)
 
-	## Count available perks into #pool_avail (target = @n[tag={ns}.pool_target], mode = #pool_all_perks)
-	count_lines: str = "\n".join(
-		f"{pool_avail_block(perk_id)}\nscoreboard players operation #pool_avail {ns}.data += #pool_slot {ns}.data"
-		for perk_id in perk_ids
-	)
-	write_versioned_function("zombies/perks/pool/count", f"""
-scoreboard players set #pool_avail {ns}.data 0
-{count_lines}
-""")
-
 	## Pick one random available perk. Output: #pool_chosen (0..n-1 index, or -1 if none) and
 	## storage {ns}:temp _pool.perk_id (only set on success). Caller tags the target + sets #pool_all_perks.
+	## No up-front availability count: choose_iter's try limit already walks the whole list and leaves
+	## #pool_chosen at -1 when nothing is free, so counting first only repeated the same test twice.
 	write_versioned_function("zombies/perks/pool/choose", f"""
-function {ns}:v{version}/zombies/perks/pool/count
 scoreboard players set #pool_chosen {ns}.data -1
 data modify storage {ns}:temp _pool set value {{}}
-execute if score #pool_avail {ns}.data matches ..0 run return 0
 
 # Random start index, then walk the list until an available perk is found
 execute store result score #pool_roll {ns}.data run random value 0..{num_perks - 1}
@@ -470,7 +451,7 @@ function {ns}:v{version}/zombies/perks/pool/choose_iter
 
 	iter_lines: str = ""
 	for i, perk_id in enumerate(perk_ids):
-		iter_lines += f"execute if score #pool_roll {ns}.data matches {i} run function {ns}:v{version}/zombies/perks/pool/try_index/{perk_id}\n"
+		iter_lines += f'execute if score #pool_roll {ns}.data matches {i} run function {ns}:v{version}/zombies/perks/pool/try_index {{perk_id:"{perk_id}"}}\n'
 		iter_lines += f"execute if score #pool_chosen {ns}.data matches 0.. run return 0\n"
 	write_versioned_function("zombies/perks/pool/choose_iter", f"""
 # Safety counter: at most one full loop over the perk list
@@ -485,11 +466,15 @@ execute if score #pool_roll {ns}.data matches {num_perks}.. run scoreboard playe
 function {ns}:v{version}/zombies/perks/pool/choose_iter
 """)
 
-	for i, perk_id in enumerate(perk_ids):
-		write_versioned_function(f"zombies/perks/pool/try_index/{perk_id}", f"""
-{pool_avail_block(perk_id)}
-execute if score #pool_slot {ns}.data matches 1 run scoreboard players set #pool_chosen {ns}.data {i}
-execute if score #pool_slot {ns}.data matches 1 run data modify storage {ns}:temp _pool.perk_id set value "{perk_id}"
+	## Claim $(perk_id) if it is available — only ever called with the perk sitting at #pool_roll,
+	## so the winning index is simply #pool_roll. Cold path (power-up pickup / Wunderfizz use).
+	write_versioned_function("zombies/perks/pool/try_index", f"""
+scoreboard players set #pool_slot {ns}.data 0
+$execute if score #map_perk_$(perk_id) {ns}.data matches 1 run scoreboard players set #pool_slot {ns}.data 1
+execute if score #pool_all_perks {ns}.data matches 1 run scoreboard players set #pool_slot {ns}.data 1
+$execute if score @n[tag={ns}.pool_target] {ns}.zb.perk.$(perk_id) matches 1 run scoreboard players set #pool_slot {ns}.data 0
+execute if score #pool_slot {ns}.data matches 1 run scoreboard players operation #pool_chosen {ns}.data = #pool_roll {ns}.data
+$execute if score #pool_slot {ns}.data matches 1 run data modify storage {ns}:temp _pool.perk_id set value "$(perk_id)"
 """)
 
 	## Right-click handler (executor: "source" = player)

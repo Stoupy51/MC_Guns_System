@@ -3,23 +3,19 @@
 #
 # @executed	at @s
 #
-# @within	mgs:v5.1.0/zombies/powerups/spawn_random_at_self with storage mgs:temp _pu_spawn
-#
-# @args		x (int)
-#			y (int)
-#			z (int)
-#			uid (int)
+# @within	mgs:v5.1.0/zombies/powerups/spawn_random_at_self
 #
 
-$execute if score #pu_spawn_type mgs.data matches 1 run function mgs:v5.1.0/zombies/powerups/spawn_type/max_ammo {x:$(x),y:$(y),z:$(z),uid:$(uid)}
-$execute if score #pu_spawn_type mgs.data matches 2 run function mgs:v5.1.0/zombies/powerups/spawn_type/insta_kill {x:$(x),y:$(y),z:$(z),uid:$(uid)}
-$execute if score #pu_spawn_type mgs.data matches 3 run function mgs:v5.1.0/zombies/powerups/spawn_type/double_points {x:$(x),y:$(y),z:$(z),uid:$(uid)}
-$execute if score #pu_spawn_type mgs.data matches 4 run function mgs:v5.1.0/zombies/powerups/spawn_type/carpenter {x:$(x),y:$(y),z:$(z),uid:$(uid)}
-$execute if score #pu_spawn_type mgs.data matches 5 run function mgs:v5.1.0/zombies/powerups/spawn_type/nuke {x:$(x),y:$(y),z:$(z),uid:$(uid)}
-$execute if score #pu_spawn_type mgs.data matches 6 run function mgs:v5.1.0/zombies/powerups/spawn_type/unlimited_ammo {x:$(x),y:$(y),z:$(z),uid:$(uid)}
-$execute if score #pu_spawn_type mgs.data matches 7 run function mgs:v5.1.0/zombies/powerups/spawn_type/random_perk {x:$(x),y:$(y),z:$(z),uid:$(uid)}
-$execute if score #pu_spawn_type mgs.data matches 8 run function mgs:v5.1.0/zombies/powerups/spawn_type/free_pap {x:$(x),y:$(y),z:$(z),uid:$(uid)}
-$execute if score #pu_spawn_type mgs.data matches 9 run function mgs:v5.1.0/zombies/powerups/spawn_type/cash_drop {x:$(x),y:$(y),z:$(z),uid:$(uid)}
-$execute if score #pu_spawn_type mgs.data matches 10 run function mgs:v5.1.0/zombies/powerups/spawn_type/fire_sale {x:$(x),y:$(y),z:$(z),uid:$(uid)}
-$execute if score #pu_spawn_type mgs.data matches 11 run function mgs:v5.1.0/zombies/powerups/spawn_type/bonfire_sale {x:$(x),y:$(y),z:$(z),uid:$(uid)}
+execute if score #pu_spawn_type mgs.data matches 1 run data modify storage mgs:temp _pu_spawn.type set value "max_ammo"
+execute if score #pu_spawn_type mgs.data matches 2 run data modify storage mgs:temp _pu_spawn.type set value "insta_kill"
+execute if score #pu_spawn_type mgs.data matches 3 run data modify storage mgs:temp _pu_spawn.type set value "double_points"
+execute if score #pu_spawn_type mgs.data matches 4 run data modify storage mgs:temp _pu_spawn.type set value "carpenter"
+execute if score #pu_spawn_type mgs.data matches 5 run data modify storage mgs:temp _pu_spawn.type set value "nuke"
+execute if score #pu_spawn_type mgs.data matches 6 run data modify storage mgs:temp _pu_spawn.type set value "unlimited_ammo"
+execute if score #pu_spawn_type mgs.data matches 7 run data modify storage mgs:temp _pu_spawn.type set value "random_perk"
+execute if score #pu_spawn_type mgs.data matches 8 run data modify storage mgs:temp _pu_spawn.type set value "free_pap"
+execute if score #pu_spawn_type mgs.data matches 9 run data modify storage mgs:temp _pu_spawn.type set value "cash_drop"
+execute if score #pu_spawn_type mgs.data matches 10 run data modify storage mgs:temp _pu_spawn.type set value "fire_sale"
+execute if score #pu_spawn_type mgs.data matches 11 run data modify storage mgs:temp _pu_spawn.type set value "bonfire_sale"
+function mgs:v5.1.0/zombies/powerups/spawn_display with storage mgs:temp _pu_spawn
 
