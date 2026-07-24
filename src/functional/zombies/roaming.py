@@ -18,7 +18,6 @@ BEAR_HEAD_TEXTURE: str = "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dX
 
 def generate_roaming() -> None:
 	ns: str = Mem.ctx.project_id
-	version: str = Mem.ctx.project_version
 
 	# Teddy bear loot table (shared move easter egg). Referenced as mgs:zombies/roaming_bear.
 	Mem.ctx.data[ns].loot_tables["zombies/roaming_bear"] = set_json_encoder(LootTable({

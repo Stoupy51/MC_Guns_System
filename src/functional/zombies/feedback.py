@@ -77,7 +77,7 @@ playsound {ns}:zombies/pap/upgrade ambient @a[scores={{{ns}.zb.in_game=1}}] ~ ~ 
 	write_versioned_function("zombies/feedback/sound_pap_jingle_sting", f"""
 playsound {ns}:zombies/pap/jingle_sting ambient @a[scores={{{ns}.zb.in_game=1}}] ~ ~ ~ 1.0 1.0
 """)
-	# Timeslip ×3 PAP: the 3×-speed jingle asset (ffmpeg atempo=1.5,2.0) so the sting fits the shorter animation.
+	# Timeslip x3 PAP: the 3x-speed jingle asset (ffmpeg atempo=1.5,2.0) so the sting fits the shorter animation.
 	write_versioned_function("zombies/feedback/sound_pap_jingle_sting_short", f"""
 playsound {ns}:zombies/pap/jingle_sting_short ambient @a[scores={{{ns}.zb.in_game=1}}] ~ ~ ~ 1.0 1.0
 """)
