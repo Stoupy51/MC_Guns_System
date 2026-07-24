@@ -120,7 +120,7 @@ tellraw @a [{MGS_TAG},{{"text":"An operator reset everyone's points.","color":"r
 	## exactly as if the power-up had been picked up off the floor.
 	# Generated from POWERUP_TYPES so EVERY power-up is always present (no drift when new ones are added).
 	admin_powerups: list[tuple[str, str, str, str]] = [
-		(pu_id, f'{_PU_ADMIN_EMOJI.get(pu_id, "⚡")} {v["display"]}', v["color"], f'Force {v["display"]} for everyone')
+		(pu_id, f'{_PU_ADMIN_EMOJI.get(pu_id, "⚡")} {v.display}', v.color, f'Force {v.display} for everyone')
 		for pu_id, v in POWERUP_TYPES.items()
 	]
 	## Some power-ups (Nuke, Free PaP, Cash Drop, Random Perk) act "as the player who picked it up"

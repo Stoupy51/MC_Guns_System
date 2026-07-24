@@ -455,7 +455,8 @@ Each phase is one commit, independently shippable, verified with
 | **P6b** ✅ | D2 remainder — perks `pool/try_index` + `pool/count`, `powerups/spawn_type`, `mob/default/level_*`, `set_door_link_*`. Four families dropped as bad value (see below). | **−35** | −45 | low |
 | **P7** ✅ | D5 — shared `zombies/deny/message` + `deny/not_enough_points`. **D6 dropped**, its premise was wrong (see below). | **−29** | −93 | low |
 | **P8** ✅ | D4 — loadout editor: one shared `show_static_dialog` skeleton for 13 submenus, 4 dead `scope/*` aliases. **Score-component dialog resources and slot parameterisation dropped** (see below). | **−18** | +1 | low |
-| **P9** | PY1/PY4/PY5 — `WeaponDef` dataclasses, typed registries, split the remaining >500-line files (**not** `shaders.py`), delete restating comments. | 0 | −850, +12 files | low |
+| **P9a** ✅ | PY1 (stats.py sound + magazine dedup) + PY4 (perk & power-up typed registries). Byte-identical. | 0 | −599 | low |
+| **P9b** | PY4 remainder (`ALL_ELEMENTS`/`EDITOR_MODES`) + PY5 file splits (>500 lines, **not** `shaders.py`) + restating-comment cleanup. | 0 | −250, +~12 files | low |
 | **P10** | D3 — one shared spawn/respawn system for all three modes. | −~20 | −600 | **high** |
 | **P11** | Tighten the ruff config (add `ANN`, `RET`, `SIM`, `PTH`, `TC`, `ARG`, `PL`), fix the fallout. | 0 | ? | low |
 
@@ -816,3 +817,35 @@ unconditional `function <id>` with nothing else. There are only 11 such pure red
 hop is what stops 23 JSON edits); `maps/editor/menu` (user-facing, reached from a dialog button);
 and `maps/<map>/tick` and the `maps/*/calls/*` family — those are the per-map hook contract every
 map implements, not accidental indirection.
+
+### P9a — PY1 stats dedup + PY4 typed registries (Python only, output byte-identical)
+
+Four changes, all proven by the harness reporting `✅ output is byte-identical to the baseline`.
+This phase does not touch the generated tree at all; the win is entirely in the Python.
+
+- **`config/stats.py` sounds (−217 LOC).** 31 of 37 weapons declared a 6–7 line `"sounds"` dict
+  that was pure `"<id>/<key>"` repetition. New `gun_sounds(id, *keys, **overrides)` derives each
+  path; `GUN_SOUNDS` / `PUMP_SOUNDS` name the two standard key sets. Non-derivable entries
+  (`crack`, the ray-gun's shared `pap_fire`, the RPG-7's three handling clips) pass as overrides,
+  so nothing became less explicit. `stats.py`: 1418 → 1201.
+- **`database/items.py` magazine capacities.** `MAGAZINES` was `(weapon, capacity)` pairs
+  re-declaring all 24 capacities that already live in each weapon's `CAPACITY` stat — a real
+  single-source-of-truth hazard (PY1 flagged it). Verified all 24 matched, then dropped the number:
+  `MAGAZINES` is now just the weapon-id tuple and `add_magazines` reads
+  `WEAPON_STATS[weapon]["stats"][CAPACITY]`.
+- **`zombies/perks.py::PERK_DEFINITIONS` → `dict[str, PerkDef]` (−199 net LOC across the module).**
+  Frozen dataclass with defaults, so a no-effect perk (mule_kick, tombstone…) declares only its
+  four identity fields. Every consumer (perks, inventory, whos_who, wunderfizz, map_editor) now
+  reads `pdata.display_name` etc. instead of `pdata["display_name"]`.
+- **`zombies/powerups.py::POWERUP_TYPES` → `dict[str, PowerupType]`.** Same treatment; `duration`
+  defaults to 0 and `TIMED_POWERUPS` now filters on `v.duration` rather than `"duration" in v`.
+
+**Why this matters beyond LOC:** pyright strict now type-checks the data. The powerup conversion
+immediately surfaced **9 field reads** my mechanical pass had missed (single-quoted `v['type_num']`
+etc.) — exactly the class of typo the old `dict[str, JsonDict]` silently accepted. That is the PY4
+argument in one data point.
+
+**Deferred to P9b:** `map_editor.py`'s `ALL_ELEMENTS` (14 heterogeneous rows, ~8 optional keys read
+via `.get()` in dozens of places) and `EDITOR_MODES`. Those are worth a dataclass too, but the file
+is 2029 lines — the largest in the tree — so the conversion belongs with the PY5 split of that file,
+not bolted onto this commit.

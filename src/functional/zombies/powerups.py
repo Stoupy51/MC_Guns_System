@@ -4,38 +4,54 @@
 # On each zombie death there is a min(5%, 2/total_round_zombies) chance to drop a power-up,
 # until one full shuffle-bag cycle has dropped this round. Rares only appear after round 5.
 # Visual: item entity + text_display. Pickup by proximity (1.5 blocks). 26.5s lifetime.
-from stewbeet import JsonDict, LootTable, Mem, set_json_encoder, write_load_file, write_versioned_function
+from dataclasses import dataclass
+
+from stewbeet import LootTable, Mem, set_json_encoder, write_load_file, write_versioned_function
 
 from ..helpers import MGS_TAG
 
-# Each power-up is a dict with required keys:
-#   item         - placeholder item id
-#   display      - display name shown in-game
-#   color        - text color
-#   type_num     - integer used in scoreboards/dispatch
-#   tier         - "common" | "rare"  (rare = 25% chance to appear each shuffle cycle)
-#
-# Timed power-ups additionally carry:
-#   duration     - active duration in ticks
-#   scoreboard   - the {ns}.special.<scoreboard> objective name
-#   bossbar_id   - the {ns}:pu_<bossbar_id> bossbar name
-#   bb_color     - bossbar color string
-# Optional sound keys (all relative to {ns}:zombies/powerups/):
-#   sound       - activation sound
-#   additional  - a second sound played simultaneously with `sound`
-#   end_sound    - (timed power-ups) played once when the effect expires
-POWERUP_TYPES: dict[str, JsonDict] = {
-	"max_ammo":       {"item": "minecraft:amethyst_shard",       "display": "Max Ammo",       "color": "aqua",         "type_num": 1, "tier": "common", "sound": "max_ammo", "additional": "max_ammo_additional"},
-	"insta_kill":     {"item": "minecraft:fermented_spider_eye", "display": "Insta Kill",     "color": "red",          "type_num": 2, "tier": "common", "duration": 600, "scoreboard": "instant_kill",  "bossbar_id": "pu_insta_kill",     "bb_color": "red",    "sound": "insta_kill", "end_sound": "insta_kill_off"},
-	"double_points":  {"item": "minecraft:gold_ingot",           "display": "Double Points",  "color": "yellow",       "type_num": 3, "tier": "common", "duration": 600, "scoreboard": "double_points", "bossbar_id": "pu_double_points",  "bb_color": "yellow", "sound": "double_points", "end_sound": "double_points_off"},
-	"carpenter":      {"item": "minecraft:oak_log",              "display": "Carpenter",      "color": "gold",         "type_num": 4, "tier": "common", "sound": "carpenter"},
-	"nuke":           {"item": "minecraft:tnt",                  "display": "Nuke",           "color": "red",          "type_num": 5, "tier": "common", "sound": "nuke", "additional": "nuke_additional"},
-	"unlimited_ammo": {"item": "minecraft:blaze_rod",            "display": "Unlimited Ammo", "color": "green",        "type_num": 6, "tier": "rare",   "duration": 600, "scoreboard": "infinite_ammo", "bossbar_id": "pu_unlimited_ammo", "bb_color": "green"},
-	"random_perk":    {"item": "minecraft:glass_bottle",         "display": "Random Perk",    "color": "light_purple", "type_num": 7, "tier": "rare",   "sound": "random_perk"},
-	"free_pap":       {"item": "minecraft:diamond",              "display": "Free PAP",       "color": "aqua",         "type_num": 8, "tier": "rare"},
-	"cash_drop":      {"item": "minecraft:emerald",              "display": "Cash Drop",      "color": "green",        "type_num": 9, "tier": "rare",   "sound": "bonus_points"},
-	"fire_sale":      {"item": "minecraft:firework_star",        "display": "Fire Sale",      "color": "light_purple", "type_num": 10, "tier": "rare",  "sound": "fire_sale"},
-	"bonfire_sale":   {"item": "minecraft:campfire",             "display": "Bonfire Sale",   "color": "gold",         "type_num": 11, "tier": "rare",  "sound": "bonfire_sale"},
+
+@dataclass(frozen=True)
+class PowerupType:
+	""" One power-up drop: its appearance, its dispatch number, and how it activates. """
+	item: str
+	""" Placeholder item id for the dropped item entity. """
+	display: str
+	color: str
+	type_num: int
+	""" Integer used in scoreboards and in the spawn dispatch. """
+	tier: str
+	""" "common" | "rare" — rare has a 25% chance to appear each shuffle cycle. """
+
+	# Timed power-ups only; a non-zero duration is what makes one timed (see TIMED_POWERUPS).
+	duration: int = 0
+	""" Active duration in ticks. """
+	scoreboard: str = ""
+	""" The {ns}.special.<scoreboard> objective name. """
+	bossbar_id: str = ""
+	""" The {ns}:pu_<bossbar_id> bossbar name. """
+	bb_color: str = ""
+
+	# Sounds, relative to {ns}:zombies/powerups/. Without `sound` the generic level-up chime plays.
+	sound: str = ""
+	additional: str = ""
+	""" A second sound played simultaneously with `sound`. """
+	end_sound: str = ""
+	""" Played once when a timed effect expires. """
+
+
+POWERUP_TYPES: dict[str, PowerupType] = {
+	"max_ammo":        PowerupType(item="minecraft:amethyst_shard",       display="Max Ammo",       color="aqua",         type_num=1, tier="common", sound="max_ammo", additional="max_ammo_additional"),
+	"insta_kill":      PowerupType(item="minecraft:fermented_spider_eye", display="Insta Kill",     color="red",          type_num=2, tier="common", duration=600, scoreboard="instant_kill",  bossbar_id="pu_insta_kill",     bb_color="red",    sound="insta_kill", end_sound="insta_kill_off"),
+	"double_points":   PowerupType(item="minecraft:gold_ingot",           display="Double Points",  color="yellow",       type_num=3, tier="common", duration=600, scoreboard="double_points", bossbar_id="pu_double_points",  bb_color="yellow", sound="double_points", end_sound="double_points_off"),
+	"carpenter":       PowerupType(item="minecraft:oak_log",              display="Carpenter",      color="gold",         type_num=4, tier="common", sound="carpenter"),
+	"nuke":            PowerupType(item="minecraft:tnt",                  display="Nuke",           color="red",          type_num=5, tier="common", sound="nuke", additional="nuke_additional"),
+	"unlimited_ammo":  PowerupType(item="minecraft:blaze_rod",            display="Unlimited Ammo", color="green",        type_num=6, tier="rare",   duration=600, scoreboard="infinite_ammo", bossbar_id="pu_unlimited_ammo", bb_color="green"),
+	"random_perk":     PowerupType(item="minecraft:glass_bottle",         display="Random Perk",    color="light_purple", type_num=7, tier="rare",   sound="random_perk"),
+	"free_pap":        PowerupType(item="minecraft:diamond",              display="Free PAP",       color="aqua",         type_num=8, tier="rare"),
+	"cash_drop":       PowerupType(item="minecraft:emerald",              display="Cash Drop",      color="green",        type_num=9, tier="rare",   sound="bonus_points"),
+	"fire_sale":       PowerupType(item="minecraft:firework_star",        display="Fire Sale",      color="light_purple", type_num=10, tier="rare",  sound="fire_sale"),
+	"bonfire_sale":    PowerupType(item="minecraft:campfire",             display="Bonfire Sale",   color="gold",         type_num=11, tier="rare",  sound="bonfire_sale"),
 }
 
 POWERUP_LIFETIME: int    = 530  # 26.5 seconds in ticks
@@ -44,7 +60,7 @@ FIRE_SALE_DURATION: int  = 600  # 30 seconds in ticks: Mystery Box costs 10 poin
 BONFIRE_SALE_DURATION: int = 600  # 30 seconds in ticks: Pack-a-Punch costs 200 points (1000/5)
 
 # Convenience view: only power-ups with a timed duration
-TIMED_POWERUPS: dict[str, JsonDict] = {k: v for k, v in POWERUP_TYPES.items() if "duration" in v}
+TIMED_POWERUPS: dict[str, PowerupType] = {k: v for k, v in POWERUP_TYPES.items() if v.duration}
 
 
 def generate_powerups() -> None:
@@ -60,12 +76,12 @@ def generate_powerups() -> None:
 		return body if at_s else f"execute {body}"
 
 	# Activation sound line(s) for a power-up entry, including its "additional" layer if present.
-	def pu_activate_sound(v: JsonDict, vol: float = 1.0) -> str:
-		if "sound" not in v:
+	def pu_activate_sound(v: PowerupType, vol: float = 1.0) -> str:
+		if not v.sound:
 			return f"playsound minecraft:entity.player.levelup ambient @a[scores={{{ns}.zb.in_game=1}}] ~ ~ ~ 1.0 1.0"
-		lines = [pu_snd(v["sound"], vol)]
-		if "additional" in v:
-			lines.append(pu_snd(v["additional"], vol))
+		lines = [pu_snd(v.sound, vol)]
+		if v.additional:
+			lines.append(pu_snd(v.additional, vol))
 		return "\n".join(lines)
 
 	# ──────────────────────────────────────────────────────────────────────────
@@ -88,7 +104,7 @@ scoreboard objectives add {ns}.zb.player_hit dummy
 			"entries": [
 				{
 					"type": "minecraft:item",
-					"name": v["item"],
+					"name": v.item,
 					"weight": 1,
 					"functions": [{
 						"function": "minecraft:set_components",
@@ -152,7 +168,7 @@ function {ns}:v{version}/zombies/powerups/do_spawn_random
 
 	# The shuffle bag deals a type_num; name it, then take the same route as an intercepted item
 	do_spawn_random_lines: str = "\n".join(
-		f'execute if score #pu_spawn_type {ns}.data matches {v["type_num"]} run data modify storage {ns}:temp _pu_spawn.type set value "{pu_id}"'
+		f'execute if score #pu_spawn_type {ns}.data matches {v.type_num} run data modify storage {ns}:temp _pu_spawn.type set value "{pu_id}"'
 		for pu_id, v in POWERUP_TYPES.items()
 	)
 	write_versioned_function("zombies/powerups/do_spawn_random", f"""
@@ -185,16 +201,16 @@ function {ns}:v{version}/zombies/powerups/queue_extract with storage {ns}:temp _
 """)
 
 	queue_refill_common_lines: str = "\n".join(
-		f"data modify storage {ns}:data _pu_queue append value {v['type_num']}"
+		f"data modify storage {ns}:data _pu_queue append value {v.type_num}"
 		for _pu_id, v in POWERUP_TYPES.items()
-		if v["tier"] == "common"
+		if v.tier == "common"
 	)
 	# Rares are gated to after round 5 (round 6+), then each has an independent 25% chance.
 	queue_refill_rare_lines: str = "\n".join(
-		f"execute if score #zb_round {ns}.data matches 6.. store result score #pu_rare_roll_{v['type_num']} {ns}.data run random value 1..100\n"
-		f"execute if score #zb_round {ns}.data matches 6.. if score #pu_rare_roll_{v['type_num']} {ns}.data matches 1..25 run data modify storage {ns}:data _pu_queue append value {v['type_num']}"
+		f"execute if score #zb_round {ns}.data matches 6.. store result score #pu_rare_roll_{v.type_num} {ns}.data run random value 1..100\n"
+		f"execute if score #zb_round {ns}.data matches 6.. if score #pu_rare_roll_{v.type_num} {ns}.data matches 1..25 run data modify storage {ns}:data _pu_queue append value {v.type_num}"
 		for _pu_id, v in POWERUP_TYPES.items()
-		if v["tier"] == "rare"
+		if v.tier == "rare"
 	)
 	write_versioned_function("zombies/powerups/queue_refill", f"""
 data modify storage {ns}:data _pu_queue set value []
@@ -239,8 +255,8 @@ function {ns}:v{version}/zombies/powerups/spawn_display with storage {ns}:temp _
 	# argument name, or the outer quoted value would be the one that gets translated.
 	dispatch_lines: str = "\n".join(
 		f'$execute if data storage {ns}:temp _pu_spawn {{"type":"{pu_id}"}} run function {ns}:v{version}/zombies/powerups/spawn_type '
-		f'{{x:$(x),y:$(y),z:$(z),uid:$(uid),item:"{v["item"]}",type_num:{v["type_num"]},'
-		f'label:\'{{"text":"{v["display"]}","color":"{v["color"]}","bold":true}}\'}}'
+		f'{{x:$(x),y:$(y),z:$(z),uid:$(uid),item:"{v.item}",type_num:{v.type_num},'
+		f'label:\'{{"text":"{v.display}","color":"{v.color}","bold":true}}\'}}'
 		for pu_id, v in POWERUP_TYPES.items()
 	)
 	write_versioned_function("zombies/powerups/spawn_display", f"""
@@ -347,7 +363,7 @@ execute as @a[tag={ns}.downed_spectator,scores={{{ns}.zb.in_game=1}}] if score @
 """)
 
 	dispatch_activate_lines: str = "\n".join(
-		f"execute if score #pu_type_pickup {ns}.data matches {v['type_num']} run function {ns}:v{version}/zombies/powerups/activate/{pu_id}"
+		f"execute if score #pu_type_pickup {ns}.data matches {v.type_num} run function {ns}:v{version}/zombies/powerups/activate/{pu_id}"
 		for pu_id, v in POWERUP_TYPES.items()
 	)
 	write_versioned_function("zombies/powerups/dispatch_activate", f"""
@@ -367,11 +383,11 @@ execute as @a[scores={{{ns}.zb.in_game=1}},gamemode=!spectator] run function {ns
 	## 2-4. Timed power-ups: Insta Kill, Double Points, Unlimited Ammo
 	# All share the same bossbar+scoreboard activation pattern, driven by TIMED_POWERUPS.
 	for pu_id, v in TIMED_POWERUPS.items():
-		duration: int     = v["duration"]
-		scoreboard: str   = v["scoreboard"]
-		bossbar_id: str   = v["bossbar_id"]
-		display_name: str = v["display"]
-		bb_color: str     = v["bb_color"]
+		duration: int     = v.duration
+		scoreboard: str   = v.scoreboard
+		bossbar_id: str   = v.bossbar_id
+		display_name: str = v.display
+		bb_color: str     = v.bb_color
 		write_versioned_function(f"zombies/powerups/activate/{pu_id}", f"""
 scoreboard players set @a[scores={{{ns}.zb.in_game=1}}] {ns}.special.{scoreboard} {duration}
 bossbar remove {ns}:{bossbar_id}
@@ -534,13 +550,13 @@ execute if score #zb_bonfire_sale_timer {ns}.data matches 1.. store result bossb
 	# Bossbar update functions — generated from TIMED_POWERUPS, one per entry
 	# ──────────────────────────────────────────────────────────────────────────
 	for pu_id, v in TIMED_POWERUPS.items():
-		scoreboard: str   = v["scoreboard"]
-		bossbar_id: str   = v["bossbar_id"]
-		display_name: str = v["display"]
+		scoreboard: str   = v.scoreboard
+		bossbar_id: str   = v.bossbar_id
+		display_name: str = v.display
 		# Play the end sound once when the effect transitions from active to expired
 		end_sound_line: str = ""
-		if "end_sound" in v:
-			end_sound: str = pu_snd(v["end_sound"], at_s=True)
+		if v.end_sound:
+			end_sound: str = pu_snd(v.end_sound, at_s=True)
 			end_sound_line = f"execute if score #pu_prev_{pu_id} {ns}.data matches 1.. if score #pu_max_duration {ns}.data matches ..0 {end_sound}\n"
 		write_versioned_function(f"zombies/powerups/update_{pu_id}_bb", f"""
 # Find max remaining duration across all players with active {pu_id}
@@ -581,7 +597,7 @@ tag @s remove {ns}.ik_melee
 
 	# Scoreboard decrement calls for game_tick, generated from TIMED_POWERUPS
 	decrement_calls: str = "\n".join(
-		f"execute as @a[scores={{{ns}.special.{v['scoreboard']}=1..}}] run scoreboard players operation @s {ns}.special.{v['scoreboard']} -= #tick_delta {ns}.data"
+		f"execute as @a[scores={{{ns}.special.{v.scoreboard}=1..}}] run scoreboard players operation @s {ns}.special.{v.scoreboard} -= #tick_delta {ns}.data"
 		for k, v in TIMED_POWERUPS.items()
 		if k not in ("insta_kill", "unlimited_ammo") # They are already handled globally (not zombies)
 	)
@@ -629,11 +645,11 @@ execute if score #zb_bonfire_sale_timer {ns}.data matches 1.. run function {ns}:
 
 	# stop cleanup resets, generated from TIMED_POWERUPS
 	stop_scoreboard_resets: str = "\n".join(
-		f"scoreboard players set @a {ns}.special.{v['scoreboard']} 0"
+		f"scoreboard players set @a {ns}.special.{v.scoreboard} 0"
 		for v in TIMED_POWERUPS.values()
 	)
 	stop_bossbar_removes: str = "\n".join(
-		f"bossbar remove {ns}:{v['bossbar_id']}"
+		f"bossbar remove {ns}:{v.bossbar_id}"
 		for v in TIMED_POWERUPS.values()
 	)
 

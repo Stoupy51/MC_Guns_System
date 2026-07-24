@@ -24,7 +24,7 @@ _PERK_ID_DOC: str = (
 	"machine placed on this map (unless a Wunderfizz has all_perks set), so\n"
 	"which perks you place here shapes what they can grant."
 )
-_PERK_PRICE_PAIRS: list[str] = [f'{PERK_DEFINITIONS[pid]["display_name"]} {RECOMMENDED_PRICES.get(pid, 2000)}' for pid in _PERK_IDS]
+_PERK_PRICE_PAIRS: list[str] = [f'{PERK_DEFINITIONS[pid].display_name} {RECOMMENDED_PRICES.get(pid, 2000)}' for pid in _PERK_IDS]
 _PERK_PRICE_DOC: str = (
 	"Cost in points to buy this perk.\n"
 	"Leave at -1 to auto-resolve the recommended price from perk_id.\n"
