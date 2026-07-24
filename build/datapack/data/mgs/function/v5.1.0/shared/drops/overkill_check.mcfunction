@@ -30,5 +30,5 @@ execute if score #is_primary mgs.data matches 0 run return 0
 
 scoreboard players set #pick_deny mgs.data 1
 tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.you_need_the_overkill_perk_to_carry_two_primary_weapons","color":"red"}]
-function mgs:v5.1.0/zombies/feedback/sound_deny
+playsound minecraft:entity.villager.no ambient @s ~ ~ ~ 0.8 1.0
 

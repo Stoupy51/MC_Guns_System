@@ -22,5 +22,5 @@ execute if score #wf_pick mgs.data matches 11 run function mgs:v5.1.0/zombies/wu
 execute if score #wf_pick mgs.data matches 12 run function mgs:v5.1.0/zombies/wunderfizz/grant/dying_wish
 execute if score #wf_pick mgs.data matches 13 run function mgs:v5.1.0/zombies/wunderfizz/grant/widows_wine
 kill @n[type=item_display,tag=mgs.wunderfizz_orb,distance=..3]
-function mgs:v5.1.0/zombies/feedback/sound_success
+playsound minecraft:entity.experience_orb.pickup ambient @s ~ ~ ~ 0.8 1.25
 

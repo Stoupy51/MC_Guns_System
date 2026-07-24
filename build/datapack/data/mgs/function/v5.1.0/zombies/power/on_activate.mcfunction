@@ -27,8 +27,8 @@ kill @e[tag=mgs.power_switch]
 
 # Announce
 tellraw @a[scores={mgs.zb.in_game=1}] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.power_is_on","color":"green","bold":true}]
-function mgs:v5.1.0/zombies/feedback/sound_power_on
+playsound minecraft:block.beacon.activate ambient @a[scores={mgs.zb.in_game=1}] ~ ~ ~ 0.9 1.0
 
 # Signal map-specific power-on hooks
-function mgs:v5.1.0/shared/maps/call_power_script_at_base
+function mgs:v5.1.0/shared/maps/call_script_at_base {script:"power"}
 

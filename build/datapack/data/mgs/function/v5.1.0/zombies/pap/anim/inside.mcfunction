@@ -13,5 +13,5 @@ execute positioned ~ ~-2 ~ run particle end_rod ~ ~0.8 ~ 0.3 0.2 0.3 0.05 1 forc
 # Periodic processing sound every 20 ticks
 execute store result score #pap_t mgs.data run scoreboard players get @s mgs.pap_anim
 scoreboard players operation #pap_t mgs.data %= #20 mgs.data
-execute if score #pap_t mgs.data matches 0 run function mgs:v5.1.0/zombies/feedback/sound_pap_loop
+execute if score #pap_t mgs.data matches 0 run playsound mgs:zombies/pap/pap_loop ambient @a[scores={mgs.zb.in_game=1}] ~ ~ ~ 0.25 1.0
 

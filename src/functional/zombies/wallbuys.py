@@ -9,6 +9,7 @@
 from stewbeet import Mem, write_load_file, write_versioned_function
 
 from ...config.stats import GRENADE_TYPE
+from ..core.feedback import zb_sound
 from ..helpers import MGS_TAG
 from .common import build_weapon_magazine_data, deny_not_enough_points_body, game_active_guard_cmd
 
@@ -205,7 +206,7 @@ function {ns}:v{version}/zombies/wallbuys/msg_purchased
 
 	write_versioned_function("zombies/wallbuys/deny_knife_owned", f"""
 tellraw @s [{MGS_TAG},{{"text":"You already own this knife.","color":"yellow"}}]
-function {ns}:v{version}/zombies/feedback/sound_deny
+{zb_sound('deny')}
 """)
 
 	## Equipment wallbuys: lethal grenades (hotbar.7, max 4) and tacticals (hotbar.6, max 3).
@@ -253,7 +254,7 @@ function {ns}:v{version}/zombies/wallbuys/msg_refilled
 
 	write_versioned_function("zombies/wallbuys/deny_equipment_full", f"""
 tellraw @s [{MGS_TAG},{{"text":"Your equipment is already full.","color":"yellow"}}]
-function {ns}:v{version}/zombies/feedback/sound_deny
+{zb_sound('deny')}
 """)
 
 	## Widow's Wine lethal buy: refill/purchase web grenades regardless of the bought lethal type.
@@ -288,22 +289,22 @@ scoreboard players set #wb_purchase_mode {ns}.data 1
 
 	write_versioned_function("zombies/wallbuys/msg_purchased", f"""
 tellraw @s [{MGS_TAG},{{"text":"You bought ","color":"green"}},{{"storage":"{ns}:temp","nbt":"_wb_display_name","color":"gold","interpret":true}},{{"text":" for ","color":"green"}},{{"score":{{"name":"#wb_price","objective":"{ns}.data"}},"color":"yellow"}},{{"text":" points.","color":"green"}}]
-function {ns}:v{version}/zombies/feedback/sound_success
+{zb_sound('success')}
 """)
 
 	write_versioned_function("zombies/wallbuys/msg_refilled", f"""
 tellraw @s [{MGS_TAG},{{"text":"Ammo refilled for ","color":"gold"}},{{"score":{{"name":"#wb_price","objective":"{ns}.data"}},"color":"yellow"}},{{"text":" points.","color":"gold"}}]
-function {ns}:v{version}/zombies/feedback/sound_refill
+{zb_sound('refill')}
 """)
 
 	write_versioned_function("zombies/wallbuys/msg_replaced", f"""
 tellraw @s [{MGS_TAG},{{"text":"Swapped your selected weapon for ","color":"yellow"}},{{"storage":"{ns}:temp","nbt":"_wb_display_name","color":"gold","interpret":true}},{{"text":" (","color":"yellow"}},{{"score":{{"name":"#wb_price","objective":"{ns}.data"}},"color":"yellow"}},{{"text":" points).","color":"yellow"}}]
-function {ns}:v{version}/zombies/feedback/sound_replace
+{zb_sound('replace')}
 """)
 
 	write_versioned_function("zombies/wallbuys/msg_refund_full", f"""
 tellraw @s [{MGS_TAG},{{"text":"Ammo is already full. Refunded ","color":"red"}},{{"score":{{"name":"#wb_price","objective":"{ns}.data"}},"color":"yellow"}},{{"text":" points.","color":"red"}}]
-function {ns}:v{version}/zombies/feedback/sound_deny
+{zb_sound('deny')}
 """)
 
 	# Generate lookup function for weapon -> magazine mapping
@@ -504,7 +505,7 @@ execute if score #wb_purchase_done {ns}.data matches 0 run scoreboard players se
 	write_versioned_function("zombies/wallbuys/deny_hold_valid_slot", f"""
 execute if score @s {ns}.zb.perk.mule_kick matches 1.. run tellraw @s [{MGS_TAG},{{"text":"Hold weapon slot 1, 2, or 3 to swap your current gun.","color":"red"}}]
 execute unless score @s {ns}.zb.perk.mule_kick matches 1.. run tellraw @s [{MGS_TAG},{{"text":"Hold weapon slot 1 or 2 to swap your current gun.","color":"red"}}]
-function {ns}:v{version}/zombies/feedback/sound_deny
+{zb_sound('deny')}
 """)
 
 	write_versioned_function("zombies/wallbuys/replace_pair", f"""

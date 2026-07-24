@@ -172,7 +172,7 @@ def late_join_flow_lines(
         parts.append(post_class_lines.strip())
     parts.extend([
         f'# Teleport to spawn\nfunction {respawn_function}',
-        f'# Call map join script (executed as the joining player)\nfunction {ns}:v{version}/shared/maps/call_join_script_at_base',
+        f'# Call map join script (executed as the joining player)\nfunction {ns}:v{version}/shared/maps/call_script_at_base {{script:"join"}}',
         f'# Announce\ntellraw @a ["",{{"selector":"@s","color":"{announce_color}"}},{{"text":" {announce_text}","color":"{announce_color}"}}]',
     ])
     return "\n\n".join(parts)

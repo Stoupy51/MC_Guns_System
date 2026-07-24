@@ -3,6 +3,7 @@
 
 from stewbeet import Mem, write_versioned_function
 
+from ..core.feedback import zb_sound
 from ..helpers import MGS_TAG
 
 
@@ -190,7 +191,7 @@ scoreboard players set #kino_tp_timer {ns}.data 600
 	write_versioned_function("maps/zombies/kino_der_toten/teleporter/deny_recharging", f"""
 # @s = interaction entity; reach the player via 'on target'
 execute on target run tellraw @s [{MGS_TAG},{{"text":"The teleporter is recharging...","color":"yellow"}}]
-execute on target at @s run function {ns}:v{version}/zombies/feedback/sound_deny
+execute on target at @s run {zb_sound('deny')}
 """)
 
 	# ── teleporter/tick ───────────────────────────────────────────────────────

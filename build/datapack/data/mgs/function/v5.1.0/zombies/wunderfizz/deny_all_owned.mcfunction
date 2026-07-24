@@ -7,5 +7,5 @@
 #
 
 tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.you_already_own_every_available_perk_points_refunded","color":"yellow"}]
-function mgs:v5.1.0/zombies/feedback/sound_deny
+playsound minecraft:entity.villager.no ambient @s ~ ~ ~ 0.8 1.0
 

@@ -6,6 +6,7 @@
 
 from stewbeet import Mem, write_load_file, write_versioned_function
 
+from ..core.feedback import zb_sound
 from ..helpers import MGS_TAG
 from .common import deny_not_enough_points_body, game_active_guard_cmd
 
@@ -171,13 +172,13 @@ execute as @e[tag={ns}.door] if score @s {ns}.zb.door.link = #door_link {ns}.dat
 
 # Announce (the total, not the last chunk: it's what the door cost the team)
 tellraw @a [{MGS_TAG},{{"selector":"@s","color":"yellow"}},{{"text":" opened ","color":"green"}},{{"storage":"{ns}:temp","nbt":"_door_hover_name","color":"gold","interpret":true}},{{"text":" for ","color":"green"}},{{"score":{{"name":"#door_total","objective":"{ns}.data"}},"color":"yellow"}},{{"text":" points.","color":"green"}}]
-function {ns}:v{version}/zombies/feedback/sound_announce
+{zb_sound('announce')}
 """)  # noqa: E501
 
 	## Chip-in payment that didn't finish the door (@s = paying player)
 	write_versioned_function("zombies/doors/announce_progress", f"""
 tellraw @a [{MGS_TAG},{{"selector":"@s","color":"yellow"}},{{"text":" chipped in ","color":"green"}},{{"score":{{"name":"#door_price","objective":"{ns}.data"}},"color":"yellow"}},{{"text":" points for ","color":"green"}},{{"storage":"{ns}:temp","nbt":"_door_hover_name","color":"gold","interpret":true}},{{"text":"  (","color":"gray"}},{{"score":{{"name":"#door_paid","objective":"{ns}.data"}},"color":"green"}},{{"text":"/","color":"gray"}},{{"score":{{"name":"#door_total","objective":"{ns}.data"}},"color":"yellow"}},{{"text":")","color":"gray"}}]
-function {ns}:v{version}/zombies/feedback/sound_announce
+{zb_sound('announce')}
 """)  # noqa: E501
 
 	write_versioned_function("zombies/doors/deny_not_enough_points", f"""

@@ -32,7 +32,7 @@ function mgs:v5.1.0/zombies/inventory/give_respawn_loadout
 function mgs:v5.1.0/zombies/perks/tombstone_on_respawn
 
 # Call map respawn script (executed as the respawning player)
-function mgs:v5.1.0/shared/maps/call_respawn_script_at_base
+function mgs:v5.1.0/shared/maps/call_script_at_base {script:"respawn"}
 
 # Announce
 tellraw @a[scores={mgs.zb.in_game=1}] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"selector":"@s","color":"green"},[{"text":" ","color":"gray"}, {"translate":"mgs.has_respawned"}]]

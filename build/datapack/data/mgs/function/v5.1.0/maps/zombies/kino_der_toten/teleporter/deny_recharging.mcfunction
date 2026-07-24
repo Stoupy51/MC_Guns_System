@@ -8,5 +8,5 @@
 
 # @s = interaction entity; reach the player via 'on target'
 execute on target run tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.the_teleporter_is_recharging","color":"yellow"}]
-execute on target at @s run function mgs:v5.1.0/zombies/feedback/sound_deny
+execute on target at @s run playsound minecraft:entity.villager.no ambient @s ~ ~ ~ 0.8 1.0
 

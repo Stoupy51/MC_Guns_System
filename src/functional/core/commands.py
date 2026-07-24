@@ -73,14 +73,13 @@ execute if data storage {ns}:temp _respawn_cmd_iter[0] at @s run function {ns}:v
 $execute positioned $(x) $(y) $(z) run function $(fn)
 """)
 
-		## Wrappers: call a map function tag positioned at map base coordinates
-		## Usage: function shared/maps/call_start_script_at_base
-		for script in ["start", "tick", "join", "leave", "respawn", "power"]:
-			write_versioned_function(f"shared/maps/call_{script}_script_at_base", f"""
+		## Call a map function tag positioned at map base coordinates (start/tick/join/leave/respawn/power)
+		## Usage: function shared/maps/call_script_at_base {script:"start"}
+		write_versioned_function("shared/maps/call_script_at_base", f"""
 execute store result storage {ns}:temp _base.x int 1 run scoreboard players get #gm_base_x {ns}.data
 execute store result storage {ns}:temp _base.y int 1 run scoreboard players get #gm_base_y {ns}.data
 execute store result storage {ns}:temp _base.z int 1 run scoreboard players get #gm_base_z {ns}.data
-data modify storage {ns}:temp _base.fn set value "#{ns}:maps/{script}_script"
+$data modify storage {ns}:temp _base.fn set value "#{ns}:maps/$(script)_script"
 function {ns}:v{version}/shared/call_at_base with storage {ns}:temp _base
 """)
 

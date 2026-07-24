@@ -15,6 +15,7 @@
 # zb.bleed / zb.revive_p scores so the shared revive core works unchanged.
 from stewbeet import Mem, write_load_file, write_versioned_function
 
+from ..core.feedback import zb_sound
 from ..helpers import MGS_TAG
 from .perks import PERK_DEFINITIONS
 from .revive import BLEED_OUT_TICKS, revive_body_detect, revive_body_progress
@@ -164,7 +165,7 @@ title @s times 5 40 15
 title @s title ["❤"]
 title @s subtitle [{{"text":"Body revived — you are whole again!","color":"green"}}]
 tellraw @a[scores={{{ns}.zb.in_game=1}}] [{MGS_TAG},{{"selector":"@s","color":"green"}},{{"text":"'s body was revived — they are whole again!","color":"gray"}}]
-function {ns}:v{version}/zombies/feedback/sound_success
+{zb_sound('success')}
 """)
 
 	## Body bled out (@s = doppelganger owner): keep playing with the pistol, perks stay lost

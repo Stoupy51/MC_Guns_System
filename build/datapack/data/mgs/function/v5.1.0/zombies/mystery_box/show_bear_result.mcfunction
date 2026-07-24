@@ -28,5 +28,5 @@ execute as @a[scores={mgs.zb.in_game=1}] if score @s mgs.mb.pid = #this_buyer mg
 scoreboard players set #mb_move_timer mgs.data 280
 
 tellraw @a[scores={mgs.zb.in_game=1}] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.the_mystery_box_is_moving_2","color":"yellow","bold":true}]
-function mgs:v5.1.0/zombies/feedback/sound_box_bye_bye
+execute as @a[scores={mgs.zb.in_game=1}] at @s run playsound mgs:zombies/mystery_box/bye_bye ambient @s ~ ~ ~ 1.0 1.0
 

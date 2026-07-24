@@ -42,7 +42,7 @@ scoreboard players operation @s mgs.zb.prev_kills = @s mgs.total_kills
 function mgs:v5.1.0/zombies/respawn_tp
 
 # Call map join script (executed as the joining player)
-function mgs:v5.1.0/shared/maps/call_join_script_at_base
+function mgs:v5.1.0/shared/maps/call_script_at_base {script:"join"}
 
 # Announce
 tellraw @a ["",{"selector":"@s","color":"dark_green"},[{"text":" ","color":"dark_green"}, {"translate":"mgs.joined_the_zombies_game"}]]

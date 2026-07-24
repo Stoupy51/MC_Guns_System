@@ -6,6 +6,6 @@
 # @within	mgs:v5.1.0/zombies/pap/anim/step
 #
 
-function mgs:v5.1.0/zombies/feedback/sound_pap_loop
-function mgs:v5.1.0/zombies/feedback/sound_pap_upgrade
+playsound mgs:zombies/pap/pap_loop ambient @a[scores={mgs.zb.in_game=1}] ~ ~ ~ 0.25 1.0
+playsound mgs:zombies/pap/upgrade ambient @a[scores={mgs.zb.in_game=1}] ~ ~ ~ 0.5 1.0
 

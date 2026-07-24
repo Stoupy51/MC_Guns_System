@@ -10,6 +10,7 @@ from stewbeet import Mem, write_load_file, write_versioned_function
 
 from ...config.stats import WEIGHT
 from ...database.items import WEAPON_STATS
+from ..core.feedback import zb_sound
 from ..helpers import MGS_TAG
 from .common import build_weapon_magazine_data
 
@@ -306,7 +307,7 @@ execute if entity @n[tag={ns}.mb_display,distance=..3,tag={ns}.mb_shared] run re
 execute unless score @s {ns}.mb.pid = @n[tag={ns}.mb_display,distance=..3] {ns}.mb.buyer run return run function {ns}:v{version}/zombies/mystery_box/deny_not_your_result
 
 tag @n[tag={ns}.mb_display,distance=..3] add {ns}.mb_shared
-function {ns}:v{version}/zombies/feedback/sound_success
+{zb_sound('success')}
 tellraw @a[scores={{{ns}.zb.in_game=1}}] [{MGS_TAG},{{"selector":"@s"}},{{"text":" shared their Mystery Box weapon — anyone can take it!","color":"green"}}]
 """)
 
@@ -383,12 +384,12 @@ function {ns}:v{version}/zombies/mystery_box/refresh_disabled
 
 	write_versioned_function("zombies/mystery_box/deny_moving", f"""
 tellraw @s [{MGS_TAG},{{"text":"The Mystery Box is moving...","color":"yellow"}}]
-function {ns}:v{version}/zombies/feedback/sound_deny
+{zb_sound('deny')}
 """)
 
 	write_versioned_function("zombies/mystery_box/deny_already_in_use", f"""
 tellraw @s [{MGS_TAG},{{"text":"Mystery Box is already in use.","color":"red"}}]
-function {ns}:v{version}/zombies/feedback/sound_deny
+{zb_sound('deny')}
 """)
 
 	## Start a pull on the clicked box (@s = player, positioned at the box, #cur_box = box id)
@@ -431,10 +432,12 @@ tag @n[tag={ns}.mb_display_new] remove {ns}.mb_display_new
 
 # Open this box's lid + open/spin sounds + a private announce to the buyer
 function {ns}:v{version}/zombies/mystery_box/open_lid
-function {ns}:v{version}/zombies/feedback/sound_box_open
+{zb_sound('box_open')}
 # Timeslip owners get the sped-up spin tune to match their 2x pull
-execute unless score @s {ns}.special.timeslip matches 1.. run function {ns}:v{version}/zombies/feedback/sound_box_spin
-execute if score @s {ns}.special.timeslip matches 1.. run function {ns}:v{version}/zombies/feedback/sound_box_spin_short
+execute unless score @s {ns}.special.timeslip matches 1.. run {zb_sound('box_spin')}
+execute unless score @s {ns}.special.timeslip matches 1.. run {zb_sound('music_box')}
+execute if score @s {ns}.special.timeslip matches 1.. run {zb_sound('box_spin')}
+execute if score @s {ns}.special.timeslip matches 1.. run {zb_sound('music_box_short')}
 tellraw @s [{MGS_TAG},{{"text":"Mystery Box spinning...","color":"light_purple"}}]
 """)
 
@@ -487,24 +490,24 @@ execute if score #mb_owned {ns}.data matches 1 if score #mb_reroll {ns}.data mat
 
 	write_versioned_function("zombies/mystery_box/deny_not_enough_points", f"""
 tellraw @s [{MGS_TAG},{{"text":"You don't have enough points (","color":"red"}},{{"score":{{"name":"#zb_mystery_box_price","objective":"{ns}.config"}},"color":"yellow"}},{{"text":" needed).","color":"red"}}]
-function {ns}:v{version}/zombies/feedback/sound_deny
+{zb_sound('deny')}
 """)
 
 	write_versioned_function("zombies/mystery_box/deny_not_your_result", f"""
 tellraw @s [{MGS_TAG},{{"text":"Wait for the current player to collect their result.","color":"red"}}]
-function {ns}:v{version}/zombies/feedback/sound_deny
+{zb_sound('deny')}
 """)
 
 	write_versioned_function("zombies/mystery_box/deny_all_owned", f"""
 tellraw @s [{MGS_TAG},{{"text":"You already own all available Mystery Box weapons. Points refunded.","color":"yellow"}}]
-function {ns}:v{version}/zombies/feedback/sound_deny
+{zb_sound('deny')}
 """)
 
 	write_versioned_function("zombies/mystery_box/deny_pool_empty", f"""
 # Clear any stale result so downstream checks treat this pull as failed
 data remove storage {ns}:zombies mystery_box.result
 tellraw @s [{MGS_TAG},{{"text":"The Mystery Box has no weapons available.","color":"red"}}]
-function {ns}:v{version}/zombies/feedback/sound_deny
+{zb_sound('deny')}
 """)
 
 	## Display entity: spawned at box level; floats up via the per-display tick (anim==104).
@@ -652,7 +655,7 @@ execute as @a[scores={{{ns}.zb.in_game=1}}] if score @s {ns}.mb.pid = #this_buye
 scoreboard players set #mb_move_timer {ns}.data {MOVE_TOTAL_TICKS}
 
 tellraw @a[scores={{{ns}.zb.in_game=1}}] [{MGS_TAG},{{"text":"The Mystery Box is moving!","color":"yellow","bold":true}}]
-function {ns}:v{version}/zombies/feedback/sound_box_bye_bye
+{zb_sound('box_bye_bye')}
 """)
 
 	## Move animation: tick dispatcher
@@ -700,7 +703,7 @@ execute if score #mb_move_timer {ns}.data matches 0 run function {ns}:v{version}
 # Enable smooth movement on the active chest (base + lid) and the bear display only
 execute as @e[tag={ns}.mb_presence,tag=!{ns}.mb_temp] run data merge entity @s {{teleport_duration:5}}
 execute as @e[tag={ns}.mb_bear] run data merge entity @s {{teleport_duration:5}}
-execute as @n[tag={ns}.mystery_box_active] at @s run function {ns}:v{version}/zombies/feedback/sound_box_disappear
+execute as @n[tag={ns}.mystery_box_active] at @s run {zb_sound('box_disappear')}
 """)
 
 	# Ascend: slow first half, fast second half
@@ -734,7 +737,7 @@ execute as @n[tag={ns}.mystery_box_active] at @s as @e[tag={ns}.mb_presence,tag=
 
 # Light beam particles at new location
 execute at @n[tag={ns}.mystery_box_active] run particle minecraft:end_rod ~ ~3 ~ 0.1 2 0.1 0.05 20 force @a[distance=..64]
-execute as @n[tag={ns}.mystery_box_active] at @s run function {ns}:v{version}/zombies/feedback/sound_box_poof
+execute as @n[tag={ns}.mystery_box_active] at @s run {zb_sound('box_poof')}
 """)
 
 	# Descend: fast first half, slow second half (landing)
@@ -763,7 +766,7 @@ function {ns}:v{version}/zombies/mystery_box/refresh_disabled
 
 # Announce arrival
 tellraw @a[scores={{{ns}.zb.in_game=1}}] [{MGS_TAG},{{"text":"The Mystery Box has arrived at a new location!","color":"yellow"}}]
-execute as @n[tag={ns}.mystery_box_active] at @s run function {ns}:v{version}/zombies/feedback/sound_box_land
+execute as @n[tag={ns}.mystery_box_active] at @s run {zb_sound('box_land')}
 """)
 
 	## Collect this box's result (called from box_click, @s = player, positioned at the box)
@@ -784,8 +787,8 @@ execute if data storage {ns}:zombies mystery_box.result.weapon_id run function {
 
 # Announce + sounds
 tellraw @s [{MGS_TAG},{{"text":"You collected ","color":"green"}},{{"storage":"{ns}:temp","nbt":"_mb_collected_name","interpret":true}},{{"text":" from the Mystery Box.","color":"green"}}]
-function {ns}:v{version}/zombies/feedback/sound_success
-function {ns}:v{version}/zombies/feedback/sound_box_close
+{zb_sound('success')}
+{zb_sound('box_close')}
 
 # Close this box's lid and remove its display (buyer is tracked per-display, nothing to clear)
 function {ns}:v{version}/zombies/mystery_box/close_lid

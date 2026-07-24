@@ -7,6 +7,7 @@
 # {ns}:power_switch_on (handle + indicator light recolored green/lit).
 from stewbeet import Mem, write_versioned_function
 
+from ..core.feedback import zb_sound
 from ..helpers import MGS_TAG
 from .common import game_active_guard_cmd
 
@@ -86,15 +87,15 @@ kill @e[tag={ns}.power_switch]
 
 # Announce
 tellraw @a[scores={{{ns}.zb.in_game=1}}] [{MGS_TAG},{{"text":"Power is ON!","color":"green","bold":true}}]
-function {ns}:v{version}/zombies/feedback/sound_power_on
+{zb_sound('power_on')}
 
 # Signal map-specific power-on hooks
-function {ns}:v{version}/shared/maps/call_power_script_at_base
+function {ns}:v{version}/shared/maps/call_script_at_base {{script:"power"}}
 """)
 
 	write_versioned_function("zombies/power/deny_already_on", f"""
 tellraw @s [{MGS_TAG},{{"text":"Power is already on.","color":"yellow"}}]
-function {ns}:v{version}/zombies/feedback/sound_deny
+{zb_sound('deny')}
 """)
 
 	## Hover events (run as the player looking at the power switch)

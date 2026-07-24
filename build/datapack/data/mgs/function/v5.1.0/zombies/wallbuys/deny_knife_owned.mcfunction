@@ -7,5 +7,5 @@
 #
 
 tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.you_already_own_this_knife","color":"yellow"}]
-function mgs:v5.1.0/zombies/feedback/sound_deny
+playsound minecraft:entity.villager.no ambient @s ~ ~ ~ 0.8 1.0
 

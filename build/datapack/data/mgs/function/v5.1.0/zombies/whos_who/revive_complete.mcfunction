@@ -65,5 +65,5 @@ title @s times 5 40 15
 title @s title ["❤"]
 title @s subtitle [{"translate":"mgs.body_revived_you_are_whole_again","color":"green"}]
 tellraw @a[scores={mgs.zb.in_game=1}] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"selector":"@s","color":"green"},{"translate":"mgs.s_body_was_revived_they_are_whole_again","color":"gray"}]
-function mgs:v5.1.0/zombies/feedback/sound_success
+playsound minecraft:entity.experience_orb.pickup ambient @s ~ ~ ~ 0.8 1.25
 

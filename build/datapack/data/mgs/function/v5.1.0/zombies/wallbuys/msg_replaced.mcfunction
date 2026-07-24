@@ -7,5 +7,5 @@
 #
 
 tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.swapped_your_selected_weapon_for","color":"yellow"},{"storage":"mgs:temp","nbt":"_wb_display_name","color":"gold","interpret":true},{"text":" (","color":"yellow"},{"score":{"name":"#wb_price","objective":"mgs.data"},"color":"yellow"},[{"text":" ","color":"yellow"}, {"translate":"mgs.points_2"}, ")."]]
-function mgs:v5.1.0/zombies/feedback/sound_replace
+playsound minecraft:item.armor.equip_iron ambient @s ~ ~ ~ 0.9 1.0
 

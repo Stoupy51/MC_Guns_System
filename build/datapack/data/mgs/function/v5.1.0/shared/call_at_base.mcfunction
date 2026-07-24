@@ -1,12 +1,7 @@
 
 #> mgs:v5.1.0/shared/call_at_base
 #
-# @within	mgs:v5.1.0/shared/maps/call_start_script_at_base with storage mgs:temp _base
-#			mgs:v5.1.0/shared/maps/call_tick_script_at_base with storage mgs:temp _base
-#			mgs:v5.1.0/shared/maps/call_join_script_at_base with storage mgs:temp _base
-#			mgs:v5.1.0/shared/maps/call_leave_script_at_base with storage mgs:temp _base
-#			mgs:v5.1.0/shared/maps/call_respawn_script_at_base with storage mgs:temp _base
-#			mgs:v5.1.0/shared/maps/call_power_script_at_base with storage mgs:temp _base
+# @within	mgs:v5.1.0/shared/maps/call_script_at_base with storage mgs:temp _base
 #			mgs:v5.1.0/zombies/escort/setup_lure_center with storage mgs:temp _base
 #
 # @args		x (unknown)

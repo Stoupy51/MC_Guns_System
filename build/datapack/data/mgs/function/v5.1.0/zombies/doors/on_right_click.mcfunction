@@ -37,5 +37,5 @@ execute as @e[tag=mgs.door] if score @s mgs.zb.door.link = #door_link mgs.data a
 
 # Announce (the total, not the last chunk: it's what the door cost the team)
 tellraw @a [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"selector":"@s","color":"yellow"},[{"text":" ","color":"green"}, {"translate":"mgs.opened"}],{"storage":"mgs:temp","nbt":"_door_hover_name","color":"gold","interpret":true},[{"text":" ","color":"green"}, {"translate":"mgs.for"}],{"score":{"name":"#door_total","objective":"mgs.data"},"color":"yellow"},[{"text":" ","color":"green"}, {"translate":"mgs.points_3"}]]
-function mgs:v5.1.0/zombies/feedback/sound_announce
+playsound minecraft:block.note_block.bit ambient @a[scores={mgs.zb.in_game=1}] ~ ~ ~ 0.6 0.9
 

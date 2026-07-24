@@ -36,7 +36,7 @@ function mgs:v5.1.0/zombies/pap/anim/store_slot with storage mgs:temp _pap_anim_
 scoreboard players set @s mgs.pap_anim 300
 
 # Sound: machine accepting weapon (Timeslip owners hear the 3x-speed jingle sting)
-function mgs:v5.1.0/zombies/feedback/sound_pap_knuckle_crack
-execute if score @s mgs.zb.pap.timeslip matches 1 run function mgs:v5.1.0/zombies/feedback/sound_pap_jingle_sting_short
-execute unless score @s mgs.zb.pap.timeslip matches 1 run function mgs:v5.1.0/zombies/feedback/sound_pap_jingle_sting
+playsound mgs:zombies/pap/knuckle_crack ambient @a[scores={mgs.zb.in_game=1}] ~ ~ ~ 1.0 1.0
+execute if score @s mgs.zb.pap.timeslip matches 1 run playsound mgs:zombies/pap/jingle_sting_short ambient @a[scores={mgs.zb.in_game=1}] ~ ~ ~ 1.0 1.0
+execute unless score @s mgs.zb.pap.timeslip matches 1 run playsound mgs:zombies/pap/jingle_sting ambient @a[scores={mgs.zb.in_game=1}] ~ ~ ~ 1.0 1.0
 

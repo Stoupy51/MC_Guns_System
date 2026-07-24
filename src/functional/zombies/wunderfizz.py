@@ -12,6 +12,7 @@
 # `all_perks` flag is set (BO2 Origins behaviour).
 from stewbeet import Mem, write_load_file, write_versioned_function
 
+from ..core.feedback import zb_sound
 from ..helpers import MGS_TAG
 from .common import deny_not_enough_points_body, deny_requires_power_body, game_active_guard_cmd
 from .perks import PERK_DEFINITIONS
@@ -305,7 +306,7 @@ particle minecraft:totem_of_undying ~ ~ ~ 0.3 0.4 0.3 0.2 10 force @a[distance=.
 particle minecraft:electric_spark ~ ~ ~ 0.4 0.5 0.4 0.15 10 force @a[distance=..48]
 playsound minecraft:block.beacon.deactivate ambient @a[scores={{{ns}.zb.in_game=1}}] ~ ~ ~ 0.8 1.4
 playsound minecraft:entity.lightning_bolt.impact ambient @a[scores={{{ns}.zb.in_game=1}}] ~ ~ ~ 0.5 1.7
-function {ns}:v{version}/zombies/feedback/sound_announce
+{zb_sound('announce')}
 scoreboard players operation #wf_b {ns}.data = @s {ns}.zb.wf.buyer
 execute as @a[scores={{{ns}.zb.in_game=1}}] if score @s {ns}.zb.wf_pid = #wf_b {ns}.data run tellraw @s [{MGS_TAG},{{"text":"Perk ready! ","color":"gold"}},{{"text":"Right-click Der Wunderfizz to collect!","color":"green","bold":true}}]
 """)
@@ -318,7 +319,7 @@ scoreboard players operation #wf_refund {ns}.data = @s {ns}.zb.wf.paid
 execute as @a[scores={{{ns}.zb.in_game=1}}] if score @s {ns}.zb.wf_pid = #wf_b {ns}.data run scoreboard players operation @s {ns}.zb.points += #wf_refund {ns}.data
 
 tellraw @a[scores={{{ns}.zb.in_game=1}}] [{MGS_TAG},{{"text":"Der Wunderfizz is moving!","color":"yellow","bold":true}}]
-function {ns}:v{version}/zombies/feedback/sound_box_bye_bye
+{zb_sound('box_bye_bye')}
 
 # Spawn the teddy bear at the active machine and start the roam timer, then remove the orb
 execute as @n[tag={ns}.wf_active] at @s run function {ns}:v{version}/zombies/wunderfizz/move_start
@@ -373,7 +374,7 @@ execute as @n[tag={ns}.wf_active] at @s run playsound minecraft:entity.lightning
 scoreboard players set #wf_move_timer {ns}.data 0
 kill @e[tag={ns}.wf_bear]
 tellraw @a[scores={{{ns}.zb.in_game=1}}] [{MGS_TAG},{{"text":"Der Wunderfizz has arrived at a new location!","color":"yellow"}}]
-execute as @n[tag={ns}.wf_active] at @s run function {ns}:v{version}/zombies/feedback/sound_announce
+execute as @n[tag={ns}.wf_active] at @s run {zb_sound('announce')}
 """)
 
 	## Orb model setters + grant functions, one per perk
@@ -402,7 +403,7 @@ kill @s
 scoreboard players operation #wf_pick {ns}.data = @n[type=item_display,tag={ns}.wunderfizz_orb,distance=..3] {ns}.zb.wf.perk
 {collect_dispatch}
 kill @n[type=item_display,tag={ns}.wunderfizz_orb,distance=..3]
-function {ns}:v{version}/zombies/feedback/sound_success
+{zb_sound('success')}
 """)
 
 	## Hover
@@ -436,19 +437,19 @@ function #smithed.actionbar:message
 """)
 	write_versioned_function("zombies/wunderfizz/deny_in_use", f"""
 tellraw @s [{MGS_TAG},{{"text":"Der Wunderfizz is already spinning.","color":"red"}}]
-function {ns}:v{version}/zombies/feedback/sound_deny
+{zb_sound('deny')}
 """)
 	write_versioned_function("zombies/wunderfizz/deny_moving", f"""
 tellraw @s [{MGS_TAG},{{"text":"Der Wunderfizz is moving...","color":"yellow"}}]
-function {ns}:v{version}/zombies/feedback/sound_deny
+{zb_sound('deny')}
 """)
 	write_versioned_function("zombies/wunderfizz/deny_not_your_result", f"""
 tellraw @s [{MGS_TAG},{{"text":"Wait for the buyer to collect their perk.","color":"red"}}]
-function {ns}:v{version}/zombies/feedback/sound_deny
+{zb_sound('deny')}
 """)
 	write_versioned_function("zombies/wunderfizz/deny_all_owned", f"""
 tellraw @s [{MGS_TAG},{{"text":"You already own every available perk. Points refunded.","color":"yellow"}}]
-function {ns}:v{version}/zombies/feedback/sound_deny
+{zb_sound('deny')}
 """)
 
 	## Hook: setup at preload_complete

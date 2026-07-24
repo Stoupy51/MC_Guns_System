@@ -5,6 +5,7 @@
 from stewbeet import JsonDict, Mem, write_load_file, write_tag, write_versioned_function
 
 from ...config.stats import CAPACITY, REMAINING_BULLETS
+from ..core.feedback import zb_sound
 from ..helpers import MGS_TAG, reset_special_scores_lines
 from ..stamina import STAM_MAX
 from .common import deny_not_enough_points_body, deny_requires_power_body, game_active_guard_cmd
@@ -530,7 +531,7 @@ function {ns}:v{version}/zombies/perks/apply with storage {ns}:temp _pk_data
 function #{ns}:zombies/on_new_perk
 
 # Sound
-function {ns}:v{version}/zombies/feedback/sound_success
+{zb_sound('success')}
 """)  # noqa: E501
 
 	write_versioned_function("zombies/perks/deny_requires_power", f"""
@@ -539,7 +540,7 @@ function {ns}:v{version}/zombies/feedback/sound_success
 
 	write_versioned_function("zombies/perks/deny_already_owned", f"""
 tellraw @s [{MGS_TAG},{{"text":"You already own this perk.","color":"yellow"}}]
-function {ns}:v{version}/zombies/feedback/sound_deny
+{zb_sound('deny')}
 """)
 
 	write_versioned_function("zombies/perks/deny_not_enough_points", f"""
@@ -593,7 +594,7 @@ $scoreboard players operation @s {ns}.zb.perkpaid.$(perk_id) = #pk_paid {ns}.dat
 	write_versioned_function("zombies/perks/announce_progress", f"""
 function {ns}:v{version}/zombies/perks/get_hover_name
 tellraw @s [{MGS_TAG},{{"text":"🥤 ","color":"dark_purple"}},{{"storage":"{ns}:temp","nbt":"_pk_hover_name","color":"light_purple","interpret":true}},{{"text":": ","color":"gray"}},{{"score":{{"name":"#pk_paid","objective":"{ns}.data"}},"color":"green"}},{{"text":"/","color":"gray"}},{{"score":{{"name":"#pk_total","objective":"{ns}.data"}},"color":"yellow"}},{{"text":" points paid","color":"gray"}}]
-function {ns}:v{version}/zombies/feedback/sound_refill
+{zb_sound('refill')}
 """)  # noqa: E501
 
 	write_versioned_function("zombies/perks/apply", f"""

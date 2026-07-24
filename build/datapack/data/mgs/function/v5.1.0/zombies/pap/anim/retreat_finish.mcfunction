@@ -14,7 +14,7 @@ scoreboard players set @s mgs.pap_anim -1
 
 # Notify and sound
 tellraw @a[scores={mgs.zb.in_game=1}] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.the_weapon_was_lost","color":"red","bold":true}]
-function mgs:v5.1.0/zombies/feedback/sound_pap_deny
+playsound mgs:zombies/pap/deny ambient @a[scores={mgs.zb.in_game=1}] ~ ~ ~ 1.0 1.0
 
 # Clean up orphaned magazine and PAP tracking for the owner
 execute store result score #pap_mid mgs.data run scoreboard players get @s mgs.zb.pap.id

@@ -17,6 +17,6 @@ execute if entity @n[tag=mgs.mb_display,distance=..3,tag=mgs.mb_shared] run retu
 execute unless score @s mgs.mb.pid = @n[tag=mgs.mb_display,distance=..3] mgs.mb.buyer run return run function mgs:v5.1.0/zombies/mystery_box/deny_not_your_result
 
 tag @n[tag=mgs.mb_display,distance=..3] add mgs.mb_shared
-function mgs:v5.1.0/zombies/feedback/sound_success
+playsound minecraft:entity.experience_orb.pickup ambient @s ~ ~ ~ 0.8 1.25
 tellraw @a[scores={mgs.zb.in_game=1}] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"selector":"@s"},{"translate":"mgs.shared_their_mystery_box_weapon_anyone_can_take_it","color":"green"}]
 

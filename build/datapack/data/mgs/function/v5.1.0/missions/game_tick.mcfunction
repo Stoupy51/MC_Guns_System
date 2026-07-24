@@ -47,7 +47,7 @@ execute if score #alive mgs.data matches 1.. if score #mi_compass_phase mgs.data
 execute at @a[scores={mgs.mi.in_game=1},limit=1] run kill @e[type=experience_orb,distance=..200]
 
 # Call map-defined tick script
-function mgs:v5.1.0/shared/maps/call_tick_script_at_base
+function mgs:v5.1.0/shared/maps/call_script_at_base {script:"tick"}
 
 # Check if all enemies are dead → victory (reuses #alive counted above instead of a second
 # full-entity scan; a kill from the map tick script above is caught one tick later).

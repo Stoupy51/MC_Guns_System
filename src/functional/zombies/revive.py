@@ -586,7 +586,7 @@ function {ns}:v{version}/zombies/inventory/give_respawn_loadout
 function {ns}:v{version}/zombies/perks/tombstone_on_respawn
 
 # Call map respawn script (executed as the respawning player)
-function {ns}:v{version}/shared/maps/call_respawn_script_at_base
+function {ns}:v{version}/shared/maps/call_script_at_base {{script:"respawn"}}
 
 # Announce
 tellraw @a[scores={{{ns}.zb.in_game=1}}] [{MGS_TAG},{{"selector":"@s","color":"green"}},{{"text":" has respawned!","color":"gray"}}]
