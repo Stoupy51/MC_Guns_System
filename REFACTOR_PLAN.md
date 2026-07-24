@@ -448,7 +448,7 @@ Each phase is one commit, independently shippable, verified with
 | ~~**P1**~~ ✅ | Fix the 11 ruff + 2 pyright errors that exist today. No behaviour change. | **0 (byte-identical)** | +12 | none |
 | ~~**P2**~~ ✅ | §3b — fix `auto.headers` in **StewBeet** to scan dialogs. Re-baselined (comment-only diff). **Unblocks P5.** | 0 files, 113 headers | +45 (StewBeet) | low |
 | ~~**P3**~~ ✅ | PY3/PY6 — merge `database/*.py` into `items.py`; delete `_template.py`, the dead `export_all_definitions_to_json` tail, `definitions_debug.json`, `game_mode.py`. | **0 (byte-identical)** | −181, −7 files | low |
-| **P4** | PY2 — 97 `_zoom` models become `parent:` children. **First intentional output diff**; verified by parent-resolution compare + in-game look. | 0 files, −~14 MB | ~+20 | low-med |
+| ~~**P4**~~ ✅ | PY2 — 97 `_zoom` models become `parent:` children. First intentional output diff; verified by parent-resolution compare. | **−69.9 MB RP**, 0 files added/removed | +8 | low-med |
 | **P5** | D1 — inline one/two-command wrappers, starting with the 26 `zombies/feedback/sound_*` and `shared/maps/call_*_script_at_base`. Re-run the caller census on post-P2 headers first. | **−~145** | ~0 | low-med |
 | **P6** | D2 — collapse the 15 per-entity function families into macros / storage-driven dispatch. | **−~160** | −250 | low |
 | **P7** | D5 + D6 — shared `zombies/deny/*`; map-editor and `players/` per-mode macros. | −~23 | −150 | low |
@@ -572,3 +572,23 @@ the one most likely to drift, so it lands only after the harness has been exerci
     span wholesale — leaving replacement-field code slightly over-indented is harmless, changing an
     emitted byte is not. Output byte-identical, so the protection held.
   - Final P3: **99 → 91 Python files, −240 LOC.**
+- **2026-07-24** — **P4 done (awaiting review).** 97 `_zoom` source models became `parent:` children.
+  **Resource pack 173.7 MB → 103.8 MB (−69.9 MB, −40 %)**; source models 32.2 → 18.3 MB.
+  485 models changed (97 × 5 camo variants), 0 files added or removed, datapack untouched.
+  - **Equivalence proof:** a script resolves each new model's `parent` chain using vanilla merge
+    rules (per-slot `display` override, `textures` merge, `elements` replace) and deep-compares to
+    the baseline. **485/485 resolve identically.** This is the check to re-run if these models are
+    ever touched again.
+  - Two things the naive version would have broken, both found before building:
+    1. **camo.py rewrites `override_model["textures"]` per material.** A `parent:`-only child has no
+       textures, so every camo'd zoom model would silently have rendered *un-camo'd*. Fixed by
+       retargeting the parent instead (`mgs:item/ak47` → `mgs:item/ak47_gold`) and skipping the
+       blend — which is also why the saving is 5× the source saving.
+    2. **StewBeet's `item_models` plugin injected a default `layer0` texture** named after the item,
+       so `rpg7_zoom` demanded a non-existent `rpg7_zoom.png` and the build failed. Fixed upstream:
+       a model that declares `parent` and no `textures` is a child and inherits them.
+  - The 5 real exceptions (`mac10_zoom`, `spas12_zoom`, `vz61_zoom`, `g3a3_1_zoom`, `g3a3_3_zoom`)
+    keep full standalone models — they differ in `elements`/`textures`, not just `display`.
+  - ⚠ **Still worth an in-game look** before this ships: ADS view on a full-scope weapon, a shotgun,
+    a pistol, and one camo'd weapon. Model inheritance is resolved client-side and no build check
+    can prove the renderer agrees.
