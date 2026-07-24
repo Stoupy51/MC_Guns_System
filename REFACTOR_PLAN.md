@@ -453,7 +453,7 @@ Each phase is one commit, independently shippable, verified with
 | **P5b** ⚠ | D1 remainder — **re-scoped to 108** (see below), and demoted below P6 on value-per-edit. | −~108 | ~0 | low-med |
 | **P6a** ✅ | D2 — mystery box give, PaP apply_field, wunderfizz set_model+grant, admin powerups. | **−95** | −29 | low |
 | **P6b** ✅ | D2 remainder — perks `pool/try_index` + `pool/count`, `powerups/spawn_type`, `mob/default/level_*`, `set_door_link_*`. Four families dropped as bad value (see below). | **−35** | −45 | low |
-| **P7** | D5 + D6 — shared `zombies/deny/*`; map-editor and `players/` per-mode macros. | −~23 | −150 | low |
+| **P7** ✅ | D5 — shared `zombies/deny/message` + `deny/not_enough_points`. **D6 dropped**, its premise was wrong (see below). | **−29** | −93 | low |
 | **P8** | D4 — loadout editor: `prepare_points`, static dialog resources with score components, slot parameterisation. | −~28 | −300 | medium |
 | **P9** | PY1/PY4/PY5 — `WeaponDef` dataclasses, typed registries, split the remaining >500-line files (**not** `shaders.py`), delete restating comments. | 0 | −850, +12 files | low |
 | **P10** | D3 — one shared spawn/respawn system for all three modes. | −~20 | −600 | **high** |
@@ -691,3 +691,45 @@ the one most likely to drift, so it lands only after the harness has been exerci
     globally shared storage. −9 files is not worth either.
   - `zombies/types/*` (5) — not a duplication family at all; `normal`/`dog` are long and genuinely
     different, and the other three already delegate to `normal`. The plan mis-filed them.
+- **2026-07-24** — **P7 done (awaiting review).** **1349 → 1320 mcfunctions (−29)**, −58 command
+  lines, −93 Python LOC. D5 came in at more than twice its estimate; **D6 was dropped**.
+  - **D5 turned out to be one family, not five.** Almost every `deny_*` in zombies is exactly
+    `tellraw @s [MGS_TAG, <component>]` + the deny `playsound`. So the split is not
+    "not_enough_points vs requires_power vs moving vs …" — it is **static message** (23 files) vs
+    **message with a live price** (7 files):
+    - `zombies/deny/message` takes the whole text component as a macro argument. The English stays
+      a literal at each call site, so every translation key is preserved. Argument named `msg`, not
+      `text`, for the lang_file reason recorded under P6b.
+    - `zombies/deny/not_enough_points` takes `score` + `obj`. Mystery Box was the reason `obj` is an
+      argument at all — its price lives in `mgs.config`, not `mgs.data`, which is why it never used
+      the shared `deny_not_enough_points_body` helper.
+    - Both are **one command at the call site**, so they survive the `return run` constraint that
+      killed P5b's inlining idea. That is the whole point of routing through a function instead of
+      inlining the two commands.
+  - The plan claimed `deny_moving`/`deny_all_owned`/`deny_not_your_result`/`deny_in_use` "appear
+    twice (mystery box + wunderfizz)" and could be shared. **They are not duplicates** — each pair
+    says something different ("The Mystery Box is moving..." vs "Der Wunderfizz is moving..."). They
+    collapse anyway, but as *callers of one handler*, not as one shared body.
+  - `zombies/pap/deny_max_level` **deleted as dead code** — `@within ???`, no caller anywhere in the
+    generated tree. Its key `mgs.this_weapon_is_already_at_max_pack_a_punch_level` leaves `en_us.json`.
+  - Two files keep their own function because their bodies are 3 commands, not 2:
+    `mystery_box/deny_pool_empty` (clears the stale result first) and `wallbuys/deny_hold_valid_slot`
+    (picks its wording on Mule Kick). `pap/deny_not_enough_points_scope` also stays: its text
+    contains an apostrophe, and a single-quoted SNBT argument would need `\'`, which lang_file would
+    then extract *with* the backslash and mint a different key.
+  - **Accepted lang diff:** `mgs.der_wunderfizz_is_moving` and `..._2` swapped values. Two distinct
+    strings ("...moving..." and "...moving!") share a base key, and lang_file suffixes whichever it
+    scans second; moving the deny text from `wunderfizz/deny_moving` into `wunderfizz/on_right_click`
+    reorders them alphabetically. **Only `en_us.json` ships**, and both keys still map to their own
+    correct English, so nothing renders differently in game.
+
+  **D6 dropped.** The plan said `maps/editor/{create,list,save_lists,give_tools,summon_existing}/
+  {multiplayer,zombies,missions}` were "measured near-identical". They are not:
+  `save_lists/zombies` clears 12 element lists, `save_lists/missions` clears 6, and they name
+  different storage paths; `give_tools` hands out a different toolbar per mode. They already come
+  from **one** `for mode_key, mode_info in EDITOR_MODES.items()` loop over a shared table, so there
+  is no Python duplication to remove either — the output differs because the modes differ.
+  Collapsing them would mean driving the editor off a runtime element table: a much larger change
+  than "−10 files, low risk", and one that buys nothing on the Python side.
+  `players/row_{mode}` is the same story (multiplayer has team buttons, the others do not, and the
+  tooltips are per-mode keys). Only `players/list_{mode}` is genuinely parameterisable, for −2.

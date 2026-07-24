@@ -14,7 +14,7 @@ execute if entity @n[tag=mgs.mb_display,distance=..3,scores={mgs.mb.anim=1..}] r
 execute if entity @n[tag=mgs.mb_display,distance=..3,tag=mgs.mb_shared] run return fail
 
 # Only the buyer can give their own pull away
-execute unless score @s mgs.mb.pid = @n[tag=mgs.mb_display,distance=..3] mgs.mb.buyer run return run function mgs:v5.1.0/zombies/mystery_box/deny_not_your_result
+execute unless score @s mgs.mb.pid = @n[tag=mgs.mb_display,distance=..3] mgs.mb.buyer run return run function mgs:v5.1.0/zombies/deny/message {msg:'{"translate":"mgs.wait_for_the_current_player_to_collect_their_result","color":"red"}'}
 
 tag @n[tag=mgs.mb_display,distance=..3] add mgs.mb_shared
 playsound minecraft:entity.experience_orb.pickup ambient @s ~ ~ ~ 0.8 1.25

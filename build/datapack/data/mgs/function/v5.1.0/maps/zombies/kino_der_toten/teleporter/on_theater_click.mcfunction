@@ -11,5 +11,5 @@ execute if score #kino_tp_state mgs.data matches 0 run return run function mgs:v
 # State 2 (armed): lobby was linked, execute the actual teleport
 execute if score #kino_tp_state mgs.data matches 2 at @s run return run function mgs:v5.1.0/maps/zombies/kino_der_toten/teleporter/activate
 # Any other state (linking/active/returning/cooldown): deny
-function mgs:v5.1.0/maps/zombies/kino_der_toten/teleporter/deny_recharging
+execute on target at @s run function mgs:v5.1.0/zombies/deny/message {msg:'{"translate":"mgs.the_teleporter_is_recharging","color":"yellow"}'}
 

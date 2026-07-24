@@ -10,7 +10,7 @@
 execute unless data storage mgs:zombies game{state:"active"} run return fail
 
 # Guard: power must not already be on
-execute if score #zb_power mgs.data matches 1 run return run function mgs:v5.1.0/zombies/power/deny_already_on
+execute if score #zb_power mgs.data matches 1 run return run function mgs:v5.1.0/zombies/deny/message {msg:'{"translate":"mgs.power_is_already_on","color":"yellow"}'}
 
 # Enable power
 scoreboard players set #zb_power mgs.data 1

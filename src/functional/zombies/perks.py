@@ -8,7 +8,7 @@ from ...config.stats import CAPACITY, REMAINING_BULLETS
 from ..core.feedback import zb_sound
 from ..helpers import MGS_TAG, reset_special_scores_lines
 from ..stamina import STAM_MAX
-from .common import deny_not_enough_points_body, deny_requires_power_body, game_active_guard_cmd
+from .common import deny_cmd, deny_not_enough_points_cmd, game_active_guard_cmd
 from .revive import SOLO_QR_MAX
 
 # Each perk defines:
@@ -268,6 +268,9 @@ tag {selector} remove {ns}.perk.quick_revive
 def generate_perks() -> None:
 	ns: str = Mem.ctx.project_id
 	version: str = Mem.ctx.project_version
+	deny_requires_power: str = deny_cmd(ns, version, '{"text":"This perk machine requires power.","color":"red"}')
+	deny_already_owned: str = deny_cmd(ns, version, '{"text":"You already own this perk.","color":"yellow"}')
+	deny_not_enough_points: str = deny_not_enough_points_cmd(ns, version, "#pk_price")
 	perk_objectives_add: str = "\n".join(
 		f"scoreboard objectives add {ns}.zb.perk.{perk_id} dummy"
 		for perk_id in PERK_DEFINITIONS
@@ -485,8 +488,8 @@ $execute if score #pool_slot {ns}.data matches 1 run data modify storage {ns}:te
 # Check power requirement. Quick Revive is exempt while solo (Black Ops rule).
 execute store result score #pk_power {ns}.data run scoreboard players get @n[tag=bs.interaction.target] {ns}.zb.perk.power
 execute store result score #qr_solo {ns}.data if entity @a[scores={{{ns}.zb.in_game=1}},gamemode=!spectator]
-execute if score #pk_power {ns}.data matches 1 unless score #zb_power {ns}.data matches 1 unless entity @n[tag=bs.interaction.target,tag={ns}.pk_quick_revive] run return run function {ns}:v{version}/zombies/perks/deny_requires_power
-execute if score #pk_power {ns}.data matches 1 unless score #zb_power {ns}.data matches 1 if entity @n[tag=bs.interaction.target,tag={ns}.pk_quick_revive] if score #qr_solo {ns}.data matches 2.. run return run function {ns}:v{version}/zombies/perks/deny_requires_power
+execute if score #pk_power {ns}.data matches 1 unless score #zb_power {ns}.data matches 1 unless entity @n[tag=bs.interaction.target,tag={ns}.pk_quick_revive] run return run {deny_requires_power}
+execute if score #pk_power {ns}.data matches 1 unless score #zb_power {ns}.data matches 1 if entity @n[tag=bs.interaction.target,tag={ns}.pk_quick_revive] if score #qr_solo {ns}.data matches 2.. run return run {deny_requires_power}
 
 # Look up perk_id
 execute store result storage {ns}:temp _pk_buy.id int 1 run scoreboard players get @n[tag=bs.interaction.target] {ns}.zb.perk.id
@@ -494,11 +497,11 @@ function {ns}:v{version}/zombies/perks/lookup_perk with storage {ns}:temp _pk_bu
 
 # Check if player already has this perk
 function {ns}:v{version}/zombies/perks/check_owned with storage {ns}:temp _pk_data
-execute if score #pk_owned {ns}.data matches 1 run return run function {ns}:v{version}/zombies/perks/deny_already_owned
+execute if score #pk_owned {ns}.data matches 1 run return run {deny_already_owned}
 
 # Get price and check points (chip-in machines charge one chunk per click)
 function {ns}:v{version}/zombies/perks/read_price with storage {ns}:temp _pk_data
-execute unless score @s {ns}.zb.points >= #pk_price {ns}.data run return run function {ns}:v{version}/zombies/perks/deny_not_enough_points
+execute unless score @s {ns}.zb.points >= #pk_price {ns}.data run return run {deny_not_enough_points}
 
 # Deduct points
 scoreboard players operation @s {ns}.zb.points -= #pk_price {ns}.data
@@ -518,19 +521,6 @@ function #{ns}:zombies/on_new_perk
 # Sound
 {zb_sound('success')}
 """)  # noqa: E501
-
-	write_versioned_function("zombies/perks/deny_requires_power", f"""
-{deny_requires_power_body(ns, version, "perk machine")}
-""")
-
-	write_versioned_function("zombies/perks/deny_already_owned", f"""
-tellraw @s [{MGS_TAG},{{"text":"You already own this perk.","color":"yellow"}}]
-{zb_sound('deny')}
-""")
-
-	write_versioned_function("zombies/perks/deny_not_enough_points", f"""
-{deny_not_enough_points_body(ns, version, "#pk_price")}
-""")
 
 	write_versioned_function("zombies/perks/lookup_perk", f"""
 $data modify storage {ns}:temp _pk_data set from storage {ns}:zombies perk_data."$(id)"

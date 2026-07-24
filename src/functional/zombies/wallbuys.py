@@ -11,12 +11,15 @@ from stewbeet import Mem, write_load_file, write_versioned_function
 from ...config.stats import GRENADE_TYPE
 from ..core.feedback import zb_sound
 from ..helpers import MGS_TAG
-from .common import build_weapon_magazine_data, deny_not_enough_points_body, game_active_guard_cmd
+from .common import build_weapon_magazine_data, deny_cmd, deny_not_enough_points_cmd, game_active_guard_cmd
 
 
 def generate_wallbuys() -> None:
 	ns: str = Mem.ctx.project_id
 	version: str = Mem.ctx.project_version
+	deny_not_enough_points: str = deny_not_enough_points_cmd(ns, version, "#wb_price")
+	deny_knife_owned: str = deny_cmd(ns, version, '{"text":"You already own this knife.","color":"yellow"}')
+	deny_equipment_full: str = deny_cmd(ns, version, '{"text":"Your equipment is already full.","color":"yellow"}')
 	gun_cd: str = "{" + ns + ":{gun:true}}"
 	mag_cd: str = "{" + ns + ":{magazine:true}}"
 	wallbuy_hover_message: str = (
@@ -163,7 +166,7 @@ scoreboard players operation #wb_price {ns}.data = #wb_buy_price {ns}.data
 function {ns}:v{version}/zombies/wallbuys/compute_effective_price with storage {ns}:temp _wb_weapon
 
 # Check player has enough points
-execute unless score @s {ns}.zb.points >= #wb_price {ns}.data run return run function {ns}:v{version}/zombies/wallbuys/deny_not_enough_points
+execute unless score @s {ns}.zb.points >= #wb_price {ns}.data run return run {deny_not_enough_points}
 
 # Deduct points
 scoreboard players operation @s {ns}.zb.points -= #wb_price {ns}.data
@@ -184,29 +187,20 @@ execute if score #wb_purchase_mode {ns}.data matches 1..3 run function {ns}:v{ve
 execute if score #wb_purchase_mode {ns}.data matches 1..3 run function {ns}:v{version}/ammo/compute_reserve
 """)
 
-	write_versioned_function("zombies/wallbuys/deny_not_enough_points", f"""
-{deny_not_enough_points_body(ns, version, "#wb_price")}
-""")
-
 	## Knife wallbuy (kind 1): replaces hotbar.0, no refill concept (macro with _wb_weapon, @s = player)
 	write_versioned_function("zombies/wallbuys/buy_knife", f"""
 # Already own this exact knife: nothing to buy
-$execute if items entity @s hotbar.0 *[custom_data~{{{ns}:{{$(weapon_id):true}}}}] run return run function {ns}:v{version}/zombies/wallbuys/deny_knife_owned
+$execute if items entity @s hotbar.0 *[custom_data~{{{ns}:{{$(weapon_id):true}}}}] run return run {deny_knife_owned}
 
 # Full price
 scoreboard players operation #wb_price {ns}.data = #wb_buy_price {ns}.data
-execute unless score @s {ns}.zb.points >= #wb_price {ns}.data run return run function {ns}:v{version}/zombies/wallbuys/deny_not_enough_points
+execute unless score @s {ns}.zb.points >= #wb_price {ns}.data run return run {deny_not_enough_points}
 scoreboard players operation @s {ns}.zb.points -= #wb_price {ns}.data
 
 # Replace the knife slot and re-tag it for the zombies slot enforcement (inventory/check_slots)
 $loot replace entity @s hotbar.0 loot {ns}:i/$(weapon_id)
 function {ns}:v{version}/zombies/inventory/apply_slot_tag {{slot:"hotbar.0",group:"hotbar",index:0}}
 function {ns}:v{version}/zombies/wallbuys/msg_purchased
-""")
-
-	write_versioned_function("zombies/wallbuys/deny_knife_owned", f"""
-tellraw @s [{MGS_TAG},{{"text":"You already own this knife.","color":"yellow"}}]
-{zb_sound('deny')}
 """)
 
 	## Equipment wallbuys: lethal grenades (hotbar.7, max 4) and tacticals (hotbar.6, max 3).
@@ -231,7 +225,7 @@ $execute if items entity @s hotbar.{eq_slot} *[custom_data~{{{ns}:{{$(weapon_id)
 
 # New purchase (empty slot or different equipment type): full price for {eq_count} fresh ones
 scoreboard players operation #wb_price {ns}.data = #wb_buy_price {ns}.data
-execute unless score @s {ns}.zb.points >= #wb_price {ns}.data run return run function {ns}:v{version}/zombies/wallbuys/deny_not_enough_points
+execute unless score @s {ns}.zb.points >= #wb_price {ns}.data run return run {deny_not_enough_points}
 scoreboard players operation @s {ns}.zb.points -= #wb_price {ns}.data
 $loot replace entity @s hotbar.{eq_slot} loot {ns}:i/$(weapon_id)
 item modify entity @s hotbar.{eq_slot} {ns}:v{version}/grenade/set_count_{eq_count}
@@ -242,19 +236,14 @@ function {ns}:v{version}/zombies/inventory/apply_slot_tag {{slot:"hotbar.{eq_slo
 		write_versioned_function(f"zombies/wallbuys/refill_{kind_name}", f"""
 # Already at max: deny without charging (no points were deducted yet on this path)
 execute store result score #wb_eq_count {ns}.data run data get entity @s Inventory[{{Slot:{eq_slot}b}}].count
-execute if score #wb_eq_count {ns}.data matches {eq_count}.. run return run function {ns}:v{version}/zombies/wallbuys/deny_equipment_full
+execute if score #wb_eq_count {ns}.data matches {eq_count}.. run return run {deny_equipment_full}
 
 # Refill price
 scoreboard players operation #wb_price {ns}.data = #wb_rfprice {ns}.data
-execute unless score @s {ns}.zb.points >= #wb_price {ns}.data run return run function {ns}:v{version}/zombies/wallbuys/deny_not_enough_points
+execute unless score @s {ns}.zb.points >= #wb_price {ns}.data run return run {deny_not_enough_points}
 scoreboard players operation @s {ns}.zb.points -= #wb_price {ns}.data
 item modify entity @s hotbar.{eq_slot} {ns}:v{version}/grenade/set_count_{eq_count}
 function {ns}:v{version}/zombies/wallbuys/msg_refilled
-""")
-
-	write_versioned_function("zombies/wallbuys/deny_equipment_full", f"""
-tellraw @s [{MGS_TAG},{{"text":"Your equipment is already full.","color":"yellow"}}]
-{zb_sound('deny')}
 """)
 
 	## Widow's Wine lethal buy: refill/purchase web grenades regardless of the bought lethal type.
@@ -262,7 +251,7 @@ tellraw @s [{MGS_TAG},{{"text":"Your equipment is already full.","color":"yellow
 	write_versioned_function("zombies/wallbuys/buy_lethal_web", f"""
 execute if items entity @s hotbar.7 *[custom_data~{{{ns}:{{stats:{{grenade_type:"web"}}}}}}] run return run function {ns}:v{version}/zombies/wallbuys/refill_lethal with storage {ns}:temp _wb_weapon
 scoreboard players operation #wb_price {ns}.data = #wb_buy_price {ns}.data
-execute unless score @s {ns}.zb.points >= #wb_price {ns}.data run return run function {ns}:v{version}/zombies/wallbuys/deny_not_enough_points
+execute unless score @s {ns}.zb.points >= #wb_price {ns}.data run return run {deny_not_enough_points}
 scoreboard players operation @s {ns}.zb.points -= #wb_price {ns}.data
 loot replace entity @s hotbar.7 loot {ns}:i/web_grenade
 item modify entity @s hotbar.7 {ns}:v{version}/grenade/set_count_4

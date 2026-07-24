@@ -9,11 +9,11 @@
 #
 
 # Already own this exact knife: nothing to buy
-$execute if items entity @s hotbar.0 *[custom_data~{mgs:{$(weapon_id):true}}] run return run function mgs:v5.1.0/zombies/wallbuys/deny_knife_owned
+$execute if items entity @s hotbar.0 *[custom_data~{mgs:{$(weapon_id):true}}] run return run function mgs:v5.1.0/zombies/deny/message {msg:'{"translate":"mgs.you_already_own_this_knife","color":"yellow"}'}
 
 # Full price
 scoreboard players operation #wb_price mgs.data = #wb_buy_price mgs.data
-execute unless score @s mgs.zb.points >= #wb_price mgs.data run return run function mgs:v5.1.0/zombies/wallbuys/deny_not_enough_points
+execute unless score @s mgs.zb.points >= #wb_price mgs.data run return run function mgs:v5.1.0/zombies/deny/not_enough_points {score:"#wb_price",obj:"mgs.data"}
 scoreboard players operation @s mgs.zb.points -= #wb_price mgs.data
 
 # Replace the knife slot and re-tag it for the zombies slot enforcement (inventory/check_slots)

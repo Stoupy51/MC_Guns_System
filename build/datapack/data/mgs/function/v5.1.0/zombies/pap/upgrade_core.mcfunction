@@ -9,14 +9,14 @@
 
 # Determine selected weapon slot (must be hotbar 1, 2, or 3)
 execute store result score #pap_sel mgs.data run data get entity @s SelectedItemSlot
-execute unless score #pap_sel mgs.data matches 1..3 run return run function mgs:v5.1.0/zombies/pap/deny_hold_weapon_slot
+execute unless score #pap_sel mgs.data matches 1..3 run return run function mgs:v5.1.0/zombies/deny/message {msg:'{"translate":"mgs.hold_weapon_slot_1_2_or_3_to_use_pack_a_punch","color":"red"}'}
 
 # Guard: selected slot must contain a gun
 scoreboard players set #pap_is_gun mgs.data 0
 execute if score #pap_sel mgs.data matches 1 if items entity @s hotbar.1 *[custom_data~{mgs:{gun:true}}] run scoreboard players set #pap_is_gun mgs.data 1
 execute if score #pap_sel mgs.data matches 2 if items entity @s hotbar.2 *[custom_data~{mgs:{gun:true}}] run scoreboard players set #pap_is_gun mgs.data 1
 execute if score #pap_sel mgs.data matches 3 if items entity @s hotbar.3 *[custom_data~{mgs:{gun:true}}] run scoreboard players set #pap_is_gun mgs.data 1
-execute unless score #pap_is_gun mgs.data matches 1 run return run function mgs:v5.1.0/zombies/pap/deny_not_gun
+execute unless score #pap_is_gun mgs.data matches 1 run return run function mgs:v5.1.0/zombies/deny/message {msg:'{"translate":"mgs.selected_slot_does_not_contain_a_weapon","color":"red"}'}
 
 # Resolve slot string
 data modify storage mgs:temp _pap.slot set value "hotbar.1"
@@ -27,7 +27,7 @@ execute if score #pap_sel mgs.data matches 3 run data modify storage mgs:temp _p
 function mgs:v5.1.0/zombies/pap/extract_selected with storage mgs:temp _pap
 
 # Guard: weapon must support PAP
-execute unless data storage mgs:temp _pap_extract.stats.pap_stats run return run function mgs:v5.1.0/zombies/pap/deny_not_supported
+execute unless data storage mgs:temp _pap_extract.stats.pap_stats run return run function mgs:v5.1.0/zombies/deny/message {msg:'{"translate":"mgs.this_weapon_cannot_be_pack_a_punched","color":"red"}'}
 
 # Compute current and next PAP levels
 scoreboard players set #pap_level mgs.data 0
