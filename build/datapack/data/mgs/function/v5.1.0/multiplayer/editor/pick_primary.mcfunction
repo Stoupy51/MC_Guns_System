@@ -36,25 +36,25 @@ execute store success score #ed_ok mgs.data run function mgs:v5.1.0/multiplayer/
 execute if score #ed_ok mgs.data matches 0 run return run function mgs:v5.1.0/multiplayer/editor/hub
 
 # Continue: scope dialog for guns with variants, camo otherwise
-execute if data storage mgs:temp editor{primary:"ak47"} run return run function mgs:v5.1.0/multiplayer/editor/scope/primary_full
-execute if data storage mgs:temp editor{primary:"m16a4"} run return run function mgs:v5.1.0/multiplayer/editor/scope/primary_full
-execute if data storage mgs:temp editor{primary:"famas"} run return run function mgs:v5.1.0/multiplayer/editor/scope/primary_full
-execute if data storage mgs:temp editor{primary:"aug"} run return run function mgs:v5.1.0/multiplayer/editor/scope/primary_full
-execute if data storage mgs:temp editor{primary:"m4a1"} run return run function mgs:v5.1.0/multiplayer/editor/scope/primary_full
-execute if data storage mgs:temp editor{primary:"fnfal"} run return run function mgs:v5.1.0/multiplayer/editor/scope/primary_full
-execute if data storage mgs:temp editor{primary:"g3a3"} run return run function mgs:v5.1.0/multiplayer/editor/scope/primary_full
-execute if data storage mgs:temp editor{primary:"scar17"} run return run function mgs:v5.1.0/multiplayer/editor/scope/primary_full
-execute if data storage mgs:temp editor{primary:"mp5"} run return run function mgs:v5.1.0/multiplayer/editor/scope/primary_full
-execute if data storage mgs:temp editor{primary:"mp7"} run return run function mgs:v5.1.0/multiplayer/editor/scope/primary_full
-execute if data storage mgs:temp editor{primary:"m249"} run return run function mgs:v5.1.0/multiplayer/editor/scope/primary_no4
-execute if data storage mgs:temp editor{primary:"rpk"} run return run function mgs:v5.1.0/multiplayer/editor/scope/primary_full
-execute if data storage mgs:temp editor{primary:"svd"} run return run function mgs:v5.1.0/multiplayer/editor/scope/primary_full
-execute if data storage mgs:temp editor{primary:"m82"} run return run function mgs:v5.1.0/multiplayer/editor/scope/primary_full
-execute if data storage mgs:temp editor{primary:"mosin"} run return run function mgs:v5.1.0/multiplayer/editor/scope/primary_1only
-execute if data storage mgs:temp editor{primary:"m24"} run return run function mgs:v5.1.0/multiplayer/editor/scope/primary_full
-execute if data storage mgs:temp editor{primary:"spas12"} run return run function mgs:v5.1.0/multiplayer/editor/scope/primary_no4
-execute if data storage mgs:temp editor{primary:"m500"} run return run function mgs:v5.1.0/multiplayer/editor/scope/primary_no4
-execute if data storage mgs:temp editor{primary:"m590"} run return run function mgs:v5.1.0/multiplayer/editor/scope/primary_no4
+execute if data storage mgs:temp editor{primary:"ak47"} run return run function mgs:v5.1.0/multiplayer/editor/show_scope_primary_full
+execute if data storage mgs:temp editor{primary:"m16a4"} run return run function mgs:v5.1.0/multiplayer/editor/show_scope_primary_full
+execute if data storage mgs:temp editor{primary:"famas"} run return run function mgs:v5.1.0/multiplayer/editor/show_scope_primary_full
+execute if data storage mgs:temp editor{primary:"aug"} run return run function mgs:v5.1.0/multiplayer/editor/show_scope_primary_full
+execute if data storage mgs:temp editor{primary:"m4a1"} run return run function mgs:v5.1.0/multiplayer/editor/show_scope_primary_full
+execute if data storage mgs:temp editor{primary:"fnfal"} run return run function mgs:v5.1.0/multiplayer/editor/show_scope_primary_full
+execute if data storage mgs:temp editor{primary:"g3a3"} run return run function mgs:v5.1.0/multiplayer/editor/show_scope_primary_full
+execute if data storage mgs:temp editor{primary:"scar17"} run return run function mgs:v5.1.0/multiplayer/editor/show_scope_primary_full
+execute if data storage mgs:temp editor{primary:"mp5"} run return run function mgs:v5.1.0/multiplayer/editor/show_scope_primary_full
+execute if data storage mgs:temp editor{primary:"mp7"} run return run function mgs:v5.1.0/multiplayer/editor/show_scope_primary_full
+execute if data storage mgs:temp editor{primary:"m249"} run return run function mgs:v5.1.0/multiplayer/editor/show_scope_primary_no4
+execute if data storage mgs:temp editor{primary:"rpk"} run return run function mgs:v5.1.0/multiplayer/editor/show_scope_primary_full
+execute if data storage mgs:temp editor{primary:"svd"} run return run function mgs:v5.1.0/multiplayer/editor/show_scope_primary_full
+execute if data storage mgs:temp editor{primary:"m82"} run return run function mgs:v5.1.0/multiplayer/editor/show_scope_primary_full
+execute if data storage mgs:temp editor{primary:"mosin"} run return run function mgs:v5.1.0/multiplayer/editor/show_scope_primary_1only
+execute if data storage mgs:temp editor{primary:"m24"} run return run function mgs:v5.1.0/multiplayer/editor/show_scope_primary_full
+execute if data storage mgs:temp editor{primary:"spas12"} run return run function mgs:v5.1.0/multiplayer/editor/show_scope_primary_no4
+execute if data storage mgs:temp editor{primary:"m500"} run return run function mgs:v5.1.0/multiplayer/editor/show_scope_primary_no4
+execute if data storage mgs:temp editor{primary:"m590"} run return run function mgs:v5.1.0/multiplayer/editor/show_scope_primary_no4
 
 function mgs:v5.1.0/multiplayer/editor/show_primary_camo_dialog
 

@@ -20,7 +20,7 @@ execute store success score #ed_ok mgs.data run function mgs:v5.1.0/multiplayer/
 execute if score #ed_ok mgs.data matches 0 run return run function mgs:v5.1.0/multiplayer/editor/hub
 
 # Continue: scope dialog for guns with variants, camo otherwise
-execute if data storage mgs:temp editor{secondary:"deagle"} run return run function mgs:v5.1.0/multiplayer/editor/scope/secondary_4only
+execute if data storage mgs:temp editor{secondary:"deagle"} run return run function mgs:v5.1.0/multiplayer/editor/show_scope_secondary_4only
 
 function mgs:v5.1.0/multiplayer/editor/show_secondary_camo_dialog
 
