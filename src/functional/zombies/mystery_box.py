@@ -76,7 +76,7 @@ scoreboard objectives add {ns}.mb.buyer dummy
 		mag_id, mag_count, is_consumable = weapon_mag_data[weapon_id]
 		pool_entries.append(
 			f'{{weapon_id:"{weapon_id}",'
-			f'give_function:"{ns}:v{version}/zombies/mystery_box/default_give/{weapon_id}",'
+			f'give_function:"{ns}:v{version}/zombies/mystery_box/default_give/weapon",'
 			f'magazine_id:"{mag_id}",'
 			f'mag_count:{mag_count},'
 			f'consumable:{"1b" if is_consumable else "0b"}}}'
@@ -96,10 +96,16 @@ scoreboard objectives add {ns}.mb.buyer dummy
 	default_pool_entries: str = ",".join(pool_entries)
 	default_pool_weights: str = ",".join(str(w) for w in pool_weights)
 
-	for weapon_id in default_pool_weapons:
-		magazine_id, mag_count, is_consumable = weapon_mag_data[weapon_id]
-		write_versioned_function(f"zombies/mystery_box/default_give/{weapon_id}", f"""
-data modify storage {ns}:temp _wb_weapon set value {{weapon_id:"{weapon_id}",name:"{weapon_id}",consumable:{"1b" if is_consumable else "0b"},magazine_id:"{magazine_id}",mag_count:{mag_count}}}
+	## Default give for every pooled gun: the chosen pool entry already carries weapon_id/magazine_id/
+	## mag_count/consumable, so this reads them back off mystery_box.result rather than one function
+	## per weapon restating the same literals. Custom pools keep their own give_function.
+	write_versioned_function("zombies/mystery_box/default_give/weapon", f"""
+data modify storage {ns}:temp _wb_weapon set value {{}}
+data modify storage {ns}:temp _wb_weapon.weapon_id set from storage {ns}:zombies mystery_box.result.weapon_id
+data modify storage {ns}:temp _wb_weapon.name set from storage {ns}:zombies mystery_box.result.weapon_id
+data modify storage {ns}:temp _wb_weapon.consumable set from storage {ns}:zombies mystery_box.result.consumable
+data modify storage {ns}:temp _wb_weapon.magazine_id set from storage {ns}:zombies mystery_box.result.magazine_id
+data modify storage {ns}:temp _wb_weapon.mag_count set from storage {ns}:zombies mystery_box.result.mag_count
 scoreboard players set #wb_price {ns}.data 0
 function {ns}:v{version}/zombies/wallbuys/process_purchase with storage {ns}:temp _wb_weapon
 """)

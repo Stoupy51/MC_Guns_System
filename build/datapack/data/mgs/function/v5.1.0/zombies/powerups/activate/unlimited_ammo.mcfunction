@@ -1,10 +1,9 @@
 
 #> mgs:v5.1.0/zombies/powerups/activate/unlimited_ammo
 #
-# @executed	as the player & at current position
+# @executed	at @s
 #
-# @within	mgs:v5.1.0/zombies/admin/powerup_unlimited_ammo
-#			mgs:v5.1.0/zombies/powerups/dispatch_activate
+# @within	mgs:v5.1.0/zombies/powerups/dispatch_activate
 #
 
 scoreboard players set @a[scores={mgs.zb.in_game=1}] mgs.special.infinite_ammo 600

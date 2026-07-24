@@ -1,10 +1,9 @@
 
 #> mgs:v5.1.0/zombies/powerups/activate/fire_sale
 #
-# @executed	as the player & at current position
+# @executed	at @s
 #
-# @within	mgs:v5.1.0/zombies/admin/powerup_fire_sale
-#			mgs:v5.1.0/zombies/powerups/dispatch_activate
+# @within	mgs:v5.1.0/zombies/powerups/dispatch_activate
 #
 
 # Remember whether a Fire Sale was already running (so we don't re-trigger song/temp boxes)

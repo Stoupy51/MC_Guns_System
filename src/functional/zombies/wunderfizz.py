@@ -26,6 +26,11 @@ WF_MOVE_BEAR_POOF: int = 48		# tick the bear despawns
 WF_MOVE_THRESHOLD: int = 4
 
 
+def _orb_model_cmd(ns: str, pid: str) -> str:
+	""" The command setting the spinning orb's item to a perk's bottle model. """
+	return f'data modify entity @s item set value {{id:"minecraft:potion",count:1,components:{{"minecraft:item_model":"{ns}:perk_machine_{pid}"}}}}'
+
+
 def generate_wunderfizz() -> None:
 	ns: str = Mem.ctx.project_id
 	version: str = Mem.ctx.project_version
@@ -278,7 +283,7 @@ execute if score @s {ns}.zb.wf.anim matches ..-200 run function {ns}:v{version}/
 
 	## Cycle the displayed perk bottle every 3 ticks during the spin (@s = orb)
 	roll_dispatch: str = "\n".join(
-		f"execute if score #wf_roll {ns}.data matches {i} run function {ns}:v{version}/zombies/wunderfizz/set_model/{pid}"
+		f"execute if score #wf_roll {ns}.data matches {i} run {_orb_model_cmd(ns, pid)}"
 		for i, pid in enumerate(perk_ids)
 	)
 	write_versioned_function("zombies/wunderfizz/spin_cycle", f"""
@@ -294,7 +299,7 @@ playsound minecraft:block.conduit.ambient.short ambient @a[scores={{{ns}.zb.in_g
 
 	## Landing (@s = orb): a roam pull turns into a teddy bear; otherwise show the chosen perk bottle.
 	land_dispatch: str = "\n".join(
-		f"execute if score @s {ns}.zb.wf.perk matches {i} run function {ns}:v{version}/zombies/wunderfizz/set_model/{pid}"
+		f"execute if score @s {ns}.zb.wf.perk matches {i} run {_orb_model_cmd(ns, pid)}"
 		for i, pid in enumerate(perk_ids)
 	)
 	write_versioned_function("zombies/wunderfizz/land", f"""
@@ -377,17 +382,6 @@ tellraw @a[scores={{{ns}.zb.in_game=1}}] [{MGS_TAG},{{"text":"Der Wunderfizz has
 execute as @n[tag={ns}.wf_active] at @s run {zb_sound('announce')}
 """)
 
-	## Orb model setters + grant functions, one per perk
-	for pid in perk_ids:
-		write_versioned_function(f"zombies/wunderfizz/set_model/{pid}", f"""
-data modify entity @s item set value {{id:"minecraft:potion",count:1,components:{{"minecraft:item_model":"{ns}:perk_machine_{pid}"}}}}
-""")
-		write_versioned_function(f"zombies/wunderfizz/grant/{pid}", f"""
-data modify storage {ns}:temp _wf_grant.perk_id set value "{pid}"
-function {ns}:v{version}/zombies/perks/apply with storage {ns}:temp _wf_grant
-function #{ns}:zombies/on_new_perk
-""")
-
 	## Uncollected after the 10s window (@s = orb): despawn (no refund — the spin already happened)
 	write_versioned_function("zombies/wunderfizz/orb_expire", """
 particle minecraft:smoke ~ ~ ~ 0.2 0.2 0.2 0.02 10 force @a[distance=..48]
@@ -396,12 +390,15 @@ kill @s
 
 	## Collect (@s = player, at machine): apply the orb's chosen perk, then despawn the orb
 	collect_dispatch: str = "\n".join(
-		f"execute if score #wf_pick {ns}.data matches {i} run function {ns}:v{version}/zombies/wunderfizz/grant/{pid}"
+		f'execute if score #wf_pick {ns}.data matches {i} run data modify storage {ns}:temp _wf_grant.perk_id set value "{pid}"'
 		for i, pid in enumerate(perk_ids)
 	)
 	write_versioned_function("zombies/wunderfizz/collect", f"""
 scoreboard players operation #wf_pick {ns}.data = @n[type=item_display,tag={ns}.wunderfizz_orb,distance=..3] {ns}.zb.wf.perk
+data remove storage {ns}:temp _wf_grant.perk_id
 {collect_dispatch}
+execute if data storage {ns}:temp _wf_grant.perk_id run function {ns}:v{version}/zombies/perks/apply with storage {ns}:temp _wf_grant
+execute if data storage {ns}:temp _wf_grant.perk_id run function #{ns}:zombies/on_new_perk
 kill @n[type=item_display,tag={ns}.wunderfizz_orb,distance=..3]
 {zb_sound('success')}
 """)
