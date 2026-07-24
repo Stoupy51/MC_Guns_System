@@ -80,14 +80,13 @@ WEAPON_RARITY: dict[str, str] = {
     "ray_gun": "epic",
 }
 
-# Reusable magazines: (weapon, capacity). A full and an "_empty" variant is made for each.
-MAGAZINES: list[tuple[str, int]] = [
-    ("ak47", 30), ("aug", 30), ("deagle", 7), ("famas", 25), ("fnfal", 20),
-    ("g3a3", 20), ("glock17", 17), ("glock18", 19), ("m16a4", 30), ("m1911", 7),
-    ("m249", 150), ("m4a1", 30), ("m82", 10), ("m9", 15), ("mac10", 30),
-    ("makarov", 8), ("mp5", 30), ("mp7", 40), ("ppsh41", 71), ("rpk", 75),
-    ("scar17", 20), ("sten", 32), ("svd", 10), ("vz61", 20),
-]
+# Weapons with a reusable magazine; a full and an "_empty" variant is made for each.
+# The capacity is NOT repeated here — it comes from the weapon's own CAPACITY stat.
+MAGAZINES: tuple[str, ...] = (
+    "ak47", "aug", "deagle", "famas", "fnfal", "g3a3", "glock17", "glock18",
+    "m16a4", "m1911", "m249", "m4a1", "m82", "m9", "mac10", "makarov",
+    "mp5", "mp7", "ppsh41", "rpk", "scar17", "sten", "svd", "vz61",
+)
 
 # Individual rounds that stack; reloading consumes items from the stack, not the whole stack.
 CONSUMABLE_MAGAZINES: list[tuple[str, str, int]] = [
@@ -168,7 +167,8 @@ def add_casings() -> None:
 def add_magazines() -> None:
     """ Reusable magazines (full + empty) and the stacking single-round items. """
     ns: str = Mem.ctx.project_id
-    for weapon, capacity in MAGAZINES:
+    for weapon in MAGAZINES:
+        capacity: int = int(WEAPON_STATS[weapon]["stats"][CAPACITY])
         for is_empty in (False, True):
             item: str = f"{weapon}_mag{'_empty' if is_empty else ''}"
             Item(

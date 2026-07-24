@@ -313,6 +313,19 @@ CASING_556X45MM = "556x45mm"
 CASING_762X25MM = "762x25mm"
 
 
+# Sound keys every gun carries; shotguns swap playerbegin/playerend for a pump.
+GUN_SOUNDS: tuple[str, ...] = ("fire", "pap_fire", "reload", "playerbegin", "playerend")
+PUMP_SOUNDS: tuple[str, ...] = ("fire", "pap_fire", "reload", "pump")
+
+def gun_sounds(weapon_id: str, *keys: str, **overrides: str) -> dict[str, str]:
+    """ Sound map for a gun: every key resolves to "<weapon_id>/<key>".
+
+    Overrides replace a listed key in place (keeping its position) or append a new one, so
+    non-derivable entries like `crack` and the RPG-7's handling clips stay declarative.
+    """
+    return {key: f"{weapon_id}/{key}" for key in keys} | overrides
+
+
 ## Gun stats
 # Rifles
 M16A4: JsonDict = {
@@ -336,14 +349,7 @@ M16A4: JsonDict = {
             DAMAGE: [28, 31, 35, 39, 44],
         },
     },
-    "sounds": {
-        "fire": "m16a4/fire",
-        "pap_fire": "m16a4/pap_fire",
-        "reload": "m16a4/reload",
-        "playerbegin": "m16a4/playerbegin",
-        "playerend": "m16a4/playerend",
-        "crack": "medium"
-    }
+    "sounds": gun_sounds("m16a4", *GUN_SOUNDS, crack="medium")
 }
 
 AK47: JsonDict = {
@@ -367,14 +373,7 @@ AK47: JsonDict = {
             DAMAGE: [30, 34, 38, 43, 48],
         },
     },
-    "sounds": {
-        "fire": "ak47/fire",
-        "pap_fire": "ak47/pap_fire",
-        "reload": "ak47/reload",
-        "playerbegin": "ak47/playerbegin",
-        "playerend": "ak47/playerend",
-        "crack": "medium"
-    }
+    "sounds": gun_sounds("ak47", *GUN_SOUNDS, crack="medium")
 }
 
 FNFAL: JsonDict = {
@@ -399,14 +398,7 @@ FNFAL: JsonDict = {
             DAMAGE: [44, 49, 55, 62, 70],
         },
     },
-    "sounds": {
-        "fire": "fnfal/fire",
-        "pap_fire": "fnfal/pap_fire",
-        "reload": "fnfal/reload",
-        "playerbegin": "fnfal/playerbegin",
-        "playerend": "fnfal/playerend",
-        "crack": "large"
-    }
+    "sounds": gun_sounds("fnfal", *GUN_SOUNDS, crack="large")
 }
 
 AUG: JsonDict = {
@@ -431,15 +423,7 @@ AUG: JsonDict = {
             DAMAGE: [26, 30, 34, 39, 44],
         },
     },
-    "sounds": {
-        "fire": "aug/fire",
-        "pap_fire": "aug/pap_fire",
-        "reload": "aug/reload",
-        "playerbegin": "aug/playerbegin",
-        "playerend": "aug/playerend",
-        "playermid": "aug/playermid",
-        "crack": "medium"
-    }
+    "sounds": gun_sounds("aug", *GUN_SOUNDS, "playermid", crack="medium")
 }
 
 M4A1: JsonDict = {
@@ -463,14 +447,7 @@ M4A1: JsonDict = {
             DAMAGE: [26, 29, 33, 38, 43],
         },
     },
-    "sounds": {
-        "fire": "m4a1/fire",
-        "pap_fire": "m4a1/pap_fire",
-        "reload": "m4a1/reload",
-        "playerbegin": "m4a1/playerbegin",
-        "playerend": "m4a1/playerend",
-        "crack": "medium"
-    }
+    "sounds": gun_sounds("m4a1", *GUN_SOUNDS, crack="medium")
 }
 
 G3A3: JsonDict = {
@@ -495,14 +472,7 @@ G3A3: JsonDict = {
             DAMAGE: [40, 45, 51, 58, 66],
         },
     },
-    "sounds": {
-        "fire": "g3a3/fire",
-        "pap_fire": "g3a3/pap_fire",
-        "reload": "g3a3/reload",
-        "playerbegin": "g3a3/playerbegin",
-        "playerend": "g3a3/playerend",
-        "crack": "large"
-    }
+    "sounds": gun_sounds("g3a3", *GUN_SOUNDS, crack="large")
 }
 
 FAMAS: JsonDict = {
@@ -527,15 +497,7 @@ FAMAS: JsonDict = {
             DAMAGE: [26, 30, 34, 39, 45],
         },
     },
-    "sounds": {
-        "fire": "famas/fire",
-        "pap_fire": "famas/pap_fire",
-        "reload": "famas/reload",
-        "playerbegin": "famas/playerbegin",
-        "playerend": "famas/playerend",
-        "playermid": "famas/playermid",
-        "crack": "medium"
-    }
+    "sounds": gun_sounds("famas", *GUN_SOUNDS, "playermid", crack="medium")
 }
 
 SCAR17: JsonDict = {
@@ -560,14 +522,7 @@ SCAR17: JsonDict = {
             DAMAGE: [36, 41, 47, 54, 62],
         },
     },
-    "sounds": {
-        "fire": "scar17/fire",
-        "pap_fire": "scar17/pap_fire",
-        "reload": "scar17/reload",
-        "playerbegin": "scar17/playerbegin",
-        "playerend": "scar17/playerend",
-        "crack": "large"
-    }
+    "sounds": gun_sounds("scar17", *GUN_SOUNDS, crack="large")
 }
 
 # Pistols
@@ -599,14 +554,7 @@ M1911: JsonDict = {
             DAMAGE: [22, 26, 31, 37, 44],
         },
     },
-    "sounds": {
-        "fire": "m1911/fire",
-        "pap_fire": "m1911/pap_fire",
-        "reload": "m1911/reload",
-        "playerbegin": "m1911/playerbegin",
-        "playerend": "m1911/playerend",
-        "crack": "tiny"
-    }
+    "sounds": gun_sounds("m1911", *GUN_SOUNDS, crack="tiny")
 }
 
 M9: JsonDict = {
@@ -630,14 +578,7 @@ M9: JsonDict = {
             DAMAGE: [18, 21, 25, 30, 36],
         },
     },
-    "sounds": {
-        "fire": "m9/fire",
-        "pap_fire": "m9/pap_fire",
-        "reload": "m9/reload",
-        "playerbegin": "m9/playerbegin",
-        "playerend": "m9/playerend",
-        "crack": "tiny"
-    }
+    "sounds": gun_sounds("m9", *GUN_SOUNDS, crack="tiny")
 }
 
 DEAGLE: JsonDict = {
@@ -662,14 +603,7 @@ DEAGLE: JsonDict = {
             DAMAGE: [34, 40, 47, 55, 64],
         },
     },
-    "sounds": {
-        "fire": "deagle/fire",
-        "pap_fire": "deagle/pap_fire",
-        "reload": "deagle/reload",
-        "playerbegin": "deagle/playerbegin",
-        "playerend": "deagle/playerend",
-        "crack": "tiny"
-    }
+    "sounds": gun_sounds("deagle", *GUN_SOUNDS, crack="tiny")
 }
 
 MAKAROV: JsonDict = {
@@ -693,14 +627,7 @@ MAKAROV: JsonDict = {
             DAMAGE: [18, 21, 25, 30, 36],
         },
     },
-    "sounds": {
-        "fire": "makarov/fire",
-        "pap_fire": "makarov/pap_fire",
-        "reload": "makarov/reload",
-        "playerbegin": "makarov/playerbegin",
-        "playerend": "makarov/playerend",
-        "crack": "tiny"
-    }
+    "sounds": gun_sounds("makarov", *GUN_SOUNDS, crack="tiny")
 }
 
 GLOCK17: JsonDict = {
@@ -724,14 +651,7 @@ GLOCK17: JsonDict = {
             DAMAGE: [18, 21, 25, 30, 36],
         },
     },
-    "sounds": {
-        "fire": "glock17/fire",
-        "pap_fire": "glock17/pap_fire",
-        "reload": "glock17/reload",
-        "playerbegin": "glock17/playerbegin",
-        "playerend": "glock17/playerend",
-        "crack": "tiny"
-    }
+    "sounds": gun_sounds("glock17", *GUN_SOUNDS, crack="tiny")
 }
 
 GLOCK18: JsonDict = {
@@ -755,14 +675,7 @@ GLOCK18: JsonDict = {
             DAMAGE: [18, 21, 25, 30, 36],
         },
     },
-    "sounds": {
-        "fire": "glock18/fire",
-        "pap_fire": "glock18/pap_fire",
-        "reload": "glock18/reload",
-        "playerbegin": "glock18/playerbegin",
-        "playerend": "glock18/playerend",
-        "crack": "tiny"
-    }
+    "sounds": gun_sounds("glock18", *GUN_SOUNDS, crack="tiny")
 }
 
 VZ61: JsonDict = {
@@ -787,14 +700,7 @@ VZ61: JsonDict = {
             DAMAGE: [16, 19, 23, 28, 34],
         },
     },
-    "sounds": {
-        "fire": "vz61/fire",
-        "pap_fire": "vz61/pap_fire",
-        "reload": "vz61/reload",
-        "playerbegin": "vz61/playerbegin",
-        "playerend": "vz61/playerend",
-        "crack": "tiny"
-    }
+    "sounds": gun_sounds("vz61", *GUN_SOUNDS, crack="tiny")
 }
 
 RAY_GUN: JsonDict = {
@@ -822,14 +728,7 @@ RAY_GUN: JsonDict = {
             DAMAGE: [48, 56, 66, 78, 92],
         },
     },
-    "sounds": {
-        "fire": "ray_gun/fire",
-        "pap_fire": "ray_gun/fire",
-        "reload": "ray_gun/reload",
-        "playerbegin": "ray_gun/playerbegin",
-        "playerend": "ray_gun/playerend",
-        "playermid": "ray_gun/playermid"
-    }
+    "sounds": gun_sounds("ray_gun", *GUN_SOUNDS, "playermid", pap_fire="ray_gun/fire")
 }
 
 # SMGS
@@ -856,15 +755,7 @@ MP5: JsonDict = {
             DAMAGE: [20, 23, 27, 32, 38],
         },
     },
-    "sounds": {
-        "fire": "mp5/fire",
-        "pap_fire": "mp5/pap_fire",
-        "reload": "mp5/reload",
-        "playerbegin": "mp5/playerbegin",
-        "playerend": "mp5/playerend",
-        "playermid": "mp5/playermid",
-        "crack": "tiny"
-    }
+    "sounds": gun_sounds("mp5", *GUN_SOUNDS, "playermid", crack="tiny")
 }
 
 MAC10: JsonDict = {
@@ -889,15 +780,7 @@ MAC10: JsonDict = {
             DAMAGE: [22, 25, 29, 34, 40],
         },
     },
-    "sounds": {
-        "fire": "mac10/fire",
-        "pap_fire": "mac10/pap_fire",
-        "reload": "mac10/reload",
-        "playerbegin": "mac10/playerbegin",
-        "playerend": "mac10/playerend",
-        "playermid": "mac10/playermid",
-        "crack": "tiny"
-    }
+    "sounds": gun_sounds("mac10", *GUN_SOUNDS, "playermid", crack="tiny")
 }
 
 MP7: JsonDict = {
@@ -922,14 +805,7 @@ MP7: JsonDict = {
             DAMAGE: [24, 28, 32, 37, 43],
         },
     },
-    "sounds": {
-        "fire": "mp7/fire",
-        "pap_fire": "mp7/pap_fire",
-        "reload": "mp7/reload",
-        "playerbegin": "mp7/playerbegin",
-        "playerend": "mp7/playerend",
-        "crack": "small"
-    }
+    "sounds": gun_sounds("mp7", *GUN_SOUNDS, crack="small")
 }
 
 PPSH41: JsonDict = {
@@ -954,15 +830,7 @@ PPSH41: JsonDict = {
             DAMAGE: [20, 23, 27, 32, 38],
         },
     },
-    "sounds": {
-        "fire": "ppsh41/fire",
-        "pap_fire": "ppsh41/pap_fire",
-        "reload": "ppsh41/reload",
-        "playerbegin": "ppsh41/playerbegin",
-        "playerend": "ppsh41/playerend",
-        "playermid": "ppsh41/playermid",
-        "crack": "tiny"
-    }
+    "sounds": gun_sounds("ppsh41", *GUN_SOUNDS, "playermid", crack="tiny")
 }
 
 STEN: JsonDict = {
@@ -988,15 +856,7 @@ STEN: JsonDict = {
             DAMAGE: [22, 26, 30, 35, 41],
         },
     },
-    "sounds": {
-        "fire": "sten/fire",
-        "pap_fire": "sten/pap_fire",
-        "reload": "sten/reload",
-        "playerbegin": "sten/playerbegin",
-        "playerend": "sten/playerend",
-        "playermid": "sten/playermid",
-        "crack": "tiny"
-    }
+    "sounds": gun_sounds("sten", *GUN_SOUNDS, "playermid", crack="tiny")
 }
 
 # Shotguns
@@ -1022,14 +882,7 @@ SPAS12: JsonDict = {
             DAMAGE: [26, 31, 37, 44, 52],
         },
     },
-    "sounds": {
-        "fire": "spas12/fire",
-        "pap_fire": "spas12/pap_fire",
-        "fire_alt": "spas12/fire_alt",
-        "reload": "spas12/reload",
-        "pump": "spas12/pump",
-        "crack": "largest"
-    }
+    "sounds": gun_sounds("spas12", "fire", "pap_fire", "fire_alt", "reload", "pump", crack="largest")
 }
 
 M500: JsonDict = {
@@ -1054,13 +907,7 @@ M500: JsonDict = {
             DAMAGE: [28, 33, 39, 46, 54],
         },
     },
-    "sounds": {
-        "fire": "m500/fire",
-        "pap_fire": "m500/pap_fire",
-        "reload": "m500/reload",
-        "pump": "m500/pump",
-        "crack": "largest"
-    }
+    "sounds": gun_sounds("m500", *PUMP_SOUNDS, crack="largest")
 }
 
 M590: JsonDict = {
@@ -1085,13 +932,7 @@ M590: JsonDict = {
             DAMAGE: [28, 33, 39, 46, 54],
         },
     },
-    "sounds": {
-        "fire": "m590/fire",
-        "pap_fire": "m590/pap_fire",
-        "reload": "m590/reload",
-        "pump": "m590/pump",
-        "crack": "largest"
-    }
+    "sounds": gun_sounds("m590", *PUMP_SOUNDS, crack="largest")
 }
 
 # Snipers
@@ -1118,15 +959,7 @@ SVD: JsonDict = {
             DAMAGE: [54, 62, 72, 84, 98],
         },
     },
-    "sounds": {
-        "fire": "svd/fire",
-        "pap_fire": "svd/pap_fire",
-        "reload": "svd/reload",
-        "playerbegin": "svd/playerbegin",
-        "playerend": "svd/playerend",
-        "playermid": "svd/playermid",
-        "crack": "large"
-    }
+    "sounds": gun_sounds("svd", *GUN_SOUNDS, "playermid", crack="large")
 }
 
 M82: JsonDict = {
@@ -1152,15 +985,7 @@ M82: JsonDict = {
             DAMAGE: [110, 126, 144, 165, 190],
         },
     },
-    "sounds": {
-        "fire": "m82/fire",
-        "pap_fire": "m82/pap_fire",
-        "reload": "m82/reload",
-        "playerbegin": "m82/playerbegin",
-        "playerend": "m82/playerend",
-        "playermid": "m82/playermid",
-        "crack": "largest"
-    }
+    "sounds": gun_sounds("m82", *GUN_SOUNDS, "playermid", crack="largest")
 }
 
 MOSIN: JsonDict = {
@@ -1185,15 +1010,7 @@ MOSIN: JsonDict = {
             DAMAGE: [58, 68, 80, 94, 111],
         },
     },
-    "sounds": {
-        "fire": "mosin/fire",
-        "pap_fire": "mosin/pap_fire",
-        "reload": "mosin/reload",
-        "playerbegin": "mosin/playerbegin",
-        "playerend": "mosin/playerend",
-        "cycle": "mosin/cycle",
-        "crack": "large"
-    }
+    "sounds": gun_sounds("mosin", *GUN_SOUNDS, "cycle", crack="large")
 }
 
 M24: JsonDict = {
@@ -1218,15 +1035,7 @@ M24: JsonDict = {
             DAMAGE: [72, 84, 98, 114, 132],
         },
     },
-    "sounds": {
-        "fire": "m24/fire",
-        "pap_fire": "m24/pap_fire",
-        "reload": "m24/reload",
-        "playerbegin": "m24/playerbegin",
-        "playerend": "m24/playerend",
-        "cycle": "m24/cycle",
-        "crack": "largest"
-    }
+    "sounds": gun_sounds("m24", *GUN_SOUNDS, "cycle", crack="largest")
 }
 
 
@@ -1254,17 +1063,7 @@ RPG7: JsonDict = {
             DAMAGE: [60, 75, 93, 113],
         },
     },
-    "sounds": {
-        "fire": "rpg7/fire",
-        "pap_fire": "rpg7/pap_fire",
-        "reload": "rpg7/reload",
-        "playerbegin": "rpg7/playerbegin",
-        "playerend": "rpg7/playerend",
-        "handling_endgrab": "rpg7/handling/rpg7_endgrab",
-        "handling_fetch": "rpg7/handling/rpg7_fetch",
-        "handling_load": "rpg7/handling/rpg7_load",
-        "crack": "rocket"
-    }
+    "sounds": gun_sounds("rpg7", *GUN_SOUNDS, handling_endgrab="rpg7/handling/rpg7_endgrab", handling_fetch="rpg7/handling/rpg7_fetch", handling_load="rpg7/handling/rpg7_load", crack="rocket")
 }
 
 RPK: JsonDict = {
@@ -1290,15 +1089,7 @@ RPK: JsonDict = {
             DAMAGE: [30, 34, 39, 45, 52],
         },
     },
-    "sounds": {
-        "fire": "rpk/fire",
-        "pap_fire": "rpk/pap_fire",
-        "reload": "rpk/reload",
-        "playerbegin": "rpk/playerbegin",
-        "playerend": "rpk/playerend",
-        "playermid": "rpk/playermid",
-        "crack": "medium"
-    }
+    "sounds": gun_sounds("rpk", *GUN_SOUNDS, "playermid", crack="medium")
 }
 
 M249: JsonDict = {
@@ -1324,15 +1115,7 @@ M249: JsonDict = {
             DAMAGE: [26, 30, 35, 41, 48],
         },
     },
-    "sounds": {
-        "fire": "m249/fire",
-        "pap_fire": "m249/pap_fire",
-        "reload": "m249/reload",
-        "playerbegin": "m249/playerbegin",
-        "playerend": "m249/playerend",
-        "playermid": "m249/playermid",
-        "crack": "medium"
-    }
+    "sounds": gun_sounds("m249", *GUN_SOUNDS, "playermid", crack="medium")
 }
 
 

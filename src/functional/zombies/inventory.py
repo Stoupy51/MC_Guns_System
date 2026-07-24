@@ -254,7 +254,7 @@ $item replace entity @s container.$(slot) from entity @n[type=minecraft:item_dis
 		for pid in PERK_DEFINITIONS
 	)
 	perk_item_lines: str = "\n".join(
-		f'execute if score @s {ns}.zb.perk.{pid} matches 1 run data modify storage {ns}:temp info.lore append value {{"text":"\\u2022 {pdata["display_name"]}","color":"{pdata["text_color"]}","italic":false}}'
+		f'execute if score @s {ns}.zb.perk.{pid} matches 1 run data modify storage {ns}:temp info.lore append value {{"text":"\\u2022 {pdata.display_name}","color":"{pdata.text_color}","italic":false}}'
 		for pid, pdata in PERK_DEFINITIONS.items()
 	)
 	write_versioned_function("zombies/inventory/refresh_info_item", f"""
@@ -312,7 +312,7 @@ $item replace entity @s hotbar.8 with minecraft:paper[custom_data={{{ns}:{{zb_in
 		perk_item: str = (
 			f'minecraft:paper[item_model="{ns}:perk_machine_{pid}",'
 			f"custom_data={{{ns}:{{zb_perk_display:true}}}},"
-			f'item_name={{"text":"{pdata["display_name"]}","color":"{pdata["text_color"]}","italic":false}},'
+			f'item_name={{"text":"{pdata.display_name}","color":"{pdata.text_color}","italic":false}},'
 			f"lore={lore_snbt}]"
 		)
 		# Owned but not yet shown -> place it once. Not owned but a stale display is here -> clear it.

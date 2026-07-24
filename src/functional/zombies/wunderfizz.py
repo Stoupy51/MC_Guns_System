@@ -422,7 +422,7 @@ function #smithed.actionbar:message
 	## Ready-orb hover: name the perk waiting to be collected, e.g. "✋ Pick-up Juggernog"
 	## (@s = player, positioned at the machine so the nearby orb resolves)
 	hover_result_dispatch: str = "\n".join(
-		f'execute if score #wf_pick {ns}.data matches {i} run data modify storage smithed.actionbar:input message set value {{json:[{{"text":"🎰 ","color":"gold"}},{{"text":"Pick-up ","color":"green"}},{{"text":"{PERK_DEFINITIONS[pid]["display_name"]}","color":"{PERK_DEFINITIONS[pid]["text_color"]}","bold":true}}],priority:"conditional",freeze:5}}'
+		f'execute if score #wf_pick {ns}.data matches {i} run data modify storage smithed.actionbar:input message set value {{json:[{{"text":"🎰 ","color":"gold"}},{{"text":"Pick-up ","color":"green"}},{{"text":"{PERK_DEFINITIONS[pid].display_name}","color":"{PERK_DEFINITIONS[pid].text_color}","bold":true}}],priority:"conditional",freeze:5}}'
 		for i, pid in enumerate(perk_ids)
 	)
 	write_versioned_function("zombies/wunderfizz/hover_result", f"""
