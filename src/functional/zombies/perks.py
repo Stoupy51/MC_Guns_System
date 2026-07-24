@@ -1042,7 +1042,7 @@ function {ns}:v{version}/zombies/perks/read_price with storage {ns}:temp _pk_dat
 execute unless score #pk_partial {ns}.data matches 1.. run data modify storage smithed.actionbar:input message set value {{json:{perk_hover_message},priority:"conditional",freeze:5}}
 execute if score #pk_partial {ns}.data matches 1.. run data modify storage smithed.actionbar:input message set value {{json:{perk_hover_partial_message},priority:"conditional",freeze:5}}
 function #smithed.actionbar:message
-""")  # noqa: E501
+""")
 
 	## Hook into game start: reset perk scoreboards
 	map_pool_reset: str = "\n".join(
