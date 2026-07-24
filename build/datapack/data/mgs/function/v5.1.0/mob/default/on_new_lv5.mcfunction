@@ -1,7 +1,7 @@
 
 #> mgs:v5.1.0/mob/default/on_new_lv5
 #
-# @within	mgs:v5.1.0/mob/default/level_5 {entity:"$(entity)"}
+# @within	mgs:mob/default/level_5 {entity:"$(entity)"}
 #
 # @args		entity (string)
 #

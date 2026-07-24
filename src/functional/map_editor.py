@@ -1298,7 +1298,10 @@ execute at @s unless entity @n[tag={ns}.map_element,distance=..10] run tellraw @
 				edit_value = "[0, 0, 0, 5, 3, 5]"
 			# Door fields (except link_id) use propagation to all doors with same link_id.
 			if etype == "door" and field != "link_id":
-				edit_cmd = f"/function {ns}:v{version}/maps/editor/set_door_link_{field} {{{field}:{snbt_val}}}"
+				# Two entry points, not eight: a macro cannot re-quote its argument, so the string
+				# fields and the numeric fields need one variant each.
+				kind: str = "text" if isinstance(default_val, str) else "number"
+				edit_cmd = f'/function {ns}:v{version}/maps/editor/set_door_link_{kind} {{field:"{field}",value:{snbt_val}}}'
 				hover_text = f"Sets {field} on ALL doors with same link_id"
 			else:
 				edit_cmd = f"/data modify entity @n[tag={ns}.element.{etype},distance=..10] data.{field} set value {edit_value}"
@@ -1373,10 +1376,11 @@ execute at @s unless entity @n[tag={ns}.map_element,distance=..10] run tellraw @
 			f'{{"entity":"@s","nbt":"data.yaw","color":"white"}}," ",{edit_yaw_btn}]'
 		)
 
-	# For enemy types: show function
+	# For enemy types: show function. The suggestion must stay version-independent like the map
+	# default above, or a map saved today calls a path that a later pack version no longer ships.
 	edit_fn_btn = btn(
 		"✎",
-		f"/data modify entity @n[tag={ns}.element.enemy,distance=..10] data.function set value '{ns}:v{version}/mob/default/level_1'",
+		f"/data modify entity @n[tag={ns}.element.enemy,distance=..10] data.function set value '{ns}:mob/default/level_1'",
 		"yellow", "Click to edit function", action="suggest_command"
 	)
 	zb_config_lines.append(
@@ -1457,43 +1461,14 @@ execute if score #check {ns}.data = #link_id {ns}.data run function {ns}:v{versi
 $data modify entity @s data.$(field) set from storage {ns}:temp _door_set.value
 """)
 
-	write_versioned_function("maps/editor/set_door_link_price", f"""
-$data modify storage {ns}:temp _door_set set value {{field:"price",value:$(price)}}
+	## Entry points for the door config buttons (macro: field, value)
+	write_versioned_function("maps/editor/set_door_link_text", f"""
+$data modify storage {ns}:temp _door_set set value {{field:"$(field)",value:"$(value)"}}
 function {ns}:v{version}/maps/editor/set_door_link_apply
 """)
 
-	write_versioned_function("maps/editor/set_door_link_partial_price", f"""
-$data modify storage {ns}:temp _door_set set value {{field:"partial_price",value:$(partial_price)}}
-function {ns}:v{version}/maps/editor/set_door_link_apply
-""")
-
-	write_versioned_function("maps/editor/set_door_link_back_group_id", f"""
-$data modify storage {ns}:temp _door_set set value {{field:"back_group_id",value:$(back_group_id)}}
-function {ns}:v{version}/maps/editor/set_door_link_apply
-""")
-
-	write_versioned_function("maps/editor/set_door_link_block", f"""
-$data modify storage {ns}:temp _door_set set value {{field:"block",value:"$(block)"}}
-function {ns}:v{version}/maps/editor/set_door_link_apply
-""")
-
-	write_versioned_function("maps/editor/set_door_link_animation", f"""
-$data modify storage {ns}:temp _door_set set value {{field:"animation",value:$(animation)}}
-function {ns}:v{version}/maps/editor/set_door_link_apply
-""")
-
-	write_versioned_function("maps/editor/set_door_link_sound", f"""
-$data modify storage {ns}:temp _door_set set value {{field:"sound",value:"$(sound)"}}
-function {ns}:v{version}/maps/editor/set_door_link_apply
-""")
-
-	write_versioned_function("maps/editor/set_door_link_name", f"""
-$data modify storage {ns}:temp _door_set set value {{field:"name",value:"$(name)"}}
-function {ns}:v{version}/maps/editor/set_door_link_apply
-""")
-
-	write_versioned_function("maps/editor/set_door_link_back_name", f"""
-$data modify storage {ns}:temp _door_set set value {{field:"back_name",value:"$(back_name)"}}
+	write_versioned_function("maps/editor/set_door_link_number", f"""
+$data modify storage {ns}:temp _door_set set value {{field:"$(field)",value:$(value)}}
 function {ns}:v{version}/maps/editor/set_door_link_apply
 """)
 

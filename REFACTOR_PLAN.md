@@ -452,7 +452,7 @@ Each phase is one commit, independently shippable, verified with
 | **P5a** ✅ | D1 — inlined the 26 `zombies/feedback/sound_*`; `shared/maps/call_*_script_at_base` ×6 → 1 macro. | **−31** | −31 | low |
 | **P5b** ⚠ | D1 remainder — **re-scoped to 108** (see below), and demoted below P6 on value-per-edit. | −~108 | ~0 | low-med |
 | **P6a** ✅ | D2 — mystery box give, PaP apply_field, wunderfizz set_model+grant, admin powerups. | **−95** | −29 | low |
-| **P6b** | D2 remainder — perks `pool/try_index` + `apply`/`reapply`, `powerups/spawn_type`, `mob/default/level_*`, `set_door_link_*`, `revive/hud_*`, `mystery_box/hud_*`. | −~60 | −? | low |
+| **P6b** ✅ | D2 remainder — perks `pool/try_index` + `pool/count`, `powerups/spawn_type`, `mob/default/level_*`, `set_door_link_*`. Four families dropped as bad value (see below). | **−35** | −45 | low |
 | **P7** | D5 + D6 — shared `zombies/deny/*`; map-editor and `players/` per-mode macros. | −~23 | −150 | low |
 | **P8** | D4 — loadout editor: `prepare_points`, static dialog resources with score components, slot parameterisation. | −~28 | −300 | medium |
 | **P9** | PY1/PY4/PY5 — `WeaponDef` dataclasses, typed registries, split the remaining >500-line files (**not** `shaders.py`), delete restating comments. | 0 | −850, +12 files | low |
@@ -648,3 +648,46 @@ the one most likely to drift, so it lands only after the harness has been exerci
     3 commands become "dispatch sets `perk_id`, then apply once". The apply is guarded on
     `perk_id` being set, preserving the original no-op for an out-of-range pick.
   - `zombies/admin/powerup_*` **11 → 1 macro** (`$(type)`); the dialog buttons pass the type.
+- **2026-07-24** — **P6b done (awaiting review).** **1384 → 1349 mcfunctions (−35)**, −237 command
+  lines, −45 Python LOC. 4 files added, 39 deleted, 15 modified (5 of those header-only).
+  - `perks/pool/try_index/*` **14 → 1 macro** (`$(perk_id)`). The per-perk index constant is simply
+    `#pool_roll` (the dispatcher only ever calls a perk at its own index), so it becomes a
+    `scoreboard players operation`. Cold path: random-perk power-up and Wunderfizz use.
+  - `perks/pool/count` **deleted** (−1 file, −71 commands). It walked all 14 perks with the same
+    availability test `try_index` runs, purely so `choose` could early-return "none available".
+    `choose_iter` already caps at one full loop and leaves `#pool_chosen` at −1, which is what both
+    callers actually read — so the count was redundant work, not a guard.
+  - `powerups/spawn_type/*` **11 → 1 macro.** `do_spawn_random` (dispatching on the shuffle-bag
+    `type_num`) now just names the type and hands over to `spawn_display` (dispatching on the type
+    string), so the per-type payload lives in **one** table instead of two parallel ones.
+    The floating label is passed as a **quoted** text component and substituted raw, so the emitted
+    `text:` is byte-identical to the 11 removed functions.
+    - Gotcha worth remembering: the macro argument is named `label`, not `text`. `auto.lang_file`'s
+      `TEXT_RE` matches any `text:"…"` textually, so with `text:'{"text":"Nuke",…}'` it translated
+      the **outer** quoted value and produced 11 junk keys like
+      `mgs.text_nukecolor_redbold_true`. Renaming the argument makes the inner component the
+      leftmost match again; `en_us.json` is unchanged.
+  - `mob/default/level_*` **5 → 0.** The versioned `level_N` was a one-line hop that the
+    unversioned public `mgs:mob/default/level_N` already pinned to a version, so the public
+    function now calls `on_new` directly.
+    - This exposed a real bug: the map editor's enemy `function` field **suggested**
+      `mgs:v5.1.0/mob/default/level_1`, contradicting the rule stated three functions above it
+      ("saved enemy functions must not embed the pack version") and matching neither of the two
+      other places that write that default. Fixed to `mgs:mob/default/level_1`.
+  - `maps/editor/set_door_link_*` **8 → 2.** One entry point for the string fields and one for the
+    numeric fields — a macro cannot re-quote its own argument, so `value:"$(value)"` and
+    `value:$(value)` have to stay separate. The field name rides along as a second argument, and the
+    suggested command still ends in the value, so editing it in chat is unchanged.
+
+  **Dropped from P6b, with reasons** (all four were on the plan's estimate of −60):
+  - `perks/apply/*` (14) — each is an arbitrary effect plus a **static** `tellraw`. Parameterising
+    the message would turn the translate components into macro text, and `auto.lang_file` only
+    lifts English out of literals, so the pack would silently lose 14 translation keys.
+  - `perks/reapply/*` (10) — bodies are already the deduplicated `commands` lists. Inlining them
+    would duplicate all 10 across **two** call sites (tombstone recovery and Who's Who revive).
+  - `revive/hud_*` (4) and `mystery_box/hud_*` (5) — both are **warm** paths (downed-player tick,
+    hover tick) and both are 2-command `return run` targets, so collapsing them needs either a
+    per-tick macro or replacing the early returns with unconditional `unless data` guards on
+    globally shared storage. −9 files is not worth either.
+  - `zombies/types/*` (5) — not a duplication family at all; `normal`/`dog` are long and genuinely
+    different, and the other three already delegate to `normal`. The plan mis-filed them.

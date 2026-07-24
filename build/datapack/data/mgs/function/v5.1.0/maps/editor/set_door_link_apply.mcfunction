@@ -1,14 +1,8 @@
 
 #> mgs:v5.1.0/maps/editor/set_door_link_apply
 #
-# @within	mgs:v5.1.0/maps/editor/set_door_link_price
-#			mgs:v5.1.0/maps/editor/set_door_link_partial_price
-#			mgs:v5.1.0/maps/editor/set_door_link_back_group_id
-#			mgs:v5.1.0/maps/editor/set_door_link_block
-#			mgs:v5.1.0/maps/editor/set_door_link_animation
-#			mgs:v5.1.0/maps/editor/set_door_link_sound
-#			mgs:v5.1.0/maps/editor/set_door_link_name
-#			mgs:v5.1.0/maps/editor/set_door_link_back_name
+# @within	mgs:v5.1.0/maps/editor/set_door_link_text
+#			mgs:v5.1.0/maps/editor/set_door_link_number
 #
 
 execute unless entity @n[tag=mgs.element.door,distance=..10] run return run tellraw @a[tag=mgs.map_editor] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.no_door_found_within_10_blocks","color":"red"}]

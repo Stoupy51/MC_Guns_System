@@ -147,16 +147,17 @@ data modify storage {ns}:temp _pu_spawn.x set from entity @s Pos[0]
 data modify storage {ns}:temp _pu_spawn.y set from entity @s Pos[1]
 data modify storage {ns}:temp _pu_spawn.z set from entity @s Pos[2]
 execute store result storage {ns}:temp _pu_spawn.uid int 1 run scoreboard players get #pu_uid {ns}.data
-function {ns}:v{version}/zombies/powerups/do_spawn_random with storage {ns}:temp _pu_spawn
+function {ns}:v{version}/zombies/powerups/do_spawn_random
 """)
 
-	# Macro: dispatch to the correct spawn_type function using the pre-stored coordinates
+	# The shuffle bag deals a type_num; name it, then take the same route as an intercepted item
 	do_spawn_random_lines: str = "\n".join(
-		f"$execute if score #pu_spawn_type {ns}.data matches {v['type_num']} run function {ns}:v{version}/zombies/powerups/spawn_type/{pu_id} {{x:$(x),y:$(y),z:$(z),uid:$(uid)}}"
+		f'execute if score #pu_spawn_type {ns}.data matches {v["type_num"]} run data modify storage {ns}:temp _pu_spawn.type set value "{pu_id}"'
 		for pu_id, v in POWERUP_TYPES.items()
 	)
 	write_versioned_function("zombies/powerups/do_spawn_random", f"""
 {do_spawn_random_lines}
+function {ns}:v{version}/zombies/powerups/spawn_display with storage {ns}:temp _pu_spawn
 """)
 
 	# ──────────────────────────────────────────────────────────────────────────
@@ -232,24 +233,24 @@ kill @s
 function {ns}:v{version}/zombies/powerups/spawn_display with storage {ns}:temp _pu_spawn
 """, tags=["common_signals:signals/on_new_item"])
 
-	# Dispatch to per-type spawner
+	# Dispatch to the shared spawner, carrying everything that differs per type as macro arguments.
+	# The floating label stays a literal text component here (quoted so it survives as one argument)
+	# so auto.lang_file still lifts the English out of it — hence `label:`, not `text:`, as the
+	# argument name, or the outer quoted value would be the one that gets translated.
 	dispatch_lines: str = "\n".join(
-		f'$execute if data storage {ns}:temp _pu_spawn {{"type":"{pu_id}"}} run function {ns}:v{version}/zombies/powerups/spawn_type/{pu_id} {{x:$(x),y:$(y),z:$(z),uid:$(uid)}}'
-		for pu_id in POWERUP_TYPES
+		f'$execute if data storage {ns}:temp _pu_spawn {{"type":"{pu_id}"}} run function {ns}:v{version}/zombies/powerups/spawn_type '
+		f'{{x:$(x),y:$(y),z:$(z),uid:$(uid),item:"{v["item"]}",type_num:{v["type_num"]},'
+		f'label:\'{{"text":"{v["display"]}","color":"{v["color"]}","bold":true}}\'}}'
+		for pu_id, v in POWERUP_TYPES.items()
 	)
 	write_versioned_function("zombies/powerups/spawn_display", f"""
 {dispatch_lines}
 """)
 
-	# Per-type spawners (macro: x, y, z)
-	for pu_id, v in POWERUP_TYPES.items():
-		item: str = v["item"]
-		display_name: str = v["display"]
-		color: str = v["color"]
-		type_num: int = v["type_num"]
-		write_versioned_function(f"zombies/powerups/spawn_type/{pu_id}", f"""
-$summon minecraft:item $(x) $(y) $(z) {{Tags:["{ns}.pu_item","{ns}.pu_item_new","{ns}.gm_entity"],PickupDelay:32767,Invulnerable:1b,Item:{{id:"{item}",count:1,components:{{"minecraft:custom_data":{{{ns}:{{powerup_uid:$(uid)}}}}}}}}}}
-scoreboard players set @n[type=minecraft:item,tag={ns}.pu_item_new] {ns}.zb.pu.type {type_num}
+	# Shared spawner (macro: x, y, z, uid, item, type_num, label)
+	write_versioned_function("zombies/powerups/spawn_type", f"""
+$summon minecraft:item $(x) $(y) $(z) {{Tags:["{ns}.pu_item","{ns}.pu_item_new","{ns}.gm_entity"],PickupDelay:32767,Invulnerable:1b,Item:{{id:"$(item)",count:1,components:{{"minecraft:custom_data":{{{ns}:{{powerup_uid:$(uid)}}}}}}}}}}
+$scoreboard players set @n[type=minecraft:item,tag={ns}.pu_item_new] {ns}.zb.pu.type $(type_num)
 scoreboard players set @n[type=minecraft:item,tag={ns}.pu_item_new] {ns}.zb.pu.timer {POWERUP_LIFETIME}
 tag @n[type=minecraft:item,tag={ns}.pu_item_new] remove {ns}.pu_item_new
 
@@ -257,7 +258,7 @@ tag @n[type=minecraft:item,tag={ns}.pu_item_new] remove {ns}.pu_item_new
 # reset to 0 by the bulk cleanup, resynced periodically). pu_item is Invulnerable, so it can only die
 # through those tracked paths — the count can never under-count and freeze a live power-up.
 scoreboard players add #pu_active {ns}.data 1
-$execute positioned $(x) $(y) $(z) run summon minecraft:text_display ~ ~1.0 ~ {{Tags:["{ns}.pu_text","{ns}.gm_entity"],text:{{"text":"{display_name}","color":"{color}","bold":true}},billboard:"vertical",background:0,shadow:true,view_range:64.0f,transformation:{{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[1.5f,1.5f,1.5f]}}}}
+$execute positioned $(x) $(y) $(z) run summon minecraft:text_display ~ ~1.0 ~ {{Tags:["{ns}.pu_text","{ns}.gm_entity"],text:$(label),billboard:"vertical",background:0,shadow:true,view_range:64.0f,transformation:{{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[1.5f,1.5f,1.5f]}}}}
 
 # Drop spawn cue
 {pu_snd("item/spawn", 0.7)}
@@ -370,7 +371,6 @@ execute as @a[scores={{{ns}.zb.in_game=1}},gamemode=!spectator] run function {ns
 		scoreboard: str   = v["scoreboard"]
 		bossbar_id: str   = v["bossbar_id"]
 		display_name: str = v["display"]
-		color: str        = v["color"]
 		bb_color: str     = v["bb_color"]
 		write_versioned_function(f"zombies/powerups/activate/{pu_id}", f"""
 scoreboard players set @a[scores={{{ns}.zb.in_game=1}}] {ns}.special.{scoreboard} {duration}
@@ -537,7 +537,6 @@ execute if score #zb_bonfire_sale_timer {ns}.data matches 1.. store result bossb
 		scoreboard: str   = v["scoreboard"]
 		bossbar_id: str   = v["bossbar_id"]
 		display_name: str = v["display"]
-		color: str        = v["color"]
 		# Play the end sound once when the effect transitions from active to expired
 		end_sound_line: str = ""
 		if "end_sound" in v:

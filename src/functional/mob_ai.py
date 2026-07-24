@@ -232,17 +232,7 @@ $scoreboard players set @s {ns}.mob.sleep_time $(sleep_time)
 # Increment armed mob count
 scoreboard players add #armed_mob_count {ns}.data 1
 """)
-    for level, active, sleep in [(1, 50, 100), (2, 50, 50), (3, 60, 20), (4, 72000, 1)]:
-        write_versioned_function(
-            f"mob/default/level_{level}",
-            f"""$execute summon $(entity) run function {ns}:v{version}/mob/default/on_new {{entity:"$(entity)",level:{level},active_time:{active},sleep_time:{sleep}}}"""
-        )
-
     # Level 5: perfect accuracy (always active, no sleep, tagged to skip inaccuracy)
-    write_versioned_function(
-        "mob/default/level_5",
-        f"""$execute summon $(entity) run function {ns}:v{version}/mob/default/on_new_lv5 {{entity:"$(entity)"}}"""
-    )
     write_versioned_function("mob/default/on_new_lv5", f"""
 # Tags, data, and attributes
 $function {ns}:v{version}/mob/default/on_new {{entity:"$(entity)",level:5,active_time:72000,sleep_time:0}}
@@ -252,7 +242,13 @@ tag @s add {ns}.mob_lv5
     # Version-independent entrypoints: map storage persists across version bumps, so saved enemy
     # functions must not embed the pack version (a map saved on v5.0.1 kept calling a dead path,
     # spawning 0 enemies and instantly completing the mission).
-    for level in range(1, 6):
-        forward: str = f"""$function {ns}:v{version}/mob/default/level_{level} {{entity:"$(entity)"}}"""
-        write_function(f"{ns}:mob/default/level_{level}", forward)
+    for level, active, sleep in [(1, 50, 100), (2, 50, 50), (3, 60, 20), (4, 72000, 1)]:
+        write_function(
+            f"{ns}:mob/default/level_{level}",
+            f"""$execute summon $(entity) run function {ns}:v{version}/mob/default/on_new {{entity:"$(entity)",level:{level},active_time:{active},sleep_time:{sleep}}}"""
+        )
+    write_function(
+        f"{ns}:mob/default/level_5",
+        f"""$execute summon $(entity) run function {ns}:v{version}/mob/default/on_new_lv5 {{entity:"$(entity)"}}"""
+    )
 

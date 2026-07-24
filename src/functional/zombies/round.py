@@ -625,16 +625,16 @@ execute if score #zb_dog_left {ns}.data matches ..0 if score #zb_dog_ammo_done {
 """)
 
 	## Primary path: @s is the last hound, still standing where it died. Bypasses the shuffle bag and
-	## drop roll — it's a fixed reward, so it calls the per-type spawner directly.
+	## drop roll — it's a fixed reward, so it names the type itself.
 	write_versioned_function("zombies/dog_max_ammo_at_self", f"""
 scoreboard players set #zb_dog_ammo_done {ns}.data 1
 scoreboard players add #pu_uid {ns}.data 1
-data modify storage {ns}:temp _pu_spawn set value {{x:0,y:0,z:0,uid:0}}
+data modify storage {ns}:temp _pu_spawn set value {{x:0,y:0,z:0,uid:0,type:"max_ammo"}}
 data modify storage {ns}:temp _pu_spawn.x set from entity @s Pos[0]
 data modify storage {ns}:temp _pu_spawn.y set from entity @s Pos[1]
 data modify storage {ns}:temp _pu_spawn.z set from entity @s Pos[2]
 execute store result storage {ns}:temp _pu_spawn.uid int 1 run scoreboard players get #pu_uid {ns}.data
-function {ns}:v{version}/zombies/powerups/spawn_type/max_ammo with storage {ns}:temp _pu_spawn
+function {ns}:v{version}/zombies/powerups/spawn_display with storage {ns}:temp _pu_spawn
 """)
 
 
