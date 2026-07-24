@@ -3,9 +3,9 @@
 # Zombies Game System
 # Wave-based survival mode with zombie spawning, points, perks, mystery box, wallbuys, doors, and traps.
 # Map definitions are dynamic (stored in storage, registered via function tags).
-from stewbeet import Mem, write_tag, write_versioned_function
+from stewbeet import Mem, write_load_file, write_tag, write_tick_file, write_versioned_function
 
-from ..game_mode import GameMode
+from ..core.spawning import write_summon_spawn_at, write_tp_player_at
 from ..helpers import (
 	MGS_TAG,
 	btn,
@@ -21,18 +21,14 @@ from ..helpers import (
 )
 
 
-class ZombiesMode(GameMode):
+def generate_zombies_game() -> None:
 	""" Generates the zombies game lifecycle (rounds, co-op spawns, sidebar). """
+	ns: str = Mem.ctx.project_id
+	version: str = Mem.ctx.project_version
 
-	mode = "zombies"
-
-	def generate(self) -> None:
-		ns: str = self.ns
-		version: str = self.version
-
-		## Scoreboards & Storage Setup
-		self.load(
-	f"""
+	## Scoreboards & Storage Setup
+	write_load_file(
+f"""
 ## Zombies scoreboards
 scoreboard objectives add {ns}.zb.in_game dummy
 scoreboard objectives add {ns}.zb.points dummy
@@ -84,12 +80,12 @@ execute unless data storage {ns}:zombies game.variant run data modify storage {n
 execute unless data storage {ns}:zombies mystery_box_pool run data modify storage {ns}:zombies mystery_box_pool set value []
 """)
 
-		## Signal function tags
-		for event in ["register_maps", "register_mystery_box_item", "on_round_start", "on_round_end", "on_game_start", "on_game_end"]:
-			write_tag(f"zombies/{event}", Mem.ctx.data[ns].function_tags, [])
+	## Signal function tags
+	for event in ["register_maps", "register_mystery_box_item", "on_round_start", "on_round_end", "on_game_start", "on_game_end"]:
+		write_tag(f"zombies/{event}", Mem.ctx.data[ns].function_tags, [])
 
-		## Game Start
-		write_versioned_function("zombies/start", f"""
+	## Game Start
+	write_versioned_function("zombies/start", f"""
 # Prevent starting if already active or preparing
 {game_start_guards(ns, "zombies", "Zombies game")}
 
@@ -177,8 +173,8 @@ function #{ns}:zombies/register_mystery_box_item
 tellraw @a ["",{{"text":"","color":"dark_green","bold":true}},"🧟 ",{{"text":"Loading zombies map...","color":"yellow"}}]
 """)
 
-		## Preload complete → transition to prep phase
-		write_versioned_function("zombies/preload_complete", f"""
+	## Preload complete → transition to prep phase
+	write_versioned_function("zombies/preload_complete", f"""
 # Guard: only if still preparing
 execute unless data storage {ns}:zombies game{{state:"preparing"}} run return fail
 
@@ -222,13 +218,13 @@ execute if data storage {ns}:zombies game{{variant:"zonweeb"}} run tellraw @a ["
 execute unless data storage {ns}:zombies game{{variant:"zonweeb"}} run tellraw @a ["",{{"text":"","color":"dark_green","bold":true}},"🧟 ",{{"text":"Preparing! Round 1 starts in 10 seconds!","color":"yellow"}}]
 """)
 
-		## Prep Tick (no class to detect, just wait)
-		write_versioned_function("zombies/prep_tick", """
+	## Prep Tick (no class to detect, just wait)
+	write_versioned_function("zombies/prep_tick", """
 # Nothing to process during prep (perk selection is instant via chat click)
 """)
 
-		## End Prep → Start Round 1
-		write_versioned_function("zombies/end_prep", f"""
+	## End Prep → Start Round 1
+	write_versioned_function("zombies/end_prep", f"""
 {end_prep_transition_lines(ns, "zombies", "zb")}
 
 # Start round 1
@@ -239,15 +235,15 @@ function {ns}:v{version}/shared/maps/call_start_script_at_base
 """)
 
 
-		# Game Tick ─────────────────────────────────────────────────
+	# Game Tick ─────────────────────────────────────────────────
 
-		self.tick(f"""
+	write_tick_file(f"""
 # Zombies game tick
 execute if data storage {ns}:zombies game{{state:"active"}} run function {ns}:v{version}/zombies/game_tick
 execute if data storage {ns}:zombies game{{state:"preparing"}} run function {ns}:v{version}/zombies/prep_tick
 """)
 
-		write_versioned_function("zombies/game_tick", f"""
+	write_versioned_function("zombies/game_tick", f"""
 # Revive system tick (process downed players)
 function {ns}:v{version}/zombies/revive/tick
 
@@ -314,9 +310,9 @@ kill @e[type=experience_orb]
 """)
 
 
-		# Death & Respawn ───────────────────────────────────────────
-		## On Respawn (zombies death handling → enter downed state)
-		write_versioned_function("zombies/on_respawn", f"""
+	# Death & Respawn ───────────────────────────────────────────
+	## On Respawn (zombies death handling → enter downed state)
+	write_versioned_function("zombies/on_respawn", f"""
 # Reset death counter
 scoreboard players set @s {ns}.mp.death_count 0
 
@@ -327,8 +323,8 @@ scoreboard players add @s {ns}.zb.downs 1
 function {ns}:v{version}/zombies/revive/on_down
 """)
 
-		## Add player tick hook for zombies death detection
-		write_versioned_function("player/tick", f"""
+	## Add player tick hook for zombies death detection
+	write_versioned_function("player/tick", f"""
 # Zombies: detect respawn
 execute if data storage {ns}:zombies game{{state:"active"}} if score @s {ns}.zb.in_game matches 1.. if score @s {ns}.mp.death_count matches 1.. run function {ns}:v{version}/zombies/on_respawn
 
@@ -337,19 +333,19 @@ execute if data storage {ns}:zombies game{{state:"active"}} if score @s {ns}.zb.
 execute if data storage {ns}:zombies game{{state:"active"}} if score @s {ns}.zb.in_game matches 1.. if score @s {ns}.zb.dw_timer matches 1.. run function {ns}:v{version}/zombies/perks/dying_wish_tick
 """)
 
-		# Game Over ─────────────────────────────────────────────────
+	# Game Over ─────────────────────────────────────────────────
 
-		zb_stat_line: str = (
-			'tellraw @a ["","  ","🎖 ",{"selector":"@s"}," — Kills: ",'
-			f'{{"score":{{"name":"@s","objective":"{ns}.zb.kills"}},"color":"green"}}," | Downs: ",'
-			f'{{"score":{{"name":"@s","objective":"{ns}.zb.downs"}},"color":"red"}}," | Points: ",'
-			f'{{"score":{{"name":"@s","objective":"{ns}.zb.points"}},"color":"gold"}}]'
-		)
-		zb_ranked_stats: str = write_ranked_stats_functions(
-			ns, version, "zombies/announce_stats", "zb.in_game", "zb.kills", zb_stat_line
-		)
+	zb_stat_line: str = (
+		'tellraw @a ["","  ","🎖 ",{"selector":"@s"}," — Kills: ",'
+		f'{{"score":{{"name":"@s","objective":"{ns}.zb.kills"}},"color":"green"}}," | Downs: ",'
+		f'{{"score":{{"name":"@s","objective":"{ns}.zb.downs"}},"color":"red"}}," | Points: ",'
+		f'{{"score":{{"name":"@s","objective":"{ns}.zb.points"}},"color":"gold"}}]'
+	)
+	zb_ranked_stats: str = write_ranked_stats_functions(
+		ns, version, "zombies/announce_stats", "zb.in_game", "zb.kills", zb_stat_line
+	)
 
-		write_versioned_function("zombies/game_over", f"""
+	write_versioned_function("zombies/game_over", f"""
 # Set state to ended
 data modify storage {ns}:zombies game.state set value "ended"
 
@@ -389,8 +385,8 @@ tellraw @a ["",{MGS_TAG}," ",{btn("⟲ Fast Restart", f"/function {ns}:v{version
 schedule function {ns}:v{version}/zombies/stop 100t
 """)
 
-		# Game Stop ─────────────────────────────────────────────────
-		write_versioned_function("zombies/stop", f"""
+	# Game Stop ─────────────────────────────────────────────────
+	write_versioned_function("zombies/stop", f"""
 # Various cleanup to set to lobby state
 data modify storage {ns}:zombies game.state set value "lobby"
 schedule clear {ns}:v{version}/zombies/end_prep
@@ -430,10 +426,10 @@ scoreboard players set @a {ns}.mp.spectate_timer 0
 tag @a[tag={ns}.give_class_menu] remove {ns}.give_class_menu
 """)
 
-		## Fast Restart ─────────────────────────────────────────────
-		## Stop the current game and immediately start a new one with the same map, variant and roster.
-		## Reachable only through /function (permission level 2), so it stays operator-only.
-		write_versioned_function("zombies/restart", f"""
+	## Fast Restart ─────────────────────────────────────────────
+	## Stop the current game and immediately start a new one with the same map, variant and roster.
+	## Reachable only through /function (permission level 2), so it stays operator-only.
+	write_versioned_function("zombies/restart", f"""
 # Roster = players still in the game; if the auto-stop already cleared in_game, fall back to the
 # snapshot game_over took. Tag them so the roster survives the stop cleanup below.
 execute if entity @a[scores={{{ns}.zb.in_game=1}}] run tag @a[scores={{{ns}.zb.in_game=1}}] add {ns}.zb_restart
@@ -454,14 +450,14 @@ tellraw @a [{MGS_TAG},{{"text":"An operator restarted the game.","color":"yellow
 function {ns}:v{version}/zombies/start
 """)
 
-		## Error path kept out of restart so the map-missing guard can both warn and drop the roster tag.
-		write_versioned_function("zombies/restart_no_map", f"""
+	## Error path kept out of restart so the map-missing guard can both warn and drop the roster tag.
+	write_versioned_function("zombies/restart_no_map", f"""
 tag @a[tag={ns}.zb_restart] remove {ns}.zb_restart
 tellraw @s [{MGS_TAG},{{"text":"No map selected — open the setup menu first.","color":"red"}}]
 """)
 
-		## Join Ongoing Zombies Game (late-joiner support)
-		write_versioned_function("zombies/join_game", f"""
+	## Join Ongoing Zombies Game (late-joiner support)
+	write_versioned_function("zombies/join_game", f"""
 {late_join_flow_lines(
 	ns,
 	"zombies",
@@ -494,9 +490,9 @@ attribute @s minecraft:entity_interaction_range base set 5
 )}
 """)
 
-		# Kill Points ───────────────────────────────────────────────
-		# Track kills via totalKillCount stat delta — catches all kill types (bullets, knife, etc.)
-		write_versioned_function("zombies/check_kill_points", f"""
+	# Kill Points ───────────────────────────────────────────────
+	# Track kills via totalKillCount stat delta — catches all kill types (bullets, knife, etc.)
+	write_versioned_function("zombies/check_kill_points", f"""
 # Calculate delta kills since last check
 scoreboard players operation #zb_kills_delta {ns}.data = @s {ns}.total_kills
 scoreboard players operation #zb_kills_delta {ns}.data -= @s {ns}.zb.prev_kills
@@ -524,8 +520,8 @@ execute if score @s {ns}.zb.passive matches 1 run scoreboard players operation @
 scoreboard players operation @s {ns}.zb.kills += #zb_kills_delta {ns}.data
 """)
 
-		# Bullet hit points (+10 per bullet hit on a live zombie)
-		write_versioned_function("zombies/on_hit_signal", f"""
+	# Bullet hit points (+10 per bullet hit on a live zombie)
+	write_versioned_function("zombies/on_hit_signal", f"""
 # Only process if zombies game is active & If the hit target is a live round zombie
 execute unless data storage {ns}:zombies game{{state:"active"}} run return fail
 execute unless entity @s[tag={ns}.zombie_round] run return fail
@@ -537,15 +533,15 @@ scoreboard players operation @s {ns}.zb.player_hit = #total_tick {ns}.data
 scoreboard players operation @n[tag={ns}.ticking] {ns}.zb.points += #zb_points_hit {ns}.config
 """, tags=[f"{ns}:signals/damage"])
 
-		# Hook kill check into game_tick (per in-game player, non-spectator)
-		write_versioned_function("zombies/game_tick", f"""
+	# Hook kill check into game_tick (per in-game player, non-spectator)
+	write_versioned_function("zombies/game_tick", f"""
 # Award kill points from totalKillCount delta
 execute as @a[scores={{{ns}.zb.in_game=1}},gamemode=!spectator] run function {ns}:v{version}/zombies/check_kill_points
 """)
 
 
-		# Stuck Zombie Check ────────────────────────────────────────
-		write_versioned_function("zombies/stuck_zombie_check", f"""
+	# Stuck Zombie Check ────────────────────────────────────────
+	write_versioned_function("zombies/stuck_zombie_check", f"""
 # @s = zombie_round entity (non-rising), run every 20 ticks on up to 24 random zombies
 # Progress = distance bucket improved (or a player in melee range is VISIBLE). Resets the timer.
 # Timeout depends on HOW the zombie is stuck:
@@ -606,7 +602,7 @@ scoreboard players operation #stuck_delta {ns}.data -= @s {ns}.zb.stuck_ticks
 execute if score #stuck_delta {ns}.data >= #stuck_threshold {ns}.data run function {ns}:v{version}/zombies/on_stuck_zombie
 """)
 
-		write_versioned_function("zombies/on_stuck_zombie", f"""
+	write_versioned_function("zombies/on_stuck_zombie", f"""
 # @s = stuck zombie — teleport it to a zombie spawn point near a player instead of killing it
 # (keeps the horde intact and drops it back onto walkable navmesh so it can path again).
 
@@ -646,17 +642,17 @@ execute store result score @s {ns}.zb.stuck_z run data get entity @s Pos[2]
 scoreboard players operation @s {ns}.zb.stuck_ticks = #total_tick {ns}.data
 """)
 
-		## @s = the stuck enemy, execution POSITION = the player it should end up near (see caller).
-		## Both selectors resolve from that position, so they agree on which marker was chosen.
-		write_versioned_function("zombies/rescue_tp", f"""
+	## @s = the stuck enemy, execution POSITION = the player it should end up near (see caller).
+	## Both selectors resolve from that position, so they agree on which marker was chosen.
+	write_versioned_function("zombies/rescue_tp", f"""
 tp @s @n[tag={ns}.zb_near]
 scoreboard players operation @s {ns}.zb.spawn.sid = @n[tag={ns}.zb_near] {ns}.zb.spawn.sid
 """)
 
-		## Player boundary check (zombies): unlike zombies (out_of_world damage -> down + mannequin),
-		## a player leaving the play area is a TOTAL elimination with no mannequin, respawning at the
-		## next round end. Uses the same #bound_* scores loaded by shared/load_bounds.
-		write_versioned_function("zombies/check_bounds_player", f"""
+	## Player boundary check (zombies): unlike zombies (out_of_world damage -> down + mannequin),
+	## a player leaving the play area is a TOTAL elimination with no mannequin, respawning at the
+	## next round end. Uses the same #bound_* scores loaded by shared/load_bounds.
+	write_versioned_function("zombies/check_bounds_player", f"""
 data modify storage {ns}:temp _player_pos set from entity @s Pos
 execute store result score @s {ns}.mp.bx run data get storage {ns}:temp _player_pos[0]
 execute store result score @s {ns}.mp.by run data get storage {ns}:temp _player_pos[1]
@@ -670,9 +666,9 @@ execute if score @s {ns}.mp.bz < #bound_z1 {ns}.data run return run function {ns
 execute if score @s {ns}.mp.bz > #bound_z2 {ns}.data run return run function {ns}:v{version}/zombies/revive/full_death
 """)
 
-		# Spawn Point Markers ───────────────────────────────────────
+	# Spawn Point Markers ───────────────────────────────────────
 
-		write_versioned_function("zombies/summon_spawns", f"""
+	write_versioned_function("zombies/summon_spawns", f"""
 # Reset the unique spawn id counter (each summoned marker gets the next id)
 scoreboard players set #zb_spawn_sid {ns}.data 0
 
@@ -704,7 +700,7 @@ scoreboard players set #unlock_gid {ns}.data 0
 execute as @e[tag={ns}.spawn_point] if score @s {ns}.zb.spawn.gid = #unlock_gid {ns}.data run tag @s add {ns}.spawn_unlocked
 """)
 
-		write_versioned_function("zombies/summon_spawn_iter", f"""
+	write_versioned_function("zombies/summon_spawn_iter", f"""
 # Read position from compound format
 execute store result score #sx {ns}.data run data get storage {ns}:temp _spawn_iter[0].pos[0]
 execute store result score #sy {ns}.data run data get storage {ns}:temp _spawn_iter[0].pos[1]
@@ -742,10 +738,10 @@ data remove storage {ns}:temp _spawn_iter[0]
 execute if data storage {ns}:temp _spawn_iter[0] run function {ns}:v{version}/zombies/summon_spawn_iter
 """)
 
-		## Store the absolute activation box {x,y,z,dx,dy,dz} on the just-summoned spawn marker.
-		## #sx/#sy/#sz hold the marker's absolute coords; activation_box[0..2] are the relative
-		## corner offset and [3..5] the box size (all in blocks).
-		write_versioned_function("zombies/store_spawn_abox", f"""
+	## Store the absolute activation box {x,y,z,dx,dy,dz} on the just-summoned spawn marker.
+	## #sx/#sy/#sz hold the marker's absolute coords; activation_box[0..2] are the relative
+	## corner offset and [3..5] the box size (all in blocks).
+	write_versioned_function("zombies/store_spawn_abox", f"""
 execute store result score #abx {ns}.data run data get storage {ns}:temp _spawn_iter[0].activation_box[0]
 execute store result score #aby {ns}.data run data get storage {ns}:temp _spawn_iter[0].activation_box[1]
 execute store result score #abz {ns}.data run data get storage {ns}:temp _spawn_iter[0].activation_box[2]
@@ -761,16 +757,16 @@ execute store result storage {ns}:temp _abox.dz double 1 run data get storage {n
 data modify entity @n[tag={ns}.new_spawn] data.abox set from storage {ns}:temp _abox
 """)
 
-		self.write_summon_spawn_at(extra_spawn_tags=("new_spawn",))
+	write_summon_spawn_at("zombies", extra_spawn_tags=("new_spawn",))
 
-		# Smart Spawn Selection ─────────────────────────────────────
+	# Smart Spawn Selection ─────────────────────────────────────
 
-		write_versioned_function("zombies/tp_all_to_spawns", f"""
+	write_versioned_function("zombies/tp_all_to_spawns", f"""
 execute as @a[scores={{{ns}.zb.in_game=1}}] at @s run function {ns}:v{version}/zombies/pick_spawn
 tag @e[tag={ns}.spawn_used] remove {ns}.spawn_used
 """)
 
-		write_versioned_function("zombies/pick_spawn", f"""
+	write_versioned_function("zombies/pick_spawn", f"""
 tag @s add {ns}.spawn_pending
 
 # Tag candidate spawns (unlocked, exclude used). Capture via command success whether any marker
@@ -788,7 +784,7 @@ tag @e[tag={ns}.spawn_candidate] remove {ns}.spawn_candidate
 tag @a[tag={ns}.spawn_pending] remove {ns}.spawn_pending
 """)
 
-		write_versioned_function("zombies/tp_to_spawn", f"""
+	write_versioned_function("zombies/tp_to_spawn", f"""
 execute store result storage {ns}:temp _tp.x double 1 run data get entity @s Pos[0]
 execute store result storage {ns}:temp _tp.y double 1 run data get entity @s Pos[1]
 execute store result storage {ns}:temp _tp.z double 1 run data get entity @s Pos[2]
@@ -799,15 +795,15 @@ execute as @p[tag={ns}.spawn_pending] run function {ns}:v{version}/zombies/tp_pl
 execute unless data storage {ns}:zombies game{{state:"active"}} run tag @s add {ns}.spawn_used
 """)
 
-		self.write_tp_player_at()
+	write_tp_player_at("zombies")
 
-		## Respawn TP for zombies
-		write_versioned_function("zombies/respawn_tp", f"""
+	## Respawn TP for zombies
+	write_versioned_function("zombies/respawn_tp", f"""
 execute if entity @e[tag={ns}.spawn_point,tag={ns}.spawn_zb_player] run function {ns}:v{version}/zombies/pick_spawn
 """)
 
-		# Sidebar HUD ───────────────────────────────────────────────
-		write_versioned_function("zombies/create_sidebar", f"""
+	# Sidebar HUD ───────────────────────────────────────────────
+	write_versioned_function("zombies/create_sidebar", f"""
 scoreboard objectives add {ns}.zb_sidebar dummy
 
 # Seed the displayed round to the upcoming round (game.round + 1) so the sidebar
@@ -823,7 +819,7 @@ function {ns}:v{version}/zombies/refresh_sidebar
 scoreboard objectives setdisplay sidebar {ns}.zb_sidebar
 """)
 
-		write_versioned_function("zombies/refresh_sidebar", f"""
+	write_versioned_function("zombies/refresh_sidebar", f"""
 # Zombie count (#zb_alive) is recomputed every tick by game_tick.
 scoreboard players operation #zb_total {ns}.data = #zb_alive {ns}.data
 scoreboard players operation #zb_total {ns}.data += #zb_to_spawn {ns}.data
@@ -842,32 +838,25 @@ function {ns}:v{version}/zombies/sidebar_rank_players
 function {ns}:v{version}/zombies/build_sidebar with storage {ns}:temp
 """)
 
-		# Rank players and append to sidebar (up to 8 players)
-		sidebar_rank_code = ""
-		for i in range(1, 9):
-			sidebar_rank_code += f"""
+	# Rank players and append to sidebar (up to 8 players)
+	sidebar_rank_code = ""
+	for i in range(1, 9):
+		sidebar_rank_code += f"""
 execute unless entity @a[tag={ns}.zb_sb_cand] run return 0
 execute as @a[tag={ns}.zb_sb_cand,limit=1] run scoreboard players set @s {ns}.zb.sb_rank {i}
 tag @a[scores={{{ns}.zb.sb_rank={i}}}] remove {ns}.zb_sb_cand
 data modify storage {ns}:temp zb_sb append value [{{selector:"@a[scores={{{ns}.zb.sb_rank={i}}}]",color:"green"}},{{score:{{name:"@a[scores={{{ns}.zb.sb_rank={i}}}]",objective:"{ns}.zb.points"}},color:"yellow"}}]
 """
-		sidebar_rank_code += f"\ntag @a remove {ns}.zb_sb_cand\n"
-		write_versioned_function("zombies/sidebar_rank_players", sidebar_rank_code)
+	sidebar_rank_code += f"\ntag @a remove {ns}.zb_sb_cand\n"
+	write_versioned_function("zombies/sidebar_rank_players", sidebar_rank_code)
 
-		write_versioned_function("zombies/build_sidebar", f"""
+	write_versioned_function("zombies/build_sidebar", f"""
 scoreboard players reset * {ns}.zb_sidebar
 $function #bs.sidebar:create {{objective:"{ns}.zb_sidebar",display_name:{{text:"Zombies",color:"dark_green",bold:true}},contents:$(zb_sb)}}
 """)
 
-		# Block shooting during prep
-		write_versioned_function("player/right_click", f"""
+	# Block shooting during prep
+	write_versioned_function("player/right_click", f"""
 # Block shooting during zombies prep phase
 execute if score @s {ns}.zb.in_game matches 1 if data storage {ns}:zombies game{{state:"preparing"}} run return run scoreboard players set @s {ns}.pending_clicks 0
 """, prepend=True)
-
-
-def generate_zombies_game() -> None:
-	""" Module-level entry (preserved signature); delegates to :class:`ZombiesMode`. """
-	ZombiesMode()()
-
-

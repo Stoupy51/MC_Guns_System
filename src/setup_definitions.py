@@ -13,7 +13,6 @@ from stewbeet import (
     add_item_name_and_lore_if_missing,
     add_private_custom_data_for_namespace,
     add_smithed_ignore_vanilla_behaviours_convention,
-    export_all_definitions_to_json,
     set_manual_components,
 )
 from stewbeet import (
@@ -40,13 +39,8 @@ from .config.stats import (
     START_HEX,
     SWITCH,
 )
-from .database.ammo import main as main_ammo
 from .database.camo import main as camo_main
-from .database.casing import main as main_casing
-from .database.grenades import main as main_grenades
-from .database.others import main as main_others
-from .database.rpg7 import main as main_rpg7
-from .database.weapons import main as main_weapons
+from .database.items import main as main_items
 
 # Blank lore separator. NOT a bare "": that's a StringTag while the styled stat lines are
 # CompoundTags, and NBT lists are homogeneous — the mix makes NbtOps wrap every line as {"": <line>},
@@ -59,19 +53,8 @@ EMPTY_LORE_LINE: JsonDict = {"text": "", "italic": False}
 def beet_default(ctx: Context) -> None:
     ns: str = ctx.project_id
 
-    # Add casings, ammo, and other miscellaneous items
-    main_casing()
-    main_ammo()
-    main_others()
-
-    # Special
-    main_rpg7()
-
-    # All weapons (rifles, pistols, SMGs, shotguns, snipers, LMGs)
-    main_weapons()
-
-    # Grenades
-    main_grenades()
+    # Casings, magazines, map props, weapons, grenades (registration order matters)
+    main_items()
 
     # Multiplayer class menu item (right-click to open class selection)
     Item(
@@ -263,7 +246,4 @@ def beet_default(ctx: Context) -> None:
     add_smithed_ignore_vanilla_behaviours_convention()	# Smithed items convention
     set_manual_components(white_list=["item_name", "lore", "custom_name", "damage", "max_damage"]) # Components to include in the manual when hovering items (here is the default list)
 
-    # Debug purposes: export all definitions to a single json file
-    return
-    export_all_definitions_to_json(f"{Mem.ctx.directory}/definitions_debug.json", Mem.definitions)
 

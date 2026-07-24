@@ -1,25 +1,30 @@
 
-# Base class for the five multiplayer game-mode variants (FFA, TDM, DOM, HP, SnD).
-#
-# Every variant emits functions under `multiplayer/gamemodes/<key>/...` and shares the
-# same lifecycle contract (at minimum: setup, tick, on_kill, cleanup; plus mode-specific
-# helpers). `GameModeVariant` removes the per-file `ns`/`version` boilerplate and the
-# repeated `multiplayer/gamemodes/<key>/` path prefix.
-from stewbeet import write_versioned_function
+# Base for the five multiplayer game-mode variants (FFA, TDM, DOM, HP, SnD): removes the per-file
+# ns/version boilerplate and the repeated `multiplayer/gamemodes/<key>/` path prefix.
+from abc import ABC, abstractmethod
 
-from ...generator import McfunctionGenerator
+from stewbeet import Mem, write_versioned_function
 
 
-class GameModeVariant(McfunctionGenerator):
-    """ Abstract base for a single multiplayer game-mode (strategy plugged into the mode).
+class GameModeVariant(ABC):
+    """ Abstract base for a single multiplayer game-mode (a strategy plugged into the mode).
 
-    Subclasses set :attr:`key` (e.g. ``"tdm"``) and implement :meth:`generate`, writing
-    their functions via :meth:`sub`, which prepends the shared
-    ``multiplayer/gamemodes/<key>/`` path so each variant only names the leaf function.
+    Subclasses set :attr:`key` (e.g. ``"tdm"``) and implement :meth:`generate`, writing their
+    functions via :meth:`sub`, which prepends the shared path so each variant only names the leaf.
     """
 
     #: Short identifier used in the function path (e.g. "ffa", "tdm", "dom", "hp", "snd").
     key: str = ""
+
+    @property
+    def ns(self) -> str:
+        """ The project namespace (e.g. ``"mgs"``), read lazily — `Mem.ctx` only exists mid-pipeline. """
+        return Mem.ctx.project_id
+
+    @property
+    def version(self) -> str:
+        """ The project version string (e.g. ``"5.1.0"``). """
+        return Mem.ctx.project_version
 
     @property
     def prefix(self) -> str:
@@ -29,3 +34,11 @@ class GameModeVariant(McfunctionGenerator):
     def sub(self, name: str, body: str) -> None:
         """ Write one of this variant's functions at ``<prefix>/<name>``. """
         write_versioned_function(f"{self.prefix}/{name}", body)
+
+    @abstractmethod
+    def generate(self) -> None:
+        """ Emit all functions/tags for this variant. """
+        raise NotImplementedError
+
+    def __call__(self) -> None:
+        self.generate()
