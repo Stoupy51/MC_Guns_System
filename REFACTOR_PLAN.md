@@ -446,7 +446,7 @@ Each phase is one commit, independently shippable, verified with
 | # | phase | output Δ | Python Δ | risk |
 |---|---|---:|---:|---|
 | ~~**P1**~~ ✅ | Fix the 11 ruff + 2 pyright errors that exist today. No behaviour change. | **0 (byte-identical)** | +12 | none |
-| **P2** | §3b — fix `auto.headers` in **StewBeet** to scan `ctx.data.dialogs`. Re-baseline (comment-only diff). **Blocks P5.** | 0 files, many headers | +40 (StewBeet) | low |
+| ~~**P2**~~ ✅ | §3b — fix `auto.headers` in **StewBeet** to scan dialogs. Re-baselined (comment-only diff). **Unblocks P5.** | 0 files, 113 headers | +45 (StewBeet) | low |
 | **P3** | PY4/PY6 — merge `database/*.py` into `items.py`; delete `_template.py`, the dead `export_all_definitions_to_json` tail, `definitions_debug.json`, `generator.py`, `game_mode.py`. | 0 | −250, −8 files | low |
 | **P4** | PY2 — 97 `_zoom` models become `parent:` children. **First intentional output diff**; verified by parent-resolution compare + in-game look. | 0 files, −~14 MB | ~+20 | low-med |
 | **P5** | D1 — inline one/two-command wrappers, starting with the 26 `zombies/feedback/sound_*` and `shared/maps/call_*_script_at_base`. Re-run the caller census on post-P2 headers first. | **−~145** | ~0 | low-med |
@@ -531,4 +531,19 @@ the one most likely to drift, so it lands only after the harness has been exerci
   **Python LOC +12** — the E501 fixes cost more lines than the `main.py` de-duplication saved.
   Worth noting the metric can move the "wrong" way for a correct change; P1 was about
   correctness, not size.
-  ⚠ Not committed — commits are made on request only.
+- **2026-07-24** — **P2 done.** `analyze_dialogs()` added to StewBeet's `FunctionAnalyzer`
+  (StewBeet commit `9517e97b`), plus a doctest and an integration-test regression guard.
+  Result on this pack: **113 headers changed, 0 command bodies changed**, `@within ???`
+  **114 → 90** (24 false orphans resolved), 81 functions gained an `@executed` context.
+
+  Two things the first attempt got wrong, both caught by the harness:
+  1. Reading `dialog.data` reformatted **9 dialog JSON files**. beet's `.data` getter calls
+     `ensure_deserialized()`, which *replaces* the file's stored content with the parsed form, so
+     the dialog is re-encoded on output and loses its hand-written formatting. Fixed by scanning
+     `.text` instead — same encoder beet writes with, so analysis stays read-only.
+  2. Running the dialog pass *before* `analyze_function_calls()` downgraded the `@executed` of 5
+     functions that have both a dialog and an mcfunction caller (e.g. `multiplayer/auto_assign_team`
+     lost `as @a[scores={mgs.mp.in_game=1}]` in favour of the generic player context), because
+     `ContextAnalyzer` returns on the first recognised caller. Fixed by running dialogs last.
+
+  **Remaining 90 `@within ???` are now trustworthy** — that census is what P5 depends on.

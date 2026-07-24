@@ -1,7 +1,9 @@
 
 #> mgs:v5.1.0/multiplayer/map_select
 #
-# @within	???
+# @executed	as the player & at current position
+#
+# @within	dialog mgs:v5.1.0/multiplayer/setup
 #
 
 # Build the base map-select dialog (empty actions), then append one button per map

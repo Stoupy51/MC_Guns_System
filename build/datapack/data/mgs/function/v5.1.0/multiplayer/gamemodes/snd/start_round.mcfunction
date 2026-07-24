@@ -1,6 +1,8 @@
 
 #> mgs:v5.1.0/multiplayer/gamemodes/snd/start_round
 #
+# @executed	as the player & at current position
+#
 # @within	mgs:v5.1.0/multiplayer/gamemodes/snd/setup
 #			mgs:v5.1.0/multiplayer/gamemodes/snd/next_round 60t [ scheduled ]
 #

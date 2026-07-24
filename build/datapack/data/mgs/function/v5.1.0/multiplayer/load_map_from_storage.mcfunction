@@ -1,6 +1,8 @@
 
 #> mgs:v5.1.0/multiplayer/load_map_from_storage
 #
+# @executed	as the player & at current position
+#
 # @within	mgs:v5.1.0/multiplayer/start with storage mgs:multiplayer game
 #
 # @args		map_id (unknown)

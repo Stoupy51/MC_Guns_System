@@ -3,6 +3,7 @@
 #
 # @within	mgs:v5.1.0/missions/end_prep
 #			mgs:v5.1.0/missions/victory
+#			dialog mgs:v5.1.0/missions/setup
 #
 
 # Various cleanup and reset tasks to return to lobby state

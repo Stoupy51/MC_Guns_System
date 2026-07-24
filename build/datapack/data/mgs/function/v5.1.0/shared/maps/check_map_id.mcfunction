@@ -1,6 +1,8 @@
 
 #> mgs:v5.1.0/shared/maps/check_map_id
 #
+# @executed	as the player & at current position
+#
 # @within	mgs:v5.1.0/shared/maps/find_map with storage mgs:temp map_load.target
 #
 # @args		id (unknown)

@@ -1,6 +1,8 @@
 
 #> mgs:v5.1.0/zombies/powerups/activate/max_ammo
 #
+# @executed	as the player & at current position
+#
 # @within	mgs:v5.1.0/zombies/admin/powerup_max_ammo
 #			mgs:v5.1.0/zombies/powerups/dispatch_activate
 #

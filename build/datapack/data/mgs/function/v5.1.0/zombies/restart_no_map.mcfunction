@@ -1,6 +1,8 @@
 
 #> mgs:v5.1.0/zombies/restart_no_map
 #
+# @executed	as the player & at current position
+#
 # @within	mgs:v5.1.0/zombies/restart
 #
 

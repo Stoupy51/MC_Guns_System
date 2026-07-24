@@ -6,6 +6,7 @@
 # @within	mgs:v5.1.0/multiplayer/start [ as @a[scores={mgs.mp.in_game=1}] ]
 #			mgs:v5.1.0/multiplayer/join_game
 #			mgs:v5.1.0/multiplayer/gamemodes/tdm/setup [ as @a[scores={mgs.mp.in_game=1,mgs.mp.team=0}] ]
+#			dialog mgs:v5.1.0/multiplayer/setup
 #
 
 # In FFA there are no sides to balance — put everyone on the single FFA team instead of splitting

@@ -1,6 +1,8 @@
 
 #> mgs:v5.1.0/zombies/perks/pool/try_index/phd_flopper
 #
+# @executed	as the player & at current position
+#
 # @within	mgs:v5.1.0/zombies/perks/pool/choose_iter
 #
 

@@ -1,7 +1,10 @@
 
 #> mgs:v5.1.0/players/list_zombies
 #
+# @executed	as the player & at current position
+#
 # @within	string in mgs:v5.1.0/players/row_zombies
+#			dialog mgs:v5.1.0/zombies/setup
 #
 
 # Materialize the online players into a fresh list (mode is set first so append_self can color by status)

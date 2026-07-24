@@ -4,6 +4,7 @@
 # @within	mgs:v5.1.0/multiplayer/team_wins
 #			mgs:v5.1.0/multiplayer/game_draw
 #			mgs:v5.1.0/multiplayer/gamemodes/ffa/player_wins
+#			dialog mgs:v5.1.0/multiplayer/setup
 #
 
 # Various cleanup to go back to lobby

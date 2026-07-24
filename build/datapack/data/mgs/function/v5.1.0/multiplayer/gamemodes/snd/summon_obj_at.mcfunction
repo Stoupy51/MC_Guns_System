@@ -1,6 +1,8 @@
 
 #> mgs:v5.1.0/multiplayer/gamemodes/snd/summon_obj_at
 #
+# @executed	as the player & at current position
+#
 # @within	mgs:v5.1.0/multiplayer/gamemodes/snd/summon_obj with storage mgs:temp _snd_pos
 #
 # @args		x (unknown)

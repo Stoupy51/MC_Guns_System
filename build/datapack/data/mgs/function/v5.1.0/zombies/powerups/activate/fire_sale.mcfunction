@@ -1,6 +1,8 @@
 
 #> mgs:v5.1.0/zombies/powerups/activate/fire_sale
 #
+# @executed	as the player & at current position
+#
 # @within	mgs:v5.1.0/zombies/admin/powerup_fire_sale
 #			mgs:v5.1.0/zombies/powerups/dispatch_activate
 #

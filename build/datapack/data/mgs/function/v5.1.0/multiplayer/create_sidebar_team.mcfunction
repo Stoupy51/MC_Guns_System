@@ -1,6 +1,8 @@
 
 #> mgs:v5.1.0/multiplayer/create_sidebar_team
 #
+# @executed	as the player & at current position
+#
 # @within	mgs:v5.1.0/multiplayer/start {title:"Team Deathmatch"}
 #			mgs:v5.1.0/multiplayer/start {title:"Search & Destroy"}
 #

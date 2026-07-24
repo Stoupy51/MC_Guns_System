@@ -1,7 +1,10 @@
 
 #> mgs:v5.1.0/zombies/start
 #
+# @executed	as the player & at current position
+#
 # @within	mgs:v5.1.0/zombies/restart
+#			dialog mgs:v5.1.0/zombies/setup
 #
 
 # Prevent starting if already active or preparing
