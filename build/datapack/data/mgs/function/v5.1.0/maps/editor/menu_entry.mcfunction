@@ -1,6 +1,8 @@
 
 #> mgs:v5.1.0/maps/editor/menu_entry
 #
+# @executed	as the player & at current position
+#
 # @within	mgs:v5.1.0/maps/editor/list/multiplayer
 #			mgs:v5.1.0/maps/editor/list/zombies
 #			mgs:v5.1.0/maps/editor/list/missions

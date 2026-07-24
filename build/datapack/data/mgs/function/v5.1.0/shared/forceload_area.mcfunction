@@ -1,6 +1,8 @@
 
 #> mgs:v5.1.0/shared/forceload_area
 #
+# @executed	as the player & at current position
+#
 # @within	mgs:v5.1.0/zombies/start
 #			mgs:v5.1.0/missions/start
 #

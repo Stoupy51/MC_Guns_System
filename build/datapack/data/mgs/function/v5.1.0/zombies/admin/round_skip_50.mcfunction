@@ -1,7 +1,9 @@
 
 #> mgs:v5.1.0/zombies/admin/round_skip_50
 #
-# @within	???
+# @executed	as the player & at current position
+#
+# @within	dialog mgs:v5.1.0/zombies/admin
 #
 
 execute unless data storage mgs:zombies game{state:"active"} run return run tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.no_zombies_game_is_active","color":"red"}]

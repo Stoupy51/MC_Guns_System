@@ -1,6 +1,8 @@
 
 #> mgs:v5.1.0/zombies/perks/pool/try_index/juggernog
 #
+# @executed	as the player & at current position
+#
 # @within	mgs:v5.1.0/zombies/perks/pool/choose_iter
 #
 

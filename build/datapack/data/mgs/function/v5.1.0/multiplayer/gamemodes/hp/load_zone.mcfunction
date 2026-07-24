@@ -1,6 +1,8 @@
 
 #> mgs:v5.1.0/multiplayer/gamemodes/hp/load_zone
 #
+# @executed	as the player & at current position
+#
 # @within	mgs:v5.1.0/multiplayer/gamemodes/hp/setup
 #			mgs:v5.1.0/multiplayer/gamemodes/hp/rotate
 #

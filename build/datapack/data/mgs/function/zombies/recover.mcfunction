@@ -2,6 +2,7 @@
 #> mgs:zombies/recover
 #
 # @within	mgs:v5.1.0/zombies/watchdog_tick
+#			dialog mgs:v5.1.0/zombies/admin
 #
 
 execute unless data storage mgs:zombies game{state:"active"} run return run tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.no_zombies_game_is_active","color":"red"}]

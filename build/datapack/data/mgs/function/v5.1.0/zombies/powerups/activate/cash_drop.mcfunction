@@ -1,6 +1,8 @@
 
 #> mgs:v5.1.0/zombies/powerups/activate/cash_drop
 #
+# @executed	as the player & at current position
+#
 # @within	mgs:v5.1.0/zombies/admin/powerup_cash_drop
 #			mgs:v5.1.0/zombies/powerups/dispatch_activate
 #

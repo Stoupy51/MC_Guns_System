@@ -1,6 +1,8 @@
 
 #> mgs:v5.1.0/shared/fold_bounds
 #
+# @executed	as the player & at current position
+#
 # @within	mgs:v5.1.0/shared/load_bounds
 #			mgs:v5.1.0/shared/fold_bounds
 #

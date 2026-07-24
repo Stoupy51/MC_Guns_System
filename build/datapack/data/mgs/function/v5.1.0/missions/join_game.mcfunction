@@ -1,7 +1,10 @@
 
 #> mgs:v5.1.0/missions/join_game
 #
+# @executed	as the player & at current position
+#
 # @within	mgs:v5.1.0/players/mi_join
+#			dialog mgs:v5.1.0/missions/setup
 #
 
 # Require an active game

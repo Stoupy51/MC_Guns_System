@@ -1,6 +1,8 @@
 
 #> mgs:v5.1.0/shared/forceload_add
 #
+# @executed	as the player & at current position
+#
 # @within	mgs:v5.1.0/shared/forceload_area with storage mgs:temp _fl
 #
 # @args		x1 (unknown)

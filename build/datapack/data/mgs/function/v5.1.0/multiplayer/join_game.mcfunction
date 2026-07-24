@@ -3,6 +3,7 @@
 #
 # @within	mgs:v5.1.0/players/mp_to_red
 #			mgs:v5.1.0/players/mp_to_blue
+#			dialog mgs:v5.1.0/multiplayer/setup
 #
 
 # Require an active game

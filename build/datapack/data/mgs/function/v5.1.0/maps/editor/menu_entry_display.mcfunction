@@ -1,6 +1,8 @@
 
 #> mgs:v5.1.0/maps/editor/menu_entry_display
 #
+# @executed	as the player & at current position
+#
 # @within	mgs:v5.1.0/maps/editor/menu_entry with storage mgs:temp map_menu
 #
 # @args		name (unknown)

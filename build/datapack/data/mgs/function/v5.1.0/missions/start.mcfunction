@@ -1,7 +1,9 @@
 
 #> mgs:v5.1.0/missions/start
 #
-# @within	???
+# @executed	as the player & at current position
+#
+# @within	dialog mgs:v5.1.0/missions/setup
 #
 
 # Prevent starting if already active or preparing

@@ -1,7 +1,10 @@
 
 #> mgs:v5.1.0/players/zb_join
 #
+# @executed	as the player & at current position
+#
 # @within	string in mgs:v5.1.0/players/row_zombies
+#			dialog mgs:v5.1.0/zombies/setup
 #
 
 execute if score @s mgs.zb.in_game matches 0 if data storage mgs:zombies game{state:"active"} run function mgs:v5.1.0/zombies/join_game

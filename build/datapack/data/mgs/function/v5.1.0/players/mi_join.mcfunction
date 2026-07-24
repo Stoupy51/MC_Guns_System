@@ -1,7 +1,10 @@
 
 #> mgs:v5.1.0/players/mi_join
 #
+# @executed	as the player & at current position
+#
 # @within	string in mgs:v5.1.0/players/row_missions
+#			dialog mgs:v5.1.0/missions/setup
 #
 
 execute if score @s mgs.mi.in_game matches 0 if data storage mgs:missions game{state:"active"} run function mgs:v5.1.0/missions/join_game

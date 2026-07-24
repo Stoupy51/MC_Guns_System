@@ -1,6 +1,8 @@
 
 #> mgs:v5.1.0/zombies/respawn_tp
 #
+# @executed	as the player & at current position
+#
 # @within	mgs:v5.1.0/zombies/join_game
 #			mgs:v5.1.0/zombies/perks/trigger_coward
 #

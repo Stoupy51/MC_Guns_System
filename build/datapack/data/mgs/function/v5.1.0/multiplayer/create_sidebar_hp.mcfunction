@@ -1,6 +1,8 @@
 
 #> mgs:v5.1.0/multiplayer/create_sidebar_hp
 #
+# @executed	as the player & at current position
+#
 # @within	mgs:v5.1.0/multiplayer/start
 #
 

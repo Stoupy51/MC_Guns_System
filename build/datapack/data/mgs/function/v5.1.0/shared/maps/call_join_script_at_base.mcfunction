@@ -1,6 +1,8 @@
 
 #> mgs:v5.1.0/shared/maps/call_join_script_at_base
 #
+# @executed	as the player & at current position
+#
 # @within	mgs:v5.1.0/zombies/join_game
 #			mgs:v5.1.0/multiplayer/join_game
 #			mgs:v5.1.0/missions/join_game

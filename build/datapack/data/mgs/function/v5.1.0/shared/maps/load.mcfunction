@@ -1,6 +1,8 @@
 
 #> mgs:v5.1.0/shared/maps/load
 #
+# @executed	as the player & at current position
+#
 # @within	mgs:v5.1.0/multiplayer/load_map_from_storage {id:"$(map_id)",mode:"multiplayer",override:{}}
 #			mgs:v5.1.0/missions/load_map_from_storage {id:"$(map_id)",mode:"missions",override:{}}
 #			mgs:v5.1.0/zombies/load_map_from_storage {id:"$(map_id)",mode:"zombies",override:{}}

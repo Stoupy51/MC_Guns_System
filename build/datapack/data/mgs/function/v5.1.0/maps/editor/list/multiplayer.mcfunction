@@ -1,6 +1,8 @@
 
 #> mgs:v5.1.0/maps/editor/list/multiplayer
 #
+# @executed	as the player & at current position
+#
 # @within	mgs:v5.1.0/maps/editor/menu
 #			string in mgs:v5.1.0/maps/editor/list/multiplayer
 #			string in mgs:v5.1.0/maps/editor/list/zombies

@@ -1,7 +1,10 @@
 
 #> mgs:v5.1.0/zombies/join_game
 #
+# @executed	as the player & at current position
+#
 # @within	mgs:v5.1.0/players/zb_join
+#			dialog mgs:v5.1.0/zombies/setup
 #
 
 # Require an active game

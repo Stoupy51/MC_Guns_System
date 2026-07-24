@@ -1,7 +1,9 @@
 
 #> mgs:v5.1.0/maps/editor/menu
 #
-# @within	???
+# @executed	as the player & at current position
+#
+# @within	dialog mgs:v5.1.0/config
 #
 
 # Default: show multiplayer maps

@@ -1,7 +1,10 @@
 
 #> mgs:v5.1.0/zombies/restart
 #
+# @executed	as the player & at current position
+#
 # @within	string in mgs:v5.1.0/zombies/game_over
+#			dialog mgs:v5.1.0/zombies/setup
 #
 
 # Roster = players still in the game; if the auto-stop already cleared in_game, fall back to the

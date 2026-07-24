@@ -1,6 +1,8 @@
 
 #> mgs:v5.1.0/zombies/powerups/activate/insta_kill
 #
+# @executed	as the player & at current position
+#
 # @within	mgs:v5.1.0/zombies/admin/powerup_insta_kill
 #			mgs:v5.1.0/zombies/powerups/dispatch_activate
 #

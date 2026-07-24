@@ -1,6 +1,8 @@
 
 #> mgs:v5.1.0/multiplayer/summon_spawn_iter
 #
+# @executed	as the player & at current position
+#
 # @within	mgs:v5.1.0/multiplayer/summon_spawns
 #			mgs:v5.1.0/multiplayer/summon_spawn_iter
 #

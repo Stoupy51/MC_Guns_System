@@ -1,6 +1,8 @@
 
 #> mgs:v5.1.0/multiplayer/gamemodes/hp/summon_marker
 #
+# @executed	as the player & at current position
+#
 # @within	mgs:v5.1.0/multiplayer/gamemodes/hp/load_zone with storage mgs:temp _hp_pos
 #
 # @args		x (unknown)
