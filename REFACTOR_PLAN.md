@@ -447,7 +447,7 @@ Each phase is one commit, independently shippable, verified with
 |---|---|---:|---:|---|
 | ~~**P1**~~ ✅ | Fix the 11 ruff + 2 pyright errors that exist today. No behaviour change. | **0 (byte-identical)** | +12 | none |
 | ~~**P2**~~ ✅ | §3b — fix `auto.headers` in **StewBeet** to scan dialogs. Re-baselined (comment-only diff). **Unblocks P5.** | 0 files, 113 headers | +45 (StewBeet) | low |
-| **P3** | PY4/PY6 — merge `database/*.py` into `items.py`; delete `_template.py`, the dead `export_all_definitions_to_json` tail, `definitions_debug.json`, `generator.py`, `game_mode.py`. | 0 | −250, −8 files | low |
+| ~~**P3**~~ ✅ | PY3/PY6 — merge `database/*.py` into `items.py`; delete `_template.py`, the dead `export_all_definitions_to_json` tail, `definitions_debug.json`, `game_mode.py`. | **0 (byte-identical)** | −181, −7 files | low |
 | **P4** | PY2 — 97 `_zoom` models become `parent:` children. **First intentional output diff**; verified by parent-resolution compare + in-game look. | 0 files, −~14 MB | ~+20 | low-med |
 | **P5** | D1 — inline one/two-command wrappers, starting with the 26 `zombies/feedback/sound_*` and `shared/maps/call_*_script_at_base`. Re-run the caller census on post-P2 headers first. | **−~145** | ~0 | low-med |
 | **P6** | D2 — collapse the 15 per-entity function families into macros / storage-driven dispatch. | **−~160** | −250 | low |
@@ -547,3 +547,28 @@ the one most likely to drift, so it lands only after the harness has been exerci
      `ContextAnalyzer` returns on the first recognised caller. Fixed by running dialogs last.
 
   **Remaining 90 `@within ???` are now trustworthy** — that census is what P5 depends on.
+- **2026-07-24** — **P3 done.** Output byte-identical; **99 → 92 Python files, −181 LOC**.
+  - `game_mode.py` folded into `generator.py` (both are generator bases, 61 lines total). The
+    `load`/`tick` wrapper methods are gone — the 6 call sites now call `write_load_file` /
+    `write_tick_file` directly, which also removed the last 2 `# type: ignore[arg-type]`.
+  - `ammo/casing/grenades/others/rpg7/weapons.py` merged into `database/items.py` (293 lines).
+    `_template.py`, the unreachable `export_all_definitions_to_json` tail, and the 1.4 MB tracked
+    `definitions_debug.json` deleted. `camo.py` kept — it is an image pipeline, not a table.
+  - Real de-duplication found on the way: `ammo.py` re-implemented `load_model()` inline, and the
+    14 perk machines were 14 hand-written `Item(...)` lines → one `PERK_MACHINES` table.
+  - ⚠ **Registration order is load-bearing** and nearly broke this: my first draft split the perk
+    machines into a "single dye" loop and a "two-tone" loop, which reorders `Mem.definitions` and
+    would have moved every downstream artefact (loot tables, item models, lang keys). Merged back
+    into one ordered table. `mystery_box.py` also imported `WEAPON_STATS` from the deleted
+    `database.weapons` — repointed to `database.items`.
+  - `MultiplayerMode` / `ZombiesMode` / `MissionsMode` converted back to plain `generate_*()`
+    functions (requested at review after I initially proposed dropping this). `GameMode` and
+    `generator.py` deleted; `McfunctionGenerator` folded into `GameModeVariant`, which is the only
+    remaining user; the two spawn-marker macros moved to `core/spawning.py` as free functions.
+  - The ~2 400-line dedent was done with a token-aware one-shot script, not a regex. **PEP 701 is
+    the trap:** an f-string replacement field can contain lines of Python code (see the
+    `late_join_flow_lines(...)` call inside `zombies/join_game`), and the same file mixes those with
+    mcfunction body lines that must not move. The script protects every `FSTRING_START..FSTRING_END`
+    span wholesale — leaving replacement-field code slightly over-indented is harmless, changing an
+    emitted byte is not. Output byte-identical, so the protection held.
+  - Final P3: **99 → 91 Python files, −240 LOC.**

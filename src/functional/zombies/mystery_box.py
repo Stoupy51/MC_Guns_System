@@ -9,7 +9,7 @@
 from stewbeet import Mem, write_load_file, write_versioned_function
 
 from ...config.stats import WEIGHT
-from ...database.weapons import WEAPON_STATS
+from ...database.items import WEAPON_STATS
 from ..helpers import MGS_TAG
 from .common import build_weapon_magazine_data
 
