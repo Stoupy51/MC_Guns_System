@@ -302,7 +302,7 @@ $item replace entity @s hotbar.8 with minecraft:paper[custom_data={{{ns}:{{zb_in
 	# Trade-off: unowned perks leave a gap rather than the row staying packed.
 	perk_display_lines: list[str] = []
 	for i, (pid, pdata) in enumerate(PERK_DEFINITIONS.items()):
-		slot: int = 26 - i
+		perk_slot: int = 26 - i
 		lore_parts: list[str] = [
 			f'{{"text":"{line}","color":"gray","italic":false}}'
 			for line in PERK_DESCRIPTIONS.get(pid, [])
@@ -317,12 +317,12 @@ $item replace entity @s hotbar.8 with minecraft:paper[custom_data={{{ns}:{{zb_in
 		)
 		# Owned but not yet shown -> place it once. Not owned but a stale display is here -> clear it.
 		perk_display_lines.append(
-			f"execute if score @s {ns}.zb.perk.{pid} matches 1 unless items entity @s inventory.{slot} "
-			f"*[custom_data~{{{ns}:{{zb_perk_display:true}}}}] run item replace entity @s inventory.{slot} with {perk_item}"
+			f"execute if score @s {ns}.zb.perk.{pid} matches 1 unless items entity @s inventory.{perk_slot} "
+			f"*[custom_data~{{{ns}:{{zb_perk_display:true}}}}] run item replace entity @s inventory.{perk_slot} with {perk_item}"
 		)
 		perk_display_lines.append(
-			f"execute unless score @s {ns}.zb.perk.{pid} matches 1 if items entity @s inventory.{slot} "
-			f"*[custom_data~{{{ns}:{{zb_perk_display:true}}}}] run item replace entity @s inventory.{slot} with air"
+			f"execute unless score @s {ns}.zb.perk.{pid} matches 1 if items entity @s inventory.{perk_slot} "
+			f"*[custom_data~{{{ns}:{{zb_perk_display:true}}}}] run item replace entity @s inventory.{perk_slot} with air"
 		)
 	perk_display_sync: str = "\n".join(perk_display_lines)
 	# Tagged into the on_new_perk signal (@s = buying player) so a purchase shows up instantly.

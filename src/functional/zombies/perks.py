@@ -869,6 +869,16 @@ function {ns}:v{version}/zombies/traps/apply_trap_damage with storage {ns}:temp 
 			ts_restore_perks_lines.append(f"execute if score @s {ns}.zb.tsp.{pid} matches 1 run function {ns}:v{version}/zombies/perks/reapply/{pid}")
 	ts_restore_perks: str = "\n".join(ts_restore_perks_lines)
 
+	# The tombstone marker: a skeleton skull laid flat on the ground, raised and enlarged slightly so
+	# it reads from across the map. Built in pieces purely to keep the summon line readable.
+	ts_tags: str = f'Tags:["{ns}.tombstone","{ns}.tombstone_new","{ns}.gm_entity"]'
+	ts_item: str = 'item:{id:"minecraft:skeleton_skull",count:1},item_display:"ground"'
+	ts_transform: str = (
+		"transformation:{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],"
+		"translation:[0f,0.3f,0f],scale:[1.2f,1.2f,1.2f]}"
+	)
+	ts_marker: str = f'{{{ts_tags},Glowing:true,billboard:"vertical",teleport_duration:1,{ts_item},{ts_transform}}}'
+
 	## Called from revive/on_down BEFORE lose_all (@s = player, death pos in temp rv_x/rv_y/rv_z).
 	## Skips solo games. Snapshots perks and spawns the (pending) tombstone marker.
 	write_versioned_function("zombies/perks/tombstone_on_down", f"""
@@ -880,7 +890,7 @@ execute if score #ts_ingame {ns}.data matches ..1 run return 0
 {ts_snapshot}
 
 # Spawn the tombstone marker at the player, tag it with the owner's downed_id, then move to death spot
-summon minecraft:item_display ~ ~ ~ {{Tags:["{ns}.tombstone","{ns}.tombstone_new","{ns}.gm_entity"],Glowing:true,billboard:"vertical",teleport_duration:1,item:{{id:"minecraft:skeleton_skull",count:1}},item_display:"ground",transformation:{{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],translation:[0f,0.3f,0f],scale:[1.2f,1.2f,1.2f]}}}}
+summon minecraft:item_display ~ ~ ~ {ts_marker}
 scoreboard players operation @n[tag={ns}.tombstone_new] {ns}.zb.downed_id = @s {ns}.zb.downed_id
 scoreboard players set @n[tag={ns}.tombstone_new] {ns}.zb.ts.state 0
 scoreboard players set @n[tag={ns}.tombstone_new] {ns}.zb.ts.timer 0
@@ -926,6 +936,7 @@ title @s subtitle [{{"text":"Return to your 🪦 within 60s to recover your gear
 
 	## Per-tick for an ACTIVE tombstone marker (@s = marker, at it). Counts down, then checks whether
 	## the owning player is standing on it to recover. Hooked into game_tick.
+	ts_nearby_alive: str = f"@a[distance=..2,gamemode=!spectator,scores={{{ns}.zb.in_game=1,{ns}.zb.downed=0}}]"
 	write_versioned_function("zombies/perks/tombstone_marker_tick", f"""
 particle minecraft:soul ~ ~0.5 ~ 0.25 0.4 0.25 0.01 3 force @a[distance=..48]
 particle minecraft:soul_fire_flame ~ ~0.6 ~ 0.15 0.2 0.15 0.005 1 force @a[distance=..48]
@@ -936,7 +947,7 @@ execute if score @s {ns}.zb.ts.timer matches ..0 run return run function {ns}:v{
 
 # Owner standing within 2 blocks (alive, in-game, not downed) → recover
 scoreboard players operation #ts_mid {ns}.data = @s {ns}.zb.downed_id
-execute as @a[distance=..2,gamemode=!spectator,scores={{{ns}.zb.in_game=1,{ns}.zb.downed=0}}] if score @s {ns}.zb.downed_id = #ts_mid {ns}.data run function {ns}:v{version}/zombies/perks/tombstone_collect
+execute as {ts_nearby_alive} if score @s {ns}.zb.downed_id = #ts_mid {ns}.data run function {ns}:v{version}/zombies/perks/tombstone_collect
 """)
 
 	## Marker expired (@s = marker): drop the stored inventory and despawn.

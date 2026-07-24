@@ -30,9 +30,9 @@ def generate_zombies_abilities() -> None:
 		"exit_action": {"label": "Skip"},
 		"actions": [
 			{"label": ["", "💰 ", {"text": "x1.2 Points", "color": "gold"}], "tooltip": {"text": "Earn 20% more points from kills (permanent)"},
-			 "action": {"type": "run_command", "command": f"/trigger {ns}.player.config set {TRIG_ZB_PASSIVE_1}"}},
+				"action": {"type": "run_command", "command": f"/trigger {ns}.player.config set {TRIG_ZB_PASSIVE_1}"}},
 			{"label": ["", "⏱ ", {"text": "x1.5 Powerups", "color": "aqua"}], "tooltip": {"text": "All powerup durations last 50% longer"},
-			 "action": {"type": "run_command", "command": f"/trigger {ns}.player.config set {TRIG_ZB_PASSIVE_2}"}},
+				"action": {"type": "run_command", "command": f"/trigger {ns}.player.config set {TRIG_ZB_PASSIVE_2}"}},
 		],
 	}, wrapper=False)
 
@@ -52,9 +52,9 @@ dialog show @s {dialog_ref('zombies/passive_ability')}
 		"exit_action": {"label": "Skip"},
 		"actions": [
 			{"label": ["", "🏃 ", {"text": "Coward", "color": "yellow"}], "tooltip": {"text": "TP to spawn when under 50% HP (1 round cooldown)"},
-			 "action": {"type": "run_command", "command": f"/trigger {ns}.player.config set {TRIG_ZB_ABILITY_1}"}},
+				"action": {"type": "run_command", "command": f"/trigger {ns}.player.config set {TRIG_ZB_ABILITY_1}"}},
 			{"label": ["", "🛡 ", {"text": "Guardian", "color": "green"}], "tooltip": {"text": "Summon an Iron Golem ally at round start (1 round cooldown)"},
-			 "action": {"type": "run_command", "command": f"/trigger {ns}.player.config set {TRIG_ZB_ABILITY_2}"}},
+				"action": {"type": "run_command", "command": f"/trigger {ns}.player.config set {TRIG_ZB_ABILITY_2}"}},
 		],
 	}, wrapper=False)
 
