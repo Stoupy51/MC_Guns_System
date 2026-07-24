@@ -11,7 +11,7 @@ execute unless data storage mgs:zombies game{state:"active"} run return fail
 
 # Check power requirement
 execute store result score #trap_power mgs.data run scoreboard players get @n[tag=bs.interaction.target] mgs.zb.trap.power
-execute if score #trap_power mgs.data matches 1 unless score #zb_power mgs.data matches 1 run return run function mgs:v5.1.0/zombies/traps/deny_requires_power
+execute if score #trap_power mgs.data matches 1 unless score #zb_power mgs.data matches 1 run return run function mgs:v5.1.0/zombies/deny/message {msg:'{"translate":"mgs.this_trap_requires_power","color":"red"}'}
 
 # Get trap ID
 execute store result score #trap_id mgs.data run scoreboard players get @n[tag=bs.interaction.target] mgs.zb.trap.id
@@ -19,11 +19,11 @@ execute store result score #trap_id mgs.data run scoreboard players get @n[tag=b
 # Check if trap is ready (not active, not on cooldown)
 scoreboard players set #trap_ready mgs.data 0
 execute as @e[type=minecraft:marker,tag=mgs.trap_center] if score @s mgs.zb.trap.id = #trap_id mgs.data if score @s mgs.zb.trap.timer matches 0 if score @s mgs.zb.trap.cd matches ..0 run scoreboard players set #trap_ready mgs.data 1
-execute unless score #trap_ready mgs.data matches 1 run return run function mgs:v5.1.0/zombies/traps/deny_not_ready
+execute unless score #trap_ready mgs.data matches 1 run return run function mgs:v5.1.0/zombies/deny/message {msg:'{"translate":"mgs.trap_is_on_cooldown_and_not_ready_yet","color":"yellow"}'}
 
 # Check price
 execute store result score #trap_price mgs.data run scoreboard players get @n[tag=bs.interaction.target] mgs.zb.trap.price
-execute unless score @s mgs.zb.points >= #trap_price mgs.data run return run function mgs:v5.1.0/zombies/traps/deny_not_enough_points
+execute unless score @s mgs.zb.points >= #trap_price mgs.data run return run function mgs:v5.1.0/zombies/deny/not_enough_points {score:"#trap_price",obj:"mgs.data"}
 
 # Deduct points
 scoreboard players operation @s mgs.zb.points -= #trap_price mgs.data

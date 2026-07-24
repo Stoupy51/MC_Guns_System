@@ -3,13 +3,15 @@
 
 from stewbeet import Mem, write_versioned_function
 
-from ..core.feedback import zb_sound
 from ..helpers import MGS_TAG
+from .common import deny_cmd
 
 
 def generate_zombies_maps() -> None:
 	ns: str = Mem.ctx.project_id
 	version: str = Mem.ctx.project_version
+	# @s = interaction entity; reach the player via 'on target'
+	deny_recharging: str = deny_cmd(ns, version, '{"text":"The teleporter is recharging...","color":"yellow"}')
 
 	# ── Kino der Toten ──────────────────────────────────────────────────────────
 	# Map registration: placeholder data (base_coordinates and spawn arrays TBD)
@@ -121,7 +123,7 @@ execute if score #kino_tp_state {ns}.data matches 0 run return run function {ns}
 # State 2 (armed): lobby was linked, execute the actual teleport
 execute if score #kino_tp_state {ns}.data matches 2 at @s run return run function {ns}:v{version}/maps/zombies/kino_der_toten/teleporter/activate
 # Any other state (linking/active/returning/cooldown): deny
-function {ns}:v{version}/maps/zombies/kino_der_toten/teleporter/deny_recharging
+execute on target at @s run {deny_recharging}
 """)
 
 	# ── teleporter/start_link ───────────────────────────────────────────────────
@@ -186,12 +188,6 @@ execute as @a[tag={ns}.kino.in_tp] at @s run playsound minecraft:entity.enderman
 # State 4: players in projection room, 600t (30s) countdown
 scoreboard players set #kino_tp_state {ns}.data 4
 scoreboard players set #kino_tp_timer {ns}.data 600
-""")
-
-	write_versioned_function("maps/zombies/kino_der_toten/teleporter/deny_recharging", f"""
-# @s = interaction entity; reach the player via 'on target'
-execute on target run tellraw @s [{MGS_TAG},{{"text":"The teleporter is recharging...","color":"yellow"}}]
-execute on target at @s run {zb_sound('deny')}
 """)
 
 	# ── teleporter/tick ───────────────────────────────────────────────────────

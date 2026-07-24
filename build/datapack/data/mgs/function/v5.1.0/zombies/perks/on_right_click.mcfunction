@@ -12,8 +12,8 @@ execute unless data storage mgs:zombies game{state:"active"} run return fail
 # Check power requirement. Quick Revive is exempt while solo (Black Ops rule).
 execute store result score #pk_power mgs.data run scoreboard players get @n[tag=bs.interaction.target] mgs.zb.perk.power
 execute store result score #qr_solo mgs.data if entity @a[scores={mgs.zb.in_game=1},gamemode=!spectator]
-execute if score #pk_power mgs.data matches 1 unless score #zb_power mgs.data matches 1 unless entity @n[tag=bs.interaction.target,tag=mgs.pk_quick_revive] run return run function mgs:v5.1.0/zombies/perks/deny_requires_power
-execute if score #pk_power mgs.data matches 1 unless score #zb_power mgs.data matches 1 if entity @n[tag=bs.interaction.target,tag=mgs.pk_quick_revive] if score #qr_solo mgs.data matches 2.. run return run function mgs:v5.1.0/zombies/perks/deny_requires_power
+execute if score #pk_power mgs.data matches 1 unless score #zb_power mgs.data matches 1 unless entity @n[tag=bs.interaction.target,tag=mgs.pk_quick_revive] run return run function mgs:v5.1.0/zombies/deny/message {msg:'{"translate":"mgs.this_perk_machine_requires_power","color":"red"}'}
+execute if score #pk_power mgs.data matches 1 unless score #zb_power mgs.data matches 1 if entity @n[tag=bs.interaction.target,tag=mgs.pk_quick_revive] if score #qr_solo mgs.data matches 2.. run return run function mgs:v5.1.0/zombies/deny/message {msg:'{"translate":"mgs.this_perk_machine_requires_power","color":"red"}'}
 
 # Look up perk_id
 execute store result storage mgs:temp _pk_buy.id int 1 run scoreboard players get @n[tag=bs.interaction.target] mgs.zb.perk.id
@@ -21,11 +21,11 @@ function mgs:v5.1.0/zombies/perks/lookup_perk with storage mgs:temp _pk_buy
 
 # Check if player already has this perk
 function mgs:v5.1.0/zombies/perks/check_owned with storage mgs:temp _pk_data
-execute if score #pk_owned mgs.data matches 1 run return run function mgs:v5.1.0/zombies/perks/deny_already_owned
+execute if score #pk_owned mgs.data matches 1 run return run function mgs:v5.1.0/zombies/deny/message {msg:'{"translate":"mgs.you_already_own_this_perk","color":"yellow"}'}
 
 # Get price and check points (chip-in machines charge one chunk per click)
 function mgs:v5.1.0/zombies/perks/read_price with storage mgs:temp _pk_data
-execute unless score @s mgs.zb.points >= #pk_price mgs.data run return run function mgs:v5.1.0/zombies/perks/deny_not_enough_points
+execute unless score @s mgs.zb.points >= #pk_price mgs.data run return run function mgs:v5.1.0/zombies/deny/not_enough_points {score:"#pk_price",obj:"mgs.data"}
 
 # Deduct points
 scoreboard players operation @s mgs.zb.points -= #pk_price mgs.data

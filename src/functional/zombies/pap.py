@@ -16,7 +16,7 @@ from ...config.stats import (
 from ...database.camo import MATERIALS
 from ..core.feedback import zb_sound
 from ..helpers import MGS_TAG
-from .common import deny_not_enough_points_body, deny_requires_power_body, game_active_guard_cmd
+from .common import deny_cmd, deny_not_enough_points_cmd, game_active_guard_cmd
 
 
 def generate_pap() -> None:
@@ -550,35 +550,15 @@ function {ns}:v{version}/zombies/pap/set_item_model_from_scope with storage {ns}
 $function {ns}:v{version}/zombies/bonus/reload_weapon_slot {{slot:"$(slot)"}}
 """)
 
-	write_versioned_function("zombies/pap/deny_requires_power", f"""
-{deny_requires_power_body(ns, version, "Pack-a-Punch machine")}
-""")
-
-	write_versioned_function("zombies/pap/deny_not_enough_points", f"""
-{deny_not_enough_points_body(ns, version, "#pap_price")}
-""")
-
-	write_versioned_function("zombies/pap/deny_hold_weapon_slot", f"""
-tellraw @s [{MGS_TAG},{{"text":"Hold weapon slot 1, 2, or 3 to use Pack-a-Punch.","color":"red"}}]
-{zb_sound('deny')}
-""")
-
-	write_versioned_function("zombies/pap/deny_not_gun", f"""
-tellraw @s [{MGS_TAG},{{"text":"Selected slot does not contain a weapon.","color":"red"}}]
-{zb_sound('deny')}
-""")
-
-	write_versioned_function("zombies/pap/deny_not_supported", f"""
-tellraw @s [{MGS_TAG},{{"text":"This weapon cannot be Pack-a-Punched.","color":"red"}}]
-{zb_sound('deny')}
-""")
+	deny_requires_power: str = deny_cmd(ns, version, '{"text":"This Pack-a-Punch machine requires power.","color":"red"}')
+	deny_hold_weapon_slot: str = deny_cmd(ns, version, '{"text":"Hold weapon slot 1, 2, or 3 to use Pack-a-Punch.","color":"red"}')
+	deny_not_gun: str = deny_cmd(ns, version, '{"text":"Selected slot does not contain a weapon.","color":"red"}')
+	deny_not_supported: str = deny_cmd(ns, version, '{"text":"This weapon cannot be Pack-a-Punched.","color":"red"}')
+	deny_not_enough_points: str = deny_not_enough_points_cmd(ns, version, "#pap_price")
+	deny_processing: str = deny_cmd(ns, version, '{"text":"Already processing a weapon...","color":"yellow"}')
+	deny_not_your_weapon: str = deny_cmd(ns, version, '{"text":"This upgraded weapon belongs to another player.","color":"red"}')
 
 	REPAP_SCOPE_PRICE: int = 1000
-
-	write_versioned_function("zombies/pap/deny_max_level", f"""
-tellraw @s [{MGS_TAG},{{"text":"This weapon is already at max Pack-a-Punch level.","color":"yellow"}}]
-{zb_sound('deny')}
-""")
 
 	## Re-PAP at max level: scope/camo only randomization for a reduced price
 	write_versioned_function("zombies/pap/repap_scope_only", f"""
@@ -640,21 +620,21 @@ tellraw @s [{MGS_TAG},{{"text":"You don't have enough points ({REPAP_SCOPE_PRICE
 # If weapon is in retreat/collectible phase (1..205): allow collection
 execute if score @n[tag=bs.interaction.target] {ns}.pap_anim matches 1..205 run return run function {ns}:v{version}/zombies/pap/anim/collect
 # If machine is going-in, inside, or coming-out (not yet collectible), deny
-execute if score @n[tag=bs.interaction.target] {ns}.pap_anim matches 206.. run return run function {ns}:v{version}/zombies/pap/anim/deny_processing
+execute if score @n[tag=bs.interaction.target] {ns}.pap_anim matches 206.. run return run {deny_processing}
 
 # Guard: power requirement
 execute store result score #pap_power {ns}.data run scoreboard players get @n[tag=bs.interaction.target] {ns}.zb.pap.power
-execute if score #pap_power {ns}.data matches 1 unless score #zb_power {ns}.data matches 1 run return run function {ns}:v{version}/zombies/pap/deny_requires_power
+execute if score #pap_power {ns}.data matches 1 unless score #zb_power {ns}.data matches 1 run return run {deny_requires_power}
 
 # Guard: player has enough points
 execute store result score #pap_price {ns}.data run scoreboard players get @n[tag=bs.interaction.target] {ns}.zb.pap.price
 # Bonfire Sale: Pack-a-Punch costs 1000 while active
 execute if score #zb_bonfire_sale_timer {ns}.data matches 1.. run scoreboard players set #pap_price {ns}.data 1000
-execute unless score @s {ns}.zb.points >= #pap_price {ns}.data run return run function {ns}:v{version}/zombies/pap/deny_not_enough_points
+execute unless score @s {ns}.zb.points >= #pap_price {ns}.data run return run {deny_not_enough_points}
 
 # Determine selected zombies weapon slot (must be hotbar.1/2/3)
 execute store result score #pap_sel {ns}.data run data get entity @s SelectedItemSlot
-execute unless score #pap_sel {ns}.data matches 1..3 run return run function {ns}:v{version}/zombies/pap/deny_hold_weapon_slot
+execute unless score #pap_sel {ns}.data matches 1..3 run return run {deny_hold_weapon_slot}
 
 data modify storage {ns}:temp _pap.slot set value "hotbar.1"
 execute if score #pap_sel {ns}.data matches 2 run data modify storage {ns}:temp _pap.slot set value "hotbar.2"
@@ -665,13 +645,13 @@ scoreboard players set #pap_is_gun {ns}.data 0
 execute if score #pap_sel {ns}.data matches 1 if items entity @s hotbar.1 *[custom_data~{gun_cd}] run scoreboard players set #pap_is_gun {ns}.data 1
 execute if score #pap_sel {ns}.data matches 2 if items entity @s hotbar.2 *[custom_data~{gun_cd}] run scoreboard players set #pap_is_gun {ns}.data 1
 execute if score #pap_sel {ns}.data matches 3 if items entity @s hotbar.3 *[custom_data~{gun_cd}] run scoreboard players set #pap_is_gun {ns}.data 1
-execute unless score #pap_is_gun {ns}.data matches 1 run return run function {ns}:v{version}/zombies/pap/deny_not_gun
+execute unless score #pap_is_gun {ns}.data matches 1 run return run {deny_not_gun}
 
 # Extract selected item data
 function {ns}:v{version}/zombies/pap/extract_selected with storage {ns}:temp _pap
 
 # Guard: selected weapon must provide PAP data in its own stats
-execute unless data storage {ns}:temp _pap_extract.stats.{PAP_STATS} run return run function {ns}:v{version}/zombies/pap/deny_not_supported
+execute unless data storage {ns}:temp _pap_extract.stats.{PAP_STATS} run return run {deny_not_supported}
 
 # Compute current and next PAP levels
 scoreboard players set #pap_level {ns}.data 0
@@ -1041,14 +1021,10 @@ scoreboard players set #pap_owns {ns}.data 0
 execute if score @s {ns}.zb.pap_mid = #pap_mid {ns}.data run scoreboard players set #pap_owns {ns}.data 1
 
 execute if score #pap_owns {ns}.data matches 1 as @n[tag=bs.interaction.target] at @s run function {ns}:v{version}/zombies/pap/anim/collect_at_machine
-execute if score #pap_owns {ns}.data matches 0 run function {ns}:v{version}/zombies/pap/anim/deny_not_your_weapon
+execute if score #pap_owns {ns}.data matches 0 run {deny_not_your_weapon}
 tag @s remove {ns}.pap_owner
 """)
 
-	write_versioned_function("zombies/pap/anim/deny_not_your_weapon", f"""
-tellraw @s [{MGS_TAG},{{"text":"This upgraded weapon belongs to another player.","color":"red"}}]
-{zb_sound('deny')}
-""")
 
 	# Resolve machine ID and call lookup (runs as machine).
 	write_versioned_function("zombies/pap/anim/collect_at_machine", f"""
@@ -1089,12 +1065,6 @@ $data remove storage {ns}:zombies pap_anim_slot."$(id)"
 execute as @p[tag={ns}.pap_owner] run {zb_sound('success')}
 """)
 
-	# Deny message when machine is busy.
-	write_versioned_function("zombies/pap/anim/deny_processing", f"""
-tellraw @s [{MGS_TAG},{{"text":"Already processing a weapon...","color":"yellow"}}]
-{zb_sound('deny')}
-""")
-
 	# Timeslip: run two EXTRA anim steps this tick for a Timeslip-owned machine, so the UPGRADE
 	# advances 3 ticks per real tick. Stepping (rather than decrementing by 3) preserves every
 	# exact-tick phase trigger — each intermediate timer value is still processed.
@@ -1128,14 +1098,14 @@ execute if data storage {ns}:zombies game.map.pap_machines[0] run function {ns}:
 	write_versioned_function("zombies/pap/upgrade_core", f"""
 # Determine selected weapon slot (must be hotbar 1, 2, or 3)
 execute store result score #pap_sel {ns}.data run data get entity @s SelectedItemSlot
-execute unless score #pap_sel {ns}.data matches 1..3 run return run function {ns}:v{version}/zombies/pap/deny_hold_weapon_slot
+execute unless score #pap_sel {ns}.data matches 1..3 run return run {deny_hold_weapon_slot}
 
 # Guard: selected slot must contain a gun
 scoreboard players set #pap_is_gun {ns}.data 0
 execute if score #pap_sel {ns}.data matches 1 if items entity @s hotbar.1 *[custom_data~{gun_cd}] run scoreboard players set #pap_is_gun {ns}.data 1
 execute if score #pap_sel {ns}.data matches 2 if items entity @s hotbar.2 *[custom_data~{gun_cd}] run scoreboard players set #pap_is_gun {ns}.data 1
 execute if score #pap_sel {ns}.data matches 3 if items entity @s hotbar.3 *[custom_data~{gun_cd}] run scoreboard players set #pap_is_gun {ns}.data 1
-execute unless score #pap_is_gun {ns}.data matches 1 run return run function {ns}:v{version}/zombies/pap/deny_not_gun
+execute unless score #pap_is_gun {ns}.data matches 1 run return run {deny_not_gun}
 
 # Resolve slot string
 data modify storage {ns}:temp _pap.slot set value "hotbar.1"
@@ -1146,7 +1116,7 @@ execute if score #pap_sel {ns}.data matches 3 run data modify storage {ns}:temp 
 function {ns}:v{version}/zombies/pap/extract_selected with storage {ns}:temp _pap
 
 # Guard: weapon must support PAP
-execute unless data storage {ns}:temp _pap_extract.stats.{PAP_STATS} run return run function {ns}:v{version}/zombies/pap/deny_not_supported
+execute unless data storage {ns}:temp _pap_extract.stats.{PAP_STATS} run return run {deny_not_supported}
 
 # Compute current and next PAP levels
 scoreboard players set #pap_level {ns}.data 0

@@ -13,7 +13,7 @@ execute unless data storage mgs:zombies game{state:"active"} run return fail
 function mgs:v5.1.0/zombies/doors/read_price
 
 # Check player has enough points
-execute unless score @s mgs.zb.points >= #door_price mgs.data run return run function mgs:v5.1.0/zombies/doors/deny_not_enough_points
+execute unless score @s mgs.zb.points >= #door_price mgs.data run return run function mgs:v5.1.0/zombies/deny/not_enough_points {score:"#door_price",obj:"mgs.data"}
 
 # Deduct points
 scoreboard players operation @s mgs.zb.points -= #door_price mgs.data

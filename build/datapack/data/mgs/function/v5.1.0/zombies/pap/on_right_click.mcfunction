@@ -12,21 +12,21 @@ execute unless data storage mgs:zombies game{state:"active"} run return fail
 # If weapon is in retreat/collectible phase (1..205): allow collection
 execute if score @n[tag=bs.interaction.target] mgs.pap_anim matches 1..205 run return run function mgs:v5.1.0/zombies/pap/anim/collect
 # If machine is going-in, inside, or coming-out (not yet collectible), deny
-execute if score @n[tag=bs.interaction.target] mgs.pap_anim matches 206.. run return run function mgs:v5.1.0/zombies/pap/anim/deny_processing
+execute if score @n[tag=bs.interaction.target] mgs.pap_anim matches 206.. run return run function mgs:v5.1.0/zombies/deny/message {msg:'{"translate":"mgs.already_processing_a_weapon","color":"yellow"}'}
 
 # Guard: power requirement
 execute store result score #pap_power mgs.data run scoreboard players get @n[tag=bs.interaction.target] mgs.zb.pap.power
-execute if score #pap_power mgs.data matches 1 unless score #zb_power mgs.data matches 1 run return run function mgs:v5.1.0/zombies/pap/deny_requires_power
+execute if score #pap_power mgs.data matches 1 unless score #zb_power mgs.data matches 1 run return run function mgs:v5.1.0/zombies/deny/message {msg:'{"translate":"mgs.this_pack_a_punch_machine_requires_power","color":"red"}'}
 
 # Guard: player has enough points
 execute store result score #pap_price mgs.data run scoreboard players get @n[tag=bs.interaction.target] mgs.zb.pap.price
 # Bonfire Sale: Pack-a-Punch costs 1000 while active
 execute if score #zb_bonfire_sale_timer mgs.data matches 1.. run scoreboard players set #pap_price mgs.data 1000
-execute unless score @s mgs.zb.points >= #pap_price mgs.data run return run function mgs:v5.1.0/zombies/pap/deny_not_enough_points
+execute unless score @s mgs.zb.points >= #pap_price mgs.data run return run function mgs:v5.1.0/zombies/deny/not_enough_points {score:"#pap_price",obj:"mgs.data"}
 
 # Determine selected zombies weapon slot (must be hotbar.1/2/3)
 execute store result score #pap_sel mgs.data run data get entity @s SelectedItemSlot
-execute unless score #pap_sel mgs.data matches 1..3 run return run function mgs:v5.1.0/zombies/pap/deny_hold_weapon_slot
+execute unless score #pap_sel mgs.data matches 1..3 run return run function mgs:v5.1.0/zombies/deny/message {msg:'{"translate":"mgs.hold_weapon_slot_1_2_or_3_to_use_pack_a_punch","color":"red"}'}
 
 data modify storage mgs:temp _pap.slot set value "hotbar.1"
 execute if score #pap_sel mgs.data matches 2 run data modify storage mgs:temp _pap.slot set value "hotbar.2"
@@ -37,13 +37,13 @@ scoreboard players set #pap_is_gun mgs.data 0
 execute if score #pap_sel mgs.data matches 1 if items entity @s hotbar.1 *[custom_data~{mgs:{gun:true}}] run scoreboard players set #pap_is_gun mgs.data 1
 execute if score #pap_sel mgs.data matches 2 if items entity @s hotbar.2 *[custom_data~{mgs:{gun:true}}] run scoreboard players set #pap_is_gun mgs.data 1
 execute if score #pap_sel mgs.data matches 3 if items entity @s hotbar.3 *[custom_data~{mgs:{gun:true}}] run scoreboard players set #pap_is_gun mgs.data 1
-execute unless score #pap_is_gun mgs.data matches 1 run return run function mgs:v5.1.0/zombies/pap/deny_not_gun
+execute unless score #pap_is_gun mgs.data matches 1 run return run function mgs:v5.1.0/zombies/deny/message {msg:'{"translate":"mgs.selected_slot_does_not_contain_a_weapon","color":"red"}'}
 
 # Extract selected item data
 function mgs:v5.1.0/zombies/pap/extract_selected with storage mgs:temp _pap
 
 # Guard: selected weapon must provide PAP data in its own stats
-execute unless data storage mgs:temp _pap_extract.stats.pap_stats run return run function mgs:v5.1.0/zombies/pap/deny_not_supported
+execute unless data storage mgs:temp _pap_extract.stats.pap_stats run return run function mgs:v5.1.0/zombies/deny/message {msg:'{"translate":"mgs.this_weapon_cannot_be_pack_a_punched","color":"red"}'}
 
 # Compute current and next PAP levels
 scoreboard players set #pap_level mgs.data 0

@@ -1,5 +1,7 @@
 
 # Shared command builders for zombies modules.
+from stewbeet import write_versioned_function
+
 from ...config.catalogs import PRIMARY_WEAPONS, SECONDARY_WEAPONS
 from ..core.feedback import zb_sound
 from ..helpers import MGS_TAG, game_active_guard
@@ -11,20 +13,32 @@ def game_active_guard_cmd(ns: str) -> str:
 	return game_active_guard(ns, "zombies")
 
 
-def deny_not_enough_points_body(ns: str, version: str, price_score: str) -> str:
-	""" Standardized not-enough-points response body. """
-	return f"""
-tellraw @s [{MGS_TAG},{{"text":"You don't have enough points (","color":"red"}},{{"score":{{"name":"{price_score}","objective":"{ns}.data"}},"color":"yellow"}},{{"text":" needed).","color":"red"}}]
+def write_deny_functions() -> None:
+	""" The two handlers every "you can't do that" path in zombies falls back to. """
+	# The message rides in as a whole text component so the English stays a literal here for
+	# auto.lang_file. The argument is `msg`, not `text`, or lang_file would translate the outer
+	# quoted value instead of the component inside it.
+	write_versioned_function("zombies/deny/message", f"""
+$tellraw @s [{MGS_TAG},$(msg)]
 {zb_sound('deny')}
-""".strip()
+""")
+
+	# Same message everywhere, only the score holding the price differs
+	write_versioned_function("zombies/deny/not_enough_points", f"""
+$tellraw @s [{MGS_TAG},{{"text":"You don't have enough points (","color":"red"}},{{"score":{{"name":"$(score)","objective":"$(obj)"}},"color":"yellow"}},{{"text":" needed).","color":"red"}}]
+{zb_sound('deny')}
+""")
 
 
-def deny_requires_power_body(ns: str, version: str, label: str) -> str:
-	""" Standardized requires-power response body. """
-	return f"""
-tellraw @s [{MGS_TAG},{{"text":"This {label} requires power.","color":"red"}}]
-{zb_sound('deny')}
-""".strip()
+def deny_cmd(ns: str, version: str, component: str) -> str:
+	""" One command showing `component` in chat with the deny sound, so it survives `return run`. """
+	return f"function {ns}:v{version}/zombies/deny/message {{msg:'{component}'}}"
+
+
+def deny_not_enough_points_cmd(ns: str, version: str, price_score: str, objective: str = "") -> str:
+	""" One command for the shared not-enough-points message, naming the score that holds the price. """
+	obj: str = objective or f"{ns}.data"
+	return f'function {ns}:v{version}/zombies/deny/not_enough_points {{score:"{price_score}",obj:"{obj}"}}'
 
 
 def build_weapon_magazine_data() -> dict[str, tuple[str, int, bool]]:

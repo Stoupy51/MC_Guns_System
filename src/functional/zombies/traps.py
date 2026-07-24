@@ -10,12 +10,15 @@ from stewbeet import JsonDict, Mem, Predicate, set_json_encoder, write_load_file
 
 from ..core.feedback import zb_sound
 from ..helpers import MGS_TAG
-from .common import deny_not_enough_points_body, deny_requires_power_body, game_active_guard_cmd
+from .common import deny_cmd, deny_not_enough_points_cmd, game_active_guard_cmd
 
 
 def generate_traps() -> None:
 	ns: str = Mem.ctx.project_id
 	version: str = Mem.ctx.project_version
+	deny_requires_power: str = deny_cmd(ns, version, '{"text":"This trap requires power.","color":"red"}')
+	deny_not_ready: str = deny_cmd(ns, version, '{"text":"Trap is on cooldown and not ready yet.","color":"yellow"}')
+	deny_not_enough_points: str = deny_not_enough_points_cmd(ns, version, "#trap_price")
 
 	## Predicate: does `this` entity's trap id match the turret currently being processed?
 	## Used to select the matching head/interaction by score directly in a selector (predicate=...),
@@ -150,7 +153,7 @@ $execute positioned $(cx) $(cy) $(cz) positioned ~ ~1.625 ~ run summon minecraft
 
 # Check power requirement
 execute store result score #trap_power {ns}.data run scoreboard players get @n[tag=bs.interaction.target] {ns}.zb.trap.power
-execute if score #trap_power {ns}.data matches 1 unless score #zb_power {ns}.data matches 1 run return run function {ns}:v{version}/zombies/traps/deny_requires_power
+execute if score #trap_power {ns}.data matches 1 unless score #zb_power {ns}.data matches 1 run return run {deny_requires_power}
 
 # Get trap ID
 execute store result score #trap_id {ns}.data run scoreboard players get @n[tag=bs.interaction.target] {ns}.zb.trap.id
@@ -158,11 +161,11 @@ execute store result score #trap_id {ns}.data run scoreboard players get @n[tag=
 # Check if trap is ready (not active, not on cooldown)
 scoreboard players set #trap_ready {ns}.data 0
 execute as @e[type=minecraft:marker,tag={ns}.trap_center] if score @s {ns}.zb.trap.id = #trap_id {ns}.data if score @s {ns}.zb.trap.timer matches 0 if score @s {ns}.zb.trap.cd matches ..0 run scoreboard players set #trap_ready {ns}.data 1
-execute unless score #trap_ready {ns}.data matches 1 run return run function {ns}:v{version}/zombies/traps/deny_not_ready
+execute unless score #trap_ready {ns}.data matches 1 run return run {deny_not_ready}
 
 # Check price
 execute store result score #trap_price {ns}.data run scoreboard players get @n[tag=bs.interaction.target] {ns}.zb.trap.price
-execute unless score @s {ns}.zb.points >= #trap_price {ns}.data run return run function {ns}:v{version}/zombies/traps/deny_not_enough_points
+execute unless score @s {ns}.zb.points >= #trap_price {ns}.data run return run {deny_not_enough_points}
 
 # Deduct points
 scoreboard players operation @s {ns}.zb.points -= #trap_price {ns}.data
@@ -179,18 +182,6 @@ tellraw @a[scores={{{ns}.zb.in_game=1}}] [{MGS_TAG},{{"text":"Trap activated for
 {zb_sound('announce')}
 """)
 
-	write_versioned_function("zombies/traps/deny_requires_power", f"""
-{deny_requires_power_body(ns, version, "trap")}
-""")
-
-	write_versioned_function("zombies/traps/deny_not_ready", f"""
-tellraw @s [{MGS_TAG},{{"text":"Trap is on cooldown and not ready yet.","color":"yellow"}}]
-{zb_sound('deny')}
-""")
-
-	write_versioned_function("zombies/traps/deny_not_enough_points", f"""
-{deny_not_enough_points_body(ns, version, "#trap_price")}
-""")
 
 	## Active trap tick: damage zombies, particles, decrement timer
 	write_versioned_function("zombies/traps/active_tick", f"""

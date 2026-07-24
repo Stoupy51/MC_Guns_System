@@ -12,7 +12,7 @@ from ...config.stats import WEIGHT
 from ...database.items import WEAPON_STATS
 from ..core.feedback import zb_sound
 from ..helpers import MGS_TAG
-from .common import build_weapon_magazine_data
+from .common import build_weapon_magazine_data, deny_cmd, deny_not_enough_points_cmd
 
 # Move animation constants
 MOVE_BEAR_TICKS: int = 30		# bear visible before ascend starts
@@ -29,6 +29,11 @@ MONKEY_BOMB_WEIGHT: int = 5
 def generate_mystery_box() -> None:
 	ns: str = Mem.ctx.project_id
 	version: str = Mem.ctx.project_version
+	deny_moving: str = deny_cmd(ns, version, '{"text":"The Mystery Box is moving...","color":"yellow"}')
+	deny_already_in_use: str = deny_cmd(ns, version, '{"text":"Mystery Box is already in use.","color":"red"}')
+	deny_not_your_result: str = deny_cmd(ns, version, '{"text":"Wait for the current player to collect their result.","color":"red"}')
+	deny_all_owned: str = deny_cmd(ns, version, '{"text":"You already own all available Mystery Box weapons. Points refunded.","color":"yellow"}')
+	deny_not_enough_points: str = deny_not_enough_points_cmd(ns, version, "#zb_mystery_box_price", f"{ns}.config")
 	owned_gun_macro_cd: str = "{" + ns + ':{gun:true,stats:{base_weapon:"$(weapon_id)"}}}'
 
 	# Presence box is two item_displays (base + lid) sharing this scale, so the lid can hinge open.
@@ -285,7 +290,7 @@ execute if score #mb_usable {ns}.data matches 0 run return fail
 execute unless data storage {ns}:zombies game{{state:"active"}} run return fail
 
 # The active box can be mid-move: deny
-execute if score #mb_move_timer {ns}.data matches 1.. if entity @e[tag=bs.interaction.target,tag={ns}.mystery_box_active] run return run function {ns}:v{version}/zombies/mystery_box/deny_moving
+execute if score #mb_move_timer {ns}.data matches 1.. if entity @e[tag=bs.interaction.target,tag={ns}.mystery_box_active] run return run {deny_moving}
 
 # Capture the clicked box id, then dispatch at the box position
 scoreboard players operation #cur_box {ns}.data = @n[tag=bs.interaction.target] {ns}.mb.box
@@ -310,7 +315,7 @@ execute if entity @n[tag={ns}.mb_display,distance=..3,scores={{{ns}.mb.anim=1..}
 execute if entity @n[tag={ns}.mb_display,distance=..3,tag={ns}.mb_shared] run return fail
 
 # Only the buyer can give their own pull away
-execute unless score @s {ns}.mb.pid = @n[tag={ns}.mb_display,distance=..3] {ns}.mb.buyer run return run function {ns}:v{version}/zombies/mystery_box/deny_not_your_result
+execute unless score @s {ns}.mb.pid = @n[tag={ns}.mb_display,distance=..3] {ns}.mb.buyer run return run {deny_not_your_result}
 
 tag @n[tag={ns}.mb_display,distance=..3] add {ns}.mb_shared
 {zb_sound('success')}
@@ -320,14 +325,14 @@ tellraw @a[scores={{{ns}.zb.in_game=1}}] [{MGS_TAG},{{"selector":"@s"}},{{"text"
 	## Dispatch a click at a specific box (@s = player, positioned at the box)
 	write_versioned_function("zombies/mystery_box/box_click", f"""
 # Spinning (a pull display here with anim > 0): already in use
-execute if entity @n[tag={ns}.mb_display,distance=..3,scores={{{ns}.mb.anim=1..}}] run return run function {ns}:v{version}/zombies/mystery_box/deny_already_in_use
+execute if entity @n[tag={ns}.mb_display,distance=..3,scores={{{ns}.mb.anim=1..}}] run return run {deny_already_in_use}
 
 # Shared by its buyer (shift + left click): anyone may collect it
 execute if entity @n[tag={ns}.mb_display,distance=..3,tag={ns}.mb_shared] run return run function {ns}:v{version}/zombies/mystery_box/collect
 
 # Ready (a display here, anim <= 0): only the buyer of this box may collect (buyer pid matches)
 execute if entity @n[tag={ns}.mb_display,distance=..3] if score @s {ns}.mb.pid = @n[tag={ns}.mb_display,distance=..3] {ns}.mb.buyer run return run function {ns}:v{version}/zombies/mystery_box/collect
-execute if entity @n[tag={ns}.mb_display,distance=..3] run return run function {ns}:v{version}/zombies/mystery_box/deny_not_your_result
+execute if entity @n[tag={ns}.mb_display,distance=..3] run return run {deny_not_your_result}
 
 # No pull on this box yet: start one
 function {ns}:v{version}/zombies/mystery_box/try_use
@@ -388,20 +393,10 @@ function {ns}:v{version}/zombies/mystery_box/sync_interaction_visibility
 function {ns}:v{version}/zombies/mystery_box/refresh_disabled
 """)
 
-	write_versioned_function("zombies/mystery_box/deny_moving", f"""
-tellraw @s [{MGS_TAG},{{"text":"The Mystery Box is moving...","color":"yellow"}}]
-{zb_sound('deny')}
-""")
-
-	write_versioned_function("zombies/mystery_box/deny_already_in_use", f"""
-tellraw @s [{MGS_TAG},{{"text":"Mystery Box is already in use.","color":"red"}}]
-{zb_sound('deny')}
-""")
-
 	## Start a pull on the clicked box (@s = player, positioned at the box, #cur_box = box id)
 	write_versioned_function("zombies/mystery_box/try_use", f"""
 # Check if player has enough points
-execute unless score @s {ns}.zb.points >= #zb_mystery_box_price {ns}.config run return run function {ns}:v{version}/zombies/mystery_box/deny_not_enough_points
+execute unless score @s {ns}.zb.points >= #zb_mystery_box_price {ns}.config run return run {deny_not_enough_points}
 
 # Ensure at least a default pool exists.
 function {ns}:v{version}/zombies/mystery_box/ensure_default_pool
@@ -492,21 +487,6 @@ execute if data storage {ns}:zombies mystery_box.result.weapon_id run function {
 execute if score #mb_owned {ns}.data matches 1 if score #mb_reroll {ns}.data matches ..19 run scoreboard players add #mb_reroll {ns}.data 1
 execute if score #mb_owned {ns}.data matches 1 if score #mb_reroll {ns}.data matches ..19 run function {ns}:v{version}/zombies/mystery_box/pick_random_result
 execute if score #mb_owned {ns}.data matches 1 if score #mb_reroll {ns}.data matches ..19 run function {ns}:v{version}/zombies/mystery_box/reroll_owned
-""")
-
-	write_versioned_function("zombies/mystery_box/deny_not_enough_points", f"""
-tellraw @s [{MGS_TAG},{{"text":"You don't have enough points (","color":"red"}},{{"score":{{"name":"#zb_mystery_box_price","objective":"{ns}.config"}},"color":"yellow"}},{{"text":" needed).","color":"red"}}]
-{zb_sound('deny')}
-""")
-
-	write_versioned_function("zombies/mystery_box/deny_not_your_result", f"""
-tellraw @s [{MGS_TAG},{{"text":"Wait for the current player to collect their result.","color":"red"}}]
-{zb_sound('deny')}
-""")
-
-	write_versioned_function("zombies/mystery_box/deny_all_owned", f"""
-tellraw @s [{MGS_TAG},{{"text":"You already own all available Mystery Box weapons. Points refunded.","color":"yellow"}}]
-{zb_sound('deny')}
 """)
 
 	write_versioned_function("zombies/mystery_box/deny_pool_empty", f"""
@@ -630,7 +610,7 @@ execute unless data storage {ns}:zombies mystery_box.result.weapon_id run scoreb
 	## Refund the buyer of this box (#this_buyer set by show_result_one) and notify them
 	write_versioned_function("zombies/mystery_box/result_all_owned", f"""
 execute as @a[scores={{{ns}.zb.in_game=1}}] if score @s {ns}.mb.pid = #this_buyer {ns}.data run scoreboard players operation @s {ns}.zb.points += #zb_mystery_box_price {ns}.config
-execute as @a[scores={{{ns}.zb.in_game=1}}] if score @s {ns}.mb.pid = #this_buyer {ns}.data run function {ns}:v{version}/zombies/mystery_box/deny_all_owned
+execute as @a[scores={{{ns}.zb.in_game=1}}] if score @s {ns}.mb.pid = #this_buyer {ns}.data run {deny_all_owned}
 """)
 
 	write_versioned_function("zombies/mystery_box/show_result_weapon_one", f"""

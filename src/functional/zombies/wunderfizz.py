@@ -14,7 +14,7 @@ from stewbeet import Mem, write_load_file, write_versioned_function
 
 from ..core.feedback import zb_sound
 from ..helpers import MGS_TAG
-from .common import deny_not_enough_points_body, deny_requires_power_body, game_active_guard_cmd
+from .common import deny_cmd, deny_not_enough_points_cmd, game_active_guard_cmd
 from .perks import PERK_DEFINITIONS
 
 # Roam move animation length (ticks). The bear rises, the machine relocates (model swap) at the
@@ -34,6 +34,12 @@ def _orb_model_cmd(ns: str, pid: str) -> str:
 def generate_wunderfizz() -> None:
 	ns: str = Mem.ctx.project_id
 	version: str = Mem.ctx.project_version
+	deny_requires_power: str = deny_cmd(ns, version, '{"text":"This Der Wunderfizz requires power.","color":"red"}')
+	deny_in_use: str = deny_cmd(ns, version, '{"text":"Der Wunderfizz is already spinning.","color":"red"}')
+	deny_moving: str = deny_cmd(ns, version, '{"text":"Der Wunderfizz is moving...","color":"yellow"}')
+	deny_not_your_result: str = deny_cmd(ns, version, '{"text":"Wait for the buyer to collect their perk.","color":"red"}')
+	deny_all_owned: str = deny_cmd(ns, version, '{"text":"You already own every available perk. Points refunded.","color":"yellow"}')
+	deny_not_enough_points: str = deny_not_enough_points_cmd(ns, version, "#wf_price")
 	perk_ids: list[str] = list(PERK_DEFINITIONS)
 	num_perks: int = len(perk_ids)
 
@@ -177,11 +183,11 @@ execute at @n[tag=bs.interaction.target] if entity @n[type=item_display,tag={ns}
 execute if score #wf_usable {ns}.data matches 0 run return fail
 
 # The active machine can be mid-roam: deny
-execute if score #wf_move_timer {ns}.data matches 1.. if entity @e[tag=bs.interaction.target,tag={ns}.wf_active] run return run function {ns}:v{version}/zombies/wunderfizz/deny_moving
+execute if score #wf_move_timer {ns}.data matches 1.. if entity @e[tag=bs.interaction.target,tag={ns}.wf_active] run return run {deny_moving}
 
 # Power requirement
 execute store result score #wf_power {ns}.data run scoreboard players get @n[tag=bs.interaction.target] {ns}.zb.wf.power
-execute if score #wf_power {ns}.data matches 1 unless score #zb_power {ns}.data matches 1 run return run function {ns}:v{version}/zombies/wunderfizz/deny_requires_power
+execute if score #wf_power {ns}.data matches 1 unless score #zb_power {ns}.data matches 1 run return run {deny_requires_power}
 
 # Capture this machine's config (scores persist into the dispatched function)
 scoreboard players operation #wf_mid {ns}.data = @n[tag=bs.interaction.target] {ns}.zb.wf.id
@@ -194,11 +200,11 @@ execute at @n[tag=bs.interaction.target] run function {ns}:v{version}/zombies/wu
 	## Dispatch a click at a specific machine (@s = player, positioned at the machine)
 	write_versioned_function("zombies/wunderfizz/machine_click", f"""
 # Spinning here → in use
-execute if entity @n[type=item_display,tag={ns}.wunderfizz_orb,distance=..3,scores={{{ns}.zb.wf.anim=1..}}] run return run function {ns}:v{version}/zombies/wunderfizz/deny_in_use
+execute if entity @n[type=item_display,tag={ns}.wunderfizz_orb,distance=..3,scores={{{ns}.zb.wf.anim=1..}}] run return run {deny_in_use}
 
 # A ready orb here → only the buyer may collect
 execute if entity @n[type=item_display,tag={ns}.wunderfizz_orb,distance=..3] if score @s {ns}.zb.wf_pid = @n[type=item_display,tag={ns}.wunderfizz_orb,distance=..3] {ns}.zb.wf.buyer run return run function {ns}:v{version}/zombies/wunderfizz/collect
-execute if entity @n[type=item_display,tag={ns}.wunderfizz_orb,distance=..3] run return run function {ns}:v{version}/zombies/wunderfizz/deny_not_your_result
+execute if entity @n[type=item_display,tag={ns}.wunderfizz_orb,distance=..3] run return run {deny_not_your_result}
 
 # Nothing here yet: start a spin
 function {ns}:v{version}/zombies/wunderfizz/try_use
@@ -206,7 +212,7 @@ function {ns}:v{version}/zombies/wunderfizz/try_use
 
 	## Start a spin (@s = player, positioned at the machine; #wf_price / #wf_allperks / #wf_mid set)
 	write_versioned_function("zombies/wunderfizz/try_use", f"""
-execute unless score @s {ns}.zb.points >= #wf_price {ns}.data run return run function {ns}:v{version}/zombies/wunderfizz/deny_not_enough_points
+execute unless score @s {ns}.zb.points >= #wf_price {ns}.data run return run {deny_not_enough_points}
 scoreboard players operation @s {ns}.zb.points -= #wf_price {ns}.data
 
 # Stable buyer id
@@ -220,7 +226,7 @@ tag @s remove {ns}.pool_target
 
 # No perk available → refund + notify
 execute if score #pool_chosen {ns}.data matches ..-1 run scoreboard players operation @s {ns}.zb.points += #wf_price {ns}.data
-execute if score #pool_chosen {ns}.data matches ..-1 run return run function {ns}:v{version}/zombies/wunderfizz/deny_all_owned
+execute if score #pool_chosen {ns}.data matches ..-1 run return run {deny_all_owned}
 
 # Decide whether this pull roams the machine (teddy bear) instead of granting a perk. Shared rule
 # with the Mystery Box (roaming/roll_move): after WF_MOVE_THRESHOLD uses, 1-in-3 chance. Needs >=2
@@ -423,30 +429,6 @@ function #smithed.actionbar:message
 scoreboard players operation #wf_pick {ns}.data = @n[type=item_display,tag={ns}.wunderfizz_orb,distance=..3] {ns}.zb.wf.perk
 {hover_result_dispatch}
 function #smithed.actionbar:message
-""")
-
-	## Deny messages
-	write_versioned_function("zombies/wunderfizz/deny_requires_power", f"""
-{deny_requires_power_body(ns, version, "Der Wunderfizz")}
-""")
-	write_versioned_function("zombies/wunderfizz/deny_not_enough_points", f"""
-{deny_not_enough_points_body(ns, version, "#wf_price")}
-""")
-	write_versioned_function("zombies/wunderfizz/deny_in_use", f"""
-tellraw @s [{MGS_TAG},{{"text":"Der Wunderfizz is already spinning.","color":"red"}}]
-{zb_sound('deny')}
-""")
-	write_versioned_function("zombies/wunderfizz/deny_moving", f"""
-tellraw @s [{MGS_TAG},{{"text":"Der Wunderfizz is moving...","color":"yellow"}}]
-{zb_sound('deny')}
-""")
-	write_versioned_function("zombies/wunderfizz/deny_not_your_result", f"""
-tellraw @s [{MGS_TAG},{{"text":"Wait for the buyer to collect their perk.","color":"red"}}]
-{zb_sound('deny')}
-""")
-	write_versioned_function("zombies/wunderfizz/deny_all_owned", f"""
-tellraw @s [{MGS_TAG},{{"text":"You already own every available perk. Points refunded.","color":"yellow"}}]
-{zb_sound('deny')}
 """)
 
 	## Hook: setup at preload_complete

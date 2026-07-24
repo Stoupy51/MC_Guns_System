@@ -3,6 +3,7 @@
 from .ability import generate_zombies_abilities
 from .barriers import generate_barriers
 from .bonus import main as bonus_main
+from .common import write_deny_functions
 from .display_helpers import generate_display_helpers
 from .doors import generate_doors
 from .escort import generate_zombies_escort
@@ -29,6 +30,7 @@ from .wunderfizz import generate_wunderfizz
 # Main function
 def main() -> None:
     # Run all zombies modules
+    write_deny_functions()
     bonus_main()
     generate_zombies_maps()
     generate_zombies_menus()

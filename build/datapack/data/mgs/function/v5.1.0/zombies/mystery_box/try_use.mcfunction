@@ -7,7 +7,7 @@
 #
 
 # Check if player has enough points
-execute unless score @s mgs.zb.points >= #zb_mystery_box_price mgs.config run return run function mgs:v5.1.0/zombies/mystery_box/deny_not_enough_points
+execute unless score @s mgs.zb.points >= #zb_mystery_box_price mgs.config run return run function mgs:v5.1.0/zombies/deny/not_enough_points {score:"#zb_mystery_box_price",obj:"mgs.config"}
 
 # Ensure at least a default pool exists.
 function mgs:v5.1.0/zombies/mystery_box/ensure_default_pool

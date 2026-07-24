@@ -8,7 +8,7 @@
 
 execute if items entity @s hotbar.7 *[custom_data~{mgs:{stats:{grenade_type:"web"}}}] run return run function mgs:v5.1.0/zombies/wallbuys/refill_lethal with storage mgs:temp _wb_weapon
 scoreboard players operation #wb_price mgs.data = #wb_buy_price mgs.data
-execute unless score @s mgs.zb.points >= #wb_price mgs.data run return run function mgs:v5.1.0/zombies/wallbuys/deny_not_enough_points
+execute unless score @s mgs.zb.points >= #wb_price mgs.data run return run function mgs:v5.1.0/zombies/deny/not_enough_points {score:"#wb_price",obj:"mgs.data"}
 scoreboard players operation @s mgs.zb.points -= #wb_price mgs.data
 loot replace entity @s hotbar.7 loot mgs:i/web_grenade
 item modify entity @s hotbar.7 mgs:v5.1.0/grenade/set_count_4

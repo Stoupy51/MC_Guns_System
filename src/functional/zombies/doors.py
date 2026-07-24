@@ -8,12 +8,13 @@ from stewbeet import Mem, write_load_file, write_versioned_function
 
 from ..core.feedback import zb_sound
 from ..helpers import MGS_TAG
-from .common import deny_not_enough_points_body, game_active_guard_cmd
+from .common import deny_not_enough_points_cmd, game_active_guard_cmd
 
 
 def generate_doors() -> None:
 	ns: str = Mem.ctx.project_id
 	version: str = Mem.ctx.project_version
+	deny_not_enough_points: str = deny_not_enough_points_cmd(ns, version, "#door_price")
 	interaction_offset: float = 0.75  # Distance in front of door block to place interaction entities
 	front_door_tags: str = f'["{ns}.door","{ns}.door_front","{ns}.gm_entity","bs.entity.interaction","{ns}.door_new"]'
 	back_door_tags: str = f'["{ns}.door","{ns}.door_back","{ns}.gm_entity","bs.entity.interaction","{ns}.door_new"]'
@@ -148,7 +149,7 @@ execute if score #door_partial {ns}.data matches 1.. run scoreboard players oper
 function {ns}:v{version}/zombies/doors/read_price
 
 # Check player has enough points
-execute unless score @s {ns}.zb.points >= #door_price {ns}.data run return run function {ns}:v{version}/zombies/doors/deny_not_enough_points
+execute unless score @s {ns}.zb.points >= #door_price {ns}.data run return run {deny_not_enough_points}
 
 # Deduct points
 scoreboard players operation @s {ns}.zb.points -= #door_price {ns}.data
@@ -180,10 +181,6 @@ tellraw @a [{MGS_TAG},{{"selector":"@s","color":"yellow"}},{{"text":" opened ","
 tellraw @a [{MGS_TAG},{{"selector":"@s","color":"yellow"}},{{"text":" chipped in ","color":"green"}},{{"score":{{"name":"#door_price","objective":"{ns}.data"}},"color":"yellow"}},{{"text":" points for ","color":"green"}},{{"storage":"{ns}:temp","nbt":"_door_hover_name","color":"gold","interpret":true}},{{"text":"  (","color":"gray"}},{{"score":{{"name":"#door_paid","objective":"{ns}.data"}},"color":"green"}},{{"text":"/","color":"gray"}},{{"score":{{"name":"#door_total","objective":"{ns}.data"}},"color":"yellow"}},{{"text":")","color":"gray"}}]
 {zb_sound('announce')}
 """)  # noqa: E501
-
-	write_versioned_function("zombies/doors/deny_not_enough_points", f"""
-{deny_not_enough_points_body(ns, version, "#door_price")}
-""")
 
 	## Open a single door entity (@s = door entity, at @s position)
 	write_versioned_function("zombies/doors/open_one", f"""

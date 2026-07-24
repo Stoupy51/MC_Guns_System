@@ -29,7 +29,7 @@ scoreboard players operation #wb_price mgs.data = #wb_buy_price mgs.data
 function mgs:v5.1.0/zombies/wallbuys/compute_effective_price with storage mgs:temp _wb_weapon
 
 # Check player has enough points
-execute unless score @s mgs.zb.points >= #wb_price mgs.data run return run function mgs:v5.1.0/zombies/wallbuys/deny_not_enough_points
+execute unless score @s mgs.zb.points >= #wb_price mgs.data run return run function mgs:v5.1.0/zombies/deny/not_enough_points {score:"#wb_price",obj:"mgs.data"}
 
 # Deduct points
 scoreboard players operation @s mgs.zb.points -= #wb_price mgs.data

@@ -9,12 +9,13 @@ from stewbeet import Mem, write_versioned_function
 
 from ..core.feedback import zb_sound
 from ..helpers import MGS_TAG
-from .common import game_active_guard_cmd
+from .common import deny_cmd, game_active_guard_cmd
 
 
 def generate_power_switch() -> None:
 	ns: str = Mem.ctx.project_id
 	version: str = Mem.ctx.project_version
+	deny_already_on: str = deny_cmd(ns, version, '{"text":"Power is already on.","color":"yellow"}')
 
 	## Setup: iterate power switch compounds, summon interaction entities + custom-model displays
 	write_versioned_function("zombies/power/setup", f"""
@@ -70,7 +71,7 @@ tag @e[tag=_pw_new] remove _pw_new
 {game_active_guard_cmd(ns)}
 
 # Guard: power must not already be on
-execute if score #zb_power {ns}.data matches 1 run return run function {ns}:v{version}/zombies/power/deny_already_on
+execute if score #zb_power {ns}.data matches 1 run return run {deny_already_on}
 
 # Enable power
 scoreboard players set #zb_power {ns}.data 1
@@ -91,11 +92,6 @@ tellraw @a[scores={{{ns}.zb.in_game=1}}] [{MGS_TAG},{{"text":"Power is ON!","col
 
 # Signal map-specific power-on hooks
 function {ns}:v{version}/shared/maps/call_script_at_base {{script:"power"}}
-""")
-
-	write_versioned_function("zombies/power/deny_already_on", f"""
-tellraw @s [{MGS_TAG},{{"text":"Power is already on.","color":"yellow"}}]
-{zb_sound('deny')}
 """)
 
 	## Hover events (run as the player looking at the power switch)

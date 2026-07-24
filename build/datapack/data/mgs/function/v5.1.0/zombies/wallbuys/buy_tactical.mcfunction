@@ -13,7 +13,7 @@ $execute if items entity @s hotbar.6 *[custom_data~{mgs:{$(weapon_id):true}}] ru
 
 # New purchase (empty slot or different equipment type): full price for 3 fresh ones
 scoreboard players operation #wb_price mgs.data = #wb_buy_price mgs.data
-execute unless score @s mgs.zb.points >= #wb_price mgs.data run return run function mgs:v5.1.0/zombies/wallbuys/deny_not_enough_points
+execute unless score @s mgs.zb.points >= #wb_price mgs.data run return run function mgs:v5.1.0/zombies/deny/not_enough_points {score:"#wb_price",obj:"mgs.data"}
 scoreboard players operation @s mgs.zb.points -= #wb_price mgs.data
 $loot replace entity @s hotbar.6 loot mgs:i/$(weapon_id)
 item modify entity @s hotbar.6 mgs:v5.1.0/grenade/set_count_3
