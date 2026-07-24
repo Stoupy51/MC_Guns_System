@@ -450,8 +450,9 @@ Each phase is one commit, independently shippable, verified with
 | ~~**P3**~~ ✅ | PY3/PY6 — merge `database/*.py` into `items.py`; delete `_template.py`, the dead `export_all_definitions_to_json` tail, `definitions_debug.json`, `game_mode.py`. | **0 (byte-identical)** | −181, −7 files | low |
 | ~~**P4**~~ ✅ | PY2 — 97 `_zoom` models become `parent:` children. First intentional output diff; verified by parent-resolution compare. | **−69.9 MB RP**, 0 files added/removed | +8 | low-med |
 | **P5a** ✅ | D1 — inlined the 26 `zombies/feedback/sound_*`; `shared/maps/call_*_script_at_base` ×6 → 1 macro. | **−31** | −31 | low |
-| **P5b** | D1 remainder — the other ~130 one/two-command wrappers, family by family. | −~110 | ~0 | low-med |
-| **P6** | D2 — collapse the 15 per-entity function families into macros / storage-driven dispatch. | **−~160** | −250 | low |
+| **P5b** ⚠ | D1 remainder — **re-scoped to 108** (see below), and demoted below P6 on value-per-edit. | −~108 | ~0 | low-med |
+| **P6a** ✅ | D2 — mystery box give, PaP apply_field, wunderfizz set_model+grant, admin powerups. | **−95** | −29 | low |
+| **P6b** | D2 remainder — perks `pool/try_index` + `apply`/`reapply`, `powerups/spawn_type`, `mob/default/level_*`, `set_door_link_*`, `revive/hud_*`, `mystery_box/hud_*`. | −~60 | −? | low |
 | **P7** | D5 + D6 — shared `zombies/deny/*`; map-editor and `players/` per-mode macros. | −~23 | −150 | low |
 | **P8** | D4 — loadout editor: `prepare_points`, static dialog resources with score components, slot parameterisation. | −~28 | −300 | medium |
 | **P9** | PY1/PY4/PY5 — `WeaponDef` dataclasses, typed registries, split the remaining >500-line files (**not** `shaders.py`), delete restating comments. | 0 | −850, +12 files | low |
@@ -611,3 +612,39 @@ the one most likely to drift, so it lands only after the harness has been exerci
     they are **5-command** wrappers with 14 call sites — inlining would have *created* ~60 lines of
     duplication. Converted to one `$(script)` macro instead (6 → 1). Belongs in D2, not D1.
     Lesson for P5b: check the command count and call-site count before inlining anything.
+- **2026-07-24** — **P5b analysed, not started. Recommend deferring it below P6.** No source
+  changed; the finding is the deliverable.
+  - ⛔ **`return run function X` makes a 2-command X non-inlinable.** `return run` takes exactly one
+    command and returns, so `execute unless <cond> run return run function .../deny_x` cannot become
+    `execute unless <cond> run return run tellraw …` — the second command (the deny sound) would
+    **silently never fire**. A byte-diff would look plausible; only playing the game would reveal it.
+  - This kills the whole `deny_*` family, which looked like the ideal P5b target: 25 of the 34 are
+    exactly `tellraw` + deny sound with one caller, but **all 44 deny call sites are guarded and
+    nearly all use `return run`**. Not inlinable at all.
+  - Re-running the census with the correct rule (inlinable = single caller, no macro args, and
+    `return run` only when the body is 1 command): **142 → 108 candidates**, 29 blocked by exactly
+    this constraint. Of the 108: 24 bare calls, 73 guarded, 11 single-command behind `return run`.
+  - **Recommendation:** do **P6 (D2) first.** P5b is 108 scattered hand edits across ~20 files for
+    −108 files; P6 is ~15 loop-driven generators for −160 files — an order of magnitude better
+    value per edit, and each one is a single localised change (e.g. `mystery_box/default_give`
+    32 → 1, `pap/apply_field` 28 → 1, `admin/powerup_*` 11 → 1).
+  - The `deny_*` family should instead go to **D5** (one shared `zombies/deny/*` taking the message
+    via storage), which keeps a function to call and so survives `return run`.
+- **2026-07-24** — **P6a done (awaiting review).** **1479 → 1384 mcfunctions (−95)**, −306 command
+  lines. Only **5 files have real command-body changes** — the 5 dispatchers rewritten on purpose;
+  the other 34 changed files differ in header comments only.
+  - `mystery_box/default_give/*` **32 → 2.** The pool entry already carries `weapon_id`/
+    `magazine_id`/`mag_count`/`consumable`, and `mystery_box.result` holds the chosen entry, so one
+    shared `default_give/weapon` reads them back instead of 31 functions restating literals.
+    Verified field-by-field against every removed function. `give_function` stays a per-map hook and
+    monkey_bomb keeps its own (different flow).
+    **Bonus:** this exposed `default_give/m1911` as dead code — `M1911` has `WEIGHT: 0` so it is
+    excluded from the pool, yet a give function was still generated for it (`@within ???`).
+  - `pap/apply_field/*` **28 → 1 macro** (`$(field)`). Cold path (PaP purchase), arg set is the
+    fixed `STATS_FIELDS`, so each variant compiles once. Verified: all 28 removed bodies reproduce
+    exactly under `$(field)` substitution, and all 28 dispatch lines rewrote consistently.
+  - `wunderfizz/set_model/*` + `grant/*` **28 → 0**, no macro. Both were dispatched by a score index,
+    so the 1-command model setter inlines straight into the two dispatch tables, and `grant`'s
+    3 commands become "dispatch sets `perk_id`, then apply once". The apply is guarded on
+    `perk_id` being set, preserving the original no-op for an out-of-range pick.
+  - `zombies/admin/powerup_*` **11 → 1 macro** (`$(type)`); the dialog buttons pass the type.

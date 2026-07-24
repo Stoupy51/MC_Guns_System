@@ -1,41 +1,11 @@
 
 #> mgs:v5.1.0/zombies/wallbuys/process_purchase
 #
-# @within	mgs:v5.1.0/zombies/mystery_box/default_give/ak47 with storage mgs:temp _wb_weapon
-#			mgs:v5.1.0/zombies/mystery_box/default_give/m16a4 with storage mgs:temp _wb_weapon
-#			mgs:v5.1.0/zombies/mystery_box/default_give/famas with storage mgs:temp _wb_weapon
-#			mgs:v5.1.0/zombies/mystery_box/default_give/aug with storage mgs:temp _wb_weapon
-#			mgs:v5.1.0/zombies/mystery_box/default_give/m4a1 with storage mgs:temp _wb_weapon
-#			mgs:v5.1.0/zombies/mystery_box/default_give/fnfal with storage mgs:temp _wb_weapon
-#			mgs:v5.1.0/zombies/mystery_box/default_give/g3a3 with storage mgs:temp _wb_weapon
-#			mgs:v5.1.0/zombies/mystery_box/default_give/scar17 with storage mgs:temp _wb_weapon
-#			mgs:v5.1.0/zombies/mystery_box/default_give/mp5 with storage mgs:temp _wb_weapon
-#			mgs:v5.1.0/zombies/mystery_box/default_give/mp7 with storage mgs:temp _wb_weapon
-#			mgs:v5.1.0/zombies/mystery_box/default_give/mac10 with storage mgs:temp _wb_weapon
-#			mgs:v5.1.0/zombies/mystery_box/default_give/ppsh41 with storage mgs:temp _wb_weapon
-#			mgs:v5.1.0/zombies/mystery_box/default_give/sten with storage mgs:temp _wb_weapon
-#			mgs:v5.1.0/zombies/mystery_box/default_give/m249 with storage mgs:temp _wb_weapon
-#			mgs:v5.1.0/zombies/mystery_box/default_give/rpk with storage mgs:temp _wb_weapon
-#			mgs:v5.1.0/zombies/mystery_box/default_give/svd with storage mgs:temp _wb_weapon
-#			mgs:v5.1.0/zombies/mystery_box/default_give/m82 with storage mgs:temp _wb_weapon
-#			mgs:v5.1.0/zombies/mystery_box/default_give/mosin with storage mgs:temp _wb_weapon
-#			mgs:v5.1.0/zombies/mystery_box/default_give/m24 with storage mgs:temp _wb_weapon
-#			mgs:v5.1.0/zombies/mystery_box/default_give/spas12 with storage mgs:temp _wb_weapon
-#			mgs:v5.1.0/zombies/mystery_box/default_give/m500 with storage mgs:temp _wb_weapon
-#			mgs:v5.1.0/zombies/mystery_box/default_give/m590 with storage mgs:temp _wb_weapon
-#			mgs:v5.1.0/zombies/mystery_box/default_give/rpg7 with storage mgs:temp _wb_weapon
-#			mgs:v5.1.0/zombies/mystery_box/default_give/m1911 with storage mgs:temp _wb_weapon
-#			mgs:v5.1.0/zombies/mystery_box/default_give/m9 with storage mgs:temp _wb_weapon
-#			mgs:v5.1.0/zombies/mystery_box/default_give/deagle with storage mgs:temp _wb_weapon
-#			mgs:v5.1.0/zombies/mystery_box/default_give/makarov with storage mgs:temp _wb_weapon
-#			mgs:v5.1.0/zombies/mystery_box/default_give/glock17 with storage mgs:temp _wb_weapon
-#			mgs:v5.1.0/zombies/mystery_box/default_give/glock18 with storage mgs:temp _wb_weapon
-#			mgs:v5.1.0/zombies/mystery_box/default_give/vz61 with storage mgs:temp _wb_weapon
-#			mgs:v5.1.0/zombies/mystery_box/default_give/ray_gun with storage mgs:temp _wb_weapon
+# @within	mgs:v5.1.0/zombies/mystery_box/default_give/weapon with storage mgs:temp _wb_weapon
 #			mgs:v5.1.0/zombies/wallbuys/on_right_click with storage mgs:temp _wb_weapon
 #
-# @args		weapon_id (string)
-#			magazine_id (string)
+# @args		weapon_id (unknown)
+#			magazine_id (unknown)
 #
 
 scoreboard players set #wb_purchase_done mgs.data 0

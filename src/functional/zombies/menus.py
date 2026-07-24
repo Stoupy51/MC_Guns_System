@@ -128,13 +128,12 @@ tellraw @a [{MGS_TAG},{{"text":"An operator reset everyone's points.","color":"r
 	## loop in particular never starts, so the fire and sounds play while every zombie survives.
 	## Nominate a collector here: the clicking operator when they are actually playing, otherwise any
 	## in-game player, so the button still works from spectator.
-	for pu_id, _label, _color, _hover in admin_powerups:
-		write_versioned_function(f"zombies/admin/powerup_{pu_id}", f"""
+	write_versioned_function("zombies/admin/powerup", f"""
 execute unless data storage {ns}:zombies game{{state:"active"}} run return run tellraw @s [{MGS_TAG},{{"text":"No zombies game is active.","color":"red"}}]
 tag @s[scores={{{ns}.zb.in_game=1}},gamemode=!spectator] add {ns}.pu_collecting
 execute unless entity @a[tag={ns}.pu_collecting] run tag @a[scores={{{ns}.zb.in_game=1}},gamemode=!spectator,limit=1] add {ns}.pu_collecting
 execute unless entity @a[tag={ns}.pu_collecting] run return run tellraw @s [{MGS_TAG},{{"text":"No living player in the game to receive the power-up.","color":"red"}}]
-function {ns}:v{version}/zombies/powerups/activate/{pu_id}
+$function {ns}:v{version}/zombies/powerups/activate/$(type)
 tag @a[tag={ns}.pu_collecting] remove {ns}.pu_collecting
 """)
 
@@ -144,7 +143,7 @@ tag @a[tag={ns}.pu_collecting] remove {ns}.pu_collecting
 		"title": ["", "🛠 ", {"text": "Force Power-Up", "color": "dark_red", "bold": True}],
 		"body": [{"type": "minecraft:plain_message", "contents": {"text": "Triggers the real power-up, for everyone", "color": "gray"}}],
 		"actions": [
-			dialog_run_btn(label, f"/function {ns}:v{version}/zombies/admin/powerup_{pu_id}", hover, color)
+			dialog_run_btn(label, f'/function {ns}:v{version}/zombies/admin/powerup {{type:"{pu_id}"}}', hover, color)
 			for pu_id, label, color, hover in admin_powerups
 		],
 		"columns": 2,

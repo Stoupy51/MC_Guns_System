@@ -9,17 +9,17 @@
 		{"type": "minecraft:plain_message","contents": {"translate": "mgs.triggers_the_real_power_up_for_everyone","color": "gray"}}
 	],
 	"actions": [
-		{"label": ["","📦 ",{"translate": "mgs.max_ammo","color": "aqua"}],"tooltip": {"translate": "mgs.force_max_ammo_for_everyone"},"action": {"type": "run_command","command": "/function mgs:v5.1.0/zombies/admin/powerup_max_ammo"}},
-		{"label": ["","💀 ",{"translate": "mgs.insta_kill","color": "red"}],"tooltip": {"translate": "mgs.force_insta_kill_for_everyone"},"action": {"type": "run_command","command": "/function mgs:v5.1.0/zombies/admin/powerup_insta_kill"}},
-		{"label": ["","💰 ",{"translate": "mgs.double_points","color": "yellow"}],"tooltip": {"translate": "mgs.force_double_points_for_everyone"},"action": {"type": "run_command","command": "/function mgs:v5.1.0/zombies/admin/powerup_double_points"}},
-		{"label": ["","🔨 ",{"translate": "mgs.carpenter","color": "gold"}],"tooltip": {"translate": "mgs.force_carpenter_for_everyone"},"action": {"type": "run_command","command": "/function mgs:v5.1.0/zombies/admin/powerup_carpenter"}},
-		{"label": ["","☢ ",{"translate": "mgs.nuke","color": "red"}],"tooltip": {"translate": "mgs.force_nuke_for_everyone"},"action": {"type": "run_command","command": "/function mgs:v5.1.0/zombies/admin/powerup_nuke"}},
-		{"label": ["","🔫 ",{"translate": "mgs.unlimited_ammo","color": "green"}],"tooltip": {"translate": "mgs.force_unlimited_ammo_for_everyone"},"action": {"type": "run_command","command": "/function mgs:v5.1.0/zombies/admin/powerup_unlimited_ammo"}},
-		{"label": ["","🧪 ",{"translate": "mgs.random_perk","color": "light_purple"}],"tooltip": {"translate": "mgs.force_random_perk_for_everyone"},"action": {"type": "run_command","command": "/function mgs:v5.1.0/zombies/admin/powerup_random_perk"}},
-		{"label": ["","💠 ",{"translate": "mgs.free_pap","color": "aqua"}],"tooltip": {"translate": "mgs.force_free_pap_for_everyone"},"action": {"type": "run_command","command": "/function mgs:v5.1.0/zombies/admin/powerup_free_pap"}},
-		{"label": ["","💵 ",{"translate": "mgs.cash_drop","color": "green"}],"tooltip": {"translate": "mgs.force_cash_drop_for_everyone"},"action": {"type": "run_command","command": "/function mgs:v5.1.0/zombies/admin/powerup_cash_drop"}},
-		{"label": ["","🏷 ",{"translate": "mgs.fire_sale","color": "light_purple"}],"tooltip": {"translate": "mgs.force_fire_sale_for_everyone"},"action": {"type": "run_command","command": "/function mgs:v5.1.0/zombies/admin/powerup_fire_sale"}},
-		{"label": ["","🔥 ",{"translate": "mgs.bonfire_sale","color": "gold"}],"tooltip": {"translate": "mgs.force_bonfire_sale_for_everyone"},"action": {"type": "run_command","command": "/function mgs:v5.1.0/zombies/admin/powerup_bonfire_sale"}}
+		{"label": ["","📦 ",{"translate": "mgs.max_ammo","color": "aqua"}],"tooltip": {"translate": "mgs.force_max_ammo_for_everyone"},"action": {"type": "run_command","command": "/function mgs:v5.1.0/zombies/admin/powerup {type:\"max_ammo\"}"}},
+		{"label": ["","💀 ",{"translate": "mgs.insta_kill","color": "red"}],"tooltip": {"translate": "mgs.force_insta_kill_for_everyone"},"action": {"type": "run_command","command": "/function mgs:v5.1.0/zombies/admin/powerup {type:\"insta_kill\"}"}},
+		{"label": ["","💰 ",{"translate": "mgs.double_points","color": "yellow"}],"tooltip": {"translate": "mgs.force_double_points_for_everyone"},"action": {"type": "run_command","command": "/function mgs:v5.1.0/zombies/admin/powerup {type:\"double_points\"}"}},
+		{"label": ["","🔨 ",{"translate": "mgs.carpenter","color": "gold"}],"tooltip": {"translate": "mgs.force_carpenter_for_everyone"},"action": {"type": "run_command","command": "/function mgs:v5.1.0/zombies/admin/powerup {type:\"carpenter\"}"}},
+		{"label": ["","☢ ",{"translate": "mgs.nuke","color": "red"}],"tooltip": {"translate": "mgs.force_nuke_for_everyone"},"action": {"type": "run_command","command": "/function mgs:v5.1.0/zombies/admin/powerup {type:\"nuke\"}"}},
+		{"label": ["","🔫 ",{"translate": "mgs.unlimited_ammo","color": "green"}],"tooltip": {"translate": "mgs.force_unlimited_ammo_for_everyone"},"action": {"type": "run_command","command": "/function mgs:v5.1.0/zombies/admin/powerup {type:\"unlimited_ammo\"}"}},
+		{"label": ["","🧪 ",{"translate": "mgs.random_perk","color": "light_purple"}],"tooltip": {"translate": "mgs.force_random_perk_for_everyone"},"action": {"type": "run_command","command": "/function mgs:v5.1.0/zombies/admin/powerup {type:\"random_perk\"}"}},
+		{"label": ["","💠 ",{"translate": "mgs.free_pap","color": "aqua"}],"tooltip": {"translate": "mgs.force_free_pap_for_everyone"},"action": {"type": "run_command","command": "/function mgs:v5.1.0/zombies/admin/powerup {type:\"free_pap\"}"}},
+		{"label": ["","💵 ",{"translate": "mgs.cash_drop","color": "green"}],"tooltip": {"translate": "mgs.force_cash_drop_for_everyone"},"action": {"type": "run_command","command": "/function mgs:v5.1.0/zombies/admin/powerup {type:\"cash_drop\"}"}},
+		{"label": ["","🏷 ",{"translate": "mgs.fire_sale","color": "light_purple"}],"tooltip": {"translate": "mgs.force_fire_sale_for_everyone"},"action": {"type": "run_command","command": "/function mgs:v5.1.0/zombies/admin/powerup {type:\"fire_sale\"}"}},
+		{"label": ["","🔥 ",{"translate": "mgs.bonfire_sale","color": "gold"}],"tooltip": {"translate": "mgs.force_bonfire_sale_for_everyone"},"action": {"type": "run_command","command": "/function mgs:v5.1.0/zombies/admin/powerup {type:\"bonfire_sale\"}"}}
 	],
 	"columns": 2,
 	"exit_action": {

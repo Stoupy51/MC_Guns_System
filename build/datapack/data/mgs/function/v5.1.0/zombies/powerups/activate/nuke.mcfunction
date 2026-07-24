@@ -1,10 +1,9 @@
 
 #> mgs:v5.1.0/zombies/powerups/activate/nuke
 #
-# @executed	as the player & at current position
+# @executed	at @s
 #
-# @within	mgs:v5.1.0/zombies/admin/powerup_nuke
-#			mgs:v5.1.0/zombies/powerups/dispatch_activate
+# @within	mgs:v5.1.0/zombies/powerups/dispatch_activate
 #
 
 execute as @a[tag=mgs.pu_collecting,scores={mgs.zb.in_game=1},gamemode=!spectator] run function mgs:zombies/bonus/nuke

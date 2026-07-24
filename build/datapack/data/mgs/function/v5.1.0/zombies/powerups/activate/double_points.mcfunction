@@ -1,10 +1,9 @@
 
 #> mgs:v5.1.0/zombies/powerups/activate/double_points
 #
-# @executed	as the player & at current position
+# @executed	at @s
 #
-# @within	mgs:v5.1.0/zombies/admin/powerup_double_points
-#			mgs:v5.1.0/zombies/powerups/dispatch_activate
+# @within	mgs:v5.1.0/zombies/powerups/dispatch_activate
 #
 
 scoreboard players set @a[scores={mgs.zb.in_game=1}] mgs.special.double_points 600

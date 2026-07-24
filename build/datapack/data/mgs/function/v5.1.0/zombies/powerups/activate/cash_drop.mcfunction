@@ -1,10 +1,9 @@
 
 #> mgs:v5.1.0/zombies/powerups/activate/cash_drop
 #
-# @executed	as the player & at current position
+# @executed	at @s
 #
-# @within	mgs:v5.1.0/zombies/admin/powerup_cash_drop
-#			mgs:v5.1.0/zombies/powerups/dispatch_activate
+# @within	mgs:v5.1.0/zombies/powerups/dispatch_activate
 #
 
 # Roll 4..16 * 100 = 400..1600 points

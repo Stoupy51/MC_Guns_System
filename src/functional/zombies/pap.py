@@ -222,20 +222,20 @@ function {ns}:v{version}/zombies/pap/pick_list_value_step
 	)
 	write_versioned_function("zombies/pap/compute_max_level", "\n".join(compute_max_lines))
 
-	# Apply one PAP field dynamically from stats.pap_stats.<field> for #pap_next_idx.
-	for field in STATS_FIELDS:
-		field_lines: list[str] = [
-			f'data modify storage {ns}:temp _pap_pick.list set from storage {ns}:temp _pap_extract.stats.{PAP_STATS}.{field}',
-			f'execute if data storage {ns}:temp _pap_pick.list[0] run function {ns}:v{version}/zombies/pap/pick_list_value',
-			f'execute if data storage {ns}:temp _pap_pick.list[0] run data modify storage {ns}:temp _pap_extract.stats.{field} set from storage {ns}:temp _pap_pick.value',
-			f'execute unless data storage {ns}:temp _pap_pick.list[0] run data modify storage {ns}:temp _pap_extract.stats.{field} set from storage {ns}:temp _pap_extract.stats.{PAP_STATS}.{field}',
-		]
-		write_versioned_function(f"zombies/pap/apply_field/{field}", "\n".join(field_lines))
+	# Apply one PAP field dynamically from stats.pap_stats.$(field) for #pap_next_idx.
+	# Macro rather than one function per stat: this is the PaP purchase path (cold), and the arg set
+	# is the fixed STATS_FIELDS list, so every variant is compiled once and then cached.
+	write_versioned_function("zombies/pap/apply_field", f"""
+$data modify storage {ns}:temp _pap_pick.list set from storage {ns}:temp _pap_extract.stats.{PAP_STATS}.$(field)
+execute if data storage {ns}:temp _pap_pick.list[0] run function {ns}:v{version}/zombies/pap/pick_list_value
+$execute if data storage {ns}:temp _pap_pick.list[0] run data modify storage {ns}:temp _pap_extract.stats.$(field) set from storage {ns}:temp _pap_pick.value
+$execute unless data storage {ns}:temp _pap_pick.list[0] run data modify storage {ns}:temp _pap_extract.stats.$(field) set from storage {ns}:temp _pap_extract.stats.{PAP_STATS}.$(field)
+""")
 
 	apply_lines: list[str] = []
 	for field in STATS_FIELDS:
 		apply_lines.append(
-			f'execute if data storage {ns}:temp _pap_extract.stats.{PAP_STATS}.{field} run function {ns}:v{version}/zombies/pap/apply_field/{field}'
+			f'execute if data storage {ns}:temp _pap_extract.stats.{PAP_STATS}.{field} run function {ns}:v{version}/zombies/pap/apply_field {{field:"{field}"}}'
 		)
 	write_versioned_function("zombies/pap/apply_runtime_overrides", "\n".join(apply_lines))
 

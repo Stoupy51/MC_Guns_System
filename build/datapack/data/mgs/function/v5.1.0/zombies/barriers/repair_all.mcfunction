@@ -1,7 +1,7 @@
 
 #> mgs:v5.1.0/zombies/barriers/repair_all
 #
-# @executed	as the player & at current position
+# @executed	at @s
 #
 # @within	mgs:v5.1.0/zombies/powerups/activate/carpenter
 #
