@@ -456,7 +456,7 @@ Each phase is one commit, independently shippable, verified with
 | **P7** ✅ | D5 — shared `zombies/deny/message` + `deny/not_enough_points`. **D6 dropped**, its premise was wrong (see below). | **−29** | −93 | low |
 | **P8** ✅ | D4 — loadout editor: one shared `show_static_dialog` skeleton for 13 submenus, 4 dead `scope/*` aliases. **Score-component dialog resources and slot parameterisation dropped** (see below). | **−18** | +1 | low |
 | **P9a** ✅ | PY1 (stats.py sound + magazine dedup) + PY4 (perk & power-up typed registries). Byte-identical. | 0 | −599 | low |
-| **P9b** | PY4 remainder (`ALL_ELEMENTS`/`EDITOR_MODES`) + PY5 file splits (>500 lines, **not** `shaders.py`) + restating-comment cleanup. | 0 | −250, +~12 files | low |
+| **P9b** ✅ | PY4 remainder (`ALL_ELEMENTS`/`EDITOR_MODES` → dataclasses) + split `map_editor.py`'s definitions into `map_editor_defs.py`. **PY5 function-splitting dropped** (see below). | 0 | +1 file | low |
 | **P10** | D3 — one shared spawn/respawn system for all three modes. | −~20 | −600 | **high** |
 | **P11** | Tighten the ruff config (add `ANN`, `RET`, `SIM`, `PTH`, `TC`, `ARG`, `PL`), fix the fallout. | 0 | ? | low |
 
@@ -849,3 +849,36 @@ argument in one data point.
 via `.get()` in dozens of places) and `EDITOR_MODES`. Those are worth a dataclass too, but the file
 is 2029 lines — the largest in the tree — so the conversion belongs with the PY5 split of that file,
 not bolted onto this commit.
+
+### P9b — map-editor typed registries + definitions split (Python only, byte-identical)
+
+- **`ALL_ELEMENTS` → `dict[str, ElementDef]`, `EDITOR_MODES` → `dict[str, EditorMode]`.** Two frozen
+  dataclasses. `ElementDef.defaults` stays a `JsonDict` — it is a genuinely heterogeneous per-element
+  config schema (a barrier carries block states, a trap an effect radius), not a fixed shape. All
+  `einfo[...]` / `mode_info[...]` reads became attribute access.
+  - Typing again earned its keep: pyright immediately flagged **two `cast(bool, ...)` calls** that
+    were now provably unnecessary (the field is already `bool`) and the `field`-import shadowing in
+    the `for field, default_val in einfo.defaults.items()` loop. Both fixed (`cast` removed, import
+    aliased to `dc_field`).
+- **`map_editor.py` split.** The 198-line definitions block (the two dataclasses, `ALL_ELEMENTS`,
+  `MODEL_DISPLAY_ELEMENTS`, `FIELD_DOCS`, `EDITOR_MODES`, `MODE_LIST`, and the perk-doc helpers)
+  moved to **`map_editor_defs.py`**. `map_editor.py` imports them. This is a real separation of
+  concerns — "what elements exist" is now independent of the 1840-line generator — and is the piece
+  of PY5 that carries no risk.
+
+**PY5 function-splitting dropped.** The plan wanted every >500-line file under 500. After the
+definitions moved out, `map_editor.py` is still 1853 lines, essentially **one** `generate_map_editor()`
+function; `pap.py`, `mystery_box.py`, `game.py` etc. are the same shape — one `generate_X()` emitting
+dozens of `write_versioned_function` blocks. Splitting *those* means carving a single function into
+sub-functions across new modules, threading `ns`/`version`/`sep` and the nested `snbt_*` helpers
+through every one. That is a large, invasive diff for a **priority-6** goal ("avoid files over 500
+lines"), it changes no output, and it is exactly the kind of edit most likely to introduce a silent
+behaviour drift the byte-diff can catch only after the fact. Same call the plan already made for
+`shaders.py`: these generators are cohesive units, and their length is inherent to how many
+functions they emit, not duplication. **Recommend leaving them as-is.** The genuine size win —
+separating data from logic — is done where it applies (`map_editor_defs.py`, and P3 earlier).
+
+**Generated-comment cleanup (PY6) not attempted here.** The restating comments the plan flagged live
+*inside* the f-strings passed to `write_versioned_function`, so they are part of the generated
+`.mcfunction` output. Removing them is an output change (it moves `mcfunction_total_lines`), not a
+Python-only edit, so it needs sign-off before it can run under the byte-identical harness.
