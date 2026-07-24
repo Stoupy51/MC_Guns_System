@@ -136,7 +136,7 @@ scoreboard players operation #timer_ones mgs.data %= #10 mgs.data
 
 # Create sidebar HUD
 scoreboard objectives add mgs.sidebar dummy
-execute if data storage mgs:multiplayer game{gamemode:"ffa"} run function mgs:v5.1.0/multiplayer/create_sidebar_ffa
+execute if data storage mgs:multiplayer game{gamemode:"ffa"} run function mgs:v5.1.0/multiplayer/refresh_sidebar_ffa
 execute if data storage mgs:multiplayer game{gamemode:"tdm"} run function mgs:v5.1.0/multiplayer/create_sidebar_team {title:"Team Deathmatch"}
 execute if data storage mgs:multiplayer game{gamemode:"dom"} run function mgs:v5.1.0/multiplayer/create_sidebar_dom
 execute if data storage mgs:multiplayer game{gamemode:"hp"} run function mgs:v5.1.0/multiplayer/create_sidebar_hp

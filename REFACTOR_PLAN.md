@@ -450,7 +450,7 @@ Each phase is one commit, independently shippable, verified with
 | ~~**P3**~~ ✅ | PY3/PY6 — merge `database/*.py` into `items.py`; delete `_template.py`, the dead `export_all_definitions_to_json` tail, `definitions_debug.json`, `game_mode.py`. | **0 (byte-identical)** | −181, −7 files | low |
 | ~~**P4**~~ ✅ | PY2 — 97 `_zoom` models become `parent:` children. First intentional output diff; verified by parent-resolution compare. | **−69.9 MB RP**, 0 files added/removed | +8 | low-med |
 | **P5a** ✅ | D1 — inlined the 26 `zombies/feedback/sound_*`; `shared/maps/call_*_script_at_base` ×6 → 1 macro. | **−31** | −31 | low |
-| **P5b** ⚠ | D1 remainder — **re-scoped to 108** (see below), and demoted below P6 on value-per-edit. | −~108 | ~0 | low-med |
+| ~~**P5b**~~ ⛔ | D1 remainder — **dropped**: 87 of its 104 candidates inline into a per-tick caller, which the brief rejects. Salvaged the 5 pure redirects instead. | **−5** (of −108) | −26 | low |
 | **P6a** ✅ | D2 — mystery box give, PaP apply_field, wunderfizz set_model+grant, admin powerups. | **−95** | −29 | low |
 | **P6b** ✅ | D2 remainder — perks `pool/try_index` + `pool/count`, `powerups/spawn_type`, `mob/default/level_*`, `set_door_link_*`. Four families dropped as bad value (see below). | **−35** | −45 | low |
 | **P7** ✅ | D5 — shared `zombies/deny/message` + `deny/not_enough_points`. **D6 dropped**, its premise was wrong (see below). | **−29** | −93 | low |
@@ -775,3 +775,44 @@ which is what the brief rules out. The trigger bases differ per slot too, so the
 **Python LOC went up by 1** — expected. `write_static_dialog` was already a shared helper before
 this phase, so D4's "−300 Python LOC" was never available: the Python was not duplicated, only its
 *output* was. The plan's LOC estimate for D4 should be read as −0.
+
+### P5b — dropped, with a −5 salvage (1302 → 1297)
+
+Re-ran the D1 census against the post-P8 tree, this time counting references across the **whole
+datapack** (function tags, dialog JSON, advancements, item components) rather than only other
+`.mcfunction` bodies — the earlier census missed those and inflated the candidate set.
+
+**104 candidates** (1–2 commands, no macro, exactly one call site, `return run` only when the body
+is one command). Then classified each by whether the function that would absorb it is reachable
+from `#minecraft:tick`:
+
+| absorbing caller | candidates |
+|---|---:|
+| runs every tick | **87** |
+| cold path | 17 |
+
+The concentration is at the top: `zombies/game_tick` alone would absorb 10, and it is already 90
+commands long. `player/tick`, `mob/tick`, `tick` and `multiplayer/game_tick` take another 9. The
+brief rules this out directly — *"inlining a hot loop into one enormous function does not count and
+will be rejected"*. And even for the 17 cold ones, inlining a single-caller wrapper removes
+**indirection, not duplication**, so it does not meet the "a reduction only counts if…" bar either.
+
+**Recommendation: drop P5b.** Its headline −108 was never −108 of the kind the brief asks for.
+
+**Salvaged (−5)** — the subset that is genuinely dead indirection, i.e. a whole body of exactly one
+unconditional `function <id>` with nothing else. There are only 11 such pure redirects in the pack:
+
+- `zombies/pap/apply` — **dead code**. `@within ???` and zero references anywhere in the datapack.
+  Deleted. (Third one found this way, after `mystery_box/default_give/m1911` and `pap/deny_max_level`.)
+- `multiplayer/create_sidebar_ffa` → `refresh_sidebar_ffa`, `zombies/monkey/detonate` →
+  `grenade/detonate_frag`, `zombies/escort/give_up_monkey` → `escort/monkey_hold`,
+  `zombies/escort/discard_near_player` → `escort/end_at_trader`. Each a rename-only hop with one
+  caller; the caller now names the real function. Their explanatory comments moved to the call site,
+  so nothing documented was lost. On the one tick-path case (`discard_near_player`, swept from
+  `game_tick`) this *removes* a dispatch rather than growing the function.
+
+**Kept deliberately:** `mgs:config` (unversioned public entry point, `@within ???` by design);
+`{missions,multiplayer,zombies}/setup` → `dialogs/*/setup` (6–9 dialog-JSON call sites each, so the
+hop is what stops 23 JSON edits); `maps/editor/menu` (user-facing, reached from a dialog button);
+and `maps/<map>/tick` and the `maps/*/calls/*` family — those are the per-map hook contract every
+map implements, not accidental indirection.

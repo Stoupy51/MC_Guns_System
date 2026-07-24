@@ -79,12 +79,7 @@ execute as @e[tag={ns}.zombie_round,tag={ns}.zb_escorted,distance=..{MONKEY_ATTR
 execute as {pull_candidates} at @s run function {ns}:v{version}/zombies/monkey/pull_one
 """)
 
-	## Start one monkey-targeted escort. @s = zombie, at @s. The one-shot mode flag makes
-	## escort/start tag the new trader for retarget_monkey (escort.py).
-	## No distance-to-player check: a zombie stood on a player is exactly the one a monkey has to
-	## drag away. Its trader spawns inside the player's reach, which is why monkey traders are exempt
-	## from escort's discard_near_player safeguard and why the click they would eat is handed back by
-	## the right_click_entity advancement (weapon/common.py).
+	## Start one monkey-targeted escort. @s = zombie, at @s
 	write_versioned_function("zombies/monkey/pull_one", f"""
 scoreboard players set #zb_escort_mode {ns}.data 1
 function {ns}:v{version}/zombies/escort/start
@@ -104,10 +99,3 @@ execute if score #monkey_note {ns}.data matches 3 run playsound minecraft:block.
 particle minecraft:note ~ ~0.5 ~ 0.3 0.3 0.3 1 3 force @a[distance=..32]
 """)
 
-	## Detonation (routed from grenade/detonate, @s = monkey grenade, at @s): the monkey uses the
-	## normal frag blast. Escorted zombies revert to normal escorts on their own once this grenade
-	## is gone (escort.py's zombie_tick drops the monkey flag when no monkey_bomb remains), so there
-	## is nothing to clean up here.
-	write_versioned_function("zombies/monkey/detonate", f"""
-function {ns}:v{version}/grenade/detonate_frag
-""")

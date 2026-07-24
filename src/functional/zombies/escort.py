@@ -69,7 +69,7 @@ LURE_RELEASE: int = 8
 # range even around corners, and the visibility check aims at the player's FEET — slabs, stairs
 # or a corner can fail it forever, leaving the taxi orbiting a player it already reached.
 RELEASE_RADIUS_CLOSE: int = 6
-# Radius of the "a trader must never be right-clickable" safeguard (see discard_near_player).
+# Radius of the "a trader must never be right-clickable" safeguard (see the sweep in game_tick).
 # Do NOT lower this: entity reach is Player.entityInteractionRange(), i.e. the
 # minecraft:entity_interaction_range attribute, and zombies raises it to 5 for its players
 # (game.py, for barrier/buyable use) — the vanilla 3 does not apply here. 6 is one block of margin
@@ -361,26 +361,13 @@ kill @s
 	## teleport body; the teleport clears the flag again once it lands (game.py), so it only
 	## routes THIS call — escorts may retry from the new position later.
 	write_versioned_function("zombies/escort/give_up", f"""
-# A MONKEY escort must never fall through to the teleport rescue: that rescue drops the zombie next
-# to a player, which is the exact opposite of what a monkey bomb is for. It also doesn't earn the
-# failure flag — nothing would ever clear it (only the teleport does), and the zombie would be
-# locked out of every future escort for the rest of the game.
-execute if entity {my_trader_monkey} run return run function {ns}:v{version}/zombies/escort/give_up_monkey
+# A MONKEY escort must never fall through to the teleport rescue
+execute if entity {my_trader_monkey} run return run function {ns}:v{version}/zombies/escort/monkey_hold
 
 tag @s add {ns}.zb_escort_failed
 execute as {my_trader} run function {ns}:v{version}/zombies/escort/discard_trader
 function {ns}:v{version}/zombies/escort/detach
 function {ns}:v{version}/zombies/on_stuck_zombie
-""")
-
-	## Monkey escort gave up: the trader stopped moving before reaching the monkey (watchdog; the TTL
-	## can't realistically expire on a ~9s monkey). @s = escorted zombie.
-	## Treated as "arrived" rather than as a failure: handing the zombie back to vanilla AI here would
-	## send it at the player, the next attract pulse would re-grab it, and the trader would blink in
-	## and out for the rest of the fuse. Freezing it where it stands is also what the monkey is FOR —
-	## the zombie is off the player either way, it just doesn't make the pile (and survives the blast).
-	write_versioned_function("zombies/escort/give_up_monkey", f"""
-function {ns}:v{version}/zombies/escort/monkey_hold
 """)
 
 	## Escorted zombie killed mid-transit: discard its taxi THIS tick instead of leaving an
@@ -400,17 +387,6 @@ scoreboard players remove #zb_escort_count {ns}.data 1
 execute as {my_trader} run function {ns}:v{version}/zombies/escort/discard_trader
 """)
 
-	## Trader too close to a player: the escort trader is invisible but still RIGHT-CLICKABLE, and a
-	## trader with empty offers returns InteractionResult.CONSUME — eating the player's click (so
-	## ADS/fire silently fails) while it stands in their face. WanderingTrader force-clamps itself to
-	## adult on every NBT load (readAdditionalSaveData: setAge(max(0, age))), so the usual "make it a
-	## baby to disable mobInteract" trick is impossible; the only reliable defense is to never let a
-	## trader be within reach. @s = trader, at @s. Player interaction reach is ~3 blocks, so a
-	## {TRADER_REACH_GUARD}-block guard leaves margin even with the trader's <1 block/tick movement.
-	write_versioned_function("zombies/escort/discard_near_player", f"""
-function {ns}:v{version}/zombies/escort/end_at_trader
-""")
-
 	## End an escort from the TRADER's context (@s = trader, at @s): unfreeze the glued zombie so
 	## vanilla AI takes over, then remove the trader. Shared by the interaction safeguard and the
 	## barrier hand-off (barriers.py) so both end an escort the same way.
@@ -424,20 +400,10 @@ function {ns}:v{version}/zombies/escort/discard_trader
 # Escort system (escort.py): drag escorted zombies behind their pathfinding traders
 execute if score #zb_escort_count {ns}.data matches 1.. as @e[tag={ns}.zb_escorted] at @s run function {ns}:v{version}/zombies/escort/zombie_tick
 
-# Interaction safeguard (count-INDEPENDENT, every tick): if the escort counter ever drifts, the
-# gated loop above stops running and a trader can walk into a player and become right-clickable.
-# This ungated pass over the (usually empty) trader set discards any trader that gets within reach
-# of an alive player regardless of the counter, so an interactable trader can never linger.
-# Monkey-bomb traders are exempt: their whole job is to drag zombies off the player, so they MUST
-# be allowed into their face. The click they would eat is given back by the right_click_entity
-# advancement (weapon/common.py) instead of by keeping them at arm's length.
-execute as @e[type=minecraft:wandering_trader,tag={ns}.zb_escort,tag=!{ns}.zb_escort_monkey] at @s if entity @p[scores={{{ns}.zb.in_game=1,{ns}.zb.downed=0}},gamemode=!spectator,distance=..{TRADER_REACH_GUARD}] run function {ns}:v{version}/zombies/escort/discard_near_player
+# Interaction safeguard (count-INDEPENDENT, every tick)
+execute as @e[type=minecraft:wandering_trader,tag={ns}.zb_escort,tag=!{ns}.zb_escort_monkey] at @s if entity @p[scores={{{ns}.zb.in_game=1,{ns}.zb.downed=0}},gamemode=!spectator,distance=..{TRADER_REACH_GUARD}] run function {ns}:v{version}/zombies/escort/end_at_trader
 
-# Every 2s: resync the escort counter from reality — start/detach keep it accurate in between,
-# but any drift (e.g. an escorted zombie dying the same tick its trader vanishes) would wedge
-# the max-escort gate shut forever, silently disabling all future escorts. Then discard
-# orphaned traders whose escorted zombie died mid-transit (shot, nuked...) — the resync above
-# already dropped those escorts from the count.
+# Every 2s: resync the escort counter from reality
 scoreboard players operation #zb_esc_sweep {ns}.data = #total_tick {ns}.data
 scoreboard players operation #zb_esc_sweep {ns}.data %= #40 {ns}.data
 execute if score #zb_esc_sweep {ns}.data matches 0 store result score #zb_escort_count {ns}.data if entity @e[tag={ns}.zb_escorted]
@@ -448,11 +414,6 @@ execute if score #zb_esc_sweep {ns}.data matches 20 if score #zb_pap_has {ns}.da
 """)
 
 	## ── PaP-room lure ──────────────────────────────────────────────────────────────────────────
-	## The lure centre (the point the horde gathers at while everyone hides in the PaP room) is
-	## defined by the MAP, not derived: a map opts in by registering a function into the
-	## #{ns}:zombies/setup_lure tag that summons a {ns}.lure_center marker. That tag is run once
-	## positioned at the map base (so registered functions can use relative coords like ~-49 ~-3 ~0).
-	## Entirely OPTIONAL — a map that registers nothing leaves no marker and the lure stays off.
 	write_tag("zombies/setup_lure", Mem.ctx.data[ns].function_tags, [])
 	write_versioned_function("zombies/escort/setup_lure_center", f"""
 kill @e[tag={ns}.lure_center]

@@ -180,7 +180,7 @@ scoreboard players operation #timer_ones {ns}.data %= #10 {ns}.data
 
 # Create sidebar HUD
 scoreboard objectives add {ns}.sidebar dummy
-execute if data storage {ns}:multiplayer game{{gamemode:"ffa"}} run function {ns}:v{version}/multiplayer/create_sidebar_ffa
+execute if data storage {ns}:multiplayer game{{gamemode:"ffa"}} run function {ns}:v{version}/multiplayer/refresh_sidebar_ffa
 execute if data storage {ns}:multiplayer game{{gamemode:"tdm"}} run function {ns}:v{version}/multiplayer/create_sidebar_team {{title:"Team Deathmatch"}}
 execute if data storage {ns}:multiplayer game{{gamemode:"dom"}} run function {ns}:v{version}/multiplayer/create_sidebar_dom
 execute if data storage {ns}:multiplayer game{{gamemode:"hp"}} run function {ns}:v{version}/multiplayer/create_sidebar_hp
@@ -809,12 +809,8 @@ $function #bs.sidebar:create {{objective:"{ns}.sidebar",display_name:{{text:"$(t
 scoreboard objectives setdisplay sidebar {ns}.sidebar
 """)
 
-	## FFA sidebar — ranked players with kills using bs.sidebar
-	write_versioned_function("multiplayer/create_sidebar_ffa", f"""
-function {ns}:v{version}/multiplayer/refresh_sidebar_ffa
-""")
-
 	# FFA sidebar refresh: ranks players by kills, builds sidebar with top 10
+	# Doubles as the sidebar's creation path — start calls it directly for the ffa gamemode
 	# Called every second from timer_display and on kills
 	ffa_rank_code = f"""
 # Initialize sidebar header in storage

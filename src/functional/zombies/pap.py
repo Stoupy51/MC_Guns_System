@@ -1185,11 +1185,6 @@ function {ns}:v{version}/ammo/compute_reserve
 function {ns}:v{version}/zombies/pap/upgrade_core
 """)
 
-	# --- Standalone PAP upgrade (no game required, no cost) ---
-	write_versioned_function("zombies/pap/apply", f"""
-function {ns}:v{version}/zombies/pap/upgrade_core
-""")
-
 	# Free scope/camo reroll when weapon is already at max PAP level (no cost, no animation).
 	write_versioned_function("zombies/pap/free_scope_reroll", f"""
 # Randomize scope (guaranteed different from current)
@@ -1210,3 +1205,4 @@ function {ns}:v{version}/zombies/pap/apply_to_slot with storage {ns}:temp _pap
 tellraw @s [{MGS_TAG},"✦ ",{{"text":"Free scope/camo reroll! (already at max PAP level)","color":"aqua"}}]
 {zb_sound('success')}
 """)
+
