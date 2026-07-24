@@ -232,6 +232,14 @@ def main() -> None:
             gun_stats[MODELS] = {"normal": normal_model, "zoom": zoom_model}
             base_weapon: str = gun_stats.get("base_weapon", base_id)
 
+            # Zoom models are `parent:` children of their base (see REFACTOR_PLAN.md, PY2): they carry
+            # no textures of their own, so the camo is applied by pointing at the camo'd parent instead.
+            parent: str = str(item.override_model.get("parent", "")) if item.override_model else ""
+            if parent.startswith(f"{ns}:item/"):
+                item.override_model = item.override_model.copy() if item.override_model else {}
+                item.override_model["parent"] = f"{parent}_{material}"
+                continue
+
             # Merge textures in override model using HSL Color mode
             if item.override_model:
                 item.override_model = item.override_model.copy()
