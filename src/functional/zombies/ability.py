@@ -1,5 +1,4 @@
 
-# ruff: noqa: E501
 # Zombies Ability & Passive System
 # Provides passive effects and activatable abilities for the zombies game mode.
 # Passives: x1.2 Points, x1.5 Powerups
