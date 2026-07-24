@@ -454,7 +454,7 @@ Each phase is one commit, independently shippable, verified with
 | **P6a** ✅ | D2 — mystery box give, PaP apply_field, wunderfizz set_model+grant, admin powerups. | **−95** | −29 | low |
 | **P6b** ✅ | D2 remainder — perks `pool/try_index` + `pool/count`, `powerups/spawn_type`, `mob/default/level_*`, `set_door_link_*`. Four families dropped as bad value (see below). | **−35** | −45 | low |
 | **P7** ✅ | D5 — shared `zombies/deny/message` + `deny/not_enough_points`. **D6 dropped**, its premise was wrong (see below). | **−29** | −93 | low |
-| **P8** | D4 — loadout editor: `prepare_points`, static dialog resources with score components, slot parameterisation. | −~28 | −300 | medium |
+| **P8** ✅ | D4 — loadout editor: one shared `show_static_dialog` skeleton for 13 submenus, 4 dead `scope/*` aliases. **Score-component dialog resources and slot parameterisation dropped** (see below). | **−18** | +1 | low |
 | **P9** | PY1/PY4/PY5 — `WeaponDef` dataclasses, typed registries, split the remaining >500-line files (**not** `shaders.py`), delete restating comments. | 0 | −850, +12 files | low |
 | **P10** | D3 — one shared spawn/respawn system for all three modes. | −~20 | −600 | **high** |
 | **P11** | Tighten the ruff config (add `ANN`, `RET`, `SIM`, `PTH`, `TC`, `ARG`, `PL`), fix the fallout. | 0 | ? | low |
@@ -733,3 +733,45 @@ the one most likely to drift, so it lands only after the harness has been exerci
   than "−10 files, low risk", and one that buys nothing on the Python side.
   `players/row_{mode}` is the same story (multiplayer has team buttons, the others do not, and the
   tooltips are per-mode keys). Only `players/list_{mode}` is genuinely parameterisable, for −2.
+
+### P8 — D4 loadout editor (1320 → 1302, −18)
+
+Two of the three D4 ideas were wrong. What shipped:
+
+- **13 `show_*_dialog_macro` → one `editor/show_static_dialog`.** Every one of them built the same
+  `multi_action` dialog and differed only in title, hint, action list and column count. The shared
+  macro takes `title` / `hint` / `columns` / `pts` and emits `actions:[]`; each caller then does
+  `data modify storage mgs:temp dialog.actions set value [...]` with its own list. **−12.**
+  - Title and hint ride in as whole text components inside **single-quoted** SNBT
+    (`title:'{text:"Loadout - Primary Weapon",color:"gold",bold:true}'`) so they substitute raw and
+    `auto.lang_file` still lifts the English out. `en_us.json` came back **byte-identical**.
+  - The action lists stay literal in each caller on purpose. Passing them as a macro string would
+    require escaping every `\` in them, and their tooltips contain `\n` and `\ud83d\uddd1`: escaped,
+    lang_file mints keys whose English contains a literal backslash; unescaped, the `\n` becomes a
+    real newline and truncates the command. Not worth one saved line per file.
+  - `recompute_points` now mirrors the score into `mgs:temp _dlg.pts` as its last line, so callers
+    do not each repeat the `store result`. Its three other callers ignore the field.
+- **4 `editor/scope/{primary_full,primary_no4,primary_1only,secondary_4only}` deleted.** Each was
+  one command — `function .../show_scope_<same>` — kept as an "alias at the historical path". Every
+  caller reaches them through `return run function`, so `pick_primary` / `pick_secondary` now name
+  the real function. **−4.** Purely dead indirection.
+
+**Dropped: static dialog resources with a `score` component.** The plan claimed
+`helpers.py::register_dialog` "already does exactly this pattern elsewhere". It does not — none of
+the 23 shipped dialogs contains a `score` component, and every dynamic number in a dialog in this
+pack goes through a macro. Dialogs are a synced registry rendered client-side, so a `score`
+component has no resolution context; the author almost certainly already hit this. The rework above
+reaches the same file count without betting on it.
+
+**Dropped: slot parameterisation of the equip1/equip2 and primary/secondary pairs (part 3, −~8).**
+`append_equip{1,2}`, `hub_row_equip{1,2}`, `pick_equip{1,2}_camo`, `pick_equip_slot{1,2}` are
+single-purpose macros invoked `with storage mgs:temp editor`, reading `$(equip_slot1_name)` /
+`$(equip_slot2_name)` directly. Merging a pair means the caller must first normalise the slot's
+fields onto a common path — so each merge is −1 file for +2 to +3 command lines at the call site
+and one more level of indirection. That moves duplication into callers rather than removing it,
+which is what the brief rules out. The trigger bases differ per slot too, so the `execute if score
+@s mgs.player.config matches N` dispatch chains would need one macro argument per grenade.
+
+**Python LOC went up by 1** — expected. `write_static_dialog` was already a shared helper before
+this phase, so D4's "−300 Python LOC" was never available: the Python was not duplicated, only its
+*output* was. The plan's LOC estimate for D4 should be read as −0.

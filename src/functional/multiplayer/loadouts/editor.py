@@ -128,6 +128,8 @@ data modify storage {ns}:temp editor set value {_empty_state()}
 		f"scoreboard players operation #lc_cost {ns}.data += #lc_t {ns}.data",
 		f"scoreboard players set @s {ns}.mp.edit_points {PICK10_TOTAL}",
 		f"scoreboard players operation @s {ns}.mp.edit_points -= #lc_cost {ns}.data",
+		# Mirrored into storage here so every submenu can hand it straight to show_static_dialog
+		f"execute store result storage {ns}:temp _dlg.pts int 1 run scoreboard players get @s {ns}.mp.edit_points",
 	]
 	write_versioned_function("multiplayer/editor/recompute_points", "\n".join(recompute_lines))
 
@@ -280,28 +282,34 @@ function {ns}:v{version}/multiplayer/show_dialog with storage {ns}:temp
 	## ====================================================================
 	## Shared dialog builder (static action lists, points in body, Back → hub)
 	## ====================================================================
-	def write_static_dialog(name: str, title: str, hint: str, actions_snbt: str, columns: int = 2, guard: str = "") -> None:
-		""" Write show_<name> (+_macro): a static-actions dialog with the points line. """
-		write_versioned_function(f"multiplayer/editor/show_{name}", f"""
-{guard}function {fn}/recompute_points
-execute store result storage {ns}:temp _pts int 1 run scoreboard players get @s {ns}.mp.edit_points
-function {fn}/show_{name}_macro with storage {ns}:temp
-""")
-		write_versioned_function(f"multiplayer/editor/show_{name}_macro", f"""$data modify storage {ns}:temp dialog set value {{\
+	# One shared skeleton for all thirteen "points line + static action list" submenus. Title and
+	# hint ride in as whole text components inside single-quoted SNBT so they substitute raw and
+	# auto.lang_file still lifts their English out. The action list stays a literal in each caller:
+	# its tooltips contain \n and \uXXXX escapes that a nested SNBT string would eat.
+	write_versioned_function("multiplayer/editor/show_static_dialog", f"""$data modify storage {ns}:temp dialog set value {{\
 type:"minecraft:multi_action",\
-title:{{text:"Loadout - {title}",color:"gold",bold:true}},\
+title:$(title),\
 body:[{{\
 type:"minecraft:plain_message",\
-contents:["",["",{{"text":"Points remaining"}},": "],{{"text":"$(_pts)","color":"gold","bold":true}},{{"text":" / {PICK10_TOTAL}","color":"dark_gray"}}]\
+contents:["",["",{{"text":"Points remaining"}},": "],{{"text":"$(pts)","color":"gold","bold":true}},{{"text":" / {PICK10_TOTAL}","color":"dark_gray"}}]\
 }},{{\
 type:"minecraft:plain_message",\
-contents:{{text:"{hint}",color:"gray"}}\
+contents:$(hint)\
 }}],\
-actions:[{actions_snbt}],\
-columns:{columns},\
+actions:[],\
+columns:$(columns),\
 after_action:"close",\
 exit_action:{{label:"Back",action:{{type:"run_command",command:"/trigger {ns}.player.config set {TRIG_HUB}"}}}}\
 }}
+""")
+
+	def write_static_dialog(name: str, title: str, hint: str, actions_snbt: str, columns: int = 2, guard: str = "") -> None:
+		""" Write show_<name>: the shared skeleton filled in, then its own action list, then show. """
+		write_versioned_function(f"multiplayer/editor/show_{name}", f"""
+{guard}function {fn}/recompute_points
+data modify storage {ns}:temp _dlg merge value {{title:'{{text:"Loadout - {title}",color:"gold",bold:true}}',hint:'{{text:"{hint}",color:"gray"}}',columns:{columns}}}
+function {fn}/show_static_dialog with storage {ns}:temp _dlg
+data modify storage {ns}:temp dialog.actions set value [{actions_snbt}]
 function {ns}:v{version}/multiplayer/show_dialog with storage {ns}:temp
 """)
 
@@ -367,9 +375,9 @@ function {fn}/show_secondary_pistol_dialog
 	# Gun pick handlers: snapshot → merge gun fields (resets scope/camo, mags to 1) → commit →
 	# on success continue to scope (if the gun has variants) or camo; on failure back to hub.
 	scope_set_func: dict[tuple[str, ...], str] = {
-		("", "_1", "_2", "_3", "_4"): "scope/primary_full",
-		("", "_1", "_2", "_3"):       "scope/primary_no4",
-		("", "_1"):                   "scope/primary_1only",
+		("", "_1", "_2", "_3", "_4"): "show_scope_primary_full",
+		("", "_1", "_2", "_3"):       "show_scope_primary_no4",
+		("", "_1"):                   "show_scope_primary_1only",
 	}
 	scope_route_lines = ""
 	for wp in PRIMARY_WEAPONS:
@@ -417,7 +425,7 @@ function {fn}/show_primary_camo_dialog
 		)
 	secondary_scope_route = (
 		f'execute if data storage {ns}:temp editor{{secondary:"deagle"}} run '
-		f'return run function {fn}/scope/secondary_4only\n'
+		f'return run function {fn}/show_scope_secondary_4only\n'
 	)
 
 	write_versioned_function("multiplayer/editor/pick_secondary", f"""
@@ -498,18 +506,11 @@ function {fn}/hub
 			f"Choose your optic (-{COST_PRIMARY_SCOPE} pt for any scope, iron sights free)",
 			scope_actions_snbt(TRIG_PRIMARY_SCOPE_BASE, variants, COST_PRIMARY_SCOPE),
 		)
-		# Alias kept at the historical path used by the per-gun scope routing
-		write_versioned_function(f"multiplayer/editor/scope/primary_{func_suffix}", f"""
-function {fn}/show_scope_primary_{func_suffix}
-""")
 	write_static_dialog(
 		"scope_secondary_4only", "Secondary Scope",
 		f"Choose your secondary optic (-{COST_SECONDARY_SCOPE} pt for scope, iron sights free)",
 		scope_actions_snbt(TRIG_SECONDARY_SCOPE_BASE, ("", "_4"), COST_SECONDARY_SCOPE),
 	)
-	write_versioned_function("multiplayer/editor/scope/secondary_4only", f"""
-function {fn}/show_scope_secondary_4only
-""")
 
 	## Scope pick handlers: snapshot → set → commit (overflow keeps iron sights) → camo dialog
 	def gen_pick_scope_lines(prefix: str, trig_base: int) -> str:

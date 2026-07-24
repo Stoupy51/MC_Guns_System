@@ -40,4 +40,5 @@ scoreboard players operation #lc_t mgs.data *= #1 mgs.data
 scoreboard players operation #lc_cost mgs.data += #lc_t mgs.data
 scoreboard players set @s mgs.mp.edit_points 10
 scoreboard players operation @s mgs.mp.edit_points -= #lc_cost mgs.data
+execute store result storage mgs:temp _dlg.pts int 1 run scoreboard players get @s mgs.mp.edit_points
 
