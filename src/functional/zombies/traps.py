@@ -8,6 +8,7 @@
 #          the bullet stops at the first entity hit, so players between the turret and zombies take 2 damage instead.
 from stewbeet import JsonDict, Mem, Predicate, set_json_encoder, write_load_file, write_versioned_function
 
+from ..core.feedback import zb_sound
 from ..helpers import MGS_TAG
 from .common import deny_not_enough_points_body, deny_requires_power_body, game_active_guard_cmd
 
@@ -175,7 +176,7 @@ execute if score @s {ns}.special.timeslip matches 1.. as @e[type=minecraft:marke
 
 # Announce
 tellraw @a[scores={{{ns}.zb.in_game=1}}] [{MGS_TAG},{{"text":"Trap activated for ","color":"gold"}},{{"score":{{"name":"#trap_price","objective":"{ns}.data"}},"color":"yellow"}},{{"text":" points.","color":"gold"}}]
-function {ns}:v{version}/zombies/feedback/sound_announce
+{zb_sound('announce')}
 """)
 
 	write_versioned_function("zombies/traps/deny_requires_power", f"""
@@ -184,7 +185,7 @@ function {ns}:v{version}/zombies/feedback/sound_announce
 
 	write_versioned_function("zombies/traps/deny_not_ready", f"""
 tellraw @s [{MGS_TAG},{{"text":"Trap is on cooldown and not ready yet.","color":"yellow"}}]
-function {ns}:v{version}/zombies/feedback/sound_deny
+{zb_sound('deny')}
 """)
 
 	write_versioned_function("zombies/traps/deny_not_enough_points", f"""

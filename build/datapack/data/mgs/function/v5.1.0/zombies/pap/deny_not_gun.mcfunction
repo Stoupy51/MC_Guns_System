@@ -8,5 +8,5 @@
 #
 
 tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.selected_slot_does_not_contain_a_weapon","color":"red"}]
-function mgs:v5.1.0/zombies/feedback/sound_deny
+playsound minecraft:entity.villager.no ambient @s ~ ~ ~ 0.8 1.0
 

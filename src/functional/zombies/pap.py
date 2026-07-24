@@ -14,6 +14,7 @@ from ...config.stats import (
 	STATS_FIELDS,
 )
 from ...database.camo import MATERIALS
+from ..core.feedback import zb_sound
 from ..helpers import MGS_TAG
 from .common import deny_not_enough_points_body, deny_requires_power_body, game_active_guard_cmd
 
@@ -559,24 +560,24 @@ $function {ns}:v{version}/zombies/bonus/reload_weapon_slot {{slot:"$(slot)"}}
 
 	write_versioned_function("zombies/pap/deny_hold_weapon_slot", f"""
 tellraw @s [{MGS_TAG},{{"text":"Hold weapon slot 1, 2, or 3 to use Pack-a-Punch.","color":"red"}}]
-function {ns}:v{version}/zombies/feedback/sound_deny
+{zb_sound('deny')}
 """)
 
 	write_versioned_function("zombies/pap/deny_not_gun", f"""
 tellraw @s [{MGS_TAG},{{"text":"Selected slot does not contain a weapon.","color":"red"}}]
-function {ns}:v{version}/zombies/feedback/sound_deny
+{zb_sound('deny')}
 """)
 
 	write_versioned_function("zombies/pap/deny_not_supported", f"""
 tellraw @s [{MGS_TAG},{{"text":"This weapon cannot be Pack-a-Punched.","color":"red"}}]
-function {ns}:v{version}/zombies/feedback/sound_deny
+{zb_sound('deny')}
 """)
 
 	REPAP_SCOPE_PRICE: int = 1000
 
 	write_versioned_function("zombies/pap/deny_max_level", f"""
 tellraw @s [{MGS_TAG},{{"text":"This weapon is already at max Pack-a-Punch level.","color":"yellow"}}]
-function {ns}:v{version}/zombies/feedback/sound_deny
+{zb_sound('deny')}
 """)
 
 	## Re-PAP at max level: scope/camo only randomization for a reduced price
@@ -629,7 +630,7 @@ tag @s remove {ns}.pap_owner
 
 	write_versioned_function("zombies/pap/deny_not_enough_points_scope", f"""
 tellraw @s [{MGS_TAG},{{"text":"You don't have enough points ({REPAP_SCOPE_PRICE} needed).","color":"red"}}]
-function {ns}:v{version}/zombies/feedback/sound_deny
+{zb_sound('deny')}
 """)
 
 	write_versioned_function("zombies/pap/on_right_click", f"""
@@ -834,9 +835,9 @@ function {ns}:v{version}/zombies/pap/anim/store_slot with storage {ns}:temp _pap
 scoreboard players set @s {ns}.pap_anim 300
 
 # Sound: machine accepting weapon (Timeslip owners hear the 3x-speed jingle sting)
-function {ns}:v{version}/zombies/feedback/sound_pap_knuckle_crack
-execute if score @s {ns}.zb.pap.timeslip matches 1 run function {ns}:v{version}/zombies/feedback/sound_pap_jingle_sting_short
-execute unless score @s {ns}.zb.pap.timeslip matches 1 run function {ns}:v{version}/zombies/feedback/sound_pap_jingle_sting
+{zb_sound('pap_knuckle_crack')}
+execute if score @s {ns}.zb.pap.timeslip matches 1 run {zb_sound('pap_jingle_sting_short')}
+execute unless score @s {ns}.zb.pap.timeslip matches 1 run {zb_sound('pap_jingle_sting')}
 """)
 
 	# Persist weapon slot keyed by machine ID in zombies storage.
@@ -917,7 +918,7 @@ execute if score @s {ns}.pap_anim matches 5 as @n[tag={ns}.pap_weapon_display,di
 execute if score @s {ns}.pap_anim matches 1..205 positioned ~ ~-2 ~ run particle smoke ~ ~0.5 ~ 0.2 0.2 0.2 0.05 2 force @a[distance=..48]
 execute store result score #pap_t {ns}.data run scoreboard players get @s {ns}.pap_anim
 scoreboard players operation #pap_t {ns}.data %= #20 {ns}.data
-execute if score @s {ns}.pap_anim matches 1..205 if score #pap_t {ns}.data matches 0 run function {ns}:v{version}/zombies/feedback/sound_pap_retreat_loop
+execute if score @s {ns}.pap_anim matches 1..205 if score #pap_t {ns}.data matches 0 run {zb_sound('pap_retreat_loop')}
 
 # Retreat finished at timer=0 — weapon is lost
 execute if score @s {ns}.pap_anim matches 0 run function {ns}:v{version}/zombies/pap/anim/retreat_finish
@@ -939,8 +940,8 @@ execute if score #pap_t {ns}.data matches 0 positioned ~ ~-2 ~ run particle dust
 
 	# Trigger inside processing (weapon already at center, no transformation change needed).
 	write_versioned_function("zombies/pap/anim/trigger_inside", f"""
-function {ns}:v{version}/zombies/feedback/sound_pap_loop
-function {ns}:v{version}/zombies/feedback/sound_pap_upgrade
+{zb_sound('pap_loop')}
+{zb_sound('pap_upgrade')}
 """)
 
 	# Dense particles and sounds while the weapon is being processed inside the machine.
@@ -952,14 +953,14 @@ execute positioned ~ ~-2 ~ run particle end_rod ~ ~0.8 ~ 0.3 0.2 0.3 0.05 1 forc
 # Periodic processing sound every 20 ticks
 execute store result score #pap_t {ns}.data run scoreboard players get @s {ns}.pap_anim
 scoreboard players operation #pap_t {ns}.data %= #20 {ns}.data
-execute if score #pap_t {ns}.data matches 0 run function {ns}:v{version}/zombies/feedback/sound_pap_loop
+execute if score #pap_t {ns}.data matches 0 run {zb_sound('pap_loop')}
 """)
 
 	# Trigger coming-out interpolation: slide horizontally out over 30 ticks.
 	write_versioned_function("zombies/pap/anim/trigger_coming_out", f"""
 # Slide weapon horizontally out to the left over 30 ticks (no rotation/size changes)
 execute as @n[tag={ns}.pap_weapon_display,distance=..2] at @s run tp @s ^ ^ ^0.6
-function {ns}:v{version}/zombies/feedback/sound_pap_dispense
+{zb_sound('pap_dispense')}
 """)
 
 	# End_rod and purple particles during the coming-out phase.
@@ -981,7 +982,7 @@ data modify entity @n[tag={ns}.pap_weapon_display,distance=..2] teleport_duratio
 
 # Sound + particle burst
 execute positioned ~ ~-2 ~ run particle end_rod ~ ~1.0 ~ 0.5 0.3 0.5 0.1 20 force @a[distance=..48]
-function {ns}:v{version}/zombies/feedback/sound_pap_ready
+{zb_sound('pap_ready')}
 tellraw @a[scores={{{ns}.zb.in_game=1}}] [{MGS_TAG},{{"text":"Weapon upgraded! Collect it before it retreats!","color":"aqua"}}]
 """)
 
@@ -995,7 +996,7 @@ scoreboard players set @s {ns}.pap_anim -1
 
 # Notify and sound
 tellraw @a[scores={{{ns}.zb.in_game=1}}] [{MGS_TAG},{{"text":"The weapon was lost!","color":"red","bold":true}}]
-function {ns}:v{version}/zombies/feedback/sound_pap_deny
+{zb_sound('pap_deny')}
 
 # Clean up orphaned magazine and PAP tracking for the owner
 execute store result score #pap_mid {ns}.data run scoreboard players get @s {ns}.zb.pap.id
@@ -1046,7 +1047,7 @@ tag @s remove {ns}.pap_owner
 
 	write_versioned_function("zombies/pap/anim/deny_not_your_weapon", f"""
 tellraw @s [{MGS_TAG},{{"text":"This upgraded weapon belongs to another player.","color":"red"}}]
-function {ns}:v{version}/zombies/feedback/sound_deny
+{zb_sound('deny')}
 """)
 
 	# Resolve machine ID and call lookup (runs as machine).
@@ -1085,13 +1086,13 @@ execute as @a[scores={{{ns}.zb.pap_mid=1..}}] if score @s {ns}.zb.pap_mid = #pap
 $data remove storage {ns}:zombies pap_anim_slot."$(id)"
 
 # Notify the player
-execute as @p[tag={ns}.pap_owner] run function {ns}:v{version}/zombies/feedback/sound_success
+execute as @p[tag={ns}.pap_owner] run {zb_sound('success')}
 """)
 
 	# Deny message when machine is busy.
 	write_versioned_function("zombies/pap/anim/deny_processing", f"""
 tellraw @s [{MGS_TAG},{{"text":"Already processing a weapon...","color":"yellow"}}]
-function {ns}:v{version}/zombies/feedback/sound_deny
+{zb_sound('deny')}
 """)
 
 	# Timeslip: run two EXTRA anim steps this tick for a Timeslip-owned machine, so the UPGRADE
@@ -1189,7 +1190,7 @@ execute if data storage {ns}:temp _pap_extract.lore[0] run function {ns}:v{versi
 
 # Notify the player
 tellraw @s [{MGS_TAG},"✦ ",{{"text":"Pack-a-Punch!","color":"aqua","bold":true}},{{"text":"  Level ","color":"gray"}},{{"score":{{"name":"#pap_next","objective":"{ns}.data"}},"color":"aqua"}},{{"text":"/","color":"dark_gray"}},{{"score":{{"name":"#pap_max","objective":"{ns}.data"}},"color":"aqua"}}]
-function {ns}:v{version}/zombies/feedback/sound_success
+{zb_sound('success')}
 
 # Restore unannotated ammo lore (preserves "/" pattern for modify_lore)
 execute if data storage {ns}:temp _pap_lore1_original run data modify storage {ns}:temp _pap_extract.lore[1] set from storage {ns}:temp _pap_lore1_original
@@ -1237,5 +1238,5 @@ function {ns}:v{version}/zombies/pap/apply_to_slot with storage {ns}:temp _pap
 
 # Notify the player
 tellraw @s [{MGS_TAG},"✦ ",{{"text":"Free scope/camo reroll! (already at max PAP level)","color":"aqua"}}]
-function {ns}:v{version}/zombies/feedback/sound_success
+{zb_sound('success')}
 """)

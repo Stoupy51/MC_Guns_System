@@ -44,7 +44,7 @@ execute unless score @s mgs.mp.class matches 0 run function mgs:v5.1.0/multiplay
 function mgs:v5.1.0/multiplayer/respawn_tp
 
 # Call map join script (executed as the joining player)
-function mgs:v5.1.0/shared/maps/call_join_script_at_base
+function mgs:v5.1.0/shared/maps/call_script_at_base {script:"join"}
 
 # Announce
 tellraw @a ["",{"selector":"@s","color":"yellow"},[{"text":" ","color":"yellow"}, {"translate":"mgs.joined_the_game"}]]

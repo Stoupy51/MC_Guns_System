@@ -7,5 +7,5 @@
 # Clear any stale result so downstream checks treat this pull as failed
 data remove storage mgs:zombies mystery_box.result
 tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.the_mystery_box_has_no_weapons_available","color":"red"}]
-function mgs:v5.1.0/zombies/feedback/sound_deny
+playsound minecraft:entity.villager.no ambient @s ~ ~ ~ 0.8 1.0
 

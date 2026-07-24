@@ -30,5 +30,5 @@ execute as @a[scores={mgs.zb.pap_mid=1..}] if score @s mgs.zb.pap_mid = #pap_mid
 $data remove storage mgs:zombies pap_anim_slot."$(id)"
 
 # Notify the player
-execute as @p[tag=mgs.pap_owner] run function mgs:v5.1.0/zombies/feedback/sound_success
+execute as @p[tag=mgs.pap_owner] run playsound minecraft:entity.experience_orb.pickup ambient @s ~ ~ ~ 0.8 1.25
 

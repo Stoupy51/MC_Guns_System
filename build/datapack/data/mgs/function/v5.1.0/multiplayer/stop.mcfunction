@@ -54,7 +54,7 @@ team leave @a[team=mgs.blue]
 team leave @a[team=mgs.ffa]
 
 # Call map leave script for each in-game player (state is still active/preparing here)
-execute as @a[scores={mgs.mp.in_game=1}] run function mgs:v5.1.0/shared/maps/call_leave_script_at_base
+execute as @a[scores={mgs.mp.in_game=1}] run function mgs:v5.1.0/shared/maps/call_script_at_base {script:"leave"}
 
 scoreboard players set @a mgs.mp.in_game 0
 scoreboard players set @a mgs.mp.team 0

@@ -29,5 +29,5 @@ item replace entity @s hotbar.3 with compass[custom_data={mgs:{compass:true}}]
 execute if data storage mgs:missions game.map.respawn_commands[0] at @s run function mgs:v5.1.0/shared/run_respawn_commands {mode:"missions"}
 
 # Call map respawn script (executed as the respawning player)
-function mgs:v5.1.0/shared/maps/call_respawn_script_at_base
+function mgs:v5.1.0/shared/maps/call_script_at_base {script:"respawn"}
 

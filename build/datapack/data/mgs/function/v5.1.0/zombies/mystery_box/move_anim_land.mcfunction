@@ -16,5 +16,5 @@ function mgs:v5.1.0/zombies/mystery_box/refresh_disabled
 
 # Announce arrival
 tellraw @a[scores={mgs.zb.in_game=1}] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.the_mystery_box_has_arrived_at_a_new_location","color":"yellow"}]
-execute as @n[tag=mgs.mystery_box_active] at @s run function mgs:v5.1.0/zombies/feedback/sound_box_land
+execute as @n[tag=mgs.mystery_box_active] at @s run playsound mgs:zombies/mystery_box/land ambient @a[scores={mgs.zb.in_game=1}] ~ ~ ~ 1.0 1.0
 

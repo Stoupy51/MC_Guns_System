@@ -71,7 +71,7 @@ execute if data storage mgs:temp _pap_extract.lore[0] run function mgs:v5.1.0/zo
 
 # Notify the player
 tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],"✦ ",{"translate":"mgs.pack_a_punch_3","color":"aqua","bold":true},[{"text":"  ","color":"gray"}, {"translate":"mgs.level_2"}],{"score":{"name":"#pap_next","objective":"mgs.data"},"color":"aqua"},{"text":"/","color":"dark_gray"},{"score":{"name":"#pap_max","objective":"mgs.data"},"color":"aqua"}]
-function mgs:v5.1.0/zombies/feedback/sound_success
+playsound minecraft:entity.experience_orb.pickup ambient @s ~ ~ ~ 0.8 1.25
 
 # Restore unannotated ammo lore (preserves "/" pattern for modify_lore)
 execute if data storage mgs:temp _pap_lore1_original run data modify storage mgs:temp _pap_extract.lore[1] set from storage mgs:temp _pap_lore1_original

@@ -262,7 +262,7 @@ team leave @a[team={ns}.blue]
 team leave @a[team={ns}.ffa]
 
 # Call map leave script for each in-game player (state is still active/preparing here)
-execute as @a[scores={{{ns}.mp.in_game=1}}] run function {ns}:v{version}/shared/maps/call_leave_script_at_base
+execute as @a[scores={{{ns}.mp.in_game=1}}] run function {ns}:v{version}/shared/maps/call_script_at_base {{script:"leave"}}
 
 scoreboard players set @a {ns}.mp.in_game 0
 scoreboard players set @a {ns}.mp.team 0
@@ -483,7 +483,7 @@ scoreboard players operation #tick_mod {ns}.data %= #6 {ns}.data
 execute if score #tick_mod {ns}.data matches 0 if entity @a[scores={{{ns}.mp.in_game=1,{ns}.special.tracker=1..}}] run function {ns}:v{version}/multiplayer/perks/tracker_tick
 
 # Call map-defined tick script
-function {ns}:v{version}/shared/maps/call_tick_script_at_base
+function {ns}:v{version}/shared/maps/call_script_at_base {{script:"tick"}}
 """)
 
 	## perks/tracker_tick - One pass over all live players: drop a footprint at each one's feet
@@ -916,7 +916,7 @@ execute as @a[scores={{{ns}.mp.in_game=1}}] run scoreboard players operation @s 
 {end_prep_transition_lines(ns, "multiplayer", "mp")}
 
 # Call map start scripts (state is now active, chunks had time to load)
-function {ns}:v{version}/shared/maps/call_start_script_at_base
+function {ns}:v{version}/shared/maps/call_script_at_base {{script:"start"}}
 
 # Announce
 tellraw @a ["","⚔ ",[{{"text":"","color":"green","bold":true}},{{"text":"GO! GO! GO!"}}]]

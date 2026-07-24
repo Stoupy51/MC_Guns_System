@@ -14,6 +14,7 @@ from stewbeet import Mem, write_load_file, write_versioned_function
 from ...config.catalogs import PRIMARY_WEAPONS, SECONDARY_WEAPONS
 from ...config.stats import BASE_WEAPON, CAPACITY, GRENADE_TYPE, REMAINING_BULLETS
 from ..helpers import MGS_TAG
+from .feedback import zb_sound
 
 
 def weapon_drop_tick_lines(ns: str) -> str:
@@ -188,7 +189,7 @@ execute if score #is_primary {ns}.data matches 0 run return 0
 
 scoreboard players set #pick_deny {ns}.data 1
 tellraw @s [{MGS_TAG},{{"text":"You need the Overkill perk to carry two primary weapons.","color":"red"}}]
-function {ns}:v{version}/zombies/feedback/sound_deny
+{zb_sound('deny')}
 """)
 
 	## Take: only one gun owned -> the drop fills the other weapon slot, then the drop is removed

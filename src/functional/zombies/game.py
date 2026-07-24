@@ -231,7 +231,7 @@ execute unless data storage {ns}:zombies game{{variant:"zonweeb"}} run tellraw @
 function {ns}:v{version}/zombies/start_round
 
 # Call map start scripts (state is now active, chunks had time to load)
-function {ns}:v{version}/shared/maps/call_start_script_at_base
+function {ns}:v{version}/shared/maps/call_script_at_base {{script:"start"}}
 """)
 
 
@@ -248,7 +248,7 @@ execute if data storage {ns}:zombies game{{state:"preparing"}} run function {ns}
 function {ns}:v{version}/zombies/revive/tick
 
 # Call map-defined tick script
-function {ns}:v{version}/shared/maps/call_tick_script_at_base
+function {ns}:v{version}/shared/maps/call_script_at_base {{script:"tick"}}
 
 # Zombie Spawning (if there are still zombies to spawn)
 execute if score #zb_to_spawn {ns}.data matches 1.. run function {ns}:v{version}/zombies/spawn_tick
@@ -411,7 +411,7 @@ gamerule advance_time true
 
 # Announce
 tellraw @a [{MGS_TAG},{{"text":"Zombies game ended.","color":"red"}}]
-execute as @a[scores={{{ns}.zb.in_game=1}}] run function {ns}:v{version}/shared/maps/call_leave_script_at_base
+execute as @a[scores={{{ns}.zb.in_game=1}}] run function {ns}:v{version}/shared/maps/call_script_at_base {{script:"leave"}}
 
 # Reset in-game state
 scoreboard players set @a {ns}.zb.in_game 0

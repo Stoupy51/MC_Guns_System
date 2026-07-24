@@ -37,5 +37,5 @@ execute if score @s mgs.special.timeslip matches 1.. as @e[type=minecraft:marker
 
 # Announce
 tellraw @a[scores={mgs.zb.in_game=1}] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.trap_activated_for","color":"gold"},{"score":{"name":"#trap_price","objective":"mgs.data"},"color":"yellow"},[{"text":" ","color":"gold"}, {"translate":"mgs.points_3"}]]
-function mgs:v5.1.0/zombies/feedback/sound_announce
+playsound minecraft:block.note_block.bit ambient @a[scores={mgs.zb.in_game=1}] ~ ~ ~ 0.6 0.9
 

@@ -200,7 +200,7 @@ execute if score #mi_total_enemies {ns}.data matches ..0 run return run function
 execute if data storage {ns}:missions game.map.start_commands[0] run function {ns}:v{version}/shared/run_start_commands {{mode:"missions"}}
 
 # Call map start scripts (state is now active, chunks had time to load)
-function {ns}:v{version}/shared/maps/call_start_script_at_base
+function {ns}:v{version}/shared/maps/call_script_at_base {{script:"start"}}
 
 # Give compass pointing to nearest enemy (hotbar slot 3)
 execute as @a[scores={{{ns}.mi.in_game=1}}] run item replace entity @s hotbar.3 with compass[custom_data={{{ns}:{{compass:true}}}}]
@@ -392,7 +392,7 @@ item replace entity @s hotbar.3 with compass[custom_data={{{ns}:{{compass:true}}
 execute if data storage {ns}:missions game.map.respawn_commands[0] at @s run function {ns}:v{version}/shared/run_respawn_commands {{mode:"missions"}}
 
 # Call map respawn script (executed as the respawning player)
-function {ns}:v{version}/shared/maps/call_respawn_script_at_base
+function {ns}:v{version}/shared/maps/call_script_at_base {{script:"respawn"}}
 """)
 
 	## Game Tick
@@ -432,7 +432,7 @@ execute if score #alive {ns}.data matches 1.. if score #mi_compass_phase {ns}.da
 execute at @a[scores={{{ns}.mi.in_game=1}},limit=1] run kill @e[type=experience_orb,distance=..200]
 
 # Call map-defined tick script
-function {ns}:v{version}/shared/maps/call_tick_script_at_base
+function {ns}:v{version}/shared/maps/call_script_at_base {{script:"tick"}}
 
 # Check if all enemies are dead → victory (reuses #alive counted above instead of a second
 # full-entity scan; a kill from the map tick script above is caught one tick later).
@@ -522,7 +522,7 @@ function #{ns}:missions/on_mission_end
 
 tellraw @a [{MGS_TAG},{{"text":"Mission ended.","color":"red"}}]
 
-execute as @a[scores={{{ns}.mi.in_game=1}}] run function {ns}:v{version}/shared/maps/call_leave_script_at_base
+execute as @a[scores={{{ns}.mi.in_game=1}}] run function {ns}:v{version}/shared/maps/call_script_at_base {{script:"leave"}}
 
 # Reset in-game state
 scoreboard players set @a[scores={{{ns}.mi.in_game=1}}] {ns}.mp.team 0

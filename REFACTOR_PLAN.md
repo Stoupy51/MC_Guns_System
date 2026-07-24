@@ -449,7 +449,8 @@ Each phase is one commit, independently shippable, verified with
 | ~~**P2**~~ ✅ | §3b — fix `auto.headers` in **StewBeet** to scan dialogs. Re-baselined (comment-only diff). **Unblocks P5.** | 0 files, 113 headers | +45 (StewBeet) | low |
 | ~~**P3**~~ ✅ | PY3/PY6 — merge `database/*.py` into `items.py`; delete `_template.py`, the dead `export_all_definitions_to_json` tail, `definitions_debug.json`, `game_mode.py`. | **0 (byte-identical)** | −181, −7 files | low |
 | ~~**P4**~~ ✅ | PY2 — 97 `_zoom` models become `parent:` children. First intentional output diff; verified by parent-resolution compare. | **−69.9 MB RP**, 0 files added/removed | +8 | low-med |
-| **P5** | D1 — inline one/two-command wrappers, starting with the 26 `zombies/feedback/sound_*` and `shared/maps/call_*_script_at_base`. Re-run the caller census on post-P2 headers first. | **−~145** | ~0 | low-med |
+| **P5a** ✅ | D1 — inlined the 26 `zombies/feedback/sound_*`; `shared/maps/call_*_script_at_base` ×6 → 1 macro. | **−31** | −31 | low |
+| **P5b** | D1 remainder — the other ~130 one/two-command wrappers, family by family. | −~110 | ~0 | low-med |
 | **P6** | D2 — collapse the 15 per-entity function families into macros / storage-driven dispatch. | **−~160** | −250 | low |
 | **P7** | D5 + D6 — shared `zombies/deny/*`; map-editor and `players/` per-mode macros. | −~23 | −150 | low |
 | **P8** | D4 — loadout editor: `prepare_points`, static dialog resources with score components, slot parameterisation. | −~28 | −300 | medium |
@@ -589,6 +590,24 @@ the one most likely to drift, so it lands only after the harness has been exerci
        a model that declares `parent` and no `textures` is a child and inherits them.
   - The 5 real exceptions (`mac10_zoom`, `spas12_zoom`, `vz61_zoom`, `g3a3_1_zoom`, `g3a3_3_zoom`)
     keep full standalone models — they differ in `elements`/`textures`, not just `display`.
-  - ⚠ **Still worth an in-game look** before this ships: ADS view on a full-scope weapon, a shotgun,
-    a pistol, and one camo'd weapon. Model inheritance is resolved client-side and no build check
-    can prove the renderer agrees.
+  - **Renderer confirmation:** deleting `iso_renders/` and rebuilding regenerated all **632 renders
+    byte-identically** (git-tracked, so `git status iso_renders` proves it) — an independent check
+    through a real model renderer covering every camo variant. Also **0 dangling parent references**
+    across the 499 models that now use an `mgs:` parent.
+  - The client-side worry is settled by the pack itself: the **14 perk machines have always been
+    `parent:`-only children with no `elements`** (`perk_machine_juggernog` = `{parent, textures}`),
+    and they render in game today. The new zoom children are the same shape.
+- **2026-07-24** — **P5a done (awaiting review).** **1510 → 1479 mcfunctions (−31)**, −51 command
+  lines, −31 Python LOC. Output diff verified by re-deriving it: a script expands each baseline
+  caller by hand and compares to the new build — **82/82 changed files match exactly**.
+  - The 26 `zombies/feedback/sound_*` one-liners became a `zb_sound(name)` table inlined at 63 call
+    sites. Removes a function dispatch per cue, so this is marginally *faster*, not slower.
+    The two 2-command cues (`box_spin`, `box_spin_short`) were split into single commands so every
+    table entry is exactly one command and guarded call sites inline safely.
+  - ⚠ **Layering:** `core/weapon_drop.py` needed a cue, and importing it from `zombies/` created a
+    circular import (`core → zombies → core`). The table moved to **`core/feedback.py`** — zombies
+    already depends on core, never the reverse.
+  - ⚠ **Plan correction:** `shared/maps/call_*_script_at_base` was filed under D1 (inlining), but
+    they are **5-command** wrappers with 14 call sites — inlining would have *created* ~60 lines of
+    duplication. Converted to one `$(script)` macro instead (6 → 1). Belongs in D2, not D1.
+    Lesson for P5b: check the command count and call-site count before inlining anything.

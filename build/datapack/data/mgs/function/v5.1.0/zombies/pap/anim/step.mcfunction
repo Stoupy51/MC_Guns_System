@@ -49,7 +49,7 @@ execute if score @s mgs.pap_anim matches 5 as @n[tag=mgs.pap_weapon_display,dist
 execute if score @s mgs.pap_anim matches 1..205 positioned ~ ~-2 ~ run particle smoke ~ ~0.5 ~ 0.2 0.2 0.2 0.05 2 force @a[distance=..48]
 execute store result score #pap_t mgs.data run scoreboard players get @s mgs.pap_anim
 scoreboard players operation #pap_t mgs.data %= #20 mgs.data
-execute if score @s mgs.pap_anim matches 1..205 if score #pap_t mgs.data matches 0 run function mgs:v5.1.0/zombies/feedback/sound_pap_retreat_loop
+execute if score @s mgs.pap_anim matches 1..205 if score #pap_t mgs.data matches 0 run playsound mgs:zombies/pap/retreat_loop ambient @a[scores={mgs.zb.in_game=1}] ~ ~ ~ 0.5 1.0
 
 # Retreat finished at timer=0 — weapon is lost
 execute if score @s mgs.pap_anim matches 0 run function mgs:v5.1.0/zombies/pap/anim/retreat_finish

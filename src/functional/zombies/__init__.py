@@ -6,7 +6,6 @@ from .bonus import main as bonus_main
 from .display_helpers import generate_display_helpers
 from .doors import generate_doors
 from .escort import generate_zombies_escort
-from .feedback import generate_zombies_feedback
 from .game import generate_zombies_game
 from .hurt_player import generate_hurt_player
 from .inventory import generate_zombies_inventory
@@ -37,7 +36,6 @@ def main() -> None:
     generate_zombies_rounds()
     generate_zombies_escort()
     generate_zombies_abilities()
-    generate_zombies_feedback()
     generate_zombies_inventory()
     generate_display_helpers()
     generate_roaming()

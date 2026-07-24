@@ -43,5 +43,5 @@ function mgs:v5.1.0/zombies/perks/apply with storage mgs:temp _pk_data
 function #mgs:zombies/on_new_perk
 
 # Sound
-function mgs:v5.1.0/zombies/feedback/sound_success
+playsound minecraft:entity.experience_orb.pickup ambient @s ~ ~ ~ 0.8 1.25
 

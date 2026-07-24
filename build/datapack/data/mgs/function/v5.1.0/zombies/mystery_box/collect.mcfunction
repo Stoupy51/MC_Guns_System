@@ -22,8 +22,8 @@ execute if data storage mgs:zombies mystery_box.result.weapon_id run function mg
 
 # Announce + sounds
 tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.you_collected","color":"green"},{"storage":"mgs:temp","nbt":"_mb_collected_name","interpret":true},[{"text":" ","color":"green"}, {"translate":"mgs.from_the_mystery_box"}]]
-function mgs:v5.1.0/zombies/feedback/sound_success
-function mgs:v5.1.0/zombies/feedback/sound_box_close
+playsound minecraft:entity.experience_orb.pickup ambient @s ~ ~ ~ 0.8 1.25
+playsound mgs:zombies/mystery_box/close ambient @a[scores={mgs.zb.in_game=1}] ~ ~ ~ 1.0 1.0
 
 # Close this box's lid and remove its display (buyer is tracked per-display, nothing to clear)
 function mgs:v5.1.0/zombies/mystery_box/close_lid
