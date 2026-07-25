@@ -15,7 +15,7 @@ execute unless score @s mgs.zb.player_hit >= #pu_hit_cutoff mgs.data run return 
 # Stop once a full drop cycle (one shuffle-bag worth) has dropped this round
 execute if score #zb_cycle_done mgs.data matches 1 run return 0
 
-# Drop chance = min(2%, 2/total_round_zombies), expressed in basis points (per 10000).
+# Drop chance = min(2%, 1/total_round_zombies), expressed in basis points (per 10000).
 # 2% = 200 bp; 1/total = 10000/total bp. Take the smaller of the two.
 scoreboard players set #pu_chance_bp mgs.data 200
 execute if score #zb_round_total mgs.data matches 1.. run scoreboard players set #pu_chance_tmp mgs.data 10000

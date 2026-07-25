@@ -12,6 +12,10 @@
 data modify storage mgs:zombies game.state set value "lobby"
 schedule clear mgs:v5.1.0/zombies/end_prep
 schedule clear mgs:v5.1.0/zombies/start_round
+
+# Drop any admin freeze (the attribute/NoAI restore below is part of the normal cleanup)
+scoreboard players set #zb_freeze mgs.data 0
+tag @e[tag=mgs.zb_frozen_ai] remove mgs.zb_frozen_ai
 execute as @a[scores={mgs.zb.in_game=1}] run attribute @s minecraft:max_health base reset
 execute as @a[scores={mgs.zb.in_game=1}] run attribute @s minecraft:movement_speed base reset
 execute as @a[scores={mgs.zb.in_game=1}] run attribute @s minecraft:jump_strength base reset

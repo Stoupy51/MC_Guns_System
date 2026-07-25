@@ -1,7 +1,7 @@
 
 # ruff: noqa: E501
 # Power-up System
-# On each zombie death there is a min(5%, 2/total_round_zombies) chance to drop a power-up,
+# On each zombie death there is a min(2%, 1/total_round_zombies) chance to drop a power-up,
 # until one full shuffle-bag cycle has dropped this round. Rares only appear after round 5.
 # Visual: item entity + text_display. Pickup by proximity (1.5 blocks). 26.5s lifetime.
 from dataclasses import dataclass
@@ -131,7 +131,7 @@ execute unless score @s {ns}.zb.player_hit >= #pu_hit_cutoff {ns}.data run retur
 # Stop once a full drop cycle (one shuffle-bag worth) has dropped this round
 execute if score #zb_cycle_done {ns}.data matches 1 run return 0
 
-# Drop chance = min(2%, 2/total_round_zombies), expressed in basis points (per 10000).
+# Drop chance = min(2%, 1/total_round_zombies), expressed in basis points (per 10000).
 # 2% = 200 bp; 1/total = 10000/total bp. Take the smaller of the two.
 scoreboard players set #pu_chance_bp {ns}.data 200
 execute if score #zb_round_total {ns}.data matches 1.. run scoreboard players set #pu_chance_tmp {ns}.data 10000
@@ -254,7 +254,7 @@ function {ns}:v{version}/zombies/powerups/spawn_display with storage {ns}:temp _
 	# so auto.lang_file still lifts the English out of it — hence `label:`, not `text:`, as the
 	# argument name, or the outer quoted value would be the one that gets translated.
 	dispatch_lines: str = "\n".join(
-		f'$execute if data storage {ns}:temp _pu_spawn {{"type":"{pu_id}"}} run function {ns}:v{version}/zombies/powerups/spawn_type '
+		f'$execute if data storage {ns}:temp _pu_spawn{{"type":"{pu_id}"}} run function {ns}:v{version}/zombies/powerups/spawn_type '
 		f'{{x:$(x),y:$(y),z:$(z),uid:$(uid),item:"{v.item}",type_num:{v.type_num},'
 		f'label:\'{{"text":"{v.display}","color":"{v.color}","bold":true}}\'}}'
 		for pu_id, v in POWERUP_TYPES.items()

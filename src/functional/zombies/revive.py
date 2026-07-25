@@ -18,6 +18,7 @@ QUICK_REVIVE_TICKS: int = 30	# 1.5 seconds with Quick Revive perk
 SOLO_QR_TICKS: int = 200		# 10 seconds for solo Quick Revive auto-revive
 SOLO_QR_MAX: int = 3			# Total solo self-revives allowed per game; each use requires rebuying QR
 CRAWL_SPEED: float = 0.06		# Blocks per tick for downed crawl movement
+ROUND_END_PICKUP_RANGE: int = 10  # A teammate this close to a still-downed body at round end revives it for free
 # HUD text display height above mannequin
 HUD_OFFSET_Y_THOUSANDTHS: int = 2000  # 2.0 blocks * 1000 (for scoreboard math)
 
@@ -555,8 +556,28 @@ execute as @e[tag={ns}.downed_cam,predicate={ns}:v{version}/zombies/revive/downe
 	## Round end respawn: revive all spectating (bled-out) players
 	# ──────────────────────────────────────────────────────────────────────────
 	write_versioned_function("zombies/revive/round_respawn", f"""
-# Respawn all spectator (bled-out) players
+# Free pickup first: a player still DOWNED when the round ended, with a live teammate standing within
+# {ROUND_END_PICKUP_RANGE} blocks of their body, is revived instead of respawned — they keep their guns.
+# Must run before the respawn pass below, which would otherwise wipe them back to the starting loadout.
+execute as @a[tag={ns}.downed_spectator,scores={{{ns}.zb.in_game=1}}] run function {ns}:v{version}/zombies/revive/round_end_pickup
+
+# Respawn every remaining spectator (bled out, or downed with nobody close enough)
 execute as @a[scores={{{ns}.zb.in_game=1}},gamemode=spectator] run function {ns}:v{version}/zombies/revive/do_round_respawn
+""")
+
+	## Round-end free pickup for one still-downed player (@s = the downed spectator). Reviving through
+	## revive_complete is what keeps the inventory: it only restores state and teleports, and never
+	## touches the hotbar (unlike do_round_respawn -> give_respawn_loadout). Perks stay lost, exactly
+	## like any other revive.
+	write_versioned_function("zombies/revive/round_end_pickup", f"""
+# Is a live (non-downed) teammate standing within {ROUND_END_PICKUP_RANGE} blocks of MY body?
+scoreboard players operation #my_downed_id {ns}.data = @s {ns}.zb.downed_id
+scoreboard players set #rv_pickup {ns}.data 0
+execute as @e[type=minecraft:mannequin,tag={ns}.downed_mannequin,predicate={ns}:v{version}/zombies/revive/downed_id_match] at @s if entity @a[scores={{{ns}.zb.in_game=1,{ns}.zb.downed=0}},gamemode=!spectator,distance=..{ROUND_END_PICKUP_RANGE}] run scoreboard players set #rv_pickup {ns}.data 1
+execute if score #rv_pickup {ns}.data matches 0 run return 0
+
+# Picked up by the end of the round: full revive, inventory untouched
+function {ns}:v{version}/zombies/revive/revive_complete
 """)
 
 	write_versioned_function("zombies/revive/do_round_respawn", f"""

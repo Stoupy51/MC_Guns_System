@@ -5,6 +5,7 @@
 #
 # @within	mgs:v5.1.0/zombies/revive/downed_tick
 #			mgs:v5.1.0/zombies/revive/solo_qr_complete
+#			mgs:v5.1.0/zombies/revive/round_end_pickup
 #
 
 # Remove downed state

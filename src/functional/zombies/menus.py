@@ -102,6 +102,13 @@ function {ns}:v{version}/zombies/admin/force_round_end
 tellraw @a [{MGS_TAG},{{"text":"An operator skipped ahead {delta} round(s).","color":"yellow"}}]
 """)
 
+	## Freeze toggle: one button that flips the state, so the dialog needs no per-state label.
+	write_versioned_function("zombies/admin/freeze_toggle", f"""
+execute unless data storage {ns}:zombies game{{state:"active"}} run return run tellraw @s [{MGS_TAG},{{"text":"No zombies game is active.","color":"red"}}]
+execute if score #zb_freeze {ns}.data matches 1 run return run function {ns}:v{version}/zombies/freeze_off
+function {ns}:v{version}/zombies/freeze_on
+""")
+
 	## Point grants, applied to every player in the game so scores stay comparable
 	for amount in (2500, 500000):
 		write_versioned_function(f"zombies/admin/points_add_{amount}", f"""
@@ -164,6 +171,7 @@ tag @a[tag={ns}.pu_collecting] remove {ns}.pu_collecting
 			dialog_run_btn("⟲ Reset Points", f"/function {ns}:v{version}/zombies/admin/points_reset", "Set every player's points back to 0", "red"),
 			dialog_run_btn("+2500 Points", f"/function {ns}:v{version}/zombies/admin/points_add_2500", "Give every player 2500 points", "green"),
 			dialog_run_btn("+500000 Points", f"/function {ns}:v{version}/zombies/admin/points_add_500000", "Give every player 500000 points", "green"),
+			dialog_run_btn("⏸ Freeze / Unfreeze", f"/function {ns}:v{version}/zombies/admin/freeze_toggle", "Pause the game: no mob moves, no player moves, every timer stops", "aqua"),
 			dialog_run_btn("🔧 Unfreeze Round", f"/function {ns}:zombies/recover", "Rebuild a round that has stopped advancing (stuck at 0 zombies)", "aqua"),
 		],
 		"columns": 2,

@@ -39,8 +39,10 @@ scoreboard players operation #armed_mob_phase mgs.data = #total_tick mgs.data
 scoreboard players operation #armed_mob_phase mgs.data %= #100 mgs.data
 execute if score #armed_mob_count mgs.data matches 1.. if score #armed_mob_phase mgs.data matches 0 store result score #armed_mob_count mgs.data if entity @e[tag=mgs.armed]
 
-# Zombies game tick
-execute if data storage mgs:zombies game{state:"active"} run function mgs:v5.1.0/zombies/game_tick
+# Zombies game tick. #zb_freeze (admin menu) swaps it for the freeze tick: skipping game_tick is what
+# actually pauses the round — every zombies timer (spawns, bleed-out, power-ups, sales) lives inside it.
+execute if data storage mgs:zombies game{state:"active"} unless score #zb_freeze mgs.data matches 1 run function mgs:v5.1.0/zombies/game_tick
+execute if data storage mgs:zombies game{state:"active"} if score #zb_freeze mgs.data matches 1 run function mgs:v5.1.0/zombies/freeze_tick
 execute if data storage mgs:zombies game{state:"preparing"} run function mgs:v5.1.0/zombies/prep_tick
 
 # Multiplayer game tick
