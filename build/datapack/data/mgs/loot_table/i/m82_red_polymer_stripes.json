@@ -243,8 +243,8 @@
 									},
 									[
 										"",
-										{"text": "I","color": "white","italic": false,"font": "mgs:icons"},
-										[{"text":" ","italic": true,"color": "blue"}, {"translate": "mgs.mc_guns_system"}]
+										{"text": "ꀁ","color": "white","italic": false,"font": "mgs:tooltip"},
+										[{"text":"뀁","italic": false,"color": "white","font": "mgs:tooltip"}, {"translate": "mgs.mc_guns_system"}]
 									]
 								],
 								"minecraft:item_model": "mgs:m82_red_polymer_stripes"
