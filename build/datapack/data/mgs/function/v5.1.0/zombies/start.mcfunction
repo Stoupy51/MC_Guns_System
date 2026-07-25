@@ -57,6 +57,10 @@ execute as @a run scoreboard players operation @s mgs.zb.prev_kills = @s mgs.tot
 scoreboard players set @a mgs.mp.death_count 0
 scoreboard players set @a mgs.mp.spectate_timer 0
 
+# A game never starts frozen (a stale flag would silently pause the very first round)
+scoreboard players set #zb_freeze mgs.data 0
+tag @e[tag=mgs.zb_frozen_ai] remove mgs.zb_frozen_ai
+
 # Clear other modes' in-game flags so their ticks/logic don't conflict with zombies
 scoreboard players set @a mgs.mp.in_game 0
 scoreboard players set @a mgs.mi.in_game 0

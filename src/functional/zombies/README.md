@@ -59,9 +59,76 @@ these are gameplay ideas from Zonweeb, not necessarily tied to the variant.)
   `special_spawn` markers (currently used by dog rounds; documented as reusable for minibosses).
 
 
+## 11. Zombies — save a game and load it later  [NOT IMPLEMENTED — specced only]
+
+Goal: "Save & Quit" like Black Ops — freeze a run to a slot, reload it another day and carry on.
+Deliberately left unbuilt: it is the only backlog item that has to serialize **every** subsystem's
+state at once, and a half-correct restore silently corrupts a map (doors visually shut but pathable,
+a box that can't be bought, perks nobody owns). It needs an in-game verification pass per subsystem,
+so it is specced here instead of shipped blind.
+
+Storages persist in the world save, so a save slot is just a compound under a dedicated storage —
+no files, no external state. Suggested layout, one entry per slot in `mgs:zombies_saves slots[]`:
+
+```
+{ name:"Saturday run", map:"<map id>", variant:"vanilla|zonweeb", round:17, saved_at:<gametime>,
+  players:[ {uuid:[I;..], name:"Stoupy51", points:.., kills:.., downs:.., lethal_type:.., ability:..,
+             passive:.., qr_uses:.., dw_uses:.., max_health:.., perks:{juggernog:1,..},
+             inventory:[<player Inventory NBT>]} ],
+  map_state:{ power:0|1, pap_unlocked:0|1, doors:[<group ids opened>], spawns:[<unlocked group ids>],
+              box:{pos:[..], uses:.., moved:0|1}, wallbuys:[<bought ids per player>] } }
+```
+
+What has to be captured, and where it lives today (this list IS the work):
+- [ ] Round + game meta — `storage mgs:zombies game` (`map`, `variant`, `round`, `state`).
+- [ ] Per-player scores — `mgs.zb.points` / `kills` / `downs` / `passive` / `ability` / `qr_uses` /
+  `dw_uses` / `lethal_type`, every `mgs.zb.perk.<id>` (`PERK_DEFINITIONS` in `perks.py`) plus the
+  `mgs.perk.<id>` tags, and `max_health` (Juggernog sets base 40).
+- [ ] Per-player inventory — the whole `Inventory` NBT (guns carry their PAP level, camo, ammo and
+  slot tags in `custom_data`). **Restore already exists**: `zombies/inventory/restore_inventory`
+  (built for Who's Who / Tombstone) takes a copied `Inventory` list in `mgs:temp _restore.items`.
+- [ ] Map progress — `#zb_power` (`power.py`), PAP unlock (`pap.py`), opened doors (`doors.py`:
+  door entities + the `mgs.spawn_unlocked` tag on the spawn points each door group unlocks),
+  Mystery Box position/uses (`mystery_box.py`), barrier repair state (`barriers.py`).
+- [ ] Save UI: admin menu button → slot picker dialog (`register_dialog`, same pattern as
+  `zombies/admin/powerups`); load UI: slot list on the setup dialog next to "Select Map".
+- [ ] Load flow: run the normal `zombies/start` on the saved map/variant first (so every subsystem
+  initializes the way it always does), then replay the saved state — set `game.round`, re-run each
+  saved door's open function, `power/turn_on` if saved, restore per-player scores/perks/inventory
+  for the players present, and skip (or park in spectator) any saved player who is offline.
+- [ ] Only allow saving between rounds (the 5s gap after `round_complete`) so no live zombie,
+  power-up, downed body or thrown grenade has to be serialized. This single constraint removes most
+  of the hard cases — do not skip it.
+
+
+## 12. Multiplayer — one death, two death messages  [NEEDS REPRO]
+
+From a playtest log, both lines at the same timestamp (= same tick), same victim:
+
+```
+[CHAT] DenisBrogniartBG sent Stoupy51 to the shadow realm     <- random_kill_message (attacker found)
+[CHAT] Stoupy51 forgot how gravity works                      <- random_death_message (no attacker)
+```
+
+So one death printed through both the attributed and the unattributed path. The two paths are
+`multiplayer/simulate_death` (bullet/OOB interception, `game.py`) and `multiplayer/on_respawn`
+(vanilla death detected via the `deathCount` criterion, `loadouts/class_selection.py`). Both already
+guard on `mp.spectate_timer matches 1..` / `gamemode=spectator`, and both set that state through
+`enter_death_spectate` — reading the code, neither order of execution reproduces this, including the
+S&D branch (`snd/on_death` does set spectator). So the guard is being defeated by something not
+visible in the source path: needs a repro to pin down.
+
+- [ ] Repro attempt: FFA/TDM, victim on low HP, killed by a bullet on the same tick as an
+  out-of-bounds / void tick (`core/bounds.py` deals `10000 out_of_world`, a *real* vanilla death).
+- [ ] If it can't be reproduced, make it unreproducible by construction: give the death a one-tick
+  claim (`#mp_death_claim` per player, set by whichever path prints first and checked by both)
+  instead of relying on `spectate_timer` / gamemode, which `enter_death_spectate` sets only at the
+  very end and never in the S&D branch.
+
+
 ---
 
 # Inbox (quick notes — dump anything here, unorganized "basic" format is fine)
 
-- a
+- Pouvoir mettre un flag aux spawns de zombies en mode éditeur pour indiquer que dès que ces zombies spawnent, ils doivent path finder jusqu'à une barriere précise
 

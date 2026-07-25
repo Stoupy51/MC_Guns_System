@@ -124,6 +124,10 @@ execute as @a run scoreboard players operation @s {ns}.zb.prev_kills = @s {ns}.t
 scoreboard players set @a {ns}.mp.death_count 0
 scoreboard players set @a {ns}.mp.spectate_timer 0
 
+# A game never starts frozen (a stale flag would silently pause the very first round)
+scoreboard players set #zb_freeze {ns}.data 0
+tag @e[tag={ns}.zb_frozen_ai] remove {ns}.zb_frozen_ai
+
 # Clear other modes' in-game flags so their ticks/logic don't conflict with zombies
 scoreboard players set @a {ns}.mp.in_game 0
 scoreboard players set @a {ns}.mi.in_game 0
@@ -238,8 +242,10 @@ function {ns}:v{version}/shared/maps/call_script_at_base {{script:"start"}}
 	# Game Tick ─────────────────────────────────────────────────
 
 	write_tick_file(f"""
-# Zombies game tick
-execute if data storage {ns}:zombies game{{state:"active"}} run function {ns}:v{version}/zombies/game_tick
+# Zombies game tick. #zb_freeze (admin menu) swaps it for the freeze tick: skipping game_tick is what
+# actually pauses the round — every zombies timer (spawns, bleed-out, power-ups, sales) lives inside it.
+execute if data storage {ns}:zombies game{{state:"active"}} unless score #zb_freeze {ns}.data matches 1 run function {ns}:v{version}/zombies/game_tick
+execute if data storage {ns}:zombies game{{state:"active"}} if score #zb_freeze {ns}.data matches 1 run function {ns}:v{version}/zombies/freeze_tick
 execute if data storage {ns}:zombies game{{state:"preparing"}} run function {ns}:v{version}/zombies/prep_tick
 """)
 
@@ -309,6 +315,50 @@ execute if score #zb_sidebar_timer {ns}.data matches 0 run function {ns}:v{versi
 kill @e[type=experience_orb]
 """)
 
+
+	# Freeze ────────────────────────────────────────────────────
+	# Admin pause: game_tick is skipped (all timers stop), mobs get NoAI and players lose their
+	# movement/jump attributes. Mobs that were ALREADY NoAI (rising spawns, escorted zombies) are
+	# left alone via the zb_frozen_ai tag, so unfreezing can't wake them up early.
+	write_versioned_function("zombies/freeze_on", f"""
+scoreboard players set #zb_freeze {ns}.data 1
+
+# Mobs: only the ones actually moving right now
+execute as @e[tag={ns}.zombie_round] unless data entity @s {{NoAI:1b}} run function {ns}:v{version}/zombies/freeze_mob
+
+# Players: same attribute pair the prep countdown uses to hold everyone still
+execute as @a[scores={{{ns}.zb.in_game=1}}] run attribute @s minecraft:movement_speed base set 0
+execute as @a[scores={{{ns}.zb.in_game=1}}] run attribute @s minecraft:jump_strength base set 0
+
+title @a[scores={{{ns}.zb.in_game=1}}] times 5 60 10
+title @a[scores={{{ns}.zb.in_game=1}}] title [{{"text":"⏸","color":"aqua"}}]
+tellraw @a [{MGS_TAG},{{"text":"An operator froze the game.","color":"aqua"}}]
+""")
+
+	write_versioned_function("zombies/freeze_mob", f"""
+tag @s add {ns}.zb_frozen_ai
+data merge entity @s {{NoAI:1b}}
+""")
+
+	write_versioned_function("zombies/freeze_off", f"""
+scoreboard players set #zb_freeze {ns}.data 0
+
+# Only wake the mobs freeze_on actually put to sleep
+execute as @e[tag={ns}.zb_frozen_ai] run data merge entity @s {{NoAI:0b}}
+tag @e[tag={ns}.zb_frozen_ai] remove {ns}.zb_frozen_ai
+
+execute as @a[scores={{{ns}.zb.in_game=1}}] run attribute @s minecraft:movement_speed base reset
+execute as @a[scores={{{ns}.zb.in_game=1}}] run attribute @s minecraft:jump_strength base reset
+
+tellraw @a [{MGS_TAG},{{"text":"An operator unfroze the game.","color":"aqua"}}]
+""")
+
+	## Everything is paused while frozen — just keep telling players why nothing is happening.
+	write_versioned_function("zombies/freeze_tick", f"""
+scoreboard players add #zb_freeze_msg {ns}.data 1
+execute if score #zb_freeze_msg {ns}.data matches 20.. run scoreboard players set #zb_freeze_msg {ns}.data 0
+execute if score #zb_freeze_msg {ns}.data matches 0 run title @a[scores={{{ns}.zb.in_game=1}}] actionbar [{{"text":"⏸ GAME FROZEN","color":"aqua","bold":true}}]
+""")
 
 	# Death & Respawn ───────────────────────────────────────────
 	## On Respawn (zombies death handling → enter downed state)
@@ -391,6 +441,10 @@ schedule function {ns}:v{version}/zombies/stop 100t
 data modify storage {ns}:zombies game.state set value "lobby"
 schedule clear {ns}:v{version}/zombies/end_prep
 schedule clear {ns}:v{version}/zombies/start_round
+
+# Drop any admin freeze (the attribute/NoAI restore below is part of the normal cleanup)
+scoreboard players set #zb_freeze {ns}.data 0
+tag @e[tag={ns}.zb_frozen_ai] remove {ns}.zb_frozen_ai
 execute as @a[scores={{{ns}.zb.in_game=1}}] run attribute @s minecraft:max_health base reset
 execute as @a[scores={{{ns}.zb.in_game=1}}] run attribute @s minecraft:movement_speed base reset
 execute as @a[scores={{{ns}.zb.in_game=1}}] run attribute @s minecraft:jump_strength base reset

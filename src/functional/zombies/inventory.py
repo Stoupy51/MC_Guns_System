@@ -447,8 +447,16 @@ execute if score #zb_info_timer {ns}.data matches 0 as @a[scores={{{ns}.zb.in_ga
 """)
 
 	write_versioned_function("zombies/inventory/on_new_item", f"""
-# Kill any non-zombies-slot managed drop from zombies players.
-execute if data entity @s Item.components."minecraft:custom_data".{ns} on origin if score @s {ns}.zb.in_game matches 1 unless data entity @s Item.components."minecraft:custom_data".{ns}.zombies run kill @s
+# Kill any non-zombies-slot managed drop from zombies players (@s = the item entity).
+# Both item checks MUST run before `on origin`: past it @s is the thrower, so a check on @s Item
+# always passed and `kill @s` killed the PLAYER instead of the drop (grenade drop = instant death).
+execute unless data entity @s Item.components."minecraft:custom_data".{ns} run return 0
+execute if data entity @s Item.components."minecraft:custom_data".{ns}.zombies run return 0
+
+# Thrown by an in-game zombies player? -> the drop is unmanaged, remove it
+scoreboard players set #zb_drop_kill {ns}.data 0
+execute on origin if score @s {ns}.zb.in_game matches 1 run scoreboard players set #zb_drop_kill {ns}.data 1
+execute if score #zb_drop_kill {ns}.data matches 1 run kill @s
 """, tags=["common_signals:signals/on_new_item"])
 
 	write_versioned_function("zombies/inventory/recreate_critical_items", f"""
