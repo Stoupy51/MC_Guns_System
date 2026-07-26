@@ -209,6 +209,7 @@ def add_machines_and_props() -> None:
             "item_name": [{"text": "Bowie Knife", "color": "gold", "italic": False}],
             "lore": [[{"text": "One-hit kills until ~round 11", "color": "gray", "italic": False}]],
             "attribute_modifiers": [
+                {"type": "movement_speed", "amount": 0.1, "operation": "add_multiplied_base", "slot": "mainhand", "id": "minecraft:base_movement_speed"},
                 {"type": "attack_damage", "amount": 153, "operation": "add_value", "slot": "mainhand", "id": "minecraft:base_attack_damage"},
                 {"type": "attack_speed", "amount": -2.5, "operation": "add_value", "slot": "mainhand", "id": "minecraft:base_attack_speed"},
             ],
