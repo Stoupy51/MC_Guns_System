@@ -244,6 +244,7 @@ def knife_item_snbt(ns: str, short_range: bool = False) -> str:
 		str: The item SNBT, ready for `item replace entity @s <slot> with <this>`.
 	"""
 	modifiers: list[str] = [
+        '{type:"movement_speed",amount: 0.1,operation:"add_multiplied_base",slot:"mainhand",id:"minecraft:base_movement_speed"}',
 		'{type:"attack_damage",amount:20,operation:"add_value",slot:"mainhand",id:"minecraft:base_attack_damage"}',
 		'{type:"attack_speed",amount:-2.5,operation:"add_value",slot:"mainhand",id:"minecraft:base_attack_speed"}',
 	]

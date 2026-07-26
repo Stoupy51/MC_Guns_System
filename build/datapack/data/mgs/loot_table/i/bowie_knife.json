@@ -43,6 +43,13 @@
 								],
 								"minecraft:attribute_modifiers": [
 									{
+										"type": "movement_speed",
+										"amount": 0.1,
+										"operation": "add_multiplied_base",
+										"slot": "mainhand",
+										"id": "minecraft:base_movement_speed"
+									},
+									{
 										"type": "attack_damage",
 										"amount": 153,
 										"operation": "add_value",
