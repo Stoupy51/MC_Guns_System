@@ -5,5 +5,4 @@
 #
 
 # Hijacked map start script
-tellraw @a [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.welcome_to_hijacked","color":"yellow"}]
 
