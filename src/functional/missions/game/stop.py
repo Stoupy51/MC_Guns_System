@@ -2,7 +2,8 @@
 # Imports
 from stewbeet import Mem, write_versioned_function
 
-from ...helpers import MGS_TAG, FunctionalHelpers
+from ...helpers import MGS_TAG
+from ...helpers.lifecycle import GameLifecycle
 
 
 # Functions
@@ -32,7 +33,7 @@ execute if score #mi_has_boundary {ns}.data matches 1 run function {ns}:v{versio
 # Signal mission end
 function #{ns}:missions/on_mission_end
 
-{FunctionalHelpers.regen_disable_lines(ns)}
+{GameLifecycle.regen_disable_lines(ns)}
 
 tellraw @a [{MGS_TAG},{{"text":"Mission ended.","color":"red"}}]
 
@@ -50,7 +51,7 @@ tag @a[tag={ns}.give_class_menu] remove {ns}.give_class_menu
 """)
 
 	## Join Ongoing Mission (late-joiner support)
-	write_versioned_function("missions/join_game", FunctionalHelpers.late_join_flow_lines(
+	write_versioned_function("missions/join_game", GameLifecycle.late_join_flow_lines(
 		ns,
 		"missions",
 		f"{ns}.mi.in_game",

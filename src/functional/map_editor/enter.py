@@ -3,7 +3,8 @@
 # Imports
 from stewbeet import Mem, write_versioned_function
 
-from ..helpers import MGS_TAG, FunctionalHelpers
+from ..helpers import MGS_TAG
+from ..helpers.dialogs import Dialogs
 from ..map_editor_defs import MODE_LIST
 
 
@@ -67,8 +68,8 @@ execute if score @s {ns}.mp.map_mode matches {MODE_LIST.index("zombies")} run fu
 # Announce
 tellraw @s [{MGS_TAG},{{"text":"Entered map editor for: ","color":"green"}},{{"text":"","color":"white"}},{{"storage":"{ns}:temp","nbt":"map_edit.map.name","interpret":true}}]
 tellraw @s [{MGS_TAG},{{"text":"Place eggs to add elements. DESTROY egg (hotbar 9) removes nearest element.","color":"yellow"}}]
-tellraw @s [{MGS_TAG},{{"text":"Need collaborators? ","color":"gray"}},{FunctionalHelpers.btn("Invite All Players", f"/function {ns}:v{version}/maps/editor/invite_all", "aqua", "Put all online players into this editor session")}]
-tellraw @s [{MGS_TAG},{{"text":"Use ","color":"gray"}},{FunctionalHelpers.btn("Save & Exit", f"/function {ns}:v{version}/maps/editor/save_exit", "green", "Save changes and exit editor")},{{"text":" or "}},{FunctionalHelpers.btn("Exit", f"/function {ns}:v{version}/maps/editor/exit", "red", "Discard changes and exit editor")}]
+tellraw @s [{MGS_TAG},{{"text":"Need collaborators? ","color":"gray"}},{Dialogs.btn("Invite All Players", f"/function {ns}:v{version}/maps/editor/invite_all", "aqua", "Put all online players into this editor session")}]
+tellraw @s [{MGS_TAG},{{"text":"Use ","color":"gray"}},{Dialogs.btn("Save & Exit", f"/function {ns}:v{version}/maps/editor/save_exit", "green", "Save changes and exit editor")},{{"text":" or "}},{Dialogs.btn("Exit", f"/function {ns}:v{version}/maps/editor/exit", "red", "Discard changes and exit editor")}]
 """)
 
 	write_versioned_function("maps/editor/invite_all", f"""

@@ -2,7 +2,7 @@
 # Imports
 from stewbeet import Mem, write_versioned_function
 
-from ....helpers import FunctionalHelpers
+from ....helpers.lifecycle import GameLifecycle
 
 
 # Functions
@@ -11,7 +11,7 @@ def write_zombies_join() -> None:
 	version: str = Mem.ctx.project_version
 
 	## Join Ongoing Zombies Game (late-joiner support)
-	write_versioned_function("zombies/join_game", FunctionalHelpers.late_join_flow_lines(
+	write_versioned_function("zombies/join_game", GameLifecycle.late_join_flow_lines(
 		ns,
 		"zombies",
 		f"{ns}.zb.in_game",

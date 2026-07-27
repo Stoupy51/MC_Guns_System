@@ -3,7 +3,7 @@
 from stewbeet import Mem, write_load_file, write_tick_file, write_versioned_function
 
 from ...config.stats.keys import REMAINING_BULLETS
-from ..helpers import FunctionalHelpers
+from ..helpers.scores import SpecialScores
 
 
 # Functions
@@ -66,8 +66,8 @@ scoreboard objectives add {ns}.last_muzzle_flash dummy
 scoreboard objectives add {ns}.config dummy
 
 ## Per-player special scoreboards (for zombies bonuses, testing, etc.)
-## Generated from helpers.SPECIAL_SCORES, which is also what game starts wipe to get a clean slate.
-{FunctionalHelpers.special_objectives_lines(ns)}
+## Generated from SpecialScores.ALL, which is also what game starts wipe to get a clean slate.
+{SpecialScores.special_objectives_lines(ns)}
 # DPS tracking: accumulates damage dealt per second, snapshot stored for actionbar
 scoreboard objectives add {ns}.dps dummy
 scoreboard objectives add {ns}.previous_dps dummy

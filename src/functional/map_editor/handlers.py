@@ -3,7 +3,8 @@
 # Imports
 from stewbeet import Mem, write_versioned_function
 
-from ..helpers import MGS_TAG, FunctionalHelpers
+from ..helpers import MGS_TAG
+from ..helpers.dialogs import Dialogs
 from ..map_editor_defs import ALL_ELEMENTS
 from .shared import ZB_ELEMENTS
 
@@ -125,7 +126,7 @@ tellraw @a[tag={ns}.map_editor] [{MGS_TAG},{{"text":"Enemy placed!","color":"red
 """)
 
 	# Handle Start Command Element (all modes).
-	edit_cmd_btn = FunctionalHelpers.btn(
+	edit_cmd_btn = Dialogs.btn(
 		"Edit Command",
 		f'/data modify entity @n[tag={ns}.element.start_command,distance=..10] data.command set value "say Hello from start command"',
 		"aqua", "Click to edit the command to run at game start", action="suggest_command"
@@ -149,7 +150,7 @@ tellraw @a[tag={ns}.map_editor] ["  ",{edit_cmd_btn}]
 """)
 
 	# Handle Respawn Command Element (multiplayer + missions) ───
-	edit_respawn_cmd_btn = FunctionalHelpers.btn(
+	edit_respawn_cmd_btn = Dialogs.btn(
 		"Edit Command",
 		f'/data modify entity @n[tag={ns}.element.respawn_command,distance=..10] data.command set value "effect give @s minecraft:speed 5 0 true"',
 		"dark_aqua", "Click to edit the command to run when players respawn", action="suggest_command"

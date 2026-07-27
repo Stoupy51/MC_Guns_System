@@ -3,7 +3,7 @@
 # Imports
 from stewbeet import Mem, write_versioned_function
 
-from ....helpers import FunctionalHelpers
+from ....helpers.text import Text
 from ..catalogs import (
 	PICK10_TOTAL,
 	TRIG_DELETE_BASE,
@@ -44,9 +44,9 @@ def write_my_loadouts() -> None:
 		fav_color = "gold" if active == "fav" else "yellow"
 		all_color = "aqua" if active == "all" else "white"
 		return [
-			f'{{label:{FunctionalHelpers.styled_text("\u2b50 Favorites", color=fav_color, bold="true")},tooltip:{{text:"Show only your favorited loadouts"}},action:{{type:"run_command",command:"/trigger {ns}.player.config set {TRIG_MY_LOADOUTS_FAV_ONLY}"}}}}',
-			f'{{label:{FunctionalHelpers.styled_text("\U0001f4cb All", color=all_color, bold="true")},tooltip:{{text:"Show all your loadouts (favorites first, then private, then public)"}},action:{{type:"run_command",command:"/trigger {ns}.player.config set {TRIG_MY_LOADOUTS}"}}}}',
-			f'{{label:{FunctionalHelpers.styled_text("\u271a Create", color="green", bold="true")},tooltip:{{text:"Build a new custom loadout from scratch"}},action:{{type:"run_command",command:"/trigger {ns}.player.config set {TRIG_EDITOR_START}"}}}}',
+			f'{{label:{Text.styled_text("\u2b50 Favorites", color=fav_color, bold="true")},tooltip:{{text:"Show only your favorited loadouts"}},action:{{type:"run_command",command:"/trigger {ns}.player.config set {TRIG_MY_LOADOUTS_FAV_ONLY}"}}}}',
+			f'{{label:{Text.styled_text("\U0001f4cb All", color=all_color, bold="true")},tooltip:{{text:"Show all your loadouts (favorites first, then private, then public)"}},action:{{type:"run_command",command:"/trigger {ns}.player.config set {TRIG_MY_LOADOUTS}"}}}}',
+			f'{{label:{Text.styled_text("\u271a Create", color="green", bold="true")},tooltip:{{text:"Build a new custom loadout from scratch"}},action:{{type:"run_command",command:"/trigger {ns}.player.config set {TRIG_EDITOR_START}"}}}}',
 		]
 
 	## my_loadouts/browse - Default: 3-pass build (favorites → privates → publics) + filter row
@@ -245,11 +245,11 @@ execute if score #pub {ns}.data matches 0 run function {ns}:v{version}/multiplay
 			'title:{text:"$(name)",color:"gold",bold:true},'
 			'body:[{type:"minecraft:plain_message",contents:BODY}],'
 			'actions:['
-			f'{{label:{FunctionalHelpers.styled_text("▶ Use this loadout", color="green", bold="true")},tooltip:{{text:"Equip this loadout (applies on next spawn)"}},action:{{type:"run_command",command:"/trigger {ns}.player.config set $(select_trig)"}}}},'
-			f'{{label:{FunctionalHelpers.styled_text("✏ Edit", color="gold")},tooltip:{{text:"Re-open the loadout editor pre-filled; saving overwrites this loadout",color:"yellow"}},action:{{type:"run_command",command:"/trigger {ns}.player.config set $(edit_trig)"}}}},'
+			f'{{label:{Text.styled_text("▶ Use this loadout", color="green", bold="true")},tooltip:{{text:"Equip this loadout (applies on next spawn)"}},action:{{type:"run_command",command:"/trigger {ns}.player.config set $(select_trig)"}}}},'
+			f'{{label:{Text.styled_text("✏ Edit", color="gold")},tooltip:{{text:"Re-open the loadout editor pre-filled; saving overwrites this loadout",color:"yellow"}},action:{{type:"run_command",command:"/trigger {ns}.player.config set $(edit_trig)"}}}},'
 			f'{{label:{{text:"{vis_label}",color:"{vis_color}"}},tooltip:{{text:"{vis_tip}"}},action:{{type:"run_command",command:"/trigger {ns}.player.config set $(vis_trig)"}}}},'
-			f'{{label:{FunctionalHelpers.styled_text("⭐ Set as Default", color="yellow")},tooltip:{{text:"Auto-equip this loadout when a game starts"}},action:{{type:"run_command",command:"/trigger {ns}.player.config set $(default_trig)"}}}},'
-			f'{{label:{FunctionalHelpers.styled_text("\U0001f5d1 Delete", color="red")},tooltip:{{text:"Permanently delete this loadout",color:"dark_red"}},action:{{type:"run_command",command:"/trigger {ns}.player.config set $(delete_trig)"}}}}'
+			f'{{label:{Text.styled_text("⭐ Set as Default", color="yellow")},tooltip:{{text:"Auto-equip this loadout when a game starts"}},action:{{type:"run_command",command:"/trigger {ns}.player.config set $(default_trig)"}}}},'
+			f'{{label:{Text.styled_text("\U0001f5d1 Delete", color="red")},tooltip:{{text:"Permanently delete this loadout",color:"dark_red"}},action:{{type:"run_command",command:"/trigger {ns}.player.config set $(delete_trig)"}}}}'
 			'],'
 			'columns:1,'
 			'after_action:"close",'

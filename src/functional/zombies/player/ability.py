@@ -7,7 +7,8 @@ Passives: x1.2 Points, x1.5 Powerups Abilities: Coward (TP to spawn), Guardian (
 # Imports
 from stewbeet import Mem, write_versioned_function
 
-from ...helpers import MGS_TAG, FunctionalHelpers
+from ...helpers import MGS_TAG
+from ...helpers.dialogs import Dialogs
 
 
 # Functions
@@ -22,7 +23,7 @@ def generate_zombies_abilities() -> None:
 	TRIG_ZB_ABILITY_2: int = 9   # Guardian
 
 	## Registered as real dialog resources; the functions below keep the variant guard that has to run before the dialog is shown, so these need no opener wrapper of their own.
-	FunctionalHelpers.register_dialog("zombies/passive_ability", {
+	Dialogs.register_dialog("zombies/passive_ability", {
 		"type": "minecraft:multi_action",
 		"title": {"text": "Zonweeb Passive", "color": "dark_green"},
 		"body": {"type": "minecraft:plain_message", "contents": {"text": "Choose a passive effect for this game.", "color": "gray"}},
@@ -41,10 +42,10 @@ def generate_zombies_abilities() -> None:
 # Zonweeb variant only
 execute unless data storage {ns}:zombies game{{variant:"zonweeb"}} run return fail
 # Show the passive selection dialog (ability dialog is shown after)
-dialog show @s {FunctionalHelpers.dialog_ref('zombies/passive_ability')}
+dialog show @s {Dialogs.dialog_ref('zombies/passive_ability')}
 """)
 
-	FunctionalHelpers.register_dialog("zombies/ability", {
+	Dialogs.register_dialog("zombies/ability", {
 		"type": "minecraft:multi_action",
 		"title": {"text": "Zonweeb Ability", "color": "dark_green"},
 		"body": {"type": "minecraft:plain_message", "contents": {"text": "Choose an ability for this game.", "color": "gray"}},
@@ -63,7 +64,7 @@ dialog show @s {FunctionalHelpers.dialog_ref('zombies/passive_ability')}
 # Zonweeb variant only
 execute unless data storage {ns}:zombies game{{variant:"zonweeb"}} run return fail
 # Show the ability selection dialog
-dialog show @s {FunctionalHelpers.dialog_ref('zombies/ability')}
+dialog show @s {Dialogs.dialog_ref('zombies/ability')}
 """)
 
 	# Passive Selection (called via trigger dispatch).

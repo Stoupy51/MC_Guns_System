@@ -3,7 +3,8 @@
 # Imports
 from stewbeet import Mem, write_versioned_function
 
-from ..helpers import MGS_TAG, FunctionalHelpers
+from ..helpers import MGS_TAG
+from ..helpers.dialogs import Dialogs
 from ..map_editor_defs import ALL_ELEMENTS, FIELD_DOCS
 from .shared import SEP, ZB_ELEMENTS, snbt_compound, snbt_suggest
 
@@ -22,7 +23,7 @@ def write_editor_zb_config() -> None:
 	zb_defaults_lines.append("")
 
 	# Shared group_id default
-	group_id_btn = FunctionalHelpers.btn(
+	group_id_btn = Dialogs.btn(
 		"\u270e",
 		f"/data modify storage {ns}:temp map_edit.zb_defaults.group_id set value 0",
 		"aqua", "Click to edit group_id", action="suggest_command"
@@ -43,7 +44,7 @@ def write_editor_zb_config() -> None:
 		)
 		for field, default_val in einfo.defaults.items():
 			snbt_val = snbt_suggest(default_val)
-			edit_btn = FunctionalHelpers.btn(
+			edit_btn = Dialogs.btn(
 				"✎",
 				f"/data modify storage {ns}:temp map_edit.zb_defaults.{etype}.{field} set value {snbt_val}",
 				"aqua", f"Click to edit {field}", action="suggest_command"
@@ -88,7 +89,7 @@ execute at @s unless entity @n[tag={ns}.map_element,distance=..10] run tellraw @
 		# group_id only shown for spawn-type zombies elements.
 		# Doors don't carry a separate group_id: a door's link_id is its front-room group, and back_group_id is the back room.
 		if etype in ("zombie_spawn", "player_spawn_zb", "special_spawn"):
-			group_id_edit_btn = FunctionalHelpers.btn(
+			group_id_edit_btn = Dialogs.btn(
 				"✎",
 				f"/data modify entity @n[tag={ns}.element.{etype},distance=..10] data.group_id set value 0",
 				"yellow", "Click to edit group_id", action="suggest_command"
@@ -113,7 +114,7 @@ execute at @s unless entity @n[tag={ns}.map_element,distance=..10] run tellraw @
 			else:
 				edit_cmd = f"/data modify entity @n[tag={ns}.element.{etype},distance=..10] data.{field} set value {edit_value}"
 				hover_text = f"Click to edit {field}"
-			edit_btn = FunctionalHelpers.btn(
+			edit_btn = Dialogs.btn(
 				"✎",
 				edit_cmd,
 				"yellow", hover_text, action="suggest_command"
@@ -121,7 +122,7 @@ execute at @s unless entity @n[tag={ns}.map_element,distance=..10] run tellraw @
 			# Optional list fields get a "✗" button to clear/disable them (set back to []).
 			clear_component: str = ""
 			if field == "activation_box":
-				clear_btn = FunctionalHelpers.btn(
+				clear_btn = Dialogs.btn(
 					"✗",
 					f"/data modify entity @n[tag={ns}.element.{etype},distance=..10] data.{field} set value []",
 					"red", "Clear (disable) the activation box", action="run_command"
@@ -154,7 +155,7 @@ execute at @s unless entity @n[tag={ns}.map_element,distance=..10] run tellraw @
 	for etype, einfo in ALL_ELEMENTS.items():
 		if einfo.save_type != "spawn":
 			continue
-		edit_yaw_btn = FunctionalHelpers.btn(
+		edit_yaw_btn = Dialogs.btn(
 			"✎",
 			f"/data modify entity @n[tag={ns}.element.{etype},distance=..10] data.yaw set value 0.0f",
 			"yellow", "Click to edit yaw", action="suggest_command"
@@ -171,7 +172,7 @@ execute at @s unless entity @n[tag={ns}.map_element,distance=..10] run tellraw @
 
 	# For zb_object types: show yaw (rotation)
 	for etype, _ in ZB_ELEMENTS.items():
-		edit_yaw_btn = FunctionalHelpers.btn(
+		edit_yaw_btn = Dialogs.btn(
 			"✎",
 			f"/data modify entity @n[tag={ns}.element.{etype},distance=..10] data.yaw set value 0.0f",
 			"yellow", "Click to edit yaw", action="suggest_command"
@@ -184,7 +185,7 @@ execute at @s unless entity @n[tag={ns}.map_element,distance=..10] run tellraw @
 
 	# For enemy types: show function.
 	# The suggestion must stay version-independent like the map default above, or a map saved today calls a path that a later pack version no longer ships.
-	edit_fn_btn = FunctionalHelpers.btn(
+	edit_fn_btn = Dialogs.btn(
 		"✎",
 		f"/data modify entity @n[tag={ns}.element.enemy,distance=..10] data.function set value '{ns}:mob/default/level_1'",
 		"yellow", "Click to edit function", action="suggest_command"
@@ -209,22 +210,22 @@ execute at @s unless entity @n[tag={ns}.map_element,distance=..10] run tellraw @
 		)
 
 	# For base_coordinates: show start_function and tick_function
-	edit_start_fn_btn = FunctionalHelpers.btn(
+	edit_start_fn_btn = Dialogs.btn(
 		"✎",
 		f'/data modify entity @n[tag={ns}.element.base_coordinates,distance=..10] data.start_function set value "namespace:path/to/function"',
 		"yellow", "Click to edit start_function (called once when game starts)", action="suggest_command"
 	)
-	clear_start_fn_btn = FunctionalHelpers.btn(
+	clear_start_fn_btn = Dialogs.btn(
 		"✗",
 		f'/data remove entity @n[tag={ns}.element.base_coordinates,distance=..10] data.start_function',
 		"red", "Clear start_function (won't be called)", action="run_command"
 	)
-	edit_tick_fn_btn = FunctionalHelpers.btn(
+	edit_tick_fn_btn = Dialogs.btn(
 		"✎",
 		f'/data modify entity @n[tag={ns}.element.base_coordinates,distance=..10] data.tick_function set value "namespace:path/to/function"',
 		"yellow", "Click to edit tick_function (called every game tick)", action="suggest_command"
 	)
-	clear_tick_fn_btn = FunctionalHelpers.btn(
+	clear_tick_fn_btn = Dialogs.btn(
 		"✗",
 		f'/data remove entity @n[tag={ns}.element.base_coordinates,distance=..10] data.tick_function',
 		"red", "Clear tick_function (won't be called)", action="run_command"

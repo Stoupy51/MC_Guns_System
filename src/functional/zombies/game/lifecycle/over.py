@@ -2,7 +2,10 @@
 # Imports
 from stewbeet import Mem, write_versioned_function
 
-from ....helpers import MGS_TAG, FunctionalHelpers
+from ....helpers import MGS_TAG
+from ....helpers.dialogs import Dialogs
+from ....helpers.lifecycle import GameLifecycle
+from ....helpers.ranked import RankedStats
 
 
 # Functions
@@ -18,7 +21,7 @@ def write_zombies_over() -> None:
 		f'{{"score":{{"name":"@s","objective":"{ns}.zb.downs"}},"color":"red"}}," | Points: ",'
 		f'{{"score":{{"name":"@s","objective":"{ns}.zb.points"}},"color":"gold"}}]'
 	)
-	zb_ranked_stats: str = FunctionalHelpers.write_ranked_stats_functions(
+	zb_ranked_stats: str = RankedStats.write_ranked_stats_functions(
 		ns, version, "zombies/announce_stats", "zb.in_game", "zb.kills", zb_stat_line
 	)
 
@@ -56,7 +59,7 @@ execute as @a[scores={{{ns}.zb.in_game=1}}] at @s run playsound {ns}:zombies/gam
 
 # Offer a one-click fast restart. suggest_command only runs at permission level 2, so it is a
 # no-op for non-operators — exactly the operator-gated restart the design calls for.
-tellraw @a ["",{MGS_TAG}," ",{FunctionalHelpers.btn("⟲ Fast Restart", f"/function {ns}:v{version}/zombies/restart", "green", "Restart with the same map, variant and players (operators only)")}]
+tellraw @a ["",{MGS_TAG}," ",{Dialogs.btn("⟲ Fast Restart", f"/function {ns}:v{version}/zombies/restart", "green", "Restart with the same map, variant and players (operators only)")}]
 
 # End game after 5 seconds
 schedule function {ns}:v{version}/zombies/stop 100t
@@ -88,7 +91,7 @@ scoreboard objectives setdisplay sidebar
 scoreboard objectives remove {ns}.zb_sidebar
 gamerule advance_time true
 
-{FunctionalHelpers.regen_disable_lines(ns)}
+{GameLifecycle.regen_disable_lines(ns)}
 
 # Announce
 tellraw @a [{MGS_TAG},{{"text":"Zombies game ended.","color":"red"}}]

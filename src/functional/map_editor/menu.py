@@ -3,7 +3,8 @@
 # Imports
 from stewbeet import Advancement, JsonDict, Mem, set_json_encoder, write_load_file, write_versioned_function
 
-from ..helpers import MGS_TAG, FunctionalHelpers
+from ..helpers import MGS_TAG
+from ..helpers.dialogs import Dialogs
 from ..map_editor_defs import EDITOR_MODES
 from .shared import SEP
 
@@ -61,7 +62,7 @@ scoreboard objectives add {ns}.class_menu minecraft.used:minecraft.warped_fungus
 
 	# Mode tab buttons (used in all list views).
 	mode_tabs = ",".join(
-		FunctionalHelpers.btn(mode_info.name, f"/function {ns}:v{version}/maps/editor/list/{mode_key}", mode_info.color, f"View {mode_info.name} maps")
+		Dialogs.btn(mode_info.name, f"/function {ns}:v{version}/maps/editor/list/{mode_key}", mode_info.color, f"View {mode_info.name} maps")
 		for mode_key, mode_info in EDITOR_MODES.items()
 	)
 
@@ -74,7 +75,7 @@ function {ns}:v{version}/maps/editor/list/multiplayer
 	# Per-Mode Map List.
 	for mode_key, mode_info in EDITOR_MODES.items():
 		sk = mode_info.storage_key
-		create_btn = FunctionalHelpers.btn("+ Create New Map", f"/function {ns}:v{version}/maps/editor/create/{mode_key}", "green", f"Create a new {mode_info.name} map")
+		create_btn = Dialogs.btn("+ Create New Map", f"/function {ns}:v{version}/maps/editor/create/{mode_key}", "green", f"Create a new {mode_info.name} map")
 
 		write_versioned_function(f"maps/editor/list/{mode_key}", f"""
 tellraw @s {SEP}
@@ -128,7 +129,7 @@ $tellraw @s ["  ",{{"text":"$(name)","color":"white"}},{{"text":" ($(id))","colo
 	for mode_key, mode_info in EDITOR_MODES.items():
 		sk = mode_info.storage_key
 		create_snbt = r"id:'my_map',name:'My Map',description:'A new map',base_coordinates:[0,64,0],start_commands:[],respawn_commands:[]"
-		back_btn = FunctionalHelpers.btn("◀ Back", f"/function {ns}:v{version}/maps/editor/list/{mode_key}", "yellow", "Back to map list")
+		back_btn = Dialogs.btn("◀ Back", f"/function {ns}:v{version}/maps/editor/list/{mode_key}", "yellow", "Back to map list")
 
 		write_versioned_function(f"maps/editor/create/{mode_key}", f"""
 tellraw @s {SEP}

@@ -4,7 +4,8 @@ from stewbeet import write_versioned_function
 
 from ...config.catalogs import PRIMARY_WEAPONS, SECONDARY_WEAPONS
 from ..core.feedback import ZombiesFeedback
-from ..helpers import MGS_TAG, FunctionalHelpers
+from ..helpers import MGS_TAG
+from ..helpers.lifecycle import GameLifecycle
 from ..multiplayer.classes import MultiplayerClasses
 
 
@@ -16,7 +17,7 @@ class ZombiesCommon:
 	@staticmethod
 	def game_active_guard_cmd(ns: str) -> str:
 		""" Return the standard guard command for active zombies games. """
-		return FunctionalHelpers.game_active_guard(ns, "zombies")
+		return GameLifecycle.game_active_guard(ns, "zombies")
 
 	@staticmethod
 	def write_deny_functions() -> None:
