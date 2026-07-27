@@ -5,7 +5,8 @@ import json
 from stewbeet import Mem, write_load_file, write_versioned_function
 from stewbeet import create_gradient_text as new_hex
 
-from ....config.stats import CAPACITY, COOLDOWN, DAMAGE, DECAY, END_HEX, EXPLOSION_DAMAGE, EXPLOSION_RADIUS, GRENADE_FUSE, GRENADE_TYPE, PELLET_COUNT, RELOAD_TIME, REMAINING_BULLETS, START_HEX, SWITCH
+from ....config.stats.colors import END_HEX, START_HEX
+from ....config.stats.keys import CAPACITY, COOLDOWN, DAMAGE, DECAY, EXPLOSION_DAMAGE, EXPLOSION_RADIUS, GRENADE_FUSE, GRENADE_TYPE, PELLET_COUNT, RELOAD_TIME, REMAINING_BULLETS, SWITCH
 
 
 # Functions

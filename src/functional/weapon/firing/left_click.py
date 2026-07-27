@@ -10,7 +10,7 @@ config/stats.py (see add_item).
 from beet import Enchantment
 from stewbeet import Mem, write_versioned_function
 
-from ....config.stats import RELOAD_TIME
+from ....config.stats.keys import RELOAD_TIME
 
 # Constants
 ENCHANTMENT_ID: str = "left_click"

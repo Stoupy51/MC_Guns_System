@@ -4,7 +4,7 @@
 # Imports
 from stewbeet import Dialog, DialogTag, Mem, set_json_encoder, write_load_file, write_versioned_function
 
-from ....config.stats import ALL_SLOTS
+from ....config.stats.items import ItemBuilder
 from ...helpers import MGS_TAG
 from ..classes import MultiplayerClasses
 from .catalogs import TRIG_EDITOR_START, TRIG_MARKETPLACE, TRIG_MY_LOADOUTS
@@ -183,7 +183,7 @@ execute if score @s {ns}.special.quick_fix matches 1 run effect give @s minecraf
 	## perks/scavenger_refill - Refill all spare magazines in the inventory to capacity (reuses the generic per-slot magazine refill; never refills the loaded weapon)
 	scavenger_slot_checks: str = "".join(
 		f'execute if items entity @s {slot} *[custom_data~{{{ns}:{{magazine:true}}}}] run function {ns}:v{version}/zombies/bonus/refill_magazine {{slot:"{slot}"}}\n'
-		for slot in ALL_SLOTS
+		for slot in ItemBuilder.ALL_SLOTS
 	)
 	write_versioned_function("multiplayer/perks/scavenger_refill", f"""
 {scavenger_slot_checks}

@@ -7,7 +7,8 @@ Resolves PAP upgrades at runtime from the selected gun's own stats.pap_stats.
 from stewbeet import ItemModifier, JsonDict, Mem, set_json_encoder, write_load_file, write_versioned_function
 
 from ....config.catalogs import SCOPE_VARIANTS
-from ....config.stats import ALL_SLOTS, BASE_WEAPON, CAPACITY, PAP_STATS, REMAINING_BULLETS, STATS_FIELDS
+from ....config.stats.items import ItemBuilder
+from ....config.stats.keys import BASE_WEAPON, CAPACITY, PAP_STATS, REMAINING_BULLETS, STATS_FIELDS
 from ....database.camo import MATERIALS
 from ...core.feedback import ZombiesFeedback
 from ...helpers import MGS_TAG
@@ -321,7 +322,7 @@ execute if score #pap_scope_changed {ns}.data matches 0 run function {ns}:v{vers
 		f"# Upgrade and refill matching {BASE_WEAPON} magazines to 8x weapon capacity",
 		f"execute store result score #pap_mag_cap {ns}.data run data get storage {ns}:temp _pap_extract.stats.capacity 8",
 	]
-	for slot in ALL_SLOTS:
+	for slot in ItemBuilder.ALL_SLOTS:
 		if slot == "weapon.mainhand":
 			continue
 		pap_mag_lines.append(
@@ -733,7 +734,7 @@ tag @s remove {ns}.pap_owner
 
 	# Refill all magazine items in inventory that match the PAP'd weapon's base_weapon.
 	mag_refill_lines: list[str] = [f"# Refill matching {BASE_WEAPON} magazines — called with storage mgs:temp _pap_extract.stats"]
-	for slot in ALL_SLOTS:
+	for slot in ItemBuilder.ALL_SLOTS:
 		if slot == "weapon.mainhand":
 			continue
 		mag_refill_lines.append(

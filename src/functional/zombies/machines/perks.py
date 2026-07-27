@@ -7,7 +7,7 @@ from dataclasses import dataclass
 
 from stewbeet import Mem, write_load_file, write_tag, write_versioned_function
 
-from ....config.stats import CAPACITY, REMAINING_BULLETS
+from ....config.stats.keys import CAPACITY, REMAINING_BULLETS
 from ...core.feedback import ZombiesFeedback
 from ...helpers import MGS_TAG, FunctionalHelpers
 from ...stamina import STAM_MAX

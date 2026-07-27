@@ -2,7 +2,8 @@
 # Imports
 from stewbeet import Mem, write_function, write_versioned_function
 
-from ....config.stats import ALL_SLOTS, BASE_WEAPON, CAPACITY, REMAINING_BULLETS
+from ....config.stats.items import ItemBuilder
+from ....config.stats.keys import BASE_WEAPON, CAPACITY, REMAINING_BULLETS
 
 
 # Functions
@@ -15,13 +16,13 @@ def main() -> None:
 	# Build slot checks for all inventory slots
 	magazine_custom_data: str = f"{{{ns}:{{magazine:true}}}}"
 	slot_checks: str = ""
-	for slot in ALL_SLOTS:
+	for slot in ItemBuilder.ALL_SLOTS:
 		slot_checks += f'execute if items entity @s {slot} *[custom_data~{magazine_custom_data}] run function {ns}:v{version}/zombies/bonus/refill_magazine {{slot:"{slot}"}}\n'
 
 	# Build slot checks for reloading all weapon slots (guns, not magazines)
 	gun_custom_data: str = f"{{{ns}:{{gun:true}}}}"
 	weapon_slot_checks: str = ""
-	for slot in ALL_SLOTS:
+	for slot in ItemBuilder.ALL_SLOTS:
 		weapon_slot_checks += f'execute if items entity @s {slot} *[custom_data~{gun_custom_data}] run function {ns}:v{version}/zombies/bonus/reload_weapon_slot {{slot:"{slot}"}}\n'
 
 	# Non-versioned entry point: /execute as <player> run function mgs:zombies/bonus/max_ammo

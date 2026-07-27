@@ -3,7 +3,7 @@
 from stewbeet import DamageType, Font, LootTable, Mem, set_json_encoder, texture_mcmeta, write_function, write_load_file, write_tag, write_tick_file, write_versioned_function
 
 from ..config.blocks import main as write_block_tags
-from ..config.stats import REMAINING_BULLETS
+from ..config.stats.keys import REMAINING_BULLETS
 from .helpers import FunctionalHelpers
 
 

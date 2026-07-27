@@ -10,7 +10,7 @@ Used by multiplayer/drop_held_weapon (player deaths) and missions/drop_enemy_wea
 from stewbeet import Mem, write_load_file, write_versioned_function
 
 from ...config.catalogs import PRIMARY_WEAPONS, SECONDARY_WEAPONS
-from ...config.stats import BASE_WEAPON, CAPACITY, GRENADE_TYPE, REMAINING_BULLETS
+from ...config.stats.keys import BASE_WEAPON, CAPACITY, GRENADE_TYPE, REMAINING_BULLETS
 from ..helpers import MGS_TAG
 from .feedback import ZombiesFeedback
 

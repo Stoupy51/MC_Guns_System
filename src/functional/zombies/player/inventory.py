@@ -5,7 +5,9 @@ Handles strict zombies slot layout, slot-tagged items, and recovery from moved/d
 # Imports
 from stewbeet import Advancement, ItemModifier, JsonDict, Mem, set_json_encoder, write_versioned_function
 
-from ....config.stats import ALL_SLOTS, CAPACITY, LETHAL_GRENADE_IDS, REMAINING_BULLETS
+from ....config.stats.items import ItemBuilder
+from ....config.stats.keys import CAPACITY, REMAINING_BULLETS
+from ....config.stats.weapons.grenades import LETHAL_GRENADE_IDS
 from ...helpers import FunctionalHelpers
 from ..machines.perks import PERK_DEFINITIONS, PERK_DESCRIPTIONS
 
@@ -71,7 +73,7 @@ def generate_zombies_inventory() -> None:
 	Mem.ctx.data[ns].item_modifiers[f"v{version}/zb_mark_converted"] = set_json_encoder(ItemModifier(zb_mark_converted_modifier), max_level=-1) # type: ignore
 
 	all_slot_scans: str = ""
-	for slot in ALL_SLOTS:
+	for slot in ItemBuilder.ALL_SLOTS:
 		all_slot_scans += (
 			f'$execute if score #zb_inv_found {ns}.data matches 0 if items entity @s {slot} $(match) '
 			f'run function {ns}:v{version}/zombies/inventory/move_found_slot {{from:"{slot}",to:"$(slot)"}}\n'

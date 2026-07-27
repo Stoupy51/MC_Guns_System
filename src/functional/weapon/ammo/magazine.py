@@ -3,7 +3,8 @@
 # Imports
 from stewbeet import ItemModifier, JsonDict, Mem, set_json_encoder, write_versioned_function
 
-from ....config.stats import ALL_SLOTS, BASE_WEAPON, CAPACITY, RELOAD_TIME, REMAINING_BULLETS, SINGLE_RELOAD
+from ....config.stats.items import ItemBuilder
+from ....config.stats.keys import BASE_WEAPON, CAPACITY, RELOAD_TIME, REMAINING_BULLETS, SINGLE_RELOAD
 
 # Constants
 # Magazine IDs that are consumable (stack count = bullet count)
@@ -159,7 +160,7 @@ execute store result storage {ns}:temp {REMAINING_BULLETS} int 1 run scoreboard 
 
 # Check all inventory slots for weapon needing ammo update (remaining bullets = -1)
 """
-	for slot in ALL_SLOTS:
+	for slot in ItemBuilder.ALL_SLOTS:
 		content += f"""execute if items entity @s {slot} *[custom_data~{custom_data}] run return run function {ns}:v{version}/ammo/set_count {{slot:"{slot}"}}\n"""
 	write_versioned_function("ammo/update_old_weapon", content)
 
@@ -202,7 +203,7 @@ item modify entity @s weapon.mainhand {ns}:v{version}/update_stats
 
 	# Check if any matching magazine with bullets exists in inventory (without consuming)
 	has_ammo_checks: str = ""
-	for slot in ALL_SLOTS:
+	for slot in ItemBuilder.ALL_SLOTS:
 		has_ammo_checks += (
 			f"$execute if items entity @s {slot} *[custom_data~{{{ns}:{{magazine:true,weapon:\"$({BASE_WEAPON})\"}}}}] "
 			f"unless items entity @s {slot} *[custom_data~{{{ns}:{{stats:{{{REMAINING_BULLETS}:0}}}}}}] "
@@ -270,7 +271,7 @@ execute if score @s {ns}.cooldown matches ..0 run scoreboard players set @s {ns}
 	# Find and consume magazines from inventory
 	magazine_custom_data: str = f"""{{{ns}:{{"magazine":true,"weapon":"$({BASE_WEAPON})"}}}}"""
 	slot_checks: str = ""
-	for slot in ALL_SLOTS:
+	for slot in ItemBuilder.ALL_SLOTS:
 		slot_checks += (
 			f"$execute if score #found_ammo {ns}.data < #capacity {ns}.data if items entity @s {slot} *[custom_data~{magazine_custom_data}] run "
 			f"""function {ns}:v{version}/ammo/inventory/process_slot {{slot:"{slot}",{BASE_WEAPON}:"$({BASE_WEAPON})"}}\n"""
@@ -409,7 +410,7 @@ function {ns}:v{version}/ammo/reload
 
 	## compute_reserve - Sum all magazine bullets in inventory for the current weapon Only counts magazines whose base_weapon matches the gun in hand Called on reload and when player is idle (~60 ticks without shooting) Build per-slot check lines: for each inventory/hotbar slot, if it contains a matching magazine (but skip the mainhand weapon itself), extract and add bullet count.
 	reserve_slot_checks: str = ""
-	for slot in ALL_SLOTS:
+	for slot in ItemBuilder.ALL_SLOTS:
 		if slot == "weapon.mainhand":
 			continue
 		reserve_slot_checks += (
