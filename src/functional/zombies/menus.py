@@ -4,7 +4,7 @@
 from stewbeet import Mem, write_versioned_function
 
 from ..helpers import MGS_TAG, FunctionalHelpers
-from .powerups import POWERUP_TYPES
+from .rewards.powerups import POWERUP_TYPES
 
 # Constants
 # Button emoji per power-up for the admin Force Power-Up menu (falls back to ⚡).

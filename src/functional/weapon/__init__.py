@@ -1,20 +1,20 @@
 """ Weapon subsystem entry point; submodules run in dependency order. """
 # Imports
 from ..helpers import FunctionalHelpers
-from .actionbar import main as actionbar_main
-from .ammo import main as ammo_main
-from .casing import main as casing_main
+from .ammo.lore import main as update_lore_main
+from .ammo.magazine import main as ammo_main
+from .ammo.switch import main as switch_main
 from .common import main as common_main
+from .firing.casing import main as casing_main
+from .firing.kick import main as kick_main
+from .firing.left_click import main as left_click_main
+from .firing.projectile import main as projectile_main
+from .firing.raycast import main as raycast_main
+from .firing.sound import main as sound_main
 from .grenade import main as grenade_main
-from .hit_indicator import main as hit_indicator_main
-from .kick import main as kick_main
-from .left_click import main as left_click_main
-from .projectile import main as projectile_main
-from .raycast import main as raycast_main
-from .sound import main as sound_main
-from .switch import main as switch_main
-from .update_lore import main as update_lore_main
-from .zoom import main as zoom_main
+from .hud.actionbar import main as actionbar_main
+from .hud.hit_indicator import main as hit_indicator_main
+from .hud.zoom import main as zoom_main
 
 
 # Functions
