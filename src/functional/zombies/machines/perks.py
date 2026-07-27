@@ -12,7 +12,7 @@ from ...core.feedback import ZombiesFeedback
 from ...helpers import MGS_TAG, FunctionalHelpers
 from ...stamina import STAM_MAX
 from ..common import ZombiesCommon
-from ..player.revive import SOLO_QR_MAX
+from ..player.revive.shared import SOLO_QR_MAX
 
 
 # Classes
