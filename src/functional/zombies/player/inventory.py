@@ -3,41 +3,79 @@
 Handles strict zombies slot layout, slot-tagged items, and recovery from moved/dropped items. """
 # ruff: noqa: E501
 # Imports
+from dataclasses import dataclass
+
 from stewbeet import Advancement, ItemModifier, JsonDict, Mem, set_json_encoder, write_versioned_function
 
 from ....config.stats.items import ItemBuilder
 from ....config.stats.keys import CAPACITY, REMAINING_BULLETS
 from ....config.stats.weapons.grenades import LETHAL_GRENADE_IDS
 from ...helpers import FunctionalHelpers
+from ..common import ZombiesCommon
 from ..machines.perks.definitions import PERK_DEFINITIONS, PERK_DESCRIPTIONS
 
 
+# Classes
+@dataclass(frozen=True)
+class SlotPredicates:
+	""" The custom-data predicate identifying what belongs in each managed zombies slot.
+
+	Zombies pins every item to one slot, so a predicate doubles as the "is this the right item here"
+	test and as the tag written back onto whatever gets moved into that slot.
+	"""
+	knife: str
+	gun_1: str
+	gun_2: str
+	gun_3: str
+	ability: str
+	equipment_1: str
+	equipment_2: str
+	info: str
+	mag_1: str
+	mag_2: str
+	mag_3: str
+
 # Functions
+def slot_predicates(ns: str) -> SlotPredicates:
+	""" Build the slot predicates for a namespace.
+
+	Args:
+		ns (str): The project namespace.
+	Returns:
+		SlotPredicates: One `custom_data` predicate body per managed slot.
+
+	Examples:
+		>>> slot_predicates("mgs").knife
+		'{mgs:{knife:true,zombies:{hotbar:0}}}'
+	"""
+	return SlotPredicates(
+		knife=       "{" + ns + ":{knife:true,zombies:{hotbar:0}}}",
+		gun_1=       "{" + ns + ":{gun:true,zombies:{hotbar:1}}}",
+		gun_2=       "{" + ns + ":{gun:true,zombies:{hotbar:2}}}",
+		gun_3=       "{" + ns + ":{gun:true,zombies:{hotbar:3}}}",
+		ability=     "{" + ns + ":{zb_ability_item:true,zombies:{hotbar:4}}}",
+		equipment_2= "{" + ns + ":{gun:true,zombies:{hotbar:6}}}",
+		equipment_1= "{" + ns + ":{gun:true,zombies:{hotbar:7}}}",
+		info=        "{" + ns + ":{zb_info:true,zombies:{hotbar:8}}}",
+		mag_1=       "{" + ns + ":{magazine:true,zombies:{inventory:1}}}",
+		mag_2=       "{" + ns + ":{magazine:true,zombies:{inventory:2}}}",
+		mag_3=       "{" + ns + ":{magazine:true,zombies:{inventory:3}}}",
+	)
+
 def generate_zombies_inventory() -> None:
 	ns: str = Mem.ctx.project_id
 	version: str = Mem.ctx.project_version
 
-	gun_cd = "{" + ns + ":{gun:true}}"
+	gun_cd: str = ZombiesCommon.gun_cd(ns)
 	mag_cd = "{" + ns + ":{magazine:true}}"
 	zb_tagged_cd = "{" + ns + ":{zombies:{}}}"
-
-	knife_slot_cd = "{" + ns + ":{knife:true,zombies:{hotbar:0}}}"
-	gun_1_slot_cd = "{" + ns + ":{gun:true,zombies:{hotbar:1}}}"
-	gun_2_slot_cd = "{" + ns + ":{gun:true,zombies:{hotbar:2}}}"
-	gun_3_slot_cd = "{" + ns + ":{gun:true,zombies:{hotbar:3}}}"
-	ability_slot_cd = "{" + ns + ":{zb_ability_item:true,zombies:{hotbar:4}}}"
-	equipment_2_slot_cd = "{" + ns + ":{gun:true,zombies:{hotbar:6}}}"
-	equipment_1_slot_cd = "{" + ns + ":{gun:true,zombies:{hotbar:7}}}"
-	info_slot_cd = "{" + ns + ":{zb_info:true,zombies:{hotbar:8}}}"
-	mag_1_slot_cd = "{" + ns + ":{magazine:true,zombies:{inventory:1}}}"
-	mag_2_slot_cd = "{" + ns + ":{magazine:true,zombies:{inventory:2}}}"
-	mag_3_slot_cd = "{" + ns + ":{magazine:true,zombies:{inventory:3}}}"
+	slots: SlotPredicates = slot_predicates(ns)
 
 	# Zombies keeps vanilla reach: its knife is the fallback weapon once ammo runs out
 	knife_item = FunctionalHelpers.knife_item_snbt(ns)
 
 	zb_tagged_match = f"*[custom_data~{zb_tagged_cd}]"
-	equipment_1_match = f"*[custom_data~{equipment_1_slot_cd}]"
+	equipment_1_match = f"*[custom_data~{slots.equipment_1}]"
 
 	zb_stats_modifier: JsonDict = {
 		"function": "minecraft:copy_custom_data",
@@ -412,23 +450,23 @@ tag @s remove {ns}.inv_checking
 execute if items entity @s hotbar.5 * run function {ns}:v{version}/zombies/inventory/drop_wrong_slot_item {{slot:"hotbar.5"}}
 
 # Always-enforced slots
-function {ns}:v{version}/zombies/inventory/enforce_slot {{slot:"hotbar.8",match:"*[custom_data~{info_slot_cd}]",expected_nbt:{info_slot_cd}}}
-function {ns}:v{version}/zombies/inventory/enforce_slot {{slot:"hotbar.7",match:"*[custom_data~{equipment_1_slot_cd}]",expected_nbt:{equipment_1_slot_cd}}}
-function {ns}:v{version}/zombies/inventory/enforce_slot {{slot:"hotbar.6",match:"*[custom_data~{equipment_2_slot_cd}]",expected_nbt:{equipment_2_slot_cd}}}
-function {ns}:v{version}/zombies/inventory/enforce_slot {{slot:"hotbar.2",match:"*[custom_data~{gun_2_slot_cd}]",expected_nbt:{gun_2_slot_cd}}}
-function {ns}:v{version}/zombies/inventory/enforce_slot {{slot:"hotbar.1",match:"*[custom_data~{gun_1_slot_cd}]",expected_nbt:{gun_1_slot_cd}}}
-function {ns}:v{version}/zombies/inventory/enforce_slot {{slot:"hotbar.0",match:"*[custom_data~{knife_slot_cd}]",expected_nbt:{knife_slot_cd}}}
-function {ns}:v{version}/zombies/inventory/enforce_slot {{slot:"inventory.1",match:"*[custom_data~{mag_1_slot_cd}]",expected_nbt:{mag_1_slot_cd}}}
-function {ns}:v{version}/zombies/inventory/enforce_slot {{slot:"inventory.2",match:"*[custom_data~{mag_2_slot_cd}]",expected_nbt:{mag_2_slot_cd}}}
+function {ns}:v{version}/zombies/inventory/enforce_slot {{slot:"hotbar.8",match:"*[custom_data~{slots.info}]",expected_nbt:{slots.info}}}
+function {ns}:v{version}/zombies/inventory/enforce_slot {{slot:"hotbar.7",match:"*[custom_data~{slots.equipment_1}]",expected_nbt:{slots.equipment_1}}}
+function {ns}:v{version}/zombies/inventory/enforce_slot {{slot:"hotbar.6",match:"*[custom_data~{slots.equipment_2}]",expected_nbt:{slots.equipment_2}}}
+function {ns}:v{version}/zombies/inventory/enforce_slot {{slot:"hotbar.2",match:"*[custom_data~{slots.gun_2}]",expected_nbt:{slots.gun_2}}}
+function {ns}:v{version}/zombies/inventory/enforce_slot {{slot:"hotbar.1",match:"*[custom_data~{slots.gun_1}]",expected_nbt:{slots.gun_1}}}
+function {ns}:v{version}/zombies/inventory/enforce_slot {{slot:"hotbar.0",match:"*[custom_data~{slots.knife}]",expected_nbt:{slots.knife}}}
+function {ns}:v{version}/zombies/inventory/enforce_slot {{slot:"inventory.1",match:"*[custom_data~{slots.mag_1}]",expected_nbt:{slots.mag_1}}}
+function {ns}:v{version}/zombies/inventory/enforce_slot {{slot:"inventory.2",match:"*[custom_data~{slots.mag_2}]",expected_nbt:{slots.mag_2}}}
 
 # Mule kick gates the third weapon/magazine slots only.
-execute if score @s {ns}.zb.perk.mule_kick matches 1 run function {ns}:v{version}/zombies/inventory/enforce_slot {{slot:"hotbar.3",match:"*[custom_data~{gun_3_slot_cd}]",expected_nbt:{gun_3_slot_cd}}}
-execute if score @s {ns}.zb.perk.mule_kick matches 1 run function {ns}:v{version}/zombies/inventory/enforce_slot {{slot:"inventory.3",match:"*[custom_data~{mag_3_slot_cd}]",expected_nbt:{mag_3_slot_cd}}}
+execute if score @s {ns}.zb.perk.mule_kick matches 1 run function {ns}:v{version}/zombies/inventory/enforce_slot {{slot:"hotbar.3",match:"*[custom_data~{slots.gun_3}]",expected_nbt:{slots.gun_3}}}
+execute if score @s {ns}.zb.perk.mule_kick matches 1 run function {ns}:v{version}/zombies/inventory/enforce_slot {{slot:"inventory.3",match:"*[custom_data~{slots.mag_3}]",expected_nbt:{slots.mag_3}}}
 execute unless score @s {ns}.zb.perk.mule_kick matches 1 run item replace entity @s hotbar.3 with air
 execute unless score @s {ns}.zb.perk.mule_kick matches 1 run item replace entity @s inventory.3 with air
 
 # Ability slot is only for manual abilities (automatic abilities such as coward should not show item)
-execute if score @s {ns}.zb.ability matches 3.. run function {ns}:v{version}/zombies/inventory/enforce_slot {{slot:"hotbar.4",match:"*[custom_data~{ability_slot_cd}]",expected_nbt:{ability_slot_cd}}}
+execute if score @s {ns}.zb.ability matches 3.. run function {ns}:v{version}/zombies/inventory/enforce_slot {{slot:"hotbar.4",match:"*[custom_data~{slots.ability}]",expected_nbt:{slots.ability}}}
 execute unless score @s {ns}.zb.ability matches 3.. run item replace entity @s hotbar.4 with air
 
 # Clear cursor (prevent dragging tagged items outside managed inventory)
@@ -444,7 +482,7 @@ execute unless score @s {ns}.zb.pap_s matches 3 unless items entity @s hotbar.3 
 # Refresh player info item every 5 seconds (100 ticks)
 scoreboard players add #zb_info_timer {ns}.data 1
 execute if score #zb_info_timer {ns}.data matches 100.. run scoreboard players set #zb_info_timer {ns}.data 0
-execute if score #zb_info_timer {ns}.data matches 0 as @a[scores={{{ns}.zb.in_game=1}},gamemode=!spectator] if items entity @s hotbar.8 *[custom_data~{info_slot_cd}] run function {ns}:v{version}/zombies/inventory/refresh_info_item
+execute if score #zb_info_timer {ns}.data matches 0 as @a[scores={{{ns}.zb.in_game=1}},gamemode=!spectator] if items entity @s hotbar.8 *[custom_data~{slots.info}] run function {ns}:v{version}/zombies/inventory/refresh_info_item
 """)
 
 	write_versioned_function("zombies/inventory/on_new_item", f"""
@@ -461,12 +499,12 @@ execute if score #zb_drop_kill {ns}.data matches 1 run kill @s
 """, tags=["common_signals:signals/on_new_item"])
 
 	write_versioned_function("zombies/inventory/recreate_critical_items", f"""
-execute unless items entity @s hotbar.0 *[custom_data~{knife_slot_cd}] run item replace entity @s hotbar.0 with {knife_item}
-execute unless items entity @s hotbar.0 *[custom_data~{knife_slot_cd}] run function {ns}:v{version}/zombies/inventory/apply_slot_tag {{slot:"hotbar.0",group:"hotbar",index:0}}
+execute unless items entity @s hotbar.0 *[custom_data~{slots.knife}] run item replace entity @s hotbar.0 with {knife_item}
+execute unless items entity @s hotbar.0 *[custom_data~{slots.knife}] run function {ns}:v{version}/zombies/inventory/apply_slot_tag {{slot:"hotbar.0",group:"hotbar",index:0}}
 
-execute unless items entity @s hotbar.7 *[custom_data~{equipment_1_slot_cd}] run function {ns}:v{version}/zombies/inventory/loot_replace_lethal
-execute unless items entity @s hotbar.7 *[custom_data~{equipment_1_slot_cd}] run function {ns}:v{version}/zombies/inventory/apply_slot_tag {{slot:"hotbar.7",group:"hotbar",index:7}}
+execute unless items entity @s hotbar.7 *[custom_data~{slots.equipment_1}] run function {ns}:v{version}/zombies/inventory/loot_replace_lethal
+execute unless items entity @s hotbar.7 *[custom_data~{slots.equipment_1}] run function {ns}:v{version}/zombies/inventory/apply_slot_tag {{slot:"hotbar.7",group:"hotbar",index:7}}
 
-execute unless items entity @s hotbar.8 *[custom_data~{info_slot_cd}] run function {ns}:v{version}/zombies/inventory/refresh_info_item
+execute unless items entity @s hotbar.8 *[custom_data~{slots.info}] run function {ns}:v{version}/zombies/inventory/refresh_info_item
 """)
 
