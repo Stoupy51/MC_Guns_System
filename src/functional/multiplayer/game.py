@@ -8,24 +8,14 @@ from ..core.respawn_countdown import respawn_countdown_tick_lines
 from ..core.spawning import CoreSpawning
 from ..core.weapon_drop import WeaponDrop
 from ..helpers import MGS_TAG, FunctionalHelpers
+from .gamemodes.dispatch import gm_dispatch
 
-# Constants
-# All multiplayer gamemodes (single source of truth for dispatch blocks)
-GAMEMODES: list[str] = ["ffa", "tdm", "dom", "hp", "snd"]
 
 # Functions
 def generate_game() -> None:
 	""" Generates the multiplayer game lifecycle (team-based modes, spawns, sidebars). """
 	ns: str = Mem.ctx.project_id
 	version: str = Mem.ctx.project_version
-
-	def gm_dispatch(script: str, ret: bool = False) -> str:
-		""" Build the per-gamemode dispatch lines for a given script (setup/cleanup/tick/on_kill). """
-		run: str = "run return run" if ret else "run"
-		return "\n".join(
-			f'execute if data storage {ns}:multiplayer game{{gamemode:"{gm}"}} {run} function {ns}:v{version}/multiplayer/gamemodes/{gm}/{script}'
-			for gm in GAMEMODES
-		)
 
 	## Scoreboards & Storage Setup
 	write_load_file(f"""
@@ -150,7 +140,7 @@ function #{ns}:multiplayer/register_classes
 function #{ns}:multiplayer/on_game_start
 
 # Run gamemode-specific setup
-{gm_dispatch("setup")}
+{gm_dispatch(ns, version, "setup")}
 
 # Run map-defined start commands after entity/setup summons
 execute if data storage {ns}:multiplayer game.map.start_commands[0] run function {ns}:v{version}/shared/run_start_commands {{mode:"multiplayer"}}
@@ -230,7 +220,7 @@ effect clear @a[scores={{{ns}.mp.in_game=1}}] blindness
 effect clear @a[scores={{{ns}.mp.in_game=1}}] night_vision
 gamemode adventure @a[scores={{{ns}.mp.in_game=1}},gamemode=spectator]
 kill @e[tag={ns}.gm_entity]
-{gm_dispatch("cleanup")}
+{gm_dispatch(ns, version, "cleanup")}
 function #{ns}:multiplayer/on_game_end
 
 {FunctionalHelpers.regen_disable_lines(ns)}
@@ -407,7 +397,7 @@ execute if score #random_message {ns}.data matches 5 run tellraw @a[scores={{{ns
 execute unless data storage {ns}:multiplayer game{{state:"active"}} run return fail
 
 # Dispatch to gamemode-specific kill handler
-{gm_dispatch("on_kill", ret=True)}
+{gm_dispatch(ns, version, "on_kill", ret=True)}
 """, tags=[f"{ns}:signals/on_kill"])
 
 	## Check Team Win (shared by TDM, DOM, HP)
@@ -460,7 +450,7 @@ scoreboard players operation #bounds_phase {ns}.data %= #4 {ns}.data
 execute as @e[type=player,scores={{{ns}.mp.in_game=1,{ns}.mp.death_count=0}},gamemode=!creative,gamemode=!spectator] at @s run function {ns}:v{version}/multiplayer/enforce_bounds
 
 # Gamemode tick dispatch
-{gm_dispatch("tick")}
+{gm_dispatch(ns, version, "tick")}
 
 # Tracker perk: render enemy footprints to perked players (every 6 ticks)
 execute store result score #tick_mod {ns}.data run scoreboard players get #total_tick {ns}.data
