@@ -140,10 +140,35 @@ splitting means carving a single function into sub-functions across new modules 
 `ns` / `version` / `sep` and the nested `snbt_*` helpers through every one. Large, invasive, zero
 output change — hence last, one file per commit against the byte-identical harness.
 
-**Order within P12:** do the pure *moves* first (`zombies/` and `weapon/` regrouping, where files
-change directory but not content), then the *splits*. A move is verifiable by import graph alone; a
-split needs the byte-diff. Mixing them in one commit makes a real drift indistinguishable from a
-rename.
+**Order within P12:** do the pure *moves* first (done, P12a), then the *splits*. A move is verifiable
+by import graph alone; a split needs the byte-diff. Mixing them in one commit makes a real drift
+indistinguishable from a rename.
+
+### ⚠ Open decision before P12b starts: what `__init__.py` may re-export
+
+Two different shapes are hiding under "split the file", and only one of them is uncontroversial.
+
+**Generator splits are fine.** `pap.py`, `mystery_box.py`, `map_editor.py`, `game.py` etc. each export
+exactly **one** symbol to the outside world (`generate_pap`, …). `pap/__init__.py` exposing that one
+function is a package entry point, not a compatibility shim, and the internal modules are free to
+have whatever shape suits them.
+
+**`config/stats.py` and `config/blocks.py` are not.** `stats.py` exports ~90 constants
+(`CAPACITY`, `DAMAGE`, `PAP_STATS`, `WEAPON_STATS`, …) read at hundreds of call sites across the
+tree. Splitting it into `config/stats/{keys,weapons,helpers}.py` leaves two options:
+
+1. `config/stats/__init__.py` re-exports all ~90 names, so every existing import keeps working. Zero
+   call-site churn — but it is exactly the wildcard re-export layer the standing rules reject.
+2. Repoint every call site at the real submodule (`from ...config.stats.keys import CAPACITY`). No
+   indirection, but a very wide diff, and every future stat added has to pick a home.
+
+**These files also still owe PY8** (they are the last unclassed helper modules), and doing PY8 first
+would move the same call sites twice. So the order is: decide 1 vs 2, then class and split in one
+pass.
+
+Recommendation: **option 2**, because option 1 keeps `stats.py` a 90-name grab bag in everything but
+file layout — the split would be cosmetic. But it is a wide, hard-to-review diff and the call is the
+author's.
 
 ### PY6. Generated-`.mcfunction` comment cleanup — ⚠ **needs sign-off**
 
