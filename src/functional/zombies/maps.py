@@ -3,7 +3,7 @@
 from stewbeet import Mem, write_versioned_function
 
 from ..helpers import MGS_TAG
-from .common import deny_cmd
+from .common import ZombiesCommon
 
 
 # Functions
@@ -11,7 +11,7 @@ def generate_zombies_maps() -> None:
 	ns: str = Mem.ctx.project_id
 	version: str = Mem.ctx.project_version
 	# @s = interaction entity; reach the player via 'on target'
-	deny_recharging: str = deny_cmd(ns, version, '{"text":"The teleporter is recharging...","color":"yellow"}')
+	deny_recharging: str = ZombiesCommon.deny_cmd(ns, version, '{"text":"The teleporter is recharging...","color":"yellow"}')
 
 	# ── Kino der Toten.
 	# Map registration: placeholder data (base_coordinates and spawn arrays TBD)

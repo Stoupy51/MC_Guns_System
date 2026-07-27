@@ -8,10 +8,10 @@ from dataclasses import dataclass
 from stewbeet import Mem, write_load_file, write_tag, write_versioned_function
 
 from ...config.stats import CAPACITY, REMAINING_BULLETS
-from ..core.feedback import zb_sound
+from ..core.feedback import ZombiesFeedback
 from ..helpers import MGS_TAG, FunctionalHelpers
 from ..stamina import STAM_MAX
-from .common import deny_cmd, deny_not_enough_points_cmd, game_active_guard_cmd
+from .common import ZombiesCommon
 from .revive import SOLO_QR_MAX
 
 
@@ -273,9 +273,9 @@ tag {selector} remove {ns}.perk.quick_revive
 def generate_perks() -> None:
 	ns: str = Mem.ctx.project_id
 	version: str = Mem.ctx.project_version
-	deny_requires_power: str = deny_cmd(ns, version, '{"text":"This perk machine requires power.","color":"red"}')
-	deny_already_owned: str = deny_cmd(ns, version, '{"text":"You already own this perk.","color":"yellow"}')
-	deny_not_enough_points: str = deny_not_enough_points_cmd(ns, version, "#pk_price")
+	deny_requires_power: str = ZombiesCommon.deny_cmd(ns, version, '{"text":"This perk machine requires power.","color":"red"}')
+	deny_already_owned: str = ZombiesCommon.deny_cmd(ns, version, '{"text":"You already own this perk.","color":"yellow"}')
+	deny_not_enough_points: str = ZombiesCommon.deny_not_enough_points_cmd(ns, version, "#pk_price")
 	perk_objectives_add: str = "\n".join(
 		f"scoreboard objectives add {ns}.zb.perk.{perk_id} dummy"
 		for perk_id in PERK_DEFINITIONS
@@ -480,7 +480,7 @@ $execute if score #pool_slot {ns}.data matches 1 run data modify storage {ns}:te
 	## Right-click handler (executor: "source" = player)
 	write_versioned_function("zombies/perks/on_right_click", f"""
 # Guard: game must be active
-{game_active_guard_cmd(ns)}
+{ZombiesCommon.game_active_guard_cmd(ns)}
 
 # Check power requirement. Quick Revive is exempt while solo (Black Ops rule).
 execute store result score #pk_power {ns}.data run scoreboard players get @n[tag=bs.interaction.target] {ns}.zb.perk.power
@@ -516,7 +516,7 @@ function {ns}:v{version}/zombies/perks/apply with storage {ns}:temp _pk_data
 function #{ns}:zombies/on_new_perk
 
 # Sound
-{zb_sound('success')}
+{ZombiesFeedback.zb_sound('success')}
 """)  # noqa: E501
 
 	write_versioned_function("zombies/perks/lookup_perk", f"""
@@ -565,7 +565,7 @@ $scoreboard players operation @s {ns}.zb.perkpaid.$(perk_id) = #pk_paid {ns}.dat
 	write_versioned_function("zombies/perks/announce_progress", f"""
 function {ns}:v{version}/zombies/perks/get_hover_name
 tellraw @s [{MGS_TAG},{{"text":"🥤 ","color":"dark_purple"}},{{"storage":"{ns}:temp","nbt":"_pk_hover_name","color":"light_purple","interpret":true}},{{"text":": ","color":"gray"}},{{"score":{{"name":"#pk_paid","objective":"{ns}.data"}},"color":"green"}},{{"text":"/","color":"gray"}},{{"score":{{"name":"#pk_total","objective":"{ns}.data"}},"color":"yellow"}},{{"text":" points paid","color":"gray"}}]
-{zb_sound('refill')}
+{ZombiesFeedback.zb_sound('refill')}
 """)  # noqa: E501
 
 	write_versioned_function("zombies/perks/apply", f"""

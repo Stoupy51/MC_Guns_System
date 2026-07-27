@@ -153,12 +153,16 @@ A large share of the comments inside the emitted functions restate the following
 `mcfunction_total_lines` (31 675 vs 12 305 real commands) and cannot run under the byte-identical
 harness without approval.
 
-### PY8 remainder. Sweep the other helper modules (→ P11d)
+### PY8 remainder — `config/stats.py` and `database/*.py`
 
-`helpers.py` is done. The same shape exists in `core/feedback.py`, `zombies/common.py`,
-`zombies/display_helpers.py` and `weapon/common.py` — modules that are a bag of shared line-builders
-rather than a `generate_X()` entry point. A module whose only top-level function *is* its entry point
-stays as it is; wrapping `generate_power_switch()` in a class buys nothing.
+Those are the last helper-shaped modules not yet classed, and they are deliberately deferred: between
+them they export ~90 constants read at hundreds of call sites, and `stats.py` is scheduled to become
+a package in P12 anyway. Class them **as part of that split**, not before it, so the call sites move
+once rather than twice.
+
+**Rule established while doing this:** a module whose only top-level function *is* its entry point
+stays a module. Wrapping `generate_power_switch()` in a class buys nothing. Classing applies to
+modules other modules import *helpers* from.
 
 ### Lint tightening (→ P11)
 
@@ -216,6 +220,7 @@ src/
 | **P11b** ✅ | PY7 — `catalogs.py`'s six tuple-splat tables became explicit keyword-argument constructor calls. | 0 | +1 |
 | **P11a** ✅ | Indentation normalised to tabs across 30 files (26 were space-indented, 5 mixed). Alignment padding and non-docstring string interiors left as spaces. | 0 | 0 |
 | **P11c** ✅ | PY8 — `helpers.py`'s 26 members folded into `FunctionalHelpers`; `MGS_TAG` stays module-level. 15 consumers repointed. | 0 | +1 |
+| **P11d** ✅ | PY8 — `feedback.py`→`ZombiesFeedback`, `zombies/common.py`→`ZombiesCommon`, `core/spawning.py`→`CoreSpawning`, `core/weapon_drop.py`→`WeaponDrop`, `classes.py`→`MultiplayerClasses`. All 31 `_`-prefixed names stripped codebase-wide. | 0 | +5 |
 
 ### Remaining phases
 
@@ -224,7 +229,6 @@ src/
 | **P10** | D3 — one shared spawn/respawn system for all three modes. | −~20 | −600 | **high** |
 | **P11** | Tighten the ruff config, fix the fallout. | 0 | ? | low |
 | **P11c** | PY8 — `helpers.py` and friends fold into `FunctionalHelpers`-style classes. | 0 | ~0 | very low |
-| **P11d** | PY8 remainder — sweep the other helper-shaped modules into classes. | 0 | ~0 | very low |
 | **P12a** (final) | PY5 moves — regroup `zombies/` (27 flat modules) and `weapon/` (15) into feature packages. Content unchanged, imports repointed. | 0 | ~0 | low |
 | **P12b** (final) | PY5 splits — carve every >300-line generator into its package's leaves. **Not** `shaders.py`. | 0 | +~45 files | med |
 

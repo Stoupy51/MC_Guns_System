@@ -6,7 +6,7 @@ from stewbeet import Dialog, DialogTag, Mem, set_json_encoder, write_load_file, 
 
 from ....config.stats import ALL_SLOTS
 from ...helpers import MGS_TAG
-from ..classes import CLASS_IDS
+from ..classes import MultiplayerClasses
 from .catalogs import TRIG_EDITOR_START, TRIG_MARKETPLACE, TRIG_MY_LOADOUTS
 
 
@@ -119,7 +119,7 @@ execute if score @s {ns}.mp.class matches ..-1 run return run function {ns}:v{ve
 
 # Standard class lookup by class_num score
 """
-	for class_num in CLASS_IDS.values():
+	for class_num in MultiplayerClasses.CLASS_IDS.values():
 		apply_commands += f"execute if score @s {ns}.mp.class matches {class_num} run data modify storage {ns}:temp current_class set from storage {ns}:multiplayer classes_list[{class_num - 1}]\n"
 
 	apply_commands += f"""

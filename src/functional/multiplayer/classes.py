@@ -1,196 +1,205 @@
 """ Preset multiplayer classes and the SNBT builders for their dialog rows. """
 # Imports
+from typing import ClassVar
+
 from stewbeet import JsonDict
 
 from ...config.catalogs import PERKS
 
-# Constants
-# Consumable magazine item IDs (stack count = bullet count, uses set_consumable_count modifier)
-CONSUMABLE_MAGS: set[str] = {"rpg7_rocket", "mosin_bullet", "m24_bullet", "spas12_shell", "m500_shell", "m590_shell", "element_115"}
 
-# Functions
-def make_slot_snbt(ns: str, slot: str, loot: str, count: int = 1, consumable: bool = False, bullets: int = 0) -> str:
-	""" Build the SNBT string for a single loadout slot entry. """
-	return f'{{slot:"{slot}",loot:"{ns}:i/{loot}",count:{count},consumable:{"1b" if consumable else "0b"},bullets:{bullets}}}'
+# Classes
+class MultiplayerClasses:
+	""" Preset multiplayer classes and the SNBT builders for their dialog rows. """
 
-# Balanced team-vs-team class loadouts (Python-side definitions) Used at build time to generate SNBT for storage initialization
-CLASSES: dict[str, JsonDict] = {
-	"assault": {
-		"name": "Assault",
-		"lore": "Versatile frontline",
-		"main": {"gun": "ak47", "mag": "ak47_mag", "mag_count": 3},
-		"secondary": {"gun": "m1911", "mag": "m1911_mag", "mag_count": 2},
-		"equipment": {"frag_grenade": 2, "smoke_grenade": 1},
-		"perks": ["quick_reload", "scavenger", "quick_swap"],
-	},
-	"rifleman": {
-		"name": "Rifleman",
-		"lore": "Accurate mid-range",
-		"main": {"gun": "m16a4", "mag": "m16a4_mag", "mag_count": 3},
-		"secondary": {"gun": "m9", "mag": "m9_mag", "mag_count": 2},
-		"equipment": {"flash_grenade": 1, "smoke_grenade": 1},
-		"perks": ["quick_reload", "tactical_mask", "tracker"],
-	},
-	"support": {
-		"name": "Support",
-		"lore": "Suppressive heavy",
-		"main": {"gun": "m249", "mag": "m249_mag", "mag_count": 3},
-		"secondary": {"gun": "glock17", "mag": "glock17_mag", "mag_count": 2},
-		"equipment": {"smoke_grenade": 2},
-		"perks": ["scavenger", "juggernaut", "flak_jacket"],
-	},
-	"sniper": {
-		"name": "Sniper",
-		"lore": "Long-range precision",
-		"main": {"gun": "m24_4", "mag": "m24_bullet", "mag_count": 10},
-		"secondary": {"gun": "deagle", "mag": "deagle_mag", "mag_count": 2},
-		"equipment": {"flash_grenade": 1},
-		"perks": ["quick_swap", "tracker", "tactical_mask"],
-	},
-	"smg": {
-		"name": "SMG",
-		"lore": "Close quarters",
-		"main": {"gun": "mp7", "mag": "mp7_mag", "mag_count": 4},
-		"secondary": {"gun": "glock18", "mag": "glock18_mag", "mag_count": 2},
-		"equipment": {"flash_grenade": 2},
-		"perks": ["quick_reload", "quick_swap", "quick_fix"],
-	},
-	"shotgunner": {
-		"name": "Shotgunner",
-		"lore": "Breaching / CQB",
-		"main": {"gun": "spas12", "mag": "spas12_shell", "mag_count": 16},
-		"secondary": {"gun": "m9", "mag": "m9_mag", "mag_count": 2},
-		"equipment": {"semtex": 2},
-		"perks": ["juggernaut", "flak_jacket", "quick_swap"],
-	},
-	"engineer": {
-		"name": "Engineer",
-		"lore": "Objective / demolitions",
-		"main": {"gun": "mp5", "mag": "mp5_mag", "mag_count": 3},
-		"secondary": {"gun": "makarov", "mag": "makarov_mag", "mag_count": 2},
-		"equipment": {"semtex": 2, "smoke_grenade": 1},
-		"perks": ["flak_jacket", "scavenger", "tactical_mask"],
-	},
-	"medic": {
-		"name": "Medic",
-		"lore": "Team sustain",
-		"main": {"gun": "famas", "mag": "famas_mag", "mag_count": 3},
-		"secondary": {"gun": "m1911", "mag": "m1911_mag", "mag_count": 2},
-		"equipment": {"smoke_grenade": 2},
-		"perks": ["quick_fix", "tactical_mask", "scavenger"],
-	},
-	"marksman": {
-		"name": "Marksman",
-		"lore": "Semi-auto precision",
-		"main": {"gun": "svd", "mag": "svd_mag", "mag_count": 3},
-		"secondary": {"gun": "glock17", "mag": "glock17_mag", "mag_count": 2},
-		"equipment": {"flash_grenade": 1, "smoke_grenade": 1},
-		"perks": ["quick_reload", "tracker", "tactical_mask"],
-	},
-	"heavy": {
-		"name": "Heavy",
-		"lore": "Armored suppressor",
-		"main": {"gun": "rpk", "mag": "rpk_mag", "mag_count": 3},
-		"secondary": {"gun": "makarov", "mag": "makarov_mag", "mag_count": 2},
-		"equipment": {"frag_grenade": 2},
-		"perks": ["juggernaut", "flak_jacket", "scavenger"],
-	},
-}
+	CONSUMABLE_MAGS: ClassVar[set[str]] = {"rpg7_rocket", "mosin_bullet", "m24_bullet", "spas12_shell", "m500_shell", "m590_shell", "element_115"}
+	""" Consumable magazine item ids, where the stack count is the bullet count via the set_consumable_count modifier. """
 
-# Lookup: perk_id -> display name (from the shared PERKS catalog)
-PERK_NAMES: dict[str, str] = {perk.perk_id: perk.display_name for perk in PERKS}
+	# Functions
+	@staticmethod
+	def make_slot_snbt(ns: str, slot: str, loot: str, count: int = 1, consumable: bool = False, bullets: int = 0) -> str:
+		""" Build the SNBT string for a single loadout slot entry. """
+		return f'{{slot:"{slot}",loot:"{ns}:i/{loot}",count:{count},consumable:{"1b" if consumable else "0b"},bullets:{bullets}}}'
 
-# Class number assignments (1-indexed, used for scoreboard mgs.mp.class)
-CLASS_IDS: dict[str, int] = {class_id: idx + 1 for idx, class_id in enumerate(CLASSES)}
+	CLASSES: ClassVar[dict[str, JsonDict]] = {
+		"assault": {
+			"name": "Assault",
+			"lore": "Versatile frontline",
+			"main": {"gun": "ak47", "mag": "ak47_mag", "mag_count": 3},
+			"secondary": {"gun": "m1911", "mag": "m1911_mag", "mag_count": 2},
+			"equipment": {"frag_grenade": 2, "smoke_grenade": 1},
+			"perks": ["quick_reload", "scavenger", "quick_swap"],
+		},
+		"rifleman": {
+			"name": "Rifleman",
+			"lore": "Accurate mid-range",
+			"main": {"gun": "m16a4", "mag": "m16a4_mag", "mag_count": 3},
+			"secondary": {"gun": "m9", "mag": "m9_mag", "mag_count": 2},
+			"equipment": {"flash_grenade": 1, "smoke_grenade": 1},
+			"perks": ["quick_reload", "tactical_mask", "tracker"],
+		},
+		"support": {
+			"name": "Support",
+			"lore": "Suppressive heavy",
+			"main": {"gun": "m249", "mag": "m249_mag", "mag_count": 3},
+			"secondary": {"gun": "glock17", "mag": "glock17_mag", "mag_count": 2},
+			"equipment": {"smoke_grenade": 2},
+			"perks": ["scavenger", "juggernaut", "flak_jacket"],
+		},
+		"sniper": {
+			"name": "Sniper",
+			"lore": "Long-range precision",
+			"main": {"gun": "m24_4", "mag": "m24_bullet", "mag_count": 10},
+			"secondary": {"gun": "deagle", "mag": "deagle_mag", "mag_count": 2},
+			"equipment": {"flash_grenade": 1},
+			"perks": ["quick_swap", "tracker", "tactical_mask"],
+		},
+		"smg": {
+			"name": "SMG",
+			"lore": "Close quarters",
+			"main": {"gun": "mp7", "mag": "mp7_mag", "mag_count": 4},
+			"secondary": {"gun": "glock18", "mag": "glock18_mag", "mag_count": 2},
+			"equipment": {"flash_grenade": 2},
+			"perks": ["quick_reload", "quick_swap", "quick_fix"],
+		},
+		"shotgunner": {
+			"name": "Shotgunner",
+			"lore": "Breaching / CQB",
+			"main": {"gun": "spas12", "mag": "spas12_shell", "mag_count": 16},
+			"secondary": {"gun": "m9", "mag": "m9_mag", "mag_count": 2},
+			"equipment": {"semtex": 2},
+			"perks": ["juggernaut", "flak_jacket", "quick_swap"],
+		},
+		"engineer": {
+			"name": "Engineer",
+			"lore": "Objective / demolitions",
+			"main": {"gun": "mp5", "mag": "mp5_mag", "mag_count": 3},
+			"secondary": {"gun": "makarov", "mag": "makarov_mag", "mag_count": 2},
+			"equipment": {"semtex": 2, "smoke_grenade": 1},
+			"perks": ["flak_jacket", "scavenger", "tactical_mask"],
+		},
+		"medic": {
+			"name": "Medic",
+			"lore": "Team sustain",
+			"main": {"gun": "famas", "mag": "famas_mag", "mag_count": 3},
+			"secondary": {"gun": "m1911", "mag": "m1911_mag", "mag_count": 2},
+			"equipment": {"smoke_grenade": 2},
+			"perks": ["quick_fix", "tactical_mask", "scavenger"],
+		},
+		"marksman": {
+			"name": "Marksman",
+			"lore": "Semi-auto precision",
+			"main": {"gun": "svd", "mag": "svd_mag", "mag_count": 3},
+			"secondary": {"gun": "glock17", "mag": "glock17_mag", "mag_count": 2},
+			"equipment": {"flash_grenade": 1, "smoke_grenade": 1},
+			"perks": ["quick_reload", "tracker", "tactical_mask"],
+		},
+		"heavy": {
+			"name": "Heavy",
+			"lore": "Armored suppressor",
+			"main": {"gun": "rpk", "mag": "rpk_mag", "mag_count": 3},
+			"secondary": {"gun": "makarov", "mag": "makarov_mag", "mag_count": 2},
+			"equipment": {"frag_grenade": 2},
+			"perks": ["juggernaut", "flak_jacket", "scavenger"],
+		},
+	}
+	""" Balanced team-vs-team class loadouts, used at build time to generate the SNBT that initialises storage. """
 
-# Trigger value offset (trigger_value = TRIGGER_OFFSET + class_num) Must match the dispatch formula in player_config.py (10 + class_num → 11..20)
-TRIGGER_OFFSET: int = 10
+	PERK_NAMES: ClassVar[dict[str, str]] = {perk.perk_id: perk.display_name for perk in PERKS}
+	""" perk_id to display name, from the shared PERKS catalog. """
 
-def get_class_description(class_id: str) -> str:
-	""" Get the hover/lore description text for a class. """
-	data = CLASSES[class_id]
-	main_gun: str = data["main"]["gun"].upper().replace("_", " ")
-	secondary_gun: str = data.get("secondary", {}).get("gun", "").upper().replace("_", " ")
-	return f"{data['lore']}\nMain: {main_gun}\nSecondary: {secondary_gun}"
+	CLASS_IDS: ClassVar[dict[str, int]] = {class_id: idx + 1 for idx, class_id in enumerate(CLASSES)}
+	""" Class number assignments, 1-indexed, used for the scoreboard mgs.mp.class. """
 
-def build_class_snbt(ns: str, class_id: str, class_data: JsonDict, class_num: int) -> str:
-	""" Build the SNBT representation of a class for storage initialization.
-	The format is designed for dynamic loadout application via recursive slot iteration. """
-	trigger_value: int = TRIGGER_OFFSET + class_num
-	main_gun: str = class_data["main"]["gun"]
-	secondary_gun: str = class_data.get("secondary", {}).get("gun", "")
+	TRIGGER_OFFSET: int = 10
+	""" trigger_value = TRIGGER_OFFSET + class_num. Must match the dispatch formula in player_config.py (10 + class_num, so 11..20). """
 
-	# Build the flat slot list (pre-computed slot assignments)
-	slots: list[str] = []
-	def add_slot(slot: str, loot: str, count: int = 1, consumable: bool = False, bullets: int = 0) -> None:
-		slots.append(make_slot_snbt(ns, slot, loot, count, consumable, bullets))
+	@staticmethod
+	def get_class_description(class_id: str) -> str:
+		""" Get the hover/lore description text for a class. """
+		data = MultiplayerClasses.CLASSES[class_id]
+		main_gun: str = data["main"]["gun"].upper().replace("_", " ")
+		secondary_gun: str = data.get("secondary", {}).get("gun", "").upper().replace("_", " ")
+		return f"{data['lore']}\nMain: {main_gun}\nSecondary: {secondary_gun}"
 
-	# Primary weapon → hotbar.1 (hotbar.0 is reserved for the knife, given in apply_class_dynamic)
-	add_slot("hotbar.1", main_gun)
+	@staticmethod
+	def build_class_snbt(ns: str, class_id: str, class_data: JsonDict, class_num: int) -> str:
+		""" Build the SNBT representation of a class for storage initialization.
+		The format is designed for dynamic loadout application via recursive slot iteration. """
+		trigger_value: int = MultiplayerClasses.TRIGGER_OFFSET + class_num
+		main_gun: str = class_data["main"]["gun"]
+		secondary_gun: str = class_data.get("secondary", {}).get("gun", "")
 
-	# Secondary weapon → hotbar.2
-	if secondary_gun:
-		add_slot("hotbar.2", secondary_gun)
+		# Build the flat slot list (pre-computed slot assignments)
+		slots: list[str] = []
+		def add_slot(slot: str, loot: str, count: int = 1, consumable: bool = False, bullets: int = 0) -> None:
+			slots.append(MultiplayerClasses.make_slot_snbt(ns, slot, loot, count, consumable, bullets))
 
-	# Equipment (grenades) → hotbar.8, hotbar.7, ...
-	equip_slot: int = 8
-	for item_id, count in class_data.get("equipment", {}).items():
-		add_slot(f"hotbar.{equip_slot}", item_id, count=count)
-		equip_slot -= 1
+		# Primary weapon → hotbar.1 (hotbar.0 is reserved for the knife, given in apply_class_dynamic)
+		add_slot("hotbar.1", main_gun)
 
-	# Magazines → inventory.0, inventory.1, ...
-	inv_slot: int = 0
+		# Secondary weapon → hotbar.2
+		if secondary_gun:
+			add_slot("hotbar.2", secondary_gun)
 
-	# Primary magazines
-	mag_id: str = class_data["main"]["mag"]
-	mag_count: int = class_data["main"].get("mag_count", 0)
-	if mag_id in CONSUMABLE_MAGS:
-		add_slot(f"inventory.{inv_slot}", mag_id, consumable=True, bullets=mag_count)
-		inv_slot += 1
-	else:
-		for _ in range(mag_count):
-			add_slot(f"inventory.{inv_slot}", mag_id)
-			inv_slot += 1
+		# Equipment (grenades) → hotbar.8, hotbar.7, ...
+		equip_slot: int = 8
+		for item_id, count in class_data.get("equipment", {}).items():
+			add_slot(f"hotbar.{equip_slot}", item_id, count=count)
+			equip_slot -= 1
 
-	# Secondary magazines
-	if "secondary" in class_data:
-		sec_mag_id: str = class_data["secondary"]["mag"]
-		sec_mag_count: int = class_data["secondary"].get("mag_count", 0)
-		if sec_mag_id in CONSUMABLE_MAGS:
-			add_slot(f"inventory.{inv_slot}", sec_mag_id, consumable=True, bullets=sec_mag_count)
+		# Magazines → inventory.0, inventory.1, ...
+		inv_slot: int = 0
+
+		# Primary magazines
+		mag_id: str = class_data["main"]["mag"]
+		mag_count: int = class_data["main"].get("mag_count", 0)
+		if mag_id in MultiplayerClasses.CONSUMABLE_MAGS:
+			add_slot(f"inventory.{inv_slot}", mag_id, consumable=True, bullets=mag_count)
 			inv_slot += 1
 		else:
-			for _ in range(sec_mag_count):
-				add_slot(f"inventory.{inv_slot}", sec_mag_id)
+			for _ in range(mag_count):
+				add_slot(f"inventory.{inv_slot}", mag_id)
 				inv_slot += 1
 
-	slots_snbt: str = ",".join(slots)
+		# Secondary magazines
+		if "secondary" in class_data:
+			sec_mag_id: str = class_data["secondary"]["mag"]
+			sec_mag_count: int = class_data["secondary"].get("mag_count", 0)
+			if sec_mag_id in MultiplayerClasses.CONSUMABLE_MAGS:
+				add_slot(f"inventory.{inv_slot}", sec_mag_id, consumable=True, bullets=sec_mag_count)
+				inv_slot += 1
+			else:
+				for _ in range(sec_mag_count):
+					add_slot(f"inventory.{inv_slot}", sec_mag_id)
+					inv_slot += 1
 
-	# Build equipment display string (e.g. "2x Frag Grenade, 1x Smoke")
-	equip_parts: list[str] = []
-	equip_display_names: dict[str, str] = {
-		"frag_grenade": "Frag", "semtex": "Semtex",
-		"flash_grenade": "Flash", "smoke_grenade": "Smoke",
-	}
-	for item_id, count in class_data.get("equipment", {}).items():
-		label = equip_display_names.get(item_id, item_id)
-		equip_parts.append(f"{count}x {label}")
-	equip_display: str = ", ".join(equip_parts) if equip_parts else "None"
+		slots_snbt: str = ",".join(slots)
 
-	main_mag_count: int = class_data["main"].get("mag_count", 0)
-	secondary_mag_count: int = class_data.get("secondary", {}).get("mag_count", 0)
+		# Build equipment display string (e.g. "2x Frag Grenade, 1x Smoke")
+		equip_parts: list[str] = []
+		equip_display_names: dict[str, str] = {
+			"frag_grenade": "Frag", "semtex": "Semtex",
+			"flash_grenade": "Flash", "smoke_grenade": "Smoke",
+		}
+		for item_id, count in class_data.get("equipment", {}).items():
+			label = equip_display_names.get(item_id, item_id)
+			equip_parts.append(f"{count}x {label}")
+		equip_display: str = ", ".join(equip_parts) if equip_parts else "None"
 
-	# Perks: stored as a string list (matches custom loadout format) + a display string
-	perks: list[str] = class_data.get("perks", [])
-	perks_snbt: str = ",".join(f'"{perk_id}"' for perk_id in perks)
-	perks_display: str = ", ".join(PERK_NAMES.get(perk_id, perk_id) for perk_id in perks) if perks else "None"
+		main_mag_count: int = class_data["main"].get("mag_count", 0)
+		secondary_mag_count: int = class_data.get("secondary", {}).get("mag_count", 0)
 
-	return (
-		f'{{id:"{class_id}",name:"{class_data["name"]}",lore:"{class_data["lore"]}",'
-		f'trigger_value:{trigger_value},main_gun:"{main_gun}",secondary_gun:"{secondary_gun}",'
-		f'main_mag_count:{main_mag_count},secondary_mag_count:{secondary_mag_count},'
-		f'equip_display:"{equip_display}",perks_display:"{perks_display}",'
-		f'perks:[{perks_snbt}],'
-		f'slots:[{slots_snbt}]}}'
-	)
+		# Perks: stored as a string list (matches custom loadout format) + a display string
+		perks: list[str] = class_data.get("perks", [])
+		perks_snbt: str = ",".join(f'"{perk_id}"' for perk_id in perks)
+		perks_display: str = ", ".join(MultiplayerClasses.PERK_NAMES.get(perk_id, perk_id) for perk_id in perks) if perks else "None"
+
+		return (
+			f'{{id:"{class_id}",name:"{class_data["name"]}",lore:"{class_data["lore"]}",'
+			f'trigger_value:{trigger_value},main_gun:"{main_gun}",secondary_gun:"{secondary_gun}",'
+			f'main_mag_count:{main_mag_count},secondary_mag_count:{secondary_mag_count},'
+			f'equip_display:"{equip_display}",perks_display:"{perks_display}",'
+			f'perks:[{perks_snbt}],'
+			f'slots:[{slots_snbt}]}}'
+		)
 

@@ -12,13 +12,18 @@ from stewbeet import Mem, write_load_file, write_versioned_function
 from ...config.catalogs import PRIMARY_WEAPONS, SECONDARY_WEAPONS
 from ...config.stats import BASE_WEAPON, CAPACITY, GRENADE_TYPE, REMAINING_BULLETS
 from ..helpers import MGS_TAG
-from .feedback import zb_sound
+from .feedback import ZombiesFeedback
 
 
-# Functions
-def weapon_drop_tick_lines(ns: str) -> str:
-	""" Build the dropped-gun lifetime countdown (called from every mode's game_tick). """
-	return f"""
+# Classes
+class WeaponDrop:
+	""" Weapon drop helpers. """
+
+	# Functions
+	@staticmethod
+	def weapon_drop_tick_lines(ns: str) -> str:
+		""" Build the dropped-gun lifetime countdown (called from every mode's game_tick). """
+		return f"""
 # Dropped-weapon lifetime: count down (real-time via #tick_delta) and remove expired drops
 execute as @e[type=minecraft:item_display,tag={ns}.dropped_gun] run scoreboard players operation @s {ns}.drop_timer -= #tick_delta {ns}.data
 execute as @e[type=minecraft:interaction,tag={ns}.drop_int] run scoreboard players operation @s {ns}.drop_timer -= #tick_delta {ns}.data
@@ -26,19 +31,20 @@ kill @e[type=minecraft:item_display,tag={ns}.dropped_gun,scores={{{ns}.drop_time
 kill @e[type=minecraft:interaction,tag={ns}.drop_int,scores={{{ns}.drop_timer=..0}}]
 """.strip()
 
-def write_shared_weapon_drop_functions() -> None:
-	ns: str = Mem.ctx.project_id
-	version: str = Mem.ctx.project_version
+	@staticmethod
+	def write_shared_weapon_drop_functions() -> None:
+		ns: str = Mem.ctx.project_id
+		version: str = Mem.ctx.project_version
 
-	write_load_file(f"""
+		write_load_file(f"""
 # Dropped-weapon lifetime (ticks remaining before a dropped gun despawns)
 scoreboard objectives add {ns}.drop_timer dummy
 """)
 
-	## Drop entry point.
-	## Run positioned where the drop falls from (usually `at` the corpse).
-	## Callers set {ns}:temp _dropw = the gun item without its Slot tag, and #drop_ammo {ns}.data to the live bullet count to bake in (<= 0 means "half a magazine": empty player guns, mob drops).
-	write_versioned_function("shared/drops/drop", f"""
+		## Drop entry point.
+		## Run positioned where the drop falls from (usually `at` the corpse).
+		## Callers set {ns}:temp _dropw = the gun item without its Slot tag, and #drop_ammo {ns}.data to the live bullet count to bake in (<= 0 means "half a magazine": empty player guns, mob drops).
+		write_versioned_function("shared/drops/drop", f"""
 # Only guns drop: knives, grenades and whatever else a capture step may have grabbed are ignored
 execute unless data storage {ns}:temp _dropw.components."minecraft:custom_data".{ns}.gun run return 0
 execute if data storage {ns}:temp _dropw.components."minecraft:custom_data".{ns}.stats.{GRENADE_TYPE} run return 0
@@ -73,8 +79,8 @@ execute rotated ~ 90 run function #bs.raycast:run with storage {ns}:input
 execute if score #drop_spawned {ns}.data matches 0 run function {ns}:v{version}/shared/drops/spawn
 """)
 
-	## Spawn the drop entities at the current position (item in {ns}:temp _dropw) Called as the raycast's on_entry_point (positioned at the ground hit point) or directly as a fallback
-	write_versioned_function("shared/drops/spawn", f"""
+		## Spawn the drop entities at the current position (item in {ns}:temp _dropw) Called as the raycast's on_entry_point (positioned at the ground hit point) or directly as a fallback
+		write_versioned_function("shared/drops/spawn", f"""
 scoreboard players set #drop_spawned {ns}.data 1
 
 # Static item display lying flat on the ground (left_rotation = 90° around X), with a random yaw
@@ -93,16 +99,16 @@ execute as @n[tag={ns}.drop_new] run function #bs.interaction:on_right_click {{r
 tag @n[tag={ns}.drop_new] remove {ns}.drop_new
 """)
 
-	## Magazine lookup: base_weapon -> magazine item id + half of one full stack for consumable ammo
-	mag_lookup_lines: str = "\n".join(
-		f'execute if data storage {ns}:temp _dropmag_args{{bw:"{w.item_id}"}} run '
-		f'data modify storage {ns}:temp _dropmag_args merge value {{mag:"{w.magazine_id}",halfc:{max(1, w.default_mag_count // 2)}}}'
-		for w in (*PRIMARY_WEAPONS, *SECONDARY_WEAPONS)
-	)
-	write_versioned_function("shared/drops/mag_lookup", mag_lookup_lines)
+		## Magazine lookup: base_weapon -> magazine item id + half of one full stack for consumable ammo
+		mag_lookup_lines: str = "\n".join(
+			f'execute if data storage {ns}:temp _dropmag_args{{bw:"{w.item_id}"}} run '
+			f'data modify storage {ns}:temp _dropmag_args merge value {{mag:"{w.magazine_id}",halfc:{max(1, w.default_mag_count // 2)}}}'
+			for w in (*PRIMARY_WEAPONS, *SECONDARY_WEAPONS)
+		)
+		write_versioned_function("shared/drops/mag_lookup", mag_lookup_lines)
 
-	## Capture a fresh magazine from the item loot table into {ns}:temp _dropmag, filled to 50%
-	write_versioned_function("shared/drops/capture_mag", f"""
+		## Capture a fresh magazine from the item loot table into {ns}:temp _dropmag, filled to 50%
+		write_versioned_function("shared/drops/capture_mag", f"""
 summon minecraft:item_display ~ ~ ~ {{Tags:["{ns}.drop_mag_helper"]}}
 $loot replace entity @n[tag={ns}.drop_mag_helper] contents loot {ns}:i/$(mag)
 data modify storage {ns}:temp _dropmag set from entity @n[tag={ns}.drop_mag_helper] item
@@ -119,9 +125,9 @@ execute unless data storage {ns}:temp _dropmag.components."minecraft:custom_data
 $execute if data storage {ns}:temp _dropmag.components."minecraft:custom_data".{ns}.consumable run data modify storage {ns}:temp _dropmag.count set value $(halfc)
 """)
 
-	## Pickup (Bookshelf callback, @s = clicking player) Requires holding a primary/secondary gun (hotbar.1/2, knife and grenades excluded).
-	## Missions players are allowed too: missions runs on multiplayer classes, same hotbar layout.
-	write_versioned_function("shared/drops/pickup", f"""
+		## Pickup (Bookshelf callback, @s = clicking player) Requires holding a primary/secondary gun (hotbar.1/2, knife and grenades excluded).
+		## Missions players are allowed too: missions runs on multiplayer classes, same hotbar layout.
+		write_versioned_function("shared/drops/pickup", f"""
 execute unless score @s {ns}.mp.in_game matches 1 unless score @s {ns}.mi.in_game matches 1 run return fail
 execute store result score #pick_sel {ns}.data run data get entity @s SelectedItemSlot
 execute unless score #pick_sel {ns}.data matches 1..2 run return fail
@@ -130,8 +136,8 @@ execute if data entity @s SelectedItem.components."minecraft:custom_data".{ns}.s
 execute at @e[tag=bs.interaction.target] run function {ns}:v{version}/shared/drops/collect
 """)
 
-	## Collect (@s = picker, positioned at the drop): 2 guns -> swap the held gun with the drop; 1 gun -> take the drop into the free weapon slot
-	write_versioned_function("shared/drops/collect", f"""
+		## Collect (@s = picker, positioned at the drop): 2 guns -> swap the held gun with the drop; 1 gun -> take the drop into the free weapon slot
+		write_versioned_function("shared/drops/collect", f"""
 execute unless entity @n[type=minecraft:item_display,tag={ns}.dropped_gun,distance=..3] run return fail
 execute store success score #pick_g0 {ns}.data if items entity @s hotbar.1 *[custom_data~{{{ns}:{{gun:true}}}}]
 execute store success score #pick_g1 {ns}.data if items entity @s hotbar.2 *[custom_data~{{{ns}:{{gun:true}}}}]
@@ -148,18 +154,18 @@ execute if score #pick_g0 {ns}.data matches 1 if score #pick_g1 {ns}.data matche
 function {ns}:v{version}/shared/drops/take
 """)
 
-	## Primary-weapon lookup: sets #is_primary from the base_weapon string in {ns}:temp _isp.bw
-	is_primary_lines: str = "\n".join(
-		f'execute if data storage {ns}:temp _isp{{bw:"{w.item_id}"}} run scoreboard players set #is_primary {ns}.data 1'
-		for w in PRIMARY_WEAPONS
-	)
-	write_versioned_function("shared/drops/is_primary_lookup", f"""
+		## Primary-weapon lookup: sets #is_primary from the base_weapon string in {ns}:temp _isp.bw
+		is_primary_lines: str = "\n".join(
+			f'execute if data storage {ns}:temp _isp{{bw:"{w.item_id}"}} run scoreboard players set #is_primary {ns}.data 1'
+			for w in PRIMARY_WEAPONS
+		)
+		write_versioned_function("shared/drops/is_primary_lookup", f"""
 scoreboard players set #is_primary {ns}.data 0
 {is_primary_lines}
 """)
 
-	## Overkill gate (@s = picker, positioned at the drop): deny when the result would be two primaries
-	write_versioned_function("shared/drops/overkill_check", f"""
+		## Overkill gate (@s = picker, positioned at the drop): deny when the result would be two primaries
+		write_versioned_function("shared/drops/overkill_check", f"""
 # Only primary drops are restricted
 data modify storage {ns}:temp _isp set value {{}}
 data modify storage {ns}:temp _isp.bw set from entity @n[type=minecraft:item_display,tag={ns}.dropped_gun,distance=..3] item.components."minecraft:custom_data".{ns}.stats.{BASE_WEAPON}
@@ -184,11 +190,11 @@ execute if score #is_primary {ns}.data matches 0 run return 0
 
 scoreboard players set #pick_deny {ns}.data 1
 tellraw @s [{MGS_TAG},{{"text":"You need the Overkill perk to carry two primary weapons.","color":"red"}}]
-{zb_sound('deny')}
+{ZombiesFeedback.zb_sound('deny')}
 """)
 
-	## Take: only one gun owned -> the drop fills the other weapon slot, then the drop is removed
-	write_versioned_function("shared/drops/take", f"""
+		## Take: only one gun owned -> the drop fills the other weapon slot, then the drop is removed
+		write_versioned_function("shared/drops/take", f"""
 execute if score #pick_g0 {ns}.data matches 0 run item replace entity @s hotbar.1 from entity @n[type=minecraft:item_display,tag={ns}.dropped_gun,distance=..3] contents
 execute if score #pick_g0 {ns}.data matches 1 run item replace entity @s hotbar.2 from entity @n[type=minecraft:item_display,tag={ns}.dropped_gun,distance=..3] contents
 playsound minecraft:entity.item.pickup player @a[distance=..24] ~ ~ ~
@@ -196,12 +202,12 @@ kill @n[type=minecraft:item_display,tag={ns}.dropped_gun,distance=..3]
 kill @e[tag=bs.interaction.target]
 """)
 
-	## Give the drop's embedded spare magazine to the picker (@s = picker, positioned at the drop) The mag goes into the first free MAIN-inventory slot (inventory.0-26 excludes the hotbar): the old ground-item give let vanilla pickup fill the hotbar first
-	mag_slot_lines: str = "\n".join(
-		f"execute if score #mag_slot {ns}.data matches -1 unless items entity @s inventory.{n} * run scoreboard players set #mag_slot {ns}.data {n}"
-		for n in range(27)
-	)
-	write_versioned_function("shared/drops/give_mag", f"""
+		## Give the drop's embedded spare magazine to the picker (@s = picker, positioned at the drop) The mag goes into the first free MAIN-inventory slot (inventory.0-26 excludes the hotbar): the old ground-item give let vanilla pickup fill the hotbar first
+		mag_slot_lines: str = "\n".join(
+			f"execute if score #mag_slot {ns}.data matches -1 unless items entity @s inventory.{n} * run scoreboard players set #mag_slot {ns}.data {n}"
+			for n in range(27)
+		)
+		write_versioned_function("shared/drops/give_mag", f"""
 data modify storage {ns}:temp _give set value {{}}
 data modify storage {ns}:temp _give.Item set from entity @n[type=minecraft:item_display,tag={ns}.dropped_gun,distance=..3] item.components."minecraft:custom_data".{ns}.drop_mag
 data modify storage {ns}:temp _give.Owner set from entity @s UUID
@@ -223,18 +229,18 @@ kill @n[tag={ns}.drop_mag_helper]
 data remove entity @n[type=minecraft:item_display,tag={ns}.dropped_gun,distance=..3] item.components."minecraft:custom_data".{ns}.drop_mag
 """)
 
-	## Place the magazine into the free main-inventory slot found above (macro key: slot only, <=27 variants)
-	write_versioned_function("shared/drops/place_mag", f"""
+		## Place the magazine into the free main-inventory slot found above (macro key: slot only, <=27 variants)
+		write_versioned_function("shared/drops/place_mag", f"""
 $item replace entity @s inventory.$(slot) from entity @n[tag={ns}.drop_mag_helper] contents
 """)
 
-	## Zero-delay, owner-locked item entity at the picker's position
-	write_versioned_function("shared/drops/give_item", f"""
+		## Zero-delay, owner-locked item entity at the picker's position
+		write_versioned_function("shared/drops/give_item", f"""
 $summon minecraft:item ~ ~0.2 ~ {{Item:$(Item),Owner:$(Owner),PickupDelay:0s,Tags:["{ns}.gm_entity"]}}
 """)
 
-	## Swap: capture the held gun, hand over the drop, then the old gun becomes the new drop (timer refreshed)
-	write_versioned_function("shared/drops/swap", f"""
+		## Swap: capture the held gun, hand over the drop, then the old gun becomes the new drop (timer refreshed)
+		write_versioned_function("shared/drops/swap", f"""
 data modify storage {ns}:temp _swapw set from entity @s Inventory[{{Slot:1b}}]
 execute if score #pick_sel {ns}.data matches 2 run data modify storage {ns}:temp _swapw set from entity @s Inventory[{{Slot:2b}}]
 data remove storage {ns}:temp _swapw.Slot

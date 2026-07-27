@@ -5,8 +5,8 @@ from stewbeet import Mem, write_load_file, write_tag, write_tick_file, write_ver
 
 from ...config.stats import REMAINING_BULLETS
 from ..core.respawn_countdown import respawn_countdown_tick_lines
-from ..core.spawning import write_summon_spawn_at, write_tp_player_at
-from ..core.weapon_drop import weapon_drop_tick_lines
+from ..core.spawning import CoreSpawning
+from ..core.weapon_drop import WeaponDrop
 from ..helpers import MGS_TAG, FunctionalHelpers
 
 # Constants
@@ -438,7 +438,7 @@ execute if data storage {ns}:multiplayer game{{state:"preparing"}} run function 
 	write_versioned_function("multiplayer/game_tick", f"""
 {respawn_countdown_tick_lines(ns, "mp", f"{ns}:v{version}/multiplayer/actual_respawn")}
 
-{weapon_drop_tick_lines(ns)}
+{WeaponDrop.weapon_drop_tick_lines(ns)}
 
 # Timer (real-time via #tick_delta)
 scoreboard players operation #mp_timer {ns}.data -= #tick_delta {ns}.data
@@ -629,7 +629,7 @@ data remove storage {ns}:temp _spawn_iter[0]
 execute if data storage {ns}:temp _spawn_iter[0] run function {ns}:v{version}/multiplayer/summon_spawn_iter
 """)
 
-	write_summon_spawn_at("multiplayer")
+	CoreSpawning.write_summon_spawn_at("multiplayer")
 
 	# Smart Spawn Selection.
 
@@ -760,7 +760,7 @@ execute unless data storage {ns}:multiplayer game{{state:"active"}} run tag @s a
 """)
 
 	## TP macro (run as the player to TP)
-	write_tp_player_at("multiplayer")
+	CoreSpawning.write_tp_player_at("multiplayer")
 
 	## Respawn TP: use general spawns on respawn to prevent spawn camping (run as the respawning player)
 	write_versioned_function("multiplayer/respawn_tp", f"""

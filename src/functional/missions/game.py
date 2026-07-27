@@ -11,8 +11,8 @@ When all enemies are killed, the game ends with a performance score.
 from stewbeet import Mem, write_load_file, write_tag, write_tick_file, write_versioned_function
 
 from ..core.respawn_countdown import respawn_countdown_tick_lines
-from ..core.spawning import write_summon_spawn_at, write_tp_player_at
-from ..core.weapon_drop import weapon_drop_tick_lines
+from ..core.spawning import CoreSpawning
+from ..core.weapon_drop import WeaponDrop
 from ..helpers import MGS_TAG, FunctionalHelpers
 
 
@@ -403,7 +403,7 @@ execute as @e[type=player,scores={{{ns}.mi.in_game=1}},gamemode=!creative,gamemo
 
 # Enemies drop their weapon at the corpse; the drops then live for 30s
 function {ns}:v{version}/missions/death_watch_tick
-{weapon_drop_tick_lines(ns)}
+{WeaponDrop.weapon_drop_tick_lines(ns)}
 
 # Track enemy kills (total enemies - alive enemies)
 execute store result score #alive {ns}.data if entity @e[tag={ns}.mission_enemy]
@@ -577,7 +577,7 @@ data remove storage {ns}:temp _spawn_iter[0]
 execute if data storage {ns}:temp _spawn_iter[0] run function {ns}:v{version}/missions/summon_spawn_iter
 """)
 
-	write_summon_spawn_at("missions")
+	CoreSpawning.write_summon_spawn_at("missions")
 
 	# Smart Spawn Teleportation.
 	write_versioned_function("missions/tp_all_to_spawns", f"""
@@ -615,7 +615,7 @@ execute as @p[tag={ns}.spawn_pending] run function {ns}:v{version}/missions/tp_p
 execute unless data storage {ns}:missions game{{state:"active"}} run tag @s add {ns}.spawn_used
 """)
 
-	write_tp_player_at("missions")
+	CoreSpawning.write_tp_player_at("missions")
 
 	## Respawn TP for missions (run as the respawning player)
 	write_versioned_function("missions/respawn_tp", f"""

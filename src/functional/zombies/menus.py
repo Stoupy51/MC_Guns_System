@@ -8,7 +8,7 @@ from .powerups import POWERUP_TYPES
 
 # Constants
 # Button emoji per power-up for the admin Force Power-Up menu (falls back to ⚡).
-_PU_ADMIN_EMOJI: dict[str, str] = {
+PU_ADMIN_EMOJI: dict[str, str] = {
 	"max_ammo": "📦", "insta_kill": "💀", "double_points": "💰", "carpenter": "🔨",
 	"nuke": "☢", "unlimited_ammo": "🔫", "random_perk": "🧪", "free_pap": "💠",
 	"cash_drop": "💵", "fire_sale": "🏷", "bonfire_sale": "🔥",
@@ -123,7 +123,7 @@ tellraw @a [{MGS_TAG},{{"text":"An operator reset everyone's points.","color":"r
 	## Power-ups reuse the real activation functions, so bossbars, sounds and timers all behave exactly as if the power-up had been picked up off the floor.
 	## Generated from POWERUP_TYPES so EVERY power-up is always present (no drift when new ones are added).
 	admin_powerups: list[tuple[str, str, str, str]] = [
-		(pu_id, f'{_PU_ADMIN_EMOJI.get(pu_id, "⚡")} {v.display}', v.color, f'Force {v.display} for everyone')
+		(pu_id, f'{PU_ADMIN_EMOJI.get(pu_id, "⚡")} {v.display}', v.color, f'Force {v.display} for everyone')
 		for pu_id, v in POWERUP_TYPES.items()
 	]
 	## Some power-ups (Nuke, Free PaP, Cash Drop, Random Perk) act "as the player who picked it up" and do nothing at all without the {ns}.pu_collecting tag a real pickup sets — the Nuke's kill loop in particular never starts, so the fire and sounds play while every zombie survives.

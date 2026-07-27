@@ -5,7 +5,7 @@
 from stewbeet import Mem, write_versioned_function
 
 from .helpers import MGS_TAG
-from .multiplayer.classes import CLASS_IDS, CLASSES
+from .multiplayer.classes import MultiplayerClasses
 from .multiplayer.loadouts import (
 	CAMO_VARIANTS,
 	GRENADE_TYPES,
@@ -128,7 +128,7 @@ execute if score @s {ns}.player.config matches 6 run function {ns}:v{version}/zo
 execute if score @s {ns}.player.config matches 7 run function {ns}:v{version}/zombies/perks/set_passive_2
 execute if score @s {ns}.player.config matches 8 run function {ns}:v{version}/zombies/perks/set_ability_1
 execute if score @s {ns}.player.config matches 9 run function {ns}:v{version}/zombies/perks/set_ability_2
-{"".join(f'execute if score @s {ns}.player.config matches {10 + class_num} run function {ns}:v{version}/multiplayer/set_class {{class_num:{class_num},class_name:"{CLASSES[class_id]["name"]}"}}{chr(10)}' for class_id, class_num in CLASS_IDS.items())}
+{"".join(f'execute if score @s {ns}.player.config matches {10 + class_num} run function {ns}:v{version}/multiplayer/set_class {{class_num:{class_num},class_name:"{MultiplayerClasses.CLASSES[class_id]["name"]}"}}{chr(10)}' for class_id, class_num in MultiplayerClasses.CLASS_IDS.items())}
 # === Custom Loadout Editor (CoD-style hub) ===
 # 100 = Open loadout editor (create new), then show the hub
 execute if score @s {ns}.player.config matches {TRIG_EDITOR_START} run function {ns}:v{version}/multiplayer/editor/start

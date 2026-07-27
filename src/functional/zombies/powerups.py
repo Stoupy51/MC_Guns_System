@@ -202,14 +202,14 @@ function {ns}:v{version}/zombies/powerups/queue_extract with storage {ns}:temp _
 
 	queue_refill_common_lines: str = "\n".join(
 		f"data modify storage {ns}:data _pu_queue append value {v.type_num}"
-		for _pu_id, v in POWERUP_TYPES.items()
+		for v in POWERUP_TYPES.values()
 		if v.tier == "common"
 	)
 	# Rares are gated to after round 5 (round 6+), then each has an independent 25% chance.
 	queue_refill_rare_lines: str = "\n".join(
 		f"execute if score #zb_round {ns}.data matches 6.. store result score #pu_rare_roll_{v.type_num} {ns}.data run random value 1..100\n"
 		f"execute if score #zb_round {ns}.data matches 6.. if score #pu_rare_roll_{v.type_num} {ns}.data matches 1..25 run data modify storage {ns}:data _pu_queue append value {v.type_num}"
-		for _pu_id, v in POWERUP_TYPES.items()
+		for v in POWERUP_TYPES.values()
 		if v.tier == "rare"
 	)
 	write_versioned_function("zombies/powerups/queue_refill", f"""
