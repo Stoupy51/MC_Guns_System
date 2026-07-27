@@ -139,6 +139,25 @@ you disagree — it is the one place the "group helpers into a class" rule was k
 stays a module. Wrapping `generate_power_switch()` in a class buys nothing. Classing applies to
 modules other modules import *helpers* from.
 
+### PY9. Clones jscpd found once the splits landed — 5 candidates
+
+`npx jscpd ./src/functional --mode mild --min-lines 8 --min-tokens 60` reports **0.42 %** duplication
+(11 clones, 118 lines). Six of them are inside `shaders.py` and are GLSL, not logic. The rest, ranked:
+
+1. **`projectile/explode.py` [42-57] ≡ `grenade/detonate.py` [59-74]** — 16 lines, verified identical
+   character for character: the centre-position snapshot, the explosion config copy and the shooter
+   resolution. Two options with different trade-offs: a shared Python helper returning the lines
+   (−16 Python, output unchanged), or one shared `projectile/explosion_setup` mcfunction both call
+   (−16 generated lines too, +1 function call on the explosion path — a cold path, so acceptable).
+2. **`pap/purchase.py` [44-55] vs [145-156]** — 12 lines, 211 tokens. The re-PaP-at-max-level path and
+   the full upgrade path share their cosmetic-roll tail.
+3. **`wallbuys/give.py` [67-81] vs [223-237]** — 15 lines, the gun and the knife give paths.
+4. **`revive/hooks.py` [11-25] vs [28-42]** — 15 lines, the game-start and game-stop resets.
+5. **`pap/free.py` [46-54] vs `pap/purchase.py` [117-125]** — 9 lines, the shared upgrade tail again.
+
+Verify each by reading before acting: jscpd's aggregate is not a metric (§8), and these are emitters
+whose "duplication" is sometimes two genuinely different commands that happen to tokenize alike.
+
 ### Lint tightening (→ P11)
 
 Add `ANN`, `RET`, `SIM`, `PTH`, `TC`, `ARG`, `PL` to the ruff config and fix the fallout. Audit the
