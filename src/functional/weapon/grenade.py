@@ -528,8 +528,7 @@ execute as @e[scores={{{ns}.stuck_id=1..}}] if score @s {ns}.stuck_id = #my_stuc
 """)
 
 	## Tick file entry for grenade movement
-	write_tick_file(
-f"""
+	write_tick_file(f"""
 # Tick every live grenade. This is intentionally NOT gated on a running count: a counter desync
 # (e.g. a grenade removed outside grenade/delete, or a double-detonate) used to drop the count to 0
 # and freeze EVERY projectile's ticking ("no more items to tick", monkey bombs included). Selecting

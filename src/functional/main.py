@@ -113,8 +113,7 @@ scoreboard players set #real_prev {ns}.data 0
 """, prepend=True)
 
 	# Write to tick file
-	write_tick_file(
-f"""
+	write_tick_file(f"""
 # Infinitely incrementing tick counter for general timing purposes
 scoreboard players add #total_tick {ns}.data 1
 

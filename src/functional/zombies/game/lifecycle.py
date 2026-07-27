@@ -19,8 +19,7 @@ def generate_zombies_game() -> None:
 	version: str = Mem.ctx.project_version
 
 	## Scoreboards & Storage Setup
-	write_load_file(
-f"""
+	write_load_file(f"""
 ## Zombies scoreboards
 scoreboard objectives add {ns}.zb.in_game dummy
 scoreboard objectives add {ns}.zb.points dummy
