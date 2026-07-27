@@ -198,6 +198,9 @@ scoreboard objectives add mgs.zb.passive dummy
 scoreboard objectives add mgs.zb.ability dummy
 scoreboard objectives add mgs.zb.ability_cd dummy
 
+# Ticks until this player's next horde groan; horde_ambient refreshes it from the count near THEM
+scoreboard objectives add mgs.zb.horde_cd dummy
+
 # Spawn point group_id scoreboard
 scoreboard objectives add mgs.zb.spawn.gid dummy
 

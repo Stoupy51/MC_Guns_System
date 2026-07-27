@@ -93,11 +93,12 @@ execute if score #zb_dog_round mgs.data matches 1 as @e[tag=mgs.zb_dog,tag=!mgs.
 # dog already locked on costs a read and no write. #zb_tick_mod is total_tick % 20 from earlier.
 execute if score #zb_dog_round mgs.data matches 1 if score #zb_tick_mod mgs.data matches 0 as @e[tag=mgs.zb_dog,tag=!mgs.zb_rising] at @s unless data entity @s angry_at run data modify entity @s angry_at set from entity @p[scores={mgs.zb.in_game=1},gamemode=!spectator,gamemode=!creative] UUID
 
-# Managed horde ambience: ~every 35 ticks, give each player one controlled, count-scaled groan.
+# Managed horde ambience: each player runs their own cooldown, refreshed by horde_ambient from the
+# zombie count near THEM, so a player being chased hears a near-continuous horde while someone alone
+# in a cleared room hears the occasional distant groan.
 # Skipped on dog rounds: dogs aren't summoned Silent, so their own growls are the ambience.
-scoreboard players add #zb_horde_timer mgs.data 1
-execute if score #zb_horde_timer mgs.data matches 35.. run scoreboard players set #zb_horde_timer mgs.data 0
-execute if score #zb_dog_round mgs.data matches 0 if score #zb_horde_timer mgs.data matches 0 as @a[scores={mgs.zb.in_game=1},gamemode=!spectator] at @s run function mgs:v5.1.0/zombies/horde_ambient
+scoreboard players remove @a[scores={mgs.zb.in_game=1,mgs.zb.horde_cd=1..}] mgs.zb.horde_cd 1
+execute if score #zb_dog_round mgs.data matches 0 as @a[scores={mgs.zb.in_game=1,mgs.zb.horde_cd=..0},gamemode=!spectator] at @s run function mgs:v5.1.0/zombies/horde_ambient
 
 # Escort system (escort.py): drag escorted zombies behind their pathfinding traders
 execute if score #zb_escort_count mgs.data matches 1.. as @e[tag=mgs.zb_escorted] at @s run function mgs:v5.1.0/zombies/escort/zombie_tick

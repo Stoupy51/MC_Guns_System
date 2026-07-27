@@ -8,6 +8,9 @@
 
 # @s = an in-game player. Count zombies within earshot.
 execute store result score #horde_count mgs.data if entity @e[tag=mgs.zombie_round,distance=..32]
+
+# Nothing nearby: wait a full cycle before paying for another entity scan.
+execute if score #horde_count mgs.data matches ..0 run scoreboard players set @s mgs.zb.horde_cd 40
 execute if score #horde_count mgs.data matches ..0 run return 0
 
 # Volume (hundredths) = 0.25 + count*0.03, hard-capped at 0.80 (so ~18+ zombies all sound the same).
@@ -27,4 +30,12 @@ execute store result storage mgs:temp _horde.pitch double 0.01 run scoreboard pl
 # Play the groan FROM a random nearby zombie's position (positional audio), so the player hears
 # the horde coming from the right direction/distance rather than centred on themselves.
 execute at @e[tag=mgs.zombie_round,distance=..32,sort=random,limit=1] run function mgs:v5.1.0/zombies/horde_ambient_play with storage mgs:temp _horde
+
+# Schedule this player's next groan: 40 ticks divided by the nearby count, so 1 zombie
+# groans every 2.0s and 10 groan 5 times a second.
+# The floor keeps a huge horde from turning into a buzz.
+scoreboard players operation #horde_next mgs.data = #40 mgs.data
+scoreboard players operation #horde_next mgs.data /= #horde_count mgs.data
+execute if score #horde_next mgs.data matches ..4 run scoreboard players set #horde_next mgs.data 4
+scoreboard players operation @s mgs.zb.horde_cd = #horde_next mgs.data
 

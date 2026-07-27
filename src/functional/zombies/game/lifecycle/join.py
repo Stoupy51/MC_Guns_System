@@ -27,6 +27,7 @@ scoreboard players set @s {ns}.zb.downs 0
 scoreboard players set @s {ns}.zb.passive 0
 scoreboard players set @s {ns}.zb.ability 0
 scoreboard players set @s {ns}.zb.ability_cd 0
+scoreboard players set @s {ns}.zb.horde_cd 0
 scoreboard players set @s {ns}.mp.spectate_timer 0
 scoreboard players set @s {ns}.mp.death_count 0
 attribute @s minecraft:max_health base reset
