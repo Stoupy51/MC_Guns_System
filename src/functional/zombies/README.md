@@ -132,5 +132,4 @@ visible in the source path: needs a repro to pin down.
 
 - Pouvoir mettre un flag aux spawns de zombies en mode éditeur pour indiquer que dès que ces zombies spawnent, ils doivent path finder jusqu'à une barriere précise
 - When mystery box is moving, all grayed mystery boxes are hidden (which is odd), why would the mystery box placeholder be removed if no box was or will move here?
-- Mystery Box: Add a message in chat indicating WHERE the box moved. To know that, add in the editor a way to name the place where the box is (for each box) and a fallback to the current message if the name is not set!
 

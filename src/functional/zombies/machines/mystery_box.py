@@ -130,6 +130,10 @@ data modify storage {ns}:zombies mystery_box_weights set value [{default_pool_we
 	write_versioned_function("zombies/mystery_box/setup_positions", f"""
 # Summon mystery box markers at map positions
 scoreboard players set #mb_box_counter {ns}.data 0
+
+# Location names, appended in box-id order so names[id - 1] is that box's name ("" when unnamed)
+data modify storage {ns}:zombies mystery_box.names set value []
+
 data modify storage {ns}:temp _mb_iter set from storage {ns}:zombies game.map.mystery_box.positions
 execute if data storage {ns}:temp _mb_iter[0] run function {ns}:v{version}/zombies/mystery_box/setup_pos_iter
 
@@ -168,6 +172,11 @@ execute as @n[tag={ns}.mb_new] at @s run tp @s ^ ^2 ^0.3
 # Assign this box a unique id (shared later by its pull display)
 scoreboard players add #mb_box_counter {ns}.data 1
 scoreboard players operation @n[tag={ns}.mb_new] {ns}.mb.box = #mb_box_counter {ns}.data
+
+# Record this box's location name, defaulting to "" so the list stays aligned with the ids
+data modify storage {ns}:temp _mb_name set value ""
+execute if data storage {ns}:temp _mb_iter[0].location_name run data modify storage {ns}:temp _mb_name set from storage {ns}:temp _mb_iter[0].location_name
+data modify storage {ns}:zombies mystery_box.names append from storage {ns}:temp _mb_name
 
 # Tag entities that can_start_on
 data modify storage {ns}:temp can_start_on set from storage {ns}:temp _mb_iter[0].can_start_on
@@ -741,9 +750,32 @@ data remove storage {ns}:zombies mystery_box.result
 # The old active spot is now inactive: (re)build the grayed disabled crates at every inactive spot
 function {ns}:v{version}/zombies/mystery_box/refresh_disabled
 
-# Announce arrival
-tellraw @a[scores={{{ns}.zb.in_game=1}}] [{MGS_TAG},{{"text":"The Mystery Box has arrived at a new location!","color":"yellow"}}]
+# Resolve the new spot's editor-given name into mystery_box.current_name, unset when it has none
+function {ns}:v{version}/zombies/mystery_box/read_location_name
+
+# Announce arrival, naming the place when the map maker gave this spot one
+execute unless data storage {ns}:zombies mystery_box.current_name run tellraw @a[scores={{{ns}.zb.in_game=1}}] [{MGS_TAG},{{"text":"The Mystery Box has arrived at a new location!","color":"yellow"}}]
+execute if data storage {ns}:zombies mystery_box.current_name run tellraw @a[scores={{{ns}.zb.in_game=1}}] [{MGS_TAG},{{"text":"The Mystery Box has arrived at ","color":"yellow"}},{{"storage":"{ns}:zombies","nbt":"mystery_box.current_name","color":"gold","bold":true}},"!"]
 execute as @n[tag={ns}.mystery_box_active] at @s run {ZombiesFeedback.zb_sound('box_land')}
+""")
+
+	## Look up the active box's location name. Split in two because the list index is dynamic:
+	# the macro only moves NBT around, so no `text:` literal ever contains a macro argument, which
+	# would otherwise mint a junk auto.lang_file key (see REFACTOR_PLAN gotchas).
+	write_versioned_function("zombies/mystery_box/read_location_name", f"""
+# names[] is 0-based, box ids are 1-based
+data remove storage {ns}:zombies mystery_box.current_name
+execute as @n[tag={ns}.mystery_box_active] run scoreboard players operation #mb_name_idx {ns}.data = @s {ns}.mb.box
+scoreboard players remove #mb_name_idx {ns}.data 1
+execute store result storage {ns}:temp _mb_name_idx.idx int 1 run scoreboard players get #mb_name_idx {ns}.data
+function {ns}:v{version}/zombies/mystery_box/read_location_name_at with storage {ns}:temp _mb_name_idx
+
+# An unnamed spot stores "", which must read the same as having no name at all
+execute if data storage {ns}:zombies mystery_box{{current_name:""}} run data remove storage {ns}:zombies mystery_box.current_name
+""")
+
+	write_versioned_function("zombies/mystery_box/read_location_name_at", f"""
+$data modify storage {ns}:zombies mystery_box.current_name set from storage {ns}:zombies mystery_box.names[$(idx)]
 """)
 
 	## Collect this box's result (called from box_click, @s = player, positioned at the box)

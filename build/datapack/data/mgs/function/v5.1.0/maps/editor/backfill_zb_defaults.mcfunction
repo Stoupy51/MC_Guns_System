@@ -52,6 +52,7 @@ execute if entity @s[tag=mgs.element.pap_machine] unless data entity @s data.ite
 execute if entity @s[tag=mgs.element.mystery_box_pos] unless data entity @s data.can_start_on run data modify entity @s data.can_start_on set value 1b
 execute if entity @s[tag=mgs.element.mystery_box_pos] unless data entity @s data.display_item run data modify entity @s data.display_item set value ""
 execute if entity @s[tag=mgs.element.mystery_box_pos] unless data entity @s data.item_model run data modify entity @s data.item_model set value ""
+execute if entity @s[tag=mgs.element.mystery_box_pos] unless data entity @s data.location_name run data modify entity @s data.location_name set value ""
 execute if entity @s[tag=mgs.element.barrier] unless data entity @s data.block_enabled run data modify entity @s data.block_enabled set value {Name:"minecraft:oak_fence_gate",Properties:{open:"false"}}
 execute if entity @s[tag=mgs.element.barrier] unless data entity @s data.block_disabled run data modify entity @s data.block_disabled set value {Name:"minecraft:oak_fence_gate",Properties:{open:"true"}}
 execute if entity @s[tag=mgs.element.barrier] unless data entity @s data.radius run data modify entity @s data.radius set value 2
