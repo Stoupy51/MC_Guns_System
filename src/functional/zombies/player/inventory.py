@@ -9,7 +9,7 @@ from ....config.stats.items import ItemBuilder
 from ....config.stats.keys import CAPACITY, REMAINING_BULLETS
 from ....config.stats.weapons.grenades import LETHAL_GRENADE_IDS
 from ...helpers import FunctionalHelpers
-from ..machines.perks import PERK_DEFINITIONS, PERK_DESCRIPTIONS
+from ..machines.perks.definitions import PERK_DEFINITIONS, PERK_DESCRIPTIONS
 
 
 # Functions

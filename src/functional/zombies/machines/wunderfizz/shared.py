@@ -1,7 +1,7 @@
 """ Roam animation timings, the perk roll table and the orb's bottle model command. """
 # Imports
 
-from ..perks import PERK_DEFINITIONS
+from ..perks.definitions import PERK_DEFINITIONS
 
 # Constants
 # Roam move animation length (ticks).

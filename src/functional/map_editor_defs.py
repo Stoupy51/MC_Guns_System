@@ -7,7 +7,7 @@ from typing import Any
 
 from stewbeet import JsonDict
 
-from .zombies.machines.perks import PERK_DEFINITIONS, RECOMMENDED_PRICES
+from .zombies.machines.perks.definitions import PERK_DEFINITIONS, RECOMMENDED_PRICES
 
 # Constants
 MAX_MAPS = 50
