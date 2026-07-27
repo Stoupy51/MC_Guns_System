@@ -2,6 +2,7 @@
 
 Registration order sets Mem.definitions order.
 """
+# Imports
 from stewbeet import Item, JsonDict, Mem
 
 from ..config.catalogs import SCOPE_VARIANTS
@@ -65,6 +66,7 @@ from ..config.stats import (
     load_model,
 )
 
+# Constants
 # Weapon ID -> stats dict
 WEAPON_STATS: dict[str, JsonDict] = {
     "ak47": AK47, "aug": AUG, "famas": FAMAS, "fnfal": FNFAL, "g3a3": G3A3,
@@ -126,6 +128,7 @@ PERK_MACHINES: dict[str, str | tuple[str, str]] = {
     "whos_who": "cyan",
 }
 
+# Functions
 def perk_machine_model(accent: str | tuple[str, str]) -> JsonDict:
     """ Perk-machine child model overriding the two accent texture slots. """
     first, second = accent if isinstance(accent, tuple) else (f"minecraft:block/{accent}_concrete", f"minecraft:block/{accent}_terracotta")

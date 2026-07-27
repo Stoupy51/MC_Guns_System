@@ -1,8 +1,10 @@
 """ Free-for-all: every player scores on their own. """
+# Imports
 from ...helpers import MGS_TAG
 from .base import GameModeVariant
 
 
+# Classes
 class FreeForAll(GameModeVariant):
 	""" Free-For-All: no teams, first player to the personal kill limit wins. """
 
@@ -55,6 +57,7 @@ execute if score @s {ns}.mp.kills >= #score_limit {ns}.data run function {ns}:v{
 		## FFA Cleanup: Re-allow team joining
 		self.sub("cleanup", "# Nothing to clean up for FFA")
 
+# Functions
 def generate_free_for_all() -> None:
 	""" Module-level entry point (preserved signature); delegates to :class:`FreeForAll`. """
 	FreeForAll()()

@@ -1,4 +1,5 @@
 """ Shared utility functions for functional modules. """
+# Imports
 import json
 import re
 from typing import Any
@@ -6,6 +7,7 @@ from typing import Any
 from stewbeet import Dialog, Mem, TextComponent, set_json_encoder, write_versioned_function
 from stouputils.typing import JsonDict
 
+# Constants
 # [MGS] prefix as a nested list component (gold colored, lang-safe).
 # Use in tellraw arrays: tellraw @s ["",{MGS_TAG},...] The brackets/space are raw strings (not matched by lang plugin). {"text":"MGS"} will be translated to {"translate":"mgs"} → value "MGS".
 MGS_TAG: str = r'[{"text":"","color":"gold"},"[",{"text":"MGS"},"] "]'
@@ -35,6 +37,7 @@ SPECIAL_SCORES: dict[str, str] = {
 	"quick_fix": r"",
 }
 
+# Functions
 def special_objectives_lines(ns: str) -> str:
 	""" Return the `scoreboard objectives add` block for every special score, with its comment. """
 	parts: list[str] = []

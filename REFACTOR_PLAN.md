@@ -4,7 +4,7 @@
 
 Goals, in priority order: (1) behaviour preserved, (2) fewer generated `.mcfunction` files,
 (3) less Python via de-duplication, (4) readability, (5) no in-game perf regression,
-(6) no file over ~500 lines.
+(6) no file over ~300 lines (revised down from ~500 on 2026-07-27).
 
 ---
 
@@ -368,16 +368,62 @@ different) + `src/data/*.{json,toml}`. Savings: ~5 files, ~150 LOC.**
 dataclasses — extend that pattern. This is what makes `pyright --strict` actually verify the data
 instead of trusting it, and it is a prerequisite for D2 (a generic emitter needs a typed row).
 
-### PY5. Files over 500 lines — 19 of them
+### PY5. Files over 300 lines — 26 of them (threshold revised 2026-07-27)
 
-`map_editor.py` 2054, `config/stats.py` 1418, `shaders.py` 1290, `zombies/pap.py` 1241,
-`zombies/perks.py` 1106, `loadouts/editor.py` 1058, `multiplayer/game.py` 934,
-`zombies/mystery_box.py` 928, `zombies/game.py` 873, `zombies/round.py` 788, `zombies/revive.py` 738,
-`zombies/powerups.py` 687, `missions/game.py` 645, `config/blocks.py` 605, `zombies/wallbuys.py` 581,
-`loadouts/browsing.py` 573, `weapon/grenade.py` 540, `helpers.py` 536, `zombies/escort.py` 510.
+Measured after P9b and the comment cleanup:
 
-PY1 fixes three of them outright. D3/D4 shrink four more. The rest split by concern
-(e.g. `pap.py` → `pap/{machine,upgrade,anim,lore}.py`).
+| file | lines | | file | lines |
+|---|---:|---|---|---:|
+| `functional/map_editor.py` | **1553** | | `zombies/wallbuys.py` | 461 |
+| `config/stats.py` | **1122** | | `functional/helpers.py` | 439 |
+| `zombies/pap.py` | **985** | | `weapon/grenade.py` | 427 |
+| `functional/shaders.py` | *950 — exempt* | | `zombies/inventory.py` | 396 |
+| `zombies/perks.py` | **939** | | `zombies/wunderfizz.py` | 386 |
+| `loadouts/editor.py` | **910** | | `weapon/ammo.py` | 369 |
+| `zombies/mystery_box.py` | **740** | | `weapon/raycast.py` | 367 |
+| `multiplayer/game.py` | **737** | | `functional/main.py` | 340 |
+| `zombies/game.py` | **728** | | `zombies/escort.py` | 323 |
+| `zombies/round.py` | **621** | | `loadouts/actions.py` | 315 |
+| `zombies/revive.py` | **610** | | `zombies/traps.py` | 307 |
+| `config/blocks.py` | **579** | | `missions/game.py` | 491 |
+| `zombies/powerups.py` | **572** | | `loadouts/browsing.py` | 470 |
+
+`shaders.py` stays **one file** and stays exempt — its embedded GLSL is not decomposable and the
+decision has been reaffirmed twice. D3 shrinks the three `game.py` files. Everything else splits.
+
+The split is **by feature, not by kind**: a package per concept, with the modules that only make
+sense together living in it. Target packages:
+
+```
+zombies/
+  perks/{registry,machine,effects}.py     # perks.py + wunderfizz.py — the machine and what it dispenses
+  powerups/{types,spawn,collect}.py       # powerups.py + bonus.py — the drop and the system that spawns it
+  objects/{barriers,traps,wallbuys,doors,power}.py   # everything placed on a map
+  pap/{machine,upgrade,anim,lore}.py
+  mystery_box/{machine,pool,anim}.py
+```
+
+### PY7. Dataclass tables built from anonymous tuples
+
+`config/catalogs.py` declares five of its six catalogs as
+`[Cls(*_row) for _row in [(...), (...), …]]`. The tuple rows carry no field names, so a reader has
+to count columns against the dataclass definition, and pyright checks nothing beyond
+`tuple[str, str, str, str, int, bool]` — swapping `magazine_id` and `category` type-checks fine.
+Rewrite every row as an explicit keyword-argument constructor call. The `_row` binding also
+violates the all-public naming rule and disappears with it.
+
+Affected: `PRIMARY_WEAPONS` (23 rows), `SECONDARY_WEAPONS`, `EQUIPMENT_PRESETS`, `CAMO_VARIANTS`,
+`GRENADE_TYPES`, `PERKS`. **Python LOC: roughly flat** (rows get longer, the wrapper goes away).
+The win is readability and real type checking, not size. Risk: very low, the harness proves the
+emitted data is unchanged.
+
+### PY8. Module-level helpers become class members
+
+Per the naming rule, module-level functions and constants group into a class with
+`@staticmethod` methods. `functional/helpers.py` is the clearest case: everything except the
+genuinely global `MGS_TAG` becomes `FunctionalHelpers.SPECIAL_SCORES`,
+`FunctionalHelpers.special_objectives_lines()`, and so on. Sweep the other modules for the same
+shape afterwards. Pure renaming; risk very low but the diff is wide.
 
 ### PY6. Misc
 
@@ -457,9 +503,13 @@ Each phase is one commit, independently shippable, verified with
 | **P8** ✅ | D4 — loadout editor: one shared `show_static_dialog` skeleton for 13 submenus, 4 dead `scope/*` aliases. **Score-component dialog resources and slot parameterisation dropped** (see below). | **−18** | +1 | low |
 | **P9a** ✅ | PY1 (stats.py sound + magazine dedup) + PY4 (perk & power-up typed registries). Byte-identical. | 0 | −599 | low |
 | **P9b** ✅ | PY4 remainder (`ALL_ELEMENTS`/`EDITOR_MODES` → dataclasses) + split `map_editor.py`'s definitions into `map_editor_defs.py`. **PY5 function-splitting deferred to P12** (see below). | 0 | +1 file | low |
+| **P9c** ✅ | Codebase-wide comment/docstring cleanup to the house style. Module docstrings at line 1, constants documented below themselves, one-line comments. | 0 | −813 | low |
+| **P9d** | Restore the `# Imports` / `# Constants` / `# Classes` / `# Functions` section banners that P9c wrongly removed as noise. They are structural markers, not comments. | 0 | +~250 | none |
 | **P10** | D3 — one shared spawn/respawn system for all three modes. | −~20 | −600 | **high** |
 | **P11** | Tighten the ruff config (add `ANN`, `RET`, `SIM`, `PTH`, `TC`, `ARG`, `PL`), fix the fallout. | 0 | ? | low |
-| **P12** (final) | PY5 — split every remaining >500-line generator into sub-modules (`map_editor.py`, `pap.py`, `mystery_box.py`, `game.py`, …), threading `ns`/`version`/shared helpers. **Not** `shaders.py`. Ships last: pure structure, zero output change, one file per commit. | 0 | +~15 files | med |
+| **P11b** | PY7 — `catalogs.py` tuple rows become explicit keyword-argument constructor calls. | 0 | ~0 | very low |
+| **P11c** | PY8 — `helpers.py` and friends fold into `FunctionalHelpers`-style classes. | 0 | ~0 | very low |
+| **P12** (final) | PY5 — split every remaining **>300-line** generator into feature packages (`zombies/perks/`, `zombies/powerups/`, `zombies/objects/`, `pap/`, `mystery_box/`, `map_editor/`, …), threading `ns`/`version`/shared helpers. **Not** `shaders.py`, which stays one file. Ships last: pure structure, zero output change, one file per commit. | 0 | +~45 files | med |
 
 **Projected end state: ~1 130–1 180 `.mcfunction` files (−23 %), ~26 000 Python LOC (−12 %),
 ~85 Python files, `src/database/models` down from 32.2 MB to ~17.6 MB, and a materially smaller
@@ -507,6 +557,18 @@ the one most likely to drift, so it lands only after the harness has been exerci
 4. **Delete `definitions_debug.json`** and the dead generator tail. ✅ answered → P3
 5. **`shaders.py` is exempt from the ~500-line rule** and keeps its GLSL inline. ✅ answered
 6. **Zoom models use vanilla `parent:` inheritance** rather than a build-time merge. ✅ answered
+
+## 8b. Review decisions (2026-07-27)
+
+7. **The size threshold is ~300 lines, not ~500.** PY5's scope grows from 19 files to 26 and P12
+   becomes the largest remaining phase. ✅ answered
+8. **`shaders.py` stays one file** and keeps its exemption, reaffirmed. ✅ answered
+9. **Section banners are mandatory.** `# Imports`, `# Constants`, `# Classes`, `# Functions` are
+   structure, not commentary; P9c deleted them by mistake and P9d puts them back. ✅ answered
+10. **Splitting is by feature, not by kind** — a package per concept, holding the modules that only
+    make sense together. ✅ answered
+11. **No `_`-prefixed names anywhere.** Everything in this codebase is public. ✅ answered
+12. **Dataclass tables use one explicit constructor call per row** (PY7). ✅ answered
 
 ---
 
@@ -883,3 +945,30 @@ P12 is the remaining mechanical structure pass. `shaders.py` stays exempt.
 *inside* the f-strings passed to `write_versioned_function`, so they are part of the generated
 `.mcfunction` output. Removing them is an output change (it moves `mcfunction_total_lines`), not a
 Python-only edit, so it needs sign-off before it can run under the byte-identical harness.
+
+### P9c — comment/docstring cleanup to the house style (Python only, byte-identical)
+
+All 92 files, **comments 2922 → 1795 (−39 %), −813 Python LOC**, output byte-identical. Every rule
+verified mechanically rather than by eye: module docstring on line 1 (92/92), zero mid-sentence
+comment wraps, `.py` files ending in exactly 2 newlines and `.json` in exactly 1, zero constants
+carrying a trailing `#` instead of a docstring below them.
+
+The scope was strictly **Python-level** comments. Comments inside the f-strings handed to
+`write_versioned_function` are generated `.mcfunction` output and were left alone — that is PY6,
+still unsigned-off.
+
+Two self-inflicted breakages, both caught by the harness rather than by review:
+1. The header script stripped the `#` off `# ruff: noqa` directives in 16 files, turning them into
+   `unexpected indent` syntax errors.
+2. A line-range edit deleted `SPECIAL_SCORES: dict[str, str] = {` from `helpers.py` because the line
+   numbers had shifted since I inspected them. **Re-read line numbers immediately before any
+   line-range edit** — this is the second time positional edits have bitten this refactor.
+
+### P9d — section banners restored
+
+P9c deleted 61 `# Imports` / `# Main function` style banners as noise. That was wrong: the four
+section markers are part of the house file structure, not commentary. **211 banners inserted across
+all 92 files**, placed above the first top-level node of each kind — above its decorators and above
+any comment block already attached to it — so no blank line moved and PEP8/E302 spacing is unchanged.
+Sections are marked where they actually are; nothing was reordered. Output byte-identical, ruff and
+pyright clean.

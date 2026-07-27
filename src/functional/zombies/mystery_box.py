@@ -6,6 +6,7 @@ Price: 950 points (configurable via #zb_mystery_box_price config) Pool can be ex
 Positions use compound format: {pos:[x,y,z], rotation:[yaw,0.0f], group_id:N, can_start_on:1b}
 """
 # ruff: noqa: E501
+# Imports
 from stewbeet import Mem, write_load_file, write_versioned_function
 
 from ...config.stats import WEIGHT
@@ -14,6 +15,7 @@ from ..core.feedback import zb_sound
 from ..helpers import MGS_TAG
 from .common import build_weapon_magazine_data, deny_cmd, deny_not_enough_points_cmd
 
+# Constants
 # Move animation constants
 MOVE_BEAR_TICKS: int = 30
 """ Bear visible before ascend starts. """
@@ -29,6 +31,7 @@ MOVE_TOTAL_TICKS: int = MOVE_BEAR_TICKS + MOVE_ASCEND_TICKS + MOVE_WAIT_TICKS + 
 # Monkey Bomb pool weight (weapon weights come from the catalog; the monkey is a non-catalog tactical added to the pool manually — BO-style fairly common roll)
 MONKEY_BOMB_WEIGHT: int = 5
 
+# Functions
 def generate_mystery_box() -> None:
 	ns: str = Mem.ctx.project_id
 	version: str = Mem.ctx.project_version

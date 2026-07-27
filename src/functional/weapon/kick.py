@@ -1,9 +1,11 @@
 """ Weapon recoil: rotates the player's view by the weapon's kick value. """
+# Imports
 from stewbeet import Mem, write_versioned_function
 
 from ...config.stats import KICK
 
 
+# Functions
 def main() -> None:
     ns: str = Mem.ctx.project_id
     version: str = Mem.ctx.project_version

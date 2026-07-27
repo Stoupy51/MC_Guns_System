@@ -1,10 +1,12 @@
 """ Per-weapon stats, the shared stat-key constants, and the add_item() helper. """
+# Imports
 import json
 from typing import Any, cast
 
 import stouputils as stp
 from stewbeet import CUSTOM_ITEM_VANILLA, Item, JsonDict, Mem
 
+# Constants
 SRC_ROOT: str = stp.get_root_path(__file__, go_up=1)
 ITEM_MODELS_PATH: str = f"{SRC_ROOT}/database/models"
 ALL_SLOTS: tuple[str, ...] = (
@@ -19,6 +21,7 @@ ALL_SLOTS: tuple[str, ...] = (
 START_HEX: str = "c24a17"
 END_HEX: str = "c77e36"
 
+# Functions
 # Utility functions
 def json_dump(x: Any) -> str: return stp.json_dump(x, max_level=-1)
 def get_model_path(model_name: str) -> str: return f"{ITEM_MODELS_PATH}/{model_name}.json"

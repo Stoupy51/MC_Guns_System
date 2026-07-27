@@ -9,6 +9,7 @@ Points are never deducted/refunded incrementally: editor/recompute_points derive
 """
 # ruff: noqa: E501
 
+# Imports
 from stewbeet import Mem, write_load_file, write_versioned_function
 
 from ...helpers import MGS_TAG
@@ -61,6 +62,7 @@ from .catalogs import (
 )
 
 
+# Functions
 # Empty editor state (display fields default to readable values so hub rows always render)
 def _empty_state() -> str:
 	return (

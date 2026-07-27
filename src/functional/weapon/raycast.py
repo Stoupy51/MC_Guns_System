@@ -1,4 +1,5 @@
 """ Hitscan firing: accuracy groups, spread, and the raycast that resolves a shot. """
+# Imports
 from stewbeet import Mem, write_versioned_function
 
 from ...config.stats import (
@@ -18,6 +19,7 @@ from ...config.stats import (
 )
 
 
+# Functions
 def main() -> None:
     ns: str = Mem.ctx.project_id
     version: str = Mem.ctx.project_version

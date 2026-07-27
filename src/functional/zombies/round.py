@@ -2,11 +2,13 @@
 
 Wave-based round progression with zombie spawning, scaling, and round completion. """
 # ruff: noqa: E501
+# Imports
 from stewbeet import Mem, write_function, write_versioned_function
 
 from ..helpers import MGS_TAG
 
 
+# Functions
 def generate_zombies_rounds() -> None:
 	ns: str = Mem.ctx.project_id
 	version: str = Mem.ctx.project_version

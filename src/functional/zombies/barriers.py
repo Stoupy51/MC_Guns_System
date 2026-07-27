@@ -5,9 +5,11 @@ Players can repair a destroyed barrier by sneaking nearby for 1.5 seconds.
 Block state is swapped in-place on destroy and repair, so each barrier stays a single block_display.
 """
 # ruff: noqa: E501
+# Imports
 from stewbeet import JsonDict, Mem, Predicate, set_json_encoder, write_load_file, write_versioned_function
 
 
+# Functions
 def generate_barriers() -> None:
 	ns: str = Mem.ctx.project_id
 	version: str = Mem.ctx.project_version

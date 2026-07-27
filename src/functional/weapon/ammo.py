@@ -1,12 +1,15 @@
 """ Ammo system: firing cost, reloading, magazines and infinite-ammo refills. """
 # ruff: noqa: E501
+# Imports
 from stewbeet import ItemModifier, JsonDict, Mem, set_json_encoder, write_versioned_function
 
 from ...config.stats import ALL_SLOTS, BASE_WEAPON, CAPACITY, RELOAD_TIME, REMAINING_BULLETS, SINGLE_RELOAD
 
+# Constants
 # Magazine IDs that are consumable (stack count = bullet count)
 CONSUMABLE_MAG_DATA_KEY = "consumable"
 
+# Functions
 def create_lore_functions(type_name: str, tag: str, remaining_source: str, capacity_source: str) -> None:
     """ Create lore modification functions for weapons or magazines.
 

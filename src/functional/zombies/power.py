@@ -5,6 +5,7 @@ Elements with power:true (perk machines, traps) require power to be active.
 The switch renders as an item_display using the {ns}:power_switch model (database/items.py).
 Activating it swaps to {ns}:power_switch_on, recoloring the handle and indicator light green.
 """
+# Imports
 from stewbeet import Mem, write_versioned_function
 
 from ..core.feedback import zb_sound
@@ -12,6 +13,7 @@ from ..helpers import MGS_TAG
 from .common import deny_cmd, game_active_guard_cmd
 
 
+# Functions
 def generate_power_switch() -> None:
 	ns: str = Mem.ctx.project_id
 	version: str = Mem.ctx.project_version

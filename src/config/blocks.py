@@ -1,7 +1,9 @@
 """ Block tag definitions written at build time. """
+# Imports
 from stewbeet import Mem, write_tag
 
 
+# Functions
 def main() -> None:
     ns: str = Mem.ctx.project_id
     version: str = Mem.ctx.project_version

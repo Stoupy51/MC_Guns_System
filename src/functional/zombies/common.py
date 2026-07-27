@@ -1,4 +1,5 @@
 """ Shared command builders for zombies modules. """
+# Imports
 from stewbeet import write_versioned_function
 
 from ...config.catalogs import PRIMARY_WEAPONS, SECONDARY_WEAPONS
@@ -7,6 +8,7 @@ from ..helpers import MGS_TAG, game_active_guard
 from ..multiplayer.classes import CONSUMABLE_MAGS
 
 
+# Functions
 def game_active_guard_cmd(ns: str) -> str:
 	""" Return the standard guard command for active zombies games. """
 	return game_active_guard(ns, "zombies")

@@ -1,4 +1,5 @@
 """ Throwable grenades: throw, flight, detonation and the per-type effects. """
+# Imports
 from beet import Font, Texture
 from PIL import Image
 from stewbeet import Conventions, ItemModifier, Mem, set_json_encoder, write_tick_file, write_versioned_function
@@ -18,6 +19,7 @@ from ...config.stats import (
 )
 
 
+# Functions
 def main() -> None:
     ns: str = Mem.ctx.project_id
     version: str = Mem.ctx.project_version

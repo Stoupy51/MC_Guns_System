@@ -1,11 +1,13 @@
 """ Advanced weapon audio: per-weapon fire sounds plus distance-based acoustics. """
 # ruff: noqa: E501
 
+# Imports
 from stewbeet import Mem, write_versioned_function
 
 from ...config.stats import COOLDOWN, RELOAD_END, RELOAD_TIME
 
 
+# Functions
 def main() -> None:
     ns: str = Mem.ctx.project_id
     version: str = Mem.ctx.project_version

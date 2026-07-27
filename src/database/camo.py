@@ -1,4 +1,5 @@
 """ Camo variants: blends each weapon texture into its cosmetic colour schemes. """
+# Imports
 import os
 from collections.abc import Callable
 from copy import deepcopy
@@ -16,6 +17,7 @@ from ..config.stats import MODELS
 # Alpha is preserved from the base layer throughout.
 # Fully vectorised with numpy — no per-pixel Python loops.
 
+# Functions
 def rgb_to_hls(arr: NDArray[np.floating]) -> NDArray[np.floating]:
     """ (N, 3) floating RGB → (N, 3) floating HLS  (colorsys channel order: H, L, S). """
     r, g, b = arr[:, 0], arr[:, 1], arr[:, 2]
@@ -140,6 +142,7 @@ def overlay_blend(
     os.makedirs(os.path.dirname(out_path), exist_ok=True)
     Image.fromarray((out_arr * 255.0).clip(0, 255).astype(np.uint8)).save(out_path)
 
+# Constants
 BlendFunc = Callable[[str, str, str], None]
 
 # Maps each material name to its blend function.

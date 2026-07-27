@@ -6,6 +6,7 @@ Doors with the same link_id open together.
 A door's link_id is also its front-room spawn group, and back_group_id is its back-room spawn group; opening a door unlocks both groups' zombie spawns.
 """
 
+# Imports
 from stewbeet import Mem, write_load_file, write_versioned_function
 
 from ..core.feedback import zb_sound
@@ -13,6 +14,7 @@ from ..helpers import MGS_TAG
 from .common import deny_not_enough_points_cmd, game_active_guard_cmd
 
 
+# Functions
 def generate_doors() -> None:
 	ns: str = Mem.ctx.project_id
 	version: str = Mem.ctx.project_version

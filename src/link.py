@@ -1,4 +1,5 @@
 """ Beet plugin entry point, run just before the build is finalized (zip, headers, lang, ...). """
+# Imports
 from stewbeet import Context, official_lib_used
 
 from .functional.core import main as main_core
@@ -14,6 +15,7 @@ from .functional.weapon import main as main_weapon
 from .functional.zombies import main as main_zombies
 
 
+# Functions
 def beet_default(ctx: Context) -> None:
     ns: str = ctx.project_id
 

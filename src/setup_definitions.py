@@ -1,4 +1,5 @@
 """ Item definition setup: registers every item, then derives names, lore and components. """
+# Imports
 import json
 
 import stouputils as stp
@@ -41,11 +42,13 @@ from .config.stats import (
 from .database.camo import main as camo_main
 from .database.items import main as main_items
 
+# Constants
 EMPTY_LORE_LINE: JsonDict = {"text": "", "italic": False}
 """ Blank lore separator. NOT a bare "": that is a StringTag while the styled stat lines are
 CompoundTags, and NBT lists are homogeneous, so the mix makes NbtOps wrap every line as
 {"": <line>}, which zombies/pap re-parses and renders blank. A style keeps it a CompoundTag. """
 
+# Functions
 @stp.measure_time(printer=stp.progress, message="Set up item definitions")
 def beet_default(ctx: Context) -> None:
     ns: str = ctx.project_id

@@ -1,7 +1,9 @@
 """ Shared OOB + spawn marker summoning functions. """
+# Imports
 from stewbeet import Mem, write_versioned_function
 
 
+# Functions
 def write_tp_player_at(mode: str) -> None:
 	""" Write ``<mode>/tp_player_at`` — the macro teleporting @s to a spawn position and yaw. """
 	write_versioned_function(f"{mode}/tp_player_at", "$tp @s $(x) $(y) $(z) $(yaw) 0")

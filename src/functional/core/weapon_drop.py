@@ -6,6 +6,7 @@ Only the *capture* step differs per caller (a dying player's selected hotbar slo
 Used by multiplayer/drop_held_weapon (player deaths) and missions/drop_enemy_weapon (mob deaths).
 """
 # ruff: noqa: E501
+# Imports
 from stewbeet import Mem, write_load_file, write_versioned_function
 
 from ...config.catalogs import PRIMARY_WEAPONS, SECONDARY_WEAPONS
@@ -14,6 +15,7 @@ from ..helpers import MGS_TAG
 from .feedback import zb_sound
 
 
+# Functions
 def weapon_drop_tick_lines(ns: str) -> str:
 	""" Build the dropped-gun lifetime countdown (called from every mode's game_tick). """
 	return f"""

@@ -1,4 +1,5 @@
 """ Right-click detection shared by every weapon path, including burst click tracking. """
+# Imports
 from typing import Any
 
 from stewbeet import Advancement, ItemModifier, JsonDict, Mem, Predicate, set_json_encoder, write_versioned_function
@@ -6,6 +7,7 @@ from stewbeet import Advancement, ItemModifier, JsonDict, Mem, Predicate, set_js
 from ...config.stats import BURST, RELOAD_TIME, REMAINING_BULLETS
 
 
+# Functions
 def main() -> None:
     ns: str = Mem.ctx.project_id
     version: str = Mem.ctx.project_version

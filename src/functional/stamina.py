@@ -12,8 +12,10 @@ target, and leftovers are burned off with hunger pulses while at target.
 Stamin-Up (zombies perk) adds +STAM_MAX on stam_bonus; its +7% movement speed is a separate
 attribute modifier applied by the perk itself.
 """
+# Imports
 from stewbeet import Mem, write_load_file, write_versioned_function
 
+# Constants
 STAM_MAX: int = 200
 """ Base full stamina; perks add stam_bonus on top. """
 STAM_DRAIN: int = 2
@@ -31,6 +33,7 @@ FOOD_MAX: int = 20
 FOOD_SPAN: int = FOOD_MAX - FOOD_MIN
 """ Hunger-bar mapping: target foodLevel = FOOD_MIN + FOOD_SPAN * stam / stam_max. """
 
+# Functions
 def main() -> None:
     ns: str = Mem.ctx.project_id
     version: str = Mem.ctx.project_version

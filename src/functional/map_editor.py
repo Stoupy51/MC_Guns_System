@@ -7,6 +7,7 @@ Markers in the world represent elements during editing; storage is written on sa
 """
 # ruff: noqa: E501
 
+# Imports
 from typing import Any, cast
 
 from stewbeet import Advancement, JsonDict, Mem, set_json_encoder, write_load_file, write_versioned_function
@@ -15,6 +16,7 @@ from .helpers import MGS_TAG, btn
 from .map_editor_defs import ALL_ELEMENTS, EDITOR_MODES, FIELD_DOCS, MODE_LIST, MODEL_DISPLAY_ELEMENTS
 
 
+# Functions
 def generate_map_editor() -> None:
 	ns: str = Mem.ctx.project_id
 	version: str = Mem.ctx.project_version

@@ -6,11 +6,14 @@ animation but share the teddy-bear head loot table, the ±512 interaction hide/s
 "should this use move the box?" roll. Grayed-out disabled models live in src/database/items.py.
 """
 # ruff: noqa: E501
+# Imports
 from stewbeet import LootTable, Mem, set_json_encoder, write_versioned_function
 
+# Constants
 BEAR_HEAD_TEXTURE: str = "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvY2RiNjZjZjlmMTdlMTQ4OTMxMGM3YWNjNjgxMDE2MDUxMTk2YTg0OGUwNzZkYjZmYzA5MzkxYjkyODcyYTc3NyJ9fX0="
 """ Teddy bear player head (Black Ops easter egg): the head that rises out of a box before it roams. """
 
+# Functions
 def generate_roaming() -> None:
 	ns: str = Mem.ctx.project_id
 

@@ -1,9 +1,11 @@
 """ Actionbar HUD: fire-mode indicator and ammo counter. """
+# Imports
 from stewbeet import Mem, write_versioned_function
 
 from ...config.stats import CAPACITY, END_HEX, FIRE_MODE, REMAINING_BULLETS, START_HEX
 
 
+# Functions
 def main() -> None:
     ns: str = Mem.ctx.project_id
     version: str = Mem.ctx.project_version

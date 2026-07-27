@@ -1,4 +1,5 @@
 """ Slow projectiles (RPG rockets and similar): summon, flight and impact. """
+# Imports
 from stewbeet import Conventions, Mem, write_tick_file, write_versioned_function
 
 from ...config.stats import (
@@ -14,6 +15,7 @@ from ...config.stats import (
 )
 
 
+# Functions
 def main() -> None:
     ns: str = Mem.ctx.project_id
     version: str = Mem.ctx.project_version

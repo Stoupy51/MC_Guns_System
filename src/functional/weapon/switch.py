@@ -1,4 +1,5 @@
 """ Weapon switching: swap timing, weapon ids, and fire-mode toggling on drop. """
+# Imports
 from typing import Any
 
 from stewbeet import ItemModifier, Mem, set_json_encoder, write_versioned_function
@@ -6,6 +7,7 @@ from stewbeet import ItemModifier, Mem, set_json_encoder, write_versioned_functi
 from ...config.stats import CAN_AUTO, CAN_BURST, FIRE_MODE, SWITCH, WEAPON_ID
 
 
+# Functions
 def main() -> None:
     ns: str = Mem.ctx.project_id
     version: str = Mem.ctx.project_version

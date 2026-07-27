@@ -9,10 +9,12 @@ After 60s without revive, player bleed out.
 Solo + Quick Revive: auto-revive after 10s, up to 3 times.
 """
 # ruff: noqa: E501
+# Imports
 from stewbeet import JsonDict, Mem, Predicate, set_json_encoder, write_load_file, write_versioned_function
 
 from ..helpers import MGS_TAG
 
+# Constants
 BLEED_OUT_TICKS: int = 1200
 """ 60 seconds to be revived before bleed out. """
 REVIVE_TICKS: int = 60
@@ -33,6 +35,7 @@ HUD_OFFSET_Y_THOUSANDTHS: int = 2000
 """ HUD text height above the mannequin: 2.0 blocks * 1000, for scoreboard math. """
 
 
+# Functions
 def revive_body_detect() -> str:
 	""" Shared per-tick upkeep for one revivable body (normal down AND Who's Who).
 

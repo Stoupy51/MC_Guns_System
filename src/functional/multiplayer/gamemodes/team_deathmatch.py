@@ -1,8 +1,10 @@
 """ Team deathmatch: first team to the kill limit wins. """
+# Imports
 from ...helpers import MGS_TAG
 from .base import GameModeVariant
 
 
+# Classes
 class TeamDeathmatch(GameModeVariant):
 	""" Team Deathmatch: first team to the score limit wins. Kills are scored by the
 	shared on_kill signal in game.py (kill -> +1 team -> check limit). """
@@ -40,6 +42,7 @@ function {ns}:v{version}/multiplayer/check_team_win
 		## TDM Cleanup
 		self.sub("cleanup", "# Nothing to clean up for TDM")
 
+# Functions
 def generate_team_deathmatch() -> None:
 	""" Module-level entry point (preserved signature); delegates to :class:`TeamDeathmatch`. """
 	TeamDeathmatch()()

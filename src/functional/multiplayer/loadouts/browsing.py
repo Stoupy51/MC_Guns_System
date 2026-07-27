@@ -1,5 +1,6 @@
 """ Loadout browsing: the marketplace and My Loadouts list builders. """
 # ruff: noqa: E501
+# Imports
 from stewbeet import Mem, write_versioned_function
 
 from ...helpers import styled_text
@@ -23,6 +24,7 @@ from .catalogs import (
 )
 
 
+# Functions
 def generate_browsing() -> None:
 	ns: str = Mem.ctx.project_id
 	version: str = Mem.ctx.project_version

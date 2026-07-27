@@ -7,6 +7,7 @@ Type 1 = electric: lethal to zombies (1000% of max health), 5 electric damage to
 Type 2 = turret: shoots the nearest zombie in range every 5 ticks for 45% of its max health;          the bullet stops at the first entity hit, so players between the turret and zombies take 2 damage instead.
 """
 # ruff: noqa: E501
+# Imports
 from stewbeet import JsonDict, Mem, Predicate, set_json_encoder, write_load_file, write_versioned_function
 
 from ..core.feedback import zb_sound
@@ -14,6 +15,7 @@ from ..helpers import MGS_TAG
 from .common import deny_cmd, deny_not_enough_points_cmd, game_active_guard_cmd
 
 
+# Functions
 def generate_traps() -> None:
 	ns: str = Mem.ctx.project_id
 	version: str = Mem.ctx.project_version

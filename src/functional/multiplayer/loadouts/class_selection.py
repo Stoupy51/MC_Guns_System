@@ -1,6 +1,7 @@
 """ Class selection menu and the perk effects applied when a loadout is equipped. """
 # ruff: noqa: E501
 
+# Imports
 from stewbeet import Dialog, DialogTag, Mem, set_json_encoder, write_load_file, write_versioned_function
 
 from ....config.stats import ALL_SLOTS
@@ -9,6 +10,7 @@ from ..classes import CLASS_IDS
 from .catalogs import TRIG_EDITOR_START, TRIG_MARKETPLACE, TRIG_MY_LOADOUTS
 
 
+# Functions
 def generate_class_selection() -> None:
 	ns: str = Mem.ctx.project_id
 	version: str = Mem.ctx.project_version

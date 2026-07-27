@@ -1,5 +1,6 @@
 """ Multiplayer game lifecycle: start, stop, join, respawn and scoring. """
 # ruff: noqa: E501
+# Imports
 from stewbeet import Mem, write_load_file, write_tag, write_tick_file, write_versioned_function
 
 from ...config.stats import REMAINING_BULLETS
@@ -18,9 +19,11 @@ from ..helpers import (
 	write_ranked_stats_functions,
 )
 
+# Constants
 # All multiplayer gamemodes (single source of truth for dispatch blocks)
 GAMEMODES: list[str] = ["ffa", "tdm", "dom", "hp", "snd"]
 
+# Functions
 def generate_game() -> None:
 	""" Generates the multiplayer game lifecycle (team-based modes, spawns, sidebars). """
 	ns: str = Mem.ctx.project_id

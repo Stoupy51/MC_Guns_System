@@ -8,6 +8,7 @@ The item KIND is probed from the item's custom_data at setup and routes the purc
 """
 # ruff: noqa: E501
 
+# Imports
 from stewbeet import Mem, write_load_file, write_versioned_function
 
 from ...config.stats import GRENADE_TYPE
@@ -16,6 +17,7 @@ from ..helpers import MGS_TAG
 from .common import build_weapon_magazine_data, deny_cmd, deny_not_enough_points_cmd, game_active_guard_cmd
 
 
+# Functions
 def generate_wallbuys() -> None:
 	ns: str = Mem.ctx.project_id
 	version: str = Mem.ctx.project_version

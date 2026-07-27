@@ -1,4 +1,5 @@
 """ Gamemode-specific logic for multiplayer: FFA, TDM, Domination, Hardpoint, Search & Destroy. """
+# Imports
 from stewbeet import Mem, write_load_file
 
 from .domination import generate_domination
@@ -8,6 +9,7 @@ from .search_and_destroy import generate_search_and_destroy
 from .team_deathmatch import generate_team_deathmatch
 
 
+# Functions
 def generate_gamemodes() -> None:
 	ns: str = Mem.ctx.project_id
 

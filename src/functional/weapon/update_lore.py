@@ -1,4 +1,5 @@
 """ Rebuilds item lore from a weapon's stats, including Pack-a-Punch values. """
+# Imports
 import json
 
 from stewbeet import Mem, write_load_file, write_versioned_function
@@ -22,6 +23,7 @@ from ...config.stats import (
 )
 
 
+# Functions
 def main() -> None:
 	ns: str = Mem.ctx.project_id
 	version: str = Mem.ctx.project_version

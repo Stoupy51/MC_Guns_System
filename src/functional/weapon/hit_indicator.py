@@ -9,6 +9,7 @@ arc sitting on the left half reports half the advance and renders off-centre —
 ring used to wander between directions. Every glyph is therefore pinned to the same advance with a
 single alpha=1 pixel in a fixed column.
 """
+# Imports
 import math
 
 import numpy as np
@@ -16,6 +17,7 @@ from beet import Font, Texture
 from PIL import Image
 from stewbeet import Mem, write_versioned_function
 
+# Constants
 SECTORS: int = 36
 """ Directions the indicator can distinguish. Must divide 36000 (yaw range in centidegrees) so the
 sector width stays whole: 8, 10, 12, 16, 20, 24, 32, 36 all work. Higher = finer arc, more
@@ -38,6 +40,7 @@ ARC_SPAN: float = 90
 GLYPH_CHARS: str = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
 """ Codepoints for the sector glyphs; any character works, these need no SNBT/JSON escaping. """
 
+# Functions
 # TODO: Later in 26.3, use post shader new command instead. Do not add it yet.
 def main() -> None:
 	ns: str = Mem.ctx.project_id

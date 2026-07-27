@@ -10,16 +10,19 @@ player. Everything reverts once the monkey is gone.
 Dogs are excluded: the escort freezes its passenger with NoAI, and every NBT write on a wolf resets
 its max health to 8 (see escort.py). Dogs are fast and rarely stuck anyway.
 """
+# Imports
 from stewbeet import Mem, write_versioned_function
 
 from .escort import MONKEY_RELEASE
 
+# Constants
 MONKEY_ATTRACT_RADIUS: int = 40
 """ How far a thrown monkey pulls zombies; matches the enemies' 40-block follow_range. """
 
 MONKEY_REGRAB_FLOOR: int = MONKEY_RELEASE + 2
 """ Leaves alone anything already at the monkey — grabbing it would summon a taxi to walk 0 blocks. """
 
+# Functions
 def generate_monkey_bomb() -> None:
 	ns: str = Mem.ctx.project_id
 	version: str = Mem.ctx.project_version

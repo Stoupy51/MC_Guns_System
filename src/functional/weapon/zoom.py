@@ -1,10 +1,12 @@
 """ Aim-down-sights zoom and the crosshair spread markers driven by shaders.py. """
 # ruff: noqa: E501
+# Imports
 from stewbeet import Mem, write_versioned_function
 
 from ...config.stats import IS_ZOOM, MODELS
 
 
+# Functions
 def main() -> None:
     ns: str = Mem.ctx.project_id
     version: str = Mem.ctx.project_version

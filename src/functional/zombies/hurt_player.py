@@ -1,7 +1,9 @@
 """ Zombies damage handling for players, including knockback and perk passives. """
+# Imports
 from stewbeet import Mem, write_advancement, write_versioned_function
 
 
+# Functions
 def generate_hurt_player() -> None:
 	ns: str = Mem.ctx.project_id
 	version: str = Mem.ctx.project_version
