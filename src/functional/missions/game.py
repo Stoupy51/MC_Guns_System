@@ -13,17 +13,7 @@ from stewbeet import Mem, write_load_file, write_tag, write_tick_file, write_ver
 from ..core.respawn_countdown import respawn_countdown_tick_lines
 from ..core.spawning import write_summon_spawn_at, write_tp_player_at
 from ..core.weapon_drop import weapon_drop_tick_lines
-from ..helpers import (
-	MGS_TAG,
-	end_prep_transition_lines,
-	game_start_guards,
-	late_join_flow_lines,
-	mode_start_map_bootstrap_lines,
-	prep_freeze_lines,
-	regen_disable_lines,
-	regen_enable_lines,
-	schedule_preload_complete_line,
-)
+from ..helpers import MGS_TAG, FunctionalHelpers
 
 
 # Functions
@@ -63,12 +53,12 @@ execute unless data storage {ns}:missions game run data modify storage {ns}:miss
 	## Game Start
 	write_versioned_function("missions/start", f"""
 # Prevent starting if already active or preparing
-{game_start_guards(ns, "missions", "Mission")}
+{FunctionalHelpers.game_start_guards(ns, "missions", "Mission")}
 
 # Require at least one opted-in player (players are independent until added via Manage Players / + Join)
 execute unless entity @a[scores={{{ns}.mi.in_game=1}}] run return run tellraw @s [{MGS_TAG},{{"text":"No players have joined the mission — use Manage Players first.","color":"red"}}]
 
-{mode_start_map_bootstrap_lines(ns, "missions", True)}
+{FunctionalHelpers.mode_start_map_bootstrap_lines(ns, "missions", True)}
 
 # Blue team for missions
 team add {ns}.blue
@@ -110,7 +100,7 @@ gamemode spectator @a[scores={{{ns}.mi.in_game=1}}]
 gamerule immediate_respawn true
 gamerule keep_inventory true
 
-{regen_enable_lines(ns)}
+{FunctionalHelpers.regen_enable_lines(ns)}
 
 # Store base coordinates for offset
 function {ns}:v{version}/shared/load_base_coordinates {{mode:"missions"}}
@@ -131,7 +121,7 @@ execute store result storage {ns}:temp _tp.z int 1 run scoreboard players get #g
 execute as @a[scores={{{ns}.mi.in_game=1}}] run function {ns}:v{version}/shared/tp_to_position with storage {ns}:temp _tp
 
 # Schedule preload completion after 1 second
-{schedule_preload_complete_line(ns, "missions")}
+{FunctionalHelpers.schedule_preload_complete_line(ns, "missions")}
 
 # Announce
 tellraw @a ["",{{"text":"","color":"aqua","bold":true}},"🎯 ",{{"text":"Loading mission area...","color":"yellow"}}]
@@ -158,7 +148,7 @@ function #{ns}:missions/on_mission_start
 function {ns}:v{version}/missions/tp_all_to_spawns
 
 # Freeze players during prep
-{prep_freeze_lines(ns, "mi")}
+{FunctionalHelpers.prep_freeze_lines(ns, "mi")}
 execute as @a[scores={{{ns}.mi.in_game=1}}] run attribute @s minecraft:waypoint_receive_range base reset
 
 # Give loadout to players who already have a class
@@ -191,7 +181,7 @@ execute as @a[scores={{{ns}.mi.in_game=1}}] run scoreboard players operation @s 
 
 	## End Prep → Start Mission (spawn all enemies)
 	write_versioned_function("missions/end_prep", f"""
-{end_prep_transition_lines(ns, "missions", "mi")}
+{FunctionalHelpers.end_prep_transition_lines(ns, "missions", "mi")}
 
 # Spawn all enemies from map data
 function {ns}:v{version}/missions/spawn_all_enemies
@@ -516,7 +506,7 @@ execute if score #mi_has_boundary {ns}.data matches 1 run function {ns}:v{versio
 # Signal mission end
 function #{ns}:missions/on_mission_end
 
-{regen_disable_lines(ns)}
+{FunctionalHelpers.regen_disable_lines(ns)}
 
 tellraw @a [{MGS_TAG},{{"text":"Mission ended.","color":"red"}}]
 
@@ -535,7 +525,7 @@ tag @a[tag={ns}.give_class_menu] remove {ns}.give_class_menu
 
 	## Join Ongoing Mission (late-joiner support)
 	write_versioned_function("missions/join_game", f"""
-{late_join_flow_lines(
+{FunctionalHelpers.late_join_flow_lines(
 	ns,
 	"missions",
 	f"{ns}.mi.in_game",

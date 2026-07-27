@@ -7,17 +7,7 @@ from ...config.stats import REMAINING_BULLETS
 from ..core.respawn_countdown import respawn_countdown_tick_lines
 from ..core.spawning import write_summon_spawn_at, write_tp_player_at
 from ..core.weapon_drop import weapon_drop_tick_lines
-from ..helpers import (
-	MGS_TAG,
-	end_prep_transition_lines,
-	game_start_guards,
-	late_join_flow_lines,
-	mode_start_map_bootstrap_lines,
-	prep_freeze_lines,
-	regen_disable_lines,
-	regen_enable_lines,
-	write_ranked_stats_functions,
-)
+from ..helpers import MGS_TAG, FunctionalHelpers
 
 # Constants
 # All multiplayer gamemodes (single source of truth for dispatch blocks)
@@ -85,12 +75,12 @@ execute unless data storage {ns}:multiplayer game run data modify storage {ns}:m
 	## Game Start (requires a map to be loaded first)
 	write_versioned_function("multiplayer/start", f"""
 # Prevent starting if already active or preparing
-{game_start_guards(ns, "multiplayer", "Game")}
+{FunctionalHelpers.game_start_guards(ns, "multiplayer", "Game")}
 
 # Require at least one opted-in player (players are independent until assigned via Manage Players / + Join)
 execute unless entity @a[scores={{{ns}.mp.in_game=1}}] run return run tellraw @s [{MGS_TAG},{{"text":"No players have joined a team — use Manage Players first.","color":"red"}}]
 
-{mode_start_map_bootstrap_lines(ns, "multiplayer", True)}
+{FunctionalHelpers.mode_start_map_bootstrap_lines(ns, "multiplayer", True)}
 
 # Teams setup
 team add {ns}.red
@@ -136,7 +126,7 @@ gamerule keep_inventory true
 # Reset spectate timers
 scoreboard players set @a {ns}.mp.spectate_timer 0
 
-{regen_enable_lines(ns)}
+{FunctionalHelpers.regen_enable_lines(ns)}
 
 # Store base coordinates for offset
 function {ns}:v{version}/shared/load_base_coordinates {{mode:"multiplayer"}}
@@ -194,7 +184,7 @@ scoreboard objectives setdisplay list {ns}.mp.kills
 function {ns}:v{version}/multiplayer/tp_all_to_spawns
 
 # Freeze all players (no movement during prep)
-{prep_freeze_lines(ns, "mp")}
+{FunctionalHelpers.prep_freeze_lines(ns, "mp")}
 
 # Give loadout to players who already have a class (positive = standard, negative = custom)
 execute as @a[scores={{{ns}.mp.in_game=1}}] at @s unless score @s {ns}.mp.class matches 0 run function {ns}:v{version}/multiplayer/apply_class
@@ -225,7 +215,7 @@ tellraw @a ["","⚔ ",[{{"text":"","color":"gold","bold":true}},{{"text":"Prepar
 		f'{{"score":{{"name":"@s","objective":"{ns}.mp.deaths"}},"color":"red"}},'
 		'{"text":" deaths","color":"gray"}]'
 	)
-	mp_ranked_stats: str = write_ranked_stats_functions(
+	mp_ranked_stats: str = FunctionalHelpers.write_ranked_stats_functions(
 		ns, version, "multiplayer/announce_stats", "mp.in_game", "mp.kills", mp_stat_line
 	)
 
@@ -244,7 +234,7 @@ kill @e[tag={ns}.gm_entity]
 {gm_dispatch("cleanup")}
 function #{ns}:multiplayer/on_game_end
 
-{regen_disable_lines(ns)}
+{FunctionalHelpers.regen_disable_lines(ns)}
 
 # Announce scores (team scores are meaningless in FFA — the winner is announced by player_wins)
 tellraw @a ["","⚔ ",[{{"text":"","color":"gold","bold":true}},{{"text":"Game Over"}},"! "]]
@@ -273,7 +263,7 @@ tag @a[tag={ns}.give_class_menu] remove {ns}.give_class_menu
 """)
 
 	## Join Ongoing Game (late-joiner support)
-	write_versioned_function("multiplayer/join_game", late_join_flow_lines(
+	write_versioned_function("multiplayer/join_game", FunctionalHelpers.late_join_flow_lines(
 	ns,
 	"multiplayer",
 	f"{ns}.mp.in_game",
@@ -896,7 +886,7 @@ execute as @a[scores={{{ns}.mp.in_game=1}}] run scoreboard players operation @s 
 
 	## End prep: unfreeze players, transition to active
 	write_versioned_function("multiplayer/end_prep", f"""
-{end_prep_transition_lines(ns, "multiplayer", "mp")}
+{FunctionalHelpers.end_prep_transition_lines(ns, "multiplayer", "mp")}
 
 # Call map start scripts (state is now active, chunks had time to load)
 function {ns}:v{version}/shared/maps/call_script_at_base {{script:"start"}}

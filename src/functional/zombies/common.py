@@ -4,14 +4,14 @@ from stewbeet import write_versioned_function
 
 from ...config.catalogs import PRIMARY_WEAPONS, SECONDARY_WEAPONS
 from ..core.feedback import zb_sound
-from ..helpers import MGS_TAG, game_active_guard
+from ..helpers import MGS_TAG, FunctionalHelpers
 from ..multiplayer.classes import CONSUMABLE_MAGS
 
 
 # Functions
 def game_active_guard_cmd(ns: str) -> str:
 	""" Return the standard guard command for active zombies games. """
-	return game_active_guard(ns, "zombies")
+	return FunctionalHelpers.game_active_guard(ns, "zombies")
 
 def write_deny_functions() -> None:
 	""" The two handlers every "you can't do that" path in zombies falls back to. """
