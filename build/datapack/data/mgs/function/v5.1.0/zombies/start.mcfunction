@@ -40,6 +40,7 @@ scoreboard players set @a mgs.zb.downs 0
 scoreboard players set @a mgs.zb.passive 0
 scoreboard players set @a mgs.zb.ability 0
 scoreboard players set @a mgs.zb.ability_cd 0
+scoreboard players set @a mgs.zb.horde_cd 0
 
 # Config: points per kill, points per hit
 scoreboard players set #zb_points_kill mgs.config 50

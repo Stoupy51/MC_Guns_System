@@ -5,6 +5,12 @@ from stewbeet import Mem, write_function, write_versioned_function
 
 from ....helpers import MGS_TAG
 
+# Constants
+HORDE_MAX_INTERVAL: int = 40
+""" Ticks between groans with a single zombie nearby; the interval is this divided by the count. """
+HORDE_MIN_INTERVAL: int = 4
+""" Floor on that interval, so a huge horde stays a wall of groans rather than a buzz. """
+
 
 # Functions
 def write_ambience() -> None:
@@ -13,10 +19,14 @@ def write_ambience() -> None:
 
 	# Managed horde ambience.
 	# Round zombies are summoned Silent, so a 50-zombie horde can't stack into a wall of groans.
-	# Instead, each player periodically hears ONE controlled groan whose volume scales gently with the nearby zombie count and is hard capped — a full horde sounds full without blowing out the player's ears.
+	# Instead each player hears ONE controlled groan at a time, and both its volume and how often it repeats scale with the zombie count near THEM.
+	# The rate is what sells a chase: ten zombies on your heels groan several times a second, an empty room barely at all.
 	write_versioned_function("zombies/horde_ambient", f"""
 # @s = an in-game player. Count zombies within earshot.
 execute store result score #horde_count {ns}.data if entity @e[tag={ns}.zombie_round,distance=..32]
+
+# Nothing nearby: wait a full cycle before paying for another entity scan.
+execute if score #horde_count {ns}.data matches ..0 run scoreboard players set @s {ns}.zb.horde_cd {HORDE_MAX_INTERVAL}
 execute if score #horde_count {ns}.data matches ..0 run return 0
 
 # Volume (hundredths) = 0.25 + count*0.03, hard-capped at 0.80 (so ~18+ zombies all sound the same).
@@ -36,6 +46,14 @@ execute store result storage {ns}:temp _horde.pitch double 0.01 run scoreboard p
 # Play the groan FROM a random nearby zombie's position (positional audio), so the player hears
 # the horde coming from the right direction/distance rather than centred on themselves.
 execute at @e[tag={ns}.zombie_round,distance=..32,sort=random,limit=1] run function {ns}:v{version}/zombies/horde_ambient_play with storage {ns}:temp _horde
+
+# Schedule this player's next groan: {HORDE_MAX_INTERVAL} ticks divided by the nearby count, so 1 zombie
+# groans every {HORDE_MAX_INTERVAL / 20:.1f}s and 10 groan {20 * 10 // HORDE_MAX_INTERVAL} times a second.
+# The floor keeps a huge horde from turning into a buzz.
+scoreboard players operation #horde_next {ns}.data = #{HORDE_MAX_INTERVAL} {ns}.data
+scoreboard players operation #horde_next {ns}.data /= #horde_count {ns}.data
+execute if score #horde_next {ns}.data matches ..{HORDE_MIN_INTERVAL} run scoreboard players set #horde_next {ns}.data {HORDE_MIN_INTERVAL}
+scoreboard players operation @s {ns}.zb.horde_cd = #horde_next {ns}.data
 """)
 
 	# @s = the player; execution position = a nearby zombie, so the sound is directional.

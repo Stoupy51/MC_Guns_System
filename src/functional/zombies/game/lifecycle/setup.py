@@ -27,6 +27,9 @@ scoreboard objectives add {ns}.zb.passive dummy
 scoreboard objectives add {ns}.zb.ability dummy
 scoreboard objectives add {ns}.zb.ability_cd dummy
 
+# Ticks until this player's next horde groan; horde_ambient refreshes it from the count near THEM
+scoreboard objectives add {ns}.zb.horde_cd dummy
+
 # Spawn point group_id scoreboard
 scoreboard objectives add {ns}.zb.spawn.gid dummy
 

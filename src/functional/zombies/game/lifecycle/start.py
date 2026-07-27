@@ -34,6 +34,7 @@ scoreboard players set @a {ns}.zb.downs 0
 scoreboard players set @a {ns}.zb.passive 0
 scoreboard players set @a {ns}.zb.ability 0
 scoreboard players set @a {ns}.zb.ability_cd 0
+scoreboard players set @a {ns}.zb.horde_cd 0
 
 # Config: points per kill, points per hit
 scoreboard players set #zb_points_kill {ns}.config 50
