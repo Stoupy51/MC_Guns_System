@@ -4,7 +4,7 @@
 from stewbeet import Mem, write_versioned_function
 
 from ..helpers import MGS_TAG, FunctionalHelpers
-from .rewards.powerups import POWERUP_TYPES
+from .rewards.powerups.types import POWERUP_TYPES
 
 # Constants
 PU_ADMIN_EMOJI: dict[str, str] = {
