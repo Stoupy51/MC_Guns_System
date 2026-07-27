@@ -2,7 +2,7 @@
 # Imports
 from stewbeet import Mem, write_versioned_function
 
-from ....config.stats import KICK
+from ....config.stats.keys import KICK
 
 
 # Functions

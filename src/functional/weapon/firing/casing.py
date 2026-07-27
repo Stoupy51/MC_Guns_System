@@ -2,7 +2,7 @@
 # Imports
 from stewbeet import Mem, write_versioned_function
 
-from ....config.stats import CASING_BINORMAL, CASING_MODEL, CASING_NORMAL, CASING_OFFSET, CASING_TANGENT
+from ....config.stats.keys import CASING_BINORMAL, CASING_MODEL, CASING_NORMAL, CASING_OFFSET, CASING_TANGENT
 
 
 # Functions

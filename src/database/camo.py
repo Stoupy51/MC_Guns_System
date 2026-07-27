@@ -11,7 +11,7 @@ from numpy.typing import NDArray
 from PIL import Image
 from stewbeet import Item, JsonDict, Mem
 
-from ..config.stats import MODELS
+from ..config.stats.keys import MODELS
 
 # HSL Color blend (GIMP "HSL Color" mode) H + S come from the blend (material) layer, L comes from the base (weapon).
 # Alpha is preserved from the base layer throughout.

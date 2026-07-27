@@ -20,13 +20,13 @@ from stewbeet import (
 )
 
 from .config.catalogs import GRENADE_TYPES, PRIMARY_WEAPONS, SCOPE_NAMES, SECONDARY_WEAPONS
-from .config.stats import (
+from .config.stats.colors import END_HEX, START_HEX
+from .config.stats.keys import (
 	CAPACITY,
 	CASING_MODEL,
 	COOLDOWN,
 	DAMAGE,
 	DECAY,
-	END_HEX,
 	EXPLOSION_DAMAGE,
 	EXPLOSION_RADIUS,
 	GRENADE_FUSE,
@@ -36,7 +36,6 @@ from .config.stats import (
 	RELOAD_TIME,
 	REMAINING_BULLETS,
 	SPEED_MULTIPLY_BASE,
-	START_HEX,
 	SWITCH,
 )
 from .database.camo import main as camo_main

@@ -6,10 +6,7 @@ Registration order sets Mem.definitions order.
 from stewbeet import Item, JsonDict, Mem
 
 from ..config.catalogs import SCOPE_VARIANTS
-from ..config.stats import (
-	AK47,
-	AUG,
-	CAPACITY,
+from ..config.stats.casings import (
 	CASING_9X18MM,
 	CASING_9X19MM,
 	CASING_12GA3IN,
@@ -25,46 +22,16 @@ from ..config.stats import (
 	CASING_762X39MM,
 	CASING_762X51MM,
 	CASING_762X54MM,
-	DEAGLE,
-	FAMAS,
-	FLASH_GRENADE,
-	FNFAL,
-	FRAG_GRENADE,
-	G3A3,
-	GLOCK17,
-	GLOCK18,
-	M4A1,
-	M9,
-	M16A4,
-	M24,
-	M82,
-	M249,
-	M500,
-	M590,
-	M1911,
-	MAC10,
-	MAKAROV,
-	MONKEY_BOMB,
-	MOSIN,
-	MP5,
-	MP7,
-	PPSH41,
-	RAY_GUN,
-	REMAINING_BULLETS,
-	RPG7,
-	RPK,
-	SCAR17,
-	SEMTEX,
-	SMOKE_GRENADE,
-	SPAS12,
-	STEN,
-	SVD,
-	VZ61,
-	WEB_GRENADE,
-	add_item,
-	get_model_path,
-	load_model,
 )
+from ..config.stats.items import ItemBuilder
+from ..config.stats.keys import CAPACITY, REMAINING_BULLETS
+from ..config.stats.weapons.grenades import FLASH_GRENADE, FRAG_GRENADE, MONKEY_BOMB, SEMTEX, SMOKE_GRENADE, WEB_GRENADE
+from ..config.stats.weapons.pistols import DEAGLE, GLOCK17, GLOCK18, M9, M1911, MAKAROV, RAY_GUN, VZ61
+from ..config.stats.weapons.rifles import AK47, AUG, FAMAS, FNFAL, G3A3, M4A1, M16A4, SCAR17
+from ..config.stats.weapons.shotguns import M500, M590, SPAS12
+from ..config.stats.weapons.smgs import MAC10, MP5, MP7, PPSH41, STEN
+from ..config.stats.weapons.snipers import M24, M82, MOSIN, SVD
+from ..config.stats.weapons.special import M249, RPG7, RPK
 
 # Constants
 # Weapon ID -> stats dict
@@ -139,7 +106,7 @@ def perk_machine_model(accent: str | tuple[str, str]) -> JsonDict:
 
 def recolored_model(model_name: str, gray_map: JsonDict, default: str | None = None) -> JsonDict:
 	""" Load a model and remap its textures through `gray_map`; `default` replaces unmapped ones (None keeps them). """
-	model: JsonDict = load_model(get_model_path(model_name))
+	model: JsonDict = ItemBuilder.load_model(ItemBuilder.get_model_path(model_name))
 	for key, tex in model["textures"].items():
 		model["textures"][key] = gray_map.get(tex, default if default is not None else tex)
 	return model
@@ -147,7 +114,7 @@ def recolored_model(model_name: str, gray_map: JsonDict, default: str | None = N
 def power_switch_on_model() -> JsonDict:
 	""" "On" breaker: lever flipped down, handle/light lit green. Mirrored about pivot y=7 and tilted
 	forward-down rather than rotated 180°, because Minecraft caps element rotations at ±45°. """
-	model: JsonDict = load_model(get_model_path("power_switch"))
+	model: JsonDict = ItemBuilder.load_model(ItemBuilder.get_model_path("power_switch"))
 	model["textures"]["handle"] = "minecraft:block/lime_terracotta"
 	model["textures"]["light"] = "minecraft:block/sea_lantern"
 	pivot_y = 7
@@ -162,7 +129,7 @@ def power_switch_on_model() -> JsonDict:
 def add_casings() -> None:
 	""" Ejected bullet casings, named after their cartridge. """
 	for casing in CASINGS:
-		add_item(casing, model_path="auto").components["item_name"] = {"text": casing, "color": "white"}
+		ItemBuilder.add_item(casing, model_path="auto").components["item_name"] = {"text": casing, "color": "white"}
 
 def add_magazines() -> None:
 	""" Reusable magazines (full + empty) and the stacking single-round items. """
@@ -173,7 +140,7 @@ def add_magazines() -> None:
 			item: str = f"{weapon}_mag{'_empty' if is_empty else ''}"
 			Item(
 				id=item,
-				override_model=load_model(get_model_path(item)),
+				override_model=ItemBuilder.load_model(ItemBuilder.get_model_path(item)),
 				components={
 					"max_stack_size": 1,
 					"custom_data": {ns: {"magazine": True, "weapon": weapon, "stats": {REMAINING_BULLETS: 0 if is_empty else capacity, CAPACITY: capacity}}},
@@ -184,7 +151,7 @@ def add_magazines() -> None:
 	for weapon, item_name, capacity in CONSUMABLE_MAGAZINES:
 		Item(
 			id=item_name,
-			override_model=load_model(get_model_path(item_name)),
+			override_model=ItemBuilder.load_model(ItemBuilder.get_model_path(item_name)),
 			components={
 				"max_stack_size": 64,
 				"custom_data": {ns: {"magazine": True, "consumable": True, "weapon": weapon, "stats": {REMAINING_BULLETS: capacity, CAPACITY: capacity}}},
@@ -213,14 +180,14 @@ def add_machines_and_props() -> None:
 				{"type": "attack_speed", "amount": -2.5, "operation": "add_value", "slot": "mainhand", "id": "minecraft:base_attack_speed"},
 			],
 		},
-		override_model=load_model(get_model_path("bowie_knife")),
+		override_model=ItemBuilder.load_model(ItemBuilder.get_model_path("bowie_knife")),
 	)
 
-	Item(id="pack_a_punch", override_model=load_model(get_model_path("pack_a_punch")))
+	Item(id="pack_a_punch", override_model=ItemBuilder.load_model(ItemBuilder.get_model_path("pack_a_punch")))
 
 	# Split into base + lid so the lid can animate open.
-	Item(id="mystery_box_base", override_model=load_model(get_model_path("mystery_box_base")))
-	Item(id="mystery_box_lid", override_model=load_model(get_model_path("mystery_box_lid")))
+	Item(id="mystery_box_base", override_model=ItemBuilder.load_model(ItemBuilder.get_model_path("mystery_box_base")))
+	Item(id="mystery_box_lid", override_model=ItemBuilder.load_model(ItemBuilder.get_model_path("mystery_box_lid")))
 	# Grayed-out crate (base only, every texture muted) shown at inactive roam spots.
 	Item(id="mystery_box_disabled", override_model=recolored_model("mystery_box_base", {
 		"minecraft:block/oak_planks": "minecraft:block/gray_concrete",
@@ -231,35 +198,35 @@ def add_machines_and_props() -> None:
 	}, default="minecraft:block/gray_concrete"))
 
 	# A new perk only needs an entry in PERK_MACHINES and a default line in perks.py setup_iter.
-	Item(id="perk_machine", override_model=load_model(get_model_path("perk_machine")))
+	Item(id="perk_machine", override_model=ItemBuilder.load_model(ItemBuilder.get_model_path("perk_machine")))
 	for perk_id, accent in PERK_MACHINES.items():
 		Item(id=f"perk_machine_{perk_id}", override_model=perk_machine_model(accent))
 
 	# Dedicated model (not a recolor): the middle alcove is open so the perk bottle can float in it.
-	Item(id="der_wunderfizz", override_model=load_model(get_model_path("der_wunderfizz")))
+	Item(id="der_wunderfizz", override_model=ItemBuilder.load_model(ItemBuilder.get_model_path("der_wunderfizz")))
 	Item(id="der_wunderfizz_disabled", override_model=recolored_model("der_wunderfizz", {
 		"minecraft:block/gold_block": "minecraft:block/iron_block",
 		"minecraft:block/purple_concrete": "minecraft:block/gray_concrete",
 		"minecraft:block/sea_lantern": "minecraft:block/light_gray_concrete",
 	}))
 
-	Item(id="power_switch", override_model=load_model(get_model_path("power_switch")))
+	Item(id="power_switch", override_model=ItemBuilder.load_model(ItemBuilder.get_model_path("power_switch")))
 	Item(id="power_switch_on", override_model=power_switch_on_model())
 
 	# Stationary base + rotating head (centred on [8,8,8], barrels along +Z for a facing-entity display).
-	Item(id="turret_base", override_model=load_model(get_model_path("turret_base")))
-	Item(id="turret_head", override_model=load_model(get_model_path("turret_head")))
+	Item(id="turret_base", override_model=ItemBuilder.load_model(ItemBuilder.get_model_path("turret_base")))
+	Item(id="turret_head", override_model=ItemBuilder.load_model(ItemBuilder.get_model_path("turret_head")))
 
 def add_weapons() -> None:
 	""" The RPG-7, then every gun with its scope variants; each gets a `_zoom` twin. """
 	for name in ("rpg7", "rpg7_zoom", "rpg7_empty", "rpg7_empty_zoom"):
-		add_item(name, stats=RPG7, model_path="auto")
+		ItemBuilder.add_item(name, stats=RPG7, model_path="auto")
 
 	for weapon_id, stats in WEAPON_STATS.items():
 		rarity: str | None = WEAPON_RARITY.get(weapon_id)
 		for suffix in SCOPE_VARIANTS.get(weapon_id, ("",)):
 			for name in (f"{weapon_id}{suffix}", f"{weapon_id}{suffix}_zoom"):
-				item: Item = add_item(name, stats=stats, model_path="auto")
+				item: Item = ItemBuilder.add_item(name, stats=stats, model_path="auto")
 				if rarity:
 					item.components["rarity"] = rarity
 
@@ -270,16 +237,16 @@ def add_grenades() -> None:
 		("frag_grenade", FRAG_GRENADE), ("semtex", SEMTEX),
 		("smoke_grenade", SMOKE_GRENADE), ("flash_grenade", FLASH_GRENADE),
 	):
-		add_item(grenade_id, stats=stats, model_path="auto", max_stack_size=4)
+		ItemBuilder.add_item(grenade_id, stats=stats, model_path="auto", max_stack_size=4)
 
 	# Widow's Wine web grenade (perk-exclusive): frag geometry, cobweb texture.
-	web = add_item("web_grenade", stats=WEB_GRENADE, model_path=get_model_path("frag_grenade"), max_stack_size=4)
+	web = ItemBuilder.add_item("web_grenade", stats=WEB_GRENADE, model_path=ItemBuilder.get_model_path("frag_grenade"), max_stack_size=4)
 	if web.override_model:
 		for k in web.override_model["textures"].keys():
 			web.override_model["textures"][k] = f"{ns}:item/cobweb"
 
 	# Zombies-exclusive tactical (mystery box / wallbuys only), capped at 3 by the give/refill functions.
-	add_item("monkey_bomb", stats=MONKEY_BOMB, model_path="auto", max_stack_size=3)
+	ItemBuilder.add_item("monkey_bomb", stats=MONKEY_BOMB, model_path="auto", max_stack_size=3)
 
 def main() -> None:
 	""" Register every item, in the order that defines Mem.definitions ordering. """

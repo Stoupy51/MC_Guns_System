@@ -1,0 +1,19 @@
+""" Cartridge type ids used by the casing ejection system. """
+# Constants
+# Casing types
+CASING_762X39MM = "762x39mm"
+CASING_762X51MM = "762x51mm"
+CASING_762X54MM = "762x54mm"
+CASING_9X18MM = "9x18mm"
+CASING_9X19MM = "9x19mm"
+CASING_12GA3IN = "12ga3in"
+CASING_12GA275IN = "12ga275in"
+CASING_32ACP = "32acp"
+CASING_45ACP = "45acp"
+CASING_46X30MM = "46x30mm"
+CASING_50AE = "50ae"
+CASING_50BMG = "50bmg"
+CASING_338LAPUA = "338lapua"
+CASING_556X45MM = "556x45mm"
+CASING_762X25MM = "762x25mm"
+

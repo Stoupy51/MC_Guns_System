@@ -499,7 +499,7 @@ tag @a remove {cand}
 		ns: str = Mem.ctx.project_id
 		version: str = Mem.ctx.project_version
 
-		from ..config.stats import PROJECTILE_SPEED
+		from ..config.stats.keys import PROJECTILE_SPEED
 
 		# Calculate velocity from the look direction, apply it to bs.vel, then teleport back.
 		# Requires @s at the summon position with data.config.PROJECTILE_SPEED set.

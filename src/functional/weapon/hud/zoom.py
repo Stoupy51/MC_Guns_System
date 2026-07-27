@@ -3,7 +3,7 @@
 # Imports
 from stewbeet import Mem, write_versioned_function
 
-from ....config.stats import IS_ZOOM, MODELS
+from ....config.stats.keys import IS_ZOOM, MODELS
 
 
 # Functions

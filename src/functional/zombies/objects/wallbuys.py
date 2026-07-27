@@ -11,7 +11,7 @@ The item KIND is probed from the item's custom_data at setup and routes the purc
 # Imports
 from stewbeet import Mem, write_load_file, write_versioned_function
 
-from ....config.stats import GRENADE_TYPE
+from ....config.stats.keys import GRENADE_TYPE
 from ...core.feedback import ZombiesFeedback
 from ...helpers import MGS_TAG
 from ..common import ZombiesCommon

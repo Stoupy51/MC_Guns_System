@@ -4,7 +4,7 @@ from beet import Font, Texture
 from PIL import Image
 from stewbeet import Conventions, ItemModifier, Mem, set_json_encoder, write_tick_file, write_versioned_function
 
-from ...config.stats import (
+from ...config.stats.keys import (
 	EXPLOSION_DAMAGE,
 	EXPLOSION_DECAY,
 	EXPLOSION_RADIUS,

@@ -4,7 +4,7 @@ from typing import Any
 
 from stewbeet import ItemModifier, Mem, set_json_encoder, write_versioned_function
 
-from ....config.stats import CAN_AUTO, CAN_BURST, FIRE_MODE, SWITCH, WEAPON_ID
+from ....config.stats.keys import CAN_AUTO, CAN_BURST, FIRE_MODE, SWITCH, WEAPON_ID
 
 
 # Functions

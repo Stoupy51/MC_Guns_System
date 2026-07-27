@@ -3,7 +3,7 @@
 # Imports
 from stewbeet import Mem, write_load_file, write_tag, write_tick_file, write_versioned_function
 
-from ...config.stats import REMAINING_BULLETS
+from ...config.stats.keys import REMAINING_BULLETS
 from ..core.respawn_countdown import respawn_countdown_tick_lines
 from ..core.spawning import CoreSpawning
 from ..core.weapon_drop import WeaponDrop

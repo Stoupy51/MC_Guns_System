@@ -9,7 +9,7 @@ Positions use compound format: {pos:[x,y,z], rotation:[yaw,0.0f], group_id:N, ca
 # Imports
 from stewbeet import Mem, write_load_file, write_versioned_function
 
-from ....config.stats import WEIGHT
+from ....config.stats.keys import WEIGHT
 from ....database.items import WEAPON_STATS
 from ...core.feedback import ZombiesFeedback
 from ...helpers import MGS_TAG
