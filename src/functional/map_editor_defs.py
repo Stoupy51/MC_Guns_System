@@ -96,10 +96,10 @@ ALL_ELEMENTS: dict[str, ElementDef] = {
 		save_path="barriers",
 		emoji="🧱",
 		defaults={
-                                "block_enabled":  {"Name": "minecraft:oak_fence_gate", "Properties": {"open": "false"}},
-                                "block_disabled": {"Name": "minecraft:oak_fence_gate", "Properties": {"open": "true"}},
-                                "radius": 2,
-                           },
+			"block_enabled":  {"Name": "minecraft:oak_fence_gate", "Properties": {"open": "false"}},
+			"block_disabled": {"Name": "minecraft:oak_fence_gate", "Properties": {"open": "true"}},
+			"radius": 2,
+		},
 	),
 }
 

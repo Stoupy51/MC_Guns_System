@@ -19,19 +19,19 @@ from .zoom import main as zoom_main
 
 # Functions
 def main() -> None:
-    write_shared_projectile_functions()  # Shared by the projectile and grenade systems
-    common_main()                        # Right-click detection
-    left_click_main()                    # Left-click (reload), via the piercing-attack enchantment
-    zoom_main()
-    switch_main()
-    raycast_main()                       # Hitscan shots with accuracy groups
-    projectile_main()                    # Slow projectiles (RPG rockets, etc.)
-    grenade_main()
-    kick_main()
-    casing_main()
-    ammo_main()
-    actionbar_main()                     # Fire mode + ammo display
-    update_lore_main()                   # Rebuild item lore from stats
-    sound_main()
-    hit_indicator_main()
+	write_shared_projectile_functions()  # Shared by the projectile and grenade systems
+	common_main()                        # Right-click detection
+	left_click_main()                    # Left-click (reload), via the piercing-attack enchantment
+	zoom_main()
+	switch_main()
+	raycast_main()                       # Hitscan shots with accuracy groups
+	projectile_main()                    # Slow projectiles (RPG rockets, etc.)
+	grenade_main()
+	kick_main()
+	casing_main()
+	ammo_main()
+	actionbar_main()                     # Fire mode + ammo display
+	update_lore_main()                   # Rebuild item lore from stats
+	sound_main()
+	hit_indicator_main()
 

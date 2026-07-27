@@ -821,246 +821,246 @@ DISTORTION: float = 0.55
 
 # Functions
 def get_entity_outline_json(ns: str) -> JsonDict:
-    """Build the entity outline post-effect pipeline JSON.
+	"""Build the entity outline post-effect pipeline JSON.
 
-    Overrides minecraft:post_effect/entity_outline.json (vanilla 26.2: sobel → box blur H →
-    box blur V → blit back). The final blit is replaced with a zoom-warp pass so glow
-    outlines follow the scene zoom/barrel distortion (see OUTLINE_ZOOM_FSH). Persistent
-    targets are per-chain, so this chain runs its own smooth-zoom feedback loop with the
-    same shader, sentinel input and lerp speed as the transparency chain — the two stay
-    in sync frame by frame.
-    """
-    return {
-        "targets": {
-            "swap": {},
-            "smooth_zoom": {"width": 1, "height": 1, "persistent": True},
-        },
-        "passes": [
-            # Smooth zoom lerp (same as the transparency chain's pass 1c)
-            {
-                "vertex_shader":   "minecraft:core/screenquad",
-                "fragment_shader": f"{ns}:post/zoom_lerp",
-                "inputs": [
-                    {"sampler_name": "Main",       "target": "minecraft:main"},
-                    {"sampler_name": "SmoothZoom", "target": "smooth_zoom"},
-                ],
-                "output": "smooth_zoom",
-            },
-            # Vanilla pass 1: sobel edge detection on the entity silhouettes
-            {
-                "vertex_shader":   "minecraft:core/screenquad",
-                "fragment_shader": "minecraft:post/entity_sobel",
-                "inputs": [
-                    {"sampler_name": "In", "target": "minecraft:entity_outline"},
-                ],
-                "output": "swap",
-            },
-            # Vanilla pass 2: horizontal box blur
-            {
-                "vertex_shader":   "minecraft:core/screenquad",
-                "fragment_shader": "minecraft:post/entity_outline_box_blur",
-                "inputs": [
-                    {"sampler_name": "In", "target": "swap", "bilinear": True},
-                ],
-                "output": "minecraft:entity_outline",
-                "uniforms": {
-                    "BlurConfig": [
-                        {"name": "BlurDir", "type": "vec2", "value": [1.0, 0.0]},
-                        {"name": "Radius",  "type": "float", "value": 2.0},
-                    ],
-                },
-            },
-            # Vanilla pass 3: vertical box blur
-            {
-                "vertex_shader":   "minecraft:core/screenquad",
-                "fragment_shader": "minecraft:post/entity_outline_box_blur",
-                "inputs": [
-                    {"sampler_name": "In", "target": "minecraft:entity_outline", "bilinear": True},
-                ],
-                "output": "swap",
-                "uniforms": {
-                    "BlurConfig": [
-                        {"name": "BlurDir", "type": "vec2", "value": [0.0, 1.0]},
-                        {"name": "Radius",  "type": "float", "value": 2.0},
-                    ],
-                },
-            },
-            # Replaces vanilla's final blit: warp the outline with the same zoom as the scene
-            {
-                "vertex_shader":   "minecraft:core/screenquad",
-                "fragment_shader": f"{ns}:post/outline_zoom",
-                "inputs": [
-                    {"sampler_name": "In",         "target": "swap", "bilinear": True},
-                    {"sampler_name": "Main",       "target": "minecraft:main"},
-                    {"sampler_name": "SmoothZoom", "target": "smooth_zoom"},
-                ],
-                "output": "minecraft:entity_outline",
-                "uniforms": {
-                    "ZoomConfig": [
-                        {"name": "Distortion", "type": "float", "value": DISTORTION},
-                    ],
-                },
-            },
-        ],
-    }
+	Overrides minecraft:post_effect/entity_outline.json (vanilla 26.2: sobel → box blur H →
+	box blur V → blit back). The final blit is replaced with a zoom-warp pass so glow
+	outlines follow the scene zoom/barrel distortion (see OUTLINE_ZOOM_FSH). Persistent
+	targets are per-chain, so this chain runs its own smooth-zoom feedback loop with the
+	same shader, sentinel input and lerp speed as the transparency chain — the two stay
+	in sync frame by frame.
+	"""
+	return {
+		"targets": {
+			"swap": {},
+			"smooth_zoom": {"width": 1, "height": 1, "persistent": True},
+		},
+		"passes": [
+			# Smooth zoom lerp (same as the transparency chain's pass 1c)
+			{
+				"vertex_shader":   "minecraft:core/screenquad",
+				"fragment_shader": f"{ns}:post/zoom_lerp",
+				"inputs": [
+					{"sampler_name": "Main",       "target": "minecraft:main"},
+					{"sampler_name": "SmoothZoom", "target": "smooth_zoom"},
+				],
+				"output": "smooth_zoom",
+			},
+			# Vanilla pass 1: sobel edge detection on the entity silhouettes
+			{
+				"vertex_shader":   "minecraft:core/screenquad",
+				"fragment_shader": "minecraft:post/entity_sobel",
+				"inputs": [
+					{"sampler_name": "In", "target": "minecraft:entity_outline"},
+				],
+				"output": "swap",
+			},
+			# Vanilla pass 2: horizontal box blur
+			{
+				"vertex_shader":   "minecraft:core/screenquad",
+				"fragment_shader": "minecraft:post/entity_outline_box_blur",
+				"inputs": [
+					{"sampler_name": "In", "target": "swap", "bilinear": True},
+				],
+				"output": "minecraft:entity_outline",
+				"uniforms": {
+					"BlurConfig": [
+						{"name": "BlurDir", "type": "vec2", "value": [1.0, 0.0]},
+						{"name": "Radius",  "type": "float", "value": 2.0},
+					],
+				},
+			},
+			# Vanilla pass 3: vertical box blur
+			{
+				"vertex_shader":   "minecraft:core/screenquad",
+				"fragment_shader": "minecraft:post/entity_outline_box_blur",
+				"inputs": [
+					{"sampler_name": "In", "target": "minecraft:entity_outline", "bilinear": True},
+				],
+				"output": "swap",
+				"uniforms": {
+					"BlurConfig": [
+						{"name": "BlurDir", "type": "vec2", "value": [0.0, 1.0]},
+						{"name": "Radius",  "type": "float", "value": 2.0},
+					],
+				},
+			},
+			# Replaces vanilla's final blit: warp the outline with the same zoom as the scene
+			{
+				"vertex_shader":   "minecraft:core/screenquad",
+				"fragment_shader": f"{ns}:post/outline_zoom",
+				"inputs": [
+					{"sampler_name": "In",         "target": "swap", "bilinear": True},
+					{"sampler_name": "Main",       "target": "minecraft:main"},
+					{"sampler_name": "SmoothZoom", "target": "smooth_zoom"},
+				],
+				"output": "minecraft:entity_outline",
+				"uniforms": {
+					"ZoomConfig": [
+						{"name": "Distortion", "type": "float", "value": DISTORTION},
+					],
+				},
+			},
+		],
+	}
 
 def get_post_effect_json(ns: str) -> JsonDict:
-    """Build the transparency post-effect pipeline JSON.
+	"""Build the transparency post-effect pipeline JSON.
 
-    Overrides minecraft:post_effect/transparency.json.
-    5 passes: classify -> transparency -> flash -> zoom -> blit.
-    Only runs when Graphics = "Fabulous!".
-    """
-    return {
-        "targets": {
-            "classify": {"width": 1, "height": 1, "persistent": True},
-            "smooth_spread": {"width": 1, "height": 1, "persistent": True},
-            "smooth_zoom": {"width": 1, "height": 1, "persistent": True},
-            "final": {},
-            "swap":  {},
-        },
-        "passes": [
-            # Pass 1: CLASSIFY - read sentinel pixels from MAIN, where renderSolid() puts opaque dust.
-            # Only translucent particles go to minecraft:particles.
-            {
-                "vertex_shader":   "minecraft:core/screenquad",
-                "fragment_shader": f"{ns}:post/classify",
-                "inputs": [
-                    {"sampler_name": "Main", "target": "minecraft:main"},
-                    {"sampler_name": "SmoothSpread", "target": "smooth_spread"},
-                ],
-                "output": "classify",
-            },
-            # Pass 1b: SPREAD COPY - persist smooth spread for next frame's feedback loop
-            {
-                "vertex_shader":   "minecraft:core/screenquad",
-                "fragment_shader": f"{ns}:post/spread_copy",
-                "inputs": [
-                    {"sampler_name": "Classify", "target": "classify"},
-                ],
-                "output": "smooth_spread",
-            },
-            # Pass 1c: ZOOM LERP - persist smooth zoom for the next frame, reading the FOV sentinel at (3,0).
-            {
-                "vertex_shader":   "minecraft:core/screenquad",
-                "fragment_shader": f"{ns}:post/zoom_lerp",
-                "inputs": [
-                    {"sampler_name": "Main",       "target": "minecraft:main"},
-                    {"sampler_name": "SmoothZoom", "target": "smooth_zoom"},
-                ],
-                "output": "smooth_zoom",
-            },
-            # Pass 2: TRANSPARENCY - Fabulous compositing (hides marker pixels)
-            {
-                "vertex_shader":   "minecraft:core/screenquad",
-                "fragment_shader": f"{ns}:post/transparency",
-                "inputs": [
-                    {"sampler_name": "Main",             "target": "minecraft:main"},
-                    {"sampler_name": "MainDepth",        "target": "minecraft:main",        "use_depth_buffer": True},
-                    {"sampler_name": "Translucent",      "target": "minecraft:translucent"},
-                    {"sampler_name": "TranslucentDepth", "target": "minecraft:translucent",  "use_depth_buffer": True},
-                    {"sampler_name": "ItemEntity",       "target": "minecraft:item_entity"},
-                    {"sampler_name": "ItemEntityDepth",  "target": "minecraft:item_entity",  "use_depth_buffer": True},
-                    {"sampler_name": "Particles",        "target": "minecraft:particles"},
-                    {"sampler_name": "ParticlesDepth",   "target": "minecraft:particles",   "use_depth_buffer": True},
-                    {"sampler_name": "Clouds",           "target": "minecraft:clouds"},
-                    {"sampler_name": "CloudsDepth",      "target": "minecraft:clouds",      "use_depth_buffer": True},
-                    {"sampler_name": "Weather",          "target": "minecraft:weather"},
-                    {"sampler_name": "WeatherDepth",     "target": "minecraft:weather",     "use_depth_buffer": True},
-                ],
-                "output": "final",
-            },
-            # Pass 3: FLASH - depth-based muzzle flash light/bloom (if mode 1)
-            {
-                "vertex_shader":   "minecraft:core/screenquad",
-                "fragment_shader": f"{ns}:post/flash",
-                "inputs": [
-                    {"sampler_name": "In",       "target": "final"},
-                    {"sampler_name": "InDepth",  "target": "minecraft:main", "use_depth_buffer": True},
-                    {"sampler_name": "Classify", "target": "classify"},
-                ],
-                "output": "swap",
-                "uniforms": {
-                    "FlashConfig": [
-                        {"name": "Color", "type": "vec3", "value": [1.0, 0.8, 0.5]},
-                    ],
-                },
-            },
-            # Pass 4: ZOOM - barrel distortion, FOV reduction and the flash spark overlay.
-            # SparkTex is the 1536x1536 flash sprite sheet (3x3 grid of 9 sprites).
-            # Spark overlays AFTER zoom so it's not barrel-distorted.
-            # Zoom level (x3/x4) is read from classify B channel.
-            # SmoothZoom provides smooth FOV reduction factor.
-            {
-                "vertex_shader":   "minecraft:core/screenquad",
-                "fragment_shader": f"{ns}:post/zoom",
-                "inputs": [
-                    {"sampler_name": "In",         "target": "swap", "bilinear": True},
-                    {"sampler_name": "Classify",   "target": "classify"},
-                    {"sampler_name": "SparkTex",   "location": f"{ns}:flash", "width": 1536, "height": 1536, "bilinear": True},
-                    {"sampler_name": "SmoothZoom", "target": "smooth_zoom"},
-                ],
-                "output": "final",
-                "uniforms": {
-                    "ZoomConfig": [
-                        {"name": "Distortion", "type": "float", "value": DISTORTION},
-                    ],
-                },
-            },
-            # Pass 5: BLIT - copy final result to screen
-            {
-                "vertex_shader":   "minecraft:core/screenquad",
-                "fragment_shader": "minecraft:post/blit",
-                "inputs": [
-                    {"sampler_name": "In", "target": "final"},
-                ],
-                "uniforms": {
-                    "BlitConfig": [
-                        {"name": "ColorModulate", "type": "vec4", "value": [1.0, 1.0, 1.0, 1.0]},
-                    ],
-                },
-                "output": "minecraft:main",
-            },
-        ],
-    }
+	Overrides minecraft:post_effect/transparency.json.
+	5 passes: classify -> transparency -> flash -> zoom -> blit.
+	Only runs when Graphics = "Fabulous!".
+	"""
+	return {
+		"targets": {
+			"classify": {"width": 1, "height": 1, "persistent": True},
+			"smooth_spread": {"width": 1, "height": 1, "persistent": True},
+			"smooth_zoom": {"width": 1, "height": 1, "persistent": True},
+			"final": {},
+			"swap":  {},
+		},
+		"passes": [
+			# Pass 1: CLASSIFY - read sentinel pixels from MAIN, where renderSolid() puts opaque dust.
+			# Only translucent particles go to minecraft:particles.
+			{
+				"vertex_shader":   "minecraft:core/screenquad",
+				"fragment_shader": f"{ns}:post/classify",
+				"inputs": [
+					{"sampler_name": "Main", "target": "minecraft:main"},
+					{"sampler_name": "SmoothSpread", "target": "smooth_spread"},
+				],
+				"output": "classify",
+			},
+			# Pass 1b: SPREAD COPY - persist smooth spread for next frame's feedback loop
+			{
+				"vertex_shader":   "minecraft:core/screenquad",
+				"fragment_shader": f"{ns}:post/spread_copy",
+				"inputs": [
+					{"sampler_name": "Classify", "target": "classify"},
+				],
+				"output": "smooth_spread",
+			},
+			# Pass 1c: ZOOM LERP - persist smooth zoom for the next frame, reading the FOV sentinel at (3,0).
+			{
+				"vertex_shader":   "minecraft:core/screenquad",
+				"fragment_shader": f"{ns}:post/zoom_lerp",
+				"inputs": [
+					{"sampler_name": "Main",       "target": "minecraft:main"},
+					{"sampler_name": "SmoothZoom", "target": "smooth_zoom"},
+				],
+				"output": "smooth_zoom",
+			},
+			# Pass 2: TRANSPARENCY - Fabulous compositing (hides marker pixels)
+			{
+				"vertex_shader":   "minecraft:core/screenquad",
+				"fragment_shader": f"{ns}:post/transparency",
+				"inputs": [
+					{"sampler_name": "Main",             "target": "minecraft:main"},
+					{"sampler_name": "MainDepth",        "target": "minecraft:main",        "use_depth_buffer": True},
+					{"sampler_name": "Translucent",      "target": "minecraft:translucent"},
+					{"sampler_name": "TranslucentDepth", "target": "minecraft:translucent",  "use_depth_buffer": True},
+					{"sampler_name": "ItemEntity",       "target": "minecraft:item_entity"},
+					{"sampler_name": "ItemEntityDepth",  "target": "minecraft:item_entity",  "use_depth_buffer": True},
+					{"sampler_name": "Particles",        "target": "minecraft:particles"},
+					{"sampler_name": "ParticlesDepth",   "target": "minecraft:particles",   "use_depth_buffer": True},
+					{"sampler_name": "Clouds",           "target": "minecraft:clouds"},
+					{"sampler_name": "CloudsDepth",      "target": "minecraft:clouds",      "use_depth_buffer": True},
+					{"sampler_name": "Weather",          "target": "minecraft:weather"},
+					{"sampler_name": "WeatherDepth",     "target": "minecraft:weather",     "use_depth_buffer": True},
+				],
+				"output": "final",
+			},
+			# Pass 3: FLASH - depth-based muzzle flash light/bloom (if mode 1)
+			{
+				"vertex_shader":   "minecraft:core/screenquad",
+				"fragment_shader": f"{ns}:post/flash",
+				"inputs": [
+					{"sampler_name": "In",       "target": "final"},
+					{"sampler_name": "InDepth",  "target": "minecraft:main", "use_depth_buffer": True},
+					{"sampler_name": "Classify", "target": "classify"},
+				],
+				"output": "swap",
+				"uniforms": {
+					"FlashConfig": [
+						{"name": "Color", "type": "vec3", "value": [1.0, 0.8, 0.5]},
+					],
+				},
+			},
+			# Pass 4: ZOOM - barrel distortion, FOV reduction and the flash spark overlay.
+			# SparkTex is the 1536x1536 flash sprite sheet (3x3 grid of 9 sprites).
+			# Spark overlays AFTER zoom so it's not barrel-distorted.
+			# Zoom level (x3/x4) is read from classify B channel.
+			# SmoothZoom provides smooth FOV reduction factor.
+			{
+				"vertex_shader":   "minecraft:core/screenquad",
+				"fragment_shader": f"{ns}:post/zoom",
+				"inputs": [
+					{"sampler_name": "In",         "target": "swap", "bilinear": True},
+					{"sampler_name": "Classify",   "target": "classify"},
+					{"sampler_name": "SparkTex",   "location": f"{ns}:flash", "width": 1536, "height": 1536, "bilinear": True},
+					{"sampler_name": "SmoothZoom", "target": "smooth_zoom"},
+				],
+				"output": "final",
+				"uniforms": {
+					"ZoomConfig": [
+						{"name": "Distortion", "type": "float", "value": DISTORTION},
+					],
+				},
+			},
+			# Pass 5: BLIT - copy final result to screen
+			{
+				"vertex_shader":   "minecraft:core/screenquad",
+				"fragment_shader": "minecraft:post/blit",
+				"inputs": [
+					{"sampler_name": "In", "target": "final"},
+				],
+				"uniforms": {
+					"BlitConfig": [
+						{"name": "ColorModulate", "type": "vec4", "value": [1.0, 1.0, 1.0, 1.0]},
+					],
+				},
+				"output": "minecraft:main",
+			},
+		],
+	}
 
 # Main entry point
 
 def main() -> None:
-    """ Register all shader files and write marker particle commands """
-    ns: str = Mem.ctx.project_id
-    custom_crosshair: bool = Mem.ctx.meta.get("mgs_custom_crosshair", False)
+	""" Register all shader files and write marker particle commands """
+	ns: str = Mem.ctx.project_id
+	custom_crosshair: bool = Mem.ctx.meta.get("mgs_custom_crosshair", False)
 
-    Mem.ctx.assets["minecraft"].vertex_shaders["core/particle"]   = VertexShader(PARTICLE_VSH)
-    Mem.ctx.assets["minecraft"].fragment_shaders["core/particle"] = FragmentShader(PARTICLE_FSH)
+	Mem.ctx.assets["minecraft"].vertex_shaders["core/particle"]   = VertexShader(PARTICLE_VSH)
+	Mem.ctx.assets["minecraft"].fragment_shaders["core/particle"] = FragmentShader(PARTICLE_FSH)
 
-    Mem.ctx.assets[ns].fragment_shaders["post/classify"]     = FragmentShader(CLASSIFY_FSH)
-    Mem.ctx.assets[ns].fragment_shaders["post/spread_copy"]  = FragmentShader(SPREAD_COPY_FSH)
-    Mem.ctx.assets[ns].fragment_shaders["post/zoom_lerp"]    = FragmentShader(ZOOM_LERP_FSH)
-    Mem.ctx.assets[ns].fragment_shaders["post/transparency"] = FragmentShader(TRANSPARENCY_FSH)
-    Mem.ctx.assets[ns].fragment_shaders["post/flash"]       = FragmentShader(FLASH_FSH)
-    Mem.ctx.assets[ns].fragment_shaders["post/zoom"]        = FragmentShader(ZOOM_FSH.replace("__MGS_CUSTOM_CROSSHAIR__", "true" if custom_crosshair else "false"))
-    Mem.ctx.assets[ns].fragment_shaders["post/outline_zoom"] = FragmentShader(OUTLINE_ZOOM_FSH)
+	Mem.ctx.assets[ns].fragment_shaders["post/classify"]     = FragmentShader(CLASSIFY_FSH)
+	Mem.ctx.assets[ns].fragment_shaders["post/spread_copy"]  = FragmentShader(SPREAD_COPY_FSH)
+	Mem.ctx.assets[ns].fragment_shaders["post/zoom_lerp"]    = FragmentShader(ZOOM_LERP_FSH)
+	Mem.ctx.assets[ns].fragment_shaders["post/transparency"] = FragmentShader(TRANSPARENCY_FSH)
+	Mem.ctx.assets[ns].fragment_shaders["post/flash"]       = FragmentShader(FLASH_FSH)
+	Mem.ctx.assets[ns].fragment_shaders["post/zoom"]        = FragmentShader(ZOOM_FSH.replace("__MGS_CUSTOM_CROSSHAIR__", "true" if custom_crosshair else "false"))
+	Mem.ctx.assets[ns].fragment_shaders["post/outline_zoom"] = FragmentShader(OUTLINE_ZOOM_FSH)
 
-    Mem.ctx.assets["minecraft"].post_effects["transparency"] = set_json_encoder(PostEffect(get_post_effect_json(ns)), max_level=4)
-    # Glow outlines are composited AFTER the scene zoom, so the outline chain must warp them the same way.
-    # Otherwise glowing entities keep unzoomed outlines (see OUTLINE_ZOOM_FSH).
-    Mem.ctx.assets["minecraft"].post_effects["entity_outline"] = set_json_encoder(PostEffect(get_entity_outline_json(ns)), max_level=4)
+	Mem.ctx.assets["minecraft"].post_effects["transparency"] = set_json_encoder(PostEffect(get_post_effect_json(ns)), max_level=4)
+	# Glow outlines are composited AFTER the scene zoom, so the outline chain must warp them the same way.
+	# Otherwise glowing entities keep unzoomed outlines (see OUTLINE_ZOOM_FSH).
+	Mem.ctx.assets["minecraft"].post_effects["entity_outline"] = set_json_encoder(PostEffect(get_entity_outline_json(ns)), max_level=4)
 
-    # Register flash spark texture for post-effect overlay (1536x1536 additive spark)
-    textures_folder: str = Mem.ctx.meta.get("stewbeet", {}).get("textures_folder", "")
-    Mem.ctx.assets[ns].textures["effect/flash"] = Texture(source_path=f"{textures_folder}/flash.png")
+	# Register flash spark texture for post-effect overlay (1536x1536 additive spark)
+	textures_folder: str = Mem.ctx.meta.get("stewbeet", {}).get("textures_folder", "")
+	Mem.ctx.assets[ns].textures["effect/flash"] = Texture(source_path=f"{textures_folder}/flash.png")
 
-    # Flash marker (mode 1): dust color:[0.02,0,0], detected as R∈[1-10] with G==0 and B==0. scale=0.01 gives a 1-tick lifetime, so the flash is brief enough for rapid fire.
-    version: str = Mem.ctx.project_version
-    write_versioned_function("player/fire_weapon", f"""
+	# Flash marker (mode 1): dust color:[0.02,0,0], detected as R∈[1-10] with G==0 and B==0. scale=0.01 gives a 1-tick lifetime, so the flash is brief enough for rapid fire.
+	version: str = Mem.ctx.project_version
+	write_versioned_function("player/fire_weapon", f"""
 # Shader: spawn muzzle flash marker - skip for grenades
 # PaP guns use mode 10 (purple dust G=1.0 → ic.g ≥ 81), normal guns use mode 1 (dust G=0)
 execute store success score #has_pap_level {ns}.data if data storage {ns}:gun all.stats.pap_level
 execute if score #has_pap_level {ns}.data matches 1 unless data storage mgs:gun all.stats.grenade_type at @s anchored eyes positioned ^ ^ ^0.001 as @a[distance=..16] run function {ns}:v{version}/player/apply_pap_flash_if_can_see
 execute if score #has_pap_level {ns}.data matches 0 unless data storage mgs:gun all.stats.grenade_type at @s anchored eyes positioned ^ ^ ^0.001 as @a[distance=..16] run function {ns}:v{version}/player/apply_flash_if_can_see
 """)  # noqa: E501
-    write_versioned_function("player/apply_flash_if_can_see", f"""
+	write_versioned_function("player/apply_flash_if_can_see", f"""
 # Stop if player saw flash less than 3 ticks ago (allowing previous flash to expire)
 execute if score @s {ns}.last_muzzle_flash > #total_tick {ns}.data run return 0
 scoreboard players set @s {ns}.last_muzzle_flash 3
@@ -1072,7 +1072,7 @@ execute if entity @s[tag={ns}.ticking] run scoreboard players set #can_see {ns}.
 execute if score #can_see {ns}.data matches 0 store result score #can_see {ns}.data run function #bs.view:can_see_ata {{with:{{}}}}
 execute if score #can_see {ns}.data matches 1 run particle minecraft:dust{{color:[0.02,0.0,0.0],scale:0.01}} ~ ~ ~ 0 0 0 0 1 force @s
 """)
-    write_versioned_function("player/apply_pap_flash_if_can_see", f"""
+	write_versioned_function("player/apply_pap_flash_if_can_see", f"""
 # PaP flash: mode 10 - dust G=1.0 → ic.g ∈ [122-255] ≥ 81 → vsh returns 10
 # Stop if player saw flash less than 3 ticks ago (allowing previous flash to expire)
 execute if score @s {ns}.last_muzzle_flash > #total_tick {ns}.data run return 0
@@ -1086,12 +1086,12 @@ execute if score #can_see {ns}.data matches 0 store result score #can_see {ns}.d
 execute if score #can_see {ns}.data matches 1 run particle minecraft:dust{{color:[0.02,1.0,0.0],scale:0.01}} ~ ~ ~ 0 0 0 0 1 force @s
 """)
 
-    # Zoom marker: x3 is color:[0.02,0.02,0] (G∈[2-5]), x4 is color:[0.02,0.08,0] (G∈[10-20]).
-    # Spawning happens in zoom/main (zoom.py) after zoom resolution, with a cooldown guard and 5-tick delay.
+	# Zoom marker: x3 is color:[0.02,0.02,0] (G∈[2-5]), x4 is color:[0.02,0.08,0] (G∈[10-20]).
+	# Spawning happens in zoom/main (zoom.py) after zoom resolution, with a cooldown guard and 5-tick delay.
 
-    # Replace crosshair texture with transparent one (shader draws custom crosshair conditionally)
-    if custom_crosshair:
-        textures_folder: str = Mem.ctx.meta.get("stewbeet", {}).get("textures_folder", "")
-        transparent_crosshair = Image.new("RGBA", (1, 1), (0, 0, 0, 0))
-        Mem.ctx.assets["minecraft"].textures["gui/sprites/hud/crosshair"] = Texture(transparent_crosshair)
+	# Replace crosshair texture with transparent one (shader draws custom crosshair conditionally)
+	if custom_crosshair:
+		textures_folder: str = Mem.ctx.meta.get("stewbeet", {}).get("textures_folder", "")
+		transparent_crosshair = Image.new("RGBA", (1, 1), (0, 0, 0, 0))
+		Mem.ctx.assets["minecraft"].textures["gui/sprites/hud/crosshair"] = Texture(transparent_crosshair)
 

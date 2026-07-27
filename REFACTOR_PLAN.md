@@ -179,6 +179,7 @@ src/
 | **P9c** ✅ | Codebase-wide comment/docstring cleanup. Comments 2922 → 1795. | 0 | −813 |
 | **P9d** ✅ | Restored the 211 `# Imports` / `# Constants` / `# Classes` / `# Functions` section banners P9c wrongly deleted. | 0 | +211 |
 | **P11b** ✅ | PY7 — `catalogs.py`'s six tuple-splat tables became explicit keyword-argument constructor calls. | 0 | +1 |
+| **P11a** ✅ | Indentation normalised to tabs across 30 files (26 were space-indented, 5 mixed). Alignment padding and non-docstring string interiors left as spaces. | 0 | 0 |
 
 ### Remaining phases
 

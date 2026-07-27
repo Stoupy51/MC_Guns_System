@@ -35,10 +35,10 @@ FOOD_SPAN: int = FOOD_MAX - FOOD_MIN
 
 # Functions
 def main() -> None:
-    ns: str = Mem.ctx.project_id
-    version: str = Mem.ctx.project_version
+	ns: str = Mem.ctx.project_id
+	version: str = Mem.ctx.project_version
 
-    write_load_file(f"""
+	write_load_file(f"""
 # Stamina system (Black Ops style) — per-player stamina state
 scoreboard objectives add {ns}.stam dummy
 scoreboard objectives add {ns}.stam_max dummy
@@ -52,18 +52,18 @@ scoreboard objectives add {ns}.stam_seen dummy
 scoreboard objectives add {ns}.stam_dirty dummy
 """)
 
-    # player/tick runs `as @e[type=player] at @s`.
-    # One in_game flag is set at a time, so at most one branch fires; spectators are downed or dead.
-    gate: str = f"execute if score #any_game_active {ns}.data matches 1 unless entity @s[gamemode=spectator]"
-    write_versioned_function("player/tick", f"""
+	# player/tick runs `as @e[type=player] at @s`.
+	# One in_game flag is set at a time, so at most one branch fires; spectators are downed or dead.
+	gate: str = f"execute if score #any_game_active {ns}.data matches 1 unless entity @s[gamemode=spectator]"
+	write_versioned_function("player/tick", f"""
 # Stamina (Black Ops style): drain while sprinting, block sprint when winded, regen while resting
 {gate} if score @s {ns}.mp.in_game matches 1 run function {ns}:v{version}/player/stamina_tick
 {gate} if score @s {ns}.mi.in_game matches 1 run function {ns}:v{version}/player/stamina_tick
 {gate} if score @s {ns}.zb.in_game matches 1 run function {ns}:v{version}/player/stamina_tick
 """)
 
-    # Per-player stamina tick (@s = in-game, non-spectating player, at @s)
-    write_versioned_function("player/stamina_tick", f"""
+	# Per-player stamina tick (@s = in-game, non-spectating player, at @s)
+	write_versioned_function("player/stamina_tick", f"""
 # First tick in this game (or a fresh late-joiner / respawn): start at full stamina. stam_seen is
 # reset to 0 at game start (see regen_enable_lines) and on respawn/revive, so this re-inits then.
 execute if score @s {ns}.stam_seen matches 0 run function {ns}:v{version}/player/stamina_init
@@ -107,7 +107,7 @@ execute if score @s {ns}.stam_out matches 1 run scoreboard players set #stam_t {
 function {ns}:v{version}/player/stamina_bar
 """)
 
-    write_versioned_function("player/stamina_init", f"""
+	write_versioned_function("player/stamina_init", f"""
 scoreboard players set @s {ns}.stam_max {STAM_MAX}
 scoreboard players operation @s {ns}.stam_max += @s {ns}.stam_bonus
 scoreboard players operation @s {ns}.stam = @s {ns}.stam_max
@@ -120,9 +120,9 @@ scoreboard players set @s {ns}.stam_seen 1
 scoreboard players set @s {ns}.stam_dirty 1
 """)
 
-    # Drive the bar toward #stam_t with 1-tick pulses.
-    # Clearing both effects first kills last tick's pulses and any saturation pin, so this owns the bar.
-    write_versioned_function("player/stamina_bar", f"""
+	# Drive the bar toward #stam_t with 1-tick pulses.
+	# Clearing both effects first kills last tick's pulses and any saturation pin, so this owns the bar.
+	write_versioned_function("player/stamina_bar", f"""
 effect clear @s minecraft:saturation
 effect clear @s minecraft:hunger
 

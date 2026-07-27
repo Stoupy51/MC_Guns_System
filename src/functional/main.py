@@ -9,11 +9,11 @@ from .helpers import special_objectives_lines
 
 # Functions
 def main() -> None:
-    ns: str = Mem.ctx.project_id
-    version: str = Mem.ctx.project_version
+	ns: str = Mem.ctx.project_id
+	version: str = Mem.ctx.project_version
 
-    # Write to load file
-    write_load_file(f"""
+	# Write to load file
+	write_load_file(f"""
 ## Define objectives
 # Used to tag players that should be selected by Multiplayer/Mission/Zombies functions (@a)
 # We use a scoreboard instead of tag so we can reset offline players
@@ -112,8 +112,8 @@ stopwatch create {ns}:clock
 scoreboard players set #real_prev {ns}.data 0
 """, prepend=True)
 
-    # Write to tick file
-    write_tick_file(
+	# Write to tick file
+	write_tick_file(
 f"""
 # Infinitely incrementing tick counter for general timing purposes
 scoreboard players add #total_tick {ns}.data 1
@@ -134,13 +134,13 @@ execute if score #tick_delta {ns}.data matches 41.. run scoreboard players set #
 execute as @e[type=player,sort=random] at @s run function {ns}:v{version}/player/tick
 """)
 
-    # Health regeneration tick hook (global — only runs during an active game)
-    write_versioned_function("player/tick", f"""
+	# Health regeneration tick hook (global — only runs during an active game)
+	write_versioned_function("player/tick", f"""
 # Health regeneration: Black Ops style — only active during a game
 execute if score #any_game_active {ns}.data matches 1 run function {ns}:v{version}/player/regen_tick
 """)
 
-    write_versioned_function("player/regen_tick", f"""
+	write_versioned_function("player/regen_tick", f"""
 # @s = any player during an active game
 # Damage detection via the auto-updated 'health' criterion (no player-NBT read)
 execute if score @s {ns}.health < @s {ns}.hp_prev run scoreboard players set @s {ns}.last_hit 0
@@ -155,62 +155,62 @@ execute if score @s {ns}.health >= #hp_max {ns}.data run return 0
 effect give @s minecraft:regeneration 3 2 true
 """)
 
-    # Add block tags
-    write_block_tags()
+	# Add block tags
+	write_block_tags()
 
-    # Entity tags to ignore when shooting
-    write_tag(f"{ns}:ignore", Mem.ctx.data.entity_type_tags, ["#bs.hitbox:intangible", "minecraft:interaction", "minecraft:experience_orb"])
+	# Entity tags to ignore when shooting
+	write_tag(f"{ns}:ignore", Mem.ctx.data.entity_type_tags, ["#bs.hitbox:intangible", "minecraft:interaction", "minecraft:experience_orb"])
 
-    # Loot table for getting username
-    Mem.ctx.data[ns].loot_tables["get_username"] = set_json_encoder(LootTable({
-        "type": "minecraft:block",
-        "pools": [
-            {
-                "rolls": 1,
-                "bonus_rolls": 0,
-                "entries": [
-                    {
-                        "type": "minecraft:item",
-                        "name": "minecraft:player_head",
-                        "functions": [
-                            {
-                                "function": "minecraft:fill_player_head",
-                                "entity": "this"
-                            }
-                        ]
-                    }
-                ]
-            }
-        ]
-    }))
+	# Loot table for getting username
+	Mem.ctx.data[ns].loot_tables["get_username"] = set_json_encoder(LootTable({
+		"type": "minecraft:block",
+		"pools": [
+			{
+				"rolls": 1,
+				"bonus_rolls": 0,
+				"entries": [
+					{
+						"type": "minecraft:item",
+						"name": "minecraft:player_head",
+						"functions": [
+							{
+								"function": "minecraft:fill_player_head",
+								"entity": "this"
+							}
+						]
+					}
+				]
+			}
+		]
+	}))
 
-    ## Register signal function tags (empty by default, other datapacks can add listeners) These are called at various events in the system, with relevant data stored in mgs:signals storage
-    signal_events: list[str] = [
-        "on_shoot",             # @s = shooter player, weapon data in mgs:signals
-        "on_hit_block",         # @s = raycast marker, block/position/weapon in mgs:signals
-        "on_reload",            # @s = reloading player, weapon data in mgs:signals
-        "on_zoom",              # @s = zooming player, weapon data in mgs:signals
-        "on_unzoom",            # @s = unzooming player, weapon data in mgs:signals
-        "on_switch",            # @s = player, weapon data in mgs:signals
-        "on_kill",              # @s = killer player, victim/weapon data in mgs:signals
-        "damage",           # @s = damaged entity, damage/weapon/attacker in mgs:input with
-        "on_explosion",         # @s = projectile entity, explosion data in mgs:signals
-        "on_headshot",          # @s = hit entity, damage/weapon in mgs:signals
-        "on_fire_mode_change",  # @s = player, weapon/new fire mode in mgs:signals
-    ]
-    for event in signal_events:
-        write_tag(f"signals/{event}", Mem.ctx.data[ns].function_tags, [])
+	## Register signal function tags (empty by default, other datapacks can add listeners) These are called at various events in the system, with relevant data stored in mgs:signals storage
+	signal_events: list[str] = [
+		"on_shoot",             # @s = shooter player, weapon data in mgs:signals
+		"on_hit_block",         # @s = raycast marker, block/position/weapon in mgs:signals
+		"on_reload",            # @s = reloading player, weapon data in mgs:signals
+		"on_zoom",              # @s = zooming player, weapon data in mgs:signals
+		"on_unzoom",            # @s = unzooming player, weapon data in mgs:signals
+		"on_switch",            # @s = player, weapon data in mgs:signals
+		"on_kill",              # @s = killer player, victim/weapon data in mgs:signals
+		"damage",           # @s = damaged entity, damage/weapon/attacker in mgs:input with
+		"on_explosion",         # @s = projectile entity, explosion data in mgs:signals
+		"on_headshot",          # @s = hit entity, damage/weapon in mgs:signals
+		"on_fire_mode_change",  # @s = player, weapon/new fire mode in mgs:signals
+	]
+	for event in signal_events:
+		write_tag(f"signals/{event}", Mem.ctx.data[ns].function_tags, [])
 
-    ## Setup special damage type
-    Mem.ctx.data[ns].damage_type["bullet"] = set_json_encoder(DamageType({"exhaustion": 0, "message_id": "player", "scaling": "when_caused_by_living_non_player"}))
-    for tag in ["bypasses_cooldown", "no_knockback"]:
-        write_tag(tag, Mem.ctx.data["minecraft"].damage_type_tags, [f"{ns}:bullet"])
-    write_versioned_function("utils/damage", f"$damage $(target) $(amount) {ns}:bullet by $(attacker)")
-    # Unattributed variant: no "by <attacker>", so team friendlyFire=false can't cancel it (used for self-inflicted explosion damage, where the shooter and victim share a team).
-    write_versioned_function("utils/damage_plain", "$damage $(target) $(amount) minecraft:explosion")
-    # Both signal_and_damage variants open with this: if the hit would kill a player who is in an active game, hand off to that mode's simulated death instead of letting the damage land.
-    lethal_hit: str = f"if score #incoming_dmg {ns}.data >= #victim_hp {ns}.data run return run function {ns}:v{version}"
-    lethal_handoff: str = f"""
+	## Setup special damage type
+	Mem.ctx.data[ns].damage_type["bullet"] = set_json_encoder(DamageType({"exhaustion": 0, "message_id": "player", "scaling": "when_caused_by_living_non_player"}))
+	for tag in ["bypasses_cooldown", "no_knockback"]:
+		write_tag(tag, Mem.ctx.data["minecraft"].damage_type_tags, [f"{ns}:bullet"])
+	write_versioned_function("utils/damage", f"$damage $(target) $(amount) {ns}:bullet by $(attacker)")
+	# Unattributed variant: no "by <attacker>", so team friendlyFire=false can't cancel it (used for self-inflicted explosion damage, where the shooter and victim share a team).
+	write_versioned_function("utils/damage_plain", "$damage $(target) $(amount) minecraft:explosion")
+	# Both signal_and_damage variants open with this: if the hit would kill a player who is in an active game, hand off to that mode's simulated death instead of letting the damage land.
+	lethal_hit: str = f"if score #incoming_dmg {ns}.data >= #victim_hp {ns}.data run return run function {ns}:v{version}"
+	lethal_handoff: str = f"""
 # Check if target is a player in an active game and damage would be lethal -> simulate death
 # (missions needs the state check: mi.in_game is an opt-in flag that is already set in the lobby)
 execute store result score #incoming_dmg {ns}.data run data get storage {ns}:input with.amount 10
@@ -219,15 +219,15 @@ execute if entity @s[type=player,scores={{{ns}.mp.in_game=1..}}] {lethal_hit}/mu
 execute if data storage {ns}:missions game{{state:"active"}} if entity @s[type=player,scores={{{ns}.mi.in_game=1..}}] {lethal_hit}/missions/simulate_death
 """.strip()
 
-    write_versioned_function("utils/signal_and_damage", f"""
+	write_versioned_function("utils/signal_and_damage", f"""
 {lethal_handoff}
 
 # Non-lethal or non-MP: normal damage + signals
 function {ns}:v{version}/utils/damage with storage {ns}:input with
 function #{ns}:signals/damage with storage {ns}:input with
 """)
-    # Same flow as signal_and_damage but applies plain (unattributed) damage.
-    write_versioned_function("utils/signal_and_damage_plain", f"""
+	# Same flow as signal_and_damage but applies plain (unattributed) damage.
+	write_versioned_function("utils/signal_and_damage_plain", f"""
 {lethal_handoff}
 
 # Non-lethal or non-MP: plain damage + signals
@@ -235,18 +235,18 @@ function {ns}:v{version}/utils/damage_plain with storage {ns}:input with
 function #{ns}:signals/damage with storage {ns}:input with
 """)
 
-    # Add bullet font (for actionbar)
-    textures_folder: str = Mem.ctx.meta.get("stewbeet", {}).get("textures_folder", "")
-    font: Font = Mem.ctx.assets.fonts.setdefault(f"{ns}:icons", Font({"providers": []}))
-    font.data["providers"].extend([
-        {"type": "bitmap","file": f"{ns}:font/bullet_full.png","ascent": 7,"height": 9,"chars": ["A"]},
-        {"type": "bitmap","file": f"{ns}:font/bullet_outline.png","ascent": 7,"height": 9,"chars": ["B"]},
-    ])
-    for icon_name in ["bullet_outline", "bullet_full"]:
-        Mem.ctx.assets[ns].textures[f"font/{icon_name}"] = texture_mcmeta(f"{textures_folder}/{icon_name}.png")
+	# Add bullet font (for actionbar)
+	textures_folder: str = Mem.ctx.meta.get("stewbeet", {}).get("textures_folder", "")
+	font: Font = Mem.ctx.assets.fonts.setdefault(f"{ns}:icons", Font({"providers": []}))
+	font.data["providers"].extend([
+		{"type": "bitmap","file": f"{ns}:font/bullet_full.png","ascent": 7,"height": 9,"chars": ["A"]},
+		{"type": "bitmap","file": f"{ns}:font/bullet_outline.png","ascent": 7,"height": 9,"chars": ["B"]},
+	])
+	for icon_name in ["bullet_outline", "bullet_full"]:
+		Mem.ctx.assets[ns].textures[f"font/{icon_name}"] = texture_mcmeta(f"{textures_folder}/{icon_name}.png")
 
-    # Random weapon function
-    write_versioned_function("utils/random_weapon", f"""
+	# Random weapon function
+	write_versioned_function("utils/random_weapon", f"""
 execute store result score #random {ns}.data run random value 1..31
 $execute if score #random {ns}.data matches 1 run loot replace entity @s $(slot) loot {ns}:i/m16a4
 $execute if score #random {ns}.data matches 2 run loot replace entity @s $(slot) loot {ns}:i/m16a4
@@ -281,114 +281,114 @@ $execute if score #random {ns}.data matches 30 run loot replace entity @s $(slot
 $execute if score #random {ns}.data matches 31 run loot replace entity @s $(slot) loot {ns}:i/m249
 """)
 
-    # Config menu (/function mgs:config), a dialog-based settings menu.
-    # The main dialog lists every setting as a button opening its own sub-dialog of value buttons.
-    # Picking a value runs the scoreboard command directly.
-    # Each value button is independent with no submit step, so opening the menu never resets untouched settings.
-    from .helpers import dialog_back_action, dialog_function, dialog_run_btn, dialog_show_btn, register_dialog, register_value_picker, split_emoji
+	# Config menu (/function mgs:config), a dialog-based settings menu.
+	# The main dialog lists every setting as a button opening its own sub-dialog of value buttons.
+	# Picking a value runs the scoreboard command directly.
+	# Each value button is independent with no submit step, so opening the menu never resets untouched settings.
+	from .helpers import dialog_back_action, dialog_function, dialog_run_btn, dialog_show_btn, register_dialog, register_value_picker, split_emoji
 
-    # --- Global Settings (server-wide fake-player scores) ---
-    rpg_opts = [
-        (str(i), f"/scoreboard players set #projectile_explosion_power {ns}.config {i}",
+	# --- Global Settings (server-wide fake-player scores) ---
+	rpg_opts = [
+		(str(i), f"/scoreboard players set #projectile_explosion_power {ns}.config {i}",
          "green" if i == 0 else "yellow",
          f"Set Projectile Explosion Power to {i}" + (" (disabled)" if i == 0 else ""))
-        for i in range(6)
-    ]
-    gren_opts = [
-        (str(i), f"/scoreboard players set #grenade_explosion_power {ns}.config {i}",
+		for i in range(6)
+	]
+	gren_opts = [
+		(str(i), f"/scoreboard players set #grenade_explosion_power {ns}.config {i}",
          "green" if i == 0 else "yellow",
          f"Set Grenade Explosion Power to {i}" + (" (disabled)" if i == 0 else ""))
-        for i in range(6)
-    ]
-    ma_opts = [
-        ("OG", f"/scoreboard players set #max_ammo_reload_weapons {ns}.config 0", "yellow", "Only refill magazines in inventory (OG zombies)"),
-        ("Recent", f"/scoreboard players set #max_ammo_reload_weapons {ns}.config 1", "green", "Also reload current weapon (recent zombies)"),
-    ]
-    dd_opts = [
-        ("OFF", f"/scoreboard players set #damage_debug {ns}.config 0", "red", "Disable global damage debug"),
-        ("ON", f"/scoreboard players set #damage_debug {ns}.config 1", "green", "Enable global damage debug (tellraw @a every hit)"),
-    ]
+		for i in range(6)
+	]
+	ma_opts = [
+		("OG", f"/scoreboard players set #max_ammo_reload_weapons {ns}.config 0", "yellow", "Only refill magazines in inventory (OG zombies)"),
+		("Recent", f"/scoreboard players set #max_ammo_reload_weapons {ns}.config 1", "green", "Also reload current weapon (recent zombies)"),
+	]
+	dd_opts = [
+		("OFF", f"/scoreboard players set #damage_debug {ns}.config 0", "red", "Disable global damage debug"),
+		("ON", f"/scoreboard players set #damage_debug {ns}.config 1", "green", "Enable global damage debug (tellraw @a every hit)"),
+	]
 
-    # --- Player Specials (self-only scores; commands run as the clicking player) ---
-    duration_opts = [("OFF", 0, "red"), ("10s", 200, "yellow"), ("30s", 600, "yellow"), ("60s", 1200, "yellow"), ("∞", 72000, "light_purple")]
-    percent_opts = [("0%", 0, "red"), ("20%", 20, "yellow"), ("50%", 50, "yellow"), ("80%", 80, "green")]
-    ik_opts = [(label, f"/scoreboard players set @s {ns}.special.instant_kill {v}", color,
-                f"Set instant kill {'off' if v == 0 else f'for {label}'}") for label, v, color in duration_opts]
-    ia_opts = [(label, f"/scoreboard players set @s {ns}.special.infinite_ammo {v}", color,
-                f"Set infinite ammo {'off' if v == 0 else f'for {label}'}") for label, v, color in duration_opts]
-    qr_opts = [(label, f"/scoreboard players set @s {ns}.special.quick_reload {v}", color,
-                f"Set quick reload to {label}") for label, v, color in percent_opts]
-    qs_opts = [(label, f"/scoreboard players set @s {ns}.special.quick_swap {v}", color,
-                f"Set quick swap to {label}") for label, v, color in percent_opts]
+	# --- Player Specials (self-only scores; commands run as the clicking player) ---
+	duration_opts = [("OFF", 0, "red"), ("10s", 200, "yellow"), ("30s", 600, "yellow"), ("60s", 1200, "yellow"), ("∞", 72000, "light_purple")]
+	percent_opts = [("0%", 0, "red"), ("20%", 20, "yellow"), ("50%", 50, "yellow"), ("80%", 80, "green")]
+	ik_opts = [(label, f"/scoreboard players set @s {ns}.special.instant_kill {v}", color,
+				f"Set instant kill {'off' if v == 0 else f'for {label}'}") for label, v, color in duration_opts]
+	ia_opts = [(label, f"/scoreboard players set @s {ns}.special.infinite_ammo {v}", color,
+				f"Set infinite ammo {'off' if v == 0 else f'for {label}'}") for label, v, color in duration_opts]
+	qr_opts = [(label, f"/scoreboard players set @s {ns}.special.quick_reload {v}", color,
+				f"Set quick reload to {label}") for label, v, color in percent_opts]
+	qs_opts = [(label, f"/scoreboard players set @s {ns}.special.quick_swap {v}", color,
+				f"Set quick swap to {label}") for label, v, color in percent_opts]
 
-    # Register every value sub-dialog: (sub_id, title, description, options)
-    value_dialogs = [
-        ("config/rpg_power", "RPG Explosion Power", "Server-wide projectile explosion power", rpg_opts),
-        ("config/grenade_power", "Grenade Explosion Power", "Server-wide grenade explosion power", gren_opts),
-        ("config/max_ammo", "Max Ammo Mode", "How the Max Ammo powerup refills weapons", ma_opts),
-        ("config/damage_debug", "Damage Debug", "Broadcast every hit's damage to chat", dd_opts),
-        ("config/instant_kill", "Instant Kill", "One-shot kills for a duration (self only)", ik_opts),
-        ("config/infinite_ammo", "Infinite Ammo", "No reloads needed for a duration (self only)", ia_opts),
-        ("config/quick_reload", "Quick Reload", "Reduce reload time (self only)", qr_opts),
-        ("config/quick_swap", "Quick Swap", "Reduce weapon-swap time (self only)", qs_opts),
-    ]
-    # Each value picker's Back button returns to its parent category (global / personal).
-    picker_back = {
-        "config/rpg_power": "config/global", "config/grenade_power": "config/global",
-        "config/max_ammo": "config/global", "config/damage_debug": "config/global",
-        "config/instant_kill": "config/personal", "config/infinite_ammo": "config/personal",
-        "config/quick_reload": "config/personal", "config/quick_swap": "config/personal",
-    }
-    for sub_id, title_text, desc, options in value_dialogs:
-        register_value_picker(sub_id, title_text, desc, options, back_dialog=picker_back[sub_id])
+	# Register every value sub-dialog: (sub_id, title, description, options)
+	value_dialogs = [
+		("config/rpg_power", "RPG Explosion Power", "Server-wide projectile explosion power", rpg_opts),
+		("config/grenade_power", "Grenade Explosion Power", "Server-wide grenade explosion power", gren_opts),
+		("config/max_ammo", "Max Ammo Mode", "How the Max Ammo powerup refills weapons", ma_opts),
+		("config/damage_debug", "Damage Debug", "Broadcast every hit's damage to chat", dd_opts),
+		("config/instant_kill", "Instant Kill", "One-shot kills for a duration (self only)", ik_opts),
+		("config/infinite_ammo", "Infinite Ammo", "No reloads needed for a duration (self only)", ia_opts),
+		("config/quick_reload", "Quick Reload", "Reduce reload time (self only)", qr_opts),
+		("config/quick_swap", "Quick Swap", "Reduce weapon-swap time (self only)", qs_opts),
+	]
+	# Each value picker's Back button returns to its parent category (global / personal).
+	picker_back = {
+		"config/rpg_power": "config/global", "config/grenade_power": "config/global",
+		"config/max_ammo": "config/global", "config/damage_debug": "config/global",
+		"config/instant_kill": "config/personal", "config/infinite_ammo": "config/personal",
+		"config/quick_reload": "config/personal", "config/quick_swap": "config/personal",
+	}
+	for sub_id, title_text, desc, options in value_dialogs:
+		register_value_picker(sub_id, title_text, desc, options, back_dialog=picker_back[sub_id])
 
-    # --- Configuration dialog, organized into categories (by scope) ---
-    # The top-level menu is a short list of categories; each opens its own sub-dialog whose Back button returns to the top-level config.
-    # Leaf value pickers Back to their category (above).
-    def register_category(sub_id: str, title: str, actions: list[dict[str, str]]) -> None:
-        register_dialog(sub_id, {
-            "type": "minecraft:multi_action",
-            "title": split_emoji(title, color="gold", bold=True),
-            "actions": actions,
-            # Each category lists items of a single kind (settings / mode links) → one column.
-            "columns": 1,
-            "exit_action": dialog_back_action("config", tooltip="Return to configuration"),
-        })
+	# --- Configuration dialog, organized into categories (by scope) ---
+	# The top-level menu is a short list of categories; each opens its own sub-dialog whose Back button returns to the top-level config.
+	# Leaf value pickers Back to their category (above).
+	def register_category(sub_id: str, title: str, actions: list[dict[str, str]]) -> None:
+		register_dialog(sub_id, {
+			"type": "minecraft:multi_action",
+			"title": split_emoji(title, color="gold", bold=True),
+			"actions": actions,
+			# Each category lists items of a single kind (settings / mode links) → one column.
+			"columns": 1,
+			"exit_action": dialog_back_action("config", tooltip="Return to configuration"),
+		})
 
-    register_category("config/global", "⚙ Global Settings", [
-        dialog_show_btn(f"{ns}:config/rpg_power", "RPG Explosion Power", "Server-wide projectile explosion power", "red"),
-        dialog_show_btn(f"{ns}:config/grenade_power", "Grenade Explosion Power", "Server-wide grenade explosion power", "gold"),
-        dialog_show_btn(f"{ns}:config/max_ammo", "Max Ammo Mode", "How the Max Ammo powerup refills weapons", "aqua"),
-        dialog_show_btn(f"{ns}:config/damage_debug", "Damage Debug", "Broadcast every hit's damage to chat", "yellow"),
-    ])
-    register_category("config/personal", "⚡ Personal Cheats", [
-        dialog_show_btn(f"{ns}:config/instant_kill", "Instant Kill", "One-shot kills for a duration (self only)", "red"),
-        dialog_show_btn(f"{ns}:config/infinite_ammo", "Infinite Ammo", "No reloads needed for a duration (self only)", "gold"),
-        dialog_show_btn(f"{ns}:config/quick_reload", "Quick Reload", "Reduce reload time (self only)", "green"),
-        dialog_show_btn(f"{ns}:config/quick_swap", "Quick Swap", "Reduce weapon-swap time (self only)", "aqua"),
-    ])
-    # The three game-mode setups sit directly on the first page instead of behind a "Game Modes" category — opening a mode used to cost two clicks for no benefit.
-    # There is no "Players & Teams" category either: team assignment only makes sense in the context of one mode, and every mode's setup dialog already carries its own "Manage Players" button.
-    config_actions = [
-        # Row 1: the game modes, side by side (see columns=3 below)
-        dialog_show_btn(f"{ns}:multiplayer/setup", "⚔ Multiplayer", "Open the multiplayer game setup menu", "red"),
-        dialog_show_btn(f"{ns}:zombies/setup", "🧟 Zombies", "Open the zombies setup menu", "green"),
-        dialog_show_btn(f"{ns}:missions/setup", "🎯 Missions", "Open the mission setup menu", "gold"),
-        # Row 2: settings and tools
-        dialog_show_btn(f"{ns}:config/global", "⚙ Global Settings", "Server-wide gameplay settings", "gold"),
-        dialog_show_btn(f"{ns}:config/personal", "⚡ Personal Cheats", "Self-only powerups", "light_purple"),
-        dialog_run_btn("🗺 Map Editor", f"/function {ns}:v{version}/maps/editor/menu", "Open the map editor", "yellow"),
-    ]
-    register_dialog("config", {
-        "type": "minecraft:multi_action",
-        "title": split_emoji("☣ MGS Configuration ☣", color="gold", bold=True),
-        "body": [{"type": "minecraft:plain_message", "contents": {"text": "Pick a game mode, or a settings category", "color": "gray"}}],
-        "actions": config_actions,
-        # 3 columns lays the actions out as two rows: the game modes, then settings + tools.
-        "columns": 3,
-        "exit_action": {"label": {"translate": "gui.done"}},
-    })
+	register_category("config/global", "⚙ Global Settings", [
+		dialog_show_btn(f"{ns}:config/rpg_power", "RPG Explosion Power", "Server-wide projectile explosion power", "red"),
+		dialog_show_btn(f"{ns}:config/grenade_power", "Grenade Explosion Power", "Server-wide grenade explosion power", "gold"),
+		dialog_show_btn(f"{ns}:config/max_ammo", "Max Ammo Mode", "How the Max Ammo powerup refills weapons", "aqua"),
+		dialog_show_btn(f"{ns}:config/damage_debug", "Damage Debug", "Broadcast every hit's damage to chat", "yellow"),
+	])
+	register_category("config/personal", "⚡ Personal Cheats", [
+		dialog_show_btn(f"{ns}:config/instant_kill", "Instant Kill", "One-shot kills for a duration (self only)", "red"),
+		dialog_show_btn(f"{ns}:config/infinite_ammo", "Infinite Ammo", "No reloads needed for a duration (self only)", "gold"),
+		dialog_show_btn(f"{ns}:config/quick_reload", "Quick Reload", "Reduce reload time (self only)", "green"),
+		dialog_show_btn(f"{ns}:config/quick_swap", "Quick Swap", "Reduce weapon-swap time (self only)", "aqua"),
+	])
+	# The three game-mode setups sit directly on the first page instead of behind a "Game Modes" category — opening a mode used to cost two clicks for no benefit.
+	# There is no "Players & Teams" category either: team assignment only makes sense in the context of one mode, and every mode's setup dialog already carries its own "Manage Players" button.
+	config_actions = [
+		# Row 1: the game modes, side by side (see columns=3 below)
+		dialog_show_btn(f"{ns}:multiplayer/setup", "⚔ Multiplayer", "Open the multiplayer game setup menu", "red"),
+		dialog_show_btn(f"{ns}:zombies/setup", "🧟 Zombies", "Open the zombies setup menu", "green"),
+		dialog_show_btn(f"{ns}:missions/setup", "🎯 Missions", "Open the mission setup menu", "gold"),
+		# Row 2: settings and tools
+		dialog_show_btn(f"{ns}:config/global", "⚙ Global Settings", "Server-wide gameplay settings", "gold"),
+		dialog_show_btn(f"{ns}:config/personal", "⚡ Personal Cheats", "Self-only powerups", "light_purple"),
+		dialog_run_btn("🗺 Map Editor", f"/function {ns}:v{version}/maps/editor/menu", "Open the map editor", "yellow"),
+	]
+	register_dialog("config", {
+		"type": "minecraft:multi_action",
+		"title": split_emoji("☣ MGS Configuration ☣", color="gold", bold=True),
+		"body": [{"type": "minecraft:plain_message", "contents": {"text": "Pick a game mode, or a settings category", "color": "gray"}}],
+		"actions": config_actions,
+		# 3 columns lays the actions out as two rows: the game modes, then settings + tools.
+		"columns": 3,
+		"exit_action": {"label": {"translate": "gui.done"}},
+	})
 
-    # /function mgs:config now opens the (inline) dialog
-    write_function(f"{ns}:config", f"function {dialog_function('config')}")
+	# /function mgs:config now opens the (inline) dialog
+	write_function(f"{ns}:config", f"function {dialog_function('config')}")
 
