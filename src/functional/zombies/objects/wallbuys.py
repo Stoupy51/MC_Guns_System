@@ -304,9 +304,7 @@ tellraw @s [{MGS_TAG},{{"text":"Ammo is already full. Refunded ","color":"red"}}
 		for wid, (mag_id, _, _) in ZombiesCommon.build_weapon_magazine_data().items()
 	])
 
-	write_versioned_function("zombies/wallbuys/lookup_magazine_id", f"""
-{magazine_lookup_cmds}
-""")
+	write_versioned_function("zombies/wallbuys/lookup_magazine_id", magazine_lookup_cmds)
 
 	write_versioned_function("zombies/wallbuys/lookup_weapon", f"""
 $data modify storage {ns}:temp _wb_weapon set from storage {ns}:zombies wallbuy_data."$(id)"

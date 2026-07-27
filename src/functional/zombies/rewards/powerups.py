@@ -255,9 +255,7 @@ function {ns}:v{version}/zombies/powerups/spawn_display with storage {ns}:temp _
 		f'label:\'{{"text":"{v.display}","color":"{v.color}","bold":true}}\'}}'
 		for pu_id, v in POWERUP_TYPES.items()
 	)
-	write_versioned_function("zombies/powerups/spawn_display", f"""
-{dispatch_lines}
-""")
+	write_versioned_function("zombies/powerups/spawn_display", dispatch_lines)
 
 	# Shared spawner (macro: x, y, z, uid, item, type_num, label)
 	write_versioned_function("zombies/powerups/spawn_type", f"""
@@ -358,9 +356,7 @@ execute as @a[tag={ns}.downed_spectator,scores={{{ns}.zb.in_game=1}}] if score @
 		f"execute if score #pu_type_pickup {ns}.data matches {v.type_num} run function {ns}:v{version}/zombies/powerups/activate/{pu_id}"
 		for pu_id, v in POWERUP_TYPES.items()
 	)
-	write_versioned_function("zombies/powerups/dispatch_activate", f"""
-{dispatch_activate_lines}
-""")
+	write_versioned_function("zombies/powerups/dispatch_activate", dispatch_activate_lines)
 
 	# Activation functions
 

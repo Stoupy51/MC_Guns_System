@@ -523,14 +523,13 @@ tag @a[tag={ns}.give_class_menu] remove {ns}.give_class_menu
 """)
 
 	## Join Ongoing Mission (late-joiner support)
-	write_versioned_function("missions/join_game", f"""
-{FunctionalHelpers.late_join_flow_lines(
-	ns,
-	"missions",
-	f"{ns}.mi.in_game",
-	"No active mission to join!",
-	"You are already in the mission!",
-	f"""
+	write_versioned_function("missions/join_game", FunctionalHelpers.late_join_flow_lines(
+		ns,
+		"missions",
+		f"{ns}.mi.in_game",
+		"No active mission to join!",
+		"You are already in the mission!",
+		f"""
 scoreboard players set @s {ns}.mi.in_game 1
 scoreboard players set @s {ns}.mp.team 1
 team join {ns}.blue @s
@@ -539,12 +538,11 @@ scoreboard players set @s {ns}.mi.deaths 0
 scoreboard players set @s {ns}.mp.death_count 0
 scoreboard players set @s {ns}.mp.spectate_timer 0
 """,
-	f"{ns}:v{version}/missions/respawn_tp",
-	"joined the mission!",
-	"green",
-	post_class_lines=f"item replace entity @s hotbar.3 with compass[custom_data={{{ns}:{{compass:true}}}}]",
-)}
-""")
+		f"{ns}:v{version}/missions/respawn_tp",
+		"joined the mission!",
+		"green",
+		post_class_lines=f"item replace entity @s hotbar.3 with compass[custom_data={{{ns}:{{compass:true}}}}]",
+	))
 
 	# Spawn Point Markers.
 	write_versioned_function("missions/summon_spawns", f"""

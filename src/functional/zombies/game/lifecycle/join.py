@@ -11,14 +11,13 @@ def write_zombies_join() -> None:
 	version: str = Mem.ctx.project_version
 
 	## Join Ongoing Zombies Game (late-joiner support)
-	write_versioned_function("zombies/join_game", f"""
-{FunctionalHelpers.late_join_flow_lines(
-	ns,
-	"zombies",
-	f"{ns}.zb.in_game",
-	"No active zombies game to join!",
-	"You are already in the zombies game!",
-	f"""
+	write_versioned_function("zombies/join_game", FunctionalHelpers.late_join_flow_lines(
+		ns,
+		"zombies",
+		f"{ns}.zb.in_game",
+		"No active zombies game to join!",
+		"You are already in the zombies game!",
+		f"""
 scoreboard players set @s {ns}.zb.in_game 1
 team join {ns}.zombies @s
 scoreboard players set @s {ns}.zb.points 500
@@ -33,17 +32,16 @@ scoreboard players set @s {ns}.mp.death_count 0
 attribute @s minecraft:max_health base reset
 attribute @s minecraft:entity_interaction_range base set 5
 """,
-	f"{ns}:v{version}/zombies/respawn_tp",
-	"joined the zombies game!",
-	"dark_green",
-	post_class_lines=f"scoreboard players operation @s {ns}.zb.prev_kills = @s {ns}.total_kills",
-	class_menu_lines=(
-		"# Zombies has no class selection: give the fixed starting loadout (knife + pistol), matching "
-		"the start function\n"
-		f"function {ns}:v{version}/zombies/inventory/give_starting_loadout"
-	),
-)}
-""")
+		f"{ns}:v{version}/zombies/respawn_tp",
+		"joined the zombies game!",
+		"dark_green",
+		post_class_lines=f"scoreboard players operation @s {ns}.zb.prev_kills = @s {ns}.total_kills",
+		class_menu_lines=(
+			"# Zombies has no class selection: give the fixed starting loadout (knife + pistol), matching "
+			"the start function\n"
+			f"function {ns}:v{version}/zombies/inventory/give_starting_loadout"
+		),
+	))
 
 	# Kill points, tracked via the totalKillCount stat delta so every kill type counts.
 	write_versioned_function("zombies/check_kill_points", f"""
