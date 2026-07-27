@@ -7,12 +7,20 @@ from ..helpers import MGS_TAG, FunctionalHelpers
 from .rewards.powerups import POWERUP_TYPES
 
 # Constants
-# Button emoji per power-up for the admin Force Power-Up menu (falls back to ⚡).
 PU_ADMIN_EMOJI: dict[str, str] = {
-	"max_ammo": "📦", "insta_kill": "💀", "double_points": "💰", "carpenter": "🔨",
-	"nuke": "☢", "unlimited_ammo": "🔫", "random_perk": "🧪", "free_pap": "💠",
-	"cash_drop": "💵", "fire_sale": "🏷", "bonfire_sale": "🔥",
+	"max_ammo": "📦",
+	"insta_kill": "💀",
+	"double_points": "💰",
+	"carpenter": "🔨",
+	"nuke": "☢",
+	"unlimited_ammo": "🔫",
+	"random_perk": "🧪",
+	"free_pap": "💠",
+	"cash_drop": "💵",
+	"fire_sale": "🏷",
+	"bonfire_sale": "🔥",
 }
+""" Button emoji per power-up for the admin Force Power-Up menu (falls back to ⚡). """
 
 # Functions
 def generate_zombies_menus() -> None:
