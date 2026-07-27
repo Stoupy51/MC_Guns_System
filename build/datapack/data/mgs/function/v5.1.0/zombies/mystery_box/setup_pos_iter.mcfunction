@@ -26,6 +26,11 @@ execute as @n[tag=mgs.mb_new] at @s run tp @s ^ ^2 ^0.3
 scoreboard players add #mb_box_counter mgs.data 1
 scoreboard players operation @n[tag=mgs.mb_new] mgs.mb.box = #mb_box_counter mgs.data
 
+# Record this box's location name, defaulting to "" so the list stays aligned with the ids
+data modify storage mgs:temp _mb_name set value ""
+execute if data storage mgs:temp _mb_iter[0].location_name run data modify storage mgs:temp _mb_name set from storage mgs:temp _mb_iter[0].location_name
+data modify storage mgs:zombies mystery_box.names append from storage mgs:temp _mb_name
+
 # Tag entities that can_start_on
 data modify storage mgs:temp can_start_on set from storage mgs:temp _mb_iter[0].can_start_on
 execute if data storage mgs:temp {can_start_on:1b} run tag @n[tag=mgs.mb_new] add mgs.mb_can_start

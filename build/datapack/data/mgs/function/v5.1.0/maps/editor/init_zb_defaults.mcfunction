@@ -14,7 +14,7 @@ data modify storage mgs:temp map_edit.zb_defaults.trap set value {price:1000,typ
 data modify storage mgs:temp map_edit.zb_defaults.perk_machine set value {name:"",price:-1,partial_price:0,perk_id:"juggernog",power:1b,display_item:"",item_model:""}
 data modify storage mgs:temp map_edit.zb_defaults.wunderfizz set value {name:"Der Wunderfizz",price:1500,power:1b,all_perks:0b,can_start_on:1b,display_item:"",item_model:""}
 data modify storage mgs:temp map_edit.zb_defaults.pap_machine set value {name:"Pack-a-Punch",price:5000,power:1b,display_item:"",item_model:""}
-data modify storage mgs:temp map_edit.zb_defaults.mystery_box_pos set value {can_start_on:1b,display_item:"",item_model:""}
+data modify storage mgs:temp map_edit.zb_defaults.mystery_box_pos set value {can_start_on:1b,display_item:"",item_model:"",location_name:""}
 data modify storage mgs:temp map_edit.zb_defaults.power_switch set value {}
 data modify storage mgs:temp map_edit.zb_defaults.barrier set value {block_enabled:{Name:"minecraft:oak_fence_gate",Properties:{open:"false"}},block_disabled:{Name:"minecraft:oak_fence_gate",Properties:{open:"true"}},radius:2}
 

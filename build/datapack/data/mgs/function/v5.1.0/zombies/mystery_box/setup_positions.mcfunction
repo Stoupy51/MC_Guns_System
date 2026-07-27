@@ -6,6 +6,10 @@
 
 # Summon mystery box markers at map positions
 scoreboard players set #mb_box_counter mgs.data 0
+
+# Location names, appended in box-id order so names[id - 1] is that box's name ("" when unnamed)
+data modify storage mgs:zombies mystery_box.names set value []
+
 data modify storage mgs:temp _mb_iter set from storage mgs:zombies game.map.mystery_box.positions
 execute if data storage mgs:temp _mb_iter[0] run function mgs:v5.1.0/zombies/mystery_box/setup_pos_iter
 
