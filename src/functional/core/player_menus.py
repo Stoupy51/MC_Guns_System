@@ -10,9 +10,11 @@ runs as the clicker, so it wraps the action in `execute as @a[scores={bs.id=<N>}
 
 """
 # ruff: noqa: E501
+# Imports
 from stewbeet import LootTable, Mem, set_json_encoder, write_versioned_function
 
 
+# Functions
 def write_player_menus() -> None:
 	ns: str = Mem.ctx.project_id
 	version: str = Mem.ctx.project_version

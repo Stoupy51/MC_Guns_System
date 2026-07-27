@@ -2,11 +2,13 @@
 
 Each cue is exactly one command, inlined at its call site via zb_sound() rather than emitted as a wrapper mcfunction — same sound, one fewer file and one fewer function dispatch per use.
 """
+# Imports
 from functools import cache
 
 from stewbeet import Mem
 
 
+# Functions
 @cache
 def _sound_table(ns: str) -> dict[str, str]:
 	""" Build the cue -> command table for a namespace (cached; ns is fixed within a build). """

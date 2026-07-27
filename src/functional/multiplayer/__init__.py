@@ -1,4 +1,5 @@
 """ Multiplayer mode entry point. """
+# Imports
 from .game import generate_game
 from .gamemodes import generate_gamemodes
 from .loadout import generate_loadouts
@@ -8,6 +9,7 @@ from .menus import generate_menus
 from .teams import generate_teams
 
 
+# Functions
 def main() -> None:
 	generate_game()
 	generate_gamemodes()

@@ -6,16 +6,19 @@ click is the RELOAD key here; fire mode is on the drop key (switch.py). The ench
 function live here, while the item components that arm it are attached to every gun in
 config/stats.py (see add_item).
 """
+# Imports
 from beet import Enchantment
 from stewbeet import Mem, write_versioned_function
 
 from ...config.stats import RELOAD_TIME
 
+# Constants
 ENCHANTMENT_ID: str = "left_click"
 """ Named for the input it detects, not the action it performs: the ID is baked into every gun item
 stack, and changing it needs a world restart to re-register (enchantments live in WORLD_REGISTRIES,
 which /reload does not touch). """
 
+# Functions
 def main() -> None:
 	ns: str = Mem.ctx.project_id
 	version: str = Mem.ctx.project_version

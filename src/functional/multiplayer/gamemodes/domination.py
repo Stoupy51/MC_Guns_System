@@ -1,9 +1,11 @@
 """ Domination: capture and hold three points for score over time. """
 # ruff: noqa: E501
+# Imports
 from ...helpers import MGS_TAG
 from .base import GameModeVariant
 
 
+# Classes
 class Domination(GameModeVariant):
 	""" Domination: capture and hold lettered zones (A-E) to earn points over time. """
 
@@ -212,6 +214,7 @@ kill @e[tag={ns}.dom_point]
 kill @e[tag={ns}.dom_label]
 """)
 
+# Functions
 def generate_domination() -> None:
 	""" Module-level entry point (preserved signature); delegates to :class:`Domination`. """
 	Domination()()

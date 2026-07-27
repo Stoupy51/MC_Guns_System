@@ -1,9 +1,11 @@
 """ Ejected bullet casings: summon, physics and cleanup. """
+# Imports
 from stewbeet import Mem, write_versioned_function
 
 from ...config.stats import CASING_BINORMAL, CASING_MODEL, CASING_NORMAL, CASING_OFFSET, CASING_TANGENT
 
 
+# Functions
 def main() -> None:
     ns: str = Mem.ctx.project_id
     version: str = Mem.ctx.project_version

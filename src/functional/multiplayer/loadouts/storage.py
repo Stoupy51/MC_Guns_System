@@ -1,7 +1,9 @@
 """ Persistent loadout storage and per-player id assignment. """
+# Imports
 from stewbeet import Mem, write_load_file, write_versioned_function
 
 
+# Functions
 def generate_storage() -> None:
 	ns: str = Mem.ctx.project_id
 	version: str = Mem.ctx.project_version

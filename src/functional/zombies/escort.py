@@ -14,8 +14,10 @@ Trader gotchas (verified in minecraft_source_code):
   1000 blocks down before the kill so the death poof is invisible.
 """
 # ruff: noqa: E501
+# Imports
 from stewbeet import Mem, write_load_file, write_tag, write_versioned_function
 
+# Constants
 MAX_ESCORTS: int = 16
 """ Max simultaneous escorts; stuck zombies beyond this use the teleport rescue instead. """
 
@@ -55,6 +57,7 @@ MONKEY_RELEASE: int = 4
 """ A monkey-escorted zombie stops riding and HOLDS within this many blocks of the thrown monkey,
 so zombies spread along their approach paths instead of stacking — well inside the 7-block blast. """
 
+# Functions
 def generate_zombies_escort() -> None:
 	ns: str = Mem.ctx.project_id
 	version: str = Mem.ctx.project_version

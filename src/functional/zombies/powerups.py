@@ -7,6 +7,7 @@ Visual: item entity + text_display.
 Pickup by proximity (1.5 blocks). 26.5s lifetime.
 """
 # ruff: noqa: E501
+# Imports
 from dataclasses import dataclass
 
 from stewbeet import LootTable, Mem, set_json_encoder, write_load_file, write_versioned_function
@@ -14,6 +15,7 @@ from stewbeet import LootTable, Mem, set_json_encoder, write_load_file, write_ve
 from ..helpers import MGS_TAG
 
 
+# Classes
 @dataclass(frozen=True)
 class PowerupType:
 	""" One power-up drop: its appearance, its dispatch number, and how it activates. """
@@ -42,6 +44,7 @@ class PowerupType:
 	end_sound: str = ""
 	""" Played once when a timed effect expires. """
 
+# Constants
 POWERUP_TYPES: dict[str, PowerupType] = {
 	"max_ammo":        PowerupType(item="minecraft:amethyst_shard",       display="Max Ammo",       color="aqua",         type_num=1, tier="common", sound="max_ammo", additional="max_ammo_additional"),
 	"insta_kill":      PowerupType(item="minecraft:fermented_spider_eye", display="Insta Kill",     color="red",          type_num=2, tier="common", duration=600, scoreboard="instant_kill",  bossbar_id="pu_insta_kill",     bb_color="red",    sound="insta_kill", end_sound="insta_kill_off"),
@@ -68,6 +71,7 @@ BONFIRE_SALE_DURATION: int = 600
 # Convenience view: only power-ups with a timed duration
 TIMED_POWERUPS: dict[str, PowerupType] = {k: v for k, v in POWERUP_TYPES.items() if v.duration}
 
+# Functions
 def generate_powerups() -> None:
 	ns: str = Mem.ctx.project_id
 	version: str = Mem.ctx.project_version

@@ -2,6 +2,7 @@
 
 Every perk and its behaviour is declared in PERK_DEFINITIONS.
 """
+# Imports
 from dataclasses import dataclass
 
 from stewbeet import Mem, write_load_file, write_tag, write_versioned_function
@@ -14,6 +15,7 @@ from .common import deny_cmd, deny_not_enough_points_cmd, game_active_guard_cmd
 from .revive import SOLO_QR_MAX
 
 
+# Classes
 @dataclass(frozen=True)
 class PerkDef:
 	""" A perk's identity and the commands that grant and revoke it.
@@ -32,6 +34,7 @@ class PerkDef:
 	persistent_score: bool = False
 	""" Skip the blanket score reset in lose_all — the perk manages its own score (quick_revive). """
 
+# Constants
 PERK_DEFINITIONS: dict[str, PerkDef] = {
 	"juggernog": PerkDef(
 		display_name="Juggernog",
@@ -240,6 +243,7 @@ PERK_DESCRIPTIONS: dict[str, list[str]] = {
 	"widows_wine": ["Grenades become sticky web grenades.", "Being hit bursts webbing around you.", "Stronger melee knife."],
 }
 
+# Functions
 def perk_effects_teardown(ns: str, selector: str) -> str:
 	""" Return the lines stripping every effect a zombies perk can leave on a player.
 

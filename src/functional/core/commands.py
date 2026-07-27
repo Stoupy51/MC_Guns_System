@@ -1,7 +1,9 @@
 """ Shared start/respawn command iteration and map-script tag helpers. """
+# Imports
 from stewbeet import Mem, write_tag, write_versioned_function
 
 
+# Functions
 def write_shared_command_functions() -> None:
 		ns: str = Mem.ctx.project_id
 		version: str = Mem.ctx.project_version

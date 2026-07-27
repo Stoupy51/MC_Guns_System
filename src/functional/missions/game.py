@@ -7,6 +7,7 @@ When all enemies are killed, the game ends with a performance score.
 """
 # ruff: noqa: E501
 
+# Imports
 from stewbeet import Mem, write_load_file, write_tag, write_tick_file, write_versioned_function
 
 from ..core.respawn_countdown import respawn_countdown_tick_lines
@@ -25,6 +26,7 @@ from ..helpers import (
 )
 
 
+# Functions
 def generate_missions_game() -> None:
 	""" Generates the missions (PvE co-op) game lifecycle and spawns. """
 	ns: str = Mem.ctx.project_id

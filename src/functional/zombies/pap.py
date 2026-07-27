@@ -3,6 +3,7 @@
 Resolves PAP upgrades at runtime from the selected gun's own stats.pap_stats.
 """
 # ruff: noqa: E501
+# Imports
 from stewbeet import ItemModifier, JsonDict, Mem, set_json_encoder, write_load_file, write_versioned_function
 
 from ...config.catalogs import SCOPE_VARIANTS
@@ -20,6 +21,7 @@ from ..helpers import MGS_TAG
 from .common import deny_cmd, deny_not_enough_points_cmd, game_active_guard_cmd
 
 
+# Functions
 def generate_pap() -> None:
 	ns: str = Mem.ctx.project_id
 	version: str = Mem.ctx.project_version

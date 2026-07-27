@@ -1,7 +1,9 @@
 """ Team assignment and the red/blue team definitions. """
+# Imports
 from stewbeet import Mem, write_versioned_function
 
 
+# Functions
 def generate_teams() -> None:
 	ns: str = Mem.ctx.project_id
 	version: str = Mem.ctx.project_version

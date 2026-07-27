@@ -1,6 +1,7 @@
 """ Per-player config menu and the trigger dispatch that applies its choices. """
 # ruff: noqa: E501
 
+# Imports
 from stewbeet import Mem, write_versioned_function
 
 from .helpers import MGS_TAG
@@ -56,6 +57,7 @@ from .multiplayer.loadouts import (
 )
 
 
+# Functions
 def main() -> None:
     ns: str = Mem.ctx.project_id
     version: str = Mem.ctx.project_version

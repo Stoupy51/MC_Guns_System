@@ -5,6 +5,7 @@ Wave-based survival mode with zombie spawning, points, perks, mystery box, wallb
 Map definitions are dynamic (stored in storage, registered via function tags).
 """
 # ruff: noqa: E501
+# Imports
 from stewbeet import Mem, write_load_file, write_tag, write_tick_file, write_versioned_function
 
 from ..core.spawning import write_summon_spawn_at, write_tp_player_at
@@ -23,6 +24,7 @@ from ..helpers import (
 )
 
 
+# Functions
 def generate_zombies_game() -> None:
 	""" Generates the zombies game lifecycle (rounds, co-op spawns, sidebar). """
 	ns: str = Mem.ctx.project_id

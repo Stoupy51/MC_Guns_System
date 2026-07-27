@@ -1,4 +1,5 @@
 """ Re-export constants from catalogs for backwards compatibility. """
+# Imports
 from .actions import generate_actions
 from .browsing import generate_browsing
 from .catalogs import *
@@ -7,6 +8,7 @@ from .editor import generate_editor
 from .storage import generate_storage
 
 
+# Functions
 def generate_custom_loadouts() -> None:
 	generate_storage()
 	generate_editor()

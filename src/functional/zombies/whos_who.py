@@ -11,6 +11,7 @@ zb.ww.id, NOT zb.downed_id, which a later normal down would overwrite and orphan
 Bleed/revive progress reuse the owner's normal scores so the revive core works unchanged.
 """
 # ruff: noqa: E501
+# Imports
 from stewbeet import Mem, write_load_file, write_versioned_function
 
 from ..core.feedback import zb_sound
@@ -19,6 +20,7 @@ from .perks import PERK_DEFINITIONS
 from .revive import BLEED_OUT_TICKS, revive_body_detect, revive_body_progress
 
 
+# Functions
 def generate_whos_who() -> None:
 	ns: str = Mem.ctx.project_id
 	version: str = Mem.ctx.project_version

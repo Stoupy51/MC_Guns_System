@@ -1,11 +1,13 @@
 """ Multiplayer setup and map selection dialogs. """
 # ruff: noqa: E501
 
+# Imports
 from stewbeet import Mem, write_versioned_function
 
 from ..helpers import dialog_back_action, dialog_function, dialog_run_btn, dialog_show_btn, register_dialog, register_value_picker
 
 
+# Functions
 def generate_menus() -> None:
 	ns: str = Mem.ctx.project_id
 	version: str = Mem.ctx.project_version

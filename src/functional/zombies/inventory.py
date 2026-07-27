@@ -2,6 +2,7 @@
 
 Handles strict zombies slot layout, slot-tagged items, and recovery from moved/dropped items. """
 # ruff: noqa: E501
+# Imports
 from stewbeet import Advancement, ItemModifier, JsonDict, Mem, set_json_encoder, write_versioned_function
 
 from ...config.stats import ALL_SLOTS, CAPACITY, LETHAL_GRENADE_IDS, REMAINING_BULLETS
@@ -9,6 +10,7 @@ from ..helpers import knife_item_snbt
 from .perks import PERK_DEFINITIONS, PERK_DESCRIPTIONS
 
 
+# Functions
 def generate_zombies_inventory() -> None:
 	ns: str = Mem.ctx.project_id
 	version: str = Mem.ctx.project_version

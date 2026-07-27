@@ -1,4 +1,5 @@
 """ Weapon subsystem entry point; submodules run in dependency order. """
+# Imports
 from ..helpers import write_shared_projectile_functions
 from .actionbar import main as actionbar_main
 from .ammo import main as ammo_main
@@ -16,6 +17,7 @@ from .update_lore import main as update_lore_main
 from .zoom import main as zoom_main
 
 
+# Functions
 def main() -> None:
     write_shared_projectile_functions()  # Shared by the projectile and grenade systems
     common_main()                        # Right-click detection

@@ -7,6 +7,7 @@ On use it cycles perk bottles, lands on a random perk the buyer doesn't own, and
 The pool is the shared "available perk pool" helper (zombies/perks/pool/*): perks with a machine on this map, widened to every perk when the editor `all_perks` flag is set (BO2 Origins behaviour).
 """
 # ruff: noqa: E501
+# Imports
 from stewbeet import Mem, write_load_file, write_versioned_function
 
 from ..core.feedback import zb_sound
@@ -14,6 +15,7 @@ from ..helpers import MGS_TAG
 from .common import deny_cmd, deny_not_enough_points_cmd, game_active_guard_cmd
 from .perks import PERK_DEFINITIONS
 
+# Constants
 # Roam move animation length (ticks).
 # The bear rises, the machine relocates (model swap) at the midpoint, then settles.
 # In-engine timing polish is a HUMAN eyeball pass.
@@ -25,6 +27,7 @@ WF_MOVE_BEAR_POOF: int = 48
 # Uses on the active machine before it may roll to roam (mirrors the Mystery Box's 4-pull threshold)
 WF_MOVE_THRESHOLD: int = 4
 
+# Functions
 def _orb_model_cmd(ns: str, pid: str) -> str:
 	""" The command setting the spinning orb's item to a perk's bottle model. """
 	return f'data modify entity @s item set value {{id:"minecraft:potion",count:1,components:{{"minecraft:item_model":"{ns}:perk_machine_{pid}"}}}}'

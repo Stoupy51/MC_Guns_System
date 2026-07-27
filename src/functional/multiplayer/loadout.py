@@ -1,10 +1,12 @@
 """ Applies a loadout to a player, slot by slot. """
+# Imports
 from stewbeet import Mem, write_load_file, write_versioned_function
 
 from ..helpers import knife_item_snbt
 from .classes import CLASS_IDS, CLASSES, build_class_snbt
 
 
+# Functions
 def generate_loadouts() -> None:
 	ns: str = Mem.ctx.project_id
 	version: str = Mem.ctx.project_version

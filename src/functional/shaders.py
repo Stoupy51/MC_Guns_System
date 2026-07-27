@@ -14,10 +14,12 @@ Key constraints, each learned the hard way:
 - Range-based colour detection, since dust randomizes each channel by ~0.48-1.0x.
 Requires Fabulous graphics, the resource pack active, and the marker in front of the camera.
 """
+# Imports
 from beet import FragmentShader, PostEffect, Texture, VertexShader
 from PIL import Image
 from stewbeet import JsonDict, Mem, set_json_encoder, write_versioned_function
 
+# Constants
 MARKER_MODES: dict[str, str] = {
 	"flash":  "(0,0)  R only          [0.02, 0.00, 0.00]",
 	"zoom":   "(1,0)  G encodes level [0.02, 0.25/0.02/0.08, 0.00] = none/x3/x4",
@@ -817,6 +819,7 @@ void main() {
 # Barrel distortion strength, shared by the scene zoom pass and the outline zoom pass
 DISTORTION: float = 0.55
 
+# Functions
 def get_entity_outline_json(ns: str) -> JsonDict:
     """Build the entity outline post-effect pipeline JSON.
 

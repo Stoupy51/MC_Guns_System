@@ -1,5 +1,6 @@
 """ Map-editor element and mode definitions (data only; the generator lives in map_editor.py). """
 # ruff: noqa: E501
+# Imports
 from dataclasses import dataclass
 from dataclasses import field as dc_field
 from typing import Any
@@ -8,6 +9,7 @@ from stewbeet import JsonDict
 
 from .zombies.perks import PERK_DEFINITIONS, RECOMMENDED_PRICES
 
+# Constants
 MAX_MAPS = 50
 
 # Perk reference lines for the perk_machine tooltips, generated from the perk registry so they can never drift out of sync with the actual perks (ids grouped 5/line, prices as "Name N" grouped 3/line).
@@ -27,6 +29,7 @@ _PERK_PRICE_DOC: str = (
 	+ "\n".join(" · ".join(_PERK_PRICE_PAIRS[i:i + 3]) for i in range(0, len(_PERK_PRICE_PAIRS), 3))
 )
 
+# Classes
 # Element Definitions.
 @dataclass(frozen=True)
 class ElementDef:

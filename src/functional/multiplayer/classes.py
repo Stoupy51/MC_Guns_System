@@ -1,11 +1,14 @@
 """ Preset multiplayer classes and the SNBT builders for their dialog rows. """
+# Imports
 from stewbeet import JsonDict
 
 from ...config.catalogs import PERKS
 
+# Constants
 # Consumable magazine item IDs (stack count = bullet count, uses set_consumable_count modifier)
 CONSUMABLE_MAGS: set[str] = {"rpg7_rocket", "mosin_bullet", "m24_bullet", "spas12_shell", "m500_shell", "m590_shell", "element_115"}
 
+# Functions
 def make_slot_snbt(ns: str, slot: str, loot: str, count: int = 1, consumable: bool = False, bullets: int = 0) -> str:
     """ Build the SNBT string for a single loadout slot entry. """
     return f'{{slot:"{slot}",loot:"{ns}:i/{loot}",count:{count},consumable:{"1b" if consumable else "0b"},bullets:{bullets}}}'

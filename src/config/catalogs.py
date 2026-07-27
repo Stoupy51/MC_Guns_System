@@ -1,7 +1,9 @@
 """ Weapon, equipment and loadout-editor catalog constants. """
+# Imports
 from dataclasses import dataclass
 
 
+# Classes
 @dataclass(frozen=True)
 class Weapon:
     """ A primary weapon catalog entry. For consumable mags (shells/bullets),
@@ -49,6 +51,7 @@ class Perk:
     description: str
     score_name: str
 
+# Constants
 PRIMARY_WEAPONS: list[Weapon] = [Weapon(*_row) for _row in [
     # Assault Rifles
     ("ak47",   "AK-47",       "Assault Rifle", "ak47_mag",   3, True),

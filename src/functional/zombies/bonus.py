@@ -1,9 +1,11 @@
 """ Bonus effects granted by power-ups, such as Max Ammo refills. """
+# Imports
 from stewbeet import Mem, write_function, write_versioned_function
 
 from ...config.stats import ALL_SLOTS, BASE_WEAPON, CAPACITY, REMAINING_BULLETS
 
 
+# Functions
 def main() -> None:
     ns: str = Mem.ctx.project_id
     version: str = Mem.ctx.project_version

@@ -1,9 +1,11 @@
 """ Base for the five multiplayer game-mode variants (FFA, TDM, DOM, HP, SnD): removes the per-file ns/version boilerplate and the repeated `multiplayer/gamemodes/<key>/` path prefix. """
+# Imports
 from abc import ABC, abstractmethod
 
 from stewbeet import Mem, write_versioned_function
 
 
+# Classes
 class GameModeVariant(ABC):
     """ Abstract base for a single multiplayer game-mode (a strategy plugged into the mode).
 

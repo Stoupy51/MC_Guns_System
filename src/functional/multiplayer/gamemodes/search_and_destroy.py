@@ -1,9 +1,11 @@
 """ Search & Destroy: round-based bomb plant and defuse, no respawns. """
 # ruff: noqa: E501
+# Imports
 from ...helpers import MGS_TAG
 from .base import GameModeVariant
 
 
+# Classes
 class SearchAndDestroy(GameModeVariant):
 	""" Search & Destroy: round-based; attackers plant a bomb, defenders defuse it.
 	No respawns within a round; best-of-six with a side swap at halftime. """
@@ -273,6 +275,7 @@ kill @e[tag={ns}.snd_bomb]
 tag @a remove {ns}.snd_alive
 """)
 
+# Functions
 def generate_search_and_destroy() -> None:
 	""" Module-level entry point (preserved signature); delegates to :class:`SearchAndDestroy`. """
 	SearchAndDestroy()()
