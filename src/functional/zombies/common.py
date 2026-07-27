@@ -46,6 +46,21 @@ $tellraw @s [{MGS_TAG},{{"text":"You don't have enough points (","color":"red"}}
 		return f'function {ns}:v{version}/zombies/deny/not_enough_points {{score:"{price_score}",obj:"{obj}"}}'
 
 	@staticmethod
+	def gun_cd(ns: str) -> str:
+		""" Return the custom-data predicate body matching any gun item.
+
+		Args:
+			ns (str): The project namespace.
+		Returns:
+			str: The body of a `custom_data~` item predicate, braces included.
+
+		Examples:
+			>>> ZombiesCommon.gun_cd("mgs")
+			'{mgs:{gun:true}}'
+		"""
+		return "{" + ns + ":{gun:true}}"
+
+	@staticmethod
 	def build_weapon_magazine_data() -> dict[str, tuple[str, int, bool]]:
 		""" Build a mapping of weapon_id -> (magazine_id, magazine_count, is_consumable). """
 		weapon_mag_data: dict[str, tuple[str, int, bool]] = {}

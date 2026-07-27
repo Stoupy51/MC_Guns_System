@@ -13,7 +13,7 @@ def write_wallbuy_give() -> None:
 	ns: str = Mem.ctx.project_id
 	version: str = Mem.ctx.project_version
 
-	gun_cd: str = "{" + ns + ":{gun:true}}"
+	gun_cd: str = ZombiesCommon.gun_cd(ns)
 	mag_cd: str = "{" + ns + ":{magazine:true}}"
 
 	# Build weapon_id -> magazine_id mapping

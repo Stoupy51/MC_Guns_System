@@ -14,12 +14,15 @@ from ...core.feedback import ZombiesFeedback
 from ...helpers import MGS_TAG
 from ..common import ZombiesCommon
 
+# Constants
+REPAP_SCOPE_PRICE: int = 1000
+""" Cost of re-rolling scope and camo on a weapon already at max Pack-a-Punch level. """
 
 # Functions
 def generate_pap() -> None:
 	ns: str = Mem.ctx.project_id
 	version: str = Mem.ctx.project_version
-	gun_cd = "{" + ns + ":{gun:true}}"
+	gun_cd: str = ZombiesCommon.gun_cd(ns)
 
 	# Item modifier: copy upgraded stats from temp storage back into selected gun item.
 	pap_stats_modifier: JsonDict = {
@@ -551,8 +554,6 @@ $function {ns}:v{version}/zombies/bonus/reload_weapon_slot {{slot:"$(slot)"}}
 	deny_not_enough_points: str = ZombiesCommon.deny_not_enough_points_cmd(ns, version, "#pap_price")
 	deny_processing: str = ZombiesCommon.deny_cmd(ns, version, '{"text":"Already processing a weapon...","color":"yellow"}')
 	deny_not_your_weapon: str = ZombiesCommon.deny_cmd(ns, version, '{"text":"This upgraded weapon belongs to another player.","color":"red"}')
-
-	REPAP_SCOPE_PRICE: int = 1000
 
 	## Re-PAP at max level: scope/camo only randomization for a reduced price
 	write_versioned_function("zombies/pap/repap_scope_only", f"""
