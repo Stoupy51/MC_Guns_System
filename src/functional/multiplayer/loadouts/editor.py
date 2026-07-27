@@ -75,10 +75,36 @@ def empty_state() -> str:
 		'perks:[]}'
 	)
 
+def editor_fn(ns: str, version: str) -> str:
+	""" Return the versioned function path every editor cross-reference is written against.
+
+	Args:
+		ns (str):      The project namespace.
+		version (str): The project version.
+	Returns:
+		str: The namespaced folder holding the editor's functions.
+
+	Examples:
+		>>> editor_fn("mgs", "1.0.0")
+		'mgs:v1.0.0/multiplayer/editor'
+	"""
+	return f"{ns}:v{version}/multiplayer/editor"
+
+def write_static_dialog(ns: str, version: str, name: str, title: str, hint: str, actions_snbt: str, columns: int = 2, guard: str = "") -> None:
+	""" Write show_<name>: the shared skeleton filled in, then its own action list, then show. """
+	fn: str = editor_fn(ns, version)
+	write_versioned_function(f"multiplayer/editor/show_{name}", f"""
+{guard}function {fn}/recompute_points
+data modify storage {ns}:temp _dlg merge value {{title:'{{text:"Loadout - {title}",color:"gold",bold:true}}',hint:'{{text:"{hint}",color:"gray"}}',columns:{columns}}}
+function {fn}/show_static_dialog with storage {ns}:temp _dlg
+data modify storage {ns}:temp dialog.actions set value [{actions_snbt}]
+function {ns}:v{version}/multiplayer/show_dialog with storage {ns}:temp
+""")
+
 def generate_editor() -> None:
 	ns: str = Mem.ctx.project_id
 	version: str = Mem.ctx.project_version
-	fn = f"{ns}:v{version}/multiplayer/editor"
+	fn: str = editor_fn(ns, version)
 
 	## ==================================================================== Per-player editor state isolation Editor state is stored in {ns}:editor.{pid} (one per player).
 	## At dispatch start, we load to {ns}:temp editor; at end, save back.
@@ -288,16 +314,6 @@ exit_action:{{label:"Back",action:{{type:"run_command",command:"/trigger {ns}.pl
 }}
 """)
 
-	def write_static_dialog(name: str, title: str, hint: str, actions_snbt: str, columns: int = 2, guard: str = "") -> None:
-		""" Write show_<name>: the shared skeleton filled in, then its own action list, then show. """
-		write_versioned_function(f"multiplayer/editor/show_{name}", f"""
-{guard}function {fn}/recompute_points
-data modify storage {ns}:temp _dlg merge value {{title:'{{text:"Loadout - {title}",color:"gold",bold:true}}',hint:'{{text:"{hint}",color:"gray"}}',columns:{columns}}}
-function {fn}/show_static_dialog with storage {ns}:temp _dlg
-data modify storage {ns}:temp dialog.actions set value [{actions_snbt}]
-function {ns}:v{version}/multiplayer/show_dialog with storage {ns}:temp
-""")
-
 	## PRIMARY / SECONDARY weapon submenus: gun (or remove) → scope → camo
 
 	# Gun action lists (+ Remove button)
@@ -315,7 +331,7 @@ function {ns}:v{version}/multiplayer/show_dialog with storage {ns}:temp
 		f'tooltip:{{text:"Clear the primary weapon (refunds its points)"}},'
 		f'action:{{type:"run_command",command:"/trigger {ns}.player.config set {TRIG_REMOVE_PRIMARY}"}}}}'
 	)
-	write_static_dialog("primary_dialog", "Primary Weapon", f"Choose your primary weapon ({COST_PRIMARY_WEAPON} pt + {COST_PRIMARY_MAG} pt per magazine)", ",".join(primary_actions))
+	write_static_dialog(ns, version, "primary_dialog", "Primary Weapon", f"Choose your primary weapon ({COST_PRIMARY_WEAPON} pt + {COST_PRIMARY_MAG} pt per magazine)", ",".join(primary_actions))
 
 	remove_secondary_btn = (
 		f'{{label:["","\\ud83d\\uddd1 ",{{text:"Remove Secondary",color:"red"}}],'
@@ -334,7 +350,7 @@ function {ns}:v{version}/multiplayer/show_dialog with storage {ns}:temp
 			f'action:{{type:"run_command",command:"/trigger {ns}.player.config set {trig}"}}}}'
 		)
 	secondary_actions.append(remove_secondary_btn)
-	write_static_dialog("secondary_pistol_dialog", "Secondary Weapon", f"Choose your secondary weapon ({COST_SECONDARY_WEAPON} pt + {COST_SECONDARY_MAG} pt per magazine)", ",".join(secondary_actions))
+	write_static_dialog(ns, version, "secondary_pistol_dialog", "Secondary Weapon", f"Choose your secondary weapon ({COST_SECONDARY_WEAPON} pt + {COST_SECONDARY_MAG} pt per magazine)", ",".join(secondary_actions))
 
 	# Overkill secondary list: primaries (iron sights only, camo selectable)
 	overkill_actions: list[str] = []
@@ -347,7 +363,7 @@ function {ns}:v{version}/multiplayer/show_dialog with storage {ns}:temp
 			f'action:{{type:"run_command",command:"/trigger {ns}.player.config set {trig}"}}}}'
 		)
 	overkill_actions.append(remove_secondary_btn)
-	write_static_dialog("secondary_overkill_dialog", "Overkill Secondary", f"Choose a second primary ({COST_SECONDARY_WEAPON} pt + {COST_SECONDARY_MAG} pt per magazine)", ",".join(overkill_actions))
+	write_static_dialog(ns, version, "secondary_overkill_dialog", "Overkill Secondary", f"Choose a second primary ({COST_SECONDARY_WEAPON} pt + {COST_SECONDARY_MAG} pt per magazine)", ",".join(overkill_actions))
 
 	# Router: Overkill holders pick a primary as their secondary, everyone else picks a pistol
 	write_versioned_function("multiplayer/editor/show_secondary_dialog", f"""
@@ -483,12 +499,12 @@ function {fn}/hub
 		"1only": ("", "_1"),
 	}
 	for func_suffix, variants in suffix_variants.items():
-		write_static_dialog(
+		write_static_dialog(ns, version,
 			f"scope_primary_{func_suffix}", "Primary Scope",
 			f"Choose your optic (-{COST_PRIMARY_SCOPE} pt for any scope, iron sights free)",
 			scope_actions_snbt(TRIG_PRIMARY_SCOPE_BASE, variants, COST_PRIMARY_SCOPE),
 		)
-	write_static_dialog(
+	write_static_dialog(ns, version,
 		"scope_secondary_4only", "Secondary Scope",
 		f"Choose your secondary optic (-{COST_SECONDARY_SCOPE} pt for scope, iron sights free)",
 		scope_actions_snbt(TRIG_SECONDARY_SCOPE_BASE, ("", "_4"), COST_SECONDARY_SCOPE),
@@ -542,7 +558,7 @@ function {fn}/show_secondary_camo_dialog
 		("equip1", "Grenade 1 Camo", TRIG_EQUIP1_CAMO_BASE),
 		("equip2", "Grenade 2 Camo", TRIG_EQUIP2_CAMO_BASE),
 	]:
-		write_static_dialog(f"{prefix}_camo_dialog", title, "Choose your camo (free, cosmetic only)", camo_actions_snbt(trig_base))
+		write_static_dialog(ns, version, f"{prefix}_camo_dialog", title, "Choose your camo (free, cosmetic only)", camo_actions_snbt(trig_base))
 
 	def gen_pick_camo_lines(field: str, trig_base: int) -> str:
 		lines = ""
@@ -591,7 +607,7 @@ function {fn}/hub
 			f'action:{{type:"run_command",command:"/trigger {ns}.player.config set {trig}"}}}}'
 		)
 	guard_primary = f'execute if data storage {ns}:temp editor{{primary:""}} run return run function {fn}/hub\n'
-	write_static_dialog("primary_mags_dialog", "Primary Magazines", f"Select the number of magazines ({COST_PRIMARY_MAG} pt each)", ",".join(mag_actions_primary), columns=1, guard=guard_primary)
+	write_static_dialog(ns, version, "primary_mags_dialog", "Primary Magazines", f"Select the number of magazines ({COST_PRIMARY_MAG} pt each)", ",".join(mag_actions_primary), columns=1, guard=guard_primary)
 
 	mag_actions_secondary: list[str] = []
 	for count in range(0, 6):
@@ -605,7 +621,7 @@ function {fn}/hub
 			f'action:{{type:"run_command",command:"/trigger {ns}.player.config set {trig}"}}}}'
 		)
 	guard_secondary = f'execute if data storage {ns}:temp editor{{secondary:""}} run return run function {fn}/hub\n'
-	write_static_dialog("secondary_mags_dialog", "Secondary Magazines", f"Select the number of magazines ({COST_SECONDARY_MAG} pt each)", ",".join(mag_actions_secondary), columns=1, guard=guard_secondary)
+	write_static_dialog(ns, version, "secondary_mags_dialog", "Secondary Magazines", f"Select the number of magazines ({COST_SECONDARY_MAG} pt each)", ",".join(mag_actions_secondary), columns=1, guard=guard_secondary)
 
 	def gen_pick_mags(prefix: str, trig_base: int, counts: range, guard: str) -> str:
 		lines = ""
@@ -650,8 +666,8 @@ function {fn}/hub
 		equip_dialog_actions[slot_num] = ",".join(actions)
 		equip_pick_lines[slot_num] = pick
 
-	write_static_dialog("equip_slot1_dialog", "Grenade 1", f"Choose a grenade for slot 1 ({COST_GRENADE} pt, None is free)", equip_dialog_actions[1], columns=3)
-	write_static_dialog("equip_slot2_dialog", "Grenade 2", f"Choose a grenade for slot 2 ({COST_GRENADE} pt, None is free)", equip_dialog_actions[2], columns=3)
+	write_static_dialog(ns, version, "equip_slot1_dialog", "Grenade 1", f"Choose a grenade for slot 1 ({COST_GRENADE} pt, None is free)", equip_dialog_actions[1], columns=3)
+	write_static_dialog(ns, version, "equip_slot2_dialog", "Grenade 2", f"Choose a grenade for slot 2 ({COST_GRENADE} pt, None is free)", equip_dialog_actions[2], columns=3)
 
 	for slot_num in (1, 2):
 		write_versioned_function(f"multiplayer/editor/pick_equip_slot{slot_num}", f"""
