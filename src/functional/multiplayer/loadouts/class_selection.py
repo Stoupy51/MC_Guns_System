@@ -1,6 +1,5 @@
-
+""" Class selection menu and the perk effects applied when a loadout is equipped. """
 # ruff: noqa: E501
-# Imports
 
 from stewbeet import Dialog, DialogTag, Mem, set_json_encoder, write_load_file, write_versioned_function
 
@@ -69,13 +68,9 @@ data modify storage {ns}:temp dialog.actions append value {{label:["","🌍 ",{{
 function {ns}:v{version}/multiplayer/show_dialog with storage {ns}:temp
 """)
 
-	## Quick Action launcher: a static dialog registered to #minecraft:quick_actions so
-	## players can open the class menu from the pause screen / Quick Actions keybind (1.21.6+).
-	## NOTE: this is the ONLY dialog kept as a resource file — dialog tags can only reference
-	## registered dialogs, so it cannot be inlined like every other dialog in the pack.
-	## The class menu is built dynamically per-player, so this is a thin launcher that fires
-	## trigger 4 (-> select_class). external_title is the pack name, which is what Minecraft
-	## shows in the shared list when several datapacks each add a quick action.
+	## Quick Action launcher: a static dialog registered to #minecraft:quick_actions so players can open the class menu from the pause screen / Quick Actions keybind (1.21.6+).
+	## NOTE: this is the ONLY dialog kept as a resource file — dialog tags can only reference registered dialogs, so it cannot be inlined like every other dialog in the pack.
+	## The class menu is built dynamically per-player, so this is a thin launcher that fires trigger 4 (-> select_class). external_title is the pack name, which is what Minecraft shows in the shared list when several datapacks each add a quick action.
 	pack_name: str = Mem.ctx.project_name
 	Mem.ctx.data[ns].dialogs["open_class_menu"] = set_json_encoder(Dialog({
 		"type": "minecraft:multi_action",
@@ -101,8 +96,7 @@ function {ns}:v{version}/multiplayer/show_dialog with storage {ns}:temp
 		DialogTag({"replace": False, "values": qa_values})
 	)
 
-	## set_class macro: sets the class score and notifies player
-	## Called from trigger dispatch (trigger values 11-20 → class 1-10)
+	## set_class macro: sets the class score and notifies player Called from trigger dispatch (trigger values 11-20 → class 1-10)
 	apply_now: str = f"""{{"text":" [✔]","color":"gold","hover_event":{{"action":"show_text","value":{{"text":"Click here to apply immediately (OP only)","color":"yellow"}}}},"click_event":{{"action":"run_command","command":"/function {ns}:v{version}/multiplayer/apply_class"}}}}"""
 	write_versioned_function("multiplayer/set_class", f"""
 $scoreboard players set @s {ns}.mp.class $(class_num)
@@ -114,10 +108,9 @@ $execute if data storage {ns}:multiplayer game{{state:"active"}} run tellraw @s 
 $execute unless data storage {ns}:multiplayer game{{state:"active"}} run tellraw @s ["",{MGS_TAG},["",{{"text":"Class set to"}}," "],{{"text":"$(class_name)","color":"green","bold":true}},{apply_now}]
 """)
 
-	## apply_class: looks up class by score from storage, copies to temp, applies dynamically
-	# We need to map class_num (score) to an entry in classes_list.
-	# Since classes_list is ordered and 1-indexed via class_num, index = class_num - 1.
-	# We use a helper that copies the correct class to temp using indexed access.
+	## apply_class: looks up class by score from storage, copies to temp, applies dynamically We need to map class_num (score) to an entry in classes_list.
+	## Since classes_list is ordered and 1-indexed via class_num, index = class_num - 1.
+	## We use a helper that copies the correct class to temp using indexed access.
 	apply_commands: str = f"""
 # Check for custom loadout (negative mp.class = custom loadout ID)
 execute if score @s {ns}.mp.class matches ..-1 run return run function {ns}:v{version}/multiplayer/apply_custom_class
@@ -185,8 +178,7 @@ execute if score @s {ns}.special.quick_fix matches 1 run scoreboard players set 
 execute if score @s {ns}.special.quick_fix matches 1 run effect give @s minecraft:regeneration 3 1 true
 """, tags=[f"{ns}:signals/on_kill"])
 
-	## perks/scavenger_refill - Refill all spare magazines in the inventory to capacity
-	## (reuses the generic per-slot magazine refill; never refills the loaded weapon)
+	## perks/scavenger_refill - Refill all spare magazines in the inventory to capacity (reuses the generic per-slot magazine refill; never refills the loaded weapon)
 	scavenger_slot_checks: str = "".join(
 		f'execute if items entity @s {slot} *[custom_data~{{{ns}:{{magazine:true}}}}] run function {ns}:v{version}/zombies/bonus/refill_magazine {{slot:"{slot}"}}\n'
 		for slot in ALL_SLOTS
@@ -250,8 +242,7 @@ execute if data storage {ns}:multiplayer game.map.respawn_commands[0] at @s run 
 function {ns}:v{version}/shared/maps/call_script_at_base {{script:"respawn"}}
 """)
 
-	## auto_apply_default: apply default custom loadout on game start
-	## Sets mp.class = -(mp.default) then applies
+	## auto_apply_default: apply default custom loadout on game start Sets mp.class = -(mp.default) then applies
 	write_versioned_function("multiplayer/auto_apply_default", f"""
 # Set mp.class to negative default ID (custom loadout)
 scoreboard players operation @s {ns}.mp.class = @s {ns}.mp.default
@@ -269,3 +260,4 @@ execute if data storage {ns}:multiplayer game{{state:"active"}} if score @s {ns}
 # Missions: detect respawn
 execute if data storage {ns}:missions game{{state:"active"}} if score @s {ns}.mi.in_game matches 1.. if score @s {ns}.mp.death_count matches 1.. run function {ns}:v{version}/missions/on_respawn
 """)
+

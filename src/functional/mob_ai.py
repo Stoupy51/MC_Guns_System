@@ -1,10 +1,7 @@
-
-# Imports
+""" Gun-wielding mob AI: arms mobs with weapons and drives their firing loop. """
 from stewbeet import Mem, write_function, write_load_file, write_tick_file, write_versioned_function
 
 from ..config.stats import ACCURACY_BASE, COOLDOWN, GRENADE_TYPE, PELLET_COUNT, PROJECTILE_SPEED
-
-# Main function
 
 
 def main() -> None:
@@ -239,9 +236,9 @@ $function {ns}:v{version}/mob/default/on_new {{entity:"$(entity)",level:5,active
 tag @s add {ns}.mob_lv5
 """)
 
-    # Version-independent entrypoints: map storage persists across version bumps, so saved enemy
-    # functions must not embed the pack version (a map saved on v5.0.1 kept calling a dead path,
-    # spawning 0 enemies and instantly completing the mission).
+    # Version-independent entrypoints: map storage persists across version bumps.
+    # Saved enemy functions must not embed the pack version.
+    # A map saved on v5.0.1 once kept calling a dead path, spawning 0 enemies and instantly completing the mission.
     for level, active, sleep in [(1, 50, 100), (2, 50, 50), (3, 60, 20), (4, 72000, 1)]:
         write_function(
             f"{ns}:mob/default/level_{level}",

@@ -1,4 +1,4 @@
-
+""" Search & Destroy: round-based bomb plant and defuse, no respawns. """
 # ruff: noqa: E501
 from ...helpers import MGS_TAG
 from .base import GameModeVariant
@@ -273,7 +273,7 @@ kill @e[tag={ns}.snd_bomb]
 tag @a remove {ns}.snd_alive
 """)
 
-
 def generate_search_and_destroy() -> None:
 	""" Module-level entry point (preserved signature); delegates to :class:`SearchAndDestroy`. """
 	SearchAndDestroy()()
+

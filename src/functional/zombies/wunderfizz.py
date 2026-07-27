@@ -1,15 +1,12 @@
+""" Der Wunderfizz — a Mystery-Box-style machine that grants a RANDOM perk.
 
+Like the Mystery Box, a map can hold SEVERAL Wunderfizz spots but only ONE is active at a time; the rest show a grayed-out "disabled" cabinet (der_wunderfizz_disabled) marking where it might roam to.
+After a few uses the active machine can roam to another spot (teddy-bear move easter egg, shared with the Mystery Box via zombies/roaming.py).
+The roam is a model-swap (old spot → disabled, new spot → live) rather than physically flying the big cabinet, with the bear as the visual cue.
+On use it cycles perk bottles, lands on a random perk the buyer doesn't own, and leaves it collectable by the buyer only for 10s.
+The pool is the shared "available perk pool" helper (zombies/perks/pool/*): perks with a machine on this map, widened to every perk when the editor `all_perks` flag is set (BO2 Origins behaviour).
+"""
 # ruff: noqa: E501
-# Der Wunderfizz — a Mystery-Box-style machine that grants a RANDOM perk.
-# Like the Mystery Box, a map can hold SEVERAL Wunderfizz spots but only ONE is active at a time; the
-# rest show a grayed-out "disabled" cabinet (der_wunderfizz_disabled) marking where it might roam to.
-# After a few uses the active machine can roam to another spot (teddy-bear move easter egg, shared with
-# the Mystery Box via zombies/roaming.py). The roam is a model-swap (old spot → disabled, new spot →
-# live) rather than physically flying the big cabinet, with the bear as the visual cue.
-# On use it cycles perk bottles, lands on a random perk the buyer doesn't own, and leaves it
-# collectable by the buyer only for 10s. The pool is the shared "available perk pool" helper
-# (zombies/perks/pool/*): perks with a machine on this map, widened to every perk when the editor
-# `all_perks` flag is set (BO2 Origins behaviour).
 from stewbeet import Mem, write_load_file, write_versioned_function
 
 from ..core.feedback import zb_sound
@@ -17,19 +14,20 @@ from ..helpers import MGS_TAG
 from .common import deny_cmd, deny_not_enough_points_cmd, game_active_guard_cmd
 from .perks import PERK_DEFINITIONS
 
-# Roam move animation length (ticks). The bear rises, the machine relocates (model swap) at the
-# midpoint, then settles. In-engine timing polish is a HUMAN eyeball pass.
+# Roam move animation length (ticks).
+# The bear rises, the machine relocates (model swap) at the midpoint, then settles.
+# In-engine timing polish is a HUMAN eyeball pass.
 WF_MOVE_TICKS: int = 100
-WF_MOVE_RELOCATE: int = 55		# tick the active spot actually changes (model swap + visibility)
-WF_MOVE_BEAR_POOF: int = 48		# tick the bear despawns
+WF_MOVE_RELOCATE: int = 55
+""" Tick the active spot actually changes (model swap + visibility). """
+WF_MOVE_BEAR_POOF: int = 48
+""" Tick the bear despawns. """
 # Uses on the active machine before it may roll to roam (mirrors the Mystery Box's 4-pull threshold)
 WF_MOVE_THRESHOLD: int = 4
-
 
 def _orb_model_cmd(ns: str, pid: str) -> str:
 	""" The command setting the spinning orb's item to a perk's bottle model. """
 	return f'data modify entity @s item set value {{id:"minecraft:potion",count:1,components:{{"minecraft:item_model":"{ns}:perk_machine_{pid}"}}}}'
-
 
 def generate_wunderfizz() -> None:
 	ns: str = Mem.ctx.project_id
@@ -64,8 +62,7 @@ scoreboard objectives add {ns}.zb.wf.paid dummy
 scoreboard objectives add {ns}.zb.wf_pid dummy
 """)
 
-	## Setup: iterate wunderfizz compounds, summon interaction + a persistent machine display each,
-	## then pick ONE active spot (prefer can_start_on markers), light it up and park the rest.
+	## Setup: iterate wunderfizz compounds, summon interaction + a persistent machine display each, then pick ONE active spot (prefer can_start_on markers), light it up and park the rest.
 	write_versioned_function("zombies/wunderfizz/setup", f"""
 scoreboard players set #wf_counter {ns}.data 0
 data modify storage {ns}:temp _wf_iter set from storage {ns}:zombies game.map.wunderfizz
@@ -146,8 +143,8 @@ execute if data storage {ns}:temp _wf_iter[0] run function {ns}:v{version}/zombi
 $summon minecraft:interaction $(x) $(y) $(z) {{width:1.2f,height:-2.0f,response:true,Rotation:$(rotation),Tags:["{ns}.wunderfizz_machine","{ns}.gm_entity","bs.entity.interaction","{ns}.wf_new"]}}
 """)
 
-	## Light up the active cabinet (live model), gray out every other (disabled model). Displays are
-	## persistent and id-linked to their spot, so roaming is just a model swap.
+	## Light up the active cabinet (live model), gray out every other (disabled model).
+	## Displays are persistent and id-linked to their spot, so roaming is just a model swap.
 	write_versioned_function("zombies/wunderfizz/sync_displays", f"""
 execute as @e[tag={ns}.wf_display] run function {ns}:v{version}/zombies/wunderfizz/set_display_disabled
 scoreboard players set #wf_active_id {ns}.data -1
@@ -162,8 +159,7 @@ data modify entity @s item.components."minecraft:item_model" set value "{ns}:der
 data modify entity @s item.components."minecraft:item_model" set value "{ns}:der_wunderfizz_disabled"
 """)
 
-	## Keep only the active machine's interaction entity reachable; park the rest ±512 out of reach
-	## (shared roaming primitive) so an inactive cabinet can't be hovered/clicked.
+	## Keep only the active machine's interaction entity reachable; park the rest ±512 out of reach (shared roaming primitive) so an inactive cabinet can't be hovered/clicked.
 	write_versioned_function("zombies/wunderfizz/sync_visibility", f"""
 execute as @e[tag={ns}.wunderfizz_machine] at @s run function {ns}:v{version}/zombies/wunderfizz/sync_visibility_one
 """)
@@ -263,11 +259,10 @@ scoreboard players operation @s {ns}.zb.wf_pid = #wf_pid_counter {ns}.data
 """)
 
 	## Spawn the orb display inside the machine's open middle alcove (@s = player, at machine).
-	## NOTE the orb spawns `at` the interaction entity, which setup_iter tp'd UP by 2 (line ~83)
-	## AFTER placing the machine display. So the orb origin sits ~2 blocks above the model. The
-	## alcove centre (model y≈15.5, display at interaction_orig+0.63, scale 1.25) lands at roughly
-	## interaction_final - 0.78, hence the negative Y. scale 0.4 keeps the bottle clear of the
-	## alcove walls. Nudge Y ±0.15 if it drifts.
+	## NOTE the orb spawns `at` the interaction entity, which setup_iter tp'd UP by 2 (line ~83) AFTER placing the machine display.
+	## So the orb origin sits ~2 blocks above the model.
+	## The alcove centre (model y≈15.5, display at interaction_orig+0.63, scale 1.25) lands at roughly interaction_final - 0.78, hence the negative Y. scale 0.4 keeps the bottle clear of the alcove walls.
+	## Nudge Y ±0.15 if it drifts.
 	write_versioned_function("zombies/wunderfizz/spawn_orb", f"""
 summon minecraft:item_display ~ ~-0.78 ~ {{Tags:["{ns}.wunderfizz_orb","{ns}.wf_orb_new","{ns}.gm_entity"],Glowing:true,billboard:"vertical",item_display:"fixed",item:{{id:"minecraft:potion",count:1}},transformation:{{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[0.2f,0.2f,0.2f]}}}}
 """)
@@ -337,8 +332,8 @@ execute as @n[tag={ns}.wf_active] at @s run function {ns}:v{version}/zombies/wun
 kill @s
 """)
 
-	## Begin the roam (@s = active interaction entity, at @s). Spawn a rising teddy bear near the
-	## cabinet and start the move timer.
+	## Begin the roam (@s = active interaction entity, at @s).
+	## Spawn a rising teddy bear near the cabinet and start the move timer.
 	write_versioned_function("zombies/wunderfizz/move_start", f"""
 execute positioned ~ ~-1.5 ~ run summon minecraft:item_display ~ ~ ~ {{Tags:["{ns}.wf_bear","{ns}.gm_entity","{ns}.wf_bear_new"],item_display:"fixed",billboard:"fixed",transformation:{{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[0.75f,0.75f,0.75f]}}}}
 loot replace entity @n[tag={ns}.wf_bear_new] contents loot {ns}:zombies/roaming_bear
@@ -365,8 +360,8 @@ execute if score #wf_move_timer {ns}.data matches {WF_MOVE_BEAR_POOF} run kill @
 execute if score #wf_move_timer {ns}.data matches 0 run function {ns}:v{version}/zombies/wunderfizz/move_land
 """)
 
-	## Swap the active spot to a new random position (@s not required). Old cabinet grays out, new one
-	## lights up, interaction reachability follows.
+	## Swap the active spot to a new random position (@s not required).
+	## Old cabinet grays out, new one lights up, interaction reachability follows.
 	write_versioned_function("zombies/wunderfizz/do_relocate", f"""
 tag @e[tag={ns}.wf_active] add {ns}.wf_prev_active
 tag @e[tag={ns}.wf_active] remove {ns}.wf_active
@@ -419,8 +414,8 @@ data modify storage smithed.actionbar:input message set value {{json:[{{"text":"
 function #smithed.actionbar:message
 """)
 
-	## Ready-orb hover: name the perk waiting to be collected, e.g. "✋ Pick-up Juggernog"
-	## (@s = player, positioned at the machine so the nearby orb resolves)
+	## Ready-orb hover: name the perk waiting to be collected, e.g.
+	## "✋ Pick-up Juggernog" (@s = player, positioned at the machine so the nearby orb resolves)
 	hover_result_dispatch: str = "\n".join(
 		f'execute if score #wf_pick {ns}.data matches {i} run data modify storage smithed.actionbar:input message set value {{json:[{{"text":"🎰 ","color":"gold"}},{{"text":"Pick-up ","color":"green"}},{{"text":"{PERK_DEFINITIONS[pid].display_name}","color":"{PERK_DEFINITIONS[pid].text_color}","bold":true}}],priority:"conditional",freeze:5}}'
 		for i, pid in enumerate(perk_ids)
@@ -457,3 +452,4 @@ kill @e[tag={ns}.wf_bear]
 scoreboard players set #wf_uses {ns}.data 0
 scoreboard players set #wf_move_timer {ns}.data 0
 """)
+

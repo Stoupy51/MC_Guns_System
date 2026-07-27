@@ -1,5 +1,14 @@
+""" BO2-style hit direction indicator: a red arc ringing the crosshair, pointing at the shooter.
 
-# Imports
+One glyph per sector, drawn white and tinted red by the title's text colour.
+
+Minecraft does not centre a glyph on its canvas: it centres the *string* on the sum of the glyphs'
+advances, then draws each glyph from that pen position. The advance is measured from content, not
+canvas (BitmapProvider.getActualGlyphWidth scans columns from the right for non-zero alpha), so an
+arc sitting on the left half reports half the advance and renders off-centre — which is why the
+ring used to wander between directions. Every glyph is therefore pinned to the same advance with a
+single alpha=1 pixel in a fixed column.
+"""
 import math
 
 import numpy as np
@@ -7,30 +16,27 @@ from beet import Font, Texture
 from PIL import Image
 from stewbeet import Mem, write_versioned_function
 
-# BO2-style hit direction indicator: a red arc ringing the crosshair, pointing toward the shooter.
-# One glyph per sector, drawn white and tinted red by the title's text color.
-
-# How many directions the indicator can distinguish. Must divide 36000 (the yaw range in centidegrees)
-# so the sector width stays a whole number: 8, 10, 12, 16, 20, 24, 32, 36... all work.
-# Higher values mean a finer arc and more textures/commands (one of each per sector).
 SECTORS: int = 36
+""" Directions the indicator can distinguish. Must divide 36000 (yaw range in centidegrees) so the
+sector width stays whole: 8, 10, 12, 16, 20, 24, 32, 36 all work. Higher = finer arc, more
+textures and commands. """
 
-# Calibration constants (font-pixel units; title text renders at 4x GUI scale).
-# Tweak these until the arc rings the crosshair in-game: HEIGHT is the arc's screen size,
-# ASCENT shifts it up (title baseline sits slightly above screen center).
 HIT_DIR_HEIGHT: int = 48
 HIT_DIR_ASCENT: int = 20
+""" Calibration in font-pixel units (title text renders at 4x GUI scale). HEIGHT is the arc's
+screen size, ASCENT shifts it up since the title baseline sits above screen centre. """
 
-# Texture geometry (drawn at 2x then downscaled for anti-aliasing)
 CANVAS: int = 256
-ARC_RADIUS: int = 220         # outer radius, in 512ths of the canvas size
-ARC_WIDTH: int = 26           # ring thickness, in 512ths of the canvas size
-ARC_SPAN: float = 90          # degrees covered by the arc: two sectors wide
+""" Texture canvas size; the arc is drawn at 2x then downscaled for anti-aliasing. """
+ARC_RADIUS: int = 220
+""" Outer radius, in 512ths of the canvas size. """
+ARC_WIDTH: int = 26
+""" Ring thickness, in 512ths of the canvas size. """
+ARC_SPAN: float = 90
+""" Degrees covered by the arc: two sectors wide. """
 
-# Codepoints for the sector glyphs. Any character works (the font is only ever used by this one
-# title), but these are the ones that need no escaping in SNBT or JSON.
 GLYPH_CHARS: str = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
-
+""" Codepoints for the sector glyphs; any character works, these need no SNBT/JSON escaping. """
 
 # TODO: Later in 26.3, use post shader new command instead. Do not add it yet.
 def main() -> None:
@@ -38,56 +44,38 @@ def main() -> None:
 	assert 36000 % SECTORS == 0, f"SECTORS={SECTORS} must divide 36000 (yaw range in centidegrees)"
 	assert SECTORS <= len(GLYPH_CHARS), f"SECTORS={SECTORS} exceeds the {len(GLYPH_CHARS)} available glyph chars"
 
-	# Generate the arc textures: sector 0 = shooter in front (arc at top), clockwise.
-	# PIL arc angles: 0° = 3 o'clock, increasing clockwise (y axis points down) -> top = -90°.
+	# Sector 0 = shooter in front (arc at top), clockwise
 	font: Font = Mem.ctx.assets.fonts.setdefault(f"{ns}:hit_dir", Font({"providers": []}))
 
-	# Minecraft does not centre a glyph on its canvas: it centres the *string* on the sum of the
-	# glyphs' advances, then draws each glyph from that pen position across its full canvas width.
-	# And the advance is measured from the content, not the canvas -- BitmapProvider.getActualGlyphWidth
-	# scans columns from the right and stops at the first one holding a non-zero alpha, so a glyph whose
-	# arc sits on the left half reports half the advance and gets drawn a quarter-canvas off-centre.
-	# That is why the ring wandered between directions.
-	#
-	# Fix: pin every glyph to the same advance with a single alpha=1 pixel in a fixed column, so all
-	# sectors measure identically. The column is chosen so the resulting advance equals the glyph's
-	# rendered width exactly, which lands the canvas centre on the string centre rather than half a
-	# pixel beside it. Solving advance == rendered width, i.e.
-	#     floor(0.5 + actual * scale) + 1 == canvas * scale == HIT_DIR_HEIGHT
-	# gives a whole range of valid widths: (HEIGHT - 1.5) / scale <= actual < (HEIGHT - 0.5) / scale.
-	# Take the largest one, so the pin sits as far right as possible and leaves the most clearance for
-	# the arc (a low HIT_DIR_HEIGHT widens each font pixel, pulling the range down into the artwork).
+	# Pin column solves advance == rendered width, taking the largest valid width so it sits far right.
+	# Valid range: (HEIGHT - 1.5) / scale <= actual < (HEIGHT - 0.5) / scale
 	scale: float = HIT_DIR_HEIGHT / CANVAS
 	pin_column: int = math.ceil((HIT_DIR_HEIGHT - 0.5) / scale) - 2
 
-	# Alpha is computed per-pixel rather than with ImageDraw.arc(), which can only flat-fill: the arc
-	# has to fade out toward its two ends, and (softly) at its inner/outer edges. Geometry is shared
-	# by all sectors, so the polar grid is built once and only the angular term varies below.
+	# Alpha is per-pixel rather than ImageDraw.arc(), which can only flat-fill, since the arc fades at its ends.
+	# Geometry is shared, so the polar grid is built once.
 	big: int = CANVAS * 2
 	radius: float = ARC_RADIUS * big / 512
 	width: float = ARC_WIDTH * big / 512
 	yy, xx = np.mgrid[0:big, 0:big]
 	centre: float = (big - 1) / 2.0
 	dx, dy = xx - centre, yy - centre
-	# 0° = 3 o'clock, increasing clockwise (image y axis points down) -> top = -90°, matching sectors.
+	# 0° = 3 o'clock, increasing clockwise (image y axis points down) -> top = -90°
 	angle = np.degrees(np.arctan2(dy, dx))
-	# Radial profile: a solid core with soft edges. The 2.5 factor widens the plateau so the ring keeps its
-	# thickness instead of reading as a thin blur; the clip is what anti-aliases the edges.
+	# Solid core with soft edges; 2.5 widens the plateau so the ring keeps its thickness
 	radial = np.clip((1.0 - np.abs(np.hypot(dx, dy) - radius) / (width / 2.0)) * 2.5, 0.0, 1.0)
 
 	for sector in range(SECTORS):
 		center_angle: float = -90.0 + (360.0 / SECTORS) * sector
-		# Signed angular distance from the arc's centre, wrapped into -180..180 so the seam at ±180°
-		# doesn't produce a hard cut, then faded linearly to fully transparent at both ends.
+		# Wrapped into -180..180 so the seam at ±180° doesn't cut hard, then faded to transparent
 		delta = np.abs((angle - center_angle + 180.0) % 360.0 - 180.0)
 		tangential = np.clip(1.0 - delta / (ARC_SPAN / 2.0), 0.0, 1.0)
 		rgba = np.empty((big, big, 4), dtype=np.uint8)
-		rgba[..., :3] = 255  # white; the title's text colour tints it red at display time
+		rgba[..., :3] = 255  # White; the title's text colour tints it red at display time
 		rgba[..., 3] = (radial * tangential * 255.0).astype(np.uint8)
 		img = Image.fromarray(rgba, "RGBA").resize((CANVAS, CANVAS), Image.Resampling.LANCZOS)
 
-		# Pin the advance (see above). Done after the downscale so the resampling can't wash the
-		# marker out, and only once it is certain no arc pixel already sits further right.
+		# Pin the advance after the downscale, so resampling cannot wash the marker out
 		final = np.array(img)
 		content_right: int = int(np.max(np.nonzero(final[..., 3].any(axis=0))))
 		assert content_right < pin_column, (
@@ -106,14 +94,12 @@ def main() -> None:
 			"chars": [GLYPH_CHARS[sector]],
 		})
 
-	# Damage-signal listener: @s = victim. Hitscan shooters carry {ns}.ticking during their tick,
-	# explosion shooters {ns}.temp_shooter (same source detection as the hitmarker listener).
+	# Damage-signal listener (@s = victim); same source detection as the hitmarker listener
 	sector_titles: str = "\n".join(
 		f'execute if score #hit_dir {ns}.data matches {sector} run title @s title {{"text":"{GLYPH_CHARS[sector]}","font":"{ns}:hit_dir","color":"#FF2A2A"}}'
 		for sector in range(SECTORS)
 	)
-	# Yaw is read in centidegrees (x100) rather than decidegrees so that sector widths stay whole
-	# numbers at any SECTORS value (36000/32 = 1125, whereas 3600/32 would not divide).
+	# Centidegrees, not decidegrees, so sector widths stay whole at any SECTORS (36000/32 = 1125)
 	step: int = 36000 // SECTORS
 	write_versioned_function("weapon/hit_direction", f"""
 # Red {SECTORS}-way hit direction indicator, shown to player victims only

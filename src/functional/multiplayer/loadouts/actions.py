@@ -1,6 +1,5 @@
-
+""" Loadout actions: select, favorite, like, delete and visibility toggles. """
 # ruff: noqa: E501
-# Imports
 from stewbeet import Mem, write_versioned_function
 
 from ...helpers import MGS_TAG
@@ -19,9 +18,7 @@ def generate_actions() -> None:
 	ns: str = Mem.ctx.project_id
 	version: str = Mem.ctx.project_version
 
-	## ====================================================================
 	## CUSTOM LOADOUT ACTIONS - Select, Delete, Toggle Visibility, Set Default
-	## ====================================================================
 
 	## custom/select - Store custom loadout choice (items applied on respawn/apply_class)
 	write_versioned_function("multiplayer/custom/select", f"""
@@ -170,8 +167,8 @@ data remove storage {ns}:temp _fav_iter[0]
 execute if data storage {ns}:temp _fav_iter[0] run function {ns}:v{version}/multiplayer/custom/fav_check_each
 """)
 
-	## fav_count_update - Rebuild custom_loadouts, updating favorites_count on target loadout
-	## #fav_found = 0 means just added (increment), 1 means just removed (decrement)
+	## Rebuild custom_loadouts, updating favorites_count on the target loadout.
+	## #fav_found 0 means just added (increment), 1 means just removed (decrement).
 	write_versioned_function("multiplayer/custom/fav_count_update", f"""
 data modify storage {ns}:temp _fav_count_src set from storage {ns}:multiplayer custom_loadouts
 data modify storage {ns}:multiplayer custom_loadouts set value []
@@ -397,3 +394,4 @@ execute if score #entry_id {ns}.data = #loadout_id {ns}.data run return 0
 data remove storage {ns}:temp _find_iter[0]
 execute if data storage {ns}:temp _find_iter[0] run function {ns}:v{version}/multiplayer/custom/edit_load_iter
 """)
+

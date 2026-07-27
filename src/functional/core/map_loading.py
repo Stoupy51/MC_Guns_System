@@ -1,5 +1,4 @@
-
-# Shared map loading functions (load by id, find, check, wrappers)
+""" Shared map loading functions (load by id, find, check, wrappers). """
 from stewbeet import Mem, write_versioned_function
 
 
@@ -7,8 +6,7 @@ def write_shared_map_loading() -> None:
 		ns: str = Mem.ctx.project_id
 		version: str = Mem.ctx.project_version
 
-		## Map loading with optional overrides (macro function)
-		## Usage: function shared/maps/load {id:"map_id",mode:"multiplayer",override:{}}
+		## Map loading with optional overrides (macro function) Usage: function shared/maps/load {id:"map_id",mode:"multiplayer",override:{}}
 		write_versioned_function("shared/maps/load", f"""
 $data modify storage {ns}:temp map_load.target set value {{id:"$(id)"}}
 $data modify storage {ns}:temp map_load.override set value $(override)
@@ -47,3 +45,4 @@ execute if score #map_load_found {ns}.data matches 1 if data storage {ns}:temp m
 			write_versioned_function(f"{mode}/load_map_from_storage", f"""
 $function {ns}:v{version}/shared/maps/load {{id:"$(map_id)",mode:"{mode}",override:{{}}}}
 """)
+

@@ -1,6 +1,5 @@
-
+""" Multiplayer setup and map selection dialogs. """
 # ruff: noqa: E501
-# Imports
 
 from stewbeet import Mem, write_versioned_function
 
@@ -11,8 +10,8 @@ def generate_menus() -> None:
 	ns: str = Mem.ctx.project_id
 	version: str = Mem.ctx.project_version
 
-	## ---- Value pickers (each opens from the setup dialog; Back returns there) ----
-	# Gamemode
+	## ---- Value pickers (each opens from the setup dialog; Back returns there).
+	## Gamemode
 	gm_data = [("FFA", "ffa", "green"), ("TDM", "tdm", "yellow"), ("DOM", "dom", "aqua"), ("HP", "hp", "dark_purple"), ("S&D", "snd", "gold")]
 	gamemode_opts = [
 		(label, f'/data modify storage {ns}:multiplayer game.gamemode set value "{gm}"', color, f"Set gamemode to {label}")
@@ -35,7 +34,7 @@ def generate_menus() -> None:
 	]
 	register_value_picker("multiplayer/setup/time_limit", "Time Limit", "Set the match time limit", time_limit_opts, back_dialog="multiplayer/setup")
 
-	## ---- Main multiplayer setup dialog ----
+	## ---- Main multiplayer setup dialog.
 	setup_actions = [
 		dialog_show_btn(f"{ns}:multiplayer/setup/gamemode", "🎮 Gamemode", "Choose the multiplayer gamemode"),
 		dialog_show_btn(f"{ns}:multiplayer/setup/score_limit", "🏆 Score Limit", "Set the score needed to win"),
@@ -79,3 +78,4 @@ execute unless data storage {ns}:temp dialog.actions[0] run data modify storage 
 # Show the completed dialog
 function {ns}:v{version}/multiplayer/show_dialog with storage {ns}:temp
 """)
+

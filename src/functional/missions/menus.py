@@ -1,6 +1,5 @@
-
+""" Missions setup and map selection dialogs. """
 # ruff: noqa: E501
-# Imports
 
 from stewbeet import Mem, write_versioned_function
 
@@ -51,3 +50,4 @@ execute unless data storage {ns}:temp dialog.actions[0] run data modify storage 
 # Show the completed dialog
 function {ns}:v{version}/multiplayer/show_dialog with storage {ns}:temp
 """)
+

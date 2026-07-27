@@ -1,12 +1,10 @@
-
-# Imports
+""" Per-weapon stats, the shared stat-key constants, and the add_item() helper. """
 import json
 from typing import Any, cast
 
 import stouputils as stp
 from stewbeet import CUSTOM_ITEM_VANILLA, Item, JsonDict, Mem
 
-# Constants
 SRC_ROOT: str = stp.get_root_path(__file__, go_up=1)
 ITEM_MODELS_PATH: str = f"{SRC_ROOT}/database/models"
 ALL_SLOTS: tuple[str, ...] = (
@@ -27,7 +25,6 @@ def get_model_path(model_name: str) -> str: return f"{ITEM_MODELS_PATH}/{model_n
 def load_model(path: str) -> JsonDict:
     return json.loads(stp.read_file(path).replace("mgs:item", f"{Mem.ctx.project_id}:item"))
 
-# Function
 def add_item(id: str, stats: JsonDict | None = None, model_path: str | None = None, max_stack_size: int = 1, **kwargs: Any) -> Item:
     if model_path == "auto":
         model_path = get_model_path(id)
@@ -38,10 +35,9 @@ def add_item(id: str, stats: JsonDict | None = None, model_path: str | None = No
         "rarity": "common",
     }
     if stats:
-        # Left-click detection (see functional/weapon/left_click.py): a zero-reach piercing_weapon
-        # makes every swing — even at air — fire the enchantment's post_piercing_attack effect, which
-        # is what toggles fire mode. The enchantment is hidden from the tooltip and its glint
-        # suppressed so it stays an implementation detail rather than something the player sees.
+        # Left-click detection (functional/weapon/left_click.py): a zero-reach piercing_weapon makes every swing fire the enchantment's post_piercing_attack effect, even at air.
+        # That effect is what toggles fire mode.
+        # The enchantment is hidden from the tooltip and its glint suppressed, so it stays an implementation detail.
         components |= {
             "piercing_weapon": {"min_reach": 0.0, "max_reach": 0.0, "hitbox_margin": 0.0},
             "enchantments": {f"{ns}:left_click": 1},
@@ -55,7 +51,6 @@ def add_item(id: str, stats: JsonDict | None = None, model_path: str | None = No
         override_model=(load_model(model_path) if model_path else None),
         **kwargs
     )
-
 
 # Mandatory constants
 CAPACITY: str = "capacity"
@@ -146,7 +141,6 @@ SPEED_MULTIPLY_BASE: str = "speed_multiply_base"
 Uses the attribute operation `add_multiplied_base` on movement_speed.
 Negative values slow the player (e.g. -0.08 = -8% base speed). """
 
-
 # Projectile constants (for slow-traveling bullets like RPG rockets, grenades, etc.)
 PROJECTILE_SPEED: str = "proj_speed"
 """ Speed of the projectile in thousandths of blocks/tick (e.g. 1500 = 1.5 blocks/tick).
@@ -228,7 +222,6 @@ PAP_NAME: str = "pap_name"
 """ Optional Pack-a-Punch display name entry inside PAP_STATS.
 Can be a scalar string or a list of strings (one per PAP level). """
 
-
 def get_pap_max_level(weapon_stats: JsonDict) -> int:
     """ Return max PAP level based on the longest PAP stat list for this weapon. """
     pap_stats_any: Any = weapon_stats.get(PAP_STATS)
@@ -244,7 +237,6 @@ def get_pap_max_level(weapon_stats: JsonDict) -> int:
         else:
             max_level = max(max_level, 1)
     return max_level
-
 
 def resolve_pap_overrides(weapon_stats: JsonDict, pap_level: int) -> JsonDict:
     """ Resolve PAP overrides for a given level.
@@ -269,7 +261,6 @@ def resolve_pap_overrides(weapon_stats: JsonDict, pap_level: int) -> JsonDict:
             resolved[stat_key] = value
     return resolved
 
-
 def resolve_pap_name(weapon_stats: JsonDict, pap_level: int, default_name: str) -> str:
     """ Resolve PAP display name for a given level.
 
@@ -293,8 +284,6 @@ def resolve_pap_name(weapon_stats: JsonDict, pap_level: int, default_name: str) 
         return picked if isinstance(picked, str) else default_name
     return default_name
 
-
-
 # Casing types
 CASING_762X39MM = "762x39mm"
 CASING_762X51MM = "762x51mm"
@@ -312,7 +301,6 @@ CASING_338LAPUA = "338lapua"
 CASING_556X45MM = "556x45mm"
 CASING_762X25MM = "762x25mm"
 
-
 # Sound keys every gun carries; shotguns swap playerbegin/playerend for a pump.
 GUN_SOUNDS: tuple[str, ...] = ("fire", "pap_fire", "reload", "playerbegin", "playerend")
 PUMP_SOUNDS: tuple[str, ...] = ("fire", "pap_fire", "reload", "pump")
@@ -325,9 +313,7 @@ def gun_sounds(weapon_id: str, *keys: str, **overrides: str) -> dict[str, str]:
     """
     return {key: f"{weapon_id}/{key}" for key in keys} | overrides
 
-
-## Gun stats
-# Rifles
+## Gun stats Rifles
 M16A4: JsonDict = {
     "stats": {
         BASE_WEAPON: "m16a4", FIRE_MODE: "auto",
@@ -1038,7 +1024,6 @@ M24: JsonDict = {
     "sounds": gun_sounds("m24", *GUN_SOUNDS, "cycle", crack="largest")
 }
 
-
 # Special
 RPG7: JsonDict = {
     "stats": {
@@ -1118,7 +1103,6 @@ M249: JsonDict = {
     "sounds": gun_sounds("m249", *GUN_SOUNDS, "playermid", crack="medium")
 }
 
-
 # Grenades
 FRAG_GRENADE: JsonDict = {
     "stats": {
@@ -1162,9 +1146,9 @@ FLASH_GRENADE: JsonDict = {
     }
 }
 
-# Widow's Wine web grenade (zombies perk-exclusive, hotbar.7). Bursts into webbing that roots and
-# lightly damages nearby zombies. PROJECTILE_MODEL/model reuse the frag grenade art as a placeholder
-# until a dedicated web-grenade texture exists (README task 5 = HUMAN art follow-up).
+# Widow's Wine web grenade (zombies perk-exclusive, hotbar.7).
+# Bursts into webbing that roots and lightly damages nearby zombies.
+# PROJECTILE_MODEL/model reuse the frag grenade art as a placeholder until a dedicated web-grenade texture exists (README task 5 = HUMAN art follow-up).
 WEB_GRENADE: JsonDict = {
     "stats": {
         GRENADE_TYPE: "web", FIRE_MODE: "semi",
@@ -1177,10 +1161,8 @@ WEB_GRENADE: JsonDict = {
 }
 
 # Zombies-exclusive tactical (hotbar.6): attracts zombies during the fuse, then explodes.
-# "tactical": True keeps it out of the camo pipeline and lets wallbuys/inventory route it to the
-# tactical slot. base_weapon is set so the mystery box duplicate check can match it in hotbar.6.
-# Damage follows the BO->MC 2/15 HP conversion used by calc_zombie_hp (BO ~1000 -> MC ~130),
-# so the blast one-shots the horde up to roughly round 10 like the original.
+# "tactical": True keeps it out of the camo pipeline and lets wallbuys/inventory route it to the tactical slot. base_weapon is set so the mystery box duplicate check can match it in hotbar.6.
+# Damage follows the BO->MC 2/15 HP conversion used by calc_zombie_hp (BO ~1000 -> MC ~130), so the blast one-shots the horde up to roughly round 10 like the original.
 MONKEY_BOMB: JsonDict = {
     "tactical": True,
     "stats": {
@@ -1193,9 +1175,9 @@ MONKEY_BOMB: JsonDict = {
     }
 }
 
-# Lethal grenades occupy the zombies lethal slot (hotbar.7, wallbuy kind 2). Their order here
-# defines the per-player {ns}.zb.lethal_type enum (list index, 0 = frag_grenade default) that lets
-# an EMPTY slot be refilled with the type the player actually bought — on round-end replenish, Max
-# Ammo, and item recovery — instead of always defaulting to frag. See zombies/inventory.py.
+# Lethal grenades occupy the zombies lethal slot (hotbar.7, wallbuy kind 2).
+# Their order here defines the per-player {ns}.zb.lethal_type enum, indexed from 0 = frag_grenade.
+# That lets an EMPTY slot be refilled with the type the player actually bought, rather than always frag.
+# Applies on round-end replenish, Max Ammo, and item recovery; see zombies/inventory.py.
 LETHAL_GRENADE_IDS: list[str] = ["frag_grenade", "semtex", "smoke_grenade", "flash_grenade"] # TODO: smoke and flash should be tactical instead (like monkeys)
 

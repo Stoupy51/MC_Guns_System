@@ -1,192 +1,36 @@
+""" Full-screen post-processing (muzzle flash, scope zoom, crosshair spread, FOV) driven from the
+datapack through a "marker particle" trick.
 
-# Imports
+The datapack spawns a very dim dust particle in front of the player whose RGB encodes the mode.
+particle.vsh intercepts it, redirects it to a fixed NDC quad, and particle.fsh writes a
+deterministic sentinel (R=254, G=mode) at an exact pixel; the post chain then reads it
+(classify -> transparency -> flash -> zoom -> blit, see get_post_effect_json).
+
+Key constraints, each learned the hard way:
+- Dust, not entity_effect: its scale controls lifetime, so a flash can expire in 1 tick.
+- classify reads minecraft:main, not :particles — in Fabulous, opaque particles render to main.
+- Fixed NDC, not ScreenSize: the Globals UBO is not bound for the particle pipeline, so
+  ScreenSize would read vec2(0,0) and put the marker at infinity.
+- Range-based colour detection, since dust randomizes each channel by ~0.48-1.0x.
+Requires Fabulous graphics, the resource pack active, and the marker in front of the camera.
+"""
 from beet import FragmentShader, PostEffect, Texture, VertexShader
 from PIL import Image
 from stewbeet import JsonDict, Mem, set_json_encoder, write_versioned_function
 
-# ============================================================================ #
-#                        SHADER SYSTEM OVERVIEW                                #
-# ============================================================================ #
-#
-# This module implements full-screen post-processing effects (muzzle flash and
-# scope zoom) by communicating between the datapack (mcfunctions) and the GPU
-# (GLSL shaders) through a "marker particle" trick.
-#
-# ╔════════════════════════════════════════════════════════════════════════╗
-# ║                         HOW IT WORKS                                   ║
-# ╠════════════════════════════════════════════════════════════════════════╣
-# ║                                                                        ║
-# ║  1. DATAPACK spawns a dust particle in front of the player             ║
-# ║     with a specific color encoding the mode.                           ║
-# ║     → fire_weapon.mcfunction  (flash marker, mode 1)                   ║
-# ║     → zoom/main.mcfunction    (zoom marker, mode 3/4)                  ║
-# ║                                                                        ║
-# ║  2. CORE PARTICLE SHADER (particle.vsh) intercepts ALL particles.      ║
-# ║     It detects our marker by range-based color pattern detection.      ║
-# ║     R∈[1-10] with B==0 identifies our marker (dust is very dim).       ║
-# ║     G==0 → flash (mode 1), G∈[1-10] → zoom (mode 4).                   ║
-# ║     Detected markers are REDIRECTED to a small quad at the             ║
-# ║     bottom-left of the screen using fixed NDC coordinates.             ║
-# ║     The fsh only writes the sentinel at EXACT gl_FragCoord pixels:     ║
-# ║     → Mode 1 (flash) → pixel (0, 0)                                    ║
-# ║     → Mode 4 (zoom)  → pixel (1, 0)                                    ║
-# ║                                                                        ║
-# ║  3. POST-EFFECT PIPELINE (transparency.json) runs these passes:        ║
-# ║                                                                        ║
-# ║     ┌─────────┐   reads exact pixels   ┌──────────┐                    ║
-# ║     │  main   ├───────────────────────►│ CLASSIFY │ → 1x1 "classify"   ║
-# ║     │ target  │  at (0,60) and (50,60) │  (pass1) │   target w/ mode   ║
-# ║     └─────────┘                        └──────────┘                    ║
-# ║                                                                        ║
-# ║     ┌──────────────┐                  ┌──────────────┐                 ║
-# ║     │ all 6 layers ├─────────────────►│ TRANSPARENCY │ → "final"       ║
-# ║     │  (fabulous)  │                  │   (pass2)    │   (hides px)    ║
-# ║     └──────────────┘                  └──────────────┘                 ║
-# ║                                                                        ║
-# ║     ┌───────┐  ┌──────────┐           ┌───────┐                        ║
-# ║     │ final ├──┤ classify ├──────────►│ FLASH │ → "swap" target        ║
-# ║     └───────┘  └──────────┘           │(pass3)│                        ║
-# ║                                       └───────┘                        ║
-# ║                                                                        ║
-# ║     ┌───────┐  ┌──────────┐           ┌───────┐                        ║
-# ║     │ swap  ├──┤ classify ├──────────►│ ZOOM  │ → "final" target       ║
-# ║     └───────┘  └──────────┘           │(pass4)│                        ║
-# ║                                       └───────┘                        ║
-# ║                                                                        ║
-# ║     ┌───────┐                         ┌───────┐                        ║
-# ║     │ final ├────────────────────────►│ BLIT  │ → minecraft:main       ║
-# ║     └───────┘                         │(pass5)│                        ║
-# ║                                       └───────┘                        ║
-# ║                                                                        ║
-# ╠════════════════════════════════════════════════════════════════════════╣
-# ║                    KEY DESIGN DECISIONS                                ║
-# ║                                                                        ║
-# ║  WHY dust instead of entity_effect:                                    ║
-# ║    dust's scale parameter controls lifetime (random(8-40) x scale).    ║
-# ║    scale=0.15 → 1-6 ticks. entity_effect has uncontrollable random     ║
-# ║    10-40 tick lifetime that makes flash linger too long.               ║
-# ║                                                                        ║
-# ║  WHY classify reads from main (not particles):                         ║
-# ║    Dust uses Layer.OPAQUE → RenderPipelines.OPAQUE_PARTICLE.           ║
-# ║    In Fabulous mode, ParticleFeatureRenderer.renderSolid() renders     ║
-# ║    opaque particles to minecraft:main (not minecraft:particles).       ║
-# ║    Only translucent particles go to minecraft:particles.               ║
-# ║    So our sentinel pixel ends up in main, and classify must read it    ║
-# ║    from there.                                                         ║
-# ║                                                                        ║
-# ║  WHY fixed NDC instead of ScreenSize:                                  ║
-# ║    The Globals UBO (which provides ScreenSize) is NOT bound for the    ║
-# ║    particle pipeline. PARTICLE_SNIPPET builds from MATRICES_FOG only,  ║
-# ║    without GLOBALS_SNIPPET. ScreenSize reads as vec2(0,0) → dividing   ║
-# ║    by zero gives infinity → marker at infinity → clipped → no output.  ║
-# ║    Instead, we use fixed NDC coordinates for the marker quad and the   ║
-# ║    fsh writes the sentinel at exact gl_FragCoord pixels (0,0)/(1,0).   ║
-# ║                                                                        ║
-# ║  WHY range-based detection:                                            ║
-# ║    Dust applies a random ~0.48-1.0x color multiplier per channel       ║
-# ║    (shared 0.6-1.0 factor x per-channel 0.8-1.0 via darken()).         ║
-# ║    Input color 0.02 → vertex Color R∈[2-5] in 8-bit.                   ║
-# ║    Checking ranges (R∈[1-10], B==0) handles this randomization.        ║
-# ║    G==0 → flash, G∈[1-10] → zoom. B==0 guaranteed (0xanything=0).      ║
-# ║                                                                        ║
-# ║  WHY deterministic sentinel in particle.fsh:                           ║
-# ║    The fsh writes vec4(254/255, mode/255, 0, 1) regardless of the      ║
-# ║    raw Color values. This ensures classify always reads exact integer  ║
-# ║    values via texelFetch, immune to dust's color randomization.        ║
-# ║                                                                        ║
-# ║  WHY ScreenSize for pixel placement:                                   ║
-# ║    Hardcoded NDC coordinates (e.g. -0.98) map to different pixels at   ║
-# ║    different resolutions. ScreenSize (from globals.glsl) lets us       ║
-# ║    compute the exact NDC for a given pixel regardless of resolution.   ║
-# ║                                                                        ║
-# ║  WHY alpha=1.0 forced in particle.fsh:                                 ║
-# ║    When alpha < 1, the GPU blends RGB channels before storing them in  ║
-# ║    the framebuffer. With alpha=1, stored = src exactly.                ║
-# ║                                                                        ║
-# ║  WHY flat varyings:                                                    ║
-# ║    `flat` prevents interpolation between vertices. Without it,         ║
-# ║    markerMode could be interpolated across the quad.                   ║
-# ║                                                                        ║
-# ╠════════════════════════════════════════════════════════════════════════╣
-# ║                      ⚠ REQUIREMENTS ⚠                                 ║
-# ║                                                                        ║
-# ║  • Graphics MUST be set to "Fabulous!"                                 ║
-# ║  • Resource pack must be active and loaded.                            ║
-# ║  • Marker particle must be IN FRONT of the camera.                     ║
-# ║                                                                        ║
-# ╠════════════════════════════════════════════════════════════════════════╣
-# ║                         DEBUG MODE                                     ║
-# ║                                                                        ║
-# ║  Bottom-left debug squares when DEBUG=1:                               ║
-# ║    [RED   0-50px]   = transparency pass runs                           ║
-# ║    [GREEN 50-100px] = flash pass runs                                  ║
-# ║    [BLUE  100-150px]= zoom pass runs (orange/cyan = mode detected)     ║
-# ║    [150-200px] = flash sentinel at (0,0) (YELLOW=found, GRAY=empty)    ║
-# ║    [200-250px] = zoom sentinel at (1,0)  (YELLOW=found, GRAY=empty)    ║
-# ║    [250-300px] = amplified MAIN at (0,0) x50                           ║
-# ║    [300-350px] = amplified MAIN at (1,0) x50                           ║
-# ║    [350-400px] = MAIN DEPTH at (0,0)                                   ║
-# ║             GREEN=near(0), RED=far(1), YELLOW=mid                      ║
-# ║    [400-450px] = MAIN DEPTH at (1,0)                                   ║
-# ║             GREEN=near(0), RED=far(1), YELLOW=mid                      ║
-# ║                                                                        ║
-# ╚════════════════════════════════════════════════════════════════════════╝
-#
-# MARKER PIXEL MAP:
-#   Mode 1 (flash)     → screen pixel (0, 0)   [bottom-left corner]
-#   Mode 2-4 (zoom)    → screen pixel (1, 0)   [one pixel right]
-#   Mode 5-9 (spread)  → screen pixel (2, 0)   [two pixels right]
-#   Mode 12-14 (FOV)   → screen pixel (3, 0)   [three pixels right]
-#
-# MARKER COLOR ENCODING (dust RGB + scale):
-#   Command provides float [R, G, B] (no alpha) + scale (size & lifetime).
-#   Dust particles apply a random color multiplier (~0.48-1.0 per channel)
-#   via AbstractDustParticle.darken(), so vertex Color.rgb varies.
-#   We use very dim colors and range-based detection to handle this.
-#
-#   Flash: color:[0.02, 0.0, 0.0], scale:0.01
-#     R ∈ [2-5] after randomization, G = 0, B = 0
-#   Zoom center-only (no scope): color:[0.02, 0.25, 0.0], scale:0.01
-#     R ∈ [2-5] after randomization, G ∈ [30-63], B = 0
-#   Zoom x3: color:[0.02, 0.02, 0.0], scale:0.01
-#     R ∈ [2-5] after randomization, G ∈ [2-5], B = 0
-#   Zoom x4: color:[0.02, 0.08, 0.0], scale:0.01
-#     R ∈ [2-5] after randomization, G ∈ [10-20], B = 0
-#
-#   Crosshair spread markers (B > 0, G = 0):
-#   Sneak:  color:[0.02, 0.0, 0.02], scale:0.01 → B' ∈ [2-5]
-#   Base:   color:[0.02, 0.0, 0.05], scale:0.01 → B' ∈ [6-13]
-#   Walk:   color:[0.02, 0.0, 0.12], scale:0.01 → B' ∈ [15-31]
-#   Sprint: color:[0.02, 0.0, 0.28], scale:0.01 → B' ∈ [34-71]
-#   Jump:   color:[0.02, 0.0, 0.60], scale:0.01 → B' ∈ [73-153]
-#
-#   FOV markers (B > 0 AND G > 0, immediate zoom FOV reduction):
-#   FOV center-only: color:[0.02, 0.25, 0.15] → G' ∈ [30-63], B' ∈ [18-38]
-#   FOV x3:          color:[0.02, 0.02, 0.15] → G' ∈ [2-5],   B' ∈ [18-38]
-#   FOV x4:          color:[0.02, 0.08, 0.15] → G' ∈ [10-20],  B' ∈ [18-38]
-#
-#   Detection: R ∈ [1,10] → marker signature.
-#   Flash/zoom: B == 0, G encodes mode.
-#   Spread: G == 0, B > 0 encodes movement state.
-#   FOV: G > 0 AND B ∈ [15-45] → immediate zoom FOV reduction.
-#
-#   scale=0.01 → particle lifetime = 0 (1 game tick minimum).
-#   Flash auto-expires after 1 tick.
-#   Zoom spawned every tick → always at least one live particle.
-#
-#   fsh writes DETERMINISTIC sentinel (R=254, G=mode, B=0, A=255)
-#   so classify always reads exact values via texelFetch.
-#
+MARKER_MODES: dict[str, str] = {
+	"flash":  "(0,0)  R only          [0.02, 0.00, 0.00]",
+	"zoom":   "(1,0)  G encodes level [0.02, 0.25/0.02/0.08, 0.00] = none/x3/x4",
+	"spread": "(2,0)  B encodes state [0.02, 0.00, 0.02/0.05/0.12/0.28/0.60] sneak..jump",
+	"fov":    "(3,0)  G and B set     [0.02, 0.25/0.02/0.08, 0.15] = none/x3/x4",
+}
+""" Marker contract shared by the mcfunctions and the GLSL: target pixel and dust colour per mode.
+R in [1,10] is the signature; scale=0.01 gives a 1-tick lifetime, so flash auto-expires and zoom
+respawns every tick. Colours are randomized by darken(), so every GLSL check is a range. """
 
-
-# ============================================================================
 # GLSL Shader Sources
-# ============================================================================
 
-
-# ────────────────────────────────────────────────────────────────────────────
 # 1. CORE PARTICLE VERTEX SHADER
-# ────────────────────────────────────────────────────────────────────────────
 PARTICLE_VSH = """\
 #version 330
 
@@ -310,10 +154,7 @@ void main() {
 }
 """
 
-
-# ────────────────────────────────────────────────────────────────────────────
 # 2. CORE PARTICLE FRAGMENT SHADER
-# ────────────────────────────────────────────────────────────────────────────
 PARTICLE_FSH = """\
 #version 330
 
@@ -374,10 +215,7 @@ void main() {
 }
 """
 
-
-# ────────────────────────────────────────────────────────────────────────────
 # 3. POST-PROCESSING: CLASSIFY PASS
-# ────────────────────────────────────────────────────────────────────────────
 CLASSIFY_FSH = """\
 #version 330
 
@@ -435,10 +273,7 @@ void main() {
 }
 """
 
-
-# ────────────────────────────────────────────────────────────────────────────
 # 4. POST-PROCESSING: SPREAD COPY (smooth spread feedback loop)
-# ────────────────────────────────────────────────────────────────────────────
 SPREAD_COPY_FSH = """\
 #version 330
 
@@ -456,10 +291,7 @@ void main() {
 }
 """
 
-
-# ────────────────────────────────────────────────────────────────────────────
 # 5. POST-PROCESSING: TRANSPARENCY COMPOSITING
-# ────────────────────────────────────────────────────────────────────────────
 TRANSPARENCY_FSH = """\
 #version 330
 
@@ -596,10 +428,7 @@ void main() {
 }
 """
 
-
-# ────────────────────────────────────────────────────────────────────────────
 # 6. POST-PROCESSING: MUZZLE FLASH EFFECT
-# ────────────────────────────────────────────────────────────────────────────
 FLASH_FSH = """\
 #version 330
 
@@ -678,10 +507,7 @@ void main() {
 }
 """
 
-
-# ────────────────────────────────────────────────────────────────────────────
 # 7. POST-PROCESSING: SMOOTH ZOOM INTERPOLATION (FOV feedback loop)
-# ────────────────────────────────────────────────────────────────────────────
 ZOOM_LERP_FSH = """\
 #version 330
 
@@ -729,10 +555,7 @@ void main() {
 }
 """
 
-
-# ────────────────────────────────────────────────────────────────────────────
 # 8. POST-PROCESSING: BARREL DISTORTION ZOOM + FOV REDUCTION
-# ────────────────────────────────────────────────────────────────────────────
 ZOOM_FSH = """\
 #version 330
 
@@ -926,10 +749,7 @@ void main() {
 }
 """
 
-
-# ────────────────────────────────────────────────────────────────────────────
 # 9. POST-PROCESSING: ENTITY OUTLINE ZOOM (glow outlines follow the scene zoom)
-# ────────────────────────────────────────────────────────────────────────────
 OUTLINE_ZOOM_FSH = """\
 #version 330
 
@@ -992,14 +812,10 @@ void main() {
 }
 """
 
-
-# ============================================================================
 # Post-effect pipeline definition
-# ============================================================================
 
 # Barrel distortion strength, shared by the scene zoom pass and the outline zoom pass
 DISTORTION: float = 0.55
-
 
 def get_entity_outline_json(ns: str) -> JsonDict:
     """Build the entity outline post-effect pipeline JSON.
@@ -1085,7 +901,6 @@ def get_entity_outline_json(ns: str) -> JsonDict:
         ],
     }
 
-
 def get_post_effect_json(ns: str) -> JsonDict:
     """Build the transparency post-effect pipeline JSON.
 
@@ -1102,8 +917,7 @@ def get_post_effect_json(ns: str) -> JsonDict:
             "swap":  {},
         },
         "passes": [
-            # Pass 1: CLASSIFY - read sentinel pixels from MAIN
-            # Dust is OPAQUE → rendered to minecraft:main by renderSolid().
+            # Pass 1: CLASSIFY - read sentinel pixels from MAIN, where renderSolid() puts opaque dust.
             # Only translucent particles go to minecraft:particles.
             {
                 "vertex_shader":   "minecraft:core/screenquad",
@@ -1123,8 +937,7 @@ def get_post_effect_json(ns: str) -> JsonDict:
                 ],
                 "output": "smooth_spread",
             },
-            # Pass 1c: ZOOM LERP - persist smooth zoom for next frame's FOV feedback loop
-            # Reads FOV sentinel at pixel (3,0) directly from main framebuffer
+            # Pass 1c: ZOOM LERP - persist smooth zoom for the next frame, reading the FOV sentinel at (3,0).
             {
                 "vertex_shader":   "minecraft:core/screenquad",
                 "fragment_shader": f"{ns}:post/zoom_lerp",
@@ -1170,7 +983,7 @@ def get_post_effect_json(ns: str) -> JsonDict:
                     ],
                 },
             },
-            # Pass 4: ZOOM - barrel distortion + FOV reduction + flash spark overlay
+            # Pass 4: ZOOM - barrel distortion, FOV reduction and the flash spark overlay.
             # SparkTex is the 1536x1536 flash sprite sheet (3x3 grid of 9 sprites).
             # Spark overlays AFTER zoom so it's not barrel-distorted.
             # Zoom level (x3/x4) is read from classify B channel.
@@ -1208,11 +1021,7 @@ def get_post_effect_json(ns: str) -> JsonDict:
         ],
     }
 
-
-# ============================================================================
 # Main entry point
-# ============================================================================
-
 
 def main() -> None:
     """ Register all shader files and write marker particle commands """
@@ -1231,17 +1040,15 @@ def main() -> None:
     Mem.ctx.assets[ns].fragment_shaders["post/outline_zoom"] = FragmentShader(OUTLINE_ZOOM_FSH)
 
     Mem.ctx.assets["minecraft"].post_effects["transparency"] = set_json_encoder(PostEffect(get_post_effect_json(ns)), max_level=4)
-    # Glow outlines are composited AFTER the scene zoom, so the outline chain must warp them
-    # with the same transform or glowing entities keep unzoomed outlines (see OUTLINE_ZOOM_FSH)
+    # Glow outlines are composited AFTER the scene zoom, so the outline chain must warp them the same way.
+    # Otherwise glowing entities keep unzoomed outlines (see OUTLINE_ZOOM_FSH).
     Mem.ctx.assets["minecraft"].post_effects["entity_outline"] = set_json_encoder(PostEffect(get_entity_outline_json(ns)), max_level=4)
 
     # Register flash spark texture for post-effect overlay (1536x1536 additive spark)
     textures_folder: str = Mem.ctx.meta.get("stewbeet", {}).get("textures_folder", "")
     Mem.ctx.assets[ns].textures["effect/flash"] = Texture(source_path=f"{textures_folder}/flash.png")
 
-    # Flash marker: mode 1
-    # dust color:[R,0,0] with R=0.02 → vsh detects R∈[1-10], G==0, B==0
-    # scale=0.01 → lifetime = 0 (1 game tick minimum) → brief flash for rapid fire
+    # Flash marker (mode 1): dust color:[0.02,0,0], detected as R∈[1-10] with G==0 and B==0. scale=0.01 gives a 1-tick lifetime, so the flash is brief enough for rapid fire.
     version: str = Mem.ctx.project_version
     write_versioned_function("player/fire_weapon", f"""
 # Shader: spawn muzzle flash marker - skip for grenades
@@ -1276,11 +1083,8 @@ execute if score #can_see {ns}.data matches 0 store result score #can_see {ns}.d
 execute if score #can_see {ns}.data matches 1 run particle minecraft:dust{{color:[0.02,1.0,0.0],scale:0.01}} ~ ~ ~ 0 0 0 0 1 force @s
 """)
 
-    # Zoom marker: mode 3 (x3) or mode 4 (x4)
-    # Zoom x3: color:[0.02, 0.02, 0] → G∈[2-5] after randomization → mode 3
-    # Zoom x4: color:[0.02, 0.08, 0] → G∈[10-20] after randomization → mode 4
-    # Zoom marker spawning is handled in zoom/main (zoom.py) after zoom state
-    # resolution, with cooldown guard and 5-tick delay.
+    # Zoom marker: x3 is color:[0.02,0.02,0] (G∈[2-5]), x4 is color:[0.02,0.08,0] (G∈[10-20]).
+    # Spawning happens in zoom/main (zoom.py) after zoom resolution, with a cooldown guard and 5-tick delay.
 
     # Replace crosshair texture with transparent one (shader draws custom crosshair conditionally)
     if custom_crosshair:

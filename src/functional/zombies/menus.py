@@ -1,6 +1,5 @@
-
+""" Zombies setup, map selection and admin dialogs. """
 # ruff: noqa: E501
-# Imports
 from stewbeet import Mem, write_versioned_function
 
 from ..helpers import MGS_TAG, dialog_back_action, dialog_function, dialog_run_btn, dialog_show_btn, register_dialog, register_value_picker
@@ -12,7 +11,6 @@ _PU_ADMIN_EMOJI: dict[str, str] = {
 	"nuke": "☢", "unlimited_ammo": "🔫", "random_perk": "🧪", "free_pap": "💠",
 	"cash_drop": "💵", "fire_sale": "🏷", "bonfire_sale": "🔥",
 }
-
 
 def generate_zombies_menus() -> None:
 	ns: str = Mem.ctx.project_id
@@ -50,10 +48,9 @@ def generate_zombies_menus() -> None:
 	# /function .../zombies/setup now opens the dialog
 	write_versioned_function("zombies/setup", f"function {dialog_function('zombies/setup')}")
 
-	## Admin / debug menu ────────────────────────────────────────
-	## Everything here reuses the normal game paths rather than poking state directly, so a debug
-	## action can't leave a game in a shape the round logic never produces. Reachable only by
-	## operators: every button is a /function, which vanilla already restricts to permission level 2.
+	## Admin / debug menu.
+	## Everything here reuses the normal game paths rather than poking state directly, so a debug action can't leave a game in a shape the round logic never produces.
+	## Reachable only by operators: every button is a /function, which vanilla already restricts to permission level 2.
 	generate_zombies_admin_menu(ns, version)
 
 	## Map selection menu: build a dialog listing all available zombies maps
@@ -74,7 +71,6 @@ execute unless data storage {ns}:temp dialog.actions[0] run data modify storage 
 function {ns}:v{version}/multiplayer/show_dialog with storage {ns}:temp
 """)
 
-
 def generate_zombies_admin_menu(ns: str, version: str) -> None:
 	""" Register the operator-only zombies debug menu and the functions its buttons run.
 
@@ -82,16 +78,14 @@ def generate_zombies_admin_menu(ns: str, version: str) -> None:
 		ns      (str): The project namespace.
 		version (str): The project version, used to build function paths.
 	"""
-	## Force the current round to end. Rather than calling round_complete directly, this reproduces
-	## the condition game_tick already watches for (no zombies alive, none left to spawn), so the
-	## normal round-end path runs exactly once with all its announcements and respawns intact.
+	## Force the current round to end.
+	## Rather than calling round_complete directly, this reproduces the condition game_tick already watches for (no zombies alive, none left to spawn), so the normal round-end path runs exactly once with all its announcements and respawns intact.
 	write_versioned_function("zombies/admin/force_round_end", f"""
 kill @e[tag={ns}.zombie_round]
 scoreboard players set #zb_to_spawn {ns}.data 0
 """)
 
-	## Round jumps. start_round increments game.round itself, so to land on "current + delta" the
-	## stored round is set to "current + delta - 1" before the round is forced to end.
+	## Round jumps. start_round increments game.round itself, so to land on "current + delta" the stored round is set to "current + delta - 1" before the round is forced to end.
 	for delta in (1, 5, 10, 50):
 		write_versioned_function(f"zombies/admin/round_skip_{delta}", f"""
 execute unless data storage {ns}:zombies game{{state:"active"}} run return run tellraw @s [{MGS_TAG},{{"text":"No zombies game is active.","color":"red"}}]
@@ -123,18 +117,14 @@ scoreboard players set @a[scores={{{ns}.zb.in_game=1}}] {ns}.zb.points 0
 tellraw @a [{MGS_TAG},{{"text":"An operator reset everyone's points.","color":"red"}}]
 """)
 
-	## Power-ups reuse the real activation functions, so bossbars, sounds and timers all behave
-	## exactly as if the power-up had been picked up off the floor.
-	# Generated from POWERUP_TYPES so EVERY power-up is always present (no drift when new ones are added).
+	## Power-ups reuse the real activation functions, so bossbars, sounds and timers all behave exactly as if the power-up had been picked up off the floor.
+	## Generated from POWERUP_TYPES so EVERY power-up is always present (no drift when new ones are added).
 	admin_powerups: list[tuple[str, str, str, str]] = [
 		(pu_id, f'{_PU_ADMIN_EMOJI.get(pu_id, "⚡")} {v.display}', v.color, f'Force {v.display} for everyone')
 		for pu_id, v in POWERUP_TYPES.items()
 	]
-	## Some power-ups (Nuke, Free PaP, Cash Drop, Random Perk) act "as the player who picked it up"
-	## and do nothing at all without the {ns}.pu_collecting tag a real pickup sets — the Nuke's kill
-	## loop in particular never starts, so the fire and sounds play while every zombie survives.
-	## Nominate a collector here: the clicking operator when they are actually playing, otherwise any
-	## in-game player, so the button still works from spectator.
+	## Some power-ups (Nuke, Free PaP, Cash Drop, Random Perk) act "as the player who picked it up" and do nothing at all without the {ns}.pu_collecting tag a real pickup sets — the Nuke's kill loop in particular never starts, so the fire and sounds play while every zombie survives.
+	## Nominate a collector here: the clicking operator when they are actually playing, otherwise any in-game player, so the button still works from spectator.
 	write_versioned_function("zombies/admin/powerup", f"""
 execute unless data storage {ns}:zombies game{{state:"active"}} run return run tellraw @s [{MGS_TAG},{{"text":"No zombies game is active.","color":"red"}}]
 tag @s[scores={{{ns}.zb.in_game=1}},gamemode=!spectator] add {ns}.pu_collecting

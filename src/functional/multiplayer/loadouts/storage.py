@@ -1,5 +1,4 @@
-
-# Imports
+""" Persistent loadout storage and per-player id assignment. """
 from stewbeet import Mem, write_load_file, write_versioned_function
 
 
@@ -54,11 +53,9 @@ data modify storage {ns}:multiplayer player_data append from storage {ns}:temp _
 # Custom loadouts: assign player ID if not yet assigned
 execute unless score @s {ns}.mp.pid matches 1.. run function {ns}:v{version}/multiplayer/assign_pid
 """, prepend=True)
-	## get_username: capture player username via player head loot table trick
-	## Called via: tag @s add {ns}.username_getter
-	##             execute at @s summon item_display run function .../get_username
-	##             tag @s remove {ns}.username_getter
-	## Result: stores username in {ns}:temp _new_loadout.owner_name
+	## Capture a player's username via the player-head loot table trick.
+	## Called by tagging @s with {ns}.username_getter, summoning an item_display at them, then removing the tag.
+	## Result: the username in {ns}:temp _new_loadout.owner_name.
 	write_versioned_function("multiplayer/get_username", f"""
 # @s = item_display entity spawned at the player's position
 # Tag this entity so we can reference it from within the execute-as subcommand
@@ -77,3 +74,4 @@ execute unless data storage {ns}:temp _new_loadout.owner_name run data modify st
 # Clean up: kill this entity
 kill @s
 """)
+

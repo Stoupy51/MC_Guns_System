@@ -1,10 +1,12 @@
+""" Wallbuy System Wall-mounted stations.
+
+Players interact to buy items.
+Each wallbuy displays its item on the wall and shows info on hover.
+The item KIND is probed from the item's custom_data at setup and routes the purchase flow:
+  0 = gun (+magazine, hotbar.1-3)        1 = knife (hotbar.0, no refill)
+  2 = lethal grenade (hotbar.7, max 4)   3 = tactical e.g. monkey bomb (hotbar.6, max 3)
+"""
 # ruff: noqa: E501
-# Wallbuy System
-# Wall-mounted stations. Players interact to buy items.
-# Each wallbuy displays its item on the wall and shows info on hover.
-# The item KIND is probed from the item's custom_data at setup and routes the purchase flow:
-#   0 = gun (+magazine, hotbar.1-3)        1 = knife (hotbar.0, no refill)
-#   2 = lethal grenade (hotbar.7, max 4)   3 = tactical e.g. monkey bomb (hotbar.6, max 3)
 
 from stewbeet import Mem, write_load_file, write_versioned_function
 
@@ -204,20 +206,19 @@ function {ns}:v{version}/zombies/wallbuys/msg_purchased
 """)
 
 	## Equipment wallbuys: lethal grenades (hotbar.7, max 4) and tacticals (hotbar.6, max 3).
-	## Same flow, generated per kind: same-item-in-slot -> refill at refill_price (deny when already
-	## full, BEFORE charging), otherwise full price for a fresh full stack of the bought type.
+	## Same flow, generated per kind: same-item-in-slot -> refill at refill_price (deny when already full, BEFORE charging), otherwise full price for a fresh full stack of the bought type.
 	for kind_name, eq_slot, eq_count in (("lethal", 7, 4), ("tactical", 6, 3)):
 		widows_gate: str = ""
 		record_line: str = ""
 		if kind_name == "lethal":
-			# Widow's Wine owners keep web grenades: any lethal buy refills webs instead of switching
-			# the bought type. Reroute before the normal buy/refill flow (buy_lethal_web below).
+			# Widow's Wine owners keep web grenades: any lethal buy refills webs instead of switching the bought type.
+			# Reroute before the normal buy/refill flow (buy_lethal_web below).
 			widows_gate = (
 				f"execute if score @s {ns}.special.widows_wine matches 1 run "
 				f"return run function {ns}:v{version}/zombies/wallbuys/buy_lethal_web with storage {ns}:temp _wb_weapon\n"
 			)
-			# Remember the bought lethal type so an emptied slot refills THIS type (not always frag)
-			# on round-end replenish / Max Ammo (inventory.py). Not needed for tacticals (refill-only).
+			# Remember the bought lethal type so an emptied slot refills THIS type (not always frag) on round-end replenish / Max Ammo (inventory.py).
+			# Not needed for tacticals (refill-only).
 			record_line = f"function {ns}:v{version}/zombies/inventory/record_lethal_type\n"
 		write_versioned_function(f"zombies/wallbuys/buy_{kind_name}", f"""
 {widows_gate}# Same equipment already in the slot: refill flow
@@ -259,9 +260,8 @@ function {ns}:v{version}/zombies/inventory/apply_slot_tag {{slot:"hotbar.7",grou
 function {ns}:v{version}/zombies/wallbuys/msg_purchased
 """)
 
-	## Silent tactical give/refill (no pricing, no messages): shared by the Mystery Box collect flow
-	## (default_give/monkey_bomb) and any future scripted givers. Sets the usual purchase flags so
-	## the box collect's retry logic sees a completed give.
+	## Silent tactical give/refill (no pricing, no messages): shared by the Mystery Box collect flow (default_give/monkey_bomb) and any future scripted givers.
+	## Sets the usual purchase flags so the box collect's retry logic sees a completed give.
 	write_versioned_function("zombies/wallbuys/give_tactical", f"""
 scoreboard players set #wb_purchase_done {ns}.data 1
 scoreboard players set #wb_purchase_mode {ns}.data 2
@@ -569,3 +569,4 @@ function {ns}:v{version}/zombies/wallbuys/render_hover
 # Setup wallbuys
 execute if data storage {ns}:zombies game.map.wallbuys[0] run function {ns}:v{version}/zombies/wallbuys/setup
 """)
+

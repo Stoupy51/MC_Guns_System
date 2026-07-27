@@ -1,5 +1,4 @@
-
-# Core shared functions (shared mcfunctions used by multiplayer, missions, and zombies)
+""" Core shared functions (shared mcfunctions used by multiplayer, missions, and zombies). """
 from .bounds import write_shared_bounds_functions
 from .commands import write_shared_command_functions
 from .map_loading import write_shared_map_loading

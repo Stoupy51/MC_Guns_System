@@ -1,5 +1,4 @@
-
-# Imports
+""" Preset multiplayer classes and the SNBT builders for their dialog rows. """
 from stewbeet import JsonDict
 
 from ...config.catalogs import PERKS
@@ -7,13 +6,11 @@ from ...config.catalogs import PERKS
 # Consumable magazine item IDs (stack count = bullet count, uses set_consumable_count modifier)
 CONSUMABLE_MAGS: set[str] = {"rpg7_rocket", "mosin_bullet", "m24_bullet", "spas12_shell", "m500_shell", "m590_shell", "element_115"}
 
-
 def make_slot_snbt(ns: str, slot: str, loot: str, count: int = 1, consumable: bool = False, bullets: int = 0) -> str:
     """ Build the SNBT string for a single loadout slot entry. """
     return f'{{slot:"{slot}",loot:"{ns}:i/{loot}",count:{count},consumable:{"1b" if consumable else "0b"},bullets:{bullets}}}'
 
-# Balanced team-vs-team class loadouts (Python-side definitions)
-# Used at build time to generate SNBT for storage initialization
+# Balanced team-vs-team class loadouts (Python-side definitions) Used at build time to generate SNBT for storage initialization
 CLASSES: dict[str, JsonDict] = {
     "assault": {
         "name": "Assault",
@@ -103,10 +100,8 @@ PERK_NAMES: dict[str, str] = {perk.perk_id: perk.display_name for perk in PERKS}
 # Class number assignments (1-indexed, used for scoreboard mgs.mp.class)
 CLASS_IDS: dict[str, int] = {class_id: idx + 1 for idx, class_id in enumerate(CLASSES)}
 
-# Trigger value offset (trigger_value = TRIGGER_OFFSET + class_num)
-# Must match the dispatch formula in player_config.py (10 + class_num → 11..20)
+# Trigger value offset (trigger_value = TRIGGER_OFFSET + class_num) Must match the dispatch formula in player_config.py (10 + class_num → 11..20)
 TRIGGER_OFFSET: int = 10
-
 
 def get_class_description(class_id: str) -> str:
     """ Get the hover/lore description text for a class. """
@@ -114,7 +109,6 @@ def get_class_description(class_id: str) -> str:
     main_gun: str = data["main"]["gun"].upper().replace("_", " ")
     secondary_gun: str = data.get("secondary", {}).get("gun", "").upper().replace("_", " ")
     return f"{data['lore']}\nMain: {main_gun}\nSecondary: {secondary_gun}"
-
 
 def build_class_snbt(ns: str, class_id: str, class_data: JsonDict, class_num: int) -> str:
     """ Build the SNBT representation of a class for storage initialization.

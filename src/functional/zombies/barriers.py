@@ -1,12 +1,10 @@
+""" Barriers: physical block-display obstacles that freeze zombies entering their radius.
 
+Zombies can remove a barrier over 2 seconds, one remover at a time.
+Players can repair a destroyed barrier by sneaking nearby for 1.5 seconds.
+Block state is swapped in-place on destroy and repair, so each barrier stays a single block_display.
+"""
 # ruff: noqa: E501
-
-# Barrier System
-# Physical block-display obstacles that freeze zombies entering their radius.
-# Zombies can remove a barrier over 2 seconds (one remover at a time).
-# Players can repair a destroyed barrier by sneaking nearby for 1.5 seconds.
-# Block state is swapped in-place on destroy/repair — single block_display per barrier.
-
 from stewbeet import JsonDict, Mem, Predicate, set_json_encoder, write_load_file, write_versioned_function
 
 
@@ -14,8 +12,7 @@ def generate_barriers() -> None:
 	ns: str = Mem.ctx.project_id
 	version: str = Mem.ctx.project_version
 
-	## Light level predicates (dynamic barricade brightness, same technique as the
-	## stewbeet custom_blocks plugin — one exact-match predicate per light level)
+	## Light level predicates (dynamic barricade brightness, same technique as the stewbeet custom_blocks plugin — one exact-match predicate per light level)
 	for level in range(1, 16):
 		light_pred: JsonDict = {"condition": "minecraft:location_check", "predicate": {"light": {"light": level}}}
 		Mem.ctx.data[ns].predicates[f"v{version}/light/{level}"] = set_json_encoder(Predicate(light_pred), max_level=-1)
@@ -102,9 +99,8 @@ $execute positioned $(x) $(y) $(z) align xyz positioned ~.5 ~.5 ~.5 run summon m
 # Check light level at current position and update #light if higher
 {check_light_lines}""")
 
-	## Compute a barricade display's brightness from the light at its position and the 6
-	## neighboring positions (max), instead of the old hardcoded sky/block 15 which made
-	## boards glow in dark rooms. @s = barrier display, executed at @s.
+	## Compute a barricade display's brightness from the light at its position and the 6 neighboring positions (max), instead of the old hardcoded sky/block 15 which made boards glow in dark rooms.
+	## @s = barrier display, executed at @s.
 	brightness_faces: list[str] = ["~ ~ ~", "~ ~1 ~", "~ ~-1 ~", "~1 ~ ~", "~-1 ~ ~", "~ ~ ~1", "~ ~ ~-1"]
 	compute_brightness_lines: str = "".join(
 		f"execute if score #light {ns}.data matches ..14 positioned {face} run function {ns}:v{version}/zombies/barriers/check_light\n"
@@ -371,3 +367,4 @@ data modify entity @s block_state set from entity @s data.block_enabled
 particle minecraft:happy_villager ~ ~ ~ 0.5 0.5 0.5 0.05 10 normal
 playsound minecraft:block.wood.place block @a[distance=..32] ~ ~ ~ 1.0 1.0
 """)
+

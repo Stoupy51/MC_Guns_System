@@ -1,11 +1,11 @@
+""" Mystery Box system.
 
+Dynamic weapon pool, visual animation with item cycling, random selection.
+
+Price: 950 points (configurable via #zb_mystery_box_price config) Pool can be extended via function tag #mgs:zombies/register_mystery_box_item Uses Bookshelf interaction module for click/hover detection.
+Positions use compound format: {pos:[x,y,z], rotation:[yaw,0.0f], group_id:N, can_start_on:1b}
+"""
 # ruff: noqa: E501
-# Mystery Box System
-# Dynamic weapon pool, visual animation with item cycling, random selection.
-# Price: 950 points (configurable via #zb_mystery_box_price config)
-# Pool can be extended via function tag #mgs:zombies/register_mystery_box_item
-# Uses Bookshelf interaction module for click/hover detection.
-# Positions use compound format: {pos:[x,y,z], rotation:[yaw,0.0f], group_id:N, can_start_on:1b}
 from stewbeet import Mem, write_load_file, write_versioned_function
 
 from ...config.stats import WEIGHT
@@ -15,16 +15,19 @@ from ..helpers import MGS_TAG
 from .common import build_weapon_magazine_data, deny_cmd, deny_not_enough_points_cmd
 
 # Move animation constants
-MOVE_BEAR_TICKS: int = 30		# bear visible before ascend starts
-MOVE_ASCEND_TICKS: int = 80		# ascend at old location
-MOVE_WAIT_TICKS: int = 100		# 5-second wait before descending
-MOVE_DESCEND_TICKS: int = 70	# descend at new location
-MOVE_TOTAL_TICKS: int = MOVE_BEAR_TICKS + MOVE_ASCEND_TICKS + MOVE_WAIT_TICKS + MOVE_DESCEND_TICKS	# 280
+MOVE_BEAR_TICKS: int = 30
+""" Bear visible before ascend starts. """
+MOVE_ASCEND_TICKS: int = 80
+""" Ascend at old location. """
+MOVE_WAIT_TICKS: int = 100
+""" 5-second wait before descending. """
+MOVE_DESCEND_TICKS: int = 70
+""" Descend at new location. """
+MOVE_TOTAL_TICKS: int = MOVE_BEAR_TICKS + MOVE_ASCEND_TICKS + MOVE_WAIT_TICKS + MOVE_DESCEND_TICKS
+""" 280. """
 
-# Monkey Bomb pool weight (weapon weights come from the catalog; the monkey is a non-catalog
-# tactical added to the pool manually — BO-style fairly common roll)
+# Monkey Bomb pool weight (weapon weights come from the catalog; the monkey is a non-catalog tactical added to the pool manually — BO-style fairly common roll)
 MONKEY_BOMB_WEIGHT: int = 5
-
 
 def generate_mystery_box() -> None:
 	ns: str = Mem.ctx.project_id
@@ -36,13 +39,10 @@ def generate_mystery_box() -> None:
 	deny_not_enough_points: str = deny_not_enough_points_cmd(ns, version, "#zb_mystery_box_price", f"{ns}.config")
 	owned_gun_macro_cd: str = "{" + ns + ':{gun:true,stats:{base_weapon:"$(weapon_id)"}}}'
 
-	# Presence box is two item_displays (base + lid) sharing this scale, so the lid can hinge open.
-	# 2.4 uniform scale makes the (full-width) model ~2.4 blocks wide.
+	# Presence box is two item_displays (base + lid) sharing this scale, so the lid can hinge open. 2.4 uniform scale makes the (full-width) model ~2.4 blocks wide.
 	MB_SCALE: float = 2.4
-	# Closed: identity. Open: hinge ~100° about X at the lid's front-bottom edge (like a real
-	# chest lid opening toward the front). item_display rotates about the model centre, so the
-	# translation cancels that out to keep the front-bottom edge fixed (T = p - R·p, with
-	# p = scaled offset of the hinge from centre = (0, -0.15, -0.6) at scale 2.4; R = -100° about X).
+	# Closed: identity.
+	# Open: hinge ~100° about X at the lid's front-bottom edge (like a real chest lid opening toward the front). item_display rotates about the model centre, so the translation cancels that out to keep the front-bottom edge fixed (T = p - R·p, with p = scaled offset of the hinge from centre = (0, -0.15, -0.6) at scale 2.4; R = -100° about X).
 	mb_closed_tf: str = f"{{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[{MB_SCALE}f,{MB_SCALE}f,{MB_SCALE}f]}}"
 	mb_open_tf: str = f"{{left_rotation:[-0.766f,0f,0f,0.643f],right_rotation:[0f,0f,0f,1f],translation:[0f,0.415f,-0.652f],scale:[{MB_SCALE}f,{MB_SCALE}f,{MB_SCALE}f]}}"
 
@@ -65,8 +65,7 @@ scoreboard objectives add {ns}.mb.pid dummy
 scoreboard objectives add {ns}.mb.buyer dummy
 """)
 
-	# Teddy bear loot table for the move animation is shared (see zombies/roaming.py) and referenced
-	# below as mgs:zombies/roaming_bear.
+	# Teddy bear loot table for the move animation is shared (see zombies/roaming.py) and referenced below as mgs:zombies/roaming_bear.
 
 	# Use common helper to build weapon->magazine mappings from catalogs
 	weapon_mag_data: dict[str, tuple[str, int, bool]] = build_weapon_magazine_data()
@@ -88,8 +87,7 @@ scoreboard objectives add {ns}.mb.buyer dummy
 		)
 		pool_weights.append(weight)
 
-	# Monkey Bomb: zombies-exclusive tactical (no magazine, given to hotbar.6 via the shared
-	# wallbuys/give_tactical — holding any monkeys counts as "owned" so duplicates reroll)
+	# Monkey Bomb: zombies-exclusive tactical (no magazine, given to hotbar.6 via the shared wallbuys/give_tactical — holding any monkeys counts as "owned" so duplicates reroll)
 	pool_entries.append(
 		f'{{weapon_id:"monkey_bomb",'
 		f'give_function:"{ns}:v{version}/zombies/mystery_box/default_give/monkey_bomb",'
@@ -101,9 +99,8 @@ scoreboard objectives add {ns}.mb.buyer dummy
 	default_pool_entries: str = ",".join(pool_entries)
 	default_pool_weights: str = ",".join(str(w) for w in pool_weights)
 
-	## Default give for every pooled gun: the chosen pool entry already carries weapon_id/magazine_id/
-	## mag_count/consumable, so this reads them back off mystery_box.result rather than one function
-	## per weapon restating the same literals. Custom pools keep their own give_function.
+	## Default give for every pooled gun: the chosen pool entry already carries weapon_id/magazine_id/ mag_count/consumable, so this reads them back off mystery_box.result rather than one function per weapon restating the same literals.
+	## Custom pools keep their own give_function.
 	write_versioned_function("zombies/mystery_box/default_give/weapon", f"""
 data modify storage {ns}:temp _wb_weapon set value {{}}
 data modify storage {ns}:temp _wb_weapon.weapon_id set from storage {ns}:zombies mystery_box.result.weapon_id
@@ -187,12 +184,10 @@ execute if data storage {ns}:temp _mb_iter[0] run function {ns}:v{version}/zombi
 $summon minecraft:interaction $(x) $(y) $(z) {{width:2.0f,height:-2.0f,response:true,Rotation:$(rotation),Tags:["{ns}.mystery_box_pos","{ns}.gm_entity","{ns}.mb_new","bs.entity.interaction"]}}
 """)
 
-	## Move each box's interaction entity out of reach unless its box is usable, so players can't
-	## hover or right-click a dead box position (an unreachable interaction entity also can't eat a
-	## gun click there). A box is usable when it's the active box, any box during a Fire Sale, or a
-	## box with a pull still in progress (so the buyer can always collect). Each entity is offset by
-	## exactly ±512 blocks so its real position stays exact across box moves. Called on every state
-	## change (setup, box move, Fire Sale start/end/cleanup, pull collect/reset) — never per tick.
+	## Move each box's interaction entity out of reach unless its box is usable, so players can't hover or right-click a dead box position (an unreachable interaction entity also can't eat a gun click there).
+	## A box is usable when it's the active box, any box during a Fire Sale, or a box with a pull still in progress (so the buyer can always collect).
+	## Each entity is offset by exactly ±512 blocks so its real position stays exact across box moves.
+	## Called on every state change (setup, box move, Fire Sale start/end/cleanup, pull collect/reset) — never per tick.
 	write_versioned_function("zombies/mystery_box/sync_interaction_visibility", f"""
 execute as @e[tag={ns}.mystery_box_pos] at @s run function {ns}:v{version}/zombies/mystery_box/sync_interaction_one
 """)
@@ -208,9 +203,8 @@ execute if score #mb_vis {ns}.data matches 1 if entity @s[tag={ns}.roam_hidden] 
 execute if score #mb_vis {ns}.data matches 0 unless entity @s[tag={ns}.roam_hidden] run function {ns}:v{version}/zombies/roaming/interaction_hide
 """)
 
-	## Refresh presence: one open chest at the active box, and a grayed-out disabled crate at every
-	## other (inactive) box position so players can see where the box might roam to. During a Fire Sale
-	## the inactive spots host real temp boxes instead, so the disabled crates are suppressed then.
+	## Refresh presence: one open chest at the active box, and a grayed-out disabled crate at every other (inactive) box position so players can see where the box might roam to.
+	## During a Fire Sale the inactive spots host real temp boxes instead, so the disabled crates are suppressed then.
 	write_versioned_function("zombies/mystery_box/sync_presence_display", f"""
 # Keep one chest display at the currently active mystery box.
 kill @e[tag={ns}.mb_presence]
@@ -223,9 +217,8 @@ execute as @n[tag={ns}.mystery_box_active] at @s run function {ns}:v{version}/zo
 function {ns}:v{version}/zombies/mystery_box/refresh_disabled
 """)
 
-	## Rebuild only the grayed-out disabled crates (leaves the active chest untouched, so it can be
-	## called after a move lands without disturbing the freshly-placed presence chest). During a Fire
-	## Sale the inactive spots host real temp boxes, so the disabled crates are suppressed then.
+	## Rebuild only the grayed-out disabled crates (leaves the active chest untouched, so it can be called after a move lands without disturbing the freshly-placed presence chest).
+	## During a Fire Sale the inactive spots host real temp boxes, so the disabled crates are suppressed then.
 	write_versioned_function("zombies/mystery_box/refresh_disabled", f"""
 kill @e[tag={ns}.mb_disabled]
 execute if score #zb_fire_sale_timer {ns}.data matches ..0 as @e[tag={ns}.mystery_box_pos,tag=!{ns}.mystery_box_active] at @s run function {ns}:v{version}/zombies/mystery_box/summon_disabled_display
@@ -233,10 +226,7 @@ execute if score #zb_fire_sale_timer {ns}.data matches ..0 as @e[tag={ns}.myster
 
 	## Grayed-out disabled crate at an inactive box (@s = a non-active box interaction entity, at @s).
 	## Same base model/scale as the presence chest, 0.9 below the interaction entity, no lid.
-	## Two wrinkles: (1) a non-active box that still has a pull in progress is reachable and shows its
-	## result display — skip it so a crate isn't stacked underneath; (2) a hidden box's interaction
-	## entity is parked exactly 512 below its real spot (see roaming/interaction_hide), so bring the
-	## execution position back up by 512 before drawing the crate at the real location.
+	## Two wrinkles: (1) a non-active box that still has a pull in progress is reachable and shows its result display — skip it so a crate isn't stacked underneath; (2) a hidden box's interaction entity is parked exactly 512 below its real spot (see roaming/interaction_hide), so bring the execution position back up by 512 before drawing the crate at the real location.
 	write_versioned_function("zombies/mystery_box/summon_disabled_display", f"""
 execute if entity @n[tag={ns}.mb_display,distance=..3] run return 0
 data modify storage {ns}:temp _mb_dis.yaw set value 0.0f
@@ -255,8 +245,8 @@ $execute positioned ~ ~-0.9 ~ run summon minecraft:item_display ~ ~ ~ {{Rotation
 $execute positioned ~ ~-0.9 ~ run summon minecraft:item_display ~ ~ ~ {{Rotation:[$(yaw),0f],Tags:["{ns}.mb_presence","{ns}.mb_lid","{ns}.gm_entity"],item_display:"fixed",billboard:"fixed",item:{{id:"minecraft:chest",count:1,components:{{"minecraft:item_model":"{ns}:mystery_box_lid"}}}},transformation:{mb_closed_tf}}}
 """)
 
-	## Lid open/close animation (interpolated). Position-based: affects only the lid nearest the
-	## current execution position, so callers must be positioned at the box they mean.
+	## Lid open/close animation (interpolated).
+	## Position-based: affects only the lid nearest the current execution position, so callers must be positioned at the box they mean.
 	write_versioned_function("zombies/mystery_box/open_lid", f"""
 data merge entity @n[tag={ns}.mb_lid,distance=..4] {{transformation:{mb_open_tf},start_interpolation:0,interpolation_duration:8}}
 """)
@@ -366,8 +356,7 @@ $execute positioned ~ ~-0.9 ~ run summon minecraft:item_display ~ ~ ~ {{Rotation
 $execute positioned ~ ~-0.9 ~ run summon minecraft:item_display ~ ~ ~ {{Rotation:[$(yaw),0f],Tags:["{ns}.mb_presence","{ns}.mb_lid","{ns}.mb_temp","{ns}.gm_entity"],item_display:"fixed",billboard:"fixed",item:{{id:"minecraft:chest",count:1,components:{{"minecraft:item_model":"{ns}:mystery_box_lid"}}}},transformation:{mb_closed_tf}}}
 """)
 
-	# End a Fire Sale: stop allowing temp pulls; clean up now if idle, else defer until the
-	# in-progress pull resets (so a box being used isn't yanked mid-spin).
+	# End a Fire Sale: stop allowing temp pulls; clean up now if idle, else defer until the in-progress pull resets (so a box being used isn't yanked mid-spin).
 	write_versioned_function("zombies/mystery_box/fire_sale_end", f"""
 tag @e[tag={ns}.mb_fs_active] remove {ns}.mb_fs_active
 # Re-hide interaction entities of boxes that are no longer usable (boxes with a pull still in
@@ -568,7 +557,6 @@ execute unless data storage {ns}:temp _mb_cycle_item.weapon_id run data modify e
 $loot replace entity @s contents loot {ns}:i/$(weapon_id)
 """)
 
-
 	## Landing: decide + show the result for this pull (@s = display, positioned at the box)
 	write_versioned_function("zombies/mystery_box/show_result_one", f"""
 # Box will move (active box only): teddy bear path
@@ -644,14 +632,14 @@ tellraw @a[scores={{{ns}.zb.in_game=1}}] [{MGS_TAG},{{"text":"The Mystery Box is
 {zb_sound('box_bye_bye')}
 """)
 
-	## Move animation: tick dispatcher
-	# Timer phases (counting down from {MOVE_TOTAL_TICKS}=280):
-	#   bear visible (280..251): bear rises out of box (30 ticks)
-	#   ascend (250..171): chest + bear rise up (80 ticks)
-	#   wait (170..71): pause with no box visible (100 ticks = 5 seconds)
-	#   transition (70): pick new location, spawn descending chest
-	#   descend (69..1): chest descends at new location (69 ticks)
-	#   land (0): finalize
+	## Move animation tick dispatcher.
+	# Timer phases, counting down from {MOVE_TOTAL_TICKS}=280:
+	#   - bear visible (280..251): bear rises out of box (30 ticks)
+	#   - ascend (250..171): chest + bear rise up (80 ticks)
+	#   - wait (170..71): pause with no box visible (100 ticks = 5 seconds)
+	#   - transition (70): pick new location, spawn descending chest
+	#   - descend (69..1): chest descends at new location (69 ticks)
+	#   - land (0): finalize
 
 	ascend_start: int = MOVE_ASCEND_TICKS + MOVE_WAIT_TICKS + MOVE_DESCEND_TICKS + 1	# 251
 	ascend_end: int = MOVE_WAIT_TICKS + MOVE_DESCEND_TICKS + 1						# 171
@@ -839,8 +827,8 @@ data modify storage smithed.actionbar:input message set value {json:[{"text":"�
 function #smithed.actionbar:message
 """)
 
-	# Ready + the weapon name is known: prompt the pick-up by name, e.g. "🎲 Pick-up Ray Gun"
-	# (_mb_hover_name is the ready display item's item_name, read in hover_at_box)
+	# Ready + the weapon name is known: prompt the pick-up by name, e.g.
+	# "🎲 Pick-up Ray Gun" (_mb_hover_name is the ready display item's item_name, read in hover_at_box)
 	write_versioned_function("zombies/mystery_box/hud_ready_named", f"""
 data modify storage smithed.actionbar:input message set value {{json:[{{"text":"🎲 ","color":"light_purple"}},{{"text":"Pick-up ","color":"green"}},{{"storage":"{ns}:temp","nbt":"_mb_hover_name","interpret":true}}],priority:"conditional",freeze:5}}
 function #smithed.actionbar:message
@@ -915,3 +903,4 @@ scoreboard players set #mb_pid_counter {ns}.data 0
 tag @e remove {ns}.mb_fs_active
 tag @e remove {ns}.mb_orig_active
 """)
+

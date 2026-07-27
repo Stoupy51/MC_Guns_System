@@ -1,7 +1,8 @@
+""" Pack-a-Punch machine system for zombies mode.
 
+Resolves PAP upgrades at runtime from the selected gun's own stats.pap_stats.
+"""
 # ruff: noqa: E501
-# Pack-a-Punch machine system for zombies mode.
-# Resolves PAP upgrades at runtime from the selected gun's own stats.pap_stats.
 from stewbeet import ItemModifier, JsonDict, Mem, set_json_encoder, write_load_file, write_versioned_function
 
 from ...config.catalogs import SCOPE_VARIANTS
@@ -184,10 +185,10 @@ execute if data entity @s item.components."minecraft:lore"[0] run data modify st
 kill @s
 """)
 
-	# Dynamic list picker helpers (no hardcoded max level).
-	# _pap_pick.list: the PAP list to resolve
-	# #pap_next_idx: 0-based requested level index
-	# _pap_pick.value: resolved value (clamped to last available entry)
+	# Dynamic list picker helpers, with no hardcoded max level.
+	#   - _pap_pick.list: the PAP list to resolve
+	#   - #pap_next_idx: 0-based requested level index
+	#   - _pap_pick.value: resolved value, clamped to the last available entry
 	write_versioned_function("zombies/pap/pick_list_value", f"""
 scoreboard players set #pap_pick_i {ns}.data 0
 data modify storage {ns}:temp _pap_pick.value set from storage {ns}:temp _pap_pick.list[0]
@@ -223,8 +224,7 @@ function {ns}:v{version}/zombies/pap/pick_list_value_step
 	write_versioned_function("zombies/pap/compute_max_level", "\n".join(compute_max_lines))
 
 	# Apply one PAP field dynamically from stats.pap_stats.$(field) for #pap_next_idx.
-	# Macro rather than one function per stat: this is the PaP purchase path (cold), and the arg set
-	# is the fixed STATS_FIELDS list, so every variant is compiled once and then cached.
+	# Macro rather than one function per stat: this is the PaP purchase path (cold), and the arg set is the fixed STATS_FIELDS list, so every variant is compiled once and then cached.
 	write_versioned_function("zombies/pap/apply_field", f"""
 $data modify storage {ns}:temp _pap_pick.list set from storage {ns}:temp _pap_extract.stats.{PAP_STATS}.$(field)
 execute if data storage {ns}:temp _pap_pick.list[0] run function {ns}:v{version}/zombies/pap/pick_list_value
@@ -305,8 +305,7 @@ $data modify storage {ns}:temp _pap_extract.stats.models.zoom set value "{ns}:$(
 $item modify entity @s $(slot) {"function":"minecraft:set_components","components":{"minecraft:item_model":"$(model)"}}
 """)
 
-	# Randomize scope but guarantee a different result than the current one
-	# _pap_old_weapon must be set before calling this
+	# Randomize scope but guarantee a different result than the current one _pap_old_weapon must be set before calling this
 	write_versioned_function("zombies/pap/randomize_scope_different", f"""
 # Skip if weapon has no scope variants or only one (default)
 $data modify storage {ns}:temp _pap_scopes set from storage {ns}:zombies scope_variants."$({BASE_WEAPON})"
@@ -404,9 +403,8 @@ $item modify entity @s $(slot) {"function":"minecraft:set_components","component
 		f'scoreboard players add #pap_li {ns}.data 1',
 	])
 
-	# Line 3 (conditional): Fire Rate. Gate on OLD stats — the extracted lore has a Fire Rate line
-	# only if the weapon had a cooldown BEFORE this PAP. pap_stats can add cooldown (e.g. m1911),
-	# which would otherwise annotate a line that isn't there and shift decay/switch down one.
+	# Line 3 (conditional): Fire Rate.
+	# Gate on OLD stats — the extracted lore has a Fire Rate line only if the weapon had a cooldown BEFORE this PAP. pap_stats can add cooldown (e.g. m1911), which would otherwise annotate a line that isn't there and shift decay/switch down one.
 	annotate_lore_lines.append(
 		f'execute if data storage {ns}:temp _pap_old_stats.cooldown run function {ns}:v{version}/zombies/pap/annotate_fire_rate_line'
 	)
@@ -779,12 +777,12 @@ execute if score #pap_li {ns}.data < #pap_lore_len {ns}.data run function {ns}:v
 
 	# --- PAP Animation System (BO1-style, horizontal movement) ---
 	# Timeline (240 ticks total, no rotation or size changes):
-	#   240→221 (20t): GOING IN   — slide horizontally from ahead to center (2-tick wait after summon)
-	#   220→161 (60t): INSIDE     — particles + periodic sound
-	#   160→141 (20t): COMING OUT — slide horizontally from center to ahead
-	#   140:           TRIGGER RETREAT — glowing weapon, starts retreat timer, allows collection
-	#   139→1 (138t):  RETREAT    — weapon retreats back, still collectible
-	#   0:             RETREAT FINISH — weapon destroyed (lost) (sound)
+	# 240→221 (20t): GOING IN   — slide horizontally from ahead to center (2-tick wait after summon)
+	# 220→161 (60t): INSIDE     — particles + periodic sound
+	# 160→141 (20t): COMING OUT — slide horizontally from center to ahead
+	# 140:           TRIGGER RETREAT — glowing weapon, starts retreat timer, allows collection
+	# 139→1 (138t):  RETREAT    — weapon retreats back, still collectible
+	# 0:             RETREAT FINISH — weapon destroyed (lost) (sound)
 
 	# Spawn weapon item_display, transfer weapon, start animation timer.
 	write_versioned_function("zombies/pap/anim/start", f"""
@@ -1025,7 +1023,6 @@ execute if score #pap_owns {ns}.data matches 0 run {deny_not_your_weapon}
 tag @s remove {ns}.pap_owner
 """)
 
-
 	# Resolve machine ID and call lookup (runs as machine).
 	write_versioned_function("zombies/pap/anim/collect_at_machine", f"""
 execute store result storage {ns}:temp _pap_c.id int 1 run scoreboard players get @s {ns}.zb.pap.id
@@ -1065,14 +1062,11 @@ $data remove storage {ns}:zombies pap_anim_slot."$(id)"
 execute as @p[tag={ns}.pap_owner] run {zb_sound('success')}
 """)
 
-	# Timeslip: run two EXTRA anim steps this tick for a Timeslip-owned machine, so the UPGRADE
-	# advances 3 ticks per real tick. Stepping (rather than decrementing by 3) preserves every
-	# exact-tick phase trigger — each intermediate timer value is still processed.
-	# Gated on pap_anim>=206 (the going-in/inside/coming-out upgrade phase, timer 300→206): Timeslip
-	# only speeds up the UPGRADE, never the retreat/collectible phase (1..205). Once the weapon has
-	# emerged and is collectible it retreats at the normal 1x rate, so the collect window is the full
-	# ~10s for Timeslip owners too (this also stops the extras running into the retreat or past the
-	# animation end at -1). The base step still runs it once from game_tick regardless.
+	# Timeslip: run two EXTRA anim steps this tick for a Timeslip-owned machine, so the UPGRADE advances 3 ticks per real tick.
+	# Stepping (rather than decrementing by 3) preserves every exact-tick phase trigger — each intermediate timer value is still processed.
+	# Gated on pap_anim>=206 (the going-in/inside/coming-out upgrade phase, timer 300→206): Timeslip only speeds up the UPGRADE, never the retreat/collectible phase (1..205).
+	# Once the weapon has emerged and is collectible it retreats at the normal 1x rate, so the collect window is the full ~10s for Timeslip owners too (this also stops the extras running into the retreat or past the animation end at -1).
+	# The base step still runs it once from game_tick regardless.
 	write_versioned_function("zombies/pap/anim/step_timeslip", f"""
 execute if score @s {ns}.pap_anim matches 206.. run function {ns}:v{version}/zombies/pap/anim/step
 execute if score @s {ns}.pap_anim matches 206.. run function {ns}:v{version}/zombies/pap/anim/step

@@ -1,5 +1,4 @@
-
-# Imports
+""" Hardpoint: hold a rotating zone to score. """
 from ...helpers import MGS_TAG
 from .base import GameModeVariant
 
@@ -162,7 +161,7 @@ kill @e[tag={ns}.hp_label]
 tag @a remove {ns}.in_hp_zone
 """)
 
-
 def generate_hardpoint() -> None:
 	""" Module-level entry point (preserved signature); delegates to :class:`Hardpoint`. """
 	Hardpoint()()
+

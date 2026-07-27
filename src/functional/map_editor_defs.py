@@ -1,6 +1,5 @@
-
+""" Map-editor element and mode definitions (data only; the generator lives in map_editor.py). """
 # ruff: noqa: E501
-# Map-editor element and mode definitions (data only; the generator lives in map_editor.py).
 from dataclasses import dataclass
 from dataclasses import field as dc_field
 from typing import Any
@@ -11,8 +10,7 @@ from .zombies.perks import PERK_DEFINITIONS, RECOMMENDED_PRICES
 
 MAX_MAPS = 50
 
-# Perk reference lines for the perk_machine tooltips, generated from the perk registry so they can
-# never drift out of sync with the actual perks (ids grouped 5/line, prices as "Name N" grouped 3/line).
+# Perk reference lines for the perk_machine tooltips, generated from the perk registry so they can never drift out of sync with the actual perks (ids grouped 5/line, prices as "Name N" grouped 3/line).
 _PERK_IDS: list[str] = list(PERK_DEFINITIONS.keys())
 _PERK_ID_DOC: str = (
 	"Perk granted by this machine:\n"
@@ -29,7 +27,7 @@ _PERK_PRICE_DOC: str = (
 	+ "\n".join(" · ".join(_PERK_PRICE_PAIRS[i:i + 3]) for i in range(0, len(_PERK_PRICE_PAIRS), 3))
 )
 
-# Element Definitions ───────────────────────────────────────────
+# Element Definitions.
 @dataclass(frozen=True)
 class ElementDef:
 	""" One placeable map element: how its marker looks and how it is saved. """
@@ -50,7 +48,6 @@ class ElementDef:
 	""" Per-element default config, written on placement (only zb_object elements use it). """
 	config_uses_default_function: bool = False
 	requires_offhand_block: bool = False
-
 
 # All element types across all modes.
 ALL_ELEMENTS: dict[str, ElementDef] = {
@@ -73,8 +70,8 @@ ALL_ELEMENTS: dict[str, ElementDef] = {
 	# Zombies elements (zb_object: compound data with pos/rotation/group_id + extra fields)
 	"zombie_spawn": ElementDef(name="Zombie Spawn", color="dark_green", particle=[0.0, 0.5, 0.0], particle_scale=1.0, has_rotation=True, egg_model="minecraft:zombie_spawn_egg", save_type="zb_object", save_path="spawning_points.zombies", emoji="🧟", defaults={"activation_box": []}),
 	"player_spawn_zb": ElementDef(name="Player Spawn", color="aqua", particle=[0.0, 1.0, 1.0], particle_scale=1.0, has_rotation=True, egg_model="minecraft:villager_spawn_egg", save_type="zb_object", save_path="spawning_points.players", emoji="●", defaults={}),
-	# Special spawns are the "not a regular zombie" spawn set: dog rounds use them today, mini-bosses
-	# and other scripted arrivals can reuse them later. A map without any simply never gets those rounds.
+	# Special spawns are the "not a regular zombie" spawn set: dog rounds use them today, mini-bosses and other scripted arrivals can reuse them later.
+	# A map without any simply never gets those rounds.
 	"special_spawn": ElementDef(name="Special Spawn", color="dark_red", particle=[0.6, 0.0, 0.2], particle_scale=1.0, has_rotation=True, egg_model="minecraft:wolf_spawn_egg", save_type="zb_object", save_path="spawning_points.special", emoji="🐺", defaults={"activation_box": []}),
 	"wallbuy": ElementDef(name="Wallbuy", color="yellow", particle=[1.0, 1.0, 0.0], particle_scale=1.0, has_rotation=True, egg_model="minecraft:iron_golem_spawn_egg", save_type="zb_object", save_path="wallbuys", emoji="🔫", defaults={"name": "", "price": 1000, "refill_price": 500, "refill_price_pap": 4500, "weapon_id": "m1911", "magazine_id": "m1911_mag"}),
 	"door": ElementDef(name="Door", color="gold", particle=[1.0, 0.6, 0.0], particle_scale=1.0, has_rotation=True, egg_model="minecraft:hoglin_spawn_egg", save_type="zb_object", save_path="doors", emoji="🚪", defaults={"name": "Door", "back_name": "Door", "price": 1000, "partial_price": 0, "link_id": 1, "back_group_id": -1, "block": "", "animation": 0, "sound": ""}, requires_offhand_block=True),
@@ -104,14 +101,13 @@ ALL_ELEMENTS: dict[str, ElementDef] = {
 }
 
 # Elements rendered as real in-game models in the editor (instead of dust particles).
-# Each has a maps/editor/displays/<etype> function mirroring the game's own display setup,
-# rebuilt every second so rotation/config edits on the marker stay in sync.
+# Each has a maps/editor/displays/<etype> function mirroring the game's own display setup, rebuilt every second so rotation/config edits on the marker stay in sync.
 MODEL_DISPLAY_ELEMENTS: tuple[str, ...] = ("wallbuy", "perk_machine", "wunderfizz", "pap_machine", "mystery_box_pos", "power_switch", "barrier")
 
-# Field documentation ───────────────────────────────────────────
-# Tooltips shown (as a hover "ⓘ") next to constant/enum config fields in the element editor,
-# so map makers don't have to guess what the magic numbers mean. Keyed by (element_type, field);
-# a plain field-name key acts as a fallback shared across element types (e.g. "power").
+# Field documentation.
+# Tooltips shown (as a hover "ⓘ") next to constant/enum config fields in the element editor, so map makers don't have to guess what the magic numbers mean.
+# Keyed by (element_type, field); a plain field-name key acts as a fallback shared across element types (e.g.
+# "power").
 FIELD_DOCS: dict[tuple[str, str] | str, str] = {
 	("trap", "type"): "Trap behaviour:\n0 = Fire — lethal to zombies, burns players inside\n1 = Electric — lethal to zombies, shocks players inside\n2 = Turret — auto-fires at the nearest zombie every 5 ticks",
 	("trap", "duration"): "How long the trap stays active, in ticks (20 ticks = 1 second).",
@@ -136,7 +132,7 @@ FIELD_DOCS: dict[tuple[str, str] | str, str] = {
 	"price": "Cost in points to buy/use this element.",
 }
 
-# Mode Definitions ──────────────────────────────────────────────
+# Mode Definitions.
 @dataclass(frozen=True)
 class EditorMode:
 	""" One editor mode: its label and which elements map to which hotbar/inventory slots. """
@@ -145,7 +141,6 @@ class EditorMode:
 	storage_key: str
 	""" Key in {ns}:maps storage (multiplayer, zombies, missions). """
 	slots: dict[str, str]
-
 
 EDITOR_MODES: dict[str, EditorMode] = {
 	"multiplayer": EditorMode(
@@ -207,3 +202,4 @@ EDITOR_MODES: dict[str, EditorMode] = {
 }
 
 MODE_LIST: list[str] = list(EDITOR_MODES.keys())
+

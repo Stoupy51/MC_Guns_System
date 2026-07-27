@@ -1,11 +1,9 @@
-# Imports
+""" Core datapack setup: player tick, regen, damage types, fonts and shared utilities. """
 from stewbeet import DamageType, Font, LootTable, Mem, set_json_encoder, texture_mcmeta, write_function, write_load_file, write_tag, write_tick_file, write_versioned_function
 
 from ..config.blocks import main as write_block_tags
 from ..config.stats import REMAINING_BULLETS
 from .helpers import special_objectives_lines
-
-# Main function
 
 
 def main() -> None:
@@ -76,7 +74,6 @@ scoreboard objectives add {ns}.dps_timer dummy
 
 # Forces an immediate actionbar refresh (set by events its idle gate can't detect, e.g. fire-mode toggle)
 scoreboard objectives add {ns}.ab_force dummy
-
 
 # Initialize slow bullet (projectile) counter
 scoreboard players add #slow_bullet_count {ns}.data 0
@@ -185,8 +182,7 @@ effect give @s minecraft:regeneration 3 2 true
         ]
     }))
 
-    ## Register signal function tags (empty by default, other datapacks can add listeners)
-    # These are called at various events in the system, with relevant data stored in mgs:signals storage
+    ## Register signal function tags (empty by default, other datapacks can add listeners) These are called at various events in the system, with relevant data stored in mgs:signals storage
     signal_events: list[str] = [
         "on_shoot",             # @s = shooter player, weapon data in mgs:signals
         "on_hit_block",         # @s = raycast marker, block/position/weapon in mgs:signals
@@ -208,11 +204,9 @@ effect give @s minecraft:regeneration 3 2 true
     for tag in ["bypasses_cooldown", "no_knockback"]:
         write_tag(tag, Mem.ctx.data["minecraft"].damage_type_tags, [f"{ns}:bullet"])
     write_versioned_function("utils/damage", f"$damage $(target) $(amount) {ns}:bullet by $(attacker)")
-    # Unattributed variant: no "by <attacker>", so team friendlyFire=false can't cancel it
-    # (used for self-inflicted explosion damage, where the shooter and victim share a team).
+    # Unattributed variant: no "by <attacker>", so team friendlyFire=false can't cancel it (used for self-inflicted explosion damage, where the shooter and victim share a team).
     write_versioned_function("utils/damage_plain", "$damage $(target) $(amount) minecraft:explosion")
-    # Both signal_and_damage variants open with this: if the hit would kill a player who is in an
-    # active game, hand off to that mode's simulated death instead of letting the damage land.
+    # Both signal_and_damage variants open with this: if the hit would kill a player who is in an active game, hand off to that mode's simulated death instead of letting the damage land.
     lethal_hit: str = f"if score #incoming_dmg {ns}.data >= #victim_hp {ns}.data run return run function {ns}:v{version}"
     lethal_handoff: str = f"""
 # Check if target is a player in an active game and damage would be lethal -> simulate death
@@ -285,12 +279,10 @@ $execute if score #random {ns}.data matches 30 run loot replace entity @s $(slot
 $execute if score #random {ns}.data matches 31 run loot replace entity @s $(slot) loot {ns}:i/m249
 """)
 
-    # Config menu: /function mgs:config
-    # A dialog-based settings menu (replaces the old clickable-chat tellraw menu).
-    # The main dialog lists every setting as a button that opens its own sub-dialog of value
-    # buttons; picking a value runs the scoreboard command directly. Each value button is
-    # independent (no submit step), so opening the menu never resets untouched settings — the
-    # same "click the value you want" model as the old menu, just rendered as native dialogs.
+    # Config menu (/function mgs:config), a dialog-based settings menu.
+    # The main dialog lists every setting as a button opening its own sub-dialog of value buttons.
+    # Picking a value runs the scoreboard command directly.
+    # Each value button is independent with no submit step, so opening the menu never resets untouched settings.
     from .helpers import dialog_back_action, dialog_function, dialog_run_btn, dialog_show_btn, register_dialog, register_value_picker, split_emoji
 
     # --- Global Settings (server-wide fake-player scores) ---
@@ -349,8 +341,8 @@ $execute if score #random {ns}.data matches 31 run loot replace entity @s $(slot
         register_value_picker(sub_id, title_text, desc, options, back_dialog=picker_back[sub_id])
 
     # --- Configuration dialog, organized into categories (by scope) ---
-    # The top-level menu is a short list of categories; each opens its own sub-dialog whose Back
-    # button returns to the top-level config. Leaf value pickers Back to their category (above).
+    # The top-level menu is a short list of categories; each opens its own sub-dialog whose Back button returns to the top-level config.
+    # Leaf value pickers Back to their category (above).
     def register_category(sub_id: str, title: str, actions: list[dict[str, str]]) -> None:
         register_dialog(sub_id, {
             "type": "minecraft:multi_action",
@@ -373,10 +365,8 @@ $execute if score #random {ns}.data matches 31 run loot replace entity @s $(slot
         dialog_show_btn(f"{ns}:config/quick_reload", "Quick Reload", "Reduce reload time (self only)", "green"),
         dialog_show_btn(f"{ns}:config/quick_swap", "Quick Swap", "Reduce weapon-swap time (self only)", "aqua"),
     ])
-    # The three game-mode setups sit directly on the first page instead of behind a "Game Modes"
-    # category — opening a mode used to cost two clicks for no benefit. There is no "Players & Teams"
-    # category either: team assignment only makes sense in the context of one mode, and every mode's
-    # setup dialog already carries its own "Manage Players" button.
+    # The three game-mode setups sit directly on the first page instead of behind a "Game Modes" category — opening a mode used to cost two clicks for no benefit.
+    # There is no "Players & Teams" category either: team assignment only makes sense in the context of one mode, and every mode's setup dialog already carries its own "Manage Players" button.
     config_actions = [
         # Row 1: the game modes, side by side (see columns=3 below)
         dialog_show_btn(f"{ns}:multiplayer/setup", "⚔ Multiplayer", "Open the multiplayer game setup menu", "red"),
@@ -399,3 +389,4 @@ $execute if score #random {ns}.data matches 31 run loot replace entity @s $(slot
 
     # /function mgs:config now opens the (inline) dialog
     write_function(f"{ns}:config", f"function {dialog_function('config')}")
+

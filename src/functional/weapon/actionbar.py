@@ -1,5 +1,4 @@
-
-# Imports
+""" Actionbar HUD: fire-mode indicator and ammo counter. """
 from stewbeet import Mem, write_versioned_function
 
 from ...config.stats import CAPACITY, END_HEX, FIRE_MODE, REMAINING_BULLETS, START_HEX
@@ -166,3 +165,4 @@ data modify storage {ns}:temp actionbar.list append value {{"score":{{"name":"#d
 data modify storage {ns}:temp actionbar.list append value " "
 data modify storage {ns}:temp actionbar.list append value {{"text":"dps","color":"#{END_HEX}"}}
 """)
+

@@ -1,42 +1,40 @@
+""" Stamina system (Black Ops style) — reference: src/functional/zombies/stamina.md
 
-# Stamina system (Call of Duty: Black Ops style) — reference: src/functional/zombies/stamina.md
-#
-# Shared across all three modes (multiplayer, missions, zombies). The hunger bar IS the visible
-# stamina meter: 20 = full stamina, 6 = empty (vanilla already blocks sprinting at foodLevel <= 6,
-# so the bar doubles as the sprint gate). A scoreboard (mgs.stam) stays the source of truth for
-# deterministic timing; every tick the bar is nudged toward the mapped target with short
-# saturation/hunger pulses, so the player SEES stamina drain while sprinting and refill while
-# resting. No sound and no "out of breath" message — the draining bar is the feedback.
-#
-# Saturation discipline (stamina.md): the saturation effect restores +1 food but ALSO +2 invisible
-# saturation per tick. Left unchecked that invisible buffer absorbs hunger pulses and freezes the
-# bar for seconds. So refill pulses are only given while the bar is below target, and leftover
-# invisible saturation is burned off with hunger pulses whenever the bar sits at target, keeping
-# the bar responsive the moment the player sprints again.
-#
-# Stamin-Up (zombies perk, stamina.md): double sprint endurance = +STAM_MAX on mgs.stam_bonus
-# (sprintEnergyMax * 2); the +7% movement speed is an attribute modifier applied by the perk.
+Shared across all three modes. The hunger bar IS the visible meter: 20 = full, 6 = empty (vanilla
+already blocks sprinting at foodLevel <= 6, so the bar doubles as the sprint gate). A scoreboard
+stays the source of truth for deterministic timing, and each tick the bar is nudged toward the
+mapped target with saturation/hunger pulses. The draining bar is the only feedback.
 
+Saturation discipline: the saturation effect restores +1 food but also +2 invisible saturation per
+tick, which would absorb hunger pulses and freeze the bar. So refill pulses are only given below
+target, and leftovers are burned off with hunger pulses while at target.
+
+Stamin-Up (zombies perk) adds +STAM_MAX on stam_bonus; its +7% movement speed is a separate
+attribute modifier applied by the perk itself.
+"""
 from stewbeet import Mem, write_load_file, write_versioned_function
 
-# Tuning constants (all in ticks / stamina points). Stamina runs 0..stam_max.
-STAM_MAX: int = 200      # base full stamina (perks add mgs.stam_bonus on top)
-STAM_DRAIN: int = 2      # stamina lost per tick while sprinting  -> 200/2 = 100t (5s); 10s with Stamin-Up
-STAM_REGEN: int = 2      # stamina gained per tick while resting  -> 200/2 = 100t (5s) to refill
-REST_DELAY: int = 20     # ticks after the last sprint before regen starts (1s)
-RECOVER_AT: int = 80     # winded players can sprint again once stamina regenerates back to this (hysteresis)
+STAM_MAX: int = 200
+""" Base full stamina; perks add stam_bonus on top. """
+STAM_DRAIN: int = 2
+""" Per tick while sprinting -> 5s, or 10s with Stamin-Up. """
+STAM_REGEN: int = 2
+""" Per tick while resting -> 5s to refill. """
+REST_DELAY: int = 20
+""" Ticks after the last sprint before regen starts. """
+RECOVER_AT: int = 80
+""" Winded players sprint again at this level (hysteresis). All values are ticks or stamina points, and stamina runs 0..stam_max. """
 
-# Hunger-bar mapping: target foodLevel = FOOD_MIN + FOOD_SPAN * stam / stam_max
-FOOD_MIN: int = 6        # vanilla no-sprint threshold = empty stamina
-FOOD_MAX: int = 20       # full bar = full stamina
+FOOD_MIN: int = 6
+""" Vanilla no-sprint threshold = empty stamina. """
+FOOD_MAX: int = 20
 FOOD_SPAN: int = FOOD_MAX - FOOD_MIN
-
+""" Hunger-bar mapping: target foodLevel = FOOD_MIN + FOOD_SPAN * stam / stam_max. """
 
 def main() -> None:
     ns: str = Mem.ctx.project_id
     version: str = Mem.ctx.project_version
 
-    ## Objectives
     write_load_file(f"""
 # Stamina system (Black Ops style) — per-player stamina state
 scoreboard objectives add {ns}.stam dummy
@@ -51,9 +49,8 @@ scoreboard objectives add {ns}.stam_seen dummy
 scoreboard objectives add {ns}.stam_dirty dummy
 """)
 
-    ## Hook into the global player tick. player/tick runs `as @e[type=player] at @s`, so @s is each
-    ## player. Only run for players currently in a game mode and not spectating (downed/dead players
-    ## spectate). One in_game flag is set at a time, so at most one branch fires.
+    # player/tick runs `as @e[type=player] at @s`.
+    # One in_game flag is set at a time, so at most one branch fires; spectators are downed or dead.
     gate: str = f"execute if score #any_game_active {ns}.data matches 1 unless entity @s[gamemode=spectator]"
     write_versioned_function("player/tick", f"""
 # Stamina (Black Ops style): drain while sprinting, block sprint when winded, regen while resting
@@ -62,7 +59,7 @@ scoreboard objectives add {ns}.stam_dirty dummy
 {gate} if score @s {ns}.zb.in_game matches 1 run function {ns}:v{version}/player/stamina_tick
 """)
 
-    ## Per-player stamina tick (@s = in-game, non-spectating player, at @s)
+    # Per-player stamina tick (@s = in-game, non-spectating player, at @s)
     write_versioned_function("player/stamina_tick", f"""
 # First tick in this game (or a fresh late-joiner / respawn): start at full stamina. stam_seen is
 # reset to 0 at game start (see regen_enable_lines) and on respawn/revive, so this re-inits then.
@@ -120,9 +117,8 @@ scoreboard players set @s {ns}.stam_seen 1
 scoreboard players set @s {ns}.stam_dirty 1
 """)
 
-    ## Drive the hunger bar toward #stam_t with 1-tick effect pulses (@s = in-game player).
-    ## Clearing both effects first kills last tick's pulses AND any infinite saturation pin left
-    ## by other systems, so this function fully owns the bar while a game is running.
+    # Drive the bar toward #stam_t with 1-tick pulses.
+    # Clearing both effects first kills last tick's pulses and any saturation pin, so this owns the bar.
     write_versioned_function("player/stamina_bar", f"""
 effect clear @s minecraft:saturation
 effect clear @s minecraft:hunger

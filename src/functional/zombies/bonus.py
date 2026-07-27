@@ -1,19 +1,14 @@
-
-# Imports
+""" Bonus effects granted by power-ups, such as Max Ammo refills. """
 from stewbeet import Mem, write_function, write_versioned_function
 
 from ...config.stats import ALL_SLOTS, BASE_WEAPON, CAPACITY, REMAINING_BULLETS
-
-# Main function
 
 
 def main() -> None:
     ns: str = Mem.ctx.project_id
     version: str = Mem.ctx.project_version
 
-    ## ==========================================
-    ## Max Ammo: Refill all magazines to capacity
-    ## ==========================================
+    ## ========================================== Max Ammo: Refill all magazines to capacity.
 
     # Build slot checks for all inventory slots
     magazine_custom_data: str = f"{{{ns}:{{magazine:true}}}}"
@@ -44,9 +39,8 @@ function {ns}:v{version}/zombies/bonus/max_ammo_grenades
 function {ns}:v{version}/ammo/compute_reserve
 """)
 
-    # Max Ammo grenade refill: top the equipment slot (hotbar.7) to full. The magazine/weapon
-    # passes above never touch grenades (they use item count, not a magazine), so without this
-    # Max Ammo left a player with 0 grenades empty-handed.
+    # Max Ammo grenade refill: top the equipment slot (hotbar.7) to full.
+    # The magazine/weapon passes above never touch grenades (they use item count, not a magazine), so without this Max Ammo left a player with 0 grenades empty-handed.
     write_versioned_function("zombies/bonus/max_ammo_grenades", f"""
 # Tactical slot (hotbar.6, e.g. Monkey Bombs): top back to 3 — refill only, never granted from
 # an empty slot (tacticals come exclusively from the Mystery Box or a wall-buy)
@@ -160,9 +154,7 @@ kill @s
 $item modify entity @s $(slot) {"function":"minecraft:set_components", "components":{"minecraft:item_model":"$(mag_model)"}}
 """)
 
-    ## ====================================================
-    ## Nuke: Tag nukable entities and kill them 1 per tick
-    ## ====================================================
+    ## ==================================================== Nuke: Tag nukable entities and kill them 1 per tick.
 
     # Non-versioned entry point: /execute as <player> run function mgs:zombies/bonus/nuke
     write_function(f"{ns}:zombies/bonus/nuke", f"""
@@ -206,3 +198,4 @@ attribute @s minecraft:attack_damage modifier remove {ns}:nuke_zero_damage
 # (the player didn't really kill them — the flat Nuke point bonus is handled separately).
 damage @s 999999 {ns}:bullet
 """)
+

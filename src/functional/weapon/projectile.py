@@ -1,5 +1,4 @@
-
-# Imports
+""" Slow projectiles (RPG rockets and similar): summon, flight and impact. """
 from stewbeet import Conventions, Mem, write_tick_file, write_versioned_function
 
 from ...config.stats import (
@@ -13,8 +12,6 @@ from ...config.stats import (
     PROJECTILE_MODEL,
     PROJECTILE_SPEED,
 )
-
-# Main function
 
 
 def main() -> None:
@@ -31,8 +28,7 @@ scoreboard players remove #bullets_to_fire {ns}.data 1
 execute if score #bullets_to_fire {ns}.data matches 1.. run function {ns}:v{version}/projectile/summon_loop
 """)
 
-    ## Summon projectile
-    # Called from projectile/summon_loop
+    ## Summon projectile Called from projectile/summon_loop
     proj_stats = [EXPLOSION_DAMAGE, EXPLOSION_DECAY, EXPLOSION_RADIUS, DAMAGE, PROJECTILE_GRAVITY, PROJECTILE_SPEED, PROJECTILE_LIFETIME, PROJECTILE_MODEL, BASE_WEAPON, "pap_level"]
     proj_copy = "\n".join(f"data modify storage {ns}:temp proj.{s} set from storage {ns}:gun all.stats.{s}" for s in proj_stats)
     write_versioned_function("projectile/summon", f"""
@@ -372,3 +368,4 @@ f"""
 # Tick function for slow bullets (projectiles)
 execute if score #slow_bullet_count {ns}.data matches 1.. as @e[tag={ns}.slow_bullet] at @s run function {ns}:v{version}/projectile/tick
 """)
+

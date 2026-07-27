@@ -1,5 +1,4 @@
-
-# Imports
+""" Zombies damage handling for players, including knockback and perk passives. """
 from stewbeet import Mem, write_advancement, write_versioned_function
 
 
@@ -41,3 +40,4 @@ scoreboard players set $y player_motion.api.launch -5000
 scoreboard players set $z player_motion.api.launch 0
 function player_motion:api/launch_xyz
 """)
+

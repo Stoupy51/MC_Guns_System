@@ -1,6 +1,4 @@
-
-# Imports
-
+""" Hitscan firing: accuracy groups, spread, and the raycast that resolves a shot. """
 from stewbeet import Mem, write_versioned_function
 
 from ...config.stats import (
@@ -18,8 +16,6 @@ from ...config.stats import (
     PELLET_COUNT,
     PROJECTILE_SPEED,
 )
-
-# Main function
 
 
 def main() -> None:
@@ -402,9 +398,7 @@ execute if score #is_new_kill {ns}.data matches 1 run data modify storage {ns}:s
 execute if score #is_new_kill {ns}.data matches 1 as @n[tag={ns}.ticking] run function #{ns}:signals/on_kill
 """)
 
-
-    ## Accuracy
-    # Get values
+    ## Accuracy Get values
     write_versioned_function("raycast/accuracy/get_value", f"""
 ## Order is important: Sneak+Air=Walk > Jump > Sneak > Sprint > Walk > Base
 data remove storage {ns}:gun accuracy
@@ -457,3 +451,4 @@ function #bs.random:uniform with storage {ns}:input with
 scoreboard players operation @s bs.rot.v = $random.uniform bs.out
 function #bs.position:add_rot_v {{scale: 0.01}}
 """)
+

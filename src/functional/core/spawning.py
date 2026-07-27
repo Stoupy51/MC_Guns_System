@@ -1,12 +1,10 @@
-
-# Shared OOB + spawn marker summoning functions
+""" Shared OOB + spawn marker summoning functions. """
 from stewbeet import Mem, write_versioned_function
 
 
 def write_tp_player_at(mode: str) -> None:
 	""" Write ``<mode>/tp_player_at`` — the macro teleporting @s to a spawn position and yaw. """
 	write_versioned_function(f"{mode}/tp_player_at", "$tp @s $(x) $(y) $(z) $(yaw) 0")
-
 
 def write_summon_spawn_at(mode: str, extra_spawn_tags: tuple[str, ...] = ()) -> None:
 	""" Write ``<mode>/summon_spawn_at`` — the macro summoning a spawn-point marker.
@@ -23,13 +21,11 @@ def write_summon_spawn_at(mode: str, extra_spawn_tags: tuple[str, ...] = ()) -> 
 $summon minecraft:marker $(x) $(y) $(z) {{Tags:[{tags}],data:{{yaw:$(yaw)}}}}
 """)
 
-
 def write_shared_spawning_functions() -> None:
 		ns: str = Mem.ctx.project_id
 		version: str = Mem.ctx.project_version
 
-		## Summon OOB markers from map data (relative → absolute)
-		## Usage: function shared/summon_oob {mode:"multiplayer"}
+		## Summon OOB markers from map data (relative → absolute) Usage: function shared/summon_oob {mode:"multiplayer"}
 		write_versioned_function("shared/summon_oob", f"""
 $function {ns}:v{version}/shared/load_base_coordinates {{mode:"$(mode)"}}
 
@@ -55,3 +51,4 @@ execute if data storage {ns}:temp _oob_iter[0] run function {ns}:v{version}/shar
 		write_versioned_function("shared/summon_oob_at", f"""
 $summon minecraft:marker $(x) $(y) $(z) {{Tags:["{ns}.oob_point","{ns}.gm_entity"]}}
 """)
+

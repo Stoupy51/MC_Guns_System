@@ -1,5 +1,4 @@
-
-# Imports
+""" Throwable grenades: throw, flight, detonation and the per-type effects. """
 from beet import Font, Texture
 from PIL import Image
 from stewbeet import Conventions, ItemModifier, Mem, set_json_encoder, write_tick_file, write_versioned_function
@@ -17,8 +16,6 @@ from ...config.stats import (
     PROJECTILE_SPEED,
     REMAINING_BULLETS,
 )
-
-# Main function
 
 
 def main() -> None:
@@ -138,8 +135,7 @@ data modify entity @s teleport_duration set value 1
 $data modify entity @s item.components."minecraft:item_model" set value "$(model_override)"
 """)
 
-    ## Tumble animation: accumulate the per-grenade spin angle and apply it with 1-tick interpolation
-    ## (angle wraps at 2π = 62832 units; quaternion slerp keeps the wrap-around seamless)
+    ## Tumble animation: accumulate the per-grenade spin angle and apply it with 1-tick interpolation (angle wraps at 2π = 62832 units; quaternion slerp keeps the wrap-around seamless)
     write_versioned_function("grenade/spin_tick", f"""
 scoreboard players add @s {ns}.grenade_spin 0
 scoreboard players operation @s {ns}.grenade_spin += #gr_speed {ns}.data
@@ -303,8 +299,8 @@ execute if data entity @s data.config{{{GRENADE_TYPE}:"web"}} run return run fun
 """)
 
     ## Web grenade detonation (Widow's Wine): burst of webbing that roots + lightly damages zombies.
-    ## The actual webbing effect lives in the zombies module (widows_web_burst); this is the throwable
-    ## delivery. No-op outside zombies since there are no zombie_round entities to web.
+    ## The actual webbing effect lives in the zombies module (widows_web_burst); this is the throwable delivery.
+    ## No-op outside zombies since there are no zombie_round entities to web.
     write_versioned_function("grenade/detonate_web", f"""
 # Webbing burst visuals + sound
 particle minecraft:item{{item:"minecraft:cobweb"}} ~ ~0.5 ~ 1.2 0.8 1.2 0.1 80 force @a[distance=..64]
@@ -538,3 +534,4 @@ f"""
 # by tag each tick is cheap and self-correcting.
 execute as @e[tag={ns}.grenade] at @s run function {ns}:v{version}/grenade/tick
 """)
+

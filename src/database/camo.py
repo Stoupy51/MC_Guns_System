@@ -1,5 +1,4 @@
-
-# Imports
+""" Camo variants: blends each weapon texture into its cosmetic colour schemes. """
 import os
 from collections.abc import Callable
 from copy import deepcopy
@@ -13,12 +12,9 @@ from stewbeet import Item, JsonDict, Mem
 
 from ..config.stats import MODELS
 
-# ---------------------------------------------------------------------------
-# HSL Color blend (GIMP "HSL Color" mode)
-# H + S come from the blend (material) layer, L comes from the base (weapon).
+# HSL Color blend (GIMP "HSL Color" mode) H + S come from the blend (material) layer, L comes from the base (weapon).
 # Alpha is preserved from the base layer throughout.
 # Fully vectorised with numpy — no per-pixel Python loops.
-# ---------------------------------------------------------------------------
 
 def rgb_to_hls(arr: NDArray[np.floating]) -> NDArray[np.floating]:
     """ (N, 3) floating RGB → (N, 3) floating HLS  (colorsys channel order: H, L, S). """
@@ -43,7 +39,6 @@ def rgb_to_hls(arr: NDArray[np.floating]) -> NDArray[np.floating]:
 
     return np.stack([h_channel, l_channel, s_channel], axis=1)
 
-
 def hls_to_rgb(hls: NDArray[np.floating]) -> NDArray[np.floating]:
     """(N, 3) floating HLS → (N, 3) floating RGB."""
     h_channel, l_channel, s_channel = hls[:, 0], hls[:, 1], hls[:, 2]
@@ -62,7 +57,6 @@ def hls_to_rgb(hls: NDArray[np.floating]) -> NDArray[np.floating]:
     g = np.where(s_channel == 0, l_channel, channel(h_channel))
     b = np.where(s_channel == 0, l_channel, channel(h_channel - 1.0 / 3.0))
     return np.stack([r, g, b], axis=1)
-
 
 def hsl_color_blend(
     base_path: str, blend_path: str, out_path: str,
@@ -194,8 +188,6 @@ def blend_texture(weapon_texture_path: str, material_texture_path: str, out_path
     func = cast(BlendFunc, override_info.get("func", MATERIALS[material]))
     func(weapon_texture_path, material_texture_path, out_path)
 
-
-# Main function
 @stp.measure_time(message="Generated camouflage variants")
 def main() -> None:
     ns: str = Mem.ctx.project_id
@@ -203,8 +195,8 @@ def main() -> None:
     queue: list[tuple[str, str, str, str, str]] = []  # (weapon_texture_path, material_texture_path, out_path, base_weapon, material)
 
     # For each weapon, make variants with only one material (e.g. wood, metal, gold, etc.)
-    # Tacticals (e.g. monkey_bomb) are skipped: they get no camos, and their models use vanilla
-    # block textures that don't exist in the textures folder the blender reads from.
+    # Tacticals such as monkey_bomb are skipped, since they get no camos.
+    # Their models also use vanilla block textures absent from the folder the blender reads.
     weapons: list[Item] = [
         Item.from_id(item)
         for item in Mem.definitions.keys()
@@ -232,8 +224,7 @@ def main() -> None:
             gun_stats[MODELS] = {"normal": normal_model, "zoom": zoom_model}
             base_weapon: str = gun_stats.get("base_weapon", base_id)
 
-            # Zoom models are `parent:` children of their base (see REFACTOR_PLAN.md, PY2): they carry
-            # no textures of their own, so the camo is applied by pointing at the camo'd parent instead.
+            # Zoom models are `parent:` children of their base (see REFACTOR_PLAN.md, PY2): they carry no textures of their own, so the camo is applied by pointing at the camo'd parent instead.
             parent: str = str(item.override_model.get("parent", "")) if item.override_model else ""
             if parent.startswith(f"{ns}:item/"):
                 item.override_model = item.override_model.copy() if item.override_model else {}

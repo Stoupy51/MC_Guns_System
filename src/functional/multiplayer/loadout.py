@@ -1,5 +1,4 @@
-
-# Imports
+""" Applies a loadout to a player, slot by slot. """
 from stewbeet import Mem, write_load_file, write_versioned_function
 
 from ..helpers import knife_item_snbt
@@ -50,8 +49,7 @@ data remove storage {ns}:temp slots[0]
 execute if data storage {ns}:temp slots[0] run function {ns}:v{version}/multiplayer/apply_next_slot
 """)
 
-	## apply_class_dynamic: reads class from temp storage and applies loadout
-	## Called after copying the target class data to mgs:temp
+	## apply_class_dynamic: reads class from temp storage and applies loadout Called after copying the target class data to mgs:temp
 	write_versioned_function("multiplayer/apply_class_dynamic", f"""
 # Clear player inventory
 clear @s
@@ -80,8 +78,7 @@ execute if entity @s[tag={ns}.give_class_menu] run loot replace entity @s hotbar
 """)
 
 	## apply_perks: reads the perks list from temp current_class and sets the special.* flags.
-	## Shared by both standard classes and custom loadouts so every loadout starts from a clean
-	## perk state (any perk not on the loadout is reset to 0 / defaults).
+	## Shared by both standard classes and custom loadouts so every loadout starts from a clean perk state (any perk not on the loadout is reset to 0 / defaults).
 	write_versioned_function("multiplayer/apply_perks", f"""
 # Sleight of Hand / Fast Hands: percentages (50 = 50% faster), 0 when absent
 execute if data storage {ns}:temp current_class{{perks:["quick_reload"]}} run scoreboard players set @s {ns}.special.quick_reload 50
@@ -113,3 +110,4 @@ execute if score #has_perk {ns}.data matches 0 run attribute @s minecraft:max_he
 scoreboard players set @s {ns}.special.infinite_ammo 0
 scoreboard players set @s {ns}.special.instant_kill 0
 """)
+

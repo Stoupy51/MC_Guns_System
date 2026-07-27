@@ -1,5 +1,4 @@
-
-# Shared utility functions for functional modules
+""" Shared utility functions for functional modules. """
 import json
 import re
 from typing import Any
@@ -8,17 +7,13 @@ from stewbeet import Dialog, Mem, TextComponent, set_json_encoder, write_version
 from stouputils.typing import JsonDict
 
 # [MGS] prefix as a nested list component (gold colored, lang-safe).
-# Use in tellraw arrays: tellraw @s ["",{MGS_TAG},...]
-# The brackets/space are raw strings (not matched by lang plugin).
-# {"text":"MGS"} will be translated to {"translate":"mgs"} → value "MGS".
+# Use in tellraw arrays: tellraw @s ["",{MGS_TAG},...] The brackets/space are raw strings (not matched by lang plugin). {"text":"MGS"} will be translated to {"translate":"mgs"} → value "MGS".
 MGS_TAG: str = r'[{"text":"","color":"gold"},"[",{"text":"MGS"},"] "]'
 
-
 # Per-player "special" flags/timers, mapping objective suffix -> its documentation comment.
-# Several unrelated systems write these: multiplayer/missions loadout perks (loadout.py::apply_perks),
-# zombies perks and power-ups, and the debug menu. Each one only ever clears what it sets, so a mode
-# MUST wipe the whole set when its game starts — otherwise Quick Reload bought as a multiplayer perk
-# (or handed out by the debug menu) is still active when the next zombies game begins.
+# Several unrelated systems write these: multiplayer/missions loadout perks, zombies perks and power-ups, and the debug menu.
+# Each one only ever clears what it sets, so a mode MUST wipe the whole set when its game starts.
+# Otherwise Quick Reload bought as a multiplayer perk is still active when the next zombies game begins.
 SPECIAL_SCORES: dict[str, str] = {
 	"instant_kill": r"Instant kill: duration in ticks (kills entities in one hit, except {ns}.no_instant_kill tagged)",
 	"infinite_ammo": r"Infinite ammo: duration in ticks (don't consume ammo, set ammo to max capacity)",
@@ -40,7 +35,6 @@ SPECIAL_SCORES: dict[str, str] = {
 	"quick_fix": r"",
 }
 
-
 def special_objectives_lines(ns: str) -> str:
 	""" Return the `scoreboard objectives add` block for every special score, with its comment. """
 	parts: list[str] = []
@@ -50,16 +44,13 @@ def special_objectives_lines(ns: str) -> str:
 		parts.append(f"scoreboard objectives add {ns}.special.{name} dummy")
 	return "\n".join(parts)
 
-
 def reset_special_scores_lines(ns: str, selector: str) -> str:
 	""" Return the lines zeroing every special score for `selector` (clean slate on game start). """
 	return "\n".join(f"scoreboard players set {selector} {ns}.special.{name} 0" for name in SPECIAL_SCORES)
 
-
 def game_active_guard(ns: str, storage: str) -> str:
 	""" Return the standard guard command for active games. """
 	return f'execute unless data storage {ns}:{storage} game{{state:"active"}} run return fail'
-
 
 def game_start_guards(ns: str, storage: str, mode_name: str) -> str:
 	""" Return the 2-line guard for game start functions (active + preparing). """
@@ -67,7 +58,6 @@ def game_start_guards(ns: str, storage: str, mode_name: str) -> str:
 execute if data storage {ns}:{storage} game{{state:"active"}} run return run tellraw @s [{MGS_TAG},{{"text":"{mode_name} already in progress!","color":"red"}}]
 execute if data storage {ns}:{storage} game{{state:"preparing"}} run return run tellraw @s [{MGS_TAG},{{"text":"{mode_name} already preparing!","color":"red"}}]
 """.strip()
-
 
 def normalize_map_command_lines(ns: str, storage: str) -> str:
     """ Return the legacy respawn/start command normalization block for a map. """
@@ -79,12 +69,10 @@ execute unless data storage {ns}:{storage} game.map.respawn_commands run data mo
 execute unless data storage {ns}:{storage} game.map.start_commands run data modify storage {ns}:{storage} game.map.start_commands set value []
 """.strip()  # noqa: E501
 
-
 def schedule_preload_complete_line(ns: str, mode: str) -> str:
     """ Return the preload-complete schedule command for a mode. """
     version: str = Mem.ctx.project_version
     return f'schedule function {ns}:v{version}/{mode}/preload_complete 20t'
-
 
 def prep_freeze_lines(ns: str, score_prefix: str, prepend: str = "", append: str = "") -> str:
     """ Return shared prep freeze/effects lines for a mode's in-game players. """
@@ -104,7 +92,6 @@ def prep_freeze_lines(ns: str, score_prefix: str, prepend: str = "", append: str
         parts.append(append.strip())
     return "\n".join(parts)
 
-
 def end_prep_transition_lines(ns: str, storage: str, score_prefix: str) -> str:
     """Return shared end-prep transition lines (guard, active state, restore, clear effects)."""
     selector: str = f'@a[scores={{{ns}.{score_prefix}.in_game=1}}]'
@@ -118,7 +105,6 @@ def end_prep_transition_lines(ns: str, storage: str, score_prefix: str) -> str:
         f'effect clear {selector} night_vision',
     ]
     return "\n".join(parts)
-
 
 def late_join_flow_lines(
     ns: str,
@@ -177,7 +163,6 @@ def late_join_flow_lines(
     ])
     return "\n\n".join(parts)
 
-
 def mode_start_map_bootstrap_lines(ns: str, mode: str, normalize_legacy: bool = False) -> str:
     """ Return the shared start bootstrap: selection check, load, copy, and preparing state. """
     parts: list[str] = []
@@ -197,7 +182,6 @@ data modify storage {ns}:{mode} game.map set from storage {ns}:temp map_load.res
     parts.append(f'# Set state to preparing\ndata modify storage {ns}:{mode} game.state set value "preparing"')
     return "\n\n".join(parts)
 
-
 def regen_enable_lines(ns: str) -> str:
 	""" Lines to add at game start: disable natural regen, activate custom regen system. """
 	return f"""
@@ -215,7 +199,6 @@ execute as @a run scoreboard players operation @s {ns}.hp_prev = @s {ns}.health
 scoreboard players set @a {ns}.stam_seen 0
 """.strip()
 
-
 def regen_disable_lines(ns: str) -> str:
 	""" Lines to add at game stop: re-enable natural regen, deactivate custom regen system. """
 	return f"""
@@ -229,7 +212,6 @@ effect give @a minecraft:saturation 5 20 true
 scoreboard players set @a {ns}.stam_out 0
 scoreboard players set @a {ns}.stam_seen 0
 """.strip()
-
 
 def knife_item_snbt(ns: str, short_range: bool = False) -> str:
 	""" The melee knife item, shared by zombies (hotbar.0) and multiplayer (hotbar.0).
@@ -259,7 +241,6 @@ def knife_item_snbt(ns: str, short_range: bool = False) -> str:
 		f"attribute_modifiers=[{','.join(modifiers)}]"
 		f"]"
 	)
-
 
 def write_ranked_stats_functions(ns: str, version: str, name: str, in_game_score: str, rank_objective: str, line: str) -> str:
 	""" Generate the function pair that announces every in-game player once, highest score first.
@@ -314,7 +295,6 @@ function {ns}:v{version}/{name}_iter
 tag @a remove {cand}
 """.strip()
 
-
 def styled_text(text: str, **attrs: str) -> str:
     """ Create a styled text component, automatically splitting non-alphanumeric
     prefixes/suffixes into raw strings so the lang plugin only sees clean alpha text
@@ -348,7 +328,6 @@ def styled_text(text: str, **attrs: str) -> str:
         parts.append(f'"{suffix}"')
     return f'[{",".join(parts)}]'
 
-
 def split_emoji(text: str, **style: str | bool) -> "JsonDict | list[Any]":
     """ Build a (Python) text component where any non-alphanumeric prefix/suffix (emojis)
     renders uncolored/unstyled, while the alphanumeric core keeps the given style.
@@ -373,7 +352,6 @@ def split_emoji(text: str, **style: str | bool) -> "JsonDict | list[Any]":
         parts.append(suffix)
     return parts
 
-
 def btn(label: str, command: str, color: str = "yellow", hover: str = "", action: str = "suggest_command") -> str:
     """ Create a clickable button JSON component.
 
@@ -393,7 +371,6 @@ def btn(label: str, command: str, color: str = "yellow", hover: str = "", action
         obj[0]["hover_event"] = {"action": "show_text", "value": hover}
     return json.dumps(obj)
 
-
 def dialog_function(dialog_id: str) -> str:
     """ Return the versioned function path that opens the dialog for dialog_id.
 
@@ -401,7 +378,6 @@ def dialog_function(dialog_id: str) -> str:
     still work; the function is now a one-liner that shows the registered dialog resource.
     """
     return f"{Mem.ctx.project_id}:v{Mem.ctx.project_version}/dialogs/{dialog_id}"
-
 
 def dialog_ref(dialog_id: str) -> str:
     """ Return the resource id of a registered dialog, e.g. "mgs:v5.1.0/config".
@@ -411,7 +387,6 @@ def dialog_ref(dialog_id: str) -> str:
     makes the client ask the player to confirm running the command every single time.
     """
     return f"{Mem.ctx.project_id}:v{Mem.ctx.project_version}/{dialog_id}"
-
 
 def register_dialog(dialog_id: str, data: JsonDict, wrapper: bool = True) -> None:
     """ Register a dialog as a real dialog resource under `data/<ns>/dialog/v<version>/<id>.json`.
@@ -433,7 +408,6 @@ def register_dialog(dialog_id: str, data: JsonDict, wrapper: bool = True) -> Non
     if wrapper:
         write_versioned_function(f"dialogs/{dialog_id}", f"dialog show @s {dialog_ref(dialog_id)}")
 
-
 def dialog_back_action(dialog_id: str, label: str = "◀ Back", tooltip: str = "Return to the previous menu") -> JsonDict:
     """ The `exit_action` entry that returns to another registered dialog without a confirm prompt. """
     return {
@@ -442,18 +416,15 @@ def dialog_back_action(dialog_id: str, label: str = "◀ Back", tooltip: str = "
         "action": {"type": "minecraft:show_dialog", "dialog": dialog_ref(dialog_id)},
     }
 
-
 def dialog_show_btn(dialog_reference: str, label: str, hover: str, color: str | None = None) -> JsonDict:
     """ A dialog action button that opens another registered dialog directly via show_dialog. """
     label_component: Any = split_emoji(label, color=color) if color else split_emoji(label)
     dialog_id: str = dialog_reference.split(":", 1)[-1]
     return {"label": label_component, "tooltip": {"text": hover}, "action": {"type": "minecraft:show_dialog", "dialog": dialog_ref(dialog_id)}}
 
-
 def dialog_run_btn(label: str, command: str, hover: str, color: str = "green") -> JsonDict:
     """ A dialog action button that runs a command as the clicking player via run_command. """
     return {"label": split_emoji(label, color=color), "tooltip": {"text": hover}, "action": {"type": "run_command", "command": command}}
-
 
 def register_value_picker(dialog_id: str, title: str, desc: str, options: list[tuple[str, str, str, str]], back_dialog: str) -> None:
     """ Register a sub-dialog whose buttons each apply one value, then a Back button returns to back_dialog.
@@ -485,7 +456,6 @@ def register_value_picker(dialog_id: str, title: str, desc: str, options: list[t
         "exit_action": dialog_back_action(back_dialog),
     })
 
-
 def write_shared_projectile_functions() -> None:
     """ Write shared mcfunctions used by both projectile and grenade systems. """
     ns: str = Mem.ctx.project_id
@@ -493,9 +463,9 @@ def write_shared_projectile_functions() -> None:
 
     from ..config.stats import PROJECTILE_SPEED
 
-    # Shared: Calculate velocity from look direction and apply to bs.vel, then teleport back
-    # Requires: entity @s at summon position, data.config.PROJECTILE_SPEED set on entity
-    # Uses raycast/accuracy/apply_spread for spread
+	# Calculate velocity from the look direction, apply it to bs.vel, then teleport back.
+	# Requires @s at the summon position with data.config.PROJECTILE_SPEED set.
+	# Spread comes from raycast/accuracy/apply_spread.
     write_versioned_function("shared/calc_velocity", f"""
 # Record current position for teleporting back later
 execute store result score #proj_ox {ns}.data run data get entity @s Pos[0] 1000
@@ -535,3 +505,4 @@ function {ns}:v{version}/shared/tp_back with storage {ns}:temp _tp_pos
 """
 $tp @s $(x) $(y) $(z)
 """)
+

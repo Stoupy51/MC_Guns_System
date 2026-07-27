@@ -1,5 +1,4 @@
-
-# Re-export constants from catalogs for backwards compatibility
+""" Re-export constants from catalogs for backwards compatibility. """
 from .actions import generate_actions
 from .browsing import generate_browsing
 from .catalogs import *

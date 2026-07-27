@@ -1,5 +1,4 @@
-
-# Imports
+""" Multiplayer mode entry point. """
 from .game import generate_game
 from .gamemodes import generate_gamemodes
 from .loadout import generate_loadouts

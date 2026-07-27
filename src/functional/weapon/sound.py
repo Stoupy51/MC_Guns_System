@@ -1,12 +1,9 @@
-
+""" Advanced weapon audio: per-weapon fire sounds plus distance-based acoustics. """
 # ruff: noqa: E501
-# Imports
 
 from stewbeet import Mem, write_versioned_function
 
 from ...config.stats import COOLDOWN, RELOAD_END, RELOAD_TIME
-
-# Main function
 
 
 def main() -> None:
@@ -73,7 +70,6 @@ execute if score #acoustics {ns}.data matches ..50 run scoreboard players set @s
 execute anchored eyes positioned ^ ^ ^ if block ~ ~ ~ #{ns}:v{version}/sounds/water run scoreboard players set @s {ns}.acoustics_level 5
 """)
 
-    # Main function
     write_versioned_function("sound/main", f"""
 # Fire sounds
 ## PaP: if gun is Pack-a-Punched and has a pap_fire sound, play it instead
@@ -122,8 +118,7 @@ scoreboard players operation #origin_acoustics_level {ns}.data = @s {ns}.acousti
 execute as @a[distance=0.001..224] facing entity @s eyes run function {ns}:v{version}/sound/propagation
 """)
 
-    # Turret gunshot: reuse the g3a3 weapon sound (close mechanical report + the 'large' acoustics
-    # crack), so the zombies turret trap sounds exactly like a player firing a G3A3.
+    # Turret gunshot: reuse the g3a3 weapon sound (close mechanical report + the 'large' acoustics crack), so the zombies turret trap sounds exactly like a player firing a G3A3.
     # @s = sound source entity (the turret center marker); executed at the muzzle, facing the target.
     write_versioned_function("sound/turret_fire", f"""
 # Compute the source environment acoustics at the turret, exactly like a firing player
@@ -138,8 +133,8 @@ data modify storage {ns}:temp _turret_snd set value {{crack:"large"}}
 execute as @a[distance=0.001..224] facing entity @s eyes run function {ns}:v{version}/sound/turret_propagation
 """)
 
-    # Per-listener crack propagation for the turret. Mirrors sound/propagation, but reads the crack
-    # from a dedicated storage ({ns}:temp _turret_snd) instead of the player gun storage ({ns}:gun).
+    # Per-listener crack propagation for the turret.
+    # Mirrors sound/propagation, but reads the crack from a dedicated storage ({ns}:temp _turret_snd) instead of the player gun storage ({ns}:gun).
     write_versioned_function("sound/turret_propagation", f"""
 # Make copies of the original (turret) acoustics level to work on
 scoreboard players operation #processed_acoustics {ns}.data = #origin_acoustics_level {ns}.data
@@ -256,3 +251,4 @@ $playsound {ns}:$(playerend) player @a[distance=0.01..16] ~ ~ ~ 0.3
 $playsound {ns}:$(pump) player @s
 $playsound {ns}:$(pump) player @a[distance=0.01..16] ~ ~ ~ 0.3
 """)
+
