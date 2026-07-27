@@ -4,7 +4,7 @@
 from stewbeet import Mem, write_versioned_function
 
 from ....core.feedback import ZombiesFeedback
-from ..perks import PERK_DEFINITIONS
+from ..perks.definitions import PERK_DEFINITIONS
 from .shared import PERK_IDS
 
 

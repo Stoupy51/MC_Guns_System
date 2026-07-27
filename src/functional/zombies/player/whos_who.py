@@ -16,7 +16,7 @@ from stewbeet import Mem, write_load_file, write_versioned_function
 
 from ...core.feedback import ZombiesFeedback
 from ...helpers import MGS_TAG
-from ..machines.perks import PERK_DEFINITIONS
+from ..machines.perks.definitions import PERK_DEFINITIONS
 from .revive.shared import BLEED_OUT_TICKS, revive_body_detect, revive_body_progress
 
 
