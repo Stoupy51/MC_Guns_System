@@ -144,7 +144,36 @@ output change — hence last, one file per commit against the byte-identical har
 by import graph alone; a split needs the byte-diff. Mixing them in one commit makes a real drift
 indistinguishable from a rename.
 
-### ⚠ Open decision before P12b starts: what `__init__.py` may re-export
+### Remaining after the config splits (2026-07-27)
+
+`config/stats.py` and `config/blocks.py` are done. 24 files are still over 300 lines, all of them
+`generate_X()` generators, and all needing real function surgery rather than a line-range carve:
+
+| file | lines | | file | lines |
+|---|---:|---|---|---:|
+| `functional/map_editor.py` | **1555** | | `loadouts/browsing.py` | 472 |
+| `zombies/machines/pap.py` | **981** | | `zombies/objects/wallbuys.py` | 463 |
+| `functional/shaders.py` | *953 — exempt* | | `weapon/grenade.py` | 428 |
+| `zombies/machines/perks.py` | **943** | | `zombies/player/inventory.py` | 400 |
+| `loadouts/editor.py` | **912** | | `zombies/machines/wunderfizz.py` | 389 |
+| `zombies/machines/mystery_box.py` | **743** | | `weapon/ammo/magazine.py` | 373 |
+| `multiplayer/game.py` | **729** | | `weapon/firing/raycast.py` | 355 |
+| `zombies/game/lifecycle.py` | **717** | | `functional/main.py` | 340 |
+| `zombies/game/round.py` | **623** | | `zombies/enemies/escort.py` | 326 |
+| `zombies/player/revive.py` | **613** | | `zombies/objects/traps.py` | 309 |
+| `zombies/rewards/powerups.py` | **576** | | `loadouts/actions.py` | 309 |
+| `missions/game.py` | 482 | | `zombies/objects/barriers.py` | 302 |
+| `functional/helpers.py` | 473 | | | |
+
+**Why these are different from the config split.** `config/stats.py` was declarations, so slices
+moved verbatim. A generator is one `generate_X()` whose sections share locals computed at the top —
+`pap.py` alone carries `scope_data_lines`, `camo_data_lines`, `apply_lines`, `annotate_lore_lines`
+and seven `deny_*` strings across sections hundreds of lines apart. Splitting means deciding, per
+file, which locals become parameters and which move with their only consumer. That is a judgement
+call per file, not a scripted carve, so these ship **one file per commit** against the byte-identical
+harness.
+
+### ⚠ Resolved decision (2026-07-27): what `__init__.py` may re-export
 
 Two different shapes are hiding under "split the file", and only one of them is uncontroversial.
 
@@ -166,9 +195,18 @@ tree. Splitting it into `config/stats/{keys,weapons,helpers}.py` leaves two opti
 would move the same call sites twice. So the order is: decide 1 vs 2, then class and split in one
 pass.
 
-Recommendation: **option 2**, because option 1 keeps `stats.py` a 90-name grab bag in everything but
-file layout — the split would be cosmetic. But it is a wide, hard-to-review diff and the call is the
-author's.
+**Decided: option 2.** Every consumer now imports from the owning submodule. `config/stats/__init__.py`
+and `config/stats/weapons/__init__.py` are docstring-only — they re-export nothing.
+
+`config/blocks/__init__.py` does define `main()`, but that is the package's own entry point (it calls
+the five tag writers), not a re-export of anything.
+
+**Deliberate deviation on PY8 here:** `ItemBuilder` and `PapStats` are classed because they are
+behaviour. The flat vocabularies — `keys.py` (60 stat names), `casings.py`, `colors.py`, `sounds.py` —
+are **not** classed. `StatKeys.CAPACITY` would appear ~900 times inside the weapon tables, making
+them materially harder to read for zero type-checking gain, since every one of those names is a plain
+`str`. After the split the module name already says where a name comes from
+(`from ...config.stats.keys import CAPACITY`), which is what the class prefix would have bought.
 
 ### PY6. Generated-`.mcfunction` comment cleanup — ⚠ **needs sign-off**
 
@@ -247,6 +285,8 @@ src/
 | **P11c** ✅ | PY8 — `helpers.py`'s 26 members folded into `FunctionalHelpers`; `MGS_TAG` stays module-level. 15 consumers repointed. | 0 | +1 |
 | **P11d** ✅ | PY8 — `feedback.py`→`ZombiesFeedback`, `zombies/common.py`→`ZombiesCommon`, `core/spawning.py`→`CoreSpawning`, `core/weapon_drop.py`→`WeaponDrop`, `classes.py`→`MultiplayerClasses`. All 31 `_`-prefixed names stripped codebase-wide. | 0 | +5 |
 | **P12a** ✅ | PY5 moves — 33 modules regrouped into 9 feature packages (`zombies/{game,player,enemies,machines,objects,rewards}`, `weapon/{firing,ammo,hud}`). 32 files had relative imports rewritten. | 0 | +9 files |
+| **P12b-1** ✅ | `config/stats.py` (1122) → 13-module package, all under 300 lines. `ItemBuilder`/`PapStats` classed; 28 consumers repointed at the owning submodule. | 0 | +13 files |
+| **P12b-2** ✅ | `config/blocks.py` (581) → 6-module package, one per tag family. | 0 | +5 files |
 
 ### Remaining phases
 
