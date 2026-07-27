@@ -9,19 +9,7 @@ Map definitions are dynamic (stored in storage, registered via function tags).
 from stewbeet import Mem, write_load_file, write_tag, write_tick_file, write_versioned_function
 
 from ..core.spawning import write_summon_spawn_at, write_tp_player_at
-from ..helpers import (
-	MGS_TAG,
-	btn,
-	end_prep_transition_lines,
-	game_start_guards,
-	late_join_flow_lines,
-	mode_start_map_bootstrap_lines,
-	prep_freeze_lines,
-	regen_disable_lines,
-	regen_enable_lines,
-	schedule_preload_complete_line,
-	write_ranked_stats_functions,
-)
+from ..helpers import MGS_TAG, FunctionalHelpers
 
 
 # Functions
@@ -91,12 +79,12 @@ execute unless data storage {ns}:zombies mystery_box_pool run data modify storag
 	## Game Start
 	write_versioned_function("zombies/start", f"""
 # Prevent starting if already active or preparing
-{game_start_guards(ns, "zombies", "Zombies game")}
+{FunctionalHelpers.game_start_guards(ns, "zombies", "Zombies game")}
 
 # Require at least one opted-in player (players are independent until added via Manage Players / + Join)
 execute unless entity @a[scores={{{ns}.zb.in_game=1}}] run return run tellraw @s [{MGS_TAG},{{"text":"No players have joined the zombies game — use Manage Players first.","color":"red"}}]
 
-{mode_start_map_bootstrap_lines(ns, "zombies", False)}
+{FunctionalHelpers.mode_start_map_bootstrap_lines(ns, "zombies", False)}
 
 # Create zombies team
 team add {ns}.zombies
@@ -137,7 +125,7 @@ scoreboard players set @a {ns}.mp.in_game 0
 scoreboard players set @a {ns}.mi.in_game 0
 
 # Disable natural regeneration, enable custom regen system
-{regen_enable_lines(ns)}
+{FunctionalHelpers.regen_enable_lines(ns)}
 
 # Set gamerules
 gamemode spectator @a[scores={{{ns}.zb.in_game=1}}]
@@ -175,7 +163,7 @@ function #{ns}:zombies/register_maps
 function #{ns}:zombies/register_mystery_box_item
 
 # Schedule preload completion after 1 second
-{schedule_preload_complete_line(ns, "zombies")}
+{FunctionalHelpers.schedule_preload_complete_line(ns, "zombies")}
 
 # Announce
 tellraw @a ["",{{"text":"","color":"dark_green","bold":true}},"🧟 ",{{"text":"Loading zombies map...","color":"yellow"}}]
@@ -205,7 +193,7 @@ execute if data storage {ns}:zombies game.map.start_commands[0] run function {ns
 function {ns}:v{version}/zombies/tp_all_to_spawns
 
 # Freeze players during prep
-{prep_freeze_lines(ns, "zb")}
+{FunctionalHelpers.prep_freeze_lines(ns, "zb")}
 execute as @a[scores={{{ns}.zb.in_game=1}}] run attribute @s minecraft:max_health base reset
 execute as @a[scores={{{ns}.zb.in_game=1}}] run attribute @s minecraft:entity_interaction_range base set 5
 
@@ -233,7 +221,7 @@ execute unless data storage {ns}:zombies game{{variant:"zonweeb"}} run tellraw @
 
 	## End Prep → Start Round 1
 	write_versioned_function("zombies/end_prep", f"""
-{end_prep_transition_lines(ns, "zombies", "zb")}
+{FunctionalHelpers.end_prep_transition_lines(ns, "zombies", "zb")}
 
 # Start round 1
 function {ns}:v{version}/zombies/start_round
@@ -391,7 +379,7 @@ execute if data storage {ns}:zombies game{{state:"active"}} if score @s {ns}.zb.
 		f'{{"score":{{"name":"@s","objective":"{ns}.zb.downs"}},"color":"red"}}," | Points: ",'
 		f'{{"score":{{"name":"@s","objective":"{ns}.zb.points"}},"color":"gold"}}]'
 	)
-	zb_ranked_stats: str = write_ranked_stats_functions(
+	zb_ranked_stats: str = FunctionalHelpers.write_ranked_stats_functions(
 		ns, version, "zombies/announce_stats", "zb.in_game", "zb.kills", zb_stat_line
 	)
 
@@ -429,7 +417,7 @@ execute as @a[scores={{{ns}.zb.in_game=1}}] at @s run playsound {ns}:zombies/gam
 
 # Offer a one-click fast restart. suggest_command only runs at permission level 2, so it is a
 # no-op for non-operators — exactly the operator-gated restart the design calls for.
-tellraw @a ["",{MGS_TAG}," ",{btn("⟲ Fast Restart", f"/function {ns}:v{version}/zombies/restart", "green", "Restart with the same map, variant and players (operators only)")}]
+tellraw @a ["",{MGS_TAG}," ",{FunctionalHelpers.btn("⟲ Fast Restart", f"/function {ns}:v{version}/zombies/restart", "green", "Restart with the same map, variant and players (operators only)")}]
 
 # End game after 5 seconds
 schedule function {ns}:v{version}/zombies/stop 100t
@@ -461,7 +449,7 @@ scoreboard objectives setdisplay sidebar
 scoreboard objectives remove {ns}.zb_sidebar
 gamerule advance_time true
 
-{regen_disable_lines(ns)}
+{FunctionalHelpers.regen_disable_lines(ns)}
 
 # Announce
 tellraw @a [{MGS_TAG},{{"text":"Zombies game ended.","color":"red"}}]
@@ -511,7 +499,7 @@ tellraw @s [{MGS_TAG},{{"text":"No map selected — open the setup menu first.",
 
 	## Join Ongoing Zombies Game (late-joiner support)
 	write_versioned_function("zombies/join_game", f"""
-{late_join_flow_lines(
+{FunctionalHelpers.late_join_flow_lines(
 	ns,
 	"zombies",
 	f"{ns}.zb.in_game",

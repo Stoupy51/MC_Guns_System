@@ -4,7 +4,7 @@ from stewbeet import DamageType, Font, LootTable, Mem, set_json_encoder, texture
 
 from ..config.blocks import main as write_block_tags
 from ..config.stats import REMAINING_BULLETS
-from .helpers import special_objectives_lines
+from .helpers import FunctionalHelpers
 
 
 # Functions
@@ -68,7 +68,7 @@ scoreboard objectives add {ns}.config dummy
 
 ## Per-player special scoreboards (for zombies bonuses, testing, etc.)
 ## Generated from helpers.SPECIAL_SCORES, which is also what game starts wipe to get a clean slate.
-{special_objectives_lines(ns)}
+{FunctionalHelpers.special_objectives_lines(ns)}
 # DPS tracking: accumulates damage dealt per second, snapshot stored for actionbar
 scoreboard objectives add {ns}.dps dummy
 scoreboard objectives add {ns}.previous_dps dummy
@@ -285,8 +285,6 @@ $execute if score #random {ns}.data matches 31 run loot replace entity @s $(slot
 	# The main dialog lists every setting as a button opening its own sub-dialog of value buttons.
 	# Picking a value runs the scoreboard command directly.
 	# Each value button is independent with no submit step, so opening the menu never resets untouched settings.
-	from .helpers import dialog_back_action, dialog_function, dialog_run_btn, dialog_show_btn, register_dialog, register_value_picker, split_emoji
-
 	# --- Global Settings (server-wide fake-player scores) ---
 	rpg_opts = [
 		(str(i), f"/scoreboard players set #projectile_explosion_power {ns}.config {i}",
@@ -340,48 +338,48 @@ $execute if score #random {ns}.data matches 31 run loot replace entity @s $(slot
 		"config/quick_reload": "config/personal", "config/quick_swap": "config/personal",
 	}
 	for sub_id, title_text, desc, options in value_dialogs:
-		register_value_picker(sub_id, title_text, desc, options, back_dialog=picker_back[sub_id])
+		FunctionalHelpers.register_value_picker(sub_id, title_text, desc, options, back_dialog=picker_back[sub_id])
 
 	# --- Configuration dialog, organized into categories (by scope) ---
 	# The top-level menu is a short list of categories; each opens its own sub-dialog whose Back button returns to the top-level config.
 	# Leaf value pickers Back to their category (above).
 	def register_category(sub_id: str, title: str, actions: list[dict[str, str]]) -> None:
-		register_dialog(sub_id, {
+		FunctionalHelpers.register_dialog(sub_id, {
 			"type": "minecraft:multi_action",
-			"title": split_emoji(title, color="gold", bold=True),
+			"title": FunctionalHelpers.split_emoji(title, color="gold", bold=True),
 			"actions": actions,
 			# Each category lists items of a single kind (settings / mode links) → one column.
 			"columns": 1,
-			"exit_action": dialog_back_action("config", tooltip="Return to configuration"),
+			"exit_action": FunctionalHelpers.dialog_back_action("config", tooltip="Return to configuration"),
 		})
 
 	register_category("config/global", "⚙ Global Settings", [
-		dialog_show_btn(f"{ns}:config/rpg_power", "RPG Explosion Power", "Server-wide projectile explosion power", "red"),
-		dialog_show_btn(f"{ns}:config/grenade_power", "Grenade Explosion Power", "Server-wide grenade explosion power", "gold"),
-		dialog_show_btn(f"{ns}:config/max_ammo", "Max Ammo Mode", "How the Max Ammo powerup refills weapons", "aqua"),
-		dialog_show_btn(f"{ns}:config/damage_debug", "Damage Debug", "Broadcast every hit's damage to chat", "yellow"),
+		FunctionalHelpers.dialog_show_btn(f"{ns}:config/rpg_power", "RPG Explosion Power", "Server-wide projectile explosion power", "red"),
+		FunctionalHelpers.dialog_show_btn(f"{ns}:config/grenade_power", "Grenade Explosion Power", "Server-wide grenade explosion power", "gold"),
+		FunctionalHelpers.dialog_show_btn(f"{ns}:config/max_ammo", "Max Ammo Mode", "How the Max Ammo powerup refills weapons", "aqua"),
+		FunctionalHelpers.dialog_show_btn(f"{ns}:config/damage_debug", "Damage Debug", "Broadcast every hit's damage to chat", "yellow"),
 	])
 	register_category("config/personal", "⚡ Personal Cheats", [
-		dialog_show_btn(f"{ns}:config/instant_kill", "Instant Kill", "One-shot kills for a duration (self only)", "red"),
-		dialog_show_btn(f"{ns}:config/infinite_ammo", "Infinite Ammo", "No reloads needed for a duration (self only)", "gold"),
-		dialog_show_btn(f"{ns}:config/quick_reload", "Quick Reload", "Reduce reload time (self only)", "green"),
-		dialog_show_btn(f"{ns}:config/quick_swap", "Quick Swap", "Reduce weapon-swap time (self only)", "aqua"),
+		FunctionalHelpers.dialog_show_btn(f"{ns}:config/instant_kill", "Instant Kill", "One-shot kills for a duration (self only)", "red"),
+		FunctionalHelpers.dialog_show_btn(f"{ns}:config/infinite_ammo", "Infinite Ammo", "No reloads needed for a duration (self only)", "gold"),
+		FunctionalHelpers.dialog_show_btn(f"{ns}:config/quick_reload", "Quick Reload", "Reduce reload time (self only)", "green"),
+		FunctionalHelpers.dialog_show_btn(f"{ns}:config/quick_swap", "Quick Swap", "Reduce weapon-swap time (self only)", "aqua"),
 	])
 	# The three game-mode setups sit directly on the first page instead of behind a "Game Modes" category — opening a mode used to cost two clicks for no benefit.
 	# There is no "Players & Teams" category either: team assignment only makes sense in the context of one mode, and every mode's setup dialog already carries its own "Manage Players" button.
 	config_actions = [
 		# Row 1: the game modes, side by side (see columns=3 below)
-		dialog_show_btn(f"{ns}:multiplayer/setup", "⚔ Multiplayer", "Open the multiplayer game setup menu", "red"),
-		dialog_show_btn(f"{ns}:zombies/setup", "🧟 Zombies", "Open the zombies setup menu", "green"),
-		dialog_show_btn(f"{ns}:missions/setup", "🎯 Missions", "Open the mission setup menu", "gold"),
+		FunctionalHelpers.dialog_show_btn(f"{ns}:multiplayer/setup", "⚔ Multiplayer", "Open the multiplayer game setup menu", "red"),
+		FunctionalHelpers.dialog_show_btn(f"{ns}:zombies/setup", "🧟 Zombies", "Open the zombies setup menu", "green"),
+		FunctionalHelpers.dialog_show_btn(f"{ns}:missions/setup", "🎯 Missions", "Open the mission setup menu", "gold"),
 		# Row 2: settings and tools
-		dialog_show_btn(f"{ns}:config/global", "⚙ Global Settings", "Server-wide gameplay settings", "gold"),
-		dialog_show_btn(f"{ns}:config/personal", "⚡ Personal Cheats", "Self-only powerups", "light_purple"),
-		dialog_run_btn("🗺 Map Editor", f"/function {ns}:v{version}/maps/editor/menu", "Open the map editor", "yellow"),
+		FunctionalHelpers.dialog_show_btn(f"{ns}:config/global", "⚙ Global Settings", "Server-wide gameplay settings", "gold"),
+		FunctionalHelpers.dialog_show_btn(f"{ns}:config/personal", "⚡ Personal Cheats", "Self-only powerups", "light_purple"),
+		FunctionalHelpers.dialog_run_btn("🗺 Map Editor", f"/function {ns}:v{version}/maps/editor/menu", "Open the map editor", "yellow"),
 	]
-	register_dialog("config", {
+	FunctionalHelpers.register_dialog("config", {
 		"type": "minecraft:multi_action",
-		"title": split_emoji("☣ MGS Configuration ☣", color="gold", bold=True),
+		"title": FunctionalHelpers.split_emoji("☣ MGS Configuration ☣", color="gold", bold=True),
 		"body": [{"type": "minecraft:plain_message", "contents": {"text": "Pick a game mode, or a settings category", "color": "gray"}}],
 		"actions": config_actions,
 		# 3 columns lays the actions out as two rows: the game modes, then settings + tools.
@@ -390,5 +388,5 @@ $execute if score #random {ns}.data matches 31 run loot replace entity @s $(slot
 	})
 
 	# /function mgs:config now opens the (inline) dialog
-	write_function(f"{ns}:config", f"function {dialog_function('config')}")
+	write_function(f"{ns}:config", f"function {FunctionalHelpers.dialog_function('config')}")
 

@@ -9,7 +9,7 @@ from stewbeet import Mem, write_load_file, write_tag, write_versioned_function
 
 from ...config.stats import CAPACITY, REMAINING_BULLETS
 from ..core.feedback import zb_sound
-from ..helpers import MGS_TAG, reset_special_scores_lines
+from ..helpers import MGS_TAG, FunctionalHelpers
 from ..stamina import STAM_MAX
 from .common import deny_cmd, deny_not_enough_points_cmd, game_active_guard_cmd
 from .revive import SOLO_QR_MAX
@@ -267,7 +267,7 @@ scoreboard players set {selector} {ns}.stam_bonus 0
 tag {selector} remove {ns}.perk.speed_cola
 tag {selector} remove {ns}.perk.double_tap
 tag {selector} remove {ns}.perk.quick_revive
-{reset_special_scores_lines(ns, selector)}
+{FunctionalHelpers.reset_special_scores_lines(ns, selector)}
 """.strip()
 
 def generate_perks() -> None:

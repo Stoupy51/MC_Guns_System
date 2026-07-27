@@ -12,7 +12,7 @@ from typing import Any, cast
 
 from stewbeet import Advancement, JsonDict, Mem, set_json_encoder, write_load_file, write_versioned_function
 
-from .helpers import MGS_TAG, btn
+from .helpers import MGS_TAG, FunctionalHelpers
 from .map_editor_defs import ALL_ELEMENTS, EDITOR_MODES, FIELD_DOCS, MODE_LIST, MODEL_DISPLAY_ELEMENTS
 
 
@@ -71,7 +71,7 @@ scoreboard objectives add {ns}.class_menu minecraft.used:minecraft.warped_fungus
 
 	# Mode tab buttons (used in all list views).
 	mode_tabs = ",".join(
-		btn(mode_info.name, f"/function {ns}:v{version}/maps/editor/list/{mode_key}", mode_info.color, f"View {mode_info.name} maps")
+		FunctionalHelpers.btn(mode_info.name, f"/function {ns}:v{version}/maps/editor/list/{mode_key}", mode_info.color, f"View {mode_info.name} maps")
 		for mode_key, mode_info in EDITOR_MODES.items()
 	)
 
@@ -84,7 +84,7 @@ function {ns}:v{version}/maps/editor/list/multiplayer
 	# Per-Mode Map List.
 	for mode_key, mode_info in EDITOR_MODES.items():
 		sk = mode_info.storage_key
-		create_btn = btn("+ Create New Map", f"/function {ns}:v{version}/maps/editor/create/{mode_key}", "green", f"Create a new {mode_info.name} map")
+		create_btn = FunctionalHelpers.btn("+ Create New Map", f"/function {ns}:v{version}/maps/editor/create/{mode_key}", "green", f"Create a new {mode_info.name} map")
 
 		write_versioned_function(f"maps/editor/list/{mode_key}", f"""
 tellraw @s {sep}
@@ -138,7 +138,7 @@ $tellraw @s ["  ",{{"text":"$(name)","color":"white"}},{{"text":" ($(id))","colo
 	for mode_key, mode_info in EDITOR_MODES.items():
 		sk = mode_info.storage_key
 		create_snbt = r"id:'my_map',name:'My Map',description:'A new map',base_coordinates:[0,64,0],start_commands:[],respawn_commands:[]"
-		back_btn = btn("◀ Back", f"/function {ns}:v{version}/maps/editor/list/{mode_key}", "yellow", "Back to map list")
+		back_btn = FunctionalHelpers.btn("◀ Back", f"/function {ns}:v{version}/maps/editor/list/{mode_key}", "yellow", "Back to map list")
 
 		write_versioned_function(f"maps/editor/create/{mode_key}", f"""
 tellraw @s {sep}
@@ -216,8 +216,8 @@ execute if score @s {ns}.mp.map_mode matches {MODE_LIST.index("zombies")} run fu
 # Announce
 tellraw @s [{MGS_TAG},{{"text":"Entered map editor for: ","color":"green"}},{{"text":"","color":"white"}},{{"storage":"{ns}:temp","nbt":"map_edit.map.name","interpret":true}}]
 tellraw @s [{MGS_TAG},{{"text":"Place eggs to add elements. DESTROY egg (hotbar 9) removes nearest element.","color":"yellow"}}]
-tellraw @s [{MGS_TAG},{{"text":"Need collaborators? ","color":"gray"}},{btn("Invite All Players", f"/function {ns}:v{version}/maps/editor/invite_all", "aqua", "Put all online players into this editor session")}]
-tellraw @s [{MGS_TAG},{{"text":"Use ","color":"gray"}},{btn("Save & Exit", f"/function {ns}:v{version}/maps/editor/save_exit", "green", "Save changes and exit editor")},{{"text":" or "}},{btn("Exit", f"/function {ns}:v{version}/maps/editor/exit", "red", "Discard changes and exit editor")}]
+tellraw @s [{MGS_TAG},{{"text":"Need collaborators? ","color":"gray"}},{FunctionalHelpers.btn("Invite All Players", f"/function {ns}:v{version}/maps/editor/invite_all", "aqua", "Put all online players into this editor session")}]
+tellraw @s [{MGS_TAG},{{"text":"Use ","color":"gray"}},{FunctionalHelpers.btn("Save & Exit", f"/function {ns}:v{version}/maps/editor/save_exit", "green", "Save changes and exit editor")},{{"text":" or "}},{FunctionalHelpers.btn("Exit", f"/function {ns}:v{version}/maps/editor/exit", "red", "Discard changes and exit editor")}]
 """)
 
 	write_versioned_function("maps/editor/invite_all", f"""
@@ -806,7 +806,7 @@ tellraw @a[tag={ns}.map_editor] [{MGS_TAG},{{"text":"Enemy placed!","color":"red
 """)
 
 	# Handle Start Command Element (all modes).
-	edit_cmd_btn = btn(
+	edit_cmd_btn = FunctionalHelpers.btn(
 		"Edit Command",
 		f'/data modify entity @n[tag={ns}.element.start_command,distance=..10] data.command set value "say Hello from start command"',
 		"aqua", "Click to edit the command to run at game start", action="suggest_command"
@@ -830,7 +830,7 @@ tellraw @a[tag={ns}.map_editor] ["  ",{edit_cmd_btn}]
 """)
 
 	# Handle Respawn Command Element (multiplayer + missions) ───
-	edit_respawn_cmd_btn = btn(
+	edit_respawn_cmd_btn = FunctionalHelpers.btn(
 		"Edit Command",
 		f'/data modify entity @n[tag={ns}.element.respawn_command,distance=..10] data.command set value "effect give @s minecraft:speed 5 0 true"',
 		"dark_aqua", "Click to edit the command to run when players respawn", action="suggest_command"
@@ -1038,7 +1038,7 @@ $tellraw {config_target} ["    ",{{"text":"[Edit Nearest {einfo.name}]","color":
 	zb_defaults_lines.append("")
 
 	# Shared group_id default
-	group_id_btn = btn(
+	group_id_btn = FunctionalHelpers.btn(
 		"\u270e",
 		f"/data modify storage {ns}:temp map_edit.zb_defaults.group_id set value 0",
 		"aqua", "Click to edit group_id", action="suggest_command"
@@ -1059,7 +1059,7 @@ $tellraw {config_target} ["    ",{{"text":"[Edit Nearest {einfo.name}]","color":
 		)
 		for field, default_val in einfo.defaults.items():
 			snbt_val = snbt_suggest(default_val)
-			edit_btn = btn(
+			edit_btn = FunctionalHelpers.btn(
 				"✎",
 				f"/data modify storage {ns}:temp map_edit.zb_defaults.{etype}.{field} set value {snbt_val}",
 				"aqua", f"Click to edit {field}", action="suggest_command"
@@ -1104,7 +1104,7 @@ execute at @s unless entity @n[tag={ns}.map_element,distance=..10] run tellraw @
 		# group_id only shown for spawn-type zombies elements.
 		# Doors don't carry a separate group_id: a door's link_id is its front-room group, and back_group_id is the back room.
 		if etype in ("zombie_spawn", "player_spawn_zb", "special_spawn"):
-			group_id_edit_btn = btn(
+			group_id_edit_btn = FunctionalHelpers.btn(
 				"✎",
 				f"/data modify entity @n[tag={ns}.element.{etype},distance=..10] data.group_id set value 0",
 				"yellow", "Click to edit group_id", action="suggest_command"
@@ -1129,7 +1129,7 @@ execute at @s unless entity @n[tag={ns}.map_element,distance=..10] run tellraw @
 			else:
 				edit_cmd = f"/data modify entity @n[tag={ns}.element.{etype},distance=..10] data.{field} set value {edit_value}"
 				hover_text = f"Click to edit {field}"
-			edit_btn = btn(
+			edit_btn = FunctionalHelpers.btn(
 				"✎",
 				edit_cmd,
 				"yellow", hover_text, action="suggest_command"
@@ -1137,7 +1137,7 @@ execute at @s unless entity @n[tag={ns}.map_element,distance=..10] run tellraw @
 			# Optional list fields get a "✗" button to clear/disable them (set back to []).
 			clear_component: str = ""
 			if field == "activation_box":
-				clear_btn = btn(
+				clear_btn = FunctionalHelpers.btn(
 					"✗",
 					f"/data modify entity @n[tag={ns}.element.{etype},distance=..10] data.{field} set value []",
 					"red", "Clear (disable) the activation box", action="run_command"
@@ -1170,7 +1170,7 @@ execute at @s unless entity @n[tag={ns}.map_element,distance=..10] run tellraw @
 	for etype, einfo in ALL_ELEMENTS.items():
 		if einfo.save_type != "spawn":
 			continue
-		edit_yaw_btn = btn(
+		edit_yaw_btn = FunctionalHelpers.btn(
 			"✎",
 			f"/data modify entity @n[tag={ns}.element.{etype},distance=..10] data.yaw set value 0.0f",
 			"yellow", "Click to edit yaw", action="suggest_command"
@@ -1187,7 +1187,7 @@ execute at @s unless entity @n[tag={ns}.map_element,distance=..10] run tellraw @
 
 	# For zb_object types: show yaw (rotation)
 	for etype, _ in zb_elements.items():
-		edit_yaw_btn = btn(
+		edit_yaw_btn = FunctionalHelpers.btn(
 			"✎",
 			f"/data modify entity @n[tag={ns}.element.{etype},distance=..10] data.yaw set value 0.0f",
 			"yellow", "Click to edit yaw", action="suggest_command"
@@ -1200,7 +1200,7 @@ execute at @s unless entity @n[tag={ns}.map_element,distance=..10] run tellraw @
 
 	# For enemy types: show function.
 	# The suggestion must stay version-independent like the map default above, or a map saved today calls a path that a later pack version no longer ships.
-	edit_fn_btn = btn(
+	edit_fn_btn = FunctionalHelpers.btn(
 		"✎",
 		f"/data modify entity @n[tag={ns}.element.enemy,distance=..10] data.function set value '{ns}:mob/default/level_1'",
 		"yellow", "Click to edit function", action="suggest_command"
@@ -1225,22 +1225,22 @@ execute at @s unless entity @n[tag={ns}.map_element,distance=..10] run tellraw @
 		)
 
 	# For base_coordinates: show start_function and tick_function
-	edit_start_fn_btn = btn(
+	edit_start_fn_btn = FunctionalHelpers.btn(
 		"✎",
 		f'/data modify entity @n[tag={ns}.element.base_coordinates,distance=..10] data.start_function set value "namespace:path/to/function"',
 		"yellow", "Click to edit start_function (called once when game starts)", action="suggest_command"
 	)
-	clear_start_fn_btn = btn(
+	clear_start_fn_btn = FunctionalHelpers.btn(
 		"✗",
 		f'/data remove entity @n[tag={ns}.element.base_coordinates,distance=..10] data.start_function',
 		"red", "Clear start_function (won't be called)", action="run_command"
 	)
-	edit_tick_fn_btn = btn(
+	edit_tick_fn_btn = FunctionalHelpers.btn(
 		"✎",
 		f'/data modify entity @n[tag={ns}.element.base_coordinates,distance=..10] data.tick_function set value "namespace:path/to/function"',
 		"yellow", "Click to edit tick_function (called every game tick)", action="suggest_command"
 	)
-	clear_tick_fn_btn = btn(
+	clear_tick_fn_btn = FunctionalHelpers.btn(
 		"✗",
 		f'/data remove entity @n[tag={ns}.element.base_coordinates,distance=..10] data.tick_function',
 		"red", "Clear tick_function (won't be called)", action="run_command"

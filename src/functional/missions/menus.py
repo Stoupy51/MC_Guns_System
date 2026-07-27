@@ -4,7 +4,7 @@
 # Imports
 from stewbeet import Mem, write_versioned_function
 
-from ..helpers import dialog_back_action, dialog_function, dialog_run_btn, register_dialog
+from ..helpers import FunctionalHelpers
 
 
 # Functions
@@ -14,26 +14,26 @@ def generate_missions_menus() -> None:
 
 	## Main missions setup dialog
 	setup_actions = [
-		dialog_run_btn("🗺 Select Map", f"/function {ns}:v{version}/missions/map_select", "Browse and select a mission map", "aqua"),
-		dialog_run_btn("▶ START", f"/function {ns}:v{version}/missions/start", "Start the mission", "green"),
-		dialog_run_btn("■ STOP", f"/function {ns}:v{version}/missions/stop", "Stop the mission", "red"),
-		dialog_run_btn("⚔ Classes", f"/function {ns}:v{version}/multiplayer/select_class", "Select your class", "aqua"),
-		dialog_run_btn("👥 Manage Players", f"/function {ns}:v{version}/players/list_missions", "Add or remove players from the mission", "dark_aqua"),
+		FunctionalHelpers.dialog_run_btn("🗺 Select Map", f"/function {ns}:v{version}/missions/map_select", "Browse and select a mission map", "aqua"),
+		FunctionalHelpers.dialog_run_btn("▶ START", f"/function {ns}:v{version}/missions/start", "Start the mission", "green"),
+		FunctionalHelpers.dialog_run_btn("■ STOP", f"/function {ns}:v{version}/missions/stop", "Stop the mission", "red"),
+		FunctionalHelpers.dialog_run_btn("⚔ Classes", f"/function {ns}:v{version}/multiplayer/select_class", "Select your class", "aqua"),
+		FunctionalHelpers.dialog_run_btn("👥 Manage Players", f"/function {ns}:v{version}/players/list_missions", "Add or remove players from the mission", "dark_aqua"),
 		# Multiplayer has "Auto Team" to seat everyone at once; this is the missions equivalent.
-		dialog_run_btn("👥 All Players Join", f"/execute as @a run function {ns}:v{version}/players/mi_join", "Add every online player to the mission", "green"),
-		dialog_run_btn("+ Join", f"/function {ns}:v{version}/missions/join_game", "Join the ongoing mission as a late joiner", "yellow"),
+		FunctionalHelpers.dialog_run_btn("👥 All Players Join", f"/execute as @a run function {ns}:v{version}/players/mi_join", "Add every online player to the mission", "green"),
+		FunctionalHelpers.dialog_run_btn("+ Join", f"/function {ns}:v{version}/missions/join_game", "Join the ongoing mission as a late joiner", "yellow"),
 	]
-	register_dialog("missions/setup", {
+	FunctionalHelpers.register_dialog("missions/setup", {
 		"type": "minecraft:multi_action",
 		"title": ["", "🎯 ", {"text": "Missions Setup", "color": "aqua", "bold": True}, " 🎯"],
 		"body": [{"type": "minecraft:plain_message", "contents": {"text": "Pick a map, then Start", "color": "gray"}}],
 		"actions": setup_actions,
 		"columns": 2,
-		"exit_action": dialog_back_action("config", tooltip="Return to the configuration menu"),
+		"exit_action": FunctionalHelpers.dialog_back_action("config", tooltip="Return to the configuration menu"),
 	})
 
 	# /function .../missions/setup now opens the dialog
-	write_versioned_function("missions/setup", f"function {dialog_function('missions/setup')}")
+	write_versioned_function("missions/setup", f"function {FunctionalHelpers.dialog_function('missions/setup')}")
 
 	## Map selection menu: build a dialog listing all available mission maps
 	write_versioned_function("missions/map_select", f"""

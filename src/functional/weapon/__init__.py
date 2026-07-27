@@ -1,6 +1,6 @@
 """ Weapon subsystem entry point; submodules run in dependency order. """
 # Imports
-from ..helpers import write_shared_projectile_functions
+from ..helpers import FunctionalHelpers
 from .actionbar import main as actionbar_main
 from .ammo import main as ammo_main
 from .casing import main as casing_main
@@ -19,7 +19,7 @@ from .zoom import main as zoom_main
 
 # Functions
 def main() -> None:
-	write_shared_projectile_functions()  # Shared by the projectile and grenade systems
+	FunctionalHelpers.write_shared_projectile_functions()  # Shared by the projectile and grenade systems
 	common_main()                        # Right-click detection
 	left_click_main()                    # Left-click (reload), via the piercing-attack enchantment
 	zoom_main()

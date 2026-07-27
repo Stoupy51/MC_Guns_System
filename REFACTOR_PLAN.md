@@ -92,22 +92,58 @@ where behaviour drift is most likely. Ship one function-group per commit.
 the three `game.py` files. Everything else splits.
 
 The split is **by feature, not by kind**: a package per concept, holding the modules that only make
-sense together.
+sense together. This is not only about the oversized files — `functional/zombies/` is **27 modules in
+one flat directory** and `functional/weapon/` is 15, and both are unnavigable regardless of how long
+any individual file is.
+
+### Target tree
 
 ```
-zombies/
-  perks/{registry,machine,effects}.py                # perks.py + wunderfizz.py — the machine and what it dispenses
-  powerups/{types,spawn,collect}.py                  # powerups.py + bonus.py — the drop and the system that spawns it
-  objects/{barriers,traps,wallbuys,doors,power}.py   # everything placed on a map
-  pap/{machine,upgrade,anim,lore}.py
-  mystery_box/{machine,pool,anim}.py
-map_editor/{elements,markers,save,ui}.py
+config/
+  stats/{keys,weapons,pap}.py            # was stats.py 1125
+  blocks/{tags,states}.py                # was blocks.py 581
+  catalogs.py                            # 268 — already the model to copy
+functional/
+  shaders.py                             # UNCHANGED, exempt, stays one file
+  helpers.py  main.py  mob_ai.py  stamina.py  player_config.py
+  map_editor/{defs,elements,markers,save,ui}.py       # was map_editor.py 1555 + map_editor_defs.py
+  core/                                  # 10 small modules — already fine, leave alone
+  weapon/
+    firing/{left_click,raycast,projectile,kick,casing,sound}.py
+    ammo/{magazine,switch,lore}.py       # ammo.py 372 + switch.py 198 + update_lore.py 261
+    hud/{actionbar,hit_indicator,zoom}.py
+    grenade/{throw,detonate,effects}.py  # was grenade.py 429
+    common.py
+  zombies/
+    game/{lifecycle,round,spawning}.py   # was game.py 718 + round.py 623
+    player/{inventory,revive,whos_who,ability,hurt}.py
+    enemies/{roaming,escort,monkey_bomb}.py
+    machines/                            # everything a player walks up to and buys from
+      perks/{registry,machine,effects}.py     # was perks.py 943
+      wunderfizz.py                           # 389 — dispenses perks, belongs beside them
+      pap/{machine,upgrade,anim,lore}.py      # was pap.py 987
+      mystery_box/{machine,pool,anim}.py      # was mystery_box.py 743
+    objects/{barriers,doors,traps,power,wallbuys}.py   # placed on a map, not bought from
+    rewards/{powerups,bonus}.py          # the drop and the system that spawns it
+    maps.py  menus.py  common.py  display_helpers.py
+  multiplayer/
+    game/{lifecycle,scoring,spawning}.py # was game.py 730
+    gamemodes/  loadouts/                # already packages
+  missions/
+    game/{lifecycle,objectives}.py       # was game.py 483
 ```
 
-Each file is `generate_X()` emitting dozens of `write_versioned_function` blocks, so splitting means
-carving one function into sub-functions across new modules and threading `ns` / `version` / `sep` and
-the nested `snbt_*` helpers through every one. Large, invasive, zero output change — hence last, one
-file per commit against the byte-identical harness.
+**92 → ~135 files.** Every leaf lands under 300 lines.
+
+Each oversized file is one `generate_X()` emitting dozens of `write_versioned_function` blocks, so
+splitting means carving a single function into sub-functions across new modules and threading
+`ns` / `version` / `sep` and the nested `snbt_*` helpers through every one. Large, invasive, zero
+output change — hence last, one file per commit against the byte-identical harness.
+
+**Order within P12:** do the pure *moves* first (`zombies/` and `weapon/` regrouping, where files
+change directory but not content), then the *splits*. A move is verifiable by import graph alone; a
+split needs the byte-diff. Mixing them in one commit makes a real drift indistinguishable from a
+rename.
 
 ### PY6. Generated-`.mcfunction` comment cleanup — ⚠ **needs sign-off**
 
@@ -117,13 +153,12 @@ A large share of the comments inside the emitted functions restate the following
 `mcfunction_total_lines` (31 675 vs 12 305 real commands) and cannot run under the byte-identical
 harness without approval.
 
-### PY8. Module-level helpers become class members (→ P11c)
+### PY8 remainder. Sweep the other helper modules (→ P11d)
 
-Per the naming rule, module-level functions and constants group into a class with `@staticmethod`
-methods. `functional/helpers.py` is the clearest case: everything except the genuinely global
-`MGS_TAG` becomes `FunctionalHelpers.SPECIAL_SCORES`, `FunctionalHelpers.special_objectives_lines()`,
-and so on. Sweep the other modules for the same shape afterwards. Pure renaming; risk very low but
-the diff is wide.
+`helpers.py` is done. The same shape exists in `core/feedback.py`, `zombies/common.py`,
+`zombies/display_helpers.py` and `weapon/common.py` — modules that are a bag of shared line-builders
+rather than a `generate_X()` entry point. A module whose only top-level function *is* its entry point
+stays as it is; wrapping `generate_power_switch()` in a class buys nothing.
 
 ### Lint tightening (→ P11)
 
@@ -180,6 +215,7 @@ src/
 | **P9d** ✅ | Restored the 211 `# Imports` / `# Constants` / `# Classes` / `# Functions` section banners P9c wrongly deleted. | 0 | +211 |
 | **P11b** ✅ | PY7 — `catalogs.py`'s six tuple-splat tables became explicit keyword-argument constructor calls. | 0 | +1 |
 | **P11a** ✅ | Indentation normalised to tabs across 30 files (26 were space-indented, 5 mixed). Alignment padding and non-docstring string interiors left as spaces. | 0 | 0 |
+| **P11c** ✅ | PY8 — `helpers.py`'s 26 members folded into `FunctionalHelpers`; `MGS_TAG` stays module-level. 15 consumers repointed. | 0 | +1 |
 
 ### Remaining phases
 
@@ -188,7 +224,9 @@ src/
 | **P10** | D3 — one shared spawn/respawn system for all three modes. | −~20 | −600 | **high** |
 | **P11** | Tighten the ruff config, fix the fallout. | 0 | ? | low |
 | **P11c** | PY8 — `helpers.py` and friends fold into `FunctionalHelpers`-style classes. | 0 | ~0 | very low |
-| **P12** (final) | PY5 — split every >300-line generator into feature packages. **Not** `shaders.py`. | 0 | +~45 files | med |
+| **P11d** | PY8 remainder — sweep the other helper-shaped modules into classes. | 0 | ~0 | very low |
+| **P12a** (final) | PY5 moves — regroup `zombies/` (27 flat modules) and `weapon/` (15) into feature packages. Content unchanged, imports repointed. | 0 | ~0 | low |
+| **P12b** (final) | PY5 splits — carve every >300-line generator into its package's leaves. **Not** `shaders.py`. | 0 | +~45 files | med |
 
 ---
 
