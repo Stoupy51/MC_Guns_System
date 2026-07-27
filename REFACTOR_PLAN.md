@@ -27,6 +27,17 @@ python scripts/verify.py metrics       # metrics table only, no build
 
 **Re-baseline after every commit**, otherwise `check` reports the previous phase's work as drift.
 
+### Finding duplication
+
+```bash
+npx jscpd ./src/functional -r ai --mode mild
+```
+
+Clone detection over the Python side. `--mode mild` catches near-duplicates rather than only exact
+copies, which is what matters here — most duplication in this tree is the same emitter written twice
+with different literals. Use it to *find* candidates, then verify each one by reading the files: the
+Phase 0 clustering passes disagreed by 2.5x, so no similarity tool's aggregate is a metric (see §8).
+
 ---
 
 ## 2. Progress
