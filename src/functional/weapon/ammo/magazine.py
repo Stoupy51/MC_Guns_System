@@ -1,0 +1,463 @@
+""" Ammo system: firing cost, reloading, magazines and infinite-ammo refills. """
+# ruff: noqa: E501
+# Imports
+from stewbeet import ItemModifier, JsonDict, Mem, set_json_encoder, write_versioned_function
+
+from ....config.stats import ALL_SLOTS, BASE_WEAPON, CAPACITY, RELOAD_TIME, REMAINING_BULLETS, SINGLE_RELOAD
+
+# Constants
+# Magazine IDs that are consumable (stack count = bullet count)
+CONSUMABLE_MAG_DATA_KEY = "consumable"
+
+# Functions
+def create_lore_functions(type_name: str, tag: str, remaining_source: str, capacity_source: str) -> None:
+	""" Create lore modification functions for weapons or magazines.
+
+	Args:
+		type_name        (str): Type name for the lore functions (e.g., "lore" or "mag_lore").
+		tag              (str): Temporary tag to identify the item being modified.
+		remaining_source (str): Source to get the remaining bullets value.
+		capacity_source  (str): Source to get the capacity value.
+	"""
+	ns: str = Mem.ctx.project_id
+	version: str = Mem.ctx.project_version
+
+	# Modify lore function
+	write_versioned_function(f"ammo/modify_{type_name}", f"""
+# Add temporary tag for item display targeting
+tag @s add {tag}
+
+# Get current item lore
+$execute summon item_display run function {ns}:v{version}/ammo/get_current_{type_name} {{"slot":"$(slot)"}}
+
+# Find and update ammo count in lore
+scoreboard players set #index {ns}.data 0
+$execute if data storage {ns}:temp copy[0] run function {ns}:v{version}/ammo/search_{type_name}_loop {{"slot":"$(slot)"}}
+
+# Clean up temporary tag
+tag @s remove {tag}
+""")
+
+	# Get current item lore
+	write_versioned_function(f"ammo/get_current_{type_name}", f"""
+# Copy item to item display entity
+$item replace entity @s contents from entity @p[tag={tag}] $(slot)
+
+# Extract lore data
+data modify storage {ns}:temp components set from entity @s item.components
+data modify storage {ns}:temp lore set from storage {ns}:temp components."minecraft:lore"
+data modify storage {ns}:temp copy set from storage {ns}:temp lore
+
+# Clean up item display
+kill @s
+""")
+
+	# Search for ammo line in lore
+	write_versioned_function(f"ammo/search_{type_name}_loop", f"""
+# Check if current lore line matches ammo format (number/number)
+scoreboard players set #success {ns}.data 0
+data modify storage {ns}:temp lore_extra set from storage {ns}:temp copy[0].extra
+data modify storage {ns}:temp lore_slash set from storage {ns}:temp lore_extra[-2]
+execute if data storage {ns}:temp lore_slash{{"text":"/"}} unless data storage {ns}:temp lore_extra[-3].text unless data storage {ns}:temp lore_extra[-1].text run scoreboard players set #success {ns}.data 1
+
+# If ammo line found, prepare data for modification
+execute if score #success {ns}.data matches 1 run data modify storage {ns}:input with set value {{}}
+execute if score #success {ns}.data matches 1 store result storage {ns}:input with.index int 1 run scoreboard players get #index {ns}.data
+execute if score #success {ns}.data matches 1 store result storage {ns}:input with.{REMAINING_BULLETS} int 1 run scoreboard players get {remaining_source}
+execute if score #success {ns}.data matches 1 run data modify storage {ns}:input with.{CAPACITY} set from {capacity_source}
+$execute if score #success {ns}.data matches 1 run data modify storage {ns}:input with.slot set value "$(slot)"
+execute if score #success {ns}.data matches 1 summon item_display run return run function {ns}:v{version}/ammo/found_{type_name}_line with storage {ns}:input with
+
+# Continue searching if not found
+data remove storage {ns}:temp copy[0]
+scoreboard players add #index {ns}.data 1
+$execute if data storage {ns}:temp copy[0] run function {ns}:v{version}/ammo/search_{type_name}_loop {{"slot":"$(slot)"}}
+""")
+
+	# Update ammo count in item lore
+	write_versioned_function(f"ammo/found_{type_name}_line", f"""
+# Copy item to item display for modification
+$item replace entity @s contents from entity @p[tag={tag}] $(slot)
+
+# Update ammo count in lore
+$data modify entity @s item.components."minecraft:lore"[$(index)].extra[-1] set value "$({CAPACITY})"
+$data modify entity @s item.components."minecraft:lore"[$(index)].extra[-3] set value "$({REMAINING_BULLETS})"
+
+# Copy modified item back to player
+$item replace entity @p[tag={tag}] $(slot) from entity @s contents
+
+# Clean up item display
+kill @s
+""")
+
+def main() -> None:
+	ns: str = Mem.ctx.project_id
+	version: str = Mem.ctx.project_version
+
+	# Create lore functions for weapons
+	create_lore_functions(
+		type_name="lore",
+		tag=f"{ns}.modify_lore",
+		remaining_source=f"@s {ns}.{REMAINING_BULLETS}",
+		capacity_source=f"storage {ns}:temp components.\"minecraft:custom_data\".{ns}.stats.{CAPACITY}"
+	)
+
+	# Create lore functions for magazines
+	create_lore_functions(
+		type_name="mag_lore",
+		tag=f"{ns}.modify_mag_lore",
+		remaining_source=f"#bullets {ns}.data",
+		capacity_source=f"storage {ns}:temp {CAPACITY}"
+	)
+
+	# Handle right click event by decreasing ammo count
+	write_versioned_function("player/right_click", f"""
+# Decrease bullet count
+function {ns}:v{version}/ammo/decrease
+""")
+
+	# Decrease ammo count function
+	write_versioned_function("ammo/decrease", f"""
+# If infinite ammo is active, refill ammo to max capacity and skip consumption
+execute if score @s {ns}.special.infinite_ammo matches 1.. run return run function {ns}:v{version}/ammo/infinite_refill
+
+# Remove 1 bullet from player's ammo count
+scoreboard players remove @s {ns}.{REMAINING_BULLETS} 1
+execute if score @s {ns}.{REMAINING_BULLETS} matches ..0 run function {ns}:v{version}/ammo/reload
+
+# Add mid cooldown sound tag if weapon has pump sound
+execute if data storage {ns}:gun all.sounds.pump run tag @s add {ns}.pump_sound
+
+# Add mid reload sound tag if weapon has reload mid sound
+execute if data storage {ns}:gun all.sounds.playermid run tag @s add {ns}.reload_mid_sound
+""")
+
+	# Infinite ammo refill: set current ammo to weapon's max capacity
+	write_versioned_function("ammo/infinite_refill", f"""
+# Set player's ammo count to weapon capacity
+execute store result score @s {ns}.{REMAINING_BULLETS} run data get storage {ns}:gun all.stats.{CAPACITY}
+""")
+
+	# Handle weapon switching logic
+	write_versioned_function("switch/on_weapon_switch", f"""
+# When unequipping a weapon (player was holding a weapon):
+#   - Find weapon with CURRENT_AMMO = -1 (needs update)
+#   - Store current ammo count in weapon's stats
+execute if score @s {ns}.last_selected matches 1.. run function {ns}:v{version}/ammo/update_old_weapon
+
+# When equipping a new weapon:
+#   - Load ammo count from weapon's stats into player scoreboard
+#   - Mark weapon as needing update by setting ammo to -1
+execute if score #current_id {ns}.data matches 1.. run function {ns}:v{version}/ammo/copy_data
+""")
+
+	# Update ammo count for previously equipped weapon
+	custom_data = f"{{{ns}:{{stats:{{{REMAINING_BULLETS}:-1}}}}}}"
+	content: str = f"""
+# Store player's current ammo count in temporary storage
+execute store result storage {ns}:temp {REMAINING_BULLETS} int 1 run scoreboard players get @s {ns}.{REMAINING_BULLETS}
+
+# Check all inventory slots for weapon needing ammo update (remaining bullets = -1)
+"""
+	for slot in ALL_SLOTS:
+		content += f"""execute if items entity @s {slot} *[custom_data~{custom_data}] run return run function {ns}:v{version}/ammo/set_count {{slot:"{slot}"}}\n"""
+	write_versioned_function("ammo/update_old_weapon", content)
+
+	# Create item modifier to update weapon's ammo count
+	modifier: JsonDict = {
+		"function":"minecraft:copy_custom_data","source":{"type":"minecraft:storage","source":f"{ns}:temp"},
+		"ops":[{"source":REMAINING_BULLETS,"target":f"{ns}.stats.{REMAINING_BULLETS}","op":"replace"}]
+	}
+	Mem.ctx.data[ns].item_modifiers[f"v{version}/update_ammo"] = set_json_encoder(ItemModifier(modifier), max_level=-1)
+
+	# Create item modifier to set consumable stack count from a score (#bullets in mgs.data)
+	consumable_count_modifier: JsonDict = {
+		"function": "minecraft:set_count",
+		"count": {"type": "minecraft:score", "target": {"type": "fixed", "name": "#bullets"}, "score": f"{ns}.data"},
+		"add": False
+	}
+	Mem.ctx.data[ns].item_modifiers[f"v{version}/set_consumable_count"] = set_json_encoder(ItemModifier(consumable_count_modifier), max_level=-1)
+
+	# Update weapon's ammo count and lore
+	write_versioned_function("ammo/set_count", f"""
+# Apply new ammo count to weapon
+$item modify entity @s $(slot) {ns}:v{version}/update_ammo
+
+# Update weapon's lore to show new ammo count
+$function {ns}:v{version}/ammo/modify_lore {{slot:"$(slot)"}}
+""")
+
+	# Load ammo data from newly equipped weapon
+	write_versioned_function("ammo/copy_data", f"""
+# Load ammo count from weapon into player's scoreboard (if different from -1)
+execute store result score #count {ns}.data run data get storage {ns}:gun all.stats.{REMAINING_BULLETS}
+execute unless score #count {ns}.data matches -1 run scoreboard players operation @s {ns}.{REMAINING_BULLETS} = #count {ns}.data
+
+# Mark weapon as needing update
+data modify storage {ns}:gun all.stats.{REMAINING_BULLETS} set value -1
+item modify entity @s weapon.mainhand {ns}:v{version}/update_stats
+""")
+
+	# Note: ammo/modify_lore, ammo/get_current_lore, ammo/search_lore_loop, and ammo/found_lore_line are generated by create_lore_functions("lore", ...) above.
+
+	# Check if any matching magazine with bullets exists in inventory (without consuming)
+	has_ammo_checks: str = ""
+	for slot in ALL_SLOTS:
+		has_ammo_checks += (
+			f"$execute if items entity @s {slot} *[custom_data~{{{ns}:{{magazine:true,weapon:\"$({BASE_WEAPON})\"}}}}] "
+			f"unless items entity @s {slot} *[custom_data~{{{ns}:{{stats:{{{REMAINING_BULLETS}:0}}}}}}] "
+			f"run return 1\n"
+		)
+	write_versioned_function("ammo/inventory/has_ammo", f"""
+# Check all slots for matching magazines with bullets (return 1 if found, fail otherwise)
+# Excludes empty non-consumable magazines (remaining_bullets: 0)
+# Consumable magazines don't have this field, so they pass the 'unless' check if they exist
+{has_ammo_checks}
+return fail
+""")
+
+	# Reload weapon function (deferred: magazines consumed on reload end, not start)
+	write_versioned_function("ammo/reload", f"""
+# Stop if already reloading, or already has full ammo
+execute if entity @s[tag={ns}.reloading] run return fail
+execute store result score #capacity {ns}.data run data get storage {ns}:gun all.stats.{CAPACITY}
+execute if score @s {ns}.{REMAINING_BULLETS} >= #capacity {ns}.data run return fail
+
+# Check if magazines are available (without consuming them)
+scoreboard players set @s {ns}.cooldown 5
+scoreboard players operation @s {ns}.cooldown += #total_tick {ns}.data
+execute unless data storage {ns}:config no_magazine store success score #success {ns}.data run function {ns}:v{version}/ammo/inventory/has_ammo with storage {ns}:gun all.stats
+execute unless data storage {ns}:config no_magazine if score #success {ns}.data matches 0 run return run playsound {ns}:common/empty ambient @s
+
+# Set cooldown as expiration tick: get reload duration and apply quick_reload reduction
+execute store result score @s {ns}.cooldown run data get storage {ns}:gun all.stats.{RELOAD_TIME}
+
+# Apply quick reload: reduce cooldown by quick_reload% (e.g. 20 = 20% faster)
+execute if score @s {ns}.special.quick_reload matches 1.. run function {ns}:v{version}/ammo/apply_quick_reload
+
+# Convert to expiration tick
+scoreboard players operation @s {ns}.cooldown += #total_tick {ns}.data
+
+# Force weapon switch animation
+function {ns}:v{version}/switch/force_switch_animation
+
+# Play reload sound (and send sounds for macro). Each is guarded because not every
+# weapon defines all reload sounds — calling the macro without the arg would error.
+execute if data storage {ns}:gun all.sounds.reload run function {ns}:v{version}/sound/reload_start with storage {ns}:gun all.sounds
+execute if data storage {ns}:gun all.sounds.playerbegin run function {ns}:v{version}/sound/player_begin with storage {ns}:gun all.sounds
+
+# Add reloading tag
+tag @s add {ns}.reloading
+
+# Signal: on_reload (@s = reloading player, weapon data in mgs:signals)
+data modify storage {ns}:signals on_reload set value {{}}
+data modify storage {ns}:signals on_reload.weapon set from storage {ns}:gun all
+function #{ns}:signals/on_reload
+""")
+
+	# Apply quick reload: reduce cooldown by quick_reload% (cooldown * (100 - quick_reload) / 100)
+	write_versioned_function("ammo/apply_quick_reload", f"""
+# Calculate reduced cooldown: cooldown = cooldown * (100 - quick_reload%) / 100
+scoreboard players operation #reduction {ns}.data = #100 {ns}.data
+scoreboard players operation #reduction {ns}.data -= @s {ns}.special.quick_reload
+scoreboard players operation @s {ns}.cooldown *= #reduction {ns}.data
+scoreboard players operation @s {ns}.cooldown /= #100 {ns}.data
+
+# Ensure minimum cooldown of 1 tick
+execute if score @s {ns}.cooldown matches ..0 run scoreboard players set @s {ns}.cooldown 1
+""")
+
+	# Find and consume magazines from inventory
+	magazine_custom_data: str = f"""{{{ns}:{{"magazine":true,"weapon":"$({BASE_WEAPON})"}}}}"""
+	slot_checks: str = ""
+	for slot in ALL_SLOTS:
+		slot_checks += (
+			f"$execute if score #found_ammo {ns}.data < #capacity {ns}.data if items entity @s {slot} *[custom_data~{magazine_custom_data}] run "
+			f"""function {ns}:v{version}/ammo/inventory/process_slot {{slot:"{slot}",{BASE_WEAPON}:"$({BASE_WEAPON})"}}\n"""
+		)
+	write_versioned_function("ammo/inventory/find", f"""
+# Get capacity and initialize found ammo to current remaining bullets
+execute store result score #capacity {ns}.data run data get storage {ns}:gun all.stats.{CAPACITY}
+execute store result score #initial_ammo {ns}.data run scoreboard players get @s {ns}.{REMAINING_BULLETS}
+scoreboard players operation #found_ammo {ns}.data = #initial_ammo {ns}.data
+
+# Single-shell reload: cap the fill target to current + 1 so only one bullet is loaded per cycle
+execute if data storage {ns}:gun all.stats.{SINGLE_RELOAD} run scoreboard players operation #single_target {ns}.data = #initial_ammo {ns}.data
+execute if data storage {ns}:gun all.stats.{SINGLE_RELOAD} run scoreboard players add #single_target {ns}.data 1
+execute if data storage {ns}:gun all.stats.{SINGLE_RELOAD} if score #capacity {ns}.data > #single_target {ns}.data run scoreboard players operation #capacity {ns}.data = #single_target {ns}.data
+
+# Check all slots for magazines
+{slot_checks}
+
+# If found ammo, compute reserve ammo and return success, else return fail
+execute unless score @s {ns}.{REMAINING_BULLETS} = #initial_ammo {ns}.data run return run function {ns}:v{version}/ammo/compute_reserve
+return fail
+""")
+
+	write_versioned_function("ammo/inventory/process_slot", f"""
+# Get bullets from the magazine
+tag @s add {ns}.extracting_bullets
+$execute summon item_display run function {ns}:v{version}/ammo/extract_bullets {{slot:"$(slot)"}}
+tag @s remove {ns}.extracting_bullets
+execute if score #bullets {ns}.data matches 0 run return 0
+
+# Calculate to_take = min(bullets, capacity - found_ammo)
+scoreboard players operation #to_take {ns}.data = #capacity {ns}.data
+scoreboard players operation #to_take {ns}.data -= #found_ammo {ns}.data
+execute if score #bullets {ns}.data < #to_take {ns}.data run scoreboard players operation #to_take {ns}.data = #bullets {ns}.data
+
+# Add to found_ammo
+scoreboard players operation #found_ammo {ns}.data += #to_take {ns}.data
+
+# Subtract from bullets
+scoreboard players operation #bullets {ns}.data -= #to_take {ns}.data
+
+# If the magazine is consumable and fully depleted, clear the slot and return
+# If the magazine is consumable but still has items, update the stack count and return
+$execute if score #bullets {ns}.data matches ..0 if items entity @s $(slot) *[custom_data~{{{ns}:{{consumable:true}}}}] run return run function {ns}:v{version}/ammo/inventory/consume_slot {{slot:"$(slot)"}}
+$execute if score #bullets {ns}.data matches 1.. if items entity @s $(slot) *[custom_data~{{{ns}:{{consumable:true}}}}] run return run function {ns}:v{version}/ammo/inventory/consume_partial {{slot:"$(slot)"}}
+
+# Modify the magazine item
+$execute if score #bullets {ns}.data matches ..0 run function {ns}:v{version}/ammo/inventory/set_item_model {{slot:"$(slot)",{BASE_WEAPON}:"$({BASE_WEAPON})"}}
+execute store result storage {ns}:temp {REMAINING_BULLETS} int 1 run scoreboard players get #bullets {ns}.data
+$item modify entity @s $(slot) {ns}:v{version}/update_ammo
+
+# Update magazine lore
+$function {ns}:v{version}/ammo/modify_mag_lore {{slot:"$(slot)"}}
+
+# Update player's ammo count
+scoreboard players operation @s {ns}.{REMAINING_BULLETS} = #found_ammo {ns}.data
+""")
+	write_versioned_function("ammo/inventory/set_item_model", f"""
+$item modify entity @s $(slot) {{function:"minecraft:set_components", components:{{"minecraft:item_model":"{ns}:$({BASE_WEAPON})_mag_empty"}}}}
+""")
+
+	# Consume a consumable magazine fully (clear it from inventory)
+	write_versioned_function("ammo/inventory/consume_slot", f"""
+# Clear the fully depleted consumable magazine from the slot
+$item replace entity @s $(slot) with air
+
+# Update player's ammo count
+scoreboard players operation @s {ns}.{REMAINING_BULLETS} = #found_ammo {ns}.data
+""")
+
+	# Partially consume a consumable magazine stack (reduce count, keep remaining)
+	write_versioned_function("ammo/inventory/consume_partial", f"""
+# Set the stack count to the remaining bullets (#bullets = remaining items in stack)
+$item modify entity @s $(slot) {ns}:v{version}/set_consumable_count
+
+# Update player's ammo count
+scoreboard players operation @s {ns}.{REMAINING_BULLETS} = #found_ammo {ns}.data
+""")
+
+	write_versioned_function("ammo/extract_bullets", f"""
+# Copy item to entity
+$item replace entity @s contents from entity @p[tag={ns}.extracting_bullets] $(slot)
+
+# For consumable magazines (1b = true consumable), the stack count IS the bullet count (each item = 1 bullet)
+# For regular/converted magazines, read remaining_bullets from custom data
+execute if data entity @s item.components."minecraft:custom_data".{ns}{{consumable:1b}} store result score #bullets {ns}.data run data get entity @s item.count
+execute unless data entity @s item.components."minecraft:custom_data".{ns}{{consumable:1b}} store result score #bullets {ns}.data run data get entity @s item.components."minecraft:custom_data".{ns}.stats.{REMAINING_BULLETS}
+
+# Get magazine capacity
+execute store result storage {ns}:temp {CAPACITY} int 1 run data get entity @s item.components."minecraft:custom_data".{ns}.stats.{CAPACITY}
+
+# Kill entity
+kill @s
+""")
+
+	write_versioned_function("ammo/end_reload", f"""
+# Actually consume magazines and update ammo now that reload is complete
+# (single-shell weapons only load one bullet per cycle, even in no_magazine mode)
+execute if data storage {ns}:config no_magazine unless data storage {ns}:gun all.stats.{SINGLE_RELOAD} store result score @s {ns}.{REMAINING_BULLETS} run data get storage {ns}:gun all.stats.{CAPACITY}
+execute if data storage {ns}:config no_magazine if data storage {ns}:gun all.stats.{SINGLE_RELOAD} run function {ns}:v{version}/ammo/single_reload_add_one
+execute unless data storage {ns}:config no_magazine run function {ns}:v{version}/ammo/inventory/find with storage {ns}:gun all.stats
+
+# Update weapon lore (if still holding weapon)
+execute if data storage {ns}:gun all.gun run function {ns}:v{version}/ammo/modify_lore {{slot:"weapon.mainhand"}}
+
+# Remove reloading tag
+tag @s remove {ns}.reloading
+
+# Single-shell reload: chain into the next shell unless full, out of ammo, or the player is firing
+execute if data storage {ns}:gun all.stats.{SINGLE_RELOAD} run function {ns}:v{version}/ammo/single_reload_continue
+""")
+
+	## Single-shell reload (no_magazine mode): add one bullet, clamped to capacity
+	write_versioned_function("ammo/single_reload_add_one", f"""
+execute store result score #capacity {ns}.data run data get storage {ns}:gun all.stats.{CAPACITY}
+scoreboard players add @s {ns}.{REMAINING_BULLETS} 1
+execute if score @s {ns}.{REMAINING_BULLETS} > #capacity {ns}.data run scoreboard players operation @s {ns}.{REMAINING_BULLETS} = #capacity {ns}.data
+""")
+
+	## Single-shell reload: decide whether to load the next shell Chains until full; aborted by firing (pending clicks) — switching weapon already cancels the {ns}.reloading tag, which breaks the chain naturally.
+	write_versioned_function("ammo/single_reload_continue", f"""
+# Stop if the player is actively trying to shoot (lets them fire mid-reload)
+execute if score @s {ns}.pending_clicks matches 0.. run return fail
+
+# Stop if the magazine is already full
+execute store result score #capacity {ns}.data run data get storage {ns}:gun all.stats.{CAPACITY}
+execute if score @s {ns}.{REMAINING_BULLETS} >= #capacity {ns}.data run return fail
+
+# Stop silently if no matching ammo remains in the inventory
+execute unless data storage {ns}:config no_magazine store success score #success {ns}.data run function {ns}:v{version}/ammo/inventory/has_ammo with storage {ns}:gun all.stats
+execute unless data storage {ns}:config no_magazine if score #success {ns}.data matches 0 run return fail
+
+# Load the next shell (plays the reload sound and sets a fresh per-shell cooldown)
+function {ns}:v{version}/ammo/reload
+""")
+
+	## compute_reserve - Sum all magazine bullets in inventory for the current weapon Only counts magazines whose base_weapon matches the gun in hand Called on reload and when player is idle (~60 ticks without shooting) Build per-slot check lines: for each inventory/hotbar slot, if it contains a matching magazine (but skip the mainhand weapon itself), extract and add bullet count.
+	reserve_slot_checks: str = ""
+	for slot in ALL_SLOTS:
+		if slot == "weapon.mainhand":
+			continue
+		reserve_slot_checks += (
+			f"$execute if items entity @s {slot} *[custom_data~{{{ns}:{{magazine:true,weapon:\"$({BASE_WEAPON})\"}}}}] run "
+			f"function {ns}:v{version}/ammo/reserve/extract_slot {{slot:\"{slot}\"}}\n"
+		)
+	write_versioned_function("ammo/compute_reserve", f"""
+# Skip if not holding a gun
+execute unless data storage {ns}:gun all.gun run return fail
+
+# Skip if weapon has no base_weapon (e.g. grenades)
+execute unless data storage {ns}:gun all.stats.{BASE_WEAPON} run return fail
+
+# Reset reserve counter
+scoreboard players set @s {ns}.reserve_ammo 0
+
+# Sum bullets from all matching magazine slots (runs as ticking player)
+function {ns}:v{version}/ammo/reserve/scan with storage {ns}:gun all.stats
+return 0
+""")
+
+	write_versioned_function("ammo/reserve/scan", f"""
+# @s = player, $(base_weapon) = current gun id
+{reserve_slot_checks}
+""")
+
+	write_versioned_function("ammo/reserve/extract_slot", f"""
+# Called for each slot containing a matching magazine
+# Spawn temp entity to read item data
+tag @s add {ns}.reading_reserve
+$execute summon item_display run function {ns}:v{version}/ammo/reserve/read_item {{slot:"$(slot)"}}
+tag @s remove {ns}.reading_reserve
+""")
+
+	write_versioned_function("ammo/reserve/read_item", f"""
+# Copy item to entity
+$item replace entity @s contents from entity @p[tag={ns}.reading_reserve] $(slot)
+
+# Consumable (1b = true consumable): stack count = bullet count
+execute if data entity @s item.components."minecraft:custom_data".{ns}{{consumable:1b}} store result score #mag_bullets {ns}.data run data get entity @s item.count
+
+# Non-consumable: read remaining_bullets from custom data
+execute unless data entity @s item.components."minecraft:custom_data".{ns}{{consumable:1b}} store result score #mag_bullets {ns}.data run data get entity @s item.components."minecraft:custom_data".{ns}.stats.{REMAINING_BULLETS}
+
+# Add to reserve
+scoreboard players operation @p[tag={ns}.reading_reserve] {ns}.reserve_ammo += #mag_bullets {ns}.data
+
+# Kill entity
+kill @s
+""")
+

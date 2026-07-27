@@ -4,15 +4,7 @@
 from stewbeet import Mem, write_versioned_function
 
 from ...helpers import MGS_TAG
-from .catalogs import (
-	TRIG_DELETE_BASE,
-	TRIG_EDIT_BASE,
-	TRIG_FAVORITE_BASE,
-	TRIG_LIKE_BASE,
-	TRIG_SELECT_BASE,
-	TRIG_SET_DEFAULT_BASE,
-	TRIG_TOGGLE_VIS_BASE,
-)
+from .catalogs import TRIG_DELETE_BASE, TRIG_EDIT_BASE, TRIG_FAVORITE_BASE, TRIG_LIKE_BASE, TRIG_SELECT_BASE, TRIG_SET_DEFAULT_BASE, TRIG_TOGGLE_VIS_BASE
 
 
 # Functions

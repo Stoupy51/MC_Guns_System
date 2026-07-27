@@ -1,30 +1,30 @@
 """ Zombies mode entry point; submodules run in dependency order. """
 # Imports
-from .ability import generate_zombies_abilities
-from .barriers import generate_barriers
-from .bonus import main as bonus_main
 from .common import ZombiesCommon
 from .display_helpers import generate_display_helpers
-from .doors import generate_doors
-from .escort import generate_zombies_escort
-from .game import generate_zombies_game
-from .hurt_player import generate_hurt_player
-from .inventory import generate_zombies_inventory
+from .enemies.escort import generate_zombies_escort
+from .enemies.monkey_bomb import generate_monkey_bomb
+from .enemies.roaming import generate_roaming
+from .game.lifecycle import generate_zombies_game
+from .game.round import generate_zombies_rounds
+from .machines.mystery_box import generate_mystery_box
+from .machines.pap import generate_pap
+from .machines.perks import generate_perks
+from .machines.wunderfizz import generate_wunderfizz
 from .maps import generate_zombies_maps
 from .menus import generate_zombies_menus
-from .monkey_bomb import generate_monkey_bomb
-from .mystery_box import generate_mystery_box
-from .pap import generate_pap
-from .perks import generate_perks
-from .power import generate_power_switch
-from .powerups import generate_powerups
-from .revive import generate_revive
-from .roaming import generate_roaming
-from .round import generate_zombies_rounds
-from .traps import generate_traps
-from .wallbuys import generate_wallbuys
-from .whos_who import generate_whos_who
-from .wunderfizz import generate_wunderfizz
+from .objects.barriers import generate_barriers
+from .objects.doors import generate_doors
+from .objects.power import generate_power_switch
+from .objects.traps import generate_traps
+from .objects.wallbuys import generate_wallbuys
+from .player.ability import generate_zombies_abilities
+from .player.hurt import generate_hurt_player
+from .player.inventory import generate_zombies_inventory
+from .player.revive import generate_revive
+from .player.whos_who import generate_whos_who
+from .rewards.bonus import main as bonus_main
+from .rewards.powerups import generate_powerups
 
 
 # Functions

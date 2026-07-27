@@ -221,6 +221,7 @@ src/
 | **P11a** ✅ | Indentation normalised to tabs across 30 files (26 were space-indented, 5 mixed). Alignment padding and non-docstring string interiors left as spaces. | 0 | 0 |
 | **P11c** ✅ | PY8 — `helpers.py`'s 26 members folded into `FunctionalHelpers`; `MGS_TAG` stays module-level. 15 consumers repointed. | 0 | +1 |
 | **P11d** ✅ | PY8 — `feedback.py`→`ZombiesFeedback`, `zombies/common.py`→`ZombiesCommon`, `core/spawning.py`→`CoreSpawning`, `core/weapon_drop.py`→`WeaponDrop`, `classes.py`→`MultiplayerClasses`. All 31 `_`-prefixed names stripped codebase-wide. | 0 | +5 |
+| **P12a** ✅ | PY5 moves — 33 modules regrouped into 9 feature packages (`zombies/{game,player,enemies,machines,objects,rewards}`, `weapon/{firing,ammo,hud}`). 32 files had relative imports rewritten. | 0 | +9 files |
 
 ### Remaining phases
 
@@ -229,7 +230,6 @@ src/
 | **P10** | D3 — one shared spawn/respawn system for all three modes. | −~20 | −600 | **high** |
 | **P11** | Tighten the ruff config, fix the fallout. | 0 | ? | low |
 | **P11c** | PY8 — `helpers.py` and friends fold into `FunctionalHelpers`-style classes. | 0 | ~0 | very low |
-| **P12a** (final) | PY5 moves — regroup `zombies/` (27 flat modules) and `weapon/` (15) into feature packages. Content unchanged, imports repointed. | 0 | ~0 | low |
 | **P12b** (final) | PY5 splits — carve every >300-line generator into its package's leaves. **Not** `shaders.py`. | 0 | +~45 files | med |
 
 ---
