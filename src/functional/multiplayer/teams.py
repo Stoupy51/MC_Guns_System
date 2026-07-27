@@ -1,5 +1,4 @@
-
-# Imports
+""" Team assignment and the red/blue team definitions. """
 from stewbeet import Mem, write_versioned_function
 
 
@@ -22,9 +21,9 @@ team join {ns}.blue @s
 tellraw @s ["",{{"text":"You joined ","color":"white"}},{{"text":"Blue Team","color":"blue","bold":true}}]
 """)
 
-	## Free-for-all has no sides: everyone shares the {ns}.ffa team (yellow, friendly fire on, no
-	## nametags) — the same team game start puts them on. mp.team is cleared to 0 so nothing downstream
-	## treats an FFA player as red/blue (spawn picking, team scores, the end-of-game team announce).
+	## Free-for-all has no sides: everyone shares the {ns}.ffa team, the same one game start puts them on.
+	## It is yellow, with friendly fire on and no nametags.
+	## mp.team is cleared to 0 so spawn picking, team scores and the end-of-game announce never treat an FFA player as red or blue.
 	write_versioned_function("multiplayer/join_ffa", f"""
 scoreboard players set @s {ns}.mp.team 0
 scoreboard players set @s {ns}.mp.in_game 1
@@ -50,3 +49,4 @@ execute if score @s {ns}.mp.team matches 2 run scoreboard players remove #blue_c
 execute if score #red_count {ns}.data <= #blue_count {ns}.data run function {ns}:v{version}/multiplayer/join_red
 execute if score #red_count {ns}.data > #blue_count {ns}.data run function {ns}:v{version}/multiplayer/join_blue
 """)
+

@@ -1,7 +1,7 @@
+""" Perk machines: stationary buyables granting gameplay-enhancing perks.
 
-# Perk Machine System
-# Stationary machines where players buy gameplay-enhancing perks.
-# Available perks and their behavior are defined in PERK_DEFINITIONS.
+Every perk and its behaviour is declared in PERK_DEFINITIONS.
+"""
 from dataclasses import dataclass
 
 from stewbeet import Mem, write_load_file, write_tag, write_versioned_function
@@ -31,7 +31,6 @@ class PerkDef:
 	removal_commands: tuple[str, ...] = ()
 	persistent_score: bool = False
 	""" Skip the blanket score reset in lose_all — the perk manages its own score (quick_revive). """
-
 
 PERK_DEFINITIONS: dict[str, PerkDef] = {
 	"juggernog": PerkDef(
@@ -78,10 +77,9 @@ PERK_DEFINITIONS: dict[str, PerkDef] = {
 		commands=(
 			"tag @s add {ns}.perk.quick_revive",
 		),
-		# Going down strips the active tag (or a doppelganger would still auto-revive off a Quick
-		# Revive they no longer own). The score drops to 0 (rebuy allowed) UNLESS the solo uses are
-		# exhausted, where score 1 keeps the machine blocked (solo_qr_complete manages that state) —
-		# which is also why persistent_score=True: lose_all must not blanket-reset the score.
+		# Going down strips the active tag, or a doppelganger would auto-revive off a QR they no longer own.
+		# The score drops to 0 unless the solo uses are exhausted, where 1 keeps the machine blocked.
+		# Hence persistent_score: lose_all must not blanket-reset it.
 		removal_commands=(
 			"tag @s remove {ns}.perk.quick_revive",
 			f"execute unless score @s {{ns}}.zb.qr_uses matches {SOLO_QR_MAX}.. run scoreboard players set @s {{ns}}.zb.perk.quick_revive 0",
@@ -99,9 +97,8 @@ PERK_DEFINITIONS: dict[str, PerkDef] = {
 		message="🏃 Stamin-Up! Sprint longer, move faster",
 		message_color="yellow",
 		text_color="gold",
-		# BO1 Zombies Stamin-Up (see zombies/stamina.md): double sprint endurance + 7% move speed
-		# (multiplicative, on top of the weapon/base movement model). The stam bump refills the
-		# new headroom instantly so the visible bar doesn't drop at purchase.
+		# BO1 Stamin-Up (zombies/stamina.md): double sprint endurance plus 7% move speed, multiplicative.
+		# The stam bump refills the new headroom instantly so the bar doesn't drop at purchase.
 		commands=(
 			"attribute @s minecraft:movement_speed modifier add {ns}:stamin_up 0.07 add_multiplied_total",
 			f"scoreboard players set @s {{ns}}.stam_bonus {STAM_MAX}",
@@ -117,8 +114,8 @@ PERK_DEFINITIONS: dict[str, PerkDef] = {
 		message="🧪 PhD Flopper! Immune to explosions & fall damage",
 		message_color="dark_purple",
 		text_color="dark_purple",
-		# Fall damage is nulled by an attribute; explosive self-damage is gated on the special score
-		# in the shared explosion paths (weapon/projectile.py, weapon/grenade.py) and trap damage.
+		# Fall damage is nulled by an attribute.
+		# Explosive self-damage is gated on the special score in the shared explosion and trap paths.
 		commands=(
 			"attribute @s minecraft:fall_damage_multiplier base set 0",
 			"scoreboard players set @s {ns}.special.phd_flopper 1",
@@ -146,14 +143,9 @@ PERK_DEFINITIONS: dict[str, PerkDef] = {
 		message="⏳ Timeslip! Faster traps & Mystery Box",
 		message_color="light_purple",
 		text_color="light_purple",
-		# Owner-only speed-ups keyed off the special score. Base factor is x2 (no official BO4 number;
-		# "about half the time" ≈ 2x, matching the music_box_short jingle ratio) — EXCEPT Pack-a-Punch,
-		# which is x3 because its 300-tick animation is already long. All wired:
-		#  - Trap cooldown x0.75            (traps.py apply_timeslip_cd)
-		#  - Mystery Box spin x2            (mystery_box.py, mb.timeslip flag)
-		#  - Pack-a-Punch anim x3           (pap.py: anim/step_timeslip runs 3 steps/tick, preserving
-		#                                    every exact-tick phase trigger; jingle_sting_short asset)
-		#  - Grenade/equipment throw x0.5   (raycast.py: halves the fire cooldown for grenade weapons)
+		# Owner-only speed-ups keyed off the special score, x2 by default (no official BO4 number).
+		# Pack-a-Punch is x3 instead, because its 300-tick animation is already long.
+		# Wired in traps.py (cd x0.75), mystery_box.py (spin x2), pap.py (x3), raycast.py (throw x0.5).
 		commands=(
 			"scoreboard players set @s {ns}.special.timeslip 1",
 		),
@@ -166,8 +158,8 @@ PERK_DEFINITIONS: dict[str, PerkDef] = {
 		message="🍒 Electric Cherry! Reloads discharge a shock",
 		message_color="blue",
 		text_color="blue",
-		# Reload discharge is wired through the on_reload signal (electric_cherry_on_reload); the perk
-		# only needs to raise the special flag. Shock size scales with how empty the mag was.
+		# The discharge is wired through the on_reload signal, so the perk only raises the special flag.
+		# Shock size scales with how empty the mag was.
 		commands=(
 			"scoreboard players set @s {ns}.special.electric_cherry 1",
 		),
@@ -180,41 +172,39 @@ PERK_DEFINITIONS: dict[str, PerkDef] = {
 		message="🪦 Tombstone! Recover your gear if you bleed out",
 		message_color="yellow",
 		text_color="gold",
-		# No purchase-time effect. On going down a tombstone marker is spawned (revive/on_down); if the
-		# owner bleeds out, they get 60s after the round respawn to walk back and recover their perks +
-		# weapons (Tombstone itself excluded). Disabled solo. See the tombstone_* functions.
+		# No purchase-time effect: going down spawns a tombstone marker (revive/on_down).
+		# Bleeding out gives 60s after the round respawn to walk back and recover perks + weapons.
+		# Tombstone itself is excluded, and the whole thing is disabled solo.
 	),
 	"whos_who": PerkDef(
 		display_name="Who's Who",
 		message="👥 Who's Who! Play on as a doppelganger when downed",
 		message_color="aqua",
 		text_color="dark_aqua",
-		# No purchase-time effect. On going down the owner keeps playing as a doppelganger (revive/on_down
-		# branch) with just a pistol; the body drops as a NORMAL revivable downed mannequin that any
-		# alive player — including the owner — can revive. Works solo (and takes priority over solo
-		# Quick Revive). See whos_who.py.
+		# No purchase-time effect: going down leaves the owner playing as a doppelganger with a pistol.
+		# The body drops as a NORMAL revivable mannequin any alive player, including the owner, can revive.
+		# Works solo and outranks solo Quick Revive; see whos_who.py.
 	),
 	"dying_wish": PerkDef(
 		display_name="Dying Wish",
 		message="⚔ Dying Wish! Cheat death with a berserk",
 		message_color="blue",
 		text_color="blue",
-		# No purchase-time effect: the behaviour triggers when the owner would go down (revive/on_down
-		# intercepts to dying_wish_trigger, off cooldown). Ownership is read straight off zb.perk.dying_wish.
+		# No purchase-time effect: revive/on_down intercepts to dying_wish_trigger when off cooldown.
+		# Ownership is read straight off zb.perk.dying_wish.
 	),
 	"widows_wine": PerkDef(
 		display_name="Widow's Wine",
 		message="🕸 Widow's Wine! Web grenades & webbing melee",
 		message_color="dark_red",
 		text_color="dark_red",
-		# Passive web-on-hurt + stronger knife read the special flag directly (hurt_player.py, melee
-		# attribute below). The grenade slot is swapped to web grenades by inventory/replenish paths.
+		# The passive web-on-hurt and stronger knife read the special flag directly.
+		# The grenade slot is swapped to web grenades by the inventory/replenish paths.
 		commands=(
 			"scoreboard players set @s {ns}.special.widows_wine 1",
 		# Stronger knife while owned (small flat melee bonus, BO3 Widow's Wine melee buff)
 			"attribute @s minecraft:attack_damage modifier add {ns}:widows_wine 6 add_value",
-		# Immediately convert the current lethal slot to web grenades (widows_wine flag is set
-		# above, so loot_replace_lethal routes hotbar.7 to i/web_grenade).
+			# The widows_wine flag is set above, so loot_replace_lethal routes hotbar.7 to i/web_grenade
 			"function {ns}:v{version}/zombies/inventory/loot_replace_lethal",
 			"item modify entity @s hotbar.7 {ns}:v{version}/grenade/set_count_2",
 			'function {ns}:v{version}/zombies/inventory/apply_slot_tag {slot:"hotbar.7",group:"hotbar",index:7}',
@@ -226,9 +216,6 @@ PERK_DEFINITIONS: dict[str, PerkDef] = {
 	),
 }
 
-
-# Recommended buy price per perk, used when a machine's editor `price` field is left at -1
-# (the auto-resolve default). Keyed by perk_id; any perk not listed falls back to 2000.
 RECOMMENDED_PRICES: dict[str, int] = {
 	"juggernog": 2500, "speed_cola": 3000, "double_tap": 2000, "quick_revive": 1500,
 	"mule_kick": 4000, "stamin_up": 2000, "phd_flopper": 2000, "deadshot": 1500,
@@ -236,8 +223,6 @@ RECOMMENDED_PRICES: dict[str, int] = {
 	"dying_wish": 2000, "widows_wine": 4000,
 }
 
-# Detailed perk descriptions, shown as lore on the mini perk items in the inventory. One list entry
-# per lore line (kept short so they read cleanly in the tooltip). Keyed by perk_id.
 PERK_DESCRIPTIONS: dict[str, list[str]] = {
 	"juggernog": ["Raises your max health to 40 (x4).", "Survive far more hits before going down."],
 	"speed_cola": ["Reload all your weapons much faster.", "About twice the reload speed."],
@@ -254,7 +239,6 @@ PERK_DESCRIPTIONS: dict[str, list[str]] = {
 	"dying_wish": ["Cheat death when you would go down.", "Brief berserk (resistance & strength),", "then drop to 1 HP. Long cooldown."],
 	"widows_wine": ["Grenades become sticky web grenades.", "Being hit bursts webbing around you.", "Stronger melee knife."],
 }
-
 
 def perk_effects_teardown(ns: str, selector: str) -> str:
 	""" Return the lines stripping every effect a zombies perk can leave on a player.
@@ -282,7 +266,6 @@ tag {selector} remove {ns}.perk.quick_revive
 {reset_special_scores_lines(ns, selector)}
 """.strip()
 
-
 def generate_perks() -> None:
 	ns: str = Mem.ctx.project_id
 	version: str = Mem.ctx.project_version
@@ -297,8 +280,7 @@ def generate_perks() -> None:
 		f"scoreboard players reset * {ns}.zb.perk.{perk_id}"
 		for perk_id in PERK_DEFINITIONS
 	)
-	# Chip-in progress is per-player (nobody pays for someone else's perk), so it mirrors the
-	# ownership objectives one-for-one and is cleared at the same points they are.
+	# Chip-in progress is per-player, so it mirrors the ownership objectives and clears with them
 	perkpaid_objectives_add: str = "\n".join(
 		f"scoreboard objectives add {ns}.zb.perkpaid.{perk_id} dummy"
 		for perk_id in PERK_DEFINITIONS
@@ -440,14 +422,10 @@ $data modify storage {ns}:zombies perk_data."$(id)" set value {{perk_id:"$(perk_
 $data modify storage {ns}:zombies perk_data."$(id)".name set value "$(name)"
 """)
 
-	## ── Shared "available perk pool" helper ─────────────────────────────────────
-	# One source of truth for "which perks can this player still be given", used by BOTH the
-	# random-perk power-up (powerups.py) and Der Wunderfizz (zombies README task 4).
-	# A perk is available for the target player when:
-	#   - the perk has a machine placed on this map (#map_perk_<id> == 1), OR the caller set
-	#     #pool_all_perks (Origins-style "roll across every perk"), AND
-	#   - the target player (tagged {ns}.pool_target) does not already own it.
-	# `mark` is called once per placed machine during setup; the flags are cleared at game start.
+	# Available perk pool, shared by the random-perk power-up and Der Wunderfizz.
+	# A perk is available when it has a machine on this map, or #pool_all_perks is set.
+	# The target player (tagged pool_target) must also not already own it.
+	# `mark` runs once per placed machine at setup; the flags clear at game start.
 	perk_ids: list[str] = list(PERK_DEFINITIONS.keys())
 	num_perks: int = len(perk_ids)
 
@@ -456,10 +434,8 @@ $data modify storage {ns}:zombies perk_data."$(id)".name set value "$(name)"
 $scoreboard players set #map_perk_$(perk_id) {ns}.data 1
 """)
 
-	## Pick one random available perk. Output: #pool_chosen (0..n-1 index, or -1 if none) and
-	## storage {ns}:temp _pool.perk_id (only set on success). Caller tags the target + sets #pool_all_perks.
-	## No up-front availability count: choose_iter's try limit already walks the whole list and leaves
-	## #pool_chosen at -1 when nothing is free, so counting first only repeated the same test twice.
+	# Pick one random available perk into #pool_chosen (-1 if none) and _pool.perk_id on success.
+	# No up-front count: choose_iter's try limit already walks the whole list and leaves -1 if empty.
 	write_versioned_function("zombies/perks/pool/choose", f"""
 scoreboard players set #pool_chosen {ns}.data -1
 data modify storage {ns}:temp _pool set value {{}}
@@ -487,8 +463,7 @@ execute if score #pool_roll {ns}.data matches {num_perks}.. run scoreboard playe
 function {ns}:v{version}/zombies/perks/pool/choose_iter
 """)
 
-	## Claim $(perk_id) if it is available — only ever called with the perk sitting at #pool_roll,
-	## so the winning index is simply #pool_roll. Cold path (power-up pickup / Wunderfizz use).
+	# Claim $(perk_id) if available; only ever called with the perk at #pool_roll, so that is the index.
 	write_versioned_function("zombies/perks/pool/try_index", f"""
 scoreboard players set #pool_slot {ns}.data 0
 $execute if score #map_perk_$(perk_id) {ns}.data matches 1 run scoreboard players set #pool_slot {ns}.data 1
@@ -559,9 +534,8 @@ scoreboard players set #pk_owned {ns}.data 0
 $execute if score @s {ns}.zb.perk.$(perk_id) matches 1 run scoreboard players set #pk_owned {ns}.data 1
 """)
 
-	## Price of the next click on the hovered/clicked machine (macro: $(perk_id) selects the
-	## player's chip-in progress). #pk_total = full price, #pk_price = what THIS click costs
-	## (one chunk when chip-in is on, the last chunk being whatever is left), #pk_paid = progress.
+	# Price of the next click on the hovered machine; $(perk_id) selects the player's chip-in progress.
+	# #pk_total is the full price, #pk_price what THIS click costs, #pk_paid the progress so far.
 	write_versioned_function("zombies/perks/read_price", f"""
 execute store result score #pk_price {ns}.data run scoreboard players get @n[tag=bs.interaction.target] {ns}.zb.perk.price
 execute store result score #pk_partial {ns}.data run scoreboard players get @n[tag=bs.interaction.target] {ns}.zb.perk.partial
@@ -615,11 +589,9 @@ $function {ns}:v{version}/zombies/perks/apply/$(perk_id)
 tellraw @s [{MGS_TAG},"{msg_emoji} ",{{"text":"{msg_text}","color":"{perk_data.message_color}"}}]
 """)
 
-	## ── Electric Cherry ─────────────────────────────────────────────────────────
-	# A reload discharges an electric shock around the owner. Size (radius + damage) scales with how
-	# empty the magazine was at reload start (capacity - remaining_bullets), so dry reloads hit hard.
-	# Anti-spam: after a discharge the next one needs either a full 10s cooldown, OR 5s + a dry reload
-	# (remaining == 0). The last-shock time is a gametime stamp (monotonic, survives /reload).
+	# Electric Cherry: a reload discharges a shock scaled by how empty the mag was, so dry reloads hit hard.
+	# Anti-spam: the next discharge needs a full 10s cooldown, or 5s plus a dry reload.
+	# The last-shock time is a gametime stamp, monotonic and surviving /reload.
 	write_load_file(f"""
 # Electric Cherry: last-discharge gametime stamp (anti-spam cooldown)
 scoreboard objectives add {ns}.zb.ec_last dummy
@@ -637,8 +609,7 @@ scoreboard objectives add {ns}.zb.ts.timer dummy
 {chr(10).join(f"scoreboard objectives add {ns}.zb.tsp.{pid} dummy" for pid in PERK_DEFINITIONS)}
 """)
 
-	## Signal handler on on_reload (@s = the reloading player). Registered into the global reload
-	## signal but no-ops outside a zombies game / for non-owners.
+	# on_reload signal handler (@s = the reloading player); no-ops outside a game or for non-owners
 	write_versioned_function("zombies/perks/electric_cherry_on_reload", f"""
 execute unless score @s {ns}.zb.in_game matches 1.. run return fail
 execute unless score @s {ns}.special.electric_cherry matches 1 run return fail
@@ -665,8 +636,8 @@ scoreboard players operation @s {ns}.zb.ec_last = #ec_now {ns}.data
 execute at @s run function {ns}:v{version}/zombies/perks/electric_cherry_shock
 """, tags=[f"{ns}:signals/on_reload"])
 
-	## The discharge itself. @s = owner, executed at the owner. #ec_used/#ec_cap set by the caller.
-	## Also fired when an owner goes down (revive on_down prepares those scores from a full mag).
+	# The discharge itself (@s = owner, at the owner); #ec_used/#ec_cap come from the caller.
+	# Also fired when an owner goes down, where on_down prepares those scores from a full mag.
 	write_versioned_function("zombies/perks/electric_cherry_shock", f"""
 # Feedback
 particle minecraft:electric_spark ~ ~1 ~ 2 1 2 0.25 80 force @a[distance=..48]
@@ -705,19 +676,17 @@ effect give @s minecraft:slowness 60 3 true
 function {ns}:v{version}/zombies/traps/apply_trap_damage with storage {ns}:temp _ec_dmg
 """)
 
-	## ── Widow's Wine ────────────────────────────────────────────────────────────
-	# Web grenades (grenade framework, GRENADE_TYPE "web") + a passive web burst when the owner is hurt
-	# + a knife melee bump (attribute, in the perk def). The web itself: heavy slowness/weakness + a
-	# little damage to every zombie in range. Shared by the thrown grenade (grenade/detonate_web) and
-	# the on-hurt passive so the effect is defined once.
+	# Widow's Wine: web grenades, a passive web burst when hurt, and a knife melee bump.
+	# The web applies heavy slowness, weakness and light damage to every zombie in range.
+	# Shared by the thrown grenade and the on-hurt passive so the effect is defined once.
 
 	## Web burst: @s/pos = the burst center. Macro radius (blocks). Roots + lightly damages zombies.
 	write_versioned_function("zombies/perks/widows_web_burst", f"""
 $execute as @e[tag={ns}.zombie_round,distance=..$(radius)] run function {ns}:v{version}/zombies/perks/widows_web_hit
 """)
 
-	## Per-zombie webbing: 5s stun (heavy slowness) + weakness, cobweb particle, light damage. @s = zombie.
-	## NOTE /effect give durations are in SECONDS, not ticks — 5 = 5s (was 400 = ~6.7min "frozen forever").
+	# Per-zombie webbing (@s = zombie): 5s stun, weakness, cobweb particle, light damage.
+	# NOTE /effect give durations are in SECONDS, not ticks; 400 once meant a ~6.7min freeze.
 	write_versioned_function("zombies/perks/widows_web_hit", f"""
 effect give @s minecraft:slowness 5 5 true
 effect give @s minecraft:weakness 5 2 true
@@ -727,9 +696,8 @@ data modify storage {ns}:temp _ww_dmg.type set value "minecraft:generic"
 function {ns}:v{version}/zombies/traps/apply_trap_damage with storage {ns}:temp _ww_dmg
 """)
 
-	## Passive: when a Widow's Wine owner is hurt, consume one web grenade and burst webbing around
-	## themselves (no self-damage — the burst only targets zombies). Called from hurt_player on_hurt.
-	## Internal 2s cooldown (gametime stamp) so a single flurry of hits doesn't drain the whole stock.
+	# When a Widow's Wine owner is hurt, consume one web grenade and burst webbing around themselves.
+	# The burst only targets zombies, and a 2s cooldown stops a flurry of hits draining the stock.
 	write_versioned_function("zombies/perks/widows_on_hurt", f"""
 # Need at least one web grenade in the lethal slot (grenade_type lives under the item's stats compound)
 execute unless items entity @s hotbar.7 *[custom_data~{{{ns}:{{stats:{{grenade_type:"web"}}}}}}] run return fail
@@ -749,11 +717,9 @@ execute store result storage {ns}:temp _web.radius float 1 run scoreboard player
 execute at @s run function {ns}:v{version}/zombies/perks/widows_web_burst with storage {ns}:temp _web
 """)
 
-	## ── Dying Wish ──────────────────────────────────────────────────────────────
-	# Instead of entering the downed state, the owner cheats death: teleport back to the death spot,
-	# restore, and go BERSERK (invulnerable + greatly increased melee) for 9s, then be left at 1 HP.
-	# Per-use escalating cooldown (60s first use, +60s each subsequent). Highest priority at on_down.
-	# Triggered from revive/on_down (top), which is why there is no purchase-time effect.
+	# Dying Wish: instead of going down, the owner is restored at the death spot and goes berserk.
+	# Invulnerable with heavy melee for 9s, then left at 1 HP, on an escalating 60s-per-use cooldown.
+	# Triggered from the top of revive/on_down, which is why there is no purchase-time effect.
 
 	## Trigger: @s = the player who would have gone down (already vanilla-respawned; LastDeathLocation set).
 	write_versioned_function("zombies/perks/dying_wish_trigger", f"""
@@ -824,22 +790,18 @@ title @s times 3 25 10
 title @s subtitle [{{"text":"...barely alive.","color":"gray"}}]
 """)
 
-	## Deal exactly (Health - 1) damage to land the player on 1 HP. #dw_hp = (Health-1)*1000. @s = player.
-	## generic_kill has no source entity, so this never trips the entity_hurt_player on_hurt handler.
+	# Deal exactly (Health - 1) damage to land the player on 1 HP; #dw_hp = (Health-1)*1000. generic_kill has no source entity, so this never trips the entity_hurt_player handler.
 	write_versioned_function("zombies/perks/dying_wish_to_1", f"""
 execute store result storage {ns}:temp _dw_dmg.amount double 0.001 run scoreboard players get #dw_hp {ns}.data
 data modify storage {ns}:temp _dw_dmg.type set value "minecraft:generic_kill"
 function {ns}:v{version}/zombies/traps/apply_trap_damage with storage {ns}:temp _dw_dmg
 """)
 
-	## ── Tombstone ───────────────────────────────────────────────────────────────
-	# On going down, a tombstone marker spawns at the death spot (holding a snapshot of the owner's
-	# perks). Revived → the marker is discarded. Bled out → the inventory is snapshotted, and after the
-	# round respawn the owner has 60s to walk back to the marker and recover their perks + weapons
-	# (Tombstone itself excluded). Disabled solo. Called from revive/on_down, revive_complete,
-	# bleed_out, and do_round_respawn.
-	# quick_revive: score 1 can also mean "solo uses exhausted" (rebuy-block) with no active tag —
-	# only snapshot a QR that is actually active, or the recovery would grant one back for free.
+	# Tombstone: going down spawns a marker holding a snapshot of the owner's perks.
+	# Being revived discards it.
+	# Bleeding out snapshots the inventory, then gives 60s after the round respawn to walk back and recover perks + weapons.
+	# Tombstone itself is excluded, and the whole thing is disabled solo. quick_revive score 1 can also mean "solo uses exhausted" with no active tag.
+	# Only an actually-active QR is snapshotted, or recovery would grant one back for free.
 	ts_snapshot: str = "\n".join(
 		f"execute store success score @s {ns}.zb.tsp.{pid} if entity @s[tag={ns}.perk.quick_revive]"
 		if pid == "quick_revive"
@@ -863,8 +825,8 @@ function {ns}:v{version}/zombies/traps/apply_trap_damage with storage {ns}:temp 
 			ts_restore_perks_lines.append(f"execute if score @s {ns}.zb.tsp.{pid} matches 1 run function {ns}:v{version}/zombies/perks/reapply/{pid}")
 	ts_restore_perks: str = "\n".join(ts_restore_perks_lines)
 
-	# The tombstone marker: a skeleton skull laid flat on the ground, raised and enlarged slightly so
-	# it reads from across the map. Built in pieces purely to keep the summon line readable.
+	# A skeleton skull laid flat, raised and enlarged so it reads from across the map.
+	# Built in pieces purely to keep the summon line readable.
 	ts_tags: str = f'Tags:["{ns}.tombstone","{ns}.tombstone_new","{ns}.gm_entity"]'
 	ts_item: str = 'item:{id:"minecraft:skeleton_skull",count:1},item_display:"ground"'
 	ts_transform: str = (
@@ -873,8 +835,8 @@ function {ns}:v{version}/zombies/traps/apply_trap_damage with storage {ns}:temp 
 	)
 	ts_marker: str = f'{{{ts_tags},Glowing:true,billboard:"vertical",teleport_duration:1,{ts_item},{ts_transform}}}'
 
-	## Called from revive/on_down BEFORE lose_all (@s = player, death pos in temp rv_x/rv_y/rv_z).
-	## Skips solo games. Snapshots perks and spawns the (pending) tombstone marker.
+	# Called from revive/on_down BEFORE lose_all (@s = player, death pos in temp rv_x/rv_y/rv_z).
+	# Skips solo games; snapshots perks and spawns the pending marker.
 	write_versioned_function("zombies/perks/tombstone_on_down", f"""
 # Tombstone is disabled solo (a solo bleed-out is game over — nothing to recover to)
 execute store result score #ts_ingame {ns}.data if entity @a[scores={{{ns}.zb.in_game=1}}]
@@ -897,15 +859,13 @@ tag @e[tag={ns}.tombstone_new] remove {ns}.tombstone_new
 $tp @n[tag={ns}.tombstone_new] $(rv_x) $(rv_y) $(rv_z)
 """)
 
-	## Called from revive_complete (@s = revived player; #my_downed_id already set). The owner was
-	## revived, so discard the pending marker and the perk snapshot — nothing to recover.
+	# Called from revive_complete: the owner was revived, so discard the marker and the snapshot
 	write_versioned_function("zombies/perks/tombstone_on_revived", f"""
 kill @e[tag={ns}.tombstone,predicate={ns}:v{version}/zombies/revive/downed_id_match]
 {ts_clear}
 """)
 
-	## Called from bleed_out (@s = player; #my_downed_id already set). If a marker exists for this
-	## player, snapshot their current inventory (still intact during the downed phase) for recovery.
+	# Called from bleed_out; if a marker exists, snapshot the inventory while it is still intact
 	write_versioned_function("zombies/perks/tombstone_on_bleed_out", f"""
 execute unless entity @e[tag={ns}.tombstone,predicate={ns}:v{version}/zombies/revive/downed_id_match] run return 0
 execute store result storage {ns}:temp _ts_id.id int 1 run scoreboard players get @s {ns}.zb.downed_id
@@ -917,8 +877,7 @@ function {ns}:v{version}/zombies/perks/tombstone_snapshot_inv with storage {ns}:
 $data modify storage {ns}:zombies tombstone_inv."$(id)" set from entity @s Inventory
 """)
 
-	## Called from do_round_respawn (@s = respawning player). If this player has a pending tombstone
-	## marker (they bled out with Tombstone), activate it and start the 60s recovery timer.
+	# Called from do_round_respawn; a pending marker is activated and starts the 60s recovery timer
 	write_versioned_function("zombies/perks/tombstone_on_respawn", f"""
 scoreboard players operation #my_downed_id {ns}.data = @s {ns}.zb.downed_id
 execute unless entity @e[tag={ns}.tombstone,predicate={ns}:v{version}/zombies/revive/downed_id_match] run return 0
@@ -928,8 +887,7 @@ title @s times 5 40 15
 title @s subtitle [{{"text":"Return to your 🪦 within 60s to recover your gear!","color":"gold"}}]
 """)
 
-	## Per-tick for an ACTIVE tombstone marker (@s = marker, at it). Counts down, then checks whether
-	## the owning player is standing on it to recover. Hooked into game_tick.
+	# Per-tick for an ACTIVE marker (@s = marker, at it), counting down then checking for the owner
 	ts_nearby_alive: str = f"@a[distance=..2,gamemode=!spectator,scores={{{ns}.zb.in_game=1,{ns}.zb.downed=0}}]"
 	write_versioned_function("zombies/perks/tombstone_marker_tick", f"""
 particle minecraft:soul ~ ~0.5 ~ 0.25 0.4 0.25 0.01 3 force @a[distance=..48]
@@ -1097,10 +1055,8 @@ execute if score #qr_price_tick {ns}.data matches 20.. run scoreboard players se
 execute if score #qr_price_tick {ns}.data matches 0 run function {ns}:v{version}/zombies/perks/update_quick_revive_price
 """)
 
-	## Hook into stop: remove perk effects.
-	## Selector note: game.py's stop hook has already zeroed zb.in_game by the time these lines run,
-	## so a `scores={zb.in_game=1}` selector here matches nobody. The zombies team is never left, so
-	## it is what still identifies the players of the game being torn down.
+	# Remove perk effects on stop. game.py's stop hook has already zeroed zb.in_game, so a score selector here matches nobody.
+	# The zombies team is never left, so it is what still identifies the torn-down game's players.
 	write_versioned_function("zombies/stop", f"""
 # Reset perk effects
 {perk_effects_teardown(ns, f"@a[team={ns}.zombies]")}

@@ -1,5 +1,7 @@
+""" Every item definition except camos (camo.py).
 
-# Every item definition except camos (camo.py). Registration order sets Mem.definitions order.
+Registration order sets Mem.definitions order.
+"""
 from stewbeet import Item, JsonDict, Mem
 
 from ..config.catalogs import SCOPE_VARIANTS
@@ -124,7 +126,6 @@ PERK_MACHINES: dict[str, str | tuple[str, str]] = {
     "whos_who": "cyan",
 }
 
-
 def perk_machine_model(accent: str | tuple[str, str]) -> JsonDict:
     """ Perk-machine child model overriding the two accent texture slots. """
     first, second = accent if isinstance(accent, tuple) else (f"minecraft:block/{accent}_concrete", f"minecraft:block/{accent}_terracotta")
@@ -133,14 +134,12 @@ def perk_machine_model(accent: str | tuple[str, str]) -> JsonDict:
         "textures": {"accent": first, "accent2": second, "particle": second},
     }
 
-
 def recolored_model(model_name: str, gray_map: JsonDict, default: str | None = None) -> JsonDict:
     """ Load a model and remap its textures through `gray_map`; `default` replaces unmapped ones (None keeps them). """
     model: JsonDict = load_model(get_model_path(model_name))
     for key, tex in model["textures"].items():
         model["textures"][key] = gray_map.get(tex, default if default is not None else tex)
     return model
-
 
 def power_switch_on_model() -> JsonDict:
     """ "On" breaker: lever flipped down, handle/light lit green. Mirrored about pivot y=7 and tilted
@@ -157,12 +156,10 @@ def power_switch_on_model() -> JsonDict:
             el["rotation"]["angle"] = 45  # tilt forward-down (off is -45, forward-up)
     return model
 
-
 def add_casings() -> None:
     """ Ejected bullet casings, named after their cartridge. """
     for casing in CASINGS:
         add_item(casing, model_path="auto").components["item_name"] = {"text": casing, "color": "white"}
-
 
 def add_magazines() -> None:
     """ Reusable magazines (full + empty) and the stacking single-round items. """
@@ -191,7 +188,6 @@ def add_magazines() -> None:
                 "rarity": "common",
             }
         )
-
 
 def add_machines_and_props() -> None:
     """ Zombies map props: knife, Pack-a-Punch, Mystery Box, perk machines, breaker, turret. """
@@ -251,7 +247,6 @@ def add_machines_and_props() -> None:
     Item(id="turret_base", override_model=load_model(get_model_path("turret_base")))
     Item(id="turret_head", override_model=load_model(get_model_path("turret_head")))
 
-
 def add_weapons() -> None:
     """ The RPG-7, then every gun with its scope variants; each gets a `_zoom` twin. """
     for name in ("rpg7", "rpg7_zoom", "rpg7_empty", "rpg7_empty_zoom"):
@@ -264,7 +259,6 @@ def add_weapons() -> None:
                 item: Item = add_item(name, stats=stats, model_path="auto")
                 if rarity:
                     item.components["rarity"] = rarity
-
 
 def add_grenades() -> None:
     """ Throwables, including the two that are never in a multiplayer loadout. """
@@ -284,7 +278,6 @@ def add_grenades() -> None:
     # Zombies-exclusive tactical (mystery box / wallbuys only), capped at 3 by the give/refill functions.
     add_item("monkey_bomb", stats=MONKEY_BOMB, model_path="auto", max_stack_size=3)
 
-
 def main() -> None:
     """ Register every item, in the order that defines Mem.definitions ordering. """
     add_casings()
@@ -292,3 +285,4 @@ def main() -> None:
     add_machines_and_props()
     add_weapons()
     add_grenades()
+

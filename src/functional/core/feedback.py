@@ -1,7 +1,7 @@
+""" Zombies interaction feedback cues (wallbuys, doors, perks, traps, mystery box, PAP).
 
-# Zombies interaction feedback cues (wallbuys, doors, perks, traps, mystery box, PAP).
-# Each cue is exactly one command, inlined at its call site via zb_sound() rather than emitted as a
-# wrapper mcfunction — same sound, one fewer file and one fewer function dispatch per use.
+Each cue is exactly one command, inlined at its call site via zb_sound() rather than emitted as a wrapper mcfunction — same sound, one fewer file and one fewer function dispatch per use.
+"""
 from functools import cache
 
 from stewbeet import Mem
@@ -47,7 +47,7 @@ def _sound_table(ns: str) -> dict[str, str]:
 		"pap_deny": f"playsound {ns}:zombies/pap/deny ambient {ingame} ~ ~ ~ 1.0 1.0",
 	}
 
-
 def zb_sound(name: str) -> str:
 	""" The single command playing a zombies feedback cue, for inlining into a caller's body. """
 	return _sound_table(Mem.ctx.project_id)[name]
+

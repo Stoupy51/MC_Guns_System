@@ -1,8 +1,10 @@
+""" Door system.
 
-# Door System
-# Physical block barriers that players purchase to open.
-# Doors with the same link_id open together. A door's link_id is also its front-room spawn group,
-# and back_group_id is its back-room spawn group; opening a door unlocks both groups' zombie spawns.
+Physical block barriers that players purchase to open.
+
+Doors with the same link_id open together.
+A door's link_id is also its front-room spawn group, and back_group_id is its back-room spawn group; opening a door unlocks both groups' zombie spawns.
+"""
 
 from stewbeet import Mem, write_load_file, write_versioned_function
 
@@ -122,8 +124,8 @@ $execute positioned $(x) $(y) $(z) rotated $(facing) 0 run summon minecraft:inte
 """)
 
 	## Read the interacted door's pricing into scores (shared by the click and hover handlers).
-	## #door_total = full price, #door_price = what THIS click costs (a chunk when chip-in is on,
-	## the last chunk being whatever is left), #door_paid = the group's progress.
+	## #door_total is the full price and #door_price what THIS click costs, a chunk at a time when chip-in is on.
+	## The last chunk is whatever is left, and #door_paid is the group's progress.
 	write_versioned_function("zombies/doors/read_price", f"""
 execute store result score #door_price {ns}.data run scoreboard players get @n[tag=bs.interaction.target] {ns}.zb.door.price
 execute store result score #door_partial {ns}.data run scoreboard players get @n[tag=bs.interaction.target] {ns}.zb.door.partial
@@ -264,3 +266,4 @@ data modify storage {ns}:zombies game.unlocked_groups set value {{"0": 1b}}
 # Setup doors
 execute if data storage {ns}:zombies game.map.doors[0] run function {ns}:v{version}/zombies/doors/setup
 """)
+

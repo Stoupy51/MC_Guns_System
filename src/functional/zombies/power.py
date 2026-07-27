@@ -1,10 +1,10 @@
+""" Power switch system.
 
-# Power Switch System
-# A one-time activatable wall switch (custom breaker-box model) that enables power for the map.
-# Elements with power:true (perk machines, traps) require power to be active.
-# The switch is rendered as an item_display using the {ns}:power_switch model (see
-# database/models/power_switch.json + database/others.py); on activation it swaps to
-# {ns}:power_switch_on (handle + indicator light recolored green/lit).
+A one-time activatable wall switch (custom breaker-box model) that enables power for the map.
+Elements with power:true (perk machines, traps) require power to be active.
+The switch renders as an item_display using the {ns}:power_switch model (database/items.py).
+Activating it swaps to {ns}:power_switch_on, recoloring the handle and indicator light green.
+"""
 from stewbeet import Mem, write_versioned_function
 
 from ..core.feedback import zb_sound
@@ -111,3 +111,4 @@ scoreboard players set #zb_power {ns}.data 0
 # Setup power switches
 execute if data storage {ns}:zombies game.map.power_switch[0] run function {ns}:v{version}/zombies/power/setup
 """)
+

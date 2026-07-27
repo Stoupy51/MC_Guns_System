@@ -1,6 +1,5 @@
-
+""" Per-player config menu and the trigger dispatch that applies its choices. """
 # ruff: noqa: E501
-# Imports
 
 from stewbeet import Mem, write_versioned_function
 
@@ -61,9 +60,7 @@ def main() -> None:
     ns: str = Mem.ctx.project_id
     version: str = Mem.ctx.project_version
 
-    ## Setup scoreboards
-    # Per-player config trigger (players use /trigger mgs.player.config set <value>)
-    # Per-player toggle scoreboards (0 = disabled, 1 = enabled)
+    ## Setup scoreboards Per-player config trigger (players use /trigger mgs.player.config set <value>) Per-player toggle scoreboards (0 = disabled, 1 = enabled)
     write_versioned_function("load/confirm_load", f"""
 # Player config: trigger objective for /trigger command
 scoreboard objectives add {ns}.player.config trigger
@@ -86,8 +83,7 @@ execute if score @s {ns}.player.config matches 1.. run function {ns}:v{version}/
 execute if score @s {ns}.mp.map_edit matches 1 run function {ns}:v{version}/maps/editor/tick
 """)
 
-    ## Process trigger values
-    # Pre-compute trigger ranges for custom loadout editor
+    ## Process trigger values Pre-compute trigger ranges for custom loadout editor
     primary_max = TRIG_PRIMARY_BASE + len(PRIMARY_WEAPONS) - 1
     secondary_count = len([w for w in SECONDARY_WEAPONS if w.in_loadout])
     secondary_max = TRIG_SECONDARY_BASE + secondary_count - 1
@@ -269,8 +265,7 @@ $execute if score #damage_debug {ns}.config matches 1 run tellraw @a ["",[{{"tex
 $execute unless score #damage_debug {ns}.config matches 1 if score $(attacker) {ns}.player.damage_debug matches 1 run tellraw $(attacker) ["",[{{"text":"","color":"red"}},"[",{{"text":"DMG"}},"] "],[{{"score":{{"name":"#dmg_whole","objective":"{ns}.data"}},"color":"gold"}},".",{{"score":{{"name":"#dmg_dec","objective":"{ns}.data"}}}}]," ",{{"text":"HP to","color":"gray"}}," ",{{"selector":"@s"}}]
 """, tags=[f"{ns}:signals/damage"])
 
-    ## Hitmarker Sound on entity hit (added to damage signal)
-    # Plays for both hitscan (@p[tag=ticking]) and explosion (@p[tag=temp_shooter]) hits
+    ## Hitmarker Sound on entity hit (added to damage signal) Plays for both hitscan (@p[tag=ticking]) and explosion (@p[tag=temp_shooter]) hits
     write_versioned_function("player/config/hitmarker_sound", f"""
 # Play hitmarker Sound to the shooter if their personal config has it enabled
 # For hitscan: shooter has tag {ns}.ticking
@@ -278,3 +273,4 @@ execute as @a[tag={ns}.ticking] if score @s {ns}.player.hitmarker matches 1 at @
 # For explosions: shooter has tag {ns}.temp_shooter (skip if already played via ticking)
 execute as @a[tag={ns}.temp_shooter,tag=!{ns}.ticking] if score @s {ns}.player.hitmarker matches 1 at @s run playsound minecraft:entity.experience_orb.pickup player @s ~ ~ ~ 1.0 2.0
 """, tags=[f"{ns}:signals/damage"])
+

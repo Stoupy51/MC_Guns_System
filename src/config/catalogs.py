@@ -1,19 +1,17 @@
-
-# Weapon & Equipment Catalog constants
+""" Weapon, equipment and loadout-editor catalog constants. """
 from dataclasses import dataclass
 
 
-# Typed catalog rows (frozen dataclasses — accessed by name, e.g. w.in_loadout).
 @dataclass(frozen=True)
 class Weapon:
-    """ A primary weapon catalog entry. """
+    """ A primary weapon catalog entry. For consumable mags (shells/bullets),
+    default_mag_count is the total bullets in one stack slot. """
     item_id: str
     display_name: str
     category: str
     magazine_id: str
-    default_mag_count: int  # for consumable mags, total bullets in one stack slot
+    default_mag_count: int
     in_loadout: bool
-
 
 @dataclass(frozen=True)
 class SecondaryWeapon:
@@ -24,7 +22,6 @@ class SecondaryWeapon:
     default_mag_count: int
     in_loadout: bool
 
-
 @dataclass(frozen=True)
 class EquipmentPreset:
     """ A grenade/equipment preset: maps equipment item_id -> count. """
@@ -32,20 +29,17 @@ class EquipmentPreset:
     display_name: str
     items: dict[str, int]
 
-
 @dataclass(frozen=True)
 class CamoVariant:
     """ A free cosmetic camo: suffix appended after the scope suffix. """
     suffix: str
     display_name: str
 
-
 @dataclass(frozen=True)
 class GrenadeType:
     """ A throwable grenade slot option ("" = None). """
     item_id: str
     display_name: str
-
 
 @dataclass(frozen=True)
 class Perk:
@@ -55,9 +49,6 @@ class Perk:
     description: str
     score_name: str
 
-
-# Primary weapons: (item_id, display_name, category, magazine_id, default_mag_count, in_loadout)
-# For consumable mags (shells/bullets), default_mag_count = total bullets in one stack slot
 PRIMARY_WEAPONS: list[Weapon] = [Weapon(*_row) for _row in [
     # Assault Rifles
     ("ak47",   "AK-47",       "Assault Rifle", "ak47_mag",   3, True),
@@ -91,10 +82,8 @@ PRIMARY_WEAPONS: list[Weapon] = [Weapon(*_row) for _row in [
     ("rpg7",   "RPG-7",       "Launcher",      "rpg7_rocket",  3, True),
 ]]
 
-# Index lookup: weapon_id -> index in PRIMARY_WEAPONS
 PRIMARY_INDEX: dict[str, int] = {w.item_id: i for i, w in enumerate(PRIMARY_WEAPONS)}
 
-# Secondary weapons: (item_id, display_name, magazine_id, default_mag_count, in_loadout)
 SECONDARY_WEAPONS: list[SecondaryWeapon] = [SecondaryWeapon(*_row) for _row in [
     ("m1911",   "M1911",   "m1911_mag",   2, True),
     ("m9",      "M9",      "m9_mag",      2, True),
@@ -106,11 +95,8 @@ SECONDARY_WEAPONS: list[SecondaryWeapon] = [SecondaryWeapon(*_row) for _row in [
     ("ray_gun", "Ray Gun", "element_115",  3, False),
 ]]
 
-# Index lookup: weapon_id -> index in SECONDARY_WEAPONS
 SECONDARY_INDEX: dict[str, int] = {w.item_id: i for i, w in enumerate(SECONDARY_WEAPONS)}
 
-# Equipment presets: (preset_id, display_name, items_dict)
-# items_dict maps equipment item_id -> count
 _EQUIPMENT_ROWS: list[tuple[str, str, dict[str, int]]] = [
     ("frag2",        "2x Frag Grenade",          {"frag_grenade": 2}),
     ("semtex2",      "2x Semtex",                {"semtex": 2}),
@@ -125,8 +111,6 @@ _EQUIPMENT_ROWS: list[tuple[str, str, dict[str, int]]] = [
 ]
 EQUIPMENT_PRESETS: list[EquipmentPreset] = [EquipmentPreset(*_row) for _row in _EQUIPMENT_ROWS]
 
-# Scope variant definitions per weapon base ID
-# Maps base weapon ID -> tuple of available scope suffixes ("" = iron sights)
 SCOPE_VARIANTS: dict[str, tuple[str, ...]] = {
     # Full range: Iron Sights, Red Dot, Holographic, 3x Scope, 4x Scope
     "ak47": ("", "_1", "_2", "_3", "_4"),
@@ -143,7 +127,7 @@ SCOPE_VARIANTS: dict[str, tuple[str, ...]] = {
     "m82": ("", "_1", "_2", "_3", "_4"),
     "m24": ("", "_1", "_2", "_3", "_4"),
     "rpk": ("", "_1", "_2", "_3", "_4"),
-    # Up to 3x: Iron Sights, Red Dot, Holographic, 3x Scope
+    # Up to 3x
     "spas12": ("", "_1", "_2", "_3"),
     "m500": ("", "_1", "_2", "_3"),
     "m590": ("", "_1", "_2", "_3"),
@@ -153,8 +137,8 @@ SCOPE_VARIANTS: dict[str, tuple[str, ...]] = {
     # Iron Sights + 4x Scope only (secondary)
     "deagle": ("", "_4"),
 }
+""" Available scope suffixes per base weapon id ("" = iron sights). """
 
-# Scope suffix -> display name
 SCOPE_NAMES: dict[str, str] = {
     "": "Iron Sights",
     "_1": "Holographic",
@@ -163,83 +147,117 @@ SCOPE_NAMES: dict[str, str] = {
     "_4": "Mk4 (4x Scope)",
 }
 
-# Ordered scope suffixes for trigger offset mapping (offset 0-4)
 ALL_SCOPE_SUFFIXES: list[str] = ["", "_1", "_2", "_3", "_4"]
+""" Ordered scope suffixes for trigger offset mapping (offset 0-4). """
 
-# Trigger value ranges for custom loadout system
-TRIG_EDITOR_START         = 100   # Open loadout editor (create new), then show the hub
-TRIG_MARKETPLACE          = 101   # Open marketplace browser
-TRIG_MY_LOADOUTS          = 102   # Open my loadouts manager
+TRIG_EDITOR_START         = 100
+""" Open loadout editor (create new), then show the hub. """
+TRIG_MARKETPLACE          = 101
+""" Open marketplace browser. """
+TRIG_MY_LOADOUTS          = 102
+""" Open my loadouts manager. """
 
 # Editor hub (CoD-style main page): one trigger per category row + remove buttons
-TRIG_HUB                  = 103   # Re-open the editor hub (also used by "Unavailable" no-op rows)
-TRIG_HUB_PRIMARY          = 104   # Open the primary weapon submenu
-TRIG_HUB_PRIMARY_MAGS     = 105   # Open the primary magazine submenu
-TRIG_HUB_SECONDARY        = 106   # Open the secondary weapon submenu
-TRIG_HUB_SECONDARY_MAGS   = 107   # Open the secondary magazine submenu
-TRIG_HUB_EQUIP1           = 108   # Open the grenade slot 1 submenu
-TRIG_HUB_EQUIP2           = 109   # Open the grenade slot 2 submenu
-TRIG_HUB_PERKS            = 110   # Open the perks submenu
-TRIG_REMOVE_PRIMARY       = 111   # Clear the primary weapon
-TRIG_REMOVE_SECONDARY     = 112   # Clear the secondary weapon
+TRIG_HUB                  = 103
+""" Re-open the editor hub (also used by "Unavailable" no-op rows). """
+TRIG_HUB_PRIMARY          = 104
+""" Open the primary weapon submenu. """
+TRIG_HUB_PRIMARY_MAGS     = 105
+""" Open the primary magazine submenu. """
+TRIG_HUB_SECONDARY        = 106
+""" Open the secondary weapon submenu. """
+TRIG_HUB_SECONDARY_MAGS   = 107
+""" Open the secondary magazine submenu. """
+TRIG_HUB_EQUIP1           = 108
+""" Open the grenade slot 1 submenu. """
+TRIG_HUB_EQUIP2           = 109
+""" Open the grenade slot 2 submenu. """
+TRIG_HUB_PERKS            = 110
+""" Open the perks submenu. """
+TRIG_REMOVE_PRIMARY       = 111
+""" Clear the primary weapon. """
+TRIG_REMOVE_SECONDARY     = 112
+""" Clear the secondary weapon. """
 
-TRIG_PRIMARY_BASE         = 200   # 200 + primary_weapon_index
-TRIG_PRIMARY_SCOPE_BASE   = 230   # 230 + scope_index (0=iron, 1=_1, 2=_2, 3=_3, 4=_4)
-TRIG_SECONDARY_BASE       = 250   # 250 + secondary_weapon_index
-TRIG_SECONDARY_SCOPE_BASE = 260   # 260 + scope_index
-TRIG_SAVE_PUBLIC          = 350   # Save loadout as public
-TRIG_SAVE_PRIVATE         = 351   # Save loadout as private
-TRIG_PRIMARY_MAGS_BASE    = 390   # 390 + count (1-5) -> pick primary mag count (391-395)
-TRIG_SECONDARY_MAGS_BASE  = 396   # 396 + count (0-5) -> pick secondary mag count (396-401)
+TRIG_PRIMARY_BASE         = 200
+""" 200 + primary_weapon_index. """
+TRIG_PRIMARY_SCOPE_BASE   = 230
+""" 230 + scope_index (0=iron, 1=_1, 2=_2, 3=_3, 4=_4). """
+TRIG_SECONDARY_BASE       = 250
+""" 250 + secondary_weapon_index. """
+TRIG_SECONDARY_SCOPE_BASE = 260
+""" 260 + scope_index. """
+TRIG_SAVE_PUBLIC          = 350
+""" Save loadout as public. """
+TRIG_SAVE_PRIVATE         = 351
+""" Save loadout as private. """
+TRIG_PRIMARY_MAGS_BASE    = 390
+""" 390 + count (1-5) -> pick primary mag count (391-395). """
+TRIG_SECONDARY_MAGS_BASE  = 396
+""" 396 + count (0-5) -> pick secondary mag count (396-401). """
+TRIG_PERK_BASE            = 410
+""" 410 + perk_index -> toggle perk. """
+TRIG_EQUIP_SLOT1_BASE     = 460
+""" 460 + grenade_index (0=none,1=frag,2=semtex,3=flash,4=smoke). """
+TRIG_EQUIP_SLOT2_BASE     = 470
+""" 470 + grenade_index. """
+TRIG_PRIMARY_CAMO_BASE    = 480
+""" 480-484 = pick primary camo. """
+TRIG_SECONDARY_CAMO_BASE  = 490
+""" 490-494 = pick secondary camo. """
+TRIG_EQUIP1_CAMO_BASE     = 500
+""" 500-504 = pick grenade slot 1 camo. """
+TRIG_EQUIP2_CAMO_BASE     = 510
+""" 510-514 = pick grenade slot 2 camo. """
+TRIG_OVERKILL_SEC_BASE    = 520
+""" 520 + primary_weapon_index = Overkill secondary. """
 
-# Perk selection triggers: base + perk index
-TRIG_PERK_BASE            = 410   # 410 + perk_index -> toggle perk (410-414 for 5 perks)
+TRIG_SELECT_BASE          = 10000
+""" + loadout_id -> use as active class. """
+TRIG_FAVORITE_BASE        = 20000
+""" + loadout_id -> toggle favorite. """
+TRIG_LIKE_BASE            = 30000
+""" + loadout_id -> like loadout. """
+TRIG_DELETE_BASE          = 40000
+""" + loadout_id -> delete own loadout. """
+TRIG_TOGGLE_VIS_BASE      = 50000
+""" + loadout_id -> toggle public/private. """
+TRIG_SET_DEFAULT_BASE     = 60000
+""" + loadout_id -> set as default. """
+TRIG_UNSET_DEFAULT        = 69999
+""" Unset default loadout. """
+TRIG_EDIT_BASE            = 70000
+""" + loadout_id -> edit own loadout (re-opens the hub pre-filled). """
+TRIG_MANAGE_BASE          = 80000
+""" + loadout_id -> open the per-loadout manage submenu. """
+""" Loadout action triggers: base + loadout_id. IDs auto-increment and are never reused, so each
+action gets a 10000-wide range (the old 100-wide ranges broke past 99 loadouts). """
 
-# Grenade slot selection triggers
-TRIG_EQUIP_SLOT1_BASE     = 460   # 460 + grenade_index (0=none,1=frag,2=semtex,3=flash,4=smoke)
-TRIG_EQUIP_SLOT2_BASE     = 470   # 470 + grenade_index (0=none,1=frag,2=semtex,3=flash,4=smoke)
+TRIG_MARKETPLACE_ALL          = 1600
+""" Marketplace: show all public (favorites first). """
+TRIG_MARKETPLACE_FAV_ONLY     = 1601
+""" Marketplace: show only player's favorited loadouts. """
+TRIG_MARKETPLACE_LIKES        = 1602
+""" Marketplace: show all sorted by likes descending. """
+TRIG_MY_LOADOUTS_FAV_ONLY     = 1603
+""" My Loadouts: show only favorited own loadouts. """
 
-# Camo selection triggers (free): base + camo_index into CAMO_VARIANTS
-TRIG_PRIMARY_CAMO_BASE    = 480   # 480-484 = pick primary camo
-TRIG_SECONDARY_CAMO_BASE  = 490   # 490-494 = pick secondary camo
-TRIG_EQUIP1_CAMO_BASE     = 500   # 500-504 = pick grenade slot 1 camo
-TRIG_EQUIP2_CAMO_BASE     = 510   # 510-514 = pick grenade slot 2 camo
-TRIG_OVERKILL_SEC_BASE    = 520   # 520 + primary_weapon_index = pick a primary as the Overkill secondary
+PICK10_TOTAL = 10
+""" Total Pick-10 points budget. """
 
-# Loadout action triggers: base + loadout_id. Loadout IDs auto-increment and are never
-# reused, so each action gets a 10000-wide range (the old 100-wide ranges silently broke
-# once more than 99 loadouts had ever been created).
-TRIG_SELECT_BASE          = 10000  # + loadout_id -> use as active class
-TRIG_FAVORITE_BASE        = 20000  # + loadout_id -> toggle favorite
-TRIG_LIKE_BASE            = 30000  # + loadout_id -> like loadout
-TRIG_DELETE_BASE          = 40000  # + loadout_id -> delete own loadout
-TRIG_TOGGLE_VIS_BASE      = 50000  # + loadout_id -> toggle public/private
-TRIG_SET_DEFAULT_BASE     = 60000  # + loadout_id -> set as default
-TRIG_UNSET_DEFAULT        = 69999  # Unset default loadout
-TRIG_EDIT_BASE            = 70000  # + loadout_id -> edit own loadout (re-opens the hub pre-filled)
-TRIG_MANAGE_BASE          = 80000  # + loadout_id -> open the per-loadout manage submenu (My Loadouts)
+COST_PRIMARY_WEAPON    = 1
+COST_PRIMARY_SCOPE     = 1
+""" Iron sights are free. """
+COST_PRIMARY_MAG       = 1
+""" Per magazine (base 1 mag included separately). """
+COST_SECONDARY_WEAPON  = 1
+COST_SECONDARY_SCOPE   = 1
+""" Iron sights are free. """
+COST_SECONDARY_MAG     = 1
+COST_GRENADE           = 1
+""" Per grenade (slot 1 and slot 2). """
+COST_PERK              = 1
 
-# Filter / Sort view triggers
-TRIG_MARKETPLACE_ALL          = 1600  # Marketplace: show all public (favorites first)
-TRIG_MARKETPLACE_FAV_ONLY     = 1601  # Marketplace: show only player's favorited loadouts
-TRIG_MARKETPLACE_LIKES        = 1602  # Marketplace: show all sorted by likes descending
-TRIG_MY_LOADOUTS_FAV_ONLY     = 1603  # My Loadouts: show only favorited own loadouts
-
-# Pick-10 System Constants
-PICK10_TOTAL = 10  # Total points budget
-
-# Point costs (each item costs this many points)
-COST_PRIMARY_WEAPON    = 1  # The primary weapon itself
-COST_PRIMARY_SCOPE     = 1  # Any scope on primary (iron sights = 0)
-COST_PRIMARY_MAG       = 1  # Per magazine (base 1 mag included separately)
-COST_SECONDARY_WEAPON  = 1  # The secondary weapon itself
-COST_SECONDARY_SCOPE   = 1  # Any scope on secondary (iron sights = 0)
-COST_SECONDARY_MAG     = 1  # Per magazine
-COST_GRENADE           = 1  # Per grenade (slot 1 and slot 2)
-COST_PERK              = 1  # Per perk
-
-# Camo variants: (item_id_suffix, display_name) — free cosmetic selection in the loadout editor
-# The suffix is appended after the scope suffix (e.g. ak47 + _3 + _gold = ak47_3_gold)
 CAMO_VARIANTS: list[CamoVariant] = [CamoVariant(*_row) for _row in [
     ("",                     "Default"),
     ("_autumn",              "Autumn"),
@@ -247,8 +265,8 @@ CAMO_VARIANTS: list[CamoVariant] = [CamoVariant(*_row) for _row in [
     ("_gold",                "Gold"),
     ("_red_polymer_stripes", "Red Polymer"),
 ]]
+""" Free cosmetic camos; the suffix is appended after the scope suffix (ak47 + _3 + _gold). """
 
-# Grenade types: (item_id, display_name)
 GRENADE_TYPES: list[GrenadeType] = [GrenadeType(*_row) for _row in [
     ("",              "None"),
     ("frag_grenade",  "Frag Grenade"),
@@ -257,9 +275,6 @@ GRENADE_TYPES: list[GrenadeType] = [GrenadeType(*_row) for _row in [
     ("smoke_grenade", "Smoke"),
 ]]
 
-# Perks: (perk_id, display_name, description, score_name)
-# score_name is the mgs.special.* scoreboard flag (0/1) set when the perk is on the loadout.
-# Effects are wired in functional/multiplayer/loadouts/class_selection.py + the systems they touch.
 PERKS: list[Perk] = [Perk(*_row) for _row in [
     ("quick_reload",  "Sleight of Hand", "Reload 50% faster", "quick_reload"),
     ("quick_swap",    "Fast Hands",      "Swap weapons 50% faster", "quick_swap"),
@@ -271,6 +286,8 @@ PERKS: list[Perk] = [Perk(*_row) for _row in [
     ("overkill",      "Overkill",        "Carry a second primary weapon", "overkill"),
     ("quick_fix",     "Quick Fix",       "Health regen starts right after a kill", "quick_fix"),
 ]]
+""" Effects are wired in functional/multiplayer/loadouts/class_selection.py. """
 
-# Max number of perks selectable (limited further by available points)
 MAX_PERKS = 3
+""" Max selectable perks, limited further by available points. """
+

@@ -1,5 +1,4 @@
-
-# Imports
+""" Weapon subsystem entry point; submodules run in dependency order. """
 from ..helpers import write_shared_projectile_functions
 from .actionbar import main as actionbar_main
 from .ammo import main as ammo_main
@@ -17,51 +16,20 @@ from .update_lore import main as update_lore_main
 from .zoom import main as zoom_main
 
 
-# Main function
 def main() -> None:
-
-    # Write shared utility functions used by both projectile and grenade systems
-    write_shared_projectile_functions()
-
-    # Detect right click base
-    common_main()
-
-    # Detect left click (reload), via the piercing-attack enchantment
-    left_click_main()
-
-    # Handle zoom functionality
+    write_shared_projectile_functions()  # Shared by the projectile and grenade systems
+    common_main()                        # Right-click detection
+    left_click_main()                    # Left-click (reload), via the piercing-attack enchantment
     zoom_main()
-
-    # Handle weapon switching mechanics
     switch_main()
-
-    # Handle shoot with raycast, with accuracy groups
-    raycast_main()
-
-    # Handle slow projectiles (RPG rockets, grenades, etc.)
-    projectile_main()
-
-    # Handle throwable grenades (frag, semtex, smoke, flash)
+    raycast_main()                       # Hitscan shots with accuracy groups
+    projectile_main()                    # Slow projectiles (RPG rockets, etc.)
     grenade_main()
-
-    # Make a weapon kick
     kick_main()
-
-    # Visually drop a casing
     casing_main()
-
-    # All ammo logic
     ammo_main()
-
-    # Actionbar display (fire mode + ammo)
-    actionbar_main()
-
-    # Update all lore utility (rebuild lore from stats)
-    update_lore_main()
-
-    # Advanced sound system
+    actionbar_main()                     # Fire mode + ammo display
+    update_lore_main()                   # Rebuild item lore from stats
     sound_main()
-
-    # BO2-style 8-way hit direction indicator
     hit_indicator_main()
 

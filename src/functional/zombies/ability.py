@@ -1,8 +1,9 @@
+""" Zombies ability and passive system.
 
-# Zombies Ability & Passive System
-# Provides passive effects and activatable abilities for the zombies game mode.
-# Passives: x1.2 Points, x1.5 Powerups
-# Abilities: Coward (TP to spawn), Guardian (summon Iron Golem)
+Provides passive effects and activatable abilities for the zombies game mode.
+
+Passives: x1.2 Points, x1.5 Powerups Abilities: Coward (TP to spawn), Guardian (summon Iron Golem)
+"""
 from stewbeet import Mem, write_versioned_function
 
 from ..helpers import MGS_TAG, dialog_ref, register_dialog
@@ -12,15 +13,13 @@ def generate_zombies_abilities() -> None:
 	ns: str = Mem.ctx.project_id
 	version: str = Mem.ctx.project_version
 
-	## Selection Dialogs
-	# Trigger values for zombies perks (dispatched in player_config.py)
+	## Selection Dialogs Trigger values for zombies perks (dispatched in player_config.py)
 	TRIG_ZB_PASSIVE_1: int = 6   # x1.2 points
 	TRIG_ZB_PASSIVE_2: int = 7   # x1.5 powerups
 	TRIG_ZB_ABILITY_1: int = 8   # Coward
 	TRIG_ZB_ABILITY_2: int = 9   # Guardian
 
-	## Registered as real dialog resources; the functions below keep the variant guard that has to
-	## run before the dialog is shown, so these need no opener wrapper of their own.
+	## Registered as real dialog resources; the functions below keep the variant guard that has to run before the dialog is shown, so these need no opener wrapper of their own.
 	register_dialog("zombies/passive_ability", {
 		"type": "minecraft:multi_action",
 		"title": {"text": "Zonweeb Passive", "color": "dark_green"},
@@ -65,7 +64,7 @@ execute unless data storage {ns}:zombies game{{variant:"zonweeb"}} run return fa
 dialog show @s {dialog_ref('zombies/ability')}
 """)
 
-	# Passive Selection (called via trigger dispatch) ───────────
+	# Passive Selection (called via trigger dispatch).
 
 	write_versioned_function("zombies/perks/set_passive_1", f"""
 # Zonweeb variant only
@@ -83,7 +82,7 @@ tellraw @s [{MGS_TAG},{{"text":"Passive set: ","color":"gray"}},{{"text":"x1.5 P
 function {ns}:v{version}/zombies/ability_menu
 """)
 
-	# Ability Selection (called via trigger dispatch) ────────────
+	# Ability Selection (called via trigger dispatch).
 
 	write_versioned_function("zombies/perks/set_ability_1", f"""
 # Zonweeb variant only
@@ -101,7 +100,7 @@ scoreboard players set @s {ns}.zb.ability_cd 0
 tellraw @s [{MGS_TAG},{{"text":"Ability set: ","color":"gray"}},{{"text":"Guardian","color":"green"}},{{"text":" (Summon an Iron Golem ally)","color":"gray"}}]
 """)
 
-	# Ability Tick (check and trigger abilities) ────────────────
+	# Ability Tick (check and trigger abilities).
 
 	write_versioned_function("zombies/ability_tick", f"""
 # Coward: TP to spawn when under 50% health (10 HP out of 20), cooldown not active
@@ -129,7 +128,7 @@ effect give @s regeneration 5 1 true
 title @s actionbar [{{"text":"🏃 Coward activated! Teleported to safety!","color":"yellow"}}]
 """)
 
-	# Guardian: summon Iron Golem at round start ─────────────────
+	# Guardian: summon Iron Golem at round start.
 
 	write_versioned_function("zombies/perks/check_guardian", f"""
 # Check guardian ability for all players with it ready
@@ -147,13 +146,13 @@ scoreboard players set @s {ns}.zb.ability_cd 1
 title @s actionbar [{{"text":"🛡 Guardian activated! Iron Golem summoned!","color":"green"}}]
 """)
 
-	# Cooldown Reduction (called at round start) ────────────────
+	# Cooldown Reduction (called at round start).
 
 	write_versioned_function("zombies/perks/reduce_cooldowns", f"""
 execute as @a[scores={{{ns}.zb.in_game=1,{ns}.zb.ability_cd=1..}}] run scoreboard players remove @s {ns}.zb.ability_cd 1
 """)
 
-	# Hooks into game_tick and start_round (APPENDS) ────────────
+	# Hooks into game_tick and start_round (APPENDS).
 
 	# Hook ability tick into game_tick
 	write_versioned_function("zombies/game_tick", f"""
@@ -167,3 +166,4 @@ execute if data storage {ns}:zombies game{{variant:"zonweeb"}} run function {ns}
 execute if data storage {ns}:zombies game{{variant:"zonweeb"}} run function {ns}:v{version}/zombies/perks/reduce_cooldowns
 execute if data storage {ns}:zombies game{{variant:"zonweeb"}} run function {ns}:v{version}/zombies/perks/check_guardian
 """)
+

@@ -1,9 +1,11 @@
+""" Map editor, generic across multiplayer, missions and zombies.
 
+Provides an in-game editor with mode switching for placing map elements.
+
+Elements are placed via spawn eggs detected by advancement (item_used_on_block).
+Markers in the world represent elements during editing; storage is written on save.
+"""
 # ruff: noqa: E501
-# Map Editor - Generic for Multiplayer, Missions, and Zombies maps
-# Provides an in-game editor with mode switching for placing map elements.
-# Elements are placed via spawn eggs detected by advancement (item_used_on_block).
-# Markers in the world represent elements during editing; storage is written on save.
 
 from typing import Any, cast
 
@@ -19,7 +21,7 @@ def generate_map_editor() -> None:
 
 	sep = '{"text":"============================================","color":"dark_gray"}'
 
-	# Scoreboards & Storage Init ─────────────────────────────────
+	# Scoreboards & Storage Init.
 	write_load_file(f"""
 # Map editor scoreboards
 scoreboard objectives add {ns}.mp.map_edit dummy
@@ -40,7 +42,7 @@ scoreboard objectives add {ns}.class_menu minecraft.used:minecraft.warped_fungus
 {storage_init_lines}
 """)
 
-	# Advancement for egg placement detection ─────────────────────
+	# Advancement for egg placement detection.
 	adv: JsonDict = {
 		"criteria": {
 			"requirement": {
@@ -65,19 +67,19 @@ scoreboard objectives add {ns}.class_menu minecraft.used:minecraft.warped_fungus
 	}
 	Mem.ctx.data[ns].advancements[f"v{version}/maps/editor/on_place"] = set_json_encoder(Advancement(adv), max_level=-1)
 
-	# Mode tab buttons (used in all list views) ──────────────────
+	# Mode tab buttons (used in all list views).
 	mode_tabs = ",".join(
 		btn(mode_info.name, f"/function {ns}:v{version}/maps/editor/list/{mode_key}", mode_info.color, f"View {mode_info.name} maps")
 		for mode_key, mode_info in EDITOR_MODES.items()
 	)
 
-	# Menu Entry Point ───────────────────────────────────────────
+	# Menu Entry Point.
 	write_versioned_function("maps/editor/menu", f"""
 # Default: show multiplayer maps
 function {ns}:v{version}/maps/editor/list/multiplayer
 """)
 
-	# Per-Mode Map List ──────────────────────────────────────────
+	# Per-Mode Map List.
 	for mode_key, mode_info in EDITOR_MODES.items():
 		sk = mode_info.storage_key
 		create_btn = btn("+ Create New Map", f"/function {ns}:v{version}/maps/editor/create/{mode_key}", "green", f"Create a new {mode_info.name} map")
@@ -105,7 +107,7 @@ tellraw @s ["  ",{create_btn}]
 tellraw @s {sep}
 """)
 
-	# Menu Entry (recursive - one map per call) ──────────────────
+	# Menu Entry (recursive - one map per call).
 	write_versioned_function("maps/editor/menu_entry", f"""
 # Read current map name and id
 data modify storage {ns}:temp map_menu.current set from storage {ns}:temp map_menu.list[0]
@@ -130,7 +132,7 @@ execute if data storage {ns}:temp map_menu.list[0] run function {ns}:v{version}/
 $tellraw @s ["  ",{{"text":"$(name)","color":"white"}},{{"text":" ($(id))","color":"gray"}}," ",[{{"text":"[","color":"yellow","click_event":{{"action":"suggest_command","command":"/function {ns}:v{version}/maps/editor/enter {{idx:$(idx),mode:$(mode)}}"}},"hover_event":{{"action":"show_text","value":"Edit this map"}}}},{{"text":"Edit"}},"]"]," ",[{{"text":"[","color":"red","click_event":{{"action":"suggest_command","command":"/function {ns}:v{version}/maps/editor/delete {{idx:$(idx),mode:$(mode)}}"}},"hover_event":{{"action":"show_text","value":"Delete this map"}}}},{{"text":"Delete"}},"]"]]
 """)
 
-	# Map Creation (per mode) ────────────────────────────────────
+	# Map Creation (per mode).
 	for mode_key, mode_info in EDITOR_MODES.items():
 		sk = mode_info.storage_key
 		create_snbt = r"id:'my_map',name:'My Map',description:'A new map',base_coordinates:[0,64,0],start_commands:[],respawn_commands:[]"
@@ -148,7 +150,7 @@ tellraw @s ["  ",{back_btn}]
 tellraw @s {sep}
 """)
 
-	# Delete Map (macro with mode) ───────────────────────────────
+	# Delete Map (macro with mode).
 	write_versioned_function("maps/editor/delete", f"""
 $data remove storage {ns}:maps $(mode)[$(idx)]
 tellraw @s [{MGS_TAG},{{"text":"Map deleted.","color":"red"}}]
@@ -157,7 +159,7 @@ tellraw @s [{MGS_TAG},{{"text":"Map deleted.","color":"red"}}]
 $function {ns}:v{version}/maps/editor/list/$(mode)
 """)
 
-	# Enter Editor Mode (macro with mode+idx) ────────────────────
+	# Enter Editor Mode (macro with mode+idx).
 	mode_score_lines = "\n".join(
 		f'execute if data storage {ns}:temp map_edit{{mode:"{mk}"}} run scoreboard players set @s {ns}.mp.map_mode {i}'
 		for i, mk in enumerate(MODE_LIST)
@@ -245,7 +247,7 @@ tellraw @a[scores={{{ns}.mp.map_edit=1}}] [{MGS_TAG},{{"text":"Editor session sy
 $data modify storage {ns}:temp map_edit.map set from storage {ns}:maps $(mode)[$(idx)]
 """)
 
-	# Summon Existing Elements ───────────────────────────────────
+	# Summon Existing Elements.
 	summon_dispatch = "\n".join(
 		f'execute if score @s {ns}.mp.map_mode matches {i} run function {ns}:v{version}/maps/editor/summon_existing/{mk}'
 		for i, mk in enumerate(MODE_LIST)
@@ -310,13 +312,12 @@ execute if data storage {ns}:temp map_edit.map.tick_function run data modify ent
 			"\n".join(summon_lines) if summon_lines else "# No mode-specific elements to summon"
 		)
 
-	# Summon helpers (shared) ────────────────────────────────────
+	# Summon helpers (shared).
 	write_versioned_function("maps/editor/summon_base_marker", f"""
 $summon minecraft:marker $(x) $(y) $(z) {{Tags:["{ns}.map_element","{ns}.element.base_coordinates"]}}
 """)
 
-	# Summon spawn markers - iterates list of [x,y,z,yaw] relative coords
-	# Tag is read from {ns}:temp _spawn_iter_tag (set before calling)
+	# Summon spawn markers - iterates list of [x,y,z,yaw] relative coords Tag is read from {ns}:temp _spawn_iter_tag (set before calling)
 	write_versioned_function("maps/editor/summon_spawn_iter", f"""
 # Read relative coordinates from first entry
 execute store result score #rx {ns}.data run data get storage {ns}:temp _spawn_iter[0][0]
@@ -355,8 +356,7 @@ execute if data storage {ns}:temp _spawn_iter[0] run function {ns}:v{version}/ma
 $summon minecraft:marker $(x) $(y) $(z) {{Tags:["{ns}.map_element","$(tag)","{ns}.new_spawn_marker"]}}
 """)
 
-	# Summon point markers - iterates list of [x,y,z] relative coords
-	# Tag is read from {ns}:temp _point_iter_tag (set before calling)
+	# Summon point markers - iterates list of [x,y,z] relative coords Tag is read from {ns}:temp _point_iter_tag (set before calling)
 	write_versioned_function("maps/editor/summon_point_iter", f"""
 # Read relative coordinates
 execute store result score #rx {ns}.data run data get storage {ns}:temp _point_iter[0][0]
@@ -486,8 +486,7 @@ execute if data storage {ns}:temp _respawn_cmd_iter[0] run function {ns}:v{versi
 $summon minecraft:marker $(x) $(y) $(z) {{Tags:["{ns}.map_element","{ns}.element.respawn_command","{ns}.new_respawn_cmd_marker"]}}
 """)
 
-	# Summon zb_object markers - iterates list of compound objects {pos:[x,y,z], rotation:[yaw,pitch], ...}
-	# Tag is read from {ns}:temp _zb_iter_tag (set before calling)
+	# Summon zb_object markers - iterates list of compound objects {pos:[x,y,z], rotation:[yaw,pitch], ...} Tag is read from {ns}:temp _zb_iter_tag (set before calling)
 	write_versioned_function("maps/editor/summon_zb_object_iter", f"""
 # Read relative position from first entry
 execute store result score #rx {ns}.data run data get storage {ns}:temp _zb_iter[0].pos[0]
@@ -531,7 +530,7 @@ execute if data storage {ns}:temp _zb_iter[0] run function {ns}:v{version}/maps/
 $summon minecraft:marker $(x) $(y) $(z) {{Tags:["{ns}.map_element","$(tag)","{ns}.new_zb_marker"]}}
 """)
 
-	# Give Editor Tools (dispatch by mode score) ─────────────────
+	# Give Editor Tools (dispatch by mode score).
 	destroy_cmd = (
 		f'item replace entity @s hotbar.8 with minecraft:bat_spawn_egg'
 		f'[minecraft:item_name={{"text":"✘ DESTROY","color":"dark_red","italic":false,"bold":true}},'
@@ -626,7 +625,7 @@ $summon minecraft:marker $(x) $(y) $(z) {{Tags:["{ns}.map_element","$(tag)","{ns
 			"\n".join(egg_cmds) if egg_cmds else "# No eggs for this mode"
 		)
 
-	# On Place (Advancement Reward) ──────────────────────────────
+	# On Place (Advancement Reward).
 	write_versioned_function("maps/editor/on_place", f"""
 # Revoke advancement immediately so it can trigger again
 advancement revoke @s only {ns}:v{version}/maps/editor/on_place
@@ -638,7 +637,7 @@ execute unless score @s {ns}.mp.map_edit matches 1 run return fail
 execute as @n[tag={ns}.new_element] at @s run function {ns}:v{version}/maps/editor/process_element
 """)
 
-	# Process Placed Element (universal - handles all types) ─────
+	# Process Placed Element (universal - handles all types).
 	process_lines: list[str] = []
 	# Destroy handler first
 	process_lines.append('# DESTROY handler')
@@ -693,7 +692,7 @@ execute as @n[tag={ns}.new_element] at @s run function {ns}:v{version}/maps/edit
 
 	write_versioned_function("maps/editor/process_element", "\n".join(process_lines))
 
-	# Handle Base Coordinates ────────────────────────────────────
+	# Handle Base Coordinates.
 	write_versioned_function("maps/editor/handle_base", f"""
 # Preserve start_function and tick_function from existing base marker
 execute if data entity @n[tag={ns}.element.base_coordinates] data.start_function run data modify storage {ns}:temp _base_preserve.start_function set from entity @n[tag={ns}.element.base_coordinates] data.start_function
@@ -722,7 +721,7 @@ data remove storage {ns}:temp _base_preserve
 execute as @a[tag={ns}.map_editor] run tellraw @s [{MGS_TAG},{{"text":"Base coordinates set!","color":"light_purple"}}]
 """)
 
-	# Handle Spawn Point (universal) ─────────────────────────────
+	# Handle Spawn Point (universal).
 	spawn_tag_lines = "\n".join(
 		f'execute if entity @s[tag={ns}.element.{etype}] run data modify storage {ns}:temp _pos.tag set value "{ns}.element.{etype}"'
 		for etype, einfo in ALL_ELEMENTS.items() if einfo.save_type == "spawn"
@@ -757,7 +756,7 @@ tag @n[tag={ns}.new_spawn_marker] remove {ns}.new_spawn_marker
 {spawn_msg_lines}
 """)
 
-	# Handle Point Element (universal) ───────────────────────────
+	# Handle Point Element (universal).
 	point_tag_lines = "\n".join(
 		f'execute if entity @s[tag={ns}.element.{etype}] run data modify storage {ns}:temp _pos.tag set value "{ns}.element.{etype}"'
 		for etype, einfo in ALL_ELEMENTS.items() if einfo.save_type == "point"
@@ -783,7 +782,7 @@ function {ns}:v{version}/maps/editor/summon_point_marker with storage {ns}:temp 
 {point_msg_lines}
 """)
 
-	# Handle Enemy Element (missions) ────────────────────────────
+	# Handle Enemy Element (missions).
 	write_versioned_function("maps/editor/handle_enemy", f"""
 # Initialize default function if missing
 execute unless data storage {ns}:temp map_edit.map.default_enemy_function run data modify storage {ns}:temp map_edit.map.default_enemy_function set value "{ns}:mob/default/level_1 {{\\"entity\\":\\"pillager\\"}}"
@@ -804,7 +803,7 @@ tag @e[tag={ns}.new_enemy_marker] remove {ns}.new_enemy_marker
 tellraw @a[tag={ns}.map_editor] [{MGS_TAG},{{"text":"Enemy placed!","color":"red"}}]
 """)
 
-	# Handle Start Command Element (all modes) ──────────────────
+	# Handle Start Command Element (all modes).
 	edit_cmd_btn = btn(
 		"Edit Command",
 		f'/data modify entity @n[tag={ns}.element.start_command,distance=..10] data.command set value "say Hello from start command"',
@@ -852,7 +851,7 @@ tellraw @a[tag={ns}.map_editor] [{MGS_TAG},{{"text":"Respawn Command placed!","c
 tellraw @a[tag={ns}.map_editor] ["  ",{edit_respawn_cmd_btn}]
 """)
 
-	# Handle ZB Object (zombies compound elements) ───────────────
+	# Handle ZB Object (zombies compound elements).
 	# Detect type, copy defaults, get rotation, summon marker with data
 	zb_elements = {etype: einfo for etype, einfo in ALL_ELEMENTS.items() if einfo.save_type == "zb_object"}
 
@@ -923,7 +922,7 @@ function {ns}:v{version}/maps/editor/refresh_displays
 {chr(10).join(zb_msg_lines)}
 """)
 
-	# Handle DESTROY ─────────────────────────────────────────────
+	# Handle DESTROY.
 	write_versioned_function("maps/editor/handle_destroy", f"""
 # Find the nearest map element marker (within 3 blocks)
 execute at @s unless entity @n[tag={ns}.map_element,distance=..3] run tellraw @a[tag={ns}.map_editor] [{MGS_TAG},{{"text":"No element found within 3 blocks!","color":"red"}}]
@@ -933,7 +932,7 @@ execute at @s as @n[tag={ns}.map_element,distance=..3] run function {ns}:v{versi
 function {ns}:v{version}/maps/editor/refresh_displays
 """)
 
-	# Destroy Element (universal) ────────────────────────────────
+	# Destroy Element (universal).
 	destroy_msg_lines = "\n".join(
 		f'execute if entity @s[tag={ns}.element.{etype}] run tellraw @a[tag={ns}.map_editor] [{MGS_TAG},{{"text":"{einfo.name} removed!","color":"{einfo.color}"}}]'
 		for etype, einfo in ALL_ELEMENTS.items() if einfo.save_type != "config"
@@ -951,7 +950,7 @@ execute if data entity @s data run tellraw @a[tag={ns}.map_editor] ["  ",{{"text
 kill @s
 """)
 
-	# Handle Config (missions utility) ───────────────────────────
+	# Handle Config (missions utility).
 	config_target = f"@p[tag={ns}.map_editor,distance=..6,sort=nearest]"
 	config_lines: list[str] = []
 	config_lines.append("# Initialize default enemy function if missing")
@@ -1083,7 +1082,7 @@ $tellraw {config_target} ["    ",{{"text":"[Edit Nearest {einfo.name}]","color":
 
 	write_versioned_function("maps/editor/init_zb_defaults", "\n".join(init_defaults_lines))
 
-	# Handle ZB Configure (configure nearest element) ────────────
+	# Handle ZB Configure (configure nearest element).
 	write_versioned_function("maps/editor/handle_zb_configure", f"""
 # Find the nearest map element marker (within 10 blocks)
 execute at @s as @n[tag={ns}.map_element,distance=..10] run function {ns}:v{version}/maps/editor/show_element_config
@@ -1100,8 +1099,8 @@ execute at @s unless entity @n[tag={ns}.map_element,distance=..10] run tellraw @
 			f'execute if entity @s[tag={ns}.element.{etype}] run tellraw @a[tag={ns}.map_editor] '
 			f'["  ","{einfo.emoji} ",{{"text":"{einfo.name} Configuration","color":"{einfo.color}","bold":true}}]'
 		)
-		# group_id only shown for spawn-type zombies elements. Doors don't carry a separate
-		# group_id: a door's link_id is its front-room group, and back_group_id is the back room.
+		# group_id only shown for spawn-type zombies elements.
+		# Doors don't carry a separate group_id: a door's link_id is its front-room group, and back_group_id is the back room.
 		if etype in ("zombie_spawn", "player_spawn_zb", "special_spawn"):
 			group_id_edit_btn = btn(
 				"✎",
@@ -1115,15 +1114,13 @@ execute at @s unless entity @n[tag={ns}.map_element,distance=..10] run tellraw @
 			)
 		for field, default_val in einfo.defaults.items():
 			snbt_val = snbt_suggest(default_val)
-			# Edit button suggests the current default value; optional list fields suggest a
-			# usable template instead of empty brackets so they're easy to fill in.
+			# Edit button suggests the current default value; optional list fields suggest a usable template instead of empty brackets so they're easy to fill in.
 			edit_value = snbt_val
 			if field == "activation_box":
 				edit_value = "[0, 0, 0, 5, 3, 5]"
 			# Door fields (except link_id) use propagation to all doors with same link_id.
 			if etype == "door" and field != "link_id":
-				# Two entry points, not eight: a macro cannot re-quote its argument, so the string
-				# fields and the numeric fields need one variant each.
+				# Two entry points, not eight: a macro cannot re-quote its argument, so the string fields and the numeric fields need one variant each.
 				kind: str = "text" if isinstance(default_val, str) else "number"
 				edit_cmd = f'/function {ns}:v{version}/maps/editor/set_door_link_{kind} {{field:"{field}",value:{snbt_val}}}'
 				hover_text = f"Sets {field} on ALL doors with same link_id"
@@ -1156,9 +1153,8 @@ execute at @s unless entity @n[tag={ns}.map_element,distance=..10] run tellraw @
 				f'{{"entity":"@s","nbt":"data.{field}","color":"white"}}," ",{edit_btn}{clear_component}{info_component}]'
 			)
 
-	# Backfill missing config fields on markers summoned from an already-saved map, so a field added
-	# to `defaults` after the map was written shows its default in the config UI instead of a blank
-	# row (e.g. partial_price on doors/perk machines). Absent-only: never touches a set value.
+	# Backfill missing config fields on markers summoned from an already-saved map, so a field added to `defaults` after the map was written shows its default in the config UI instead of a blank row (e.g. partial_price on doors/perk machines).
+	# Absent-only: never touches a set value.
 	backfill_lines: list[str] = []
 	for etype, einfo in zb_elements.items():
 		for field, default_val in einfo.defaults.items():
@@ -1200,8 +1196,8 @@ execute at @s unless entity @n[tag={ns}.map_element,distance=..10] run tellraw @
 			f'{{"entity":"@s","nbt":"data.yaw","color":"white"}}," ",{edit_yaw_btn}]'
 		)
 
-	# For enemy types: show function. The suggestion must stay version-independent like the map
-	# default above, or a map saved today calls a path that a later pack version no longer ships.
+	# For enemy types: show function.
+	# The suggestion must stay version-independent like the map default above, or a map saved today calls a path that a later pack version no longer ships.
 	edit_fn_btn = btn(
 		"✎",
 		f"/data modify entity @n[tag={ns}.element.enemy,distance=..10] data.function set value '{ns}:mob/default/level_1'",
@@ -1567,14 +1563,14 @@ $data modify storage {ns}:temp map_edit.map.$(path) append from storage {ns}:tem
 $data modify storage {ns}:maps $(mode)[$(idx)] set from storage {ns}:temp map_edit.map
 """)
 
-	# Exit Without Saving ────────────────────────────────────────
+	# Exit Without Saving.
 	write_versioned_function("maps/editor/exit", f"""
 execute unless score @s {ns}.mp.map_edit matches 1 run return fail
 function {ns}:v{version}/maps/editor/cleanup
 tellraw @s [{MGS_TAG},{{"text":"Exited map editor (changes discarded).","color":"red"}}]
 """)
 
-	# Cleanup (shared by save_exit and exit) ─────────────────────
+	# Cleanup (shared by save_exit and exit).
 	write_versioned_function("maps/editor/cleanup", f"""
 # Kill all editor markers and model displays
 kill @e[tag={ns}.map_element]
@@ -1588,10 +1584,9 @@ tag @s remove {ns}.map_editor
 clear @s
 """)
 
-	# Model Displays ─────────────────────────────────────────────
-	# Show the real in-game models for wallbuys, perk machines, PAP, mystery boxes, and the
-	# power switch while editing. Displays are rebuilt from the markers every second (and on
-	# placement/destroy), so edits like rotation or item_model changes stay in sync.
+	# Model Displays.
+	# Show the real in-game models for wallbuys, perk machines, PAP, mystery boxes, and the power switch while editing.
+	# Displays are rebuilt from the markers every second (and on placement/destroy), so edits like rotation or item_model changes stay in sync.
 	# Each displays/<etype> function mirrors that system's own setup placement exactly.
 	write_versioned_function("maps/editor/refresh_displays", f"""
 # Rebuild all editor model displays from the current markers
@@ -1605,8 +1600,7 @@ execute as @e[tag={ns}.element.power_switch] at @s run function {ns}:v{version}/
 execute as @e[tag={ns}.element.barrier] at @s run function {ns}:v{version}/maps/editor/displays/barrier
 """)
 
-	## Barrier: block_display of the "enabled" (intact) block, mirroring zombies/barriers/place_at
-	## so a map maker sees the boards exactly where they will stand in game.
+	## Barrier: block_display of the "enabled" (intact) block, mirroring zombies/barriers/place_at so a map maker sees the boards exactly where they will stand in game.
 	write_versioned_function("maps/editor/displays/barrier", f"""
 # @s = barrier marker, at @s
 data modify storage {ns}:temp _ed_bar.yaw set value 0.0f
@@ -1638,8 +1632,7 @@ $execute as @n[tag={ns}._ed_new_disp] run loot replace entity @s contents loot {
 tag @e[tag={ns}._ed_new_disp] remove {ns}._ed_new_disp
 """)
 
-	## Perk machine: mirror zombies/perks/setup_iter display logic (default potion model with
-	## per-perk override; map-defined display_item/item_model take precedence)
+	## Perk machine: mirror zombies/perks/setup_iter display logic (default potion model with per-perk override; map-defined display_item/item_model take precedence)
 	write_versioned_function("maps/editor/displays/perk_machine", f"""
 # @s = perk machine marker, at @s
 data modify storage {ns}:temp _pk_disp.tag set value "{ns}.editor_display"
@@ -1686,8 +1679,8 @@ execute if data entity @s data.yaw run data modify storage {ns}:temp _pap_disp.y
 execute positioned ^ ^ ^-0.49 positioned ~ ~-0.4 ~ run function {ns}:v{version}/zombies/display/summon_machine_display with storage {ns}:temp _pap_disp
 """)
 
-	## Mystery box: two-piece chest (base + lid). The in-game box interaction sits at ^ ^2 ^0.3
-	## from the map position and the presence chest is drawn 0.9 below it (see zombies/mystery_box).
+	## Mystery box: two-piece chest (base + lid).
+	## The in-game box interaction sits at ^ ^2 ^0.3 from the map position and the presence chest is drawn 0.9 below it (see zombies/mystery_box).
 	write_versioned_function("maps/editor/displays/mystery_box_pos", f"""
 # @s = mystery box marker, at @s
 data modify storage {ns}:temp _ed_mb.yaw set value 0.0f
@@ -1711,10 +1704,9 @@ execute align xyz positioned ~.5 ~.5 ~.5 run function {ns}:v{version}/maps/edito
 $summon minecraft:item_display ~ ~ ~ {{Rotation:[$(yaw),0f],Tags:["{ns}.editor_display"],item_display:"fixed",billboard:"fixed",item:{{id:"minecraft:lever",count:1,components:{{"minecraft:item_model":"{ns}:power_switch"}}}},transformation:{{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[1f,1f,1f]}}}}
 """)
 
-	# Editor Tick (universal - shows all element types) ──────────
-	# Editor particles go only to players actually in editor mode. A particle command with no viewer
-	# selector is transmitted to every player on the server, so the markers were costing bandwidth
-	# and client FPS for everyone in the game, not just the map maker.
+	# Editor Tick (universal - shows all element types).
+	# Editor particles go only to players actually in editor mode.
+	# A particle command with no viewer selector is transmitted to every player on the server, so the markers were costing bandwidth and client FPS for everyone in the game, not just the map maker.
 	editor_viewers: str = f"@a[scores={{{ns}.mp.map_edit=1}},distance=..48]"
 
 	particle_lines: list[str] = []
@@ -1787,7 +1779,7 @@ execute as @e[type=minecraft:marker,tag={ns}.map_element{model_excluded}] at @s 
 {chr(10).join(particle_lines)}
 """)
 
-	# Coord Stick ─────────────────────────────────────────────────
+	# Coord Stick.
 	# Detection in player/tick (prepend so it runs before scoreboard reset)
 	write_versioned_function("player/tick", f"""
 # Coord stick: detect right-click on coord stick
@@ -1851,3 +1843,4 @@ kill @s
 	write_versioned_function("utils/coord_stick_print", f"""
 $tellraw @s [{MGS_TAG},{{"text":"positioned ~$(x) ~$(y) ~$(z)","color":"aqua","click_event":{{"action":"copy_to_clipboard","value":"positioned ~$(x) ~$(y) ~$(z)"}},"hover_event":{{"action":"show_text","value":"Click to copy"}}}}]
 """)
+

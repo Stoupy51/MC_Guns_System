@@ -1,5 +1,4 @@
-
-# Gamemode-specific logic for multiplayer: FFA, TDM, Domination, Hardpoint, Search & Destroy
+""" Gamemode-specific logic for multiplayer: FFA, TDM, Domination, Hardpoint, Search & Destroy. """
 from stewbeet import Mem, write_load_file
 
 from .domination import generate_domination

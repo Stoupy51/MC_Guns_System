@@ -1,5 +1,4 @@
-
-# Imports
+""" Item definition setup: registers every item, then derives names, lore and components. """
 import json
 
 import stouputils as stp
@@ -42,21 +41,19 @@ from .config.stats import (
 from .database.camo import main as camo_main
 from .database.items import main as main_items
 
-# Blank lore separator. NOT a bare "": that's a StringTag while the styled stat lines are
-# CompoundTags, and NBT lists are homogeneous — the mix makes NbtOps wrap every line as {"": <line>},
-# which zombies/pap re-parses as a text component and renders blank. A style keeps it a CompoundTag.
 EMPTY_LORE_LINE: JsonDict = {"text": "", "italic": False}
+""" Blank lore separator. NOT a bare "": that is a StringTag while the styled stat lines are
+CompoundTags, and NBT lists are homogeneous, so the mix makes NbtOps wrap every line as
+{"": <line>}, which zombies/pap re-parses and renders blank. A style keeps it a CompoundTag. """
 
-
-# Main function should return a database
 @stp.measure_time(printer=stp.progress, message="Set up item definitions")
 def beet_default(ctx: Context) -> None:
     ns: str = ctx.project_id
 
-    # Casings, magazines, map props, weapons, grenades (registration order matters)
+    # Registration order matters
     main_items()
 
-    # Multiplayer class menu item (right-click to open class selection)
+    # Multiplayer class menu item
     Item(
         id="class_menu",
         base_item="minecraft:warped_fungus_on_a_stick",
@@ -69,7 +66,6 @@ def beet_default(ctx: Context) -> None:
         },
     )
 
-    # Name maps sourced from shared loadout catalogs
     weapon_display_names: dict[str, str] = {
         **{w.item_id: w.display_name for w in PRIMARY_WEAPONS},
         **{w.item_id: w.display_name for w in SECONDARY_WEAPONS},
@@ -78,17 +74,15 @@ def beet_default(ctx: Context) -> None:
         g.item_id: g.display_name for g in GRENADE_TYPES if g.item_id
     }
 
-    # Adjust guns data
     for item in Mem.definitions.keys():
         obj = Item.from_id(item)
 
-        # Get all gun data
         obj.components["custom_data"] = json.loads(json.dumps(obj.components.get("custom_data", {})))
         ns_data: JsonDict = obj.components["custom_data"].get(ns, {})
         if ns_data.get("gun"):
             gun_stats: JsonDict = ns_data.get("stats", {})
 
-            # Resolve catalog display name + optional scope suffix
+            # Resolve the catalog display name and optional scope suffix
             base_name: str = item.replace("_zoom", "")
             scope_suffix: str = ""
             for candidate in ("_1", "_2", "_3", "_4"):
@@ -114,25 +108,23 @@ def beet_default(ctx: Context) -> None:
                     display_name = f"{display_name} ({scope_name})"
                 obj.components["item_name"] = [{"text": display_name, "color": "gold", "italic": False}]
 
-            # Update casing model
             if CASING_MODEL in gun_stats:
                 gun_stats[CASING_MODEL] = f"{ns}:{gun_stats[CASING_MODEL]}"
 
-            # Define normal and zoom models
             normal_model: str = f"{ns}:{item.replace('_zoom', '')}"
             zoom_model: str = normal_model + "_zoom"
             gun_stats[MODELS] = {"normal": normal_model, "zoom": zoom_model}
 
-            # Initialize magazine with full capacity
+            # Start with a full magazine
             gun_stats[REMAINING_BULLETS] = gun_stats[CAPACITY]
 
-            # Mark weapons with scopes: _3 variants get x3 zoom, _4 variants get x4 zoom
+            # _3 variants get x3 zoom, _4 variants x4
             if scope_suffix == "_3":
                 gun_stats["scope_level"] = 3
             elif scope_suffix == "_4":
                 gun_stats["scope_level"] = 4
 
-            # Add consumable and use_effects components for tick-perfect right-click detection
+            # consumable + use_effects give tick-perfect right-click detection
             obj.components["consumable"] = {
                 "consume_seconds": 1_000_000,  # Very high value to avoid actual consumption
                 "animation": "spear",   # Not "none" because of "use" animation still present, but "spear" has minimal animation
@@ -146,7 +138,7 @@ def beet_default(ctx: Context) -> None:
             }
             obj.components["food"] = {"saturation":0,"nutrition":0,"can_always_eat":True}
 
-            # Apply held weapon movement speed penalty using multiply-base operation.
+            # Held-weapon movement penalty
             if SPEED_MULTIPLY_BASE in gun_stats:
                 speed_multiply_base: float = gun_stats[SPEED_MULTIPLY_BASE]
                 attribute_modifiers: list[JsonDict] = obj.components.setdefault("attribute_modifiers", [])
@@ -158,21 +150,18 @@ def beet_default(ctx: Context) -> None:
                     "id": f"{ns}:weapon_weight_speed",
                 })
 
-            # Prepare fire_rate lore
             fire_rate_component: list[TextComponent] = []
             if COOLDOWN in gun_stats:
                 fire_rate: float = 20 / gun_stats[COOLDOWN]
                 fire_rate_unit: str = "shots/s" if fire_rate > 1.0 else "s/shot"
                 fire_rate_component.append([*new_hex("Fire Rate             ➤ ", START_HEX, END_HEX), f"{fire_rate:.1f} ", *new_hex(fire_rate_unit, END_HEX, START_HEX, text_length=10)])
 
-            # Prepare pellet count lore
             pellet_component: list[TextComponent] = []
             if PELLET_COUNT in gun_stats:
                 pellet_component.append([*new_hex("Pellets Per Shot    ➤ ", START_HEX, END_HEX), str(gun_stats[PELLET_COUNT])])
 
-            # Grenades have different lore than regular guns
+            # Grenades get their own lore, and stack
             if GRENADE_TYPE in gun_stats:
-                # Grenades can stack (not limited to 1)
                 obj.components["max_stack_size"] = 16
 
                 grenade_type_display: str = gun_stats[GRENADE_TYPE].replace("_", " ").title()
@@ -191,7 +180,6 @@ def beet_default(ctx: Context) -> None:
                     )
                 obj.components["lore"] = [*lore, EMPTY_LORE_LINE]
             else:
-                # Set custom lore for regular guns
                 obj.components["lore"] = [
                     [*new_hex("Damage Per Bullet  ➤ ", START_HEX, END_HEX),    str(gun_stats[DAMAGE])],
                     [*new_hex("Ammo Remaining      ➤ ", START_HEX, END_HEX),   str(gun_stats[REMAINING_BULLETS]),      {"text":"/","color":f"#{END_HEX}"}, str(gun_stats[CAPACITY])],
@@ -203,23 +191,17 @@ def beet_default(ctx: Context) -> None:
                     EMPTY_LORE_LINE,
                 ]
 
-        # Adjust magazines data
         if ns_data.get("magazine"):
             bullets: int = ns_data["stats"][REMAINING_BULLETS]
-
-            # Get magazine's capacity
             capacity: int = ns_data["stats"]["capacity"]
-
-            # Set magazine lore
             obj.components["lore"] = [
                 [*new_hex("Ammo Remaining ➤ ", START_HEX, END_HEX), str(bullets), {"text": "/", "color": f"#{END_HEX}"}, str(capacity)],
             ]
 
-
-    # For each weapon, make camo variants (e.g. wood, metal, gold, etc.)
+    # Camo variants per weapon
     camo_main()
 
-    # Sort items so that zoom models are at the end
+    # Zoom models sort to the end
     def sorter(k: str) -> int:
         obj = Item.from_id(k)
         ns_data: JsonDict = obj.components.get("custom_data", {}).get(ns, {})
@@ -233,17 +215,16 @@ def beet_default(ctx: Context) -> None:
     sorted_items: list[str] = sorted(Mem.definitions.keys(), key=sorter)
     Mem.definitions = {k: Mem.definitions[k] for k in sorted_items}
 
-    # Prevent some items to get in the give_all chests
+    # Keep these out of the give_all chests
     for item in Mem.definitions.keys():
         obj = Item.from_id(item)
         if item.endswith(("_zoom", "_mag_empty")):
             obj.skip_gives = True
 
-    # Final adjustments, you definitively should keep them!
+    # Final adjustments, keep them
     add_item_model_component(black_list=["item_ids","you_don't_want","in_that","list"])
     add_item_name_and_lore_if_missing()
     add_private_custom_data_for_namespace()		# Add a custom namespace for easy item detection
     add_smithed_ignore_vanilla_behaviours_convention()	# Smithed items convention
     set_manual_components(white_list=["item_name", "lore", "custom_name", "damage", "max_damage"]) # Components to include in the manual when hovering items (here is the default list)
-
 

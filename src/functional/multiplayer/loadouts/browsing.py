@@ -1,6 +1,5 @@
-
+""" Loadout browsing: the marketplace and My Loadouts list builders. """
 # ruff: noqa: E501
-# Imports
 from stewbeet import Mem, write_versioned_function
 
 from ...helpers import styled_text
@@ -28,9 +27,7 @@ def generate_browsing() -> None:
 	ns: str = Mem.ctx.project_id
 	version: str = Mem.ctx.project_version
 
-	## ====================================================================
 	## SHARED HELPERS - player favorites loading & is-fav check
-	## ====================================================================
 
 	## shared/load_player_favorites - Copy current player's favorites list into _cur_favorites
 	write_versioned_function("multiplayer/shared/load_player_favorites", f"""
@@ -66,11 +63,7 @@ data remove storage {ns}:temp _fav_check[0]
 execute unless score #is_fav {ns}.data matches 1 if data storage {ns}:temp _fav_check[0] run function {ns}:v{version}/multiplayer/shared/check_fav_iter
 """)
 
-	## ====================================================================
-	## MY LOADOUTS - Browse and manage player's own custom loadouts
-	## Organized as: [⭐Favorites Only] [📋All] [✚Create] filter row,
-	##                then favorites, then privates, then publics
-	## ====================================================================
+	## MY LOADOUTS - Browse and manage player's own custom loadouts Organized as: [⭐Favorites Only] [📋All] [✚Create] filter row, then favorites, then privates, then publics
 
 	def _my_loadouts_dialog_init() -> str:
 		"""SNBT for the base My Loadouts dialog (no actions yet)."""
@@ -188,8 +181,7 @@ execute if score #pub {ns}.data matches 1 run function {ns}:v{version}/multiplay
 execute if score #pub {ns}.data matches 1 if score #is_fav {ns}.data matches 0 run function {ns}:v{version}/multiplayer/my_loadouts/prep_btn
 """)
 
-	# Build perk display lines for tooltips
-	# \\n in SNBT → stored as \n (backslash+n, 2 chars) → when macro-substituted: \n = newline in text component
+	# Build perk display lines for tooltips \\n in SNBT → stored as \n (backslash+n, 2 chars) → when macro-substituted: \n = newline in text component
 	_perk_disp = (
 		"\n".join(f"data modify storage {ns}:temp _btn_data.perk{i} set value \"\"" for i in range(len(PERKS)))
 		+ "\n"
@@ -277,9 +269,7 @@ execute if score #pub {ns}.data matches 0 run function {ns}:v{version}/multiplay
 	write_versioned_function("multiplayer/my_loadouts/add_btn_private", f"""$data modify storage {ns}:temp dialog.actions append value {{label:["",{{"text":"$(name)",color:"red"}},{{"text":"  \\u25b6","color":"dark_gray"}}],tooltip:{_ml_tooltip_priv},action:{{type:"run_command",command:"/trigger {ns}.player.config set $(manage_trig)"}}}}
 """)
 
-	## ====================================================================
 	## MY LOADOUTS - per-loadout manage submenu (Use / Edit / Visibility / Default / Delete)
-	## ====================================================================
 	def _compute_trig_id(field: str, base: int) -> str:
 		"""Compute base + #loadout_id into _btn_data.<field> (manage submenu)."""
 		return (
@@ -349,11 +339,7 @@ function {ns}:v{version}/multiplayer/show_dialog with storage {ns}:temp
 function {ns}:v{version}/multiplayer/show_dialog with storage {ns}:temp
 """)
 
-	## ====================================================================
-	## MARKETPLACE - Browse all public custom loadouts
-	## Organized as: [📋All] [⭐Favorites] [❤Best Liked] filter row,
-	##                then favorited public loadouts first, then the rest
-	## ====================================================================
+	## MARKETPLACE - Browse all public custom loadouts Organized as: [📋All] [⭐Favorites] [❤Best Liked] filter row, then favorited public loadouts first, then the rest
 
 	def _marketplace_dialog_init() -> str:
 		return (
@@ -571,3 +557,4 @@ function {ns}:v{version}/multiplayer/marketplace/add_btn with storage {ns}:temp 
 $data modify storage {ns}:temp dialog.actions append value {{label:[{{text:"\u2b50 ",color:"gold"}},{{text:"Make Favorite",color:"yellow"}}],tooltip:{{text:"Add to favorites",color:"gold"}},action:{{type:"run_command",command:"/trigger {ns}.player.config set $(fav_trig)"}}}}
 $data modify storage {ns}:temp dialog.actions append value {{label:[{{text:"\u2665 ",color:"red"}},{{text:"Like the Loadout",color:"yellow"}}],tooltip:{{text:"Like this loadout",color:"yellow"}},action:{{type:"run_command",command:"/trigger {ns}.player.config set $(like_trig)"}}}}
 """)
+

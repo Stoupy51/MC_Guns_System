@@ -1,14 +1,11 @@
+""" Shared on-death weapon drop.
 
+A drop is a static item_display lying flat on the ground plus a small interaction hitbox that an in-game player can right-click to pick the gun up for 30 s.
+Only the *capture* step differs per caller (a dying player's selected hotbar slot vs a dying mob's mainhand), so callers fill `{ns}:temp _dropw` (the gun item, no Slot tag) + `#drop_ammo {ns}.data`, then call `shared/drops/drop` positioned where the drop should fall from.
+
+Used by multiplayer/drop_held_weapon (player deaths) and missions/drop_enemy_weapon (mob deaths).
+"""
 # ruff: noqa: E501
-# Shared on-death weapon drop.
-#
-# A drop is a static item_display lying flat on the ground plus a small interaction hitbox that an
-# in-game player can right-click to pick the gun up for 30 s. Only the *capture* step differs per
-# caller (a dying player's selected hotbar slot vs a dying mob's mainhand), so callers fill
-# `{ns}:temp _dropw` (the gun item, no Slot tag) + `#drop_ammo {ns}.data`, then call
-# `shared/drops/drop` positioned where the drop should fall from.
-#
-# Used by multiplayer/drop_held_weapon (player deaths) and missions/drop_enemy_weapon (mob deaths).
 from stewbeet import Mem, write_load_file, write_versioned_function
 
 from ...config.catalogs import PRIMARY_WEAPONS, SECONDARY_WEAPONS
@@ -27,7 +24,6 @@ kill @e[type=minecraft:item_display,tag={ns}.dropped_gun,scores={{{ns}.drop_time
 kill @e[type=minecraft:interaction,tag={ns}.drop_int,scores={{{ns}.drop_timer=..0}}]
 """.strip()
 
-
 def write_shared_weapon_drop_functions() -> None:
 	ns: str = Mem.ctx.project_id
 	version: str = Mem.ctx.project_version
@@ -37,9 +33,9 @@ def write_shared_weapon_drop_functions() -> None:
 scoreboard objectives add {ns}.drop_timer dummy
 """)
 
-	## Drop entry point. Run positioned where the drop falls from (usually `at` the corpse).
-	## Callers set {ns}:temp _dropw = the gun item without its Slot tag, and #drop_ammo {ns}.data to
-	## the live bullet count to bake in (<= 0 means "half a magazine": empty player guns, mob drops).
+	## Drop entry point.
+	## Run positioned where the drop falls from (usually `at` the corpse).
+	## Callers set {ns}:temp _dropw = the gun item without its Slot tag, and #drop_ammo {ns}.data to the live bullet count to bake in (<= 0 means "half a magazine": empty player guns, mob drops).
 	write_versioned_function("shared/drops/drop", f"""
 # Only guns drop: knives, grenades and whatever else a capture step may have grabbed are ignored
 execute unless data storage {ns}:temp _dropw.components."minecraft:custom_data".{ns}.gun run return 0
@@ -75,8 +71,7 @@ execute rotated ~ 90 run function #bs.raycast:run with storage {ns}:input
 execute if score #drop_spawned {ns}.data matches 0 run function {ns}:v{version}/shared/drops/spawn
 """)
 
-	## Spawn the drop entities at the current position (item in {ns}:temp _dropw)
-	## Called as the raycast's on_entry_point (positioned at the ground hit point) or directly as a fallback
+	## Spawn the drop entities at the current position (item in {ns}:temp _dropw) Called as the raycast's on_entry_point (positioned at the ground hit point) or directly as a fallback
 	write_versioned_function("shared/drops/spawn", f"""
 scoreboard players set #drop_spawned {ns}.data 1
 
@@ -122,8 +117,7 @@ execute unless data storage {ns}:temp _dropmag.components."minecraft:custom_data
 $execute if data storage {ns}:temp _dropmag.components."minecraft:custom_data".{ns}.consumable run data modify storage {ns}:temp _dropmag.count set value $(halfc)
 """)
 
-	## Pickup (Bookshelf callback, @s = clicking player)
-	## Requires holding a primary/secondary gun (hotbar.1/2, knife and grenades excluded).
+	## Pickup (Bookshelf callback, @s = clicking player) Requires holding a primary/secondary gun (hotbar.1/2, knife and grenades excluded).
 	## Missions players are allowed too: missions runs on multiplayer classes, same hotbar layout.
 	write_versioned_function("shared/drops/pickup", f"""
 execute unless score @s {ns}.mp.in_game matches 1 unless score @s {ns}.mi.in_game matches 1 run return fail
@@ -134,8 +128,7 @@ execute if data entity @s SelectedItem.components."minecraft:custom_data".{ns}.s
 execute at @e[tag=bs.interaction.target] run function {ns}:v{version}/shared/drops/collect
 """)
 
-	## Collect (@s = picker, positioned at the drop):
-	## 2 guns -> swap the held gun with the drop; 1 gun -> take the drop into the free weapon slot
+	## Collect (@s = picker, positioned at the drop): 2 guns -> swap the held gun with the drop; 1 gun -> take the drop into the free weapon slot
 	write_versioned_function("shared/drops/collect", f"""
 execute unless entity @n[type=minecraft:item_display,tag={ns}.dropped_gun,distance=..3] run return fail
 execute store success score #pick_g0 {ns}.data if items entity @s hotbar.1 *[custom_data~{{{ns}:{{gun:true}}}}]
@@ -201,9 +194,7 @@ kill @n[type=minecraft:item_display,tag={ns}.dropped_gun,distance=..3]
 kill @e[tag=bs.interaction.target]
 """)
 
-	## Give the drop's embedded spare magazine to the picker (@s = picker, positioned at the drop)
-	## The mag goes into the first free MAIN-inventory slot (inventory.0-26 excludes the hotbar):
-	## the old ground-item give let vanilla pickup fill the hotbar first
+	## Give the drop's embedded spare magazine to the picker (@s = picker, positioned at the drop) The mag goes into the first free MAIN-inventory slot (inventory.0-26 excludes the hotbar): the old ground-item give let vanilla pickup fill the hotbar first
 	mag_slot_lines: str = "\n".join(
 		f"execute if score #mag_slot {ns}.data matches -1 unless items entity @s inventory.{n} * run scoreboard players set #mag_slot {ns}.data {n}"
 		for n in range(27)

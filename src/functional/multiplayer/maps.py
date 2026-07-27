@@ -1,5 +1,4 @@
-
-# Imports
+""" Built-in multiplayer maps and map registration. """
 from stewbeet import Mem, write_load_file, write_versioned_function
 
 
@@ -38,7 +37,7 @@ data modify storage {ns}:maps multiplayer append from storage {ns}:input multipl
 execute store result storage {ns}:temp map_load.result_idx int 1 run scoreboard players get #map_load_idx {ns}.data
 """)
 
-	# ── Hijacked map scripts ────────────────────────────────────────────────────
+	# ── Hijacked map scripts.
 	# Logic functions (actual work)
 	write_versioned_function("maps/multiplayer/hijacked/start", "# Hijacked map start script")
 	write_versioned_function("maps/multiplayer/hijacked/tick", "# Hijacked map tick")

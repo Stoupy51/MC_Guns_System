@@ -1,9 +1,11 @@
+""" Missions game system.
 
+Cooperative PvE game mode: all enemies spawn at game start, players kill them all.
+
+Enemy positions and spawn functions are stored per-map via the editor.
+When all enemies are killed, the game ends with a performance score.
+"""
 # ruff: noqa: E501
-# Missions Game System
-# Cooperative PvE game mode: all enemies spawn at game start, players kill them all.
-# Enemy positions and spawn functions are stored per-map via the editor.
-# When all enemies are killed, the game ends with a performance score.
 
 from stewbeet import Mem, write_load_file, write_tag, write_tick_file, write_versioned_function
 
@@ -265,20 +267,18 @@ execute if data storage {ns}:temp _enemy_iter[0] run function {ns}:v{version}/mi
 $execute positioned $(x) $(y) $(z) run function $(function)
 """)
 
-	# Enemy weapon drops ────────────────────────────────────────
-	## Backup death watch. The drop normally fires from raycast/apply_damage the moment the
-	## killing shot lands (@s = victim, gun still in hand); this catches enemies killed by
-	## anything that doesn't route through there, e.g. the boundary kill.
-	## Cost: one entity-NBT read per living enemy per tick, the same deal zombies pays in
-	## zombies/death_watch_tick. There is no cheaper "did anything die" signal to gate it on.
+	# Enemy weapon drops.
+	# Backup death watch.
+	# The drop normally fires from raycast/apply_damage the moment the killing shot lands (@s = victim, gun still in hand); this catches enemies killed by anything that doesn't route through there, e.g. the boundary kill.
+	# Cost: one entity-NBT read per living enemy per tick, the same deal zombies pays in zombies/death_watch_tick.
+	# There is no cheaper "did anything die" signal to gate it on.
 	write_versioned_function("missions/death_watch_tick", f"""
 execute as @e[tag={ns}.mission_enemy,tag=!{ns}.drop_done] at @s run function {ns}:v{version}/missions/check_enemy_dead
 """)
 
-	## Is this enemy dead? Read the health into a score rather than NBT-matching the corpse:
-	## `{Health:0.0f}` and `{DeathTime:1s}` were both tried here and each went 0-for-34 in
-	## playtest, while this `data get entity @s Health` read is exactly what raycast/apply_damage
-	## uses for kill detection. The sentinel keeps a failed read from reusing the last mob's score.
+	## Is this enemy dead?
+	## Read the health into a score rather than NBT-matching the corpse: `{Health:0.0f}` and `{DeathTime:1s}` were both tried here and each went 0-for-34 in playtest, while this `data get entity @s Health` read is exactly what raycast/apply_damage uses for kill detection.
+	## The sentinel keeps a failed read from reusing the last mob's score.
 	write_versioned_function("missions/check_enemy_dead", f"""
 scoreboard players set #mi_enemy_hp {ns}.data 1000
 execute store result score #mi_enemy_hp {ns}.data run data get entity @s Health 100
@@ -286,8 +286,7 @@ execute if score #mi_enemy_hp {ns}.data matches ..0 run function {ns}:v{version}
 """)
 
 	## Capture step for the shared drop (@s = dying enemy, at its position).
-	## Mobs hold their gun in equipment.mainhand instead of an Inventory slot; everything after
-	## the capture (ammo bake, spare magazine, ground spawn, pickup) is core/weapon_drop.py.
+	## Mobs hold their gun in equipment.mainhand instead of an Inventory slot; everything after the capture (ammo bake, spare magazine, ground spawn, pickup) is core/weapon_drop.py.
 	write_versioned_function("missions/drop_enemy_weapon", f"""
 tag @s add {ns}.drop_done
 
@@ -300,11 +299,9 @@ scoreboard players set #drop_ammo {ns}.data 0
 function {ns}:v{version}/shared/drops/drop
 """)
 
-	# Death handling ────────────────────────────────────────────
-	## Simulated death (@s = victim, `{ns}:input with` may hold amount/attacker).
-	## Called from utils/signal_and_damage when a bullet/explosion would be lethal, exactly like
-	## multiplayer: the player is healed instead of dying, so vanilla never respawns them at the
-	## world spawn and their position stays valid for the respawn teleport below.
+	# Death handling.
+	# Simulated death (@s = victim, `{ns}:input with` may hold amount/attacker).
+	# Called from utils/signal_and_damage when a bullet/explosion would be lethal, exactly like multiplayer: the player is healed instead of dying, so vanilla never respawns them at the world spawn and their position stays valid for the respawn teleport below.
 	write_versioned_function("missions/simulate_death", f"""
 # Ignore duplicate deaths (a second bullet landing in the same tick, or an OOB kill on top of one)
 execute if score @s {ns}.mp.spectate_timer matches 1.. run return 0
@@ -324,9 +321,8 @@ scoreboard players set @s {ns}.mi.died_here 1
 function {ns}:v{version}/missions/enter_death_spectate
 """)
 
-	## On Respawn: the vanilla-death fallback (fall damage, lava, drowning, the OOB kill) for
-	## everything the simulated path can't intercept. Vanilla already respawned the player
-	## elsewhere by now, so their position is worthless — these respawn at a mission spawn.
+	## On Respawn: the vanilla-death fallback (fall damage, lava, drowning, the OOB kill) for everything the simulated path can't intercept.
+	## Vanilla already respawned the player elsewhere by now, so their position is worthless — these respawn at a mission spawn.
 	write_versioned_function("missions/on_respawn", f"""
 # Reset death counter
 scoreboard players set @s {ns}.mp.death_count 0
@@ -440,8 +436,8 @@ function {ns}:v{version}/shared/maps/call_script_at_base {{script:"tick"}}
 execute if score #mi_total_enemies {ns}.data matches 1.. if score #alive {ns}.data matches 0 run return run function {ns}:v{version}/missions/victory
 """)
 
-	## Compass - points toward nearest enemy (runs as player at player; caller guarantees
-	## #alive >= 1, so no per-player emptiness rescan is needed)
+	## Compass pointing at the nearest enemy, run as the player at the player.
+	## The caller guarantees #alive >= 1, so no per-player emptiness rescan is needed.
 	write_versioned_function("missions/update_compass", f"""
 # Only players actually carrying the mission compass need the item write
 execute unless items entity @s hotbar.3 minecraft:compass run return fail
@@ -559,7 +555,7 @@ scoreboard players set @s {ns}.mp.spectate_timer 0
 )}
 """)
 
-	# Spawn Point Markers ───────────────────────────────────────
+	# Spawn Point Markers.
 	write_versioned_function("missions/summon_spawns", f"""
 # Mission spawns
 data modify storage {ns}:temp _spawn_iter set from storage {ns}:missions game.map.spawning_points.mission
@@ -591,7 +587,7 @@ execute if data storage {ns}:temp _spawn_iter[0] run function {ns}:v{version}/mi
 
 	write_summon_spawn_at("missions")
 
-	# Smart Spawn Teleportation ─────────────────────────────────
+	# Smart Spawn Teleportation.
 	write_versioned_function("missions/tp_all_to_spawns", f"""
 # Teleport all players to mission spawns (random selection)
 execute as @a[scores={{{ns}.mi.in_game=1}}] at @s run function {ns}:v{version}/missions/pick_spawn
@@ -633,3 +629,4 @@ execute unless data storage {ns}:missions game{{state:"active"}} run tag @s add 
 	write_versioned_function("missions/respawn_tp", f"""
 execute if entity @e[tag={ns}.spawn_point,tag={ns}.spawn_mission] run function {ns}:v{version}/missions/pick_spawn
 """)
+

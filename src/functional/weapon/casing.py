@@ -1,11 +1,7 @@
-
-# Imports
-
+""" Ejected bullet casings: summon, physics and cleanup. """
 from stewbeet import Mem, write_versioned_function
 
 from ...config.stats import CASING_BINORMAL, CASING_MODEL, CASING_NORMAL, CASING_OFFSET, CASING_TANGENT
-
-# Main function
 
 
 def main() -> None:
@@ -21,7 +17,6 @@ function {ns}:v{version}/casing/main
     # Prepare
     item_nbt: str = f"""{{Tags:["{ns}.new","{ns}.casing"],Item:{{id:"minecraft:stone",count:1,components:{{"minecraft:item_model":"air"}}}},PickupDelay:32767,Age:5990}}"""
 
-    # Main function
     write_versioned_function("casing/main", f"""
 # Get if player is zooming or not
 scoreboard players set #is_zoom {ns}.data 0
@@ -248,3 +243,4 @@ scoreboard players operation #pos_new_z {ns}.data += #off_tz {ns}.data
 scoreboard players operation #pos_new_z {ns}.data /= #1000 {ns}.data
 scoreboard players operation #pos_new_z {ns}.data += #pos_initial_z {ns}.data
 """)
+

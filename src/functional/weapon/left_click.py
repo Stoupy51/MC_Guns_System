@@ -1,32 +1,27 @@
+""" Left-click detection.
 
-# Imports
+Minecraft has no "player swung" event, but a zero-reach `piercing_weapon` plus a
+`post_piercing_attack` enchantment turns any left click (even at air) into a function call. Left
+click is the RELOAD key here; fire mode is on the drop key (switch.py). The enchantment and its
+function live here, while the item components that arm it are attached to every gun in
+config/stats.py (see add_item).
+"""
 from beet import Enchantment
 from stewbeet import Mem, write_versioned_function
 
 from ...config.stats import RELOAD_TIME
 
-# Left-click detection.
-#
-# Minecraft has no "player swung" event, but a zero-reach `piercing_weapon` + a `post_piercing_attack`
-# enchantment turns any left click (even a swing at air) into a function call. Left click is a RELOAD
-# key here, alongside hand-swap (player/offhand_swap_check). Fire mode is on the drop key (switch.py).
-#
-# The two halves live in different places: the enchantment + function are here, while the item
-# components that arm it are attached to every gun in config/stats.py (see add_item).
-#
-# Named for the input it detects, not the action it currently performs: the ID is baked into every
-# gun item stack, and changing it later would need another world restart to re-register (enchantments
-# live in WORLD_REGISTRIES, which /reload does not touch).
 ENCHANTMENT_ID: str = "left_click"
-
+""" Named for the input it detects, not the action it performs: the ID is baked into every gun item
+stack, and changing it needs a world restart to re-register (enchantments live in WORLD_REGISTRIES,
+which /reload does not touch). """
 
 def main() -> None:
 	ns: str = Mem.ctx.project_id
 	version: str = Mem.ctx.project_version
 
-	# The enchantment is deliberately NOT versioned: gun item stacks persist in player inventories
-	# and in the world across pack updates, so the ID they embed has to stay valid. Only the function
-	# it points at is versioned, and that is rewritten on every build.
+	# Deliberately NOT versioned: gun stacks persist across pack updates, so the embedded ID must stay valid.
+	# Only the function it points at is versioned, and that is rewritten every build.
 	Mem.ctx.data[ns].enchantments[ENCHANTMENT_ID] = Enchantment({
 		"description": "",
 		"max_level": 1,
@@ -43,7 +38,7 @@ def main() -> None:
 		},
 	})
 
-	# Runs as the attacking player.
+	# Runs as the attacking player
 	write_versioned_function("weapon/left_click", f"""
 # The enchantment only sits on our guns, but a player can left-click mid-swap: re-check the mainhand
 # so a click landing on the frame the weapon changes can't retarget whatever is held now.
@@ -57,3 +52,4 @@ execute unless data storage {ns}:gun all.stats.{RELOAD_TIME} run return 0
 # Safe to spam: ammo/reload returns fail while reloading or already full
 function {ns}:v{version}/ammo/reload
 """)
+

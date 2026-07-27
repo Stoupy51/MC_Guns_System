@@ -1,6 +1,5 @@
-
+""" Multiplayer game lifecycle: start, stop, join, respawn and scoring. """
 # ruff: noqa: E501
-# Imports
 from stewbeet import Mem, write_load_file, write_tag, write_tick_file, write_versioned_function
 
 from ...config.stats import REMAINING_BULLETS
@@ -21,7 +20,6 @@ from ..helpers import (
 
 # All multiplayer gamemodes (single source of truth for dispatch blocks)
 GAMEMODES: list[str] = ["ffa", "tdm", "dom", "hp", "snd"]
-
 
 def generate_game() -> None:
 	""" Generates the multiplayer game lifecycle (team-based modes, spawns, sidebars). """
@@ -298,9 +296,8 @@ execute unless data storage {ns}:multiplayer game{{gamemode:"ffa"}} unless score
 	setup_extra_lines="attribute @s minecraft:waypoint_receive_range base set 0.0",
 ))
 
-	# Simulated Death ───────────────────────────────────────────
-	# Called when lethal damage is intercepted (bullet/projectile) or for OOB kills
-	# @s = victim player; storage mgs:input with.attacker may or may not exist
+	# Simulated Death.
+	# Called when lethal damage is intercepted (bullet/projectile) or for OOB kills @s = victim player; storage mgs:input with.attacker may or may not exist
 
 	write_versioned_function("multiplayer/simulate_death", f"""
 # Ignore duplicate deaths (second bullet / OOB / vanilla death landing in the same tick as another death)
@@ -324,8 +321,7 @@ execute unless data storage {ns}:input with.attacker run function {ns}:v{version
 function {ns}:v{version}/multiplayer/enter_death_spectate
 """)
 
-	## Shared death-spectate flow (@s = dying player, {ns}.temp_killer may be tagged by the caller)
-	## Used by simulate_death (bullet/OOB deaths) and on_respawn (vanilla deaths)
+	## Shared death-spectate flow (@s = dying player, {ns}.temp_killer may be tagged by the caller) Used by simulate_death (bullet/OOB deaths) and on_respawn (vanilla deaths)
 	write_versioned_function("multiplayer/enter_death_spectate", f"""
 # Drop the held gun on the ground (pickable for 30s) before anything else, while still holding it
 execute at @s run function {ns}:v{version}/multiplayer/drop_held_weapon
@@ -348,8 +344,7 @@ title @s subtitle [{{"text":"Respawning in 3 seconds...","color":"gray"}}]
 execute at @s run playsound minecraft:entity.player.hurt ambient @s
 """)
 
-	## Fire kill signal as attacker + death message (macro function)
-	## @s = victim, $(attacker) = attacker selector from storage
+	## Fire kill signal as attacker + death message (macro function) @s = victim, $(attacker) = attacker selector from storage
 	write_versioned_function("multiplayer/simulate_death_fire_kill", f"""
 $tag $(attacker) add {ns}.temp_killer
 
@@ -364,10 +359,8 @@ function {ns}:v{version}/multiplayer/random_kill_message
 tag @s remove {ns}.temp_victim
 """)
 
-	## ── On-death weapon drop ────────────────────────────────────────────────
-	## Captures the gun in the player's selected weapon slot (hotbar.1/2); the drop itself
-	## (spawn, 30s pickup window, spare magazine) lives in core/weapon_drop.py, shared with
-	## the mission-enemy drop.
+	## ── On-death weapon drop.
+	## Captures the gun in the player's selected weapon slot (hotbar.1/2); the drop itself (spawn, 30s pickup window, spare magazine) lives in core/weapon_drop.py, shared with the mission-enemy drop.
 	write_versioned_function("multiplayer/drop_held_weapon", f"""
 # Only drop a gun held in a weapon slot (hotbar.1 or hotbar.2; hotbar.0 is the knife)
 execute store result score #drop_sel {ns}.data run data get entity @s SelectedItemSlot
@@ -491,9 +484,9 @@ function {ns}:v{version}/shared/maps/call_script_at_base {{script:"tick"}}
 execute as @a[scores={{{ns}.mp.in_game=1}},gamemode=!spectator] at @s run function {ns}:v{version}/multiplayer/perks/tracker_footprint
 """)
 
-	## perks/tracker_footprint - @s = the tracked player (at their position);
-	## the footprint is forced to enemy Tracker holders only, via a single team-filtered selector.
-	## (Team modes: opposite team. FFA/team 0: every other Tracker holder, excluded via distance.)
+	## perks/tracker_footprint - @s = the tracked player (at their position); the footprint is forced to enemy Tracker holders only, via a single team-filtered selector.
+	## (Team modes: opposite team.
+	## FFA/team 0: every other Tracker holder, excluded via distance.)
 	write_versioned_function("multiplayer/perks/tracker_footprint", f"""
 execute if score @s {ns}.mp.team matches 1 run particle minecraft:dust{{color:[0.95,0.85,0.2],scale:0.8}} ~ ~0.1 ~ 0.15 0.02 0.15 0 3 force @a[scores={{{ns}.special.tracker=1..,{ns}.mp.team=2}}]
 execute if score @s {ns}.mp.team matches 2 run particle minecraft:dust{{color:[0.95,0.85,0.2],scale:0.8}} ~ ~0.1 ~ 0.15 0.02 0.15 0 3 force @a[scores={{{ns}.special.tracker=1..,{ns}.mp.team=1}}]
@@ -567,8 +560,9 @@ execute if score @s {ns}.mp.bz < #bound_z1 {ns}.data run return run function {ns
 execute if score @s {ns}.mp.bz > #bound_z2 {ns}.data run return run function {ns}:v{version}/multiplayer/bounds_kill
 """)
 
-	## Per-player boundary + OOB enforcement (one scan in game_tick dispatches this). @s = a playing
-	## player. Merges the former two separate game_tick passes over the same selector.
+	## Per-player boundary + OOB enforcement (one scan in game_tick dispatches this).
+	## @s = a playing player.
+	## Merges the former two separate game_tick passes over the same selector.
 	write_versioned_function("multiplayer/enforce_bounds", f"""
 # Coordinate bounds (only when the map defines a boundary box). May eliminate @s -> spectator.
 execute unless score @s {ns}.mp.bphase matches 0..3 run function {ns}:v{version}/multiplayer/assign_bphase
@@ -581,8 +575,7 @@ execute if entity @s[gamemode=!spectator] if entity @e[tag={ns}.oob_point,distan
 """)
 
 	## Give @s the next boundary-check phase, round-robin so the 4 phases stay evenly filled.
-	## Runs once per player (the score persists), so an uneven split can only come from players
-	## leaving mid-game, which at worst unbalances a handful of position reads per tick.
+	## Runs once per player (the score persists), so an uneven split can only come from players leaving mid-game, which at worst unbalances a handful of position reads per tick.
 	write_versioned_function("multiplayer/assign_bphase", f"""
 scoreboard players operation @s {ns}.mp.bphase = #bphase_next {ns}.data
 scoreboard players add #bphase_next {ns}.data 1
@@ -596,7 +589,7 @@ data modify storage {ns}:input with set value {{}}
 function {ns}:v{version}/multiplayer/simulate_death
 """)
 
-	# Spawn Point Markers ───────────────────────────────────────
+	# Spawn Point Markers.
 
 	## Summon spawn markers from map data (called at game start)
 	write_versioned_function("multiplayer/summon_spawns", f"""
@@ -645,7 +638,7 @@ execute if data storage {ns}:temp _spawn_iter[0] run function {ns}:v{version}/mu
 
 	write_summon_spawn_at("multiplayer")
 
-	# Smart Spawn Selection ─────────────────────────────────────
+	# Smart Spawn Selection.
 
 	## TP all players to spawn points at game start
 	write_versioned_function("multiplayer/tp_all_to_spawns", f"""
@@ -713,8 +706,7 @@ tag @a[tag={ns}.spawn_enemy] remove {ns}.spawn_enemy
 """)
 
 	## Drop a contested candidate marker and keep #mp_cand_count in sync (@s = the spawn marker).
-	## The tag is always present here (we only iterate spawn_candidate markers), so the decrement
-	## is exactly 1:1 with a removal — letting pick_spawn's fallback test a score, not scan @e.
+	## The tag is always present here (we only iterate spawn_candidate markers), so the decrement is exactly 1:1 with a removal — letting pick_spawn's fallback test a score, not scan @e.
 	write_versioned_function("multiplayer/uncontest_spawn", f"""
 tag @s remove {ns}.spawn_candidate
 scoreboard players remove #mp_cand_count {ns}.data 1
@@ -787,7 +779,7 @@ execute if score @s {ns}.mp.team matches 1 run return run function {ns}:v{versio
 execute if score @s {ns}.mp.team matches 2 run return run function {ns}:v{version}/multiplayer/pick_spawn {{type:"blue"}}
 """)
 
-	# Sidebar HUD ───────────────────────────────────────────────
+	# Sidebar HUD.
 
 	# Build sidebar content components for reuse
 	sb_timer = (
@@ -809,9 +801,7 @@ $function #bs.sidebar:create {{objective:"{ns}.sidebar",display_name:{{text:"$(t
 scoreboard objectives setdisplay sidebar {ns}.sidebar
 """)
 
-	# FFA sidebar refresh: ranks players by kills, builds sidebar with top 10
-	# Doubles as the sidebar's creation path — start calls it directly for the ffa gamemode
-	# Called every second from timer_display and on kills
+	# FFA sidebar refresh: ranks players by kills, builds sidebar with top 10 Doubles as the sidebar's creation path — start calls it directly for the ffa gamemode Called every second from timer_display and on kills
 	ffa_rank_code = f"""
 # Initialize sidebar header in storage
 data modify storage {ns}:temp ffa_sb set value [{sb_timer},{sb_spacer},{sb_limit},{sb_spacer}]
@@ -847,17 +837,13 @@ $function #bs.sidebar:create {{objective:"{ns}.sidebar",display_name:{{text:"Fre
 scoreboard objectives setdisplay sidebar {ns}.sidebar
 """)
 
-	## Domination sidebar — shows team scores + point ownership per zone
-	# Point status display helper (0=⚪, 1=🔴, 2=🔵) — updated each tick via refresh
-	# We build DOM point lines that reference #dom_owner_X scores
-	# Since sidebar can't do conditionals, we use a helper function to rebuild sidebar each score_tick
+	## Domination sidebar — shows team scores + point ownership per zone Point status display helper (0=⚪, 1=🔴, 2=🔵) — updated each tick via refresh We build DOM point lines that reference #dom_owner_X scores Since sidebar can't do conditionals, we use a helper function to rebuild sidebar each score_tick
 	write_versioned_function("multiplayer/create_sidebar_dom", f"""
 function {ns}:v{version}/multiplayer/refresh_sidebar_dom
 scoreboard objectives setdisplay sidebar {ns}.sidebar
 """)
 
-	# DOM sidebar refresh: rebuilds the sidebar content with current point ownership
-	# Called every score_tick (every 5 seconds) and on point captures
+	# DOM sidebar refresh: rebuilds the sidebar content with current point ownership Called every score_tick (every 5 seconds) and on point captures
 	write_versioned_function("multiplayer/refresh_sidebar_dom", f"""
 # Build point status strings based on ownership scores
 # Zone A
@@ -892,15 +878,13 @@ function #bs.sidebar:create {{objective:"{ns}.sidebar",display_name:{{text:"Hard
 scoreboard objectives setdisplay sidebar {ns}.sidebar
 """)
 
-	# Shooting Block During Prep
-	## Prepend to right_click: block shooting during prep phase
+	# Shooting Block During Prep Prepend to right_click: block shooting during prep phase
 	write_versioned_function("player/right_click", f"""
 # Block shooting during multiplayer prep phase
 execute if score @s {ns}.mp.in_game matches 1 if data storage {ns}:multiplayer game{{state:"preparing"}} run return run scoreboard players set @s {ns}.pending_clicks 0
 """, prepend=True)
 
-	# Prep Phase
-	## Prep tick: during 10s warmup, detect class changes and apply immediately
+	# Prep Phase Prep tick: during 10s warmup, detect class changes and apply immediately
 	write_versioned_function("multiplayer/prep_tick", f"""
 # Check for class changes and apply immediately
 execute as @a[scores={{{ns}.mp.in_game=1}}] unless score @s {ns}.mp.class = @s {ns}.mp.prev_class unless score @s {ns}.mp.class matches 0 at @s run function {ns}:v{version}/multiplayer/apply_class
@@ -917,3 +901,4 @@ function {ns}:v{version}/shared/maps/call_script_at_base {{script:"start"}}
 # Announce
 tellraw @a ["","⚔ ",[{{"text":"","color":"green","bold":true}},{{"text":"GO! GO! GO!"}}]]
 """)
+

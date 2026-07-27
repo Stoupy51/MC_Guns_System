@@ -1,5 +1,4 @@
-
-# Imports
+""" Beet plugin entry point, run just before the build is finalized (zip, headers, lang, ...). """
 from stewbeet import Context, official_lib_used
 
 from .functional.core import main as main_core
@@ -15,7 +14,6 @@ from .functional.weapon import main as main_weapon
 from .functional.zombies import main as main_zombies
 
 
-# Main function is run just before making finalyzing the build process (zip, headers, lang, ...)
 def beet_default(ctx: Context) -> None:
     ns: str = ctx.project_id
 
@@ -25,26 +23,14 @@ def beet_default(ctx: Context) -> None:
     main_player_config()
     main_stamina()
     main_mob_ai()
-
-    # Shared core functions (bounds, teleport, maps, commands, spawning)
-    main_core()
-
-    # Zombies functional initialization
+    main_core()            # Bounds, teleport, maps, commands, spawning
     main_zombies()
-
-    # Multiplayer functional initialization
     main_multiplayer()
-
-    # Missions functional initialization
     main_missions()
-
-    # Map editor (generic for multiplayer, zombies, missions)
-    generate_map_editor()
-
-    # Bookshelf dump module
+    generate_map_editor()  # Generic across all three modes
     official_lib_used("bs.dump")
 
-    # Generate 3D renders (excluding _zoom variants)
+    # 3D renders, excluding _zoom variants
     from stewbeet import Item, Mem
     from stewbeet.plugins.ingame_manual.config import ManualConfig  # pyright: ignore[reportMissingTypeStubs]
     from stewbeet.plugins.ingame_manual.iso_renders import generate_all_iso_renders  # pyright: ignore[reportMissingTypeStubs]
@@ -58,8 +44,7 @@ def beet_default(ctx: Context) -> None:
     iso_renders_cache: str = f"{Mem.ctx.directory}/iso_renders"
     generate_all_iso_renders(config, override_cache_path=f"{iso_renders_cache}/items", ignore_vanilla=True, ignore_painting=True)
 
-    # Generate all_items.png showcase grid, excluding _zoom/_empty variants (which have no iso render, see above).
-    # Reads renders from "{iso_renders_cache}/items/{project_id}" and saves to the output directory.
+    # all_items.png showcase grid; _zoom/_empty have no iso render so they are excluded
     from PIL import Image
     from stewbeet.plugins.ingame_manual.paths import template_path  # pyright: ignore[reportMissingTypeStubs]
     from stewbeet.plugins.ingame_manual.showcase import generate_showcase_images  # pyright: ignore[reportMissingTypeStubs]

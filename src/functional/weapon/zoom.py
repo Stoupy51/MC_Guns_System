@@ -1,6 +1,5 @@
-
+""" Aim-down-sights zoom and the crosshair spread markers driven by shaders.py. """
 # ruff: noqa: E501
-# Imports
 from stewbeet import Mem, write_versioned_function
 
 from ...config.stats import IS_ZOOM, MODELS
@@ -53,9 +52,7 @@ execute if score @s {ns}.zoom matches 1 unless score @s {ns}.switch_cooldown > #
 execute unless score @s {ns}.zoom matches 1 run function {ns}:v{version}/zoom/crosshair_spread
 """)
 
-    # Crosshair spread: spawn a marker particle encoding the player's movement state
-    # Uses B channel > 0 (with G=0) to distinguish from flash/zoom markers
-    # Priority: jump > sprint > walk > sneak > base (matching accuracy system)
+    # Crosshair spread: spawn a marker particle encoding the player's movement state Uses B channel > 0 (with G=0) to distinguish from flash/zoom markers Priority: jump > sprint > walk > sneak > base (matching accuracy system)
     write_versioned_function("zoom/crosshair_spread", f"""
 # If sneaking in the air, treat as walking (not jump spread)
 execute unless predicate {ns}:v{version}/is_on_ground if predicate {ns}:v{version}/is_sneaking at @s anchored eyes run return run particle minecraft:dust{{color:[0.02,0.0,0.12],scale:0.01}} ^ ^ ^0.1 0 0 0 0 1 force @s
@@ -128,11 +125,9 @@ function #{ns}:signals/on_zoom
 """)
 
     # Clear the player-side zoom state without touching the held item.
-    # Called on weapon switch: zoom/main only unzooms when the HELD gun has the zoom stat, so
-    # switching from a zoomed gun to another gun would otherwise leave the player stuck with
-    # zoom=1 and infinite slowness. The old item's zoomed model/stats self-heal via zoom/remove
-    # the next time it is held while not sneaking. (mgs:gun storage already holds the NEW
-    # weapon here, so zoom/remove itself must not be used — it would corrupt the new weapon.)
+    # Called on weapon switch: zoom/main only unzooms when the HELD gun has the zoom stat, so switching from a zoomed gun to another gun would otherwise leave the player stuck with zoom=1 and infinite slowness.
+    # The old item's zoomed model/stats self-heal via zoom/remove the next time it is held while not sneaking.
+    # (mgs:gun storage already holds the NEW weapon here, so zoom/remove itself must not be used — it would corrupt the new weapon.)
     write_versioned_function("zoom/clear_state", f"""
 playsound {ns}:common/lean_out player @s
 scoreboard players reset @s {ns}.zoom
@@ -148,3 +143,4 @@ playsound {ns}:common/lean_out player @s
 scoreboard players reset @s {ns}.zoom
 effect clear @s slowness
 """)
+

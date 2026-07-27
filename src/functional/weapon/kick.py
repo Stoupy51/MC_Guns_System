@@ -1,5 +1,4 @@
-
-# Imports
+""" Weapon recoil: rotates the player's view by the weapon's kick value. """
 from stewbeet import Mem, write_versioned_function
 
 from ...config.stats import KICK
@@ -62,3 +61,4 @@ function {ns}:v{version}/kicks/apply
                     sp: float = round(pitch * factor, 4)
                     content += f"\nexecute if score #has_vehicle {ns}.data matches {score} if score #random {ns}.data matches {j+1} run {command} ~{sy} ~{sp}"
             write_versioned_function(f"kicks/type_{i}{suffix}", content)
+

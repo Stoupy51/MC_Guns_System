@@ -1,5 +1,4 @@
-
-# Imports
+""" Rebuilds item lore from a weapon's stats, including Pack-a-Punch values. """
 import json
 
 from stewbeet import Mem, write_load_file, write_versioned_function
@@ -54,8 +53,7 @@ def main() -> None:
 	)
 	write_load_file(f"\n## Lore label templates for utils/update_all_lore\n{template_commands}")
 
-	# Main entry point: utils/update_all_lore {slot:"weapon.mainhand"}
-	# Rebuilds ALL lore lines from the weapon's current stats in custom_data
+	# Main entry point: utils/update_all_lore {slot:"weapon.mainhand"} Rebuilds ALL lore lines from the weapon's current stats in custom_data
 	write_versioned_function("utils/update_all_lore", f"""
 # Rebuild all lore lines for the weapon in the given slot from its current stats
 # Usage: function {ns}:v{version}/utils/update_all_lore {{slot:"weapon.mainhand"}}
@@ -316,3 +314,4 @@ $item replace entity @p[tag={ns}.update_lore] $(slot) from entity @s contents
 # Clean up
 kill @s
 """)
+

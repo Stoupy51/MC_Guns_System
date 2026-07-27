@@ -1,5 +1,4 @@
-
-# Shared command builders for zombies modules.
+""" Shared command builders for zombies modules. """
 from stewbeet import write_versioned_function
 
 from ...config.catalogs import PRIMARY_WEAPONS, SECONDARY_WEAPONS
@@ -12,12 +11,10 @@ def game_active_guard_cmd(ns: str) -> str:
 	""" Return the standard guard command for active zombies games. """
 	return game_active_guard(ns, "zombies")
 
-
 def write_deny_functions() -> None:
 	""" The two handlers every "you can't do that" path in zombies falls back to. """
-	# The message rides in as a whole text component so the English stays a literal here for
-	# auto.lang_file. The argument is `msg`, not `text`, or lang_file would translate the outer
-	# quoted value instead of the component inside it.
+	# The message rides in as a whole text component so the English stays a literal here for auto.lang_file.
+	# The argument is `msg`, not `text`, or lang_file would translate the outer quoted value instead of the component inside it.
 	write_versioned_function("zombies/deny/message", f"""
 $tellraw @s [{MGS_TAG},$(msg)]
 {zb_sound('deny')}
@@ -29,17 +26,14 @@ $tellraw @s [{MGS_TAG},{{"text":"You don't have enough points (","color":"red"}}
 {zb_sound('deny')}
 """)
 
-
 def deny_cmd(ns: str, version: str, component: str) -> str:
 	""" One command showing `component` in chat with the deny sound, so it survives `return run`. """
 	return f"function {ns}:v{version}/zombies/deny/message {{msg:'{component}'}}"
-
 
 def deny_not_enough_points_cmd(ns: str, version: str, price_score: str, objective: str = "") -> str:
 	""" One command for the shared not-enough-points message, naming the score that holds the price. """
 	obj: str = objective or f"{ns}.data"
 	return f'function {ns}:v{version}/zombies/deny/not_enough_points {{score:"{price_score}",obj:"{obj}"}}'
-
 
 def build_weapon_magazine_data() -> dict[str, tuple[str, int, bool]]:
 	""" Build a mapping of weapon_id -> (magazine_id, magazine_count, is_consumable). """
@@ -57,7 +51,6 @@ def build_weapon_magazine_data() -> dict[str, tuple[str, int, bool]]:
 
 	return weapon_mag_data
 
-
 def get_weapon_magazine_info(weapon_id: str, weapon_mag_data: dict[str, tuple[str, int, bool]] | None = None) -> tuple[str, int, bool]:
 	""" Lookup magazine info for a specific weapon.
 
@@ -73,7 +66,6 @@ def get_weapon_magazine_info(weapon_id: str, weapon_mag_data: dict[str, tuple[st
 	if weapon_id not in weapon_mag_data:
 		raise ValueError(f"Unknown weapon_id: {weapon_id}")
 	return weapon_mag_data[weapon_id]
-
 
 def give_magazine_for_weapon_cmd(
 	ns: str, version: str, inventory_slot: str, weapon_id: str,
@@ -106,7 +98,6 @@ item modify entity @s {inventory_slot} {ns}:v{version}/set_consumable_count"""
 	else:
 		# Regular magazine: loot replace directly (already has bullets set in item definition)
 		return f"loot replace entity @s {inventory_slot} loot {ns}:i/{mag_id}"
-
 
 def give_magazine_pool_entries(ns: str, version: str, weapon_mag_data: dict[str, tuple[str, int, bool]] | None = None) -> str:
 	"""Generate pool entries for mystery box / dynamic weapon selection with magazine metadata.

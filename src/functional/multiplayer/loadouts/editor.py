@@ -1,16 +1,13 @@
+""" Custom Loadout Editor — CoD-style hub.
 
+The editor opens on a HUB page listing every category (guns, magazines, grenades, perks) with the current selection on each button and the Pick-10 points at the top.
+Clicking a row opens a short submenu (e.g.
+Primary: gun → scope → camo) that returns to the hub when done.
+Rows whose prerequisite is missing (magazines without the gun, saving without a primary) are grayed out as "Unavailable".
+
+Points are never deducted/refunded incrementally: editor/recompute_points derives the cost from the current state, and every mutation goes through a snapshot+commit check that reverts and denies when the budget would be exceeded.
+"""
 # ruff: noqa: E501
-# Custom Loadout Editor — CoD-style hub.
-#
-# The editor opens on a HUB page listing every category (guns, magazines, grenades, perks)
-# with the current selection on each button and the Pick-10 points at the top.
-# Clicking a row opens a short submenu (e.g. Primary: gun → scope → camo) that returns
-# to the hub when done. Rows whose prerequisite is missing (magazines without the gun,
-# saving without a primary) are grayed out as "Unavailable".
-#
-# Points are never deducted/refunded incrementally: editor/recompute_points derives the
-# cost from the current state, and every mutation goes through a snapshot+commit check
-# that reverts and denies when the budget would be exceeded.
 
 from stewbeet import Mem, write_load_file, write_versioned_function
 
@@ -76,17 +73,13 @@ def _empty_state() -> str:
 		'perks:[]}'
 	)
 
-
 def generate_editor() -> None:
 	ns: str = Mem.ctx.project_id
 	version: str = Mem.ctx.project_version
 	fn = f"{ns}:v{version}/multiplayer/editor"
 
-	## ====================================================================
-	## Per-player editor state isolation
-	## Editor state is stored in {ns}:editor.{pid} (one per player).
+	## ==================================================================== Per-player editor state isolation Editor state is stored in {ns}:editor.{pid} (one per player).
 	## At dispatch start, we load to {ns}:temp editor; at end, save back.
-	## ====================================================================
 	write_versioned_function("multiplayer/editor/load_state", f"""
 # Initialize this player's slot first: if the copy failed (first interaction), {ns}:temp editor
 # would otherwise keep another player's in-progress state
@@ -97,9 +90,7 @@ $data modify storage {ns}:temp editor set from storage {ns}:editor "$(_pid)"
 $data modify storage {ns}:editor "$(_pid)" set from storage {ns}:temp editor
 """)
 
-	## ====================================================================
 	## State init, budget recompute, and the snapshot/commit pattern
-	## ====================================================================
 	write_versioned_function("multiplayer/editor/init_state", f"""
 data modify storage {ns}:temp editor set value {_empty_state()}
 """)
@@ -120,8 +111,7 @@ data modify storage {ns}:temp editor set value {_empty_state()}
 		recompute_lines.append(
 			f'execute unless data storage {ns}:temp editor{{{field}:""}} run scoreboard players add #lc_cost {ns}.data {COST_GRENADE}'
 		)
-	# Perks: data get on a LIST cannot take a scale (throws "not a number", silently costing 0 points
-	# and letting players overspend the budget) — get the count, then multiply by the cost constant.
+	# Perks: data get on a LIST cannot take a scale (throws "not a number", silently costing 0 points and letting players overspend the budget) — get the count, then multiply by the cost constant.
 	recompute_lines += [
 		f"execute store result score #lc_t {ns}.data run data get storage {ns}:temp editor.perks",
 		f"scoreboard players operation #lc_t {ns}.data *= #{COST_PERK} {ns}.data",
@@ -133,8 +123,7 @@ data modify storage {ns}:temp editor set value {_empty_state()}
 	]
 	write_versioned_function("multiplayer/editor/recompute_points", "\n".join(recompute_lines))
 
-	## Commit check: callers snapshot {ns}:temp editor into {ns}:temp _ed_bak before mutating,
-	## then `execute store success score #ed_ok ... run function .../commit_check`.
+	## Commit check: callers snapshot {ns}:temp editor into {ns}:temp _ed_bak before mutating, then `execute store success score #ed_ok ... run function .../commit_check`.
 	## On overflow the mutation is reverted and the player is notified.
 	write_versioned_function("multiplayer/editor/commit_check", f"""
 function {fn}/recompute_points
@@ -147,9 +136,7 @@ tellraw @s [{MGS_TAG},{{"text":"Not enough points for that!","color":"red"}}]
 return fail
 """)
 
-	## ====================================================================
-	## HUB — the main loadout page (CoD-style)
-	## ====================================================================
+	## ==================================================================== HUB — the main loadout page (CoD-style).
 
 	## editor/start - Create a new loadout: fresh state, then open the hub
 	write_versioned_function("multiplayer/editor/start", f"""
@@ -279,13 +266,9 @@ execute unless data storage {ns}:temp editor{{primary:""}} run data modify stora
 function {ns}:v{version}/multiplayer/show_dialog with storage {ns}:temp
 """)
 
-	## ====================================================================
-	## Shared dialog builder (static action lists, points in body, Back → hub)
-	## ====================================================================
-	# One shared skeleton for all thirteen "points line + static action list" submenus. Title and
-	# hint ride in as whole text components inside single-quoted SNBT so they substitute raw and
-	# auto.lang_file still lifts their English out. The action list stays a literal in each caller:
-	# its tooltips contain \n and \uXXXX escapes that a nested SNBT string would eat.
+	## Shared dialog builder (static action lists, points in body, Back → hub) One shared skeleton for all thirteen "points line + static action list" submenus.
+	## Title and hint ride in as whole text components inside single-quoted SNBT so they substitute raw and auto.lang_file still lifts their English out.
+	## The action list stays a literal in each caller: its tooltips contain \n and \uXXXX escapes that a nested SNBT string would eat.
 	write_versioned_function("multiplayer/editor/show_static_dialog", f"""$data modify storage {ns}:temp dialog set value {{\
 type:"minecraft:multi_action",\
 title:$(title),\
@@ -313,9 +296,7 @@ data modify storage {ns}:temp dialog.actions set value [{actions_snbt}]
 function {ns}:v{version}/multiplayer/show_dialog with storage {ns}:temp
 """)
 
-	## ====================================================================
 	## PRIMARY / SECONDARY weapon submenus: gun (or remove) → scope → camo
-	## ====================================================================
 
 	# Gun action lists (+ Remove button)
 	primary_actions: list[str] = []
@@ -372,8 +353,7 @@ execute if data storage {ns}:temp editor{{perks:["overkill"]}} run return run fu
 function {fn}/show_secondary_pistol_dialog
 """)
 
-	# Gun pick handlers: snapshot → merge gun fields (resets scope/camo, mags to 1) → commit →
-	# on success continue to scope (if the gun has variants) or camo; on failure back to hub.
+	# Gun pick handlers: snapshot → merge gun fields (resets scope/camo, mags to 1) → commit → on success continue to scope (if the gun has variants) or camo; on failure back to hub.
 	scope_set_func: dict[tuple[str, ...], str] = {
 		("", "_1", "_2", "_3", "_4"): "show_scope_primary_full",
 		("", "_1", "_2", "_3"):       "show_scope_primary_no4",
@@ -599,9 +579,7 @@ function {fn}/hub
 function {fn}/hub
 """)
 
-	## ====================================================================
 	## MAGAZINE submenus (guarded: their gun must be selected)
-	## ====================================================================
 	mag_actions_primary: list[str] = []
 	for count in range(1, 6):
 		trig = TRIG_PRIMARY_MAGS_BASE + count
@@ -647,9 +625,7 @@ function {fn}/hub
 	write_versioned_function("multiplayer/editor/pick_primary_mags", gen_pick_mags("primary", TRIG_PRIMARY_MAGS_BASE, range(1, 6), guard_primary.strip()))
 	write_versioned_function("multiplayer/editor/pick_secondary_mags", gen_pick_mags("secondary", TRIG_SECONDARY_MAGS_BASE, range(0, 6), guard_secondary.strip()))
 
-	## ====================================================================
-	## GRENADE submenus: grenade (None = remove) → camo
-	## ====================================================================
+	## ==================================================================== GRENADE submenus: grenade (None = remove) → camo.
 	equip_dialog_actions: dict[int, str] = {}
 	equip_pick_lines: dict[int, str] = {}
 	for slot_num, field, trig_base in [(1, "equip_slot1", TRIG_EQUIP_SLOT1_BASE), (2, "equip_slot2", TRIG_EQUIP_SLOT2_BASE)]:
@@ -688,11 +664,8 @@ execute if data storage {ns}:temp editor{{equip_slot{slot_num}:""}} run return r
 function {fn}/show_equip{slot_num}_camo_dialog
 """)
 
-	## ====================================================================
-	## PERKS submenu (toggle, recompute-based budget)
-	## Selected perks are shown green with a ✔; unselected are aqua.
-	## ====================================================================
-	# Per-perk append lines: a selected variant and an unselected variant
+	## PERKS submenu (toggle, recompute-based budget) Selected perks are shown green with a ✔; unselected are aqua.
+	## Per-perk append lines: a selected variant and an unselected variant
 	_perk_tooltip = '["",{{"text":"{desc}","color":"gray"}},["","\\n",{{"text":"Cost"}},": "],[{{"text":"{cost}","color":"gold"}}]," pt",{{"text":"\\nClick to toggle on/off","color":"dark_gray"}}]'
 	perk_button_lines = ""
 	for perk_idx, p in enumerate(PERKS):
@@ -793,10 +766,7 @@ $execute unless data storage {ns}:temp {{_perk_val:"$(_toggle_perk)"}} run data 
 function {fn}/rebuild_perks with storage {ns}:temp
 """)
 
-	## ====================================================================
-	## SAVE — build the loadout entry from the editor state
-	## ====================================================================
-	# Pre-generate weapon slot lookup tables
+	## SAVE — build the loadout entry from the editor state Pre-generate weapon slot lookup tables
 	primary_slot_entries: list[str] = []
 	for wp in PRIMARY_WEAPONS:
 		gun_id, mag_id, mag_count = wp.item_id, wp.magazine_id, wp.default_mag_count
@@ -963,8 +933,7 @@ function {fn}/notify_saved with storage {ns}:temp editor
 function {ns}:v{version}/multiplayer/my_loadouts/browse
 """)
 
-	## save_replace - Editing flow: rebuild the list, swapping the original entry (by id + owner)
-	## for the freshly built _new_loadout while preserving its social stats.
+	## save_replace - Editing flow: rebuild the list, swapping the original entry (by id + owner) for the freshly built _new_loadout while preserving its social stats.
 	write_versioned_function("multiplayer/editor/save_replace", f"""
 scoreboard players operation #edit_id {ns}.data = @s {ns}.mp.edit_target
 data modify storage {ns}:temp _edit_src set from storage {ns}:multiplayer custom_loadouts
@@ -1057,3 +1026,4 @@ execute if score #pmag_count {ns}.data matches 1.. run function {fn}/append_mag_
 	write_versioned_function("multiplayer/editor/set_main_gun_display", f"""$data modify storage {ns}:temp _new_loadout.main_gun_display set value "$(primary_name) ($(primary_scope_name), $(primary_camo_name))"\n""")
 	write_versioned_function("multiplayer/editor/set_sec_gun_display", f"""$data modify storage {ns}:temp _new_loadout.secondary_gun_display set value "$(secondary_name) ($(secondary_scope_name), $(secondary_camo_name))"\n""")
 	write_versioned_function("multiplayer/editor/notify_saved", '$tellraw @s ["",' + MGS_TAG + ',[{"text":"","color":"white"},{"text":"Loadout saved"},": "],{"text":"$(primary_name) + $(secondary_name)","color":"green","bold":true}]')
+

@@ -1,30 +1,40 @@
+""" Revive system, Black Ops Zombies-style and mannequin-based.
 
+When a player takes lethal damage, they enter a "downed" state.
+
+A mannequin is spawned at their death location wearing their armor/skin.
+The player spectates the mannequin and can crawl (slow movement via WASD input predicates).
+Teammates revive by standing near the mannequin.
+After 60s without revive, player bleed out.
+Solo + Quick Revive: auto-revive after 10s, up to 3 times.
+"""
 # ruff: noqa: E501
-# Revive System (Black Ops Zombies-style, mannequin-based)
-# When a player takes lethal damage, they enter a "downed" state.
-# A mannequin is spawned at their death location wearing their armor/skin.
-# The player spectates the mannequin and can crawl (slow movement via WASD input predicates).
-# Teammates revive by standing near the mannequin. After 60s without revive, player bleed out.
-# Solo + Quick Revive: auto-revive after 10s, up to 3 times.
 from stewbeet import JsonDict, Mem, Predicate, set_json_encoder, write_load_file, write_versioned_function
 
 from ..helpers import MGS_TAG
 
-# Revive configuration
-BLEED_OUT_TICKS: int = 1200		# 60 seconds to be revived before bleed out
-REVIVE_TICKS: int = 60			# 3 seconds of proximity to revive
-REVIVE_RANGE: float = 2.5		# Blocks range for revive interaction
-QUICK_REVIVE_TICKS: int = 30	# 1.5 seconds with Quick Revive perk
-SOLO_QR_TICKS: int = 200		# 10 seconds for solo Quick Revive auto-revive
-SOLO_QR_MAX: int = 3			# Total solo self-revives allowed per game; each use requires rebuying QR
-CRAWL_SPEED: float = 0.06		# Blocks per tick for downed crawl movement
-ROUND_END_PICKUP_RANGE: int = 10  # A teammate this close to a still-downed body at round end revives it for free
-# HUD text display height above mannequin
-HUD_OFFSET_Y_THOUSANDTHS: int = 2000  # 2.0 blocks * 1000 (for scoreboard math)
+BLEED_OUT_TICKS: int = 1200
+""" 60 seconds to be revived before bleed out. """
+REVIVE_TICKS: int = 60
+""" 3 seconds of proximity to revive. """
+REVIVE_RANGE: float = 2.5
+""" Blocks range for revive interaction. """
+QUICK_REVIVE_TICKS: int = 30
+""" 1.5 seconds with Quick Revive perk. """
+SOLO_QR_TICKS: int = 200
+""" 10 seconds for solo Quick Revive auto-revive. """
+SOLO_QR_MAX: int = 3
+""" Total solo self-revives allowed per game; each use requires rebuying QR. """
+CRAWL_SPEED: float = 0.06
+""" Blocks per tick for downed crawl movement. """
+ROUND_END_PICKUP_RANGE: int = 10
+""" A teammate this close to a still-downed body at round end revives it for free. """
+HUD_OFFSET_Y_THOUSANDTHS: int = 2000
+""" HUD text height above the mannequin: 2.0 blocks * 1000, for scoreboard math. """
 
 
 def revive_body_detect() -> str:
-	"""Shared per-tick upkeep for one revivable body (normal down AND Who's Who).
+	""" Shared per-tick upkeep for one revivable body (normal down AND Who's Who).
 
 	Emitted into the caller's tick function. Contract: @s = the downed-state holder (a spectating
 	downed player, or an alive Who's Who doppelganger) carrying `zb.bleed`/`zb.revive_p`, with
@@ -45,7 +55,6 @@ scoreboard players operation @s {ns}.zb.bleed -= #tick_delta {ns}.data
 scoreboard players set #zb_reviving {ns}.data 0
 execute as @e[type=minecraft:mannequin,tag={ns}.downed_mannequin,predicate={ns}:v{version}/zombies/revive/downed_id_match] at @s run execute as @a[scores={{{ns}.zb.in_game=1,{ns}.zb.downed=0}},gamemode=!spectator,distance=..{REVIVE_RANGE}] run scoreboard players set #zb_reviving {ns}.data 1
 """.strip()
-
 
 def revive_body_progress(complete_function: str) -> str:
 	"""Shared revive progress for one revivable body: progress/decay on `zb.revive_p`, the reviver
@@ -85,7 +94,6 @@ execute if score #zb_reviving {ns}.data matches 1 if score #rv_qr_near {ns}.data
 execute if score #zb_reviving {ns}.data matches 1 if score #rv_qr_near {ns}.data matches 0 if score @s {ns}.zb.revive_p matches {REVIVE_TICKS}.. run return run function {complete_function}
 """.strip()
 
-
 def generate_revive() -> None:
 	ns: str = Mem.ctx.project_id
 	version: str = Mem.ctx.project_version
@@ -99,9 +107,7 @@ def generate_revive() -> None:
 	Mem.ctx.data[ns].predicates[f"v{version}/input/right"]    = set_json_encoder(Predicate(player_input("right")))
 
 	## Predicate: does `this` entity's downed_id match the downed player currently being processed?
-	## Lets a selector pick the matching mannequin/cam/hud directly via predicate=... instead of
-	## `as @e[tag=...] if score @s {ns}.zb.downed_id = #my_downed_id ...` — one selector pass, the
-	## id test folded into selection (same trick as zombies/traps/turret_id_match).
+	## Lets a selector pick the matching mannequin/cam/hud directly via predicate=... instead of `as @e[tag=...] if score @s {ns}.zb.downed_id = #my_downed_id ...` — one selector pass, the id test folded into selection (same trick as zombies/traps/turret_id_match).
 	downed_id_ref: JsonDict = {"type": "minecraft:score", "target": {"type": "minecraft:fixed", "name": "#my_downed_id"}, "score": f"{ns}.data"}
 	Mem.ctx.data[ns].predicates[f"v{version}/zombies/revive/downed_id_match"] = set_json_encoder(Predicate({
 		"condition": "minecraft:entity_scores",
@@ -124,9 +130,7 @@ scoreboard objectives add {ns}.zb.qr_uses dummy
 scoreboard objectives add {ns}.zb.downed_id dummy
 """)
 
-	# ──────────────────────────────────────────────────────────────────────────
-	## On Down: called from on_respawn when player dies in zombies
-	# ──────────────────────────────────────────────────────────────────────────
+	# On Down: called from on_respawn when player dies in zombies
 	write_versioned_function("zombies/revive/on_down", f"""
 # Dying Wish (highest priority): if owned and off cooldown, cheat death with a berserk instead of
 # going down. Returns before any downed state is set. Must stay ABOVE the Who's Who branch.
@@ -198,13 +202,10 @@ title @s subtitle [{{"text":"You are down! A teammate can revive you.","color":"
 tellraw @a[scores={{{ns}.zb.in_game=1}}] [{MGS_TAG},{{"selector":"@s","color":"red"}},{{"text":" is down!","color":"gray"}}]
 """)
 
-	## Spawn the revivable body for @s: a mannequin wearing their armor + skin, with the name HUD
-	## above it. Shared by the normal down AND Who's Who — the body is the exact same entity kind
-	## either way (same tags, same visuals, same revive interactions). Position defaults to @s's
-	## LastDeathLocation, but a caller may pre-set {ns}:temp _body_at (a [x,y,z] pos list) to override
-	## it — used by the void/out-of-bounds revive, where the death spot is unusable so the body drops
-	## at a safe spawn instead. Requires @s {ns}.zb.downed_id already set to a fresh id; leaves the
-	## body position in storage temp rv_x/rv_y/rv_z for the caller.
+	## Spawn the revivable body for @s: a mannequin wearing their armor + skin, with the name HUD above it.
+	## Shared by the normal down AND Who's Who — the body is the exact same entity kind either way (same tags, same visuals, same revive interactions).
+	## Position defaults to @s's LastDeathLocation, but a caller may pre-set {ns}:temp _body_at (a [x,y,z] pos list) to override it — used by the void/out-of-bounds revive, where the death spot is unusable so the body drops at a safe spawn instead.
+	## Requires @s {ns}.zb.downed_id already set to a fresh id; leaves the body position in storage temp rv_x/rv_y/rv_z for the caller.
 	write_versioned_function("zombies/revive/spawn_downed_body", f"""
 # Body position: an explicit {ns}:temp _body_at overrides the default LastDeathLocation
 execute unless data storage {ns}:temp _body_at run data modify storage {ns}:temp _body_at set from entity @s LastDeathLocation.pos
@@ -270,9 +271,7 @@ $tp @n[tag={ns}.downed_hud_new] $(rv_x) $(rv_y_hud) $(rv_z)
 $tp @s $(rv_x) $(rv_y) $(rv_z)
 """)
 
-	# ──────────────────────────────────────────────────────────────────────────
-	## Tick: process all downed spectating players
-	# ──────────────────────────────────────────────────────────────────────────
+	# Tick: process all downed spectating players
 	write_versioned_function("zombies/revive/tick", f"""
 # Process each spectating (downed) player
 execute as @a[tag={ns}.downed_spectator,scores={{{ns}.zb.in_game=1}}] at @s run function {ns}:v{version}/zombies/revive/downed_tick
@@ -336,12 +335,11 @@ execute if score @s {ns}.zb.bleed matches ..0 run function {ns}:v{version}/zombi
 execute if score #zb_reviving {ns}.data matches 0 unless entity @a[scores={{{ns}.zb.in_game=1,{ns}.zb.downed=0}},gamemode=!spectator] run function {ns}:v{version}/zombies/revive/bleed_out
 """)
 
-	## All per-mannequin downed work in one pass. @s = the downed player's mannequin, executed at it
-	## (dispatched once per downed player from downed_tick after tagging the mannequin downed_mine_temp).
-	## Folds the former ~11 separate `@e[tag=downed_mannequin,predicate=...]` selections into a single
-	## entity selection; everything here is @s (the mannequin) or a local @p/@n lookup. Crawl direction
-	## arrives via #crawl_vx/#crawl_vz (set on the player before dispatch). Order matches the old inline
-	## version: yaw sync first, then velocity, then local->canonical, then motion, then HUD anchor.
+	## All per-mannequin downed work in one pass.
+	## @s = the downed player's mannequin, executed at it (dispatched once per downed player from downed_tick after tagging the mannequin downed_mine_temp).
+	## Folds the former ~11 separate `@e[tag=downed_mannequin,predicate=...]` selections into a single entity selection; everything here is @s (the mannequin) or a local @p/@n lookup.
+	## Crawl direction arrives via #crawl_vx/#crawl_vz (set on the player before dispatch).
+	## Order matches the old inline version: yaw sync first, then velocity, then local->canonical, then motion, then HUD anchor.
 	write_versioned_function("zombies/revive/move_mannequin", f"""
 # Sync mannequin yaw from the owner's look direction (snapshotted into #rv_yaw x100 by downed_tick)
 execute store result entity @s Rotation[0] float 0.01 run scoreboard players get #rv_yaw {ns}.data
@@ -359,9 +357,7 @@ function #bs.move:set_motion {{scale:0.001}}
 tp @n[tag={ns}.downed_hud,predicate={ns}:v{version}/zombies/revive/downed_id_match] ~ ~2 ~
 """)
 
-	# ──────────────────────────────────────────────────────────────────────────
-	## Solo Quick Revive check: auto-revive if alone in game
-	# ──────────────────────────────────────────────────────────────────────────
+	# Solo Quick Revive check: auto-revive if alone in game
 	write_versioned_function("zombies/revive/check_solo_qr", f"""
 # Only trigger in a TRUE solo game: @s must be the only in-game player. Teammates being
 # downed or bled-out does NOT make the game solo — in co-op, a downed player with Quick
@@ -414,9 +410,7 @@ execute unless score @s {ns}.zb.qr_uses matches {SOLO_QR_MAX}.. run tellraw @s [
 function {ns}:v{version}/zombies/revive/revive_complete
 """)
 
-	# ──────────────────────────────────────────────────────────────────────────
-	## Reviver actionbar (run as the reviving player, context @s = reviver, nearest downed = target)
-	# ──────────────────────────────────────────────────────────────────────────
+	# Reviver actionbar (run as the reviving player, context @s = reviver, nearest downed = target)
 	write_versioned_function("zombies/revive/show_reviver_bar", f"""
 # #rv_reviver_disp holds the downed player's revive progress (snapshotted in downed_tick while
 # @s was the downed player — the reviver cannot re-select them: they spectate a camera entity
@@ -443,20 +437,14 @@ data modify storage smithed.actionbar:input message set value {{json:[{{"text":"
 function #smithed.actionbar:message
 """)
 
-	# ──────────────────────────────────────────────────────────────────────────
-	## HUD color update helpers (run as downed spectator, update nearest downed_hud)
-	# ──────────────────────────────────────────────────────────────────────────
-	# Recolor only: the name was written once as a literal string in on_down (set_hud_name) and
-	# must never be replaced by a "nearest" selector (wrong-owner ties, see on_down)
+	# HUD color update helpers (run as downed spectator, update nearest downed_hud) Recolor only: the name was written once as a literal string in on_down (set_hud_name) and must never be replaced by a "nearest" selector (wrong-owner ties, see on_down)
 	for hud_color in ("white", "yellow", "gold", "red"):
 		write_versioned_function(f"zombies/revive/hud_{hud_color}", f"""
 data modify entity @n[tag={ns}.downed_hud,predicate={ns}:v{version}/zombies/revive/downed_id_match] text[0].color set value "{hud_color}"
 data modify entity @n[tag={ns}.downed_hud,predicate={ns}:v{version}/zombies/revive/downed_id_match] text[1].color set value "{hud_color}"
 """)
 
-	# ──────────────────────────────────────────────────────────────────────────
-	## Revive complete: restore the downed player (run as downed spectator)
-	# ──────────────────────────────────────────────────────────────────────────
+	# Revive complete: restore the downed player (run as downed spectator)
 	write_versioned_function("zombies/revive/revive_complete", f"""
 # Remove downed state
 scoreboard players set @s {ns}.zb.downed 0
@@ -506,9 +494,7 @@ title @s subtitle [{{"text":"You have been revived!","color":"green"}}]
 tellraw @a[scores={{{ns}.zb.in_game=1}}] [{MGS_TAG},{{"selector":"@s","color":"green"}},{{"text":" has been revived!","color":"gray"}}]
 """)
 
-	# ──────────────────────────────────────────────────────────────────────────
-	## Bleed out: player couldn't be revived in time (run as downed spectator)
-	# ──────────────────────────────────────────────────────────────────────────
+	# Bleed out: player couldn't be revived in time (run as downed spectator)
 	write_versioned_function("zombies/revive/bleed_out", f"""
 # Remove downed state
 scoreboard players set @s {ns}.zb.downed 0
@@ -539,8 +525,7 @@ title @s subtitle [{{"text":"You bled out. Respawning next round...","color":"gr
 tellraw @a[scores={{{ns}.zb.in_game=1}}] [{MGS_TAG},{{"selector":"@s","color":"dark_red"}},{{"text":" has bled out.","color":"gray"}}]
 """)
 
-	## Hide @s's body (mannequin + HUD, id-matched via #my_downed_id) by teleporting it far below
-	## the world (avoids the kill animation/drops), strip the tags, and kill the camera if any.
+	## Hide @s's body (mannequin + HUD, id-matched via #my_downed_id) by teleporting it far below the world (avoids the kill animation/drops), strip the tags, and kill the camera if any.
 	## Shared by revive_complete, bleed_out and the Who's Who paths (no camera there — no-op).
 	write_versioned_function("zombies/revive/hide_body", f"""
 tag @e[tag={ns}.downed_mannequin,predicate={ns}:v{version}/zombies/revive/downed_id_match] add {ns}.downed_mine_temp
@@ -552,9 +537,7 @@ tag @e[tag={ns}.downed_mine_temp] remove {ns}.downed_mine_temp
 execute as @e[tag={ns}.downed_cam,predicate={ns}:v{version}/zombies/revive/downed_id_match] run kill @s
 """)
 
-	# ──────────────────────────────────────────────────────────────────────────
-	## Round end respawn: revive all spectating (bled-out) players
-	# ──────────────────────────────────────────────────────────────────────────
+	# Round end respawn: revive all spectating (bled-out) players
 	write_versioned_function("zombies/revive/round_respawn", f"""
 # Free pickup first: a player still DOWNED when the round ended, with a live teammate standing within
 # {ROUND_END_PICKUP_RANGE} blocks of their body, is revived instead of respawned — they keep their guns.
@@ -565,10 +548,9 @@ execute as @a[tag={ns}.downed_spectator,scores={{{ns}.zb.in_game=1}}] run functi
 execute as @a[scores={{{ns}.zb.in_game=1}},gamemode=spectator] run function {ns}:v{version}/zombies/revive/do_round_respawn
 """)
 
-	## Round-end free pickup for one still-downed player (@s = the downed spectator). Reviving through
-	## revive_complete is what keeps the inventory: it only restores state and teleports, and never
-	## touches the hotbar (unlike do_round_respawn -> give_respawn_loadout). Perks stay lost, exactly
-	## like any other revive.
+	## Round-end free pickup for one still-downed player (@s = the downed spectator).
+	## Reviving through revive_complete is what keeps the inventory: it only restores state and teleports, and never touches the hotbar (unlike do_round_respawn -> give_respawn_loadout).
+	## Perks stay lost, exactly like any other revive.
 	write_versioned_function("zombies/revive/round_end_pickup", f"""
 # Is a live (non-downed) teammate standing within {ROUND_END_PICKUP_RANGE} blocks of MY body?
 scoreboard players operation #my_downed_id {ns}.data = @s {ns}.zb.downed_id
@@ -626,8 +608,7 @@ scoreboard players set @s {ns}.zb.revive_p 0
 tag @s remove {ns}.downed_spectator
 """)
 
-	## Teleport @s to the unlocked player spawn nearest to a random alive teammate (so respawned
-	## players rejoin near the action rather than at an arbitrary spawn).
+	## Teleport @s to the unlocked player spawn nearest to a random alive teammate (so respawned players rejoin near the action rather than at an arbitrary spawn).
 	write_versioned_function("zombies/revive/respawn_near_player", f"""
 tag @s add {ns}.spawn_pending
 # #has_candidate stays 0 if there is no alive teammate (the `as @r` body never runs, so its
@@ -641,10 +622,8 @@ tag @e[tag={ns}.spawn_candidate] remove {ns}.spawn_candidate
 tag @a[tag={ns}.spawn_pending] remove {ns}.spawn_pending
 """)
 
-	# ──────────────────────────────────────────────────────────────────────────
-	## Full death: instant elimination with NO mannequin (e.g. falling out of the world).
-	## The player goes straight to bled-out spectator and is respawned at the next round end.
-	# ──────────────────────────────────────────────────────────────────────────
+	# Full death: instant elimination with NO mannequin (e.g. falling out of the world).
+	# The player goes straight to bled-out spectator and is respawned at the next round end.
 	write_versioned_function("zombies/revive/full_death", f"""
 # A doppelganger's unrevived body is forfeited (same rule as going down again)
 execute if entity @s[tag={ns}.ww_active] run function {ns}:v{version}/zombies/whos_who/forfeit
@@ -677,9 +656,8 @@ title @s subtitle [{{"text":"You fell out of the world!","color":"gray"}}]
 tellraw @a[scores={{{ns}.zb.in_game=1}}] [{MGS_TAG},{{"selector":"@s","color":"dark_red"}},{{"text":" fell out of the world.","color":"gray"}}]
 """)
 
-	## Who's Who saved you from the void (@s = the falling player, perks still intact). Respawn at a
-	## safe spawn first (the death spot is the void), then run the normal Who's Who down with the body
-	## anchored at that spawn — the doppelganger flow then relocates itself ≥10 blocks from the body.
+	## Who's Who saved you from the void (@s = the falling player, perks still intact).
+	## Respawn at a safe spawn first (the death spot is the void), then run the normal Who's Who down with the body anchored at that spawn — the doppelganger flow then relocates itself ≥10 blocks from the body.
 	write_versioned_function("zombies/revive/void_revive_whos_who", f"""
 gamemode adventure @s
 function {ns}:v{version}/zombies/revive/respawn_near_player
@@ -688,8 +666,8 @@ function {ns}:v{version}/zombies/whos_who/on_down
 """)
 
 	## Solo Quick Revive saved you from the void (@s = the falling player, solo game, uses left).
-	## Spend one use and respawn at a spawn point. Perks are still stripped (any down loses them),
-	## consistent with a normal solo QR self-revive; the QR rebuy bookkeeping mirrors solo_qr_complete.
+	## Spend one use and respawn at a spawn point.
+	## Perks are still stripped (any down loses them), consistent with a normal solo QR self-revive; the QR rebuy bookkeeping mirrors solo_qr_complete.
 	write_versioned_function("zombies/revive/void_revive_solo_qr", f"""
 # Consume one Quick Revive use (same rebuy bookkeeping as solo_qr_complete)
 scoreboard players add @s {ns}.zb.qr_uses 1
@@ -721,9 +699,7 @@ title @s subtitle [{{"text":"Quick Revive pulled you back from the void!","color
 tellraw @a[scores={{{ns}.zb.in_game=1}}] [{MGS_TAG},{{"selector":"@s","color":"aqua"}},{{"text":" fell out — but Quick Revive pulled them back!","color":"gray"}}]
 """)
 
-	# ──────────────────────────────────────────────────────────────────────────
-	## Hook: reset revive state on game start
-	# ──────────────────────────────────────────────────────────────────────────
+	# Hook: reset revive state on game start
 	write_versioned_function("zombies/start", f"""
 # Reset revive state
 scoreboard players set @a {ns}.zb.downed 0

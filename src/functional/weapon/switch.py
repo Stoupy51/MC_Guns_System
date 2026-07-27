@@ -1,12 +1,9 @@
-
-# Imports
+""" Weapon switching: swap timing, weapon ids, and fire-mode toggling on drop. """
 from typing import Any
 
 from stewbeet import ItemModifier, Mem, set_json_encoder, write_versioned_function
 
 from ...config.stats import CAN_AUTO, CAN_BURST, FIRE_MODE, SWITCH, WEAPON_ID
-
-# Main function
 
 
 def main() -> None:
@@ -140,9 +137,9 @@ item replace entity @p[tag={ns}.to_modify] weapon.mainhand from entity @s conten
 kill @s
 """)  # noqa: E501
 
-
-    # Drop key = fire-mode switch. No "key pressed" event, so the drop really happens (detected via
-    # the minecraft.drop stat) and is undone below. Reload is on hand-swap + left click.
+    # Drop key = fire-mode switch.
+    # No "key pressed" event, so the drop really happens (detected via the minecraft.drop stat) and is undone below.
+    # Reload is on hand-swap + left click.
     write_versioned_function("switch/check_fire_mode_on_drop", f"""
 # Check if player dropped a weapon
 execute if score @s {ns}.dropped matches 1.. run function {ns}:v{version}/switch/fire_mode_on_dropped_weapon
@@ -246,3 +243,4 @@ scoreboard players set @s {ns}.ab_force 1
         ]
     }
     Mem.ctx.data[ns].item_modifiers[f"v{version}/set_fire_mode"] = set_json_encoder(ItemModifier(modifier), max_level=-1)
+

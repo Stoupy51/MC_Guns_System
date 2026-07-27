@@ -1,5 +1,4 @@
-
-# Imports
+""" Team deathmatch: first team to the kill limit wins. """
 from ...helpers import MGS_TAG
 from .base import GameModeVariant
 
@@ -41,7 +40,7 @@ function {ns}:v{version}/multiplayer/check_team_win
 		## TDM Cleanup
 		self.sub("cleanup", "# Nothing to clean up for TDM")
 
-
 def generate_team_deathmatch() -> None:
 	""" Module-level entry point (preserved signature); delegates to :class:`TeamDeathmatch`. """
 	TeamDeathmatch()()
+

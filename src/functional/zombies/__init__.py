@@ -1,5 +1,4 @@
-
-# Imports
+""" Zombies mode entry point; submodules run in dependency order. """
 from .ability import generate_zombies_abilities
 from .barriers import generate_barriers
 from .bonus import main as bonus_main
@@ -27,7 +26,6 @@ from .whos_who import generate_whos_who
 from .wunderfizz import generate_wunderfizz
 
 
-# Main function
 def main() -> None:
     # Run all zombies modules
     write_deny_functions()

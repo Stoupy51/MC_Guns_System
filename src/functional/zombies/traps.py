@@ -1,11 +1,12 @@
+""" Trap system.
 
+Area-of-effect devices that damage zombies in a radius for a duration, then enter cooldown.
+
+Type 0 = fire: lethal to zombies (1000% of max health), 5 fire damage to players inside.
+Type 1 = electric: lethal to zombies (1000% of max health), 5 electric damage to players inside.
+Type 2 = turret: shoots the nearest zombie in range every 5 ticks for 45% of its max health;          the bullet stops at the first entity hit, so players between the turret and zombies take 2 damage instead.
+"""
 # ruff: noqa: E501
-# Trap System
-# Area-of-effect devices that damage zombies in a radius for a duration, then enter cooldown.
-# Type 0 = fire: lethal to zombies (1000% of max health), 5 fire damage to players inside.
-# Type 1 = electric: lethal to zombies (1000% of max health), 5 electric damage to players inside.
-# Type 2 = turret: shoots the nearest zombie in range every 5 ticks for 45% of its max health;
-#          the bullet stops at the first entity hit, so players between the turret and zombies take 2 damage instead.
 from stewbeet import JsonDict, Mem, Predicate, set_json_encoder, write_load_file, write_versioned_function
 
 from ..core.feedback import zb_sound
@@ -21,8 +22,7 @@ def generate_traps() -> None:
 	deny_not_enough_points: str = deny_not_enough_points_cmd(ns, version, "#trap_price")
 
 	## Predicate: does `this` entity's trap id match the turret currently being processed?
-	## Used to select the matching head/interaction by score directly in a selector (predicate=...),
-	## which is cheaper than `execute as @e[...] if score @s ... = #turret_tid ...`.
+	## Used to select the matching head/interaction by score directly in a selector (predicate=...), which is cheaper than `execute as @e[...] if score @s ... = #turret_tid ...`.
 	id_ref: JsonDict = {"type": "minecraft:score", "target": {"type": "minecraft:fixed", "name": "#turret_tid"}, "score": f"{ns}.data"}
 	Mem.ctx.data[ns].predicates[f"v{version}/zombies/traps/turret_id_match"] = set_json_encoder(Predicate({
 		"condition": "minecraft:entity_scores",
@@ -136,11 +136,9 @@ $execute positioned $(ix) $(iy) $(iz) run summon minecraft:interaction ~ ~2 ~ {{
 $summon minecraft:marker $(cx) $(cy) $(cz) {{Tags:["{ns}.trap_center","{ns}.gm_entity","{ns}._trap_new_m"]}}
 """)
 
-	## Turret model: a stationary base + an aiming head. Both models are built around the origin
-	## (the head around its mount/pivot), so the displays are simply summoned at their real world
-	## position with an identity transform - no translation offsets. The base sits at the block centre
-	## on the floor; the head's mount sits ~1.625 up so it seats in the base's yoke (yoke at 1.5..1.75),
-	## and the head pivots about its own mount when aimed. teleport_duration smooths the re-aim rotation.
+	## Turret model: a stationary base + an aiming head.
+	## Both models are built around the origin (the head around its mount/pivot), so the displays are simply summoned at their real world position with an identity transform - no translation offsets.
+	## The base sits at the block centre on the floor; the head's mount sits ~1.625 up so it seats in the base's yoke (yoke at 1.5..1.75), and the head pivots about its own mount when aimed. teleport_duration smooths the re-aim rotation.
 	write_versioned_function("zombies/traps/place_turret_at", f"""
 $execute positioned $(cx) $(cy) $(cz) run summon minecraft:item_display ~ ~.5 ~ {{Rotation:[$(yaw)f,0f],Tags:["{ns}.trap_base","{ns}.gm_entity"],item_display:"fixed",billboard:"fixed",item:{{id:"minecraft:iron_block",count:1,components:{{"minecraft:item_model":"{ns}:turret_base"}}}},transformation:{{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[2f,2f,2f]}}}}
 $execute positioned $(cx) $(cy) $(cz) positioned ~ ~1.625 ~ run summon minecraft:item_display ~ ~ ~ {{Rotation:[$(yaw)f,0f],Tags:["{ns}.trap_head","{ns}.gm_entity","{ns}._trap_new_head"],item_display:"fixed",billboard:"fixed",teleport_duration:5,item:{{id:"minecraft:netherite_block",count:1,components:{{"minecraft:item_model":"{ns}:turret_head"}}}},transformation:{{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[1f,1f,1f]}}}}
@@ -181,7 +179,6 @@ execute if score @s {ns}.special.timeslip matches 1.. as @e[type=minecraft:marke
 tellraw @a[scores={{{ns}.zb.in_game=1}}] [{MGS_TAG},{{"text":"Trap activated for ","color":"gold"}},{{"score":{{"name":"#trap_price","objective":"{ns}.data"}},"color":"yellow"}},{{"text":" points.","color":"gold"}}]
 {zb_sound('announce')}
 """)
-
 
 	## Active trap tick: damage zombies, particles, decrement timer
 	write_versioned_function("zombies/traps/active_tick", f"""
@@ -305,10 +302,8 @@ execute as @e[tag={ns}.trap_head,predicate={ns}:v{version}/zombies/traps/turret_
 tag @e[tag={ns}._turret_target] remove {ns}._turret_target
 """)
 
-	## Line-of-sight gate: tag the candidate zombie as visible only if the turret can see it.
-	## can_see_ata raycasts from the execution position to @s (the zombie), returning 1 if unobstructed.
-	## The turret head sits half inside a barrier block, so casting from there would self-block; instead we
-	## cast from 1.5 blocks below the interaction entity (clear of the barrier) - matched by id via predicate.
+	## Line-of-sight gate: tag the candidate zombie as visible only if the turret can see it. can_see_ata raycasts from the execution position to @s (the zombie), returning 1 if unobstructed.
+	## The turret head sits half inside a barrier block, so casting from there would self-block; instead we cast from 1.5 blocks below the interaction entity (clear of the barrier) - matched by id via predicate.
 	write_versioned_function("zombies/traps/turret_check_los", f"""
 # @s = candidate zombie
 scoreboard players set #turret_vis {ns}.data 0
