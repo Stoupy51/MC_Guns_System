@@ -355,8 +355,7 @@ kill @s
 """)
 
 	## Tick file entry for projectile movement
-	write_tick_file(
-f"""
+	write_tick_file(f"""
 # Tick function for slow bullets (projectiles)
 execute if score #slow_bullet_count {ns}.data matches 1.. as @e[tag={ns}.slow_bullet] at @s run function {ns}:v{version}/projectile/tick
 """)

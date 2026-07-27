@@ -200,8 +200,7 @@ $playsound {ns}:$(fire) player @a[distance=0.01..48] ~ ~ ~ 0.35 1 0.10
 """)
 
 	## Tick file entry for armed mobs
-	write_tick_file(
-f"""
+	write_tick_file(f"""
 # Armed mob AI loop
 execute if score #armed_mob_count {ns}.data matches 1.. as @e[tag={ns}.armed] at @s run function {ns}:v{version}/mob/tick
 

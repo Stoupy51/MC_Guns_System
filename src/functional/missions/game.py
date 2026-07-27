@@ -23,8 +23,7 @@ def generate_missions_game() -> None:
 	version: str = Mem.ctx.project_version
 
 	## Scoreboards & Storage Setup
-	write_load_file(
-f"""
+	write_load_file(f"""
 ## Missions scoreboards
 scoreboard objectives add {ns}.mi.in_game dummy
 scoreboard objectives add {ns}.mi.timer dummy

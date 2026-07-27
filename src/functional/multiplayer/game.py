@@ -28,8 +28,7 @@ def generate_game() -> None:
 		)
 
 	## Scoreboards & Storage Setup
-	write_load_file(
-f"""
+	write_load_file(f"""
 ## Multiplayer scoreboards
 # Team assignment (1 = red, 2 = blue, 0 = none/spectator)
 scoreboard objectives add {ns}.mp.team dummy
