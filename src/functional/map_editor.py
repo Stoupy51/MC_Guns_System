@@ -13,15 +13,58 @@ from typing import Any, cast
 from stewbeet import Advancement, JsonDict, Mem, set_json_encoder, write_load_file, write_versioned_function
 
 from .helpers import MGS_TAG, FunctionalHelpers
-from .map_editor_defs import ALL_ELEMENTS, EDITOR_MODES, FIELD_DOCS, MODE_LIST, MODEL_DISPLAY_ELEMENTS
+from .map_editor_defs import ALL_ELEMENTS, EDITOR_MODES, FIELD_DOCS, MODE_LIST, MODEL_DISPLAY_ELEMENTS, ElementDef
 
+# Constants
+SEP: str = '{"text":"============================================","color":"dark_gray"}'
+""" The horizontal rule every editor chat panel is framed with. """
+ZB_ELEMENTS: dict[str, ElementDef] = {etype: einfo for etype, einfo in ALL_ELEMENTS.items() if einfo.save_type == "zb_object"}
+""" The zombies elements, which share one placement handler and one compound layout in storage. """
 
 # Functions
+def snbt_suggest(val: Any) -> str:
+	""" Format a Python value as the SNBT a suggested command would carry.
+
+	Args:
+		val (Any): The value to format.
+	Returns:
+		str: Its SNBT spelling, quoted and suffixed the way Minecraft expects.
+
+	Examples:
+		>>> snbt_suggest([1, True, "a"])
+		'[1,1b,"a"]'
+	"""
+	if isinstance(val, bool):
+		return "1b" if val else "0b"
+	elif isinstance(val, int):
+		return str(val)
+	elif isinstance(val, float):
+		return f"{val}f"
+	elif isinstance(val, str):
+		return f'"{val}"'
+	elif isinstance(val, list):
+		return "[" + ",".join(snbt_suggest(v) for v in cast(list[Any], val)) + "]"
+	elif isinstance(val, dict):
+		return "{" + ",".join(f"{k}:{snbt_suggest(v)}" for k, v in cast(dict[str, Any], val).items()) + "}"
+	return str(val)
+
+def snbt_compound(d: JsonDict) -> str:
+	""" Convert a dict to an SNBT compound string.
+
+	Args:
+		d (JsonDict): The compound's fields.
+	Returns:
+		str: The compound, braces included.
+
+	Examples:
+		>>> snbt_compound({"a": 1, "b": "x"})
+		'{a:1,b:"x"}'
+	"""
+	return "{" + ",".join(f"{k}:{snbt_suggest(v)}" for k, v in d.items()) + "}"
+
 def generate_map_editor() -> None:
 	ns: str = Mem.ctx.project_id
 	version: str = Mem.ctx.project_version
-
-	sep = '{"text":"============================================","color":"dark_gray"}'
 
 	# Scoreboards & Storage Init.
 	write_load_file(f"""
@@ -87,9 +130,9 @@ function {ns}:v{version}/maps/editor/list/multiplayer
 		create_btn = FunctionalHelpers.btn("+ Create New Map", f"/function {ns}:v{version}/maps/editor/create/{mode_key}", "green", f"Create a new {mode_info.name} map")
 
 		write_versioned_function(f"maps/editor/list/{mode_key}", f"""
-tellraw @s {sep}
+tellraw @s {SEP}
 tellraw @s ["","       🗺 ",[{{"text":"","color":"gold","bold":true}},{{"text":"Map Editor"}}]," 🗺"]
-tellraw @s {sep}
+tellraw @s {SEP}
 tellraw @s ["  ",{mode_tabs}]
 tellraw @s ""
 
@@ -106,7 +149,7 @@ execute unless data storage {ns}:maps {sk}[0] run tellraw @s ["  ",{{"text":"No 
 
 tellraw @s ""
 tellraw @s ["  ",{create_btn}]
-tellraw @s {sep}
+tellraw @s {SEP}
 """)
 
 	# Menu Entry (recursive - one map per call).
@@ -141,15 +184,15 @@ $tellraw @s ["  ",{{"text":"$(name)","color":"white"}},{{"text":" ($(id))","colo
 		back_btn = FunctionalHelpers.btn("◀ Back", f"/function {ns}:v{version}/maps/editor/list/{mode_key}", "yellow", "Back to map list")
 
 		write_versioned_function(f"maps/editor/create/{mode_key}", f"""
-tellraw @s {sep}
+tellraw @s {SEP}
 tellraw @s ["","  📝 ",[{{"text":"","color":"gold","bold":true}},{{"text":"Create New {mode_info.name} Map"}}]]
-tellraw @s {sep}
+tellraw @s {SEP}
 tellraw @s {{"text":"Run this command to create a new map:","color":"yellow"}}
 tellraw @s [{{"text":"","color":"aqua","click_event":{{"action":"suggest_command","command":"/data modify storage {ns}:maps {sk} append value {{{create_snbt}}}"}}}},"/data modify storage {ns}:maps {sk} append value {{...}}"]
 tellraw @s ["  ",{{"text":"⬆ Click to paste the command, then edit the id/name/description.","color":"gray","italic":true}}]
 tellraw @s ""
 tellraw @s ["  ",{back_btn}]
-tellraw @s {sep}
+tellraw @s {SEP}
 """)
 
 	# Delete Map (macro with mode).
@@ -855,17 +898,15 @@ tellraw @a[tag={ns}.map_editor] ["  ",{edit_respawn_cmd_btn}]
 
 	# Handle ZB Object (zombies compound elements).
 	# Detect type, copy defaults, get rotation, summon marker with data
-	zb_elements = {etype: einfo for etype, einfo in ALL_ELEMENTS.items() if einfo.save_type == "zb_object"}
-
 	# Build tag detection lines
 	zb_tag_lines: list[str] = []
-	for etype in zb_elements:
+	for etype in ZB_ELEMENTS:
 		zb_tag_lines.append(f'execute if entity @s[tag={ns}.element.{etype}] run data modify storage {ns}:temp _zbpos.tag set value "{ns}.element.{etype}"')
 		zb_tag_lines.append(f'execute if entity @s[tag={ns}.element.{etype}] run data modify storage {ns}:temp _zb_new set from storage {ns}:temp map_edit.zb_defaults.{etype}')
 
 	# Build announce lines
 	zb_msg_lines: list[str] = []
-	for etype, einfo in zb_elements.items():
+	for etype, einfo in ZB_ELEMENTS.items():
 		zb_msg_lines.append(f'execute if entity @s[tag={ns}.element.{etype}] run tellraw @a[tag={ns}.map_editor] [{MGS_TAG},{{"text":"{einfo.name} placed!","color":"{einfo.color}"}}]')
 
 	write_versioned_function("maps/editor/handle_zb_object", f"""
@@ -958,9 +999,9 @@ kill @s
 	config_lines.append("# Initialize default enemy function if missing")
 	config_lines.append(f'execute unless data storage {ns}:temp map_edit.map.default_enemy_function run data modify storage {ns}:temp map_edit.map.default_enemy_function set value "{ns}:mob/default/level_1 {{\\"entity\\":\\"pillager\\"}}"')
 	config_lines.append("")
-	config_lines.append(f"tellraw {config_target} {sep}")
+	config_lines.append(f"tellraw {config_target} {SEP}")
 	config_lines.append(f'tellraw {config_target} [{{"text":"","color":"white","bold":true}},"  ⚙ ",{{"text":"Enemy Configuration"}}]')
-	config_lines.append(f"tellraw {config_target} {sep}")
+	config_lines.append(f"tellraw {config_target} {SEP}")
 	config_lines.append(
 		f'tellraw {config_target} '
 		f'["  ",{{"text":"Default Function: ","color":"gray"}},'
@@ -985,7 +1026,7 @@ kill @s
 		config_lines.append(f'execute if entity @e[tag={ns}.element.{etype},distance=..10] run data modify storage {ns}:temp _cfg.nearest_cmd set from entity @n[tag={ns}.element.{etype},distance=..10] data.command')
 		config_lines.append(f'execute if entity @e[tag={ns}.element.{etype},distance=..10] run function {ns}:v{version}/maps/editor/handle_config_nearest_{etype}_btn with storage {ns}:temp _cfg')
 
-	config_lines.append(f"tellraw {config_target} {sep}")
+	config_lines.append(f"tellraw {config_target} {SEP}")
 
 	write_versioned_function("maps/editor/handle_config", "\n".join(config_lines))
 
@@ -997,7 +1038,7 @@ $tellraw {config_target} ["    ",{{"text":"[Edit Function]","color":"aqua","clic
 		if not einfo.config_uses_default_function:
 			continue
 		write_versioned_function(f"maps/editor/handle_config_nearest_{etype}_btn", f"""
-tellraw {config_target} {sep}
+tellraw {config_target} {SEP}
 tellraw {config_target} ["  ",{{"text":"Nearest {einfo.name}: ","color":"yellow","bold":true}},{{"entity":"@n[tag={ns}.element.{etype},distance=..10]","nbt":"data.function","color":"white"}}]
 $tellraw {config_target} ["    ",{{"text":"[Edit Nearest {einfo.name}]","color":"yellow","click_event":{{"action":"suggest_command","command":"/data modify entity @n[tag={ns}.element.{etype},distance=..10] data.function set value \\"$(nearest_fn)\\""}},"hover_event":{{"action":"show_text","value":"Edit nearest {einfo.name.lower()} using its current function"}}}}]
 """)
@@ -1005,36 +1046,17 @@ $tellraw {config_target} ["    ",{{"text":"[Edit Nearest {einfo.name}]","color":
 	for etype in ("start_command", "respawn_command"):
 		einfo = ALL_ELEMENTS[etype]
 		write_versioned_function(f"maps/editor/handle_config_nearest_{etype}_btn", f"""
-tellraw {config_target} {sep}
+tellraw {config_target} {SEP}
 tellraw {config_target} ["  ",{{"text":"Nearest {einfo.name}: ","color":"yellow","bold":true}},{{"entity":"@n[tag={ns}.element.{etype},distance=..10]","nbt":"data.command","color":"white"}}]
 $tellraw {config_target} ["    ",{{"text":"[Edit Nearest {einfo.name}]","color":"yellow","click_event":{{"action":"suggest_command","command":"/data modify entity @n[tag={ns}.element.{etype},distance=..10] data.command set value \\"$(nearest_cmd)\\""}},"hover_event":{{"action":"show_text","value":"Edit nearest {einfo.name.lower()} command using its current value"}}}}]
 """)
 
 	# Handle ZB Defaults (configure defaults for new zombies elements)
-	def snbt_suggest(val: Any) -> str:
-		"""Format a Python value as SNBT for MC commands."""
-		if isinstance(val, bool):
-			return "1b" if val else "0b"
-		elif isinstance(val, int):
-			return str(val)
-		elif isinstance(val, float):
-			return f"{val}f"
-		elif isinstance(val, str):
-			return f'"{val}"'
-		elif isinstance(val, list):
-			return "[" + ",".join(snbt_suggest(v) for v in cast(list[Any], val)) + "]"
-		elif isinstance(val, dict):
-			return "{" + ",".join(f"{k}:{snbt_suggest(v)}" for k, v in cast(dict[str, Any], val).items()) + "}"
-		return str(val)
-	def snbt_compound(d: JsonDict) -> str:
-		"""Convert a Python dict to an SNBT compound string."""
-		return "{" + ",".join(f"{k}:{snbt_suggest(v)}" for k, v in d.items()) + "}"
-
 	zb_defaults_lines: list[str] = []
-	zb_defaults_lines.append(f"tellraw @a[tag={ns}.map_editor] {sep}")
+	zb_defaults_lines.append(f"tellraw @a[tag={ns}.map_editor] {SEP}")
 	zb_defaults_lines.append(f'tellraw @a[tag={ns}.map_editor] [{{"text":"","color":"white","bold":true}},"  ⚙ ",{{"text":"Zombies Element Defaults"}}]')
 	zb_defaults_lines.append(f'tellraw @a[tag={ns}.map_editor] ["  ",{{"text":"New elements use these values on placement","color":"gray","italic":true}}]')
-	zb_defaults_lines.append(f"tellraw @a[tag={ns}.map_editor] {sep}")
+	zb_defaults_lines.append(f"tellraw @a[tag={ns}.map_editor] {SEP}")
 	zb_defaults_lines.append("")
 
 	# Shared group_id default
@@ -1051,7 +1073,7 @@ $tellraw {config_target} ["    ",{{"text":"[Edit Nearest {einfo.name}]","color":
 	zb_defaults_lines.append(f'tellraw @a[tag={ns}.map_editor] ["  ",{{"text":"Applies to Zombie Spawn & Player Spawn.","color":"dark_gray","italic":true}}]')
 	zb_defaults_lines.append("")
 
-	for etype, einfo in zb_elements.items():
+	for etype, einfo in ZB_ELEMENTS.items():
 		if not einfo.defaults:
 			continue  # Skip elements with no type-specific defaults
 		zb_defaults_lines.append(
@@ -1071,14 +1093,14 @@ $tellraw {config_target} ["    ",{{"text":"[Edit Nearest {einfo.name}]","color":
 			)
 		zb_defaults_lines.append("")
 
-	zb_defaults_lines.append(f"tellraw @a[tag={ns}.map_editor] {sep}")
+	zb_defaults_lines.append(f"tellraw @a[tag={ns}.map_editor] {SEP}")
 
 	write_versioned_function("maps/editor/handle_zb_defaults", "\n".join(zb_defaults_lines))
 
 	# Init ZB Defaults (called on editor enter for zombies mode) ─
 	init_defaults_lines: list[str] = []
 	init_defaults_lines.append(f'data modify storage {ns}:temp map_edit.zb_defaults.group_id set value 0')
-	for etype, einfo in zb_elements.items():
+	for etype, einfo in ZB_ELEMENTS.items():
 		compound = snbt_compound(einfo.defaults)
 		init_defaults_lines.append(f'data modify storage {ns}:temp map_edit.zb_defaults.{etype} set value {compound}')
 
@@ -1093,10 +1115,10 @@ execute at @s unless entity @n[tag={ns}.map_element,distance=..10] run tellraw @
 
 	# show_element_config: runs as the nearest marker, shows type-specific fields
 	zb_config_lines: list[str] = []
-	zb_config_lines.append(f"tellraw @a[tag={ns}.map_editor] {sep}")
+	zb_config_lines.append(f"tellraw @a[tag={ns}.map_editor] {SEP}")
 
 	# For each zb_object type, show its fields
-	for etype, einfo in zb_elements.items():
+	for etype, einfo in ZB_ELEMENTS.items():
 		zb_config_lines.append(
 			f'execute if entity @s[tag={ns}.element.{etype}] run tellraw @a[tag={ns}.map_editor] '
 			f'["  ","{einfo.emoji} ",{{"text":"{einfo.name} Configuration","color":"{einfo.color}","bold":true}}]'
@@ -1158,7 +1180,7 @@ execute at @s unless entity @n[tag={ns}.map_element,distance=..10] run tellraw @
 	# Backfill missing config fields on markers summoned from an already-saved map, so a field added to `defaults` after the map was written shows its default in the config UI instead of a blank row (e.g. partial_price on doors/perk machines).
 	# Absent-only: never touches a set value.
 	backfill_lines: list[str] = []
-	for etype, einfo in zb_elements.items():
+	for etype, einfo in ZB_ELEMENTS.items():
 		for field, default_val in einfo.defaults.items():
 			backfill_lines.append(
 				f"execute if entity @s[tag={ns}.element.{etype}] unless data entity @s data.{field} "
@@ -1186,7 +1208,7 @@ execute at @s unless entity @n[tag={ns}.map_element,distance=..10] run tellraw @
 		)
 
 	# For zb_object types: show yaw (rotation)
-	for etype, _ in zb_elements.items():
+	for etype, _ in ZB_ELEMENTS.items():
 		edit_yaw_btn = FunctionalHelpers.btn(
 			"✎",
 			f"/data modify entity @n[tag={ns}.element.{etype},distance=..10] data.yaw set value 0.0f",
@@ -1262,7 +1284,7 @@ execute at @s unless entity @n[tag={ns}.map_element,distance=..10] run tellraw @
 		f'["    ","💎 ",{{"text":"start_function is called once when the game starts, tick_function every game tick.","color":"dark_gray","italic":true}}]'
 	)
 
-	zb_config_lines.append(f"tellraw @a[tag={ns}.map_editor] {sep}")
+	zb_config_lines.append(f"tellraw @a[tag={ns}.map_editor] {SEP}")
 
 	write_versioned_function("maps/editor/show_element_config", "\n".join(zb_config_lines))
 
