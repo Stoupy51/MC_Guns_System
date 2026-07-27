@@ -31,7 +31,32 @@ MOVE_TOTAL_TICKS: int = MOVE_BEAR_TICKS + MOVE_ASCEND_TICKS + MOVE_WAIT_TICKS + 
 # Monkey Bomb pool weight (weapon weights come from the catalog; the monkey is a non-catalog tactical added to the pool manually — BO-style fairly common roll)
 MONKEY_BOMB_WEIGHT: int = 5
 
+MB_SCALE: float = 2.4
+""" Uniform scale of the two item_displays a presence box is made of.
+The chest model is full-width, so 2.4 makes the box about 2.4 blocks across.
+"""
+MB_CLOSED_TF: str = f"{{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[{MB_SCALE}f,{MB_SCALE}f,{MB_SCALE}f]}}"
+""" Lid transformation at rest: identity rotation, so the two halves sit flush. """
+MB_OPEN_TF: str = f"{{left_rotation:[-0.766f,0f,0f,0.643f],right_rotation:[0f,0f,0f,1f],translation:[0f,0.415f,-0.652f],scale:[{MB_SCALE}f,{MB_SCALE}f,{MB_SCALE}f]}}"
+""" Lid transformation when open: hinged ~100° about X at the lid's front-bottom edge, like a real chest opening toward the front.
+An item_display rotates about the model centre, so the translation cancels that out to keep the hinge edge fixed (T = p - R·p, with p = (0, -0.15, -0.6) the hinge's scaled offset from the centre).
+"""
+
 # Functions
+def owned_gun_macro_cd(ns: str) -> str:
+	""" Custom-data predicate matching any gun whose base weapon is the macro's $(weapon_id).
+
+	Args:
+		ns (str): The project namespace.
+	Returns:
+		str: The body of a `custom_data~` item predicate, braces included.
+
+	Examples:
+		>>> owned_gun_macro_cd("mgs")
+		'{mgs:{gun:true,stats:{base_weapon:"$(weapon_id)"}}}'
+	"""
+	return "{" + ns + ':{gun:true,stats:{base_weapon:"$(weapon_id)"}}}'
+
 def generate_mystery_box() -> None:
 	ns: str = Mem.ctx.project_id
 	version: str = Mem.ctx.project_version
@@ -40,14 +65,7 @@ def generate_mystery_box() -> None:
 	deny_not_your_result: str = ZombiesCommon.deny_cmd(ns, version, '{"text":"Wait for the current player to collect their result.","color":"red"}')
 	deny_all_owned: str = ZombiesCommon.deny_cmd(ns, version, '{"text":"You already own all available Mystery Box weapons. Points refunded.","color":"yellow"}')
 	deny_not_enough_points: str = ZombiesCommon.deny_not_enough_points_cmd(ns, version, "#zb_mystery_box_price", f"{ns}.config")
-	owned_gun_macro_cd: str = "{" + ns + ':{gun:true,stats:{base_weapon:"$(weapon_id)"}}}'
-
-	# Presence box is two item_displays (base + lid) sharing this scale, so the lid can hinge open. 2.4 uniform scale makes the (full-width) model ~2.4 blocks wide.
-	MB_SCALE: float = 2.4
-	# Closed: identity.
-	# Open: hinge ~100° about X at the lid's front-bottom edge (like a real chest lid opening toward the front). item_display rotates about the model centre, so the translation cancels that out to keep the front-bottom edge fixed (T = p - R·p, with p = scaled offset of the hinge from centre = (0, -0.15, -0.6) at scale 2.4; R = -100° about X).
-	mb_closed_tf: str = f"{{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[{MB_SCALE}f,{MB_SCALE}f,{MB_SCALE}f]}}"
-	mb_open_tf: str = f"{{left_rotation:[-0.766f,0f,0f,0.643f],right_rotation:[0f,0f,0f,1f],translation:[0f,0.415f,-0.652f],scale:[{MB_SCALE}f,{MB_SCALE}f,{MB_SCALE}f]}}"
+	owned_gun_cd: str = owned_gun_macro_cd(ns)
 
 	## Per-box state objectives (each box is an independent pull, so multiple can spin at once)
 	write_load_file(f"""
@@ -248,22 +266,22 @@ execute if entity @s[tag={ns}.roam_hidden] positioned ~ ~512 ~ run function {ns}
 """)
 
 	write_versioned_function("zombies/mystery_box/summon_disabled_at", f"""
-$execute positioned ~ ~-0.9 ~ run summon minecraft:item_display ~ ~ ~ {{Rotation:[$(yaw),0f],Tags:["{ns}.mb_disabled","{ns}.gm_entity"],item_display:"fixed",billboard:"fixed",item:{{id:"minecraft:chest",count:1,components:{{"minecraft:item_model":"{ns}:mystery_box_disabled"}}}},transformation:{mb_closed_tf}}}
+$execute positioned ~ ~-0.9 ~ run summon minecraft:item_display ~ ~ ~ {{Rotation:[$(yaw),0f],Tags:["{ns}.mb_disabled","{ns}.gm_entity"],item_display:"fixed",billboard:"fixed",item:{{id:"minecraft:chest",count:1,components:{{"minecraft:item_model":"{ns}:mystery_box_disabled"}}}},transformation:{MB_CLOSED_TF}}}
 """)
 
 	write_versioned_function("zombies/mystery_box/summon_presence_display", f"""
 # Two-piece presence box: base + lid (both tagged mb_presence so they move/despawn together).
-$execute positioned ~ ~-0.9 ~ run summon minecraft:item_display ~ ~ ~ {{Rotation:[$(yaw),0f],Tags:["{ns}.mb_presence","{ns}.mb_base","{ns}.gm_entity"],item_display:"fixed",billboard:"fixed",item:{{id:"minecraft:chest",count:1,components:{{"minecraft:item_model":"{ns}:mystery_box_base"}}}},transformation:{mb_closed_tf}}}
-$execute positioned ~ ~-0.9 ~ run summon minecraft:item_display ~ ~ ~ {{Rotation:[$(yaw),0f],Tags:["{ns}.mb_presence","{ns}.mb_lid","{ns}.gm_entity"],item_display:"fixed",billboard:"fixed",item:{{id:"minecraft:chest",count:1,components:{{"minecraft:item_model":"{ns}:mystery_box_lid"}}}},transformation:{mb_closed_tf}}}
+$execute positioned ~ ~-0.9 ~ run summon minecraft:item_display ~ ~ ~ {{Rotation:[$(yaw),0f],Tags:["{ns}.mb_presence","{ns}.mb_base","{ns}.gm_entity"],item_display:"fixed",billboard:"fixed",item:{{id:"minecraft:chest",count:1,components:{{"minecraft:item_model":"{ns}:mystery_box_base"}}}},transformation:{MB_CLOSED_TF}}}
+$execute positioned ~ ~-0.9 ~ run summon minecraft:item_display ~ ~ ~ {{Rotation:[$(yaw),0f],Tags:["{ns}.mb_presence","{ns}.mb_lid","{ns}.gm_entity"],item_display:"fixed",billboard:"fixed",item:{{id:"minecraft:chest",count:1,components:{{"minecraft:item_model":"{ns}:mystery_box_lid"}}}},transformation:{MB_CLOSED_TF}}}
 """)
 
 	## Lid open/close animation (interpolated).
 	## Position-based: affects only the lid nearest the current execution position, so callers must be positioned at the box they mean.
 	write_versioned_function("zombies/mystery_box/open_lid", f"""
-data merge entity @n[tag={ns}.mb_lid,distance=..4] {{transformation:{mb_open_tf},start_interpolation:0,interpolation_duration:8}}
+data merge entity @n[tag={ns}.mb_lid,distance=..4] {{transformation:{MB_OPEN_TF},start_interpolation:0,interpolation_duration:8}}
 """)
 	write_versioned_function("zombies/mystery_box/close_lid", f"""
-data merge entity @n[tag={ns}.mb_lid,distance=..4] {{transformation:{mb_closed_tf},start_interpolation:0,interpolation_duration:8}}
+data merge entity @n[tag={ns}.mb_lid,distance=..4] {{transformation:{MB_CLOSED_TF},start_interpolation:0,interpolation_duration:8}}
 """)
 
 	write_versioned_function("zombies/mystery_box/move_active_position", f"""
@@ -364,8 +382,8 @@ function {ns}:v{version}/zombies/mystery_box/summon_temp_box with storage {ns}:t
 """)
 
 	write_versioned_function("zombies/mystery_box/summon_temp_box", f"""
-$execute positioned ~ ~-0.9 ~ run summon minecraft:item_display ~ ~ ~ {{Rotation:[$(yaw),0f],Tags:["{ns}.mb_presence","{ns}.mb_base","{ns}.mb_temp","{ns}.gm_entity"],item_display:"fixed",billboard:"fixed",item:{{id:"minecraft:chest",count:1,components:{{"minecraft:item_model":"{ns}:mystery_box_base"}}}},transformation:{mb_closed_tf}}}
-$execute positioned ~ ~-0.9 ~ run summon minecraft:item_display ~ ~ ~ {{Rotation:[$(yaw),0f],Tags:["{ns}.mb_presence","{ns}.mb_lid","{ns}.mb_temp","{ns}.gm_entity"],item_display:"fixed",billboard:"fixed",item:{{id:"minecraft:chest",count:1,components:{{"minecraft:item_model":"{ns}:mystery_box_lid"}}}},transformation:{mb_closed_tf}}}
+$execute positioned ~ ~-0.9 ~ run summon minecraft:item_display ~ ~ ~ {{Rotation:[$(yaw),0f],Tags:["{ns}.mb_presence","{ns}.mb_base","{ns}.mb_temp","{ns}.gm_entity"],item_display:"fixed",billboard:"fixed",item:{{id:"minecraft:chest",count:1,components:{{"minecraft:item_model":"{ns}:mystery_box_base"}}}},transformation:{MB_CLOSED_TF}}}
+$execute positioned ~ ~-0.9 ~ run summon minecraft:item_display ~ ~ ~ {{Rotation:[$(yaw),0f],Tags:["{ns}.mb_presence","{ns}.mb_lid","{ns}.mb_temp","{ns}.gm_entity"],item_display:"fixed",billboard:"fixed",item:{{id:"minecraft:chest",count:1,components:{{"minecraft:item_model":"{ns}:mystery_box_lid"}}}},transformation:{MB_CLOSED_TF}}}
 """)
 
 	# End a Fire Sale: stop allowing temp pulls; clean up now if idle, else defer until the in-progress pull resets (so a box being used isn't yanked mid-spin).
@@ -460,11 +478,11 @@ data modify storage {ns}:zombies mystery_box.result set from storage bs:out rand
 
 	write_versioned_function("zombies/mystery_box/check_owned_result", f"""
 scoreboard players set #mb_owned {ns}.data 0
-$execute if items entity @s hotbar.1 *[custom_data~{owned_gun_macro_cd}] run scoreboard players set #mb_owned {ns}.data 1
-$execute if items entity @s hotbar.2 *[custom_data~{owned_gun_macro_cd}] run scoreboard players set #mb_owned {ns}.data 1
-$execute if items entity @s hotbar.3 *[custom_data~{owned_gun_macro_cd}] run scoreboard players set #mb_owned {ns}.data 1
+$execute if items entity @s hotbar.1 *[custom_data~{owned_gun_cd}] run scoreboard players set #mb_owned {ns}.data 1
+$execute if items entity @s hotbar.2 *[custom_data~{owned_gun_cd}] run scoreboard players set #mb_owned {ns}.data 1
+$execute if items entity @s hotbar.3 *[custom_data~{owned_gun_cd}] run scoreboard players set #mb_owned {ns}.data 1
 # Tactical slot (monkey bombs): holding any counts as owned, so the box rerolls like duplicate guns
-$execute if items entity @s hotbar.6 *[custom_data~{owned_gun_macro_cd}] run scoreboard players set #mb_owned {ns}.data 1
+$execute if items entity @s hotbar.6 *[custom_data~{owned_gun_cd}] run scoreboard players set #mb_owned {ns}.data 1
 
 # Also treat as owned if Ray Gun cap (max 2 players) is reached and result is Ray Gun (special case to limit 2 Ray Guns per game)
 execute if score #mb_owned {ns}.data matches 0 run function {ns}:v{version}/zombies/mystery_box/check_ray_gun_cap
@@ -717,8 +735,8 @@ function {ns}:v{version}/zombies/mystery_box/sync_interaction_visibility
 
 # Spawn new chest display (base + lid) above the new active position (height = 0.7 + descent total)
 # Fast: 35t * 0.18 = 6.3 blocks, Slow: 34t * 0.06 = 2.04 blocks, Total = 8.34
-execute as @n[tag={ns}.mystery_box_active] at @s positioned ~ ~7.54 ~ run summon minecraft:item_display ~ ~ ~ {{Tags:["{ns}.mb_presence","{ns}.mb_base","{ns}.gm_entity"],item_display:"fixed",billboard:"fixed",item:{{id:"minecraft:chest",count:1,components:{{"minecraft:item_model":"{ns}:mystery_box_base"}}}},transformation:{mb_closed_tf},teleport_duration:5}}
-execute as @n[tag={ns}.mystery_box_active] at @s positioned ~ ~7.54 ~ run summon minecraft:item_display ~ ~ ~ {{Tags:["{ns}.mb_presence","{ns}.mb_lid","{ns}.gm_entity"],item_display:"fixed",billboard:"fixed",item:{{id:"minecraft:chest",count:1,components:{{"minecraft:item_model":"{ns}:mystery_box_lid"}}}},transformation:{mb_closed_tf},teleport_duration:5}}
+execute as @n[tag={ns}.mystery_box_active] at @s positioned ~ ~7.54 ~ run summon minecraft:item_display ~ ~ ~ {{Tags:["{ns}.mb_presence","{ns}.mb_base","{ns}.gm_entity"],item_display:"fixed",billboard:"fixed",item:{{id:"minecraft:chest",count:1,components:{{"minecraft:item_model":"{ns}:mystery_box_base"}}}},transformation:{MB_CLOSED_TF},teleport_duration:5}}
+execute as @n[tag={ns}.mystery_box_active] at @s positioned ~ ~7.54 ~ run summon minecraft:item_display ~ ~ ~ {{Tags:["{ns}.mb_presence","{ns}.mb_lid","{ns}.gm_entity"],item_display:"fixed",billboard:"fixed",item:{{id:"minecraft:chest",count:1,components:{{"minecraft:item_model":"{ns}:mystery_box_lid"}}}},transformation:{MB_CLOSED_TF},teleport_duration:5}}
 execute as @n[tag={ns}.mystery_box_active] at @s as @e[tag={ns}.mb_presence,tag=!{ns}.mb_temp] run data modify entity @s Rotation set from entity @n[tag={ns}.mystery_box_active] Rotation
 
 # Light beam particles at new location
@@ -814,10 +832,10 @@ function {ns}:v{version}/zombies/mystery_box/sync_interaction_visibility
 $data modify storage {ns}:temp _mb_collected_name set value [{{"text":"$(weapon_id)","color":"gold"}}]
 scoreboard players set #mb_name_found {ns}.data 0
 
-$execute if score #mb_name_found {ns}.data matches 0 if items entity @s hotbar.1 *[custom_data~{owned_gun_macro_cd}] run function {ns}:v{version}/zombies/mystery_box/capture_collected_name_slot {{slot:"hotbar.1"}}
-$execute if score #mb_name_found {ns}.data matches 0 if items entity @s hotbar.2 *[custom_data~{owned_gun_macro_cd}] run function {ns}:v{version}/zombies/mystery_box/capture_collected_name_slot {{slot:"hotbar.2"}}
-$execute if score #mb_name_found {ns}.data matches 0 if items entity @s hotbar.3 *[custom_data~{owned_gun_macro_cd}] run function {ns}:v{version}/zombies/mystery_box/capture_collected_name_slot {{slot:"hotbar.3"}}
-$execute if score #mb_name_found {ns}.data matches 0 if items entity @s hotbar.6 *[custom_data~{owned_gun_macro_cd}] run function {ns}:v{version}/zombies/mystery_box/capture_collected_name_slot {{slot:"hotbar.6"}}
+$execute if score #mb_name_found {ns}.data matches 0 if items entity @s hotbar.1 *[custom_data~{owned_gun_cd}] run function {ns}:v{version}/zombies/mystery_box/capture_collected_name_slot {{slot:"hotbar.1"}}
+$execute if score #mb_name_found {ns}.data matches 0 if items entity @s hotbar.2 *[custom_data~{owned_gun_cd}] run function {ns}:v{version}/zombies/mystery_box/capture_collected_name_slot {{slot:"hotbar.2"}}
+$execute if score #mb_name_found {ns}.data matches 0 if items entity @s hotbar.3 *[custom_data~{owned_gun_cd}] run function {ns}:v{version}/zombies/mystery_box/capture_collected_name_slot {{slot:"hotbar.3"}}
+$execute if score #mb_name_found {ns}.data matches 0 if items entity @s hotbar.6 *[custom_data~{owned_gun_cd}] run function {ns}:v{version}/zombies/mystery_box/capture_collected_name_slot {{slot:"hotbar.6"}}
 """)
 
 	write_versioned_function("zombies/mystery_box/capture_collected_name_slot", f"""
