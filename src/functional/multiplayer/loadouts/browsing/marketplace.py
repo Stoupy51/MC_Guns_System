@@ -3,7 +3,7 @@
 # Imports
 from stewbeet import Mem, write_versioned_function
 
-from ....helpers import FunctionalHelpers
+from ....helpers.text import Text
 from ..catalogs import PICK10_TOTAL, TRIG_FAVORITE_BASE, TRIG_LIKE_BASE, TRIG_MARKETPLACE_ALL, TRIG_MARKETPLACE_FAV_ONLY, TRIG_MARKETPLACE_LIKES, TRIG_SELECT_BASE
 from .shared import PERK_CONCAT, compute_trig, normalize_btn_fields
 
@@ -32,9 +32,9 @@ def write_marketplace() -> None:
 		fav_color = "gold" if active == "fav" else "yellow"
 		likes_color = "red" if active == "likes" else "white"
 		return [
-			f'{{label:{FunctionalHelpers.styled_text("\U0001f4cb All", color=all_color, bold="true")},tooltip:{{text:"Show all public loadouts (your favorites first)"}},action:{{type:"run_command",command:"/trigger {ns}.player.config set {TRIG_MARKETPLACE_ALL}"}}}}',
-			f'{{label:{FunctionalHelpers.styled_text("\u2b50 Favorites", color=fav_color, bold="true")},tooltip:{{text:"Show only loadouts you favorited"}},action:{{type:"run_command",command:"/trigger {ns}.player.config set {TRIG_MARKETPLACE_FAV_ONLY}"}}}}',
-			f'{{label:{FunctionalHelpers.styled_text("\u2764 Best Liked", color=likes_color, bold="true")},tooltip:{{text:"Show all public loadouts sorted by most likes"}},action:{{type:"run_command",command:"/trigger {ns}.player.config set {TRIG_MARKETPLACE_LIKES}"}}}}',
+			f'{{label:{Text.styled_text("\U0001f4cb All", color=all_color, bold="true")},tooltip:{{text:"Show all public loadouts (your favorites first)"}},action:{{type:"run_command",command:"/trigger {ns}.player.config set {TRIG_MARKETPLACE_ALL}"}}}}',
+			f'{{label:{Text.styled_text("\u2b50 Favorites", color=fav_color, bold="true")},tooltip:{{text:"Show only loadouts you favorited"}},action:{{type:"run_command",command:"/trigger {ns}.player.config set {TRIG_MARKETPLACE_FAV_ONLY}"}}}}',
+			f'{{label:{Text.styled_text("\u2764 Best Liked", color=likes_color, bold="true")},tooltip:{{text:"Show all public loadouts sorted by most likes"}},action:{{type:"run_command",command:"/trigger {ns}.player.config set {TRIG_MARKETPLACE_LIKES}"}}}}',
 		]
 
 	## marketplace/browse - Default: favorites first, then the rest

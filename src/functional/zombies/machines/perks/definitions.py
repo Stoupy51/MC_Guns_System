@@ -2,7 +2,7 @@
 # Imports
 from dataclasses import dataclass
 
-from ....helpers import FunctionalHelpers
+from ....helpers.scores import SpecialScores
 from ....stamina import STAM_MAX
 from ...player.revive.shared import SOLO_QR_MAX
 
@@ -242,7 +242,7 @@ def perk_effects_teardown(ns: str, selector: str) -> str:
 	Run at BOTH ends of a game: at stop to hand players back a clean profile, and at start because
 	the effects can also arrive from outside zombies entirely — the multiplayer/missions loadout
 	perks and the debug menu write the same `special.*` scores, and nothing else clears them for a
-	zombies player. Wiping the whole `SPECIAL_SCORES` set (not just the ones perks grant) is what
+	zombies player. Wiping the whole `SpecialScores.ALL` set (not just the ones perks grant) is what
 	keeps e.g. a multiplayer Quick Reload class from handing out free Speed Cola in zombies.
 	"""
 	return f"""
@@ -259,6 +259,6 @@ scoreboard players set {selector} {ns}.stam_bonus 0
 tag {selector} remove {ns}.perk.speed_cola
 tag {selector} remove {ns}.perk.double_tap
 tag {selector} remove {ns}.perk.quick_revive
-{FunctionalHelpers.reset_special_scores_lines(ns, selector)}
+{SpecialScores.reset_special_scores_lines(ns, selector)}
 """.strip()
 

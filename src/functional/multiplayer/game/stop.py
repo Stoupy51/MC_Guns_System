@@ -3,7 +3,8 @@
 # Imports
 from stewbeet import Mem, write_versioned_function
 
-from ...helpers import FunctionalHelpers
+from ...helpers.lifecycle import GameLifecycle
+from ...helpers.ranked import RankedStats
 from ..gamemodes.dispatch import gm_dispatch
 
 
@@ -20,7 +21,7 @@ def write_multiplayer_stop() -> None:
 		f'{{"score":{{"name":"@s","objective":"{ns}.mp.deaths"}},"color":"red"}},'
 		'{"text":" deaths","color":"gray"}]'
 	)
-	mp_ranked_stats: str = FunctionalHelpers.write_ranked_stats_functions(
+	mp_ranked_stats: str = RankedStats.write_ranked_stats_functions(
 		ns, version, "multiplayer/announce_stats", "mp.in_game", "mp.kills", mp_stat_line
 	)
 
@@ -39,7 +40,7 @@ kill @e[tag={ns}.gm_entity]
 {gm_dispatch(ns, version, "cleanup")}
 function #{ns}:multiplayer/on_game_end
 
-{FunctionalHelpers.regen_disable_lines(ns)}
+{GameLifecycle.regen_disable_lines(ns)}
 
 # Announce scores (team scores are meaningless in FFA — the winner is announced by player_wins)
 tellraw @a ["","⚔ ",[{{"text":"","color":"gold","bold":true}},{{"text":"Game Over"}},"! "]]

@@ -2,7 +2,7 @@
 # Imports
 from stewbeet import Mem, write_versioned_function
 
-from ...helpers import FunctionalHelpers
+from ...helpers.lifecycle import GameLifecycle
 
 
 # Functions
@@ -25,7 +25,7 @@ execute as @a[scores={{{ns}.mp.in_game=1}}] run scoreboard players operation @s 
 
 	## End prep: unfreeze players, transition to active
 	write_versioned_function("multiplayer/end_prep", f"""
-{FunctionalHelpers.end_prep_transition_lines(ns, "multiplayer", "mp")}
+{GameLifecycle.end_prep_transition_lines(ns, "multiplayer", "mp")}
 
 # Call map start scripts (state is now active, chunks had time to load)
 function {ns}:v{version}/shared/maps/call_script_at_base {{script:"start"}}

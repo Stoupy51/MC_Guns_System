@@ -3,7 +3,8 @@
 # Imports
 from stewbeet import Mem, write_versioned_function
 
-from ..helpers import MGS_TAG, FunctionalHelpers
+from ..helpers import MGS_TAG
+from ..helpers.dialogs import Dialogs
 from .rewards.powerups.types import POWERUP_TYPES
 
 # Constants
@@ -32,32 +33,32 @@ def generate_zombies_menus() -> None:
 		("Vanilla", f'/data modify storage {ns}:zombies game.variant set value "vanilla"', "yellow", "Classic CoD zombies: no passives, abilities, or special zombies"),
 		("Zonweeb", f'/data modify storage {ns}:zombies game.variant set value "zonweeb"', "green", "Full experience: passives, abilities, and special zombies"),
 	]
-	FunctionalHelpers.register_value_picker("zombies/setup/variant", "Variant", "Choose the zombies experience", variant_opts, back_dialog="zombies/setup")
+	Dialogs.register_value_picker("zombies/setup/variant", "Variant", "Choose the zombies experience", variant_opts, back_dialog="zombies/setup")
 
 	## Main zombies setup dialog
 	setup_actions = [
-		FunctionalHelpers.dialog_run_btn("🗺 Select Map", f"/function {ns}:v{version}/zombies/map_select", "Browse and select a zombies map", "dark_green"),
-		FunctionalHelpers.dialog_show_btn(f"{ns}:zombies/setup/variant", "🧬 Variant", "Choose the zombies experience"),
-		FunctionalHelpers.dialog_run_btn("▶ START", f"/function {ns}:v{version}/zombies/start", "Start the zombies game", "green"),
-		FunctionalHelpers.dialog_run_btn("■ STOP", f"/function {ns}:v{version}/zombies/stop", "Stop the zombies game", "red"),
-		FunctionalHelpers.dialog_run_btn("⟲ Fast Restart", f"/function {ns}:v{version}/zombies/restart", "Stop and immediately restart with the same map, variant and players", "gold"),
-		FunctionalHelpers.dialog_run_btn("👥 Manage Players", f"/function {ns}:v{version}/players/list_zombies", "Add or remove players from the zombies game", "dark_aqua"),
+		Dialogs.dialog_run_btn("🗺 Select Map", f"/function {ns}:v{version}/zombies/map_select", "Browse and select a zombies map", "dark_green"),
+		Dialogs.dialog_show_btn(f"{ns}:zombies/setup/variant", "🧬 Variant", "Choose the zombies experience"),
+		Dialogs.dialog_run_btn("▶ START", f"/function {ns}:v{version}/zombies/start", "Start the zombies game", "green"),
+		Dialogs.dialog_run_btn("■ STOP", f"/function {ns}:v{version}/zombies/stop", "Stop the zombies game", "red"),
+		Dialogs.dialog_run_btn("⟲ Fast Restart", f"/function {ns}:v{version}/zombies/restart", "Stop and immediately restart with the same map, variant and players", "gold"),
+		Dialogs.dialog_run_btn("👥 Manage Players", f"/function {ns}:v{version}/players/list_zombies", "Add or remove players from the zombies game", "dark_aqua"),
 		# Multiplayer has "Auto Team" to seat everyone at once; this is the zombies equivalent.
-		FunctionalHelpers.dialog_run_btn("👥 All Players Join", f"/execute as @a run function {ns}:v{version}/players/zb_join", "Add every online player to the zombies game", "green"),
-		FunctionalHelpers.dialog_run_btn("+ Join", f"/function {ns}:v{version}/zombies/join_game", "Join the ongoing zombies game as a late joiner", "yellow"),
-		FunctionalHelpers.dialog_show_btn(f"{ns}:zombies/admin", "🛠 Admin / Debug", "Skip rounds, grant points and force power-ups (operators only)"),
+		Dialogs.dialog_run_btn("👥 All Players Join", f"/execute as @a run function {ns}:v{version}/players/zb_join", "Add every online player to the zombies game", "green"),
+		Dialogs.dialog_run_btn("+ Join", f"/function {ns}:v{version}/zombies/join_game", "Join the ongoing zombies game as a late joiner", "yellow"),
+		Dialogs.dialog_show_btn(f"{ns}:zombies/admin", "🛠 Admin / Debug", "Skip rounds, grant points and force power-ups (operators only)"),
 	]
-	FunctionalHelpers.register_dialog("zombies/setup", {
+	Dialogs.register_dialog("zombies/setup", {
 		"type": "minecraft:multi_action",
 		"title": ["", "🧟 ", {"text": "Zombies Setup", "color": "dark_green", "bold": True}, " 🧟"],
 		"body": [{"type": "minecraft:plain_message", "contents": {"text": "Pick a map and variant, then Start", "color": "gray"}}],
 		"actions": setup_actions,
 		"columns": 2,
-		"exit_action": FunctionalHelpers.dialog_back_action("config", tooltip="Return to the configuration menu"),
+		"exit_action": Dialogs.dialog_back_action("config", tooltip="Return to the configuration menu"),
 	})
 
 	# /function .../zombies/setup now opens the dialog
-	write_versioned_function("zombies/setup", f"function {FunctionalHelpers.dialog_function('zombies/setup')}")
+	write_versioned_function("zombies/setup", f"function {Dialogs.dialog_function('zombies/setup')}")
 
 	## Admin / debug menu.
 	## Everything here reuses the normal game paths rather than poking state directly, so a debug action can't leave a game in a shape the round logic never produces.
@@ -146,36 +147,36 @@ tag @a[tag={ns}.pu_collecting] remove {ns}.pu_collecting
 """)
 
 	## Power-up sub-dialog (kept separate so the main admin dialog stays readable)
-	FunctionalHelpers.register_dialog("zombies/admin/powerups", {
+	Dialogs.register_dialog("zombies/admin/powerups", {
 		"type": "minecraft:multi_action",
 		"title": ["", "🛠 ", {"text": "Force Power-Up", "color": "dark_red", "bold": True}],
 		"body": [{"type": "minecraft:plain_message", "contents": {"text": "Triggers the real power-up, for everyone", "color": "gray"}}],
 		"actions": [
-			FunctionalHelpers.dialog_run_btn(label, f'/function {ns}:v{version}/zombies/admin/powerup {{type:"{pu_id}"}}', hover, color)
+			Dialogs.dialog_run_btn(label, f'/function {ns}:v{version}/zombies/admin/powerup {{type:"{pu_id}"}}', hover, color)
 			for pu_id, label, color, hover in admin_powerups
 		],
 		"columns": 2,
-		"exit_action": FunctionalHelpers.dialog_back_action("zombies/admin", tooltip="Return to the admin menu"),
+		"exit_action": Dialogs.dialog_back_action("zombies/admin", tooltip="Return to the admin menu"),
 	})
 
 	## Main admin dialog
-	FunctionalHelpers.register_dialog("zombies/admin", {
+	Dialogs.register_dialog("zombies/admin", {
 		"type": "minecraft:multi_action",
 		"title": ["", "🛠 ", {"text": "Zombies Admin", "color": "dark_red", "bold": True}],
 		"body": [{"type": "minecraft:plain_message", "contents": {"text": "Debug tools — operators only", "color": "gray"}}],
 		"actions": [
-			FunctionalHelpers.dialog_run_btn("⏭ Skip Round", f"/function {ns}:v{version}/zombies/admin/round_skip_1", "End this round and start the next one", "yellow"),
-			FunctionalHelpers.dialog_run_btn("⏩ Skip 5 Rounds", f"/function {ns}:v{version}/zombies/admin/round_skip_5", "Jump forward 5 rounds", "gold"),
-			FunctionalHelpers.dialog_run_btn("⏩ Skip 10 Rounds", f"/function {ns}:v{version}/zombies/admin/round_skip_10", "Jump forward 10 rounds", "gold"),
-			FunctionalHelpers.dialog_run_btn("⏩ Skip 50 Rounds", f"/function {ns}:v{version}/zombies/admin/round_skip_50", "Jump forward 50 rounds", "gold"),
-			FunctionalHelpers.dialog_show_btn(f"{ns}:zombies/admin/powerups", "⚡ Force Power-Up", "Trigger any power-up for everyone"),
-			FunctionalHelpers.dialog_run_btn("⟲ Reset Points", f"/function {ns}:v{version}/zombies/admin/points_reset", "Set every player's points back to 0", "red"),
-			FunctionalHelpers.dialog_run_btn("+2500 Points", f"/function {ns}:v{version}/zombies/admin/points_add_2500", "Give every player 2500 points", "green"),
-			FunctionalHelpers.dialog_run_btn("+500000 Points", f"/function {ns}:v{version}/zombies/admin/points_add_500000", "Give every player 500000 points", "green"),
-			FunctionalHelpers.dialog_run_btn("⏸ Freeze / Unfreeze", f"/function {ns}:v{version}/zombies/admin/freeze_toggle", "Pause the game: no mob moves, no player moves, every timer stops", "aqua"),
-			FunctionalHelpers.dialog_run_btn("🔧 Unfreeze Round", f"/function {ns}:zombies/recover", "Rebuild a round that has stopped advancing (stuck at 0 zombies)", "aqua"),
+			Dialogs.dialog_run_btn("⏭ Skip Round", f"/function {ns}:v{version}/zombies/admin/round_skip_1", "End this round and start the next one", "yellow"),
+			Dialogs.dialog_run_btn("⏩ Skip 5 Rounds", f"/function {ns}:v{version}/zombies/admin/round_skip_5", "Jump forward 5 rounds", "gold"),
+			Dialogs.dialog_run_btn("⏩ Skip 10 Rounds", f"/function {ns}:v{version}/zombies/admin/round_skip_10", "Jump forward 10 rounds", "gold"),
+			Dialogs.dialog_run_btn("⏩ Skip 50 Rounds", f"/function {ns}:v{version}/zombies/admin/round_skip_50", "Jump forward 50 rounds", "gold"),
+			Dialogs.dialog_show_btn(f"{ns}:zombies/admin/powerups", "⚡ Force Power-Up", "Trigger any power-up for everyone"),
+			Dialogs.dialog_run_btn("⟲ Reset Points", f"/function {ns}:v{version}/zombies/admin/points_reset", "Set every player's points back to 0", "red"),
+			Dialogs.dialog_run_btn("+2500 Points", f"/function {ns}:v{version}/zombies/admin/points_add_2500", "Give every player 2500 points", "green"),
+			Dialogs.dialog_run_btn("+500000 Points", f"/function {ns}:v{version}/zombies/admin/points_add_500000", "Give every player 500000 points", "green"),
+			Dialogs.dialog_run_btn("⏸ Freeze / Unfreeze", f"/function {ns}:v{version}/zombies/admin/freeze_toggle", "Pause the game: no mob moves, no player moves, every timer stops", "aqua"),
+			Dialogs.dialog_run_btn("🔧 Unfreeze Round", f"/function {ns}:zombies/recover", "Rebuild a round that has stopped advancing (stuck at 0 zombies)", "aqua"),
 		],
 		"columns": 2,
-		"exit_action": FunctionalHelpers.dialog_back_action("zombies/setup", tooltip="Return to the zombies setup menu"),
+		"exit_action": Dialogs.dialog_back_action("zombies/setup", tooltip="Return to the zombies setup menu"),
 	})
 

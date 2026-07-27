@@ -3,7 +3,8 @@
 # Imports
 from stewbeet import Mem, write_versioned_function
 
-from ...helpers import MGS_TAG, FunctionalHelpers
+from ...helpers import MGS_TAG
+from ...helpers.lifecycle import GameLifecycle
 from ..gamemodes.dispatch import gm_dispatch
 
 
@@ -15,12 +16,12 @@ def write_multiplayer_start() -> None:
 	## Game Start (requires a map to be loaded first)
 	write_versioned_function("multiplayer/start", f"""
 # Prevent starting if already active or preparing
-{FunctionalHelpers.game_start_guards(ns, "multiplayer", "Game")}
+{GameLifecycle.game_start_guards(ns, "multiplayer", "Game")}
 
 # Require at least one opted-in player (players are independent until assigned via Manage Players / + Join)
 execute unless entity @a[scores={{{ns}.mp.in_game=1}}] run return run tellraw @s [{MGS_TAG},{{"text":"No players have joined a team — use Manage Players first.","color":"red"}}]
 
-{FunctionalHelpers.mode_start_map_bootstrap_lines(ns, "multiplayer", True)}
+{GameLifecycle.mode_start_map_bootstrap_lines(ns, "multiplayer", True)}
 
 # Teams setup
 team add {ns}.red
@@ -66,7 +67,7 @@ gamerule keep_inventory true
 # Reset spectate timers
 scoreboard players set @a {ns}.mp.spectate_timer 0
 
-{FunctionalHelpers.regen_enable_lines(ns)}
+{GameLifecycle.regen_enable_lines(ns)}
 
 # Store base coordinates for offset
 function {ns}:v{version}/shared/load_base_coordinates {{mode:"multiplayer"}}
@@ -124,7 +125,7 @@ scoreboard objectives setdisplay list {ns}.mp.kills
 function {ns}:v{version}/multiplayer/tp_all_to_spawns
 
 # Freeze all players (no movement during prep)
-{FunctionalHelpers.prep_freeze_lines(ns, "mp")}
+{GameLifecycle.prep_freeze_lines(ns, "mp")}
 
 # Give loadout to players who already have a class (positive = standard, negative = custom)
 execute as @a[scores={{{ns}.mp.in_game=1}}] at @s unless score @s {ns}.mp.class matches 0 run function {ns}:v{version}/multiplayer/apply_class

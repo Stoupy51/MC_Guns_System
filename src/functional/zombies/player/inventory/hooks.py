@@ -3,7 +3,7 @@
 # Imports
 from stewbeet import Mem, write_versioned_function
 
-from ....helpers import FunctionalHelpers
+from ....helpers.content import SharedContent
 from ...common import ZombiesCommon
 from .shared import SlotPredicates, slot_predicates
 
@@ -17,7 +17,7 @@ def write_inventory_hooks() -> None:
 	mag_cd = "{" + ns + ":{magazine:true}}"
 	slots: SlotPredicates = slot_predicates(ns)
 	# Zombies keeps vanilla reach: its knife is the fallback weapon once ammo runs out
-	knife_item = FunctionalHelpers.knife_item_snbt(ns)
+	knife_item = SharedContent.knife_item_snbt(ns)
 
 	write_versioned_function("zombies/inventory/on_change", f"""
 advancement revoke @s only {ns}:v{version}/zombies/inventory_changed

@@ -2,7 +2,7 @@
 # Imports
 from stewbeet import Mem, write_versioned_function
 
-from ....helpers import FunctionalHelpers
+from ....helpers.content import SharedContent
 
 
 # Functions
@@ -11,7 +11,7 @@ def write_zombies_loadout() -> None:
 	version: str = Mem.ctx.project_version
 
 	# Zombies keeps vanilla reach: its knife is the fallback weapon once ammo runs out
-	knife_item = FunctionalHelpers.knife_item_snbt(ns)
+	knife_item = SharedContent.knife_item_snbt(ns)
 
 	write_versioned_function("zombies/inventory/give_starting_loadout", f"""
 clear @s

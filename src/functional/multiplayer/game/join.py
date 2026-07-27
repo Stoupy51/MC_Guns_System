@@ -2,7 +2,7 @@
 # Imports
 from stewbeet import Mem, write_versioned_function
 
-from ...helpers import FunctionalHelpers
+from ...helpers.lifecycle import GameLifecycle
 
 
 # Functions
@@ -11,7 +11,7 @@ def write_multiplayer_join() -> None:
 	version: str = Mem.ctx.project_version
 
 	## Join Ongoing Game (late-joiner support)
-	write_versioned_function("multiplayer/join_game", FunctionalHelpers.late_join_flow_lines(
+	write_versioned_function("multiplayer/join_game", GameLifecycle.late_join_flow_lines(
 	ns,
 	"multiplayer",
 	f"{ns}.mp.in_game",

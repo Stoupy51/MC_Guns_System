@@ -64,7 +64,7 @@ scoreboard objectives add mgs.last_muzzle_flash dummy
 scoreboard objectives add mgs.config dummy
 
 ## Per-player special scoreboards (for zombies bonuses, testing, etc.)
-## Generated from helpers.SPECIAL_SCORES, which is also what game starts wipe to get a clean slate.
+## Generated from SpecialScores.ALL, which is also what game starts wipe to get a clean slate.
 # Instant kill: duration in ticks (kills entities in one hit, except mgs.no_instant_kill tagged)
 scoreboard objectives add mgs.special.instant_kill dummy
 # Infinite ammo: duration in ticks (don't consume ammo, set ammo to max capacity)

@@ -3,7 +3,8 @@
 # Imports
 from stewbeet import Mem, write_versioned_function
 
-from ....helpers import MGS_TAG, FunctionalHelpers
+from ....helpers import MGS_TAG
+from ....helpers.lifecycle import GameLifecycle
 
 
 # Functions
@@ -14,12 +15,12 @@ def write_zombies_start() -> None:
 	## Game Start
 	write_versioned_function("zombies/start", f"""
 # Prevent starting if already active or preparing
-{FunctionalHelpers.game_start_guards(ns, "zombies", "Zombies game")}
+{GameLifecycle.game_start_guards(ns, "zombies", "Zombies game")}
 
 # Require at least one opted-in player (players are independent until added via Manage Players / + Join)
 execute unless entity @a[scores={{{ns}.zb.in_game=1}}] run return run tellraw @s [{MGS_TAG},{{"text":"No players have joined the zombies game — use Manage Players first.","color":"red"}}]
 
-{FunctionalHelpers.mode_start_map_bootstrap_lines(ns, "zombies", False)}
+{GameLifecycle.mode_start_map_bootstrap_lines(ns, "zombies", False)}
 
 # Create zombies team
 team add {ns}.zombies
@@ -61,7 +62,7 @@ scoreboard players set @a {ns}.mp.in_game 0
 scoreboard players set @a {ns}.mi.in_game 0
 
 # Disable natural regeneration, enable custom regen system
-{FunctionalHelpers.regen_enable_lines(ns)}
+{GameLifecycle.regen_enable_lines(ns)}
 
 # Set gamerules
 gamemode spectator @a[scores={{{ns}.zb.in_game=1}}]
@@ -99,7 +100,7 @@ function #{ns}:zombies/register_maps
 function #{ns}:zombies/register_mystery_box_item
 
 # Schedule preload completion after 1 second
-{FunctionalHelpers.schedule_preload_complete_line(ns, "zombies")}
+{GameLifecycle.schedule_preload_complete_line(ns, "zombies")}
 
 # Announce
 tellraw @a ["",{{"text":"","color":"dark_green","bold":true}},"🧟 ",{{"text":"Loading zombies map...","color":"yellow"}}]
@@ -129,7 +130,7 @@ execute if data storage {ns}:zombies game.map.start_commands[0] run function {ns
 function {ns}:v{version}/zombies/tp_all_to_spawns
 
 # Freeze players during prep
-{FunctionalHelpers.prep_freeze_lines(ns, "zb")}
+{GameLifecycle.prep_freeze_lines(ns, "zb")}
 execute as @a[scores={{{ns}.zb.in_game=1}}] run attribute @s minecraft:max_health base reset
 execute as @a[scores={{{ns}.zb.in_game=1}}] run attribute @s minecraft:entity_interaction_range base set 5
 
@@ -157,7 +158,7 @@ execute unless data storage {ns}:zombies game{{variant:"zonweeb"}} run tellraw @
 
 	## End Prep → Start Round 1
 	write_versioned_function("zombies/end_prep", f"""
-{FunctionalHelpers.end_prep_transition_lines(ns, "zombies", "zb")}
+{GameLifecycle.end_prep_transition_lines(ns, "zombies", "zb")}
 
 # Start round 1
 function {ns}:v{version}/zombies/start_round
