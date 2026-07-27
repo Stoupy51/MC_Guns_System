@@ -13,7 +13,7 @@ Points are never deducted/refunded incrementally: editor/recompute_points derive
 from stewbeet import Mem, write_load_file, write_versioned_function
 
 from ...helpers import MGS_TAG
-from ..classes import CONSUMABLE_MAGS
+from ..classes import MultiplayerClasses
 from .catalogs import (
 	ALL_SCOPE_SUFFIXES,
 	CAMO_VARIANTS,
@@ -64,7 +64,7 @@ from .catalogs import (
 
 # Functions
 # Empty editor state (display fields default to readable values so hub rows always render)
-def _empty_state() -> str:
+def empty_state() -> str:
 	return (
 		'{primary:"",primary_name:"None",primary_mag:"",primary_mag_count:1,'
 		'primary_scope:"",primary_scope_name:"Iron Sights",primary_camo:"",primary_camo_name:"Default",primary_full:"",'
@@ -94,7 +94,7 @@ $data modify storage {ns}:editor "$(_pid)" set from storage {ns}:temp editor
 
 	## State init, budget recompute, and the snapshot/commit pattern
 	write_versioned_function("multiplayer/editor/init_state", f"""
-data modify storage {ns}:temp editor set value {_empty_state()}
+data modify storage {ns}:temp editor set value {empty_state()}
 """)
 
 	## Derive the Pick-10 cost from the current state (mags only count when their gun is picked)
@@ -168,71 +168,71 @@ exit_action:{{label:"Cancel",action:{{type:"run_command",command:"/trigger {ns}.
 """)
 
 	# Hub rows whose label depends on the current state (macro append with editor fields)
-	def _row(trig: int, label_snbt: str, tooltip_snbt: str) -> str:
+	def row(trig: int, label_snbt: str, tooltip_snbt: str) -> str:
 		return (
 			f'$data modify storage {ns}:temp dialog.actions append value '
 			f'{{label:{label_snbt},tooltip:{tooltip_snbt},'
 			f'action:{{type:"run_command",command:"/trigger {ns}.player.config set {trig}"}}}}'
 		)
 
-	write_versioned_function("multiplayer/editor/hub_row_primary", _row(
+	write_versioned_function("multiplayer/editor/hub_row_primary", row(
 		TRIG_HUB_PRIMARY,
 		'["",{text:"\\ud83d\\udd2b "},{text:"Primary: ",color:"white"},{text:"$(primary_name)",color:"green"}]',
 		'{text:"$(primary_scope_name), $(primary_camo_name)\\nClick to change",color:"gray"}',
 	))
-	write_versioned_function("multiplayer/editor/hub_row_primary_mags", _row(
+	write_versioned_function("multiplayer/editor/hub_row_primary_mags", row(
 		TRIG_HUB_PRIMARY_MAGS,
 		'["",{text:"\\ud83d\\udce6 "},{text:"Primary Mags: ",color:"white"},{text:"$(primary_mag_count)x",color:"green"}]',
 		f'{{text:"{COST_PRIMARY_MAG} pt per magazine",color:"gray"}}',
 	))
-	write_versioned_function("multiplayer/editor/hub_row_secondary", _row(
+	write_versioned_function("multiplayer/editor/hub_row_secondary", row(
 		TRIG_HUB_SECONDARY,
 		'["",{text:"\\ud83d\\udd2b "},{text:"Secondary: ",color:"white"},{text:"$(secondary_name)",color:"green"}]',
 		'{text:"$(secondary_scope_name), $(secondary_camo_name)\\nClick to change",color:"gray"}',
 	))
-	write_versioned_function("multiplayer/editor/hub_row_secondary_mags", _row(
+	write_versioned_function("multiplayer/editor/hub_row_secondary_mags", row(
 		TRIG_HUB_SECONDARY_MAGS,
 		'["",{text:"\\ud83d\\udce6 "},{text:"Secondary Mags: ",color:"white"},{text:"$(secondary_mag_count)x",color:"green"}]',
 		f'{{text:"{COST_SECONDARY_MAG} pt per magazine",color:"gray"}}',
 	))
-	write_versioned_function("multiplayer/editor/hub_row_equip1", _row(
+	write_versioned_function("multiplayer/editor/hub_row_equip1", row(
 		TRIG_HUB_EQUIP1,
 		'["",{text:"\\ud83d\\udca3 "},{text:"Grenade 1: ",color:"white"},{text:"$(equip_slot1_name)",color:"green"}]',
 		f'{{text:"{COST_GRENADE} pt\\nClick to change",color:"gray"}}',
 	))
-	write_versioned_function("multiplayer/editor/hub_row_equip2", _row(
+	write_versioned_function("multiplayer/editor/hub_row_equip2", row(
 		TRIG_HUB_EQUIP2,
 		'["",{text:"\\ud83d\\udca3 "},{text:"Grenade 2: ",color:"white"},{text:"$(equip_slot2_name)",color:"green"}]',
 		f'{{text:"{COST_GRENADE} pt\\nClick to change",color:"gray"}}',
 	))
-	write_versioned_function("multiplayer/editor/hub_row_perks", _row(
+	write_versioned_function("multiplayer/editor/hub_row_perks", row(
 		TRIG_HUB_PERKS,
 		f'["",{{text:"\\u2b50 "}},{{text:"Perks: ",color:"white"}},{{text:"$(perks)/{MAX_PERKS}",color:"green"}}]',
 		f'{{text:"{COST_PERK} pt per perk",color:"gray"}}',
 	))
 
 	# Static hub buttons
-	_unavailable_mags_primary = (
+	unavailable_mags_primary = (
 		f'{{label:["","\\ud83d\\udce6 ",{{text:"Primary Mags \\u2014 Unavailable",color:"dark_gray"}}],'
 		f'tooltip:{{text:"Pick a primary weapon first",color:"red"}},'
 		f'action:{{type:"run_command",command:"/trigger {ns}.player.config set {TRIG_HUB}"}}}}'
 	)
-	_unavailable_mags_secondary = (
+	unavailable_mags_secondary = (
 		f'{{label:["","\\ud83d\\udce6 ",{{text:"Secondary Mags \\u2014 Unavailable",color:"dark_gray"}}],'
 		f'tooltip:{{text:"Pick a secondary weapon first",color:"red"}},'
 		f'action:{{type:"run_command",command:"/trigger {ns}.player.config set {TRIG_HUB}"}}}}'
 	)
-	_save_public_btn = (
+	save_public_btn = (
 		f'{{label:["","\\ud83d\\udcbe ",{{text:"Save as Public",color:"green",bold:true}}],'
 		f'tooltip:{{text:"Everyone can see and use this loadout"}},'
 		f'action:{{type:"run_command",command:"/trigger {ns}.player.config set {TRIG_SAVE_PUBLIC}"}}}}'
 	)
-	_save_private_btn = (
+	save_private_btn = (
 		f'{{label:["","\\ud83d\\udcbe ",{{text:"Save as Private",color:"yellow",bold:true}}],'
 		f'tooltip:{{text:"Only you can see and use this loadout"}},'
 		f'action:{{type:"run_command",command:"/trigger {ns}.player.config set {TRIG_SAVE_PRIVATE}"}}}}'
 	)
-	_unavailable_save = (
+	unavailable_save = (
 		f'{{label:["","\\ud83d\\udcbe ",{{text:"Save \\u2014 Unavailable",color:"dark_gray"}}],'
 		f'tooltip:{{text:"A primary weapon is required",color:"red"}},'
 		f'action:{{type:"run_command",command:"/trigger {ns}.player.config set {TRIG_HUB}"}}}}'
@@ -250,19 +250,19 @@ execute store result storage {ns}:temp _hub.perks int 1 run data get storage {ns
 # Base dialog, then one row per category (labels show the current selection)
 function {fn}/hub_base with storage {ns}:temp _hub
 function {fn}/hub_row_primary with storage {ns}:temp editor
-execute if data storage {ns}:temp editor{{primary:""}} run data modify storage {ns}:temp dialog.actions append value {_unavailable_mags_primary}
+execute if data storage {ns}:temp editor{{primary:""}} run data modify storage {ns}:temp dialog.actions append value {unavailable_mags_primary}
 execute unless data storage {ns}:temp editor{{primary:""}} run function {fn}/hub_row_primary_mags with storage {ns}:temp editor
 function {fn}/hub_row_secondary with storage {ns}:temp editor
-execute if data storage {ns}:temp editor{{secondary:""}} run data modify storage {ns}:temp dialog.actions append value {_unavailable_mags_secondary}
+execute if data storage {ns}:temp editor{{secondary:""}} run data modify storage {ns}:temp dialog.actions append value {unavailable_mags_secondary}
 execute unless data storage {ns}:temp editor{{secondary:""}} run function {fn}/hub_row_secondary_mags with storage {ns}:temp editor
 function {fn}/hub_row_equip1 with storage {ns}:temp editor
 function {fn}/hub_row_equip2 with storage {ns}:temp editor
 function {fn}/hub_row_perks with storage {ns}:temp _hub
 
 # Save buttons (grayed out until a primary weapon is selected)
-execute if data storage {ns}:temp editor{{primary:""}} run data modify storage {ns}:temp dialog.actions append value {_unavailable_save}
-execute unless data storage {ns}:temp editor{{primary:""}} run data modify storage {ns}:temp dialog.actions append value {_save_public_btn}
-execute unless data storage {ns}:temp editor{{primary:""}} run data modify storage {ns}:temp dialog.actions append value {_save_private_btn}
+execute if data storage {ns}:temp editor{{primary:""}} run data modify storage {ns}:temp dialog.actions append value {unavailable_save}
+execute unless data storage {ns}:temp editor{{primary:""}} run data modify storage {ns}:temp dialog.actions append value {save_public_btn}
+execute unless data storage {ns}:temp editor{{primary:""}} run data modify storage {ns}:temp dialog.actions append value {save_private_btn}
 
 # Show
 function {ns}:v{version}/multiplayer/show_dialog with storage {ns}:temp
@@ -317,7 +317,7 @@ function {ns}:v{version}/multiplayer/show_dialog with storage {ns}:temp
 	)
 	write_static_dialog("primary_dialog", "Primary Weapon", f"Choose your primary weapon ({COST_PRIMARY_WEAPON} pt + {COST_PRIMARY_MAG} pt per magazine)", ",".join(primary_actions))
 
-	_remove_secondary_btn = (
+	remove_secondary_btn = (
 		f'{{label:["","\\ud83d\\uddd1 ",{{text:"Remove Secondary",color:"red"}}],'
 		f'tooltip:{{text:"Clear the secondary weapon (refunds its points)"}},'
 		f'action:{{type:"run_command",command:"/trigger {ns}.player.config set {TRIG_REMOVE_SECONDARY}"}}}}'
@@ -333,7 +333,7 @@ function {ns}:v{version}/multiplayer/show_dialog with storage {ns}:temp
 			f'tooltip:["",{{"text":"Pistol","color":"gray"}},["","\\n",{{"text":"Cost"}},": "],[{{"text":"{COST_SECONDARY_WEAPON}","color":"gold"}}]," pt"],'
 			f'action:{{type:"run_command",command:"/trigger {ns}.player.config set {trig}"}}}}'
 		)
-	secondary_actions.append(_remove_secondary_btn)
+	secondary_actions.append(remove_secondary_btn)
 	write_static_dialog("secondary_pistol_dialog", "Secondary Weapon", f"Choose your secondary weapon ({COST_SECONDARY_WEAPON} pt + {COST_SECONDARY_MAG} pt per magazine)", ",".join(secondary_actions))
 
 	# Overkill secondary list: primaries (iron sights only, camo selectable)
@@ -346,7 +346,7 @@ function {ns}:v{version}/multiplayer/show_dialog with storage {ns}:temp
 			f'tooltip:["",{{"text":"{category}","color":"gray"}},["","\\n",{{"text":"Cost"}},": "],[{{"text":"{COST_SECONDARY_WEAPON}","color":"gold"}}]," pt"],'
 			f'action:{{type:"run_command",command:"/trigger {ns}.player.config set {trig}"}}}}'
 		)
-	overkill_actions.append(_remove_secondary_btn)
+	overkill_actions.append(remove_secondary_btn)
 	write_static_dialog("secondary_overkill_dialog", "Overkill Secondary", f"Choose a second primary ({COST_SECONDARY_WEAPON} pt + {COST_SECONDARY_MAG} pt per magazine)", ",".join(overkill_actions))
 
 	# Router: Overkill holders pick a primary as their secondary, everyone else picks a pistol
@@ -668,12 +668,12 @@ function {fn}/show_equip{slot_num}_camo_dialog
 
 	## PERKS submenu (toggle, recompute-based budget) Selected perks are shown green with a ✔; unselected are aqua.
 	## Per-perk append lines: a selected variant and an unselected variant
-	_perk_tooltip = '["",{{"text":"{desc}","color":"gray"}},["","\\n",{{"text":"Cost"}},": "],[{{"text":"{cost}","color":"gold"}}]," pt",{{"text":"\\nClick to toggle on/off","color":"dark_gray"}}]'
+	perk_tooltip = '["",{{"text":"{desc}","color":"gray"}},["","\\n",{{"text":"Cost"}},": "],[{{"text":"{cost}","color":"gold"}}]," pt",{{"text":"\\nClick to toggle on/off","color":"dark_gray"}}]'
 	perk_button_lines = ""
 	for perk_idx, p in enumerate(PERKS):
 		perk_id, perk_name, perk_desc = p.perk_id, p.display_name, p.description
 		trig = TRIG_PERK_BASE + perk_idx
-		tip = _perk_tooltip.format(desc=perk_desc, cost=COST_PERK)
+		tip = perk_tooltip.format(desc=perk_desc, cost=COST_PERK)
 		sel = (
 			f'{{label:{{text:"\\u2714 {perk_name}",color:"green",bold:true}},'
 			f'tooltip:{tip},action:{{type:"run_command",command:"/trigger {ns}.player.config set {trig}"}}}}'
@@ -773,8 +773,8 @@ function {fn}/rebuild_perks with storage {ns}:temp
 	for wp in PRIMARY_WEAPONS:
 		gun_id, mag_id, mag_count = wp.item_id, wp.magazine_id, wp.default_mag_count
 		gun_slot = f'{{slot:"hotbar.1",loot:"{ns}:i/{gun_id}",count:1,consumable:0b,bullets:0}}'
-		is_consumable = "1b" if mag_id in CONSUMABLE_MAGS else "0b"
-		bullets = mag_count if mag_id in CONSUMABLE_MAGS else 0
+		is_consumable = "1b" if mag_id in MultiplayerClasses.CONSUMABLE_MAGS else "0b"
+		bullets = mag_count if mag_id in MultiplayerClasses.CONSUMABLE_MAGS else 0
 		primary_slot_entries.append(
 			f'{{id:"{gun_id}",gun_slot:{gun_slot},mag_id:"{mag_id}",mag_consumable:{is_consumable},mag_bullets:{bullets}}}'
 		)
@@ -782,8 +782,8 @@ function {fn}/rebuild_perks with storage {ns}:temp
 	for wp in (w for w in SECONDARY_WEAPONS if w.in_loadout):
 		gun_id, mag_id, mag_count = wp.item_id, wp.magazine_id, wp.default_mag_count
 		gun_slot = f'{{slot:"hotbar.2",loot:"{ns}:i/{gun_id}",count:1,consumable:0b,bullets:0}}'
-		is_consumable = "1b" if mag_id in CONSUMABLE_MAGS else "0b"
-		bullets = mag_count if mag_id in CONSUMABLE_MAGS else 0
+		is_consumable = "1b" if mag_id in MultiplayerClasses.CONSUMABLE_MAGS else "0b"
+		bullets = mag_count if mag_id in MultiplayerClasses.CONSUMABLE_MAGS else 0
 		secondary_slot_entries.append(
 			f'{{id:"{gun_id}",gun_slot:{gun_slot},mag_id:"{mag_id}",mag_consumable:{is_consumable},mag_bullets:{bullets}}}'
 		)

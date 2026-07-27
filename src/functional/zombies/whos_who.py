@@ -14,7 +14,7 @@ Bleed/revive progress reuse the owner's normal scores so the revive core works u
 # Imports
 from stewbeet import Mem, write_load_file, write_versioned_function
 
-from ..core.feedback import zb_sound
+from ..core.feedback import ZombiesFeedback
 from ..helpers import MGS_TAG
 from .perks import PERK_DEFINITIONS
 from .revive import BLEED_OUT_TICKS, revive_body_detect, revive_body_progress
@@ -161,7 +161,7 @@ title @s times 5 40 15
 title @s title ["❤"]
 title @s subtitle [{{"text":"Body revived — you are whole again!","color":"green"}}]
 tellraw @a[scores={{{ns}.zb.in_game=1}}] [{MGS_TAG},{{"selector":"@s","color":"green"}},{{"text":"'s body was revived — they are whole again!","color":"gray"}}]
-{zb_sound('success')}
+{ZombiesFeedback.zb_sound('success')}
 """)
 
 	# Body bled out (@s = owner): keep playing with the pistol, perks stay lost

@@ -12,18 +12,18 @@ The item KIND is probed from the item's custom_data at setup and routes the purc
 from stewbeet import Mem, write_load_file, write_versioned_function
 
 from ...config.stats import GRENADE_TYPE
-from ..core.feedback import zb_sound
+from ..core.feedback import ZombiesFeedback
 from ..helpers import MGS_TAG
-from .common import build_weapon_magazine_data, deny_cmd, deny_not_enough_points_cmd, game_active_guard_cmd
+from .common import ZombiesCommon
 
 
 # Functions
 def generate_wallbuys() -> None:
 	ns: str = Mem.ctx.project_id
 	version: str = Mem.ctx.project_version
-	deny_not_enough_points: str = deny_not_enough_points_cmd(ns, version, "#wb_price")
-	deny_knife_owned: str = deny_cmd(ns, version, '{"text":"You already own this knife.","color":"yellow"}')
-	deny_equipment_full: str = deny_cmd(ns, version, '{"text":"Your equipment is already full.","color":"yellow"}')
+	deny_not_enough_points: str = ZombiesCommon.deny_not_enough_points_cmd(ns, version, "#wb_price")
+	deny_knife_owned: str = ZombiesCommon.deny_cmd(ns, version, '{"text":"You already own this knife.","color":"yellow"}')
+	deny_equipment_full: str = ZombiesCommon.deny_cmd(ns, version, '{"text":"Your equipment is already full.","color":"yellow"}')
 	gun_cd: str = "{" + ns + ":{gun:true}}"
 	mag_cd: str = "{" + ns + ":{magazine:true}}"
 	wallbuy_hover_message: str = (
@@ -37,7 +37,7 @@ def generate_wallbuys() -> None:
 
 	# Build weapon_id -> magazine_id mapping
 	weapon_mag_data: dict[str, str] = {}
-	for weapon_id, (mag_id, _, _) in build_weapon_magazine_data().items():
+	for weapon_id, (mag_id, _, _) in ZombiesCommon.build_weapon_magazine_data().items():
 		weapon_mag_data[weapon_id] = mag_id
 
 	## Wallbuy entity scoreboards
@@ -148,7 +148,7 @@ $execute as @e[tag={ns}.wb_new_display] run loot replace entity @s contents loot
 	## Right-click handler (executor: "source" = player)
 	write_versioned_function("zombies/wallbuys/on_right_click", f"""
 # Guard: game must be active
-{game_active_guard_cmd(ns)}
+{ZombiesCommon.game_active_guard_cmd(ns)}
 
 # Get wallbuy id + data first (used by dynamic price logic)
 execute store result storage {ns}:temp _wb_buy.id int 1 run scoreboard players get @n[tag=bs.interaction.target] {ns}.zb.wb.id
@@ -280,28 +280,28 @@ scoreboard players set #wb_purchase_mode {ns}.data 1
 
 	write_versioned_function("zombies/wallbuys/msg_purchased", f"""
 tellraw @s [{MGS_TAG},{{"text":"You bought ","color":"green"}},{{"storage":"{ns}:temp","nbt":"_wb_display_name","color":"gold","interpret":true}},{{"text":" for ","color":"green"}},{{"score":{{"name":"#wb_price","objective":"{ns}.data"}},"color":"yellow"}},{{"text":" points.","color":"green"}}]
-{zb_sound('success')}
+{ZombiesFeedback.zb_sound('success')}
 """)
 
 	write_versioned_function("zombies/wallbuys/msg_refilled", f"""
 tellraw @s [{MGS_TAG},{{"text":"Ammo refilled for ","color":"gold"}},{{"score":{{"name":"#wb_price","objective":"{ns}.data"}},"color":"yellow"}},{{"text":" points.","color":"gold"}}]
-{zb_sound('refill')}
+{ZombiesFeedback.zb_sound('refill')}
 """)
 
 	write_versioned_function("zombies/wallbuys/msg_replaced", f"""
 tellraw @s [{MGS_TAG},{{"text":"Swapped your selected weapon for ","color":"yellow"}},{{"storage":"{ns}:temp","nbt":"_wb_display_name","color":"gold","interpret":true}},{{"text":" (","color":"yellow"}},{{"score":{{"name":"#wb_price","objective":"{ns}.data"}},"color":"yellow"}},{{"text":" points).","color":"yellow"}}]
-{zb_sound('replace')}
+{ZombiesFeedback.zb_sound('replace')}
 """)
 
 	write_versioned_function("zombies/wallbuys/msg_refund_full", f"""
 tellraw @s [{MGS_TAG},{{"text":"Ammo is already full. Refunded ","color":"red"}},{{"score":{{"name":"#wb_price","objective":"{ns}.data"}},"color":"yellow"}},{{"text":" points.","color":"red"}}]
-{zb_sound('deny')}
+{ZombiesFeedback.zb_sound('deny')}
 """)
 
 	# Generate lookup function for weapon -> magazine mapping
 	magazine_lookup_cmds = "\n".join([
 		f"execute if data storage {ns}:temp _wb_store{{weapon_id:\"{wid}\"}} run data modify storage {ns}:temp _wb_store.magazine_id set value \"{mag_id}\""
-		for wid, (mag_id, _, _) in build_weapon_magazine_data().items()
+		for wid, (mag_id, _, _) in ZombiesCommon.build_weapon_magazine_data().items()
 	])
 
 	write_versioned_function("zombies/wallbuys/lookup_magazine_id", f"""
@@ -496,7 +496,7 @@ execute if score #wb_purchase_done {ns}.data matches 0 run scoreboard players se
 	write_versioned_function("zombies/wallbuys/deny_hold_valid_slot", f"""
 execute if score @s {ns}.zb.perk.mule_kick matches 1.. run tellraw @s [{MGS_TAG},{{"text":"Hold weapon slot 1, 2, or 3 to swap your current gun.","color":"red"}}]
 execute unless score @s {ns}.zb.perk.mule_kick matches 1.. run tellraw @s [{MGS_TAG},{{"text":"Hold weapon slot 1 or 2 to swap your current gun.","color":"red"}}]
-{zb_sound('deny')}
+{ZombiesFeedback.zb_sound('deny')}
 """)
 
 	write_versioned_function("zombies/wallbuys/replace_pair", f"""

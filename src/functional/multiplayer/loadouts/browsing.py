@@ -67,7 +67,7 @@ execute unless score #is_fav {ns}.data matches 1 if data storage {ns}:temp _fav_
 
 	## MY LOADOUTS - Browse and manage player's own custom loadouts Organized as: [⭐Favorites Only] [📋All] [✚Create] filter row, then favorites, then privates, then publics
 
-	def _my_loadouts_dialog_init() -> str:
+	def my_loadouts_dialog_init() -> str:
 		"""SNBT for the base My Loadouts dialog (no actions yet)."""
 		return (
 			f'{{type:"minecraft:multi_action",'
@@ -80,7 +80,7 @@ execute unless score #is_fav {ns}.data matches 1 if data storage {ns}:temp _fav_
 			f'}}'
 		)
 
-	def _my_loadouts_filter_btns(active: str = "all") -> list[str]:
+	def my_loadouts_filter_btns(active: str = "all") -> list[str]:
 		""" Return the 3 filter button SNBT entries for My Loadouts """
 		fav_color = "gold" if active == "fav" else "yellow"
 		all_color = "aqua" if active == "all" else "white"
@@ -93,12 +93,12 @@ execute unless score #is_fav {ns}.data matches 1 if data storage {ns}:temp _fav_
 	## my_loadouts/browse - Default: 3-pass build (favorites → privates → publics) + filter row
 	write_versioned_function("multiplayer/my_loadouts/browse", f"""
 # Initialize dialog
-data modify storage {ns}:temp dialog set value {_my_loadouts_dialog_init()}
+data modify storage {ns}:temp dialog set value {my_loadouts_dialog_init()}
 
 # Add filter/sort buttons (row 1: favorites / all / create)
-data modify storage {ns}:temp dialog.actions append value {_my_loadouts_filter_btns("all")[0]}
-data modify storage {ns}:temp dialog.actions append value {_my_loadouts_filter_btns("all")[1]}
-data modify storage {ns}:temp dialog.actions append value {_my_loadouts_filter_btns("all")[2]}
+data modify storage {ns}:temp dialog.actions append value {my_loadouts_filter_btns("all")[0]}
+data modify storage {ns}:temp dialog.actions append value {my_loadouts_filter_btns("all")[1]}
+data modify storage {ns}:temp dialog.actions append value {my_loadouts_filter_btns("all")[2]}
 
 # Load player favorites for ordering
 function {ns}:v{version}/multiplayer/shared/load_player_favorites
@@ -122,13 +122,13 @@ function {ns}:v{version}/multiplayer/show_dialog with storage {ns}:temp
 	## my_loadouts/browse_fav_only - Filter: only own favorited loadouts
 	write_versioned_function("multiplayer/my_loadouts/browse_fav_only", f"""
 # Initialize dialog
-data modify storage {ns}:temp dialog set value {_my_loadouts_dialog_init()}
+data modify storage {ns}:temp dialog set value {my_loadouts_dialog_init()}
 data modify storage {ns}:temp dialog.title set value [{{text:"",color:"gold",bold:true}},{{text:"My Loadouts"}}," \u2014 ",{{text:"Favorites"}}]
 
 # Add filter/sort buttons (favorites tab active)
-data modify storage {ns}:temp dialog.actions append value {_my_loadouts_filter_btns("fav")[0]}
-data modify storage {ns}:temp dialog.actions append value {_my_loadouts_filter_btns("fav")[1]}
-data modify storage {ns}:temp dialog.actions append value {_my_loadouts_filter_btns("fav")[2]}
+data modify storage {ns}:temp dialog.actions append value {my_loadouts_filter_btns("fav")[0]}
+data modify storage {ns}:temp dialog.actions append value {my_loadouts_filter_btns("fav")[1]}
+data modify storage {ns}:temp dialog.actions append value {my_loadouts_filter_btns("fav")[2]}
 
 # Load player favorites
 function {ns}:v{version}/multiplayer/shared/load_player_favorites
@@ -184,7 +184,7 @@ execute if score #pub {ns}.data matches 1 if score #is_fav {ns}.data matches 0 r
 """)
 
 	# Build perk display lines for tooltips \\n in SNBT → stored as \n (backslash+n, 2 chars) → when macro-substituted: \n = newline in text component
-	_perk_disp = (
+	perk_disp = (
 		"\n".join(f"data modify storage {ns}:temp _btn_data.perk{i} set value \"\"" for i in range(len(PERKS)))
 		+ "\n"
 		+ "\n".join(
@@ -193,13 +193,13 @@ execute if score #pub {ns}.data matches 1 if score #is_fav {ns}.data matches 0 r
 		)
 	)
 	# Concatenation of every perk slot (unselected ones are empty) — shows all chosen perks
-	_perk_concat = "".join(f"$(perk{i})" for i in range(len(PERKS)))
+	perk_concat = "".join(f"$(perk{i})" for i in range(len(PERKS)))
 
 	# Shared: normalize optional fields, compute perks count & display for _btn_data
-	_normalize_fields = "\n".join([
+	normalize_fields = "\n".join([
 		f'execute unless data storage {ns}:temp _btn_data.perks run data modify storage {ns}:temp _btn_data.perks set value []',
 		f'execute store result storage {ns}:temp _btn_data.perks_count int 1 run data get storage {ns}:temp _btn_data.perks',
-		_perk_disp,
+		perk_disp,
 		f'execute unless data storage {ns}:temp _btn_data.points_used run data modify storage {ns}:temp _btn_data.points_used set value 0',
 		f'execute unless data storage {ns}:temp _btn_data.favorites_count run data modify storage {ns}:temp _btn_data.favorites_count set value 0',
 		f'execute unless data storage {ns}:temp _btn_data.likes run data modify storage {ns}:temp _btn_data.likes set value 0',
@@ -212,7 +212,7 @@ execute if score #pub {ns}.data matches 1 if score #is_fav {ns}.data matches 0 r
 	])
 
 	# Helper to compute a trigger value and store it
-	def _compute_trig(field: str, base: int) -> str:
+	def compute_trig(field: str, base: int) -> str:
 		return (
 			f"execute store result score #trig {ns}.data run data get storage {ns}:temp _iter[0].id\n"
 			f"scoreboard players add #trig {ns}.data {base}\n"
@@ -220,7 +220,7 @@ execute if score #pub {ns}.data matches 1 if score #is_fav {ns}.data matches 0 r
 		)
 
 	# Rich info component shared by the list-row tooltip and the manage-dialog body
-	def _ml_info(public_label: str) -> str:
+	def ml_info(public_label: str) -> str:
 		return (
 			'["",{"text":"$(main_gun_display)","color":"green"},'
 			'{"text":" x$(primary_mag_count) mags","color":"dark_green"},'
@@ -236,7 +236,7 @@ execute if score #pub {ns}.data matches 1 if score #is_fav {ns}.data matches 0 r
 			f'{{"text":"$(points_used)/{PICK10_TOTAL}pts","color":"gold"}},'
 			'[{"text":"","color":"white"},"  ",{"text":"Perks"},": "],'
 			'{"text":"$(perks_count)","color":"light_purple"},'
-			'{"text":"' + _perk_concat + '","color":"light_purple"},'
+			'{"text":"' + perk_concat + '","color":"light_purple"},'
 			'"\\n",'
 			'{"text":"\\u2665 $(likes) likes","color":"red"},'
 			'{"text":"  \\u2b50 $(favorites_count) favs","color":"yellow"},'
@@ -245,8 +245,8 @@ execute if score #pub {ns}.data matches 1 if score #is_fav {ns}.data matches 0 r
 			+ ']'
 		)
 
-	_ml_tooltip_pub = _ml_info('{"text":"Public","color":"green","italic":true},"\\n\\n",{"text":"\\u25b6 Click to manage","color":"dark_gray","italic":true}')
-	_ml_tooltip_priv = _ml_info('{"text":"Private","color":"red","italic":true},"\\n\\n",{"text":"\\u25b6 Click to manage","color":"dark_gray","italic":true}')
+	ml_tooltip_pub = ml_info('{"text":"Public","color":"green","italic":true},"\\n\\n",{"text":"\\u25b6 Click to manage","color":"dark_gray","italic":true}')
+	ml_tooltip_priv = ml_info('{"text":"Private","color":"red","italic":true},"\\n\\n",{"text":"\\u25b6 Click to manage","color":"dark_gray","italic":true}')
 
 	## my_loadouts/prep_btn - Each loadout becomes ONE list row that opens its manage submenu
 	write_versioned_function("multiplayer/my_loadouts/prep_btn", f"""
@@ -254,10 +254,10 @@ execute if score #pub {ns}.data matches 1 if score #is_fav {ns}.data matches 0 r
 data modify storage {ns}:temp _btn_data set from storage {ns}:temp _iter[0]
 
 # Compute the manage submenu trigger (TRIG_MANAGE_BASE + id)
-{_compute_trig("manage_trig", TRIG_MANAGE_BASE)}
+{compute_trig("manage_trig", TRIG_MANAGE_BASE)}
 
 # Normalize and compute perk display
-{_normalize_fields}
+{normalize_fields}
 
 # Route to correct color variant based on public flag (green=public, red=private)
 execute store result score #pub {ns}.data run data get storage {ns}:temp _iter[0].public
@@ -266,13 +266,13 @@ execute if score #pub {ns}.data matches 0 run function {ns}:v{version}/multiplay
 """)
 
 	## add_btn_public / add_btn_private - one row: name + ▶ arrow, opens the manage submenu
-	write_versioned_function("multiplayer/my_loadouts/add_btn_public", f"""$data modify storage {ns}:temp dialog.actions append value {{label:["",{{"text":"$(name)",color:"green"}},{{"text":"  \\u25b6","color":"dark_gray"}}],tooltip:{_ml_tooltip_pub},action:{{type:"run_command",command:"/trigger {ns}.player.config set $(manage_trig)"}}}}
+	write_versioned_function("multiplayer/my_loadouts/add_btn_public", f"""$data modify storage {ns}:temp dialog.actions append value {{label:["",{{"text":"$(name)",color:"green"}},{{"text":"  \\u25b6","color":"dark_gray"}}],tooltip:{ml_tooltip_pub},action:{{type:"run_command",command:"/trigger {ns}.player.config set $(manage_trig)"}}}}
 """)
-	write_versioned_function("multiplayer/my_loadouts/add_btn_private", f"""$data modify storage {ns}:temp dialog.actions append value {{label:["",{{"text":"$(name)",color:"red"}},{{"text":"  \\u25b6","color":"dark_gray"}}],tooltip:{_ml_tooltip_priv},action:{{type:"run_command",command:"/trigger {ns}.player.config set $(manage_trig)"}}}}
+	write_versioned_function("multiplayer/my_loadouts/add_btn_private", f"""$data modify storage {ns}:temp dialog.actions append value {{label:["",{{"text":"$(name)",color:"red"}},{{"text":"  \\u25b6","color":"dark_gray"}}],tooltip:{ml_tooltip_priv},action:{{type:"run_command",command:"/trigger {ns}.player.config set $(manage_trig)"}}}}
 """)
 
 	## MY LOADOUTS - per-loadout manage submenu (Use / Edit / Visibility / Default / Delete)
-	def _compute_trig_id(field: str, base: int) -> str:
+	def compute_trig_id(field: str, base: int) -> str:
 		"""Compute base + #loadout_id into _btn_data.<field> (manage submenu)."""
 		return (
 			f"scoreboard players operation #trig {ns}.data = #loadout_id {ns}.data\n"
@@ -300,22 +300,22 @@ execute if data storage {ns}:temp _find_iter[0] run function {ns}:v{version}/mul
 	## manage_prep - Copy the found loadout, compute action triggers, normalize, build dialog
 	write_versioned_function("multiplayer/my_loadouts/manage_prep", f"""
 data modify storage {ns}:temp _btn_data set from storage {ns}:temp _find_iter[0]
-{_compute_trig_id("select_trig", TRIG_SELECT_BASE)}
-{_compute_trig_id("edit_trig", TRIG_EDIT_BASE)}
-{_compute_trig_id("vis_trig", TRIG_TOGGLE_VIS_BASE)}
-{_compute_trig_id("delete_trig", TRIG_DELETE_BASE)}
-{_compute_trig_id("default_trig", TRIG_SET_DEFAULT_BASE)}
-{_normalize_fields}
+{compute_trig_id("select_trig", TRIG_SELECT_BASE)}
+{compute_trig_id("edit_trig", TRIG_EDIT_BASE)}
+{compute_trig_id("vis_trig", TRIG_TOGGLE_VIS_BASE)}
+{compute_trig_id("delete_trig", TRIG_DELETE_BASE)}
+{compute_trig_id("default_trig", TRIG_SET_DEFAULT_BASE)}
+{normalize_fields}
 execute store result score #pub {ns}.data run data get storage {ns}:temp _find_iter[0].public
 execute if score #pub {ns}.data matches 1 run function {ns}:v{version}/multiplayer/my_loadouts/manage_build_public with storage {ns}:temp _btn_data
 execute if score #pub {ns}.data matches 0 run function {ns}:v{version}/multiplayer/my_loadouts/manage_build_private with storage {ns}:temp _btn_data
 """)
 
 	# Manage dialog body (rich info, no "click to manage" hint)
-	_manage_body_pub = _ml_info('{"text":"Public","color":"green","italic":true}')
-	_manage_body_priv = _ml_info('{"text":"Private","color":"red","italic":true}')
+	manage_body_pub = ml_info('{"text":"Public","color":"green","italic":true}')
+	manage_body_priv = ml_info('{"text":"Private","color":"red","italic":true}')
 
-	def _manage_dialog(vis_label: str, vis_tip: str, vis_color: str) -> str:
+	def manage_dialog(vis_label: str, vis_tip: str, vis_color: str) -> str:
 		""" Shared manage dialog: Use / Edit / Toggle visibility / Set default / Delete + Back """
 		return (
 			'{type:"minecraft:multi_action",'
@@ -334,16 +334,16 @@ execute if score #pub {ns}.data matches 0 run function {ns}:v{version}/multiplay
 			'}'
 		)
 
-	write_versioned_function("multiplayer/my_loadouts/manage_build_public", f"""$data modify storage {ns}:temp dialog set value {_manage_dialog("Public -> Private", "Toggle this loadout to Private", "dark_aqua").replace("BODY", _manage_body_pub)}
+	write_versioned_function("multiplayer/my_loadouts/manage_build_public", f"""$data modify storage {ns}:temp dialog set value {manage_dialog("Public -> Private", "Toggle this loadout to Private", "dark_aqua").replace("BODY", manage_body_pub)}
 function {ns}:v{version}/multiplayer/show_dialog with storage {ns}:temp
 """)
-	write_versioned_function("multiplayer/my_loadouts/manage_build_private", f"""$data modify storage {ns}:temp dialog set value {_manage_dialog("Private -> Public", "Toggle this loadout to Public", "aqua").replace("BODY", _manage_body_priv)}
+	write_versioned_function("multiplayer/my_loadouts/manage_build_private", f"""$data modify storage {ns}:temp dialog set value {manage_dialog("Private -> Public", "Toggle this loadout to Public", "aqua").replace("BODY", manage_body_priv)}
 function {ns}:v{version}/multiplayer/show_dialog with storage {ns}:temp
 """)
 
 	## MARKETPLACE - Browse all public custom loadouts Organized as: [📋All] [⭐Favorites] [❤Best Liked] filter row, then favorited public loadouts first, then the rest
 
-	def _marketplace_dialog_init() -> str:
+	def marketplace_dialog_init() -> str:
 		return (
 			f'{{type:"minecraft:multi_action",'
 			f'title:{{text:"Marketplace",color:"light_purple",bold:true}},'
@@ -355,7 +355,7 @@ function {ns}:v{version}/multiplayer/show_dialog with storage {ns}:temp
 			f'}}'
 		)
 
-	def _marketplace_filter_btns(active: str = "all") -> list[str]:
+	def marketplace_filter_btns(active: str = "all") -> list[str]:
 		all_color = "aqua" if active == "all" else "white"
 		fav_color = "gold" if active == "fav" else "yellow"
 		likes_color = "red" if active == "likes" else "white"
@@ -368,12 +368,12 @@ function {ns}:v{version}/multiplayer/show_dialog with storage {ns}:temp
 	## marketplace/browse - Default: favorites first, then the rest
 	write_versioned_function("multiplayer/marketplace/browse", f"""
 # Initialize dialog
-data modify storage {ns}:temp dialog set value {_marketplace_dialog_init()}
+data modify storage {ns}:temp dialog set value {marketplace_dialog_init()}
 
 # Add filter/sort buttons (row 1: all / favorites / best liked)
-data modify storage {ns}:temp dialog.actions append value {_marketplace_filter_btns("all")[0]}
-data modify storage {ns}:temp dialog.actions append value {_marketplace_filter_btns("all")[1]}
-data modify storage {ns}:temp dialog.actions append value {_marketplace_filter_btns("all")[2]}
+data modify storage {ns}:temp dialog.actions append value {marketplace_filter_btns("all")[0]}
+data modify storage {ns}:temp dialog.actions append value {marketplace_filter_btns("all")[1]}
+data modify storage {ns}:temp dialog.actions append value {marketplace_filter_btns("all")[2]}
 
 # Load player favorites
 function {ns}:v{version}/multiplayer/shared/load_player_favorites
@@ -393,13 +393,13 @@ function {ns}:v{version}/multiplayer/show_dialog with storage {ns}:temp
 	## marketplace/browse_fav_only - Filter: only public + in player's favorites
 	write_versioned_function("multiplayer/marketplace/browse_fav_only", f"""
 # Initialize dialog
-data modify storage {ns}:temp dialog set value {_marketplace_dialog_init()}
+data modify storage {ns}:temp dialog set value {marketplace_dialog_init()}
 data modify storage {ns}:temp dialog.title set value [{{text:"",color:"light_purple",bold:true}},{{text:"Marketplace"}}," \u2014 ",{{text:"Favorites"}}]
 
 # Add filter/sort buttons (favorites tab active)
-data modify storage {ns}:temp dialog.actions append value {_marketplace_filter_btns("fav")[0]}
-data modify storage {ns}:temp dialog.actions append value {_marketplace_filter_btns("fav")[1]}
-data modify storage {ns}:temp dialog.actions append value {_marketplace_filter_btns("fav")[2]}
+data modify storage {ns}:temp dialog.actions append value {marketplace_filter_btns("fav")[0]}
+data modify storage {ns}:temp dialog.actions append value {marketplace_filter_btns("fav")[1]}
+data modify storage {ns}:temp dialog.actions append value {marketplace_filter_btns("fav")[2]}
 
 # Load player favorites
 function {ns}:v{version}/multiplayer/shared/load_player_favorites
@@ -415,13 +415,13 @@ function {ns}:v{version}/multiplayer/show_dialog with storage {ns}:temp
 	## marketplace/browse_likes - Sort by likes descending (find-max passes O(n^2), fine for small n)
 	write_versioned_function("multiplayer/marketplace/browse_likes", f"""
 # Initialize dialog
-data modify storage {ns}:temp dialog set value {_marketplace_dialog_init()}
+data modify storage {ns}:temp dialog set value {marketplace_dialog_init()}
 data modify storage {ns}:temp dialog.title set value [{{text:"",color:"light_purple",bold:true}},{{text:"Marketplace"}}," \u2014 ",{{text:"Best Liked"}}]
 
 # Add filter/sort buttons (likes tab active)
-data modify storage {ns}:temp dialog.actions append value {_marketplace_filter_btns("likes")[0]}
-data modify storage {ns}:temp dialog.actions append value {_marketplace_filter_btns("likes")[1]}
-data modify storage {ns}:temp dialog.actions append value {_marketplace_filter_btns("likes")[2]}
+data modify storage {ns}:temp dialog.actions append value {marketplace_filter_btns("likes")[0]}
+data modify storage {ns}:temp dialog.actions append value {marketplace_filter_btns("likes")[1]}
+data modify storage {ns}:temp dialog.actions append value {marketplace_filter_btns("likes")[2]}
 
 # Load player favorites (used in prep_btn normalization)
 function {ns}:v{version}/multiplayer/shared/load_player_favorites
@@ -516,12 +516,12 @@ execute if data storage {ns}:temp _pool_rebuild[0] run function {ns}:v{version}/
 data modify storage {ns}:temp _btn_data set from storage {ns}:temp _iter[0]
 
 # Compute triggers
-{_compute_trig("select_trig", TRIG_SELECT_BASE)}
-{_compute_trig("like_trig", TRIG_LIKE_BASE)}
-{_compute_trig("fav_trig", TRIG_FAVORITE_BASE)}
+{compute_trig("select_trig", TRIG_SELECT_BASE)}
+{compute_trig("like_trig", TRIG_LIKE_BASE)}
+{compute_trig("fav_trig", TRIG_FAVORITE_BASE)}
 
 # Normalize and compute perk display
-{_normalize_fields}
+{normalize_fields}
 execute unless data storage {ns}:temp _btn_data.owner_name run data modify storage {ns}:temp _btn_data.owner_name set value "?"
 
 # Add buttons to dialog
@@ -529,7 +529,7 @@ function {ns}:v{version}/multiplayer/marketplace/add_btn with storage {ns}:temp 
 """)
 
 	# Rich tooltip for MARKETPLACE buttons (includes owner name)
-	_mp_tooltip = (
+	mp_tooltip = (
 		'["",{"text":"$(main_gun_display)","color":"green"},'
 		'{"text":" x$(primary_mag_count) mags","color":"dark_green"},'
 		'"\\n",'
@@ -544,7 +544,7 @@ function {ns}:v{version}/multiplayer/marketplace/add_btn with storage {ns}:temp 
 		f'{{"text":"$(points_used)/{PICK10_TOTAL}pts","color":"gold"}},'
 		'[{"text":"","color":"white"},"  ",{"text":"Perks"},": "],'
 		'{"text":"$(perks_count)","color":"light_purple"},'
-		'{"text":"' + _perk_concat + '","color":"light_purple"},'
+		'{"text":"' + perk_concat + '","color":"light_purple"},'
 		'"\\n",'
 		'{"text":"\\u2665 $(likes) likes","color":"red"},'
 		'{"text":"  \\u2b50 $(favorites_count) favs","color":"yellow"},'
@@ -555,7 +555,7 @@ function {ns}:v{version}/multiplayer/marketplace/add_btn with storage {ns}:temp 
 	)
 
 	## marketplace/add_btn - Macro: append 3 buttons (Select + Like + Favorite) with rich tooltip
-	write_versioned_function("multiplayer/marketplace/add_btn", f"""$data modify storage {ns}:temp dialog.actions append value {{label:{{text:"$(name)",color:"green"}},tooltip:{_mp_tooltip},action:{{type:"run_command",command:"/trigger {ns}.player.config set $(select_trig)"}}}}
+	write_versioned_function("multiplayer/marketplace/add_btn", f"""$data modify storage {ns}:temp dialog.actions append value {{label:{{text:"$(name)",color:"green"}},tooltip:{mp_tooltip},action:{{type:"run_command",command:"/trigger {ns}.player.config set $(select_trig)"}}}}
 $data modify storage {ns}:temp dialog.actions append value {{label:[{{text:"\u2b50 ",color:"gold"}},{{text:"Make Favorite",color:"yellow"}}],tooltip:{{text:"Add to favorites",color:"gold"}},action:{{type:"run_command",command:"/trigger {ns}.player.config set $(fav_trig)"}}}}
 $data modify storage {ns}:temp dialog.actions append value {{label:[{{text:"\u2665 ",color:"red"}},{{text:"Like the Loadout",color:"yellow"}}],tooltip:{{text:"Like this loadout",color:"yellow"}},action:{{type:"run_command",command:"/trigger {ns}.player.config set $(like_trig)"}}}}
 """)

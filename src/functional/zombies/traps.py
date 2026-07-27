@@ -10,18 +10,18 @@ Type 2 = turret: shoots the nearest zombie in range every 5 ticks for 45% of its
 # Imports
 from stewbeet import JsonDict, Mem, Predicate, set_json_encoder, write_load_file, write_versioned_function
 
-from ..core.feedback import zb_sound
+from ..core.feedback import ZombiesFeedback
 from ..helpers import MGS_TAG
-from .common import deny_cmd, deny_not_enough_points_cmd, game_active_guard_cmd
+from .common import ZombiesCommon
 
 
 # Functions
 def generate_traps() -> None:
 	ns: str = Mem.ctx.project_id
 	version: str = Mem.ctx.project_version
-	deny_requires_power: str = deny_cmd(ns, version, '{"text":"This trap requires power.","color":"red"}')
-	deny_not_ready: str = deny_cmd(ns, version, '{"text":"Trap is on cooldown and not ready yet.","color":"yellow"}')
-	deny_not_enough_points: str = deny_not_enough_points_cmd(ns, version, "#trap_price")
+	deny_requires_power: str = ZombiesCommon.deny_cmd(ns, version, '{"text":"This trap requires power.","color":"red"}')
+	deny_not_ready: str = ZombiesCommon.deny_cmd(ns, version, '{"text":"Trap is on cooldown and not ready yet.","color":"yellow"}')
+	deny_not_enough_points: str = ZombiesCommon.deny_not_enough_points_cmd(ns, version, "#trap_price")
 
 	## Predicate: does `this` entity's trap id match the turret currently being processed?
 	## Used to select the matching head/interaction by score directly in a selector (predicate=...), which is cheaper than `execute as @e[...] if score @s ... = #turret_tid ...`.
@@ -149,7 +149,7 @@ $execute positioned $(cx) $(cy) $(cz) positioned ~ ~1.625 ~ run summon minecraft
 	## Right-click handler (executor: "source" = player)
 	write_versioned_function("zombies/traps/on_right_click", f"""
 # Guard: game must be active
-{game_active_guard_cmd(ns)}
+{ZombiesCommon.game_active_guard_cmd(ns)}
 
 # Check power requirement
 execute store result score #trap_power {ns}.data run scoreboard players get @n[tag=bs.interaction.target] {ns}.zb.trap.power
@@ -179,7 +179,7 @@ execute if score @s {ns}.special.timeslip matches 1.. as @e[type=minecraft:marke
 
 # Announce
 tellraw @a[scores={{{ns}.zb.in_game=1}}] [{MGS_TAG},{{"text":"Trap activated for ","color":"gold"}},{{"score":{{"name":"#trap_price","objective":"{ns}.data"}},"color":"yellow"}},{{"text":" points.","color":"gold"}}]
-{zb_sound('announce')}
+{ZombiesFeedback.zb_sound('announce')}
 """)
 
 	## Active trap tick: damage zombies, particles, decrement timer

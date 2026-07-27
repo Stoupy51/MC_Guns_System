@@ -8,7 +8,7 @@ Map definitions are dynamic (stored in storage, registered via function tags).
 # Imports
 from stewbeet import Mem, write_load_file, write_tag, write_tick_file, write_versioned_function
 
-from ..core.spawning import write_summon_spawn_at, write_tp_player_at
+from ..core.spawning import CoreSpawning
 from ..helpers import MGS_TAG, FunctionalHelpers
 
 
@@ -795,7 +795,7 @@ execute store result storage {ns}:temp _abox.dz double 1 run data get storage {n
 data modify entity @n[tag={ns}.new_spawn] data.abox set from storage {ns}:temp _abox
 """)
 
-	write_summon_spawn_at("zombies", extra_spawn_tags=("new_spawn",))
+	CoreSpawning.write_summon_spawn_at("zombies", extra_spawn_tags=("new_spawn",))
 
 	# Smart Spawn Selection.
 
@@ -833,7 +833,7 @@ execute as @p[tag={ns}.spawn_pending] run function {ns}:v{version}/zombies/tp_pl
 execute unless data storage {ns}:zombies game{{state:"active"}} run tag @s add {ns}.spawn_used
 """)
 
-	write_tp_player_at("zombies")
+	CoreSpawning.write_tp_player_at("zombies")
 
 	## Respawn TP for zombies
 	write_versioned_function("zombies/respawn_tp", f"""

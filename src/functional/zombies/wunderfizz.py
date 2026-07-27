@@ -10,9 +10,9 @@ The pool is the shared "available perk pool" helper (zombies/perks/pool/*): perk
 # Imports
 from stewbeet import Mem, write_load_file, write_versioned_function
 
-from ..core.feedback import zb_sound
+from ..core.feedback import ZombiesFeedback
 from ..helpers import MGS_TAG
-from .common import deny_cmd, deny_not_enough_points_cmd, game_active_guard_cmd
+from .common import ZombiesCommon
 from .perks import PERK_DEFINITIONS
 
 # Constants
@@ -28,19 +28,19 @@ WF_MOVE_BEAR_POOF: int = 48
 WF_MOVE_THRESHOLD: int = 4
 
 # Functions
-def _orb_model_cmd(ns: str, pid: str) -> str:
+def orb_model_cmd(ns: str, pid: str) -> str:
 	""" The command setting the spinning orb's item to a perk's bottle model. """
 	return f'data modify entity @s item set value {{id:"minecraft:potion",count:1,components:{{"minecraft:item_model":"{ns}:perk_machine_{pid}"}}}}'
 
 def generate_wunderfizz() -> None:
 	ns: str = Mem.ctx.project_id
 	version: str = Mem.ctx.project_version
-	deny_requires_power: str = deny_cmd(ns, version, '{"text":"This Der Wunderfizz requires power.","color":"red"}')
-	deny_in_use: str = deny_cmd(ns, version, '{"text":"Der Wunderfizz is already spinning.","color":"red"}')
-	deny_moving: str = deny_cmd(ns, version, '{"text":"Der Wunderfizz is moving...","color":"yellow"}')
-	deny_not_your_result: str = deny_cmd(ns, version, '{"text":"Wait for the buyer to collect their perk.","color":"red"}')
-	deny_all_owned: str = deny_cmd(ns, version, '{"text":"You already own every available perk. Points refunded.","color":"yellow"}')
-	deny_not_enough_points: str = deny_not_enough_points_cmd(ns, version, "#wf_price")
+	deny_requires_power: str = ZombiesCommon.deny_cmd(ns, version, '{"text":"This Der Wunderfizz requires power.","color":"red"}')
+	deny_in_use: str = ZombiesCommon.deny_cmd(ns, version, '{"text":"Der Wunderfizz is already spinning.","color":"red"}')
+	deny_moving: str = ZombiesCommon.deny_cmd(ns, version, '{"text":"Der Wunderfizz is moving...","color":"yellow"}')
+	deny_not_your_result: str = ZombiesCommon.deny_cmd(ns, version, '{"text":"Wait for the buyer to collect their perk.","color":"red"}')
+	deny_all_owned: str = ZombiesCommon.deny_cmd(ns, version, '{"text":"You already own every available perk. Points refunded.","color":"yellow"}')
+	deny_not_enough_points: str = ZombiesCommon.deny_not_enough_points_cmd(ns, version, "#wf_price")
 	perk_ids: list[str] = list(PERK_DEFINITIONS)
 	num_perks: int = len(perk_ids)
 
@@ -173,7 +173,7 @@ execute unless entity @s[tag={ns}.wf_active] unless entity @s[tag={ns}.roam_hidd
 
 	## Right-click (executor "source" = player)
 	write_versioned_function("zombies/wunderfizz/on_right_click", f"""
-{game_active_guard_cmd(ns)}
+{ZombiesCommon.game_active_guard_cmd(ns)}
 
 # Usable only on the active machine, or a machine that still has an orb here to collect
 scoreboard players set #wf_usable {ns}.data 0
@@ -287,7 +287,7 @@ execute if score @s {ns}.zb.wf.anim matches ..-200 run function {ns}:v{version}/
 
 	## Cycle the displayed perk bottle every 3 ticks during the spin (@s = orb)
 	roll_dispatch: str = "\n".join(
-		f"execute if score #wf_roll {ns}.data matches {i} run {_orb_model_cmd(ns, pid)}"
+		f"execute if score #wf_roll {ns}.data matches {i} run {orb_model_cmd(ns, pid)}"
 		for i, pid in enumerate(perk_ids)
 	)
 	write_versioned_function("zombies/wunderfizz/spin_cycle", f"""
@@ -303,7 +303,7 @@ playsound minecraft:block.conduit.ambient.short ambient @a[scores={{{ns}.zb.in_g
 
 	## Landing (@s = orb): a roam pull turns into a teddy bear; otherwise show the chosen perk bottle.
 	land_dispatch: str = "\n".join(
-		f"execute if score @s {ns}.zb.wf.perk matches {i} run {_orb_model_cmd(ns, pid)}"
+		f"execute if score @s {ns}.zb.wf.perk matches {i} run {orb_model_cmd(ns, pid)}"
 		for i, pid in enumerate(perk_ids)
 	)
 	write_versioned_function("zombies/wunderfizz/land", f"""
@@ -315,7 +315,7 @@ particle minecraft:totem_of_undying ~ ~ ~ 0.3 0.4 0.3 0.2 10 force @a[distance=.
 particle minecraft:electric_spark ~ ~ ~ 0.4 0.5 0.4 0.15 10 force @a[distance=..48]
 playsound minecraft:block.beacon.deactivate ambient @a[scores={{{ns}.zb.in_game=1}}] ~ ~ ~ 0.8 1.4
 playsound minecraft:entity.lightning_bolt.impact ambient @a[scores={{{ns}.zb.in_game=1}}] ~ ~ ~ 0.5 1.7
-{zb_sound('announce')}
+{ZombiesFeedback.zb_sound('announce')}
 scoreboard players operation #wf_b {ns}.data = @s {ns}.zb.wf.buyer
 execute as @a[scores={{{ns}.zb.in_game=1}}] if score @s {ns}.zb.wf_pid = #wf_b {ns}.data run tellraw @s [{MGS_TAG},{{"text":"Perk ready! ","color":"gold"}},{{"text":"Right-click Der Wunderfizz to collect!","color":"green","bold":true}}]
 """)
@@ -328,7 +328,7 @@ scoreboard players operation #wf_refund {ns}.data = @s {ns}.zb.wf.paid
 execute as @a[scores={{{ns}.zb.in_game=1}}] if score @s {ns}.zb.wf_pid = #wf_b {ns}.data run scoreboard players operation @s {ns}.zb.points += #wf_refund {ns}.data
 
 tellraw @a[scores={{{ns}.zb.in_game=1}}] [{MGS_TAG},{{"text":"Der Wunderfizz is moving!","color":"yellow","bold":true}}]
-{zb_sound('box_bye_bye')}
+{ZombiesFeedback.zb_sound('box_bye_bye')}
 
 # Spawn the teddy bear at the active machine and start the roam timer, then remove the orb
 execute as @n[tag={ns}.wf_active] at @s run function {ns}:v{version}/zombies/wunderfizz/move_start
@@ -383,7 +383,7 @@ execute as @n[tag={ns}.wf_active] at @s run playsound minecraft:entity.lightning
 scoreboard players set #wf_move_timer {ns}.data 0
 kill @e[tag={ns}.wf_bear]
 tellraw @a[scores={{{ns}.zb.in_game=1}}] [{MGS_TAG},{{"text":"Der Wunderfizz has arrived at a new location!","color":"yellow"}}]
-execute as @n[tag={ns}.wf_active] at @s run {zb_sound('announce')}
+execute as @n[tag={ns}.wf_active] at @s run {ZombiesFeedback.zb_sound('announce')}
 """)
 
 	## Uncollected after the 10s window (@s = orb): despawn (no refund — the spin already happened)
@@ -404,7 +404,7 @@ data remove storage {ns}:temp _wf_grant.perk_id
 execute if data storage {ns}:temp _wf_grant.perk_id run function {ns}:v{version}/zombies/perks/apply with storage {ns}:temp _wf_grant
 execute if data storage {ns}:temp _wf_grant.perk_id run function #{ns}:zombies/on_new_perk
 kill @n[type=item_display,tag={ns}.wunderfizz_orb,distance=..3]
-{zb_sound('success')}
+{ZombiesFeedback.zb_sound('success')}
 """)
 
 	## Hover

@@ -3,7 +3,7 @@
 from stewbeet import Mem, write_load_file, write_versioned_function
 
 from ..helpers import FunctionalHelpers
-from .classes import CLASS_IDS, CLASSES, build_class_snbt
+from .classes import MultiplayerClasses
 
 
 # Functions
@@ -13,9 +13,9 @@ def generate_loadouts() -> None:
 
 	## Initialize default classes in storage as an ordered list
 	class_entries: list[str] = []
-	for class_id, class_data in CLASSES.items():
-		class_num: int = CLASS_IDS[class_id]
-		class_entries.append(build_class_snbt(ns, class_id, class_data, class_num))
+	for class_id, class_data in MultiplayerClasses.CLASSES.items():
+		class_num: int = MultiplayerClasses.CLASS_IDS[class_id]
+		class_entries.append(MultiplayerClasses.build_class_snbt(ns, class_id, class_data, class_num))
 
 	classes_snbt: str = ",".join(class_entries)
 	write_load_file(f"data modify storage {ns}:multiplayer classes_list set value [{classes_snbt}]")

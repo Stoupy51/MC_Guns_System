@@ -12,21 +12,21 @@ from .zombies.perks import PERK_DEFINITIONS, RECOMMENDED_PRICES
 # Constants
 MAX_MAPS = 50
 
-# Perk reference lines for the perk_machine tooltips, generated from the perk registry so they can never drift out of sync with the actual perks (ids grouped 5/line, prices as "Name N" grouped 3/line).
-_PERK_IDS: list[str] = list(PERK_DEFINITIONS.keys())
-_PERK_ID_DOC: str = (
+PERK_IDS: list[str] = list(PERK_DEFINITIONS.keys())
+""" Perk ids for the perk_machine tooltips, read from the registry so they can never drift out of sync with the actual perks. """
+PERK_ID_DOC: str = (
 	"Perk granted by this machine:\n"
-	+ "\n".join(" · ".join(_PERK_IDS[i:i + 5]) for i in range(0, len(_PERK_IDS), 5))
+	+ "\n".join(" · ".join(PERK_IDS[i:i + 5]) for i in range(0, len(PERK_IDS), 5))
 	+ "\n\nThe Random Perk power-up and Der Wunderfizz only roll perks that have a\n"
 	"machine placed on this map (unless a Wunderfizz has all_perks set), so\n"
 	"which perks you place here shapes what they can grant."
 )
-_PERK_PRICE_PAIRS: list[str] = [f'{PERK_DEFINITIONS[pid].display_name} {RECOMMENDED_PRICES.get(pid, 2000)}' for pid in _PERK_IDS]
-_PERK_PRICE_DOC: str = (
+PERK_PRICE_PAIRS: list[str] = [f'{PERK_DEFINITIONS[pid].display_name} {RECOMMENDED_PRICES.get(pid, 2000)}' for pid in PERK_IDS]
+PERK_PRICE_DOC: str = (
 	"Cost in points to buy this perk.\n"
 	"Leave at -1 to auto-resolve the recommended price from perk_id.\n"
 	"Recommended prices:\n"
-	+ "\n".join(" · ".join(_PERK_PRICE_PAIRS[i:i + 3]) for i in range(0, len(_PERK_PRICE_PAIRS), 3))
+	+ "\n".join(" · ".join(PERK_PRICE_PAIRS[i:i + 3]) for i in range(0, len(PERK_PRICE_PAIRS), 3))
 )
 
 # Classes
@@ -121,8 +121,8 @@ FIELD_DOCS: dict[tuple[str, str] | str, str] = {
 	("perk_machine", "partial_price"): "Chip-in payments: points taken per right-click (0 = pay the full price at once).\nExample: price 2500 + partial_price 500 = 5 payments.\nPerk progress is LOCAL — each player pays down their own perk, nobody can\ncontribute to someone else's. Progress is lost when the perk is obtained.",
 	("door", "back_group_id"): "Zombie spawn group_id unlocked behind this door (-1 = none).",
 	("perk_machine", "name"): "Display label shown when hovering the machine.\nLeave EMPTY to auto-resolve the perk's canonical name from perk_id\n(e.g. juggernog -> Juggernog). Only set this to override that name.",
-	("perk_machine", "perk_id"): _PERK_ID_DOC,
-	("perk_machine", "price"): _PERK_PRICE_DOC,
+	("perk_machine", "perk_id"): PERK_ID_DOC,
+	("perk_machine", "price"): PERK_PRICE_DOC,
 	("wunderfizz", "all_perks"): "false = the machine only rolls perks that have a machine placed on\nthis map (like the Random Perk power-up).\ntrue = rolls across EVERY defined perk (BO2 Origins behaviour), so it\ncan grant perks with no machine on the map.",
 	("wunderfizz", "price"): "Points per use. Cycles perk bottles and grants one random perk the\nbuyer doesn't already own, collectable by the buyer for 10s. Suggested: 1500.",
 	("wallbuy", "weapon_id"): "Item id given on purchase. Guns (e.g. m1911, ak47, mp5),\nknives (bowie_knife, ~3000 pts), lethal grenades (frag_grenade,\nsemtex...), or tacticals (monkey_bomb). Non-guns route to their\nown slot: knife hotbar.0, lethals hotbar.7 (x4), tacticals hotbar.6 (x3).",

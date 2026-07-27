@@ -9,16 +9,16 @@ A door's link_id is also its front-room spawn group, and back_group_id is its ba
 # Imports
 from stewbeet import Mem, write_load_file, write_versioned_function
 
-from ..core.feedback import zb_sound
+from ..core.feedback import ZombiesFeedback
 from ..helpers import MGS_TAG
-from .common import deny_not_enough_points_cmd, game_active_guard_cmd
+from .common import ZombiesCommon
 
 
 # Functions
 def generate_doors() -> None:
 	ns: str = Mem.ctx.project_id
 	version: str = Mem.ctx.project_version
-	deny_not_enough_points: str = deny_not_enough_points_cmd(ns, version, "#door_price")
+	deny_not_enough_points: str = ZombiesCommon.deny_not_enough_points_cmd(ns, version, "#door_price")
 	interaction_offset: float = 0.75  # Distance in front of door block to place interaction entities
 	front_door_tags: str = f'["{ns}.door","{ns}.door_front","{ns}.gm_entity","bs.entity.interaction","{ns}.door_new"]'
 	back_door_tags: str = f'["{ns}.door","{ns}.door_back","{ns}.gm_entity","bs.entity.interaction","{ns}.door_new"]'
@@ -147,7 +147,7 @@ execute if score #door_partial {ns}.data matches 1.. run scoreboard players oper
 	## Right-click handler (executor: "source" = player)
 	write_versioned_function("zombies/doors/on_right_click", f"""
 # Guard: game must be active
-{game_active_guard_cmd(ns)}
+{ZombiesCommon.game_active_guard_cmd(ns)}
 
 # Get door price from interacted entity
 function {ns}:v{version}/zombies/doors/read_price
@@ -177,13 +177,13 @@ execute as @e[tag={ns}.door] if score @s {ns}.zb.door.link = #door_link {ns}.dat
 
 # Announce (the total, not the last chunk: it's what the door cost the team)
 tellraw @a [{MGS_TAG},{{"selector":"@s","color":"yellow"}},{{"text":" opened ","color":"green"}},{{"storage":"{ns}:temp","nbt":"_door_hover_name","color":"gold","interpret":true}},{{"text":" for ","color":"green"}},{{"score":{{"name":"#door_total","objective":"{ns}.data"}},"color":"yellow"}},{{"text":" points.","color":"green"}}]
-{zb_sound('announce')}
+{ZombiesFeedback.zb_sound('announce')}
 """)  # noqa: E501
 
 	## Chip-in payment that didn't finish the door (@s = paying player)
 	write_versioned_function("zombies/doors/announce_progress", f"""
 tellraw @a [{MGS_TAG},{{"selector":"@s","color":"yellow"}},{{"text":" chipped in ","color":"green"}},{{"score":{{"name":"#door_price","objective":"{ns}.data"}},"color":"yellow"}},{{"text":" points for ","color":"green"}},{{"storage":"{ns}:temp","nbt":"_door_hover_name","color":"gold","interpret":true}},{{"text":"  (","color":"gray"}},{{"score":{{"name":"#door_paid","objective":"{ns}.data"}},"color":"green"}},{{"text":"/","color":"gray"}},{{"score":{{"name":"#door_total","objective":"{ns}.data"}},"color":"yellow"}},{{"text":")","color":"gray"}}]
-{zb_sound('announce')}
+{ZombiesFeedback.zb_sound('announce')}
 """)  # noqa: E501
 
 	## Open a single door entity (@s = door entity, at @s position)
