@@ -13,7 +13,7 @@ its max health to 8 (see escort.py). Dogs are fast and rarely stuck anyway.
 # Imports
 from stewbeet import Mem, write_versioned_function
 
-from .escort import MONKEY_RELEASE
+from .escort.shared import MONKEY_RELEASE
 
 # Constants
 MONKEY_ATTRACT_RADIUS: int = 40
