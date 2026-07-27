@@ -8,7 +8,7 @@ def generate_hurt_player() -> None:
 	ns: str = Mem.ctx.project_id
 	version: str = Mem.ctx.project_version
 
-    # Advancement triggered when the player is hurt
+	# Advancement triggered when the player is hurt
 	write_advancement(f"{ns}:v{version}/zombies/hurt_player", {
 		"criteria": {
 			"requirement": {

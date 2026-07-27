@@ -7,63 +7,63 @@ from stewbeet import Mem, write_versioned_function
 from .helpers import MGS_TAG
 from .multiplayer.classes import CLASS_IDS, CLASSES
 from .multiplayer.loadouts import (
-    CAMO_VARIANTS,
-    GRENADE_TYPES,
-    PERKS,
-    PRIMARY_WEAPONS,
-    SECONDARY_WEAPONS,
-    TRIG_DELETE_BASE,
-    TRIG_EDIT_BASE,
-    TRIG_EDITOR_START,
-    TRIG_EQUIP1_CAMO_BASE,
-    TRIG_EQUIP2_CAMO_BASE,
-    TRIG_EQUIP_SLOT1_BASE,
-    TRIG_EQUIP_SLOT2_BASE,
-    TRIG_FAVORITE_BASE,
-    TRIG_HUB,
-    TRIG_HUB_EQUIP1,
-    TRIG_HUB_EQUIP2,
-    TRIG_HUB_PERKS,
-    TRIG_HUB_PRIMARY,
-    TRIG_HUB_PRIMARY_MAGS,
-    TRIG_HUB_SECONDARY,
-    TRIG_HUB_SECONDARY_MAGS,
-    TRIG_LIKE_BASE,
-    TRIG_MANAGE_BASE,
-    TRIG_MARKETPLACE,
-    TRIG_MARKETPLACE_ALL,
-    TRIG_MARKETPLACE_FAV_ONLY,
-    TRIG_MARKETPLACE_LIKES,
-    TRIG_MY_LOADOUTS,
-    TRIG_MY_LOADOUTS_FAV_ONLY,
-    TRIG_OVERKILL_SEC_BASE,
-    TRIG_PERK_BASE,
-    TRIG_PRIMARY_BASE,
-    TRIG_PRIMARY_CAMO_BASE,
-    TRIG_PRIMARY_MAGS_BASE,
-    TRIG_PRIMARY_SCOPE_BASE,
-    TRIG_REMOVE_PRIMARY,
-    TRIG_REMOVE_SECONDARY,
-    TRIG_SAVE_PRIVATE,
-    TRIG_SAVE_PUBLIC,
-    TRIG_SECONDARY_BASE,
-    TRIG_SECONDARY_CAMO_BASE,
-    TRIG_SECONDARY_MAGS_BASE,
-    TRIG_SECONDARY_SCOPE_BASE,
-    TRIG_SELECT_BASE,
-    TRIG_SET_DEFAULT_BASE,
-    TRIG_TOGGLE_VIS_BASE,
-    TRIG_UNSET_DEFAULT,
+	CAMO_VARIANTS,
+	GRENADE_TYPES,
+	PERKS,
+	PRIMARY_WEAPONS,
+	SECONDARY_WEAPONS,
+	TRIG_DELETE_BASE,
+	TRIG_EDIT_BASE,
+	TRIG_EDITOR_START,
+	TRIG_EQUIP1_CAMO_BASE,
+	TRIG_EQUIP2_CAMO_BASE,
+	TRIG_EQUIP_SLOT1_BASE,
+	TRIG_EQUIP_SLOT2_BASE,
+	TRIG_FAVORITE_BASE,
+	TRIG_HUB,
+	TRIG_HUB_EQUIP1,
+	TRIG_HUB_EQUIP2,
+	TRIG_HUB_PERKS,
+	TRIG_HUB_PRIMARY,
+	TRIG_HUB_PRIMARY_MAGS,
+	TRIG_HUB_SECONDARY,
+	TRIG_HUB_SECONDARY_MAGS,
+	TRIG_LIKE_BASE,
+	TRIG_MANAGE_BASE,
+	TRIG_MARKETPLACE,
+	TRIG_MARKETPLACE_ALL,
+	TRIG_MARKETPLACE_FAV_ONLY,
+	TRIG_MARKETPLACE_LIKES,
+	TRIG_MY_LOADOUTS,
+	TRIG_MY_LOADOUTS_FAV_ONLY,
+	TRIG_OVERKILL_SEC_BASE,
+	TRIG_PERK_BASE,
+	TRIG_PRIMARY_BASE,
+	TRIG_PRIMARY_CAMO_BASE,
+	TRIG_PRIMARY_MAGS_BASE,
+	TRIG_PRIMARY_SCOPE_BASE,
+	TRIG_REMOVE_PRIMARY,
+	TRIG_REMOVE_SECONDARY,
+	TRIG_SAVE_PRIVATE,
+	TRIG_SAVE_PUBLIC,
+	TRIG_SECONDARY_BASE,
+	TRIG_SECONDARY_CAMO_BASE,
+	TRIG_SECONDARY_MAGS_BASE,
+	TRIG_SECONDARY_SCOPE_BASE,
+	TRIG_SELECT_BASE,
+	TRIG_SET_DEFAULT_BASE,
+	TRIG_TOGGLE_VIS_BASE,
+	TRIG_UNSET_DEFAULT,
 )
 
 
 # Functions
 def main() -> None:
-    ns: str = Mem.ctx.project_id
-    version: str = Mem.ctx.project_version
+	ns: str = Mem.ctx.project_id
+	version: str = Mem.ctx.project_version
 
-    ## Setup scoreboards Per-player config trigger (players use /trigger mgs.player.config set <value>) Per-player toggle scoreboards (0 = disabled, 1 = enabled)
-    write_versioned_function("load/confirm_load", f"""
+	## Setup scoreboards Per-player config trigger (players use /trigger mgs.player.config set <value>) Per-player toggle scoreboards (0 = disabled, 1 = enabled)
+	write_versioned_function("load/confirm_load", f"""
 # Player config: trigger objective for /trigger command
 scoreboard objectives add {ns}.player.config trigger
 
@@ -72,8 +72,8 @@ scoreboard objectives add {ns}.player.hitmarker dummy
 scoreboard objectives add {ns}.player.damage_debug dummy
 """, prepend=True)
 
-    ## In player tick: enable trigger and process if set
-    write_versioned_function("player/tick", f"""
+	## In player tick: enable trigger and process if set
+	write_versioned_function("player/tick", f"""
 # Assign unique player ID (Bookshelf SUID) if not yet assigned
 execute unless score @s bs.id matches 0.. run function #bs.id:give_suid
 
@@ -85,30 +85,30 @@ execute if score @s {ns}.player.config matches 1.. run function {ns}:v{version}/
 execute if score @s {ns}.mp.map_edit matches 1 run function {ns}:v{version}/maps/editor/tick
 """)
 
-    ## Process trigger values Pre-compute trigger ranges for custom loadout editor
-    primary_max = TRIG_PRIMARY_BASE + len(PRIMARY_WEAPONS) - 1
-    secondary_count = len([w for w in SECONDARY_WEAPONS if w.in_loadout])
-    secondary_max = TRIG_SECONDARY_BASE + secondary_count - 1
-    overkill_sec_max = TRIG_OVERKILL_SEC_BASE + len(PRIMARY_WEAPONS) - 1
-    primary_mags_max = TRIG_PRIMARY_MAGS_BASE + 5
-    secondary_mags_max = TRIG_SECONDARY_MAGS_BASE + 5
-    perk_max = TRIG_PERK_BASE + len(PERKS) - 1
-    equip1_max = TRIG_EQUIP_SLOT1_BASE + len(GRENADE_TYPES) - 1
-    equip2_max = TRIG_EQUIP_SLOT2_BASE + len(GRENADE_TYPES) - 1
-    primary_camo_max = TRIG_PRIMARY_CAMO_BASE + len(CAMO_VARIANTS) - 1
-    secondary_camo_max = TRIG_SECONDARY_CAMO_BASE + len(CAMO_VARIANTS) - 1
-    equip1_camo_max = TRIG_EQUIP1_CAMO_BASE + len(CAMO_VARIANTS) - 1
-    equip2_camo_max = TRIG_EQUIP2_CAMO_BASE + len(CAMO_VARIANTS) - 1
-    edit_max = TRIG_EDIT_BASE + 9999
-    manage_max = TRIG_MANAGE_BASE + 9999
-    select_max = TRIG_SELECT_BASE + 9999  # 10000-wide range per loadout action
-    favorite_max = TRIG_FAVORITE_BASE + 9999
-    like_max = TRIG_LIKE_BASE + 9999
-    delete_max = TRIG_DELETE_BASE + 9999
-    toggle_vis_max = TRIG_TOGGLE_VIS_BASE + 9999
-    set_default_max = TRIG_SET_DEFAULT_BASE + 9998  # 69999 is reserved for UNSET_DEFAULT
+	## Process trigger values Pre-compute trigger ranges for custom loadout editor
+	primary_max = TRIG_PRIMARY_BASE + len(PRIMARY_WEAPONS) - 1
+	secondary_count = len([w for w in SECONDARY_WEAPONS if w.in_loadout])
+	secondary_max = TRIG_SECONDARY_BASE + secondary_count - 1
+	overkill_sec_max = TRIG_OVERKILL_SEC_BASE + len(PRIMARY_WEAPONS) - 1
+	primary_mags_max = TRIG_PRIMARY_MAGS_BASE + 5
+	secondary_mags_max = TRIG_SECONDARY_MAGS_BASE + 5
+	perk_max = TRIG_PERK_BASE + len(PERKS) - 1
+	equip1_max = TRIG_EQUIP_SLOT1_BASE + len(GRENADE_TYPES) - 1
+	equip2_max = TRIG_EQUIP_SLOT2_BASE + len(GRENADE_TYPES) - 1
+	primary_camo_max = TRIG_PRIMARY_CAMO_BASE + len(CAMO_VARIANTS) - 1
+	secondary_camo_max = TRIG_SECONDARY_CAMO_BASE + len(CAMO_VARIANTS) - 1
+	equip1_camo_max = TRIG_EQUIP1_CAMO_BASE + len(CAMO_VARIANTS) - 1
+	equip2_camo_max = TRIG_EQUIP2_CAMO_BASE + len(CAMO_VARIANTS) - 1
+	edit_max = TRIG_EDIT_BASE + 9999
+	manage_max = TRIG_MANAGE_BASE + 9999
+	select_max = TRIG_SELECT_BASE + 9999  # 10000-wide range per loadout action
+	favorite_max = TRIG_FAVORITE_BASE + 9999
+	like_max = TRIG_LIKE_BASE + 9999
+	delete_max = TRIG_DELETE_BASE + 9999
+	toggle_vis_max = TRIG_TOGGLE_VIS_BASE + 9999
+	set_default_max = TRIG_SET_DEFAULT_BASE + 9998  # 69999 is reserved for UNSET_DEFAULT
 
-    write_versioned_function("player/config/process", f"""
+	write_versioned_function("player/config/process", f"""
 # Load per-player editor state (isolates simultaneous editors)
 execute store result storage {ns}:temp _pid int 1 run scoreboard players get @s bs.id
 function {ns}:v{version}/multiplayer/editor/load_state with storage {ns}:temp
@@ -215,9 +215,9 @@ function {ns}:v{version}/multiplayer/editor/save_state with storage {ns}:temp
 scoreboard players set @s {ns}.player.config 0
 """)
 
-    ## Toggle functions (hitmarker, damage_debug)
-    for score_name, display_name in [("hitmarker", "Hitmarker Sound"), ("damage_debug", "Damage Debug")]:
-        write_versioned_function(f"player/config/toggle_{score_name}", f"""
+	## Toggle functions (hitmarker, damage_debug)
+	for score_name, display_name in [("hitmarker", "Hitmarker Sound"), ("damage_debug", "Damage Debug")]:
+		write_versioned_function(f"player/config/toggle_{score_name}", f"""
 # Flip the toggle: #toggle = 1 when it was OFF (so we turn it ON), 0 when it was already ON
 execute store success score #toggle {ns}.data unless score @s {ns}.player.{score_name} matches 1
 execute if score #toggle {ns}.data matches 1 run scoreboard players set @s {ns}.player.{score_name} 1
@@ -229,9 +229,9 @@ execute unless score #toggle {ns}.data matches 1 run tellraw @s [{MGS_TAG},["",{
 function {ns}:v{version}/player/config/menu
 """)
 
-    ## Player config menu — a quick-action dialog (built per-player so toggle states show live).
-    ## Replaces the old clickable-chat menu: /trigger set 1 now opens this dialog instead.
-    write_versioned_function("player/config/menu", f"""
+	## Player config menu — a quick-action dialog (built per-player so toggle states show live).
+	## Replaces the old clickable-chat menu: /trigger set 1 now opens this dialog instead.
+	write_versioned_function("player/config/menu", f"""
 # Build the Player Settings dialog in storage, then show it via /dialog
 data modify storage {ns}:temp dialog set value {{type:"minecraft:multi_action",title:["","🎮 ",{{text:"Player Settings",color:"gold",bold:true}}],body:[{{type:"minecraft:plain_message",contents:{{text:"Toggle your personal settings","color":"gray"}}}}],actions:[],columns:1,after_action:"close",exit_action:{{label:{{translate:"gui.done"}}}}}}
 
@@ -250,7 +250,7 @@ data modify storage {ns}:temp dialog.actions append value {{label:["","⚔ ",{{t
 function {ns}:v{version}/multiplayer/show_dialog with storage {ns}:temp
 """)
 
-    write_versioned_function("player/config/damage_debug", f"""
+	write_versioned_function("player/config/damage_debug", f"""
 # Round amount to 1 decimal: store (amount * 10) as int score, then split into whole + decimal parts
 $data modify storage {ns}:temp amount set value $(amount)
 execute store result score #dmg_x10 {ns}.data run data get storage {ns}:temp amount 10
@@ -267,8 +267,8 @@ $execute if score #damage_debug {ns}.config matches 1 run tellraw @a ["",[{{"tex
 $execute unless score #damage_debug {ns}.config matches 1 if score $(attacker) {ns}.player.damage_debug matches 1 run tellraw $(attacker) ["",[{{"text":"","color":"red"}},"[",{{"text":"DMG"}},"] "],[{{"score":{{"name":"#dmg_whole","objective":"{ns}.data"}},"color":"gold"}},".",{{"score":{{"name":"#dmg_dec","objective":"{ns}.data"}}}}]," ",{{"text":"HP to","color":"gray"}}," ",{{"selector":"@s"}}]
 """, tags=[f"{ns}:signals/damage"])
 
-    ## Hitmarker Sound on entity hit (added to damage signal) Plays for both hitscan (@p[tag=ticking]) and explosion (@p[tag=temp_shooter]) hits
-    write_versioned_function("player/config/hitmarker_sound", f"""
+	## Hitmarker Sound on entity hit (added to damage signal) Plays for both hitscan (@p[tag=ticking]) and explosion (@p[tag=temp_shooter]) hits
+	write_versioned_function("player/config/hitmarker_sound", f"""
 # Play hitmarker Sound to the shooter if their personal config has it enabled
 # For hitscan: shooter has tag {ns}.ticking
 execute as @a[tag={ns}.ticking] if score @s {ns}.player.hitmarker matches 1 at @s run playsound minecraft:entity.experience_orb.pickup player @s ~ ~ ~ 1.0 2.0

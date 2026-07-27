@@ -7,25 +7,25 @@ from ...config.stats import ALL_SLOTS, BASE_WEAPON, CAPACITY, REMAINING_BULLETS
 
 # Functions
 def main() -> None:
-    ns: str = Mem.ctx.project_id
-    version: str = Mem.ctx.project_version
+	ns: str = Mem.ctx.project_id
+	version: str = Mem.ctx.project_version
 
-    ## ========================================== Max Ammo: Refill all magazines to capacity.
+	## ========================================== Max Ammo: Refill all magazines to capacity.
 
-    # Build slot checks for all inventory slots
-    magazine_custom_data: str = f"{{{ns}:{{magazine:true}}}}"
-    slot_checks: str = ""
-    for slot in ALL_SLOTS:
-        slot_checks += f'execute if items entity @s {slot} *[custom_data~{magazine_custom_data}] run function {ns}:v{version}/zombies/bonus/refill_magazine {{slot:"{slot}"}}\n'
+	# Build slot checks for all inventory slots
+	magazine_custom_data: str = f"{{{ns}:{{magazine:true}}}}"
+	slot_checks: str = ""
+	for slot in ALL_SLOTS:
+		slot_checks += f'execute if items entity @s {slot} *[custom_data~{magazine_custom_data}] run function {ns}:v{version}/zombies/bonus/refill_magazine {{slot:"{slot}"}}\n'
 
-    # Build slot checks for reloading all weapon slots (guns, not magazines)
-    gun_custom_data: str = f"{{{ns}:{{gun:true}}}}"
-    weapon_slot_checks: str = ""
-    for slot in ALL_SLOTS:
-        weapon_slot_checks += f'execute if items entity @s {slot} *[custom_data~{gun_custom_data}] run function {ns}:v{version}/zombies/bonus/reload_weapon_slot {{slot:"{slot}"}}\n'
+	# Build slot checks for reloading all weapon slots (guns, not magazines)
+	gun_custom_data: str = f"{{{ns}:{{gun:true}}}}"
+	weapon_slot_checks: str = ""
+	for slot in ALL_SLOTS:
+		weapon_slot_checks += f'execute if items entity @s {slot} *[custom_data~{gun_custom_data}] run function {ns}:v{version}/zombies/bonus/reload_weapon_slot {{slot:"{slot}"}}\n'
 
-    # Non-versioned entry point: /execute as <player> run function mgs:zombies/bonus/max_ammo
-    write_function(f"{ns}:zombies/bonus/max_ammo", f"""
+	# Non-versioned entry point: /execute as <player> run function mgs:zombies/bonus/max_ammo
+	write_function(f"{ns}:zombies/bonus/max_ammo", f"""
 # Copy gun data for current weapon (needed for ammo scoreboard sync)
 function {ns}:v{version}/utils/copy_gun_data
 
@@ -41,9 +41,9 @@ function {ns}:v{version}/zombies/bonus/max_ammo_grenades
 function {ns}:v{version}/ammo/compute_reserve
 """)
 
-    # Max Ammo grenade refill: top the equipment slot (hotbar.7) to full.
-    # The magazine/weapon passes above never touch grenades (they use item count, not a magazine), so without this Max Ammo left a player with 0 grenades empty-handed.
-    write_versioned_function("zombies/bonus/max_ammo_grenades", f"""
+	# Max Ammo grenade refill: top the equipment slot (hotbar.7) to full.
+	# The magazine/weapon passes above never touch grenades (they use item count, not a magazine), so without this Max Ammo left a player with 0 grenades empty-handed.
+	write_versioned_function("zombies/bonus/max_ammo_grenades", f"""
 # Tactical slot (hotbar.6, e.g. Monkey Bombs): top back to 3 — refill only, never granted from
 # an empty slot (tacticals come exclusively from the Mystery Box or a wall-buy)
 execute if items entity @s hotbar.6 *[custom_data~{{{ns}:{{gun:true}}}}] run item modify entity @s hotbar.6 {ns}:v{version}/grenade/set_count_3
@@ -56,16 +56,16 @@ execute if items entity @s hotbar.7 *[custom_data~{{{ns}:{{gun:true}}}}] run ret
 execute unless items entity @s hotbar.7 * run function {ns}:v{version}/zombies/inventory/give_lethal_type {{count:4}}
 """)
 
-    # Reload ALL weapon slots (iterates all inventory)
-    write_versioned_function("zombies/bonus/max_ammo_reload_weapons", f"""
+	# Reload ALL weapon slots (iterates all inventory)
+	write_versioned_function("zombies/bonus/max_ammo_reload_weapons", f"""
 # Reload every gun item in every slot
 {weapon_slot_checks}
 # Sync current weapon's ammo to player scoreboard (mainhand)
 execute if data storage {ns}:gun all.gun store result score @s {ns}.{REMAINING_BULLETS} run data get storage {ns}:gun all.stats.{CAPACITY}
 """)
 
-    # Reload a single weapon slot to max capacity
-    write_versioned_function("zombies/bonus/reload_weapon_slot", f"""
+	# Reload a single weapon slot to max capacity
+	write_versioned_function("zombies/bonus/reload_weapon_slot", f"""
 # Extract weapon capacity and set remaining_bullets = capacity
 tag @s add {ns}.reloading_weapon
 $execute summon item_display run function {ns}:v{version}/zombies/bonus/extract_weapon_capacity {{slot:"$(slot)"}}
@@ -91,8 +91,8 @@ $function {ns}:v{version}/ammo/modify_lore {{slot:"$(slot)"}}
 scoreboard players operation @s {ns}.{REMAINING_BULLETS} = #rws_save {ns}.data
 """)
 
-    # Extract weapon capacity from item_display (@s = item_display)
-    write_versioned_function("zombies/bonus/extract_weapon_capacity", f"""
+	# Extract weapon capacity from item_display (@s = item_display)
+	write_versioned_function("zombies/bonus/extract_weapon_capacity", f"""
 # Copy weapon from player to item_display
 $item replace entity @s contents from entity @p[tag={ns}.reloading_weapon] $(slot)
 
@@ -107,8 +107,8 @@ data modify storage {ns}:temp components set from entity @s item.components
 kill @s
 """)
 
-    # Refill a single magazine slot
-    write_versioned_function("zombies/bonus/refill_magazine", f"""
+	# Refill a single magazine slot
+	write_versioned_function("zombies/bonus/refill_magazine", f"""
 # Extract magazine data into storage (sets #bullets = CAPACITY)
 tag @s add {ns}.refilling_mag
 scoreboard players set #stack_size {ns}.data 1
@@ -126,8 +126,8 @@ execute if score #stack_size {ns}.data matches 1 run function {ns}:v{version}/zo
 $function {ns}:v{version}/ammo/modify_mag_lore {{slot:"$(slot)"}}
 """)
 
-    # Extract magazine data from item_display (@s = item_display)
-    write_versioned_function("zombies/bonus/extract_mag_data", f"""
+	# Extract magazine data from item_display (@s = item_display)
+	write_versioned_function("zombies/bonus/extract_mag_data", f"""
 # Copy item from player to item_display
 $item replace entity @s contents from entity @p[tag={ns}.refilling_mag] $(slot)
 
@@ -151,15 +151,15 @@ data modify storage {ns}:temp refill.mag_model set from entity @s item.component
 kill @s
 """)  # noqa: E501
 
-    # Set magazine item model to non-empty (full) version
-    write_versioned_function("zombies/bonus/set_full_mag_model", r"""
+	# Set magazine item model to non-empty (full) version
+	write_versioned_function("zombies/bonus/set_full_mag_model", r"""
 $item modify entity @s $(slot) {"function":"minecraft:set_components", "components":{"minecraft:item_model":"$(mag_model)"}}
 """)
 
-    ## ==================================================== Nuke: Tag nukable entities and kill them 1 per tick.
+	## ==================================================== Nuke: Tag nukable entities and kill them 1 per tick.
 
-    # Non-versioned entry point: /execute as <player> run function mgs:zombies/bonus/nuke
-    write_function(f"{ns}:zombies/bonus/nuke", f"""
+	# Non-versioned entry point: /execute as <player> run function mgs:zombies/bonus/nuke
+	write_function(f"{ns}:zombies/bonus/nuke", f"""
 # Remove any existing nuke activator (in case of concurrent nukes)
 tag @a[tag={ns}.nuke_activator] remove {ns}.nuke_activator
 
@@ -176,8 +176,8 @@ execute as @e[tag={ns}.nuked] run attribute @s minecraft:attack_damage modifier 
 function {ns}:v{version}/zombies/bonus/nuke_loop
 """)
 
-    # Nuke kill loop: damage 1 entity per tick
-    write_versioned_function("zombies/bonus/nuke_loop", f"""
+	# Nuke kill loop: damage 1 entity per tick
+	write_versioned_function("zombies/bonus/nuke_loop", f"""
 # Find one nuked entity and process it
 execute as @n[tag={ns}.nuked,sort=random] at @s run function {ns}:v{version}/zombies/bonus/nuke_damage_one
 
@@ -188,8 +188,8 @@ execute if entity @e[tag={ns}.nuked] run return run schedule function {ns}:v{ver
 tag @a[tag={ns}.nuke_activator] remove {ns}.nuke_activator
 """)
 
-    # Damage one nuked entity (@s = nuked entity, positioned at entity)
-    write_versioned_function("zombies/bonus/nuke_damage_one", f"""
+	# Damage one nuked entity (@s = nuked entity, positioned at entity)
+	write_versioned_function("zombies/bonus/nuke_damage_one", f"""
 # Remove nuked tag (entity will no longer be selected in loop)
 tag @s remove {ns}.nuked
 

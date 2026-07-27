@@ -9,70 +9,70 @@ from ...config.stats import BURST, RELOAD_TIME, REMAINING_BULLETS
 
 # Functions
 def main() -> None:
-    ns: str = Mem.ctx.project_id
-    version: str = Mem.ctx.project_version
+	ns: str = Mem.ctx.project_id
+	version: str = Mem.ctx.project_version
 
-    # Advancement detecting right click using using_item trigger
-    adv: JsonDict = {
-        "criteria": {
-            "requirement": {
-                "trigger": "minecraft:using_item",
-                "conditions": {
-                    "item": {
-                        "predicates": {
-                            "minecraft:custom_data": f"{{{ns}:{{gun:true}}}}"
-                        }
-                    }
-                }
-            }
-        },
-        "rewards": {
-            "function": f"{ns}:v{version}/player/set_pending_clicks"
-        }
-    }
-    Mem.ctx.data[ns].advancements[f"v{version}/right_click"] = set_json_encoder(Advancement(adv), max_level=-1)
+	# Advancement detecting right click using using_item trigger
+	adv: JsonDict = {
+		"criteria": {
+			"requirement": {
+				"trigger": "minecraft:using_item",
+				"conditions": {
+					"item": {
+						"predicates": {
+							"minecraft:custom_data": f"{{{ns}:{{gun:true}}}}"
+						}
+					}
+				}
+			}
+		},
+		"rewards": {
+			"function": f"{ns}:v{version}/player/set_pending_clicks"
+		}
+	}
+	Mem.ctx.data[ns].advancements[f"v{version}/right_click"] = set_json_encoder(Advancement(adv), max_level=-1)
 
-    # Same click, recovered when an escort trader ate it.
-    # A right-click aimed at an ENTITY sends ServerboundInteractPacket, not ServerboundUseItemPacket.
-    # The client only falls through to the item use when that interaction did NOT consume.
-    # The escort taxi is an invisible trader with empty offers, and mobInteract returns CONSUME for those.
-    # Aiming at one therefore swallowed the shot, and it is glued to its zombie so a monkey bomb puts it in your face.
-    # handleInteract fires this trigger for any consuming result, and CONSUME carries ItemContext.DEFAULT.
-    # The gun stack really is reported here, so the item predicate matches.
-    adv_entity: JsonDict = {
-        "criteria": {
-            "requirement": {
-                "trigger": "minecraft:player_interacted_with_entity",
-                "conditions": {
-                    "item": {
-                        "predicates": {
-                            "minecraft:custom_data": f"{{{ns}:{{gun:true}}}}"
-                        }
-                    },
-                    # EntityPredicate is a flat map dispatched on the entity_sub_predicate_type registry.
-                    # Each condition is keyed by its registry id: "entity_type"/"nbt", NOT the old "type"/"nbt".
-                    # Writing "type" makes the game look for a minecraft:type sub-predicate and reject the advancement.
-                    "entity": {
-                        "entity_type": "minecraft:wandering_trader",
-                        "nbt": f'{{Tags:["{ns}.zb_escort"]}}'
-                    }
-                }
-            }
-        },
-        "rewards": {
-            "function": f"{ns}:v{version}/player/set_pending_clicks_entity"
-        }
-    }
-    Mem.ctx.data[ns].advancements[f"v{version}/right_click_entity"] = set_json_encoder(Advancement(adv_entity), max_level=-1)
+	# Same click, recovered when an escort trader ate it.
+	# A right-click aimed at an ENTITY sends ServerboundInteractPacket, not ServerboundUseItemPacket.
+	# The client only falls through to the item use when that interaction did NOT consume.
+	# The escort taxi is an invisible trader with empty offers, and mobInteract returns CONSUME for those.
+	# Aiming at one therefore swallowed the shot, and it is glued to its zombie so a monkey bomb puts it in your face.
+	# handleInteract fires this trigger for any consuming result, and CONSUME carries ItemContext.DEFAULT.
+	# The gun stack really is reported here, so the item predicate matches.
+	adv_entity: JsonDict = {
+		"criteria": {
+			"requirement": {
+				"trigger": "minecraft:player_interacted_with_entity",
+				"conditions": {
+					"item": {
+						"predicates": {
+							"minecraft:custom_data": f"{{{ns}:{{gun:true}}}}"
+						}
+					},
+					# EntityPredicate is a flat map dispatched on the entity_sub_predicate_type registry.
+					# Each condition is keyed by its registry id: "entity_type"/"nbt", NOT the old "type"/"nbt".
+					# Writing "type" makes the game look for a minecraft:type sub-predicate and reject the advancement.
+					"entity": {
+						"entity_type": "minecraft:wandering_trader",
+						"nbt": f'{{Tags:["{ns}.zb_escort"]}}'
+					}
+				}
+			}
+		},
+		"rewards": {
+			"function": f"{ns}:v{version}/player/set_pending_clicks_entity"
+		}
+	}
+	Mem.ctx.data[ns].advancements[f"v{version}/right_click_entity"] = set_json_encoder(Advancement(adv_entity), max_level=-1)
 
-    write_versioned_function("player/set_pending_clicks_entity", f"""
+	write_versioned_function("player/set_pending_clicks_entity", f"""
 # Revoke this advancement, then run the normal click path (which revokes its own)
 advancement revoke @s only {ns}:v{version}/right_click_entity
 function {ns}:v{version}/player/set_pending_clicks
 """)
 
-    # Function to set pending clicks
-    write_versioned_function("player/set_pending_clicks", f"""
+	# Function to set pending clicks
+	write_versioned_function("player/set_pending_clicks", f"""
 # Revoke advancement
 advancement revoke @s only {ns}:v{version}/right_click
 
@@ -99,8 +99,8 @@ execute if score #is_mid_burst {ns}.data matches 1 run scoreboard players add @s
 execute unless score #is_mid_burst {ns}.data matches 1 run scoreboard players set @s {ns}.pending_clicks 1
 """)
 
-    # Check if burst is mid-progress (not complete)
-    write_versioned_function("player/check_mid_burst", f"""
+	# Check if burst is mid-progress (not complete)
+	write_versioned_function("player/check_mid_burst", f"""
 # Get burst limit
 execute store result score #burst_limit {ns}.data run data get storage {ns}:gun all.stats.{BURST}
 
@@ -108,11 +108,11 @@ execute store result score #burst_limit {ns}.data run data get storage {ns}:gun 
 execute if score @s {ns}.burst_count < #burst_limit {ns}.data run scoreboard players set #is_mid_burst {ns}.data 1
 """)
 
-    # Copy gun data.
-    # The SelectedItem copy serializes the whole player NBT, so only pay it when the mainhand holds one of ours.
-    # Guns, grenades, knives and menu items all carry {ns} custom data.
-    # For anything else the cleared storage is exactly what every consumer expects.
-    write_versioned_function("utils/copy_gun_data", f"""
+	# Copy gun data.
+	# The SelectedItem copy serializes the whole player NBT, so only pay it when the mainhand holds one of ours.
+	# Guns, grenades, knives and menu items all carry {ns} custom data.
+	# For anything else the cleared storage is exactly what every consumer expects.
+	write_versioned_function("utils/copy_gun_data", f"""
 # Copy gun data
 data remove storage {ns}:gun all
 data modify storage {ns}:gun SelectedItem set value {{id:""}}
@@ -121,8 +121,8 @@ data modify storage {ns}:gun SelectedItem set from entity @s SelectedItem
 data modify storage {ns}:gun all set from storage {ns}:gun SelectedItem.components."minecraft:custom_data".{ns}
 """)
 
-    # Player tick function
-    write_versioned_function("player/tick", f"""
+	# Player tick function
+	write_versioned_function("player/tick", f"""
 # Add temporary tag
 tag @s add {ns}.ticking
 
@@ -187,8 +187,8 @@ tag @s remove {ns}.ticking
 execute store result score @s {ns}.previous_selected run data get storage {ns}:gun SelectedItem.id
 """)
 
-    # Handle pending clicks
-    write_versioned_function("player/right_click", f"""
+	# Handle pending clicks
+	write_versioned_function("player/right_click", f"""
 # Decrease pending clicks by 1
 scoreboard players remove @s {ns}.pending_clicks 1
 
@@ -204,32 +204,32 @@ execute unless data storage {ns}:gun all.gun run return fail
 execute unless score @s {ns}.special.infinite_ammo matches 1.. if score @s {ns}.{REMAINING_BULLETS} matches ..0 run return run function {ns}:v{version}/ammo/reload
 """)
 
-    # Prepare predicates for movement checks (Can't use flag 'is_on_ground' because /tp @s ~ ~ ~ makes it false for two ticks)
-    def json_enc(x: Any) -> Any: return set_json_encoder(x, max_level=-1)
-    Mem.ctx.data[ns].predicates[f"v{version}/is_on_ground"] = json_enc(Predicate({"condition":"minecraft:entity_properties","entity":"this","predicate":{"movement":{"vertical_speed":{"max":0.1}}}}))
-    Mem.ctx.data[ns].predicates[f"v{version}/is_sprinting"] = json_enc(Predicate({"condition":"minecraft:entity_properties","entity":"this","predicate":{"flags":{"is_sprinting":True}}}))
-    Mem.ctx.data[ns].predicates[f"v{version}/is_sneaking"] = json_enc(Predicate({"condition":"minecraft:entity_properties","entity":"this","predicate":{"flags":{"is_sneaking":True}}}))
-    Mem.ctx.data[ns].predicates[f"v{version}/is_moving"] = json_enc(Predicate({"condition":"minecraft:entity_properties","entity":"this","predicate":{"movement":{"horizontal_speed":{"min":0.1}}}}))
+	# Prepare predicates for movement checks (Can't use flag 'is_on_ground' because /tp @s ~ ~ ~ makes it false for two ticks)
+	def json_enc(x: Any) -> Any: return set_json_encoder(x, max_level=-1)
+	Mem.ctx.data[ns].predicates[f"v{version}/is_on_ground"] = json_enc(Predicate({"condition":"minecraft:entity_properties","entity":"this","predicate":{"movement":{"vertical_speed":{"max":0.1}}}}))
+	Mem.ctx.data[ns].predicates[f"v{version}/is_sprinting"] = json_enc(Predicate({"condition":"minecraft:entity_properties","entity":"this","predicate":{"flags":{"is_sprinting":True}}}))
+	Mem.ctx.data[ns].predicates[f"v{version}/is_sneaking"] = json_enc(Predicate({"condition":"minecraft:entity_properties","entity":"this","predicate":{"flags":{"is_sneaking":True}}}))
+	Mem.ctx.data[ns].predicates[f"v{version}/is_moving"] = json_enc(Predicate({"condition":"minecraft:entity_properties","entity":"this","predicate":{"movement":{"horizontal_speed":{"min":0.1}}}}))
 
-    # Update weapon stats item modifier
-    modifier: dict[str, Any] = {"function":"minecraft:copy_custom_data","source":{"type":"minecraft:storage","source":f"{ns}:gun"},"ops":[{"source":"all.stats","target":f"{ns}.stats","op":"replace"}]}
-    Mem.ctx.data[ns].item_modifiers[f"v{version}/update_stats"] = json_enc(ItemModifier(modifier))
+	# Update weapon stats item modifier
+	modifier: dict[str, Any] = {"function":"minecraft:copy_custom_data","source":{"type":"minecraft:storage","source":f"{ns}:gun"},"ops":[{"source":"all.stats","target":f"{ns}.stats","op":"replace"}]}
+	Mem.ctx.data[ns].item_modifiers[f"v{version}/update_stats"] = json_enc(ItemModifier(modifier))
 
-    # Update weapon model item modifier
-    write_versioned_function("utils/update_model", """
+	# Update weapon model item modifier
+	write_versioned_function("utils/update_model", """
 $item modify entity @s weapon.mainhand {"function": "minecraft:set_components","components": {"minecraft:item_model": "$(item_model)"}}
 """)
 
-    # Hand swap (F) is a reload key (left click is the other one, see weapon/left_click.py).
-    # Pressing it puts the gun in the offhand, which is what we detect here — the weapon is put straight back so the swap never visibly happens.
-    # (Fire mode is on the drop key, switch.py.)
-    write_versioned_function("player/offhand_swap_check", f"""
+	# Hand swap (F) is a reload key (left click is the other one, see weapon/left_click.py).
+	# Pressing it puts the gun in the offhand, which is what we detect here — the weapon is put straight back so the swap never visibly happens.
+	# (Fire mode is on the drop key, switch.py.)
+	write_versioned_function("player/offhand_swap_check", f"""
 # If mainhand is empty and offhand has a weapon, move it back to mainhand and reload
 execute unless items entity @s weapon.mainhand * if items entity @s weapon.offhand *[custom_data~{{{ns}:{{gun:true}}}}] run function {ns}:v{version}/player/swap_and_reload
 """)
 
-    # Undo the swap, then reload
-    write_versioned_function("player/swap_and_reload", f"""
+	# Undo the swap, then reload
+	write_versioned_function("player/swap_and_reload", f"""
 # Move offhand item back to mainhand
 item replace entity @s weapon.mainhand from entity @s weapon.offhand
 item replace entity @s weapon.offhand with air
@@ -241,8 +241,8 @@ execute unless data storage {ns}:gun all.stats.{RELOAD_TIME} run return 0
 function {ns}:v{version}/ammo/reload
 """)
 
-    # Reset burst count only if burst is complete
-    write_versioned_function("player/reset_burst_if_complete", f"""
+	# Reset burst count only if burst is complete
+	write_versioned_function("player/reset_burst_if_complete", f"""
 # Check if in burst mode
 execute store result score #fire_mode_is_burst {ns}.data if data storage {ns}:gun all.stats{{fire_mode:"burst"}}
 
@@ -255,18 +255,18 @@ execute store result score #burst_limit {ns}.data run data get storage {ns}:gun 
 execute if score @s {ns}.burst_count >= #burst_limit {ns}.data run scoreboard players set @s {ns}.burst_count 0
 """)
 
-    # DPS snapshot: copy accumulated damage to previous_dps, then reset
-    write_versioned_function("player/dps_snapshot", f"""
+	# DPS snapshot: copy accumulated damage to previous_dps, then reset
+	write_versioned_function("player/dps_snapshot", f"""
 # Snapshot current DPS accumulator and reset for the next second
 scoreboard players operation @s {ns}.previous_dps = @s {ns}.dps
 scoreboard players set @s {ns}.dps 0
 scoreboard players set @s {ns}.dps_timer 0
 """)
 
-    # DPS signal: add the damage actually dealt to the shooter's mgs.dps.
-    # @s = hit entity, and the shooter is the ticking player (tagged mgs.ticking).
-    # $(amount) is the damage float from the damage signal macro, e.g. 24.0.
-    write_versioned_function("weapon/dps_collect", f"""
+	# DPS signal: add the damage actually dealt to the shooter's mgs.dps.
+	# @s = hit entity, and the shooter is the ticking player (tagged mgs.ticking).
+	# $(amount) is the damage float from the damage signal macro, e.g. 24.0.
+	write_versioned_function("weapon/dps_collect", f"""
 # @s = hit entity; add damage (x10) to the shooter's DPS accumulator
 # Store $(amount) float then read back x10 to get integer tenths (same unit as dps accumulator)
 $data modify storage {ns}:temp dps_amount set value $(amount)

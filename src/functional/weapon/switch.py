@@ -9,11 +9,11 @@ from ...config.stats import CAN_AUTO, CAN_BURST, FIRE_MODE, SWITCH, WEAPON_ID
 
 # Functions
 def main() -> None:
-    ns: str = Mem.ctx.project_id
-    version: str = Mem.ctx.project_version
+	ns: str = Mem.ctx.project_id
+	version: str = Mem.ctx.project_version
 
-    # Weapon switching main function
-    write_versioned_function("switch/main", f"""
+	# Weapon switching main function
+	write_versioned_function("switch/main", f"""
 # Set weapon id if not done yet
 execute if data storage {ns}:gun all.gun unless data storage {ns}:gun all.stats.{WEAPON_ID} run function {ns}:v{version}/switch/set_weapon_id
 
@@ -26,8 +26,8 @@ execute unless score @s {ns}.last_selected = #current_id {ns}.data run function 
 scoreboard players operation @s {ns}.last_selected = #current_id {ns}.data
 """)
 
-    # Set weapon id function and item modifier
-    write_versioned_function("switch/set_weapon_id", f"""
+	# Set weapon id function and item modifier
+	write_versioned_function("switch/set_weapon_id", f"""
 execute store result storage {ns}:gun all.stats.{WEAPON_ID} int 1 run scoreboard players add #next_id {ns}.data 1
 
 # Initialize fire mode to 'auto' if weapon supports it, otherwise 'semi'
@@ -37,8 +37,8 @@ execute unless data storage {ns}:gun all.stats.{FIRE_MODE} unless data storage {
 item modify entity @s weapon.mainhand {ns}:v{version}/set_weapon_id
 """)
 
-    # On weapon switch function
-    write_versioned_function("switch/on_weapon_switch", f"""
+	# On weapon switch function
+	write_versioned_function("switch/on_weapon_switch", f"""
 # If player was reloading, cancel reload (deferred: no ammo consumed yet)
 execute if entity @s[tag={ns}.reloading] run tag @s remove {ns}.reloading
 execute if entity @s[tag={ns}.pump_sound] run tag @s remove {ns}.pump_sound
@@ -76,8 +76,8 @@ data modify storage {ns}:signals on_switch.weapon set from storage {ns}:gun all
 function #{ns}:signals/on_switch
 """)
 
-    # Apply quick swap: reduce switch cooldown by quick_swap%
-    write_versioned_function("switch/apply_quick_swap", f"""
+	# Apply quick swap: reduce switch cooldown by quick_swap%
+	write_versioned_function("switch/apply_quick_swap", f"""
 # Calculate reduced cooldown: cooldown = cooldown * (100 - quick_swap%) / 100
 scoreboard players operation #reduction {ns}.data = #100 {ns}.data
 scoreboard players operation #reduction {ns}.data -= @s {ns}.special.quick_swap
@@ -88,7 +88,7 @@ scoreboard players operation #cooldown {ns}.data /= #100 {ns}.data
 execute if score #cooldown {ns}.data matches ..0 run scoreboard players set #cooldown {ns}.data 1
 """)
 
-    write_versioned_function("switch/force_switch_animation", f"""
+	write_versioned_function("switch/force_switch_animation", f"""
 # Stop if no weapon in hand
 execute unless data storage {ns}:gun all.gun run return fail
 
@@ -101,8 +101,8 @@ execute if score #current_length {ns}.data = @s {ns}.previous_selected if score 
 execute if score #current_length {ns}.data = @s {ns}.previous_selected unless score @s {ns}.previous_selected matches 26 run item modify entity @s weapon.mainhand {{"function": "minecraft:set_item","item": "minecraft:poisonous_potato"}}
 """)  # noqa: E501
 
-    # Sync attack speed with cooldown function
-    write_versioned_function("switch/sync_attack_speed_with_cooldown", f"""
+	# Sync attack speed with cooldown function
+	write_versioned_function("switch/sync_attack_speed_with_cooldown", f"""
 ## Formula: [attack_speed = (20.0 / cooldown) - 4.0] <- where 4.0 is default attack speed
 # Compute attack speed based of @s {ns}.cooldown (with 3 digits precision)
 scoreboard players operation #remaining_cooldown {ns}.data = @s {ns}.cooldown
@@ -117,8 +117,8 @@ execute summon item_display run function {ns}:v{version}/switch/modify_attack_sp
 tag @s remove {ns}.to_modify
 """)
 
-    # Modify attack speed function
-    write_versioned_function("switch/modify_attack_speed", f"""
+	# Modify attack speed function
+	write_versioned_function("switch/modify_attack_speed", f"""
 # Copy weapon from player's mainhand slot to item_display entity
 item replace entity @s contents from entity @p[tag={ns}.to_modify] weapon.mainhand
 
@@ -139,17 +139,17 @@ item replace entity @p[tag={ns}.to_modify] weapon.mainhand from entity @s conten
 kill @s
 """)  # noqa: E501
 
-    # Drop key = fire-mode switch.
-    # No "key pressed" event, so the drop really happens (detected via the minecraft.drop stat) and is undone below.
-    # Reload is on hand-swap + left click.
-    write_versioned_function("switch/check_fire_mode_on_drop", f"""
+	# Drop key = fire-mode switch.
+	# No "key pressed" event, so the drop really happens (detected via the minecraft.drop stat) and is undone below.
+	# Reload is on hand-swap + left click.
+	write_versioned_function("switch/check_fire_mode_on_drop", f"""
 # Check if player dropped a weapon
 execute if score @s {ns}.dropped matches 1.. run function {ns}:v{version}/switch/fire_mode_on_dropped_weapon
 scoreboard players reset @s {ns}.dropped
 """)
 
-    # Undo the drop, then cycle the fire mode
-    write_versioned_function("switch/fire_mode_on_dropped_weapon", f"""
+	# Undo the drop, then cycle the fire mode
+	write_versioned_function("switch/fire_mode_on_dropped_weapon", f"""
 # Find nearest dropped gun item and execute as it (only if mainhand is empty)
 tag @s add {ns}.to_pickup
 execute unless items entity @s weapon.mainhand * as @n[type=item,distance=..3,nbt={{Item:{{components:{{"minecraft:custom_data":{{{ns}:{{gun:true}}}}}}}}}}] run function {ns}:v{version}/switch/weapon_back_to_mainhand
@@ -164,14 +164,14 @@ execute unless data storage {ns}:gun all.stats.{CAN_AUTO} unless data storage {n
 # Cycle auto -> semi -> burst -> auto (narrowed to what the weapon supports)
 function {ns}:v{version}/switch/do_toggle_fire_mode
 """)  # noqa: E501
-    write_versioned_function("switch/weapon_back_to_mainhand", f"""
+	write_versioned_function("switch/weapon_back_to_mainhand", f"""
 # Move the dropped item back to player's mainhand
 item replace entity @p[tag={ns}.to_pickup] weapon.mainhand from entity @s contents
 kill @s
 """)
 
-    # Do the actual toggle
-    write_versioned_function("switch/do_toggle_fire_mode", f"""
+	# Do the actual toggle
+	write_versioned_function("switch/do_toggle_fire_mode", f"""
 # Copy gun data & Get current fire mode
 function {ns}:v{version}/utils/copy_gun_data
 data modify storage {ns}:temp fire_mode set from storage {ns}:gun all.stats.{FIRE_MODE}
@@ -214,35 +214,35 @@ playsound minecraft:block.note_block.hat ambient @s
 scoreboard players set @s {ns}.ab_force 1
 """)  # noqa: E501
 
-    modifier: dict[str, Any] = {
-        "function": "minecraft:copy_custom_data",
-        "source": {
-            "type": "minecraft:storage",
-            "source": f"{ns}:gun"
-        },
-        "ops": [
-            {
-                "source": f"all.stats.{WEAPON_ID}",
-                "target": f"{ns}.stats.{WEAPON_ID}",
-                "op": "replace"
-            }
-        ]
-    }
-    Mem.ctx.data[ns].item_modifiers[f"v{version}/set_weapon_id"] = set_json_encoder(ItemModifier(modifier), max_level=-1)
+	modifier: dict[str, Any] = {
+		"function": "minecraft:copy_custom_data",
+		"source": {
+			"type": "minecraft:storage",
+			"source": f"{ns}:gun"
+		},
+		"ops": [
+			{
+				"source": f"all.stats.{WEAPON_ID}",
+				"target": f"{ns}.stats.{WEAPON_ID}",
+				"op": "replace"
+			}
+		]
+	}
+	Mem.ctx.data[ns].item_modifiers[f"v{version}/set_weapon_id"] = set_json_encoder(ItemModifier(modifier), max_level=-1)
 
-    modifier: dict[str, Any] = {
-        "function": "minecraft:copy_custom_data",
-        "source": {
-            "type": "minecraft:storage",
-            "source": f"{ns}:gun"
-        },
-        "ops": [
-            {
-                "source": f"all.stats.{FIRE_MODE}",
-                "target": f"{ns}.stats.{FIRE_MODE}",
-                "op": "replace"
-            }
-        ]
-    }
-    Mem.ctx.data[ns].item_modifiers[f"v{version}/set_fire_mode"] = set_json_encoder(ItemModifier(modifier), max_level=-1)
+	modifier: dict[str, Any] = {
+		"function": "minecraft:copy_custom_data",
+		"source": {
+			"type": "minecraft:storage",
+			"source": f"{ns}:gun"
+		},
+		"ops": [
+			{
+				"source": f"all.stats.{FIRE_MODE}",
+				"target": f"{ns}.stats.{FIRE_MODE}",
+				"op": "replace"
+			}
+		]
+	}
+	Mem.ctx.data[ns].item_modifiers[f"v{version}/set_fire_mode"] = set_json_encoder(ItemModifier(modifier), max_level=-1)
 
