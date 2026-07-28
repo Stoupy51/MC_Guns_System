@@ -4,6 +4,7 @@
 # @within	mgs:v5.1.0/zombies/preload_complete
 #
 
+# Teleport every player in this game onto a spawn marker, then free the markers again
 execute as @a[scores={mgs.zb.in_game=1}] at @s run function mgs:v5.1.0/zombies/pick_spawn
 tag @e[tag=mgs.spawn_used] remove mgs.spawn_used
 
