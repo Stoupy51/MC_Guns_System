@@ -21,9 +21,8 @@ function {ns}:v{version}/zombies/mystery_box/close_lid
 # Mark this display as the moving bear so the move animation only touches it (not other pulls)
 tag @s add {ns}.mb_bear
 
-# Hide every grayed disabled crate for the duration of the move (rebuilt when the box lands) so the
-# destination spot doesn't show a disabled crate underneath the arriving chest.
-kill @e[tag={ns}.mb_disabled]
+# The other spots keep their grayed crates: only the destination's is cleared, and only once the
+# destination is known (move_anim_transition). A spot the box never visits must never blink out.
 
 # Replace display with teddy bear
 loot replace entity @s contents loot {ns}:zombies/roaming_bear
@@ -110,6 +109,10 @@ function {ns}:v{version}/zombies/mystery_box/move_active_position
 # Bring the new active box's interaction entity into reach (and hide the old one) BEFORE the chest
 # is positioned relative to it below — otherwise the chest would spawn at the hidden -512 offset.
 function {ns}:v{version}/zombies/mystery_box/sync_interaction_visibility
+
+# The destination is the only spot losing its grayed crate, and only now that it is known — the
+# arriving chest must not land on top of one. refresh_disabled rebuilds the whole set on landing.
+execute as @n[tag={ns}.mystery_box_active] at @s run kill @e[tag={ns}.mb_disabled,distance=..3]
 
 # Spawn new chest display (base + lid) above the new active position (height = 0.7 + descent total)
 # Fast: 35t * 0.18 = 6.3 blocks, Slow: 34t * 0.06 = 2.04 blocks, Total = 8.34
