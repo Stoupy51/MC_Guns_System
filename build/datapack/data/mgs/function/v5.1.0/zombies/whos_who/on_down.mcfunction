@@ -50,7 +50,7 @@ scoreboard players operation #my_downed_id mgs.data = @s mgs.zb.ww.id
 scoreboard players set #has_candidate mgs.data 0
 execute as @e[type=minecraft:mannequin,tag=mgs.downed_mannequin,predicate=mgs:v5.1.0/zombies/revive/downed_id_match] at @s store success score #has_candidate mgs.data run tag @n[tag=mgs.spawn_point,tag=mgs.spawn_zb_player,tag=mgs.spawn_unlocked,distance=10..] add mgs.spawn_candidate
 execute if score #has_candidate mgs.data matches 0 as @e[type=minecraft:mannequin,tag=mgs.downed_mannequin,predicate=mgs:v5.1.0/zombies/revive/downed_id_match] at @s run tag @n[tag=mgs.spawn_point,tag=mgs.spawn_zb_player,tag=mgs.spawn_unlocked] add mgs.spawn_candidate
-execute as @n[tag=mgs.spawn_candidate] run function mgs:v5.1.0/zombies/tp_to_spawn
+execute as @n[tag=mgs.spawn_candidate] run function mgs:v5.1.0/shared/tp_to_spawn {mode:"zombies"}
 tag @e[tag=mgs.spawn_candidate] remove mgs.spawn_candidate
 tag @a[tag=mgs.spawn_pending] remove mgs.spawn_pending
 

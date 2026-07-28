@@ -60,25 +60,12 @@ execute store success score #has_candidate {ns}.data run tag @e[tag={ns}.spawn_p
 execute if score #has_candidate {ns}.data matches 0 run tag @e[tag={ns}.spawn_point,tag={ns}.spawn_mission] add {ns}.spawn_candidate
 
 # Pick random candidate
-execute as @n[tag={ns}.spawn_candidate,sort=random] run function {ns}:v{version}/missions/tp_to_spawn
+execute as @n[tag={ns}.spawn_candidate,sort=random] run function {ns}:v{version}/shared/tp_to_spawn {{mode:"missions"}}
 
 # Cleanup
 tag @e[tag={ns}.spawn_candidate] remove {ns}.spawn_candidate
 tag @a[tag={ns}.spawn_pending] remove {ns}.spawn_pending
 """)
-
-	write_versioned_function("missions/tp_to_spawn", f"""
-execute store result storage {ns}:temp _tp.x double 1 run data get entity @s Pos[0]
-execute store result storage {ns}:temp _tp.y double 1 run data get entity @s Pos[1]
-execute store result storage {ns}:temp _tp.z double 1 run data get entity @s Pos[2]
-data modify storage {ns}:temp _tp.yaw set from entity @s data.yaw
-
-execute as @p[tag={ns}.spawn_pending] run function {ns}:v{version}/missions/tp_player_at with storage {ns}:temp _tp
-
-execute unless data storage {ns}:missions game{{state:"active"}} run tag @s add {ns}.spawn_used
-""")
-
-	CoreSpawning.write_tp_player_at("missions")
 
 	## Respawn TP for missions (run as the respawning player)
 	write_versioned_function("missions/respawn_tp", f"""

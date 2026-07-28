@@ -121,25 +121,12 @@ execute store success score #has_candidate {ns}.data run tag @e[tag={ns}.spawn_p
 execute if score #has_candidate {ns}.data matches 0 run tag @e[tag={ns}.spawn_point,tag={ns}.spawn_zb_player,tag={ns}.spawn_unlocked] add {ns}.spawn_candidate
 
 # Pick random candidate
-execute as @n[tag={ns}.spawn_candidate,sort=random] run function {ns}:v{version}/zombies/tp_to_spawn
+execute as @n[tag={ns}.spawn_candidate,sort=random] run function {ns}:v{version}/shared/tp_to_spawn {{mode:"zombies"}}
 
 # Cleanup
 tag @e[tag={ns}.spawn_candidate] remove {ns}.spawn_candidate
 tag @a[tag={ns}.spawn_pending] remove {ns}.spawn_pending
 """)
-
-	write_versioned_function("zombies/tp_to_spawn", f"""
-execute store result storage {ns}:temp _tp.x double 1 run data get entity @s Pos[0]
-execute store result storage {ns}:temp _tp.y double 1 run data get entity @s Pos[1]
-execute store result storage {ns}:temp _tp.z double 1 run data get entity @s Pos[2]
-data modify storage {ns}:temp _tp.yaw set from entity @s data.yaw
-
-execute as @p[tag={ns}.spawn_pending] run function {ns}:v{version}/zombies/tp_player_at with storage {ns}:temp _tp
-
-execute unless data storage {ns}:zombies game{{state:"active"}} run tag @s add {ns}.spawn_used
-""")
-
-	CoreSpawning.write_tp_player_at("zombies")
 
 	## Respawn TP for zombies
 	write_versioned_function("zombies/respawn_tp", f"""

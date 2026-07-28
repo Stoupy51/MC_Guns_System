@@ -118,7 +118,7 @@ scoreboard players set #best_dist {ns}.data 0
 scoreboard players operation #best_dist {ns}.data > @e[tag={ns}.spawn_candidate] {ns}.data
 
 # Pick the first candidate with that best score and TP the pending player there
-execute as @e[tag={ns}.spawn_candidate,sort=random] if score @s {ns}.data = #best_dist {ns}.data run function {ns}:v{version}/multiplayer/tp_to_spawn
+execute as @e[tag={ns}.spawn_candidate,sort=random] if score @s {ns}.data = #best_dist {ns}.data run function {ns}:v{version}/shared/tp_to_spawn {{mode:"multiplayer"}}
 
 # Clean up
 tag @e[tag={ns}.spawn_candidate] remove {ns}.spawn_candidate
@@ -135,7 +135,7 @@ scoreboard players remove #mp_cand_count {ns}.data 1
 
 	## Pick random spawn (no enemies — skip distance calc entirely)
 	write_versioned_function("multiplayer/pick_spawn_random", f"""
-execute as @n[tag={ns}.spawn_candidate,sort=random] run function {ns}:v{version}/multiplayer/tp_to_spawn
+execute as @n[tag={ns}.spawn_candidate,sort=random] run function {ns}:v{version}/shared/tp_to_spawn {{mode:"multiplayer"}}
 
 # Clean up
 tag @e[tag={ns}.spawn_candidate] remove {ns}.spawn_candidate
@@ -171,24 +171,6 @@ scoreboard players operation #mx {ns}.data += #mz {ns}.data
 # Store on entity
 scoreboard players operation @s {ns}.data = #mx {ns}.data
 """)
-
-	## TP player to chosen spawn marker (run as the marker)
-	write_versioned_function("multiplayer/tp_to_spawn", f"""
-# Store marker position and yaw for macro
-execute store result storage {ns}:temp _tp.x double 1 run data get entity @s Pos[0]
-execute store result storage {ns}:temp _tp.y double 1 run data get entity @s Pos[1]
-execute store result storage {ns}:temp _tp.z double 1 run data get entity @s Pos[2]
-data modify storage {ns}:temp _tp.yaw set from entity @s data.yaw
-
-# TP the pending player
-execute as @p[tag={ns}.spawn_pending] run function {ns}:v{version}/multiplayer/tp_player_at with storage {ns}:temp _tp
-
-# Mark this spawn as used (prevents duplicate assignments) (only in preparing time)
-execute unless data storage {ns}:multiplayer game{{state:"active"}} run tag @s add {ns}.spawn_used
-""")
-
-	## TP macro (run as the player to TP)
-	CoreSpawning.write_tp_player_at("multiplayer")
 
 	## Respawn TP: use general spawns on respawn to prevent spawn camping (run as the respawning player)
 	write_versioned_function("multiplayer/respawn_tp", f"""

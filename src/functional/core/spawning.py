@@ -9,9 +9,31 @@ class CoreSpawning:
 
 	# Functions
 	@staticmethod
-	def write_tp_player_at(mode: str) -> None:
-		""" Write ``<mode>/tp_player_at`` — the macro teleporting @s to a spawn position and yaw. """
-		write_versioned_function(f"{mode}/tp_player_at", "$tp @s $(x) $(y) $(z) $(yaw) 0")
+	def write_spawn_teleport() -> None:
+		""" Write the two teleport functions, shared because their bodies name no mode of their own.
+
+		`shared/tp_to_spawn` runs as the chosen marker and moves whoever is tagged `spawn_pending` onto
+		it. Its `mode` argument only names the storage holding that mode's game state: a marker is
+		consumed once during the pre-game teleport, but a respawn mid-game must be able to reuse it.
+		"""
+		ns: str = Mem.ctx.project_id
+		version: str = Mem.ctx.project_version
+
+		write_versioned_function("shared/tp_player_at", "$tp @s $(x) $(y) $(z) $(yaw) 0")
+
+		write_versioned_function("shared/tp_to_spawn", f"""
+# Store marker position and yaw for the teleport macro
+execute store result storage {ns}:temp _tp.x double 1 run data get entity @s Pos[0]
+execute store result storage {ns}:temp _tp.y double 1 run data get entity @s Pos[1]
+execute store result storage {ns}:temp _tp.z double 1 run data get entity @s Pos[2]
+data modify storage {ns}:temp _tp.yaw set from entity @s data.yaw
+
+# TP the pending player
+execute as @p[tag={ns}.spawn_pending] run function {ns}:v{version}/shared/tp_player_at with storage {ns}:temp _tp
+
+# Mark this spawn as used (prevents duplicate assignments) (only in preparing time)
+$execute unless data storage {ns}:$(mode) game{{state:"active"}} run tag @s add {ns}.spawn_used
+""")
 
 	@staticmethod
 	def write_summon_spawn_at(mode: str, extra_spawn_tags: tuple[str, ...] = ()) -> None:

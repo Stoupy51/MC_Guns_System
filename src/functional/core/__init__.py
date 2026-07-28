@@ -19,5 +19,6 @@ def main() -> None:
 	write_player_menus()
 	write_shared_command_functions()
 	CoreSpawning.write_shared_spawning_functions()
+	CoreSpawning.write_spawn_teleport()
 	WeaponDrop.write_shared_weapon_drop_functions()
 
