@@ -24,14 +24,21 @@ execute if entity @s[gamemode=spectator] run return 0
 effect give @s instant_health 1 100 true
 scoreboard players add @s {ns}.mp.deaths 1
 
+# `{ns}:input with` is GLOBAL scratch: the signals fired below reuse it (the killer's Scavenger perk
+# refills their magazines, and every lore rewrite clears `input with`), so re-reading it after
+# a signal used to lose the attacker and print an unattributed death message on top of the kill
+# message. Decide the branch on a score taken now, and pass the signals a private copy.
+execute store success score #mp_death_attacked {ns}.data if data storage {ns}:input with.attacker
+data modify storage {ns}:temp _mp_death set from storage {ns}:input with
+
 # Fire damage signal (hit effects, hitmarker, DPS) if this came from a bullet hit
-execute if data storage {ns}:input with.amount run function #{ns}:signals/damage with storage {ns}:input with
+execute if data storage {ns}:temp _mp_death.amount run function #{ns}:signals/damage with storage {ns}:temp _mp_death
 
 # Fire kill signal as attacker (if attacker exists in input)
-execute if data storage {ns}:input with.attacker run function {ns}:v{version}/multiplayer/simulate_death_fire_kill with storage {ns}:input with
+execute if score #mp_death_attacked {ns}.data matches 1 run function {ns}:v{version}/multiplayer/simulate_death_fire_kill with storage {ns}:temp _mp_death
 
 # No attacker: random funny self-death message
-execute unless data storage {ns}:input with.attacker run function {ns}:v{version}/multiplayer/random_death_message
+execute if score #mp_death_attacked {ns}.data matches 0 run function {ns}:v{version}/multiplayer/random_death_message
 
 # Enter death spectate (shared with vanilla-death on_respawn)
 function {ns}:v{version}/multiplayer/enter_death_spectate
