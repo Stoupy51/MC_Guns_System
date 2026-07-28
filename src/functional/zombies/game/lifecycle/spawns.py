@@ -70,6 +70,10 @@ scoreboard players operation @n[tag={ns}.new_spawn] {ns}.zb.spawn.sid = #zb_spaw
 # data defines all 6 elements [x,y,z,dx,dy,dz] (relative to this spawn).
 execute if data storage {ns}:temp _spawn_iter[0].activation_box[5] run function {ns}:v{version}/zombies/store_spawn_abox
 
+# Optional walk-to target (zombie spawns only): store the ABSOLUTE spot on the marker, so every
+# zombie spawned here is escorted to it instead of wandering after the nearest player.
+execute if data storage {ns}:temp _spawn_iter[0].walk_to[2] run function {ns}:v{version}/zombies/store_spawn_walk_to
+
 tag @n[tag={ns}.new_spawn] remove {ns}.new_spawn
 
 data remove storage {ns}:temp _spawn_iter[0]
@@ -93,6 +97,22 @@ execute store result storage {ns}:temp _abox.dx double 1 run data get storage {n
 execute store result storage {ns}:temp _abox.dy double 1 run data get storage {ns}:temp _spawn_iter[0].activation_box[4]
 execute store result storage {ns}:temp _abox.dz double 1 run data get storage {ns}:temp _spawn_iter[0].activation_box[5]
 data modify entity @n[tag={ns}.new_spawn] data.abox set from storage {ns}:temp _abox
+""")
+
+	## Store the absolute walk-to target {x,y,z} on the just-summoned spawn marker.
+	# #sx/#sy/#sz hold the marker's absolute coords and walk_to[0..2] the offset from it, in blocks.
+	# Kept as three ints because that is what a trader's wander_target and an arrival test both want.
+	write_versioned_function("zombies/store_spawn_walk_to", f"""
+execute store result score #swx {ns}.data run data get storage {ns}:temp _spawn_iter[0].walk_to[0]
+execute store result score #swy {ns}.data run data get storage {ns}:temp _spawn_iter[0].walk_to[1]
+execute store result score #swz {ns}.data run data get storage {ns}:temp _spawn_iter[0].walk_to[2]
+scoreboard players operation #swx {ns}.data += #sx {ns}.data
+scoreboard players operation #swy {ns}.data += #sy {ns}.data
+scoreboard players operation #swz {ns}.data += #sz {ns}.data
+execute store result storage {ns}:temp _walk_to.x int 1 run scoreboard players get #swx {ns}.data
+execute store result storage {ns}:temp _walk_to.y int 1 run scoreboard players get #swy {ns}.data
+execute store result storage {ns}:temp _walk_to.z int 1 run scoreboard players get #swz {ns}.data
+data modify entity @n[tag={ns}.new_spawn] data.walk_to set from storage {ns}:temp _walk_to
 """)
 
 	CoreSpawning.write_summon_spawn_at("zombies", extra_spawn_tags=("new_spawn",))

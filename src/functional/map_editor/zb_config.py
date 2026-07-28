@@ -5,7 +5,7 @@ from stewbeet import Mem, write_versioned_function
 
 from ..helpers import MGS_TAG
 from ..helpers.dialogs import Dialogs
-from ..map_editor_defs import ALL_ELEMENTS, FIELD_DOCS
+from ..map_editor_defs import ALL_ELEMENTS, FIELD_DOCS, OPTIONAL_LIST_FIELDS
 from .shared import SEP, ZB_ELEMENTS, snbt_compound, snbt_suggest
 
 
@@ -102,9 +102,7 @@ execute at @s unless entity @n[tag={ns}.map_element,distance=..10] run tellraw @
 		for field, default_val in einfo.defaults.items():
 			snbt_val = snbt_suggest(default_val)
 			# Edit button suggests the current default value; optional list fields suggest a usable template instead of empty brackets so they're easy to fill in.
-			edit_value = snbt_val
-			if field == "activation_box":
-				edit_value = "[0, 0, 0, 5, 3, 5]"
+			edit_value = OPTIONAL_LIST_FIELDS.get(field, snbt_val)
 			# Door fields (except link_id) use propagation to all doors with same link_id.
 			if etype == "door" and field != "link_id":
 				# Two entry points, not eight: a macro cannot re-quote its argument, so the string fields and the numeric fields need one variant each.
@@ -121,11 +119,11 @@ execute at @s unless entity @n[tag={ns}.map_element,distance=..10] run tellraw @
 			)
 			# Optional list fields get a "✗" button to clear/disable them (set back to []).
 			clear_component: str = ""
-			if field == "activation_box":
+			if field in OPTIONAL_LIST_FIELDS:
 				clear_btn = Dialogs.btn(
 					"✗",
 					f"/data modify entity @n[tag={ns}.element.{etype},distance=..10] data.{field} set value []",
-					"red", "Clear (disable) the activation box", action="run_command"
+					"red", f"Clear (disable) {field}", action="run_command"
 				)
 				clear_component = f'," ",{clear_btn}'
 			# Optional info tooltip for constant/enum fields (e.g. trap type, door animation).

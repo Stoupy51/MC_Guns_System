@@ -16,8 +16,10 @@ def write_escort_hooks() -> None:
 # Escort system (escort.py): drag escorted zombies behind their pathfinding traders
 execute if score #zb_escort_count {ns}.data matches 1.. as @e[tag={ns}.zb_escorted] at @s run function {ns}:v{version}/zombies/escort/zombie_tick
 
-# Interaction safeguard (count-INDEPENDENT, every tick)
-execute as @e[type=minecraft:wandering_trader,tag={ns}.zb_escort,tag=!{ns}.zb_escort_monkey] at @s if entity @p[scores={{{ns}.zb.in_game=1,{ns}.zb.downed=0}},gamemode=!spectator,distance=..{TRADER_REACH_GUARD}] run function {ns}:v{version}/zombies/escort/end_at_trader
+# Interaction safeguard (count-INDEPENDENT, every tick). Walk-to escorts are exempt like monkey
+# ones: the map maker aims them at where the action is, so the guard would cancel every walk a few
+# blocks short of its target. Their eaten click is recovered the same way (weapon/common.py).
+execute as @e[type=minecraft:wandering_trader,tag={ns}.zb_escort,tag=!{ns}.zb_escort_monkey,tag=!{ns}.zb_escort_walk] at @s if entity @p[scores={{{ns}.zb.in_game=1,{ns}.zb.downed=0}},gamemode=!spectator,distance=..{TRADER_REACH_GUARD}] run function {ns}:v{version}/zombies/escort/end_at_trader
 
 # Every 2s: resync the escort counter from reality
 scoreboard players operation #zb_esc_sweep {ns}.data = #total_tick {ns}.data

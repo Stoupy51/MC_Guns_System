@@ -19,6 +19,11 @@ execute at @n[type=minecraft:wandering_trader,tag=mgs.zb_escort,distance=..8] ru
 execute if entity @n[type=minecraft:wandering_trader,tag=mgs.zb_escort,tag=mgs.zb_escort_monkey,distance=..8] unless entity @e[tag=mgs.monkey_bomb] run tag @n[type=minecraft:wandering_trader,tag=mgs.zb_escort,distance=..8] remove mgs.zb_escort_monkey
 execute if entity @n[type=minecraft:wandering_trader,tag=mgs.zb_escort,tag=mgs.zb_escort_monkey,distance=..8] run return run function mgs:v5.1.0/zombies/escort/monkey_ride
 
+# Walk-to spawn: ride all the way to the target, skipping the player releases below. Those would
+# fire on the first tick — spawns are picked within 32 blocks of a player — and drop the zombie
+# right back where it spawned, which is exactly what the walk exists to avoid.
+execute if entity @n[type=minecraft:wandering_trader,tag=mgs.zb_escort,tag=mgs.zb_escort_walk,distance=..8] run return run function mgs:v5.1.0/zombies/escort/walk_ride
+
 # PaP-room lure active: release once the zombie reaches the theatre centre (no player will be
 # nearby there to trigger the player-based releases below)
 execute if score #zb_lure mgs.data matches 1 if entity @e[tag=mgs.lure_center,distance=..8] run return run function mgs:v5.1.0/zombies/escort/release

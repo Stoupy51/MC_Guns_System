@@ -103,8 +103,10 @@ execute if score #zb_dog_round mgs.data matches 0 as @a[scores={mgs.zb.in_game=1
 # Escort system (escort.py): drag escorted zombies behind their pathfinding traders
 execute if score #zb_escort_count mgs.data matches 1.. as @e[tag=mgs.zb_escorted] at @s run function mgs:v5.1.0/zombies/escort/zombie_tick
 
-# Interaction safeguard (count-INDEPENDENT, every tick)
-execute as @e[type=minecraft:wandering_trader,tag=mgs.zb_escort,tag=!mgs.zb_escort_monkey] at @s if entity @p[scores={mgs.zb.in_game=1,mgs.zb.downed=0},gamemode=!spectator,distance=..6] run function mgs:v5.1.0/zombies/escort/end_at_trader
+# Interaction safeguard (count-INDEPENDENT, every tick). Walk-to escorts are exempt like monkey
+# ones: the map maker aims them at where the action is, so the guard would cancel every walk a few
+# blocks short of its target. Their eaten click is recovered the same way (weapon/common.py).
+execute as @e[type=minecraft:wandering_trader,tag=mgs.zb_escort,tag=!mgs.zb_escort_monkey,tag=!mgs.zb_escort_walk] at @s if entity @p[scores={mgs.zb.in_game=1,mgs.zb.downed=0},gamemode=!spectator,distance=..6] run function mgs:v5.1.0/zombies/escort/end_at_trader
 
 # Every 2s: resync the escort counter from reality
 scoreboard players operation #zb_esc_sweep mgs.data = #total_tick mgs.data

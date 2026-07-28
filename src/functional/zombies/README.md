@@ -101,35 +101,9 @@ What has to be captured, and where it lives today (this list IS the work):
   of the hard cases — do not skip it.
 
 
-## 12. Multiplayer — one death, two death messages  [NEEDS REPRO]
-
-From a playtest log, both lines at the same timestamp (= same tick), same victim:
-
-```
-[CHAT] DenisBrogniartBG sent Stoupy51 to the shadow realm     <- random_kill_message (attacker found)
-[CHAT] Stoupy51 forgot how gravity works                      <- random_death_message (no attacker)
-```
-
-So one death printed through both the attributed and the unattributed path. The two paths are
-`multiplayer/simulate_death` (bullet/OOB interception, `game.py`) and `multiplayer/on_respawn`
-(vanilla death detected via the `deathCount` criterion, `loadouts/class_selection.py`). Both already
-guard on `mp.spectate_timer matches 1..` / `gamemode=spectator`, and both set that state through
-`enter_death_spectate` — reading the code, neither order of execution reproduces this, including the
-S&D branch (`snd/on_death` does set spectator). So the guard is being defeated by something not
-visible in the source path: needs a repro to pin down.
-
-- [ ] Repro attempt: FFA/TDM, victim on low HP, killed by a bullet on the same tick as an
-  out-of-bounds / void tick (`core/bounds.py` deals `10000 out_of_world`, a *real* vanilla death).
-- [ ] If it can't be reproduced, make it unreproducible by construction: give the death a one-tick
-  claim (`#mp_death_claim` per player, set by whichever path prints first and checked by both)
-  instead of relying on `spectate_timer` / gamemode, which `enter_death_spectate` sets only at the
-  very end and never in the S&D branch.
-
-
 ---
 
 # Inbox (quick notes — dump anything here, unorganized "basic" format is fine)
 
-- Pouvoir mettre un flag aux spawns de zombies en mode éditeur pour indiquer que dès que ces zombies spawnent, ils doivent path finder jusqu'à une barriere précise
-- When mystery box is moving, all grayed mystery boxes are hidden (which is odd), why would the mystery box placeholder be removed if no box was or will move here?
+- a
 

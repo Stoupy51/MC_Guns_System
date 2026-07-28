@@ -4,6 +4,7 @@
 # @executed	as @e[tag=...,limit=24,sort=random] & at @s
 #
 # @within	mgs:v5.1.0/zombies/on_stuck_zombie
+#			mgs:v5.1.0/zombies/escort/start_to_target
 #			mgs:v5.1.0/zombies/escort/update_lure [ as @e[tag=...,limit=2,sort=random] & at @s ]
 #			mgs:v5.1.0/zombies/monkey/pull_one
 #
@@ -41,6 +42,11 @@ execute as @n[tag=mgs.zb_escort_new] run attribute @s minecraft:follow_range bas
 # Monkey-bomb escorts (monkey_bomb.py) target the thrown monkey instead of a player: flag the
 # trader so retarget routes to retarget_monkey. #zb_escort_mode is the caller's one-shot signal.
 execute if score #zb_escort_mode mgs.data matches 1 run tag @n[tag=mgs.zb_escort_new] add mgs.zb_escort_monkey
+
+# Walk-to spawns (start_to_target): the destination never moves, so the trader carries its own copy
+# of it and retarget just feeds that straight back in, no lookup per second.
+execute if score #zb_escort_mode mgs.data matches 2 run tag @n[tag=mgs.zb_escort_new] add mgs.zb_escort_walk
+execute if score #zb_escort_mode mgs.data matches 2 run data modify entity @n[tag=mgs.zb_escort_new] data.walk_to set from entity @s data.walk_to
 scoreboard players set #zb_escort_mode mgs.data 0
 
 # Aim it at its target immediately (nearest player, PaP-room lure, or thrown monkey per the flag)
