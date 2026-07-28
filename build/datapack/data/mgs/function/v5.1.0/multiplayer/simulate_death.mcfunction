@@ -17,14 +17,21 @@ execute if entity @s[gamemode=spectator] run return 0
 effect give @s instant_health 1 100 true
 scoreboard players add @s mgs.mp.deaths 1
 
+# `mgs:input with` is GLOBAL scratch: the signals fired below reuse it (the killer's Scavenger perk
+# refills their magazines, and every lore rewrite clears `input with`), so re-reading it after
+# a signal used to lose the attacker and print an unattributed death message on top of the kill
+# message. Decide the branch on a score taken now, and pass the signals a private copy.
+execute store success score #mp_death_attacked mgs.data if data storage mgs:input with.attacker
+data modify storage mgs:temp _mp_death set from storage mgs:input with
+
 # Fire damage signal (hit effects, hitmarker, DPS) if this came from a bullet hit
-execute if data storage mgs:input with.amount run function #mgs:signals/damage with storage mgs:input with
+execute if data storage mgs:temp _mp_death.amount run function #mgs:signals/damage with storage mgs:temp _mp_death
 
 # Fire kill signal as attacker (if attacker exists in input)
-execute if data storage mgs:input with.attacker run function mgs:v5.1.0/multiplayer/simulate_death_fire_kill with storage mgs:input with
+execute if score #mp_death_attacked mgs.data matches 1 run function mgs:v5.1.0/multiplayer/simulate_death_fire_kill with storage mgs:temp _mp_death
 
 # No attacker: random funny self-death message
-execute unless data storage mgs:input with.attacker run function mgs:v5.1.0/multiplayer/random_death_message
+execute if score #mp_death_attacked mgs.data matches 0 run function mgs:v5.1.0/multiplayer/random_death_message
 
 # Enter death spectate (shared with vanilla-death on_respawn)
 function mgs:v5.1.0/multiplayer/enter_death_spectate

@@ -3,7 +3,7 @@
 #
 # @executed	at @s
 #
-# @within	mgs:v5.1.0/multiplayer/simulate_death with storage mgs:input with
+# @within	mgs:v5.1.0/multiplayer/simulate_death with storage mgs:temp _mp_death
 #
 # @args		attacker (unknown)
 #
