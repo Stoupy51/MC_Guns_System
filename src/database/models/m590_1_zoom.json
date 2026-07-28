@@ -1,5 +1,6 @@
 {
 	"parent": "mgs:item/m590_1",
+	"textures": null,
 	"display": {
 		"thirdperson_righthand": {
 			"rotation": [

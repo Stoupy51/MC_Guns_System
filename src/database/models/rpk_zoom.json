@@ -1,5 +1,6 @@
 {
 	"parent": "mgs:item/rpk",
+	"textures": null,
 	"display": {
 		"thirdperson_righthand": {
 			"rotation": [

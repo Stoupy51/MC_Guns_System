@@ -1,5 +1,6 @@
 {
 	"parent": "mgs:item/svd_3",
+	"textures": null,
 	"display": {
 		"thirdperson_righthand": {
 			"rotation": [

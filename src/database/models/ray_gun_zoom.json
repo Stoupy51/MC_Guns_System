@@ -1,5 +1,6 @@
 {
 	"parent": "mgs:item/ray_gun",
+	"textures": null,
 	"display": {
 		"thirdperson_righthand": {
 			"translation": [

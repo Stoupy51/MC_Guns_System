@@ -1,5 +1,6 @@
 {
 	"parent": "mgs:item/mosin_1",
+	"textures": null,
 	"display": {
 		"thirdperson_righthand": {
 			"rotation": [

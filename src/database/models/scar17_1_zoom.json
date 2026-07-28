@@ -1,5 +1,6 @@
 {
 	"parent": "mgs:item/scar17_1",
+	"textures": null,
 	"display": {
 		"thirdperson_righthand": {
 			"rotation": [
