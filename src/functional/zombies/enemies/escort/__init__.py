@@ -1,4 +1,4 @@
-""" Wandering-trader pathfinding taxi for stuck zombies.
+""" Wandering-trader pathfinding taxi: stuck zombies, monkey bombs, the PaP lure and walk-to spawns.
 
 Zombie A* fails over long or complex routes (PathNavigation.java) and the zombie strolls randomly.
 A trader's `wander_target` NBT drives WanderToPositionGoal, which re-paths in 10-block segments, so

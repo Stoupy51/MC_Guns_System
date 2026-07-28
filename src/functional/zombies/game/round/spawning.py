@@ -120,6 +120,10 @@ function {ns}:v{version}/zombies/summon_zombie_at with storage {ns}:temp _zpos
 
 # Remember which spawn point (@s) this zombie used, so a stuck-rescue never reuses it
 scoreboard players operation @n[tag={ns}.zombie_round,tag={ns}.zb_rising] {ns}.zb.spawn.sid = @s {ns}.zb.spawn.sid
+
+# Walk-to spawn (map editor "walk_to"): pass the target down to the zombie, which zombie_finish_rise
+# then walks to instead of letting it wander (see escort/start_to_target)
+execute if data entity @s data.walk_to run data modify entity @n[tag={ns}.zombie_round,tag={ns}.zb_rising] data.walk_to set from entity @s data.walk_to
 """)
 
 	## Release one hound, unless the pack is already at full strength.

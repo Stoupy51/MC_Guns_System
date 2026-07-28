@@ -7,6 +7,7 @@
 #
 
 execute if entity @s[tag=mgs.element.zombie_spawn] unless data entity @s data.activation_box run data modify entity @s data.activation_box set value []
+execute if entity @s[tag=mgs.element.zombie_spawn] unless data entity @s data.walk_to run data modify entity @s data.walk_to set value []
 execute if entity @s[tag=mgs.element.special_spawn] unless data entity @s data.activation_box run data modify entity @s data.activation_box set value []
 execute if entity @s[tag=mgs.element.wallbuy] unless data entity @s data.name run data modify entity @s data.name set value ""
 execute if entity @s[tag=mgs.element.wallbuy] unless data entity @s data.price run data modify entity @s data.price set value 1000

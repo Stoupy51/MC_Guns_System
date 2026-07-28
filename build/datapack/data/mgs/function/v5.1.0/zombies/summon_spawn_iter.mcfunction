@@ -36,6 +36,10 @@ scoreboard players operation @n[tag=mgs.new_spawn] mgs.zb.spawn.sid = #zb_spawn_
 # data defines all 6 elements [x,y,z,dx,dy,dz] (relative to this spawn).
 execute if data storage mgs:temp _spawn_iter[0].activation_box[5] run function mgs:v5.1.0/zombies/store_spawn_abox
 
+# Optional walk-to target (zombie spawns only): store the ABSOLUTE spot on the marker, so every
+# zombie spawned here is escorted to it instead of wandering after the nearest player.
+execute if data storage mgs:temp _spawn_iter[0].walk_to[2] run function mgs:v5.1.0/zombies/store_spawn_walk_to
+
 tag @n[tag=mgs.new_spawn] remove mgs.new_spawn
 
 data remove storage mgs:temp _spawn_iter[0]

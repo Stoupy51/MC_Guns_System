@@ -3,7 +3,15 @@
 # Imports
 from stewbeet import Mem, write_versioned_function
 
-from .shared import ESCORT_TTL, LURE_RELEASE, MONKEY_RELEASE, RELEASE_RADIUS, RELEASE_RADIUS_CLOSE, WATCHDOG_GIVE_UP
+from .shared import (
+	ESCORT_TTL,
+	LURE_RELEASE,
+	MONKEY_RELEASE,
+	RELEASE_RADIUS,
+	RELEASE_RADIUS_CLOSE,
+	WALK_ARRIVAL,
+	WATCHDOG_GIVE_UP,
+)
 
 
 # Functions
@@ -14,6 +22,7 @@ def write_escort_tick() -> None:
 	# Escorted zombies are glued to their trader every tick, so "mine" is always the nearest one
 	my_trader: str = f"@n[type=minecraft:wandering_trader,tag={ns}.zb_escort,distance=..8]"
 	my_trader_monkey: str = f"@n[type=minecraft:wandering_trader,tag={ns}.zb_escort,tag={ns}.zb_escort_monkey,distance=..8]"
+	my_trader_walk: str = f"@n[type=minecraft:wandering_trader,tag={ns}.zb_escort,tag={ns}.zb_escort_walk,distance=..8]"
 
 	# Per-tick escort logic (@s = escorted zombie, at @s = the trader's last-tick position)
 	write_versioned_function("zombies/escort/zombie_tick", f"""
@@ -29,6 +38,11 @@ execute at {my_trader} run tp @s ~ ~ ~ ~ ~
 # otherwise ride toward the monkey and release on arrival, ignoring the player releases below.
 execute if entity {my_trader_monkey} unless entity @e[tag={ns}.monkey_bomb] run tag {my_trader} remove {ns}.zb_escort_monkey
 execute if entity {my_trader_monkey} run return run function {ns}:v{version}/zombies/escort/monkey_ride
+
+# Walk-to spawn: ride all the way to the target, skipping the player releases below. Those would
+# fire on the first tick — spawns are picked within 32 blocks of a player — and drop the zombie
+# right back where it spawned, which is exactly what the walk exists to avoid.
+execute if entity {my_trader_walk} run return run function {ns}:v{version}/zombies/escort/walk_ride
 
 # PaP-room lure active: release once the zombie reaches the theatre centre (no player will be
 # nearby there to trigger the player-based releases below)
@@ -61,6 +75,23 @@ execute if score #zb_esc_mod {ns}.data matches 0 as {my_trader} at @s run functi
 
 # Watchdog every second: a trader that can't move is caught in {WATCHDOG_GIVE_UP}s, not {ESCORT_TTL // 20}s
 execute if score #zb_esc_mod {ns}.data matches 0 run function {ns}:v{version}/zombies/escort/watchdog
+""")
+
+	# Walk ride: release once the zombie stands at the spot it was sent to, so vanilla AI takes it
+	# from there. A barrier crossed on the way ends the escort earlier through barriers/freeze_zombies;
+	# this is what covers a target with no barrier in front of it, which would otherwise leave the
+	# zombie idling on arrival until the watchdog gave up on it.
+	write_versioned_function("zombies/escort/walk_ride", f"""
+scoreboard players set #zb_esc_arrived {ns}.data 0
+function {ns}:v{version}/zombies/escort/check_walk_arrived with entity @s data.walk_to
+execute if score #zb_esc_arrived {ns}.data matches 1 run return run function {ns}:v{version}/zombies/escort/release
+
+function {ns}:v{version}/zombies/escort/escort_tail
+""")
+
+	# @s = the travelling zombie, args = its data.walk_to
+	write_versioned_function("zombies/escort/check_walk_arrived", f"""
+$execute positioned $(x) $(y) $(z) if entity @s[distance=..{WALK_ARRIVAL}] run scoreboard players set #zb_esc_arrived {ns}.data 1
 """)
 
 	# Monkey ride: HOLD on arrival rather than release, since the monkey has no aggro of its own

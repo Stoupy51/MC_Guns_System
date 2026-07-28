@@ -240,7 +240,8 @@ scoreboard objectives add mgs.zb.escort_ttl dummy
 scoreboard players add #zb_escort_count mgs.data 0
 
 # One-shot target mode for the NEXT escort/start, consumed (reset to 0) inside start:
-# 0 = aim at the nearest player (stuck rescue / PaP lure), 1 = aim at a thrown monkey bomb.
+# 0 = aim at the nearest player (stuck rescue / PaP lure), 1 = aim at a thrown monkey bomb,
+# 2 = aim at the spot a walk-to spawn pinned on the zombie (data.walk_to).
 scoreboard players add #zb_escort_mode mgs.data 0
 
 # Horde alliance team: round zombies and escort traders are allied, so the trader's

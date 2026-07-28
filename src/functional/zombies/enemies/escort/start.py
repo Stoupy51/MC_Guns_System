@@ -19,7 +19,8 @@ scoreboard objectives add {ns}.zb.escort_ttl dummy
 scoreboard players add #zb_escort_count {ns}.data 0
 
 # One-shot target mode for the NEXT escort/start, consumed (reset to 0) inside start:
-# 0 = aim at the nearest player (stuck rescue / PaP lure), 1 = aim at a thrown monkey bomb.
+# 0 = aim at the nearest player (stuck rescue / PaP lure), 1 = aim at a thrown monkey bomb,
+# 2 = aim at the spot a walk-to spawn pinned on the zombie (data.walk_to).
 scoreboard players add #zb_escort_mode {ns}.data 0
 
 # Horde alliance team: round zombies and escort traders are allied, so the trader's
@@ -76,6 +77,11 @@ execute as @n[tag={ns}.zb_escort_new] run attribute @s minecraft:follow_range ba
 # Monkey-bomb escorts (monkey_bomb.py) target the thrown monkey instead of a player: flag the
 # trader so retarget routes to retarget_monkey. #zb_escort_mode is the caller's one-shot signal.
 execute if score #zb_escort_mode {ns}.data matches 1 run tag @n[tag={ns}.zb_escort_new] add {ns}.zb_escort_monkey
+
+# Walk-to spawns (start_to_target): the destination never moves, so the trader carries its own copy
+# of it and retarget just feeds that straight back in, no lookup per second.
+execute if score #zb_escort_mode {ns}.data matches 2 run tag @n[tag={ns}.zb_escort_new] add {ns}.zb_escort_walk
+execute if score #zb_escort_mode {ns}.data matches 2 run data modify entity @n[tag={ns}.zb_escort_new] data.walk_to set from entity @s data.walk_to
 scoreboard players set #zb_escort_mode {ns}.data 0
 
 # Aim it at its target immediately (nearest player, PaP-room lure, or thrown monkey per the flag)
@@ -87,5 +93,14 @@ scoreboard players add #zb_escort_count {ns}.data 1
 
 	write_versioned_function("zombies/escort/set_trader_speed", """
 $attribute @s minecraft:movement_speed base set $(speed)
+""")
+
+	# Escort a just-risen zombie to the spot its spawn point named (@s = that zombie, at @s).
+	# Over the escort cap it simply doesn't get one: it spawns like any other zombie and the stuck
+	# rescue remains the safety net, which is strictly better than starving the rescues themselves.
+	write_versioned_function("zombies/escort/start_to_target", f"""
+execute if score #zb_escort_count {ns}.data matches {MAX_ESCORTS}.. run return 0
+scoreboard players set #zb_escort_mode {ns}.data 2
+function {ns}:v{version}/zombies/escort/start
 """)
 

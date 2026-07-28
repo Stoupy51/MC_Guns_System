@@ -71,7 +71,7 @@ ALL_ELEMENTS: dict[str, ElementDef] = {
 	# Config (utility, no marker)
 	"config":             ElementDef(name="⚙ Config",         color="white",        particle=[1.0, 1.0, 1.0], particle_scale=0.5, has_rotation=False, egg_model="minecraft:allay_spawn_egg",       save_type="config",                                               emoji="⚙"),
 	# Zombies elements (zb_object: compound data with pos/rotation/group_id + extra fields)
-	"zombie_spawn":       ElementDef(name="Zombie Spawn",     color="dark_green",   particle=[0.0, 0.5, 0.0], particle_scale=1.0, has_rotation=True,  egg_model="minecraft:zombie_spawn_egg",      save_type="zb_object",       save_path="spawning_points.zombies", emoji="🧟", defaults={"activation_box": []}),
+	"zombie_spawn":       ElementDef(name="Zombie Spawn",     color="dark_green",   particle=[0.0, 0.5, 0.0], particle_scale=1.0, has_rotation=True,  egg_model="minecraft:zombie_spawn_egg",      save_type="zb_object",       save_path="spawning_points.zombies", emoji="🧟", defaults={"activation_box": [], "walk_to": []}),
 	"player_spawn_zb":    ElementDef(name="Player Spawn",     color="aqua",         particle=[0.0, 1.0, 1.0], particle_scale=1.0, has_rotation=True,  egg_model="minecraft:villager_spawn_egg",    save_type="zb_object",       save_path="spawning_points.players", emoji="●", defaults={}),
 	# Special spawns are the "not a regular zombie" spawn set: dog rounds use them today, mini-bosses and other scripted arrivals can reuse them later.
 	# A map without any simply never gets those rounds.
@@ -91,6 +91,14 @@ ALL_ELEMENTS: dict[str, ElementDef] = {
 # Elements rendered as real in-game models in the editor (instead of dust particles).
 # Each has a maps/editor/displays/<etype> function mirroring the game's own display setup, rebuilt every second so rotation/config edits on the marker stay in sync.
 MODEL_DISPLAY_ELEMENTS: tuple[str, ...] = ("wallbuy", "perk_machine", "wunderfizz", "pap_machine", "mystery_box_pos", "power_switch", "barrier")
+
+OPTIONAL_LIST_FIELDS: dict[str, str] = {
+	"activation_box": "[0, 0, 0, 5, 3, 5]",
+	"walk_to":        "[0, 0, 10]",
+}
+""" List fields an empty [] disables, mapped to the template their edit button suggests.
+Empty brackets are useless to type into, and each gets a "✗" button to clear it again.
+"""
 
 # Field documentation.
 # Tooltips shown (as a hover "ⓘ") next to constant/enum config fields in the element editor, so map makers don't have to guess what the magic numbers mean.
@@ -115,6 +123,7 @@ FIELD_DOCS: dict[tuple[str, str] | str, str] = {
 	("barrier", "radius"): "Block radius the barrier toggles open/closed around its marker.",
 	("mystery_box_pos", "location_name"): "Name of the place this spot sits in, announced in chat when the box\nlands here (e.g. \"the Power Room\").\nLeave EMPTY to fall back to the generic \"a new location\" message.",
 	"activation_box": "Optional [x, y, z, dx, dy, dz] box (relative to this spawn, in blocks).\nWhen set, this spawn only produces enemies while a player stands inside the box.\nx/y/z = corner offset from the spawn, dx/dy/dz = size. Empty [] = always active.",
+	"walk_to": "Optional [x, y, z] offset (relative to this spawn, in blocks).\nWhen set, zombies from this spawn walk straight to that spot instead of\nheading for the nearest player — a pathfinding escort carries them there,\nthen hands them back to normal AI on arrival. Empty [] = normal behaviour.\nAim it just inside a window and they break in through the barrier on the way.",
 	# Shared fallbacks (any element type):
 	"can_start_on": "true = the machine is allowed to be the ACTIVE (usable) spot at game\nstart and after it roams. false = a valid roam destination, but never\nthe first active spot. Only one spot is active at a time; the rest show\na grayed-out disabled model. At least one spot must allow starting.",
 	"power": "true = requires the map's power to be switched on before it works\nfalse = always usable",

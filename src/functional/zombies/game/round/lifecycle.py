@@ -35,6 +35,10 @@ $execute align xyz run particle block{block_state:"$(block)"} ~.5 ~1 ~.5 0.3 0.1
 	write_versioned_function("zombies/zombie_finish_rise", f"""
 data modify entity @s NoAI set value 0b
 tag @s remove {ns}.zb_rising
+
+# Walk-to spawn: hand it to an escort taxi that walks it to the map maker's spot. Only now that the
+# rise is over — the escort freezes the zombie, which would strand it mid-animation.
+execute if data entity @s data.walk_to run function {ns}:v{version}/zombies/escort/start_to_target
 """)
 
 	## Per-tick death watch: intercept zombie death before vanilla event 60 (poof particles)

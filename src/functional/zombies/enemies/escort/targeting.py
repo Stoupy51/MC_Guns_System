@@ -18,6 +18,10 @@ def write_escort_targeting() -> None:
 # the PaP lure and player targeting while the trader carries the {ns}.zb_escort_monkey flag.
 execute if entity @s[tag={ns}.zb_escort_monkey] run return run function {ns}:v{version}/zombies/escort/retarget_monkey
 
+# Walk-to spawn: a fixed destination copied onto the trader at start, so re-aiming is just feeding
+# it back in (WanderToPositionGoal.stop() nulls wander_target every time it deactivates)
+execute if entity @s[tag={ns}.zb_escort_walk] run return run function {ns}:v{version}/zombies/escort/set_wander_target with entity @s data.walk_to
+
 # PaP-room lure active: aim at the theatre centre marker instead of a player (see escort.py)
 execute if score #zb_lure {ns}.data matches 1 if entity @e[tag={ns}.lure_center] run return run function {ns}:v{version}/zombies/escort/retarget_lure
 execute store result storage {ns}:temp _escort.x int 1 run data get entity {nearest_alive} Pos[0]

@@ -35,6 +35,12 @@ minecraft:entity_interaction_range attribute, which zombies raises to 5 (game.py
 does not apply. Monkey-bomb traders are exempt; their eaten click is recovered by the
 right_click_entity advancement (weapon/common.py). """
 
+WALK_ARRIVAL: int = 4
+""" Walk-to spawns (map editor "walk_to"): hand back to vanilla AI once the zombie is within this
+many blocks of the spot it was sent to. An intact barrier on the way ends the ride earlier still
+(barriers/freeze_zombies calls end_at_trader), which is what lets a target placed just inside a
+window read as "break in through it, then fight normally". """
+
 MONKEY_RELEASE: int = 4
 """ A monkey-escorted zombie stops riding and HOLDS within this many blocks of the thrown monkey,
 so zombies spread along their approach paths instead of stacking — well inside the 7-block blast. """
