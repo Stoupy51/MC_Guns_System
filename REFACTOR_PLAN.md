@@ -139,16 +139,18 @@ you disagree — it is the one place the "group helpers into a class" rule was k
 stays a module. Wrapping `generate_power_switch()` in a class buys nothing. Classing applies to
 modules other modules import *helpers* from.
 
-### PY9. Clones jscpd found once the splits landed — 5 candidates
+### PY9. Clones jscpd found once the splits landed — 1 done, 4 open
 
 `npx jscpd ./src/functional --mode mild --min-lines 8 --min-tokens 60` reports **0.42 %** duplication
 (11 clones, 118 lines). Six of them are inside `shaders.py` and are GLSL, not logic. The rest, ranked:
 
-1. **`projectile/explode.py` [42-57] ≡ `grenade/detonate.py` [59-74]** — 16 lines, verified identical
-   character for character: the centre-position snapshot, the explosion config copy and the shooter
-   resolution. Two options with different trade-offs: a shared Python helper returning the lines
-   (−16 Python, output unchanged), or one shared `projectile/explosion_setup` mcfunction both call
-   (−16 generated lines too, +1 function call on the explosion path — a cold path, so acceptable).
+1. ✅ **`projectile/explode.py` ≡ `grenade/detonate.py`** — done. `weapon/explosion.py` now owns
+   `Explosion.setup_lines()` (the 16-line centre/config/shooter block) and `Explosion.area_damage_lines()`
+   (2 more lines both paths repeated). Output byte-identical: both generators still emit their own copy,
+   the Python is written once. The shared-mcfunction variant was **not** taken — it would have cut ~19
+   generated lines but added a file, and goal (2) is *fewer* generated files.
+   Left alone: the `on_explosion` signal block, 3 shared lines whose only difference is one extra
+   `.grenade` field. Folding it needs a boolean flag parameter, which reads worse than the repetition.
 2. **`pap/purchase.py` [44-55] vs [145-156]** — 12 lines, 211 tokens. The re-PaP-at-max-level path and
    the full upgrade path share their cosmetic-roll tail.
 3. **`wallbuys/give.py` [67-81] vs [223-237]** — 15 lines, the gun and the knife give paths.

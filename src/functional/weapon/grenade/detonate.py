@@ -2,7 +2,8 @@
 # Imports
 from stewbeet import Mem, write_versioned_function
 
-from ....config.stats.keys import EXPLOSION_DAMAGE, EXPLOSION_DECAY, EXPLOSION_RADIUS, GRENADE_DURATION, GRENADE_EFFECT_RADIUS, GRENADE_TYPE
+from ....config.stats.keys import GRENADE_DURATION, GRENADE_EFFECT_RADIUS, GRENADE_TYPE
+from ..explosion import Explosion
 
 
 # Functions
@@ -56,26 +57,10 @@ playsound minecraft:entity.generic.explode player @a[distance=..64] ~ ~ ~ 2 0.8
 execute if score #grenade_explosion_power {ns}.config matches 1.. run function {ns}:v{version}/grenade/realistic_explosion
 
 # Store explosion center position for damage calculation (scores used by projectile/damage_entity)
-execute store result score #ctr_x {ns}.data run data get entity @s Pos[0] 1000
-execute store result score #ctr_y {ns}.data run data get entity @s Pos[1] 1000
-execute store result score #ctr_z {ns}.data run data get entity @s Pos[2] 1000
-
-# Copy explosion config from entity data to temp storage
-data modify storage {ns}:temp expl.{EXPLOSION_DAMAGE} set from entity @s data.config.{EXPLOSION_DAMAGE}
-data modify storage {ns}:temp expl.{EXPLOSION_DECAY} set from entity @s data.config.{EXPLOSION_DECAY}
-data modify storage {ns}:temp expl.{EXPLOSION_RADIUS} set from entity @s data.config.{EXPLOSION_RADIUS}
-
-# Resolve shooter: copy UUID to storage, then find matching player
-data modify storage {ns}:temp expl.shooter_uuid set from entity @s data.shooter
-
-# Tag the matching shooter for damage attribution
-scoreboard players set #found {ns}.data 0
-execute as @a run function {ns}:v{version}/projectile/match_shooter
-execute if score #found {ns}.data matches 0 as @e[tag={ns}.armed] run function {ns}:v{version}/projectile/match_shooter
+{Explosion.setup_lines(ns, version)}
 
 # Apply area damage to nearby entities (macro for configurable radius)
-execute store result storage {ns}:temp expl.radius_float float 1 run data get entity @s data.config.{EXPLOSION_RADIUS}
-function {ns}:v{version}/projectile/damage_area with storage {ns}:temp expl
+{Explosion.area_damage_lines(ns, version)}
 
 # Signal: on_explosion
 data modify storage {ns}:signals on_explosion set value {{}}
