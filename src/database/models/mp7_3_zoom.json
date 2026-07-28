@@ -1,5 +1,6 @@
 {
 	"parent": "mgs:item/mp7_3",
+	"textures": null,
 	"display": {
 		"thirdperson_righthand": {
 			"rotation": [

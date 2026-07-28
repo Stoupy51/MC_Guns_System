@@ -1,5 +1,6 @@
 {
 	"parent": "mgs:item/glock17",
+	"textures": null,
 	"display": {
 		"thirdperson_righthand": {
 			"rotation": [

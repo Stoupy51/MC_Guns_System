@@ -1,5 +1,6 @@
 {
 	"parent": "mgs:item/makarov",
+	"textures": null,
 	"display": {
 		"thirdperson_righthand": {
 			"rotation": [

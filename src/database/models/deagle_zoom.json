@@ -1,5 +1,6 @@
 {
 	"parent": "mgs:item/deagle",
+	"textures": null,
 	"display": {
 		"thirdperson_righthand": {
 			"rotation": [

@@ -1,5 +1,6 @@
 {
 	"parent": "mgs:item/rpg7_empty",
+	"textures": null,
 	"display": {
 		"thirdperson_righthand": {
 			"rotation": [

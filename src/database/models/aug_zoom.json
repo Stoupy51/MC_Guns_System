@@ -1,5 +1,6 @@
 {
 	"parent": "mgs:item/aug",
+	"textures": null,
 	"display": {
 		"thirdperson_righthand": {
 			"rotation": [

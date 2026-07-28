@@ -1,5 +1,6 @@
 {
 	"parent": "mgs:item/g3a3_4",
+	"textures": null,
 	"display": {
 		"thirdperson_righthand": {
 			"rotation": [

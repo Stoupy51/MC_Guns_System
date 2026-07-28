@@ -1,5 +1,6 @@
 {
 	"parent": "mgs:item/m500",
+	"textures": null,
 	"display": {
 		"thirdperson_righthand": {
 			"rotation": [

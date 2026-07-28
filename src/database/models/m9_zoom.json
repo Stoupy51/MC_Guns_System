@@ -1,5 +1,6 @@
 {
 	"parent": "mgs:item/m9",
+	"textures": null,
 	"display": {
 		"thirdperson_righthand": {
 			"rotation": [
