@@ -2,7 +2,8 @@
 # Imports
 from stewbeet import Mem, write_versioned_function
 
-from .....config.stats.keys import BASE_WEAPON, DAMAGE, EXPLOSION_DAMAGE, EXPLOSION_DECAY, EXPLOSION_RADIUS
+from .....config.stats.keys import BASE_WEAPON, DAMAGE
+from ...explosion import Explosion
 
 
 # Functions
@@ -39,22 +40,7 @@ execute if score #ray_gun {ns}.data matches 0 run playsound minecraft:entity.gen
 execute if score #projectile_explosion_power {ns}.config matches 1.. run function {ns}:v{version}/projectile/realistic_explosion
 
 # Store explosion center position for damage calculation
-execute store result score #ctr_x {ns}.data run data get entity @s Pos[0] 1000
-execute store result score #ctr_y {ns}.data run data get entity @s Pos[1] 1000
-execute store result score #ctr_z {ns}.data run data get entity @s Pos[2] 1000
-
-# Copy explosion config from entity data to temp storage
-data modify storage {ns}:temp expl.{EXPLOSION_DAMAGE} set from entity @s data.config.{EXPLOSION_DAMAGE}
-data modify storage {ns}:temp expl.{EXPLOSION_DECAY} set from entity @s data.config.{EXPLOSION_DECAY}
-data modify storage {ns}:temp expl.{EXPLOSION_RADIUS} set from entity @s data.config.{EXPLOSION_RADIUS}
-
-# Resolve shooter: copy UUID to storage, then find matching player
-data modify storage {ns}:temp expl.shooter_uuid set from entity @s data.shooter
-
-# Tag the matching shooter for damage attribution
-scoreboard players set #found {ns}.data 0
-execute as @a run function {ns}:v{version}/projectile/match_shooter
-execute if score #found {ns}.data matches 0 as @e[tag={ns}.armed] run function {ns}:v{version}/projectile/match_shooter
+{Explosion.setup_lines(ns, version)}
 
 # Apply bullet direct-hit damage to the entity tagged in on_collision (if entity was hit, not just a block)
 # Give shooter ticking tag so DPS signal can find them
@@ -88,8 +74,7 @@ tag @e[tag={ns}.direct_hit] remove {ns}.direct_hit
 tag @n[tag={ns}.temp_shooter] remove {ns}.ticking
 
 # Apply area damage to nearby entities (macro for configurable radius)
-execute store result storage {ns}:temp expl.radius_float float 1 run data get entity @s data.config.{EXPLOSION_RADIUS}
-function {ns}:v{version}/projectile/damage_area with storage {ns}:temp expl
+{Explosion.area_damage_lines(ns, version)}
 
 # Signal: on_explosion (@s = projectile entity, explosion data in mgs:signals)
 data modify storage {ns}:signals on_explosion set value {{}}
