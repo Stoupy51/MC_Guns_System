@@ -17,20 +17,14 @@ def write_zombies_spawns() -> None:
 scoreboard players set #zb_spawn_sid {ns}.data 0
 
 # Player spawns
-data modify storage {ns}:temp _spawn_iter set from storage {ns}:zombies game.map.spawning_points.players
-data modify storage {ns}:temp _spawn_tag set value "{ns}.spawn_zb_player"
-execute if data storage {ns}:temp _spawn_iter[0] run function {ns}:v{version}/zombies/summon_spawn_iter
+{CoreSpawning.spawn_category_lines("zombies", "players", "spawn_zb_player")}
 
 # Zombie spawns
-data modify storage {ns}:temp _spawn_iter set from storage {ns}:zombies game.map.spawning_points.zombies
-data modify storage {ns}:temp _spawn_tag set value "{ns}.spawn_zb"
-execute if data storage {ns}:temp _spawn_iter[0] run function {ns}:v{version}/zombies/summon_spawn_iter
+{CoreSpawning.spawn_category_lines("zombies", "zombies", "spawn_zb")}
 
 # Special spawns (dog rounds today, mini-bosses later). Same plumbing as zombie spawns — group_id
 # gating, activation boxes, unique spawn ids — only the tag differs.
-data modify storage {ns}:temp _spawn_iter set from storage {ns}:zombies game.map.spawning_points.special
-data modify storage {ns}:temp _spawn_tag set value "{ns}.spawn_special"
-execute if data storage {ns}:temp _spawn_iter[0] run function {ns}:v{version}/zombies/summon_spawn_iter
+{CoreSpawning.spawn_category_lines("zombies", "special", "spawn_special")}
 
 # Read off the map data, not an entity scan, so start_round can gate dog rounds on a score
 execute store success score #zb_has_special {ns}.data if data storage {ns}:zombies game.map.spawning_points.special[0]
@@ -104,32 +98,4 @@ data modify entity @n[tag={ns}.new_spawn] data.abox set from storage {ns}:temp _
 	CoreSpawning.write_summon_spawn_at("zombies", extra_spawn_tags=("new_spawn",))
 
 	# Smart Spawn Selection.
-
-	write_versioned_function("zombies/tp_all_to_spawns", f"""
-execute as @a[scores={{{ns}.zb.in_game=1}}] at @s run function {ns}:v{version}/zombies/pick_spawn
-tag @e[tag={ns}.spawn_used] remove {ns}.spawn_used
-""")
-
-	write_versioned_function("zombies/pick_spawn", f"""
-tag @s add {ns}.spawn_pending
-
-# Tag candidate spawns (unlocked, exclude used). Capture via command success whether any marker
-# was tagged, so the "all used" fallback can branch on a score instead of a global @e scan.
-execute store success score #has_candidate {ns}.data run tag @e[tag={ns}.spawn_point,tag={ns}.spawn_zb_player,tag={ns}.spawn_unlocked,tag=!{ns}.spawn_used] add {ns}.spawn_candidate
-
-# If all used, re-tag all unlocked
-execute if score #has_candidate {ns}.data matches 0 run tag @e[tag={ns}.spawn_point,tag={ns}.spawn_zb_player,tag={ns}.spawn_unlocked] add {ns}.spawn_candidate
-
-# Pick random candidate
-execute as @n[tag={ns}.spawn_candidate,sort=random] run function {ns}:v{version}/shared/tp_to_spawn {{mode:"zombies"}}
-
-# Cleanup
-tag @e[tag={ns}.spawn_candidate] remove {ns}.spawn_candidate
-tag @a[tag={ns}.spawn_pending] remove {ns}.spawn_pending
-""")
-
-	## Respawn TP for zombies
-	write_versioned_function("zombies/respawn_tp", f"""
-execute if entity @e[tag={ns}.spawn_point,tag={ns}.spawn_zb_player] run function {ns}:v{version}/zombies/pick_spawn
-""")
-
+	CoreSpawning.write_random_spawn_selection("zombies", "spawn_zb_player", "zb.in_game", required_tags=("spawn_unlocked",))

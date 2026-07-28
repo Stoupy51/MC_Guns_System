@@ -15,48 +15,16 @@ def write_multiplayer_spawns() -> None:
 	## Summon spawn markers from map data (called at game start)
 	write_versioned_function("multiplayer/summon_spawns", f"""
 # Red spawns
-data modify storage {ns}:temp _spawn_iter set from storage {ns}:multiplayer game.map.spawning_points.red
-data modify storage {ns}:temp _spawn_tag set value "{ns}.spawn_red"
-execute if data storage {ns}:temp _spawn_iter[0] run function {ns}:v{version}/multiplayer/summon_spawn_iter
+{CoreSpawning.spawn_category_lines("multiplayer", "red", "spawn_red")}
 
 # Blue spawns
-data modify storage {ns}:temp _spawn_iter set from storage {ns}:multiplayer game.map.spawning_points.blue
-data modify storage {ns}:temp _spawn_tag set value "{ns}.spawn_blue"
-execute if data storage {ns}:temp _spawn_iter[0] run function {ns}:v{version}/multiplayer/summon_spawn_iter
+{CoreSpawning.spawn_category_lines("multiplayer", "blue", "spawn_blue")}
 
 # General spawns
-data modify storage {ns}:temp _spawn_iter set from storage {ns}:multiplayer game.map.spawning_points.general
-data modify storage {ns}:temp _spawn_tag set value "{ns}.spawn_general"
-execute if data storage {ns}:temp _spawn_iter[0] run function {ns}:v{version}/multiplayer/summon_spawn_iter
+{CoreSpawning.spawn_category_lines("multiplayer", "general", "spawn_general")}
 """)
 
-	write_versioned_function("multiplayer/summon_spawn_iter", f"""
-# Read relative coords
-execute store result score #sx {ns}.data run data get storage {ns}:temp _spawn_iter[0][0]
-execute store result score #sy {ns}.data run data get storage {ns}:temp _spawn_iter[0][1]
-execute store result score #sz {ns}.data run data get storage {ns}:temp _spawn_iter[0][2]
-execute store result score #syaw {ns}.data run data get storage {ns}:temp _spawn_iter[0][3] 100
-
-# Convert to absolute
-scoreboard players operation #sx {ns}.data += #gm_base_x {ns}.data
-scoreboard players operation #sy {ns}.data += #gm_base_y {ns}.data
-scoreboard players operation #sz {ns}.data += #gm_base_z {ns}.data
-
-# Store position + yaw for macro
-execute store result storage {ns}:temp _spos.x double 1 run scoreboard players get #sx {ns}.data
-execute store result storage {ns}:temp _spos.y double 1 run scoreboard players get #sy {ns}.data
-execute store result storage {ns}:temp _spos.z double 1 run scoreboard players get #sz {ns}.data
-execute store result storage {ns}:temp _spos.yaw double 0.01 run scoreboard players get #syaw {ns}.data
-data modify storage {ns}:temp _spos.tag set from storage {ns}:temp _spawn_tag
-
-# Summon
-function {ns}:v{version}/multiplayer/summon_spawn_at with storage {ns}:temp _spos
-
-# Next
-data remove storage {ns}:temp _spawn_iter[0]
-execute if data storage {ns}:temp _spawn_iter[0] run function {ns}:v{version}/multiplayer/summon_spawn_iter
-""")
-
+	CoreSpawning.write_array_spawn_iter("multiplayer")
 	CoreSpawning.write_summon_spawn_at("multiplayer")
 
 	# Smart Spawn Selection.
