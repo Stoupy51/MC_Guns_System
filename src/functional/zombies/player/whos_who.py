@@ -85,7 +85,7 @@ scoreboard players operation #my_downed_id {ns}.data = @s {ns}.zb.ww.id
 scoreboard players set #has_candidate {ns}.data 0
 execute as @e[type=minecraft:mannequin,tag={ns}.downed_mannequin,predicate={ns}:v{version}/zombies/revive/downed_id_match] at @s store success score #has_candidate {ns}.data run tag @n[tag={ns}.spawn_point,tag={ns}.spawn_zb_player,tag={ns}.spawn_unlocked,distance=10..] add {ns}.spawn_candidate
 execute if score #has_candidate {ns}.data matches 0 as @e[type=minecraft:mannequin,tag={ns}.downed_mannequin,predicate={ns}:v{version}/zombies/revive/downed_id_match] at @s run tag @n[tag={ns}.spawn_point,tag={ns}.spawn_zb_player,tag={ns}.spawn_unlocked] add {ns}.spawn_candidate
-execute as @n[tag={ns}.spawn_candidate] run function {ns}:v{version}/zombies/tp_to_spawn
+execute as @n[tag={ns}.spawn_candidate] run function {ns}:v{version}/shared/tp_to_spawn {{mode:"zombies"}}
 tag @e[tag={ns}.spawn_candidate] remove {ns}.spawn_candidate
 tag @a[tag={ns}.spawn_pending] remove {ns}.spawn_pending
 

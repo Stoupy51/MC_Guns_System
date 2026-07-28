@@ -54,7 +54,7 @@ scoreboard players set #best_dist mgs.data 0
 scoreboard players operation #best_dist mgs.data > @e[tag=mgs.spawn_candidate] mgs.data
 
 # Pick the first candidate with that best score and TP the pending player there
-execute as @e[tag=mgs.spawn_candidate,sort=random] if score @s mgs.data = #best_dist mgs.data run function mgs:v5.1.0/multiplayer/tp_to_spawn
+execute as @e[tag=mgs.spawn_candidate,sort=random] if score @s mgs.data = #best_dist mgs.data run function mgs:v5.1.0/shared/tp_to_spawn {mode:"multiplayer"}
 
 # Clean up
 tag @e[tag=mgs.spawn_candidate] remove mgs.spawn_candidate

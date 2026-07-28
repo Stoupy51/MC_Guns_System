@@ -17,7 +17,7 @@ execute store success score #has_candidate mgs.data run tag @e[tag=mgs.spawn_poi
 execute if score #has_candidate mgs.data matches 0 run tag @e[tag=mgs.spawn_point,tag=mgs.spawn_zb_player,tag=mgs.spawn_unlocked] add mgs.spawn_candidate
 
 # Pick random candidate
-execute as @n[tag=mgs.spawn_candidate,sort=random] run function mgs:v5.1.0/zombies/tp_to_spawn
+execute as @n[tag=mgs.spawn_candidate,sort=random] run function mgs:v5.1.0/shared/tp_to_spawn {mode:"zombies"}
 
 # Cleanup
 tag @e[tag=mgs.spawn_candidate] remove mgs.spawn_candidate

@@ -6,7 +6,7 @@
 # @within	mgs:v5.1.0/multiplayer/pick_spawn
 #
 
-execute as @n[tag=mgs.spawn_candidate,sort=random] run function mgs:v5.1.0/multiplayer/tp_to_spawn
+execute as @n[tag=mgs.spawn_candidate,sort=random] run function mgs:v5.1.0/shared/tp_to_spawn {mode:"multiplayer"}
 
 # Clean up
 tag @e[tag=mgs.spawn_candidate] remove mgs.spawn_candidate
