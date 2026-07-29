@@ -9,15 +9,15 @@ class SharedContent:
 
 	# Functions
 	@staticmethod
-	def knife_item_snbt(ns: str, short_range: bool = False) -> str:
-		""" The melee knife item, shared by zombies (hotbar.0) and multiplayer (hotbar.0).
+	def knife_item_snbt(ns: str) -> str:
+		""" The zombies starting knife: the `combat_knife` DB item minus its reach penalty.
+
+		Multiplayer and the zombies wallbuys give the DB item straight from `<ns>:i/combat_knife`,
+		which carries a -1 `entity_interaction_range`. Zombies builds this inline copy instead so its
+		starting knife keeps vanilla reach — it is the fallback weapon once ammo runs out.
 
 		Args:
-			ns          (str):  The project namespace.
-			short_range (bool): Clamp the wielder's entity interaction range down to melee distance.
-				Guns hit at whatever range their raycast reaches, so multiplayer wants the knife to be
-				an explicit close-quarters trade; zombies keeps vanilla reach for its starting knife.
-
+			ns (str): The project namespace.
 		Returns:
 			str: The item SNBT, ready for `item replace entity @s <slot> with <this>`.
 		"""
@@ -26,13 +26,6 @@ class SharedContent:
 			'{type:"attack_damage",amount:20,operation:"add_value",slot:"mainhand",id:"minecraft:base_attack_damage"}',
 			'{type:"attack_speed",amount:-2.5,operation:"add_value",slot:"mainhand",id:"minecraft:base_attack_speed"}',
 		]
-		if short_range:
-			# Vanilla entity interaction range is 3; add_value of -1.0 leaves 2.0 blocks of reach
-			modifiers.append(
-				f'{{type:"entity_interaction_range",amount:-1.0,operation:"add_value",slot:"mainhand",id:"{ns}:knife_range"}}'
-			)
-		# item_model points at the `combat_knife` DB item's model; the item itself stays inline
-		# because multiplayer needs the short_range variant that the DB entry does not carry.
 		return (
 			f"minecraft:iron_sword[unbreakable={{}},custom_data={{{ns}:{{knife:true,combat_knife:true}}}},"
 			f"item_model=\"{ns}:combat_knife\","
