@@ -30,6 +30,10 @@ class Melee:
 	rarity: str = "common"
 	movement_bonus: float = 0.1
 	attack_speed: float = -2.5
+	reach_modifier: float = -1.0
+	""" Added to the vanilla entity interaction range of 3, so -1.0 leaves 2.0 blocks.
+	Guns hit at whatever range their raycast reaches, so melee is an explicit close-quarters trade.
+	"""
 
 	@property
 	def damage(self) -> int:

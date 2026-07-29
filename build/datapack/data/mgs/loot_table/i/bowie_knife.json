@@ -62,6 +62,13 @@
 										"operation": "add_value",
 										"slot": "mainhand",
 										"id": "minecraft:base_attack_speed"
+									},
+									{
+										"type": "entity_interaction_range",
+										"amount": -1.0,
+										"operation": "add_value",
+										"slot": "mainhand",
+										"id": "mgs:knife_range"
 									}
 								],
 								"minecraft:item_model": "mgs:bowie_knife"

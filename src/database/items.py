@@ -176,6 +176,7 @@ def add_melee_weapons() -> None:
 				{"type": "movement_speed", "amount": melee.movement_bonus, "operation": "add_multiplied_base", "slot": "mainhand", "id": "minecraft:base_movement_speed"},
 				{"type": "attack_damage", "amount": melee.damage, "operation": "add_value", "slot": "mainhand", "id": "minecraft:base_attack_damage"},
 				{"type": "attack_speed", "amount": melee.attack_speed, "operation": "add_value", "slot": "mainhand", "id": "minecraft:base_attack_speed"},
+				{"type": "entity_interaction_range", "amount": melee.reach_modifier, "operation": "add_value", "slot": "mainhand", "id": f"{ns}:knife_range"},
 			],
 		}
 		Item(
