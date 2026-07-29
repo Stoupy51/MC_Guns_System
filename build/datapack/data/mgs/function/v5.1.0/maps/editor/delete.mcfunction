@@ -1,7 +1,7 @@
 
 #> mgs:v5.1.0/maps/editor/delete
 #
-# @within	string in mgs:v5.1.0/maps/editor/menu_entry_display
+# @within	string in mgs:v5.1.0/maps/editor/menu_entry_display {idx:$(idx),mode:$(mode)}
 #
 # @args		mode (unknown)
 #			idx (unknown)
