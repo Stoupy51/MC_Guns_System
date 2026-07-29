@@ -16,23 +16,32 @@ Shared code map (used by many tasks below):
 - Respawn loadout after full death (`inventory/give_respawn_loadout`): knife + M1911 + half mag + 4 frags (spec below says 2 — see task 9).
 
 
-## 1. Multiplayer — knife skin/camo in loadouts  [UNBLOCKED: art exists]
+## 1. Multiplayer — knife skin/camo in loadouts  [DONE, pending in-game check]
 
-**Blocker resolved.** The four Black Ops 2 melee weapons are modelled and registered:
-`combat_knife`, `bowie_knife`, `sickle`, `galvaknuckles` (`src/database/models/*.json`, stat table in
-`src/config/stats/weapons/melee.py`). They are built entirely from the project's own material
-textures (`mgs:item/metal_dark`, `metal_bright`, `brass`, `mosinwood`, …), which is what the camo
-blender reads — so `camo.py` can blend them with no new art. The one exception is the
-Galvaknuckles' `spark` texture (`minecraft:block/sea_lantern`), which must go in an `ignore_textures`
-override or it will fail to resolve a PNG.
+The four Black Ops 2 melee weapons are modelled and registered: `combat_knife`, `bowie_knife`,
+`sickle`, `galvaknuckles` (`src/database/models/*.json`, stat table in
+`src/config/stats/weapons/melee.py`), built entirely from the project's own material textures
+(`mgs:item/metal_dark`, `metal_bright`, `brass`, `mosinwood`, …) — which is what the camo blender
+reads, so no new art was needed.
 
-Remaining work:
 - [x] Add the knife as a DB item with `override_model` (like guns), keep `custom_data {mgs:{knife:true}}`.
-- [ ] Extend `camo.py::main()` to include it — it currently iterates only items with `custom_data.mgs.gun`; either tag the knife item as camo-eligible or special-case it. Camo item ids follow `<base>_<material>` (e.g. `knife_gold`), suffixes from `CAMO_VARIANTS` in `src/config/catalogs.py`.
-- [ ] Loadout editor (`multiplayer/loadouts/editor.py`): add a "Knife" row → camo-only submenu (reuse `camo_actions_snbt` pattern). New trigger range in `catalogs.py` (next free: ~530+ is `TRIG_OVERKILL_SEC_BASE`, use e.g. 540 `TRIG_KNIFE_CAMO_BASE`). Store `knife_camo` in the editor snapshot + committed loadout. Free (no Pick-10 cost), like other camos.
-- [ ] Apply in `multiplayer/loadout.py::apply_class_dynamic` (the `hotbar.0` knife give): parametrize `knife_item_snbt` with an `item_model`/camo suffix. It already emits `item_model="mgs:combat_knife"`, so a camo is just a different suffix on that value.
-- [ ] Missions gets it for free — `missions/game.py` applies loadouts via the same `multiplayer/apply_class` → `apply_class_dynamic`. Verify in-game.
+- [x] Extend `camo.py::main()` to include it — eligibility is now `is_camo_eligible()`: every non-tactical gun, plus any `MELEE_WEAPONS` row flagged `camo_eligible`. All four melee weapons are flagged, so there are 20 melee items (4 weapons x Default + 4 camos). Ids follow `<base>_<material>`, e.g. `bowie_knife_gold`.
+- [x] Loadout editor: "Knife" row (`TRIG_HUB_KNIFE` 113) → camo-only submenu on `TRIG_KNIFE_CAMO_BASE` 540-544, reusing `camo_actions_snbt`. `knife_camo` / `knife_camo_name` live in the editor state (`shared.py::empty_state`) and the committed loadout (`save.py`). Free, no Pick-10 cost.
+- [x] Apply in `multiplayer/loadout.py::apply_class_dynamic` — `hotbar.0` now comes from the loot table via the `apply_knife` macro: `loot mgs:i/combat_knife$(camo)`. The camo is defaulted to `""` first, so standard classes and loadouts saved before knife camos still work.
+- [ ] Missions gets it for free — `missions/game/{start,death}.py` call the same `multiplayer/apply_class` → `apply_class_dynamic`. **Verify in-game** (only unchecked item; cannot be tested from a build).
 - Zombies keeps its plain knife (separate give in `zombies/inventory.py`), until a zombies knife wall-buy exists (task 9).
+
+Only `combat_knife`'s camos are handed out so far (the loadout editor's Knife row — it is the only
+melee a multiplayer loadout carries). The upgrades' camos exist for a future zombies camo pick and
+are already reachable from the creative loot table.
+
+Two gotchas worth keeping in mind:
+- `element_115` (the Galvaknuckles' arc) is in `COMMON_IGNORE`: it is an animated 8-frame strip, and
+  blending it would drop the `.mcmeta` and squash the whole strip onto one face. Keeping it out also
+  means the arc stays electric blue on every camo, which is what you want from electricity.
+- Every camo-eligible melee gets a generated `OVERRIDES` entry so Gold uses `COMMON_IGNORE` instead of
+  `GOLD_DEFAULT_IGNORE_TEXTURE`. Gold normally spares a gun's metal so the receiver stays black, but a
+  melee weapon *is* its blade — without it a "gold" knife is gold only on the grip.
 
 The Sickle and Galvaknuckles are registered but not placed on any map yet: they are `kind 1`
 wallbuys, so a map editor `wallbuy` element with `weapon_id: "sickle"` / `"galvaknuckles"` is all it

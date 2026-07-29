@@ -14,6 +14,7 @@
 #			mgs:v5.1.0/multiplayer/editor/pick_secondary_camo
 #			mgs:v5.1.0/multiplayer/editor/pick_equip1_camo
 #			mgs:v5.1.0/multiplayer/editor/pick_equip2_camo
+#			mgs:v5.1.0/multiplayer/editor/pick_knife_camo
 #			mgs:v5.1.0/multiplayer/editor/show_primary_mags_dialog
 #			mgs:v5.1.0/multiplayer/editor/show_secondary_mags_dialog
 #			mgs:v5.1.0/multiplayer/editor/pick_primary_mags
@@ -23,6 +24,12 @@
 #			mgs:v5.1.0/multiplayer/editor/save
 #			mgs:v5.1.0/multiplayer/custom/edit
 #
+
+# Backfill fields added after a state was stored: in-progress states in mgs:editor and the
+# editor_state embedded in older saved loadouts predate the knife row, and hub_row_knife is a
+# macro — a missing $(knife_camo_name) would fail the whole row.
+execute unless data storage mgs:temp editor.knife_camo run data modify storage mgs:temp editor.knife_camo set value ""
+execute unless data storage mgs:temp editor.knife_camo_name run data modify storage mgs:temp editor.knife_camo_name set value "Default"
 
 # Points summary
 function mgs:v5.1.0/multiplayer/editor/recompute_points
@@ -40,6 +47,7 @@ execute unless data storage mgs:temp editor{primary:""} run function mgs:v5.1.0/
 function mgs:v5.1.0/multiplayer/editor/hub_row_secondary with storage mgs:temp editor
 execute if data storage mgs:temp editor{secondary:""} run data modify storage mgs:temp dialog.actions append value {label:["","\ud83d\udce6 ",{text:"Secondary Mags \u2014 Unavailable",color:"dark_gray"}],tooltip:{translate:"mgs.pick_a_secondary_weapon_first",color:"red"},action:{type:"run_command",command:"/trigger mgs.player.config set 103"}}
 execute unless data storage mgs:temp editor{secondary:""} run function mgs:v5.1.0/multiplayer/editor/hub_row_secondary_mags with storage mgs:temp editor
+function mgs:v5.1.0/multiplayer/editor/hub_row_knife with storage mgs:temp editor
 function mgs:v5.1.0/multiplayer/editor/hub_row_equip1 with storage mgs:temp editor
 function mgs:v5.1.0/multiplayer/editor/hub_row_equip2 with storage mgs:temp editor
 function mgs:v5.1.0/multiplayer/editor/hub_row_perks with storage mgs:temp _hub

@@ -21,6 +21,7 @@
 #			mgs:v5.1.0/multiplayer/editor/show_secondary_camo_dialog with storage mgs:temp
 #			mgs:v5.1.0/multiplayer/editor/show_equip1_camo_dialog with storage mgs:temp
 #			mgs:v5.1.0/multiplayer/editor/show_equip2_camo_dialog with storage mgs:temp
+#			mgs:v5.1.0/multiplayer/editor/show_knife_camo_dialog with storage mgs:temp
 #			mgs:v5.1.0/multiplayer/editor/show_primary_mags_dialog with storage mgs:temp
 #			mgs:v5.1.0/multiplayer/editor/show_secondary_mags_dialog with storage mgs:temp
 #			mgs:v5.1.0/multiplayer/editor/show_equip_slot1_dialog with storage mgs:temp

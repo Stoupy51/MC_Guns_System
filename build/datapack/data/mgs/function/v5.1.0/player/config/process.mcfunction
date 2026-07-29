@@ -53,6 +53,7 @@ execute if score @s mgs.player.config matches 107 run function mgs:v5.1.0/multip
 execute if score @s mgs.player.config matches 108 run function mgs:v5.1.0/multiplayer/editor/show_equip_slot1_dialog
 execute if score @s mgs.player.config matches 109 run function mgs:v5.1.0/multiplayer/editor/show_equip_slot2_dialog
 execute if score @s mgs.player.config matches 110 run function mgs:v5.1.0/multiplayer/editor/show_perks_dialog
+execute if score @s mgs.player.config matches 113 run function mgs:v5.1.0/multiplayer/editor/show_knife_camo_dialog
 # Remove weapon buttons
 execute if score @s mgs.player.config matches 111 run function mgs:v5.1.0/multiplayer/editor/remove_primary
 execute if score @s mgs.player.config matches 112 run function mgs:v5.1.0/multiplayer/editor/remove_secondary
@@ -86,6 +87,8 @@ execute if score @s mgs.player.config matches 490..494 run function mgs:v5.1.0/m
 execute if score @s mgs.player.config matches 500..504 run function mgs:v5.1.0/multiplayer/editor/pick_equip1_camo
 # 510-514 = Editor: pick grenade slot 2 camo (free)
 execute if score @s mgs.player.config matches 510..514 run function mgs:v5.1.0/multiplayer/editor/pick_equip2_camo
+# 540-544 = Editor: pick knife camo (free)
+execute if score @s mgs.player.config matches 540..544 run function mgs:v5.1.0/multiplayer/editor/pick_knife_camo
 # === Custom Loadout Actions ===
 # 10000-19999 = Select/use a custom loadout
 execute if score @s mgs.player.config matches 10000..19999 run function mgs:v5.1.0/multiplayer/custom/select

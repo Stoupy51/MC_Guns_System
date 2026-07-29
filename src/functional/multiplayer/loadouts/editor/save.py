@@ -94,7 +94,7 @@ data modify storage {ns}:temp _build set value {{}}
 execute if data storage {ns}:temp _build.secondary_data run data modify storage {ns}:temp _build.secondary_data.gun_slot.slot set value "hotbar.2"
 
 # Build the new loadout entry (include new Pick-10 fields)
-data modify storage {ns}:temp _new_loadout set value {{id:0,owner_pid:0,owner_name:"",name:"",public:0b,likes:0,favorites_count:0,points_used:0,main_gun:"",main_gun_display:"",secondary_gun:"",secondary_gun_display:"None",primary_mag_count:1,secondary_mag_count:0,equip_slot1:"",equip_slot1_name:"None",equip_slot2:"",equip_slot2_name:"None",perks:[],slots:[]}}
+data modify storage {ns}:temp _new_loadout set value {{id:0,owner_pid:0,owner_name:"",name:"",public:0b,likes:0,favorites_count:0,points_used:0,main_gun:"",main_gun_display:"",secondary_gun:"",secondary_gun_display:"None",primary_mag_count:1,secondary_mag_count:0,equip_slot1:"",equip_slot1_name:"None",equip_slot2:"",equip_slot2_name:"None",knife_camo:"",perks:[],slots:[]}}
 # Set loadout ID: from the counter for new loadouts, or keep the edited loadout's id
 execute if score @s {ns}.mp.edit_target matches ..0 store result storage {ns}:temp _new_loadout.id int 1 run data get storage {ns}:multiplayer next_loadout_id
 execute if score @s {ns}.mp.edit_target matches 1.. store result storage {ns}:temp _new_loadout.id int 1 run scoreboard players get @s {ns}.mp.edit_target
@@ -121,6 +121,7 @@ data modify storage {ns}:temp _new_loadout.primary_mag_count set from storage {n
 data modify storage {ns}:temp _new_loadout.secondary_mag_count set from storage {ns}:temp editor.secondary_mag_count
 data modify storage {ns}:temp _new_loadout.equip_slot1 set from storage {ns}:temp editor.equip_slot1
 data modify storage {ns}:temp _new_loadout.equip_slot2 set from storage {ns}:temp editor.equip_slot2
+data modify storage {ns}:temp _new_loadout.knife_camo set from storage {ns}:temp editor.knife_camo
 data modify storage {ns}:temp _new_loadout.perks set from storage {ns}:temp editor.perks
 
 # Embed the full editor state so the loadout can be re-opened for editing later

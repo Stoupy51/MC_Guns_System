@@ -12,6 +12,7 @@ from ..catalogs import (
 	TRIG_HUB,
 	TRIG_HUB_EQUIP1,
 	TRIG_HUB_EQUIP2,
+	TRIG_HUB_KNIFE,
 	TRIG_HUB_PERKS,
 	TRIG_HUB_PRIMARY,
 	TRIG_HUB_PRIMARY_MAGS,
@@ -87,6 +88,12 @@ exit_action:{{label:"Cancel",action:{{type:"run_command",command:"/trigger {ns}.
 		'["",{text:"\\ud83d\\udce6 "},{text:"Secondary Mags: ",color:"white"},{text:"$(secondary_mag_count)x",color:"green"}]',
 		f'{{text:"{COST_SECONDARY_MAG} pt per magazine",color:"gray"}}',
 	))
+	# Knife: camo only, and free — every loadout carries it, so there is nothing else to choose.
+	write_versioned_function("multiplayer/editor/hub_row_knife", row(
+		TRIG_HUB_KNIFE,
+		'["",{text:"\\ud83d\\udd2a "},{text:"Knife: ",color:"white"},{text:"$(knife_camo_name)",color:"green"}]',
+		'{text:"Free, cosmetic only\\nClick to change",color:"gray"}',
+	))
 	write_versioned_function("multiplayer/editor/hub_row_equip1", row(
 		TRIG_HUB_EQUIP1,
 		'["",{text:"\\ud83d\\udca3 "},{text:"Grenade 1: ",color:"white"},{text:"$(equip_slot1_name)",color:"green"}]',
@@ -131,6 +138,12 @@ exit_action:{{label:"Cancel",action:{{type:"run_command",command:"/trigger {ns}.
 	)
 
 	write_versioned_function("multiplayer/editor/hub", f"""
+# Backfill fields added after a state was stored: in-progress states in {ns}:editor and the
+# editor_state embedded in older saved loadouts predate the knife row, and hub_row_knife is a
+# macro — a missing $(knife_camo_name) would fail the whole row.
+execute unless data storage {ns}:temp editor.knife_camo run data modify storage {ns}:temp editor.knife_camo set value ""
+execute unless data storage {ns}:temp editor.knife_camo_name run data modify storage {ns}:temp editor.knife_camo_name set value "Default"
+
 # Points summary
 function {fn}/recompute_points
 scoreboard players set #pts_used {ns}.data {PICK10_TOTAL}
@@ -147,6 +160,7 @@ execute unless data storage {ns}:temp editor{{primary:""}} run function {fn}/hub
 function {fn}/hub_row_secondary with storage {ns}:temp editor
 execute if data storage {ns}:temp editor{{secondary:""}} run data modify storage {ns}:temp dialog.actions append value {unavailable_mags_secondary}
 execute unless data storage {ns}:temp editor{{secondary:""}} run function {fn}/hub_row_secondary_mags with storage {ns}:temp editor
+function {fn}/hub_row_knife with storage {ns}:temp editor
 function {fn}/hub_row_equip1 with storage {ns}:temp editor
 function {fn}/hub_row_equip2 with storage {ns}:temp editor
 function {fn}/hub_row_perks with storage {ns}:temp _hub

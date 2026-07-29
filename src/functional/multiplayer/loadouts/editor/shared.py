@@ -13,6 +13,7 @@ def empty_state() -> str:
 		'secondary_scope:"",secondary_scope_name:"Iron Sights",secondary_camo:"",secondary_camo_name:"Default",secondary_full:"",'
 		'equip_slot1:"",equip_slot1_name:"None",equip_slot1_camo:"",'
 		'equip_slot2:"",equip_slot2_name:"None",equip_slot2_camo:"",'
+		'knife_camo:"",knife_camo_name:"Default",'
 		'perks:[]}'
 	)
 

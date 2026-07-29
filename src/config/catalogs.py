@@ -180,6 +180,8 @@ TRIG_REMOVE_PRIMARY       = 111
 """ Clear the primary weapon. """
 TRIG_REMOVE_SECONDARY     = 112
 """ Clear the secondary weapon. """
+TRIG_HUB_KNIFE            = 113
+""" Open the knife camo submenu (cosmetic only: no class can choose the knife away). """
 
 TRIG_PRIMARY_BASE         = 200
 """ 200 + primary_weapon_index. """
@@ -213,6 +215,8 @@ TRIG_EQUIP2_CAMO_BASE     = 510
 """ 510-514 = pick grenade slot 2 camo. """
 TRIG_OVERKILL_SEC_BASE    = 520
 """ 520 + primary_weapon_index = Overkill secondary. """
+TRIG_KNIFE_CAMO_BASE      = 540
+""" 540-544 = pick knife camo (free). """
 
 TRIG_SELECT_BASE          = 10000
 """ + loadout_id -> use as active class. """

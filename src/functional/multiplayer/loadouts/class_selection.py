@@ -161,6 +161,9 @@ execute if data storage {ns}:temp _find_iter[0] run function {ns}:v{version}/mul
 data modify storage {ns}:temp current_class set value {{slots:[],perks:[]}}
 data modify storage {ns}:temp current_class.slots set from storage {ns}:temp _find_iter[0].slots
 data modify storage {ns}:temp current_class.perks set from storage {ns}:temp _find_iter[0].perks
+# Knife camo is cosmetic and lives outside slots[] (hotbar.0 is given unconditionally).
+# Loadouts saved before knife camos existed have no field, so apply_class_dynamic defaults it.
+execute if data storage {ns}:temp _find_iter[0].knife_camo run data modify storage {ns}:temp current_class.knife_camo set from storage {ns}:temp _find_iter[0].knife_camo
 
 # Apply the loadout (clears inventory, gives items, applies perks)
 function {ns}:v{version}/multiplayer/apply_class_dynamic
