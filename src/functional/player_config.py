@@ -23,11 +23,13 @@ from .multiplayer.loadouts import (
 	TRIG_HUB,
 	TRIG_HUB_EQUIP1,
 	TRIG_HUB_EQUIP2,
+	TRIG_HUB_KNIFE,
 	TRIG_HUB_PERKS,
 	TRIG_HUB_PRIMARY,
 	TRIG_HUB_PRIMARY_MAGS,
 	TRIG_HUB_SECONDARY,
 	TRIG_HUB_SECONDARY_MAGS,
+	TRIG_KNIFE_CAMO_BASE,
 	TRIG_LIKE_BASE,
 	TRIG_MANAGE_BASE,
 	TRIG_MARKETPLACE,
@@ -99,6 +101,7 @@ execute if score @s {ns}.mp.map_edit matches 1 run function {ns}:v{version}/maps
 	secondary_camo_max = TRIG_SECONDARY_CAMO_BASE + len(CAMO_VARIANTS) - 1
 	equip1_camo_max = TRIG_EQUIP1_CAMO_BASE + len(CAMO_VARIANTS) - 1
 	equip2_camo_max = TRIG_EQUIP2_CAMO_BASE + len(CAMO_VARIANTS) - 1
+	knife_camo_max = TRIG_KNIFE_CAMO_BASE + len(CAMO_VARIANTS) - 1
 	edit_max = TRIG_EDIT_BASE + 9999
 	manage_max = TRIG_MANAGE_BASE + 9999
 	select_max = TRIG_SELECT_BASE + 9999  # 10000-wide range per loadout action
@@ -146,6 +149,7 @@ execute if score @s {ns}.player.config matches {TRIG_HUB_SECONDARY_MAGS} run fun
 execute if score @s {ns}.player.config matches {TRIG_HUB_EQUIP1} run function {ns}:v{version}/multiplayer/editor/show_equip_slot1_dialog
 execute if score @s {ns}.player.config matches {TRIG_HUB_EQUIP2} run function {ns}:v{version}/multiplayer/editor/show_equip_slot2_dialog
 execute if score @s {ns}.player.config matches {TRIG_HUB_PERKS} run function {ns}:v{version}/multiplayer/editor/show_perks_dialog
+execute if score @s {ns}.player.config matches {TRIG_HUB_KNIFE} run function {ns}:v{version}/multiplayer/editor/show_knife_camo_dialog
 # Remove weapon buttons
 execute if score @s {ns}.player.config matches {TRIG_REMOVE_PRIMARY} run function {ns}:v{version}/multiplayer/editor/remove_primary
 execute if score @s {ns}.player.config matches {TRIG_REMOVE_SECONDARY} run function {ns}:v{version}/multiplayer/editor/remove_secondary
@@ -179,6 +183,8 @@ execute if score @s {ns}.player.config matches {TRIG_SECONDARY_CAMO_BASE}..{seco
 execute if score @s {ns}.player.config matches {TRIG_EQUIP1_CAMO_BASE}..{equip1_camo_max} run function {ns}:v{version}/multiplayer/editor/pick_equip1_camo
 # {TRIG_EQUIP2_CAMO_BASE}-{equip2_camo_max} = Editor: pick grenade slot 2 camo (free)
 execute if score @s {ns}.player.config matches {TRIG_EQUIP2_CAMO_BASE}..{equip2_camo_max} run function {ns}:v{version}/multiplayer/editor/pick_equip2_camo
+# {TRIG_KNIFE_CAMO_BASE}-{knife_camo_max} = Editor: pick knife camo (free)
+execute if score @s {ns}.player.config matches {TRIG_KNIFE_CAMO_BASE}..{knife_camo_max} run function {ns}:v{version}/multiplayer/editor/pick_knife_camo
 # === Custom Loadout Actions ===
 # {TRIG_SELECT_BASE}-{select_max} = Select/use a custom loadout
 execute if score @s {ns}.player.config matches {TRIG_SELECT_BASE}..{select_max} run function {ns}:v{version}/multiplayer/custom/select

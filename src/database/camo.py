@@ -12,6 +12,7 @@ from PIL import Image
 from stewbeet import Item, JsonDict, Mem
 
 from ..config.stats.keys import MODELS
+from ..config.stats.weapons.melee import MELEE_WEAPONS
 
 # HSL Color blend (GIMP "HSL Color" mode) H + S come from the blend (material) layer, L comes from the base (weapon).
 # Alpha is preserved from the base layer throughout.
@@ -153,7 +154,12 @@ MATERIALS: dict[str, BlendFunc] = {
 	"galaxy":               hsl_color_blend,
 	"red_polymer_stripes":  hsl_color_blend,
 }
-COMMON_IGNORE: tuple[str, ...] = ("acogdetails", "holodetails", "kobradetails", "reticles", "reticles_1024")
+COMMON_IGNORE: tuple[str, ...] = ("acogdetails", "holodetails", "kobradetails", "reticles", "reticles_1024", "element_115")
+""" element_115 is an animated strip (8 frames + .mcmeta); blending it would drop the .mcmeta and
+render the whole strip squashed onto one face. """
+
+CAMO_MELEE: frozenset[str] = frozenset(melee.item_id for melee in MELEE_WEAPONS if melee.camo_eligible)
+""" Melee weapons that get camo variants, on top of every non-tactical gun. """
 GOLD_DEFAULT_IGNORE_TEXTURE: tuple[str, ...] = (
 	*COMMON_IGNORE,
 	"metal", "metal_bright", "metal_brighter", "metal_dark",
@@ -181,6 +187,11 @@ OVERRIDES: dict[str, dict[str, list[str] | BlendFunc | tuple[str, ...]]] = {
 	"ray_gun": {"apply_to": ["gold"], "func": lambda b, bl, o: hsl_color_blend(b, bl, o, l_blend=0.0)},
 }
 
+# Gold normally spares a gun's metal sheets so the receiver stays black, but a melee weapon IS its
+# blade: skipping them would leave a "gold" knife with nothing gold but the grip. Driven off
+# CAMO_MELEE so toggling `camo_eligible` needs no second edit here.
+OVERRIDES.update({melee_id: {"apply_to": ["gold"], "ignore_textures": COMMON_IGNORE} for melee_id in CAMO_MELEE})
+
 def blend_texture(weapon_texture_path: str, material_texture_path: str, out_path: str, base_weapon: str, material: str) -> None:
 	""" Blend with cache — skips redundant work when variants share a base texture. """
 	if os.path.exists(out_path):
@@ -200,12 +211,14 @@ def main() -> None:
 	# For each weapon, make variants with only one material (e.g. wood, metal, gold, etc.)
 	# Tacticals such as monkey_bomb are skipped, since they get no camos.
 	# Their models also use vanilla block textures absent from the folder the blender reads.
-	weapons: list[Item] = [
-		Item.from_id(item)
-		for item in Mem.definitions.keys()
-		if Item.from_id(item).components.get("custom_data", {}).get(ns, {}).get("gun")
-		and not Item.from_id(item).components.get("custom_data", {}).get(ns, {}).get("tactical")
-	]
+	def is_camo_eligible(item: Item) -> bool:
+		""" Every non-tactical gun, plus the melee weapons flagged `camo_eligible` in MELEE_WEAPONS. """
+		if item.id in CAMO_MELEE:
+			return True
+		custom: JsonDict = item.components.get("custom_data", {}).get(ns, {})
+		return bool(custom.get("gun")) and not custom.get("tactical")
+
+	weapons: list[Item] = [item for item in map(Item.from_id, Mem.definitions.keys()) if is_camo_eligible(item)]
 	for material in MATERIALS:
 		material_texture_path: str = f"{textures_folder}/{material}.png"
 

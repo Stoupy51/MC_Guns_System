@@ -34,6 +34,11 @@ class Melee:
 	""" Added to the vanilla entity interaction range of 3, so -1.0 leaves 2.0 blocks.
 	Guns hit at whatever range their raycast reaches, so melee is an explicit close-quarters trade.
 	"""
+	camo_eligible: bool = False
+	""" Whether camo.py generates the `<id>_<material>` cosmetic variants for this weapon.
+	Only `combat_knife`'s variants are handed out so far (the loadout editor's Knife row); the upgrades'
+	exist for a future zombies camo pick and are already reachable from the creative loot table.
+	"""
 
 	@property
 	def damage(self) -> int:
@@ -43,10 +48,10 @@ class Melee:
 
 # Constants
 MELEE_WEAPONS: list[Melee] = [
-	Melee(item_id="combat_knife",  display_name="Knife",         name_color="white", bo_damage=150),
-	Melee(item_id="bowie_knife",   display_name="Bowie Knife",   name_color="gold",  bo_damage=1150, one_hit_until=11, rarity="rare"),
-	Melee(item_id="sickle",        display_name="Sickle",        name_color="gold",  bo_damage=1150, one_hit_until=11, rarity="rare"),
-	Melee(item_id="galvaknuckles", display_name="Galvaknuckles", name_color="aqua",  bo_damage=1600, one_hit_until=15, rarity="epic"),
+	Melee(item_id="combat_knife",  display_name="Knife",         name_color="white", bo_damage=150,  camo_eligible=True),
+	Melee(item_id="bowie_knife",   display_name="Bowie Knife",   name_color="gold",  bo_damage=1150, one_hit_until=11, rarity="rare", camo_eligible=True),
+	Melee(item_id="sickle",        display_name="Sickle",        name_color="gold",  bo_damage=1150, one_hit_until=11, rarity="rare", camo_eligible=True),
+	Melee(item_id="galvaknuckles", display_name="Galvaknuckles", name_color="aqua",  bo_damage=1600, one_hit_until=15, rarity="epic", camo_eligible=True),
 ]
 """ The Sickle is a straight Bowie Knife reskin in Black Ops 2, so it shares its damage exactly.
 Galvaknuckles sit one tier up: 1600 is the value that one-hits through round 14 on the Black Ops curve.

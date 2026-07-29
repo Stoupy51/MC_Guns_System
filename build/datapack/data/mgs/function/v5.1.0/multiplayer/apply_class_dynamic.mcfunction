@@ -18,7 +18,11 @@ item replace entity @s armor.feet with iron_boots[unbreakable={}]
 
 # Knife in hotbar.0 for every loadout: it is not part of the class slot list because no class can
 # choose it away. Weapons therefore start at hotbar.1 (primary) and hotbar.2 (secondary).
-loot replace entity @s hotbar.0 loot mgs:i/combat_knife
+# Default the camo first: standard classes never set it, and loadouts saved before knife camos
+# existed have no field, so the macro would fail on a missing $(camo).
+data modify storage mgs:temp _knife set value {camo:""}
+execute if data storage mgs:temp current_class.knife_camo run data modify storage mgs:temp _knife.camo set from storage mgs:temp current_class.knife_camo
+function mgs:v5.1.0/multiplayer/apply_knife with storage mgs:temp _knife
 
 # Copy class slots to iteration temp
 data modify storage mgs:temp slots set from storage mgs:temp current_class.slots

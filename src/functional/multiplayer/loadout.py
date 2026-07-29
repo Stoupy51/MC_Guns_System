@@ -33,6 +33,10 @@ $scoreboard players set #bullets {ns}.data $(bullets)
 $item modify entity @s $(slot) {ns}:v{version}/set_consumable_count
 """)
 
+	# apply_knife: hotbar.0 melee, with the loadout's cosmetic camo suffix ("" = default)
+	write_versioned_function("multiplayer/apply_knife", f"""$loot replace entity @s hotbar.0 loot {ns}:i/combat_knife$(camo)
+""")
+
 	# apply_next_slot: recursive function that processes slots[0] then continues
 	write_versioned_function("multiplayer/apply_next_slot", f"""
 # Apply loot to slot
@@ -63,7 +67,11 @@ item replace entity @s armor.feet with iron_boots[unbreakable={{}}]
 
 # Knife in hotbar.0 for every loadout: it is not part of the class slot list because no class can
 # choose it away. Weapons therefore start at hotbar.1 (primary) and hotbar.2 (secondary).
-loot replace entity @s hotbar.0 loot {ns}:i/combat_knife
+# Default the camo first: standard classes never set it, and loadouts saved before knife camos
+# existed have no field, so the macro would fail on a missing $(camo).
+data modify storage {ns}:temp _knife set value {{camo:""}}
+execute if data storage {ns}:temp current_class.knife_camo run data modify storage {ns}:temp _knife.camo set from storage {ns}:temp current_class.knife_camo
+function {ns}:v{version}/multiplayer/apply_knife with storage {ns}:temp _knife
 
 # Copy class slots to iteration temp
 data modify storage {ns}:temp slots set from storage {ns}:temp current_class.slots

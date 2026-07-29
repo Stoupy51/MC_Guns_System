@@ -2,7 +2,14 @@
 # Imports
 from stewbeet import Mem, write_versioned_function
 
-from ..catalogs import CAMO_VARIANTS, TRIG_EQUIP1_CAMO_BASE, TRIG_EQUIP2_CAMO_BASE, TRIG_PRIMARY_CAMO_BASE, TRIG_SECONDARY_CAMO_BASE
+from ..catalogs import (
+	CAMO_VARIANTS,
+	TRIG_EQUIP1_CAMO_BASE,
+	TRIG_EQUIP2_CAMO_BASE,
+	TRIG_KNIFE_CAMO_BASE,
+	TRIG_PRIMARY_CAMO_BASE,
+	TRIG_SECONDARY_CAMO_BASE,
+)
 from .shared import editor_fn, write_static_dialog
 
 
@@ -31,6 +38,7 @@ def write_editor_camos() -> None:
 		("secondary", "Secondary Camo", TRIG_SECONDARY_CAMO_BASE),
 		("equip1", "Grenade 1 Camo", TRIG_EQUIP1_CAMO_BASE),
 		("equip2", "Grenade 2 Camo", TRIG_EQUIP2_CAMO_BASE),
+		("knife", "Knife Camo", TRIG_KNIFE_CAMO_BASE),
 	]:
 		write_static_dialog(ns, version, f"{prefix}_camo_dialog", title, "Choose your camo (free, cosmetic only)", camo_actions_snbt(trig_base))
 
@@ -68,6 +76,11 @@ function {fn}/hub
 """)
 	write_versioned_function("multiplayer/editor/pick_equip2_camo", f"""
 {gen_pick_camo_lines("equip_slot2", TRIG_EQUIP2_CAMO_BASE)}
+function {fn}/hub
+""")
+	# The knife needs no *_full field: it is always `combat_knife` + the camo suffix, never scoped.
+	write_versioned_function("multiplayer/editor/pick_knife_camo", f"""
+{gen_pick_camo_lines("knife", TRIG_KNIFE_CAMO_BASE)}
 function {fn}/hub
 """)
 
