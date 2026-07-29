@@ -26,6 +26,7 @@ from ..config.stats.casings import (
 from ..config.stats.items import ItemBuilder
 from ..config.stats.keys import CAPACITY, REMAINING_BULLETS
 from ..config.stats.weapons.grenades import FLASH_GRENADE, FRAG_GRENADE, MONKEY_BOMB, SEMTEX, SMOKE_GRENADE, WEB_GRENADE
+from ..config.stats.weapons.melee import MELEE_WEAPONS
 from ..config.stats.weapons.pistols import DEAGLE, GLOCK17, GLOCK18, M9, M1911, MAKAROV, RAY_GUN, VZ61
 from ..config.stats.weapons.rifles import AK47, AUG, FAMAS, FNFAL, G3A3, M4A1, M16A4, SCAR17
 from ..config.stats.weapons.shotguns import M500, M590, SPAS12
@@ -159,30 +160,33 @@ def add_magazines() -> None:
 			}
 		)
 
-def add_machines_and_props() -> None:
-	""" Zombies map props: knife, Pack-a-Punch, Mystery Box, perk machines, breaker, turret. """
+def add_melee_weapons() -> None:
+	""" The starting knife and its Black Ops 2 upgrades; `knife` marks them all as `kind 1` wallbuys. """
 	ns: str = Mem.ctx.project_id
 
-	# BO->MC 2/15 damage conversion like the zombie HP curve: BO 1150 -> MC 153, one-hit until ~round 11.
-	Item(
-		id="bowie_knife",
-		base_item="minecraft:iron_sword",
-		components={
+	for melee in MELEE_WEAPONS:
+		components: JsonDict = {
 			"max_stack_size": 1,
-			"rarity": "rare",
+			"rarity": melee.rarity,
 			"unbreakable": {},
-			"custom_data": {ns: {"knife": True, "bowie_knife": True}},
-			"item_name": [{"text": "Bowie Knife", "color": "gold", "italic": False}],
-			"lore": [[{"text": "One-hit kills until ~round 11", "color": "gray", "italic": False}]],
+			"custom_data": {ns: {"knife": True, melee.item_id: True}},
+			"item_name": [{"text": melee.display_name, "color": melee.name_color, "italic": False}],
+			**({"lore": [[{"text": f"One-hit kills until ~round {melee.one_hit_until}", "color": "gray", "italic": False}]]} if melee.one_hit_until else {}),
 			"attribute_modifiers": [
-				{"type": "movement_speed", "amount": 0.1, "operation": "add_multiplied_base", "slot": "mainhand", "id": "minecraft:base_movement_speed"},
-				{"type": "attack_damage", "amount": 153, "operation": "add_value", "slot": "mainhand", "id": "minecraft:base_attack_damage"},
-				{"type": "attack_speed", "amount": -2.5, "operation": "add_value", "slot": "mainhand", "id": "minecraft:base_attack_speed"},
+				{"type": "movement_speed", "amount": melee.movement_bonus, "operation": "add_multiplied_base", "slot": "mainhand", "id": "minecraft:base_movement_speed"},
+				{"type": "attack_damage", "amount": melee.damage, "operation": "add_value", "slot": "mainhand", "id": "minecraft:base_attack_damage"},
+				{"type": "attack_speed", "amount": melee.attack_speed, "operation": "add_value", "slot": "mainhand", "id": "minecraft:base_attack_speed"},
 			],
-		},
-		override_model=ItemBuilder.load_model(ItemBuilder.get_model_path("bowie_knife")),
-	)
+		}
+		Item(
+			id=melee.item_id,
+			base_item="minecraft:iron_sword",
+			components=components,
+			override_model=ItemBuilder.load_model(ItemBuilder.get_model_path(melee.item_id)),
+		)
 
+def add_machines_and_props() -> None:
+	""" Zombies map props: Pack-a-Punch, Mystery Box, perk machines, breaker, turret. """
 	Item(id="pack_a_punch", override_model=ItemBuilder.load_model(ItemBuilder.get_model_path("pack_a_punch")))
 
 	# Split into base + lid so the lid can animate open.
@@ -252,6 +256,7 @@ def main() -> None:
 	""" Register every item, in the order that defines Mem.definitions ordering. """
 	add_casings()
 	add_magazines()
+	add_melee_weapons()
 	add_machines_and_props()
 	add_weapons()
 	add_grenades()

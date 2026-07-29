@@ -16,20 +16,28 @@ Shared code map (used by many tasks below):
 - Respawn loadout after full death (`inventory/give_respawn_loadout`): knife + M1911 + half mag + 4 frags (spec below says 2 — see task 9).
 
 
-## 1. Multiplayer — knife skin/camo in loadouts  [BLOCKED: needs knife art first]
+## 1. Multiplayer — knife skin/camo in loadouts  [UNBLOCKED: art exists]
 
-**Blocker (HUMAN):** the camo pipeline (`src/database/camo.py`) blends a *weapon texture* with a
-*material texture* (HSL-color / overlay blend onto the item's `override_model` textures). The knife
-is a plain vanilla `iron_sword` built inline by `helpers.py::knife_item_snbt()` — no custom model,
-no texture, so there is nothing to blend. Need a knife model + texture in the item DB first.
+**Blocker resolved.** The four Black Ops 2 melee weapons are modelled and registered:
+`combat_knife`, `bowie_knife`, `sickle`, `galvaknuckles` (`src/database/models/*.json`, stat table in
+`src/config/stats/weapons/melee.py`). They are built entirely from the project's own material
+textures (`mgs:item/metal_dark`, `metal_bright`, `brass`, `mosinwood`, …), which is what the camo
+blender reads — so `camo.py` can blend them with no new art. The one exception is the
+Galvaknuckles' `spark` texture (`minecraft:block/sea_lantern`), which must go in an `ignore_textures`
+override or it will fail to resolve a PNG.
 
-Once art exists:
-- [ ] Add the knife as a DB item with `override_model` (like guns), keep `custom_data {mgs:{knife:true}}`.
+Remaining work:
+- [x] Add the knife as a DB item with `override_model` (like guns), keep `custom_data {mgs:{knife:true}}`.
 - [ ] Extend `camo.py::main()` to include it — it currently iterates only items with `custom_data.mgs.gun`; either tag the knife item as camo-eligible or special-case it. Camo item ids follow `<base>_<material>` (e.g. `knife_gold`), suffixes from `CAMO_VARIANTS` in `src/config/catalogs.py`.
 - [ ] Loadout editor (`multiplayer/loadouts/editor.py`): add a "Knife" row → camo-only submenu (reuse `camo_actions_snbt` pattern). New trigger range in `catalogs.py` (next free: ~530+ is `TRIG_OVERKILL_SEC_BASE`, use e.g. 540 `TRIG_KNIFE_CAMO_BASE`). Store `knife_camo` in the editor snapshot + committed loadout. Free (no Pick-10 cost), like other camos.
-- [ ] Apply in `multiplayer/loadout.py::apply_class_dynamic` (the `hotbar.0` knife give): parametrize `knife_item_snbt` with an `item_model`/camo suffix.
+- [ ] Apply in `multiplayer/loadout.py::apply_class_dynamic` (the `hotbar.0` knife give): parametrize `knife_item_snbt` with an `item_model`/camo suffix. It already emits `item_model="mgs:combat_knife"`, so a camo is just a different suffix on that value.
 - [ ] Missions gets it for free — `missions/game.py` applies loadouts via the same `multiplayer/apply_class` → `apply_class_dynamic`. Verify in-game.
 - Zombies keeps its plain knife (separate give in `zombies/inventory.py`), until a zombies knife wall-buy exists (task 9).
+
+The Sickle and Galvaknuckles are registered but not placed on any map yet: they are `kind 1`
+wallbuys, so a map editor `wallbuy` element with `weapon_id: "sickle"` / `"galvaknuckles"` is all it
+takes (3000 / 6000 points in Black Ops 2). The Galvaknuckles' electrocution effect is cosmetic-only
+so far — the model shows the arc, but nothing chains damage between zombies.
 
 
 ## 7. Zombies — perk purchase songs  (mostly HUMAN)

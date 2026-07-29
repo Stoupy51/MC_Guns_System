@@ -1,0 +1,75 @@
+{
+	"pools": [
+		{
+			"rolls": 1,
+			"entries": [
+				{
+					"type": "minecraft:item",
+					"name": "minecraft:iron_sword",
+					"functions": [
+						{
+							"function": "minecraft:set_components",
+							"components": {
+								"minecraft:max_stack_size": 1,
+								"minecraft:rarity": "rare",
+								"minecraft:unbreakable": {},
+								"minecraft:custom_data": {
+									"mgs": {
+										"knife": true,
+										"sickle": true
+									},
+									"smithed": {
+										"id": "mgs:sickle",
+										"origin": "mgs",
+										"ignore": {"functionality": true,"crafting": true}
+									}
+								},
+								"minecraft:item_name": [
+									{
+										"translate": "mgs.sickle",
+										"color": "gold",
+										"italic": false
+									}
+								],
+								"minecraft:lore": [
+									[
+										[{"translate":"mgs.one_hit_kills_until_round","color": "gray","italic": false}, " 11"]
+									],
+									[
+										"",
+										{"text": "ꀁ","color": "white","italic": false,"font": "mgs:tooltip"},
+										[{"text":"뀁","italic": false,"color": "white","font": "mgs:tooltip"}, {"translate": "mgs.mc_guns_system"}]
+									]
+								],
+								"minecraft:attribute_modifiers": [
+									{
+										"type": "movement_speed",
+										"amount": 0.1,
+										"operation": "add_multiplied_base",
+										"slot": "mainhand",
+										"id": "minecraft:base_movement_speed"
+									},
+									{
+										"type": "attack_damage",
+										"amount": 153,
+										"operation": "add_value",
+										"slot": "mainhand",
+										"id": "minecraft:base_attack_damage"
+									},
+									{
+										"type": "attack_speed",
+										"amount": -2.5,
+										"operation": "add_value",
+										"slot": "mainhand",
+										"id": "minecraft:base_attack_speed"
+									}
+								],
+								"minecraft:item_model": "mgs:sickle"
+							}
+						}
+					]
+				}
+			]
+		}
+	]
+}
