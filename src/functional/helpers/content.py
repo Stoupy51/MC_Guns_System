@@ -31,8 +31,11 @@ class SharedContent:
 			modifiers.append(
 				f'{{type:"entity_interaction_range",amount:-1.0,operation:"add_value",slot:"mainhand",id:"{ns}:knife_range"}}'
 			)
+		# item_model points at the `combat_knife` DB item's model; the item itself stays inline
+		# because multiplayer needs the short_range variant that the DB entry does not carry.
 		return (
-			f"minecraft:iron_sword[unbreakable={{}},custom_data={{{ns}:{{knife:true}}}},"
+			f"minecraft:iron_sword[unbreakable={{}},custom_data={{{ns}:{{knife:true,combat_knife:true}}}},"
+			f"item_model=\"{ns}:combat_knife\","
 			f'item_name={{"text":"Knife","color":"white","italic":false}},'
 			f"attribute_modifiers=[{','.join(modifiers)}]"
 			f"]"
