@@ -14,6 +14,10 @@ execute unless score @s mgs.zb.in_game matches 1.. run return fail
 # Launch player downward to counter the slight jump boost from knockback.
 function mgs:v5.1.0/zombies/hurt_player/launch_downward
 
+# Melee grunt from whatever just hit us, budgeted per player (see enemies/vocals.py). Gated with
+# `unless` rather than an early return, because the perk passives below still have to run on every hit.
+execute unless score @s mgs.zb.vox_attack > #total_tick mgs.data run function mgs:v5.1.0/zombies/vocals/attack
+
 # Widow's Wine passive: consume a web grenade and burst webbing around the hurt owner.
 execute if score @s mgs.special.widows_wine matches 1 run function mgs:v5.1.0/zombies/perks/widows_on_hurt
 

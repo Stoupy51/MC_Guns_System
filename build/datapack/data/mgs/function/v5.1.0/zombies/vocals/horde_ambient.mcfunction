@@ -1,5 +1,5 @@
 
-#> mgs:v5.1.0/zombies/horde_ambient_play
+#> mgs:v5.1.0/zombies/vocals/horde_ambient
 #
 # @executed	at @e[tag=mgs.zombie_round,distance=..32,sort=random,limit=1]
 #
@@ -9,5 +9,5 @@
 #			pitch (unknown)
 #
 
-$playsound minecraft:entity.zombie.ambient hostile @s ~ ~ ~ $(vol) $(pitch)
+$playsound mgs:zombies/entity/ambient hostile @s ~ ~ ~ $(vol) $(pitch)
 

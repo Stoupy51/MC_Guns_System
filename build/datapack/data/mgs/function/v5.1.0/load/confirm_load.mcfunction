@@ -198,8 +198,15 @@ scoreboard objectives add mgs.zb.passive dummy
 scoreboard objectives add mgs.zb.ability dummy
 scoreboard objectives add mgs.zb.ability_cd dummy
 
-# Ticks until this player's next horde groan; horde_ambient refreshes it from the count near THEM
+# Ticks until this player's next horde vocal; horde_ambient refreshes it from the count near THEM
 scoreboard objectives add mgs.zb.horde_cd dummy
+
+# Zombie vocal budgets (enemies/vocals.py): #total_tick timestamps of when each channel frees up again.
+# No reset needed anywhere — #total_tick only ever grows, so a stale value is always in the past, and an
+# unset score fails the `>` comparison, which reads as "ready".
+scoreboard objectives add mgs.zb.vox_sprint dummy
+scoreboard objectives add mgs.zb.vox_attack dummy
+scoreboard objectives add mgs.zb.vox_death dummy
 
 # Spawn point group_id scoreboard
 scoreboard objectives add mgs.zb.spawn.gid dummy

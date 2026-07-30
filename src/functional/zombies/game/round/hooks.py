@@ -35,7 +35,8 @@ execute if score #zb_dog_round {ns}.data matches 1 if score #zb_tick_mod {ns}.da
 
 # Managed horde ambience: each player runs their own cooldown, refreshed by horde_ambient from the
 # zombie count near THEM, so a player being chased hears a near-continuous horde while someone alone
-# in a cleared room hears the occasional distant groan.
+# in a cleared room hears the occasional distant groan. horde_ambient also owns the sprint-scream
+# channel, so this is the only tick entry point for the whole ambient side of enemies/vocals.py.
 # Skipped on dog rounds: dogs aren't summoned Silent, so their own growls are the ambience.
 scoreboard players remove @a[scores={{{ns}.zb.in_game=1,{ns}.zb.horde_cd=1..}}] {ns}.zb.horde_cd 1
 execute if score #zb_dog_round {ns}.data matches 0 as @a[scores={{{ns}.zb.in_game=1,{ns}.zb.horde_cd=..0}},gamemode=!spectator] at @s run function {ns}:v{version}/zombies/horde_ambient

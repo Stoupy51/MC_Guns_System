@@ -55,6 +55,10 @@ execute unless entity @s[tag={ns}.zombie_round] run return 0
 # Kill the attached death-watch marker while still mounted to avoid orphan buildup.
 kill @n[type=minecraft:marker,tag={ns}.death_watch,distance=..1]
 
+# Death groan, from this zombie's position. Dogs are skipped: they are not Silent and already die with
+# their own wolf vocals. Runs before the teleport below, which is what moves the corpse out of earshot.
+execute unless entity @s[tag={ns}.zb_dog] run function {ns}:v{version}/zombies/vocals/death
+
 # Check if a power-up should drop at this zombie's position. Dogs never roll the random table — a
 # dog round's only drop is the guaranteed Max Ammo from the last hound.
 execute unless entity @s[tag={ns}.zb_dog] run function {ns}:v{version}/zombies/powerups/check_drop

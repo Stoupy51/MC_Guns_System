@@ -1,54 +1,5 @@
 # Zombies — TODO (implementation-ready backlog)
 
-How this file works:
-- Each numbered section below is a specced task with the decisions already made, the researched
-  values, and pointers into the code so it can be picked up cold and implemented.
-- `(HUMAN)` marks steps only Stoupy can do (assets, taste calls). Everything else is implementable.
-- Quick/unspecced ideas go in the **Inbox** section at the very bottom (any format); they get
-  promoted into specced sections here later.
-
-Shared code map (used by many tasks below):
-- Python generators in `src/functional/zombies/*.py` emit mcfunctions (stewbeet `write_versioned_function` / `write_load_file` / hooks into `zombies/start`, `zombies/stop`, `zombies/game_tick`, `zombies/preload_complete`).
-- In-game map editor: `src/functional/map_editor.py` — `ALL_ELEMENTS` (element types + `defaults` = the per-element config fields), `FIELD_DOCS` (the ⓘ tooltips), `EDITOR_MODES["zombies"]["slots"]` (spawn-egg slots; next free zombies slot is `inventory.9`).
-- Buyables use Bookshelf `#bs.interaction:on_right_click` / `on_hover`; deny/guard helpers in `zombies/common.py`.
-- Config scores: `#zb_* mgs.config`, initialized in `zombies/game.py` → `zombies/start` (lines ~110–114).
-- Zombies hotbar layout (`zombies/inventory.py`): `0` knife · `1-3` guns (3 = Mule Kick) · `4` ability item (Zonweeb variant) · `5` forbidden · `6` equipment_2 / tactical (slot is already enforced by `check_slots` but nothing is ever given there yet) · `7` equipment_1 (frags, count 4) · `8` info paper · `inventory.1-3` magazines paired with `hotbar.1-3`.
-- Respawn loadout after full death (`inventory/give_respawn_loadout`): knife + M1911 + half mag + 4 frags (spec below says 2 — see task 9).
-
-
-## 1. Multiplayer — knife skin/camo in loadouts  [DONE, pending in-game check]
-
-The four Black Ops 2 melee weapons are modelled and registered: `combat_knife`, `bowie_knife`,
-`sickle`, `galvaknuckles` (`src/database/models/*.json`, stat table in
-`src/config/stats/weapons/melee.py`), built entirely from the project's own material textures
-(`mgs:item/metal_dark`, `metal_bright`, `brass`, `mosinwood`, …) — which is what the camo blender
-reads, so no new art was needed.
-
-- [x] Add the knife as a DB item with `override_model` (like guns), keep `custom_data {mgs:{knife:true}}`.
-- [x] Extend `camo.py::main()` to include it — eligibility is now `is_camo_eligible()`: every non-tactical gun, plus any `MELEE_WEAPONS` row flagged `camo_eligible`. All four melee weapons are flagged, so there are 20 melee items (4 weapons x Default + 4 camos). Ids follow `<base>_<material>`, e.g. `bowie_knife_gold`.
-- [x] Loadout editor: "Knife" row (`TRIG_HUB_KNIFE` 113) → camo-only submenu on `TRIG_KNIFE_CAMO_BASE` 540-544, reusing `camo_actions_snbt`. `knife_camo` / `knife_camo_name` live in the editor state (`shared.py::empty_state`) and the committed loadout (`save.py`). Free, no Pick-10 cost.
-- [x] Apply in `multiplayer/loadout.py::apply_class_dynamic` — `hotbar.0` now comes from the loot table via the `apply_knife` macro: `loot mgs:i/combat_knife$(camo)`. The camo is defaulted to `""` first, so standard classes and loadouts saved before knife camos still work.
-- [ ] Missions gets it for free — `missions/game/{start,death}.py` call the same `multiplayer/apply_class` → `apply_class_dynamic`. **Verify in-game** (only unchecked item; cannot be tested from a build).
-- Zombies keeps its plain knife (separate give in `zombies/inventory.py`), until a zombies knife wall-buy exists (task 9).
-
-Only `combat_knife`'s camos are handed out so far (the loadout editor's Knife row — it is the only
-melee a multiplayer loadout carries). The upgrades' camos exist for a future zombies camo pick and
-are already reachable from the creative loot table.
-
-Two gotchas worth keeping in mind:
-- `element_115` (the Galvaknuckles' arc) is in `COMMON_IGNORE`: it is an animated 8-frame strip, and
-  blending it would drop the `.mcmeta` and squash the whole strip onto one face. Keeping it out also
-  means the arc stays electric blue on every camo, which is what you want from electricity.
-- Every camo-eligible melee gets a generated `OVERRIDES` entry so Gold uses `COMMON_IGNORE` instead of
-  `GOLD_DEFAULT_IGNORE_TEXTURE`. Gold normally spares a gun's metal so the receiver stays black, but a
-  melee weapon *is* its blade — without it a "gold" knife is gold only on the grip.
-
-The Sickle and Galvaknuckles are registered but not placed on any map yet: they are `kind 1`
-wallbuys, so a map editor `wallbuy` element with `weapon_id: "sickle"` / `"galvaknuckles"` is all it
-takes (3000 / 6000 points in Black Ops 2). The Galvaknuckles' electrocution effect is cosmetic-only
-so far — the model shows the arc, but nothing chains damage between zombies.
-
-
 ## 7. Zombies — perk purchase songs  (mostly HUMAN)
 
 State: `assets/zombies_perk_songs/` already holds 10 staged .oggs — deadshot, doubletap,
@@ -61,6 +12,39 @@ tombstone, whoswho. They are NOT wired (not under `assets/sounds/`).
   (same auto-registration as `zombies/powerups/*` sounds → playable as `mgs:zombies/perks/<perk_id>`),
   play in `zombies/perks/apply/<perk_id>` (generated per-perk in `perks.py`) — positional at the
   machine or private to the buyer, match the power-up sound conventions (`pu_snd` in `powerups.py`).
+
+
+## 9. Zombies — Black Ops 2 zombie vocals  [DONE, pending in-game check]
+
+The 66 downloaded .oggs in `assets/sounds/zombies/entity/` were regrouped into the six sets the
+build-time grouper (`(.+?)(?:_)?(\d+)$`) can see, and wired in `enemies/vocals.py`:
+
+| Set | Count | From | Used by |
+| --- | --- | --- | --- |
+| `ambient` | 12 | say1-6, say20-25 | `horde_ambient`, walking/running horde |
+| `attack` | 16 | hurt1-14, say7-8 | `hurt_player/on_hurt` |
+| `sprint` | 7 | say26-32 | `horde_ambient`, sprint-gait zombies |
+| `death` | 11 | death, death2-11 | `on_zombie_dying` |
+| `crawler_ambient` | 18 | say9-19, say35-41 | nothing yet — no crawler enemy |
+| `crawler_sprint` | 2 | say33-34 | nothing yet |
+
+The spec's ranges were literal filenames (there is no `say0`; the first file is `say1`), which was
+confirmed by duration: say26-34 run 3.0-4.9s while every other say is 0.4-2.2s.
+
+Per-player budgets, one channel each so a wall of death groans can't drown out the scream that tells
+you a sprinter is behind you — all `#total_tick` timestamps, no per-tick decrement:
+- sprint 100t (longest clip is 99t, so literally one scream at a time, as asked)
+- attack 20t (1/s; eight zombies on you would otherwise be eight overlapping grunts)
+- death 4t (a Nuke kills the whole round in one tick)
+
+Gait → vocal set comes from `mgs.zb_sprint`, tagged in `zombies/types/normal` at round 10+ (speed
+0.29+) and untagged by the round-15+ 10% walker roll.
+
+- [ ] **Verify in-game** (only unchecked item): sprint screams don't overlap, attack grunt is
+  directional and comes from the zombie that hit you, a Nuke doesn't wall of noise.
+- [ ] Crawlers: when a legless enemy exists, point it at `VOCAL_CRAWLER_AMBIENT` /
+  `VOCAL_CRAWLER_SPRINT` and tag it `mgs.zb_sprint` on the same gait rule. The constants and the
+  budgets already exist; it is a selector change in `horde_ambient`, nothing more.
 
 
 ## 10. Zonweeb — ideas backlog
@@ -122,5 +106,6 @@ What has to be captured, and where it lives today (this list IS the work):
 
 # Inbox (quick notes — dump anything here, unorganized "basic" format is fine)
 
-- a
+- Make the step_height attribute of zombies 1 block tall
+- Add barriers repairs sounds => find them on internet "repair.ogg", "slam[1-6].ogg", "snap[1-6].ogg", "window[1-5].ogg". And check what they are actually about to correctly use them in our zombies implementation!
 

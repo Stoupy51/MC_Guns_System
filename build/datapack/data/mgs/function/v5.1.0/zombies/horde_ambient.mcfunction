@@ -19,19 +19,24 @@ scoreboard players operation #horde_tmp mgs.data = #horde_count mgs.data
 scoreboard players operation #horde_tmp mgs.data *= #3 mgs.data
 scoreboard players operation #horde_vol mgs.data += #horde_tmp mgs.data
 execute if score #horde_vol mgs.data matches 80.. run scoreboard players set #horde_vol mgs.data 80
-
-# Random pitch 0.70..1.05 for variety so the loop doesn't sound metronomic.
-execute store result score #horde_pitch mgs.data run random value 70..105
-
-# Hand volume/pitch to the macro as doubles (value/100).
 execute store result storage mgs:temp _horde.vol double 0.01 run scoreboard players get #horde_vol mgs.data
-execute store result storage mgs:temp _horde.pitch double 0.01 run scoreboard players get #horde_pitch mgs.data
 
-# Play the groan FROM a random nearby zombie's position (positional audio), so the player hears
-# the horde coming from the right direction/distance rather than centred on themselves.
-execute at @e[tag=mgs.zombie_round,distance=..32,sort=random,limit=1] run function mgs:v5.1.0/zombies/horde_ambient_play with storage mgs:temp _horde
+# Sprint channel first. BO2 leads with the sprinter that is closing on you rather than a random member
+# of the horde, and the channel lockout is what keeps it to one scream at a time (see SPRINT_LOCKOUT).
+# The scream is NOT pitch-shifted: bending a 4-second human scream is instantly audible as a gimmick.
+scoreboard players set #horde_sprint mgs.data 0
+execute unless score @s mgs.zb.vox_sprint > #total_tick mgs.data store success score #horde_sprint mgs.data at @n[tag=mgs.zb_sprint,tag=mgs.zombie_round,distance=..32,sort=random] run function mgs:v5.1.0/zombies/vocals/horde_sprint with storage mgs:temp _horde
+execute if score #horde_sprint mgs.data matches 1 run scoreboard players operation @s mgs.zb.vox_sprint = #total_tick mgs.data
+execute if score #horde_sprint mgs.data matches 1 run scoreboard players add @s mgs.zb.vox_sprint 100
 
-# Schedule this player's next groan: 40 ticks divided by the nearby count, so 1 zombie
+# Otherwise the short groan set, from a random nearby zombie so the horde comes from the right
+# direction and distance rather than being centred on the player. Random pitch 0.70..1.05 keeps a
+# 12-clip set from sounding metronomic over a long round.
+execute if score #horde_sprint mgs.data matches 0 store result score #horde_pitch mgs.data run random value 70..105
+execute if score #horde_sprint mgs.data matches 0 store result storage mgs:temp _horde.pitch double 0.01 run scoreboard players get #horde_pitch mgs.data
+execute if score #horde_sprint mgs.data matches 0 at @e[tag=mgs.zombie_round,distance=..32,sort=random,limit=1] run function mgs:v5.1.0/zombies/vocals/horde_ambient with storage mgs:temp _horde
+
+# Schedule this player's next vocal: 40 ticks divided by the nearby count, so 1 zombie
 # groans every 2.0s and 10 groan 5 times a second.
 # The floor keeps a huge horde from turning into a buzz.
 scoreboard players operation #horde_next mgs.data = #40 mgs.data
