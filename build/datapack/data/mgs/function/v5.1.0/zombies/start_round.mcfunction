@@ -50,7 +50,7 @@ function mgs:v5.1.0/zombies/refresh_sidebar
 
 # Announce
 execute if score #zb_dog_round mgs.data matches 0 run tellraw @a ["",{"text":"","color":"dark_green","bold":true},"🧟 ",{"translate":"mgs.round","color":"red"},{"score":{"name":"#zb_round","objective":"mgs.data"},"color":"gold","bold":true},[{"text":" ","color":"red"}, {"translate":"mgs.has_begun"}]]
-execute if score #zb_dog_round mgs.data matches 0 as @a[scores={mgs.zb.in_game=1}] at @s run playsound mgs:zombies/round_start_generic ambient @s ~ ~ ~ 0.15 1.0
+execute if score #zb_dog_round mgs.data matches 0 as @a[scores={mgs.zb.in_game=1}] at @s run playsound mgs:zombies/round_start_generic ambient @s ~ ~ ~ 0.3 1.0
 
 # Dog rounds get their own announcement + howl instead of the usual round jingle
 execute if score #zb_dog_round mgs.data matches 1 run tellraw @a ["",{"text":"","color":"dark_red","bold":true},"🐺 ",{"translate":"mgs.round","color":"dark_red"},{"score":{"name":"#zb_round","objective":"mgs.data"},"color":"gold","bold":true},[{"text":" — ","color":"dark_red"}, {"translate":"mgs.the_hounds_are_loose"}]]
