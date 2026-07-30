@@ -164,6 +164,12 @@ function {fn}/show_secondary_camo_dialog
 		)
 
 	write_versioned_function("multiplayer/editor/pick_overkill_secondary", f"""
+# Overkill is what allows a primary in the secondary slot, so verify it HERE and not only in the dialog
+# router: the router decides which menu to show, it cannot stop this function being reached any other way.
+# A trigger-range collision did exactly that once (see TRIG_KNIFE_CAMO_BASE), and because this handler
+# trusted the router it happily wrote a second primary for a player with no perk.
+execute unless data storage {ns}:temp editor{{perks:["overkill"]}} run return run function {fn}/hub
+
 # Snapshot, store the chosen primary as the secondary (0 magazines), commit against the budget
 data modify storage {ns}:temp _ed_bak set from storage {ns}:temp editor
 {pick_overkill_lines}

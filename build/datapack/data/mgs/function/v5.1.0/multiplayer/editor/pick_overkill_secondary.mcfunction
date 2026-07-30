@@ -6,6 +6,12 @@
 # @within	mgs:v5.1.0/player/config/process
 #
 
+# Overkill is what allows a primary in the secondary slot, so verify it HERE and not only in the dialog
+# router: the router decides which menu to show, it cannot stop this function being reached any other way.
+# A trigger-range collision did exactly that once (see TRIG_KNIFE_CAMO_BASE), and because this handler
+# trusted the router it happily wrote a second primary for a player with no perk.
+execute unless data storage mgs:temp editor{perks:["overkill"]} run return run function mgs:v5.1.0/multiplayer/editor/hub
+
 # Snapshot, store the chosen primary as the secondary (0 magazines), commit against the budget
 data modify storage mgs:temp _ed_bak set from storage mgs:temp editor
 execute if score @s mgs.player.config matches 520 run data modify storage mgs:temp editor merge value {secondary:"ak47",secondary_name:"AK-47",secondary_mag:"ak47_mag",secondary_mag_count:0,secondary_scope:"",secondary_scope_name:"Iron Sights",secondary_camo:"",secondary_camo_name:"Default",secondary_full:"ak47"}

@@ -88,10 +88,15 @@ execute if score @s {ns}.mp.map_edit matches 1 run function {ns}:v{version}/maps
 """)
 
 	## Process trigger values Pre-compute trigger ranges for custom loadout editor
-	primary_max = TRIG_PRIMARY_BASE + len(PRIMARY_WEAPONS) - 1
+	# Count only the guns the editor actually lists: the dialogs enumerate `if w.in_loadout`, so the trigger
+	# index of the last button is that filtered count, not the size of the whole catalog. Using the full
+	# length made both ranges wider than any button that exists, which is how the Overkill block grew into
+	# the knife-camo block (see TRIG_KNIFE_CAMO_BASE) and let a camo click hand out a free second primary.
+	primary_count = len([w for w in PRIMARY_WEAPONS if w.in_loadout])
+	primary_max = TRIG_PRIMARY_BASE + primary_count - 1
 	secondary_count = len([w for w in SECONDARY_WEAPONS if w.in_loadout])
 	secondary_max = TRIG_SECONDARY_BASE + secondary_count - 1
-	overkill_sec_max = TRIG_OVERKILL_SEC_BASE + len(PRIMARY_WEAPONS) - 1
+	overkill_sec_max = TRIG_OVERKILL_SEC_BASE + primary_count - 1
 	primary_mags_max = TRIG_PRIMARY_MAGS_BASE + 5
 	secondary_mags_max = TRIG_SECONDARY_MAGS_BASE + 5
 	perk_max = TRIG_PERK_BASE + len(PERKS) - 1
