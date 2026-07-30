@@ -4,6 +4,7 @@
 # @executed	anchored eyes & positioned ^ ^ ^0.69
 #
 # @within	mgs:v5.1.0/projectile/summon [ anchored eyes & positioned ^ ^ ^0.69 ]
+#			mgs:v5.1.0/projectile/summon [ anchored eyes & positioned ^ ^ ^0 ]
 #
 
 # Tag as slow bullet
