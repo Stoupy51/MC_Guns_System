@@ -17,6 +17,7 @@ scoreboard players set @a {ns}.zb.qr_uses 0
 scoreboard players set @a {ns}.zb.downed_id 0
 scoreboard players set #downed_id_next {ns}.data 0
 tag @a remove {ns}.downed_spectator
+tag @a remove {ns}.zb_qr_armed
 kill @e[tag={ns}.downed_mannequin]
 kill @e[tag={ns}.downed_hud]
 kill @e[tag={ns}.downed_cam]
@@ -34,6 +35,7 @@ scoreboard players set @a {ns}.zb.qr_uses 0
 scoreboard players set @a {ns}.zb.downed_id 0
 scoreboard players set #downed_id_next {ns}.data 0
 tag @a remove {ns}.downed_spectator
+tag @a remove {ns}.zb_qr_armed
 kill @e[tag={ns}.downed_mannequin]
 kill @e[tag={ns}.downed_hud]
 kill @e[tag={ns}.downed_cam]

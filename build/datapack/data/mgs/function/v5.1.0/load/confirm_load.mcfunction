@@ -208,10 +208,6 @@ scoreboard objectives add mgs.zb.vox_sprint dummy
 scoreboard objectives add mgs.zb.vox_attack dummy
 scoreboard objectives add mgs.zb.vox_death dummy
 
-# Per-enemy Health x1000, read by death_watch_tick only while the enemy is not yet tagged zb_dying.
-# Hitting 0 is what fires the death groan, on the exact tick the enemy died.
-scoreboard objectives add mgs.zb.hp dummy
-
 # Spawn point group_id scoreboard
 scoreboard objectives add mgs.zb.spawn.gid dummy
 

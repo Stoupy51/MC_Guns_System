@@ -197,6 +197,7 @@ scoreboard players set @a mgs.zb.qr_uses 0
 scoreboard players set @a mgs.zb.downed_id 0
 scoreboard players set #downed_id_next mgs.data 0
 tag @a remove mgs.downed_spectator
+tag @a remove mgs.zb_qr_armed
 kill @e[tag=mgs.downed_mannequin]
 kill @e[tag=mgs.downed_hud]
 kill @e[tag=mgs.downed_cam]
