@@ -374,6 +374,7 @@
 	"mgs.has_begun": "has begun!",
 	"mgs.has_bled_out": "has bled out.",
 	"mgs.has_respawned": "has respawned!",
+	"mgs.headshot": "HEADSHOT",
 	"mgs.health_regen_starts_right_after_a_kill": "Health regen starts right after a kill",
 	"mgs.hitmarker_sound": "Hitmarker Sound: ",
 	"mgs.hitmarker_sound_2": "Hitmarker Sound",
