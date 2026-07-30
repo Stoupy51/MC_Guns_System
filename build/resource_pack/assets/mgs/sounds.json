@@ -1062,5 +1062,25 @@
 	"zombies/round_start_generic": {
 		"subtitle": "zombies/round_start_generic",
 		"sounds": [{"name": "mgs:zombies/round_start_generic","stream": true}]
+	},
+	"zombies/window/bang": {
+		"subtitle": "zombies/window/bang",
+		"sounds": ["mgs:zombies/window/bang1","mgs:zombies/window/bang2","mgs:zombies/window/bang3","mgs:zombies/window/bang4","mgs:zombies/window/bang5"]
+	},
+	"zombies/window/repair": {
+		"subtitle": "zombies/window/repair",
+		"sounds": ["mgs:zombies/window/repair"]
+	},
+	"zombies/window/repair_no_cash": {
+		"subtitle": "zombies/window/repair_no_cash",
+		"sounds": ["mgs:zombies/window/repair_no_cash"]
+	},
+	"zombies/window/slam": {
+		"subtitle": "zombies/window/slam",
+		"sounds": ["mgs:zombies/window/slam1","mgs:zombies/window/slam2","mgs:zombies/window/slam3","mgs:zombies/window/slam4","mgs:zombies/window/slam5","mgs:zombies/window/slam6"]
+	},
+	"zombies/window/snap": {
+		"subtitle": "zombies/window/snap",
+		"sounds": ["mgs:zombies/window/snap1","mgs:zombies/window/snap2","mgs:zombies/window/snap3","mgs:zombies/window/snap4","mgs:zombies/window/snap5","mgs:zombies/window/snap6"]
 	}
 }
