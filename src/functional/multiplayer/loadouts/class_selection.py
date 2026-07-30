@@ -206,15 +206,32 @@ execute if entity @s[gamemode=spectator] run return 0
 # Increment death stats
 scoreboard players add @s {ns}.mp.deaths 1
 
-# Death message: try to find attacker, otherwise random message
+# Death message + kill credit: resolve the attacker, then credit the kill THROUGH the signal.
+# This is the path every vanilla-damage kill takes, and melee is plain vanilla attack_damage (see
+# config/stats/weapons/melee.py — knives are an attack_damage attribute, not a custom raycast), so a
+# knife kill lands here and never in simulate_death. It used to print a kill message without firing
+# signals/on_kill, so the knifer got no kill count, their team no point, and no on-kill perk triggered.
 tag @s add {ns}.temp_victim
 execute on attacker run tag @s add {ns}.temp_killer
-execute if entity @a[tag={ns}.temp_killer] run function {ns}:v{version}/multiplayer/random_kill_message
+
+# Self-damage: the victim is their own attacker. Drop the tag so the credit below cannot hand someone a
+# kill for killing themselves, and let the fall-through print a self-death message instead.
+execute if entity @s[tag={ns}.temp_killer] run tag @s remove {ns}.temp_killer
+
+execute if entity @a[tag={ns}.temp_killer] run function {ns}:v{version}/multiplayer/vanilla_kill_credit
 execute unless entity @a[tag={ns}.temp_killer] run function {ns}:v{version}/multiplayer/random_death_message
 tag @s remove {ns}.temp_victim
 
 # Enter death spectate (shared flow: S&D branch, spectator mode, spectate killer/random, titles)
 function {ns}:v{version}/multiplayer/enter_death_spectate
+""")
+
+	## Credit a vanilla-damage kill (@s = victim, {ns}.temp_killer = the attacker, already self-checked).
+	## Mirrors what simulate_death_fire_kill does for intercepted bullet kills, so both damage paths award
+	## a kill the same way: the gamemode's on_kill (kill count + team score) and the on-kill perks.
+	write_versioned_function("multiplayer/vanilla_kill_credit", f"""
+execute as @a[tag={ns}.temp_killer] run function #{ns}:signals/on_kill
+function {ns}:v{version}/multiplayer/random_kill_message
 """)
 
 	## Spectate a random alive in-game player (fallback when no killer)
