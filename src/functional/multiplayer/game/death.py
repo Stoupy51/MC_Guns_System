@@ -31,6 +31,12 @@ scoreboard players add @s {ns}.mp.deaths 1
 execute store success score #mp_death_attacked {ns}.data if data storage {ns}:input with.attacker
 data modify storage {ns}:temp _mp_death set from storage {ns}:input with
 
+# Was the killing hit a headshot? Set by raycast/apply_damage into `input with.headshot`. Read into a score
+# rather than passed through the kill macro because the key is simply absent for non-bullet deaths (an
+# explosion, the void), and a macro referencing a missing key fails the whole function.
+scoreboard players set #mp_kill_headshot {ns}.data 0
+execute store result score #mp_kill_headshot {ns}.data run data get storage {ns}:temp _mp_death.headshot
+
 # Fire damage signal (hit effects, hitmarker, DPS) if this came from a bullet hit
 execute if data storage {ns}:temp _mp_death.amount run function #{ns}:signals/damage with storage {ns}:temp _mp_death
 
@@ -122,14 +128,35 @@ execute if score #random_message {ns}.data matches 4 run tellraw @a[scores={{{ns
 execute if score #random_message {ns}.data matches 5 run tellraw @a[scores={{{ns}.mp.in_game=1..}}] ["",{{"selector":"@s"}}," ",{{"text":"is their own worst enemy","color":"gray"}}]
 """)
 
-	## Random kill message (uses temp_killer/temp_victim tags, shared by simulate_death + on_respawn)
+	## Random kill message (uses temp_killer/temp_victim tags, shared by simulate_death + on_respawn).
+	## Each verb exists twice, with and without the headshot marker, chosen on #mp_kill_headshot: a tellraw
+	## is one atomic message, so the marker cannot be appended to an already-sent line, and putting it on a
+	## second line would double every kill in the feed. The pair is generated rather than written out.
+	kill_verbs: list[tuple[str, str]] = [
+		("eliminated",  ""),
+		("took down",   ""),
+		("dispatched",  ""),
+		("sent",        "to the shadow realm"),
+		("wiped",       "off the map"),
+	]
+	kill_lines: list[str] = []
+	for idx, (verb, tail) in enumerate(kill_verbs, start=1):
+		body: str = (
+			f'["",{{"selector":"@a[tag={ns}.temp_killer]"}}," ",{{"text":"{verb}","color":"gray"}}'
+			f',[" ",{{"selector":"@a[tag={ns}.temp_victim]"}}]'
+		)
+		body += f',[" ",{{"text":"{tail}","color":"gray"}}]' if tail else ""
+		for hs, hs_check in ((True, "matches 1"), (False, "matches 0")):
+			suffix: str = ',[" ",{"text":"💀 HEADSHOT","color":"red","bold":true}]' if hs else ""
+			kill_lines.append(
+				f"execute if score #random_message {ns}.data matches {idx}"
+				f" if score #mp_kill_headshot {ns}.data {hs_check}"
+				f" run tellraw @a[scores={{{ns}.mp.in_game=1..}}] {body}{suffix}]"
+			)
+	newline: str = "\n"
 	write_versioned_function("multiplayer/random_kill_message", f"""
-execute store result score #random_message {ns}.data run random value 1..5
-execute if score #random_message {ns}.data matches 1 run tellraw @a[scores={{{ns}.mp.in_game=1..}}] ["",{{"selector":"@a[tag={ns}.temp_killer]"}}," ",{{"text":"eliminated","color":"gray"}}," ",{{"selector":"@a[tag={ns}.temp_victim]"}}]
-execute if score #random_message {ns}.data matches 2 run tellraw @a[scores={{{ns}.mp.in_game=1..}}] ["",{{"selector":"@a[tag={ns}.temp_killer]"}}," ",{{"text":"took down","color":"gray"}}," ",{{"selector":"@a[tag={ns}.temp_victim]"}}]
-execute if score #random_message {ns}.data matches 3 run tellraw @a[scores={{{ns}.mp.in_game=1..}}] ["",{{"selector":"@a[tag={ns}.temp_killer]"}}," ",{{"text":"dispatched","color":"gray"}}," ",{{"selector":"@a[tag={ns}.temp_victim]"}}]
-execute if score #random_message {ns}.data matches 4 run tellraw @a[scores={{{ns}.mp.in_game=1..}}] ["",{{"selector":"@a[tag={ns}.temp_killer]"}}," ",{{"text":"sent","color":"gray"}}," ",{{"selector":"@a[tag={ns}.temp_victim]"}}," ",{{"text":"to the shadow realm","color":"gray"}}]
-execute if score #random_message {ns}.data matches 5 run tellraw @a[scores={{{ns}.mp.in_game=1..}}] ["",{{"selector":"@a[tag={ns}.temp_killer]"}}," ",{{"text":"wiped","color":"gray"}}," ",{{"selector":"@a[tag={ns}.temp_victim]"}}," ",{{"text":"off the map","color":"gray"}}]
+execute store result score #random_message {ns}.data run random value 1..{len(kill_verbs)}
+{newline.join(kill_lines)}
 """)
 
 	## Kill Tracking (Signal Listener) - now dispatches to gamemode

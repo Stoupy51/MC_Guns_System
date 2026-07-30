@@ -24,6 +24,12 @@ scoreboard players add @s mgs.mp.deaths 1
 execute store success score #mp_death_attacked mgs.data if data storage mgs:input with.attacker
 data modify storage mgs:temp _mp_death set from storage mgs:input with
 
+# Was the killing hit a headshot? Set by raycast/apply_damage into `input with.headshot`. Read into a score
+# rather than passed through the kill macro because the key is simply absent for non-bullet deaths (an
+# explosion, the void), and a macro referencing a missing key fails the whole function.
+scoreboard players set #mp_kill_headshot mgs.data 0
+execute store result score #mp_kill_headshot mgs.data run data get storage mgs:temp _mp_death.headshot
+
 # Fire damage signal (hit effects, hitmarker, DPS) if this came from a bullet hit
 execute if data storage mgs:temp _mp_death.amount run function #mgs:signals/damage with storage mgs:temp _mp_death
 

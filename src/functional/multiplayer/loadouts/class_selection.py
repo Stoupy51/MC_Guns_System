@@ -231,6 +231,11 @@ function {ns}:v{version}/multiplayer/enter_death_spectate
 	## a kill the same way: the gamemode's on_kill (kill count + team score) and the on-kill perks.
 	write_versioned_function("multiplayer/vanilla_kill_credit", f"""
 execute as @a[tag={ns}.temp_killer] run function #{ns}:signals/on_kill
+
+# No headshots on this path: it is reached by vanilla damage (melee, fall, fire), none of which goes
+# through the raycast that decides headshots. Cleared explicitly so a previous bullet kill cannot leak
+# its marker onto an unrelated knife kill.
+scoreboard players set #mp_kill_headshot {ns}.data 0
 function {ns}:v{version}/multiplayer/random_kill_message
 """)
 
