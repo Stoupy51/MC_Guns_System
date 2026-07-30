@@ -14,39 +14,6 @@ tombstone, whoswho. They are NOT wired (not under `assets/sounds/`).
   machine or private to the buyer, match the power-up sound conventions (`pu_snd` in `powerups.py`).
 
 
-## 9. Zombies — Black Ops 2 zombie vocals  [DONE, pending in-game check]
-
-The 66 downloaded .oggs in `assets/sounds/zombies/entity/` were regrouped into the six sets the
-build-time grouper (`(.+?)(?:_)?(\d+)$`) can see, and wired in `enemies/vocals.py`:
-
-| Set | Count | From | Used by |
-| --- | --- | --- | --- |
-| `ambient` | 12 | say1-6, say20-25 | `horde_ambient`, walking/running horde |
-| `attack` | 16 | hurt1-14, say7-8 | `hurt_player/on_hurt` |
-| `sprint` | 7 | say26-32 | `horde_ambient`, sprint-gait zombies |
-| `death` | 11 | death, death2-11 | `on_zombie_dying` |
-| `crawler_ambient` | 18 | say9-19, say35-41 | nothing yet — no crawler enemy |
-| `crawler_sprint` | 2 | say33-34 | nothing yet |
-
-The spec's ranges were literal filenames (there is no `say0`; the first file is `say1`), which was
-confirmed by duration: say26-34 run 3.0-4.9s while every other say is 0.4-2.2s.
-
-Per-player budgets, one channel each so a wall of death groans can't drown out the scream that tells
-you a sprinter is behind you — all `#total_tick` timestamps, no per-tick decrement:
-- sprint 100t (longest clip is 99t, so literally one scream at a time, as asked)
-- attack 20t (1/s; eight zombies on you would otherwise be eight overlapping grunts)
-- death 4t (a Nuke kills the whole round in one tick)
-
-Gait → vocal set comes from `mgs.zb_sprint`, tagged in `zombies/types/normal` at round 10+ (speed
-0.29+) and untagged by the round-15+ 10% walker roll.
-
-- [ ] **Verify in-game** (only unchecked item): sprint screams don't overlap, attack grunt is
-  directional and comes from the zombie that hit you, a Nuke doesn't wall of noise.
-- [ ] Crawlers: when a legless enemy exists, point it at `VOCAL_CRAWLER_AMBIENT` /
-  `VOCAL_CRAWLER_SPRINT` and tag it `mgs.zb_sprint` on the same gait rule. The constants and the
-  budgets already exist; it is a selector change in `horde_ambient`, nothing more.
-
-
 ## 10. Zonweeb — ideas backlog
 
 ("zonweeb" is also the zombies game variant with passives/abilities — `zombies/ability.py`;
@@ -102,10 +69,53 @@ What has to be captured, and where it lives today (this list IS the work):
   of the hard cases — do not skip it.
 
 
+## 12. Zombies — barricade sounds  [BLOCKED on assets (HUMAN) — everything else is decided]
+
+- [ ] (HUMAN, and the only blocker) download `repair.ogg`, `slam[1-6].ogg`, `snap[1-6].ogg`,
+  `window[1-5].ogg` into `assets/sounds/zombies/barrier/`. They are not reachable from a build:
+  not indexed anywhere public, and they are BO2 game assets.
+
+**Design decision, already taken: the barricade stays single-stage.** For the record, a Black Ops 2
+barricade is 6 boards torn off and rebuilt one at a time at 10 points each
+([Nazi Zombies Wiki](https://nazizombies.fandom.com/wiki/Barriers)), which is almost certainly why
+`slam` and `snap` ship exactly six variants — they read as one sound per board index. We are not
+matching that: `mgs.zb.barrier.state` stays 0/1 with one 2s teardown (`r_timer 40`), one 1.5s repair
+(`rp_timer 30`) and `+10` for the whole thing, and slam/snap are used as plain random-variant pools.
+Do not "fix" this later without deciding to go 6-board on purpose.
+
+### What the files probably are (INFERRED — not verified)
+
+Guessed from the names plus BO2's mechanics. Confirm with `ffprobe` durations once the .oggs land —
+that is exactly how the `say*` vocal ranges got pinned down, a loop and a one-shot are obvious apart:
+
+| File | Best guess |
+| --- | --- |
+| `slam[1-6]` | player slamming a board into place |
+| `snap[1-6]` | zombie ripping a board off |
+| `window[1-5]` | zombie pounding on the intact barricade |
+| `repair` | the held-interact loop while repairing |
+
+### Wiring
+
+Files auto-register as `mgs:zombies/barrier/<name>` (stewbeet sounds plugin), and `slam1..slam6`
+collapse into one random-pick event — which is what we want now that we are single-stage.
+
+Placeholders to replace, all in `objects/barriers/`:
+- [ ] `tick.py::destroy` — `minecraft:entity.zombie.break_wooden_door` → `snap*`
+- [ ] `tick.py::repair` — `minecraft:block.anvil.use` → `slam*`
+- [ ] `hooks.py::instant_repair` (Carpenter) — `minecraft:block.wood.place` → `slam*`
+- [ ] `tick.py::on_remover_valid` — silent today → `window*`
+- [ ] `tick.py::on_repairer_valid` — silent today → `repair`
+
+The last two run **every tick** while a barricade is being torn down / rebuilt, so they need the same
+`#total_tick` timestamp budget as `enemies/vocals.py`, or a barricade under attack turns into a
+machine gun of wood sounds. `window*` should be per-player budgeted (several players can watch the
+same barricade); `repair` only ever has one repairer, so a per-barrier interval is enough.
+
+
 ---
 
 # Inbox (quick notes — dump anything here, unorganized "basic" format is fine)
 
-- Make the step_height attribute of zombies 1 block tall
-- Add barriers repairs sounds => find them on internet "repair.ogg", "slam[1-6].ogg", "snap[1-6].ogg", "window[1-5].ogg". And check what they are actually about to correctly use them in our zombies implementation!
+- A day in 2027: Add this map https://www.planetminecraft.com/project/black-ops-ii-mob-of-the-dead-minecraft-in-2013/
 

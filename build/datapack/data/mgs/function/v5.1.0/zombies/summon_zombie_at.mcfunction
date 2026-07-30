@@ -16,7 +16,11 @@
 # repath build a multi-thousand-block region and explore 32k+ nodes, so paths failed and zombies
 # froze. A sane value (40, just above vanilla's 35) keeps pathfinding cheap and reliable; long-range
 # targeting is unnecessary because zombies spawn next to players and stuck ones are teleport-rescued.
-summon minecraft:zombie ~ ~-2 ~ {Tags:["mgs.zombie_round","mgs.gm_entity","mgs.nukable","mgs.zb_rising"],CanPickUpLoot:false,PersistenceRequired:true,DeathLootTable:"minecraft:empty",NoAI:1b,Silent:1b,Passengers:[{id:"minecraft:marker",Tags:["mgs.death_watch","mgs.gm_entity"]}],Attributes:[{id:"minecraft:follow_range",base:40.0d}]}
+# step_height 1.0 (vanilla mobs get 0.6) is what makes a zombie walk a 1-block rise instead of
+# jumping it: WalkNodeEvaluator reads this attribute, so full blocks become plainly walkable nodes
+# rather than jump nodes that stall on stairs, slabs and map geometry. Barriers are unaffected —
+# they stop zombies by freezing movement_speed, not by collision (barriers/tick.py).
+summon minecraft:zombie ~ ~-2 ~ {Tags:["mgs.zombie_round","mgs.gm_entity","mgs.nukable","mgs.zb_rising"],CanPickUpLoot:false,PersistenceRequired:true,DeathLootTable:"minecraft:empty",NoAI:1b,Silent:1b,Passengers:[{id:"minecraft:marker",Tags:["mgs.death_watch","mgs.gm_entity"]}],Attributes:[{id:"minecraft:follow_range",base:40.0d},{id:"minecraft:step_height",base:1.0d}]}
 
 # Apply type-specific scaling (health, speed, rise timer)
 $execute as @n[tag=mgs.zombie_round,tag=!mgs.zb_scaled] run function mgs:v5.1.0/zombies/types/$(type) {level:"$(level)"}

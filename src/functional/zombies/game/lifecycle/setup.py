@@ -37,6 +37,10 @@ scoreboard objectives add {ns}.zb.vox_sprint dummy
 scoreboard objectives add {ns}.zb.vox_attack dummy
 scoreboard objectives add {ns}.zb.vox_death dummy
 
+# Per-enemy DeathTime cache, refreshed by the one NBT read death_watch_tick already pays for. Lets the
+# death groan (DeathTime -15, the first tick after dying) and the corpse intercept (1) share that read.
+scoreboard objectives add {ns}.zb.death_time dummy
+
 # Spawn point group_id scoreboard
 scoreboard objectives add {ns}.zb.spawn.gid dummy
 

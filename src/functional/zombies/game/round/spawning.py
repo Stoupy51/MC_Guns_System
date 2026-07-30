@@ -228,7 +228,11 @@ kill @s
 	write_versioned_function("zombies/summon_dog_at", f"""
 # Delivered by the bolt at ground level, AI live immediately — no rise animation, so no zb_rising.
 # zb_dog_new is a scratch tag the strike removes once setup is done.
-summon minecraft:wolf ~ ~ ~ {{Tags:["{ns}.zombie_round","{ns}.zb_dog","{ns}.zb_dog_new","{ns}.gm_entity","{ns}.nukable"],variant:"minecraft:black",PersistenceRequired:true,DeathLootTable:"minecraft:empty",Passengers:[{{id:"minecraft:marker",Tags:["{ns}.death_watch","{ns}.gm_entity"]}}],Attributes:[{{id:"minecraft:follow_range",base:40.0d}}]}}
+# step_height 1.0 for the same reason as zombies (summon_zombie_at), and it matters more here: hounds
+# are what you kite, so one stalling on a 1-block rise is far more noticeable. Safe as a `base` value
+# unlike HP — Wolf.applyTamingSideEffects only ever resets MAX_HEALTH, so the save/load round-trip
+# that forced the HP modifier in types/dog leaves this one alone.
+summon minecraft:wolf ~ ~ ~ {{Tags:["{ns}.zombie_round","{ns}.zb_dog","{ns}.zb_dog_new","{ns}.gm_entity","{ns}.nukable"],variant:"minecraft:black",PersistenceRequired:true,DeathLootTable:"minecraft:empty",Passengers:[{{id:"minecraft:marker",Tags:["{ns}.death_watch","{ns}.gm_entity"]}}],Attributes:[{{id:"minecraft:follow_range",base:40.0d}},{{id:"minecraft:step_height",base:1.0d}}]}}
 
 # Apply scaling (health, speed). Not a macro call: types/dog reads #zb_round itself and never used
 # the level argument, so passing one only added a way for the call to be skipped.
@@ -254,7 +258,11 @@ scoreboard players set @n[tag={ns}.zb_dog_new] {ns}.zb.stuck_dist 4
 # repath build a multi-thousand-block region and explore 32k+ nodes, so paths failed and zombies
 # froze. A sane value (40, just above vanilla's 35) keeps pathfinding cheap and reliable; long-range
 # targeting is unnecessary because zombies spawn next to players and stuck ones are teleport-rescued.
-summon minecraft:zombie ~ ~-2 ~ {{Tags:["{ns}.zombie_round","{ns}.gm_entity","{ns}.nukable","{ns}.zb_rising"],CanPickUpLoot:false,PersistenceRequired:true,DeathLootTable:"minecraft:empty",NoAI:1b,Silent:1b,Passengers:[{{id:"minecraft:marker",Tags:["{ns}.death_watch","{ns}.gm_entity"]}}],Attributes:[{{id:"minecraft:follow_range",base:40.0d}}]}}
+# step_height 1.0 (vanilla mobs get 0.6) is what makes a zombie walk a 1-block rise instead of
+# jumping it: WalkNodeEvaluator reads this attribute, so full blocks become plainly walkable nodes
+# rather than jump nodes that stall on stairs, slabs and map geometry. Barriers are unaffected —
+# they stop zombies by freezing movement_speed, not by collision (barriers/tick.py).
+summon minecraft:zombie ~ ~-2 ~ {{Tags:["{ns}.zombie_round","{ns}.gm_entity","{ns}.nukable","{ns}.zb_rising"],CanPickUpLoot:false,PersistenceRequired:true,DeathLootTable:"minecraft:empty",NoAI:1b,Silent:1b,Passengers:[{{id:"minecraft:marker",Tags:["{ns}.death_watch","{ns}.gm_entity"]}}],Attributes:[{{id:"minecraft:follow_range",base:40.0d}},{{id:"minecraft:step_height",base:1.0d}}]}}
 
 # Apply type-specific scaling (health, speed, rise timer)
 $execute as @n[tag={ns}.zombie_round,tag=!{ns}.zb_scaled] run function {ns}:v{version}/zombies/types/$(type) {{level:"$(level)"}}

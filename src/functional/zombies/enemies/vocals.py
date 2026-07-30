@@ -29,15 +29,15 @@ VOCAL_CRAWLER_AMBIENT: str = "zombies/entity/crawler_ambient"
 VOCAL_CRAWLER_SPRINT: str = "zombies/entity/crawler_sprint"
 """ 2 legless screams. Staged alongside [[VOCAL_CRAWLER_AMBIENT]]. """
 
-SPRINT_LOCKOUT: int = 100
-""" Ticks a player's sprint channel stays held after a scream. The longest clip is 4.94s (99 ticks), so
-one scream at a time is exactly what this buys — the BO2 sprinter that owns the soundscape while it closes. """
+SPRINT_LOCKOUT: int = 70
+""" Ticks a player's sprint channel stays held after a scream, so a sprinter owns the soundscape while
+it closes instead of the horde drowning it. Clips run 60-99 ticks, so at 70 the longest ones still
+overlap the next scream by up to 29 ticks — raise this to 100 for strictly one at a time. """
 ATTACK_LOCKOUT: int = 20
 """ Ticks between melee grunts for one player. A surrounded player is hit by up to eight zombies, and
 eight overlapping grunts is mush; one per second still reads as "something is hitting me". """
 DEATH_LOCKOUT: int = 4
-""" Ticks between death groans for one player. A Nuke kills the whole round in a single tick, which
-without this is 50 simultaneous groans that drop every other sound in the mix. """
+""" Ticks between death groans for one player. """
 
 VOCAL_RANGE: int = 32
 """ Blocks a vocal carries. Volume 2.0 gives full loudness inside 16 blocks and fades out to this. """
@@ -47,8 +47,19 @@ without picking up a bystander across the room. """
 
 HORDE_MAX_INTERVAL: int = 40
 """ Ticks between vocals with a single zombie nearby; the interval is this divided by the count. """
-HORDE_MIN_INTERVAL: int = 4
-""" Floor on that interval, so a huge horde stays a wall of groans rather than a buzz. """
+HORDE_MIN_INTERVAL: int = 20
+""" Floor on that interval: one ambient vocal per second per player, no matter how big the horde is.
+Anything faster stops reading as individual zombies and turns into a texture. """
+
+HORDE_VOLUME_BASE: int = 100
+""" Volume in hundredths for a single nearby zombie. 1.0 is a deliberate floor: playsound below 1.0
+shrinks the audible radius to 16*volume, so anything less meant a zombie picked from the 32-block
+radius was often inaudible and the groan simply did not happen. """
+HORDE_VOLUME_PER_ZOMBIE: int = 5
+""" Added per nearby zombie. Past 1.0 playsound extends reach rather than loudness, so a big horde is
+heard from further out instead of louder — which is the effect worth having anyway. """
+HORDE_VOLUME_CAP: int = 200
+""" 2.0 = audible out to exactly [[VOCAL_RANGE]], the radius the zombie is picked from. """
 
 
 # Functions
@@ -58,8 +69,8 @@ def generate_vocals() -> None:
 
 	# Managed horde ambience.
 	# Round zombies are Silent, so a 50-zombie horde can't stack into a wall of groans on its own.
-	# Instead each player hears ONE controlled vocal at a time, and both its volume and how often it repeats scale with the zombie count near THEM.
-	# The rate is what sells a chase: ten zombies on your heels groan several times a second, an empty room barely at all.
+	# Instead each player hears ONE controlled vocal at a time, scheduled off the zombie count near THEM.
+	# Rate is capped at 1/s (HORDE_MIN_INTERVAL), so a chase reads through volume and reach instead: an empty room is a rare distant groan, a horde on your heels is a loud one every second from all around you.
 	write_versioned_function("zombies/horde_ambient", f"""
 # @s = an in-game player. Count zombies within earshot.
 execute store result score #horde_count {ns}.data if entity @e[tag={ns}.zombie_round,distance=..{VOCAL_RANGE}]
@@ -68,12 +79,12 @@ execute store result score #horde_count {ns}.data if entity @e[tag={ns}.zombie_r
 execute if score #horde_count {ns}.data matches ..0 run scoreboard players set @s {ns}.zb.horde_cd {HORDE_MAX_INTERVAL}
 execute if score #horde_count {ns}.data matches ..0 run return 0
 
-# Volume (hundredths) = 0.25 + count*0.03, hard-capped at 0.80 (so ~18+ zombies all sound the same).
-scoreboard players set #horde_vol {ns}.data 25
+# Volume (hundredths) = 1.00 + count*0.05, capped at 2.00 (20+ zombies all reach the full 32 blocks).
+scoreboard players set #horde_vol {ns}.data {HORDE_VOLUME_BASE}
 scoreboard players operation #horde_tmp {ns}.data = #horde_count {ns}.data
-scoreboard players operation #horde_tmp {ns}.data *= #3 {ns}.data
+scoreboard players operation #horde_tmp {ns}.data *= #{HORDE_VOLUME_PER_ZOMBIE} {ns}.data
 scoreboard players operation #horde_vol {ns}.data += #horde_tmp {ns}.data
-execute if score #horde_vol {ns}.data matches 80.. run scoreboard players set #horde_vol {ns}.data 80
+execute if score #horde_vol {ns}.data matches {HORDE_VOLUME_CAP}.. run scoreboard players set #horde_vol {ns}.data {HORDE_VOLUME_CAP}
 execute store result storage {ns}:temp _horde.vol double 0.01 run scoreboard players get #horde_vol {ns}.data
 
 # Sprint channel first. BO2 leads with the sprinter that is closing on you rather than a random member
@@ -91,9 +102,9 @@ execute if score #horde_sprint {ns}.data matches 0 store result score #horde_pit
 execute if score #horde_sprint {ns}.data matches 0 store result storage {ns}:temp _horde.pitch double 0.01 run scoreboard players get #horde_pitch {ns}.data
 execute if score #horde_sprint {ns}.data matches 0 at @e[tag={ns}.zombie_round,distance=..{VOCAL_RANGE},sort=random,limit=1] run function {ns}:v{version}/zombies/vocals/horde_ambient with storage {ns}:temp _horde
 
-# Schedule this player's next vocal: {HORDE_MAX_INTERVAL} ticks divided by the nearby count, so 1 zombie
-# groans every {HORDE_MAX_INTERVAL / 20:.1f}s and 10 groan {20 * 10 // HORDE_MAX_INTERVAL} times a second.
-# The floor keeps a huge horde from turning into a buzz.
+# Schedule this player's next vocal: {HORDE_MAX_INTERVAL} ticks divided by the nearby count, so a lone
+# zombie groans every {HORDE_MAX_INTERVAL / 20:.1f}s and {HORDE_MAX_INTERVAL // HORDE_MIN_INTERVAL}+ zombies sit at the {HORDE_MIN_INTERVAL}-tick floor.
+# Density then shows up as volume/reach rather than as rate, which is the point of the floor.
 scoreboard players operation #horde_next {ns}.data = #{HORDE_MAX_INTERVAL} {ns}.data
 scoreboard players operation #horde_next {ns}.data /= #horde_count {ns}.data
 execute if score #horde_next {ns}.data matches ..{HORDE_MIN_INTERVAL} run scoreboard players set #horde_next {ns}.data {HORDE_MIN_INTERVAL}
@@ -120,9 +131,14 @@ scoreboard players add @s {ns}.zb.vox_attack {ATTACK_LOCKOUT}
 execute at @n[tag={ns}.zombie_round,tag=!{ns}.zb_dog,distance=..{ATTACK_REACH}] run playsound {ns}:{VOCAL_ATTACK} hostile @s ~ ~ ~ 1.0 1.0
 """)
 
-	## Death groan. @s = the dying zombie, execution position = the zombie (called from on_zombie_dying).
+	## Death groan. @s = the zombie on its first tick after dying, execution position = the zombie
+	## (dispatched from death_watch_tick on the cached DeathTime score).
 	## The budget is per-player rather than per-death, so one kill always sounds while a Nuke thins out.
 	write_versioned_function("zombies/vocals/death", f"""
+# Consume the trigger value so a zombie whose death-watch marker got separated can't loop the groan:
+# the sweep overwrites this every tick for anything still mounted, so this only matters when it doesn't.
+scoreboard players set @s {ns}.zb.death_time 0
+
 execute as @a[scores={{{ns}.zb.in_game=1}},gamemode=!spectator,distance=..{VOCAL_RANGE}] unless score @s {ns}.zb.vox_death > #total_tick {ns}.data run function {ns}:v{version}/zombies/vocals/death_for
 """)
 
@@ -132,3 +148,4 @@ scoreboard players operation @s {ns}.zb.vox_death = #total_tick {ns}.data
 scoreboard players add @s {ns}.zb.vox_death {DEATH_LOCKOUT}
 playsound {ns}:{VOCAL_DEATH} hostile @s ~ ~ ~ 2.0 1.0
 """)
+
