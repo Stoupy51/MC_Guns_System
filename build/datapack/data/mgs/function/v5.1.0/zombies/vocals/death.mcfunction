@@ -1,9 +1,9 @@
 
 #> mgs:v5.1.0/zombies/vocals/death
 #
-# @executed	as @e[tag=...,scores={mgs.zb.hp=..0}] & at @s
+# @executed	at @s
 #
-# @within	mgs:v5.1.0/zombies/death_watch_tick [ as @e[tag=...,scores={mgs.zb.hp=..0}] & at @s ]
+# @within	mgs:v5.1.0/zombies/death_watch_tick [ at @s ]
 #
 
 # Health stays 0 for the whole death animation, so this tag is what makes the groan fire exactly once.

@@ -9,8 +9,10 @@
 # Consume one Quick Revive use
 scoreboard players add @s mgs.zb.qr_uses 1
 
-# Always remove the QR tag so the player must rebuy each time
+# Always remove the QR tags so the player must rebuy each time. perk.quick_revive is already gone
+# (lose_all took it on the way down); zb_qr_armed is the snapshot this auto-revive ran on.
 tag @s remove mgs.perk.quick_revive
+tag @s remove mgs.zb_qr_armed
 
 # If all 3 uses are exhausted, keep the perk score at 1 to permanently block rebuy
 # Otherwise reset to 0 so the machine allows a new purchase

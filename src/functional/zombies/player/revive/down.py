@@ -55,6 +55,15 @@ execute if score @s {ns}.special.electric_cherry matches 1 at @s run function {n
 # which returns earlier, takes priority so a marker never spawns for a doppelganger).
 execute if score @s {ns}.zb.perk.tombstone matches 1 run function {ns}:v{version}/zombies/perks/tombstone_on_down
 
+# Solo Quick Revive: snapshot ownership HERE, one line before lose_all strips the perk.
+# full_death can read the live tag because it decides in the same function; the normal-down auto-revive
+# cannot — it runs from downed_tick a tick later, by which point lose_all has already removed
+# {ns}.perk.quick_revive. That check therefore always failed, downed_tick fell through to its
+# "nobody can revive this player" instant bleed-out, and a solo game ended the moment the player
+# went down. Recomputed on every down, so a stale arm can never leak into a later one.
+tag @s remove {ns}.zb_qr_armed
+execute if entity @s[tag={ns}.perk.quick_revive] run tag @s add {ns}.zb_qr_armed
+
 # Remove all perks when going down
 function {ns}:v{version}/zombies/perks/lose_all
 

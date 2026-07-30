@@ -53,8 +53,13 @@ tag @e[tag={ns}.downed_mine_temp] remove {ns}.downed_mine_temp
 
 {revive_body_detect()}
 
-# Solo Quick Revive auto-revive: if no teammates in-game and player has quick_revive + uses left
-execute if score #zb_reviving {ns}.data matches 0 if entity @s[tag={ns}.perk.quick_revive] unless score #zb_solo_revive_block {ns}.data matches 1 run function {ns}:v{version}/zombies/revive/check_solo_qr
+# Solo Quick Revive auto-revive: if no teammates in-game and the player went down owning quick_revive.
+# Gated on zb_qr_armed, NOT on the live perk tag: going down runs lose_all, so by the time this tick
+# fires the perk is already gone (see revive/on_down, which snapshots it just before the strip).
+# The dead `unless score #zb_solo_revive_block matches 1` guard that used to sit here is gone: that
+# score was read here and written nowhere in the project, so it never blocked anything. Who's Who
+# already outranks solo QR by returning early in on_down, so nothing needs to block this path.
+execute if score #zb_reviving {ns}.data matches 0 if entity @s[tag={ns}.zb_qr_armed] run function {ns}:v{version}/zombies/revive/check_solo_qr
 
 # Show bleed timer on downed player's actionbar ONLY when not in solo QR (which has its own actionbar)
 # Compute display: whole seconds and tenths digit (sec = bleed/20, tenth = (bleed%20)/2)
@@ -137,8 +142,10 @@ execute if score @s {ns}.zb.revive_p matches {SOLO_QR_TICKS}.. run function {ns}
 # Consume one Quick Revive use
 scoreboard players add @s {ns}.zb.qr_uses 1
 
-# Always remove the QR tag so the player must rebuy each time
+# Always remove the QR tags so the player must rebuy each time. perk.quick_revive is already gone
+# (lose_all took it on the way down); zb_qr_armed is the snapshot this auto-revive ran on.
 tag @s remove {ns}.perk.quick_revive
+tag @s remove {ns}.zb_qr_armed
 
 # If all {SOLO_QR_MAX} uses are exhausted, keep the perk score at 1 to permanently block rebuy
 # Otherwise reset to 0 so the machine allows a new purchase
