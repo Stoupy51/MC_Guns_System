@@ -26,6 +26,12 @@ scoreboard objectives add {ns}.zb.barricade.removing_id dummy
 scoreboard objectives add {ns}.zb.barricade.repairing_id dummy
 # Per-player barricade repair counter (reset each round, capped reward at 25)
 scoreboard objectives add {ns}.zb.barricade_repairs dummy
+
+# Per-player sound budgets: #total_tick timestamps of when each barricade sound frees up again.
+# Same scheme as enemies/vocals.py, so no reset is needed — #total_tick only grows, and an unset score
+# fails the `>` comparison, which reads as "ready".
+scoreboard objectives add {ns}.zb.barricade.bang_at dummy
+scoreboard objectives add {ns}.zb.barricade.rep_at dummy
 """)
 
 	## Setup: iterate barricade compounds, summon block_display entities

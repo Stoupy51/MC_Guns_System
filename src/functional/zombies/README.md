@@ -69,9 +69,10 @@ What has to be captured, and where it lives today (this list IS the work):
   of the hard cases — do not skip it.
 
 
-## 12. Zombies — barricade sounds  [assets landed — only the wiring is left]
+## 12. Zombies — barricade sounds  [DONE — kept as the provenance record]
 
-Assets are in `assets/sounds/zombies/window/` (18 files, Vorbis 48 kHz mono 96 kbps, 364 KB).
+Assets are in `assets/sounds/zombies/barricade/` (19 files, Vorbis 48 kHz mono 96 kbps).
+Not verified in game yet: whether the Carpenter slam burst is too much on a map with many barricades.
 
 ### Provenance (VERIFIED — these are the real Treyarch files, not lookalikes)
 
@@ -90,7 +91,8 @@ and barricade SFX wholesale, so these are the same recordings the BO2 player hea
 | `slam[1-6]`  | `levels/zombie/board_slam/board_slam_0[0-5]`| 6 | board slammed in, one-shot decaying -12→-40 dB, 1.8-2.7s |
 | `repair`     | `levels/zombie/windows/wood_repair/repair_ching` | 1 | 3.53s of *sustained* hammering (holds -18..-24 dB flat then cuts), i.e. a whole rebuild, not a single hit |
 
-Renamed `windows_*` → `bang*` only to avoid the `zombies/window/window*` stutter in the event id.
+Renamed `windows_*` → `bang*` so the event id is not `zombies/barricade/window*`, which read as a
+separate thing from the barricade itself.
 
 The dump also confirmed two earlier inferences and one non-need:
 - `levels/zombie/new_zombie_vox/` really does have a **`behind`** folder (5 files) alongside
@@ -99,6 +101,16 @@ The dump also confirmed two earlier inferences and one non-need:
   `death` being exactly 11 also matches our `death1-11` one-for-one.
 - `levels/zombie/boards_float/boards_float.wav` is the Carpenter boards-flying-up sound. Not needed,
   `powerups/carpenter.ogg` already exists.
+
+It also fixed the sprint vocals. Treyarch ships **two** sprint sets — `new_zombie_vox/sprint` (14 files,
+0.7-2.5s) and `new_zombie_vox/sprint2` (9 files, 3.0-5.3s) — and duration-matching pinned the downloaded
+pack's `sprint1-7` onto `sprint2` (1-24 ms apart), i.e. it shipped the long set. `sprint*` is now the
+short primary set, so a scream no longer sits 5 seconds behind the zombie that made it (see
+[[vocals]] `VOCAL_SPRINT` for why `/playsound` cannot follow an entity at all).
+Still unresolved from the same comparison, and deliberately left alone: only `crawler_ambient6-11` match
+WaW's 6 `crawl` vocals (0 ms exact), so the other 12 files in `crawler_ambient*` are miscategorised.
+Duration matching is decisive for long clips and exact-0 hits but ambiguous under ~1.5s — three of our
+files all "matched" `taunt_02` — so a full remap of the 66 vocals needs real spectral fingerprinting.
 
 **Design decision, already taken: the barricade stays single-stage.** For the record, a Black Ops 2
 barricade is 6 boards torn off and rebuilt one at a time at 10 points each
@@ -110,21 +122,22 @@ Do not "fix" this later without deciding to go 6-board on purpose.
 
 ### Wiring
 
-Files auto-register as `mgs:zombies/window/<name>` (stewbeet sounds plugin), and `slam1..slam6`
+Files auto-register as `mgs:zombies/barricade/<name>` (stewbeet sounds plugin), and `slam1..slam6`
 collapse into one random-pick event — which is what we want now that we are single-stage.
 
-Placeholders to replace, all in `objects/barricades/`:
-- [ ] `tick.py::destroy` — `minecraft:entity.zombie.break_wooden_door` → `snap*`
-- [ ] `tick.py::repair` — `minecraft:block.anvil.use` → `slam*`
-- [ ] `hooks.py::instant_repair` (Carpenter) — `minecraft:block.wood.place` → `slam*`
-- [ ] `tick.py::on_remover_valid` — silent today → `bang*`
-- [ ] `tick.py::on_repairer_valid` — silent today → `repair`
+All five placeholders are replaced, in `objects/barricades/`:
+- [x] `tick.py::destroy` — `snap*`, one-shot when the boards come off
+- [x] `tick.py::repair` — `slam*`, one-shot when the rebuild completes
+- [x] `hooks.py::instant_repair` (Carpenter) — `slam*`, one per barricade, unbudgeted on purpose
+- [x] `tick.py::on_remover_valid` — `bang*`, budgeted per player at `BANG_INTERVAL`
+- [x] `tick.py::start_repairing_player` — `repair_no_cash`, budgeted per player at `REPAIR_INTERVAL`
 
-The last two run **every tick** while a barricade is being torn down / rebuilt, so they need the same
-`#total_tick` timestamp budget as `enemies/vocals.py`, or a barricade under attack turns into a
-machine gun of wood sounds. `bang*` should be per-player budgeted (several players can watch the
-same barricade); `repair` only ever has one repairer, and at 3.53s it covers the whole 1.5s rebuild on
-its own, so fire it once at the start of the repair rather than on an interval.
+`on_remover_valid` runs **every tick** of the 40-tick teardown, so it carries the same `#total_tick`
+timestamp budget as `enemies/vocals.py` or a barricade under attack becomes a machine gun of wood hits.
+Budgets are per player, not per barricade: several players can stand at one window.
+The repair hammering hangs off `start_repairing_player` rather than the per-tick `on_repairer_valid` —
+it fires exactly once when a repairer is assigned, and the clip already outlasts the 30-tick repair. Its
+budget exists only so tapping sneak to restart a repair cannot stack copies of it.
 
 
 ---

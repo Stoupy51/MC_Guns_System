@@ -21,5 +21,5 @@ execute as @e[tag=mgs.barricade_removing] if score @s mgs.zb.barricade.removing_
 
 # Sound + particles
 particle minecraft:happy_villager ~ ~1 ~ 0.5 0.5 0.5 0 10
-playsound minecraft:block.anvil.use block @a[distance=..32] ~ ~ ~ 1.0 1.5
+playsound mgs:zombies/barricade/slam block @a[distance=..32] ~ ~ ~ 1.0 1.0
 

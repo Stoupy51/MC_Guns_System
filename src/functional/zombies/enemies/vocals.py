@@ -2,8 +2,8 @@
 
 Round zombies are summoned Silent, so every sound they make is played by hand from here. BO2 splits its
 zombie vocals into ambient / attack / sprint (plus a separate set for crawlers) and picks the set from
-the zombie's gait, which is what the sound files themselves confirm: sprint clips run 3.0-4.9s while
-every other bark is 0.4-2.2s.
+the zombie's gait, which is what the sound files themselves confirm: sprint clips run longer and louder
+than the 0.4-2.2s barks of every other channel.
 
 Each channel carries its own per-player budget rather than one shared one, because a shared budget
 would let a wall of death groans starve the scream that tells you a sprinter is behind you. Budgets are
@@ -26,7 +26,12 @@ If they turn out to be plain ambients, fold them back into [[VOCAL_AMBIENT]] and
 VOCAL_ATTACK: str = "zombies/entity/attack"
 """ 16 melee grunts (the downloaded set's hurt* files plus say7-8, all swing sounds). """
 VOCAL_SPRINT: str = "zombies/entity/sprint"
-""" 7 screams, 3.0-4.9s, the sprint gait. """
+""" 14 screams, 0.7-2.5s, the sprint gait. These are Treyarch's primary sprint set (World at War's
+`new_zombie_vox/sprint`), not the 3.0-5.3s `sprint2` set the downloaded pack shipped.
+The long set is why sprinters used to sound wrong: /playsound emits a sound fixed at the position it was
+played from, so a 5s scream stays nailed to where the zombie was 5 seconds ago while the zombie crosses
+the room. Vanilla mob sounds are positional one-shots too, they just stay near 1s so the drift never
+shows. Keeping clips under ~2.5s puts our drift back in that range. """
 VOCAL_DEATH: str = "zombies/entity/death"
 """ 11 death groans. """
 
@@ -37,8 +42,8 @@ VOCAL_CRAWLER_SPRINT: str = "zombies/entity/crawler_sprint"
 
 SPRINT_LOCKOUT: int = 70
 """ Ticks a player's sprint channel stays held after a scream, so a sprinter owns the soundscape while
-it closes instead of the horde drowning it. Clips run 60-99 ticks, so at 70 the longest ones still
-overlap the next scream by up to 29 ticks — raise this to 100 for strictly one at a time. """
+it closes instead of the horde drowning it. Clips run 15-49 ticks, so this holds strictly one scream at a
+time with a 21-tick gap after even the longest. """
 ATTACK_LOCKOUT: int = 20
 """ Ticks between melee grunts for one player. A surrounded player is hit by up to eight zombies, and
 eight overlapping grunts is mush; one per second still reads as "something is hitting me". """
