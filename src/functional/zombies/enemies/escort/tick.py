@@ -78,8 +78,8 @@ execute if score #zb_esc_mod {ns}.data matches 0 run function {ns}:v{version}/zo
 """)
 
 	# Walk ride: release once the zombie stands at the spot it was sent to, so vanilla AI takes it
-	# from there. A barrier crossed on the way ends the escort earlier through barriers/freeze_zombies;
-	# this is what covers a target with no barrier in front of it, which would otherwise leave the
+	# from there. A barricade crossed on the way ends the escort earlier through barricades/freeze_zombies;
+	# this is what covers a target with no barricade in front of it, which would otherwise leave the
 	# zombie idling on arrival until the watchdog gave up on it.
 	write_versioned_function("zombies/escort/walk_ride", f"""
 scoreboard players set #zb_esc_arrived {ns}.data 0

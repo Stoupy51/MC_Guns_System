@@ -309,16 +309,16 @@ data modify storage mgs:zombies scope_variants."mosin" set value [{id:"mosin",mo
 data modify storage mgs:zombies scope_variants."deagle" set value [{id:"deagle",model:"mgs:deagle",zoom:"mgs:deagle_zoom"},{id:"deagle_4",model:"mgs:deagle_4",zoom:"mgs:deagle_4_zoom",scope_level:4}]
 data modify storage mgs:zombies camo_variants._default set value ["gold","autumn","galaxy","red_polymer_stripes"]
 
-# Barrier entity scoreboards
-scoreboard objectives add mgs.zb.barrier.id dummy
-scoreboard objectives add mgs.zb.barrier.state dummy
-scoreboard objectives add mgs.zb.barrier.r_timer dummy
-scoreboard objectives add mgs.zb.barrier.rp_timer dummy
-scoreboard objectives add mgs.zb.barrier.radius dummy
-scoreboard objectives add mgs.zb.barrier.removing_id dummy
-scoreboard objectives add mgs.zb.barrier.repairing_id dummy
-# Per-player barrier repair counter (reset each round, capped reward at 25)
-scoreboard objectives add mgs.zb.barrier_repairs dummy
+# Barricade entity scoreboards
+scoreboard objectives add mgs.zb.barricade.id dummy
+scoreboard objectives add mgs.zb.barricade.state dummy
+scoreboard objectives add mgs.zb.barricade.r_timer dummy
+scoreboard objectives add mgs.zb.barricade.rp_timer dummy
+scoreboard objectives add mgs.zb.barricade.radius dummy
+scoreboard objectives add mgs.zb.barricade.removing_id dummy
+scoreboard objectives add mgs.zb.barricade.repairing_id dummy
+# Per-player barricade repair counter (reset each round, capped reward at 25)
+scoreboard objectives add mgs.zb.barricade_repairs dummy
 
 # Power-up entity scoreboards
 scoreboard objectives add mgs.zb.pu.type dummy

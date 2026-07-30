@@ -135,14 +135,14 @@ execute as @e[type=minecraft:interaction,tag=mgs.pap_machine,scores={mgs.pap_ani
 # Timeslip: two extra steps this tick for Timeslip-owned machines (3x total speed)
 execute as @e[type=minecraft:interaction,tag=mgs.pap_machine,scores={mgs.zb.pap.timeslip=1,mgs.pap_anim=1..}] at @s run function mgs:v5.1.0/zombies/pap/anim/step_timeslip
 
-# Barriers: restore frozen speeds from last tick, then dispatch all display ticks
-execute as @e[tag=mgs.zombie_round,tag=mgs.barrier_frozen] run function mgs:v5.1.0/zombies/barriers/restore_zombie_speed
-execute as @e[type=minecraft:block_display,tag=mgs.barrier_display] at @s run function mgs:v5.1.0/zombies/barriers/tick
+# Barricades: restore frozen speeds from last tick, then dispatch all display ticks
+execute as @e[tag=mgs.zombie_round,tag=mgs.barricade_frozen] run function mgs:v5.1.0/zombies/barricades/restore_zombie_speed
+execute as @e[type=minecraft:block_display,tag=mgs.barricade_display] at @s run function mgs:v5.1.0/zombies/barricades/tick
 
 # Refresh barricade brightness every 5s (local light can change: doors, power, placed lights)
-scoreboard players add #barrier_bright_timer mgs.data 1
-execute if score #barrier_bright_timer mgs.data matches 100.. run scoreboard players set #barrier_bright_timer mgs.data 0
-execute if score #barrier_bright_timer mgs.data matches 0 as @e[type=minecraft:block_display,tag=mgs.barrier_display] at @s run function mgs:v5.1.0/zombies/barriers/compute_brightness
+scoreboard players add #barricade_bright_timer mgs.data 1
+execute if score #barricade_bright_timer mgs.data matches 100.. run scoreboard players set #barricade_bright_timer mgs.data 0
+execute if score #barricade_bright_timer mgs.data matches 0 as @e[type=minecraft:block_display,tag=mgs.barricade_display] at @s run function mgs:v5.1.0/zombies/barricades/compute_brightness
 
 # Power-up entities exist only after a drop. #pu_active (maintained on spawn/expire/pickup) gates the
 # two per-tick scans below so an empty board costs nothing. Resync once every 40 ticks as a safety net

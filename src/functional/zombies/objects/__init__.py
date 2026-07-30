@@ -1,2 +1,2 @@
-""" Objects placed on a map: barriers, doors, traps, the power switch and wallbuys. """
+""" Objects placed on a map: barricades, doors, traps, the power switch and wallbuys. """
 

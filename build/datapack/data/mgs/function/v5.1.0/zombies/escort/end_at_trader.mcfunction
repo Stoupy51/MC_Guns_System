@@ -4,7 +4,7 @@
 # @executed	at @s
 #
 # @within	mgs:v5.1.0/zombies/game_tick [ at @s ]
-#			mgs:v5.1.0/zombies/barriers/freeze_zombies
+#			mgs:v5.1.0/zombies/barricades/freeze_zombies
 #
 
 execute as @e[tag=mgs.zb_escorted,distance=..8,limit=1,sort=nearest] run function mgs:v5.1.0/zombies/escort/detach

@@ -22,12 +22,12 @@ execute as @e[tag={ns}.element.wunderfizz] at @s run function {ns}:v{version}/ma
 execute as @e[tag={ns}.element.pap_machine] at @s run function {ns}:v{version}/maps/editor/displays/pap_machine
 execute as @e[tag={ns}.element.mystery_box_pos] at @s run function {ns}:v{version}/maps/editor/displays/mystery_box_pos
 execute as @e[tag={ns}.element.power_switch] at @s run function {ns}:v{version}/maps/editor/displays/power_switch
-execute as @e[tag={ns}.element.barrier] at @s run function {ns}:v{version}/maps/editor/displays/barrier
+execute as @e[tag={ns}.element.barricade] at @s run function {ns}:v{version}/maps/editor/displays/barricade
 """)
 
-	## Barrier: block_display of the "enabled" (intact) block, mirroring zombies/barriers/place_at so a map maker sees the boards exactly where they will stand in game.
-	write_versioned_function("maps/editor/displays/barrier", f"""
-# @s = barrier marker, at @s
+	## Barricade: block_display of the "enabled" (intact) block, mirroring zombies/barricades/place_at so a map maker sees the boards exactly where they will stand in game.
+	write_versioned_function("maps/editor/displays/barricade", f"""
+# @s = barricade marker, at @s
 data modify storage {ns}:temp _ed_bar.yaw set value 0.0f
 execute if data entity @s data.yaw run data modify storage {ns}:temp _ed_bar.yaw set from entity @s data.yaw
 
@@ -35,10 +35,10 @@ execute if data entity @s data.yaw run data modify storage {ns}:temp _ed_bar.yaw
 data modify storage {ns}:temp _ed_bar.block set value {{Name:"minecraft:oak_fence_gate",Properties:{{open:"false"}}}}
 execute if data entity @s data.block_enabled run data modify storage {ns}:temp _ed_bar.block set from entity @s data.block_enabled
 
-execute align xyz positioned ~.5 ~.5 ~.5 run function {ns}:v{version}/maps/editor/displays/summon_barrier with storage {ns}:temp _ed_bar
+execute align xyz positioned ~.5 ~.5 ~.5 run function {ns}:v{version}/maps/editor/displays/summon_barricade with storage {ns}:temp _ed_bar
 """)
-	write_versioned_function("maps/editor/displays/summon_barrier", f"""
-# Same placement and transform as zombies/barriers/place_at
+	write_versioned_function("maps/editor/displays/summon_barricade", f"""
+# Same placement and transform as zombies/barricades/place_at
 $summon minecraft:block_display ~ ~ ~ {{Rotation:[$(yaw),0f],block_state:$(block),transformation:{{left_rotation:[0f,0f,0f,1f],scale:[1f,1f,1f],translation:[-0.5f,-0.5f,-0.5f],right_rotation:[0f,0f,0f,1f]}},Tags:["{ns}.editor_display"]}}
 """)
 

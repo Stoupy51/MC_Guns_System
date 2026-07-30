@@ -223,7 +223,7 @@ scoreboard players remove #zb_dog_pending {ns}.data 1
 kill @s
 """)
 
-	## Summon dog at execution position (macro for level dispatch) Wolves carry {ns}.zombie_round like every other enemy, so alive counts, round completion, traps, barriers, nukes and the stuck-rescue all apply with no extra wiring.
+	## Summon dog at execution position (macro for level dispatch) Wolves carry {ns}.zombie_round like every other enemy, so alive counts, round completion, traps, barricades, nukes and the stuck-rescue all apply with no extra wiring.
 	## Unlike zombies they are NOT Silent — a pack is small enough that its own growls are the ambience (horde_ambient is skipped).
 	write_versioned_function("zombies/summon_dog_at", f"""
 # Delivered by the bolt at ground level, AI live immediately — no rise animation, so no zb_rising.
@@ -260,8 +260,8 @@ scoreboard players set @n[tag={ns}.zb_dog_new] {ns}.zb.stuck_dist 4
 # targeting is unnecessary because zombies spawn next to players and stuck ones are teleport-rescued.
 # step_height 1.0 (vanilla mobs get 0.6) is what makes a zombie walk a 1-block rise instead of
 # jumping it: WalkNodeEvaluator reads this attribute, so full blocks become plainly walkable nodes
-# rather than jump nodes that stall on stairs, slabs and map geometry. Barriers are unaffected —
-# they stop zombies by freezing movement_speed, not by collision (barriers/tick.py).
+# rather than jump nodes that stall on stairs, slabs and map geometry. Barricades are unaffected —
+# they stop zombies by freezing movement_speed, not by collision (barricades/tick.py).
 summon minecraft:zombie ~ ~-2 ~ {{Tags:["{ns}.zombie_round","{ns}.gm_entity","{ns}.nukable","{ns}.zb_rising"],CanPickUpLoot:false,PersistenceRequired:true,DeathLootTable:"minecraft:empty",NoAI:1b,Silent:1b,Passengers:[{{id:"minecraft:marker",Tags:["{ns}.death_watch","{ns}.gm_entity"]}}],Attributes:[{{id:"minecraft:follow_range",base:40.0d}},{{id:"minecraft:step_height",base:1.0d}}]}}
 
 # Apply type-specific scaling (health, speed, rise timer)

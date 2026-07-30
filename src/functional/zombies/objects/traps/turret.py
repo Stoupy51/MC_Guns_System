@@ -41,7 +41,7 @@ tag @e[tag={ns}._turret_target] remove {ns}._turret_target
 """)
 
 	## Line-of-sight gate: tag the candidate zombie as visible only if the turret can see it. can_see_ata raycasts from the execution position to @s (the zombie), returning 1 if unobstructed.
-	## The turret head sits half inside a barrier block, so casting from there would self-block; instead we cast from 1.5 blocks below the interaction entity (clear of the barrier) - matched by id via predicate.
+	## The turret head sits half inside a barricade block, so casting from there would self-block; instead we cast from 1.5 blocks below the interaction entity (clear of the barricade) - matched by id via predicate.
 	write_versioned_function("zombies/traps/turret_check_los", f"""
 # @s = candidate zombie
 scoreboard players set #turret_vis {ns}.data 0

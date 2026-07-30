@@ -57,7 +57,7 @@ What has to be captured, and where it lives today (this list IS the work):
   (built for Who's Who / Tombstone) takes a copied `Inventory` list in `mgs:temp _restore.items`.
 - [ ] Map progress — `#zb_power` (`power.py`), PAP unlock (`pap.py`), opened doors (`doors.py`:
   door entities + the `mgs.spawn_unlocked` tag on the spawn points each door group unlocks),
-  Mystery Box position/uses (`mystery_box.py`), barrier repair state (`barriers.py`).
+  Mystery Box position/uses (`mystery_box.py`), barricade repair state (`barricades.py`).
 - [ ] Save UI: admin menu button → slot picker dialog (`register_dialog`, same pattern as
   `zombies/admin/powerups`); load UI: slot list on the setup dialog next to "Select Map".
 - [ ] Load flow: run the normal `zombies/start` on the saved map/variant first (so every subsystem
@@ -103,7 +103,7 @@ The dump also confirmed two earlier inferences and one non-need:
 **Design decision, already taken: the barricade stays single-stage.** For the record, a Black Ops 2
 barricade is 6 boards torn off and rebuilt one at a time at 10 points each
 ([Nazi Zombies Wiki](https://nazizombies.fandom.com/wiki/Barriers)), which is why `slam` and `snap`
-ship exactly six variants — one per board index. We are not matching that: `mgs.zb.barrier.state`
+ship exactly six variants — one per board index. We are not matching that: `mgs.zb.barricade.state`
 stays 0/1 with one 2s teardown (`r_timer 40`), one 1.5s repair (`rp_timer 30`) and `+10` for the whole
 thing, and slam/snap are used as plain random-variant pools.
 Do not "fix" this later without deciding to go 6-board on purpose.
@@ -113,7 +113,7 @@ Do not "fix" this later without deciding to go 6-board on purpose.
 Files auto-register as `mgs:zombies/window/<name>` (stewbeet sounds plugin), and `slam1..slam6`
 collapse into one random-pick event — which is what we want now that we are single-stage.
 
-Placeholders to replace, all in `objects/barriers/`:
+Placeholders to replace, all in `objects/barricades/`:
 - [ ] `tick.py::destroy` — `minecraft:entity.zombie.break_wooden_door` → `snap*`
 - [ ] `tick.py::repair` — `minecraft:block.anvil.use` → `slam*`
 - [ ] `hooks.py::instant_repair` (Carpenter) — `minecraft:block.wood.place` → `slam*`
