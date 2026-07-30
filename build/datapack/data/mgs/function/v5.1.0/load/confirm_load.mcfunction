@@ -165,6 +165,9 @@ scoreboard objectives add mgs.stam_rest dummy
 scoreboard objectives add mgs.stam_out dummy
 scoreboard objectives add mgs.stam_seen dummy
 
+# Counts swimming ticks so the drain can be applied on one tick in SWIM_DRAIN_FACTOR (see stamina_swim_drain)
+scoreboard objectives add mgs.stam_swim dummy
+
 # Set while refill pulses may have left invisible saturation; only then does the at-target
 # branch pay the foodSaturationLevel NBT read to burn it off (see stamina_bar)
 scoreboard objectives add mgs.stam_dirty dummy
