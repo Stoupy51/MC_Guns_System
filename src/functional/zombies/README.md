@@ -69,48 +69,62 @@ What has to be captured, and where it lives today (this list IS the work):
   of the hard cases — do not skip it.
 
 
-## 12. Zombies — barricade sounds  [BLOCKED on assets (HUMAN) — everything else is decided]
+## 12. Zombies — barricade sounds  [assets landed — only the wiring is left]
 
-- [ ] (HUMAN, and the only blocker) download `repair.ogg`, `slam[1-6].ogg`, `snap[1-6].ogg`,
-  `window[1-5].ogg` into `assets/sounds/zombies/barrier/`. They are not reachable from a build:
-  not indexed anywhere public, and they are BO2 game assets.
+Assets are in `assets/sounds/zombies/window/` (18 files, Vorbis 48 kHz mono 96 kbps, 364 KB).
+
+### Provenance (VERIFIED — these are the real Treyarch files, not lookalikes)
+
+Ripped from `WAW_Sound_Dump.7z`, a community dump of Call of Duty: World at War's uncompressed
+`Sound/sfx/` tree, posted on the NZ:P forum
+([thread](https://nzportable.forumotion.com/t1989-world-at-war-nazi-zombies-sound-dump) ·
+[direct](https://www.dropbox.com/s/lxzhzqml9755hwz/WAW_Sound_Dump.7z?dl=1)).
+Source is WaW rather than BO2 because BO2's own banks are `.sabl`/`.sabs` with **hashed** alias names,
+so they cannot be searched by name and no verifiable extractor exists — but BO2 reuses the WaW zombie
+and barricade SFX wholesale, so these are the same recordings the BO2 player hears.
+
+| Ours | WaW original | Count | What it is (verified by duration + envelope) |
+| --- | --- | --- | --- |
+| `bang[1-5]`  | `levels/zombie/windows/windows_0[0-4]`      | 5 | zombie pounding the intact barricade, 1.0-1.7s |
+| `snap[1-6]`  | `levels/zombie/wood_snap/wood_snap_0[0-5]`  | 6 | board torn off, sharp crack, 0.4-1.3s |
+| `slam[1-6]`  | `levels/zombie/board_slam/board_slam_0[0-5]`| 6 | board slammed in, one-shot decaying -12→-40 dB, 1.8-2.7s |
+| `repair`     | `levels/zombie/windows/wood_repair/repair_ching` | 1 | 3.53s of *sustained* hammering (holds -18..-24 dB flat then cuts), i.e. a whole rebuild, not a single hit |
+
+Renamed `windows_*` → `bang*` only to avoid the `zombies/window/window*` stutter in the event id.
+
+The dump also confirmed two earlier inferences and one non-need:
+- `levels/zombie/new_zombie_vox/` really does have a **`behind`** folder (5 files) alongside
+  `ambient` (21), `attack` (23), `crawl` (6), `death` (11), `elec` (6), `sprint` (15), `sprint2` (9),
+  `taunt` (7). So the `behind` channel in `enemies/vocals.py` is a real Treyarch category, not a guess.
+  `death` being exactly 11 also matches our `death1-11` one-for-one.
+- `levels/zombie/boards_float/boards_float.wav` is the Carpenter boards-flying-up sound. Not needed,
+  `powerups/carpenter.ogg` already exists.
 
 **Design decision, already taken: the barricade stays single-stage.** For the record, a Black Ops 2
 barricade is 6 boards torn off and rebuilt one at a time at 10 points each
-([Nazi Zombies Wiki](https://nazizombies.fandom.com/wiki/Barriers)), which is almost certainly why
-`slam` and `snap` ship exactly six variants — they read as one sound per board index. We are not
-matching that: `mgs.zb.barrier.state` stays 0/1 with one 2s teardown (`r_timer 40`), one 1.5s repair
-(`rp_timer 30`) and `+10` for the whole thing, and slam/snap are used as plain random-variant pools.
+([Nazi Zombies Wiki](https://nazizombies.fandom.com/wiki/Barriers)), which is why `slam` and `snap`
+ship exactly six variants — one per board index. We are not matching that: `mgs.zb.barrier.state`
+stays 0/1 with one 2s teardown (`r_timer 40`), one 1.5s repair (`rp_timer 30`) and `+10` for the whole
+thing, and slam/snap are used as plain random-variant pools.
 Do not "fix" this later without deciding to go 6-board on purpose.
-
-### What the files probably are (INFERRED — not verified)
-
-Guessed from the names plus BO2's mechanics. Confirm with `ffprobe` durations once the .oggs land —
-that is exactly how the `say*` vocal ranges got pinned down, a loop and a one-shot are obvious apart:
-
-| File | Best guess |
-| --- | --- |
-| `slam[1-6]` | player slamming a board into place |
-| `snap[1-6]` | zombie ripping a board off |
-| `window[1-5]` | zombie pounding on the intact barricade |
-| `repair` | the held-interact loop while repairing |
 
 ### Wiring
 
-Files auto-register as `mgs:zombies/barrier/<name>` (stewbeet sounds plugin), and `slam1..slam6`
+Files auto-register as `mgs:zombies/window/<name>` (stewbeet sounds plugin), and `slam1..slam6`
 collapse into one random-pick event — which is what we want now that we are single-stage.
 
 Placeholders to replace, all in `objects/barriers/`:
 - [ ] `tick.py::destroy` — `minecraft:entity.zombie.break_wooden_door` → `snap*`
 - [ ] `tick.py::repair` — `minecraft:block.anvil.use` → `slam*`
 - [ ] `hooks.py::instant_repair` (Carpenter) — `minecraft:block.wood.place` → `slam*`
-- [ ] `tick.py::on_remover_valid` — silent today → `window*`
+- [ ] `tick.py::on_remover_valid` — silent today → `bang*`
 - [ ] `tick.py::on_repairer_valid` — silent today → `repair`
 
 The last two run **every tick** while a barricade is being torn down / rebuilt, so they need the same
 `#total_tick` timestamp budget as `enemies/vocals.py`, or a barricade under attack turns into a
-machine gun of wood sounds. `window*` should be per-player budgeted (several players can watch the
-same barricade); `repair` only ever has one repairer, so a per-barrier interval is enough.
+machine gun of wood sounds. `bang*` should be per-player budgeted (several players can watch the
+same barricade); `repair` only ever has one repairer, and at 3.53s it covers the whole 1.5s rebuild on
+its own, so fire it once at the start of the repair rather than on an interval.
 
 
 ---

@@ -35,7 +35,7 @@ function #mgs:zombies/on_game_end
 
 # Stop all sounds and play gameover sound
 stopsound @a
-execute as @a[scores={mgs.zb.in_game=1}] at @s run playsound mgs:zombies/game_over ambient @s ~ ~ ~ 0.25 1.0
+execute as @a[scores={mgs.zb.in_game=1}] at @s run playsound mgs:zombies/game_over ambient @s ~ ~ ~ 0.3 1.0
 
 # Offer a one-click fast restart. suggest_command only runs at permission level 2, so it is a
 # no-op for non-operators — exactly the operator-gated restart the design calls for.
