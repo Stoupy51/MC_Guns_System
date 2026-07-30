@@ -4,7 +4,7 @@
 # @executed	at @s
 #
 # @within	mgs:v5.1.0/multiplayer/simulate_death_fire_kill
-#			mgs:v5.1.0/multiplayer/on_respawn
+#			mgs:v5.1.0/multiplayer/vanilla_kill_credit
 #
 
 execute store result score #random_message mgs.data run random value 1..5
