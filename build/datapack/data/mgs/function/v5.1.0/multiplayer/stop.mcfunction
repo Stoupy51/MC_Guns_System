@@ -17,12 +17,16 @@ effect clear @a[scores={mgs.mp.in_game=1}] darkness
 effect clear @a[scores={mgs.mp.in_game=1}] blindness
 effect clear @a[scores={mgs.mp.in_game=1}] night_vision
 gamemode adventure @a[scores={mgs.mp.in_game=1},gamemode=spectator]
-kill @e[tag=mgs.gm_entity]
+
+# Mode cleanup BEFORE the gm_entity sweep: a cleanup may need its own markers to still exist in order to
+# undo world changes made from them. S&D restores its bomb sites with `execute at @e[tag=snd_obj] run
+# fill ...`, which silently did nothing while the sweep ran first, leaving the chest on the map forever.
 execute if data storage mgs:multiplayer game{gamemode:"ffa"} run function mgs:v5.1.0/multiplayer/gamemodes/ffa/cleanup
 execute if data storage mgs:multiplayer game{gamemode:"tdm"} run function mgs:v5.1.0/multiplayer/gamemodes/tdm/cleanup
 execute if data storage mgs:multiplayer game{gamemode:"dom"} run function mgs:v5.1.0/multiplayer/gamemodes/dom/cleanup
 execute if data storage mgs:multiplayer game{gamemode:"hp"} run function mgs:v5.1.0/multiplayer/gamemodes/hp/cleanup
 execute if data storage mgs:multiplayer game{gamemode:"snd"} run function mgs:v5.1.0/multiplayer/gamemodes/snd/cleanup
+kill @e[tag=mgs.gm_entity]
 function #mgs:multiplayer/on_game_end
 
 # Re-enable natural regeneration, disable custom regen system

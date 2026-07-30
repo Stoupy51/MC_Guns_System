@@ -111,7 +111,7 @@ execute store result storage {ns}:temp rv_y_hud double 0.001 run scoreboard play
 data remove storage {ns}:temp _body_at
 
 # Summon mannequin (crouching pose, invulnerable, temp tag for targeting)
-summon minecraft:mannequin ~ ~.5 ~ {{Invulnerable:1b,pose:"swimming",hide_description:true,Tags:["{ns}.downed_mannequin","{ns}.downed_new","{ns}.gm_entity"]}}
+summon minecraft:mannequin ~ ~1.5 ~ {{Invulnerable:1b,pose:"swimming",hide_description:true,Tags:["{ns}.downed_mannequin","{ns}.downed_new","{ns}.gm_entity"]}}
 
 # Copy the player's downed_id to the mannequin so we can find it uniquely later
 scoreboard players operation @n[tag={ns}.downed_new] {ns}.zb.downed_id = @s {ns}.zb.downed_id
