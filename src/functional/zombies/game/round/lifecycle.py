@@ -42,9 +42,24 @@ execute if data entity @s data.walk_to run function {ns}:v{version}/zombies/esco
 """)
 
 	## Per-tick death watch: intercept zombie death before vanilla event 60 (poof particles)
+	## Enemies are spawned with DeathTime preset to -16 (types/normal, types/dog), so the counter runs
+	## -16 -> ... -> 1 -> ... -> 20 once they die, buying a 17-tick window before vanilla removes them.
+	## That means -15 is the FIRST tick after the enemy actually died, and 1 is the intercept.
+	## The value is cached into a score by the one NBT read this sweep already paid for, so both
+	## branches below come for free instead of costing a second read per enemy per tick.
 	write_versioned_function("zombies/death_watch_tick", f"""
-# Move execution from marker passenger -> vehicle (zombie), then intercept once DeathTime starts.
-execute as @e[type=minecraft:marker,tag={ns}.death_watch] at @s on vehicle if data entity @s {{DeathTime:1s}} run function {ns}:v{version}/zombies/on_zombie_dying
+# Move execution from marker passenger -> vehicle (enemy) and cache DeathTime.
+execute as @e[type=minecraft:marker,tag={ns}.death_watch] on vehicle store result score @s {ns}.zb.death_time run data get entity @s DeathTime
+
+# Death groan on the first tick after death. Firing it from the intercept below instead put it 17 ticks
+# (0.85s) late — after the fall animation — which reads as a bug rather than as a death.
+# Dogs are skipped: they are not Silent and already die with their own wolf vocals.
+execute as @e[tag={ns}.zombie_round,tag=!{ns}.zb_dog,scores={{{ns}.zb.death_time=-15}}] at @s run function {ns}:v{version}/zombies/vocals/death
+
+# The removal intercept keeps running from the MARKER, at the marker's position: on_zombie_dying kills
+# its own marker with distance=..1, and a zombie's passenger attachment sits ~1.5 blocks up, so
+# re-rooting it on the enemy would silently orphan every marker.
+execute as @e[type=minecraft:marker,tag={ns}.death_watch] at @s on vehicle if score @s {ns}.zb.death_time matches 1 run function {ns}:v{version}/zombies/on_zombie_dying
 """)
 
 	## Intercept a dying zombie before DeathTime reaches 20
@@ -54,10 +69,6 @@ execute unless entity @s[tag={ns}.zombie_round] run return 0
 
 # Kill the attached death-watch marker while still mounted to avoid orphan buildup.
 kill @n[type=minecraft:marker,tag={ns}.death_watch,distance=..1]
-
-# Death groan, from this zombie's position. Dogs are skipped: they are not Silent and already die with
-# their own wolf vocals. Runs before the teleport below, which is what moves the corpse out of earshot.
-execute unless entity @s[tag={ns}.zb_dog] run function {ns}:v{version}/zombies/vocals/death
 
 # Check if a power-up should drop at this zombie's position. Dogs never roll the random table — a
 # dog round's only drop is the guaranteed Max Ammo from the last hound.
