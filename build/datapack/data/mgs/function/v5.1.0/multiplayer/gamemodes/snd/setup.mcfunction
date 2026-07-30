@@ -6,7 +6,7 @@
 # @within	mgs:v5.1.0/multiplayer/start
 #
 
-tellraw @a [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.search_destroy_attackers_plant_defenders_defuse","color":"yellow"}]
+tellraw @a [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.search_destroy_carry_the_bomb_to_a_site_or_defend_both","color":"yellow"}]
 
 # Store base coordinates for offset
 function mgs:v5.1.0/shared/load_base_coordinates {mode:"multiplayer"}
@@ -18,7 +18,7 @@ function mgs:v5.1.0/shared/load_base_coordinates {mode:"multiplayer"}
 scoreboard players set #snd_round mgs.data 1
 scoreboard players set #snd_max_rounds mgs.data 6
 
-# Bomb state: 0=not planted, 2=planted (bomb_timer = explosion countdown)
+# Bomb state: 0=loose or carried, 2=planted (bomb_timer = explosion countdown)
 # Plant/defuse channel progress are tracked separately so the countdown is never clobbered
 scoreboard players set #snd_bomb_state mgs.data 0
 scoreboard players set #snd_bomb_timer mgs.data 0
@@ -29,8 +29,8 @@ scoreboard players set #snd_defuse_progress mgs.data 0
 # tick's "one whole side is dead" checks read as a wipe. See next_round.
 scoreboard players set #snd_round_active mgs.data 0
 
-# Round timer (90 seconds = 1800 ticks)
-scoreboard players set #snd_round_timer mgs.data 1800
+# Round timer
+scoreboard players set #snd_round_timer mgs.data 3000
 
 # Summon objective markers (relative → absolute)
 scoreboard players set #snd_site_idx mgs.data 0
