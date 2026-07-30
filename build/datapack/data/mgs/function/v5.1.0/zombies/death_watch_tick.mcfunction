@@ -4,16 +4,16 @@
 # @within	mgs:v5.1.0/zombies/game_tick
 #
 
-# Move execution from marker passenger -> vehicle (enemy) and cache DeathTime.
-execute as @e[type=minecraft:marker,tag=mgs.death_watch] on vehicle store result score @s mgs.zb.death_time run data get entity @s DeathTime
+# Move execution from marker passenger -> vehicle (zombie), then intercept once DeathTime starts.
+execute as @e[type=minecraft:marker,tag=mgs.death_watch] at @s on vehicle if data entity @s {DeathTime:1s} run function mgs:v5.1.0/zombies/on_zombie_dying
 
-# Death groan on the first tick after death. Firing it from the intercept below instead put it 17 ticks
-# (0.85s) late — after the fall animation — which reads as a bug rather than as a death.
+# Death groan, keyed on Health rather than on the intercept above. Enemies are spawned with DeathTime
+# preset to -16 (types/normal, types/dog), so that intercept only lands 17 ticks (0.85s) after the enemy
+# actually died — the groan then arrived after the fall animation, which reads as a bug.
+# Health is 0 the instant it dies, which is the moment we want. Scaled by 1000 so an enemy on its last
+# 0.4 HP cannot truncate to 0 and groan while still alive. zb_dying makes it fire exactly once, since
+# Health stays 0 for the whole death animation, and also stops paying for the read afterwards.
 # Dogs are skipped: they are not Silent and already die with their own wolf vocals.
-execute as @e[tag=mgs.zombie_round,tag=!mgs.zb_dog,scores={mgs.zb.death_time=-15}] at @s run function mgs:v5.1.0/zombies/vocals/death
-
-# The removal intercept keeps running from the MARKER, at the marker's position: on_zombie_dying kills
-# its own marker with distance=..1, and a zombie's passenger attachment sits ~1.5 blocks up, so
-# re-rooting it on the enemy would silently orphan every marker.
-execute as @e[type=minecraft:marker,tag=mgs.death_watch] at @s on vehicle if score @s mgs.zb.death_time matches 1 run function mgs:v5.1.0/zombies/on_zombie_dying
+execute as @e[type=minecraft:marker,tag=mgs.death_watch] on vehicle if entity @s[tag=mgs.zombie_round,tag=!mgs.zb_dog,tag=!mgs.zb_dying] store result score @s mgs.zb.hp run data get entity @s Health 1000
+execute as @e[tag=mgs.zombie_round,tag=!mgs.zb_dog,tag=!mgs.zb_dying,scores={mgs.zb.hp=..0}] at @s run function mgs:v5.1.0/zombies/vocals/death
 

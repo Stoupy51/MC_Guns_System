@@ -208,9 +208,9 @@ scoreboard objectives add mgs.zb.vox_sprint dummy
 scoreboard objectives add mgs.zb.vox_attack dummy
 scoreboard objectives add mgs.zb.vox_death dummy
 
-# Per-enemy DeathTime cache, refreshed by the one NBT read death_watch_tick already pays for. Lets the
-# death groan (DeathTime -15, the first tick after dying) and the corpse intercept (1) share that read.
-scoreboard objectives add mgs.zb.death_time dummy
+# Per-enemy Health x1000, read by death_watch_tick only while the enemy is not yet tagged zb_dying.
+# Hitting 0 is what fires the death groan, on the exact tick the enemy died.
+scoreboard objectives add mgs.zb.hp dummy
 
 # Spawn point group_id scoreboard
 scoreboard objectives add mgs.zb.spawn.gid dummy
