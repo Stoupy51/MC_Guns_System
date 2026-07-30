@@ -863,6 +863,30 @@
 		"subtitle": "vz61/reload",
 		"sounds": ["mgs:vz61/reload"]
 	},
+	"zombies/entity/ambient": {
+		"subtitle": "zombies/entity/ambient",
+		"sounds": ["mgs:zombies/entity/ambient1","mgs:zombies/entity/ambient10","mgs:zombies/entity/ambient11","mgs:zombies/entity/ambient12","mgs:zombies/entity/ambient2","mgs:zombies/entity/ambient3","mgs:zombies/entity/ambient4","mgs:zombies/entity/ambient5","mgs:zombies/entity/ambient6","mgs:zombies/entity/ambient7","mgs:zombies/entity/ambient8","mgs:zombies/entity/ambient9"]
+	},
+	"zombies/entity/attack": {
+		"subtitle": "zombies/entity/attack",
+		"sounds": ["mgs:zombies/entity/attack1","mgs:zombies/entity/attack10","mgs:zombies/entity/attack11","mgs:zombies/entity/attack12","mgs:zombies/entity/attack13","mgs:zombies/entity/attack14","mgs:zombies/entity/attack15","mgs:zombies/entity/attack16","mgs:zombies/entity/attack2","mgs:zombies/entity/attack3","mgs:zombies/entity/attack4","mgs:zombies/entity/attack5","mgs:zombies/entity/attack6","mgs:zombies/entity/attack7","mgs:zombies/entity/attack8","mgs:zombies/entity/attack9"]
+	},
+	"zombies/entity/crawler_ambient": {
+		"subtitle": "zombies/entity/crawler_ambient",
+		"sounds": ["mgs:zombies/entity/crawler_ambient1","mgs:zombies/entity/crawler_ambient10","mgs:zombies/entity/crawler_ambient11","mgs:zombies/entity/crawler_ambient12","mgs:zombies/entity/crawler_ambient13","mgs:zombies/entity/crawler_ambient14","mgs:zombies/entity/crawler_ambient15","mgs:zombies/entity/crawler_ambient16","mgs:zombies/entity/crawler_ambient17","mgs:zombies/entity/crawler_ambient18","mgs:zombies/entity/crawler_ambient2","mgs:zombies/entity/crawler_ambient3","mgs:zombies/entity/crawler_ambient4","mgs:zombies/entity/crawler_ambient5","mgs:zombies/entity/crawler_ambient6","mgs:zombies/entity/crawler_ambient7","mgs:zombies/entity/crawler_ambient8","mgs:zombies/entity/crawler_ambient9"]
+	},
+	"zombies/entity/crawler_sprint": {
+		"subtitle": "zombies/entity/crawler_sprint",
+		"sounds": ["mgs:zombies/entity/crawler_sprint1","mgs:zombies/entity/crawler_sprint2"]
+	},
+	"zombies/entity/death": {
+		"subtitle": "zombies/entity/death",
+		"sounds": ["mgs:zombies/entity/death1","mgs:zombies/entity/death10","mgs:zombies/entity/death11","mgs:zombies/entity/death2","mgs:zombies/entity/death3","mgs:zombies/entity/death4","mgs:zombies/entity/death5","mgs:zombies/entity/death6","mgs:zombies/entity/death7","mgs:zombies/entity/death8","mgs:zombies/entity/death9"]
+	},
+	"zombies/entity/sprint": {
+		"subtitle": "zombies/entity/sprint",
+		"sounds": ["mgs:zombies/entity/sprint1","mgs:zombies/entity/sprint2","mgs:zombies/entity/sprint3","mgs:zombies/entity/sprint4","mgs:zombies/entity/sprint5","mgs:zombies/entity/sprint6","mgs:zombies/entity/sprint7"]
+	},
 	"zombies/game_over": {
 		"subtitle": "zombies/game_over",
 		"sounds": [{"name": "mgs:zombies/game_over","stream": true}]

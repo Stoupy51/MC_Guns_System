@@ -5,6 +5,7 @@ from .display_helpers import generate_display_helpers
 from .enemies.escort import generate_zombies_escort
 from .enemies.monkey_bomb import generate_monkey_bomb
 from .enemies.roaming import generate_roaming
+from .enemies.vocals import generate_vocals
 from .game.lifecycle import generate_zombies_game
 from .game.round import generate_zombies_rounds
 from .machines.mystery_box import generate_mystery_box
@@ -36,6 +37,7 @@ def main() -> None:
 	generate_zombies_menus()
 	generate_zombies_game()
 	generate_zombies_rounds()
+	generate_vocals()
 	generate_zombies_escort()
 	generate_zombies_abilities()
 	generate_zombies_inventory()

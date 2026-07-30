@@ -37,9 +37,14 @@ execute if score #zb_round {ns}.data matches 11 run attribute @s minecraft:movem
 execute if score #zb_round {ns}.data matches 12 run attribute @s minecraft:movement_speed base set 0.31
 execute if score #zb_round {ns}.data matches 13.. run attribute @s minecraft:movement_speed base set 0.32
 
+# Gait picks the vocal set (enemies/vocals.py): 0.29+ is the Black Ops 2 sprint gait, which screams
+# (3-5s clips) instead of groaning. Rounds 1-9 walk or run and stay on the short groan set.
+execute if score #zb_round {ns}.data matches 10.. run tag @s add {ns}.zb_sprint
+
 # For round 15+, 10% walkers (0.20 speed)
 execute if score #zb_round {ns}.data matches 15.. store result score #zb_speed_roll {ns}.data run random value 1..10
 execute if score #zb_round {ns}.data matches 15.. if score #zb_speed_roll {ns}.data matches 1 run attribute @s minecraft:movement_speed base set 0.20
+execute if score #zb_round {ns}.data matches 15.. if score #zb_speed_roll {ns}.data matches 1 run tag @s remove {ns}.zb_sprint
 
 # Fixed melee damage: 15.0 HP = 7.5 hearts and no knockback
 attribute @s minecraft:attack_damage base set 15.0
