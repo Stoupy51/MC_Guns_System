@@ -31,8 +31,15 @@ function {ns}:v{version}/raycast/accuracy/get_value
 data modify storage {ns}:temp proj set value {{}}
 {proj_copy}
 
-# Summon the projectile entity at the player's eye position
-execute anchored eyes positioned ^ ^ ^0.69 summon item_display run function {ns}:v{version}/projectile/init
+# Summon the projectile at the muzzle, 0.69 blocks ahead of the eyes — but only when that spot is actually
+# open, otherwise fall back to the eye position itself.
+# Standing flush against a wall the eyes sit ~0.3 blocks from its face, so the muzzle lands INSIDE the wall.
+# A projectile that starts embedded never registers an entry collision: bs.move sees it leave a block rather
+# than enter one, so the rocket kept going and came out the far side of walls three or more blocks thick.
+# The eye position is inside the player's own head, which is air, so the first movement step is honest again.
+execute anchored eyes positioned ^ ^ ^0.69 store success score #proj_muzzle_free {ns}.data if block ~ ~ ~ #{ns}:v{version}/projectile_pass_through
+execute if score #proj_muzzle_free {ns}.data matches 1 anchored eyes positioned ^ ^ ^0.69 summon item_display run function {ns}:v{version}/projectile/init
+execute if score #proj_muzzle_free {ns}.data matches 0 anchored eyes positioned ^ ^ ^0 summon item_display run function {ns}:v{version}/projectile/init
 
 # Increment slow bullet counter
 scoreboard players add #slow_bullet_count {ns}.data 1
