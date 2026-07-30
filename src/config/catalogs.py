@@ -214,9 +214,14 @@ TRIG_EQUIP1_CAMO_BASE     = 500
 TRIG_EQUIP2_CAMO_BASE     = 510
 """ 510-514 = pick grenade slot 2 camo. """
 TRIG_OVERKILL_SEC_BASE    = 520
-""" 520 + primary_weapon_index = Overkill secondary. """
-TRIG_KNIFE_CAMO_BASE      = 540
-""" 540-544 = pick knife camo (free). """
+""" 520 + primary_weapon_index = Overkill secondary.
+This block is as wide as the primary catalog, so it must keep room for every loadout primary: with 23 of
+them it already reaches 542. Anything placed under 600 collides with it as more guns are added. """
+TRIG_KNIFE_CAMO_BASE      = 600
+""" 600-604 = pick knife camo (free).
+Was 540, which sat INSIDE the Overkill block above (520..542 for 23 primaries). Knife camos 1-3 therefore
+also dispatched as "Overkill secondary = m500 / m590 / rpg7", handing the player a second primary they had
+not bought and did not have the perk for. Keep a gap here — do not move this back down. """
 
 TRIG_SELECT_BASE          = 10000
 """ + loadout_id -> use as active class. """
