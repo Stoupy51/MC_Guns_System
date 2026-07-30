@@ -16,7 +16,13 @@ from stewbeet import Mem, write_versioned_function
 
 # Constants
 VOCAL_AMBIENT: str = "zombies/entity/ambient"
-""" 12 short groans, the walking/running horde. """
+""" 6 short groans, the walking/running horde. """
+VOCAL_BEHIND: str = "zombies/entity/behind"
+""" 6 groans reserved for a zombie directly behind the player. World at War / Black Ops treats these as
+their own category, deliberately quiet and rare "so that zombies are still likely to surprise the
+player", which is why they are barely recognisable from normal play. Mapping the downloaded say20-25 to
+this category is INFERRED, not confirmed: they are a contiguous block of 6 that reads as a separate set.
+If they turn out to be plain ambients, fold them back into [[VOCAL_AMBIENT]] and drop the behind channel. """
 VOCAL_ATTACK: str = "zombies/entity/attack"
 """ 16 melee grunts (the downloaded set's hurt* files plus say7-8, all swing sounds). """
 VOCAL_SPRINT: str = "zombies/entity/sprint"
@@ -36,8 +42,20 @@ overlap the next scream by up to 29 ticks — raise this to 100 for strictly one
 ATTACK_LOCKOUT: int = 20
 """ Ticks between melee grunts for one player. A surrounded player is hit by up to eight zombies, and
 eight overlapping grunts is mush; one per second still reads as "something is hitting me". """
-DEATH_LOCKOUT: int = 4
+DEATH_LOCKOUT: int = 10
 """ Ticks between death groans for one player. """
+
+BEHIND_CHANCE: int = 25
+""" Percent chance a qualifying behind-zombie actually gets a behind vocal. The behind check is already
+situational, so this is what turns "situational" into "startling". """
+BEHIND_DISTANCE: int = 3
+""" Blocks straight back from the player where the behind-check sphere is centred. """
+BEHIND_RADIUS: float = 3.0
+""" Radius of that sphere. Together with [[BEHIND_DISTANCE]] this covers roughly 0-6 blocks directly
+behind the player and nothing in front, which is the "actually directly behind" the category wants. """
+BEHIND_VOLUME: float = 0.6
+""" Fixed and deliberately quiet — the point is a sound you half-notice. Safe below 1.0 here, unlike the
+horde ambience: 0.6 still reaches 9.6 blocks, well past the ~6 blocks this channel can fire from. """
 
 VOCAL_RANGE: int = 32
 """ Blocks a vocal carries. Volume 2.0 gives full loudness inside 16 blocks and fades out to this. """
@@ -45,11 +63,11 @@ ATTACK_REACH: float = 3.5
 """ Blocks searched for the zombie that landed the hit. Melee reach is ~2-3, so this finds the attacker
 without picking up a bystander across the room. """
 
-HORDE_MAX_INTERVAL: int = 40
+HORDE_MAX_INTERVAL: int = 60
 """ Ticks between vocals with a single zombie nearby; the interval is this divided by the count. """
-HORDE_MIN_INTERVAL: int = 20
-""" Floor on that interval: one ambient vocal per second per player, no matter how big the horde is.
-Anything faster stops reading as individual zombies and turns into a texture. """
+HORDE_MIN_INTERVAL: int = 40
+""" Floor on that interval, so the rate stops scaling once the horde is big: at 40 that is one ambient
+vocal every 2s per player. Anything faster stops reading as individual zombies and turns into a texture. """
 
 HORDE_VOLUME_BASE: int = 100
 """ Volume in hundredths for a single nearby zombie. 1.0 is a deliberate floor: playsound below 1.0
@@ -95,15 +113,23 @@ execute unless score @s {ns}.zb.vox_sprint > #total_tick {ns}.data store success
 execute if score #horde_sprint {ns}.data matches 1 run scoreboard players operation @s {ns}.zb.vox_sprint = #total_tick {ns}.data
 execute if score #horde_sprint {ns}.data matches 1 run scoreboard players add @s {ns}.zb.vox_sprint {SPRINT_LOCKOUT}
 
+# Behind channel, next. `rotated ~180 0` flips the player's yaw and flattens the pitch, so ^ ^ ^{BEHIND_DISTANCE}
+# lands {BEHIND_DISTANCE} blocks straight back from them at their own height — which is what makes this "same floor,
+# actually behind" rather than "anywhere within N blocks". Rolled, because the whole point of the
+# category is to be missed most of the time.
+execute if score #horde_sprint {ns}.data matches 0 store result score #horde_behind_roll {ns}.data run random value 1..100
+scoreboard players set #horde_behind {ns}.data 0
+execute if score #horde_sprint {ns}.data matches 0 if score #horde_behind_roll {ns}.data matches ..{BEHIND_CHANCE} store success score #horde_behind {ns}.data rotated ~180 0 positioned ^ ^ ^{BEHIND_DISTANCE} at @n[tag={ns}.zombie_round,distance=..{BEHIND_RADIUS}] run function {ns}:v{version}/zombies/vocals/horde_behind
+
 # Otherwise the short groan set, from a random nearby zombie so the horde comes from the right
 # direction and distance rather than being centred on the player. Random pitch 0.70..1.05 keeps a
-# 12-clip set from sounding metronomic over a long round.
-execute if score #horde_sprint {ns}.data matches 0 store result score #horde_pitch {ns}.data run random value 70..105
-execute if score #horde_sprint {ns}.data matches 0 store result storage {ns}:temp _horde.pitch double 0.01 run scoreboard players get #horde_pitch {ns}.data
-execute if score #horde_sprint {ns}.data matches 0 at @e[tag={ns}.zombie_round,distance=..{VOCAL_RANGE},sort=random,limit=1] run function {ns}:v{version}/zombies/vocals/horde_ambient with storage {ns}:temp _horde
+# 6-clip set from sounding metronomic over a long round.
+execute if score #horde_sprint {ns}.data matches 0 if score #horde_behind {ns}.data matches 0 store result score #horde_pitch {ns}.data run random value 70..105
+execute if score #horde_sprint {ns}.data matches 0 if score #horde_behind {ns}.data matches 0 store result storage {ns}:temp _horde.pitch double 0.01 run scoreboard players get #horde_pitch {ns}.data
+execute if score #horde_sprint {ns}.data matches 0 if score #horde_behind {ns}.data matches 0 at @e[tag={ns}.zombie_round,distance=..{VOCAL_RANGE},sort=random,limit=1] run function {ns}:v{version}/zombies/vocals/horde_ambient with storage {ns}:temp _horde
 
 # Schedule this player's next vocal: {HORDE_MAX_INTERVAL} ticks divided by the nearby count, so a lone
-# zombie groans every {HORDE_MAX_INTERVAL / 20:.1f}s and {HORDE_MAX_INTERVAL // HORDE_MIN_INTERVAL}+ zombies sit at the {HORDE_MIN_INTERVAL}-tick floor.
+# zombie groans every {HORDE_MAX_INTERVAL / 20:.1f}s and {-(-HORDE_MAX_INTERVAL // HORDE_MIN_INTERVAL)}+ zombies sit at the {HORDE_MIN_INTERVAL}-tick ({HORDE_MIN_INTERVAL / 20:.1f}s) floor.
 # Density then shows up as volume/reach rather than as rate, which is the point of the floor.
 scoreboard players operation #horde_next {ns}.data = #{HORDE_MAX_INTERVAL} {ns}.data
 scoreboard players operation #horde_next {ns}.data /= #horde_count {ns}.data
@@ -113,6 +139,14 @@ scoreboard players operation @s {ns}.zb.horde_cd = #horde_next {ns}.data
 
 	# @s = the player; execution position = a nearby zombie, so the sound is directional.
 	write_versioned_function("zombies/vocals/horde_ambient", f"$playsound {ns}:{VOCAL_AMBIENT} hostile @s ~ ~ ~ $(vol) $(pitch)")
+
+	## @s = the player; execution position = a zombie directly behind them.
+	## Fixed quiet volume, no horde scaling and no pitch shift: this channel is one specific zombie at
+	## your back, not a read on how many there are. `return 1` is what the caller's `store success` reads.
+	write_versioned_function("zombies/vocals/horde_behind", f"""
+playsound {ns}:{VOCAL_BEHIND} hostile @s ~ ~ ~ {BEHIND_VOLUME} 1.0
+return 1
+""")
 
 	## @s = the player; execution position = a nearby sprinting zombie.
 	## `return 1` is what the caller's `store success` reads, so the lockout is only taken when a
@@ -131,13 +165,13 @@ scoreboard players add @s {ns}.zb.vox_attack {ATTACK_LOCKOUT}
 execute at @n[tag={ns}.zombie_round,tag=!{ns}.zb_dog,distance=..{ATTACK_REACH}] run playsound {ns}:{VOCAL_ATTACK} hostile @s ~ ~ ~ 1.0 1.0
 """)
 
-	## Death groan. @s = the zombie on its first tick after dying, execution position = the zombie
-	## (dispatched from death_watch_tick on the cached DeathTime score).
+	## Death groan. @s = the zombie on the tick its Health reached 0, execution position = the zombie
+	## (dispatched from death_watch_tick).
 	## The budget is per-player rather than per-death, so one kill always sounds while a Nuke thins out.
 	write_versioned_function("zombies/vocals/death", f"""
-# Consume the trigger value so a zombie whose death-watch marker got separated can't loop the groan:
-# the sweep overwrites this every tick for anything still mounted, so this only matters when it doesn't.
-scoreboard players set @s {ns}.zb.death_time 0
+# Health stays 0 for the whole death animation, so this tag is what makes the groan fire exactly once.
+# It also drops this zombie out of the Health read in death_watch_tick for the rest of its existence.
+tag @s add {ns}.zb_dying
 
 execute as @a[scores={{{ns}.zb.in_game=1}},gamemode=!spectator,distance=..{VOCAL_RANGE}] unless score @s {ns}.zb.vox_death > #total_tick {ns}.data run function {ns}:v{version}/zombies/vocals/death_for
 """)

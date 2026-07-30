@@ -865,11 +865,15 @@
 	},
 	"zombies/entity/ambient": {
 		"subtitle": "zombies/entity/ambient",
-		"sounds": ["mgs:zombies/entity/ambient1","mgs:zombies/entity/ambient10","mgs:zombies/entity/ambient11","mgs:zombies/entity/ambient12","mgs:zombies/entity/ambient2","mgs:zombies/entity/ambient3","mgs:zombies/entity/ambient4","mgs:zombies/entity/ambient5","mgs:zombies/entity/ambient6","mgs:zombies/entity/ambient7","mgs:zombies/entity/ambient8","mgs:zombies/entity/ambient9"]
+		"sounds": ["mgs:zombies/entity/ambient1","mgs:zombies/entity/ambient2","mgs:zombies/entity/ambient3","mgs:zombies/entity/ambient4","mgs:zombies/entity/ambient5","mgs:zombies/entity/ambient6"]
 	},
 	"zombies/entity/attack": {
 		"subtitle": "zombies/entity/attack",
 		"sounds": ["mgs:zombies/entity/attack1","mgs:zombies/entity/attack10","mgs:zombies/entity/attack11","mgs:zombies/entity/attack12","mgs:zombies/entity/attack13","mgs:zombies/entity/attack14","mgs:zombies/entity/attack15","mgs:zombies/entity/attack16","mgs:zombies/entity/attack2","mgs:zombies/entity/attack3","mgs:zombies/entity/attack4","mgs:zombies/entity/attack5","mgs:zombies/entity/attack6","mgs:zombies/entity/attack7","mgs:zombies/entity/attack8","mgs:zombies/entity/attack9"]
+	},
+	"zombies/entity/behind": {
+		"subtitle": "zombies/entity/behind",
+		"sounds": ["mgs:zombies/entity/behind1","mgs:zombies/entity/behind2","mgs:zombies/entity/behind3","mgs:zombies/entity/behind4","mgs:zombies/entity/behind5","mgs:zombies/entity/behind6"]
 	},
 	"zombies/entity/crawler_ambient": {
 		"subtitle": "zombies/entity/crawler_ambient",
