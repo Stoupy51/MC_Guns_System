@@ -22,6 +22,10 @@ STAM_DRAIN: int = 2
 """ Per tick while sprinting -> 5s, or 10s with Stamin-Up. """
 STAM_REGEN: int = 2
 """ Per tick while resting -> 5s to refill. """
+SWIM_DRAIN_FACTOR: int = 5
+""" Swimming drains this many times slower than sprinting on land, so crossing water is a traversal rather
+than a sprint you cannot afford. Applied by draining on one tick in SWIM_DRAIN_FACTOR instead of by
+shrinking the step: STAM_DRAIN is only 2, so dividing it would floor to 0 and never drain at all. """
 REST_DELAY: int = 20
 """ Ticks after the last sprint before regen starts. """
 RECOVER_AT: int = 80
@@ -46,6 +50,9 @@ scoreboard objectives add {ns}.stam_bonus dummy
 scoreboard objectives add {ns}.stam_rest dummy
 scoreboard objectives add {ns}.stam_out dummy
 scoreboard objectives add {ns}.stam_seen dummy
+
+# Counts swimming ticks so the drain can be applied on one tick in SWIM_DRAIN_FACTOR (see stamina_swim_drain)
+scoreboard objectives add {ns}.stam_swim dummy
 
 # Set while refill pulses may have left invisible saturation; only then does the at-target
 # branch pay the foodSaturationLevel NBT read to burn it off (see stamina_bar)
@@ -79,8 +86,14 @@ scoreboard players operation @s {ns}.stam < @s {ns}.stam_max
 scoreboard players set #stam_sprinting {ns}.data 0
 execute if predicate {ns}:v{version}/is_sprinting run scoreboard players set #stam_sprinting {ns}.data 1
 
+# Swimming is charged at 1/{SWIM_DRAIN_FACTOR} of the sprint rate. The swim pose only exists while sprint is held, so
+# without this a swim was billed as a full sprint and the bar emptied before the player crossed any water.
+scoreboard players set #stam_swimming {ns}.data 0
+execute if predicate {ns}:v{version}/is_swimming run scoreboard players set #stam_swimming {ns}.data 1
+
 # Sprinting → drain stamina and (re)arm the rest delay before regen can start
-execute if score #stam_sprinting {ns}.data matches 1 run scoreboard players remove @s {ns}.stam {STAM_DRAIN}
+execute if score #stam_sprinting {ns}.data matches 1 if score #stam_swimming {ns}.data matches 0 run scoreboard players remove @s {ns}.stam {STAM_DRAIN}
+execute if score #stam_sprinting {ns}.data matches 1 if score #stam_swimming {ns}.data matches 1 run function {ns}:v{version}/player/stamina_swim_drain
 execute if score #stam_sprinting {ns}.data matches 1 run scoreboard players set @s {ns}.stam_rest {REST_DELAY}
 
 # Resting → count down the delay, then regen stamina
@@ -107,12 +120,22 @@ execute if score @s {ns}.stam_out matches 1 run scoreboard players set #stam_t {
 function {ns}:v{version}/player/stamina_bar
 """)
 
+	# Swimming drain: tick a counter and only pay STAM_DRAIN once it wraps, giving 1/SWIM_DRAIN_FACTOR of the
+	# sprint rate. The counter is per player and deliberately NOT reset when the player leaves the water, so
+	# alternating swim/land strokes cannot be used to dodge the drain entirely.
+	write_versioned_function("player/stamina_swim_drain", f"""
+scoreboard players add @s {ns}.stam_swim 1
+execute if score @s {ns}.stam_swim matches {SWIM_DRAIN_FACTOR}.. run scoreboard players set @s {ns}.stam_swim 0
+execute if score @s {ns}.stam_swim matches 0 run scoreboard players remove @s {ns}.stam {STAM_DRAIN}
+""")
+
 	write_versioned_function("player/stamina_init", f"""
 scoreboard players set @s {ns}.stam_max {STAM_MAX}
 scoreboard players operation @s {ns}.stam_max += @s {ns}.stam_bonus
 scoreboard players operation @s {ns}.stam = @s {ns}.stam_max
 scoreboard players set @s {ns}.stam_out 0
 scoreboard players set @s {ns}.stam_rest 0
+scoreboard players set @s {ns}.stam_swim 0
 scoreboard players set @s {ns}.stam_seen 1
 
 # Assume leftover invisible saturation from before the game (e.g. the game-stop refill pin),

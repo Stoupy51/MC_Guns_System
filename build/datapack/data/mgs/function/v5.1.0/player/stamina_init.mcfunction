@@ -11,6 +11,7 @@ scoreboard players operation @s mgs.stam_max += @s mgs.stam_bonus
 scoreboard players operation @s mgs.stam = @s mgs.stam_max
 scoreboard players set @s mgs.stam_out 0
 scoreboard players set @s mgs.stam_rest 0
+scoreboard players set @s mgs.stam_swim 0
 scoreboard players set @s mgs.stam_seen 1
 
 # Assume leftover invisible saturation from before the game (e.g. the game-stop refill pin),

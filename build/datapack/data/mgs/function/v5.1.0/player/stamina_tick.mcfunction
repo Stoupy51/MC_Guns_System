@@ -21,8 +21,14 @@ scoreboard players operation @s mgs.stam < @s mgs.stam_max
 scoreboard players set #stam_sprinting mgs.data 0
 execute if predicate mgs:v5.1.0/is_sprinting run scoreboard players set #stam_sprinting mgs.data 1
 
+# Swimming is charged at 1/5 of the sprint rate. The swim pose only exists while sprint is held, so
+# without this a swim was billed as a full sprint and the bar emptied before the player crossed any water.
+scoreboard players set #stam_swimming mgs.data 0
+execute if predicate mgs:v5.1.0/is_swimming run scoreboard players set #stam_swimming mgs.data 1
+
 # Sprinting → drain stamina and (re)arm the rest delay before regen can start
-execute if score #stam_sprinting mgs.data matches 1 run scoreboard players remove @s mgs.stam 2
+execute if score #stam_sprinting mgs.data matches 1 if score #stam_swimming mgs.data matches 0 run scoreboard players remove @s mgs.stam 2
+execute if score #stam_sprinting mgs.data matches 1 if score #stam_swimming mgs.data matches 1 run function mgs:v5.1.0/player/stamina_swim_drain
 execute if score #stam_sprinting mgs.data matches 1 run scoreboard players set @s mgs.stam_rest 20
 
 # Resting → count down the delay, then regen stamina

@@ -209,6 +209,7 @@ execute unless score @s {ns}.special.infinite_ammo matches 1.. if score @s {ns}.
 	Mem.ctx.data[ns].predicates[f"v{version}/is_on_ground"] = json_enc(Predicate({"condition":"minecraft:entity_properties","entity":"this","predicate":{"movement":{"vertical_speed":{"max":0.1}}}}))
 	Mem.ctx.data[ns].predicates[f"v{version}/is_sprinting"] = json_enc(Predicate({"condition":"minecraft:entity_properties","entity":"this","predicate":{"flags":{"is_sprinting":True}}}))
 	Mem.ctx.data[ns].predicates[f"v{version}/is_sneaking"] = json_enc(Predicate({"condition":"minecraft:entity_properties","entity":"this","predicate":{"flags":{"is_sneaking":True}}}))
+	Mem.ctx.data[ns].predicates[f"v{version}/is_swimming"] = json_enc(Predicate({"condition":"minecraft:entity_properties","entity":"this","predicate":{"flags":{"is_swimming":True}}}))
 	Mem.ctx.data[ns].predicates[f"v{version}/is_moving"] = json_enc(Predicate({"condition":"minecraft:entity_properties","entity":"this","predicate":{"movement":{"horizontal_speed":{"min":0.1}}}}))
 
 	# Update weapon stats item modifier
