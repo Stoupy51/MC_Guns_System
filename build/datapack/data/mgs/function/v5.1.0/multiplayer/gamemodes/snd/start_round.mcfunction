@@ -41,3 +41,7 @@ execute as @a[scores={mgs.mp.team=2}] at @s run function mgs:v5.1.0/multiplayer/
 tag @e[tag=mgs.spawn_used] remove mgs.spawn_used
 execute as @a[scores={mgs.mp.team=1..2}] at @s run function mgs:v5.1.0/multiplayer/apply_class
 
+# Open the round LAST, once everyone is alive-tagged and placed. Until this is 1 the tick judges nothing,
+# so the gap between rounds can never be mistaken for a team wipe.
+scoreboard players set #snd_round_active mgs.data 1
+

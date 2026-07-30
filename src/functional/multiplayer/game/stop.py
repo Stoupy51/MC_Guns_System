@@ -36,8 +36,12 @@ effect clear @a[scores={{{ns}.mp.in_game=1}}] darkness
 effect clear @a[scores={{{ns}.mp.in_game=1}}] blindness
 effect clear @a[scores={{{ns}.mp.in_game=1}}] night_vision
 gamemode adventure @a[scores={{{ns}.mp.in_game=1}},gamemode=spectator]
-kill @e[tag={ns}.gm_entity]
+
+# Mode cleanup BEFORE the gm_entity sweep: a cleanup may need its own markers to still exist in order to
+# undo world changes made from them. S&D restores its bomb sites with `execute at @e[tag=snd_obj] run
+# fill ...`, which silently did nothing while the sweep ran first, leaving the chest on the map forever.
 {gm_dispatch(ns, version, "cleanup")}
+kill @e[tag={ns}.gm_entity]
 function #{ns}:multiplayer/on_game_end
 
 {GameLifecycle.regen_disable_lines(ns)}

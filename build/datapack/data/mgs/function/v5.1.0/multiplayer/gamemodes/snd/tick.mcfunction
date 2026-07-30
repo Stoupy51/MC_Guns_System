@@ -4,6 +4,10 @@
 # @within	mgs:v5.1.0/multiplayer/game_tick
 #
 
+# Nothing to tick between rounds, and critically nothing to JUDGE: next_round clears snd_alive, so every
+# check below would read one side as wiped during the 60-tick gap before start_round.
+execute unless score #snd_round_active mgs.data matches 1 run return 0
+
 # Round timer
 scoreboard players operation #snd_round_timer mgs.data -= #tick_delta mgs.data
 
@@ -14,12 +18,20 @@ execute if score #snd_round_timer mgs.data matches ..0 if score #snd_bomb_state 
 execute if score #snd_bomb_state mgs.data matches 2 run scoreboard players operation #snd_bomb_timer mgs.data -= #tick_delta mgs.data
 execute if score #snd_bomb_state mgs.data matches 2 if score #snd_bomb_timer mgs.data matches ..0 run function mgs:v5.1.0/multiplayer/gamemodes/snd/bomb_explodes
 
+# Live countdown on the planted bomb. A score component would be wrong here: a text_display resolves its
+# components when the entity data is sent, not continuously, so it would freeze at the planted value.
+# Rewriting only when the whole second changes keeps that to one NBT write a second.
+execute if score #snd_bomb_state mgs.data matches 2 run scoreboard players operation #snd_bomb_sec mgs.data = #snd_bomb_timer mgs.data
+execute if score #snd_bomb_state mgs.data matches 2 run scoreboard players operation #snd_bomb_sec mgs.data /= #20 mgs.data
+execute if score #snd_bomb_state mgs.data matches 2 unless score #snd_bomb_sec mgs.data = #snd_bomb_sec_shown mgs.data run function mgs:v5.1.0/multiplayer/gamemodes/snd/update_bomb_hud
+
 # Check if all attackers are dead (defenders win)
 execute store result score #snd_atk_alive mgs.data if entity @a[tag=mgs.snd_alive,scores={mgs.mp.team=1}]
 execute if score #snd_attackers mgs.data matches 2 store result score #snd_atk_alive mgs.data if entity @a[tag=mgs.snd_alive,scores={mgs.mp.team=2}]
 execute if score #snd_atk_alive mgs.data matches 0 if score #snd_bomb_state mgs.data matches 0 run function mgs:v5.1.0/multiplayer/gamemodes/snd/defenders_win
 
-# Check if all defenders are dead and bomb not planted (attackers win)
+# Check if all defenders are dead (attackers win). Deliberately NOT gated on the bomb state: wiping the
+# defenders wins the round outright, planted or not, because nobody is left who could ever defuse.
 execute store result score #snd_def_alive mgs.data if entity @a[tag=mgs.snd_alive,scores={mgs.mp.team=2}]
 execute if score #snd_attackers mgs.data matches 2 store result score #snd_def_alive mgs.data if entity @a[tag=mgs.snd_alive,scores={mgs.mp.team=1}]
 execute if score #snd_def_alive mgs.data matches 0 run function mgs:v5.1.0/multiplayer/gamemodes/snd/attackers_win

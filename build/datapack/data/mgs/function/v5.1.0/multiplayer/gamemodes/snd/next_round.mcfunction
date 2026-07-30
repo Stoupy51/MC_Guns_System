@@ -5,14 +5,17 @@
 #			mgs:v5.1.0/multiplayer/gamemodes/snd/defenders_win
 #
 
-# Clean round state
+# Clean round state. #snd_round_active was already cleared by the win function that got us here, which is
+# what stops the tick from judging the cleared snd_alive tags below as a wipe.
 kill @e[tag=mgs.snd_bomb]
+kill @e[tag=mgs.snd_bomb_vis]
+kill @e[tag=mgs.snd_bomb_hud]
 tag @a remove mgs.snd_alive
 
 # Check if either team won enough rounds (best of max_rounds) — stop here on game win
 scoreboard players set #snd_win_threshold mgs.data 4
-execute if score #snd_red_wins mgs.data >= #snd_win_threshold mgs.data run return run function mgs:v5.1.0/multiplayer/team_wins {team:"Red"}
-execute if score #snd_blue_wins mgs.data >= #snd_win_threshold mgs.data run return run function mgs:v5.1.0/multiplayer/team_wins {team:"Blue"}
+execute if score #red mgs.mp.team >= #snd_win_threshold mgs.data run return run function mgs:v5.1.0/multiplayer/team_wins {team:"Red"}
+execute if score #blue mgs.mp.team >= #snd_win_threshold mgs.data run return run function mgs:v5.1.0/multiplayer/team_wins {team:"Blue"}
 
 # Swap sides at halftime (after round 3)
 scoreboard players add #snd_round mgs.data 1
