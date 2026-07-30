@@ -909,7 +909,7 @@
 	},
 	"zombies/entity/sprint": {
 		"subtitle": "zombies/entity/sprint",
-		"sounds": ["mgs:zombies/entity/sprint1","mgs:zombies/entity/sprint2","mgs:zombies/entity/sprint3","mgs:zombies/entity/sprint4","mgs:zombies/entity/sprint5","mgs:zombies/entity/sprint6","mgs:zombies/entity/sprint7"]
+		"sounds": ["mgs:zombies/entity/sprint1","mgs:zombies/entity/sprint10","mgs:zombies/entity/sprint11","mgs:zombies/entity/sprint12","mgs:zombies/entity/sprint13","mgs:zombies/entity/sprint14","mgs:zombies/entity/sprint2","mgs:zombies/entity/sprint3","mgs:zombies/entity/sprint4","mgs:zombies/entity/sprint5","mgs:zombies/entity/sprint6","mgs:zombies/entity/sprint7","mgs:zombies/entity/sprint8","mgs:zombies/entity/sprint9"]
 	},
 	"zombies/game_over": {
 		"subtitle": "zombies/game_over",

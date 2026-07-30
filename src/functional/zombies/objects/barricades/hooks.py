@@ -68,8 +68,9 @@ tag @a[tag={ns}.barricade_repairing] remove {ns}.barricade_repairing
 # Re-enable the block (collision/visibility)
 data modify entity @s block_state set from entity @s data.block_enabled
 
-# Visual feedback
+# Visual feedback. One slam per barricade, positional, so Carpenter reads as the whole map being boarded
+# up at once — that burst IS the effect. No budget here: the power-up is rare and fires a single tick.
 particle minecraft:happy_villager ~ ~ ~ 0.5 0.5 0.5 0.05 10 normal
-playsound minecraft:block.wood.place block @a[distance=..32] ~ ~ ~ 1.0 1.0
+playsound {ns}:zombies/barricade/slam block @a[distance=..32] ~ ~ ~ 1.0 1.0
 """)
 

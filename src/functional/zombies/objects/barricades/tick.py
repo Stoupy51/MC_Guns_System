@@ -3,6 +3,24 @@
 # Imports
 from stewbeet import Mem, write_versioned_function
 
+# Constants
+SOUND_BANG: str = "zombies/barricade/bang"
+""" 5 variants, 20-34 ticks: a zombie pounding the boards while it tears them off. """
+SOUND_SNAP: str = "zombies/barricade/snap"
+""" 6 variants, 8-26 ticks: a board coming loose. Punctuates the teardown. """
+SOUND_SLAM: str = "zombies/barricade/slam"
+""" 6 variants, 36-54 ticks: a board driven back into place. Punctuates the repair. """
+SOUND_REPAIR: str = "zombies/barricade/repair_no_cash"
+""" 67 ticks of sustained hammering, covering a whole rebuild. The `repair` variant next to it is the
+same take with Treyarch's points ka-ching left in; we award points ourselves, so use the clean one. """
+
+BANG_INTERVAL: int = 35
+""" Ticks between pounding sounds for one player. Longer than the longest bang (34) so they never
+overlap, and short enough that the 40-tick teardown gets one or two of them. """
+REPAIR_INTERVAL: int = 80
+""" Ticks before a player can hear the repair hammering again. Longer than the clip (67) so tapping
+sneak to restart the repair cannot stack copies of it. """
+
 
 # Functions
 def write_barricade_tick() -> None:
@@ -70,6 +88,19 @@ execute if score #barricade_remover_valid {ns}.data matches 0 run function {ns}:
 # @s = removing zombie, at zombie position (via at @s in handle_removing selector)
 scoreboard players set #barricade_remover_valid {ns}.data 1
 particle minecraft:large_smoke ~ ~1 ~ 0.3 0.3 0.3 0.02 1
+
+# Pounding on the boards. This runs EVERY tick of the 40-tick teardown, so it needs a budget or it is a
+# machine gun of wood hits. Budgeted per player rather than per barricade: several players can stand at
+# the same window, and each should hear it at a sane rate. `as` does not move the execution position, so
+# ~ ~ ~ below is still the zombie.
+execute as @a[scores={{{ns}.zb.in_game=1}},gamemode=!spectator,distance=..32] unless score @s {ns}.zb.barricade.bang_at > #total_tick {ns}.data run function {ns}:v{version}/zombies/barricades/bang_for
+""")
+
+	## @s = a listening player; execution position = the zombie tearing the boards off.
+	write_versioned_function("zombies/barricades/bang_for", f"""
+scoreboard players operation @s {ns}.zb.barricade.bang_at = #total_tick {ns}.data
+scoreboard players add @s {ns}.zb.barricade.bang_at {BANG_INTERVAL}
+playsound {ns}:{SOUND_BANG} block @s ~ ~ ~ 1.0 1.0
 """)
 
 	write_versioned_function("zombies/barricades/cancel_remove", f"""
@@ -92,7 +123,7 @@ data modify entity @s block_state set from entity @s data.block_disabled
 # Sound + particles
 particle minecraft:large_smoke ~ ~0.5 ~ 0.4 0.4 0.4 0.02 6
 particle minecraft:crit ~ ~0.5 ~ 0.4 0.4 0.4 0.05 8
-playsound minecraft:entity.zombie.break_wooden_door block @a[distance=..32] ~ ~ ~ 1.0 1.0
+playsound {ns}:{SOUND_SNAP} block @a[distance=..32] ~ ~ ~ 1.0 1.0
 """)
 
 	## Destroyed barricade tick
@@ -119,10 +150,21 @@ execute if score #barricade_found_repairer {ns}.data matches 1 run scoreboard pl
 """)
 
 	write_versioned_function("zombies/barricades/start_repairing_player", f"""
-# @s = player assigned as repairer
+# @s = player assigned as repairer, execution position = the barricade (find_repairer runs at it)
 tag @s add {ns}.barricade_repairing
 scoreboard players operation @s {ns}.zb.barricade.repairing_id = #barricade_id {ns}.data
 scoreboard players set #barricade_found_repairer {ns}.data 1
+
+# Hammering, started once here rather than ticked from on_repairer_valid: the clip already runs longer
+# than the 30-tick repair, so one play covers the whole action.
+execute as @a[scores={{{ns}.zb.in_game=1}},gamemode=!spectator,distance=..32] unless score @s {ns}.zb.barricade.rep_at > #total_tick {ns}.data run function {ns}:v{version}/zombies/barricades/repair_sound_for
+""")
+
+	## @s = a listening player; execution position = the barricade being repaired.
+	write_versioned_function("zombies/barricades/repair_sound_for", f"""
+scoreboard players operation @s {ns}.zb.barricade.rep_at = #total_tick {ns}.data
+scoreboard players add @s {ns}.zb.barricade.rep_at {REPAIR_INTERVAL}
+playsound {ns}:{SOUND_REPAIR} block @s ~ ~ ~ 1.0 1.0
 """)
 
 	write_versioned_function("zombies/barricades/handle_repair", f"""
@@ -168,7 +210,7 @@ execute as @e[tag={ns}.barricade_removing] if score @s {ns}.zb.barricade.removin
 
 # Sound + particles
 particle minecraft:happy_villager ~ ~1 ~ 0.5 0.5 0.5 0 10
-playsound minecraft:block.anvil.use block @a[distance=..32] ~ ~ ~ 1.0 1.5
+playsound {ns}:{SOUND_SLAM} block @a[distance=..32] ~ ~ ~ 1.0 1.0
 """)
 
 	write_versioned_function("zombies/barricades/on_repair_complete_player", f"""
