@@ -1,13 +1,46 @@
-""" Search & Destroy: round-based bomb plant and defuse, no respawns. """
+""" Search & Destroy: round-based bomb carry, plant and defuse, no respawns.
+
+Modelled on Call of Duty's Search & Destroy, NOT on Counter-Strike's defusal. The difference that shapes
+everything is the bomb: CoD spawns a single bomb in front of the attacking team, one attacker has to pick
+it up and carry it, and it drops where they die for another attacker to retrieve. Only the carrier can
+plant, and only at one of the marked sites. Counter-Strike's economy, its plant-anywhere-in-a-zone rule
+and its per-player bomb spawns are all deliberately absent.
+"""
 # ruff: noqa: E501
 # Imports
 from ...helpers import MGS_TAG
 from .base import GameModeVariant
 
+# Constants
+ROUND_TICKS: int = 3000
+""" 2:30 to take the bomb across the map and plant it, the classic CoD round length.
+Longer than a Counter-Strike round because the attackers start by walking to the bomb, not by buying. """
+BOMB_FUSE_TICKS: int = 900
+""" 45s from plant to detonation ([CoD Wiki](https://callofduty.fandom.com/wiki/Search_and_Destroy)),
+matching Black Ops 2's competitive setting. """
+PLANT_TICKS: int = 100
+""" 5s to plant, the Black Ops 2 competitive value. """
+DEFUSE_TICKS: int = 150
+""" 7.5s to defuse, the Black Ops 2 competitive value: deliberately longer than the plant, so a defuse
+has to be covered rather than stolen. """
+
+PICKUP_RANGE: float = 2.0
+""" Blocks from the loose bomb that pick it up. No channel and no key press — in CoD you collect it by
+walking over it. """
+SITE_RANGE: float = 3.0
+""" Blocks from a site marker where the carrier can plant, and from the planted bomb where it can be defused. """
+
+WIN_ROUNDS: int = 4
+""" Round wins needed to take the match. """
+MAX_ROUNDS: int = 6
+""" Rounds in a full match, so WIN_ROUNDS is a majority of them. """
+HALFTIME_ROUND: int = 4
+""" The round the sides swap on, i.e. after MAX_ROUNDS // 2 have been played. """
+
 
 # Classes
 class SearchAndDestroy(GameModeVariant):
-	""" Search & Destroy: round-based; attackers plant a bomb, defenders defuse it.
+	""" Search & Destroy: round-based; attackers carry a bomb to a site, defenders defuse it.
 	No respawns within a round; best-of-six with a side swap at halftime. """
 
 	key = "snd"
@@ -18,7 +51,7 @@ class SearchAndDestroy(GameModeVariant):
 
 		## S&D Setup
 		self.sub("setup", f"""
-tellraw @a [{MGS_TAG},{{"text":"Search & Destroy! Attackers plant, defenders defuse!","color":"yellow"}}]
+tellraw @a [{MGS_TAG},{{"text":"Search & Destroy! Carry the bomb to a site, or defend both!","color":"yellow"}}]
 
 # Store base coordinates for offset
 function {ns}:v{version}/shared/load_base_coordinates {{mode:"multiplayer"}}
@@ -28,9 +61,9 @@ function {ns}:v{version}/shared/load_base_coordinates {{mode:"multiplayer"}}
 # an empty sidebar all match and then announced a winner with "Red: 0 vs Blue: 0". multiplayer/start
 # already zeroes both, so they are only read from here on.
 scoreboard players set #snd_round {ns}.data 1
-scoreboard players set #snd_max_rounds {ns}.data 6
+scoreboard players set #snd_max_rounds {ns}.data {MAX_ROUNDS}
 
-# Bomb state: 0=not planted, 2=planted (bomb_timer = explosion countdown)
+# Bomb state: 0=loose or carried, 2=planted (bomb_timer = explosion countdown)
 # Plant/defuse channel progress are tracked separately so the countdown is never clobbered
 scoreboard players set #snd_bomb_state {ns}.data 0
 scoreboard players set #snd_bomb_timer {ns}.data 0
@@ -41,8 +74,8 @@ scoreboard players set #snd_defuse_progress {ns}.data 0
 # tick's "one whole side is dead" checks read as a wipe. See next_round.
 scoreboard players set #snd_round_active {ns}.data 0
 
-# Round timer (90 seconds = 1800 ticks)
-scoreboard players set #snd_round_timer {ns}.data 1800
+# Round timer
+scoreboard players set #snd_round_timer {ns}.data {ROUND_TICKS}
 
 # Summon objective markers (relative → absolute)
 scoreboard players set #snd_site_idx {ns}.data 0
@@ -108,7 +141,8 @@ execute if data storage {ns}:temp _snd_iter[0] run function {ns}:v{version}/mult
 """)
 
 		## The floating letter is what domination has and S&D did not: without it the sites are an unmarked
-		## chest, so neither side can tell where the objective is without being told out of band.
+		## chest, so neither side can tell where the objective is without being told out of band. The letter
+		## also names the site in chat when the bomb goes down there, which is how defenders rotate.
 		self.sub("summon_obj_at", f"""
 $summon minecraft:marker $(x) $(y) $(z) {{Tags:["{ns}.snd_obj","{ns}.gm_entity","{ns}.snd_site_$(label)"]}}
 $summon minecraft:text_display $(x) $(y) $(z) {{Tags:["{ns}.snd_label","{ns}.gm_entity"],billboard:"vertical",text:[{{"text":"💣 ","color":"gold"}},{{"text":"$(label)","color":"yellow","bold":true}}],transformation:{{translation:[0.0f,2.0f,0.0f],left_rotation:[0.0f,0.0f,0.0f,1.0f],scale:[3.0f,3.0f,3.0f],right_rotation:[0.0f,0.0f,0.0f,1.0f]}},shadow:true,see_through:true}}
@@ -137,7 +171,7 @@ scoreboard players set #snd_plant_progress {ns}.data 0
 scoreboard players set #snd_defuse_progress {ns}.data 0
 
 # Reset round timer
-scoreboard players set #snd_round_timer {ns}.data 1800
+scoreboard players set #snd_round_timer {ns}.data {ROUND_TICKS}
 
 # Restore players who died last round (S&D deaths skip the respawn countdown)
 execute as @a[scores={{{ns}.mp.team=1..2}},gamemode=spectator] run spectate @s
@@ -152,9 +186,31 @@ execute as @a[scores={{{ns}.mp.team=2}}] at @s run function {ns}:v{version}/mult
 tag @e[tag={ns}.spawn_used] remove {ns}.spawn_used
 execute as @a[scores={{{ns}.mp.team=1..2}}] at @s run function {ns}:v{version}/multiplayer/apply_class
 
+# Drop a fresh bomb in front of the attacking team. There is exactly ONE bomb per round and nobody starts
+# holding it, so the attackers' first job is to collect it — that walk is what gives the defenders time
+# to set up, and it is the main thing that separates this from a Counter-Strike round.
+tag @a remove {ns}.snd_carrier
+kill @e[tag={ns}.snd_loose]
+kill @e[tag={ns}.snd_carrier_label]
+execute if score #snd_attackers {ns}.data matches 1 at @e[tag={ns}.spawn_red,limit=1] run function {ns}:v{version}/multiplayer/gamemodes/snd/spawn_loose_bomb
+execute if score #snd_attackers {ns}.data matches 2 at @e[tag={ns}.spawn_blue,limit=1] run function {ns}:v{version}/multiplayer/gamemodes/snd/spawn_loose_bomb
+
+# Safety net: a map defining only general spawns would otherwise open the round with no bomb anywhere,
+# which the attackers could never win. Any spawn point is better than none.
+execute unless entity @e[tag={ns}.snd_loose_at] at @e[tag={ns}.spawn_point,limit=1] run function {ns}:v{version}/multiplayer/gamemodes/snd/spawn_loose_bomb
+
 # Open the round LAST, once everyone is alive-tagged and placed. Until this is 1 the tick judges nothing,
 # so the gap between rounds can never be mistaken for a team wipe.
 scoreboard players set #snd_round_active {ns}.data 1
+""")
+
+		## S&D: put the bomb on the ground at the current position, free for any attacker to collect.
+		## Used both for the round-start bomb and for the drop when a carrier is killed, so a retrieved bomb
+		## always looks and behaves exactly like the original one.
+		self.sub("spawn_loose_bomb", f"""
+summon minecraft:marker ~ ~ ~ {{Tags:["{ns}.snd_loose","{ns}.snd_loose_at","{ns}.gm_entity"]}}
+summon minecraft:block_display ~ ~ ~ {{Tags:["{ns}.snd_loose","{ns}.gm_entity"],block_state:{{Name:"minecraft:tnt"}},transformation:{{translation:[-0.25f,0.0f,-0.25f],left_rotation:[0.0f,0.0f,0.0f,1.0f],scale:[0.5f,0.5f,0.5f],right_rotation:[0.0f,0.0f,0.0f,1.0f]}}}}
+summon minecraft:text_display ~ ~ ~ {{Tags:["{ns}.snd_loose","{ns}.gm_entity"],billboard:"vertical",text:[{{"text":"💣 BOMB","color":"gold","bold":true}}],transformation:{{translation:[0.0f,1.1f,0.0f],left_rotation:[0.0f,0.0f,0.0f,1.0f],scale:[1.5f,1.5f,1.5f],right_rotation:[0.0f,0.0f,0.0f,1.0f]}},shadow:true,see_through:true}}
 """)
 
 		## S&D Tick
@@ -169,7 +225,7 @@ scoreboard players operation #snd_round_timer {ns}.data -= #tick_delta {ns}.data
 # If timer runs out before the bomb is planted, defenders win
 execute if score #snd_round_timer {ns}.data matches ..0 if score #snd_bomb_state {ns}.data matches 0 run function {ns}:v{version}/multiplayer/gamemodes/snd/defenders_win
 
-# If bomb planted, tick bomb timer (45 seconds = 900 ticks)
+# If bomb planted, tick bomb timer
 execute if score #snd_bomb_state {ns}.data matches 2 run scoreboard players operation #snd_bomb_timer {ns}.data -= #tick_delta {ns}.data
 execute if score #snd_bomb_state {ns}.data matches 2 if score #snd_bomb_timer {ns}.data matches ..0 run function {ns}:v{version}/multiplayer/gamemodes/snd/bomb_explodes
 
@@ -180,7 +236,8 @@ execute if score #snd_bomb_state {ns}.data matches 2 run scoreboard players oper
 execute if score #snd_bomb_state {ns}.data matches 2 run scoreboard players operation #snd_bomb_sec {ns}.data /= #20 {ns}.data
 execute if score #snd_bomb_state {ns}.data matches 2 unless score #snd_bomb_sec {ns}.data = #snd_bomb_sec_shown {ns}.data run function {ns}:v{version}/multiplayer/gamemodes/snd/update_bomb_hud
 
-# Check if all attackers are dead (defenders win)
+# Check if all attackers are dead (defenders win). Only BEFORE the plant: once the bomb is down, wiping
+# the attackers is not enough on its own — someone still has to walk up and defuse it.
 execute store result score #snd_atk_alive {ns}.data if entity @a[tag={ns}.snd_alive,scores={{{ns}.mp.team=1}}]
 execute if score #snd_attackers {ns}.data matches 2 store result score #snd_atk_alive {ns}.data if entity @a[tag={ns}.snd_alive,scores={{{ns}.mp.team=2}}]
 execute if score #snd_atk_alive {ns}.data matches 0 if score #snd_bomb_state {ns}.data matches 0 run function {ns}:v{version}/multiplayer/gamemodes/snd/defenders_win
@@ -194,50 +251,95 @@ execute if score #snd_def_alive {ns}.data matches 0 run function {ns}:v{version}
 # Particles at objectives
 execute at @e[tag={ns}.snd_obj] run particle dust{{color:[1.0,0.6,0.0],scale:1.0}} ~ ~1 ~ 1.0 0.5 1.0 0 5
 
-# Check planting (attacker near objective and sneaking); progress resets if nobody is channeling
+# Keep the carrier's bomb marker on their back, and remind them they are the one holding it.
+# see_through is false on that label so it does NOT wallhack the carrier to the defenders: in CoD you spot
+# the bomb on their model when you can already see them, you are not handed their position.
+execute as @a[tag={ns}.snd_carrier] at @s run tp @e[tag={ns}.snd_carrier_label,limit=1] ~ ~2.2 ~
+title @a[tag={ns}.snd_carrier] actionbar [{{"text":"💣 You have the bomb — plant at a site","color":"gold"}}]
+
+# Loose bomb: any living attacker who walks over it collects it. No channel, no keypress.
+execute if score #snd_bomb_state {ns}.data matches 0 unless entity @a[tag={ns}.snd_carrier] as @a[tag={ns}.snd_alive,gamemode=!spectator] at @s if entity @e[tag={ns}.snd_loose_at,distance=..{PICKUP_RANGE}] run function {ns}:v{version}/multiplayer/gamemodes/snd/try_pickup
+
+# Check planting (the CARRIER only, sneaking at a site); progress resets if nobody is channeling
 scoreboard players set #snd_channeling {ns}.data 0
-execute if score #snd_bomb_state {ns}.data matches 0 as @a[tag={ns}.snd_alive,predicate={ns}:v{version}/is_sneaking,gamemode=!spectator] at @s if entity @e[tag={ns}.snd_obj,distance=..3] run function {ns}:v{version}/multiplayer/gamemodes/snd/try_plant
+execute if score #snd_bomb_state {ns}.data matches 0 as @a[tag={ns}.snd_carrier,tag={ns}.snd_alive,predicate={ns}:v{version}/is_sneaking,gamemode=!spectator] at @s if entity @e[tag={ns}.snd_obj,distance=..{SITE_RANGE}] run function {ns}:v{version}/multiplayer/gamemodes/snd/try_plant
 execute if score #snd_bomb_state {ns}.data matches 0 if score #snd_channeling {ns}.data matches 0 run scoreboard players set #snd_plant_progress {ns}.data 0
 
 # Check defusing (defender near bomb and sneaking); progress resets if nobody is channeling
 scoreboard players set #snd_channeling {ns}.data 0
-execute if score #snd_bomb_state {ns}.data matches 2 as @a[tag={ns}.snd_alive,predicate={ns}:v{version}/is_sneaking,gamemode=!spectator] at @s if entity @e[tag={ns}.snd_bomb,distance=..3] run function {ns}:v{version}/multiplayer/gamemodes/snd/try_defuse
+execute if score #snd_bomb_state {ns}.data matches 2 as @a[tag={ns}.snd_alive,predicate={ns}:v{version}/is_sneaking,gamemode=!spectator] at @s if entity @e[tag={ns}.snd_bomb,distance=..{SITE_RANGE}] run function {ns}:v{version}/multiplayer/gamemodes/snd/try_defuse
 execute if score #snd_bomb_state {ns}.data matches 2 if score #snd_channeling {ns}.data matches 0 run scoreboard players set #snd_defuse_progress {ns}.data 0
 """)
 
-		## S&D: Plant attempt
-		self.sub("try_plant", f"""
-# Only attackers can plant
+		## S&D: Pickup attempt (@s = a living player standing on the loose bomb)
+		self.sub("try_pickup", f"""
+# Defenders cannot touch the bomb
 execute if score #snd_attackers {ns}.data matches 1 unless score @s {ns}.mp.team matches 1 run return fail
 execute if score #snd_attackers {ns}.data matches 2 unless score @s {ns}.mp.team matches 2 run return fail
 
-# Continue planting (5 seconds = 100 ticks)
-scoreboard players set #snd_channeling {ns}.data 1
-scoreboard players operation #snd_plant_progress {ns}.data += #tick_delta {ns}.data
-title @s actionbar [{{"text":"Planting... ","color":"gold"}},{{"score":{{"name":"#snd_plant_progress","objective":"{ns}.data"}},"color":"yellow"}},{{"text":"/100"}}]
+tag @s add {ns}.snd_carrier
+kill @e[tag={ns}.snd_loose]
 
-# If planted
-execute if score #snd_plant_progress {ns}.data matches 100.. run function {ns}:v{version}/multiplayer/gamemodes/snd/bomb_planted
+# The label rides along by teleport (an entity cannot be made to ride a player), and doubles as the record
+# of where the carrier is: if they die, the bomb drops at this label's position.
+summon minecraft:text_display ~ ~ ~ {{Tags:["{ns}.snd_carrier_label","{ns}.gm_entity"],billboard:"vertical",teleport_duration:1,text:[{{"text":"💣","color":"gold","bold":true}}],transformation:{{translation:[0.0f,0.0f,0.0f],left_rotation:[0.0f,0.0f,0.0f,1.0f],scale:[1.5f,1.5f,1.5f],right_rotation:[0.0f,0.0f,0.0f,1.0f]}},shadow:true,see_through:false}}
+
+tellraw @a [{MGS_TAG},"💣 ",{{"selector":"@s"}},{{"text":" picked up the bomb!","color":"gold"}}]
+playsound minecraft:item.armor.equip_chain player @a ~ ~ ~ 1 1.2
 """)
 
-		## S&D: Bomb planted
+		## S&D: the carrier died — put the bomb back on the ground where they fell so another attacker can
+		## retrieve it. Dropping it is what keeps a lost gunfight from silently ending the attack.
+		self.sub("drop_bomb", f"""
+tag @s remove {ns}.snd_carrier
+execute at @e[tag={ns}.snd_carrier_label,limit=1] run function {ns}:v{version}/multiplayer/gamemodes/snd/spawn_loose_bomb
+kill @e[tag={ns}.snd_carrier_label]
+tellraw @a [{MGS_TAG},"💣 ",{{"text":"The bomb carrier is down!","color":"yellow"}}]
+""")
+
+		## S&D: Plant attempt (@s = the carrier, sneaking at a site)
+		self.sub("try_plant", f"""
+# Continue planting
+scoreboard players set #snd_channeling {ns}.data 1
+scoreboard players operation #snd_plant_progress {ns}.data += #tick_delta {ns}.data
+title @s actionbar [{{"text":"Planting... ","color":"gold"}},{{"score":{{"name":"#snd_plant_progress","objective":"{ns}.data"}},"color":"yellow"}},{{"text":"/{PLANT_TICKS}"}}]
+
+# If planted
+execute if score #snd_plant_progress {ns}.data matches {PLANT_TICKS}.. run function {ns}:v{version}/multiplayer/gamemodes/snd/bomb_planted
+""")
+
+		## S&D: Bomb planted (@s = the carrier, at them)
 		self.sub("bomb_planted", f"""
 scoreboard players set #snd_bomb_state {ns}.data 2
-scoreboard players set #snd_bomb_timer {ns}.data 900
+scoreboard players set #snd_bomb_timer {ns}.data {BOMB_FUSE_TICKS}
 scoreboard players set #snd_plant_progress {ns}.data 0
 
 # Force the countdown label to be written on the very next tick
 scoreboard players set #snd_bomb_sec_shown {ns}.data -1
 
-# The marker is the logic anchor (defuse range, explosion origin) and is invisible, which is why planting
-# used to change nothing on screen. The block_display is the bomb players actually see and the text
-# display carries the countdown, so both sides can read the state of the round from across the room.
+# The bomb leaves the carrier's hands
+tag @s remove {ns}.snd_carrier
+kill @e[tag={ns}.snd_carrier_label]
+
+# Plant it ON the site, not wherever the player happened to be standing. A CoD bomb sits at the site, so
+# both teams know exactly where the defuse happens; planting at the player's feet is the Counter-Strike
+# "anywhere inside the zone" rule and made the bomb hard to find.
+execute as @e[tag={ns}.snd_obj,limit=1,sort=nearest] at @s run function {ns}:v{version}/multiplayer/gamemodes/snd/place_planted_bomb
+
+playsound minecraft:block.note_block.pling player @a ~ ~ ~ 1 0.5
+""")
+
+		## S&D: @s = the site being planted on, at it. Spawns the planted bomb and names the site in chat.
+		self.sub("place_planted_bomb", f"""
 summon minecraft:marker ~ ~ ~ {{Tags:["{ns}.snd_bomb","{ns}.gm_entity"]}}
 summon minecraft:block_display ~ ~ ~ {{Tags:["{ns}.snd_bomb_vis","{ns}.gm_entity"],block_state:{{Name:"minecraft:tnt"}},transformation:{{translation:[-0.25f,0.0f,-0.25f],left_rotation:[0.0f,0.0f,0.0f,1.0f],scale:[0.5f,0.5f,0.5f],right_rotation:[0.0f,0.0f,0.0f,1.0f]}}}}
 summon minecraft:text_display ~ ~ ~ {{Tags:["{ns}.snd_bomb_hud","{ns}.gm_entity"],billboard:"vertical",text:[{{"text":"💣 PLANTED","color":"red","bold":true}}],transformation:{{translation:[0.0f,1.1f,0.0f],left_rotation:[0.0f,0.0f,0.0f,1.0f],scale:[1.5f,1.5f,1.5f],right_rotation:[0.0f,0.0f,0.0f,1.0f]}},shadow:true,see_through:true}}
 
-tellraw @a [{MGS_TAG},"💣 ",{{"text":"BOMB PLANTED!","color":"red","bold":true}}]
-playsound minecraft:block.note_block.pling player @a ~ ~ ~ 1 0.5
+# Name the site so the defenders know which one to rotate to
+execute if entity @s[tag={ns}.snd_site_A] run tellraw @a [{MGS_TAG},"💣 ",{{"text":"BOMB PLANTED AT A!","color":"red","bold":true}}]
+execute if entity @s[tag={ns}.snd_site_B] run tellraw @a [{MGS_TAG},"💣 ",{{"text":"BOMB PLANTED AT B!","color":"red","bold":true}}]
+execute if entity @s[tag={ns}.snd_site_C] run tellraw @a [{MGS_TAG},"💣 ",{{"text":"BOMB PLANTED AT C!","color":"red","bold":true}}]
+execute if entity @s[tag={ns}.snd_site_D] run tellraw @a [{MGS_TAG},"💣 ",{{"text":"BOMB PLANTED AT D!","color":"red","bold":true}}]
 """)
 
 		## S&D: rewrite the bomb countdown label (only called when the displayed second changes)
@@ -258,12 +360,12 @@ $data modify entity @e[tag={ns}.snd_bomb_hud,limit=1] text set value [{{"text":"
 execute if score #snd_attackers {ns}.data matches 1 unless score @s {ns}.mp.team matches 2 run return fail
 execute if score #snd_attackers {ns}.data matches 2 unless score @s {ns}.mp.team matches 1 run return fail
 
-# Continue defusing (7.5 seconds = 150 ticks); the bomb countdown keeps running in parallel
+# Continue defusing; the bomb countdown keeps running in parallel
 scoreboard players set #snd_channeling {ns}.data 1
 scoreboard players operation #snd_defuse_progress {ns}.data += #tick_delta {ns}.data
-title @s actionbar [{{"text":"Defusing... ","color":"aqua"}},{{"score":{{"name":"#snd_defuse_progress","objective":"{ns}.data"}},"color":"yellow"}},{{"text":"/150"}}]
+title @s actionbar [{{"text":"Defusing... ","color":"aqua"}},{{"score":{{"name":"#snd_defuse_progress","objective":"{ns}.data"}},"color":"yellow"}},{{"text":"/{DEFUSE_TICKS}"}}]
 
-execute if score #snd_defuse_progress {ns}.data matches 150.. run function {ns}:v{version}/multiplayer/gamemodes/snd/bomb_defused
+execute if score #snd_defuse_progress {ns}.data matches {DEFUSE_TICKS}.. run function {ns}:v{version}/multiplayer/gamemodes/snd/bomb_defused
 """)
 
 		## S&D: Bomb defused → defenders win
@@ -327,19 +429,22 @@ function {ns}:v{version}/multiplayer/gamemodes/snd/next_round
 kill @e[tag={ns}.snd_bomb]
 kill @e[tag={ns}.snd_bomb_vis]
 kill @e[tag={ns}.snd_bomb_hud]
+kill @e[tag={ns}.snd_loose]
+kill @e[tag={ns}.snd_carrier_label]
+tag @a remove {ns}.snd_carrier
 tag @a remove {ns}.snd_alive
 
 # Check if either team won enough rounds (best of max_rounds) — stop here on game win
-scoreboard players set #snd_win_threshold {ns}.data 4
+scoreboard players set #snd_win_threshold {ns}.data {WIN_ROUNDS}
 execute if score #red {ns}.mp.team >= #snd_win_threshold {ns}.data run return run function {ns}:v{version}/multiplayer/team_wins {{team:"Red"}}
 execute if score #blue {ns}.mp.team >= #snd_win_threshold {ns}.data run return run function {ns}:v{version}/multiplayer/team_wins {{team:"Blue"}}
 
-# Swap sides at halftime (after round 3)
+# Swap sides at halftime
 scoreboard players add #snd_round {ns}.data 1
-execute if score #snd_round {ns}.data matches 4 if score #snd_attackers {ns}.data matches 1 run scoreboard players set #snd_attackers {ns}.data 2
-execute if score #snd_round {ns}.data matches 4 if score #snd_attackers {ns}.data matches 2 run scoreboard players set #snd_attackers {ns}.data 1
-execute if score #snd_round {ns}.data matches 4 run tellraw @a [{MGS_TAG},"⚔ ",{{"text":"Sides swapped!","color":"gold"}}]
-execute if score #snd_round {ns}.data matches 4 run playsound minecraft:block.note_block.xylophone player @a ~ ~ ~ 1 1.0
+execute if score #snd_round {ns}.data matches {HALFTIME_ROUND} if score #snd_attackers {ns}.data matches 1 run scoreboard players set #snd_attackers {ns}.data 2
+execute if score #snd_round {ns}.data matches {HALFTIME_ROUND} if score #snd_attackers {ns}.data matches 2 run scoreboard players set #snd_attackers {ns}.data 1
+execute if score #snd_round {ns}.data matches {HALFTIME_ROUND} run tellraw @a [{MGS_TAG},"⚔ ",{{"text":"Sides swapped!","color":"gold"}}]
+execute if score #snd_round {ns}.data matches {HALFTIME_ROUND} run playsound minecraft:block.note_block.xylophone player @a ~ ~ ~ 1 1.0
 # Start next round (delay 3 seconds = 60 ticks via schedule)
 schedule function {ns}:v{version}/multiplayer/gamemodes/snd/start_round 60t
 """)
@@ -352,13 +457,16 @@ scoreboard players add @s {ns}.mp.kills 1
 
 		## S&D Death Hook: Mark dead (called from on_respawn override)
 		self.sub("on_death", f"""
+# Drop the bomb before anything else, while the carrier tag and its label are still around
+execute if entity @s[tag={ns}.snd_carrier] run function {ns}:v{version}/multiplayer/gamemodes/snd/drop_bomb
+
 # Remove alive tag (no respawn in S&D)
 tag @s remove {ns}.snd_alive
 # Set to spectator mode
 gamemode spectator @s
 """)
 
-		## S&D Cleanup
+		## S&D Cleanup.
 		## Runs BEFORE multiplayer/stop's gm_entity sweep (see game/stop.py), which is what the fill depends
 		## on: it restores the world from the marker positions, so the markers have to still be alive here.
 		self.sub("cleanup", f"""
@@ -369,12 +477,15 @@ kill @e[tag={ns}.snd_label]
 kill @e[tag={ns}.snd_bomb]
 kill @e[tag={ns}.snd_bomb_vis]
 kill @e[tag={ns}.snd_bomb_hud]
+kill @e[tag={ns}.snd_loose]
+kill @e[tag={ns}.snd_carrier_label]
+tag @a remove {ns}.snd_carrier
 tag @a remove {ns}.snd_alive
 scoreboard players set #snd_round_active {ns}.data 0
 """)
+
 
 # Functions
 def generate_search_and_destroy() -> None:
 	""" Module-level entry point (preserved signature); delegates to :class:`SearchAndDestroy`. """
 	SearchAndDestroy()()
-

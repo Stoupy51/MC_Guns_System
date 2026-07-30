@@ -13,13 +13,14 @@ scoreboard players set #snd_plant_progress mgs.data 0
 # Force the countdown label to be written on the very next tick
 scoreboard players set #snd_bomb_sec_shown mgs.data -1
 
-# The marker is the logic anchor (defuse range, explosion origin) and is invisible, which is why planting
-# used to change nothing on screen. The block_display is the bomb players actually see and the text
-# display carries the countdown, so both sides can read the state of the round from across the room.
-summon minecraft:marker ~ ~ ~ {Tags:["mgs.snd_bomb","mgs.gm_entity"]}
-summon minecraft:block_display ~ ~ ~ {Tags:["mgs.snd_bomb_vis","mgs.gm_entity"],block_state:{Name:"minecraft:tnt"},transformation:{translation:[-0.25f,0.0f,-0.25f],left_rotation:[0.0f,0.0f,0.0f,1.0f],scale:[0.5f,0.5f,0.5f],right_rotation:[0.0f,0.0f,0.0f,1.0f]}}
-summon minecraft:text_display ~ ~ ~ {Tags:["mgs.snd_bomb_hud","mgs.gm_entity"],billboard:"vertical",text:[[{"text":"💣 ","color":"red","bold":true}, {"translate":"mgs.planted"}]],transformation:{translation:[0.0f,1.1f,0.0f],left_rotation:[0.0f,0.0f,0.0f,1.0f],scale:[1.5f,1.5f,1.5f],right_rotation:[0.0f,0.0f,0.0f,1.0f]},shadow:true,see_through:true}
+# The bomb leaves the carrier's hands
+tag @s remove mgs.snd_carrier
+kill @e[tag=mgs.snd_carrier_label]
 
-tellraw @a [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],"💣 ",{"translate":"mgs.bomb_planted","color":"red","bold":true}]
+# Plant it ON the site, not wherever the player happened to be standing. A CoD bomb sits at the site, so
+# both teams know exactly where the defuse happens; planting at the player's feet is the Counter-Strike
+# "anywhere inside the zone" rule and made the bomb hard to find.
+execute as @e[tag=mgs.snd_obj,limit=1,sort=nearest] at @s run function mgs:v5.1.0/multiplayer/gamemodes/snd/place_planted_bomb
+
 playsound minecraft:block.note_block.pling player @a ~ ~ ~ 1 0.5
 
