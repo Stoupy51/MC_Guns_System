@@ -37,8 +37,8 @@ right_click_entity advancement (weapon/common.py). """
 
 WALK_ARRIVAL: int = 4
 """ Walk-to spawns (map editor "walk_to"): hand back to vanilla AI once the zombie is within this
-many blocks of the spot it was sent to. An intact barrier on the way ends the ride earlier still
-(barriers/freeze_zombies calls end_at_trader), which is what lets a target placed just inside a
+many blocks of the spot it was sent to. An intact barricade on the way ends the ride earlier still
+(barricades/freeze_zombies calls end_at_trader), which is what lets a target placed just inside a
 window read as "break in through it, then fight normally". """
 
 MONKEY_RELEASE: int = 4

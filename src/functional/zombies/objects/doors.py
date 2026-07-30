@@ -1,6 +1,6 @@
 """ Door system.
 
-Physical block barriers that players purchase to open.
+Physical block barricades that players purchase to open.
 
 Doors with the same link_id open together.
 A door's link_id is also its front-room spawn group, and back_group_id is its back-room spawn group; opening a door unlocks both groups' zombie spawns.

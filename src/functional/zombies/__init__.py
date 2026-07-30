@@ -14,7 +14,7 @@ from .machines.perks import generate_perks
 from .machines.wunderfizz import generate_wunderfizz
 from .maps import generate_zombies_maps
 from .menus import generate_zombies_menus
-from .objects.barriers import generate_barriers
+from .objects.barricades import generate_barricades
 from .objects.doors import generate_doors
 from .objects.power import generate_power_switch
 from .objects.traps import generate_traps
@@ -46,7 +46,7 @@ def main() -> None:
 	generate_mystery_box()
 	generate_monkey_bomb()
 	generate_pap()
-	generate_barriers()
+	generate_barricades()
 	generate_powerups()
 	generate_power_switch()
 	generate_doors()

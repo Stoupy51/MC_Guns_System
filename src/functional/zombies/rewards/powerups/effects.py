@@ -31,9 +31,9 @@ bossbar set {ns}:{bossbar_id} players @a[scores={{{ns}.zb.in_game=1}}]
 {pu_activate_sound(ns, v)}
 """)
 
-	## 5. Carpenter (instant barrier repair) — no chat message; +200 points, doubled with Double Points
+	## 5. Carpenter (instant barricade repair) — no chat message; +200 points, doubled with Double Points
 	write_versioned_function("zombies/powerups/activate/carpenter", f"""
-function {ns}:v{version}/zombies/barriers/repair_all
+function {ns}:v{version}/zombies/barricades/repair_all
 {pu_snd(ns, "carpenter")}
 scoreboard players add @a[scores={{{ns}.zb.in_game=1}}] {ns}.zb.points 200
 scoreboard players add @a[scores={{{ns}.zb.in_game=1,{ns}.special.double_points=1..}}] {ns}.zb.points 200

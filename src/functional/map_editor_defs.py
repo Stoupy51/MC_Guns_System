@@ -85,12 +85,12 @@ ALL_ELEMENTS: dict[str, ElementDef] = {
 	"pap_machine":        ElementDef(name="Pack-a-Punch",     color="dark_red",     particle=[0.8, 0.1, 0.1], particle_scale=1.0, has_rotation=True,  egg_model="minecraft:creaking_spawn_egg",    save_type="zb_object",       save_path="pap_machines",            emoji="🔥", defaults={"name": "Pack-a-Punch", "price": 5000, "power": True, "display_item": "", "item_model": ""}),
 	"mystery_box_pos":    ElementDef(name="Mystery Box Pos",  color="light_purple", particle=[1.0, 0.0, 1.0], particle_scale=1.0, has_rotation=True,  egg_model="minecraft:evoker_spawn_egg",      save_type="zb_object",       save_path="mystery_box.positions",   emoji="📦", defaults={"can_start_on": True, "display_item": "", "item_model": "", "location_name": ""}),
 	"power_switch":       ElementDef(name="Power Switch",     color="green",        particle=[0.0, 1.0, 0.0], particle_scale=1.0, has_rotation=True,  egg_model="minecraft:slime_spawn_egg",       save_type="zb_object",       save_path="power_switch",            emoji="⚡", defaults={}),
-	"barrier":            ElementDef(name="Barrier",          color="aqua",         particle=[0.0, 1.0, 1.0], particle_scale=1.0, has_rotation=True,  egg_model="minecraft:guardian_spawn_egg",    save_type="zb_object",       save_path="barriers",                emoji="🧱", defaults={"block_enabled": {"Name": "minecraft:oak_fence_gate", "Properties": {"open": "false"}}, "block_disabled": {"Name": "minecraft:oak_fence_gate", "Properties": {"open": "true"}}, "radius": 2}),
+	"barricade":            ElementDef(name="Barricade",          color="aqua",         particle=[0.0, 1.0, 1.0], particle_scale=1.0, has_rotation=True,  egg_model="minecraft:guardian_spawn_egg",    save_type="zb_object",       save_path="barricades",                emoji="🧱", defaults={"block_enabled": {"Name": "minecraft:oak_fence_gate", "Properties": {"open": "false"}}, "block_disabled": {"Name": "minecraft:oak_fence_gate", "Properties": {"open": "true"}}, "radius": 2}),
 }
 
 # Elements rendered as real in-game models in the editor (instead of dust particles).
 # Each has a maps/editor/displays/<etype> function mirroring the game's own display setup, rebuilt every second so rotation/config edits on the marker stay in sync.
-MODEL_DISPLAY_ELEMENTS: tuple[str, ...] = ("wallbuy", "perk_machine", "wunderfizz", "pap_machine", "mystery_box_pos", "power_switch", "barrier")
+MODEL_DISPLAY_ELEMENTS: tuple[str, ...] = ("wallbuy", "perk_machine", "wunderfizz", "pap_machine", "mystery_box_pos", "power_switch", "barricade")
 
 OPTIONAL_LIST_FIELDS: dict[str, str] = {
 	"activation_box": "[0, 0, 0, 5, 3, 5]",
@@ -120,10 +120,10 @@ FIELD_DOCS: dict[tuple[str, str] | str, str] = {
 	("wunderfizz", "price"): "Points per use. Cycles perk bottles and grants one random perk the\nbuyer doesn't already own, collectable by the buyer for 10s. Suggested: 1500.",
 	("wallbuy", "weapon_id"): "Item id given on purchase. Guns (e.g. m1911, ak47, mp5),\nknives (bowie_knife, ~3000 pts), lethal grenades (frag_grenade,\nsemtex...), or tacticals (monkey_bomb). Non-guns route to their\nown slot: knife hotbar.0, lethals hotbar.7 (x4), tacticals hotbar.6 (x3).",
 	("wallbuy", "magazine_id"): "Magazine item paired with the gun (e.g. m1911_mag).\nLeave empty for knife/grenade/tactical wallbuys.",
-	("barrier", "radius"): "Block radius the barrier toggles open/closed around its marker.",
+	("barricade", "radius"): "Block radius the barricade toggles open/closed around its marker.",
 	("mystery_box_pos", "location_name"): "Name of the place this spot sits in, announced in chat when the box\nlands here (e.g. \"the Power Room\").\nLeave EMPTY to fall back to the generic \"a new location\" message.",
 	"activation_box": "Optional [x, y, z, dx, dy, dz] box (relative to this spawn, in blocks).\nWhen set, this spawn only produces enemies while a player stands inside the box.\nx/y/z = corner offset from the spawn, dx/dy/dz = size. Empty [] = always active.",
-	"walk_to": "Optional [x, y, z] offset (relative to this spawn, in blocks).\nWhen set, zombies from this spawn walk straight to that spot instead of\nheading for the nearest player — a pathfinding escort carries them there,\nthen hands them back to normal AI on arrival. Empty [] = normal behaviour.\nAim it just inside a window and they break in through the barrier on the way.",
+	"walk_to": "Optional [x, y, z] offset (relative to this spawn, in blocks).\nWhen set, zombies from this spawn walk straight to that spot instead of\nheading for the nearest player — a pathfinding escort carries them there,\nthen hands them back to normal AI on arrival. Empty [] = normal behaviour.\nAim it just inside a window and they break in through the barricade on the way.",
 	# Shared fallbacks (any element type):
 	"can_start_on": "true = the machine is allowed to be the ACTIVE (usable) spot at game\nstart and after it roams. false = a valid roam destination, but never\nthe first active spot. Only one spot is active at a time; the rest show\na grayed-out disabled model. At least one spot must allow starting.",
 	"power": "true = requires the map's power to be switched on before it works\nfalse = always usable",
@@ -178,7 +178,7 @@ EDITOR_MODES: dict[str, EditorMode] = {
 			"pap_machine": "inventory.5",
 			"start_command": "inventory.6",
 			"special_spawn": "inventory.7",
-			"barrier": "inventory.8",
+			"barricade": "inventory.8",
 			"wunderfizz": "inventory.9",
 		},
 	),

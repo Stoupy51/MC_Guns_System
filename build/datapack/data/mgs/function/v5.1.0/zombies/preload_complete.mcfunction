@@ -59,8 +59,14 @@ execute if data storage mgs:zombies game.map.mystery_box.positions[0] run functi
 # Setup Pack-a-Punch machines
 execute if data storage mgs:zombies game.map.pap_machines[0] run function mgs:v5.1.0/zombies/pap/setup
 
-# Setup barriers
-execute if data storage mgs:zombies game.map.barriers[0] run function mgs:v5.1.0/zombies/barriers/setup
+# Maps saved before the barriers->barricades rename still carry the old key, and maps.py only appends a
+# map "unless" its id already exists, so an existing world keeps its old compound forever. Normalise the
+# key here instead of migrating: game.map is a per-game copy (helpers/lifecycle.py), so this never writes
+# to the stored map, and everything downstream only has to know about `barricades`.
+execute unless data storage mgs:zombies game.map.barricades if data storage mgs:zombies game.map.barriers run data modify storage mgs:zombies game.map.barricades set from storage mgs:zombies game.map.barriers
+
+# Setup barricades
+execute if data storage mgs:zombies game.map.barricades[0] run function mgs:v5.1.0/zombies/barricades/setup
 
 # Setup power switches
 execute if data storage mgs:zombies game.map.power_switch[0] run function mgs:v5.1.0/zombies/power/setup

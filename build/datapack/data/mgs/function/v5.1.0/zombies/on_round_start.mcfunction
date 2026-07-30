@@ -4,6 +4,6 @@
 # @within	???
 #
 
-# Reset barrier repair counters for all players
-scoreboard players set @a mgs.zb.barrier_repairs 0
+# Reset barricade repair counters for all players
+scoreboard players set @a mgs.zb.barricade_repairs 0
 

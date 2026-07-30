@@ -81,10 +81,10 @@ scoreboard players set #mb_pid_counter mgs.data 0
 tag @e remove mgs.mb_fs_active
 tag @e remove mgs.mb_orig_active
 
-# Barriers cleanup
-tag @e[tag=mgs.barrier_removing] remove mgs.barrier_removing
-tag @a[tag=mgs.barrier_repairing] remove mgs.barrier_repairing
-scoreboard players reset @a mgs.zb.barrier_repairs
+# Barricades cleanup
+tag @e[tag=mgs.barricade_removing] remove mgs.barricade_removing
+tag @a[tag=mgs.barricade_repairing] remove mgs.barricade_repairing
+scoreboard players reset @a mgs.zb.barricade_repairs
 
 # Power-up cleanup
 kill @e[type=minecraft:item,tag=mgs.pu_item]

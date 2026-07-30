@@ -71,7 +71,7 @@ scoreboard players remove #zb_escort_count {ns}.data 1
 execute as {my_trader} run function {ns}:v{version}/zombies/escort/discard_trader
 """)
 
-	# End an escort from the TRADER's context; shared by the reach safeguard and barriers.py
+	# End an escort from the TRADER's context; shared by the reach safeguard and barricades.py
 	write_versioned_function("zombies/escort/end_at_trader", f"""
 execute as @e[tag={ns}.zb_escorted,distance=..8,limit=1,sort=nearest] run function {ns}:v{version}/zombies/escort/detach
 function {ns}:v{version}/zombies/escort/discard_trader
