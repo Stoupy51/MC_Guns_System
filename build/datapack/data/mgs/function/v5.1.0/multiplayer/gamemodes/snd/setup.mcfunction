@@ -29,7 +29,9 @@ scoreboard players set #snd_defuse_progress mgs.data 0
 # tick's "one whole side is dead" checks read as a wipe. See next_round.
 scoreboard players set #snd_round_active mgs.data 0
 
-# Round timer
+# Round timer. It also drives the HUD clock: S&D owns #mp_timer outright (multiplayer/game_tick neither
+# decrements it nor ends the match on it for this gamemode), because a 10-minute match limit cannot
+# arbitrate a format that runs up to seven 2:30 rounds. start_round seeds the display.
 scoreboard players set #snd_round_timer mgs.data 3000
 
 # Summon objective markers (relative → absolute)

@@ -7,6 +7,9 @@
 
 # Clean round state. #snd_round_active was already cleared by the win function that got us here, which is
 # what stops the tick from judging the cleared snd_alive tags below as a wipe.
+# The HUD clock is reset here and not only in start_round: the tick stops driving it while no round is
+# running, so the 3s gap would otherwise sit on the expired timer or the leftover fuse.
+scoreboard players set #mp_timer mgs.data 3000
 kill @e[tag=mgs.snd_bomb]
 kill @e[tag=mgs.snd_bomb_vis]
 kill @e[tag=mgs.snd_bomb_hud]

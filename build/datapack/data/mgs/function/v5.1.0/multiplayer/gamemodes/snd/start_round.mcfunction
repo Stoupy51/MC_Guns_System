@@ -25,8 +25,9 @@ scoreboard players set #snd_bomb_timer mgs.data 0
 scoreboard players set #snd_plant_progress mgs.data 0
 scoreboard players set #snd_defuse_progress mgs.data 0
 
-# Reset round timer
+# Reset round timer (and the HUD clock it drives, so the 3s gap already shows the fresh 2:30)
 scoreboard players set #snd_round_timer mgs.data 3000
+scoreboard players set #mp_timer mgs.data 3000
 
 # Restore players who died last round (S&D deaths skip the respawn countdown)
 execute as @a[scores={mgs.mp.team=1..2},gamemode=spectator] run spectate @s
