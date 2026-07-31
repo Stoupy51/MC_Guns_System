@@ -54,8 +54,10 @@ scoreboard players set @a mgs.mp.kills 0
 scoreboard players set @a mgs.mp.deaths 0
 scoreboard players set @a mgs.mp.death_count 0
 
-# Set timer from time_limit
+# Set timer from time_limit. Cleared here and re-claimed by the gamemode's own setup below, so a mode that
+# drives its own clock (S&D, Demolition) cannot inherit a stale claim from the previous match.
 execute store result score #mp_timer mgs.data run data get storage mgs:multiplayer game.time_limit
+scoreboard players set #mp_mode_owns_timer mgs.data 0
 
 # Assign vanilla teams to opted-in players only: FFA joins everyone; otherwise honor each player's
 # chosen side (set via Manage Players), auto-assigning anyone who opted in without picking a team.

@@ -25,10 +25,12 @@ execute if data storage {ns}:multiplayer game{{state:"preparing"}} run function 
 
 {WeaponDrop.weapon_drop_tick_lines(ns)}
 
-# Timer (real-time via #tick_delta). S&D is excluded: it owns #mp_timer and writes its own round timer
-# (or the bomb fuse) into it, so the HUD shows the clock that actually decides something. A time limit
-# cannot arbitrate a first-to-4 format anyway — 10 minutes would have cut a 7-round match in half.
-execute unless data storage {ns}:multiplayer game{{gamemode:"snd"}} run scoreboard players operation #mp_timer {ns}.data -= #tick_delta {ns}.data
+# Timer (real-time via #tick_delta), unless the gamemode claimed #mp_timer for itself in its setup.
+# Round-based modes drive that score from their own clock so the HUD shows what actually decides something
+# (S&D: the round timer then the bomb fuse — Demolition: a clock that stops on a plant and grows on a
+# destroy), and a match-wide time limit cannot arbitrate a best-of-N format anyway. A claim flag rather
+# than a list of gamemode names here: the list was going to grow once per round-based mode.
+execute if score #mp_mode_owns_timer {ns}.data matches 0 run scoreboard players operation #mp_timer {ns}.data -= #tick_delta {ns}.data
 
 # Timer display every second (20 ticks; keyed to #total_tick — a #mp_timer %20 hit can be
 # skipped entirely when #tick_delta jumps by 2+ under lag)
@@ -36,8 +38,8 @@ execute store result score #tick_mod {ns}.data run scoreboard players get #total
 scoreboard players operation #tick_mod {ns}.data %= #20 {ns}.data
 execute if score #tick_mod {ns}.data matches 0 run function {ns}:v{version}/multiplayer/timer_display
 
-# Time's up (never in S&D: the score is that mode's round clock, which reaching 0 is a ROUND event)
-execute unless data storage {ns}:multiplayer game{{gamemode:"snd"}} if score #mp_timer {ns}.data matches ..0 run function {ns}:v{version}/multiplayer/time_up
+# Time's up — never for a mode that owns the score, where reaching 0 is a ROUND event it handles itself
+execute if score #mp_mode_owns_timer {ns}.data matches 0 if score #mp_timer {ns}.data matches ..0 run function {ns}:v{version}/multiplayer/time_up
 
 # Which boundary-check phase runs this tick (see multiplayer/enforce_bounds)
 execute store result score #bounds_phase {ns}.data run scoreboard players get #total_tick {ns}.data
