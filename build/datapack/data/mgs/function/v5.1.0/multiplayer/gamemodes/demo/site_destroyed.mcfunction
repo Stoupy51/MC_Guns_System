@@ -27,7 +27,6 @@ execute if entity @s[tag=mgs.demo_site_A] run tellraw @a [[{"text":"","color":"g
 execute if entity @s[tag=mgs.demo_site_B] run tellraw @a [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],"💣 ",{"translate":"mgs.bomb_site_b_destroyed","color":"red","bold":true}]
 execute if entity @s[tag=mgs.demo_site_C] run tellraw @a [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],"💣 ",{"translate":"mgs.bomb_site_c_destroyed","color":"red","bold":true}]
 execute if entity @s[tag=mgs.demo_site_D] run tellraw @a [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],"💣 ",{"translate":"mgs.bomb_site_d_destroyed","color":"red","bold":true}]
-execute unless entity @s[tag=mgs.demo_site_A] unless entity @s[tag=mgs.demo_site_B] unless entity @s[tag=mgs.demo_site_C] unless entity @s[tag=mgs.demo_site_D] run tellraw @a [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],"💣 ",{"translate":"mgs.bomb_site_destroyed","color":"red","bold":true}]
 
 # Destroying a site buys time to reach the other one
 scoreboard players add #demo_timer mgs.data 1200

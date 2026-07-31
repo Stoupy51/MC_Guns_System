@@ -40,7 +40,7 @@ summon minecraft:block_display ~ ~ ~ {{Tags:["{ns}.{vis_tag}","{ns}.gm_entity"],
 summon minecraft:text_display ~ ~ ~ {{Tags:["{ns}.{hud_tag}","{ns}.gm_entity"],billboard:"vertical",text:[{{"text":"💣 {label}","color":"red","bold":true}}],transformation:{{translation:[0.0f,1.4f,0.0f],left_rotation:[0.0f,0.0f,0.0f,1.0f],scale:[1.5f,1.5f,1.5f],right_rotation:[0.0f,0.0f,0.0f,1.0f]}},shadow:true,see_through:true}}"""
 
 	@staticmethod
-	def announce_site_lines(variant: GameModeVariant, message: str, generic: str = "", color: str = "red") -> str:
+	def announce_site_lines(variant: GameModeVariant, message: str, color: str = "red") -> str:
 		""" Return one `tellraw` per site letter, selected by the `<key>_site_<letter>` tag on `@s`.
 
 		Naming the site is how the defending side knows which one to rotate to, so it is worth a line
@@ -49,18 +49,12 @@ summon minecraft:text_display ~ ~ ~ {{Tags:["{ns}.{hud_tag}","{ns}.gm_entity"],b
 		Args:
 			variant (GameModeVariant): The mode whose site tags are being tested.
 			message (str):             Announce text, with `{{letter}}` where the letter goes.
-			generic (str):             Text for a site carrying no letter tag (Demolition's overtime site).
-				Omit to emit no fallback line at all.
 			color   (str):             Colour of the announce.
 		Returns:
-			str: One command per letter in SITE_LETTERS, plus the fallback when `generic` is given.
+			str: One command per letter in SITE_LETTERS.
 		"""
 		ns, key = variant.ns, variant.key
-		lines: list[str] = [
+		return "\n".join(
 			f'execute if entity @s[tag={ns}.{key}_site_{letter}] run tellraw @a [{MGS_TAG},"💣 ",{{"text":"{message.format(letter=letter)}","color":"{color}","bold":true}}]'
 			for letter in SITE_LETTERS
-		]
-		if generic:
-			no_letter: str = " ".join(f"unless entity @s[tag={ns}.{key}_site_{letter}]" for letter in SITE_LETTERS)
-			lines.append(f'execute {no_letter} run tellraw @a [{MGS_TAG},"💣 ",{{"text":"{generic}","color":"{color}","bold":true}}]')
-		return "\n".join(lines)
+		)

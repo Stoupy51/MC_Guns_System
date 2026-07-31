@@ -18,6 +18,5 @@ execute if entity @s[tag=mgs.demo_site_A] run tellraw @a [[{"text":"","color":"g
 execute if entity @s[tag=mgs.demo_site_B] run tellraw @a [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],"💣 ",{"translate":"mgs.bomb_planted_at_b","color":"red","bold":true}]
 execute if entity @s[tag=mgs.demo_site_C] run tellraw @a [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],"💣 ",{"translate":"mgs.bomb_planted_at_c","color":"red","bold":true}]
 execute if entity @s[tag=mgs.demo_site_D] run tellraw @a [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],"💣 ",{"translate":"mgs.bomb_planted_at_d","color":"red","bold":true}]
-execute unless entity @s[tag=mgs.demo_site_A] unless entity @s[tag=mgs.demo_site_B] unless entity @s[tag=mgs.demo_site_C] unless entity @s[tag=mgs.demo_site_D] run tellraw @a [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],"💣 ",{"translate":"mgs.bomb_planted","color":"red","bold":true}]
 playsound minecraft:block.note_block.pling player @a ~ ~ ~ 1 0.5
 

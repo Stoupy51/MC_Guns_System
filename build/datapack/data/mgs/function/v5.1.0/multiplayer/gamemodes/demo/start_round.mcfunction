@@ -5,7 +5,6 @@
 #
 # @within	mgs:v5.1.0/multiplayer/gamemodes/demo/setup
 #			mgs:v5.1.0/multiplayer/gamemodes/demo/next_round 60t [ scheduled ]
-#			mgs:v5.1.0/multiplayer/gamemodes/demo/start_overtime 60t [ scheduled ]
 #
 
 # Guard: only while the game is running (a scheduled call may fire after the game ended)
@@ -16,7 +15,7 @@ execute if data storage mgs:multiplayer game{state:"ended"} run return fail
 tellraw @a [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],[{"text":"────── ","color":"gold"}, {"translate":"mgs.round"}],{"score":{"name":"#demo_round","objective":"mgs.data"},"color":"yellow"},{"text":" ──────","color":"gold"}]
 execute if score #demo_round mgs.data matches ..2 if score #demo_attackers mgs.data matches 1 run tellraw @a [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.red","color":"red"},[{"text":" "}, {"translate":"mgs.attacks_both_sites"}, " | "],{"translate":"mgs.blue","color":"blue"},[{"text":" "}, {"translate":"mgs.defends"}]]
 execute if score #demo_round mgs.data matches ..2 if score #demo_attackers mgs.data matches 2 run tellraw @a [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.blue","color":"blue"},[{"text":" "}, {"translate":"mgs.attacks_both_sites"}, " | "],{"translate":"mgs.red","color":"red"},[{"text":" "}, {"translate":"mgs.defends"}]]
-execute if score #demo_round mgs.data matches 3.. run tellraw @a [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.both_teams_are_armed_first_to_detonate_wins","color":"gold"}]
+execute if score #demo_round mgs.data matches 3.. run tellraw @a [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],"⚡ ",{"translate":"mgs.overtime_both_sites_are_neutral_first_detonation_wins","color":"gold","bold":true}]
 playsound minecraft:block.note_block.harp player @a ~ ~ ~ 1 1.0
 
 # Every site back to intact
