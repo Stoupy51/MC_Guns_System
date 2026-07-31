@@ -52,10 +52,11 @@ scoreboard players set #snd_defuse_progress {ns}.data 0
 # tick's "one whole side is dead" checks read as a wipe. See next_round.
 scoreboard players set #snd_round_active {ns}.data 0
 
-# Round timer. It also drives the HUD clock: S&D owns #mp_timer outright (multiplayer/game_tick neither
-# decrements it nor ends the match on it for this gamemode), because a 10-minute match limit cannot
-# arbitrate a format that runs up to seven 2:30 rounds. start_round seeds the display.
+# Round timer. It also drives the HUD clock: claiming #mp_timer stops multiplayer/game_tick from both
+# decrementing it and ending the match on it, because a 10-minute match limit cannot arbitrate a format
+# that runs up to seven 2:30 rounds. start_round seeds the display.
 scoreboard players set #snd_round_timer {ns}.data {ROUND_TICKS}
+scoreboard players set #mp_mode_owns_timer {ns}.data 1
 
 # Summon objective markers (relative → absolute)
 {BombSites.setup_lines(self, "search_and_destroy")}
