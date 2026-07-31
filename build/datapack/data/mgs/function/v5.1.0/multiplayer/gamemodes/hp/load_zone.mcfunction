@@ -7,6 +7,9 @@
 #			mgs:v5.1.0/multiplayer/gamemodes/hp/rotate
 #
 
+# A fresh hill is uncaptured, so the next side to hold it uncontested earns the capture bonus
+scoreboard players set #hp_xp_captured mgs.data 0
+
 # Kill old zone marker
 kill @e[tag=mgs.hp_marker]
 kill @e[tag=mgs.hp_label]

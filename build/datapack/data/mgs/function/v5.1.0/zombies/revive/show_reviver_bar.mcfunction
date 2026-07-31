@@ -17,6 +17,9 @@ scoreboard players operation #rv_rev_tenth mgs.data = #rv_reviver_disp mgs.data
 scoreboard players operation #rv_rev_tenth mgs.data %= #20 mgs.data
 scoreboard players operation #rv_rev_tenth mgs.data /= #2 mgs.data
 
+# Marked for revive_complete, which runs as the DOWNED player and cannot re-select the revivers
+tag @s add mgs.zb_reviver
+
 # Check if reviver has Quick Revive perk
 execute if entity @s[tag=mgs.perk.quick_revive] run function mgs:v5.1.0/zombies/revive/show_reviver_bar_quick
 execute unless entity @s[tag=mgs.perk.quick_revive] run function mgs:v5.1.0/zombies/revive/show_reviver_bar_normal

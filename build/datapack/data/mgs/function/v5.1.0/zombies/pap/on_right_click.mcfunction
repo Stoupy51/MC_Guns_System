@@ -64,6 +64,9 @@ data modify storage mgs:temp _pap_old_stats set from storage mgs:temp _pap_extra
 scoreboard players operation @s mgs.zb.points -= #pap_price mgs.data
 function mgs:v5.1.0/zombies/pap/apply_runtime_overrides
 
+# Silent award: an upgrade confirms with the machine animation, not a chat line
+function mgs:v5.1.0/progression/zb/award_pack_a_punch
+
 # Save original weapon ID before scope randomization (for later restore)
 data modify storage mgs:temp _pap_pre_cosm_weapon set from storage mgs:temp _pap_extract.weapon
 

@@ -3,6 +3,7 @@
 # Imports
 from stewbeet import Mem, write_versioned_function
 
+from ...helpers.text import Text
 from ..gamemodes.bomb.demo.rounds import TIEBREAK_ROUND
 
 
@@ -53,7 +54,7 @@ execute as @a[tag={ns}.ffa_candidate] if score @s {ns}.mp.kills = #ffa_max {ns}.
 execute as @p[tag={ns}.ffa_top,sort=arbitrary] run scoreboard players set @s {ns}.mp.ffa_rank {i}
 tag @a[tag={ns}.ffa_top] remove {ns}.ffa_top
 execute as @a[scores={{{ns}.mp.ffa_rank={i}}}] run tag @s remove {ns}.ffa_candidate
-data modify storage {ns}:temp ffa_sb append value [[{{text:" {i}. ",color:"gold"}},{{selector:"@a[scores={{{ns}.mp.ffa_rank={i}}}]",color:"yellow"}}],{{score:{{name:"@a[scores={{{ns}.mp.ffa_rank={i}}}]",objective:"{ns}.mp.kills"}},color:"white"}}]
+data modify storage {ns}:temp ffa_sb append value [[{{text:" {i}. ",color:"gold"}},{Text.player(ns, f"@a[scores={{{ns}.mp.ffa_rank={i}}}]", color="yellow")}],{{score:{{name:"@a[scores={{{ns}.mp.ffa_rank={i}}}]",objective:"{ns}.mp.kills"}},color:"white"}}]
 """
 	ffa_rank_code += f"""
 # Build

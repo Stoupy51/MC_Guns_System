@@ -29,6 +29,7 @@ execute if score #zb_reviving mgs.data matches 0 if score @s mgs.zb.revive_p mat
 # Show the revive progress bar to the revivers (snapshot @s's progress first: a reviver cannot
 # reliably re-select the downed player, see show_reviver_bar)
 scoreboard players operation #rv_reviver_disp mgs.data = @s mgs.zb.revive_p
+tag @a remove mgs.zb_reviver
 execute if score #zb_reviving mgs.data matches 1 as @e[type=minecraft:mannequin,tag=mgs.downed_mannequin,predicate=mgs:v5.1.0/zombies/revive/downed_id_match] at @s run execute as @a[scores={mgs.zb.in_game=1,mgs.zb.downed=0},gamemode=!spectator,distance=..2.5] run function mgs:v5.1.0/zombies/revive/show_reviver_bar
 
 # Update HUD text_display color based on revive state / bleed timer

@@ -5,5 +5,6 @@
 #
 
 scoreboard players set @s mgs.special.deadshot 1
-tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],"🎯 ",{"translate":"mgs.deadshot_daiquiri_accuracy_recoil","color":"dark_green"}]
+tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],"🎯 ",{"translate":"mgs.deadshot_daiquiri_accuracy_recoil","color":"dark_green"},[" ",{"text":"+5 XP","color":"gold"}]]
+function mgs:v5.1.0/progression/zb/award_perk
 

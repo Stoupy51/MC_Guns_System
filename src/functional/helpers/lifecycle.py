@@ -3,6 +3,7 @@
 from stewbeet import Mem
 
 from . import MGS_TAG
+from .text import Text
 
 
 # Classes
@@ -90,6 +91,7 @@ execute unless data storage {ns}:{storage} game.map.start_commands run data modi
 		setup_extra_lines: str = "",
 		post_class_lines: str = "",
 		class_menu_lines: str = "",
+		xp_side: str = "mp",
 	) -> str:
 		""" Return a mode late-join flow with hook points for mode-specific setup.
 
@@ -128,7 +130,7 @@ execute unless data storage {ns}:{storage} game.map.start_commands run data modi
 		parts.extend([
 			f'# Teleport to spawn\nfunction {respawn_function}',
 			f'# Call map join script (executed as the joining player)\nfunction {ns}:v{version}/shared/maps/call_script_at_base {{script:"join"}}',
-			f'# Announce\ntellraw @a ["",{{"selector":"@s","color":"{announce_color}"}},{{"text":" {announce_text}","color":"{announce_color}"}}]',
+			f'# Announce\ntellraw @a ["",{Text.player(ns, "@s", side=xp_side, color=announce_color)},{{"text":" {announce_text}","color":"{announce_color}"}}]',
 		])
 		return "\n\n".join(parts)
 

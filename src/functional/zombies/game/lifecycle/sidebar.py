@@ -3,6 +3,8 @@
 # Imports
 from stewbeet import Mem, write_versioned_function
 
+from ....helpers.text import Text
+
 
 # Functions
 def write_zombies_sidebar() -> None:
@@ -52,7 +54,7 @@ function {ns}:v{version}/zombies/build_sidebar with storage {ns}:temp
 execute unless entity @a[tag={ns}.zb_sb_cand] run return 0
 execute as @a[tag={ns}.zb_sb_cand,limit=1] run scoreboard players set @s {ns}.zb.sb_rank {i}
 tag @a[scores={{{ns}.zb.sb_rank={i}}}] remove {ns}.zb_sb_cand
-data modify storage {ns}:temp zb_sb append value [{{selector:"@a[scores={{{ns}.zb.sb_rank={i}}}]",color:"green"}},{{score:{{name:"@a[scores={{{ns}.zb.sb_rank={i}}}]",objective:"{ns}.zb.points"}},color:"yellow"}}]
+data modify storage {ns}:temp zb_sb append value [{Text.player(ns, f"@a[scores={{{ns}.zb.sb_rank={i}}}]", side="zb", color="green")},{{score:{{name:"@a[scores={{{ns}.zb.sb_rank={i}}}]",objective:"{ns}.zb.points"}},color:"yellow"}}]
 """
 	sidebar_rank_code += f"\ntag @a remove {ns}.zb_sb_cand\n"
 	write_versioned_function("zombies/sidebar_rank_players", sidebar_rank_code)

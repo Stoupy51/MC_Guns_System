@@ -5,5 +5,6 @@
 #
 
 scoreboard players set @s mgs.special.additional_shots 1
-tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],"🔥 ",{"translate":"mgs.double_tap_more_damage","color":"gold"}]
+tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],"🔥 ",{"translate":"mgs.double_tap_more_damage","color":"gold"},[" ",{"text":"+5 XP","color":"gold"}]]
+function mgs:v5.1.0/progression/zb/award_perk
 

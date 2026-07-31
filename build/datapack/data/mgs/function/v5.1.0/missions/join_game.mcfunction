@@ -44,5 +44,5 @@ function mgs:v5.1.0/missions/respawn_tp
 function mgs:v5.1.0/shared/maps/call_script_at_base {script:"join"}
 
 # Announce
-tellraw @a ["",{"selector":"@s","color":"green"},[{"text":" ","color":"green"}, {"translate":"mgs.joined_the_mission"}]]
+tellraw @a ["",["",{"text":"[","color":"dark_gray"},{"score":{"name":"@s","objective":"mgs.mp.xp_level"},"color":"gold"},{"text":"] ","color":"dark_gray"},{"selector":"@s","color":"green"}],[{"text":" ","color":"green"}, {"translate":"mgs.joined_the_mission"}]]
 

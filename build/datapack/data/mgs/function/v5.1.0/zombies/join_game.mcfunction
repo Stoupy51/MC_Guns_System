@@ -16,7 +16,10 @@ execute if score @s mgs.zb.in_game matches 1 run return run tellraw @s [[{"text"
 # Tag as in-game and reset stats
 scoreboard players set @s mgs.zb.in_game 1
 team join mgs.zombies @s
+# Keep the XP spend tracker in step: an unsynced reset reads as points being SPENT (see zombies/xp.py)
 scoreboard players set @s mgs.zb.points 500
+scoreboard players set @s mgs.zb.xp_pts_prev 500
+scoreboard players set @s mgs.zb.xp_spent_acc 0
 scoreboard players set @s mgs.zb.kills 0
 scoreboard players set @s mgs.zb.downs 0
 scoreboard players set @s mgs.zb.passive 0
@@ -46,5 +49,5 @@ function mgs:v5.1.0/zombies/respawn_tp
 function mgs:v5.1.0/shared/maps/call_script_at_base {script:"join"}
 
 # Announce
-tellraw @a ["",{"selector":"@s","color":"dark_green"},[{"text":" ","color":"dark_green"}, {"translate":"mgs.joined_the_zombies_game"}]]
+tellraw @a ["",["",{"text":"[","color":"dark_gray"},{"score":{"name":"@s","objective":"mgs.zb.xp_level"},"color":"gold"},{"text":"] ","color":"dark_gray"},{"selector":"@s","color":"dark_green"}],[{"text":" ","color":"dark_green"}, {"translate":"mgs.joined_the_zombies_game"}]]
 

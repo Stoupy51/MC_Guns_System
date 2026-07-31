@@ -48,7 +48,10 @@ execute as @a[scores={mgs.zb.in_game=1}] run function mgs:v5.1.0/shared/maps/cal
 
 # Reset in-game state
 scoreboard players set @a mgs.zb.in_game 0
+# Keep the XP spend tracker in step: an unsynced reset reads as points being SPENT (see zombies/xp.py)
 scoreboard players set @a mgs.zb.points 0
+scoreboard players set @a mgs.zb.xp_pts_prev 0
+scoreboard players set @a mgs.zb.xp_spent_acc 0
 scoreboard players set @a mgs.zb.kills 0
 scoreboard players set @a mgs.zb.downs 0
 scoreboard players set @a mgs.zb.passive 0

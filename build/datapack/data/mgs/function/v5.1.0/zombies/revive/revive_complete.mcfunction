@@ -53,5 +53,10 @@ function mgs:v5.1.0/zombies/perks/tombstone_on_revived
 # Announce
 title @s title ["❤"]
 title @s subtitle [{"translate":"mgs.you_have_been_revived","color":"green"}]
-tellraw @a[scores={mgs.zb.in_game=1}] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"selector":"@s","color":"green"},[{"text":" ","color":"gray"}, {"translate":"mgs.has_been_revived"}]]
+tag @a remove mgs.xp_earner
+tag @a[tag=mgs.zb_reviver] add mgs.xp_earner
+tellraw @a[scores={mgs.zb.in_game=1},tag=!mgs.xp_earner] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],["",{"text":"[","color":"dark_gray"},{"score":{"name":"@s","objective":"mgs.zb.xp_level"},"color":"gold"},{"text":"] ","color":"dark_gray"},{"selector":"@s","color":"green"}],[{"text":" ","color":"gray"}, {"translate":"mgs.has_been_revived"}]]
+tellraw @a[tag=mgs.xp_earner] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],["",{"text":"[","color":"dark_gray"},{"score":{"name":"@s","objective":"mgs.zb.xp_level"},"color":"gold"},{"text":"] ","color":"dark_gray"},{"selector":"@s","color":"green"}],[{"text":" ","color":"gray"}, {"translate":"mgs.has_been_revived"}],[" ",{"text":"+10 XP","color":"gold"}]]
+execute as @a[tag=mgs.xp_earner] run function mgs:v5.1.0/progression/zb/award_revive
+tag @a remove mgs.xp_earner
 
