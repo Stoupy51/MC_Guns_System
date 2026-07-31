@@ -74,7 +74,9 @@ scoreboard players set #snd_defuse_progress {ns}.data 0
 # tick's "one whole side is dead" checks read as a wipe. See next_round.
 scoreboard players set #snd_round_active {ns}.data 0
 
-# Round timer
+# Round timer. It also drives the HUD clock: S&D owns #mp_timer outright (multiplayer/game_tick neither
+# decrements it nor ends the match on it for this gamemode), because a 10-minute match limit cannot
+# arbitrate a format that runs up to seven 2:30 rounds. start_round seeds the display.
 scoreboard players set #snd_round_timer {ns}.data {ROUND_TICKS}
 
 # Summon objective markers (relative → absolute)
@@ -170,8 +172,9 @@ scoreboard players set #snd_bomb_timer {ns}.data 0
 scoreboard players set #snd_plant_progress {ns}.data 0
 scoreboard players set #snd_defuse_progress {ns}.data 0
 
-# Reset round timer
+# Reset round timer (and the HUD clock it drives, so the 3s gap already shows the fresh 2:30)
 scoreboard players set #snd_round_timer {ns}.data {ROUND_TICKS}
+scoreboard players set #mp_timer {ns}.data {ROUND_TICKS}
 
 # Restore players who died last round (S&D deaths skip the respawn countdown)
 execute as @a[scores={{{ns}.mp.team=1..2}},gamemode=spectator] run spectate @s
@@ -250,6 +253,14 @@ execute if score #snd_round_timer {ns}.data matches ..0 if score #snd_bomb_state
 # If bomb planted, tick bomb timer
 execute if score #snd_bomb_state {ns}.data matches 2 run scoreboard players operation #snd_bomb_timer {ns}.data -= #tick_delta {ns}.data
 execute if score #snd_bomb_state {ns}.data matches 2 if score #snd_bomb_timer {ns}.data matches ..0 run function {ns}:v{version}/multiplayer/gamemodes/snd/bomb_explodes
+
+# The HUD clock is the ROUND clock, and the bomb fuse from the moment the bomb goes down. The two can
+# never fight over it: the plant stops the round timer from meaning anything (its expiry check above is
+# gated on state 0), so whichever clock is authoritative is also the one being shown. A plant with 20s
+# left therefore raises the displayed time to the 45s fuse, which is the point.
+scoreboard players operation #mp_timer {ns}.data = #snd_round_timer {ns}.data
+execute if score #snd_bomb_state {ns}.data matches 2 run scoreboard players operation #mp_timer {ns}.data = #snd_bomb_timer {ns}.data
+execute if score #mp_timer {ns}.data matches ..0 run scoreboard players set #mp_timer {ns}.data 0
 
 # Live countdown on the planted bomb. A score component would be wrong here: a text_display resolves its
 # components when the entity data is sent, not continuously, so it would freeze at the planted value.
@@ -448,6 +459,9 @@ function {ns}:v{version}/multiplayer/gamemodes/snd/next_round
 		self.sub("next_round", f"""
 # Clean round state. #snd_round_active was already cleared by the win function that got us here, which is
 # what stops the tick from judging the cleared snd_alive tags below as a wipe.
+# The HUD clock is reset here and not only in start_round: the tick stops driving it while no round is
+# running, so the 3s gap would otherwise sit on the expired timer or the leftover fuse.
+scoreboard players set #mp_timer {ns}.data {ROUND_TICKS}
 kill @e[tag={ns}.snd_bomb]
 kill @e[tag={ns}.snd_bomb_vis]
 kill @e[tag={ns}.snd_bomb_hud]

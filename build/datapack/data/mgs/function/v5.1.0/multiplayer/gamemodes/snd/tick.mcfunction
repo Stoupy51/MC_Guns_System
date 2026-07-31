@@ -18,6 +18,14 @@ execute if score #snd_round_timer mgs.data matches ..0 if score #snd_bomb_state 
 execute if score #snd_bomb_state mgs.data matches 2 run scoreboard players operation #snd_bomb_timer mgs.data -= #tick_delta mgs.data
 execute if score #snd_bomb_state mgs.data matches 2 if score #snd_bomb_timer mgs.data matches ..0 run function mgs:v5.1.0/multiplayer/gamemodes/snd/bomb_explodes
 
+# The HUD clock is the ROUND clock, and the bomb fuse from the moment the bomb goes down. The two can
+# never fight over it: the plant stops the round timer from meaning anything (its expiry check above is
+# gated on state 0), so whichever clock is authoritative is also the one being shown. A plant with 20s
+# left therefore raises the displayed time to the 45s fuse, which is the point.
+scoreboard players operation #mp_timer mgs.data = #snd_round_timer mgs.data
+execute if score #snd_bomb_state mgs.data matches 2 run scoreboard players operation #mp_timer mgs.data = #snd_bomb_timer mgs.data
+execute if score #mp_timer mgs.data matches ..0 run scoreboard players set #mp_timer mgs.data 0
+
 # Live countdown on the planted bomb. A score component would be wrong here: a text_display resolves its
 # components when the entity data is sent, not continuously, so it would freeze at the planted value.
 # Rewriting only when the whole second changes keeps that to one NBT write a second.
