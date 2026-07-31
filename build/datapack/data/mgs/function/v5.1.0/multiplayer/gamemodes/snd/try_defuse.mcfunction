@@ -10,10 +10,8 @@
 execute if score #snd_attackers mgs.data matches 1 unless score @s mgs.mp.team matches 2 run return fail
 execute if score #snd_attackers mgs.data matches 2 unless score @s mgs.mp.team matches 1 run return fail
 
-# Continue defusing; the bomb countdown keeps running in parallel
+# Raise the channel flag and show the progress; the tick owns the increment, so extra defenders on the
+# same bomb give cover rather than a faster defuse. The bomb countdown keeps running in parallel.
 scoreboard players set #snd_channeling mgs.data 1
-scoreboard players operation #snd_defuse_progress mgs.data += #tick_delta mgs.data
 title @s actionbar [{"translate":"mgs.defusing","color":"aqua"},{"score":{"name":"#snd_defuse_progress","objective":"mgs.data"},"color":"yellow"},{"translate":"mgs.150"}]
-
-execute if score #snd_defuse_progress mgs.data matches 150.. run function mgs:v5.1.0/multiplayer/gamemodes/snd/bomb_defused
 

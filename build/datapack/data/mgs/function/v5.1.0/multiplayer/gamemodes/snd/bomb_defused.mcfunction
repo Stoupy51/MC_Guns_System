@@ -1,9 +1,7 @@
 
 #> mgs:v5.1.0/multiplayer/gamemodes/snd/bomb_defused
 #
-# @executed	at @s
-#
-# @within	mgs:v5.1.0/multiplayer/gamemodes/snd/try_defuse
+# @within	mgs:v5.1.0/multiplayer/gamemodes/snd/tick
 #
 
 tellraw @a [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],"💣 ",{"translate":"mgs.bomb_defused","color":"aqua","bold":true}]

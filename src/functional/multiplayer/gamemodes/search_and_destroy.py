@@ -293,15 +293,22 @@ title @a[tag={ns}.snd_carrier] actionbar [{{"text":"💣 You have the bomb — p
 # Loose bomb: any living attacker who walks over it collects it. No channel, no keypress.
 execute if score #snd_bomb_state {ns}.data matches 0 unless entity @a[tag={ns}.snd_carrier] as @a[tag={ns}.snd_alive,gamemode=!spectator] at @s if entity @e[tag={ns}.snd_loose_at,distance=..{PICKUP_RANGE}] run function {ns}:v{version}/multiplayer/gamemodes/snd/try_pickup
 
-# Check planting (the CARRIER only, sneaking at a site); progress resets if nobody is channeling
+# Planting (the CARRIER only, sneaking at a site). The channeler only raises a flag; the progress is
+# advanced ONCE here, never inside the per-player function — see the defuse block below.
 scoreboard players set #snd_channeling {ns}.data 0
 execute if score #snd_bomb_state {ns}.data matches 0 as @a[tag={ns}.snd_carrier,tag={ns}.snd_alive,predicate={ns}:v{version}/is_sneaking,gamemode=!spectator] at @s if entity @e[tag={ns}.snd_obj,distance=..{SITE_RANGE}] run function {ns}:v{version}/multiplayer/gamemodes/snd/try_plant
 execute if score #snd_bomb_state {ns}.data matches 0 if score #snd_channeling {ns}.data matches 0 run scoreboard players set #snd_plant_progress {ns}.data 0
+execute if score #snd_bomb_state {ns}.data matches 0 if score #snd_channeling {ns}.data matches 1 run scoreboard players operation #snd_plant_progress {ns}.data += #tick_delta {ns}.data
+execute if score #snd_bomb_state {ns}.data matches 0 if score #snd_plant_progress {ns}.data matches {PLANT_TICKS}.. as @a[tag={ns}.snd_carrier,limit=1] at @s run function {ns}:v{version}/multiplayer/gamemodes/snd/bomb_planted
 
-# Check defusing (defender near bomb and sneaking); progress resets if nobody is channeling
+# Defusing (defender near bomb and sneaking); progress resets if nobody is channeling.
+# The += lives HERE and not in try_defuse on purpose: run per player, two defenders on the same bomb each
+# added a tick_delta to the one shared progress score and halved the defuse time.
 scoreboard players set #snd_channeling {ns}.data 0
 execute if score #snd_bomb_state {ns}.data matches 2 as @a[tag={ns}.snd_alive,predicate={ns}:v{version}/is_sneaking,gamemode=!spectator] at @s if entity @e[tag={ns}.snd_bomb,distance=..{SITE_RANGE}] run function {ns}:v{version}/multiplayer/gamemodes/snd/try_defuse
 execute if score #snd_bomb_state {ns}.data matches 2 if score #snd_channeling {ns}.data matches 0 run scoreboard players set #snd_defuse_progress {ns}.data 0
+execute if score #snd_bomb_state {ns}.data matches 2 if score #snd_channeling {ns}.data matches 1 run scoreboard players operation #snd_defuse_progress {ns}.data += #tick_delta {ns}.data
+execute if score #snd_bomb_state {ns}.data matches 2 if score #snd_defuse_progress {ns}.data matches {DEFUSE_TICKS}.. run function {ns}:v{version}/multiplayer/gamemodes/snd/bomb_defused
 """)
 
 		## S&D: Pickup attempt (@s = a living player standing on the loose bomb)
@@ -330,15 +337,11 @@ kill @e[tag={ns}.snd_carrier_label]
 tellraw @a [{MGS_TAG},"💣 ",{{"text":"The bomb carrier is down!","color":"yellow"}}]
 """)
 
-		## S&D: Plant attempt (@s = the carrier, sneaking at a site)
+		## S&D: Plant attempt (@s = the carrier, sneaking at a site).
+		## Raises the channel flag and shows the progress; the tick owns the increment and the completion.
 		self.sub("try_plant", f"""
-# Continue planting
 scoreboard players set #snd_channeling {ns}.data 1
-scoreboard players operation #snd_plant_progress {ns}.data += #tick_delta {ns}.data
 title @s actionbar [{{"text":"Planting... ","color":"gold"}},{{"score":{{"name":"#snd_plant_progress","objective":"{ns}.data"}},"color":"yellow"}},{{"text":"/{PLANT_TICKS}"}}]
-
-# If planted
-execute if score #snd_plant_progress {ns}.data matches {PLANT_TICKS}.. run function {ns}:v{version}/multiplayer/gamemodes/snd/bomb_planted
 """)
 
 		## S&D: Bomb planted (@s = the carrier, at them)
@@ -395,12 +398,10 @@ $data modify entity @e[tag={ns}.snd_bomb_hud,limit=1] text set value [{{"text":"
 execute if score #snd_attackers {ns}.data matches 1 unless score @s {ns}.mp.team matches 2 run return fail
 execute if score #snd_attackers {ns}.data matches 2 unless score @s {ns}.mp.team matches 1 run return fail
 
-# Continue defusing; the bomb countdown keeps running in parallel
+# Raise the channel flag and show the progress; the tick owns the increment, so extra defenders on the
+# same bomb give cover rather than a faster defuse. The bomb countdown keeps running in parallel.
 scoreboard players set #snd_channeling {ns}.data 1
-scoreboard players operation #snd_defuse_progress {ns}.data += #tick_delta {ns}.data
 title @s actionbar [{{"text":"Defusing... ","color":"aqua"}},{{"score":{{"name":"#snd_defuse_progress","objective":"{ns}.data"}},"color":"yellow"}},{{"text":"/{DEFUSE_TICKS}"}}]
-
-execute if score #snd_defuse_progress {ns}.data matches {DEFUSE_TICKS}.. run function {ns}:v{version}/multiplayer/gamemodes/snd/bomb_defused
 """)
 
 		## S&D: Bomb defused → defenders win
