@@ -57,13 +57,20 @@ title @a[tag=mgs.snd_carrier] actionbar [{"translate":"mgs.you_have_the_bomb_pla
 # Loose bomb: any living attacker who walks over it collects it. No channel, no keypress.
 execute if score #snd_bomb_state mgs.data matches 0 unless entity @a[tag=mgs.snd_carrier] as @a[tag=mgs.snd_alive,gamemode=!spectator] at @s if entity @e[tag=mgs.snd_loose_at,distance=..2.0] run function mgs:v5.1.0/multiplayer/gamemodes/snd/try_pickup
 
-# Check planting (the CARRIER only, sneaking at a site); progress resets if nobody is channeling
+# Planting (the CARRIER only, sneaking at a site). The channeler only raises a flag; the progress is
+# advanced ONCE here, never inside the per-player function — see the defuse block below.
 scoreboard players set #snd_channeling mgs.data 0
 execute if score #snd_bomb_state mgs.data matches 0 as @a[tag=mgs.snd_carrier,tag=mgs.snd_alive,predicate=mgs:v5.1.0/is_sneaking,gamemode=!spectator] at @s if entity @e[tag=mgs.snd_obj,distance=..3.0] run function mgs:v5.1.0/multiplayer/gamemodes/snd/try_plant
 execute if score #snd_bomb_state mgs.data matches 0 if score #snd_channeling mgs.data matches 0 run scoreboard players set #snd_plant_progress mgs.data 0
+execute if score #snd_bomb_state mgs.data matches 0 if score #snd_channeling mgs.data matches 1 run scoreboard players operation #snd_plant_progress mgs.data += #tick_delta mgs.data
+execute if score #snd_bomb_state mgs.data matches 0 if score #snd_plant_progress mgs.data matches 100.. as @a[tag=mgs.snd_carrier,limit=1] at @s run function mgs:v5.1.0/multiplayer/gamemodes/snd/bomb_planted
 
-# Check defusing (defender near bomb and sneaking); progress resets if nobody is channeling
+# Defusing (defender near bomb and sneaking); progress resets if nobody is channeling.
+# The += lives HERE and not in try_defuse on purpose: run per player, two defenders on the same bomb each
+# added a tick_delta to the one shared progress score and halved the defuse time.
 scoreboard players set #snd_channeling mgs.data 0
 execute if score #snd_bomb_state mgs.data matches 2 as @a[tag=mgs.snd_alive,predicate=mgs:v5.1.0/is_sneaking,gamemode=!spectator] at @s if entity @e[tag=mgs.snd_bomb,distance=..3.0] run function mgs:v5.1.0/multiplayer/gamemodes/snd/try_defuse
 execute if score #snd_bomb_state mgs.data matches 2 if score #snd_channeling mgs.data matches 0 run scoreboard players set #snd_defuse_progress mgs.data 0
+execute if score #snd_bomb_state mgs.data matches 2 if score #snd_channeling mgs.data matches 1 run scoreboard players operation #snd_defuse_progress mgs.data += #tick_delta mgs.data
+execute if score #snd_bomb_state mgs.data matches 2 if score #snd_defuse_progress mgs.data matches 150.. run function mgs:v5.1.0/multiplayer/gamemodes/snd/bomb_defused
 
