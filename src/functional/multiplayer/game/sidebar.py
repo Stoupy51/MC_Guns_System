@@ -3,6 +3,8 @@
 # Imports
 from stewbeet import Mem, write_versioned_function
 
+from ..gamemodes.bomb.demo.rounds import TIEBREAK_ROUND
+
 
 # Functions
 def write_multiplayer_sidebar() -> None:
@@ -161,13 +163,15 @@ scoreboard objectives setdisplay sidebar {ns}.sidebar
 """)
 
 	write_versioned_function("multiplayer/refresh_sidebar_demo", f"""
-# Which side is attacking (in overtime both are, and the row says so)
-execute if score #demo_attackers {ns}.data matches 1 run data modify storage {ns}:temp demo_sb.atk set value '[[" ⚔ ",{{"text":"Attack","color":"gray"}}],{{"text":"Red","color":"red"}}]'
-execute if score #demo_attackers {ns}.data matches 2 run data modify storage {ns}:temp demo_sb.atk set value '[[" ⚔ ",{{"text":"Attack","color":"gray"}}],{{"text":"Blue","color":"blue"}}]'
-execute if score #demo_round {ns}.data matches 3.. run data modify storage {ns}:temp demo_sb.atk set value '[[" ⚡ ",{{"text":"Overtime","color":"gray"}}],{{"text":"Both","color":"gold"}}]'
+# Which side is attacking. Label and team are stored apart so the decider only relabels the left half,
+# instead of needing one row string per round kind and attacking side pair.
+data modify storage {ns}:temp demo_sb.atk_label set value '[" ⚔ ",{{"text":"Attack","color":"gray"}}]'
+execute if score #demo_round {ns}.data matches {TIEBREAK_ROUND}.. run data modify storage {ns}:temp demo_sb.atk_label set value '[" ⚡ ",{{"text":"Decider","color":"gold"}}]'
+data modify storage {ns}:temp demo_sb.atk_team set value '{{"text":"—","color":"dark_gray"}}'
+execute if score #demo_attackers {ns}.data matches 1 run data modify storage {ns}:temp demo_sb.atk_team set value '{{"text":"Red","color":"red"}}'
+execute if score #demo_attackers {ns}.data matches 2 run data modify storage {ns}:temp demo_sb.atk_team set value '{{"text":"Blue","color":"blue"}}'
 
-# One row per site, read off that site's own marker. Both rows stay meaningful in overtime: the sites are
-# the same two, they just belong to nobody, so there is no third layout to describe here.
+# One row per site, read off that site's own marker
 data modify storage {ns}:temp demo_sb.a set value '[[" ",{{"text":"Site A","color":"dark_gray"}}],{{"text":"—","color":"dark_gray"}}]'
 data modify storage {ns}:temp demo_sb.b set value '[[" ",{{"text":"Site B","color":"dark_gray"}}],{{"text":"—","color":"dark_gray"}}]'
 {demo_site_lines}
@@ -177,7 +181,7 @@ function {ns}:v{version}/multiplayer/build_sidebar_demo with storage {ns}:temp d
 
 	write_versioned_function("multiplayer/build_sidebar_demo", f"""
 scoreboard players reset * {ns}.sidebar
-$function #bs.sidebar:create {{objective:"{ns}.sidebar",display_name:{{text:"Demolition",color:"gold",bold:true}},contents:[{sb_timer},{sb_spacer},{sb_red},{sb_blue},{sb_spacer},{sb_demo_round},$(atk),{sb_spacer},$(a),$(b)]}}
+$function #bs.sidebar:create {{objective:"{ns}.sidebar",display_name:{{text:"Demolition",color:"gold",bold:true}},contents:[{sb_timer},{sb_spacer},{sb_red},{sb_blue},{sb_spacer},{sb_demo_round},[$(atk_label),$(atk_team)],{sb_spacer},$(a),$(b)]}}
 scoreboard objectives setdisplay sidebar {ns}.sidebar
 """)
 

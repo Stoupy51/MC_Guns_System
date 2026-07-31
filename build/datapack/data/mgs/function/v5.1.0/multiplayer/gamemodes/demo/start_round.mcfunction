@@ -11,11 +11,11 @@
 execute if data storage mgs:multiplayer game{state:"lobby"} run return fail
 execute if data storage mgs:multiplayer game{state:"ended"} run return fail
 
-# Announce round
+# Announce round. The decider is announced as one, but plays like any other round.
 tellraw @a [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],[{"text":"────── ","color":"gold"}, {"translate":"mgs.round"}],{"score":{"name":"#demo_round","objective":"mgs.data"},"color":"yellow"},{"text":" ──────","color":"gold"}]
-execute if score #demo_round mgs.data matches ..2 if score #demo_attackers mgs.data matches 1 run tellraw @a [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.red","color":"red"},[{"text":" "}, {"translate":"mgs.attacks_both_sites"}, " | "],{"translate":"mgs.blue","color":"blue"},[{"text":" "}, {"translate":"mgs.defends"}]]
-execute if score #demo_round mgs.data matches ..2 if score #demo_attackers mgs.data matches 2 run tellraw @a [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.blue","color":"blue"},[{"text":" "}, {"translate":"mgs.attacks_both_sites"}, " | "],{"translate":"mgs.red","color":"red"},[{"text":" "}, {"translate":"mgs.defends"}]]
-execute if score #demo_round mgs.data matches 3.. run tellraw @a [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],"⚡ ",{"translate":"mgs.overtime_both_sites_are_neutral_first_detonation_wins","color":"gold","bold":true}]
+execute if score #demo_round mgs.data matches 3.. run tellraw @a [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],"⚡ ",{"translate":"mgs.tie_break_round_most_kills_defends","color":"gold","bold":true}]
+execute if score #demo_attackers mgs.data matches 1 run tellraw @a [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.red","color":"red"},[{"text":" "}, {"translate":"mgs.attacks_both_sites"}, " | "],{"translate":"mgs.blue","color":"blue"},[{"text":" "}, {"translate":"mgs.defends_2"}]]
+execute if score #demo_attackers mgs.data matches 2 run tellraw @a [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.blue","color":"blue"},[{"text":" "}, {"translate":"mgs.attacks_both_sites"}, " | "],{"translate":"mgs.red","color":"red"},[{"text":" "}, {"translate":"mgs.defends_2"}]]
 playsound minecraft:block.note_block.harp player @a ~ ~ ~ 1 1.0
 
 # Every site back to intact
@@ -30,17 +30,15 @@ scoreboard players set @e[tag=mgs.demo_obj] mgs.demo_fuse 0
 scoreboard players set @e[tag=mgs.demo_obj] mgs.demo_owner 0
 execute as @e[tag=mgs.demo_obj] at @s run function mgs:v5.1.0/multiplayer/gamemodes/demo/restore_site
 
-# Clock. Regulation and overtime differ only in length; both stop while a bomb is down.
-execute if score #demo_round mgs.data matches ..2 run scoreboard players set #demo_timer mgs.data 3600
-execute if score #demo_round mgs.data matches 3.. run scoreboard players set #demo_timer mgs.data 3600
+# Clock, same length every round; it stops while a bomb is down, which is why this mode owns #mp_timer.
+scoreboard players set #demo_timer mgs.data 3600
 scoreboard players operation #mp_timer mgs.data = #demo_timer mgs.data
 
 # Who is carrying a bomb. Every attacker is, on every respawn, which is why Demolition needs none of the
-# carry/drop/pickup machinery S&D has — the tag IS the bomb. In overtime BOTH sides get it.
+# carry/drop/pickup machinery S&D has — the tag IS the bomb.
 tag @a remove mgs.demo_atk
-execute if score #demo_round mgs.data matches ..2 if score #demo_attackers mgs.data matches 1 run tag @a[scores={mgs.mp.team=1}] add mgs.demo_atk
-execute if score #demo_round mgs.data matches ..2 if score #demo_attackers mgs.data matches 2 run tag @a[scores={mgs.mp.team=2}] add mgs.demo_atk
-execute if score #demo_round mgs.data matches 3.. run tag @a[scores={mgs.mp.team=1..2}] add mgs.demo_atk
+execute if score #demo_attackers mgs.data matches 1 run tag @a[scores={mgs.mp.team=1}] add mgs.demo_atk
+execute if score #demo_attackers mgs.data matches 2 run tag @a[scores={mgs.mp.team=2}] add mgs.demo_atk
 
 # Everyone alive and back at their spawns. Mid-respawn spectators are pulled out of it and their countdown
 # is cleared, so a death from the previous round cannot respawn them a second time mid-round.

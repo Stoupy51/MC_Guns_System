@@ -8,7 +8,6 @@
 
 scoreboard players set @s mgs.demo_state 2
 scoreboard players set @s mgs.demo_prog 0
-scoreboard players operation #demo_last_owner mgs.data = @s mgs.demo_owner
 
 particle minecraft:explosion_emitter ~ ~1 ~ 2 2 2 0 5
 playsound minecraft:entity.generic.explode player @a ~ ~ ~ 2 0.8
@@ -32,9 +31,6 @@ execute if entity @s[tag=mgs.demo_site_D] run tellraw @a [[{"text":"","color":"g
 scoreboard players add #demo_timer mgs.data 1200
 tellraw @a [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],"⏱ ",[{"text":"+60","color":"gold"}, {"translate":"mgs.s_on_the_clock"}]]
 
-# Overtime is a single neutral site, so blowing it up takes the MATCH for whoever planted it
-execute if score #demo_round mgs.data matches 3.. run return run function mgs:v5.1.0/multiplayer/gamemodes/demo/overtime_won
-
-# Otherwise the attackers only win once nothing is left standing
+# The attackers only win once nothing is left standing, in the decider as in any other round
 execute unless entity @e[tag=mgs.demo_obj,scores={mgs.demo_state=..1}] run function mgs:v5.1.0/multiplayer/gamemodes/demo/attackers_win
 
