@@ -363,10 +363,12 @@ playsound minecraft:block.note_block.pling player @a ~ ~ ~ 1 0.5
 """)
 
 		## S&D: @s = the site being planted on, at it. Spawns the planted bomb and names the site in chat.
+		## The half-scale TNT is raised to 0.625 so it pokes out of the chest lid (a chest is 0.875 tall)
+		## instead of being summoned inside the block and invisible. The countdown label clears its top.
 		self.sub("place_planted_bomb", f"""
 summon minecraft:marker ~ ~ ~ {{Tags:["{ns}.snd_bomb","{ns}.gm_entity"]}}
-summon minecraft:block_display ~ ~ ~ {{Tags:["{ns}.snd_bomb_vis","{ns}.gm_entity"],block_state:{{Name:"minecraft:tnt"}},transformation:{{translation:[-0.25f,0.0f,-0.25f],left_rotation:[0.0f,0.0f,0.0f,1.0f],scale:[0.5f,0.5f,0.5f],right_rotation:[0.0f,0.0f,0.0f,1.0f]}}}}
-summon minecraft:text_display ~ ~ ~ {{Tags:["{ns}.snd_bomb_hud","{ns}.gm_entity"],billboard:"vertical",text:[{{"text":"💣 PLANTED","color":"red","bold":true}}],transformation:{{translation:[0.0f,1.1f,0.0f],left_rotation:[0.0f,0.0f,0.0f,1.0f],scale:[1.5f,1.5f,1.5f],right_rotation:[0.0f,0.0f,0.0f,1.0f]}},shadow:true,see_through:true}}
+summon minecraft:block_display ~ ~ ~ {{Tags:["{ns}.snd_bomb_vis","{ns}.gm_entity"],block_state:{{Name:"minecraft:tnt"}},transformation:{{translation:[-0.25f,0.625f,-0.25f],left_rotation:[0.0f,0.0f,0.0f,1.0f],scale:[0.5f,0.5f,0.5f],right_rotation:[0.0f,0.0f,0.0f,1.0f]}}}}
+summon minecraft:text_display ~ ~ ~ {{Tags:["{ns}.snd_bomb_hud","{ns}.gm_entity"],billboard:"vertical",text:[{{"text":"💣 PLANTED","color":"red","bold":true}}],transformation:{{translation:[0.0f,1.4f,0.0f],left_rotation:[0.0f,0.0f,0.0f,1.0f],scale:[1.5f,1.5f,1.5f],right_rotation:[0.0f,0.0f,0.0f,1.0f]}},shadow:true,see_through:true}}
 
 # Name the site so the defenders know which one to rotate to
 execute if entity @s[tag={ns}.snd_site_A] run tellraw @a [{MGS_TAG},"💣 ",{{"text":"BOMB PLANTED AT A!","color":"red","bold":true}}]
