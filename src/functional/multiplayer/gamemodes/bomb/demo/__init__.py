@@ -7,7 +7,7 @@ which differs from Search & Destroy on every axis that matters:
 - respawns are unlimited, so a wipe never wins a round and there is no "alive" bookkeeping
 - **both** sites must be destroyed, and a defuse does not end the round — attackers replant as often as needed
 - destroying a site adds time to the clock, and the clock stops entirely while a bomb is down
-- each side attacks once; a 1-1 (or 0-0) match is decided by a sudden-death round on one neutral site
+- each side attacks once; a 1-1 match is decided by a third round in which the top-killing side defends
 
 The map data is Search & Destroy's: both modes want exactly two marked objectives, and every shipped map
 already defines them. Only the map editor's item label mentions both modes.
@@ -16,14 +16,14 @@ already defines them. Only the map editor's item label mentions both modes.
 from .....helpers import MGS_TAG
 from ...base import GameModeVariant
 from ..sites import BombSites
-from .rounds import OVERTIME_ROUND, ROUND_TICKS, ROUNDS_PER_MATCH, DemoRounds
+from .rounds import ROUND_TICKS, DemoRounds
 from .sites_state import DemoSites
 
 
 # Classes
 class Demolition(GameModeVariant):
 	""" Demolition: attackers must destroy both bomb sites within the round clock; defenders hold them.
-	Unlimited respawns, two halves, sudden death on a neutral site if the halves split. """
+	Unlimited respawns, one attack per side, and a kill-seeded third round if the two halves split. """
 
 	key = "demo"
 
@@ -83,11 +83,9 @@ execute unless score #demo_round_active {ns}.data matches 1 run return 0
 # defend their own plant, and it also means the expiry below can never fire on a bomb already down.
 execute unless entity @e[tag={ns}.demo_obj,scores={{{ns}.demo_state=1}}] run scoreboard players operation #demo_timer {ns}.data -= #tick_delta {ns}.data
 
-# Expiry means a defensive hold in regulation — but overtime has no defenders, so there is nobody to award
-# it to: #demo_attackers still names whoever attacked in the second half, and crediting that side would
-# have put a phantom round win in the final score of what is really a draw.
-execute if score #demo_timer {ns}.data matches ..0 if score #demo_round {ns}.data matches ..{ROUNDS_PER_MATCH} run function {ns}:v{version}/multiplayer/gamemodes/demo/defenders_win
-execute if score #demo_timer {ns}.data matches ..0 if score #demo_round {ns}.data matches {OVERTIME_ROUND}.. run function {ns}:v{version}/multiplayer/gamemodes/demo/overtime_expired
+# Expiry with anything left standing is a defensive hold, decider included — which is why the decider has
+# a defending side at all, and why no round can ever end without awarding a point.
+execute if score #demo_timer {ns}.data matches ..0 run function {ns}:v{version}/multiplayer/gamemodes/demo/defenders_win
 
 # Mirror the round clock onto the HUD score this mode claimed
 scoreboard players operation #mp_timer {ns}.data = #demo_timer {ns}.data

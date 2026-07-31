@@ -8,7 +8,7 @@ fake-player scores Search & Destroy uses — every value below is stored **on th
 | `demo_state`    | 0 = intact, 1 = planted, 2 = destroyed                               |
 | `demo_prog`     | progress of whatever channel is running on this site                 |
 | `demo_fuse`     | ticks left before this site's bomb goes off                          |
-| `demo_owner`    | team channeling it, then the team that planted it (0 = nobody)       |
+| `demo_owner`    | team that planted it (0 = intact or defused)                          |
 
 The loop is also inverted compared to S&D: sites on the outside, players on the inside. That makes the
 channel rate structurally one-per-site (a single `+=` per marker, whatever the crowd standing on it) and
@@ -91,20 +91,10 @@ setblock ~ ~ ~ chest
 setblock ~ ~1 ~ barrier
 """)
 
-		## Plant channel (@s = an intact site, at it).
-		## #demo_ch is which team is planting: 0 = nobody, or contested. In a normal round only one side is
-		## armed so a contest is impossible; in overtime BOTH are, and "clear the site before you plant" is
-		## exactly the rule that makes the resulting owner unambiguous.
+		## Plant channel (@s = an intact site, at it). Exactly one side is armed in every round, the decider
+		## included, so #demo_ch is only a COUNT of attackers channeling here and needs no team arbitration.
 		variant.sub("site_plant_tick", f"""
-execute store result score #demo_ch_red {ns}.data if entity @a[tag={ns}.demo_atk,scores={{{ns}.mp.team=1}},predicate={ns}:v{version}/is_sneaking,gamemode=!spectator,distance=..{SITE_RANGE}]
-execute store result score #demo_ch_blue {ns}.data if entity @a[tag={ns}.demo_atk,scores={{{ns}.mp.team=2}},predicate={ns}:v{version}/is_sneaking,gamemode=!spectator,distance=..{SITE_RANGE}]
-scoreboard players set #demo_ch {ns}.data 0
-execute if score #demo_ch_red {ns}.data matches 1.. if score #demo_ch_blue {ns}.data matches 0 run scoreboard players set #demo_ch {ns}.data 1
-execute if score #demo_ch_blue {ns}.data matches 1.. if score #demo_ch_red {ns}.data matches 0 run scoreboard players set #demo_ch {ns}.data 2
-
-# A different team taking over restarts the plant from zero
-execute unless score #demo_ch {ns}.data = @s {ns}.demo_owner run scoreboard players set @s {ns}.demo_prog 0
-scoreboard players operation @s {ns}.demo_owner = #demo_ch {ns}.data
+execute store result score #demo_ch {ns}.data if entity @a[tag={ns}.demo_atk,predicate={ns}:v{version}/is_sneaking,gamemode=!spectator,distance=..{SITE_RANGE}]
 
 # The += is here and NOT inside a per-player function, so a crowd plants no faster than one attacker
 execute if score #demo_ch {ns}.data matches 0 run scoreboard players set @s {ns}.demo_prog 0
@@ -118,11 +108,12 @@ execute if score #demo_ch {ns}.data matches 1.. run title @a[tag={ns}.demo_atk,p
 execute if score @s {ns}.demo_prog matches {PLANT_TICKS}.. run function {ns}:v{version}/multiplayer/gamemodes/demo/site_planted
 """)
 
-		## The bomb goes down on this site (@s = the site, at it). demo_owner already holds the planting team.
+		## The bomb goes down on this site (@s = the site, at it)
 		variant.sub("site_planted", f"""
 scoreboard players set @s {ns}.demo_state 1
 scoreboard players set @s {ns}.demo_fuse {BOMB_FUSE_TICKS}
 scoreboard players set @s {ns}.demo_prog 0
+scoreboard players operation @s {ns}.demo_owner = #demo_attackers {ns}.data
 
 {BombVisuals.planted_entities(ns, "demo_bomb", "demo_bomb_vis", "demo_bomb_hud", "PLANTED")}
 
@@ -130,8 +121,8 @@ scoreboard players set @s {ns}.demo_prog 0
 playsound minecraft:block.note_block.pling player @a ~ ~ ~ 1 0.5
 """)
 
-		## Defuse channel (@s = a planted site, at it). "Anyone whose team is not the owner" covers both
-		## phases at once: in a normal round that is the defenders, in overtime it is whoever did not plant.
+		## Defuse channel (@s = a planted site, at it). Keyed off demo_owner rather than #demo_attackers so
+		## the site itself says who may defuse it, which keeps the two sites independent.
 		variant.sub("site_defuse_tick", f"""
 scoreboard players set #demo_ch {ns}.data 0
 execute if score @s {ns}.demo_owner matches 1 store result score #demo_ch {ns}.data if entity @a[scores={{{ns}.mp.team=2}},predicate={ns}:v{version}/is_sneaking,gamemode=!spectator,distance=..{SITE_RANGE}]
@@ -191,7 +182,6 @@ $data modify entity @n[tag={ns}.demo_bomb_hud,distance=..2] text set value [{{"t
 		variant.sub("site_destroyed", f"""
 scoreboard players set @s {ns}.demo_state 2
 scoreboard players set @s {ns}.demo_prog 0
-scoreboard players operation #demo_last_owner {ns}.data = @s {ns}.demo_owner
 
 particle minecraft:explosion_emitter ~ ~1 ~ 2 2 2 0 5
 playsound minecraft:entity.generic.explode player @a ~ ~ ~ 2 0.8
@@ -212,9 +202,6 @@ summon minecraft:text_display ~ ~ ~ {{Tags:["{ns}.demo_wreck","{ns}.gm_entity"],
 scoreboard players add #demo_timer {ns}.data {TIME_BONUS}
 tellraw @a [{MGS_TAG},"⏱ ",{{"text":"+{TIME_BONUS // 20}s on the clock","color":"gold"}}]
 
-# Overtime is a single neutral site, so blowing it up takes the MATCH for whoever planted it
-execute if score #demo_round {ns}.data matches 3.. run return run function {ns}:v{version}/multiplayer/gamemodes/demo/overtime_won
-
-# Otherwise the attackers only win once nothing is left standing
+# The attackers only win once nothing is left standing, in the decider as in any other round
 execute unless entity @e[tag={ns}.demo_obj,scores={{{ns}.demo_state=..1}}] run function {ns}:v{version}/multiplayer/gamemodes/demo/attackers_win
 """)

@@ -33,11 +33,9 @@ execute at @e[tag=mgs.demo_obj,scores={mgs.demo_state=0}] run particle dust{colo
 # defend their own plant, and it also means the expiry below can never fire on a bomb already down.
 execute unless entity @e[tag=mgs.demo_obj,scores={mgs.demo_state=1}] run scoreboard players operation #demo_timer mgs.data -= #tick_delta mgs.data
 
-# Expiry means a defensive hold in regulation — but overtime has no defenders, so there is nobody to award
-# it to: #demo_attackers still names whoever attacked in the second half, and crediting that side would
-# have put a phantom round win in the final score of what is really a draw.
-execute if score #demo_timer mgs.data matches ..0 if score #demo_round mgs.data matches ..2 run function mgs:v5.1.0/multiplayer/gamemodes/demo/defenders_win
-execute if score #demo_timer mgs.data matches ..0 if score #demo_round mgs.data matches 3.. run function mgs:v5.1.0/multiplayer/gamemodes/demo/overtime_expired
+# Expiry with anything left standing is a defensive hold, decider included — which is why the decider has
+# a defending side at all, and why no round can ever end without awarding a point.
+execute if score #demo_timer mgs.data matches ..0 run function mgs:v5.1.0/multiplayer/gamemodes/demo/defenders_win
 
 # Mirror the round clock onto the HUD score this mode claimed
 scoreboard players operation #mp_timer mgs.data = #demo_timer mgs.data

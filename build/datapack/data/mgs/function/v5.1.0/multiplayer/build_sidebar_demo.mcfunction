@@ -5,12 +5,13 @@
 #
 # @within	mgs:v5.1.0/multiplayer/refresh_sidebar_demo with storage mgs:temp demo_sb
 #
-# @args		atk (unknown)
+# @args		atk_label (unknown)
+#			atk_team (unknown)
 #			a (unknown)
 #			b (unknown)
 #
 
 scoreboard players reset * mgs.sidebar
-$function #bs.sidebar:create {objective:"mgs.sidebar",display_name:{translate:"mgs.demolition",color:"gold",bold:true},contents:[[" ⏱ ",[{score:{name:"#timer_min",objective:"mgs.data"},"color":"yellow"},{text:":"},{score:{name:"#timer_tens",objective:"mgs.data"}},{score:{name:"#timer_ones",objective:"mgs.data"}}]]," ",[["", " 🔴 ",{translate:"mgs.red",color:"red"}],[" ",{score:{name:"#red",objective:"mgs.mp.team"},color:"white"}]],[["", " 🔵 ",{translate:"mgs.blue",color:"blue"}],[" ",{score:{name:"#blue",objective:"mgs.mp.team"},color:"white"}]]," ",[[{text:" ",color:"gray"}, {translate:"mgs.round"}],{score:{name:"#demo_round",objective:"mgs.data"},color:"white"}],$(atk)," ",$(a),$(b)]}
+$function #bs.sidebar:create {objective:"mgs.sidebar",display_name:{translate:"mgs.demolition",color:"gold",bold:true},contents:[[" ⏱ ",[{score:{name:"#timer_min",objective:"mgs.data"},"color":"yellow"},{text:":"},{score:{name:"#timer_tens",objective:"mgs.data"}},{score:{name:"#timer_ones",objective:"mgs.data"}}]]," ",[["", " 🔴 ",{translate:"mgs.red",color:"red"}],[" ",{score:{name:"#red",objective:"mgs.mp.team"},color:"white"}]],[["", " 🔵 ",{translate:"mgs.blue",color:"blue"}],[" ",{score:{name:"#blue",objective:"mgs.mp.team"},color:"white"}]]," ",[[{text:" ",color:"gray"}, {translate:"mgs.round"}],{score:{name:"#demo_round",objective:"mgs.data"},color:"white"}],[$(atk_label),$(atk_team)]," ",$(a),$(b)]}
 scoreboard objectives setdisplay sidebar mgs.sidebar
 

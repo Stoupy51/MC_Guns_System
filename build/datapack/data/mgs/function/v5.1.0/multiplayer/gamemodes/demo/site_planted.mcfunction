@@ -9,6 +9,7 @@
 scoreboard players set @s mgs.demo_state 1
 scoreboard players set @s mgs.demo_fuse 200
 scoreboard players set @s mgs.demo_prog 0
+scoreboard players operation @s mgs.demo_owner = #demo_attackers mgs.data
 
 summon minecraft:marker ~ ~ ~ {Tags:["mgs.demo_bomb","mgs.gm_entity"]}
 summon minecraft:block_display ~ ~ ~ {Tags:["mgs.demo_bomb_vis","mgs.gm_entity"],block_state:{Name:"minecraft:tnt"},transformation:{translation:[-0.25f,0.625f,-0.25f],left_rotation:[0.0f,0.0f,0.0f,1.0f],scale:[0.5f,0.5f,0.5f],right_rotation:[0.0f,0.0f,0.0f,1.0f]}}

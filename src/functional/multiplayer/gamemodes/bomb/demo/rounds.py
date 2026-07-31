@@ -1,13 +1,14 @@
-""" Demolition's round structure: two halves, then a sudden-death overtime.
+""" Demolition's round structure: two halves, then a tie-break round when they split.
 
 Each side attacks exactly once. An attacking side wins its half only by destroying **both** sites before
-the clock runs out; anything less is a defensive hold. If the two halves split 1-1 — or if both defences
-held, 0-0, which the official rules do not cover and which is treated the same way here — a third round
-decides it: both bomb sites turn neutral, everyone is armed, and the first detonation takes the match.
+the clock runs out, and anything less is a defensive hold, so every round awards exactly one point and
+regulation always ends 2-0 or 1-1.
 
-CoD runs that decider on one dedicated neutral site. This mode has no map data for such a point and will
-not invent one: the two bomb sites the map already defines are authored, playable, and exactly the right
-kind of place, so overtime simply opens both of them to both teams instead.
+A 1-1 goes to a third round played exactly like the first two — one attacking side, one defending side,
+both sites to destroy. Per the [CoD Wiki](https://callofduty.fandom.com/wiki/Demolition_(Game_Mode)) the
+side that **defends** it is whichever team has the most kills.
+That is knowingly an advantage on maps easier to hold than to take, and it is the rule as written.
+A kill tie leaves Red attacking, the same fallback `BombSites.write_side_picking` uses.
 """
 # ruff: noqa: E501
 # Imports
@@ -17,25 +18,23 @@ from .sites_state import DemoSites
 
 # Constants
 ROUND_TICKS: int = 3600
-""" 3:00 per half. Longer than a Search & Destroy round because the attackers have to destroy two sites
+""" 3:00 per round. Longer than a Search & Destroy round because the attackers have to destroy two sites
 rather than plant one, and every death is a respawn rather than the end of their round.
 NOT a sourced value — tune in game. """
-OVERTIME_TICKS: int = 3600
-""" 3:00 for the decider. Expiring means nobody detonated anything, which is a draw. """
 ROUNDS_PER_MATCH: int = 2
-""" Halves in regulation, one per side. """
-OVERTIME_ROUND: int = ROUNDS_PER_MATCH + 1
-""" Round number the sudden-death round runs as; `demo_round` reaching past it means it expired. """
+""" Rounds in regulation, one attack per side. """
+TIEBREAK_ROUND: int = ROUNDS_PER_MATCH + 1
+""" Round number the decider runs as, played only when regulation ends level. """
 
 
 # Classes
 class DemoRounds:
-	""" Opening and closing Demolition rounds, and running the overtime decider. """
+	""" Opening and closing Demolition rounds, and choosing the sides of the tie-break round. """
 
 	# Functions
 	@staticmethod
 	def write(variant: GameModeVariant) -> None:
-		""" Write `start_round`, the two win functions, `next_round`, `swap_sides` and the overtime pair. """
+		""" Write `start_round`, the two win functions, `next_round`, `swap_sides` and `pick_tiebreak_sides`. """
 		ns, version = variant.ns, variant.version
 
 		## Demolition: Start Round
@@ -44,27 +43,25 @@ class DemoRounds:
 execute if data storage {ns}:multiplayer game{{state:"lobby"}} run return fail
 execute if data storage {ns}:multiplayer game{{state:"ended"}} run return fail
 
-# Announce round
+# Announce round. The decider is announced as one, but plays like any other round.
 tellraw @a [{MGS_TAG},{{"text":"────── Round ","color":"gold"}},{{"score":{{"name":"#demo_round","objective":"{ns}.data"}},"color":"yellow"}},{{"text":" ──────","color":"gold"}}]
-execute if score #demo_round {ns}.data matches ..{ROUNDS_PER_MATCH} if score #demo_attackers {ns}.data matches 1 run tellraw @a [{MGS_TAG},{{"text":"Red","color":"red"}},{{"text":" attacks both sites | "}},{{"text":"Blue","color":"blue"}},{{"text":" defends"}}]
-execute if score #demo_round {ns}.data matches ..{ROUNDS_PER_MATCH} if score #demo_attackers {ns}.data matches 2 run tellraw @a [{MGS_TAG},{{"text":"Blue","color":"blue"}},{{"text":" attacks both sites | "}},{{"text":"Red","color":"red"}},{{"text":" defends"}}]
-execute if score #demo_round {ns}.data matches {OVERTIME_ROUND}.. run tellraw @a [{MGS_TAG},"⚡ ",{{"text":"OVERTIME — both sites are neutral, first detonation wins!","color":"gold","bold":true}}]
+execute if score #demo_round {ns}.data matches {TIEBREAK_ROUND}.. run tellraw @a [{MGS_TAG},"⚡ ",{{"text":"TIE-BREAK ROUND — most kills defends!","color":"gold","bold":true}}]
+execute if score #demo_attackers {ns}.data matches 1 run tellraw @a [{MGS_TAG},{{"text":"Red","color":"red"}},{{"text":" attacks both sites | "}},{{"text":"Blue","color":"blue"}},{{"text":" defends"}}]
+execute if score #demo_attackers {ns}.data matches 2 run tellraw @a [{MGS_TAG},{{"text":"Blue","color":"blue"}},{{"text":" attacks both sites | "}},{{"text":"Red","color":"red"}},{{"text":" defends"}}]
 playsound minecraft:block.note_block.harp player @a ~ ~ ~ 1 1.0
 
 # Every site back to intact
 {DemoSites.reset_lines(variant)}
 
-# Clock. Regulation and overtime differ only in length; both stop while a bomb is down.
-execute if score #demo_round {ns}.data matches ..{ROUNDS_PER_MATCH} run scoreboard players set #demo_timer {ns}.data {ROUND_TICKS}
-execute if score #demo_round {ns}.data matches {OVERTIME_ROUND}.. run scoreboard players set #demo_timer {ns}.data {OVERTIME_TICKS}
+# Clock, same length every round; it stops while a bomb is down, which is why this mode owns #mp_timer.
+scoreboard players set #demo_timer {ns}.data {ROUND_TICKS}
 scoreboard players operation #mp_timer {ns}.data = #demo_timer {ns}.data
 
 # Who is carrying a bomb. Every attacker is, on every respawn, which is why Demolition needs none of the
-# carry/drop/pickup machinery S&D has — the tag IS the bomb. In overtime BOTH sides get it.
+# carry/drop/pickup machinery S&D has — the tag IS the bomb.
 tag @a remove {ns}.demo_atk
-execute if score #demo_round {ns}.data matches ..{ROUNDS_PER_MATCH} if score #demo_attackers {ns}.data matches 1 run tag @a[scores={{{ns}.mp.team=1}}] add {ns}.demo_atk
-execute if score #demo_round {ns}.data matches ..{ROUNDS_PER_MATCH} if score #demo_attackers {ns}.data matches 2 run tag @a[scores={{{ns}.mp.team=2}}] add {ns}.demo_atk
-execute if score #demo_round {ns}.data matches {OVERTIME_ROUND}.. run tag @a[scores={{{ns}.mp.team=1..2}}] add {ns}.demo_atk
+execute if score #demo_attackers {ns}.data matches 1 run tag @a[scores={{{ns}.mp.team=1}}] add {ns}.demo_atk
+execute if score #demo_attackers {ns}.data matches 2 run tag @a[scores={{{ns}.mp.team=2}}] add {ns}.demo_atk
 
 # Everyone alive and back at their spawns. Mid-respawn spectators are pulled out of it and their countdown
 # is cleared, so a death from the previous round cannot respawn them a second time mid-round.
@@ -109,30 +106,6 @@ playsound minecraft:entity.player.levelup player @a ~ ~ ~ 1 1.0
 function {ns}:v{version}/multiplayer/gamemodes/demo/next_round
 """)
 
-		## Demolition: overtime detonation — the planting team takes the match (#demo_last_owner is set by
-		## site_destroyed, before this is called, because the site marker is gone from that context by then)
-		variant.sub("overtime_won", f"""
-execute unless score #demo_round_active {ns}.data matches 1 run return fail
-scoreboard players set #demo_round_active {ns}.data 0
-
-execute if score #demo_last_owner {ns}.data matches 1 run scoreboard players add #red {ns}.mp.team 1
-execute if score #demo_last_owner {ns}.data matches 2 run scoreboard players add #blue {ns}.mp.team 1
-execute if score #demo_last_owner {ns}.data matches 1 run return run function {ns}:v{version}/multiplayer/team_wins {{team:"Red"}}
-execute if score #demo_last_owner {ns}.data matches 2 run return run function {ns}:v{version}/multiplayer/team_wins {{team:"Blue"}}
-
-# Nobody owned it (should be unreachable): treat it as the draw an expired overtime would have been
-function {ns}:v{version}/multiplayer/game_draw
-""")
-
-		## Demolition: the overtime clock ran out with the neutral site still standing — nobody earned it
-		variant.sub("overtime_expired", f"""
-execute unless score #demo_round_active {ns}.data matches 1 run return fail
-scoreboard players set #demo_round_active {ns}.data 0
-
-tellraw @a [{MGS_TAG},"⚡ ",{{"text":"Overtime expired — nobody detonated the site.","color":"gray"}}]
-function {ns}:v{version}/multiplayer/game_draw
-""")
-
 		## Demolition: what happens after a round closes
 		variant.sub("next_round", f"""
 # The clock is reset here as well as in start_round: the tick stops driving #mp_timer between rounds, so
@@ -146,21 +119,43 @@ scoreboard players add #demo_round {ns}.data 1
 execute if score #demo_round {ns}.data matches {ROUNDS_PER_MATCH} run function {ns}:v{version}/multiplayer/gamemodes/demo/swap_sides
 execute if score #demo_round {ns}.data matches {ROUNDS_PER_MATCH} run return run schedule function {ns}:v{version}/multiplayer/gamemodes/demo/start_round 60t
 
-# Both halves played: a leader takes the match, a tie plays the decider. Overtime needs no setup of its
-# own — start_round already restores both sites and arms both teams once the round number says so.
-execute if score #demo_round {ns}.data matches {OVERTIME_ROUND} if score #red {ns}.mp.team > #blue {ns}.mp.team run return run function {ns}:v{version}/multiplayer/team_wins {{team:"Red"}}
-execute if score #demo_round {ns}.data matches {OVERTIME_ROUND} if score #blue {ns}.mp.team > #red {ns}.mp.team run return run function {ns}:v{version}/multiplayer/team_wins {{team:"Blue"}}
-execute if score #demo_round {ns}.data matches {OVERTIME_ROUND} run return run schedule function {ns}:v{version}/multiplayer/gamemodes/demo/start_round 60t
+# Regulation is over. Every round awards exactly one point, so this closes the match on 2-0 here and on
+# 2-1 after the decider; only a 1-1 falls through.
+execute if score #red {ns}.mp.team > #blue {ns}.mp.team run return run function {ns}:v{version}/multiplayer/team_wins {{team:"Red"}}
+execute if score #blue {ns}.mp.team > #red {ns}.mp.team run return run function {ns}:v{version}/multiplayer/team_wins {{team:"Blue"}}
 
-# Overtime itself expired without a detonation
+# Still level: play the decider, its defending side chosen by kills
+execute if score #demo_round {ns}.data matches {TIEBREAK_ROUND} run function {ns}:v{version}/multiplayer/gamemodes/demo/pick_tiebreak_sides
+execute if score #demo_round {ns}.data matches {TIEBREAK_ROUND} run return run schedule function {ns}:v{version}/multiplayer/gamemodes/demo/start_round 60t
+
+# Level after the decider (should be unreachable: a round that awards no point cannot happen)
 function {ns}:v{version}/multiplayer/game_draw
 """)
 
-		## Demolition: halftime. The only structural change in the whole match — overtime alters no
-		## geometry and no sides, which is why it needs no function of its own.
+		## Demolition: halftime, the only place sides are swapped rather than computed
 		variant.sub("swap_sides", f"""
 execute if score #demo_attackers {ns}.data matches 1 run scoreboard players set #demo_attackers {ns}.data 2
 execute unless score #demo_attackers {ns}.data matches 2 run scoreboard players set #demo_attackers {ns}.data 1
 tellraw @a [{MGS_TAG},"⚔ ",{{"text":"Sides swapped!","color":"gold"}}]
 playsound minecraft:block.note_block.xylophone player @a ~ ~ ~ 1 1.0
+""")
+
+		## Demolition: the decider's sides. The team with the most kills defends, so the other one attacks —
+		## which is why this replaces swap_sides rather than following it, and can hand the same side two
+		## attacks in a row. Announced in full because it decides the match and nobody can see the tally.
+		variant.sub("pick_tiebreak_sides", f"""
+# Match kill totals: mp.kills is per player and zeroed by multiplayer/start, never between rounds
+scoreboard players set #demo_kills_red {ns}.data 0
+scoreboard players set #demo_kills_blue {ns}.data 0
+execute as @a[scores={{{ns}.mp.team=1}}] run scoreboard players operation #demo_kills_red {ns}.data += @s {ns}.mp.kills
+execute as @a[scores={{{ns}.mp.team=2}}] run scoreboard players operation #demo_kills_blue {ns}.data += @s {ns}.mp.kills
+
+# Most kills defends. A tie leaves Red attacking, matching the side-picking fallback.
+scoreboard players set #demo_attackers {ns}.data 1
+execute if score #demo_kills_red {ns}.data > #demo_kills_blue {ns}.data run scoreboard players set #demo_attackers {ns}.data 2
+
+# The tally, then the tie fallback only: who defends is already announced by start_round, but "most kills"
+# says nothing about a tie, so that one case is spelled out.
+tellraw @a [{MGS_TAG},{{"text":"Kills: ","color":"gray"}},{{"text":"Red ","color":"red"}},{{"score":{{"name":"#demo_kills_red","objective":"{ns}.data"}},"color":"white"}},{{"text":" - ","color":"gray"}},{{"text":"Blue ","color":"blue"}},{{"score":{{"name":"#demo_kills_blue","objective":"{ns}.data"}},"color":"white"}}]
+execute if score #demo_kills_red {ns}.data = #demo_kills_blue {ns}.data run tellraw @a [{MGS_TAG},{{"text":"Kills are level, so ","color":"yellow"}},{{"text":"Blue","color":"blue"}},{{"text":" defends.","color":"yellow"}}]
 """)

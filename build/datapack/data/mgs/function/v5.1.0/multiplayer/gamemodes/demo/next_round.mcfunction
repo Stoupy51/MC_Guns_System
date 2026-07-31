@@ -18,12 +18,15 @@ scoreboard players add #demo_round mgs.data 1
 execute if score #demo_round mgs.data matches 2 run function mgs:v5.1.0/multiplayer/gamemodes/demo/swap_sides
 execute if score #demo_round mgs.data matches 2 run return run schedule function mgs:v5.1.0/multiplayer/gamemodes/demo/start_round 60t
 
-# Both halves played: a leader takes the match, a tie plays the decider. Overtime needs no setup of its
-# own — start_round already restores both sites and arms both teams once the round number says so.
-execute if score #demo_round mgs.data matches 3 if score #red mgs.mp.team > #blue mgs.mp.team run return run function mgs:v5.1.0/multiplayer/team_wins {team:"Red"}
-execute if score #demo_round mgs.data matches 3 if score #blue mgs.mp.team > #red mgs.mp.team run return run function mgs:v5.1.0/multiplayer/team_wins {team:"Blue"}
+# Regulation is over. Every round awards exactly one point, so this closes the match on 2-0 here and on
+# 2-1 after the decider; only a 1-1 falls through.
+execute if score #red mgs.mp.team > #blue mgs.mp.team run return run function mgs:v5.1.0/multiplayer/team_wins {team:"Red"}
+execute if score #blue mgs.mp.team > #red mgs.mp.team run return run function mgs:v5.1.0/multiplayer/team_wins {team:"Blue"}
+
+# Still level: play the decider, its defending side chosen by kills
+execute if score #demo_round mgs.data matches 3 run function mgs:v5.1.0/multiplayer/gamemodes/demo/pick_tiebreak_sides
 execute if score #demo_round mgs.data matches 3 run return run schedule function mgs:v5.1.0/multiplayer/gamemodes/demo/start_round 60t
 
-# Overtime itself expired without a detonation
+# Level after the decider (should be unreachable: a round that awards no point cannot happen)
 function mgs:v5.1.0/multiplayer/game_draw
 
