@@ -25,8 +25,9 @@ execute as @e[tag=mgs.power_switch_disp] run data modify entity @s item.componen
 # Kill power switch interaction entities (one-time use); displays stay to show the "on" state
 kill @e[tag=mgs.power_switch]
 
-# Announce
-tellraw @a[scores={mgs.zb.in_game=1}] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.power_is_on","color":"green","bold":true}]
+# Announce. The whole roster earns this one, so the audience IS the earners and needs no split.
+tellraw @a[scores={mgs.zb.in_game=1}] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.power_is_on","color":"green","bold":true},[" ",{"text":"+10 XP","color":"gold"}]]
+execute as @a[scores={mgs.zb.in_game=1}] run function mgs:v5.1.0/progression/zb/award_power
 playsound minecraft:block.beacon.activate ambient @a[scores={mgs.zb.in_game=1}] ~ ~ ~ 0.9 1.0
 
 # Signal map-specific power-on hooks

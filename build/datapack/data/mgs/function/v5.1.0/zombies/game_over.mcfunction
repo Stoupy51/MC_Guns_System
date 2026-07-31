@@ -19,9 +19,13 @@ title @a[scores={mgs.zb.in_game=1}] title {"translate":"mgs.game_over_2","color"
 # Calculate final round
 execute store result score #final_round mgs.data run data get storage mgs:zombies game.round
 
-# Performance summary
+# Depth bonus, paid here so the Final Round line below can carry the amount
+function mgs:v5.1.0/zombies/xp/on_game_over
+
+# Performance summary. The Final Round line is split because only the roster earned the bonus.
 tellraw @a ["","\n",[{"text":"═══════ ","color":"dark_red","bold":true}, {"translate":"mgs.game_over_2"}, " ═══════"]]
-tellraw @a ["","  ","🧟 ",{"translate":"mgs.final_round","color":"gray"},{"score":{"name":"#final_round","objective":"mgs.data"},"color":"red","bold":true}]
+tellraw @a[scores={mgs.zb.in_game=1}] ["","  ","🧟 ",{"translate":"mgs.final_round","color":"gray"},{"score":{"name":"#final_round","objective":"mgs.data"},"color":"red","bold":true},[" ",{"text":"+","color":"gold"},{"score":{"name":"#xp_gain","objective":"mgs.data"},"color":"gold"},{"text":" XP","color":"gold"}]]
+tellraw @a[scores={mgs.zb.in_game=0}] ["","  ","🧟 ",{"translate":"mgs.final_round","color":"gray"},{"score":{"name":"#final_round","objective":"mgs.data"},"color":"red","bold":true}]
 
 # Per-player stats, best first. The bare selector component renders the player's team colour.
 tag @a[scores={mgs.zb.in_game=1}] add mgs.stat_cand

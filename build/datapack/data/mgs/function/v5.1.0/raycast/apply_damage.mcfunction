@@ -35,5 +35,11 @@ execute if score #is_new_kill mgs.data matches 1 if entity @s[tag=mgs.mission_en
 
 execute if score #is_new_kill mgs.data matches 1 run data modify storage mgs:signals on_kill set value {}
 execute if score #is_new_kill mgs.data matches 1 run data modify storage mgs:signals on_kill.weapon set from storage mgs:gun all
+
+# Headshot goes in the PAYLOAD, not left on #is_headshot: the projectile path fires on_kill without
+# resetting that score, so a listener reading it there would see the last raycast's value. Absent here
+# means "not a headshot", which is exactly what that path's `on_kill set value {}` produces.
+execute if score #is_new_kill mgs.data matches 1 store result storage mgs:signals on_kill.headshot int 1 run scoreboard players get #is_headshot mgs.data
+
 execute if score #is_new_kill mgs.data matches 1 as @n[tag=mgs.ticking] run function #mgs:signals/on_kill
 

@@ -36,6 +36,11 @@ execute unless score @s mgs.special.timeslip matches 1.. as @e[type=minecraft:ma
 execute if score @s mgs.special.timeslip matches 1.. as @e[type=minecraft:marker,tag=mgs.trap_center] if score @s mgs.zb.trap.id = #trap_id mgs.data run scoreboard players set @s mgs.zb.trap.timeslip 1
 
 # Announce
-tellraw @a[scores={mgs.zb.in_game=1}] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.trap_activated_for","color":"gold"},{"score":{"name":"#trap_price","objective":"mgs.data"},"color":"yellow"},[{"text":" ","color":"gold"}, {"translate":"mgs.points_3"}]]
+tag @a remove mgs.xp_earner
+tag @s add mgs.xp_earner
+tellraw @a[scores={mgs.zb.in_game=1},tag=!mgs.xp_earner] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.trap_activated_for","color":"gold"},{"score":{"name":"#trap_price","objective":"mgs.data"},"color":"yellow"},[{"text":" ","color":"gold"}, {"translate":"mgs.points_3"}]]
+tellraw @a[tag=mgs.xp_earner] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.trap_activated_for","color":"gold"},{"score":{"name":"#trap_price","objective":"mgs.data"},"color":"yellow"},[{"text":" ","color":"gold"}, {"translate":"mgs.points_3"}],[" ",{"text":"+2 XP","color":"gold"}]]
+execute as @a[tag=mgs.xp_earner] run function mgs:v5.1.0/progression/zb/award_trap
+tag @a remove mgs.xp_earner
 playsound minecraft:block.note_block.bit ambient @a[scores={mgs.zb.in_game=1}] ~ ~ ~ 0.6 0.9
 

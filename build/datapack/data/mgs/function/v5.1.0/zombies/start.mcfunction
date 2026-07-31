@@ -34,7 +34,10 @@ team modify mgs.zombies friendlyFire false
 team modify mgs.zombies nametagVisibility hideForOtherTeams
 
 # Reset scores (in_game is left untouched: it's the opt-in flag, set via Manage Players / + Join)
+# Keep the XP spend tracker in step: an unsynced reset reads as points being SPENT (see zombies/xp.py)
 scoreboard players set @a mgs.zb.points 500
+scoreboard players set @a mgs.zb.xp_pts_prev 500
+scoreboard players set @a mgs.zb.xp_spent_acc 0
 scoreboard players set @a mgs.zb.kills 0
 scoreboard players set @a mgs.zb.downs 0
 scoreboard players set @a mgs.zb.passive 0

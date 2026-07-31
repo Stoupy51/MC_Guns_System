@@ -18,5 +18,5 @@ execute unless score @s mgs.mb.pid = @n[tag=mgs.mb_display,distance=..3] mgs.mb.
 
 tag @n[tag=mgs.mb_display,distance=..3] add mgs.mb_shared
 playsound minecraft:entity.experience_orb.pickup ambient @s ~ ~ ~ 0.8 1.25
-tellraw @a[scores={mgs.zb.in_game=1}] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"selector":"@s"},{"translate":"mgs.shared_their_mystery_box_weapon_anyone_can_take_it","color":"green"}]
+tellraw @a[scores={mgs.zb.in_game=1}] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],["",{"text":"[","color":"dark_gray"},{"score":{"name":"@s","objective":"mgs.zb.xp_level"},"color":"gold"},{"text":"] ","color":"dark_gray"},{"selector":"@s"}],{"translate":"mgs.shared_their_mystery_box_weapon_anyone_can_take_it","color":"green"}]
 

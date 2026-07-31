@@ -4,5 +4,6 @@
 # @within	???
 #
 
-tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],"🪦 ",{"translate":"mgs.tombstone_recover_your_gear_if_you_bleed_out","color":"yellow"}]
+tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],"🪦 ",{"translate":"mgs.tombstone_recover_your_gear_if_you_bleed_out","color":"yellow"},[" ",{"text":"+5 XP","color":"gold"}]]
+function mgs:v5.1.0/progression/zb/award_perk
 

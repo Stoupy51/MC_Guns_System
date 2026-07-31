@@ -80,7 +80,9 @@ execute if score #snd_bomb_state mgs.data matches 0 if score #snd_plant_progress
 # Defusing (defender near bomb and sneaking); progress resets if nobody is channeling.
 # The += lives HERE and not in try_defuse on purpose: run per player, two defenders on the same bomb each
 # added a tick_delta to the one shared progress score and halved the defuse time.
+# try_defuse also marks each channeler, so bomb_defused knows who to pay without re-deriving the set.
 scoreboard players set #snd_channeling mgs.data 0
+tag @a remove mgs.xp_earner
 execute if score #snd_bomb_state mgs.data matches 2 as @a[tag=mgs.snd_alive,predicate=mgs:v5.1.0/is_sneaking,gamemode=!spectator] at @s if entity @e[tag=mgs.snd_bomb,distance=..3.0] run function mgs:v5.1.0/multiplayer/gamemodes/snd/try_defuse
 execute if score #snd_bomb_state mgs.data matches 2 if score #snd_channeling mgs.data matches 0 run scoreboard players set #snd_defuse_progress mgs.data 0
 execute if score #snd_bomb_state mgs.data matches 2 if score #snd_channeling mgs.data matches 1 run scoreboard players operation #snd_defuse_progress mgs.data += #tick_delta mgs.data

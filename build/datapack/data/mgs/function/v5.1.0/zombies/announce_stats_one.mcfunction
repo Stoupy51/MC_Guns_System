@@ -9,5 +9,5 @@
 # @s = the highest-scoring player not yet announced
 scoreboard players set #stat_found mgs.data 1
 tag @s remove mgs.stat_cand
-tellraw @a ["","  ","🎖 ",{"selector":"@s"}," — Kills: ",{"score":{"name":"@s","objective":"mgs.zb.kills"},"color":"green"}," | Downs: ",{"score":{"name":"@s","objective":"mgs.zb.downs"},"color":"red"}," | Points: ",{"score":{"name":"@s","objective":"mgs.zb.points"},"color":"gold"}]
+tellraw @a ["","  ","🎖 ",{Text.player(ns, "@s", side="zb")}," — Kills: ",{"score":{"name":"@s","objective":"mgs.zb.kills"},"color":"green"}," | Downs: ",{"score":{"name":"@s","objective":"mgs.zb.downs"},"color":"red"}," | Points: ",{"score":{"name":"@s","objective":"mgs.zb.points"},"color":"gold"}]
 

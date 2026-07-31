@@ -13,5 +13,6 @@ execute if score #snd_attackers mgs.data matches 2 unless score @s mgs.mp.team m
 # Raise the channel flag and show the progress; the tick owns the increment, so extra defenders on the
 # same bomb give cover rather than a faster defuse. The bomb countdown keeps running in parallel.
 scoreboard players set #snd_channeling mgs.data 1
+tag @s add mgs.xp_earner
 title @s actionbar [{"translate":"mgs.defusing","color":"aqua"},{"score":{"name":"#snd_defuse_progress","objective":"mgs.data"},"color":"yellow"},{"translate":"mgs.150"}]
 

@@ -5,6 +5,7 @@ from stewbeet import Mem, write_tick_file, write_versioned_function
 
 from ...core.respawn_countdown import respawn_countdown_tick_lines
 from ...core.weapon_drop import WeaponDrop
+from ...helpers.text import Text
 
 
 # Functions
@@ -105,7 +106,7 @@ tellraw @a ["","  ","⏱ ",{{"text":"Time: ","color":"gray"}},{{"score":{{"name"
 tellraw @a ["","  ","💀 ",{{"text":"Enemies killed: ","color":"gray"}},{{"score":{{"name":"#mi_total_enemies","objective":"{ns}.data"}},"color":"red"}}]
 
 # Per-player stats
-execute as @a[scores={{{ns}.mi.in_game=1}}] run tellraw @a ["","  ","🎖 ",{{"selector":"@s","color":"yellow"}}," — Kills: ",{{"score":{{"name":"@s","objective":"{ns}.mi.kills"}},"color":"green"}}," | Deaths: ",{{"score":{{"name":"@s","objective":"{ns}.mi.deaths"}},"color":"red"}}]
+execute as @a[scores={{{ns}.mi.in_game=1}}] run tellraw @a ["","  ","🎖 ",{Text.player(ns, "@s", color="yellow")}," — Kills: ",{{"score":{{"name":"@s","objective":"{ns}.mi.kills"}},"color":"green"}}," | Deaths: ",{{"score":{{"name":"@s","objective":"{ns}.mi.deaths"}},"color":"red"}}]
 
 tellraw @a ["",{{"text":"═══════════════════════════════","color":"gold","bold":true}},"\\n"]
 

@@ -13,6 +13,7 @@ tag @s remove mgs.barricade_repairing
 execute unless score @s mgs.zb.barricade_repairs matches 25.. run scoreboard players add @s mgs.zb.points 10
 execute unless score @s mgs.zb.barricade_repairs matches 25.. run scoreboard players add @s mgs.zb.barricade_repairs 1
 
-data modify storage smithed.actionbar:input message set value {json:[[{"text":"✔ ","color":"green"}, {"translate":"mgs.barricade_repaired"}],{"text":"+10","color":"gold"},[{"text":" ","color":"yellow"}, {"translate":"mgs.points_2"}]],priority:"notification",freeze:20}
+data modify storage smithed.actionbar:input message set value {json:[[{"text":"✔ ","color":"green"}, {"translate":"mgs.barricade_repaired"}],{"text":"+10","color":"gold"},[{"text":" ","color":"yellow"}, {"translate":"mgs.points_2"}],[" ",{"text":"+1 XP","color":"gold"}]],priority:"notification",freeze:20}
+function mgs:v5.1.0/progression/zb/award_barricade
 function #smithed.actionbar:message
 

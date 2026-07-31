@@ -32,5 +32,5 @@ execute unless entity @a[scores={mgs.zb.in_game=1,mgs.zb.downed=0},gamemode=!spe
 # Announce
 title @s title ["☠"]
 title @s subtitle [{"translate":"mgs.you_bled_out_respawning_next_round","color":"gray"}]
-tellraw @a[scores={mgs.zb.in_game=1}] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"selector":"@s","color":"dark_red"},[{"text":" ","color":"gray"}, {"translate":"mgs.has_bled_out"}]]
+tellraw @a[scores={mgs.zb.in_game=1}] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],["",{"text":"[","color":"dark_gray"},{"score":{"name":"@s","objective":"mgs.zb.xp_level"},"color":"gold"},{"text":"] ","color":"dark_gray"},{"selector":"@s","color":"dark_red"}],[{"text":" ","color":"gray"}, {"translate":"mgs.has_bled_out"}]]
 

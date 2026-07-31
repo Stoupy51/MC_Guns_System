@@ -24,6 +24,10 @@ execute as @a[scores={mgs.zb.in_game=1}] at @s run playsound mgs:zombies/powerup
 # Activate the power-up effect (collector tag is still active here)
 function mgs:v5.1.0/zombies/powerups/dispatch_activate
 
+# Silent award: there are eleven power-up types with eleven different announces, so there is no single
+# message to suffix. The bar moving is the feedback.
+execute as @a[tag=mgs.pu_collecting] run function mgs:v5.1.0/progression/zb/award_powerup
+
 # Kill this power-up item entity
 kill @s
 scoreboard players remove #pu_active mgs.data 1

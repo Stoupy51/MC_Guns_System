@@ -29,7 +29,7 @@ tellraw @a ["","  ","⏱ ",{"translate":"mgs.time","color":"gray"},{"score":{"na
 tellraw @a ["","  ","💀 ",{"translate":"mgs.enemies_killed","color":"gray"},{"score":{"name":"#mi_total_enemies","objective":"mgs.data"},"color":"red"}]
 
 # Per-player stats
-execute as @a[scores={mgs.mi.in_game=1}] run tellraw @a ["","  ","🎖 ",{"selector":"@s","color":"yellow"}," — Kills: ",{"score":{"name":"@s","objective":"mgs.mi.kills"},"color":"green"}," | Deaths: ",{"score":{"name":"@s","objective":"mgs.mi.deaths"},"color":"red"}]
+execute as @a[scores={mgs.mi.in_game=1}] run tellraw @a ["","  ","🎖 ",["",{"text":"[","color":"dark_gray"},{"score":{"name":"@s","objective":"mgs.mp.xp_level"},"color":"gold"},{"text":"] ","color":"dark_gray"},{"selector":"@s","color":"yellow"}]," — Kills: ",{"score":{"name":"@s","objective":"mgs.mi.kills"},"color":"green"}," | Deaths: ",{"score":{"name":"@s","objective":"mgs.mi.deaths"},"color":"red"}]
 
 tellraw @a ["",{"text":"═══════════════════════════════","color":"gold","bold":true},"\n"]
 

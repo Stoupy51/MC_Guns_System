@@ -26,6 +26,9 @@ scoreboard players set #hp_zone_idx mgs.data 0
 # Scoring timer (score every 1 second = 20 ticks)
 scoreboard players set #hp_score_timer mgs.data 20
 
+# XP throttles: the hold counter, and the once-per-hill capture flag load_zone clears on every rotation
+scoreboard players set #hp_xp_hold mgs.data 5
+
 # Load first zone
 function mgs:v5.1.0/multiplayer/gamemodes/hp/load_zone
 

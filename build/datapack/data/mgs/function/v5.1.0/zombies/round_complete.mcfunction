@@ -15,9 +15,10 @@ scoreboard players set #zb_to_spawn mgs.data -1
 # Signal round end
 function #mgs:zombies/on_round_end
 
-# Announce
+# Announce. Split because only the roster earned the survival XP; #xp_gain was set by the signal above.
 execute store result score #completed_round mgs.data run data get storage mgs:zombies game.round
-tellraw @a ["",{"text":"","color":"dark_green","bold":true},"🧟 ",{"translate":"mgs.round","color":"green"},{"score":{"name":"#completed_round","objective":"mgs.data"},"color":"gold","bold":true},{"translate":"mgs.complete_next_round_in_5_seconds","color":"green"}]
+tellraw @a[scores={mgs.zb.in_game=1}] ["",{"text":"","color":"dark_green","bold":true},"🧟 ",{"translate":"mgs.round","color":"green"},{"score":{"name":"#completed_round","objective":"mgs.data"},"color":"gold","bold":true},{"translate":"mgs.complete_next_round_in_5_seconds","color":"green"},[" ",{"text":"+","color":"gold"},{"score":{"name":"#xp_gain","objective":"mgs.data"},"color":"gold"},{"text":" XP","color":"gold"}]]
+tellraw @a[scores={mgs.zb.in_game=0}] ["",{"text":"","color":"dark_green","bold":true},"🧟 ",{"translate":"mgs.round","color":"green"},{"score":{"name":"#completed_round","objective":"mgs.data"},"color":"gold","bold":true},{"translate":"mgs.complete_next_round_in_5_seconds","color":"green"}]
 execute as @a[scores={mgs.zb.in_game=1}] at @s run playsound mgs:zombies/round_end_generic ambient @s ~ ~ ~ 0.3 1.0
 
 # Schedule next round after 5 seconds

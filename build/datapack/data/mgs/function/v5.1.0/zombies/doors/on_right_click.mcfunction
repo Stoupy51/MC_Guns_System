@@ -36,6 +36,11 @@ execute if score #door_partial mgs.data matches 1.. if score #door_paid mgs.data
 execute as @e[tag=mgs.door] if score @s mgs.zb.door.link = #door_link mgs.data at @s run function mgs:v5.1.0/zombies/doors/open_one
 
 # Announce (the total, not the last chunk: it's what the door cost the team)
-tellraw @a [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"selector":"@s","color":"yellow"},[{"text":" ","color":"green"}, {"translate":"mgs.opened"}],{"storage":"mgs:temp","nbt":"_door_hover_name","color":"gold","interpret":true},[{"text":" ","color":"green"}, {"translate":"mgs.for"}],{"score":{"name":"#door_total","objective":"mgs.data"},"color":"yellow"},[{"text":" ","color":"green"}, {"translate":"mgs.points_3"}]]
+tag @a remove mgs.xp_earner
+tag @s add mgs.xp_earner
+tellraw @a[tag=!mgs.xp_earner] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],["",{"text":"[","color":"dark_gray"},{"score":{"name":"@s","objective":"mgs.zb.xp_level"},"color":"gold"},{"text":"] ","color":"dark_gray"},{"selector":"@s","color":"yellow"}],[{"text":" ","color":"green"}, {"translate":"mgs.opened"}],{"storage":"mgs:temp","nbt":"_door_hover_name","color":"gold","interpret":true},[{"text":" ","color":"green"}, {"translate":"mgs.for"}],{"score":{"name":"#door_total","objective":"mgs.data"},"color":"yellow"},[{"text":" ","color":"green"}, {"translate":"mgs.points_3"}]]
+tellraw @a[tag=mgs.xp_earner] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],["",{"text":"[","color":"dark_gray"},{"score":{"name":"@s","objective":"mgs.zb.xp_level"},"color":"gold"},{"text":"] ","color":"dark_gray"},{"selector":"@s","color":"yellow"}],[{"text":" ","color":"green"}, {"translate":"mgs.opened"}],{"storage":"mgs:temp","nbt":"_door_hover_name","color":"gold","interpret":true},[{"text":" ","color":"green"}, {"translate":"mgs.for"}],{"score":{"name":"#door_total","objective":"mgs.data"},"color":"yellow"},[{"text":" ","color":"green"}, {"translate":"mgs.points_3"}],[" ",{"text":"+3 XP","color":"gold"}]]
+execute as @a[tag=mgs.xp_earner] run function mgs:v5.1.0/progression/zb/award_door
+tag @a remove mgs.xp_earner
 playsound minecraft:block.note_block.bit ambient @a[scores={mgs.zb.in_game=1}] ~ ~ ~ 0.6 0.9
 

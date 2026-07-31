@@ -4,6 +4,10 @@
 # @within	mgs:v5.1.0/tick
 #
 
+# The XP bar is the progression HUD, so a stray orb would show a level nobody earned. Zombies and missions
+# already sweep these; progression/tick_player re-asserts the bar every second as the backstop.
+kill @e[type=experience_orb]
+
 # Spectate Timer (3s respawn cooldown, real-time via #tick_delta).
 # Range checks instead of exact values: a 2+ tick delta under lag can jump over any single value
 # (an exact =0 respawn check would then never fire)

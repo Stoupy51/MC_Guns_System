@@ -183,6 +183,17 @@ scoreboard objectives add mgs.mob.sleep_time dummy
 # Dropped-weapon lifetime (ticks remaining before a dropped gun despawns)
 scoreboard objectives add mgs.drop_timer dummy
 
+# Progression scoreboards (xp_total is authoritative; xp_level and xp_prog are caches derived from it)
+scoreboard objectives add mgs.mp.xp_total dummy
+scoreboard objectives add mgs.mp.xp_level dummy
+scoreboard objectives add mgs.mp.xp_prog dummy
+scoreboard objectives add mgs.mp.xp_session dummy
+scoreboard objectives add mgs.zb.xp_total dummy
+scoreboard objectives add mgs.zb.xp_level dummy
+scoreboard objectives add mgs.zb.xp_prog dummy
+scoreboard objectives add mgs.zb.xp_pts_prev dummy
+scoreboard objectives add mgs.zb.xp_spent_acc dummy
+
 ## Zombies scoreboards
 scoreboard objectives add mgs.zb.in_game dummy
 scoreboard objectives add mgs.zb.points dummy
@@ -626,6 +637,7 @@ scoreboard players set #90 mgs.data 90
 scoreboard players set #100 mgs.data 100
 scoreboard players set #200 mgs.data 200
 scoreboard players set #1000 mgs.data 1000
+scoreboard players set #1011 mgs.data 1011
 scoreboard players set #1200 mgs.data 1200
 scoreboard players set #3500 mgs.data 3500
 scoreboard players set #36000 mgs.data 36000

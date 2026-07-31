@@ -8,8 +8,11 @@
 #			mgs:v5.1.0/multiplayer/gamemodes/ffa/on_kill
 #
 
+# FFA has no team score for multiplayer/xp/on_game_end to read, so the winner is marked here instead.
+tag @s add mgs.xp_winner
+
 # Announce winner using player's name
-tellraw @a ["","🏆 ",{"selector":"@s","color":"gold","bold":true}," ",{"translate":"mgs.wins","color":"gold","bold":true}]
+tellraw @a ["","🏆 ",["",{"text":"[","color":"dark_gray"},{"score":{"name":"@s","objective":"mgs.mp.xp_level"},"color":"gold"},{"text":"] ","color":"dark_gray"},{"selector":"@s","color":"gold","bold":true}]," ",{"translate":"mgs.wins","color":"gold","bold":true}]
 tellraw @a ["","  ",{"translate":"mgs.score","color":"gray"},{"score":{"name":"@s","objective":"mgs.mp.kills"},"color":"yellow"}," ",{"translate":"mgs.kills","color":"gray"}]
 
 # End game
