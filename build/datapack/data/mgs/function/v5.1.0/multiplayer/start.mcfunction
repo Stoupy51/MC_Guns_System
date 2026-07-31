@@ -119,6 +119,7 @@ execute if data storage mgs:multiplayer game{gamemode:"tdm"} run function mgs:v5
 execute if data storage mgs:multiplayer game{gamemode:"dom"} run function mgs:v5.1.0/multiplayer/gamemodes/dom/setup
 execute if data storage mgs:multiplayer game{gamemode:"hp"} run function mgs:v5.1.0/multiplayer/gamemodes/hp/setup
 execute if data storage mgs:multiplayer game{gamemode:"snd"} run function mgs:v5.1.0/multiplayer/gamemodes/snd/setup
+execute if data storage mgs:multiplayer game{gamemode:"demo"} run function mgs:v5.1.0/multiplayer/gamemodes/demo/setup
 
 # Run map-defined start commands after entity/setup summons
 execute if data storage mgs:multiplayer game.map.start_commands[0] run function mgs:v5.1.0/shared/run_start_commands {mode:"multiplayer"}
@@ -143,6 +144,7 @@ execute if data storage mgs:multiplayer game{gamemode:"tdm"} run function mgs:v5
 execute if data storage mgs:multiplayer game{gamemode:"dom"} run function mgs:v5.1.0/multiplayer/create_sidebar_dom
 execute if data storage mgs:multiplayer game{gamemode:"hp"} run function mgs:v5.1.0/multiplayer/create_sidebar_hp
 execute if data storage mgs:multiplayer game{gamemode:"snd"} run function mgs:v5.1.0/multiplayer/create_sidebar_snd
+execute if data storage mgs:multiplayer game{gamemode:"demo"} run function mgs:v5.1.0/multiplayer/create_sidebar_demo
 
 # Show kills in player list (tab)
 scoreboard objectives setdisplay list mgs.mp.kills

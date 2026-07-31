@@ -7,6 +7,7 @@
 #			mgs:v5.1.0/multiplayer/gamemodes/dom/setup {mode:"multiplayer"}
 #			mgs:v5.1.0/multiplayer/gamemodes/hp/setup {mode:"multiplayer"}
 #			mgs:v5.1.0/multiplayer/gamemodes/snd/setup {mode:"multiplayer"}
+#			mgs:v5.1.0/multiplayer/gamemodes/demo/setup {mode:"multiplayer"}
 #			mgs:v5.1.0/missions/start {mode:"missions"}
 #
 # @args		mode (string)

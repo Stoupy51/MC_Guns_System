@@ -138,6 +138,51 @@ $function #bs.sidebar:create {{objective:"{ns}.sidebar",display_name:{{text:"Sea
 scoreboard objectives setdisplay sidebar {ns}.sidebar
 """)
 
+	## Demolition sidebar — round wins, which side attacks, and the state of each bomb site.
+	## Site state is read off the site MARKERS (mgs.demo_state), so the rows are built by testing tagged
+	## entities rather than fake-player scores: a site is intact, planted or destroyed independently.
+	## The ⏱ line is the round clock, which this mode freezes while any bomb is down.
+	sb_demo_round = f'[{{text:" Round ",color:"gray"}},{{score:{{name:"#demo_round",objective:"{ns}.data"}},color:"white"}}]'
+	demo_site_states: list[tuple[str, str, str, str]] = [
+		("demo_state=0", "Intact",    "gray",      "🔹 "),
+		("demo_state=1", "PLANTED",   "red",       "💣 "),
+		("demo_state=2", "Destroyed", "dark_gray", "💥 "),
+	]
+	demo_site_lines: str = "\n".join(
+		f'execute if entity @e[tag={ns}.demo_obj,tag={ns}.demo_site_{letter},scores={{{ns}.{state}}}] run data modify storage {ns}:temp demo_sb.{letter.lower()} set value '
+		f"'[[\" \",{{\"text\":\"Site {letter}\",\"color\":\"{color}\"}}],[\"{emoji}\",{{\"text\":\"{name}\",\"color\":\"{color}\"}}]]'"
+		for letter in ("A", "B")
+		for state, name, color, emoji in demo_site_states
+	)
+
+	write_versioned_function("multiplayer/create_sidebar_demo", f"""
+function {ns}:v{version}/multiplayer/refresh_sidebar_demo
+scoreboard objectives setdisplay sidebar {ns}.sidebar
+""")
+
+	write_versioned_function("multiplayer/refresh_sidebar_demo", f"""
+# Which side is attacking (in overtime both are, and the row says so)
+execute if score #demo_attackers {ns}.data matches 1 run data modify storage {ns}:temp demo_sb.atk set value '[[" ⚔ ",{{"text":"Attack","color":"gray"}}],{{"text":"Red","color":"red"}}]'
+execute if score #demo_attackers {ns}.data matches 2 run data modify storage {ns}:temp demo_sb.atk set value '[[" ⚔ ",{{"text":"Attack","color":"gray"}}],{{"text":"Blue","color":"blue"}}]'
+execute if score #demo_round {ns}.data matches 3.. run data modify storage {ns}:temp demo_sb.atk set value '[[" ⚡ ",{{"text":"Overtime","color":"gray"}}],{{"text":"Both","color":"gold"}}]'
+
+# One row per site, read off that site's marker. Overtime has a single "OT" site instead of A and B.
+data modify storage {ns}:temp demo_sb.a set value '[[" ",{{"text":"Site A","color":"dark_gray"}}],{{"text":"—","color":"dark_gray"}}]'
+data modify storage {ns}:temp demo_sb.b set value '[[" ",{{"text":"Site B","color":"dark_gray"}}],{{"text":"—","color":"dark_gray"}}]'
+{demo_site_lines}
+execute if entity @e[tag={ns}.demo_site_OT,scores={{{ns}.demo_state=0}}] run data modify storage {ns}:temp demo_sb.a set value '[[" ",{{"text":"Neutral","color":"gold"}}],["🔹 ",{{"text":"Intact","color":"gray"}}]]'
+execute if entity @e[tag={ns}.demo_site_OT,scores={{{ns}.demo_state=1}}] run data modify storage {ns}:temp demo_sb.a set value '[[" ",{{"text":"Neutral","color":"gold"}}],["💣 ",{{"text":"PLANTED","color":"red"}}]]'
+execute if entity @e[tag={ns}.demo_site_OT] run data modify storage {ns}:temp demo_sb.b set value '" "'
+
+function {ns}:v{version}/multiplayer/build_sidebar_demo with storage {ns}:temp demo_sb
+""")
+
+	write_versioned_function("multiplayer/build_sidebar_demo", f"""
+scoreboard players reset * {ns}.sidebar
+$function #bs.sidebar:create {{objective:"{ns}.sidebar",display_name:{{text:"Demolition",color:"gold",bold:true}},contents:[{sb_timer},{sb_spacer},{sb_red},{sb_blue},{sb_spacer},{sb_demo_round},$(atk),{sb_spacer},$(a),$(b)]}}
+scoreboard objectives setdisplay sidebar {ns}.sidebar
+""")
+
 	## Hardpoint sidebar — shows team scores + controlling team + time to move
 	## The rotation line was three components (label, seconds, "s left"), one too many for a two-sided
 	## entry, so it never rendered: the seconds and the unit now share the right half.

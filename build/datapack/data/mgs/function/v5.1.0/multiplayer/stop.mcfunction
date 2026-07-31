@@ -26,6 +26,7 @@ execute if data storage mgs:multiplayer game{gamemode:"tdm"} run function mgs:v5
 execute if data storage mgs:multiplayer game{gamemode:"dom"} run function mgs:v5.1.0/multiplayer/gamemodes/dom/cleanup
 execute if data storage mgs:multiplayer game{gamemode:"hp"} run function mgs:v5.1.0/multiplayer/gamemodes/hp/cleanup
 execute if data storage mgs:multiplayer game{gamemode:"snd"} run function mgs:v5.1.0/multiplayer/gamemodes/snd/cleanup
+execute if data storage mgs:multiplayer game{gamemode:"demo"} run function mgs:v5.1.0/multiplayer/gamemodes/demo/cleanup
 kill @e[tag=mgs.gm_entity]
 function #mgs:multiplayer/on_game_end
 

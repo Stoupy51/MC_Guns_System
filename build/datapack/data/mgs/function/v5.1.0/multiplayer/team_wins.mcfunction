@@ -7,6 +7,10 @@
 #			mgs:v5.1.0/multiplayer/time_up {team:"Blue"}
 #			mgs:v5.1.0/multiplayer/gamemodes/snd/next_round {team:"Red"}
 #			mgs:v5.1.0/multiplayer/gamemodes/snd/next_round {team:"Blue"}
+#			mgs:v5.1.0/multiplayer/gamemodes/demo/overtime_won {team:"Red"}
+#			mgs:v5.1.0/multiplayer/gamemodes/demo/overtime_won {team:"Blue"}
+#			mgs:v5.1.0/multiplayer/gamemodes/demo/next_round {team:"Red"}
+#			mgs:v5.1.0/multiplayer/gamemodes/demo/next_round {team:"Blue"}
 #
 # @args		team (string)
 #

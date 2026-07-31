@@ -7,8 +7,9 @@ bomb and global channel scores, Demolition arms everyone and keeps per-site stat
 Forcing those two into one abstraction would hide the only interesting difference between the modes.
 """
 # Imports
+from .demo import Demolition, generate_demolition
 from .snd import SearchAndDestroy, generate_search_and_destroy
 
 # Constants
-__all__ = ["SearchAndDestroy", "generate_search_and_destroy"]
+__all__ = ["Demolition", "SearchAndDestroy", "generate_demolition", "generate_search_and_destroy"]
 """ What the gamemode package imports from here. """

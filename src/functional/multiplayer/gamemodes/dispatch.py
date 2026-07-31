@@ -1,6 +1,6 @@
 """ The gamemode list and the dispatch block that routes a lifecycle script to the active one. """
 # Constants
-GAMEMODES: list[str] = ["ffa", "tdm", "dom", "hp", "snd"]
+GAMEMODES: list[str] = ["ffa", "tdm", "dom", "hp", "snd", "demo"]
 """ Every multiplayer gamemode, the single source of truth for dispatch blocks. """
 
 
