@@ -1,7 +1,14 @@
 """ Hardpoint: hold a rotating zone to score. """
 # Imports
 from ...helpers import MGS_TAG
+from ...progression import Xp
 from .base import GameModeVariant
+
+# Constants
+HOLD_XP_SECONDS: int = 5
+""" Seconds inside the active hill per 1 XP.
+score_tick runs once a second; paying every tick would make sitting on the hill for a ten-minute match worth
+more XP than the entire kill feed, so the hold stream is throttled to a fifth of the scoring rate. """
 
 
 # Classes
@@ -36,12 +43,18 @@ scoreboard players set #hp_zone_idx {ns}.data 0
 # Scoring timer (score every 1 second = 20 ticks)
 scoreboard players set #hp_score_timer {ns}.data 20
 
+# XP throttles: the hold counter, and the once-per-hill capture flag load_zone clears on every rotation
+scoreboard players set #hp_xp_hold {ns}.data {HOLD_XP_SECONDS}
+
 # Load first zone
 function {ns}:v{version}/multiplayer/gamemodes/hp/load_zone
 """)
 
 		## HP: Load zone from first entry → summon single marker with base offset
 		self.sub("load_zone", f"""
+# A fresh hill is uncaptured, so the next side to hold it uncontested earns the capture bonus
+scoreboard players set #hp_xp_captured {ns}.data 0
+
 # Kill old zone marker
 kill @e[tag={ns}.hp_marker]
 kill @e[tag={ns}.hp_label]
@@ -108,16 +121,52 @@ execute if score #hp_score_timer {ns}.data matches ..0 run function {ns}:v{versi
 execute if score #hp_score_timer {ns}.data matches ..0 run scoreboard players set #hp_score_timer {ns}.data 20
 """)
 
-		## HP: Score tick
+		## HP: Score tick.
+		## Two XP streams here. The capture bonus is a one-off per hill, gated on #hp_xp_captured, which
+		## hp/load_zone clears — so it pays whichever side gets there first after a rotation. The hold
+		## stream is deliberately 1 XP per HOLD_XP_SECONDS rather than per second: this function runs once a
+		## second, and paying every one of them would make camping the hill worth more than the entire kill
+		## feed over a ten-minute match.
+		alone: dict[int, str] = {
+			1: f"if score #hp_red {ns}.data matches 1.. unless score #hp_blue {ns}.data matches 1..",
+			2: f"if score #hp_blue {ns}.data matches 1.. unless score #hp_red {ns}.data matches 1..",
+		}
+		holders: str = f"@a[tag={ns}.in_hp_zone,scores={{{ns}.mp.team=%d,{ns}.mp.in_game=1}}]"
+		uncaptured: str = f"if score #hp_xp_captured {ns}.data matches 0"
+		due: str = f"if score #hp_xp_hold {ns}.data matches ..0"
+		capture_lines: str = "\n".join(
+			f'execute {alone[team]} {uncaptured} run tellraw {who} '
+			f'[{MGS_TAG},"🎯 ",{{"text":"Hardpoint captured!","color":"gold"}}{suffix}]'
+			for team in alone
+			for who, suffix in (
+				(f"@a[tag=!{ns}.in_hp_zone]", ""),
+				(holders % team, "," + Xp.suffix("mp", "hp_capture")),
+			)
+		) + "\n" + "\n".join(
+			Xp.give("mp", "hp_capture", holders % team, guard=f"{alone[team]} {uncaptured}") for team in alone
+		)
+		hold_lines: str = "\n".join(
+			Xp.give("mp", "hp_hold", holders % team, guard=f"{alone[team]} {due}") for team in alone
+		)
 		self.sub("score_tick", f"""
 # Only score if one team exclusively holds the zone (not contested)
 # Red alone in zone
-execute if score #hp_red {ns}.data matches 1.. unless score #hp_blue {ns}.data matches 1.. at @e[tag={ns}.hp_marker] run playsound minecraft:block.note_block.bell player @a ~ ~ ~ 1 1.2
-execute if score #hp_red {ns}.data matches 1.. unless score #hp_blue {ns}.data matches 1.. run scoreboard players add #red {ns}.mp.team 1
+execute {alone[1]} at @e[tag={ns}.hp_marker] run playsound minecraft:block.note_block.bell player @a ~ ~ ~ 1 1.2
+execute {alone[1]} run scoreboard players add #red {ns}.mp.team 1
 
 # Blue alone in zone
-execute if score #hp_blue {ns}.data matches 1.. unless score #hp_red {ns}.data matches 1.. at @e[tag={ns}.hp_marker] run playsound minecraft:block.note_block.bell player @a ~ ~ ~ 1 1.2
-execute if score #hp_blue {ns}.data matches 1.. unless score #hp_red {ns}.data matches 1.. run scoreboard players add #blue {ns}.mp.team 1
+execute {alone[2]} at @e[tag={ns}.hp_marker] run playsound minecraft:block.note_block.bell player @a ~ ~ ~ 1 1.2
+execute {alone[2]} run scoreboard players add #blue {ns}.mp.team 1
+
+# First side to hold this hill after it rotated
+{capture_lines}
+execute {alone[1]} run scoreboard players set #hp_xp_captured {ns}.data 1
+execute {alone[2]} run scoreboard players set #hp_xp_captured {ns}.data 1
+
+# Holding it, once every {HOLD_XP_SECONDS}s. No message: the bar moving is the feedback.
+scoreboard players remove #hp_xp_hold {ns}.data 1
+{hold_lines}
+execute if score #hp_xp_hold {ns}.data matches ..0 run scoreboard players set #hp_xp_hold {ns}.data {HOLD_XP_SECONDS}
 
 # Check win
 function {ns}:v{version}/multiplayer/check_team_win

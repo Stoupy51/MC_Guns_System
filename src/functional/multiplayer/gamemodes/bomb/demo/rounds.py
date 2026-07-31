@@ -14,6 +14,7 @@ A kill tie leaves Red attacking, the same fallback `BombSites.write_side_picking
 # Imports
 from .....helpers import MGS_TAG
 from ...base import GameModeVariant
+from ..round_xp import RoundXp
 from .sites_state import DemoSites
 
 # Constants
@@ -84,9 +85,8 @@ execute unless score #demo_round_active {ns}.data matches 1 run return fail
 scoreboard players set #demo_round_active {ns}.data 0
 
 execute if score #demo_attackers {ns}.data matches 1 run scoreboard players add #red {ns}.mp.team 1
-execute if score #demo_attackers {ns}.data matches 1 run tellraw @a [{MGS_TAG},{{"text":"Red","color":"red"}},{{"text":" destroyed both sites!","color":"yellow"}}]
 execute if score #demo_attackers {ns}.data matches 2 run scoreboard players add #blue {ns}.mp.team 1
-execute if score #demo_attackers {ns}.data matches 2 run tellraw @a [{MGS_TAG},{{"text":"Blue","color":"blue"}},{{"text":" destroyed both sites!","color":"yellow"}}]
+{RoundXp.result_lines(ns, "#demo_attackers", attackers_won=True, note="destroyed both sites!")}
 playsound minecraft:entity.player.levelup player @a ~ ~ ~ 1 1.0
 
 function {ns}:v{version}/multiplayer/gamemodes/demo/next_round
@@ -98,9 +98,8 @@ execute unless score #demo_round_active {ns}.data matches 1 run return fail
 scoreboard players set #demo_round_active {ns}.data 0
 
 execute if score #demo_attackers {ns}.data matches 1 run scoreboard players add #blue {ns}.mp.team 1
-execute if score #demo_attackers {ns}.data matches 1 run tellraw @a [{MGS_TAG},{{"text":"Blue","color":"blue"}},{{"text":" held the sites!","color":"yellow"}}]
 execute if score #demo_attackers {ns}.data matches 2 run scoreboard players add #red {ns}.mp.team 1
-execute if score #demo_attackers {ns}.data matches 2 run tellraw @a [{MGS_TAG},{{"text":"Red","color":"red"}},{{"text":" held the sites!","color":"yellow"}}]
+{RoundXp.result_lines(ns, "#demo_attackers", attackers_won=False, note="held the sites!")}
 playsound minecraft:entity.player.levelup player @a ~ ~ ~ 1 1.0
 
 function {ns}:v{version}/multiplayer/gamemodes/demo/next_round

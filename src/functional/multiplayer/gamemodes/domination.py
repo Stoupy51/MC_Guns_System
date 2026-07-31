@@ -2,6 +2,7 @@
 # ruff: noqa: E501
 # Imports
 from ...helpers import MGS_TAG
+from ...progression import Xp
 from .base import GameModeVariant
 
 
@@ -137,16 +138,41 @@ execute if score #dom_blue {ns}.data matches 1.. unless score #dom_red {ns}.data
 			("red",  "Red",  1, "add",    100,  "101..",  "..-1", "0..",  "1.2"),
 			("blue", "Blue", 2, "remove", -100, "..-101", "1..",  "..0",  "0.8"),
 		]:
+			## Both announces are emitted twice: once to the players standing on the point, carrying the XP
+			## they just earned, and once to everyone else without it. A tellraw is one atomic message and a
+			## score component resolves in the executor's context, not per recipient, so a single line
+			## cannot say "+20 XP" to only some of the people reading it.
+			CAPTURER: str = f"{ns}.dom_capturer"
+			neut_guard: str = (
+				f'execute if score #dom_prog {ns}.data matches {neut_old} '
+				f'if score @s {ns}.mp.dom_progress matches {neut_new}'
+			)
+			cap_guard: str = (
+				f'execute if score @s {ns}.mp.dom_progress matches {cap} '
+				f'unless score @s {ns}.mp.dom_owner matches {owner_id}'
+			)
 			neutralize_labels: str = "\n".join(
-				f'execute if score #dom_prog {ns}.data matches {neut_old} if score @s {ns}.mp.dom_progress matches {neut_new} '
-				f'if entity @s[tag={ns}.dom_label_{lbl}] run tellraw @a [{MGS_TAG},{{"text":"Point {lbl} neutralized!","color":"yellow"}}]'
+				f'{neut_guard} if entity @s[tag={ns}.dom_label_{lbl}] run tellraw {who} '
+				f'[{MGS_TAG},{{"text":"Point {lbl} neutralized!","color":"yellow"}}{suffix}]'
 				for lbl in DOM_LABELS
+				for who, suffix in (
+					(f"@a[tag=!{CAPTURER}]", ""),
+					(f"@a[tag={CAPTURER}]", "," + Xp.suffix("mp", "dom_neutralize")),
+				)
 			)
 			capture_labels: str = "\n".join(
-				f'execute if score @s {ns}.mp.dom_progress matches {cap} unless score @s {ns}.mp.dom_owner matches {owner_id} '
-				f'if entity @s[tag={ns}.dom_label_{lbl}] run tellraw @a [{MGS_TAG},{{"text":"{team_name}","color":"{color}"}}," ",{{"text":"captured point {lbl}!","color":"yellow"}}]'
+				f'{cap_guard} if entity @s[tag={ns}.dom_label_{lbl}] run tellraw {who} '
+				f'[{MGS_TAG},{{"text":"{team_name}","color":"{color}"}}," ",{{"text":"captured point {lbl}!","color":"yellow"}}{suffix}]'
 				for lbl in DOM_LABELS
+				for who, suffix in (
+					(f"@a[tag=!{CAPTURER}]", ""),
+					(f"@a[tag={CAPTURER}]", "," + Xp.suffix("mp", "dom_capture")),
+				)
 			)
+			## @s = the point marker, at it, so the players who did the work are whoever is inside its radius
+			## on the tick it flips. Awarded and announced BEFORE dom_owner moves: the guard above reads it,
+			## so anything placed after that `set` would never fire.
+			nearby: str = f"@a[distance=..5,scores={{{ns}.mp.team={owner_id},{ns}.mp.in_game=1}}]"
 			self.sub(f"capture_{color}", f"""
 execute store result score #dom_prog {ns}.data run scoreboard players get @s {ns}.mp.dom_progress
 scoreboard players {op} @s {ns}.mp.dom_progress 2
@@ -155,16 +181,23 @@ scoreboard players {op} @s {ns}.mp.dom_progress 2
 execute if score @s {ns}.mp.dom_progress matches {cap_match} run scoreboard players set @s {ns}.mp.dom_progress {cap}
 
 # If crossed 0, point neutralized
+tag @a remove {CAPTURER}
+{neut_guard} run tag {nearby} add {CAPTURER}
 {neutralize_labels}
-execute if score #dom_prog {ns}.data matches {neut_old} if score @s {ns}.mp.dom_progress matches {neut_new} run playsound minecraft:block.note_block.bass player @a ~ ~ ~ 1 0.5
-execute if score #dom_prog {ns}.data matches {neut_old} if score @s {ns}.mp.dom_progress matches {neut_new} run scoreboard players set @s {ns}.mp.dom_owner 0
-execute if score #dom_prog {ns}.data matches {neut_old} if score @s {ns}.mp.dom_progress matches {neut_new} run data modify entity @n[tag={ns}.dom_label,distance=..1] text.color set value "yellow"
+{Xp.give("mp", "dom_neutralize", f"@a[tag={CAPTURER}]")}
+{neut_guard} run playsound minecraft:block.note_block.bass player @a ~ ~ ~ 1 0.5
+{neut_guard} run scoreboard players set @s {ns}.mp.dom_owner 0
+{neut_guard} run data modify entity @n[tag={ns}.dom_label,distance=..1] text.color set value "yellow"
 
 # If reached {cap}, captured by {color}
+tag @a remove {CAPTURER}
+{cap_guard} run tag {nearby} add {CAPTURER}
 {capture_labels}
-execute if score @s {ns}.mp.dom_progress matches {cap} unless score @s {ns}.mp.dom_owner matches {owner_id} run playsound minecraft:block.note_block.bell player @a ~ ~ ~ 1 {pitch}
-execute if score @s {ns}.mp.dom_progress matches {cap} unless score @s {ns}.mp.dom_owner matches {owner_id} run data modify entity @n[tag={ns}.dom_label,distance=..1] text.color set value "{color}"
-execute if score @s {ns}.mp.dom_progress matches {cap} unless score @s {ns}.mp.dom_owner matches {owner_id} run scoreboard players set @s {ns}.mp.dom_owner {owner_id}
+{Xp.give("mp", "dom_capture", f"@a[tag={CAPTURER}]")}
+{cap_guard} run playsound minecraft:block.note_block.bell player @a ~ ~ ~ 1 {pitch}
+{cap_guard} run data modify entity @n[tag={ns}.dom_label,distance=..1] text.color set value "{color}"
+{cap_guard} run scoreboard players set @s {ns}.mp.dom_owner {owner_id}
+tag @a remove {CAPTURER}
 """)
 
 		## DOM: Score tick - +1 per owned point
@@ -176,6 +209,12 @@ execute store result score #dom_b {ns}.data if entity @e[tag={ns}.dom_point,scor
 # Add to team scores
 scoreboard players operation #red {ns}.mp.team += #dom_r {ns}.data
 scoreboard players operation #blue {ns}.mp.team += #dom_b {ns}.data
+
+# XP for actually standing on a point your team holds, rather than for the team owning it from anywhere.
+# This tick is already the 5s cadence, so it is one award per point held per 5s. Before check_team_win:
+# that can end the match, and the cleanup it runs would leave nobody left to pay.
+execute as @e[tag={ns}.dom_point,scores={{{ns}.mp.dom_owner=1}}] at @s run {Xp.give("mp", "dom_hold", f"@a[distance=..5,scores={{{ns}.mp.team=1,{ns}.mp.in_game=1}}]")}
+execute as @e[tag={ns}.dom_point,scores={{{ns}.mp.dom_owner=2}}] at @s run {Xp.give("mp", "dom_hold", f"@a[distance=..5,scores={{{ns}.mp.team=2,{ns}.mp.in_game=1}}]")}
 
 # Refresh DOM sidebar with updated point ownership
 function {ns}:v{version}/multiplayer/refresh_sidebar_dom
