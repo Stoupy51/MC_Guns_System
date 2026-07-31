@@ -1,15 +1,18 @@
-""" Demolition's round structure: two halves, then a sudden-death overtime on a neutral site.
+""" Demolition's round structure: two halves, then a sudden-death overtime.
 
 Each side attacks exactly once. An attacking side wins its half only by destroying **both** sites before
 the clock runs out; anything less is a defensive hold. If the two halves split 1-1 — or if both defences
-held, 0-0, which the official rules do not cover and which is treated the same way here — the match is
-decided by a third round on a single neutral site that either team may plant.
+held, 0-0, which the official rules do not cover and which is treated the same way here — a third round
+decides it: both bomb sites turn neutral, everyone is armed, and the first detonation takes the match.
+
+CoD runs that decider on one dedicated neutral site. This mode has no map data for such a point and will
+not invent one: the two bomb sites the map already defines are authored, playable, and exactly the right
+kind of place, so overtime simply opens both of them to both teams instead.
 """
 # ruff: noqa: E501
 # Imports
 from .....helpers import MGS_TAG
 from ...base import GameModeVariant
-from ..sites import BombSites
 from .sites_state import DemoSites
 
 # Constants
@@ -18,7 +21,7 @@ ROUND_TICKS: int = 3600
 rather than plant one, and every death is a respawn rather than the end of their round.
 NOT a sourced value — tune in game. """
 OVERTIME_TICKS: int = 3600
-""" 3:00 for the decider. Expiring means nobody detonated the neutral site, which is a draw. """
+""" 3:00 for the decider. Expiring means nobody detonated anything, which is a draw. """
 ROUNDS_PER_MATCH: int = 2
 """ Halves in regulation, one per side. """
 OVERTIME_ROUND: int = ROUNDS_PER_MATCH + 1
@@ -45,7 +48,7 @@ execute if data storage {ns}:multiplayer game{{state:"ended"}} run return fail
 tellraw @a [{MGS_TAG},{{"text":"────── Round ","color":"gold"}},{{"score":{{"name":"#demo_round","objective":"{ns}.data"}},"color":"yellow"}},{{"text":" ──────","color":"gold"}}]
 execute if score #demo_round {ns}.data matches ..{ROUNDS_PER_MATCH} if score #demo_attackers {ns}.data matches 1 run tellraw @a [{MGS_TAG},{{"text":"Red","color":"red"}},{{"text":" attacks both sites | "}},{{"text":"Blue","color":"blue"}},{{"text":" defends"}}]
 execute if score #demo_round {ns}.data matches ..{ROUNDS_PER_MATCH} if score #demo_attackers {ns}.data matches 2 run tellraw @a [{MGS_TAG},{{"text":"Blue","color":"blue"}},{{"text":" attacks both sites | "}},{{"text":"Red","color":"red"}},{{"text":" defends"}}]
-execute if score #demo_round {ns}.data matches {OVERTIME_ROUND}.. run tellraw @a [{MGS_TAG},{{"text":"Both teams are armed — first to detonate wins!","color":"gold"}}]
+execute if score #demo_round {ns}.data matches {OVERTIME_ROUND}.. run tellraw @a [{MGS_TAG},"⚡ ",{{"text":"OVERTIME — both sites are neutral, first detonation wins!","color":"gold","bold":true}}]
 playsound minecraft:block.note_block.harp player @a ~ ~ ~ 1 1.0
 
 # Every site back to intact
@@ -143,53 +146,21 @@ scoreboard players add #demo_round {ns}.data 1
 execute if score #demo_round {ns}.data matches {ROUNDS_PER_MATCH} run function {ns}:v{version}/multiplayer/gamemodes/demo/swap_sides
 execute if score #demo_round {ns}.data matches {ROUNDS_PER_MATCH} run return run schedule function {ns}:v{version}/multiplayer/gamemodes/demo/start_round 60t
 
-# Both halves played: a leader takes the match, a tie goes to sudden death
+# Both halves played: a leader takes the match, a tie plays the decider. Overtime needs no setup of its
+# own — start_round already restores both sites and arms both teams once the round number says so.
 execute if score #demo_round {ns}.data matches {OVERTIME_ROUND} if score #red {ns}.mp.team > #blue {ns}.mp.team run return run function {ns}:v{version}/multiplayer/team_wins {{team:"Red"}}
 execute if score #demo_round {ns}.data matches {OVERTIME_ROUND} if score #blue {ns}.mp.team > #red {ns}.mp.team run return run function {ns}:v{version}/multiplayer/team_wins {{team:"Blue"}}
-execute if score #demo_round {ns}.data matches {OVERTIME_ROUND} run return run function {ns}:v{version}/multiplayer/gamemodes/demo/start_overtime
+execute if score #demo_round {ns}.data matches {OVERTIME_ROUND} run return run schedule function {ns}:v{version}/multiplayer/gamemodes/demo/start_round 60t
 
 # Overtime itself expired without a detonation
 function {ns}:v{version}/multiplayer/game_draw
 """)
 
-		## Demolition: halftime
+		## Demolition: halftime. The only structural change in the whole match — overtime alters no
+		## geometry and no sides, which is why it needs no function of its own.
 		variant.sub("swap_sides", f"""
 execute if score #demo_attackers {ns}.data matches 1 run scoreboard players set #demo_attackers {ns}.data 2
 execute unless score #demo_attackers {ns}.data matches 2 run scoreboard players set #demo_attackers {ns}.data 1
 tellraw @a [{MGS_TAG},"⚔ ",{{"text":"Sides swapped!","color":"gold"}}]
 playsound minecraft:block.note_block.xylophone player @a ~ ~ ~ 1 1.0
-""")
-
-		## Demolition: replace the two contested sites with one neutral site both teams can plant
-		variant.sub("start_overtime", f"""
-tellraw @a [{MGS_TAG},"⚡ ",{{"text":"OVERTIME — one neutral site, first to detonate it wins!","color":"gold","bold":true}}]
-
-# Take the regulation sites down. The fill has to happen while their markers are still alive, which is
-# exactly what BombSites.cleanup_lines guarantees the order of.
-{BombSites.cleanup_lines(variant)}
-kill @e[tag={ns}.demo_wreck]
-kill @e[tag={ns}.demo_rubble]
-
-function {ns}:v{version}/multiplayer/gamemodes/demo/summon_ot_site
-schedule function {ns}:v{version}/multiplayer/gamemodes/demo/start_round 60t
-""")
-
-		## Demolition: the neutral site.
-		## Position comes from the middle domination zone: an authored, central, canonically contested spot
-		## that exists on any map supporting DOM, so no map needs a new point defined for this mode. Falls
-		## back to the first bomb site on a map with no zones.
-		variant.sub("summon_ot_site", f"""
-data remove storage {ns}:temp _demo_iter
-data modify storage {ns}:temp _demo_iter append from storage {ns}:multiplayer game.map.domination[1]
-execute unless data storage {ns}:temp _demo_iter[0] run data modify storage {ns}:temp _demo_iter append from storage {ns}:multiplayer game.map.search_and_destroy[0]
-execute unless data storage {ns}:temp _demo_iter[0] run return fail
-
-{BombSites.abs_pos_lines(variant)}
-data modify storage {ns}:temp _demo_pos.label set value "OT"
-function {ns}:v{version}/multiplayer/gamemodes/demo/summon_obj_at with storage {ns}:temp _demo_pos
-
-scoreboard players set @e[tag={ns}.demo_obj] {ns}.demo_state 0
-scoreboard players set @e[tag={ns}.demo_obj] {ns}.demo_prog 0
-scoreboard players set @e[tag={ns}.demo_obj] {ns}.demo_fuse 0
-scoreboard players set @e[tag={ns}.demo_obj] {ns}.demo_owner 0
 """)

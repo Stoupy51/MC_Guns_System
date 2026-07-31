@@ -4,7 +4,6 @@
 # @executed	as the player & at current position
 #
 # @within	mgs:v5.1.0/multiplayer/gamemodes/demo/summon_obj with storage mgs:temp _demo_pos
-#			mgs:v5.1.0/multiplayer/gamemodes/demo/summon_ot_site with storage mgs:temp _demo_pos
 #
 # @args		x (unknown)
 #			y (unknown)

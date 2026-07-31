@@ -38,14 +38,13 @@ data modify storage {ns}:temp _{key}_iter set from storage {ns}:multiplayer game
 execute if data storage {ns}:temp _{key}_iter[0] run function {ns}:v{version}/multiplayer/gamemodes/{key}/summon_obj"""
 
 	@staticmethod
-	def abs_pos_lines(variant: GameModeVariant) -> str:
-		""" Return the lines turning `_<key>_iter[0]` (map-relative) into `_<key>_pos` (absolute).
+	def write_summoning(variant: GameModeVariant) -> None:
+		""" Write `summon_obj` + `summon_obj_at`: the relative → absolute loop and the marker itself. """
+		ns, version, key = variant.ns, variant.version, variant.key
 
-		Shared by the site loop and by Demolition's one-off overtime site, which needs the same conversion
-		for a position that does not come from a list.
-		"""
-		ns, key = variant.ns, variant.key
-		return f"""execute store result score #rx {ns}.data run data get storage {ns}:temp _{key}_iter[0][0]
+		## Summon objective markers (relative → absolute)
+		variant.sub("summon_obj", f"""
+execute store result score #rx {ns}.data run data get storage {ns}:temp _{key}_iter[0][0]
 execute store result score #ry {ns}.data run data get storage {ns}:temp _{key}_iter[0][1]
 execute store result score #rz {ns}.data run data get storage {ns}:temp _{key}_iter[0][2]
 scoreboard players operation #rx {ns}.data += #gm_base_x {ns}.data
@@ -53,16 +52,7 @@ scoreboard players operation #ry {ns}.data += #gm_base_y {ns}.data
 scoreboard players operation #rz {ns}.data += #gm_base_z {ns}.data
 execute store result storage {ns}:temp _{key}_pos.x double 1 run scoreboard players get #rx {ns}.data
 execute store result storage {ns}:temp _{key}_pos.y double 1 run scoreboard players get #ry {ns}.data
-execute store result storage {ns}:temp _{key}_pos.z double 1 run scoreboard players get #rz {ns}.data"""
-
-	@staticmethod
-	def write_summoning(variant: GameModeVariant) -> None:
-		""" Write `summon_obj` + `summon_obj_at`: the relative → absolute loop and the marker itself. """
-		ns, version, key = variant.ns, variant.version, variant.key
-
-		## Summon objective markers (relative → absolute)
-		variant.sub("summon_obj", f"""
-{BombSites.abs_pos_lines(variant)}
+execute store result storage {ns}:temp _{key}_pos.z double 1 run scoreboard players get #rz {ns}.data
 
 # Site letter, same scheme as domination's zone labels
 execute if score #{key}_site_idx {ns}.data matches 0 run data modify storage {ns}:temp _{key}_pos.label set value "A"

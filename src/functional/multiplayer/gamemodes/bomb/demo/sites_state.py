@@ -126,7 +126,7 @@ scoreboard players set @s {ns}.demo_prog 0
 
 {BombVisuals.planted_entities(ns, "demo_bomb", "demo_bomb_vis", "demo_bomb_hud", "PLANTED")}
 
-{BombVisuals.announce_site_lines(variant, "BOMB PLANTED AT {letter}!", generic="BOMB PLANTED!")}
+{BombVisuals.announce_site_lines(variant, "BOMB PLANTED AT {letter}!")}
 playsound minecraft:block.note_block.pling player @a ~ ~ ~ 1 0.5
 """)
 
@@ -161,7 +161,7 @@ kill @e[tag={ns}.demo_bomb,distance=..2]
 kill @e[tag={ns}.demo_bomb_vis,distance=..2]
 kill @e[tag={ns}.demo_bomb_hud,distance=..2]
 
-{BombVisuals.announce_site_lines(variant, "BOMB DEFUSED AT {letter}!", generic="BOMB DEFUSED!", color="aqua")}
+{BombVisuals.announce_site_lines(variant, "BOMB DEFUSED AT {letter}!", color="aqua")}
 playsound minecraft:block.note_block.bit player @a ~ ~ ~ 1 1.5
 """)
 
@@ -206,7 +206,7 @@ setblock ~ ~ ~ air
 summon minecraft:block_display ~ ~ ~ {{Tags:["{ns}.demo_rubble","{ns}.gm_entity"],block_state:{{Name:"minecraft:polished_blackstone"}},transformation:{{translation:[-0.3f,0.0f,-0.3f],left_rotation:[0.0f,0.0f,0.0f,1.0f],scale:[0.6f,0.2f,0.6f],right_rotation:[0.0f,0.0f,0.0f,1.0f]}}}}
 summon minecraft:text_display ~ ~ ~ {{Tags:["{ns}.demo_wreck","{ns}.gm_entity"],billboard:"vertical",text:[{{"text":"💥 DESTROYED","color":"dark_gray"}}],transformation:{{translation:[0.0f,1.4f,0.0f],left_rotation:[0.0f,0.0f,0.0f,1.0f],scale:[1.5f,1.5f,1.5f],right_rotation:[0.0f,0.0f,0.0f,1.0f]}},shadow:true,see_through:true}}
 
-{BombVisuals.announce_site_lines(variant, "BOMB SITE {letter} DESTROYED!", generic="BOMB SITE DESTROYED!")}
+{BombVisuals.announce_site_lines(variant, "BOMB SITE {letter} DESTROYED!")}
 
 # Destroying a site buys time to reach the other one
 scoreboard players add #demo_timer {ns}.data {TIME_BONUS}

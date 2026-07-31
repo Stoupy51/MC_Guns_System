@@ -166,13 +166,11 @@ execute if score #demo_attackers {ns}.data matches 1 run data modify storage {ns
 execute if score #demo_attackers {ns}.data matches 2 run data modify storage {ns}:temp demo_sb.atk set value '[[" ⚔ ",{{"text":"Attack","color":"gray"}}],{{"text":"Blue","color":"blue"}}]'
 execute if score #demo_round {ns}.data matches 3.. run data modify storage {ns}:temp demo_sb.atk set value '[[" ⚡ ",{{"text":"Overtime","color":"gray"}}],{{"text":"Both","color":"gold"}}]'
 
-# One row per site, read off that site's marker. Overtime has a single "OT" site instead of A and B.
+# One row per site, read off that site's own marker. Both rows stay meaningful in overtime: the sites are
+# the same two, they just belong to nobody, so there is no third layout to describe here.
 data modify storage {ns}:temp demo_sb.a set value '[[" ",{{"text":"Site A","color":"dark_gray"}}],{{"text":"—","color":"dark_gray"}}]'
 data modify storage {ns}:temp demo_sb.b set value '[[" ",{{"text":"Site B","color":"dark_gray"}}],{{"text":"—","color":"dark_gray"}}]'
 {demo_site_lines}
-execute if entity @e[tag={ns}.demo_site_OT,scores={{{ns}.demo_state=0}}] run data modify storage {ns}:temp demo_sb.a set value '[[" ",{{"text":"Neutral","color":"gold"}}],["🔹 ",{{"text":"Intact","color":"gray"}}]]'
-execute if entity @e[tag={ns}.demo_site_OT,scores={{{ns}.demo_state=1}}] run data modify storage {ns}:temp demo_sb.a set value '[[" ",{{"text":"Neutral","color":"gold"}}],["💣 ",{{"text":"PLANTED","color":"red"}}]]'
-execute if entity @e[tag={ns}.demo_site_OT] run data modify storage {ns}:temp demo_sb.b set value '" "'
 
 function {ns}:v{version}/multiplayer/build_sidebar_demo with storage {ns}:temp demo_sb
 """)
