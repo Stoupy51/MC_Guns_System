@@ -74,22 +74,23 @@ scoreboard objectives setdisplay sidebar {ns}.sidebar
 """)
 
 	# DOM sidebar refresh: rebuilds the sidebar content with current point ownership Called every score_tick (every 5 seconds) and on point captures
+	# Each zone line is two components — the label on the left, the owner on the right. They used to be
+	# four (" ", "A: ", the emoji, the owner name), which bs.sidebar cannot lay out: only the first two
+	# would have had a side, so the zone rows never rendered at all.
+	dom_zone_states: list[tuple[int, str, str, str]] = [
+		(0, "gray", "⚪ ", "Neutral"),
+		(1, "red",  "🔴 ", "Red"),
+		(2, "blue", "🔵 ", "Blue"),
+	]
+	dom_zone_lines: str = "\n".join(
+		f'execute if score #dom_owner_{zone.lower()} {ns}.data matches {owner} run data modify storage {ns}:temp dom_sb.{zone.lower()} set value '
+		f"'[[\" \",{{\"text\":\"{zone}\",\"color\":\"{color}\"}}],[\"{emoji}\",{{\"text\":\"{name}\",\"color\":\"{color}\"}}]]'"
+		for zone in ("A", "B", "C")
+		for owner, color, emoji, name in dom_zone_states
+	)
 	write_versioned_function("multiplayer/refresh_sidebar_dom", f"""
 # Build point status strings based on ownership scores
-# Zone A
-execute if score #dom_owner_a {ns}.data matches 0 run data modify storage {ns}:temp dom_sb.a set value '[" ",{{"text":"A: ","color":"gray"}},"⚪ ",{{"text":"Neutral","color":"gray"}}]'
-execute if score #dom_owner_a {ns}.data matches 1 run data modify storage {ns}:temp dom_sb.a set value '[" ",{{"text":"A: ","color":"red"}},"🔴 ",{{"text":"Red","color":"red"}}]'
-execute if score #dom_owner_a {ns}.data matches 2 run data modify storage {ns}:temp dom_sb.a set value '[" ",{{"text":"A: ","color":"blue"}},"🔵 ",{{"text":"Blue","color":"blue"}}]'
-
-# Zone B
-execute if score #dom_owner_b {ns}.data matches 0 run data modify storage {ns}:temp dom_sb.b set value '[" ",{{"text":"B: ","color":"gray"}},"⚪ ",{{"text":"Neutral","color":"gray"}}]'
-execute if score #dom_owner_b {ns}.data matches 1 run data modify storage {ns}:temp dom_sb.b set value '[" ",{{"text":"B: ","color":"red"}},"🔴 ",{{"text":"Red","color":"red"}}]'
-execute if score #dom_owner_b {ns}.data matches 2 run data modify storage {ns}:temp dom_sb.b set value '[" ",{{"text":"B: ","color":"blue"}},"🔵 ",{{"text":"Blue","color":"blue"}}]'
-
-# Zone C
-execute if score #dom_owner_c {ns}.data matches 0 run data modify storage {ns}:temp dom_sb.c set value '[" ",{{"text":"C: ","color":"gray"}},"⚪ ",{{"text":"Neutral","color":"gray"}}]'
-execute if score #dom_owner_c {ns}.data matches 1 run data modify storage {ns}:temp dom_sb.c set value '[" ",{{"text":"C: ","color":"red"}},"🔴 ",{{"text":"Red","color":"red"}}]'
-execute if score #dom_owner_c {ns}.data matches 2 run data modify storage {ns}:temp dom_sb.c set value '[" ",{{"text":"C: ","color":"blue"}},"🔵 ",{{"text":"Blue","color":"blue"}}]'
+{dom_zone_lines}
 
 # Build sidebar with dynamic point entries
 function {ns}:v{version}/multiplayer/build_sidebar_dom with storage {ns}:temp dom_sb
@@ -138,9 +139,15 @@ scoreboard objectives setdisplay sidebar {ns}.sidebar
 """)
 
 	## Hardpoint sidebar — shows team scores + controlling team + time to move
+	## The rotation line was three components (label, seconds, "s left"), one too many for a two-sided
+	## entry, so it never rendered: the seconds and the unit now share the right half.
+	sb_hp_rotate = (
+		f'[{{text:" Zone",color:"dark_purple"}},'
+		f'[{{score:{{name:"#hp_rotate_sec",objective:"{ns}.data"}},color:"white"}},{{text:"s left",color:"gray"}}]]'
+	)
 	write_versioned_function("multiplayer/create_sidebar_hp", f"""
 scoreboard players reset * {ns}.sidebar
-function #bs.sidebar:create {{objective:"{ns}.sidebar",display_name:{{text:"Hardpoint",color:"gold",bold:true}},contents:[{sb_timer},{sb_spacer},{sb_red},{sb_blue},{sb_spacer},[{{text:" Zone: ",color:"dark_purple"}},{{score:{{name:"#hp_rotate_sec",objective:"{ns}.data"}},color:"white"}},{{text:"s left",color:"gray"}}],{sb_spacer},{sb_limit}]}}
+function #bs.sidebar:create {{objective:"{ns}.sidebar",display_name:{{text:"Hardpoint",color:"gold",bold:true}},contents:[{sb_timer},{sb_spacer},{sb_red},{sb_blue},{sb_spacer},{sb_hp_rotate},{sb_spacer},{sb_limit}]}}
 scoreboard objectives setdisplay sidebar {ns}.sidebar
 """)
 
