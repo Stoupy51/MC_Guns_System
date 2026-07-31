@@ -2,10 +2,10 @@
 # Imports
 from stewbeet import Mem, write_load_file
 
+from .bomb import generate_search_and_destroy
 from .domination import generate_domination
 from .free_for_all import generate_free_for_all
 from .hardpoint import generate_hardpoint
-from .search_and_destroy import generate_search_and_destroy
 from .team_deathmatch import generate_team_deathmatch
 
 
