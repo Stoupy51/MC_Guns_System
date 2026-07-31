@@ -6,6 +6,7 @@ from stewbeet import Mem, write_tick_file, write_versioned_function
 from ...core.respawn_countdown import respawn_countdown_tick_lines
 from ...core.weapon_drop import WeaponDrop
 from ...helpers.text import Text
+from ...helpers.titles import TitleTimes
 
 
 # Functions
@@ -96,7 +97,7 @@ scoreboard players operation #mi_rem_sec {ns}.data = #mi_seconds {ns}.data
 scoreboard players operation #mi_rem_sec {ns}.data %= #60 {ns}.data
 
 # Title
-title @a[scores={{{ns}.mi.in_game=1}}] times 10 80 20
+{TitleTimes.BANNER.cmd(f'@a[scores={{{ns}.mi.in_game=1}}]')}
 title @a[scores={{{ns}.mi.in_game=1}}] title {{"text":"MISSION COMPLETE","color":"gold","bold":true}}
 title @a[scores={{{ns}.mi.in_game=1}}] subtitle {{"text":"All enemies eliminated!","color":"green"}}
 

@@ -19,6 +19,7 @@ scoreboard players set @s mgs.mp.spectate_timer 60
 execute unless score @s mgs.mi.died_here matches 1 run function mgs:v5.1.0/missions/spectate_random_player
 
 # Announce respawn delay to the dying player
+title @s times 0 70 10
 title @s title ["☠"]
 title @s subtitle [{"translate":"mgs.respawning_in_3_seconds","color":"gray"}]
 execute at @s run playsound minecraft:entity.player.hurt ambient @s

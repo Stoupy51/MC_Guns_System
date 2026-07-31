@@ -4,6 +4,7 @@
 from stewbeet import Mem, write_tick_file, write_versioned_function
 
 from ....helpers import MGS_TAG
+from ....helpers.titles import TitleTimes
 
 
 # Functions
@@ -100,7 +101,7 @@ execute as @e[tag={ns}.zombie_round] unless data entity @s {{NoAI:1b}} run funct
 execute as @a[scores={{{ns}.zb.in_game=1}}] run attribute @s minecraft:movement_speed base set 0
 execute as @a[scores={{{ns}.zb.in_game=1}}] run attribute @s minecraft:jump_strength base set 0
 
-title @a[scores={{{ns}.zb.in_game=1}}] times 5 60 10
+{TitleTimes.FREEZE.cmd(f'@a[scores={{{ns}.zb.in_game=1}}]')}
 title @a[scores={{{ns}.zb.in_game=1}}] title [{{"text":"⏸","color":"aqua"}}]
 tellraw @a [{MGS_TAG},{{"text":"An operator froze the game.","color":"aqua"}}]
 """)

@@ -1,7 +1,7 @@
 """ Shared helpers for the functional generators, one class per concern.
 
 Each submodule owns one class: [scores.SpecialScores], [lifecycle.GameLifecycle], [content.SharedContent],
-[ranked.RankedStats], [text.Text] and [dialogs.Dialogs].
+[ranked.RankedStats], [text.Text], [titles.TitleTimes] and [dialogs.Dialogs].
 """
 # Constants
 MGS_TAG: str = r'[{"text":"","color":"gold"},"[",{"text":"MGS"},"] "]'

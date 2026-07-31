@@ -80,6 +80,7 @@ ride @s mount @n[tag=mgs.downed_mine_temp]
 tag @e[tag=mgs.downed_mine_temp] remove mgs.downed_mine_temp
 
 # Announce
+title @s times 0 60 20
 title @s title ["☠"]
 title @s subtitle [{"translate":"mgs.you_are_down_a_teammate_can_revive_you","color":"gray"}]
 tellraw @a[scores={mgs.zb.in_game=1}] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],["",{"text":"[","color":"dark_gray"},{"score":{"name":"@s","objective":"mgs.zb.xp_level"},"color":"gold"},{"text":"] ","color":"dark_gray"},{"selector":"@s","color":"red"}],[{"text":" ","color":"gray"}, {"translate":"mgs.is_down"}]]

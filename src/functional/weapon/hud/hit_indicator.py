@@ -17,6 +17,8 @@ from beet import Font, Texture
 from PIL import Image
 from stewbeet import Mem, write_versioned_function
 
+from ...helpers.titles import TitleTimes
+
 # Constants
 SECTORS: int = 36
 """ Directions the indicator can distinguish. Must divide 36000 (yaw range in centidegrees) so the
@@ -133,7 +135,7 @@ scoreboard players operation #hit_dir {ns}.data %= #36000 {ns}.data
 scoreboard players operation #hit_dir {ns}.data /= #{step} {ns}.data
 
 # Flash the matching arc glyph around the crosshair (~0.7s, no fade-in)
-title @s times 0 8 6
+{TitleTimes.HIT_DIRECTION.cmd()}
 {sector_titles}
 """, tags=[f"{ns}:signals/damage"])
 

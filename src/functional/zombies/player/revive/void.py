@@ -5,6 +5,7 @@ from stewbeet import Mem, write_versioned_function
 
 from ....helpers import MGS_TAG
 from ....helpers.text import Text
+from ....helpers.titles import TitleTimes
 from .shared import SOLO_QR_MAX
 
 
@@ -42,6 +43,7 @@ execute as @r[scores={{{ns}.zb.in_game=1,{ns}.zb.downed=0}},gamemode=!spectator,
 execute unless entity @a[scores={{{ns}.zb.in_game=1,{ns}.zb.downed=0}},gamemode=!spectator] run tp @s ~ ~ ~
 
 # Announce
+{TitleTimes.BAD_NEWS.cmd()}
 title @s title ["☠"]
 title @s subtitle [{{"text":"You fell out of the world!","color":"gray"}}]
 tellraw @a[scores={{{ns}.zb.in_game=1}}] [{MGS_TAG},{Text.player(ns, "@s", side="zb", color="dark_red")},{{"text":" fell out of the world.","color":"gray"}}]
@@ -84,7 +86,7 @@ effect give @s minecraft:instant_health 1 255 true
 scoreboard players set @s {ns}.stam_seen 0
 
 # Announce
-title @s times 5 40 15
+{TitleTimes.EVENT.cmd()}
 title @s title ["⚡"]
 title @s subtitle [{{"text":"Quick Revive pulled you back from the void!","color":"aqua"}}]
 tellraw @a[scores={{{ns}.zb.in_game=1}}] [{MGS_TAG},{Text.player(ns, "@s", side="zb", color="aqua")},{{"text":" fell out — but Quick Revive pulled them back!","color":"gray"}}]

@@ -4,6 +4,7 @@ from stewbeet import Mem, write_versioned_function
 
 from ....helpers import MGS_TAG
 from ....helpers.text import Text
+from ....helpers.titles import TitleTimes
 
 
 # Functions
@@ -48,7 +49,7 @@ effect give @s minecraft:speed 180 1 true
 attribute @s minecraft:attack_damage modifier add {ns}:dying_wish 200 add_value
 
 # Feedback
-title @s times 5 40 15
+{TitleTimes.EVENT.cmd()}
 title @s title ["⚔"]
 title @s subtitle [{{"text":"DYING WISH — Berserk!","color":"dark_red"}}]
 particle minecraft:totem_of_undying ~ ~1 ~ 0.5 1 0.5 0.3 80 force @a[distance=..32]
@@ -80,7 +81,8 @@ scoreboard players set @s {ns}.zb.dw_timer 0
 execute store result score #dw_hp {ns}.data run data get entity @s Health 1000
 scoreboard players remove #dw_hp {ns}.data 1000
 execute if score #dw_hp {ns}.data matches 1.. run function {ns}:v{version}/zombies/perks/dying_wish_to_1
-title @s times 3 25 10
+{TitleTimes.AFTERMATH.cmd()}
+title @s title ["⚔"]
 title @s subtitle [{{"text":"...barely alive.","color":"gray"}}]
 """)
 

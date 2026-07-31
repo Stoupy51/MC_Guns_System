@@ -5,6 +5,7 @@ from stewbeet import Mem, write_versioned_function
 
 from ....helpers import MGS_TAG
 from ....helpers.text import Text
+from ....helpers.titles import TitleTimes
 from .shared import BLEED_OUT_TICKS, HUD_OFFSET_Y_THOUSANDTHS
 
 
@@ -89,6 +90,7 @@ ride @s mount @n[tag={ns}.downed_mine_temp]
 tag @e[tag={ns}.downed_mine_temp] remove {ns}.downed_mine_temp
 
 # Announce
+{TitleTimes.BAD_NEWS.cmd()}
 title @s title ["☠"]
 title @s subtitle [{{"text":"You are down! A teammate can revive you.","color":"gray"}}]
 tellraw @a[scores={{{ns}.zb.in_game=1}}] [{MGS_TAG},{Text.player(ns, "@s", side="zb", color="red")},{{"text":" is down!","color":"gray"}}]
