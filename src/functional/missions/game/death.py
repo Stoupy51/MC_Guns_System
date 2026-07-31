@@ -3,6 +3,8 @@
 # Imports
 from stewbeet import Mem, write_versioned_function
 
+from ...helpers.titles import TitleTimes
+
 
 # Functions
 def write_missions_death() -> None:
@@ -62,6 +64,7 @@ scoreboard players set @s {ns}.mp.spectate_timer 60
 execute unless score @s {ns}.mi.died_here matches 1 run function {ns}:v{version}/missions/spectate_random_player
 
 # Announce respawn delay to the dying player
+{TitleTimes.RESPAWN.cmd()}
 title @s title ["☠"]
 title @s subtitle [{{"text":"Respawning in 3 seconds...","color":"gray"}}]
 execute at @s run playsound minecraft:entity.player.hurt ambient @s

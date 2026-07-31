@@ -4,6 +4,7 @@ from stewbeet import Mem, write_versioned_function
 
 from ....helpers import MGS_TAG
 from ....helpers.text import Text
+from ....helpers.titles import TitleTimes
 from .definitions import PERK_DEFINITIONS
 
 
@@ -98,7 +99,8 @@ scoreboard players operation #my_downed_id {ns}.data = @s {ns}.zb.downed_id
 execute unless entity @e[tag={ns}.tombstone,predicate={ns}:v{version}/zombies/revive/downed_id_match] run return 0
 scoreboard players set @e[tag={ns}.tombstone,predicate={ns}:v{version}/zombies/revive/downed_id_match] {ns}.zb.ts.state 1
 scoreboard players set @e[tag={ns}.tombstone,predicate={ns}:v{version}/zombies/revive/downed_id_match] {ns}.zb.ts.timer 1200
-title @s times 5 40 15
+{TitleTimes.EVENT.cmd()}
+title @s title ["🪦"]
 title @s subtitle [{{"text":"Return to your 🪦 within 60s to recover your gear!","color":"gold"}}]
 """)
 
@@ -152,7 +154,7 @@ scoreboard players operation #my_downed_id {ns}.data = @s {ns}.zb.downed_id
 kill @e[tag={ns}.tombstone,predicate={ns}:v{version}/zombies/revive/downed_id_match]
 
 # Feedback
-title @s times 5 40 15
+{TitleTimes.EVENT.cmd()}
 title @s title ["🪦"]
 title @s subtitle [{{"text":"Gear recovered!","color":"green"}}]
 playsound minecraft:block.respawn_anchor.charge player @a[distance=..24] ~ ~ ~ 1 1.2

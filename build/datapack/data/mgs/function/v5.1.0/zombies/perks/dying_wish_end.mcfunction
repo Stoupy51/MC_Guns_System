@@ -22,5 +22,6 @@ execute store result score #dw_hp mgs.data run data get entity @s Health 1000
 scoreboard players remove #dw_hp mgs.data 1000
 execute if score #dw_hp mgs.data matches 1.. run function mgs:v5.1.0/zombies/perks/dying_wish_to_1
 title @s times 3 25 10
+title @s title ["⚔"]
 title @s subtitle [[{"text":"...","color":"gray"}, {"translate":"mgs.barely_alive"}]]
 

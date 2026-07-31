@@ -51,6 +51,7 @@ scoreboard players set @s mgs.stam_seen 0
 function mgs:v5.1.0/zombies/perks/tombstone_on_revived
 
 # Announce
+title @s times 5 40 15
 title @s title ["❤"]
 title @s subtitle [{"translate":"mgs.you_have_been_revived","color":"green"}]
 tag @a remove mgs.xp_earner

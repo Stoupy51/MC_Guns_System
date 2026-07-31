@@ -5,6 +5,7 @@ from stewbeet import Mem, write_versioned_function
 
 from ....helpers import MGS_TAG
 from ....helpers.text import Text
+from ....helpers.titles import TitleTimes
 from ....progression import Xp
 from .shared import QUICK_REVIVE_TICKS, REVIVE_TICKS
 
@@ -96,6 +97,7 @@ scoreboard players set @s {ns}.stam_seen 0
 function {ns}:v{version}/zombies/perks/tombstone_on_revived
 
 # Announce
+{TitleTimes.EVENT.cmd()}
 title @s title ["❤"]
 title @s subtitle [{{"text":"You have been revived!","color":"green"}}]
 {Xp.announce("zb", "revive", f'{MGS_TAG},{Text.player(ns, "@s", side="zb", color="green")},{{"text":" has been revived!","color":"gray"}}', earner=f"@a[tag={ns}.zb_reviver]", audience=f"@a[scores={{{ns}.zb.in_game=1}}]")}
@@ -127,6 +129,7 @@ execute as @r[scores={{{ns}.zb.in_game=1,{ns}.zb.downed=0}},gamemode=!spectator,
 execute unless entity @a[scores={{{ns}.zb.in_game=1,{ns}.zb.downed=0}},gamemode=!spectator] run tp @s ~ ~ ~
 
 # Announce
+{TitleTimes.BAD_NEWS.cmd()}
 title @s title ["☠"]
 title @s subtitle [{{"text":"You bled out. Respawning next round...","color":"gray"}}]
 tellraw @a[scores={{{ns}.zb.in_game=1}}] [{MGS_TAG},{Text.player(ns, "@s", side="zb", color="dark_red")},{{"text":" has bled out.","color":"gray"}}]

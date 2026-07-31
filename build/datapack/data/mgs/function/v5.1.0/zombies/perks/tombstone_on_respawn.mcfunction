@@ -11,5 +11,6 @@ execute unless entity @e[tag=mgs.tombstone,predicate=mgs:v5.1.0/zombies/revive/d
 scoreboard players set @e[tag=mgs.tombstone,predicate=mgs:v5.1.0/zombies/revive/downed_id_match] mgs.zb.ts.state 1
 scoreboard players set @e[tag=mgs.tombstone,predicate=mgs:v5.1.0/zombies/revive/downed_id_match] mgs.zb.ts.timer 1200
 title @s times 5 40 15
+title @s title ["🪦"]
 title @s subtitle [{"translate":"mgs.return_to_your_within_60s_to_recover_your_gear","color":"gold"}]
 

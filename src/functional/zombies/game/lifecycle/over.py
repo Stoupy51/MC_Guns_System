@@ -7,6 +7,7 @@ from ....helpers import MGS_TAG
 from ....helpers.dialogs import Dialogs
 from ....helpers.lifecycle import GameLifecycle
 from ....helpers.ranked import RankedStats
+from ....helpers.titles import TitleTimes
 from ....progression import Xp
 
 
@@ -37,7 +38,7 @@ tag @a remove {ns}.zb_last_roster
 tag @a[scores={{{ns}.zb.in_game=1}}] add {ns}.zb_last_roster
 
 # Title
-title @a[scores={{{ns}.zb.in_game=1}}] times 10 80 20
+{TitleTimes.BANNER.cmd(f'@a[scores={{{ns}.zb.in_game=1}}]')}
 title @a[scores={{{ns}.zb.in_game=1}}] title {{"text":"GAME OVER","color":"dark_red","bold":true}}
 
 # Calculate final round

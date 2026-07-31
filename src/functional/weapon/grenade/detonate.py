@@ -3,6 +3,7 @@
 from stewbeet import Mem, write_versioned_function
 
 from ....config.stats.keys import GRENADE_DURATION, GRENADE_EFFECT_RADIUS, GRENADE_TYPE
+from ...helpers.titles import TitleTimes
 from ..explosion import Explosion
 
 
@@ -177,14 +178,14 @@ effect give @s minecraft:blindness 5 0 true
 effect give @s minecraft:darkness 3 0 true
 
 # White screen flash using custom font (1x1 white pixel scaled to fill screen)
-title @s times 5 40 20
+{TitleTimes.FLASH_FULL.cmd()}
 title @s title {{"text":"F","font":"{ns}:flash"}}
 """)
 
 	write_versioned_function("grenade/flash_player_masked", f"""
 # Reduced flash for Tactical Mask holders
 effect give @s minecraft:blindness 1 0 true
-title @s times 2 10 10
+{TitleTimes.FLASH_WEAK.cmd()}
 title @s title {{"text":"F","font":"{ns}:flash"}}
 """)
 

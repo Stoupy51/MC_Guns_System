@@ -5,6 +5,7 @@ from stewbeet import Mem, write_versioned_function
 
 from ....config.stats.keys import REMAINING_BULLETS
 from ...helpers.text import Text
+from ...helpers.titles import TitleTimes
 from ...progression.awards import MP_AWARDS
 from ..gamemodes.dispatch import gm_dispatch
 
@@ -70,6 +71,7 @@ execute unless entity @a[tag={ns}.temp_killer] run function {ns}:v{version}/mult
 tag @a[tag={ns}.temp_killer] remove {ns}.temp_killer
 
 # Announce death & playsound
+{TitleTimes.RESPAWN.cmd()}
 title @s title ["☠"]
 title @s subtitle [{{"text":"Respawning in 3 seconds...","color":"gray"}}]
 execute at @s run playsound minecraft:entity.player.hurt ambient @s

@@ -2,6 +2,8 @@
 # Imports
 from stewbeet import Mem, write_versioned_function
 
+from ....helpers.titles import TitleTimes
+
 
 # Functions
 def write_wallbuy_hover() -> None:
@@ -23,6 +25,7 @@ $data modify storage {ns}:temp _wb_weapon set from storage {ns}:zombies wallbuy_
 """)
 
 	write_versioned_function("zombies/wallbuys/render_hover_title", f"""
+{TitleTimes.HOVER.cmd()}
 title @s title ["","🔫 ",{{"storage":"{ns}:temp","nbt":"_wb_weapon.item_name","color":"gold","interpret":true}}]
 """)
 
