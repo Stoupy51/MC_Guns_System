@@ -299,6 +299,11 @@ execute at @e[tag={ns}.snd_obj] run particle dust{{color:[1.0,0.6,0.0],scale:1.0
 execute as @a[tag={ns}.snd_carrier] at @s run tp @e[tag={ns}.snd_carrier_label,limit=1] ~ ~2.2 ~
 title @a[tag={ns}.snd_carrier] actionbar [{{"text":"💣 You have the bomb — plant at a site","color":"gold"}}]
 
+# A carrier who disconnects takes the tag out of @a with them but leaves the bomb nowhere: no loose
+# entity (pickup killed it) and no carrier to plant it, which silently ended the attack for the round.
+# Their label is still standing where they logged out, so drop it there.
+execute if score #snd_bomb_state {ns}.data matches 0 unless entity @a[tag={ns}.snd_carrier] if entity @e[tag={ns}.snd_carrier_label] run function {ns}:v{version}/multiplayer/gamemodes/snd/recover_bomb
+
 # Loose bomb: any living attacker who walks over it collects it. No channel, no keypress.
 execute if score #snd_bomb_state {ns}.data matches 0 unless entity @a[tag={ns}.snd_carrier] as @a[tag={ns}.snd_alive,gamemode=!spectator] at @s if entity @e[tag={ns}.snd_loose_at,distance=..{PICKUP_RANGE}] run function {ns}:v{version}/multiplayer/gamemodes/snd/try_pickup
 
@@ -318,6 +323,13 @@ execute if score #snd_bomb_state {ns}.data matches 2 as @a[tag={ns}.snd_alive,pr
 execute if score #snd_bomb_state {ns}.data matches 2 if score #snd_channeling {ns}.data matches 0 run scoreboard players set #snd_defuse_progress {ns}.data 0
 execute if score #snd_bomb_state {ns}.data matches 2 if score #snd_channeling {ns}.data matches 1 run scoreboard players operation #snd_defuse_progress {ns}.data += #tick_delta {ns}.data
 execute if score #snd_bomb_state {ns}.data matches 2 if score #snd_defuse_progress {ns}.data matches {DEFUSE_TICKS}.. run function {ns}:v{version}/multiplayer/gamemodes/snd/bomb_defused
+""")
+
+		## S&D: the carrier is gone from @a (disconnect) but their label survives — put the bomb back.
+		self.sub("recover_bomb", f"""
+execute at @e[tag={ns}.snd_carrier_label,limit=1] run function {ns}:v{version}/multiplayer/gamemodes/snd/spawn_loose_bomb
+kill @e[tag={ns}.snd_carrier_label]
+tellraw @a [{MGS_TAG},"💣 ",{{"text":"The bomb carrier left the game — bomb dropped!","color":"yellow"}}]
 """)
 
 		## S&D: Pickup attempt (@s = a living player standing on the loose bomb)

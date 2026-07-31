@@ -61,6 +61,11 @@ execute at @e[tag=mgs.snd_obj] run particle dust{color:[1.0,0.6,0.0],scale:1.0} 
 execute as @a[tag=mgs.snd_carrier] at @s run tp @e[tag=mgs.snd_carrier_label,limit=1] ~ ~2.2 ~
 title @a[tag=mgs.snd_carrier] actionbar [{"translate":"mgs.you_have_the_bomb_plant_at_a_site","color":"gold"}]
 
+# A carrier who disconnects takes the tag out of @a with them but leaves the bomb nowhere: no loose
+# entity (pickup killed it) and no carrier to plant it, which silently ended the attack for the round.
+# Their label is still standing where they logged out, so drop it there.
+execute if score #snd_bomb_state mgs.data matches 0 unless entity @a[tag=mgs.snd_carrier] if entity @e[tag=mgs.snd_carrier_label] run function mgs:v5.1.0/multiplayer/gamemodes/snd/recover_bomb
+
 # Loose bomb: any living attacker who walks over it collects it. No channel, no keypress.
 execute if score #snd_bomb_state mgs.data matches 0 unless entity @a[tag=mgs.snd_carrier] as @a[tag=mgs.snd_alive,gamemode=!spectator] at @s if entity @e[tag=mgs.snd_loose_at,distance=..2.0] run function mgs:v5.1.0/multiplayer/gamemodes/snd/try_pickup
 

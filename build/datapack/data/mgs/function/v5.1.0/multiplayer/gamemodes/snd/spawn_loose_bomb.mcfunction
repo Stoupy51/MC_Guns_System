@@ -6,6 +6,7 @@
 # @within	mgs:v5.1.0/multiplayer/gamemodes/snd/start_round [ at @e[tag=mgs.spawn_red,limit=1] ]
 #			mgs:v5.1.0/multiplayer/gamemodes/snd/start_round [ at @e[tag=mgs.spawn_blue,limit=1] ]
 #			mgs:v5.1.0/multiplayer/gamemodes/snd/start_round [ at @e[tag=mgs.spawn_point,limit=1] ]
+#			mgs:v5.1.0/multiplayer/gamemodes/snd/recover_bomb [ at @e[tag=mgs.snd_carrier_label,limit=1] ]
 #			mgs:v5.1.0/multiplayer/gamemodes/snd/drop_bomb [ at @e[tag=mgs.snd_carrier_label,limit=1] ]
 #
 
