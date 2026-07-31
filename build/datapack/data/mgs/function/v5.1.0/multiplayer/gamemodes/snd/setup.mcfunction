@@ -16,7 +16,7 @@ function mgs:v5.1.0/shared/load_base_coordinates {mode:"multiplayer"}
 # an empty sidebar all match and then announced a winner with "Red: 0 vs Blue: 0". multiplayer/start
 # already zeroes both, so they are only read from here on.
 scoreboard players set #snd_round mgs.data 1
-scoreboard players set #snd_max_rounds mgs.data 6
+scoreboard players set #snd_win_threshold mgs.data 4
 
 # Bomb state: 0=loose or carried, 2=planted (bomb_timer = explosion countdown)
 # Plant/defuse channel progress are tracked separately so the countdown is never clobbered

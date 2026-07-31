@@ -18,8 +18,7 @@ kill @e[tag=mgs.snd_carrier_label]
 tag @a remove mgs.snd_carrier
 tag @a remove mgs.snd_alive
 
-# Check if either team won enough rounds (best of max_rounds) — stop here on game win
-scoreboard players set #snd_win_threshold mgs.data 4
+# Check if either team reached the round-win threshold (set in setup, also read by the sidebar)
 execute if score #red mgs.mp.team >= #snd_win_threshold mgs.data run return run function mgs:v5.1.0/multiplayer/team_wins {team:"Red"}
 execute if score #blue mgs.mp.team >= #snd_win_threshold mgs.data run return run function mgs:v5.1.0/multiplayer/team_wins {team:"Blue"}
 

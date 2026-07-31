@@ -24,7 +24,7 @@ def write_multiplayer_sidebar() -> None:
 	sb_limit = f'[{{text:" First to ",color:"gray"}},{{score:{{name:"#score_limit",objective:"{ns}.data"}},color:"white"}}]'
 	sb_spacer = '" "'
 
-	## Team sidebar (TDM/SND) — takes $(title) macro arg
+	## Team sidebar (TDM) — takes $(title) macro arg
 	write_versioned_function("multiplayer/create_sidebar_team", f"""
 scoreboard players reset * {ns}.sidebar
 $function #bs.sidebar:create {{objective:"{ns}.sidebar",display_name:{{text:"$(title)",color:"gold",bold:true}},contents:[{sb_timer},{sb_spacer},{sb_red},{sb_blue},{sb_spacer},{sb_limit}]}}
@@ -98,6 +98,42 @@ function {ns}:v{version}/multiplayer/build_sidebar_dom with storage {ns}:temp do
 	write_versioned_function("multiplayer/build_sidebar_dom", f"""
 scoreboard players reset * {ns}.sidebar
 $function #bs.sidebar:create {{objective:"{ns}.sidebar",display_name:{{text:"Domination",color:"gold",bold:true}},contents:[{sb_timer},{sb_spacer},{sb_red},{sb_blue},{sb_spacer},$(a),$(b),$(c),{sb_spacer},{sb_limit}]}}
+scoreboard objectives setdisplay sidebar {ns}.sidebar
+""")
+
+	## Search & Destroy sidebar — round number, round wins, which side attacks, bomb state.
+	## The ⏱ line is the ROUND clock here (and the bomb fuse once planted): the gamemode writes #mp_timer
+	## itself, because a match time limit cannot arbitrate a first-to-4 format.
+	## Rebuilt rather than refreshed for the same reason as domination: the attacking side and the bomb
+	## state are text, and no score component can express text.
+	##
+	## Every line is EXACTLY two components — `[left, right]`. bs.sidebar renders one entry as a left half
+	## and a right half, so a third top-level component is not laid out anywhere and the line silently
+	## disappears. Anything richer than one component per side has to be wrapped in its own array.
+	sb_snd_round = f'[{{text:" Round ",color:"gray"}},{{score:{{name:"#snd_round",objective:"{ns}.data"}},color:"white"}}]'
+	sb_snd_limit = f'[{{text:" First to ",color:"gray"}},{{score:{{name:"#snd_win_threshold",objective:"{ns}.data"}},color:"white"}}]'
+
+	write_versioned_function("multiplayer/create_sidebar_snd", f"""
+function {ns}:v{version}/multiplayer/refresh_sidebar_snd
+scoreboard objectives setdisplay sidebar {ns}.sidebar
+""")
+
+	write_versioned_function("multiplayer/refresh_sidebar_snd", f"""
+# Which side is attacking
+execute if score #snd_attackers {ns}.data matches 1 run data modify storage {ns}:temp snd_sb.atk set value '[[" ⚔ ",{{"text":"Attack","color":"gray"}}],{{"text":"Red","color":"red"}}]'
+execute if score #snd_attackers {ns}.data matches 2 run data modify storage {ns}:temp snd_sb.atk set value '[[" ⚔ ",{{"text":"Attack","color":"gray"}}],{{"text":"Blue","color":"blue"}}]'
+
+# Bomb state: on the ground, on someone's back, or ticking
+execute if score #snd_bomb_state {ns}.data matches 0 run data modify storage {ns}:temp snd_sb.bomb set value '[[" 💣 ",{{"text":"Bomb","color":"gray"}}],{{"text":"Loose","color":"gray"}}]'
+execute if score #snd_bomb_state {ns}.data matches 0 if entity @a[tag={ns}.snd_carrier] run data modify storage {ns}:temp snd_sb.bomb set value '[[" 💣 ",{{"text":"Bomb","color":"gray"}}],{{"text":"Carried","color":"gold"}}]'
+execute if score #snd_bomb_state {ns}.data matches 2 run data modify storage {ns}:temp snd_sb.bomb set value '[[" 💣 ",{{"text":"Bomb","color":"gray"}}],{{"text":"PLANTED","color":"red","bold":true}}]'
+
+function {ns}:v{version}/multiplayer/build_sidebar_snd with storage {ns}:temp snd_sb
+""")
+
+	write_versioned_function("multiplayer/build_sidebar_snd", f"""
+scoreboard players reset * {ns}.sidebar
+$function #bs.sidebar:create {{objective:"{ns}.sidebar",display_name:{{text:"Search & Destroy",color:"gold",bold:true}},contents:[{sb_timer},{sb_spacer},{sb_red},{sb_blue},{sb_spacer},{sb_snd_round},$(atk),$(bomb),{sb_spacer},{sb_snd_limit}]}}
 scoreboard objectives setdisplay sidebar {ns}.sidebar
 """)
 
