@@ -204,10 +204,32 @@ execute unless entity @e[tag={ns}.snd_loose_at] at @e[tag={ns}.spawn_point,limit
 scoreboard players set #snd_round_active {ns}.data 1
 """)
 
-		## S&D: put the bomb on the ground at the current position, free for any attacker to collect.
+		## S&D: put the bomb on the ground below the current position, free for any attacker to collect.
 		## Used both for the round-start bomb and for the drop when a carrier is killed, so a retrieved bomb
 		## always looks and behaves exactly like the original one.
+		##
+		## The raycast down is not cosmetic. The carrier's label — the position a death drop is taken from —
+		## rides 2.2 blocks above their feet, and PICKUP_RANGE is 2.0: a bomb summoned right there sits out
+		## of reach of anyone standing under it, so losing a gunfight silently ended the attack for the round.
+		## Same downward raycast as the dropped-gun code (see core/weapon_drop.py), same fallback when
+		## nothing is below within range.
 		self.sub("spawn_loose_bomb", f"""
+data modify storage {ns}:input with set value {{}}
+data modify storage {ns}:input with.blocks set value "function #bs.hitbox:callback/get_block_shape_with_fluid"
+data modify storage {ns}:input with.piercing set value 0
+data modify storage {ns}:input with.max_distance set value 100
+data modify storage {ns}:input with.ignored_blocks set value "#{ns}:v{version}/empty"
+data modify storage {ns}:input with.on_entry_point set value "function {ns}:v{version}/multiplayer/gamemodes/snd/place_loose_bomb"
+scoreboard players set #snd_bomb_grounded {ns}.data 0
+execute rotated ~ 90 run function #bs.raycast:run with storage {ns}:input
+
+# Dropped over the void: leave it where it fell rather than lose it entirely
+execute if score #snd_bomb_grounded {ns}.data matches 0 run function {ns}:v{version}/multiplayer/gamemodes/snd/place_loose_bomb
+""")
+
+		## S&D: the loose bomb's three entities, at the ground point the raycast found.
+		self.sub("place_loose_bomb", f"""
+scoreboard players set #snd_bomb_grounded {ns}.data 1
 summon minecraft:marker ~ ~ ~ {{Tags:["{ns}.snd_loose","{ns}.snd_loose_at","{ns}.gm_entity"]}}
 summon minecraft:block_display ~ ~ ~ {{Tags:["{ns}.snd_loose","{ns}.gm_entity"],block_state:{{Name:"minecraft:tnt"}},transformation:{{translation:[-0.25f,0.0f,-0.25f],left_rotation:[0.0f,0.0f,0.0f,1.0f],scale:[0.5f,0.5f,0.5f],right_rotation:[0.0f,0.0f,0.0f,1.0f]}}}}
 summon minecraft:text_display ~ ~ ~ {{Tags:["{ns}.snd_loose","{ns}.gm_entity"],billboard:"vertical",text:[{{"text":"💣 BOMB","color":"gold","bold":true}}],transformation:{{translation:[0.0f,1.1f,0.0f],left_rotation:[0.0f,0.0f,0.0f,1.0f],scale:[1.5f,1.5f,1.5f],right_rotation:[0.0f,0.0f,0.0f,1.0f]}},shadow:true,see_through:true}}
