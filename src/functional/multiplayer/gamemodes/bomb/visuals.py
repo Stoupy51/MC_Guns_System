@@ -6,6 +6,7 @@ announce live here rather than being typed twice with a drifting Y offset.
 # ruff: noqa: E501
 # Imports
 from ....helpers import MGS_TAG
+from ....progression import EARNER_TAG, Xp
 from ..base import GameModeVariant
 
 # Constants
@@ -40,21 +41,32 @@ summon minecraft:block_display ~ ~ ~ {{Tags:["{ns}.{vis_tag}","{ns}.gm_entity"],
 summon minecraft:text_display ~ ~ ~ {{Tags:["{ns}.{hud_tag}","{ns}.gm_entity"],billboard:"vertical",text:[{{"text":"💣 {label}","color":"red","bold":true}}],transformation:{{translation:[0.0f,1.4f,0.0f],left_rotation:[0.0f,0.0f,0.0f,1.0f],scale:[1.5f,1.5f,1.5f],right_rotation:[0.0f,0.0f,0.0f,1.0f]}},shadow:true,see_through:true}}"""
 
 	@staticmethod
-	def announce_site_lines(variant: GameModeVariant, message: str, color: str = "red") -> str:
+	def announce_site_lines(variant: GameModeVariant, message: str, color: str = "red", xp_key: str = "") -> str:
 		""" Return one `tellraw` per site letter, selected by the `<key>_site_<letter>` tag on `@s`.
 
 		Naming the site is how the defending side knows which one to rotate to, so it is worth a line
 		per letter rather than a generic "the bomb was planted".
 
+		With `xp_key` set, each letter is emitted twice and split on `EARNER_TAG`: whoever the caller tagged
+		before getting here reads the amount they just earned, and everyone else reads the same line without
+		it. That is why plants and defuses add no message of their own — this IS their message.
+
 		Args:
 			variant (GameModeVariant): The mode whose site tags are being tested.
 			message (str):             Announce text, with `{{letter}}` where the letter goes.
 			color   (str):             Colour of the announce.
+			xp_key  (str):             Row key in MP_AWARDS whose amount to suffix, or "" for no suffix.
 		Returns:
-			str: One command per letter in SITE_LETTERS.
+			str: One or two commands per letter in SITE_LETTERS.
 		"""
 		ns, key = variant.ns, variant.key
+		audiences: tuple[tuple[str, str], ...] = (("@a", ""),) if not xp_key else (
+			(f"@a[tag=!{ns}.{EARNER_TAG}]", ""),
+			(f"@a[tag={ns}.{EARNER_TAG}]", "," + Xp.suffix("mp", xp_key)),
+		)
 		return "\n".join(
-			f'execute if entity @s[tag={ns}.{key}_site_{letter}] run tellraw @a [{MGS_TAG},"💣 ",{{"text":"{message.format(letter=letter)}","color":"{color}","bold":true}}]'
+			f'execute if entity @s[tag={ns}.{key}_site_{letter}] run tellraw {who} '
+			f'[{MGS_TAG},"💣 ",{{"text":"{message.format(letter=letter)}","color":"{color}","bold":true}}{suffix}]'
 			for letter in SITE_LETTERS
+			for who, suffix in audiences
 		)

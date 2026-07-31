@@ -45,6 +45,9 @@ scoreboard players set @a {ns}.mp.kills 0
 scoreboard players set @a {ns}.mp.deaths 0
 scoreboard players set @a {ns}.mp.death_count 0
 
+# Per-match XP, for the after-action line. The lifetime totals are deliberately NOT touched.
+scoreboard players set @a {ns}.mp.xp_session 0
+
 # Set timer from time_limit. Cleared here and re-claimed by the gamemode's own setup below, so a mode that
 # drives its own clock (S&D, Demolition) cannot inherit a stale claim from the previous match.
 execute store result score #mp_timer {ns}.data run data get storage {ns}:multiplayer game.time_limit

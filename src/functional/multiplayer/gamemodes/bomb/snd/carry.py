@@ -6,6 +6,8 @@ every respawn and needs none of it.
 # ruff: noqa: E501
 # Imports
 from .....helpers import MGS_TAG
+from .....helpers.text import Text
+from .....progression import Xp
 from ...base import GameModeVariant
 
 # Constants
@@ -75,7 +77,7 @@ kill @e[tag={ns}.snd_loose]
 # of where the carrier is: if they die, the bomb drops at this label's position.
 summon minecraft:text_display ~ ~ ~ {{Tags:["{ns}.snd_carrier_label","{ns}.gm_entity"],billboard:"vertical",teleport_duration:1,text:[{{"text":"💣","color":"gold","bold":true}}],transformation:{{translation:[0.0f,0.0f,0.0f],left_rotation:[0.0f,0.0f,0.0f,1.0f],scale:[1.5f,1.5f,1.5f],right_rotation:[0.0f,0.0f,0.0f,1.0f]}},shadow:true,see_through:false}}
 
-tellraw @a [{MGS_TAG},"💣 ",{{"selector":"@s"}},{{"text":" picked up the bomb!","color":"gold"}}]
+{Xp.announce("mp", "bomb_pickup", f'{MGS_TAG},"💣 ",{Text.player(ns, "@s")},{{"text":" picked up the bomb!","color":"gold"}}')}
 playsound minecraft:item.armor.equip_chain player @a ~ ~ ~ 1 1.2
 """)
 

@@ -1,6 +1,8 @@
 """ Free-for-all: every player scores on their own. """
 # Imports
 from ...helpers import MGS_TAG
+from ...helpers.text import Text
+from ..xp import WINNER_TAG
 from .base import GameModeVariant
 
 
@@ -33,8 +35,11 @@ execute as @a if score @s {ns}.mp.kills >= #score_limit {ns}.data run function {
 
 		## FFA Player Wins
 		self.sub("player_wins", f"""
+# FFA has no team score for multiplayer/xp/on_game_end to read, so the winner is marked here instead.
+tag @s add {ns}.{WINNER_TAG}
+
 # Announce winner using player's name
-tellraw @a ["","🏆 ",{{"selector":"@s","color":"gold","bold":true}}," ",{{"text":"wins!","color":"gold","bold":true}}]
+tellraw @a ["","🏆 ",{Text.player(ns, "@s", color="gold", bold="true")}," ",{{"text":"wins!","color":"gold","bold":true}}]
 tellraw @a ["","  ",{{"text":"Score: ","color":"gray"}},{{"score":{{"name":"@s","objective":"{ns}.mp.kills"}},"color":"yellow"}}," ",{{"text":"kills","color":"gray"}}]
 
 # End game

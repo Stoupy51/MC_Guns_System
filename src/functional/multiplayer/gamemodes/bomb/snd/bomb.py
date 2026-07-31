@@ -5,6 +5,7 @@ cannot do that — it has a site-per-bomb and keeps the same state on each site 
 """
 # Imports
 from .....helpers import MGS_TAG
+from .....progression import EARNER_TAG, Xp
 from ...base import GameModeVariant
 from ..visuals import BombVisuals
 
@@ -51,10 +52,16 @@ scoreboard players set #snd_bomb_sec_shown {ns}.data -1
 tag @s remove {ns}.snd_carrier
 kill @e[tag={ns}.snd_carrier_label]
 
+# Pay the planter, and mark them so the site announce inside place_planted_bomb carries their XP
+{Xp.give("mp", "bomb_plant")}
+tag @a remove {ns}.{EARNER_TAG}
+tag @s add {ns}.{EARNER_TAG}
+
 # Plant it ON the site, not wherever the player happened to be standing. A CoD bomb sits at the site, so
 # both teams know exactly where the defuse happens; planting at the player's feet is the Counter-Strike
 # "anywhere inside the zone" rule and made the bomb hard to find.
 execute as @e[tag={ns}.snd_obj,limit=1,sort=nearest] at @s run function {ns}:v{version}/multiplayer/gamemodes/snd/place_planted_bomb
+tag @a remove {ns}.{EARNER_TAG}
 
 playsound minecraft:block.note_block.pling player @a ~ ~ ~ 1 0.5
 """)
@@ -63,8 +70,8 @@ playsound minecraft:block.note_block.pling player @a ~ ~ ~ 1 0.5
 		variant.sub("place_planted_bomb", f"""
 {BombVisuals.planted_entities(ns, "snd_bomb", "snd_bomb_vis", "snd_bomb_hud", "PLANTED")}
 
-# Name the site so the defenders know which one to rotate to
-{BombVisuals.announce_site_lines(variant, "BOMB PLANTED AT {letter}!")}
+# Name the site so the defenders know which one to rotate to, and pay the planter on that same line
+{BombVisuals.announce_site_lines(variant, "BOMB PLANTED AT {letter}!", xp_key="bomb_plant")}
 """)
 
 		## S&D: rewrite the bomb countdown label (only called when the displayed second changes)
@@ -88,12 +95,17 @@ execute if score #snd_attackers {ns}.data matches 2 unless score @s {ns}.mp.team
 # Raise the channel flag and show the progress; the tick owns the increment, so extra defenders on the
 # same bomb give cover rather than a faster defuse. The bomb countdown keeps running in parallel.
 scoreboard players set #snd_channeling {ns}.data 1
+tag @s add {ns}.{EARNER_TAG}
 title @s actionbar [{{"text":"Defusing... ","color":"aqua"}},{{"score":{{"name":"#snd_defuse_progress","objective":"{ns}.data"}},"color":"yellow"}},{{"text":"/{DEFUSE_TICKS}"}}]
 """)
 
-		## S&D: Bomb defused → defenders win
+		## S&D: Bomb defused → defenders win.
+		## The channelers were tagged by try_defuse on this very tick, so the announce can pay them on the
+		## line that already exists rather than adding one.
 		variant.sub("bomb_defused", f"""
-tellraw @a [{MGS_TAG},"💣 ",{{"text":"BOMB DEFUSED!","color":"aqua","bold":true}}]
+tellraw @a[tag=!{ns}.{EARNER_TAG}] [{MGS_TAG},"💣 ",{{"text":"BOMB DEFUSED!","color":"aqua","bold":true}}]
+tellraw @a[tag={ns}.{EARNER_TAG}] [{MGS_TAG},"💣 ",{{"text":"BOMB DEFUSED!","color":"aqua","bold":true}},{Xp.suffix("mp", "bomb_defuse")}]
+{Xp.give("mp", "bomb_defuse", f"@a[tag={ns}.{EARNER_TAG}]")}
 kill @e[tag={ns}.snd_bomb]
 function {ns}:v{version}/multiplayer/gamemodes/snd/defenders_win
 """)

@@ -9,6 +9,7 @@ and its per-player bomb spawns are all deliberately absent.
 # ruff: noqa: E501
 # Imports
 from .....helpers import MGS_TAG
+from .....progression import EARNER_TAG
 from ...base import GameModeVariant
 from ..sites import BombSites
 from .bomb import DEFUSE_TICKS, PLANT_TICKS, SITE_RANGE, SndBomb
@@ -152,7 +153,9 @@ execute if score #snd_bomb_state {ns}.data matches 0 if score #snd_plant_progres
 # Defusing (defender near bomb and sneaking); progress resets if nobody is channeling.
 # The += lives HERE and not in try_defuse on purpose: run per player, two defenders on the same bomb each
 # added a tick_delta to the one shared progress score and halved the defuse time.
+# try_defuse also marks each channeler, so bomb_defused knows who to pay without re-deriving the set.
 scoreboard players set #snd_channeling {ns}.data 0
+tag @a remove {ns}.{EARNER_TAG}
 execute if score #snd_bomb_state {ns}.data matches 2 as @a[tag={ns}.snd_alive,predicate={ns}:v{version}/is_sneaking,gamemode=!spectator] at @s if entity @e[tag={ns}.snd_bomb,distance=..{SITE_RANGE}] run function {ns}:v{version}/multiplayer/gamemodes/snd/try_defuse
 execute if score #snd_bomb_state {ns}.data matches 2 if score #snd_channeling {ns}.data matches 0 run scoreboard players set #snd_defuse_progress {ns}.data 0
 execute if score #snd_bomb_state {ns}.data matches 2 if score #snd_channeling {ns}.data matches 1 run scoreboard players operation #snd_defuse_progress {ns}.data += #tick_delta {ns}.data

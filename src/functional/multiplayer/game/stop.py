@@ -5,6 +5,7 @@ from stewbeet import Mem, write_versioned_function
 
 from ...helpers.lifecycle import GameLifecycle
 from ...helpers.ranked import RankedStats
+from ...helpers.text import Text
 from ..gamemodes.dispatch import gm_dispatch
 
 
@@ -14,12 +15,16 @@ def write_multiplayer_stop() -> None:
 	version: str = Mem.ctx.project_version
 
 	## Game Stop
+	## The XP this match earned closes the line, which is also where the match win/loss bonus surfaces:
+	## multiplayer/xp/on_game_end runs from the on_game_end tag above, before this iteration reads the score.
 	mp_stat_line: str = (
-		'tellraw @a ["","  ",{"selector":"@s"},{"text":" ➤ ","color":"dark_gray"},'
+		f'tellraw @a ["","  ",{Text.player(ns, "@s")},{{"text":" ➤ ","color":"dark_gray"}},'
 		f'{{"score":{{"name":"@s","objective":"{ns}.mp.kills"}},"color":"green"}},'
 		'{"text":" kills","color":"gray"},{"text":" · ","color":"dark_gray"},'
 		f'{{"score":{{"name":"@s","objective":"{ns}.mp.deaths"}},"color":"red"}},'
-		'{"text":" deaths","color":"gray"}]'
+		'{"text":" deaths","color":"gray"},{"text":" · ","color":"dark_gray"},'
+		f'{{"text":"+","color":"gold"}},{{"score":{{"name":"@s","objective":"{ns}.mp.xp_session"}},"color":"gold"}},'
+		'{"text":" XP","color":"gold"}]'
 	)
 	mp_ranked_stats: str = RankedStats.write_ranked_stats_functions(
 		ns, version, "multiplayer/announce_stats", "mp.in_game", "mp.kills", mp_stat_line

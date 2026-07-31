@@ -4,6 +4,8 @@
 from stewbeet import Mem, write_versioned_function
 
 from ....config.stats.keys import REMAINING_BULLETS
+from ...helpers.text import Text
+from ...progression.awards import MP_AWARDS
 from ..gamemodes.dispatch import gm_dispatch
 
 
@@ -111,21 +113,21 @@ function {ns}:v{version}/shared/drops/drop
 	## Random death message for self-deaths (OOB, environmental)
 	write_versioned_function("multiplayer/random_death_message", f"""
 execute store result score #random_message {ns}.data run random value 1..5
-execute if score #random_message {ns}.data matches 1 run tellraw @a[scores={{{ns}.mp.in_game=1..}}] ["",{{"selector":"@s"}}," ",{{"text":"made a terrible mistake","color":"gray"}}]
-execute if score #random_message {ns}.data matches 2 run tellraw @a[scores={{{ns}.mp.in_game=1..}}] ["",{{"selector":"@s"}}," ",{{"text":"forgot how gravity works","color":"gray"}}]
-execute if score #random_message {ns}.data matches 3 run tellraw @a[scores={{{ns}.mp.in_game=1..}}] ["",{{"selector":"@s"}}," ",{{"text":"played themselves","color":"gray"}}]
-execute if score #random_message {ns}.data matches 4 run tellraw @a[scores={{{ns}.mp.in_game=1..}}] ["",{{"selector":"@s"}}," ",{{"text":"left the battlefield","color":"gray"}}]
-execute if score #random_message {ns}.data matches 5 run tellraw @a[scores={{{ns}.mp.in_game=1..}}] ["",{{"selector":"@s"}}," ",{{"text":"embraced the void","color":"gray"}}]
+execute if score #random_message {ns}.data matches 1 run tellraw @a[scores={{{ns}.mp.in_game=1..}}] ["",{Text.player(ns, "@s")}," ",{{"text":"made a terrible mistake","color":"gray"}}]
+execute if score #random_message {ns}.data matches 2 run tellraw @a[scores={{{ns}.mp.in_game=1..}}] ["",{Text.player(ns, "@s")}," ",{{"text":"forgot how gravity works","color":"gray"}}]
+execute if score #random_message {ns}.data matches 3 run tellraw @a[scores={{{ns}.mp.in_game=1..}}] ["",{Text.player(ns, "@s")}," ",{{"text":"played themselves","color":"gray"}}]
+execute if score #random_message {ns}.data matches 4 run tellraw @a[scores={{{ns}.mp.in_game=1..}}] ["",{Text.player(ns, "@s")}," ",{{"text":"left the battlefield","color":"gray"}}]
+execute if score #random_message {ns}.data matches 5 run tellraw @a[scores={{{ns}.mp.in_game=1..}}] ["",{Text.player(ns, "@s")}," ",{{"text":"embraced the void","color":"gray"}}]
 """)
 
 	## Random self-kill message (grenade, RPG, own explosion)
 	write_versioned_function("multiplayer/random_self_kill_message", f"""
 execute store result score #random_message {ns}.data run random value 1..5
-execute if score #random_message {ns}.data matches 1 run tellraw @a[scores={{{ns}.mp.in_game=1..}}] ["",{{"selector":"@s"}}," ",{{"text":"blew themselves up","color":"gray"}}]
-execute if score #random_message {ns}.data matches 2 run tellraw @a[scores={{{ns}.mp.in_game=1..}}] ["",{{"selector":"@s"}}," ",{{"text":"got a taste of their own medicine","color":"gray"}}]
-execute if score #random_message {ns}.data matches 3 run tellraw @a[scores={{{ns}.mp.in_game=1..}}] ["",{{"selector":"@s"}}," ",{{"text":"found out the blast radius the hard way","color":"gray"}}]
-execute if score #random_message {ns}.data matches 4 run tellraw @a[scores={{{ns}.mp.in_game=1..}}] ["",{{"selector":"@s"}}," ",{{"text":"didn't throw the grenade far enough","color":"gray"}}]
-execute if score #random_message {ns}.data matches 5 run tellraw @a[scores={{{ns}.mp.in_game=1..}}] ["",{{"selector":"@s"}}," ",{{"text":"is their own worst enemy","color":"gray"}}]
+execute if score #random_message {ns}.data matches 1 run tellraw @a[scores={{{ns}.mp.in_game=1..}}] ["",{Text.player(ns, "@s")}," ",{{"text":"blew themselves up","color":"gray"}}]
+execute if score #random_message {ns}.data matches 2 run tellraw @a[scores={{{ns}.mp.in_game=1..}}] ["",{Text.player(ns, "@s")}," ",{{"text":"got a taste of their own medicine","color":"gray"}}]
+execute if score #random_message {ns}.data matches 3 run tellraw @a[scores={{{ns}.mp.in_game=1..}}] ["",{Text.player(ns, "@s")}," ",{{"text":"found out the blast radius the hard way","color":"gray"}}]
+execute if score #random_message {ns}.data matches 4 run tellraw @a[scores={{{ns}.mp.in_game=1..}}] ["",{Text.player(ns, "@s")}," ",{{"text":"didn't throw the grenade far enough","color":"gray"}}]
+execute if score #random_message {ns}.data matches 5 run tellraw @a[scores={{{ns}.mp.in_game=1..}}] ["",{Text.player(ns, "@s")}," ",{{"text":"is their own worst enemy","color":"gray"}}]
 """)
 
 	## Random kill message (uses temp_killer/temp_victim tags, shared by simulate_death + on_respawn).
@@ -139,20 +141,30 @@ execute if score #random_message {ns}.data matches 5 run tellraw @a[scores={{{ns
 		("sent",        "to the shadow realm"),
 		("wiped",       "off the map"),
 	]
+	## Every line is emitted twice more than it looks: once to the killer, carrying the XP that kill was
+	## worth, and once to everyone else without it. A score component resolves in the executor's context
+	## rather than per recipient, so one tellraw cannot say "+20 XP" to only one of the people reading it.
+	## Both copies sit under the same #random_message guard, so the verb stays identical between them.
 	kill_lines: list[str] = []
 	for idx, (verb, tail) in enumerate(kill_verbs, start=1):
 		body: str = (
-			f'["",{{"selector":"@a[tag={ns}.temp_killer]"}}," ",{{"text":"{verb}","color":"gray"}}'
-			f',[" ",{{"selector":"@a[tag={ns}.temp_victim]"}}]'
+			f'["",{Text.player(ns, f"@a[tag={ns}.temp_killer]")}," ",{{"text":"{verb}","color":"gray"}}'
+			f',[" ",{Text.player(ns, f"@a[tag={ns}.temp_victim]")}]'
 		)
 		body += f',[" ",{{"text":"{tail}","color":"gray"}}]' if tail else ""
 		for hs, hs_check in ((True, "matches 1"), (False, "matches 0")):
-			suffix: str = ',[" ",{"text":"💀 HEADSHOT","color":"red","bold":true}]' if hs else ""
-			kill_lines.append(
-				f"execute if score #random_message {ns}.data matches {idx}"
-				f" if score #mp_kill_headshot {ns}.data {hs_check}"
-				f" run tellraw @a[scores={{{ns}.mp.in_game=1..}}] {body}{suffix}]"
-			)
+			marker: str = ',[" ",{"text":"💀 HEADSHOT","color":"red","bold":true}]' if hs else ""
+			# A headshot kill is worth kill + headshot, and the killer's line says so
+			earned: int = MP_AWARDS["kill"].amount + (MP_AWARDS["headshot"].amount if hs else 0)
+			for who, xp in (
+				(f"@a[scores={{{ns}.mp.in_game=1..}},tag=!{ns}.temp_killer]", ""),
+				(f"@a[tag={ns}.temp_killer]", f',[" ",{{"text":"+{earned} XP","color":"gold"}}]'),
+			):
+				kill_lines.append(
+					f"execute if score #random_message {ns}.data matches {idx}"
+					f" if score #mp_kill_headshot {ns}.data {hs_check}"
+					f" run tellraw {who} {body}{marker}{xp}]"
+				)
 	newline: str = "\n"
 	write_versioned_function("multiplayer/random_kill_message", f"""
 execute store result score #random_message {ns}.data run random value 1..{len(kill_verbs)}

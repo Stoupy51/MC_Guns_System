@@ -2,6 +2,7 @@
 # Imports
 from .....helpers import MGS_TAG
 from ...base import GameModeVariant
+from ..round_xp import RoundXp
 
 # Constants
 ROUND_TICKS: int = 3000
@@ -90,9 +91,8 @@ execute unless score #snd_round_active {ns}.data matches 1 run return fail
 scoreboard players set #snd_round_active {ns}.data 0
 
 execute if score #snd_attackers {ns}.data matches 1 run scoreboard players add #red {ns}.mp.team 1
-execute if score #snd_attackers {ns}.data matches 1 run tellraw @a [{MGS_TAG},{{"text":"Red","color":"red"}},{{"text":" (Attackers) win the round!","color":"yellow"}}]
 execute if score #snd_attackers {ns}.data matches 2 run scoreboard players add #blue {ns}.mp.team 1
-execute if score #snd_attackers {ns}.data matches 2 run tellraw @a [{MGS_TAG},{{"text":"Blue","color":"blue"}},{{"text":" (Attackers) win the round!","color":"yellow"}}]
+{RoundXp.result_lines(ns, "#snd_attackers", attackers_won=True, note="(Attackers) win the round!")}
 playsound minecraft:entity.player.levelup player @a ~ ~ ~ 1 1.0
 
 function {ns}:v{version}/multiplayer/gamemodes/snd/next_round
@@ -106,9 +106,8 @@ execute unless score #snd_round_active {ns}.data matches 1 run return fail
 scoreboard players set #snd_round_active {ns}.data 0
 
 execute if score #snd_attackers {ns}.data matches 1 run scoreboard players add #blue {ns}.mp.team 1
-execute if score #snd_attackers {ns}.data matches 1 run tellraw @a [{MGS_TAG},{{"text":"Blue","color":"blue"}},{{"text":" (Defenders) win the round!","color":"yellow"}}]
 execute if score #snd_attackers {ns}.data matches 2 run scoreboard players add #red {ns}.mp.team 1
-execute if score #snd_attackers {ns}.data matches 2 run tellraw @a [{MGS_TAG},{{"text":"Red","color":"red"}},{{"text":" (Defenders) win the round!","color":"yellow"}}]
+{RoundXp.result_lines(ns, "#snd_attackers", attackers_won=False, note="(Defenders) win the round!")}
 playsound minecraft:entity.player.levelup player @a ~ ~ ~ 1 1.0
 
 function {ns}:v{version}/multiplayer/gamemodes/snd/next_round

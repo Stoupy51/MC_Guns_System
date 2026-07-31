@@ -17,6 +17,7 @@ it is cheaper — two markers to walk instead of every player.
 # ruff: noqa: E501
 # Imports
 from .....helpers import MGS_TAG
+from .....progression import EARNER_TAG, Xp
 from ...base import GameModeVariant
 from ..visuals import BombVisuals
 
@@ -108,16 +109,23 @@ execute if score #demo_ch {ns}.data matches 1.. run title @a[tag={ns}.demo_atk,p
 execute if score @s {ns}.demo_prog matches {PLANT_TICKS}.. run function {ns}:v{version}/multiplayer/gamemodes/demo/site_planted
 """)
 
-		## The bomb goes down on this site (@s = the site, at it)
+		## The bomb goes down on this site (@s = the site, at it).
+		## Still positioned at the site, so the players who planted it are whoever is channeling in range —
+		## tagged before the announce so it can pay them on the line it already prints.
 		variant.sub("site_planted", f"""
 scoreboard players set @s {ns}.demo_state 1
 scoreboard players set @s {ns}.demo_fuse {BOMB_FUSE_TICKS}
 scoreboard players set @s {ns}.demo_prog 0
 scoreboard players operation @s {ns}.demo_owner = #demo_attackers {ns}.data
 
+tag @a remove {ns}.{EARNER_TAG}
+tag @a[tag={ns}.demo_atk,predicate={ns}:v{version}/is_sneaking,gamemode=!spectator,distance=..{SITE_RANGE}] add {ns}.{EARNER_TAG}
+{Xp.give("mp", "bomb_plant", f"@a[tag={ns}.{EARNER_TAG}]")}
+
 {BombVisuals.planted_entities(ns, "demo_bomb", "demo_bomb_vis", "demo_bomb_hud", "PLANTED")}
 
-{BombVisuals.announce_site_lines(variant, "BOMB PLANTED AT {letter}!")}
+{BombVisuals.announce_site_lines(variant, "BOMB PLANTED AT {letter}!", xp_key="bomb_plant")}
+tag @a remove {ns}.{EARNER_TAG}
 playsound minecraft:block.note_block.pling player @a ~ ~ ~ 1 0.5
 """)
 
@@ -143,7 +151,14 @@ execute if score @s {ns}.demo_prog matches {DEFUSE_TICKS}.. run function {ns}:v{
 
 		## Defused (@s = the site, at it). This does NOT end the round: the attackers keep their bombs and
 		## may plant this site again, which is the whole reason Demolition rounds are longer than S&D ones.
+		## The defusers are read off demo_owner BEFORE it is cleared below — after that, nothing here knows
+		## which side was defending this site.
 		variant.sub("site_defused", f"""
+tag @a remove {ns}.{EARNER_TAG}
+execute if score @s {ns}.demo_owner matches 1 run tag @a[scores={{{ns}.mp.team=2}},predicate={ns}:v{version}/is_sneaking,gamemode=!spectator,distance=..{SITE_RANGE}] add {ns}.{EARNER_TAG}
+execute if score @s {ns}.demo_owner matches 2 run tag @a[scores={{{ns}.mp.team=1}},predicate={ns}:v{version}/is_sneaking,gamemode=!spectator,distance=..{SITE_RANGE}] add {ns}.{EARNER_TAG}
+{Xp.give("mp", "bomb_defuse", f"@a[tag={ns}.{EARNER_TAG}]")}
+
 scoreboard players set @s {ns}.demo_state 0
 scoreboard players set @s {ns}.demo_prog 0
 scoreboard players set @s {ns}.demo_fuse 0
@@ -152,7 +167,8 @@ kill @e[tag={ns}.demo_bomb,distance=..2]
 kill @e[tag={ns}.demo_bomb_vis,distance=..2]
 kill @e[tag={ns}.demo_bomb_hud,distance=..2]
 
-{BombVisuals.announce_site_lines(variant, "BOMB DEFUSED AT {letter}!", color="aqua")}
+{BombVisuals.announce_site_lines(variant, "BOMB DEFUSED AT {letter}!", color="aqua", xp_key="bomb_defuse")}
+tag @a remove {ns}.{EARNER_TAG}
 playsound minecraft:block.note_block.bit player @a ~ ~ ~ 1 1.5
 """)
 
@@ -183,6 +199,12 @@ $data modify entity @n[tag={ns}.demo_bomb_hud,distance=..2] text set value [{{"t
 scoreboard players set @s {ns}.demo_state 2
 scoreboard players set @s {ns}.demo_prog 0
 
+# Pay the attacking side BEFORE the blast below: it runs simulate_death on everyone in range, which turns
+# the planter standing over their own bomb into a spectator and would exclude them from their own objective.
+tag @a remove {ns}.{EARNER_TAG}
+tag @a[tag={ns}.demo_atk,gamemode=!spectator] add {ns}.{EARNER_TAG}
+{Xp.give("mp", "site_destroyed", f"@a[tag={ns}.{EARNER_TAG}]")}
+
 particle minecraft:explosion_emitter ~ ~1 ~ 2 2 2 0 5
 playsound minecraft:entity.generic.explode player @a ~ ~ ~ 2 0.8
 execute as @a[distance=..{BLAST_RANGE},gamemode=!creative,gamemode=!spectator,scores={{{ns}.mp.in_game=1..}}] run data modify storage {ns}:input with set value {{}}
@@ -196,7 +218,8 @@ setblock ~ ~ ~ air
 summon minecraft:block_display ~ ~ ~ {{Tags:["{ns}.demo_rubble","{ns}.gm_entity"],block_state:{{Name:"minecraft:polished_blackstone"}},transformation:{{translation:[-0.3f,0.0f,-0.3f],left_rotation:[0.0f,0.0f,0.0f,1.0f],scale:[0.6f,0.2f,0.6f],right_rotation:[0.0f,0.0f,0.0f,1.0f]}}}}
 summon minecraft:text_display ~ ~ ~ {{Tags:["{ns}.demo_wreck","{ns}.gm_entity"],billboard:"vertical",text:[{{"text":"💥 DESTROYED","color":"dark_gray"}}],transformation:{{translation:[0.0f,1.4f,0.0f],left_rotation:[0.0f,0.0f,0.0f,1.0f],scale:[1.5f,1.5f,1.5f],right_rotation:[0.0f,0.0f,0.0f,1.0f]}},shadow:true,see_through:true}}
 
-{BombVisuals.announce_site_lines(variant, "BOMB SITE {letter} DESTROYED!")}
+{BombVisuals.announce_site_lines(variant, "BOMB SITE {letter} DESTROYED!", xp_key="site_destroyed")}
+tag @a remove {ns}.{EARNER_TAG}
 
 # Destroying a site buys time to reach the other one
 scoreboard players add #demo_timer {ns}.data {TIME_BONUS}
