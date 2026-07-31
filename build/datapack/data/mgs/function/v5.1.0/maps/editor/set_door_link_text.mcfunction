@@ -6,8 +6,8 @@
 #			string in mgs:v5.1.0/maps/editor/show_element_config {field:\"block\",value:\"\"}
 #			string in mgs:v5.1.0/maps/editor/show_element_config {field:\"sound\",value:\"\"}
 #
-# @args		field (unknown)
-#			value (unknown)
+# @args		field (string)
+#			value (string)
 #
 
 $data modify storage mgs:temp _door_set set value {field:"$(field)",value:"$(value)"}

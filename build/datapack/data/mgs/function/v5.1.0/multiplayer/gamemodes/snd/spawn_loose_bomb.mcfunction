@@ -9,7 +9,15 @@
 #			mgs:v5.1.0/multiplayer/gamemodes/snd/drop_bomb [ at @e[tag=mgs.snd_carrier_label,limit=1] ]
 #
 
-summon minecraft:marker ~ ~ ~ {Tags:["mgs.snd_loose","mgs.snd_loose_at","mgs.gm_entity"]}
-summon minecraft:block_display ~ ~ ~ {Tags:["mgs.snd_loose","mgs.gm_entity"],block_state:{Name:"minecraft:tnt"},transformation:{translation:[-0.25f,0.0f,-0.25f],left_rotation:[0.0f,0.0f,0.0f,1.0f],scale:[0.5f,0.5f,0.5f],right_rotation:[0.0f,0.0f,0.0f,1.0f]}}
-summon minecraft:text_display ~ ~ ~ {Tags:["mgs.snd_loose","mgs.gm_entity"],billboard:"vertical",text:[[{"text":"💣 ","color":"gold","bold":true}, {"translate":"mgs.bomb"}]],transformation:{translation:[0.0f,1.1f,0.0f],left_rotation:[0.0f,0.0f,0.0f,1.0f],scale:[1.5f,1.5f,1.5f],right_rotation:[0.0f,0.0f,0.0f,1.0f]},shadow:true,see_through:true}
+data modify storage mgs:input with set value {}
+data modify storage mgs:input with.blocks set value "function #bs.hitbox:callback/get_block_shape_with_fluid"
+data modify storage mgs:input with.piercing set value 0
+data modify storage mgs:input with.max_distance set value 100
+data modify storage mgs:input with.ignored_blocks set value "#mgs:v5.1.0/empty"
+data modify storage mgs:input with.on_entry_point set value "function mgs:v5.1.0/multiplayer/gamemodes/snd/place_loose_bomb"
+scoreboard players set #snd_bomb_grounded mgs.data 0
+execute rotated ~ 90 run function #bs.raycast:run with storage mgs:input
+
+# Dropped over the void: leave it where it fell rather than lose it entirely
+execute if score #snd_bomb_grounded mgs.data matches 0 run function mgs:v5.1.0/multiplayer/gamemodes/snd/place_loose_bomb
 
