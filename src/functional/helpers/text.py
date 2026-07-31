@@ -1,4 +1,4 @@
-""" Building text components: gradients, and splitting an emoji off a coloured label. """
+""" Building text components: gradients, splitting an emoji off a coloured label, and naming a player. """
 # Imports
 import re
 from typing import Any
@@ -8,9 +8,52 @@ from stouputils.typing import JsonDict
 
 # Classes
 class Text:
-	""" Building text components: gradients, and splitting an emoji off a coloured label. """
+	""" Building text components: gradients, splitting an emoji off a coloured label, and naming a player. """
 
 	# Functions
+	@staticmethod
+	def player(ns: str, selector: str = "@s", side: str = "mp", **style: str) -> str:
+		""" A player's name with their level in front of it, as one grouped component.
+
+		Returned as a bracketed list rather than a bare comma-separated fragment so it can be dropped
+		anywhere a single component is expected. The leading `""` keeps the group from inheriting the
+		first element's styling.
+
+		The `selector` has to resolve to exactly ONE entity, because a score component reads a single
+		score — the same constraint `game/sidebar.py` already relies on for its FFA rank rows. A player
+		whose level score is still unset renders as `[]`, which is why `progression/tick_player`
+		initialises everyone within a second of joining.
+
+		Args:
+			ns       (str): Project namespace.
+			selector (str): Single-entity selector, ex: "@s" or "@a[tag=mgs.temp_killer]".
+			side     (str): "mp" or "zb" — which of the two independent levels to show.
+			**style  (str): SNBT attributes applied to the NAME only, ex: color="yellow", bold="true".
+		Returns:
+			str: SNBT list component, ex: `["",{"text":"["...},{"score":...},{"text":"] "...},{"selector":"@s"}]`
+
+		Examples:
+			>>> Text.player("mgs", "@s").startswith('["",{"text":"[","color":"dark_gray"}')
+			True
+			>>> '"objective":"mgs.zb.xp_level"' in Text.player("mgs", "@s", side="zb")
+			True
+			>>> '{"selector":"@s","color":"red"}' in Text.player("mgs", "@s", color="red")
+			True
+			>>> '{"selector":"@s","bold":true}' in Text.player("mgs", "@s", bold="true")
+			True
+		"""
+		# Booleans stay unquoted, matching styled_text: "bold":"true" is a string, which SNBT rejects.
+		attrs: str = "".join(
+			f',"{key}":{value}' if value in ("true", "false") else f',"{key}":"{value}"'
+			for key, value in style.items()
+		)
+		return (
+			f'["",{{"text":"[","color":"dark_gray"}}'
+			f',{{"score":{{"name":"{selector}","objective":"{ns}.{side}.xp_level"}},"color":"gold"}}'
+			f',{{"text":"] ","color":"dark_gray"}}'
+			f',{{"selector":"{selector}"{attrs}}}]'
+		)
+
 	@staticmethod
 	def styled_text(text: str, **attrs: str) -> str:
 		""" Create a styled text component, automatically splitting non-alphanumeric

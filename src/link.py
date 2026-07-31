@@ -9,6 +9,7 @@ from .functional.missions import main as main_missions
 from .functional.mob_ai import main as main_mob_ai
 from .functional.multiplayer import main as main_multiplayer
 from .functional.player_config import main as main_player_config
+from .functional.progression import generate_progression
 from .functional.shaders import main as main_shaders
 from .functional.stamina import main as main_stamina
 from .functional.weapon import main as main_weapon
@@ -26,6 +27,7 @@ def beet_default(ctx: Context) -> None:
 	main_stamina()
 	main_mob_ai()
 	main_core()            # Bounds, teleport, maps, commands, spawning
+	generate_progression()  # Shared XP curve; both modes' award sites depend on it existing
 	main_zombies()
 	main_multiplayer()
 	main_missions()
