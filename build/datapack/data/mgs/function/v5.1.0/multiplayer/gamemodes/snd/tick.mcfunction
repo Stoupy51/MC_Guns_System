@@ -4,6 +4,13 @@
 # @within	mgs:v5.1.0/multiplayer/game_tick
 #
 
+# Sidebar: rebuilt once a second because the attacking side and the bomb state are text, which no score
+# component can express (same reason domination rebuilds instead of refreshing). Above the round gate on
+# purpose, so the new round number and the swapped sides are on screen during the 3s gap that announces them.
+execute store result score #snd_sb_tick mgs.data run scoreboard players get #total_tick mgs.data
+scoreboard players operation #snd_sb_tick mgs.data %= #20 mgs.data
+execute if score #snd_sb_tick mgs.data matches 0 run function mgs:v5.1.0/multiplayer/refresh_sidebar_snd
+
 # Nothing to tick between rounds, and critically nothing to JUDGE: next_round clears snd_alive, so every
 # check below would read one side as wiped during the 60-tick gap before start_round.
 execute unless score #snd_round_active mgs.data matches 1 run return 0

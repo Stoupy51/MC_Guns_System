@@ -140,7 +140,7 @@ execute if data storage mgs:multiplayer game{gamemode:"ffa"} run function mgs:v5
 execute if data storage mgs:multiplayer game{gamemode:"tdm"} run function mgs:v5.1.0/multiplayer/create_sidebar_team {title:"Team Deathmatch"}
 execute if data storage mgs:multiplayer game{gamemode:"dom"} run function mgs:v5.1.0/multiplayer/create_sidebar_dom
 execute if data storage mgs:multiplayer game{gamemode:"hp"} run function mgs:v5.1.0/multiplayer/create_sidebar_hp
-execute if data storage mgs:multiplayer game{gamemode:"snd"} run function mgs:v5.1.0/multiplayer/create_sidebar_team {title:"Search & Destroy"}
+execute if data storage mgs:multiplayer game{gamemode:"snd"} run function mgs:v5.1.0/multiplayer/create_sidebar_snd
 
 # Show kills in player list (tab)
 scoreboard objectives setdisplay list mgs.mp.kills

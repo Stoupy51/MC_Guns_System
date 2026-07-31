@@ -31,17 +31,19 @@ SITE_RANGE: float = 3.0
 """ Blocks from a site marker where the carrier can plant, and from the planted bomb where it can be defused. """
 
 WIN_ROUNDS: int = 4
-""" Round wins needed to take the match. """
-MAX_ROUNDS: int = 6
-""" Rounds in a full match, so WIN_ROUNDS is a majority of them. """
-HALFTIME_ROUND: int = 4
-""" The round the sides swap on, i.e. after MAX_ROUNDS // 2 have been played. """
+""" Round wins needed to take the match, so a match lasts between 4 and 7 rounds.
+There is deliberately no cap on the round number: "first to 4" is the CoD rule, and a 3-3 match has to
+play a seventh round to produce a winner. """
+ROUNDS_PER_HALF: int = 3
+""" Rounds a side spends attacking before the swap. """
+HALFTIME_ROUND: int = ROUNDS_PER_HALF + 1
+""" The round the sides swap on, i.e. the first round of the second half. """
 
 
 # Classes
 class SearchAndDestroy(GameModeVariant):
 	""" Search & Destroy: round-based; attackers carry a bomb to a site, defenders defuse it.
-	No respawns within a round; best-of-six with a side swap at halftime. """
+	No respawns within a round; first to WIN_ROUNDS round wins, with a side swap at halftime. """
 
 	key = "snd"
 
@@ -61,7 +63,7 @@ function {ns}:v{version}/shared/load_base_coordinates {{mode:"multiplayer"}}
 # an empty sidebar all match and then announced a winner with "Red: 0 vs Blue: 0". multiplayer/start
 # already zeroes both, so they are only read from here on.
 scoreboard players set #snd_round {ns}.data 1
-scoreboard players set #snd_max_rounds {ns}.data {MAX_ROUNDS}
+scoreboard players set #snd_win_threshold {ns}.data {WIN_ROUNDS}
 
 # Bomb state: 0=loose or carried, 2=planted (bomb_timer = explosion countdown)
 # Plant/defuse channel progress are tracked separately so the countdown is never clobbered
@@ -240,6 +242,13 @@ summon minecraft:text_display ~ ~ ~ {{Tags:["{ns}.snd_loose","{ns}.gm_entity"],b
 
 		## S&D Tick
 		self.sub("tick", f"""
+# Sidebar: rebuilt once a second because the attacking side and the bomb state are text, which no score
+# component can express (same reason domination rebuilds instead of refreshing). Above the round gate on
+# purpose, so the new round number and the swapped sides are on screen during the 3s gap that announces them.
+execute store result score #snd_sb_tick {ns}.data run scoreboard players get #total_tick {ns}.data
+scoreboard players operation #snd_sb_tick {ns}.data %= #20 {ns}.data
+execute if score #snd_sb_tick {ns}.data matches 0 run function {ns}:v{version}/multiplayer/refresh_sidebar_snd
+
 # Nothing to tick between rounds, and critically nothing to JUDGE: next_round clears snd_alive, so every
 # check below would read one side as wiped during the 60-tick gap before start_round.
 execute unless score #snd_round_active {ns}.data matches 1 run return 0
@@ -473,8 +482,7 @@ kill @e[tag={ns}.snd_carrier_label]
 tag @a remove {ns}.snd_carrier
 tag @a remove {ns}.snd_alive
 
-# Check if either team won enough rounds (best of max_rounds) — stop here on game win
-scoreboard players set #snd_win_threshold {ns}.data {WIN_ROUNDS}
+# Check if either team reached the round-win threshold (set in setup, also read by the sidebar)
 execute if score #red {ns}.mp.team >= #snd_win_threshold {ns}.data run return run function {ns}:v{version}/multiplayer/team_wins {{team:"Red"}}
 execute if score #blue {ns}.mp.team >= #snd_win_threshold {ns}.data run return run function {ns}:v{version}/multiplayer/team_wins {{team:"Blue"}}
 
