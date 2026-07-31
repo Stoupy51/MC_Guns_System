@@ -5,6 +5,7 @@ from stewbeet import Mem, write_versioned_function
 from .....config.stats.keys import PAP_STATS, REMAINING_BULLETS
 from ....core.feedback import ZombiesFeedback
 from ....helpers import MGS_TAG
+from ....progression import Xp
 from ...common import ZombiesCommon
 from .shared import REPAP_SCOPE_PRICE
 
@@ -134,6 +135,9 @@ data modify storage {ns}:temp _pap_old_stats set from storage {ns}:temp _pap_ext
 # Deduct points and apply runtime overrides from pap_stats
 scoreboard players operation @s {ns}.zb.points -= #pap_price {ns}.data
 function {ns}:v{version}/zombies/pap/apply_runtime_overrides
+
+# Silent award: an upgrade confirms with the machine animation, not a chat line
+{Xp.give("zb", "pack_a_punch")}
 
 # Save original weapon ID before scope randomization (for later restore)
 data modify storage {ns}:temp _pap_pre_cosm_weapon set from storage {ns}:temp _pap_extract.weapon

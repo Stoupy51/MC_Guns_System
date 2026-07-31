@@ -16,6 +16,7 @@ from stewbeet import Mem, write_load_file, write_versioned_function
 
 from ...core.feedback import ZombiesFeedback
 from ...helpers import MGS_TAG
+from ...helpers.text import Text
 from ..machines.perks.definitions import PERK_DEFINITIONS
 from .revive.shared import BLEED_OUT_TICKS, revive_body_detect, revive_body_progress
 
@@ -98,7 +99,7 @@ scoreboard players set @s {ns}.zb.revive_p 0
 title @s times 5 40 15
 title @s title ["👥"]
 title @s subtitle [{{"text":"Who's Who — revive your body, or fight on!","color":"dark_aqua"}}]
-tellraw @a[scores={{{ns}.zb.in_game=1}}] [{MGS_TAG},{{"selector":"@s","color":"aqua"}},{{"text":" went down — but plays on as a doppelganger!","color":"gray"}}]
+tellraw @a[scores={{{ns}.zb.in_game=1}}] [{MGS_TAG},{Text.player(ns, "@s", side="zb", color="aqua")},{{"text":" went down — but plays on as a doppelganger!","color":"gray"}}]
 """)
 
 	# Store @s Inventory keyed by body id, for recovery on revive
@@ -160,7 +161,7 @@ scoreboard players set @s {ns}.zb.revive_p 0
 title @s times 5 40 15
 title @s title ["❤"]
 title @s subtitle [{{"text":"Body revived — you are whole again!","color":"green"}}]
-tellraw @a[scores={{{ns}.zb.in_game=1}}] [{MGS_TAG},{{"selector":"@s","color":"green"}},{{"text":"'s body was revived — they are whole again!","color":"gray"}}]
+tellraw @a[scores={{{ns}.zb.in_game=1}}] [{MGS_TAG},{Text.player(ns, "@s", side="zb", color="green")},{{"text":"'s body was revived — they are whole again!","color":"gray"}}]
 {ZombiesFeedback.zb_sound('success')}
 """)
 
@@ -169,7 +170,7 @@ tellraw @a[scores={{{ns}.zb.in_game=1}}] [{MGS_TAG},{{"selector":"@s","color":"g
 function {ns}:v{version}/zombies/whos_who/forfeit
 title @s title ["☠"]
 title @s subtitle [{{"text":"Your body bled out — fight on with your pistol.","color":"gray"}}]
-tellraw @a[scores={{{ns}.zb.in_game=1}}] [{MGS_TAG},{{"selector":"@s","color":"dark_aqua"}},{{"text":"'s body bled out.","color":"gray"}}]
+tellraw @a[scores={{{ns}.zb.in_game=1}}] [{MGS_TAG},{Text.player(ns, "@s", side="zb", color="dark_aqua")},{{"text":"'s body bled out.","color":"gray"}}]
 """)
 
 	# Silently discard the body + snapshot and leave doppelganger state.

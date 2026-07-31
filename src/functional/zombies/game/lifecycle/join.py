@@ -20,7 +20,10 @@ def write_zombies_join() -> None:
 		f"""
 scoreboard players set @s {ns}.zb.in_game 1
 team join {ns}.zombies @s
+# Keep the XP spend tracker in step: an unsynced reset reads as points being SPENT (see zombies/xp.py)
 scoreboard players set @s {ns}.zb.points 500
+scoreboard players set @s {ns}.zb.xp_pts_prev 500
+scoreboard players set @s {ns}.zb.xp_spent_acc 0
 scoreboard players set @s {ns}.zb.kills 0
 scoreboard players set @s {ns}.zb.downs 0
 scoreboard players set @s {ns}.zb.passive 0
@@ -35,6 +38,7 @@ attribute @s minecraft:entity_interaction_range base set 5
 		f"{ns}:v{version}/zombies/respawn_tp",
 		"joined the zombies game!",
 		"dark_green",
+		xp_side="zb",
 		post_class_lines=f"scoreboard players operation @s {ns}.zb.prev_kills = @s {ns}.total_kills",
 		class_menu_lines=(
 			"# Zombies has no class selection: give the fixed starting loadout (knife + pistol), matching "

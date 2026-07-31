@@ -5,6 +5,7 @@ from stewbeet import Mem, write_versioned_function
 
 from ....core.feedback import ZombiesFeedback
 from ....helpers import MGS_TAG
+from ....progression import Xp
 from .shared import owned_gun_macro_cd
 
 
@@ -32,7 +33,8 @@ execute if score #wb_purchase_done {ns}.data matches 0 run return 0
 execute if data storage {ns}:zombies mystery_box.result.weapon_id run function {ns}:v{version}/zombies/mystery_box/capture_collected_name with storage {ns}:zombies mystery_box.result
 
 # Announce + sounds
-tellraw @s [{MGS_TAG},{{"text":"You collected ","color":"green"}},{{"storage":"{ns}:temp","nbt":"_mb_collected_name","interpret":true}},{{"text":" from the Mystery Box.","color":"green"}}]
+tellraw @s [{MGS_TAG},{{"text":"You collected ","color":"green"}},{{"storage":"{ns}:temp","nbt":"_mb_collected_name","interpret":true}},{{"text":" from the Mystery Box.","color":"green"}},{Xp.suffix("zb", "mystery_box")}]
+{Xp.give("zb", "mystery_box")}
 {ZombiesFeedback.zb_sound('success')}
 {ZombiesFeedback.zb_sound('box_close')}
 

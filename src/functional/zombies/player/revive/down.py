@@ -4,6 +4,7 @@
 from stewbeet import Mem, write_versioned_function
 
 from ....helpers import MGS_TAG
+from ....helpers.text import Text
 from .shared import BLEED_OUT_TICKS, HUD_OFFSET_Y_THOUSANDTHS
 
 
@@ -90,7 +91,7 @@ tag @e[tag={ns}.downed_mine_temp] remove {ns}.downed_mine_temp
 # Announce
 title @s title ["☠"]
 title @s subtitle [{{"text":"You are down! A teammate can revive you.","color":"gray"}}]
-tellraw @a[scores={{{ns}.zb.in_game=1}}] [{MGS_TAG},{{"selector":"@s","color":"red"}},{{"text":" is down!","color":"gray"}}]
+tellraw @a[scores={{{ns}.zb.in_game=1}}] [{MGS_TAG},{Text.player(ns, "@s", side="zb", color="red")},{{"text":" is down!","color":"gray"}}]
 """)
 
 	## Spawn the revivable body for @s: a mannequin wearing their armor + skin, with the name HUD above it.

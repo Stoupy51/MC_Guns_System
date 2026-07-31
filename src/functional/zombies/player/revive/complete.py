@@ -4,6 +4,8 @@
 from stewbeet import Mem, write_versioned_function
 
 from ....helpers import MGS_TAG
+from ....helpers.text import Text
+from ....progression import Xp
 from .shared import QUICK_REVIVE_TICKS, REVIVE_TICKS
 
 
@@ -23,6 +25,9 @@ scoreboard players operation #rv_rev_sec {ns}.data /= #20 {ns}.data
 scoreboard players operation #rv_rev_tenth {ns}.data = #rv_reviver_disp {ns}.data
 scoreboard players operation #rv_rev_tenth {ns}.data %= #20 {ns}.data
 scoreboard players operation #rv_rev_tenth {ns}.data /= #2 {ns}.data
+
+# Marked for revive_complete, which runs as the DOWNED player and cannot re-select the revivers
+tag @s add {ns}.zb_reviver
 
 # Check if reviver has Quick Revive perk
 execute if entity @s[tag={ns}.perk.quick_revive] run function {ns}:v{version}/zombies/revive/show_reviver_bar_quick
@@ -93,7 +98,7 @@ function {ns}:v{version}/zombies/perks/tombstone_on_revived
 # Announce
 title @s title ["❤"]
 title @s subtitle [{{"text":"You have been revived!","color":"green"}}]
-tellraw @a[scores={{{ns}.zb.in_game=1}}] [{MGS_TAG},{{"selector":"@s","color":"green"}},{{"text":" has been revived!","color":"gray"}}]
+{Xp.announce("zb", "revive", f'{MGS_TAG},{Text.player(ns, "@s", side="zb", color="green")},{{"text":" has been revived!","color":"gray"}}', earner=f"@a[tag={ns}.zb_reviver]", audience=f"@a[scores={{{ns}.zb.in_game=1}}]")}
 """)
 
 	# Bleed out: player couldn't be revived in time (run as downed spectator)
@@ -124,7 +129,7 @@ execute unless entity @a[scores={{{ns}.zb.in_game=1,{ns}.zb.downed=0}},gamemode=
 # Announce
 title @s title ["☠"]
 title @s subtitle [{{"text":"You bled out. Respawning next round...","color":"gray"}}]
-tellraw @a[scores={{{ns}.zb.in_game=1}}] [{MGS_TAG},{{"selector":"@s","color":"dark_red"}},{{"text":" has bled out.","color":"gray"}}]
+tellraw @a[scores={{{ns}.zb.in_game=1}}] [{MGS_TAG},{Text.player(ns, "@s", side="zb", color="dark_red")},{{"text":" has bled out.","color":"gray"}}]
 """)
 
 	## Hide @s's body (mannequin + HUD, id-matched via #my_downed_id) by teleporting it far below the world (avoids the kill animation/drops), strip the tags, and kill the camera if any.

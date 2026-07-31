@@ -4,6 +4,7 @@
 from stewbeet import Mem, write_versioned_function
 
 from ....helpers import MGS_TAG
+from ....helpers.text import Text
 from .types import BONFIRE_SALE_DURATION, FIRE_SALE_DURATION, TIMED_POWERUPS, pu_activate_sound, pu_snd
 
 
@@ -87,7 +88,7 @@ execute if score #pool_chosen {ns}.data matches ..-1 run return run tellraw @p[t
 execute as @p[tag={ns}.pu_collecting] run function {ns}:v{version}/zombies/perks/apply with storage {ns}:temp _pool
 
 # Announce + sound
-tellraw @a[scores={{{ns}.zb.in_game=1}}] [{MGS_TAG},{{"text":"Random Perk dropped for ","color":"light_purple"}},{{"selector":"@p[tag={ns}.pu_collecting]","color":"light_purple","bold":true}},{{"text":"!","color":"light_purple"}}]
+tellraw @a[scores={{{ns}.zb.in_game=1}}] [{MGS_TAG},{{"text":"Random Perk dropped for ","color":"light_purple"}},{Text.player(ns, f"@p[tag={ns}.pu_collecting]", side="zb", color="light_purple", bold="true")},{{"text":"!","color":"light_purple"}}]
 {pu_snd(ns, "random_perk")}
 """)
 

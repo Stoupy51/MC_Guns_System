@@ -4,6 +4,7 @@ from stewbeet import Mem, write_versioned_function
 
 from ....core.feedback import ZombiesFeedback
 from ....helpers import MGS_TAG
+from ....helpers.text import Text
 from ...common import ZombiesCommon
 
 
@@ -60,7 +61,7 @@ execute unless score @s {ns}.mb.pid = @n[tag={ns}.mb_display,distance=..3] {ns}.
 
 tag @n[tag={ns}.mb_display,distance=..3] add {ns}.mb_shared
 {ZombiesFeedback.zb_sound('success')}
-tellraw @a[scores={{{ns}.zb.in_game=1}}] [{MGS_TAG},{{"selector":"@s"}},{{"text":" shared their Mystery Box weapon — anyone can take it!","color":"green"}}]
+tellraw @a[scores={{{ns}.zb.in_game=1}}] [{MGS_TAG},{Text.player(ns, "@s", side="zb")},{{"text":" shared their Mystery Box weapon — anyone can take it!","color":"green"}}]
 """)
 
 	## Dispatch a click at a specific box (@s = player, positioned at the box)

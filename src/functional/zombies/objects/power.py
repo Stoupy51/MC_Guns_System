@@ -10,6 +10,7 @@ from stewbeet import Mem, write_versioned_function
 
 from ...core.feedback import ZombiesFeedback
 from ...helpers import MGS_TAG
+from ...progression import Xp
 from ..common import ZombiesCommon
 
 
@@ -88,8 +89,9 @@ execute as @e[tag={ns}.power_switch_disp] run data modify entity @s item.compone
 # Kill power switch interaction entities (one-time use); displays stay to show the "on" state
 kill @e[tag={ns}.power_switch]
 
-# Announce
-tellraw @a[scores={{{ns}.zb.in_game=1}}] [{MGS_TAG},{{"text":"Power is ON!","color":"green","bold":true}}]
+# Announce. The whole roster earns this one, so the audience IS the earners and needs no split.
+tellraw @a[scores={{{ns}.zb.in_game=1}}] [{MGS_TAG},{{"text":"Power is ON!","color":"green","bold":true}},{Xp.suffix("zb", "power")}]
+{Xp.give("zb", "power", f"@a[scores={{{ns}.zb.in_game=1}}]")}
 {ZombiesFeedback.zb_sound('power_on')}
 
 # Signal map-specific power-on hooks

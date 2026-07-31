@@ -126,6 +126,7 @@ tellraw @a [{MGS_TAG},{{"text":"An operator granted {amount} points to everyone.
 	write_versioned_function("zombies/admin/points_reset", f"""
 execute unless data storage {ns}:zombies game{{state:"active"}} run return run tellraw @s [{MGS_TAG},{{"text":"No zombies game is active.","color":"red"}}]
 scoreboard players set @a[scores={{{ns}.zb.in_game=1}}] {ns}.zb.points 0
+scoreboard players operation @a[scores={{{ns}.zb.in_game=1}}] {ns}.zb.xp_pts_prev = @a[scores={{{ns}.zb.in_game=1}}] {ns}.zb.points
 tellraw @a [{MGS_TAG},{{"text":"An operator reset everyone's points.","color":"red"}}]
 """)
 

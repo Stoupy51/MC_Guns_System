@@ -2,6 +2,7 @@
 # Imports
 from stewbeet import Mem, write_versioned_function
 
+from ....progression import Xp
 from .types import POWERUP_TYPES, pu_activate_sound, pu_snd
 
 
@@ -29,6 +30,10 @@ kill @n[type=minecraft:text_display,tag={ns}.pu_text,distance=..3]
 
 # Activate the power-up effect (collector tag is still active here)
 function {ns}:v{version}/zombies/powerups/dispatch_activate
+
+# Silent award: there are eleven power-up types with eleven different announces, so there is no single
+# message to suffix. The bar moving is the feedback.
+{Xp.give("zb", "powerup", f"@a[tag={ns}.pu_collecting]")}
 
 # Kill this power-up item entity
 kill @s

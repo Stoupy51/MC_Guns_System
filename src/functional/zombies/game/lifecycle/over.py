@@ -1,4 +1,5 @@
 """ Game over, stopping a game and the operator-only fast restart. """
+# ruff: noqa: E501
 # Imports
 from stewbeet import Mem, write_versioned_function
 
@@ -6,6 +7,7 @@ from ....helpers import MGS_TAG
 from ....helpers.dialogs import Dialogs
 from ....helpers.lifecycle import GameLifecycle
 from ....helpers.ranked import RankedStats
+from ....progression import Xp
 
 
 # Functions
@@ -16,7 +18,7 @@ def write_zombies_over() -> None:
 	# Game Over.
 
 	zb_stat_line: str = (
-		'tellraw @a ["","  ","🎖 ",{"selector":"@s"}," — Kills: ",'
+		'tellraw @a ["","  ","🎖 ",{Text.player(ns, "@s", side="zb")}," — Kills: ",'
 		f'{{"score":{{"name":"@s","objective":"{ns}.zb.kills"}},"color":"green"}}," | Downs: ",'
 		f'{{"score":{{"name":"@s","objective":"{ns}.zb.downs"}},"color":"red"}}," | Points: ",'
 		f'{{"score":{{"name":"@s","objective":"{ns}.zb.points"}},"color":"gold"}}]'
@@ -41,9 +43,13 @@ title @a[scores={{{ns}.zb.in_game=1}}] title {{"text":"GAME OVER","color":"dark_
 # Calculate final round
 execute store result score #final_round {ns}.data run data get storage {ns}:zombies game.round
 
-# Performance summary
+# Depth bonus, paid here so the Final Round line below can carry the amount
+function {ns}:v{version}/zombies/xp/on_game_over
+
+# Performance summary. The Final Round line is split because only the roster earned the bonus.
 tellraw @a ["","\\n",{{"text":"═══════ GAME OVER ═══════","color":"dark_red","bold":true}}]
-tellraw @a ["","  ","🧟 ",{{"text":"Final Round: ","color":"gray"}},{{"score":{{"name":"#final_round","objective":"{ns}.data"}},"color":"red","bold":true}}]
+tellraw @a[scores={{{ns}.zb.in_game=1}}] ["","  ","🧟 ",{{"text":"Final Round: ","color":"gray"}},{{"score":{{"name":"#final_round","objective":"{ns}.data"}},"color":"red","bold":true}},{Xp.suffix("zb", "game_over")}]
+tellraw @a[scores={{{ns}.zb.in_game=0}}] ["","  ","🧟 ",{{"text":"Final Round: ","color":"gray"}},{{"score":{{"name":"#final_round","objective":"{ns}.data"}},"color":"red","bold":true}}]
 
 # Per-player stats, best first. The bare selector component renders the player's team colour.
 {zb_ranked_stats}
@@ -99,7 +105,10 @@ execute as @a[scores={{{ns}.zb.in_game=1}}] run function {ns}:v{version}/shared/
 
 # Reset in-game state
 scoreboard players set @a {ns}.zb.in_game 0
+# Keep the XP spend tracker in step: an unsynced reset reads as points being SPENT (see zombies/xp.py)
 scoreboard players set @a {ns}.zb.points 0
+scoreboard players set @a {ns}.zb.xp_pts_prev 0
+scoreboard players set @a {ns}.zb.xp_spent_acc 0
 scoreboard players set @a {ns}.zb.kills 0
 scoreboard players set @a {ns}.zb.downs 0
 scoreboard players set @a {ns}.zb.passive 0

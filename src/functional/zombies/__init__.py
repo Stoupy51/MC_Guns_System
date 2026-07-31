@@ -26,6 +26,7 @@ from .player.revive import generate_revive
 from .player.whos_who import generate_whos_who
 from .rewards.bonus import main as bonus_main
 from .rewards.powerups import generate_powerups
+from .xp import generate_zombies_xp
 
 
 # Functions
@@ -57,4 +58,5 @@ def main() -> None:
 	generate_revive()
 	generate_traps()
 	generate_hurt_player()
+	generate_zombies_xp()
 

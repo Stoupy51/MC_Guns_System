@@ -3,6 +3,7 @@
 from stewbeet import Mem, write_versioned_function
 
 from ....helpers import MGS_TAG
+from ....helpers.text import Text
 from .definitions import PERK_DEFINITIONS
 
 
@@ -155,7 +156,7 @@ title @s times 5 40 15
 title @s title ["🪦"]
 title @s subtitle [{{"text":"Gear recovered!","color":"green"}}]
 playsound minecraft:block.respawn_anchor.charge player @a[distance=..24] ~ ~ ~ 1 1.2
-tellraw @a[scores={{{ns}.zb.in_game=1}}] [{MGS_TAG},{{"selector":"@s","color":"green"}},{{"text":" recovered their gear from a tombstone!","color":"gray"}}]
+tellraw @a[scores={{{ns}.zb.in_game=1}}] [{MGS_TAG},{Text.player(ns, "@s", side="zb", color="green")},{{"text":" recovered their gear from a tombstone!","color":"gray"}}]
 """)
 
 	## Macro: load a snapshot by id into the shared restore buffer, then drop the snapshot.
