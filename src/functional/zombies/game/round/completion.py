@@ -3,6 +3,8 @@
 # Imports
 from stewbeet import Mem, write_versioned_function
 
+from ....progression import Xp
+
 
 # Functions
 def write_round_completion() -> None:
@@ -22,9 +24,10 @@ scoreboard players set #zb_to_spawn {ns}.data -1
 # Signal round end
 function #{ns}:zombies/on_round_end
 
-# Announce
+# Announce. Split because only the roster earned the survival XP; #xp_gain was set by the signal above.
 execute store result score #completed_round {ns}.data run data get storage {ns}:zombies game.round
-tellraw @a ["",{{"text":"","color":"dark_green","bold":true}},"🧟 ",{{"text":"Round ","color":"green"}},{{"score":{{"name":"#completed_round","objective":"{ns}.data"}},"color":"gold","bold":true}},{{"text":" complete! Next round in 5 seconds...","color":"green"}}]
+tellraw @a[scores={{{ns}.zb.in_game=1}}] ["",{{"text":"","color":"dark_green","bold":true}},"🧟 ",{{"text":"Round ","color":"green"}},{{"score":{{"name":"#completed_round","objective":"{ns}.data"}},"color":"gold","bold":true}},{{"text":" complete! Next round in 5 seconds...","color":"green"}},{Xp.suffix("zb", "round_survived")}]
+tellraw @a[scores={{{ns}.zb.in_game=0}}] ["",{{"text":"","color":"dark_green","bold":true}},"🧟 ",{{"text":"Round ","color":"green"}},{{"score":{{"name":"#completed_round","objective":"{ns}.data"}},"color":"gold","bold":true}},{{"text":" complete! Next round in 5 seconds...","color":"green"}}]
 execute as @a[scores={{{ns}.zb.in_game=1}}] at @s run playsound {ns}:zombies/round_end_generic ambient @s ~ ~ ~ 0.3 1.0
 
 # Schedule next round after 5 seconds

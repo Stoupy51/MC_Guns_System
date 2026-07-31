@@ -4,6 +4,7 @@
 from stewbeet import Mem, write_versioned_function
 
 from ....helpers import MGS_TAG
+from ....helpers.text import Text
 from .shared import SOLO_QR_MAX
 
 
@@ -43,7 +44,7 @@ execute unless entity @a[scores={{{ns}.zb.in_game=1,{ns}.zb.downed=0}},gamemode=
 # Announce
 title @s title ["☠"]
 title @s subtitle [{{"text":"You fell out of the world!","color":"gray"}}]
-tellraw @a[scores={{{ns}.zb.in_game=1}}] [{MGS_TAG},{{"selector":"@s","color":"dark_red"}},{{"text":" fell out of the world.","color":"gray"}}]
+tellraw @a[scores={{{ns}.zb.in_game=1}}] [{MGS_TAG},{Text.player(ns, "@s", side="zb", color="dark_red")},{{"text":" fell out of the world.","color":"gray"}}]
 """)
 
 	## Who's Who saved you from the void (@s = the falling player, perks still intact).
@@ -86,6 +87,6 @@ scoreboard players set @s {ns}.stam_seen 0
 title @s times 5 40 15
 title @s title ["⚡"]
 title @s subtitle [{{"text":"Quick Revive pulled you back from the void!","color":"aqua"}}]
-tellraw @a[scores={{{ns}.zb.in_game=1}}] [{MGS_TAG},{{"selector":"@s","color":"aqua"}},{{"text":" fell out — but Quick Revive pulled them back!","color":"gray"}}]
+tellraw @a[scores={{{ns}.zb.in_game=1}}] [{MGS_TAG},{Text.player(ns, "@s", side="zb", color="aqua")},{{"text":" fell out — but Quick Revive pulled them back!","color":"gray"}}]
 """)
 

@@ -3,6 +3,8 @@
 # Imports
 from stewbeet import Mem, write_versioned_function
 
+from ....progression import Xp
+
 # Constants
 SOUND_BANG: str = "zombies/barricade/bang"
 """ 5 variants, 20-34 ticks: a zombie pounding the boards while it tears them off. """
@@ -221,7 +223,8 @@ tag @s remove {ns}.barricade_repairing
 execute unless score @s {ns}.zb.barricade_repairs matches 25.. run scoreboard players add @s {ns}.zb.points 10
 execute unless score @s {ns}.zb.barricade_repairs matches 25.. run scoreboard players add @s {ns}.zb.barricade_repairs 1
 
-data modify storage smithed.actionbar:input message set value {{json:[{{"text":"✔ Barricade repaired! ","color":"green"}},{{"text":"+10","color":"gold"}},{{"text":" points","color":"yellow"}}],priority:"notification",freeze:20}}
+data modify storage smithed.actionbar:input message set value {{json:[{{"text":"✔ Barricade repaired! ","color":"green"}},{{"text":"+10","color":"gold"}},{{"text":" points","color":"yellow"}},{Xp.suffix("zb", "barricade")}],priority:"notification",freeze:20}}
+{Xp.give("zb", "barricade")}
 function #smithed.actionbar:message
 """)
 

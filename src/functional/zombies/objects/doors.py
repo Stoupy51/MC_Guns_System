@@ -11,6 +11,8 @@ from stewbeet import Mem, write_load_file, write_versioned_function
 
 from ...core.feedback import ZombiesFeedback
 from ...helpers import MGS_TAG
+from ...helpers.text import Text
+from ...progression import Xp
 from ..common import ZombiesCommon
 
 
@@ -176,13 +178,13 @@ execute if score #door_partial {ns}.data matches 1.. if score #door_paid {ns}.da
 execute as @e[tag={ns}.door] if score @s {ns}.zb.door.link = #door_link {ns}.data at @s run function {ns}:v{version}/zombies/doors/open_one
 
 # Announce (the total, not the last chunk: it's what the door cost the team)
-tellraw @a [{MGS_TAG},{{"selector":"@s","color":"yellow"}},{{"text":" opened ","color":"green"}},{{"storage":"{ns}:temp","nbt":"_door_hover_name","color":"gold","interpret":true}},{{"text":" for ","color":"green"}},{{"score":{{"name":"#door_total","objective":"{ns}.data"}},"color":"yellow"}},{{"text":" points.","color":"green"}}]
+{Xp.announce("zb", "door", f'{MGS_TAG},{Text.player(ns, "@s", side="zb", color="yellow")},{{"text":" opened ","color":"green"}},{{"storage":"{ns}:temp","nbt":"_door_hover_name","color":"gold","interpret":true}},{{"text":" for ","color":"green"}},{{"score":{{"name":"#door_total","objective":"{ns}.data"}},"color":"yellow"}},{{"text":" points.","color":"green"}}')}
 {ZombiesFeedback.zb_sound('announce')}
 """)  # noqa: E501
 
 	## Chip-in payment that didn't finish the door (@s = paying player)
 	write_versioned_function("zombies/doors/announce_progress", f"""
-tellraw @a [{MGS_TAG},{{"selector":"@s","color":"yellow"}},{{"text":" chipped in ","color":"green"}},{{"score":{{"name":"#door_price","objective":"{ns}.data"}},"color":"yellow"}},{{"text":" points for ","color":"green"}},{{"storage":"{ns}:temp","nbt":"_door_hover_name","color":"gold","interpret":true}},{{"text":"  (","color":"gray"}},{{"score":{{"name":"#door_paid","objective":"{ns}.data"}},"color":"green"}},{{"text":"/","color":"gray"}},{{"score":{{"name":"#door_total","objective":"{ns}.data"}},"color":"yellow"}},{{"text":")","color":"gray"}}]
+tellraw @a [{MGS_TAG},{Text.player(ns, "@s", side="zb", color="yellow")},{{"text":" chipped in ","color":"green"}},{{"score":{{"name":"#door_price","objective":"{ns}.data"}},"color":"yellow"}},{{"text":" points for ","color":"green"}},{{"storage":"{ns}:temp","nbt":"_door_hover_name","color":"gold","interpret":true}},{{"text":"  (","color":"gray"}},{{"score":{{"name":"#door_paid","objective":"{ns}.data"}},"color":"green"}},{{"text":"/","color":"gray"}},{{"score":{{"name":"#door_total","objective":"{ns}.data"}},"color":"yellow"}},{{"text":")","color":"gray"}}]
 {ZombiesFeedback.zb_sound('announce')}
 """)  # noqa: E501
 

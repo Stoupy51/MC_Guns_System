@@ -3,6 +3,7 @@
 from stewbeet import Mem, write_versioned_function
 
 from ....helpers import MGS_TAG
+from ....progression import Xp
 from .definitions import PERK_DEFINITIONS
 
 
@@ -33,6 +34,7 @@ $function {ns}:v{version}/zombies/perks/apply/$(perk_id)
 		msg_emoji, msg_text = perk_data.message.split(" ", 1)
 		write_versioned_function(f"zombies/perks/apply/{perk_id}", f"""
 {extra_commands}
-tellraw @s [{MGS_TAG},"{msg_emoji} ",{{"text":"{msg_text}","color":"{perk_data.message_color}"}}]
+tellraw @s [{MGS_TAG},"{msg_emoji} ",{{"text":"{msg_text}","color":"{perk_data.message_color}"}},{Xp.suffix("zb", "perk")}]
+{Xp.give("zb", "perk")}
 """)
 

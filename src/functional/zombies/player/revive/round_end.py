@@ -4,6 +4,7 @@
 from stewbeet import Mem, write_versioned_function
 
 from ....helpers import MGS_TAG
+from ....helpers.text import Text
 from .shared import ROUND_END_PICKUP_RANGE
 
 
@@ -67,7 +68,7 @@ function {ns}:v{version}/zombies/perks/tombstone_on_respawn
 function {ns}:v{version}/shared/maps/call_script_at_base {{script:"respawn"}}
 
 # Announce
-tellraw @a[scores={{{ns}.zb.in_game=1}}] [{MGS_TAG},{{"selector":"@s","color":"green"}},{{"text":" has respawned!","color":"gray"}}]
+tellraw @a[scores={{{ns}.zb.in_game=1}}] [{MGS_TAG},{Text.player(ns, "@s", side="zb", color="green")},{{"text":" has respawned!","color":"gray"}}]
 """)
 
 	## Fully tear down @s's downed mannequin/HUD/camera (matched by downed_id) and dismount.

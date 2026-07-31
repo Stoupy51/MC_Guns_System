@@ -3,6 +3,7 @@
 from stewbeet import Mem, write_versioned_function
 
 from ....helpers import MGS_TAG
+from ....helpers.text import Text
 
 
 # Functions
@@ -52,7 +53,7 @@ title @s title ["⚔"]
 title @s subtitle [{{"text":"DYING WISH — Berserk!","color":"dark_red"}}]
 particle minecraft:totem_of_undying ~ ~1 ~ 0.5 1 0.5 0.3 80 force @a[distance=..32]
 playsound minecraft:item.totem.use player @a[distance=..32] ~ ~ ~ 1 0.8
-tellraw @a[scores={{{ns}.zb.in_game=1}}] [{MGS_TAG},{{"selector":"@s","color":"blue"}},{{"text":" refuses to die!","color":"gray"}}]
+tellraw @a[scores={{{ns}.zb.in_game=1}}] [{MGS_TAG},{Text.player(ns, "@s", side="zb", color="blue")},{{"text":" refuses to die!","color":"gray"}}]
 """)
 
 	## Per-tick berserk countdown (called from player/tick while dw_timer >= 1). @s = player.
