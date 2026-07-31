@@ -21,6 +21,10 @@ execute if data storage {ns}:multiplayer game{{state:"preparing"}} run function 
 """)
 
 	write_versioned_function("multiplayer/game_tick", f"""
+# The XP bar is the progression HUD, so a stray orb would show a level nobody earned. Zombies and missions
+# already sweep these; progression/tick_player re-asserts the bar every second as the backstop.
+kill @e[type=experience_orb]
+
 {respawn_countdown_tick_lines(ns, "mp", f"{ns}:v{version}/multiplayer/actual_respawn")}
 
 {WeaponDrop.weapon_drop_tick_lines(ns)}
