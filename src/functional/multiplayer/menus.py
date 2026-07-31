@@ -14,7 +14,7 @@ def generate_menus() -> None:
 
 	## ---- Value pickers (each opens from the setup dialog; Back returns there).
 	## Gamemode
-	gm_data = [("FFA", "ffa", "green"), ("TDM", "tdm", "yellow"), ("DOM", "dom", "aqua"), ("HP", "hp", "dark_purple"), ("S&D", "snd", "gold")]
+	gm_data = [("FFA", "ffa", "green"), ("TDM", "tdm", "yellow"), ("DOM", "dom", "aqua"), ("HP", "hp", "dark_purple"), ("S&D", "snd", "gold"), ("DEMO", "demo", "red")]
 	gamemode_opts = [
 		(label, f'/data modify storage {ns}:multiplayer game.gamemode set value "{gm}"', color, f"Set gamemode to {label}")
 		for label, gm, color in gm_data

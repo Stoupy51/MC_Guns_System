@@ -119,6 +119,7 @@ execute if data storage {ns}:multiplayer game{{gamemode:"tdm"}} run function {ns
 execute if data storage {ns}:multiplayer game{{gamemode:"dom"}} run function {ns}:v{version}/multiplayer/create_sidebar_dom
 execute if data storage {ns}:multiplayer game{{gamemode:"hp"}} run function {ns}:v{version}/multiplayer/create_sidebar_hp
 execute if data storage {ns}:multiplayer game{{gamemode:"snd"}} run function {ns}:v{version}/multiplayer/create_sidebar_snd
+execute if data storage {ns}:multiplayer game{{gamemode:"demo"}} run function {ns}:v{version}/multiplayer/create_sidebar_demo
 
 # Show kills in player list (tab)
 scoreboard objectives setdisplay list {ns}.mp.kills

@@ -7,6 +7,7 @@
 #			mgs:v5.1.0/utils/signal_and_damage_plain
 #			mgs:v5.1.0/multiplayer/bounds_kill
 #			mgs:v5.1.0/multiplayer/gamemodes/snd/bomb_explodes [ at @e[tag=mgs.snd_bomb] & as @a[distance=..10,gamemode=!creative,scores={mgs.mp.in_game=1..}] ]
+#			mgs:v5.1.0/multiplayer/gamemodes/demo/site_destroyed [ as @a[distance=..8.0,gamemode=!creative,scores={mgs.mp.in_game=1..}] ]
 #
 
 # Ignore duplicate deaths (second bullet / OOB / vanilla death landing in the same tick as another death)
