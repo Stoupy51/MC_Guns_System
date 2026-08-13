@@ -6,7 +6,7 @@
 # @within	mgs:v5.1.0/zombies/powerups/dispatch_activate
 #
 
-execute as @a[tag=mgs.pu_collecting,scores={mgs.zb.in_game=1},gamemode=!spectator] run function mgs:zombies/bonus/nuke
+function mgs:zombies/bonus/nuke
 scoreboard players add @a[scores={mgs.zb.in_game=1}] mgs.zb.points 400
 scoreboard players add @a[scores={mgs.zb.in_game=1,mgs.special.double_points=1..}] mgs.zb.points 400
 

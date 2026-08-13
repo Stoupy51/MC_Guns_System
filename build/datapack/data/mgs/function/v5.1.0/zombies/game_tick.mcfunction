@@ -44,6 +44,9 @@ execute store result score #zb_tick_mod mgs.data run scoreboard players get #tot
 scoreboard players operation #zb_tick_mod mgs.data %= #20 mgs.data
 execute if score #zb_tick_mod mgs.data matches 0 as @e[tag=mgs.zombie_round,tag=!mgs.zb_rising,tag=!mgs.zb_escorted,limit=24,sort=random] at @s run function mgs:v5.1.0/zombies/stuck_zombie_check
 
+# Squad outlines: every player in the run glows in the team colour (yellow)
+execute if score #zb_tick_mod mgs.data matches 0 run effect give @a[scores={mgs.zb.in_game=1},gamemode=!spectator] minecraft:glowing 3 0 true
+
 # Stuck zombie glow: count up once all spawns are done (60s = 1200 ticks after last spawn)
 execute if score #zb_to_spawn mgs.data matches 0 run scoreboard players add #zb_stuck_timer mgs.data 1
 execute if score #zb_to_spawn mgs.data matches 1.. run scoreboard players set #zb_stuck_timer mgs.data 0

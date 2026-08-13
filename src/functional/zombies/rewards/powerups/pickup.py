@@ -3,6 +3,7 @@
 from stewbeet import Mem, write_versioned_function
 
 from ....progression import Xp
+from ...common import ZombiesCommon
 from .types import POWERUP_TYPES, pu_activate_sound, pu_snd
 
 
@@ -11,8 +12,19 @@ def write_powerup_pickup() -> None:
 	ns: str = Mem.ctx.project_id
 	version: str = Mem.ctx.project_version
 
+	gun_cd: str = ZombiesCommon.gun_cd(ns)
+	free_pap_type: int = POWERUP_TYPES["free_pap"].type_num
+
 	# Pickup
 	write_versioned_function("zombies/powerups/do_pickup", f"""
+# Free PaP is the only power-up spent on a specific item, the gun held in hotbar 1-3, so it is the only
+# one a player can be unable to use: downed players are spectators, and the knife (hotbar.0) and the
+# grenade slots (hotbar.6-7) are not weapons it can upgrade. Leave the drop on the ground for a
+# teammate who can take it rather than burning it on someone it would do nothing for.
+scoreboard players set #pu_pap_ok {ns}.data 0
+execute if score @s {ns}.zb.pu.type matches {free_pap_type} as @p[scores={{{ns}.zb.in_game=1}},gamemode=!spectator,distance=..1.5] run function {ns}:v{version}/zombies/powerups/check_pap_taker
+execute if score @s {ns}.zb.pu.type matches {free_pap_type} if score #pu_pap_ok {ns}.data matches 0 run return fail
+
 # Tag the nearest eligible player as the collector for this activation
 tag @p[scores={{{ns}.zb.in_game=1}},gamemode=!spectator,distance=..1.5,tag=!{ns}.pu_collecting] add {ns}.pu_collecting
 
@@ -41,6 +53,18 @@ scoreboard players remove #pu_active {ns}.data 1
 
 # Clean up the collector tag so other pickups can proceed
 tag @a[tag={ns}.pu_collecting] remove {ns}.pu_collecting
+""")
+
+	# Can this player spend a Free PaP right now? (@s = nearest living player to the drop)
+	# Same rule as the upgrade itself (see pap/upgrade_core): a gun in the selected hotbar slot 1-3.
+	# When they cannot, the drop stays put and the actionbar says what they are missing.
+	write_versioned_function("zombies/powerups/check_pap_taker", f"""
+execute store result score #pu_pap_sel {ns}.data run data get entity @s SelectedItemSlot
+execute if score #pu_pap_sel {ns}.data matches 1 if items entity @s hotbar.1 *[custom_data~{gun_cd}] run scoreboard players set #pu_pap_ok {ns}.data 1
+execute if score #pu_pap_sel {ns}.data matches 2 if items entity @s hotbar.2 *[custom_data~{gun_cd}] run scoreboard players set #pu_pap_ok {ns}.data 1
+execute if score #pu_pap_sel {ns}.data matches 3 if items entity @s hotbar.3 *[custom_data~{gun_cd}] run scoreboard players set #pu_pap_ok {ns}.data 1
+execute if score #pu_pap_ok {ns}.data matches 0 run data modify storage smithed.actionbar:input message set value {{json:["✦ ",{{"text":"Free Pack-a-Punch","color":"aqua"}},{{"text":" - ","color":"gray"}},{{"text":"Hold a weapon to take it","color":"red"}}],priority:"conditional",freeze:5}}
+execute if score #pu_pap_ok {ns}.data matches 0 run function #smithed.actionbar:message
 """)
 
 	# Tag the owner of the nearest downed mannequin (a downed spectator) as the collector, so a crawling downed player can grab power-ups.

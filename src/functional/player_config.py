@@ -270,11 +270,10 @@ scoreboard players operation #dmg_dec {ns}.data = #dmg_x10 {ns}.data
 scoreboard players operation #dmg_dec {ns}.data %= #10 {ns}.data
 
 # Damage Debug: global config overrides (tellraw @a), otherwise per-player (tellraw to shooter only)
-# Per-player variant stays executed as @s (the victim) so the displayed selector is the REAL victim:
-# resolving "@n at the victim's position" instead could pick an unrelated entity (e.g. the invisible
-# ray gun projectile item_display) when the victim just died from this hit.
 $execute if score #damage_debug {ns}.config matches 1 run tellraw @a ["",[{{"text":"","color":"red"}},"[",{{"text":"DMG"}},"] "],[{{"score":{{"name":"#dmg_whole","objective":"{ns}.data"}},"color":"gold"}},".",{{"score":{{"name":"#dmg_dec","objective":"{ns}.data"}}}}]," ",{{"text":"HP to","color":"gray"}}," ",{{"selector":"$(target)"}}," ",{{"text":"by","color":"gray"}}," ",{{"selector":"$(attacker)"}}]
-$execute unless score #damage_debug {ns}.config matches 1 if score $(attacker) {ns}.player.damage_debug matches 1 run tellraw $(attacker) ["",[{{"text":"","color":"red"}},"[",{{"text":"DMG"}},"] "],[{{"score":{{"name":"#dmg_whole","objective":"{ns}.data"}},"color":"gold"}},".",{{"score":{{"name":"#dmg_dec","objective":"{ns}.data"}}}}]," ",{{"text":"HP to","color":"gray"}}," ",{{"selector":"@s"}}]
+$execute unless score #damage_debug {ns}.config matches 1 as $(attacker) if entity @s[type=player] run tag @s add {ns}.temp_dmg_reader
+tellraw @a[tag={ns}.temp_dmg_reader,scores={{{ns}.player.damage_debug=1}}] ["",[{{"text":"","color":"red"}},"[",{{"text":"DMG"}},"] "],[{{"score":{{"name":"#dmg_whole","objective":"{ns}.data"}},"color":"gold"}},".",{{"score":{{"name":"#dmg_dec","objective":"{ns}.data"}}}}]," ",{{"text":"HP to","color":"gray"}}," ",{{"selector":"@s"}}]
+tag @a[tag={ns}.temp_dmg_reader] remove {ns}.temp_dmg_reader
 """, tags=[f"{ns}:signals/damage"])
 
 	## Hitmarker Sound on entity hit (added to damage signal) Plays for both hitscan (@p[tag=ticking]) and explosion (@p[tag=temp_shooter]) hits

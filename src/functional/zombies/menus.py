@@ -135,7 +135,7 @@ tellraw @a [{MGS_TAG},{{"text":"An operator reset everyone's points.","color":"r
 		(pu_id, f'{PU_ADMIN_EMOJI.get(pu_id, "⚡")} {v.display}', v.color, f'Force {v.display} for everyone')
 		for pu_id, v in POWERUP_TYPES.items()
 	]
-	## Some power-ups (Nuke, Free PaP, Cash Drop, Random Perk) act "as the player who picked it up" and do nothing at all without the {ns}.pu_collecting tag a real pickup sets — the Nuke's kill loop in particular never starts, so the fire and sounds play while every zombie survives.
+	## Some power-ups (Free PaP, Cash Drop, Random Perk) act "as the player who picked it up" and do nothing at all without the {ns}.pu_collecting tag a real pickup sets.
 	## Nominate a collector here: the clicking operator when they are actually playing, otherwise any in-game player, so the button still works from spectator.
 	write_versioned_function("zombies/admin/powerup", f"""
 execute unless data storage {ns}:zombies game{{state:"active"}} run return run tellraw @s [{MGS_TAG},{{"text":"No zombies game is active.","color":"red"}}]

@@ -49,7 +49,7 @@ scoreboard players add @a[scores={{{ns}.zb.in_game=1,{ns}.special.double_points=
 	## Nuke — kaboom + soul layer, white screen flash, zombies catch fire (no chat message).
 	## +400 points to everyone, doubled to +800 for players with Double Points.
 	write_versioned_function("zombies/powerups/activate/nuke", f"""
-execute as @a[tag={ns}.pu_collecting,scores={{{ns}.zb.in_game=1}},gamemode=!spectator] run function {ns}:zombies/bonus/nuke
+function {ns}:zombies/bonus/nuke
 scoreboard players add @a[scores={{{ns}.zb.in_game=1}}] {ns}.zb.points 400
 scoreboard players add @a[scores={{{ns}.zb.in_game=1,{ns}.special.double_points=1..}}] {ns}.zb.points 400
 

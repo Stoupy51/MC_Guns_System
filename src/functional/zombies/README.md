@@ -145,4 +145,4 @@ budget exists only so tapping sneak to restart a repair cannot stack copies of i
 # Inbox (quick notes — dump anything here, unorganized "basic" format is fine)
 
 - A day in 2027: Add this map https://www.planetminecraft.com/project/black-ops-ii-mob-of-the-dead-minecraft-in-2013/
-
+- Advancements for the XP System
