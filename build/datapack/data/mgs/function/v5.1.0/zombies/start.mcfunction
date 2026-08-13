@@ -47,7 +47,7 @@ scoreboard players set @a mgs.zb.horde_cd 0
 
 # Config: points per kill, points per hit
 scoreboard players set #zb_points_kill mgs.config 50
-scoreboard players set #zb_points_hit mgs.config 5
+scoreboard players set #zb_points_hit mgs.config 10
 scoreboard players set #zb_points_knife_kill mgs.config 130
 scoreboard players set #zb_mystery_box_price mgs.config 950
 

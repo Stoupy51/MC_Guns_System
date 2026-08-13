@@ -4,7 +4,6 @@ from stewbeet import Mem, write_versioned_function
 
 from ....helpers import MGS_TAG
 from ....helpers.text import Text
-from .shared import ROUND_END_PICKUP_RANGE
 
 
 # Functions
@@ -14,27 +13,16 @@ def write_round_end_revives() -> None:
 
 	# Round end respawn: revive all spectating (bled-out) players
 	write_versioned_function("zombies/revive/round_respawn", f"""
-# Free pickup first: a player still DOWNED when the round ended, with a live teammate standing within
-# {ROUND_END_PICKUP_RANGE} blocks of their body, is revived instead of respawned — they keep their guns.
+# Surviving the round while downed is a free pickup, wherever the body fell and whoever was near it:
+# the round is over, every zombie is dead, and the bleed timer never ran out. Losing a full loadout
+# because a Nuke cleared the last zombie instead of a teammate reaching you is not a play the player
+# could have made differently. Reviving through revive_complete is what keeps the inventory: it only
+# restores state and teleports, and never touches the hotbar. Perks stay lost, like any other revive.
 # Must run before the respawn pass below, which would otherwise wipe them back to the starting loadout.
-execute as @a[tag={ns}.downed_spectator,scores={{{ns}.zb.in_game=1}}] run function {ns}:v{version}/zombies/revive/round_end_pickup
+execute as @a[tag={ns}.downed_spectator,scores={{{ns}.zb.in_game=1}}] run function {ns}:v{version}/zombies/revive/revive_complete
 
-# Respawn every remaining spectator (bled out, or downed with nobody close enough)
+# Respawn every remaining spectator: they bled out during the round, and that still costs the loadout
 execute as @a[scores={{{ns}.zb.in_game=1}},gamemode=spectator] run function {ns}:v{version}/zombies/revive/do_round_respawn
-""")
-
-	## Round-end free pickup for one still-downed player (@s = the downed spectator).
-	## Reviving through revive_complete is what keeps the inventory: it only restores state and teleports, and never touches the hotbar (unlike do_round_respawn -> give_respawn_loadout).
-	## Perks stay lost, exactly like any other revive.
-	write_versioned_function("zombies/revive/round_end_pickup", f"""
-# Is a live (non-downed) teammate standing within {ROUND_END_PICKUP_RANGE} blocks of MY body?
-scoreboard players operation #my_downed_id {ns}.data = @s {ns}.zb.downed_id
-scoreboard players set #rv_pickup {ns}.data 0
-execute as @e[type=minecraft:mannequin,tag={ns}.downed_mannequin,predicate={ns}:v{version}/zombies/revive/downed_id_match] at @s if entity @a[scores={{{ns}.zb.in_game=1,{ns}.zb.downed=0}},gamemode=!spectator,distance=..{ROUND_END_PICKUP_RANGE}] run scoreboard players set #rv_pickup {ns}.data 1
-execute if score #rv_pickup {ns}.data matches 0 run return 0
-
-# Picked up by the end of the round: full revive, inventory untouched
-function {ns}:v{version}/zombies/revive/revive_complete
 """)
 
 	write_versioned_function("zombies/revive/do_round_respawn", f"""

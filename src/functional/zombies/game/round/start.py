@@ -3,6 +3,13 @@
 from stewbeet import Mem, write_versioned_function
 
 
+# Constants
+EARLY_ROUND_ZOMBIES: dict[int, int] = {1: 5, 2: 6, 3: 8, 4: 9, 5: 11, 6: 12, 7: 13, 8: 15, 9: 16}
+""" Zombies per player for rounds 1-9, replacing the standard `round + 7` base while it is still steep.
+The ramp lands on 16 at round 9 and hands over to `round + 7` = 17 at round 10 with no step or drop.
+"""
+
+
 # Functions
 def write_round_start() -> None:
 	ns: str = Mem.ctx.project_id
@@ -63,12 +70,21 @@ execute if score #zb_dog_round {ns}.data matches 1 run tellraw @a ["",{{"text":"
 execute if score #zb_dog_round {ns}.data matches 1 as @a[scores={{{ns}.zb.in_game=1}}] at @s run playsound minecraft:entity.wolf.howl ambient @s ~ ~ ~ 1.0 0.6
 """)
 
-	## Standard round size: min(256, min(96, 7 + round) * min(4, player_count))
-	## Solo player: r1=8,  r5=12, r10=17, r20=27,  r40=47,  r41+ caps at 96
-	## 4+ players:  r1=32, r5=48, r10=68, r20=108, r40=188, r41+ caps at 256
+	early_round_lines: str = "\n".join(
+		f"execute if score #zb_round {ns}.data matches {round_num} run scoreboard players set #zb_to_spawn {ns}.data {count}"
+		for round_num, count in EARLY_ROUND_ZOMBIES.items()
+	)
+
+	## Standard round size: min(256, min(96, 7 + round) * min(4, player_count)), with EARLY_ROUND_ZOMBIES
+	## overriding the base below round 10 so the opening rounds are a warmup rather than a wall.
+	## Solo player: r1=5,  r5=11, r10=17, r20=27,  r40=47,  r41+ caps at 96
+	## 4+ players:  r1=20, r5=44, r10=68, r20=108, r40=188, r41+ caps at 256
 	write_versioned_function("zombies/calc_round_count_zombies", f"""
 scoreboard players operation #zb_to_spawn {ns}.data = #zb_round {ns}.data
 scoreboard players add #zb_to_spawn {ns}.data 7
+
+# Rounds 1-9 run the eased ramp instead, meeting the formula above exactly at round 10
+{early_round_lines}
 execute if score #zb_to_spawn {ns}.data matches 97.. run scoreboard players set #zb_to_spawn {ns}.data 96
 scoreboard players operation #zb_to_spawn {ns}.data *= #zb_player_count {ns}.data
 execute if score #zb_to_spawn {ns}.data matches 257.. run scoreboard players set #zb_to_spawn {ns}.data 256

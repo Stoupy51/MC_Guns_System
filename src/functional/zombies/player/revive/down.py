@@ -113,7 +113,9 @@ execute store result storage {ns}:temp rv_y_hud double 0.001 run scoreboard play
 data remove storage {ns}:temp _body_at
 
 # Summon mannequin (crouching pose, invulnerable, temp tag for targeting)
-summon minecraft:mannequin ~ ~1.5 ~ {{Invulnerable:1b,pose:"swimming",hide_description:true,Tags:["{ns}.downed_mannequin","{ns}.downed_new","{ns}.gm_entity"]}}
+# Glowing: a body on the floor is small and easy to lose in a horde, and the whole squad needs to find
+# it before the bleed-out timer runs out. It outlines white, apart from the team yellow of living players.
+summon minecraft:mannequin ~ ~1.5 ~ {{Invulnerable:1b,Glowing:1b,pose:"swimming",hide_description:true,Tags:["{ns}.downed_mannequin","{ns}.downed_new","{ns}.gm_entity"]}}
 
 # Copy the player's downed_id to the mannequin so we can find it uniquely later
 scoreboard players operation @n[tag={ns}.downed_new] {ns}.zb.downed_id = @s {ns}.zb.downed_id
@@ -134,7 +136,8 @@ execute unless data storage {ns}:temp rv_name run data modify storage {ns}:temp 
 item replace entity @n[tag={ns}.downed_new] weapon.mainhand with minecraft:air
 
 # Summon text_display HUD above mannequin (temp tag, teleported below; name set right after via macro)
-summon minecraft:text_display ~ ~ ~ {{Tags:["{ns}.downed_hud","{ns}.downed_hud_new","{ns}.gm_entity"],billboard:"vertical",shadow:1b,see_through:0b,teleport_duration:1,transformation:{{translation:[0.0f,0.0f,0.0f],left_rotation:[0.0f,0.0f,0.0f,1.0f],scale:[1.5f,1.5f,1.5f],right_rotation:[0.0f,0.0f,0.0f,1.0f]}},text:[{{"text":"...","color":"yellow"}},{{"text":" ↓","color":"yellow"}}]}}
+# see_through so the name reads through the wall or the pile of zombies standing between it and you
+summon minecraft:text_display ~ ~ ~ {{Tags:["{ns}.downed_hud","{ns}.downed_hud_new","{ns}.gm_entity"],billboard:"vertical",shadow:1b,see_through:1b,teleport_duration:1,transformation:{{translation:[0.0f,0.0f,0.0f],left_rotation:[0.0f,0.0f,0.0f,1.0f],scale:[1.5f,1.5f,1.5f],right_rotation:[0.0f,0.0f,0.0f,1.0f]}},text:[{{"text":"...","color":"yellow"}},{{"text":" ↓","color":"yellow"}}]}}
 function {ns}:v{version}/zombies/revive/set_hud_name with storage {ns}:temp
 
 # Copy the player's downed_id to the HUD so it can be id-matched (never "nearest") later

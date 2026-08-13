@@ -17,8 +17,6 @@ SOLO_QR_MAX: int = 3
 """ Total solo self-revives allowed per game; each use requires rebuying QR. """
 CRAWL_SPEED: float = 0.06
 """ Blocks per tick for downed crawl movement. """
-ROUND_END_PICKUP_RANGE: int = 10
-""" A teammate this close to a still-downed body at round end revives it for free. """
 HUD_OFFSET_Y_THOUSANDTHS: int = 2000
 """ HUD text height above the mannequin: 2.0 blocks * 1000, for scoreboard math. """
 

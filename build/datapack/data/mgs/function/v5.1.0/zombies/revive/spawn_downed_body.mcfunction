@@ -20,7 +20,9 @@ execute store result storage mgs:temp rv_y_hud double 0.001 run scoreboard playe
 data remove storage mgs:temp _body_at
 
 # Summon mannequin (crouching pose, invulnerable, temp tag for targeting)
-summon minecraft:mannequin ~ ~1.5 ~ {Invulnerable:1b,pose:"swimming",hide_description:true,Tags:["mgs.downed_mannequin","mgs.downed_new","mgs.gm_entity"]}
+# Glowing: a body on the floor is small and easy to lose in a horde, and the whole squad needs to find
+# it before the bleed-out timer runs out. It outlines white, apart from the team yellow of living players.
+summon minecraft:mannequin ~ ~1.5 ~ {Invulnerable:1b,Glowing:1b,pose:"swimming",hide_description:true,Tags:["mgs.downed_mannequin","mgs.downed_new","mgs.gm_entity"]}
 
 # Copy the player's downed_id to the mannequin so we can find it uniquely later
 scoreboard players operation @n[tag=mgs.downed_new] mgs.zb.downed_id = @s mgs.zb.downed_id
@@ -41,7 +43,8 @@ execute unless data storage mgs:temp rv_name run data modify storage mgs:temp rv
 item replace entity @n[tag=mgs.downed_new] weapon.mainhand with minecraft:air
 
 # Summon text_display HUD above mannequin (temp tag, teleported below; name set right after via macro)
-summon minecraft:text_display ~ ~ ~ {Tags:["mgs.downed_hud","mgs.downed_hud_new","mgs.gm_entity"],billboard:"vertical",shadow:1b,see_through:0b,teleport_duration:1,transformation:{translation:[0.0f,0.0f,0.0f],left_rotation:[0.0f,0.0f,0.0f,1.0f],scale:[1.5f,1.5f,1.5f],right_rotation:[0.0f,0.0f,0.0f,1.0f]},text:[{"text":"...","color":"yellow"},{"text":" ↓","color":"yellow"}]}
+# see_through so the name reads through the wall or the pile of zombies standing between it and you
+summon minecraft:text_display ~ ~ ~ {Tags:["mgs.downed_hud","mgs.downed_hud_new","mgs.gm_entity"],billboard:"vertical",shadow:1b,see_through:1b,teleport_duration:1,transformation:{translation:[0.0f,0.0f,0.0f],left_rotation:[0.0f,0.0f,0.0f,1.0f],scale:[1.5f,1.5f,1.5f],right_rotation:[0.0f,0.0f,0.0f,1.0f]},text:[{"text":"...","color":"yellow"},{"text":" ↓","color":"yellow"}]}
 function mgs:v5.1.0/zombies/revive/set_hud_name with storage mgs:temp
 
 # Copy the player's downed_id to the HUD so it can be id-matched (never "nearest") later
