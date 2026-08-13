@@ -1,5 +1,4 @@
 """ The per-display spin: item cycling, the landing and the result baked onto the display. """
-# ruff: noqa: E501
 # Imports
 from stewbeet import Mem, write_versioned_function
 

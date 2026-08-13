@@ -10,7 +10,6 @@ The owner stays a normal ALIVE player (never zb.downed), tagged ww_active. The b
 zb.ww.id, NOT zb.downed_id, which a later normal down would overwrite and orphan the mannequin.
 Bleed/revive progress reuse the owner's normal scores so the revive core works unchanged.
 """
-# ruff: noqa: E501
 # Imports
 from stewbeet import Mem, write_load_file, write_versioned_function
 

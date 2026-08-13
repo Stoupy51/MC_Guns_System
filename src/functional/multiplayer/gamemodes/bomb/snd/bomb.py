@@ -83,7 +83,7 @@ function {ns}:v{version}/multiplayer/gamemodes/snd/set_bomb_hud with storage {ns
 
 		## Selected by tag rather than @n: this runs from the mode tick, which has no meaningful position.
 		variant.sub("set_bomb_hud", f"""
-$data modify entity @e[tag={ns}.snd_bomb_hud,limit=1] text set value [{{"text":"💣 ","color":"red","bold":true}},{{"text":"$(sec)s","color":"white"}}]
+$data modify entity @e[tag={ns}.snd_bomb_hud,limit=1] text set value [{{"text":"💣 ","color":"white"}},{{"text":"$(sec)s","color":"white","bold":true}}]
 """)
 
 		## S&D: Defuse attempt
@@ -103,8 +103,8 @@ title @s actionbar [{{"text":"Defusing... ","color":"aqua"}},{{"score":{{"name":
 		## The channelers were tagged by try_defuse on this very tick, so the announce can pay them on the
 		## line that already exists rather than adding one.
 		variant.sub("bomb_defused", f"""
-tellraw @a[tag=!{ns}.{EARNER_TAG}] [{MGS_TAG},"💣 ",{{"text":"BOMB DEFUSED!","color":"aqua","bold":true}}]
-tellraw @a[tag={ns}.{EARNER_TAG}] [{MGS_TAG},"💣 ",{{"text":"BOMB DEFUSED!","color":"aqua","bold":true}},{Xp.suffix("mp", "bomb_defuse")}]
+tellraw @a[tag=!{ns}.{EARNER_TAG}] [{MGS_TAG},{{"text":"💣 ","color":"white"}},{{"text":"BOMB DEFUSED!","color":"aqua","bold":true}}]
+tellraw @a[tag={ns}.{EARNER_TAG}] [{MGS_TAG},{{"text":"💣 ","color":"white"}},{{"text":"BOMB DEFUSED!","color":"aqua","bold":true}},{Xp.suffix("mp", "bomb_defuse")}]
 {Xp.give("mp", "bomb_defuse", f"@a[tag={ns}.{EARNER_TAG}]")}
 kill @e[tag={ns}.snd_bomb]
 function {ns}:v{version}/multiplayer/gamemodes/snd/defenders_win
@@ -120,7 +120,7 @@ execute at @e[tag={ns}.snd_bomb] run playsound minecraft:entity.generic.explode 
 execute at @e[tag={ns}.snd_bomb] as @a[distance=..10,gamemode=!creative,gamemode=!spectator,scores={{{ns}.mp.in_game=1..}}] run data modify storage {ns}:input with set value {{}}
 execute at @e[tag={ns}.snd_bomb] as @a[distance=..10,gamemode=!creative,gamemode=!spectator,scores={{{ns}.mp.in_game=1..}}] run function {ns}:v{version}/multiplayer/simulate_death
 
-tellraw @a [{MGS_TAG},"💥 ",{{"text":"BOMB EXPLODED!","color":"red","bold":true}}]
+tellraw @a [{MGS_TAG},{{"text":"💥 ","color":"white"}},{{"text":"BOMB EXPLODED!","color":"red","bold":true}}]
 kill @e[tag={ns}.snd_bomb]
 function {ns}:v{version}/multiplayer/gamemodes/snd/attackers_win
 """)

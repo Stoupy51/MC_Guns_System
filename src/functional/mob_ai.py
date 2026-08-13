@@ -1,8 +1,20 @@
 """ Gun-wielding mob AI: arms mobs with weapons and drives their firing loop. """
 # Imports
-from stewbeet import Mem, write_function, write_load_file, write_tick_file, write_versioned_function
+from stewbeet import (
+	Mem,
+	write_function,
+	write_load_file,
+	write_tick_file,
+	write_versioned_function,
+)
 
-from ..config.stats.keys import ACCURACY_BASE, COOLDOWN, GRENADE_TYPE, PELLET_COUNT, PROJECTILE_SPEED
+from ..config.stats.keys import (
+	ACCURACY_BASE,
+	COOLDOWN,
+	GRENADE_TYPE,
+	PELLET_COUNT,
+	PROJECTILE_SPEED,
+)
 
 
 # Functions

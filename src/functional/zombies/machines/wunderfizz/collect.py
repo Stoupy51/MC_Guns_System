@@ -1,5 +1,4 @@
 """ Collecting the rolled perk, hover feedback and the game hooks. """
-# ruff: noqa: E501
 # Imports
 from stewbeet import Mem, write_versioned_function
 
@@ -40,14 +39,14 @@ kill @n[type=item_display,tag={ns}.wunderfizz_orb,distance=..3]
 execute at @n[tag=bs.interaction.target] if entity @n[type=item_display,tag={ns}.wunderfizz_orb,distance=..3,scores={{{ns}.zb.wf.anim=..0}}] if score @s {ns}.zb.wf_pid = @n[type=item_display,tag={ns}.wunderfizz_orb,distance=..3] {ns}.zb.wf.buyer run return run function {ns}:v{version}/zombies/wunderfizz/hover_result
 
 execute store result score #wf_price {ns}.data run scoreboard players get @n[tag=bs.interaction.target] {ns}.zb.wf.price
-data modify storage smithed.actionbar:input message set value {{json:[{{"text":"🎰 Der Wunderfizz","color":"gold"}},{{"text":" - Cost: ","color":"gray"}},{{"score":{{"name":"#wf_price","objective":"{ns}.data"}},"color":"yellow"}},{{"text":" points  (random perk)","color":"gray"}}],priority:"conditional",freeze:5}}
+data modify storage smithed.actionbar:input message set value {{json:[{{"text":"🎰 ","color":"white"}},{{"text":"Der Wunderfizz","color":"gold"}},{{"text":" - Cost: ","color":"gray"}},{{"score":{{"name":"#wf_price","objective":"{ns}.data"}},"color":"yellow"}},{{"text":" points  (random perk)","color":"gray"}}],priority:"conditional",freeze:5}}
 function #smithed.actionbar:message
 """)
 
 	## Ready-orb hover: name the perk waiting to be collected, e.g.
 	## "✋ Pick-up Juggernog" (@s = player, positioned at the machine so the nearby orb resolves)
 	hover_result_dispatch: str = "\n".join(
-		f'execute if score #wf_pick {ns}.data matches {i} run data modify storage smithed.actionbar:input message set value {{json:[{{"text":"🎰 ","color":"gold"}},{{"text":"Pick-up ","color":"green"}},{{"text":"{PERK_DEFINITIONS[pid].display_name}","color":"{PERK_DEFINITIONS[pid].text_color}","bold":true}}],priority:"conditional",freeze:5}}'
+		f'execute if score #wf_pick {ns}.data matches {i} run data modify storage smithed.actionbar:input message set value {{json:[{{"text":"🎰 ","color":"white"}},{{"text":"Pick-up ","color":"green"}},{{"text":"{PERK_DEFINITIONS[pid].display_name}","color":"{PERK_DEFINITIONS[pid].text_color}","bold":true}}],priority:"conditional",freeze:5}}'
 		for i, pid in enumerate(PERK_IDS)
 	)
 	write_versioned_function("zombies/wunderfizz/hover_result", f"""

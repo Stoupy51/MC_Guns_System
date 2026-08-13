@@ -1,9 +1,13 @@
 """ The magazine-count submenus, guarded on their gun being selected. """
-# ruff: noqa: E501
 # Imports
 from stewbeet import Mem, write_versioned_function
 
-from ..catalogs import COST_PRIMARY_MAG, COST_SECONDARY_MAG, TRIG_PRIMARY_MAGS_BASE, TRIG_SECONDARY_MAGS_BASE
+from ..catalogs import (
+	COST_PRIMARY_MAG,
+	COST_SECONDARY_MAG,
+	TRIG_PRIMARY_MAGS_BASE,
+	TRIG_SECONDARY_MAGS_BASE,
+)
 from .shared import editor_fn, write_static_dialog
 
 
@@ -27,7 +31,7 @@ def write_editor_mags() -> None:
 	write_static_dialog(ns, version, "primary_mags_dialog", "Primary Magazines", f"Select the number of magazines ({COST_PRIMARY_MAG} pt each)", ",".join(mag_actions_primary), columns=1, guard=guard_primary)
 
 	mag_actions_secondary: list[str] = []
-	for count in range(0, 6):
+	for count in range(6):
 		trig = TRIG_SECONDARY_MAGS_BASE + count
 		label = f"{count}x Magazine" if count > 0 else "No Mags (0)"
 		label_color = "yellow" if count > 0 else "green"
@@ -58,5 +62,5 @@ function {fn}/hub
 """
 
 	write_versioned_function("multiplayer/editor/pick_primary_mags", gen_pick_mags("primary", TRIG_PRIMARY_MAGS_BASE, range(1, 6), guard_primary.strip()))
-	write_versioned_function("multiplayer/editor/pick_secondary_mags", gen_pick_mags("secondary", TRIG_SECONDARY_MAGS_BASE, range(0, 6), guard_secondary.strip()))
+	write_versioned_function("multiplayer/editor/pick_secondary_mags", gen_pick_mags("secondary", TRIG_SECONDARY_MAGS_BASE, range(6), guard_secondary.strip()))
 

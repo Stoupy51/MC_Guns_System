@@ -1,5 +1,4 @@
 """ Per-player config menu and the trigger dispatch that applies its choices. """
-# ruff: noqa: E501
 
 # Imports
 from stewbeet import Mem, write_versioned_function

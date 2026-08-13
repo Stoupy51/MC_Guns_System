@@ -2,7 +2,6 @@
 
 Used by perks, PAP, and any other zombies machine system.
 """
-# ruff: noqa: E501
 # Imports
 from stewbeet import Mem, write_versioned_function
 

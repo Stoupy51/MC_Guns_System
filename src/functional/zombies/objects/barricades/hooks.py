@@ -1,5 +1,4 @@
 """ Game hooks, the per-round reset and the Carpenter power-up repair. """
-# ruff: noqa: E501
 # Imports
 from stewbeet import Mem, write_versioned_function
 

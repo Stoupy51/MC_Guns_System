@@ -1,5 +1,4 @@
 """ Entering the editor for one map, and inviting everyone else into it. """
-# ruff: noqa: E501
 # Imports
 from stewbeet import Mem, write_versioned_function
 

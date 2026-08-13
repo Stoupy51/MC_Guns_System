@@ -99,7 +99,7 @@ function {ns}:v{version}/switch/sync_attack_speed_with_cooldown
 execute store result score #current_length {ns}.data run data get storage {ns}:gun SelectedItem.id
 execute if score #current_length {ns}.data = @s {ns}.previous_selected if score @s {ns}.previous_selected matches 26 run item modify entity @s weapon.mainhand {{"function": "minecraft:set_item","item": "minecraft:firework_star"}}
 execute if score #current_length {ns}.data = @s {ns}.previous_selected unless score @s {ns}.previous_selected matches 26 run item modify entity @s weapon.mainhand {{"function": "minecraft:set_item","item": "minecraft:poisonous_potato"}}
-""")  # noqa: E501
+""")
 
 	# Sync attack speed with cooldown function
 	write_versioned_function("switch/sync_attack_speed_with_cooldown", f"""
@@ -137,7 +137,7 @@ item replace entity @p[tag={ns}.to_modify] weapon.mainhand from entity @s conten
 
 # Kill item_display entity
 kill @s
-""")  # noqa: E501
+""")
 
 	# Drop key = fire-mode switch.
 	# No "key pressed" event, so the drop really happens (detected via the minecraft.drop stat) and is undone below.
@@ -163,7 +163,7 @@ execute unless data storage {ns}:gun all.stats.{CAN_AUTO} unless data storage {n
 
 # Cycle auto -> semi -> burst -> auto (narrowed to what the weapon supports)
 function {ns}:v{version}/switch/do_toggle_fire_mode
-""")  # noqa: E501
+""")
 	write_versioned_function("switch/weapon_back_to_mainhand", f"""
 # Move the dropped item back to player's mainhand
 item replace entity @p[tag={ns}.to_pickup] weapon.mainhand from entity @s contents
@@ -212,7 +212,7 @@ playsound minecraft:block.note_block.hat ambient @s
 
 # Refresh the actionbar immediately so the fire-mode highlight doesn't lag behind the toggle
 scoreboard players set @s {ns}.ab_force 1
-""")  # noqa: E501
+""")
 
 	modifier: dict[str, Any] = {
 		"function": "minecraft:copy_custom_data",

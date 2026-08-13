@@ -1,8 +1,14 @@
 """ Class selection menu and the perk effects applied when a loadout is equipped. """
-# ruff: noqa: E501
 
 # Imports
-from stewbeet import Dialog, DialogTag, Mem, set_json_encoder, write_load_file, write_versioned_function
+from stewbeet import (
+	Dialog,
+	DialogTag,
+	Mem,
+	set_json_encoder,
+	write_load_file,
+	write_versioned_function,
+)
 
 from ....config.stats.items import ItemBuilder
 from ...helpers import MGS_TAG

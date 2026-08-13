@@ -150,7 +150,7 @@ data modify storage {ns}:temp refill.mag_model set from entity @s item.component
 
 # Clean up item_display
 kill @s
-""")  # noqa: E501
+""")
 
 	# Set magazine item model to non-empty (full) version
 	write_versioned_function("zombies/bonus/set_full_mag_model", r"""

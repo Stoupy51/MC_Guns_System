@@ -1,5 +1,4 @@
 """ Buying a spin: the guards, the orb and the perk it rolls. """
-# ruff: noqa: E501
 # Imports
 from stewbeet import Mem, write_versioned_function
 

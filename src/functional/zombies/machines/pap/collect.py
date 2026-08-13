@@ -1,5 +1,4 @@
 """ Collecting the upgraded weapon back off the machine. """
-# ruff: noqa: E501
 # Imports
 from stewbeet import Mem, write_versioned_function
 

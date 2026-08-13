@@ -19,7 +19,12 @@ from stewbeet import (
 	create_gradient_text as new_hex,
 )
 
-from .config.catalogs import GRENADE_TYPES, PRIMARY_WEAPONS, SCOPE_NAMES, SECONDARY_WEAPONS
+from .config.catalogs import (
+	GRENADE_TYPES,
+	PRIMARY_WEAPONS,
+	SCOPE_NAMES,
+	SECONDARY_WEAPONS,
+)
 from .config.stats.colors import END_HEX, START_HEX
 from .config.stats.keys import (
 	CAPACITY,

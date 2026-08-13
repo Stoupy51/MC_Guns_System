@@ -13,7 +13,7 @@ execute if data storage mgs:multiplayer game{state:"ended"} run return fail
 
 # Announce round. The decider is announced as one, but plays like any other round.
 tellraw @a [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],[{"text":"────── ","color":"gold"}, {"translate":"mgs.round"}],{"score":{"name":"#demo_round","objective":"mgs.data"},"color":"yellow"},{"text":" ──────","color":"gold"}]
-execute if score #demo_round mgs.data matches 3.. run tellraw @a [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],"⚡ ",{"translate":"mgs.tie_break_round_most_kills_defends","color":"gold","bold":true}]
+execute if score #demo_round mgs.data matches 3.. run tellraw @a [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"text":"⚡ ","color":"white"},{"translate":"mgs.tie_break_round_most_kills_defends","color":"gold","bold":true}]
 execute if score #demo_attackers mgs.data matches 1 run tellraw @a [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.red","color":"red"},[{"text":" "}, {"translate":"mgs.attacks_both_sites"}, " | "],{"translate":"mgs.blue","color":"blue"},[{"text":" "}, {"translate":"mgs.defends_2"}]]
 execute if score #demo_attackers mgs.data matches 2 run tellraw @a [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.blue","color":"blue"},[{"text":" "}, {"translate":"mgs.attacks_both_sites"}, " | "],{"translate":"mgs.red","color":"red"},[{"text":" "}, {"translate":"mgs.defends_2"}]]
 playsound minecraft:block.note_block.harp player @a ~ ~ ~ 1 1.0

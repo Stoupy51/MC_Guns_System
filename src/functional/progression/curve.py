@@ -12,7 +12,6 @@ alone — which is what makes retuning awards.py safe on a live server.
 Inverting `total_to_reach` needs a square root. Rather than pull in `#bs.math:sqrt` and fight rounding at the
 level boundary, `bisect` binary-searches the level: 14 frames covers every level the XP cap allows, exactly.
 """
-# ruff: noqa: E501
 # Imports
 from stewbeet import write_versioned_function
 
@@ -197,9 +196,9 @@ function {base}/level_check
 		## The tag at the end is the public extension point — anything that wants to react to a level up
 		## (a cosmetic unlock, a broadcast at milestones) subscribes to it instead of editing this.
 		write_versioned_function(f"progression/{side}/level_up_feedback", f"""
-data modify storage smithed.actionbar:input message set value {{json:[{{"text":"⬆ ","color":"gold"}},{{"text":"{label} level ","color":"gold","bold":true}},{{"score":{{"name":"@s","objective":"{ns}.{side}.xp_level"}},"color":"yellow","bold":true}}],priority:"override",freeze:60}}
+data modify storage smithed.actionbar:input message set value {{json:[{{"text":"⬆ ","color":"white"}},{{"text":"{label} level ","color":"gold"}},{{"score":{{"name":"@s","objective":"{ns}.{side}.xp_level"}},"color":"yellow"}}],priority:"override",freeze:60}}
 function #smithed.actionbar:message
-tellraw @s [{MGS_TAG},{{"text":"⬆ ","color":"gold"}},{{"text":"{label} level up! You are now level ","color":"yellow"}},{{"score":{{"name":"@s","objective":"{ns}.{side}.xp_level"}},"color":"gold","bold":true}},{{"text":".","color":"yellow"}}]
+tellraw @s [{MGS_TAG},{{"text":"⬆ ","color":"white"}},{{"text":"{label} level up! You are now level ","color":"yellow"}},{{"score":{{"name":"@s","objective":"{ns}.{side}.xp_level"}},"color":"gold"}},{{"text":".","color":"yellow"}}]
 playsound minecraft:entity.player.levelup player @s ~ ~ ~ 1 1.2
 
 # @s = the player who levelled; #xp_lvl_before still holds the level they came from

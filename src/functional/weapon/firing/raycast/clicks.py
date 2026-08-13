@@ -2,7 +2,15 @@
 # Imports
 from stewbeet import Mem, write_versioned_function
 
-from .....config.stats.keys import BURST, COOLDOWN, DAMAGE, FIRE_MODE, GRENADE_TYPE, PELLET_COUNT, PROJECTILE_SPEED
+from .....config.stats.keys import (
+	BURST,
+	COOLDOWN,
+	DAMAGE,
+	FIRE_MODE,
+	GRENADE_TYPE,
+	PELLET_COUNT,
+	PROJECTILE_SPEED,
+)
 
 
 # Functions

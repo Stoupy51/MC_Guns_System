@@ -1,5 +1,4 @@
 """ Ending a round, the dog-round reward and grenade replenishment. """
-# ruff: noqa: E501
 # Imports
 from stewbeet import Mem, write_versioned_function
 

@@ -19,14 +19,14 @@ kill @e[tag=mgs.demo_bomb,distance=..2]
 kill @e[tag=mgs.demo_bomb_vis,distance=..2]
 kill @e[tag=mgs.demo_bomb_hud,distance=..2]
 
-execute if entity @s[tag=mgs.demo_site_A] run tellraw @a[tag=!mgs.xp_earner] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],"💣 ",{"translate":"mgs.bomb_defused_at_a","color":"aqua","bold":true}]
-execute if entity @s[tag=mgs.demo_site_A] run tellraw @a[tag=mgs.xp_earner] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],"💣 ",{"translate":"mgs.bomb_defused_at_a","color":"aqua","bold":true},[" ",{"text":"+25 XP","color":"gold"}]]
-execute if entity @s[tag=mgs.demo_site_B] run tellraw @a[tag=!mgs.xp_earner] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],"💣 ",{"translate":"mgs.bomb_defused_at_b","color":"aqua","bold":true}]
-execute if entity @s[tag=mgs.demo_site_B] run tellraw @a[tag=mgs.xp_earner] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],"💣 ",{"translate":"mgs.bomb_defused_at_b","color":"aqua","bold":true},[" ",{"text":"+25 XP","color":"gold"}]]
-execute if entity @s[tag=mgs.demo_site_C] run tellraw @a[tag=!mgs.xp_earner] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],"💣 ",{"translate":"mgs.bomb_defused_at_c","color":"aqua","bold":true}]
-execute if entity @s[tag=mgs.demo_site_C] run tellraw @a[tag=mgs.xp_earner] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],"💣 ",{"translate":"mgs.bomb_defused_at_c","color":"aqua","bold":true},[" ",{"text":"+25 XP","color":"gold"}]]
-execute if entity @s[tag=mgs.demo_site_D] run tellraw @a[tag=!mgs.xp_earner] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],"💣 ",{"translate":"mgs.bomb_defused_at_d","color":"aqua","bold":true}]
-execute if entity @s[tag=mgs.demo_site_D] run tellraw @a[tag=mgs.xp_earner] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],"💣 ",{"translate":"mgs.bomb_defused_at_d","color":"aqua","bold":true},[" ",{"text":"+25 XP","color":"gold"}]]
+execute if entity @s[tag=mgs.demo_site_A] run tellraw @a[tag=!mgs.xp_earner] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"text":"💣 ","color":"white"},{"translate":"mgs.bomb_defused_at_a","color":"aqua","bold":true}]
+execute if entity @s[tag=mgs.demo_site_A] run tellraw @a[tag=mgs.xp_earner] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"text":"💣 ","color":"white"},{"translate":"mgs.bomb_defused_at_a","color":"aqua","bold":true},[" ",{"text":"+25 XP","color":"gold"}]]
+execute if entity @s[tag=mgs.demo_site_B] run tellraw @a[tag=!mgs.xp_earner] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"text":"💣 ","color":"white"},{"translate":"mgs.bomb_defused_at_b","color":"aqua","bold":true}]
+execute if entity @s[tag=mgs.demo_site_B] run tellraw @a[tag=mgs.xp_earner] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"text":"💣 ","color":"white"},{"translate":"mgs.bomb_defused_at_b","color":"aqua","bold":true},[" ",{"text":"+25 XP","color":"gold"}]]
+execute if entity @s[tag=mgs.demo_site_C] run tellraw @a[tag=!mgs.xp_earner] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"text":"💣 ","color":"white"},{"translate":"mgs.bomb_defused_at_c","color":"aqua","bold":true}]
+execute if entity @s[tag=mgs.demo_site_C] run tellraw @a[tag=mgs.xp_earner] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"text":"💣 ","color":"white"},{"translate":"mgs.bomb_defused_at_c","color":"aqua","bold":true},[" ",{"text":"+25 XP","color":"gold"}]]
+execute if entity @s[tag=mgs.demo_site_D] run tellraw @a[tag=!mgs.xp_earner] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"text":"💣 ","color":"white"},{"translate":"mgs.bomb_defused_at_d","color":"aqua","bold":true}]
+execute if entity @s[tag=mgs.demo_site_D] run tellraw @a[tag=mgs.xp_earner] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"text":"💣 ","color":"white"},{"translate":"mgs.bomb_defused_at_d","color":"aqua","bold":true},[" ",{"text":"+25 XP","color":"gold"}]]
 tag @a remove mgs.xp_earner
 playsound minecraft:block.note_block.bit player @a ~ ~ ~ 1 1.5
 

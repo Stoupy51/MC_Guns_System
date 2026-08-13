@@ -1,5 +1,4 @@
 """ The Fire Sale: every spot becomes a real box, then the temp ones are torn down. """
-# ruff: noqa: E501
 # Imports
 from stewbeet import Mem, write_versioned_function
 

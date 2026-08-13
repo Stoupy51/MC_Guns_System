@@ -1,5 +1,4 @@
 """ The coord stick: reading a block's absolute or map-relative position. """
-# ruff: noqa: E501
 # Imports
 from stewbeet import Mem, write_versioned_function
 

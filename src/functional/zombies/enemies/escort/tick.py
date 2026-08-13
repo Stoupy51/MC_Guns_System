@@ -1,5 +1,4 @@
 """ The per-tick escort: dragging the zombie behind its trader and the stuck watchdog. """
-# ruff: noqa: E501
 # Imports
 from stewbeet import Mem, write_versioned_function
 

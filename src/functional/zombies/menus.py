@@ -1,5 +1,4 @@
 """ Zombies setup, map selection and admin dialogs. """
-# ruff: noqa: E501
 # Imports
 from stewbeet import Mem, write_versioned_function
 

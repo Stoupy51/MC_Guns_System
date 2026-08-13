@@ -59,7 +59,7 @@ execute at @e[tag=mgs.snd_obj] run particle dust{color:[1.0,0.6,0.0],scale:1.0} 
 # see_through is false on that label so it does NOT wallhack the carrier to the defenders: in CoD you spot
 # the bomb on their model when you can already see them, you are not handed their position.
 execute as @a[tag=mgs.snd_carrier] at @s run tp @e[tag=mgs.snd_carrier_label,limit=1] ~ ~2.2 ~
-title @a[tag=mgs.snd_carrier] actionbar [{"translate":"mgs.you_have_the_bomb_plant_at_a_site","color":"gold"}]
+title @a[tag=mgs.snd_carrier] actionbar [{"text":"💣 ","color":"white"},{"translate":"mgs.you_have_the_bomb_plant_at_a_site","color":"gold"}]
 
 # A carrier who disconnects takes the tag out of @a with them but leaves the bomb nowhere: no loose
 # entity (pickup killed it) and no carrier to plant it, which silently ended the attack for the round.

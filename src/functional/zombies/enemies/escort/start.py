@@ -1,5 +1,4 @@
 """ Escort scoreboards, picking a zombie to escort and spawning the trader that leads it. """
-# ruff: noqa: E501
 # Imports
 from stewbeet import Mem, write_load_file, write_versioned_function
 

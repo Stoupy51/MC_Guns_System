@@ -17,5 +17,5 @@ effect give @s speed 5 1 true
 effect give @s regeneration 5 1 true
 
 # Announce
-title @s actionbar [[{"text":"🏃 ","color":"yellow"}, {"translate":"mgs.coward_activated_teleported_to_safety"}]]
+title @s actionbar [{"text":"🏃 ","color":"white"},{"translate":"mgs.coward_activated_teleported_to_safety","color":"yellow"}]
 

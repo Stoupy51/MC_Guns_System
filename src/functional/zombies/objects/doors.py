@@ -25,7 +25,7 @@ def generate_doors() -> None:
 	front_door_tags: str = f'["{ns}.door","{ns}.door_front","{ns}.gm_entity","bs.entity.interaction","{ns}.door_new"]'
 	back_door_tags: str = f'["{ns}.door","{ns}.door_back","{ns}.gm_entity","bs.entity.interaction","{ns}.door_new"]'
 	door_hover_message: str = (
-		f'[{{"text":"🛠 ","color":"gold"}},'
+		f'[{{"text":"🛠 "}},'
 		f'{{"storage":"{ns}:temp","nbt":"_door_hover_name","color":"yellow","interpret":true}},'
 		f'{{"text":" - Cost: ","color":"gray"}},'
 		f'{{"score":{{"name":"#door_price","objective":"{ns}.data"}},"color":"yellow"}},'
@@ -33,7 +33,7 @@ def generate_doors() -> None:
 	)
 	# Chip-in doors show the next chunk plus the group's progress instead of the full price
 	door_hover_partial_message: str = (
-		f'[{{"text":"🛠 ","color":"gold"}},'
+		f'[{{"text":"🛠 "}},'
 		f'{{"storage":"{ns}:temp","nbt":"_door_hover_name","color":"yellow","interpret":true}},'
 		f'{{"text":" - Chip in: ","color":"gray"}},'
 		f'{{"score":{{"name":"#door_price","objective":"{ns}.data"}},"color":"yellow"}},'
@@ -180,13 +180,13 @@ execute as @e[tag={ns}.door] if score @s {ns}.zb.door.link = #door_link {ns}.dat
 # Announce (the total, not the last chunk: it's what the door cost the team)
 {Xp.announce("zb", "door", f'{MGS_TAG},{Text.player(ns, "@s", side="zb", color="yellow")},{{"text":" opened ","color":"green"}},{{"storage":"{ns}:temp","nbt":"_door_hover_name","color":"gold","interpret":true}},{{"text":" for ","color":"green"}},{{"score":{{"name":"#door_total","objective":"{ns}.data"}},"color":"yellow"}},{{"text":" points.","color":"green"}}')}
 {ZombiesFeedback.zb_sound('announce')}
-""")  # noqa: E501
+""")
 
 	## Chip-in payment that didn't finish the door (@s = paying player)
 	write_versioned_function("zombies/doors/announce_progress", f"""
 tellraw @a [{MGS_TAG},{Text.player(ns, "@s", side="zb", color="yellow")},{{"text":" chipped in ","color":"green"}},{{"score":{{"name":"#door_price","objective":"{ns}.data"}},"color":"yellow"}},{{"text":" points for ","color":"green"}},{{"storage":"{ns}:temp","nbt":"_door_hover_name","color":"gold","interpret":true}},{{"text":"  (","color":"gray"}},{{"score":{{"name":"#door_paid","objective":"{ns}.data"}},"color":"green"}},{{"text":"/","color":"gray"}},{{"score":{{"name":"#door_total","objective":"{ns}.data"}},"color":"yellow"}},{{"text":")","color":"gray"}}]
 {ZombiesFeedback.zb_sound('announce')}
-""")  # noqa: E501
+""")
 
 	## Open a single door entity (@s = door entity, at @s position)
 	write_versioned_function("zombies/doors/open_one", f"""

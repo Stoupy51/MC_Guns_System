@@ -36,15 +36,21 @@ def beet_default(ctx: Context) -> None:
 
 	# 3D renders, excluding _zoom variants
 	from stewbeet import Item, Mem
-	from stewbeet.core.utils.fonts.item_images import generate_all_iso_renders  # pyright: ignore[reportMissingTypeStubs]
+	from stewbeet.core.utils.fonts.item_images import (
+		generate_all_iso_renders,  # pyright: ignore[reportMissingTypeStubs]
+	)
 	[Item.from_id(x).components.pop("item_model", None) for x in Mem.definitions.keys() if x.endswith("_zoom")]
 	iso_renders_cache: str = f"{Mem.ctx.directory}/iso_renders"
 	generate_all_iso_renders(ignore_vanilla=True, ignore_painting=True)
 
 	# all_items.png showcase grid; _zoom/_empty have no iso render so they are excluded
 	from PIL import Image
-	from stewbeet.plugins.ingame_manual.paths import template_path  # pyright: ignore[reportMissingTypeStubs]
-	from stewbeet.plugins.ingame_manual.showcase import generate_showcase_images  # pyright: ignore[reportMissingTypeStubs]
+	from stewbeet.plugins.ingame_manual.paths import (
+		template_path,  # pyright: ignore[reportMissingTypeStubs]
+	)
+	from stewbeet.plugins.ingame_manual.showcase import (
+		generate_showcase_images,  # pyright: ignore[reportMissingTypeStubs]
+	)
 	simple_case: Image.Image = Image.open(template_path("simple_case_no_border.png"))
 	showcase_items: list[str] = [
 		x for x in Mem.definitions.keys()

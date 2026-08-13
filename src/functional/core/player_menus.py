@@ -9,7 +9,6 @@ A player is targeted from a dialog button via their Bookshelf SUID (`bs.id`): a 
 runs as the clicker, so it wraps the action in `execute as @a[scores={bs.id=<N>}] run ...`.
 
 """
-# ruff: noqa: E501
 # Imports
 from stewbeet import LootTable, Mem, set_json_encoder, write_versioned_function
 

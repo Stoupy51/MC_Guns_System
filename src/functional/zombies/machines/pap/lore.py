@@ -1,5 +1,4 @@
 """ The upgraded item's name and the per-stat deltas annotated onto its lore. """
-# ruff: noqa: E501
 # Imports
 from stewbeet import Mem, write_versioned_function
 

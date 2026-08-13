@@ -1,5 +1,4 @@
 """ Buying a trap: the power, cooldown and points guards. """
-# ruff: noqa: E501
 # Imports
 from stewbeet import Mem, write_versioned_function
 

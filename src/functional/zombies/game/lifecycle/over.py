@@ -1,5 +1,4 @@
 """ Game over, stopping a game and the operator-only fast restart. """
-# ruff: noqa: E501
 # Imports
 from stewbeet import Mem, write_versioned_function
 
@@ -7,6 +6,7 @@ from ....helpers import MGS_TAG
 from ....helpers.dialogs import Dialogs
 from ....helpers.lifecycle import GameLifecycle
 from ....helpers.ranked import RankedStats
+from ....helpers.text import Text
 from ....helpers.titles import TitleTimes
 from ....progression import Xp
 
@@ -17,9 +17,8 @@ def write_zombies_over() -> None:
 	version: str = Mem.ctx.project_version
 
 	# Game Over.
-
 	zb_stat_line: str = (
-		'tellraw @a ["","  ","🎖 ",{Text.player(ns, "@s", side="zb")}," — Kills: ",'
+		f'tellraw @a ["","  ","🎖 ",{Text.player(ns, "@s", side="zb")}," — Kills: ",'
 		f'{{"score":{{"name":"@s","objective":"{ns}.zb.kills"}},"color":"green"}}," | Downs: ",'
 		f'{{"score":{{"name":"@s","objective":"{ns}.zb.downs"}},"color":"red"}}," | Points: ",'
 		f'{{"score":{{"name":"@s","objective":"{ns}.zb.points"}},"color":"gold"}}]'

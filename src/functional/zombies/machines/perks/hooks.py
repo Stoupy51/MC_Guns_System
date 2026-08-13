@@ -45,7 +45,7 @@ function {ns}:v{version}/zombies/inventory/refresh_perk_items
 
 	## Hover events (executor: "source" = player)
 	perk_hover_message: str = (
-		f'[{{"text":"🥤 ","color":"dark_purple"}},'
+		f'[{{"text":"🥤 "}},'
 		f'{{"storage":"{ns}:temp","nbt":"_pk_hover_name","color":"light_purple","interpret":true}},'
 		f'{{"text":" - Cost: ","color":"gray"}},'
 		f'{{"score":{{"name":"#pk_price","objective":"{ns}.data"}},"color":"yellow"}},'
@@ -53,7 +53,7 @@ function {ns}:v{version}/zombies/inventory/refresh_perk_items
 	)
 	# Chip-in machines show the next chunk plus the hovering player's own progress
 	perk_hover_partial_message: str = (
-		f'[{{"text":"🥤 ","color":"dark_purple"}},'
+		f'[{{"text":"🥤 "}},'
 		f'{{"storage":"{ns}:temp","nbt":"_pk_hover_name","color":"light_purple","interpret":true}},'
 		f'{{"text":" - Chip in: ","color":"gray"}},'
 		f'{{"score":{{"name":"#pk_price","objective":"{ns}.data"}},"color":"yellow"}},'

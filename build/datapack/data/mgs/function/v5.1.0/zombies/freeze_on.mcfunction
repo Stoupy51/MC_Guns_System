@@ -16,6 +16,6 @@ execute as @a[scores={mgs.zb.in_game=1}] run attribute @s minecraft:movement_spe
 execute as @a[scores={mgs.zb.in_game=1}] run attribute @s minecraft:jump_strength base set 0
 
 title @a[scores={mgs.zb.in_game=1}] times 5 60 10
-title @a[scores={mgs.zb.in_game=1}] title [{"text":"⏸","color":"aqua"}]
+title @a[scores={mgs.zb.in_game=1}] title [{"text":"⏸","color":"white"}]
 tellraw @a [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.an_operator_froze_the_game","color":"aqua"}]
 

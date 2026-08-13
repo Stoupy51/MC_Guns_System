@@ -1059,7 +1059,7 @@ def main() -> None:
 execute store success score #has_pap_level {ns}.data if data storage {ns}:gun all.stats.pap_level
 execute if score #has_pap_level {ns}.data matches 1 unless data storage mgs:gun all.stats.grenade_type at @s anchored eyes positioned ^ ^ ^0.001 as @a[distance=..16] run function {ns}:v{version}/player/apply_pap_flash_if_can_see
 execute if score #has_pap_level {ns}.data matches 0 unless data storage mgs:gun all.stats.grenade_type at @s anchored eyes positioned ^ ^ ^0.001 as @a[distance=..16] run function {ns}:v{version}/player/apply_flash_if_can_see
-""")  # noqa: E501
+""")
 	write_versioned_function("player/apply_flash_if_can_see", f"""
 # Stop if player saw flash less than 3 ticks ago (allowing previous flash to expire)
 execute if score @s {ns}.last_muzzle_flash > #total_tick {ns}.data run return 0

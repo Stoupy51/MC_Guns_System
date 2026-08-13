@@ -1,5 +1,4 @@
 """ Intact and destroyed barricade ticks, plus restoring zombie speed after a freeze. """
-# ruff: noqa: E501
 # Imports
 from stewbeet import Mem, write_versioned_function
 
@@ -186,7 +185,7 @@ execute if score #barricade_repair_valid {ns}.data matches 1 if score @s {ns}.zb
 # @s = repairing player
 scoreboard players set #barricade_repair_valid {ns}.data 1
 # Actionbar progress: show remaining ticks out of 30
-data modify storage smithed.actionbar:input message set value {{json:[{{"text":"🔧 Repairing barricade... ","color":"aqua"}},{{"score":{{"name":"#barricade_rp_cur","objective":"{ns}.data"}},"color":"yellow"}},{{"text":"/30","color":"gray"}}],priority:"conditional",freeze:2}}
+data modify storage smithed.actionbar:input message set value {{json:[{{"text":"🔧 ","color":"white"}},{{"text":"Repairing barricade... ","color":"aqua"}},{{"score":{{"name":"#barricade_rp_cur","objective":"{ns}.data"}},"color":"yellow"}},{{"text":"/30","color":"gray"}}],priority:"conditional",freeze:2}}
 function #smithed.actionbar:message
 """)
 

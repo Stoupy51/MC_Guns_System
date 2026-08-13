@@ -2,7 +2,14 @@
 # Imports
 from stewbeet import Mem, write_versioned_function
 
-from ..catalogs import ALL_SCOPE_SUFFIXES, COST_PRIMARY_SCOPE, COST_SECONDARY_SCOPE, SCOPE_NAMES, TRIG_PRIMARY_SCOPE_BASE, TRIG_SECONDARY_SCOPE_BASE
+from ..catalogs import (
+	ALL_SCOPE_SUFFIXES,
+	COST_PRIMARY_SCOPE,
+	COST_SECONDARY_SCOPE,
+	SCOPE_NAMES,
+	TRIG_PRIMARY_SCOPE_BASE,
+	TRIG_SECONDARY_SCOPE_BASE,
+)
 from .shared import editor_fn, write_static_dialog
 
 

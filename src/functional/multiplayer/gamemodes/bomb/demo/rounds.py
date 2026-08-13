@@ -10,7 +10,6 @@ side that **defends** it is whichever team has the most kills.
 That is knowingly an advantage on maps easier to hold than to take, and it is the rule as written.
 A kill tie leaves Red attacking, the same fallback `BombSites.write_side_picking` uses.
 """
-# ruff: noqa: E501
 # Imports
 from .....helpers import MGS_TAG
 from ...base import GameModeVariant
@@ -46,7 +45,7 @@ execute if data storage {ns}:multiplayer game{{state:"ended"}} run return fail
 
 # Announce round. The decider is announced as one, but plays like any other round.
 tellraw @a [{MGS_TAG},{{"text":"────── Round ","color":"gold"}},{{"score":{{"name":"#demo_round","objective":"{ns}.data"}},"color":"yellow"}},{{"text":" ──────","color":"gold"}}]
-execute if score #demo_round {ns}.data matches {TIEBREAK_ROUND}.. run tellraw @a [{MGS_TAG},"⚡ ",{{"text":"TIE-BREAK ROUND — most kills defends!","color":"gold","bold":true}}]
+execute if score #demo_round {ns}.data matches {TIEBREAK_ROUND}.. run tellraw @a [{MGS_TAG},{{"text":"⚡ ","color":"white"}},{{"text":"TIE-BREAK ROUND — most kills defends!","color":"gold","bold":true}}]
 execute if score #demo_attackers {ns}.data matches 1 run tellraw @a [{MGS_TAG},{{"text":"Red","color":"red"}},{{"text":" attacks both sites | "}},{{"text":"Blue","color":"blue"}},{{"text":" defends"}}]
 execute if score #demo_attackers {ns}.data matches 2 run tellraw @a [{MGS_TAG},{{"text":"Blue","color":"blue"}},{{"text":" attacks both sites | "}},{{"text":"Red","color":"red"}},{{"text":" defends"}}]
 playsound minecraft:block.note_block.harp player @a ~ ~ ~ 1 1.0
@@ -135,7 +134,7 @@ function {ns}:v{version}/multiplayer/game_draw
 		variant.sub("swap_sides", f"""
 execute if score #demo_attackers {ns}.data matches 1 run scoreboard players set #demo_attackers {ns}.data 2
 execute unless score #demo_attackers {ns}.data matches 2 run scoreboard players set #demo_attackers {ns}.data 1
-tellraw @a [{MGS_TAG},"⚔ ",{{"text":"Sides swapped!","color":"gold"}}]
+tellraw @a [{MGS_TAG},{{"text":"⚔ ","color":"white"}},{{"text":"Sides swapped!","color":"gold"}}]
 playsound minecraft:block.note_block.xylophone player @a ~ ~ ~ 1 1.0
 """)
 

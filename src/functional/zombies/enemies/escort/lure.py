@@ -1,5 +1,4 @@
 """ The PaP-room lure marker and the sweep that sends escorts toward it. """
-# ruff: noqa: E501
 # Imports
 from stewbeet import Mem, write_tag, write_versioned_function
 

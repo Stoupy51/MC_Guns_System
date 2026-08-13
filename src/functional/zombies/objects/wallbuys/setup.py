@@ -1,5 +1,4 @@
 """ Wallbuy scoreboards and summoning each buy's interaction and item display. """
-# ruff: noqa: E501
 # Imports
 from stewbeet import Mem, write_load_file, write_versioned_function
 

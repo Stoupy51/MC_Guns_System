@@ -1,5 +1,4 @@
 """ Starting a game: teams, bounds, spawn markers and the gamemode setup hook. """
-# ruff: noqa: E501
 # Imports
 from stewbeet import Mem, write_versioned_function
 

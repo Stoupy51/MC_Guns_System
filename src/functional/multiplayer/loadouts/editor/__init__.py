@@ -6,7 +6,6 @@ Primary: gun → scope → camo) that returns to the hub when done.
 Rows whose prerequisite is missing (magazines without the gun, saving without a primary) are grayed out as "Unavailable".
 
 Points are never deducted/refunded incrementally: editor/recompute_points derives the cost from the current state, and every mutation goes through a snapshot+commit check that reverts and denies when the budget would be exceeded. """
-# ruff: noqa: E501
 # Imports
 from .camos import write_editor_camos
 from .dialogs import write_editor_dialog_base

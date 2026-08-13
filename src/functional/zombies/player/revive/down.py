@@ -1,5 +1,4 @@
 """ Going down: spawning the mannequin, its name HUD and the teleport macros. """
-# ruff: noqa: E501
 # Imports
 from stewbeet import Mem, write_versioned_function
 

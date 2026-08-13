@@ -1,7 +1,13 @@
 """ Editor scoreboards and storage, the placement advancement and the map list per mode. """
-# ruff: noqa: E501
 # Imports
-from stewbeet import Advancement, JsonDict, Mem, set_json_encoder, write_load_file, write_versioned_function
+from stewbeet import (
+	Advancement,
+	JsonDict,
+	Mem,
+	set_json_encoder,
+	write_load_file,
+	write_versioned_function,
+)
 
 from ..helpers import MGS_TAG
 from ..helpers.dialogs import Dialogs

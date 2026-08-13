@@ -25,10 +25,35 @@ from ..config.stats.casings import (
 )
 from ..config.stats.items import ItemBuilder
 from ..config.stats.keys import CAPACITY, REMAINING_BULLETS
-from ..config.stats.weapons.grenades import FLASH_GRENADE, FRAG_GRENADE, MONKEY_BOMB, SEMTEX, SMOKE_GRENADE, WEB_GRENADE
+from ..config.stats.weapons.grenades import (
+	FLASH_GRENADE,
+	FRAG_GRENADE,
+	MONKEY_BOMB,
+	SEMTEX,
+	SMOKE_GRENADE,
+	WEB_GRENADE,
+)
 from ..config.stats.weapons.melee import MELEE_WEAPONS
-from ..config.stats.weapons.pistols import DEAGLE, GLOCK17, GLOCK18, M9, M1911, MAKAROV, RAY_GUN, VZ61
-from ..config.stats.weapons.rifles import AK47, AUG, FAMAS, FNFAL, G3A3, M4A1, M16A4, SCAR17
+from ..config.stats.weapons.pistols import (
+	DEAGLE,
+	GLOCK17,
+	GLOCK18,
+	M9,
+	M1911,
+	MAKAROV,
+	RAY_GUN,
+	VZ61,
+)
+from ..config.stats.weapons.rifles import (
+	AK47,
+	AUG,
+	FAMAS,
+	FNFAL,
+	G3A3,
+	M4A1,
+	M16A4,
+	SCAR17,
+)
 from ..config.stats.weapons.shotguns import M500, M590, SPAS12
 from ..config.stats.weapons.smgs import MAC10, MP5, MP7, PPSH41, STEN
 from ..config.stats.weapons.snipers import M24, M82, MOSIN, SVD

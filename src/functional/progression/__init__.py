@@ -8,7 +8,13 @@ This package owns the curve and the display. The award *sites* live with the mod
 `multiplayer/xp.py` and `zombies/xp.py` — and the award *values* all live in `awards.py`.
 """
 # Imports
-from stewbeet import Mem, write_load_file, write_tag, write_tick_file, write_versioned_function
+from stewbeet import (
+	Mem,
+	write_load_file,
+	write_tag,
+	write_tick_file,
+	write_versioned_function,
+)
 
 from .awards import MP_AWARDS, ZB_AWARDS, XpAward
 from .curve import PARK_LEVEL, Curve

@@ -1,5 +1,4 @@
 """ The game tick, the admin pause and routing a death into the downed state. """
-# ruff: noqa: E501
 # Imports
 from stewbeet import Mem, write_tick_file, write_versioned_function
 
@@ -102,7 +101,7 @@ execute as @a[scores={{{ns}.zb.in_game=1}}] run attribute @s minecraft:movement_
 execute as @a[scores={{{ns}.zb.in_game=1}}] run attribute @s minecraft:jump_strength base set 0
 
 {TitleTimes.FREEZE.cmd(f'@a[scores={{{ns}.zb.in_game=1}}]')}
-title @a[scores={{{ns}.zb.in_game=1}}] title [{{"text":"⏸","color":"aqua"}}]
+title @a[scores={{{ns}.zb.in_game=1}}] title [{{"text":"⏸","color":"white"}}]
 tellraw @a [{MGS_TAG},{{"text":"An operator froze the game.","color":"aqua"}}]
 """)
 
@@ -128,7 +127,7 @@ tellraw @a [{MGS_TAG},{{"text":"An operator unfroze the game.","color":"aqua"}}]
 	write_versioned_function("zombies/freeze_tick", f"""
 scoreboard players add #zb_freeze_msg {ns}.data 1
 execute if score #zb_freeze_msg {ns}.data matches 20.. run scoreboard players set #zb_freeze_msg {ns}.data 0
-execute if score #zb_freeze_msg {ns}.data matches 0 run title @a[scores={{{ns}.zb.in_game=1}}] actionbar [{{"text":"⏸ GAME FROZEN","color":"aqua","bold":true}}]
+execute if score #zb_freeze_msg {ns}.data matches 0 run title @a[scores={{{ns}.zb.in_game=1}}] actionbar [{{"text":"⏸ ","color":"white"}},{{"text":"GAME FROZEN","color":"aqua","bold":true}}]
 """)
 
 	# Death and respawn: zombies death handling enters the downed state.

@@ -1,5 +1,4 @@
 """ Per-box state objectives, the default weapon pool and the give functions behind it. """
-# ruff: noqa: E501
 # Imports
 from stewbeet import Mem, write_load_file, write_versioned_function
 

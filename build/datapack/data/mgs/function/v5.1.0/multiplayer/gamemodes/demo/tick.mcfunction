@@ -42,5 +42,5 @@ scoreboard players operation #mp_timer mgs.data = #demo_timer mgs.data
 execute if score #mp_timer mgs.data matches ..0 run scoreboard players set #mp_timer mgs.data 0
 
 # Remind the armed side what they are holding
-title @a[tag=mgs.demo_atk,gamemode=!spectator] actionbar [{"translate":"mgs.you_are_carrying_a_bomb_plant_at_a_site","color":"gold"}]
+title @a[tag=mgs.demo_atk,gamemode=!spectator] actionbar [{"text":"💣 ","color":"white"},{"translate":"mgs.you_are_carrying_a_bomb_plant_at_a_site","color":"gold"}]
 

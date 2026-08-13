@@ -1,5 +1,4 @@
 """ The hover actionbar for each box state. """
-# ruff: noqa: E501
 # Imports
 from stewbeet import Mem, write_versioned_function
 
@@ -11,29 +10,29 @@ def write_mystery_box_hover() -> None:
 
 	## Hover functions for active mystery box
 	write_versioned_function("zombies/mystery_box/hud_ready", """
-data modify storage smithed.actionbar:input message set value {json:[{"text":"🎲 Mystery Box","color":"light_purple"},{"text":" - ","color":"gray"},{"text":"Click to collect!","color":"green"}],priority:"conditional",freeze:5}
+data modify storage smithed.actionbar:input message set value {json:[{"text":"🎲 ","color":"white"},{"text":"Mystery Box","color":"light_purple"},{"text":" - ","color":"gray"},{"text":"Click to collect!","color":"green"}],priority:"conditional",freeze:5}
 function #smithed.actionbar:message
 """)
 
 	# Ready + the weapon name is known: prompt the pick-up by name, e.g.
 	# "🎲 Pick-up Ray Gun" (_mb_hover_name is the ready display item's item_name, read in hover_at_box)
 	write_versioned_function("zombies/mystery_box/hud_ready_named", f"""
-data modify storage smithed.actionbar:input message set value {{json:[{{"text":"🎲 ","color":"light_purple"}},{{"text":"Pick-up ","color":"green"}},{{"storage":"{ns}:temp","nbt":"_mb_hover_name","interpret":true}}],priority:"conditional",freeze:5}}
+data modify storage smithed.actionbar:input message set value {{json:["🎲 ",{{"text":"Pick-up ","color":"green"}},{{"storage":"{ns}:temp","nbt":"_mb_hover_name","interpret":true,"color":"light_purple"}}],priority:"conditional",freeze:5}}
 function #smithed.actionbar:message
 """)
 
 	write_versioned_function("zombies/mystery_box/hud_spinning", """
-data modify storage smithed.actionbar:input message set value {json:[{"text":"🎲 Mystery Box","color":"light_purple"},{"text":" - ","color":"gray"},{"text":"Spinning...","color":"yellow"}],priority:"conditional",freeze:5}
+data modify storage smithed.actionbar:input message set value {json:["🎲 ",{"text":"Mystery Box","color":"light_purple"},{"text":" - ","color":"gray"},{"text":"Spinning...","color":"yellow"}],priority:"conditional",freeze:5}
 function #smithed.actionbar:message
 """)
 
 	write_versioned_function("zombies/mystery_box/hud_price", f"""
-data modify storage smithed.actionbar:input message set value {{json:[{{"text":"🎲 Mystery Box","color":"light_purple"}},{{"text":" - ","color":"gray"}},{{"score":{{"name":"#zb_mystery_box_price","objective":"{ns}.config"}},"color":"gold"}},{{"text":" points","color":"gold"}}],priority:"conditional",freeze:5}}
+data modify storage smithed.actionbar:input message set value {{json:["🎲 ",{{"text":"Mystery Box","color":"light_purple"}},{{"text":" - ","color":"gray"}},{{"score":{{"name":"#zb_mystery_box_price","objective":"{ns}.config"}},"color":"gold"}},{{"text":" points","color":"gold"}}],priority:"conditional",freeze:5}}
 function #smithed.actionbar:message
 """)
 
 	write_versioned_function("zombies/mystery_box/hud_moving", """
-data modify storage smithed.actionbar:input message set value {json:[{"text":"🎲 Mystery Box","color":"light_purple"},{"text":" - ","color":"gray"},{"text":"Moving...","color":"yellow"}],priority:"conditional",freeze:5}
+data modify storage smithed.actionbar:input message set value {json:["🎲 ",{"text":"Mystery Box","color":"light_purple"},{"text":" - ","color":"gray"},{"text":"Moving...","color":"yellow"}],priority:"conditional",freeze:5}
 function #smithed.actionbar:message
 """)
 

@@ -1,5 +1,4 @@
 """ Round-end free pickups, tearing a body down and respawning near the team. """
-# ruff: noqa: E501
 # Imports
 from stewbeet import Mem, write_versioned_function
 

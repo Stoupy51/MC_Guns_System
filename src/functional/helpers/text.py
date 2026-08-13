@@ -89,7 +89,7 @@ class Text:
 		return f'[{",".join(parts)}]'
 
 	@staticmethod
-	def split_emoji(text: str, **style: str | bool) -> "JsonDict | list[Any]":
+	def split_emoji(text: str, **style: str | bool) -> JsonDict | list[Any]:
 		""" Build a (Python) text component where any non-alphanumeric prefix/suffix (emojis)
 		renders uncolored/unstyled, while the alphanumeric core keeps the given style.
 

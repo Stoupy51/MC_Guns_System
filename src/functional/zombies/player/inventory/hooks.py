@@ -1,5 +1,4 @@
 """ The inventory-changed advancement, the slot audit it triggers and the game tick. """
-# ruff: noqa: E501
 # Imports
 from stewbeet import Mem, write_versioned_function
 

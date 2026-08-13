@@ -1,5 +1,4 @@
 """ Selecting a custom loadout and deleting one you own. """
-# ruff: noqa: E501
 # Imports
 from stewbeet import Mem, write_versioned_function
 

@@ -1,5 +1,4 @@
 """ Player death, spectating and respawning. """
-# ruff: noqa: E501
 # Imports
 from stewbeet import Mem, write_versioned_function
 

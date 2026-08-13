@@ -1,5 +1,4 @@
 """ The info paper: its lore, its perk lines and the perk display items beside it. """
-# ruff: noqa: E501
 # Imports
 from stewbeet import Mem, write_versioned_function
 

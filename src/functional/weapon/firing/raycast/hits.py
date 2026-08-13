@@ -106,7 +106,7 @@ execute if block ~ ~ ~ #{ns}:v{version}/sounds/wood run return run execute if sc
 execute if block ~ ~ ~ #{ns}:v{version}/plant run return run execute if score #played_plant {ns}.data matches 0 store success score #played_plant {ns}.data run playsound minecraft:block.azalea_leaves.break block @a[distance=..24] ~ ~ ~ 1
 execute if block ~ ~ ~ #{ns}:v{version}/solid run return run execute if score #played_solid {ns}.data matches 0 store success score #played_solid {ns}.data run playsound {ns}:common/solid_bullet_impact block @a[distance=..24] ~ ~ ~ 0.2
 execute if score #played_soft {ns}.data matches 0 store success score #played_soft {ns}.data run playsound {ns}:common/soft_bullet_impact block @a[distance=..24] ~ ~ ~ 0.2
-""")  # noqa: E501
+""")
 
 	# Apply block hardness-based damage reduction (called from on_targeted_block, #hardness already set)
 	write_versioned_function("raycast/apply_block_hardness", f"""
@@ -126,7 +126,7 @@ scoreboard players operation #remaining_pct {ns}.data -= #reduction {ns}.data
 scoreboard players operation #new_damage {ns}.data *= #remaining_pct {ns}.data
 scoreboard players operation #new_damage {ns}.data /= #1000 {ns}.data
 execute store result storage {ns}:temp damage float 0.001 run scoreboard players get #new_damage {ns}.data
-""")  # noqa: E501
+""")
 
 	# On targeted entity
 	write_versioned_function("raycast/on_targeted_entity", f"""

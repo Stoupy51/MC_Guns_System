@@ -8,7 +8,6 @@ Every function is written into the *calling variant's* own path (`multiplayer/ga
 uses that key for its scratch names, so the two modes stay independent at runtime and the S&D output is
 byte-for-byte what it was before this was extracted.
 """
-# ruff: noqa: E501
 # Imports
 from ..base import GameModeVariant
 
@@ -71,7 +70,7 @@ execute if data storage {ns}:temp _{key}_iter[0] run function {ns}:v{version}/mu
 		## also names the site in chat when the bomb goes down there, which is how defenders rotate.
 		variant.sub("summon_obj_at", f"""
 $summon minecraft:marker $(x) $(y) $(z) {{Tags:["{ns}.{key}_obj","{ns}.gm_entity","{ns}.{key}_site_$(label)"]}}
-$summon minecraft:text_display $(x) $(y) $(z) {{Tags:["{ns}.{key}_label","{ns}.gm_entity"],billboard:"vertical",text:[{{"text":"💣 ","color":"gold"}},{{"text":"$(label)","color":"yellow","bold":true}}],transformation:{{translation:[0.0f,2.0f,0.0f],left_rotation:[0.0f,0.0f,0.0f,1.0f],scale:[3.0f,3.0f,3.0f],right_rotation:[0.0f,0.0f,0.0f,1.0f]}},shadow:true,see_through:true}}
+$summon minecraft:text_display $(x) $(y) $(z) {{Tags:["{ns}.{key}_label","{ns}.gm_entity"],billboard:"vertical",text:[{{"text":"💣 ","color":"white"}},{{"text":"$(label)","color":"yellow","bold":true}}],transformation:{{translation:[0.0f,2.0f,0.0f],left_rotation:[0.0f,0.0f,0.0f,1.0f],scale:[3.0f,3.0f,3.0f],right_rotation:[0.0f,0.0f,0.0f,1.0f]}},shadow:true,see_through:true}}
 $execute positioned $(x) $(y) $(z) run setblock ~ ~ ~ chest
 $execute positioned $(x) $(y) $(z) run setblock ~ ~1 ~ barrier
 """)

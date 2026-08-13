@@ -1,6 +1,12 @@
 """ Replenishing lethals and remembering which grenade type a player carries. """
 # Imports
-from stewbeet import Advancement, JsonDict, Mem, set_json_encoder, write_versioned_function
+from stewbeet import (
+	Advancement,
+	JsonDict,
+	Mem,
+	set_json_encoder,
+	write_versioned_function,
+)
 
 from .....config.stats.weapons.grenades import LETHAL_GRENADE_IDS
 from .shared import SlotPredicates, slot_predicates

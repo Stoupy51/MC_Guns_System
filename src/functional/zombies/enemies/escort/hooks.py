@@ -1,5 +1,4 @@
 """ The game tick, preload, start and stop hooks. """
-# ruff: noqa: E501
 # Imports
 from stewbeet import Mem, write_versioned_function
 

@@ -1,5 +1,4 @@
 """ Placing an element: its marker, its defaults and the announce that follows. """
-# ruff: noqa: E501
 # Imports
 from stewbeet import Mem, write_versioned_function
 
@@ -227,7 +226,7 @@ execute as @n[tag={ns}.new_zb_marker] run data modify entity @s Rotation[0] set 
 
 # For doors: capture block from player's offhand (required)
 execute if entity @s[tag={ns}.element.door] as @p[tag={ns}.map_editor,distance=..6,sort=nearest] run data modify storage {ns}:temp _zb_offhand_block set from entity @s equipment.offhand.id
-execute if entity @s[tag={ns}.element.door] unless data storage {ns}:temp _zb_offhand_block run tellraw @a[tag={ns}.map_editor] [{MGS_TAG},"⚠ ",{{"text":"Door cancelled! Hold a block in offhand.","color":"red"}}]
+execute if entity @s[tag={ns}.element.door] unless data storage {ns}:temp _zb_offhand_block run tellraw @a[tag={ns}.map_editor] [{MGS_TAG},{{"text":"⚠ ","color":"white"}},{{"text":"Door cancelled! Hold a block in offhand.","color":"red"}}]
 execute if entity @s[tag={ns}.element.door] unless data storage {ns}:temp _zb_offhand_block run kill @e[tag={ns}.new_zb_marker]
 execute if entity @s[tag={ns}.element.door] unless data storage {ns}:temp _zb_offhand_block run return fail
 execute if entity @s[tag={ns}.element.door] as @n[tag={ns}.new_zb_marker] run data modify entity @s data.block set from storage {ns}:temp _zb_offhand_block

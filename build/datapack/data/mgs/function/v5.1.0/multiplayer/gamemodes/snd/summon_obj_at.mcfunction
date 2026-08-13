@@ -12,7 +12,7 @@
 #
 
 $summon minecraft:marker $(x) $(y) $(z) {Tags:["mgs.snd_obj","mgs.gm_entity","mgs.snd_site_$(label)"]}
-$summon minecraft:text_display $(x) $(y) $(z) {Tags:["mgs.snd_label","mgs.gm_entity"],billboard:"vertical",text:[{"text":"💣 ","color":"gold"},{"text":"$(label)","color":"yellow","bold":true}],transformation:{translation:[0.0f,2.0f,0.0f],left_rotation:[0.0f,0.0f,0.0f,1.0f],scale:[3.0f,3.0f,3.0f],right_rotation:[0.0f,0.0f,0.0f,1.0f]},shadow:true,see_through:true}
+$summon minecraft:text_display $(x) $(y) $(z) {Tags:["mgs.snd_label","mgs.gm_entity"],billboard:"vertical",text:[{"text":"💣 ","color":"white"},{"text":"$(label)","color":"yellow","bold":true}],transformation:{translation:[0.0f,2.0f,0.0f],left_rotation:[0.0f,0.0f,0.0f,1.0f],scale:[3.0f,3.0f,3.0f],right_rotation:[0.0f,0.0f,0.0f,1.0f]},shadow:true,see_through:true}
 $execute positioned $(x) $(y) $(z) run setblock ~ ~ ~ chest
 $execute positioned $(x) $(y) $(z) run setblock ~ ~1 ~ barrier
 

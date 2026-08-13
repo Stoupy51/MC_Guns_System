@@ -6,7 +6,6 @@ it up and carry it, and it drops where they die for another attacker to retrieve
 plant, and only at one of the marked sites. Counter-Strike's economy, its plant-anywhere-in-a-zone rule
 and its per-player bomb spawns are all deliberately absent.
 """
-# ruff: noqa: E501
 # Imports
 from .....helpers import MGS_TAG
 from .....progression import EARNER_TAG
@@ -132,7 +131,7 @@ execute at @e[tag={ns}.snd_obj] run particle dust{{color:[1.0,0.6,0.0],scale:1.0
 # see_through is false on that label so it does NOT wallhack the carrier to the defenders: in CoD you spot
 # the bomb on their model when you can already see them, you are not handed their position.
 execute as @a[tag={ns}.snd_carrier] at @s run tp @e[tag={ns}.snd_carrier_label,limit=1] ~ ~2.2 ~
-title @a[tag={ns}.snd_carrier] actionbar [{{"text":"💣 You have the bomb — plant at a site","color":"gold"}}]
+title @a[tag={ns}.snd_carrier] actionbar [{{"text":"💣 ","color":"white"}},{{"text":"You have the bomb — plant at a site","color":"gold"}}]
 
 # A carrier who disconnects takes the tag out of @a with them but leaves the bomb nowhere: no loose
 # entity (pickup killed it) and no carrier to plant it, which silently ended the attack for the round.

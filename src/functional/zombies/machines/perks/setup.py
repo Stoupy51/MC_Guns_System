@@ -52,7 +52,7 @@ execute if data storage {ns}:temp _pk_iter[0] run function {ns}:v{version}/zombi
 
 	# When the map leaves price at -1 (auto), resolve the recommended price from the perk_id.
 	price_resolve_lines: str = "\n".join(
-		f'execute if score @n[tag={ns}.pk_new] {ns}.zb.perk.price matches -1 if data storage {ns}:temp _pk_price{{perk_id:"{perk_id}"}} run scoreboard players set @n[tag={ns}.pk_new] {ns}.zb.perk.price {RECOMMENDED_PRICES.get(perk_id, 2000)}'  # noqa: E501
+		f'execute if score @n[tag={ns}.pk_new] {ns}.zb.perk.price matches -1 if data storage {ns}:temp _pk_price{{perk_id:"{perk_id}"}} run scoreboard players set @n[tag={ns}.pk_new] {ns}.zb.perk.price {RECOMMENDED_PRICES.get(perk_id, 2000)}'
 		for perk_id in PERK_DEFINITIONS
 	)
 	write_versioned_function("zombies/perks/setup_iter", f"""

@@ -1,5 +1,4 @@
 """ An active trap: damaging zombies, its cooldown and the Timeslip discount. """
-# ruff: noqa: E501
 # Imports
 from stewbeet import Mem, write_versioned_function
 

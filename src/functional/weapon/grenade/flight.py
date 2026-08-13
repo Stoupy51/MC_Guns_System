@@ -75,7 +75,7 @@ scoreboard players operation @s {ns}.data -= #tick_delta {ns}.data
 
 # If fuse expired, detonate
 execute if score @s {ns}.data matches ..0 run function {ns}:v{version}/grenade/detonate
-""")  # noqa: E501
+""")
 
 	## Bounce collision callback (for frag/smoke/flash grenades)
 	write_versioned_function("grenade/on_bounce",
@@ -116,7 +116,7 @@ execute positioned ~ ~-1 ~ run scoreboard players operation @n[type=!#{ns}:ignor
 
 # Mark that this grenade is stuck to an entity (not just a block)
 tag @s add {ns}.stuck_to_entity
-""")  # noqa: E501
+""")
 
 	## Tick for stuck grenades (just countdown)
 	write_versioned_function("grenade/tick_stuck", f"""

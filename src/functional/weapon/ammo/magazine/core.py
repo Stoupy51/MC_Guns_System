@@ -1,6 +1,12 @@
 """ Consuming a bullet, the infinite-ammo refill and reading ammo back on a weapon switch. """
 # Imports
-from stewbeet import ItemModifier, JsonDict, Mem, set_json_encoder, write_versioned_function
+from stewbeet import (
+	ItemModifier,
+	JsonDict,
+	Mem,
+	set_json_encoder,
+	write_versioned_function,
+)
 
 from .....config.stats.items import ItemBuilder
 from .....config.stats.keys import CAPACITY, REMAINING_BULLETS

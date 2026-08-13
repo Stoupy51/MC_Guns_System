@@ -1,5 +1,4 @@
 """ Domination: capture and hold three points for score over time. """
-# ruff: noqa: E501
 # Imports
 from ...helpers import MGS_TAG
 from ...progression import Xp

@@ -101,7 +101,7 @@ scoreboard players set @e[tag={ns}.tombstone,predicate={ns}:v{version}/zombies/r
 scoreboard players set @e[tag={ns}.tombstone,predicate={ns}:v{version}/zombies/revive/downed_id_match] {ns}.zb.ts.timer 1200
 {TitleTimes.EVENT.cmd()}
 title @s title ["🪦"]
-title @s subtitle [{{"text":"Return to your 🪦 within 60s to recover your gear!","color":"gold"}}]
+title @s subtitle [{{"text":"Return to your ","color":"gold"}},{{"text":"🪦","color":"white"}},{{"text":" within 60s to recover your gear!","color":"gold"}}]
 """)
 
 	# Per-tick for an ACTIVE marker (@s = marker, at it), counting down then checking for the owner

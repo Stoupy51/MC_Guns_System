@@ -1,5 +1,4 @@
 """ The primary, secondary and Overkill gun submenus, and removing a picked gun. """
-# ruff: noqa: E501
 # Imports
 from stewbeet import Mem, write_versioned_function
 

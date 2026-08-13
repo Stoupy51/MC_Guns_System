@@ -1,5 +1,4 @@
 """ Roaming to another spot when a pull turns up the teddy bear. """
-# ruff: noqa: E501
 # Imports
 from stewbeet import Mem, write_versioned_function
 

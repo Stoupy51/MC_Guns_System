@@ -87,7 +87,7 @@ tag @e[tag={ns}.temp_shooter] remove {ns}.temp_shooter
 
 # Delete the projectile
 function {ns}:v{version}/projectile/delete
-""")  # noqa: E501
+""")
 
 	## Realistic block destruction (calls RealisticExplosionLibrary)
 	write_versioned_function("projectile/realistic_explosion", f"""
