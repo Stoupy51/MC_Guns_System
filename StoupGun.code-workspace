@@ -13,5 +13,7 @@
 			"path": "../beet"
 		}
 	],
-	"settings": {}
+	"settings": {
+		"git.ignoreLimitWarning": true
+	}
 }
