@@ -106,6 +106,18 @@ meta:
             resource_pack: ["D:/minecraft/latest/resourcepacks"]
         # Custom item lore configuration. If set to "auto" or unset, uses project icon followed by PROJECT_NAME
         source_lore: "auto"
+
+        # Folder holding the per-item PNG renders (isometric renders, downloaded vanilla textures,
+        # and the ones you drop yourself for items of other packs, as "<folder>/<namespace>/<item>.png").
+        # Shared by the ingame_manual and auto.text_renders plugins so an item is only rendered once.
+        iso_renders_path: "iso_renders"
+        # Configuration for the "render" key of text components (auto.text_renders plugin)
+        text_renders:
+            default_height: 16
+            default_resolution: 0
+            font: "renders"
+            # allow_oversized: true
+
         # Automagically checks for dependencies and their minimum required versions at runtime.
         # The url is used when the dependency is not found to suggest where to get it.
         # The version dict key contains the minimum required version of the dependency in [major, minor, patch] format.

@@ -36,17 +36,10 @@ def beet_default(ctx: Context) -> None:
 
 	# 3D renders, excluding _zoom variants
 	from stewbeet import Item, Mem
-	from stewbeet.plugins.ingame_manual.config import ManualConfig  # pyright: ignore[reportMissingTypeStubs]
-	from stewbeet.plugins.ingame_manual.iso_renders import generate_all_iso_renders  # pyright: ignore[reportMissingTypeStubs]
+	from stewbeet.core.utils.fonts.item_images import generate_all_iso_renders  # pyright: ignore[reportMissingTypeStubs]
 	[Item.from_id(x).components.pop("item_model", None) for x in Mem.definitions.keys() if x.endswith("_zoom")]
-	config = ManualConfig(
-		project_id=ctx.project_id,
-		project_name=ctx.project_name,
-		project_author=ctx.project_author,
-		cache_path=f"{Mem.ctx.directory}/manual_cache",
-	)
 	iso_renders_cache: str = f"{Mem.ctx.directory}/iso_renders"
-	generate_all_iso_renders(config, override_cache_path=f"{iso_renders_cache}/items", ignore_vanilla=True, ignore_painting=True)
+	generate_all_iso_renders(ignore_vanilla=True, ignore_painting=True)
 
 	# all_items.png showcase grid; _zoom/_empty have no iso render so they are excluded
 	from PIL import Image
