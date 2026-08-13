@@ -5,7 +5,7 @@
 #
 # @within	mgs:v5.1.0/zombies/revive/downed_tick
 #			mgs:v5.1.0/zombies/revive/solo_qr_complete
-#			mgs:v5.1.0/zombies/revive/round_end_pickup
+#			mgs:v5.1.0/zombies/revive/round_respawn [ as @a[tag=mgs.downed_spectator,scores={mgs.zb.in_game=1}] ]
 #
 
 # Remove downed state

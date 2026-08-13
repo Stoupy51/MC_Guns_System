@@ -41,7 +41,7 @@ scoreboard players set @a {ns}.zb.horde_cd 0
 
 # Config: points per kill, points per hit
 scoreboard players set #zb_points_kill {ns}.config 50
-scoreboard players set #zb_points_hit {ns}.config 5
+scoreboard players set #zb_points_hit {ns}.config 10
 scoreboard players set #zb_points_knife_kill {ns}.config 130
 scoreboard players set #zb_mystery_box_price {ns}.config 950
 
