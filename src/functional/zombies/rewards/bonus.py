@@ -159,22 +159,22 @@ $item modify entity @s $(slot) {"function":"minecraft:set_components", "componen
 
 	## ==================================================== Nuke: Tag nukable entities and kill them 1 per tick.
 
-	# Non-versioned entry point: /execute as <player> run function mgs:zombies/bonus/nuke
+	# Non-versioned entry point: /function mgs:zombies/bonus/nuke
+	# It needs no executor on purpose: the kill loop belongs to the round, not to whoever set it off, so a
+	# nuke grabbed by a downed player (a spectator) still wipes the map instead of only playing the sounds.
 	write_function(f"{ns}:zombies/bonus/nuke", f"""
-# Remove any existing nuke activator (in case of concurrent nukes)
-tag @a[tag={ns}.nuke_activator] remove {ns}.nuke_activator
-
-# Tag activating player for damage attribution
-tag @s add {ns}.nuke_activator
-
-# Tag all nukable entities as nuked
-execute as @e[tag={ns}.nukable] run tag @s add {ns}.nuked
-
-# Zero attack damage on all nuked entities (multiply base by 0)
-execute as @e[tag={ns}.nuked] run attribute @s minecraft:attack_damage modifier add {ns}:nuke_zero_damage -1 add_multiplied_total
+# Mark every nukable entity: tagged for the kill loop and stripped of its attack damage right away,
+# so the ones waiting their turn in the loop can no longer hurt anybody.
+execute as @e[tag={ns}.nukable] run function {ns}:v{version}/zombies/bonus/nuke_mark_one
 
 # Start kill loop (1 entity per tick)
 function {ns}:v{version}/zombies/bonus/nuke_loop
+""")
+
+	# Mark one entity for the nuke (@s = nukable entity)
+	write_versioned_function("zombies/bonus/nuke_mark_one", f"""
+tag @s add {ns}.nuked
+attribute @s minecraft:attack_damage modifier add {ns}:nuke_zero_damage -1 add_multiplied_total
 """)
 
 	# Nuke kill loop: damage 1 entity per tick
@@ -183,10 +183,7 @@ function {ns}:v{version}/zombies/bonus/nuke_loop
 execute as @n[tag={ns}.nuked,sort=random] at @s run function {ns}:v{version}/zombies/bonus/nuke_damage_one
 
 # Continue loop if more nuked entities exist
-execute if entity @e[tag={ns}.nuked] run return run schedule function {ns}:v{version}/zombies/bonus/nuke_loop 1t
-
-# Clean up when all nuked entities are processed
-tag @a[tag={ns}.nuke_activator] remove {ns}.nuke_activator
+execute if entity @e[tag={ns}.nuked] run schedule function {ns}:v{version}/zombies/bonus/nuke_loop 1t
 """)
 
 	# Damage one nuked entity (@s = nuked entity, positioned at entity)

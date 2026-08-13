@@ -6,6 +6,14 @@
 # @within	mgs:v5.1.0/zombies/powerups/entity_tick
 #
 
+# Free PaP is the only power-up spent on a specific item, the gun held in hotbar 1-3, so it is the only
+# one a player can be unable to use: downed players are spectators, and the knife (hotbar.0) and the
+# grenade slots (hotbar.6-7) are not weapons it can upgrade. Leave the drop on the ground for a
+# teammate who can take it rather than burning it on someone it would do nothing for.
+scoreboard players set #pu_pap_ok mgs.data 0
+execute if score @s mgs.zb.pu.type matches 8 as @p[scores={mgs.zb.in_game=1},gamemode=!spectator,distance=..1.5] run function mgs:v5.1.0/zombies/powerups/check_pap_taker
+execute if score @s mgs.zb.pu.type matches 8 if score #pu_pap_ok mgs.data matches 0 run return fail
+
 # Tag the nearest eligible player as the collector for this activation
 tag @p[scores={mgs.zb.in_game=1},gamemode=!spectator,distance=..1.5,tag=!mgs.pu_collecting] add mgs.pu_collecting
 
