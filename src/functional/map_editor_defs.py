@@ -1,5 +1,4 @@
 """ Map-editor element and mode definitions (data only; the generator lives in map_editor.py). """
-# ruff: noqa: E501
 # Imports
 from dataclasses import dataclass
 from dataclasses import field as dc_field

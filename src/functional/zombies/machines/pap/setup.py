@@ -1,7 +1,13 @@
 """ Machine scoreboards, the scope and camo tables, placing each machine and its hover. """
-# ruff: noqa: E501
 # Imports
-from stewbeet import ItemModifier, JsonDict, Mem, set_json_encoder, write_load_file, write_versioned_function
+from stewbeet import (
+	ItemModifier,
+	JsonDict,
+	Mem,
+	set_json_encoder,
+	write_load_file,
+	write_versioned_function,
+)
 
 from .....config.catalogs import SCOPE_VARIANTS
 from .....database.camo import MATERIALS
@@ -151,7 +157,7 @@ execute store result score #pap_price {ns}.data run scoreboard players get @n[ta
 execute if score #zb_bonfire_sale_timer {ns}.data matches 1.. run scoreboard players set #pap_price {ns}.data 1000
 execute store result storage {ns}:temp _pap_hover.id int 1 run scoreboard players get @n[tag=bs.interaction.target] {ns}.zb.pap.id
 function {ns}:v{version}/zombies/pap/lookup_machine with storage {ns}:temp _pap_hover
-data modify storage smithed.actionbar:input message set value {{json:[{{"text":"⚙ ","color":"dark_red"}},{{"storage":"{ns}:temp","nbt":"_pap_machine.name","color":"gold","interpret":true}},{{"text":" - Cost: ","color":"gray"}},{{"score":{{"name":"#pap_price","objective":"{ns}.data"}},"color":"yellow"}},{{"text":" points","color":"gray"}}],priority:"conditional",freeze:5}}
+data modify storage smithed.actionbar:input message set value {{json:[{{"text":"⚙ ","color":"white"}},{{"storage":"{ns}:temp","nbt":"_pap_machine.name","color":"gold","interpret":true}},{{"text":" - Cost: ","color":"gray"}},{{"score":{{"name":"#pap_price","objective":"{ns}.data"}},"color":"yellow"}},{{"text":" points","color":"gray"}}],priority:"conditional",freeze:5}}
 function #smithed.actionbar:message
 """)
 

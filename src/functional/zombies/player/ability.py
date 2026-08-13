@@ -128,7 +128,7 @@ effect give @s speed 5 1 true
 effect give @s regeneration 5 1 true
 
 # Announce
-title @s actionbar [{{"text":"🏃 Coward activated! Teleported to safety!","color":"yellow"}}]
+title @s actionbar [{{"text":"🏃 ","color":"white"}},{{"text":"Coward activated! Teleported to safety!","color":"yellow"}}]
 """)
 
 	# Guardian: summon Iron Golem at round start.
@@ -146,7 +146,7 @@ summon minecraft:iron_golem ~ ~ ~ {{Tags:["{ns}.guardian_golem","{ns}.gm_entity"
 scoreboard players set @s {ns}.zb.ability_cd 1
 
 # Announce
-title @s actionbar [{{"text":"🛡 Guardian activated! Iron Golem summoned!","color":"green"}}]
+title @s actionbar [{{"text":"🛡 ","color":"white"}},{{"text":"Guardian activated! Iron Golem summoned!","color":"green"}}]
 """)
 
 	# Cooldown Reduction (called at round start).

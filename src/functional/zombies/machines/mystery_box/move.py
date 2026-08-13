@@ -1,11 +1,16 @@
 """ The teddy bear and the move that follows: ascend, wait, descend and the arrival announce. """
-# ruff: noqa: E501
 # Imports
 from stewbeet import Mem, write_versioned_function
 
 from ....core.feedback import ZombiesFeedback
 from ....helpers import MGS_TAG
-from .shared import MB_CLOSED_TF, MOVE_ASCEND_TICKS, MOVE_DESCEND_TICKS, MOVE_TOTAL_TICKS, MOVE_WAIT_TICKS
+from .shared import (
+	MB_CLOSED_TF,
+	MOVE_ASCEND_TICKS,
+	MOVE_DESCEND_TICKS,
+	MOVE_TOTAL_TICKS,
+	MOVE_WAIT_TICKS,
+)
 
 
 # Functions

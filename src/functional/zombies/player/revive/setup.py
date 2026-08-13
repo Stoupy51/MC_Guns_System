@@ -1,5 +1,4 @@
 """ Crawl input predicates, the downed-id predicate and the revive scoreboards. """
-# ruff: noqa: E501
 # Imports
 from stewbeet import JsonDict, Mem, Predicate, set_json_encoder, write_load_file
 

@@ -10,5 +10,5 @@
 scoreboard players set #snd_bomb_grounded mgs.data 1
 summon minecraft:marker ~ ~ ~ {Tags:["mgs.snd_loose","mgs.snd_loose_at","mgs.gm_entity"]}
 summon minecraft:block_display ~ ~ ~ {Tags:["mgs.snd_loose","mgs.gm_entity"],block_state:{Name:"minecraft:tnt"},transformation:{translation:[-0.25f,0.0f,-0.25f],left_rotation:[0.0f,0.0f,0.0f,1.0f],scale:[0.5f,0.5f,0.5f],right_rotation:[0.0f,0.0f,0.0f,1.0f]}}
-summon minecraft:text_display ~ ~ ~ {Tags:["mgs.snd_loose","mgs.gm_entity"],billboard:"vertical",text:[[{"text":"💣 ","color":"gold","bold":true}, {"translate":"mgs.bomb"}]],transformation:{translation:[0.0f,1.1f,0.0f],left_rotation:[0.0f,0.0f,0.0f,1.0f],scale:[1.5f,1.5f,1.5f],right_rotation:[0.0f,0.0f,0.0f,1.0f]},shadow:true,see_through:true}
+summon minecraft:text_display ~ ~ ~ {Tags:["mgs.snd_loose","mgs.gm_entity"],billboard:"vertical",text:[{"text":"💣 ","color":"white"},{"translate":"mgs.bomb","color":"gold","bold":true}],transformation:{translation:[0.0f,1.1f,0.0f],left_rotation:[0.0f,0.0f,0.0f,1.0f],scale:[1.5f,1.5f,1.5f],right_rotation:[0.0f,0.0f,0.0f,1.0f]},shadow:true,see_through:true}
 

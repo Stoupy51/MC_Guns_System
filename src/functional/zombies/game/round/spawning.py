@@ -1,5 +1,4 @@
 """ Spawn pacing, proximity marker selection, activation boxes and the dog spawn portals. """
-# ruff: noqa: E501
 # Imports
 from stewbeet import Mem, write_versioned_function
 

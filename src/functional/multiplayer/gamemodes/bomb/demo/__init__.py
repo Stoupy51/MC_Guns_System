@@ -92,7 +92,7 @@ scoreboard players operation #mp_timer {ns}.data = #demo_timer {ns}.data
 execute if score #mp_timer {ns}.data matches ..0 run scoreboard players set #mp_timer {ns}.data 0
 
 # Remind the armed side what they are holding
-title @a[tag={ns}.demo_atk,gamemode=!spectator] actionbar [{{"text":"💣 You are carrying a bomb — plant at a site","color":"gold"}}]
+title @a[tag={ns}.demo_atk,gamemode=!spectator] actionbar [{{"text":"💣 ","color":"white"}},{{"text":"You are carrying a bomb — plant at a site","color":"gold"}}]
 """)
 
 		## Demolition Kill Hook: no team scoring from kills, only round wins

@@ -1,5 +1,4 @@
 """ The generic ammo-in-lore rewriter, instantiated once per item kind. """
-# ruff: noqa: E501
 # Imports
 from stewbeet import Mem, write_versioned_function
 

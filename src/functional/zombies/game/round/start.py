@@ -1,5 +1,4 @@
 """ Starting a round and the zombie/dog count curves that size it. """
-# ruff: noqa: E501
 # Imports
 from stewbeet import Mem, write_versioned_function
 

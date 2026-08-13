@@ -1,5 +1,4 @@
 """ The real in-game models shown next to the markers while editing. """
-# ruff: noqa: E501
 # Imports
 from stewbeet import Mem, write_versioned_function
 

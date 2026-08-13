@@ -1,10 +1,15 @@
 """ The downed tick: crawling, the single mannequin pass and solo Quick Revive. """
-# ruff: noqa: E501
 # Imports
 from stewbeet import Mem, write_versioned_function
 
 from ....helpers import MGS_TAG
-from .shared import CRAWL_SPEED, SOLO_QR_MAX, SOLO_QR_TICKS, revive_body_detect, revive_body_progress
+from .shared import (
+	CRAWL_SPEED,
+	SOLO_QR_MAX,
+	SOLO_QR_TICKS,
+	revive_body_detect,
+	revive_body_progress,
+)
 
 
 # Functions
@@ -68,7 +73,7 @@ execute if score #zb_reviving {ns}.data matches ..1 run scoreboard players opera
 execute if score #zb_reviving {ns}.data matches ..1 run scoreboard players operation #rv_disp_tenth {ns}.data = @s {ns}.zb.bleed
 execute if score #zb_reviving {ns}.data matches ..1 run scoreboard players operation #rv_disp_tenth {ns}.data %= #20 {ns}.data
 execute if score #zb_reviving {ns}.data matches ..1 run scoreboard players operation #rv_disp_tenth {ns}.data /= #2 {ns}.data
-execute if score #zb_reviving {ns}.data matches ..1 run data modify storage smithed.actionbar:input message set value {{json:[{{"text":"☠ Bleeding out: ","color":"red"}},{{"score":{{"name":"#rv_disp_sec","objective":"{ns}.data"}},"color":"gray"}},{{"text":".","color":"gray"}},{{"score":{{"name":"#rv_disp_tenth","objective":"{ns}.data"}},"color":"gray"}},{{"text":"s","color":"dark_gray"}}],priority:"override",freeze:2}}
+execute if score #zb_reviving {ns}.data matches ..1 run data modify storage smithed.actionbar:input message set value {{json:[{{"text":"☠ ","color":"white"}},{{"text":"Bleeding out: ","color":"red"}},{{"score":{{"name":"#rv_disp_sec","objective":"{ns}.data"}},"color":"gray"}},{{"text":".","color":"gray"}},{{"score":{{"name":"#rv_disp_tenth","objective":"{ns}.data"}},"color":"gray"}},{{"text":"s","color":"dark_gray"}}],priority:"override",freeze:2}}
 execute if score #zb_reviving {ns}.data matches ..1 run function #smithed.actionbar:message
 
 {revive_body_progress(f"{ns}:v{version}/zombies/revive/revive_complete")}
@@ -130,7 +135,7 @@ scoreboard players operation #rv_qr_sec {ns}.data /= #20 {ns}.data
 scoreboard players operation #rv_qr_tenth {ns}.data = @s {ns}.zb.revive_p
 scoreboard players operation #rv_qr_tenth {ns}.data %= #20 {ns}.data
 scoreboard players operation #rv_qr_tenth {ns}.data /= #2 {ns}.data
-data modify storage smithed.actionbar:input message set value {{json:[{{"text":"⚡ Solo Quick Revive: ","color":"aqua"}},{{"score":{{"name":"#rv_qr_sec","objective":"{ns}.data"}},"color":"green"}},{{"text":".","color":"green"}},{{"score":{{"name":"#rv_qr_tenth","objective":"{ns}.data"}},"color":"green"}},{{"text":"s / {SOLO_QR_TICKS // 20}.{(SOLO_QR_TICKS % 20) // 2}s","color":"gray"}}],priority:"override",freeze:2}}
+data modify storage smithed.actionbar:input message set value {{json:[{{"text":"⚡ ","color":"white"}},{{"text":"Solo Quick Revive: ","color":"aqua"}},{{"score":{{"name":"#rv_qr_sec","objective":"{ns}.data"}},"color":"green"}},{{"text":".","color":"green"}},{{"score":{{"name":"#rv_qr_tenth","objective":"{ns}.data"}},"color":"green"}},{{"text":"s / {SOLO_QR_TICKS // 20}.{(SOLO_QR_TICKS % 20) // 2}s","color":"gray"}}],priority:"override",freeze:2}}
 function #smithed.actionbar:message
 
 # Auto-revive once threshold reached

@@ -2,7 +2,13 @@
 # Imports
 from stewbeet import JsonDict
 
-from ..casings import CASING_9X18MM, CASING_9X19MM, CASING_32ACP, CASING_45ACP, CASING_50AE
+from ..casings import (
+	CASING_9X18MM,
+	CASING_9X19MM,
+	CASING_32ACP,
+	CASING_45ACP,
+	CASING_50AE,
+)
 from ..keys import (
 	ACCURACY_BASE,
 	ACCURACY_JUMP,

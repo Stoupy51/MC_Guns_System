@@ -42,7 +42,7 @@ execute unless score @s {ns}.special.infinite_ammo matches 1.. run item modify e
 
 # Set remaining_bullets to 2 so ammo/decrease (which runs after) reduces it to 1 for the next throw
 scoreboard players set @s {ns}.{REMAINING_BULLETS} 2
-""")  # noqa: E501
+""")
 
 	## Summon loop (supports pellet_count for multiple grenades)
 	write_versioned_function("grenade/summon_loop", f"""

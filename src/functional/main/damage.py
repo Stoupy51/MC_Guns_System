@@ -1,6 +1,13 @@
 """ The bullet damage type, its signal function tags and the shared damage handoff. """
 # Imports
-from stewbeet import DamageType, LootTable, Mem, set_json_encoder, write_tag, write_versioned_function
+from stewbeet import (
+	DamageType,
+	LootTable,
+	Mem,
+	set_json_encoder,
+	write_tag,
+	write_versioned_function,
+)
 
 from ...config.blocks import main as write_block_tags
 

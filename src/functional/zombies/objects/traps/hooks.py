@@ -1,5 +1,4 @@
 """ Hover feedback and the game tick / preload hooks. """
-# ruff: noqa: E501
 # Imports
 from stewbeet import Mem, write_versioned_function
 
@@ -13,10 +12,13 @@ def write_trap_hooks() -> None:
 	write_versioned_function("zombies/traps/on_hover", f"""
 execute store result score #trap_price {ns}.data run scoreboard players get @n[tag=bs.interaction.target] {ns}.zb.trap.price
 execute store result score #trap_type {ns}.data run scoreboard players get @n[tag=bs.interaction.target] {ns}.zb.trap.type
-data modify storage smithed.actionbar:input message set value {{json:[{{"text":"⚠ Trap","color":"red"}},{{"text":" - Cost: ","color":"gray"}},{{"score":{{"name":"#trap_price","objective":"{ns}.data"}},"color":"yellow"}},{{"text":" points","color":"gray"}}],priority:"conditional",freeze:5}}
-execute if score #trap_type {ns}.data matches 0 run data modify storage smithed.actionbar:input message.json[0] set value {{"text":"🔥 Fire Trap","color":"red"}}
-execute if score #trap_type {ns}.data matches 1 run data modify storage smithed.actionbar:input message.json[0] set value {{"text":"⚡ Electric Trap","color":"aqua"}}
-execute if score #trap_type {ns}.data matches 2 run data modify storage smithed.actionbar:input message.json[0] set value {{"text":"🔫 Turret Trap","color":"gold"}}
+
+# json[0] is a nested list so the per-type overwrites below still swap emoji AND name in one write.
+# Its neutral "" head keeps the emoji white without tinting the siblings, which carry their own colors.
+data modify storage smithed.actionbar:input message set value {{json:[["",{{"text":"⚠ ","color":"white"}},{{"text":"Trap","color":"red"}}],{{"text":" - Cost: ","color":"gray"}},{{"score":{{"name":"#trap_price","objective":"{ns}.data"}},"color":"yellow"}},{{"text":" points","color":"gray"}}],priority:"conditional",freeze:5}}
+execute if score #trap_type {ns}.data matches 0 run data modify storage smithed.actionbar:input message.json[0] set value ["",{{"text":"🔥 ","color":"white"}},{{"text":"Fire Trap","color":"red"}}]
+execute if score #trap_type {ns}.data matches 1 run data modify storage smithed.actionbar:input message.json[0] set value ["",{{"text":"⚡ ","color":"white"}},{{"text":"Electric Trap","color":"aqua"}}]
+execute if score #trap_type {ns}.data matches 2 run data modify storage smithed.actionbar:input message.json[0] set value ["",{{"text":"🔫 ","color":"white"}},{{"text":"Turret Trap","color":"gold"}}]
 function #smithed.actionbar:message
 """)
 

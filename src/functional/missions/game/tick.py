@@ -1,5 +1,4 @@
 """ The game tick, the compass pointing at the nearest enemy and the victory check. """
-# ruff: noqa: E501
 # Imports
 from stewbeet import Mem, write_tick_file, write_versioned_function
 

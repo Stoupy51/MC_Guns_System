@@ -1,5 +1,4 @@
 """ Starting a game: map preload, the prep phase and the handoff to round 1. """
-# ruff: noqa: E501
 # Imports
 from stewbeet import Mem, write_versioned_function
 

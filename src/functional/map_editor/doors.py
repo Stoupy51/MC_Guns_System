@@ -1,5 +1,4 @@
 """ Propagating a field to every door sharing a link id. """
-# ruff: noqa: E501
 # Imports
 from stewbeet import Mem, write_versioned_function
 

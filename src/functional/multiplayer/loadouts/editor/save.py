@@ -1,11 +1,16 @@
 """ Building the loadout entry from the editor state and writing it back to storage. """
-# ruff: noqa: E501
 # Imports
 from stewbeet import Mem, write_load_file, write_versioned_function
 
 from ....helpers import MGS_TAG
 from ...classes import MultiplayerClasses
-from ..catalogs import GRENADE_TYPES, PICK10_TOTAL, PRIMARY_WEAPONS, SECONDARY_WEAPONS, TRIG_SAVE_PUBLIC
+from ..catalogs import (
+	GRENADE_TYPES,
+	PICK10_TOTAL,
+	PRIMARY_WEAPONS,
+	SECONDARY_WEAPONS,
+	TRIG_SAVE_PUBLIC,
+)
 from .shared import editor_fn
 
 

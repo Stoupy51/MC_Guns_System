@@ -1,5 +1,4 @@
 """ Starting a pull: the guards, the weighted roll and the rerolls that skip owned guns. """
-# ruff: noqa: E501
 # Imports
 from stewbeet import Mem, write_versioned_function
 

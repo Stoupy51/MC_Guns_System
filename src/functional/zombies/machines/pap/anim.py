@@ -1,5 +1,4 @@
 """ The machine animation: the weapon goes in, is processed, comes out and retreats. """
-# ruff: noqa: E501
 # Imports
 from stewbeet import Mem, write_versioned_function
 

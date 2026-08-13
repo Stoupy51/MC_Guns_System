@@ -57,14 +57,14 @@ function #{ns}:zombies/on_new_perk
 
 # Sound
 {ZombiesFeedback.zb_sound('success')}
-""")  # noqa: E501
+""")
 
 	write_versioned_function("zombies/perks/lookup_perk", f"""
 $data modify storage {ns}:temp _pk_data set from storage {ns}:zombies perk_data."$(id)"
 """)
 
 	hover_name_lines: str = "\n".join(
-		f'execute unless data storage {ns}:temp _pk_data.name if data storage {ns}:temp _pk_data{{perk_id:"{perk_id}"}} run data modify storage {ns}:temp _pk_hover_name set value "{perk_data.display_name}"'  # noqa: E501
+		f'execute unless data storage {ns}:temp _pk_data.name if data storage {ns}:temp _pk_data{{perk_id:"{perk_id}"}} run data modify storage {ns}:temp _pk_hover_name set value "{perk_data.display_name}"'
 		for perk_id, perk_data in PERK_DEFINITIONS.items()
 	)
 	write_versioned_function("zombies/perks/get_hover_name", f"""
@@ -104,7 +104,7 @@ $scoreboard players operation @s {ns}.zb.perkpaid.$(perk_id) = #pk_paid {ns}.dat
 	## Chip-in payment that didn't finish the perk (@s = paying player, _pk_data = the machine's perk)
 	write_versioned_function("zombies/perks/announce_progress", f"""
 function {ns}:v{version}/zombies/perks/get_hover_name
-tellraw @s [{MGS_TAG},{{"text":"🥤 ","color":"dark_purple"}},{{"storage":"{ns}:temp","nbt":"_pk_hover_name","color":"light_purple","interpret":true}},{{"text":": ","color":"gray"}},{{"score":{{"name":"#pk_paid","objective":"{ns}.data"}},"color":"green"}},{{"text":"/","color":"gray"}},{{"score":{{"name":"#pk_total","objective":"{ns}.data"}},"color":"yellow"}},{{"text":" points paid","color":"gray"}}]
+tellraw @s [{MGS_TAG},{{"text":"🥤 ","color":"white"}},{{"storage":"{ns}:temp","nbt":"_pk_hover_name","color":"light_purple","interpret":true}},{{"text":": ","color":"gray"}},{{"score":{{"name":"#pk_paid","objective":"{ns}.data"}},"color":"green"}},{{"text":"/","color":"gray"}},{{"score":{{"name":"#pk_total","objective":"{ns}.data"}},"color":"yellow"}},{{"text":" points paid","color":"gray"}}]
 {ZombiesFeedback.zb_sound('refill')}
-""")  # noqa: E501
+""")
 

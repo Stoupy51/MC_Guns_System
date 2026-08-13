@@ -3,7 +3,6 @@
 Horde ambience used to live here; it moved to enemies/vocals.py when it grew the rest of the Black Ops 2
 vocal channels (attack, sprint, death), which are one feature rather than an ambience footnote.
 """
-# ruff: noqa: E501
 # Imports
 from stewbeet import Mem, write_function, write_versioned_function
 

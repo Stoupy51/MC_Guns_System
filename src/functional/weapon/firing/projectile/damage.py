@@ -122,7 +122,7 @@ execute if score #is_new_kill {ns}.data matches 1 as @n[tag={ns}.temp_shooter] r
 
 # Remove temporary tag
 tag @n[tag={ns}.temp_shooter] remove {ns}.ticking
-""")  # noqa: E501
+""")
 
 	## Delete projectile
 	write_versioned_function("projectile/delete", f"""

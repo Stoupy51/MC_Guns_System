@@ -1,5 +1,4 @@
 """ The detailed upgrade summary printed in chat, one lore line at a time. """
-# ruff: noqa: E501
 # Imports
 from stewbeet import Mem, write_versioned_function
 

@@ -14,7 +14,6 @@ The loop is also inverted compared to S&D: sites on the outside, players on the 
 channel rate structurally one-per-site (a single `+=` per marker, whatever the crowd standing on it) and
 it is cheaper — two markers to walk instead of every player.
 """
-# ruff: noqa: E501
 # Imports
 from .....helpers import MGS_TAG
 from .....progression import EARNER_TAG, Xp
@@ -188,7 +187,7 @@ function {ns}:v{version}/multiplayer/gamemodes/demo/set_site_hud with storage {n
 
 		## @s = the planted site, at it — so the label is found by proximity rather than by a global tag
 		variant.sub("set_site_hud", f"""
-$data modify entity @n[tag={ns}.demo_bomb_hud,distance=..2] text set value [{{"text":"💣 ","color":"red","bold":true}},{{"text":"$(sec)s","color":"white"}}]
+$data modify entity @n[tag={ns}.demo_bomb_hud,distance=..2] text set value [{{"text":"💣 ","color":"white"}},{{"text":"$(sec)s","color":"white","bold":true}}]
 """)
 
 		## The site blows up (@s = the site, at it).
@@ -216,14 +215,14 @@ kill @e[tag={ns}.demo_bomb_vis,distance=..2]
 kill @e[tag={ns}.demo_bomb_hud,distance=..2]
 setblock ~ ~ ~ air
 summon minecraft:block_display ~ ~ ~ {{Tags:["{ns}.demo_rubble","{ns}.gm_entity"],block_state:{{Name:"minecraft:polished_blackstone"}},transformation:{{translation:[-0.3f,0.0f,-0.3f],left_rotation:[0.0f,0.0f,0.0f,1.0f],scale:[0.6f,0.2f,0.6f],right_rotation:[0.0f,0.0f,0.0f,1.0f]}}}}
-summon minecraft:text_display ~ ~ ~ {{Tags:["{ns}.demo_wreck","{ns}.gm_entity"],billboard:"vertical",text:[{{"text":"💥 DESTROYED","color":"dark_gray"}}],transformation:{{translation:[0.0f,1.4f,0.0f],left_rotation:[0.0f,0.0f,0.0f,1.0f],scale:[1.5f,1.5f,1.5f],right_rotation:[0.0f,0.0f,0.0f,1.0f]}},shadow:true,see_through:true}}
+summon minecraft:text_display ~ ~ ~ {{Tags:["{ns}.demo_wreck","{ns}.gm_entity"],billboard:"vertical",text:[{{"text":"💥 ","color":"white"}},{{"text":"DESTROYED","color":"dark_gray"}}],transformation:{{translation:[0.0f,1.4f,0.0f],left_rotation:[0.0f,0.0f,0.0f,1.0f],scale:[1.5f,1.5f,1.5f],right_rotation:[0.0f,0.0f,0.0f,1.0f]}},shadow:true,see_through:true}}
 
 {BombVisuals.announce_site_lines(variant, "BOMB SITE {letter} DESTROYED!", xp_key="site_destroyed")}
 tag @a remove {ns}.{EARNER_TAG}
 
 # Destroying a site buys time to reach the other one
 scoreboard players add #demo_timer {ns}.data {TIME_BONUS}
-tellraw @a [{MGS_TAG},"⏱ ",{{"text":"+{TIME_BONUS // 20}s on the clock","color":"gold"}}]
+tellraw @a [{MGS_TAG},{{"text":"⏱ ","color":"white"}},{{"text":"+{TIME_BONUS // 20}s on the clock","color":"gold"}}]
 
 # The attackers only win once nothing is left standing, in the decider as in any other round
 execute unless entity @e[tag={ns}.demo_obj,scores={{{ns}.demo_state=..1}}] run function {ns}:v{version}/multiplayer/gamemodes/demo/attackers_win

@@ -1,5 +1,4 @@
 """ Buying from a wall: guns, knives, lethals and tacticals, each with its own guards. """
-# ruff: noqa: E501
 # Imports
 from stewbeet import Mem, write_versioned_function
 

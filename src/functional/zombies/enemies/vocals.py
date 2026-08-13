@@ -10,7 +10,6 @@ would let a wall of death groans starve the scream that tells you a sprinter is 
 timestamps compared against #total_tick, so no per-tick decrement is needed and an unset score reads as
 "ready".
 """
-# ruff: noqa: E501
 # Imports
 from stewbeet import Mem, write_versioned_function
 

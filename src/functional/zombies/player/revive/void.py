@@ -1,5 +1,4 @@
 """ Falling out of the world, and the Who's Who / solo QR saves for it. """
-# ruff: noqa: E501
 # Imports
 from stewbeet import Mem, write_versioned_function
 

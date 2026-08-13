@@ -1,5 +1,4 @@
 """ Shared respawn countdown lines, reused by every mode's respawn flow. """
-pass
 
 # Functions
 def respawn_countdown_tick_lines(ns: str, mode_prefix: str, actual_respawn_function: str) -> str:

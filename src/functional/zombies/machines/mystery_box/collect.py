@@ -1,5 +1,4 @@
 """ Collecting a result, naming the weapon that was given and resetting the box. """
-# ruff: noqa: E501
 # Imports
 from stewbeet import Mem, write_versioned_function
 

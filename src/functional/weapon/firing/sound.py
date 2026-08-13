@@ -1,5 +1,4 @@
 """ Advanced weapon audio: per-weapon fire sounds plus distance-based acoustics. """
-# ruff: noqa: E501
 
 # Imports
 from stewbeet import Mem, write_versioned_function

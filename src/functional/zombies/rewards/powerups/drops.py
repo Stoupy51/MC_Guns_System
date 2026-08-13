@@ -1,6 +1,12 @@
 """ The per-kill drop roll, the loot table behind it and the shuffle bag that picks a type. """
 # Imports
-from stewbeet import LootTable, Mem, set_json_encoder, write_load_file, write_versioned_function
+from stewbeet import (
+	LootTable,
+	Mem,
+	set_json_encoder,
+	write_load_file,
+	write_versioned_function,
+)
 
 from .types import POWERUP_TYPES
 

@@ -81,7 +81,7 @@ scoreboard players add #hp_zone_idx {ns}.data 1
 
 function {ns}:v{version}/multiplayer/gamemodes/hp/summon_marker with storage {ns}:temp _hp_pos
 
-tellraw @a [{MGS_TAG},"⚡ ",{{"text":"Hardpoint ","color":"dark_purple"}},{{"storage":"{ns}:temp","nbt":"_hp_pos.label","color":"yellow","interpret":true}},{{"text":" active!","color":"dark_purple"}}]
+tellraw @a [{MGS_TAG},{{"text":"⚡ ","color":"white"}},{{"text":"Hardpoint ","color":"dark_purple"}},{{"storage":"{ns}:temp","nbt":"_hp_pos.label","color":"yellow","interpret":true}},{{"text":" active!","color":"dark_purple"}}]
 playsound minecraft:block.note_block.chime player @a ~ ~ ~ 1 1.0
 """)
 
@@ -89,7 +89,7 @@ playsound minecraft:block.note_block.chime player @a ~ ~ ~ 1 1.0
 		self.sub("summon_marker", f"""
 $summon minecraft:marker $(x) $(y) $(z) {{Tags:["{ns}.hp_marker","{ns}.gm_entity"]}}
 $summon minecraft:text_display $(x) $(y) $(z) {{Tags:["{ns}.hp_label","{ns}.gm_entity","{ns}.hp_$(label)"],billboard:"vertical",text:{{"text":"$(label)","color":"dark_purple","bold":true}},transformation:{{translation:[0.0f,2.0f,0.0f],left_rotation:[0.0f,0.0f,0.0f,1.0f],scale:[3.0f,3.0f,3.0f],right_rotation:[0.0f,0.0f,0.0f,1.0f]}},shadow:true,see_through:true}}
-""")  # noqa: E501
+""")
 
 		## HP Tick: Zone particles, scoring, rotation
 		self.sub("tick", f"""
@@ -136,7 +136,7 @@ execute if score #hp_score_timer {ns}.data matches ..0 run scoreboard players se
 		due: str = f"if score #hp_xp_hold {ns}.data matches ..0"
 		capture_lines: str = "\n".join(
 			f'execute {alone[team]} {uncaptured} run tellraw {who} '
-			f'[{MGS_TAG},"🎯 ",{{"text":"Hardpoint captured!","color":"gold"}}{suffix}]'
+			f'[{MGS_TAG},{{"text":"🎯 ","color":"white"}},{{"text":"Hardpoint captured!","color":"gold"}}{suffix}]'
 			for team in alone
 			for who, suffix in (
 				(f"@a[tag=!{ns}.in_hp_zone]", ""),

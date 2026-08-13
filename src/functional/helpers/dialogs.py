@@ -3,7 +3,13 @@
 import json
 from typing import Any
 
-from stewbeet import Dialog, Mem, TextComponent, set_json_encoder, write_versioned_function
+from stewbeet import (
+	Dialog,
+	Mem,
+	TextComponent,
+	set_json_encoder,
+	write_versioned_function,
+)
 from stouputils.typing import JsonDict
 
 from .text import Text

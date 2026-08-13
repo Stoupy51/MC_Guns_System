@@ -1,5 +1,4 @@
 """ The turret trap: target selection, line of sight, aiming and its bullet. """
-# ruff: noqa: E501
 # Imports
 from stewbeet import Mem, write_versioned_function
 

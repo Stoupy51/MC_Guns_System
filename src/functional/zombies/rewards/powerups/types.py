@@ -1,5 +1,4 @@
 """ The power-up registry: what each one looks like, how long it lasts and how it sounds. """
-# ruff: noqa: E501
 # Imports
 from dataclasses import dataclass
 

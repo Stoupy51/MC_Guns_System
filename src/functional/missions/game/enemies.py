@@ -1,5 +1,4 @@
 """ The backup death watch that drops an enemy's weapon. """
-# ruff: noqa: E501
 # Imports
 from stewbeet import Mem, write_versioned_function
 

@@ -1,7 +1,12 @@
 """ Tagging an item with its slot, and putting anything found in the wrong one back. """
-# ruff: noqa: E501
 # Imports
-from stewbeet import ItemModifier, JsonDict, Mem, set_json_encoder, write_versioned_function
+from stewbeet import (
+	ItemModifier,
+	JsonDict,
+	Mem,
+	set_json_encoder,
+	write_versioned_function,
+)
 
 from .....config.stats.items import ItemBuilder
 from .....config.stats.keys import CAPACITY, REMAINING_BULLETS

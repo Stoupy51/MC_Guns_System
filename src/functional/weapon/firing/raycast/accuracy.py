@@ -2,7 +2,13 @@
 # Imports
 from stewbeet import Mem, write_versioned_function
 
-from .....config.stats.keys import ACCURACY_BASE, ACCURACY_JUMP, ACCURACY_SNEAK, ACCURACY_SPRINT, ACCURACY_WALK
+from .....config.stats.keys import (
+	ACCURACY_BASE,
+	ACCURACY_JUMP,
+	ACCURACY_SNEAK,
+	ACCURACY_SPRINT,
+	ACCURACY_WALK,
+)
 
 
 # Functions

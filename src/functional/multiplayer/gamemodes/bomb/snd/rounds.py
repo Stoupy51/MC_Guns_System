@@ -136,7 +136,7 @@ execute if score #blue {ns}.mp.team >= #snd_win_threshold {ns}.data run return r
 scoreboard players add #snd_round {ns}.data 1
 execute if score #snd_round {ns}.data matches {HALFTIME_ROUND} if score #snd_attackers {ns}.data matches 1 run scoreboard players set #snd_attackers {ns}.data 2
 execute if score #snd_round {ns}.data matches {HALFTIME_ROUND} if score #snd_attackers {ns}.data matches 2 run scoreboard players set #snd_attackers {ns}.data 1
-execute if score #snd_round {ns}.data matches {HALFTIME_ROUND} run tellraw @a [{MGS_TAG},"⚔ ",{{"text":"Sides swapped!","color":"gold"}}]
+execute if score #snd_round {ns}.data matches {HALFTIME_ROUND} run tellraw @a [{MGS_TAG},{{"text":"⚔ ","color":"white"}},{{"text":"Sides swapped!","color":"gold"}}]
 execute if score #snd_round {ns}.data matches {HALFTIME_ROUND} run playsound minecraft:block.note_block.xylophone player @a ~ ~ ~ 1 1.0
 # Start next round (delay 3 seconds = 60 ticks via schedule)
 schedule function {ns}:v{version}/multiplayer/gamemodes/snd/start_round 60t

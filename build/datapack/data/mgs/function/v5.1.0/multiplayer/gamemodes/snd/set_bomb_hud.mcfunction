@@ -6,5 +6,5 @@
 # @args		sec (unknown)
 #
 
-$data modify entity @e[tag=mgs.snd_bomb_hud,limit=1] text set value [{"text":"💣 ","color":"red","bold":true},{"text":"$(sec)s","color":"white"}]
+$data modify entity @e[tag=mgs.snd_bomb_hud,limit=1] text set value [{"text":"💣 ","color":"white"},{"text":"$(sec)s","color":"white","bold":true}]
 

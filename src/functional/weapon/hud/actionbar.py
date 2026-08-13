@@ -90,7 +90,7 @@ execute if score #has_auto {ns}.data matches 1 unless data storage {ns}:gun all.
 
 # Add closing bracket
 data modify storage {ns}:temp actionbar.list append value {{"text":" ] ","color":"#{END_HEX}"}}
-""")  # noqa: E501
+""")
 
 	# Add numeric ammo display (for capacity > 15): shows "remaining | reserve"
 	write_versioned_function("actionbar/add_numeric_ammo", f"""

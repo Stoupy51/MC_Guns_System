@@ -1,5 +1,4 @@
 """ The rise animation, the death intercept and the spawn batch tick. """
-# ruff: noqa: E501
 # Imports
 from stewbeet import Mem, write_versioned_function
 

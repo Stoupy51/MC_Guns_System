@@ -3,7 +3,14 @@
 from stewbeet import Mem, write_versioned_function
 
 from ....helpers import MGS_TAG
-from ..catalogs import COST_PERK, MAX_PERKS, PERKS, PICK10_TOTAL, TRIG_HUB, TRIG_PERK_BASE
+from ..catalogs import (
+	COST_PERK,
+	MAX_PERKS,
+	PERKS,
+	PICK10_TOTAL,
+	TRIG_HUB,
+	TRIG_PERK_BASE,
+)
 from .shared import editor_fn
 
 

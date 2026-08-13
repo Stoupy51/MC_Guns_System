@@ -69,7 +69,7 @@ execute as @n[tag=mgs.new_zb_marker] run data modify entity @s Rotation[0] set f
 
 # For doors: capture block from player's offhand (required)
 execute if entity @s[tag=mgs.element.door] as @p[tag=mgs.map_editor,distance=..6,sort=nearest] run data modify storage mgs:temp _zb_offhand_block set from entity @s equipment.offhand.id
-execute if entity @s[tag=mgs.element.door] unless data storage mgs:temp _zb_offhand_block run tellraw @a[tag=mgs.map_editor] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],"⚠ ",{"translate":"mgs.door_cancelled_hold_a_block_in_offhand","color":"red"}]
+execute if entity @s[tag=mgs.element.door] unless data storage mgs:temp _zb_offhand_block run tellraw @a[tag=mgs.map_editor] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"text":"⚠ ","color":"white"},{"translate":"mgs.door_cancelled_hold_a_block_in_offhand","color":"red"}]
 execute if entity @s[tag=mgs.element.door] unless data storage mgs:temp _zb_offhand_block run kill @e[tag=mgs.new_zb_marker]
 execute if entity @s[tag=mgs.element.door] unless data storage mgs:temp _zb_offhand_block run return fail
 execute if entity @s[tag=mgs.element.door] as @n[tag=mgs.new_zb_marker] run data modify entity @s data.block set from storage mgs:temp _zb_offhand_block

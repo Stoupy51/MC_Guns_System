@@ -1,10 +1,14 @@
 """ Finding a magazine in the inventory and spending it, whole or partially. """
-# ruff: noqa: E501
 # Imports
 from stewbeet import Mem, write_versioned_function
 
 from .....config.stats.items import ItemBuilder
-from .....config.stats.keys import BASE_WEAPON, CAPACITY, REMAINING_BULLETS, SINGLE_RELOAD
+from .....config.stats.keys import (
+	BASE_WEAPON,
+	CAPACITY,
+	REMAINING_BULLETS,
+	SINGLE_RELOAD,
+)
 
 
 # Functions

@@ -1,7 +1,13 @@
 """ Trap scoreboards, the turret id predicate and summoning each trap's entities. """
-# ruff: noqa: E501
 # Imports
-from stewbeet import JsonDict, Mem, Predicate, set_json_encoder, write_load_file, write_versioned_function
+from stewbeet import (
+	JsonDict,
+	Mem,
+	Predicate,
+	set_json_encoder,
+	write_load_file,
+	write_versioned_function,
+)
 
 
 # Functions

@@ -5,7 +5,6 @@ The Mystery Box (mystery_box.py) and Der Wunderfizz (wunderfizz.py) each keep th
 animation but share the teddy-bear head loot table, the ±512 interaction hide/show trick, and the
 "should this use move the box?" roll. Grayed-out disabled models live in src/database/items.py.
 """
-# ruff: noqa: E501
 # Imports
 from stewbeet import LootTable, Mem, set_json_encoder, write_versioned_function
 

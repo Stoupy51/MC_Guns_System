@@ -1,5 +1,4 @@
 """ The unguarded upgrade core, the free power-up upgrade and the free re-roll at max level. """
-# ruff: noqa: E501
 # Imports
 from stewbeet import Mem, write_versioned_function
 

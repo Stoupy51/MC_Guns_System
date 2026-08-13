@@ -1,11 +1,16 @@
 """ Each power-up's effect: timed buffs, Nuke, Carpenter, Random Perk and the sales. """
-# ruff: noqa: E501
 # Imports
 from stewbeet import Mem, write_versioned_function
 
 from ....helpers import MGS_TAG
 from ....helpers.text import Text
-from .types import BONFIRE_SALE_DURATION, FIRE_SALE_DURATION, TIMED_POWERUPS, pu_activate_sound, pu_snd
+from .types import (
+	BONFIRE_SALE_DURATION,
+	FIRE_SALE_DURATION,
+	TIMED_POWERUPS,
+	pu_activate_sound,
+	pu_snd,
+)
 
 
 # Functions

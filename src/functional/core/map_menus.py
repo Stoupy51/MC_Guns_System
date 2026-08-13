@@ -30,5 +30,5 @@ execute if data storage {ns}:temp _map_iter[0] run function {ns}:v{version}/shar
 		## Map select entry (macro: mode, id, name, description) Appends a dialog action button that selects this map (run as the clicking player).
 		write_versioned_function("shared/maps/select_entry", f"""
 $data modify storage {ns}:temp dialog.actions append value {{label:{{text:"$(name)",color:"green"}},tooltip:{{text:"$(description)"}},action:{{type:"run_command",command:"/data modify storage {ns}:$(mode) game.map_id set value \\"$(id)\\""}}}}
-""")  # noqa: E501
+""")
 

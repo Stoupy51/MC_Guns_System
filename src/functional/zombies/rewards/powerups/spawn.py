@@ -1,5 +1,4 @@
 """ Turning the dropped item into the managed display, and its lifetime and blink. """
-# ruff: noqa: E501
 # Imports
 from stewbeet import Mem, write_versioned_function
 

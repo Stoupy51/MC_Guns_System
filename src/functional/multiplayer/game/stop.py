@@ -1,5 +1,4 @@
 """ Ending a game and the ranked end-of-match stats. """
-# ruff: noqa: E501
 # Imports
 from stewbeet import Mem, write_versioned_function
 

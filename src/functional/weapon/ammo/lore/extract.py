@@ -2,7 +2,20 @@
 # Imports
 from stewbeet import Mem, write_versioned_function
 
-from .....config.stats.keys import CAPACITY, COOLDOWN, DAMAGE, DECAY, EXPLOSION_DAMAGE, EXPLOSION_RADIUS, GRENADE_FUSE, GRENADE_TYPE, PELLET_COUNT, RELOAD_TIME, REMAINING_BULLETS, SWITCH
+from .....config.stats.keys import (
+	CAPACITY,
+	COOLDOWN,
+	DAMAGE,
+	DECAY,
+	EXPLOSION_DAMAGE,
+	EXPLOSION_RADIUS,
+	GRENADE_FUSE,
+	GRENADE_TYPE,
+	PELLET_COUNT,
+	RELOAD_TIME,
+	REMAINING_BULLETS,
+	SWITCH,
+)
 
 
 # Functions

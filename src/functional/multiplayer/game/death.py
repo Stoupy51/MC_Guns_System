@@ -1,5 +1,4 @@
 """ Simulated death, the spectate flow, kill messages and win conditions. """
-# ruff: noqa: E501
 # Imports
 from stewbeet import Mem, write_versioned_function
 
@@ -155,7 +154,7 @@ execute if score #random_message {ns}.data matches 5 run tellraw @a[scores={{{ns
 		)
 		body += f',[" ",{{"text":"{tail}","color":"gray"}}]' if tail else ""
 		for hs, hs_check in ((True, "matches 1"), (False, "matches 0")):
-			marker: str = ',[" ",{"text":"💀 HEADSHOT","color":"red","bold":true}]' if hs else ""
+			marker: str = ',[" ",{"text":"💀 ","color":"white"},{"text":"HEADSHOT","color":"red","bold":true}]' if hs else ""
 			# A headshot kill is worth kill + headshot, and the killer's line says so
 			earned: int = MP_AWARDS["kill"].amount + (MP_AWARDS["headshot"].amount if hs else 0)
 			for who, xp in (

@@ -1,5 +1,4 @@
 """ Spawning a box per map position, hiding the dead ones and moving the active one. """
-# ruff: noqa: E501
 # Imports
 from stewbeet import Mem, write_versioned_function
 

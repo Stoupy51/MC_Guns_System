@@ -66,7 +66,7 @@ $execute positioned $(x) $(y) $(z) align xyz positioned ~.5 ~.5 ~.5 run summon m
 execute as @e[tag=_pw_new] run function #bs.interaction:on_right_click {{run:"function {ns}:v{version}/zombies/power/on_activate",executor:"source"}}
 execute as @e[tag=_pw_new] run function #bs.interaction:on_hover {{run:"function {ns}:v{version}/zombies/power/on_hover",executor:"source"}}
 tag @e[tag=_pw_new] remove _pw_new
-""")  # noqa: E501
+""")
 
 	## On right-click: activate power (runs as the clicking player)
 	write_versioned_function("zombies/power/on_activate", f"""
@@ -100,7 +100,7 @@ function {ns}:v{version}/shared/maps/call_script_at_base {{script:"power"}}
 
 	## Hover events (run as the player looking at the power switch)
 	write_versioned_function("zombies/power/on_hover", """
-data modify storage smithed.actionbar:input message set value {json:[{"text":"⚡ Power Switch","color":"yellow"}],priority:"conditional",freeze:5}
+data modify storage smithed.actionbar:input message set value {json:[{"text":"⚡ ","color":"white"},{"text":"Power Switch","color":"yellow"}],priority:"conditional",freeze:5}
 function #smithed.actionbar:message
 """)
 

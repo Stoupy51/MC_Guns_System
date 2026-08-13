@@ -1,5 +1,4 @@
 """ Placing the bought item and its magazine into the right slot. """
-# ruff: noqa: E501
 # Imports
 from stewbeet import Mem, write_versioned_function
 

@@ -3,7 +3,6 @@
 Both bomb modes put the same object on the same kind of site, so the entity trio and the per-letter chat
 announce live here rather than being typed twice with a drifting Y offset.
 """
-# ruff: noqa: E501
 # Imports
 from ....helpers import MGS_TAG
 from ....progression import EARNER_TAG, Xp
@@ -38,7 +37,7 @@ class BombVisuals:
 		"""
 		return f"""summon minecraft:marker ~ ~ ~ {{Tags:["{ns}.{marker_tag}","{ns}.gm_entity"]}}
 summon minecraft:block_display ~ ~ ~ {{Tags:["{ns}.{vis_tag}","{ns}.gm_entity"],block_state:{{Name:"minecraft:tnt"}},transformation:{{translation:[-0.25f,{TNT_LIFT}f,-0.25f],left_rotation:[0.0f,0.0f,0.0f,1.0f],scale:[0.5f,0.5f,0.5f],right_rotation:[0.0f,0.0f,0.0f,1.0f]}}}}
-summon minecraft:text_display ~ ~ ~ {{Tags:["{ns}.{hud_tag}","{ns}.gm_entity"],billboard:"vertical",text:[{{"text":"💣 {label}","color":"red","bold":true}}],transformation:{{translation:[0.0f,1.4f,0.0f],left_rotation:[0.0f,0.0f,0.0f,1.0f],scale:[1.5f,1.5f,1.5f],right_rotation:[0.0f,0.0f,0.0f,1.0f]}},shadow:true,see_through:true}}"""
+summon minecraft:text_display ~ ~ ~ {{Tags:["{ns}.{hud_tag}","{ns}.gm_entity"],billboard:"vertical",text:[{{"text":"💣 ","color":"white"}},{{"text":"{label}","color":"red","bold":true}}],transformation:{{translation:[0.0f,1.4f,0.0f],left_rotation:[0.0f,0.0f,0.0f,1.0f],scale:[1.5f,1.5f,1.5f],right_rotation:[0.0f,0.0f,0.0f,1.0f]}},shadow:true,see_through:true}}"""
 
 	@staticmethod
 	def announce_site_lines(variant: GameModeVariant, message: str, color: str = "red", xp_key: str = "") -> str:
@@ -66,7 +65,7 @@ summon minecraft:text_display ~ ~ ~ {{Tags:["{ns}.{hud_tag}","{ns}.gm_entity"],b
 		)
 		return "\n".join(
 			f'execute if entity @s[tag={ns}.{key}_site_{letter}] run tellraw {who} '
-			f'[{MGS_TAG},"💣 ",{{"text":"{message.format(letter=letter)}","color":"{color}","bold":true}}{suffix}]'
+			f'[{MGS_TAG},{{"text":"💣 ","color":"white"}},{{"text":"{message.format(letter=letter)}","color":"{color}","bold":true}}{suffix}]'
 			for letter in SITE_LETTERS
 			for who, suffix in audiences
 		)

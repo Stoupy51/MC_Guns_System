@@ -11,7 +11,7 @@ def write_wallbuy_hover() -> None:
 	version: str = Mem.ctx.project_version
 
 	wallbuy_hover_message: str = (
-		f'[{{"text":"🔫 ","color":"gold"}},'
+		f'[{{"text":"🔫 "}},'
 		f'{{"storage":"{ns}:temp","nbt":"_wb_display_name","color":"yellow","interpret":true}},'
 		f'{{"text":" - Cost: ","color":"gray"}},'
 		f'{{"score":{{"name":"#wb_price","objective":"{ns}.data"}},"color":"yellow"}},'

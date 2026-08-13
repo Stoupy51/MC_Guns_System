@@ -40,7 +40,7 @@ execute if score #map_load_found {ns}.data matches 1 run data modify storage {ns
 
 # Apply base_coordinates override if present
 execute if score #map_load_found {ns}.data matches 1 if data storage {ns}:temp map_load.override.base_coordinates run data modify storage {ns}:temp map_load.result.base_coordinates set from storage {ns}:temp map_load.override.base_coordinates
-""")  # noqa: E501
+""")
 
 		# Mode-specific wrappers for loading map from storage
 		for mode in ["multiplayer", "missions", "zombies"]:

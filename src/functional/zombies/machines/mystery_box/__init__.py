@@ -4,7 +4,6 @@ Dynamic weapon pool, visual animation with item cycling, random selection.
 
 Price: 950 points (configurable via #zb_mystery_box_price config) Pool can be extended via function tag #mgs:zombies/register_mystery_box_item Uses Bookshelf interaction module for click/hover detection.
 Positions use compound format: {pos:[x,y,z], rotation:[yaw,0.0f], group_id:N, can_start_on:1b} """
-# ruff: noqa: E501
 # Imports
 from .collect import write_mystery_box_collect
 from .fire_sale import write_fire_sale

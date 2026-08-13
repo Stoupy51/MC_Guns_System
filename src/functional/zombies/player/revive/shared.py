@@ -1,5 +1,4 @@
 """ Revive tuning constants and the mannequin upkeep blocks Who's Who reuses. """
-# ruff: noqa: E501
 # Imports
 from stewbeet import Mem
 

@@ -1,5 +1,4 @@
 """ Per-map zombies defaults and the field-by-field panel for one placed element. """
-# ruff: noqa: E501
 # Imports
 from stewbeet import Mem, write_versioned_function
 

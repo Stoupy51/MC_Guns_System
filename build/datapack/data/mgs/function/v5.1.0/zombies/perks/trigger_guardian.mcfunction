@@ -13,5 +13,5 @@ summon minecraft:iron_golem ~ ~ ~ {Tags:["mgs.guardian_golem","mgs.gm_entity"],P
 scoreboard players set @s mgs.zb.ability_cd 1
 
 # Announce
-title @s actionbar [[{"text":"🛡 ","color":"green"}, {"translate":"mgs.guardian_activated_iron_golem_summoned"}]]
+title @s actionbar [{"text":"🛡 ","color":"white"},{"translate":"mgs.guardian_activated_iron_golem_summoned","color":"green"}]
 

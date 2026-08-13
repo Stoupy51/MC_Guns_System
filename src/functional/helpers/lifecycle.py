@@ -33,7 +33,7 @@ execute unless data storage {ns}:{storage} game.map.respawn_commands if data sto
 execute unless data storage {ns}:{storage} game.map.respawn_commands[0] if data storage {ns}:{storage} game.map.respawn_command.command run data modify storage {ns}:{storage} game.map.respawn_commands append from storage {ns}:{storage} game.map.respawn_command
 execute unless data storage {ns}:{storage} game.map.respawn_commands run data modify storage {ns}:{storage} game.map.respawn_commands set value []
 execute unless data storage {ns}:{storage} game.map.start_commands run data modify storage {ns}:{storage} game.map.start_commands set value []
-""".strip()  # noqa: E501
+""".strip()
 
 	@staticmethod
 	def schedule_preload_complete_line(ns: str, mode: str) -> str:

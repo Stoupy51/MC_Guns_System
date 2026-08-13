@@ -1,5 +1,4 @@
 """ Rescuing unreachable zombies and keeping players inside the map bounds. """
-# ruff: noqa: E501
 # Imports
 from stewbeet import Mem, write_versioned_function
 

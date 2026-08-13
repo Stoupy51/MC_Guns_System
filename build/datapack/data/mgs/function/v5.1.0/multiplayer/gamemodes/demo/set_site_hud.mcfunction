@@ -8,5 +8,5 @@
 # @args		sec (unknown)
 #
 
-$data modify entity @n[tag=mgs.demo_bomb_hud,distance=..2] text set value [{"text":"💣 ","color":"red","bold":true},{"text":"$(sec)s","color":"white"}]
+$data modify entity @n[tag=mgs.demo_bomb_hud,distance=..2] text set value [{"text":"💣 ","color":"white"},{"text":"$(sec)s","color":"white","bold":true}]
 

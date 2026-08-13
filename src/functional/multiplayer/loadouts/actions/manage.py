@@ -1,5 +1,4 @@
 """ Public/private visibility, the default loadout and re-opening one in the editor. """
-# ruff: noqa: E501
 # Imports
 from stewbeet import Mem, write_versioned_function
 

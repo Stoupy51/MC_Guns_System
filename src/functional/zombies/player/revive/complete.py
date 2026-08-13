@@ -1,5 +1,4 @@
 """ Reviver feedback, completing a revive, bleeding out and hiding the body. """
-# ruff: noqa: E501
 # Imports
 from stewbeet import Mem, write_versioned_function
 
@@ -41,7 +40,7 @@ function #smithed.actionbar:message
 """)
 
 	write_versioned_function("zombies/revive/show_reviver_bar_quick", f"""
-data modify storage smithed.actionbar:input message set value {{json:[{{"text":"⚡ Reviving... ","color":"aqua"}},{{"score":{{"name":"#rv_rev_sec","objective":"{ns}.data"}},"color":"green"}},{{"text":".","color":"green"}},{{"score":{{"name":"#rv_rev_tenth","objective":"{ns}.data"}},"color":"green"}},{{"text":"s / {QUICK_REVIVE_TICKS // 20}.{(QUICK_REVIVE_TICKS % 20) // 2}s","color":"gray"}}],priority:"override",freeze:2}}
+data modify storage smithed.actionbar:input message set value {{json:[{{"text":"⚡ ","color":"white"}},{{"text":"Reviving... ","color":"aqua"}},{{"score":{{"name":"#rv_rev_sec","objective":"{ns}.data"}},"color":"green"}},{{"text":".","color":"green"}},{{"score":{{"name":"#rv_rev_tenth","objective":"{ns}.data"}},"color":"green"}},{{"text":"s / {QUICK_REVIVE_TICKS // 20}.{(QUICK_REVIVE_TICKS % 20) // 2}s","color":"gray"}}],priority:"override",freeze:2}}
 function #smithed.actionbar:message
 """)
 
