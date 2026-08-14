@@ -9,3 +9,6 @@ perf.html
 .refactor
 
 *.sfk
+
+# Per-machine Claude Code settings, the shared spec-kit skills stay tracked
+.claude/settings.local.json
