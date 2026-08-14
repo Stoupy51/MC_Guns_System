@@ -16,20 +16,22 @@ attribute modifier applied by the perk itself.
 from stewbeet import Mem, write_load_file, write_versioned_function
 
 # Constants
-STAM_MAX: int = 200
+STAM_MAX: int = 300
 """ Base full stamina; perks add stam_bonus on top. """
 STAM_DRAIN: int = 2
-""" Per tick while sprinting -> 5s, or 10s with Stamin-Up. """
-STAM_REGEN: int = 2
-""" Per tick while resting -> 5s to refill. """
+""" Per tick while sprinting -> 7.5s, or 15s with Stamin-Up. """
+STAM_REGEN: int = 3
+""" Per tick while resting -> 5s to refill. Scaled with STAM_MAX so the refill time stays 5s: the pool
+grew, the sprint got longer, topping it back up did not get slower. """
 SWIM_DRAIN_FACTOR: int = 5
 """ Swimming drains this many times slower than sprinting on land, so crossing water is a traversal rather
 than a sprint you cannot afford. Applied by draining on one tick in SWIM_DRAIN_FACTOR instead of by
 shrinking the step: STAM_DRAIN is only 2, so dividing it would floor to 0 and never drain at all. """
 REST_DELAY: int = 20
 """ Ticks after the last sprint before regen starts. """
-RECOVER_AT: int = 80
-""" Winded players sprint again at this level (hysteresis). All values are ticks or stamina points, and stamina runs 0..stam_max. """
+RECOVER_AT: int = 120
+""" Winded players sprint again at this level (hysteresis). Kept at 40% of STAM_MAX, which at STAM_REGEN
+is the same 2s of resting as before the pool was widened. All values are ticks or stamina points, and stamina runs 0..stam_max. """
 
 FOOD_MIN: int = 6
 """ Vanilla no-sprint threshold = empty stamina. """
