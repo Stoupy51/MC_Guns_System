@@ -27,7 +27,7 @@ execute store result storage mgs:temp _horde.vol double 0.01 run scoreboard play
 scoreboard players set #horde_sprint mgs.data 0
 execute unless score @s mgs.zb.vox_sprint > #total_tick mgs.data store success score #horde_sprint mgs.data at @n[tag=mgs.zb_sprint,tag=mgs.zombie_round,distance=..32,sort=random] run function mgs:v5.1.0/zombies/vocals/horde_sprint with storage mgs:temp _horde
 execute if score #horde_sprint mgs.data matches 1 run scoreboard players operation @s mgs.zb.vox_sprint = #total_tick mgs.data
-execute if score #horde_sprint mgs.data matches 1 run scoreboard players add @s mgs.zb.vox_sprint 70
+execute if score #horde_sprint mgs.data matches 1 run scoreboard players add @s mgs.zb.vox_sprint 110
 
 # Behind channel, next. `rotated ~180 0` flips the player's yaw and flattens the pitch, so ^ ^ ^3
 # lands 3 blocks straight back from them at their own height — which is what makes this "same floor,

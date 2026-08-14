@@ -2,8 +2,8 @@
 
 Round zombies are summoned Silent, so every sound they make is played by hand from here. BO2 splits its
 zombie vocals into ambient / attack / sprint (plus a separate set for crawlers) and picks the set from
-the zombie's gait, which is what the sound files themselves confirm: sprint clips run longer and louder
-than the 0.4-2.2s barks of every other channel.
+the zombie's gait, which is what the sound files themselves confirm: sprint clips run 3.0-5.3s while
+every other bark is 0.4-2.2s.
 
 Each channel carries its own per-player budget rather than one shared one, because a shared budget
 would let a wall of death groans starve the scream that tells you a sprinter is behind you. Budgets are
@@ -25,12 +25,11 @@ If they turn out to be plain ambients, fold them back into [[VOCAL_AMBIENT]] and
 VOCAL_ATTACK: str = "zombies/entity/attack"
 """ 16 melee grunts (the downloaded set's hurt* files plus say7-8, all swing sounds). """
 VOCAL_SPRINT: str = "zombies/entity/sprint"
-""" 14 screams, 0.7-2.5s, the sprint gait. These are Treyarch's primary sprint set (World at War's
-`new_zombie_vox/sprint`), not the 3.0-5.3s `sprint2` set the downloaded pack shipped.
-The long set is why sprinters used to sound wrong: /playsound emits a sound fixed at the position it was
-played from, so a 5s scream stays nailed to where the zombie was 5 seconds ago while the zombie crosses
-the room. Vanilla mob sounds are positional one-shots too, they just stay near 1s so the drift never
-shows. Keeping clips under ~2.5s puts our drift back in that range. """
+""" 7 screams, 3.0-5.3s, the sprint gait. This is World at War's `new_zombie_vox/sprint2` set, the long
+one, chosen over the 0.7-2.5s `sprint` set after hearing both in game: the short set does not read as a
+sprinter at all.
+Positional drift is the known cost and is accepted. /playsound emits a sound fixed where it was played
+from, so a 5s scream stays nailed to where the zombie was while the zombie crosses the room. """
 VOCAL_DEATH: str = "zombies/entity/death"
 """ 11 death groans. """
 
@@ -39,10 +38,10 @@ VOCAL_CRAWLER_AMBIENT: str = "zombies/entity/crawler_ambient"
 VOCAL_CRAWLER_SPRINT: str = "zombies/entity/crawler_sprint"
 """ 2 legless screams. Staged alongside [[VOCAL_CRAWLER_AMBIENT]]. """
 
-SPRINT_LOCKOUT: int = 70
+SPRINT_LOCKOUT: int = 110
 """ Ticks a player's sprint channel stays held after a scream, so a sprinter owns the soundscape while
-it closes instead of the horde drowning it. Clips run 15-49 ticks, so this holds strictly one scream at a
-time with a 21-tick gap after even the longest. """
+it closes instead of the horde drowning it. Clips run 59-107 ticks, so this holds strictly one scream at
+a time even after the longest. """
 ATTACK_LOCKOUT: int = 20
 """ Ticks between melee grunts for one player. A surrounded player is hit by up to eight zombies, and
 eight overlapping grunts is mush; one per second still reads as "something is hitting me". """

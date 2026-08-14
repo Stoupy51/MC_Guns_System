@@ -102,15 +102,16 @@ The dump also confirmed two earlier inferences and one non-need:
 - `levels/zombie/boards_float/boards_float.wav` is the Carpenter boards-flying-up sound. Not needed,
   `powerups/carpenter.ogg` already exists.
 
-It also fixed the sprint vocals. Treyarch ships **two** sprint sets — `new_zombie_vox/sprint` (14 files,
-0.7-2.5s) and `new_zombie_vox/sprint2` (9 files, 3.0-5.3s) — and duration-matching pinned the downloaded
-pack's `sprint1-7` onto `sprint2` (1-24 ms apart), i.e. it shipped the long set. `sprint*` is now the
-short primary set, so a scream no longer sits 5 seconds behind the zombie that made it (see
-[[vocals]] `VOCAL_SPRINT` for why `/playsound` cannot follow an entity at all).
+It also settled the sprint vocals. Treyarch ships **two** sprint sets: `new_zombie_vox/sprint` (14 files,
+0.7-2.5s) and `new_zombie_vox/sprint2` (9 files, 3.0-5.3s). Duration-matching pinned the downloaded
+pack's `sprint1-7` onto `sprint2` (1-24 ms apart), i.e. it shipped the long set. The short set was tried
+in its place and reverted after playtesting: it does not read as a sprinter, whatever the file naming
+suggests about which one is "primary". `sprint*` is the long `sprint2` set and stays that way. The
+positional drift that motivated the swap is real and accepted (see [[vocals]] `VOCAL_SPRINT`).
 Still unresolved from the same comparison, and deliberately left alone: only `crawler_ambient6-11` match
 WaW's 6 `crawl` vocals (0 ms exact), so the other 12 files in `crawler_ambient*` are miscategorised.
-Duration matching is decisive for long clips and exact-0 hits but ambiguous under ~1.5s — three of our
-files all "matched" `taunt_02` — so a full remap of the 66 vocals needs real spectral fingerprinting.
+Duration matching is decisive for long clips and exact-0 hits but ambiguous under ~1.5s (three of our
+files all "matched" `taunt_02`), so a full remap of the 66 vocals needs real spectral fingerprinting.
 
 **Design decision, already taken: the barricade stays single-stage.** For the record, a Black Ops 2
 barricade is 6 boards torn off and rebuilt one at a time at 10 points each
