@@ -29,6 +29,7 @@ execute if data storage mgs:temp _pap_extract.stats.pap_stats.speed_multiply_bas
 execute if data storage mgs:temp _pap_extract.stats.pap_stats.proj_speed run function mgs:v5.1.0/zombies/pap/apply_field {field:"proj_speed"}
 execute if data storage mgs:temp _pap_extract.stats.pap_stats.proj_gravity run function mgs:v5.1.0/zombies/pap/apply_field {field:"proj_gravity"}
 execute if data storage mgs:temp _pap_extract.stats.pap_stats.proj_lifetime run function mgs:v5.1.0/zombies/pap/apply_field {field:"proj_lifetime"}
+execute if data storage mgs:temp _pap_extract.stats.pap_stats.proj_model run function mgs:v5.1.0/zombies/pap/apply_field {field:"proj_model"}
 execute if data storage mgs:temp _pap_extract.stats.pap_stats.expl_radius run function mgs:v5.1.0/zombies/pap/apply_field {field:"expl_radius"}
 execute if data storage mgs:temp _pap_extract.stats.pap_stats.expl_damage run function mgs:v5.1.0/zombies/pap/apply_field {field:"expl_damage"}
 execute if data storage mgs:temp _pap_extract.stats.pap_stats.expl_decay run function mgs:v5.1.0/zombies/pap/apply_field {field:"expl_decay"}

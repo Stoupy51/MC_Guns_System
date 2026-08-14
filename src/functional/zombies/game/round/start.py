@@ -2,7 +2,6 @@
 # Imports
 from stewbeet import Mem, write_versioned_function
 
-
 # Constants
 EARLY_ROUND_ZOMBIES: dict[int, int] = {1: 5, 2: 6, 3: 8, 4: 9, 5: 11, 6: 12, 7: 13, 8: 15, 9: 16}
 """ Zombies per player for rounds 1-9, replacing the standard `round + 7` base while it is still steep.
