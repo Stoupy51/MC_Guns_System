@@ -11,7 +11,7 @@
 execute if score @s mgs.stam_seen matches 0 run function mgs:v5.1.0/player/stamina_init
 
 # Max stamina = base + perk bonus (Stamin-Up doubles the endurance budget); clamp current to it
-scoreboard players set @s mgs.stam_max 200
+scoreboard players set @s mgs.stam_max 300
 scoreboard players operation @s mgs.stam_max += @s mgs.stam_bonus
 scoreboard players operation @s mgs.stam < @s mgs.stam_max
 
@@ -33,7 +33,7 @@ execute if score #stam_sprinting mgs.data matches 1 run scoreboard players set @
 
 # Resting → count down the delay, then regen stamina
 execute if score #stam_sprinting mgs.data matches 0 if score @s mgs.stam_rest matches 1.. run scoreboard players remove @s mgs.stam_rest 1
-execute if score #stam_sprinting mgs.data matches 0 if score @s mgs.stam_rest matches 0 run scoreboard players add @s mgs.stam 2
+execute if score #stam_sprinting mgs.data matches 0 if score @s mgs.stam_rest matches 0 run scoreboard players add @s mgs.stam 3
 
 # Clamp 0..max
 execute if score @s mgs.stam matches ..-1 run scoreboard players set @s mgs.stam 0
@@ -42,7 +42,7 @@ scoreboard players operation @s mgs.stam < @s mgs.stam_max
 # Become winded when stamina hits 0; silently recover once it regenerates past the hysteresis
 # threshold. No sound, no "out of breath" message — the empty bar is the feedback (stamina.md).
 execute if score @s mgs.stam_out matches 0 if score @s mgs.stam matches 0 run scoreboard players set @s mgs.stam_out 1
-execute if score @s mgs.stam_out matches 1 if score @s mgs.stam matches 80.. run scoreboard players set @s mgs.stam_out 0
+execute if score @s mgs.stam_out matches 1 if score @s mgs.stam matches 120.. run scoreboard players set @s mgs.stam_out 0
 
 # Map stamina to the hunger-bar target (6..20); winded → held at the no-sprint level
 scoreboard players operation #stam_t mgs.data = @s mgs.stam
