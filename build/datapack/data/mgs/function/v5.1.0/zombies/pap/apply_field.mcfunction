@@ -25,6 +25,7 @@
 #			mgs:v5.1.0/zombies/pap/apply_runtime_overrides {field:"proj_speed"}
 #			mgs:v5.1.0/zombies/pap/apply_runtime_overrides {field:"proj_gravity"}
 #			mgs:v5.1.0/zombies/pap/apply_runtime_overrides {field:"proj_lifetime"}
+#			mgs:v5.1.0/zombies/pap/apply_runtime_overrides {field:"proj_model"}
 #			mgs:v5.1.0/zombies/pap/apply_runtime_overrides {field:"expl_radius"}
 #			mgs:v5.1.0/zombies/pap/apply_runtime_overrides {field:"expl_damage"}
 #			mgs:v5.1.0/zombies/pap/apply_runtime_overrides {field:"expl_decay"}

@@ -52,6 +52,8 @@ execute if data storage mgs:temp _pap_extract.stats.pap_stats.proj_gravity[0] st
 execute if score #pap_len mgs.data > #pap_max mgs.data run scoreboard players operation #pap_max mgs.data = #pap_len mgs.data
 execute if data storage mgs:temp _pap_extract.stats.pap_stats.proj_lifetime[0] store result score #pap_len mgs.data run data get storage mgs:temp _pap_extract.stats.pap_stats.proj_lifetime
 execute if score #pap_len mgs.data > #pap_max mgs.data run scoreboard players operation #pap_max mgs.data = #pap_len mgs.data
+execute if data storage mgs:temp _pap_extract.stats.pap_stats.proj_model[0] store result score #pap_len mgs.data run data get storage mgs:temp _pap_extract.stats.pap_stats.proj_model
+execute if score #pap_len mgs.data > #pap_max mgs.data run scoreboard players operation #pap_max mgs.data = #pap_len mgs.data
 execute if data storage mgs:temp _pap_extract.stats.pap_stats.expl_radius[0] store result score #pap_len mgs.data run data get storage mgs:temp _pap_extract.stats.pap_stats.expl_radius
 execute if score #pap_len mgs.data > #pap_max mgs.data run scoreboard players operation #pap_max mgs.data = #pap_len mgs.data
 execute if data storage mgs:temp _pap_extract.stats.pap_stats.expl_damage[0] store result score #pap_len mgs.data run data get storage mgs:temp _pap_extract.stats.pap_stats.expl_damage
