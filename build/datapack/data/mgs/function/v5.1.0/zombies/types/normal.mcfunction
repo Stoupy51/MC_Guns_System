@@ -15,7 +15,7 @@ function mgs:v5.1.0/zombies/calc_zombie_hp
 execute store result storage mgs:temp _zb_hp.val int 1 run scoreboard players get #zb_hp mgs.data
 function mgs:v5.1.0/zombies/apply_zombie_hp with storage mgs:temp _zb_hp
 
-# Explicit speed per round, capped at 0.32 from round 13+
+# Explicit speed per round, capped at 0.30 from round 11+
 execute if score #zb_round mgs.data matches 1 run attribute @s minecraft:movement_speed base set 0.20
 execute if score #zb_round mgs.data matches 2 run attribute @s minecraft:movement_speed base set 0.21
 execute if score #zb_round mgs.data matches 3 run attribute @s minecraft:movement_speed base set 0.22
@@ -26,9 +26,7 @@ execute if score #zb_round mgs.data matches 7 run attribute @s minecraft:movemen
 execute if score #zb_round mgs.data matches 8 run attribute @s minecraft:movement_speed base set 0.27
 execute if score #zb_round mgs.data matches 9 run attribute @s minecraft:movement_speed base set 0.28
 execute if score #zb_round mgs.data matches 10 run attribute @s minecraft:movement_speed base set 0.29
-execute if score #zb_round mgs.data matches 11 run attribute @s minecraft:movement_speed base set 0.30
-execute if score #zb_round mgs.data matches 12 run attribute @s minecraft:movement_speed base set 0.31
-execute if score #zb_round mgs.data matches 13.. run attribute @s minecraft:movement_speed base set 0.32
+execute if score #zb_round mgs.data matches 11.. run attribute @s minecraft:movement_speed base set 0.30
 
 # Gait picks the vocal set (enemies/vocals.py): 0.29+ is the Black Ops 2 sprint gait, which screams
 # (3-5s clips) instead of groaning. Rounds 1-9 walk or run and stay on the short groan set.
