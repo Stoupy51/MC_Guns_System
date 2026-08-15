@@ -22,3 +22,7 @@ Not tracked here on purpose:
 - The legacy MGS 4.2 crafting system. The root README calls it out as dropped, not deferred.
 - `zombies/README.md` "Inbox" items still without a shape (the Mob of the Dead map port).
   `/speckit-specify` them when they get one.
+
+# Inbox (quick notes - dump anything here, unorganized "basic" format is fine)
+- A day in 2027: Add this map https://www.planetminecraft.com/project/black-ops-ii-mob-of-the-dead-minecraft-in-2013/
+
