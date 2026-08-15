@@ -1,6 +1,9 @@
 """ Every perk's identity, price, description and the teardown that strips its effects. """
 # Imports
+import os
 from dataclasses import dataclass
+
+from stewbeet import Mem
 
 from ....helpers.scores import SpecialScores
 from ....stamina import STAM_MAX
@@ -13,6 +16,8 @@ class PerkDef:
 
 	`{ns}` and `{version}` in the command lists are substituted at generation time.
 	"""
+	perk_id: str
+	""" Scoreboard, function and sound name; also the key PERK_DEFINITIONS is built on. """
 	display_name: str
 	message: str
 	""" Chat feedback on purchase; the leading emoji is split off and rendered uncolored. """
@@ -23,9 +28,21 @@ class PerkDef:
 	commands: tuple[str, ...] = ()
 	removal_commands: tuple[str, ...] = ()
 
+	@property
+	def has_song(self) -> bool:
+		""" Whether the perk's purchase jingle exists, so apply/<perk_id> plays it.
+
+		Read off the .ogg itself rather than a hand-set flag: dropping a clip into the sounds folder is
+		then the only thing a perk still missing its jingle needs. A perk without one stays silent
+		instead of asking for a sound the resource pack never registered.
+		"""
+		sounds_folder: str = Mem.ctx.meta.get("stewbeet", {}).get("sounds", {}).get("folder", "")
+		return os.path.isfile(f"{sounds_folder}/zombies/perks/{self.perk_id}.ogg")
+
 # Constants
-PERK_DEFINITIONS: dict[str, PerkDef] = {
-	"juggernog": PerkDef(
+PERK_DEFINITIONS: dict[str, PerkDef] = {perk.perk_id: perk for perk in [
+	PerkDef(
+		perk_id="juggernog",
 		display_name="Juggernog",
 		message="🍺 Juggernog! Max HP: 40",
 		message_color="dark_red",
@@ -37,7 +54,8 @@ PERK_DEFINITIONS: dict[str, PerkDef] = {
 			"attribute @s minecraft:max_health base reset",
 		),
 	),
-	"speed_cola": PerkDef(
+	PerkDef(
+		perk_id="speed_cola",
 		display_name="Speed Cola",
 		message="⚡ Speed Cola! Faster reload",
 		message_color="green",
@@ -49,7 +67,8 @@ PERK_DEFINITIONS: dict[str, PerkDef] = {
 			"scoreboard players set @s {ns}.special.quick_reload 0",
 		),
 	),
-	"double_tap": PerkDef(
+	PerkDef(
+		perk_id="double_tap",
 		display_name="Double Tap",
 		message="🔥 Double Tap! More damage",
 		message_color="gold",
@@ -61,7 +80,8 @@ PERK_DEFINITIONS: dict[str, PerkDef] = {
 			"scoreboard players set @s {ns}.special.additional_shots 0",
 		),
 	),
-	"quick_revive": PerkDef(
+	PerkDef(
+		perk_id="quick_revive",
 		display_name="Quick Revive",
 		message="💚 Quick Revive! You can revive teammates",
 		message_color="aqua",
@@ -77,13 +97,15 @@ PERK_DEFINITIONS: dict[str, PerkDef] = {
 			"tag @s remove {ns}.perk.quick_revive",
 		),
 	),
-	"mule_kick": PerkDef(
+	PerkDef(
+		perk_id="mule_kick",
 		display_name="Mule Kick",
 		message="🎒 Mule Kick! Third weapon slot unlocked",
 		message_color="gold",
 		text_color="dark_green",
 	),
-	"stamin_up": PerkDef(
+	PerkDef(
+		perk_id="stamin_up",
 		display_name="Stamin-Up",
 		message="🏃 Stamin-Up! Sprint longer, move faster",
 		message_color="yellow",
@@ -100,7 +122,8 @@ PERK_DEFINITIONS: dict[str, PerkDef] = {
 			"scoreboard players set @s {ns}.stam_bonus 0",
 		),
 	),
-	"phd_flopper": PerkDef(
+	PerkDef(
+		perk_id="phd_flopper",
 		display_name="PhD Flopper",
 		message="🧪 PhD Flopper! Immune to explosions & fall damage",
 		message_color="dark_purple",
@@ -116,7 +139,8 @@ PERK_DEFINITIONS: dict[str, PerkDef] = {
 			"scoreboard players set @s {ns}.special.phd_flopper 0",
 		),
 	),
-	"deadshot": PerkDef(
+	PerkDef(
+		perk_id="deadshot",
 		display_name="Deadshot Daiquiri",
 		message="🎯 Deadshot Daiquiri! +Accuracy, -Recoil",
 		message_color="dark_green",
@@ -129,7 +153,8 @@ PERK_DEFINITIONS: dict[str, PerkDef] = {
 			"scoreboard players set @s {ns}.special.deadshot 0",
 		),
 	),
-	"timeslip": PerkDef(
+	PerkDef(
+		perk_id="timeslip",
 		display_name="Timeslip",
 		message="⏳ Timeslip! Faster traps & Mystery Box",
 		message_color="light_purple",
@@ -144,7 +169,8 @@ PERK_DEFINITIONS: dict[str, PerkDef] = {
 			"scoreboard players set @s {ns}.special.timeslip 0",
 		),
 	),
-	"electric_cherry": PerkDef(
+	PerkDef(
+		perk_id="electric_cherry",
 		display_name="Electric Cherry",
 		message="🍒 Electric Cherry! Reloads discharge a shock",
 		message_color="blue",
@@ -158,7 +184,8 @@ PERK_DEFINITIONS: dict[str, PerkDef] = {
 			"scoreboard players set @s {ns}.special.electric_cherry 0",
 		),
 	),
-	"tombstone": PerkDef(
+	PerkDef(
+		perk_id="tombstone",
 		display_name="Tombstone",
 		message="🪦 Tombstone! Recover your gear if you bleed out",
 		message_color="yellow",
@@ -167,7 +194,8 @@ PERK_DEFINITIONS: dict[str, PerkDef] = {
 		# Bleeding out gives 60s after the round respawn to walk back and recover perks + weapons.
 		# Tombstone itself is excluded, and the whole thing is disabled solo.
 	),
-	"whos_who": PerkDef(
+	PerkDef(
+		perk_id="whos_who",
 		display_name="Who's Who",
 		message="👥 Who's Who! Play on as a doppelganger when downed",
 		message_color="aqua",
@@ -176,7 +204,8 @@ PERK_DEFINITIONS: dict[str, PerkDef] = {
 		# The body drops as a NORMAL revivable mannequin any alive player, including the owner, can revive.
 		# Works solo and outranks solo Quick Revive; see whos_who.py.
 	),
-	"dying_wish": PerkDef(
+	PerkDef(
+		perk_id="dying_wish",
 		display_name="Dying Wish",
 		message="⚔ Dying Wish! Cheat death with a berserk",
 		message_color="blue",
@@ -184,7 +213,8 @@ PERK_DEFINITIONS: dict[str, PerkDef] = {
 		# No purchase-time effect: revive/on_down intercepts to dying_wish_trigger when off cooldown.
 		# Ownership is read straight off zb.perk.dying_wish.
 	),
-	"widows_wine": PerkDef(
+	PerkDef(
+		perk_id="widows_wine",
 		display_name="Widow's Wine",
 		message="🕸 Widow's Wine! Web grenades & webbing melee",
 		message_color="dark_red",
@@ -205,7 +235,7 @@ PERK_DEFINITIONS: dict[str, PerkDef] = {
 			"attribute @s minecraft:attack_damage modifier remove {ns}:widows_wine",
 		),
 	),
-}
+]}
 
 RECOMMENDED_PRICES: dict[str, int] = {
 	"juggernog": 2500, "speed_cola": 3000, "double_tap": 2000, "quick_revive": 1500,

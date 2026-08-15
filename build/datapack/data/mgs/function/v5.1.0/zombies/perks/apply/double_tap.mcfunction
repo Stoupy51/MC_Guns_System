@@ -5,6 +5,7 @@
 #
 
 scoreboard players set @s mgs.special.additional_shots 1
+execute at @s run playsound mgs:zombies/perks/double_tap ambient @s ~ ~ ~ 1.0 1.0
 tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],"🔥 ",{"translate":"mgs.double_tap_more_damage","color":"gold"},[" ",{"text":"+5 XP","color":"gold"}]]
 function mgs:v5.1.0/progression/zb/award_perk
 

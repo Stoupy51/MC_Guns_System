@@ -2,16 +2,13 @@
 
 ## 7. Zombies — perk purchase songs  (mostly HUMAN)
 
-State: `assets/zombies_perk_songs/` already holds 10 staged .oggs — deadshot, doubletap,
-`jungernog` (typo → rename `juggernog`), mulekick, phdflopper, quickrevive, speedcola, staminup,
-tombstone, whoswho. They are NOT wired (not under `assets/sounds/`).
+Wired, see `specs/005-perk-purchase-songs/`. 11 of the 14 perks have their jingle in
+`assets/sounds/zombies/perks/<perk_id>.ogg`, played by `apply/<perk_id>` when the `PerkDef.has_song`
+property finds the file.
 
 - [ ] (HUMAN — explicitly the LAST thing on this list) download the missing final-seconds cuts:
-  electric_cherry, widows_wine, timeslip, dying_wish (+ optionally a Wunderfizz jingle).
-- [ ] Wiring (any time after assets land): move/rename to `assets/sounds/zombies/perks/<perk_id>.ogg`
-  (same auto-registration as `zombies/powerups/*` sounds → playable as `mgs:zombies/perks/<perk_id>`),
-  play in `zombies/perks/apply/<perk_id>` (generated per-perk in `perks.py`) — positional at the
-  machine or private to the buyer, match the power-up sound conventions (`pu_snd` in `powerups.py`).
+  electric_cherry, timeslip, dying_wish (+ optionally a Wunderfizz jingle). Drop each one in as
+  `<perk_id>.ogg` and it plays; `has_song` reads the folder, so there is no code change.
 
 
 ## 10. Zonweeb — ideas backlog

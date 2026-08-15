@@ -11,7 +11,6 @@ the "Known WIP" section of the root [README.md](../README.md), and the `# TODO` 
 | [002-zombies-save-load](002-zombies-save-load/) | `zombies/README.md` §11 | Specced only |
 | [003-zombie-special-types](003-zombie-special-types/) | `round/enemies.py` stubs + `zombies/README.md` §10 | Stubs fall through to `types/normal` |
 | [004-multiplayer-kill-cam](004-multiplayer-kill-cam/) | root `README.md`, "Future multiplayer TODO" | Design sketch only |
-| [005-perk-purchase-songs](005-perk-purchase-songs/) | `zombies/README.md` §7 | 10 of 14 .oggs staged, none wired |
 | [006-weapon-fire-modes-tacticals](006-weapon-fire-modes-tacticals/) | `firing/sound.py`, `stats/weapons/grenades.py` | Two known gaps |
 
 Working on one of these: run `/speckit-tasks` to regenerate its task list from the current code,
