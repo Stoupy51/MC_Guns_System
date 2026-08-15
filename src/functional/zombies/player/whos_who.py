@@ -42,7 +42,7 @@ def generate_whos_who() -> None:
 			continue  # Who's Who is not restored on revive (BO rule) — must be rebought
 		ww_restore_lines.append(f"execute if score @s {ns}.zb.wwp.{pid} matches 1 run scoreboard players set @s {ns}.zb.perk.{pid} 1")
 		if pdata.commands:
-			# reapply/<pid> (effect-only, no chat) is generated in perks.py's Tombstone section
+			# reapply/<pid> (effect-only: no chat, no jingle, no xp) is generated in perks/tombstone.py
 			ww_restore_lines.append(f"execute if score @s {ns}.zb.wwp.{pid} matches 1 run function {ns}:v{version}/zombies/perks/reapply/{pid}")
 	ww_restore: str = "\n".join(ww_restore_lines)
 

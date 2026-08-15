@@ -1003,6 +1003,50 @@
 		"subtitle": "zombies/pap/upgrade",
 		"sounds": ["mgs:zombies/pap/upgrade"]
 	},
+	"zombies/perks/deadshot": {
+		"subtitle": "zombies/perks/deadshot",
+		"sounds": ["mgs:zombies/perks/deadshot"]
+	},
+	"zombies/perks/double_tap": {
+		"subtitle": "zombies/perks/double_tap",
+		"sounds": ["mgs:zombies/perks/double_tap"]
+	},
+	"zombies/perks/juggernog": {
+		"subtitle": "zombies/perks/juggernog",
+		"sounds": ["mgs:zombies/perks/juggernog"]
+	},
+	"zombies/perks/mule_kick": {
+		"subtitle": "zombies/perks/mule_kick",
+		"sounds": [{"name": "mgs:zombies/perks/mule_kick","stream": true}]
+	},
+	"zombies/perks/phd_flopper": {
+		"subtitle": "zombies/perks/phd_flopper",
+		"sounds": [{"name": "mgs:zombies/perks/phd_flopper","stream": true}]
+	},
+	"zombies/perks/quick_revive": {
+		"subtitle": "zombies/perks/quick_revive",
+		"sounds": ["mgs:zombies/perks/quick_revive"]
+	},
+	"zombies/perks/speed_cola": {
+		"subtitle": "zombies/perks/speed_cola",
+		"sounds": ["mgs:zombies/perks/speed_cola"]
+	},
+	"zombies/perks/stamin_up": {
+		"subtitle": "zombies/perks/stamin_up",
+		"sounds": ["mgs:zombies/perks/stamin_up"]
+	},
+	"zombies/perks/tombstone": {
+		"subtitle": "zombies/perks/tombstone",
+		"sounds": [{"name": "mgs:zombies/perks/tombstone","stream": true}]
+	},
+	"zombies/perks/whos_who": {
+		"subtitle": "zombies/perks/whos_who",
+		"sounds": ["mgs:zombies/perks/whos_who"]
+	},
+	"zombies/perks/widows_wine": {
+		"subtitle": "zombies/perks/widows_wine",
+		"sounds": ["mgs:zombies/perks/widows_wine"]
+	},
 	"zombies/powerups/bonfire_sale": {
 		"subtitle": "zombies/powerups/bonfire_sale",
 		"sounds": ["mgs:zombies/powerups/bonfire_sale"]

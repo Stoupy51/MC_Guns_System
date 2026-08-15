@@ -25,16 +25,17 @@ $function {ns}:v{version}/zombies/perks/apply/$(perk_id)
 """)
 
 	## Per-perk effect functions (generated from top-level metadata)
-	for perk_id, perk_data in PERK_DEFINITIONS.items():
-		extra_commands: str = "\n".join(
+	for perk_data in PERK_DEFINITIONS.values():
+		lines: list[str] = [
 			command.replace("{ns}", ns).replace("{version}", version)
 			for command in perk_data.commands
-		)
+		]
+		if perk_data.has_song:
+			lines.append(f"execute at @s run playsound {ns}:zombies/perks/{perk_data.perk_id} ambient @s ~ ~ ~ 1.0 1.0")
+
 		# Split the emoji prefix out of the colored component (emojis stay uncolored in chat)
 		msg_emoji, msg_text = perk_data.message.split(" ", 1)
-		write_versioned_function(f"zombies/perks/apply/{perk_id}", f"""
-{extra_commands}
-tellraw @s [{MGS_TAG},"{msg_emoji} ",{{"text":"{msg_text}","color":"{perk_data.message_color}"}},{Xp.suffix("zb", "perk")}]
-{Xp.give("zb", "perk")}
-""")
+		lines.append(f'tellraw @s [{MGS_TAG},"{msg_emoji} ",{{"text":"{msg_text}","color":"{perk_data.message_color}"}},{Xp.suffix("zb", "perk")}]')
+		lines.append(Xp.give("zb", "perk"))
+		write_versioned_function(f"zombies/perks/apply/{perk_data.perk_id}", "\n".join(lines))
 

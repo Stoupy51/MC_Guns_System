@@ -26,7 +26,9 @@ def write_tombstone() -> None:
 	)
 	ts_clear: str = "\n".join(f"scoreboard players set @s {ns}.zb.tsp.{pid} 0" for pid in PERK_DEFINITIONS)
 
-	# Reapply-effect (no chat message) for perks with commands — used when recovering from a tombstone.
+	# Reapply-effect (no chat message) for perks with commands, used when recovering from a tombstone.
+	# Deliberately NOT apply/<pid>: a recovery regrants up to five perks in one tick, and routing it
+	# through apply would stack five purchase jingles and five xp payouts on top of each other.
 	for pid, pdata in PERK_DEFINITIONS.items():
 		cmds: str = "\n".join(c.replace("{ns}", ns).replace("{version}", version) for c in pdata.commands)
 		if cmds:
