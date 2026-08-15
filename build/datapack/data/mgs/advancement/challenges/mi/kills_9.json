@@ -1,0 +1,42 @@
+{
+	"parent": "mgs:challenges/mi/kills_8",
+	"display": {
+		"icon": {
+			"id": "minecraft:poisonous_potato",
+			"components": {
+				"minecraft:item_model": "mgs:rpk"
+			}
+		},
+		"title": {
+			"translate": "mgs.one_man_army"
+		},
+		"description": {
+			"translate": "mgs.kill_20000_enemies_in_missions"
+		},
+		"frame": "goal",
+		"show_toast": true,
+		"announce_to_chat": false,
+		"hidden": false
+	},
+	"criteria": {
+		"threshold": {
+			"trigger": "minecraft:tick",
+			"conditions": {
+				"player": [
+					{
+						"condition": "minecraft:entity_scores",
+						"entity": "this",
+						"scores": {
+							"mgs.adv.mi.kills": {
+								"min": 20000
+							}
+						}
+					}
+				]
+			}
+		}
+	},
+	"rewards": {
+		"function": "mgs:v5.1.0/progression/adv/mi/kills/reward_9"
+	}
+}

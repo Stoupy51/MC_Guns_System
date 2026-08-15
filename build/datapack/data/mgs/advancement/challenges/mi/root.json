@@ -1,0 +1,23 @@
+{
+	"parent": "mgs:challenges/root",
+	"display": {
+		"icon": {
+			"id": "minecraft:compass"
+		},
+		"title": {
+			"translate": "mgs.missions"
+		},
+		"description": {
+			"translate": "mgs.challenges_for_co_op_missions_pays_multiplayer_xp"
+		},
+		"frame": "task",
+		"show_toast": false,
+		"announce_to_chat": false,
+		"hidden": false
+	},
+	"criteria": {
+		"joined": {
+			"trigger": "minecraft:tick"
+		}
+	}
+}

@@ -1,0 +1,39 @@
+{
+	"parent": "mgs:challenges/mi/root",
+	"display": {
+		"icon": {
+			"id": "minecraft:compass"
+		},
+		"title": {
+			"translate": "mgs.first_deployment"
+		},
+		"description": {
+			"translate": "mgs.complete_a_mission"
+		},
+		"frame": "task",
+		"show_toast": true,
+		"announce_to_chat": false,
+		"hidden": false
+	},
+	"criteria": {
+		"threshold": {
+			"trigger": "minecraft:tick",
+			"conditions": {
+				"player": [
+					{
+						"condition": "minecraft:entity_scores",
+						"entity": "this",
+						"scores": {
+							"mgs.adv.mi.completed": {
+								"min": 1
+							}
+						}
+					}
+				]
+			}
+		}
+	},
+	"rewards": {
+		"function": "mgs:v5.1.0/progression/adv/mi/completed/reward_1"
+	}
+}

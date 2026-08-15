@@ -1,0 +1,39 @@
+{
+	"parent": "mgs:challenges/zb/pack_a_punch_6",
+	"display": {
+		"icon": {
+			"id": "minecraft:enchanted_book"
+		},
+		"title": {
+			"translate": "mgs.fully_packed"
+		},
+		"description": {
+			"translate": "mgs.upgrade_50_weapons"
+		},
+		"frame": "task",
+		"show_toast": true,
+		"announce_to_chat": false,
+		"hidden": false
+	},
+	"criteria": {
+		"threshold": {
+			"trigger": "minecraft:tick",
+			"conditions": {
+				"player": [
+					{
+						"condition": "minecraft:entity_scores",
+						"entity": "this",
+						"scores": {
+							"mgs.adv.zb.pap": {
+								"min": 50
+							}
+						}
+					}
+				]
+			}
+		}
+	},
+	"rewards": {
+		"function": "mgs:v5.1.0/progression/adv/zb/pack_a_punch/reward_7"
+	}
+}

@@ -1,0 +1,45 @@
+{
+	"parent": "mgs:challenges/zb/level_6",
+	"display": {
+		"icon": {
+			"id": "minecraft:diamond"
+		},
+		"title": [
+			{
+				"translate": "mgs.zombies_rank"
+			},
+			" 100"
+		],
+		"description": [
+			{
+				"translate": "mgs.reach_zombies_level"
+			},
+			" 100"
+		],
+		"frame": "task",
+		"show_toast": true,
+		"announce_to_chat": false,
+		"hidden": false
+	},
+	"criteria": {
+		"threshold": {
+			"trigger": "minecraft:tick",
+			"conditions": {
+				"player": [
+					{
+						"condition": "minecraft:entity_scores",
+						"entity": "this",
+						"scores": {
+							"mgs.zb.xp_level": {
+								"min": 100
+							}
+						}
+					}
+				]
+			}
+		}
+	},
+	"rewards": {
+		"function": "mgs:v5.1.0/progression/adv/zb/level/reward_7"
+	}
+}

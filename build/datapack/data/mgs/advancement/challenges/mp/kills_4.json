@@ -1,0 +1,42 @@
+{
+	"parent": "mgs:challenges/mp/kills_3",
+	"display": {
+		"icon": {
+			"id": "minecraft:poisonous_potato",
+			"components": {
+				"minecraft:item_model": "mgs:vz61"
+			}
+		},
+		"title": {
+			"translate": "mgs.regular"
+		},
+		"description": {
+			"translate": "mgs.kill_250_players"
+		},
+		"frame": "task",
+		"show_toast": true,
+		"announce_to_chat": false,
+		"hidden": false
+	},
+	"criteria": {
+		"threshold": {
+			"trigger": "minecraft:tick",
+			"conditions": {
+				"player": [
+					{
+						"condition": "minecraft:entity_scores",
+						"entity": "this",
+						"scores": {
+							"mgs.adv.mp.kills": {
+								"min": 250
+							}
+						}
+					}
+				]
+			}
+		}
+	},
+	"rewards": {
+		"function": "mgs:v5.1.0/progression/adv/mp/kills/reward_4"
+	}
+}

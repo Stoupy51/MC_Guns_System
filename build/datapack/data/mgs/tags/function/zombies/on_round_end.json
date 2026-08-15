@@ -1,5 +1,6 @@
 {
 	"values": [
+		"mgs:v5.1.0/zombies/adv/on_round_end",
 		"mgs:v5.1.0/zombies/xp/on_round_end"
 	]
 }

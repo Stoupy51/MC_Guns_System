@@ -1,0 +1,42 @@
+{
+	"parent": "mgs:challenges/mp/root",
+	"display": {
+		"icon": {
+			"id": "minecraft:poisonous_potato",
+			"components": {
+				"minecraft:item_model": "mgs:makarov"
+			}
+		},
+		"title": {
+			"translate": "mgs.first_blood"
+		},
+		"description": {
+			"translate": "mgs.kill_25_players"
+		},
+		"frame": "task",
+		"show_toast": true,
+		"announce_to_chat": false,
+		"hidden": false
+	},
+	"criteria": {
+		"threshold": {
+			"trigger": "minecraft:tick",
+			"conditions": {
+				"player": [
+					{
+						"condition": "minecraft:entity_scores",
+						"entity": "this",
+						"scores": {
+							"mgs.adv.mp.kills": {
+								"min": 25
+							}
+						}
+					}
+				]
+			}
+		}
+	},
+	"rewards": {
+		"function": "mgs:v5.1.0/progression/adv/mp/kills/reward_1"
+	}
+}

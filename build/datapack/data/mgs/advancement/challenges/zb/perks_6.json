@@ -1,0 +1,39 @@
+{
+	"parent": "mgs:challenges/zb/perks_5",
+	"display": {
+		"icon": {
+			"id": "minecraft:cauldron"
+		},
+		"title": {
+			"translate": "mgs.liquid_courage"
+		},
+		"description": {
+			"translate": "mgs.acquire_100_perks"
+		},
+		"frame": "task",
+		"show_toast": true,
+		"announce_to_chat": false,
+		"hidden": false
+	},
+	"criteria": {
+		"threshold": {
+			"trigger": "minecraft:tick",
+			"conditions": {
+				"player": [
+					{
+						"condition": "minecraft:entity_scores",
+						"entity": "this",
+						"scores": {
+							"mgs.adv.zb.perks": {
+								"min": 100
+							}
+						}
+					}
+				]
+			}
+		}
+	},
+	"rewards": {
+		"function": "mgs:v5.1.0/progression/adv/zb/perks/reward_6"
+	}
+}

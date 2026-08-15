@@ -11,7 +11,7 @@ the award has to sit at a precise point in the sequence.
 # Imports
 from stewbeet import Mem, write_versioned_function
 
-from ..progression import Xp
+from ..progression import Advancements, Xp
 
 # Constants
 WINNER_TAG: str = "xp_winner"
@@ -43,5 +43,8 @@ execute if score #blue {ns}.mp.team > #red {ns}.mp.team run tag @a[scores={{{ns}
 
 {Xp.give("mp", "match_win", f"@a[scores={{{ns}.mp.in_game=1}},tag={ns}.{WINNER_TAG}]")}
 {Xp.give("mp", "match_loss", f"@a[scores={{{ns}.mp.in_game=1}},tag=!{ns}.{WINNER_TAG}]")}
+
+# Challenge: took the match without dying once. Needs the winner tag, so it lands before the cleanup
+{Advancements.match_end_lines(WINNER_TAG)}
 tag @a remove {ns}.{WINNER_TAG}
 """, tags=[f"{ns}:multiplayer/on_game_end"])
