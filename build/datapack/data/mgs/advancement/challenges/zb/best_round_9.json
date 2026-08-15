@@ -1,0 +1,45 @@
+{
+	"parent": "mgs:challenges/zb/best_round_8",
+	"display": {
+		"icon": {
+			"id": "minecraft:dragon_head"
+		},
+		"title": [
+			{
+				"translate": "mgs.round"
+			},
+			" 50"
+		],
+		"description": [
+			{
+				"translate": "mgs.clear_round"
+			},
+			" 50"
+		],
+		"frame": "goal",
+		"show_toast": true,
+		"announce_to_chat": false,
+		"hidden": false
+	},
+	"criteria": {
+		"threshold": {
+			"trigger": "minecraft:tick",
+			"conditions": {
+				"player": [
+					{
+						"condition": "minecraft:entity_scores",
+						"entity": "this",
+						"scores": {
+							"mgs.adv.zb.best_round": {
+								"min": 50
+							}
+						}
+					}
+				]
+			}
+		}
+	},
+	"rewards": {
+		"function": "mgs:v5.1.0/progression/adv/zb/best_round/reward_9"
+	}
+}

@@ -1,0 +1,39 @@
+{
+	"parent": "mgs:challenges/zb/perks_7",
+	"display": {
+		"icon": {
+			"id": "minecraft:lingering_potion"
+		},
+		"title": {
+			"translate": "mgs.fully_loaded"
+		},
+		"description": {
+			"translate": "mgs.acquire_200_perks"
+		},
+		"frame": "goal",
+		"show_toast": true,
+		"announce_to_chat": false,
+		"hidden": false
+	},
+	"criteria": {
+		"threshold": {
+			"trigger": "minecraft:tick",
+			"conditions": {
+				"player": [
+					{
+						"condition": "minecraft:entity_scores",
+						"entity": "this",
+						"scores": {
+							"mgs.adv.zb.perks": {
+								"min": 200
+							}
+						}
+					}
+				]
+			}
+		}
+	},
+	"rewards": {
+		"function": "mgs:v5.1.0/progression/adv/zb/perks/reward_8"
+	}
+}

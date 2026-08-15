@@ -17,6 +17,7 @@
 #			mgs:v5.1.0/progression/zb/award_trap
 #			mgs:v5.1.0/progression/zb/award_barricade
 #			mgs:v5.1.0/progression/zb/award_game_over
+#			mgs:v5.1.0/progression/zb/award_challenge
 #
 
 # XP only ever goes up, and the cap is far past anything reachable — it exists so the bar and bisect

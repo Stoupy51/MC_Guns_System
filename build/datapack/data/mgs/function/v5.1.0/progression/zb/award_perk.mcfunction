@@ -20,5 +20,8 @@
 # Any perk acquired, bought or from a power-up
 scoreboard players add @s mgs.zb.xp_total 5
 scoreboard players add @s mgs.zb.xp_prog 5
+
+# Observers of this award
+scoreboard players add @s mgs.adv.zb.perks 1
 function mgs:v5.1.0/progression/zb/settle
 

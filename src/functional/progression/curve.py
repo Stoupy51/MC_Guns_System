@@ -82,18 +82,26 @@ scoreboard players remove #xp_lvl_m1 {ns}.data 1
 scoreboard players operation {dest} {ns}.data *= #xp_lvl_m1 {ns}.data"""
 
 	@staticmethod
-	def write_award_functions(ns: str, version: str, side: str, awards: dict[str, XpAward]) -> None:
+	def write_award_functions(
+		ns: str, version: str, side: str, awards: dict[str, XpAward], extra_lines: dict[str, str] | None = None,
+	) -> None:
 		""" Write one `award_<key>` function per row, so every call site is a single command.
 
 		Award sites are scattered across gamemode functions where `@s` is often a marker rather than a
 		player, so they need an `execute as <players> run` wrapper. Giving each award its own function keeps
 		that wrapper to one line instead of four, which is what makes inserting it mid-function readable.
 
+		That same property makes these functions the one place every earned event passes through as the
+		player who earned it, which is why `extra_lines` exists: anything wanting to observe awards hands
+		its lines over here instead of editing thirty-odd award sites. This function stays ignorant of what
+		those lines are for, which is what keeps the dependency one-way.
+
 		Args:
-			ns      (str):                Project namespace.
-			version (str):                Project version.
-			side    (str):                `mp` or `zb`.
-			awards  (dict[str, XpAward]): That side's table.
+			ns          (str):                Project namespace.
+			version     (str):                Project version.
+			side        (str):                `mp` or `zb`.
+			awards      (dict[str, XpAward]): That side's table.
+			extra_lines (dict[str, str] | None): Award key -> extra commands that row's function carries.
 		"""
 		# xp_session feeds the end-of-match report, so only multiplayer keeps one.
 		targets: list[str] = ["xp_total", "xp_prog"] + (["xp_session"] if side == "mp" else [])
@@ -104,6 +112,11 @@ scoreboard players operation {dest} {ns}.data *= #xp_lvl_m1 {ns}.data"""
 			else:
 				bumps = [f"scoreboard players add @s {ns}.{side}.{target} {award.amount}" for target in targets]
 			body: str = "\n".join(bumps)
+
+			# Observers run BEFORE settle, so a counter and the level it may push are consistent within the tick
+			extra: str = (extra_lines or {}).get(key, "")
+			if extra:
+				body = f"{body}\n\n# Observers of this award\n{extra}"
 			write_versioned_function(f"progression/{side}/award_{key}", f"""
 # {award.note}
 {body}

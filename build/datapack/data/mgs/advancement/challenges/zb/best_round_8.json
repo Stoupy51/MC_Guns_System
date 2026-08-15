@@ -1,0 +1,45 @@
+{
+	"parent": "mgs:challenges/zb/best_round_7",
+	"display": {
+		"icon": {
+			"id": "minecraft:ghast_tear"
+		},
+		"title": [
+			{
+				"translate": "mgs.round"
+			},
+			" 40"
+		],
+		"description": [
+			{
+				"translate": "mgs.clear_round"
+			},
+			" 40"
+		],
+		"frame": "goal",
+		"show_toast": true,
+		"announce_to_chat": false,
+		"hidden": false
+	},
+	"criteria": {
+		"threshold": {
+			"trigger": "minecraft:tick",
+			"conditions": {
+				"player": [
+					{
+						"condition": "minecraft:entity_scores",
+						"entity": "this",
+						"scores": {
+							"mgs.adv.zb.best_round": {
+								"min": 40
+							}
+						}
+					}
+				]
+			}
+		}
+	},
+	"rewards": {
+		"function": "mgs:v5.1.0/progression/adv/zb/best_round/reward_8"
+	}
+}

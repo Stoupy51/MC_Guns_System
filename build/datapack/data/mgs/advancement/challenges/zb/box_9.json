@@ -1,0 +1,42 @@
+{
+	"parent": "mgs:challenges/zb/box_8",
+	"display": {
+		"icon": {
+			"id": "minecraft:poisonous_potato",
+			"components": {
+				"minecraft:item_model": "mgs:ray_gun"
+			}
+		},
+		"title": {
+			"translate": "mgs.ray_gun_eventually"
+		},
+		"description": {
+			"translate": "mgs.collect_300_weapons_from_the_box"
+		},
+		"frame": "goal",
+		"show_toast": true,
+		"announce_to_chat": false,
+		"hidden": false
+	},
+	"criteria": {
+		"threshold": {
+			"trigger": "minecraft:tick",
+			"conditions": {
+				"player": [
+					{
+						"condition": "minecraft:entity_scores",
+						"entity": "this",
+						"scores": {
+							"mgs.adv.zb.box": {
+								"min": 300
+							}
+						}
+					}
+				]
+			}
+		}
+	},
+	"rewards": {
+		"function": "mgs:v5.1.0/progression/adv/zb/box/reward_9"
+	}
+}

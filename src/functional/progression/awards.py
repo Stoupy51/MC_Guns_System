@@ -80,9 +80,18 @@ MP_AWARDS: dict[str, XpAward] = by_key([
 	XpAward(key="round_loss",      amount=5,  note="Losing one; never zero, so a losing side still progresses"),
 	XpAward(key="match_win",       amount=50, note="Match win, to every player on the winning side"),
 	XpAward(key="match_loss",      amount=20, note="Match loss or draw, to everyone who played it"),
+	XpAward(key="mission_kill",    amount=3,  note="A mission enemy, worth less than a player because there are far more of them"),
+	XpAward(key="mission_headshot", amount=3, note="Added ON TOP of mission_kill, same doubling as the other two modes"),
+	XpAward(key="mission_complete", amount=50, note="Clearing a mission, to everyone still on the roster"),
+	XpAward(key="challenge",       amount=0,  note="Any challenge unlocked; the tier's payout arrives in #xp_gain", scaled=True),
 ])
-""" Multiplayer awards. Tuned so a 20-kill win lands around 300-400 XP, which is ~2400 XP/hour.
-A death is deliberately absent: XP never goes down. """
+""" Multiplayer awards, and the missions ones: missions has no level of its own and pays into this pool.
+Tuned so a 20-kill win lands around 300-400 XP, which is ~2400 XP/hour, and a mission of ~60 enemies
+lands around 250 XP. A death is deliberately absent: XP never goes down.
+
+The mission rows are separate from `kill` and `headshot` rather than reusing them, because the
+Multiplayer kills challenge counts the `kill` row and its nodes say "Kill N players". A mission enemy is
+not a player. """
 
 ZB_AWARDS: dict[str, XpAward] = by_key([
 	XpAward(key="kill",            amount=2,  note="Per zombie, any kill type, via the totalKillCount delta", scaled=True),
@@ -99,6 +108,7 @@ ZB_AWARDS: dict[str, XpAward] = by_key([
 	XpAward(key="trap",            amount=2,  note="Activating a trap"),
 	XpAward(key="barricade",       amount=1,  note="Repairing a barricade; already capped at 25 repairs per round"),
 	XpAward(key="game_over",       amount=0,  note="GAME_OVER_XP x the final round", scaled=True),
+	XpAward(key="challenge",       amount=0,  note="Any challenge unlocked; the tier's payout arrives in #xp_gain", scaled=True),
 ])
 """ Zombies awards. Tuned so a round-20 run lands around 1580 XP over ~45 minutes, which is ~2100 XP/hour —
 close enough to multiplayer that neither side is the obvious grind. """

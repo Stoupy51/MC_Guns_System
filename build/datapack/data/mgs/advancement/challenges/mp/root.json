@@ -1,0 +1,26 @@
+{
+	"parent": "mgs:challenges/root",
+	"display": {
+		"icon": {
+			"id": "minecraft:poisonous_potato",
+			"components": {
+				"minecraft:item_model": "mgs:m4a1"
+			}
+		},
+		"title": {
+			"translate": "mgs.multiplayer"
+		},
+		"description": {
+			"translate": "mgs.challenges_across_every_competitive_gamemode"
+		},
+		"frame": "task",
+		"show_toast": false,
+		"announce_to_chat": false,
+		"hidden": false
+	},
+	"criteria": {
+		"joined": {
+			"trigger": "minecraft:tick"
+		}
+	}
+}

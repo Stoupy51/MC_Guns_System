@@ -1,0 +1,8 @@
+{
+	"parent": "mgs:challenges/zb/best_round_10",
+	"criteria": {
+		"joined": {
+			"trigger": "minecraft:tick"
+		}
+	}
+}

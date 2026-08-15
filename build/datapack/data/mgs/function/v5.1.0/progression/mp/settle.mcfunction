@@ -16,6 +16,10 @@
 #			mgs:v5.1.0/progression/mp/award_round_loss
 #			mgs:v5.1.0/progression/mp/award_match_win
 #			mgs:v5.1.0/progression/mp/award_match_loss
+#			mgs:v5.1.0/progression/mp/award_mission_kill
+#			mgs:v5.1.0/progression/mp/award_mission_headshot
+#			mgs:v5.1.0/progression/mp/award_mission_complete
+#			mgs:v5.1.0/progression/mp/award_challenge
 #
 
 # XP only ever goes up, and the cap is far past anything reachable — it exists so the bar and bisect

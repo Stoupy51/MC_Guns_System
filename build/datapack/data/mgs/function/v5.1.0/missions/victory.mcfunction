@@ -8,6 +8,11 @@
 execute as @a[scores={mgs.mi.in_game=1}] run scoreboard players operation @s mgs.mi.kills = @s mgs.mi.kill_total
 execute as @a[scores={mgs.mi.in_game=1}] run scoreboard players operation @s mgs.mi.kills -= @s mgs.mi.kill_base
 
+# Challenges: missions have no XP awards to ride, so the counters are fed here, where mi.kills is final
+execute as @a[scores={mgs.mi.in_game=1}] run scoreboard players add @s mgs.adv.mi.completed 1
+execute as @a[scores={mgs.mi.in_game=1}] run scoreboard players operation @s mgs.adv.mi.kills += @s mgs.mi.kills
+execute as @a[scores={mgs.mi.in_game=1,mgs.mi.deaths=0}] run advancement grant @s only mgs:challenges/mi/flawless
+
 # Calculate time in seconds
 scoreboard players operation #mi_seconds mgs.data = #mi_timer mgs.data
 scoreboard players operation #mi_seconds mgs.data /= #20 mgs.data
@@ -28,8 +33,9 @@ tellraw @a ["","\n",[{"text":"═══════ ","color":"gold","bold":true
 tellraw @a ["","  ","⏱ ",{"translate":"mgs.time","color":"gray"},{"score":{"name":"#mi_minutes","objective":"mgs.data"},"color":"yellow"},"m ",{"score":{"name":"#mi_rem_sec","objective":"mgs.data"},"color":"yellow"},"s"]
 tellraw @a ["","  ","💀 ",{"translate":"mgs.enemies_killed","color":"gray"},{"score":{"name":"#mi_total_enemies","objective":"mgs.data"},"color":"red"}]
 
-# Per-player stats
-execute as @a[scores={mgs.mi.in_game=1}] run tellraw @a ["","  ","🎖 ",["",{"text":"[","color":"dark_gray"},{"score":{"name":"@s","objective":"mgs.mp.xp_level"},"color":"gold"},{"text":"] ","color":"dark_gray"},{"selector":"@s","color":"yellow"}]," — Kills: ",{"score":{"name":"@s","objective":"mgs.mi.kills"},"color":"green"}," | Deaths: ",{"score":{"name":"@s","objective":"mgs.mi.deaths"},"color":"red"}]
+# Per-player stats, carrying the completion XP rather than printing a second line for it
+execute as @a[scores={mgs.mi.in_game=1}] run tellraw @a ["","  ","🎖 ",["",{"text":"[","color":"dark_gray"},{"score":{"name":"@s","objective":"mgs.mp.xp_level"},"color":"gold"},{"text":"] ","color":"dark_gray"},{"selector":"@s","color":"yellow"}]," — Kills: ",{"score":{"name":"@s","objective":"mgs.mi.kills"},"color":"green"}," | Deaths: ",{"score":{"name":"@s","objective":"mgs.mi.deaths"},"color":"red"},[" ",{"text":"+50 XP","color":"gold"}]]
+execute as @a[scores={mgs.mi.in_game=1}] run function mgs:v5.1.0/progression/mp/award_mission_complete
 
 tellraw @a ["",{"text":"═══════════════════════════════","color":"gold","bold":true},"\n"]
 

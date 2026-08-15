@@ -1,0 +1,45 @@
+{
+	"parent": "mgs:challenges/zb/best_round_3",
+	"display": {
+		"icon": {
+			"id": "minecraft:golden_carrot"
+		},
+		"title": [
+			{
+				"translate": "mgs.round"
+			},
+			" 20"
+		],
+		"description": [
+			{
+				"translate": "mgs.clear_round"
+			},
+			" 20"
+		],
+		"frame": "task",
+		"show_toast": true,
+		"announce_to_chat": false,
+		"hidden": false
+	},
+	"criteria": {
+		"threshold": {
+			"trigger": "minecraft:tick",
+			"conditions": {
+				"player": [
+					{
+						"condition": "minecraft:entity_scores",
+						"entity": "this",
+						"scores": {
+							"mgs.adv.zb.best_round": {
+								"min": 20
+							}
+						}
+					}
+				]
+			}
+		}
+	},
+	"rewards": {
+		"function": "mgs:v5.1.0/progression/adv/zb/best_round/reward_4"
+	}
+}

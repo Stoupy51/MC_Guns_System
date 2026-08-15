@@ -10,5 +10,8 @@
 scoreboard players add @s mgs.mp.xp_total 50
 scoreboard players add @s mgs.mp.xp_prog 50
 scoreboard players add @s mgs.mp.xp_session 50
+
+# Observers of this award
+scoreboard players add @s mgs.adv.mp.wins 1
 function mgs:v5.1.0/progression/mp/settle
 

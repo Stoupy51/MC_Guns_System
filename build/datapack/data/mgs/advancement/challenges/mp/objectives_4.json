@@ -1,0 +1,39 @@
+{
+	"parent": "mgs:challenges/mp/objectives_3",
+	"display": {
+		"icon": {
+			"id": "minecraft:cyan_banner"
+		},
+		"title": {
+			"translate": "mgs.team_player"
+		},
+		"description": {
+			"translate": "mgs.complete_50_objective_plays"
+		},
+		"frame": "task",
+		"show_toast": true,
+		"announce_to_chat": false,
+		"hidden": false
+	},
+	"criteria": {
+		"threshold": {
+			"trigger": "minecraft:tick",
+			"conditions": {
+				"player": [
+					{
+						"condition": "minecraft:entity_scores",
+						"entity": "this",
+						"scores": {
+							"mgs.adv.mp.objectives": {
+								"min": 50
+							}
+						}
+					}
+				]
+			}
+		}
+	},
+	"rewards": {
+		"function": "mgs:v5.1.0/progression/adv/mp/objectives/reward_4"
+	}
+}

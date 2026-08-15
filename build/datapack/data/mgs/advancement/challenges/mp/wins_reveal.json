@@ -1,0 +1,8 @@
+{
+	"parent": "mgs:challenges/mp/wins_10",
+	"criteria": {
+		"joined": {
+			"trigger": "minecraft:tick"
+		}
+	}
+}

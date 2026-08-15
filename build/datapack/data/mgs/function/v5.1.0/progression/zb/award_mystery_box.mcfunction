@@ -9,5 +9,8 @@
 # Collecting a weapon off the box
 scoreboard players add @s mgs.zb.xp_total 3
 scoreboard players add @s mgs.zb.xp_prog 3
+
+# Observers of this award
+scoreboard players add @s mgs.adv.zb.box 1
 function mgs:v5.1.0/progression/zb/settle
 

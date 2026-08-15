@@ -1,0 +1,39 @@
+{
+	"parent": "mgs:challenges/zb/root",
+	"display": {
+		"icon": {
+			"id": "minecraft:skeleton_skull"
+		},
+		"title": {
+			"translate": "mgs.aim_for_the_head"
+		},
+		"description": {
+			"translate": "mgs.land_50_headshot_kills"
+		},
+		"frame": "task",
+		"show_toast": true,
+		"announce_to_chat": false,
+		"hidden": false
+	},
+	"criteria": {
+		"threshold": {
+			"trigger": "minecraft:tick",
+			"conditions": {
+				"player": [
+					{
+						"condition": "minecraft:entity_scores",
+						"entity": "this",
+						"scores": {
+							"mgs.adv.zb.headshots": {
+								"min": 50
+							}
+						}
+					}
+				]
+			}
+		}
+	},
+	"rewards": {
+		"function": "mgs:v5.1.0/progression/adv/zb/headshots/reward_1"
+	}
+}

@@ -1,0 +1,8 @@
+{
+	"parent": "mgs:challenges/zb/headshots_10",
+	"criteria": {
+		"joined": {
+			"trigger": "minecraft:tick"
+		}
+	}
+}

@@ -1,0 +1,26 @@
+{
+	"parent": "mgs:challenges/mi/root",
+	"display": {
+		"icon": {
+			"id": "minecraft:totem_of_undying"
+		},
+		"title": {
+			"translate": "mgs.no_casualties"
+		},
+		"description": {
+			"translate": "mgs.complete_a_mission_without_dying_once"
+		},
+		"frame": "challenge",
+		"show_toast": true,
+		"announce_to_chat": false,
+		"hidden": false
+	},
+	"criteria": {
+		"granted": {
+			"trigger": "minecraft:impossible"
+		}
+	},
+	"rewards": {
+		"function": "mgs:v5.1.0/progression/adv/mi/reward_flawless"
+	}
+}

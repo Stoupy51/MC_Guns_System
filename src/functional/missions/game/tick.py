@@ -6,6 +6,8 @@ from ...core.respawn_countdown import respawn_countdown_tick_lines
 from ...core.weapon_drop import WeaponDrop
 from ...helpers.text import Text
 from ...helpers.titles import TitleTimes
+from ...progression import Advancements
+from ..xp import MissionsXp
 
 
 # Functions
@@ -85,6 +87,9 @@ $item replace entity @s hotbar.3 with compass[lodestone_tracker={{target:{{pos:[
 execute as @a[scores={{{ns}.mi.in_game=1}}] run scoreboard players operation @s {ns}.mi.kills = @s {ns}.mi.kill_total
 execute as @a[scores={{{ns}.mi.in_game=1}}] run scoreboard players operation @s {ns}.mi.kills -= @s {ns}.mi.kill_base
 
+# Challenges: missions have no XP awards to ride, so the counters are fed here, where mi.kills is final
+{Advancements.mission_victory_lines()}
+
 # Calculate time in seconds
 scoreboard players operation #mi_seconds {ns}.data = #mi_timer {ns}.data
 scoreboard players operation #mi_seconds {ns}.data /= #20 {ns}.data
@@ -105,8 +110,9 @@ tellraw @a ["","\\n",{{"text":"═══════ MISSION COMPLETE ═══�
 tellraw @a ["","  ","⏱ ",{{"text":"Time: ","color":"gray"}},{{"score":{{"name":"#mi_minutes","objective":"{ns}.data"}},"color":"yellow"}},"m ",{{"score":{{"name":"#mi_rem_sec","objective":"{ns}.data"}},"color":"yellow"}},"s"]
 tellraw @a ["","  ","💀 ",{{"text":"Enemies killed: ","color":"gray"}},{{"score":{{"name":"#mi_total_enemies","objective":"{ns}.data"}},"color":"red"}}]
 
-# Per-player stats
-execute as @a[scores={{{ns}.mi.in_game=1}}] run tellraw @a ["","  ","🎖 ",{Text.player(ns, "@s", color="yellow")}," — Kills: ",{{"score":{{"name":"@s","objective":"{ns}.mi.kills"}},"color":"green"}}," | Deaths: ",{{"score":{{"name":"@s","objective":"{ns}.mi.deaths"}},"color":"red"}}]
+# Per-player stats, carrying the completion XP rather than printing a second line for it
+execute as @a[scores={{{ns}.mi.in_game=1}}] run tellraw @a ["","  ","🎖 ",{Text.player(ns, "@s", color="yellow")}," — Kills: ",{{"score":{{"name":"@s","objective":"{ns}.mi.kills"}},"color":"green"}}," | Deaths: ",{{"score":{{"name":"@s","objective":"{ns}.mi.deaths"}},"color":"red"}},{MissionsXp.victory_suffix()}]
+{MissionsXp.victory_lines()}
 
 tellraw @a ["",{{"text":"═══════════════════════════════","color":"gold","bold":true}},"\\n"]
 
