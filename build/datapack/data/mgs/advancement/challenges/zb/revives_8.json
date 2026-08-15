@@ -1,0 +1,39 @@
+{
+	"parent": "mgs:challenges/zb/revives_7",
+	"display": {
+		"icon": {
+			"id": "minecraft:enchanted_golden_apple"
+		},
+		"title": {
+			"translate": "mgs.nobody_dies_today"
+		},
+		"description": {
+			"translate": "mgs.revive_75_teammates"
+		},
+		"frame": "goal",
+		"show_toast": true,
+		"announce_to_chat": false,
+		"hidden": false
+	},
+	"criteria": {
+		"threshold": {
+			"trigger": "minecraft:tick",
+			"conditions": {
+				"player": [
+					{
+						"condition": "minecraft:entity_scores",
+						"entity": "this",
+						"scores": {
+							"mgs.adv.zb.revives": {
+								"min": 75
+							}
+						}
+					}
+				]
+			}
+		}
+	},
+	"rewards": {
+		"function": "mgs:v5.1.0/progression/adv/zb/revives/reward_8"
+	}
+}

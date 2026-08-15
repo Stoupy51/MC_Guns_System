@@ -16,11 +16,13 @@ condition. No command grants it.
   "threshold": {
     "trigger": "minecraft:tick",
     "conditions": {
-      "player": {
-        "condition": "minecraft:entity_scores",
-        "entity": "this",
-        "scores": { "mgs.adv.zb.kills": { "min": 2500 } }
-      }
+      "player": [
+        {
+          "condition": "minecraft:entity_scores",
+          "entity": "this",
+          "scores": { "mgs.adv.zb.kills": { "min": 2500 } }
+        }
+      ]
     }
   }
 }
@@ -30,10 +32,17 @@ condition. No command grants it.
 
 - `minecraft:tick` is `PlayerTrigger`, registered at
   [CriteriaTriggers.java:31](../../minecraft_source_code/net/minecraft/advancements/triggers/CriteriaTriggers.java#L31).
-  Its instance is a single optional `player` field holding a `LootItemCondition`
-  ([PlayerTrigger.java:28-32](../../minecraft_source_code/net/minecraft/advancements/triggers/PlayerTrigger.java#L28)).
-  It is a `Holder`, so the value may also be a reference to a predicate file if a condition is ever
-  shared between tiers.
+- **`player` is a list.** It holds a `ContextAwarePredicate`, which decodes as a list of loot
+  conditions, with an alternative branch that reads a bare `EntityPredicate` (a map keyed by entity
+  sub-predicate type) and wraps it. Handing it a single condition object satisfies neither branch: the
+  list branch reports the whole object as missed input, and the alternative rejects `condition`,
+  `entity` and `scores` as unknown `entity_sub_predicate_type` keys.
+
+  This cost a load cycle to find, because the decompiled dump in `minecraft_source_code/` is **stale for
+  this class**: it shows `PlayerTrigger.TriggerInstance` holding `Optional<Holder<LootItemCondition>>`
+  and contains no `ContextAwarePredicate` at all, while the running server reports
+  `TriggerInstance[player=Optional[ContextAwarePredicate@...]]`. Treat the dump as a strong hint and the
+  server log as the authority.
 - `minecraft:entity_scores` is `EntityHasScoreCondition`, registered at
   [LootItemConditionTypes.java:15](../../minecraft_source_code/net/minecraft/world/level/storage/loot/predicates/LootItemConditionTypes.java#L15),
   with `scores` an unbounded map of objective name to `IntRange`
@@ -153,8 +162,31 @@ root is one tab. Three separate roots would be three tabs competing with vanilla
 what the user does not want. Branch roots give the tree its structure without spending a tab on it.
 
 All four roots use an unconditioned `{"trigger": "minecraft:tick"}` criterion, so they complete on a
-player's first tick and every chain's first tier is visible immediately. That is the difference between a
-screen that reads as a list of goals and one that reads as a wall of question marks. Roots pay no XP.
+player's first tick. Roots pay no XP.
+
+## 6b. Making the whole tree visible
+
+**Decision**: Each chain ends in a sentinel advancement with **no `display` block at all**, auto-granted
+by an unconditioned `tick` criterion, parented to the chain's last tier.
+
+**Rationale**: Granting the roots is not enough, and believing it was is the mistake this entry exists to
+correct. `AdvancementVisibilityEvaluator` shows an unfinished node only when it or one of its two nearest
+ancestors is done
+([AdvancementVisibilityEvaluator.java:25-38](../../minecraft_source_code/net/minecraft/server/advancements/AdvancementVisibilityEvaluator.java#L25)),
+so on a four-tier chain a fresh player sees tiers 1 and 2 and nothing else. Half the catalog would be
+invisible, and a challenge nobody can read is a challenge nobody chases.
+
+The same file gives the fix. `evaluateVisibilityRule` returns `HIDE` for any advancement whose `display`
+is absent, so a display-less node is never drawn
+([line 16-17](../../minecraft_source_code/net/minecraft/server/advancements/AdvancementVisibilityEvaluator.java#L16)),
+while `isSelfOrDescendantDone |= evaluateVisibility(child, ...)` ORs a child's done-ness into its parent
+all the way up
+([line 51-55](../../minecraft_source_code/net/minecraft/server/advancements/AdvancementVisibilityEvaluator.java#L51)).
+One completed, invisible leaf therefore lights up its entire ancestor chain while rendering nothing,
+announcing nothing and paying nothing.
+
+Sixteen sentinels, one per chain, at `mgs:challenges/<branch>/<chain>_reveal`. The event challenges need
+none: they hang directly off a branch root, well inside the two-ancestor window.
 
 `background` is only read on the true root. It is a plain identifier resolved as `textures/<path>.png`
 ([ClientAsset.java:19-27](../../minecraft_source_code/net/minecraft/core/ClientAsset.java#L19)), so
@@ -224,7 +256,8 @@ the command runs.
 
 ## 11. Titles, descriptions and icons
 
-**Decision**: Plain `{"text": ...}` components for title and description, vanilla item ids for icons.
+**Decision**: Plain `{"text": ...}` components for title and description. Icons are either a vanilla item
+id or one of the pack's own weapons.
 
 **Rationale**: `stewbeet.plugins.auto.lang_file` walks every text file in `ctx.data.all()`
 ([scan.py:139](../../../StewBeet/python_package/stewbeet/core/utils/text_component/scan.py#L139)), and
@@ -233,20 +266,51 @@ like item names and chat lines.
 
 `icon` is an `ItemStackTemplate`
 ([DisplayInfo.java:16](../../minecraft_source_code/net/minecraft/advancements/DisplayInfo.java#L16)), so
-the shape is `{"id": "minecraft:iron_axe"}` and custom MGS items remain available later through
-`icon.components`. The first pass uses vanilla items so no new asset work blocks the feature.
+it carries components as well as an id. Every gun in the pack is a `minecraft:poisonous_potato` wearing a
+`minecraft:item_model` ([items.py:58](../../src/config/stats/items.py#L58)), which means an icon can show
+the real weapon:
+
+```json
+"icon": { "id": "minecraft:poisonous_potato", "components": { "minecraft:item_model": "mgs:m249" } }
+```
+
+The catalog writes `icon="m249"` for a pack item and `icon="minecraft:beacon"` for a vanilla one, and the
+generator tells them apart by the colon. The pack item path goes through `Item.from_id`, which is strict,
+so a mistyped weapon id fails the build rather than rendering as a raw potato in game.
+
+Guns are used where the chain is about shooting (kills, headshots), on both branch roots and on the tab
+itself. Objectives, perks, rounds and levels keep vanilla items, because a gun on every node would make
+the tree unreadable.
 
 ## 12. Balance of the payouts
 
-**Decision**: Payout scales with tier index, with the catalog carrying the number explicitly per tier
-rather than deriving it. The Multiplayer pool comes to 9,100 XP (7,100 from the Multiplayer branch plus
-2,000 from Missions) and the Zombies pool to 12,100.
+**Decision**: Ten tiers per chain on a shared XP ladder, with the number written out per row. Standard
+chains use `10, 20, 30, 50, 75, 110, 160, 230, 275, 340` (1,300 total); the two `level` chains and
+`best_round` use `15, 30, 50, 80, 120, 175, 250, 350, 425, 505` (2,000). Multiplayer pool 10,400, Zombies
+pool 13,600.
 
 **Rationale**: SC-003. A Zombies run to round 20 is about 1,580 XP
-([awards.py:103](../../src/functional/progression/awards.py#L103)), so that pool is worth about eight
-runs, spread across a tail that takes far longer than eight runs to finish. A Multiplayer win is 300 to
-400 XP, so its pool is about twenty-five matches. No single unlock is worth more than a good match, so
-challenges accelerate the curve without replacing it.
+([awards.py:103](../../src/functional/progression/awards.py#L103)), so that pool is worth about 8.6 runs,
+spread across a tail that takes far longer than 8.6 runs to finish. A Multiplayer win is 300 to 400 XP,
+so its pool is about thirty matches. No single unlock is worth more than a good match, so challenges
+accelerate the curve without replacing it.
 
-Explicit per-tier numbers rather than a formula, because the chains are not equally hard and a formula
-would force every chain to pretend they are.
+The ladder is shared rather than per-chain because sixteen bespoke curves would be sixteen things to
+retune and no player would ever notice the difference. It is still written out per row rather than
+generated, so a single tier can be nudged without touching the rest.
+
+## 12b. Ten tiers, not four
+
+**Decision**: Every chain is ten tiers.
+
+**Rationale**: Shape, not content. Four-tier chains stacked sixteen deep render as a tall narrow column
+that has to be scrolled to read, which is what the first build actually looked like. Ten across turns
+each chain into a line read left to right and the tab into something roughly square.
+
+It also fixes the pacing at the bottom. With four tiers the first Zombies kills node wanted 250 kills;
+with ten it wants 100, and there are four more nodes before the old first one. A challenge tree is most
+useful to a new player, and the old one gave them nothing to hit for an hour.
+
+The cost is 160 rows instead of 53, which is why `Tier` was reduced to threshold, XP and title, with
+description, icon and frame derived from the chain. Ten near-identical rows per chain would have been
+worse than four verbose ones.

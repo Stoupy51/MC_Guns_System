@@ -1,0 +1,39 @@
+{
+	"parent": "mgs:challenges/mp/objectives_1",
+	"display": {
+		"icon": {
+			"id": "minecraft:light_gray_banner"
+		},
+		"title": {
+			"translate": "mgs.playing_the_objective"
+		},
+		"description": {
+			"translate": "mgs.complete_10_objective_plays"
+		},
+		"frame": "task",
+		"show_toast": true,
+		"announce_to_chat": false,
+		"hidden": false
+	},
+	"criteria": {
+		"threshold": {
+			"trigger": "minecraft:tick",
+			"conditions": {
+				"player": [
+					{
+						"condition": "minecraft:entity_scores",
+						"entity": "this",
+						"scores": {
+							"mgs.adv.mp.objectives": {
+								"min": 10
+							}
+						}
+					}
+				]
+			}
+		}
+	},
+	"rewards": {
+		"function": "mgs:v5.1.0/progression/adv/mp/objectives/reward_2"
+	}
+}

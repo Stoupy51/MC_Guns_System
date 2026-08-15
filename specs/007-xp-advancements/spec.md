@@ -161,6 +161,13 @@ tier unlock by itself.
   exist, and MUST NOT introduce any new per-tick function.
 - **FR-013**: Chains that read a scoreboard the pack already maintains MUST read it directly rather than
   mirroring it into a second counter.
+- **FR-014**: Missions MUST award XP for its own play (kills, headshots, completing a mission), into the
+  same pool its challenges pay. It awards none today, so its branch would otherwise hang off a mode
+  whose level bar never moves.
+- **FR-015**: Mission kills MUST NOT be counted by the Multiplayer kills challenge, whose nodes are
+  written in terms of killing players.
+- **FR-016**: Each chain MUST hold enough tiers that the tab reads as a wide tree rather than a tall
+  column, and MUST start low enough that a new player can reach its first tier in a session.
 
 ### Key Entities
 
@@ -180,8 +187,12 @@ tier unlock by itself.
   available to them and what each one pays, without reading any documentation.
 - **SC-002**: Tracking costs at most one command per already-existing award event, and zero commands on
   ticks where nothing is earned. The pack adds no function that runs per tick for this feature.
-- **SC-003**: Each pool is worth roughly seven to twenty sessions of bonus XP, spread so that no single
+- **SC-003**: Each pool is worth roughly eight to thirty sessions of bonus XP, spread so that no single
   unlock outweighs a good match.
+- **SC-007**: The tab is roughly as wide as it is tall, and a player who has never opened the pack can
+  reach the first tier of most chains within one session.
+- **SC-008**: A mission that is played and completed moves the Multiplayer level bar, by an amount in the
+  same range as a Multiplayer match.
 - **SC-004**: Changing any threshold or payout requires editing exactly one file, rebuilding, and
   reloading. No command is run afterwards.
 - **SC-005**: A pack version bump followed by a reload leaves every player's unlocks and counters intact,
@@ -196,6 +207,8 @@ tier unlock by itself.
   reuses `mp.class`, `mp.team`, `mp.default`, the multiplayer loadout and class functions, and
   `progression/tick_player` shows the Multiplayer level everywhere outside a Zombies game, so a missions
   player is looking at their Multiplayer bar while they play. A third curve would be a separate feature.
+- **Missions gains ordinary XP awards too** (FR-014). It had none before this feature, so a Missions
+  branch on the challenge tree would otherwise sit on top of a mode where the bar never moves.
 - The two XP pools stay independent. There is no combined MGS level.
 - Advancements are the only UI. No separate menu, dialog or scoreboard display is in scope.
 - Counters start at zero for everyone, including players with XP banked from before this feature. The

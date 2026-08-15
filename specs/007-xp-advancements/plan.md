@@ -54,8 +54,9 @@ running per tick, zero new entity selectors, zero NBT reads
 
 **Constraints**: No unlock lost to a pack update; no admin step after a retune; the tab count stays at one
 
-**Scale/Scope**: 60 advancement files, 16 chains, 3 event challenges, one new package of roughly seven
-modules, three small edits to existing progression files and three one-line inserts at event sites
+**Scale/Scope**: 183 advancement files, 16 chains of ten, 3 event challenges, one new package of roughly
+seven modules, a new `missions/xp.py`, three small edits to existing progression files and a handful of
+one-line inserts at event sites
 
 ## Constitution Check
 
@@ -82,6 +83,8 @@ the pack's side.
   hash lookup and an integer compare in native code, not a command dispatch, and vanilla unregisters a
   criterion as soon as it completes, so the cost decays to zero as a player finishes the tree. Worst case
   is a brand new player with 56 live criteria, which is still orders of magnitude below one `@e` scan.
+  The 16 reveal sentinels and the 4 roots complete on the first tick and unregister immediately, so they
+  cost one tick each and nothing after that.
 - **Objectives**: 14 new dummy objectives. They cost nothing per tick and live in `level.dat` forever.
   They sit under a fresh `mgs.adv.` prefix so they are recognisable and never caught by a per-match wipe.
   The two `level` chains read `mgs.*.xp_level` directly instead of mirroring it, which is 2 objectives and
@@ -113,10 +116,16 @@ specs/007-xp-advancements/
 ### Source Code (repository root)
 
 ```text
+src/functional/missions/
+├── xp.py                            # New: mission kills, headshots and completion, into the mp pool
+└── game/tick.py                     # Victory splices in the completion award and the challenge counters
+
 src/functional/progression/
 ├── __init__.py                      # Wire in: objectives, generate_advancements()
-├── awards.py                        # One `challenge` row per XP pool, scaled=True
+├── awards.py                        # A `challenge` row per pool, plus the three mission rows
 ├── curve.py                         # write_award_functions gains the per-award extra-lines dict
+├── xp.py                            # Xp, moved out of __init__ so advancements can import it
+
 └── advancements/                    # New package
     ├── __init__.py                  # generate_advancements(), Advancements.stat_lines / .grant
     ├── model.py                     # Branch, StatKind, Stat, Tier, Chain, EventChallenge

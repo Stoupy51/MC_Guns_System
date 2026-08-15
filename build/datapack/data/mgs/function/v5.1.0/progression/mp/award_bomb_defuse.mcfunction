@@ -11,5 +11,8 @@
 scoreboard players add @s mgs.mp.xp_total 25
 scoreboard players add @s mgs.mp.xp_prog 25
 scoreboard players add @s mgs.mp.xp_session 25
+
+# Observers of this award
+scoreboard players add @s mgs.adv.mp.objectives 1
 function mgs:v5.1.0/progression/mp/settle
 

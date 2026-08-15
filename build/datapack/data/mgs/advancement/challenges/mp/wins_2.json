@@ -1,0 +1,39 @@
+{
+	"parent": "mgs:challenges/mp/wins_1",
+	"display": {
+		"icon": {
+			"id": "minecraft:chainmail_helmet"
+		},
+		"title": {
+			"translate": "mgs.winning_habit"
+		},
+		"description": {
+			"translate": "mgs.win_3_matches"
+		},
+		"frame": "task",
+		"show_toast": true,
+		"announce_to_chat": false,
+		"hidden": false
+	},
+	"criteria": {
+		"threshold": {
+			"trigger": "minecraft:tick",
+			"conditions": {
+				"player": [
+					{
+						"condition": "minecraft:entity_scores",
+						"entity": "this",
+						"scores": {
+							"mgs.adv.mp.wins": {
+								"min": 3
+							}
+						}
+					}
+				]
+			}
+		}
+	},
+	"rewards": {
+		"function": "mgs:v5.1.0/progression/adv/mp/wins/reward_2"
+	}
+}

@@ -1,0 +1,39 @@
+{
+	"parent": "mgs:challenges/zb/root",
+	"display": {
+		"icon": {
+			"id": "minecraft:chest"
+		},
+		"title": {
+			"translate": "mgs.first_roll"
+		},
+		"description": {
+			"translate": "mgs.collect_a_weapon_from_the_box"
+		},
+		"frame": "task",
+		"show_toast": true,
+		"announce_to_chat": false,
+		"hidden": false
+	},
+	"criteria": {
+		"threshold": {
+			"trigger": "minecraft:tick",
+			"conditions": {
+				"player": [
+					{
+						"condition": "minecraft:entity_scores",
+						"entity": "this",
+						"scores": {
+							"mgs.adv.zb.box": {
+								"min": 1
+							}
+						}
+					}
+				]
+			}
+		}
+	},
+	"rewards": {
+		"function": "mgs:v5.1.0/progression/adv/zb/box/reward_1"
+	}
+}

@@ -1,0 +1,26 @@
+{
+	"parent": "mgs:challenges/zb/root",
+	"display": {
+		"icon": {
+			"id": "minecraft:soul_lantern"
+		},
+		"title": {
+			"translate": "mgs.alone_in_the_dark"
+		},
+		"description": {
+			"translate": "mgs.reach_round_20_with_nobody_else_in_the_game"
+		},
+		"frame": "challenge",
+		"show_toast": true,
+		"announce_to_chat": false,
+		"hidden": false
+	},
+	"criteria": {
+		"granted": {
+			"trigger": "minecraft:impossible"
+		}
+	},
+	"rewards": {
+		"function": "mgs:v5.1.0/progression/adv/zb/reward_solo_run"
+	}
+}

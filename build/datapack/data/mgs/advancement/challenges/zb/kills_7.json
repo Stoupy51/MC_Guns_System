@@ -1,0 +1,42 @@
+{
+	"parent": "mgs:challenges/zb/kills_6",
+	"display": {
+		"icon": {
+			"id": "minecraft:poisonous_potato",
+			"components": {
+				"minecraft:item_model": "mgs:ak47"
+			}
+		},
+		"title": {
+			"translate": "mgs.thinning_them_out"
+		},
+		"description": {
+			"translate": "mgs.kill_10000_zombies"
+		},
+		"frame": "task",
+		"show_toast": true,
+		"announce_to_chat": false,
+		"hidden": false
+	},
+	"criteria": {
+		"threshold": {
+			"trigger": "minecraft:tick",
+			"conditions": {
+				"player": [
+					{
+						"condition": "minecraft:entity_scores",
+						"entity": "this",
+						"scores": {
+							"mgs.adv.zb.kills": {
+								"min": 10000
+							}
+						}
+					}
+				]
+			}
+		}
+	},
+	"rewards": {
+		"function": "mgs:v5.1.0/progression/adv/zb/kills/reward_7"
+	}
+}

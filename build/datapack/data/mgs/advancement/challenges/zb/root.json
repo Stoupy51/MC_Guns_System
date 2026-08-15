@@ -1,0 +1,26 @@
+{
+	"parent": "mgs:challenges/root",
+	"display": {
+		"icon": {
+			"id": "minecraft:poisonous_potato",
+			"components": {
+				"minecraft:item_model": "mgs:ray_gun"
+			}
+		},
+		"title": {
+			"translate": "mgs.zombies"
+		},
+		"description": {
+			"translate": "mgs.challenges_for_the_undead_survival_mode"
+		},
+		"frame": "task",
+		"show_toast": false,
+		"announce_to_chat": false,
+		"hidden": false
+	},
+	"criteria": {
+		"joined": {
+			"trigger": "minecraft:tick"
+		}
+	}
+}

@@ -27,12 +27,21 @@ Substitute the pack version from `beet.yml` (`5.1.0` at time of writing) whereve
 
 **Expect**: exactly **one** MGS tab, not three. Its root is already completed (the roots are
 unconditioned `tick` criteria, so they finish on the first tick), the Multiplayer, Missions and Zombies
-sub-roots hang off it, and every chain's first tier is visible.
+sub-roots hang off it, and **every tier of every chain is visible**, all ten of them, on an account that
+has earned nothing.
 
-Hover a few entries: titles and descriptions are readable English, not raw translation keys.
+The tab should read roughly square: sixteen rows of ten, not a tall thin column. If it is still narrow,
+a chain lost tiers somewhere.
 
-**Rules out**: a branch root that lost its `parent` and became a second tab, a mis-parented chain, an
-unregistered advancement folder.
+That last part is the reveal sentinels working. Without them vanilla shows only the first two tiers of
+each chain. Nothing anywhere should render as an empty or nameless node: the sentinels themselves must be
+invisible, not drawn as blanks.
+
+Hover a few entries: titles and descriptions are readable English, not raw translation keys, and the
+shooting chains show real weapon models rather than a poisonous potato.
+
+**Rules out**: a branch root that lost its `parent` and became a second tab, a mis-parented chain, a
+sentinel that accidentally gained a `display`, an icon whose `item_model` component did not survive.
 
 Then confirm the localization went through the pack's normal path:
 
@@ -105,6 +114,36 @@ sits between thresholds. No repeat of the tier-1 message at any point.
 
 **Expect**: the Multiplayer `level` chain's first tier unlocks, with no `mgs.adv.mp.level` objective
 existing anywhere. The chain reads `mgs.mp.xp_level` directly.
+
+## 5b. Missions pays XP at all
+
+Missions awarded nothing before this feature, so this is a new stream rather than a regression check.
+
+```
+/scoreboard players get @s mgs.mp.xp_total
+```
+
+Start a mission and kill a handful of enemies.
+
+**Expect**: `mgs.mp.xp_total` rising by 3 per enemy, doubled on a headshot, with the Multiplayer bar
+moving as you go. Nothing should pay while you are in the missions lobby rather than a live mission.
+
+Finish the mission.
+
+**Expect**: the victory summary's per-player line ends in `+50 XP`, and no separate message announces the
+completion bonus.
+
+**Rules out**: a listener that fires outside `state:"active"` and pays for multiplayer or zombies kills
+too, and a completion award appended after `missions/stop`, which would select nobody.
+
+Then confirm the mission kills did not pollute the Multiplayer kills challenge:
+
+```
+/scoreboard players get @s mgs.adv.mp.kills
+```
+
+**Expect**: unchanged. Mission enemies use their own award rows precisely so that chain, whose nodes say
+"Kill N players", stays honest.
 
 ## 6. The event challenges
 

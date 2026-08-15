@@ -194,6 +194,22 @@ scoreboard objectives add mgs.zb.xp_prog dummy
 scoreboard objectives add mgs.zb.xp_pts_prev dummy
 scoreboard objectives add mgs.zb.xp_spent_acc dummy
 
+# Challenge counters (14 of them; the level chains borrow mgs.mp.xp_level and mgs.zb.xp_level instead)
+scoreboard objectives add mgs.adv.mp.kills dummy
+scoreboard objectives add mgs.adv.mp.headshots dummy
+scoreboard objectives add mgs.adv.mp.objectives dummy
+scoreboard objectives add mgs.adv.mp.wins dummy
+scoreboard objectives add mgs.adv.mi.completed dummy
+scoreboard objectives add mgs.adv.mi.kills dummy
+scoreboard objectives add mgs.adv.zb.kills dummy
+scoreboard objectives add mgs.adv.zb.headshots dummy
+scoreboard objectives add mgs.adv.zb.best_round dummy
+scoreboard objectives add mgs.adv.zb.revives dummy
+scoreboard objectives add mgs.adv.zb.perks dummy
+scoreboard objectives add mgs.adv.zb.pap dummy
+scoreboard objectives add mgs.adv.zb.box dummy
+scoreboard objectives add mgs.adv.zb.spending dummy
+
 ## Zombies scoreboards
 scoreboard objectives add mgs.zb.in_game dummy
 scoreboard objectives add mgs.zb.points dummy

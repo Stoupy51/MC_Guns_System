@@ -12,6 +12,7 @@ release destroys player progress.
 | `mgs:challenges/<branch>/root` | Yes | Branch sub-root: `mp`, `mi`, `zb` |
 | `mgs:challenges/<branch>/<chain>_<n>` | Yes | One threshold tier, `n` starting at 1 |
 | `mgs:challenges/<branch>/<key>` | Yes | One event challenge |
+| `mgs:challenges/<branch>/<chain>_reveal` | Yes | Invisible sentinel closing a chain |
 
 **Contract**: these ids never gain a `v<version>` segment and are never renamed. A chain may gain tiers
 at the end; existing tiers are never renumbered. Removing a chain orphans the unlock in every world that
@@ -34,17 +35,22 @@ already has it, which is acceptable only as a deliberate, documented removal.
     "threshold": {
       "trigger": "minecraft:tick",
       "conditions": {
-        "player": {
-          "condition": "minecraft:entity_scores",
-          "entity": "this",
-          "scores": { "mgs.adv.zb.kills": { "min": 2500 } }
-        }
+        "player": [
+          {
+            "condition": "minecraft:entity_scores",
+            "entity": "this",
+            "scores": { "mgs.adv.zb.kills": { "min": 2500 } }
+          }
+        ]
       }
     }
   },
   "rewards": { "function": "mgs:v<version>/progression/adv/zb/kills/reward_2" }
 }
 ```
+
+`player` is a **list**. It is a `ContextAwarePredicate`, and a bare condition object there fails to load
+the whole advancement (see [research.md](../research.md) §1).
 
 Vanilla owns the unlock. The pack never runs `advancement grant` for a tier, which is what makes retuning
 self-healing and what keeps the per-event cost at one command.
@@ -68,6 +74,19 @@ Unreachable by design. The only way in is the single `advancement grant` at its 
 { "display": { "...": "...", "background": "minecraft:block/polished_deepslate", "show_toast": false, "announce_to_chat": false },
   "criteria": { "joined": { "trigger": "minecraft:tick" } } }
 ```
+
+### Reveal sentinel
+
+```json
+{ "parent": "mgs:challenges/zb/kills_4",
+  "criteria": { "joined": { "trigger": "minecraft:tick" } } }
+```
+
+**No `display` key, deliberately.** That is what makes it unrenderable, while its completion still ORs
+up the tree and reveals every tier above it. Adding a display to one of these turns it into a visible
+node that pays nothing, which is not what any of them are for.
+
+### Roots
 
 Unconditioned, so a root completes on the player's first tick and the branches below it become visible.
 `background` is read only on `mgs:challenges/root` and is a plain identifier resolved as
