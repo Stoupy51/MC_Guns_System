@@ -24,6 +24,7 @@
 #			mgs:v5.1.0/zombies/wallbuys/refill_tactical {msg:'{"translate":"mgs.your_equipment_is_already_full","color":"yellow"}'}
 #			mgs:v5.1.0/zombies/perks/on_right_click {msg:'{"translate":"mgs.this_perk_machine_requires_power","color":"red"}'}
 #			mgs:v5.1.0/zombies/perks/on_right_click {msg:'{"translate":"mgs.you_already_own_this_perk","color":"yellow"}'}
+#			mgs:v5.1.0/zombies/perks/on_right_click {msg:'{"translate":"mgs.quick_revive_is_spent_3_3_self_revives_used_this_game","color":"yellow"}'}
 #			mgs:v5.1.0/zombies/wunderfizz/on_right_click {msg:'{"translate":"mgs.der_wunderfizz_is_moving_2","color":"yellow"}'}
 #			mgs:v5.1.0/zombies/wunderfizz/on_right_click {msg:'{"translate":"mgs.this_der_wunderfizz_requires_power","color":"red"}'}
 #			mgs:v5.1.0/zombies/wunderfizz/machine_click {msg:'{"translate":"mgs.der_wunderfizz_is_already_spinning","color":"red"}'}

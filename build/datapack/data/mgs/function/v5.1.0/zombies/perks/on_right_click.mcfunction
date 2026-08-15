@@ -23,6 +23,10 @@ function mgs:v5.1.0/zombies/perks/lookup_perk with storage mgs:temp _pk_buy
 function mgs:v5.1.0/zombies/perks/check_owned with storage mgs:temp _pk_data
 execute if score #pk_owned mgs.data matches 1 run return run function mgs:v5.1.0/zombies/deny/message {msg:'{"translate":"mgs.you_already_own_this_perk","color":"yellow"}'}
 
+# Quick Revive is capped at 3 solo self-revives per game. The cap lives on qr_uses, not on a
+# pinned perk score: that made every ownership readout show the perk again after the last self-revive.
+execute if entity @n[tag=bs.interaction.target,tag=mgs.pk_quick_revive] if score @s mgs.zb.qr_uses matches 3.. run return run function mgs:v5.1.0/zombies/deny/message {msg:'{"translate":"mgs.quick_revive_is_spent_3_3_self_revives_used_this_game","color":"yellow"}'}
+
 # Get price and check points (chip-in machines charge one chunk per click)
 function mgs:v5.1.0/zombies/perks/read_price with storage mgs:temp _pk_data
 execute unless score @s mgs.zb.points >= #pk_price mgs.data run return run function mgs:v5.1.0/zombies/deny/not_enough_points {score:"#pk_price",obj:"mgs.data"}

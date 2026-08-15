@@ -14,10 +14,10 @@ scoreboard players add @s mgs.zb.qr_uses 1
 tag @s remove mgs.perk.quick_revive
 tag @s remove mgs.zb_qr_armed
 
-# If all 3 uses are exhausted, keep the perk score at 1 to permanently block rebuy
-# Otherwise reset to 0 so the machine allows a new purchase
-execute if score @s mgs.zb.qr_uses matches 3.. run scoreboard players set @s mgs.zb.perk.quick_revive 1
-execute unless score @s mgs.zb.qr_uses matches 3.. run scoreboard players set @s mgs.zb.perk.quick_revive 0
+# Not owned any more either way. The exhausted case used to pin this score at 1 to block rebuy, but
+# the score is what every ownership readout uses, so the perk stayed in the info paper and the perk
+# item row after the last self-revive. mgs.zb.qr_uses is the cap now (perks/on_right_click).
+scoreboard players set @s mgs.zb.perk.quick_revive 0
 execute if score @s mgs.zb.qr_uses matches 3.. run tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.quick_revive_exhausted_3_3_no_more_self_revives_this_game","color":"dark_red"}]
 execute unless score @s mgs.zb.qr_uses matches 3.. run tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.quick_revive_used_2_3_rebuy_for_another_self_revive","color":"gray"}]
 

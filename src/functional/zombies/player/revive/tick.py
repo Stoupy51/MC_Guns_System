@@ -152,10 +152,10 @@ scoreboard players add @s {ns}.zb.qr_uses 1
 tag @s remove {ns}.perk.quick_revive
 tag @s remove {ns}.zb_qr_armed
 
-# If all {SOLO_QR_MAX} uses are exhausted, keep the perk score at 1 to permanently block rebuy
-# Otherwise reset to 0 so the machine allows a new purchase
-execute if score @s {ns}.zb.qr_uses matches {SOLO_QR_MAX}.. run scoreboard players set @s {ns}.zb.perk.quick_revive 1
-execute unless score @s {ns}.zb.qr_uses matches {SOLO_QR_MAX}.. run scoreboard players set @s {ns}.zb.perk.quick_revive 0
+# Not owned any more either way. The exhausted case used to pin this score at 1 to block rebuy, but
+# the score is what every ownership readout uses, so the perk stayed in the info paper and the perk
+# item row after the last self-revive. {ns}.zb.qr_uses is the cap now (perks/on_right_click).
+scoreboard players set @s {ns}.zb.perk.quick_revive 0
 execute if score @s {ns}.zb.qr_uses matches {SOLO_QR_MAX}.. run tellraw @s [{MGS_TAG},{{"text":"Quick Revive exhausted! ({SOLO_QR_MAX}/{SOLO_QR_MAX}) No more self-revives this game.","color":"dark_red"}}]
 execute unless score @s {ns}.zb.qr_uses matches {SOLO_QR_MAX}.. run tellraw @s [{MGS_TAG},{{"text":"Quick Revive used! ({SOLO_QR_MAX - 1 if SOLO_QR_MAX > 1 else 0}/{SOLO_QR_MAX}) Rebuy for another self-revive.","color":"gray"}}]
 

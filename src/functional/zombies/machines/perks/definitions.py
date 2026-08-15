@@ -4,7 +4,6 @@ from dataclasses import dataclass
 
 from ....helpers.scores import SpecialScores
 from ....stamina import STAM_MAX
-from ...player.revive.shared import SOLO_QR_MAX
 
 
 # Classes
@@ -23,8 +22,6 @@ class PerkDef:
 	everywhere the perk is listed (info paper, perk display items) so the colors stay consistent. """
 	commands: tuple[str, ...] = ()
 	removal_commands: tuple[str, ...] = ()
-	persistent_score: bool = False
-	""" Skip the blanket score reset in lose_all — the perk manages its own score (quick_revive). """
 
 # Constants
 PERK_DEFINITIONS: dict[str, PerkDef] = {
@@ -73,13 +70,12 @@ PERK_DEFINITIONS: dict[str, PerkDef] = {
 			"tag @s add {ns}.perk.quick_revive",
 		),
 		# Going down strips the active tag, or a doppelganger would auto-revive off a QR they no longer own.
-		# The score drops to 0 unless the solo uses are exhausted, where 1 keeps the machine blocked.
-		# Hence persistent_score: lose_all must not blanket-reset it.
+		# The score means ownership and nothing else, so it follows the blanket reset like every other perk.
+		# Rebuy after the solo uses run out is blocked on {ns}.zb.qr_uses in perks/on_right_click; it used
+		# to be blocked by pinning this score at 1, which every ownership readout then rendered as "owned".
 		removal_commands=(
 			"tag @s remove {ns}.perk.quick_revive",
-			f"execute unless score @s {{ns}}.zb.qr_uses matches {SOLO_QR_MAX}.. run scoreboard players set @s {{ns}}.zb.perk.quick_revive 0",
 		),
-		persistent_score=True,
 	),
 	"mule_kick": PerkDef(
 		display_name="Mule Kick",

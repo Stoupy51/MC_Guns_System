@@ -21,9 +21,13 @@ data modify storage mgs:temp _zpos.type set value "normal"
 function mgs:v5.1.0/zombies/summon_zombie_at with storage mgs:temp _zpos
 
 # Remember which spawn point (@s) this zombie used, so a stuck-rescue never reuses it
-scoreboard players operation @n[tag=mgs.zombie_round,tag=mgs.zb_rising] mgs.zb.spawn.sid = @s mgs.zb.spawn.sid
+scoreboard players operation @n[tag=mgs.zb_new] mgs.zb.spawn.sid = @s mgs.zb.spawn.sid
 
 # Walk-to spawn (map editor "walk_to"): pass the target down to the zombie, which zombie_finish_rise
 # then walks to instead of letting it wander (see escort/start_to_target)
-execute if data entity @s data.walk_to run data modify entity @n[tag=mgs.zombie_round,tag=mgs.zb_rising] data.walk_to set from entity @s data.walk_to
+execute if data entity @s data.walk_to run data modify entity @n[tag=mgs.zb_new] data.walk_to set from entity @s data.walk_to
+
+# Last use of the scratch tag: everything summon_zombie_at and this function pin on the fresh
+# zombie is done, so retire it before the next spawn summons another one.
+tag @n[tag=mgs.zb_new] remove mgs.zb_new
 
