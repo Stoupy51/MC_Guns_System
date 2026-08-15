@@ -30,9 +30,7 @@ def write_perk_hooks() -> None:
 				lose_all_lines.append(
 					f"execute if score @s {ns}.zb.perk.{perk_id} matches 1 run {cmd.replace('{ns}', ns)}"
 				)
-		# Skip score reset for perks with persistent_score=True (e.g. quick_revive manages its own score)
-		if not perk_data.persistent_score:
-			lose_all_lines.append(f"scoreboard players set @s {ns}.zb.perk.{perk_id} 0")
+		lose_all_lines.append(f"scoreboard players set @s {ns}.zb.perk.{perk_id} 0")
 	lose_all_body = "\n".join(lose_all_lines)
 	write_versioned_function("zombies/perks/lose_all", f"""
 # Remove all perk effects and reset scoreboard tracking

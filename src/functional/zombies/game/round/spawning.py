@@ -118,11 +118,15 @@ data modify storage {ns}:temp _zpos.type set value "normal"
 function {ns}:v{version}/zombies/summon_zombie_at with storage {ns}:temp _zpos
 
 # Remember which spawn point (@s) this zombie used, so a stuck-rescue never reuses it
-scoreboard players operation @n[tag={ns}.zombie_round,tag={ns}.zb_rising] {ns}.zb.spawn.sid = @s {ns}.zb.spawn.sid
+scoreboard players operation @n[tag={ns}.zb_new] {ns}.zb.spawn.sid = @s {ns}.zb.spawn.sid
 
 # Walk-to spawn (map editor "walk_to"): pass the target down to the zombie, which zombie_finish_rise
 # then walks to instead of letting it wander (see escort/start_to_target)
-execute if data entity @s data.walk_to run data modify entity @n[tag={ns}.zombie_round,tag={ns}.zb_rising] data.walk_to set from entity @s data.walk_to
+execute if data entity @s data.walk_to run data modify entity @n[tag={ns}.zb_new] data.walk_to set from entity @s data.walk_to
+
+# Last use of the scratch tag: everything summon_zombie_at and this function pin on the fresh
+# zombie is done, so retire it before the next spawn summons another one.
+tag @n[tag={ns}.zb_new] remove {ns}.zb_new
 """)
 
 	## Release one hound, unless the pack is already at full strength.
@@ -261,19 +265,25 @@ scoreboard players set @n[tag={ns}.zb_dog_new] {ns}.zb.stuck_dist 4
 # jumping it: WalkNodeEvaluator reads this attribute, so full blocks become plainly walkable nodes
 # rather than jump nodes that stall on stairs, slabs and map geometry. Barricades are unaffected —
 # they stop zombies by freezing movement_speed, not by collision (barricades/tick.py).
-summon minecraft:zombie ~ ~-2 ~ {{Tags:["{ns}.zombie_round","{ns}.gm_entity","{ns}.nukable","{ns}.zb_rising"],CanPickUpLoot:false,PersistenceRequired:true,DeathLootTable:"minecraft:empty",NoAI:1b,Silent:1b,Passengers:[{{id:"minecraft:marker",Tags:["{ns}.death_watch","{ns}.gm_entity"]}}],Attributes:[{{id:"minecraft:follow_range",base:40.0d}},{{id:"minecraft:step_height",base:1.0d}}]}}
+# zb_new is a scratch tag naming THIS zombie, mirroring zb_dog_new; do_spawn_zombie retires it.
+# Every follow-up below used to select @n[tag=zb_rising], which is wrong from round 20 on: the timer
+# bottoms out at 1 tick while a rise lasts 20, so up to 20 rising zombies exist at once and the one
+# summoned 2 blocks under the marker is rarely the nearest. Missing the team join is what made escort
+# traders read the horde as hostile and flee it at AvoidEntityGoal's 0.5 modifier instead of walking
+# at WanderToPositionGoal's 0.35, i.e. 43% over the round's zombie speed.
+summon minecraft:zombie ~ ~-2 ~ {{Tags:["{ns}.zombie_round","{ns}.gm_entity","{ns}.nukable","{ns}.zb_rising","{ns}.zb_new"],CanPickUpLoot:false,PersistenceRequired:true,DeathLootTable:"minecraft:empty",NoAI:1b,Silent:1b,Passengers:[{{id:"minecraft:marker",Tags:["{ns}.death_watch","{ns}.gm_entity"]}}],Attributes:[{{id:"minecraft:follow_range",base:40.0d}},{{id:"minecraft:step_height",base:1.0d}}]}}
 
 # Apply type-specific scaling (health, speed, rise timer)
-$execute as @n[tag={ns}.zombie_round,tag=!{ns}.zb_scaled] run function {ns}:v{version}/zombies/types/$(type) {{level:"$(level)"}}
+$execute as @n[tag={ns}.zb_new] run function {ns}:v{version}/zombies/types/$(type) {{level:"$(level)"}}
 
 # Ally with escort traders (escort.py: forCombat targeting fails between allies, so the trader
 # never flees the horde and zombies never attack the pathfinding taxi)
-team join {ns}.horde @n[tag={ns}.zombie_round,tag={ns}.zb_rising]
+team join {ns}.horde @n[tag={ns}.zb_new]
 
 # Initialize stuck detection scores (timestamp + XZ snapshot + distance bucket at spawn)
-execute as @n[tag={ns}.zombie_round,tag={ns}.zb_rising] run scoreboard players operation @s {ns}.zb.stuck_ticks = #total_tick {ns}.data
-execute as @n[tag={ns}.zombie_round,tag={ns}.zb_rising] store result score @s {ns}.zb.stuck_x run data get entity @s Pos[0]
-execute as @n[tag={ns}.zombie_round,tag={ns}.zb_rising] store result score @s {ns}.zb.stuck_z run data get entity @s Pos[2]
-scoreboard players set @n[tag={ns}.zombie_round,tag={ns}.zb_rising] {ns}.zb.stuck_dist 4
+execute as @n[tag={ns}.zb_new] run scoreboard players operation @s {ns}.zb.stuck_ticks = #total_tick {ns}.data
+execute as @n[tag={ns}.zb_new] store result score @s {ns}.zb.stuck_x run data get entity @s Pos[0]
+execute as @n[tag={ns}.zb_new] store result score @s {ns}.zb.stuck_z run data get entity @s Pos[2]
+scoreboard players set @n[tag={ns}.zb_new] {ns}.zb.stuck_dist 4
 """)
 

@@ -5,6 +5,7 @@ from stewbeet import Mem, write_versioned_function
 from ....core.feedback import ZombiesFeedback
 from ....helpers import MGS_TAG
 from ...common import ZombiesCommon
+from ...player.revive.shared import SOLO_QR_MAX
 from .definitions import PERK_DEFINITIONS
 
 
@@ -15,6 +16,7 @@ def write_perk_purchase() -> None:
 
 	deny_requires_power: str = ZombiesCommon.deny_cmd(ns, version, '{"text":"This perk machine requires power.","color":"red"}')
 	deny_already_owned: str = ZombiesCommon.deny_cmd(ns, version, '{"text":"You already own this perk.","color":"yellow"}')
+	deny_qr_exhausted: str = ZombiesCommon.deny_cmd(ns, version, f'{{"text":"Quick Revive is spent ({SOLO_QR_MAX}/{SOLO_QR_MAX} self-revives used this game).","color":"yellow"}}')
 	deny_not_enough_points: str = ZombiesCommon.deny_not_enough_points_cmd(ns, version, "#pk_price")
 
 	## Right-click handler (executor: "source" = player)
@@ -35,6 +37,10 @@ function {ns}:v{version}/zombies/perks/lookup_perk with storage {ns}:temp _pk_bu
 # Check if player already has this perk
 function {ns}:v{version}/zombies/perks/check_owned with storage {ns}:temp _pk_data
 execute if score #pk_owned {ns}.data matches 1 run return run {deny_already_owned}
+
+# Quick Revive is capped at {SOLO_QR_MAX} solo self-revives per game. The cap lives on qr_uses, not on a
+# pinned perk score: that made every ownership readout show the perk again after the last self-revive.
+execute if entity @n[tag=bs.interaction.target,tag={ns}.pk_quick_revive] if score @s {ns}.zb.qr_uses matches {SOLO_QR_MAX}.. run return run {deny_qr_exhausted}
 
 # Get price and check points (chip-in machines charge one chunk per click)
 function {ns}:v{version}/zombies/perks/read_price with storage {ns}:temp _pk_data

@@ -36,6 +36,11 @@ $execute align xyz run particle block{block_state:"$(block)"} ~.5 ~1 ~.5 0.3 0.1
 data modify entity @s NoAI set value 0b
 tag @s remove {ns}.zb_rising
 
+# Safety net for the horde alliance (escort.py): summon_zombie_at already joins, but a zombie that
+# somehow missed it makes every escort trader within 8 blocks flee it at 0.5 instead of walking at
+# 0.35. One command, once per zombie, on a sweep that is already iterating it.
+team join {ns}.horde @s
+
 # Walk-to spawn: hand it to an escort taxi that walks it to the map maker's spot. Only now that the
 # rise is over — the escort freezes the zombie, which would strand it mid-animation.
 execute if data entity @s data.walk_to run function {ns}:v{version}/zombies/escort/start_to_target

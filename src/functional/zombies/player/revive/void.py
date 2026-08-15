@@ -64,8 +64,7 @@ function {ns}:v{version}/zombies/whos_who/on_down
 # Consume one Quick Revive use (same rebuy bookkeeping as solo_qr_complete)
 scoreboard players add @s {ns}.zb.qr_uses 1
 tag @s remove {ns}.perk.quick_revive
-execute if score @s {ns}.zb.qr_uses matches {SOLO_QR_MAX}.. run scoreboard players set @s {ns}.zb.perk.quick_revive 1
-execute unless score @s {ns}.zb.qr_uses matches {SOLO_QR_MAX}.. run scoreboard players set @s {ns}.zb.perk.quick_revive 0
+scoreboard players set @s {ns}.zb.perk.quick_revive 0
 execute if score @s {ns}.zb.qr_uses matches {SOLO_QR_MAX}.. run tellraw @s [{MGS_TAG},{{"text":"Quick Revive exhausted! ({SOLO_QR_MAX}/{SOLO_QR_MAX}) No more self-revives this game.","color":"dark_red"}}]
 execute unless score @s {ns}.zb.qr_uses matches {SOLO_QR_MAX}.. run tellraw @s [{MGS_TAG},{{"text":"Quick Revive used! ({SOLO_QR_MAX - 1 if SOLO_QR_MAX > 1 else 0}/{SOLO_QR_MAX}) Rebuy for another self-revive.","color":"gray"}}]
 
@@ -88,6 +87,6 @@ scoreboard players set @s {ns}.stam_seen 0
 {TitleTimes.EVENT.cmd()}
 title @s title ["⚡"]
 title @s subtitle [{{"text":"Quick Revive pulled you back from the void!","color":"aqua"}}]
-tellraw @a[scores={{{ns}.zb.in_game=1}}] [{MGS_TAG},{Text.player(ns, "@s", side="zb", color="aqua")},{{"text":" fell out — but Quick Revive pulled them back!","color":"gray"}}]
+tellraw @a[scores={{{ns}.zb.in_game=1}}] [{MGS_TAG},{Text.player(ns, "@s", side="zb", color="aqua")},{{"text":" fell out, but Quick Revive pulled them back!","color":"gray"}}]
 """)
 
