@@ -11,11 +11,11 @@ execute store result score #mx mgs.data run data get entity @s Pos[0]
 execute store result score #my mgs.data run data get entity @s Pos[1]
 execute store result score #mz mgs.data run data get entity @s Pos[2]
 
-# Get nearest enemy player position (expensive — caller limits candidates)
-data modify storage mgs:temp _nearest set from entity @p[tag=mgs.spawn_enemy] Pos
-execute store result score #px mgs.data run data get storage mgs:temp _nearest[0]
-execute store result score #py mgs.data run data get storage mgs:temp _nearest[1]
-execute store result score #pz mgs.data run data get storage mgs:temp _nearest[2]
+# Get nearest enemy player position (the caller limits the candidate set)
+execute at @p[tag=mgs.spawn_enemy] summon minecraft:marker run function mgs:v5.1.0/shared/probe_pos
+execute store result score #px mgs.data run data get storage mgs:temp _probe_pos[0]
+execute store result score #py mgs.data run data get storage mgs:temp _probe_pos[1]
+execute store result score #pz mgs.data run data get storage mgs:temp _probe_pos[2]
 
 # dx, dy, dz
 scoreboard players operation #mx mgs.data -= #px mgs.data

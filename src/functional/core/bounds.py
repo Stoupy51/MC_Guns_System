@@ -2,6 +2,8 @@
 # Imports
 from stewbeet import Mem, write_versioned_function
 
+from ..helpers.probes import Probe
+
 
 # Functions
 def write_shared_bounds_functions() -> None:
@@ -78,10 +80,10 @@ function {ns}:v{version}/shared/forceload_remove with storage {ns}:temp _fl
 		# Compare @s against the #bound scores and kill on exit; run as an entity at its position.
 		# Missions and zombies use this, multiplayer uses bounds_kill for kill-tracking instead.
 		write_versioned_function("shared/check_bounds", f"""
-data modify storage {ns}:temp _player_pos set from entity @s Pos
-execute store result score @s {ns}.mp.bx run data get storage {ns}:temp _player_pos[0]
-execute store result score @s {ns}.mp.by run data get storage {ns}:temp _player_pos[1]
-execute store result score @s {ns}.mp.bz run data get storage {ns}:temp _player_pos[2]
+{Probe.pos()}
+execute store result score @s {ns}.mp.bx run data get storage {ns}:temp _probe_pos[0]
+execute store result score @s {ns}.mp.by run data get storage {ns}:temp _probe_pos[1]
+execute store result score @s {ns}.mp.bz run data get storage {ns}:temp _probe_pos[2]
 
 execute if score @s {ns}.mp.bx < #bound_x1 {ns}.data run return run damage @s 10000 out_of_world
 execute if score @s {ns}.mp.bx > #bound_x2 {ns}.data run return run damage @s 10000 out_of_world

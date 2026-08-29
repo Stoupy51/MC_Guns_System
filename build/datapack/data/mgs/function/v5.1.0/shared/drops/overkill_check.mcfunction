@@ -23,8 +23,9 @@ execute if score #pick_g0 mgs.data matches 1 if score #pick_g1 mgs.data matches 
 
 # If the kept gun is also a primary, deny the pickup
 data modify storage mgs:temp _isp set value {}
-execute if score #pick_keep mgs.data matches 0 run data modify storage mgs:temp _isp.bw set from entity @s Inventory[{Slot:0b}].components."minecraft:custom_data".mgs.stats.base_weapon
-execute if score #pick_keep mgs.data matches 1 run data modify storage mgs:temp _isp.bw set from entity @s Inventory[{Slot:1b}].components."minecraft:custom_data".mgs.stats.base_weapon
+execute if score #pick_keep mgs.data matches 0 run item replace entity B5-0-0-0-3 contents from entity @s hotbar.0
+execute if score #pick_keep mgs.data matches 1 run item replace entity B5-0-0-0-3 contents from entity @s hotbar.1
+execute if score #pick_keep mgs.data matches 0..1 run data modify storage mgs:temp _isp.bw set from entity B5-0-0-0-3 item.components."minecraft:custom_data".mgs.stats.base_weapon
 function mgs:v5.1.0/shared/drops/is_primary_lookup
 execute if score #is_primary mgs.data matches 0 run return 0
 

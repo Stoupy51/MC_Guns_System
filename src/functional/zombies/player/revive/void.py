@@ -3,6 +3,7 @@
 from stewbeet import Mem, write_versioned_function
 
 from ....helpers import MGS_TAG
+from ....helpers.probes import Probe
 from ....helpers.text import Text
 from ....helpers.titles import TitleTimes
 from .shared import SOLO_QR_MAX
@@ -53,7 +54,8 @@ tellraw @a[scores={{{ns}.zb.in_game=1}}] [{MGS_TAG},{Text.player(ns, "@s", side=
 	write_versioned_function("zombies/revive/void_revive_whos_who", f"""
 gamemode adventure @s
 function {ns}:v{version}/zombies/revive/respawn_near_player
-data modify storage {ns}:temp _body_at set from entity @s Pos
+{Probe.pos()}
+data modify storage {ns}:temp _body_at set from storage {ns}:temp _probe_pos
 function {ns}:v{version}/zombies/whos_who/on_down
 """)
 

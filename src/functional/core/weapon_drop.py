@@ -11,6 +11,7 @@ from stewbeet import Mem, write_load_file, write_versioned_function
 from ...config.catalogs import PRIMARY_WEAPONS, SECONDARY_WEAPONS
 from ...config.stats.keys import BASE_WEAPON, CAPACITY, GRENADE_TYPE, REMAINING_BULLETS
 from ..helpers import MGS_TAG
+from ..helpers.probes import Probe
 from .feedback import ZombiesFeedback
 
 
@@ -182,8 +183,9 @@ execute if score #pick_g0 {ns}.data matches 1 if score #pick_g1 {ns}.data matche
 
 # If the kept gun is also a primary, deny the pickup
 data modify storage {ns}:temp _isp set value {{}}
-execute if score #pick_keep {ns}.data matches 0 run data modify storage {ns}:temp _isp.bw set from entity @s Inventory[{{Slot:0b}}].components."minecraft:custom_data".{ns}.stats.{BASE_WEAPON}
-execute if score #pick_keep {ns}.data matches 1 run data modify storage {ns}:temp _isp.bw set from entity @s Inventory[{{Slot:1b}}].components."minecraft:custom_data".{ns}.stats.{BASE_WEAPON}
+execute if score #pick_keep {ns}.data matches 0 run {Probe.item("hotbar.0")}
+execute if score #pick_keep {ns}.data matches 1 run {Probe.item("hotbar.1")}
+execute if score #pick_keep {ns}.data matches 0..1 run data modify storage {ns}:temp _isp.bw set from entity {Probe.ITEM_DISPLAY} item.components."minecraft:custom_data".{ns}.stats.{BASE_WEAPON}
 function {ns}:v{version}/shared/drops/is_primary_lookup
 execute if score #is_primary {ns}.data matches 0 run return 0
 
@@ -240,9 +242,9 @@ $summon minecraft:item ~ ~0.2 ~ {{Item:$(Item),Owner:$(Owner),PickupDelay:0s,Tag
 
 		## Swap: capture the held gun, hand over the drop, then the old gun becomes the new drop (timer refreshed)
 		write_versioned_function("shared/drops/swap", f"""
-data modify storage {ns}:temp _swapw set from entity @s Inventory[{{Slot:1b}}]
-execute if score #pick_sel {ns}.data matches 2 run data modify storage {ns}:temp _swapw set from entity @s Inventory[{{Slot:2b}}]
-data remove storage {ns}:temp _swapw.Slot
+{Probe.item("hotbar.1")}
+execute if score #pick_sel {ns}.data matches 2 run {Probe.item("hotbar.2")}
+data modify storage {ns}:temp _swapw set from entity {Probe.ITEM_DISPLAY} item
 
 # Held guns carry remaining_bullets:-1 in their item NBT (the live count is on the scoreboard), so sync it in
 execute store result storage {ns}:temp _swapw.components."minecraft:custom_data".{ns}.stats.{REMAINING_BULLETS} int 1 run scoreboard players get @s {ns}.{REMAINING_BULLETS}

@@ -5,6 +5,7 @@ from stewbeet import Mem, write_tick_file, write_versioned_function
 from ...core.respawn_countdown import respawn_countdown_tick_lines
 from ...core.weapon_drop import WeaponDrop
 from ...helpers import MGS_TAG
+from ...helpers.probes import Probe
 from ..gamemodes.dispatch import gm_dispatch
 
 
@@ -132,10 +133,10 @@ function {ns}:v{version}/multiplayer/stop
 	## Boundary check (run as each in-game player at their position)
 	write_versioned_function("multiplayer/check_bounds", f"""
 # Get player position as integers
-data modify storage {ns}:temp _player_pos set from entity @s Pos
-execute store result score @s {ns}.mp.bx run data get storage {ns}:temp _player_pos[0]
-execute store result score @s {ns}.mp.by run data get storage {ns}:temp _player_pos[1]
-execute store result score @s {ns}.mp.bz run data get storage {ns}:temp _player_pos[2]
+{Probe.pos()}
+execute store result score @s {ns}.mp.bx run data get storage {ns}:temp _probe_pos[0]
+execute store result score @s {ns}.mp.by run data get storage {ns}:temp _probe_pos[1]
+execute store result score @s {ns}.mp.bz run data get storage {ns}:temp _probe_pos[2]
 
 # Check if outside boundaries (any axis out of range = OOB)
 execute if score @s {ns}.mp.bx < #bound_x1 {ns}.data run return run function {ns}:v{version}/multiplayer/bounds_kill

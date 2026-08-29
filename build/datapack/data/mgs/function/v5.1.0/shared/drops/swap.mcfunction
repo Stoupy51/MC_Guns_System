@@ -6,9 +6,9 @@
 # @within	mgs:v5.1.0/shared/drops/collect
 #
 
-data modify storage mgs:temp _swapw set from entity @s Inventory[{Slot:1b}]
-execute if score #pick_sel mgs.data matches 2 run data modify storage mgs:temp _swapw set from entity @s Inventory[{Slot:2b}]
-data remove storage mgs:temp _swapw.Slot
+item replace entity B5-0-0-0-3 contents from entity @s hotbar.1
+execute if score #pick_sel mgs.data matches 2 run item replace entity B5-0-0-0-3 contents from entity @s hotbar.2
+data modify storage mgs:temp _swapw set from entity B5-0-0-0-3 item
 
 # Held guns carry remaining_bullets:-1 in their item NBT (the live count is on the scoreboard), so sync it in
 execute store result storage mgs:temp _swapw.components."minecraft:custom_data".mgs.stats.remaining_bullets int 1 run scoreboard players get @s mgs.remaining_bullets
