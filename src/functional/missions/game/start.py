@@ -21,17 +21,6 @@ execute unless entity @a[scores={{{ns}.mi.in_game=1}}] run return run tellraw @s
 
 {GameLifecycle.mode_start_map_bootstrap_lines(ns, "missions", True)}
 
-# Blue team for missions
-team add {ns}.blue
-team modify {ns}.blue color blue
-team modify {ns}.blue friendlyFire false
-team modify {ns}.blue nametagVisibility hideForOtherTeams
-
-# Mission mob team (created once)
-team add {ns}.mi_mobs
-team modify {ns}.mi_mobs color dark_red
-team modify {ns}.mi_mobs friendlyFire true
-
 # Reset scores (in_game is left untouched: it's the opt-in flag, set via Manage Players / + Join)
 scoreboard players set #mi_timer {ns}.data 0
 scoreboard players set #mi_total_enemies {ns}.data 0

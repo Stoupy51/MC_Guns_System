@@ -104,24 +104,22 @@ scoreboard players set #wb_purchase_done {ns}.data 1
 scoreboard players set #wb_purchase_mode {ns}.data 4
 """)
 
+	# Owning the gun is what makes a wall a refill wall, whatever the ammo count: Pack-a-Punch tops every
+	# magazine up, so gating this on a non-full mag quoted the full buy price on a gun the player just upgraded.
 	write_versioned_function("zombies/wallbuys/compute_effective_price", f"""
-scoreboard players set #wb_price_locked {ns}.data 0
 scoreboard players set #wb_price_mode {ns}.data 0
 
 # Slot 1 refill candidate
 $function {ns}:v{version}/zombies/wallbuys/check_same_weapon_slot {{slot:1,weapon_id:"$(weapon_id)"}}
-execute if score #wb_same_weapon {ns}.data matches 1 run function {ns}:v{version}/zombies/wallbuys/check_mag_not_full {{slot:"inventory.1"}}
-execute if score #wb_price_locked {ns}.data matches 0 if score #wb_same_weapon {ns}.data matches 1 if score #wb_mag_not_full {ns}.data matches 1 run return run function {ns}:v{version}/zombies/wallbuys/select_refill_price {{hotbar:1}}
+execute if score #wb_same_weapon {ns}.data matches 1 run return run function {ns}:v{version}/zombies/wallbuys/select_refill_price {{hotbar:1,inventory:1}}
 
 # Slot 2 refill candidate
 $function {ns}:v{version}/zombies/wallbuys/check_same_weapon_slot {{slot:2,weapon_id:"$(weapon_id)"}}
-execute if score #wb_same_weapon {ns}.data matches 1 run function {ns}:v{version}/zombies/wallbuys/check_mag_not_full {{slot:"inventory.2"}}
-execute if score #wb_price_locked {ns}.data matches 0 if score #wb_same_weapon {ns}.data matches 1 if score #wb_mag_not_full {ns}.data matches 1 run return run function {ns}:v{version}/zombies/wallbuys/select_refill_price {{hotbar:2}}
+execute if score #wb_same_weapon {ns}.data matches 1 run return run function {ns}:v{version}/zombies/wallbuys/select_refill_price {{hotbar:2,inventory:2}}
 
 # Slot 3 refill candidate
 $function {ns}:v{version}/zombies/wallbuys/check_same_weapon_slot {{slot:3,weapon_id:"$(weapon_id)"}}
-execute if score #wb_same_weapon {ns}.data matches 1 run function {ns}:v{version}/zombies/wallbuys/check_mag_not_full {{slot:"inventory.3"}}
-execute if score #wb_price_locked {ns}.data matches 0 if score #wb_same_weapon {ns}.data matches 1 if score #wb_mag_not_full {ns}.data matches 1 run return run function {ns}:v{version}/zombies/wallbuys/select_refill_price {{hotbar:3}}
+execute if score #wb_same_weapon {ns}.data matches 1 run return run function {ns}:v{version}/zombies/wallbuys/select_refill_price {{hotbar:3,inventory:3}}
 """)
 
 	write_versioned_function("zombies/wallbuys/select_refill_price", f"""
@@ -135,13 +133,16 @@ $execute store result score #wb_pap_level {ns}.data run data get entity @s Inven
 execute if score #wb_pap_level {ns}.data matches 1.. run scoreboard players operation #wb_price {ns}.data = #wb_rfpap {ns}.data
 execute if score #wb_pap_level {ns}.data matches 1.. run scoreboard players set #wb_price_mode {ns}.data 2
 
-scoreboard players set #wb_price_locked {ns}.data 1
+# Nothing left to top up: the click would only be charged and refunded, so the hover says so instead
+$function {ns}:v{version}/zombies/wallbuys/check_mag_not_full {{slot:"inventory.$(inventory)"}}
+execute if score #wb_mag_not_full {ns}.data matches 0 run scoreboard players set #wb_price_mode {ns}.data 3
 """)
 
 	write_versioned_function("zombies/wallbuys/set_hover_price_suffix", f"""
 data modify storage {ns}:temp _wb_price_suffix set value ""
 execute if score #wb_price_mode {ns}.data matches 1 run data modify storage {ns}:temp _wb_price_suffix set value " (Refill)"
 execute if score #wb_price_mode {ns}.data matches 2 run data modify storage {ns}:temp _wb_price_suffix set value " (PAP Refill)"
+execute if score #wb_price_mode {ns}.data matches 3 run data modify storage {ns}:temp _wb_price_suffix set value " (Ammo full)"
 """)
 
 	write_versioned_function("zombies/wallbuys/check_mag_not_full", f"""

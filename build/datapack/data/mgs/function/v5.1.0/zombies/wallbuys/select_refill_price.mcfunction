@@ -3,11 +3,12 @@
 #
 # @executed	as @n[tag=mgs.wb_new]
 #
-# @within	mgs:v5.1.0/zombies/wallbuys/compute_effective_price {hotbar:1}
-#			mgs:v5.1.0/zombies/wallbuys/compute_effective_price {hotbar:2}
-#			mgs:v5.1.0/zombies/wallbuys/compute_effective_price {hotbar:3}
+# @within	mgs:v5.1.0/zombies/wallbuys/compute_effective_price {hotbar:1,inventory:1}
+#			mgs:v5.1.0/zombies/wallbuys/compute_effective_price {hotbar:2,inventory:2}
+#			mgs:v5.1.0/zombies/wallbuys/compute_effective_price {hotbar:3,inventory:3}
 #
 # @args		hotbar (int)
+#			inventory (int)
 #
 
 # Default refill price
@@ -20,5 +21,7 @@ $execute store result score #wb_pap_level mgs.data run data get entity @s Invent
 execute if score #wb_pap_level mgs.data matches 1.. run scoreboard players operation #wb_price mgs.data = #wb_rfpap mgs.data
 execute if score #wb_pap_level mgs.data matches 1.. run scoreboard players set #wb_price_mode mgs.data 2
 
-scoreboard players set #wb_price_locked mgs.data 1
+# Nothing left to top up: the click would only be charged and refunded, so the hover says so instead
+$function mgs:v5.1.0/zombies/wallbuys/check_mag_not_full {slot:"inventory.$(inventory)"}
+execute if score #wb_mag_not_full mgs.data matches 0 run scoreboard players set #wb_price_mode mgs.data 3
 

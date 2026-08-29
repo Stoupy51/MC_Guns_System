@@ -13,6 +13,10 @@ execute if score #demo_sb_tick mgs.data matches 0 run function mgs:v5.1.0/multip
 # Nothing to tick, and nothing to judge, between rounds
 execute unless score #demo_round_active mgs.data matches 1 run return 0
 
+# Remind the armed side what they are holding, and how to use it. Written BEFORE the site channels so a
+# plant in progress overwrites it with its own progress readout instead of the other way around.
+title @a[tag=mgs.demo_atk,gamemode=!spectator] actionbar [{"text":"💣 ","color":"white"},{"translate":"mgs.you_are_carrying_a_bomb_sneak_at_a_site_to_plant","color":"gold"}]
+
 # Channels first, fuses second, and the clock LAST (see the clock block below): a plant that completes on
 # this tick has to have stopped the clock before the clock is allowed to reach 0, otherwise the defenders
 # steal a round off a bomb that is already down.
@@ -40,7 +44,4 @@ execute if score #demo_timer mgs.data matches ..0 run function mgs:v5.1.0/multip
 # Mirror the round clock onto the HUD score this mode claimed
 scoreboard players operation #mp_timer mgs.data = #demo_timer mgs.data
 execute if score #mp_timer mgs.data matches ..0 run scoreboard players set #mp_timer mgs.data 0
-
-# Remind the armed side what they are holding
-title @a[tag=mgs.demo_atk,gamemode=!spectator] actionbar [{"text":"💣 ","color":"white"},{"translate":"mgs.you_are_carrying_a_bomb_plant_at_a_site","color":"gold"}]
 

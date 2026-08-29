@@ -21,12 +21,6 @@ execute unless entity @a[scores={{{ns}.zb.in_game=1}}] run return run tellraw @s
 
 {GameLifecycle.mode_start_map_bootstrap_lines(ns, "zombies", False)}
 
-# Create zombies team
-team add {ns}.zombies
-team modify {ns}.zombies color yellow
-team modify {ns}.zombies friendlyFire false
-team modify {ns}.zombies nametagVisibility hideForOtherTeams
-
 # Reset scores (in_game is left untouched: it's the opt-in flag, set via Manage Players / + Join)
 # Keep the XP spend tracker in step: an unsynced reset reads as points being SPENT (see zombies/xp.py)
 scoreboard players set @a {ns}.zb.points 500
