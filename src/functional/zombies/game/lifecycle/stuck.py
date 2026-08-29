@@ -2,6 +2,8 @@
 # Imports
 from stewbeet import Mem, write_versioned_function
 
+from ....helpers.probes import Probe
+
 
 # Functions
 def write_stuck_and_bounds() -> None:
@@ -120,10 +122,10 @@ scoreboard players operation @s {ns}.zb.spawn.sid = @n[tag={ns}.zb_near] {ns}.zb
 	## Player boundary check (zombies): unlike zombies (out_of_world damage -> down + mannequin), a player leaving the play area is a TOTAL elimination with no mannequin, respawning at the next round end.
 	## Uses the same #bound_* scores loaded by shared/load_bounds.
 	write_versioned_function("zombies/check_bounds_player", f"""
-data modify storage {ns}:temp _player_pos set from entity @s Pos
-execute store result score @s {ns}.mp.bx run data get storage {ns}:temp _player_pos[0]
-execute store result score @s {ns}.mp.by run data get storage {ns}:temp _player_pos[1]
-execute store result score @s {ns}.mp.bz run data get storage {ns}:temp _player_pos[2]
+{Probe.pos()}
+execute store result score @s {ns}.mp.bx run data get storage {ns}:temp _probe_pos[0]
+execute store result score @s {ns}.mp.by run data get storage {ns}:temp _probe_pos[1]
+execute store result score @s {ns}.mp.bz run data get storage {ns}:temp _probe_pos[2]
 
 execute if score @s {ns}.mp.bx < #bound_x1 {ns}.data run return run function {ns}:v{version}/zombies/revive/full_death
 execute if score @s {ns}.mp.bx > #bound_x2 {ns}.data run return run function {ns}:v{version}/zombies/revive/full_death

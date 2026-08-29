@@ -4,6 +4,7 @@ from stewbeet import Mem, write_tick_file, write_versioned_function
 
 from ...core.respawn_countdown import respawn_countdown_tick_lines
 from ...core.weapon_drop import WeaponDrop
+from ...helpers.probes import Probe
 from ...helpers.text import Text
 from ...helpers.titles import TitleTimes
 from ...progression import Advancements
@@ -62,16 +63,16 @@ execute if score #mi_total_enemies {ns}.data matches 1.. if score #alive {ns}.da
 
 	## Compass pointing at the nearest enemy, run as the player at the player.
 	## The caller guarantees #alive >= 1, so no per-player emptiness rescan is needed.
+	target: str = f"@n[tag={ns}.mission_enemy]"
 	write_versioned_function("missions/update_compass", f"""
 # Only players actually carrying the mission compass need the item write
 execute unless items entity @s hotbar.3 minecraft:compass run return fail
 
-# Get nearest enemy position: ONE sorted scan + ONE NBT read, then cheap storage extracts
-# (was three @n scans, each with its own distance sort and Pos read)
-data modify storage {ns}:temp _compass.pos set from entity @n[tag={ns}.mission_enemy] Pos
-execute store result storage {ns}:temp _compass.x int 1 run data get storage {ns}:temp _compass.pos[0]
-execute store result storage {ns}:temp _compass.y int 1 run data get storage {ns}:temp _compass.pos[1]
-execute store result storage {ns}:temp _compass.z int 1 run data get storage {ns}:temp _compass.pos[2]
+# One sorted scan, then a marker carries the position out instead of serializing the mob
+{Probe.pos(target)}
+execute store result storage {ns}:temp _compass.x int 1 run data get storage {ns}:temp _probe_pos[0]
+execute store result storage {ns}:temp _compass.y int 1 run data get storage {ns}:temp _probe_pos[1]
+execute store result storage {ns}:temp _compass.z int 1 run data get storage {ns}:temp _probe_pos[2]
 
 # Update compass in hotbar slot 3
 function {ns}:v{version}/missions/set_compass_target with storage {ns}:temp _compass

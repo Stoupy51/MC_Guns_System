@@ -3,6 +3,7 @@
 from stewbeet import Mem, write_versioned_function
 
 from ...core.spawning import CoreSpawning
+from ...helpers.probes import Probe
 
 
 # Functions
@@ -112,17 +113,18 @@ tag @a[tag={ns}.spawn_enemy] remove {ns}.spawn_enemy
 """)
 
 	## Calculate distance² from spawn marker to nearest enemy player (run as marker at marker)
+	enemy: str = f"@p[tag={ns}.spawn_enemy]"
 	write_versioned_function("multiplayer/spawn_calc_dist", f"""
 # Get marker position
 execute store result score #mx {ns}.data run data get entity @s Pos[0]
 execute store result score #my {ns}.data run data get entity @s Pos[1]
 execute store result score #mz {ns}.data run data get entity @s Pos[2]
 
-# Get nearest enemy player position (expensive — caller limits candidates)
-data modify storage {ns}:temp _nearest set from entity @p[tag={ns}.spawn_enemy] Pos
-execute store result score #px {ns}.data run data get storage {ns}:temp _nearest[0]
-execute store result score #py {ns}.data run data get storage {ns}:temp _nearest[1]
-execute store result score #pz {ns}.data run data get storage {ns}:temp _nearest[2]
+# Get nearest enemy player position (the caller limits the candidate set)
+{Probe.pos(enemy)}
+execute store result score #px {ns}.data run data get storage {ns}:temp _probe_pos[0]
+execute store result score #py {ns}.data run data get storage {ns}:temp _probe_pos[1]
+execute store result score #pz {ns}.data run data get storage {ns}:temp _probe_pos[2]
 
 # dx, dy, dz
 scoreboard players operation #mx {ns}.data -= #px {ns}.data
