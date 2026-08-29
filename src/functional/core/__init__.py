@@ -6,12 +6,14 @@ from .map_loading import write_shared_map_loading
 from .map_menus import write_shared_map_menus
 from .player_menus import write_player_menus
 from .spawning import CoreSpawning
+from .teams import write_teams
 from .teleport import write_shared_teleport_functions
 from .weapon_drop import WeaponDrop
 
 
 # Functions
 def main() -> None:
+	write_teams()
 	write_shared_bounds_functions()
 	write_shared_teleport_functions()
 	write_shared_map_loading()

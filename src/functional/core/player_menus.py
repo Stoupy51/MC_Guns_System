@@ -141,8 +141,7 @@ execute if score @s {ns}.mp.in_game matches 0 if data storage {ns}:multiplayer g
 execute if score @s {ns}.mp.in_game matches 0 if data storage {ns}:multiplayer game{{state:"preparing"}} run function {ns}:v{version}/multiplayer/join_game
 scoreboard players set @s {ns}.mp.in_game 1
 scoreboard players set @s {ns}.mp.team 1
-execute if data storage {ns}:multiplayer game{{state:"active"}} run team join {ns}.red @s
-execute if data storage {ns}:multiplayer game{{state:"preparing"}} run team join {ns}.red @s
+team join {ns}.red @s
 tellraw @s ["",{{"text":"Assigned to ","color":"white"}},{{"text":"Red Team","color":"red","bold":true}}]
 """)
 
@@ -151,8 +150,7 @@ execute if score @s {ns}.mp.in_game matches 0 if data storage {ns}:multiplayer g
 execute if score @s {ns}.mp.in_game matches 0 if data storage {ns}:multiplayer game{{state:"preparing"}} run function {ns}:v{version}/multiplayer/join_game
 scoreboard players set @s {ns}.mp.in_game 1
 scoreboard players set @s {ns}.mp.team 2
-execute if data storage {ns}:multiplayer game{{state:"active"}} run team join {ns}.blue @s
-execute if data storage {ns}:multiplayer game{{state:"preparing"}} run team join {ns}.blue @s
+team join {ns}.blue @s
 tellraw @s ["",{{"text":"Assigned to ","color":"white"}},{{"text":"Blue Team","color":"blue","bold":true}}]
 """)
 
@@ -168,8 +166,7 @@ tellraw @s [{{"text":"Removed from the game","color":"gray"}}]
 execute if score @s {ns}.zb.in_game matches 0 if data storage {ns}:zombies game{{state:"active"}} run function {ns}:v{version}/zombies/join_game
 execute if score @s {ns}.zb.in_game matches 0 if data storage {ns}:zombies game{{state:"preparing"}} run function {ns}:v{version}/zombies/join_game
 scoreboard players set @s {ns}.zb.in_game 1
-execute if data storage {ns}:zombies game{{state:"active"}} run team join {ns}.zombies @s
-execute if data storage {ns}:zombies game{{state:"preparing"}} run team join {ns}.zombies @s
+team join {ns}.zombies @s
 tellraw @s ["",{{"text":"Joined the ","color":"white"}},{{"text":"Zombies game","color":"dark_green","bold":true}}]
 """)
 
@@ -185,8 +182,7 @@ execute if score @s {ns}.mi.in_game matches 0 if data storage {ns}:missions game
 execute if score @s {ns}.mi.in_game matches 0 if data storage {ns}:missions game{{state:"preparing"}} run function {ns}:v{version}/missions/join_game
 scoreboard players set @s {ns}.mi.in_game 1
 scoreboard players set @s {ns}.mp.team 1
-execute if data storage {ns}:missions game{{state:"active"}} run team join {ns}.blue @s
-execute if data storage {ns}:missions game{{state:"preparing"}} run team join {ns}.blue @s
+team join {ns}.blue @s
 tellraw @s ["",{{"text":"Joined the ","color":"white"}},{{"text":"Mission","color":"aqua","bold":true}}]
 """)
 

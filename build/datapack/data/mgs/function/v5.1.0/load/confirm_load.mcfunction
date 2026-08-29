@@ -180,6 +180,28 @@ scoreboard objectives add mgs.mob.timer dummy
 scoreboard objectives add mgs.mob.active_time dummy
 scoreboard objectives add mgs.mob.sleep_time dummy
 
+# Shared vanilla teams
+team add mgs.red
+team modify mgs.red color red
+team modify mgs.red friendlyFire false
+team modify mgs.red nametagVisibility hideForOtherTeams
+team add mgs.blue
+team modify mgs.blue color blue
+team modify mgs.blue friendlyFire false
+team modify mgs.blue nametagVisibility hideForOtherTeams
+team add mgs.ffa
+team modify mgs.ffa color yellow
+team modify mgs.ffa friendlyFire true
+team modify mgs.ffa nametagVisibility never
+team add mgs.zombies
+team modify mgs.zombies color yellow
+team modify mgs.zombies friendlyFire false
+team modify mgs.zombies nametagVisibility hideForOtherTeams
+team add mgs.mi_mobs
+team modify mgs.mi_mobs color dark_red
+team modify mgs.mi_mobs friendlyFire true
+team modify mgs.mi_mobs nametagVisibility always
+
 # Dropped-weapon lifetime (ticks remaining before a dropped gun despawns)
 scoreboard objectives add mgs.drop_timer dummy
 

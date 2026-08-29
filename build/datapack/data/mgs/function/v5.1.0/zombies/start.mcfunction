@@ -27,12 +27,6 @@ data modify storage mgs:zombies game.map set from storage mgs:temp map_load.resu
 # Set state to preparing
 data modify storage mgs:zombies game.state set value "preparing"
 
-# Create zombies team
-team add mgs.zombies
-team modify mgs.zombies color yellow
-team modify mgs.zombies friendlyFire false
-team modify mgs.zombies nametagVisibility hideForOtherTeams
-
 # Reset scores (in_game is left untouched: it's the opt-in flag, set via Manage Players / + Join)
 # Keep the XP spend tracker in step: an unsynced reset reads as points being SPENT (see zombies/xp.py)
 scoreboard players set @a mgs.zb.points 500

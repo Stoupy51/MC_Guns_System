@@ -32,20 +32,6 @@ execute unless data storage mgs:multiplayer game.map.start_commands run data mod
 # Set state to preparing
 data modify storage mgs:multiplayer game.state set value "preparing"
 
-# Teams setup
-team add mgs.red
-team modify mgs.red color red
-team modify mgs.red friendlyFire false
-team modify mgs.red nametagVisibility hideForOtherTeams
-team add mgs.blue
-team modify mgs.blue color blue
-team modify mgs.blue friendlyFire false
-team modify mgs.blue nametagVisibility hideForOtherTeams
-team add mgs.ffa
-team modify mgs.ffa color yellow
-team modify mgs.ffa friendlyFire true
-team modify mgs.ffa nametagVisibility never
-
 # Reset scores
 scoreboard players set #red mgs.mp.team 0
 scoreboard players set #blue mgs.mp.team 0

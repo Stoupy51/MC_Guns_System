@@ -77,6 +77,10 @@ execute if score #demo_sb_tick {ns}.data matches 0 run function {ns}:v{version}/
 # Nothing to tick, and nothing to judge, between rounds
 execute unless score #demo_round_active {ns}.data matches 1 run return 0
 
+# Remind the armed side what they are holding, and how to use it. Written BEFORE the site channels so a
+# plant in progress overwrites it with its own progress readout instead of the other way around.
+title @a[tag={ns}.demo_atk,gamemode=!spectator] actionbar [{{"text":"💣 ","color":"white"}},{{"text":"You are carrying a bomb - sneak at a site to plant","color":"gold"}}]
+
 {DemoSites.tick_lines(self)}
 
 # The clock stops dead while any site is planted — that is the rule that gives the attackers room to
@@ -90,9 +94,6 @@ execute if score #demo_timer {ns}.data matches ..0 run function {ns}:v{version}/
 # Mirror the round clock onto the HUD score this mode claimed
 scoreboard players operation #mp_timer {ns}.data = #demo_timer {ns}.data
 execute if score #mp_timer {ns}.data matches ..0 run scoreboard players set #mp_timer {ns}.data 0
-
-# Remind the armed side what they are holding
-title @a[tag={ns}.demo_atk,gamemode=!spectator] actionbar [{{"text":"💣 ","color":"white"}},{{"text":"You are carrying a bomb — plant at a site","color":"gold"}}]
 """)
 
 		## Demolition Kill Hook: no team scoring from kills, only round wins

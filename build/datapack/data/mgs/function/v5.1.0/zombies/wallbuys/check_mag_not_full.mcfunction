@@ -4,9 +4,7 @@
 # @within	mgs:v5.1.0/zombies/wallbuys/try_refill_owned {slot:"inventory.1"}
 #			mgs:v5.1.0/zombies/wallbuys/try_refill_owned {slot:"inventory.2"}
 #			mgs:v5.1.0/zombies/wallbuys/try_refill_owned {slot:"inventory.3"}
-#			mgs:v5.1.0/zombies/wallbuys/compute_effective_price {slot:"inventory.1"}
-#			mgs:v5.1.0/zombies/wallbuys/compute_effective_price {slot:"inventory.2"}
-#			mgs:v5.1.0/zombies/wallbuys/compute_effective_price {slot:"inventory.3"}
+#			mgs:v5.1.0/zombies/wallbuys/select_refill_price {slot:"inventory.$(inventory)"}
 #			mgs:v5.1.0/zombies/wallbuys/replace_selected {slot:"inventory.1"}
 #			mgs:v5.1.0/zombies/wallbuys/replace_selected {slot:"inventory.2"}
 #			mgs:v5.1.0/zombies/wallbuys/replace_selected {slot:"inventory.3"}

@@ -22,20 +22,6 @@ execute unless entity @a[scores={{{ns}.mp.in_game=1}}] run return run tellraw @s
 
 {GameLifecycle.mode_start_map_bootstrap_lines(ns, "multiplayer", True)}
 
-# Teams setup
-team add {ns}.red
-team modify {ns}.red color red
-team modify {ns}.red friendlyFire false
-team modify {ns}.red nametagVisibility hideForOtherTeams
-team add {ns}.blue
-team modify {ns}.blue color blue
-team modify {ns}.blue friendlyFire false
-team modify {ns}.blue nametagVisibility hideForOtherTeams
-team add {ns}.ffa
-team modify {ns}.ffa color yellow
-team modify {ns}.ffa friendlyFire true
-team modify {ns}.ffa nametagVisibility never
-
 # Reset scores
 scoreboard players set #red {ns}.mp.team 0
 scoreboard players set #blue {ns}.mp.team 0
