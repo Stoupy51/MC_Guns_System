@@ -13,10 +13,8 @@ from stewbeet import (
 	add_item_name_and_lore_if_missing,
 	add_private_custom_data_for_namespace,
 	add_smithed_ignore_vanilla_behaviours_convention,
-	set_manual_components,
-)
-from stewbeet import (
 	create_gradient_text as new_hex,
+	set_manual_components,
 )
 
 from .config.catalogs import (
