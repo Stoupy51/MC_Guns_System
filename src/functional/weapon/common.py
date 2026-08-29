@@ -117,7 +117,8 @@ execute if score @s {ns}.burst_count < #burst_limit {ns}.data run scoreboard pla
 """)
 
 	# Copy gun data.
-	# The SelectedItem copy serializes the whole player NBT, so only pay it when the mainhand holds one of ours.
+	# Reading a path off a player serializes the whole player first: inventory, ender chest and recipe book.
+	# Bouncing the stack through B5-0-0-0-3, the forceloaded item_display Bookshelf keeps around, measured 8x cheaper.
 	# Guns, grenades, knives and menu items all carry {ns} custom data.
 	# For anything else the cleared storage is exactly what every consumer expects.
 	write_versioned_function("utils/copy_gun_data", f"""
@@ -125,7 +126,8 @@ execute if score @s {ns}.burst_count < #burst_limit {ns}.data run scoreboard pla
 data remove storage {ns}:gun all
 data modify storage {ns}:gun SelectedItem set value {{id:""}}
 execute unless items entity @s weapon.mainhand *[custom_data~{{{ns}:{{}}}}] run return 0
-data modify storage {ns}:gun SelectedItem set from entity @s SelectedItem
+item replace entity B5-0-0-0-3 contents from entity @s weapon.mainhand
+data modify storage {ns}:gun SelectedItem set from entity B5-0-0-0-3 item
 data modify storage {ns}:gun all set from storage {ns}:gun SelectedItem.components."minecraft:custom_data".{ns}
 """)
 
