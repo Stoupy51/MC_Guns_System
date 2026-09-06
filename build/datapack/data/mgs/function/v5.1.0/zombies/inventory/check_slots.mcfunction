@@ -37,3 +37,4 @@ execute unless score @s mgs.zb.pap_s matches 1 unless items entity @s hotbar.1 *
 execute unless score @s mgs.zb.pap_s matches 2 unless items entity @s hotbar.2 *[custom_data~{mgs:{gun:true}}] if items entity @s inventory.2 *[custom_data~{mgs:{magazine:true}}] run item replace entity @s inventory.2 with air
 execute unless score @s mgs.zb.pap_s matches 3 unless items entity @s hotbar.3 *[custom_data~{mgs:{gun:true}}] if items entity @s inventory.3 *[custom_data~{mgs:{magazine:true}}] run item replace entity @s inventory.3 with air
 
+## sourceMappingURL=check_slots.mcfunction.map

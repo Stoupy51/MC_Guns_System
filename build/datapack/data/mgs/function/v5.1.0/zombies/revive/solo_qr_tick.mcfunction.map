@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "solo_qr_tick.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/player/revive/tick.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AAyHyD;AACzD;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

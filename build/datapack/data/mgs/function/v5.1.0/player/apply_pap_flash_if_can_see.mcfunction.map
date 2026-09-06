@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "apply_pap_flash_if_can_see.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/shaders.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AAkjC+D;AAC/D;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

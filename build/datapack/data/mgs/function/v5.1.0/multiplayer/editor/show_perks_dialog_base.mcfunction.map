@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "show_perks_dialog_base.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/multiplayer/loadouts/editor/perks.py"
+	],
+	"names": [],
+	"mappings": "AAwDA"
+}

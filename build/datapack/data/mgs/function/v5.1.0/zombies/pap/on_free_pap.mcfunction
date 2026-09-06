@@ -10,3 +10,4 @@
 execute unless data storage mgs:zombies game{state:"active"} run return fail
 function mgs:v5.1.0/zombies/pap/upgrade_core
 
+## sourceMappingURL=on_free_pap.mcfunction.map

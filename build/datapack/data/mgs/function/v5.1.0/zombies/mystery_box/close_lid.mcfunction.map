@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "close_lid.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/machines/mystery_box/positions.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;;AAoJ2D;AAC3D;AACA"
+}

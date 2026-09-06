@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "fold_bounds.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/core/bounds.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;AAyCiD;AACjD;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

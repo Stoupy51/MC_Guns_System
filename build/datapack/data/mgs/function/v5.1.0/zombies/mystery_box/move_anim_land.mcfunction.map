@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "move_anim_land.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/machines/mystery_box/move.py"
+	],
+	"names": [],
+	"mappings": ";;;;;AAiJgE;AAChE;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

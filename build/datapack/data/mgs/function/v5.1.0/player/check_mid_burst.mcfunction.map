@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "check_mid_burst.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/weapon/common.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AA+GoD;AACpD;AACA;AACA;AACA;AACA;AACA"
+}

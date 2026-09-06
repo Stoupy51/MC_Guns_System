@@ -8,3 +8,4 @@
 
 $tellraw @s [{"text":"- ","color":"gray"},$(line)]
 
+## sourceMappingURL=pap_chat_lore_line.mcfunction.map

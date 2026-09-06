@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "set_item_model_from_scope.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/machines/pap/cosmetics.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;;;;AAiEmE;AACnE;AACA"
+}

@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "summon_point_at.mcfunction",
+	"sourceRoot": "../../../../../../../../..",
+	"sources": [
+		"src/functional/multiplayer/gamemodes/base.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;;;;;AAmCE;AAAA;AAAA;AAAA"
+}

@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "reduce_cooldowns.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/player/ability.py"
+	],
+	"names": [],
+	"mappings": ";;;;;AAyJ4D;AAC5D;AACA"
+}

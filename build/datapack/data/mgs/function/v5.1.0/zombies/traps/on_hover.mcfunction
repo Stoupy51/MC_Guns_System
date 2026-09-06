@@ -17,3 +17,4 @@ execute if score #trap_type mgs.data matches 1 run data modify storage smithed.a
 execute if score #trap_type mgs.data matches 2 run data modify storage smithed.actionbar:input message.json[0] set value ["",{"text":"🔫 ","color":"white"},{"translate":"mgs.turret_trap","color":"gold"}]
 function #smithed.actionbar:message
 
+## sourceMappingURL=on_hover.mcfunction.map

@@ -20,3 +20,4 @@ execute if score #mb_move_timer mgs.data matches 1.. if entity @e[tag=bs.interac
 # This box's pull state (at the box)
 execute at @n[tag=bs.interaction.target] run function mgs:v5.1.0/zombies/mystery_box/hover_at_box
 
+## sourceMappingURL=on_hover.mcfunction.map

@@ -1,0 +1,11 @@
+{
+	"version": 3,
+	"file": "on_hit_signal.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/zombies/game/lifecycle/join.py",
+		"src/functional/zombies/rewards/powerups/bossbars.py"
+	],
+	"names": [],
+	"mappings": ";;;;;AA+EmD;AACnD;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;ACqEA;AACA;AACA"
+}

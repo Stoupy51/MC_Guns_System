@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "cleanup_stuck_entity.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/weapon/grenade/effects.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AAiD0D;AAC1D;AACA;AACA;AACA;AACA;AACA"
+}

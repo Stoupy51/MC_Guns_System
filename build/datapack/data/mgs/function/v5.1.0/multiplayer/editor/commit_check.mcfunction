@@ -24,3 +24,4 @@ function mgs:v5.1.0/multiplayer/editor/recompute_points
 tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.not_enough_points_for_that","color":"red"}]
 return fail
 
+## sourceMappingURL=commit_check.mcfunction.map

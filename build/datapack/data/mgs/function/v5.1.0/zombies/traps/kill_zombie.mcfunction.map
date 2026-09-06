@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "kill_zombie.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/objects/traps/active.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;AA4FuD;AACvD;AACA;AACA"
+}

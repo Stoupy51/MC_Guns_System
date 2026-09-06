@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "copy_gun_data.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/weapon/common.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;;;;;;;AA4HiD;AACjD;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

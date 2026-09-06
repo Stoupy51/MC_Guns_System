@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "set_display_disabled.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/machines/wunderfizz/setup.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AA4HqE;AACrE;AACA"
+}

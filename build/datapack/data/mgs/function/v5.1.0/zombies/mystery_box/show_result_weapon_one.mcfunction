@@ -10,3 +10,4 @@
 
 $loot replace entity @s contents loot mgs:i/$(weapon_id)
 
+## sourceMappingURL=show_result_weapon_one.mcfunction.map

@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "move_found_slot.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/player/inventory/slots.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;AAoH+D;AAC/D;AACA;AACA;AACA;AACA;AACA"
+}

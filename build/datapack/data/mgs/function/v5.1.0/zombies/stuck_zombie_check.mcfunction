@@ -65,3 +65,4 @@ scoreboard players operation #stuck_delta mgs.data = #total_tick mgs.data
 scoreboard players operation #stuck_delta mgs.data -= @s mgs.zb.stuck_ticks
 execute if score #stuck_delta mgs.data >= #stuck_threshold mgs.data run function mgs:v5.1.0/zombies/on_stuck_zombie
 
+## sourceMappingURL=stuck_zombie_check.mcfunction.map

@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "leave.mcfunction",
+	"sourceRoot": "../../../../../../../../..",
+	"sources": [
+		"src/functional/multiplayer/maps.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;AA8C6D"
+}

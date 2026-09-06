@@ -6,3 +6,4 @@
 
 scoreboard players add @s mgs.mp.kills 1
 
+## sourceMappingURL=on_kill.mcfunction.map

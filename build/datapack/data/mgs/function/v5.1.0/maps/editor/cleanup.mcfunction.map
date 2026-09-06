@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "cleanup.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/map_editor/exit.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;AAoBiD;AACjD;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

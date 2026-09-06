@@ -17,3 +17,4 @@ execute if data entity @s item.components."minecraft:item_name"[0].text run data
 execute if data entity @s item.components."minecraft:lore"[0] run data modify storage mgs:temp _pap_extract.lore set from entity @s item.components."minecraft:lore"
 kill @s
 
+## sourceMappingURL=extract_selected_item.mcfunction.map

@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "save_zb_object.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/map_editor/save.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;;;;;;;;;;;;;AAuPwD;AACxD;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

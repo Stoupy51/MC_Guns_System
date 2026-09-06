@@ -16,3 +16,4 @@ execute as @n[tag=mgs.zb_near,sort=random] at @s run function mgs:v5.1.0/zombies
 # Cleanup
 tag @e[tag=mgs.zb_near] remove mgs.zb_near
 
+## sourceMappingURL=spawn_dog.mcfunction.map

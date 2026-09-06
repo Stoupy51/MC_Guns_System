@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "death.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/enemies/vocals.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AA6KkD;AAClD;AACA;AACA;AACA;AACA;AACA"
+}

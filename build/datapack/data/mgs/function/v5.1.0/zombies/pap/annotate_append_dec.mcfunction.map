@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "annotate_append_dec.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/machines/pap/lore.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;;;;;;AAwK6D;AAC7D;AACA"
+}

@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "respawn_tp.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/multiplayer/game/spawns.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;AAiJoD;AACpD;AACA;AACA;AACA;AACA;AACA;AACA"
+}

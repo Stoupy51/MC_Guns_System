@@ -1,0 +1,17 @@
+{
+	"version": 3,
+	"file": "right_click.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/multiplayer/game/prep.py",
+		"src/functional/zombies/game/lifecycle/sidebar.py",
+		"src/functional/weapon/common.py",
+		"src/functional/weapon/firing/raycast/clicks.py",
+		"src/functional/weapon/firing/kick.py",
+		"src/functional/weapon/firing/casing.py",
+		"src/functional/weapon/ammo/magazine/core.py",
+		"src/functional/weapon/firing/sound.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AAagD;AAChD;AACA;ACmDgD;AAChD;AACA;AACA;ACoIgD;AAChD;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;ACjMgD;AAChD;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AC5CA;AACA;ACIgD;AAChD;AACA;AACA;ACgBA;AACA;ACzBgD;AAChD;AACA;AACA"
+}

@@ -11,3 +11,4 @@
 
 $function mgs:v5.1.0/players/row_$(mode) {id:$(id),name:"$(name)",color:"$(color)"}
 
+## sourceMappingURL=list_entry.mcfunction.map

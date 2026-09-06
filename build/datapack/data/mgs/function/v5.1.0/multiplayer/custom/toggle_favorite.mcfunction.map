@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "toggle_favorite.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/multiplayer/loadouts/actions/favorites.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AAcgE;AAChE;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

@@ -70,3 +70,4 @@ execute if score #hit_dir mgs.data matches 33 run title @s title {"text":"h","fo
 execute if score #hit_dir mgs.data matches 34 run title @s title {"text":"i","font":"mgs:hit_dir","color":"#FF2A2A"}
 execute if score #hit_dir mgs.data matches 35 run title @s title {"text":"j","font":"mgs:hit_dir","color":"#FF2A2A"}
 
+## sourceMappingURL=hit_direction.mcfunction.map

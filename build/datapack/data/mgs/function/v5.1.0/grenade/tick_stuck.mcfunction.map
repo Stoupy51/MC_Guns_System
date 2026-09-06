@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "tick_stuck.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/weapon/grenade/flight.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AAyHgD;AAChD;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

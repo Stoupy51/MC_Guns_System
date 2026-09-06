@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "bleed_out.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/player/whos_who.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AAwKwD;AACxD;AACA;AACA;AACA;AACA;AACA"
+}

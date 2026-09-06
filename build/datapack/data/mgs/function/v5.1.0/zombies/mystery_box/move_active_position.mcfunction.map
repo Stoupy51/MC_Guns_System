@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "move_active_position.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/machines/mystery_box/positions.py"
+	],
+	"names": [],
+	"mappings": ";;;;;AAwJsE;AACtE;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

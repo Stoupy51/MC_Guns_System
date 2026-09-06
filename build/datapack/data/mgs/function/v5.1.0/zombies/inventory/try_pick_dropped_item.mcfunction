@@ -13,3 +13,4 @@ $execute if score #zb_inv_found mgs.data matches 0 run item replace entity @p[ta
 $execute if score #zb_inv_found mgs.data matches 0 run kill @n[type=item,distance=..8,nbt={Item:{components:{"minecraft:custom_data":$(expected_nbt)}}}]
 scoreboard players set #zb_inv_found mgs.data 1
 
+## sourceMappingURL=try_pick_dropped_item.mcfunction.map

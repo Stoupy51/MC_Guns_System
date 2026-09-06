@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "discard_trader.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/enemies/escort/end.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;;;;AA4C2D;AAC3D;AACA;AACA"
+}

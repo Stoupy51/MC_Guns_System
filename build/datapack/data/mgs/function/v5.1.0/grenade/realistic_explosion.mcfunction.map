@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "realistic_explosion.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/weapon/grenade/detonate.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AAgFyD;AACzD;AACA;AACA;AACA;AACA;AACA"
+}

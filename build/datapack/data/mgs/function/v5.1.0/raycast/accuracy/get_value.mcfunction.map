@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "get_value.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/weapon/firing/raycast/accuracy.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;;AAmBwD;AACxD;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

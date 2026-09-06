@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "on_throw.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/enemies/monkey_bomb.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AA8BqD;AACrD;AACA;AACA;AACA;AACA;AACA"
+}

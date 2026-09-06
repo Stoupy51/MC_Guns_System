@@ -8,3 +8,4 @@
 # @s = joining player
 # @within  #mgs:maps/join_script (via calls/join)
 
+## sourceMappingURL=join.mcfunction.map

@@ -15,3 +15,4 @@ data remove storage mgs:temp _remove_iter[0]
 $execute unless data storage mgs:temp {_perk_val:"$(_toggle_perk)"} run data modify storage mgs:temp editor.perks append from storage mgs:temp _perk_val
 function mgs:v5.1.0/multiplayer/editor/rebuild_perks with storage mgs:temp
 
+## sourceMappingURL=rebuild_perks.mcfunction.map

@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "pick_list_value.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/machines/pap/stats.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;AAiCyD;AACzD;AACA;AACA;AACA"
+}

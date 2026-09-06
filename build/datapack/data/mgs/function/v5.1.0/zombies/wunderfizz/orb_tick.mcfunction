@@ -18,3 +18,4 @@ execute if score @s mgs.zb.wf.anim matches 1.. run function mgs:v5.1.0/zombies/w
 execute if score @s mgs.zb.wf.anim matches 0 run function mgs:v5.1.0/zombies/wunderfizz/land
 execute if score @s mgs.zb.wf.anim matches ..-200 run function mgs:v5.1.0/zombies/wunderfizz/orb_expire
 
+## sourceMappingURL=orb_tick.mcfunction.map

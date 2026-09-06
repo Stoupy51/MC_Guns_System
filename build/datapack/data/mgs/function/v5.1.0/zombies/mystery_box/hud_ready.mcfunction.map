@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "hud_ready.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/machines/mystery_box/hover.py"
+	],
+	"names": [],
+	"mappings": "AAW2D;AAC3D;;;;;;;;AACA;AACA"
+}

@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "join.mcfunction",
+	"sourceRoot": "../../../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/maps.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;AAmCG"
+}

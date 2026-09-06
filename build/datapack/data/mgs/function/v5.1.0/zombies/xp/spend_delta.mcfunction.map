@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "spend_delta.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/xp.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AAgDoD;AACpD;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

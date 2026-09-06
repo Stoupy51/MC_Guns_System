@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "tombstone_on_bleed_out.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/machines/perks/tombstone.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AAsFkE;AAClE;AACA;AACA;AACA"
+}

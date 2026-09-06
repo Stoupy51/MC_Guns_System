@@ -22,3 +22,4 @@ execute if score @s mgs.mp.map_mode matches 0 run function mgs:v5.1.0/maps/edito
 execute if score @s mgs.mp.map_mode matches 1 run function mgs:v5.1.0/maps/editor/summon_existing/zombies
 execute if score @s mgs.mp.map_mode matches 2 run function mgs:v5.1.0/maps/editor/summon_existing/missions
 
+## sourceMappingURL=summon_existing.mcfunction.map

@@ -15,3 +15,4 @@ scoreboard players operation #burst_clicks mgs.data *= #cooldown_value mgs.data
 # Set pending_clicks to sustain burst firing
 scoreboard players operation @s mgs.pending_clicks = #burst_clicks mgs.data
 
+## sourceMappingURL=init_burst_clicks.mcfunction.map

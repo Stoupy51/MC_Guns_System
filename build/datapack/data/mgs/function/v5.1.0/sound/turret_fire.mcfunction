@@ -17,3 +17,4 @@ playsound mgs:g3a3/fire player @a[distance=0.01..48] ~ ~ ~ 0.35 1 0.10
 data modify storage mgs:temp _turret_snd set value {crack:"large"}
 execute as @a[distance=0.001..224] facing entity @s eyes run function mgs:v5.1.0/sound/turret_propagation
 
+## sourceMappingURL=turret_fire.mcfunction.map

@@ -13,3 +13,4 @@ scoreboard players add @s mgs.mp.xp_prog 1
 scoreboard players add @s mgs.mp.xp_session 1
 function mgs:v5.1.0/progression/mp/settle
 
+## sourceMappingURL=award_hp_hold.mcfunction.map

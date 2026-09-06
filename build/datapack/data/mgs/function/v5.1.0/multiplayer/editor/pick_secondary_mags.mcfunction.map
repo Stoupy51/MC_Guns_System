@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "pick_secondary_mags.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/multiplayer/loadouts/editor/mags.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AAgEC;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA"
+}

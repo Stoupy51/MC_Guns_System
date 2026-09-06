@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "tick_player.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/progression/__init__.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AAuEqD;AACrD;AACA;AACA;AACA;AACA;AACA;AACA"
+}

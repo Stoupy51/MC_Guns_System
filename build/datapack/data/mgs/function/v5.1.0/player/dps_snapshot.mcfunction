@@ -11,3 +11,4 @@ scoreboard players operation @s mgs.previous_dps = @s mgs.dps
 scoreboard players set @s mgs.dps 0
 scoreboard players set @s mgs.dps_timer 0
 
+## sourceMappingURL=dps_snapshot.mcfunction.map

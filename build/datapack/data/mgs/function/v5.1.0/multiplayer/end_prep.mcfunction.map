@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "end_prep.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/multiplayer/game/prep.py"
+	],
+	"names": [],
+	"mappings": ";;;;;AA0BkD;AAClD;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

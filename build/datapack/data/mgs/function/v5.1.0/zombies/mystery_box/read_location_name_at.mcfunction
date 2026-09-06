@@ -8,3 +8,4 @@
 
 $data modify storage mgs:zombies mystery_box.current_name set from storage mgs:zombies mystery_box.names[$(idx)]
 
+## sourceMappingURL=read_location_name_at.mcfunction.map

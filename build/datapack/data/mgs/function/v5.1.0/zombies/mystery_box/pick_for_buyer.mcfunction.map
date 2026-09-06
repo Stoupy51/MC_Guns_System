@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "pick_for_buyer.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/machines/mystery_box/spin.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AA+GgE;AAChE;AACA;AACA;AACA;AACA;AACA"
+}

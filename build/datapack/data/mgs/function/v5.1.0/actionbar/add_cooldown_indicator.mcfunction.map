@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "add_cooldown_indicator.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/weapon/hud/actionbar.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AAyI8D;AAC9D;AACA;AACA;AACA"
+}

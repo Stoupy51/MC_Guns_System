@@ -13,3 +13,4 @@ data modify storage mgs:temp _mb_cycle_item set from storage bs:out random.weigh
 execute if data storage mgs:temp _mb_cycle_item.weapon_id run function mgs:v5.1.0/zombies/mystery_box/cycle_display_weapon_one with storage mgs:temp _mb_cycle_item
 execute unless data storage mgs:temp _mb_cycle_item.weapon_id run data modify entity @s item set from storage mgs:temp _mb_cycle_item.display_item
 
+## sourceMappingURL=cycle_display_one.mcfunction.map

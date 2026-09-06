@@ -12,3 +12,4 @@ $data modify entity @s item set value {id:"minecraft:paper", count:1, components
 data modify entity @s item_display set value "fixed"
 data modify entity @s brightness set value {sky: 15, block: 15}
 
+## sourceMappingURL=set_model.mcfunction.map

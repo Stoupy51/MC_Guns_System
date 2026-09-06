@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "on_round_end.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/progression/advancements/hooks.py"
+	],
+	"names": [],
+	"mappings": ";;;;;AAuEuD;AACvD;AACA;AACA;AACA;AACA;AACA;AACA"
+}

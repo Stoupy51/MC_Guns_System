@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "reward_6.mcfunction",
+	"sourceRoot": "../../../../../../../../../..",
+	"sources": [
+		"src/functional/progression/advancements/rewards.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AAkHG;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA"
+}

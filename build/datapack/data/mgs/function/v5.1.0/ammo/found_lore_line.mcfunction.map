@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "found_lore_line.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/weapon/ammo/magazine/lore.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;;;;;AAwE0D;AAC1D;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

@@ -49,3 +49,4 @@ execute if score @s mgs.mp.dom_progress matches 100 unless score @s mgs.mp.dom_o
 execute if score @s mgs.mp.dom_progress matches 100 unless score @s mgs.mp.dom_owner matches 1 run scoreboard players set @s mgs.mp.dom_owner 1
 tag @a remove mgs.dom_capturer
 
+## sourceMappingURL=capture_red.mcfunction.map

@@ -27,3 +27,4 @@ execute as @n[tag=mgs.zb_dog_new] store result score @s mgs.zb.stuck_x run data 
 execute as @n[tag=mgs.zb_dog_new] store result score @s mgs.zb.stuck_z run data get entity @s Pos[2]
 scoreboard players set @n[tag=mgs.zb_dog_new] mgs.zb.stuck_dist 4
 
+## sourceMappingURL=summon_dog_at.mcfunction.map

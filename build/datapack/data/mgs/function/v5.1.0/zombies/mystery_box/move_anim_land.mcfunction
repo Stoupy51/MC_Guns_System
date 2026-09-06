@@ -22,3 +22,4 @@ execute unless data storage mgs:zombies mystery_box.current_name run tellraw @a[
 execute if data storage mgs:zombies mystery_box.current_name run tellraw @a[scores={mgs.zb.in_game=1}] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.the_mystery_box_has_arrived_at","color":"yellow"},{"storage":"mgs:zombies","nbt":"mystery_box.current_name","color":"gold","bold":true},"!"]
 execute as @n[tag=mgs.mystery_box_active] at @s run playsound mgs:zombies/mystery_box/land ambient @a[scores={mgs.zb.in_game=1}] ~ ~ ~ 1.0 1.0
 
+## sourceMappingURL=move_anim_land.mcfunction.map

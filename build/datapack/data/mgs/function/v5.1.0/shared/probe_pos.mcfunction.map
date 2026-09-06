@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "probe_pos.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/helpers/probes.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;;;;;;;AA2B+C;AAC/C;AACA;AACA;AACA"
+}

@@ -11,3 +11,4 @@
 
 $damage $(target) $(amount) minecraft:explosion
 
+## sourceMappingURL=damage_plain.mcfunction.map

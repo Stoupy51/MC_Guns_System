@@ -16,3 +16,4 @@ execute as @a[scores={mgs.zb.in_game=1},distance=..0.75] positioned as @s run tp
 # Downed mannequin collision: same push so crawling players can't clip through barricades
 execute as @e[type=minecraft:mannequin,tag=mgs.downed_mannequin,distance=..0.75] positioned as @s run tp @s ^ ^ ^0.8
 
+## sourceMappingURL=tick.mcfunction.map

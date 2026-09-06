@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "on_round_end.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/xp.py"
+	],
+	"names": [],
+	"mappings": ";;;;;AAsEqD;AACrD;AACA;AACA;AACA"
+}

@@ -19,3 +19,4 @@ execute if score #wf_move_timer mgs.data matches 48 run kill @e[tag=mgs.wf_bear]
 # Arrival
 execute if score #wf_move_timer mgs.data matches 0 run function mgs:v5.1.0/zombies/wunderfizz/move_land
 
+## sourceMappingURL=move_tick.mcfunction.map

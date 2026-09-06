@@ -13,3 +13,4 @@ execute store result storage mgs:zombies game.round int 1 run scoreboard players
 function mgs:v5.1.0/zombies/admin/force_round_end
 tellraw @a [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.an_operator_skipped_ahead_1_rounds","color":"yellow"}]
 
+## sourceMappingURL=round_skip_1.mcfunction.map

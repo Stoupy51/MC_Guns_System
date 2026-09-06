@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "apply_next_slot.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/multiplayer/loadout.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;AAwCyD;AACzD;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

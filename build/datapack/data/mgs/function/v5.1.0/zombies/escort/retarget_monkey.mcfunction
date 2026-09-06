@@ -11,3 +11,4 @@ execute store result storage mgs:temp _escort.y int 1 run data get entity @n[tag
 execute store result storage mgs:temp _escort.z int 1 run data get entity @n[tag=mgs.monkey_bomb] Pos[2]
 function mgs:v5.1.0/zombies/escort/set_wander_target with storage mgs:temp _escort
 
+## sourceMappingURL=retarget_monkey.mcfunction.map

@@ -10,3 +10,4 @@
 
 $summon minecraft:marker $(x) $(y) $(z) {Tags:["mgs.oob_point","mgs.gm_entity"]}
 
+## sourceMappingURL=summon_oob_at.mcfunction.map

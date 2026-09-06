@@ -14,3 +14,4 @@ tag @s remove mgs.snd_alive
 # Set to spectator mode
 gamemode spectator @s
 
+## sourceMappingURL=on_death.mcfunction.map

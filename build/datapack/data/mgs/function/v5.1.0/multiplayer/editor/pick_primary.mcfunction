@@ -58,3 +58,4 @@ execute if data storage mgs:temp editor{primary:"m590"} run return run function 
 
 function mgs:v5.1.0/multiplayer/editor/show_primary_camo_dialog
 
+## sourceMappingURL=pick_primary.mcfunction.map

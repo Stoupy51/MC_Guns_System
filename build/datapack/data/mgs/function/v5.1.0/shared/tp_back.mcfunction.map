@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "tp_back.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/helpers/content.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;;;;AAmFC;AACD;AACA"
+}

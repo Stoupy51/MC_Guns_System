@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "join_red.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/multiplayer/teams.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;AAWkD;AAClD;AACA;AACA;AACA;AACA"
+}

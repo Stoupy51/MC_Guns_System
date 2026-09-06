@@ -11,3 +11,4 @@
 # Full reload sound for the player
 $playsound mgs:$(reload) player @s
 
+## sourceMappingURL=reload_start.mcfunction.map

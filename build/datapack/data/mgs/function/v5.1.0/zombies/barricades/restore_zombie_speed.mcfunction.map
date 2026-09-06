@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "restore_zombie_speed.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/objects/barricades/tick.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AAsOqE;AACrE;AACA;AACA;AACA"
+}

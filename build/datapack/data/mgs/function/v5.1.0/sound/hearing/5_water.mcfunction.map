@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "5_water.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/weapon/firing/sound.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;;;;AAqOI;AAAA;AAAA"
+}

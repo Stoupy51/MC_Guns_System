@@ -13,3 +13,4 @@
 
 $data modify storage mgs:temp info.lore set value [{"text":"Round: $(round)","color":"gray","italic":false},{"text":"Points: $(points)","color":"gray","italic":false},{"text":"Kills: $(kills)","color":"gray","italic":false},{"text":"Downs: $(downs)","color":"gray","italic":false}]
 
+## sourceMappingURL=build_info_lore.mcfunction.map

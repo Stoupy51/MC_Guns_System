@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "overkill_check.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/core/weapon_drop.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AAuK0D;AAC1D;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

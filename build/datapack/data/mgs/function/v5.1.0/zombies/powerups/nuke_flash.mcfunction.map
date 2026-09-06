@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "nuke_flash.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/rewards/powerups/effects.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AAkEyD;AACzD;AACA"
+}

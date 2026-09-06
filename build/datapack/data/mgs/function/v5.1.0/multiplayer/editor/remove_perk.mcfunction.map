@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "remove_perk.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/multiplayer/loadouts/editor/perks.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AAgH4D;AAC5D;AACA;AACA;AACA"
+}

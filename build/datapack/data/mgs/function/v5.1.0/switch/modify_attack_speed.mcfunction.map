@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "modify_attack_speed.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/weapon/ammo/switch.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AAwHwD;AACxD;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

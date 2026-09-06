@@ -16,3 +16,4 @@ execute if data storage mgs:temp _fav_iter[0] run function mgs:v5.1.0/multiplaye
 # If not found (wasn't in favorites), add it
 execute if score #fav_found mgs.data matches 0 run function mgs:v5.1.0/multiplayer/custom/fav_append_new
 
+## sourceMappingURL=fav_modify_entry.mcfunction.map

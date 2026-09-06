@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "mp_to_red.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/core/player_menus.py"
+	],
+	"names": [],
+	"mappings": ";;;;;AA0I+C;AAC/C;AACA;AACA;AACA;AACA;AACA;AACA"
+}

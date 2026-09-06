@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "apply_zombie_hp.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/zombies/game/round/enemies.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AAqFqD;AACrD;AACA;AACA"
+}

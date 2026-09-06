@@ -10,3 +10,4 @@
 attribute @s minecraft:fall_damage_multiplier base set 0
 scoreboard players set @s mgs.special.phd_flopper 1
 
+## sourceMappingURL=phd_flopper.mcfunction.map

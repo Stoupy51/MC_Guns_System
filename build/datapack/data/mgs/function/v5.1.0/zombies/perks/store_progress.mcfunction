@@ -10,3 +10,4 @@
 
 $scoreboard players operation @s mgs.zb.perkpaid.$(perk_id) = #pk_paid mgs.data
 
+## sourceMappingURL=store_progress.mcfunction.map

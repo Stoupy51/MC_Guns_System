@@ -11,3 +11,4 @@
 
 $data modify storage mgs:zombies pap_anim_slot."$(id)" set value "$(slot)"
 
+## sourceMappingURL=store_slot.mcfunction.map

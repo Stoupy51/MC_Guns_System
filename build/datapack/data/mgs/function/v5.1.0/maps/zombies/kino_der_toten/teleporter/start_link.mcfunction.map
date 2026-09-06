@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "start_link.mcfunction",
+	"sourceRoot": "../../../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/maps.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AAkI+E;AAC/E;AACA;AACA;AACA;AACA"
+}

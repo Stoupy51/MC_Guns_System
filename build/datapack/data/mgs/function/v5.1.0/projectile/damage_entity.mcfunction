@@ -112,3 +112,4 @@ execute if score #is_new_kill mgs.data matches 1 as @n[tag=mgs.temp_shooter] run
 # Remove temporary tag
 tag @n[tag=mgs.temp_shooter] remove mgs.ticking
 
+## sourceMappingURL=damage_entity.mcfunction.map

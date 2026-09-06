@@ -13,3 +13,4 @@ scoreboard players operation #pap_delta mgs.data -= #pap_old mgs.data
 execute unless score #pap_delta mgs.data matches 0 run function mgs:v5.1.0/zombies/pap/annotate_int_delta
 scoreboard players add #pap_li mgs.data 1
 
+## sourceMappingURL=annotate_pellets_line.mcfunction.map

@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "deadshot_scale.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/weapon/firing/raycast/accuracy.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AA2C6D;AAC7D;AACA;AACA;AACA;AACA;AACA;AACA"
+}

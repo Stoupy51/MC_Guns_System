@@ -14,3 +14,4 @@ tellraw @s ""
 tellraw @s ["  ",[{"text": "[", "color": "yellow", "click_event": {"action": "suggest_command", "command": "/function mgs:v5.1.0/maps/editor/list/multiplayer"}, "hover_event": {"action": "show_text", "value": "Back to map list"}}, "\u25c0 Back", "]"]]
 tellraw @s {"text":"============================================","color":"dark_gray"}
 
+## sourceMappingURL=multiplayer.mcfunction.map

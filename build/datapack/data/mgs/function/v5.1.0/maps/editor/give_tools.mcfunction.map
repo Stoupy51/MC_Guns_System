@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "give_tools.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/map_editor/tools.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AA0DoD;AACpD;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

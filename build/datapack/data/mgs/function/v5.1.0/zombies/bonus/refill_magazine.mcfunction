@@ -150,3 +150,4 @@ $item modify entity @s $(slot) mgs:v5.1.0/update_ammo
 execute if score #stack_size mgs.data matches 1 run function mgs:v5.1.0/zombies/bonus/set_full_mag_model with storage mgs:temp refill
 $function mgs:v5.1.0/ammo/modify_mag_lore {slot:"$(slot)"}
 
+## sourceMappingURL=refill_magazine.mcfunction.map

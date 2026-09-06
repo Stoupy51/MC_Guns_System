@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "on_hover.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/objects/power.py"
+	],
+	"names": [],
+	"mappings": "AAqGoD;AACpD;;;;;;;;AACA;AACA"
+}

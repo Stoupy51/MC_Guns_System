@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "check_owned.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/machines/perks/purchase.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;;AAiFuD;AACvD;AACA;AACA"
+}

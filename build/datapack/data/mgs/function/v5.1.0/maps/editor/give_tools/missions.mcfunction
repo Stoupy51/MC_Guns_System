@@ -13,3 +13,4 @@ item replace entity @s hotbar.5 with minecraft:bat_spawn_egg[minecraft:item_name
 item replace entity @s inventory.0 with minecraft:bat_spawn_egg[minecraft:item_name={"translate":"mgs.start_command","color":"aqua","italic":false},minecraft:item_model="minecraft:allay_spawn_egg",minecraft:custom_data={mgs:{editor:true,type:"start_command"}},minecraft:entity_data={id:"minecraft:bat",NoAI:1b,Silent:1b,Invulnerable:1b,Tags:["mgs.new_element","mgs.element.start_command"]}]
 item replace entity @s inventory.1 with minecraft:bat_spawn_egg[minecraft:item_name={"translate":"mgs.respawn_command","color":"dark_aqua","italic":false},minecraft:item_model="minecraft:vex_spawn_egg",minecraft:custom_data={mgs:{editor:true,type:"respawn_command"}},minecraft:entity_data={id:"minecraft:bat",NoAI:1b,Silent:1b,Invulnerable:1b,Tags:["mgs.new_element","mgs.element.respawn_command"]}]
 
+## sourceMappingURL=missions.mcfunction.map

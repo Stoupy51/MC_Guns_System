@@ -10,3 +10,4 @@
 # Falls through to normal scaling until implemented
 $function mgs:v5.1.0/zombies/types/normal {level:"$(level)"}
 
+## sourceMappingURL=fast.mcfunction.map

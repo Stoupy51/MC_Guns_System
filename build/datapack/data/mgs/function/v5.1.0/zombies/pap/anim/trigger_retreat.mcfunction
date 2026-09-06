@@ -19,3 +19,4 @@ execute positioned ~ ~-2 ~ run particle end_rod ~ ~1.0 ~ 0.5 0.3 0.5 0.1 20 forc
 playsound mgs:zombies/pap/ready ambient @a[scores={mgs.zb.in_game=1}] ~ ~ ~ 1.0 1.0
 tellraw @a[scores={mgs.zb.in_game=1}] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.weapon_upgraded_collect_it_before_it_retreats","color":"aqua"}]
 
+## sourceMappingURL=trigger_retreat.mcfunction.map

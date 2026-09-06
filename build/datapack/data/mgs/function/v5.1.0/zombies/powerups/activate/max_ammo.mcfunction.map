@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "max_ammo.mcfunction",
+	"sourceRoot": "../../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/rewards/powerups/pickup.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AAsFgE;AAChE;AACA;AACA;AACA"
+}

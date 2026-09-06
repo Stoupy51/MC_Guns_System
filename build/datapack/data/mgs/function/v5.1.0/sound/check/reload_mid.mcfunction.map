@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "reload_mid.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/weapon/firing/sound.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AA2KoD;AACpD;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

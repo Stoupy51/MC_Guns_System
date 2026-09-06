@@ -10,3 +10,4 @@
 $scoreboard players set #bullets mgs.data $(bullets)
 $item modify entity @s $(slot) mgs:v5.1.0/set_consumable_count
 
+## sourceMappingURL=apply_slot_consumable.mcfunction.map

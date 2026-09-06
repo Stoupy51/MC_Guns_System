@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "particles.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/map_editor/tick.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AA+EmD;AACnD;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

@@ -10,3 +10,4 @@ execute unless entity @e[tag=mgs.tombstone,predicate=mgs:v5.1.0/zombies/revive/d
 execute store result storage mgs:temp _ts_id.id int 1 run scoreboard players get @s mgs.zb.downed_id
 function mgs:v5.1.0/zombies/perks/tombstone_snapshot_inv with storage mgs:temp _ts_id
 
+## sourceMappingURL=tombstone_on_bleed_out.mcfunction.map

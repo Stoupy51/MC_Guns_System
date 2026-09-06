@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "on_change.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/player/inventory/hooks.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AAoByD;AACzD;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

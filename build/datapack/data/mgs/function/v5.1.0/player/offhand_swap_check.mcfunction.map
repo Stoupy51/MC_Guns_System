@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "offhand_swap_check.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/weapon/common.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AA6OuD;AACvD;AACA;AACA"
+}

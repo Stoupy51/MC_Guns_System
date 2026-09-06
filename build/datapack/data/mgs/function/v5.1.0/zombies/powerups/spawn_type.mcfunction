@@ -38,3 +38,4 @@ $execute positioned $(x) $(y) $(z) run summon minecraft:text_display ~ ~1.0 ~ {T
 # Drop spawn cue
 execute as @a[scores={mgs.zb.in_game=1}] at @s run playsound mgs:zombies/powerups/item/spawn ambient @s ~ ~ ~ 0.7 1.0
 
+## sourceMappingURL=spawn_type.mcfunction.map

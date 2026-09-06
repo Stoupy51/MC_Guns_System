@@ -22,3 +22,4 @@ data modify storage mgs:temp _dropw set from entity B5-0-0-0-3 item
 scoreboard players operation #drop_ammo mgs.data = @s mgs.remaining_bullets
 function mgs:v5.1.0/shared/drops/drop
 
+## sourceMappingURL=drop_held_weapon.mcfunction.map

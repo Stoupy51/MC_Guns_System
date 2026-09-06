@@ -10,3 +10,4 @@ scoreboard players add @s mgs.mp.xp_prog 3
 scoreboard players add @s mgs.mp.xp_session 3
 function mgs:v5.1.0/progression/mp/settle
 
+## sourceMappingURL=award_mission_kill.mcfunction.map

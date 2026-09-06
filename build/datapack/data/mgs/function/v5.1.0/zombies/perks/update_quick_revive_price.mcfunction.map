@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "update_quick_revive_price.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/machines/perks/hooks.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;AA8FqE;AACrE;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

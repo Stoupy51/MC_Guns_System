@@ -71,3 +71,4 @@ scoreboard players set #zb_cycle_done mgs.data 0
 function mgs:v5.1.0/zombies/powerups/queue_refill
 execute store result score #zb_cycle_len mgs.data run data get storage mgs:data _pu_queue
 
+## sourceMappingURL=start_round.mcfunction.map

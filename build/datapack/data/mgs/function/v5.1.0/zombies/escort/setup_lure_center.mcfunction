@@ -18,3 +18,4 @@ scoreboard players set #zb_pap_has mgs.data 0
 execute if entity @e[tag=mgs.lure_center] run scoreboard players set #zb_pap_has mgs.data 1
 scoreboard players set #zb_lure mgs.data 0
 
+## sourceMappingURL=setup_lure_center.mcfunction.map

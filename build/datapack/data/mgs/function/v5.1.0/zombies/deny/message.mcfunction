@@ -39,3 +39,4 @@
 $tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],$(msg)]
 playsound minecraft:entity.villager.no ambient @s ~ ~ ~ 0.8 1.0
 
+## sourceMappingURL=message.mcfunction.map

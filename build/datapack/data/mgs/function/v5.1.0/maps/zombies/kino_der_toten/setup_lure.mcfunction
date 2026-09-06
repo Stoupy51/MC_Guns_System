@@ -6,3 +6,4 @@
 
 execute if data storage mgs:zombies game{map_id:"kino_der_toten"} positioned ~-49 ~-3 ~0 run summon minecraft:marker ~ ~ ~ {Tags:["mgs.lure_center","mgs.gm_entity"]}
 
+## sourceMappingURL=setup_lure.mcfunction.map

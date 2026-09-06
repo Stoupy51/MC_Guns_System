@@ -40,3 +40,4 @@ scoreboard players operation #xp_gain mgs.data = #zb_kills_delta mgs.data
 scoreboard players operation #xp_gain mgs.data *= #2 mgs.data
 function mgs:v5.1.0/progression/zb/award_kill
 
+## sourceMappingURL=check_kill_points.mcfunction.map

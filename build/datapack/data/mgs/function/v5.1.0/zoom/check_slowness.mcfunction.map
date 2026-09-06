@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "check_slowness.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/weapon/hud/zoom.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AA2IiD;AACjD;AACA;AACA;AACA;AACA;AACA"
+}

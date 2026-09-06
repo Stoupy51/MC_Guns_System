@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "turret_shoot.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/objects/traps/turret.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AAmDwD;AACxD;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

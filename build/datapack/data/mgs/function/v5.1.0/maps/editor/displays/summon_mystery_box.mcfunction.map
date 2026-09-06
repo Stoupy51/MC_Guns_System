@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "summon_mystery_box.mcfunction",
+	"sourceRoot": "../../../../../../../../..",
+	"sources": [
+		"src/functional/map_editor/displays.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;;AAiHqE;AACrE;AACA;AACA;AACA"
+}

@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "instant_repair.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/objects/barricades/hooks.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AAsD+D;AAC/D;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

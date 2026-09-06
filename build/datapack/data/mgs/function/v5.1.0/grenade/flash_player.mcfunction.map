@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "flash_player.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/weapon/grenade/detonate.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AA2KkD;AAClD;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

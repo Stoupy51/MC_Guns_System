@@ -13,3 +13,4 @@ function mgs:v5.1.0/zombies/inventory/give_starting_loadout
 # The starting-loadout clear also strips any bought knife/grenade-type/tactical (intended).
 item modify entity @s hotbar.7 mgs:v5.1.0/grenade/set_count_2
 
+## sourceMappingURL=give_respawn_loadout.mcfunction.map

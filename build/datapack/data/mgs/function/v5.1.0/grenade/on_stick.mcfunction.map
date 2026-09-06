@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "on_stick.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/weapon/grenade/flight.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;AA0F8C;AAC9C;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

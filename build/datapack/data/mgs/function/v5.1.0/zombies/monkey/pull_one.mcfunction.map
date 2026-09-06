@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "pull_one.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/enemies/monkey_bomb.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AAyEqD;AACrD;AACA;AACA"
+}

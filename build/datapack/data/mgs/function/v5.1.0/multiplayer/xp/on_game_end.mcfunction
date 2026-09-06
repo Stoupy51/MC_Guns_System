@@ -14,3 +14,4 @@ execute as @a[scores={mgs.mp.in_game=1},tag=!mgs.xp_winner] run function mgs:v5.
 execute as @a[scores={mgs.mp.in_game=1,mgs.mp.deaths=0},tag=mgs.xp_winner] run advancement grant @s only mgs:challenges/mp/flawless
 tag @a remove mgs.xp_winner
 
+## sourceMappingURL=on_game_end.mcfunction.map

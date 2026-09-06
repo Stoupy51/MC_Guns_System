@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "tp_all_to_spawns.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/core/spawning.py"
+	],
+	"names": [],
+	"mappings": ";;;;;AA+HuD;AACvD;AACA;AACA;AACA"
+}

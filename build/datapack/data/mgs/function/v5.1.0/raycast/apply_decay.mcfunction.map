@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "apply_decay.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/weapon/firing/raycast/hits.py"
+	],
+	"names": [],
+	"mappings": ";;;;;AAyJiD;AACjD;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

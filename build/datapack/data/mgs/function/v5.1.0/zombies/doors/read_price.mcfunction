@@ -21,3 +21,4 @@ execute if score #door_left mgs.data matches ..0 run scoreboard players set #doo
 execute if score #door_partial mgs.data matches 1.. run scoreboard players operation #door_price mgs.data = #door_partial mgs.data
 execute if score #door_partial mgs.data matches 1.. run scoreboard players operation #door_price mgs.data < #door_left mgs.data
 
+## sourceMappingURL=read_price.mcfunction.map

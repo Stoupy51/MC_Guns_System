@@ -11,3 +11,4 @@
 
 $execute positioned ~ ~ ~ rotated $(rot) 0 positioned ^ ^ ^$(offset) run setblock ~ ~ ~ air
 
+## sourceMappingURL=remove_block_silent.mcfunction.map

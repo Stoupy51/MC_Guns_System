@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "simulate_death_fire_kill.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/multiplayer/game/death.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;;AAgFkE;AAClE;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "apply_spin.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/weapon/grenade/throw.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;;AAmHgD;AAChD;AACA;AACA"
+}

@@ -27,3 +27,4 @@ execute if data storage mgs:temp _wf_grant.perk_id run function #mgs:zombies/on_
 kill @n[type=item_display,tag=mgs.wunderfizz_orb,distance=..3]
 playsound minecraft:entity.experience_orb.pickup ambient @s ~ ~ ~ 0.8 1.25
 
+## sourceMappingURL=collect.mcfunction.map

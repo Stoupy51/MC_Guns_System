@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "update_insta_kill_bb.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/rewards/powerups/bossbars.py"
+	],
+	"names": [],
+	"mappings": ";;;;;AAqBkE;AAClE;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

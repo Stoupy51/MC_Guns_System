@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "prep_tick.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/zombies/game/lifecycle/start.py"
+	],
+	"names": [],
+	"mappings": ";;;;;AAsJ+C;AAC/C;AACA"
+}

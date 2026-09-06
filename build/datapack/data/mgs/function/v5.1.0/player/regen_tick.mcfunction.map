@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "regen_tick.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/main/objectives.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AA4I+C;AAC/C;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

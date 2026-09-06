@@ -6,3 +6,4 @@
 
 # TDM scoring handled by kill signal
 
+## sourceMappingURL=tick.mcfunction.map

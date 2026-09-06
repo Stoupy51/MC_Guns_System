@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "bleed_out.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/player/revive/complete.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AAyGsD;AACtD;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

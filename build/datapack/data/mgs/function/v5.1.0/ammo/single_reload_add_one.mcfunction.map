@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "single_reload_add_one.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/weapon/ammo/magazine/shells.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AAcwD;AACxD;AACA;AACA;AACA"
+}

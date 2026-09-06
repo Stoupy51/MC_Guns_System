@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "check_pap_taker.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/rewards/powerups/pickup.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AA4D8D;AAC9D;AACA;AACA;AACA;AACA;AACA;AACA"
+}

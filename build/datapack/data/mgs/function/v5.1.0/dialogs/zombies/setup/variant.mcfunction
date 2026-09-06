@@ -6,3 +6,4 @@
 
 dialog show @s mgs:v5.1.0/zombies/setup/variant
 
+## sourceMappingURL=variant.mcfunction.map

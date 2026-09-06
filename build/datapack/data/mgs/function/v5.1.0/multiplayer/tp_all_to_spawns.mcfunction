@@ -19,3 +19,4 @@ execute unless data storage mgs:multiplayer game{gamemode:"ffa"} as @a[scores={m
 # Clean up used spawn markers
 tag @e[tag=mgs.spawn_used] remove mgs.spawn_used
 
+## sourceMappingURL=tp_all_to_spawns.mcfunction.map

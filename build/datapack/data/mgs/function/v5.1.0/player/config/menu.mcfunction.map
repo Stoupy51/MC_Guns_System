@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "menu.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/player_config.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;;AAmPgD;AAChD;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

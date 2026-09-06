@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "check_ray_gun_cap.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/machines/mystery_box/pull.py"
+	],
+	"names": [],
+	"mappings": ";;;;;AA8FmE;AACnE;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

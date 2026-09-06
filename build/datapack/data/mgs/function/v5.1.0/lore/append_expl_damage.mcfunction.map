@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "append_expl_damage.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/weapon/ammo/lore/build.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AAoGqD;AACrD;AACA;AACA;AACA"
+}

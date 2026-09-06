@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "award_match_loss.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/progression/curve.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AAuH+D;AAC/D;AACA;AACA;AACA;AACA;AACA"
+}

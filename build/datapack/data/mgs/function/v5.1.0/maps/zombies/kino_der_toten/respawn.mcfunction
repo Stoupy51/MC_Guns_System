@@ -8,3 +8,4 @@
 # @s = respawning player
 # @within  #mgs:maps/respawn_script (via calls/respawn)
 
+## sourceMappingURL=respawn.mcfunction.map

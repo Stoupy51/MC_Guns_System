@@ -16,3 +16,4 @@ bossbar set mgs:pu_unlimited_ammo style progress
 bossbar set mgs:pu_unlimited_ammo players @a[scores={mgs.zb.in_game=1}]
 playsound minecraft:entity.player.levelup ambient @a[scores={mgs.zb.in_game=1}] ~ ~ ~ 1.0 1.0
 
+## sourceMappingURL=unlimited_ammo.mcfunction.map

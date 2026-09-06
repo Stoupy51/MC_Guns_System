@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "armed.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/game/round/enemies.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AAiIiD;AACjD;AACA;AACA;AACA"
+}

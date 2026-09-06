@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "create_sidebar.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/zombies/game/lifecycle/sidebar.py"
+	],
+	"names": [],
+	"mappings": ";;;;;AAaoD;AACpD;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

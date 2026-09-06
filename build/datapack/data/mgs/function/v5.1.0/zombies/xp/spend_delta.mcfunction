@@ -15,3 +15,4 @@ scoreboard players operation #xp_gain mgs.data = @s mgs.zb.xp_spent_acc
 scoreboard players operation #xp_gain mgs.data /= #100 mgs.data
 execute if score #xp_gain mgs.data matches 1.. run function mgs:v5.1.0/zombies/xp/pay_spend
 
+## sourceMappingURL=spend_delta.mcfunction.map

@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "passive_ability_menu.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/zombies/player/ability.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;AAwC0D;AAC1D;AACA;AACA;AACA;AACA"
+}

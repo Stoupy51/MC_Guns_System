@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "announce_stats_one.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/helpers/ranked.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AAmD0C;AAC1C;AACA;AACA;AACA;AACA"
+}

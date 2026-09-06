@@ -41,3 +41,4 @@ execute as @n[tag=mgs.zb_new] store result score @s mgs.zb.stuck_x run data get 
 execute as @n[tag=mgs.zb_new] store result score @s mgs.zb.stuck_z run data get entity @s Pos[2]
 scoreboard players set @n[tag=mgs.zb_new] mgs.zb.stuck_dist 4
 
+## sourceMappingURL=summon_zombie_at.mcfunction.map

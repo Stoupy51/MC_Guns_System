@@ -21,3 +21,4 @@ scoreboard players set @s mgs.cooldown 20
 # Start in active phase
 function mgs:v5.1.0/mob/wake_up
 
+## sourceMappingURL=init.mcfunction.map

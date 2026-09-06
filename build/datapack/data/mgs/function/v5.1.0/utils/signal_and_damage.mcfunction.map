@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "signal_and_damage.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/main/damage.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;;AAmFqD;AACrD;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

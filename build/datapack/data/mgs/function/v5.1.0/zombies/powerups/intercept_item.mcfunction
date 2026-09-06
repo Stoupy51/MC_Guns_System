@@ -21,3 +21,4 @@ kill @s
 # Spawn the managed item entity + text_display at the stored position
 function mgs:v5.1.0/zombies/powerups/spawn_display with storage mgs:temp _pu_spawn
 
+## sourceMappingURL=intercept_item.mcfunction.map

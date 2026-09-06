@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "apply_flash_if_can_see.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/shaders.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AAsiC2D;AAC3D;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

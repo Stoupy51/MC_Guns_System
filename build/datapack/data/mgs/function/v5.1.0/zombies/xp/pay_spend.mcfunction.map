@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "pay_spend.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/xp.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AA2DkD;AAClD;AACA;AACA;AACA;AACA;AACA;AACA"
+}

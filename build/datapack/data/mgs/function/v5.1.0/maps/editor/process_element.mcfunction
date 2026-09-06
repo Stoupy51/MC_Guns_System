@@ -105,3 +105,4 @@ execute if entity @s[tag=mgs.element.editor_save] run return run kill @s
 # Fallback: unknown type
 kill @s
 
+## sourceMappingURL=process_element.mcfunction.map

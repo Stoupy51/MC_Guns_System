@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "go_sleep.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/mob_ai.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AAsI0C;AAC1C;AACA;AACA;AACA"
+}

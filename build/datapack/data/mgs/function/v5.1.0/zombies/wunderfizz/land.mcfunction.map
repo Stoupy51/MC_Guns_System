@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "land.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/machines/wunderfizz/spin.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AA6JqD;AACrD;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

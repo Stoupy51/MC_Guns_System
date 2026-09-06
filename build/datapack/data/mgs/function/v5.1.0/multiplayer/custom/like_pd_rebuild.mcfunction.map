@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "like_pd_rebuild.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/multiplayer/loadouts/actions/likes.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;AAqCgE;AAChE;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

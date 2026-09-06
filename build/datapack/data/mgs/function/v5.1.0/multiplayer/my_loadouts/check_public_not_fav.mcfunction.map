@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "check_public_not_fav.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/multiplayer/loadouts/browsing/my_loadouts.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AAyI0E;AAC1E;AACA;AACA;AACA"
+}

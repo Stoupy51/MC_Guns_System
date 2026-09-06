@@ -13,3 +13,4 @@ data remove storage mgs:temp _pd_iter[0]
 # Stop early once our entry is found
 execute unless score #pd_pid mgs.data = @s mgs.mp.pid if data storage mgs:temp _pd_iter[0] run function mgs:v5.1.0/multiplayer/shared/load_fav_iter
 
+## sourceMappingURL=load_fav_iter.mcfunction.map

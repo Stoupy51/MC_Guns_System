@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "power_switch.mcfunction",
+	"sourceRoot": "../../../../../../../../..",
+	"sources": [
+		"src/functional/map_editor/displays.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AAwH+D;AAC/D;AACA;AACA;AACA;AACA"
+}

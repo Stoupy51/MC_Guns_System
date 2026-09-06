@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "reset_burst_if_complete.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/weapon/common.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AAgQ4D;AAC5D;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

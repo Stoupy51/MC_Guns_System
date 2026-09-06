@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "init_state.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/multiplayer/loadouts/editor/state.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;AAuC2D;AAC3D;AACA"
+}

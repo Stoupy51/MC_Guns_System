@@ -9,3 +9,4 @@
 
 execute if entity @e[tag=mgs.spawn_point,tag=mgs.spawn_mission] run function mgs:v5.1.0/missions/pick_spawn
 
+## sourceMappingURL=respawn_tp.mcfunction.map

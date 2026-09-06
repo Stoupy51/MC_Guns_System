@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "recreate_critical_items.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/player/inventory/hooks.py"
+	],
+	"names": [],
+	"mappings": "AAsFuE;AACvE;;;;;;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

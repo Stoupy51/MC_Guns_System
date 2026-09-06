@@ -10,3 +10,4 @@ execute store result storage mgs:temp _pap_cosm_fetch.id int 1 run scoreboard pl
 function mgs:v5.1.0/zombies/pap/anim/fetch_cosmetics with storage mgs:temp _pap_cosm_fetch
 execute as @n[tag=mgs.pap_weapon_display,distance=..2] run function mgs:v5.1.0/zombies/pap/anim/apply_cosmetics_to_display
 
+## sourceMappingURL=apply_cosmetics.mcfunction.map

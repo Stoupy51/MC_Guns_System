@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "spawn_enemy_iter.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/missions/game/start.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;AAmLuD;AACvD;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

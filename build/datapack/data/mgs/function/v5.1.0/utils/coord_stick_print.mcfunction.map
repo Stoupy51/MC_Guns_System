@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "coord_stick_print.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/map_editor/coord_stick.py"
+	],
+	"names": [],
+	"mappings": "AAyEqD;AACrD;;;;;;;;;;AACA"
+}

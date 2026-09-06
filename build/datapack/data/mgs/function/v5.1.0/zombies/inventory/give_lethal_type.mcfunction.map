@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "give_lethal_type.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/player/inventory/grenades.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;;;AA+CgE;AAChE;AACA;AACA;AACA"
+}

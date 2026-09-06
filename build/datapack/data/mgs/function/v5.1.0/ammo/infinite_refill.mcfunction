@@ -9,3 +9,4 @@
 # Set player's ammo count to weapon capacity
 execute store result score @s mgs.remaining_bullets run data get storage mgs:gun all.stats.capacity
 
+## sourceMappingURL=infinite_refill.mcfunction.map

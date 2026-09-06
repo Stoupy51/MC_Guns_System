@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "extract_slot.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/weapon/ammo/magazine/shells.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;AAkEuD;AACvD;AACA;AACA;AACA;AACA;AACA"
+}

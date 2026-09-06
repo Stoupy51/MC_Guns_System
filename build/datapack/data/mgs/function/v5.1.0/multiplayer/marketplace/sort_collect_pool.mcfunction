@@ -13,3 +13,4 @@ execute if score #pub mgs.data matches 1 run data modify storage mgs:temp _sort_
 data remove storage mgs:temp _iter[0]
 execute if data storage mgs:temp _iter[0] run function mgs:v5.1.0/multiplayer/marketplace/sort_collect_pool
 
+## sourceMappingURL=sort_collect_pool.mcfunction.map

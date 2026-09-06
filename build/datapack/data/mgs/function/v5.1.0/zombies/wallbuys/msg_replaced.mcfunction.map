@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "msg_replaced.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/objects/wallbuys/purchase.py"
+	],
+	"names": [],
+	"mappings": "AAiK2D;AAC3D;;;;;;;;AACA;AACA"
+}

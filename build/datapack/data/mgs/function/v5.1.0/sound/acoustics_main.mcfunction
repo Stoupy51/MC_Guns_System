@@ -20,3 +20,4 @@ $execute if score @s mgs.acoustics_level matches 5 run playsound mgs:common/$(cr
 scoreboard players operation #origin_acoustics_level mgs.data = @s mgs.acoustics_level
 execute as @a[distance=0.001..224] facing entity @s eyes run function mgs:v5.1.0/sound/propagation
 
+## sourceMappingURL=acoustics_main.mcfunction.map

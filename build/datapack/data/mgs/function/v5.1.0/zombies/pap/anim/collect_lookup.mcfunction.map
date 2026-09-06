@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "collect_lookup.mcfunction",
+	"sourceRoot": "../../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/machines/pap/collect.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;;AAuC6D;AAC7D;AACA;AACA;AACA"
+}

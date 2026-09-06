@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "ability_menu.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/zombies/player/ability.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;AA8DkD;AAClD;AACA;AACA;AACA;AACA"
+}

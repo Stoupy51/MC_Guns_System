@@ -18,3 +18,4 @@ execute if data storage mgs:temp _pap_disp{item_model:""} run data modify storag
 execute if data entity @s data.yaw run data modify storage mgs:temp _pap_disp.yaw set from entity @s data.yaw
 execute positioned ^ ^ ^-0.49 positioned ~ ~-0.4 ~ run function mgs:v5.1.0/zombies/display/summon_machine_display with storage mgs:temp _pap_disp
 
+## sourceMappingURL=pap_machine.mcfunction.map

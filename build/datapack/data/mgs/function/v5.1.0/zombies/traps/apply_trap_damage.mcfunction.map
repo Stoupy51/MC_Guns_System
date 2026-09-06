@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "apply_trap_damage.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/objects/traps/active.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;;;;;;;AAiG6D;AAC7D;AACA"
+}

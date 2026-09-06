@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "on_hover.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/objects/traps/hooks.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AAWoD;AACpD;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

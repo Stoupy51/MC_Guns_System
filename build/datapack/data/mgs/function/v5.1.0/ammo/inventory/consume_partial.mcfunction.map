@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "consume_partial.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/weapon/ammo/magazine/consume.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;;AA6F4D;AAC5D;AACA;AACA;AACA;AACA;AACA"
+}

@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "activate.mcfunction",
+	"sourceRoot": "../../../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/maps.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AAqJ6E;AAC7E;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

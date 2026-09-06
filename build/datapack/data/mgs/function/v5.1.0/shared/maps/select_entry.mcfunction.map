@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "select_entry.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/core/map_menus.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;;;AA8BuD;AACvD;AACA"
+}

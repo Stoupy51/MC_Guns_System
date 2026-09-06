@@ -67,3 +67,4 @@ scoreboard players set @a mgs.mp.spectate_timer 0
 scoreboard players set #mp_has_boundary mgs.data 0
 tag @a[tag=mgs.give_class_menu] remove mgs.give_class_menu
 
+## sourceMappingURL=stop.mcfunction.map

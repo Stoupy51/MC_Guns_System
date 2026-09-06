@@ -16,3 +16,4 @@ execute unless score #toggle mgs.data matches 1 run tellraw @s [[{"text":"","col
 # Reopen the settings dialog so the updated state is reflected immediately
 function mgs:v5.1.0/player/config/menu
 
+## sourceMappingURL=toggle_hitmarker.mcfunction.map

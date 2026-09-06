@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "fire_sale_summon_box.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/machines/mystery_box/fire_sale.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AA6BsE;AACtE;AACA;AACA;AACA"
+}

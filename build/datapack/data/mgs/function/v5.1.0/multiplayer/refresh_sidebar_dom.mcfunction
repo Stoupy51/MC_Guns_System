@@ -22,3 +22,4 @@ execute if score #dom_owner_c mgs.data matches 2 run data modify storage mgs:tem
 # Build sidebar with dynamic point entries
 function mgs:v5.1.0/multiplayer/build_sidebar_dom with storage mgs:temp dom_sb
 
+## sourceMappingURL=refresh_sidebar_dom.mcfunction.map

@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "start_to_target.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/enemies/escort/start.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AAmG4D;AAC5D;AACA;AACA;AACA"
+}

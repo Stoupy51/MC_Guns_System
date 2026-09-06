@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "sync_attack_speed_with_cooldown.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/weapon/ammo/switch.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AAwGoE;AACpE;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

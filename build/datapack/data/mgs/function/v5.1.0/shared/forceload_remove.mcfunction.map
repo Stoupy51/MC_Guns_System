@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "forceload_remove.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/core/bounds.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;;;;;;AA6EsD"
+}

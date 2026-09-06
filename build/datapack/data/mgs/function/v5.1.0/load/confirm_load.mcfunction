@@ -137,6 +137,7 @@ stopwatch remove mgs:clock
 stopwatch create mgs:clock
 scoreboard players set #real_prev mgs.data 0
 
+
 # Confirm load
 tellraw @a[tag=convention.debug] {"translate":"mgs.loaded_mc_guns_system_v5_1_0","color":"green"}
 scoreboard players set #mgs.loaded load.status 1
@@ -682,3 +683,4 @@ scoreboard players set #36000 mgs.data 36000
 scoreboard players set #62832 mgs.data 62832
 scoreboard players set #1000000 mgs.data 1000000
 
+## sourceMappingURL=confirm_load.mcfunction.map

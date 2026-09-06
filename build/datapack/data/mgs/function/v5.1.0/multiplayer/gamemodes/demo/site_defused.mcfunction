@@ -30,3 +30,4 @@ execute if entity @s[tag=mgs.demo_site_D] run tellraw @a[tag=mgs.xp_earner] [[{"
 tag @a remove mgs.xp_earner
 playsound minecraft:block.note_block.bit player @a ~ ~ ~ 1 1.5
 
+## sourceMappingURL=site_defused.mcfunction.map

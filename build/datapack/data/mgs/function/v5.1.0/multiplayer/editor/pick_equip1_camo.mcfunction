@@ -19,3 +19,4 @@ execute if score @s mgs.player.config matches 504 run data modify storage mgs:te
 
 function mgs:v5.1.0/multiplayer/editor/hub
 
+## sourceMappingURL=pick_equip1_camo.mcfunction.map

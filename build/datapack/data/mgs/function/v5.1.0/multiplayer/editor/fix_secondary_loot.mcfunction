@@ -10,3 +10,4 @@
 
 $data modify storage mgs:temp _build.secondary_data.gun_slot.loot set value "mgs:i/$(secondary_full)"
 
+## sourceMappingURL=fix_secondary_loot.mcfunction.map

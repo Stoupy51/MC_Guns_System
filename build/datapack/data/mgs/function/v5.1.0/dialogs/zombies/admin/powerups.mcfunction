@@ -6,3 +6,4 @@
 
 dialog show @s mgs:v5.1.0/zombies/admin/powerups
 
+## sourceMappingURL=powerups.mcfunction.map

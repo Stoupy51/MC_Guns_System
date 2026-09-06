@@ -12,3 +12,4 @@
 
 $data modify storage mgs:temp editor.secondary_full set value "$(secondary)$(secondary_scope)$(secondary_camo)"
 
+## sourceMappingURL=set_secondary_full.mcfunction.map

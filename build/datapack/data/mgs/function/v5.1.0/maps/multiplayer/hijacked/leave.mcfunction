@@ -6,3 +6,4 @@
 
 # Hijacked map leave
 
+## sourceMappingURL=leave.mcfunction.map

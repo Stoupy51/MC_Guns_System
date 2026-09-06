@@ -16,3 +16,4 @@ function mgs:v5.1.0/zombies/wunderfizz/sync_visibility
 execute as @n[tag=mgs.wf_active] at @s run particle minecraft:end_rod ~ ~-1 ~ 0.3 1.5 0.3 0.05 25 force @a[distance=..64]
 execute as @n[tag=mgs.wf_active] at @s run playsound minecraft:entity.lightning_bolt.impact ambient @a[scores={mgs.zb.in_game=1}] ~ ~ ~ 0.6 1.6
 
+## sourceMappingURL=do_relocate.mcfunction.map

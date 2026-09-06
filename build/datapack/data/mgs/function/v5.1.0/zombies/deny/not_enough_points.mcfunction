@@ -24,3 +24,4 @@
 $tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],[{"translate":"mgs.you_dont_have_enough_points","color":"red"}, " ("],{"score":{"name":"$(score)","objective":"$(obj)"},"color":"yellow"},[{"text":" ","color":"red"}, {"translate":"mgs.needed"}, ")."]]
 playsound minecraft:entity.villager.no ambient @s ~ ~ ~ 0.8 1.0
 
+## sourceMappingURL=not_enough_points.mcfunction.map

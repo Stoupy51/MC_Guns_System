@@ -13,3 +13,4 @@ execute unless score @s mgs.zb.xp_level matches 1.. run function mgs:v5.1.0/prog
 execute if score @s mgs.zb.in_game matches 1 run return run function mgs:v5.1.0/progression/zb/refresh_bar
 function mgs:v5.1.0/progression/mp/refresh_bar
 
+## sourceMappingURL=tick_player.mcfunction.map

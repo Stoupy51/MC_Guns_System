@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "reward_flawless.mcfunction",
+	"sourceRoot": "../../../../../../../../..",
+	"sources": [
+		"src/functional/progression/advancements/rewards.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AA8HE;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA"
+}

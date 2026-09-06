@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "on_place.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/map_editor/place.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AAakD;AAClD;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "watchdog.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/enemies/escort/tick.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AA4GqD;AACrD;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

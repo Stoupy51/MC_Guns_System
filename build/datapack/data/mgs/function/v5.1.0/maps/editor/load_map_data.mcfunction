@@ -10,3 +10,4 @@
 
 $data modify storage mgs:temp map_edit.map set from storage mgs:maps $(mode)[$(idx)]
 
+## sourceMappingURL=load_map_data.mcfunction.map

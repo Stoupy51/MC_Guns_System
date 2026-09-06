@@ -28,3 +28,4 @@ execute if data storage mgs:gun all.stats.proj_speed run return run function mgs
 # Shoot with hitscan raycast
 function mgs:v5.1.0/player/shoot
 
+## sourceMappingURL=fire_weapon.mcfunction.map

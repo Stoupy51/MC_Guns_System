@@ -27,3 +27,4 @@ scoreboard players operation #zb_hp mgs.data /= #15 mgs.data
 # Cap at Minecraft-safe gameplay max (also catches int overflow on very high rounds)
 execute unless score #zb_hp mgs.data matches 15..2048 run scoreboard players set #zb_hp mgs.data 2048
 
+## sourceMappingURL=calc_zombie_hp.mcfunction.map

@@ -31,3 +31,4 @@ playsound minecraft:block.note_block.bit ambient @a[scores={mgs.zb.in_game=1}] ~
 scoreboard players operation #wf_b mgs.data = @s mgs.zb.wf.buyer
 execute as @a[scores={mgs.zb.in_game=1}] if score @s mgs.zb.wf_pid = #wf_b mgs.data run tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.perk_ready","color":"gold"},{"translate":"mgs.right_click_der_wunderfizz_to_collect","color":"green","bold":true}]
 
+## sourceMappingURL=land.mcfunction.map

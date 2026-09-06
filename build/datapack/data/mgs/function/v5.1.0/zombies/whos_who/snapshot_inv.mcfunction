@@ -10,3 +10,4 @@
 
 $data modify storage mgs:zombies ww_inv."$(id)" set from entity @s Inventory
 
+## sourceMappingURL=snapshot_inv.mcfunction.map

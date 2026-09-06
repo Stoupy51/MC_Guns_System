@@ -31,3 +31,4 @@ data modify storage mgs:temp _save_start_cmd.command set from entity @s data.com
 # Append to list path
 $data modify storage mgs:temp map_edit.map.$(path) append from storage mgs:temp _save_start_cmd
 
+## sourceMappingURL=save_start_command.mcfunction.map

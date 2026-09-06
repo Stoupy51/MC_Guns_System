@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "carpenter.mcfunction",
+	"sourceRoot": "../../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/rewards/powerups/effects.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AAwCiE;AACjE;AACA;AACA;AACA;AACA"
+}

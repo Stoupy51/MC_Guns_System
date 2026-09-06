@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "apply_slot_count.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/multiplayer/loadout.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;;AA2B0D"
+}

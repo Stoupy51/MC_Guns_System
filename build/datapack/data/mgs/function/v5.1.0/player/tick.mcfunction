@@ -12,6 +12,7 @@ execute if score @s mgs.class_menu matches 1.. if items entity @s weapon.mainhan
 # Custom loadouts: assign player ID if not yet assigned
 execute unless score @s mgs.mp.pid matches 1.. run function mgs:v5.1.0/multiplayer/assign_pid
 
+
 # Health regeneration: Black Ops style — only active during a game
 execute if score #any_game_active mgs.data matches 1 run function mgs:v5.1.0/player/regen_tick
 
@@ -110,3 +111,4 @@ execute if data storage mgs:multiplayer game{state:"active"} if score @s mgs.mp.
 # Missions: detect respawn
 execute if data storage mgs:missions game{state:"active"} if score @s mgs.mi.in_game matches 1.. if score @s mgs.mp.death_count matches 1.. run function mgs:v5.1.0/missions/on_respawn
 
+## sourceMappingURL=tick.mcfunction.map

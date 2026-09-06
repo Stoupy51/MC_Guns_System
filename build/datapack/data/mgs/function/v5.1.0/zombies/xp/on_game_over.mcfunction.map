@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "on_game_over.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/xp.py"
+	],
+	"names": [],
+	"mappings": ";;;;;AA6FqD;AACrD;AACA;AACA;AACA"
+}

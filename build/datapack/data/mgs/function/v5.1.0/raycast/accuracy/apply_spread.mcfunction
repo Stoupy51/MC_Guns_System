@@ -24,3 +24,4 @@ function #bs.random:uniform with storage mgs:input with
 scoreboard players operation @s bs.rot.v = $random.uniform bs.out
 function #bs.position:add_rot_v {scale: 0.01}
 
+## sourceMappingURL=apply_spread.mcfunction.map

@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "ensure_default_pool.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/machines/mystery_box/setup.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AAuFqE;AACrE;AACA;AACA"
+}

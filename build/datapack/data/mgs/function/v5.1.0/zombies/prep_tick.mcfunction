@@ -6,3 +6,4 @@
 
 # Nothing to process during prep (perk selection is instant via chat click)
 
+## sourceMappingURL=prep_tick.mcfunction.map

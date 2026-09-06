@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "apply_rotation_offset.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/mob_ai.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;;;AA4JuD;AACvD;AACA"
+}

@@ -1,0 +1,12 @@
+{
+	"version": 3,
+	"file": "check_kill_points.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/zombies/game/lifecycle/join.py",
+		"src/functional/zombies/rewards/powerups/bossbars.py",
+		"src/functional/zombies/xp.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AAkDuD;AACvD;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AC6EA;AACA;AC5EuD;AACvD;AACA;AACA;AACA;AACA"
+}

@@ -19,3 +19,4 @@ scoreboard players set #wf_move_timer mgs.data 0
 function mgs:v5.1.0/zombies/wunderfizz/sync_displays
 function mgs:v5.1.0/zombies/wunderfizz/sync_visibility
 
+## sourceMappingURL=setup.mcfunction.map

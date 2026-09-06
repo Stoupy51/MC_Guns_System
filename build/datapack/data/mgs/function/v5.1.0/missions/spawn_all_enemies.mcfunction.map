@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "spawn_all_enemies.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/missions/game/start.py"
+	],
+	"names": [],
+	"mappings": ";;;;;AA+JwD;AACxD;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

@@ -46,3 +46,4 @@ execute if score @s mgs.zoom matches 1 unless score @s mgs.switch_cooldown > #to
 # Crosshair spread marker: spawn when NOT zooming to indicate accuracy via crosshair gap
 execute unless score @s mgs.zoom matches 1 run function mgs:v5.1.0/zoom/crosshair_spread
 
+## sourceMappingURL=main.mcfunction.map

@@ -19,3 +19,4 @@ scoreboard players remove #zb_spawn_batch_remaining mgs.data 1
 # Recurse if batch not exhausted and zombies remain
 execute if score #zb_spawn_batch_remaining mgs.data matches 1.. if score #zb_to_spawn mgs.data matches 1.. run function mgs:v5.1.0/zombies/spawn_batch_tick
 
+## sourceMappingURL=spawn_batch_tick.mcfunction.map

@@ -8,3 +8,4 @@
 
 execute as @e[type=minecraft:block_display,tag=mgs.barricade_display,scores={mgs.zb.barricade.state=1}] at @s run function mgs:v5.1.0/zombies/barricades/instant_repair
 
+## sourceMappingURL=repair_all.mcfunction.map

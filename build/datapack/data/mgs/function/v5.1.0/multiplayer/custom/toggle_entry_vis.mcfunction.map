@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "toggle_entry_vis.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/multiplayer/loadouts/actions/manage.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AAiDiE;AACjE;AACA;AACA;AACA;AACA"
+}

@@ -10,3 +10,4 @@
 tp @s ~ ~512 ~
 tag @s remove mgs.roam_hidden
 
+## sourceMappingURL=interaction_show.mcfunction.map

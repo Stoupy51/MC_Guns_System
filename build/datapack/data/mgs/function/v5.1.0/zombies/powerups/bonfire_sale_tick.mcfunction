@@ -8,3 +8,4 @@ scoreboard players operation #zb_bonfire_sale_timer mgs.data -= #tick_delta mgs.
 execute if score #zb_bonfire_sale_timer mgs.data matches ..0 run bossbar remove mgs:pu_bonfire_sale
 execute if score #zb_bonfire_sale_timer mgs.data matches 1.. store result bossbar mgs:pu_bonfire_sale value run scoreboard players get #zb_bonfire_sale_timer mgs.data
 
+## sourceMappingURL=bonfire_sale_tick.mcfunction.map

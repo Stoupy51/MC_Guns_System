@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "start_repairing_player.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/objects/barricades/tick.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AAwJuE;AACvE;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

@@ -25,3 +25,4 @@ data modify storage mgs:temp actionbar.list append value {"score":{"name":"#dps_
 data modify storage mgs:temp actionbar.list append value " "
 data modify storage mgs:temp actionbar.list append value {"translate":"mgs.dps","color":"#c77e36"}
 
+## sourceMappingURL=add_dps.mcfunction.map

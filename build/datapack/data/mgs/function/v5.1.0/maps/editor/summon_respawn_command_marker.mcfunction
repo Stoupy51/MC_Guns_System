@@ -11,3 +11,4 @@
 
 $summon minecraft:marker $(x) $(y) $(z) {Tags:["mgs.map_element","mgs.element.respawn_command","mgs.new_respawn_cmd_marker"]}
 
+## sourceMappingURL=summon_respawn_command_marker.mcfunction.map

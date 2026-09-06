@@ -31,3 +31,4 @@ data modify storage mgs:temp new_lore append from storage mgs:temp lore_line
 # -- Empty separator (compound, not bare "" — keeps lore NBT homogeneous, see EMPTY_LORE_LINE) --
 data modify storage mgs:temp new_lore append value {"text":"","italic":false}
 
+## sourceMappingURL=build_grenade.mcfunction.map

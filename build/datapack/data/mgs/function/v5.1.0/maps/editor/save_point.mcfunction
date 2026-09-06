@@ -36,3 +36,4 @@ execute store result storage mgs:temp _save_coord[2] int 1 run scoreboard player
 # Append to the correct list
 $data modify storage mgs:temp map_edit.map.$(path) append from storage mgs:temp _save_coord
 
+## sourceMappingURL=save_point.mcfunction.map

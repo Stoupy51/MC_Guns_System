@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "override_perk_model.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/machines/perks/setup.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;AA0I+D;AAC/D;AACA"
+}

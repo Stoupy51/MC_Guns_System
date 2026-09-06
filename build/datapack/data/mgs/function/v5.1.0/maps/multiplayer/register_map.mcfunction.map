@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "register_map.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/multiplayer/maps.py"
+	],
+	"names": [],
+	"mappings": ";;;;;AA4B2D;AAC3D;AACA;AACA;AACA;AACA;AACA"
+}

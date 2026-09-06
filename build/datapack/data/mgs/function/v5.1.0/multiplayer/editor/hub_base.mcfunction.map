@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "hub_base.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/multiplayer/loadouts/editor/hub.py"
+	],
+	"names": [],
+	"mappings": "AA8CA"
+}

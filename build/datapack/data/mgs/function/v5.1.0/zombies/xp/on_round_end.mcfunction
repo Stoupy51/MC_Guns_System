@@ -8,3 +8,4 @@ execute store result score #xp_gain mgs.data run data get storage mgs:zombies ga
 scoreboard players operation #xp_gain mgs.data *= #2 mgs.data
 execute as @a[scores={mgs.zb.in_game=1}] run function mgs:v5.1.0/progression/zb/award_round_survived
 
+## sourceMappingURL=on_round_end.mcfunction.map

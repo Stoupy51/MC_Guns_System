@@ -94,3 +94,4 @@ execute if entity @s[tag=mgs.element.mystery_box_pos] run tellraw @a[tag=mgs.map
 execute if entity @s[tag=mgs.element.power_switch] run tellraw @a[tag=mgs.map_editor] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.power_switch_placed","color":"green"}]
 execute if entity @s[tag=mgs.element.barricade] run tellraw @a[tag=mgs.map_editor] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.barricade_placed","color":"aqua"}]
 
+## sourceMappingURL=handle_zb_object.mcfunction.map

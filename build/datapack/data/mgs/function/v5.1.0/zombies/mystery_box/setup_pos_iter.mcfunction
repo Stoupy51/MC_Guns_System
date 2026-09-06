@@ -44,3 +44,4 @@ tag @n[tag=mgs.mb_new] remove mgs.mb_new
 data remove storage mgs:temp _mb_iter[0]
 execute if data storage mgs:temp _mb_iter[0] run function mgs:v5.1.0/zombies/mystery_box/setup_pos_iter
 
+## sourceMappingURL=setup_pos_iter.mcfunction.map

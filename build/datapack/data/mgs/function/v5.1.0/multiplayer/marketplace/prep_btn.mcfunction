@@ -57,3 +57,4 @@ execute unless data storage mgs:temp _btn_data.owner_name run data modify storag
 # Add buttons to dialog
 function mgs:v5.1.0/multiplayer/marketplace/add_btn with storage mgs:temp _btn_data
 
+## sourceMappingURL=prep_btn.mcfunction.map

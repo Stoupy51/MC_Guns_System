@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "intercept_item.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/rewards/powerups/spawn.py"
+	],
+	"names": [],
+	"mappings": ";;;;;AAa6D;AAC7D;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

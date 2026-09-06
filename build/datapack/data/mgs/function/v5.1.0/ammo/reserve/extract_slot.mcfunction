@@ -55,3 +55,4 @@ tag @s add mgs.reading_reserve
 $execute summon item_display run function mgs:v5.1.0/ammo/reserve/read_item {slot:"$(slot)"}
 tag @s remove mgs.reading_reserve
 
+## sourceMappingURL=extract_slot.mcfunction.map

@@ -10,3 +10,4 @@ execute as @a[scores={mgs.zb.in_game=1},gamemode=!spectator] run function mgs:zo
 execute as @a[scores={mgs.zb.in_game=1}] at @s run playsound mgs:zombies/powerups/max_ammo ambient @s ~ ~ ~ 1.0 1.0
 execute as @a[scores={mgs.zb.in_game=1}] at @s run playsound mgs:zombies/powerups/max_ammo_additional ambient @s ~ ~ ~ 1.0 1.0
 
+## sourceMappingURL=max_ammo.mcfunction.map

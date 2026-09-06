@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "orb_expire.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/machines/wunderfizz/collect.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AAe2D;AAC3D;AACA;AACA"
+}

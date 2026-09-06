@@ -61,3 +61,4 @@ tellraw @a[tag=mgs.xp_earner] [[{"text":"","color":"gold"},"[",{"translate":"mgs
 execute as @a[tag=mgs.xp_earner] run function mgs:v5.1.0/progression/zb/award_revive
 tag @a remove mgs.xp_earner
 
+## sourceMappingURL=revive_complete.mcfunction.map

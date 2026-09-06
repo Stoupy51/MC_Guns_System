@@ -41,3 +41,4 @@ execute as @e[tag=mgs.trap_head,predicate=mgs:v5.1.0/zombies/traps/turret_id_mat
 # Clear the temporary target tag
 tag @e[tag=mgs._turret_target] remove mgs._turret_target
 
+## sourceMappingURL=turret_fire.mcfunction.map

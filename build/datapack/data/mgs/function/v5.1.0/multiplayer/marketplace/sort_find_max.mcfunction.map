@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "sort_find_max.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/multiplayer/loadouts/browsing/marketplace.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;AA2KmE;AACnE;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

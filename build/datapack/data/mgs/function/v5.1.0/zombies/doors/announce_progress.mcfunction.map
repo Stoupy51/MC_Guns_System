@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "announce_progress.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/objects/doors.py"
+	],
+	"names": [],
+	"mappings": "AAyL6D;AAC7D;;;;;;;;AACA;AACA"
+}

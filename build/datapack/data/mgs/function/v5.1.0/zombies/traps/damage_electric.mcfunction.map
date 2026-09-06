@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "damage_electric.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/objects/traps/active.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;;;;;;;AAkF2D;AAC3D;AACA;AACA;AACA;AACA;AACA;AACA"
+}

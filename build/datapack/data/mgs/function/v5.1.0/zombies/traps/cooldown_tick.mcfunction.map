@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "cooldown_tick.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/objects/traps/active.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AAiEyD;AACzD;AACA;AACA;AACA;AACA;AACA"
+}

@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "drop_wrong_slot_item.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/player/inventory/slots.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;;;;AAwIoE;AACpE;AACA;AACA;AACA;AACA;AACA"
+}

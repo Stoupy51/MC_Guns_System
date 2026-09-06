@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "fire_sound.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/mob_ai.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;;AAiN4C;AAC5C;AACA"
+}

@@ -12,3 +12,4 @@ data merge entity @n[tag=mgs.wf_bear_new] {teleport_duration:2}
 tag @e[tag=mgs.wf_bear_new] remove mgs.wf_bear_new
 scoreboard players set #wf_move_timer mgs.data 100
 
+## sourceMappingURL=move_start.mcfunction.map

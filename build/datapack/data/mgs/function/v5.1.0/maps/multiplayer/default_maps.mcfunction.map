@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "default_maps.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/multiplayer/maps.py"
+	],
+	"names": [],
+	"mappings": ";;;;;AAmB2D;AAC3D;AACA;AACA;AACA;AACA;AACA"
+}

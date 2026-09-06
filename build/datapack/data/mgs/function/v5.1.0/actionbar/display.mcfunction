@@ -11,3 +11,4 @@
 $data modify storage smithed.actionbar:input message set value {json:$(list),priority:'persistent',freeze:1}
 function #smithed.actionbar:message
 
+## sourceMappingURL=display.mcfunction.map

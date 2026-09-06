@@ -6,3 +6,4 @@
 
 # Hijacked map start script
 
+## sourceMappingURL=start.mcfunction.map

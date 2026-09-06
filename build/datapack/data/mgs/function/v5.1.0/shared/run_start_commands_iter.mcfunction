@@ -26,3 +26,4 @@ function mgs:v5.1.0/shared/run_start_command with storage mgs:temp _start_cmd
 data remove storage mgs:temp _start_cmd_iter[0]
 execute if data storage mgs:temp _start_cmd_iter[0] run function mgs:v5.1.0/shared/run_start_commands_iter
 
+## sourceMappingURL=run_start_commands_iter.mcfunction.map

@@ -15,3 +15,4 @@ execute if data storage mgs:temp _pap_retreat{slot:"hotbar.3"} run item replace 
 scoreboard players set @s mgs.zb.pap_s 0
 scoreboard players set @s mgs.zb.pap_mid 0
 
+## sourceMappingURL=retreat_clear_owner.mcfunction.map

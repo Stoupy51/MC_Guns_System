@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "apply_timeslip_cd.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/objects/traps/active.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AAyD6D;AAC7D;AACA;AACA;AACA;AACA"
+}

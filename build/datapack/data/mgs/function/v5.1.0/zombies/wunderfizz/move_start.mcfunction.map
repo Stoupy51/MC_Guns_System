@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "move_start.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/machines/wunderfizz/roam.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AA+B2D;AAC3D;AACA;AACA;AACA;AACA;AACA"
+}

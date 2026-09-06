@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "bisect.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/progression/curve.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;AAkQyD;AACzD;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

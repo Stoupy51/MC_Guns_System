@@ -18,3 +18,4 @@ function mgs:v5.1.0/shared/summon_oob_at with storage mgs:temp _oob_pos
 data remove storage mgs:temp _oob_iter[0]
 execute if data storage mgs:temp _oob_iter[0] run function mgs:v5.1.0/shared/summon_oob_iter
 
+## sourceMappingURL=summon_oob_iter.mcfunction.map

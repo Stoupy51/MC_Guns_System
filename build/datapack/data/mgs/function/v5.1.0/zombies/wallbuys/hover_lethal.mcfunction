@@ -12,3 +12,4 @@ $execute if items entity @s hotbar.7 *[custom_data~{mgs:{$(weapon_id):true}}] ru
 $execute if items entity @s hotbar.7 *[custom_data~{mgs:{$(weapon_id):true}}] run data modify storage mgs:temp _wb_price_suffix set value " (Refill)"
 function mgs:v5.1.0/zombies/wallbuys/render_hover
 
+## sourceMappingURL=hover_lethal.mcfunction.map

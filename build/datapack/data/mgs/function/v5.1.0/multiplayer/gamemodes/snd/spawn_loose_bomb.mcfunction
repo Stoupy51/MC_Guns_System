@@ -22,3 +22,4 @@ execute rotated ~ 90 run function #bs.raycast:run with storage mgs:input
 # Dropped over the void: leave it where it fell rather than lose it entirely
 execute if score #snd_bomb_grounded mgs.data matches 0 run function mgs:v5.1.0/multiplayer/gamemodes/snd/place_loose_bomb
 
+## sourceMappingURL=spawn_loose_bomb.mcfunction.map

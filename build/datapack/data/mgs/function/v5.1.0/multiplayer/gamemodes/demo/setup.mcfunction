@@ -35,3 +35,4 @@ function mgs:v5.1.0/multiplayer/gamemodes/demo/pick_sides
 # Start round
 function mgs:v5.1.0/multiplayer/gamemodes/demo/start_round
 
+## sourceMappingURL=setup.mcfunction.map

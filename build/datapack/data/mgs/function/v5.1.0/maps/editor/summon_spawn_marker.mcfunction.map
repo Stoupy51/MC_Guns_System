@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "summon_spawn_marker.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/map_editor/summon.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;;;;AAqH6D;AAC7D;AACA"
+}

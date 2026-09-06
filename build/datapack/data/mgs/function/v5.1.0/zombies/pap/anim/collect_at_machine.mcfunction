@@ -9,3 +9,4 @@
 execute store result storage mgs:temp _pap_c.id int 1 run scoreboard players get @s mgs.zb.pap.id
 function mgs:v5.1.0/zombies/pap/anim/collect_lookup with storage mgs:temp _pap_c
 
+## sourceMappingURL=collect_at_machine.mcfunction.map

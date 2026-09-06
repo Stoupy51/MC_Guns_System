@@ -11,3 +11,4 @@
 tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.ammo_refilled_for","color":"gold"},{"score":{"name":"#wb_price","objective":"mgs.data"},"color":"yellow"},[{"text":" ","color":"gold"}, {"translate":"mgs.points_3"}]]
 playsound minecraft:block.note_block.pling ambient @s ~ ~ ~ 0.8 1.45
 
+## sourceMappingURL=msg_refilled.mcfunction.map

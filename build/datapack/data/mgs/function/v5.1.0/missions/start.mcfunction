@@ -98,3 +98,4 @@ schedule function mgs:v5.1.0/missions/preload_complete 20t
 # Announce
 tellraw @a ["",{"text":"","color":"aqua","bold":true},"🎯 ",{"translate":"mgs.loading_mission_area","color":"yellow"}]
 
+## sourceMappingURL=start.mcfunction.map

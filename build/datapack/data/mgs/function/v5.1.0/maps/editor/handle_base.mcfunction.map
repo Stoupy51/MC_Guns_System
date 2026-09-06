@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "handle_base.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/map_editor/handlers.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AAgBqD;AACrD;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

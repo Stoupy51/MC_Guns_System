@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "respawn_near_player.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/player/revive/round_end.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;;;AA0EgE;AAChE;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

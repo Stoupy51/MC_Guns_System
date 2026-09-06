@@ -6,3 +6,4 @@
 
 dialog show @s mgs:v5.1.0/config/instant_kill
 
+## sourceMappingURL=instant_kill.mcfunction.map

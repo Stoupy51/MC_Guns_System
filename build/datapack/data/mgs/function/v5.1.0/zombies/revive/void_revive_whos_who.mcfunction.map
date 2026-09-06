@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "void_revive_whos_who.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/player/revive/void.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AAqDiE;AACjE;AACA;AACA;AACA;AACA;AACA"
+}

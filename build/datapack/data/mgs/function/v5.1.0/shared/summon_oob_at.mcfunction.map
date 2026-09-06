@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "summon_oob_at.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/core/spawning.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;;AAuLoD;AACpD;AACA"
+}

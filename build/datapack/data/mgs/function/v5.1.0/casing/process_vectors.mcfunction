@@ -18,3 +18,4 @@ function mgs:v5.1.0/casing/calculate_offset
 # 4. Kill marker
 kill @s
 
+## sourceMappingURL=process_vectors.mcfunction.map

@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "save_start_command.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/map_editor/save.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;;;;AAuM4D;AAC5D;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

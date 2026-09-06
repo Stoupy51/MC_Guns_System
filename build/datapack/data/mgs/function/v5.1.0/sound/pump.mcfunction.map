@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "pump.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/weapon/firing/sound.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;;AAyPwC;AACxC;AACA;AACA;AACA"
+}

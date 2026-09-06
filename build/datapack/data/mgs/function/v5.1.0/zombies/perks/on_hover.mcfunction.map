@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "on_hover.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/machines/perks/hooks.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AA+DoD;AACpD;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

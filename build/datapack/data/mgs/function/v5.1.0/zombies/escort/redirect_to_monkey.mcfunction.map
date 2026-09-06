@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "redirect_to_monkey.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/enemies/escort/targeting.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AAiD+D;AAC/D;AACA"
+}

@@ -16,3 +16,4 @@ tag @a remove mgs.kino.in_tp
 scoreboard players set #kino_tp_state mgs.data 6
 scoreboard players set #kino_tp_cd mgs.data 1800
 
+## sourceMappingURL=return_to_lobby.mcfunction.map

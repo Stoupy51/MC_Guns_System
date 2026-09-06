@@ -13,3 +13,4 @@ effect give @e[tag=mgs.zombie_round,tag=!mgs.zb_near_player] glowing 6 0 true
 # Cleanup temp tag
 tag @e[tag=mgs.zb_near_player] remove mgs.zb_near_player
 
+## sourceMappingURL=glow_stuck_zombies.mcfunction.map

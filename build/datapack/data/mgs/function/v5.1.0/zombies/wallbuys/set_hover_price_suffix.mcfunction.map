@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "set_hover_price_suffix.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/objects/wallbuys/give.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AA4IqE;AACrE;AACA;AACA;AACA;AACA"
+}

@@ -30,3 +30,4 @@ execute as @e[tag=mgs.element.hardpoint] at @s run function mgs:v5.1.0/maps/edit
 execute as @e[tag=mgs.element.start_command] at @s run function mgs:v5.1.0/maps/editor/save_start_command {path:"start_commands"}
 execute as @e[tag=mgs.element.respawn_command] at @s run function mgs:v5.1.0/maps/editor/save_respawn_command {path:"respawn_commands"}
 
+## sourceMappingURL=multiplayer.mcfunction.map

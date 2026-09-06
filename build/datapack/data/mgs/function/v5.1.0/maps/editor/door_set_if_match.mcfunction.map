@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "door_set_if_match.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/map_editor/doors.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AAoB2D;AAC3D;AACA;AACA"
+}

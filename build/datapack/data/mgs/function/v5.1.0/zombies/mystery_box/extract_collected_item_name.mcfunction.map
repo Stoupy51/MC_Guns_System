@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "extract_collected_item_name.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/machines/mystery_box/collect.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;;AAmE6E;AAC7E;AACA;AACA;AACA"
+}

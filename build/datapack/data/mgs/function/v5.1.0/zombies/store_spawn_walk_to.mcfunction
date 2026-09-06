@@ -15,3 +15,4 @@ execute store result storage mgs:temp _walk_to.y int 1 run scoreboard players ge
 execute store result storage mgs:temp _walk_to.z int 1 run scoreboard players get #swz mgs.data
 data modify entity @n[tag=mgs.new_spawn] data.walk_to set from storage mgs:temp _walk_to
 
+## sourceMappingURL=store_spawn_walk_to.mcfunction.map

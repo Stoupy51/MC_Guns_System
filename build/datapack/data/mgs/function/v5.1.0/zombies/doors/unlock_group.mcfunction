@@ -15,3 +15,4 @@ $data modify storage mgs:zombies game.unlocked_groups."$(gid)" set value 1b
 $scoreboard players set #unlock_gid mgs.data $(gid)
 execute as @e[tag=mgs.spawn_point] if score @s mgs.zb.spawn.gid = #unlock_gid mgs.data run tag @s add mgs.spawn_unlocked
 
+## sourceMappingURL=unlock_group.mcfunction.map

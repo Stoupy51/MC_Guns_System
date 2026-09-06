@@ -20,3 +20,4 @@ execute if score #barricade_remover_valid mgs.data matches 1 if score @s mgs.zb.
 # Not in range (dead or pushed out): always cancel so the zombie is freed
 execute if score #barricade_remover_valid mgs.data matches 0 run function mgs:v5.1.0/zombies/barricades/cancel_remove
 
+## sourceMappingURL=handle_removing.mcfunction.map

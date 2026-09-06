@@ -22,3 +22,4 @@ execute if score #dom_score_timer mgs.data matches ..0 run scoreboard players se
 # Show particles at each point
 execute as @e[tag=mgs.dom_point] at @s run function mgs:v5.1.0/multiplayer/gamemodes/dom/point_particles
 
+## sourceMappingURL=tick.mcfunction.map

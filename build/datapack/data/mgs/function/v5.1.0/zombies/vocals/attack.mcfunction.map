@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "attack.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/enemies/vocals.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AAoKmD;AACnD;AACA;AACA;AACA"
+}

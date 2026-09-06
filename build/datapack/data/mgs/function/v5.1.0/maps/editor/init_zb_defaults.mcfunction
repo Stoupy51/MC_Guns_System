@@ -18,3 +18,4 @@ data modify storage mgs:temp map_edit.zb_defaults.mystery_box_pos set value {can
 data modify storage mgs:temp map_edit.zb_defaults.power_switch set value {}
 data modify storage mgs:temp map_edit.zb_defaults.barricade set value {block_enabled:{Name:"minecraft:oak_fence_gate",Properties:{open:"false"}},block_disabled:{Name:"minecraft:oak_fence_gate",Properties:{open:"true"}},radius:2}
 
+## sourceMappingURL=init_zb_defaults.mcfunction.map

@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "electric_cherry_on_reload.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/machines/perks/cherry.py"
+	],
+	"names": [],
+	"mappings": ";;;;;AAaqE;AACrE;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

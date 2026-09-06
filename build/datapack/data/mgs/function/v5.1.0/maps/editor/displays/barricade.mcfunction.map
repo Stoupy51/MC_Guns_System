@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "barricade.mcfunction",
+	"sourceRoot": "../../../../../../../../..",
+	"sources": [
+		"src/functional/map_editor/displays.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AA2B4D;AAC5D;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

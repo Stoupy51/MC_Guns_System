@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "damage_fire.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/objects/traps/active.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;;;;;;;AAyEuD;AACvD;AACA;AACA;AACA;AACA;AACA;AACA"
+}

@@ -13,3 +13,4 @@
 $execute unless data storage mgs:editor "$(_pid)" run data modify storage mgs:editor "$(_pid)" set value {}
 $data modify storage mgs:temp editor set from storage mgs:editor "$(_pid)"
 
+## sourceMappingURL=load_state.mcfunction.map

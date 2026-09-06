@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "apply_camo.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/machines/pap/cosmetics.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;;;AA0DoD;AACpD;AACA;AACA;AACA"
+}

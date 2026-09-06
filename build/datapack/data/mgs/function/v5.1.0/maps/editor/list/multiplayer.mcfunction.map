@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "multiplayer.mcfunction",
+	"sourceRoot": "../../../../../../../../..",
+	"sources": [
+		"src/functional/map_editor/menu.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;;;;AAqF2D;AAC3D;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

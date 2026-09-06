@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "join.mcfunction",
+	"sourceRoot": "../../../../../../../../..",
+	"sources": [
+		"src/functional/multiplayer/maps.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;AA6C4D"
+}

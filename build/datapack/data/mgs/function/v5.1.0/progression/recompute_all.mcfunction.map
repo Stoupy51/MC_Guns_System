@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "recompute_all.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/progression/__init__.py"
+	],
+	"names": [],
+	"mappings": ";;;;;AAyFuD;AACvD;AACA;AACA"
+}

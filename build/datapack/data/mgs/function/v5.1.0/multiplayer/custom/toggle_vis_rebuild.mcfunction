@@ -22,3 +22,4 @@ data modify storage mgs:multiplayer custom_loadouts append from storage mgs:temp
 data remove storage mgs:temp _del_src[0]
 execute if data storage mgs:temp _del_src[0] run function mgs:v5.1.0/multiplayer/custom/toggle_vis_rebuild
 
+## sourceMappingURL=toggle_vis_rebuild.mcfunction.map

@@ -23,3 +23,4 @@ execute as @n[tag=mgs.spawn_candidate,sort=random] run function mgs:v5.1.0/share
 tag @e[tag=mgs.spawn_candidate] remove mgs.spawn_candidate
 tag @a[tag=mgs.spawn_pending] remove mgs.spawn_pending
 
+## sourceMappingURL=pick_spawn.mcfunction.map

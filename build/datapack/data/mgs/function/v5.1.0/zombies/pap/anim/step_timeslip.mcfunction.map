@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "step_timeslip.mcfunction",
+	"sourceRoot": "../../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/machines/pap/collect.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AA4E4D;AAC5D;AACA;AACA"
+}

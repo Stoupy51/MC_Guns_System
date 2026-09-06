@@ -19,3 +19,4 @@ function mgs:v5.1.0/zombies/zombie_rise_particles with storage mgs:temp _rise_pa
 scoreboard players remove @s mgs.zb.rise_tick 1
 execute if score @s mgs.zb.rise_tick matches ..0 run function mgs:v5.1.0/zombies/zombie_finish_rise
 
+## sourceMappingURL=zombie_rise_tick.mcfunction.map

@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "summon_enemy_marker.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/map_editor/summon.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;;;AAqL6D;AAC7D;AACA"
+}

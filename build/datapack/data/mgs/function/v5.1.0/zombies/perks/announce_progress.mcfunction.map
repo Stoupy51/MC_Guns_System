@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "announce_progress.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/machines/perks/purchase.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AA8G6D;AAC7D;AACA;AACA;AACA"
+}

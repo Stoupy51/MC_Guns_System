@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "restore_inventory.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/player/inventory/loadout.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;AA2DiE;AACjE;AACA;AACA;AACA;AACA;AACA"
+}

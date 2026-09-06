@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "pick_secondary.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/multiplayer/loadouts/editor/weapons.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AA4I+D;AAC/D;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

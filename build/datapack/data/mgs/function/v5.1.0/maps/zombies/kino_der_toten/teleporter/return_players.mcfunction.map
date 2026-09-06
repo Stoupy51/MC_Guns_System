@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "return_players.mcfunction",
+	"sourceRoot": "../../../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/maps.py"
+	],
+	"names": [],
+	"mappings": ";;;;;AA4NmF;AACnF;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

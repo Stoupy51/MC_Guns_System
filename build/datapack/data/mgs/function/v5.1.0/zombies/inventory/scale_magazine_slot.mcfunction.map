@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "scale_magazine_slot.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/player/inventory/slots.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;;;;;;;AA0EmE;AACnE;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "insta_kill_melee_on.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/rewards/powerups/bossbars.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AAuCkE;AAClE;AACA;AACA;AACA;AACA"
+}

@@ -13,3 +13,4 @@
 $data modify storage mgs:temp _door_set set value {field:"$(field)",value:"$(value)"}
 function mgs:v5.1.0/maps/editor/set_door_link_apply
 
+## sourceMappingURL=set_door_link_text.mcfunction.map

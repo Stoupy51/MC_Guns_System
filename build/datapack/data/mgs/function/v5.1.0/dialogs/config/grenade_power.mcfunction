@@ -6,3 +6,4 @@
 
 dialog show @s mgs:v5.1.0/config/grenade_power
 
+## sourceMappingURL=grenade_power.mcfunction.map

@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "pick_primary_camo.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/multiplayer/loadouts/editor/camos.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AA8DkE;AAClE;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

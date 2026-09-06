@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "recover.mcfunction",
+	"sourceRoot": "../../../../../..",
+	"sources": [
+		"src/functional/zombies/game/round/watchdog.py"
+	],
+	"names": [],
+	"mappings": "AA0CyC;AACzC;;;;;;;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

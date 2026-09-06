@@ -10,3 +10,4 @@
 
 $data modify storage mgs:temp dialog.actions append value {label:["",{text:"\u2b50 "},{translate:"mgs.perks_2",color:"white"},{text:"$(perks)/3",color:"green"}],tooltip:[{text:"1 ",color:"gray"}, {translate:"mgs.pt_per_perk"}],action:{type:"run_command",command:"/trigger mgs.player.config set 110"}}
 
+## sourceMappingURL=hub_row_perks.mcfunction.map

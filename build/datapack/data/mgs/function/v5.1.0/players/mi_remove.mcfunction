@@ -10,3 +10,4 @@ team leave @s
 execute if data storage mgs:missions game{state:"active"} run gamemode spectator @s
 tellraw @s [{"translate":"mgs.removed_from_the_mission","color":"gray"}]
 
+## sourceMappingURL=mi_remove.mcfunction.map

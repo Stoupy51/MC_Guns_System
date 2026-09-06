@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "bounds_kill.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/multiplayer/game/tick.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;AA4KqD;AACrD;AACA;AACA;AACA"
+}

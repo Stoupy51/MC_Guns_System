@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "spectate_random_player.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/multiplayer/loadouts/class_selection.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AAwPgE;AAChE;AACA;AACA"
+}

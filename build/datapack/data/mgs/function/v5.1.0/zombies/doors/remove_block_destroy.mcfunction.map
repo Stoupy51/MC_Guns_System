@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "remove_block_destroy.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/objects/doors.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;;;AAqNgE;AAChE;AACA;AACA"
+}

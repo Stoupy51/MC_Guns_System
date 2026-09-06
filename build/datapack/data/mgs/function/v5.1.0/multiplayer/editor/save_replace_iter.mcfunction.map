@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "save_replace_iter.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/multiplayer/loadouts/editor/save.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;AA2MkE;AAClE;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

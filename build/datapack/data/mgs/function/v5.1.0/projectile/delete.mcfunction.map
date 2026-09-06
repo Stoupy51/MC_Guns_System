@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "delete.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/weapon/firing/projectile/damage.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AA+H+C;AAC/C;AACA;AACA;AACA"
+}

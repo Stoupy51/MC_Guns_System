@@ -13,3 +13,4 @@ scoreboard players set @s mgs.zb.in_game 1
 team join mgs.zombies @s
 tellraw @s ["",{"translate":"mgs.joined_the","color":"white"},{"translate":"mgs.zombies_game","color":"dark_green","bold":true}]
 
+## sourceMappingURL=zb_join.mcfunction.map

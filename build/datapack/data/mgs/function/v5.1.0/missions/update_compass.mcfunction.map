@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "update_compass.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/missions/game/tick.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AAkEqD;AACrD;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

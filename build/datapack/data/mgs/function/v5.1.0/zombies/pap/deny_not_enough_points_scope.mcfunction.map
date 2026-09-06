@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "deny_not_enough_points_scope.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/machines/pap/purchase.py"
+	],
+	"names": [],
+	"mappings": "AA0EsE;AACtE;;;;;;;;AACA;AACA"
+}

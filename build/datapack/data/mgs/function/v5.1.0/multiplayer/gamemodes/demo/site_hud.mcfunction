@@ -11,3 +11,4 @@ scoreboard players operation #demo_sec mgs.data /= #20 mgs.data
 execute store result storage mgs:temp _demo_hud.sec int 1 run scoreboard players get #demo_sec mgs.data
 function mgs:v5.1.0/multiplayer/gamemodes/demo/set_site_hud with storage mgs:temp _demo_hud
 
+## sourceMappingURL=site_hud.mcfunction.map

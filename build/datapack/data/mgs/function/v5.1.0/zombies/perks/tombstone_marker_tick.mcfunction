@@ -17,3 +17,4 @@ execute if score @s mgs.zb.ts.timer matches ..0 run return run function mgs:v5.1
 scoreboard players operation #ts_mid mgs.data = @s mgs.zb.downed_id
 execute as @a[distance=..2,gamemode=!spectator,scores={mgs.zb.in_game=1,mgs.zb.downed=0}] if score @s mgs.zb.downed_id = #ts_mid mgs.data run function mgs:v5.1.0/zombies/perks/tombstone_collect
 
+## sourceMappingURL=tombstone_marker_tick.mcfunction.map

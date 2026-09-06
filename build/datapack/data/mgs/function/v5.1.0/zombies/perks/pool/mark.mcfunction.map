@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "mark.mcfunction",
+	"sourceRoot": "../../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/machines/perks/pool.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AAoBqD;AACrD;AACA"
+}

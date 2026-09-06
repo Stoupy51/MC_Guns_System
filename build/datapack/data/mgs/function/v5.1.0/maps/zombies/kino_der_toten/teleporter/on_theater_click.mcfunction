@@ -13,3 +13,4 @@ execute if score #kino_tp_state mgs.data matches 2 at @s run return run function
 # Any other state (linking/active/returning/cooldown): deny
 execute on target at @s run function mgs:v5.1.0/zombies/deny/message {msg:'{"translate":"mgs.the_teleporter_is_recharging","color":"yellow"}'}
 
+## sourceMappingURL=on_theater_click.mcfunction.map

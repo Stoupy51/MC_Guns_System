@@ -21,3 +21,4 @@ scoreboard players add #next_air_particle mgs.data 1
 execute if score #next_air_particle mgs.data matches 2 run function mgs:v5.1.0/raycast/air_particles with storage mgs:input with
 execute if score #next_air_particle mgs.data matches 3.. run scoreboard players set #next_air_particle mgs.data 0
 
+## sourceMappingURL=on_entry_point.mcfunction.map

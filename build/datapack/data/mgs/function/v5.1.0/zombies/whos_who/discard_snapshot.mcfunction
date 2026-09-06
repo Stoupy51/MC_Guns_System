@@ -10,3 +10,4 @@
 
 $data remove storage mgs:zombies ww_inv."$(id)"
 
+## sourceMappingURL=discard_snapshot.mcfunction.map

@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "dog_death.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/zombies/game/round/completion.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AA4C+C;AAC/C;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

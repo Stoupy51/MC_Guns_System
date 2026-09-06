@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "annotate_pellets_line.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/machines/pap/lore.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AAyJ+D;AAC/D;AACA;AACA;AACA;AACA;AACA;AACA"
+}

@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "phd_flopper.mcfunction",
+	"sourceRoot": "../../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/machines/perks/tombstone.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;;AAkCG;AAAA"
+}

@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "check_map_id.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/core/map_loading.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;;AAoCuD;AACvD;AACA;AACA;AACA;AACA;AACA"
+}

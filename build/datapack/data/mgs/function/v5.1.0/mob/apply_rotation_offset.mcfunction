@@ -11,3 +11,4 @@
 
 $rotate @s ~$(yaw) ~$(pitch)
 
+## sourceMappingURL=apply_rotation_offset.mcfunction.map

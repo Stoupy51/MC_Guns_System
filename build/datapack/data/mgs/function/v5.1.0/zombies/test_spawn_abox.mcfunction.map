@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "test_spawn_abox.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/zombies/game/round/spawning.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;;;;;;;AAmGqD;AACrD;AACA"
+}

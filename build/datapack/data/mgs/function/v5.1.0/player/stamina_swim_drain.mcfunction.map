@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "stamina_swim_drain.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/stamina.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AA+HuD;AACvD;AACA;AACA;AACA"
+}

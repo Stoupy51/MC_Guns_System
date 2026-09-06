@@ -26,3 +26,4 @@ execute if entity @e[tag=mgs.element.respawn_command,distance=..10] run data mod
 execute if entity @e[tag=mgs.element.respawn_command,distance=..10] run function mgs:v5.1.0/maps/editor/handle_config_nearest_respawn_command_btn with storage mgs:temp _cfg
 tellraw @p[tag=mgs.map_editor,distance=..6,sort=nearest] {"text":"============================================","color":"dark_gray"}
 
+## sourceMappingURL=handle_config.mcfunction.map

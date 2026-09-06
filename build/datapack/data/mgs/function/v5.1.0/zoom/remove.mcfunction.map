@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "remove.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/weapon/hud/zoom.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AA6EyC;AACzC;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

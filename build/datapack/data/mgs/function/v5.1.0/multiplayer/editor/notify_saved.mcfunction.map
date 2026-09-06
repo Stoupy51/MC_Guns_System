@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "notify_saved.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/multiplayer/loadouts/editor/save.py"
+	],
+	"names": [],
+	"mappings": "AA2RC"
+}

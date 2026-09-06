@@ -37,3 +37,4 @@ function mgs:v5.1.0/shared/maps/call_script_at_base {script:"respawn"}
 # Announce
 tellraw @a[scores={mgs.zb.in_game=1}] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],["",{"text":"[","color":"dark_gray"},{"score":{"name":"@s","objective":"mgs.zb.xp_level"},"color":"gold"},{"text":"] ","color":"dark_gray"},{"selector":"@s","color":"green"}],[{"text":" ","color":"gray"}, {"translate":"mgs.has_respawned"}]]
 
+## sourceMappingURL=do_round_respawn.mcfunction.map

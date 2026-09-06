@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "handle_destroy.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/map_editor/destroy.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AAcwD;AACxD;AACA;AACA;AACA;AACA;AACA;AACA"
+}

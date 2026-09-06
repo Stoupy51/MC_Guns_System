@@ -128,3 +128,4 @@ data modify storage mgs:temp ffa_sb append value [[{text:" 10. ",color:"gold"},[
 # Build
 function mgs:v5.1.0/multiplayer/build_sidebar_ffa with storage mgs:temp
 
+## sourceMappingURL=refresh_sidebar_ffa.mcfunction.map

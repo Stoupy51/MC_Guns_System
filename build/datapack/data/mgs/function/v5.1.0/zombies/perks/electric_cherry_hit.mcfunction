@@ -14,3 +14,4 @@ particle minecraft:electric_spark ~ ~1 ~ 0.3 0.5 0.3 0.1 12
 effect give @s minecraft:slowness 60 3 true
 function mgs:v5.1.0/zombies/traps/apply_trap_damage with storage mgs:temp _ec_dmg
 
+## sourceMappingURL=electric_cherry_hit.mcfunction.map

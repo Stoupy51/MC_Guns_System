@@ -14,3 +14,4 @@ execute unless score #pk_partial mgs.data matches 1.. run data modify storage sm
 execute if score #pk_partial mgs.data matches 1.. run data modify storage smithed.actionbar:input message set value {json:[{"text":"🥤 "},{"storage":"mgs:temp","nbt":"_pk_hover_name","color":"light_purple","interpret":true},[{"text":" - ","color":"gray"}, {"translate":"mgs.chip_in"}],{"score":{"name":"#pk_price","objective":"mgs.data"},"color":"yellow"},[{"text":" ","color":"gray"}, {"translate":"mgs.points_2"}, " ("],{"score":{"name":"#pk_paid","objective":"mgs.data"},"color":"green"},{"text":"/","color":"gray"},{"score":{"name":"#pk_total","objective":"mgs.data"},"color":"yellow"},{"text":")","color":"gray"}],priority:"conditional",freeze:5}
 function #smithed.actionbar:message
 
+## sourceMappingURL=on_hover.mcfunction.map

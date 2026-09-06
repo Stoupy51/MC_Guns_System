@@ -24,3 +24,4 @@ tag @s add mgs.zb_reviver
 execute if entity @s[tag=mgs.perk.quick_revive] run function mgs:v5.1.0/zombies/revive/show_reviver_bar_quick
 execute unless entity @s[tag=mgs.perk.quick_revive] run function mgs:v5.1.0/zombies/revive/show_reviver_bar_normal
 
+## sourceMappingURL=show_reviver_bar.mcfunction.map

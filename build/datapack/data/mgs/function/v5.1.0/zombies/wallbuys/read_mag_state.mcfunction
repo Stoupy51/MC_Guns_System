@@ -11,3 +11,4 @@ execute store result score #wb_mag_rem mgs.data run data get entity @s item.comp
 execute store result score #wb_mag_cap mgs.data run data get entity @s item.components."minecraft:custom_data".mgs.stats.capacity
 kill @s
 
+## sourceMappingURL=read_mag_state.mcfunction.map

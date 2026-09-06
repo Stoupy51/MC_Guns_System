@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "mi_join.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/core/player_menus.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;AAmL6C;AAC7C;AACA;AACA;AACA;AACA;AACA;AACA"
+}

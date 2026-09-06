@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "walk_ride.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/enemies/escort/tick.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AAkFsD;AACtD;AACA;AACA;AACA;AACA;AACA"
+}

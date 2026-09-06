@@ -14,3 +14,4 @@ execute unless data storage mgs:gun all.stats.fire_mode unless data storage mgs:
 
 item modify entity @s weapon.mainhand mgs:v5.1.0/set_weapon_id
 
+## sourceMappingURL=set_weapon_id.mcfunction.map

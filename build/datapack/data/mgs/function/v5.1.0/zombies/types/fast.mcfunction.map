@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "fast.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/game/round/enemies.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AAwIgD;AAChD;AACA;AACA;AACA"
+}

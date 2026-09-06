@@ -11,3 +11,4 @@
 data modify storage mgs:input with set value {}
 function mgs:v5.1.0/multiplayer/simulate_death
 
+## sourceMappingURL=bounds_kill.mcfunction.map

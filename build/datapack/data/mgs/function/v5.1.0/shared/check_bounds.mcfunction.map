@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "check_bounds.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/core/bounds.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;;AAiFkD;AAClD;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

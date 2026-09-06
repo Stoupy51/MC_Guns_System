@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "block_particles.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/weapon/firing/raycast/hits.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;AAsCqD"
+}

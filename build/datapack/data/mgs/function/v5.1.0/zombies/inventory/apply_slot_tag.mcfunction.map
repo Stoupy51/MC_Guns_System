@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "apply_slot_tag.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/player/inventory/slots.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;AA8D8D;AAC9D;AACA;AACA;AACA"
+}

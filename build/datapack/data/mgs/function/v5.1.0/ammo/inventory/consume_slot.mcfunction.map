@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "consume_slot.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/weapon/ammo/magazine/consume.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;;AAoFyD;AACzD;AACA;AACA;AACA;AACA;AACA"
+}

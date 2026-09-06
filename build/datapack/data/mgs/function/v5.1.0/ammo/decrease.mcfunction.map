@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "decrease.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/weapon/ammo/magazine/core.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AA2C2C;AAC3C;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

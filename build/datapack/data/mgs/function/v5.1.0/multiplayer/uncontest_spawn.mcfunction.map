@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "uncontest_spawn.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/multiplayer/game/spawns.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AAmGyD;AACzD;AACA;AACA"
+}

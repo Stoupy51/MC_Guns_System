@@ -14,3 +14,4 @@ scoreboard players set #barricade_found_remover mgs.data 0
 $execute as @e[tag=mgs.zombie_round,tag=!mgs.barricade_removing,distance=..$(radius),limit=1,sort=nearest] run function mgs:v5.1.0/zombies/barricades/start_removing_zombie
 execute if score #barricade_found_remover mgs.data matches 1 run scoreboard players set @s mgs.zb.barricade.r_timer 40
 
+## sourceMappingURL=find_remover.mcfunction.map

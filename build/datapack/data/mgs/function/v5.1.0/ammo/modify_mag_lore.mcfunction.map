@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "modify_mag_lore.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/weapon/ammo/magazine/lore.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;;;;;AAoBsD;AACtD;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

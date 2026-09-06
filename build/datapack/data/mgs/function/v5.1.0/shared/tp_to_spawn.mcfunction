@@ -25,3 +25,4 @@ execute as @p[tag=mgs.spawn_pending] run function mgs:v5.1.0/shared/tp_player_at
 # Mark this spawn as used (prevents duplicate assignments) (only in preparing time)
 $execute unless data storage mgs:$(mode) game{state:"active"} run tag @s add mgs.spawn_used
 
+## sourceMappingURL=tp_to_spawn.mcfunction.map

@@ -22,3 +22,4 @@ execute store result storage mgs:temp capacity int 1 run data get entity @s item
 # Kill entity
 kill @s
 
+## sourceMappingURL=extract_bullets.mcfunction.map

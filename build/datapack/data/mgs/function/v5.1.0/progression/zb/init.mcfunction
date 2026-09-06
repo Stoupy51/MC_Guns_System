@@ -15,3 +15,4 @@ scoreboard players set @s mgs.zb.xp_level 1
 execute if score @s mgs.zb.xp_total matches 1.. run function mgs:v5.1.0/progression/zb/recompute
 function mgs:v5.1.0/progression/zb/refresh_bar
 
+## sourceMappingURL=init.mcfunction.map

@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "show_scope_primary_full.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/multiplayer/loadouts/editor/shared.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AAqC6D;AAC7D;AACA;AACA;AACA;AACA;AACA"
+}

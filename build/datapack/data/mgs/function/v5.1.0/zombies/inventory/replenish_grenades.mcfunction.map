@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "replenish_grenades.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/player/inventory/grenades.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AAsBkE;AAClE;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

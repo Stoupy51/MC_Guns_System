@@ -14,3 +14,4 @@
 $tp @n[tag=mgs.downed_new] $(rv_x) $(rv_y) $(rv_z)
 $tp @n[tag=mgs.downed_hud_new] $(rv_x) $(rv_y_hud) $(rv_z)
 
+## sourceMappingURL=tp_to_death.mcfunction.map

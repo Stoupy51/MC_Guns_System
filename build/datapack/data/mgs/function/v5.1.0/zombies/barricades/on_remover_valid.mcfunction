@@ -16,3 +16,4 @@ particle minecraft:large_smoke ~ ~1 ~ 0.3 0.3 0.3 0.02 1
 # ~ ~ ~ below is still the zombie.
 execute as @a[scores={mgs.zb.in_game=1},gamemode=!spectator,distance=..32] unless score @s mgs.zb.barricade.bang_at > #total_tick mgs.data run function mgs:v5.1.0/zombies/barricades/bang_for
 
+## sourceMappingURL=on_remover_valid.mcfunction.map

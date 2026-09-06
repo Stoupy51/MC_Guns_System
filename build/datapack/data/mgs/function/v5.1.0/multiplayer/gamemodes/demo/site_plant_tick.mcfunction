@@ -19,3 +19,4 @@ execute if score #demo_ch mgs.data matches 1.. run title @a[tag=mgs.demo_atk,pre
 
 execute if score @s mgs.demo_prog matches 50.. run function mgs:v5.1.0/multiplayer/gamemodes/demo/site_planted
 
+## sourceMappingURL=site_plant_tick.mcfunction.map

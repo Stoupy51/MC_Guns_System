@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "reset_one.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/machines/mystery_box/collect.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;AAkF2D;AAC3D;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

@@ -12,3 +12,4 @@
 
 $data modify storage mgs:temp _new_loadout.main_gun_display set value "$(primary_name) ($(primary_scope_name), $(primary_camo_name))"
 
+## sourceMappingURL=set_main_gun_display.mcfunction.map

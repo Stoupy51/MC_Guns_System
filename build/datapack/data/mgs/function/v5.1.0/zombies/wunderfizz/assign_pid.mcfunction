@@ -9,3 +9,4 @@
 scoreboard players add #wf_pid_counter mgs.data 1
 scoreboard players operation @s mgs.zb.wf_pid = #wf_pid_counter mgs.data
 
+## sourceMappingURL=assign_pid.mcfunction.map

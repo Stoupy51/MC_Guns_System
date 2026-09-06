@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "bonfire_sale_tick.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/rewards/powerups/effects.py"
+	],
+	"names": [],
+	"mappings": ";;;;;AAoLgE;AAChE;AACA;AACA;AACA"
+}

@@ -9,3 +9,4 @@
 
 scoreboard players set @s mgs.special.deadshot 1
 
+## sourceMappingURL=deadshot.mcfunction.map

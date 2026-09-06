@@ -13,3 +13,4 @@ data modify storage mgs:temp _wb_weapon.mag_count set from storage mgs:zombies m
 scoreboard players set #wb_price mgs.data 0
 function mgs:v5.1.0/zombies/wallbuys/process_purchase with storage mgs:temp _wb_weapon
 
+## sourceMappingURL=weapon.mcfunction.map

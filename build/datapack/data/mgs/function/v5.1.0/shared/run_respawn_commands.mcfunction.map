@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "run_respawn_commands.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/core/commands.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;;;AA0C0D;AAC1D;AACA;AACA"
+}

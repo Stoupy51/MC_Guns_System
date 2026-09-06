@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "check_bounds_player.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/zombies/game/lifecycle/stuck.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AA2HyD;AACzD;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

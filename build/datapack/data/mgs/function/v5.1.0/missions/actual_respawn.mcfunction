@@ -31,3 +31,4 @@ execute if data storage mgs:missions game.map.respawn_commands[0] at @s run func
 # Call map respawn script (executed as the respawning player)
 function mgs:v5.1.0/shared/maps/call_script_at_base {script:"respawn"}
 
+## sourceMappingURL=actual_respawn.mcfunction.map

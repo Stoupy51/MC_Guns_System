@@ -11,3 +11,4 @@
 # Open the lobby-to-theater door
 execute positioned ~-19 ~0 ~-1 run fill ~ ~ ~ ~ ~2 ~2 air
 
+## sourceMappingURL=power.mcfunction.map

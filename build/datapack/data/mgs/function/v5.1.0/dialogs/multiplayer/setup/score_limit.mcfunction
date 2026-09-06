@@ -6,3 +6,4 @@
 
 dialog show @s mgs:v5.1.0/multiplayer/setup/score_limit
 
+## sourceMappingURL=score_limit.mcfunction.map

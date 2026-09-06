@@ -40,3 +40,4 @@ execute as @e[tag=mgs.element.special_spawn] at @s run function mgs:v5.1.0/maps/
 execute as @e[tag=mgs.element.barricade] at @s run function mgs:v5.1.0/maps/editor/save_zb_object {path:"barricades"}
 execute as @e[tag=mgs.element.wunderfizz] at @s run function mgs:v5.1.0/maps/editor/save_zb_object {path:"wunderfizz"}
 
+## sourceMappingURL=zombies.mcfunction.map

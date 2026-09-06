@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "prep_tick.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/multiplayer/game/prep.py"
+	],
+	"names": [],
+	"mappings": ";;;;;AAmBmD;AACnD;AACA;AACA;AACA"
+}

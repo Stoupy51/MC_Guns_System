@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "init.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/progression/curve.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AAsKuD;AACvD;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

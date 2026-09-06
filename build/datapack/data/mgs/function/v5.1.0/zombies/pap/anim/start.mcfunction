@@ -40,3 +40,4 @@ playsound mgs:zombies/pap/knuckle_crack ambient @a[scores={mgs.zb.in_game=1}] ~ 
 execute if score @s mgs.zb.pap.timeslip matches 1 run playsound mgs:zombies/pap/jingle_sting_short ambient @a[scores={mgs.zb.in_game=1}] ~ ~ ~ 1.0 1.0
 execute unless score @s mgs.zb.pap.timeslip matches 1 run playsound mgs:zombies/pap/jingle_sting ambient @a[scores={mgs.zb.in_game=1}] ~ ~ ~ 1.0 1.0
 
+## sourceMappingURL=start.mcfunction.map

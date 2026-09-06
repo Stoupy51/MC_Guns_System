@@ -19,3 +19,4 @@ data modify storage mgs:temp copy set from storage mgs:temp lore
 # Clean up item display
 kill @s
 
+## sourceMappingURL=get_current_lore.mcfunction.map

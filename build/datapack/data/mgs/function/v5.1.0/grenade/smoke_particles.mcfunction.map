@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "smoke_particles.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/weapon/grenade/effects.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AAgCA;AACA;AACA;AACA;AACA;AACA"
+}

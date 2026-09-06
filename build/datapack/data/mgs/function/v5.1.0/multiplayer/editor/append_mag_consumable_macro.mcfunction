@@ -12,3 +12,4 @@
 
 $data modify storage mgs:temp _new_loadout.slots append value {slot:"inventory.$(_inv_n)",loot:"mgs:i/$(_mag_id)",count:1,consumable:1b,bullets:$(_mag_bullets)}
 
+## sourceMappingURL=append_mag_consumable_macro.mcfunction.map

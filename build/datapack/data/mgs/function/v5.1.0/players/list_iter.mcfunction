@@ -20,3 +20,4 @@ function mgs:v5.1.0/players/list_entry with storage mgs:temp _plr_entry
 data remove storage mgs:temp _plr_iter[0]
 execute if data storage mgs:temp _plr_iter[0] run function mgs:v5.1.0/players/list_iter
 
+## sourceMappingURL=list_iter.mcfunction.map

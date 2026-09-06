@@ -27,3 +27,4 @@ data remove storage mgs:temp map_menu.list[0]
 scoreboard players add #map_menu_idx mgs.data 1
 execute if data storage mgs:temp map_menu.list[0] run function mgs:v5.1.0/maps/editor/menu_entry
 
+## sourceMappingURL=menu_entry.mcfunction.map

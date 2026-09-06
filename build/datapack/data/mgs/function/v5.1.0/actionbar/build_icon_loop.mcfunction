@@ -19,3 +19,4 @@ scoreboard players add #i mgs.data 1
 # Recurse if not done
 execute if score #i mgs.data < #capacity mgs.data run function mgs:v5.1.0/actionbar/build_icon_loop
 
+## sourceMappingURL=build_icon_loop.mcfunction.map

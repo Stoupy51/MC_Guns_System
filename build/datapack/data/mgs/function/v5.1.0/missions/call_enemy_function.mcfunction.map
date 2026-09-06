@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "call_enemy_function.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/missions/game/start.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;;;AA+M0D;AAC1D;AACA"
+}

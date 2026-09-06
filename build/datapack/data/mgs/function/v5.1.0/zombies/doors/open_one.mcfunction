@@ -26,3 +26,4 @@ execute unless score @s mgs.zb.door.bgid matches -1 run function mgs:v5.1.0/zomb
 # Kill door interaction entity
 kill @s
 
+## sourceMappingURL=open_one.mcfunction.map

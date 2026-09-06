@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "give_up.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/enemies/escort/end.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;AAkDoD;AACpD;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

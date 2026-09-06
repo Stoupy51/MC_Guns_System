@@ -33,3 +33,4 @@ playsound minecraft:block.beacon.activate ambient @a[scores={mgs.zb.in_game=1}] 
 # Signal map-specific power-on hooks
 function mgs:v5.1.0/shared/maps/call_script_at_base {script:"power"}
 
+## sourceMappingURL=on_activate.mcfunction.map

@@ -54,3 +54,4 @@ execute if score @s mgs.pap_anim matches 1..205 if score #pap_t mgs.data matches
 # Retreat finished at timer=0 — weapon is lost
 execute if score @s mgs.pap_anim matches 0 run function mgs:v5.1.0/zombies/pap/anim/retreat_finish
 
+## sourceMappingURL=step.mcfunction.map

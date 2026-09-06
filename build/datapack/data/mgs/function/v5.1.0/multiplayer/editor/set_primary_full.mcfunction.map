@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "set_primary_full.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/multiplayer/loadouts/editor/camos.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;;;;;AAyDiE;AACjE"
+}

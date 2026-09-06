@@ -6,3 +6,4 @@
 
 dialog show @s mgs:v5.1.0/config/quick_swap
 
+## sourceMappingURL=quick_swap.mcfunction.map

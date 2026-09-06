@@ -16,3 +16,4 @@ $execute as @n[type=item,tag=mgs.inv_new_drop,distance=..1] run function mgs:v5.
 tag @s remove mgs.inv_slot_owner
 $item replace entity @s $(slot) with air
 
+## sourceMappingURL=drop_wrong_slot_item.mcfunction.map

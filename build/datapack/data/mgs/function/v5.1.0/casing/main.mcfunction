@@ -46,3 +46,4 @@ execute store result storage mgs:temp casing.Pos[2] double 0.001 run scoreboard 
 summon item ~ ~ ~ {Tags:["mgs.new","mgs.casing"],Item:{id:"minecraft:stone",count:1,components:{"minecraft:item_model":"air"}},PickupDelay:32767,Age:5990}
 execute as @n[type=item,tag=mgs.new] run function mgs:v5.1.0/casing/update_item
 
+## sourceMappingURL=main.mcfunction.map

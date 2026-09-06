@@ -44,3 +44,4 @@ data modify storage mgs:temp lore_footer set from entity @s item.components."min
 # Clean up item_display
 kill @s
 
+## sourceMappingURL=extract_stats.mcfunction.map

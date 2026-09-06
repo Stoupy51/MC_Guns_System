@@ -54,3 +54,4 @@ execute if score @s mgs.stam_out matches 1 run scoreboard players set #stam_t mg
 # Nudge the visible bar toward the target
 function mgs:v5.1.0/player/stamina_bar
 
+## sourceMappingURL=stamina_tick.mcfunction.map

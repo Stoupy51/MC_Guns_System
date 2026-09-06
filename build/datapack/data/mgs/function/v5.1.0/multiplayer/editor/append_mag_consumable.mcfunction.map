@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "append_mag_consumable.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/multiplayer/loadouts/editor/save.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AAiPsE;AACtE;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

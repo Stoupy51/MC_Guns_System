@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "menu.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/map_editor/menu.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AA2E8C;AAC9C;AACA;AACA"
+}

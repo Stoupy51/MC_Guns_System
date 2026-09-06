@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "flash_apply.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/weapon/grenade/detonate.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AA4IiD;AACjD;AACA;AACA;AACA"
+}

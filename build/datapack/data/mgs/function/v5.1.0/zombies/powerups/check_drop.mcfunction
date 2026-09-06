@@ -33,3 +33,4 @@ function mgs:v5.1.0/zombies/powerups/spawn_random_at_self
 scoreboard players add #zb_drops_this_round mgs.data 1
 execute if score #zb_drops_this_round mgs.data >= #zb_cycle_len mgs.data run scoreboard players set #zb_cycle_done mgs.data 1
 
+## sourceMappingURL=check_drop.mcfunction.map

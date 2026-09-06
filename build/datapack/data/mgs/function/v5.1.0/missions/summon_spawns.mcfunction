@@ -9,3 +9,4 @@ data modify storage mgs:temp _spawn_iter set from storage mgs:missions game.map.
 data modify storage mgs:temp _spawn_tag set value "mgs.spawn_mission"
 execute if data storage mgs:temp _spawn_iter[0] run function mgs:v5.1.0/missions/summon_spawn_iter
 
+## sourceMappingURL=summon_spawns.mcfunction.map

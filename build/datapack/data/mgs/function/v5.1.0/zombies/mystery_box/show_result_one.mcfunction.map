@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "show_result_one.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/machines/mystery_box/spin.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AAkFiE;AACjE;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

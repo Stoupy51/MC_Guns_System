@@ -27,3 +27,4 @@ execute if entity @e[tag=mgs.demo_obj,tag=mgs.demo_site_B,scores={mgs.demo_state
 
 function mgs:v5.1.0/multiplayer/build_sidebar_demo with storage mgs:temp demo_sb
 
+## sourceMappingURL=refresh_sidebar_demo.mcfunction.map

@@ -26,3 +26,4 @@ scoreboard players remove @s mgs.data 1
 # If lifetime expired, explode
 execute if score @s mgs.data matches ..0 run function mgs:v5.1.0/projectile/explode
 
+## sourceMappingURL=post_vel.mcfunction.map

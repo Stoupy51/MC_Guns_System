@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "setup_lure_center.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/enemies/escort/lure.py"
+	],
+	"names": [],
+	"mappings": ";;;;;AAc8D;AAC9D;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

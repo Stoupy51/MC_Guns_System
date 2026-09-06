@@ -8,3 +8,4 @@
 tellraw @a ["","🤝 ",{"translate":"mgs.draw","color":"gold","bold":true}]
 function mgs:v5.1.0/multiplayer/stop
 
+## sourceMappingURL=game_draw.mcfunction.map

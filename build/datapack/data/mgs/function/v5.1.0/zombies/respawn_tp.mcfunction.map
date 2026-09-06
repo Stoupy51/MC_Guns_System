@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "respawn_tp.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/core/spawning.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;AAuJiD;AACjD;AACA"
+}

@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "build_list_rest.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/multiplayer/loadouts/browsing/marketplace.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;AAkIqE;AACrE;AACA;AACA;AACA;AACA;AACA;AACA"
+}

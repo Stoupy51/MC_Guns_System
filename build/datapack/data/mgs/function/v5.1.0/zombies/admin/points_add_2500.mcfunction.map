@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "points_add_2500.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/menus.py"
+	],
+	"names": [],
+	"mappings": "AAsHiE;AACjE;;;;;;;;AACA;AACA;AACA"
+}

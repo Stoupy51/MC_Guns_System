@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "hover_result.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/machines/wunderfizz/collect.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AAmD6D;AAC7D;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

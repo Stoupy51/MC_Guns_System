@@ -56,3 +56,4 @@ $execute summon item_display run function mgs:v5.1.0/zombies/inventory/swap_slot
 tag @s remove mgs.inv_swapping
 scoreboard players set #zb_inv_found mgs.data 1
 
+## sourceMappingURL=move_found_slot.mcfunction.map

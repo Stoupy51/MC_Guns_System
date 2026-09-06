@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "fire_sale_cleanup.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/machines/mystery_box/fire_sale.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;AAmDmE;AACnE;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

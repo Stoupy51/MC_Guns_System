@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "power.mcfunction",
+	"sourceRoot": "../../../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/maps.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;AAmCG"
+}

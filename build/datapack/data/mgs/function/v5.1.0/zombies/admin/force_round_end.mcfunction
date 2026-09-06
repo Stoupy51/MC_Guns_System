@@ -12,3 +12,4 @@
 kill @e[tag=mgs.zombie_round]
 scoreboard players set #zb_to_spawn mgs.data 0
 
+## sourceMappingURL=force_round_end.mcfunction.map

@@ -10,3 +10,4 @@ execute store result score #link_id mgs.data run data get entity @n[tag=mgs.elem
 execute as @e[tag=mgs.element.door] run function mgs:v5.1.0/maps/editor/door_set_if_match
 tellraw @a[tag=mgs.map_editor] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.updated","color":"green"},{"storage":"mgs:temp","nbt":"_door_set.field","color":"yellow"},{"translate":"mgs.for_all_doors_with_matching_link_id","color":"green"}]
 
+## sourceMappingURL=set_door_link_apply.mcfunction.map

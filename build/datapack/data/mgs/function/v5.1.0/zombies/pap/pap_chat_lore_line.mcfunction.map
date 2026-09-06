@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "pap_chat_lore_line.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/machines/pap/chat.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;AAa4D;AAAA"
+}

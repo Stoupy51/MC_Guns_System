@@ -54,3 +54,4 @@ function mgs:v5.1.0/shared/maps/call_script_at_base {script:"tick"}
 # Requires at least one spawned enemy so a broken spawn can never instantly end the game.
 execute if score #mi_total_enemies mgs.data matches 1.. if score #alive mgs.data matches 0 run return run function mgs:v5.1.0/missions/victory
 
+## sourceMappingURL=game_tick.mcfunction.map

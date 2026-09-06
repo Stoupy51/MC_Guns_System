@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "is_primary_lookup.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/core/weapon_drop.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AAiK6D;AAC7D;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

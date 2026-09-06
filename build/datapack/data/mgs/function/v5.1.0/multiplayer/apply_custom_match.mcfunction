@@ -19,3 +19,4 @@ execute if data storage mgs:temp _find_iter[0].knife_camo run data modify storag
 # Apply the loadout (clears inventory, gives items, applies perks)
 function mgs:v5.1.0/multiplayer/apply_class_dynamic
 
+## sourceMappingURL=apply_custom_match.mcfunction.map

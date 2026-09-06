@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "level_check.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/progression/curve.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;AAmM8D;AAC9D;AACA;AACA;AACA;AACA"
+}

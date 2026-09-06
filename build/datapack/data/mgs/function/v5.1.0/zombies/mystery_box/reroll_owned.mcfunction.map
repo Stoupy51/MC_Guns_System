@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "reroll_owned.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/machines/mystery_box/pull.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;AA0G8D;AAC9D;AACA;AACA;AACA;AACA;AACA"
+}

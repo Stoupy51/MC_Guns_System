@@ -21,3 +21,4 @@ item replace entity B5-0-0-0-3 contents from entity @s weapon.mainhand
 data modify storage mgs:gun SelectedItem set from entity B5-0-0-0-3 item
 data modify storage mgs:gun all set from storage mgs:gun SelectedItem.components."minecraft:custom_data".mgs
 
+## sourceMappingURL=copy_gun_data.mcfunction.map

@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "search_mag_lore_loop.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/weapon/ammo/magazine/lore.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;;;AAkD2D;AAC3D;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

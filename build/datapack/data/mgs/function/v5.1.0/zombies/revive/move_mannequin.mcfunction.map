@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "move_mannequin.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/player/revive/tick.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AA6F2D;AAC3D;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

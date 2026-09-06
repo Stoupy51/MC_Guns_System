@@ -10,3 +10,4 @@
 
 $data remove storage mgs:zombies tombstone_inv."$(id)"
 
+## sourceMappingURL=tombstone_clear_inv.mcfunction.map

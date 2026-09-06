@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "assign_pid.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/multiplayer/loadouts/storage.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AAyCoD;AACpD;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

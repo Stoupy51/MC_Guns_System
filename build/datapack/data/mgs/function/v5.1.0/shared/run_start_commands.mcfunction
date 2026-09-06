@@ -11,3 +11,4 @@
 $data modify storage mgs:temp _start_cmd_iter set from storage mgs:$(mode) game.map.start_commands
 execute if data storage mgs:temp _start_cmd_iter[0] run function mgs:v5.1.0/shared/run_start_commands_iter
 
+## sourceMappingURL=run_start_commands.mcfunction.map

@@ -12,3 +12,4 @@ scoreboard players operation @s mgs.grenade_spin %= #62832 mgs.data
 execute store result storage mgs:temp _gr_spin.angle float 0.0001 run scoreboard players get @s mgs.grenade_spin
 function mgs:v5.1.0/grenade/apply_spin with storage mgs:temp _gr_spin
 
+## sourceMappingURL=spin_tick.mcfunction.map

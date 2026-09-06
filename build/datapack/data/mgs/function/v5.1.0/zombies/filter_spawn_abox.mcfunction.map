@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "filter_spawn_abox.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/zombies/game/round/spawning.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;AA2FuD;AACvD;AACA;AACA;AACA;AACA"
+}

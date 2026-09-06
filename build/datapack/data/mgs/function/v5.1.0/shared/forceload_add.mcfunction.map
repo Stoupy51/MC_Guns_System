@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "forceload_add.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/core/bounds.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;;;;;AAgEmD;AACnD;AACA"
+}

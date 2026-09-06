@@ -23,3 +23,4 @@ execute unless data storage mgs:temp _new_loadout.owner_name run data modify sto
 # Clean up: kill this entity
 kill @s
 
+## sourceMappingURL=get_username.mcfunction.map

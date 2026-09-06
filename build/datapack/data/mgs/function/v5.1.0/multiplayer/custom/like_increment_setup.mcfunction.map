@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "like_increment_setup.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/multiplayer/loadouts/actions/likes.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AA6EqE;AACrE;AACA;AACA;AACA"
+}

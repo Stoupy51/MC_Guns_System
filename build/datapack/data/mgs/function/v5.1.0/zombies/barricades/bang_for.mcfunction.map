@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "bang_for.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/objects/barricades/tick.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AAoGyD;AACzD;AACA;AACA;AACA"
+}

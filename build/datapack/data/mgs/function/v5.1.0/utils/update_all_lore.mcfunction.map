@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "update_all_lore.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/weapon/ammo/lore/templates.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AA2CmD;AACnD;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

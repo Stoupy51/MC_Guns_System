@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "post_vel.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/weapon/firing/projectile/flight.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AAyBiD;AACjD;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

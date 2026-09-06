@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "setup_lure.mcfunction",
+	"sourceRoot": "../../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/maps.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;AA8RE"
+}

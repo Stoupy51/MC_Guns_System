@@ -10,3 +10,4 @@
 
 $data modify storage mgs:zombies door_names."$(id)" set value {name:"$(name)",back_name:"$(back_name)"}
 
+## sourceMappingURL=store_name.mcfunction.map

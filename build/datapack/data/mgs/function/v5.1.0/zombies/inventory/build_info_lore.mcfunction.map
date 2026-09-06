@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "build_info_lore.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/player/inventory/info.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;;;;;AA4C+D;AAC/D;AACA"
+}

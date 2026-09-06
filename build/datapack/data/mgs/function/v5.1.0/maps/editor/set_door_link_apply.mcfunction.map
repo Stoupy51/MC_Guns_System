@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "set_door_link_apply.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/map_editor/doors.py"
+	],
+	"names": [],
+	"mappings": "AAa6D;AAC7D;;;;;;;AACA;AACA;AACA;AACA"
+}

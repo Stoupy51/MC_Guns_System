@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "spawn_orb.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/machines/wunderfizz/spin.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AAqH0D;AAC1D;AACA"
+}

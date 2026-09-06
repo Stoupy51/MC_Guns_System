@@ -1,0 +1,13 @@
+{
+	"version": 3,
+	"file": "start_round.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/zombies/game/round/start.py",
+		"src/functional/zombies/game/round/completion.py",
+		"src/functional/zombies/player/ability.py",
+		"src/functional/zombies/rewards/powerups/bossbars.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AAmBiD;AACjD;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;ACIiD;AACjD;AACA;AACA;AC4FA;AACA;AACA;AC3BiD;AACjD;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "set_display_live.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/machines/wunderfizz/setup.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AAyHiE;AACjE;AACA"
+}

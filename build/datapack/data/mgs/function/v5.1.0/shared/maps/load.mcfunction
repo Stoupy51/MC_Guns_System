@@ -20,3 +20,4 @@ scoreboard players set #map_load_idx mgs.data 0
 scoreboard players set #map_load_found mgs.data 0
 function mgs:v5.1.0/shared/maps/find_map
 
+## sourceMappingURL=load.mcfunction.map

@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "tp_revive_pos.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/player/revive/down.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;;;;;AAqK0D;AAC1D;AACA"
+}

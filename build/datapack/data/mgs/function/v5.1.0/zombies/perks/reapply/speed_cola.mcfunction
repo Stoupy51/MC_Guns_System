@@ -9,3 +9,4 @@
 
 scoreboard players set @s mgs.special.quick_reload 50
 
+## sourceMappingURL=speed_cola.mcfunction.map

@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "on_new_lv5.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/mob_ai.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AAqPoD;AACpD;AACA;AACA;AACA"
+}

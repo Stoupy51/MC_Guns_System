@@ -12,3 +12,4 @@
 
 $data modify storage mgs:temp editor.primary_full set value "$(primary)$(primary_scope)$(primary_camo)"
 
+## sourceMappingURL=set_primary_full.mcfunction.map

@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "hover_lethal.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/objects/wallbuys/hover.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;;AAkEkE;AAClE;AACA;AACA;AACA"
+}

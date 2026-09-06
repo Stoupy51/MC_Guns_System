@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "init.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/weapon/firing/projectile/summon.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;AA0D6C;AAC7C;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

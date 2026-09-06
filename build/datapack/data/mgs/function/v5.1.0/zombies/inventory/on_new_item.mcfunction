@@ -15,3 +15,4 @@ scoreboard players set #zb_drop_kill mgs.data 0
 execute on origin if score @s mgs.zb.in_game matches 1 run scoreboard players set #zb_drop_kill mgs.data 1
 execute if score #zb_drop_kill mgs.data matches 1 run kill @s
 
+## sourceMappingURL=on_new_item.mcfunction.map

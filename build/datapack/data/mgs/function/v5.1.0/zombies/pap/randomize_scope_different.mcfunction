@@ -21,3 +21,4 @@ execute store success score #pap_scope_changed mgs.data run data modify storage 
 # Retry if same weapon ID was picked (guaranteed to terminate since ≥2 variants exist)
 execute if score #pap_scope_changed mgs.data matches 0 run function mgs:v5.1.0/zombies/pap/randomize_scope_different
 
+## sourceMappingURL=randomize_scope_different.mcfunction.map

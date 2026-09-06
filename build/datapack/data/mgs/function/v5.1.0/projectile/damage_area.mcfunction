@@ -11,3 +11,4 @@
 
 $execute as @e[type=!#mgs:ignore,distance=..$(radius_float),tag=!global.ignore.kill,tag=!global.ignore,nbt=!{Invulnerable:true}] run function mgs:v5.1.0/projectile/damage_entity
 
+## sourceMappingURL=damage_area.mcfunction.map

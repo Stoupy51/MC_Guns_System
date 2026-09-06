@@ -6,3 +6,4 @@
 
 execute as @a[scores={mgs.zb.in_game=1,mgs.zb.ability_cd=1..}] run scoreboard players remove @s mgs.zb.ability_cd 1
 
+## sourceMappingURL=reduce_cooldowns.mcfunction.map

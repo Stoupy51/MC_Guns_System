@@ -23,3 +23,4 @@ execute if score #wf_pick mgs.data matches 12 run data modify storage smithed.ac
 execute if score #wf_pick mgs.data matches 13 run data modify storage smithed.actionbar:input message set value {json:[{"text":"🎰 ","color":"white"},{"translate":"mgs.pick_up","color":"green"},{"translate":"mgs.widows_wine","color":"dark_red","bold":true}],priority:"conditional",freeze:5}
 function #smithed.actionbar:message
 
+## sourceMappingURL=hover_result.mcfunction.map

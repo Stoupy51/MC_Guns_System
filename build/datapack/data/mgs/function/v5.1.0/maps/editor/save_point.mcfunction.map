@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "save_point.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/map_editor/save.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;;;;;;;;;;AAwJoD;AACpD;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

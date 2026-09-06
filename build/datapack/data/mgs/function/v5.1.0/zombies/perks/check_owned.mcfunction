@@ -11,3 +11,4 @@
 scoreboard players set #pk_owned mgs.data 0
 $execute if score @s mgs.zb.perk.$(perk_id) matches 1 run scoreboard players set #pk_owned mgs.data 1
 
+## sourceMappingURL=check_owned.mcfunction.map

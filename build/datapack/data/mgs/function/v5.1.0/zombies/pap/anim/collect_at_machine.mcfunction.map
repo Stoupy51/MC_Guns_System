@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "collect_at_machine.mcfunction",
+	"sourceRoot": "../../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/machines/pap/collect.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AAiCiE;AACjE;AACA;AACA"
+}

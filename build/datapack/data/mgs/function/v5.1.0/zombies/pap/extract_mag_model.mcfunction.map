@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "extract_mag_model.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/machines/pap/magazines.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;;AAiD2D;AAC3D;AACA;AACA;AACA"
+}

@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "dispatch_activate.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/rewards/powerups/pickup.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;AAiFC;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA"
+}

@@ -52,3 +52,4 @@ execute if score #mag_slot mgs.data matches -1 at @s run function mgs:v5.1.0/sha
 kill @n[tag=mgs.drop_mag_helper]
 data remove entity @n[type=minecraft:item_display,tag=mgs.dropped_gun,distance=..3] item.components."minecraft:custom_data".mgs.drop_mag
 
+## sourceMappingURL=give_mag.mcfunction.map

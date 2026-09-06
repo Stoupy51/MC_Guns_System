@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "zombies.mcfunction",
+	"sourceRoot": "../../../../../../../../..",
+	"sources": [
+		"src/functional/map_editor/tools.py"
+	],
+	"names": [],
+	"mappings": "AAsGE;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA"
+}

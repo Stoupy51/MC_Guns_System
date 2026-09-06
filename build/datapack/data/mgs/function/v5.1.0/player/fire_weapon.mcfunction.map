@@ -1,0 +1,11 @@
+{
+	"version": 3,
+	"file": "fire_weapon.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/shaders.py",
+		"src/functional/weapon/firing/raycast/clicks.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AA+hCgD;AAChD;AACA;AACA;AACA;AACA;ACv+BgD;AAChD;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

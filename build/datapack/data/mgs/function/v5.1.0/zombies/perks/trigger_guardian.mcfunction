@@ -15,3 +15,4 @@ scoreboard players set @s mgs.zb.ability_cd 1
 # Announce
 title @s actionbar [{"text":"🛡 ","color":"white"},{"translate":"mgs.guardian_activated_iron_golem_summoned","color":"green"}]
 
+## sourceMappingURL=trigger_guardian.mcfunction.map

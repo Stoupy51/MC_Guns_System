@@ -27,3 +27,4 @@ execute store result score #stam_sat mgs.data run data get entity @s foodSaturat
 execute if score #stam_sat mgs.data matches 1.. run return run effect give @s minecraft:hunger 1 255 true
 scoreboard players set @s mgs.stam_dirty 0
 
+## sourceMappingURL=stamina_bar.mcfunction.map

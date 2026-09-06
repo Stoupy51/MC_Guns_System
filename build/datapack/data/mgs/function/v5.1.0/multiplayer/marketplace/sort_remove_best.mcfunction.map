@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "sort_remove_best.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/multiplayer/loadouts/browsing/marketplace.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;AAuLsE;AACtE;AACA;AACA;AACA;AACA;AACA"
+}

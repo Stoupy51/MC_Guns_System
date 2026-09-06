@@ -12,3 +12,4 @@ scoreboard players add @s mgs.zb.xp_prog 2
 scoreboard players add @s mgs.adv.zb.headshots 1
 function mgs:v5.1.0/progression/zb/settle
 
+## sourceMappingURL=award_headshot.mcfunction.map

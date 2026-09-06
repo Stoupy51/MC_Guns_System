@@ -88,3 +88,4 @@ execute if score #snd_bomb_state mgs.data matches 2 if score #snd_channeling mgs
 execute if score #snd_bomb_state mgs.data matches 2 if score #snd_channeling mgs.data matches 1 run scoreboard players operation #snd_defuse_progress mgs.data += #tick_delta mgs.data
 execute if score #snd_bomb_state mgs.data matches 2 if score #snd_defuse_progress mgs.data matches 150.. run function mgs:v5.1.0/multiplayer/gamemodes/snd/bomb_defused
 
+## sourceMappingURL=tick.mcfunction.map

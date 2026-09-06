@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "not_enough_points.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/common.py"
+	],
+	"names": [],
+	"mappings": "AAgC6D;AAC7D;;;;;;;;;;;;;;;;;;;;;;;AACA;AACA"
+}

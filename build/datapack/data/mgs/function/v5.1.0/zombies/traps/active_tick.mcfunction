@@ -49,3 +49,4 @@ execute if score @s mgs.zb.trap.timer matches 0 run scoreboard players operation
 # Timeslip: the activator's trap cooldown is scaled to 75%
 execute if score @s mgs.zb.trap.timer matches 0 if score @s mgs.zb.trap.timeslip matches 1 run function mgs:v5.1.0/zombies/traps/apply_timeslip_cd
 
+## sourceMappingURL=active_tick.mcfunction.map

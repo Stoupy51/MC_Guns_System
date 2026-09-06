@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "restore_slot.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/player/inventory/loadout.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;;AAwF4D;AAC5D;AACA"
+}

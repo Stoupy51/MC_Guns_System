@@ -9,3 +9,4 @@
 setblock ~ ~ ~ chest
 setblock ~ ~1 ~ barrier
 
+## sourceMappingURL=restore_site.mcfunction.map

@@ -32,3 +32,4 @@ data merge entity @s {interpolation_duration:150,transformation:{translation:[0f
 # Tell only the buyer it is ready
 execute as @a[scores={mgs.zb.in_game=1}] if score @s mgs.mb.pid = #this_buyer mgs.data run tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.mystery_box_result_ready","color":"light_purple"},{"translate":"mgs.right_click_to_collect","color":"green","bold":true}]
 
+## sourceMappingURL=show_result_one.mcfunction.map

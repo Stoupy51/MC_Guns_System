@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "spawn_display.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/rewards/powerups/spawn.py"
+	],
+	"names": [],
+	"mappings": "AAwCC;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA"
+}

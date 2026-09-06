@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "points_reset.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/menus.py"
+	],
+	"names": [],
+	"mappings": "AA4HwD;AACxD;;;;;;;;AACA;AACA;AACA;AACA"
+}

@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "on_right_click.mcfunction",
+	"sourceRoot": "../../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/maps.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AA6GwE;AACxE;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

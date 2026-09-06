@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "entity_tick.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/rewards/powerups/spawn.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AA4D0D;AAC1D;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

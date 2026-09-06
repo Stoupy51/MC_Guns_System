@@ -24,3 +24,4 @@ function mgs:v5.1.0/zombies/pap/apply_to_slot with storage mgs:temp _pap
 tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],"✦ ",{"translate":"mgs.free_scope_camo_reroll_already_at_max_pap_level","color":"aqua"}]
 playsound minecraft:entity.experience_orb.pickup ambient @s ~ ~ ~ 0.8 1.25
 
+## sourceMappingURL=free_scope_reroll.mcfunction.map

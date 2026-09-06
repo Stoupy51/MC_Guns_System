@@ -24,3 +24,4 @@ execute if score #mb_move_timer mgs.data matches 1.. if entity @e[tag=bs.interac
 scoreboard players operation #cur_box mgs.data = @n[tag=bs.interaction.target] mgs.mb.box
 execute at @n[tag=bs.interaction.target] run function mgs:v5.1.0/zombies/mystery_box/box_click
 
+## sourceMappingURL=on_right_click.mcfunction.map

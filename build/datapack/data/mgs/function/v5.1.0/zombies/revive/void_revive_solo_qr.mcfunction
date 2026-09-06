@@ -34,3 +34,4 @@ title @s title ["⚡"]
 title @s subtitle [{"translate":"mgs.quick_revive_pulled_you_back_from_the_void","color":"aqua"}]
 tellraw @a[scores={mgs.zb.in_game=1}] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],["",{"text":"[","color":"dark_gray"},{"score":{"name":"@s","objective":"mgs.zb.xp_level"},"color":"gold"},{"text":"] ","color":"dark_gray"},{"selector":"@s","color":"aqua"}],{"translate":"mgs.fell_out_but_quick_revive_pulled_them_back","color":"gray"}]
 
+## sourceMappingURL=void_revive_solo_qr.mcfunction.map

@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "give_item.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/core/weapon_drop.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;;;AA8OqD;AACrD;AACA"
+}

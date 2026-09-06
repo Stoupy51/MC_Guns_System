@@ -10,3 +10,4 @@
 scoreboard players set @s mgs.zb.barricade.r_timer 0
 execute as @e[tag=mgs.barricade_removing] if score @s mgs.zb.barricade.removing_id = #barricade_id mgs.data run tag @s remove mgs.barricade_removing
 
+## sourceMappingURL=cancel_remove.mcfunction.map

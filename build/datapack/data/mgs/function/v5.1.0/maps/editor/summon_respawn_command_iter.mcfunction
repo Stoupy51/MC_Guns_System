@@ -32,3 +32,4 @@ tag @e[tag=mgs.new_respawn_cmd_marker] remove mgs.new_respawn_cmd_marker
 data remove storage mgs:temp _respawn_cmd_iter[0]
 execute if data storage mgs:temp _respawn_cmd_iter[0] run function mgs:v5.1.0/maps/editor/summon_respawn_command_iter
 
+## sourceMappingURL=summon_respawn_command_iter.mcfunction.map

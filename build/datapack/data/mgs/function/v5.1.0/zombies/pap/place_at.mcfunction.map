@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "place_at.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/machines/pap/setup.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;;;AA6IkD;AAClD;AACA"
+}

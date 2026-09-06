@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "move_anim_start_ascend.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/machines/mystery_box/move.py"
+	],
+	"names": [],
+	"mappings": ";;;;;AAuFwE;AACxE;AACA;AACA;AACA;AACA"
+}

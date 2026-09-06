@@ -49,3 +49,4 @@ function #mgs:zombies/on_new_perk
 # Sound
 playsound minecraft:entity.experience_orb.pickup ambient @s ~ ~ ~ 0.8 1.25
 
+## sourceMappingURL=on_right_click.mcfunction.map

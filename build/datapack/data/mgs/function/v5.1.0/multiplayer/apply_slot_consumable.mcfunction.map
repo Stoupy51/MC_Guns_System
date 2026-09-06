@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "apply_slot_consumable.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/multiplayer/loadout.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;AA8B+D;AAC/D;AACA;AACA"
+}

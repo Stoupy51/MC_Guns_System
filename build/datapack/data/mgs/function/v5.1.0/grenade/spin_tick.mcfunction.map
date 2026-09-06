@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "spin_tick.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/weapon/grenade/throw.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AA2G+C;AAC/C;AACA;AACA;AACA;AACA;AACA"
+}

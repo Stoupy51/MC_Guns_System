@@ -36,3 +36,4 @@ execute if score @s mgs.mp.class matches 10 run data modify storage mgs:temp cur
 # Apply the loadout dynamically from the selected class
 function mgs:v5.1.0/multiplayer/apply_class_dynamic
 
+## sourceMappingURL=apply_class.mcfunction.map

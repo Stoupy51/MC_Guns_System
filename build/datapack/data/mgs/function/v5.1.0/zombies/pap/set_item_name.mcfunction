@@ -9,3 +9,4 @@
 
 $item modify entity @s $(slot) {"function":"minecraft:set_components","components":{"minecraft:item_name":{"text":"$(name)","color":"gold","italic":false}}}
 
+## sourceMappingURL=set_item_name.mcfunction.map

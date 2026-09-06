@@ -21,3 +21,4 @@ execute unless data storage mgs:temp dialog.actions[0] run data modify storage m
 # Show the completed dialog
 function mgs:v5.1.0/multiplayer/show_dialog with storage mgs:temp
 
+## sourceMappingURL=map_select.mcfunction.map

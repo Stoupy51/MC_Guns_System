@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "on_exit_point.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/weapon/firing/raycast/hits.py"
+	],
+	"names": [],
+	"mappings": ";;;;;AAamD;AACnD;AACA;AACA;AACA"
+}

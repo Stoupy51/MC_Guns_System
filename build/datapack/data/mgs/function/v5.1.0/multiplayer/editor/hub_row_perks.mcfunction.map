@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "hub_row_perks.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/multiplayer/loadouts/editor/hub.py"
+	],
+	"names": [],
+	"mappings": "AA0GC"
+}

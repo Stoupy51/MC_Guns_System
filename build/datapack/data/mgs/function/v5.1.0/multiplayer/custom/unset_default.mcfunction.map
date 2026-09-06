@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "unset_default.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/multiplayer/loadouts/actions/manage.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AAsE8D;AAC9D;AACA;AACA;AACA"
+}

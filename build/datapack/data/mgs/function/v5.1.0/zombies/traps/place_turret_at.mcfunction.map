@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "place_turret_at.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/objects/traps/setup.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;;;AAuI2D;AAC3D;AACA;AACA"
+}

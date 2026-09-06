@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "restart_no_map.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/zombies/game/lifecycle/over.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AAiJoD;AACpD;AACA;AACA"
+}

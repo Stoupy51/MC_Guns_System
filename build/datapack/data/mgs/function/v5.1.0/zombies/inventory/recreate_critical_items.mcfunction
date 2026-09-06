@@ -12,3 +12,4 @@ execute unless items entity @s hotbar.7 *[custom_data~{mgs:{gun:true,zombies:{ho
 
 execute unless items entity @s hotbar.8 *[custom_data~{mgs:{zb_info:true,zombies:{hotbar:8}}}] run function mgs:v5.1.0/zombies/inventory/refresh_info_item
 
+## sourceMappingURL=recreate_critical_items.mcfunction.map

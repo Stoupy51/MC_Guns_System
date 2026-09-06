@@ -10,3 +10,4 @@ scoreboard players operation @s mgs.zb.barricade.rep_at = #total_tick mgs.data
 scoreboard players add @s mgs.zb.barricade.rep_at 80
 playsound mgs:zombies/barricade/repair_no_cash block @s ~ ~ ~ 1.0 1.0
 
+## sourceMappingURL=repair_sound_for.mcfunction.map

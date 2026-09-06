@@ -9,3 +9,4 @@ data modify storage mgs:zombies wallbuy_data set value {}
 data modify storage mgs:temp _wb_iter set from storage mgs:zombies game.map.wallbuys
 execute if data storage mgs:temp _wb_iter[0] run function mgs:v5.1.0/zombies/wallbuys/setup_iter
 
+## sourceMappingURL=setup.mcfunction.map

@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "dps_collect.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/weapon/common.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AAwRgD;AAChD;AACA;AACA;AACA;AACA;AACA"
+}

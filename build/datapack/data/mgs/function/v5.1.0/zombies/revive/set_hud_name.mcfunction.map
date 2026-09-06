@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "set_hud_name.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/player/revive/down.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;;AA0JyD;AACzD;AACA"
+}

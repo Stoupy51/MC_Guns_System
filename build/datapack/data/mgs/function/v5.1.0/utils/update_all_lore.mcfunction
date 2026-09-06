@@ -34,3 +34,4 @@ $execute summon item_display run function mgs:v5.1.0/lore/apply {"slot":"$(slot)
 # Clean up
 tag @s remove mgs.update_lore
 
+## sourceMappingURL=update_all_lore.mcfunction.map

@@ -13,3 +13,4 @@ execute store result score #wf_price mgs.data run scoreboard players get @n[tag=
 data modify storage smithed.actionbar:input message set value {json:[{"text":"🎰 ","color":"white"},{"translate":"mgs.der_wunderfizz","color":"gold"},[{"text":" - ","color":"gray"}, {"translate":"mgs.cost_2"}],{"score":{"name":"#wf_price","objective":"mgs.data"},"color":"yellow"},[{"text":" ","color":"gray"}, {"translate":"mgs.points_random_perk"}]],priority:"conditional",freeze:5}
 function #smithed.actionbar:message
 
+## sourceMappingURL=on_hover.mcfunction.map

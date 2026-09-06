@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "lookup_machine.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/machines/pap/setup.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;;;AAqJwD;AACxD;AACA"
+}

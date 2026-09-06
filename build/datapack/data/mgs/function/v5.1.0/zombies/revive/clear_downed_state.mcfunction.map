@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "clear_downed_state.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/player/revive/round_end.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AA8D+D;AAC/D;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

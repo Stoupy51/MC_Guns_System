@@ -42,3 +42,4 @@ tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translat
 # Remove the perk display items from the inventory right away
 function mgs:v5.1.0/zombies/inventory/refresh_perk_items
 
+## sourceMappingURL=lose_all.mcfunction.map

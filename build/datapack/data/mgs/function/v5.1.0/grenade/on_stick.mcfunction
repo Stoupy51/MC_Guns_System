@@ -22,3 +22,4 @@ execute if score $move.hit_flag bs.lambda matches -1 if data entity @s data.conf
 # Play stick sound
 playsound minecraft:block.honey_block.place player @a[distance=..32] ~ ~ ~ 1 1.2
 
+## sourceMappingURL=on_stick.mcfunction.map

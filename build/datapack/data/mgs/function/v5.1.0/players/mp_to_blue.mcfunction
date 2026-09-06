@@ -11,3 +11,4 @@ scoreboard players set @s mgs.mp.team 2
 team join mgs.blue @s
 tellraw @s ["",{"translate":"mgs.assigned_to","color":"white"},{"translate":"mgs.blue_team","color":"blue","bold":true}]
 
+## sourceMappingURL=mp_to_blue.mcfunction.map

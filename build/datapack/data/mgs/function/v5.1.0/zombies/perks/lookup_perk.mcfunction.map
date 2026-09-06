@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "lookup_perk.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/machines/perks/purchase.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;;;AAmEuD;AACvD;AACA"
+}

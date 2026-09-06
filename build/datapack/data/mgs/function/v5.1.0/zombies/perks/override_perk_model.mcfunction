@@ -9,3 +9,4 @@
 
 $data modify storage mgs:temp _pk_disp.item_model set value "mgs:perk_machine_$(perk_id)"
 
+## sourceMappingURL=override_perk_model.mcfunction.map

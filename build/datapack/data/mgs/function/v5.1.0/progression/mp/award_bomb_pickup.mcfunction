@@ -12,3 +12,4 @@ scoreboard players add @s mgs.mp.xp_prog 2
 scoreboard players add @s mgs.mp.xp_session 2
 function mgs:v5.1.0/progression/mp/settle
 
+## sourceMappingURL=award_bomb_pickup.mcfunction.map

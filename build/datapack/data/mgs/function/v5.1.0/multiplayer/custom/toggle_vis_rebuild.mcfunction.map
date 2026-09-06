@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "toggle_vis_rebuild.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/multiplayer/loadouts/actions/manage.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;AA+BmE;AACnE;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

@@ -6,3 +6,4 @@
 
 # Hijacked map respawn
 
+## sourceMappingURL=respawn.mcfunction.map

@@ -8,3 +8,4 @@
 data modify storage mgs:temp _pw_iter set from storage mgs:zombies game.map.power_switch
 execute if data storage mgs:temp _pw_iter[0] run function mgs:v5.1.0/zombies/power/setup_iter
 
+## sourceMappingURL=setup.mcfunction.map

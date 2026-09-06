@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "set_sec_gun_display.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/multiplayer/loadouts/editor/save.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;;;;;AA0RoE;AAAA"
+}

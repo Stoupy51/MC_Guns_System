@@ -50,3 +50,4 @@ scoreboard players set @a mgs.mi.kills 0
 scoreboard players set @a mgs.mi.deaths 0
 tag @a[tag=mgs.give_class_menu] remove mgs.give_class_menu
 
+## sourceMappingURL=stop.mcfunction.map

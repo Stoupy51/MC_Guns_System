@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "append_equip2.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/multiplayer/loadouts/editor/save.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;;;;AAgO8D;AAC9D"
+}

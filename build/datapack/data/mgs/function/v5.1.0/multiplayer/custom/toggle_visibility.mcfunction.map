@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "toggle_visibility.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/multiplayer/loadouts/actions/manage.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AAckE;AAClE;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

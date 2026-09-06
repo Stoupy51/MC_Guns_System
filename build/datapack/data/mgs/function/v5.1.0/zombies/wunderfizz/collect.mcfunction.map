@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "collect.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/machines/wunderfizz/collect.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AAyBwD;AACxD;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "end_prep.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/zombies/game/lifecycle/start.py"
+	],
+	"names": [],
+	"mappings": ";;;;;AA2J8C;AAC9C;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

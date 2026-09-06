@@ -11,3 +11,4 @@ tag @s add mgs.barricade_removing
 scoreboard players operation @s mgs.zb.barricade.removing_id = #barricade_id mgs.data
 scoreboard players set #barricade_found_remover mgs.data 1
 
+## sourceMappingURL=start_removing_zombie.mcfunction.map

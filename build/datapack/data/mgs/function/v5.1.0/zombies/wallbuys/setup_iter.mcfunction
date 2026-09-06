@@ -75,3 +75,4 @@ tag @e[tag=mgs.wb_new_display] remove mgs.wb_new_display
 data remove storage mgs:temp _wb_iter[0]
 execute if data storage mgs:temp _wb_iter[0] run function mgs:v5.1.0/zombies/wallbuys/setup_iter
 
+## sourceMappingURL=setup_iter.mcfunction.map

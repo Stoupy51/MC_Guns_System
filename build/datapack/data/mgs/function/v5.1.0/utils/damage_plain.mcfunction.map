@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "damage_plain.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/main/damage.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;;;;AAuEgD"
+}

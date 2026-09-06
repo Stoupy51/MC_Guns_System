@@ -12,3 +12,4 @@ function #bs.move:callback/damped_bounce
 # Play bounce sound
 playsound minecraft:entity.item.pickup player @a[distance=..32] ~ ~ ~ 0.5 0.5
 
+## sourceMappingURL=on_bounce.mcfunction.map

@@ -26,3 +26,4 @@ scoreboard players set @s mgs.reserve_ammo 0
 function mgs:v5.1.0/ammo/reserve/scan with storage mgs:gun all.stats
 return 0
 
+## sourceMappingURL=compute_reserve.mcfunction.map

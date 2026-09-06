@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "end_reload.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/weapon/ammo/magazine/consume.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AAqH6C;AAC7C;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

@@ -10,3 +10,4 @@
 
 $function mgs:v5.1.0/shared/maps/load {id:"$(map_id)",mode:"multiplayer",override:{}}
 
+## sourceMappingURL=load_map_from_storage.mcfunction.map

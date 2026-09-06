@@ -18,3 +18,4 @@ execute store result storage mgs:temp _abox.dy double 1 run data get storage mgs
 execute store result storage mgs:temp _abox.dz double 1 run data get storage mgs:temp _spawn_iter[0].activation_box[5]
 data modify entity @n[tag=mgs.new_spawn] data.abox set from storage mgs:temp _abox
 
+## sourceMappingURL=store_spawn_abox.mcfunction.map

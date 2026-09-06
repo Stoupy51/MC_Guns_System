@@ -45,3 +45,4 @@ execute at @s run function #bs.raycast:run with storage mgs:input
 # Kill marker
 kill @s
 
+## sourceMappingURL=main.mcfunction.map

@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "detonate.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/weapon/grenade/detonate.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;;;AAe8C;AAC9C;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

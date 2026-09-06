@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "play_song.mcfunction",
+	"sourceRoot": "../../../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/maps.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AAiR6E;AAC7E;AACA;AACA;AACA;AACA;AACA;AACA"
+}

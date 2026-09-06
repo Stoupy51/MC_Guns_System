@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "crosshair_spread.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/weapon/hud/zoom.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AAwDmD;AACnD;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

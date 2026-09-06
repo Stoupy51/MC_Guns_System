@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "mp_remove.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/core/player_menus.py"
+	],
+	"names": [],
+	"mappings": ";;;;;AA4J+C;AAC/C;AACA;AACA;AACA;AACA;AACA"
+}

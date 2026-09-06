@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "watchdog_tick.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/zombies/game/round/watchdog.py"
+	],
+	"names": [],
+	"mappings": ";;;;;AAoBmD;AACnD;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

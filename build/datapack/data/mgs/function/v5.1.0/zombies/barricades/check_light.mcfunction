@@ -29,3 +29,4 @@ execute if score #light mgs.data matches ..12 if predicate mgs:v5.1.0/light/13 r
 execute if score #light mgs.data matches ..13 if predicate mgs:v5.1.0/light/14 run return run scoreboard players set #light mgs.data 14
 execute if score #light mgs.data matches ..14 if predicate mgs:v5.1.0/light/15 run return run scoreboard players set #light mgs.data 15
 
+## sourceMappingURL=check_light.mcfunction.map

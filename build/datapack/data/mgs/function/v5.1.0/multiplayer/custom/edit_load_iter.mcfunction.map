@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "edit_load_iter.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/multiplayer/loadouts/actions/manage.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;AAoG+D;AAC/D;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

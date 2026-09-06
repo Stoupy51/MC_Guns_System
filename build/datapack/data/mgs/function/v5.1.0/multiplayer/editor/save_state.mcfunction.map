@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "save_state.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/multiplayer/loadouts/editor/state.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;;AAkC2D;AAC3D;AACA"
+}

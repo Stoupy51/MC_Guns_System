@@ -10,3 +10,4 @@
 
 $execute as @a[distance=..$(radius_float)] at @s run function mgs:v5.1.0/grenade/flash_check
 
+## sourceMappingURL=flash_area.mcfunction.map

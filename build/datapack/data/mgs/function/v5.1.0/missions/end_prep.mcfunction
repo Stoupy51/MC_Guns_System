@@ -34,3 +34,4 @@ scoreboard players set #mi_timer mgs.data 0
 # Announce
 tellraw @a ["",{"text":"","color":"aqua","bold":true},"🎯 ",{"translate":"mgs.go_go_go_kill_all_enemies"}]
 
+## sourceMappingURL=end_prep.mcfunction.map

@@ -16,3 +16,4 @@ scoreboard players operation #zb_dog_left mgs.data += #zb_dog_alive mgs.data
 # ammo_done also covers the same-tick case: two hounds dying together both see the pack empty.
 execute if score #zb_dog_left mgs.data matches ..0 if score #zb_dog_ammo_done mgs.data matches 0 run function mgs:v5.1.0/zombies/dog_max_ammo_at_self
 
+## sourceMappingURL=dog_death.mcfunction.map

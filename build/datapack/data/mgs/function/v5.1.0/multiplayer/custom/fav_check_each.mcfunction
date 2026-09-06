@@ -18,3 +18,4 @@ execute unless score #fav_id mgs.data = #loadout_id mgs.data run data modify sto
 data remove storage mgs:temp _fav_iter[0]
 execute if data storage mgs:temp _fav_iter[0] run function mgs:v5.1.0/multiplayer/custom/fav_check_each
 
+## sourceMappingURL=fav_check_each.mcfunction.map

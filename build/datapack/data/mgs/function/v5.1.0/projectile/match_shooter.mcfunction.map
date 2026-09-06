@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "match_shooter.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/weapon/firing/projectile/explode.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;;;AAqGsD;AACtD;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}
