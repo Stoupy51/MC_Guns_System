@@ -21,3 +21,4 @@ execute if score #ed_ok mgs.data matches 0 run return run function mgs:v5.1.0/mu
 execute if data storage mgs:temp editor{equip_slot1:""} run return run function mgs:v5.1.0/multiplayer/editor/hub
 function mgs:v5.1.0/multiplayer/editor/show_equip1_camo_dialog
 
+## sourceMappingURL=pick_equip_slot1.mcfunction.map

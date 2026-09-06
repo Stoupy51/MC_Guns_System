@@ -28,3 +28,4 @@ data remove storage mgs:temp copy[0]
 scoreboard players add #index mgs.data 1
 $execute if data storage mgs:temp copy[0] run function mgs:v5.1.0/ammo/search_mag_lore_loop {"slot":"$(slot)"}
 
+## sourceMappingURL=search_mag_lore_loop.mcfunction.map

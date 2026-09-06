@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "pick_spawn.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/multiplayer/game/spawns.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;;;;;;;;;;;AAiDoD;AACpD;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

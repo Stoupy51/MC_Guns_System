@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "handle_respawn_command.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/map_editor/handlers.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AA4JgE;AAChE;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

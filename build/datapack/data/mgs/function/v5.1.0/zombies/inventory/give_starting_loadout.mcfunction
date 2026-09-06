@@ -35,3 +35,4 @@ function mgs:v5.1.0/zombies/inventory/refresh_info_item
 # hotbar.4: only for manual abilities (automatic abilities must not show this item)
 execute if score @s mgs.zb.ability matches 3.. run function mgs:v5.1.0/zombies/inventory/give_ability_item
 
+## sourceMappingURL=give_starting_loadout.mcfunction.map

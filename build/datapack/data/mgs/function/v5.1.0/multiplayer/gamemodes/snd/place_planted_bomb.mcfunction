@@ -20,3 +20,4 @@ execute if entity @s[tag=mgs.snd_site_C] run tellraw @a[tag=mgs.xp_earner] [[{"t
 execute if entity @s[tag=mgs.snd_site_D] run tellraw @a[tag=!mgs.xp_earner] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"text":"💣 ","color":"white"},{"translate":"mgs.bomb_planted_at_d","color":"red","bold":true}]
 execute if entity @s[tag=mgs.snd_site_D] run tellraw @a[tag=mgs.xp_earner] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"text":"💣 ","color":"white"},{"translate":"mgs.bomb_planted_at_d","color":"red","bold":true},[" ",{"text":"+20 XP","color":"gold"}]]
 
+## sourceMappingURL=place_planted_bomb.mcfunction.map

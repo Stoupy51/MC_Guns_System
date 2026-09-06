@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "count_guns.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/objects/wallbuys/give.py"
+	],
+	"names": [],
+	"mappings": ";;;;;AA0DyD;AACzD;AACA;AACA;AACA;AACA"
+}

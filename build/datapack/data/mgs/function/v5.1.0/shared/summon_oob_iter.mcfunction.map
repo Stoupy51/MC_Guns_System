@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "summon_oob_iter.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/core/spawning.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;AAwKsD;AACtD;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

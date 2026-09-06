@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "open_one.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/objects/doors.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AA+LoD;AACpD;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

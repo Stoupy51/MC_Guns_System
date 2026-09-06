@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "append_pellet_line.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/weapon/ammo/lore/build.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AAmEqD;AACrD;AACA;AACA;AACA"
+}

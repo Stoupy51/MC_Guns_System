@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "summon_spawns.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/missions/game/spawns.py"
+	],
+	"names": [],
+	"mappings": ";;;;;AAUoD;AACpD;AACA;AACA;AACA;AACA"
+}

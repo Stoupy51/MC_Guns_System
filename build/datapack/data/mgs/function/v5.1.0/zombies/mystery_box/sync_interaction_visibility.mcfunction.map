@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "sync_interaction_visibility.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/machines/mystery_box/positions.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;;;;AAsF6E;AAC7E;AACA"
+}

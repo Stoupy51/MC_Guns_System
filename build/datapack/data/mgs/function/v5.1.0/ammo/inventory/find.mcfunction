@@ -66,3 +66,4 @@ $execute if score #found_ammo mgs.data < #capacity mgs.data if items entity @s p
 execute unless score @s mgs.remaining_bullets = #initial_ammo mgs.data run return run function mgs:v5.1.0/ammo/compute_reserve
 return fail
 
+## sourceMappingURL=find.mcfunction.map

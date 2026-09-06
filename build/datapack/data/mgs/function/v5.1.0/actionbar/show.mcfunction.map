@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "show.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/weapon/hud/actionbar.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AAc4C;AAC5C;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

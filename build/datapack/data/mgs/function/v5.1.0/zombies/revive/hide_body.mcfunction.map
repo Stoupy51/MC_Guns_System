@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "hide_body.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/player/revive/complete.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;;;AA0IsD;AACtD;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

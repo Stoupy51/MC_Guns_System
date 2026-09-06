@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "trigger_coward.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/player/ability.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AAsH0D;AAC1D;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

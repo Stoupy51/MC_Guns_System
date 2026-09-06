@@ -11,3 +11,4 @@ scoreboard players set #ts_den mgs.data 4
 scoreboard players operation @s mgs.zb.trap.cd *= #ts_num mgs.data
 scoreboard players operation @s mgs.zb.trap.cd /= #ts_den mgs.data
 
+## sourceMappingURL=apply_timeslip_cd.mcfunction.map

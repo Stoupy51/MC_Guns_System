@@ -16,3 +16,4 @@ tellraw @a [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"text":"ð
 kill @e[tag=mgs.snd_bomb]
 function mgs:v5.1.0/multiplayer/gamemodes/snd/attackers_win
 
+## sourceMappingURL=bomb_explodes.mcfunction.map

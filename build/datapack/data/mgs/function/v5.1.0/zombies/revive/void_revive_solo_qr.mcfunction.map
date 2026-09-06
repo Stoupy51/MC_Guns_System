@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "void_revive_solo_qr.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/player/revive/void.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AAgEgE;AAChE;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

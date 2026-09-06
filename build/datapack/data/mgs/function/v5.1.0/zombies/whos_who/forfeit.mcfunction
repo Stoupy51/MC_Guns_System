@@ -31,3 +31,4 @@ scoreboard players set @s mgs.zb.ww.id 0
 scoreboard players set @s mgs.zb.bleed 0
 scoreboard players set @s mgs.zb.revive_p 0
 
+## sourceMappingURL=forfeit.mcfunction.map

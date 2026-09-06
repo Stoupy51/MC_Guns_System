@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "tracker_tick.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/multiplayer/game/tick.py"
+	],
+	"names": [],
+	"mappings": ";;;;;AAqE4D;AAC5D;AACA"
+}

@@ -15,3 +15,4 @@ execute as @a[tag=mgs.kino.in_tp] at @s run playsound minecraft:entity.enderman.
 scoreboard players set #kino_tp_state mgs.data 4
 scoreboard players set #kino_tp_timer mgs.data 600
 
+## sourceMappingURL=do_teleport.mcfunction.map

@@ -45,3 +45,4 @@ execute if score #demo_timer mgs.data matches ..0 run function mgs:v5.1.0/multip
 scoreboard players operation #mp_timer mgs.data = #demo_timer mgs.data
 execute if score #mp_timer mgs.data matches ..0 run scoreboard players set #mp_timer mgs.data 0
 
+## sourceMappingURL=tick.mcfunction.map

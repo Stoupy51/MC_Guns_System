@@ -9,6 +9,7 @@
 # Escorted zombie died: remove its escort trader immediately (escort.py)
 execute if entity @s[tag=mgs.zb_escorted] at @s run function mgs:v5.1.0/zombies/escort/on_escorted_killed
 
+
 # Guard: only process round zombies.
 execute unless entity @s[tag=mgs.zombie_round] run return 0
 
@@ -25,3 +26,4 @@ execute if entity @s[tag=mgs.zb_dog] run function mgs:v5.1.0/zombies/dog_death
 # Remove zombie before vanilla death event 60 can fire.
 tp @s ~ -10000 ~
 
+## sourceMappingURL=on_zombie_dying.mcfunction.map

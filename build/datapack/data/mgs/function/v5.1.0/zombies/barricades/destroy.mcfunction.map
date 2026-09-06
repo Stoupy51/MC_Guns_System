@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "destroy.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/objects/barricades/tick.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AAgHwD;AACxD;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

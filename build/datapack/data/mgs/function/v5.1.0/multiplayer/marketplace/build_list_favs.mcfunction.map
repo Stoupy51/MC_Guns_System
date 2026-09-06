@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "build_list_favs.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/multiplayer/loadouts/browsing/marketplace.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;;AAwHqE;AACrE;AACA;AACA;AACA;AACA;AACA;AACA"
+}

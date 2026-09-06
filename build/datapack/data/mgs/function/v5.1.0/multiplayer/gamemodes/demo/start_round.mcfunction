@@ -53,3 +53,4 @@ execute as @a[scores={mgs.mp.team=1..2}] at @s run function mgs:v5.1.0/multiplay
 # Open the round LAST, once the sites are intact and everyone is placed
 scoreboard players set #demo_round_active mgs.data 1
 
+## sourceMappingURL=start_round.mcfunction.map

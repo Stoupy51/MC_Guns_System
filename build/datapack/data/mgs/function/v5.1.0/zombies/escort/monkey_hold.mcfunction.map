@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "monkey_hold.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/enemies/escort/tick.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;AAsGwD;AACxD;AACA;AACA"
+}

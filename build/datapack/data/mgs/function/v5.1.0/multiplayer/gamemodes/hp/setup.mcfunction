@@ -32,3 +32,4 @@ scoreboard players set #hp_xp_hold mgs.data 5
 # Load first zone
 function mgs:v5.1.0/multiplayer/gamemodes/hp/load_zone
 
+## sourceMappingURL=setup.mcfunction.map

@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "tombstone.mcfunction",
+	"sourceRoot": "../../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/machines/perks/apply.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;AAuCE;AAAA;AAAA"
+}

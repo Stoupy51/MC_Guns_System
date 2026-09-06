@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "lookup_weapon.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/objects/wallbuys/give.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;;AA8B4D;AAC5D;AACA"
+}

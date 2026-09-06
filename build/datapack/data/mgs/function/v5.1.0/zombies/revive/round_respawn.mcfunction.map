@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "round_respawn.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/player/revive/round_end.py"
+	],
+	"names": [],
+	"mappings": ";;;;;AAc0D;AAC1D;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

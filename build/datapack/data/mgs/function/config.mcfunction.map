@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "config.mcfunction",
+	"sourceRoot": "../../../../..",
+	"sources": [
+		"src/functional/main/config_menu.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;AAwHgC"
+}

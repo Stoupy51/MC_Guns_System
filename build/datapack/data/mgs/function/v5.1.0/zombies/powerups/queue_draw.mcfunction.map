@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "queue_draw.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/rewards/powerups/drops.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AAgHyD;AACzD;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

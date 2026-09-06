@@ -19,3 +19,4 @@ effect give @s regeneration 5 1 true
 # Announce
 title @s actionbar [{"text":"🏃 ","color":"white"},{"translate":"mgs.coward_activated_teleported_to_safety","color":"yellow"}]
 
+## sourceMappingURL=trigger_coward.mcfunction.map

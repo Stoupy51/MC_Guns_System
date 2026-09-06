@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "wake_up.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/mob_ai.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;AA+HyC;AACzC;AACA;AACA;AACA"
+}

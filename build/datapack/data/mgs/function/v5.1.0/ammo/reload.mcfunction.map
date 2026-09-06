@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "reload.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/weapon/ammo/magazine/reload.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;;;;AA8ByC;AACzC;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

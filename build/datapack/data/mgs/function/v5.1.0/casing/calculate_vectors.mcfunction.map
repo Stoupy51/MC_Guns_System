@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "calculate_vectors.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/weapon/firing/casing.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AA2FsD;AACtD;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

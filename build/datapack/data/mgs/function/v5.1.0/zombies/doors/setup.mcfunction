@@ -7,3 +7,4 @@
 data modify storage mgs:temp _door_iter set from storage mgs:zombies game.map.doors
 execute if data storage mgs:temp _door_iter[0] run function mgs:v5.1.0/zombies/doors/setup_iter
 
+## sourceMappingURL=setup.mcfunction.map

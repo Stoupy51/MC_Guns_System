@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "land_bear.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/machines/wunderfizz/roam.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AAe0D;AAC1D;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

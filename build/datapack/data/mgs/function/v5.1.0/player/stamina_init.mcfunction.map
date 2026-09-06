@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "stamina_init.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/stamina.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AAqIiD;AACjD;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

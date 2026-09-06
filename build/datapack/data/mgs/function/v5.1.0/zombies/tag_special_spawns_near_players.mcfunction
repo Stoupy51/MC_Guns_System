@@ -19,3 +19,4 @@ execute if score #zb_near_found mgs.data matches 0 as @a[scores={mgs.zb.in_game=
 # letting callers gate "did we tag anything at all" purely on the score.
 execute if score #zb_near_found mgs.data matches 0 store success score #zb_near_found mgs.data run tag @e[tag=mgs.spawn_special,tag=mgs.spawn_unlocked] add mgs.zb_near
 
+## sourceMappingURL=tag_special_spawns_near_players.mcfunction.map

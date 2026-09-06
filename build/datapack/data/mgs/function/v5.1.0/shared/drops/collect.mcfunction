@@ -21,3 +21,4 @@ execute if data entity @n[type=minecraft:item_display,tag=mgs.dropped_gun,distan
 execute if score #pick_g0 mgs.data matches 1 if score #pick_g1 mgs.data matches 1 run return run function mgs:v5.1.0/shared/drops/swap
 function mgs:v5.1.0/shared/drops/take
 
+## sourceMappingURL=collect.mcfunction.map

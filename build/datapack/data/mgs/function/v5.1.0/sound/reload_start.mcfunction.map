@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "reload_start.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/weapon/firing/sound.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;;AAyOgD;AAChD;AACA;AACA"
+}

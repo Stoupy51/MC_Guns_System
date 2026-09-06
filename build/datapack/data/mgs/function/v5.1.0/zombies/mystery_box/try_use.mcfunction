@@ -52,3 +52,4 @@ execute if score @s mgs.special.timeslip matches 1.. run playsound mgs:zombies/m
 execute if score @s mgs.special.timeslip matches 1.. run playsound mgs:zombies/mystery_box/music_box_short ambient @a[scores={mgs.zb.in_game=1}] ~ ~ ~ 1.0 1.0
 tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.mystery_box_spinning","color":"light_purple"}]
 
+## sourceMappingURL=try_use.mcfunction.map

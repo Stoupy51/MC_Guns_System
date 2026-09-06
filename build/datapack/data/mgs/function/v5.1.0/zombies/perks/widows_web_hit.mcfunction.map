@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "widows_web_hit.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/machines/perks/widow.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AAqB0D;AAC1D;AACA;AACA;AACA;AACA;AACA;AACA"
+}

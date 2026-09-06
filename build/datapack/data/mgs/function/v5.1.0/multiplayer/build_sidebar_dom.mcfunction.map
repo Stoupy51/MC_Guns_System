@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "build_sidebar_dom.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/multiplayer/game/sidebar.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;;;;AAoG2D;AAC3D;AACA;AACA;AACA"
+}

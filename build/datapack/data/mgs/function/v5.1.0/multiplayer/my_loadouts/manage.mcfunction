@@ -11,3 +11,4 @@ scoreboard players remove #loadout_id mgs.data 80000
 data modify storage mgs:temp _find_iter set from storage mgs:multiplayer custom_loadouts
 execute if data storage mgs:temp _find_iter[0] run function mgs:v5.1.0/multiplayer/my_loadouts/manage_find
 
+## sourceMappingURL=manage.mcfunction.map

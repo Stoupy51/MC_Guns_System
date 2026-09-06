@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "read_location_name_at.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/machines/mystery_box/move.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AAoLuE;AACvE;AACA"
+}

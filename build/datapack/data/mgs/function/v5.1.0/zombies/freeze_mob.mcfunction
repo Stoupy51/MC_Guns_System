@@ -9,3 +9,4 @@
 tag @s add mgs.zb_frozen_ai
 data merge entity @s {NoAI:1b}
 
+## sourceMappingURL=freeze_mob.mcfunction.map

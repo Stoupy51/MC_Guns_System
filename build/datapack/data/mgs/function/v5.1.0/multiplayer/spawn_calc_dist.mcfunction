@@ -32,3 +32,4 @@ scoreboard players operation #mx mgs.data += #mz mgs.data
 # Store on entity
 scoreboard players operation @s mgs.data = #mx mgs.data
 
+## sourceMappingURL=spawn_calc_dist.mcfunction.map

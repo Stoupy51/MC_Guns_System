@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "set_model.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/weapon/grenade/throw.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;;AA8F+C;AAC/C;AACA;AACA;AACA;AACA"
+}

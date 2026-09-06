@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "summon_base_marker.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/map_editor/summon.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;;;AA8E4D;AAC5D;AACA"
+}

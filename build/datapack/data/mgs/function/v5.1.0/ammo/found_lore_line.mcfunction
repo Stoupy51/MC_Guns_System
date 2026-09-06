@@ -24,3 +24,4 @@ $item replace entity @p[tag=mgs.modify_lore] $(slot) from entity @s contents
 # Clean up item display
 kill @s
 
+## sourceMappingURL=found_lore_line.mcfunction.map

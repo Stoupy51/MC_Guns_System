@@ -1,0 +1,17 @@
+{
+	"version": 3,
+	"file": "tick.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/map_editor/coord_stick.py",
+		"src/functional/multiplayer/loadouts/storage.py",
+		"src/functional/main/objectives.py",
+		"src/functional/weapon/common.py",
+		"src/functional/player_config.py",
+		"src/functional/stamina.py",
+		"src/functional/zombies/game/lifecycle/tick.py",
+		"src/functional/multiplayer/loadouts/class_selection.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AAcyC;AACzC;AACA;ACqCyC;AACzC;AACA;AACA;AC+EyC;AACzC;AACA;ACFyC;AACzC;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;ACzHA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;ACnBA;AACA;AACA;AACA;AC8EyC;AACzC;AACA;AACA;AACA;AACA;AACA;AACA;ACtHA;AACA;AACA;AAyPyC;AACzC;AACA;AACA;AACA;AACA;AACA"
+}

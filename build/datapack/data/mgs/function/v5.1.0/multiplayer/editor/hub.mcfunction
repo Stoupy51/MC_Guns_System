@@ -60,3 +60,4 @@ execute unless data storage mgs:temp editor{primary:""} run data modify storage 
 # Show
 function mgs:v5.1.0/multiplayer/show_dialog with storage mgs:temp
 
+## sourceMappingURL=hub.mcfunction.map

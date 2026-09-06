@@ -20,3 +20,4 @@ playsound minecraft:entity.item.pickup player @a[distance=..24] ~ ~ ~
 scoreboard players set @n[type=minecraft:item_display,tag=mgs.dropped_gun,distance=..3] mgs.drop_timer 600
 scoreboard players set @n[type=minecraft:interaction,tag=mgs.drop_int,distance=..3] mgs.drop_timer 600
 
+## sourceMappingURL=swap.mcfunction.map

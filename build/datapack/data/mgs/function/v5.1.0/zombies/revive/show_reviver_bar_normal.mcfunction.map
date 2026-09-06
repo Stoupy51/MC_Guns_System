@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "show_reviver_bar_normal.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/player/revive/complete.py"
+	],
+	"names": [],
+	"mappings": "AAoCoE;AACpE;;;;;;;;AACA;AACA"
+}

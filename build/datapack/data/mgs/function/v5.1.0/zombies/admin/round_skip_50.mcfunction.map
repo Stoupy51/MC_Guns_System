@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "round_skip_50.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/menus.py"
+	],
+	"names": [],
+	"mappings": "AAoGgE;AAChE;;;;;;;;AACA;AACA;AACA;AACA;AACA;AACA"
+}

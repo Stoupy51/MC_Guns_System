@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "compute_reserve.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/weapon/ammo/magazine/shells.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;;;;;;;AA8CkD;AAClD;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

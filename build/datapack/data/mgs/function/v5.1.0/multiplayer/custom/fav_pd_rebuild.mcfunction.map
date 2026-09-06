@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "fav_pd_rebuild.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/multiplayer/loadouts/actions/favorites.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;AAqC+D;AAC/D;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

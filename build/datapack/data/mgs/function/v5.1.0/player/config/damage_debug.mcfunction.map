@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "damage_debug.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/player_config.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;;AAsQwD;AACxD;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

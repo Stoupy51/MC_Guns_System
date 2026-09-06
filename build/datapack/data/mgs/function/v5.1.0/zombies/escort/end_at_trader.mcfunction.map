@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "end_at_trader.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/enemies/escort/end.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;AA0E0D;AAC1D;AACA;AACA"
+}

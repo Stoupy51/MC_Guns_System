@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "annotate_fire_rate_line.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/machines/pap/lore.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AAuHiE;AACjE;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

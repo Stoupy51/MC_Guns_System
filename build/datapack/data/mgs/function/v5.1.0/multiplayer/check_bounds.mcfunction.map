@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "check_bounds.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/multiplayer/game/tick.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AAqIsD;AACtD;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

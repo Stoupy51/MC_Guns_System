@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "apply_ds.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/weapon/firing/kick.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;AA6CC;AAAA;AAAA;AAAA;AAAA;AAAA"
+}

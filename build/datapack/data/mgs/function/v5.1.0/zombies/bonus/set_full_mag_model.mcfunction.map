@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "set_full_mag_model.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/rewards/bonus.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;;;;AA2J8D;AAC9D;AACA"
+}

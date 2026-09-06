@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "check_coward.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/player/ability.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AAgHwD;AACxD;AACA;AACA;AACA"
+}

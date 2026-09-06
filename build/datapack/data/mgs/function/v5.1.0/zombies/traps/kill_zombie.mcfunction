@@ -10,3 +10,4 @@
 execute store result storage mgs:temp _trap_dmg.amount int 1 run attribute @s minecraft:max_health get 10
 function mgs:v5.1.0/zombies/traps/apply_trap_damage with storage mgs:temp _trap_dmg
 
+## sourceMappingURL=kill_zombie.mcfunction.map

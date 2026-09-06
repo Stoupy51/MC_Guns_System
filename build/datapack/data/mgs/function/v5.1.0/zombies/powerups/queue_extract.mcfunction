@@ -11,3 +11,4 @@
 $execute store result score #pu_spawn_type mgs.data run data get storage mgs:data _pu_queue[$(idx)]
 $data remove storage mgs:data _pu_queue[$(idx)]
 
+## sourceMappingURL=queue_extract.mcfunction.map

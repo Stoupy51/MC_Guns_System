@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "set_model.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/weapon/firing/projectile/summon.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;;AAgFkD;AAClD;AACA;AACA;AACA"
+}

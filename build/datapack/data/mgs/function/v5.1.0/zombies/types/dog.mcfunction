@@ -35,3 +35,4 @@ attribute @s minecraft:knockback_resistance base set 1024
 # Hellhound build: 1.5x a vanilla wolf, which also scales the hitbox so they're easier to hit
 attribute @s minecraft:scale base set 1.5
 
+## sourceMappingURL=dog.mcfunction.map

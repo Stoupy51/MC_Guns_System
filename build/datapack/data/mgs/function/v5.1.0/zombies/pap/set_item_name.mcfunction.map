@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "set_item_name.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/machines/pap/lore.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;AA2KuD;AACvD;AACA"
+}

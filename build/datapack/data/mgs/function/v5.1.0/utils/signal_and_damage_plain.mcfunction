@@ -17,3 +17,4 @@ execute if data storage mgs:missions game{state:"active"} if entity @s[type=play
 function mgs:v5.1.0/utils/damage_plain with storage mgs:input with
 function #mgs:signals/damage with storage mgs:input with
 
+## sourceMappingURL=signal_and_damage_plain.mcfunction.map

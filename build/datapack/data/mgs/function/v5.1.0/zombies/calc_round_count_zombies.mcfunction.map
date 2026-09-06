@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "calc_round_count_zombies.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/zombies/game/round/start.py"
+	],
+	"names": [],
+	"mappings": ";;;;;AAgF8D;AAC9D;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

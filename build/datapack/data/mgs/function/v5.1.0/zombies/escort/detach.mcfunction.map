@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "detach.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/enemies/escort/end.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;;;AAgBmD;AACnD;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

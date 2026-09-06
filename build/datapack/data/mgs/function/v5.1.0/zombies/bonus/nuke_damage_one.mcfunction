@@ -16,3 +16,4 @@ attribute @s minecraft:attack_damage modifier remove mgs:nuke_zero_damage
 # (the player didn't really kill them — the flat Nuke point bonus is handled separately).
 damage @s 999999 mgs:bullet
 
+## sourceMappingURL=nuke_damage_one.mcfunction.map

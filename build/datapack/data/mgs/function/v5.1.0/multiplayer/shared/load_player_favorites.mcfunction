@@ -16,3 +16,4 @@ data modify storage mgs:temp _cur_favorites set value []
 data modify storage mgs:temp _pd_iter set from storage mgs:multiplayer player_data
 execute if data storage mgs:temp _pd_iter[0] run function mgs:v5.1.0/multiplayer/shared/load_fav_iter
 
+## sourceMappingURL=load_player_favorites.mcfunction.map

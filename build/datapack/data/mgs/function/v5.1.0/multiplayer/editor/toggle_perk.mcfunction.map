@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "toggle_perk.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/multiplayer/loadouts/editor/perks.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;;AAiG4D;AAC5D;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

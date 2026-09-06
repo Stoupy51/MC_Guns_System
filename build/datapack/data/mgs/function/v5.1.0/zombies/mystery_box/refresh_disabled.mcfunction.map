@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "refresh_disabled.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/machines/mystery_box/positions.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AAqHkE;AAClE;AACA;AACA"
+}

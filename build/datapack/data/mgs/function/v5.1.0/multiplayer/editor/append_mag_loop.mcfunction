@@ -14,3 +14,4 @@ scoreboard players add #inv_slot mgs.data 1
 scoreboard players remove #pmag_count mgs.data 1
 return run function mgs:v5.1.0/multiplayer/editor/append_mag_loop
 
+## sourceMappingURL=append_mag_loop.mcfunction.map

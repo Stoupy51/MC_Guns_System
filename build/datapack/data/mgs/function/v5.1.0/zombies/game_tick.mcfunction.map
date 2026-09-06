@@ -1,0 +1,25 @@
+{
+	"version": 3,
+	"file": "game_tick.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/zombies/game/lifecycle/tick.py",
+		"src/functional/zombies/game/lifecycle/join.py",
+		"src/functional/zombies/game/round/hooks.py",
+		"src/functional/zombies/enemies/escort/hooks.py",
+		"src/functional/zombies/player/ability.py",
+		"src/functional/zombies/player/inventory/hooks.py",
+		"src/functional/zombies/machines/mystery_box/hooks.py",
+		"src/functional/zombies/machines/pap/hooks.py",
+		"src/functional/zombies/objects/barricades/hooks.py",
+		"src/functional/zombies/rewards/powerups/bossbars.py",
+		"src/functional/zombies/machines/perks/tombstone.py",
+		"src/functional/zombies/machines/perks/hooks.py",
+		"src/functional/zombies/machines/wunderfizz/collect.py",
+		"src/functional/zombies/player/whos_who.py",
+		"src/functional/zombies/objects/traps/hooks.py",
+		"src/functional/zombies/xp.py"
+	],
+	"names": [],
+	"mappings": ";;;;;AAuB+C;AAC/C;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;ACGA;AACA;ACnF+C;AAC/C;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AC3BA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;ACmIA;AACA;AChG+C;AAC/C;AACA;AACA;AACA;AACA;AC3DA;AACA;ACF+C;AAC/C;AACA;AACA;AACA;AACA;ACL+C;AAC/C;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AC4C+C;AAC/C;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;ACqEA;AC1D+C;AAC/C;AACA;AACA;AACA;ACvDA;AACA;AACA;AC6HA;ACtK+C;AAC/C;AACA;AACA;AACA;AACA;AACA;ACwDA;AACA;AACA"
+}

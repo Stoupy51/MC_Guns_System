@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "nuke_fire_one.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/rewards/powerups/effects.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AAuE4D;AAC5D;AACA;AACA;AACA;AACA"
+}

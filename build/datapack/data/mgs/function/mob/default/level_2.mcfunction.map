@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "level_2.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/mob_ai.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;AAiQG"
+}

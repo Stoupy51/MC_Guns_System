@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "shoot.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/mob_ai.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;AAkMuC;AACvC;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

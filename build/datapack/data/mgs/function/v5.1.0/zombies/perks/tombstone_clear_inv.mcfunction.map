@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "tombstone_clear_inv.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/machines/perks/tombstone.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;;AAmI+D;AAC/D;AACA"
+}

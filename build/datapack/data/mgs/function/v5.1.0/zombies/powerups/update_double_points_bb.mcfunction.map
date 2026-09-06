@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "update_double_points_bb.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/rewards/powerups/bossbars.py"
+	],
+	"names": [],
+	"mappings": ";;;;;AAqBkE;AAClE;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

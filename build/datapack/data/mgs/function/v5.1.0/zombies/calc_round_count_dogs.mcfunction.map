@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "calc_round_count_dogs.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/zombies/game/round/start.py"
+	],
+	"names": [],
+	"mappings": ";;;;;AA+F2D;AAC3D;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

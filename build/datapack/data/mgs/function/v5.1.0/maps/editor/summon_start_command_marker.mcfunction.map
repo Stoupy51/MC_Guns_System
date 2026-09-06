@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "summon_start_command_marker.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/map_editor/summon.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;;;AAsNqE;AACrE;AACA"
+}

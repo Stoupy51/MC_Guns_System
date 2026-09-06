@@ -53,3 +53,4 @@ execute if items entity @s player.crafting.3 *[custom_data~{mgs:{gun:true}}] run
 # Sync current weapon's ammo to player scoreboard (mainhand)
 execute if data storage mgs:gun all.gun store result score @s mgs.remaining_bullets run data get storage mgs:gun all.stats.capacity
 
+## sourceMappingURL=max_ammo_reload_weapons.mcfunction.map

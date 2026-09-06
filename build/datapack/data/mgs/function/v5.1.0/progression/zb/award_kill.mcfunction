@@ -14,3 +14,4 @@ scoreboard players operation @s mgs.zb.xp_prog += #xp_gain mgs.data
 scoreboard players operation @s mgs.adv.zb.kills += #zb_kills_delta mgs.data
 function mgs:v5.1.0/progression/zb/settle
 
+## sourceMappingURL=award_kill.mcfunction.map

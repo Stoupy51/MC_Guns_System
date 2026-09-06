@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "read_price.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/objects/doors.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;AAoIsD;AACtD;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

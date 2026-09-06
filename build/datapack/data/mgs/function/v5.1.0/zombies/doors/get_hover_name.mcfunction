@@ -11,3 +11,4 @@
 
 $data modify storage mgs:temp _door_hover_name set from storage mgs:zombies door_names."$(id)".name
 
+## sourceMappingURL=get_hover_name.mcfunction.map

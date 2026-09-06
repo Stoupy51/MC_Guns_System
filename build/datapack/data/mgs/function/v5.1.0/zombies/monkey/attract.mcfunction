@@ -15,3 +15,4 @@ execute as @e[tag=mgs.zombie_round,tag=mgs.zb_escorted,distance=..40] at @s run 
 # monkey.
 execute as @e[tag=mgs.zombie_round,tag=!mgs.zb_dog,tag=!mgs.zb_rising,tag=!mgs.zb_escorted,tag=!mgs.zb_escort_failed,distance=6..40] at @s run function mgs:v5.1.0/zombies/monkey/pull_one
 
+## sourceMappingURL=attract.mcfunction.map

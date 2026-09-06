@@ -16,3 +16,4 @@ $execute summon item_display run function mgs:v5.1.0/zombies/mystery_box/extract
 tag @s remove mgs.mb_name_reader
 scoreboard players set #mb_name_found mgs.data 1
 
+## sourceMappingURL=capture_collected_name_slot.mcfunction.map

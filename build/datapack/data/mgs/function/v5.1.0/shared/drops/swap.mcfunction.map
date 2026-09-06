@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "swap.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/core/weapon_drop.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AAmPgD;AAChD;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

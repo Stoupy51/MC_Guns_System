@@ -20,3 +20,4 @@ execute at @s run function mgs:v5.1.0/zombies/perks/widows_web_burst with storag
 # Delete the grenade
 function mgs:v5.1.0/grenade/delete
 
+## sourceMappingURL=detonate_web.mcfunction.map

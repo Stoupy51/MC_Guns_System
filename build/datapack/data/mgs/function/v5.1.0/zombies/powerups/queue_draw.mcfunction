@@ -30,3 +30,4 @@ execute if score #pu_q_len mgs.data matches 11 store result score #pu_q_idx mgs.
 execute store result storage mgs:temp _pu_q.idx int 1 run scoreboard players get #pu_q_idx mgs.data
 function mgs:v5.1.0/zombies/powerups/queue_extract with storage mgs:temp _pu_q
 
+## sourceMappingURL=queue_draw.mcfunction.map

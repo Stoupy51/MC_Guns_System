@@ -18,3 +18,4 @@ execute as @a[scores={mgs.zb.in_game=1}] at @s run playsound mgs:zombies/mystery
 execute as @n[tag=mgs.wf_active] at @s run function mgs:v5.1.0/zombies/wunderfizz/move_start
 kill @s
 
+## sourceMappingURL=land_bear.mcfunction.map

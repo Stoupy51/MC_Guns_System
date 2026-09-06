@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "buy_lethal.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/objects/wallbuys/purchase.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;;AA+FgE;AAChE;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

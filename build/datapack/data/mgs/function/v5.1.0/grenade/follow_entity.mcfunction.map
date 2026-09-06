@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "follow_entity.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/weapon/grenade/flight.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AAwImD;AACnD;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

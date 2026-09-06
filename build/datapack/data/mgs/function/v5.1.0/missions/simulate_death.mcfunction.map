@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "simulate_death.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/missions/game/death.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;AAeqD;AACrD;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

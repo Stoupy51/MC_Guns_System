@@ -23,3 +23,4 @@ execute if score #wb_same_weapon mgs.data matches 1 run return run function mgs:
 $function mgs:v5.1.0/zombies/wallbuys/check_same_weapon_slot {slot:3,weapon_id:"$(weapon_id)"}
 execute if score #wb_same_weapon mgs.data matches 1 run return run function mgs:v5.1.0/zombies/wallbuys/select_refill_price {hotbar:3,inventory:3}
 
+## sourceMappingURL=compute_effective_price.mcfunction.map

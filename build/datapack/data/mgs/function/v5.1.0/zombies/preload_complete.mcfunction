@@ -88,3 +88,4 @@ execute if data storage mgs:zombies game.map.wunderfizz[0] run function mgs:v5.1
 # Setup traps
 execute if data storage mgs:zombies game.map.traps[0] run function mgs:v5.1.0/zombies/traps/setup
 
+## sourceMappingURL=preload_complete.mcfunction.map

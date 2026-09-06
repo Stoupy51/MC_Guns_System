@@ -18,3 +18,4 @@ execute if score #snd_bomb_state mgs.data matches 2 run data modify storage mgs:
 
 function mgs:v5.1.0/multiplayer/build_sidebar_snd with storage mgs:temp snd_sb
 
+## sourceMappingURL=refresh_sidebar_snd.mcfunction.map

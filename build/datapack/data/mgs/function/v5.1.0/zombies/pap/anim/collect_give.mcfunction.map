@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "collect_give.mcfunction",
+	"sourceRoot": "../../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/machines/pap/collect.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;;;AA8C2D;AAC3D;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

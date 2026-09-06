@@ -27,3 +27,4 @@ execute store result storage mgs:temp _base.z int 1 run scoreboard players get #
 $data modify storage mgs:temp _base.fn set value "#mgs:maps/$(script)_script"
 function mgs:v5.1.0/shared/call_at_base with storage mgs:temp _base
 
+## sourceMappingURL=call_script_at_base.mcfunction.map

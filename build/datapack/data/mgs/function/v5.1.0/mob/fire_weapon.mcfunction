@@ -36,3 +36,4 @@ data modify storage mgs:signals on_shoot set value {}
 data modify storage mgs:signals on_shoot.weapon set from storage mgs:gun all
 function #mgs:signals/on_shoot
 
+## sourceMappingURL=fire_weapon.mcfunction.map

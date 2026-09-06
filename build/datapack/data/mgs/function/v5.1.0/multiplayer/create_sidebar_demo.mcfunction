@@ -9,3 +9,4 @@
 function mgs:v5.1.0/multiplayer/refresh_sidebar_demo
 scoreboard objectives setdisplay sidebar mgs.sidebar
 
+## sourceMappingURL=create_sidebar_demo.mcfunction.map

@@ -12,3 +12,4 @@
 
 $summon minecraft:marker $(x) $(y) $(z) {Tags:["mgs.map_element","$(tag)","mgs.new_spawn_marker"]}
 
+## sourceMappingURL=summon_spawn_marker.mcfunction.map

@@ -10,3 +10,4 @@
 
 $item replace entity @s hotbar.8 with minecraft:paper[custom_data={mgs:{zb_info:true}},item_name=["",{"text":"\u2139 ","italic":false},{"translate":"mgs.player_info","color":"gold","italic":false}],lore=$(lore)]
 
+## sourceMappingURL=refresh_info_item_render.mcfunction.map

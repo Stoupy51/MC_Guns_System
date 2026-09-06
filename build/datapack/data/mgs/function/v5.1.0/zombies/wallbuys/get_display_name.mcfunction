@@ -13,3 +13,4 @@ data modify storage mgs:temp _wb_display_name set from storage mgs:temp _wb_weap
 # If a custom map name is set, use it instead.
 execute unless data storage mgs:temp _wb_weapon{name:""} if data storage mgs:temp _wb_weapon.name run data modify storage mgs:temp _wb_display_name set from storage mgs:temp _wb_weapon.name
 
+## sourceMappingURL=get_display_name.mcfunction.map

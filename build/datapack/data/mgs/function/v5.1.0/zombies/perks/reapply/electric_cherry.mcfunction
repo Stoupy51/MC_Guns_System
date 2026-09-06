@@ -9,3 +9,4 @@
 
 scoreboard players set @s mgs.special.electric_cherry 1
 
+## sourceMappingURL=electric_cherry.mcfunction.map

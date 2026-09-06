@@ -20,3 +20,4 @@ execute unless data storage mgs:config no_magazine if score #success mgs.data ma
 # Load the next shell (plays the reload sound and sets a fresh per-shell cooldown)
 function mgs:v5.1.0/ammo/reload
 
+## sourceMappingURL=single_reload_continue.mcfunction.map

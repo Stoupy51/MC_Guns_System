@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "random_death_message.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/multiplayer/game/death.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;AAkH8D;AAC9D;AACA;AACA;AACA;AACA;AACA;AACA"
+}

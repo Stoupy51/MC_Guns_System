@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "summon_machine_display.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/display_helpers.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;;;;;;;;;;AAgBoE;AACpE;AACA"
+}

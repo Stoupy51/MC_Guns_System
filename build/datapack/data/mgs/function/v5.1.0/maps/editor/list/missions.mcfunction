@@ -28,3 +28,4 @@ tellraw @s ""
 tellraw @s ["  ",[{"text": "[", "color": "green", "click_event": {"action": "suggest_command", "command": "/function mgs:v5.1.0/maps/editor/create/missions"}, "hover_event": {"action": "show_text", "value": "Create a new Missions map"}}, "+ Create New Map", "]"]]
 tellraw @s {"text":"============================================","color":"dark_gray"}
 
+## sourceMappingURL=missions.mcfunction.map

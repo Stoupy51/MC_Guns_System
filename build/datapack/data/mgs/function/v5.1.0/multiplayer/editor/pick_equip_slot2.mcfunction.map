@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "pick_equip_slot2.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/multiplayer/loadouts/editor/equipment.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AA+C4E;AAC5E;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

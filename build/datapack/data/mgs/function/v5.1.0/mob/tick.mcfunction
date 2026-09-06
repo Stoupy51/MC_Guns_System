@@ -76,3 +76,4 @@ execute anchored eyes facing entity @e[tag=mgs.target,limit=1] feet run function
 tag @e[tag=mgs.target,limit=1] remove mgs.target
 tag @s remove mgs.ticking
 
+## sourceMappingURL=tick.mcfunction.map

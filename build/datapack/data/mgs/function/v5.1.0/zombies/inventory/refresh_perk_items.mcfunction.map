@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "refresh_perk_items.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/player/inventory/info.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;;;;AAyFkE;AAClE;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

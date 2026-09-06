@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "summon_wallbuy.mcfunction",
+	"sourceRoot": "../../../../../../../../..",
+	"sources": [
+		"src/functional/map_editor/displays.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;;;AAmDiE;AACjE;AACA;AACA;AACA;AACA"
+}

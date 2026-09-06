@@ -69,3 +69,4 @@ execute if score #pap_len mgs.data > #pap_max mgs.data run scoreboard players op
 execute if data storage mgs:temp _pap_extract.stats.pap_stats.pap_name[0] store result score #pap_len mgs.data run data get storage mgs:temp _pap_extract.stats.pap_stats.pap_name
 execute if score #pap_len mgs.data > #pap_max mgs.data run scoreboard players operation #pap_max mgs.data = #pap_len mgs.data
 
+## sourceMappingURL=compute_max_level.mcfunction.map

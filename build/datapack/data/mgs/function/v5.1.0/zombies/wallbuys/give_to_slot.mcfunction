@@ -26,3 +26,4 @@ $function mgs:v5.1.0/zombies/bonus/reload_weapon_slot {slot:"hotbar.$(hotbar)"}
 scoreboard players set #wb_purchase_done mgs.data 1
 scoreboard players set #wb_purchase_mode mgs.data 1
 
+## sourceMappingURL=give_to_slot.mcfunction.map

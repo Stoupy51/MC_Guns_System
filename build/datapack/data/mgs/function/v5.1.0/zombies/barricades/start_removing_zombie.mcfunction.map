@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "start_removing_zombie.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/objects/barricades/tick.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AAkEsE;AACtE;AACA;AACA;AACA;AACA"
+}

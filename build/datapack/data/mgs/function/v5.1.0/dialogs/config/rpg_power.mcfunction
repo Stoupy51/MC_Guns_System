@@ -6,3 +6,4 @@
 
 dialog show @s mgs:v5.1.0/config/rpg_power
 
+## sourceMappingURL=rpg_power.mcfunction.map

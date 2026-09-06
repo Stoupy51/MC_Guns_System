@@ -24,3 +24,4 @@ execute unless score #can_see mgs.data matches 1 run return 0
 # Both checks passed: flash the player
 function mgs:v5.1.0/grenade/flash_player
 
+## sourceMappingURL=flash_check.mcfunction.map

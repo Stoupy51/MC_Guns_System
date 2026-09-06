@@ -14,3 +14,4 @@ $summon minecraft:item_display ^ ^0.5 ^-0.49 {Rotation:[$(yaw),0f],billboard:"fi
 $execute as @n[tag=mgs._ed_new_disp] run loot replace entity @s contents loot mgs:i/$(weapon_id)
 tag @e[tag=mgs._ed_new_disp] remove mgs._ed_new_disp
 
+## sourceMappingURL=summon_wallbuy.mcfunction.map

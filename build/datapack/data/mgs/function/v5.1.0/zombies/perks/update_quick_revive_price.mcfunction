@@ -14,3 +14,4 @@ execute if score #qr_players mgs.data matches ..1 run scoreboard players set @e[
 # Two or more: restore each machine's map-defined price
 execute if score #qr_players mgs.data matches 2.. as @e[tag=mgs.pk_quick_revive] run scoreboard players operation @s mgs.zb.perk.price = @s mgs.zb.perk.base_price
 
+## sourceMappingURL=update_quick_revive_price.mcfunction.map

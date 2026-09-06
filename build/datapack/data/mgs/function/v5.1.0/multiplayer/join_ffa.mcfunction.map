@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "join_ffa.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/multiplayer/teams.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AA4BkD;AAClD;AACA;AACA;AACA;AACA"
+}

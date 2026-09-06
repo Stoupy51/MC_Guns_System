@@ -19,3 +19,4 @@ tag @s add mgs.to_modify
 execute summon item_display run function mgs:v5.1.0/switch/modify_attack_speed
 tag @s remove mgs.to_modify
 
+## sourceMappingURL=sync_attack_speed_with_cooldown.mcfunction.map

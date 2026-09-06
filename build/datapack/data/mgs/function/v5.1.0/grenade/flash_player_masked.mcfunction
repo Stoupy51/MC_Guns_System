@@ -11,3 +11,4 @@ effect give @s minecraft:blindness 1 0 true
 title @s times 2 10 10
 title @s title {"text":"F","font":"mgs:flash"}
 
+## sourceMappingURL=flash_player_masked.mcfunction.map

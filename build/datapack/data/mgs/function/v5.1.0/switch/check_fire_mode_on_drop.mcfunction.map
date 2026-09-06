@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "check_fire_mode_on_drop.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/weapon/ammo/switch.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AAgJ4D;AAC5D;AACA;AACA;AACA"
+}

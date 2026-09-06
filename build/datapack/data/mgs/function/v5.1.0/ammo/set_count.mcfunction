@@ -55,3 +55,4 @@ $item modify entity @s $(slot) mgs:v5.1.0/update_ammo
 # Update weapon's lore to show new ammo count
 $function mgs:v5.1.0/ammo/modify_lore {slot:"$(slot)"}
 
+## sourceMappingURL=set_count.mcfunction.map

@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "damage_area.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/weapon/firing/projectile/damage.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;;;AAaoD;AACpD;AACA"
+}

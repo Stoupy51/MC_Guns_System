@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "turret_fire.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/weapon/firing/sound.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AA2H+C;AAC/C;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

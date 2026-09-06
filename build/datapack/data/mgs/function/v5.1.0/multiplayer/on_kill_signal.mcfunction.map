@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "on_kill_signal.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/multiplayer/game/death.py"
+	],
+	"names": [],
+	"mappings": ";;;;;AA+KwD;AACxD;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

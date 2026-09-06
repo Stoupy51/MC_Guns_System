@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "dog.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/game/round/enemies.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;AAkG+C;AAC/C;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

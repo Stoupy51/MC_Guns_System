@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "give_starting_loadout.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/player/inventory/loadout.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;;AAeqE;AACrE;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

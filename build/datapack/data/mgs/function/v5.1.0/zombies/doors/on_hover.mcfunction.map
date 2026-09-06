@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "on_hover.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/objects/doors.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AA0PoD;AACpD;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

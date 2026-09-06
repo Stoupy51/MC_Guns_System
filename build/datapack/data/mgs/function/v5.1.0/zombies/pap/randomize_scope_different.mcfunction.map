@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "randomize_scope_different.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/machines/pap/cosmetics.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;;AAsEmE;AACnE;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

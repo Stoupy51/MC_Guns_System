@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "victory.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/missions/game/tick.py"
+	],
+	"names": [],
+	"mappings": ";;;;;AAqF8C;AAC9C;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

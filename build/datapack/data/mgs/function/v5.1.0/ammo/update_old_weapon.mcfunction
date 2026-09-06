@@ -53,3 +53,4 @@ execute if items entity @s player.crafting.1 *[custom_data~{mgs:{stats:{remainin
 execute if items entity @s player.crafting.2 *[custom_data~{mgs:{stats:{remaining_bullets:-1}}}] run return run function mgs:v5.1.0/ammo/set_count {slot:"player.crafting.2"}
 execute if items entity @s player.crafting.3 *[custom_data~{mgs:{stats:{remaining_bullets:-1}}}] run return run function mgs:v5.1.0/ammo/set_count {slot:"player.crafting.3"}
 
+## sourceMappingURL=update_old_weapon.mcfunction.map

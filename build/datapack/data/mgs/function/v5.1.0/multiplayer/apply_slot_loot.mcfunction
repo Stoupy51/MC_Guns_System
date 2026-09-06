@@ -9,3 +9,4 @@
 
 $loot replace entity @s $(slot) loot $(loot)
 
+## sourceMappingURL=apply_slot_loot.mcfunction.map

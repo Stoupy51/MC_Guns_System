@@ -46,3 +46,4 @@ function mgs:v5.1.0/shared/maps/call_script_at_base {script:"join"}
 # Announce
 tellraw @a ["",["",{"text":"[","color":"dark_gray"},{"score":{"name":"@s","objective":"mgs.mp.xp_level"},"color":"gold"},{"text":"] ","color":"dark_gray"},{"selector":"@s","color":"green"}],[{"text":" ","color":"green"}, {"translate":"mgs.joined_the_mission"}]]
 
+## sourceMappingURL=join_game.mcfunction.map

@@ -15,3 +15,4 @@ data modify storage mgs:temp _pap_scope_model.slot set value "contents"
 data modify storage mgs:temp _pap_scope_model.model set from storage mgs:temp _pap_pending_cosmetics.models.normal
 function mgs:v5.1.0/zombies/pap/set_item_model_from_scope with storage mgs:temp _pap_scope_model
 
+## sourceMappingURL=apply_cosmetics_to_display.mcfunction.map

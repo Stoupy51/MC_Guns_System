@@ -9,3 +9,4 @@
 scoreboard players reset * mgs.zb_sidebar
 $function #bs.sidebar:create {objective:"mgs.zb_sidebar",display_name:{translate:"mgs.zombies",color:"dark_green",bold:true},contents:$(zb_sb)}
 
+## sourceMappingURL=build_sidebar.mcfunction.map

@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "return_to_lobby.mcfunction",
+	"sourceRoot": "../../../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/maps.py"
+	],
+	"names": [],
+	"mappings": ";;;;;AAuOoF;AACpF;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

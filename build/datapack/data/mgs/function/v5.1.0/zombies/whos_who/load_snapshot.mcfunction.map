@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "load_snapshot.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/player/whos_who.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;;AA8G4D;AAC5D;AACA;AACA"
+}

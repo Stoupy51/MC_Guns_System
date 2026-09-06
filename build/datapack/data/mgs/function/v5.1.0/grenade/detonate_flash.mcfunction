@@ -33,3 +33,4 @@ function #mgs:signals/on_explosion
 # Delete the grenade
 function mgs:v5.1.0/grenade/delete
 
+## sourceMappingURL=detonate_flash.mcfunction.map

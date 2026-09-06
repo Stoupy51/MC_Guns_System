@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "check_enemy_dead.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/missions/game/enemies.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AAsBuD;AACvD;AACA;AACA;AACA"
+}

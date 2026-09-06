@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "move_anim_transition.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/machines/mystery_box/move.py"
+	],
+	"names": [],
+	"mappings": ";;;;;AA6GsE;AACtE;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

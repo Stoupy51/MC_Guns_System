@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "lose_all.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/machines/perks/hooks.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;;;AAkCoD;AACpD;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

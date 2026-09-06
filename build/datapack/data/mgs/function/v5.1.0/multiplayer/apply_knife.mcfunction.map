@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "apply_knife.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/multiplayer/loadout.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;;;AAoCqD;AACrD"
+}

@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "store_loaded_idx.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/multiplayer/maps.py"
+	],
+	"names": [],
+	"mappings": ";;;;;AAqC+D;AAC/D;AACA"
+}

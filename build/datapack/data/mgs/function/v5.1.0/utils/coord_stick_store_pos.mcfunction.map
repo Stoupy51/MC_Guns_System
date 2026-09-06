@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "coord_stick_store_pos.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/map_editor/coord_stick.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AAiEyD;AACzD;AACA;AACA;AACA;AACA"
+}

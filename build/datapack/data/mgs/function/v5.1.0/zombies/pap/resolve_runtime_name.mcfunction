@@ -12,3 +12,4 @@ execute if data storage mgs:temp _pap_pick.list[0] run function mgs:v5.1.0/zombi
 execute if data storage mgs:temp _pap_pick.list[0] run data modify storage mgs:temp _pap_extract.new_name set from storage mgs:temp _pap_pick.value
 execute unless data storage mgs:temp _pap_pick.list[0] run data modify storage mgs:temp _pap_extract.new_name set from storage mgs:temp _pap_extract.stats.pap_stats.pap_name
 
+## sourceMappingURL=resolve_runtime_name.mcfunction.map

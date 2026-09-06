@@ -19,3 +19,4 @@ execute if entity @n[tag=mgs.mb_display,distance=..3] run return run function mg
 # No pull on this box yet: start one
 function mgs:v5.1.0/zombies/mystery_box/try_use
 
+## sourceMappingURL=box_click.mcfunction.map

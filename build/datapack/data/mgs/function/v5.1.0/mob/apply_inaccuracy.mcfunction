@@ -11,3 +11,4 @@ execute store result storage mgs:temp _rot.yaw double 0.1 run random value -200.
 execute store result storage mgs:temp _rot.pitch double 0.1 run random value -200..200
 function mgs:v5.1.0/mob/apply_rotation_offset with storage mgs:temp _rot
 
+## sourceMappingURL=apply_inaccuracy.mcfunction.map

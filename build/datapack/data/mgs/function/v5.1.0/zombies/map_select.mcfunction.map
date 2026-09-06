@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "map_select.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/zombies/menus.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AAmEgD;AAChD;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

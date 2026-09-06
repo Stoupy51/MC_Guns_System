@@ -15,3 +15,4 @@ execute if entity @s[tag=mgs.zombie_round] run return run function mgs:v5.1.0/zo
 # Player caught between the turret and the zombies: 2 damage
 execute if entity @s[type=player,gamemode=!creative,gamemode=!spectator] if score @s mgs.zb.in_game matches 1.. run damage @s 2 mgs:bullet
 
+## sourceMappingURL=turret_hit.mcfunction.map

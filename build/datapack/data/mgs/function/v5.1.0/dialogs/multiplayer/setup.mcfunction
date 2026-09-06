@@ -6,3 +6,4 @@
 
 dialog show @s mgs:v5.1.0/multiplayer/setup
 
+## sourceMappingURL=setup.mcfunction.map

@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "show_secondary_dialog.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/multiplayer/loadouts/editor/weapons.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AAgFsE;AACtE;AACA;AACA"
+}

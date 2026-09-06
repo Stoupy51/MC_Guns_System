@@ -38,3 +38,4 @@ execute if data storage mgs:temp _dropmag_args{bw:"glock18"} run data modify sto
 execute if data storage mgs:temp _dropmag_args{bw:"vz61"} run data modify storage mgs:temp _dropmag_args merge value {mag:"vz61_mag",halfc:1}
 execute if data storage mgs:temp _dropmag_args{bw:"ray_gun"} run data modify storage mgs:temp _dropmag_args merge value {mag:"element_115",halfc:1}
 
+## sourceMappingURL=mag_lookup.mcfunction.map

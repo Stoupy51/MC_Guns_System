@@ -18,3 +18,4 @@ function mgs:v5.1.0/zombies/start_round
 # Call map start scripts (state is now active, chunks had time to load)
 function mgs:v5.1.0/shared/maps/call_script_at_base {script:"start"}
 
+## sourceMappingURL=end_prep.mcfunction.map

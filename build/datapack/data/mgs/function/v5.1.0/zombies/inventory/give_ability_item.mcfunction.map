@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "give_ability_item.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/player/inventory/info.py"
+	],
+	"names": [],
+	"mappings": "AA+FiE;AACjE;;;;;;;;AACA;AACA"
+}

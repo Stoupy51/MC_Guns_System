@@ -12,3 +12,4 @@
 
 $item replace entity @s hotbar.3 with compass[lodestone_tracker={target:{pos:[I;$(x),$(y),$(z)],dimension:"minecraft:overworld"},tracked:false},custom_data={mgs:{compass:true}}]
 
+## sourceMappingURL=set_compass_target.mcfunction.map

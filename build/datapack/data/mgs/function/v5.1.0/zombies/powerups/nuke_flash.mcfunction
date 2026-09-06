@@ -8,3 +8,4 @@
 
 execute at @s anchored eyes run particle minecraft:flash{color:[1.0,1.0,1.0,1.0]} ^ ^ ^0.4 0 0 0 0 1 force @s
 
+## sourceMappingURL=nuke_flash.mcfunction.map

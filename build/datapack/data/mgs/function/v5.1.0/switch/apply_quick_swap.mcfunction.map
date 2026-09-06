@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "apply_quick_swap.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/weapon/ammo/switch.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AA+EqD;AACrD;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

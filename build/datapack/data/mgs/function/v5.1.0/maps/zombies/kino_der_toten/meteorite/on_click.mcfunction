@@ -18,3 +18,4 @@ execute at @s run playsound minecraft:block.beacon.activate block @a[distance=..
 # On third meteorite: play the 115 song
 execute if score #kino_met_count mgs.data matches 3 run function mgs:v5.1.0/maps/zombies/kino_der_toten/meteorite/play_song
 
+## sourceMappingURL=on_click.mcfunction.map

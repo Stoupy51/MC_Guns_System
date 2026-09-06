@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "run_start_commands_iter.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/core/commands.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;AAgB6D;AAC7D;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

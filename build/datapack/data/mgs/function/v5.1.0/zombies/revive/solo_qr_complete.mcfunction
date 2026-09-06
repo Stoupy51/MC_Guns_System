@@ -24,3 +24,4 @@ execute unless score @s mgs.zb.qr_uses matches 3.. run tellraw @s [[{"text":"","
 # Proceed with revive
 function mgs:v5.1.0/zombies/revive/revive_complete
 
+## sourceMappingURL=solo_qr_complete.mcfunction.map

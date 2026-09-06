@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "choose.mcfunction",
+	"sourceRoot": "../../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/machines/perks/pool.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;AA0BuD;AACvD;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

@@ -11,3 +11,4 @@ attribute @s minecraft:attack_damage modifier remove mgs:insta_kill
 attribute @s minecraft:attack_damage modifier add mgs:insta_kill 100000 add_value
 tag @s add mgs.ik_melee
 
+## sourceMappingURL=insta_kill_melee_on.mcfunction.map

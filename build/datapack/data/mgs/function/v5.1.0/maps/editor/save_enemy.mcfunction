@@ -27,3 +27,4 @@ data modify storage mgs:temp _save_enemy.function set from entity @s data.functi
 # Append to enemies list
 data modify storage mgs:temp map_edit.map.enemies append from storage mgs:temp _save_enemy
 
+## sourceMappingURL=save_enemy.mcfunction.map

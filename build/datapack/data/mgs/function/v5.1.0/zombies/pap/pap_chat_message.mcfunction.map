@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "pap_chat_message.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/machines/pap/chat.py"
+	],
+	"names": [],
+	"mappings": "AAuCC;AAAA;;;;;;;;;AAAA;AAAA;AAAA;AAAA"
+}

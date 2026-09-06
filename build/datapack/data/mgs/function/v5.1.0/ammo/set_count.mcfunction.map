@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "set_count.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/weapon/ammo/magazine/core.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;AAyG4C;AAC5C;AACA;AACA;AACA;AACA;AACA"
+}

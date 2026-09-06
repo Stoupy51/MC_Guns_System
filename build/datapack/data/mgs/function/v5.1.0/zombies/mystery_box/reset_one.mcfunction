@@ -19,3 +19,4 @@ execute if score #mb_fs_cleanup_pending mgs.data matches 1 unless entity @e[tag=
 # This box's pull ended: if it's no longer usable (e.g. a Fire-Sale box after the sale), hide it
 function mgs:v5.1.0/zombies/mystery_box/sync_interaction_visibility
 
+## sourceMappingURL=reset_one.mcfunction.map

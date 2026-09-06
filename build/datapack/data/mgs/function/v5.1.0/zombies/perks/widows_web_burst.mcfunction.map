@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "widows_web_burst.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/machines/perks/widow.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;;;AAe4D;AAC5D;AACA"
+}

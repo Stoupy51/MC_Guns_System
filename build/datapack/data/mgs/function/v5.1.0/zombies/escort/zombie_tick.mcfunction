@@ -41,3 +41,4 @@ execute if score #zb_esc_see mgs.data matches 1 run return run function mgs:v5.1
 # Ride tail: TTL fallback + periodic retarget/watchdog (shared with the monkey-bomb ride below)
 function mgs:v5.1.0/zombies/escort/escort_tail
 
+## sourceMappingURL=zombie_tick.mcfunction.map

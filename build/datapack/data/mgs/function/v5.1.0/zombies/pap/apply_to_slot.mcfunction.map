@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "apply_to_slot.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/machines/pap/lore.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;;;;AAmLuD;AACvD;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

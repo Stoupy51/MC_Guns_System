@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "set_trader_speed.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/enemies/escort/start.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;;AA4F6D;AAC7D;AACA"
+}

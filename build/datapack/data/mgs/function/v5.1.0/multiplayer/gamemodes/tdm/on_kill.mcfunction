@@ -14,3 +14,4 @@ function #bs.sidebar:refresh {objective:"mgs.sidebar"}
 # Check win condition
 function mgs:v5.1.0/multiplayer/check_team_win
 
+## sourceMappingURL=on_kill.mcfunction.map

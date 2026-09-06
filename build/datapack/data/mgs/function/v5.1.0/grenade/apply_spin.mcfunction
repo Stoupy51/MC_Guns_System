@@ -11,3 +11,4 @@
 $data modify entity @s transformation.left_rotation set value {axis:[1f,0f,0f],angle:$(angle)}
 data merge entity @s {start_interpolation:0,interpolation_duration:1}
 
+## sourceMappingURL=apply_spin.mcfunction.map

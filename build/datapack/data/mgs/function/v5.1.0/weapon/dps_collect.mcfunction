@@ -12,3 +12,4 @@ $data modify storage mgs:temp dps_amount set value $(amount)
 execute store result score #sent_damage mgs.data run data get storage mgs:temp dps_amount 10
 scoreboard players operation @n[tag=mgs.ticking] mgs.dps += #sent_damage mgs.data
 
+## sourceMappingURL=dps_collect.mcfunction.map

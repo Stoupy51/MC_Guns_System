@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "place_at.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/objects/barricades/setup.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;;;AAiGyD;AACzD;AACA"
+}

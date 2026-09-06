@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "escort_tail.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/enemies/escort/tick.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;;AAgEwD;AACxD;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "compute_effective_price.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/objects/wallbuys/give.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;;;AA4GsE;AACtE;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

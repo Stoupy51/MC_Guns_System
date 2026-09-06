@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "freeze_toggle.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/menus.py"
+	],
+	"names": [],
+	"mappings": "AA8GyD;AACzD;;;;;;;;AACA;AACA;AACA"
+}

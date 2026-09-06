@@ -14,6 +14,7 @@
 # They also don't need one — they outrun the trader, so the direct teleport below is strictly better.
 execute unless entity @s[tag=mgs.zb_dog] unless entity @s[tag=mgs.zb_escort_failed] if score #zb_escort_count mgs.data matches ..15 run return run function mgs:v5.1.0/zombies/escort/start
 
+
 # @s = stuck zombie — teleport it to a zombie spawn point near a player instead of killing it
 # (keeps the horde intact and drops it back onto walkable navmesh so it can path again).
 
@@ -52,3 +53,4 @@ execute store result score @s mgs.zb.stuck_x run data get entity @s Pos[0]
 execute store result score @s mgs.zb.stuck_z run data get entity @s Pos[2]
 scoreboard players operation @s mgs.zb.stuck_ticks = #total_tick mgs.data
 
+## sourceMappingURL=on_stuck_zombie.mcfunction.map

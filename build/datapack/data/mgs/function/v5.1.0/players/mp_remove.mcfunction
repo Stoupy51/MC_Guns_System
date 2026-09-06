@@ -10,3 +10,4 @@ team leave @s
 execute if data storage mgs:multiplayer game{state:"active"} run gamemode spectator @s
 tellraw @s [{"translate":"mgs.removed_from_the_game","color":"gray"}]
 
+## sourceMappingURL=mp_remove.mcfunction.map

@@ -8,3 +8,4 @@
 data modify storage mgs:multiplayer game.hp_zones set from storage mgs:multiplayer game.map.hardpoint
 scoreboard players set #hp_zone_idx mgs.data 0
 
+## sourceMappingURL=reset_zones.mcfunction.map

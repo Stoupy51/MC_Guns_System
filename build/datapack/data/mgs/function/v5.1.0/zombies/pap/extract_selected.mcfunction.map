@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "extract_selected.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/machines/pap/stats.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;;;AAY0D;AAC1D;AACA;AACA;AACA"
+}

@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "pulse.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/enemies/monkey_bomb.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AA+EkD;AAClD;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

@@ -12,3 +12,4 @@
 data modify storage smithed.actionbar:input message set value {json:[{"text":"🔫 "},{"storage":"mgs:temp","nbt":"_wb_display_name","color":"yellow","interpret":true},[{"text":" - ","color":"gray"}, {"translate":"mgs.cost_2"}],{"score":{"name":"#wb_price","objective":"mgs.data"},"color":"yellow"},[{"text":" ","color":"gray"}, {"translate":"mgs.points_2"}],{"storage":"mgs:temp","nbt":"_wb_price_suffix","color":"gray","interpret":true}],priority:"conditional",freeze:5}
 function #smithed.actionbar:message
 
+## sourceMappingURL=render_hover.mcfunction.map

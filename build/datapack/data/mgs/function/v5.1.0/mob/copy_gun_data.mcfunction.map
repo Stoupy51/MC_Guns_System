@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "copy_gun_data.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/mob_ai.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AA6I+C;AAC/C;AACA;AACA;AACA"
+}

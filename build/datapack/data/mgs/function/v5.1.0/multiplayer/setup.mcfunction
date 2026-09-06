@@ -6,3 +6,4 @@
 
 function mgs:v5.1.0/dialogs/multiplayer/setup
 
+## sourceMappingURL=setup.mcfunction.map

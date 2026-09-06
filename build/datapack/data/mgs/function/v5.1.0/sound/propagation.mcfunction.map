@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "propagation.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/weapon/firing/sound.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AA4L+C;AAC/C;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

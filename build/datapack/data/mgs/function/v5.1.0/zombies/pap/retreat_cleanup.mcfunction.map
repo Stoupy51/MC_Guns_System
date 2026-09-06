@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "retreat_cleanup.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/machines/pap/anim.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;;AA6NyD;AACzD;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

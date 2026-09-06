@@ -23,3 +23,4 @@ execute if data storage mgs:gun all.sounds.cycle run function mgs:v5.1.0/sound/c
 # Acoustics handling
 execute if data storage mgs:gun all.sounds.crack run function mgs:v5.1.0/sound/acoustics_main with storage mgs:gun all.sounds
 
+## sourceMappingURL=main.mcfunction.map

@@ -16,3 +16,4 @@ kill @e[tag=mgs.demo_rubble]
 tag @a remove mgs.demo_atk
 scoreboard players set #demo_round_active mgs.data 0
 
+## sourceMappingURL=cleanup.mcfunction.map

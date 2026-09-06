@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "retreat_finish.mcfunction",
+	"sourceRoot": "../../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/machines/pap/anim.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AA2M6D;AAC7D;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

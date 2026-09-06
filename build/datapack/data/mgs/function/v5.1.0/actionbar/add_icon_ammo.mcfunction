@@ -17,3 +17,4 @@ data modify storage mgs:temp actionbar.list append value {"score":{"name":"#rese
 data modify storage mgs:temp actionbar.list append value {"text":"x ","color":"gray"}
 data modify storage mgs:temp actionbar.list append value {"text":"A","font":"mgs:icons","shadow_color":[0,0,0,0],"color":"gray"}
 
+## sourceMappingURL=add_icon_ammo.mcfunction.map

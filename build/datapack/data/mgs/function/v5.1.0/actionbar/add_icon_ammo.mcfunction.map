@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "add_icon_ammo.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/weapon/hud/actionbar.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AA4GqD;AACrD;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

@@ -13,3 +13,4 @@ execute store result storage mgs:temp _fl.x2 int 1 run scoreboard players get #b
 execute store result storage mgs:temp _fl.z2 int 1 run scoreboard players get #bound_z2 mgs.data
 function mgs:v5.1.0/shared/forceload_remove with storage mgs:temp _fl
 
+## sourceMappingURL=remove_forceload.mcfunction.map

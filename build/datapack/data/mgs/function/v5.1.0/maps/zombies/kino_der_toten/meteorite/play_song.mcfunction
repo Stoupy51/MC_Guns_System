@@ -13,3 +13,4 @@ execute as @a[scores={mgs.zb.in_game=1}] at @s run playsound mgs:zombies/music/1
 tag @e[tag=mgs.kino.met_active] remove mgs.kino.met_active
 scoreboard players set #kino_met_count mgs.data 0
 
+## sourceMappingURL=play_song.mcfunction.map

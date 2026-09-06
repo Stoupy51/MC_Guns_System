@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "refresh_displays.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/map_editor/displays.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;AAc0D;AAC1D;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

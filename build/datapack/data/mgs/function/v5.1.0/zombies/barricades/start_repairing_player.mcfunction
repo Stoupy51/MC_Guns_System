@@ -15,3 +15,4 @@ scoreboard players set #barricade_found_repairer mgs.data 1
 # than the 30-tick repair, so one play covers the whole action.
 execute as @a[scores={mgs.zb.in_game=1},gamemode=!spectator,distance=..32] unless score @s mgs.zb.barricade.rep_at > #total_tick mgs.data run function mgs:v5.1.0/zombies/barricades/repair_sound_for
 
+## sourceMappingURL=start_repairing_player.mcfunction.map

@@ -21,3 +21,4 @@ function #bs.move:set_motion {scale:0.001}
 # Keep the HUD text_display anchored 2 blocks above the mannequin (id-matched via #my_downed_id)
 tp @n[tag=mgs.downed_hud,predicate=mgs:v5.1.0/zombies/revive/downed_id_match] ~ ~2 ~
 
+## sourceMappingURL=move_mannequin.mcfunction.map

@@ -16,3 +16,4 @@ scoreboard players operation @s mgs.mp.default = #loadout_id mgs.data
 # Notify
 tellraw @s ["",[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.default_loadout_set_it_will_auto_apply_when_a_game_starts","color":"green"}]
 
+## sourceMappingURL=set_default.mcfunction.map

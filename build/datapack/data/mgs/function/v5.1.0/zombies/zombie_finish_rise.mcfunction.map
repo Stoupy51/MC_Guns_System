@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "zombie_finish_rise.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/zombies/game/round/lifecycle.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AAkCwD;AACxD;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

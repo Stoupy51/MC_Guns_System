@@ -11,3 +11,4 @@
 $playsound mgs:$(cycle) player @s ~ ~ ~ 0.5
 $playsound mgs:$(cycle) player @a[distance=0.01..48] ~ ~ ~ 1.0 1 0.5
 
+## sourceMappingURL=cycle.mcfunction.map

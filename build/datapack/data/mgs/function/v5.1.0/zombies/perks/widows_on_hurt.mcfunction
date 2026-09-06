@@ -23,3 +23,4 @@ playsound minecraft:block.wool.place player @a[distance=..32] ~ ~ ~ 1 0.7
 execute store result storage mgs:temp _web.radius float 1 run scoreboard players get #4 mgs.data
 execute at @s run function mgs:v5.1.0/zombies/perks/widows_web_burst with storage mgs:temp _web
 
+## sourceMappingURL=widows_on_hurt.mcfunction.map

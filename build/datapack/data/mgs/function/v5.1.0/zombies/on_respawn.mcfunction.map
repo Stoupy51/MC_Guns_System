@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "on_respawn.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/zombies/game/lifecycle/tick.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AAwIgD;AAChD;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

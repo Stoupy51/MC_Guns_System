@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "read_price.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/machines/perks/purchase.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;;;AAwFsD;AACtD;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

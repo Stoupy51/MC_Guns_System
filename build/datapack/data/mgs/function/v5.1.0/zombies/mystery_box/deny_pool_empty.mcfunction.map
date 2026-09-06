@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "deny_pool_empty.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/machines/mystery_box/pull.py"
+	],
+	"names": [],
+	"mappings": ";;;;;AAkHiE;AACjE;AACA;AACA;AACA;AACA"
+}

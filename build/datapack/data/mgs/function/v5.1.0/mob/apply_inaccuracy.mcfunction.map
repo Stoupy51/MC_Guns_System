@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "apply_inaccuracy.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/mob_ai.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AAoJkD;AAClD;AACA;AACA;AACA;AACA"
+}

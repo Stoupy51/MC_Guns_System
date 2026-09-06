@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "on_respawn.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/multiplayer/loadouts/class_selection.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AA0MoD;AACpD;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

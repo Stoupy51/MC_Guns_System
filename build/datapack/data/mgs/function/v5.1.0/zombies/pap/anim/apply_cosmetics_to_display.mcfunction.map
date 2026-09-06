@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "apply_cosmetics_to_display.mcfunction",
+	"sourceRoot": "../../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/machines/pap/anim.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AA+EyE;AACzE;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

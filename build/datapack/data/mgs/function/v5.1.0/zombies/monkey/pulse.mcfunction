@@ -17,3 +17,4 @@ execute if score #monkey_note mgs.data matches 2 run playsound minecraft:block.n
 execute if score #monkey_note mgs.data matches 3 run playsound minecraft:block.note_block.chime ambient @a[distance=..32] ~ ~ ~ 1.0 1.4
 particle minecraft:note ~ ~0.5 ~ 0.3 0.3 0.3 1 3 force @a[distance=..32]
 
+## sourceMappingURL=pulse.mcfunction.map

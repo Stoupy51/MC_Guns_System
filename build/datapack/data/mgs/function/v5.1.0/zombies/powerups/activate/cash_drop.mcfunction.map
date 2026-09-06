@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "cash_drop.mcfunction",
+	"sourceRoot": "../../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/rewards/powerups/effects.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AAyGiE;AACjE;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

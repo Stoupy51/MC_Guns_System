@@ -19,3 +19,4 @@ scoreboard players set $move.vel.x bs.lambda 0
 scoreboard players set $move.vel.y bs.lambda 0
 scoreboard players set $move.vel.z bs.lambda 0
 
+## sourceMappingURL=on_collision.mcfunction.map

@@ -26,3 +26,4 @@ tag @a[tag=mgs.zb_restart] remove mgs.zb_restart
 tellraw @a [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.an_operator_restarted_the_game","color":"yellow"}]
 function mgs:v5.1.0/zombies/start
 
+## sourceMappingURL=restart.mcfunction.map

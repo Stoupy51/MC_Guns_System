@@ -25,3 +25,4 @@ data modify storage mgs:temp dialog.actions append value {label:["","⚔ ",{tran
 # Show the completed dialog (reuses the multiplayer show_dialog macro)
 function mgs:v5.1.0/multiplayer/show_dialog with storage mgs:temp
 
+## sourceMappingURL=menu.mcfunction.map

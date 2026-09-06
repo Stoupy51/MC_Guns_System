@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "delete.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/map_editor/menu.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;AAwJgD;AAChD;AACA;AACA;AACA;AACA;AACA"
+}

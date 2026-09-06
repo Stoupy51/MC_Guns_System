@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "tombstone_snapshot_inv.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/machines/perks/tombstone.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;;AA6FkE;AAClE;AACA"
+}

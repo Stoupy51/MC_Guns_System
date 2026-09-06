@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "set_wander_target.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/enemies/escort/targeting.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;;;;;;;AAqD8D;AAC9D;AACA"
+}

@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "tp_player_at.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/core/spawning.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;;;;;;AAqBkD"
+}

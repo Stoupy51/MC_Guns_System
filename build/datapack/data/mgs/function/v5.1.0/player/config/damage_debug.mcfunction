@@ -22,3 +22,4 @@ $execute unless score #damage_debug mgs.config matches 1 as $(attacker) if entit
 tellraw @a[tag=mgs.temp_dmg_reader,scores={mgs.player.damage_debug=1}] ["",[{"text":"","color":"red"},"[",{"translate":"mgs.dmg"},"] "],[{"score":{"name":"#dmg_whole","objective":"mgs.data"},"color":"gold"},".",{"score":{"name":"#dmg_dec","objective":"mgs.data"}}]," ",{"translate":"mgs.hp_to","color":"gray"}," ",{"selector":"@s"}]
 tag @a[tag=mgs.temp_dmg_reader] remove mgs.temp_dmg_reader
 
+## sourceMappingURL=damage_debug.mcfunction.map

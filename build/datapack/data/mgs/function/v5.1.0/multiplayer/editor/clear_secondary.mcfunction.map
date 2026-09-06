@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "clear_secondary.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/multiplayer/loadouts/editor/weapons.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;AAsLgE;AAChE;AACA"
+}

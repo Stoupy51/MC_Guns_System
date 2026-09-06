@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "load_base_coordinates.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/core/commands.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;;;;;;;AA8E2D;AAC3D;AACA;AACA;AACA"
+}

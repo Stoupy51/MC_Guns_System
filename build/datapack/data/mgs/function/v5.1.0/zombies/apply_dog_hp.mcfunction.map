@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "apply_dog_hp.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/zombies/game/round/enemies.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;;AA4FkD;AAClD;AACA;AACA"
+}

@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "show_primary_camo_dialog.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/multiplayer/loadouts/editor/shared.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;AAqC6D;AAC7D;AACA;AACA;AACA;AACA;AACA"
+}

@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "player_end.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/weapon/firing/sound.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;;AAqP8C;AAC9C;AACA;AACA"
+}

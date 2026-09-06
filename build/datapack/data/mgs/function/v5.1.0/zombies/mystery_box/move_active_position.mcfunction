@@ -13,3 +13,4 @@ tag @e[tag=mgs.mystery_box_active] remove mgs.mystery_box_active
 execute as @n[tag=mgs.mystery_box_pos,tag=!mgs.mb_prev_active,sort=random] run tag @s add mgs.mystery_box_active
 tag @e[tag=mgs.mb_prev_active] remove mgs.mb_prev_active
 
+## sourceMappingURL=move_active_position.mcfunction.map

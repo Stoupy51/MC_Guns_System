@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "load_map_data.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/map_editor/enter.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;;AAkGuD;AACvD;AACA"
+}

@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "tick_effect.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/weapon/grenade/effects.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AAaiD;AACjD;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

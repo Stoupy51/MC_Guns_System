@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "on_hurt.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/player/hurt.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AAuByD;AACzD;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

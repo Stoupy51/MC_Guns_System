@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "nuke.mcfunction",
+	"sourceRoot": "../../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/rewards/powerups/effects.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AAkD4D;AAC5D;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

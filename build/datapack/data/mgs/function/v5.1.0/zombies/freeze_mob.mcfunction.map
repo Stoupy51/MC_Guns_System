@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "freeze_mob.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/zombies/game/lifecycle/tick.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AA8GgD;AAChD;AACA;AACA"
+}

@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "tombstone_on_respawn.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/machines/perks/tombstone.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AAkGgE;AAChE;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

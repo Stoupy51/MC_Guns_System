@@ -13,3 +13,4 @@ execute if data storage mgs:temp _restore.items[0] run function mgs:v5.1.0/zombi
 kill @e[type=minecraft:item_display,tag=mgs.inv_restore]
 data remove storage mgs:temp _restore
 
+## sourceMappingURL=restore_inventory.mcfunction.map

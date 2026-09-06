@@ -24,3 +24,4 @@ execute unless data storage mgs:temp _pk_data.name if data storage mgs:temp _pk_
 execute unless data storage mgs:temp _pk_data.name if data storage mgs:temp _pk_data{perk_id:"dying_wish"} run data modify storage mgs:temp _pk_hover_name set value "Dying Wish"
 execute unless data storage mgs:temp _pk_data.name if data storage mgs:temp _pk_data{perk_id:"widows_wine"} run data modify storage mgs:temp _pk_hover_name set value "Widow's Wine"
 
+## sourceMappingURL=get_hover_name.mcfunction.map

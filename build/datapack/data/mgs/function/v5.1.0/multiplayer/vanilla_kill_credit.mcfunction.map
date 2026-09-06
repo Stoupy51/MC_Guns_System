@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "vanilla_kill_credit.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/multiplayer/loadouts/class_selection.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AA6O6D;AAC7D;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

@@ -41,3 +41,4 @@ execute if data storage mgs:temp _pap_pick.list[0] run function mgs:v5.1.0/zombi
 $execute if data storage mgs:temp _pap_pick.list[0] run data modify storage mgs:temp _pap_extract.stats.$(field) set from storage mgs:temp _pap_pick.value
 $execute unless data storage mgs:temp _pap_pick.list[0] run data modify storage mgs:temp _pap_extract.stats.$(field) set from storage mgs:temp _pap_extract.stats.pap_stats.$(field)
 
+## sourceMappingURL=apply_field.mcfunction.map

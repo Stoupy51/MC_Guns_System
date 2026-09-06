@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "clear_state.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/weapon/hud/zoom.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AAmI8C;AAC9C;AACA;AACA;AACA;AACA"
+}

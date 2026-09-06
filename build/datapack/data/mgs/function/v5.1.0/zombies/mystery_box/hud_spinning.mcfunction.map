@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "hud_spinning.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/machines/mystery_box/hover.py"
+	],
+	"names": [],
+	"mappings": "AAuB8D;AAC9D;;;;;;;;AACA;AACA"
+}

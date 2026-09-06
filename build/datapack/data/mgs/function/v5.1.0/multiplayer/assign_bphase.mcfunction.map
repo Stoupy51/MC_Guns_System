@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "assign_bphase.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/multiplayer/game/tick.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AAqKuD;AACvD;AACA;AACA;AACA"
+}

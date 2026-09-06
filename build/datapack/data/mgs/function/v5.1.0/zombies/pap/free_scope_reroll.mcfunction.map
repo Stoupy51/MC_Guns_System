@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "free_scope_reroll.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/machines/pap/free.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AAkH2D;AAC3D;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

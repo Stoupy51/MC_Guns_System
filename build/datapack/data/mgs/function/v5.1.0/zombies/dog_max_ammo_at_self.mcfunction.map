@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "dog_max_ammo_at_self.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/zombies/game/round/completion.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AA0D0D;AAC1D;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "round_complete.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/zombies/game/round/completion.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;AAeoD;AACpD;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

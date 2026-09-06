@@ -13,3 +13,4 @@
 
 $data modify storage mgs:temp _pap_extract.lore[$(index)].extra append value {"text":" > $(value)$(suffix)","color":"aqua","italic":false}
 
+## sourceMappingURL=annotate_append_int.mcfunction.map

@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "apply.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/weapon/ammo/lore/build.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AAmHwC;AACxC;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

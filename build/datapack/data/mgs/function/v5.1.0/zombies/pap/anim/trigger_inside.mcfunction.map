@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "trigger_inside.mcfunction",
+	"sourceRoot": "../../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/machines/pap/anim.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AA2J6D;AAC7D;AACA;AACA"
+}

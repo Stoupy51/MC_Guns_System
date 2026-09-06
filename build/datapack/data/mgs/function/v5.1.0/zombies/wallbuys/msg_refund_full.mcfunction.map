@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "msg_refund_full.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/objects/wallbuys/purchase.py"
+	],
+	"names": [],
+	"mappings": "AAsK8D;AAC9D;;;;;;;;AACA;AACA"
+}

@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "setup_iter.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/objects/power.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;AA6BsD;AACtD;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "get_username.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/multiplayer/loadouts/storage.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AA4DsD;AACtD;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

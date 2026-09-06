@@ -14,3 +14,4 @@ function mgs:v5.1.0/zombies/pap/lookup_machine with storage mgs:temp _pap_hover
 data modify storage smithed.actionbar:input message set value {json:[{"text":"⚙ ","color":"white"},{"storage":"mgs:temp","nbt":"_pap_machine.name","color":"gold","interpret":true},[{"text":" - ","color":"gray"}, {"translate":"mgs.cost_2"}],{"score":{"name":"#pap_price","objective":"mgs.data"},"color":"yellow"},[{"text":" ","color":"gray"}, {"translate":"mgs.points_2"}]],priority:"conditional",freeze:5}
 function #smithed.actionbar:message
 
+## sourceMappingURL=on_hover.mcfunction.map

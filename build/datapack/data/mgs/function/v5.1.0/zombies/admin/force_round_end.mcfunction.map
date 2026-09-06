@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "force_round_end.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/menus.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;;;AA6F2D;AAC3D;AACA;AACA"
+}

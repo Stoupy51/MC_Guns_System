@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "hitmarker_sound.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/player_config.py"
+	],
+	"names": [],
+	"mappings": ";;;;;AAuR2D;AAC3D;AACA;AACA;AACA;AACA;AACA"
+}

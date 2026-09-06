@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "create_sidebar_hp.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/multiplayer/game/sidebar.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AAkM2D;AAC3D;AACA;AACA;AACA"
+}

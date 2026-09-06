@@ -9,3 +9,4 @@ data modify storage mgs:zombies pap_data set value {}
 data modify storage mgs:temp _pap_iter set from storage mgs:zombies game.map.pap_machines
 execute if data storage mgs:temp _pap_iter[0] run function mgs:v5.1.0/zombies/pap/setup_iter
 
+## sourceMappingURL=setup.mcfunction.map

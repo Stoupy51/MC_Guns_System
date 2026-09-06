@@ -28,3 +28,4 @@ $execute if items entity @s inventory.$(inventory) *[custom_data~{mgs:{magazine:
 scoreboard players set #wb_purchase_done mgs.data 1
 scoreboard players set #wb_purchase_mode mgs.data 2
 
+## sourceMappingURL=reload_pair.mcfunction.map

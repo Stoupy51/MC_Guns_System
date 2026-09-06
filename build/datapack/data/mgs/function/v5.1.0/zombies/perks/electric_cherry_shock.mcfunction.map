@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "electric_cherry_shock.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/machines/perks/cherry.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;AAyCiE;AACjE;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "delete_filter.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/multiplayer/loadouts/actions/selection.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;AA0E8D;AAC9D;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

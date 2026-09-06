@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "powerup.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/menus.py"
+	],
+	"names": [],
+	"mappings": "AA2ImD;AACnD;;;;;;;;;;AACA;AACA;AACA;AACA;AACA;AACA"
+}

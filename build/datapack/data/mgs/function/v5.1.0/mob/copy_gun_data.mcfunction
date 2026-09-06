@@ -10,3 +10,4 @@
 data remove storage mgs:gun all
 data modify storage mgs:gun all set from entity @s equipment.mainhand.components."minecraft:custom_data".mgs
 
+## sourceMappingURL=copy_gun_data.mcfunction.map

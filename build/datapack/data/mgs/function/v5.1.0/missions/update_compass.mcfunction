@@ -18,3 +18,4 @@ execute store result storage mgs:temp _compass.z int 1 run data get storage mgs:
 # Update compass in hotbar slot 3
 function mgs:v5.1.0/missions/set_compass_target with storage mgs:temp _compass
 
+## sourceMappingURL=update_compass.mcfunction.map

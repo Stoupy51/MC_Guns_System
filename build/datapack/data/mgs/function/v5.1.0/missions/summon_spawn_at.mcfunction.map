@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "summon_spawn_at.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/core/spawning.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;;;;AAiDsD;AACtD;AACA"
+}

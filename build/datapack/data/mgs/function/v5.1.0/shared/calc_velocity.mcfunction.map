@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "calc_velocity.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/helpers/content.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;AA+CmD;AACnD;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "tombstone_expire.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/machines/perks/tombstone.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AA4H4D;AAC5D;AACA;AACA;AACA"
+}

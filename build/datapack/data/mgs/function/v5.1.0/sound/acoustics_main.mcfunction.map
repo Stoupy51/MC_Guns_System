@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "acoustics_main.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/weapon/firing/sound.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;;AA2GkD;AAClD;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

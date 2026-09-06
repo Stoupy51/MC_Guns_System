@@ -52,3 +52,4 @@ scoreboard players operation #horde_next mgs.data /= #horde_count mgs.data
 execute if score #horde_next mgs.data matches ..40 run scoreboard players set #horde_next mgs.data 40
 scoreboard players operation @s mgs.zb.horde_cd = #horde_next mgs.data
 
+## sourceMappingURL=horde_ambient.mcfunction.map

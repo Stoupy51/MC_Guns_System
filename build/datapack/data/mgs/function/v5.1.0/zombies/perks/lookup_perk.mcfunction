@@ -11,3 +11,4 @@
 
 $data modify storage mgs:temp _pk_data set from storage mgs:zombies perk_data."$(id)"
 
+## sourceMappingURL=lookup_perk.mcfunction.map

@@ -15,3 +15,4 @@ execute store result score #pap_t mgs.data run scoreboard players get @s mgs.pap
 scoreboard players operation #pap_t mgs.data %= #20 mgs.data
 execute if score #pap_t mgs.data matches 0 run playsound mgs:zombies/pap/pap_loop ambient @a[scores={mgs.zb.in_game=1}] ~ ~ ~ 0.25 1.0
 
+## sourceMappingURL=inside.mcfunction.map

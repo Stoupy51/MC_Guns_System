@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "delete.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/weapon/grenade/effects.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;;;AAwC4C;AAC5C;AACA;AACA;AACA;AACA;AACA"
+}

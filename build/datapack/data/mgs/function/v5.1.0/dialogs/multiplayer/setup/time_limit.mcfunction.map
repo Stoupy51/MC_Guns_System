@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "time_limit.mcfunction",
+	"sourceRoot": "../../../../../../../../..",
+	"sources": [
+		"src/functional/helpers/dialogs.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;AAgFoD"
+}

@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "fix_primary_loot.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/multiplayer/loadouts/editor/save.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;;;AAkRiE;AACjE"
+}

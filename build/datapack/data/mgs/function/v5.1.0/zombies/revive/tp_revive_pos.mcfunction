@@ -13,3 +13,4 @@
 
 $tp @s $(rv_x) $(rv_y) $(rv_z)
 
+## sourceMappingURL=tp_revive_pos.mcfunction.map

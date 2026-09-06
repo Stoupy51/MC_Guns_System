@@ -35,3 +35,4 @@ execute if score @s mgs.mp.xp_level > #xp_lvl_before mgs.data run function mgs:v
 
 function mgs:v5.1.0/progression/mp/refresh_bar
 
+## sourceMappingURL=settle.mcfunction.map

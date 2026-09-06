@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "find_and_notify.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/multiplayer/loadouts/actions/selection.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;AA+BgE;AAChE;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

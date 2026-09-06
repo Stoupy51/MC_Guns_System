@@ -19,3 +19,4 @@ execute if data storage mgs:temp current_slot{consumable:true} run function mgs:
 data remove storage mgs:temp slots[0]
 execute if data storage mgs:temp slots[0] run function mgs:v5.1.0/multiplayer/apply_next_slot
 
+## sourceMappingURL=apply_next_slot.mcfunction.map

@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "store_slot.mcfunction",
+	"sourceRoot": "../../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/machines/pap/anim.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;;;AAyDyD;AACzD;AACA"
+}

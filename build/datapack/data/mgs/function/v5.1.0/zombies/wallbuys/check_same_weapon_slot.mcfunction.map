@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "check_same_weapon_slot.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/objects/wallbuys/give.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;;;;;;;;;AAgKqE;AACrE;AACA;AACA"
+}

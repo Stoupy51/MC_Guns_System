@@ -11,3 +11,4 @@ scoreboard players set @a[scores={mgs.zb.in_game=1}] mgs.zb.points 0
 scoreboard players operation @a[scores={mgs.zb.in_game=1}] mgs.zb.xp_pts_prev = @a[scores={mgs.zb.in_game=1}] mgs.zb.points
 tellraw @a [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.an_operator_reset_everyones_points","color":"red"}]
 
+## sourceMappingURL=points_reset.mcfunction.map

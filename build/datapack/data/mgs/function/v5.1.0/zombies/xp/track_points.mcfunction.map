@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "track_points.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/xp.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AAuCqD;AACrD;AACA;AACA"
+}

@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "level_up.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/progression/curve.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AAwM2D;AAC3D;AACA;AACA;AACA"
+}

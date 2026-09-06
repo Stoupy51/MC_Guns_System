@@ -48,3 +48,4 @@ execute if score #zb_reviving mgs.data matches 1 if score #rv_qr_near mgs.data m
 # Body bled out: doppelganger fights on with just the pistol (perks stay lost)
 execute if score @s mgs.zb.bleed matches ..0 run function mgs:v5.1.0/zombies/whos_who/bleed_out
 
+## sourceMappingURL=owner_tick.mcfunction.map

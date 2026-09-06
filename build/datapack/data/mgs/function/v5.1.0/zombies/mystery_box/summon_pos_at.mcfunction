@@ -11,3 +11,4 @@
 
 $summon minecraft:interaction $(x) $(y) $(z) {width:2.0f,height:-2.0f,response:true,Rotation:$(rotation),Tags:["mgs.mystery_box_pos","mgs.gm_entity","mgs.mb_new","bs.entity.interaction"]}
 
+## sourceMappingURL=summon_pos_at.mcfunction.map

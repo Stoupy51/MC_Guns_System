@@ -19,3 +19,4 @@ tag @s remove mgs.check_nearest
 # repeated for each of them. Do that work once per tick instead, whoever gets here first.
 execute unless score #ed_global_tick mgs.data = #total_tick mgs.data run function mgs:v5.1.0/maps/editor/global_tick
 
+## sourceMappingURL=tick.mcfunction.map

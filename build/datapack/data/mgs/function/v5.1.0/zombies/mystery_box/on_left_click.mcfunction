@@ -11,3 +11,4 @@ execute unless predicate mgs:v5.1.0/is_sneaking run return fail
 execute unless data storage mgs:zombies game{state:"active"} run return fail
 execute at @n[tag=bs.interaction.target] run function mgs:v5.1.0/zombies/mystery_box/share_at_box
 
+## sourceMappingURL=on_left_click.mcfunction.map

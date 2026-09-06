@@ -11,3 +11,4 @@ execute as @a[scores={mgs.mp.in_game=1,mgs.mp.team=0}] run function mgs:v5.1.0/m
 
 tellraw @a [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.team_deathmatch_first_team_to_the_score_limit_wins","color":"yellow"}]
 
+## sourceMappingURL=setup.mcfunction.map

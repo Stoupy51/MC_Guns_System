@@ -17,3 +17,4 @@ execute as @a[scores={mgs.zb.in_game=1}] run attribute @s minecraft:jump_strengt
 
 tellraw @a [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.an_operator_unfroze_the_game","color":"aqua"}]
 
+## sourceMappingURL=freeze_off.mcfunction.map

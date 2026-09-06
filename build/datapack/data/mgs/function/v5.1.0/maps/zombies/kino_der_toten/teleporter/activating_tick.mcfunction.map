@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "activating_tick.mcfunction",
+	"sourceRoot": "../../../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/maps.py"
+	],
+	"names": [],
+	"mappings": "AAiKoF;;;;;;;AACpF;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

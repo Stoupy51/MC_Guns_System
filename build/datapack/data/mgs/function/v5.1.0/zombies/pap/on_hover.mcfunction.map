@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "on_hover.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/machines/pap/setup.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AAyJkD;AAClD;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

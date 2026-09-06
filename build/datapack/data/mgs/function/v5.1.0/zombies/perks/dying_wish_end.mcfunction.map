@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "dying_wish_end.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/machines/perks/dying_wish.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AAmE0D;AAC1D;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

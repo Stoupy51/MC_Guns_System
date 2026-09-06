@@ -29,3 +29,4 @@ execute at @e[tag=mgs.element.special_spawn] run particle dust{color:[0.6,0.0,0.
 execute at @e[tag=mgs.element.door] run particle dust{color:[1.0,0.6,0.0],scale:1.0} ~ ~1 ~ 0.3 0.5 0.3 0 1 normal @a[scores={mgs.mp.map_edit=1},distance=..48]
 execute at @e[tag=mgs.element.trap] run particle dust{color:[1.0,0.2,0.2],scale:1.0} ~ ~1 ~ 0.3 0.5 0.3 0 1 normal @a[scores={mgs.mp.map_edit=1},distance=..48]
 
+## sourceMappingURL=particles.mcfunction.map

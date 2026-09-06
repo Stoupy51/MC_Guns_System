@@ -22,3 +22,4 @@ scoreboard players add #zb_spawn_batch mgs.data 1
 execute if score #zb_dog_round mgs.data matches 1 run scoreboard players set #zb_spawn_timer mgs.data 20
 execute if score #zb_dog_round mgs.data matches 1 run scoreboard players set #zb_spawn_batch mgs.data 1
 
+## sourceMappingURL=calc_spawn_timer.mcfunction.map

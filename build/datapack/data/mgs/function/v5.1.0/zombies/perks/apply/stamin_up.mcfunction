@@ -11,3 +11,4 @@ execute at @s run playsound mgs:zombies/perks/stamin_up ambient @s ~ ~ ~ 1.0 1.0
 tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],"🏃 ",{"translate":"mgs.stamin_up_sprint_longer_move_faster","color":"yellow"},[" ",{"text":"+5 XP","color":"gold"}]]
 function mgs:v5.1.0/progression/zb/award_perk
 
+## sourceMappingURL=stamin_up.mcfunction.map

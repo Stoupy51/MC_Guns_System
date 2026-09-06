@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "game_draw.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/multiplayer/game/tick.py"
+	],
+	"names": [],
+	"mappings": "AA+HmD;AACnD;;;;;;;AACA;AACA"
+}

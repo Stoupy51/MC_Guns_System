@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "create_sidebar_snd.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/multiplayer/game/sidebar.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AAsH4D;AAC5D;AACA;AACA"
+}

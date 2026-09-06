@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "coord_stick.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/map_editor/coord_stick.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AAoB+C;AAC/C;AACA;AACA;AACA;AACA"
+}

@@ -52,3 +52,4 @@ scoreboard players operation #damage mgs.data /= #1000 mgs.data
 scoreboard players set #is_headshot mgs.data 1
 execute at @s run function mgs:v5.1.0/raycast/apply_damage
 
+## sourceMappingURL=headshot_and_damage.mcfunction.map

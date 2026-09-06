@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "select_class.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/multiplayer/loadouts/class_selection.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;;;;;;;AA2DsD;AACtD;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

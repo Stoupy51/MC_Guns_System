@@ -11,3 +11,4 @@
 # Play the end reload sound for all nearby players
 $playsound mgs:$(playerend) player @a[distance=0.01..16] ~ ~ ~ 0.3
 
+## sourceMappingURL=player_end.mcfunction.map

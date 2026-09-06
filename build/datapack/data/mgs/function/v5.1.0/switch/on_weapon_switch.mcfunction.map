@@ -1,0 +1,11 @@
+{
+	"version": 3,
+	"file": "on_weapon_switch.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/weapon/ammo/switch.py",
+		"src/functional/weapon/ammo/magazine/core.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AAwCqD;AACrD;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;ACVA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

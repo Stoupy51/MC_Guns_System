@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "render_hover_title.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/objects/wallbuys/hover.py"
+	],
+	"names": [],
+	"mappings": ";;;;;AA0BiE;AACjE;AACA;AACA"
+}

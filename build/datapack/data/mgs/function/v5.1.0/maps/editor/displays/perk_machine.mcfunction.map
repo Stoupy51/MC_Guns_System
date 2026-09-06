@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "perk_machine.mcfunction",
+	"sourceRoot": "../../../../../../../../..",
+	"sources": [
+		"src/functional/map_editor/displays.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AA2D+D;AAC/D;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

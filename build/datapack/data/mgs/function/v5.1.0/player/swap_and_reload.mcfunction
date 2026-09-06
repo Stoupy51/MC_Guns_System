@@ -16,3 +16,4 @@ function mgs:v5.1.0/utils/copy_gun_data
 execute unless data storage mgs:gun all.stats.reload_time run return 0
 function mgs:v5.1.0/ammo/reload
 
+## sourceMappingURL=swap_and_reload.mcfunction.map

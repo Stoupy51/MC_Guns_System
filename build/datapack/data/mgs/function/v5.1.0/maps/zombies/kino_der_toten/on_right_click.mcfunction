@@ -14,3 +14,4 @@ execute if entity @s[tag=mgs.kino.meteorite_1] run return run function mgs:v5.1.
 execute if entity @s[tag=mgs.kino.meteorite_2] run return run function mgs:v5.1.0/maps/zombies/kino_der_toten/meteorite/on_click
 execute if entity @s[tag=mgs.kino.meteorite_3] run return run function mgs:v5.1.0/maps/zombies/kino_der_toten/meteorite/on_click
 
+## sourceMappingURL=on_right_click.mcfunction.map

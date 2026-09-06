@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "extract_mag_data.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/rewards/bonus.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;;AAkI4D;AAC5D;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

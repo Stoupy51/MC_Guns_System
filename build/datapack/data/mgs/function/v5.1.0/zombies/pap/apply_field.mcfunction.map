@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "apply_field.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/machines/pap/stats.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;AAqEqD;AACrD;AACA;AACA;AACA;AACA"
+}

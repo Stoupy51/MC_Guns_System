@@ -98,3 +98,4 @@ execute if score @s mgs.zb.bleed matches ..0 run function mgs:v5.1.0/zombies/rev
 # there is no hope of revive — end the suspense immediately
 execute if score #zb_reviving mgs.data matches 0 unless entity @a[scores={mgs.zb.in_game=1,mgs.zb.downed=0},gamemode=!spectator] run function mgs:v5.1.0/zombies/revive/bleed_out
 
+## sourceMappingURL=downed_tick.mcfunction.map

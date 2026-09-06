@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "on_remover_valid.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/objects/barricades/tick.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AAuFiE;AACjE;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

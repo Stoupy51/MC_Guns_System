@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "refill_already_full.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/objects/wallbuys/give.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;AAqGkE;AAClE;AACA;AACA"
+}

@@ -1,0 +1,11 @@
+{
+	"version": 3,
+	"file": "on_stuck_zombie.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/zombies/enemies/escort/start.py",
+		"src/functional/zombies/game/lifecycle/stuck.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;AAkCqD;AACrD;AACA;AACA;AACA;AACA;AACA;AACA;ACiCqD;AACrD;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

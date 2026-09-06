@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "annotate_int_delta.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/machines/pap/lore.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;AAkF4D;AAC5D;AACA;AACA;AACA;AACA"
+}

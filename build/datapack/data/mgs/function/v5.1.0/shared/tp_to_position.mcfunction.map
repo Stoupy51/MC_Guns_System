@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "tp_to_position.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/core/teleport.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;;;;;;;;AAQoD"
+}

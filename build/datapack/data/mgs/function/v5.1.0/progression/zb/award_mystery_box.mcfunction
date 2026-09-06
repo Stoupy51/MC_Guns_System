@@ -14,3 +14,4 @@ scoreboard players add @s mgs.zb.xp_prog 3
 scoreboard players add @s mgs.adv.zb.box 1
 function mgs:v5.1.0/progression/zb/settle
 
+## sourceMappingURL=award_mystery_box.mcfunction.map

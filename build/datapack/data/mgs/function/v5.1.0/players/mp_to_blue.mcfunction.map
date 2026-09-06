@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "mp_to_blue.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/core/player_menus.py"
+	],
+	"names": [],
+	"mappings": ";;;;;AAmJgD;AAChD;AACA;AACA;AACA;AACA;AACA;AACA"
+}

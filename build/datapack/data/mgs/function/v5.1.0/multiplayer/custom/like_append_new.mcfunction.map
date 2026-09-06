@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "like_append_new.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/multiplayer/loadouts/actions/likes.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AA6DgE;AAChE;AACA;AACA;AACA"
+}

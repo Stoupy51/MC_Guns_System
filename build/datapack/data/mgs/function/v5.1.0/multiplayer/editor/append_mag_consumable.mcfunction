@@ -14,3 +14,4 @@ execute store result storage mgs:temp _inv_n int 1 run scoreboard players get #i
 function mgs:v5.1.0/multiplayer/editor/append_mag_consumable_macro with storage mgs:temp
 scoreboard players add #inv_slot mgs.data 1
 
+## sourceMappingURL=append_mag_consumable.mcfunction.map

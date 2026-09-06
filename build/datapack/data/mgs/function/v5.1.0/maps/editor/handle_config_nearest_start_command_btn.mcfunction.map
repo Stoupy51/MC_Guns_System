@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "handle_config_nearest_start_command_btn.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/map_editor/config.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;;AAiE6E;AAC7E;AACA;AACA;AACA"
+}

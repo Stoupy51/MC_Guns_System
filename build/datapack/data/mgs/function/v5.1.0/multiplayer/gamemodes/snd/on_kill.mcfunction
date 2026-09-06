@@ -7,3 +7,4 @@
 scoreboard players add @s mgs.mp.kills 1
 # Remove snd_alive from dead player (dead players detected by death_count in on_respawn)
 
+## sourceMappingURL=on_kill.mcfunction.map

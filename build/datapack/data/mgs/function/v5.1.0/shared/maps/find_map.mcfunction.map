@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "find_map.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/core/map_loading.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;AAsBmD;AACnD;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

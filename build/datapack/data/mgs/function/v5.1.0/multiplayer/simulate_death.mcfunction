@@ -43,3 +43,4 @@ execute if score #mp_death_attacked mgs.data matches 0 run function mgs:v5.1.0/m
 # Enter death spectate (shared with vanilla-death on_respawn)
 function mgs:v5.1.0/multiplayer/enter_death_spectate
 
+## sourceMappingURL=simulate_death.mcfunction.map

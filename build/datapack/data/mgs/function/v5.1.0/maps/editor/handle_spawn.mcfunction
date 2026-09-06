@@ -35,3 +35,4 @@ execute if entity @s[tag=mgs.element.blue_spawn] run tellraw @a[tag=mgs.map_edit
 execute if entity @s[tag=mgs.element.general_spawn] run tellraw @a[tag=mgs.map_editor] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.general_spawn_placed","color":"yellow"}]
 execute if entity @s[tag=mgs.element.mission_spawn] run tellraw @a[tag=mgs.map_editor] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.mission_spawn_placed","color":"aqua"}]
 
+## sourceMappingURL=handle_spawn.mcfunction.map

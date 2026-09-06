@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "map_select.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/missions/menus.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AAqCiD;AACjD;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

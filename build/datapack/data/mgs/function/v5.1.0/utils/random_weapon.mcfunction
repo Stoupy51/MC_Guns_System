@@ -39,3 +39,4 @@ $execute if score #random mgs.data matches 29 run loot replace entity @s $(slot)
 $execute if score #random mgs.data matches 30 run loot replace entity @s $(slot) loot mgs:i/rpk
 $execute if score #random mgs.data matches 31 run loot replace entity @s $(slot) loot mgs:i/m249
 
+## sourceMappingURL=random_weapon.mcfunction.map

@@ -10,3 +10,4 @@
 
 $execute at @s run $(command)
 
+## sourceMappingURL=run_respawn_command.mcfunction.map

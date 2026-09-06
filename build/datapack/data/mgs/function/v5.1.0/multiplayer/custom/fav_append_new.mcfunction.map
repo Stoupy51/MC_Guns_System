@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "fav_append_new.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/multiplayer/loadouts/actions/favorites.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AAgE+D;AAC/D;AACA;AACA;AACA;AACA"
+}

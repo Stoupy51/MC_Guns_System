@@ -12,6 +12,7 @@ execute if score @s mgs.mp.in_game matches 1 if data storage mgs:multiplayer gam
 # Block shooting during zombies prep phase
 execute if score @s mgs.zb.in_game matches 1 if data storage mgs:zombies game{state:"preparing"} run return run scoreboard players set @s mgs.pending_clicks 0
 
+
 # Decrease pending clicks by 1
 scoreboard players remove @s mgs.pending_clicks 1
 
@@ -75,3 +76,4 @@ function mgs:v5.1.0/ammo/decrease
 # Advanced Playsound
 function mgs:v5.1.0/sound/main
 
+## sourceMappingURL=right_click.mcfunction.map

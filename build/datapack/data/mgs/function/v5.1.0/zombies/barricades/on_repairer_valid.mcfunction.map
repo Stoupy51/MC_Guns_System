@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "on_repairer_valid.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/objects/barricades/tick.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AAuLkE;AAClE;AACA;AACA;AACA;AACA;AACA"
+}

@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "hover_knife.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/objects/wallbuys/hover.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;;AA4D0D;AAC1D;AACA;AACA"
+}

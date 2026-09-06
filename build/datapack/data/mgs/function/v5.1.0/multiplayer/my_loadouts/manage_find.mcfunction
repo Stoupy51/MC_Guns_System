@@ -13,3 +13,4 @@ execute if score #entry_id mgs.data = #loadout_id mgs.data if score #entry_owner
 data remove storage mgs:temp _find_iter[0]
 execute if data storage mgs:temp _find_iter[0] run function mgs:v5.1.0/multiplayer/my_loadouts/manage_find
 
+## sourceMappingURL=manage_find.mcfunction.map

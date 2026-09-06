@@ -21,3 +21,4 @@ particle minecraft:large_smoke ~ ~0.5 ~ 0.4 0.4 0.4 0.02 6
 particle minecraft:crit ~ ~0.5 ~ 0.4 0.4 0.4 0.05 8
 playsound mgs:zombies/barricade/snap block @a[distance=..32] ~ ~ ~ 1.0 1.0
 
+## sourceMappingURL=destroy.mcfunction.map

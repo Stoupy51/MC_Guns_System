@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "store_name.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/objects/doors.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;;AA6OsD;AACtD;AACA"
+}

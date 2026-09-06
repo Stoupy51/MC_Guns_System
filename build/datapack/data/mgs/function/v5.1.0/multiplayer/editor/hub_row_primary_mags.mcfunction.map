@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "hub_row_primary_mags.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/multiplayer/loadouts/editor/hub.py"
+	],
+	"names": [],
+	"mappings": "AA2EC"
+}

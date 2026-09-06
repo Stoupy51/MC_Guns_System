@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "do_spawn_random.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/rewards/powerups/drops.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AAqG8D;AAC9D;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

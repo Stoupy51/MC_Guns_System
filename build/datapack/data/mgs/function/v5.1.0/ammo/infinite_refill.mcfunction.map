@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "infinite_refill.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/weapon/ammo/magazine/core.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AA2DkD;AAClD;AACA;AACA"
+}

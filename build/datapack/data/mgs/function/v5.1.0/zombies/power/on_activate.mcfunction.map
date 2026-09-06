@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "on_activate.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/objects/power.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AAuEuD;AACvD;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "summon_pos_at.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/machines/mystery_box/positions.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;;;AA8E+D;AAC/D;AACA"
+}

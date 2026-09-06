@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "cycle_step_one.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/machines/mystery_box/spin.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AA+CgE;AAChE;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

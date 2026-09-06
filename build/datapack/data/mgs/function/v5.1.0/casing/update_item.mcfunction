@@ -9,3 +9,4 @@
 data modify entity @s {} merge from storage mgs:temp casing
 tag @s remove mgs.new
 
+## sourceMappingURL=update_item.mcfunction.map

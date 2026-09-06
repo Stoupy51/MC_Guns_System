@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "run_start_commands.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/core/commands.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;;AAWwD;AACxD;AACA;AACA"
+}

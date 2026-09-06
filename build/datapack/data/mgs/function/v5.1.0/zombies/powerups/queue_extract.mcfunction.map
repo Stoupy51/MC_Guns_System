@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "queue_extract.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/rewards/powerups/drops.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;;AAsJ4D;AAC5D;AACA;AACA"
+}

@@ -21,3 +21,4 @@ function mgs:v5.1.0/zombies/barricades/freeze_zombies with storage mgs:temp _bti
 execute if score @s mgs.zb.barricade.r_timer matches 1.. run function mgs:v5.1.0/zombies/barricades/handle_removing with storage mgs:temp _btick
 execute if score @s mgs.zb.barricade.r_timer matches 0 if score @s mgs.zb.barricade.state matches 0 run function mgs:v5.1.0/zombies/barricades/find_remover with storage mgs:temp _btick
 
+## sourceMappingURL=intact_tick.mcfunction.map

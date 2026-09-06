@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "monkey_ride.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/enemies/escort/tick.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AAgGwD;AACxD;AACA;AACA"
+}

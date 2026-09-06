@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "player_wins.mcfunction",
+	"sourceRoot": "../../../../../../../../..",
+	"sources": [
+		"src/functional/multiplayer/gamemodes/base.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;;AAmCE;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA"
+}

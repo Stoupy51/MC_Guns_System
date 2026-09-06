@@ -24,3 +24,4 @@ $function mgs:v5.1.0/zombies/wallbuys/check_same_weapon_slot {slot:3,weapon_id:"
 $execute if score #wb_purchase_done mgs.data matches 0 if score #wb_same_weapon mgs.data matches 1 if score #wb_mag_not_full mgs.data matches 1 run function mgs:v5.1.0/zombies/wallbuys/reload_pair {hotbar:3,inventory:3,weapon_id:"$(weapon_id)",magazine_id:"$(magazine_id)"}
 execute if score #wb_purchase_done mgs.data matches 0 if score #wb_same_weapon mgs.data matches 1 if score #wb_mag_not_full mgs.data matches 0 run function mgs:v5.1.0/zombies/wallbuys/refill_already_full
 
+## sourceMappingURL=try_refill_owned.mcfunction.map

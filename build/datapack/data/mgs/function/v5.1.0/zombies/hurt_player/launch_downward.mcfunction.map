@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "launch_downward.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/player/hurt.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AAyCiE;AACjE;AACA;AACA;AACA;AACA;AACA"
+}

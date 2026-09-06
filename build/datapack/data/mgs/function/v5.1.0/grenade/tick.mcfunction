@@ -48,3 +48,4 @@ scoreboard players operation @s mgs.data -= #tick_delta mgs.data
 # If fuse expired, detonate
 execute if score @s mgs.data matches ..0 run function mgs:v5.1.0/grenade/detonate
 
+## sourceMappingURL=tick.mcfunction.map

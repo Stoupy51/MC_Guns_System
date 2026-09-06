@@ -19,3 +19,4 @@ execute as @a[scores={mgs.zb.in_game=1}] at @s run playsound mgs:zombies/powerup
 execute as @a[scores={mgs.zb.in_game=1}] run function mgs:v5.1.0/zombies/powerups/nuke_flash
 execute as @e[tag=mgs.nukable] at @s run function mgs:v5.1.0/zombies/powerups/nuke_fire_one
 
+## sourceMappingURL=nuke.mcfunction.map

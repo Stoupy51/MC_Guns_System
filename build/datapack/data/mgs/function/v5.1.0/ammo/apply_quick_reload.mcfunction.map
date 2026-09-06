@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "apply_quick_reload.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/weapon/ammo/magazine/reload.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AAqEqD;AACrD;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

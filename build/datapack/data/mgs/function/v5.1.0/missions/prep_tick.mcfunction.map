@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "prep_tick.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/missions/game/start.py"
+	],
+	"names": [],
+	"mappings": ";;;;;AA6HgD;AAChD;AACA;AACA;AACA"
+}

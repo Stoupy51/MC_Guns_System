@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "check_walk_arrived.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/enemies/escort/tick.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;;;;AA2F+D;AAC/D;AACA"
+}

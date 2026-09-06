@@ -9,3 +9,4 @@
 function mgs:v5.1.0/multiplayer/editor/clear_secondary
 function mgs:v5.1.0/multiplayer/editor/hub
 
+## sourceMappingURL=remove_secondary.mcfunction.map

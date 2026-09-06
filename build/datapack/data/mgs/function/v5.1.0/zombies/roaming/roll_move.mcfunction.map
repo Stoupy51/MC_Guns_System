@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "roll_move.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/enemies/roaming.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;AAqDuD;AACvD;AACA;AACA;AACA"
+}

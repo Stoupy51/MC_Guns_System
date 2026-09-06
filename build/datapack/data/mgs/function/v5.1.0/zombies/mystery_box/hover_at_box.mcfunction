@@ -14,3 +14,4 @@ execute if entity @n[tag=mgs.mb_display,distance=..3] if data storage mgs:temp _
 execute if entity @n[tag=mgs.mb_display,distance=..3] run return run function mgs:v5.1.0/zombies/mystery_box/hud_ready
 function mgs:v5.1.0/zombies/mystery_box/hud_price
 
+## sourceMappingURL=hover_at_box.mcfunction.map

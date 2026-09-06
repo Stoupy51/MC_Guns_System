@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "add_dps.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/weapon/hud/actionbar.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AAsJ+C;AAC/C;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

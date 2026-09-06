@@ -21,3 +21,4 @@ $loot replace entity @s hotbar.0 loot mgs:i/$(weapon_id)
 function mgs:v5.1.0/zombies/inventory/apply_slot_tag {slot:"hotbar.0",group:"hotbar",index:0}
 function mgs:v5.1.0/zombies/wallbuys/msg_purchased
 
+## sourceMappingURL=buy_knife.mcfunction.map

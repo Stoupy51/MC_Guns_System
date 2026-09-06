@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "retarget_lure.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/enemies/escort/targeting.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AAiC0D;AAC1D;AACA;AACA;AACA;AACA"
+}

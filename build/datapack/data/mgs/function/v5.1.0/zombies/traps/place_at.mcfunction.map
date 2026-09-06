@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "place_at.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/objects/traps/setup.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;;;;;AA0HoD;AACpD;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

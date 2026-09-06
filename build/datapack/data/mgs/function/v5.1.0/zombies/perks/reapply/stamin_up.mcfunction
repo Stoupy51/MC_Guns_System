@@ -11,3 +11,4 @@ attribute @s minecraft:movement_speed modifier add mgs:stamin_up 0.07 add_multip
 scoreboard players set @s mgs.stam_bonus 300
 scoreboard players add @s mgs.stam 300
 
+## sourceMappingURL=stamin_up.mcfunction.map

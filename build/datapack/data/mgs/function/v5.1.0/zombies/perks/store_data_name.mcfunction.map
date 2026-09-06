@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "store_data_name.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/machines/perks/setup.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;AAuJ2D;AAC3D;AACA"
+}

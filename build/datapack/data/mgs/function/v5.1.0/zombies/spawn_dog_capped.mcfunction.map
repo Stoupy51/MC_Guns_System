@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "spawn_dog_capped.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/zombies/game/round/spawning.py"
+	],
+	"names": [],
+	"mappings": ";;;;;AAsIsD;AACtD;AACA;AACA;AACA;AACA;AACA;AACA"
+}

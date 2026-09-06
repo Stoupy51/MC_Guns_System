@@ -28,3 +28,4 @@ execute if score #dom_red mgs.data matches 1.. unless score #dom_blue mgs.data m
 # If only blue present: progress toward blue (decrease toward -100)
 execute if score #dom_blue mgs.data matches 1.. unless score #dom_red mgs.data matches 1.. run function mgs:v5.1.0/multiplayer/gamemodes/dom/capture_blue
 
+## sourceMappingURL=point_tick.mcfunction.map

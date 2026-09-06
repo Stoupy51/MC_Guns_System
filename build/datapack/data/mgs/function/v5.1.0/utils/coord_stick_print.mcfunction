@@ -12,3 +12,4 @@
 
 $tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"text":"positioned ~$(x) ~$(y) ~$(z)","color":"aqua","click_event":{"action":"copy_to_clipboard","value":"positioned ~$(x) ~$(y) ~$(z)"},"hover_event":{"action":"show_text","value":"Click to copy"}}]
 
+## sourceMappingURL=coord_stick_print.mcfunction.map

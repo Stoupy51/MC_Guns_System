@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "set_model_override.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/weapon/grenade/throw.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;;AAsGwD;AACxD;AACA"
+}

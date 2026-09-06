@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "actual_respawn.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/missions/game/death.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AA8EqD;AACrD;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

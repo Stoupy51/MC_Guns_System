@@ -15,3 +15,4 @@ scoreboard players add @s mgs.zb.downs 1
 # Enter downed state (revive system)
 function mgs:v5.1.0/zombies/revive/on_down
 
+## sourceMappingURL=on_respawn.mcfunction.map

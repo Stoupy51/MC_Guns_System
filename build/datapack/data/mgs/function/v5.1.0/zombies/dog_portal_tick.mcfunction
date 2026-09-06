@@ -25,3 +25,4 @@ execute if score #zb_portal_mod mgs.data matches 0 run playsound minecraft:block
 scoreboard players remove @s mgs.zb.rise_tick 1
 execute if score @s mgs.zb.rise_tick matches ..0 run function mgs:v5.1.0/zombies/dog_portal_strike
 
+## sourceMappingURL=dog_portal_tick.mcfunction.map

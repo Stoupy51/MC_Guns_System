@@ -13,3 +13,4 @@ execute as @n[tag=mgs.nuked,sort=random] at @s run function mgs:v5.1.0/zombies/b
 # Continue loop if more nuked entities exist
 execute if entity @e[tag=mgs.nuked] run schedule function mgs:v5.1.0/zombies/bonus/nuke_loop 1t
 
+## sourceMappingURL=nuke_loop.mcfunction.map

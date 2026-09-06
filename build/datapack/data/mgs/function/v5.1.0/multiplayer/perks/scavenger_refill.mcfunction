@@ -49,3 +49,4 @@ execute if items entity @s player.crafting.3 *[custom_data~{mgs:{magazine:true}}
 
 function mgs:v5.1.0/ammo/compute_reserve
 
+## sourceMappingURL=scavenger_refill.mcfunction.map

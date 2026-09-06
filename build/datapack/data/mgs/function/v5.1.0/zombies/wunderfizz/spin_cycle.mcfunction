@@ -28,3 +28,4 @@ execute if score #wf_roll mgs.data matches 13 run data modify entity @s item set
 particle minecraft:electric_spark ~ ~ ~ 0.25 0.3 0.25 0.05 3 force @a[distance=..32]
 playsound minecraft:block.conduit.ambient.short ambient @a[scores={mgs.zb.in_game=1}] ~ ~ ~ 0.5 1.4
 
+## sourceMappingURL=spin_cycle.mcfunction.map

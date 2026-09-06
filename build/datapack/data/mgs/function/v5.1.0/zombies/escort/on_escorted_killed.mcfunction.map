@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "on_escorted_killed.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/enemies/escort/end.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AAmE+D;AAC/D;AACA;AACA;AACA"
+}

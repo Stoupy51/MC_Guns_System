@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "on_bounce.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/weapon/grenade/flight.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AAiFA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

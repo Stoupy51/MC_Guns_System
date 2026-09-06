@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "retarget_monkey.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/enemies/escort/targeting.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AAyC4D;AAC5D;AACA;AACA;AACA;AACA"
+}

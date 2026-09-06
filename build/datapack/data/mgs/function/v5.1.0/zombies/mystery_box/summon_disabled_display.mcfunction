@@ -12,3 +12,4 @@ data modify storage mgs:temp _mb_dis.yaw set from entity @s Rotation[0]
 execute unless entity @s[tag=mgs.roam_hidden] run function mgs:v5.1.0/zombies/mystery_box/summon_disabled_at with storage mgs:temp _mb_dis
 execute if entity @s[tag=mgs.roam_hidden] positioned ~ ~512 ~ run function mgs:v5.1.0/zombies/mystery_box/summon_disabled_at with storage mgs:temp _mb_dis
 
+## sourceMappingURL=summon_disabled_display.mcfunction.map

@@ -34,3 +34,4 @@ execute unless data storage mgs:temp editor{perks:["quick_fix"]} run data modify
 
 function mgs:v5.1.0/multiplayer/show_dialog with storage mgs:temp
 
+## sourceMappingURL=show_perks_dialog.mcfunction.map

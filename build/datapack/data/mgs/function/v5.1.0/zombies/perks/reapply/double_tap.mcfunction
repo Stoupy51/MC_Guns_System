@@ -9,3 +9,4 @@
 
 scoreboard players set @s mgs.special.additional_shots 1
 
+## sourceMappingURL=double_tap.mcfunction.map

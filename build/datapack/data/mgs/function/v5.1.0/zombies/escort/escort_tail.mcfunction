@@ -20,3 +20,4 @@ execute if score #zb_esc_mod mgs.data matches 0 as @n[type=minecraft:wandering_t
 # Watchdog every second: a trader that can't move is caught in 5s, not 45s
 execute if score #zb_esc_mod mgs.data matches 0 run function mgs:v5.1.0/zombies/escort/watchdog
 
+## sourceMappingURL=escort_tail.mcfunction.map

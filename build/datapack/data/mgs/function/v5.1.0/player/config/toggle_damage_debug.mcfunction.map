@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "toggle_damage_debug.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/player_config.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AAqOiE;AACjE;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

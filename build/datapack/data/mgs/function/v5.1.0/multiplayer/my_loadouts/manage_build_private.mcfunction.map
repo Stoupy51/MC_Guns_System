@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "manage_build_private.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/multiplayer/loadouts/browsing/my_loadouts.py"
+	],
+	"names": [],
+	"mappings": "AAqQ0E;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;AAC1E;AACA"
+}

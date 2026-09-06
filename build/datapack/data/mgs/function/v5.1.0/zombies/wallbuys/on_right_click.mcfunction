@@ -49,3 +49,4 @@ execute if score #wb_purchase_mode mgs.data matches 4 run function mgs:v5.1.0/zo
 execute if score #wb_purchase_mode mgs.data matches 1..3 run function mgs:v5.1.0/utils/copy_gun_data
 execute if score #wb_purchase_mode mgs.data matches 1..3 run function mgs:v5.1.0/ammo/compute_reserve
 
+## sourceMappingURL=on_right_click.mcfunction.map

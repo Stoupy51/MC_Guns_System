@@ -10,3 +10,4 @@
 execute store result score #hp mgs.data run data get entity @s Health 1
 execute if score #hp mgs.data matches ..10 run function mgs:v5.1.0/zombies/perks/trigger_coward
 
+## sourceMappingURL=check_coward.mcfunction.map

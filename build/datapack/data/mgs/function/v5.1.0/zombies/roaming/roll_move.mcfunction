@@ -11,3 +11,4 @@ scoreboard players set #roam_will_move mgs.data 0
 execute if score #roam_uses mgs.data >= #roam_threshold mgs.data store result score #roam_move_roll mgs.data run random value 0..2
 execute if score #roam_uses mgs.data >= #roam_threshold mgs.data if score #roam_move_roll mgs.data matches 0 run scoreboard players set #roam_will_move mgs.data 1
 
+## sourceMappingURL=roll_move.mcfunction.map

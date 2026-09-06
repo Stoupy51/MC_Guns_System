@@ -17,3 +17,4 @@ execute if score #has_vehicle mgs.data matches 1 if score #random mgs.data match
 execute if score #has_vehicle mgs.data matches 1 if score #random mgs.data matches 4 run rotate @s ~0.039 ~-0.975
 execute if score #has_vehicle mgs.data matches 1 if score #random mgs.data matches 5 run rotate @s ~0.0845 ~-0.975
 
+## sourceMappingURL=type_3_ds.mcfunction.map

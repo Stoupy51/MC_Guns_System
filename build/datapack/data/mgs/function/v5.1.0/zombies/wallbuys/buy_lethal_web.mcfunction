@@ -15,3 +15,4 @@ item modify entity @s hotbar.7 mgs:v5.1.0/grenade/set_count_4
 function mgs:v5.1.0/zombies/inventory/apply_slot_tag {slot:"hotbar.7",group:"hotbar",index:7}
 function mgs:v5.1.0/zombies/wallbuys/msg_purchased
 
+## sourceMappingURL=buy_lethal_web.mcfunction.map

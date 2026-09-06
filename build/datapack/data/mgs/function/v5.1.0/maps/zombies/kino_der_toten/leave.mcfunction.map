@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "leave.mcfunction",
+	"sourceRoot": "../../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/maps.py"
+	],
+	"names": [],
+	"mappings": ";;;;;AAoF+D;AAC/D;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

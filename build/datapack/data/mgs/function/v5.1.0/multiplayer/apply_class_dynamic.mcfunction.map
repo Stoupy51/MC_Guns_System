@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "apply_class_dynamic.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/multiplayer/loadout.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;AAyD6D;AAC7D;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

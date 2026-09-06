@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "pap_chat_lore_iter.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/machines/pap/chat.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AAgB4D;AAC5D;AACA;AACA"
+}

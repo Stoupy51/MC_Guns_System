@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "exit.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/map_editor/exit.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;AAa8C;AAC9C;AACA;AACA;AACA"
+}

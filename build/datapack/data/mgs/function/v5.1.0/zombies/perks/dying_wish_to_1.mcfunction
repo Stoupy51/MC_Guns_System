@@ -10,3 +10,4 @@ execute store result storage mgs:temp _dw_dmg.amount double 0.001 run scoreboard
 data modify storage mgs:temp _dw_dmg.type set value "minecraft:generic_kill"
 function mgs:v5.1.0/zombies/traps/apply_trap_damage with storage mgs:temp _dw_dmg
 
+## sourceMappingURL=dying_wish_to_1.mcfunction.map

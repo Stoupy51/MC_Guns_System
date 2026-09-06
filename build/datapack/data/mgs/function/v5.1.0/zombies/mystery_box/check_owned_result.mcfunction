@@ -16,3 +16,4 @@ $execute if items entity @s hotbar.6 *[custom_data~{mgs:{gun:true,stats:{base_we
 # Also treat as owned if Ray Gun cap (max 2 players) is reached and result is Ray Gun (special case to limit 2 Ray Guns per game)
 execute if score #mb_owned mgs.data matches 0 run function mgs:v5.1.0/zombies/mystery_box/check_ray_gun_cap
 
+## sourceMappingURL=check_owned_result.mcfunction.map

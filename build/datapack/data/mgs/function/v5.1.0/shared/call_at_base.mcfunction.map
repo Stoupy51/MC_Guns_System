@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "call_at_base.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/core/commands.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;;;;AAgEkD;AAClD;AACA"
+}

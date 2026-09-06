@@ -24,3 +24,4 @@ scoreboard players set @n[tag=mgs.drop_new] mgs.drop_timer 600
 execute as @n[tag=mgs.drop_new] run function #bs.interaction:on_right_click {run:"function mgs:v5.1.0/shared/drops/pickup",executor:"source"}
 tag @n[tag=mgs.drop_new] remove mgs.drop_new
 
+## sourceMappingURL=spawn.mcfunction.map

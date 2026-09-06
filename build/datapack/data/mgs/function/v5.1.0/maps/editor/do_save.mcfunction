@@ -34,3 +34,4 @@ execute if score @s mgs.mp.map_mode matches 2 run function mgs:v5.1.0/maps/edito
 # Write back to storage
 function mgs:v5.1.0/maps/editor/write_back with storage mgs:temp map_edit
 
+## sourceMappingURL=do_save.mcfunction.map

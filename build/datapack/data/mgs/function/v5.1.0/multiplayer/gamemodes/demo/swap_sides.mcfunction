@@ -11,3 +11,4 @@ execute unless score #demo_attackers mgs.data matches 2 run scoreboard players s
 tellraw @a [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"text":"⚔ ","color":"white"},{"translate":"mgs.sides_swapped","color":"gold"}]
 playsound minecraft:block.note_block.xylophone player @a ~ ~ ~ 1 1.0
 
+## sourceMappingURL=swap_sides.mcfunction.map

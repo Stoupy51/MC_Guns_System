@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "buy_knife.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/objects/wallbuys/purchase.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;;AAiEwD;AACxD;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

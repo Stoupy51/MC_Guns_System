@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "commit_check.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/multiplayer/loadouts/editor/state.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;;;;;;;;;AAyE6D;AAC7D;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

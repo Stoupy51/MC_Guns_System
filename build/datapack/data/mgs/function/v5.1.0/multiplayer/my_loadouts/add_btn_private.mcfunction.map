@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "add_btn_private.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/multiplayer/loadouts/browsing/my_loadouts.py"
+	],
+	"names": [],
+	"mappings": "AAiMA"
+}

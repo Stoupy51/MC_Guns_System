@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "spin_cycle.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/machines/wunderfizz/spin.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AA6I2D;AAC3D;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

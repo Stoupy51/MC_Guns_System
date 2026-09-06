@@ -124,3 +124,4 @@ function mgs:v5.1.0/multiplayer/editor/save_state with storage mgs:temp
 # Reset score
 scoreboard players set @s mgs.player.config 0
 
+## sourceMappingURL=process.mcfunction.map

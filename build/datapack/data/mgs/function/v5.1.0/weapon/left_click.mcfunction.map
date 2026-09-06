@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "left_click.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/weapon/firing/left_click.py"
+	],
+	"names": [],
+	"mappings": ";;;;;AA4C+C;AAC/C;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

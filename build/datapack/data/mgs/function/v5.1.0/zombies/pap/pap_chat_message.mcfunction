@@ -13,3 +13,4 @@ scoreboard players remove #pap_lore_len mgs.data 2
 scoreboard players set #pap_li mgs.data 0
 execute if score #pap_li mgs.data < #pap_lore_len mgs.data run function mgs:v5.1.0/zombies/pap/pap_chat_lore_loop
 
+## sourceMappingURL=pap_chat_message.mcfunction.map

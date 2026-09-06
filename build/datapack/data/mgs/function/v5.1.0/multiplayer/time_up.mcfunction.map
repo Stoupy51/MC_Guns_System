@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "time_up.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/multiplayer/game/tick.py"
+	],
+	"names": [],
+	"mappings": ";;;;;AAwGiD;AACjD;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

@@ -9,3 +9,4 @@ execute at @s run playsound mgs:zombies/perks/double_tap ambient @s ~ ~ ~ 1.0 1.
 tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],"🔥 ",{"translate":"mgs.double_tap_more_damage","color":"gold"},[" ",{"text":"+5 XP","color":"gold"}]]
 function mgs:v5.1.0/progression/zb/award_perk
 
+## sourceMappingURL=double_tap.mcfunction.map

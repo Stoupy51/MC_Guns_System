@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "process_vectors.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/weapon/firing/casing.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AA4EoD;AACpD;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

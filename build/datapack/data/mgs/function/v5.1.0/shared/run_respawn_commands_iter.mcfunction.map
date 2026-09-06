@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "run_respawn_commands_iter.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/core/commands.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;AA+C+D;AAC/D;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

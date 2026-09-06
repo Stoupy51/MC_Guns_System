@@ -14,3 +14,4 @@ function mgs:v5.1.0/zombies/mystery_box/read_location_name_at with storage mgs:t
 # An unnamed spot stores "", which must read the same as having no name at all
 execute if data storage mgs:zombies mystery_box{current_name:""} run data remove storage mgs:zombies mystery_box.current_name
 
+## sourceMappingURL=read_location_name.mcfunction.map

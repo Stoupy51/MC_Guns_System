@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "sync_visibility.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/machines/wunderfizz/setup.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;AAiIgE;AAChE;AACA"
+}

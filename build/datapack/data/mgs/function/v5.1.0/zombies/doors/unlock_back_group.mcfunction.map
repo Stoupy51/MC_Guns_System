@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "unlock_back_group.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/objects/doors.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AA+N6D;AAC7D;AACA;AACA"
+}

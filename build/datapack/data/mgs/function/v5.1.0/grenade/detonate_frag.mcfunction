@@ -54,3 +54,4 @@ tag @e[tag=mgs.temp_shooter] remove mgs.temp_shooter
 # Delete the grenade
 function mgs:v5.1.0/grenade/delete
 
+## sourceMappingURL=detonate_frag.mcfunction.map

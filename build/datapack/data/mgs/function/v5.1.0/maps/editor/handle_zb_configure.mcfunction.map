@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "handle_zb_configure.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/map_editor/zb_config.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AAuE6D;AAC7D;AACA;AACA;AACA"
+}

@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "load_player_favorites.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/multiplayer/loadouts/browsing/favorites.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;;;;AAasE;AACtE;AACA;AACA;AACA;AACA;AACA"
+}

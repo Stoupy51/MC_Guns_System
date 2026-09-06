@@ -9,3 +9,4 @@
 tellraw @a [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],["",{"text":"[","color":"dark_gray"},{"score":{"name":"@s","objective":"mgs.zb.xp_level"},"color":"gold"},{"text":"] ","color":"dark_gray"},{"selector":"@s","color":"yellow"}],[{"text":" ","color":"green"}, {"translate":"mgs.chipped_in"}],{"score":{"name":"#door_price","objective":"mgs.data"},"color":"yellow"},[{"text":" ","color":"green"}, {"translate":"mgs.points_for"}],{"storage":"mgs:temp","nbt":"_door_hover_name","color":"gold","interpret":true},{"text":"  (","color":"gray"},{"score":{"name":"#door_paid","objective":"mgs.data"},"color":"green"},{"text":"/","color":"gray"},{"score":{"name":"#door_total","objective":"mgs.data"},"color":"yellow"},{"text":")","color":"gray"}]
 playsound minecraft:block.note_block.bit ambient @a[scores={mgs.zb.in_game=1}] ~ ~ ~ 0.6 0.9
 
+## sourceMappingURL=announce_progress.mcfunction.map

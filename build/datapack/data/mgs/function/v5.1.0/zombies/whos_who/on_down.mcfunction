@@ -65,3 +65,4 @@ title @s title ["👥"]
 title @s subtitle [{"translate":"mgs.whos_who_revive_your_body_or_fight_on","color":"dark_aqua"}]
 tellraw @a[scores={mgs.zb.in_game=1}] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],["",{"text":"[","color":"dark_gray"},{"score":{"name":"@s","objective":"mgs.zb.xp_level"},"color":"gold"},{"text":"] ","color":"dark_gray"},{"selector":"@s","color":"aqua"}],{"translate":"mgs.went_down_but_plays_on_as_a_doppelganger","color":"gray"}]
 
+## sourceMappingURL=on_down.mcfunction.map

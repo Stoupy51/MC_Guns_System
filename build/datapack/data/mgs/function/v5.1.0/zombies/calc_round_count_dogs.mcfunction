@@ -19,3 +19,4 @@ scoreboard players add #zb_dog_cap mgs.data 2
 # Arm this round's guaranteed Max Ammo
 scoreboard players set #zb_dog_ammo_done mgs.data 0
 
+## sourceMappingURL=calc_round_count_dogs.mcfunction.map

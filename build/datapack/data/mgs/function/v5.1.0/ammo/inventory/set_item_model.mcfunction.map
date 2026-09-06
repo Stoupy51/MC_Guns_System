@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "set_item_model.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/weapon/ammo/magazine/consume.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;;;AA+E2D;AAC3D;AACA"
+}

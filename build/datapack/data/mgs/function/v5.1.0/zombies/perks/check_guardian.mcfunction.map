@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "check_guardian.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/player/ability.py"
+	],
+	"names": [],
+	"mappings": ";;;;;AAuI0D;AAC1D;AACA;AACA"
+}

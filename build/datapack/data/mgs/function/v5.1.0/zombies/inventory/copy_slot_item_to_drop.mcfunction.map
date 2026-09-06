@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "copy_slot_item_to_drop.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/player/inventory/slots.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;;AAgJsE;AACtE;AACA;AACA;AACA;AACA;AACA"
+}

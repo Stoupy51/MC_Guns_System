@@ -16,3 +16,4 @@ execute if data entity @s data.block_enabled run data modify storage mgs:temp _e
 
 execute align xyz positioned ~.5 ~.5 ~.5 run function mgs:v5.1.0/maps/editor/displays/summon_barricade with storage mgs:temp _ed_bar
 
+## sourceMappingURL=barricade.mcfunction.map

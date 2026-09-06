@@ -27,3 +27,4 @@ execute if score #kino_tp_state mgs.data matches 6 run scoreboard players operat
 execute if score #kino_tp_state mgs.data matches 6 if score #kino_prev_t mgs.data matches 2.. if score #kino_tp_cd mgs.data matches ..1 run tellraw @a [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.the_teleporter_is_ready_to_use_again","color":"green"}]
 execute if score #kino_tp_state mgs.data matches 6 if score #kino_tp_cd mgs.data matches ..0 run scoreboard players set #kino_tp_state mgs.data 0
 
+## sourceMappingURL=tick.mcfunction.map

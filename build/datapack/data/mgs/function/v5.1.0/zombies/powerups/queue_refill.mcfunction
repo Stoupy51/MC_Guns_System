@@ -28,3 +28,4 @@ execute if score #zb_round mgs.data matches 6.. if score #pu_rare_roll_10 mgs.da
 execute if score #zb_round mgs.data matches 6.. store result score #pu_rare_roll_11 mgs.data run random value 1..100
 execute if score #zb_round mgs.data matches 6.. if score #pu_rare_roll_11 mgs.data matches 1..25 run data modify storage mgs:data _pu_queue append value 11
 
+## sourceMappingURL=queue_refill.mcfunction.map

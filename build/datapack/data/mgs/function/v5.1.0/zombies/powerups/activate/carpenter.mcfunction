@@ -11,3 +11,4 @@ execute as @a[scores={mgs.zb.in_game=1}] at @s run playsound mgs:zombies/powerup
 scoreboard players add @a[scores={mgs.zb.in_game=1}] mgs.zb.points 200
 scoreboard players add @a[scores={mgs.zb.in_game=1,mgs.special.double_points=1..}] mgs.zb.points 200
 
+## sourceMappingURL=carpenter.mcfunction.map

@@ -43,3 +43,4 @@ scoreboard players remove #pu_active mgs.data 1
 # Clean up the collector tag so other pickups can proceed
 tag @a[tag=mgs.pu_collecting] remove mgs.pu_collecting
 
+## sourceMappingURL=do_pickup.mcfunction.map

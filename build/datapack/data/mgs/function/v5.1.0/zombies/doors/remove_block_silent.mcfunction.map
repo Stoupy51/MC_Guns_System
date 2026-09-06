@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "remove_block_silent.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/objects/doors.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;;;AA0N+D;AAC/D;AACA"
+}

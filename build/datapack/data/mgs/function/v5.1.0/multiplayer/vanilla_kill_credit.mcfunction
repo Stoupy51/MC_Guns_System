@@ -14,3 +14,4 @@ execute as @a[tag=mgs.temp_killer] run function #mgs:signals/on_kill
 scoreboard players set #mp_kill_headshot mgs.data 0
 function mgs:v5.1.0/multiplayer/random_kill_message
 
+## sourceMappingURL=vanilla_kill_credit.mcfunction.map

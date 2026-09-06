@@ -21,3 +21,4 @@ execute unless score @s mgs.zb.vox_attack > #total_tick mgs.data run function mg
 # Widow's Wine passive: consume a web grenade and burst webbing around the hurt owner.
 execute if score @s mgs.special.widows_wine matches 1 run function mgs:v5.1.0/zombies/perks/widows_on_hurt
 
+## sourceMappingURL=on_hurt.mcfunction.map

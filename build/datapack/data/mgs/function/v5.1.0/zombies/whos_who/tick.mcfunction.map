@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "tick.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/player/whos_who.py"
+	],
+	"names": [],
+	"mappings": ";;;;;AAyHmD;AACnD;AACA"
+}

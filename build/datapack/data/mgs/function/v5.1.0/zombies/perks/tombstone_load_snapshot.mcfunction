@@ -11,3 +11,4 @@
 $data modify storage mgs:temp _restore.items set from storage mgs:zombies tombstone_inv."$(id)"
 $data remove storage mgs:zombies tombstone_inv."$(id)"
 
+## sourceMappingURL=tombstone_load_snapshot.mcfunction.map

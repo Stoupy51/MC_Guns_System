@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "check_light.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/objects/barricades/lighting.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;;;;;;AAe4D;AAC5D;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

@@ -17,3 +17,4 @@ tag @a remove mgs.snd_carrier
 tag @a remove mgs.snd_alive
 scoreboard players set #snd_round_active mgs.data 0
 
+## sourceMappingURL=cleanup.mcfunction.map

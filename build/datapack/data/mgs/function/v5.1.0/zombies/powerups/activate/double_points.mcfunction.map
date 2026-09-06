@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "double_points.mcfunction",
+	"sourceRoot": "../../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/rewards/powerups/effects.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AA2BiE;AACjE;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

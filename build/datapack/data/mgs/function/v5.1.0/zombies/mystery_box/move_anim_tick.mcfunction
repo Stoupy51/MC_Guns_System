@@ -29,3 +29,4 @@ execute if score #mb_move_timer mgs.data matches 1..69 run function mgs:v5.1.0/z
 # Land: finalize
 execute if score #mb_move_timer mgs.data matches 0 run function mgs:v5.1.0/zombies/mystery_box/move_anim_land
 
+## sourceMappingURL=move_anim_tick.mcfunction.map

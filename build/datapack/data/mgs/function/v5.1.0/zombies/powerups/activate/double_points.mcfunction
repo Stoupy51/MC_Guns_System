@@ -16,3 +16,4 @@ bossbar set mgs:pu_double_points style progress
 bossbar set mgs:pu_double_points players @a[scores={mgs.zb.in_game=1}]
 execute as @a[scores={mgs.zb.in_game=1}] at @s run playsound mgs:zombies/powerups/double_points ambient @s ~ ~ ~ 1.0 1.0
 
+## sourceMappingURL=double_points.mcfunction.map

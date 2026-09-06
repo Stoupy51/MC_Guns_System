@@ -21,3 +21,4 @@ execute if score @s mgs.special.deadshot matches 1 run return run function mgs:v
 # Switch case
 function mgs:v5.1.0/kicks/apply
 
+## sourceMappingURL=main.mcfunction.map

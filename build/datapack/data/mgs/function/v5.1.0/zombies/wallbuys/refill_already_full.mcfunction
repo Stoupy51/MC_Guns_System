@@ -8,3 +8,4 @@
 scoreboard players set #wb_purchase_done mgs.data 1
 scoreboard players set #wb_purchase_mode mgs.data 4
 
+## sourceMappingURL=refill_already_full.mcfunction.map

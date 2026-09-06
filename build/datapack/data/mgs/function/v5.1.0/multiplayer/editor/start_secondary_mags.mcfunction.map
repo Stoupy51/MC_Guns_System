@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "start_secondary_mags.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/multiplayer/loadouts/editor/save.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AA2QqE;AACrE;AACA;AACA;AACA"
+}

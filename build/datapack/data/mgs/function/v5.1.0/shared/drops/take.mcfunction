@@ -12,3 +12,4 @@ playsound minecraft:entity.item.pickup player @a[distance=..24] ~ ~ ~
 kill @n[type=minecraft:item_display,tag=mgs.dropped_gun,distance=..3]
 kill @e[tag=bs.interaction.target]
 
+## sourceMappingURL=take.mcfunction.map

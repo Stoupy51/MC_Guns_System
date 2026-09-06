@@ -12,3 +12,4 @@ $item replace entity @s contents from entity @p[tag=mgs.pap_extracting_mag] $(sl
 data modify storage mgs:temp refill.mag_model set from entity @s item.components."minecraft:item_model"
 kill @s
 
+## sourceMappingURL=extract_mag_model.mcfunction.map

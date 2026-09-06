@@ -18,3 +18,4 @@ execute store success score #ed_ok mgs.data run function mgs:v5.1.0/multiplayer/
 # Continue to camo either way (a denied scope simply stays on iron sights)
 function mgs:v5.1.0/multiplayer/editor/show_secondary_camo_dialog
 
+## sourceMappingURL=pick_secondary_scope.mcfunction.map

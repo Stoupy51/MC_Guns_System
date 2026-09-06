@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "expire.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/rewards/powerups/spawn.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AAmFqD;AACrD;AACA;AACA;AACA"
+}

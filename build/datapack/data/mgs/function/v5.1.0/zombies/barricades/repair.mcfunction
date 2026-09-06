@@ -23,3 +23,4 @@ execute as @e[tag=mgs.barricade_removing] if score @s mgs.zb.barricade.removing_
 particle minecraft:happy_villager ~ ~1 ~ 0.5 0.5 0.5 0 10
 playsound mgs:zombies/barricade/slam block @a[distance=..32] ~ ~ ~ 1.0 1.0
 
+## sourceMappingURL=repair.mcfunction.map

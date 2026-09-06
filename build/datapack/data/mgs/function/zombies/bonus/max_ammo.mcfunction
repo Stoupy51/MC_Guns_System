@@ -62,3 +62,4 @@ function mgs:v5.1.0/zombies/bonus/max_ammo_grenades
 # Recompute reserve ammo display after refilling all magazines
 function mgs:v5.1.0/ammo/compute_reserve
 
+## sourceMappingURL=max_ammo.mcfunction.map

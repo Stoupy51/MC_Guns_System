@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "door_apply_field.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/map_editor/doors.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;;AAyB0D;AAC1D;AACA"
+}

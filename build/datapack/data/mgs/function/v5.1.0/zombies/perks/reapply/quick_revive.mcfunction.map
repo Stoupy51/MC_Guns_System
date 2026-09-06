@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "quick_revive.mcfunction",
+	"sourceRoot": "../../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/machines/perks/tombstone.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;;AAkCG"
+}

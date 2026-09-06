@@ -32,3 +32,4 @@ data remove storage mgs:temp _base_preserve
 # Announce
 execute as @a[tag=mgs.map_editor] run tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.base_coordinates_set","color":"light_purple"}]
 
+## sourceMappingURL=handle_base.mcfunction.map

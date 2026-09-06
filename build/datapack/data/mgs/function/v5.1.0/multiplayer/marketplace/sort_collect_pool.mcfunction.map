@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "sort_collect_pool.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/multiplayer/loadouts/browsing/marketplace.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;AA4IuE;AACvE;AACA;AACA;AACA;AACA;AACA"
+}

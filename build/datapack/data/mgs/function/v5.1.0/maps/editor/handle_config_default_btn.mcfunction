@@ -10,3 +10,4 @@
 
 $tellraw @p[tag=mgs.map_editor,distance=..6,sort=nearest] ["    ",{"translate":"mgs.edit_function","color":"aqua","click_event":{"action":"suggest_command","command":"/data modify storage mgs:temp map_edit.map.default_enemy_function set value \"$(default_fn)\""},"hover_event":{"action":"show_text","value":"Click to edit the default spawn function for new enemies"}}]
 
+## sourceMappingURL=handle_config_default_btn.mcfunction.map

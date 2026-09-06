@@ -44,3 +44,4 @@ execute if score #ed_ok mgs.data matches 0 run return run function mgs:v5.1.0/mu
 # Overkill secondaries keep iron sights; go straight to camo
 function mgs:v5.1.0/multiplayer/editor/show_secondary_camo_dialog
 
+## sourceMappingURL=pick_overkill_secondary.mcfunction.map

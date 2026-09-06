@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "deny_hold_valid_slot.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/objects/wallbuys/give.py"
+	],
+	"names": [],
+	"mappings": "AAwNmE;AACnE;AACA;;;;;;AACA;AACA"
+}

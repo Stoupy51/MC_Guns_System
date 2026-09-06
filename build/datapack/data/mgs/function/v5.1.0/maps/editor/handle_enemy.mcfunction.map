@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "handle_enemy.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/map_editor/handlers.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AA0GsD;AACtD;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

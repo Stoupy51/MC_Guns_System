@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "horde_behind.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/enemies/vocals.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AAoJyD;AACzD;AACA;AACA"
+}

@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "remove_primary.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/multiplayer/loadouts/editor/weapons.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AA2L+D;AAC/D;AACA;AACA"
+}

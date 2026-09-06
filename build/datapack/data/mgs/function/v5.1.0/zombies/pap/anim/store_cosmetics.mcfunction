@@ -11,3 +11,4 @@
 
 $data modify storage mgs:zombies pap_pending_cosmetics."$(id)" set from storage mgs:temp _pap_cosm_store
 
+## sourceMappingURL=store_cosmetics.mcfunction.map

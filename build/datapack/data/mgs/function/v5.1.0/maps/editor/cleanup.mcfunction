@@ -18,3 +18,4 @@ tag @s remove mgs.map_editor
 # Clear editor tools
 clear @s
 
+## sourceMappingURL=cleanup.mcfunction.map

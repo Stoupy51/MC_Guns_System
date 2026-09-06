@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "join_blue.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/multiplayer/teams.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;AAkBmD;AACnD;AACA;AACA;AACA;AACA"
+}

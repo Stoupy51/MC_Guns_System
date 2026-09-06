@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "discard_snapshot.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/player/whos_who.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;;AAoH+D;AAC/D;AACA"
+}

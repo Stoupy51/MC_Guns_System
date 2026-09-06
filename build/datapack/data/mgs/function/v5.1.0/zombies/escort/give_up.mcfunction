@@ -15,3 +15,4 @@ execute as @n[type=minecraft:wandering_trader,tag=mgs.zb_escort,distance=..8] ru
 function mgs:v5.1.0/zombies/escort/detach
 function mgs:v5.1.0/zombies/on_stuck_zombie
 
+## sourceMappingURL=give_up.mcfunction.map

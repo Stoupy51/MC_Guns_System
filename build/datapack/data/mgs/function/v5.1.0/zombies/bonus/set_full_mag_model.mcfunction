@@ -12,3 +12,4 @@
 
 $item modify entity @s $(slot) {"function":"minecraft:set_components", "components":{"minecraft:item_model":"$(mag_model)"}}
 
+## sourceMappingURL=set_full_mag_model.mcfunction.map

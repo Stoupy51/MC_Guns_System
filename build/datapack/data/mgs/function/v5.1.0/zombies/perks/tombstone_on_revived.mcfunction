@@ -22,3 +22,4 @@ scoreboard players set @s mgs.zb.tsp.whos_who 0
 scoreboard players set @s mgs.zb.tsp.dying_wish 0
 scoreboard players set @s mgs.zb.tsp.widows_wine 0
 
+## sourceMappingURL=tombstone_on_revived.mcfunction.map

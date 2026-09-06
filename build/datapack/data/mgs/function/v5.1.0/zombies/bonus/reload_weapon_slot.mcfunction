@@ -77,3 +77,4 @@ $function mgs:v5.1.0/ammo/modify_lore {slot:"$(slot)"}
 # Restore the active weapon's ammo display for non-active slots
 scoreboard players operation @s mgs.remaining_bullets = #rws_save mgs.data
 
+## sourceMappingURL=reload_weapon_slot.mcfunction.map

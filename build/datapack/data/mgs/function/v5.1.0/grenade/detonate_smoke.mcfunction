@@ -24,3 +24,4 @@ scoreboard players set @s bs.vel.z 0
 # Initial burst of smoke
 particle campfire_signal_smoke ~ ~ ~ 1.5 1 1.5 0.02 200 force @a[distance=..128]
 
+## sourceMappingURL=detonate_smoke.mcfunction.map

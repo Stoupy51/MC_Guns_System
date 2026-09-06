@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "give_via_function.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/machines/mystery_box/collect.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AAyEmE;AACnE;AACA"
+}

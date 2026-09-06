@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "row_zombies.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/core/player_menus.py"
+	],
+	"names": [],
+	"mappings": "AAsGE;AAAA;AAAA"
+}

@@ -20,3 +20,4 @@ tellraw @s ["",[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"trans
 # Reopen My Loadouts dialog with updated data
 function mgs:v5.1.0/multiplayer/my_loadouts/browse
 
+## sourceMappingURL=toggle_visibility.mcfunction.map

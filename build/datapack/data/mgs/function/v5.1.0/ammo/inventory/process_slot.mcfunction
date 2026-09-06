@@ -83,3 +83,4 @@ $function mgs:v5.1.0/ammo/modify_mag_lore {slot:"$(slot)"}
 # Update player's ammo count
 scoreboard players operation @s mgs.remaining_bullets = #found_ammo mgs.data
 
+## sourceMappingURL=process_slot.mcfunction.map

@@ -16,3 +16,4 @@ execute unless data storage mgs:gun all.stats.reload_time run return 0
 # Safe to spam: ammo/reload returns fail while reloading or already full
 function mgs:v5.1.0/ammo/reload
 
+## sourceMappingURL=left_click.mcfunction.map

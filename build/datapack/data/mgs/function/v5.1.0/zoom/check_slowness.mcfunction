@@ -12,3 +12,4 @@ playsound mgs:common/lean_out player @s
 scoreboard players reset @s mgs.zoom
 effect clear @s slowness
 
+## sourceMappingURL=check_slowness.mcfunction.map

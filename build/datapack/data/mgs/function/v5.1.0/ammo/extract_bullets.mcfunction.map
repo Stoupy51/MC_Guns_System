@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "extract_bullets.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/weapon/ammo/magazine/consume.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;;AAqGkD;AAClD;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

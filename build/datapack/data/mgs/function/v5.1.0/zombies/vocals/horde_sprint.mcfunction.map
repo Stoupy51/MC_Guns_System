@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "horde_sprint.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/enemies/vocals.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;;AA4JyD;AACzD;AACA;AACA"
+}

@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "update_model.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/weapon/common.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;;;AAsOgD;AAChD;AACA"
+}

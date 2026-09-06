@@ -15,3 +15,4 @@ scoreboard players reset * mgs.sidebar
 $function #bs.sidebar:create {objective:"mgs.sidebar",display_name:{translate:"mgs.demolition",color:"gold",bold:true},contents:[[" ⏱ ",[{score:{name:"#timer_min",objective:"mgs.data"},"color":"yellow"},{text:":"},{score:{name:"#timer_tens",objective:"mgs.data"}},{score:{name:"#timer_ones",objective:"mgs.data"}}]]," ",[["", " 🔴 ",{translate:"mgs.red",color:"red"}],[" ",{score:{name:"#red",objective:"mgs.mp.team"},color:"white"}]],[["", " 🔵 ",{translate:"mgs.blue",color:"blue"}],[" ",{score:{name:"#blue",objective:"mgs.mp.team"},color:"white"}]]," ",[[{text:" ",color:"gray"}, {translate:"mgs.round_2"}],{score:{name:"#demo_round",objective:"mgs.data"},color:"white"}],[$(atk_label),$(atk_team)]," ",$(a),$(b)]}
 scoreboard objectives setdisplay sidebar mgs.sidebar
 
+## sourceMappingURL=build_sidebar_demo.mcfunction.map

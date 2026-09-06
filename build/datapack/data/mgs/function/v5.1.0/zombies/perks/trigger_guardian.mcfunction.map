@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "trigger_guardian.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/player/ability.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AA4I4D;AAC5D;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

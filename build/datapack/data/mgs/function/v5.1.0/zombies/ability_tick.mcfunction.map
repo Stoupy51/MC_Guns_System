@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "ability_tick.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/zombies/player/ability.py"
+	],
+	"names": [],
+	"mappings": ";;;;;AA2GkD;AAClD;AACA;AACA"
+}

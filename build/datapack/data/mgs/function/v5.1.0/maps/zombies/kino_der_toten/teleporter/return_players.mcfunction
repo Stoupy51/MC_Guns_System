@@ -12,3 +12,4 @@ execute as @a[tag=mgs.kino.in_tp] run function mgs:v5.1.0/maps/zombies/kino_der_
 scoreboard players set #kino_tp_state mgs.data 5
 scoreboard players set #kino_tp_timer mgs.data 100
 
+## sourceMappingURL=return_players.mcfunction.map

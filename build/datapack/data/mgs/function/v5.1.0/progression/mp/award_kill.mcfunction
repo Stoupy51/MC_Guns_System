@@ -13,3 +13,4 @@ scoreboard players add @s mgs.mp.xp_session 10
 scoreboard players add @s mgs.adv.mp.kills 1
 function mgs:v5.1.0/progression/mp/settle
 
+## sourceMappingURL=award_kill.mcfunction.map

@@ -13,3 +13,4 @@ execute if score #entry_owner mgs.data = @s mgs.mp.pid run function mgs:v5.1.0/m
 data remove storage mgs:temp _iter[0]
 execute if data storage mgs:temp _iter[0] run function mgs:v5.1.0/multiplayer/my_loadouts/build_list_privates
 
+## sourceMappingURL=build_list_privates.mcfunction.map

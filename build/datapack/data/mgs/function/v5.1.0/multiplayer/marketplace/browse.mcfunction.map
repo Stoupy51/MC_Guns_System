@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "browse.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/multiplayer/loadouts/browsing/marketplace.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;;AA+C4D;AAC5D;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

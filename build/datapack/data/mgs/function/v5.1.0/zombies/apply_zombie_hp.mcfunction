@@ -9,3 +9,4 @@
 $attribute @s minecraft:max_health base set $(val)
 execute store result entity @s Health float 1 run attribute @s minecraft:max_health get
 
+## sourceMappingURL=apply_zombie_hp.mcfunction.map

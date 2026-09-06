@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "death_watch_tick.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/zombies/game/round/lifecycle.py"
+	],
+	"names": [],
+	"mappings": ";;;;;AAiDsD;AACtD;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

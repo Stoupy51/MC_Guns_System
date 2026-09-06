@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "pick_secondary_scope.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/multiplayer/loadouts/editor/scopes.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AA4EqE;AACrE;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

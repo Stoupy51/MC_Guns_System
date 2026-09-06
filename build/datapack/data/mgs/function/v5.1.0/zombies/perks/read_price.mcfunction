@@ -24,3 +24,4 @@ execute if score #pk_left mgs.data matches ..0 run scoreboard players set #pk_le
 execute if score #pk_partial mgs.data matches 1.. run scoreboard players operation #pk_price mgs.data = #pk_partial mgs.data
 execute if score #pk_partial mgs.data matches 1.. run scoreboard players operation #pk_price mgs.data < #pk_left mgs.data
 
+## sourceMappingURL=read_price.mcfunction.map

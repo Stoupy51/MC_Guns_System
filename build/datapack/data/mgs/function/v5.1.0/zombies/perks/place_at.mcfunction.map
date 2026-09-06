@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "place_at.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/machines/perks/setup.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;;;AA8IoD;AACpD;AACA"
+}

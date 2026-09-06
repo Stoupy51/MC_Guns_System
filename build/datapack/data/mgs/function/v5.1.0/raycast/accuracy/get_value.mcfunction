@@ -29,3 +29,4 @@ execute if predicate mgs:v5.1.0/is_moving run return run data modify storage mgs
 # Else, return base accuracy
 data modify storage mgs:gun accuracy set from storage mgs:gun all.stats.acc_base
 
+## sourceMappingURL=get_value.mcfunction.map

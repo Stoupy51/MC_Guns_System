@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "pickup_downed_collector.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/rewards/powerups/pickup.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AAuEsE;AACtE;AACA;AACA;AACA"
+}

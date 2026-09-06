@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "edit.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/multiplayer/loadouts/actions/manage.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AA6EqD;AACrD;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

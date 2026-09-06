@@ -12,3 +12,4 @@ data modify storage mgs:temp _ed_disp.yaw set value 0.0f
 data modify storage mgs:temp _ed_disp.yaw set from entity @s data.yaw
 function mgs:v5.1.0/maps/editor/displays/summon_wallbuy with storage mgs:temp _ed_disp
 
+## sourceMappingURL=wallbuy.mcfunction.map

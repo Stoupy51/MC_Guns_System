@@ -14,3 +14,4 @@ $item modify entity @s $(slot) mgs:v5.1.0/set_consumable_count
 # Update player's ammo count
 scoreboard players operation @s mgs.remaining_bullets = #found_ammo mgs.data
 
+## sourceMappingURL=consume_partial.mcfunction.map

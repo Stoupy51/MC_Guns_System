@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "summon_enemy_edit_iter.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/map_editor/summon.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;AAyJgE;AAChE;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

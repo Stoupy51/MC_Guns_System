@@ -17,3 +17,4 @@ data modify storage mgs:temp _probe_pos set from entity @s Pos
 tp @s ~ -1000000 ~
 kill @s
 
+## sourceMappingURL=probe_pos.mcfunction.map

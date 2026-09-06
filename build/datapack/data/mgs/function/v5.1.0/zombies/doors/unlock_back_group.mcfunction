@@ -9,3 +9,4 @@
 execute store result storage mgs:temp _door_unlock.gid int 1 run scoreboard players get @s mgs.zb.door.bgid
 function mgs:v5.1.0/zombies/doors/unlock_group with storage mgs:temp _door_unlock
 
+## sourceMappingURL=unlock_back_group.mcfunction.map

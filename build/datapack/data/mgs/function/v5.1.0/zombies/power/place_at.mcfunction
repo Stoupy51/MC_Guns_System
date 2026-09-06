@@ -20,3 +20,4 @@ execute as @e[tag=_pw_new] run function #bs.interaction:on_right_click {run:"fun
 execute as @e[tag=_pw_new] run function #bs.interaction:on_hover {run:"function mgs:v5.1.0/zombies/power/on_hover",executor:"source"}
 tag @e[tag=_pw_new] remove _pw_new
 
+## sourceMappingURL=place_at.mcfunction.map

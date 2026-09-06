@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "apply.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/machines/perks/apply.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;;;;AAciD;AACjD;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

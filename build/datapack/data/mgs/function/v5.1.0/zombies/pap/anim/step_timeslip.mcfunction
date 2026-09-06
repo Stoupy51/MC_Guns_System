@@ -9,3 +9,4 @@
 execute if score @s mgs.pap_anim matches 206.. run function mgs:v5.1.0/zombies/pap/anim/step
 execute if score @s mgs.pap_anim matches 206.. run function mgs:v5.1.0/zombies/pap/anim/step
 
+## sourceMappingURL=step_timeslip.mcfunction.map

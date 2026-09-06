@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "trigger_going_in.mcfunction",
+	"sourceRoot": "../../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/machines/pap/anim.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AA6I+D;AAC/D;AACA;AACA"
+}

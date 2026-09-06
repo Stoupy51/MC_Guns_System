@@ -18,3 +18,4 @@ data remove storage mgs:temp map_load.search[0]
 scoreboard players add #map_load_idx mgs.data 1
 function mgs:v5.1.0/shared/maps/find_map
 
+## sourceMappingURL=find_map.mcfunction.map

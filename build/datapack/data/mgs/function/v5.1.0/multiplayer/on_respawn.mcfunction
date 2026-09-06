@@ -36,3 +36,4 @@ tag @s remove mgs.temp_victim
 # Enter death spectate (shared flow: S&D branch, spectator mode, spectate killer/random, titles)
 function mgs:v5.1.0/multiplayer/enter_death_spectate
 
+## sourceMappingURL=on_respawn.mcfunction.map

@@ -1,0 +1,11 @@
+{
+	"version": 3,
+	"file": "on_zombie_dying.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/zombies/enemies/escort/end.py",
+		"src/functional/zombies/game/round/lifecycle.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AA6DqD;AACrD;AACA;AACA;ACCqD;AACrD;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

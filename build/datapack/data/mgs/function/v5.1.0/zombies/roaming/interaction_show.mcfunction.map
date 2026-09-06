@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "interaction_show.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/enemies/roaming.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;AA8C8D;AAC9D;AACA;AACA"
+}

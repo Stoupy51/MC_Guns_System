@@ -20,3 +20,4 @@ execute if score @s mgs.player.config matches 401 run data modify storage mgs:te
 execute store success score #ed_ok mgs.data run function mgs:v5.1.0/multiplayer/editor/commit_check
 function mgs:v5.1.0/multiplayer/editor/hub
 
+## sourceMappingURL=pick_secondary_mags.mcfunction.map

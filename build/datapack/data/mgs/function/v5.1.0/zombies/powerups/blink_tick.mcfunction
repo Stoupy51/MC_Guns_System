@@ -15,3 +15,4 @@ execute if score #zb_blink_state mgs.data matches 1 run data modify entity @s It
 execute if score #zb_blink_state mgs.data matches 0 as @n[type=minecraft:text_display,tag=mgs.pu_text,distance=..3] run data merge entity @s {view_range:0.0f}
 execute if score #zb_blink_state mgs.data matches 1 as @n[type=minecraft:text_display,tag=mgs.pu_text,distance=..3] run data merge entity @s {view_range:64.0f}
 
+## sourceMappingURL=blink_tick.mcfunction.map

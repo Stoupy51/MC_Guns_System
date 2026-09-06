@@ -27,3 +27,4 @@ execute as @a[scores={mgs.mp.map_edit=1}] run function mgs:v5.1.0/shared/tp_to_p
 
 tellraw @a[scores={mgs.mp.map_edit=1}] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.editor_session_synced_for_all_players","color":"aqua"}]
 
+## sourceMappingURL=invite_all.mcfunction.map

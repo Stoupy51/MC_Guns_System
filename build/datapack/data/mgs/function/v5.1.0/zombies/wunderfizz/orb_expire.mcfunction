@@ -9,3 +9,4 @@
 particle minecraft:smoke ~ ~ ~ 0.2 0.2 0.2 0.02 10 force @a[distance=..48]
 kill @s
 
+## sourceMappingURL=orb_expire.mcfunction.map

@@ -73,3 +73,4 @@ execute if data storage mgs:temp {grenade_type:"semtex"} run data modify storage
 execute if data storage mgs:temp {grenade_type:"smoke"} run data modify storage mgs:input lore.type_display set value "Smoke"
 execute if data storage mgs:temp {grenade_type:"flash"} run data modify storage mgs:input lore.type_display set value "Flash"
 
+## sourceMappingURL=compute_values.mcfunction.map

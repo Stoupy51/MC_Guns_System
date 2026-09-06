@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "inside.mcfunction",
+	"sourceRoot": "../../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/machines/pap/anim.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AAiKqD;AACrD;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

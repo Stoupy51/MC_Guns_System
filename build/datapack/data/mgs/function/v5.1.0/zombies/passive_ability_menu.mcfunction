@@ -12,3 +12,4 @@ execute unless data storage mgs:zombies game{variant:"zonweeb"} run return fail
 # Show the passive selection dialog (ability dialog is shown after)
 dialog show @s mgs:v5.1.0/zombies/passive_ability
 
+## sourceMappingURL=passive_ability_menu.mcfunction.map

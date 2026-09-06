@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "rescue_tp.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/zombies/game/lifecycle/stuck.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;AAoH+C;AAC/C;AACA;AACA"
+}

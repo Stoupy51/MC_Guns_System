@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "cancel_repair.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/objects/barricades/tick.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AA+L8D;AAC9D;AACA;AACA;AACA"
+}

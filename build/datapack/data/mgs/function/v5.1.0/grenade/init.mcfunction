@@ -31,3 +31,4 @@ scoreboard players set @s mgs.grenade_launch 3
 # Calculate velocity from the player's look direction and teleport back
 function mgs:v5.1.0/shared/calc_velocity
 
+## sourceMappingURL=init.mcfunction.map

@@ -1,0 +1,19 @@
+{
+	"version": 3,
+	"file": "stop.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/zombies/game/lifecycle/over.py",
+		"src/functional/zombies/game/round/hooks.py",
+		"src/functional/zombies/enemies/escort/hooks.py",
+		"src/functional/zombies/machines/mystery_box/hooks.py",
+		"src/functional/zombies/objects/barricades/hooks.py",
+		"src/functional/zombies/rewards/powerups/bossbars.py",
+		"src/functional/zombies/machines/perks/hooks.py",
+		"src/functional/zombies/machines/wunderfizz/collect.py",
+		"src/functional/zombies/player/whos_who.py",
+		"src/functional/zombies/player/revive/hooks.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;;AA0E0C;AAC1C;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AClFA;AACA;AACA;AACA;AACA;AACA;AACA;ACFA;AACA;AC3B0C;AAC1C;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;ACMA;AACA;AACA;AACA;ACqE0C;AAC1C;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;ACpB0C;AAC1C;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AC7GA;AACA;AACA;AACA;AACA;AACA;ACuHA;AACA;AACA;AC/K0C;AAC1C;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

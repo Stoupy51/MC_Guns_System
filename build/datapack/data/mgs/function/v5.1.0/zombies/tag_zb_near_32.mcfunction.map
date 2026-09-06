@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "tag_zb_near_32.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/zombies/game/round/spawning.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AAgF0D;AAC1D;AACA;AACA"
+}

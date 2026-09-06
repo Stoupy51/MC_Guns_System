@@ -17,3 +17,4 @@ execute as @a[scores={mgs.zb.pap_s=1..}] if score @s mgs.zb.pap_mid = #pap_mid m
 # Clean stored slot data
 $data remove storage mgs:zombies pap_anim_slot."$(id)"
 
+## sourceMappingURL=retreat_cleanup.mcfunction.map

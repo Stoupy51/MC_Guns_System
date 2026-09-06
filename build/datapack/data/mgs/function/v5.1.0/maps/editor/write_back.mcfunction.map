@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "write_back.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/map_editor/save.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;;;AAwRoD;AACpD;AACA"
+}

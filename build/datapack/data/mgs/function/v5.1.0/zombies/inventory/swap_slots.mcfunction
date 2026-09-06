@@ -19,3 +19,4 @@ $execute if items entity @s contents * run item replace entity @p[tag=mgs.inv_sw
 $execute unless items entity @s contents * run item replace entity @p[tag=mgs.inv_swapping] $(from) with air
 kill @s
 
+## sourceMappingURL=swap_slots.mcfunction.map

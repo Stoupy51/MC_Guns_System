@@ -18,3 +18,4 @@ scoreboard players operation @s mgs.zb.points -= #wb_price mgs.data
 item modify entity @s hotbar.7 mgs:v5.1.0/grenade/set_count_4
 function mgs:v5.1.0/zombies/wallbuys/msg_refilled
 
+## sourceMappingURL=refill_lethal.mcfunction.map

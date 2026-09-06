@@ -31,3 +31,4 @@ execute if score #fs_was_active mgs.data matches 0 run execute as @a[scores={mgs
 execute if score #fs_was_active mgs.data matches 0 as @a[scores={mgs.zb.in_game=1}] run playsound mgs:zombies/powerups/fire_sale_song ambient @s ~ ~ ~ 0.3 1.0
 execute if score #fs_was_active mgs.data matches 0 run function mgs:v5.1.0/zombies/mystery_box/fire_sale_start
 
+## sourceMappingURL=fire_sale.mcfunction.map

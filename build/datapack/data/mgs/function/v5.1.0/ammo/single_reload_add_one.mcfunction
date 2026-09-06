@@ -10,3 +10,4 @@ execute store result score #capacity mgs.data run data get storage mgs:gun all.s
 scoreboard players add @s mgs.remaining_bullets 1
 execute if score @s mgs.remaining_bullets > #capacity mgs.data run scoreboard players operation @s mgs.remaining_bullets = #capacity mgs.data
 
+## sourceMappingURL=single_reload_add_one.mcfunction.map

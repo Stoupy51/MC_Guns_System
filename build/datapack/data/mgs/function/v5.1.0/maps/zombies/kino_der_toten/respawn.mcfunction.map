@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "respawn.mcfunction",
+	"sourceRoot": "../../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/maps.py"
+	],
+	"names": [],
+	"mappings": ";;;;;AAsGiE;AACjE;AACA;AACA;AACA"
+}

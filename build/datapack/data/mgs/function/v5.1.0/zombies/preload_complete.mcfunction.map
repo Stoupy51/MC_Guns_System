@@ -1,0 +1,20 @@
+{
+	"version": 3,
+	"file": "preload_complete.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/zombies/game/lifecycle/start.py",
+		"src/functional/zombies/enemies/escort/hooks.py",
+		"src/functional/zombies/machines/mystery_box/hooks.py",
+		"src/functional/zombies/machines/pap/hooks.py",
+		"src/functional/zombies/objects/barricades/hooks.py",
+		"src/functional/zombies/objects/power.py",
+		"src/functional/zombies/objects/doors.py",
+		"src/functional/zombies/objects/wallbuys/hover.py",
+		"src/functional/zombies/machines/perks/hooks.py",
+		"src/functional/zombies/machines/wunderfizz/collect.py",
+		"src/functional/zombies/objects/traps/hooks.py"
+	],
+	"names": [],
+	"mappings": ";;;;;AAyGsD;AACtD;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;ACrHsD;AACtD;AACA;AACA;AClBA;AACA;AACA;ACCA;AACA;ACCsD;AACtD;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;ACkFA;AACA;ACyJsD;AACtD;AACA;AACA;ACrMA;AACA;AC+BsD;AACtD;AACA;AACA;AACA;AACA;AACA;ACrDA;ACzBsD;AACtD;AACA;AACA"
+}

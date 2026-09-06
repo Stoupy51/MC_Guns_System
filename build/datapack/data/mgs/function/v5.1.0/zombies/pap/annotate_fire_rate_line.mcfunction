@@ -23,3 +23,4 @@ execute store result storage mgs:temp _pap_ann.index int 1 run scoreboard player
 execute unless score #pap_delta mgs.data matches 0 run function mgs:v5.1.0/zombies/pap/annotate_rate_delta
 scoreboard players add #pap_li mgs.data 1
 
+## sourceMappingURL=annotate_fire_rate_line.mcfunction.map

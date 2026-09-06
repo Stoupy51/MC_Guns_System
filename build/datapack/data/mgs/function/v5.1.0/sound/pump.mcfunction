@@ -12,3 +12,4 @@
 $playsound mgs:$(pump) player @s
 $playsound mgs:$(pump) player @a[distance=0.01..16] ~ ~ ~ 0.3
 
+## sourceMappingURL=pump.mcfunction.map

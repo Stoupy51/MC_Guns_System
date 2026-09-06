@@ -21,3 +21,4 @@ execute if score #demo_kills_red mgs.data > #demo_kills_blue mgs.data run scoreb
 tellraw @a [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.kills_2","color":"gray"},{"translate":"mgs.red_2","color":"red"},{"score":{"name":"#demo_kills_red","objective":"mgs.data"},"color":"white"},{"text":" - ","color":"gray"},{"translate":"mgs.blue_2","color":"blue"},{"score":{"name":"#demo_kills_blue","objective":"mgs.data"},"color":"white"}]
 execute if score #demo_kills_red mgs.data = #demo_kills_blue mgs.data run tellraw @a [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.kills_are_level_so","color":"yellow"},{"translate":"mgs.blue","color":"blue"},[{"text":" ","color":"yellow"}, {"translate":"mgs.defends"}]]
 
+## sourceMappingURL=pick_tiebreak_sides.mcfunction.map

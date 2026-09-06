@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "manage_find.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/multiplayer/loadouts/browsing/my_loadouts.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;AAqNiE;AACjE;AACA;AACA;AACA;AACA;AACA"
+}

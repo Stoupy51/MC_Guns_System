@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "attract.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/enemies/monkey_bomb.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;AA6DoD;AACpD;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

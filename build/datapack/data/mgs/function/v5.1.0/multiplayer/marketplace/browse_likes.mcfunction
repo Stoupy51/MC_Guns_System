@@ -29,3 +29,4 @@ execute if data storage mgs:temp _sort_pool[0] run function mgs:v5.1.0/multiplay
 # Show dialog
 function mgs:v5.1.0/multiplayer/show_dialog with storage mgs:temp
 
+## sourceMappingURL=browse_likes.mcfunction.map

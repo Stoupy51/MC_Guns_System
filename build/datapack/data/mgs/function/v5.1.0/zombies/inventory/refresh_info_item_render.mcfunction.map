@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "refresh_info_item_render.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/player/inventory/info.py"
+	],
+	"names": [],
+	"mappings": "AAiDwE;AACxE;;;;;;;;AACA"
+}
