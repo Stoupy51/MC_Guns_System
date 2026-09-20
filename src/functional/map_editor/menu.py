@@ -46,7 +46,7 @@ scoreboard objectives add {ns}.class_menu minecraft.used:minecraft.warped_fungus
 		"criteria": {
 			"requirement": {
 				"trigger": "minecraft:item_used_on_block",
-				"conditions": {
+				"condition": {
 					"location": [
 						{
 							"condition": "minecraft:match_tool",

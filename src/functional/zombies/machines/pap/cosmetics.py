@@ -64,7 +64,7 @@ $data modify storage {ns}:temp _pap_extract.stats.models.zoom set value "{ns}:$(
 
 	# Set item_model component from scope data
 	write_versioned_function("zombies/pap/set_item_model_from_scope", """
-$item modify entity @s $(slot) {"function":"minecraft:set_components","components":{"minecraft:item_model":"$(model)"}}
+$item modify entity @s $(slot) {"type":"minecraft:set_components","components":{"minecraft:item_model":"$(model)"}}
 """)
 
 	# Randomize scope but guarantee a different result than the current one _pap_old_weapon must be set before calling this

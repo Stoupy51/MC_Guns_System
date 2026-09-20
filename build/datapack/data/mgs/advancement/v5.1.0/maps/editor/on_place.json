@@ -2,7 +2,7 @@
 	"criteria": {
 		"requirement": {
 			"trigger": "minecraft:item_used_on_block",
-			"conditions": {
+			"condition": {
 				"location": [
 					{
 						"condition": "minecraft:match_tool",

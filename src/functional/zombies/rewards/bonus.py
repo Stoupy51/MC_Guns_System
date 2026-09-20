@@ -154,7 +154,7 @@ kill @s
 
 	# Set magazine item model to non-empty (full) version
 	write_versioned_function("zombies/bonus/set_full_mag_model", r"""
-$item modify entity @s $(slot) {"function":"minecraft:set_components", "components":{"minecraft:item_model":"$(mag_model)"}}
+$item modify entity @s $(slot) {"type":"minecraft:set_components", "components":{"minecraft:item_model":"$(mag_model)"}}
 """)
 
 	## ==================================================== Nuke: Tag nukable entities and kill them 1 per tick.

@@ -89,14 +89,14 @@ execute store result storage {ns}:temp {REMAINING_BULLETS} int 1 run scoreboard 
 
 	# Create item modifier to update weapon's ammo count
 	modifier: JsonDict = {
-		"function":"minecraft:copy_custom_data","source":{"type":"minecraft:storage","source":f"{ns}:temp"},
+		"type":"minecraft:copy_custom_data","source":{"type":"minecraft:storage","source":f"{ns}:temp"},
 		"ops":[{"source":REMAINING_BULLETS,"target":f"{ns}.stats.{REMAINING_BULLETS}","op":"replace"}]
 	}
 	Mem.ctx.data[ns].item_modifiers[f"v{version}/update_ammo"] = set_json_encoder(ItemModifier(modifier), max_level=-1)
 
 	# Create item modifier to set consumable stack count from a score (#bullets in mgs.data)
 	consumable_count_modifier: JsonDict = {
-		"function": "minecraft:set_count",
+		"type": "minecraft:set_count",
 		"count": {"type": "minecraft:score", "target": {"type": "fixed", "name": "#bullets"}, "score": f"{ns}.data"},
 		"add": False
 	}

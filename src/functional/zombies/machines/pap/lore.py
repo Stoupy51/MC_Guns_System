@@ -10,7 +10,7 @@ def write_pap_lore() -> None:
 
 	# Set item name with PAP level suffix: [name, " (PaP N/M)"]
 	write_versioned_function("zombies/pap/set_item_name_with_level", """
-$item modify entity @s $(slot) {"function":"minecraft:set_components","components":{"minecraft:item_name":[{"text":"$(name)","color":"gold","italic":false},{"text":" (PaP $(level)/$(max))","color":"aqua","italic":false}]}}
+$item modify entity @s $(slot) {"type":"minecraft:set_components","components":{"minecraft:item_name":[{"text":"$(name)","color":"gold","italic":false},{"text":" (PaP $(level)/$(max))","color":"aqua","italic":false}]}}
 """)
 
 	# Annotate lore lines with runtime-computed PAP deltas.
@@ -170,11 +170,11 @@ $data modify storage {ns}:temp _pap_extract.lore[$(index)].extra append value {{
 $data modify storage {ns}:temp _pap_extract.lore[$(index)].extra append value {{"text":" > $(whole).$(dec)$(suffix)","color":"aqua","italic":false}}
 """)
 	write_versioned_function("zombies/pap/set_item_name", """
-$item modify entity @s $(slot) {"function":"minecraft:set_components","components":{"minecraft:item_name":{"text":"$(name)","color":"gold","italic":false}}}
+$item modify entity @s $(slot) {"type":"minecraft:set_components","components":{"minecraft:item_name":{"text":"$(name)","color":"gold","italic":false}}}
 """)
 
 	write_versioned_function("zombies/pap/set_item_lore", """
-$item modify entity @s $(slot) {"function":"minecraft:set_components","components":{"minecraft:lore":$(lore)}}
+$item modify entity @s $(slot) {"type":"minecraft:set_components","components":{"minecraft:lore":$(lore)}}
 	""")
 
 	write_versioned_function("zombies/pap/apply_to_slot", f"""

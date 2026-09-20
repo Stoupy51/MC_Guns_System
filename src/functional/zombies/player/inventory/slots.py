@@ -21,7 +21,7 @@ def write_slot_enforcement() -> None:
 	zb_tagged_match = f"*[custom_data~{zb_tagged_cd}]"
 
 	zb_stats_modifier: JsonDict = {
-		"function": "minecraft:copy_custom_data",
+		"type": "minecraft:copy_custom_data",
 		"source": {"type": "minecraft:storage", "source": f"{ns}:temp"},
 		"ops": [
 			{"source": f"zb_item_stats.{CAPACITY}", "target": f"{ns}.stats.{CAPACITY}", "op": "replace"},
@@ -31,7 +31,7 @@ def write_slot_enforcement() -> None:
 	Mem.ctx.data[ns].item_modifiers[f"v{version}/zb_item_stats"] = set_json_encoder(ItemModifier(zb_stats_modifier), max_level=-1)
 
 	zb_slot_modifier: JsonDict = {
-		"function": "minecraft:copy_custom_data",
+		"type": "minecraft:copy_custom_data",
 		"source": {"type": "minecraft:storage", "source": f"{ns}:temp"},
 		"ops": [
 			{"source": "zb_slot", "target": f"{ns}.zombies", "op": "replace"},
@@ -41,17 +41,19 @@ def write_slot_enforcement() -> None:
 
 	# Marks a magazine as zombies-converted by setting consumable to 2b.
 	# Value 1b = true consumable (stack count = bullets), 2b = zombies non-consumable (custom_data only).
-	zb_mark_converted_modifier: list[JsonDict] = [
-		{
-			"function": "minecraft:set_custom_data",
-			"tag": f'{{{ns}: {{consumable: 2b}}}}',
-		},
-		{
-			"function": "minecraft:set_components",
-			"components": {"minecraft:max_stack_size": 1}
-		}
-	]
-	Mem.ctx.data[ns].item_modifiers[f"v{version}/zb_mark_converted"] = set_json_encoder(ItemModifier(zb_mark_converted_modifier), max_level=-1) # type: ignore
+	Mem.ctx.data[ns].item_modifiers[f"v{version}/zb_mark_converted"] = set_json_encoder(ItemModifier({
+		"type": "minecraft:sequence",
+		"functions": [
+			{
+				"type": "minecraft:set_custom_data",
+				"tag": f'{{{ns}: {{consumable: 2b}}}}'
+			},
+			{
+				"type": "minecraft:set_components",
+				"components": {"minecraft:max_stack_size": 1}
+			}
+		]
+	}), max_level=-1)
 
 	all_slot_scans: str = ""
 	for slot in ItemBuilder.ALL_SLOTS:

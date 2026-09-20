@@ -19,7 +19,7 @@ def write_trap_setup() -> None:
 	## Used to select the matching head/interaction by score directly in a selector (predicate=...), which is cheaper than `execute as @e[...] if score @s ... = #turret_tid ...`.
 	id_ref: JsonDict = {"type": "minecraft:score", "target": {"type": "minecraft:fixed", "name": "#turret_tid"}, "score": f"{ns}.data"}
 	Mem.ctx.data[ns].predicates[f"v{version}/zombies/traps/turret_id_match"] = set_json_encoder(Predicate({
-		"condition": "minecraft:entity_scores",
+		"type": "minecraft:entity_scores",
 		"entity": "this",
 		"scores": {f"{ns}.zb.trap.id": {"min": id_ref, "max": id_ref}},
 	}), max_level=-1)

@@ -17,7 +17,7 @@ def write_barricade_setup() -> None:
 
 	## Light level predicates (dynamic barricade brightness, same technique as the stewbeet custom_blocks plugin — one exact-match predicate per light level)
 	for level in range(1, 16):
-		light_pred: JsonDict = {"condition": "minecraft:location_check", "predicate": {"light": {"light": level}}}
+		light_pred: JsonDict = {"type": "minecraft:location_check", "predicate": {"light": {"light": level}}}
 		Mem.ctx.data[ns].predicates[f"v{version}/light/{level}"] = set_json_encoder(Predicate(light_pred), max_level=-1)
 
 	## Scoreboards

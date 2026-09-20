@@ -97,7 +97,7 @@ class Tree:
 		return {
 			"threshold": {
 				"trigger": "minecraft:tick",
-				"conditions": {
+				"condition": {
 					"player": [
 						{
 							"condition": "minecraft:entity_scores",

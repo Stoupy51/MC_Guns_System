@@ -2,7 +2,7 @@
 	"criteria": {
 		"requirement": {
 			"trigger": "minecraft:using_item",
-			"conditions": {
+			"condition": {
 				"item": {
 					"predicates": {
 						"minecraft:custom_data": "{mgs:{gun:true}}"

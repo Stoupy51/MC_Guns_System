@@ -97,8 +97,8 @@ function {ns}:v{version}/switch/sync_attack_speed_with_cooldown
 
 # Swap weapon in hand if same as previously selected (26 chars long = "minecraft:poisonous_potato")
 execute store result score #current_length {ns}.data run data get storage {ns}:gun SelectedItem.id
-execute if score #current_length {ns}.data = @s {ns}.previous_selected if score @s {ns}.previous_selected matches 26 run item modify entity @s weapon.mainhand {{"function": "minecraft:set_item","item": "minecraft:firework_star"}}
-execute if score #current_length {ns}.data = @s {ns}.previous_selected unless score @s {ns}.previous_selected matches 26 run item modify entity @s weapon.mainhand {{"function": "minecraft:set_item","item": "minecraft:poisonous_potato"}}
+execute if score #current_length {ns}.data = @s {ns}.previous_selected if score @s {ns}.previous_selected matches 26 run item modify entity @s weapon.mainhand {{"type": "minecraft:set_item","item": "minecraft:firework_star"}}
+execute if score #current_length {ns}.data = @s {ns}.previous_selected unless score @s {ns}.previous_selected matches 26 run item modify entity @s weapon.mainhand {{"type": "minecraft:set_item","item": "minecraft:poisonous_potato"}}
 """)
 
 	# Sync attack speed with cooldown function
@@ -215,7 +215,7 @@ scoreboard players set @s {ns}.ab_force 1
 """)
 
 	modifier: dict[str, Any] = {
-		"function": "minecraft:copy_custom_data",
+		"type": "minecraft:copy_custom_data",
 		"source": {
 			"type": "minecraft:storage",
 			"source": f"{ns}:gun"
@@ -231,7 +231,7 @@ scoreboard players set @s {ns}.ab_force 1
 	Mem.ctx.data[ns].item_modifiers[f"v{version}/set_weapon_id"] = set_json_encoder(ItemModifier(modifier), max_level=-1)
 
 	modifier: dict[str, Any] = {
-		"function": "minecraft:copy_custom_data",
+		"type": "minecraft:copy_custom_data",
 		"source": {
 			"type": "minecraft:storage",
 			"source": f"{ns}:gun"

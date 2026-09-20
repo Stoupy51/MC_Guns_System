@@ -20,7 +20,7 @@ def write_pap_setup() -> None:
 
 	# Item modifier: copy upgraded stats from temp storage back into selected gun item.
 	pap_stats_modifier: JsonDict = {
-		"function": "minecraft:copy_custom_data",
+		"type": "minecraft:copy_custom_data",
 		"source": {"type": "minecraft:storage", "source": f"{ns}:temp"},
 		"ops": [
 			{"source": "_pap_extract.stats", "target": f"{ns}.stats", "op": "replace"},

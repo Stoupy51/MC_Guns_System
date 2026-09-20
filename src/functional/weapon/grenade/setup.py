@@ -12,18 +12,18 @@ def write_grenade_setup() -> None:
 
 	# Create item modifier to consume one grenade from the stack
 	Mem.ctx.data[ns].item_modifiers[f"v{version}/grenade/consume_one"] = set_json_encoder(
-		ItemModifier({"function": "minecraft:set_count", "count": -1, "add": True}),
+		ItemModifier({"type": "minecraft:set_count", "count": -1, "add": True}),
 		max_level=-1
 	)
 
 	# Create item modifiers to set grenade count (for initial give and replenishment)
 	for i in (4, 3, 2):
 		Mem.ctx.data[ns].item_modifiers[f"v{version}/grenade/set_count_{i}"] = set_json_encoder(
-			ItemModifier({"function": "minecraft:set_count", "count": i}),
+			ItemModifier({"type": "minecraft:set_count", "count": i}),
 			max_level=-1
 		)
 	Mem.ctx.data[ns].item_modifiers[f"v{version}/grenade/set_count_add_2"] = set_json_encoder(
-		ItemModifier({"function": "minecraft:set_count", "count": 2, "add": True}),
+		ItemModifier({"type": "minecraft:set_count", "count": 2, "add": True}),
 		max_level=-1
 	)
 
