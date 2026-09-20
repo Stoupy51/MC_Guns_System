@@ -23,6 +23,9 @@ playsound mgs:common/lean_in player @s
 effect give @s slowness infinite 2 true
 scoreboard players set @s mgs.zoom 1
 
+# Shader: ramp the scope overlay in, level picked from the weapon's scope_level stat
+function mgs:v5.1.0/zoom/fx_enter
+
 # Signal: on_zoom (@s = zooming player, weapon data in mgs:signals)
 data modify storage mgs:signals on_zoom set value {}
 data modify storage mgs:signals on_zoom.weapon set from storage mgs:gun all

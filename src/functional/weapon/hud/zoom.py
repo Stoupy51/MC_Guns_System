@@ -1,4 +1,4 @@
-""" Aim-down-sights zoom and the crosshair spread markers driven by shaders.py. """
+""" Aim-down-sights state, and the edges that drive the scope and crosshair post effects. """
 # Imports
 from stewbeet import Mem, write_versioned_function
 
@@ -28,50 +28,16 @@ execute if data storage {ns}:gun all.stats.{IS_ZOOM} if score #is_sneaking {ns}.
 # If not zooming but sneaking, zoom
 execute unless data storage {ns}:gun all.stats.{IS_ZOOM} if score #is_sneaking {ns}.data matches 1 run return run function {ns}:v{version}/zoom/set
 
-## Shader: zoom marker with delay, scope check, and cooldown guard
+## Shader ids: the scope overlay while aiming, the spread crosshair while not
 # Reset zoom timer when not zooming
 execute unless score @s {ns}.zoom matches 1 run scoreboard players set @s {ns}.zoom_timer 0
 
 # Increment zoom timer while zooming
 execute if score @s {ns}.zoom matches 1 run scoreboard players add @s {ns}.zoom_timer 1
 
-# FOV marker: spawn IMMEDIATELY on zoom (no delay) for smooth FOV reduction
-# Uses color with B=0.15 (non-zero B + non-zero G) to distinguish from zoom/flash/spread markers
-# B=0.15 → B'∈[18-38] after randomization, safely above dim grayscale particles
-scoreboard players set #scope_level {ns}.data 0
-execute store result score #scope_level {ns}.data run data get storage {ns}:gun all.stats.scope_level
-execute if score @s {ns}.zoom matches 1 unless score @s {ns}.switch_cooldown > #total_tick {ns}.data if score #scope_level {ns}.data matches 3 at @s anchored eyes run particle minecraft:dust{{color:[0.02,0.02,0.15],scale:0.01}} ^ ^ ^0.1 0 0 0 0 1 force @s
-execute if score @s {ns}.zoom matches 1 unless score @s {ns}.switch_cooldown > #total_tick {ns}.data if score #scope_level {ns}.data matches 4 at @s anchored eyes run particle minecraft:dust{{color:[0.02,0.08,0.15],scale:0.01}} ^ ^ ^0.1 0 0 0 0 1 force @s
-execute if score @s {ns}.zoom matches 1 unless score @s {ns}.switch_cooldown > #total_tick {ns}.data unless score #scope_level {ns}.data matches 3 unless score #scope_level {ns}.data matches 4 at @s anchored eyes run particle minecraft:dust{{color:[0.02,0.25,0.15],scale:0.01}} ^ ^ ^0.1 0 0 0 0 1 force @s
-
-# Scope zoom marker: spawn AFTER delay for barrel distortion effect
-execute if score @s {ns}.zoom matches 1 unless score @s {ns}.switch_cooldown > #total_tick {ns}.data if score @s {ns}.zoom_timer matches 6.. if score #scope_level {ns}.data matches 3 at @s anchored eyes run particle minecraft:dust{{color:[0.02,0.02,0.0],scale:0.01}} ^ ^ ^0.1 0 0 0 0 1 force @s
-execute if score @s {ns}.zoom matches 1 unless score @s {ns}.switch_cooldown > #total_tick {ns}.data if score @s {ns}.zoom_timer matches 6.. if score #scope_level {ns}.data matches 4 at @s anchored eyes run particle minecraft:dust{{color:[0.02,0.08,0.0],scale:0.01}} ^ ^ ^0.1 0 0 0 0 1 force @s
-execute if score @s {ns}.zoom matches 1 unless score @s {ns}.switch_cooldown > #total_tick {ns}.data if score @s {ns}.zoom_timer matches 6.. unless score #scope_level {ns}.data matches 3 unless score #scope_level {ns}.data matches 4 at @s anchored eyes run particle minecraft:dust{{color:[0.02,0.25,0.0],scale:0.01}} ^ ^ ^0.1 0 0 0 0 1 force @s
-
-# Crosshair spread marker: spawn when NOT zooming to indicate accuracy via crosshair gap
-execute unless score @s {ns}.zoom matches 1 run function {ns}:v{version}/zoom/crosshair_spread
-""")
-
-	# Crosshair spread: spawn a marker particle encoding the player's movement state Uses B channel > 0 (with G=0) to distinguish from flash/zoom markers Priority: jump > sprint > walk > sneak > base (matching accuracy system)
-	write_versioned_function("zoom/crosshair_spread", f"""
-# If sneaking in the air, treat as walking (not jump spread)
-execute unless predicate {ns}:v{version}/is_on_ground if predicate {ns}:v{version}/is_sneaking at @s anchored eyes run return run particle minecraft:dust{{color:[0.02,0.0,0.12],scale:0.01}} ^ ^ ^0.1 0 0 0 0 1 force @s
-
-# Jump (in air, not sneaking): widest spread
-execute unless predicate {ns}:v{version}/is_on_ground at @s anchored eyes run return run particle minecraft:dust{{color:[0.02,0.0,0.60],scale:0.01}} ^ ^ ^0.1 0 0 0 0 1 force @s
-
-# Sprint: very wide spread
-execute if predicate {ns}:v{version}/is_sprinting at @s anchored eyes run return run particle minecraft:dust{{color:[0.02,0.0,0.28],scale:0.01}} ^ ^ ^0.1 0 0 0 0 1 force @s
-
-# Walk: wider spread
-execute unless predicate {ns}:v{version}/is_sprinting if predicate {ns}:v{version}/is_moving at @s anchored eyes run return run particle minecraft:dust{{color:[0.02,0.0,0.12],scale:0.01}} ^ ^ ^0.1 0 0 0 0 1 force @s
-
-# Sneak: tightest spread (rarely visible since sneak = zoom for guns)
-execute if predicate {ns}:v{version}/is_sneaking at @s anchored eyes run return run particle minecraft:dust{{color:[0.02,0.0,0.02],scale:0.01}} ^ ^ ^0.1 0 0 0 0 1 force @s
-
-# Base: standing still, default spread
-execute at @s anchored eyes run particle minecraft:dust{{color:[0.02,0.0,0.05],scale:0.01}} ^ ^ ^0.1 0 0 0 0 1 force @s
+# The crosshair is hidden behind the scope, so the two are mutually exclusive
+execute if score @s {ns}.zoom matches 1 run return run function {ns}:v{version}/zoom/crosshair_clear
+function {ns}:v{version}/zoom/crosshair_spread
 """)
 
 	# Function to remove zoom state
@@ -93,6 +59,9 @@ playsound {ns}:common/lean_out player
 scoreboard players reset @s {ns}.zoom
 scoreboard players set @s {ns}.zoom_timer 0
 effect clear @s slowness
+
+# Shader: hand the scope overlay to its fade-out id
+function {ns}:v{version}/zoom/fx_leave
 
 # Signal: on_unzoom (@s = unzooming player, weapon data in mgs:signals)
 data modify storage {ns}:signals on_unzoom set value {{}}
@@ -119,6 +88,9 @@ playsound {ns}:common/lean_in player @s
 effect give @s slowness infinite 2 true
 scoreboard players set @s {ns}.zoom 1
 
+# Shader: ramp the scope overlay in, level picked from the weapon's scope_level stat
+function {ns}:v{version}/zoom/fx_enter
+
 # Signal: on_zoom (@s = zooming player, weapon data in mgs:signals)
 data modify storage {ns}:signals on_zoom set value {{}}
 data modify storage {ns}:signals on_zoom.weapon set from storage {ns}:gun all
@@ -134,14 +106,17 @@ playsound {ns}:common/lean_out player @s
 scoreboard players reset @s {ns}.zoom
 scoreboard players set @s {ns}.zoom_timer 0
 effect clear @s slowness
+function {ns}:v{version}/zoom/fx_leave
 """)
 
 	# Function to check and handle slowness effect
 	write_versioned_function("zoom/check_slowness", f"""
 # If player was zooming and switched slot so no longer holding a gun, remove slowness effect
+function {ns}:v{version}/zoom/crosshair_clear
 execute unless score @s {ns}.zoom matches 1 run return fail
 playsound {ns}:common/lean_out player @s
 scoreboard players reset @s {ns}.zoom
 effect clear @s slowness
+function {ns}:v{version}/zoom/fx_leave
 """)
 

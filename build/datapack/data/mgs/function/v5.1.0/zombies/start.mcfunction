@@ -77,6 +77,10 @@ execute as @a run scoreboard players operation @s mgs.hp_prev = @s mgs.health
 # Reset stamina state so every player re-inits to full on their next stamina tick (also covers late-joiners)
 scoreboard players set @a mgs.stam_seen 0
 
+# Post effects are stored in player NBT, so a previous round that ended badly would still be
+# applied. Clearing here means nobody starts a game scoped or with a red screen.
+execute as @a run function mgs:v5.1.0/player/fx_reset
+
 # Set gamerules
 gamemode spectator @a[scores={mgs.zb.in_game=1}]
 gamerule immediate_respawn true

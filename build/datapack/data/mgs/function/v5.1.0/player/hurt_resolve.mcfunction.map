@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "hurt_resolve.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/shaders/hurt.py"
+	],
+	"names": [],
+	"mappings": "AAyHiD;;;;;;;;AACjD;AACA;AACA;AACA;AACA;AACA;AACA"
+}

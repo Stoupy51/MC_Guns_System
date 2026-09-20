@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "fx_enter_3.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/shaders/zoom.py"
+	],
+	"names": [],
+	"mappings": "AA6K2D;;;;;;;;AAC3D;AACA;AACA;AACA"
+}

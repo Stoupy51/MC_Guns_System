@@ -3,8 +3,8 @@
 	"file": "apply_pap_flash_if_can_see.mcfunction",
 	"sourceRoot": "../../../../../../..",
 	"sources": [
-		"src/functional/shaders.py"
+		"src/functional/shaders/flash.py"
 	],
 	"names": [],
-	"mappings": "AAkjC+D;;;;;;;;AAC/D;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+	"mappings": "AA0J6C;;;;;;;;AAC7C;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
 }

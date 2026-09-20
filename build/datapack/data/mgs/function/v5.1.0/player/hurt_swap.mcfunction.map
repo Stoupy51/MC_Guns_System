@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "hurt_swap.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/shaders/hurt.py"
+	],
+	"names": [],
+	"mappings": "AAmJ8C;;;;;;;;AAC9C;AACA;AACA;AACA;AACA;AACA"
+}

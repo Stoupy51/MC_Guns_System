@@ -1,0 +1,44 @@
+{
+	"targets": {
+		"clock": {
+			"width": 1,
+			"height": 1,
+			"persistent": true,
+			"clear_color": 0
+		},
+		"clock_next": {
+			"width": 1,
+			"height": 1
+		}
+	},
+	"passes": [
+		{
+			"vertex_shader": "minecraft:core/screenquad",
+			"fragment_shader": "mgs:post/clock",
+			"inputs": [
+				{"sampler_name": "Clock","target": "clock"}
+			],
+			"output": "clock_next"
+		},
+		{
+			"vertex_shader": "minecraft:core/screenquad",
+			"fragment_shader": "mgs:post/copy",
+			"inputs": [
+				{"sampler_name": "In","target": "clock_next"}
+			],
+			"output": "clock"
+		},
+		{
+			"vertex_shader": "minecraft:core/screenquad",
+			"fragment_shader": "mgs:post/zoom",
+			"inputs": [
+				{"sampler_name": "Clock","target": "clock_next"},
+				{"sampler_name": "In","target": "minecraft:main"}
+			],
+			"output": "minecraft:main",
+			"uniforms": {
+				"ZoomConfig": [{"name": "Magnify","type": "vec2","value": [0.45,0.0]},{"name": "Barrel","type": "vec2","value": [0.55,0.0]},{"name": "Lens","type": "vec2","value": [4.0,0.2]},{"name": "Duration","type": "float","value": 4.0}]
+			}
+		}
+	]
+}

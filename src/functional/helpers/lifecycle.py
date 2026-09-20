@@ -170,6 +170,10 @@ execute as @a run scoreboard players operation @s {ns}.hp_prev = @s {ns}.health
 
 # Reset stamina state so every player re-inits to full on their next stamina tick (also covers late-joiners)
 scoreboard players set @a {ns}.stam_seen 0
+
+# Post effects are stored in player NBT, so a previous round that ended badly would still be
+# applied. Clearing here means nobody starts a game scoped or with a red screen.
+execute as @a run function {ns}:v{Mem.ctx.project_version}/player/fx_reset
 """.strip()
 
 	@staticmethod
@@ -185,5 +189,8 @@ effect clear @a minecraft:hunger
 effect give @a minecraft:saturation 5 20 true
 scoreboard players set @a {ns}.stam_out 0
 scoreboard players set @a {ns}.stam_seen 0
+
+# Take every shader id back off, so nothing survives into the lobby
+execute as @a run function {ns}:v{Mem.ctx.project_version}/player/fx_reset
 """.strip()
 
