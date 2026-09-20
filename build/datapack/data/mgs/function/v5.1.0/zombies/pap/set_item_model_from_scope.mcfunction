@@ -10,5 +10,5 @@
 #			model (unknown)
 #
 
-$item modify entity @s $(slot) {"function":"minecraft:set_components","components":{"minecraft:item_model":"$(model)"}}
+$item modify entity @s $(slot) {"type":"minecraft:set_components","components":{"minecraft:item_model":"$(model)"}}
 

@@ -9,5 +9,5 @@
 #			lore (unknown)
 #
 
-$item modify entity @s $(slot) {"function":"minecraft:set_components","components":{"minecraft:lore":$(lore)}}
+$item modify entity @s $(slot) {"type":"minecraft:set_components","components":{"minecraft:lore":$(lore)}}
 

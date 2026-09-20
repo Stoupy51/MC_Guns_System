@@ -26,7 +26,7 @@ def main() -> None:
 		"criteria": {
 			"requirement": {
 				"trigger": "minecraft:using_item",
-				"conditions": {
+				"condition": {
 					"item": {
 						"predicates": {
 							"minecraft:custom_data": f"{{{ns}:{{gun:true}}}}"
@@ -52,7 +52,7 @@ def main() -> None:
 		"criteria": {
 			"requirement": {
 				"trigger": "minecraft:player_interacted_with_entity",
-				"conditions": {
+				"condition": {
 					"item": {
 						"predicates": {
 							"minecraft:custom_data": f"{{{ns}:{{gun:true}}}}"
@@ -217,19 +217,19 @@ execute unless score @s {ns}.special.infinite_ammo matches 1.. if score @s {ns}.
 
 	# Prepare predicates for movement checks (Can't use flag 'is_on_ground' because /tp @s ~ ~ ~ makes it false for two ticks)
 	def json_enc(x: Any) -> Any: return set_json_encoder(x, max_level=-1)
-	Mem.ctx.data[ns].predicates[f"v{version}/is_on_ground"] = json_enc(Predicate({"condition":"minecraft:entity_properties","entity":"this","predicate":{"movement":{"vertical_speed":{"max":0.1}}}}))
-	Mem.ctx.data[ns].predicates[f"v{version}/is_sprinting"] = json_enc(Predicate({"condition":"minecraft:entity_properties","entity":"this","predicate":{"flags":{"is_sprinting":True}}}))
-	Mem.ctx.data[ns].predicates[f"v{version}/is_sneaking"] = json_enc(Predicate({"condition":"minecraft:entity_properties","entity":"this","predicate":{"flags":{"is_sneaking":True}}}))
-	Mem.ctx.data[ns].predicates[f"v{version}/is_swimming"] = json_enc(Predicate({"condition":"minecraft:entity_properties","entity":"this","predicate":{"flags":{"is_swimming":True}}}))
-	Mem.ctx.data[ns].predicates[f"v{version}/is_moving"] = json_enc(Predicate({"condition":"minecraft:entity_properties","entity":"this","predicate":{"movement":{"horizontal_speed":{"min":0.1}}}}))
+	Mem.ctx.data[ns].predicates[f"v{version}/is_on_ground"] = json_enc(Predicate({"type":"minecraft:entity_properties","entity":"this","predicate":{"movement":{"vertical_speed":{"max":0.1}}}}))
+	Mem.ctx.data[ns].predicates[f"v{version}/is_sprinting"] = json_enc(Predicate({"type":"minecraft:entity_properties","entity":"this","predicate":{"flags":{"is_sprinting":True}}}))
+	Mem.ctx.data[ns].predicates[f"v{version}/is_sneaking"] = json_enc(Predicate({"type":"minecraft:entity_properties","entity":"this","predicate":{"flags":{"is_sneaking":True}}}))
+	Mem.ctx.data[ns].predicates[f"v{version}/is_swimming"] = json_enc(Predicate({"type":"minecraft:entity_properties","entity":"this","predicate":{"flags":{"is_swimming":True}}}))
+	Mem.ctx.data[ns].predicates[f"v{version}/is_moving"] = json_enc(Predicate({"type":"minecraft:entity_properties","entity":"this","predicate":{"movement":{"horizontal_speed":{"min":0.1}}}}))
 
 	# Update weapon stats item modifier
-	modifier: dict[str, Any] = {"function":"minecraft:copy_custom_data","source":{"type":"minecraft:storage","source":f"{ns}:gun"},"ops":[{"source":"all.stats","target":f"{ns}.stats","op":"replace"}]}
+	modifier: dict[str, Any] = {"type":"minecraft:copy_custom_data","source":{"type":"minecraft:storage","source":f"{ns}:gun"},"ops":[{"source":"all.stats","target":f"{ns}.stats","op":"replace"}]}
 	Mem.ctx.data[ns].item_modifiers[f"v{version}/update_stats"] = json_enc(ItemModifier(modifier))
 
 	# Update weapon model item modifier
 	write_versioned_function("utils/update_model", """
-$item modify entity @s weapon.mainhand {"function": "minecraft:set_components","components": {"minecraft:item_model": "$(item_model)"}}
+$item modify entity @s weapon.mainhand {"type": "minecraft:set_components","components": {"minecraft:item_model": "$(item_model)"}}
 """)
 
 	# Hand swap (F) is a reload key (left click is the other one, see weapon/left_click.py).

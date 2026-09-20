@@ -25,7 +25,7 @@ def generate_loadouts() -> None:
 	write_versioned_function("multiplayer/apply_slot_loot", "$loot replace entity @s $(slot) loot $(loot)")
 
 	# apply_slot_count: set item count (for equipment stacking, e.g. 2 grenades)
-	write_versioned_function("multiplayer/apply_slot_count", """$item modify entity @s $(slot) {"function":"minecraft:set_count","count":$(count),"add":false}""")
+	write_versioned_function("multiplayer/apply_slot_count", """$item modify entity @s $(slot) {"type":"minecraft:set_count","count":$(count),"add":false}""")
 
 	# apply_slot_consumable: set consumable magazine stack count from #bullets score
 	write_versioned_function("multiplayer/apply_slot_consumable", f"""

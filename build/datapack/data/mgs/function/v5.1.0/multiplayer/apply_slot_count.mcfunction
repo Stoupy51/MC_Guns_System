@@ -7,5 +7,5 @@
 #			count (unknown)
 #
 
-$item modify entity @s $(slot) {"function":"minecraft:set_count","count":$(count),"add":false}
+$item modify entity @s $(slot) {"type":"minecraft:set_count","count":$(count),"add":false}
 
