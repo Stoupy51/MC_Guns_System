@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "fx_clear.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/shaders/zoom.py"
+	],
+	"names": [],
+	"mappings": "AAsK2C;;;;;;;;AAC3C;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

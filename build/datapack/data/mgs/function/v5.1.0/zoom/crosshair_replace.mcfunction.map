@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "crosshair_replace.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/shaders/crosshair.py"
+	],
+	"names": [],
+	"mappings": "AA4IoD;;;;;;;;;;;;AACpD;AACA;AACA"
+}

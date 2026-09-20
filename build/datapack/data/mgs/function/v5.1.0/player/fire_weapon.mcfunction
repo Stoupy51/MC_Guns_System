@@ -6,8 +6,7 @@
 # @within	mgs:v5.1.0/player/right_click
 #
 
-# Shader: spawn muzzle flash marker - skip for grenades
-# PaP guns use mode 10 (purple dust G=1.0 → ic.g ≥ 81), normal guns use mode 1 (dust G=0)
+# Shader: muzzle flash for everyone who can see the shooter - skip for grenades
 execute store success score #has_pap_level mgs.data if data storage mgs:gun all.stats.pap_level
 execute if score #has_pap_level mgs.data matches 1 unless data storage mgs:gun all.stats.grenade_type at @s anchored eyes positioned ^ ^ ^0.001 as @a[distance=..16] run function mgs:v5.1.0/player/apply_pap_flash_if_can_see
 execute if score #has_pap_level mgs.data matches 0 unless data storage mgs:gun all.stats.grenade_type at @s anchored eyes positioned ^ ^ ^0.001 as @a[distance=..16] run function mgs:v5.1.0/player/apply_flash_if_can_see

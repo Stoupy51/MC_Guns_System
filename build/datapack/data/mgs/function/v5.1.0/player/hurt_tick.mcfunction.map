@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "hurt_tick.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/shaders/hurt.py"
+	],
+	"names": [],
+	"mappings": "AAkI8C;;;;;;;;AAC9C;AACA;AACA;AACA;AACA;AACA;AACA"
+}

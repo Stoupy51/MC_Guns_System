@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "crosshair_remove.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/shaders/crosshair.py"
+	],
+	"names": [],
+	"mappings": "AAyImD;;;;;;;;;;;AACnD;AACA"
+}

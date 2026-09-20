@@ -16,6 +16,14 @@ execute unless score @s mgs.mp.pid matches 1.. run function mgs:v5.1.0/multiplay
 # Health regeneration: Black Ops style — only active during a game
 execute if score #any_game_active mgs.data matches 1 run function mgs:v5.1.0/player/regen_tick
 
+# Shader ids that expire on their own: the muzzle flash burst and the zoom fade-out
+execute if score @s mgs.flash_off matches 0.. run function mgs:v5.1.0/player/flash_tick
+execute if score @s mgs.zoom_fx matches ..-1 run function mgs:v5.1.0/zoom/fx_tick
+
+# Low-health overlay. Outside a game it resolves to no tier, which is also how it comes back off.
+execute if score #any_game_active mgs.data matches 1 run function mgs:v5.1.0/player/hurt_tick
+execute unless score #any_game_active mgs.data matches 1 if score @s mgs.hurt_fx matches 1.. run function mgs:v5.1.0/player/hurt_tick
+
 # Add temporary tag
 tag @s add mgs.ticking
 

@@ -3,8 +3,8 @@
 	"file": "crosshair_spread.mcfunction",
 	"sourceRoot": "../../../../../../..",
 	"sources": [
-		"src/functional/weapon/hud/zoom.py"
+		"src/functional/shaders/crosshair.py"
 	],
 	"names": [],
-	"mappings": "AAwDmD;;;;;;;;AACnD;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+	"mappings": "AAyFmD;;;;;;;;AACnD;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
 }

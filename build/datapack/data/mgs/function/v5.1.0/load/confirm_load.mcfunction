@@ -143,6 +143,14 @@ tellraw @a[tag=convention.debug] {"translate":"mgs.loaded_mc_guns_system_v5_1_0"
 scoreboard players set #mgs.loaded load.status 1
 function mgs:v5.1.0/load/set_items_storage
 
+scoreboard objectives add mgs.flash_id dummy
+scoreboard objectives add mgs.flash_off dummy
+scoreboard objectives add mgs.zoom_fx dummy
+scoreboard objectives add mgs.zoom_fx_off dummy
+scoreboard objectives add mgs.cross_from dummy
+scoreboard objectives add mgs.cross_to dummy
+scoreboard objectives add mgs.hurt_fx dummy
+
 ## Lore label templates for utils/update_all_lore
 data modify storage mgs:lore_templates damage set value [{"text": "D", "color": "#c24a17", "italic": false}, {"text": "a", "color": "#c24c18"}, {"text": "m", "color": "#c24f1a"}, {"text": "a", "color": "#c2511b"}, {"text": "g", "color": "#c3541d"}, {"text": "e", "color": "#c3571e"}, {"text": " ", "color": "#c35920"}, {"text": "P", "color": "#c35c21"}, {"text": "e", "color": "#c45e23"}, {"text": "r", "color": "#c46124"}, {"text": " ", "color": "#c46426"}, {"text": "B", "color": "#c46628"}, {"text": "u", "color": "#c56929"}, {"text": "l", "color": "#c56b2b"}, {"text": "l", "color": "#c56e2c"}, {"text": "e", "color": "#c5712e"}, {"text": "t", "color": "#c6732f"}, {"text": " ", "color": "#c67631"}, {"text": " ", "color": "#c67832"}, {"text": "\u27a4", "color": "#c67b34"}, {"text": " ", "color": "#c77e36"}]
 data modify storage mgs:lore_templates ammo set value [{"text": "A", "color": "#c24a17", "italic": false}, {"text": "m", "color": "#c24c18"}, {"text": "m", "color": "#c24e19"}, {"text": "o", "color": "#c2511b"}, {"text": " ", "color": "#c2531c"}, {"text": "R", "color": "#c3561e"}, {"text": "e", "color": "#c3581f"}, {"text": "m", "color": "#c35b21"}, {"text": "a", "color": "#c35d22"}, {"text": "i", "color": "#c46024"}, {"text": "n", "color": "#c46225"}, {"text": "i", "color": "#c46527"}, {"text": "n", "color": "#c46728"}, {"text": "g", "color": "#c56a2a"}, {"text": " ", "color": "#c56c2b"}, {"text": " ", "color": "#c56f2d"}, {"text": " ", "color": "#c5712e"}, {"text": " ", "color": "#c67430"}, {"text": " ", "color": "#c67631"}, {"text": " ", "color": "#c67933"}, {"text": "\u27a4", "color": "#c67b34"}, {"text": " ", "color": "#c77e36"}]

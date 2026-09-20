@@ -42,6 +42,9 @@ effect give @a minecraft:saturation 5 20 true
 scoreboard players set @a mgs.stam_out 0
 scoreboard players set @a mgs.stam_seen 0
 
+# Take every shader id back off, so nothing survives into the lobby
+execute as @a run function mgs:v5.1.0/player/fx_reset
+
 # Announce
 tellraw @a [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.zombies_game_ended","color":"red"}]
 execute as @a[scores={mgs.zb.in_game=1}] run function mgs:v5.1.0/shared/maps/call_script_at_base {script:"leave"}

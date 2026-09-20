@@ -40,6 +40,9 @@ effect give @a minecraft:saturation 5 20 true
 scoreboard players set @a mgs.stam_out 0
 scoreboard players set @a mgs.stam_seen 0
 
+# Take every shader id back off, so nothing survives into the lobby
+execute as @a run function mgs:v5.1.0/player/fx_reset
+
 # Announce scores (team scores are meaningless in FFA — the winner is announced by player_wins)
 tellraw @a ["","⚔ ",[{"text":"","color":"gold","bold":true},{"translate":"mgs.game_over"},"! "]]
 execute unless data storage mgs:multiplayer game{gamemode:"ffa"} run tellraw @a ["",{"translate":"mgs.red","color":"red"},{"text":": "},{"score":{"name":"#red","objective":"mgs.mp.team"}}," | ",{"translate":"mgs.blue","color":"blue"},{"text":": "},{"score":{"name":"#blue","objective":"mgs.mp.team"}}]

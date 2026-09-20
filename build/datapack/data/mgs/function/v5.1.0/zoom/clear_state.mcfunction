@@ -10,4 +10,5 @@ playsound mgs:common/lean_out player @s
 scoreboard players reset @s mgs.zoom
 scoreboard players set @s mgs.zoom_timer 0
 effect clear @s slowness
+function mgs:v5.1.0/zoom/fx_leave
 

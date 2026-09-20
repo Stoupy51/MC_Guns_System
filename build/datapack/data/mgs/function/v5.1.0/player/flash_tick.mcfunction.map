@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "flash_tick.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/shaders/flash.py"
+	],
+	"names": [],
+	"mappings": "AA8K+C;;;;;;;;AAC/C;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}
