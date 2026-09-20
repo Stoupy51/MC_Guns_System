@@ -22,4 +22,3 @@ tag @e[tag=mgs.new_respawn_cmd_marker] remove mgs.new_respawn_cmd_marker
 tellraw @a[tag=mgs.map_editor] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.respawn_command_placed","color":"dark_aqua"}]
 tellraw @a[tag=mgs.map_editor] ["  ",[{"text": "[", "color": "dark_aqua", "click_event": {"action": "suggest_command", "command": "/data modify entity @n[tag=mgs.element.respawn_command,distance=..10] data.command set value \"effect give @s minecraft:speed 5 0 true\""}, "hover_event": {"action": "show_text", "value": "Click to edit the command to run when players respawn"}}, "Edit Command", "]"]]
 
-## sourceMappingURL=handle_respawn_command.mcfunction.map

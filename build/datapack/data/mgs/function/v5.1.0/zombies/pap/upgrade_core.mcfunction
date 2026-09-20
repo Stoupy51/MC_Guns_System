@@ -87,4 +87,3 @@ function mgs:v5.1.0/zombies/pap/pap_upgrade_magazines with storage mgs:temp _pap
 # Refresh ammo HUD
 function mgs:v5.1.0/ammo/compute_reserve
 
-## sourceMappingURL=upgrade_core.mcfunction.map

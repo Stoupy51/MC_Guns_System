@@ -10,4 +10,3 @@
 
 $item replace entity @s container.$(slot) from entity @n[type=minecraft:item_display,tag=mgs.inv_restore] contents
 
-## sourceMappingURL=restore_slot.mcfunction.map

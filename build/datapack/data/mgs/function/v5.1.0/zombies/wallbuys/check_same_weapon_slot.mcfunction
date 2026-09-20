@@ -18,4 +18,3 @@
 scoreboard players set #wb_same_weapon mgs.data 0
 $execute store success score #wb_same_weapon mgs.data run data get entity @s Inventory[{Slot:$(slot)b}].components."minecraft:custom_data".mgs.$(weapon_id)
 
-## sourceMappingURL=check_same_weapon_slot.mcfunction.map

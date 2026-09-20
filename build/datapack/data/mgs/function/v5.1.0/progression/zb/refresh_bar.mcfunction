@@ -22,4 +22,3 @@ execute store result storage mgs:temp _xp.points int 1 run scoreboard players ge
 execute store result storage mgs:temp _xp.level int 1 run scoreboard players get @s mgs.zb.xp_level
 function mgs:v5.1.0/progression/apply_bar with storage mgs:temp _xp
 
-## sourceMappingURL=refresh_bar.mcfunction.map

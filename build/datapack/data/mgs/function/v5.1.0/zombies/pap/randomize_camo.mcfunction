@@ -31,4 +31,3 @@ data modify storage mgs:temp _pap_camo_data.weapon_id set from storage mgs:temp 
 execute if data storage mgs:temp _pap_extract.weapon run data modify storage mgs:temp _pap_camo_data.weapon_id set from storage mgs:temp _pap_extract.weapon
 function mgs:v5.1.0/zombies/pap/apply_camo with storage mgs:temp _pap_camo_data
 
-## sourceMappingURL=randomize_camo.mcfunction.map

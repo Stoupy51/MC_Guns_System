@@ -45,4 +45,3 @@ tag @n[tag=mgs.new_spawn] remove mgs.new_spawn
 data remove storage mgs:temp _spawn_iter[0]
 execute if data storage mgs:temp _spawn_iter[0] run function mgs:v5.1.0/zombies/summon_spawn_iter
 
-## sourceMappingURL=summon_spawn_iter.mcfunction.map

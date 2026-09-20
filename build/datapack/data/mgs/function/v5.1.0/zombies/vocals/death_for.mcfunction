@@ -10,4 +10,3 @@ scoreboard players operation @s mgs.zb.vox_death = #total_tick mgs.data
 scoreboard players add @s mgs.zb.vox_death 10
 playsound mgs:zombies/entity/death hostile @s ~ ~ ~ 2.0 1.0
 
-## sourceMappingURL=death_for.mcfunction.map

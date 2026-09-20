@@ -74,4 +74,3 @@ execute if score #trap_type mgs.data matches 2 run tag @e[tag=mgs._trap_new_head
 data remove storage mgs:temp _trap_iter[0]
 execute if data storage mgs:temp _trap_iter[0] run function mgs:v5.1.0/zombies/traps/setup_iter
 
-## sourceMappingURL=setup_iter.mcfunction.map

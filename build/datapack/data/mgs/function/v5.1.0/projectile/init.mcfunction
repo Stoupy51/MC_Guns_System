@@ -26,4 +26,3 @@ execute store result score @s mgs.data run data get storage mgs:temp proj.proj_l
 # Calculate velocity from the player's look direction and teleport back
 function mgs:v5.1.0/shared/calc_velocity
 
-## sourceMappingURL=init.mcfunction.map

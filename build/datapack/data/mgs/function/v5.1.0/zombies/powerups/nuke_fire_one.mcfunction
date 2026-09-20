@@ -11,4 +11,3 @@ effect give @s minecraft:fire_resistance infinite 0 true
 particle minecraft:flame ~ ~1 ~ 0.3 0.5 0.3 0.02 12 force @a[scores={mgs.zb.in_game=1},distance=..48]
 particle minecraft:soul_fire_flame ~ ~1 ~ 0.3 0.5 0.3 0.02 6 force @a[scores={mgs.zb.in_game=1},distance=..48]
 
-## sourceMappingURL=nuke_fire_one.mcfunction.map

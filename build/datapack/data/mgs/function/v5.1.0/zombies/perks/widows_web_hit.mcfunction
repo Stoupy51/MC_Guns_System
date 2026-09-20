@@ -13,4 +13,3 @@ execute store result storage mgs:temp _ww_dmg.amount int 1 run attribute @s mine
 data modify storage mgs:temp _ww_dmg.type set value "minecraft:generic"
 function mgs:v5.1.0/zombies/traps/apply_trap_damage with storage mgs:temp _ww_dmg
 
-## sourceMappingURL=widows_web_hit.mcfunction.map

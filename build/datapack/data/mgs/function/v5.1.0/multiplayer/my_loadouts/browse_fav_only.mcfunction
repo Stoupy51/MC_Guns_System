@@ -25,4 +25,3 @@ execute if data storage mgs:temp _iter[0] run function mgs:v5.1.0/multiplayer/my
 # Show dialog
 function mgs:v5.1.0/multiplayer/show_dialog with storage mgs:temp
 
-## sourceMappingURL=browse_fav_only.mcfunction.map

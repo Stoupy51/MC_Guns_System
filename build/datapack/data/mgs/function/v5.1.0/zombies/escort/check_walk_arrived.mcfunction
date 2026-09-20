@@ -12,4 +12,3 @@
 
 $execute positioned $(x) $(y) $(z) if entity @s[distance=..4] run scoreboard players set #zb_esc_arrived mgs.data 1
 
-## sourceMappingURL=check_walk_arrived.mcfunction.map

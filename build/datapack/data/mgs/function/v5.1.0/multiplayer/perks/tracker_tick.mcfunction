@@ -6,4 +6,3 @@
 
 execute as @a[scores={mgs.mp.in_game=1},gamemode=!spectator] at @s run function mgs:v5.1.0/multiplayer/perks/tracker_footprint
 
-## sourceMappingURL=tracker_tick.mcfunction.map

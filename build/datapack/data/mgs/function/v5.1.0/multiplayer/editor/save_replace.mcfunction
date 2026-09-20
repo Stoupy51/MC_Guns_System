@@ -15,4 +15,3 @@ execute if data storage mgs:temp _edit_src[0] run function mgs:v5.1.0/multiplaye
 # If the original vanished in the meantime (e.g. deleted), append as a new entry
 execute if score #edit_replaced mgs.data matches 0 run data modify storage mgs:multiplayer custom_loadouts append from storage mgs:temp _new_loadout
 
-## sourceMappingURL=save_replace.mcfunction.map

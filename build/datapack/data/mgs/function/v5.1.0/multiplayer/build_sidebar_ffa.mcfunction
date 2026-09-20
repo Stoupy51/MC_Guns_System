@@ -13,4 +13,3 @@ scoreboard players reset * mgs.sidebar
 $function #bs.sidebar:create {objective:"mgs.sidebar",display_name:{translate:"mgs.free_for_all",color:"gold",bold:true},contents:$(ffa_sb)}
 scoreboard objectives setdisplay sidebar mgs.sidebar
 
-## sourceMappingURL=build_sidebar_ffa.mcfunction.map

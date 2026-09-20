@@ -13,4 +13,3 @@
 $data modify storage mgs:temp _pap_extract.stats.models.normal set value "mgs:$(weapon_id)_$(camo)"
 $data modify storage mgs:temp _pap_extract.stats.models.zoom set value "mgs:$(weapon_id)_$(camo)_zoom"
 
-## sourceMappingURL=apply_camo.mcfunction.map

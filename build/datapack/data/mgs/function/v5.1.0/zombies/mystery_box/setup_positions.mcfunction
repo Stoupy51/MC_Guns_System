@@ -26,4 +26,3 @@ function mgs:v5.1.0/zombies/mystery_box/sync_presence_display
 # Tuck away the interaction entities of every non-active box
 function mgs:v5.1.0/zombies/mystery_box/sync_interaction_visibility
 
-## sourceMappingURL=setup_positions.mcfunction.map

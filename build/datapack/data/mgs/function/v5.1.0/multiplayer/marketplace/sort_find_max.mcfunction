@@ -16,4 +16,3 @@ execute if score #this_likes mgs.data > #max_likes mgs.data run scoreboard playe
 data remove storage mgs:temp _find_max_iter[0]
 execute if data storage mgs:temp _find_max_iter[0] run function mgs:v5.1.0/multiplayer/marketplace/sort_find_max
 
-## sourceMappingURL=sort_find_max.mcfunction.map

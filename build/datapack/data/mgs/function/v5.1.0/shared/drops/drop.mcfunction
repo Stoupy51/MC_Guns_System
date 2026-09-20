@@ -40,4 +40,3 @@ execute rotated ~ 90 run function #bs.raycast:run with storage mgs:input
 # Nothing below within range (died over the void) -> drop at the death position
 execute if score #drop_spawned mgs.data matches 0 run function mgs:v5.1.0/shared/drops/spawn
 
-## sourceMappingURL=drop.mcfunction.map

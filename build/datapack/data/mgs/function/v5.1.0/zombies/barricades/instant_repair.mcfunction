@@ -25,4 +25,3 @@ data modify entity @s block_state set from entity @s data.block_enabled
 particle minecraft:happy_villager ~ ~ ~ 0.5 0.5 0.5 0.05 10 normal
 playsound mgs:zombies/barricade/slam block @a[distance=..32] ~ ~ ~ 1.0 1.0
 
-## sourceMappingURL=instant_repair.mcfunction.map

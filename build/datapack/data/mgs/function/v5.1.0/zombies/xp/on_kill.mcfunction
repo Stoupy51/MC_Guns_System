@@ -10,4 +10,3 @@ execute unless data storage mgs:signals on_kill{headshot:1} run return fail
 
 function mgs:v5.1.0/progression/zb/award_headshot
 
-## sourceMappingURL=on_kill.mcfunction.map

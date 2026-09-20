@@ -10,4 +10,3 @@
 
 $execute align xyz run particle block{block_state:"$(block)"} ~.5 ~1 ~.5 0.3 0.1 0.3 0.5 15 force @a[distance=..64]
 
-## sourceMappingURL=zombie_rise_particles.mcfunction.map

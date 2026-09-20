@@ -22,4 +22,3 @@ execute as @e[tag=mgs.element.boundary] at @s run function mgs:v5.1.0/maps/edito
 execute as @e[tag=mgs.element.start_command] at @s run function mgs:v5.1.0/maps/editor/save_start_command {path:"start_commands"}
 execute as @e[tag=mgs.element.respawn_command] at @s run function mgs:v5.1.0/maps/editor/save_respawn_command {path:"respawn_commands"}
 
-## sourceMappingURL=missions.mcfunction.map

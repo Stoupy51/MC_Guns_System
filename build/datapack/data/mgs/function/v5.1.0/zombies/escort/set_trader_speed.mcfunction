@@ -10,4 +10,3 @@
 
 $attribute @s minecraft:movement_speed base set $(speed)
 
-## sourceMappingURL=set_trader_speed.mcfunction.map

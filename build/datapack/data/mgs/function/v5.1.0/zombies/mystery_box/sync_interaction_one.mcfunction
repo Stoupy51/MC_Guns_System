@@ -15,4 +15,3 @@ execute if entity @n[tag=mgs.mb_display,distance=..3] run scoreboard players set
 execute if score #mb_vis mgs.data matches 1 if entity @s[tag=mgs.roam_hidden] run function mgs:v5.1.0/zombies/roaming/interaction_show
 execute if score #mb_vis mgs.data matches 0 unless entity @s[tag=mgs.roam_hidden] run function mgs:v5.1.0/zombies/roaming/interaction_hide
 
-## sourceMappingURL=sync_interaction_one.mcfunction.map

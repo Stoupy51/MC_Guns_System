@@ -12,4 +12,3 @@ execute if score @s mgs.zb.trap.cd > @s mgs.zb.trap.cd_max run scoreboard player
 
 scoreboard players operation @s mgs.zb.trap.cd -= #tick_delta mgs.data
 
-## sourceMappingURL=cooldown_tick.mcfunction.map

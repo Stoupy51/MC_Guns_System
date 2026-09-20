@@ -21,4 +21,3 @@ data remove storage mgs:temp _map_iter[0]
 scoreboard players add #map_idx mgs.data 1
 execute if data storage mgs:temp _map_iter[0] run function mgs:v5.1.0/shared/maps/select_iter
 
-## sourceMappingURL=select_iter.mcfunction.map

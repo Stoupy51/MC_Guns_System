@@ -9,4 +9,3 @@
 
 function mgs:v5.1.0/maps/zombies/kino_der_toten/teleporter/tick
 
-## sourceMappingURL=tick.mcfunction.map

@@ -8,4 +8,3 @@
 
 tag @n[type=minecraft:wandering_trader,tag=mgs.zb_escort,distance=..8] add mgs.zb_escort_monkey
 
-## sourceMappingURL=redirect_to_monkey.mcfunction.map

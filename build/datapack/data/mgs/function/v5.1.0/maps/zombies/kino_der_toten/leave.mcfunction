@@ -19,4 +19,3 @@ scoreboard players set #kino_tp_timer mgs.data 0
 scoreboard players set #kino_tp_cd mgs.data 0
 scoreboard players set #kino_met_count mgs.data 0
 
-## sourceMappingURL=leave.mcfunction.map

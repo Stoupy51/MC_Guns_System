@@ -26,4 +26,9 @@ Not tracked here on purpose:
 # Inbox (quick notes - dump anything here, unorganized "basic" format is fine)
 - A day in 2027: Add this map https://www.planetminecraft.com/project/black-ops-ii-mob-of-the-dead-minecraft-in-2013/
 - bs.entity.interaction to remove: not used?
+- hud rouge quand peu de vie
+- Demolition: "Sides swapped" it didn't swapped.
+- Multiplayer: better armor
+- Zombies: if mannequin falls out of the map the player isn't killed for Out of Bounds
+- Zombies: when shooting 
 

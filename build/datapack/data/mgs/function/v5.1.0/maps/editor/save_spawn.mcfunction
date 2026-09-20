@@ -32,4 +32,3 @@ data modify storage mgs:temp _save_coord[3] set from entity @s data.yaw
 # Append to the correct list
 $data modify storage mgs:temp map_edit.map.spawning_points.$(path) append from storage mgs:temp _save_coord
 
-## sourceMappingURL=save_spawn.mcfunction.map

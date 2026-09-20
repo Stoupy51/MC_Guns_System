@@ -11,4 +11,3 @@
 
 $data modify storage mgs:temp _new_loadout.name set value "$(primary_name) + $(secondary_name)"
 
-## sourceMappingURL=set_name.mcfunction.map

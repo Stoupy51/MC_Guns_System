@@ -31,4 +31,3 @@ function mgs:v5.1.0/maps/editor/summon_point_marker with storage mgs:temp _ppos
 data remove storage mgs:temp _point_iter[0]
 execute if data storage mgs:temp _point_iter[0] run function mgs:v5.1.0/maps/editor/summon_point_iter
 
-## sourceMappingURL=summon_point_iter.mcfunction.map

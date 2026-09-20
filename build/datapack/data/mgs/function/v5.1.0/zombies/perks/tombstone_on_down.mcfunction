@@ -34,4 +34,3 @@ scoreboard players set @n[tag=mgs.tombstone_new] mgs.zb.ts.timer 0
 function mgs:v5.1.0/zombies/perks/tombstone_tp with storage mgs:temp
 tag @e[tag=mgs.tombstone_new] remove mgs.tombstone_new
 
-## sourceMappingURL=tombstone_on_down.mcfunction.map

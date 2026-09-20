@@ -28,4 +28,3 @@ scoreboard players operation @s mgs.zb.xp_prog -= #xp_need mgs.data
 
 function mgs:v5.1.0/progression/zb/refresh_bar
 
-## sourceMappingURL=recompute.mcfunction.map

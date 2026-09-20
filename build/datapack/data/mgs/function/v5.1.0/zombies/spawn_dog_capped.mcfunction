@@ -11,4 +11,3 @@ execute if score #zb_dog_live mgs.data >= #zb_dog_cap mgs.data run return 0
 function mgs:v5.1.0/zombies/spawn_dog
 scoreboard players remove #zb_to_spawn mgs.data 1
 
-## sourceMappingURL=spawn_dog_capped.mcfunction.map

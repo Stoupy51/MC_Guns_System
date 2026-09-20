@@ -20,4 +20,3 @@ $execute as $(attacker) run function #mgs:signals/on_kill
 function mgs:v5.1.0/multiplayer/random_kill_message
 tag @s remove mgs.temp_victim
 
-## sourceMappingURL=simulate_death_fire_kill.mcfunction.map

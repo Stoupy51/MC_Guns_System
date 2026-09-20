@@ -13,4 +13,3 @@ scoreboard players operation #ds_acc mgs.data *= #ds_num mgs.data
 scoreboard players operation #ds_acc mgs.data /= #ds_den mgs.data
 execute store result storage mgs:gun accuracy double 0.001 run scoreboard players get #ds_acc mgs.data
 
-## sourceMappingURL=deadshot_scale.mcfunction.map

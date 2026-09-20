@@ -20,4 +20,3 @@ $execute positioned ~-$(rx) ~-$(ry) ~-$(rz) as @e[tag=mgs.zombie_round,dx=$(sx),
 # Players inside the trap: 5 electric damage (PhD Flopper owners are immune)
 $execute positioned ~-$(rx) ~-$(ry) ~-$(rz) as @a[scores={mgs.zb.in_game=1,mgs.special.phd_flopper=0},gamemode=!creative,gamemode=!spectator,dx=$(sx),dy=$(sy),dz=$(sz)] run damage @s 5 minecraft:lightning_bolt
 
-## sourceMappingURL=damage_electric.mcfunction.map

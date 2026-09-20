@@ -11,4 +11,3 @@
 
 $summon minecraft:interaction $(x) $(y) $(z) {width:1.69f,height:-2.0f,response:true,Rotation:$(rotation),Tags:["mgs.pap_machine","mgs.gm_entity","bs.entity.interaction","mgs.pap_new"]}
 
-## sourceMappingURL=place_at.mcfunction.map

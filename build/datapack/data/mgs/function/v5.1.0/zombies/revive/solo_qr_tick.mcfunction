@@ -27,4 +27,3 @@ function #smithed.actionbar:message
 # Auto-revive once threshold reached
 execute if score @s mgs.zb.revive_p matches 200.. run function mgs:v5.1.0/zombies/revive/solo_qr_complete
 
-## sourceMappingURL=solo_qr_tick.mcfunction.map

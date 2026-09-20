@@ -15,4 +15,3 @@
 
 $data modify entity @s wander_target set value [I;$(x),$(y),$(z)]
 
-## sourceMappingURL=set_wander_target.mcfunction.map

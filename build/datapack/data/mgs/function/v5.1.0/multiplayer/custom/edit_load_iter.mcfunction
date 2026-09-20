@@ -16,4 +16,3 @@ execute if score #entry_id mgs.data = #loadout_id mgs.data run return 0
 data remove storage mgs:temp _find_iter[0]
 execute if data storage mgs:temp _find_iter[0] run function mgs:v5.1.0/multiplayer/custom/edit_load_iter
 
-## sourceMappingURL=edit_load_iter.mcfunction.map

@@ -12,4 +12,3 @@ function mgs:v5.1.0/zombies/mystery_box/reroll_owned
 # Treat a missing result (empty pool / all owned after rerolls) as "owned" so we refund
 execute unless data storage mgs:zombies mystery_box.result.weapon_id run scoreboard players set #mb_owned mgs.data 1
 
-## sourceMappingURL=pick_for_buyer.mcfunction.map

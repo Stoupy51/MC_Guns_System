@@ -26,4 +26,3 @@ execute if score #fav_found mgs.data matches 0 run tellraw @s ["",[{"text":"","c
 # Reopen Marketplace dialog with updated data
 function mgs:v5.1.0/multiplayer/marketplace/browse
 
-## sourceMappingURL=toggle_favorite.mcfunction.map

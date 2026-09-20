@@ -9,4 +9,3 @@
 execute if data storage mgs:temp editor{perks:["overkill"]} run return run function mgs:v5.1.0/multiplayer/editor/show_secondary_overkill_dialog
 function mgs:v5.1.0/multiplayer/editor/show_secondary_pistol_dialog
 
-## sourceMappingURL=show_secondary_dialog.mcfunction.map

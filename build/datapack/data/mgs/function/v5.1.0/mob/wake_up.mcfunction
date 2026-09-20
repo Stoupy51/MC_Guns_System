@@ -11,4 +11,3 @@
 tag @s remove mgs.mob_sleeping
 scoreboard players operation @s mgs.mob.timer = @s mgs.mob.active_time
 
-## sourceMappingURL=wake_up.mcfunction.map

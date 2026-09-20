@@ -23,4 +23,3 @@ scoreboard players add #zb_dog_pending mgs.data 1
 # selector, with a minVolume floor so the telegraph carries to players further out.
 playsound minecraft:block.beacon.deactivate ambient @a[distance=..32] ~ ~ ~ 2.0 1.9 0.25
 
-## sourceMappingURL=do_spawn_dog.mcfunction.map

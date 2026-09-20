@@ -16,4 +16,3 @@ execute positioned ~ ~-1 ~ run scoreboard players operation @n[type=!#mgs:ignore
 # Mark that this grenade is stuck to an entity (not just a block)
 tag @s add mgs.stuck_to_entity
 
-## sourceMappingURL=stick_to_entity.mcfunction.map

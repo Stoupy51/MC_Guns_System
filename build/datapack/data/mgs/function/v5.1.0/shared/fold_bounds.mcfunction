@@ -19,4 +19,3 @@ execute if score #bc_z mgs.data > #bound_z2 mgs.data run scoreboard players oper
 data remove storage mgs:temp _bnd_corners[0]
 execute if data storage mgs:temp _bnd_corners[0] run function mgs:v5.1.0/shared/fold_bounds
 
-## sourceMappingURL=fold_bounds.mcfunction.map

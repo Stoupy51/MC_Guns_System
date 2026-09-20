@@ -63,4 +63,3 @@ data modify storage mgs:temp _zb_iter set from storage mgs:temp map_edit.map.wun
 data modify storage mgs:temp _zb_iter_tag set value "mgs.element.wunderfizz"
 execute if data storage mgs:temp _zb_iter[0] run function mgs:v5.1.0/maps/editor/summon_zb_object_iter
 
-## sourceMappingURL=zombies.mcfunction.map

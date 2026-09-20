@@ -33,4 +33,3 @@ execute unless score @s mgs.special.infinite_ammo matches 1.. run item modify en
 # Set remaining_bullets to 2 so ammo/decrease (which runs after) reduces it to 1 for the next throw
 scoreboard players set @s mgs.remaining_bullets 2
 
-## sourceMappingURL=throw.mcfunction.map

@@ -12,4 +12,3 @@ $item replace entity @s contents from entity @p[tag=mgs.mb_name_reader] $(slot)
 data modify storage mgs:temp _mb_collected_name set from entity @s item.components."minecraft:item_name"
 kill @s
 
-## sourceMappingURL=extract_collected_item_name.mcfunction.map

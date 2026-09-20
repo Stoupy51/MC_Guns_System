@@ -12,4 +12,3 @@
 
 $damage $(target) $(amount) mgs:bullet by $(attacker)
 
-## sourceMappingURL=damage.mcfunction.map

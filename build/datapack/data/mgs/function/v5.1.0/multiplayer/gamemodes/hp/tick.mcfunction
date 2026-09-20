@@ -31,4 +31,3 @@ scoreboard players remove #hp_score_timer mgs.data 1
 execute if score #hp_score_timer mgs.data matches ..0 run function mgs:v5.1.0/multiplayer/gamemodes/hp/score_tick
 execute if score #hp_score_timer mgs.data matches ..0 run scoreboard players set #hp_score_timer mgs.data 20
 
-## sourceMappingURL=tick.mcfunction.map

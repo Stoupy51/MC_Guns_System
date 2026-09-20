@@ -31,4 +31,3 @@ $scoreboard players set @s mgs.mob.sleep_time $(sleep_time)
 # Increment armed mob count
 scoreboard players add #armed_mob_count mgs.data 1
 
-## sourceMappingURL=on_new.mcfunction.map

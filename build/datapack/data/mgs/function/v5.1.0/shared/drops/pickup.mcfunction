@@ -13,4 +13,3 @@ execute unless items entity @s weapon.mainhand *[custom_data~{mgs:{gun:true}}] r
 execute if data entity @s SelectedItem.components."minecraft:custom_data".mgs.stats.grenade_type run return fail
 execute at @e[tag=bs.interaction.target] run function mgs:v5.1.0/shared/drops/collect
 
-## sourceMappingURL=pickup.mcfunction.map

@@ -11,4 +11,3 @@
 
 $data modify storage mgs:temp _pap_machine set from storage mgs:zombies pap_data."$(id)"
 
-## sourceMappingURL=lookup_machine.mcfunction.map

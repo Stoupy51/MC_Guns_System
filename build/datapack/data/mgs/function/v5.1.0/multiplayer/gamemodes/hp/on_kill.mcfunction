@@ -11,4 +11,3 @@ execute if score @s mgs.mp.team matches 2 run scoreboard players add #blue mgs.m
 # Refresh sidebar to show updated team scores
 function #bs.sidebar:refresh {objective:"mgs.sidebar"}
 
-## sourceMappingURL=on_kill.mcfunction.map

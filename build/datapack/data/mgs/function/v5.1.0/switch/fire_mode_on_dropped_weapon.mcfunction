@@ -20,4 +20,3 @@ execute unless data storage mgs:gun all.stats.can_auto unless data storage mgs:g
 # Cycle auto -> semi -> burst -> auto (narrowed to what the weapon supports)
 function mgs:v5.1.0/switch/do_toggle_fire_mode
 
-## sourceMappingURL=fire_mode_on_dropped_weapon.mcfunction.map

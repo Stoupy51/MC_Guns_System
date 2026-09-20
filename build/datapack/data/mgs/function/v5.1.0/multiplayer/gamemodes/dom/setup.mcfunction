@@ -34,4 +34,3 @@ execute store result score #dom_point_count mgs.data if entity @e[tag=mgs.dom_po
 # Initialize scoring interval timer (score every 5 seconds = 100 ticks)
 scoreboard players set #dom_score_timer mgs.data 100
 
-## sourceMappingURL=setup.mcfunction.map

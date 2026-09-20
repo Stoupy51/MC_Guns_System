@@ -47,4 +47,3 @@ playsound minecraft:block.note_block.hat ambient @s
 # Refresh the actionbar immediately so the fire-mode highlight doesn't lag behind the toggle
 scoreboard players set @s mgs.ab_force 1
 
-## sourceMappingURL=do_toggle_fire_mode.mcfunction.map

@@ -17,4 +17,3 @@ execute as @e[type=minecraft:marker,tag=mgs.death_watch] at @s on vehicle if dat
 # Dogs are skipped: they are not Silent and already die with their own wolf vocals.
 execute as @e[type=minecraft:marker,tag=mgs.death_watch] at @s on vehicle if entity @s[tag=mgs.zombie_round,tag=!mgs.zb_dog,tag=!mgs.zb_dying] if data entity @s {Health:0.0f} run function mgs:v5.1.0/zombies/vocals/death
 
-## sourceMappingURL=death_watch_tick.mcfunction.map

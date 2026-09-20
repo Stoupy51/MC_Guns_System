@@ -43,4 +43,3 @@ execute if score #is_new_kill mgs.data matches 1 store result storage mgs:signal
 
 execute if score #is_new_kill mgs.data matches 1 as @n[tag=mgs.ticking] run function #mgs:signals/on_kill
 
-## sourceMappingURL=apply_damage.mcfunction.map

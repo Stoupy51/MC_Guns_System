@@ -21,4 +21,3 @@ execute if score #zb_to_spawn mgs.data matches 97.. run scoreboard players set #
 scoreboard players operation #zb_to_spawn mgs.data *= #zb_player_count mgs.data
 execute if score #zb_to_spawn mgs.data matches 257.. run scoreboard players set #zb_to_spawn mgs.data 256
 
-## sourceMappingURL=calc_round_count_zombies.mcfunction.map

@@ -32,4 +32,3 @@ $data remove storage mgs:zombies pap_anim_slot."$(id)"
 # Notify the player
 execute as @p[tag=mgs.pap_owner] run playsound minecraft:entity.experience_orb.pickup ambient @s ~ ~ ~ 0.8 1.25
 
-## sourceMappingURL=collect_give.mcfunction.map

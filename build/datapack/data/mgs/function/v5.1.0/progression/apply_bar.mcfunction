@@ -14,4 +14,3 @@ xp set @s 130 levels
 $xp set @s $(points) points
 $xp set @s $(level) levels
 
-## sourceMappingURL=apply_bar.mcfunction.map

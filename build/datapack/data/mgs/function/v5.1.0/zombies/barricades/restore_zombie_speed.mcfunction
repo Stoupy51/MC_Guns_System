@@ -10,4 +10,3 @@
 attribute @s minecraft:movement_speed modifier remove mgs:freeze
 tag @s remove mgs.barricade_frozen
 
-## sourceMappingURL=restore_zombie_speed.mcfunction.map

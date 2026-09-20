@@ -12,4 +12,3 @@
 
 execute as @e[tag=mgs.mystery_box_pos] at @s run function mgs:v5.1.0/zombies/mystery_box/sync_interaction_one
 
-## sourceMappingURL=sync_interaction_visibility.mcfunction.map

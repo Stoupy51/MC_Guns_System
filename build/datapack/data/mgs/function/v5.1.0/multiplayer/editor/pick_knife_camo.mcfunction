@@ -19,4 +19,3 @@ execute if score @s mgs.player.config matches 604 run data modify storage mgs:te
 
 function mgs:v5.1.0/multiplayer/editor/hub
 
-## sourceMappingURL=pick_knife_camo.mcfunction.map

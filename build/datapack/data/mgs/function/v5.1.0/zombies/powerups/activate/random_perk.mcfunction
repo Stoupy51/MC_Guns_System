@@ -22,4 +22,3 @@ execute as @p[tag=mgs.pu_collecting] run function mgs:v5.1.0/zombies/perks/apply
 tellraw @a[scores={mgs.zb.in_game=1}] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.random_perk_dropped_for","color":"light_purple"},["",{"text":"[","color":"dark_gray"},{"score":{"name":"@p[tag=mgs.pu_collecting]","objective":"mgs.zb.xp_level"},"color":"gold"},{"text":"] ","color":"dark_gray"},{"selector":"@p[tag=mgs.pu_collecting]","color":"light_purple","bold":true}],{"text":"!","color":"light_purple"}]
 execute as @a[scores={mgs.zb.in_game=1}] at @s run playsound mgs:zombies/powerups/random_perk ambient @s ~ ~ ~ 0.7 1.0
 
-## sourceMappingURL=random_perk.mcfunction.map

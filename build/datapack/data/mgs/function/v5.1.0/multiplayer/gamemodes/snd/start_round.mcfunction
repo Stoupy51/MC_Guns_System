@@ -59,4 +59,3 @@ execute unless entity @e[tag=mgs.snd_loose_at] at @e[tag=mgs.spawn_point,limit=1
 # so the gap between rounds can never be mistaken for a team wipe.
 scoreboard players set #snd_round_active mgs.data 1
 
-## sourceMappingURL=start_round.mcfunction.map

@@ -8,4 +8,3 @@ kill @e[tag=mgs.hp_marker]
 kill @e[tag=mgs.hp_label]
 tag @a remove mgs.in_hp_zone
 
-## sourceMappingURL=cleanup.mcfunction.map

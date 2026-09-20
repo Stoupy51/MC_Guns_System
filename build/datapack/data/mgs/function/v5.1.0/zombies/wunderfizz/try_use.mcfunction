@@ -50,4 +50,3 @@ playsound minecraft:block.conduit.activate ambient @a[scores={mgs.zb.in_game=1}]
 playsound minecraft:block.beacon.activate ambient @a[scores={mgs.zb.in_game=1}] ~ ~ ~ 0.6 1.6
 tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.der_wunderfizz_spinning","color":"gold"}]
 
-## sourceMappingURL=try_use.mcfunction.map

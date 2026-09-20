@@ -17,4 +17,3 @@ function #bs.move:apply_vel {scale:0.001,with:{blocks:true,entities:true,ignored
 # If collision was detected, explode and stop processing
 execute at @s run function mgs:v5.1.0/projectile/post_vel
 
-## sourceMappingURL=tick.mcfunction.map

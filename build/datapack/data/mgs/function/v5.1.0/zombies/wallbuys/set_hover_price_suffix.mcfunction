@@ -11,4 +11,3 @@ execute if score #wb_price_mode mgs.data matches 1 run data modify storage mgs:t
 execute if score #wb_price_mode mgs.data matches 2 run data modify storage mgs:temp _wb_price_suffix set value " (PAP Refill)"
 execute if score #wb_price_mode mgs.data matches 3 run data modify storage mgs:temp _wb_price_suffix set value " (Ammo full)"
 
-## sourceMappingURL=set_hover_price_suffix.mcfunction.map

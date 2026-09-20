@@ -6,4 +6,3 @@
 
 function mgs:v5.1.0/dialogs/missions/setup
 
-## sourceMappingURL=setup.mcfunction.map

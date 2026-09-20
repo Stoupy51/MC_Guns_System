@@ -31,4 +31,3 @@ function mgs:v5.1.0/zombies/power/place_at with storage mgs:temp _pw
 data remove storage mgs:temp _pw_iter[0]
 execute if data storage mgs:temp _pw_iter[0] run function mgs:v5.1.0/zombies/power/setup_iter
 
-## sourceMappingURL=setup_iter.mcfunction.map

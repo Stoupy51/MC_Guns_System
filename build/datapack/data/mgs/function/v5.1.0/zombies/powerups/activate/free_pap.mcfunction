@@ -8,4 +8,3 @@
 
 execute as @p[tag=mgs.pu_collecting] run function mgs:v5.1.0/zombies/pap/on_free_pap
 
-## sourceMappingURL=free_pap.mcfunction.map

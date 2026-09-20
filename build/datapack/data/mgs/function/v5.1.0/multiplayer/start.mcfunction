@@ -168,4 +168,3 @@ schedule function mgs:v5.1.0/multiplayer/end_prep 200t
 # Announce
 tellraw @a ["","⚔ ",[{"text":"","color":"gold","bold":true},{"translate":"mgs.preparing"},"! "],{"translate":"mgs.choose_your_class_game_starts_in_10_seconds","color":"yellow"}]
 
-## sourceMappingURL=start.mcfunction.map

@@ -25,4 +25,3 @@ execute if score #wb_pap_level mgs.data matches 1.. run scoreboard players set #
 $function mgs:v5.1.0/zombies/wallbuys/check_mag_not_full {slot:"inventory.$(inventory)"}
 execute if score #wb_mag_not_full mgs.data matches 0 run scoreboard players set #wb_price_mode mgs.data 3
 
-## sourceMappingURL=select_refill_price.mcfunction.map

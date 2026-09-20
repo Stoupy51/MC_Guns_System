@@ -14,4 +14,3 @@ execute unless score #count mgs.data matches -1 run scoreboard players operation
 data modify storage mgs:gun all.stats.remaining_bullets set value -1
 item modify entity @s weapon.mainhand mgs:v5.1.0/update_stats
 
-## sourceMappingURL=copy_data.mcfunction.map

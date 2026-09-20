@@ -13,4 +13,3 @@ scoreboard players operation @s mgs.zb.xp_spent_acc -= #xp_spent mgs.data
 # No message: spending already had its own feedback, and this is a trickle rather than an event
 function mgs:v5.1.0/progression/zb/award_points_spent
 
-## sourceMappingURL=pay_spend.mcfunction.map

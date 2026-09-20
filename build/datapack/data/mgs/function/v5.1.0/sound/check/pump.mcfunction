@@ -14,4 +14,3 @@ scoreboard players operation #half mgs.data /= #divisor mgs.data
 # If current cooldown equals half, play mid cooldown sound and remove tag
 execute if score @s mgs.cooldown = #half mgs.data run function mgs:v5.1.0/sound/pump with storage mgs:gun all.sounds
 
-## sourceMappingURL=pump.mcfunction.map

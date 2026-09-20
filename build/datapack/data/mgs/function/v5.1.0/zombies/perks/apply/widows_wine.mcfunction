@@ -13,4 +13,3 @@ execute at @s run playsound mgs:zombies/perks/widows_wine ambient @s ~ ~ ~ 1.0 1
 tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],"🕸 ",{"translate":"mgs.widows_wine_web_grenades_webbing_melee","color":"dark_red"},[" ",{"text":"+5 XP","color":"gold"}]]
 function mgs:v5.1.0/progression/zb/award_perk
 
-## sourceMappingURL=widows_wine.mcfunction.map

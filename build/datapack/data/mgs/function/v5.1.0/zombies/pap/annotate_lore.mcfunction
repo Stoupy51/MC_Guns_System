@@ -40,4 +40,3 @@ scoreboard players operation #pap_delta mgs.data = #pap_new mgs.data
 scoreboard players operation #pap_delta mgs.data -= #pap_old mgs.data
 execute unless score #pap_delta mgs.data matches 0 run function mgs:v5.1.0/zombies/pap/annotate_time_delta
 
-## sourceMappingURL=annotate_lore.mcfunction.map

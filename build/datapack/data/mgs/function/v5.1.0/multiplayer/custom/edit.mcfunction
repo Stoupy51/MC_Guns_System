@@ -26,4 +26,3 @@ execute if score #edit_found mgs.data matches 0 run tellraw @s [[{"text":"","col
 # Open the hub (points recompute from the loaded state)
 function mgs:v5.1.0/multiplayer/editor/hub
 
-## sourceMappingURL=edit.mcfunction.map

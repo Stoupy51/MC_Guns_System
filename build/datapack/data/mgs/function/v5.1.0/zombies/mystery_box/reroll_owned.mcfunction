@@ -11,4 +11,3 @@ execute if score #mb_owned mgs.data matches 1 if score #mb_reroll mgs.data match
 execute if score #mb_owned mgs.data matches 1 if score #mb_reroll mgs.data matches ..19 run function mgs:v5.1.0/zombies/mystery_box/pick_random_result
 execute if score #mb_owned mgs.data matches 1 if score #mb_reroll mgs.data matches ..19 run function mgs:v5.1.0/zombies/mystery_box/reroll_owned
 
-## sourceMappingURL=reroll_owned.mcfunction.map

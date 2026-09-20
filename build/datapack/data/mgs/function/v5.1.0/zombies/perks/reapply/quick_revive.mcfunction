@@ -9,4 +9,3 @@
 
 tag @s add mgs.perk.quick_revive
 
-## sourceMappingURL=quick_revive.mcfunction.map

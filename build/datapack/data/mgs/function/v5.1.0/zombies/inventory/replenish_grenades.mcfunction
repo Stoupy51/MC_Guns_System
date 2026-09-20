@@ -16,4 +16,3 @@ execute if items entity @s hotbar.7 *[custom_data~{mgs:{gun:true,zombies:{hotbar
 # hardcoded frag (a player who bought semtex and used them all should get 2 semtex back).
 execute unless items entity @s hotbar.7 * run function mgs:v5.1.0/zombies/inventory/give_lethal_type {count:2}
 
-## sourceMappingURL=replenish_grenades.mcfunction.map

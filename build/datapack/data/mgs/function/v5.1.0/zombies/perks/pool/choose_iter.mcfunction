@@ -46,4 +46,3 @@ scoreboard players add #pool_roll mgs.data 1
 execute if score #pool_roll mgs.data matches 14.. run scoreboard players set #pool_roll mgs.data 0
 function mgs:v5.1.0/zombies/perks/pool/choose_iter
 
-## sourceMappingURL=choose_iter.mcfunction.map

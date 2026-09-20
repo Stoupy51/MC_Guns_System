@@ -17,4 +17,3 @@ data modify storage mgs:multiplayer custom_loadouts append from storage mgs:temp
 data remove storage mgs:temp _like_src[0]
 execute if data storage mgs:temp _like_src[0] run function mgs:v5.1.0/multiplayer/custom/like_increment_rebuild
 
-## sourceMappingURL=like_increment_rebuild.mcfunction.map

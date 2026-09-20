@@ -12,4 +12,3 @@ data modify storage bs:in random.weighted_choice.weights set from storage mgs:zo
 function #bs.random:weighted_choice
 data modify storage mgs:zombies mystery_box.result set from storage bs:out random.weighted_choice
 
-## sourceMappingURL=pick_random_result.mcfunction.map

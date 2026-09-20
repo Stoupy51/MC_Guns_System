@@ -22,4 +22,3 @@ function mgs:v5.1.0/zombies/inventory/apply_slot_tag {slot:"hotbar.7",group:"hot
 function mgs:v5.1.0/zombies/inventory/record_lethal_type
 function mgs:v5.1.0/zombies/wallbuys/msg_purchased
 
-## sourceMappingURL=buy_lethal.mcfunction.map

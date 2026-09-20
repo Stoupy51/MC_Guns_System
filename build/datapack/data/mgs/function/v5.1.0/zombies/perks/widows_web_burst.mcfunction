@@ -11,4 +11,3 @@
 
 $execute as @e[tag=mgs.zombie_round,distance=..$(radius)] run function mgs:v5.1.0/zombies/perks/widows_web_hit
 
-## sourceMappingURL=widows_web_burst.mcfunction.map

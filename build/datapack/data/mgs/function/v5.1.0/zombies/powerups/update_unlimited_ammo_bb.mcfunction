@@ -17,4 +17,3 @@ execute if score #pu_max_duration mgs.data matches ..0 run bossbar remove mgs:pu
 execute if score #pu_max_duration mgs.data matches 1.. store result bossbar mgs:pu_unlimited_ammo value run scoreboard players get #pu_max_duration mgs.data
 scoreboard players operation #pu_prev_unlimited_ammo mgs.data = #pu_max_duration mgs.data
 
-## sourceMappingURL=update_unlimited_ammo_bb.mcfunction.map

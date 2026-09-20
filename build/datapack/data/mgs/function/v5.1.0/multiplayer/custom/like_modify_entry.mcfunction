@@ -13,4 +13,3 @@ execute if data storage mgs:temp _liked_iter[0] run function mgs:v5.1.0/multipla
 # If not already liked, add to liked[] list
 execute if score #already_liked mgs.data matches 0 run function mgs:v5.1.0/multiplayer/custom/like_append_new
 
-## sourceMappingURL=like_modify_entry.mcfunction.map

@@ -11,4 +11,3 @@
 # Play the mid reload sound for all nearby players
 $playsound mgs:$(playermid) player @a[distance=0.01..16] ~ ~ ~ 0.3
 
-## sourceMappingURL=player_mid.mcfunction.map

@@ -12,4 +12,3 @@
 
 $summon minecraft:marker $(x) $(y) $(z) {Tags:["mgs.map_element","$(tag)"]}
 
-## sourceMappingURL=summon_point_marker.mcfunction.map

@@ -24,4 +24,3 @@ execute if score #inv_slot mgs.data matches -106 run item replace entity @s weap
 data remove storage mgs:temp _restore.items[0]
 execute if data storage mgs:temp _restore.items[0] run function mgs:v5.1.0/zombies/inventory/restore_loop
 
-## sourceMappingURL=restore_loop.mcfunction.map

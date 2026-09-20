@@ -15,4 +15,3 @@ execute if entity @s[tag=mgs.stuck_to_entity] run function mgs:v5.1.0/grenade/cl
 # Remove the grenade entity
 kill @s
 
-## sourceMappingURL=delete.mcfunction.map

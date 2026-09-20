@@ -13,4 +13,3 @@ execute if score #kick mgs.data matches 3 run function mgs:v5.1.0/kicks/type_3_d
 execute if score #kick mgs.data matches 4 run function mgs:v5.1.0/kicks/type_4_ds
 execute if score #kick mgs.data matches 5.. run function mgs:v5.1.0/kicks/type_5_ds
 
-## sourceMappingURL=apply_ds.mcfunction.map

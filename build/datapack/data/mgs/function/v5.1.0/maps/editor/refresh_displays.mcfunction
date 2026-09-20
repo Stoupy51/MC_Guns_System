@@ -17,4 +17,3 @@ execute as @e[tag=mgs.element.mystery_box_pos] at @s run function mgs:v5.1.0/map
 execute as @e[tag=mgs.element.power_switch] at @s run function mgs:v5.1.0/maps/editor/displays/power_switch
 execute as @e[tag=mgs.element.barricade] at @s run function mgs:v5.1.0/maps/editor/displays/barricade
 
-## sourceMappingURL=refresh_displays.mcfunction.map

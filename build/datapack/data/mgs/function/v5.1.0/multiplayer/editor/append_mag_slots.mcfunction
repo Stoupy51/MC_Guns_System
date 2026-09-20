@@ -18,4 +18,3 @@ execute if data storage mgs:temp _mag_data{mag_consumable:1b} run return 0
 # Non-consumable: add one slot per count
 execute if score #pmag_count mgs.data matches 1.. run function mgs:v5.1.0/multiplayer/editor/append_mag_loop
 
-## sourceMappingURL=append_mag_slots.mcfunction.map

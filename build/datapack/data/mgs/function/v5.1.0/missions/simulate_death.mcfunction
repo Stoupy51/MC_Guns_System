@@ -24,4 +24,3 @@ scoreboard players set @s mgs.mi.died_here 1
 
 function mgs:v5.1.0/missions/enter_death_spectate
 
-## sourceMappingURL=simulate_death.mcfunction.map

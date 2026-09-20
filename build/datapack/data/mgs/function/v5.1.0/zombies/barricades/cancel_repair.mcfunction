@@ -10,4 +10,3 @@
 scoreboard players set @s mgs.zb.barricade.rp_timer 0
 execute as @a[tag=mgs.barricade_repairing] if score @s mgs.zb.barricade.repairing_id = #barricade_id mgs.data run tag @s remove mgs.barricade_repairing
 
-## sourceMappingURL=cancel_repair.mcfunction.map

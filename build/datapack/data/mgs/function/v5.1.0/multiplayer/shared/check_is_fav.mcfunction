@@ -15,4 +15,3 @@ data modify storage mgs:temp _fav_check set from storage mgs:temp _cur_favorites
 scoreboard players set #is_fav mgs.data 0
 execute if data storage mgs:temp _fav_check[0] run function mgs:v5.1.0/multiplayer/shared/check_fav_iter
 
-## sourceMappingURL=check_is_fav.mcfunction.map

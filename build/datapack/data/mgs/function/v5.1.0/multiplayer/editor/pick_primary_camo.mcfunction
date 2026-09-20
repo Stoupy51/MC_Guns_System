@@ -20,4 +20,3 @@ execute if score @s mgs.player.config matches 484 run data modify storage mgs:te
 function mgs:v5.1.0/multiplayer/editor/set_primary_full with storage mgs:temp editor
 function mgs:v5.1.0/multiplayer/editor/hub
 
-## sourceMappingURL=pick_primary_camo.mcfunction.map

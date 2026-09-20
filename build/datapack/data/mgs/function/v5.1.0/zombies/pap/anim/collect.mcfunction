@@ -20,4 +20,3 @@ execute if score #pap_owns mgs.data matches 1 as @n[tag=bs.interaction.target] a
 execute if score #pap_owns mgs.data matches 0 run function mgs:v5.1.0/zombies/deny/message {msg:'{"translate":"mgs.this_upgraded_weapon_belongs_to_another_player","color":"red"}'}
 tag @s remove mgs.pap_owner
 
-## sourceMappingURL=collect.mcfunction.map

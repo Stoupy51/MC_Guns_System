@@ -8,4 +8,3 @@
 
 $scoreboard players set #map_perk_$(perk_id) mgs.data 1
 
-## sourceMappingURL=mark.mcfunction.map

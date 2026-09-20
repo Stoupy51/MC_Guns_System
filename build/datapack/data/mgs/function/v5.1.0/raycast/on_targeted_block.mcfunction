@@ -70,4 +70,3 @@ execute if block ~ ~ ~ #mgs:v5.1.0/plant run return run execute if score #played
 execute if block ~ ~ ~ #mgs:v5.1.0/solid run return run execute if score #played_solid mgs.data matches 0 store success score #played_solid mgs.data run playsound mgs:common/solid_bullet_impact block @a[distance=..24] ~ ~ ~ 0.2
 execute if score #played_soft mgs.data matches 0 store success score #played_soft mgs.data run playsound mgs:common/soft_bullet_impact block @a[distance=..24] ~ ~ ~ 0.2
 
-## sourceMappingURL=on_targeted_block.mcfunction.map

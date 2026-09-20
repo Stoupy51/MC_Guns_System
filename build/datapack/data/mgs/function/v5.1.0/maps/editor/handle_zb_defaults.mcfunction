@@ -87,4 +87,3 @@ tellraw @a[tag=mgs.map_editor] ["    ",{"translate":"mgs.radius","color":"gray"}
 
 tellraw @a[tag=mgs.map_editor] {"text":"============================================","color":"dark_gray"}
 
-## sourceMappingURL=handle_zb_defaults.mcfunction.map

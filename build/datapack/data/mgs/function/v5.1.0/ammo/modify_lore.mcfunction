@@ -26,4 +26,3 @@ $execute if data storage mgs:temp copy[0] run function mgs:v5.1.0/ammo/search_lo
 # Clean up temporary tag
 tag @s remove mgs.modify_lore
 
-## sourceMappingURL=modify_lore.mcfunction.map

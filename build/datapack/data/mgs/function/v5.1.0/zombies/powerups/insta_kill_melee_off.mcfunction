@@ -9,4 +9,3 @@
 attribute @s minecraft:attack_damage modifier remove mgs:insta_kill
 tag @s remove mgs.ik_melee
 
-## sourceMappingURL=insta_kill_melee_off.mcfunction.map

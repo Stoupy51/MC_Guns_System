@@ -23,4 +23,3 @@ execute unless score #edit_match mgs.data matches 1 run data modify storage mgs:
 data remove storage mgs:temp _edit_src[0]
 execute if data storage mgs:temp _edit_src[0] run function mgs:v5.1.0/multiplayer/editor/save_replace_iter
 
-## sourceMappingURL=save_replace_iter.mcfunction.map

@@ -28,4 +28,3 @@ function mgs:v5.1.0/multiplayer/gamemodes/snd/summon_obj_at with storage mgs:tem
 data remove storage mgs:temp _snd_iter[0]
 execute if data storage mgs:temp _snd_iter[0] run function mgs:v5.1.0/multiplayer/gamemodes/snd/summon_obj
 
-## sourceMappingURL=summon_obj.mcfunction.map

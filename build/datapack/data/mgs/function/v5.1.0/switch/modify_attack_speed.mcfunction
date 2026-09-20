@@ -25,4 +25,3 @@ item replace entity @p[tag=mgs.to_modify] weapon.mainhand from entity @s content
 # Kill item_display entity
 kill @s
 
-## sourceMappingURL=modify_attack_speed.mcfunction.map

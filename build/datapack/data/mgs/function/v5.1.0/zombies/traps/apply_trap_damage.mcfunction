@@ -15,4 +15,3 @@
 
 $damage @s $(amount) $(type)
 
-## sourceMappingURL=apply_trap_damage.mcfunction.map

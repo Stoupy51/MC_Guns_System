@@ -22,4 +22,3 @@ data merge entity @s {brightness:{block:0,sky:0}}
 execute store result entity @s brightness.block int 1 run scoreboard players get #light mgs.data
 execute store result entity @s brightness.sky int 1 run scoreboard players get #light mgs.data
 
-## sourceMappingURL=compute_brightness.mcfunction.map

@@ -21,4 +21,3 @@ scoreboard players operation #new_damage mgs.data *= #remaining_pct mgs.data
 scoreboard players operation #new_damage mgs.data /= #1000 mgs.data
 execute store result storage mgs:temp damage float 0.001 run scoreboard players get #new_damage mgs.data
 
-## sourceMappingURL=apply_block_hardness.mcfunction.map

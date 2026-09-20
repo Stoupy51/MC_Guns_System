@@ -12,4 +12,3 @@
 
 $data modify storage mgs:temp dialog.actions append value {label:["",{text:"\ud83d\udd2b "},{translate:"mgs.primary_2",color:"white"},{text:"$(primary_name)",color:"green"}],tooltip:{text:"$(primary_scope_name), $(primary_camo_name)\nClick to change",color:"gray"},action:{type:"run_command",command:"/trigger mgs.player.config set 104"}}
 
-## sourceMappingURL=hub_row_primary.mcfunction.map

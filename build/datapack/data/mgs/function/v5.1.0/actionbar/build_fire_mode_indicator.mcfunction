@@ -44,4 +44,3 @@ execute if score #has_auto mgs.data matches 1 unless data storage mgs:gun all.st
 # Add closing bracket
 data modify storage mgs:temp actionbar.list append value {"text":" ] ","color":"#c77e36"}
 
-## sourceMappingURL=build_fire_mode_indicator.mcfunction.map

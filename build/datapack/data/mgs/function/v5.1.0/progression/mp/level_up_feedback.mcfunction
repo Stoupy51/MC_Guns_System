@@ -13,4 +13,3 @@ playsound minecraft:entity.player.levelup player @s ~ ~ ~ 1 1.2
 data modify storage mgs:signals on_level_up set value {side:"mp"}
 function #mgs:progression/on_level_up
 
-## sourceMappingURL=level_up_feedback.mcfunction.map

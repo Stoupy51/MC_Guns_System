@@ -30,4 +30,3 @@ execute if score #demo_round mgs.data matches 3 run return run schedule function
 # Level after the decider (should be unreachable: a round that awards no point cannot happen)
 function mgs:v5.1.0/multiplayer/game_draw
 
-## sourceMappingURL=next_round.mcfunction.map

@@ -10,4 +10,3 @@ execute unless data storage mgs:zombies game{state:"active"} run return run tell
 scoreboard players add @a[scores={mgs.zb.in_game=1}] mgs.zb.points 2500
 tellraw @a [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.an_operator_granted_2500_points_to_everyone","color":"green"}]
 
-## sourceMappingURL=points_add_2500.mcfunction.map

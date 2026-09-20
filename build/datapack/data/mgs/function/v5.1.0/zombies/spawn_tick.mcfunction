@@ -15,4 +15,3 @@ function mgs:v5.1.0/zombies/calc_spawn_timer
 scoreboard players operation #zb_spawn_batch_remaining mgs.data = #zb_spawn_batch mgs.data
 function mgs:v5.1.0/zombies/spawn_batch_tick
 
-## sourceMappingURL=spawn_tick.mcfunction.map

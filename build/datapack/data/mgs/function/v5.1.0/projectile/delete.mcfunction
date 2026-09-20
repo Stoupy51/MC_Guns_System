@@ -10,4 +10,3 @@
 scoreboard players remove #slow_bullet_count mgs.data 1
 kill @s
 
-## sourceMappingURL=delete.mcfunction.map

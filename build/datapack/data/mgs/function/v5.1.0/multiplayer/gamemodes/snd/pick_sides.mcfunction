@@ -15,4 +15,3 @@ execute as @e[tag=mgs.snd_obj] at @s run function mgs:v5.1.0/multiplayer/gamemod
 scoreboard players set #snd_attackers mgs.data 1
 execute if score #snd_near_red mgs.data > #snd_near_blue mgs.data run scoreboard players set #snd_attackers mgs.data 2
 
-## sourceMappingURL=pick_sides.mcfunction.map

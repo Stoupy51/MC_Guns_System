@@ -57,4 +57,3 @@ $execute if items entity @s player.crafting.3 *[custom_data~{mgs:{magazine:true,
 
 return fail
 
-## sourceMappingURL=has_ammo.mcfunction.map

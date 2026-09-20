@@ -35,4 +35,3 @@ $data modify storage mgs:temp dialog.actions append value {label:{text:"$(name)"
 $data modify storage mgs:temp dialog.actions append value {label:[{text:"⭐ ",color:"gold"},{translate:"mgs.make_favorite",color:"yellow"}],tooltip:{translate:"mgs.add_to_favorites",color:"gold"},action:{type:"run_command",command:"/trigger mgs.player.config set $(fav_trig)"}}
 $data modify storage mgs:temp dialog.actions append value {label:[{text:"♥ ",color:"red"},{translate:"mgs.like_the_loadout",color:"yellow"}],tooltip:{translate:"mgs.like_this_loadout",color:"yellow"},action:{type:"run_command",command:"/trigger mgs.player.config set $(like_trig)"}}
 
-## sourceMappingURL=add_btn.mcfunction.map

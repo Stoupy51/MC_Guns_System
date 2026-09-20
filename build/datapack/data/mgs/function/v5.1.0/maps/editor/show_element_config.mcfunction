@@ -106,4 +106,3 @@ execute if entity @s[tag=mgs.element.base_coordinates] run tellraw @a[tag=mgs.ma
 execute if entity @s[tag=mgs.element.base_coordinates] run tellraw @a[tag=mgs.map_editor] ["    ","💎 ",{"translate":"mgs.start_function_is_called_once_when_the_game_starts_tick_function","color":"dark_gray","italic":true}]
 tellraw @a[tag=mgs.map_editor] {"text":"============================================","color":"dark_gray"}
 
-## sourceMappingURL=show_element_config.mcfunction.map

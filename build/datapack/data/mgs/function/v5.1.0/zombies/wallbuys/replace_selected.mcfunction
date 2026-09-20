@@ -32,4 +32,3 @@ execute if score #wb_purchase_done mgs.data matches 0 run scoreboard players ope
 execute if score #wb_purchase_done mgs.data matches 0 run function mgs:v5.1.0/zombies/wallbuys/deny_hold_valid_slot
 execute if score #wb_purchase_done mgs.data matches 0 run scoreboard players set #wb_purchase_mode mgs.data -1
 
-## sourceMappingURL=replace_selected.mcfunction.map

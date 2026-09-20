@@ -18,4 +18,3 @@ data modify storage mgs:multiplayer player_data append from storage mgs:temp _pd
 data remove storage mgs:temp _pd_src[0]
 execute if data storage mgs:temp _pd_src[0] run function mgs:v5.1.0/multiplayer/custom/like_pd_rebuild
 
-## sourceMappingURL=like_pd_rebuild.mcfunction.map

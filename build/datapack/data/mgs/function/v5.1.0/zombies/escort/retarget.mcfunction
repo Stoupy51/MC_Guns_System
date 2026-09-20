@@ -22,4 +22,3 @@ execute store result storage mgs:temp _escort.y int 1 run data get entity @p[sco
 execute store result storage mgs:temp _escort.z int 1 run data get entity @p[scores={mgs.zb.in_game=1,mgs.zb.downed=0},gamemode=!spectator] Pos[2]
 function mgs:v5.1.0/zombies/escort/set_wander_target with storage mgs:temp _escort
 
-## sourceMappingURL=retarget.mcfunction.map

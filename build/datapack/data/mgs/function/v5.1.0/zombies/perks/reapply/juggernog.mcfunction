@@ -9,4 +9,3 @@
 
 attribute @s minecraft:max_health base set 40
 
-## sourceMappingURL=juggernog.mcfunction.map

@@ -17,4 +17,3 @@ function mgs:v5.1.0/maps/editor/do_save
 function mgs:v5.1.0/maps/editor/cleanup
 tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.map_saved_and_editor_closed","color":"green"}]
 
-## sourceMappingURL=save_exit.mcfunction.map

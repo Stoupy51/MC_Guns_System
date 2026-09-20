@@ -15,4 +15,3 @@ execute if data storage mgs:multiplayer game{gamemode:"hp"} run return run funct
 execute if data storage mgs:multiplayer game{gamemode:"snd"} run return run function mgs:v5.1.0/multiplayer/gamemodes/snd/on_kill
 execute if data storage mgs:multiplayer game{gamemode:"demo"} run return run function mgs:v5.1.0/multiplayer/gamemodes/demo/on_kill
 
-## sourceMappingURL=on_kill_signal.mcfunction.map

@@ -42,4 +42,3 @@ tag @e[tag=mgs.new_zb_marker] remove mgs.new_zb_marker
 data remove storage mgs:temp _zb_iter[0]
 execute if data storage mgs:temp _zb_iter[0] run function mgs:v5.1.0/maps/editor/summon_zb_object_iter
 
-## sourceMappingURL=summon_zb_object_iter.mcfunction.map

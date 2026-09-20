@@ -15,4 +15,3 @@ scoreboard players operation @s mgs.cooldown /= #100 mgs.data
 # Ensure minimum cooldown of 1 tick
 execute if score @s mgs.cooldown matches ..0 run scoreboard players set @s mgs.cooldown 1
 
-## sourceMappingURL=apply_quick_reload.mcfunction.map

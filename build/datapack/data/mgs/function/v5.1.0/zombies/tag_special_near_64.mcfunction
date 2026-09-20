@@ -9,4 +9,3 @@
 execute store result score #zb_near_hit mgs.data run tag @e[tag=mgs.spawn_special,tag=mgs.spawn_unlocked,distance=..64] add mgs.zb_near
 scoreboard players operation #zb_near_found mgs.data += #zb_near_hit mgs.data
 
-## sourceMappingURL=tag_special_near_64.mcfunction.map

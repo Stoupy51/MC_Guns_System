@@ -11,4 +11,3 @@
 
 $execute positioned $(x) $(y) $(z) run $(command)
 
-## sourceMappingURL=run_start_command.mcfunction.map

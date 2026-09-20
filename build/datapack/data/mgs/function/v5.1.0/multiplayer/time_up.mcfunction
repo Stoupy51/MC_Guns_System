@@ -12,4 +12,3 @@ execute unless data storage mgs:multiplayer game{gamemode:"ffa"} if score #red m
 execute unless data storage mgs:multiplayer game{gamemode:"ffa"} if score #blue mgs.mp.team > #red mgs.mp.team run function mgs:v5.1.0/multiplayer/team_wins {team:"Blue"}
 execute unless data storage mgs:multiplayer game{gamemode:"ffa"} if score #red mgs.mp.team = #blue mgs.mp.team run function mgs:v5.1.0/multiplayer/game_draw
 
-## sourceMappingURL=time_up.mcfunction.map

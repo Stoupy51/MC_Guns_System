@@ -71,4 +71,3 @@ scoreboard players operation #pos_new_z mgs.data += #off_tz mgs.data
 scoreboard players operation #pos_new_z mgs.data /= #1000 mgs.data
 scoreboard players operation #pos_new_z mgs.data += #pos_initial_z mgs.data
 
-## sourceMappingURL=calculate_offset.mcfunction.map

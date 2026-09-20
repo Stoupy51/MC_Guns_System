@@ -12,4 +12,3 @@ tellraw @p[tag=mgs.map_editor,distance=..6,sort=nearest] {"text":"==============
 tellraw @p[tag=mgs.map_editor,distance=..6,sort=nearest] ["  ",{"translate":"mgs.nearest_respawn_command","color":"yellow","bold":true},{"entity":"@n[tag=mgs.element.respawn_command,distance=..10]","nbt":"data.command","color":"white"}]
 $tellraw @p[tag=mgs.map_editor,distance=..6,sort=nearest] ["    ",{"translate":"mgs.edit_nearest_respawn_command","color":"yellow","click_event":{"action":"suggest_command","command":"/data modify entity @n[tag=mgs.element.respawn_command,distance=..10] data.command set value \"$(nearest_cmd)\""},"hover_event":{"action":"show_text","value":"Edit nearest respawn command command using its current value"}}]
 
-## sourceMappingURL=handle_config_nearest_respawn_command_btn.mcfunction.map

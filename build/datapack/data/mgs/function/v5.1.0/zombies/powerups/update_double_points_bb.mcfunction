@@ -18,4 +18,3 @@ execute if score #pu_max_duration mgs.data matches 1.. store result bossbar mgs:
 execute if score #pu_prev_double_points mgs.data matches 1.. if score #pu_max_duration mgs.data matches ..0 as @a[scores={mgs.zb.in_game=1}] at @s run playsound mgs:zombies/powerups/double_points_off ambient @s ~ ~ ~ 0.7 1.0
 scoreboard players operation #pu_prev_double_points mgs.data = #pu_max_duration mgs.data
 
-## sourceMappingURL=update_double_points_bb.mcfunction.map

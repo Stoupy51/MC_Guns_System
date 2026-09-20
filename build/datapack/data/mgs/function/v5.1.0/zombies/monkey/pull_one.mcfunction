@@ -9,4 +9,3 @@
 scoreboard players set #zb_escort_mode mgs.data 1
 function mgs:v5.1.0/zombies/escort/start
 
-## sourceMappingURL=pull_one.mcfunction.map

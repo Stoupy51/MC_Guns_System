@@ -12,4 +12,3 @@ tag @s add mgs.monkey_bomb
 # Wind-up cue (placeholder: the real toy-jingle .ogg is a HUMAN asset, see zombies README task 8)
 playsound minecraft:block.note_block.chime ambient @a[distance=..24] ~ ~ ~ 0.8 1.6
 
-## sourceMappingURL=on_throw.mcfunction.map

@@ -25,4 +25,3 @@ kill @e[type=armor_stand,tag=mgs_name_probe]
 
 data modify storage mgs:temp _plr_iter append from storage mgs:temp _plr_entry
 
-## sourceMappingURL=append_self.mcfunction.map

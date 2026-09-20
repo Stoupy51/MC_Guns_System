@@ -15,4 +15,3 @@ execute unless score @s mgs.mp.map_edit matches 1 run return fail
 # Find the newly spawned bat entity (tagged by entity_data)
 execute as @n[tag=mgs.new_element] at @s run function mgs:v5.1.0/maps/editor/process_element
 
-## sourceMappingURL=on_place.mcfunction.map

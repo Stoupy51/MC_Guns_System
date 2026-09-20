@@ -12,4 +12,3 @@ $data modify storage mgs:temp _pap_cg.slot set from storage mgs:zombies pap_anim
 $data modify storage mgs:temp _pap_cg.id set value $(id)
 function mgs:v5.1.0/zombies/pap/anim/collect_give with storage mgs:temp _pap_cg
 
-## sourceMappingURL=collect_lookup.mcfunction.map

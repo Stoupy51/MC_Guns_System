@@ -10,4 +10,3 @@ execute store result storage mgs:temp _ts_id.id int 1 run scoreboard players get
 function mgs:v5.1.0/zombies/perks/tombstone_clear_inv with storage mgs:temp _ts_id
 kill @s
 
-## sourceMappingURL=tombstone_expire.mcfunction.map

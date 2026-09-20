@@ -17,4 +17,3 @@ execute unless score @s mgs.last_selected = #current_id mgs.data run function mg
 # Update last selected
 scoreboard players operation @s mgs.last_selected = #current_id mgs.data
 
-## sourceMappingURL=main.mcfunction.map

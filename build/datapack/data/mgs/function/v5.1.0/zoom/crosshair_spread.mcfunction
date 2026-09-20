@@ -24,4 +24,3 @@ execute if predicate mgs:v5.1.0/is_sneaking at @s anchored eyes run return run p
 # Base: standing still, default spread
 execute at @s anchored eyes run particle minecraft:dust{color:[0.02,0.0,0.05],scale:0.01} ^ ^ ^0.1 0 0 0 0 1 force @s
 
-## sourceMappingURL=crosshair_spread.mcfunction.map

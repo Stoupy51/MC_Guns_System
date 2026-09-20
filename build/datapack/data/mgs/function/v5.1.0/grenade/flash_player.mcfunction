@@ -17,4 +17,3 @@ effect give @s minecraft:darkness 3 0 true
 title @s times 5 40 20
 title @s title {"text":"F","font":"mgs:flash"}
 
-## sourceMappingURL=flash_player.mcfunction.map

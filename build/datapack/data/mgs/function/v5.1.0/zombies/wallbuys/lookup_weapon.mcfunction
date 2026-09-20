@@ -10,4 +10,3 @@
 
 $data modify storage mgs:temp _wb_weapon set from storage mgs:zombies wallbuy_data."$(id)"
 
-## sourceMappingURL=lookup_weapon.mcfunction.map

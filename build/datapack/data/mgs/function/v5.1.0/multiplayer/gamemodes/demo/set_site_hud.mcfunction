@@ -10,4 +10,3 @@
 
 $data modify entity @n[tag=mgs.demo_bomb_hud,distance=..2] text set value [{"text":"💣 ","color":"white"},{"text":"$(sec)s","color":"white","bold":true}]
 
-## sourceMappingURL=set_site_hud.mcfunction.map

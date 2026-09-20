@@ -15,4 +15,3 @@ execute unless score #door_partial mgs.data matches 1.. run data modify storage 
 execute if score #door_partial mgs.data matches 1.. run data modify storage smithed.actionbar:input message set value {json:[{"text":"🛠 "},{"storage":"mgs:temp","nbt":"_door_hover_name","color":"yellow","interpret":true},[{"text":" - ","color":"gray"}, {"translate":"mgs.chip_in"}],{"score":{"name":"#door_price","objective":"mgs.data"},"color":"yellow"},[{"text":" ","color":"gray"}, {"translate":"mgs.points_2"}, " ("],{"score":{"name":"#door_paid","objective":"mgs.data"},"color":"green"},{"text":"/","color":"gray"},{"score":{"name":"#door_total","objective":"mgs.data"},"color":"yellow"},{"text":")","color":"gray"}],priority:"conditional",freeze:5}
 function #smithed.actionbar:message
 
-## sourceMappingURL=on_hover.mcfunction.map

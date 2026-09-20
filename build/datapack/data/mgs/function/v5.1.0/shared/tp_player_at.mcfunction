@@ -13,4 +13,3 @@
 
 $tp @s $(x) $(y) $(z) $(yaw) 0
 
-## sourceMappingURL=tp_player_at.mcfunction.map

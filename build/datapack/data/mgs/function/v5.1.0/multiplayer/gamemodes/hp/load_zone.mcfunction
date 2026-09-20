@@ -39,4 +39,3 @@ function mgs:v5.1.0/multiplayer/gamemodes/hp/summon_marker with storage mgs:temp
 tellraw @a [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"text":"⚡ ","color":"white"},{"translate":"mgs.hardpoint_2","color":"dark_purple"},{"storage":"mgs:temp","nbt":"_hp_pos.label","color":"yellow","interpret":true},[{"text":" ","color":"dark_purple"}, {"translate":"mgs.active"}]]
 playsound minecraft:block.note_block.chime player @a ~ ~ ~ 1 1.0
 
-## sourceMappingURL=load_zone.mcfunction.map

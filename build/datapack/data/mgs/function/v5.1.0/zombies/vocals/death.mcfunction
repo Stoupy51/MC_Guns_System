@@ -12,4 +12,3 @@ tag @s add mgs.zb_dying
 
 execute as @a[scores={mgs.zb.in_game=1},gamemode=!spectator,distance=..32] unless score @s mgs.zb.vox_death > #total_tick mgs.data run function mgs:v5.1.0/zombies/vocals/death_for
 
-## sourceMappingURL=death.mcfunction.map

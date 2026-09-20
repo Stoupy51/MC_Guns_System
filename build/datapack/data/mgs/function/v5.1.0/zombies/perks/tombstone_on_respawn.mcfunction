@@ -14,4 +14,3 @@ title @s times 5 40 15
 title @s title ["🪦"]
 title @s subtitle [{"translate":"mgs.return_to_your","color":"gold"},{"text":"🪦","color":"white"},{"translate":"mgs.within_60s_to_recover_your_gear","color":"gold"}]
 
-## sourceMappingURL=tombstone_on_respawn.mcfunction.map

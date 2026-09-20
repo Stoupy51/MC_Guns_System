@@ -10,4 +10,3 @@
 
 $data modify entity @n[tag=mgs.downed_hud_new] text set value [{"text":"$(rv_name)","color":"yellow"},{"text":" ↓","color":"yellow"}]
 
-## sourceMappingURL=set_hud_name.mcfunction.map

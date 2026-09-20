@@ -7,4 +7,3 @@
 # Reset barricade repair counters for all players
 scoreboard players set @a mgs.zb.barricade_repairs 0
 
-## sourceMappingURL=on_round_start.mcfunction.map

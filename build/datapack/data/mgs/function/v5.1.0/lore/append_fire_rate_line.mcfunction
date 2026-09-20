@@ -13,4 +13,3 @@ execute if score #fire_rate_tenths mgs.data matches 10.. run data modify storage
 execute if score #fire_rate_tenths mgs.data matches ..9 run data modify storage mgs:temp lore_line append from storage mgs:lore_templates fire_rate_spshot
 data modify storage mgs:temp new_lore append from storage mgs:temp lore_line
 
-## sourceMappingURL=append_fire_rate_line.mcfunction.map

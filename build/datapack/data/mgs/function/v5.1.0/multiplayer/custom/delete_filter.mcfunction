@@ -21,4 +21,3 @@ execute unless score #del_match mgs.data matches 1 run data modify storage mgs:m
 data remove storage mgs:temp _del_src[0]
 execute if data storage mgs:temp _del_src[0] run function mgs:v5.1.0/multiplayer/custom/delete_filter
 
-## sourceMappingURL=delete_filter.mcfunction.map

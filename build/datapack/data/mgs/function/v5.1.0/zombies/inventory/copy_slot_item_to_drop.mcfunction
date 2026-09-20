@@ -14,4 +14,3 @@ data modify entity @s Thrower set from entity @p[tag=mgs.inv_slot_owner] UUID
 data modify entity @s Owner set from entity @s Thrower
 tag @s remove mgs.inv_new_drop
 
-## sourceMappingURL=copy_slot_item_to_drop.mcfunction.map

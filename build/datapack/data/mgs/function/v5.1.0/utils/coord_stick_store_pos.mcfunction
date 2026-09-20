@@ -11,4 +11,3 @@ execute store result score #cs_pos_y mgs.data run data get entity @s Pos[1]
 execute store result score #cs_pos_z mgs.data run data get entity @s Pos[2]
 kill @s
 
-## sourceMappingURL=coord_stick_store_pos.mcfunction.map

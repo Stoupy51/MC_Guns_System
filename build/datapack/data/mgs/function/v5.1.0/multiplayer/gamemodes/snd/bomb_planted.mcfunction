@@ -30,4 +30,3 @@ tag @a remove mgs.xp_earner
 
 playsound minecraft:block.note_block.pling player @a ~ ~ ~ 1 0.5
 
-## sourceMappingURL=bomb_planted.mcfunction.map

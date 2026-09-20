@@ -15,4 +15,3 @@ playsound minecraft:block.portal.trigger block @a[distance=..50] ~ ~ ~ 1 2
 scoreboard players set #kino_tp_state mgs.data 3
 scoreboard players set #kino_tp_timer mgs.data 50
 
-## sourceMappingURL=activate.mcfunction.map

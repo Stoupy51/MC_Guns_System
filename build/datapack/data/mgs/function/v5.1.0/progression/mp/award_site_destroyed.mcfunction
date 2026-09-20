@@ -15,4 +15,3 @@ scoreboard players add @s mgs.mp.xp_session 20
 scoreboard players add @s mgs.adv.mp.objectives 1
 function mgs:v5.1.0/progression/mp/settle
 
-## sourceMappingURL=award_site_destroyed.mcfunction.map

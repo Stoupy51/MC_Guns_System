@@ -11,4 +11,3 @@
 
 $summon minecraft:marker $(x) $(y) $(z) {Tags:["mgs.map_element","mgs.element.enemy","mgs.new_enemy_marker"]}
 
-## sourceMappingURL=summon_enemy_marker.mcfunction.map

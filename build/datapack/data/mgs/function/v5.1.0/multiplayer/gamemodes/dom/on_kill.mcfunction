@@ -11,4 +11,3 @@ execute if score @s mgs.mp.team matches 2 run scoreboard players add #blue mgs.m
 # Refresh DOM sidebar to show updated team scores and point ownership
 function mgs:v5.1.0/multiplayer/refresh_sidebar_dom
 
-## sourceMappingURL=on_kill.mcfunction.map

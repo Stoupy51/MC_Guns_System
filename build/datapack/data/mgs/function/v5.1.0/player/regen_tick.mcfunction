@@ -19,4 +19,3 @@ execute store result score #hp_max mgs.data run attribute @s minecraft:max_healt
 execute if score @s mgs.health >= #hp_max mgs.data run return 0
 effect give @s minecraft:regeneration 3 2 true
 
-## sourceMappingURL=regen_tick.mcfunction.map

@@ -14,4 +14,3 @@ $item replace entity @s $(slot) with air
 # Update player's ammo count
 scoreboard players operation @s mgs.remaining_bullets = #found_ammo mgs.data
 
-## sourceMappingURL=consume_slot.mcfunction.map

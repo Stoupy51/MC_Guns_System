@@ -12,4 +12,3 @@
 
 $tp @n[tag=mgs.tombstone_new] $(rv_x) $(rv_y) $(rv_z)
 
-## sourceMappingURL=tombstone_tp.mcfunction.map

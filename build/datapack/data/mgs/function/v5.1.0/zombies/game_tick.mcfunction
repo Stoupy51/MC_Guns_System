@@ -208,4 +208,3 @@ execute as @e[type=minecraft:marker,tag=mgs.trap_center,scores={mgs.zb.trap.cd=1
 # Progression: turn spent points into XP (see zombies/xp/track_points)
 execute as @a[scores={mgs.zb.in_game=1}] run function mgs:v5.1.0/zombies/xp/track_points
 
-## sourceMappingURL=game_tick.mcfunction.map

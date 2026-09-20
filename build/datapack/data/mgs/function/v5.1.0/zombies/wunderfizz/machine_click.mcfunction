@@ -16,4 +16,3 @@ execute if entity @n[type=item_display,tag=mgs.wunderfizz_orb,distance=..3] run 
 # Nothing here yet: start a spin
 function mgs:v5.1.0/zombies/wunderfizz/try_use
 
-## sourceMappingURL=machine_click.mcfunction.map

@@ -18,4 +18,3 @@ execute if score #pu_type_pickup mgs.data matches 9 run function mgs:v5.1.0/zomb
 execute if score #pu_type_pickup mgs.data matches 10 run function mgs:v5.1.0/zombies/powerups/activate/fire_sale
 execute if score #pu_type_pickup mgs.data matches 11 run function mgs:v5.1.0/zombies/powerups/activate/bonfire_sale
 
-## sourceMappingURL=dispatch_activate.mcfunction.map

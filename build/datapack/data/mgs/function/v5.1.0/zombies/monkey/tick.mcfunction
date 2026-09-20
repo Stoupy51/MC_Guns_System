@@ -20,4 +20,3 @@ execute if score #monkey_phase mgs.data matches 10 run function mgs:v5.1.0/zombi
 # Once a second: toy-jingle placeholder + note particles (real monkey-music .ogg is a HUMAN asset)
 execute if score #monkey_phase mgs.data matches 0 run function mgs:v5.1.0/zombies/monkey/pulse
 
-## sourceMappingURL=tick.mcfunction.map

@@ -73,4 +73,3 @@ scoreboard players operation #scaled_binormal_y mgs.data *= #casing_binormal mgs
 scoreboard players operation #scaled_binormal_z mgs.data = #binormal_z mgs.data
 scoreboard players operation #scaled_binormal_z mgs.data *= #casing_binormal mgs.data
 
-## sourceMappingURL=calculate_vectors.mcfunction.map

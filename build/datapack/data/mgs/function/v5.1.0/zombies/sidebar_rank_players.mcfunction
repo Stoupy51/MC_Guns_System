@@ -46,4 +46,3 @@ data modify storage mgs:temp zb_sb append value [["",{"text":"[","color":"dark_g
 
 tag @a remove mgs.zb_sb_cand
 
-## sourceMappingURL=sidebar_rank_players.mcfunction.map

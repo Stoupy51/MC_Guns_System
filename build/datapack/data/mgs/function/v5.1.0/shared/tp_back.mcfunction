@@ -12,4 +12,3 @@
 
 $tp @s $(x) $(y) $(z)
 
-## sourceMappingURL=tp_back.mcfunction.map

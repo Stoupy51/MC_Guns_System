@@ -19,4 +19,3 @@ execute if score #pu_spawn_type mgs.data matches 10 run data modify storage mgs:
 execute if score #pu_spawn_type mgs.data matches 11 run data modify storage mgs:temp _pu_spawn.type set value "bonfire_sale"
 function mgs:v5.1.0/zombies/powerups/spawn_display with storage mgs:temp _pu_spawn
 
-## sourceMappingURL=do_spawn_random.mcfunction.map

@@ -28,4 +28,3 @@ $execute if score @n[tag=mgs.pool_target] mgs.zb.perk.$(perk_id) matches 1 run s
 execute if score #pool_slot mgs.data matches 1 run scoreboard players operation #pool_chosen mgs.data = #pool_roll mgs.data
 $execute if score #pool_slot mgs.data matches 1 run data modify storage mgs:temp _pool.perk_id set value "$(perk_id)"
 
-## sourceMappingURL=try_index.mcfunction.map

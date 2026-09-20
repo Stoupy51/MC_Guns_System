@@ -10,4 +10,3 @@ execute unless score @s mgs.mi.in_game matches 1 run return fail
 function mgs:v5.1.0/progression/mp/award_mission_kill
 execute if data storage mgs:signals on_kill{headshot:1} run function mgs:v5.1.0/progression/mp/award_mission_headshot
 
-## sourceMappingURL=on_kill.mcfunction.map

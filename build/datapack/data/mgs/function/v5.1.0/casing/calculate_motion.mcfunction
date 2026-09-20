@@ -29,4 +29,3 @@ scoreboard players operation #motion_x mgs.data /= #1000 mgs.data
 scoreboard players operation #motion_y mgs.data /= #1000 mgs.data
 scoreboard players operation #motion_z mgs.data /= #1000 mgs.data
 
-## sourceMappingURL=calculate_motion.mcfunction.map

@@ -34,4 +34,3 @@ scoreboard players set #zb_dog_pending mgs.data 0
 scoreboard players set #unlock_gid mgs.data 0
 execute as @e[tag=mgs.spawn_point] if score @s mgs.zb.spawn.gid = #unlock_gid mgs.data run tag @s add mgs.spawn_unlocked
 
-## sourceMappingURL=summon_spawns.mcfunction.map

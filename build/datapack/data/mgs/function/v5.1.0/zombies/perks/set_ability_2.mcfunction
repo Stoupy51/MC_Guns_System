@@ -12,4 +12,3 @@ scoreboard players set @s mgs.zb.ability 2
 scoreboard players set @s mgs.zb.ability_cd 0
 tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.ability_set","color":"gray"},{"translate":"mgs.guardian","color":"green"},[{"text":" ","color":"gray"}, {"translate":"mgs.summon_an_iron_golem_ally"}]]
 
-## sourceMappingURL=set_ability_2.mcfunction.map

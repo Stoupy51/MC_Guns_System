@@ -18,4 +18,3 @@ tellraw @a ["","  ",{"translate":"mgs.score","color":"gray"},{"score":{"name":"@
 # End game
 function mgs:v5.1.0/multiplayer/stop
 
-## sourceMappingURL=player_wins.mcfunction.map

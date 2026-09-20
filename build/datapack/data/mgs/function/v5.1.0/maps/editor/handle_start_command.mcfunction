@@ -22,4 +22,3 @@ tag @e[tag=mgs.new_start_cmd_marker] remove mgs.new_start_cmd_marker
 tellraw @a[tag=mgs.map_editor] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.start_command_placed","color":"aqua"}]
 tellraw @a[tag=mgs.map_editor] ["  ",[{"text": "[", "color": "aqua", "click_event": {"action": "suggest_command", "command": "/data modify entity @n[tag=mgs.element.start_command,distance=..10] data.command set value \"say Hello from start command\""}, "hover_event": {"action": "show_text", "value": "Click to edit the command to run at game start"}}, "Edit Command", "]"]]
 
-## sourceMappingURL=handle_start_command.mcfunction.map

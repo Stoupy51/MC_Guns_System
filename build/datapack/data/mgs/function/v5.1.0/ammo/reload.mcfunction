@@ -46,4 +46,3 @@ data modify storage mgs:signals on_reload set value {}
 data modify storage mgs:signals on_reload.weapon set from storage mgs:gun all
 function #mgs:signals/on_reload
 
-## sourceMappingURL=reload.mcfunction.map

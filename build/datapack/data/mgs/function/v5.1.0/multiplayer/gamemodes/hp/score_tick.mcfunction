@@ -32,4 +32,3 @@ execute if score #hp_xp_hold mgs.data matches ..0 run scoreboard players set #hp
 # Check win
 function mgs:v5.1.0/multiplayer/check_team_win
 
-## sourceMappingURL=score_tick.mcfunction.map

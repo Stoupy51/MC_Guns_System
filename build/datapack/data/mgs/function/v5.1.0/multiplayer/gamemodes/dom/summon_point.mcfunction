@@ -37,4 +37,3 @@ function mgs:v5.1.0/multiplayer/gamemodes/dom/summon_point_at with storage mgs:t
 data remove storage mgs:temp _dom_iter[0]
 execute if data storage mgs:temp _dom_iter[0] run function mgs:v5.1.0/multiplayer/gamemodes/dom/summon_point
 
-## sourceMappingURL=summon_point.mcfunction.map

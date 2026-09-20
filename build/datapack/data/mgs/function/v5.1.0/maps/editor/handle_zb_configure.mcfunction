@@ -10,4 +10,3 @@
 execute at @s as @n[tag=mgs.map_element,distance=..10] run function mgs:v5.1.0/maps/editor/show_element_config
 execute at @s unless entity @n[tag=mgs.map_element,distance=..10] run tellraw @a[tag=mgs.map_editor] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.no_element_found_within_10_blocks","color":"red"}]
 
-## sourceMappingURL=handle_zb_configure.mcfunction.map

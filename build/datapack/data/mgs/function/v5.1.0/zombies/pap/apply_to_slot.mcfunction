@@ -24,4 +24,3 @@ function mgs:v5.1.0/zombies/pap/set_item_model_from_scope with storage mgs:temp 
 
 $function mgs:v5.1.0/zombies/bonus/reload_weapon_slot {slot:"$(slot)"}
 
-## sourceMappingURL=apply_to_slot.mcfunction.map

@@ -10,4 +10,3 @@
 
 $data modify storage mgs:editor "$(_pid)" set from storage mgs:temp editor
 
-## sourceMappingURL=save_state.mcfunction.map

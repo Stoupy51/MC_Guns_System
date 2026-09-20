@@ -13,4 +13,3 @@ tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translat
 # Refresh menu for the same mode
 $function mgs:v5.1.0/maps/editor/list/$(mode)
 
-## sourceMappingURL=delete.mcfunction.map

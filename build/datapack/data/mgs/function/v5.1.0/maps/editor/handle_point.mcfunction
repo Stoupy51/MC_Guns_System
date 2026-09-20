@@ -28,4 +28,3 @@ execute if entity @s[tag=mgs.element.search_and_destroy] run tellraw @a[tag=mgs.
 execute if entity @s[tag=mgs.element.domination] run tellraw @a[tag=mgs.map_editor] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.domination_point_placed","color":"green"}]
 execute if entity @s[tag=mgs.element.hardpoint] run tellraw @a[tag=mgs.map_editor] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.hardpoint_zone_placed","color":"dark_purple"}]
 
-## sourceMappingURL=handle_point.mcfunction.map

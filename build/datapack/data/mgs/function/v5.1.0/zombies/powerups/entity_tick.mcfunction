@@ -27,4 +27,3 @@ execute if entity @a[scores={mgs.zb.in_game=1},gamemode=!spectator,distance=..1.
 # Only fires when no alive player is in range (alive players take priority and already ran above).
 execute unless entity @a[scores={mgs.zb.in_game=1},gamemode=!spectator,distance=..1.5] if entity @e[type=minecraft:mannequin,tag=mgs.downed_mannequin,distance=..1.5] run function mgs:v5.1.0/zombies/powerups/do_pickup
 
-## sourceMappingURL=entity_tick.mcfunction.map

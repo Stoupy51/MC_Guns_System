@@ -24,4 +24,3 @@ execute unless data storage mgs:temp _dropmag.components."minecraft:custom_data"
 # Consumable ammo (stack count = bullets): half of one full stack
 $execute if data storage mgs:temp _dropmag.components."minecraft:custom_data".mgs.consumable run data modify storage mgs:temp _dropmag.count set value $(halfc)
 
-## sourceMappingURL=capture_mag.mcfunction.map

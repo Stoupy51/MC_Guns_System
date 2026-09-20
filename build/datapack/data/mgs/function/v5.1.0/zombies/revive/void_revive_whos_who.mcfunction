@@ -12,4 +12,3 @@ execute at @s summon minecraft:marker run function mgs:v5.1.0/shared/probe_pos
 data modify storage mgs:temp _body_at set from storage mgs:temp _probe_pos
 function mgs:v5.1.0/zombies/whos_who/on_down
 
-## sourceMappingURL=void_revive_whos_who.mcfunction.map

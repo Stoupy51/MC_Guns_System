@@ -10,4 +10,3 @@
 advancement revoke @s only mgs:v5.1.0/right_click_entity
 function mgs:v5.1.0/player/set_pending_clicks
 
-## sourceMappingURL=set_pending_clicks_entity.mcfunction.map

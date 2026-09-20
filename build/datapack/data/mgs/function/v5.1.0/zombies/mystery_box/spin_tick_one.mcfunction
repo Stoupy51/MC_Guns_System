@@ -25,4 +25,3 @@ execute if score @s mgs.mb.anim matches 0 run function mgs:v5.1.0/zombies/myster
 # Pickup window expired (anim == -150): remove display and reset this box
 execute if score @s mgs.mb.anim matches ..-150 run function mgs:v5.1.0/zombies/mystery_box/reset_one
 
-## sourceMappingURL=spin_tick_one.mcfunction.map

@@ -20,4 +20,3 @@ function mgs:v5.1.0/zombies/mystery_box/sync_interaction_visibility
 
 execute as @e[tag=mgs.mystery_box_pos,tag=!mgs.mystery_box_active] at @s run function mgs:v5.1.0/zombies/mystery_box/fire_sale_summon_box
 
-## sourceMappingURL=fire_sale_start.mcfunction.map

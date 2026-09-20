@@ -11,4 +11,3 @@
 
 $summon minecraft:marker $(x) $(y) $(z) {Tags:["mgs.map_element","mgs.element.start_command","mgs.new_start_cmd_marker"]}
 
-## sourceMappingURL=summon_start_command_marker.mcfunction.map

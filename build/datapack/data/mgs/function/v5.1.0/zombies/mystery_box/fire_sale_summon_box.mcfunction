@@ -10,4 +10,3 @@ data modify storage mgs:temp _mb_fs.yaw set value 0.0f
 data modify storage mgs:temp _mb_fs.yaw set from entity @s Rotation[0]
 function mgs:v5.1.0/zombies/mystery_box/summon_temp_box with storage mgs:temp _mb_fs
 
-## sourceMappingURL=fire_sale_summon_box.mcfunction.map
