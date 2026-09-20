@@ -36,4 +36,3 @@ execute if score #has_perk mgs.data matches 0 run attribute @s minecraft:max_hea
 scoreboard players set @s mgs.special.infinite_ammo 0
 scoreboard players set @s mgs.special.instant_kill 0
 
-## sourceMappingURL=apply_perks.mcfunction.map

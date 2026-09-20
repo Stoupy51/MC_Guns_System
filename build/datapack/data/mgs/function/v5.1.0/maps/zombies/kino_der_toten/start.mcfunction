@@ -30,4 +30,3 @@ execute positioned ~-54 ~4 ~39 run summon interaction ~ ~ ~ {Tags:["mgs.kino","m
 # Register right-click events for all kino interactions (target = interaction entity itself)
 execute as @e[tag=mgs.kino] run function #bs.interaction:on_right_click {run:"function mgs:v5.1.0/maps/zombies/kino_der_toten/on_right_click",executor:"target"}
 
-## sourceMappingURL=start.mcfunction.map

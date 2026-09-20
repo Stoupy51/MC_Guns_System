@@ -25,4 +25,3 @@ execute if data storage mgs:temp _start_cmd_iter[0] run function mgs:v5.1.0/maps
 data modify storage mgs:temp _respawn_cmd_iter set from storage mgs:temp map_edit.map.respawn_commands
 execute if data storage mgs:temp _respawn_cmd_iter[0] run function mgs:v5.1.0/maps/editor/summon_respawn_command_iter
 
-## sourceMappingURL=missions.mcfunction.map

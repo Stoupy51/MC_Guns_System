@@ -13,4 +13,3 @@ $data modify storage mgs:temp dialog.actions append value {label:{translate:"mgs
 $data modify storage mgs:temp dialog.actions append value {label:{translate:"mgs.blue",color:"blue"},tooltip:{translate:"mgs.move_to_blue_team"},action:{type:"run_command",command:"/execute as @a[scores={bs.id=$(id)}] run function mgs:v5.1.0/players/mp_to_blue"}}
 $data modify storage mgs:temp dialog.actions append value {label:{translate:"mgs.remove",color:"gray"},tooltip:{translate:"mgs.remove_from_the_game_spectator"},action:{type:"run_command",command:"/execute as @a[scores={bs.id=$(id)}] run function mgs:v5.1.0/players/mp_remove"}}
 
-## sourceMappingURL=row_multiplayer.mcfunction.map

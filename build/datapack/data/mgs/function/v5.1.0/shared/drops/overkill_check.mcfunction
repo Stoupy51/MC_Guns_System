@@ -33,4 +33,3 @@ scoreboard players set #pick_deny mgs.data 1
 tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.you_need_the_overkill_perk_to_carry_two_primary_weapons","color":"red"}]
 playsound minecraft:entity.villager.no ambient @s ~ ~ ~ 0.8 1.0
 
-## sourceMappingURL=overkill_check.mcfunction.map

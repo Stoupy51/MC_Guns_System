@@ -14,4 +14,3 @@ execute as @a[scores={mgs.zb.in_game=1}] if items entity @s hotbar.2 *[custom_da
 execute as @a[scores={mgs.zb.in_game=1}] if items entity @s hotbar.3 *[custom_data~{mgs:{gun:true,stats:{base_weapon:"ray_gun"}}}] run scoreboard players add #mb_ray_gun_owners mgs.data 1
 execute if score #mb_ray_gun_owners mgs.data matches 2.. run scoreboard players set #mb_owned mgs.data 1
 
-## sourceMappingURL=check_ray_gun_cap.mcfunction.map

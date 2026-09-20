@@ -28,4 +28,3 @@ execute if score #ec_ok mgs.data matches 0 run return fail
 scoreboard players operation @s mgs.zb.ec_last = #ec_now mgs.data
 execute at @s run function mgs:v5.1.0/zombies/perks/electric_cherry_shock
 
-## sourceMappingURL=electric_cherry_on_reload.mcfunction.map

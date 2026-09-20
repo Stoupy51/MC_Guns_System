@@ -15,4 +15,3 @@ execute if score #tp_random mgs.data matches 4 run tp @s ~-97 ~7 ~13
 execute if score #tp_random mgs.data matches 5 run tp @s ~40 ~4 ~39
 execute at @s run playsound minecraft:entity.enderman.teleport block @s ~ ~ ~ 1 1
 
-## sourceMappingURL=return_one.mcfunction.map

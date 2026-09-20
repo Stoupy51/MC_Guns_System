@@ -16,4 +16,3 @@ scoreboard players set #snd_channeling mgs.data 1
 tag @s add mgs.xp_earner
 title @s actionbar [{"translate":"mgs.defusing","color":"aqua"},{"score":{"name":"#snd_defuse_progress","objective":"mgs.data"},"color":"yellow"},{"translate":"mgs.150"}]
 
-## sourceMappingURL=try_defuse.mcfunction.map

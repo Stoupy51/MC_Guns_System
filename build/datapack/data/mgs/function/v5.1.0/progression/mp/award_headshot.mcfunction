@@ -13,4 +13,3 @@ scoreboard players add @s mgs.mp.xp_session 10
 scoreboard players add @s mgs.adv.mp.headshots 1
 function mgs:v5.1.0/progression/mp/settle
 
-## sourceMappingURL=award_headshot.mcfunction.map

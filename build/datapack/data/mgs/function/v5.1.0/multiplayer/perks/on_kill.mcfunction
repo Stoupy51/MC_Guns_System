@@ -15,4 +15,3 @@ execute if score @s mgs.special.scavenger matches 1 run function mgs:v5.1.0/mult
 execute if score @s mgs.special.quick_fix matches 1 run scoreboard players set @s mgs.last_hit 100
 execute if score @s mgs.special.quick_fix matches 1 run effect give @s minecraft:regeneration 3 1 true
 
-## sourceMappingURL=on_kill.mcfunction.map

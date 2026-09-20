@@ -8,4 +8,3 @@
 
 execute as @e[tag=mgs.spawn_point,tag=!mgs.spawn_general,limit=1,sort=nearest] run function mgs:v5.1.0/multiplayer/gamemodes/snd/tally_site_spawn
 
-## sourceMappingURL=tally_site.mcfunction.map

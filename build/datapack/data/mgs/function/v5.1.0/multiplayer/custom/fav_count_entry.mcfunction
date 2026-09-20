@@ -22,4 +22,3 @@ execute if score #fav_cnt mgs.data matches ..-1 run scoreboard players set #fav_
 # Store back
 execute store result storage mgs:temp _fav_count_src[0].favorites_count int 1 run scoreboard players get #fav_cnt mgs.data
 
-## sourceMappingURL=fav_count_entry.mcfunction.map

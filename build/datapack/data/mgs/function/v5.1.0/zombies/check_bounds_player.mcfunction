@@ -18,4 +18,3 @@ execute if score @s mgs.mp.by > #bound_y2 mgs.data run return run function mgs:v
 execute if score @s mgs.mp.bz < #bound_z1 mgs.data run return run function mgs:v5.1.0/zombies/revive/full_death
 execute if score @s mgs.mp.bz > #bound_z2 mgs.data run return run function mgs:v5.1.0/zombies/revive/full_death
 
-## sourceMappingURL=check_bounds_player.mcfunction.map

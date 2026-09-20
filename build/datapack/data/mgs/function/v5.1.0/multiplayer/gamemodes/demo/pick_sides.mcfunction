@@ -15,4 +15,3 @@ execute as @e[tag=mgs.demo_obj] at @s run function mgs:v5.1.0/multiplayer/gamemo
 scoreboard players set #demo_attackers mgs.data 1
 execute if score #demo_near_red mgs.data > #demo_near_blue mgs.data run scoreboard players set #demo_attackers mgs.data 2
 
-## sourceMappingURL=pick_sides.mcfunction.map

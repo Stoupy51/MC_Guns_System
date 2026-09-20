@@ -39,4 +39,3 @@ execute store result storage mgs:temp _tp_pos.y double 0.001 run scoreboard play
 execute store result storage mgs:temp _tp_pos.z double 0.001 run scoreboard players get #proj_oz mgs.data
 function mgs:v5.1.0/shared/tp_back with storage mgs:temp _tp_pos
 
-## sourceMappingURL=calc_velocity.mcfunction.map

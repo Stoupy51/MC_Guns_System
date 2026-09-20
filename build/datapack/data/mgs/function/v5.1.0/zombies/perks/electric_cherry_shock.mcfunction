@@ -29,4 +29,3 @@ execute store result storage mgs:temp _ec.scale double 0.01 run scoreboard playe
 
 function mgs:v5.1.0/zombies/perks/electric_cherry_damage with storage mgs:temp _ec
 
-## sourceMappingURL=electric_cherry_shock.mcfunction.map

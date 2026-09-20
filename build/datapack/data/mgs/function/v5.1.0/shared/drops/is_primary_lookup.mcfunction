@@ -31,4 +31,3 @@ execute if data storage mgs:temp _isp{bw:"m500"} run scoreboard players set #is_
 execute if data storage mgs:temp _isp{bw:"m590"} run scoreboard players set #is_primary mgs.data 1
 execute if data storage mgs:temp _isp{bw:"rpg7"} run scoreboard players set #is_primary mgs.data 1
 
-## sourceMappingURL=is_primary_lookup.mcfunction.map

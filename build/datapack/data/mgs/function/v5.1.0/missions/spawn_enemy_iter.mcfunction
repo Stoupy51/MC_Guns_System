@@ -30,4 +30,3 @@ function mgs:v5.1.0/missions/call_enemy_function with storage mgs:temp _epos
 data remove storage mgs:temp _enemy_iter[0]
 execute if data storage mgs:temp _enemy_iter[0] run function mgs:v5.1.0/missions/spawn_enemy_iter
 
-## sourceMappingURL=spawn_enemy_iter.mcfunction.map

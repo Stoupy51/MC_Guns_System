@@ -15,4 +15,3 @@ execute unless entity @a[tag=mgs.pu_collecting] run return run tellraw @s [[{"te
 $function mgs:v5.1.0/zombies/powerups/activate/$(type)
 tag @a[tag=mgs.pu_collecting] remove mgs.pu_collecting
 
-## sourceMappingURL=powerup.mcfunction.map

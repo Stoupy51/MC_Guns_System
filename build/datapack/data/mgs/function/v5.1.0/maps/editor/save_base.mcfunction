@@ -17,4 +17,3 @@ execute unless data entity @s data.start_function run data remove storage mgs:te
 execute if data entity @s data.tick_function run data modify storage mgs:temp map_edit.map.tick_function set from entity @s data.tick_function
 execute unless data entity @s data.tick_function run data remove storage mgs:temp map_edit.map.tick_function
 
-## sourceMappingURL=save_base.mcfunction.map

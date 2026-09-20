@@ -10,4 +10,3 @@ data modify storage mgs:temp _mag_data set from storage mgs:temp _build.secondar
 execute store result score #pmag_count mgs.data run data get storage mgs:temp editor.secondary_mag_count
 execute if score #pmag_count mgs.data matches 1.. run function mgs:v5.1.0/multiplayer/editor/append_mag_slots
 
-## sourceMappingURL=start_secondary_mags.mcfunction.map

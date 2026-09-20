@@ -12,4 +12,3 @@ scoreboard players set @s mgs.mp.edit_target 0
 function mgs:v5.1.0/multiplayer/editor/init_state
 function mgs:v5.1.0/multiplayer/editor/hub
 
-## sourceMappingURL=start.mcfunction.map

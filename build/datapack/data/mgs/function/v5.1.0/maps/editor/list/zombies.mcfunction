@@ -28,4 +28,3 @@ tellraw @s ""
 tellraw @s ["  ",[{"text": "[", "color": "green", "click_event": {"action": "suggest_command", "command": "/function mgs:v5.1.0/maps/editor/create/zombies"}, "hover_event": {"action": "show_text", "value": "Create a new Zombies map"}}, "+ Create New Map", "]"]]
 tellraw @s {"text":"============================================","color":"dark_gray"}
 
-## sourceMappingURL=zombies.mcfunction.map

@@ -53,4 +53,3 @@ execute store result score @s mgs.zb.pap_mid run scoreboard players get @n[tag=b
 execute as @n[tag=bs.interaction.target] at @s run function mgs:v5.1.0/zombies/pap/anim/start with storage mgs:temp _pap
 tag @s remove mgs.pap_owner
 
-## sourceMappingURL=repap_scope_only.mcfunction.map

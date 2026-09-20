@@ -8,4 +8,3 @@
 
 $execute as @e[tag=mgs.wb_new_display] run loot replace entity @s contents loot mgs:i/$(weapon_id)
 
-## sourceMappingURL=set_display_item.mcfunction.map

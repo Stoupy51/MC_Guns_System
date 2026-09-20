@@ -32,4 +32,3 @@ execute if score @s mgs.burst_count matches 1.. if data storage mgs:gun all.stat
 execute if score #is_mid_burst mgs.data matches 1 run scoreboard players add @s mgs.pending_clicks 1
 execute unless score #is_mid_burst mgs.data matches 1 run scoreboard players set @s mgs.pending_clicks 1
 
-## sourceMappingURL=set_pending_clicks.mcfunction.map

@@ -28,4 +28,3 @@ scoreboard players operation #wf_allperks mgs.data = @n[tag=bs.interaction.targe
 
 execute at @n[tag=bs.interaction.target] run function mgs:v5.1.0/zombies/wunderfizz/machine_click
 
-## sourceMappingURL=on_right_click.mcfunction.map

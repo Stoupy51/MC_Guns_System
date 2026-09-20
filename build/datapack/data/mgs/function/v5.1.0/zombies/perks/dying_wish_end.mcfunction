@@ -25,4 +25,3 @@ title @s times 3 25 10
 title @s title ["⚔"]
 title @s subtitle [[{"text":"...","color":"gray"}, {"translate":"mgs.barely_alive"}]]
 
-## sourceMappingURL=dying_wish_end.mcfunction.map

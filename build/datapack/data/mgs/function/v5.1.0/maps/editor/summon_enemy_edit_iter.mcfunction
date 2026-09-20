@@ -31,4 +31,3 @@ tag @e[tag=mgs.new_enemy_marker] remove mgs.new_enemy_marker
 data remove storage mgs:temp _enemy_edit_iter[0]
 execute if data storage mgs:temp _enemy_edit_iter[0] run function mgs:v5.1.0/maps/editor/summon_enemy_edit_iter
 
-## sourceMappingURL=summon_enemy_edit_iter.mcfunction.map

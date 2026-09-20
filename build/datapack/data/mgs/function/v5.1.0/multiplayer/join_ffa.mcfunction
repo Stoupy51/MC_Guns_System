@@ -11,4 +11,3 @@ scoreboard players set @s mgs.mp.in_game 1
 team join mgs.ffa @s
 tellraw @s ["",{"translate":"mgs.you_joined_the","color":"white"},{"translate":"mgs.free_for_all","color":"yellow","bold":true}]
 
-## sourceMappingURL=join_ffa.mcfunction.map

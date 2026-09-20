@@ -31,4 +31,3 @@ execute if data entity @s data.walk_to run data modify entity @n[tag=mgs.zb_new]
 # zombie is done, so retire it before the next spawn summons another one.
 tag @n[tag=mgs.zb_new] remove mgs.zb_new
 
-## sourceMappingURL=do_spawn_zombie.mcfunction.map

@@ -13,4 +13,3 @@ team leave @a[team=mgs.blue]
 scoreboard players set @a mgs.mp.team 0
 tellraw @a [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.free_for_all_everyone_for_themselves","color":"yellow"}]
 
-## sourceMappingURL=setup.mcfunction.map

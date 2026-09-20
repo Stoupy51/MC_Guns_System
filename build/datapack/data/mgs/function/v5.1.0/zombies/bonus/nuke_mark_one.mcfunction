@@ -9,4 +9,3 @@
 tag @s add mgs.nuked
 attribute @s minecraft:attack_damage modifier add mgs:nuke_zero_damage -1 add_multiplied_total
 
-## sourceMappingURL=nuke_mark_one.mcfunction.map

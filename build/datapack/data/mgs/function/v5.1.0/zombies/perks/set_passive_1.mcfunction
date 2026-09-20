@@ -12,4 +12,3 @@ scoreboard players set @s mgs.zb.passive 1
 tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.passive_set","color":"gray"},{"translate":"mgs.x1_2_points","color":"gold"}]
 function mgs:v5.1.0/zombies/ability_menu
 
-## sourceMappingURL=set_passive_1.mcfunction.map

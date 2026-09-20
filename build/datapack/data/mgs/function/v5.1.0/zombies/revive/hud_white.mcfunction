@@ -10,4 +10,3 @@
 data modify entity @n[tag=mgs.downed_hud,predicate=mgs:v5.1.0/zombies/revive/downed_id_match] text[0].color set value "white"
 data modify entity @n[tag=mgs.downed_hud,predicate=mgs:v5.1.0/zombies/revive/downed_id_match] text[1].color set value "white"
 
-## sourceMappingURL=hud_white.mcfunction.map

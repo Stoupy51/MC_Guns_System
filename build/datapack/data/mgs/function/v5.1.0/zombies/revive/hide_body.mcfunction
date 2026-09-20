@@ -17,4 +17,3 @@ execute as @e[tag=mgs.downed_hud,predicate=mgs:v5.1.0/zombies/revive/downed_id_m
 tag @e[tag=mgs.downed_mine_temp] remove mgs.downed_mine_temp
 execute as @e[tag=mgs.downed_cam,predicate=mgs:v5.1.0/zombies/revive/downed_id_match] run kill @s
 
-## sourceMappingURL=hide_body.mcfunction.map

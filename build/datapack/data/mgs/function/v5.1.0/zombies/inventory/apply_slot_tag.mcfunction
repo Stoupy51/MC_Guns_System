@@ -35,4 +35,3 @@ data modify storage mgs:temp zb_slot set value {}
 $data modify storage mgs:temp zb_slot.$(group) set value $(index)
 $item modify entity @s $(slot) mgs:v5.1.0/zb_slot_tag
 
-## sourceMappingURL=apply_slot_tag.mcfunction.map

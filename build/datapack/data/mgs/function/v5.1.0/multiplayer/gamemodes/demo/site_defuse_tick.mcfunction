@@ -22,4 +22,3 @@ execute if score #demo_ch mgs.data matches 1.. if score @s mgs.demo_owner matche
 
 execute if score @s mgs.demo_prog matches 100.. run function mgs:v5.1.0/multiplayer/gamemodes/demo/site_defused
 
-## sourceMappingURL=site_defuse_tick.mcfunction.map

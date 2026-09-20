@@ -176,4 +176,3 @@ scoreboard players set @s mgs.mp.edit_target 0
 function mgs:v5.1.0/multiplayer/editor/notify_saved with storage mgs:temp editor
 function mgs:v5.1.0/multiplayer/my_loadouts/browse
 
-## sourceMappingURL=save.mcfunction.map

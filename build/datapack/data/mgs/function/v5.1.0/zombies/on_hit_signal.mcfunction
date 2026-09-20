@@ -17,4 +17,3 @@ scoreboard players operation @n[tag=mgs.ticking] mgs.zb.points += #zb_points_hit
 # Double points bonus for bullet hit points
 execute if score @n[tag=mgs.ticking] mgs.special.double_points matches 1.. run scoreboard players operation @n[tag=mgs.ticking] mgs.zb.points += #zb_points_hit mgs.config
 
-## sourceMappingURL=on_hit_signal.mcfunction.map

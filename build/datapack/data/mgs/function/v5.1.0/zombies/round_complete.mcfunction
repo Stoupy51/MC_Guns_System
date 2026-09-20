@@ -27,4 +27,3 @@ schedule function mgs:v5.1.0/zombies/start_round 5s
 # Respawn all bled-out (spectator) players for the next round
 function mgs:v5.1.0/zombies/revive/round_respawn
 
-## sourceMappingURL=round_complete.mcfunction.map

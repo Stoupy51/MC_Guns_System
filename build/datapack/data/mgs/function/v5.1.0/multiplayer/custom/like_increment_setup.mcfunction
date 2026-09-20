@@ -10,4 +10,3 @@ data modify storage mgs:temp _like_src set from storage mgs:multiplayer custom_l
 data modify storage mgs:multiplayer custom_loadouts set value []
 execute if data storage mgs:temp _like_src[0] run function mgs:v5.1.0/multiplayer/custom/like_increment_rebuild
 
-## sourceMappingURL=like_increment_setup.mcfunction.map

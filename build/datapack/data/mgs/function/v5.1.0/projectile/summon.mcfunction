@@ -35,4 +35,3 @@ execute if score #proj_muzzle_free mgs.data matches 0 anchored eyes positioned ^
 # Increment slow bullet counter
 scoreboard players add #slow_bullet_count mgs.data 1
 
-## sourceMappingURL=summon.mcfunction.map

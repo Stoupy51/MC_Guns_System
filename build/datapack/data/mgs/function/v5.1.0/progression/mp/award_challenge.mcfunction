@@ -83,4 +83,3 @@ scoreboard players operation @s mgs.mp.xp_prog += #xp_gain mgs.data
 scoreboard players operation @s mgs.mp.xp_session += #xp_gain mgs.data
 function mgs:v5.1.0/progression/mp/settle
 
-## sourceMappingURL=award_challenge.mcfunction.map

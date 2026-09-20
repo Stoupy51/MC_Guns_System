@@ -8,4 +8,3 @@
 
 data modify entity @s item.components."minecraft:item_model" set value "mgs:der_wunderfizz"
 
-## sourceMappingURL=set_display_live.mcfunction.map

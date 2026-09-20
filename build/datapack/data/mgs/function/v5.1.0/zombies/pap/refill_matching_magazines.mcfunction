@@ -50,4 +50,3 @@ $execute if items entity @s player.crafting.1 *[custom_data~{mgs:{magazine:true,
 $execute if items entity @s player.crafting.2 *[custom_data~{mgs:{magazine:true,weapon:"$(base_weapon)"}}] run function mgs:v5.1.0/zombies/bonus/refill_magazine {slot:"player.crafting.2"}
 $execute if items entity @s player.crafting.3 *[custom_data~{mgs:{magazine:true,weapon:"$(base_weapon)"}}] run function mgs:v5.1.0/zombies/bonus/refill_magazine {slot:"player.crafting.3"}
 
-## sourceMappingURL=refill_matching_magazines.mcfunction.map

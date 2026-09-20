@@ -21,4 +21,3 @@ tag @s remove mgs.reloading
 # Single-shell reload: chain into the next shell unless full, out of ammo, or the player is firing
 execute if data storage mgs:gun all.stats.single_reload run function mgs:v5.1.0/ammo/single_reload_continue
 
-## sourceMappingURL=end_reload.mcfunction.map

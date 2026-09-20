@@ -25,4 +25,3 @@ execute as @n[tag=mgs.mystery_box_active] at @s as @e[tag=mgs.mb_presence,tag=!m
 execute at @n[tag=mgs.mystery_box_active] run particle minecraft:end_rod ~ ~3 ~ 0.1 2 0.1 0.05 20 force @a[distance=..64]
 execute as @n[tag=mgs.mystery_box_active] at @s run playsound mgs:zombies/mystery_box/poof ambient @a[scores={mgs.zb.in_game=1}] ~ ~ ~ 1.0 1.0
 
-## sourceMappingURL=move_anim_transition.mcfunction.map

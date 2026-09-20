@@ -10,4 +10,3 @@
 tag @s add mgs.mob_sleeping
 scoreboard players operation @s mgs.mob.timer = @s mgs.mob.sleep_time
 
-## sourceMappingURL=go_sleep.mcfunction.map

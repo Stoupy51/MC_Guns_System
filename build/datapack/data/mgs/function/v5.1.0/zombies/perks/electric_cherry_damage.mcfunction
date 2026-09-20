@@ -11,4 +11,3 @@
 
 $execute as @e[tag=mgs.zombie_round,distance=..$(radius)] run function mgs:v5.1.0/zombies/perks/electric_cherry_hit {scale:"$(scale)"}
 
-## sourceMappingURL=electric_cherry_damage.mcfunction.map

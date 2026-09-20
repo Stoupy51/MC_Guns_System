@@ -21,4 +21,3 @@ execute store result score #pap_mid mgs.data run scoreboard players get @s mgs.z
 execute store result storage mgs:temp _pap_retreat.id int 1 run scoreboard players get @s mgs.zb.pap.id
 function mgs:v5.1.0/zombies/pap/retreat_cleanup with storage mgs:temp _pap_retreat
 
-## sourceMappingURL=retreat_finish.mcfunction.map

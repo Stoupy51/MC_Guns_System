@@ -28,4 +28,3 @@ title @s title ["☠"]
 title @s subtitle [{"translate":"mgs.respawning_in_3_seconds","color":"gray"}]
 execute at @s run playsound minecraft:entity.player.hurt ambient @s
 
-## sourceMappingURL=enter_death_spectate.mcfunction.map

@@ -12,4 +12,3 @@ execute unless data storage mgs:zombies game{variant:"zonweeb"} run return fail
 # Show the ability selection dialog
 dialog show @s mgs:v5.1.0/zombies/ability
 
-## sourceMappingURL=ability_menu.mcfunction.map

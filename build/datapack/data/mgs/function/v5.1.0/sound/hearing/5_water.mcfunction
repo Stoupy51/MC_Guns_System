@@ -13,4 +13,3 @@ $execute if entity @s[distance=0..16] positioned as @s run playsound mgs:common/
 $execute if entity @s[distance=16..32] positioned as @s run playsound mgs:common/$(crack)_crack_5_water player @s ^ ^ ^-6 0.15
 $execute if entity @s[distance=32..48] positioned as @s run playsound mgs:common/$(crack)_crack_5_water player @s ^ ^ ^-6 0.075
 
-## sourceMappingURL=5_water.mcfunction.map

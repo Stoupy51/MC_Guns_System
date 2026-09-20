@@ -48,4 +48,3 @@ tellraw @a ["",[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "]," ",[{"
 # End game after 5 seconds
 schedule function mgs:v5.1.0/zombies/stop 100t
 
-## sourceMappingURL=game_over.mcfunction.map

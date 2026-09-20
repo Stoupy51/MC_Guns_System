@@ -23,4 +23,3 @@ execute if score #kino_tp_timer mgs.data matches 10 run playsound minecraft:enti
 # When timer reaches 0, execute the actual teleport
 execute if score #kino_tp_timer mgs.data matches ..0 run function mgs:v5.1.0/maps/zombies/kino_der_toten/teleporter/do_teleport
 
-## sourceMappingURL=activating_tick.mcfunction.map

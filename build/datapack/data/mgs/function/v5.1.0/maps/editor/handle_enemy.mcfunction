@@ -24,4 +24,3 @@ tag @e[tag=mgs.new_enemy_marker] remove mgs.new_enemy_marker
 # Announce
 tellraw @a[tag=mgs.map_editor] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.enemy_placed","color":"red"}]
 
-## sourceMappingURL=handle_enemy.mcfunction.map

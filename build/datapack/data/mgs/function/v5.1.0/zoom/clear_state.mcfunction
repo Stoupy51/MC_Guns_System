@@ -11,4 +11,3 @@ scoreboard players reset @s mgs.zoom
 scoreboard players set @s mgs.zoom_timer 0
 effect clear @s slowness
 
-## sourceMappingURL=clear_state.mcfunction.map

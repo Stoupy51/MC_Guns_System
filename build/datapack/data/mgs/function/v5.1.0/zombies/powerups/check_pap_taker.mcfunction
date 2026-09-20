@@ -13,4 +13,3 @@ execute if score #pu_pap_sel mgs.data matches 3 if items entity @s hotbar.3 *[cu
 execute if score #pu_pap_ok mgs.data matches 0 run data modify storage smithed.actionbar:input message set value {json:["✦ ",{"translate":"mgs.free_pack_a_punch","color":"aqua"},{"text":" - ","color":"gray"},{"translate":"mgs.hold_a_weapon_to_take_it","color":"red"}],priority:"conditional",freeze:5}
 execute if score #pu_pap_ok mgs.data matches 0 run function #smithed.actionbar:message
 
-## sourceMappingURL=check_pap_taker.mcfunction.map

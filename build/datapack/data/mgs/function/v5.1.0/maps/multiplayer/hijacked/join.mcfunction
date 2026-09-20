@@ -6,4 +6,3 @@
 
 # Hijacked map join
 
-## sourceMappingURL=join.mcfunction.map

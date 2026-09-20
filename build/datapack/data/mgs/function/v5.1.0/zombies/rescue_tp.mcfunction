@@ -10,4 +10,3 @@
 tp @s @n[tag=mgs.zb_near]
 scoreboard players operation @s mgs.zb.spawn.sid = @n[tag=mgs.zb_near] mgs.zb.spawn.sid
 
-## sourceMappingURL=rescue_tp.mcfunction.map

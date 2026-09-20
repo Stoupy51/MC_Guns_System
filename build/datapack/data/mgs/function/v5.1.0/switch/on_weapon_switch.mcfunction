@@ -52,4 +52,3 @@ execute if score @s mgs.last_selected matches 1.. run function mgs:v5.1.0/ammo/u
 #   - Mark weapon as needing update by setting ammo to -1
 execute if score #current_id mgs.data matches 1.. run function mgs:v5.1.0/ammo/copy_data
 
-## sourceMappingURL=on_weapon_switch.mcfunction.map

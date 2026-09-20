@@ -10,4 +10,3 @@
 
 $playsound mgs:$(fire) player @a[distance=0.01..48] ~ ~ ~ 0.35 1 0.10
 
-## sourceMappingURL=fire_sound.mcfunction.map

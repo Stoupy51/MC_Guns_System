@@ -28,4 +28,3 @@ tag @n[tag=mgs.zb_dog_new] remove mgs.zb_dog_new
 scoreboard players remove #zb_dog_pending mgs.data 1
 kill @s
 
-## sourceMappingURL=dog_portal_strike.mcfunction.map

@@ -6,4 +6,3 @@
 
 dialog show @s mgs:v5.1.0/multiplayer/setup/time_limit
 
-## sourceMappingURL=time_limit.mcfunction.map

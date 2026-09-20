@@ -20,4 +20,3 @@ execute if score @s mgs.mp.by > #bound_y2 mgs.data run return run damage @s 1000
 execute if score @s mgs.mp.bz < #bound_z1 mgs.data run return run damage @s 10000 out_of_world
 execute if score @s mgs.mp.bz > #bound_z2 mgs.data run return run damage @s 10000 out_of_world
 
-## sourceMappingURL=check_bounds.mcfunction.map

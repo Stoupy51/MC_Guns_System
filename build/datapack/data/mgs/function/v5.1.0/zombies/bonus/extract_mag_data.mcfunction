@@ -30,4 +30,3 @@ data modify storage mgs:temp refill.mag_model set from entity @s item.components
 # Clean up item_display
 kill @s
 
-## sourceMappingURL=extract_mag_data.mcfunction.map

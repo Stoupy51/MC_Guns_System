@@ -9,4 +9,3 @@
 
 $data modify storage mgs:zombies perk_data."$(id)".name set value "$(name)"
 
-## sourceMappingURL=store_data_name.mcfunction.map

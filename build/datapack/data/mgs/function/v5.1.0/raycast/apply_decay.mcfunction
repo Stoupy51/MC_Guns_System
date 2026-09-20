@@ -23,4 +23,3 @@ scoreboard players operation #damage mgs.data *= #pow_decay_distance mgs.data
 # Divide by 1000 because we're multiplying two scaled integers with each other (10*1000 = 10000)
 scoreboard players operation #damage mgs.data /= #1000 mgs.data
 
-## sourceMappingURL=apply_decay.mcfunction.map

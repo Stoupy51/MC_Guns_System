@@ -18,4 +18,3 @@ function mgs:v5.1.0/shared/maps/call_script_at_base {script:"start"}
 # Announce
 tellraw @a ["","⚔ ",[{"text":"","color":"green","bold":true},{"translate":"mgs.go_go_go"}]]
 
-## sourceMappingURL=end_prep.mcfunction.map

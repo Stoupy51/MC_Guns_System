@@ -18,4 +18,3 @@ team join mgs.horde @s
 # rise is over — the escort freezes the zombie, which would strand it mid-animation.
 execute if data entity @s data.walk_to run function mgs:v5.1.0/zombies/escort/start_to_target
 
-## sourceMappingURL=zombie_finish_rise.mcfunction.map

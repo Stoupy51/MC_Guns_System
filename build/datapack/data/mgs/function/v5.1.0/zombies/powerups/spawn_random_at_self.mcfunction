@@ -19,4 +19,3 @@ data modify storage mgs:temp _pu_spawn.z set from storage mgs:temp _probe_pos[2]
 execute store result storage mgs:temp _pu_spawn.uid int 1 run scoreboard players get #pu_uid mgs.data
 function mgs:v5.1.0/zombies/powerups/do_spawn_random
 
-## sourceMappingURL=spawn_random_at_self.mcfunction.map

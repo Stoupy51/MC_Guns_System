@@ -11,4 +11,3 @@ scoreboard players set #kino_tp_state mgs.data 1
 playsound minecraft:block.beacon.power_select block @a[distance=..50] ~ ~ ~ 1 1
 tellraw @a[distance=..50] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.teleporter_link_started","color":"green"}]
 
-## sourceMappingURL=start_link.mcfunction.map

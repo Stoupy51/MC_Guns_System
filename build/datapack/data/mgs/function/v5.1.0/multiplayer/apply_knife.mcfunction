@@ -10,4 +10,3 @@
 
 $loot replace entity @s hotbar.0 loot mgs:i/combat_knife$(camo)
 
-## sourceMappingURL=apply_knife.mcfunction.map

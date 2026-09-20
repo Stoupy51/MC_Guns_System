@@ -10,4 +10,3 @@ data modify storage mgs:temp lore_line set from storage mgs:lore_templates expl_
 $data modify storage mgs:temp lore_line append value "$(expl_damage)"
 data modify storage mgs:temp new_lore append from storage mgs:temp lore_line
 
-## sourceMappingURL=append_expl_damage.mcfunction.map

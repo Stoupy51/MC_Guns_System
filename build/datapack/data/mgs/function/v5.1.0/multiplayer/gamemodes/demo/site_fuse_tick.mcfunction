@@ -9,4 +9,3 @@
 scoreboard players operation @s mgs.demo_fuse -= #tick_delta mgs.data
 execute if score @s mgs.demo_fuse matches ..0 run function mgs:v5.1.0/multiplayer/gamemodes/demo/site_destroyed
 
-## sourceMappingURL=site_fuse_tick.mcfunction.map

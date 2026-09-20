@@ -6,4 +6,3 @@
 
 # Nothing to clean up for FFA
 
-## sourceMappingURL=cleanup.mcfunction.map

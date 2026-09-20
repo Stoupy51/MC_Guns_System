@@ -9,4 +9,3 @@ team leave @s
 execute if data storage mgs:zombies game{state:"active"} run gamemode spectator @s
 tellraw @s [{"translate":"mgs.removed_from_the_zombies_game","color":"gray"}]
 
-## sourceMappingURL=zb_remove.mcfunction.map

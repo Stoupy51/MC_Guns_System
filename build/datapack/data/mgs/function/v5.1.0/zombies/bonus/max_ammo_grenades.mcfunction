@@ -17,4 +17,3 @@ execute if items entity @s hotbar.7 *[custom_data~{mgs:{gun:true}}] run return r
 # not a hardcoded frag; give_lethal_type re-tags the slot too.
 execute unless items entity @s hotbar.7 * run function mgs:v5.1.0/zombies/inventory/give_lethal_type {count:4}
 
-## sourceMappingURL=max_ammo_grenades.mcfunction.map

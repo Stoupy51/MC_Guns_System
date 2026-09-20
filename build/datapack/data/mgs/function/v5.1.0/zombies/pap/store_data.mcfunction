@@ -13,4 +13,3 @@
 
 $data modify storage mgs:zombies pap_data."$(id)" set value {name:"$(name)",display_tag:"$(display_tag)",display_item_id:"$(display_item_id)",display_item_model:"$(display_item_model)",display_yaw:$(display_yaw)}
 
-## sourceMappingURL=store_data.mcfunction.map

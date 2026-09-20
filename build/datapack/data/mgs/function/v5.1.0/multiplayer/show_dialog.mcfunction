@@ -42,4 +42,3 @@
 
 $dialog show @s $(dialog)
 
-## sourceMappingURL=show_dialog.mcfunction.map

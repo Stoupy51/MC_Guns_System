@@ -14,4 +14,3 @@ execute if score #pub mgs.data matches 1 if score #is_fav mgs.data matches 0 run
 data remove storage mgs:temp _iter[0]
 execute if data storage mgs:temp _iter[0] run function mgs:v5.1.0/multiplayer/marketplace/build_list_rest
 
-## sourceMappingURL=build_list_rest.mcfunction.map

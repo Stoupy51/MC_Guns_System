@@ -44,4 +44,3 @@ particle minecraft:totem_of_undying ~ ~1 ~ 0.5 1 0.5 0.3 80 force @a[distance=..
 playsound minecraft:item.totem.use player @a[distance=..32] ~ ~ ~ 1 0.8
 tellraw @a[scores={mgs.zb.in_game=1}] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],["",{"text":"[","color":"dark_gray"},{"score":{"name":"@s","objective":"mgs.zb.xp_level"},"color":"gold"},{"text":"] ","color":"dark_gray"},{"selector":"@s","color":"blue"}],[{"text":" ","color":"gray"}, {"translate":"mgs.refuses_to_die"}]]
 
-## sourceMappingURL=dying_wish_trigger.mcfunction.map

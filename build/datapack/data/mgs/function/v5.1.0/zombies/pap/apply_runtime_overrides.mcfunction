@@ -37,4 +37,3 @@ execute if data storage mgs:temp _pap_extract.stats.pap_stats.fire_mode run func
 execute if data storage mgs:temp _pap_extract.stats.pap_stats.can_auto run function mgs:v5.1.0/zombies/pap/apply_field {field:"can_auto"}
 execute if data storage mgs:temp _pap_extract.stats.pap_stats.can_burst run function mgs:v5.1.0/zombies/pap/apply_field {field:"can_burst"}
 
-## sourceMappingURL=apply_runtime_overrides.mcfunction.map

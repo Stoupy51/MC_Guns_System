@@ -12,4 +12,3 @@ function mgs:v5.1.0/multiplayer/editor/show_static_dialog with storage mgs:temp 
 data modify storage mgs:temp dialog.actions set value [{label:{translate:"mgs.iron_sights",color:"green"},tooltip:{translate:"mgs.free"},action:{type:"run_command",command:"/trigger mgs.player.config set 230"}},{label:{translate:"mgs.holographic",color:"yellow"},tooltip:[{text:"-1","color":"gold"}, " pt"],action:{type:"run_command",command:"/trigger mgs.player.config set 231"}}]
 function mgs:v5.1.0/multiplayer/show_dialog with storage mgs:temp
 
-## sourceMappingURL=show_scope_primary_1only.mcfunction.map

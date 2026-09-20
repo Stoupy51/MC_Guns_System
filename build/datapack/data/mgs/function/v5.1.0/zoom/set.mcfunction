@@ -28,4 +28,3 @@ data modify storage mgs:signals on_zoom set value {}
 data modify storage mgs:signals on_zoom.weapon set from storage mgs:gun all
 function #mgs:signals/on_zoom
 
-## sourceMappingURL=set.mcfunction.map

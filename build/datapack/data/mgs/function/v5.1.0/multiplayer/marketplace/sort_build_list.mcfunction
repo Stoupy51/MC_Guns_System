@@ -26,4 +26,3 @@ execute if data storage mgs:temp _pool_rebuild[0] run function mgs:v5.1.0/multip
 # Recurse if pool still has entries
 execute if data storage mgs:temp _sort_pool[0] run function mgs:v5.1.0/multiplayer/marketplace/sort_build_list
 
-## sourceMappingURL=sort_build_list.mcfunction.map

@@ -57,4 +57,3 @@ function mgs:v5.1.0/zombies/revive/tp_to_death with storage mgs:temp
 tag @e[tag=mgs.downed_new] remove mgs.downed_new
 tag @e[tag=mgs.downed_hud_new] remove mgs.downed_hud_new
 
-## sourceMappingURL=spawn_downed_body.mcfunction.map

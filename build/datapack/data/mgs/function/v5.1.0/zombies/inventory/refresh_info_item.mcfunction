@@ -54,4 +54,3 @@ function mgs:v5.1.0/zombies/inventory/apply_slot_tag {slot:"hotbar.8",group:"hot
 # Keep the perk display items (inventory.26 and down) in sync with the same cadence
 function mgs:v5.1.0/zombies/inventory/refresh_perk_items
 
-## sourceMappingURL=refresh_info_item.mcfunction.map

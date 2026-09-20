@@ -24,4 +24,3 @@ execute if data storage mgs:temp editor{secondary:"deagle"} run return run funct
 
 function mgs:v5.1.0/multiplayer/editor/show_secondary_camo_dialog
 
-## sourceMappingURL=pick_secondary.mcfunction.map

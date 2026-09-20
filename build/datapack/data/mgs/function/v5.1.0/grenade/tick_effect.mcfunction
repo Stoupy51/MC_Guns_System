@@ -21,4 +21,3 @@ execute if score #smoke_tick mgs.data matches 0 run playsound minecraft:block.fi
 # If duration expired, delete
 execute if score @s mgs.data matches ..0 run function mgs:v5.1.0/grenade/delete
 
-## sourceMappingURL=tick_effect.mcfunction.map

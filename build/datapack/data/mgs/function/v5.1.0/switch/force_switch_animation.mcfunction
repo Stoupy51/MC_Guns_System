@@ -18,4 +18,3 @@ execute store result score #current_length mgs.data run data get storage mgs:gun
 execute if score #current_length mgs.data = @s mgs.previous_selected if score @s mgs.previous_selected matches 26 run item modify entity @s weapon.mainhand {"function": "minecraft:set_item","item": "minecraft:firework_star"}
 execute if score #current_length mgs.data = @s mgs.previous_selected unless score @s mgs.previous_selected matches 26 run item modify entity @s weapon.mainhand {"function": "minecraft:set_item","item": "minecraft:poisonous_potato"}
 
-## sourceMappingURL=force_switch_animation.mcfunction.map

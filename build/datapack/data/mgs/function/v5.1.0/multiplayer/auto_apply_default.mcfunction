@@ -14,4 +14,3 @@ scoreboard players operation @s mgs.mp.class *= #minus_one mgs.data
 # Apply the loadout
 function mgs:v5.1.0/multiplayer/apply_class
 
-## sourceMappingURL=auto_apply_default.mcfunction.map

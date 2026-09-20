@@ -11,4 +11,3 @@ tag @s add mgs.coord_stick_user
 function #bs.view:at_aimed_block {run:"function mgs:v5.1.0/utils/coord_stick_relative",with:{}}
 tag @s remove mgs.coord_stick_user
 
-## sourceMappingURL=coord_stick.mcfunction.map

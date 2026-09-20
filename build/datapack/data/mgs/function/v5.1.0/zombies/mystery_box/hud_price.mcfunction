@@ -9,4 +9,3 @@
 data modify storage smithed.actionbar:input message set value {json:["🎲 ",{"translate":"mgs.mystery_box","color":"light_purple"},{"text":" - ","color":"gray"},{"score":{"name":"#zb_mystery_box_price","objective":"mgs.config"},"color":"gold"},[{"text":" ","color":"gold"}, {"translate":"mgs.points_2"}]],priority:"conditional",freeze:5}
 function #smithed.actionbar:message
 
-## sourceMappingURL=hud_price.mcfunction.map

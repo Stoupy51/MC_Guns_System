@@ -21,4 +21,3 @@ data modify storage mgs:temp _spawn_iter set from storage mgs:multiplayer game.m
 data modify storage mgs:temp _spawn_tag set value "mgs.spawn_general"
 execute if data storage mgs:temp _spawn_iter[0] run function mgs:v5.1.0/multiplayer/summon_spawn_iter
 
-## sourceMappingURL=summon_spawns.mcfunction.map

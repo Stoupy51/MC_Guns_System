@@ -25,4 +25,3 @@ $execute if data storage mgs:temp _pu_spawn{"type":"cash_drop"} run function mgs
 $execute if data storage mgs:temp _pu_spawn{"type":"fire_sale"} run function mgs:v5.1.0/zombies/powerups/spawn_type {x:$(x),y:$(y),z:$(z),uid:$(uid),item:"minecraft:firework_star",type_num:10,label:'{"translate":"mgs.fire_sale","color":"light_purple","bold":true}'}
 $execute if data storage mgs:temp _pu_spawn{"type":"bonfire_sale"} run function mgs:v5.1.0/zombies/powerups/spawn_type {x:$(x),y:$(y),z:$(z),uid:$(uid),item:"minecraft:campfire",type_num:11,label:'{"translate":"mgs.bonfire_sale","color":"gold","bold":true}'}
 
-## sourceMappingURL=spawn_display.mcfunction.map

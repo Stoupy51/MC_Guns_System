@@ -16,4 +16,3 @@ $summon minecraft:text_display $(x) $(y) $(z) {Tags:["mgs.demo_label","mgs.gm_en
 $execute positioned $(x) $(y) $(z) run setblock ~ ~ ~ chest
 $execute positioned $(x) $(y) $(z) run setblock ~ ~1 ~ barrier
 
-## sourceMappingURL=summon_obj_at.mcfunction.map

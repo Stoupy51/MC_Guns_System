@@ -13,4 +13,3 @@ data modify entity @s item_display set value "fixed"
 data modify entity @s brightness set value {sky: 15, block: 15}
 data modify entity @s teleport_duration set value 1
 
-## sourceMappingURL=set_model.mcfunction.map

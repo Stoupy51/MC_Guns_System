@@ -11,4 +11,3 @@
 
 $summon minecraft:interaction $(x) $(y) $(z) {width:1.2f,height:-2.0f,response:true,Rotation:$(rotation),Tags:["mgs.wunderfizz_machine","mgs.gm_entity","bs.entity.interaction","mgs.wf_new"]}
 
-## sourceMappingURL=place_at.mcfunction.map

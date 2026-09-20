@@ -28,4 +28,3 @@
 
 $data modify storage mgs:temp dialog set value {type:"minecraft:multi_action",title:$(title),body:[{type:"minecraft:plain_message",contents:["",["",{"translate":"mgs.points_remaining"},": "],{"text":"$(pts)","color":"gold","bold":true},{"text":" / 10","color":"dark_gray"}]},{type:"minecraft:plain_message",contents:$(hint)}],actions:[],columns:$(columns),after_action:"close",exit_action:{label:"Back",action:{type:"run_command",command:"/trigger mgs.player.config set 103"}}}
 
-## sourceMappingURL=show_static_dialog.mcfunction.map

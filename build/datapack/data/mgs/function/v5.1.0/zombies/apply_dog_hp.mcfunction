@@ -11,4 +11,3 @@
 $attribute @s minecraft:max_health modifier add mgs:dog_hp $(val) add_value
 execute store result entity @s Health float 1 run attribute @s minecraft:max_health get
 
-## sourceMappingURL=apply_dog_hp.mcfunction.map

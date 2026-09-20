@@ -30,4 +30,3 @@ data modify storage mgs:temp dialog.actions append value {label:["","🌍 ",{tra
 # Show the completed dialog via macro
 function mgs:v5.1.0/multiplayer/show_dialog with storage mgs:temp
 
-## sourceMappingURL=select_class.mcfunction.map

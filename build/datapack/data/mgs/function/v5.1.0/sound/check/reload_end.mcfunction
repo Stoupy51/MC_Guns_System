@@ -10,4 +10,3 @@
 execute store result score #reload_end mgs.data run data get storage mgs:gun all.stats.reload_end
 execute if score @s mgs.cooldown = #reload_end mgs.data run function mgs:v5.1.0/sound/player_end with storage mgs:gun all.sounds
 
-## sourceMappingURL=reload_end.mcfunction.map

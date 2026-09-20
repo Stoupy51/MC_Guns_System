@@ -63,4 +63,3 @@ tag @e[tag=mgs.spawn_candidate] remove mgs.spawn_candidate
 tag @a[tag=mgs.spawn_pending] remove mgs.spawn_pending
 tag @a[tag=mgs.spawn_enemy] remove mgs.spawn_enemy
 
-## sourceMappingURL=pick_spawn.mcfunction.map

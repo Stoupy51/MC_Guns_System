@@ -10,4 +10,3 @@
 
 $function $(give_function)
 
-## sourceMappingURL=run_give.mcfunction.map

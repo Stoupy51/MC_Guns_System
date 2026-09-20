@@ -17,4 +17,3 @@ function mgs:v5.1.0/maps/editor/give_tools
 
 tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.map_saved","color":"green"}]
 
-## sourceMappingURL=save_only.mcfunction.map

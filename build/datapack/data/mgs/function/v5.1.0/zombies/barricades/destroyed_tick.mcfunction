@@ -19,4 +19,3 @@ execute store result storage mgs:temp _brptick.radius int 1 run scoreboard playe
 execute if score @s mgs.zb.barricade.rp_timer matches 1.. run function mgs:v5.1.0/zombies/barricades/handle_repair with storage mgs:temp _brptick
 execute if score @s mgs.zb.barricade.rp_timer matches 0 if score @s mgs.zb.barricade.state matches 1 run function mgs:v5.1.0/zombies/barricades/find_repairer with storage mgs:temp _brptick
 
-## sourceMappingURL=destroyed_tick.mcfunction.map

@@ -25,4 +25,3 @@ execute if score #processed_acoustics mgs.data matches 3 run function mgs:v5.1.0
 execute if score #processed_acoustics mgs.data matches 4 run function mgs:v5.1.0/sound/hearing/4_closest with storage mgs:temp _turret_snd
 execute if score #processed_acoustics mgs.data matches 5 run function mgs:v5.1.0/sound/hearing/5_water with storage mgs:temp _turret_snd
 
-## sourceMappingURL=turret_propagation.mcfunction.map

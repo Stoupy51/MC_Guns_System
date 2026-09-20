@@ -22,4 +22,3 @@ execute if score #zb_wd_moved mgs.data matches 0 run scoreboard players add #zb_
 # 400 ticks = 20s, well past the 5s handoff so a healthy round can't trip it.
 execute if score #zb_wd_ticks mgs.data matches 400.. run function mgs:zombies/recover
 
-## sourceMappingURL=watchdog_tick.mcfunction.map

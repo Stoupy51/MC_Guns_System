@@ -44,4 +44,3 @@ execute as @a[tag=mgs.xp_earner] run function mgs:v5.1.0/progression/zb/award_do
 tag @a remove mgs.xp_earner
 playsound minecraft:block.note_block.bit ambient @a[scores={mgs.zb.in_game=1}] ~ ~ ~ 0.6 0.9
 
-## sourceMappingURL=on_right_click.mcfunction.map

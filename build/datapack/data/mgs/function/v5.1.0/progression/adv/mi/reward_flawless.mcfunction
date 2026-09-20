@@ -21,4 +21,3 @@ data modify storage mgs:signals on_challenge_unlock set value {branch:"mi",chain
 function #mgs:progression/on_challenge_unlock
 scoreboard players operation #xp_gain mgs.data = #adv_gain_prev mgs.data
 
-## sourceMappingURL=reward_flawless.mcfunction.map

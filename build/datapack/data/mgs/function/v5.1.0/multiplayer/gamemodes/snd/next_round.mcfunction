@@ -31,4 +31,3 @@ execute if score #snd_round mgs.data matches 4 run playsound minecraft:block.not
 # Start next round (delay 3 seconds = 60 ticks via schedule)
 schedule function mgs:v5.1.0/multiplayer/gamemodes/snd/start_round 60t
 
-## sourceMappingURL=next_round.mcfunction.map

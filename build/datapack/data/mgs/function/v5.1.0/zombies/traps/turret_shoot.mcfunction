@@ -23,4 +23,3 @@ data modify storage mgs:input with.ignored_entities set value "#mgs:ignore"
 data modify storage mgs:input with.on_targeted_entity set value "function mgs:v5.1.0/zombies/traps/turret_hit"
 function #bs.raycast:run with storage mgs:input
 
-## sourceMappingURL=turret_shoot.mcfunction.map

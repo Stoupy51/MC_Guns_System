@@ -366,3 +366,4 @@ External:
 - <https://minecraft.wiki/w/Java_Edition_26.3_Snapshot_3>
 - <https://minecraft.wiki/w/Commands/posteffect>
 - <https://github.com/IrisShaders/Iris> — `common/src/main/java/net/irisshaders/iris/mixin/`
+

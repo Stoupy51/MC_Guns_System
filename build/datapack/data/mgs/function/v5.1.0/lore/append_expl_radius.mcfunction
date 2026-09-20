@@ -11,4 +11,3 @@ $data modify storage mgs:temp lore_line append value "$(expl_radius)"
 data modify storage mgs:temp lore_line append value [{"text":" ","color":"#c77e36"}, {"translate":"mgs.blocks"}]
 data modify storage mgs:temp new_lore append from storage mgs:temp lore_line
 
-## sourceMappingURL=append_expl_radius.mcfunction.map

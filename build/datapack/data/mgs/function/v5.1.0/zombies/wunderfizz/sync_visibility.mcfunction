@@ -7,4 +7,3 @@
 
 execute as @e[tag=mgs.wunderfizz_machine] at @s run function mgs:v5.1.0/zombies/wunderfizz/sync_visibility_one
 
-## sourceMappingURL=sync_visibility.mcfunction.map

@@ -19,4 +19,3 @@ scoreboard players add @s mgs.mp.xp_prog 5
 scoreboard players add @s mgs.mp.xp_session 5
 function mgs:v5.1.0/progression/mp/settle
 
-## sourceMappingURL=award_round_loss.mcfunction.map

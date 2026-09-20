@@ -13,4 +13,3 @@
 
 $data modify storage mgs:zombies wallbuy_data."$(id)" set value {weapon_id:"$(weapon_id)",name:"$(name)",magazine_id:"$(magazine_id)",kind:$(kind),item_name:$(item_name)}
 
-## sourceMappingURL=store_data.mcfunction.map

@@ -19,4 +19,3 @@ execute if score #barricade_repair_valid mgs.data matches 1 run scoreboard playe
 execute if score #barricade_repair_valid mgs.data matches 1 unless score @s mgs.zb.barricade.rp_timer matches 0.. run scoreboard players set @s mgs.zb.barricade.rp_timer 0
 execute if score #barricade_repair_valid mgs.data matches 1 if score @s mgs.zb.barricade.rp_timer matches 0 run function mgs:v5.1.0/zombies/barricades/repair
 
-## sourceMappingURL=handle_repair.mcfunction.map

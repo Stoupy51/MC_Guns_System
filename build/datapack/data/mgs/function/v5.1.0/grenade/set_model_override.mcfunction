@@ -10,4 +10,3 @@
 
 $data modify entity @s item.components."minecraft:item_model" set value "$(model_override)"
 
-## sourceMappingURL=set_model_override.mcfunction.map

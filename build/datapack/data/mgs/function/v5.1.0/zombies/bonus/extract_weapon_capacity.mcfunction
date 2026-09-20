@@ -21,4 +21,3 @@ data modify storage mgs:temp components set from entity @s item.components
 # Clean up item_display
 kill @s
 
-## sourceMappingURL=extract_weapon_capacity.mcfunction.map

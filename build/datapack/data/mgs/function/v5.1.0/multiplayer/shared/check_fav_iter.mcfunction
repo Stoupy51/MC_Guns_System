@@ -12,4 +12,3 @@ execute if score #fav_entry_id mgs.data = #check_id mgs.data run scoreboard play
 data remove storage mgs:temp _fav_check[0]
 execute unless score #is_fav mgs.data matches 1 if data storage mgs:temp _fav_check[0] run function mgs:v5.1.0/multiplayer/shared/check_fav_iter
 
-## sourceMappingURL=check_fav_iter.mcfunction.map

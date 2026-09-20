@@ -9,4 +9,3 @@
 
 scoreboard players set @s mgs.special.timeslip 1
 
-## sourceMappingURL=timeslip.mcfunction.map

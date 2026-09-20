@@ -10,4 +10,3 @@
 
 $item replace entity @s inventory.$(slot) from entity @n[tag=mgs.drop_mag_helper] contents
 
-## sourceMappingURL=place_mag.mcfunction.map

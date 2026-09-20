@@ -11,4 +11,3 @@ scoreboard players set #pap_pick_i mgs.data 0
 data modify storage mgs:temp _pap_pick.value set from storage mgs:temp _pap_pick.list[0]
 function mgs:v5.1.0/zombies/pap/pick_list_value_step
 
-## sourceMappingURL=pick_list_value.mcfunction.map

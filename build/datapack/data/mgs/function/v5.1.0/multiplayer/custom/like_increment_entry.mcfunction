@@ -12,4 +12,3 @@ execute store result score #likes mgs.data run data get storage mgs:temp _like_s
 scoreboard players add #likes mgs.data 1
 execute store result storage mgs:temp _like_src[0].likes int 1 run scoreboard players get #likes mgs.data
 
-## sourceMappingURL=like_increment_entry.mcfunction.map

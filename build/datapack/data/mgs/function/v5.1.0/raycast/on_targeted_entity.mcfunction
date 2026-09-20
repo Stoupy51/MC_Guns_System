@@ -23,4 +23,3 @@ execute if entity @n[tag=mgs.ticking,type=player] run data modify storage mgs:in
 execute store result score #damage mgs.data run data get storage mgs:temp damage 10
 function mgs:v5.1.0/raycast/apply_decay
 
-## sourceMappingURL=on_targeted_entity.mcfunction.map

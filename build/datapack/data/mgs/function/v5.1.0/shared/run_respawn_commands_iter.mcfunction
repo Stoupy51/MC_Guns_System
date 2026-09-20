@@ -15,4 +15,3 @@ function mgs:v5.1.0/shared/run_respawn_command with storage mgs:temp _respawn_cm
 data remove storage mgs:temp _respawn_cmd_iter[0]
 execute if data storage mgs:temp _respawn_cmd_iter[0] at @s run function mgs:v5.1.0/shared/run_respawn_commands_iter
 
-## sourceMappingURL=run_respawn_commands_iter.mcfunction.map

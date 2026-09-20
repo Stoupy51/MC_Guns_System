@@ -20,4 +20,3 @@ execute if score @s mgs.mp.by > #bound_y2 mgs.data run return run function mgs:v
 execute if score @s mgs.mp.bz < #bound_z1 mgs.data run return run function mgs:v5.1.0/multiplayer/bounds_kill
 execute if score @s mgs.mp.bz > #bound_z2 mgs.data run return run function mgs:v5.1.0/multiplayer/bounds_kill
 
-## sourceMappingURL=check_bounds.mcfunction.map

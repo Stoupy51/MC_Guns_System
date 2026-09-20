@@ -11,4 +11,3 @@
 
 $data modify storage mgs:temp dialog.actions append value {label:{text:"$(name)",color:"green"},tooltip:{text:"$(description)"},action:{type:"run_command",command:"/data modify storage mgs:$(mode) game.map_id set value \"$(id)\""}}
 
-## sourceMappingURL=select_entry.mcfunction.map

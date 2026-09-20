@@ -26,4 +26,3 @@ execute if score #already_liked mgs.data matches 1 run tellraw @s ["",[{"text":"
 # Reopen Marketplace dialog with updated data
 function mgs:v5.1.0/multiplayer/marketplace/browse
 
-## sourceMappingURL=like.mcfunction.map

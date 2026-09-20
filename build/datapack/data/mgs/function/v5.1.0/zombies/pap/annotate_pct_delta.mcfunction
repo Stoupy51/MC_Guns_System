@@ -11,4 +11,3 @@ data modify storage mgs:temp _pap_ann.suffix set value "%"
 execute store result storage mgs:temp _pap_ann.value int 1 run scoreboard players get #pap_new mgs.data
 function mgs:v5.1.0/zombies/pap/annotate_append_int with storage mgs:temp _pap_ann
 
-## sourceMappingURL=annotate_pct_delta.mcfunction.map

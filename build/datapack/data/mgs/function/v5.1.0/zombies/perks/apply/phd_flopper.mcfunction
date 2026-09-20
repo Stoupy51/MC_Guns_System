@@ -10,4 +10,3 @@ execute at @s run playsound mgs:zombies/perks/phd_flopper ambient @s ~ ~ ~ 1.0 1
 tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],"🧪 ",{"translate":"mgs.phd_flopper_immune_to_explosions_fall_damage","color":"dark_purple"},[" ",{"text":"+5 XP","color":"gold"}]]
 function mgs:v5.1.0/progression/zb/award_perk
 
-## sourceMappingURL=phd_flopper.mcfunction.map

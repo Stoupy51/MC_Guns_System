@@ -11,4 +11,3 @@
 
 $data modify storage mgs:temp _new_loadout.slots append value {slot:"hotbar.7",loot:"mgs:i/$(equip_slot2)$(equip_slot2_camo)",count:1,consumable:0b,bullets:0}
 
-## sourceMappingURL=append_equip2.mcfunction.map

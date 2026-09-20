@@ -11,4 +11,3 @@
 $playsound mgs:zombies/entity/sprint hostile @s ~ ~ ~ $(vol) 1.0
 return 1
 
-## sourceMappingURL=horde_sprint.mcfunction.map

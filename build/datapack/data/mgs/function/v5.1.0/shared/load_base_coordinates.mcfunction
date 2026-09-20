@@ -17,4 +17,3 @@ $execute store result score #gm_base_x mgs.data run data get storage mgs:$(mode)
 $execute store result score #gm_base_y mgs.data run data get storage mgs:$(mode) game.map.base_coordinates[1]
 $execute store result score #gm_base_z mgs.data run data get storage mgs:$(mode) game.map.base_coordinates[2]
 
-## sourceMappingURL=load_base_coordinates.mcfunction.map

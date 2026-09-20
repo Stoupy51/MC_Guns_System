@@ -12,4 +12,3 @@
 
 $summon minecraft:marker $(x) $(y) $(z) {Tags:["mgs.spawn_point","$(tag)","mgs.gm_entity","mgs.new_spawn"],data:{yaw:$(yaw)}}
 
-## sourceMappingURL=summon_spawn_at.mcfunction.map

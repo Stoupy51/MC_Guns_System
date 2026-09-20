@@ -29,4 +29,3 @@ data modify storage mgs:signals on_unzoom set value {}
 data modify storage mgs:signals on_unzoom.weapon set from storage mgs:gun all
 function #mgs:signals/on_unzoom
 
-## sourceMappingURL=remove.mcfunction.map

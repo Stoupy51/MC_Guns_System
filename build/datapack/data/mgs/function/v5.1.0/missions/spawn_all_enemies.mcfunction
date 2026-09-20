@@ -21,4 +21,3 @@ execute store result score #mi_total_enemies mgs.data if entity @e[tag=mgs.missi
 # Announce count
 tellraw @a [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"score":{"name":"#mi_total_enemies","objective":"mgs.data"},"color":"yellow"}," ",{"translate":"mgs.enemies_spawned","color":"gray"}]
 
-## sourceMappingURL=spawn_all_enemies.mcfunction.map

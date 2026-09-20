@@ -12,4 +12,3 @@ $data modify storage mgs:temp dialog.actions append value {label:{text:"$(name)"
 $data modify storage mgs:temp dialog.actions append value {label:{translate:"mgs.join",color:"green"},tooltip:{translate:"mgs.add_to_the_zombies_game"},action:{type:"run_command",command:"/execute as @a[scores={bs.id=$(id)}] run function mgs:v5.1.0/players/zb_join"}}
 $data modify storage mgs:temp dialog.actions append value {label:{translate:"mgs.remove",color:"gray"},tooltip:{translate:"mgs.remove_from_the_game_spectator"},action:{type:"run_command",command:"/execute as @a[scores={bs.id=$(id)}] run function mgs:v5.1.0/players/zb_remove"}}
 
-## sourceMappingURL=row_zombies.mcfunction.map

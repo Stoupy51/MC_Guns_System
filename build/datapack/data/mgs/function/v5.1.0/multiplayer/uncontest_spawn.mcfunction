@@ -9,4 +9,3 @@
 tag @s remove mgs.spawn_candidate
 scoreboard players remove #mp_cand_count mgs.data 1
 
-## sourceMappingURL=uncontest_spawn.mcfunction.map

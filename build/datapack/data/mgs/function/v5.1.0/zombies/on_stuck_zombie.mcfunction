@@ -53,4 +53,3 @@ execute store result score @s mgs.zb.stuck_x run data get entity @s Pos[0]
 execute store result score @s mgs.zb.stuck_z run data get entity @s Pos[2]
 scoreboard players operation @s mgs.zb.stuck_ticks = #total_tick mgs.data
 
-## sourceMappingURL=on_stuck_zombie.mcfunction.map

@@ -66,4 +66,3 @@ execute if score #tick_mod mgs.data matches 0 if entity @a[scores={mgs.mp.in_gam
 # Call map-defined tick script
 function mgs:v5.1.0/shared/maps/call_script_at_base {script:"tick"}
 
-## sourceMappingURL=game_tick.mcfunction.map

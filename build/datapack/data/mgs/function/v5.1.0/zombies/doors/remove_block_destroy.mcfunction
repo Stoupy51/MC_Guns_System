@@ -12,4 +12,3 @@
 $execute positioned ~ ~ ~ rotated $(rot) 0 positioned ^ ^ ^$(offset) run setblock ~ ~ ~ air destroy
 $execute positioned ~ ~ ~ rotated $(rot) 0 positioned ^ ^ ^$(offset) run kill @e[type=item,distance=..1.5]
 
-## sourceMappingURL=remove_block_destroy.mcfunction.map

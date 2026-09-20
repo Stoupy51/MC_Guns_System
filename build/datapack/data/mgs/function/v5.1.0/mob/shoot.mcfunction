@@ -19,4 +19,3 @@ tag @s remove bs.raycast.omit
 scoreboard players remove #bullets_to_fire mgs.data 1
 execute if score #bullets_to_fire mgs.data matches 1.. run function mgs:v5.1.0/mob/shoot
 
-## sourceMappingURL=shoot.mcfunction.map

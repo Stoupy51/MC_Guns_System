@@ -14,4 +14,3 @@ scoreboard players set @s mgs.mp.team 1
 team join mgs.blue @s
 tellraw @s ["",{"translate":"mgs.joined_the","color":"white"},{"translate":"mgs.mission","color":"aqua","bold":true}]
 
-## sourceMappingURL=mi_join.mcfunction.map

@@ -9,4 +9,3 @@ kill @e[tag=mgs.wf_bear]
 tellraw @a[scores={mgs.zb.in_game=1}] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.der_wunderfizz_has_arrived_at_a_new_location","color":"yellow"}]
 execute as @n[tag=mgs.wf_active] at @s run playsound minecraft:block.note_block.bit ambient @a[scores={mgs.zb.in_game=1}] ~ ~ ~ 0.6 0.9
 
-## sourceMappingURL=move_land.mcfunction.map

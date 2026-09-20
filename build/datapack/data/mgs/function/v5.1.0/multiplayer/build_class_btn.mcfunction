@@ -25,4 +25,3 @@ data modify storage mgs:temp dialog.actions append from storage mgs:temp _btn
 data remove storage mgs:temp class_iter[0]
 execute if data storage mgs:temp class_iter[0] run function mgs:v5.1.0/multiplayer/build_class_btn with storage mgs:temp class_iter[0]
 
-## sourceMappingURL=build_class_btn.mcfunction.map

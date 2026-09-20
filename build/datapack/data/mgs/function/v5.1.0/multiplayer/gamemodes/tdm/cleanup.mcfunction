@@ -6,4 +6,3 @@
 
 # Nothing to clean up for TDM
 
-## sourceMappingURL=cleanup.mcfunction.map

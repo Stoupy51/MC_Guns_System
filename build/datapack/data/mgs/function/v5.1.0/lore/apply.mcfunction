@@ -18,4 +18,3 @@ $item replace entity @p[tag=mgs.update_lore] $(slot) from entity @s contents
 # Clean up
 kill @s
 
-## sourceMappingURL=apply.mcfunction.map

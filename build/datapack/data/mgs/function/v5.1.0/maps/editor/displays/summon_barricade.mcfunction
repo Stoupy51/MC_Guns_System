@@ -12,4 +12,3 @@
 # Same placement and transform as zombies/barricades/place_at
 $summon minecraft:block_display ~ ~ ~ {Rotation:[$(yaw),0f],block_state:$(block),transformation:{left_rotation:[0f,0f,0f,1f],scale:[1f,1f,1f],translation:[-0.5f,-0.5f,-0.5f],right_rotation:[0f,0f,0f,1f]},Tags:["mgs.editor_display"]}
 
-## sourceMappingURL=summon_barricade.mcfunction.map

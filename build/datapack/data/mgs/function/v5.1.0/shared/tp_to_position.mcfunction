@@ -15,4 +15,3 @@
 
 $tp @s $(x) $(y) $(z)
 
-## sourceMappingURL=tp_to_position.mcfunction.map

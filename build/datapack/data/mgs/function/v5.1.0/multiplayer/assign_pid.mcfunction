@@ -15,4 +15,3 @@ data modify storage mgs:temp _new_player set value {pid:0,favorites:[],liked:[],
 execute store result storage mgs:temp _new_player.pid int 1 run scoreboard players get @s mgs.mp.pid
 data modify storage mgs:multiplayer player_data append from storage mgs:temp _new_player
 
-## sourceMappingURL=assign_pid.mcfunction.map

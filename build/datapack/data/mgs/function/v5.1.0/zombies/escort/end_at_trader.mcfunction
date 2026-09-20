@@ -10,4 +10,3 @@
 execute as @e[tag=mgs.zb_escorted,distance=..8,limit=1,sort=nearest] run function mgs:v5.1.0/zombies/escort/detach
 function mgs:v5.1.0/zombies/escort/discard_trader
 
-## sourceMappingURL=end_at_trader.mcfunction.map

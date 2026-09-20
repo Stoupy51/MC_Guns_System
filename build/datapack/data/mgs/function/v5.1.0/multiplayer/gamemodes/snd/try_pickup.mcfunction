@@ -25,4 +25,3 @@ execute as @a[tag=mgs.xp_earner] run function mgs:v5.1.0/progression/mp/award_bo
 tag @a remove mgs.xp_earner
 playsound minecraft:item.armor.equip_chain player @a ~ ~ ~ 1 1.2
 
-## sourceMappingURL=try_pickup.mcfunction.map

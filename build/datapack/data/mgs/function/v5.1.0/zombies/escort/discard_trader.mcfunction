@@ -13,4 +13,3 @@
 tp @s ~ ~-1000 ~
 kill @s
 
-## sourceMappingURL=discard_trader.mcfunction.map

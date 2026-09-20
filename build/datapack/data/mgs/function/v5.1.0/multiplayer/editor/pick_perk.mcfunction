@@ -27,4 +27,3 @@ execute if data storage mgs:temp {_toggle_perk:"overkill"} run function mgs:v5.1
 # Re-open the perks dialog to reflect updated state
 function mgs:v5.1.0/multiplayer/editor/show_perks_dialog
 
-## sourceMappingURL=pick_perk.mcfunction.map

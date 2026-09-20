@@ -26,4 +26,3 @@ function mgs:v5.1.0/zombies/wallbuys/compute_effective_price with storage mgs:te
 function mgs:v5.1.0/zombies/wallbuys/set_hover_price_suffix
 function mgs:v5.1.0/zombies/wallbuys/render_hover
 
-## sourceMappingURL=on_hover.mcfunction.map

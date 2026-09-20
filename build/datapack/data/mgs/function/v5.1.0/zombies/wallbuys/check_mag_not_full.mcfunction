@@ -23,4 +23,3 @@ tag @s remove mgs.wb_reading_mag
 
 execute if score #wb_mag_rem mgs.data < #wb_mag_cap mgs.data run scoreboard players set #wb_mag_not_full mgs.data 1
 
-## sourceMappingURL=check_mag_not_full.mcfunction.map

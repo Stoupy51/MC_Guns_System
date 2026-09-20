@@ -26,4 +26,3 @@ execute if score @s mgs.mp.team matches 2 run scoreboard players remove #blue_co
 execute if score #red_count mgs.data <= #blue_count mgs.data run function mgs:v5.1.0/multiplayer/join_red
 execute if score #red_count mgs.data > #blue_count mgs.data run function mgs:v5.1.0/multiplayer/join_blue
 
-## sourceMappingURL=auto_assign_team.mcfunction.map

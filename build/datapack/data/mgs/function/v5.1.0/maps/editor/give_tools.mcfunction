@@ -22,4 +22,3 @@ execute if score @s mgs.mp.map_disp matches 0 run function mgs:v5.1.0/maps/edito
 execute if score @s mgs.mp.map_disp matches 1 run function mgs:v5.1.0/maps/editor/give_tools/zombies
 execute if score @s mgs.mp.map_disp matches 2 run function mgs:v5.1.0/maps/editor/give_tools/missions
 
-## sourceMappingURL=give_tools.mcfunction.map

@@ -9,4 +9,3 @@
 
 execute if score #pap_pick_i mgs.data < #pap_next_idx mgs.data if data storage mgs:temp _pap_pick.list[1] run function mgs:v5.1.0/zombies/pap/pick_list_value_advance
 
-## sourceMappingURL=pick_list_value_step.mcfunction.map

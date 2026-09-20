@@ -13,4 +13,3 @@ execute if score #random_message mgs.data matches 3 run tellraw @a[scores={mgs.m
 execute if score #random_message mgs.data matches 4 run tellraw @a[scores={mgs.mp.in_game=1..}] ["",["",{"text":"[","color":"dark_gray"},{"score":{"name":"@s","objective":"mgs.mp.xp_level"},"color":"gold"},{"text":"] ","color":"dark_gray"},{"selector":"@s"}]," ",{"translate":"mgs.didnt_throw_the_grenade_far_enough","color":"gray"}]
 execute if score #random_message mgs.data matches 5 run tellraw @a[scores={mgs.mp.in_game=1..}] ["",["",{"text":"[","color":"dark_gray"},{"score":{"name":"@s","objective":"mgs.mp.xp_level"},"color":"gold"},{"text":"] ","color":"dark_gray"},{"selector":"@s"}]," ",{"translate":"mgs.is_their_own_worst_enemy","color":"gray"}]
 
-## sourceMappingURL=random_self_kill_message.mcfunction.map

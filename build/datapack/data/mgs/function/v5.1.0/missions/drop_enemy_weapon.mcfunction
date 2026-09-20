@@ -18,4 +18,3 @@ data modify storage mgs:temp _dropw set from entity @s equipment.mainhand
 scoreboard players set #drop_ammo mgs.data 0
 function mgs:v5.1.0/shared/drops/drop
 
-## sourceMappingURL=drop_enemy_weapon.mcfunction.map

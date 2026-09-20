@@ -26,4 +26,3 @@ data modify storage mgs:temp _pap_extract.weapon set from storage mgs:temp _pap_
 data remove storage mgs:temp _pap_extract.stats.scope_level
 execute if data storage mgs:temp _pap_scope_pick.scope_level run data modify storage mgs:temp _pap_extract.stats.scope_level set from storage mgs:temp _pap_scope_pick.scope_level
 
-## sourceMappingURL=randomize_scope.mcfunction.map

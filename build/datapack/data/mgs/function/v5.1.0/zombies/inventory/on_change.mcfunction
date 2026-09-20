@@ -17,4 +17,3 @@ tag @s add mgs.inv_checking
 function mgs:v5.1.0/zombies/inventory/check_slots
 tag @s remove mgs.inv_checking
 
-## sourceMappingURL=on_change.mcfunction.map

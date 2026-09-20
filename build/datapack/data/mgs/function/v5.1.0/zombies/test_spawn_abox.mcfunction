@@ -15,4 +15,3 @@
 
 $execute if entity @a[scores={mgs.zb.in_game=1},gamemode=!spectator,x=$(x),y=$(y),z=$(z),dx=$(dx),dy=$(dy),dz=$(dz)] run scoreboard players set #abox_ok mgs.data 1
 
-## sourceMappingURL=test_spawn_abox.mcfunction.map

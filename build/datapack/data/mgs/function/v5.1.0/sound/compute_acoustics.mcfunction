@@ -58,4 +58,3 @@ execute if score #acoustics mgs.data matches 51..85 run scoreboard players set @
 execute if score #acoustics mgs.data matches ..50 run scoreboard players set @s mgs.acoustics_level 4
 execute anchored eyes positioned ^ ^ ^ if block ~ ~ ~ #mgs:v5.1.0/sounds/water run scoreboard players set @s mgs.acoustics_level 5
 
-## sourceMappingURL=compute_acoustics.mcfunction.map

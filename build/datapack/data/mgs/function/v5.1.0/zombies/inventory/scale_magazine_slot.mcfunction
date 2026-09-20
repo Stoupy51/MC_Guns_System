@@ -35,4 +35,3 @@ data modify storage mgs:temp capacity set from storage mgs:temp zb_item_stats.ca
 execute store result score #bullets mgs.data run data get storage mgs:temp zb_item_stats.remaining_bullets
 $function mgs:v5.1.0/ammo/modify_mag_lore {slot:"$(slot)"}
 
-## sourceMappingURL=scale_magazine_slot.mcfunction.map

@@ -7,4 +7,3 @@
 # Process each spectating (downed) player
 execute as @a[tag=mgs.downed_spectator,scores={mgs.zb.in_game=1}] at @s run function mgs:v5.1.0/zombies/revive/downed_tick
 
-## sourceMappingURL=tick.mcfunction.map

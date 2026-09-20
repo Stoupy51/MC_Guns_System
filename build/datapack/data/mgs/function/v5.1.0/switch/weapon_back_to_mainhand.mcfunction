@@ -10,4 +10,3 @@
 item replace entity @p[tag=mgs.to_pickup] weapon.mainhand from entity @s contents
 kill @s
 
-## sourceMappingURL=weapon_back_to_mainhand.mcfunction.map

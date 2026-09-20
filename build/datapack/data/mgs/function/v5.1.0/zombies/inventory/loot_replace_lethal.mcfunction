@@ -15,4 +15,3 @@ execute if score @s mgs.zb.lethal_type matches 1 run loot replace entity @s hotb
 execute if score @s mgs.zb.lethal_type matches 2 run loot replace entity @s hotbar.7 loot mgs:i/smoke_grenade
 execute if score @s mgs.zb.lethal_type matches 3 run loot replace entity @s hotbar.7 loot mgs:i/flash_grenade
 
-## sourceMappingURL=loot_replace_lethal.mcfunction.map

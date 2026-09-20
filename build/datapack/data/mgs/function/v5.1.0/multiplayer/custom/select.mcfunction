@@ -18,4 +18,3 @@ scoreboard players operation @s mgs.mp.class *= #minus_one mgs.data
 data modify storage mgs:temp _find_iter set from storage mgs:multiplayer custom_loadouts
 execute if data storage mgs:temp _find_iter[0] run function mgs:v5.1.0/multiplayer/custom/find_and_notify
 
-## sourceMappingURL=select.mcfunction.map

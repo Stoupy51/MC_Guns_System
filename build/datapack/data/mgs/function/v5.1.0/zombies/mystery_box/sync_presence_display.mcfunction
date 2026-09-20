@@ -14,4 +14,3 @@ execute as @n[tag=mgs.mystery_box_active] at @s run function mgs:v5.1.0/zombies/
 # Grayed-out disabled crate at each inactive position
 function mgs:v5.1.0/zombies/mystery_box/refresh_disabled
 
-## sourceMappingURL=sync_presence_display.mcfunction.map

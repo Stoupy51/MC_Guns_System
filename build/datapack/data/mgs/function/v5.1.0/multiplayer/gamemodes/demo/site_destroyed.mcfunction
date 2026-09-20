@@ -45,4 +45,3 @@ tellraw @a [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"text":"â
 # The attackers only win once nothing is left standing, in the decider as in any other round
 execute unless entity @e[tag=mgs.demo_obj,scores={mgs.demo_state=..1}] run function mgs:v5.1.0/multiplayer/gamemodes/demo/attackers_win
 
-## sourceMappingURL=site_destroyed.mcfunction.map

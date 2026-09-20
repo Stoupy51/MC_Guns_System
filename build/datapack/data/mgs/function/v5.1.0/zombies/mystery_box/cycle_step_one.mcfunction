@@ -24,4 +24,3 @@ scoreboard players operation #mb_mod mgs.data = #mb_elapsed mgs.data
 execute if score #mb_elapsed mgs.data matches 50.. run scoreboard players operation #mb_mod mgs.data %= #mb_c8 mgs.data
 execute if score #mb_elapsed mgs.data matches 50.. if score #mb_mod mgs.data matches 0 run function mgs:v5.1.0/zombies/mystery_box/cycle_display_one
 
-## sourceMappingURL=cycle_step_one.mcfunction.map

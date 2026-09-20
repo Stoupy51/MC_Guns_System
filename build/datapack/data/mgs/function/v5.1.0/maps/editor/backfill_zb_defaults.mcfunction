@@ -58,4 +58,3 @@ execute if entity @s[tag=mgs.element.barricade] unless data entity @s data.block
 execute if entity @s[tag=mgs.element.barricade] unless data entity @s data.block_disabled run data modify entity @s data.block_disabled set value {Name:"minecraft:oak_fence_gate",Properties:{open:"true"}}
 execute if entity @s[tag=mgs.element.barricade] unless data entity @s data.radius run data modify entity @s data.radius set value 2
 
-## sourceMappingURL=backfill_zb_defaults.mcfunction.map

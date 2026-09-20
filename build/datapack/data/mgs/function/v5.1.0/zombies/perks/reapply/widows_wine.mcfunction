@@ -13,4 +13,3 @@ function mgs:v5.1.0/zombies/inventory/loot_replace_lethal
 item modify entity @s hotbar.7 mgs:v5.1.0/grenade/set_count_2
 function mgs:v5.1.0/zombies/inventory/apply_slot_tag {slot:"hotbar.7",group:"hotbar",index:7}
 
-## sourceMappingURL=widows_wine.mcfunction.map

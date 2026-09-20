@@ -11,4 +11,3 @@
 
 $tellraw @s ["",[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],[{"text":"","color":"white"},{"translate":"mgs.loadout_saved"},": "],{"text":"$(primary_name) + $(secondary_name)","color":"green","bold":true}]
 
-## sourceMappingURL=notify_saved.mcfunction.map

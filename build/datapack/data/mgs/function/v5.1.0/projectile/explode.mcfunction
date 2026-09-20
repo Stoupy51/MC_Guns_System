@@ -97,4 +97,3 @@ tag @e[tag=mgs.temp_shooter] remove mgs.temp_shooter
 # Delete the projectile
 function mgs:v5.1.0/projectile/delete
 
-## sourceMappingURL=explode.mcfunction.map

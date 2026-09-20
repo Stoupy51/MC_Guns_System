@@ -22,4 +22,3 @@ $execute if score #wb_purchase_done mgs.data matches 0 unless items entity @s ho
 # Otherwise replace the currently selected gun slot (1/2/3 only)
 execute if score #wb_purchase_done mgs.data matches 0 run function mgs:v5.1.0/zombies/wallbuys/replace_selected with storage mgs:temp _wb_weapon
 
-## sourceMappingURL=process_purchase.mcfunction.map

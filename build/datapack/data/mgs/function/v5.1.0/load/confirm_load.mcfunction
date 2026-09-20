@@ -683,4 +683,3 @@ scoreboard players set #36000 mgs.data 36000
 scoreboard players set #62832 mgs.data 62832
 scoreboard players set #1000000 mgs.data 1000000
 
-## sourceMappingURL=confirm_load.mcfunction.map

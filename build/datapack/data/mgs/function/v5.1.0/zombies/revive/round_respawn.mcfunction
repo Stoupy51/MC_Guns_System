@@ -15,4 +15,3 @@ execute as @a[tag=mgs.downed_spectator,scores={mgs.zb.in_game=1}] run function m
 # Respawn every remaining spectator: they bled out during the round, and that still costs the loadout
 execute as @a[scores={mgs.zb.in_game=1},gamemode=spectator] run function mgs:v5.1.0/zombies/revive/do_round_respawn
 
-## sourceMappingURL=round_respawn.mcfunction.map

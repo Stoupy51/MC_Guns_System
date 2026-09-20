@@ -10,4 +10,3 @@ execute as @a[tag=mgs.xp_earner] run function mgs:v5.1.0/progression/mp/award_bo
 kill @e[tag=mgs.snd_bomb]
 function mgs:v5.1.0/multiplayer/gamemodes/snd/defenders_win
 
-## sourceMappingURL=bomb_defused.mcfunction.map

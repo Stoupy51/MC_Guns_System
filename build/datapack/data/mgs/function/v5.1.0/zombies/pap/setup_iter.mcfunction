@@ -66,4 +66,3 @@ tag @n[tag=mgs.pap_new] remove mgs.pap_new
 data remove storage mgs:temp _pap_iter[0]
 execute if data storage mgs:temp _pap_iter[0] run function mgs:v5.1.0/zombies/pap/setup_iter
 
-## sourceMappingURL=setup_iter.mcfunction.map

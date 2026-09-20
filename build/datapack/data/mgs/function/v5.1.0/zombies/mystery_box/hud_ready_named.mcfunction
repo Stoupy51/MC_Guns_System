@@ -9,4 +9,3 @@
 data modify storage smithed.actionbar:input message set value {json:["🎲 ",{"translate":"mgs.pick_up","color":"green"},{"storage":"mgs:temp","nbt":"_mb_hover_name","interpret":true,"color":"light_purple"}],priority:"conditional",freeze:5}
 function #smithed.actionbar:message
 
-## sourceMappingURL=hud_ready_named.mcfunction.map

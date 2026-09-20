@@ -30,4 +30,3 @@ data modify storage mgs:temp _save_respawn_cmd.command set from entity @s data.c
 # Append to list path
 $data modify storage mgs:temp map_edit.map.$(path) append from storage mgs:temp _save_respawn_cmd
 
-## sourceMappingURL=save_respawn_command.mcfunction.map

@@ -12,4 +12,3 @@ function mgs:v5.1.0/zombies/mystery_box/sync_interaction_visibility
 execute if entity @e[tag=mgs.mb_display] run return run scoreboard players set #mb_fs_cleanup_pending mgs.data 1
 function mgs:v5.1.0/zombies/mystery_box/fire_sale_cleanup
 
-## sourceMappingURL=fire_sale_end.mcfunction.map

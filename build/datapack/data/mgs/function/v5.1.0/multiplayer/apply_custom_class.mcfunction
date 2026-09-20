@@ -16,4 +16,3 @@ data modify storage mgs:temp _find_iter set from storage mgs:multiplayer custom_
 # Recursive search by ID (score-based comparison)
 execute if data storage mgs:temp _find_iter[0] run function mgs:v5.1.0/multiplayer/apply_custom_found
 
-## sourceMappingURL=apply_custom_class.mcfunction.map

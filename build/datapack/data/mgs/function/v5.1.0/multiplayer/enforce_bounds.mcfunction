@@ -15,4 +15,3 @@ execute if score #mp_has_boundary mgs.data matches 1 if score @s mgs.mp.bphase =
 # OOB kill here too would double-count the death.
 execute if entity @s[gamemode=!spectator] if entity @e[tag=mgs.oob_point,distance=..5] run function mgs:v5.1.0/multiplayer/bounds_kill
 
-## sourceMappingURL=enforce_bounds.mcfunction.map

@@ -12,4 +12,3 @@ execute if score #zb_esc_arrived mgs.data matches 1 run return run function mgs:
 
 function mgs:v5.1.0/zombies/escort/escort_tail
 
-## sourceMappingURL=walk_ride.mcfunction.map

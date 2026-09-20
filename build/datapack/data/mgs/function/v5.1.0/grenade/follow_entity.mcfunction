@@ -18,4 +18,3 @@ execute as @e[scores={mgs.stuck_id=1..}] if score @s mgs.stuck_id = #my_stuck mg
 # Remove temp tag
 tag @s remove mgs.tp_me
 
-## sourceMappingURL=follow_entity.mcfunction.map

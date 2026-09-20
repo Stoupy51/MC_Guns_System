@@ -20,4 +20,3 @@ data modify storage mgs:temp _ed_bak set from storage mgs:temp editor
 $data modify storage mgs:temp editor.perks append value "$(_toggle_perk)"
 execute store success score #ed_ok mgs.data run function mgs:v5.1.0/multiplayer/editor/commit_check
 
-## sourceMappingURL=toggle_perk.mcfunction.map

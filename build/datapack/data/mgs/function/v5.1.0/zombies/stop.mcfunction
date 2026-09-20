@@ -207,4 +207,3 @@ kill @e[tag=mgs.downed_cam]
 kill @e[tag=mgs.tombstone]
 data modify storage mgs:zombies tombstone_inv set value {}
 
-## sourceMappingURL=stop.mcfunction.map

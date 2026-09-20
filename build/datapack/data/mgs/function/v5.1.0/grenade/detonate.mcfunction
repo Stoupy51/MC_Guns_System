@@ -17,4 +17,3 @@ execute if data entity @s data.config{grenade_type:"smoke"} run return run funct
 execute if data entity @s data.config{grenade_type:"flash"} run return run function mgs:v5.1.0/grenade/detonate_flash
 execute if data entity @s data.config{grenade_type:"web"} run return run function mgs:v5.1.0/grenade/detonate_web
 
-## sourceMappingURL=detonate.mcfunction.map

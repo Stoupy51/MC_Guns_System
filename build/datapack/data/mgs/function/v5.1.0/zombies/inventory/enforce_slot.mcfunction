@@ -78,4 +78,3 @@ tag @s remove mgs.inv_slot_owner
 
 return 0
 
-## sourceMappingURL=enforce_slot.mcfunction.map

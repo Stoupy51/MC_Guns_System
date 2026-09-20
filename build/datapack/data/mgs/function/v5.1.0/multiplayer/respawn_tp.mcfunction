@@ -12,4 +12,3 @@ execute if entity @e[tag=mgs.spawn_point,tag=mgs.spawn_general] run return run f
 execute if score @s mgs.mp.team matches 1 run return run function mgs:v5.1.0/multiplayer/pick_spawn {type:"red"}
 execute if score @s mgs.mp.team matches 2 run return run function mgs:v5.1.0/multiplayer/pick_spawn {type:"blue"}
 
-## sourceMappingURL=respawn_tp.mcfunction.map

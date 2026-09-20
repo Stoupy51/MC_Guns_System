@@ -111,4 +111,3 @@ execute if data storage mgs:multiplayer game{state:"active"} if score @s mgs.mp.
 # Missions: detect respawn
 execute if data storage mgs:missions game{state:"active"} if score @s mgs.mi.in_game matches 1.. if score @s mgs.mp.death_count matches 1.. run function mgs:v5.1.0/missions/on_respawn
 
-## sourceMappingURL=tick.mcfunction.map

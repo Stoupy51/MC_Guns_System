@@ -55,4 +55,3 @@ execute store result score #pub mgs.data run data get storage mgs:temp _find_ite
 execute if score #pub mgs.data matches 1 run function mgs:v5.1.0/multiplayer/my_loadouts/manage_build_public with storage mgs:temp _btn_data
 execute if score #pub mgs.data matches 0 run function mgs:v5.1.0/multiplayer/my_loadouts/manage_build_private with storage mgs:temp _btn_data
 
-## sourceMappingURL=manage_prep.mcfunction.map

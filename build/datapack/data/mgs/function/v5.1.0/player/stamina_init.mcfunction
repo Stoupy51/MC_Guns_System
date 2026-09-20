@@ -18,4 +18,3 @@ scoreboard players set @s mgs.stam_seen 1
 # so the first at-target ticks verify and burn it off
 scoreboard players set @s mgs.stam_dirty 1
 
-## sourceMappingURL=stamina_init.mcfunction.map

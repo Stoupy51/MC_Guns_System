@@ -23,4 +23,3 @@ item replace entity @s inventory.9 with minecraft:bat_spawn_egg[minecraft:item_n
 item replace entity @s hotbar.6 with minecraft:bat_spawn_egg[minecraft:item_name=[{"text":"⚙ ","color":"white","italic":false,"bold":true}, {"translate":"mgs.defaults"}],minecraft:item_model="minecraft:allay_spawn_egg",minecraft:custom_data={mgs:{editor:true,type:"zb_defaults"}},minecraft:entity_data={id:"minecraft:bat",NoAI:1b,Silent:1b,Invulnerable:1b,Tags:["mgs.new_element","mgs.element.zb_defaults"]}]
 item replace entity @s hotbar.7 with minecraft:bat_spawn_egg[minecraft:item_name=["","🔧 ",{"translate":"mgs.configure","color":"aqua","italic":false,"bold":true}],minecraft:item_model="minecraft:breeze_spawn_egg",minecraft:custom_data={mgs:{editor:true,type:"zb_configure"}},minecraft:entity_data={id:"minecraft:bat",NoAI:1b,Silent:1b,Invulnerable:1b,Tags:["mgs.new_element","mgs.element.zb_configure"]}]
 
-## sourceMappingURL=zombies.mcfunction.map

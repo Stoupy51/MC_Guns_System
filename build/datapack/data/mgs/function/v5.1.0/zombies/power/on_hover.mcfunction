@@ -9,4 +9,3 @@
 data modify storage smithed.actionbar:input message set value {json:[{"text":"⚡ ","color":"white"},{"translate":"mgs.power_switch","color":"yellow"}],priority:"conditional",freeze:5}
 function #smithed.actionbar:message
 
-## sourceMappingURL=on_hover.mcfunction.map

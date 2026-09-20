@@ -42,4 +42,3 @@ tellraw @a ["",{"text":"══════════════════�
 # End game
 function mgs:v5.1.0/missions/stop
 
-## sourceMappingURL=victory.mcfunction.map

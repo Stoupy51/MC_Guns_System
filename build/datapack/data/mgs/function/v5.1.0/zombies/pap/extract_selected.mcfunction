@@ -13,4 +13,3 @@ tag @s add mgs.pap_extracting
 $execute summon item_display run function mgs:v5.1.0/zombies/pap/extract_selected_item {slot:"$(slot)"}
 tag @s remove mgs.pap_extracting
 
-## sourceMappingURL=extract_selected.mcfunction.map

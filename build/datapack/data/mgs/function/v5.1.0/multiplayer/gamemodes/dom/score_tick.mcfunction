@@ -24,4 +24,3 @@ function mgs:v5.1.0/multiplayer/refresh_sidebar_dom
 # Check win
 function mgs:v5.1.0/multiplayer/check_team_win
 
-## sourceMappingURL=score_tick.mcfunction.map

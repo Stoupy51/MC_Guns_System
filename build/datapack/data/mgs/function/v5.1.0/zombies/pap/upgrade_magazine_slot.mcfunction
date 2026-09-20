@@ -69,4 +69,3 @@ $execute summon item_display run function mgs:v5.1.0/zombies/pap/extract_mag_mod
 tag @s remove mgs.pap_extracting_mag
 function mgs:v5.1.0/zombies/bonus/set_full_mag_model with storage mgs:temp refill
 
-## sourceMappingURL=upgrade_magazine_slot.mcfunction.map

@@ -49,4 +49,3 @@ data remove storage mgs:temp _save_zb.yaw
 # Append to the correct list
 $data modify storage mgs:temp map_edit.map.$(path) append from storage mgs:temp _save_zb
 
-## sourceMappingURL=save_zb_object.mcfunction.map

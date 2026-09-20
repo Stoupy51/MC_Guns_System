@@ -24,4 +24,3 @@ execute store result storage mgs:temp _pap_ann.whole int 1 run scoreboard player
 execute store result storage mgs:temp _pap_ann.dec int 1 run scoreboard players get #pap_dec mgs.data
 function mgs:v5.1.0/zombies/pap/annotate_append_dec with storage mgs:temp _pap_ann
 
-## sourceMappingURL=annotate_time_delta.mcfunction.map

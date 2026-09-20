@@ -23,4 +23,3 @@ execute if score #stat_found mgs.data matches 0 run return run tag @a remove mgs
 # Recurse for the next player down. Depth is bounded by the player count.
 function mgs:v5.1.0/multiplayer/announce_stats_iter
 
-## sourceMappingURL=announce_stats_iter.mcfunction.map

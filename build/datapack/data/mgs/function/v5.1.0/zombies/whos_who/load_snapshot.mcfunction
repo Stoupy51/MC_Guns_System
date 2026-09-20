@@ -11,4 +11,3 @@
 $data modify storage mgs:temp _restore.items set from storage mgs:zombies ww_inv."$(id)"
 $data remove storage mgs:zombies ww_inv."$(id)"
 
-## sourceMappingURL=load_snapshot.mcfunction.map

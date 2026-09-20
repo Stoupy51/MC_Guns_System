@@ -58,4 +58,3 @@ execute if data storage mgs:multiplayer game{state:"preparing"} run function mgs
 execute if data storage mgs:missions game{state:"active"} run function mgs:v5.1.0/missions/game_tick
 execute if data storage mgs:missions game{state:"preparing"} run function mgs:v5.1.0/missions/prep_tick
 
-## sourceMappingURL=tick.mcfunction.map

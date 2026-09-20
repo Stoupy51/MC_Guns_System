@@ -20,4 +20,3 @@ $scoreboard players set @s mgs.zb.perkpaid.$(perk_id) 0
 # Call perk-specific effect function
 $function mgs:v5.1.0/zombies/perks/apply/$(perk_id)
 
-## sourceMappingURL=apply.mcfunction.map

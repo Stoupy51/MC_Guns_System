@@ -10,4 +10,3 @@
 #   out_of_bounds:[], search_and_destroy:[], domination:[], hardpoint:[]}
 data modify storage mgs:maps multiplayer append from storage mgs:input multiplayer.map
 
-## sourceMappingURL=register_map.mcfunction.map

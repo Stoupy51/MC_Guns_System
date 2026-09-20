@@ -17,4 +17,3 @@ execute if score @s mgs.mp.dom_owner matches 0 run particle dust{color:[1.0,1.0,
 execute if score @s mgs.mp.dom_owner matches 1 run particle dust{color:[1.0,0.2,0.2],scale:2.0} ~ ~8 ~ 0.1 2.0 0.1 0 3
 execute if score @s mgs.mp.dom_owner matches 2 run particle dust{color:[0.2,0.2,1.0],scale:2.0} ~ ~8 ~ 0.1 2.0 0.1 0 3
 
-## sourceMappingURL=point_particles.mcfunction.map

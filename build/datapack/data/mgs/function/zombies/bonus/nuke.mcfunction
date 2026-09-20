@@ -13,4 +13,3 @@ execute as @e[tag=mgs.nukable] run function mgs:v5.1.0/zombies/bonus/nuke_mark_o
 # Start kill loop (1 entity per tick)
 function mgs:v5.1.0/zombies/bonus/nuke_loop
 
-## sourceMappingURL=nuke.mcfunction.map

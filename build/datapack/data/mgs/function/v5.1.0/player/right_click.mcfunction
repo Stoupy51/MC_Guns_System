@@ -76,4 +76,3 @@ function mgs:v5.1.0/ammo/decrease
 # Advanced Playsound
 function mgs:v5.1.0/sound/main
 
-## sourceMappingURL=right_click.mcfunction.map

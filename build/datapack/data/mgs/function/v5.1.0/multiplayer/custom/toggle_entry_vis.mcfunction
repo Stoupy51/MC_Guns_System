@@ -11,4 +11,3 @@ execute store result score #pub mgs.data run data get storage mgs:temp _del_src[
 execute if score #pub mgs.data matches 1 run data modify storage mgs:temp _del_src[0].public set value 0b
 execute if score #pub mgs.data matches 0 run data modify storage mgs:temp _del_src[0].public set value 1b
 
-## sourceMappingURL=toggle_entry_vis.mcfunction.map

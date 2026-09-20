@@ -25,4 +25,3 @@ scoreboard players add @s mgs.zb.xp_prog 5
 scoreboard players add @s mgs.adv.zb.perks 1
 function mgs:v5.1.0/progression/zb/settle
 
-## sourceMappingURL=award_perk.mcfunction.map

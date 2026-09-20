@@ -15,4 +15,3 @@ execute store result score #pool_roll mgs.data run random value 0..13
 scoreboard players set #pool_tries mgs.data 0
 function mgs:v5.1.0/zombies/perks/pool/choose_iter
 
-## sourceMappingURL=choose.mcfunction.map

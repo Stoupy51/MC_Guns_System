@@ -10,4 +10,3 @@ execute store result score #score_limit mgs.data run data get storage mgs:multip
 execute if score #red mgs.mp.team >= #score_limit mgs.data run function mgs:v5.1.0/multiplayer/team_wins {team:"Red"}
 execute if score #blue mgs.mp.team >= #score_limit mgs.data run function mgs:v5.1.0/multiplayer/team_wins {team:"Blue"}
 
-## sourceMappingURL=check_team_win.mcfunction.map

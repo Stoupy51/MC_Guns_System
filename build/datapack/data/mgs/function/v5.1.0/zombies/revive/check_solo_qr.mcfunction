@@ -13,4 +13,3 @@ execute store result score #zb_ingame_total mgs.data if entity @a[scores={mgs.zb
 execute if score #zb_ingame_total mgs.data matches 2.. run return 0
 function mgs:v5.1.0/zombies/revive/solo_qr_tick
 
-## sourceMappingURL=check_solo_qr.mcfunction.map

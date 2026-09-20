@@ -11,4 +11,3 @@ execute at @e[tag=mgs.snd_carrier_label,limit=1] run function mgs:v5.1.0/multipl
 kill @e[tag=mgs.snd_carrier_label]
 tellraw @a [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"text":"💣 ","color":"white"},{"translate":"mgs.the_bomb_carrier_is_down","color":"yellow"}]
 
-## sourceMappingURL=drop_bomb.mcfunction.map

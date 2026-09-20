@@ -22,4 +22,3 @@ execute if score @s mgs.zb.xp_total >= #xp_need mgs.data run scoreboard players 
 execute if score @s mgs.zb.xp_total < #xp_need mgs.data run scoreboard players operation #xp_hi mgs.data = #xp_mid mgs.data
 function mgs:v5.1.0/progression/zb/bisect
 
-## sourceMappingURL=bisect.mcfunction.map

@@ -16,4 +16,3 @@ execute if score #zb_fire_sale_timer mgs.data matches ..0 run function mgs:v5.1.
 # Still active: update bossbar value
 execute if score #zb_fire_sale_timer mgs.data matches 1.. store result bossbar mgs:pu_fire_sale value run scoreboard players get #zb_fire_sale_timer mgs.data
 
-## sourceMappingURL=fire_sale_tick.mcfunction.map

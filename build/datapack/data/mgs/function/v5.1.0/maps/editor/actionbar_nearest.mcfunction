@@ -32,4 +32,3 @@ execute if entity @s[tag=mgs.element.mystery_box_pos] run return run title @a[ta
 execute if entity @s[tag=mgs.element.power_switch] run return run title @a[tag=mgs.check_nearest] actionbar [{"text":"⚡ ","color":"green"},{"translate":"mgs.power_switch"}]
 execute if entity @s[tag=mgs.element.barricade] run return run title @a[tag=mgs.check_nearest] actionbar [{"text":"🧱 ","color":"aqua"},{"translate":"mgs.barricade"}]
 
-## sourceMappingURL=actionbar_nearest.mcfunction.map

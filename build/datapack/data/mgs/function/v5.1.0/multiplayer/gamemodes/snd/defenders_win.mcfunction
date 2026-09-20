@@ -24,4 +24,3 @@ playsound minecraft:entity.player.levelup player @a ~ ~ ~ 1 1.0
 
 function mgs:v5.1.0/multiplayer/gamemodes/snd/next_round
 
-## sourceMappingURL=defenders_win.mcfunction.map

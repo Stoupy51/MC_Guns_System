@@ -11,4 +11,3 @@ scoreboard players add @s mgs.zb.xp_total 10
 scoreboard players add @s mgs.zb.xp_prog 10
 function mgs:v5.1.0/progression/zb/settle
 
-## sourceMappingURL=award_power.mcfunction.map

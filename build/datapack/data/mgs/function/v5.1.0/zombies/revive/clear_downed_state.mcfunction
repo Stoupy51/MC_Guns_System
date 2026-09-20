@@ -15,4 +15,3 @@ scoreboard players set @s mgs.zb.downed 0
 scoreboard players set @s mgs.zb.revive_p 0
 tag @s remove mgs.downed_spectator
 
-## sourceMappingURL=clear_downed_state.mcfunction.map

@@ -23,4 +23,3 @@ scoreboard players operation #ed_part_phase mgs.data = #total_tick mgs.data
 scoreboard players operation #ed_part_phase mgs.data %= #4 mgs.data
 execute if score #ed_part_phase mgs.data matches 0 run function mgs:v5.1.0/maps/editor/particles
 
-## sourceMappingURL=global_tick.mcfunction.map

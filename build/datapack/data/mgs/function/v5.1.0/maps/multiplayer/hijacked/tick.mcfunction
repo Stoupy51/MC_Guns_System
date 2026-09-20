@@ -6,4 +6,3 @@
 
 # Hijacked map tick
 
-## sourceMappingURL=tick.mcfunction.map

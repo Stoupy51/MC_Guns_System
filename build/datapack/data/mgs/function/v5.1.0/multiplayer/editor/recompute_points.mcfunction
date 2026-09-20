@@ -43,4 +43,3 @@ scoreboard players set @s mgs.mp.edit_points 10
 scoreboard players operation @s mgs.mp.edit_points -= #lc_cost mgs.data
 execute store result storage mgs:temp _dlg.pts int 1 run scoreboard players get @s mgs.mp.edit_points
 
-## sourceMappingURL=recompute_points.mcfunction.map

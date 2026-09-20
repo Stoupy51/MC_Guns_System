@@ -18,4 +18,3 @@ execute store success score #is_match mgs.data run data modify storage mgs:temp 
 execute if score #is_match mgs.data matches 0 run scoreboard players set #found mgs.data 1
 execute if score #is_match mgs.data matches 0 run tag @s add mgs.temp_shooter
 
-## sourceMappingURL=match_shooter.mcfunction.map

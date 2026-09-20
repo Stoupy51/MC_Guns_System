@@ -12,4 +12,3 @@ execute if score #projectile_explosion_power mgs.config matches 1.. run scoreboa
 execute unless score #projectile_explosion_power mgs.config matches 1.. run scoreboard players set #falling_fire realistic_explosion.data 0
 function realistic_explosion:explode
 
-## sourceMappingURL=realistic_explosion.mcfunction.map

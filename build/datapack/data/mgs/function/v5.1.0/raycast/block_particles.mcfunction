@@ -8,4 +8,3 @@
 
 $particle block{block_state:"$(block)"} ~ ~ ~ 0.1 0.1 0.1 1 10 force @a[distance=..128]
 
-## sourceMappingURL=block_particles.mcfunction.map

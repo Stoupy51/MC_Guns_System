@@ -55,4 +55,3 @@ execute as @n[tag=mgs.zb_escort_new] at @s run function mgs:v5.1.0/zombies/escor
 tag @n[tag=mgs.zb_escort_new] remove mgs.zb_escort_new
 scoreboard players add #zb_escort_count mgs.data 1
 
-## sourceMappingURL=start.mcfunction.map

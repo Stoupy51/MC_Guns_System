@@ -13,4 +13,3 @@ execute unless score #entry_id mgs.data = #extract_id mgs.data run data modify s
 data remove storage mgs:temp _pool_rebuild[0]
 execute if data storage mgs:temp _pool_rebuild[0] run function mgs:v5.1.0/multiplayer/marketplace/sort_remove_best
 
-## sourceMappingURL=sort_remove_best.mcfunction.map

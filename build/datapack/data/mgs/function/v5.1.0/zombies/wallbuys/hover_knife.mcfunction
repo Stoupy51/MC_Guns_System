@@ -11,4 +11,3 @@
 $execute if items entity @s hotbar.0 *[custom_data~{mgs:{$(weapon_id):true}}] run data modify storage mgs:temp _wb_price_suffix set value " (Owned)"
 function mgs:v5.1.0/zombies/wallbuys/render_hover
 
-## sourceMappingURL=hover_knife.mcfunction.map

@@ -10,4 +10,3 @@
 scoreboard players set @s mgs.zb.escort_ttl 900
 scoreboard players set @s mgs.zb.stuck_ticks 0
 
-## sourceMappingURL=monkey_hold.mcfunction.map

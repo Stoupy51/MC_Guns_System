@@ -19,4 +19,3 @@ $execute positioned $(ix) $(iy) $(iz) run summon minecraft:interaction ~ ~2 ~ {w
 # Summon marker entity at trap center
 $summon minecraft:marker $(cx) $(cy) $(cz) {Tags:["mgs.trap_center","mgs.gm_entity","mgs._trap_new_m"]}
 
-## sourceMappingURL=place_at.mcfunction.map

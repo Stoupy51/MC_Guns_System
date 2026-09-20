@@ -17,4 +17,3 @@ $tag @e[tag=mgs.zombie_round,distance=..$(radius)] add mgs.barricade_frozen
 # catches it next tick, so it respects the barricade (and can remove it) like any other zombie.
 $execute as @e[type=minecraft:wandering_trader,tag=mgs.zb_escort,distance=..$(radius)] at @s run function mgs:v5.1.0/zombies/escort/end_at_trader
 
-## sourceMappingURL=freeze_zombies.mcfunction.map

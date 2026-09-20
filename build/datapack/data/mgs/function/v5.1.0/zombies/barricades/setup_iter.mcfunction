@@ -51,4 +51,3 @@ tag @e[tag=mgs._barricade_new_d] remove mgs._barricade_new_d
 data remove storage mgs:temp _barricade_iter[0]
 execute if data storage mgs:temp _barricade_iter[0] run function mgs:v5.1.0/zombies/barricades/setup_iter
 
-## sourceMappingURL=setup_iter.mcfunction.map

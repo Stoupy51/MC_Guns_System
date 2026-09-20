@@ -23,4 +23,3 @@ function mgs:v5.1.0/zombies/sidebar_rank_players
 # Build sidebar via macro
 function mgs:v5.1.0/zombies/build_sidebar with storage mgs:temp
 
-## sourceMappingURL=refresh_sidebar.mcfunction.map

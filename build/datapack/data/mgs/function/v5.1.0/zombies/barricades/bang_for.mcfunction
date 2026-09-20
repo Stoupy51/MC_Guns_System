@@ -10,4 +10,3 @@ scoreboard players operation @s mgs.zb.barricade.bang_at = #total_tick mgs.data
 scoreboard players add @s mgs.zb.barricade.bang_at 35
 playsound mgs:zombies/barricade/bang block @s ~ ~ ~ 1.0 1.0
 
-## sourceMappingURL=bang_for.mcfunction.map

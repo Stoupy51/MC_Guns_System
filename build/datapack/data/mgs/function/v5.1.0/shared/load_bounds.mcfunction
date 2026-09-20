@@ -33,4 +33,3 @@ scoreboard players operation #bound_x2 mgs.data += #gm_base_x mgs.data
 scoreboard players operation #bound_y2 mgs.data += #gm_base_y mgs.data
 scoreboard players operation #bound_z2 mgs.data += #gm_base_z mgs.data
 
-## sourceMappingURL=load_bounds.mcfunction.map

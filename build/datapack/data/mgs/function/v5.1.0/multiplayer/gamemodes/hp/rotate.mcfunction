@@ -17,4 +17,3 @@ scoreboard players set #hp_rotate_sec mgs.data 60
 # Load next zone
 function mgs:v5.1.0/multiplayer/gamemodes/hp/load_zone
 
-## sourceMappingURL=rotate.mcfunction.map

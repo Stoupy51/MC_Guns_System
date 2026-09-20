@@ -8,4 +8,3 @@
 
 $execute summon $(entity) run function mgs:v5.1.0/mob/default/on_new {entity:"$(entity)",level:1,active_time:50,sleep_time:100}
 
-## sourceMappingURL=level_1.mcfunction.map

@@ -46,4 +46,3 @@ attribute @s minecraft:knockback_resistance base set 1024
 # Start rise animation (20 ticks to rise 2 blocks)
 scoreboard players set @s mgs.zb.rise_tick 20
 
-## sourceMappingURL=normal.mcfunction.map

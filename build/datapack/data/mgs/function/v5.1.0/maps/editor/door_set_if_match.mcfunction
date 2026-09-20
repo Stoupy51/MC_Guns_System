@@ -9,4 +9,3 @@
 execute store result score #check mgs.data run data get entity @s data.link_id
 execute if score #check mgs.data = #link_id mgs.data run function mgs:v5.1.0/maps/editor/door_apply_field with storage mgs:temp _door_set
 
-## sourceMappingURL=door_set_if_match.mcfunction.map

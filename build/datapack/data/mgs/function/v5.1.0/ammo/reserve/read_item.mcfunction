@@ -23,4 +23,3 @@ scoreboard players operation @p[tag=mgs.reading_reserve] mgs.reserve_ammo += #ma
 # Kill entity
 kill @s
 
-## sourceMappingURL=read_item.mcfunction.map

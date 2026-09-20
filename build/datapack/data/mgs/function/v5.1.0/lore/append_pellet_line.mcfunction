@@ -10,4 +10,3 @@ data modify storage mgs:temp lore_line set from storage mgs:lore_templates pelle
 $data modify storage mgs:temp lore_line append value "$(pellets)"
 data modify storage mgs:temp new_lore append from storage mgs:temp lore_line
 
-## sourceMappingURL=append_pellet_line.mcfunction.map

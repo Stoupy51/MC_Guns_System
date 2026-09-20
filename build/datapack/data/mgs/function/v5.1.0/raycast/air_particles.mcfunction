@@ -8,4 +8,3 @@
 
 $particle $(block) ~ ~ ~ 0 0 0 0 1 force @a[distance=..128]
 
-## sourceMappingURL=air_particles.mcfunction.map

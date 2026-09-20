@@ -40,4 +40,3 @@ execute if data entity @s data run tellraw @a[tag=mgs.map_editor] ["  ",{"transl
 # Kill the marker
 kill @s
 
-## sourceMappingURL=destroy_element.mcfunction.map

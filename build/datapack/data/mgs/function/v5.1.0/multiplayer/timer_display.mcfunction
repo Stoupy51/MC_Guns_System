@@ -22,4 +22,3 @@ scoreboard players operation #timer_ones mgs.data %= #10 mgs.data
 execute unless data storage mgs:multiplayer game{gamemode:"ffa"} run function #bs.sidebar:refresh {objective:"mgs.sidebar"}
 execute if data storage mgs:multiplayer game{gamemode:"ffa"} run function mgs:v5.1.0/multiplayer/refresh_sidebar_ffa
 
-## sourceMappingURL=timer_display.mcfunction.map
