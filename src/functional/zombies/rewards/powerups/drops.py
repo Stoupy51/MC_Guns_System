@@ -106,7 +106,9 @@ function {ns}:v{version}/zombies/powerups/spawn_display with storage {ns}:temp _
 
 	# Shuffle-bag queue
 	num_types: int = len(POWERUP_TYPES)
+	# A bag of one can only draw index 0, and `random value 0..0` is rejected as a range too small
 	queue_random_lines: str = "\n".join(
+		f"execute if score #pu_q_len {ns}.data matches 1 run scoreboard players set #pu_q_idx {ns}.data 0" if i == 0 else
 		f"execute if score #pu_q_len {ns}.data matches {i + 1} store result score #pu_q_idx {ns}.data run random value 0..{i}"
 		for i in range(num_types)
 	)
