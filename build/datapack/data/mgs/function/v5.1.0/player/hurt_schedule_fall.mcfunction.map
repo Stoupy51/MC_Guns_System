@@ -1,10 +1,10 @@
 {
 	"version": 3,
-	"file": "hurt_fall.mcfunction",
+	"file": "hurt_schedule_fall.mcfunction",
 	"sourceRoot": "../../../../../../..",
 	"sources": [
 		"src/functional/shaders/hurt.py"
 	],
 	"names": [],
-	"mappings": "AAmM8C;;;;;;;;AAC9C;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+	"mappings": "AAgPuD;;;;;;;;AACvD;AACA;AACA;AACA;AACA;AACA;AACA"
 }
