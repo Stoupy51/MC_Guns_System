@@ -105,7 +105,7 @@ meta:
             # Paths to copy the datapack(s) to
             datapack: ["D:/latest_snapshot/world/datapacks"]
             # Paths to copy the resource pack(s) to
-            resource_pack: ["D:/minecraft/latest/resourcepacks"]
+            resource_pack: ["D:/minecraft/latest/resourcepacks","C:/Users/Alexandre-PC/AppData/Roaming/ModrinthApp/profiles/Fabric 26.3/resourcepacks"]
         # Custom item lore configuration. If set to "auto" or unset, uses project icon followed by PROJECT_NAME
         source_lore: "auto"
 
