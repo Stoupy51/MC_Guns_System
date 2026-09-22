@@ -97,14 +97,12 @@ class Tree:
 		return {
 			"threshold": {
 				"trigger": "minecraft:tick",
-				"condition": {
-					"player": [
-						{
-							"condition": "minecraft:entity_scores",
-							"entity": "this",
-							"scores": {objective: {"min": threshold}},
-						}
-					]
+				"conditions": {
+					"player": {
+						"type": "minecraft:entity_scores",
+						"entity": "this",
+						"scores": {objective: {"min": threshold}},
+					},
 				},
 			}
 		}

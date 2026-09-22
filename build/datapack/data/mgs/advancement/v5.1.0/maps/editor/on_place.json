@@ -2,21 +2,19 @@
 	"criteria": {
 		"requirement": {
 			"trigger": "minecraft:item_used_on_block",
-			"condition": {
-				"location": [
-					{
-						"condition": "minecraft:match_tool",
-						"predicate": {
-							"predicates": {
-								"minecraft:custom_data": {
-									"mgs": {
-										"editor": true
-									}
+			"conditions": {
+				"location": {
+					"type": "minecraft:match_tool",
+					"predicate": {
+						"predicates": {
+							"minecraft:custom_data": {
+								"mgs": {
+									"editor": true
 								}
 							}
 						}
 					}
-				]
+				}
 			}
 		}
 	},

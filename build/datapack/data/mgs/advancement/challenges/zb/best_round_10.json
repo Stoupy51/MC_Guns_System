@@ -24,18 +24,16 @@
 	"criteria": {
 		"threshold": {
 			"trigger": "minecraft:tick",
-			"condition": {
-				"player": [
-					{
-						"condition": "minecraft:entity_scores",
-						"entity": "this",
-						"scores": {
-							"mgs.adv.zb.best_round": {
-								"min": 60
-							}
+			"conditions": {
+				"player": {
+					"type": "minecraft:entity_scores",
+					"entity": "this",
+					"scores": {
+						"mgs.adv.zb.best_round": {
+							"min": 60
 						}
 					}
-				]
+				}
 			}
 		}
 	},

@@ -18,18 +18,16 @@
 	"criteria": {
 		"threshold": {
 			"trigger": "minecraft:tick",
-			"condition": {
-				"player": [
-					{
-						"condition": "minecraft:entity_scores",
-						"entity": "this",
-						"scores": {
-							"mgs.adv.zb.revives": {
-								"min": 35
-							}
+			"conditions": {
+				"player": {
+					"type": "minecraft:entity_scores",
+					"entity": "this",
+					"scores": {
+						"mgs.adv.zb.revives": {
+							"min": 35
 						}
 					}
-				]
+				}
 			}
 		}
 	},
