@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "snapshot.mcfunction",
+	"sourceRoot": "../../../../../../../../..",
+	"sources": [
+		"src/functional/map_editor/displays.py"
+	],
+	"names": [],
+	"mappings": "AAwC2D;;;;;;;;;AAC3D;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

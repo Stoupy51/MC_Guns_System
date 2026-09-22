@@ -274,6 +274,7 @@ data modify storage {ns}:temp _save_zb.rotation[0] set from entity @s data.yaw
 
 # Remove internal-only marker fields (yaw is stored in rotation array)
 data remove storage {ns}:temp _save_zb.yaw
+data remove storage {ns}:temp _save_zb._disp_sig
 {strip_dispatch}
 
 # Append to the correct list
