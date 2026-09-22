@@ -11,5 +11,9 @@ layout(location = 0) out vec4 fragColor;
 
 void main() {
     vec4 clock = texture(ClockSampler, vec2(0.5));
-    fragColor = clock.a < 0.5 ? vec4(mgs_pack_time(GameTime), 1.0) : clock;
+    if (clock.a < 0.25) {
+        fragColor = vec4(mgs_pack_time(GameTime), MGS_RUNNING);
+        return;
+    }
+    fragColor = mgs_elapsed(clock, GameTime) > MGS_SETTLE_TICKS ? vec4(clock.rgb, 1.0) : clock;
 }

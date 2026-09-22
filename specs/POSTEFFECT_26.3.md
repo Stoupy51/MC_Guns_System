@@ -239,16 +239,26 @@ From the shader, yes, and with millisecond precision. The recipe:
 
 1. Declare a `1x1` `persistent` target with `clear_color: 0`.
 2. On the first frame after `add`, that target is freshly cleared, so alpha is 0. Stamp `GameTime`
-   into it and set alpha to 1.
+   into it and set alpha to 0.5 ("running").
 3. Every later frame, read the stamp back, compute `elapsed = GameTime - stamp`, and drive the
    effect from it. When `elapsed` passes your duration, output the input unchanged.
-4. The server removes the effect on a later tick. The removal destroys the target, so the next `add`
+4. Once `elapsed` is far past every duration (60 s here), set alpha to 1 ("settled"), which always
+   reads as expired.
+5. The server removes the effect on a later tick. The removal destroys the target, so the next `add`
    re-arms the timer automatically.
 
 `clear_color` is ARGB, so `0` means fully transparent black and alpha is a reliable armed flag.
 Store the timestamp in RGB only: 24 bits over 24000 ticks is 0.0014 ticks of resolution, about
-0.07 ms. Watch the wrap: once every 20 minutes `GameTime` jumps from just under 1 back to 0, so
-clamp a negative `elapsed` to "expired".
+0.07 ms.
+
+A negative `elapsed` has two causes, and they need opposite answers:
+
+- **The wrap.** Once every 20 minutes `GameTime` jumps from just under 1 back to 0, and the delta
+  lands near -24000 ticks. Add a full cycle back. The settled state guarantees a running clock
+  crosses the wrap at most once.
+- **The server's time sync.** The client's game time is overwritten from the server every second,
+  and when the client ran ahead it steps back a tick or two. Clamp to 0. Reading this as "expired"
+  ends a fade on its first frames: the overlay vanishes, then pops back.
 
 ```glsl
 // pass 1: state -> next  (1x1, computes the stamp)
@@ -265,18 +275,28 @@ vec3 packTime(float t) {
     return enc - enc.yzz * vec3(1.0 / 255.0, 1.0 / 255.0, 0.0);
 }
 
+float elapsed(vec4 state) {
+    if (state.a < 0.25) return 0.0;          // not armed yet
+    if (state.a > 0.75) return 1.0e6;        // settled
+    float delta = GameTime - dot(state.rgb, vec3(1.0, 1.0 / 255.0, 1.0 / 65025.0));
+    if (delta < -0.5) delta += 1.0;          // GameTime wrapped
+    return max(delta * 24000.0, 0.0);        // time sync stepped the client back
+}
+
 void main() {
     vec4 state = texture(StateSampler, vec2(0.5));
     // Alpha 0 means the target was just (re)allocated, so this frame is the activation frame.
-    fragColor = state.a < 0.5 ? vec4(packTime(GameTime), 1.0) : state;
+    if (state.a < 0.25) {
+        fragColor = vec4(packTime(GameTime), 0.5);
+        return;
+    }
+    fragColor = elapsed(state) > 1200.0 ? vec4(state.rgb, 1.0) : state;
 }
 ```
 
 ```glsl
-// pass 3: apply, reading the stamp
-float stamp   = dot(texture(NextSampler, vec2(0.5)).rgb, vec3(1.0, 1.0 / 255.0, 1.0 / 65025.0));
-float elapsed = (GameTime - stamp) * 24000.0;        // in ticks
-float life    = (elapsed < 0.0) ? 1.0 : clamp(elapsed / 0.6, 0.0, 1.0);  // 0.6 tick = 30 ms
+// pass 3: apply, with the same elapsed() as pass 1
+float life = clamp(elapsed(texture(NextSampler, vec2(0.5))) / 0.6, 0.0, 1.0);  // 0.6 tick = 30 ms
 ```
 
 Pass 2 copies `next` back into `state`, because a pass may not sample its own output target. Two of

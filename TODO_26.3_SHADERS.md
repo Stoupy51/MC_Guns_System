@@ -30,7 +30,7 @@ then one fullscreen pass. `mgs:clock.glsl` holds the pack and ramp helpers.
 Stop at the first failure. Everything rests on step 1.
 
 - [ ] **The clock.** `/posteffect add @s mgs:debug_clock`. A green strip should appear at the bottom
-      of the screen and sweep across once every 10 ticks. Red means the persistent target never
+      of the screen and sweep across once every 10 ticks, turning blue (settled) after a minute. Red means the persistent target never
       reported an unarmed frame, which invalidates every timed effect. No strip at all means the
       chain failed to compile, so check the log and remember that a compile error blacklists the id
       until F3+T.
