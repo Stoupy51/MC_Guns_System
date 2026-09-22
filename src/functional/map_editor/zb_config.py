@@ -4,7 +4,7 @@ from stewbeet import Mem, write_versioned_function
 
 from ..helpers import MGS_TAG
 from ..helpers.dialogs import Dialogs
-from ..map_editor_defs import ALL_ELEMENTS, FIELD_DOCS, OPTIONAL_LIST_FIELDS
+from ..map_editor_defs import ALL_ELEMENTS, FIELD_DOCS, OPTIONAL_LIST_FIELDS, ElementDef
 from .shared import SEP, ZB_ELEMENTS, snbt_compound, snbt_suggest
 
 
@@ -139,7 +139,7 @@ execute at @s unless entity @n[tag={ns}.map_element,distance=..10] run tellraw @
 
 	# Backfill missing config fields on markers summoned from an already-saved map, so a field added to `defaults` after the map was written shows its default in the config UI instead of a blank row (e.g. partial_price on doors/perk machines).
 	# Absent-only: never touches a set value.
-	backfill_lines: list[str] = []
+	backfill_lines: list[str] = write_light_fields()
 	for etype, einfo in ZB_ELEMENTS.items():
 		for field, default_val in einfo.defaults.items():
 			backfill_lines.append(
@@ -247,4 +247,31 @@ execute at @s unless entity @n[tag={ns}.map_element,distance=..10] run tellraw @
 	zb_config_lines.append(f"tellraw @a[tag={ns}.map_editor] {SEP}")
 
 	write_versioned_function("maps/editor/show_element_config", "\n".join(zb_config_lines))
+
+
+def write_light_fields() -> list[str]:
+	""" Write maps/light_fields/<etype>, restoring the fields a saved map leaves out and upgrading pre-26.3 block states.
+
+	Returns:
+		The lines an editor marker runs to dispatch to them.
+	"""
+	ns: str = Mem.ctx.project_id
+	version: str = Mem.ctx.project_version
+	light_elements: dict[str, ElementDef] = {etype: einfo for etype, einfo in ZB_ELEMENTS.items() if einfo.light_fields}
+	for etype, einfo in light_elements.items():
+		light_lines: list[str] = [f"# @s = an entity holding one saved {etype} compound in data (editor marker or in-game display)"]
+		for field in einfo.light_fields:
+			path: str = f"entity @s data.{field}"
+			light_lines += [
+				f"execute if data {path}.Name run data modify {path}.id set from {path}.Name",
+				f"execute if data {path}.Properties run data modify {path}.properties set from {path}.Properties",
+				f"data remove {path}.Name",
+				f"data remove {path}.Properties",
+				f"execute unless data {path} run data modify {path} set value {snbt_suggest(einfo.defaults[field])}",
+			]
+		write_versioned_function(f"maps/light_fields/{etype}", "\n".join(light_lines))
+	return [
+		f"execute if entity @s[tag={ns}.element.{etype}] run function {ns}:v{version}/maps/light_fields/{etype}"
+		for etype in light_elements
+	]
 

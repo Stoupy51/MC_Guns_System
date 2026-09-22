@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "barricade.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/map_editor/zb_config.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;;AA+QE;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA"
+}

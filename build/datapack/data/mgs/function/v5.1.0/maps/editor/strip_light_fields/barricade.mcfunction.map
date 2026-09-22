@@ -3,8 +3,8 @@
 	"file": "barricade.mcfunction",
 	"sourceRoot": "../../../../../../../../..",
 	"sources": [
-		"src/functional/map_editor/displays.py"
+		"src/functional/map_editor/save.py"
 	],
 	"names": [],
-	"mappings": "AA8B4D;;;;;;;;AAC5D;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+	"mappings": ";;;;;;;;AA2SE;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA"
 }
