@@ -9,7 +9,10 @@
 # Round 30: 175 XP into the zb pool
 scoreboard players operation #adv_gain_prev mgs.data = #xp_gain mgs.data
 scoreboard players set #xp_gain mgs.data 175
-tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"text":"🏆 ","color":"white"},{"translate":"mgs.challenge_unlocked","color":"gray"},[{"translate":"mgs.round","color":"yellow"}, " 30"],[" ",{"text":"+","color":"gold"},{"score":{"name":"#xp_gain","objective":"mgs.data"},"color":"gold"},{"text":" XP","color":"gold"}]]
+tag @s add mgs.xp_earner
+tellraw @a[tag=!mgs.xp_earner] {"text":"","hover_event":{"action":"show_text","value":[[{"translate":"mgs.round","color":"yellow"}, " 30"],"\n",[{"translate":"mgs.clear_round","color":"gray"}, " 30"]]},"extra":[[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"text":"🏆 ","color":"white"},["",{"text":"[","color":"dark_gray"},{"score":{"name":"@s","objective":"mgs.zb.xp_level"},"color":"gold"},{"text":"] ","color":"dark_gray"},{"selector":"@s","color":"yellow"}],[{"text":" ","color":"gray"}, {"translate":"mgs.unlocked_challenge"}],[{"translate":"mgs.round","color":"yellow"}, " 30"]]}
+tag @s remove mgs.xp_earner
+tellraw @s {"text":"","hover_event":{"action":"show_text","value":[[{"translate":"mgs.round","color":"yellow"}, " 30"],"\n",[{"translate":"mgs.clear_round","color":"gray"}, " 30"]]},"extra":[[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"text":"🏆 ","color":"white"},{"translate":"mgs.challenge_unlocked","color":"gray"},[{"translate":"mgs.round","color":"yellow"}, " 30"],[" ",{"text":"+","color":"gold"},{"score":{"name":"#xp_gain","objective":"mgs.data"},"color":"gold"},{"text":" XP","color":"gold"}]]}
 function mgs:v5.1.0/progression/zb/award_challenge
 playsound minecraft:ui.toast.challenge_complete player @s ~ ~ ~ 1 1
 
