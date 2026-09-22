@@ -2,7 +2,7 @@
 # Imports
 from stewbeet import Mem, write_versioned_function
 
-from ..catalogs import (
+from .....config.catalogs import (
 	COST_PRIMARY_MAG,
 	COST_SECONDARY_MAG,
 	TRIG_PRIMARY_MAGS_BASE,

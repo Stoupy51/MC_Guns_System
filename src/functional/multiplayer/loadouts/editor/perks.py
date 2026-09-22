@@ -2,8 +2,7 @@
 # Imports
 from stewbeet import Mem, write_versioned_function
 
-from ....helpers import MGS_TAG
-from ..catalogs import (
+from .....config.catalogs import (
 	COST_PERK,
 	MAX_PERKS,
 	PERKS,
@@ -11,6 +10,7 @@ from ..catalogs import (
 	TRIG_HUB,
 	TRIG_PERK_BASE,
 )
+from ....helpers import MGS_TAG
 from .shared import editor_fn
 
 

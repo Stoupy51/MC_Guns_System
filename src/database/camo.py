@@ -192,86 +192,90 @@ OVERRIDES: dict[str, dict[str, list[str] | BlendFunc | tuple[str, ...]]] = {
 # CAMO_MELEE so toggling `camo_eligible` needs no second edit here.
 OVERRIDES.update({melee_id: {"apply_to": ["gold"], "ignore_textures": COMMON_IGNORE} for melee_id in CAMO_MELEE})
 
-def blend_texture(weapon_texture_path: str, material_texture_path: str, out_path: str, base_weapon: str, material: str) -> None:
-	""" Blend with cache — skips redundant work when variants share a base texture. """
-	if os.path.exists(out_path):
-		return
+BlendJob = tuple[str, str, str, str, str]
+""" Arguments of one `blend_texture` call: weapon texture, material texture, output path, base weapon, material. """
+
+
+def active_override(base_weapon: str, material: str) -> dict[str, list[str] | BlendFunc | tuple[str, ...]]:
+	""" The weapon's `OVERRIDES` entry, empty when its `apply_to` leaves this material out. """
 	override_info = OVERRIDES.get(base_weapon, {})
 	if override_info.get("apply_to") and material not in cast(list[str], override_info["apply_to"]):
-		override_info = {}  # Ignore this override if it's not meant to be applied to the current material
-	func = cast(BlendFunc, override_info.get("func", MATERIALS[material]))
+		return {}
+	return override_info
+
+def blend_texture(weapon_texture_path: str, material_texture_path: str, out_path: str, base_weapon: str, material: str) -> None:
+	""" Blend with cache: skips redundant work when variants share a base texture. """
+	if os.path.exists(out_path):
+		return
+	func = cast(BlendFunc, active_override(base_weapon, material).get("func", MATERIALS[material]))
 	func(weapon_texture_path, material_texture_path, out_path)
 
 @stp.measure_time(message="Generated camouflage variants")
 def main() -> None:
 	ns: str = Mem.ctx.project_id
 	textures_folder: str = Mem.ctx.meta.get("stewbeet", {}).get("textures_folder", "")
-	queue: list[tuple[str, str, str, str, str]] = []  # (weapon_texture_path, material_texture_path, out_path, base_weapon, material)
 
 	# For each weapon, make variants with only one material (e.g. wood, metal, gold, etc.)
-	# Tacticals such as monkey_bomb are skipped, since they get no camos.
-	# Their models also use vanilla block textures absent from the folder the blender reads.
-	def is_camo_eligible(item: Item) -> bool:
-		""" Every non-tactical gun, plus the melee weapons flagged `camo_eligible` in MELEE_WEAPONS. """
-		if item.id in CAMO_MELEE:
-			return True
-		custom: JsonDict = item.components.get("custom_data", {}).get(ns, {})
-		return bool(custom.get("gun")) and not custom.get("tactical")
-
-	weapons: list[Item] = [item for item in map(Item.from_id, Mem.definitions.keys()) if is_camo_eligible(item)]
-	for material in MATERIALS:
-		material_texture_path: str = f"{textures_folder}/{material}.png"
-
-		for weapon in weapons:
-			base_id: str = weapon.id.replace("_zoom", "")
-			item_id: str = (
-				f"{base_id}_{material}"
-				if not weapon.id.endswith("_zoom")
-				else f"{base_id}_{material}_zoom"
-			)
-			item: Item = Item(
-				id=item_id, base_item=weapon.base_item, components=deepcopy(weapon.components), override_model=weapon.override_model
-			)
-
-			# Define normal and zoom models
-			gun_stats: JsonDict = item.components["custom_data"].get(ns, {}).get("stats", {})
-			normal_model: str = f"{ns}:{base_id}_{material}"
-			zoom_model: str = normal_model + "_zoom"
-			gun_stats[MODELS] = {"normal": normal_model, "zoom": zoom_model}
-			base_weapon: str = gun_stats.get("base_weapon", base_id)
-
-			# Zoom models are `parent:` children of their base (see REFACTOR_PLAN.md, PY2): they carry no textures of their own, so the camo is applied by pointing at the camo'd parent instead.
-			parent: str = str(item.override_model.get("parent", "")) if item.override_model else ""
-			if parent.startswith(f"{ns}:item/"):
-				item.override_model = item.override_model.copy() if item.override_model else {}
-				item.override_model["parent"] = f"{parent}_{material}"
-				continue
-
-			# Merge textures in override model using HSL Color mode
-			if item.override_model:
-				item.override_model = item.override_model.copy()
-				item.override_model["textures"] = item.override_model.get("textures", {}).copy()
-				for key, texture in item.override_model["textures"].items():
-					override_info = OVERRIDES.get(base_weapon, {})
-					if override_info.get("apply_to") and material not in cast(list[str], override_info["apply_to"]):
-						override_info = {}  # Ignore this override if it's not meant to be applied to the current material
-					ignore_textures = cast(tuple[str, ...], override_info.get("ignore_textures", GOLD_DEFAULT_IGNORE_TEXTURE if material == "gold" else COMMON_IGNORE))
-					if any(texture.endswith(f"/{x}") for x in ignore_textures):
-						continue
-
-					# Resolve weapon texture PNG from its namespaced path (e.g. "mgs:item/ak47")
-					texture_file: str = texture.split("/")[-1]
-					if texture_file == material:
-						continue  # Some models reuse the material texture directly as their override texture — skip blending in this case
-					weapon_texture_path: str = f"{textures_folder}/{texture_file}.png"
-
-					blended_name: str = f"{texture_file}_{material}"
-					blended_out_path: str = f"{textures_folder}/blended_camo/{blended_name}.png"
-
-					queue.append((weapon_texture_path, material_texture_path, blended_out_path, base_weapon, material))
-
-					item.override_model["textures"][key] = f"{ns}:item/{blended_name}"
+	weapons: list[Item] = [item for item in map(Item.from_id, Mem.definitions) if is_camo_eligible(ns, item)]
+	queue: list[BlendJob] = [
+		job
+		for material in MATERIALS
+		for weapon in weapons
+		for job in add_camo_variant(ns, textures_folder, weapon, material)
+	]
 
 	# Blend textures in parallel with multiprocessing
 	stp.multiprocessing(blend_texture, stp.unique_list(queue), use_starmap=True, desc="Blending camo textures", max_workers=1)
+
+def is_camo_eligible(ns: str, item: Item) -> bool:
+	""" Every non-tactical gun, plus the melee weapons flagged `camo_eligible` in MELEE_WEAPONS.
+
+	Tacticals such as monkey_bomb get no camos, and their models use vanilla block textures absent from the folder the blender reads.
+	"""
+	if item.id in CAMO_MELEE:
+		return True
+	custom: JsonDict = item.components.get("custom_data", {}).get(ns, {})
+	return bool(custom.get("gun")) and not custom.get("tactical")
+
+def add_camo_variant(ns: str, textures_folder: str, weapon: Item, material: str) -> list[BlendJob]:
+	""" Register the `material` variant of a weapon, and return the texture blends its model needs. """
+	base_id: str = weapon.id.replace("_zoom", "")
+	item_id: str = f"{base_id}_{material}_zoom" if weapon.id.endswith("_zoom") else f"{base_id}_{material}"
+	item: Item = Item(
+		id=item_id, base_item=weapon.base_item, components=deepcopy(weapon.components), override_model=weapon.override_model
+	)
+	gun_stats: JsonDict = item.components["custom_data"].get(ns, {}).get("stats", {})
+	gun_stats[MODELS] = {"normal": f"{ns}:{base_id}_{material}", "zoom": f"{ns}:{base_id}_{material}_zoom"}
+	if not item.override_model:
+		return []
+	item.override_model = item.override_model.copy()
+
+	# Zoom models are `parent:` children of their base: they carry no textures of their own, so the camo is applied by pointing at the camo'd parent instead.
+	parent: str = str(item.override_model.get("parent", ""))
+	if parent.startswith(f"{ns}:item/"):
+		item.override_model["parent"] = f"{parent}_{material}"
+		return []
+	return retexture(ns, textures_folder, item.override_model, gun_stats.get("base_weapon", base_id), material)
+
+def retexture(ns: str, textures_folder: str, model: JsonDict, base_weapon: str, material: str) -> list[BlendJob]:
+	""" Point a model's textures at their HSL-blended camo versions, and return the blends to produce.
+
+	Args:
+		model: The variant's own override model, whose `textures` is replaced by an edited copy.
+	"""
+	default_ignore: tuple[str, ...] = GOLD_DEFAULT_IGNORE_TEXTURE if material == "gold" else COMMON_IGNORE
+	ignore_textures = cast(tuple[str, ...], active_override(base_weapon, material).get("ignore_textures", default_ignore))
+	textures: JsonDict = model.get("textures", {}).copy()
+	model["textures"] = textures
+
+	jobs: list[BlendJob] = []
+	for key, texture in textures.items():
+		# Some models reuse the material texture directly as their override texture, which needs no blending
+		texture_file: str = texture.split("/")[-1]
+		if texture_file == material or any(texture.endswith(f"/{x}") for x in ignore_textures):
+			continue
+		blended_name: str = f"{texture_file}_{material}"
+		jobs.append((f"{textures_folder}/{texture_file}.png", f"{textures_folder}/{material}.png", f"{textures_folder}/blended_camo/{blended_name}.png", base_weapon, material))
+		textures[key] = f"{ns}:item/{blended_name}"
+	return jobs
 

@@ -6,6 +6,10 @@ from ..helpers import MGS_TAG
 from ..map_editor_defs import ALL_ELEMENTS, EDITOR_MODES, MODE_LIST
 from .shared import ZB_ELEMENTS, snbt_suggest
 
+# Constants
+SAVED_TYPES: tuple[str, ...] = ("spawn", "point", "enemy", "start_command", "respawn_command", "zb_object")
+""" Save types rebuilt from their markers on every save, each by its `maps/editor/save_<type>` function. """
+
 
 # Functions
 def write_editor_save() -> None:
@@ -70,47 +74,7 @@ execute store result score #base_z {ns}.data run data get storage {ns}:temp map_
 function {ns}:v{version}/maps/editor/write_back with storage {ns}:temp map_edit
 """)
 
-	# Per-mode save lists functions
-	for mode_key, mode_info in EDITOR_MODES.items():
-		reset_lines: list[str] = []
-		rebuild_lines: list[str] = []
-		for etype in mode_info.slots:
-			einfo = ALL_ELEMENTS[etype]
-			if einfo.save_type in ("base", "config"):
-				continue  # handled by save_base / no save data
-
-			save_path = einfo.save_path
-			if einfo.save_type == "spawn":
-				reset_lines.append(f'data modify storage {ns}:temp map_edit.map.{save_path} set value []')
-				path_suffix = save_path.split(".")[-1]
-				rebuild_lines.append(f'execute as @e[tag={ns}.element.{etype}] at @s run function {ns}:v{version}/maps/editor/save_spawn {{path:"{path_suffix}"}}')
-			elif einfo.save_type == "point":
-				reset_lines.append(f'data modify storage {ns}:temp map_edit.map.{save_path} set value []')
-				rebuild_lines.append(f'execute as @e[tag={ns}.element.{etype}] at @s run function {ns}:v{version}/maps/editor/save_point {{path:"{save_path}"}}')
-			elif einfo.save_type == "enemy":
-				reset_lines.append(f'data modify storage {ns}:temp map_edit.map.{save_path} set value []')
-				rebuild_lines.append(f'execute as @e[tag={ns}.element.{etype}] at @s run function {ns}:v{version}/maps/editor/save_enemy')
-			elif einfo.save_type == "start_command":
-				reset_lines.append(f'data modify storage {ns}:temp map_edit.map.{save_path} set value []')
-				rebuild_lines.append(f'execute as @e[tag={ns}.element.{etype}] at @s run function {ns}:v{version}/maps/editor/save_start_command {{path:"{save_path}"}}')
-			elif einfo.save_type == "respawn_command":
-				reset_lines.append(f'data modify storage {ns}:temp map_edit.map.{save_path} set value []')
-				rebuild_lines.append(f'execute as @e[tag={ns}.element.{etype}] at @s run function {ns}:v{version}/maps/editor/save_respawn_command {{path:"{save_path}"}}')
-			elif einfo.save_type == "zb_object":
-				reset_lines.append(f'data modify storage {ns}:temp map_edit.map.{save_path} set value []')
-				rebuild_lines.append(f'execute as @e[tag={ns}.element.{etype}] at @s run function {ns}:v{version}/maps/editor/save_zb_object {{path:"{save_path}"}}')
-		all_lines: list[str] = []
-		if reset_lines:
-			all_lines.append("# Reset lists")
-			all_lines.extend(reset_lines)
-			all_lines.append("")
-			all_lines.append("# Rebuild from markers")
-			all_lines.extend(rebuild_lines)
-
-		write_versioned_function(
-			f"maps/editor/save_lists/{mode_key}",
-			"\n".join(all_lines) if all_lines else "# No mode-specific elements to save"
-		)
+	write_save_lists(ns, version)
 
 	## Save base coordinates from marker
 	write_versioned_function("maps/editor/save_base", f"""
@@ -285,6 +249,33 @@ $data modify storage {ns}:temp map_edit.map.$(path) append from storage {ns}:tem
 	write_versioned_function("maps/editor/write_back", f"""
 $data modify storage {ns}:maps $(mode)[$(idx)] set from storage {ns}:temp map_edit.map
 """)
+
+
+def write_save_lists(ns: str, version: str) -> None:
+	""" Write one `save_lists/<mode>` function per editor mode: empty each saved list, then rebuild it from its markers. """
+	for mode_key, mode_info in EDITOR_MODES.items():
+		saved: list[str] = [etype for etype in mode_info.slots if ALL_ELEMENTS[etype].save_type in SAVED_TYPES]
+		resets: list[str] = [f"data modify storage {ns}:temp map_edit.map.{ALL_ELEMENTS[etype].save_path} set value []" for etype in saved]
+		rebuilds: list[str] = [
+			f"execute as @e[tag={ns}.element.{etype}] at @s run function {ns}:v{version}/maps/editor/{save_call(etype)}" for etype in saved
+		]
+		write_versioned_function(
+			f"maps/editor/save_lists/{mode_key}",
+			"\n".join(["# Reset lists", *resets, "", "# Rebuild from markers", *rebuilds]) if saved else "# No mode-specific elements to save",
+		)
+
+
+def save_call(etype: str) -> str:
+	""" The save function one marker runs, with its list path when it takes one.
+
+	>>> save_call("enemy")
+	'save_enemy'
+	"""
+	einfo = ALL_ELEMENTS[etype]
+	if einfo.save_type == "enemy":
+		return "save_enemy"
+	list_path: str = einfo.save_path.split(".")[-1] if einfo.save_type == "spawn" else einfo.save_path
+	return f'save_{einfo.save_type} {{path:"{list_path}"}}'
 
 
 def write_strip_light_fields() -> str:

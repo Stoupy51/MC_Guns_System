@@ -1,11 +1,12 @@
-""" Re-export constants from catalogs for backwards compatibility. """
+""" Custom loadouts: the editor, browsing them, and the actions on a saved one. """
 # Imports
 from .actions import generate_actions
 from .browsing import generate_browsing
-from .catalogs import *
-from .class_selection import *
+from .class_selection import generate_class_selection
 from .editor import generate_editor
 from .storage import generate_storage
+
+__all__ = ["generate_class_selection", "generate_custom_loadouts"]
 
 
 # Functions

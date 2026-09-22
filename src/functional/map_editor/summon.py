@@ -1,8 +1,34 @@
 """ Rebuilding a saved map's markers, one iterator and marker summon per element kind. """
 # Imports
+from dataclasses import dataclass
+
 from stewbeet import Mem, write_versioned_function
 
 from ..map_editor_defs import ALL_ELEMENTS, EDITOR_MODES, MODE_LIST
+
+
+# Classes
+@dataclass(frozen=True)
+class SummonIterator:
+	""" How one save type's markers are rebuilt: a temp copy of the saved list, walked by a recursive function. """
+	storage: str
+	""" `{ns}:temp` path of the list being walked. """
+	function: str
+	""" Iterator under `maps/editor/`. """
+	tagged: bool
+	""" Whether the iterator reads the element tag to put on its markers from `<storage>_tag`. """
+
+
+# Constants
+SUMMON_ITERATORS: dict[str, SummonIterator] = {
+	"spawn":           SummonIterator(storage="_spawn_iter",       function="summon_spawn_iter",           tagged=True),
+	"point":           SummonIterator(storage="_point_iter",       function="summon_point_iter",           tagged=True),
+	"enemy":           SummonIterator(storage="_enemy_edit_iter",  function="summon_enemy_edit_iter",      tagged=False),
+	"start_command":   SummonIterator(storage="_start_cmd_iter",   function="summon_start_command_iter",   tagged=False),
+	"respawn_command": SummonIterator(storage="_respawn_cmd_iter", function="summon_respawn_command_iter", tagged=False),
+	"zb_object":       SummonIterator(storage="_zb_iter",          function="summon_zb_object_iter",       tagged=True),
+}
+""" Iterator of every save type that has markers, keyed by `ElementDef.save_type`. """
 
 
 # Functions
@@ -36,40 +62,11 @@ execute if data storage {ns}:temp map_edit.map.tick_function run data modify ent
 
 	# Per-mode summon functions
 	for mode_key, mode_info in EDITOR_MODES.items():
-		summon_lines: list[str] = []
-		for etype in mode_info.slots:
-			einfo = ALL_ELEMENTS[etype]
-			if einfo.save_type in ("base", "config"):
-				continue  # handled in parent / no markers
-			save_path = einfo.save_path
-			if einfo.save_type == "spawn":
-				summon_lines.append(f'data modify storage {ns}:temp _spawn_iter set from storage {ns}:temp map_edit.map.{save_path}')
-				summon_lines.append(f'data modify storage {ns}:temp _spawn_iter_tag set value "{ns}.element.{etype}"')
-				summon_lines.append(f'execute if data storage {ns}:temp _spawn_iter[0] run function {ns}:v{version}/maps/editor/summon_spawn_iter')
-				summon_lines.append("")
-			elif einfo.save_type == "point":
-				summon_lines.append(f'data modify storage {ns}:temp _point_iter set from storage {ns}:temp map_edit.map.{save_path}')
-				summon_lines.append(f'data modify storage {ns}:temp _point_iter_tag set value "{ns}.element.{etype}"')
-				summon_lines.append(f'execute if data storage {ns}:temp _point_iter[0] run function {ns}:v{version}/maps/editor/summon_point_iter')
-				summon_lines.append("")
-			elif einfo.save_type == "enemy":
-				summon_lines.append(f'data modify storage {ns}:temp _enemy_edit_iter set from storage {ns}:temp map_edit.map.{save_path}')
-				summon_lines.append(f'execute if data storage {ns}:temp _enemy_edit_iter[0] run function {ns}:v{version}/maps/editor/summon_enemy_edit_iter')
-				summon_lines.append("")
-			elif einfo.save_type == "start_command":
-				summon_lines.append(f'data modify storage {ns}:temp _start_cmd_iter set from storage {ns}:temp map_edit.map.{save_path}')
-				summon_lines.append(f'execute if data storage {ns}:temp _start_cmd_iter[0] run function {ns}:v{version}/maps/editor/summon_start_command_iter')
-				summon_lines.append("")
-			elif einfo.save_type == "respawn_command":
-				summon_lines.append(f'data modify storage {ns}:temp _respawn_cmd_iter set from storage {ns}:temp map_edit.map.{save_path}')
-				summon_lines.append(f'execute if data storage {ns}:temp _respawn_cmd_iter[0] run function {ns}:v{version}/maps/editor/summon_respawn_command_iter')
-				summon_lines.append("")
-			elif einfo.save_type == "zb_object":
-				summon_lines.append(f'data modify storage {ns}:temp _zb_iter set from storage {ns}:temp map_edit.map.{save_path}')
-				summon_lines.append(f'data modify storage {ns}:temp _zb_iter_tag set value "{ns}.element.{etype}"')
-				summon_lines.append(f'execute if data storage {ns}:temp _zb_iter[0] run function {ns}:v{version}/maps/editor/summon_zb_object_iter')
-				summon_lines.append("")
-
+		summon_lines: list[str] = [
+			line
+			for etype in mode_info.slots if ALL_ELEMENTS[etype].save_type in SUMMON_ITERATORS
+			for line in start_iterator(ns, version, etype)
+		]
 		write_versioned_function(
 			f"maps/editor/summon_existing/{mode_key}",
 			"\n".join(summon_lines) if summon_lines else "# No mode-specific elements to summon"
@@ -292,4 +289,16 @@ execute if data storage {ns}:temp _zb_iter[0] run function {ns}:v{version}/maps/
 	write_versioned_function("maps/editor/summon_zb_marker", f"""
 $summon minecraft:marker $(x) $(y) $(z) {{Tags:["{ns}.map_element","$(tag)","{ns}.new_zb_marker"]}}
 """)
+
+
+def start_iterator(ns: str, version: str, etype: str) -> list[str]:
+	""" Lines copying one element's saved list and starting its summon iterator, then a blank separator. """
+	einfo = ALL_ELEMENTS[etype]
+	iterator: SummonIterator = SUMMON_ITERATORS[einfo.save_type]
+	return [
+		f"data modify storage {ns}:temp {iterator.storage} set from storage {ns}:temp map_edit.map.{einfo.save_path}",
+		*([f'data modify storage {ns}:temp {iterator.storage}_tag set value "{ns}.element.{etype}"'] if iterator.tagged else []),
+		f"execute if data storage {ns}:temp {iterator.storage}[0] run function {ns}:v{version}/maps/editor/{iterator.function}",
+		"",
+	]
 

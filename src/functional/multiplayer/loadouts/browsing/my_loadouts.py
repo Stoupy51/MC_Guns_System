@@ -2,8 +2,7 @@
 # Imports
 from stewbeet import Mem, write_versioned_function
 
-from ....helpers.text import Text
-from ..catalogs import (
+from .....config.catalogs import (
 	PICK10_TOTAL,
 	TRIG_DELETE_BASE,
 	TRIG_EDIT_BASE,
@@ -15,6 +14,7 @@ from ..catalogs import (
 	TRIG_SET_DEFAULT_BASE,
 	TRIG_TOGGLE_VIS_BASE,
 )
+from ....helpers.text import Text
 from .shared import PERK_CONCAT, compute_trig, normalize_btn_fields
 
 

@@ -2,7 +2,7 @@
 # Imports
 from stewbeet import Mem, write_versioned_function
 
-from ..catalogs import (
+from .....config.catalogs import (
 	COST_GRENADE,
 	COST_PERK,
 	COST_PRIMARY_MAG,

@@ -110,6 +110,12 @@ class MultiplayerClasses:
 	CLASS_IDS: ClassVar[dict[str, int]] = {class_id: idx + 1 for idx, class_id in enumerate(CLASSES)}
 	""" Class number assignments, 1-indexed, used for the scoreboard mgs.mp.class. """
 
+	EQUIP_LABELS: ClassVar[dict[str, str]] = {
+		"frag_grenade": "Frag", "semtex": "Semtex",
+		"flash_grenade": "Flash", "smoke_grenade": "Smoke",
+	}
+	""" Short grenade names for a class's equipment line, falling back on the item id. """
+
 	TRIGGER_OFFSET: int = 10
 	""" trigger_value = TRIGGER_OFFSET + class_num. Must match the dispatch formula in player_config.py (10 + class_num, so 11..20). """
 
@@ -128,62 +134,23 @@ class MultiplayerClasses:
 		trigger_value: int = MultiplayerClasses.TRIGGER_OFFSET + class_num
 		main_gun: str = class_data["main"]["gun"]
 		secondary_gun: str = class_data.get("secondary", {}).get("gun", "")
+		equipment: dict[str, int] = class_data.get("equipment", {})
+		make_slot = MultiplayerClasses.make_slot_snbt
 
-		# Build the flat slot list (pre-computed slot assignments)
-		slots: list[str] = []
-		def add_slot(slot: str, loot: str, count: int = 1, consumable: bool = False, bullets: int = 0) -> None:
-			slots.append(MultiplayerClasses.make_slot_snbt(ns, slot, loot, count, consumable, bullets))
-
-		# Primary weapon → hotbar.1 (hotbar.0 is reserved for the knife, given in apply_class_dynamic)
-		add_slot("hotbar.1", main_gun)
-
-		# Secondary weapon → hotbar.2
+		# Primary on hotbar.1 (hotbar.0 is reserved for the knife, given in apply_class_dynamic), secondary on hotbar.2,
+		# grenades from hotbar.8 downwards, then magazines from inventory.0 on
+		slots: list[str] = [make_slot(ns, "hotbar.1", main_gun)]
 		if secondary_gun:
-			add_slot("hotbar.2", secondary_gun)
-
-		# Equipment (grenades) → hotbar.8, hotbar.7, ...
-		equip_slot: int = 8
-		for item_id, count in class_data.get("equipment", {}).items():
-			add_slot(f"hotbar.{equip_slot}", item_id, count=count)
-			equip_slot -= 1
-
-		# Magazines → inventory.0, inventory.1, ...
-		inv_slot: int = 0
-
-		# Primary magazines
-		mag_id: str = class_data["main"]["mag"]
-		mag_count: int = class_data["main"].get("mag_count", 0)
-		if mag_id in MultiplayerClasses.CONSUMABLE_MAGS:
-			add_slot(f"inventory.{inv_slot}", mag_id, consumable=True, bullets=mag_count)
-			inv_slot += 1
-		else:
-			for _ in range(mag_count):
-				add_slot(f"inventory.{inv_slot}", mag_id)
-				inv_slot += 1
-
-		# Secondary magazines
+			slots.append(make_slot(ns, "hotbar.2", secondary_gun))
+		slots += [make_slot(ns, f"hotbar.{8 - index}", item_id, count=count) for index, (item_id, count) in enumerate(equipment.items())]
+		main_mags: list[str] = MultiplayerClasses.magazine_slots(ns, class_data["main"], first_slot=0)
+		slots += main_mags
 		if "secondary" in class_data:
-			sec_mag_id: str = class_data["secondary"]["mag"]
-			sec_mag_count: int = class_data["secondary"].get("mag_count", 0)
-			if sec_mag_id in MultiplayerClasses.CONSUMABLE_MAGS:
-				add_slot(f"inventory.{inv_slot}", sec_mag_id, consumable=True, bullets=sec_mag_count)
-				inv_slot += 1
-			else:
-				for _ in range(sec_mag_count):
-					add_slot(f"inventory.{inv_slot}", sec_mag_id)
-					inv_slot += 1
-
+			slots += MultiplayerClasses.magazine_slots(ns, class_data["secondary"], first_slot=len(main_mags))
 		slots_snbt: str = ",".join(slots)
 
-		# Build equipment display string (e.g. "2x Frag Grenade, 1x Smoke")
-		equip_parts: list[str] = []
-		equip_display_names: dict[str, str] = {
-			"frag_grenade": "Frag", "semtex": "Semtex",
-			"flash_grenade": "Flash", "smoke_grenade": "Smoke",
-		}
-		for item_id, count in class_data.get("equipment", {}).items():
-			label = equip_display_names.get(item_id, item_id)
-			equip_parts.append(f"{count}x {label}")
+		# Equipment display string, ex: "2x Frag, 1x Smoke"
+		equip_parts: list[str] = [f"{count}x {MultiplayerClasses.EQUIP_LABELS.get(item_id, item_id)}" for item_id, count in equipment.items()]
 		equip_display: str = ", ".join(equip_parts) if equip_parts else "None"
 
 		main_mag_count: int = class_data["main"].get("mag_count", 0)
@@ -202,4 +169,19 @@ class MultiplayerClasses:
 			f'perks:[{perks_snbt}],'
 			f'slots:[{slots_snbt}]}}'
 		)
+
+	@staticmethod
+	def magazine_slots(ns: str, weapon: JsonDict, first_slot: int) -> list[str]:
+		""" Inventory slots holding a weapon's magazines, from `inventory.<first_slot>` on.
+
+		A consumable magazine is one stack whose count is the bullet count; any other takes one slot per magazine.
+
+		Args:
+			weapon: A class's `main` or `secondary` entry, reading `mag` and `mag_count`.
+		"""
+		mag_id: str = weapon["mag"]
+		mag_count: int = weapon.get("mag_count", 0)
+		if mag_id in MultiplayerClasses.CONSUMABLE_MAGS:
+			return [MultiplayerClasses.make_slot_snbt(ns, f"inventory.{first_slot}", mag_id, consumable=True, bullets=mag_count)]
+		return [MultiplayerClasses.make_slot_snbt(ns, f"inventory.{first_slot + index}", mag_id) for index in range(mag_count)]
 

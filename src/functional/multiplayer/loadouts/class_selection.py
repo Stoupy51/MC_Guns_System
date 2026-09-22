@@ -10,10 +10,10 @@ from stewbeet import (
 	write_versioned_function,
 )
 
+from ....config.catalogs import TRIG_EDITOR_START, TRIG_MARKETPLACE, TRIG_MY_LOADOUTS
 from ....config.stats.items import ItemBuilder
 from ...helpers import MGS_TAG
 from ..classes import MultiplayerClasses
-from .catalogs import TRIG_EDITOR_START, TRIG_MARKETPLACE, TRIG_MY_LOADOUTS
 
 
 # Functions

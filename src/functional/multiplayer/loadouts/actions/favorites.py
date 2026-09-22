@@ -2,8 +2,8 @@
 # Imports
 from stewbeet import Mem, write_versioned_function
 
+from .....config.catalogs import TRIG_FAVORITE_BASE
 from ....helpers import MGS_TAG
-from ..catalogs import TRIG_FAVORITE_BASE
 
 
 # Functions

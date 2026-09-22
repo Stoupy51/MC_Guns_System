@@ -2,8 +2,7 @@
 # Imports
 from stewbeet import Mem, write_versioned_function
 
-from ....helpers.text import Text
-from ..catalogs import (
+from .....config.catalogs import (
 	PICK10_TOTAL,
 	TRIG_FAVORITE_BASE,
 	TRIG_LIKE_BASE,
@@ -12,6 +11,7 @@ from ..catalogs import (
 	TRIG_MARKETPLACE_LIKES,
 	TRIG_SELECT_BASE,
 )
+from ....helpers.text import Text
 from .shared import PERK_CONCAT, compute_trig, normalize_btn_fields
 
 

@@ -2,7 +2,7 @@
 # Imports
 from stewbeet import Mem, write_versioned_function
 
-from ..catalogs import (
+from .....config.catalogs import (
 	COST_GRENADE,
 	GRENADE_TYPES,
 	TRIG_EQUIP_SLOT1_BASE,

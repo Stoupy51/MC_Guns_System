@@ -136,66 +136,82 @@ class Catalog:
 		Raises:
 			ValueError: With the offending chain or challenge named.
 		"""
-		branch_keys: set[str] = {branch.key for branch in BRANCHES}
 		seen_objectives: dict[str, str] = {}
-		seen_paths: set[str] = set()
-
 		for chain in CHAINS:
 			label: str = f"chain {chain.branch}/{chain.key}"
-			if chain.branch not in branch_keys:
-				raise ValueError(f"{label}: unknown branch")
-			if not chain.tiers:
-				raise ValueError(f"{label}: no tiers")
+			Catalog.validate_tiers(chain, label)
+			Catalog.validate_stat(chain, label, seen_objectives)
 
-			## Thresholds must strictly ascend: the tree parents each tier onto the previous one, so an
-			## out-of-order row would leave a tier unlocking before the node it hangs from.
-			thresholds: list[int] = [tier.threshold for tier in chain.tiers]
-			if thresholds != sorted(set(thresholds)):
-				raise ValueError(f"{label}: thresholds must strictly ascend, got {thresholds}")
-
-			## Two rows sharing a title produce two nodes nobody can tell apart, and the toast for the
-			## second one reads as a bug rather than a reward.
-			titles: list[str] = [tier.title for tier in chain.tiers]
-			if len(set(titles)) != len(titles):
-				raise ValueError(f"{label}: duplicate tier titles, got {titles}")
-
-			## The tree is read left to right, so a chain that is much shorter than its neighbours leaves a
-			## ragged column. Ten is the shape the catalog is tuned for.
-			if len(chain.tiers) < 5:
-				raise ValueError(f"{label}: only {len(chain.tiers)} tiers, which makes the tree vertical again")
-
-			stat = chain.stat
-			if not stat.owned:
-				if stat.sources or stat.source:
-					raise ValueError(f"{label}: a borrowed stat is never written, so it takes no sources")
-			else:
-				## One owned objective per chain. Two chains sharing a counter would each pay for the
-				## other's progress, which is never what the catalog means.
-				if stat.objective in seen_objectives:
-					raise ValueError(f"{label}: objective {stat.objective} already used by {seen_objectives[stat.objective]}")
-				seen_objectives[stat.objective] = label
-
-				needs_source: bool = stat.kind in (StatKind.COUNT_SCORE, StatKind.MAX_SCORE)
-				if needs_source and not stat.source:
-					raise ValueError(f"{label}: {stat.kind.value} needs a source score")
-				if not needs_source and stat.source:
-					raise ValueError(f"{label}: count_one reads no source score")
-
-				## A mistyped award key is the failure this whole method exists for: the chain would
-				## generate cleanly, show up in game, and never move.
-				table: dict[str, XpAward] = Catalog.awards(Catalog.side(chain.branch))
-				for key in stat.sources:
-					if key not in table:
-						raise ValueError(f"{label}: award key {key!r} is not in the {Catalog.side(chain.branch)} table")
-
-			for index in range(len(chain.tiers)):
-				seen_paths.add(Catalog.tier_path(chain, index))
-
+		seen_paths: set[str] = {Catalog.tier_path(chain, index) for chain in CHAINS for index in range(len(chain.tiers))}
 		for event in EVENTS:
 			label = f"challenge {event.branch}/{event.key}"
-			if event.branch not in branch_keys:
+			if event.branch not in {branch.key for branch in BRANCHES}:
 				raise ValueError(f"{label}: unknown branch")
 			path: str = Catalog.event_path(event)
 			if path in seen_paths:
 				raise ValueError(f"{label}: path {path} collides with a chain tier")
 			seen_paths.add(path)
+
+	@staticmethod
+	def validate_tiers(chain: Chain, label: str) -> None:
+		""" Check a chain's branch and the shape of its tier list.
+
+		Raises:
+			ValueError: With `label` naming the chain.
+		"""
+		if chain.branch not in {branch.key for branch in BRANCHES}:
+			raise ValueError(f"{label}: unknown branch")
+		if not chain.tiers:
+			raise ValueError(f"{label}: no tiers")
+
+		## Thresholds must strictly ascend: the tree parents each tier onto the previous one, so an
+		## out-of-order row would leave a tier unlocking before the node it hangs from.
+		thresholds: list[int] = [tier.threshold for tier in chain.tiers]
+		if thresholds != sorted(set(thresholds)):
+			raise ValueError(f"{label}: thresholds must strictly ascend, got {thresholds}")
+
+		## Two rows sharing a title produce two nodes nobody can tell apart, and the toast for the
+		## second one reads as a bug rather than a reward.
+		titles: list[str] = [tier.title for tier in chain.tiers]
+		if len(set(titles)) != len(titles):
+			raise ValueError(f"{label}: duplicate tier titles, got {titles}")
+
+		## The tree is read left to right, so a chain that is much shorter than its neighbours leaves a
+		## ragged column. Ten is the shape the catalog is tuned for.
+		if len(chain.tiers) < 5:
+			raise ValueError(f"{label}: only {len(chain.tiers)} tiers, which makes the tree vertical again")
+
+	@staticmethod
+	def validate_stat(chain: Chain, label: str, seen_objectives: dict[str, str]) -> None:
+		""" Check that a chain's stat is fed the way its kind reads it.
+
+		Args:
+			seen_objectives: Owned objectives of the chains checked so far, mapped to their label; this one is added.
+		Raises:
+			ValueError: With `label` naming the chain.
+		"""
+		stat = chain.stat
+		if not stat.owned:
+			if stat.sources or stat.source:
+				raise ValueError(f"{label}: a borrowed stat is never written, so it takes no sources")
+			return
+
+		## One owned objective per chain. Two chains sharing a counter would each pay for the
+		## other's progress, which is never what the catalog means.
+		if stat.objective in seen_objectives:
+			raise ValueError(f"{label}: objective {stat.objective} already used by {seen_objectives[stat.objective]}")
+		seen_objectives[stat.objective] = label
+
+		needs_source: bool = stat.kind in (StatKind.COUNT_SCORE, StatKind.MAX_SCORE)
+		if needs_source and not stat.source:
+			raise ValueError(f"{label}: {stat.kind.value} needs a source score")
+		if not needs_source and stat.source:
+			raise ValueError(f"{label}: count_one reads no source score")
+
+		## A mistyped award key is the failure this whole method exists for: the chain would
+		## generate cleanly, show up in game, and never move.
+		side: str = Catalog.side(chain.branch)
+		unknown: list[str] = [key for key in stat.sources if key not in Catalog.awards(side)]
+		if unknown:
+			raise ValueError(f"{label}: award key {unknown[0]!r} is not in the {side} table")
+

@@ -2,7 +2,7 @@
 # Imports
 from stewbeet import Mem, write_versioned_function
 
-from ..catalogs import PICK10_TOTAL, TRIG_HUB
+from .....config.catalogs import PICK10_TOTAL, TRIG_HUB
 
 
 # Functions
