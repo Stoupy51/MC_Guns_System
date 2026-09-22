@@ -1,7 +1,7 @@
 
 #> mgs:v5.1.0/maps/editor/displays/summon_wallbuy
 #
-# @executed	as @e[tag=mgs.element.wallbuy] & at @s
+# @executed	at @s
 #
 # @within	mgs:v5.1.0/maps/editor/displays/wallbuy with storage mgs:temp _ed_disp
 #

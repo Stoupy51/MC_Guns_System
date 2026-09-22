@@ -1,9 +1,9 @@
 
 #> mgs:v5.1.0/maps/editor/displays/barricade
 #
-# @executed	as @e[tag=mgs.element.barricade] & at @s
+# @executed	at @s
 #
-# @within	mgs:v5.1.0/maps/editor/refresh_displays [ as @e[tag=mgs.element.barricade] & at @s ]
+# @within	mgs:v5.1.0/maps/editor/refresh_displays [ at @s ]
 #
 
 # @s = barricade marker, at @s

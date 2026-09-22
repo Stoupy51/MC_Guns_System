@@ -1,9 +1,9 @@
 
 #> mgs:v5.1.0/maps/editor/displays/mystery_box_pos
 #
-# @executed	as @e[tag=mgs.element.mystery_box_pos] & at @s
+# @executed	at @s
 #
-# @within	mgs:v5.1.0/maps/editor/refresh_displays [ as @e[tag=mgs.element.mystery_box_pos] & at @s ]
+# @within	mgs:v5.1.0/maps/editor/refresh_displays [ at @s ]
 #
 
 # @s = mystery box marker, at @s

@@ -1,9 +1,9 @@
 
 #> mgs:v5.1.0/maps/editor/displays/wunderfizz
 #
-# @executed	as @e[tag=mgs.element.wunderfizz] & at @s
+# @executed	at @s
 #
-# @within	mgs:v5.1.0/maps/editor/refresh_displays [ as @e[tag=mgs.element.wunderfizz] & at @s ]
+# @within	mgs:v5.1.0/maps/editor/refresh_displays [ at @s ]
 #
 
 # @s = wunderfizz marker, at @s

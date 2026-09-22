@@ -1,10 +1,10 @@
 {
 	"version": 3,
-	"file": "power_switch.mcfunction",
+	"file": "snapshot.mcfunction",
 	"sourceRoot": "../../../../../../../../..",
 	"sources": [
 		"src/functional/map_editor/displays.py"
 	],
 	"names": [],
-	"mappings": "AAgJ+D;;;;;;;;AAC/D;AACA;AACA;AACA;AACA"
+	"mappings": "AAwC2D;;;;;;;;;AAC3D;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
 }

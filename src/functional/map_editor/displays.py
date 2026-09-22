@@ -2,7 +2,7 @@
 # Imports
 from stewbeet import Mem, write_versioned_function
 
-from ..map_editor_defs import ALL_ELEMENTS
+from ..map_editor_defs import ALL_ELEMENTS, MODEL_DISPLAY_ELEMENTS
 from .shared import snbt_suggest
 
 
@@ -13,18 +13,39 @@ def write_editor_displays() -> None:
 
 	# Model Displays.
 	# Show the real in-game models for wallbuys, perk machines, PAP, mystery boxes, and the power switch while editing.
-	# Displays are rebuilt from the markers every second (and on placement/destroy), so edits like rotation or item_model changes stay in sync.
+	# Displays are rebuilt on placement/destroy, and by displays/sync once a second when a marker was edited, so rotation or item_model changes stay in sync.
 	# Each displays/<etype> function mirrors that system's own setup placement exactly.
+	model_markers: str = f"@e[type=minecraft:marker,tag={ns}.model_display]"
 	write_versioned_function("maps/editor/refresh_displays", f"""
 # Rebuild all editor model displays from the current markers
 kill @e[tag={ns}.editor_display]
-execute as @e[tag={ns}.element.wallbuy] at @s run function {ns}:v{version}/maps/editor/displays/wallbuy
-execute as @e[tag={ns}.element.perk_machine] at @s run function {ns}:v{version}/maps/editor/displays/perk_machine
-execute as @e[tag={ns}.element.wunderfizz] at @s run function {ns}:v{version}/maps/editor/displays/wunderfizz
-execute as @e[tag={ns}.element.pap_machine] at @s run function {ns}:v{version}/maps/editor/displays/pap_machine
-execute as @e[tag={ns}.element.mystery_box_pos] at @s run function {ns}:v{version}/maps/editor/displays/mystery_box_pos
-execute as @e[tag={ns}.element.power_switch] at @s run function {ns}:v{version}/maps/editor/displays/power_switch
-execute as @e[tag={ns}.element.barricade] at @s run function {ns}:v{version}/maps/editor/displays/barricade
+{"\n".join(
+	f"execute as @e[type=minecraft:marker,tag={ns}.element.{etype}] at @s run function {ns}:v{version}/maps/editor/displays/{etype}"
+	for etype in MODEL_DISPLAY_ELEMENTS
+)}
+
+# Snapshot what was just drawn, so displays/sync only rebuilds after a real edit
+{"\n".join(f"tag @e[type=minecraft:marker,tag={ns}.element.{etype}] add {ns}.model_display" for etype in MODEL_DISPLAY_ELEMENTS)}
+execute as {model_markers} run function {ns}:v{version}/maps/editor/displays/snapshot
+execute store result score #ed_disp_count {ns}.data if entity {model_markers}
+""")
+
+	# Killing and summoning the displays makes them blink for a frame, so a rebuild only happens when a marker changed.
+	write_versioned_function("maps/editor/displays/sync", f"""
+scoreboard players set #ed_disp_dirty {ns}.data 0
+execute as {model_markers} run function {ns}:v{version}/maps/editor/displays/snapshot
+execute store result score #ed_disp_now {ns}.data if entity {model_markers}
+execute unless score #ed_disp_now {ns}.data = #ed_disp_count {ns}.data run scoreboard players set #ed_disp_dirty {ns}.data 1
+execute if score #ed_disp_dirty {ns}.data matches 1 run function {ns}:v{version}/maps/editor/refresh_displays
+""")
+	write_versioned_function("maps/editor/displays/snapshot", f"""
+# @s = a model-display marker. Everything its display is built from is its data and position.
+data modify storage {ns}:temp _ed_sig set value {{}}
+data modify storage {ns}:temp _ed_sig.data set from entity @s data
+data remove storage {ns}:temp _ed_sig.data._disp_sig
+data modify storage {ns}:temp _ed_sig.pos set from entity @s Pos
+execute store success score #ed_sig_changed {ns}.data run data modify entity @s data._disp_sig set from storage {ns}:temp _ed_sig
+execute if score #ed_sig_changed {ns}.data matches 1 run scoreboard players set #ed_disp_dirty {ns}.data 1
 """)
 
 	## Barricade: block_display of the "enabled" (intact) block, mirroring zombies/barricades/place_at so a map maker sees the boards exactly where they will stand in game.

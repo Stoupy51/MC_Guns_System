@@ -1,9 +1,9 @@
 
 #> mgs:v5.1.0/maps/editor/displays/wallbuy
 #
-# @executed	as @e[tag=mgs.element.wallbuy] & at @s
+# @executed	at @s
 #
-# @within	mgs:v5.1.0/maps/editor/refresh_displays [ as @e[tag=mgs.element.wallbuy] & at @s ]
+# @within	mgs:v5.1.0/maps/editor/refresh_displays [ at @s ]
 #
 
 # @s = wallbuy marker, at @s (marker Rotation is synced from data.yaw)
