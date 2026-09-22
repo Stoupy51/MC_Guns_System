@@ -15,11 +15,10 @@ execute if data storage mgs:temp {_plr_mode:"multiplayer"} if score @s mgs.mp.te
 execute if data storage mgs:temp {_plr_mode:"zombies"} if score @s mgs.zb.in_game matches 1 run data modify storage mgs:temp _plr_entry.color set value "green"
 execute if data storage mgs:temp {_plr_mode:"missions"} if score @s mgs.mi.in_game matches 1 run data modify storage mgs:temp _plr_entry.color set value "green"
 
-# Resolve the real username: fill an invisible probe's head with @s's profile ("this" in the loot
-# table), then read the name out of its profile component (dual path covers both equipment NBT formats).
+# Dialog labels don't resolve @-selector text components, so the real username is baked in as a literal.
+# Fill an invisible probe's head with @s's profile ("this" in the loot table), then read the name back out.
 execute at @s run summon armor_stand ~ ~ ~ {Tags:["mgs_name_probe"],Invisible:1b,NoGravity:1b}
-loot replace entity @e[type=armor_stand,tag=mgs_name_probe,limit=1] armor.head loot mgs:players/name_head
-data modify storage mgs:temp _plr_entry.name set from entity @e[type=armor_stand,tag=mgs_name_probe,limit=1] ArmorItems[3].components."minecraft:profile".name
+loot replace entity @e[type=armor_stand,tag=mgs_name_probe,limit=1] armor.head loot mgs:get_username
 data modify storage mgs:temp _plr_entry.name set from entity @e[type=armor_stand,tag=mgs_name_probe,limit=1] equipment.head.components."minecraft:profile".name
 kill @e[type=armor_stand,tag=mgs_name_probe]
 

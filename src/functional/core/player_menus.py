@@ -10,26 +10,13 @@ runs as the clicker, so it wraps the action in `execute as @a[scores={bs.id=<N>}
 
 """
 # Imports
-from stewbeet import LootTable, Mem, set_json_encoder, write_versioned_function
+from stewbeet import Mem, write_versioned_function
 
 
 # Functions
 def write_player_menus() -> None:
 	ns: str = Mem.ctx.project_id
 	version: str = Mem.ctx.project_version
-
-	# Dialog labels don't resolve @-selector text components, so a player's name is baked in as a literal.
-	# Fill a head from their profile ("this"), then read the username back out.
-	Mem.ctx.data[ns].loot_tables["players/name_head"] = set_json_encoder(LootTable({
-		"pools": [{
-			"rolls": 1,
-			"entries": [{
-				"type": "minecraft:item",
-				"name": "minecraft:player_head",
-				"functions": [{"function": "minecraft:fill_player_head", "entity": "this"}],
-			}],
-		}],
-	}))
 
 	# Append @s's bs.id, real name and status colour; needs _plr_mode set beforehand
 	write_versioned_function("players/append_self", f"""
@@ -40,11 +27,10 @@ execute if data storage {ns}:temp {{_plr_mode:"multiplayer"}} if score @s {ns}.m
 execute if data storage {ns}:temp {{_plr_mode:"zombies"}} if score @s {ns}.zb.in_game matches 1 run data modify storage {ns}:temp _plr_entry.color set value "green"
 execute if data storage {ns}:temp {{_plr_mode:"missions"}} if score @s {ns}.mi.in_game matches 1 run data modify storage {ns}:temp _plr_entry.color set value "green"
 
-# Resolve the real username: fill an invisible probe's head with @s's profile ("this" in the loot
-# table), then read the name out of its profile component (dual path covers both equipment NBT formats).
+# Dialog labels don't resolve @-selector text components, so the real username is baked in as a literal.
+# Fill an invisible probe's head with @s's profile ("this" in the loot table), then read the name back out.
 execute at @s run summon armor_stand ~ ~ ~ {{Tags:["{ns}_name_probe"],Invisible:1b,NoGravity:1b}}
-loot replace entity @e[type=armor_stand,tag={ns}_name_probe,limit=1] armor.head loot {ns}:players/name_head
-data modify storage {ns}:temp _plr_entry.name set from entity @e[type=armor_stand,tag={ns}_name_probe,limit=1] ArmorItems[3].components."minecraft:profile".name
+loot replace entity @e[type=armor_stand,tag={ns}_name_probe,limit=1] armor.head loot {ns}:get_username
 data modify storage {ns}:temp _plr_entry.name set from entity @e[type=armor_stand,tag={ns}_name_probe,limit=1] equipment.head.components."minecraft:profile".name
 kill @e[type=armor_stand,tag={ns}_name_probe]
 

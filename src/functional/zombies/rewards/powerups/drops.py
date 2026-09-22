@@ -35,8 +35,8 @@ scoreboard objectives add {ns}.zb.player_hit dummy
 					"type": "minecraft:item",
 					"name": v.item,
 					"weight": 1,
-					"functions": [{
-						"function": "minecraft:set_components",
+					"modifier": [{
+						"type": "minecraft:set_components",
 						"components": {
 							"minecraft:custom_data": {ns: {"powerup": {"type": pu_id}}},
 						},
