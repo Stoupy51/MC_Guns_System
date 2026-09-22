@@ -83,10 +83,10 @@ none of it is tested and Iris had no 26.3 branch at the time of writing.
 
 - [ ] Sanity test with a heavy pack: flash bloom, scope distortion, crosshair, hurt vignette.
 - [x] Flash bloom, scope, crosshair and hurt all work with Iris.
-- [ ] **Flash in front of the gun with Iris.** The gun mask relies on the `core/integrate_depth`
-      override, which Iris bypasses. `/posteffect add @s mgs:debug_depth` with Iris on and off shows
-      where the gun lands in depth: magenta = marked, yellow = squashed near the camera, grey = world.
-      The fix depends on which colour the gun turns under Iris.
+- [x] **Flash in front of the gun with Iris: not fixable by depth.** `mgs:debug_depth` shows the gun
+      magenta (masked) without Iris, but with Iris it is plain world-grey: Iris draws the hand in
+      its own pass, never runs `core/integrate_depth`, and leaves no trace of it in the depth a post
+      effect can read. The spark draws over the gun under shaderpacks; everything else is unaffected.
 - [ ] Look for banding from grading an already tonemapped image. If it is bad, soften the flash.
 - [ ] Re-read Iris's `MixinPostChain`. It is an empty class today; if that changes, the whole
       compatibility story needs revisiting.

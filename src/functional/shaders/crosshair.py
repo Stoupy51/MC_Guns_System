@@ -63,7 +63,7 @@ def main() -> None:
 	ns: str = Mem.ctx.project_id
 	if not Mem.ctx.meta.get("mgs_custom_crosshair", False):
 		# zoom/main calls these every tick, and a call to a missing function fails the caller at load
-		for entry_point in ("zoom/crosshair_spread", "zoom/crosshair_base", "zoom/crosshair_clear"):
+		for entry_point in ("zoom/crosshair_spread", "zoom/crosshair_base", "zoom/crosshair_clear", "zoom/crosshair_to_back"):
 			write_versioned_function(entry_point, "# Custom crosshair disabled (mgs_custom_crosshair)\n")
 		return
 
@@ -143,6 +143,16 @@ execute store result storage {ns}:input crosshair.to int 1 run scoreboard player
 function {ns}:v{version}/zoom/crosshair_remove with storage {ns}:input crosshair
 scoreboard players reset @s {ns}.cross_from
 scoreboard players reset @s {ns}.cross_to
+""")
+
+	# Drawn last so it stays crisp on top of the flash. Same id in one tick: the client keeps its clock.
+	write_versioned_function("zoom/crosshair_to_back", f"""
+execute unless score @s {ns}.cross_to matches -2147483648.. run return 0
+data modify storage {ns}:input crosshair set value {{"from":0,"to":0}}
+execute store result storage {ns}:input crosshair.from int 1 run scoreboard players get @s {ns}.cross_from
+execute store result storage {ns}:input crosshair.to int 1 run scoreboard players get @s {ns}.cross_to
+function {ns}:v{version}/zoom/crosshair_remove with storage {ns}:input crosshair
+function {ns}:v{version}/zoom/crosshair_add with storage {ns}:input crosshair
 """)
 
 	write_versioned_function("zoom/crosshair_add", f"""

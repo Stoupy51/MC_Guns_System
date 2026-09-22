@@ -30,6 +30,10 @@ execute if score @s mgs.zoom matches 1 if score @s mgs.flash_slot matches 0 run 
 execute if score @s mgs.zoom matches 1 if score @s mgs.flash_slot matches 0 run scoreboard players set @s mgs.flash_id 7
 execute if score @s mgs.zoom matches 1 if score @s mgs.flash_slot matches 1 run posteffect add @s mgs:flash_pap_zoom_1
 execute if score @s mgs.zoom matches 1 if score @s mgs.flash_slot matches 1 run scoreboard players set @s mgs.flash_id 8
+
+# The flash lights from unmagnified depth, so the zoom must run after it; the crosshair stays on top
+function mgs:v5.1.0/zoom/fx_to_back
+function mgs:v5.1.0/zoom/crosshair_to_back
 scoreboard players set @s mgs.flash_off 2
 scoreboard players operation @s mgs.flash_off += #total_tick mgs.data
 

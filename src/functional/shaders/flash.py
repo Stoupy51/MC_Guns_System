@@ -232,6 +232,10 @@ function {ns}:v{version}/player/flash_clear
 execute store success score #flash_slot_was_1 {ns}.data if score @s {ns}.flash_slot matches 1
 execute store result score @s {ns}.flash_slot if score #flash_slot_was_1 {ns}.data matches 0
 {lines}
+
+# The flash lights from unmagnified depth, so the zoom must run after it; the crosshair stays on top
+function {ns}:v{version}/zoom/fx_to_back
+function {ns}:v{version}/zoom/crosshair_to_back
 scoreboard players set @s {ns}.flash_off {HOLD_TICKS}
 scoreboard players operation @s {ns}.flash_off += #total_tick {ns}.data
 """)

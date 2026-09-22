@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "fx_to_back.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/shaders/zoom.py"
+	],
+	"names": [],
+	"mappings": "AAgN6C;;;;;;;;;AAC7C;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}
