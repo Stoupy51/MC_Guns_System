@@ -20,7 +20,7 @@ FX_SCORES: list[str] = [
 	"flash_id", "flash_slot", "flash_off",
 	"zoom_fx", "zoom_fx_off",
 	"cross_from", "cross_to",
-	"hurt_fx", "hurt_out", "hurt_out_until",
+	"hurt_fx", "hurt_from", "hurt_pending", "hurt_fall_until", "hurt_out_until",
 ]
 """ Which post effect each player currently has, mirrored as scores so ids can be taken off again. """
 

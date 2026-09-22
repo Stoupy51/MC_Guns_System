@@ -38,7 +38,7 @@
 			],
 			"output": "swap",
 			"uniforms": {
-				"HurtConfig": [{"name": "Tint","type": "vec4","value": [1.0,0.05,0.05,0.9]},{"name": "Pulse","type": "vec2","value": [0.45,16.0]},{"name": "Shape","type": "vec2","value": [0.4,0.7]},{"name": "Fade","type": "vec2","value": [1.0,0.0]},{"name": "Aberration","type": "float","value": 0.004},{"name": "Duration","type": "float","value": 40.0}]
+				"HurtConfig": [{"name": "TintFrom","type": "vec4","value": [1.0,0.15,0.12,0.55]},{"name": "TintTo","type": "vec4","value": [1.0,0.15,0.12,0.55]},{"name": "Shape","type": "vec4","value": [0.62,0.35,0.62,0.35]},{"name": "PulseAberration","type": "vec4","value": [0.0,0.0,0.0,0.0]},{"name": "Duration","type": "float","value": 1.0}]
 			}
 		},
 		{

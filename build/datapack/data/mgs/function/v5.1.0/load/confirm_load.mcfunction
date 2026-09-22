@@ -151,7 +151,9 @@ scoreboard objectives add mgs.zoom_fx_off dummy
 scoreboard objectives add mgs.cross_from dummy
 scoreboard objectives add mgs.cross_to dummy
 scoreboard objectives add mgs.hurt_fx dummy
-scoreboard objectives add mgs.hurt_out dummy
+scoreboard objectives add mgs.hurt_from dummy
+scoreboard objectives add mgs.hurt_pending dummy
+scoreboard objectives add mgs.hurt_fall_until dummy
 scoreboard objectives add mgs.hurt_out_until dummy
 scoreboard objectives add mgs.fx_deaths deathCount
 

@@ -11,8 +11,10 @@ execute unless entity @s[gamemode=spectator] if score @s mgs.mp.in_game matches 
 execute unless entity @s[gamemode=spectator] if score @s mgs.mi.in_game matches 1 run function mgs:v5.1.0/player/hurt_resolve
 execute unless entity @s[gamemode=spectator] if score @s mgs.zb.in_game matches 1 run function mgs:v5.1.0/player/hurt_resolve
 execute unless score @s mgs.hurt_fx matches -2147483648.. run scoreboard players set @s mgs.hurt_fx 0
-execute if score @s mgs.hurt_fx = #hurt_tier mgs.data run return 0
-execute if score #hurt_tier mgs.data > @s mgs.hurt_fx run function mgs:v5.1.0/player/hurt_rise
-execute if score #hurt_tier mgs.data < @s mgs.hurt_fx run function mgs:v5.1.0/player/hurt_fall
-scoreboard players operation @s mgs.hurt_fx = #hurt_tier mgs.data
+execute if score @s mgs.hurt_fx = #hurt_tier mgs.data run return run scoreboard players reset @s mgs.hurt_pending
+execute if score #hurt_tier mgs.data > @s mgs.hurt_fx run return run function mgs:v5.1.0/player/hurt_swap
+
+# Healing: wait for the bar to settle, so crossing several thresholds becomes a single fade
+scoreboard players add @s mgs.hurt_pending 1
+execute if score @s mgs.hurt_pending matches 10.. run function mgs:v5.1.0/player/hurt_swap
 
