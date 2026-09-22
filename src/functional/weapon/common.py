@@ -26,7 +26,7 @@ def main() -> None:
 		"criteria": {
 			"requirement": {
 				"trigger": "minecraft:using_item",
-				"condition": {
+				"conditions": {
 					"item": {
 						"predicates": {
 							"minecraft:custom_data": f"{{{ns}:{{gun:true}}}}"
@@ -52,18 +52,23 @@ def main() -> None:
 		"criteria": {
 			"requirement": {
 				"trigger": "minecraft:player_interacted_with_entity",
-				"condition": {
+				"conditions": {
 					"item": {
 						"predicates": {
 							"minecraft:custom_data": f"{{{ns}:{{gun:true}}}}"
 						}
 					},
+					# `entity` is a loot condition, so the entity predicate sits inside an entity_properties.
 					# EntityPredicate is a flat map dispatched on the entity_sub_predicate_type registry.
 					# Each condition is keyed by its registry id: "entity_type"/"nbt", NOT the old "type"/"nbt".
 					# Writing "type" makes the game look for a minecraft:type sub-predicate and reject the advancement.
 					"entity": {
-						"entity_type": "minecraft:wandering_trader",
-						"nbt": f'{{Tags:["{ns}.zb_escort"]}}'
+						"type": "minecraft:entity_properties",
+						"entity": "this",
+						"predicate": {
+							"entity_type": "minecraft:wandering_trader",
+							"nbt": f'{{Tags:["{ns}.zb_escort"]}}'
+						}
 					}
 				}
 			}
