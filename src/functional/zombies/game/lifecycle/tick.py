@@ -4,6 +4,7 @@ from stewbeet import Mem, write_tick_file, write_versioned_function
 
 from ....helpers import MGS_TAG
 from ....helpers.titles import TitleTimes
+from ...player.revive.shared import SOLO_QR_MAX
 
 
 # Functions
@@ -46,15 +47,20 @@ execute store result score #zb_alive {ns}.data if entity @e[tag={ns}.zombie_roun
 execute if score #zb_alive {ns}.data matches 0 if score #zb_to_spawn {ns}.data matches 0 if score #zb_dog_pending {ns}.data matches 1.. store result score #zb_dog_pending {ns}.data if entity @e[tag={ns}.dog_portal]
 execute if score #zb_alive {ns}.data matches 0 if score #zb_to_spawn {ns}.data matches 0 if score #zb_dog_pending {ns}.data matches ..0 run function {ns}:v{version}/zombies/round_complete
 
-# Check game over: only trigger when no healthy AND no downed players remain
-# - Healthy: downed=0, gamemode=!spectator (playing normally)
-# - Downed: downed=1, gamemode=spectator (spectating their mannequin, can be revived)
-# - Bled out: downed=0, gamemode=spectator (waiting for next round — truly dead)
+# Check game over: the run ends once nobody is left standing to revive anyone.
+# - Healthy: downed=0, gamemode=!spectator (playing normally; a Who's Who owner is one of these)
+# - Downed: downed=1, gamemode=spectator (only a healthy teammate can bring them back)
+# - Bled out: downed=0, gamemode=spectator (waiting for next round, truly dead)
+# The one exception is solo Quick Revive with uses left, which revives on its own.
 execute if score #zb_round_grace {ns}.data matches 1.. run scoreboard players remove #zb_round_grace {ns}.data 1
 execute unless score #zb_round_grace {ns}.data matches 1.. store result score #zb_alive_players {ns}.data if entity @a[scores={{{ns}.zb.in_game=1,{ns}.zb.downed=0}},gamemode=!spectator]
-execute unless score #zb_round_grace {ns}.data matches 1.. store result score #zb_downed_alive {ns}.data if entity @a[scores={{{ns}.zb.in_game=1,{ns}.zb.downed=1}},gamemode=spectator]
-execute unless score #zb_round_grace {ns}.data matches 1.. run scoreboard players operation #zb_alive_players {ns}.data += #zb_downed_alive {ns}.data
-execute unless score #zb_round_grace {ns}.data matches 1.. if score #zb_alive_players {ns}.data matches 0 run function {ns}:v{version}/zombies/game_over
+execute unless score #zb_round_grace {ns}.data matches 1.. if score #zb_alive_players {ns}.data matches 0 store result score #zb_ingame_total {ns}.data if entity @a[scores={{{ns}.zb.in_game=1}}]
+execute unless score #zb_round_grace {ns}.data matches 1.. if score #zb_alive_players {ns}.data matches 0 if score #zb_ingame_total {ns}.data matches 1 store success score #zb_alive_players {ns}.data as @a[scores={{{ns}.zb.in_game=1,{ns}.zb.downed=1}},tag={ns}.zb_qr_armed] unless score @s {ns}.zb.qr_uses matches {SOLO_QR_MAX}..
+
+# Nobody left for two ticks in a row, so a revive or respawn landing on the same tick cannot end the run
+execute unless score #zb_round_grace {ns}.data matches 1.. if score #zb_alive_players {ns}.data matches 1.. run scoreboard players set #zb_nobody_ticks {ns}.data 0
+execute unless score #zb_round_grace {ns}.data matches 1.. if score #zb_alive_players {ns}.data matches 0 run scoreboard players add #zb_nobody_ticks {ns}.data 1
+execute unless score #zb_round_grace {ns}.data matches 1.. if score #zb_nobody_ticks {ns}.data matches 2.. run function {ns}:v{version}/zombies/game_over
 
 # Stuck zombie check (every 20 ticks, 24 random non-rising zombies; escorted ones are NoAI
 # and already being rescued by their trader — see escort.py)
