@@ -23,8 +23,8 @@ def generate_roaming() -> None:
 			"entries": [{
 				"type": "minecraft:item",
 				"name": "minecraft:player_head",
-				"functions": [{
-					"function": "minecraft:set_components",
+				"modifier": [{
+					"type": "minecraft:set_components",
 					"components": {
 						"minecraft:profile": {
 							"properties": [{

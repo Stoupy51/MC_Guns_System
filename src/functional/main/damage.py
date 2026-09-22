@@ -25,7 +25,7 @@ def write_damage_and_signals() -> None:
 
 	# Loot table for getting username
 	Mem.ctx.data[ns].loot_tables["get_username"] = set_json_encoder(LootTable({
-		"type": "minecraft:block",
+		"type": "minecraft:chest",
 		"pools": [
 			{
 				"rolls": 1,
@@ -34,9 +34,9 @@ def write_damage_and_signals() -> None:
 					{
 						"type": "minecraft:item",
 						"name": "minecraft:player_head",
-						"functions": [
+						"modifier": [
 							{
-								"function": "minecraft:fill_player_head",
+								"type": "minecraft:fill_player_head",
 								"entity": "this"
 							}
 						]
