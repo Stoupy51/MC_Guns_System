@@ -3,7 +3,7 @@
 The migration is written. Reference material lives in [POSTEFFECT_26.3.md](specs/POSTEFFECT_26.3.md);
 this file is only the list of things that cannot be checked from a build.
 
-Everything below is unverified against a running client.
+Everything below is verified in game, except the Iris items still open.
 
 ---
 
@@ -29,35 +29,35 @@ then one fullscreen pass. `mgs:clock.glsl` holds the pack and ramp helpers.
 
 Stop at the first failure. Everything rests on step 1.
 
-- [ ] **The clock.** `/posteffect add @s mgs:debug_clock`. A green strip should appear at the bottom
+- [x] **The clock.** `/posteffect add @s mgs:debug_clock`. A green strip should appear at the bottom
       of the screen and sweep across once every 10 ticks, turning blue (settled) after a minute. Red means the persistent target never
       reported an unarmed frame, which invalidates every timed effect. No strip at all means the
       chain failed to compile, so check the log and remember that a compile error blacklists the id
       until F3+T.
-- [ ] **Re-arming.** Remove it, wait a second, add it again. The sweep must restart from the left.
+- [x] **Re-arming.** Remove it, wait a second, add it again. The sweep must restart from the left.
       If it resumes where it left off, `closePersistentTargets` is not doing what the source says
       and the flash will not repeat correctly.
-- [ ] **No grid.** Nothing tiled or offset anywhere on screen with any effect applied.
-- [ ] **Muzzle flash.** Full strength for one tick, gone after about 80 ms, and **behind the gun**.
+- [x] **No grid.** Nothing tiled or offset anywhere on screen with any effect applied.
+- [x] **Muzzle flash.** Full strength for one tick, gone after about 80 ms, and **behind the gun**.
       The fastest automatic weapon should flash 10 times per second, each burst distinct.
-- [ ] **Flash while someone else shoots.** Stand near a shooter. The bloom is screen centred, which
+- [x] **Flash while someone else shoots.** Stand near a shooter. The bloom is screen centred, which
       is how it already behaved, but check that the spark sprite shows in the right place and that
       line of sight still gates it through walls.
-- [ ] **Pack-a-Punch flash** picks the purple id.
-- [ ] **Aim down sights** on a scoped weapon: the magnification and the lens distortion ramp in over
+- [x] **Pack-a-Punch flash** picks the purple id.
+- [x] **Aim down sights** on a scoped weapon: the magnification and the lens distortion ramp in over
       about a third of a second, then hold. Release: they ramp back out over 0.2 s and the id comes
       off. Tapping sneak repeatedly inside that 0.2 s window snaps back to zero first, which is
       known and accepted.
-- [ ] **Unscoped weapon** gets the centre pull with no barrel distortion.
-- [ ] **Weapon switch while aiming** clears the overlay (`zoom/clear_state`).
-- [ ] **Crosshair** shows the base size with no gun, animates with movement while holding a gun or
+- [x] **Unscoped weapon** gets the centre pull with no barrel distortion.
+- [x] **Weapon switch while aiming** clears the overlay (`zoom/clear_state`).
+- [x] **Crosshair** shows the base size with no gun, animates with movement while holding a gun or
       a grenade, and disappears while aiming.
-- [ ] **Low health.** Below 40% a vignette with an uneven, drifting edge; below 20% the heartbeat
+- [x] **Low health.** Below 40% a vignette with an uneven, drifting edge; below 20% the heartbeat
       and rim colour separation too. Heal up fast and it fades out over 2 seconds.
-- [ ] **Leaving a game** while hurt takes the overlay off, and so does the round ending.
-- [ ] **Relog** mid-round: ids are stored in player NBT, so they should come back intact and the
+- [x] **Leaving a game** while hurt takes the overlay off, and so does the round ending.
+- [x] **Relog** mid-round: ids are stored in player NBT, so they should come back intact and the
       mirror scores should still agree with them.
-- [ ] **Death and respawn:** the server drops the effect list on respawn, and `{ns}.fx_deaths`
+- [x] **Death and respawn:** the server drops the effect list on respawn, and `{ns}.fx_deaths`
       resets the mirror scores, so the crosshair should be back within one tick.
 
 ---
