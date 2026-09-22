@@ -28,15 +28,20 @@ execute store result score #zb_alive mgs.data if entity @e[tag=mgs.zombie_round]
 execute if score #zb_alive mgs.data matches 0 if score #zb_to_spawn mgs.data matches 0 if score #zb_dog_pending mgs.data matches 1.. store result score #zb_dog_pending mgs.data if entity @e[tag=mgs.dog_portal]
 execute if score #zb_alive mgs.data matches 0 if score #zb_to_spawn mgs.data matches 0 if score #zb_dog_pending mgs.data matches ..0 run function mgs:v5.1.0/zombies/round_complete
 
-# Check game over: only trigger when no healthy AND no downed players remain
-# - Healthy: downed=0, gamemode=!spectator (playing normally)
-# - Downed: downed=1, gamemode=spectator (spectating their mannequin, can be revived)
-# - Bled out: downed=0, gamemode=spectator (waiting for next round — truly dead)
+# Check game over: the run ends once nobody is left standing to revive anyone.
+# - Healthy: downed=0, gamemode=!spectator (playing normally; a Who's Who owner is one of these)
+# - Downed: downed=1, gamemode=spectator (only a healthy teammate can bring them back)
+# - Bled out: downed=0, gamemode=spectator (waiting for next round, truly dead)
+# The one exception is solo Quick Revive with uses left, which revives on its own.
 execute if score #zb_round_grace mgs.data matches 1.. run scoreboard players remove #zb_round_grace mgs.data 1
 execute unless score #zb_round_grace mgs.data matches 1.. store result score #zb_alive_players mgs.data if entity @a[scores={mgs.zb.in_game=1,mgs.zb.downed=0},gamemode=!spectator]
-execute unless score #zb_round_grace mgs.data matches 1.. store result score #zb_downed_alive mgs.data if entity @a[scores={mgs.zb.in_game=1,mgs.zb.downed=1},gamemode=spectator]
-execute unless score #zb_round_grace mgs.data matches 1.. run scoreboard players operation #zb_alive_players mgs.data += #zb_downed_alive mgs.data
-execute unless score #zb_round_grace mgs.data matches 1.. if score #zb_alive_players mgs.data matches 0 run function mgs:v5.1.0/zombies/game_over
+execute unless score #zb_round_grace mgs.data matches 1.. if score #zb_alive_players mgs.data matches 0 store result score #zb_ingame_total mgs.data if entity @a[scores={mgs.zb.in_game=1}]
+execute unless score #zb_round_grace mgs.data matches 1.. if score #zb_alive_players mgs.data matches 0 if score #zb_ingame_total mgs.data matches 1 store success score #zb_alive_players mgs.data as @a[scores={mgs.zb.in_game=1,mgs.zb.downed=1},tag=mgs.zb_qr_armed] unless score @s mgs.zb.qr_uses matches 3..
+
+# Nobody left for two ticks in a row, so a revive or respawn landing on the same tick cannot end the run
+execute unless score #zb_round_grace mgs.data matches 1.. if score #zb_alive_players mgs.data matches 1.. run scoreboard players set #zb_nobody_ticks mgs.data 0
+execute unless score #zb_round_grace mgs.data matches 1.. if score #zb_alive_players mgs.data matches 0 run scoreboard players add #zb_nobody_ticks mgs.data 1
+execute unless score #zb_round_grace mgs.data matches 1.. if score #zb_nobody_ticks mgs.data matches 2.. run function mgs:v5.1.0/zombies/game_over
 
 # Stuck zombie check (every 20 ticks, 24 random non-rising zombies; escorted ones are NoAI
 # and already being rescued by their trader — see escort.py)

@@ -9,7 +9,8 @@
 		"clock_next": {
 			"width": 1,
 			"height": 1
-		}
+		},
+		"swap": {}
 	},
 	"passes": [
 		{
@@ -35,10 +36,18 @@
 				{"sampler_name": "Clock","target": "clock_next"},
 				{"sampler_name": "In","target": "minecraft:main"}
 			],
-			"output": "minecraft:main",
+			"output": "swap",
 			"uniforms": {
-				"HurtConfig": [{"name": "Tint","type": "vec4","value": [1.0,0.15,0.12,0.55]},{"name": "Pulse","type": "vec2","value": [0.0,24.0]},{"name": "Shape","type": "vec2","value": [0.35,0.35]},{"name": "Aberration","type": "float","value": 0.0},{"name": "Duration","type": "float","value": 5.0}]
+				"HurtConfig": [{"name": "Tint","type": "vec4","value": [1.0,0.15,0.12,0.55]},{"name": "Pulse","type": "vec2","value": [0.0,24.0]},{"name": "Shape","type": "vec2","value": [0.62,0.35]},{"name": "Fade","type": "vec2","value": [0.0,1.0]},{"name": "Aberration","type": "float","value": 0.0},{"name": "Duration","type": "float","value": 5.0}]
 			}
+		},
+		{
+			"vertex_shader": "minecraft:core/screenquad",
+			"fragment_shader": "mgs:post/copy",
+			"inputs": [
+				{"sampler_name": "In","target": "swap"}
+			],
+			"output": "minecraft:main"
 		}
 	]
 }

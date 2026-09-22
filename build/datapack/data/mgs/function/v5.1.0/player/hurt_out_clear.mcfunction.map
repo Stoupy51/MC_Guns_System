@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "hurt_out_clear.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/shaders/hurt.py"
+	],
+	"names": [],
+	"mappings": "AAiNmD;;;;;;;;;;AACnD;AACA;AACA;AACA;AACA"
+}

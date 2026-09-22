@@ -62,6 +62,9 @@ def main() -> None:
 	""" Register the 25 crosshair ids, blank the vanilla sprite, and wire the spread state machine. """
 	ns: str = Mem.ctx.project_id
 	if not Mem.ctx.meta.get("mgs_custom_crosshair", False):
+		# zoom/main calls these every tick, and a call to a missing function fails the caller at load
+		for entry_point in ("zoom/crosshair_spread", "zoom/crosshair_base", "zoom/crosshair_clear"):
+			write_versioned_function(entry_point, "# Custom crosshair disabled (mgs_custom_crosshair)\n")
 		return
 
 	Mem.ctx.assets[ns].fragment_shaders["post/crosshair"] = FragmentShader(CROSSHAIR_FSH)
@@ -94,7 +97,17 @@ execute if predicate {ns}:v{version}/is_sprinting run scoreboard players set #sp
 execute if predicate {ns}:v{version}/is_sneaking run scoreboard players set #spread {ns}.data 0
 execute unless predicate {ns}:v{version}/is_on_ground run scoreboard players set #spread {ns}.data 4
 execute unless predicate {ns}:v{version}/is_on_ground if predicate {ns}:v{version}/is_sneaking run scoreboard players set #spread {ns}.data 2
+function {ns}:v{version}/zoom/crosshair_apply
+""")
 
+	# The vanilla sprite is blanked for everyone, so without a gun this still has to draw something.
+	write_versioned_function("zoom/crosshair_base", f"""
+scoreboard players set #spread {ns}.data 1
+function {ns}:v{version}/zoom/crosshair_apply
+""")
+
+	write_versioned_function("zoom/crosshair_apply", f"""
+# @s = any player, #spread = the level to show
 execute unless score @s {ns}.cross_to matches -2147483648.. run return run function {ns}:v{version}/zoom/crosshair_first
 execute if score @s {ns}.cross_to = #spread {ns}.data run return 0
 function {ns}:v{version}/zoom/crosshair_swap

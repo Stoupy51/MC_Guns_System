@@ -9,8 +9,8 @@
 # If no gun data, stop here
 execute unless data storage mgs:gun all.gun run return run function mgs:v5.1.0/zoom/check_slowness
 
-# Grenades cannot zoom/aim
-execute if data storage mgs:gun all.stats.grenade_type run return 0
+# Grenades cannot zoom/aim, but still get the movement crosshair
+execute if data storage mgs:gun all.stats.grenade_type run return run function mgs:v5.1.0/zoom/crosshair_spread
 
 # Get is sneaking state (don't apply zoom if reloading)
 scoreboard players set #is_sneaking mgs.data 0

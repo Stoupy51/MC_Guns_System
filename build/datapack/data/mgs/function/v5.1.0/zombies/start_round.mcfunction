@@ -34,6 +34,7 @@ function mgs:v5.1.0/zombies/calc_spawn_timer
 
 # Grace period: don't check game over for 3 seconds (60 ticks)
 scoreboard players set #zb_round_grace mgs.data 60
+scoreboard players set #zb_nobody_ticks mgs.data 0
 
 # Reset stuck zombie glow timers
 scoreboard players set #zb_stuck_timer mgs.data 0

@@ -9,7 +9,8 @@
 		"clock_next": {
 			"width": 1,
 			"height": 1
-		}
+		},
+		"swap": {}
 	},
 	"passes": [
 		{
@@ -35,10 +36,18 @@
 				{"sampler_name": "Clock","target": "clock_next"},
 				{"sampler_name": "In","target": "minecraft:main"}
 			],
-			"output": "minecraft:main",
+			"output": "swap",
 			"uniforms": {
 				"CrosshairConfig": [{"name": "Spread","type": "vec2","value": [4.0,0.0]},{"name": "Duration","type": "float","value": 4.0}]
 			}
+		},
+		{
+			"vertex_shader": "minecraft:core/screenquad",
+			"fragment_shader": "mgs:post/copy",
+			"inputs": [
+				{"sampler_name": "In","target": "swap"}
+			],
+			"output": "minecraft:main"
 		}
 	]
 }

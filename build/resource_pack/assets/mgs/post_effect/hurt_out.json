@@ -9,7 +9,8 @@
 		"clock_next": {
 			"width": 1,
 			"height": 1
-		}
+		},
+		"swap": {}
 	},
 	"passes": [
 		{
@@ -30,17 +31,23 @@
 		},
 		{
 			"vertex_shader": "minecraft:core/screenquad",
-			"fragment_shader": "mgs:post/flash",
+			"fragment_shader": "mgs:post/hurt",
 			"inputs": [
 				{"sampler_name": "Clock","target": "clock_next"},
-				{"sampler_name": "In","target": "minecraft:main"},
-				{"sampler_name": "Depth","target": "minecraft:main","use_depth_buffer": true},
-				{"sampler_name": "Spark","location": "mgs:flash","width": 1536,"height": 1536,"bilinear": true}
+				{"sampler_name": "In","target": "minecraft:main"}
 			],
-			"output": "minecraft:main",
+			"output": "swap",
 			"uniforms": {
-				"FlashConfig": [{"name": "Color","type": "vec4","value": [1.0,0.8,0.5,0.0]},{"name": "Spark","type": "vec4","value": [0.085,-0.11,0.45,0.45]},{"name": "Duration","type": "float","value": 0.8}]
+				"HurtConfig": [{"name": "Tint","type": "vec4","value": [1.0,0.15,0.12,0.55]},{"name": "Pulse","type": "vec2","value": [0.0,24.0]},{"name": "Shape","type": "vec2","value": [0.62,0.35]},{"name": "Fade","type": "vec2","value": [1.0,0.0]},{"name": "Aberration","type": "float","value": 0.0},{"name": "Duration","type": "float","value": 40.0}]
 			}
+		},
+		{
+			"vertex_shader": "minecraft:core/screenquad",
+			"fragment_shader": "mgs:post/copy",
+			"inputs": [
+				{"sampler_name": "In","target": "swap"}
+			],
+			"output": "minecraft:main"
 		}
 	]
 }

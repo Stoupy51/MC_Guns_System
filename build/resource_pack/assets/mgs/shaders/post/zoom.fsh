@@ -9,8 +9,9 @@ uniform sampler2D InSampler;
 
 layout(std140) uniform ZoomConfig {
     vec2 Magnify;    // UV pull toward the centre, at the start and at the end of the ramp
-    vec2 Barrel;     // lens distortion strength, at the start and at the end of the ramp
-    vec2 Lens;       // x = scope magnification divisor, y = lens radius, 0 disables the lens
+    vec2 LensAlpha;  // lens opacity, at the start and at the end of its own window
+    vec4 Lens;       // x = scope magnification divisor, y = lens radius (0 disables), z = barrel strength
+    vec2 LensTicks;  // the lens cross-fades between these two ticks, apart from the magnification
     float Duration;  // ramp length in ticks
 };
 
@@ -50,21 +51,22 @@ vec4 textureBicubic(sampler2D samp, vec2 texCoords, vec2 texSize) {
 }
 
 void main() {
-    float t = mgs_ramp(texture(ClockSampler, vec2(0.5)), GameTime, Duration);
-    float magnify = mix(Magnify.x, Magnify.y, t);
-    float barrel = mix(Barrel.x, Barrel.y, t);
+    vec4 clock = texture(ClockSampler, vec2(0.5));
+    float magnify = mix(Magnify.x, Magnify.y, mgs_ramp(clock, GameTime, Duration));
+    float lensAlpha = mix(LensAlpha.x, LensAlpha.y, smoothstep(LensTicks.x, LensTicks.y, mgs_elapsed(clock, GameTime)));
 
     fragColor = texture(InSampler, mix(texCoord, vec2(0.5), magnify));
 
     vec2 inSize = vec2(textureSize(InSampler, 0));
     float aspectRatio = inSize.x / inSize.y;
     vec2 screenCoord = (texCoord - vec2(0.5)) * vec2(aspectRatio, 1.0);
-    if (Lens.y <= 0.0 || barrel <= 0.0 || length(screenCoord) >= Lens.y) return;
+    if (Lens.y <= 0.0 || lensAlpha <= 0.0 || length(screenCoord) >= Lens.y) return;
 
-    float d = length(screenCoord * barrel / Lens.y);
+    // Always at full strength and faded as a whole: a weak barrel would squash the lens into one pixel.
+    float d = length(screenCoord * Lens.z / Lens.y);
     float r = atan(d, sqrt(1.0 - d * d)) / 3.1415926535;
     float theta = atan(screenCoord.y, screenCoord.x);
     vec2 lensCoord = vec2(cos(theta), sin(theta)) * r / Lens.x;
     vec2 pixCoord = mix(lensCoord * vec2(1.0 / aspectRatio, 1.0) + vec2(0.5), vec2(0.5), magnify);
-    fragColor = textureBicubic(InSampler, pixCoord, inSize);
+    fragColor = mix(fragColor, textureBicubic(InSampler, pixCoord, inSize), lensAlpha);
 }

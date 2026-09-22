@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "flash_clear.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/shaders/flash.py"
+	],
+	"names": [],
+	"mappings": "AAkPgD;;;;;;;;;;AAChD;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

@@ -1,6 +1,6 @@
 # 26.3 shaders: what to verify in game
 
-The migration is written. Reference material lives in [POSTEFFECT_26.3.md](POSTEFFECT_26.3.md);
+The migration is written. Reference material lives in [POSTEFFECT_26.3.md](specs/POSTEFFECT_26.3.md);
 this file is only the list of things that cannot be checked from a build.
 
 Everything below is unverified against a running client.
@@ -37,10 +37,9 @@ Stop at the first failure. Everything rests on step 1.
 - [ ] **Re-arming.** Remove it, wait a second, add it again. The sweep must restart from the left.
       If it resumes where it left off, `closePersistentTargets` is not doing what the source says
       and the flash will not repeat correctly.
-- [ ] **Muzzle flash.** Fire a slow weapon. The burst should be visibly shorter than before, about
-      two frames. Then fire the fastest automatic weapon available: the flash must still blink
-      rather than sit on permanently. It is gated to one per 3 ticks, and the id needs a full tick
-      off between bursts.
+- [ ] **No grid.** Nothing tiled or offset anywhere on screen with any effect applied.
+- [ ] **Muzzle flash.** Full strength for one tick, gone after about 80 ms, and **behind the gun**.
+      The fastest automatic weapon should flash 10 times per second, each burst distinct.
 - [ ] **Flash while someone else shoots.** Stand near a shooter. The bloom is screen centred, which
       is how it already behaved, but check that the spark sprite shows in the right place and that
       line of sight still gates it through walls.
@@ -51,16 +50,15 @@ Stop at the first failure. Everything rests on step 1.
       known and accepted.
 - [ ] **Unscoped weapon** gets the centre pull with no barrel distortion.
 - [ ] **Weapon switch while aiming** clears the overlay (`zoom/clear_state`).
-- [ ] **Crosshair** appears when holding a gun, disappears while aiming, and its gap animates
-      between standing, walking, sprinting and jumping rather than snapping.
-- [ ] **Low health.** Take damage below 40% for the soft vignette, below 20% for the heartbeat and
-      the rim colour separation. Heal back up and confirm both come off.
+- [ ] **Crosshair** shows the base size with no gun, animates with movement while holding a gun or
+      a grenade, and disappears while aiming.
+- [ ] **Low health.** Below 40% a vignette with an uneven, drifting edge; below 20% the heartbeat
+      and rim colour separation too. Heal up fast and it fades out over 2 seconds.
 - [ ] **Leaving a game** while hurt takes the overlay off, and so does the round ending.
 - [ ] **Relog** mid-round: ids are stored in player NBT, so they should come back intact and the
       mirror scores should still agree with them.
-- [ ] **Death and respawn:** post effects are dropped server side on respawn, while the mirror
-      scores survive. The crosshair re-asserts on the next spread change and the hurt tier on the
-      next health change, so check nothing is stuck for longer than that.
+- [ ] **Death and respawn:** the server drops the effect list on respawn, and `{ns}.fx_deaths`
+      resets the mirror scores, so the crosshair should be back within one tick.
 
 ---
 
@@ -80,12 +78,15 @@ Stop at the first failure. Everything rests on step 1.
 
 ## Iris
 
-Post effects compose with shaderpacks (see [POSTEFFECT_26.3.md](POSTEFFECT_26.3.md) section 7), but
+Post effects compose with shaderpacks (see [POSTEFFECT_26.3.md](specs/POSTEFFECT_26.3.md) section 7), but
 none of it is tested and Iris had no 26.3 branch at the time of writing.
 
 - [ ] Sanity test with a heavy pack: flash bloom, scope distortion, crosshair, hurt vignette.
-- [ ] Check the depth read specifically. `mgs:post/flash` is the only shader that reads main depth,
-      and the Iris and vanilla split is most fragile there.
+- [x] Flash bloom, scope, crosshair and hurt all work with Iris.
+- [ ] **Flash in front of the gun with Iris.** The gun mask relies on the `core/integrate_depth`
+      override, which Iris bypasses. `/posteffect add @s mgs:debug_depth` with Iris on and off shows
+      where the gun lands in depth: magenta = marked, yellow = squashed near the camera, grey = world.
+      The fix depends on which colour the gun turns under Iris.
 - [ ] Look for banding from grading an already tonemapped image. If it is bad, soften the flash.
 - [ ] Re-read Iris's `MixinPostChain`. It is an empty class today; if that changes, the whole
       compatibility story needs revisiting.

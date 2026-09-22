@@ -14,7 +14,7 @@ void main() {
     fragColor = texture(InSampler, texCoord);
     vec4 clock = texture(ClockSampler, vec2(0.5));
 
-    // Bottom strip: green while the clock is armed, red if it never armed. Its width is the
+    // Bottom strip (texCoord.y grows upward): green while the clock is armed, red if it never armed. Its width is the
     // elapsed time, one tenth of the screen per tick, so a stuck clock is obvious at a glance.
     if (texCoord.y < 0.03) {
         float ticks = mgs_elapsed(clock, GameTime);

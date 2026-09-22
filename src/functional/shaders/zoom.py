@@ -21,6 +21,12 @@ OUT_TICKS: float = 4.0
 DISTORTION: float = 0.55
 """ Barrel strength of the lens, unitless. """
 
+LENS_IN_TICKS: list[float] = [5.0, 6.0]
+""" The lens appears between these ticks, once the scope model has finished swinging to the centre. """
+
+LENS_OUT_TICKS: list[float] = [0.0, 1.0]
+""" Leaving the scope, the lens goes at once, before the model starts swinging away. """
+
 
 @dataclass(frozen=True)
 class ScopeLevel:
@@ -29,13 +35,14 @@ class ScopeLevel:
 	magnify: float
 	""" How far the UV is pulled toward the centre at full zoom, 0.45 being roughly 1.82x. """
 	lens_radius: float
-	""" Screen-space radius of the barrel distortion, 0 for weapons with no scope. """
+	""" Screen-space radius of the barrel distortion, 0 for weapons with no scope.
+	Sized to the scope opening once magnified: the held model is in the image and gets pulled too. """
 
 
 SCOPE_LEVELS: list[ScopeLevel] = [
 	ScopeLevel(level=2, magnify=0.25, lens_radius=0.00),
-	ScopeLevel(level=3, magnify=0.30, lens_radius=0.14),
-	ScopeLevel(level=4, magnify=0.45, lens_radius=0.20),
+	ScopeLevel(level=3, magnify=0.30, lens_radius=0.21),
+	ScopeLevel(level=4, magnify=0.45, lens_radius=0.30),
 ]
 """ Level 2 is the centre-only pull used by weapons without a scope, so it has no lens. """
 
@@ -48,8 +55,9 @@ uniform sampler2D InSampler;
 
 layout(std140) uniform ZoomConfig {
     vec2 Magnify;    // UV pull toward the centre, at the start and at the end of the ramp
-    vec2 Barrel;     // lens distortion strength, at the start and at the end of the ramp
-    vec2 Lens;       // x = scope magnification divisor, y = lens radius, 0 disables the lens
+    vec2 LensAlpha;  // lens opacity, at the start and at the end of its own window
+    vec4 Lens;       // x = scope magnification divisor, y = lens radius (0 disables), z = barrel strength
+    vec2 LensTicks;  // the lens cross-fades between these two ticks, apart from the magnification
     float Duration;  // ramp length in ticks
 };
 
@@ -89,23 +97,24 @@ vec4 textureBicubic(sampler2D samp, vec2 texCoords, vec2 texSize) {
 }
 
 void main() {
-    float t = mgs_ramp(texture(ClockSampler, vec2(0.5)), GameTime, Duration);
-    float magnify = mix(Magnify.x, Magnify.y, t);
-    float barrel = mix(Barrel.x, Barrel.y, t);
+    vec4 clock = texture(ClockSampler, vec2(0.5));
+    float magnify = mix(Magnify.x, Magnify.y, mgs_ramp(clock, GameTime, Duration));
+    float lensAlpha = mix(LensAlpha.x, LensAlpha.y, smoothstep(LensTicks.x, LensTicks.y, mgs_elapsed(clock, GameTime)));
 
     fragColor = texture(InSampler, mix(texCoord, vec2(0.5), magnify));
 
     vec2 inSize = vec2(textureSize(InSampler, 0));
     float aspectRatio = inSize.x / inSize.y;
     vec2 screenCoord = (texCoord - vec2(0.5)) * vec2(aspectRatio, 1.0);
-    if (Lens.y <= 0.0 || barrel <= 0.0 || length(screenCoord) >= Lens.y) return;
+    if (Lens.y <= 0.0 || lensAlpha <= 0.0 || length(screenCoord) >= Lens.y) return;
 
-    float d = length(screenCoord * barrel / Lens.y);
+    // Always at full strength and faded as a whole: a weak barrel would squash the lens into one pixel.
+    float d = length(screenCoord * Lens.z / Lens.y);
     float r = atan(d, sqrt(1.0 - d * d)) / 3.1415926535;
     float theta = atan(screenCoord.y, screenCoord.x);
     vec2 lensCoord = vec2(cos(theta), sin(theta)) * r / Lens.x;
     vec2 pixCoord = mix(lensCoord * vec2(1.0 / aspectRatio, 1.0) + vec2(0.5), vec2(0.5), magnify);
-    fragColor = textureBicubic(InSampler, pixCoord, inSize);
+    fragColor = mix(fragColor, textureBicubic(InSampler, pixCoord, inSize), lensAlpha);
 }
 """
 
@@ -125,15 +134,16 @@ def main() -> None:
 def register_variant(ns: str, scope: ScopeLevel, fading_out: bool) -> None:
 	""" Register one direction of one scope level, the ramp running forwards or in reverse. """
 	magnify: list[float] = [scope.magnify, 0.0] if fading_out else [0.0, scope.magnify]
-	barrel: list[float] = [DISTORTION, 0.0] if fading_out else [0.0, DISTORTION]
+	lens_alpha: list[float] = [1.0, 0.0] if fading_out else [0.0, 1.0]
 	timed_effect(
 		ns,
 		f"zoom_{scope.level}{'_out' if fading_out else ''}",
 		f"{ns}:post/zoom",
 		{"ZoomConfig": [
 			uniform("Magnify", "vec2", magnify),
-			uniform("Barrel", "vec2", barrel),
-			uniform("Lens", "vec2", [float(scope.level), scope.lens_radius]),
+			uniform("LensAlpha", "vec2", lens_alpha),
+			uniform("Lens", "vec4", [float(scope.level), scope.lens_radius, DISTORTION, 0.0]),
+			uniform("LensTicks", "vec2", LENS_OUT_TICKS if fading_out else LENS_IN_TICKS),
 			uniform("Duration", "float", OUT_TICKS if fading_out else IN_TICKS),
 		]},
 	)
