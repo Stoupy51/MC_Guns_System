@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "crosshair_to_back.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/shaders/crosshair.py"
+	],
+	"names": [],
+	"mappings": "AAoJoD;;;;;;;;;AACpD;AACA;AACA;AACA;AACA;AACA;AACA"
+}

@@ -200,6 +200,18 @@ execute unless score @s {ns}.zoom_fx matches 1.. run return 0
 scoreboard players set @s {ns}.zoom_fx_off {int(OUT_TICKS) + 1}
 """)
 
+	# Same id removed and re-added in one tick: the client keeps the chain and its clock, only the order changes.
+	to_back: str = "\n".join(
+		f"""execute if score @s {ns}.zoom_fx matches {sign}{scope.level} run posteffect remove @s {ns}:zoom_{scope.level}{suffix}
+execute if score @s {ns}.zoom_fx matches {sign}{scope.level} run posteffect add @s {ns}:zoom_{scope.level}{suffix}"""
+		for scope in SCOPE_LEVELS for sign, suffix in (("", ""), ("-", "_out"))
+	)
+	write_versioned_function("zoom/fx_to_back", f"""
+# Post effects run in list order. The flash lights the scene from the unmagnified depth buffer,
+# so it has to run before the zoom, or its lighting lands on the wrong blocks once magnified.
+{to_back}
+""")
+
 	expire: str = "\n".join(
 		f"execute if score @s {ns}.zoom_fx matches -{scope.level} run posteffect remove @s {ns}:zoom_{scope.level}_out"
 		for scope in SCOPE_LEVELS
