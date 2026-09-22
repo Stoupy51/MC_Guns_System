@@ -78,7 +78,7 @@ $function {ns}:v{version}/ammo/modify_mag_lore {{slot:"$(slot)"}}
 scoreboard players operation @s {ns}.{REMAINING_BULLETS} = #found_ammo {ns}.data
 """)
 	write_versioned_function("ammo/inventory/set_item_model", f"""
-$item modify entity @s $(slot) {{function:"minecraft:set_components", components:{{"minecraft:item_model":"{ns}:$({BASE_WEAPON})_mag_empty"}}}}
+$item modify entity @s $(slot) {{type:"minecraft:set_components", components:{{"minecraft:item_model":"{ns}:$({BASE_WEAPON})_mag_empty"}}}}
 """)
 
 	# Consume a consumable magazine fully (clear it from inventory)

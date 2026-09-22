@@ -235,7 +235,7 @@ kill @s
 # are what you kite, so one stalling on a 1-block rise is far more noticeable. Safe as a `base` value
 # unlike HP — Wolf.applyTamingSideEffects only ever resets MAX_HEALTH, so the save/load round-trip
 # that forced the HP modifier in types/dog leaves this one alone.
-summon minecraft:wolf ~ ~ ~ {{Tags:["{ns}.zombie_round","{ns}.zb_dog","{ns}.zb_dog_new","{ns}.gm_entity","{ns}.nukable"],variant:"minecraft:black",PersistenceRequired:true,DeathLootTable:"minecraft:empty",Passengers:[{{id:"minecraft:marker",Tags:["{ns}.death_watch","{ns}.gm_entity"]}}],Attributes:[{{id:"minecraft:follow_range",base:40.0d}},{{id:"minecraft:step_height",base:1.0d}}]}}
+summon minecraft:wolf ~ ~ ~ {{Tags:["{ns}.zombie_round","{ns}.zb_dog","{ns}.zb_dog_new","{ns}.gm_entity","{ns}.nukable"],variant:"minecraft:black",PersistenceRequired:true,DeathLootTable:"minecraft:empty",Passengers:[{{id:"minecraft:marker",Tags:["{ns}.death_watch","{ns}.gm_entity"]}}],attributes:[{{id:"minecraft:follow_range",base:40.0d}},{{id:"minecraft:step_height",base:1.0d}}]}}
 
 # Apply scaling (health, speed). Not a macro call: types/dog reads #zb_round itself and never used
 # the level argument, so passing one only added a way for the call to be skipped.
@@ -271,7 +271,7 @@ scoreboard players set @n[tag={ns}.zb_dog_new] {ns}.zb.stuck_dist 4
 # summoned 2 blocks under the marker is rarely the nearest. Missing the team join is what made escort
 # traders read the horde as hostile and flee it at AvoidEntityGoal's 0.5 modifier instead of walking
 # at WanderToPositionGoal's 0.35, i.e. 43% over the round's zombie speed.
-summon minecraft:zombie ~ ~-2 ~ {{Tags:["{ns}.zombie_round","{ns}.gm_entity","{ns}.nukable","{ns}.zb_rising","{ns}.zb_new"],CanPickUpLoot:false,PersistenceRequired:true,DeathLootTable:"minecraft:empty",NoAI:1b,Silent:1b,Passengers:[{{id:"minecraft:marker",Tags:["{ns}.death_watch","{ns}.gm_entity"]}}],Attributes:[{{id:"minecraft:follow_range",base:40.0d}},{{id:"minecraft:step_height",base:1.0d}}]}}
+summon minecraft:zombie ~ ~-2 ~ {{Tags:["{ns}.zombie_round","{ns}.gm_entity","{ns}.nukable","{ns}.zb_rising","{ns}.zb_new"],CanPickUpLoot:false,PersistenceRequired:true,DeathLootTable:"minecraft:empty",NoAI:1b,Silent:1b,Passengers:[{{id:"minecraft:marker",Tags:["{ns}.death_watch","{ns}.gm_entity"]}}],attributes:[{{id:"minecraft:follow_range",base:40.0d}},{{id:"minecraft:step_height",base:1.0d}}]}}
 
 # Apply type-specific scaling (health, speed, rise timer)
 $execute as @n[tag={ns}.zb_new] run function {ns}:v{version}/zombies/types/$(type) {{level:"$(level)"}}
