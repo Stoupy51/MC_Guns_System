@@ -2,7 +2,7 @@
 # Imports
 from stewbeet import Mem, write_versioned_function
 
-from ..catalogs import (
+from .....config.catalogs import (
 	CAMO_VARIANTS,
 	TRIG_EQUIP1_CAMO_BASE,
 	TRIG_EQUIP2_CAMO_BASE,

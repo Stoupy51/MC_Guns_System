@@ -1,16 +1,20 @@
 """ Building the loadout entry from the editor state and writing it back to storage. """
 # Imports
+from collections.abc import Sequence
+
 from stewbeet import Mem, write_load_file, write_versioned_function
 
-from ....helpers import MGS_TAG
-from ...classes import MultiplayerClasses
-from ..catalogs import (
+from .....config.catalogs import (
 	GRENADE_TYPES,
 	PICK10_TOTAL,
 	PRIMARY_WEAPONS,
 	SECONDARY_WEAPONS,
 	TRIG_SAVE_PUBLIC,
+	SecondaryWeapon,
+	Weapon,
 )
+from ....helpers import MGS_TAG
+from ...classes import MultiplayerClasses
 from .shared import editor_fn
 
 
@@ -21,53 +25,20 @@ def write_editor_save() -> None:
 
 	fn: str = editor_fn(ns, version)
 
-	## SAVE — build the loadout entry from the editor state Pre-generate weapon slot lookup tables
-	primary_slot_entries: list[str] = []
-	for wp in PRIMARY_WEAPONS:
-		gun_id, mag_id, mag_count = wp.item_id, wp.magazine_id, wp.default_mag_count
-		gun_slot = f'{{slot:"hotbar.1",loot:"{ns}:i/{gun_id}",count:1,consumable:0b,bullets:0}}'
-		is_consumable = "1b" if mag_id in MultiplayerClasses.CONSUMABLE_MAGS else "0b"
-		bullets = mag_count if mag_id in MultiplayerClasses.CONSUMABLE_MAGS else 0
-		primary_slot_entries.append(
-			f'{{id:"{gun_id}",gun_slot:{gun_slot},mag_id:"{mag_id}",mag_consumable:{is_consumable},mag_bullets:{bullets}}}'
-		)
-	secondary_slot_entries: list[str] = []
-	for wp in (w for w in SECONDARY_WEAPONS if w.in_loadout):
-		gun_id, mag_id, mag_count = wp.item_id, wp.magazine_id, wp.default_mag_count
-		gun_slot = f'{{slot:"hotbar.2",loot:"{ns}:i/{gun_id}",count:1,consumable:0b,bullets:0}}'
-		is_consumable = "1b" if mag_id in MultiplayerClasses.CONSUMABLE_MAGS else "0b"
-		bullets = mag_count if mag_id in MultiplayerClasses.CONSUMABLE_MAGS else 0
-		secondary_slot_entries.append(
-			f'{{id:"{gun_id}",gun_slot:{gun_slot},mag_id:"{mag_id}",mag_consumable:{is_consumable},mag_bullets:{bullets}}}'
-		)
-
+	## SAVE: build the loadout entry from the editor state, through weapon slot lookup tables generated here
+	secondaries: list[SecondaryWeapon] = [w for w in SECONDARY_WEAPONS if w.in_loadout]
 	write_load_file(f"""
 # Slot lookup tables for custom loadout editor (pre-computed at build time)
-data modify storage {ns}:multiplayer primary_slot_table set value [{",".join(primary_slot_entries)}]
-data modify storage {ns}:multiplayer secondary_slot_table set value [{",".join(secondary_slot_entries)}]
+data modify storage {ns}:multiplayer primary_slot_table set value [{",".join(slot_table_entry(ns, wp, "hotbar.1") for wp in PRIMARY_WEAPONS)}]
+data modify storage {ns}:multiplayer secondary_slot_table set value [{",".join(slot_table_entry(ns, wp, "hotbar.2") for wp in secondaries)}]
 """)
 
-	save_primary_dispatch = ""
-	for idx, wp in enumerate(PRIMARY_WEAPONS):
-		gun_id = wp.item_id
-		save_primary_dispatch += (
-			f'execute if data storage {ns}:temp editor{{primary:"{gun_id}"}} run '
-			f'data modify storage {ns}:temp _build.primary_data set from storage {ns}:multiplayer primary_slot_table[{idx}]\n'
-		)
-	save_secondary_dispatch = ""
-	for idx, wp in enumerate(w for w in SECONDARY_WEAPONS if w.in_loadout):
-		gun_id = wp.item_id
-		save_secondary_dispatch += (
-			f'execute if data storage {ns}:temp editor{{secondary:"{gun_id}"}} run '
-			f'data modify storage {ns}:temp _build.secondary_data set from storage {ns}:multiplayer secondary_slot_table[{idx}]\n'
-		)
-	# Overkill: the secondary may be a primary weapon — look it up in the primary table instead
-	for idx, wp in enumerate(PRIMARY_WEAPONS):
-		gun_id = wp.item_id
-		save_secondary_dispatch += (
-			f'execute if data storage {ns}:temp editor{{secondary:"{gun_id}"}} run '
-			f'data modify storage {ns}:temp _build.secondary_data set from storage {ns}:multiplayer primary_slot_table[{idx}]\n'
-		)
+	save_primary_dispatch: str = slot_table_lookup(ns, "primary", PRIMARY_WEAPONS, "primary_slot_table")
+	# Overkill: the secondary may be a primary weapon, looked up in the primary table instead
+	save_secondary_dispatch: str = (
+		slot_table_lookup(ns, "secondary", secondaries, "secondary_slot_table")
+		+ slot_table_lookup(ns, "secondary", PRIMARY_WEAPONS, "primary_slot_table")
+	)
 
 	equip_name_dispatch: dict[int, str] = {}
 	for slot_num, field in [(1, "equip_slot1"), (2, "equip_slot2")]:
@@ -282,4 +253,27 @@ execute if score #pmag_count {ns}.data matches 1.. run function {fn}/append_mag_
 	write_versioned_function("multiplayer/editor/set_main_gun_display", f"""$data modify storage {ns}:temp _new_loadout.main_gun_display set value "$(primary_name) ($(primary_scope_name), $(primary_camo_name))"\n""")
 	write_versioned_function("multiplayer/editor/set_sec_gun_display", f"""$data modify storage {ns}:temp _new_loadout.secondary_gun_display set value "$(secondary_name) ($(secondary_scope_name), $(secondary_camo_name))"\n""")
 	write_versioned_function("multiplayer/editor/notify_saved", '$tellraw @s ["",' + MGS_TAG + ',[{"text":"","color":"white"},{"text":"Loadout saved"},": "],{"text":"$(primary_name) + $(secondary_name)","color":"green","bold":true}]')
+
+
+def slot_table_entry(ns: str, weapon: Weapon | SecondaryWeapon, hotbar: str) -> str:
+	""" SNBT row of a slot lookup table: the gun's slot on `hotbar`, and how its magazines are given. """
+	consumable: bool = weapon.magazine_id in MultiplayerClasses.CONSUMABLE_MAGS
+	gun_slot: str = f'{{slot:"{hotbar}",loot:"{ns}:i/{weapon.item_id}",count:1,consumable:0b,bullets:0}}'
+	return (
+		f'{{id:"{weapon.item_id}",gun_slot:{gun_slot},mag_id:"{weapon.magazine_id}",'
+		f'mag_consumable:{"1b" if consumable else "0b"},mag_bullets:{weapon.default_mag_count if consumable else 0}}}'
+	)
+
+
+def slot_table_lookup(ns: str, field: str, weapons: Sequence[Weapon | SecondaryWeapon], table: str) -> str:
+	""" One line per weapon copying its `table` row into `_build.<field>_data` when the editor's `field` holds it.
+
+	Args:
+		weapons: In the order they sit in `table`.
+	"""
+	return "".join(
+		f'execute if data storage {ns}:temp editor{{{field}:"{weapon.item_id}"}} run '
+		f"data modify storage {ns}:temp _build.{field}_data set from storage {ns}:multiplayer {table}[{index}]\n"
+		for index, weapon in enumerate(weapons)
+	)
 

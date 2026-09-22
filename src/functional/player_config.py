@@ -3,9 +3,7 @@
 # Imports
 from stewbeet import Mem, write_versioned_function
 
-from .helpers import MGS_TAG
-from .multiplayer.classes import MultiplayerClasses
-from .multiplayer.loadouts import (
+from ..config.catalogs import (
 	CAMO_VARIANTS,
 	GRENADE_TYPES,
 	PERKS,
@@ -56,6 +54,8 @@ from .multiplayer.loadouts import (
 	TRIG_TOGGLE_VIS_BASE,
 	TRIG_UNSET_DEFAULT,
 )
+from .helpers import MGS_TAG
+from .multiplayer.classes import MultiplayerClasses
 
 
 # Functions

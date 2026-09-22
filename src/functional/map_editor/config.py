@@ -27,7 +27,7 @@ def write_editor_config() -> None:
 	)
 	config_lines.append(f'data modify storage {ns}:temp _cfg.default_fn set from storage {ns}:temp map_edit.map.default_enemy_function')
 	config_lines.append(f'function {ns}:v{version}/maps/editor/handle_config_default_btn with storage {ns}:temp _cfg')
-	config_lines.append(f'tellraw {config_target} ["  ",{{"text":"ℹ Edit the function path above, then run the command.","color":"dark_gray","italic":true}}]')
+	config_lines.append(f'tellraw {config_target} ["  ",{{"text":"\u2139 Edit the function path above, then run the command.","color":"dark_gray","italic":true}}]')
 	config_lines.append("")
 
 	# Show nearest configurable elements that can use the default function.

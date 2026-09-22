@@ -272,7 +272,7 @@ def add_grenades() -> None:
 	# Widow's Wine web grenade (perk-exclusive): frag geometry, cobweb texture.
 	web = ItemBuilder.add_item("web_grenade", stats=WEB_GRENADE, model_path=ItemBuilder.get_model_path("frag_grenade"), max_stack_size=4)
 	if web.override_model:
-		for k in web.override_model["textures"].keys():
+		for k in web.override_model["textures"]:
 			web.override_model["textures"][k] = f"{ns}:item/cobweb"
 
 	# Zombies-exclusive tactical (mystery box / wallbuys only), capped at 3 by the give/refill functions.

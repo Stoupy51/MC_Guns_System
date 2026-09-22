@@ -2,7 +2,7 @@
 # Imports
 from stewbeet import Mem, write_versioned_function
 
-from ..catalogs import (
+from .....config.catalogs import (
 	ALL_SCOPE_SUFFIXES,
 	COST_PRIMARY_SCOPE,
 	COST_SECONDARY_SCOPE,

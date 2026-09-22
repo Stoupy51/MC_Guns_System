@@ -1,7 +1,7 @@
 """ The perk tooltip line and the two row builders both browsers share. """
 # Imports
 
-from ..catalogs import PERKS
+from .....config.catalogs import PERKS
 
 # Constants
 PERK_CONCAT: str = "".join(f"$(perk{i})" for i in range(len(PERKS)))

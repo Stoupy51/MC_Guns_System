@@ -2,8 +2,8 @@
 # Imports
 from stewbeet import Mem, write_versioned_function
 
+from .....config.catalogs import TRIG_EDIT_BASE, TRIG_SET_DEFAULT_BASE, TRIG_TOGGLE_VIS_BASE
 from ....helpers import MGS_TAG
-from ..catalogs import TRIG_EDIT_BASE, TRIG_SET_DEFAULT_BASE, TRIG_TOGGLE_VIS_BASE
 
 
 # Functions

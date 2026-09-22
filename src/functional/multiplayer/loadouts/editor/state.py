@@ -2,8 +2,7 @@
 # Imports
 from stewbeet import Mem, write_versioned_function
 
-from ....helpers import MGS_TAG
-from ..catalogs import (
+from .....config.catalogs import (
 	COST_GRENADE,
 	COST_PERK,
 	COST_PRIMARY_MAG,
@@ -14,6 +13,7 @@ from ..catalogs import (
 	COST_SECONDARY_WEAPON,
 	PICK10_TOTAL,
 )
+from ....helpers import MGS_TAG
 from .shared import editor_fn, empty_state
 
 
