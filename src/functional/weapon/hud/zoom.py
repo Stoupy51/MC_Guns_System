@@ -25,8 +25,8 @@ execute if predicate {ns}:v{version}/is_sneaking unless entity @s[tag={ns}.reloa
 # If already zoom and not sneaking, unzoom
 execute if data storage {ns}:gun all.stats.{IS_ZOOM} if score #is_sneaking {ns}.data matches 0 run return run function {ns}:v{version}/zoom/remove
 
-# If not zooming but sneaking, zoom
-execute unless data storage {ns}:gun all.stats.{IS_ZOOM} if score #is_sneaking {ns}.data matches 1 run return run function {ns}:v{version}/zoom/set
+# Sneaking without the player-side zoom, zoom. Keyed on the score, not the item: a gun switched away from mid-aim keeps its zoom stat
+execute if score #is_sneaking {ns}.data matches 1 unless score @s {ns}.zoom matches 1 run return run function {ns}:v{version}/zoom/set
 
 ## Shader ids: the scope overlay while aiming, the spread crosshair while not
 # Reset zoom timer when not zooming
@@ -99,7 +99,7 @@ function #{ns}:signals/on_zoom
 
 	# Clear the player-side zoom state without touching the held item.
 	# Called on weapon switch: zoom/main only unzooms when the HELD gun has the zoom stat, so switching from a zoomed gun to another gun would otherwise leave the player stuck with zoom=1 and infinite slowness.
-	# The old item's zoomed model/stats self-heal via zoom/remove the next time it is held while not sneaking.
+	# The old item keeps its zoomed model/stats: zoom/main unzooms it when held unsneaking, or re-enters aim when held sneaking.
 	# (mgs:gun storage already holds the NEW weapon here, so zoom/remove itself must not be used — it would corrupt the new weapon.)
 	write_versioned_function("zoom/clear_state", f"""
 playsound {ns}:common/lean_out player @s

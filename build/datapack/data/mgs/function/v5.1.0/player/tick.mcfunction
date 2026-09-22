@@ -46,11 +46,11 @@ function mgs:v5.1.0/switch/check_fire_mode_on_drop
 # Copy gun data
 function mgs:v5.1.0/utils/copy_gun_data
 
+# Check if switching weapon, before the zoom: a switch clears the old aim, so the new weapon's aim must be decided after it
+function mgs:v5.1.0/switch/main
+
 # Check if we need to zoom weapon or stop
 function mgs:v5.1.0/zoom/main
-
-# Check if switching weapon
-function mgs:v5.1.0/switch/main
 
 # Check mid cooldown sound
 execute if score @s mgs.cooldown > #total_tick mgs.data if entity @s[tag=mgs.pump_sound] if data storage mgs:gun all.sounds.pump run function mgs:v5.1.0/sound/check/pump

@@ -157,11 +157,11 @@ function {ns}:v{version}/switch/check_fire_mode_on_drop
 # Copy gun data
 function {ns}:v{version}/utils/copy_gun_data
 
+# Check if switching weapon, before the zoom: a switch clears the old aim, so the new weapon's aim must be decided after it
+function {ns}:v{version}/switch/main
+
 # Check if we need to zoom weapon or stop
 function {ns}:v{version}/zoom/main
-
-# Check if switching weapon
-function {ns}:v{version}/switch/main
 
 # Check mid cooldown sound
 execute if score @s {ns}.cooldown > #total_tick {ns}.data if entity @s[tag={ns}.pump_sound] if data storage {ns}:gun all.sounds.pump run function {ns}:v{version}/sound/check/pump
