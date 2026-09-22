@@ -6,6 +6,7 @@
 # @within	mgs:v5.1.0/maps/editor/summon_zb_object_iter [ as @n[tag=mgs.new_zb_marker] ]
 #
 
+execute if entity @s[tag=mgs.element.barricade] run function mgs:v5.1.0/maps/light_fields/barricade
 execute if entity @s[tag=mgs.element.zombie_spawn] unless data entity @s data.activation_box run data modify entity @s data.activation_box set value []
 execute if entity @s[tag=mgs.element.zombie_spawn] unless data entity @s data.walk_to run data modify entity @s data.walk_to set value []
 execute if entity @s[tag=mgs.element.special_spawn] unless data entity @s data.activation_box run data modify entity @s data.activation_box set value []
@@ -54,7 +55,7 @@ execute if entity @s[tag=mgs.element.mystery_box_pos] unless data entity @s data
 execute if entity @s[tag=mgs.element.mystery_box_pos] unless data entity @s data.display_item run data modify entity @s data.display_item set value ""
 execute if entity @s[tag=mgs.element.mystery_box_pos] unless data entity @s data.item_model run data modify entity @s data.item_model set value ""
 execute if entity @s[tag=mgs.element.mystery_box_pos] unless data entity @s data.location_name run data modify entity @s data.location_name set value ""
-execute if entity @s[tag=mgs.element.barricade] unless data entity @s data.block_enabled run data modify entity @s data.block_enabled set value {Name:"minecraft:oak_fence_gate",Properties:{open:"false"}}
-execute if entity @s[tag=mgs.element.barricade] unless data entity @s data.block_disabled run data modify entity @s data.block_disabled set value {Name:"minecraft:oak_fence_gate",Properties:{open:"true"}}
+execute if entity @s[tag=mgs.element.barricade] unless data entity @s data.block_enabled run data modify entity @s data.block_enabled set value {id:"minecraft:oak_fence_gate",properties:{open:"false"}}
+execute if entity @s[tag=mgs.element.barricade] unless data entity @s data.block_disabled run data modify entity @s data.block_disabled set value {id:"minecraft:oak_fence_gate",properties:{open:"true"}}
 execute if entity @s[tag=mgs.element.barricade] unless data entity @s data.radius run data modify entity @s data.radius set value 2
 

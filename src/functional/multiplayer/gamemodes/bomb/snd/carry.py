@@ -52,7 +52,7 @@ execute if score #snd_bomb_grounded {ns}.data matches 0 run function {ns}:v{vers
 		variant.sub("place_loose_bomb", f"""
 scoreboard players set #snd_bomb_grounded {ns}.data 1
 summon minecraft:marker ~ ~ ~ {{Tags:["{ns}.snd_loose","{ns}.snd_loose_at","{ns}.gm_entity"]}}
-summon minecraft:block_display ~ ~ ~ {{Tags:["{ns}.snd_loose","{ns}.gm_entity"],block_state:{{Name:"minecraft:tnt"}},transformation:{{translation:[-0.25f,0.0f,-0.25f],left_rotation:[0.0f,0.0f,0.0f,1.0f],scale:[0.5f,0.5f,0.5f],right_rotation:[0.0f,0.0f,0.0f,1.0f]}}}}
+summon minecraft:block_display ~ ~ ~ {{Tags:["{ns}.snd_loose","{ns}.gm_entity"],block_state:"minecraft:tnt",transformation:{{translation:[-0.25f,0.0f,-0.25f],left_rotation:[0.0f,0.0f,0.0f,1.0f],scale:[0.5f,0.5f,0.5f],right_rotation:[0.0f,0.0f,0.0f,1.0f]}}}}
 summon minecraft:text_display ~ ~ ~ {{Tags:["{ns}.snd_loose","{ns}.gm_entity"],billboard:"vertical",text:[{{"text":"💣 ","color":"white"}},{{"text":"BOMB","color":"gold","bold":true}}],transformation:{{translation:[0.0f,1.1f,0.0f],left_rotation:[0.0f,0.0f,0.0f,1.0f],scale:[1.5f,1.5f,1.5f],right_rotation:[0.0f,0.0f,0.0f,1.0f]}},shadow:true,see_through:true}}
 """)
 

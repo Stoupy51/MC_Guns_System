@@ -4,6 +4,7 @@ from stewbeet import Mem, write_versioned_function
 
 from ..helpers import MGS_TAG
 from ..map_editor_defs import ALL_ELEMENTS, EDITOR_MODES, MODE_LIST
+from .shared import ZB_ELEMENTS, snbt_suggest
 
 
 # Functions
@@ -245,6 +246,7 @@ $data modify storage {ns}:temp map_edit.map.$(path) append from storage {ns}:tem
 """)
 
 	## Save a zb_object element (macro: path = wallbuys/doors/etc.)
+	strip_dispatch: str = write_strip_light_fields()
 	write_versioned_function("maps/editor/save_zb_object", f"""
 # @s = marker entity, at its position
 # Get absolute position
@@ -272,6 +274,7 @@ data modify storage {ns}:temp _save_zb.rotation[0] set from entity @s data.yaw
 
 # Remove internal-only marker fields (yaw is stored in rotation array)
 data remove storage {ns}:temp _save_zb.yaw
+{strip_dispatch}
 
 # Append to the correct list
 $data modify storage {ns}:temp map_edit.map.$(path) append from storage {ns}:temp _save_zb
@@ -281,4 +284,28 @@ $data modify storage {ns}:temp map_edit.map.$(path) append from storage {ns}:tem
 	write_versioned_function("maps/editor/write_back", f"""
 $data modify storage {ns}:maps $(mode)[$(idx)] set from storage {ns}:temp map_edit.map
 """)
+
+
+def write_strip_light_fields() -> str:
+	""" Write one function per element with light fields, dropping from `_save_zb` each one that holds its default.
+
+	Returns:
+		The lines save_zb_object runs to dispatch to them.
+	"""
+	ns: str = Mem.ctx.project_id
+	version: str = Mem.ctx.project_version
+	light_elements: dict[str, tuple[str, ...]] = {etype: einfo.light_fields for etype, einfo in ZB_ELEMENTS.items() if einfo.light_fields}
+	for etype, fields in light_elements.items():
+		# `set value` on an equal compound changes nothing, so its success says whether the field differs from the default.
+		write_versioned_function(f"maps/editor/strip_light_fields/{etype}", "\n".join(
+			f"""data remove storage {ns}:temp _light
+data modify storage {ns}:temp _light set from storage {ns}:temp _save_zb.{field}
+execute store success score #light_differs {ns}.data run data modify storage {ns}:temp _light set value {snbt_suggest(ALL_ELEMENTS[etype].defaults[field])}
+execute if score #light_differs {ns}.data matches 0 run data remove storage {ns}:temp _save_zb.{field}"""
+			for field in fields
+		))
+	return "\n".join(
+		f"execute if entity @s[tag={ns}.element.{etype}] run function {ns}:v{version}/maps/editor/strip_light_fields/{etype}"
+		for etype in light_elements
+	)
 

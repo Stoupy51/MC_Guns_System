@@ -48,6 +48,9 @@ class ElementDef:
 	""" Dotted key under the mode's storage where instances are written (empty for base/config). """
 	defaults: JsonDict = dc_field(default_factory=dict[str, Any])
 	""" Per-element default config, written on placement (only zb_object elements use it). """
+	light_fields: tuple[str, ...] = ()
+	""" Block-state `defaults` a saved map leaves out while they hold their default, filled back in on load.
+	Keeps maps small and lets them survive block-state format changes; `Name`/`Properties` states are upgraded to `id`/`properties`. """
 	config_uses_default_function: bool = False
 	requires_offhand_block: bool = False
 
@@ -84,7 +87,7 @@ ALL_ELEMENTS: dict[str, ElementDef] = {
 	"pap_machine":        ElementDef(name="Pack-a-Punch",     color="dark_red",     particle=[0.8, 0.1, 0.1], particle_scale=1.0, has_rotation=True,  egg_model="minecraft:creaking_spawn_egg",    save_type="zb_object",       save_path="pap_machines",            emoji="🔥", defaults={"name": "Pack-a-Punch", "price": 5000, "power": True, "display_item": "", "item_model": ""}),
 	"mystery_box_pos":    ElementDef(name="Mystery Box Pos",  color="light_purple", particle=[1.0, 0.0, 1.0], particle_scale=1.0, has_rotation=True,  egg_model="minecraft:evoker_spawn_egg",      save_type="zb_object",       save_path="mystery_box.positions",   emoji="📦", defaults={"can_start_on": True, "display_item": "", "item_model": "", "location_name": ""}),
 	"power_switch":       ElementDef(name="Power Switch",     color="green",        particle=[0.0, 1.0, 0.0], particle_scale=1.0, has_rotation=True,  egg_model="minecraft:slime_spawn_egg",       save_type="zb_object",       save_path="power_switch",            emoji="⚡", defaults={}),
-	"barricade":            ElementDef(name="Barricade",          color="aqua",         particle=[0.0, 1.0, 1.0], particle_scale=1.0, has_rotation=True,  egg_model="minecraft:guardian_spawn_egg",    save_type="zb_object",       save_path="barricades",                emoji="🧱", defaults={"block_enabled": {"Name": "minecraft:oak_fence_gate", "Properties": {"open": "false"}}, "block_disabled": {"Name": "minecraft:oak_fence_gate", "Properties": {"open": "true"}}, "radius": 2}),
+	"barricade":            ElementDef(name="Barricade",          color="aqua",         particle=[0.0, 1.0, 1.0], particle_scale=1.0, has_rotation=True,  egg_model="minecraft:guardian_spawn_egg",    save_type="zb_object",       save_path="barricades",                emoji="🧱", defaults={"block_enabled": {"id": "minecraft:oak_fence_gate", "properties": {"open": "false"}}, "block_disabled": {"id": "minecraft:oak_fence_gate", "properties": {"open": "true"}}, "radius": 2}, light_fields=("block_enabled", "block_disabled")),
 }
 
 # Elements rendered as real in-game models in the editor (instead of dust particles).

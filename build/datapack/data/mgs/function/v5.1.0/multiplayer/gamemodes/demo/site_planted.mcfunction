@@ -16,7 +16,7 @@ tag @a[tag=mgs.demo_atk,predicate=mgs:v5.1.0/is_sneaking,gamemode=!spectator,dis
 execute as @a[tag=mgs.xp_earner] run function mgs:v5.1.0/progression/mp/award_bomb_plant
 
 summon minecraft:marker ~ ~ ~ {Tags:["mgs.demo_bomb","mgs.gm_entity"]}
-summon minecraft:block_display ~ ~ ~ {Tags:["mgs.demo_bomb_vis","mgs.gm_entity"],block_state:{Name:"minecraft:tnt"},transformation:{translation:[-0.25f,0.625f,-0.25f],left_rotation:[0.0f,0.0f,0.0f,1.0f],scale:[0.5f,0.5f,0.5f],right_rotation:[0.0f,0.0f,0.0f,1.0f]}}
+summon minecraft:block_display ~ ~ ~ {Tags:["mgs.demo_bomb_vis","mgs.gm_entity"],block_state:"minecraft:tnt",transformation:{translation:[-0.25f,0.625f,-0.25f],left_rotation:[0.0f,0.0f,0.0f,1.0f],scale:[0.5f,0.5f,0.5f],right_rotation:[0.0f,0.0f,0.0f,1.0f]}}
 summon minecraft:text_display ~ ~ ~ {Tags:["mgs.demo_bomb_hud","mgs.gm_entity"],billboard:"vertical",text:[{"text":"💣 ","color":"white"},{"translate":"mgs.planted","color":"red","bold":true}],transformation:{translation:[0.0f,1.4f,0.0f],left_rotation:[0.0f,0.0f,0.0f,1.0f],scale:[1.5f,1.5f,1.5f],right_rotation:[0.0f,0.0f,0.0f,1.0f]},shadow:true,see_through:true}
 
 execute if entity @s[tag=mgs.demo_site_A] run tellraw @a[tag=!mgs.xp_earner] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"text":"💣 ","color":"white"},{"translate":"mgs.bomb_planted_at_a","color":"red","bold":true}]

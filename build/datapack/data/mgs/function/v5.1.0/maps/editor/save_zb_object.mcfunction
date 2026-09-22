@@ -45,6 +45,7 @@ data modify storage mgs:temp _save_zb.rotation[0] set from entity @s data.yaw
 
 # Remove internal-only marker fields (yaw is stored in rotation array)
 data remove storage mgs:temp _save_zb.yaw
+execute if entity @s[tag=mgs.element.barricade] run function mgs:v5.1.0/maps/editor/strip_light_fields/barricade
 
 # Append to the correct list
 $data modify storage mgs:temp map_edit.map.$(path) append from storage mgs:temp _save_zb
