@@ -14,7 +14,7 @@ execute if score #pu_q_len mgs.data matches ..0 run function mgs:v5.1.0/zombies/
 execute if score #pu_q_len mgs.data matches ..0 run execute store result score #pu_q_len mgs.data run data get storage mgs:data _pu_queue
 
 # Pick a random index within [0, size-1]
-execute if score #pu_q_len mgs.data matches 1 store result score #pu_q_idx mgs.data run random value 0..0
+execute if score #pu_q_len mgs.data matches 1 run scoreboard players set #pu_q_idx mgs.data 0
 execute if score #pu_q_len mgs.data matches 2 store result score #pu_q_idx mgs.data run random value 0..1
 execute if score #pu_q_len mgs.data matches 3 store result score #pu_q_idx mgs.data run random value 0..2
 execute if score #pu_q_len mgs.data matches 4 store result score #pu_q_idx mgs.data run random value 0..3
