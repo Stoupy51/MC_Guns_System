@@ -19,8 +19,8 @@ execute if predicate mgs:v5.1.0/is_sneaking unless entity @s[tag=mgs.reloading] 
 # If already zoom and not sneaking, unzoom
 execute if data storage mgs:gun all.stats.is_zoom if score #is_sneaking mgs.data matches 0 run return run function mgs:v5.1.0/zoom/remove
 
-# If not zooming but sneaking, zoom
-execute unless data storage mgs:gun all.stats.is_zoom if score #is_sneaking mgs.data matches 1 run return run function mgs:v5.1.0/zoom/set
+# Sneaking without the player-side zoom, zoom. Keyed on the score, not the item: a gun switched away from mid-aim keeps its zoom stat
+execute if score #is_sneaking mgs.data matches 1 unless score @s mgs.zoom matches 1 run return run function mgs:v5.1.0/zoom/set
 
 ## Shader ids: the scope overlay while aiming, the spread crosshair while not
 # Reset zoom timer when not zooming
