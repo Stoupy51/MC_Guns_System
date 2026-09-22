@@ -208,9 +208,10 @@ execute unless score @s {ns}.hurt_fx matches -2147483648.. run scoreboard player
 execute if score @s {ns}.hurt_fx = #hurt_tier {ns}.data run return run scoreboard players reset @s {ns}.hurt_pending
 execute if score #hurt_tier {ns}.data > @s {ns}.hurt_fx run return run function {ns}:v{version}/player/hurt_swap
 
-# Healing: wait for the bar to settle, so crossing several thresholds becomes a single fade
+# Healing: wait for the bar to settle, so crossing several thresholds becomes a single fade.
+# A fade still playing finishes first: the next id starts from its end look, so starting early would jump.
 scoreboard players add @s {ns}.hurt_pending 1
-execute if score @s {ns}.hurt_pending matches {FALL_DEBOUNCE}.. run function {ns}:v{version}/player/hurt_swap
+execute if score @s {ns}.hurt_pending matches {FALL_DEBOUNCE}.. unless score @s {ns}.hurt_fall_until > #total_tick {ns}.data run function {ns}:v{version}/player/hurt_swap
 """)
 
 	removes: str = "\n".join(

@@ -14,7 +14,8 @@ execute unless score @s mgs.hurt_fx matches -2147483648.. run scoreboard players
 execute if score @s mgs.hurt_fx = #hurt_tier mgs.data run return run scoreboard players reset @s mgs.hurt_pending
 execute if score #hurt_tier mgs.data > @s mgs.hurt_fx run return run function mgs:v5.1.0/player/hurt_swap
 
-# Healing: wait for the bar to settle, so crossing several thresholds becomes a single fade
+# Healing: wait for the bar to settle, so crossing several thresholds becomes a single fade.
+# A fade still playing finishes first: the next id starts from its end look, so starting early would jump.
 scoreboard players add @s mgs.hurt_pending 1
-execute if score @s mgs.hurt_pending matches 10.. run function mgs:v5.1.0/player/hurt_swap
+execute if score @s mgs.hurt_pending matches 10.. unless score @s mgs.hurt_fall_until > #total_tick mgs.data run function mgs:v5.1.0/player/hurt_swap
 
