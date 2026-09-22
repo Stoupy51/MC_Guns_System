@@ -77,7 +77,7 @@ void main() {
     fragColor = texture(InSampler, texCoord);
 }
 """
-""" A pass may not sample the target it writes, so the clock ping-pongs through a scratch target. """
+""" A pass may not sample the target it writes, so the clock and the frame both go through scratch targets. """
 
 
 # Functions
@@ -91,9 +91,11 @@ def register_common(ns: str) -> None:
 def timed_effect(ns: str, effect_id: str, shader: str, uniforms: JsonDict, inputs: list[JsonDict] | None = None) -> None:
 	""" Register a `/posteffect` chain whose clock restarts on every `posteffect add`.
 
-	The apply pass receives `ClockSampler` plus `InSampler` bound to `minecraft:main`, and writes
-	back to `minecraft:main`. Extra `inputs` are appended in order, so their `SamplerInfo` entries
-	follow `OutSize`, `ClockSize` and `InSize`.
+	The apply pass receives `ClockSampler` plus `InSampler` bound to `minecraft:main`, and writes a
+	scratch target that a last pass copies back. Sampling main while rendering into it is a GPU
+	feedback loop, which shows up as a tiled grid of stale blocks across the screen.
+	Extra `inputs` are appended in order, so their `SamplerInfo` entries follow `OutSize`,
+	`ClockSize` and `InSize`.
 
 	Args:
 		effect_id: path under `assets/<ns>/post_effect/`, the id `/posteffect add` takes.
@@ -121,14 +123,21 @@ def timed_effect(ns: str, effect_id: str, shader: str, uniforms: JsonDict, input
 				{"sampler_name": "In", "target": "minecraft:main"},
 				*(inputs or []),
 			],
-			"output": "minecraft:main",
+			"output": "swap",
 			"uniforms": uniforms,
+		},
+		{
+			"vertex_shader": SCREENQUAD,
+			"fragment_shader": f"{ns}:post/copy",
+			"inputs": [{"sampler_name": "In", "target": "swap"}],
+			"output": "minecraft:main",
 		},
 	]
 	chain: JsonDict = {
 		"targets": {
 			"clock":      {"width": 1, "height": 1, "persistent": True, "clear_color": 0},
 			"clock_next": {"width": 1, "height": 1},
+			"swap":       {},
 		},
 		"passes": passes,
 	}

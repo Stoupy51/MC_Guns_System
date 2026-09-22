@@ -15,8 +15,8 @@ def main() -> None:
 # If no gun data, stop here
 execute unless data storage {ns}:gun all.gun run return run function {ns}:v{version}/zoom/check_slowness
 
-# Grenades cannot zoom/aim
-execute if data storage {ns}:gun all.stats.grenade_type run return 0
+# Grenades cannot zoom/aim, but still get the movement crosshair
+execute if data storage {ns}:gun all.stats.grenade_type run return run function {ns}:v{version}/zoom/crosshair_spread
 
 # Get is sneaking state (don't apply zoom if reloading)
 scoreboard players set #is_sneaking {ns}.data 0
@@ -111,8 +111,10 @@ function {ns}:v{version}/zoom/fx_leave
 
 	# Function to check and handle slowness effect
 	write_versioned_function("zoom/check_slowness", f"""
+# Not holding a gun: the vanilla crosshair sprite is blanked, so show the static base one
+function {ns}:v{version}/zoom/crosshair_base
+
 # If player was zooming and switched slot so no longer holding a gun, remove slowness effect
-function {ns}:v{version}/zoom/crosshair_clear
 execute unless score @s {ns}.zoom matches 1 run return fail
 playsound {ns}:common/lean_out player @s
 scoreboard players reset @s {ns}.zoom

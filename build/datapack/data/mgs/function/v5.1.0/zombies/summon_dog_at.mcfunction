@@ -12,7 +12,7 @@
 # are what you kite, so one stalling on a 1-block rise is far more noticeable. Safe as a `base` value
 # unlike HP — Wolf.applyTamingSideEffects only ever resets MAX_HEALTH, so the save/load round-trip
 # that forced the HP modifier in types/dog leaves this one alone.
-summon minecraft:wolf ~ ~ ~ {Tags:["mgs.zombie_round","mgs.zb_dog","mgs.zb_dog_new","mgs.gm_entity","mgs.nukable"],variant:"minecraft:black",PersistenceRequired:true,DeathLootTable:"minecraft:empty",Passengers:[{id:"minecraft:marker",Tags:["mgs.death_watch","mgs.gm_entity"]}],Attributes:[{id:"minecraft:follow_range",base:40.0d},{id:"minecraft:step_height",base:1.0d}]}
+summon minecraft:wolf ~ ~ ~ {Tags:["mgs.zombie_round","mgs.zb_dog","mgs.zb_dog_new","mgs.gm_entity","mgs.nukable"],variant:"minecraft:black",PersistenceRequired:true,DeathLootTable:"minecraft:empty",Passengers:[{id:"minecraft:marker",Tags:["mgs.death_watch","mgs.gm_entity"]}],attributes:[{id:"minecraft:follow_range",base:40.0d},{id:"minecraft:step_height",base:1.0d}]}
 
 # Apply scaling (health, speed). Not a macro call: types/dog reads #zb_round itself and never used
 # the level argument, so passing one only added a way for the call to be skipped.

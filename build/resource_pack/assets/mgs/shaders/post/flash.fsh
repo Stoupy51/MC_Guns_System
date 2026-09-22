@@ -10,9 +10,9 @@ uniform sampler2D DepthSampler;
 uniform sampler2D SparkSampler;
 
 layout(std140) uniform FlashConfig {
-    vec4 Color;      // rgb tint of the scene light, a = 1 to tint the sprite as Pack-a-Punch
-    vec4 Spark;      // xy = sprite centre in screen space, zw = sprite size
-    float Duration;  // ticks
+    vec4 Color;    // rgb tint of the scene light, a = 1 to tint the sprite as Pack-a-Punch
+    vec4 Spark;    // xy = sprite centre in screen space, zw = sprite size
+    vec2 Timing;   // ticks at full strength, then ticks until fully faded
 };
 
 layout(location = 0) in vec2 texCoord;
@@ -39,16 +39,20 @@ void main() {
     vec4 clock = texture(ClockSampler, vec2(0.5));
     fragColor = texture(InSampler, texCoord);
 
-    // Decay to nothing well before the id is removed, so the burst is two frames rather than a tick.
-    float life = 1.0 - clamp(mgs_elapsed(clock, GameTime) / Duration, 0.0, 1.0);
+    float life = 1.0 - smoothstep(Timing.x, Timing.y, mgs_elapsed(clock, GameTime));
     if (life <= 0.0) return;
 
+    // The held item is drawn before post effects, so without this the spark would sit on the gun.
+    // mgs:core/integrate_depth writes it at exactly 1.0, a depth no world geometry can reach.
     vec2 inSize = vec2(textureSize(InSampler, 0));
+    float rawDepth = texelFetch(DepthSampler, ivec2(texCoord * inSize), 0).r;
+    if (rawDepth >= 1.0) return;
+
     float aspectRatio = inSize.x / inSize.y;
     vec2 oneTexel = 1.0 / inSize;
     vec2 screenCoord = (texCoord - vec2(0.5)) * vec2(aspectRatio, 1.0);
 
-    float depth = LinearizeDepth(texture(DepthSampler, texCoord).r);
+    float depth = LinearizeDepth(rawDepth);
     float dist = length(vec3(screenCoord * CK * depth, depth));
     if (dist < MAXDIST) {
         vec4 blurColor = fragColor

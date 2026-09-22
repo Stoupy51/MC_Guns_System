@@ -144,12 +144,16 @@ scoreboard players set #mgs.loaded load.status 1
 function mgs:v5.1.0/load/set_items_storage
 
 scoreboard objectives add mgs.flash_id dummy
+scoreboard objectives add mgs.flash_slot dummy
 scoreboard objectives add mgs.flash_off dummy
 scoreboard objectives add mgs.zoom_fx dummy
 scoreboard objectives add mgs.zoom_fx_off dummy
 scoreboard objectives add mgs.cross_from dummy
 scoreboard objectives add mgs.cross_to dummy
 scoreboard objectives add mgs.hurt_fx dummy
+scoreboard objectives add mgs.hurt_out dummy
+scoreboard objectives add mgs.hurt_out_until dummy
+scoreboard objectives add mgs.fx_deaths deathCount
 
 ## Lore label templates for utils/update_all_lore
 data modify storage mgs:lore_templates damage set value [{"text": "D", "color": "#c24a17", "italic": false}, {"text": "a", "color": "#c24c18"}, {"text": "m", "color": "#c24f1a"}, {"text": "a", "color": "#c2511b"}, {"text": "g", "color": "#c3541d"}, {"text": "e", "color": "#c3571e"}, {"text": " ", "color": "#c35920"}, {"text": "P", "color": "#c35c21"}, {"text": "e", "color": "#c45e23"}, {"text": "r", "color": "#c46124"}, {"text": " ", "color": "#c46426"}, {"text": "B", "color": "#c46628"}, {"text": "u", "color": "#c56929"}, {"text": "l", "color": "#c56b2b"}, {"text": "l", "color": "#c56e2c"}, {"text": "e", "color": "#c5712e"}, {"text": "t", "color": "#c6732f"}, {"text": " ", "color": "#c67631"}, {"text": " ", "color": "#c67832"}, {"text": "\u27a4", "color": "#c67b34"}, {"text": " ", "color": "#c77e36"}]

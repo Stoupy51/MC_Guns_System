@@ -9,7 +9,8 @@
 		"clock_next": {
 			"width": 1,
 			"height": 1
-		}
+		},
+		"swap": {}
 	},
 	"passes": [
 		{
@@ -30,17 +31,22 @@
 		},
 		{
 			"vertex_shader": "minecraft:core/screenquad",
-			"fragment_shader": "mgs:post/flash",
+			"fragment_shader": "mgs:post/debug_depth",
 			"inputs": [
 				{"sampler_name": "Clock","target": "clock_next"},
 				{"sampler_name": "In","target": "minecraft:main"},
-				{"sampler_name": "Depth","target": "minecraft:main","use_depth_buffer": true},
-				{"sampler_name": "Spark","location": "mgs:flash","width": 1536,"height": 1536,"bilinear": true}
+				{"sampler_name": "Depth","target": "minecraft:main","use_depth_buffer": true}
 			],
-			"output": "minecraft:main",
-			"uniforms": {
-				"FlashConfig": [{"name": "Color","type": "vec4","value": [0.6,0.0,1.0,1.0]},{"name": "Spark","type": "vec4","value": [0.0,-0.125,0.6,0.6]},{"name": "Duration","type": "float","value": 0.8}]
-			}
+			"output": "swap",
+			"uniforms": {}
+		},
+		{
+			"vertex_shader": "minecraft:core/screenquad",
+			"fragment_shader": "mgs:post/copy",
+			"inputs": [
+				{"sampler_name": "In","target": "swap"}
+			],
+			"output": "minecraft:main"
 		}
 	]
 }

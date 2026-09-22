@@ -4,7 +4,6 @@
 # @executed	as @e[type=player,sort=random] & at @s
 #
 # @within	mgs:v5.1.0/zoom/main
-#			mgs:v5.1.0/zoom/check_slowness
 #
 
 # @s = a player who is aiming down sights or no longer holding a gun

@@ -3,7 +3,7 @@
 #
 # @executed	as @e[type=player,sort=random] & at @s
 #
-# @within	mgs:v5.1.0/zoom/crosshair_spread
+# @within	mgs:v5.1.0/zoom/crosshair_apply
 #
 
 # @s = a player who has no crosshair id yet, so the ramp starts and ends on the same level

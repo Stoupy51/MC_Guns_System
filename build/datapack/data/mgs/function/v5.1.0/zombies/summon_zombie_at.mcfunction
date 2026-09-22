@@ -26,7 +26,7 @@
 # summoned 2 blocks under the marker is rarely the nearest. Missing the team join is what made escort
 # traders read the horde as hostile and flee it at AvoidEntityGoal's 0.5 modifier instead of walking
 # at WanderToPositionGoal's 0.35, i.e. 43% over the round's zombie speed.
-summon minecraft:zombie ~ ~-2 ~ {Tags:["mgs.zombie_round","mgs.gm_entity","mgs.nukable","mgs.zb_rising","mgs.zb_new"],CanPickUpLoot:false,PersistenceRequired:true,DeathLootTable:"minecraft:empty",NoAI:1b,Silent:1b,Passengers:[{id:"minecraft:marker",Tags:["mgs.death_watch","mgs.gm_entity"]}],Attributes:[{id:"minecraft:follow_range",base:40.0d},{id:"minecraft:step_height",base:1.0d}]}
+summon minecraft:zombie ~ ~-2 ~ {Tags:["mgs.zombie_round","mgs.gm_entity","mgs.nukable","mgs.zb_rising","mgs.zb_new"],CanPickUpLoot:false,PersistenceRequired:true,DeathLootTable:"minecraft:empty",NoAI:1b,Silent:1b,Passengers:[{id:"minecraft:marker",Tags:["mgs.death_watch","mgs.gm_entity"]}],attributes:[{id:"minecraft:follow_range",base:40.0d},{id:"minecraft:step_height",base:1.0d}]}
 
 # Apply type-specific scaling (health, speed, rise timer)
 $execute as @n[tag=mgs.zb_new] run function mgs:v5.1.0/zombies/types/$(type) {level:"$(level)"}

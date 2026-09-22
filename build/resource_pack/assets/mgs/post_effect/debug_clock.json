@@ -9,7 +9,8 @@
 		"clock_next": {
 			"width": 1,
 			"height": 1
-		}
+		},
+		"swap": {}
 	},
 	"passes": [
 		{
@@ -35,8 +36,16 @@
 				{"sampler_name": "Clock","target": "clock_next"},
 				{"sampler_name": "In","target": "minecraft:main"}
 			],
-			"output": "minecraft:main",
+			"output": "swap",
 			"uniforms": {}
+		},
+		{
+			"vertex_shader": "minecraft:core/screenquad",
+			"fragment_shader": "mgs:post/copy",
+			"inputs": [
+				{"sampler_name": "In","target": "swap"}
+			],
+			"output": "minecraft:main"
 		}
 	]
 }
