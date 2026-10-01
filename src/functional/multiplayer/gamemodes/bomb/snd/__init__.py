@@ -201,3 +201,4 @@ scoreboard players set #snd_round_active {ns}.data 0
 def generate_search_and_destroy() -> None:
 	""" Module-level entry point (preserved signature); delegates to :class:`SearchAndDestroy`. """
 	SearchAndDestroy()()
+

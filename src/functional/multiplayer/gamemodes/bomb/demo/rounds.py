@@ -157,3 +157,4 @@ execute if score #demo_kills_red {ns}.data > #demo_kills_blue {ns}.data run scor
 tellraw @a [{MGS_TAG},{{"text":"Kills: ","color":"gray"}},{{"text":"Red ","color":"red"}},{{"score":{{"name":"#demo_kills_red","objective":"{ns}.data"}},"color":"white"}},{{"text":" - ","color":"gray"}},{{"text":"Blue ","color":"blue"}},{{"score":{{"name":"#demo_kills_blue","objective":"{ns}.data"}},"color":"white"}}]
 execute if score #demo_kills_red {ns}.data = #demo_kills_blue {ns}.data run tellraw @a [{MGS_TAG},{{"text":"Kills are level, so ","color":"yellow"}},{{"text":"Blue","color":"blue"}},{{"text":" defends.","color":"yellow"}}]
 """)
+

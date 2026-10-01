@@ -12,17 +12,13 @@ class RankedStats:
 	def write_ranked_stats_functions(ns: str, version: str, name: str, in_game_score: str, rank_objective: str, line: str) -> str:
 		""" Generate the function pair that announces every in-game player once, highest score first.
 
-		Players come out of a selector in arbitrary order, so end-of-game stats used to be listed in
-		whatever order the entity list happened to hold. This repeatedly takes the highest remaining
-		score instead, announcing one player per pass and dropping them from the candidate set.
+		Each pass announces the highest remaining score and drops that player from the candidates.
 
 		Args:
-			ns             (str): The project namespace.
-			version        (str): The project version, used to build the function paths.
-			name           (str): Base function path, e.g. "multiplayer/announce_stats".
-			in_game_score  (str): Score marking players in this game, e.g. "mp.in_game".
-			rank_objective (str): Objective to sort by, descending, e.g. "mp.kills".
-			line           (str): The tellraw command to run as each player, in rank order.
+			name: Base function path, e.g. "multiplayer/announce_stats".
+			in_game_score: Score marking players in this game, e.g. "mp.in_game".
+			rank_objective: Objective to sort by, descending, e.g. "mp.kills".
+			line: The tellraw command to run as each player, in rank order.
 
 		Returns:
 			str: The lines to place where the ranked announcement should appear.

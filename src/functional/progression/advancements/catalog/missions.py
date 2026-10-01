@@ -89,3 +89,4 @@ MI_EVENTS: tuple[EventChallenge, ...] = (
 )
 """ Not expressible as a score: `mgs.mi.deaths` is zeroed for everyone at mission start, so outside the
 instant of a victory it reads 0 whether or not anybody earned it. """
+

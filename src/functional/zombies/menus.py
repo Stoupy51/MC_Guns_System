@@ -83,12 +83,7 @@ function {ns}:v{version}/multiplayer/show_dialog with storage {ns}:temp
 """)
 
 def generate_zombies_admin_menu(ns: str, version: str) -> None:
-	""" Register the operator-only zombies debug menu and the functions its buttons run.
-
-	Args:
-		ns      (str): The project namespace.
-		version (str): The project version, used to build function paths.
-	"""
+	""" Register the operator-only zombies debug menu and the functions its buttons run. """
 	## Force the current round to end.
 	## Rather than calling round_complete directly, this reproduces the condition game_tick already watches for (no zombies alive, none left to spawn), so the normal round-end path runs exactly once with all its announcements and respawns intact.
 	write_versioned_function("zombies/admin/force_round_end", f"""

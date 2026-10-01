@@ -124,3 +124,4 @@ tellraw @a [{MGS_TAG},{{"text":"💥 ","color":"white"}},{{"text":"BOMB EXPLODED
 kill @e[tag={ns}.snd_bomb]
 function {ns}:v{version}/multiplayer/gamemodes/snd/attackers_win
 """)
+

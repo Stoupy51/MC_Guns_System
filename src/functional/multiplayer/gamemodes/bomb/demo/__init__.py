@@ -121,3 +121,4 @@ scoreboard players set #demo_round_active {ns}.data 0
 def generate_demolition() -> None:
 	""" Module-level entry point, mirroring the other gamemodes. """
 	Demolition()()
+

@@ -48,14 +48,11 @@ $tellraw @s [{MGS_TAG},{{"text":"You don't have enough points (","color":"red"}}
 	def gun_cd(ns: str) -> str:
 		""" Return the custom-data predicate body matching any gun item.
 
-		Args:
-			ns (str): The project namespace.
 		Returns:
 			str: The body of a `custom_data~` item predicate, braces included.
 
-		Examples:
-			>>> ZombiesCommon.gun_cd("mgs")
-			'{mgs:{gun:true}}'
+		>>> ZombiesCommon.gun_cd("mgs")
+		'{mgs:{gun:true}}'
 		"""
 		return "{" + ns + ":{gun:true}}"
 

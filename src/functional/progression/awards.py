@@ -20,11 +20,10 @@ class XpAward:
 	`amount` is 0 for the two awards that scale with the round number; those pass their value through
 	`#xp_gain {ns}.data` instead and set `scaled=True`.
 
-	Examples:
-		>>> MP_AWARDS["kill"].suffix_text
-		'+10 XP'
-		>>> ZB_AWARDS["round_survived"].scaled
-		True
+	>>> MP_AWARDS["kill"].suffix_text
+	'+10 XP'
+	>>> ZB_AWARDS["round_survived"].scaled
+	True
 	"""
 	key: str
 	""" Lookup name, used by the hook sites. """
@@ -51,14 +50,11 @@ class XpAward:
 def by_key(awards: list[XpAward]) -> dict[str, XpAward]:
 	""" Index a table by its rows' keys.
 
-	Args:
-		awards (list[XpAward]): The rows to index.
 	Returns:
 		dict[str, XpAward]: Rows keyed by `XpAward.key`.
 
-	Examples:
-		>>> by_key([XpAward(key="a", amount=1, note="")])["a"].amount
-		1
+	>>> by_key([XpAward(key="a", amount=1, note="")])["a"].amount
+	1
 	"""
 	return {award.key: award for award in awards}
 
@@ -121,3 +117,4 @@ ROUND_XP: int = 2
 run worth pushing: rounds 1-20 come to 420 XP, rounds 1-100 to 10,100. """
 GAME_OVER_XP: int = 5
 """ XP per round reached, paid once when the run ends. Rewards going deep rather than farming early rounds. """
+

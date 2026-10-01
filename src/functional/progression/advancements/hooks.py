@@ -43,9 +43,9 @@ class Hooks:
 		Granting an advancement a player already owns is a no-op, so no site needs a guard of its own.
 
 		Args:
-			path     (str): Unversioned advancement path, ex: "challenges/mi/flawless".
-			selector (str): Who earns it; `@s` needs no `as` clause.
-			guard    (str): Extra `execute` subcommands folded into the same command.
+			path: Unversioned advancement path, ex: "challenges/mi/flawless".
+			selector: Who earns it; `@s` needs no `as` clause.
+			guard: Extra `execute` subcommands folded into the same command.
 		Returns:
 			str: One command, ex: `execute as @a[tag=x] run advancement grant @s only mgs:challenges/mi/flawless`
 		"""
@@ -143,7 +143,7 @@ execute store result score {ROSTER_SCORE} {ns}.data if entity {roster}
 		""" Return the line `multiplayer/xp/on_game_end` splices in once it has tagged the winners.
 
 		Args:
-			winner_tag (str): The scratch tag that site puts on whoever took the match.
+			winner_tag: The scratch tag that site puts on whoever took the match.
 		Returns:
 			str: One command.
 		"""
@@ -153,3 +153,4 @@ execute store result score {ROSTER_SCORE} {ns}.data if entity {roster}
 			Catalog.event_path(flawless),
 			f"@a[scores={{{ns}.mp.in_game=1,{ns}.mp.deaths=0}},tag={ns}.{winner_tag}]",
 		)
+

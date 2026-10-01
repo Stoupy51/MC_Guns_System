@@ -119,3 +119,4 @@ data modify entity @n[tag={ns}.new_spawn] data.walk_to set from storage {ns}:tem
 
 	# Smart Spawn Selection.
 	CoreSpawning.write_random_spawn_selection("zombies", "spawn_zb_player", "zb.in_game", required_tags=("spawn_unlocked",))
+

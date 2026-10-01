@@ -113,3 +113,4 @@ scoreboard players operation #xp_gain {ns}.data = {SAVED_GAIN} {ns}.data
 			Rewards.write_chain(chain)
 		for event in EVENTS:
 			Rewards.write_event(event)
+

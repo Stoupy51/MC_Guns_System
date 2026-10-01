@@ -66,3 +66,4 @@ execute unless score @s {ns}.mi.in_game matches 1 run return fail
 {Xp.give("mp", "mission_kill")}
 execute if data storage {ns}:signals on_kill{{headshot:1}} run {Xp.give("mp", "mission_headshot")}
 """, tags=[f"{ns}:signals/on_kill"])
+

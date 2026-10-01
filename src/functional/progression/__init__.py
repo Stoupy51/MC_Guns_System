@@ -95,3 +95,4 @@ execute as @a run function {ns}:v{version}/progression/zb/recompute
 	## Challenges. Written last so the award functions it observes already exist, and because its tree
 	## references the reward functions it is about to write.
 	generate_advancements()
+

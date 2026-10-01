@@ -37,7 +37,7 @@ class Tree:
 		mistyped weapon id fails the build instead of rendering as a potato in game.
 
 		Args:
-			icon (str): `minecraft:target`, or a pack item id such as `ak47`.
+			icon: `minecraft:target`, or a pack item id such as `ak47`.
 		Returns:
 			JsonDict: ex: `{"id": "minecraft:poisonous_potato", "components": {"minecraft:item_model": "mgs:ak47"}}`
 		"""
@@ -54,11 +54,11 @@ class Tree:
 		carrying the XP amount, which vanilla's announcement cannot do.
 
 		Args:
-			title       (str):  Shown in the toast and on the node.
-			description (str):  Shown in the tooltip.
-			icon        (str):  Item id.
-			frame       (str):  `task`, `goal` or `challenge`.
-			hidden      (bool): Whether the node stays invisible until earned.
+			title: Shown in the toast and on the node.
+			description: Shown in the tooltip.
+			icon: Item id.
+			frame: `task`, `goal` or `challenge`.
+			hidden: Whether the node stays invisible until earned.
 		Returns:
 			JsonDict: The display block.
 		"""
@@ -77,8 +77,7 @@ class Tree:
 		""" Register one advancement file at an unversioned path.
 
 		Args:
-			path        (str):      Path under the namespace, ex: "challenges/zb/kills_2".
-			advancement (JsonDict): The whole file.
+			path: Path under the namespace, ex: "challenges/zb/kills_2".
 		"""
 		Mem.ctx.data[Mem.ctx.project_id].advancements[path] = set_json_encoder(Advancement(advancement), max_level=-1)
 
@@ -109,11 +108,7 @@ class Tree:
 
 	@staticmethod
 	def write_branch_root(branch: Branch) -> None:
-		""" Write one branch sub-root.
-
-		Args:
-			branch (Branch): The branch.
-		"""
+		""" Write one branch sub-root. """
 		Tree.write(f"{ROOT_PATH}/{branch.key}/root", {
 			"parent": f"{Mem.ctx.project_id}:{ROOT_PATH}/root",
 			"display": {
@@ -125,11 +120,7 @@ class Tree:
 
 	@staticmethod
 	def write_chain(chain: Chain) -> None:
-		""" Write every tier of one chain, parented in order, and the sentinel that reveals it.
-
-		Args:
-			chain (Chain): The chain.
-		"""
+		""" Write every tier of one chain, parented in order, and the sentinel that reveals it. """
 		ns: str = Mem.ctx.project_id
 		version: str = Mem.ctx.project_version
 		parent: str = f"{ns}:{ROOT_PATH}/{chain.branch}/root"
@@ -159,11 +150,7 @@ class Tree:
 
 	@staticmethod
 	def write_event(event: EventChallenge) -> None:
-		""" Write one event challenge, unreachable except by command.
-
-		Args:
-			event (EventChallenge): The challenge.
-		"""
+		""" Write one event challenge, unreachable except by command. """
 		ns: str = Mem.ctx.project_id
 		version: str = Mem.ctx.project_version
 		Tree.write(Catalog.event_path(event), {
@@ -181,3 +168,4 @@ class Tree:
 			Tree.write_chain(chain)
 		for event in EVENTS:
 			Tree.write_event(event)
+

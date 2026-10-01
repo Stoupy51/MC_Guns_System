@@ -16,11 +16,10 @@ BO_TO_MC_DAMAGE: float = 2 / 15
 class Melee:
 	""" One melee weapon, converted from its Black Ops damage so the HP curve stays comparable.
 
-	Examples:
-		>>> Melee(item_id="bowie_knife", display_name="Bowie Knife", name_color="gold", bo_damage=1150).damage
-		153
-		>>> Melee(item_id="combat_knife", display_name="Knife", name_color="white", bo_damage=150).damage
-		20
+	>>> Melee(item_id="bowie_knife", display_name="Bowie Knife", name_color="gold", bo_damage=1150).damage
+	153
+	>>> Melee(item_id="combat_knife", display_name="Knife", name_color="white", bo_damage=150).damage
+	20
 	"""
 	item_id: str
 	display_name: str
@@ -56,3 +55,4 @@ MELEE_WEAPONS: list[Melee] = [
 """ The Sickle is a straight Bowie Knife reskin in Black Ops 2, so it shares its damage exactly.
 Galvaknuckles sit one tier up: 1600 is the value that one-hits through round 14 on the Black Ops curve.
 """
+

@@ -22,14 +22,13 @@ class BombSites:
 		""" Return the setup lines that read a map's site list and kick off the summon loop.
 
 		Args:
-			variant (GameModeVariant): The mode these sites belong to; its key names the scratch storage.
-			map_key (str):             Key under `game.map` holding the `[[x, y, z], ...]` site list.
+			variant: The mode these sites belong to; its key names the scratch storage.
+			map_key: Key under `game.map` holding the `[[x, y, z], ...]` site list.
 		Returns:
 			str: Three commands, one per line.
 
-		Examples:
-			>>> BombSites.setup_lines.__doc__ is not None
-			True
+		>>> BombSites.setup_lines.__doc__ is not None
+		True
 		"""
 		ns, version, key = variant.ns, variant.version, variant.key
 		return f"""scoreboard players set #{key}_site_idx {ns}.data 0
@@ -117,3 +116,4 @@ execute if entity @s[tag={ns}.spawn_blue] run scoreboard players add #{key}_near
 		return f"""execute at @e[tag={ns}.{key}_obj] run fill ~ ~ ~ ~ ~1 ~ air
 kill @e[tag={ns}.{key}_obj]
 kill @e[tag={ns}.{key}_label]"""
+

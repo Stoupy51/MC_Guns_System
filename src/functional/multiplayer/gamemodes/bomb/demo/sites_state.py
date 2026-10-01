@@ -227,3 +227,4 @@ tellraw @a [{MGS_TAG},{{"text":"⏱ ","color":"white"}},{{"text":"+{TIME_BONUS /
 # The attackers only win once nothing is left standing, in the decider as in any other round
 execute unless entity @e[tag={ns}.demo_obj,scores={{{ns}.demo_state=..1}}] run function {ns}:v{version}/multiplayer/gamemodes/demo/attackers_win
 """)
+

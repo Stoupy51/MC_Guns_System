@@ -18,3 +18,4 @@ def write_missions_spawns() -> None:
 
 	# Smart Spawn Teleportation.
 	CoreSpawning.write_random_spawn_selection("missions", "spawn_mission", "mi.in_game")
+

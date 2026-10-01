@@ -36,7 +36,7 @@ kill @s
 		""" One command leaving the target position in {ns}:temp _probe_pos, as a list of three doubles.
 
 		Args:
-			target (str): Selector to read the position of
+			target: Selector to read the position of
 		Returns:
 			str: The command to inline in a function body
 		"""
@@ -49,13 +49,12 @@ kill @s
 		Read the stack back with `from entity {Probe.ITEM_DISPLAY} item`, which carries no Slot key.
 
 		Args:
-			slot   (str): Slot name, ex: "weapon.mainhand" or "hotbar.1"
-			target (str): Selector holding the stack
+			slot: Slot name, ex: "weapon.mainhand" or "hotbar.1"
+			target: Selector holding the stack
 		Returns:
 			str: The command to inline in a function body
-		Examples:
-			>>> Probe.item("hotbar.1")
-			'item replace entity B5-0-0-0-3 contents from entity @s hotbar.1'
+		>>> Probe.item("hotbar.1")
+		'item replace entity B5-0-0-0-3 contents from entity @s hotbar.1'
 		"""
 		return f"item replace entity {Probe.ITEM_DISPLAY} contents from entity {target} {slot}"
 

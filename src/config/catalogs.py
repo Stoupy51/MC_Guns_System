@@ -242,7 +242,7 @@ TRIG_EDIT_BASE            = 70000
 TRIG_MANAGE_BASE          = 80000
 """ + loadout_id -> open the per-loadout manage submenu. """
 """ Loadout action triggers: base + loadout_id. IDs auto-increment and are never reused, so each
-action gets a 10000-wide range (the old 100-wide ranges broke past 99 loadouts). """
+action gets a 10000-wide range. """
 
 TRIG_MARKETPLACE_ALL          = 1600
 """ Marketplace: show all public (favorites first). """

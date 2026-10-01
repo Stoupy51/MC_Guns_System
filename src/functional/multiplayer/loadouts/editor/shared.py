@@ -20,15 +20,11 @@ def empty_state() -> str:
 def editor_fn(ns: str, version: str) -> str:
 	""" Return the versioned function path every editor cross-reference is written against.
 
-	Args:
-		ns (str):      The project namespace.
-		version (str): The project version.
 	Returns:
 		str: The namespaced folder holding the editor's functions.
 
-	Examples:
-		>>> editor_fn("mgs", "1.0.0")
-		'mgs:v1.0.0/multiplayer/editor'
+	>>> editor_fn("mgs", "1.0.0")
+	'mgs:v1.0.0/multiplayer/editor'
 	"""
 	return f"{ns}:v{version}/multiplayer/editor"
 
