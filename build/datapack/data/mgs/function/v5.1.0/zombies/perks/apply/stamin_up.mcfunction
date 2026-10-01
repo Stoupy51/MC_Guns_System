@@ -1,7 +1,9 @@
 
 #> mgs:v5.1.0/zombies/perks/apply/stamin_up
 #
-# @within	???
+# @executed	as @p[tag=mgs.pu_collecting]
+#
+# @within	mgs:v5.1.0/zombies/perks/apply
 #
 
 attribute @s minecraft:movement_speed modifier add mgs:stamin_up 0.07 add_multiplied_total

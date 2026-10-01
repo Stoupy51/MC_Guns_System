@@ -1,9 +1,10 @@
 
 #> mgs:v5.1.0/zombies/powerups/activate/nuke
 #
-# @executed	at @s
+# @executed	as the player & at current position
 #
-# @within	mgs:v5.1.0/zombies/powerups/dispatch_activate
+# @within	mgs:v5.1.0/zombies/admin/powerup
+#			mgs:v5.1.0/zombies/powerups/dispatch_activate
 #
 
 function mgs:zombies/bonus/nuke

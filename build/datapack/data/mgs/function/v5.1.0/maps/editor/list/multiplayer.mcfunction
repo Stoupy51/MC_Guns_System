@@ -8,6 +8,7 @@
 #			string in mgs:v5.1.0/maps/editor/list/zombies
 #			string in mgs:v5.1.0/maps/editor/list/missions
 #			string in mgs:v5.1.0/maps/editor/create/multiplayer
+#			mgs:v5.1.0/maps/editor/delete
 #
 
 tellraw @s {"text":"============================================","color":"dark_gray"}

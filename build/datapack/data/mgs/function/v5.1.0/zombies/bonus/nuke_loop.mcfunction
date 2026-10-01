@@ -1,7 +1,7 @@
 
 #> mgs:v5.1.0/zombies/bonus/nuke_loop
 #
-# @executed	at @s
+# @executed	as the player & at current position
 #
 # @within	mgs:zombies/bonus/nuke
 #			mgs:v5.1.0/zombies/bonus/nuke_loop 1t [ scheduled ]

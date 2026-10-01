@@ -1,9 +1,10 @@
 
 #> mgs:v5.1.0/zombies/powerups/activate/cash_drop
 #
-# @executed	at @s
+# @executed	as the player & at current position
 #
-# @within	mgs:v5.1.0/zombies/powerups/dispatch_activate
+# @within	mgs:v5.1.0/zombies/admin/powerup
+#			mgs:v5.1.0/zombies/powerups/dispatch_activate
 #
 
 execute store result score #pu_cash mgs.data run random value 4..16

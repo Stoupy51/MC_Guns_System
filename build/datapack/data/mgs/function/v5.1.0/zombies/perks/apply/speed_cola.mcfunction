@@ -1,7 +1,9 @@
 
 #> mgs:v5.1.0/zombies/perks/apply/speed_cola
 #
-# @within	???
+# @executed	as @p[tag=mgs.pu_collecting]
+#
+# @within	mgs:v5.1.0/zombies/perks/apply
 #
 
 scoreboard players set @s mgs.special.quick_reload 50

@@ -1,9 +1,10 @@
 
 #> mgs:v5.1.0/zombies/powerups/activate/fire_sale
 #
-# @executed	at @s
+# @executed	as the player & at current position
 #
-# @within	mgs:v5.1.0/zombies/powerups/dispatch_activate
+# @within	mgs:v5.1.0/zombies/admin/powerup
+#			mgs:v5.1.0/zombies/powerups/dispatch_activate
 #
 
 # An already running Fire Sale does not restart its song or temporary boxes.

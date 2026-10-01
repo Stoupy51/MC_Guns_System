@@ -1,6 +1,8 @@
 
 #> mgs:v5.1.0/progression/adv/zb/perks/check
 #
+# @executed	as @p[tag=mgs.pu_collecting]
+#
 # @within	mgs:v5.1.0/progression/zb/award_perk
 #			mgs:v5.1.0/progression/adv/catch_up
 #

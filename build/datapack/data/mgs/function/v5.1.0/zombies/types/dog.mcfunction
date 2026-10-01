@@ -5,6 +5,7 @@
 #
 # @within	mgs:v5.1.0/zombies/game_tick [ as @e[type=minecraft:wolf,tag=...] ]
 #			mgs:v5.1.0/zombies/summon_dog_at [ as @n[tag=mgs.zb_dog_new] ]
+#			mgs:v5.1.0/zombies/summon_zombie_at {level:"$(level)"}
 #
 
 tag @s add mgs.zb_scaled
