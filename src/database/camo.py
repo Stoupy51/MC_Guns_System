@@ -255,7 +255,9 @@ def add_camo_variant(ns: str, textures_folder: str, weapon: Item, material: str)
 	if parent.startswith(f"{ns}:item/"):
 		item.override_model["parent"] = f"{parent}_{material}"
 		return []
-	return retexture(ns, textures_folder, item.override_model, gun_stats.get("base_weapon", base_id), material)
+	jobs: list[BlendJob] = retexture(ns, textures_folder, item.override_model, gun_stats.get("base_weapon", base_id), material)
+	item.override_model = {"parent": f"{ns}:item/{weapon.id}", "textures": item.override_model["textures"]}
+	return jobs
 
 def retexture(ns: str, textures_folder: str, model: JsonDict, base_weapon: str, material: str) -> list[BlendJob]:
 	""" Point a model's textures at their HSL-blended camo versions, and return the blends to produce.
