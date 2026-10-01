@@ -8,12 +8,6 @@ def write_surface_tags() -> None:
 	ns: str = Mem.ctx.project_id
 	version: str = Mem.ctx.project_version
 
-	write_tag(f"{ns}:v{version}/activate", Mem.ctx.data.block_tags, values=[
-		"minecraft:lever",
-		"minecraft:stone_button",
-		"minecraft:polished_blackstone_button"
-	])
-
 	write_tag(f"{ns}:v{version}/terracotta", Mem.ctx.data.block_tags, values=[
 		"minecraft:terracotta",
 		"minecraft:white_terracotta",

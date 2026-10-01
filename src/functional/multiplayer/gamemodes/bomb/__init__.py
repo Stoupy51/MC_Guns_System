@@ -13,3 +13,4 @@ from .snd import SearchAndDestroy, generate_search_and_destroy
 # Constants
 __all__ = ["Demolition", "SearchAndDestroy", "generate_demolition", "generate_search_and_destroy"]
 """ What the gamemode package imports from here. """
+

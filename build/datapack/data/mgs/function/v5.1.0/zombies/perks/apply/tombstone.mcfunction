@@ -1,7 +1,9 @@
 
 #> mgs:v5.1.0/zombies/perks/apply/tombstone
 #
-# @within	???
+# @executed	as @p[tag=mgs.pu_collecting]
+#
+# @within	mgs:v5.1.0/zombies/perks/apply
 #
 
 execute at @s run playsound mgs:zombies/perks/tombstone ambient @s ~ ~ ~ 1.0 1.0

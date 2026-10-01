@@ -16,7 +16,6 @@ BEAR_HEAD_TEXTURE: str = "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dX
 def generate_roaming() -> None:
 	ns: str = Mem.ctx.project_id
 
-	# Teddy bear loot table, referenced as mgs:zombies/roaming_bear
 	Mem.ctx.data[ns].loot_tables["zombies/roaming_bear"] = set_json_encoder(LootTable({
 		"pools": [{
 			"rolls": 1,
@@ -38,8 +37,7 @@ def generate_roaming() -> None:
 		}],
 	}))
 
-	# Park an interaction entity out of reach and back (@s = the interaction entity).
-	# Exactly ±512 blocks so its real position stays exact; hidden ones can't be clicked or eat a gun click.
+	# Exactly 512 blocks, so the real position stays exact; a hidden entity cannot be clicked or eat a gun click.
 	write_versioned_function("zombies/roaming/interaction_hide", f"""
 tp @s ~ ~-512 ~
 tag @s add {ns}.roam_hidden
@@ -49,8 +47,8 @@ tp @s ~ ~512 ~
 tag @s remove {ns}.roam_hidden
 """)
 
-	# Roll 1-in-3 once #roam_uses reaches #roam_threshold; result in #roam_will_move (0/1).
-	# The caller sets both scores, does its own extra gating, and resets its use counter on a move.
+	# 1 in 3 once #roam_uses reaches #roam_threshold, into #roam_will_move. The caller sets both, adds its own gates
+	# and resets its counter on a move.
 	write_versioned_function("zombies/roaming/roll_move", f"""
 scoreboard players set #roam_will_move {ns}.data 0
 execute if score #roam_uses {ns}.data >= #roam_threshold {ns}.data store result score #roam_move_roll {ns}.data run random value 0..2

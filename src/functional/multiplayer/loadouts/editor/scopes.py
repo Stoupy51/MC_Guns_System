@@ -54,7 +54,7 @@ def write_editor_scopes() -> None:
 		scope_actions_snbt(TRIG_SECONDARY_SCOPE_BASE, ("", "_4"), COST_SECONDARY_SCOPE),
 	)
 
-	## Scope pick handlers: snapshot → set → commit (overflow keeps iron sights) → camo dialog
+	## Scope pick: snapshot, set, commit (overflow keeps iron sights), then the camo dialog.
 	def gen_pick_scope_lines(prefix: str, trig_base: int) -> str:
 		lines = ""
 		for i, suffix in enumerate(ALL_SCOPE_SUFFIXES):
@@ -71,7 +71,7 @@ data modify storage {ns}:temp _ed_bak set from storage {ns}:temp editor
 {gen_pick_scope_lines("primary", TRIG_PRIMARY_SCOPE_BASE)}
 execute store success score #ed_ok {ns}.data run function {fn}/commit_check
 
-# Continue to camo either way (a denied scope simply stays on iron sights)
+# A denied scope stays on iron sights; camo follows either way.
 function {fn}/show_primary_camo_dialog
 """)
 	write_versioned_function("multiplayer/editor/pick_secondary_scope", f"""
@@ -79,7 +79,7 @@ data modify storage {ns}:temp _ed_bak set from storage {ns}:temp editor
 {gen_pick_scope_lines("secondary", TRIG_SECONDARY_SCOPE_BASE)}
 execute store success score #ed_ok {ns}.data run function {fn}/commit_check
 
-# Continue to camo either way (a denied scope simply stays on iron sights)
+# A denied scope stays on iron sights; camo follows either way.
 function {fn}/show_secondary_camo_dialog
 """)
 

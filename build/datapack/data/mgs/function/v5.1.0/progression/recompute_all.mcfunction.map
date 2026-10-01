@@ -3,8 +3,9 @@
 	"file": "recompute_all.mcfunction",
 	"sourceRoot": "../../../../../../..",
 	"sources": [
-		"src/functional/progression/__init__.py"
+		"src/functional/progression/__init__.py",
+		"src/functional/progression/advancements/hooks.py"
 	],
 	"names": [],
-	"mappings": "AAyFuD;;;;;;AACvD;AACA;AACA"
+	"mappings": "AAmFuD;;;;;;AACvD;AACA;AACA;ACAwD"
 }

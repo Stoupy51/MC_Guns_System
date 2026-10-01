@@ -6,12 +6,10 @@
 # @within	mgs:v5.1.0/maps/editor/process_element
 #
 
-# Get position for permanent marker
 execute store result storage mgs:temp _zbpos.x double 1 run data get entity @s Pos[0]
 execute store result storage mgs:temp _zbpos.y double 1 run data get entity @s Pos[1]
 execute store result storage mgs:temp _zbpos.z double 1 run data get entity @s Pos[2]
 
-# Detect type and copy defaults
 execute if entity @s[tag=mgs.element.zombie_spawn] run data modify storage mgs:temp _zbpos.tag set value "mgs.element.zombie_spawn"
 execute if entity @s[tag=mgs.element.zombie_spawn] run data modify storage mgs:temp _zb_new set from storage mgs:temp map_edit.zb_defaults.zombie_spawn
 execute if entity @s[tag=mgs.element.player_spawn_zb] run data modify storage mgs:temp _zbpos.tag set value "mgs.element.player_spawn_zb"
@@ -37,21 +35,16 @@ execute if entity @s[tag=mgs.element.power_switch] run data modify storage mgs:t
 execute if entity @s[tag=mgs.element.barricade] run data modify storage mgs:temp _zbpos.tag set value "mgs.element.barricade"
 execute if entity @s[tag=mgs.element.barricade] run data modify storage mgs:temp _zb_new set from storage mgs:temp map_edit.zb_defaults.barricade
 
-# Summon marker
 function mgs:v5.1.0/maps/editor/summon_zb_marker with storage mgs:temp _zbpos
 
-# Copy data compound to marker
 execute as @n[tag=mgs.new_zb_marker] run data modify entity @s data set from storage mgs:temp _zb_new
 
-# Apply shared group_id default
 execute as @n[tag=mgs.new_zb_marker] run data modify entity @s data.group_id set from storage mgs:temp map_edit.zb_defaults.group_id
 
-# Get player rotation
 execute store result score #yaw mgs.data run data get entity @p[tag=mgs.map_editor,distance=..6,sort=nearest] Rotation[0]
 
-# Snap yaw: the power switch is mounted on a block face, so it only allows the 4 cardinal facings
-# (snap to 90°). Every other zb_object snaps to the nearest 45°. (742 = 720 + 45/2 and 765 = 720 + 90/2
-# offset the value positive for rounding; 720 is a multiple of both 45 and 90 and is removed again after.)
+# The power switch sits on a block face, so it snaps to 90°; other objects to 45°.
+# 742 = 720 + 45/2 and 765 = 720 + 90/2 make the value positive for rounding; the 720 is removed after.
 execute unless entity @s[tag=mgs.element.power_switch] run scoreboard players add #yaw mgs.data 742
 execute unless entity @s[tag=mgs.element.power_switch] run scoreboard players operation #yaw mgs.data /= #45 mgs.data
 execute unless entity @s[tag=mgs.element.power_switch] run scoreboard players operation #yaw mgs.data *= #45 mgs.data
@@ -60,14 +53,14 @@ execute if entity @s[tag=mgs.element.power_switch] run scoreboard players operat
 execute if entity @s[tag=mgs.element.power_switch] run scoreboard players operation #yaw mgs.data *= #90 mgs.data
 scoreboard players remove #yaw mgs.data 720
 
-# Apply 180° yaw offset
+# +180°
 scoreboard players add #yaw mgs.data 180
 
-# Store yaw on marker (and sync entity Rotation immediately so the model display below is oriented right away)
+# The entity Rotation is synced at once, so the model display below is oriented right away.
 execute as @n[tag=mgs.new_zb_marker] store result entity @s data.yaw float 1 run scoreboard players get #yaw mgs.data
 execute as @n[tag=mgs.new_zb_marker] run data modify entity @s Rotation[0] set from entity @s data.yaw
 
-# For doors: capture block from player's offhand (required)
+# Doors take their block from the player's offhand (required).
 execute if entity @s[tag=mgs.element.door] as @p[tag=mgs.map_editor,distance=..6,sort=nearest] run data modify storage mgs:temp _zb_offhand_block set from entity @s equipment.offhand.id
 execute if entity @s[tag=mgs.element.door] unless data storage mgs:temp _zb_offhand_block run tellraw @a[tag=mgs.map_editor] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"text":"⚠ ","color":"white"},{"translate":"mgs.door_cancelled_hold_a_block_in_offhand","color":"red"}]
 execute if entity @s[tag=mgs.element.door] unless data storage mgs:temp _zb_offhand_block run kill @e[tag=mgs.new_zb_marker]
@@ -77,10 +70,9 @@ data remove storage mgs:temp _zb_offhand_block
 
 tag @e[tag=mgs.new_zb_marker] remove mgs.new_zb_marker
 
-# Refresh model displays right away (wallbuy/perk/pap/mystery box/power switch)
+# Wallbuy, perk, PaP, mystery box and power switch displays.
 function mgs:v5.1.0/maps/editor/refresh_displays
 
-# Announce
 execute if entity @s[tag=mgs.element.zombie_spawn] run tellraw @a[tag=mgs.map_editor] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.zombie_spawn_placed","color":"dark_green"}]
 execute if entity @s[tag=mgs.element.player_spawn_zb] run tellraw @a[tag=mgs.map_editor] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.player_spawn_placed","color":"aqua"}]
 execute if entity @s[tag=mgs.element.special_spawn] run tellraw @a[tag=mgs.map_editor] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.special_spawn_placed","color":"dark_red"}]

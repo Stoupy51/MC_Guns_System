@@ -1,7 +1,9 @@
 
 #> mgs:v5.1.0/zombies/perks/apply/quick_revive
 #
-# @within	???
+# @executed	as @p[tag=mgs.pu_collecting]
+#
+# @within	mgs:v5.1.0/zombies/perks/apply
 #
 
 tag @s add mgs.perk.quick_revive

@@ -10,7 +10,6 @@ def write_multiplayer_join() -> None:
 	ns: str = Mem.ctx.project_id
 	version: str = Mem.ctx.project_version
 
-	## Join Ongoing Game (late-joiner support)
 	write_versioned_function("multiplayer/join_game", GameLifecycle.late_join_flow_lines(
 	ns,
 	"multiplayer",
@@ -26,7 +25,6 @@ scoreboard players set @s {ns}.mp.spectate_timer 0
 scoreboard players set @s {ns}.last_hit 0
 execute store result score @s {ns}.hp_prev run data get entity @s Health 1
 
-# Assign to FFA team for ffa mode, otherwise auto-assign to team
 execute if data storage {ns}:multiplayer game{{gamemode:"ffa"}} run team join {ns}.ffa @s
 execute unless data storage {ns}:multiplayer game{{gamemode:"ffa"}} unless score @s {ns}.mp.team matches 1.. run function {ns}:v{version}/multiplayer/auto_assign_team
 """,

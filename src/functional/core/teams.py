@@ -1,7 +1,6 @@
 """ The vanilla teams every mode assigns players to.
 
-Created at load rather than at game start: the Manage Players menu assigns a team before any game
-exists, and a mid-game /reload can't leave them missing.
+Created at load rather than at game start: the Manage Players menu assigns a team before any game exists, and a mid-game /reload can't leave them missing.
 """
 # Imports
 from dataclasses import dataclass

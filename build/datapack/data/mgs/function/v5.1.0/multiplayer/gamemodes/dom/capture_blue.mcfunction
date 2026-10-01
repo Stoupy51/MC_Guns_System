@@ -9,10 +9,9 @@
 execute store result score #dom_prog mgs.data run scoreboard players get @s mgs.mp.dom_progress
 scoreboard players remove @s mgs.mp.dom_progress 2
 
-# Cap at -100
 execute if score @s mgs.mp.dom_progress matches ..-101 run scoreboard players set @s mgs.mp.dom_progress -100
 
-# If crossed 0, point neutralized
+# Crossing 0 neutralizes the point.
 tag @a remove mgs.dom_capturer
 execute if score #dom_prog mgs.data matches 1.. if score @s mgs.mp.dom_progress matches ..0 run tag @a[distance=..5,scores={mgs.mp.team=2,mgs.mp.in_game=1}] add mgs.dom_capturer
 execute if score #dom_prog mgs.data matches 1.. if score @s mgs.mp.dom_progress matches ..0 if entity @s[tag=mgs.dom_label_A] run tellraw @a[tag=!mgs.dom_capturer] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.point_a_neutralized","color":"yellow"}]
@@ -30,7 +29,6 @@ execute if score #dom_prog mgs.data matches 1.. if score @s mgs.mp.dom_progress 
 execute if score #dom_prog mgs.data matches 1.. if score @s mgs.mp.dom_progress matches ..0 run scoreboard players set @s mgs.mp.dom_owner 0
 execute if score #dom_prog mgs.data matches 1.. if score @s mgs.mp.dom_progress matches ..0 run data modify entity @n[tag=mgs.dom_label,distance=..1] text.color set value "yellow"
 
-# If reached -100, captured by blue
 tag @a remove mgs.dom_capturer
 execute if score @s mgs.mp.dom_progress matches -100 unless score @s mgs.mp.dom_owner matches 2 run tag @a[distance=..5,scores={mgs.mp.team=2,mgs.mp.in_game=1}] add mgs.dom_capturer
 execute if score @s mgs.mp.dom_progress matches -100 unless score @s mgs.mp.dom_owner matches 2 if entity @s[tag=mgs.dom_label_A] run tellraw @a[tag=!mgs.dom_capturer] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.blue","color":"blue"}," ",{"translate":"mgs.captured_point_a","color":"yellow"}]

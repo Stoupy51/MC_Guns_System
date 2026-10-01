@@ -10,11 +10,10 @@ data modify storage mgs:temp _give set value {}
 data modify storage mgs:temp _give.Item set from entity @n[type=minecraft:item_display,tag=mgs.dropped_gun,distance=..3] item.components."minecraft:custom_data".mgs.drop_mag
 data modify storage mgs:temp _give.Owner set from entity @s UUID
 
-# Load the magazine into a helper display so `item replace ... from entity` can read it
+# So `item replace ... from entity` can read it.
 summon minecraft:item_display ~ ~ ~ {Tags:["mgs.drop_mag_helper"]}
 data modify entity @n[tag=mgs.drop_mag_helper] item set from storage mgs:temp _give.Item
 
-# First free main-inventory slot
 scoreboard players set #mag_slot mgs.data -1
 execute if score #mag_slot mgs.data matches -1 unless items entity @s inventory.0 * run scoreboard players set #mag_slot mgs.data 0
 execute if score #mag_slot mgs.data matches -1 unless items entity @s inventory.1 * run scoreboard players set #mag_slot mgs.data 1
@@ -46,7 +45,7 @@ execute if score #mag_slot mgs.data matches -1 unless items entity @s inventory.
 execute store result storage mgs:temp _give.slot int 1 run scoreboard players get #mag_slot mgs.data
 execute if score #mag_slot mgs.data matches 0.. run function mgs:v5.1.0/shared/drops/place_mag with storage mgs:temp _give
 
-# Main inventory full -> fall back to an owner-locked ground item (may land in the hotbar)
+# Main inventory full: an owner-locked ground item (may land in the hotbar).
 execute if score #mag_slot mgs.data matches -1 at @s run function mgs:v5.1.0/shared/drops/give_item with storage mgs:temp _give
 
 kill @n[tag=mgs.drop_mag_helper]

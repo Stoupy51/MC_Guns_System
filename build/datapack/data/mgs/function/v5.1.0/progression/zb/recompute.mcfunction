@@ -10,12 +10,12 @@
 execute unless score @s mgs.zb.xp_total matches 0.. run scoreboard players set @s mgs.zb.xp_total 0
 execute if score @s mgs.zb.xp_total matches 1000000000.. run scoreboard players set @s mgs.zb.xp_total 1000000000
 
-# Bracket the answer, then halve. Invariant: total_to_reach(#xp_lo) <= xp_total < total_to_reach(#xp_hi).
+# Bisection; invariant: total_to_reach(#xp_lo) <= xp_total < total_to_reach(#xp_hi).
 scoreboard players set #xp_lo mgs.data 1
 scoreboard players set #xp_hi mgs.data 16384
 function mgs:v5.1.0/progression/zb/bisect
 
-# #xp_lo is the level; whatever the level does not account for is the progress into it
+# #xp_lo is the level; the rest of the total is the progress into it.
 scoreboard players operation @s mgs.zb.xp_level = #xp_lo mgs.data
 scoreboard players operation #xp_need mgs.data = #xp_lo mgs.data
 scoreboard players operation #xp_need mgs.data *= #5 mgs.data

@@ -1,7 +1,6 @@
 """ Weapon subsystem entry point; submodules run in dependency order. """
 # Imports
 from ..helpers.content import SharedContent
-from .ammo.lore import main as update_lore_main
 from .ammo.magazine import main as ammo_main
 from .ammo.switch import main as switch_main
 from .common import main as common_main
@@ -31,7 +30,6 @@ def main() -> None:
 	casing_main()
 	ammo_main()
 	actionbar_main()                     # Fire mode + ammo display
-	update_lore_main()                   # Rebuild item lore from stats
 	sound_main()
 	hit_indicator_main()
 

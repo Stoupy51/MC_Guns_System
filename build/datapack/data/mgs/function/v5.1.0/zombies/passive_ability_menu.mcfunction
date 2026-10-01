@@ -7,8 +7,7 @@
 #			mgs:v5.1.0/zombies/preload_complete [ as @a[scores={mgs.zb.in_game=1}] ]
 #
 
-# Zonweeb variant only
 execute unless data storage mgs:zombies game{variant:"zonweeb"} run return fail
-# Show the passive selection dialog (ability dialog is shown after)
+# The ability dialog follows.
 dialog show @s mgs:v5.1.0/zombies/passive_ability
 

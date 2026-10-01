@@ -6,10 +6,9 @@
 # @within	mgs:v5.1.0/zombies/powerups/check_drop
 #
 
-# Draw next type from the shuffle bag (no repeats until the current cycle is exhausted)
+# No repeats until the bag is empty.
 function mgs:v5.1.0/zombies/powerups/queue_draw
 
-# Spawn visuals at @s's position
 scoreboard players add #pu_uid mgs.data 1
 data modify storage mgs:temp _pu_spawn set value {x:0,y:0,z:0,uid:0}
 execute at @s summon minecraft:marker run function mgs:v5.1.0/shared/probe_pos

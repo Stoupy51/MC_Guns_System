@@ -14,12 +14,10 @@ def normalize_btn_fields(ns: str) -> str:
 	A loadout saved before a field existed simply has no value for it, and a macro substituting a
 	missing key fails the whole command, so each one is defaulted before the row is built.
 
-	Args:
-		ns (str): The project namespace.
 	Returns:
 		str: One command per line, ready to embed in a function body.
 	"""
-	# Perk display lines for tooltips: \\n in SNBT is stored as \n (backslash + n, 2 chars), which macro substitution turns back into a newline
+	# \\n in SNBT is stored as backslash + n, which macro substitution turns back into a newline.
 	perk_disp: str = (
 		"\n".join(f"data modify storage {ns}:temp _btn_data.perk{i} set value \"\"" for i in range(len(PERKS)))
 		+ "\n"
@@ -47,9 +45,8 @@ def compute_trig(ns: str, field: str, base: int) -> str:
 	""" Return the lines storing `base + the current row's loadout id` into a _btn_data field.
 
 	Args:
-		ns (str):    The project namespace.
-		field (str): The _btn_data key the trigger value lands in.
-		base (int):  The first trigger value of the block reserved for this action.
+		field: The _btn_data key the trigger value lands in.
+		base: The first trigger value of the block reserved for this action.
 	Returns:
 		str: Three commands, one per line.
 	"""

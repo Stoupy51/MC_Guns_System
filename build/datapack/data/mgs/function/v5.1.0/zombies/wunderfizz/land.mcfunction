@@ -6,7 +6,7 @@
 # @within	mgs:v5.1.0/zombies/wunderfizz/orb_tick
 #
 
-# Roam pull: the machine is about to move — show the bear, refund the buyer, no perk
+# Roam: refund the buyer, no perk.
 execute if score @s mgs.zb.wf.willmove matches 1 run return run function mgs:v5.1.0/zombies/wunderfizz/land_bear
 
 execute if score @s mgs.zb.wf.perk matches 0 run data modify entity @s item set value {id:"minecraft:potion",count:1,components:{"minecraft:item_model":"mgs:perk_machine_juggernog"}}

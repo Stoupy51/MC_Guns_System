@@ -6,16 +6,13 @@
 # @within	mgs:v5.1.0/zombies/revive/check_solo_qr
 #
 
-# Check player has uses remaining
 execute if score @s mgs.zb.qr_uses matches 3.. run return 0
 
-# Signal solo reviving so decay logic is skipped (set #zb_reviving=2)
+# #zb_reviving 2 skips the decay logic.
 scoreboard players set #zb_reviving mgs.data 2
 
-# Increment revive_p at normal speed (real-time via #tick_delta)
 scoreboard players operation @s mgs.zb.revive_p += #tick_delta mgs.data
 
-# Show solo QR auto-revive actionbar with seconds display
 scoreboard players operation #rv_qr_sec mgs.data = @s mgs.zb.revive_p
 scoreboard players operation #rv_qr_sec mgs.data /= #20 mgs.data
 scoreboard players operation #rv_qr_tenth mgs.data = @s mgs.zb.revive_p
@@ -24,6 +21,5 @@ scoreboard players operation #rv_qr_tenth mgs.data /= #2 mgs.data
 data modify storage smithed.actionbar:input message set value {json:[{"text":"⚡ ","color":"white"},{"translate":"mgs.solo_quick_revive","color":"aqua"},{"score":{"name":"#rv_qr_sec","objective":"mgs.data"},"color":"green"},{"text":".","color":"green"},{"score":{"name":"#rv_qr_tenth","objective":"mgs.data"},"color":"green"},{"translate":"mgs.s_10_0s","color":"gray"}],priority:"override",freeze:2}
 function #smithed.actionbar:message
 
-# Auto-revive once threshold reached
 execute if score @s mgs.zb.revive_p matches 200.. run function mgs:v5.1.0/zombies/revive/solo_qr_complete
 

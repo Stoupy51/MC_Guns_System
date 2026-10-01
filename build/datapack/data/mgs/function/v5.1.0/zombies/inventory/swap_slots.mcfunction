@@ -9,12 +9,9 @@
 #			from (string)
 #
 
-# @s = temp item_display, player = @p[tag=mgs.inv_swapping]
-# Save target item to temp display
+# Run as the temporary item_display; the player is @p[tag=mgs.inv_swapping].
 $item replace entity @s contents from entity @p[tag=mgs.inv_swapping] $(to)
-# Move source to target
 $item replace entity @p[tag=mgs.inv_swapping] $(to) from entity @p[tag=mgs.inv_swapping] $(from)
-# Put old target item (from display) into source, or clear source if target was empty
 $execute if items entity @s contents * run item replace entity @p[tag=mgs.inv_swapping] $(from) from entity @s contents
 $execute unless items entity @s contents * run item replace entity @p[tag=mgs.inv_swapping] $(from) with air
 kill @s

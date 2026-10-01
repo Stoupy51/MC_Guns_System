@@ -6,7 +6,6 @@
 # @within	mgs:v5.1.0/zombies/game_tick [ as @e[tag=...] ]
 #
 
-# @s = frozen zombie — restore level-appropriate speed
 attribute @s minecraft:movement_speed modifier remove mgs:freeze
 tag @s remove mgs.barricade_frozen
 

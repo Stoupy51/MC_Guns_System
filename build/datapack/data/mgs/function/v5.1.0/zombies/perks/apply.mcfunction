@@ -10,13 +10,10 @@
 # @args		perk_id (unknown)
 #
 
-# Set perk scoreboard for the player
 $scoreboard players set @s mgs.zb.perk.$(perk_id) 1
 
-# Owning the perk voids any chip-in progress toward it (including perks granted for free by the
-# random-perk power-up), so a re-purchase after going down starts from zero.
+# Owning the perk (even from the random-perk power-up) clears its chip-in progress, so a rebuy after going down starts at zero.
 $scoreboard players set @s mgs.zb.perkpaid.$(perk_id) 0
 
-# Call perk-specific effect function
 $function mgs:v5.1.0/zombies/perks/apply/$(perk_id)
 

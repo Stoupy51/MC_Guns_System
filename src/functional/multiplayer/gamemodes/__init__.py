@@ -13,14 +13,10 @@ from .team_deathmatch import generate_team_deathmatch
 def generate_gamemodes() -> None:
 	ns: str = Mem.ctx.project_id
 
-	## Scoreboards for gamemodes.
-	## The four demo_* objectives are per-ENTITY: Demolition keeps each bomb site's state on its own marker
-	## because two sites can be planted, contested and defused at the same time.
+	## The demo_* objectives are per entity: each bomb site keeps its own state, since two can be planted or defused at once.
 	write_load_file(f"""
-# Gamemode scoreboards
 scoreboard objectives add {ns}.mp.dom_progress dummy
 scoreboard objectives add {ns}.mp.dom_owner dummy
-scoreboard objectives add {ns}.mp.gm_timer dummy
 scoreboard objectives add {ns}.demo_state dummy
 scoreboard objectives add {ns}.demo_prog dummy
 scoreboard objectives add {ns}.demo_fuse dummy

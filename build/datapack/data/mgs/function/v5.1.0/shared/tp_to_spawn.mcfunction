@@ -13,15 +13,14 @@
 # @args		mode (string)
 #
 
-# Store marker position and yaw for the teleport macro
+# For the teleport macro.
 execute store result storage mgs:temp _tp.x double 1 run data get entity @s Pos[0]
 execute store result storage mgs:temp _tp.y double 1 run data get entity @s Pos[1]
 execute store result storage mgs:temp _tp.z double 1 run data get entity @s Pos[2]
 data modify storage mgs:temp _tp.yaw set from entity @s data.yaw
 
-# TP the pending player
 execute as @p[tag=mgs.spawn_pending] run function mgs:v5.1.0/shared/tp_player_at with storage mgs:temp _tp
 
-# Mark this spawn as used (prevents duplicate assignments) (only in preparing time)
+# Only during prep: the spawn is used, so no two players get it.
 $execute unless data storage mgs:$(mode) game{state:"active"} run tag @s add mgs.spawn_used
 

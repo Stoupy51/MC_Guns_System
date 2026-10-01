@@ -9,30 +9,59 @@ Credits for resources: MGS 4.2 by TheBradqq
 
 ## 🎮 Overview
 
-MC Guns System 26.3 is a full FPS framework for Minecraft.
-
-It includes:
-
-- Data-driven weapons (stats in item NBT/custom_data).
-- Multiplayer game modes.
-- Missions (co-op PvE).
-- Zombies mode.
-- A generic in-game map editor for all modes.
-- A custom loadout and class ecosystem.
-- Shader-based visual effects (zoom, flash, spread feedback).
-
-Quick item commands:
-
-- Give all registered items: `/function mgs:_give_all`
-- Give one specific item: `/loot give @s loot mgs:i/<item>`
-
-Quick config commands:
-
-- Open player config menu: `/trigger mgs.player.config set 1`
-- Open admin/server config menu: `/function mgs:config`
+MC Guns System is an FPS framework for Minecraft 26.3: data-driven weapons, Multiplayer game modes, co-op Missions, a Zombies mode, an in-game map editor shared by the three modes, custom loadouts, and post-effect shaders (zoom, muzzle flash, crosshair spread, low health).
 
 ![Gameplay overview](./assets/img/gameplay_overview.gif)
 ![Config Menu](./assets/img/config_menu.png)
+
+## 📦 Install
+
+1. Download the latest [release](https://github.com/Stoupy51/MC_Guns_System/releases/latest).
+2. Put `MCGunsSystem_datapack_with_libs.zip` in the world's `datapacks` folder.
+   It bundles Bookshelf and Smithed Actionbar; take `MCGunsSystem_datapack.zip` instead if the world already has them.
+3. Enable `MCGunsSystem_resource_pack_with_libs.zip` as a resource pack.
+4. `/reload`, or open the world.
+
+## 🕹️ Use
+
+- Give every item: `/function mgs:_give_all`
+- Give one item: `/loot give @s loot mgs:i/<item>`
+- Admin menu (game setup, map editor, server options): `/function mgs:config`
+- Player options: `/trigger mgs.player.config set 1`
+- After retuning `src/functional/progression/awards.py` or a challenge threshold, rebuild every online player's levels and challenges from their banked XP: `/function mgs:v5.1.0/progression/recompute_all` (the path carries the pack version).
+
+## 🛠️ Build
+
+Needs [uv](https://docs.astral.sh/uv/) 0.9 or newer, which fetches Python 3.14.
+
+```bash
+uv sync
+uv run stewbeet          # writes build/datapack, build/resource_pack and the zips
+```
+
+`beet.yml` copies the zips to the author's Windows paths (`build_copy_destinations`); elsewhere StewBeet only warns.
+
+Checks, with `uv run python scripts/verify.py <command>`:
+
+| Command | What it does |
+|---|---|
+| `baseline` | Snapshot `build/` to compare against |
+| `check [--diff]` | Rebuild and list what changed since the baseline, comments and blank lines ignored |
+| `validate` | Parse every function with mecha and report missing and unreachable resources |
+| `server --java <absolute path to Java 25>` | Load and reload the pack in a real 26.3 server |
+| `lint` | ruff, pyright strict, complexipy |
+
+## 🧱 Architecture
+
+`src/` generates everything; `build/` is the output, tracked in git, and is never edited by hand.
+
+- `src/setup_definitions.py`: registers every item (weapons, magazines, grenades, consumables) from `src/config` and `src/database`, then derives names, lore and components.
+- `src/link.py`: writes every function, in dependency order:
+  `main` (objectives, damage, config menu), `shaders`, `weapon`, `player_config`, `stamina`, `mob_ai`, `core` (bounds, maps, spawning, menus shared by the modes), `progression` (XP and challenges), `zombies`, `multiplayer`, `missions`, `map_editor`.
+- `src/config`: weapon stats, catalogs, keys. `src/database`: item builders, camo blends, Blockbench models.
+- `src/functional/helpers`: text, dialogs, titles and lifecycle helpers shared by the generators.
+- `assets/`: textures, sounds, shaders. `libs/`: bundled library resource pack.
+- `specs/`: one folder per planned feature, plus the inbox.
 
 ## 📊 Feature Matrix By Mode
 
@@ -80,7 +109,6 @@ Major differences in 5.0 (Minecraft 26.3+) compared to MGS 4.2:
 - Quick swap and quick reload modifiers.
 - Recoil and casing ejection.
 - Actionbar weapon HUD.
-- Runtime lore rebuilding from weapon stats.
 - Advanced firing and environment-aware sound logic.
 
 https://github.com/user-attachments/assets/a8094f23-320a-4708-8b7c-132a2f3dc7c4
@@ -106,7 +134,7 @@ https://github.com/user-attachments/assets/e6f96ed9-383e-48d2-8c2b-bb47300bba42
 - Sidebar and score tracking by gamemode.
 
 <details>
-<summary>🔥 Exemple of a Domination match</summary>
+<summary>🔥 Example of a Domination match</summary>
 
 ![Multiplayer match](./assets/img/multiplayer_match.gif)
 
@@ -118,9 +146,10 @@ Implemented gamemodes:
 - 🏳️ Domination.
 - ⚡ Hardpoint.
 - 💣 Search and Destroy.
+- 💣 Demolition.
 
 <details>
-<summary>🏳️ Modes de jeu supportés</summary>
+<summary>🏳️ Supported gamemodes</summary>
 
 ![FFA](./assets/img/mode_ffa.png)
 ![Team Deathmatch](./assets/img/mode_tdm.png)
@@ -159,7 +188,7 @@ https://github.com/user-attachments/assets/69d14336-9af0-47ef-a5da-538b0f668787
 
 A generic in-game authoring tool shared by Multiplayer, Missions, and Zombies. Instead of hardcoding coordinates in functions, each map is a storage compound (id, name, base_coordinates, boundaries, mode-specific element arrays) stored in a per-mode list. Element positions are saved relative to base_coordinates and converted to absolute world positions at runtime, so maps are portable and shareable between worlds/projects.
 
-Workflow: open the editor from the config menu (Game Setup), pick a mode tab, then select or create a map. The editor loads the map into temporary storage, spawns markers for existing elements, and gives you editor tools (spawn eggs and utility items). Place eggs to add elements, configure them via per-element handlers, then save — live markers are read back, converted to relative positions, and the map compound is rebuilt. Exiting cleans up all editor entities/items/tags.
+Workflow: open the editor from the config menu (Game Setup), pick a mode tab, then select or create a map. The editor loads the map into temporary storage, spawns markers for existing elements, and gives you editor tools (spawn eggs and utility items). Place eggs to add elements, configure them via per-element handlers, then save: live markers are read back, converted to relative positions, and the map compound is rebuilt. Exiting cleans up all editor entities/items/tags.
 
 Available elements per mode:
 
@@ -169,6 +198,30 @@ Available elements per mode:
 
 Tips: place base coordinates first, validate boundaries early, ensure enough spawn points, verify door group/link consistency, and save frequently.
 
+### Shipping a map with the pack
+
+1. Build the map in the editor and save it.
+2. Print its compound with `/data get storage mgs:maps <mode>[{id:"<id>"}]` (`<mode>` is `multiplayer`, `zombies` or `missions`).
+3. Paste the compound into the generator as a raw string, next to the existing ones, and append it only when its id is missing:
+
+| Mode | File | Registration function | Runs |
+|---|---|---|---|
+| Multiplayer | `src/functional/multiplayer/maps.py` | `maps/multiplayer/default_maps`, in `#mgs:maps/register` | on every load |
+| Zombies | `src/functional/zombies/maps.py` | `maps/zombies/<id>/register`, in `#mgs:zombies/register_maps` | at every Zombies game start |
+| Missions | none yet | none yet | |
+
+```mcfunction
+execute unless data storage mgs:maps multiplayer[{id:"hijacked"}] run data modify storage mgs:maps multiplayer append value {...}
+```
+
+A world that already holds a map with that id keeps its own copy, so in-game edits survive a reload.
+The flip side: a changed built-in map only reaches a world after the stored one is removed, for example with `/data remove storage mgs:maps multiplayer[{id:"hijacked"}]` before `/reload`.
+
+Another datapack can ship maps the same way, by adding its own function to `#mgs:maps/register` or `#mgs:zombies/register_maps`.
+
+Per-map scripts go in the function tags `#mgs:maps/<script>_script`, with `<script>` one of `start`, `tick`, `join`, `leave` and `respawn`. They run at the map's base coordinates.
+Every map's scripts are in the same tags, so each one first checks that its game is active on its own map (see `maps/multiplayer/hijacked/calls/*` and `maps/zombies/kino_der_toten/calls/*`).
+
 https://github.com/user-attachments/assets/7b429b68-c476-4b08-98ce-0fa53cb72608
 
 ![Editor elements](./assets/img/editor_elements.png)
@@ -177,11 +230,11 @@ https://github.com/user-attachments/assets/7b429b68-c476-4b08-98ce-0fa53cb72608
 
 - Weapon, magazine, grenade, and casing definitions are generated from Python sources.
 - Weapon stats are embedded in item custom_data.
-- Automatic display name/model/lore generation.
+- Display name, model and lore generated at build time.
 - PAP (Pack-a-Punch) schema support in stat config.
 
 ## 🚧 Known WIP / Pending Items
 
 - Legacy crafting system from MGS 4.2 is not integrated.
-- Future multiplayer TODO: final kill cam buffer/recording design: Starting 10 seconds before the end of the game, we record every player's position and rotation every tick in a list (with a max size of 200 ticks, so 10 seconds at 20 ticks per second) (storage {ns}:kill_cam players set value {username:[[x,y,z,yaw,pitch],[x,y,z,yaw,pitch],...]},username_2...})
+- Multiplayer final kill cam: designed in [specs/004-multiplayer-kill-cam](specs/004-multiplayer-kill-cam/), not built.
 

@@ -31,15 +31,13 @@ execute if score @s mgs.zb.wwp.widows_wine matches 1 run scoreboard players set 
 execute if score @s mgs.zb.wwp.widows_wine matches 1 run function mgs:v5.1.0/zombies/perks/reapply/widows_wine
 execute if score @s mgs.zb.perk.juggernog matches 1.. run attribute @s minecraft:max_health base set 40
 
-# Restore the snapshotted inventory into the exact original slots (players can't be data-modified,
-# so this goes through the shared inventory/restore_inventory system)
+# Players cannot be data-modified, so the inventory goes back through inventory/restore_inventory.
 execute store result storage mgs:temp _ww_id.id int 1 run scoreboard players get @s mgs.zb.ww.id
 function mgs:v5.1.0/zombies/whos_who/load_snapshot with storage mgs:temp _ww_id
 function mgs:v5.1.0/zombies/inventory/restore_inventory
 function mgs:v5.1.0/zombies/inventory/refresh_perk_items
 effect give @s minecraft:instant_health 1 255 true
 
-# Remove the body and clear doppelganger state + snapshot
 scoreboard players operation #my_downed_id mgs.data = @s mgs.zb.ww.id
 function mgs:v5.1.0/zombies/revive/hide_body
 scoreboard players set @s mgs.zb.wwp.juggernog 0
@@ -53,7 +51,6 @@ scoreboard players set @s mgs.zb.wwp.deadshot 0
 scoreboard players set @s mgs.zb.wwp.timeslip 0
 scoreboard players set @s mgs.zb.wwp.electric_cherry 0
 scoreboard players set @s mgs.zb.wwp.tombstone 0
-scoreboard players set @s mgs.zb.wwp.whos_who 0
 scoreboard players set @s mgs.zb.wwp.dying_wish 0
 scoreboard players set @s mgs.zb.wwp.widows_wine 0
 tag @s remove mgs.ww_active

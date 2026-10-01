@@ -14,7 +14,7 @@
 
 scoreboard players set #wb_mag_not_full mgs.data 0
 
-# Missing paired mag counts as not full.
+# A missing paired magazine counts as not full.
 $execute unless items entity @s $(slot) *[custom_data~{mgs:{magazine:true}}] run scoreboard players set #wb_mag_not_full mgs.data 1
 
 tag @s add mgs.wb_reading_mag

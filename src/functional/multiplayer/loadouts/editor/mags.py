@@ -18,7 +18,7 @@ def write_editor_mags() -> None:
 
 	fn: str = editor_fn(ns, version)
 
-	## MAGAZINE submenus (guarded: their gun must be selected)
+	## Magazine submenus, only once their gun is picked.
 	mag_actions_primary: list[str] = []
 	for count in range(1, 6):
 		trig = TRIG_PRIMARY_MAGS_BASE + count
@@ -52,9 +52,9 @@ def write_editor_mags() -> None:
 				f'data modify storage {ns}:temp editor.{prefix}_mag_count set value {count}\n'
 			)
 		return f"""
-# Guard: the gun must be selected (hub grays this out, but triggers can be sent manually)
+# The hub grays this out, but triggers can be sent by hand.
 {guard}
-# Snapshot, apply, commit (reverts on overflow), back to hub
+# Snapshot, apply, commit (reverts on overflow), back to the hub.
 data modify storage {ns}:temp _ed_bak set from storage {ns}:temp editor
 {lines}
 execute store success score #ed_ok {ns}.data run function {fn}/commit_check

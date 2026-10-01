@@ -6,7 +6,6 @@
 # @within	mgs:v5.1.0/player/config/process
 #
 
-# Zonweeb variant only
 execute unless data storage mgs:zombies game{variant:"zonweeb"} run return fail
 scoreboard players set @s mgs.zb.ability 1
 scoreboard players set @s mgs.zb.ability_cd 0

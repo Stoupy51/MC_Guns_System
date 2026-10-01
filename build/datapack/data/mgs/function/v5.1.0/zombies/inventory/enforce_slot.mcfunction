@@ -22,7 +22,7 @@
 
 $execute if items entity @s $(slot) $(match) run return 1
 
-# Scan all inventory slots for the correct item and swap it into place
+# Find the right item in any slot and swap it into place.
 scoreboard players set #zb_inv_found mgs.data 0
 $execute if score #zb_inv_found mgs.data matches 0 if items entity @s hotbar.0 $(match) run function mgs:v5.1.0/zombies/inventory/move_found_slot {from:"hotbar.0",to:"$(slot)"}
 $execute if score #zb_inv_found mgs.data matches 0 if items entity @s hotbar.1 $(match) run function mgs:v5.1.0/zombies/inventory/move_found_slot {from:"hotbar.1",to:"$(slot)"}
@@ -69,7 +69,7 @@ $execute if score #zb_inv_found mgs.data matches 0 if items entity @s player.cra
 
 execute if score #zb_inv_found mgs.data matches 1 run return 1
 
-# Not found in any slot: drop wrong zombies item from target slot if present, then try ground pickup
+# Not found: drop a wrong zombies item from the slot, then try a ground pickup.
 $execute if items entity @s $(slot) *[custom_data~{mgs:{zombies:{}}}] run function mgs:v5.1.0/zombies/inventory/drop_wrong_slot_item {slot:"$(slot)"}
 
 tag @s add mgs.inv_slot_owner

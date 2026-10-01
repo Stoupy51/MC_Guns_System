@@ -6,10 +6,10 @@
 # @within	mgs:v5.1.0/zoom/main
 #
 
-# Not holding a gun: the vanilla crosshair sprite is blanked, so show the static base one
+# No gun: the vanilla crosshair sprite is blank, so the static base one shows.
 function mgs:v5.1.0/zoom/crosshair_base
 
-# If player was zooming and switched slot so no longer holding a gun, remove slowness effect
+# Switched away from a gun while zoomed: remove the slowness.
 execute unless score @s mgs.zoom matches 1 run return fail
 playsound mgs:common/lean_out player @s
 scoreboard players reset @s mgs.zoom

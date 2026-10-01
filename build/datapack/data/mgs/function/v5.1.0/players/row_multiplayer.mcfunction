@@ -1,10 +1,10 @@
 
 #> mgs:v5.1.0/players/row_multiplayer
 #
-# @within	???
+# @within	mgs:v5.1.0/players/list_entry {id:$(id),name:"$(name)",color:"$(color)"}
 #
-# @args		name (unknown)
-#			color (unknown)
+# @args		name (string)
+#			color (string)
 #			id (unknown)
 #
 

@@ -6,21 +6,16 @@
 # @within	mgs:v5.1.0/zombies/pap/upgrade_core with storage mgs:temp _pap
 #
 
-# Randomize scope (guaranteed different from current)
 function mgs:v5.1.0/zombies/pap/randomize_scope_different with storage mgs:temp _pap_extract.stats
 
-# Randomize camo on top of the new scope
 function mgs:v5.1.0/zombies/pap/randomize_camo with storage mgs:temp _pap_extract.stats
 
-# Set up name data with current (max) level
 data modify storage mgs:temp _pap_name_data.name set from storage mgs:temp _pap_extract.current_name
 execute store result storage mgs:temp _pap_name_data.level int 1 run scoreboard players get #pap_level mgs.data
 execute store result storage mgs:temp _pap_name_data.max int 1 run scoreboard players get #pap_max mgs.data
 
-# Apply new cosmetics directly
 function mgs:v5.1.0/zombies/pap/apply_to_slot with storage mgs:temp _pap
 
-# Notify the player
 tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],"✦ ",{"translate":"mgs.free_scope_camo_reroll_already_at_max_pap_level","color":"aqua"}]
 playsound minecraft:entity.experience_orb.pickup ambient @s ~ ~ ~ 0.8 1.25
 

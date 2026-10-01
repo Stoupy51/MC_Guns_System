@@ -1,27 +1,20 @@
 
 #> mgs:v5.1.0/zombies/summon_dog_at
 #
-# @executed	as @e[tag=mgs.dog_portal] & at @s
+# @executed	at @s
 #
 # @within	mgs:v5.1.0/zombies/dog_portal_strike
 #
 
-# Delivered by the bolt at ground level, AI live immediately — no rise animation, so no zb_rising.
-# zb_dog_new is a scratch tag the strike removes once setup is done.
-# step_height 1.0 for the same reason as zombies (summon_zombie_at), and it matters more here: hounds
-# are what you kite, so one stalling on a 1-block rise is far more noticeable. Safe as a `base` value
-# unlike HP — Wolf.applyTamingSideEffects only ever resets MAX_HEALTH, so the save/load round-trip
-# that forced the HP modifier in types/dog leaves this one alone.
+# Delivered at ground level with AI on, so no rise and no zb_rising; the strike removes the scratch tag zb_dog_new.
+# step_height 1.0 as in summon_zombie_at; Wolf.applyTamingSideEffects only resets MAX_HEALTH, so a base value is safe here.
 summon minecraft:wolf ~ ~ ~ {Tags:["mgs.zombie_round","mgs.zb_dog","mgs.zb_dog_new","mgs.gm_entity","mgs.nukable"],variant:"minecraft:black",PersistenceRequired:true,DeathLootTable:"minecraft:empty",Passengers:[{id:"minecraft:marker",Tags:["mgs.death_watch","mgs.gm_entity"]}],attributes:[{id:"minecraft:follow_range",base:40.0d},{id:"minecraft:step_height",base:1.0d}]}
 
-# Apply scaling (health, speed). Not a macro call: types/dog reads #zb_round itself and never used
-# the level argument, so passing one only added a way for the call to be skipped.
 execute as @n[tag=mgs.zb_dog_new] run function mgs:v5.1.0/zombies/types/dog
 
-# Ally with escort traders, same reason as zombies (escort.py)
+# Allied with escort traders (see escort).
 team join mgs.horde @n[tag=mgs.zb_dog_new]
 
-# Initialize stuck detection scores (timestamp + XZ snapshot + distance bucket at spawn)
 execute as @n[tag=mgs.zb_dog_new] run scoreboard players operation @s mgs.zb.stuck_ticks = #total_tick mgs.data
 execute as @n[tag=mgs.zb_dog_new] store result score @s mgs.zb.stuck_x run data get entity @s Pos[0]
 execute as @n[tag=mgs.zb_dog_new] store result score @s mgs.zb.stuck_z run data get entity @s Pos[2]

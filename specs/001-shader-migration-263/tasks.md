@@ -5,7 +5,7 @@ description: "Task list for the 26.3 shader migration"
 
 # Tasks: 26.3 Shader Migration
 
-**Input**: [spec.md](spec.md), [plan.md](plan.md), and the line-referenced research in [TODO_26.3_SHADERS.md](../../TODO_26.3_SHADERS.md)
+**Input**: [spec.md](spec.md), [plan.md](plan.md), the research in [POSTEFFECT_26.3.md](../POSTEFFECT_26.3.md), and the in-game checklist in [verification.md](verification.md)
 
 **Tests**: No automated tests. This is shader work; every task closes on a named in-game check, per constitution principle V.
 
@@ -93,7 +93,7 @@ Ordered before User Story 2 on purpose: it is not blocked on an external Iris re
 - [ ] T028 [P] [US3] Remove every "requires Fabulous" and "Improved Transparency" mention from in-game messages, `beet.yml` comments (`mgs_custom_crosshair`) and the README
 - [ ] T029 [US3] Revisit `src/functional/weapon/hud/hit_indicator.py`: its font-glyph arc exists only because no post-shader path was available. Decide port or replace, and delete the TODO either way
 - [ ] T030 [US3] Set `beet.yml` `minecraft: "26.3"` and update the README's "MC Guns System 26.2" heading
-- [ ] T031 [US3] Delete `TODO_26.3_SHADERS.md`, folding anything still true into the package docstring
+- [x] T031 [US3] Move the root `TODO_26.3_SHADERS.md` into [verification.md](verification.md)
 - [ ] T032 [US3] `ruff check src --fix` and a clean `beet build`
 
 **Checkpoint**: The tree contains only live code.

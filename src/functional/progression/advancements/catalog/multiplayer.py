@@ -3,12 +3,12 @@
 Every counter here rides an award function that already exists, so nothing in `multiplayer/` is touched
 except the one `advancement grant` for `flawless`.
 
-`level` is the odd one: it reads `mgs.mp.xp_level` directly instead of mirroring it into a counter of its
-own. The score is already permanent and already the number the challenge is about.
+`level` is the odd one: it reads `mgs.mp.xp_level` directly instead of mirroring it into a counter of its own.
+The score is already permanent and already the number the challenge is about.
 
-Ten rows per chain is a shape rather than a coincidence. Four-row chains stacked sixteen deep made the
-advancement screen a tall thin column; ten across turns it into something you read left to right. Rows
-carry only their threshold, payout and name, and take the description, icon and frame from the chain.
+Ten rows per chain is a shape rather than a coincidence.
+Four-row chains stacked sixteen deep would make the advancement screen a tall thin column; ten across turns it into something you read left to right.
+Rows carry only their threshold, payout and name, and take the description, icon and frame from the chain.
 """
 # Imports
 from ..model import Branch, Chain, EventChallenge, Stat, StatKind, Tier
@@ -164,3 +164,4 @@ MP_EVENTS: tuple[EventChallenge, ...] = (
 )
 """ Not expressible as a score: `mgs.mp.deaths` is per-match and is zeroed on join and on start, so it
 reads 0 for almost everyone almost always. """
+

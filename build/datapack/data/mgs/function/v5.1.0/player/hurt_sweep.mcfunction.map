@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "hurt_sweep.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/shaders/hurt.py"
+	],
+	"names": [],
+	"mappings": "AAiQ+C;;;;;;;;AAC/C;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

@@ -29,12 +29,9 @@ $scoreboard players set @n[type=minecraft:item,tag=mgs.pu_item_new] mgs.zb.pu.ty
 scoreboard players set @n[type=minecraft:item,tag=mgs.pu_item_new] mgs.zb.pu.timer 530
 tag @n[type=minecraft:item,tag=mgs.pu_item_new] remove mgs.pu_item_new
 
-# Track live power-up count so game_tick can gate the per-item scans (decremented on expire/pickup,
-# reset to 0 by the bulk cleanup, resynced periodically). pu_item is Invulnerable, so it can only die
-# through those tracked paths — the count can never under-count and freeze a live power-up.
+# Live count gating the per-item scans in game_tick. pu_item is Invulnerable, so it only dies through tracked paths.
 scoreboard players add #pu_active mgs.data 1
 $execute positioned $(x) $(y) $(z) run summon minecraft:text_display ~ ~1.0 ~ {Tags:["mgs.pu_text","mgs.gm_entity"],text:$(label),billboard:"vertical",background:0,shadow:true,view_range:64.0f,transformation:{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[1.5f,1.5f,1.5f]}}
 
-# Drop spawn cue
 execute as @a[scores={mgs.zb.in_game=1}] at @s run playsound mgs:zombies/powerups/item/spawn ambient @s ~ ~ ~ 0.7 1.0
 

@@ -8,7 +8,7 @@ def generate_teams() -> None:
 	ns: str = Mem.ctx.project_id
 	version: str = Mem.ctx.project_version
 
-	## Join Teams (picking a team also opts the player into the game: in_game is the "joined" flag)
+	## Picking a team also opts the player in: in_game is the "joined" flag.
 	write_versioned_function("multiplayer/join_red", f"""
 scoreboard players set @s {ns}.mp.team 1
 scoreboard players set @s {ns}.mp.in_game 1
@@ -23,9 +23,8 @@ team join {ns}.blue @s
 tellraw @s ["",{{"text":"You joined ","color":"white"}},{{"text":"Blue Team","color":"blue","bold":true}}]
 """)
 
-	## Free-for-all has no sides: everyone shares the {ns}.ffa team, the same one game start puts them on.
-	## It is yellow, with friendly fire on and no nametags.
-	## mp.team is cleared to 0 so spawn picking, team scores and the end-of-game announce never treat an FFA player as red or blue.
+	## FFA has no sides: everyone shares the yellow {ns}.ffa team (friendly fire on, no nametags), as at game start.
+	## mp.team is 0, so spawns, team scores and the end announce never treat an FFA player as red or blue.
 	write_versioned_function("multiplayer/join_ffa", f"""
 scoreboard players set @s {ns}.mp.team 0
 scoreboard players set @s {ns}.mp.in_game 1
@@ -34,20 +33,17 @@ tellraw @s ["",{{"text":"You joined the ","color":"white"}},{{"text":"Free For A
 """)
 
 	write_versioned_function("multiplayer/auto_assign_team", f"""
-# In FFA there are no sides to balance — put everyone on the single FFA team instead of splitting
-# them red/blue, which implied alliances that don't exist and sent them to opposing spawns.
+# FFA: everyone goes to the single FFA team instead of being split red and blue.
 execute if data storage {ns}:multiplayer game{{gamemode:"ffa"}} run return run function {ns}:v{version}/multiplayer/join_ffa
 
-# Count players on each team
 execute store result score #red_count {ns}.data if entity @a[scores={{{ns}.mp.team=1}}]
 execute store result score #blue_count {ns}.data if entity @a[scores={{{ns}.mp.team=2}}]
 
-# Exclude self from the count so a player never tips the balance toward their own current team
-# (otherwise re-running auto-assign on already-assigned players is unstable and clumps onto one side)
+# The player's own team does not count, so re-running auto-assign stays stable instead of clumping onto one side.
 execute if score @s {ns}.mp.team matches 1 run scoreboard players remove #red_count {ns}.data 1
 execute if score @s {ns}.mp.team matches 2 run scoreboard players remove #blue_count {ns}.data 1
 
-# Assign to team with fewer players (red if tied)
+# The smaller team, red when tied.
 execute if score #red_count {ns}.data <= #blue_count {ns}.data run function {ns}:v{version}/multiplayer/join_red
 execute if score #red_count {ns}.data > #blue_count {ns}.data run function {ns}:v{version}/multiplayer/join_blue
 """)

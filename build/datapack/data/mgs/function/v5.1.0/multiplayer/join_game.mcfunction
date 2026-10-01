@@ -21,7 +21,6 @@ scoreboard players set @s mgs.mp.spectate_timer 0
 scoreboard players set @s mgs.last_hit 0
 execute store result score @s mgs.hp_prev run data get entity @s Health 1
 
-# Assign to FFA team for ffa mode, otherwise auto-assign to team
 execute if data storage mgs:multiplayer game{gamemode:"ffa"} run team join mgs.ffa @s
 execute unless data storage mgs:multiplayer game{gamemode:"ffa"} unless score @s mgs.mp.team matches 1.. run function mgs:v5.1.0/multiplayer/auto_assign_team
 

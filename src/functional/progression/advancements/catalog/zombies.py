@@ -1,9 +1,8 @@
 """ The Zombies branch: nine chains of ten and one event challenge, 13,100 XP into the `zb` pool.
 
-Two counters are not worth one per event and say so. `kills` reads `#zb_kills_delta`, the same score the
-kill award multiplies for its XP, so a Nuke moves the counter by the number of zombies it actually
-killed. `spending` reads `#xp_gain`, which the spend tracker has already divided by `POINTS_PER_XP`, so
-one unit of that counter is 100 points and the descriptions say points rather than units.
+Two counters are not worth one per event and say so.
+`kills` reads `#zb_kills_delta`, the same score the kill award multiplies for its XP, so a Nuke moves the counter by the number of zombies it actually killed.
+`spending` reads `#xp_gain`, which the spend tracker has already divided by `POINTS_PER_XP`, so one unit of that counter is 100 points and the descriptions say points rather than units.
 
 `best_round` is a high-water mark rather than a count, fed from the round-end tag. `level` borrows
 `mgs.zb.xp_level` and needs no feed at all.
@@ -268,3 +267,4 @@ ZB_EVENTS: tuple[EventChallenge, ...] = (
 )
 """ Not expressible as a score: it needs the round number and the roster size at the same instant, and
 the roster is a selector count rather than anything persistent. """
+

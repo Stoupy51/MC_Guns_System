@@ -114,7 +114,7 @@ EQUIPMENT_PRESETS: list[EquipmentPreset] = [
 ]
 
 SCOPE_VARIANTS: dict[str, tuple[str, ...]] = {
-	# Full range: Iron Sights, Red Dot, Holographic, 3x Scope, 4x Scope
+	# Iron sights, red dot, holographic, 3x, 4x.
 	"ak47": ("", "_1", "_2", "_3", "_4"),
 	"m16a4": ("", "_1", "_2", "_3", "_4"),
 	"famas": ("", "_1", "_2", "_3", "_4"),
@@ -129,14 +129,14 @@ SCOPE_VARIANTS: dict[str, tuple[str, ...]] = {
 	"m82": ("", "_1", "_2", "_3", "_4"),
 	"m24": ("", "_1", "_2", "_3", "_4"),
 	"rpk": ("", "_1", "_2", "_3", "_4"),
-	# Up to 3x
+	# Up to 3x.
 	"spas12": ("", "_1", "_2", "_3"),
 	"m500": ("", "_1", "_2", "_3"),
 	"m590": ("", "_1", "_2", "_3"),
 	"m249": ("", "_1", "_2", "_3"),
-	# Iron Sights + Red Dot only
+	# Iron sights and red dot only.
 	"mosin": ("", "_1"),
-	# Iron Sights + 4x Scope only (secondary)
+	# Iron sights and 4x only (secondary).
 	"deagle": ("", "_4"),
 }
 """ Available scope suffixes per base weapon id ("" = iron sights). """
@@ -159,7 +159,7 @@ TRIG_MARKETPLACE          = 101
 TRIG_MY_LOADOUTS          = 102
 """ Open my loadouts manager. """
 
-# Editor hub (CoD-style main page): one trigger per category row + remove buttons
+# Editor hub: one trigger per category row, plus the remove buttons.
 TRIG_HUB                  = 103
 """ Re-open the editor hub (also used by "Unavailable" no-op rows). """
 TRIG_HUB_PRIMARY          = 104
@@ -215,13 +215,11 @@ TRIG_EQUIP2_CAMO_BASE     = 510
 """ 510-514 = pick grenade slot 2 camo. """
 TRIG_OVERKILL_SEC_BASE    = 520
 """ 520 + primary_weapon_index = Overkill secondary.
-This block is as wide as the primary catalog, so it must keep room for every loadout primary: with 23 of
-them it already reaches 542. Anything placed under 600 collides with it as more guns are added. """
+This block is as wide as the primary catalog, so it must keep room for every loadout primary: with 23 of them it already reaches 542.
+Anything placed under 600 collides with it as more guns are added. """
 TRIG_KNIFE_CAMO_BASE      = 600
 """ 600-604 = pick knife camo (free).
-Was 540, which sat INSIDE the Overkill block above (520..542 for 23 primaries). Knife camos 1-3 therefore
-also dispatched as "Overkill secondary = m500 / m590 / rpg7", handing the player a second primary they had
-not bought and did not have the perk for. Keep a gap here — do not move this back down. """
+Inside the Overkill block, a knife camo trigger would also dispatch as an Overkill secondary and hand out a primary the player has no perk for. """
 
 TRIG_SELECT_BASE          = 10000
 """ + loadout_id -> use as active class. """
@@ -242,7 +240,7 @@ TRIG_EDIT_BASE            = 70000
 TRIG_MANAGE_BASE          = 80000
 """ + loadout_id -> open the per-loadout manage submenu. """
 """ Loadout action triggers: base + loadout_id. IDs auto-increment and are never reused, so each
-action gets a 10000-wide range (the old 100-wide ranges broke past 99 loadouts). """
+action gets a 10000-wide range. """
 
 TRIG_MARKETPLACE_ALL          = 1600
 """ Marketplace: show all public (favorites first). """

@@ -17,13 +17,12 @@ def write_damage_and_signals() -> None:
 	ns: str = Mem.ctx.project_id
 	version: str = Mem.ctx.project_version
 
-	# Add block tags
 	write_block_tags()
 
-	# Entity tags to ignore when shooting
+	# Ignored by shots.
 	write_tag(f"{ns}:ignore", Mem.ctx.data.entity_type_tags, ["#bs.hitbox:intangible", "minecraft:interaction", "minecraft:experience_orb"])
 
-	# Loot table for getting username
+	# Gives a player_head with the player's profile, for usernames.
 	Mem.ctx.data[ns].loot_tables["get_username"] = set_json_encoder(LootTable({
 		"type": "minecraft:chest",
 		"pools": [
@@ -46,7 +45,7 @@ def write_damage_and_signals() -> None:
 		]
 	}))
 
-	## Register signal function tags (empty by default, other datapacks can add listeners) These are called at various events in the system, with relevant data stored in mgs:signals storage
+	## Signal tags, empty by default for other datapacks to add listeners; event data goes to mgs:signals.
 	signal_events: list[str] = [
 		"on_shoot",             # @s = shooter player, weapon data in mgs:signals
 		"on_hit_block",         # @s = raycast marker, block/position/weapon in mgs:signals
@@ -63,18 +62,17 @@ def write_damage_and_signals() -> None:
 	for event in signal_events:
 		write_tag(f"signals/{event}", Mem.ctx.data[ns].function_tags, [])
 
-	## Setup special damage type
+	## Bullet damage type.
 	Mem.ctx.data[ns].damage_type["bullet"] = set_json_encoder(DamageType({"exhaustion": 0, "message_id": "player", "scaling": "when_caused_by_living_non_player"}))
 	for tag in ["bypasses_cooldown", "no_knockback"]:
 		write_tag(tag, Mem.ctx.data["minecraft"].damage_type_tags, [f"{ns}:bullet"])
 	write_versioned_function("utils/damage", f"$damage $(target) $(amount) {ns}:bullet by $(attacker)")
-	# Unattributed variant: no "by <attacker>", so team friendlyFire=false can't cancel it (used for self-inflicted explosion damage, where the shooter and victim share a team).
+	# Unattributed, so team friendlyFire=false cannot cancel it (self-inflicted explosions, where shooter and victim share a team).
 	write_versioned_function("utils/damage_plain", "$damage $(target) $(amount) minecraft:explosion")
-	# Both signal_and_damage variants open with this: if the hit would kill a player who is in an active game, hand off to that mode's simulated death instead of letting the damage land.
+	# A hit that would kill a player in an active game hands off to that mode's simulated death instead.
 	lethal_hit: str = f"if score #incoming_dmg {ns}.data >= #victim_hp {ns}.data run return run function {ns}:v{version}"
 	lethal_handoff: str = f"""
-# Check if target is a player in an active game and damage would be lethal -> simulate death
-# (missions needs the state check: mi.in_game is an opt-in flag that is already set in the lobby)
+# Missions needs the state check: mi.in_game is an opt-in flag already set in the lobby.
 execute store result score #incoming_dmg {ns}.data run data get storage {ns}:input with.amount 10
 execute store result score #victim_hp {ns}.data run data get entity @s Health 10
 execute if entity @s[type=player,scores={{{ns}.mp.in_game=1..}}] {lethal_hit}/multiplayer/simulate_death
@@ -84,15 +82,15 @@ execute if data storage {ns}:missions game{{state:"active"}} if entity @s[type=p
 	write_versioned_function("utils/signal_and_damage", f"""
 {lethal_handoff}
 
-# Non-lethal or non-MP: normal damage + signals
+# Otherwise normal damage and signals.
 function {ns}:v{version}/utils/damage with storage {ns}:input with
 function #{ns}:signals/damage with storage {ns}:input with
 """)
-	# Same flow as signal_and_damage but applies plain (unattributed) damage.
+	# Same flow with plain, unattributed damage.
 	write_versioned_function("utils/signal_and_damage_plain", f"""
 {lethal_handoff}
 
-# Non-lethal or non-MP: plain damage + signals
+# Otherwise plain damage and signals.
 function {ns}:v{version}/utils/damage_plain with storage {ns}:input with
 function #{ns}:signals/damage with storage {ns}:input with
 """)

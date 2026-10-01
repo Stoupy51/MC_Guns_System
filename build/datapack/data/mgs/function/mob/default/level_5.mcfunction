@@ -1,7 +1,7 @@
 
 #> mgs:mob/default/level_5
 #
-# @within	???
+# @within	(public)
 #
 # @args		entity (unknown)
 #

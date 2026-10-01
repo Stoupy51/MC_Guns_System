@@ -6,9 +6,9 @@
 # @within	mgs:v5.1.0/grenade/init
 #
 
-# Tag drives the per-tick attraction hook (grenade/tick) and lets cleanup find monkey grenades
+# Read by the attraction hook (grenade/tick) and by cleanup.
 tag @s add mgs.monkey_bomb
 
-# Wind-up cue (placeholder: the real toy-jingle .ogg is a HUMAN asset, see zombies README task 8)
+# TODO: placeholder until the real toy-jingle .ogg exists.
 playsound minecraft:block.note_block.chime ambient @a[distance=..24] ~ ~ ~ 0.8 1.6
 

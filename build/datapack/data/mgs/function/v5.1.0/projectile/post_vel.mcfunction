@@ -6,10 +6,10 @@
 # @within	mgs:v5.1.0/projectile/tick [ at @s ]
 #
 
-# If collision was detected, explode and stop processing
+# Collision: explode and stop.
 execute if entity @s[tag=mgs.exploding] run return run function mgs:v5.1.0/projectile/explode
 
-# Trail particles: ray_gun = green dust swirl, upgraded ray_gun = red dust swirl, others = flame + smoke
+# Ray Gun: green swirl, Pack-a-Punched: red; others flame and smoke.
 scoreboard players set #ray_gun mgs.data 0
 execute if data entity @s data.config{base_weapon:"ray_gun"} run scoreboard players set #ray_gun mgs.data 1
 execute if score #ray_gun mgs.data matches 1 if data entity @s data.config.pap_level run scoreboard players set #ray_gun mgs.data 2
@@ -20,9 +20,8 @@ execute if score #ray_gun mgs.data matches 1 run particle glow ~ ~ ~ 0.1 0.1 0.1
 execute if score #ray_gun mgs.data matches 0 run particle flame ~ ~ ~ 0.05 0.05 0.05 0.02 3 force @a[distance=..128]
 execute if score #ray_gun mgs.data matches 0 run particle smoke ~ ~ ~ 0.1 0.1 0.1 0.01 2 force @a[distance=..128]
 
-# Decrement lifetime
 scoreboard players remove @s mgs.data 1
 
-# If lifetime expired, explode
+# Lifetime over: explode.
 execute if score @s mgs.data matches ..0 run function mgs:v5.1.0/projectile/explode
 

@@ -15,12 +15,12 @@ data modify storage mgs:temp _dropmag set from entity @n[tag=mgs.drop_mag_helper
 kill @n[tag=mgs.drop_mag_helper]
 execute unless data storage mgs:temp _dropmag run return 0
 
-# Regular magazines: fill to 50% of their capacity (never a full magazine)
+# Regular magazines: half their capacity.
 execute store result score #mag_half mgs.data run data get storage mgs:temp _dropmag.components."minecraft:custom_data".mgs.stats.capacity
 scoreboard players operation #mag_half mgs.data /= #2 mgs.data
 execute if score #mag_half mgs.data matches ..0 run scoreboard players set #mag_half mgs.data 1
 execute unless data storage mgs:temp _dropmag.components."minecraft:custom_data".mgs.consumable store result storage mgs:temp _dropmag.components."minecraft:custom_data".mgs.stats.remaining_bullets int 1 run scoreboard players get #mag_half mgs.data
 
-# Consumable ammo (stack count = bullets): half of one full stack
+# Consumable ammo (stack count = bullets): half a stack.
 $execute if data storage mgs:temp _dropmag.components."minecraft:custom_data".mgs.consumable run data modify storage mgs:temp _dropmag.count set value $(halfc)
 

@@ -13,8 +13,7 @@ tag @s add mgs.drop_done
 data remove storage mgs:temp _dropw
 data modify storage mgs:temp _dropw set from entity @s equipment.mainhand
 
-# Mob guns never track live ammo on a scoreboard: 0 makes the drop carry half a magazine,
-# the same deal a player's empty gun leaves behind
+# Mob guns track no live ammo: 0 makes the drop carry half a magazine, like a player's empty gun.
 scoreboard players set #drop_ammo mgs.data 0
 function mgs:v5.1.0/shared/drops/drop
 

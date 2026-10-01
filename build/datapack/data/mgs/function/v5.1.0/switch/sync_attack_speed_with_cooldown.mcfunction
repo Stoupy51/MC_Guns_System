@@ -6,15 +6,14 @@
 # @within	mgs:v5.1.0/switch/force_switch_animation
 #
 
-## Formula: [attack_speed = (20.0 / cooldown) - 4.0] <- where 4.0 is default attack speed
-# Compute attack speed based of @s mgs.cooldown (with 3 digits precision)
+## attack_speed = 20.0 / cooldown - 4.0 (4.0 is the default), with 3 digits of precision.
 scoreboard players operation #remaining_cooldown mgs.data = @s mgs.cooldown
 scoreboard players operation #remaining_cooldown mgs.data -= #total_tick mgs.data
 scoreboard players set #attack_speed mgs.data 20000
 scoreboard players operation #attack_speed mgs.data /= #remaining_cooldown mgs.data
 scoreboard players remove #attack_speed mgs.data 4000
 
-# Summon a temporary entity that will be used to modify the attack speed attribute modifier from the player's mainhand slot
+# A temporary item_display edits the attribute modifier of the mainhand item.
 tag @s add mgs.to_modify
 execute summon item_display run function mgs:v5.1.0/switch/modify_attack_speed
 tag @s remove mgs.to_modify

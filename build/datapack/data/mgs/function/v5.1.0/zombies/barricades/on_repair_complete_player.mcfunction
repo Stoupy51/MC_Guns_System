@@ -6,10 +6,10 @@
 # @within	mgs:v5.1.0/zombies/barricades/repair [ as @a[tag=mgs.barricade_repairing] ]
 #
 
-# @s = repairing player
+# Run as the repairing player.
 tag @s remove mgs.barricade_repairing
 
-# Reward +10 points (max 25 barricade repairs rewarded per round)
+# +10 points, for at most 25 repairs per round.
 execute unless score @s mgs.zb.barricade_repairs matches 25.. run scoreboard players add @s mgs.zb.points 10
 execute unless score @s mgs.zb.barricade_repairs matches 25.. run scoreboard players add @s mgs.zb.barricade_repairs 1
 

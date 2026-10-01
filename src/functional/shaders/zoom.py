@@ -1,7 +1,7 @@
 """ Aim-down-sights magnification and scope barrel distortion.
 
-Each scope level ships two ids, one that ramps the effect in and one that ramps it out, because a
-removed chain stops rendering on the frame the packet lands and can never animate its own exit.
+Each scope level ships an id ramping the effect in and one ramping it out.
+A removed chain stops rendering on the frame the packet lands, so it can never animate its own exit.
 """
 # Imports
 from dataclasses import dataclass
@@ -167,8 +167,8 @@ function {ns}:v{version}/zoom/fx_clear
 {swap_in}
 """)
 
-	# Aiming again mid-fade takes the fade-out straight off instead of handing it a successor, so the
-	# two directions never stack. The new ramp restarts from zero, which is visible if you tap fast.
+	# Aiming again mid-fade removes the fade-out instead of handing it a successor, so the two directions never stack.
+	# The new ramp restarts from zero, which shows if you tap fast.
 	clear: str = "\n".join(
 		f"""execute if score @s {ns}.zoom_fx matches {scope.level} run posteffect remove @s {ns}:zoom_{scope.level}
 execute if score @s {ns}.zoom_fx matches -{scope.level} run posteffect remove @s {ns}:zoom_{scope.level}_out"""

@@ -15,28 +15,14 @@ def write_wallbuy_give() -> None:
 	gun_cd: str = ZombiesCommon.gun_cd(ns)
 	mag_cd: str = "{" + ns + ":{magazine:true}}"
 
-	# Build weapon_id -> magazine_id mapping
-	weapon_mag_data: dict[str, str] = {}
-	for weapon_id, (mag_id, _, _) in ZombiesCommon.build_weapon_magazine_data().items():
-		weapon_mag_data[weapon_id] = mag_id
-
-	# Generate lookup function for weapon -> magazine mapping
-	magazine_lookup_cmds = "\n".join([
-		f"execute if data storage {ns}:temp _wb_store{{weapon_id:\"{wid}\"}} run data modify storage {ns}:temp _wb_store.magazine_id set value \"{mag_id}\""
-		for wid, (mag_id, _, _) in ZombiesCommon.build_weapon_magazine_data().items()
-	])
-
-	write_versioned_function("zombies/wallbuys/lookup_magazine_id", magazine_lookup_cmds)
-
 	write_versioned_function("zombies/wallbuys/lookup_weapon", f"""
 $data modify storage {ns}:temp _wb_weapon set from storage {ns}:zombies wallbuy_data."$(id)"
 """)
 
 	write_versioned_function("zombies/wallbuys/get_display_name", f"""
-# Default to localized display item name.
 data modify storage {ns}:temp _wb_display_name set from storage {ns}:temp _wb_weapon.item_name
 
-# If a custom map name is set, use it instead.
+# A custom map name wins.
 execute unless data storage {ns}:temp _wb_weapon{{name:""}} if data storage {ns}:temp _wb_weapon.name run data modify storage {ns}:temp _wb_display_name set from storage {ns}:temp _wb_weapon.name
 """)
 
@@ -44,23 +30,16 @@ execute unless data storage {ns}:temp _wb_weapon{{name:""}} if data storage {ns}
 scoreboard players set #wb_purchase_done {ns}.data 0
 scoreboard players set #wb_purchase_mode {ns}.data 0
 
-# Always prioritize refill of the same weapon to prevent duplicates.
+# A refill of the same weapon first, so it is never duplicated.
 execute if score #wb_purchase_done {ns}.data matches 0 run function {ns}:v{version}/zombies/wallbuys/try_refill_owned with storage {ns}:temp _wb_weapon
 
-# New placement: give to the first empty gun slot (checks each slot individually)
+# Then the first empty gun slot.
 $execute if score #wb_purchase_done {ns}.data matches 0 unless items entity @s hotbar.1 *[custom_data~{gun_cd}] run function {ns}:v{version}/zombies/wallbuys/give_to_slot {{hotbar:1,inventory:1,weapon_id:"$(weapon_id)",magazine_id:"$(magazine_id)"}}
 $execute if score #wb_purchase_done {ns}.data matches 0 unless items entity @s hotbar.2 *[custom_data~{gun_cd}] run function {ns}:v{version}/zombies/wallbuys/give_to_slot {{hotbar:2,inventory:2,weapon_id:"$(weapon_id)",magazine_id:"$(magazine_id)"}}
 $execute if score #wb_purchase_done {ns}.data matches 0 unless items entity @s hotbar.3 *[custom_data~{gun_cd}] if score @s {ns}.zb.perk.mule_kick matches 1.. run function {ns}:v{version}/zombies/wallbuys/give_to_slot {{hotbar:3,inventory:3,weapon_id:"$(weapon_id)",magazine_id:"$(magazine_id)"}}
 
-# Otherwise replace the currently selected gun slot (1/2/3 only)
+# Then the selected gun slot (1 to 3).
 execute if score #wb_purchase_done {ns}.data matches 0 run function {ns}:v{version}/zombies/wallbuys/replace_selected with storage {ns}:temp _wb_weapon
-""")
-
-	write_versioned_function("zombies/wallbuys/count_guns", f"""
-scoreboard players set #wb_gun_count {ns}.data 0
-execute if items entity @s hotbar.1 *[custom_data~{gun_cd}] run scoreboard players add #wb_gun_count {ns}.data 1
-execute if items entity @s hotbar.2 *[custom_data~{gun_cd}] run scoreboard players add #wb_gun_count {ns}.data 1
-execute if items entity @s hotbar.3 *[custom_data~{gun_cd}] run scoreboard players add #wb_gun_count {ns}.data 1
 """)
 
 	write_versioned_function("zombies/wallbuys/give_to_slot", f"""
@@ -104,36 +83,31 @@ scoreboard players set #wb_purchase_done {ns}.data 1
 scoreboard players set #wb_purchase_mode {ns}.data 4
 """)
 
-	# Owning the gun is what makes a wall a refill wall, whatever the ammo count: Pack-a-Punch tops every
-	# magazine up, so gating this on a non-full mag quoted the full buy price on a gun the player just upgraded.
+	# Owning the gun makes it a refill, whatever the ammo: PaP tops every magazine up, so a full-mag gate would quote the buy price.
 	write_versioned_function("zombies/wallbuys/compute_effective_price", f"""
 scoreboard players set #wb_price_mode {ns}.data 0
 
-# Slot 1 refill candidate
 $function {ns}:v{version}/zombies/wallbuys/check_same_weapon_slot {{slot:1,weapon_id:"$(weapon_id)"}}
 execute if score #wb_same_weapon {ns}.data matches 1 run return run function {ns}:v{version}/zombies/wallbuys/select_refill_price {{hotbar:1,inventory:1}}
 
-# Slot 2 refill candidate
 $function {ns}:v{version}/zombies/wallbuys/check_same_weapon_slot {{slot:2,weapon_id:"$(weapon_id)"}}
 execute if score #wb_same_weapon {ns}.data matches 1 run return run function {ns}:v{version}/zombies/wallbuys/select_refill_price {{hotbar:2,inventory:2}}
 
-# Slot 3 refill candidate
 $function {ns}:v{version}/zombies/wallbuys/check_same_weapon_slot {{slot:3,weapon_id:"$(weapon_id)"}}
 execute if score #wb_same_weapon {ns}.data matches 1 run return run function {ns}:v{version}/zombies/wallbuys/select_refill_price {{hotbar:3,inventory:3}}
 """)
 
 	write_versioned_function("zombies/wallbuys/select_refill_price", f"""
-# Default refill price
 scoreboard players operation #wb_price {ns}.data = #wb_rfprice {ns}.data
 scoreboard players set #wb_price_mode {ns}.data 1
 
-# PAP refill price if weapon in this slot has pap_level > 0
+# PaP refill price when pap_level > 0.
 scoreboard players set #wb_pap_level {ns}.data 0
 $execute store result score #wb_pap_level {ns}.data run data get entity @s Inventory[{{Slot:$(hotbar)b}}].components."minecraft:custom_data".{ns}.stats.pap_level
 execute if score #wb_pap_level {ns}.data matches 1.. run scoreboard players operation #wb_price {ns}.data = #wb_rfpap {ns}.data
 execute if score #wb_pap_level {ns}.data matches 1.. run scoreboard players set #wb_price_mode {ns}.data 2
 
-# Nothing left to top up: the click would only be charged and refunded, so the hover says so instead
+# Nothing to top up: the hover says so rather than charging and refunding.
 $function {ns}:v{version}/zombies/wallbuys/check_mag_not_full {{slot:"inventory.$(inventory)"}}
 execute if score #wb_mag_not_full {ns}.data matches 0 run scoreboard players set #wb_price_mode {ns}.data 3
 """)
@@ -148,7 +122,7 @@ execute if score #wb_price_mode {ns}.data matches 3 run data modify storage {ns}
 	write_versioned_function("zombies/wallbuys/check_mag_not_full", f"""
 scoreboard players set #wb_mag_not_full {ns}.data 0
 
-# Missing paired mag counts as not full.
+# A missing paired magazine counts as not full.
 $execute unless items entity @s $(slot) *[custom_data~{mag_cd}] run scoreboard players set #wb_mag_not_full {ns}.data 1
 
 tag @s add {ns}.wb_reading_mag

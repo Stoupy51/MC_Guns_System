@@ -6,7 +6,7 @@
 # @within	mgs:v5.1.0/maps/zombies/kino_der_toten/teleporter/return_players [ as @a[tag=mgs.kino.in_tp] ]
 #
 
-# @s = player returning from theater — pick a random lobby spot
+# Run as a returning player: pick one of 5 lobby spots.
 execute store result score #tp_random mgs.data run random value 1..5
 execute if score #tp_random mgs.data matches 1 run tp @s ~9 ~-4 ~-40
 execute if score #tp_random mgs.data matches 2 run tp @s ~-34 ~4 ~54

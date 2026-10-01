@@ -19,6 +19,6 @@ data modify storage mgs:input with.on_entry_point set value "function mgs:v5.1.0
 scoreboard players set #snd_bomb_grounded mgs.data 0
 execute rotated ~ 90 run function #bs.raycast:run with storage mgs:input
 
-# Dropped over the void: leave it where it fell rather than lose it entirely
+# Over the void it stays where it fell.
 execute if score #snd_bomb_grounded mgs.data matches 0 run function mgs:v5.1.0/multiplayer/gamemodes/snd/place_loose_bomb
 

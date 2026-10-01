@@ -50,36 +50,29 @@
 #			base_weapon (string)
 #
 
-# Get bullets from the magazine
 tag @s add mgs.extracting_bullets
 $execute summon item_display run function mgs:v5.1.0/ammo/extract_bullets {slot:"$(slot)"}
 tag @s remove mgs.extracting_bullets
 execute if score #bullets mgs.data matches 0 run return 0
 
-# Calculate to_take = min(bullets, capacity - found_ammo)
+# to_take = min(bullets, capacity - found_ammo)
 scoreboard players operation #to_take mgs.data = #capacity mgs.data
 scoreboard players operation #to_take mgs.data -= #found_ammo mgs.data
 execute if score #bullets mgs.data < #to_take mgs.data run scoreboard players operation #to_take mgs.data = #bullets mgs.data
 
-# Add to found_ammo
 scoreboard players operation #found_ammo mgs.data += #to_take mgs.data
 
-# Subtract from bullets
 scoreboard players operation #bullets mgs.data -= #to_take mgs.data
 
-# If the magazine is consumable and fully depleted, clear the slot and return
-# If the magazine is consumable but still has items, update the stack count and return
+# Consumables: an emptied stack clears the slot, otherwise the stack count drops.
 $execute if score #bullets mgs.data matches ..0 if items entity @s $(slot) *[custom_data~{mgs:{consumable:true}}] run return run function mgs:v5.1.0/ammo/inventory/consume_slot {slot:"$(slot)"}
 $execute if score #bullets mgs.data matches 1.. if items entity @s $(slot) *[custom_data~{mgs:{consumable:true}}] run return run function mgs:v5.1.0/ammo/inventory/consume_partial {slot:"$(slot)"}
 
-# Modify the magazine item
 $execute if score #bullets mgs.data matches ..0 run function mgs:v5.1.0/ammo/inventory/set_item_model {slot:"$(slot)",base_weapon:"$(base_weapon)"}
 execute store result storage mgs:temp remaining_bullets int 1 run scoreboard players get #bullets mgs.data
 $item modify entity @s $(slot) mgs:v5.1.0/update_ammo
 
-# Update magazine lore
 $function mgs:v5.1.0/ammo/modify_mag_lore {slot:"$(slot)"}
 
-# Update player's ammo count
 scoreboard players operation @s mgs.remaining_bullets = #found_ammo mgs.data
 

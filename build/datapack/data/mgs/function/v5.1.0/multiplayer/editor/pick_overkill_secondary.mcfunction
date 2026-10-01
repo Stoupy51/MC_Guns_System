@@ -6,13 +6,11 @@
 # @within	mgs:v5.1.0/player/config/process
 #
 
-# Overkill is what allows a primary in the secondary slot, so verify it HERE and not only in the dialog
-# router: the router decides which menu to show, it cannot stop this function being reached any other way.
-# A trigger-range collision did exactly that once (see TRIG_KNIFE_CAMO_BASE), and because this handler
-# trusted the router it happily wrote a second primary for a player with no perk.
+# Overkill is checked here, not only in the dialog router: a trigger can reach this function without it
+# (a trigger-range overlap once did, see TRIG_KNIFE_CAMO_BASE).
 execute unless data storage mgs:temp editor{perks:["overkill"]} run return run function mgs:v5.1.0/multiplayer/editor/hub
 
-# Snapshot, store the chosen primary as the secondary (0 magazines), commit against the budget
+# The chosen primary becomes the secondary, with no magazine.
 data modify storage mgs:temp _ed_bak set from storage mgs:temp editor
 execute if score @s mgs.player.config matches 520 run data modify storage mgs:temp editor merge value {secondary:"ak47",secondary_name:"AK-47",secondary_mag:"ak47_mag",secondary_mag_count:0,secondary_scope:"",secondary_scope_name:"Iron Sights",secondary_camo:"",secondary_camo_name:"Default",secondary_full:"ak47"}
 execute if score @s mgs.player.config matches 521 run data modify storage mgs:temp editor merge value {secondary:"m16a4",secondary_name:"M16A4",secondary_mag:"m16a4_mag",secondary_mag_count:0,secondary_scope:"",secondary_scope_name:"Iron Sights",secondary_camo:"",secondary_camo_name:"Default",secondary_full:"m16a4"}
@@ -41,6 +39,6 @@ execute if score @s mgs.player.config matches 542 run data modify storage mgs:te
 execute store success score #ed_ok mgs.data run function mgs:v5.1.0/multiplayer/editor/commit_check
 execute if score #ed_ok mgs.data matches 0 run return run function mgs:v5.1.0/multiplayer/editor/hub
 
-# Overkill secondaries keep iron sights; go straight to camo
+# Iron sights only, so straight to camo.
 function mgs:v5.1.0/multiplayer/editor/show_secondary_camo_dialog
 

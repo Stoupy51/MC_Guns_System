@@ -6,7 +6,6 @@
 # @within	mgs:zombies/bonus/max_ammo
 #
 
-# Reload every gun item in every slot
 execute if items entity @s hotbar.0 *[custom_data~{mgs:{gun:true}}] run function mgs:v5.1.0/zombies/bonus/reload_weapon_slot {slot:"hotbar.0"}
 execute if items entity @s hotbar.1 *[custom_data~{mgs:{gun:true}}] run function mgs:v5.1.0/zombies/bonus/reload_weapon_slot {slot:"hotbar.1"}
 execute if items entity @s hotbar.2 *[custom_data~{mgs:{gun:true}}] run function mgs:v5.1.0/zombies/bonus/reload_weapon_slot {slot:"hotbar.2"}
@@ -50,6 +49,5 @@ execute if items entity @s player.crafting.1 *[custom_data~{mgs:{gun:true}}] run
 execute if items entity @s player.crafting.2 *[custom_data~{mgs:{gun:true}}] run function mgs:v5.1.0/zombies/bonus/reload_weapon_slot {slot:"player.crafting.2"}
 execute if items entity @s player.crafting.3 *[custom_data~{mgs:{gun:true}}] run function mgs:v5.1.0/zombies/bonus/reload_weapon_slot {slot:"player.crafting.3"}
 
-# Sync current weapon's ammo to player scoreboard (mainhand)
 execute if data storage mgs:gun all.gun store result score @s mgs.remaining_bullets run data get storage mgs:gun all.stats.capacity
 

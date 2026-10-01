@@ -7,7 +7,7 @@
 scoreboard players operation #zb_to_spawn mgs.data = #zb_round mgs.data
 scoreboard players add #zb_to_spawn mgs.data 7
 
-# Rounds 1-9 run the eased ramp instead, meeting the formula above exactly at round 10
+# Rounds 1-9 use the eased ramp, which meets the formula at round 10.
 execute if score #zb_round mgs.data matches 1 run scoreboard players set #zb_to_spawn mgs.data 5
 execute if score #zb_round mgs.data matches 2 run scoreboard players set #zb_to_spawn mgs.data 6
 execute if score #zb_round mgs.data matches 3 run scoreboard players set #zb_to_spawn mgs.data 8

@@ -1,8 +1,7 @@
 """ Cosmetic leveling, shared by Multiplayer and Zombies.
 
-Purely visual: nothing is gated behind a level, there is no cap and no prestige. Each side keeps its own
-independent level, shown on the vanilla XP bar and in front of the player's name in every message the pack
-prints.
+Purely visual: nothing is gated behind a level, there is no cap and no prestige.
+Each side keeps its own independent level, shown on the vanilla XP bar and in front of the player's name in every message the pack prints.
 
 This package owns the curve and the display. The award *sites* live with the mode that fires them,
 `multiplayer/xp.py` and `zombies/xp.py`, and the award *values* all live in `awards.py`. `Xp` itself is in
@@ -33,11 +32,10 @@ def generate_progression() -> None:
 	ns: str = Mem.ctx.project_id
 	version: str = Mem.ctx.project_version
 
-	## All dummy, so they live in level.dat and survive reloads, restarts and the player being offline.
-	## multiplayer/start and zombies/stop reset their objectives by explicit name, so none of these are
-	## caught by a mode's per-match wipe. xp_session is the exception and is cleared in multiplayer/start.
+	## All dummy, so they survive reloads, restarts and offline players. multiplayer/start and zombies/stop reset objectives by name,
+	## so no per-match wipe catches these; xp_session is cleared in multiplayer/start.
 	write_load_file(f"""
-# Progression scoreboards (xp_total is authoritative; xp_level and xp_prog are caches derived from it)
+# xp_total is authoritative; xp_level and xp_prog are caches derived from it.
 scoreboard objectives add {ns}.mp.xp_total dummy
 scoreboard objectives add {ns}.mp.xp_level dummy
 scoreboard objectives add {ns}.mp.xp_prog dummy
@@ -49,49 +47,45 @@ scoreboard objectives add {ns}.zb.xp_pts_prev dummy
 scoreboard objectives add {ns}.zb.xp_spent_acc dummy
 """)
 
-	## Published so anything that wants to react to a level up subscribes instead of editing the feedback
-	## function. Fired as the player who levelled, with the side in `storage {ns}:signals on_level_up`.
+	## Fired as the player who levelled, with the side in `storage {ns}:signals on_level_up`.
 	write_tag("progression/on_level_up", Mem.ctx.data[ns].function_tags, [])
 
 	for side, label in SIDES.items():
 		Curve.write(ns, version, side, label)
 		Curve.write_award_functions(ns, version, side, TABLES[side], Advancements.stat_lines(side))
 
-	## The bar trick, shared by both sides. Order is everything: `xp set <n> points` scales n by the cost of
-	## the CURRENT level, so the level has to be parked at 130 (cost exactly 1012) before the fill is written,
-	## and only then set to what the player should see.
+	## Order matters: `xp set <n> points` scales n by the cost of the current level, so the level is parked at 130 (cost exactly 1012)
+	## before the fill is written, and only then set to what the player should see.
 	write_versioned_function("progression/apply_bar", f"""
 xp set @s {PARK_LEVEL} levels
 $xp set @s $(points) points
 $xp set @s $(level) levels
 """)
 
-	## Re-assert the bar once a second. There is no event for "the client's XP changed", and a stray orb or a
-	## furnace would otherwise leave someone showing a level they never earned, so this is the self-heal.
-	## Multiplayer already kills loose orbs during a match; this covers the lobby and everything else.
+	## There is no event for the client's XP changing, and a stray orb or a furnace would show a level nobody earned.
+	## Multiplayer kills loose orbs during a match; this covers everything else.
 	write_versioned_function("progression/tick_player", f"""
 execute unless score @s {ns}.mp.xp_level matches 1.. run function {ns}:v{version}/progression/mp/init
 execute unless score @s {ns}.zb.xp_level matches 1.. run function {ns}:v{version}/progression/zb/init
 
-# Zombies owns the bar while its game is running; multiplayer and the lobby show the multiplayer level.
+# Zombies owns the bar while its game runs; elsewhere the multiplayer level shows.
 execute if score @s {ns}.zb.in_game matches 1 run return run function {ns}:v{version}/progression/zb/refresh_bar
 function {ns}:v{version}/progression/mp/refresh_bar
 """)
 
 	write_tick_file(f"""
-# Progression: re-assert every player's XP bar once a second (see progression/tick_player)
+# Once a second (see progression/tick_player).
 scoreboard players operation #xp_sec_tick {ns}.data = #total_tick {ns}.data
 scoreboard players operation #xp_sec_tick {ns}.data %= #20 {ns}.data
 execute if score #xp_sec_tick {ns}.data matches 0 as @a run function {ns}:v{version}/progression/tick_player
 """)
 
-	## Admin entry point: rebuild every player's level from the XP they banked. This is what makes retuning
-	## awards.py safe: the totals are authoritative, so nobody loses progress when the curve moves under them.
+	## Admin entry point: rebuild every player's level from their banked XP, so retuning awards never loses progress.
 	write_versioned_function("progression/recompute_all", f"""
 execute as @a run function {ns}:v{version}/progression/mp/recompute
 execute as @a run function {ns}:v{version}/progression/zb/recompute
 """)
 
-	## Challenges. Written last so the award functions it observes already exist, and because its tree
-	## references the reward functions it is about to write.
+	## Last: its tree observes the award functions and references the reward functions it writes.
 	generate_advancements()
+

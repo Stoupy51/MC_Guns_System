@@ -49,19 +49,16 @@
 # @args		slot (string)
 #
 
-# Set magazine capacity and remaining to weapon capacity x 8
 execute store result storage mgs:temp zb_item_stats.capacity int 1 run scoreboard players get #pap_mag_cap mgs.data
 execute store result storage mgs:temp zb_item_stats.remaining_bullets int 1 run scoreboard players get #pap_mag_cap mgs.data
 
-# Apply new stats to magazine
 $item modify entity @s $(slot) mgs:v5.1.0/zb_item_stats
 
-# Update magazine lore
 data modify storage mgs:temp capacity set from storage mgs:temp zb_item_stats.capacity
 scoreboard players operation #bullets mgs.data = #pap_mag_cap mgs.data
 $function mgs:v5.1.0/ammo/modify_mag_lore {slot:"$(slot)"}
 
-# Restore full magazine model (read actual item_model from the magazine)
+# The full model is read from the magazine itself.
 $data modify storage mgs:temp refill.slot set value "$(slot)"
 data modify storage mgs:temp refill.base_weapon set from storage mgs:temp _pap_extract.stats.base_weapon
 tag @s add mgs.pap_extracting_mag

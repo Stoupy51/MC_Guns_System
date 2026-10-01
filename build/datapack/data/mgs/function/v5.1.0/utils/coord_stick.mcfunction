@@ -6,7 +6,7 @@
 # @within	mgs:v5.1.0/player/tick
 #
 
-# Tag the player so tellraw can target them from inside the at-aimed-block context
+# So tellraw can target them from the aimed-block context.
 tag @s add mgs.coord_stick_user
 function #bs.view:at_aimed_block {run:"function mgs:v5.1.0/utils/coord_stick_relative",with:{}}
 tag @s remove mgs.coord_stick_user

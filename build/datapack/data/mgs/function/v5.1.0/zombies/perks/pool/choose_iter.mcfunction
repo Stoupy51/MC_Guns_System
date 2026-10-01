@@ -1,13 +1,13 @@
 
 #> mgs:v5.1.0/zombies/perks/pool/choose_iter
 #
-# @executed	at @s
+# @executed	as the player & at current position
 #
 # @within	mgs:v5.1.0/zombies/perks/pool/choose
 #			mgs:v5.1.0/zombies/perks/pool/choose_iter
 #
 
-# Safety counter: at most one full loop over the perk list
+# At most one full loop.
 scoreboard players add #pool_tries mgs.data 1
 execute if score #pool_tries mgs.data matches 15.. run return 0
 execute if score #pool_chosen mgs.data matches 0.. run return 0
@@ -41,7 +41,6 @@ execute if score #pool_chosen mgs.data matches 0.. run return 0
 execute if score #pool_roll mgs.data matches 13 run function mgs:v5.1.0/zombies/perks/pool/try_index {perk_id:"widows_wine"}
 execute if score #pool_chosen mgs.data matches 0.. run return 0
 
-# Nothing available at this index: advance and recurse
 scoreboard players add #pool_roll mgs.data 1
 execute if score #pool_roll mgs.data matches 14.. run scoreboard players set #pool_roll mgs.data 0
 function mgs:v5.1.0/zombies/perks/pool/choose_iter

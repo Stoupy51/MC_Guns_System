@@ -15,103 +15,93 @@ def write_death_and_kills() -> None:
 	ns: str = Mem.ctx.project_id
 	version: str = Mem.ctx.project_version
 
-	# Simulated Death.
-	# Called when lethal damage is intercepted (bullet/projectile) or for OOB kills @s = victim player; storage mgs:input with.attacker may or may not exist
+	# Run as the victim when lethal damage is intercepted (bullet, projectile) or on an OOB kill; mgs:input with.attacker may be absent.
 
 	write_versioned_function("multiplayer/simulate_death", f"""
-# Ignore duplicate deaths (second bullet / OOB / vanilla death landing in the same tick as another death)
+# A second bullet, OOB or vanilla death in the same tick.
 execute if score @s {ns}.mp.spectate_timer matches 1.. run return 0
 execute if entity @s[gamemode=spectator] run return 0
 
-# Heal to prevent actual death & Increment death stats
+# Healed so the player never really dies.
 effect give @s instant_health 1 100 true
 scoreboard players add @s {ns}.mp.deaths 1
 
-# `{ns}:input with` is GLOBAL scratch: the signals fired below reuse it (the killer's Scavenger perk
-# refills their magazines, and every lore rewrite clears `input with`), so re-reading it after
-# a signal used to lose the attacker and print an unattributed death message on top of the kill
-# message. Decide the branch on a score taken now, and pass the signals a private copy.
+# `{ns}:input with` is shared scratch that the signals below reuse (Scavenger refills, lore rewrites clear it),
+# so the branch is decided on a score taken now and the signals get a private copy.
 execute store success score #mp_death_attacked {ns}.data if data storage {ns}:input with.attacker
 data modify storage {ns}:temp _mp_death set from storage {ns}:input with
 
-# Was the killing hit a headshot? Set by raycast/apply_damage into `input with.headshot`. Read into a score
-# rather than passed through the kill macro because the key is simply absent for non-bullet deaths (an
-# explosion, the void), and a macro referencing a missing key fails the whole function.
+# raycast/apply_damage sets `input with.headshot`. Read into a score because the key is absent for non-bullet deaths,
+# and a macro naming a missing key fails the whole function.
 scoreboard players set #mp_kill_headshot {ns}.data 0
 execute store result score #mp_kill_headshot {ns}.data run data get storage {ns}:temp _mp_death.headshot
 
-# Fire damage signal (hit effects, hitmarker, DPS) if this came from a bullet hit
+# Hit effects, hitmarker and DPS, for bullet hits.
 execute if data storage {ns}:temp _mp_death.amount run function #{ns}:signals/damage with storage {ns}:temp _mp_death
 
-# Fire kill signal as attacker (if attacker exists in input)
 execute if score #mp_death_attacked {ns}.data matches 1 run function {ns}:v{version}/multiplayer/simulate_death_fire_kill with storage {ns}:temp _mp_death
 
-# No attacker: random funny self-death message
+# No attacker: a random self-death message.
 execute if score #mp_death_attacked {ns}.data matches 0 run function {ns}:v{version}/multiplayer/random_death_message
 
-# Enter death spectate (shared with vanilla-death on_respawn)
+# Shared with vanilla deaths (on_respawn).
 function {ns}:v{version}/multiplayer/enter_death_spectate
 """)
 
-	## Shared death-spectate flow (@s = dying player, {ns}.temp_killer may be tagged by the caller) Used by simulate_death (bullet/OOB deaths) and on_respawn (vanilla deaths)
+	## Run as the dying player; the caller may tag {ns}.temp_killer. Used by simulate_death and on_respawn.
 	write_versioned_function("multiplayer/enter_death_spectate", f"""
-# Drop the held gun on the ground (pickable for 30s) before anything else, while still holding it
+# First, while the gun is still held: it can be picked up for 30 s.
 execute at @s run function {ns}:v{version}/multiplayer/drop_held_weapon
 
-# S&D: no respawning, mark as dead and go spectator
+# S&D: no respawn.
 execute if data storage {ns}:multiplayer game{{gamemode:"snd"}} run return run function {ns}:v{version}/multiplayer/gamemodes/snd/on_death
 
-# Set player to spectator mode for 3 seconds (60 ticks)
+# 3 s of spectating.
 gamemode spectator @s
 scoreboard players set @s {ns}.mp.spectate_timer 60
 
-# Spectate attacker (if tagged) or random alive player
 spectate @p[tag={ns}.temp_killer,gamemode=!spectator] @s
 execute unless entity @a[tag={ns}.temp_killer] run function {ns}:v{version}/multiplayer/spectate_random_player
 tag @a[tag={ns}.temp_killer] remove {ns}.temp_killer
 
-# Announce death & playsound
 {TitleTimes.RESPAWN.cmd()}
 title @s title ["☠"]
 title @s subtitle [{{"text":"Respawning in 3 seconds...","color":"gray"}}]
 execute at @s run playsound minecraft:entity.player.hurt ambient @s
 """)
 
-	## Fire kill signal as attacker + death message (macro function) @s = victim, $(attacker) = attacker selector from storage
+	## Run as the victim; $(attacker) is the attacker selector.
 	write_versioned_function("multiplayer/simulate_death_fire_kill", f"""
 $tag $(attacker) add {ns}.temp_killer
 
-# Self-kill check: if victim(@s) is also tagged as killer, it's self-damage
+# The victim tagged as killer: self-damage.
 execute if entity @s[tag={ns}.temp_killer] run tag @s remove {ns}.temp_killer
 execute unless entity @a[tag={ns}.temp_killer] run return run function {ns}:v{version}/multiplayer/random_self_kill_message
 
-# Normal kill: fire signal and show message
 tag @s add {ns}.temp_victim
 $execute as $(attacker) run function #{ns}:signals/on_kill
 function {ns}:v{version}/multiplayer/random_kill_message
 tag @s remove {ns}.temp_victim
 """)
 
-	## ── On-death weapon drop.
-	## Captures the gun in the player's selected weapon slot (hotbar.1/2); the drop itself (spawn, 30s pickup window, spare magazine) lives in core/weapon_drop.py, shared with the mission-enemy drop.
+	## Captures the gun in hotbar.1 or 2 (hotbar.0 is the knife); the drop itself lives in core/weapon_drop, shared with mission enemies.
 	write_versioned_function("multiplayer/drop_held_weapon", f"""
-# Only drop a gun held in a weapon slot (hotbar.1 or hotbar.2; hotbar.0 is the knife)
 execute store result score #drop_sel {ns}.data run data get entity @s SelectedItemSlot
 execute unless score #drop_sel {ns}.data matches 1..2 run scoreboard players set #drop_sel {ns}.data 1
 execute if score #drop_sel {ns}.data matches 1 unless items entity @s hotbar.1 *[custom_data~{{{ns}:{{gun:true}}}}] run return 0
 execute if score #drop_sel {ns}.data matches 2 unless items entity @s hotbar.2 *[custom_data~{{{ns}:{{gun:true}}}}] run return 0
 
-# Capture the held gun item, bare of any inventory Slot tag so it fits an item_display / item entity
+# Without its inventory Slot tag, so it fits an item_display or item entity.
 execute if score #drop_sel {ns}.data matches 1 run {Probe.item("hotbar.1")}
 execute if score #drop_sel {ns}.data matches 2 run {Probe.item("hotbar.2")}
 data modify storage {ns}:temp _dropw set from entity {Probe.ITEM_DISPLAY} item
 
-# The live bullet count lives on the scoreboard, not in the item (<= 0 makes the drop use half a mag)
+# The bullet count lives in the score; <= 0 makes the drop use half a magazine.
 scoreboard players operation #drop_ammo {ns}.data = @s {ns}.{REMAINING_BULLETS}
 function {ns}:v{version}/shared/drops/drop
 """)
 
-	## Random death message for self-deaths (OOB, environmental)
+	## Self-deaths (OOB, environment).
 	write_versioned_function("multiplayer/random_death_message", f"""
 execute store result score #random_message {ns}.data run random value 1..5
 execute if score #random_message {ns}.data matches 1 run tellraw @a[scores={{{ns}.mp.in_game=1..}}] ["",{Text.player(ns, "@s")}," ",{{"text":"made a terrible mistake","color":"gray"}}]
@@ -121,7 +111,7 @@ execute if score #random_message {ns}.data matches 4 run tellraw @a[scores={{{ns
 execute if score #random_message {ns}.data matches 5 run tellraw @a[scores={{{ns}.mp.in_game=1..}}] ["",{Text.player(ns, "@s")}," ",{{"text":"embraced the void","color":"gray"}}]
 """)
 
-	## Random self-kill message (grenade, RPG, own explosion)
+	## Own grenade, RPG or explosion.
 	write_versioned_function("multiplayer/random_self_kill_message", f"""
 execute store result score #random_message {ns}.data run random value 1..5
 execute if score #random_message {ns}.data matches 1 run tellraw @a[scores={{{ns}.mp.in_game=1..}}] ["",{Text.player(ns, "@s")}," ",{{"text":"blew themselves up","color":"gray"}}]
@@ -131,10 +121,8 @@ execute if score #random_message {ns}.data matches 4 run tellraw @a[scores={{{ns
 execute if score #random_message {ns}.data matches 5 run tellraw @a[scores={{{ns}.mp.in_game=1..}}] ["",{Text.player(ns, "@s")}," ",{{"text":"is their own worst enemy","color":"gray"}}]
 """)
 
-	## Random kill message (uses temp_killer/temp_victim tags, shared by simulate_death + on_respawn).
-	## Each verb exists twice, with and without the headshot marker, chosen on #mp_kill_headshot: a tellraw
-	## is one atomic message, so the marker cannot be appended to an already-sent line, and putting it on a
-	## second line would double every kill in the feed. The pair is generated rather than written out.
+	## Kill messages, shared by simulate_death and on_respawn. Each verb exists with and without the headshot marker
+	## (chosen on #mp_kill_headshot), since a tellraw cannot be appended to after it is sent.
 	kill_verbs: list[tuple[str, str]] = [
 		("eliminated",  ""),
 		("took down",   ""),
@@ -142,10 +130,8 @@ execute if score #random_message {ns}.data matches 5 run tellraw @a[scores={{{ns
 		("sent",        "to the shadow realm"),
 		("wiped",       "off the map"),
 	]
-	## Every line is emitted twice more than it looks: once to the killer, carrying the XP that kill was
-	## worth, and once to everyone else without it. A score component resolves in the executor's context
-	## rather than per recipient, so one tellraw cannot say "+20 XP" to only one of the people reading it.
-	## Both copies sit under the same #random_message guard, so the verb stays identical between them.
+	## Each line is sent twice: to the killer with the XP the kill was worth, and to everyone else without it.
+	## Both copies share the #random_message guard, so the verb matches.
 	kill_lines: list[str] = []
 	for idx, (verb, tail) in enumerate(kill_verbs, start=1):
 		body: str = (
@@ -155,7 +141,7 @@ execute if score #random_message {ns}.data matches 5 run tellraw @a[scores={{{ns
 		body += f',[" ",{{"text":"{tail}","color":"gray"}}]' if tail else ""
 		for hs, hs_check in ((True, "matches 1"), (False, "matches 0")):
 			marker: str = ',[" ",{"text":"💀 ","color":"white"},{"text":"HEADSHOT","color":"red","bold":true}]' if hs else ""
-			# A headshot kill is worth kill + headshot, and the killer's line says so
+			# Kill plus headshot, and the killer's line says so.
 			earned: int = MP_AWARDS["kill"].amount + (MP_AWARDS["headshot"].amount if hs else 0)
 			for who, xp in (
 				(f"@a[scores={{{ns}.mp.in_game=1..}},tag=!{ns}.temp_killer]", ""),
@@ -172,29 +158,24 @@ execute store result score #random_message {ns}.data run random value 1..{len(ki
 {newline.join(kill_lines)}
 """)
 
-	## Kill Tracking (Signal Listener) - now dispatches to gamemode
+	## Dispatched to the gamemode.
 	write_versioned_function("multiplayer/on_kill_signal", f"""
-# Only process if multiplayer game is active
 execute unless data storage {ns}:multiplayer game{{state:"active"}} run return fail
 
-# Dispatch to gamemode-specific kill handler
 {gm_dispatch(ns, version, "on_kill", ret=True)}
 """, tags=[f"{ns}:signals/on_kill"])
 
-	## Check Team Win (shared by TDM, DOM, HP)
+	## Shared by TDM, DOM and HP.
 	write_versioned_function("multiplayer/check_team_win", f"""
 execute store result score #score_limit {ns}.data run data get storage {ns}:multiplayer game.score_limit
 execute if score #red {ns}.mp.team >= #score_limit {ns}.data run function {ns}:v{version}/multiplayer/team_wins {{team:"Red"}}
 execute if score #blue {ns}.mp.team >= #score_limit {ns}.data run function {ns}:v{version}/multiplayer/team_wins {{team:"Blue"}}
 """)
 
-	## Team Wins
 	write_versioned_function("multiplayer/team_wins", f"""
-# Announce winner
 $tellraw @a ["","🏆 ",{{"text":"$(team) Team Wins!","color":"gold","bold":true}}]
 tellraw @a ["",[{{"text":"","color":"gray"}},"  ",{{"text":"Final Score - Red"}},": "],{{"score":{{"name":"#red","objective":"{ns}.mp.team"}},"color":"red"}},[{{"text":"","color":"gray"}}," ",{{"text":"vs Blue"}},": "],{{"score":{{"name":"#blue","objective":"{ns}.mp.team"}},"color":"blue"}}]
 
-# End game
 function {ns}:v{version}/multiplayer/stop
 """)
 

@@ -6,7 +6,7 @@
 
 **Status**: Draft
 
-**Input**: Existing research document [TODO_26.3_SHADERS.md](../../TODO_26.3_SHADERS.md), written 2026-07-30 against 26.3 Snapshot 3.
+**Input**: Research written 2026-07-30 against 26.3 Snapshot 3, now [POSTEFFECT_26.3.md](../POSTEFFECT_26.3.md). The in-game checklist is [verification.md](verification.md).
 
 ## User Scenarios & Testing *(mandatory)*
 
@@ -133,4 +133,4 @@ relog and confirm it does not persist.
 - Iris will publish a 26.3 build; until then User Story 2 cannot be validated and must not block the rest.
 - `MixinPostChain` stays an empty class in the Iris 26.3 branch. If it stops being one, User Story 2 needs re-research before any work.
 - No parallel 26.2 branch is maintained. The pack moves to 26.3 and does not look back.
-- The research in `TODO_26.3_SHADERS.md` was verified against the decompiled sources in [minecraft_source_code/](../../minecraft_source_code/) and is treated as accurate for the version it names.
+- The research in [POSTEFFECT_26.3.md](../POSTEFFECT_26.3.md) was verified against the decompiled sources in [minecraft_source_code/](../../minecraft_source_code/) and is treated as accurate for the version it names.

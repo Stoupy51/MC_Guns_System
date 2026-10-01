@@ -9,12 +9,11 @@
 #			mgs:v5.1.0/zombies/revive/void_revive_solo_qr
 #
 
-# Remove all perk effects and reset scoreboard tracking
 execute if score @s mgs.zb.perk.juggernog matches 1 run attribute @s minecraft:max_health base reset
 scoreboard players set @s mgs.zb.perk.juggernog 0
 execute if score @s mgs.zb.perk.speed_cola matches 1 run scoreboard players set @s mgs.special.quick_reload 0
 scoreboard players set @s mgs.zb.perk.speed_cola 0
-execute if score @s mgs.zb.perk.double_tap matches 1 run scoreboard players set @s mgs.special.additional_shots 0
+execute if score @s mgs.zb.perk.double_tap matches 1 run scoreboard players set @s mgs.special.double_tap 0
 scoreboard players set @s mgs.zb.perk.double_tap 0
 execute if score @s mgs.zb.perk.quick_revive matches 1 run tag @s remove mgs.perk.quick_revive
 scoreboard players set @s mgs.zb.perk.quick_revive 0
@@ -39,6 +38,6 @@ execute if score @s mgs.zb.perk.widows_wine matches 1 run attribute @s minecraft
 scoreboard players set @s mgs.zb.perk.widows_wine 0
 tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.all_perks_lost","color":"red"}]
 
-# Remove the perk display items from the inventory right away
+# Right away.
 function mgs:v5.1.0/zombies/inventory/refresh_perk_items
 

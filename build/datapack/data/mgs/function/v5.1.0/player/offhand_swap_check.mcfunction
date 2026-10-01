@@ -6,6 +6,6 @@
 # @within	mgs:v5.1.0/player/tick
 #
 
-# If mainhand is empty and offhand has a weapon, move it back to mainhand and reload
+# Main hand empty and a gun in the offhand.
 execute unless items entity @s weapon.mainhand * if items entity @s weapon.offhand *[custom_data~{mgs:{gun:true}}] run function mgs:v5.1.0/player/swap_and_reload
 

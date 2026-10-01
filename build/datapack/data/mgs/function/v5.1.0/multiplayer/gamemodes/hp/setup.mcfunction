@@ -8,27 +8,24 @@
 
 tellraw @a [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.hardpoint_control_the_zone_to_score","color":"yellow"}]
 
-# Store base coordinates for offset
 function mgs:v5.1.0/shared/load_base_coordinates {mode:"multiplayer"}
 
-# Copy hardpoint zones from map to game state
 data modify storage mgs:multiplayer game.hp_zones set from storage mgs:multiplayer game.map.hardpoint
 
-# Rotation timer (60 seconds = 1200 ticks per zone)
+# 60 s per zone.
 scoreboard players set #hp_rotate_timer mgs.data 1200
 
-# Rotation timer in seconds for sidebar display
+# For the sidebar.
 scoreboard players set #hp_rotate_sec mgs.data 60
 
-# Label index for current hardpoint zone (A, B, C, D, E)
+# Label of the current zone (A to E).
 scoreboard players set #hp_zone_idx mgs.data 0
 
-# Scoring timer (score every 1 second = 20 ticks)
+# Score every second.
 scoreboard players set #hp_score_timer mgs.data 20
 
-# XP throttles: the hold counter, and the once-per-hill capture flag load_zone clears on every rotation
+# XP throttles: the hold counter, and the once-per-hill capture flag that load_zone clears.
 scoreboard players set #hp_xp_hold mgs.data 5
 
-# Load first zone
 function mgs:v5.1.0/multiplayer/gamemodes/hp/load_zone
 
