@@ -1,10 +1,8 @@
-""" Shared plumbing for every `/posteffect` chain: the GLSL header, the activation clock and the
-three-pass skeleton that wraps one fullscreen shader around it.
+""" Shared plumbing for every `/posteffect` chain: the GLSL header, the activation clock and the three-pass skeleton around one fullscreen shader.
 
-A post effect has no parameters. The only per-activation signal a chain receives is that
-`posteffect add` reallocates its persistent targets at `clear_color`, so a 1x1 persistent target
-whose alpha starts at 0 tells the shader "this is frame one". Stamping `Globals.GameTime` there
-turns that edge into a wall-clock timer with sub-tick resolution.
+A post effect has no parameters.
+The only per-activation signal a chain gets is that `posteffect add` reallocates its persistent targets at `clear_color`, so a 1x1 persistent target whose alpha starts at 0 marks frame one.
+Stamping `Globals.GameTime` there turns that edge into a wall-clock timer with sub-tick resolution.
 """
 # Imports
 from beet import FragmentShader, GlslShader, PostEffect
@@ -101,11 +99,9 @@ def register_common(ns: str) -> None:
 def timed_effect(ns: str, effect_id: str, shader: str, uniforms: JsonDict, inputs: list[JsonDict] | None = None) -> None:
 	""" Register a `/posteffect` chain whose clock restarts on every `posteffect add`.
 
-	The apply pass receives `ClockSampler` plus `InSampler` bound to `minecraft:main`, and writes a
-	scratch target that a last pass copies back. Sampling main while rendering into it is a GPU
-	feedback loop, which shows up as a tiled grid of stale blocks across the screen.
-	Extra `inputs` are appended in order, so their `SamplerInfo` entries follow `OutSize`,
-	`ClockSize` and `InSize`.
+	The apply pass gets `ClockSampler` and `InSampler` (bound to `minecraft:main`) and writes a scratch target that a last pass copies back.
+	Sampling main while rendering into it is a GPU feedback loop, which shows as a tiled grid of stale blocks.
+	Extra `inputs` are appended in order, so their `SamplerInfo` entries follow `OutSize`, `ClockSize` and `InSize`.
 
 	Args:
 		effect_id: path under `assets/<ns>/post_effect/`, the id `/posteffect add` takes.

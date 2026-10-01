@@ -13,16 +13,14 @@
 #			mgs:v5.1.0/multiplayer/perks/scavenger_refill
 #
 
-# Skip if not holding a gun
 execute unless data storage mgs:gun all.gun run return fail
 
-# Skip if weapon has no base_weapon (e.g. grenades)
+# Grenades have no base_weapon.
 execute unless data storage mgs:gun all.stats.base_weapon run return fail
 
-# Reset reserve counter
 scoreboard players set @s mgs.reserve_ammo 0
 
-# Sum bullets from all matching magazine slots (runs as ticking player)
+# Run as the ticking player.
 function mgs:v5.1.0/ammo/reserve/scan with storage mgs:gun all.stats
 return 0
 

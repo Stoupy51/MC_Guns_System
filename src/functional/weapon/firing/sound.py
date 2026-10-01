@@ -34,18 +34,13 @@ def main() -> None:
 	ns: str = Mem.ctx.project_id
 	version: str = Mem.ctx.project_version
 
-	# Handle pending clicks
 	write_versioned_function("player/right_click", f"""
-# Advanced Playsound
 function {ns}:v{version}/sound/main
 """)
 
-	# Compute acoustics function
 	write_versioned_function("sound/compute_acoustics", f"""
-# Initialize acoustics score
 scoreboard players set #acoustics {ns}.data 0
 
-# Compute it
 execute if block ~ ~1 ~ #{ns}:v{version}/outside if block ~ ~2 ~ #{ns}:v{version}/outside if block ~ ~3 ~ #{ns}:v{version}/outside run scoreboard players add #acoustics {ns}.data 8
 execute if block ~ ~4 ~ #{ns}:v{version}/outside if block ~ ~5 ~ #{ns}:v{version}/outside if block ~ ~6 ~ #{ns}:v{version}/outside run scoreboard players add #acoustics {ns}.data 8
 execute if block ~1 ~1 ~ #{ns}:v{version}/outside if block ~2 ~1 ~ #{ns}:v{version}/outside if block ~3 ~1 ~ #{ns}:v{version}/outside if block ~1 ~2 ~ #{ns}:v{version}/outside if block ~2 ~2 ~ #{ns}:v{version}/outside if block ~3 ~2 ~ #{ns}:v{version}/outside run scoreboard players add #acoustics {ns}.data 4
@@ -85,7 +80,7 @@ execute if block ~-2 ~5 ~1 #{ns}:v{version}/outside if block ~-2 ~6 ~1 #{ns}:v{v
 execute if block ~1 ~5 ~2 #{ns}:v{version}/outside if block ~1 ~6 ~2 #{ns}:v{version}/outside if block ~-1 ~5 ~2 #{ns}:v{version}/outside if block ~-1 ~6 ~2 #{ns}:v{version}/outside run scoreboard players add #acoustics {ns}.data 8
 execute if block ~1 ~5 ~-2 #{ns}:v{version}/outside if block ~1 ~6 ~-2 #{ns}:v{version}/outside if block ~-1 ~5 ~-2 #{ns}:v{version}/outside if block ~-1 ~6 ~-2 #{ns}:v{version}/outside run scoreboard players add #acoustics {ns}.data 8
 
-# Turn score into acoustics level
+# Score to acoustics level.
 scoreboard players set @s {ns}.acoustics_level 0
 execute if score #acoustics {ns}.data matches 121..155 run scoreboard players set @s {ns}.acoustics_level 1
 execute if score #acoustics {ns}.data matches 86..120 run scoreboard players set @s {ns}.acoustics_level 2
@@ -95,21 +90,18 @@ execute anchored eyes positioned ^ ^ ^ if block ~ ~ ~ #{ns}:v{version}/sounds/wa
 """)
 
 	write_versioned_function("sound/main", f"""
-# Fire sounds
-## PaP: if gun is Pack-a-Punched and has a pap_fire sound, play it instead
+## A Pack-a-Punched gun with a pap_fire sound plays it instead.
 scoreboard players set #do_pap_sound {ns}.data 0
 execute if data storage {ns}:gun all.stats.pap_level if data storage {ns}:gun all.sounds.pap_fire run scoreboard players set #do_pap_sound {ns}.data 1
 execute if score #do_pap_sound {ns}.data matches 1 run function {ns}:v{version}/sound/fire_pap with storage {ns}:gun all.sounds
 
-## Normal fire sounds
-# TODO: Add a mode check to select between fire and fire_alt
+## TODO: a mode check to choose between fire and fire_alt.
 execute if score #do_pap_sound {ns}.data matches 0 if data storage {ns}:gun all.sounds.fire_alt run function {ns}:v{version}/sound/fire_alt with storage {ns}:gun all.sounds
 execute if score #do_pap_sound {ns}.data matches 0 unless data storage {ns}:gun all.sounds.fire_alt run function {ns}:v{version}/sound/fire_simple with storage {ns}:gun all.sounds
 
-# Cycle sound (for sniper rifles)
+# Sniper rifles.
 execute if data storage {ns}:gun all.sounds.cycle run function {ns}:v{version}/sound/cycle with storage {ns}:gun all.sounds
 
-# Acoustics handling
 execute if data storage {ns}:gun all.sounds.crack run function {ns}:v{version}/sound/acoustics_main with storage {ns}:gun all.sounds
 """)
 	write_versioned_function("sound/fire_pap", f"""
@@ -129,7 +121,6 @@ $playsound {ns}:$(cycle) player @s ~ ~ ~ 0.5
 $playsound {ns}:$(cycle) player @a[distance=0.01..48] ~ ~ ~ 1.0 1 0.5
 """)
 	write_versioned_function("sound/acoustics_main", f"""
-# Playsound depending on acoustics level
 $execute if score @s {ns}.acoustics_level matches 0 run playsound {ns}:common/$(crack)_crack_0_distant player @s ~ ~ ~ 1.0
 $execute if score @s {ns}.acoustics_level matches 1 run playsound {ns}:common/$(crack)_crack_1_far player @s ~ ~ ~ 1.0
 $execute if score @s {ns}.acoustics_level matches 2 run playsound {ns}:common/$(crack)_crack_2_midrange player @s ~ ~ ~ 1.0
@@ -137,41 +128,38 @@ $execute if score @s {ns}.acoustics_level matches 3 run playsound {ns}:common/$(
 $execute if score @s {ns}.acoustics_level matches 4 run playsound {ns}:common/$(crack)_crack_4_closest player @s ~ ~ ~ 1.0
 $execute if score @s {ns}.acoustics_level matches 5 run playsound {ns}:common/$(crack)_crack_5_water player @s ~ ~ ~ 1.0
 
-# Directs sound propagation to nearby players by aligning their view with the sound source for accurate positional audio
+# Each listener faces the source, so the sound is positioned right.
 scoreboard players operation #origin_acoustics_level {ns}.data = @s {ns}.acoustics_level
 execute as @a[distance=0.001..224] facing entity @s eyes run function {ns}:v{version}/sound/propagation
 """)
 
-	# Turret gunshot: reuse the g3a3 weapon sound (close mechanical report + the 'large' acoustics crack), so the zombies turret trap sounds exactly like a player firing a G3A3.
-	# @s = sound source entity (the turret center marker); executed at the muzzle, facing the target.
+	# Turret shot: the G3A3 sound (close report and 'large' crack), as for a player. Run as the turret centre marker, at the muzzle facing the target.
 	write_versioned_function("sound/turret_fire", f"""
-# Compute the source environment acoustics at the turret, exactly like a firing player
+# The turret's acoustics, as for a firing player.
 function {ns}:v{version}/sound/compute_acoustics
 scoreboard players operation #origin_acoustics_level {ns}.data = @s {ns}.acoustics_level
 
-# Close-range g3a3 mechanical report for nearby players (same mix as sound/fire_simple)
+# The fire_simple mix.
 playsound {ns}:g3a3/fire player @a[distance=0.01..48] ~ ~ ~ 0.35 1 0.10
 
-# Propagate the 'large' crack to every listener, using each listener's own acoustics level
+# Each listener's own acoustics level.
 data modify storage {ns}:temp _turret_snd set value {{crack:"large"}}
 execute as @a[distance=0.001..224] facing entity @s eyes run function {ns}:v{version}/sound/turret_propagation
 """)
 
-	# Per-listener crack propagation for the turret.
-	# Mirrors sound/propagation, but reads the crack from a dedicated storage ({ns}:temp _turret_snd) instead of the player gun storage ({ns}:gun).
+	# Like sound/propagation, reading the crack from {ns}:temp _turret_snd instead of {ns}:gun.
 	write_versioned_function("sound/turret_propagation", f"""
-# Make copies of the original (turret) acoustics level to work on
 scoreboard players operation #processed_acoustics {ns}.data = #origin_acoustics_level {ns}.data
 scoreboard players operation #attenuation_acoustics {ns}.data = #origin_acoustics_level {ns}.data
 scoreboard players add #attenuation_acoustics {ns}.data 1
 
-# Same acoustics blending as the player propagation, against each listener's own acoustics level
+# Same blending as the player propagation.
 execute if score #origin_acoustics_level {ns}.data matches 0..4 if score #origin_acoustics_level {ns}.data > @s {ns}.acoustics_level run scoreboard players remove #processed_acoustics {ns}.data 1
 execute if score #origin_acoustics_level {ns}.data < @s {ns}.acoustics_level run scoreboard players add #processed_acoustics {ns}.data 1
 execute if score #attenuation_acoustics {ns}.data < @s {ns}.acoustics_level run scoreboard players add #processed_acoustics {ns}.data 1
 execute if score @s {ns}.acoustics_level matches 5 run scoreboard players set #processed_acoustics {ns}.data 5
 
-# Play the appropriate crack variant (reuses the shared hearing/* distance table)
+# The shared hearing/* table.
 execute if score #processed_acoustics {ns}.data matches 0 run function {ns}:v{version}/sound/hearing/0_distant with storage {ns}:temp _turret_snd
 execute if score #processed_acoustics {ns}.data matches 1 run function {ns}:v{version}/sound/hearing/1_far with storage {ns}:temp _turret_snd
 execute if score #processed_acoustics {ns}.data matches 2 run function {ns}:v{version}/sound/hearing/2_midrange with storage {ns}:temp _turret_snd
@@ -180,57 +168,46 @@ execute if score #processed_acoustics {ns}.data matches 4 run function {ns}:v{ve
 execute if score #processed_acoustics {ns}.data matches 5 run function {ns}:v{version}/sound/hearing/5_water with storage {ns}:temp _turret_snd
 """)
 
-	# Check mid cooldown
 	write_versioned_function("sound/check/pump", f"""
-# Calculate half of weapon cooldown
 scoreboard players set #divisor {ns}.data 2
 execute store result score #half {ns}.data run data get storage {ns}:gun all.stats.{COOLDOWN}
 scoreboard players operation #half {ns}.data /= #divisor {ns}.data
 
-# If current cooldown equals half, play mid cooldown sound and remove tag
+# Half the cooldown: the mid sound plays.
 execute if score @s {ns}.cooldown = #half {ns}.data run function {ns}:v{version}/sound/pump with storage {ns}:gun all.sounds
 """)
 
-	# Check mid reload
 	write_versioned_function("sound/check/reload_mid", f"""
-# Calculate half of weapon cooldown
 scoreboard players set #divisor {ns}.data 2
 execute store result score #half {ns}.data run data get storage {ns}:gun all.stats.{RELOAD_TIME}
 scoreboard players operation #half {ns}.data /= #divisor {ns}.data
 
-# If current cooldown equals half, play mid cooldown sound and remove tag
+# Half the cooldown: the mid sound plays.
 execute if score @s {ns}.cooldown = #half {ns}.data run function {ns}:v{version}/sound/player_mid with storage {ns}:gun all.sounds
 """)
 
-	# Check reload end
 	write_versioned_function("sound/check/reload_end", f"""
-# If cooldown is reload end, and player was reloading, playsound
 execute store result score #{RELOAD_END} {ns}.data run data get storage {ns}:gun all.stats.{RELOAD_END}
 execute if score @s {ns}.cooldown = #{RELOAD_END} {ns}.data run function {ns}:v{version}/sound/player_end with storage {ns}:gun all.sounds
 """)
 
 	write_versioned_function("sound/propagation", f"""
-# Make copies of the original acoustics level to work on
 scoreboard players operation #processed_acoustics {ns}.data = #origin_acoustics_level {ns}.data
 scoreboard players operation #attenuation_acoustics {ns}.data = #origin_acoustics_level {ns}.data
 scoreboard players add #attenuation_acoustics {ns}.data 1
 
-# Reduce the sound level by 1 when the original sound level (0-4) is greater than the listener's acoustics level
-# When in an enclosed space, distant sounds are perceived as closer due to acoustic properties
+# One level closer when the source (0-4) is above the listener's level: enclosed spaces make distant sounds seem near.
 execute if score #origin_acoustics_level {ns}.data matches 0..4 if score #origin_acoustics_level {ns}.data > @s {ns}.acoustics_level run scoreboard players remove #processed_acoustics {ns}.data 1
 
-# Increase the sound level by 1 when the original sound level is less than the listener's acoustics level
-# This makes sounds appear louder when the listener is in a more acoustically reflective environment
+# One level louder when the source is below: a more reflective spot sounds louder.
 execute if score #origin_acoustics_level {ns}.data < @s {ns}.acoustics_level run scoreboard players add #processed_acoustics {ns}.data 1
 
-# If (original sound level + 1) is less than listener's acoustics level, increase the sound level by 1
-# This creates a smoother Sound transition between different acoustic environments
+# Again when source + 1 is still below, which smooths the transition between environments.
 execute if score #attenuation_acoustics {ns}.data < @s {ns}.acoustics_level run scoreboard players add #processed_acoustics {ns}.data 1
 
-# If listener's acoustics level is 5 (water), force the sound level to water regardless of other conditions
+# A listener in water (5) always hears the water level.
 execute if score @s {ns}.acoustics_level matches 5 run scoreboard players set #processed_acoustics {ns}.data 5
 
-# Play the appropriate sound effect based on the calculated sound level
 execute if score #processed_acoustics {ns}.data matches 0 run function {ns}:v{version}/sound/hearing/0_distant with storage {ns}:gun all.sounds
 execute if score #processed_acoustics {ns}.data matches 1 run function {ns}:v{version}/sound/hearing/1_far with storage {ns}:gun all.sounds
 execute if score #processed_acoustics {ns}.data matches 2 run function {ns}:v{version}/sound/hearing/2_midrange with storage {ns}:gun all.sounds
@@ -247,25 +224,19 @@ execute if score #processed_acoustics {ns}.data matches 5 run function {ns}:v{ve
 				f"$execute if entity @s[distance={low}..{level.first_band + 16 * band}] positioned as @s run playsound {ns}:common/$(crack)_crack_{i}_{level.name} player @s ^ ^ ^-6 {round(volume * 1.5, 3)}"
 			)
 
-	# Missing sounds
 	write_versioned_function("sound/reload_start", f"""
-# Full reload sound for the player
 $playsound {ns}:$(reload) player @s
 """)
 	write_versioned_function("sound/player_begin", f"""
-# Play the begin reload sound for all nearby players
 $playsound {ns}:$(playerbegin) player @a[distance=0.01..16] ~ ~ ~ 0.3
 """)
 	write_versioned_function("sound/player_mid", f"""
-# Play the mid reload sound for all nearby players
 $playsound {ns}:$(playermid) player @a[distance=0.01..16] ~ ~ ~ 0.3
 """)
 	write_versioned_function("sound/player_end", f"""
-# Play the end reload sound for all nearby players
 $playsound {ns}:$(playerend) player @a[distance=0.01..16] ~ ~ ~ 0.3
 """)
 	write_versioned_function("sound/pump", f"""
-# Play the pump sound for the player and nearby players
 $playsound {ns}:$(pump) player @s
 $playsound {ns}:$(pump) player @a[distance=0.01..16] ~ ~ ~ 0.3
 """)

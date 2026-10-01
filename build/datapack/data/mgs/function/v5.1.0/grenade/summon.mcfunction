@@ -6,9 +6,8 @@
 # @within	mgs:v5.1.0/grenade/summon_loop
 #
 
-# Get accuracy value and apply spread
+# Spread from the accuracy value.
 function mgs:v5.1.0/raycast/accuracy/get_value
 
-# Summon the grenade entity at the player's eye position
 execute anchored eyes positioned ^ ^ ^0.5 summon item_display run function mgs:v5.1.0/grenade/init
 

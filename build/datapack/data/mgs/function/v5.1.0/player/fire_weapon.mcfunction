@@ -11,19 +11,15 @@ execute store success score #has_pap_level mgs.data if data storage mgs:gun all.
 execute if score #has_pap_level mgs.data matches 1 unless data storage mgs:gun all.stats.grenade_type at @s anchored eyes positioned ^ ^ ^0.001 as @a[distance=..16] run function mgs:v5.1.0/player/apply_pap_flash_if_can_see
 execute if score #has_pap_level mgs.data matches 0 unless data storage mgs:gun all.stats.grenade_type at @s anchored eyes positioned ^ ^ ^0.001 as @a[distance=..16] run function mgs:v5.1.0/player/apply_flash_if_can_see
 
-# For weapons with pellet count, set bullets_to_fire appropriately
 execute if data storage mgs:gun all.stats.pellet_count store result score #bullets_to_fire mgs.data run data get storage mgs:gun all.stats.pellet_count
 
-# Per-shot budget for entity hit particles: only the first 3 entities hit by this shot
-# (all pellets included) emit blood particles, to avoid lag when piercing a whole horde
+# Only the first 3 entities hit by a shot (all pellets) bleed, against lag when piercing a horde.
 scoreboard players set #hit_particles_left mgs.data 3
 
-# If weapon is a grenade, throw it instead
 execute if data storage mgs:gun all.stats.grenade_type run return run function mgs:v5.1.0/grenade/throw
 
-# If weapon has projectile config, fire slow projectile(s) instead of instant raycast
+# Weapons with projectile config fire slow projectiles instead of a raycast.
 execute if data storage mgs:gun all.stats.proj_speed run return run function mgs:v5.1.0/projectile/summon_loop
 
-# Shoot with hitscan raycast
 function mgs:v5.1.0/player/shoot
 

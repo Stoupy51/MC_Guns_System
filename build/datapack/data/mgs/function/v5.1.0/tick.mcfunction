@@ -22,19 +22,15 @@ execute if score #tick_delta mgs.data matches 41.. run scoreboard players set #t
 # Player loop
 execute as @e[type=player,sort=random] at @s run function mgs:v5.1.0/player/tick
 
-# Tick function for slow bullets (projectiles)
 execute if score #slow_bullet_count mgs.data matches 1.. as @e[type=minecraft:item_display,tag=mgs.slow_bullet] at @s run function mgs:v5.1.0/projectile/tick
 
-# Tick every live grenade. This is intentionally NOT gated on a running count: a counter desync
-# (e.g. a grenade removed outside grenade/delete, or a double-detonate) used to drop the count to 0
-# and freeze EVERY projectile's ticking ("no more items to tick", monkey bombs included). Selecting
-# by tag each tick is cheap and self-correcting.
+# Not gated on a counter: a desync (a grenade removed outside grenade/delete, a double detonation) could stop every grenade ticking.
+# Selecting by tag each tick is cheap and self-correcting.
 execute as @e[type=minecraft:item_display,tag=mgs.grenade] at @s run function mgs:v5.1.0/grenade/tick
 
-# Armed mob AI loop
 execute if score #armed_mob_count mgs.data matches 1.. as @e[tag=mgs.armed] at @s run function mgs:v5.1.0/mob/tick
 
-# Resync armed mob count every 5 seconds (mobs dying never decrement the counter)
+# Every 5 s: dying mobs never decrement the counter.
 scoreboard players operation #armed_mob_phase mgs.data = #total_tick mgs.data
 scoreboard players operation #armed_mob_phase mgs.data %= #100 mgs.data
 execute if score #armed_mob_count mgs.data matches 1.. if score #armed_mob_phase mgs.data matches 0 store result score #armed_mob_count mgs.data if entity @e[tag=mgs.armed]

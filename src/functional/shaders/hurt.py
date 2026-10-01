@@ -1,9 +1,8 @@
-""" Low-health screen overlay: a red vignette that turns into a pulsing one when close to death.
+""" Low-health screen overlay: a red vignette that turns into a pulsing one close to death.
 
-A post effect has no parameters, so each id is a transition from one tier's look to another's and
-everything the overlay shows (tint, edge, heartbeat, colour split) blends between the two. Exactly
-one id is applied at a time. Healing waits for the bar to settle before fading, so a fast
-regeneration crossing both thresholds plays one smooth fade instead of two cut-off ones.
+A post effect has no parameters, so each id is a transition from one tier's look to another's, blending tint, edge, heartbeat and colour split.
+Exactly one id is applied at a time.
+Healing waits for the bar to settle, so a fast regeneration crossing both thresholds plays one smooth fade instead of two cut-off ones.
 """
 # Imports
 from dataclasses import dataclass
@@ -196,8 +195,8 @@ execute if score @s {ns}.health <= #hurt_at {ns}.data run scoreboard players set
 {resolve}
 """)
 
-	# Every player is checked, not just the ones in a game, so that leaving one takes the overlay
-	# off. A player outside a game resolves to level 0 and fades out like any heal.
+	# Every player is checked, not only those in a game, so leaving one takes the overlay off.
+	# A player outside a game resolves to level 0 and fades out like any heal.
 	gate: str = f"execute unless entity @s[gamemode=spectator] if score @s {ns}"
 	write_versioned_function("player/hurt_tick", f"""
 scoreboard players set #hurt_tier {ns}.data 0

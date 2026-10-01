@@ -11,12 +11,9 @@ def main() -> None:
 	ns: str = Mem.ctx.project_id
 	version: str = Mem.ctx.project_version
 
-	# Main actionbar display function
 	write_versioned_function("actionbar/show", f"""
-# Idle gate: everything on the bar (ammo, cooldown dot, fire mode, dps) can only change while
-# the weapon is in use, so while idle we refresh every 10 ticks instead of rebuilding the whole
-# bar (~50 commands + a macro parse) every tick. ab_force (set by the fire-mode toggle) forces
-# an immediate refresh for changes the use-detection below can't see.
+# Everything on the bar only changes while the weapon is in use, so idle refreshes every 10 ticks instead of every tick
+# (~50 commands and a macro parse); ab_force (fire-mode toggle) forces a refresh the use detection cannot see.
 scoreboard players set #ab_active {ns}.data 0
 execute if score @s {ns}.cooldown > #total_tick {ns}.data run scoreboard players set #ab_active {ns}.data 1
 execute if score @s {ns}.pending_clicks matches 0.. run scoreboard players set #ab_active {ns}.data 1
@@ -27,91 +24,69 @@ scoreboard players operation #ab_phase {ns}.data %= #10 {ns}.data
 execute if score #ab_active {ns}.data matches 0 unless score #ab_phase {ns}.data matches 0 run return 0
 scoreboard players set @s {ns}.ab_force 0
 
-# Initialize actionbar with fire mode indicator
 function {ns}:v{version}/actionbar/build_fire_mode_indicator
 
-# Add cooldown ready indicator
 function {ns}:v{version}/actionbar/add_cooldown_indicator
 
-# Get capacity and remaining bullets
 execute store result score #capacity {ns}.data run data get storage {ns}:gun all.stats.{CAPACITY}
 execute store result score #remaining {ns}.data run scoreboard players get @s {ns}.{REMAINING_BULLETS}
 
-# Add separator between fire mode and ammo
 data modify storage {ns}:temp actionbar.list append value " "
 
-# Check if capacity > 15 (use numeric display) or <= 15 (use icons)
+# Above 15 bullets, numbers; otherwise icons.
 execute if score #capacity {ns}.data matches 16.. run function {ns}:v{version}/actionbar/add_numeric_ammo
 execute if score #capacity {ns}.data matches ..15 run function {ns}:v{version}/actionbar/add_icon_ammo
 
-# Add DPS display
 function {ns}:v{version}/actionbar/add_dps
 
-# Display actionbar
 function {ns}:v{version}/actionbar/display with storage {ns}:temp actionbar
 """)
 
-	# Build fire mode indicator: [S | B | A]
+	# [S | B | A]
 	write_versioned_function("actionbar/build_fire_mode_indicator", f"""
-# Initialize actionbar list
 data modify storage {ns}:temp actionbar set value {{list:[]}}
 
-# Add opening bracket
 data modify storage {ns}:temp actionbar.list append value {{"text":"","color":"#{START_HEX}"}}
 data modify storage {ns}:temp actionbar.list append value {{"text":"[ ","color":"#{END_HEX}"}}
 
-# Check weapon capabilities
 execute store result score #has_auto {ns}.data if data storage {ns}:gun all.stats.can_auto
 execute store result score #has_burst {ns}.data if data storage {ns}:gun all.stats.can_burst
 
-# Show appropriate fire mode selector based on capabilities
-# Weapons with auto and burst: [S | B | A]
-# Weapons with auto only: [S | A]
-# Weapons with burst only: [S | B]
-# Weapons with neither: [S]
+# auto and burst: [S | B | A]; auto only: [S | A]; burst only: [S | B]; neither: [S].
 
-# S = Semi-auto (always available)
 execute if data storage {ns}:gun all.stats{{{FIRE_MODE}:"semi"}} run data modify storage {ns}:temp actionbar.list append value {{"text":"S","color":"yellow","bold":true}}
 execute unless data storage {ns}:gun all.stats{{{FIRE_MODE}:"semi"}} run data modify storage {ns}:temp actionbar.list append value {{"text":"S"}}
 
-# Show separator and burst only if weapon has burst capability
 execute if score #has_burst {ns}.data matches 1 run data modify storage {ns}:temp actionbar.list append value {{"text":" | "}}
 
-# B = Burst (only show if CAN_BURST)
 execute if score #has_burst {ns}.data matches 1 if data storage {ns}:gun all.stats{{{FIRE_MODE}:"burst"}} run data modify storage {ns}:temp actionbar.list append value {{"text":"B","color":"yellow"}}
 execute if score #has_burst {ns}.data matches 1 unless data storage {ns}:gun all.stats{{{FIRE_MODE}:"burst"}} run data modify storage {ns}:temp actionbar.list append value {{"text":"B"}}
 
-# Show separator and auto only if weapon has auto capability
 execute if score #has_auto {ns}.data matches 1 run data modify storage {ns}:temp actionbar.list append value {{"text":" | "}}
 
-# A = Auto (only show if CAN_AUTO)
 execute if score #has_auto {ns}.data matches 1 if data storage {ns}:gun all.stats{{{FIRE_MODE}:"auto"}} run data modify storage {ns}:temp actionbar.list append value {{"text":"A","color":"yellow","bold":true}}
 execute if score #has_auto {ns}.data matches 1 unless data storage {ns}:gun all.stats{{{FIRE_MODE}:"auto"}} run data modify storage {ns}:temp actionbar.list append value {{"text":"A"}}
 
-# Add closing bracket
 data modify storage {ns}:temp actionbar.list append value {{"text":" ] ","color":"#{END_HEX}"}}
 """)
 
-	# Add numeric ammo display (for capacity > 15): shows "remaining | reserve"
+	# Above 15 bullets: "remaining | reserve".
 	write_versioned_function("actionbar/add_numeric_ammo", f"""
 data modify storage {ns}:temp actionbar.list append value {{"score":{{"name":"#remaining","objective":"{ns}.data"}}}}
 data modify storage {ns}:temp actionbar.list append value {{"text":"x "}}
 data modify storage {ns}:temp actionbar.list append value {{"text":"A","font":"{ns}:icons","shadow_color":[0,0,0,0],"color":"white"}}
 data modify storage {ns}:temp actionbar.list append value {{"text":" | ","color":"#{END_HEX}"}}
-# Reserve ammo from player's scoreboard
 execute store result score #reserve {ns}.data run scoreboard players get @s {ns}.reserve_ammo
 data modify storage {ns}:temp actionbar.list append value {{"score":{{"name":"#reserve","objective":"{ns}.data"}}}}
 data modify storage {ns}:temp actionbar.list append value {{"text":"x "}}
 data modify storage {ns}:temp actionbar.list append value {{"text":"A","font":"{ns}:icons","shadow_color":[0,0,0,0],"color":"gray"}}
 """)
 
-	# Add icon ammo display (for capacity <= 15): bullet icons + reserve count
+	# Up to 15 bullets: icons, then the reserve.
 	write_versioned_function("actionbar/add_icon_ammo", f"""
-# Build icons recursively
 scoreboard players set #i {ns}.data 0
 execute if score #i {ns}.data < #capacity {ns}.data run function {ns}:v{version}/actionbar/build_icon_loop
 
-# Append reserve ammo count after icons
 data modify storage {ns}:temp actionbar.list append value {{"text":" | ","color":"#{END_HEX}"}}
 execute store result score #reserve {ns}.data run scoreboard players get @s {ns}.reserve_ammo
 data modify storage {ns}:temp actionbar.list append value {{"score":{{"name":"#reserve","objective":"{ns}.data"}}}}
@@ -119,46 +94,39 @@ data modify storage {ns}:temp actionbar.list append value {{"text":"x ","color":
 data modify storage {ns}:temp actionbar.list append value {{"text":"A","font":"{ns}:icons","shadow_color":[0,0,0,0],"color":"gray"}}
 """)
 
-	# Build actionbar icons recursively
 	write_versioned_function("actionbar/build_icon_loop", f"""
-# Append bullet icon (full by default)
+# Full by default.
 data modify storage {ns}:temp actionbar.list append value {{"text":"A","font":"{ns}:icons","shadow_color":[0,0,0,0]}}
 
-# For empty bullets, use outline
+# Empty bullets are outlines.
 execute if score #i {ns}.data >= #remaining {ns}.data run data modify storage {ns}:temp actionbar.list[-1] set value {{"text":"B","font":"{ns}:icons","color":"gray","shadow_color":[0,0,0,0]}}
 
-# Increment counter
 scoreboard players add #i {ns}.data 1
 
-# Recurse if not done
 execute if score #i {ns}.data < #capacity {ns}.data run function {ns}:v{version}/actionbar/build_icon_loop
 """)
 
-	# Add cooldown ready indicator: green ● when ready to fire, dark_red ● when on cooldown
+	# Green ● when ready to fire, dark red ● on cooldown.
 	write_versioned_function("actionbar/add_cooldown_indicator", f"""
-# Append cooldown indicator dot: green if ready, dark_red if on cooldown
 execute if score @s {ns}.cooldown <= #total_tick {ns}.data run data modify storage {ns}:temp actionbar.list append value {{"text":" ● ","color":"green"}}
 execute if score @s {ns}.cooldown > #total_tick {ns}.data run data modify storage {ns}:temp actionbar.list append value {{"text":" ● ","color":"dark_red"}}
 """)
 
-	# Display actionbar through Smithed Actionbar with persistent priority.
+	# Through Smithed Actionbar, with persistent priority.
 	write_versioned_function("actionbar/display", """
 $data modify storage smithed.actionbar:input message set value {json:$(list),priority:'persistent',freeze:1}
 function #smithed.actionbar:message
 """)
 
-	# Add DPS display: reads mgs.previous_dps (real-time collected damage per second)
+	# previous_dps: damage x10 per second, snapshotted every 20 ticks.
 	write_versioned_function("actionbar/add_dps", f"""
-# Get collected DPS (accumulated damage*10 per second, snapshotted every 20 ticks)
 execute store result score #dps_raw {ns}.data run scoreboard players get @s {ns}.previous_dps
 
-# Split into integer and decimal parts (previous_dps is damage*10/sec)
 scoreboard players operation #dps_int {ns}.data = #dps_raw {ns}.data
 scoreboard players operation #dps_int {ns}.data /= #10 {ns}.data
 scoreboard players operation #dps_dec {ns}.data = #dps_raw {ns}.data
 scoreboard players operation #dps_dec {ns}.data %= #10 {ns}.data
 
-# Append DPS to actionbar list
 data modify storage {ns}:temp actionbar.list append value "    "
 data modify storage {ns}:temp actionbar.list append value {{"text":"⚡","color":"#{END_HEX}"}}
 data modify storage {ns}:temp actionbar.list append value " "

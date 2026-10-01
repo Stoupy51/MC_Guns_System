@@ -20,7 +20,7 @@ def main() -> None:
 	ns: str = Mem.ctx.project_id
 	version: str = Mem.ctx.project_version
 
-	# Advancement detecting right click using using_item trigger
+	# Right click detected through the using_item trigger.
 	adv: JsonDict = {
 		"criteria": {
 			"requirement": {
@@ -40,13 +40,8 @@ def main() -> None:
 	}
 	Mem.ctx.data[ns].advancements[f"v{version}/right_click"] = set_json_encoder(Advancement(adv), max_level=-1)
 
-	# Same click, recovered when an escort trader ate it.
-	# A right-click aimed at an ENTITY sends ServerboundInteractPacket, not ServerboundUseItemPacket.
-	# The client only falls through to the item use when that interaction did NOT consume.
-	# The escort taxi is an invisible trader with empty offers, and mobInteract returns CONSUME for those.
-	# Aiming at one therefore swallowed the shot, and it is glued to its zombie so a monkey bomb puts it in your face.
-	# handleInteract fires this trigger for any consuming result, and CONSUME carries ItemContext.DEFAULT.
-	# The gun stack really is reported here, so the item predicate matches.
+	# The same click when an escort trader eats it: aiming at an entity sends an interact packet, and the item use only follows when
+	# the interaction does not consume. The trader's empty offers return CONSUME, and handleInteract fires this trigger with the gun stack.
 	adv_entity: JsonDict = {
 		"criteria": {
 			"requirement": {
@@ -57,10 +52,8 @@ def main() -> None:
 							"minecraft:custom_data": f"{{{ns}:{{gun:true}}}}"
 						}
 					},
-					# `entity` is a loot condition, so the entity predicate sits inside an entity_properties.
-					# EntityPredicate is a flat map dispatched on the entity_sub_predicate_type registry.
-					# Each condition is keyed by its registry id: "entity_type"/"nbt", NOT the old "type"/"nbt".
-					# Writing "type" makes the game look for a minecraft:type sub-predicate and reject the advancement.
+					# `entity` is a loot condition, so the entity predicate sits inside entity_properties; EntityPredicate keys its conditions
+					# by registry id ("entity_type", "nbt"), and the old "type" makes the game reject the advancement.
 					"entity": {
 						"type": "minecraft:entity_properties",
 						"entity": "this",
@@ -79,55 +72,40 @@ def main() -> None:
 	Mem.ctx.data[ns].advancements[f"v{version}/right_click_entity"] = set_json_encoder(Advancement(adv_entity), max_level=-1)
 
 	write_versioned_function("player/set_pending_clicks_entity", f"""
-# Revoke this advancement, then run the normal click path (which revokes its own)
+# Revoked, then the normal click path runs (it revokes its own).
 advancement revoke @s only {ns}:v{version}/right_click_entity
 function {ns}:v{version}/player/set_pending_clicks
 """)
 
-	# Function to set pending clicks
 	write_versioned_function("player/set_pending_clicks", f"""
-# Revoke advancement
 advancement revoke @s only {ns}:v{version}/right_click
 
-# Detect if player is holding right-click (vs single tap)
-# If pending_clicks >= 0, means it was still positive from previous tick (holding)
+# pending_clicks still >= 0 from last tick means the button is held.
 execute if score @s {ns}.pending_clicks matches 0.. run scoreboard players set @s {ns}.held_click 1
 execute if score @s {ns}.pending_clicks matches ..-1 run scoreboard players set @s {ns}.held_click 0
 
-# A leftover partial burst counter with negative pending_clicks means the burst was interrupted
-# (e.g. the magazine emptied into an auto-reload before the burst finished). Reset it so this
-# click starts a fresh burst — otherwise the mid-burst path below would keep adding +1 to a
-# deeply negative pending_clicks and the weapon could never fire again (weapon lock).
+# A negative pending_clicks with a partial burst means the burst was interrupted (an auto-reload mid-burst);
+# without this reset the mid-burst path keeps adding to a very negative count and the weapon never fires again.
 execute if score @s {ns}.pending_clicks matches ..-1 run scoreboard players set @s {ns}.burst_count 0
 
-# Check if we're mid-burst (burst started but not yet complete)
 scoreboard players set #is_mid_burst {ns}.data 0
 execute if score @s {ns}.burst_count matches 1.. run function {ns}:v{version}/utils/copy_gun_data
 execute if score @s {ns}.burst_count matches 1.. if data storage {ns}:gun all.stats{{fire_mode:"burst"}} run function {ns}:v{version}/player/check_mid_burst
 
-# Set pending clicks logic:
-# - If mid-burst: always add (to maintain burst sequence)
-# - Otherwise: set to 1 (normal behavior, will trigger held detection next tick if still holding)
+# Mid-burst: add, to keep the burst going; otherwise set to 1 (held detection follows next tick if still held).
 execute if score #is_mid_burst {ns}.data matches 1 run scoreboard players add @s {ns}.pending_clicks 1
 execute unless score #is_mid_burst {ns}.data matches 1 run scoreboard players set @s {ns}.pending_clicks 1
 """)
 
-	# Check if burst is mid-progress (not complete)
 	write_versioned_function("player/check_mid_burst", f"""
-# Get burst limit
 execute store result score #burst_limit {ns}.data run data get storage {ns}:gun all.stats.{BURST}
 
-# If burst_count < burst_limit, we're mid-burst
 execute if score @s {ns}.burst_count < #burst_limit {ns}.data run scoreboard players set #is_mid_burst {ns}.data 1
 """)
 
-	# Copy gun data.
-	# Reading a path off a player serializes the whole player first: inventory, ender chest and recipe book.
-	# Bouncing the stack through the forceloaded item_display Bookshelf keeps around measured 8x cheaper.
-	# Guns, grenades, knives and menu items all carry {ns} custom data.
-	# For anything else the cleared storage is exactly what every consumer expects.
+	# Reading a path off a player serializes the whole player (inventory, ender chest, recipe book); bouncing the stack through
+	# Bookshelf's forceloaded item_display measured 8x cheaper. Anything without {ns} custom data leaves the storage empty, as consumers expect.
 	write_versioned_function("utils/copy_gun_data", f"""
-# Copy gun data
 data remove storage {ns}:gun all
 data modify storage {ns}:gun SelectedItem set value {{id:""}}
 execute unless items entity @s weapon.mainhand *[custom_data~{{{ns}:{{}}}}] run return 0
@@ -136,90 +114,76 @@ data modify storage {ns}:gun SelectedItem set from entity {Probe.ITEM_DISPLAY} i
 data modify storage {ns}:gun all set from storage {ns}:gun SelectedItem.components."minecraft:custom_data".{ns}
 """)
 
-	# Player tick function
 	write_versioned_function("player/tick", f"""
-# Add temporary tag
+# Removed at the end of the tick.
 tag @s add {ns}.ticking
 
-# Compute acoustics (only if player moved enough, every second not tick)
+# Once a second, and only if the player moved enough.
 scoreboard players operation #acoustics_phase {ns}.data = #total_tick {ns}.data
 scoreboard players operation #acoustics_phase {ns}.data %= #20 {ns}.data
 execute if score #acoustics_phase {ns}.data matches 0 if predicate {ns}:v{version}/is_moving run function {ns}:v{version}/sound/compute_acoustics
 execute if score #acoustics_phase {ns}.data matches 0 unless predicate {ns}:v{version}/is_on_ground run function {ns}:v{version}/sound/compute_acoustics
 
-# Reload if the hand-swap key parked the weapon in the offhand
+# The hand-swap key parks the weapon in the offhand to reload.
 execute if items entity @s weapon.offhand * run function {ns}:v{version}/player/offhand_swap_check
 
-# Check if player dropped weapon to switch fire mode
+# Dropping the weapon switches fire mode.
 function {ns}:v{version}/switch/check_fire_mode_on_drop
 
-# Copy gun data
 function {ns}:v{version}/utils/copy_gun_data
 
-# Check if switching weapon, before the zoom: a switch clears the old aim, so the new weapon's aim must be decided after it
+# Before the zoom: a switch clears the old aim, so the new weapon's aim is decided after it.
 function {ns}:v{version}/switch/main
 
-# Check if we need to zoom weapon or stop
 function {ns}:v{version}/zoom/main
 
-# Check mid cooldown sound
 execute if score @s {ns}.cooldown > #total_tick {ns}.data if entity @s[tag={ns}.pump_sound] if data storage {ns}:gun all.sounds.pump run function {ns}:v{version}/sound/check/pump
 execute unless score @s {ns}.cooldown > #total_tick {ns}.data if entity @s[tag={ns}.pump_sound] run tag @s remove {ns}.pump_sound
 
-# Check mid reload sound
 execute if score @s {ns}.cooldown > #total_tick {ns}.data if entity @s[tag={ns}.reload_mid_sound] if data storage {ns}:gun all.sounds.playermid run function {ns}:v{version}/sound/check/reload_mid
 execute unless score @s {ns}.cooldown > #total_tick {ns}.data if entity @s[tag={ns}.reload_mid_sound] run tag @s remove {ns}.reload_mid_sound
 
-# Check if we need to play reload end sound
 execute if score @s {ns}.cooldown > #total_tick {ns}.data if data storage {ns}:gun all.sounds.playerend run function {ns}:v{version}/sound/check/reload_end
 execute unless score @s {ns}.cooldown > #total_tick {ns}.data if entity @s[tag={ns}.reloading] run function {ns}:v{version}/ammo/end_reload
 
-# If pending clicks, run right click function
 execute if score @s {ns}.pending_clicks matches -100.. run function {ns}:v{version}/player/right_click
 
-# Reset held_click when player stops holding (pending_clicks goes negative)
+# pending_clicks goes negative once the button is released.
 execute if score @s {ns}.pending_clicks matches ..-1 run scoreboard players set @s {ns}.held_click 0
 
-# Reset burst_count only if burst completed or player switched weapons
-# (burst_count gate: with no burst in progress the function would be a no-op anyway)
+# Only once a burst is complete or the player switched weapons.
 execute if score @s {ns}.pending_clicks matches ..-1 if score @s {ns}.burst_count matches 1.. run function {ns}:v{version}/player/reset_burst_if_complete
 
-# Show action bar
 execute if data storage {ns}:gun all.gun run function {ns}:v{version}/actionbar/show
 
-# DPS timer: every 20 ticks snapshot mgs.dps -> mgs.previous_dps and reset
+# Every 20 ticks mgs.dps is snapshotted into mgs.previous_dps and reset.
 scoreboard players add @s {ns}.dps_timer 1
 execute if score @s {ns}.dps_timer matches 20.. run function {ns}:v{version}/player/dps_snapshot
 
-# Decrement special durations (instant_kill, infinite_ammo) in real time via #tick_delta
+# instant_kill and infinite_ammo count down in real time.
 execute if score @s {ns}.special.instant_kill matches 1.. run scoreboard players operation @s {ns}.special.instant_kill -= #tick_delta {ns}.data
 execute if score @s {ns}.special.infinite_ammo matches 1.. run scoreboard players operation @s {ns}.special.infinite_ammo -= #tick_delta {ns}.data
 
-# Remove temporary tag
 tag @s remove {ns}.ticking
 
-# Set previous selected weapon (length of string)
+# The length of the item id string.
 execute store result score @s {ns}.previous_selected run data get storage {ns}:gun SelectedItem.id
 """)
 
-	# Handle pending clicks
 	write_versioned_function("player/right_click", f"""
-# Decrease pending clicks by 1
 scoreboard players remove @s {ns}.pending_clicks 1
 
-# If player stopped right clicking for 3 second, we update the item lore and reserve ammo
+# 3 s after the last click, the lore and reserve ammo are refreshed.
 execute if score @s {ns}.pending_clicks matches -60 if data storage {ns}:gun all.gun run function {ns}:v{version}/ammo/modify_lore {{slot:"weapon.mainhand"}}
 
-# Stop here if weapon cooldown OR pending clicks if negative
 execute if score @s {ns}.cooldown > #total_tick {ns}.data run return fail
 execute if score @s {ns}.pending_clicks matches ..-1 run return fail
 
-# Stop if SelectedItem is not a gun or if not enough ammo
 execute unless data storage {ns}:gun all.gun run return fail
 execute unless score @s {ns}.special.infinite_ammo matches 1.. if score @s {ns}.{REMAINING_BULLETS} matches ..0 run return run function {ns}:v{version}/ammo/reload
 """)
 
-	# Prepare predicates for movement checks (Can't use flag 'is_on_ground' because /tp @s ~ ~ ~ makes it false for two ticks)
+	# is_on_ground cannot be used: /tp @s ~ ~ ~ makes it false for two ticks.
 	def json_enc[T: JsonFile](x: T) -> T: return set_json_encoder(x, max_level=-1)
 	Mem.ctx.data[ns].predicates[f"v{version}/is_on_ground"] = json_enc(Predicate({"type":"minecraft:entity_properties","entity":"this","predicate":{"movement":{"vertical_speed":{"max":0.1}}}}))
 	Mem.ctx.data[ns].predicates[f"v{version}/is_sprinting"] = json_enc(Predicate({"type":"minecraft:entity_properties","entity":"this","predicate":{"flags":{"is_sprinting":True}}}))
@@ -227,64 +191,49 @@ execute unless score @s {ns}.special.infinite_ammo matches 1.. if score @s {ns}.
 	Mem.ctx.data[ns].predicates[f"v{version}/is_swimming"] = json_enc(Predicate({"type":"minecraft:entity_properties","entity":"this","predicate":{"flags":{"is_swimming":True}}}))
 	Mem.ctx.data[ns].predicates[f"v{version}/is_moving"] = json_enc(Predicate({"type":"minecraft:entity_properties","entity":"this","predicate":{"movement":{"horizontal_speed":{"min":0.1}}}}))
 
-	# Update weapon stats item modifier
 	modifier: JsonDict = {"type":"minecraft:copy_custom_data","source":{"type":"minecraft:storage","source":f"{ns}:gun"},"ops":[{"source":"all.stats","target":f"{ns}.stats","op":"replace"}]}
 	Mem.ctx.data[ns].item_modifiers[f"v{version}/update_stats"] = json_enc(ItemModifier(modifier))
 
-	# Update weapon model item modifier
 	write_versioned_function("utils/update_model", """
 $item modify entity @s weapon.mainhand {"type": "minecraft:set_components","components": {"minecraft:item_model": "$(item_model)"}}
 """)
 
-	# Hand swap (F) is a reload key (left click is the other one, see weapon/left_click.py).
-	# Pressing it puts the gun in the offhand, which is what we detect here — the weapon is put straight back so the swap never visibly happens.
-	# (Fire mode is on the drop key, switch.py.)
+	# Hand swap (F) is a reload key (left click is the other, see weapon/left_click); the gun goes straight back, so the swap never shows.
+	# Fire mode is on the drop key (switch).
 	write_versioned_function("player/offhand_swap_check", f"""
-# If mainhand is empty and offhand has a weapon, move it back to mainhand and reload
+# Main hand empty and a gun in the offhand.
 execute unless items entity @s weapon.mainhand * if items entity @s weapon.offhand *[custom_data~{{{ns}:{{gun:true}}}}] run function {ns}:v{version}/player/swap_and_reload
 """)
 
-	# Undo the swap, then reload
 	write_versioned_function("player/swap_and_reload", f"""
-# Move offhand item back to mainhand
 item replace entity @s weapon.mainhand from entity @s weapon.offhand
 item replace entity @s weapon.offhand with air
 
-# Reload the weapon. Throwables carry {{gun:true}} but no {RELOAD_TIME}, and ammo/reload would store
-# a result from that missing field, leaving a garbage cooldown that locks the item.
+# Throwables carry {{gun:true}} but no {RELOAD_TIME}: ammo/reload would store a garbage cooldown from it and lock the item.
 function {ns}:v{version}/utils/copy_gun_data
 execute unless data storage {ns}:gun all.stats.{RELOAD_TIME} run return 0
 function {ns}:v{version}/ammo/reload
 """)
 
-	# Reset burst count only if burst is complete
 	write_versioned_function("player/reset_burst_if_complete", f"""
-# Check if in burst mode
 execute store result score #fire_mode_is_burst {ns}.data if data storage {ns}:gun all.stats{{fire_mode:"burst"}}
 
-# If not in burst mode, always reset
 execute if score #fire_mode_is_burst {ns}.data matches 0 run scoreboard players set @s {ns}.burst_count 0
 execute if score #fire_mode_is_burst {ns}.data matches 0 run return 0
 
-# If in burst mode, only reset if burst completed
 execute store result score #burst_limit {ns}.data run data get storage {ns}:gun all.stats.burst
 execute if score @s {ns}.burst_count >= #burst_limit {ns}.data run scoreboard players set @s {ns}.burst_count 0
 """)
 
-	# DPS snapshot: copy accumulated damage to previous_dps, then reset
 	write_versioned_function("player/dps_snapshot", f"""
-# Snapshot current DPS accumulator and reset for the next second
 scoreboard players operation @s {ns}.previous_dps = @s {ns}.dps
 scoreboard players set @s {ns}.dps 0
 scoreboard players set @s {ns}.dps_timer 0
 """)
 
-	# DPS signal: add the damage actually dealt to the shooter's mgs.dps.
-	# @s = hit entity, and the shooter is the ticking player (tagged mgs.ticking).
-	# $(amount) is the damage float from the damage signal macro, e.g. 24.0.
+	# Run as the hit entity; the shooter is the ticking player. $(amount) is the damage float of the damage signal (24.0).
 	write_versioned_function("weapon/dps_collect", f"""
-# @s = hit entity; add damage (x10) to the shooter's DPS accumulator
-# Store $(amount) float then read back x10 to get integer tenths (same unit as dps accumulator)
+# Stored as a float, read back x10 into integer tenths, the accumulator's unit.
 $data modify storage {ns}:temp dps_amount set value $(amount)
 execute store result score #sent_damage {ns}.data run data get storage {ns}:temp dps_amount 10
 scoreboard players operation @n[tag={ns}.ticking] {ns}.dps += #sent_damage {ns}.data

@@ -1,10 +1,8 @@
 """ Left-click detection.
 
-Minecraft has no "player swung" event, but a zero-reach `piercing_weapon` plus a
-`post_piercing_attack` enchantment turns any left click (even at air) into a function call. Left
-click is the RELOAD key here; fire mode is on the drop key (switch.py). The enchantment and its
-function live here, while the item components that arm it are attached to every gun in
-config/stats.py (see add_item).
+Minecraft has no "player swung" event, but a zero-reach `piercing_weapon` plus a `post_piercing_attack` enchantment turns any left click (even at air) into a function call.
+Left click is the reload key here; fire mode is on the drop key (switch).
+The enchantment and its function live here; the item components that arm it are added to every gun in config/stats/items (add_item).
 """
 # Imports
 from beet import Enchantment
@@ -23,8 +21,7 @@ def main() -> None:
 	ns: str = Mem.ctx.project_id
 	version: str = Mem.ctx.project_version
 
-	# Deliberately NOT versioned: gun stacks persist across pack updates, so the embedded ID must stay valid.
-	# Only the function it points at is versioned, and that is rewritten every build.
+	# Not versioned: gun stacks persist across pack updates, so the embedded id must stay valid; only the function it points at is versioned.
 	Mem.ctx.data[ns].enchantments[ENCHANTMENT_ID] = Enchantment({
 		"description": "",
 		"max_level": 1,
@@ -41,18 +38,17 @@ def main() -> None:
 		},
 	})
 
-	# Runs as the attacking player
+	# Run as the attacking player.
 	write_versioned_function("weapon/left_click", f"""
-# The enchantment only sits on our guns, but a player can left-click mid-swap: re-check the mainhand
-# so a click landing on the frame the weapon changes can't retarget whatever is held now.
+# A left click can land on the frame the weapon changes, so the main hand is checked again.
 execute unless items entity @s weapon.mainhand *[custom_data~{{{ns}:{{gun:true}}}}] run return 0
 
 function {ns}:v{version}/utils/copy_gun_data
 
-# Guard throwables/knives: no {RELOAD_TIME} -> ammo/reload would set a garbage cooldown and lock the item
+# Throwables and knives have no {RELOAD_TIME}: ammo/reload would set a garbage cooldown and lock the item.
 execute unless data storage {ns}:gun all.stats.{RELOAD_TIME} run return 0
 
-# Safe to spam: ammo/reload returns fail while reloading or already full
+# ammo/reload fails while reloading or full, so spamming is safe.
 function {ns}:v{version}/ammo/reload
 """)
 

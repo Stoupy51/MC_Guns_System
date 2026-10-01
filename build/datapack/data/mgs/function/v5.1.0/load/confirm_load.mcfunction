@@ -4,10 +4,9 @@
 # @within	mgs:v5.1.0/load/valid_dependencies
 #
 
-# Player config: trigger objective for /trigger command
 scoreboard objectives add mgs.player.config trigger
 
-# Per-player toggles (default 0 = disabled)
+# Off by default.
 scoreboard objectives add mgs.player.hitmarker dummy
 scoreboard objectives add mgs.player.damage_debug dummy
 
@@ -146,7 +145,7 @@ scoreboard objectives add mgs.hurt_fall_until dummy
 scoreboard objectives add mgs.hurt_out_until dummy
 scoreboard objectives add mgs.fx_deaths deathCount
 
-# Stamina system (Black Ops style) — per-player stamina state
+# Black Ops style stamina, per player.
 scoreboard objectives add mgs.stam dummy
 scoreboard objectives add mgs.stam_max dummy
 scoreboard objectives add mgs.stam_bonus dummy
@@ -154,17 +153,15 @@ scoreboard objectives add mgs.stam_rest dummy
 scoreboard objectives add mgs.stam_out dummy
 scoreboard objectives add mgs.stam_seen dummy
 
-# Counts swimming ticks so the drain can be applied on one tick in SWIM_DRAIN_FACTOR (see stamina_swim_drain)
+# Counts swim ticks, so the drain applies once per SWIM_DRAIN_FACTOR ticks (see stamina_swim_drain).
 scoreboard objectives add mgs.stam_swim dummy
 
-# Set while refill pulses may have left invisible saturation; only then does the at-target
-# branch pay the foodSaturationLevel NBT read to burn it off (see stamina_bar)
+# Set while refill pulses may have left invisible saturation; only then does the at-target branch read foodSaturationLevel to burn it off.
 scoreboard objectives add mgs.stam_dirty dummy
 
-# Armed mob counter (skip tick loop if 0)
+# The tick loop is skipped at 0.
 scoreboard players add #armed_mob_count mgs.data 0
 
-# Mob AI phase timer, active time, and sleep time
 scoreboard objectives add mgs.mob.timer dummy
 scoreboard objectives add mgs.mob.active_time dummy
 scoreboard objectives add mgs.mob.sleep_time dummy

@@ -20,64 +20,50 @@ def write_projectile_summon() -> None:
 	ns: str = Mem.ctx.project_id
 	version: str = Mem.ctx.project_version
 
-	## Summon loop (supports pellet_count for multiple projectiles)
+	## pellet_count gives several projectiles.
 	write_versioned_function("projectile/summon_loop", f"""
-# Summon a projectile
 function {ns}:v{version}/projectile/summon
 
-# Loop for remaining pellets
 scoreboard players remove #bullets_to_fire {ns}.data 1
 execute if score #bullets_to_fire {ns}.data matches 1.. run function {ns}:v{version}/projectile/summon_loop
 """)
 
-	## Summon projectile Called from projectile/summon_loop
 	proj_stats = [EXPLOSION_DAMAGE, EXPLOSION_DECAY, EXPLOSION_RADIUS, DAMAGE, PROJECTILE_GRAVITY, PROJECTILE_SPEED, PROJECTILE_LIFETIME, PROJECTILE_MODEL, BASE_WEAPON, "pap_level"]
 	proj_copy = "\n".join(f"data modify storage {ns}:temp proj.{s} set from storage {ns}:gun all.stats.{s}" for s in proj_stats)
 	write_versioned_function("projectile/summon", f"""
-# Get accuracy value and apply spread
+# Spread from the accuracy value.
 function {ns}:v{version}/raycast/accuracy/get_value
 
-# Prepare projectile data in storage before summoning
 data modify storage {ns}:temp proj set value {{}}
 {proj_copy}
 
-# Summon the projectile at the muzzle, 0.69 blocks ahead of the eyes — but only when that spot is actually
-# open, otherwise fall back to the eye position itself.
-# Standing flush against a wall the eyes sit ~0.3 blocks from its face, so the muzzle lands INSIDE the wall.
-# A projectile that starts embedded never registers an entry collision: bs.move sees it leave a block rather
-# than enter one, so the rocket kept going and came out the far side of walls three or more blocks thick.
-# The eye position is inside the player's own head, which is air, so the first movement step is honest again.
+# At the muzzle, 0.69 ahead of the eyes, only when that spot is open, else at the eyes: flush against a wall the muzzle is inside it,
+# and a projectile starting inside a block never registers an entry collision (bs.move sees it leave), so it went through thick walls.
 execute anchored eyes positioned ^ ^ ^0.69 store success score #proj_muzzle_free {ns}.data if block ~ ~ ~ #{ns}:v{version}/projectile_pass_through
 execute if score #proj_muzzle_free {ns}.data matches 1 anchored eyes positioned ^ ^ ^0.69 summon item_display run function {ns}:v{version}/projectile/init
 execute if score #proj_muzzle_free {ns}.data matches 0 anchored eyes positioned ^ ^ ^0 summon item_display run function {ns}:v{version}/projectile/init
 
-# Increment slow bullet counter
 scoreboard players add #slow_bullet_count {ns}.data 1
 """)
 
-	## Initialize the newly summoned projectile marker
 	write_versioned_function("projectile/init", f"""
-# Tag as slow bullet
 tag @s add {ns}.slow_bullet
 
-# Store shooter UUID for damage attribution
+# For damage attribution.
 data modify entity @s data.shooter set from entity @n[tag={ns}.ticking] UUID
 
-# Copy explosion and projectile config from temp storage
 data modify entity @s data.config set from storage {ns}:temp proj
 
-# Set the visual model on the item_display entity (ray_gun is invisible - no projectile model)
+# The Ray Gun has no projectile model.
 execute store success score #is_ray_gun {ns}.data if data entity @s data.config{{{BASE_WEAPON}:"ray_gun"}}
 execute if score #is_ray_gun {ns}.data matches 0 run function {ns}:v{version}/projectile/set_model with entity @s data.config
 
-# Set lifetime score
 execute store result score @s {ns}.data run data get storage {ns}:temp proj.{PROJECTILE_LIFETIME}
 
-# Calculate velocity from the player's look direction and teleport back
+# From the look direction, then back.
 function {ns}:v{version}/shared/calc_velocity
 """)
 
-	## Set visual model on the item_display (macro function)
 	write_versioned_function("projectile/set_model", f"""
 $data modify entity @s item set value {{id:"minecraft:paper", count:1, components:{{"minecraft:item_model":"{ns}:$({PROJECTILE_MODEL})"}}}}
 data modify entity @s item_display set value "fixed"

@@ -9,7 +9,6 @@
 #			mgs:v5.1.0/grenade/tick_stuck
 #
 
-# Route to the appropriate detonation effect based on grenade type
 execute if data entity @s data.config{grenade_type:"frag"} run return run function mgs:v5.1.0/grenade/detonate_frag
 execute if data entity @s data.config{grenade_type:"semtex"} run return run function mgs:v5.1.0/grenade/detonate_frag
 execute if data entity @s data.config{grenade_type:"monkey_bomb"} run return run function mgs:v5.1.0/grenade/detonate_frag

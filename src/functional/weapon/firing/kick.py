@@ -10,31 +10,27 @@ def main() -> None:
 	ns: str = Mem.ctx.project_id
 	version: str = Mem.ctx.project_version
 
-	# Handle pending clicks
 	write_versioned_function("player/right_click", f"""
-# Simulate weapon kick
 function {ns}:v{version}/kicks/main
 """)
 
-	## Kicks
 	write_versioned_function("kicks/main", f"""
-# Extract kick type & pick random value between 1 and 5
+# Kick type, and a random value from 1 to 5.
 scoreboard players set #kick {ns}.data 0
 execute store result score #kick {ns}.data run data get storage {ns}:gun all.stats.{KICK}
 execute store result score #random {ns}.data run random value 1..5
 
-# Check if player is riding a vehicle - if so, use /rotate instead of /tp to avoid dismounting
+# In a vehicle, /rotate instead of /tp, which would dismount.
 scoreboard players set #has_vehicle {ns}.data 0
 execute on vehicle run scoreboard players set #has_vehicle {ns}.data 1
 
-# Deadshot Daiquiri (zombies perk): route to the reduced-recoil (65%) kick variants
+# Deadshot Daiquiri (zombies): the 65% kick tables.
 execute if score @s {ns}.special.deadshot matches 1 run return run function {ns}:v{version}/kicks/apply_ds
 
-# Switch case
 function {ns}:v{version}/kicks/apply
 """)
 
-	# Switch-case dispatcher, shared between the normal and Deadshot (_ds) kick tables.
+	# Shared by the normal and Deadshot (_ds) kick tables.
 	kick_ranges: list[str] = ["..0", "1", "2", "3", "4", "5.."]
 
 	def kick_switch(suffix: str) -> str:
@@ -53,7 +49,7 @@ function {ns}:v{version}/kicks/apply
 		[(-0.15, -2.0), (-0.06, -2.0), (-0.0, -2.0), (0.06, -2.0), (0.15, -2.0)],
 		[(-0.17, -2.5), (-0.06, -2.5), (-0.0, -2.5), (0.06, -2.5), (0.17, -2.5)],
 	]
-	# Deadshot Daiquiri: -35% recoil = the same kick tables scaled to 65%.
+	# Deadshot Daiquiri: -35% recoil, the same tables at 65%.
 	for suffix, factor in [("", 1.0), ("_ds", 0.65)]:
 		for i, kicks in enumerate(all_kicks):
 			content: str = ""

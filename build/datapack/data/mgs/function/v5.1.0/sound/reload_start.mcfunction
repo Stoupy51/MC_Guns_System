@@ -8,6 +8,5 @@
 # @args		reload (unknown)
 #
 
-# Full reload sound for the player
 $playsound mgs:$(reload) player @s
 
