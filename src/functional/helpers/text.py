@@ -1,7 +1,6 @@
 """ Building text components: gradients, splitting an emoji off a coloured label, and naming a player. """
 # Imports
 import re
-from typing import Any
 
 from stouputils.typing import JsonDict
 
@@ -89,7 +88,7 @@ class Text:
 		return f'[{",".join(parts)}]'
 
 	@staticmethod
-	def split_emoji(text: str, **style: str | bool) -> JsonDict | list[Any]:
+	def split_emoji(text: str, **style: str | bool) -> JsonDict | list[str | JsonDict]:
 		""" Build a (Python) text component where any non-alphanumeric prefix/suffix (emojis)
 		renders uncolored/unstyled, while the alphanumeric core keeps the given style.
 
@@ -105,7 +104,7 @@ class Text:
 		if not alpha or (not prefix and not suffix):
 			# Pure alphanumeric or pure symbols: keep as a single styled component
 			return {"text": text, **style}
-		parts: list[Any] = ["", ]
+		parts: list[str | JsonDict] = [""]
 		if prefix:
 			parts.append(prefix)
 		parts.append({"text": alpha, **style} if style else {"text": alpha})

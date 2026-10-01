@@ -1,8 +1,9 @@
 """ The chat rule, the zombies element subset and the SNBT formatting helpers. """
 # Imports
-from typing import Any, cast
+from typing import cast
 
 from stewbeet import JsonDict
+from stouputils.typing import JsonList
 
 from ..map_editor_defs import ALL_ELEMENTS, ElementDef
 
@@ -13,11 +14,11 @@ ZB_ELEMENTS: dict[str, ElementDef] = {etype: einfo for etype, einfo in ALL_ELEME
 """ The zombies elements, which share one placement handler and one compound layout in storage. """
 
 # Functions
-def snbt_suggest(val: Any) -> str:
+def snbt_suggest(val: object) -> str:
 	""" Format a Python value as the SNBT a suggested command would carry.
 
 	Args:
-		val (Any): The value to format.
+		val (object): The value to format.
 	Returns:
 		str: Its SNBT spelling, quoted and suffixed the way Minecraft expects.
 
@@ -34,9 +35,9 @@ def snbt_suggest(val: Any) -> str:
 	if isinstance(val, str):
 		return f'"{val}"'
 	if isinstance(val, list):
-		return "[" + ",".join(snbt_suggest(v) for v in cast(list[Any], val)) + "]"
+		return "[" + ",".join(snbt_suggest(v) for v in cast(JsonList, val)) + "]"
 	if isinstance(val, dict):
-		return "{" + ",".join(f"{k}:{snbt_suggest(v)}" for k, v in cast(dict[str, Any], val).items()) + "}"
+		return "{" + ",".join(f"{k}:{snbt_suggest(v)}" for k, v in cast(JsonDict, val).items()) + "}"
 	return str(val)
 
 def snbt_compound(d: JsonDict) -> str:

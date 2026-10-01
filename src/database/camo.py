@@ -4,7 +4,6 @@ import os
 from collections.abc import Callable
 from copy import deepcopy
 from dataclasses import astuple, dataclass
-from typing import cast
 
 import numpy as np
 import stouputils as stp
@@ -167,31 +166,41 @@ GOLD_DEFAULT_IGNORE_TEXTURE: tuple[str, ...] = (
 	"akdetails", "glock18details", "augdetails", "m82details"
 )
 
-# Allow to override functions and ignored textures on a per-weapon basis
-OVERRIDES: dict[str, dict[str, list[str] | BlendFunc | tuple[str, ...]]] = {
-	"m249": {"apply_to": ["gold"], "ignore_textures": ("brass", "copper", "metal", "metal_bright", "metal_dark", *COMMON_IGNORE)},
-	"m4a1": {"apply_to": ["gold"], "ignore_textures": ("m4details", "ardetails2", *COMMON_IGNORE)},
-	"m16a4": {"apply_to": ["gold"], "ignore_textures": ("ardetails2", *COMMON_IGNORE)},
-	"m24": {"apply_to": ["gold"], "ignore_textures": ("metal_dark", "m24details", *COMMON_IGNORE)},
-	"mac10": {"apply_to": ["gold"], "ignore_textures": COMMON_IGNORE},
-	"mp5": {"apply_to": ["gold"], "ignore_textures": ("rubber_cross", *COMMON_IGNORE)},
-	"mp7": {"apply_to": ["gold"], "ignore_textures": ("metal", "mp7details", *COMMON_IGNORE)},
-	"ppsh41": {"apply_to": ["gold"], "ignore_textures": ("ppshdetails", "ppshwood", *COMMON_IGNORE)},
-	"spas12": {"apply_to": ["gold"], "ignore_textures": ("metal", "spas12details", *COMMON_IGNORE)},
-	"sten": {"apply_to": ["gold"], "ignore_textures": COMMON_IGNORE},
-	"m1911": {"apply_to": ["gold"], "ignore_textures": COMMON_IGNORE},
-	"m9": {"apply_to": ["gold"], "ignore_textures": COMMON_IGNORE},
-	"deagle": {"apply_to": ["gold"], "ignore_textures": ("rubber", "deagledetails", *COMMON_IGNORE)},
-	"makarov": {"apply_to": ["gold"], "ignore_textures": COMMON_IGNORE},
-	"glock17": {"apply_to": ["gold"], "ignore_textures": ("glock17_polymer_dots", *COMMON_IGNORE)},
-	"vz61": {"apply_to": ["gold"], "ignore_textures": ("vz61grip", "vz61wood", *COMMON_IGNORE)},
-	"ray_gun": {"apply_to": ["gold"], "func": lambda b, bl, o: hsl_color_blend(b, bl, o, l_blend=0.0)},
+@dataclass(frozen=True)
+class CamoOverride:
+	""" Per-weapon exception to how its camo textures are blended. """
+	ignore_textures: tuple[str, ...] | None = None
+	""" Texture names left untouched, instead of the material's default list. """
+	func: BlendFunc | None = None
+	""" Blend function used instead of the material's. """
+	apply_to: tuple[str, ...] = ("gold",)
+	""" Materials this override applies to. """
+
+
+OVERRIDES: dict[str, CamoOverride] = {
+	"m249": CamoOverride(ignore_textures=("brass", "copper", "metal", "metal_bright", "metal_dark", *COMMON_IGNORE)),
+	"m4a1": CamoOverride(ignore_textures=("m4details", "ardetails2", *COMMON_IGNORE)),
+	"m16a4": CamoOverride(ignore_textures=("ardetails2", *COMMON_IGNORE)),
+	"m24": CamoOverride(ignore_textures=("metal_dark", "m24details", *COMMON_IGNORE)),
+	"mac10": CamoOverride(ignore_textures=COMMON_IGNORE),
+	"mp5": CamoOverride(ignore_textures=("rubber_cross", *COMMON_IGNORE)),
+	"mp7": CamoOverride(ignore_textures=("metal", "mp7details", *COMMON_IGNORE)),
+	"ppsh41": CamoOverride(ignore_textures=("ppshdetails", "ppshwood", *COMMON_IGNORE)),
+	"spas12": CamoOverride(ignore_textures=("metal", "spas12details", *COMMON_IGNORE)),
+	"sten": CamoOverride(ignore_textures=COMMON_IGNORE),
+	"m1911": CamoOverride(ignore_textures=COMMON_IGNORE),
+	"m9": CamoOverride(ignore_textures=COMMON_IGNORE),
+	"deagle": CamoOverride(ignore_textures=("rubber", "deagledetails", *COMMON_IGNORE)),
+	"makarov": CamoOverride(ignore_textures=COMMON_IGNORE),
+	"glock17": CamoOverride(ignore_textures=("glock17_polymer_dots", *COMMON_IGNORE)),
+	"vz61": CamoOverride(ignore_textures=("vz61grip", "vz61wood", *COMMON_IGNORE)),
+	"ray_gun": CamoOverride(func=lambda b, bl, o: hsl_color_blend(b, bl, o, l_blend=0.0)),
 }
 
 # Gold normally spares a gun's metal sheets so the receiver stays black, but a melee weapon IS its
 # blade: skipping them would leave a "gold" knife with nothing gold but the grip. Driven off
 # CAMO_MELEE so toggling `camo_eligible` needs no second edit here.
-OVERRIDES.update({melee_id: {"apply_to": ["gold"], "ignore_textures": COMMON_IGNORE} for melee_id in CAMO_MELEE})
+OVERRIDES.update({melee_id: CamoOverride(ignore_textures=COMMON_IGNORE) for melee_id in CAMO_MELEE})
 
 @dataclass(frozen=True)
 class BlendJob:
@@ -203,18 +212,16 @@ class BlendJob:
 	material: str
 
 
-def active_override(base_weapon: str, material: str) -> dict[str, list[str] | BlendFunc | tuple[str, ...]]:
-	""" The weapon's `OVERRIDES` entry, empty when its `apply_to` leaves this material out. """
-	override_info = OVERRIDES.get(base_weapon, {})
-	if override_info.get("apply_to") and material not in cast(list[str], override_info["apply_to"]):
-		return {}
-	return override_info
+def active_override(base_weapon: str, material: str) -> CamoOverride:
+	""" The weapon's `OVERRIDES` entry, or an empty one when it has none for this material. """
+	override: CamoOverride | None = OVERRIDES.get(base_weapon)
+	return override if override and material in override.apply_to else CamoOverride()
 
 def blend_texture(weapon_texture_path: str, material_texture_path: str, out_path: str, base_weapon: str, material: str) -> None:
 	""" Blend with cache: skips redundant work when variants share a base texture. """
 	if os.path.exists(out_path):
 		return
-	func = cast(BlendFunc, active_override(base_weapon, material).get("func", MATERIALS[material]))
+	func: BlendFunc = active_override(base_weapon, material).func or MATERIALS[material]
 	func(weapon_texture_path, material_texture_path, out_path)
 
 @stp.measure_time(message="Generated camouflage variants")
@@ -273,7 +280,8 @@ def retexture(ns: str, textures_folder: str, model: JsonDict, base_weapon: str, 
 		model: The variant's own override model, whose `textures` is replaced by an edited copy.
 	"""
 	default_ignore: tuple[str, ...] = GOLD_DEFAULT_IGNORE_TEXTURE if material == "gold" else COMMON_IGNORE
-	ignore_textures = cast(tuple[str, ...], active_override(base_weapon, material).get("ignore_textures", default_ignore))
+	override_ignore: tuple[str, ...] | None = active_override(base_weapon, material).ignore_textures
+	ignore_textures: tuple[str, ...] = default_ignore if override_ignore is None else override_ignore
 	textures: JsonDict = model.get("textures", {}).copy()
 	model["textures"] = textures
 

@@ -1,7 +1,6 @@
 """ Right-click detection shared by every weapon path, including burst click tracking. """
 # Imports
-from typing import Any
-
+from beet import JsonFile
 from stewbeet import (
 	Advancement,
 	ItemModifier,
@@ -221,7 +220,7 @@ execute unless score @s {ns}.special.infinite_ammo matches 1.. if score @s {ns}.
 """)
 
 	# Prepare predicates for movement checks (Can't use flag 'is_on_ground' because /tp @s ~ ~ ~ makes it false for two ticks)
-	def json_enc(x: Any) -> Any: return set_json_encoder(x, max_level=-1)
+	def json_enc[T: JsonFile](x: T) -> T: return set_json_encoder(x, max_level=-1)
 	Mem.ctx.data[ns].predicates[f"v{version}/is_on_ground"] = json_enc(Predicate({"type":"minecraft:entity_properties","entity":"this","predicate":{"movement":{"vertical_speed":{"max":0.1}}}}))
 	Mem.ctx.data[ns].predicates[f"v{version}/is_sprinting"] = json_enc(Predicate({"type":"minecraft:entity_properties","entity":"this","predicate":{"flags":{"is_sprinting":True}}}))
 	Mem.ctx.data[ns].predicates[f"v{version}/is_sneaking"] = json_enc(Predicate({"type":"minecraft:entity_properties","entity":"this","predicate":{"flags":{"is_sneaking":True}}}))
@@ -229,7 +228,7 @@ execute unless score @s {ns}.special.infinite_ammo matches 1.. if score @s {ns}.
 	Mem.ctx.data[ns].predicates[f"v{version}/is_moving"] = json_enc(Predicate({"type":"minecraft:entity_properties","entity":"this","predicate":{"movement":{"horizontal_speed":{"min":0.1}}}}))
 
 	# Update weapon stats item modifier
-	modifier: dict[str, Any] = {"type":"minecraft:copy_custom_data","source":{"type":"minecraft:storage","source":f"{ns}:gun"},"ops":[{"source":"all.stats","target":f"{ns}.stats","op":"replace"}]}
+	modifier: JsonDict = {"type":"minecraft:copy_custom_data","source":{"type":"minecraft:storage","source":f"{ns}:gun"},"ops":[{"source":"all.stats","target":f"{ns}.stats","op":"replace"}]}
 	Mem.ctx.data[ns].item_modifiers[f"v{version}/update_stats"] = json_enc(ItemModifier(modifier))
 
 	# Update weapon model item modifier

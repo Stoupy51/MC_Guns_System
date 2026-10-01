@@ -1,7 +1,6 @@
 """ Item registration: the add_item() builder and the model loading it depends on. """
 # Imports
 import json
-from typing import Any
 
 import stouputils as stp
 from stewbeet import CUSTOM_ITEM_VANILLA, Item, JsonDict, Mem
@@ -28,15 +27,13 @@ class ItemBuilder:
 	# Functions
 	# Utility functions
 	@staticmethod
-	def json_dump(x: Any) -> str: return stp.json_dump(x, max_level=-1)
-	@staticmethod
 	def get_model_path(model_name: str) -> str: return f"{ItemBuilder.ITEM_MODELS_PATH}/{model_name}.json"
 	@staticmethod
 	def load_model(path: str) -> JsonDict:
 		return json.loads(stp.read_file(path).replace("mgs:item", f"{Mem.ctx.project_id}:item"))
 
 	@staticmethod
-	def add_item(id: str, stats: JsonDict | None = None, model_path: str | None = None, max_stack_size: int = 1, **kwargs: Any) -> Item:
+	def add_item(id: str, stats: JsonDict | None = None, model_path: str | None = None, max_stack_size: int = 1) -> Item:
 		if model_path == "auto":
 			model_path = ItemBuilder.get_model_path(id)
 		ns: str = Mem.ctx.project_id
@@ -60,6 +57,5 @@ class ItemBuilder:
 			base_item="minecraft:poisonous_potato" if stats else CUSTOM_ITEM_VANILLA,
 			components=components,
 			override_model=(ItemBuilder.load_model(model_path) if model_path else None),
-			**kwargs
 		)
 

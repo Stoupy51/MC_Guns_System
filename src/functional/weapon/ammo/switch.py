@@ -1,8 +1,6 @@
 """ Weapon switching: swap timing, weapon ids, and fire-mode toggling on drop. """
 # Imports
-from typing import Any
-
-from stewbeet import ItemModifier, Mem, set_json_encoder, write_versioned_function
+from stewbeet import ItemModifier, JsonDict, Mem, set_json_encoder, write_versioned_function
 
 from ....config.stats.keys import CAN_AUTO, CAN_BURST, FIRE_MODE, SWITCH, WEAPON_ID
 
@@ -211,7 +209,7 @@ playsound minecraft:block.note_block.hat ambient @s
 scoreboard players set @s {ns}.ab_force 1
 """)
 
-	modifier: dict[str, Any] = {
+	modifier: JsonDict = {
 		"type": "minecraft:copy_custom_data",
 		"source": {
 			"type": "minecraft:storage",
@@ -227,7 +225,7 @@ scoreboard players set @s {ns}.ab_force 1
 	}
 	Mem.ctx.data[ns].item_modifiers[f"v{version}/set_weapon_id"] = set_json_encoder(ItemModifier(modifier), max_level=-1)
 
-	modifier: dict[str, Any] = {
+	modifier: JsonDict = {
 		"type": "minecraft:copy_custom_data",
 		"source": {
 			"type": "minecraft:storage",
