@@ -17,6 +17,9 @@ execute if score #tick_delta mgs.data matches 41.. run scoreboard players set #t
 
 execute as @e[type=player,sort=random] at @s run function mgs:v5.1.0/player/tick
 
+scoreboard players operation #fx_sweep mgs.data = #total_tick mgs.data
+scoreboard players operation #fx_sweep mgs.data %= #fx_sweep_period mgs.data
+
 execute if score #slow_bullet_count mgs.data matches 1.. as @e[type=minecraft:item_display,tag=mgs.slow_bullet] at @s run function mgs:v5.1.0/projectile/tick
 
 # Not gated on a counter: a desync (a grenade removed outside grenade/delete, a double detonation) could stop every grenade ticking.

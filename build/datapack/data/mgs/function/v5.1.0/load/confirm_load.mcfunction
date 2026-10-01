@@ -137,6 +137,9 @@ scoreboard objectives add mgs.hurt_fall_until dummy
 scoreboard objectives add mgs.hurt_out_until dummy
 scoreboard objectives add mgs.fx_deaths deathCount
 scoreboard objectives add mgs.fx_rejoins custom:leave_game
+scoreboard players set #fx_sweep_period mgs.data 40
+
+execute as @a run function mgs:v5.1.0/player/fx_reset
 
 # Black Ops style stamina, per player.
 scoreboard objectives add mgs.stam dummy

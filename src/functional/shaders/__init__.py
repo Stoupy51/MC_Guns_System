@@ -9,7 +9,7 @@ Iris shaderpacks compose with all of it, since post effects run after the level 
 """
 # Imports
 from beet import FragmentShader
-from stewbeet import Mem, write_load_file, write_versioned_function
+from stewbeet import Mem, write_load_file, write_tick_file, write_versioned_function
 
 from . import crosshair, flash, hurt, zoom
 from .common import HEADER, register_common, timed_effect
@@ -96,6 +96,7 @@ def write_lifecycle(ns: str) -> None:
 {objectives}
 scoreboard objectives add {ns}.fx_deaths deathCount
 scoreboard objectives add {ns}.fx_rejoins custom:leave_game
+scoreboard players set #fx_sweep_period {ns}.data 40
 """)
 
 	# Post effects live in player NBT, so a round that ends badly would leave someone scoped for good.
@@ -115,6 +116,15 @@ scoreboard players set @s {ns}.fx_deaths 0
 	write_versioned_function("player/fx_after_rejoin", f"""
 function {ns}:v{version}/player/fx_reset
 scoreboard players set @s {ns}.fx_rejoins 0
+""")
+
+	# A /reload also repairs a player stuck by an older version of these rules.
+	write_load_file(f"execute as @a run function {ns}:v{version}/player/fx_reset\n")
+
+	# Phase of the periodic sweep that takes off any overlay id the mirror scores do not know about.
+	write_tick_file(f"""
+scoreboard players operation #fx_sweep {ns}.data = #total_tick {ns}.data
+scoreboard players operation #fx_sweep {ns}.data %= #fx_sweep_period {ns}.data
 """)
 
 	write_versioned_function("player/tick", f"""
