@@ -6,7 +6,6 @@
 # @within	mgs:v5.1.0/player/tick
 #
 
-# Snapshot current DPS accumulator and reset for the next second
 scoreboard players operation @s mgs.previous_dps = @s mgs.dps
 scoreboard players set @s mgs.dps 0
 scoreboard players set @s mgs.dps_timer 0

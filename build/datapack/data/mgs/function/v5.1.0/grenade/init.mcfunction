@@ -6,28 +6,25 @@
 # @within	mgs:v5.1.0/grenade/summon [ anchored eyes & positioned ^ ^ ^0.5 ]
 #
 
-# Tag as grenade
 tag @s add mgs.grenade
 
-# Store shooter UUID for damage attribution
+# For damage attribution.
 data modify entity @s data.shooter set from entity @n[tag=mgs.ticking] UUID
 
-# Copy grenade config from temp storage
 data modify entity @s data.config set from storage mgs:temp grenade
 
-# Set the visual model on the item_display entity (camo variants override the base model)
+# Camo variants override the base model.
 function mgs:v5.1.0/grenade/set_model with entity @s data.config
 execute if data entity @s data.config.model_override run function mgs:v5.1.0/grenade/set_model_override with entity @s data.config
 
-# Set fuse timer from config
 execute store result score @s mgs.data run data get entity @s data.config.grenade_fuse
 
-# Monkey bomb: tag + summon its zombie-attraction taunt (zombies module owns the behavior)
+# The zombies module owns the attraction.
 execute if data entity @s data.config{grenade_type:"monkey_bomb"} run function mgs:v5.1.0/zombies/monkey/on_throw
 
-# Launch grace period: disable entity collision for 3 ticks to avoid sticking to the thrower
+# No entity collision for 3 ticks, so it never sticks to the thrower.
 scoreboard players set @s mgs.grenade_launch 3
 
-# Calculate velocity from the player's look direction and teleport back
+# From the look direction, then back.
 function mgs:v5.1.0/shared/calc_velocity
 

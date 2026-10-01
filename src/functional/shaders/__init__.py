@@ -1,11 +1,11 @@
 """ Screen post-processing, hosted entirely on `/posteffect`.
 
-Every effect is a per-player id the datapack applies and removes. The server cannot pass a value to
-a shader, so each discrete state gets its own id with its parameters baked into the JSON, and each
-chain times itself from the activation edge (see [common.py](common.py)).
+Every effect is a per-player id the datapack applies and removes.
+The server cannot pass a value to a shader, so each discrete state gets its own id with its parameters baked into the JSON.
+Each chain times itself from the activation edge (see [common.py](common.py)).
 
-Nothing here overrides a core shader, so the pack depends neither on the particle pipeline nor on
-Fabulous graphics. Iris shaderpacks compose with all of it, since post effects run after the level is finished.
+Nothing here overrides a core shader, so the pack depends neither on the particle pipeline nor on Fabulous graphics.
+Iris shaderpacks compose with all of it, since post effects run after the level is finished.
 """
 # Imports
 from beet import FragmentShader
@@ -97,16 +97,16 @@ def write_lifecycle(ns: str) -> None:
 scoreboard objectives add {ns}.fx_deaths deathCount
 """)
 
-	# Post effects live in player NBT, so a round that ends badly would leave someone scoped for
-	# good. Every game start and stop runs this.
+	# Post effects live in player NBT, so a round that ends badly would leave someone scoped for good.
+	# Every game start and stop runs this.
 	reset_scores: str = "\n".join(f"scoreboard players reset @s {ns}.{score}" for score in FX_SCORES)
 	write_versioned_function("player/fx_reset", f"""
 posteffect clear @s
 {reset_scores}
 """)
 
-	# A real death respawns a fresh server player with an empty effect list, so only the mirror
-	# scores need forgetting. The crosshair and hurt watchers re-apply on their next tick.
+	# A real death respawns a fresh server player with an empty effect list, so only the mirror scores need forgetting.
+	# The crosshair and hurt watchers re-apply on their next tick.
 	write_versioned_function("player/fx_after_death", f"""
 {reset_scores}
 scoreboard players set @s {ns}.fx_deaths 0

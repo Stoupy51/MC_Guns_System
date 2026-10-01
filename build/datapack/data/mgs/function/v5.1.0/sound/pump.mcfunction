@@ -8,7 +8,6 @@
 # @args		pump (unknown)
 #
 
-# Play the pump sound for the player and nearby players
 $playsound mgs:$(pump) player @s
 $playsound mgs:$(pump) player @a[distance=0.01..16] ~ ~ ~ 0.3
 

@@ -7,22 +7,19 @@
 #			mgs:v5.1.0/projectile/summon [ anchored eyes & positioned ^ ^ ^0 ]
 #
 
-# Tag as slow bullet
 tag @s add mgs.slow_bullet
 
-# Store shooter UUID for damage attribution
+# For damage attribution.
 data modify entity @s data.shooter set from entity @n[tag=mgs.ticking] UUID
 
-# Copy explosion and projectile config from temp storage
 data modify entity @s data.config set from storage mgs:temp proj
 
-# Set the visual model on the item_display entity (ray_gun is invisible - no projectile model)
+# The Ray Gun has no projectile model.
 execute store success score #is_ray_gun mgs.data if data entity @s data.config{base_weapon:"ray_gun"}
 execute if score #is_ray_gun mgs.data matches 0 run function mgs:v5.1.0/projectile/set_model with entity @s data.config
 
-# Set lifetime score
 execute store result score @s mgs.data run data get storage mgs:temp proj.proj_lifetime
 
-# Calculate velocity from the player's look direction and teleport back
+# From the look direction, then back.
 function mgs:v5.1.0/shared/calc_velocity
 

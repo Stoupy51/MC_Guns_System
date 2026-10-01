@@ -8,9 +8,7 @@
 # @args		slot (string)
 #
 
-# Clear the fully depleted consumable magazine from the slot
 $item replace entity @s $(slot) with air
 
-# Update player's ammo count
 scoreboard players operation @s mgs.remaining_bullets = #found_ammo mgs.data
 

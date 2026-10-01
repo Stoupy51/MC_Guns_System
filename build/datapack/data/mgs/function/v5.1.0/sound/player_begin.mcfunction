@@ -8,6 +8,5 @@
 # @args		playerbegin (unknown)
 #
 
-# Play the begin reload sound for all nearby players
 $playsound mgs:$(playerbegin) player @a[distance=0.01..16] ~ ~ ~ 0.3
 

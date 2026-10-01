@@ -8,7 +8,7 @@
 # @args		base_weapon (unknown)
 #
 
-# @s = player, $(base_weapon) = current gun id
+# Run as the player; $(base_weapon) is the held gun.
 $execute if items entity @s hotbar.0 *[custom_data~{mgs:{magazine:true,weapon:"$(base_weapon)"}}] run function mgs:v5.1.0/ammo/reserve/extract_slot {slot:"hotbar.0"}
 $execute if items entity @s hotbar.1 *[custom_data~{mgs:{magazine:true,weapon:"$(base_weapon)"}}] run function mgs:v5.1.0/ammo/reserve/extract_slot {slot:"hotbar.1"}
 $execute if items entity @s hotbar.2 *[custom_data~{mgs:{magazine:true,weapon:"$(base_weapon)"}}] run function mgs:v5.1.0/ammo/reserve/extract_slot {slot:"hotbar.2"}

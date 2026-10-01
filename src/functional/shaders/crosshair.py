@@ -1,8 +1,7 @@
 """ Movement-driven crosshair, drawn by inverting the pixels under its arms.
 
-The vanilla crosshair sprite is replaced by a transparent pixel, so this shader owns the whole
-thing. Spread cannot be passed as a parameter, so every from-to pair of the five movement states
-gets its own id and bakes the two ends of the ramp as uniforms.
+The vanilla crosshair sprite is replaced by a transparent pixel, so this shader owns the whole thing.
+Spread cannot be passed as a parameter, so every from-to pair of the five movement states gets its own id with the two ends of the ramp baked as uniforms.
 """
 # Imports
 from beet import FragmentShader, Texture

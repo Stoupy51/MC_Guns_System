@@ -4,34 +4,32 @@
 # @within	#mgs:signals/damage
 #
 
-# Red 36-way hit direction indicator, shown to player victims only
+# Player victims only.
 execute unless entity @s[type=player] run return 0
 
-# Explosion self-hits have no meaningful direction (hitscan cannot self-hit)
+# Explosion self-hits have no direction (hitscan cannot self-hit).
 execute if entity @s[tag=mgs.temp_shooter] run return 0
 
-# Locate the shooter
 scoreboard players set #hit_src mgs.data 0
 execute at @s if entity @n[tag=mgs.ticking] run scoreboard players set #hit_src mgs.data 1
 execute at @s if score #hit_src mgs.data matches 0 if entity @n[tag=mgs.temp_shooter] run scoreboard players set #hit_src mgs.data 2
 execute if score #hit_src mgs.data matches 0 run return 0
 
-# Yaw toward the shooter (x100): face a scratch marker at the victim toward the shooter, read it back
+# Yaw toward the shooter (x100) from a scratch marker at the victim facing the shooter.
 execute at @s run summon minecraft:marker ~ ~ ~ {Tags:["mgs.hit_dir_marker"]}
 execute at @s if score #hit_src mgs.data matches 1 run tp @n[tag=mgs.hit_dir_marker] ~ ~ ~ facing entity @n[tag=mgs.ticking] eyes
 execute at @s if score #hit_src mgs.data matches 2 run tp @n[tag=mgs.hit_dir_marker] ~ ~ ~ facing entity @n[tag=mgs.temp_shooter] eyes
 execute at @s store result score #hit_dir mgs.data run data get entity @n[tag=mgs.hit_dir_marker] Rotation[0] 100
 execute at @s run kill @n[tag=mgs.hit_dir_marker]
 
-# Sector 0..35 relative to the victim's facing (0 = front, clockwise; scoreboard %= is floorMod).
-# The half-sector offset makes each sector straddle its direction instead of starting at it.
+# Sector 0..35 from the victim's facing (0 front, clockwise; scoreboard %= is floorMod); the half-sector offset centres each sector on its direction.
 execute store result score #hit_yaw mgs.data run data get entity @s Rotation[0] 100
 scoreboard players operation #hit_dir mgs.data -= #hit_yaw mgs.data
 scoreboard players add #hit_dir mgs.data 500
 scoreboard players operation #hit_dir mgs.data %= #36000 mgs.data
 scoreboard players operation #hit_dir mgs.data /= #1000 mgs.data
 
-# Flash the matching arc glyph around the crosshair (~0.7s, no fade-in)
+# About 0.7 s, no fade-in.
 title @s times 0 8 6
 execute if score #hit_dir mgs.data matches 0 run title @s title {"text":"A","font":"mgs:hit_dir","color":"#FF2A2A"}
 execute if score #hit_dir mgs.data matches 1 run title @s title {"text":"B","font":"mgs:hit_dir","color":"#FF2A2A"}

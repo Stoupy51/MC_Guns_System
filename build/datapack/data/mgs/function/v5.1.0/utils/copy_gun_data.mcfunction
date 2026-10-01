@@ -13,7 +13,6 @@
 #			mgs:v5.1.0/zombies/wallbuys/on_right_click
 #
 
-# Copy gun data
 data remove storage mgs:gun all
 data modify storage mgs:gun SelectedItem set value {id:""}
 execute unless items entity @s weapon.mainhand *[custom_data~{mgs:{}}] run return 0

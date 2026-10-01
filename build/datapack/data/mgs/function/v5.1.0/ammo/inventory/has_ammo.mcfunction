@@ -9,9 +9,7 @@
 # @args		base_weapon (unknown)
 #
 
-# Check all slots for matching magazines with bullets (return 1 if found, fail otherwise)
-# Excludes empty non-consumable magazines (remaining_bullets: 0)
-# Consumable magazines don't have this field, so they pass the 'unless' check if they exist
+# Returns 1 when found. Empty regular magazines (remaining_bullets 0) are skipped; consumables have no such field.
 $execute if items entity @s container.* *[custom_data~{mgs:{magazine:true,weapon:"$(base_weapon)"}},!custom_data~{mgs:{stats:{remaining_bullets:0}}}] run return 1
 $execute if items entity @s weapon.offhand *[custom_data~{mgs:{magazine:true,weapon:"$(base_weapon)"}},!custom_data~{mgs:{stats:{remaining_bullets:0}}}] run return 1
 $execute if items entity @s player.cursor *[custom_data~{mgs:{magazine:true,weapon:"$(base_weapon)"}},!custom_data~{mgs:{stats:{remaining_bullets:0}}}] run return 1

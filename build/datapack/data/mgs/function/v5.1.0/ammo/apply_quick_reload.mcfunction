@@ -6,12 +6,12 @@
 # @within	mgs:v5.1.0/ammo/reload
 #
 
-# Calculate reduced cooldown: cooldown = cooldown * (100 - quick_reload%) / 100
+# cooldown x (100 - quick_reload) / 100
 scoreboard players operation #reduction mgs.data = #100 mgs.data
 scoreboard players operation #reduction mgs.data -= @s mgs.special.quick_reload
 scoreboard players operation @s mgs.cooldown *= #reduction mgs.data
 scoreboard players operation @s mgs.cooldown /= #100 mgs.data
 
-# Ensure minimum cooldown of 1 tick
+# At least 1 tick.
 execute if score @s mgs.cooldown matches ..0 run scoreboard players set @s mgs.cooldown 1
 

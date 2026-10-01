@@ -2,11 +2,9 @@
 
 One glyph per sector, drawn white and tinted red by the title's text colour.
 
-Minecraft does not centre a glyph on its canvas: it centres the *string* on the sum of the glyphs'
-advances, then draws each glyph from that pen position. The advance is measured from content, not
-canvas (BitmapProvider.getActualGlyphWidth scans columns from the right for non-zero alpha), so an
-arc sitting on the left half reports half the advance and renders off-centre. Every glyph is
-therefore pinned to the same advance with a single alpha=1 pixel in a fixed column.
+Minecraft centres the string on the sum of the glyph advances, not each glyph on its canvas.
+The advance is measured from content (BitmapProvider.getActualGlyphWidth scans columns from the right for non-zero alpha), so an arc on the left half reports half the advance and renders off-centre.
+Every glyph is therefore pinned to the same advance with a single alpha=1 pixel in a fixed column.
 """
 # Imports
 import math
@@ -42,36 +40,35 @@ GLYPH_CHARS: str = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz01234567
 """ Codepoints for the sector glyphs; any character works, these need no SNBT/JSON escaping. """
 
 # Functions
-# TODO: Later in 26.3, use post shader new command instead. Do not add it yet.
+# TODO: in 26.3, use the new post shader command instead (not yet).
 def main() -> None:
 	ns: str = Mem.ctx.project_id
 	assert 36000 % SECTORS == 0, f"SECTORS={SECTORS} must divide 36000 (yaw range in centidegrees)"
 	assert len(GLYPH_CHARS) >= SECTORS, f"SECTORS={SECTORS} exceeds the {len(GLYPH_CHARS)} available glyph chars"
 
-	# Sector 0 = shooter in front (arc at top), clockwise
+	# Sector 0 = shooter in front (arc at the top), clockwise.
 	font: Font = Mem.ctx.assets.fonts.setdefault(f"{ns}:hit_dir", Font({"providers": []}))
 
-	# Pin column solves advance == rendered width, taking the largest valid width so it sits far right.
+	# The pin column makes the advance equal the rendered width, at the largest valid width so it sits far right.
 	# Valid range: (HEIGHT - 1.5) / scale <= actual < (HEIGHT - 0.5) / scale
 	scale: float = HIT_DIR_HEIGHT / CANVAS
 	pin_column: int = math.ceil((HIT_DIR_HEIGHT - 0.5) / scale) - 2
 
-	# Alpha is per-pixel rather than ImageDraw.arc(), which can only flat-fill, since the arc fades at its ends.
-	# Geometry is shared, so the polar grid is built once.
+	# Per-pixel alpha, since ImageDraw.arc() only flat-fills and the arc fades at its ends; the polar grid is built once.
 	big: int = CANVAS * 2
 	radius: float = ARC_RADIUS * big / 512
 	width: float = ARC_WIDTH * big / 512
 	yy, xx = np.mgrid[0:big, 0:big]
 	centre: float = (big - 1) / 2.0
 	dx, dy = xx - centre, yy - centre
-	# 0° = 3 o'clock, increasing clockwise (image y axis points down) -> top = -90°
+	# 0° is 3 o'clock, clockwise (the image y axis points down), so the top is -90°.
 	angle = np.degrees(np.arctan2(dy, dx))
-	# Solid core with soft edges; 2.5 widens the plateau so the ring keeps its thickness
+	# Solid core, soft edges; 2.5 widens the plateau so the ring keeps its thickness.
 	radial = np.clip((1.0 - np.abs(np.hypot(dx, dy) - radius) / (width / 2.0)) * 2.5, 0.0, 1.0)
 
 	for sector in range(SECTORS):
 		center_angle: float = -90.0 + (360.0 / SECTORS) * sector
-		# Wrapped into -180..180 so the seam at ±180° doesn't cut hard, then faded to transparent
+		# Wrapped into -180..180 so the ±180° seam fades instead of cutting.
 		delta = np.abs((angle - center_angle + 180.0) % 360.0 - 180.0)
 		tangential = np.clip(1.0 - delta / (ARC_SPAN / 2.0), 0.0, 1.0)
 		rgba = np.empty((big, big, 4), dtype=np.uint8)
@@ -79,7 +76,7 @@ def main() -> None:
 		rgba[..., 3] = (radial * tangential * 255.0).astype(np.uint8)
 		img = Image.fromarray(rgba, "RGBA").resize((CANVAS, CANVAS), Image.Resampling.LANCZOS)
 
-		# Pin the advance after the downscale, so resampling cannot wash the marker out
+		# After the downscale, so resampling cannot wash the pin pixel out.
 		final = np.array(img)
 		content_right: int = int(np.max(np.nonzero(final[..., 3].any(axis=0))))
 		assert content_right < pin_column, (
@@ -98,42 +95,40 @@ def main() -> None:
 			"chars": [GLYPH_CHARS[sector]],
 		})
 
-	# Damage-signal listener (@s = victim); same source detection as the hitmarker listener
+	# Damage signal listener, run as the victim; same source detection as the hitmarker.
 	sector_titles: str = "\n".join(
 		f'execute if score #hit_dir {ns}.data matches {sector} run title @s title {{"text":"{GLYPH_CHARS[sector]}","font":"{ns}:hit_dir","color":"#FF2A2A"}}'
 		for sector in range(SECTORS)
 	)
-	# Centidegrees, not decidegrees, so sector widths stay whole at any SECTORS (36000/32 = 1125)
+	# Centidegrees, so sector widths stay whole for any SECTORS (36000 / 32 = 1125).
 	step: int = 36000 // SECTORS
 	write_versioned_function("weapon/hit_direction", f"""
-# Red {SECTORS}-way hit direction indicator, shown to player victims only
+# Player victims only.
 execute unless entity @s[type=player] run return 0
 
-# Explosion self-hits have no meaningful direction (hitscan cannot self-hit)
+# Explosion self-hits have no direction (hitscan cannot self-hit).
 execute if entity @s[tag={ns}.temp_shooter] run return 0
 
-# Locate the shooter
 scoreboard players set #hit_src {ns}.data 0
 execute at @s if entity @n[tag={ns}.ticking] run scoreboard players set #hit_src {ns}.data 1
 execute at @s if score #hit_src {ns}.data matches 0 if entity @n[tag={ns}.temp_shooter] run scoreboard players set #hit_src {ns}.data 2
 execute if score #hit_src {ns}.data matches 0 run return 0
 
-# Yaw toward the shooter (x100): face a scratch marker at the victim toward the shooter, read it back
+# Yaw toward the shooter (x100) from a scratch marker at the victim facing the shooter.
 execute at @s run summon minecraft:marker ~ ~ ~ {{Tags:["{ns}.hit_dir_marker"]}}
 execute at @s if score #hit_src {ns}.data matches 1 run tp @n[tag={ns}.hit_dir_marker] ~ ~ ~ facing entity @n[tag={ns}.ticking] eyes
 execute at @s if score #hit_src {ns}.data matches 2 run tp @n[tag={ns}.hit_dir_marker] ~ ~ ~ facing entity @n[tag={ns}.temp_shooter] eyes
 execute at @s store result score #hit_dir {ns}.data run data get entity @n[tag={ns}.hit_dir_marker] Rotation[0] 100
 execute at @s run kill @n[tag={ns}.hit_dir_marker]
 
-# Sector 0..{SECTORS - 1} relative to the victim's facing (0 = front, clockwise; scoreboard %= is floorMod).
-# The half-sector offset makes each sector straddle its direction instead of starting at it.
+# Sector 0..{SECTORS - 1} from the victim's facing (0 front, clockwise; scoreboard %= is floorMod); the half-sector offset centres each sector on its direction.
 execute store result score #hit_yaw {ns}.data run data get entity @s Rotation[0] 100
 scoreboard players operation #hit_dir {ns}.data -= #hit_yaw {ns}.data
 scoreboard players add #hit_dir {ns}.data {step // 2}
 scoreboard players operation #hit_dir {ns}.data %= #36000 {ns}.data
 scoreboard players operation #hit_dir {ns}.data /= #{step} {ns}.data
 
-# Flash the matching arc glyph around the crosshair (~0.7s, no fade-in)
+# About 0.7 s, no fade-in.
 {TitleTimes.HIT_DIRECTION.cmd()}
 {sector_titles}
 """, tags=[f"{ns}:signals/damage"])

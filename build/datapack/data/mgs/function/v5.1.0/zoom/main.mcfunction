@@ -6,24 +6,22 @@
 # @within	mgs:v5.1.0/player/tick
 #
 
-# If no gun data, stop here
+# No gun.
 execute unless data storage mgs:gun all.gun run return run function mgs:v5.1.0/zoom/check_slowness
 
-# Grenades cannot zoom/aim, but still get the movement crosshair
+# Grenades cannot aim, but still get the movement crosshair.
 execute if data storage mgs:gun all.stats.grenade_type run return run function mgs:v5.1.0/zoom/crosshair_spread
 
-# Get is sneaking state (don't apply zoom if reloading)
+# No zoom while reloading.
 scoreboard players set #is_sneaking mgs.data 0
 execute if predicate mgs:v5.1.0/is_sneaking unless entity @s[tag=mgs.reloading] run scoreboard players set #is_sneaking mgs.data 1
 
-# If already zoom and not sneaking, unzoom
 execute if data storage mgs:gun all.stats.is_zoom if score #is_sneaking mgs.data matches 0 run return run function mgs:v5.1.0/zoom/remove
 
-# Sneaking without the player-side zoom, zoom. Keyed on the score, not the item: a gun switched away from mid-aim keeps its zoom stat
+# Keyed on the score, not the item: a gun switched away from mid-aim keeps its zoom stat.
 execute if score #is_sneaking mgs.data matches 1 unless score @s mgs.zoom matches 1 run return run function mgs:v5.1.0/zoom/set
 
-## Shader ids: the scope overlay while aiming, the spread crosshair while not
-# The crosshair is hidden behind the scope, so the two are mutually exclusive
+## The scope overlay while aiming, the spread crosshair otherwise; the crosshair is hidden behind the scope.
 execute if score @s mgs.zoom matches 1 run return run function mgs:v5.1.0/zoom/crosshair_clear
 function mgs:v5.1.0/zoom/crosshair_spread
 

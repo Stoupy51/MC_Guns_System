@@ -1,16 +1,13 @@
-""" Stamina system (Black Ops style) — reference: src/functional/zombies/stamina.md
+""" Black Ops style stamina, shared by the three modes.
 
-Shared across all three modes. The hunger bar IS the visible meter: 20 = full, 6 = empty (vanilla
-already blocks sprinting at foodLevel <= 6, so the bar doubles as the sprint gate). A scoreboard
-stays the source of truth for deterministic timing, and each tick the bar is nudged toward the
-mapped target with saturation/hunger pulses. The draining bar is the only feedback.
+The hunger bar is the visible meter: 20 full, 6 empty (vanilla already blocks sprinting at foodLevel <= 6, so the bar is also the sprint gate).
+A score stays the source of truth for timing, and each tick the bar is nudged toward the mapped target with saturation and hunger pulses.
+The draining bar is the only feedback.
 
-Saturation discipline: the saturation effect restores +1 food but also +2 invisible saturation per
-tick, which would absorb hunger pulses and freeze the bar. So refill pulses are only given below
-target, and leftovers are burned off with hunger pulses while at target.
+The saturation effect restores +1 food but also +2 invisible saturation per tick, which would absorb hunger pulses and freeze the bar.
+Refill pulses are therefore only given below target, and leftovers are burned off with hunger pulses at target.
 
-Stamin-Up (zombies perk) adds +STAM_MAX on stam_bonus; its +7% movement speed is a separate
-attribute modifier applied by the perk itself.
+Stamin-Up (zombies perk) adds +STAM_MAX on stam_bonus; its +7% movement speed is an attribute modifier set by the perk.
 """
 # Imports
 from stewbeet import Mem, write_load_file, write_versioned_function
@@ -24,9 +21,9 @@ STAM_REGEN: int = 3
 """ Per tick while resting -> 5s to refill. Scaled with STAM_MAX so the refill time stays 5s: the pool
 grew, the sprint got longer, topping it back up did not get slower. """
 SWIM_DRAIN_FACTOR: int = 5
-""" Swimming drains this many times slower than sprinting on land, so crossing water is a traversal rather
-than a sprint you cannot afford. Applied by draining on one tick in SWIM_DRAIN_FACTOR instead of by
-shrinking the step: STAM_DRAIN is only 2, so dividing it would floor to 0 and never drain at all. """
+""" Swimming drains this many times slower than sprinting on land, so crossing water is affordable.
+The drain applies on one tick in SWIM_DRAIN_FACTOR: STAM_DRAIN is only 2, so dividing it would floor to 0.
+"""
 REST_DELAY: int = 20
 """ Ticks after the last sprint before regen starts. """
 RECOVER_AT: int = 120
@@ -45,7 +42,7 @@ def main() -> None:
 	version: str = Mem.ctx.project_version
 
 	write_load_file(f"""
-# Stamina system (Black Ops style) — per-player stamina state
+# Black Ops style stamina, per player.
 scoreboard objectives add {ns}.stam dummy
 scoreboard objectives add {ns}.stam_max dummy
 scoreboard objectives add {ns}.stam_bonus dummy
@@ -53,78 +50,68 @@ scoreboard objectives add {ns}.stam_rest dummy
 scoreboard objectives add {ns}.stam_out dummy
 scoreboard objectives add {ns}.stam_seen dummy
 
-# Counts swimming ticks so the drain can be applied on one tick in SWIM_DRAIN_FACTOR (see stamina_swim_drain)
+# Counts swim ticks, so the drain applies once per SWIM_DRAIN_FACTOR ticks (see stamina_swim_drain).
 scoreboard objectives add {ns}.stam_swim dummy
 
-# Set while refill pulses may have left invisible saturation; only then does the at-target
-# branch pay the foodSaturationLevel NBT read to burn it off (see stamina_bar)
+# Set while refill pulses may have left invisible saturation; only then does the at-target branch read foodSaturationLevel to burn it off.
 scoreboard objectives add {ns}.stam_dirty dummy
 """)
 
-	# player/tick runs `as @e[type=player] at @s`.
-	# One in_game flag is set at a time, so at most one branch fires; spectators are downed or dead.
+	# player/tick runs as each player, at them. One in_game flag at a time, so at most one branch fires; spectators are downed or dead.
 	gate: str = f"execute if score #any_game_active {ns}.data matches 1 unless entity @s[gamemode=spectator]"
 	write_versioned_function("player/tick", f"""
-# Stamina (Black Ops style): drain while sprinting, block sprint when winded, regen while resting
+# Drain while sprinting, block sprinting when winded, regen at rest.
 {gate} if score @s {ns}.mp.in_game matches 1 run function {ns}:v{version}/player/stamina_tick
 {gate} if score @s {ns}.mi.in_game matches 1 run function {ns}:v{version}/player/stamina_tick
 {gate} if score @s {ns}.zb.in_game matches 1 run function {ns}:v{version}/player/stamina_tick
 """)
 
-	# Per-player stamina tick (@s = in-game, non-spectating player, at @s)
+	# Run as an in-game, non-spectating player, at them.
 	write_versioned_function("player/stamina_tick", f"""
-# First tick in this game (or a fresh late-joiner / respawn): start at full stamina. stam_seen is
-# reset to 0 at game start (see regen_enable_lines) and on respawn/revive, so this re-inits then.
+# Full stamina on the first tick of a game, a late join, a respawn or a revive: stam_seen is reset to 0 on each.
 execute if score @s {ns}.stam_seen matches 0 run function {ns}:v{version}/player/stamina_init
 
-# Max stamina = base + perk bonus (Stamin-Up doubles the endurance budget); clamp current to it
+# Base + perk bonus (Stamin-Up doubles it); the current value is clamped to it.
 scoreboard players set @s {ns}.stam_max {STAM_MAX}
 scoreboard players operation @s {ns}.stam_max += @s {ns}.stam_bonus
 scoreboard players operation @s {ns}.stam < @s {ns}.stam_max
 
-# Detect sprinting via the is_sprinting entity flag: unlike the sprint_one_cm stat (which only
-# increments on the ground), the flag stays set through the whole jump arc, so jump-sprinting
-# drains exactly like ground sprinting
+# The is_sprinting flag, unlike the sprint_one_cm stat (ground only), stays set through a jump, so jump-sprinting drains the same.
 scoreboard players set #stam_sprinting {ns}.data 0
 execute if predicate {ns}:v{version}/is_sprinting run scoreboard players set #stam_sprinting {ns}.data 1
 
-# Swimming is charged at 1/{SWIM_DRAIN_FACTOR} of the sprint rate. The swim pose only exists while sprint is held, so
-# without this a swim was billed as a full sprint and the bar emptied before the player crossed any water.
+# Swimming costs 1/{SWIM_DRAIN_FACTOR} of the sprint rate: the swim pose needs sprint held, and a full rate emptied the bar before any water was crossed.
 scoreboard players set #stam_swimming {ns}.data 0
 execute if predicate {ns}:v{version}/is_swimming run scoreboard players set #stam_swimming {ns}.data 1
 
-# Sprinting → drain stamina and (re)arm the rest delay before regen can start
+# Sprinting drains and re-arms the delay before regen.
 execute if score #stam_sprinting {ns}.data matches 1 if score #stam_swimming {ns}.data matches 0 run scoreboard players remove @s {ns}.stam {STAM_DRAIN}
 execute if score #stam_sprinting {ns}.data matches 1 if score #stam_swimming {ns}.data matches 1 run function {ns}:v{version}/player/stamina_swim_drain
 execute if score #stam_sprinting {ns}.data matches 1 run scoreboard players set @s {ns}.stam_rest {REST_DELAY}
 
-# Resting → count down the delay, then regen stamina
+# At rest, the delay counts down, then stamina regenerates.
 execute if score #stam_sprinting {ns}.data matches 0 if score @s {ns}.stam_rest matches 1.. run scoreboard players remove @s {ns}.stam_rest 1
 execute if score #stam_sprinting {ns}.data matches 0 if score @s {ns}.stam_rest matches 0 run scoreboard players add @s {ns}.stam {STAM_REGEN}
 
-# Clamp 0..max
 execute if score @s {ns}.stam matches ..-1 run scoreboard players set @s {ns}.stam 0
 scoreboard players operation @s {ns}.stam < @s {ns}.stam_max
 
-# Become winded when stamina hits 0; silently recover once it regenerates past the hysteresis
-# threshold. No sound, no "out of breath" message — the empty bar is the feedback (stamina.md).
+# Winded at 0, recovered silently past the hysteresis threshold: the empty bar is the only feedback.
 execute if score @s {ns}.stam_out matches 0 if score @s {ns}.stam matches 0 run scoreboard players set @s {ns}.stam_out 1
 execute if score @s {ns}.stam_out matches 1 if score @s {ns}.stam matches {RECOVER_AT}.. run scoreboard players set @s {ns}.stam_out 0
 
-# Map stamina to the hunger-bar target ({FOOD_MIN}..{FOOD_MAX}); winded → held at the no-sprint level
+# Stamina to the hunger bar target ({FOOD_MIN}..{FOOD_MAX}); winded holds it at the no-sprint level.
 scoreboard players operation #stam_t {ns}.data = @s {ns}.stam
 scoreboard players operation #stam_t {ns}.data *= #{FOOD_SPAN} {ns}.data
 scoreboard players operation #stam_t {ns}.data /= @s {ns}.stam_max
 scoreboard players add #stam_t {ns}.data {FOOD_MIN}
 execute if score @s {ns}.stam_out matches 1 run scoreboard players set #stam_t {ns}.data {FOOD_MIN}
 
-# Nudge the visible bar toward the target
 function {ns}:v{version}/player/stamina_bar
 """)
 
-	# Swimming drain: tick a counter and only pay STAM_DRAIN once it wraps, giving 1/SWIM_DRAIN_FACTOR of the
-	# sprint rate. The counter is per player and deliberately NOT reset when the player leaves the water, so
-	# alternating swim/land strokes cannot be used to dodge the drain entirely.
+	# Pays STAM_DRAIN once the counter wraps (1/SWIM_DRAIN_FACTOR of sprint). The counter is not reset on leaving water,
+	# so alternating swim and land strokes cannot dodge the drain.
 	write_versioned_function("player/stamina_swim_drain", f"""
 scoreboard players add @s {ns}.stam_swim 1
 execute if score @s {ns}.stam_swim matches {SWIM_DRAIN_FACTOR}.. run scoreboard players set @s {ns}.stam_swim 0
@@ -140,30 +127,24 @@ scoreboard players set @s {ns}.stam_rest 0
 scoreboard players set @s {ns}.stam_swim 0
 scoreboard players set @s {ns}.stam_seen 1
 
-# Assume leftover invisible saturation from before the game (e.g. the game-stop refill pin),
-# so the first at-target ticks verify and burn it off
+# Assume leftover saturation from before the game (the stop refill), so the first at-target ticks burn it off.
 scoreboard players set @s {ns}.stam_dirty 1
 """)
 
-	# Drive the bar toward #stam_t with 1-tick pulses.
-	# Clearing both effects first kills last tick's pulses and any saturation pin, so this owns the bar.
+	# Drives the bar toward #stam_t with 1-tick pulses; clearing both effects first removes last tick's pulses, so this owns the bar.
 	write_versioned_function("player/stamina_bar", f"""
 effect clear @s minecraft:saturation
 effect clear @s minecraft:hunger
 
-# The bar is read from the auto-updated 'food' criterion — no player-NBT read on this path.
-# Below target → refill pulse (+1 food this tick). Never given at/above target so the invisible
-# saturation side effect (+2/tick) can't stack past what's visible (stamina.md). The pulse may
-# leave invisible saturation behind, so flag it for the at-target burn-off below.
+# Read from the auto-updated `food` criterion, no NBT read. Below target: +1 food this tick, never at or above, so the invisible
+# saturation (+2 per tick) cannot stack past what is shown; the pulse may leave some, hence the flag.
 execute if score @s {ns}.food < #stam_t {ns}.data run scoreboard players set @s {ns}.stam_dirty 1
 execute if score @s {ns}.food < #stam_t {ns}.data run return run effect give @s minecraft:saturation 1 0 true
 
-# Above target → hunger pulse slowly drains the bar, showing the player they sprint too much
+# Above target: a hunger pulse drains the bar slowly.
 execute if score @s {ns}.food > #stam_t {ns}.data run return run effect give @s minecraft:hunger 1 255 true
 
-# At target: only while flagged dirty, pay the saturation NBT read and burn leftovers off with
-# hunger pulses so the next drain shows immediately; once it reads 0 the flag clears and the
-# steady state costs no NBT read at all
+# At target and flagged: read saturation and burn leftovers off with hunger pulses, so the next drain shows at once; once 0 the flag clears and the steady state reads no NBT.
 execute unless score @s {ns}.stam_dirty matches 1 run return 0
 execute store result score #stam_sat {ns}.data run data get entity @s foodSaturationLevel
 execute if score #stam_sat {ns}.data matches 1.. run return run effect give @s minecraft:hunger 1 255 true
