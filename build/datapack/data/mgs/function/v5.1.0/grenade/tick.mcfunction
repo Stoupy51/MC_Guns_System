@@ -1,9 +1,9 @@
 
 #> mgs:v5.1.0/grenade/tick
 #
-# @executed	as @e[tag=mgs.grenade] & at @s
+# @executed	at @s
 #
-# @within	mgs:v5.1.0/tick [ as @e[tag=mgs.grenade] & at @s ]
+# @within	mgs:v5.1.0/tick [ at @s ]
 #
 
 # Skip if grenade is stuck (semtex on a surface) or in smoke/flash effect phase

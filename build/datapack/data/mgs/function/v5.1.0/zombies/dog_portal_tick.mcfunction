@@ -1,9 +1,9 @@
 
 #> mgs:v5.1.0/zombies/dog_portal_tick
 #
-# @executed	as @e[tag=mgs.dog_portal] & at @s
+# @executed	at @s
 #
-# @within	mgs:v5.1.0/zombies/game_tick [ as @e[tag=mgs.dog_portal] & at @s ]
+# @within	mgs:v5.1.0/zombies/game_tick [ at @s ]
 #
 
 # Phase 1 (all 30 ticks): a flat ring crawling along the floor marks the footprint

@@ -1,9 +1,9 @@
 
 #> mgs:v5.1.0/zombies/types/dog
 #
-# @executed	as @e[tag=...]
+# @executed	as @e[type=minecraft:wolf,tag=...]
 #
-# @within	mgs:v5.1.0/zombies/game_tick [ as @e[tag=...] ]
+# @within	mgs:v5.1.0/zombies/game_tick [ as @e[type=minecraft:wolf,tag=...] ]
 #			mgs:v5.1.0/zombies/summon_dog_at [ as @n[tag=mgs.zb_dog_new] ]
 #
 

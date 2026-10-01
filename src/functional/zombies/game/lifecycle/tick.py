@@ -32,7 +32,7 @@ function {ns}:v{version}/shared/maps/call_script_at_base {{script:"tick"}}
 execute if score #zb_to_spawn {ns}.data matches 1.. run function {ns}:v{version}/zombies/spawn_tick
 
 # Rise animation tick for spawning zombies
-execute as @e[tag={ns}.zb_rising] at @s run function {ns}:v{version}/zombies/zombie_rise_tick
+execute as @e[type=minecraft:zombie,tag={ns}.zb_rising] at @s run function {ns}:v{version}/zombies/zombie_rise_tick
 
 # Boundary enforcement (skip spectators, only if map has bounds)
 execute if score #zb_has_bounds {ns}.data matches 1 as @e[tag={ns}.zombie_round] at @s run function {ns}:v{version}/shared/check_bounds
@@ -43,7 +43,7 @@ execute store result score #zb_alive {ns}.data if entity @e[tag={ns}.zombie_roun
 # Dogs still telegraphing aren't entities yet, so #zb_alive can't see them. #zb_dog_pending is only
 # a fast gate though: whenever it claims dogs are pending, resync it from the real portal count so a
 # desynced counter can't freeze the run. That scan only runs on the tick the round would complete.
-execute if score #zb_alive {ns}.data matches 0 if score #zb_to_spawn {ns}.data matches 0 if score #zb_dog_pending {ns}.data matches 1.. store result score #zb_dog_pending {ns}.data if entity @e[tag={ns}.dog_portal]
+execute if score #zb_alive {ns}.data matches 0 if score #zb_to_spawn {ns}.data matches 0 if score #zb_dog_pending {ns}.data matches 1.. store result score #zb_dog_pending {ns}.data if entity @e[type=minecraft:marker,tag={ns}.dog_portal]
 execute if score #zb_alive {ns}.data matches 0 if score #zb_to_spawn {ns}.data matches 0 if score #zb_dog_pending {ns}.data matches ..0 run function {ns}:v{version}/zombies/round_complete
 
 # Check game over: the run ends once nobody is left standing to revive anyone.

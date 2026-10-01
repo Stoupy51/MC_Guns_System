@@ -1,7 +1,7 @@
 
 #> mgs:v5.1.0/grenade/flash_area
 #
-# @executed	as @e[tag=mgs.grenade] & at @s
+# @executed	at @s
 #
 # @within	mgs:v5.1.0/grenade/flash_apply with storage mgs:temp flash
 #

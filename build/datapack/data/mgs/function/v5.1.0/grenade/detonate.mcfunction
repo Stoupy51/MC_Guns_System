@@ -1,7 +1,7 @@
 
 #> mgs:v5.1.0/grenade/detonate
 #
-# @executed	as @e[tag=mgs.grenade] & at @s
+# @executed	at @s
 #
 # @within	mgs:v5.1.0/grenade/tick
 #			mgs:v5.1.0/grenade/move_semtex

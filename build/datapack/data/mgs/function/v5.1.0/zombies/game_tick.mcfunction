@@ -14,7 +14,7 @@ function mgs:v5.1.0/shared/maps/call_script_at_base {script:"tick"}
 execute if score #zb_to_spawn mgs.data matches 1.. run function mgs:v5.1.0/zombies/spawn_tick
 
 # Rise animation tick for spawning zombies
-execute as @e[tag=mgs.zb_rising] at @s run function mgs:v5.1.0/zombies/zombie_rise_tick
+execute as @e[type=minecraft:zombie,tag=mgs.zb_rising] at @s run function mgs:v5.1.0/zombies/zombie_rise_tick
 
 # Boundary enforcement (skip spectators, only if map has bounds)
 execute if score #zb_has_bounds mgs.data matches 1 as @e[tag=mgs.zombie_round] at @s run function mgs:v5.1.0/shared/check_bounds
@@ -25,7 +25,7 @@ execute store result score #zb_alive mgs.data if entity @e[tag=mgs.zombie_round]
 # Dogs still telegraphing aren't entities yet, so #zb_alive can't see them. #zb_dog_pending is only
 # a fast gate though: whenever it claims dogs are pending, resync it from the real portal count so a
 # desynced counter can't freeze the run. That scan only runs on the tick the round would complete.
-execute if score #zb_alive mgs.data matches 0 if score #zb_to_spawn mgs.data matches 0 if score #zb_dog_pending mgs.data matches 1.. store result score #zb_dog_pending mgs.data if entity @e[tag=mgs.dog_portal]
+execute if score #zb_alive mgs.data matches 0 if score #zb_to_spawn mgs.data matches 0 if score #zb_dog_pending mgs.data matches 1.. store result score #zb_dog_pending mgs.data if entity @e[type=minecraft:marker,tag=mgs.dog_portal]
 execute if score #zb_alive mgs.data matches 0 if score #zb_to_spawn mgs.data matches 0 if score #zb_dog_pending mgs.data matches ..0 run function mgs:v5.1.0/zombies/round_complete
 
 # Check game over: the run ends once nobody is left standing to revive anyone.
@@ -88,18 +88,18 @@ function mgs:v5.1.0/zombies/watchdog_tick
 # Dog spawn portals: 1.5s of sparks, then the bolt. Gated on the round kind, NOT on
 # #zb_dog_pending — a portal orphaned by a desynced counter would then never tick, never strike and
 # never die, which is the freeze the resync in game_tick pairs with this to rule out.
-execute if score #zb_dog_round mgs.data matches 1 as @e[tag=mgs.dog_portal] at @s run function mgs:v5.1.0/zombies/dog_portal_tick
+execute if score #zb_dog_round mgs.data matches 1 as @e[type=minecraft:marker,tag=mgs.dog_portal] at @s run function mgs:v5.1.0/zombies/dog_portal_tick
 
 # Safety net: a dog that missed its scaling call is a vanilla 8-HP wolf, which reads as a bug
 # (one-punch kills) rather than as a difficulty setting. types/dog is idempotent and tags what it
 # scales, so this costs one tag-filtered scan and normally matches nothing.
-execute if score #zb_dog_round mgs.data matches 1 as @e[tag=mgs.zb_dog,tag=!mgs.zb_scaled] run function mgs:v5.1.0/zombies/types/dog
+execute if score #zb_dog_round mgs.data matches 1 as @e[type=minecraft:wolf,tag=mgs.zb_dog,tag=!mgs.zb_scaled] run function mgs:v5.1.0/zombies/types/dog
 
 # Wolves are neutral mobs and hunt nothing without an anger target. Writing `angry_at` alone is
 # enough (the game calls setTarget() from it on reload, then sustains the timer); writing AngerTime
 # does nothing, as the always-saved `anger_end_time` outranks it. The `unless data` guard means a
 # dog already locked on costs a read and no write. #zb_tick_mod is total_tick % 20 from earlier.
-execute if score #zb_dog_round mgs.data matches 1 if score #zb_tick_mod mgs.data matches 0 as @e[tag=mgs.zb_dog,tag=!mgs.zb_rising] at @s unless data entity @s angry_at run data modify entity @s angry_at set from entity @p[scores={mgs.zb.in_game=1},gamemode=!spectator,gamemode=!creative] UUID
+execute if score #zb_dog_round mgs.data matches 1 if score #zb_tick_mod mgs.data matches 0 as @e[type=minecraft:wolf,tag=mgs.zb_dog,tag=!mgs.zb_rising] at @s unless data entity @s angry_at run data modify entity @s angry_at set from entity @p[scores={mgs.zb.in_game=1},gamemode=!spectator,gamemode=!creative] UUID
 
 # Managed horde ambience: each player runs their own cooldown, refreshed by horde_ambient from the
 # zombie count near THEM, so a player being chased hears a near-continuous horde while someone alone
@@ -193,7 +193,7 @@ execute if score #zb_fire_sale_timer mgs.data matches 1.. run function mgs:v5.1.
 # Bonfire Sale: global timer countdown
 execute if score #zb_bonfire_sale_timer mgs.data matches 1.. run function mgs:v5.1.0/zombies/powerups/bonfire_sale_tick
 
-execute as @e[tag=mgs.tombstone,scores={mgs.zb.ts.state=1}] at @s run function mgs:v5.1.0/zombies/perks/tombstone_marker_tick
+execute as @e[type=minecraft:item_display,tag=mgs.tombstone,scores={mgs.zb.ts.state=1}] at @s run function mgs:v5.1.0/zombies/perks/tombstone_marker_tick
 
 scoreboard players add #qr_price_tick mgs.data 1
 execute if score #qr_price_tick mgs.data matches 20.. run scoreboard players set #qr_price_tick mgs.data 0
