@@ -13,8 +13,8 @@ from .....config.catalogs import (
 	SecondaryWeapon,
 	Weapon,
 )
+from .....database.items import CONSUMABLE_MAGAZINES
 from ....helpers import MGS_TAG
-from ...classes import MultiplayerClasses
 from .shared import editor_fn
 
 
@@ -256,7 +256,7 @@ execute if score #pmag_count {ns}.data matches 1.. run function {fn}/append_mag_
 
 def slot_table_entry(ns: str, weapon: Weapon | SecondaryWeapon, hotbar: str) -> str:
 	""" SNBT row of a slot lookup table: the gun's slot on `hotbar`, and how its magazines are given. """
-	consumable: bool = weapon.magazine_id in MultiplayerClasses.CONSUMABLE_MAGS
+	consumable: bool = weapon.magazine_id in CONSUMABLE_MAGAZINES
 	gun_slot: str = f'{{slot:"{hotbar}",loot:"{ns}:i/{weapon.item_id}",count:1,consumable:0b,bullets:0}}'
 	return (
 		f'{{id:"{weapon.item_id}",gun_slot:{gun_slot},mag_id:"{weapon.magazine_id}",'

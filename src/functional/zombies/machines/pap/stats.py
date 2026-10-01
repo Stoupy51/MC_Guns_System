@@ -74,11 +74,10 @@ $execute if data storage {ns}:temp _pap_pick.list[0] run data modify storage {ns
 $execute unless data storage {ns}:temp _pap_pick.list[0] run data modify storage {ns}:temp _pap_extract.stats.$(field) set from storage {ns}:temp _pap_extract.stats.{PAP_STATS}.$(field)
 """)
 
-	apply_lines: list[str] = []
-	for field in STATS_FIELDS:
-		apply_lines.append(
-			f'execute if data storage {ns}:temp _pap_extract.stats.{PAP_STATS}.{field} run function {ns}:v{version}/zombies/pap/apply_field {{field:"{field}"}}'
-		)
+	apply_lines: list[str] = [
+		f'execute if data storage {ns}:temp _pap_extract.stats.{PAP_STATS}.{field} run function {ns}:v{version}/zombies/pap/apply_field {{field:"{field}"}}'
+		for field in STATS_FIELDS
+	]
 	write_versioned_function("zombies/pap/apply_runtime_overrides", "\n".join(apply_lines))
 
 	# Resolve optional pap_name dynamically (scalar or list).

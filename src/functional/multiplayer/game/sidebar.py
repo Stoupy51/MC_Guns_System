@@ -1,9 +1,35 @@
 """ Per-gamemode sidebar HUDs. """
 # Imports
+from dataclasses import dataclass
+
 from stewbeet import Mem, write_versioned_function
 
 from ...helpers.text import Text
 from ..gamemodes.bomb.demo.rounds import TIEBREAK_ROUND
+
+
+# Classes
+@dataclass(frozen=True)
+class RowState:
+	""" One state of a sidebar row: the score value it shows for, then how the right half reads. """
+	value: int
+	name: str
+	color: str
+	emoji: str
+
+
+DOM_ZONE_STATES: tuple[RowState, ...] = (
+	RowState(value=0, name="Neutral", color="gray", emoji="⚪ "),
+	RowState(value=1, name="Red", color="red", emoji="🔴 "),
+	RowState(value=2, name="Blue", color="blue", emoji="🔵 "),
+)
+""" Owner of a domination zone (`#dom_owner_<zone>`). """
+DEMO_SITE_STATES: tuple[RowState, ...] = (
+	RowState(value=0, name="Intact", color="gray", emoji="🔹 "),
+	RowState(value=1, name="PLANTED", color="red", emoji="💣 "),
+	RowState(value=2, name="Destroyed", color="dark_gray", emoji="💥 "),
+)
+""" State of a demolition bomb site, read off its marker (`mgs.demo_state`). """
 
 
 # Functions
@@ -79,16 +105,11 @@ scoreboard objectives setdisplay sidebar {ns}.sidebar
 	# Each zone line is two components — the label on the left, the owner on the right. They used to be
 	# four (" ", "A: ", the emoji, the owner name), which bs.sidebar cannot lay out: only the first two
 	# would have had a side, so the zone rows never rendered at all.
-	dom_zone_states: list[tuple[int, str, str, str]] = [
-		(0, "gray", "⚪ ", "Neutral"),
-		(1, "red",  "🔴 ", "Red"),
-		(2, "blue", "🔵 ", "Blue"),
-	]
 	dom_zone_lines: str = "\n".join(
-		f'execute if score #dom_owner_{zone.lower()} {ns}.data matches {owner} run data modify storage {ns}:temp dom_sb.{zone.lower()} set value '
-		f"'[[\" \",{{\"text\":\"{zone}\",\"color\":\"{color}\"}}],[\"{emoji}\",{{\"text\":\"{name}\",\"color\":\"{color}\"}}]]'"
+		f'execute if score #dom_owner_{zone.lower()} {ns}.data matches {s.value} run data modify storage {ns}:temp dom_sb.{zone.lower()} set value '
+		f"'[[\" \",{{\"text\":\"{zone}\",\"color\":\"{s.color}\"}}],[\"{s.emoji}\",{{\"text\":\"{s.name}\",\"color\":\"{s.color}\"}}]]'"
 		for zone in ("A", "B", "C")
-		for owner, color, emoji, name in dom_zone_states
+		for s in DOM_ZONE_STATES
 	)
 	write_versioned_function("multiplayer/refresh_sidebar_dom", f"""
 # Build point status strings based on ownership scores
@@ -145,16 +166,11 @@ scoreboard objectives setdisplay sidebar {ns}.sidebar
 	## entities rather than fake-player scores: a site is intact, planted or destroyed independently.
 	## The ⏱ line is the round clock, which this mode freezes while any bomb is down.
 	sb_demo_round = f'[{{text:" Round ",color:"gray"}},{{score:{{name:"#demo_round",objective:"{ns}.data"}},color:"white"}}]'
-	demo_site_states: list[tuple[str, str, str, str]] = [
-		("demo_state=0", "Intact",    "gray",      "🔹 "),
-		("demo_state=1", "PLANTED",   "red",       "💣 "),
-		("demo_state=2", "Destroyed", "dark_gray", "💥 "),
-	]
 	demo_site_lines: str = "\n".join(
-		f'execute if entity @e[tag={ns}.demo_obj,tag={ns}.demo_site_{letter},scores={{{ns}.{state}}}] run data modify storage {ns}:temp demo_sb.{letter.lower()} set value '
-		f"'[[\" \",{{\"text\":\"Site {letter}\",\"color\":\"{color}\"}}],[\"{emoji}\",{{\"text\":\"{name}\",\"color\":\"{color}\"}}]]'"
+		f'execute if entity @e[tag={ns}.demo_obj,tag={ns}.demo_site_{letter},scores={{{ns}.demo_state={s.value}}}] run data modify storage {ns}:temp demo_sb.{letter.lower()} set value '
+		f"'[[\" \",{{\"text\":\"Site {letter}\",\"color\":\"{s.color}\"}}],[\"{s.emoji}\",{{\"text\":\"{s.name}\",\"color\":\"{s.color}\"}}]]'"
 		for letter in ("A", "B")
-		for state, name, color, emoji in demo_site_states
+		for s in DEMO_SITE_STATES
 	)
 
 	write_versioned_function("multiplayer/create_sidebar_demo", f"""

@@ -3,6 +3,7 @@
 import os
 from collections.abc import Callable
 from copy import deepcopy
+from dataclasses import astuple, dataclass
 from typing import cast
 
 import numpy as np
@@ -192,8 +193,14 @@ OVERRIDES: dict[str, dict[str, list[str] | BlendFunc | tuple[str, ...]]] = {
 # CAMO_MELEE so toggling `camo_eligible` needs no second edit here.
 OVERRIDES.update({melee_id: {"apply_to": ["gold"], "ignore_textures": COMMON_IGNORE} for melee_id in CAMO_MELEE})
 
-BlendJob = tuple[str, str, str, str, str]
-""" Arguments of one `blend_texture` call: weapon texture, material texture, output path, base weapon, material. """
+@dataclass(frozen=True)
+class BlendJob:
+	""" Arguments of one `blend_texture` call. """
+	weapon_texture: str
+	material_texture: str
+	out_path: str
+	base_weapon: str
+	material: str
 
 
 def active_override(base_weapon: str, material: str) -> dict[str, list[str] | BlendFunc | tuple[str, ...]]:
@@ -225,7 +232,7 @@ def main() -> None:
 	]
 
 	# Blend textures in parallel with multiprocessing
-	stp.multiprocessing(blend_texture, stp.unique_list(queue), use_starmap=True, desc="Blending camo textures", max_workers=1)
+	stp.multiprocessing(blend_texture, [astuple(job) for job in stp.unique_list(queue)], use_starmap=True, desc="Blending camo textures", max_workers=1)
 
 def is_camo_eligible(ns: str, item: Item) -> bool:
 	""" Every non-tactical gun, plus the melee weapons flagged `camo_eligible` in MELEE_WEAPONS.
@@ -277,7 +284,13 @@ def retexture(ns: str, textures_folder: str, model: JsonDict, base_weapon: str, 
 		if texture_file == material or any(texture.endswith(f"/{x}") for x in ignore_textures):
 			continue
 		blended_name: str = f"{texture_file}_{material}"
-		jobs.append((f"{textures_folder}/{texture_file}.png", f"{textures_folder}/{material}.png", f"{textures_folder}/blended_camo/{blended_name}.png", base_weapon, material))
+		jobs.append(BlendJob(
+			weapon_texture=f"{textures_folder}/{texture_file}.png",
+			material_texture=f"{textures_folder}/{material}.png",
+			out_path=f"{textures_folder}/blended_camo/{blended_name}.png",
+			base_weapon=base_weapon,
+			material=material,
+		))
 		textures[key] = f"{ns}:item/{blended_name}"
 	return jobs
 

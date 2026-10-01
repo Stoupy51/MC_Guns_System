@@ -85,16 +85,17 @@ MAGAZINES: tuple[str, ...] = (
 	"mp5", "mp7", "ppsh41", "rpk", "scar17", "sten", "svd", "vz61",
 )
 
-# Individual rounds that stack; reloading consumes items from the stack, not the whole stack.
-CONSUMABLE_MAGAZINES: list[tuple[str, str, int]] = [
-	("rpg7", "rpg7_rocket", 1),
-	("mosin", "mosin_bullet", 1),
-	("m24", "m24_bullet", 1),
-	("spas12", "spas12_shell", 1),
-	("m500", "m500_shell", 1),
-	("m590", "m590_shell", 1),
-	("ray_gun", "element_115", 1),
-]
+# Individual rounds that stack, one bullet each; reloading consumes items from the stack, not the whole stack.
+CONSUMABLE_MAGAZINES: dict[str, str] = {
+	"rpg7_rocket": "rpg7",
+	"mosin_bullet": "mosin",
+	"m24_bullet": "m24",
+	"spas12_shell": "spas12",
+	"m500_shell": "m500",
+	"m590_shell": "m590",
+	"element_115": "ray_gun",
+}
+""" Round item id: weapon id. """
 
 CASINGS: tuple[str, ...] = (
 	CASING_9X18MM, CASING_9X19MM, CASING_12GA3IN, CASING_12GA275IN, CASING_32ACP,
@@ -174,13 +175,13 @@ def add_magazines() -> None:
 				}
 			)
 
-	for weapon, item_name, capacity in CONSUMABLE_MAGAZINES:
+	for item_name, weapon in CONSUMABLE_MAGAZINES.items():
 		Item(
 			id=item_name,
 			override_model=ItemBuilder.load_model(ItemBuilder.get_model_path(item_name)),
 			components={
 				"max_stack_size": 64,
-				"custom_data": {ns: {"magazine": True, "consumable": True, "weapon": weapon, "stats": {REMAINING_BULLETS: capacity, CAPACITY: capacity}}},
+				"custom_data": {ns: {"magazine": True, "consumable": True, "weapon": weapon, "stats": {REMAINING_BULLETS: 1, CAPACITY: 1}}},
 				"rarity": "common",
 			}
 		)

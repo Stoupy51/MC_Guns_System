@@ -1,6 +1,7 @@
 """ Registering a dialog and the buttons that open or run things from one. """
 # Imports
 import json
+from dataclasses import dataclass
 from typing import Any
 
 from stewbeet import (
@@ -15,6 +16,16 @@ from .text import Text
 
 
 # Classes
+@dataclass(frozen=True)
+class PickerOption:
+	""" One value button of a picker dialog. """
+	label: str
+	command: str
+	""" Run as the clicking player, with its leading slash. """
+	color: str
+	hover: str
+
+
 class Dialogs:
 	""" Registering a dialog and the buttons that open or run things from one. """
 
@@ -82,7 +93,7 @@ class Dialogs:
 		return {"label": Text.split_emoji(label, color=color), "tooltip": {"text": hover}, "action": {"type": "run_command", "command": command}}
 
 	@staticmethod
-	def register_value_picker(dialog_id: str, title: str, desc: str, options: list[tuple[str, str, str, str]], back_dialog: str) -> None:
+	def register_value_picker(dialog_id: str, title: str, desc: str, options: list[PickerOption], back_dialog: str) -> None:
 		""" Register a sub-dialog whose buttons each apply one value, then a Back button returns to back_dialog.
 
 		Each value button is independent (no submit step), so opening the picker never resets untouched
@@ -90,16 +101,13 @@ class Dialogs:
 
 		Args:
 			dialog_id   (str): Path within the namespace for this picker.
-			title       (str): Dialog title text.
-			desc        (str): Short body description.
-			options     (list): (label, command, color, hover) tuples, one per value button.
 			back_dialog (str): Path within the namespace of the dialog the Back button returns to.
 		"""
 		actions: list[JsonDict] = [{
-			"label": {"text": label, "color": color},
-			"tooltip": {"text": hover},
-			"action": {"type": "run_command", "command": command},
-		} for label, command, color, hover in options]
+			"label": {"text": o.label, "color": o.color},
+			"tooltip": {"text": o.hover},
+			"action": {"type": "run_command", "command": o.command},
+		} for o in options]
 		Dialogs.register_dialog(dialog_id, {
 			"type": "minecraft:multi_action",
 			"title": {"text": title, "color": "gold", "bold": True},

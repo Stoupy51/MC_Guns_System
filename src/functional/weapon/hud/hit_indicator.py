@@ -47,7 +47,7 @@ GLYPH_CHARS: str = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz01234567
 def main() -> None:
 	ns: str = Mem.ctx.project_id
 	assert 36000 % SECTORS == 0, f"SECTORS={SECTORS} must divide 36000 (yaw range in centidegrees)"
-	assert SECTORS <= len(GLYPH_CHARS), f"SECTORS={SECTORS} exceeds the {len(GLYPH_CHARS)} available glyph chars"
+	assert len(GLYPH_CHARS) >= SECTORS, f"SECTORS={SECTORS} exceeds the {len(GLYPH_CHARS)} available glyph chars"
 
 	# Sector 0 = shooter in front (arc at top), clockwise
 	font: Font = Mem.ctx.assets.fonts.setdefault(f"{ns}:hit_dir", Font({"providers": []}))
