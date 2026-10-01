@@ -2,7 +2,6 @@
 # Imports
 import json
 from dataclasses import dataclass
-from typing import Any
 
 from stewbeet import (
 	Dialog,
@@ -83,7 +82,7 @@ class Dialogs:
 	@staticmethod
 	def dialog_show_btn(dialog_reference: str, label: str, hover: str, color: str | None = None) -> JsonDict:
 		""" A dialog action button that opens another registered dialog directly via show_dialog. """
-		label_component: Any = Text.split_emoji(label, color=color) if color else Text.split_emoji(label)
+		label_component: JsonDict | list[str | JsonDict] = Text.split_emoji(label, color=color) if color else Text.split_emoji(label)
 		dialog_id: str = dialog_reference.split(":", 1)[-1]
 		return {"label": label_component, "tooltip": {"text": hover}, "action": {"type": "minecraft:show_dialog", "dialog": Dialogs.dialog_ref(dialog_id)}}
 
