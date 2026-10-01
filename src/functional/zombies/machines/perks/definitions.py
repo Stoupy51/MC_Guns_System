@@ -237,6 +237,9 @@ PERK_DEFINITIONS: dict[str, PerkDef] = {perk.perk_id: perk for perk in [
 	),
 ]}
 
+TOMBSTONE_PERKS: list[str] = [pid for pid in PERK_DEFINITIONS if pid != "tombstone"]
+""" Perks a tombstone gives back: itself excluded (Black Ops rule), it must be rebought. """
+
 RECOMMENDED_PRICES: dict[str, int] = {
 	"juggernog": 2500, "speed_cola": 3000, "double_tap": 2000, "quick_revive": 1500,
 	"mule_kick": 4000, "stamin_up": 2000, "phd_flopper": 2000, "deadshot": 1500,

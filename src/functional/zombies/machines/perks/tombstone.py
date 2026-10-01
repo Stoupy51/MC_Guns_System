@@ -5,7 +5,7 @@ from stewbeet import Mem, write_versioned_function
 from ....helpers import MGS_TAG
 from ....helpers.text import Text
 from ....helpers.titles import TitleTimes
-from .definitions import PERK_DEFINITIONS
+from .definitions import PERK_DEFINITIONS, TOMBSTONE_PERKS
 
 
 # Functions
@@ -22,9 +22,9 @@ def write_tombstone() -> None:
 		f"execute store success score @s {ns}.zb.tsp.{pid} if entity @s[tag={ns}.perk.quick_revive]"
 		if pid == "quick_revive"
 		else f"scoreboard players operation @s {ns}.zb.tsp.{pid} = @s {ns}.zb.perk.{pid}"
-		for pid in PERK_DEFINITIONS
+		for pid in TOMBSTONE_PERKS
 	)
-	ts_clear: str = "\n".join(f"scoreboard players set @s {ns}.zb.tsp.{pid} 0" for pid in PERK_DEFINITIONS)
+	ts_clear: str = "\n".join(f"scoreboard players set @s {ns}.zb.tsp.{pid} 0" for pid in TOMBSTONE_PERKS)
 
 	# Reapply-effect (no chat message) for perks with commands, used when recovering from a tombstone.
 	# Deliberately NOT apply/<pid>: a recovery regrants up to five perks in one tick, and routing it
@@ -35,9 +35,8 @@ def write_tombstone() -> None:
 			write_versioned_function(f"zombies/perks/reapply/{pid}", cmds)
 
 	ts_restore_perks_lines: list[str] = []
-	for pid, pdata in PERK_DEFINITIONS.items():
-		if pid == "tombstone":
-			continue  # Tombstone excludes itself from recovery (BO behaviour) — must be rebought
+	for pid in TOMBSTONE_PERKS:
+		pdata = PERK_DEFINITIONS[pid]
 		ts_restore_perks_lines.append(f"execute if score @s {ns}.zb.tsp.{pid} matches 1 run scoreboard players set @s {ns}.zb.perk.{pid} 1")
 		if pdata.commands:
 			ts_restore_perks_lines.append(f"execute if score @s {ns}.zb.tsp.{pid} matches 1 run function {ns}:v{version}/zombies/perks/reapply/{pid}")

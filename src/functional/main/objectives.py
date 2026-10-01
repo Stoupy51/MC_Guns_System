@@ -14,10 +14,6 @@ def write_objectives() -> None:
 	# Write to load file
 	write_load_file(f"""
 ## Define objectives
-# Used to tag players that should be selected by Multiplayer/Mission/Zombies functions (@a)
-# We use a scoreboard instead of tag so we can reset offline players
-scoreboard objectives add {ns}.player dummy
-
 # Tracks the currently selected weapon ID for each player
 scoreboard objectives add {ns}.previous_selected dummy
 
@@ -36,14 +32,8 @@ scoreboard objectives add {ns}.dropped minecraft.custom:minecraft.drop
 # Cooldown in ticks before being able to shot
 scoreboard objectives add {ns}.cooldown dummy
 
-# Tracks weapon-switch-only cooldown (not set when shooting) for zoom shader guard
-scoreboard objectives add {ns}.switch_cooldown dummy
-
 # Indicates if the player was zooming (used to remove slowness)
 scoreboard objectives add {ns}.zoom dummy
-
-# Tracks continuous zoom duration for delayed scope effect (10-tick delay)
-scoreboard objectives add {ns}.zoom_timer dummy
 
 # Tracks the most recently selected weapon ID for weapon switching mechanics
 scoreboard objectives add {ns}.last_selected dummy

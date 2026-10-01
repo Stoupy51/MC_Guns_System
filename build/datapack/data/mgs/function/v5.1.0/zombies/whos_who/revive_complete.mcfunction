@@ -53,7 +53,6 @@ scoreboard players set @s mgs.zb.wwp.deadshot 0
 scoreboard players set @s mgs.zb.wwp.timeslip 0
 scoreboard players set @s mgs.zb.wwp.electric_cherry 0
 scoreboard players set @s mgs.zb.wwp.tombstone 0
-scoreboard players set @s mgs.zb.wwp.whos_who 0
 scoreboard players set @s mgs.zb.wwp.dying_wish 0
 scoreboard players set @s mgs.zb.wwp.widows_wine 0
 tag @s remove mgs.ww_active

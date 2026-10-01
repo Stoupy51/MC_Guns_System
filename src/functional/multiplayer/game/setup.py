@@ -15,8 +15,6 @@ scoreboard objectives add {ns}.mp.team dummy
 # Personal stats
 scoreboard objectives add {ns}.mp.kills dummy
 scoreboard objectives add {ns}.mp.deaths dummy
-# Round timer (ticks remaining)
-scoreboard objectives add {ns}.mp.timer dummy
 # In-game tag scoreboard (1 = in active game)
 scoreboard objectives add {ns}.mp.in_game dummy
 

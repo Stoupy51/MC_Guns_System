@@ -29,12 +29,6 @@ execute if data storage {ns}:gun all.stats.{IS_ZOOM} if score #is_sneaking {ns}.
 execute if score #is_sneaking {ns}.data matches 1 unless score @s {ns}.zoom matches 1 run return run function {ns}:v{version}/zoom/set
 
 ## Shader ids: the scope overlay while aiming, the spread crosshair while not
-# Reset zoom timer when not zooming
-execute unless score @s {ns}.zoom matches 1 run scoreboard players set @s {ns}.zoom_timer 0
-
-# Increment zoom timer while zooming
-execute if score @s {ns}.zoom matches 1 run scoreboard players add @s {ns}.zoom_timer 1
-
 # The crosshair is hidden behind the scope, so the two are mutually exclusive
 execute if score @s {ns}.zoom matches 1 run return run function {ns}:v{version}/zoom/crosshair_clear
 function {ns}:v{version}/zoom/crosshair_spread
@@ -57,7 +51,6 @@ item modify entity @s weapon.mainhand {ns}:v{version}/update_stats
 # Apply unzoom effects
 playsound {ns}:common/lean_out player
 scoreboard players reset @s {ns}.zoom
-scoreboard players set @s {ns}.zoom_timer 0
 effect clear @s slowness
 
 # Shader: hand the scope overlay to its fade-out id
@@ -104,7 +97,6 @@ function #{ns}:signals/on_zoom
 	write_versioned_function("zoom/clear_state", f"""
 playsound {ns}:common/lean_out player @s
 scoreboard players reset @s {ns}.zoom
-scoreboard players set @s {ns}.zoom_timer 0
 effect clear @s slowness
 function {ns}:v{version}/zoom/fx_leave
 """)

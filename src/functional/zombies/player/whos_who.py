@@ -25,7 +25,8 @@ from .revive.shared import BLEED_OUT_TICKS, revive_body_detect, revive_body_prog
 def generate_whos_who() -> None:
 	ns: str = Mem.ctx.project_id
 	version: str = Mem.ctx.project_version
-	perk_ids: list[str] = list(PERK_DEFINITIONS)
+	# Who's Who does not give itself back (Black Ops rule), it must be rebought
+	perk_ids: list[str] = [pid for pid in PERK_DEFINITIONS if pid != "whos_who"]
 
 	# quick_revive score 1 can also mean "solo uses exhausted" (rebuy-block) with no active tag.
 	# Only snapshot a QR that is actually active, or the revive would grant one back for free.
@@ -37,9 +38,8 @@ def generate_whos_who() -> None:
 	)
 	ww_clear: str = "\n".join(f"scoreboard players set @s {ns}.zb.wwp.{pid} 0" for pid in perk_ids)
 	ww_restore_lines: list[str] = []
-	for pid, pdata in PERK_DEFINITIONS.items():
-		if pid == "whos_who":
-			continue  # Who's Who is not restored on revive (BO rule) — must be rebought
+	for pid in perk_ids:
+		pdata = PERK_DEFINITIONS[pid]
 		ww_restore_lines.append(f"execute if score @s {ns}.zb.wwp.{pid} matches 1 run scoreboard players set @s {ns}.zb.perk.{pid} 1")
 		if pdata.commands:
 			# reapply/<pid> (effect-only: no chat, no jingle, no xp) is generated in perks/tombstone.py

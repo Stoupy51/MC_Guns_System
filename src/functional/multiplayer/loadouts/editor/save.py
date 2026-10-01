@@ -152,7 +152,6 @@ execute if score @s {ns}.mp.edit_target matches ..0 run data modify storage {ns}
 execute if score @s {ns}.mp.edit_target matches 1.. run function {fn}/save_replace
 
 # Reset editor state
-scoreboard players set @s {ns}.mp.edit_step 0
 scoreboard players set @s {ns}.mp.edit_target 0
 
 # Notify player and show the updated loadout list

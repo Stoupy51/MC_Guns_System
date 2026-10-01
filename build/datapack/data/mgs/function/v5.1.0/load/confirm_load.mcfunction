@@ -12,10 +12,6 @@ scoreboard objectives add mgs.player.hitmarker dummy
 scoreboard objectives add mgs.player.damage_debug dummy
 
 ## Define objectives
-# Used to tag players that should be selected by Multiplayer/Mission/Zombies functions (@a)
-# We use a scoreboard instead of tag so we can reset offline players
-scoreboard objectives add mgs.player dummy
-
 # Tracks the currently selected weapon ID for each player
 scoreboard objectives add mgs.previous_selected dummy
 
@@ -34,14 +30,8 @@ scoreboard objectives add mgs.dropped minecraft.custom:minecraft.drop
 # Cooldown in ticks before being able to shot
 scoreboard objectives add mgs.cooldown dummy
 
-# Tracks weapon-switch-only cooldown (not set when shooting) for zoom shader guard
-scoreboard objectives add mgs.switch_cooldown dummy
-
 # Indicates if the player was zooming (used to remove slowness)
 scoreboard objectives add mgs.zoom dummy
-
-# Tracks continuous zoom duration for delayed scope effect (10-tick delay)
-scoreboard objectives add mgs.zoom_timer dummy
 
 # Tracks the most recently selected weapon ID for weapon switching mechanics
 scoreboard objectives add mgs.last_selected dummy
@@ -480,7 +470,6 @@ scoreboard objectives add mgs.zb.tsp.phd_flopper dummy
 scoreboard objectives add mgs.zb.tsp.deadshot dummy
 scoreboard objectives add mgs.zb.tsp.timeslip dummy
 scoreboard objectives add mgs.zb.tsp.electric_cherry dummy
-scoreboard objectives add mgs.zb.tsp.tombstone dummy
 scoreboard objectives add mgs.zb.tsp.whos_who dummy
 scoreboard objectives add mgs.zb.tsp.dying_wish dummy
 scoreboard objectives add mgs.zb.tsp.widows_wine dummy
@@ -518,7 +507,6 @@ scoreboard objectives add mgs.zb.wwp.deadshot dummy
 scoreboard objectives add mgs.zb.wwp.timeslip dummy
 scoreboard objectives add mgs.zb.wwp.electric_cherry dummy
 scoreboard objectives add mgs.zb.wwp.tombstone dummy
-scoreboard objectives add mgs.zb.wwp.whos_who dummy
 scoreboard objectives add mgs.zb.wwp.dying_wish dummy
 scoreboard objectives add mgs.zb.wwp.widows_wine dummy
 
@@ -554,8 +542,6 @@ scoreboard objectives add mgs.mp.team dummy
 # Personal stats
 scoreboard objectives add mgs.mp.kills dummy
 scoreboard objectives add mgs.mp.deaths dummy
-# Round timer (ticks remaining)
-scoreboard objectives add mgs.mp.timer dummy
 # In-game tag scoreboard (1 = in active game)
 scoreboard objectives add mgs.mp.in_game dummy
 
@@ -588,7 +574,6 @@ execute unless data storage mgs:multiplayer game run data modify storage mgs:mul
 # Gamemode scoreboards
 scoreboard objectives add mgs.mp.dom_progress dummy
 scoreboard objectives add mgs.mp.dom_owner dummy
-scoreboard objectives add mgs.mp.gm_timer dummy
 scoreboard objectives add mgs.demo_state dummy
 scoreboard objectives add mgs.demo_prog dummy
 scoreboard objectives add mgs.demo_fuse dummy
@@ -613,7 +598,6 @@ scoreboard objectives add mgs.class_menu minecraft.used:minecraft.warped_fungus_
 scoreboard objectives add mgs.mp.pid dummy
 execute unless score #next_pid mgs.data matches 1.. run scoreboard players set #next_pid mgs.data 1
 scoreboard objectives add mgs.mp.default dummy
-scoreboard objectives add mgs.mp.edit_step dummy
 # Pick-10 points remaining during loadout editing
 scoreboard objectives add mgs.mp.edit_points dummy
 # Loadout id being edited (0 = creating a new loadout; saving overwrites this id)
@@ -638,8 +622,6 @@ execute unless data storage mgs:maps multiplayer run data modify storage mgs:map
 
 ## Missions scoreboards
 scoreboard objectives add mgs.mi.in_game dummy
-scoreboard objectives add mgs.mi.timer dummy
-scoreboard objectives add mgs.mi.total_enemies dummy
 scoreboard objectives add mgs.mi.kills dummy
 scoreboard objectives add mgs.mi.deaths dummy
 scoreboard objectives add mgs.mi.kill_total totalKillCount

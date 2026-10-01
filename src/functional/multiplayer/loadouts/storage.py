@@ -18,7 +18,6 @@ def generate_storage() -> None:
 scoreboard objectives add {ns}.mp.pid dummy
 execute unless score #next_pid {ns}.data matches 1.. run scoreboard players set #next_pid {ns}.data 1
 scoreboard objectives add {ns}.mp.default dummy
-scoreboard objectives add {ns}.mp.edit_step dummy
 # Pick-10 points remaining during loadout editing
 scoreboard objectives add {ns}.mp.edit_points dummy
 # Loadout id being edited (0 = creating a new loadout; saving overwrites this id)

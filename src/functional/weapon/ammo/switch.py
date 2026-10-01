@@ -57,12 +57,9 @@ execute store result score #cooldown {ns}.data run data get storage {ns}:gun all
 # Apply quick swap: reduce cooldown by quick_swap% (e.g. 20 = 20% faster)
 execute if score @s {ns}.special.quick_swap matches 1.. run function {ns}:v{version}/switch/apply_quick_swap
 
-# Convert to expiration tick and set as both cooldown and switch_cooldown
+# Convert to expiration tick
 scoreboard players operation #cooldown {ns}.data += #total_tick {ns}.data
 scoreboard players operation @s {ns}.cooldown = #cooldown {ns}.data
-
-# Mirror into switch_cooldown (used by shader zoom guard, unaffected by shooting)
-scoreboard players operation @s {ns}.switch_cooldown = #cooldown {ns}.data
 
 # Force weapon switch animation
 function {ns}:v{version}/switch/force_switch_animation

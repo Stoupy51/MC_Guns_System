@@ -35,7 +35,6 @@ def write_editor_hub() -> None:
 
 	## editor/start - Create a new loadout: fresh state, then open the hub
 	write_versioned_function("multiplayer/editor/start", f"""
-scoreboard players set @s {ns}.mp.edit_step 1
 # Default to creating a new loadout (custom/edit overrides this after calling start)
 scoreboard players set @s {ns}.mp.edit_target 0
 function {fn}/init_state
