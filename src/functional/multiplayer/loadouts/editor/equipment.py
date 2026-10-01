@@ -18,7 +18,7 @@ def write_editor_equipment() -> None:
 
 	fn: str = editor_fn(ns, version)
 
-	## ==================================================================== GRENADE submenus: grenade (None = remove) → camo.
+	## Grenade submenus: grenade (or None to remove), then camo.
 	equip_dialog_actions: dict[int, str] = {}
 	equip_pick_lines: dict[int, str] = {}
 	for slot_num, field, trig_base in [(1, "equip_slot1", TRIG_EQUIP_SLOT1_BASE), (2, "equip_slot2", TRIG_EQUIP_SLOT2_BASE)]:
@@ -46,13 +46,13 @@ def write_editor_equipment() -> None:
 
 	for slot_num in (1, 2):
 		write_versioned_function(f"multiplayer/editor/pick_equip_slot{slot_num}", f"""
-# Snapshot, apply (None clears the slot), commit
+# Snapshot, apply (None clears the slot), commit.
 data modify storage {ns}:temp _ed_bak set from storage {ns}:temp editor
 {equip_pick_lines[slot_num]}
 execute store success score #ed_ok {ns}.data run function {fn}/commit_check
 execute if score #ed_ok {ns}.data matches 0 run return run function {fn}/hub
 
-# None → hub, otherwise pick a camo for the grenade (free)
+# None goes back to the hub; otherwise pick a camo (free).
 execute if data storage {ns}:temp editor{{equip_slot{slot_num}:""}} run return run function {fn}/hub
 function {fn}/show_equip{slot_num}_camo_dialog
 """)

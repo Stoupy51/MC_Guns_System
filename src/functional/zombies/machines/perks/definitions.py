@@ -23,8 +23,9 @@ class PerkDef:
 	""" Chat feedback on purchase; the leading emoji is split off and rendered uncolored. """
 	message_color: str
 	text_color: str
-	""" Matches the perk MACHINE model's dye color (items.py override_model), and is reused
-	everywhere the perk is listed (info paper, perk display items) so the colors stay consistent. """
+	""" The dye colour of the perk machine model (items override_model).
+	Reused wherever the perk is listed (info paper, perk display items).
+	"""
 	commands: tuple[str, ...] = ()
 	removal_commands: tuple[str, ...] = ()
 
@@ -74,10 +75,10 @@ PERK_DEFINITIONS: dict[str, PerkDef] = {perk.perk_id: perk for perk in [
 		message_color="gold",
 		text_color="yellow",
 		commands=(
-			"scoreboard players set @s {ns}.special.additional_shots 1",
+			"scoreboard players set @s {ns}.special.double_tap 1",
 		),
 		removal_commands=(
-			"scoreboard players set @s {ns}.special.additional_shots 0",
+			"scoreboard players set @s {ns}.special.double_tap 0",
 		),
 	),
 	PerkDef(
@@ -89,10 +90,8 @@ PERK_DEFINITIONS: dict[str, PerkDef] = {perk.perk_id: perk for perk in [
 		commands=(
 			"tag @s add {ns}.perk.quick_revive",
 		),
-		# Going down strips the active tag, or a doppelganger would auto-revive off a QR they no longer own.
-		# The score means ownership and nothing else, so it follows the blanket reset like every other perk.
-		# Rebuy after the solo uses run out is blocked on {ns}.zb.qr_uses in perks/on_right_click; it used
-		# to be blocked by pinning this score at 1, which every ownership readout then rendered as "owned".
+		# Going down strips the active tag, or a doppelganger would auto-revive off a Quick Revive they lost.
+		# The score only means ownership; {ns}.zb.qr_uses blocks rebuys after the solo uses (perks/on_right_click).
 		removal_commands=(
 			"tag @s remove {ns}.perk.quick_revive",
 		),
@@ -110,8 +109,7 @@ PERK_DEFINITIONS: dict[str, PerkDef] = {perk.perk_id: perk for perk in [
 		message="🏃 Stamin-Up! Sprint longer, move faster",
 		message_color="yellow",
 		text_color="gold",
-		# BO1 Stamin-Up (zombies/stamina.md): double sprint endurance plus 7% move speed, multiplicative.
-		# The stam bump refills the new headroom instantly so the bar doesn't drop at purchase.
+		# BO1 Stamin-Up: double sprint endurance and +7% move speed (multiplicative); the stam bump fills the new headroom at once.
 		commands=(
 			"attribute @s minecraft:movement_speed modifier add {ns}:stamin_up 0.07 add_multiplied_total",
 			f"scoreboard players set @s {{ns}}.stam_bonus {STAM_MAX}",
@@ -128,8 +126,7 @@ PERK_DEFINITIONS: dict[str, PerkDef] = {perk.perk_id: perk for perk in [
 		message="🧪 PhD Flopper! Immune to explosions & fall damage",
 		message_color="dark_purple",
 		text_color="dark_purple",
-		# Fall damage is nulled by an attribute.
-		# Explosive self-damage is gated on the special score in the shared explosion and trap paths.
+		# Fall damage is nulled by an attribute; explosive self-damage reads the special score (explosion and trap paths).
 		commands=(
 			"attribute @s minecraft:fall_damage_multiplier base set 0",
 			"scoreboard players set @s {ns}.special.phd_flopper 1",
@@ -145,7 +142,7 @@ PERK_DEFINITIONS: dict[str, PerkDef] = {perk.perk_id: perk for perk in [
 		message="🎯 Deadshot Daiquiri! +Accuracy, -Recoil",
 		message_color="dark_green",
 		text_color="dark_green",
-		# Read in the weapon spread path (raycast.py) and the recoil path (kick.py): both scale to 65%.
+		# Read by the spread (raycast) and recoil (kick) paths: both scale to 65%.
 		commands=(
 			"scoreboard players set @s {ns}.special.deadshot 1",
 		),
@@ -159,9 +156,8 @@ PERK_DEFINITIONS: dict[str, PerkDef] = {perk.perk_id: perk for perk in [
 		message="⏳ Timeslip! Faster traps & Mystery Box",
 		message_color="light_purple",
 		text_color="light_purple",
-		# Owner-only speed-ups keyed off the special score, x2 by default (no official BO4 number).
-		# Pack-a-Punch is x3 instead, because its 300-tick animation is already long.
-		# Wired in traps.py (cd x0.75), mystery_box.py (spin x2), pap.py (x3), raycast.py (throw x0.5).
+		# Owner-only speed-ups, x2 by default (no official BO4 number), x3 for Pack-a-Punch whose animation is long.
+		# Read by traps (cooldown x0.75), mystery_box (spin x2), pap (x3) and raycast (throw x0.5).
 		commands=(
 			"scoreboard players set @s {ns}.special.timeslip 1",
 		),
@@ -175,8 +171,7 @@ PERK_DEFINITIONS: dict[str, PerkDef] = {perk.perk_id: perk for perk in [
 		message="🍒 Electric Cherry! Reloads discharge a shock",
 		message_color="blue",
 		text_color="blue",
-		# The discharge is wired through the on_reload signal, so the perk only raises the special flag.
-		# Shock size scales with how empty the mag was.
+		# The discharge runs from the on_reload signal; its size scales with how empty the magazine was.
 		commands=(
 			"scoreboard players set @s {ns}.special.electric_cherry 1",
 		),
@@ -190,9 +185,7 @@ PERK_DEFINITIONS: dict[str, PerkDef] = {perk.perk_id: perk for perk in [
 		message="🪦 Tombstone! Recover your gear if you bleed out",
 		message_color="yellow",
 		text_color="gold",
-		# No purchase-time effect: going down spawns a tombstone marker (revive/on_down).
-		# Bleeding out gives 60s after the round respawn to walk back and recover perks + weapons.
-		# Tombstone itself is excluded, and the whole thing is disabled solo.
+		# No purchase effect: going down spawns a tombstone (revive/on_down); see perks/tombstone.
 	),
 	PerkDef(
 		perk_id="whos_who",
@@ -200,9 +193,7 @@ PERK_DEFINITIONS: dict[str, PerkDef] = {perk.perk_id: perk for perk in [
 		message="👥 Who's Who! Play on as a doppelganger when downed",
 		message_color="aqua",
 		text_color="dark_aqua",
-		# No purchase-time effect: going down leaves the owner playing as a doppelganger with a pistol.
-		# The body drops as a NORMAL revivable mannequin any alive player, including the owner, can revive.
-		# Works solo and outranks solo Quick Revive; see whos_who.py.
+		# No purchase effect: going down leaves the owner playing as a doppelganger; see whos_who.
 	),
 	PerkDef(
 		perk_id="dying_wish",
@@ -210,8 +201,7 @@ PERK_DEFINITIONS: dict[str, PerkDef] = {perk.perk_id: perk for perk in [
 		message="⚔ Dying Wish! Cheat death with a berserk",
 		message_color="blue",
 		text_color="blue",
-		# No purchase-time effect: revive/on_down intercepts to dying_wish_trigger when off cooldown.
-		# Ownership is read straight off zb.perk.dying_wish.
+		# No purchase effect: revive/on_down triggers it when off cooldown.
 	),
 	PerkDef(
 		perk_id="widows_wine",
@@ -219,13 +209,12 @@ PERK_DEFINITIONS: dict[str, PerkDef] = {perk.perk_id: perk for perk in [
 		message="🕸 Widow's Wine! Web grenades & webbing melee",
 		message_color="dark_red",
 		text_color="dark_red",
-		# The passive web-on-hurt and stronger knife read the special flag directly.
-		# The grenade slot is swapped to web grenades by the inventory/replenish paths.
+		# Web-on-hurt and the knife bonus read the special flag; the replenish paths swap the grenade slot to webs.
 		commands=(
 			"scoreboard players set @s {ns}.special.widows_wine 1",
-		# Stronger knife while owned (small flat melee bonus, BO3 Widow's Wine melee buff)
+		# Small flat melee bonus (BO3).
 			"attribute @s minecraft:attack_damage modifier add {ns}:widows_wine 6 add_value",
-			# The widows_wine flag is set above, so loot_replace_lethal routes hotbar.7 to i/web_grenade
+			# The flag above makes loot_replace_lethal give web grenades.
 			"function {ns}:v{version}/zombies/inventory/loot_replace_lethal",
 			"item modify entity @s hotbar.7 {ns}:v{version}/grenade/set_count_2",
 			'function {ns}:v{version}/zombies/inventory/apply_slot_tag {slot:"hotbar.7",group:"hotbar",index:7}',
@@ -237,6 +226,9 @@ PERK_DEFINITIONS: dict[str, PerkDef] = {perk.perk_id: perk for perk in [
 	),
 ]}
 
+TOMBSTONE_PERKS: list[str] = [pid for pid in PERK_DEFINITIONS if pid != "tombstone"]
+""" Perks a tombstone gives back: itself excluded (Black Ops rule), it must be rebought. """
+
 RECOMMENDED_PRICES: dict[str, int] = {
 	"juggernog": 2500, "speed_cola": 3000, "double_tap": 2000, "quick_revive": 1500,
 	"mule_kick": 4000, "stamin_up": 2000, "phd_flopper": 2000, "deadshot": 1500,
@@ -247,7 +239,7 @@ RECOMMENDED_PRICES: dict[str, int] = {
 PERK_DESCRIPTIONS: dict[str, list[str]] = {
 	"juggernog": ["Raises your max health to 40 (x4).", "Survive far more hits before going down."],
 	"speed_cola": ["Reload all your weapons much faster.", "About twice the reload speed."],
-	"double_tap": ["Fires an extra bullet with every shot.", "Roughly doubles your damage output."],
+	"double_tap": ["Every bullet deals double damage."],
 	"quick_revive": ["Revive downed teammates faster.", "Solo: revives you after you go down."],
 	"mule_kick": ["Carry a third weapon.", "Unlocks an extra weapon slot."],
 	"stamin_up": ["Move faster and sprint for longer.", "+7% move speed, double sprint endurance."],
@@ -265,11 +257,9 @@ PERK_DESCRIPTIONS: dict[str, list[str]] = {
 def perk_effects_teardown(ns: str, selector: str) -> str:
 	""" Return the lines stripping every effect a zombies perk can leave on a player.
 
-	Run at BOTH ends of a game: at stop to hand players back a clean profile, and at start because
-	the effects can also arrive from outside zombies entirely — the multiplayer/missions loadout
-	perks and the debug menu write the same `special.*` scores, and nothing else clears them for a
-	zombies player. Wiping the whole `SpecialScores.ALL` set (not just the ones perks grant) is what
-	keeps e.g. a multiplayer Quick Reload class from handing out free Speed Cola in zombies.
+	Run at both ends of a game: at stop to hand back a clean profile, and at start because the effects can come from outside zombies.
+	Multiplayer and missions loadout perks and the debug menu write the same `special.*` scores.
+	Wiping all of `SpecialScores.ALL` keeps, for example, a multiplayer Quick Reload class from granting a free Speed Cola in zombies.
 	"""
 	return f"""
 execute as {selector} run attribute @s minecraft:max_health base reset

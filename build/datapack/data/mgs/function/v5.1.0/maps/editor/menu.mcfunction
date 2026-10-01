@@ -6,6 +6,6 @@
 # @within	dialog mgs:v5.1.0/config
 #
 
-# Default: show multiplayer maps
+# Multiplayer maps by default.
 function mgs:v5.1.0/maps/editor/list/multiplayer
 

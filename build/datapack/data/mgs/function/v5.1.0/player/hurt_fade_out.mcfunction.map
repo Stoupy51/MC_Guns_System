@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "hurt_fade_out.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/shaders/hurt.py"
+	],
+	"names": [],
+	"mappings": "AAwQkD;;;;;;;;;AAClD;AACA;AACA;AACA;AACA"
+}

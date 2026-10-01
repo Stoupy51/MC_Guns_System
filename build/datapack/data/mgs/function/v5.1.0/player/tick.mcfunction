@@ -6,18 +6,17 @@
 # @within	mgs:v5.1.0/tick [ as @e[type=player,sort=random] & at @s ]
 #
 
-# Coord stick: detect right-click on coord stick
 execute if score @s mgs.class_menu matches 1.. if items entity @s weapon.mainhand *[custom_data~{mgs:{coord_stick:true}}] run function mgs:v5.1.0/utils/coord_stick
 
-# Custom loadouts: assign player ID if not yet assigned
 execute unless score @s mgs.mp.pid matches 1.. run function mgs:v5.1.0/multiplayer/assign_pid
 
 
-# Health regeneration: Black Ops style — only active during a game
+# Black Ops style, only during a game.
 execute if score #any_game_active mgs.data matches 1 run function mgs:v5.1.0/player/regen_tick
 
-# Mirror scores go stale on a real respawn, since the server drops the effect list with the old player
+# A respawn or a rejoin can leave the effect list and the mirror scores out of step
 execute if score @s mgs.fx_deaths matches 1.. run function mgs:v5.1.0/player/fx_after_death
+execute if score @s mgs.fx_rejoins matches 1.. run function mgs:v5.1.0/player/fx_after_rejoin
 
 # Shader ids that expire on their own: the muzzle flash burst and the zoom and hurt fade-outs
 execute if score @s mgs.flash_off <= #total_tick mgs.data run function mgs:v5.1.0/player/flash_tick
@@ -28,98 +27,85 @@ execute if score @s mgs.hurt_out_until <= #total_tick mgs.data run function mgs:
 execute if score #any_game_active mgs.data matches 1 run function mgs:v5.1.0/player/hurt_tick
 execute unless score #any_game_active mgs.data matches 1 if score @s mgs.hurt_fx matches 1.. run function mgs:v5.1.0/player/hurt_tick
 
-# Add temporary tag
+# Removed at the end of the tick.
 tag @s add mgs.ticking
 
-# Compute acoustics (only if player moved enough, every second not tick)
+# Once a second, and only if the player moved enough.
 scoreboard players operation #acoustics_phase mgs.data = #total_tick mgs.data
 scoreboard players operation #acoustics_phase mgs.data %= #20 mgs.data
 execute if score #acoustics_phase mgs.data matches 0 if predicate mgs:v5.1.0/is_moving run function mgs:v5.1.0/sound/compute_acoustics
 execute if score #acoustics_phase mgs.data matches 0 unless predicate mgs:v5.1.0/is_on_ground run function mgs:v5.1.0/sound/compute_acoustics
 
-# Reload if the hand-swap key parked the weapon in the offhand
+# The hand-swap key parks the weapon in the offhand to reload.
 execute if items entity @s weapon.offhand * run function mgs:v5.1.0/player/offhand_swap_check
 
-# Check if player dropped weapon to switch fire mode
+# Dropping the weapon switches fire mode.
 function mgs:v5.1.0/switch/check_fire_mode_on_drop
 
-# Copy gun data
 function mgs:v5.1.0/utils/copy_gun_data
 
-# Check if switching weapon, before the zoom: a switch clears the old aim, so the new weapon's aim must be decided after it
+# Before the zoom: a switch clears the old aim, so the new weapon's aim is decided after it.
 function mgs:v5.1.0/switch/main
 
-# Check if we need to zoom weapon or stop
 function mgs:v5.1.0/zoom/main
 
-# Check mid cooldown sound
 execute if score @s mgs.cooldown > #total_tick mgs.data if entity @s[tag=mgs.pump_sound] if data storage mgs:gun all.sounds.pump run function mgs:v5.1.0/sound/check/pump
 execute unless score @s mgs.cooldown > #total_tick mgs.data if entity @s[tag=mgs.pump_sound] run tag @s remove mgs.pump_sound
 
-# Check mid reload sound
 execute if score @s mgs.cooldown > #total_tick mgs.data if entity @s[tag=mgs.reload_mid_sound] if data storage mgs:gun all.sounds.playermid run function mgs:v5.1.0/sound/check/reload_mid
 execute unless score @s mgs.cooldown > #total_tick mgs.data if entity @s[tag=mgs.reload_mid_sound] run tag @s remove mgs.reload_mid_sound
 
-# Check if we need to play reload end sound
 execute if score @s mgs.cooldown > #total_tick mgs.data if data storage mgs:gun all.sounds.playerend run function mgs:v5.1.0/sound/check/reload_end
 execute unless score @s mgs.cooldown > #total_tick mgs.data if entity @s[tag=mgs.reloading] run function mgs:v5.1.0/ammo/end_reload
 
-# If pending clicks, run right click function
 execute if score @s mgs.pending_clicks matches -100.. run function mgs:v5.1.0/player/right_click
 
-# Reset held_click when player stops holding (pending_clicks goes negative)
+# pending_clicks goes negative once the button is released.
 execute if score @s mgs.pending_clicks matches ..-1 run scoreboard players set @s mgs.held_click 0
 
-# Reset burst_count only if burst completed or player switched weapons
-# (burst_count gate: with no burst in progress the function would be a no-op anyway)
+# Only once a burst is complete or the player switched weapons.
 execute if score @s mgs.pending_clicks matches ..-1 if score @s mgs.burst_count matches 1.. run function mgs:v5.1.0/player/reset_burst_if_complete
 
-# Show action bar
 execute if data storage mgs:gun all.gun run function mgs:v5.1.0/actionbar/show
 
-# DPS timer: every 20 ticks snapshot mgs.dps -> mgs.previous_dps and reset
+# Every 20 ticks mgs.dps is snapshotted into mgs.previous_dps and reset.
 scoreboard players add @s mgs.dps_timer 1
 execute if score @s mgs.dps_timer matches 20.. run function mgs:v5.1.0/player/dps_snapshot
 
-# Decrement special durations (instant_kill, infinite_ammo) in real time via #tick_delta
+# instant_kill and infinite_ammo count down in real time.
 execute if score @s mgs.special.instant_kill matches 1.. run scoreboard players operation @s mgs.special.instant_kill -= #tick_delta mgs.data
 execute if score @s mgs.special.infinite_ammo matches 1.. run scoreboard players operation @s mgs.special.infinite_ammo -= #tick_delta mgs.data
 
-# Remove temporary tag
 tag @s remove mgs.ticking
 
-# Set previous selected weapon (length of string)
+# The length of the item id string.
 execute store result score @s mgs.previous_selected run data get storage mgs:gun SelectedItem.id
 
-# Assign unique player ID (Bookshelf SUID) if not yet assigned
+# Bookshelf SUID.
 execute unless score @s bs.id matches 0.. run function #bs.id:give_suid
 
-# Enable /trigger for this player
 scoreboard players enable @s mgs.player.config
 execute if score @s mgs.player.config matches 1.. run function mgs:v5.1.0/player/config/process
 
-# Map editor tick (particles + actionbar) for players in editor mode
+# Particles and actionbar.
 execute if score @s mgs.mp.map_edit matches 1 run function mgs:v5.1.0/maps/editor/tick
 
-# Stamina (Black Ops style): drain while sprinting, block sprint when winded, regen while resting
+# Drain while sprinting, block sprinting when winded, regen at rest.
 execute if score #any_game_active mgs.data matches 1 unless entity @s[gamemode=spectator] if score @s mgs.mp.in_game matches 1 run function mgs:v5.1.0/player/stamina_tick
 execute if score #any_game_active mgs.data matches 1 unless entity @s[gamemode=spectator] if score @s mgs.mi.in_game matches 1 run function mgs:v5.1.0/player/stamina_tick
 execute if score #any_game_active mgs.data matches 1 unless entity @s[gamemode=spectator] if score @s mgs.zb.in_game matches 1 run function mgs:v5.1.0/player/stamina_tick
 
-# Zombies: detect respawn
 execute if data storage mgs:zombies game{state:"active"} if score @s mgs.zb.in_game matches 1.. if score @s mgs.mp.death_count matches 1.. run function mgs:v5.1.0/zombies/on_respawn
 
-# Dying Wish: tick down the escalating cooldown, and run the active berserk timer
+# Dying Wish: escalating cooldown and berserk timer.
 execute if data storage mgs:zombies game{state:"active"} if score @s mgs.zb.in_game matches 1.. if score @s mgs.zb.dw_cd matches 1.. run scoreboard players remove @s mgs.zb.dw_cd 1
 execute if data storage mgs:zombies game{state:"active"} if score @s mgs.zb.in_game matches 1.. if score @s mgs.zb.dw_timer matches 1.. run function mgs:v5.1.0/zombies/perks/dying_wish_tick
 
-# Class menu: detect right-click on warped fungus on a stick
 execute if score @s mgs.class_menu matches 1.. if items entity @s weapon.mainhand *[custom_data~{mgs:{class_menu:true}}] run function mgs:v5.1.0/multiplayer/select_class
 scoreboard players set @s mgs.class_menu 0
 
-# Multiplayer: detect respawn (death_count incremented by deathCount criterion)
+# death_count comes from the deathCount criterion.
 execute if data storage mgs:multiplayer game{state:"active"} if score @s mgs.mp.death_count matches 1.. run function mgs:v5.1.0/multiplayer/on_respawn
 
-# Missions: detect respawn
 execute if data storage mgs:missions game{state:"active"} if score @s mgs.mi.in_game matches 1.. if score @s mgs.mp.death_count matches 1.. run function mgs:v5.1.0/missions/on_respawn
 

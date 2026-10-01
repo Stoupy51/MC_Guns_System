@@ -19,35 +19,32 @@
 # @args		path (string)
 #
 
-# @s = marker entity, at its position
-# Get absolute position
+# Run as the marker, at it.
 execute store result score #ax mgs.data run data get entity @s Pos[0]
 execute store result score #ay mgs.data run data get entity @s Pos[1]
 execute store result score #az mgs.data run data get entity @s Pos[2]
 
-# Compute relative coordinates
 scoreboard players operation #ax mgs.data -= #base_x mgs.data
 scoreboard players operation #ay mgs.data -= #base_y mgs.data
 scoreboard players operation #az mgs.data -= #base_z mgs.data
 
-# Copy marker's data compound as the base entry
+# The marker's data is the base entry.
 data modify storage mgs:temp _save_zb set from entity @s data
 
-# Overwrite pos with relative coordinates
+# pos becomes relative.
 data modify storage mgs:temp _save_zb.pos set value [0, 0, 0]
 execute store result storage mgs:temp _save_zb.pos[0] int 1 run scoreboard players get #ax mgs.data
 execute store result storage mgs:temp _save_zb.pos[1] int 1 run scoreboard players get #ay mgs.data
 execute store result storage mgs:temp _save_zb.pos[2] int 1 run scoreboard players get #az mgs.data
 
-# Build rotation array from yaw (pitch is always 0)
+# Pitch is always 0.
 data modify storage mgs:temp _save_zb.rotation set value [0.0f, 0.0f]
 data modify storage mgs:temp _save_zb.rotation[0] set from entity @s data.yaw
 
-# Remove internal-only marker fields (yaw is stored in rotation array)
+# yaw lives in the rotation array.
 data remove storage mgs:temp _save_zb.yaw
 data remove storage mgs:temp _save_zb._disp_sig
 execute if entity @s[tag=mgs.element.barricade] run function mgs:v5.1.0/maps/editor/strip_light_fields/barricade
 
-# Append to the correct list
 $data modify storage mgs:temp map_edit.map.$(path) append from storage mgs:temp _save_zb
 

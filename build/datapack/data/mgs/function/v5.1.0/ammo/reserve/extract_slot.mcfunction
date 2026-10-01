@@ -49,8 +49,7 @@
 # @args		slot (string)
 #
 
-# Called for each slot containing a matching magazine
-# Spawn temp entity to read item data
+# Per slot holding a matching magazine, read through a temporary entity.
 tag @s add mgs.reading_reserve
 $execute summon item_display run function mgs:v5.1.0/ammo/reserve/read_item {slot:"$(slot)"}
 tag @s remove mgs.reading_reserve

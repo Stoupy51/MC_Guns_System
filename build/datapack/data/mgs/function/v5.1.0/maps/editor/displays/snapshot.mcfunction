@@ -7,7 +7,7 @@
 #			mgs:v5.1.0/maps/editor/displays/sync [ as @e[type=minecraft:marker,tag=mgs.model_display] ]
 #
 
-# @s = a model-display marker. Everything its display is built from is its data and position.
+# Run as a model-display marker; its display depends only on its data and position.
 data modify storage mgs:temp _ed_sig set value {}
 data modify storage mgs:temp _ed_sig.data set from entity @s data
 data remove storage mgs:temp _ed_sig.data._disp_sig

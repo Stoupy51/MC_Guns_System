@@ -6,13 +6,11 @@
 
 scoreboard objectives add mgs.zb_sidebar dummy
 
-# Seed the displayed round to the upcoming round (game.round + 1) so the sidebar
-# shows "Round 1" immediately during prep instead of a stale value until start_round runs
+# Shows the upcoming round (game.round + 1) during prep.
 execute store result score #zb_round mgs.data run data get storage mgs:zombies game.round
 scoreboard players add #zb_round mgs.data 1
 
-# Prep context: game_tick isn't maintaining #zb_alive yet (and a previous game may have left a
-# stale value), so seed it once here before the (now rescan-free) refresh_sidebar.
+# game_tick does not maintain #zb_alive during prep, and a previous game may have left it stale.
 execute store result score #zb_alive mgs.data if entity @e[tag=mgs.zombie_round]
 
 function mgs:v5.1.0/zombies/refresh_sidebar

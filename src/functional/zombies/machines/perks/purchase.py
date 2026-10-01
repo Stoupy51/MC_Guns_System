@@ -19,49 +19,40 @@ def write_perk_purchase() -> None:
 	deny_qr_exhausted: str = ZombiesCommon.deny_cmd(ns, version, f'{{"text":"Quick Revive is spent ({SOLO_QR_MAX}/{SOLO_QR_MAX} self-revives used this game).","color":"yellow"}}')
 	deny_not_enough_points: str = ZombiesCommon.deny_not_enough_points_cmd(ns, version, "#pk_price")
 
-	## Right-click handler (executor: "source" = player)
+	## Run as the player.
 	write_versioned_function("zombies/perks/on_right_click", f"""
-# Guard: game must be active
 {ZombiesCommon.game_active_guard_cmd(ns)}
 
-# Check power requirement. Quick Revive is exempt while solo (Black Ops rule).
+# Quick Revive needs no power while solo (Black Ops rule).
 execute store result score #pk_power {ns}.data run scoreboard players get @n[tag=bs.interaction.target] {ns}.zb.perk.power
 execute store result score #qr_solo {ns}.data if entity @a[scores={{{ns}.zb.in_game=1}},gamemode=!spectator]
 execute if score #pk_power {ns}.data matches 1 unless score #zb_power {ns}.data matches 1 unless entity @n[tag=bs.interaction.target,tag={ns}.pk_quick_revive] run return run {deny_requires_power}
 execute if score #pk_power {ns}.data matches 1 unless score #zb_power {ns}.data matches 1 if entity @n[tag=bs.interaction.target,tag={ns}.pk_quick_revive] if score #qr_solo {ns}.data matches 2.. run return run {deny_requires_power}
 
-# Look up perk_id
 execute store result storage {ns}:temp _pk_buy.id int 1 run scoreboard players get @n[tag=bs.interaction.target] {ns}.zb.perk.id
 function {ns}:v{version}/zombies/perks/lookup_perk with storage {ns}:temp _pk_buy
 
-# Check if player already has this perk
 function {ns}:v{version}/zombies/perks/check_owned with storage {ns}:temp _pk_data
 execute if score #pk_owned {ns}.data matches 1 run return run {deny_already_owned}
 
-# Quick Revive is capped at {SOLO_QR_MAX} solo self-revives per game. The cap lives on qr_uses, not on a
-# pinned perk score: that made every ownership readout show the perk again after the last self-revive.
+# At most {SOLO_QR_MAX} solo self-revives per game, counted on qr_uses.
 execute if entity @n[tag=bs.interaction.target,tag={ns}.pk_quick_revive] if score @s {ns}.zb.qr_uses matches {SOLO_QR_MAX}.. run return run {deny_qr_exhausted}
 
-# Get price and check points (chip-in machines charge one chunk per click)
+# Chip-in machines charge one chunk per click.
 function {ns}:v{version}/zombies/perks/read_price with storage {ns}:temp _pk_data
 execute unless score @s {ns}.zb.points >= #pk_price {ns}.data run return run {deny_not_enough_points}
 
-# Deduct points
 scoreboard players operation @s {ns}.zb.points -= #pk_price {ns}.data
 
-# Chip-in: progress is LOCAL, each player pays down their own perk. Stop here unless this
-# payment was the one that completed it.
+# Chip-in progress is per player: stop unless this payment completed it.
 scoreboard players operation #pk_paid {ns}.data += #pk_price {ns}.data
 execute if score #pk_partial {ns}.data matches 1.. run function {ns}:v{version}/zombies/perks/store_progress with storage {ns}:temp _pk_data
 execute if score #pk_partial {ns}.data matches 1.. if score #pk_paid {ns}.data < #pk_total {ns}.data run return run function {ns}:v{version}/zombies/perks/announce_progress
 
-# Apply perk effect (sets scoreboard + calls specific perk function)
 function {ns}:v{version}/zombies/perks/apply with storage {ns}:temp _pk_data
 
-# Signal
 function #{ns}:zombies/on_new_perk
 
-# Sound
 {ZombiesFeedback.zb_sound('success')}
 """)
 
@@ -84,21 +75,18 @@ scoreboard players set #pk_owned {ns}.data 0
 $execute if score @s {ns}.zb.perk.$(perk_id) matches 1 run scoreboard players set #pk_owned {ns}.data 1
 """)
 
-	# Price of the next click on the hovered machine; $(perk_id) selects the player's chip-in progress.
-	# #pk_total is the full price, #pk_price what THIS click costs, #pk_paid the progress so far.
+	# Price of the next click: $(perk_id) selects the player's chip-in progress. #pk_total full price, #pk_price this click, #pk_paid the progress.
 	write_versioned_function("zombies/perks/read_price", f"""
 execute store result score #pk_price {ns}.data run scoreboard players get @n[tag=bs.interaction.target] {ns}.zb.perk.price
 execute store result score #pk_partial {ns}.data run scoreboard players get @n[tag=bs.interaction.target] {ns}.zb.perk.partial
 $execute store result score #pk_paid {ns}.data run scoreboard players get @s {ns}.zb.perkpaid.$(perk_id)
 scoreboard players operation #pk_total {ns}.data = #pk_price {ns}.data
 
-# Remaining, clamped at 0: solo Quick Revive rewrites the price live, so it can drop below the
-# progress already paid. Clamping makes that last click free instead of refunding points.
+# Clamped at 0: solo Quick Revive changes the price live, so it can fall below the progress; the last click is then free.
 scoreboard players operation #pk_left {ns}.data = #pk_total {ns}.data
 scoreboard players operation #pk_left {ns}.data -= #pk_paid {ns}.data
 execute if score #pk_left {ns}.data matches ..0 run scoreboard players set #pk_left {ns}.data 0
 
-# Fixed chunks, last one is the remainder
 execute if score #pk_partial {ns}.data matches 1.. run scoreboard players operation #pk_price {ns}.data = #pk_partial {ns}.data
 execute if score #pk_partial {ns}.data matches 1.. run scoreboard players operation #pk_price {ns}.data < #pk_left {ns}.data
 """)
@@ -107,7 +95,7 @@ execute if score #pk_partial {ns}.data matches 1.. run scoreboard players operat
 $scoreboard players operation @s {ns}.zb.perkpaid.$(perk_id) = #pk_paid {ns}.data
 """)
 
-	## Chip-in payment that didn't finish the perk (@s = paying player, _pk_data = the machine's perk)
+	## Run as the paying player, when the chunk did not finish the perk.
 	write_versioned_function("zombies/perks/announce_progress", f"""
 function {ns}:v{version}/zombies/perks/get_hover_name
 tellraw @s [{MGS_TAG},{{"text":"🥤 ","color":"white"}},{{"storage":"{ns}:temp","nbt":"_pk_hover_name","color":"light_purple","interpret":true}},{{"text":": ","color":"gray"}},{{"score":{{"name":"#pk_paid","objective":"{ns}.data"}},"color":"green"}},{{"text":"/","color":"gray"}},{{"score":{{"name":"#pk_total","objective":"{ns}.data"}},"color":"yellow"}},{{"text":" points paid","color":"gray"}}]

@@ -7,20 +7,17 @@
 #			mgs:v5.1.0/zombies/revive/downed_tick [ at @s ]
 #
 
-# #rv_reviver_disp holds the downed player's revive progress (snapshotted in downed_tick while
-# @s was the downed player — the reviver cannot re-select them: they spectate a camera entity
-# that sits outside the revive range, which used to make this display a stuck "0").
-# Convert ticks to seconds for display: sec = p/20, tenth = (p%20)/2
+# #rv_reviver_disp is the progress snapshotted in downed_tick: the reviver cannot select the downed player,
+# who spectates a camera outside the revive range. Seconds = p / 20, tenths = (p % 20) / 2.
 scoreboard players operation #rv_rev_sec mgs.data = #rv_reviver_disp mgs.data
 scoreboard players operation #rv_rev_sec mgs.data /= #20 mgs.data
 scoreboard players operation #rv_rev_tenth mgs.data = #rv_reviver_disp mgs.data
 scoreboard players operation #rv_rev_tenth mgs.data %= #20 mgs.data
 scoreboard players operation #rv_rev_tenth mgs.data /= #2 mgs.data
 
-# Marked for revive_complete, which runs as the DOWNED player and cannot re-select the revivers
+# revive_complete runs as the downed player and cannot select the revivers.
 tag @s add mgs.zb_reviver
 
-# Check if reviver has Quick Revive perk
 execute if entity @s[tag=mgs.perk.quick_revive] run function mgs:v5.1.0/zombies/revive/show_reviver_bar_quick
 execute unless entity @s[tag=mgs.perk.quick_revive] run function mgs:v5.1.0/zombies/revive/show_reviver_bar_normal
 

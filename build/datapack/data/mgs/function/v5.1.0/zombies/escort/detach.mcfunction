@@ -13,16 +13,13 @@ tag @s remove mgs.zb_escorted
 data modify entity @s NoAI set value 0b
 scoreboard players remove #zb_escort_count mgs.data 1
 
-# Kickstart vanilla AI. A zombie fresh off NoAI won't re-scan for a target for up to ~0.5s
-# (NearestAttackableTargetGoal's mustSee re-scan interval) and looks braindead standing still.
-# Turn it to face the nearest player and clear its NoActionTime so the goal selector re-evaluates
-# immediately, then a brief speed nudge so it lunges the instant it acquires the target instead
-# of pausing. (NoActionTime being high after the frozen transport is what stalls the first scan.)
+# A zombie fresh off NoAI stands still for up to 0.5 s before re-scanning for a target. Clearing NoActionTime
+# (high after the frozen ride) makes the goals re-evaluate at once, and a brief speed nudge makes it lunge.
 data modify entity @s NoActionTime set value 0
 execute at @s facing entity @p[scores={mgs.zb.in_game=1,mgs.zb.downed=0},gamemode=!spectator] eyes run tp @s ~ ~ ~ ~ ~
 effect give @s minecraft:speed 2 0 true
 
-# Fresh stuck-tracking window from wherever the escort left the zombie
+# Fresh stuck window from where the escort left it.
 scoreboard players set @s mgs.zb.stuck_dist 4
 execute store result score @s mgs.zb.stuck_x run data get entity @s Pos[0]
 execute store result score @s mgs.zb.stuck_z run data get entity @s Pos[2]

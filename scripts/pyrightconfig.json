@@ -1,6 +1,0 @@
-{
-  "typeCheckingMode": "strict",
-  "include": ["../src"],
-  "exclude": ["**/__pycache__"],
-  "pythonVersion": "3.14"
-}

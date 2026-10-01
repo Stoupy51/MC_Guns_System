@@ -21,7 +21,6 @@ from ..keys import (
 )
 
 # Constants
-# Grenades
 FRAG_GRENADE: JsonDict = {
 	"stats": {
 		GRENADE_TYPE: "frag", FIRE_MODE: "semi",
@@ -64,9 +63,8 @@ FLASH_GRENADE: JsonDict = {
 	}
 }
 
-# Widow's Wine web grenade (zombies perk-exclusive, hotbar.7).
-# Bursts into webbing that roots and lightly damages nearby zombies.
-# PROJECTILE_MODEL/model reuse the frag grenade art as a placeholder until a dedicated web-grenade texture exists (README task 5 = HUMAN art follow-up).
+# Widow's Wine web grenade (zombies perk only, hotbar.7): webbing that roots and lightly damages nearby zombies.
+# TODO: it reuses the frag art until a web-grenade texture exists.
 WEB_GRENADE: JsonDict = {
 	"stats": {
 		GRENADE_TYPE: "web", FIRE_MODE: "semi",
@@ -78,9 +76,8 @@ WEB_GRENADE: JsonDict = {
 	}
 }
 
-# Zombies-exclusive tactical (hotbar.6): attracts zombies during the fuse, then explodes.
-# "tactical": True keeps it out of the camo pipeline and lets wallbuys/inventory route it to the tactical slot. base_weapon is set so the mystery box duplicate check can match it in hotbar.6.
-# Damage follows the BO->MC 2/15 HP conversion used by calc_zombie_hp (BO ~1000 -> MC ~130), so the blast one-shots the horde up to roughly round 10 like the original.
+# Zombies-only tactical (hotbar.6): attracts zombies during the fuse, then explodes. "tactical" keeps it out of the camo pipeline and routes it to the tactical slot;
+# base_weapon lets the mystery box duplicate check match it. Damage uses the BO to MC 2/15 conversion (BO ~1000, MC ~130), one-shotting the horde up to about round 10.
 MONKEY_BOMB: JsonDict = {
 	"tactical": True,
 	"stats": {
@@ -93,9 +90,7 @@ MONKEY_BOMB: JsonDict = {
 	}
 }
 
-# Lethal grenades occupy the zombies lethal slot (hotbar.7, wallbuy kind 2).
-# Their order here defines the per-player {ns}.zb.lethal_type enum, indexed from 0 = frag_grenade.
-# That lets an EMPTY slot be refilled with the type the player actually bought, rather than always frag.
-# Applies on round-end replenish, Max Ammo, and item recovery; see zombies/inventory.py.
+# Lethal grenades (zombies lethal slot, hotbar.7, wallbuy kind 2): this order is the {ns}.zb.lethal_type index (0 = frag_grenade),
+# so an empty slot refills with the bought type on round end, Max Ammo and recovery (see zombies inventory).
 LETHAL_GRENADE_IDS: list[str] = ["frag_grenade", "semtex", "smoke_grenade", "flash_grenade"] # TODO: smoke and flash should be tactical instead (like monkeys)
 

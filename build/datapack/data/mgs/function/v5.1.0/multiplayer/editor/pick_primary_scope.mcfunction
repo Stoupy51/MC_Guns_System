@@ -15,6 +15,6 @@ execute if score @s mgs.player.config matches 234 run data modify storage mgs:te
 
 execute store success score #ed_ok mgs.data run function mgs:v5.1.0/multiplayer/editor/commit_check
 
-# Continue to camo either way (a denied scope simply stays on iron sights)
+# A denied scope stays on iron sights; camo follows either way.
 function mgs:v5.1.0/multiplayer/editor/show_primary_camo_dialog
 

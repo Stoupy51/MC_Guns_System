@@ -1,16 +1,15 @@
 """ Screen post-processing, hosted entirely on `/posteffect`.
 
-Every effect is a per-player id the datapack applies and removes. The server cannot pass a value to
-a shader, so each discrete state gets its own id with its parameters baked into the JSON, and each
-chain times itself from the activation edge (see [common.py](common.py)).
+Every effect is a per-player id the datapack applies and removes.
+The server cannot pass a value to a shader, so each discrete state gets its own id with its parameters baked into the JSON.
+Each chain times itself from the activation edge (see [common.py](common.py)).
 
-Nothing here overrides a core shader any more, so the pack no longer depends on the particle
-pipeline, on Fabulous graphics, or on the marker-sentinel contract. Iris shaderpacks compose with
-all of it, since post effects run after the level is finished.
+Nothing here overrides a core shader, so the pack depends neither on the particle pipeline nor on Fabulous graphics.
+Iris shaderpacks compose with all of it, since post effects run after the level is finished.
 """
 # Imports
 from beet import FragmentShader
-from stewbeet import Mem, write_load_file, write_versioned_function
+from stewbeet import Mem, write_load_file, write_tick_file, write_versioned_function
 
 from . import crosshair, flash, hurt, zoom
 from .common import HEADER, register_common, timed_effect
@@ -96,26 +95,47 @@ def write_lifecycle(ns: str) -> None:
 	write_load_file(f"""
 {objectives}
 scoreboard objectives add {ns}.fx_deaths deathCount
+scoreboard objectives add {ns}.fx_rejoins custom:leave_game
+scoreboard players set #fx_sweep_period {ns}.data 40
 """)
 
-	# Post effects live in player NBT, so a round that ends badly would leave someone scoped for
-	# good. Every game start and stop runs this.
+	# Post effects live in player NBT, so a round that ends badly would leave someone scoped for good.
+	# Every game start and stop runs this.
 	reset_scores: str = "\n".join(f"scoreboard players reset @s {ns}.{score}" for score in FX_SCORES)
 	write_versioned_function("player/fx_reset", f"""
+scoreboard players set #hurt_was {ns}.data 0
+execute if score @s {ns}.hurt_fx matches 1.. run scoreboard players operation #hurt_was {ns}.data = @s {ns}.hurt_fx
 posteffect clear @s
 {reset_scores}
+
+# The red overlay fades out instead of vanishing
+execute if score #hurt_was {ns}.data matches 1.. run function {ns}:v{version}/player/hurt_fade_out
 """)
 
-	# A real death respawns a fresh server player with an empty effect list, so only the mirror
-	# scores need forgetting. The crosshair and hurt watchers re-apply on their next tick.
+	# The server copies the effect list onto the respawned player, so leaving it would stack a second crosshair on the next apply.
+	# Clearing on death and on rejoin puts the list and the mirror scores back in step; the crosshair and hurt watchers re-apply on their next tick.
 	write_versioned_function("player/fx_after_death", f"""
-{reset_scores}
+function {ns}:v{version}/player/fx_reset
 scoreboard players set @s {ns}.fx_deaths 0
+""")
+	write_versioned_function("player/fx_after_rejoin", f"""
+function {ns}:v{version}/player/fx_reset
+scoreboard players set @s {ns}.fx_rejoins 0
+""")
+
+	# A /reload also repairs a player stuck by an older version of these rules.
+	write_load_file(f"execute as @a run function {ns}:v{version}/player/fx_reset\n")
+
+	# Phase of the periodic sweep that takes off any overlay id the mirror scores do not know about.
+	write_tick_file(f"""
+scoreboard players operation #fx_sweep {ns}.data = #total_tick {ns}.data
+scoreboard players operation #fx_sweep {ns}.data %= #fx_sweep_period {ns}.data
 """)
 
 	write_versioned_function("player/tick", f"""
-# Mirror scores go stale on a real respawn, since the server drops the effect list with the old player
+# A respawn or a rejoin can leave the effect list and the mirror scores out of step
 execute if score @s {ns}.fx_deaths matches 1.. run function {ns}:v{version}/player/fx_after_death
+execute if score @s {ns}.fx_rejoins matches 1.. run function {ns}:v{version}/player/fx_after_rejoin
 
 # Shader ids that expire on their own: the muzzle flash burst and the zoom and hurt fade-outs
 execute if score @s {ns}.flash_off <= #total_tick {ns}.data run function {ns}:v{version}/player/flash_tick

@@ -108,6 +108,8 @@ meta:
             resource_pack: ["D:/minecraft/latest/resourcepacks","C:/Users/Alexandre-PC/AppData/Roaming/ModrinthApp/profiles/Fabric 26.3/resourcepacks"]
         # Custom item lore configuration. If set to "auto" or unset, uses project icon followed by PROJECT_NAME
         source_lore: "auto"
+        # MGS never reads the <id>:items storage, so it is not written on load
+        items_storage: false
 
         # Folder holding the per-item PNG renders (isometric renders, downloaded vanilla textures,
         # and the ones you drop yourself for items of other packs, as "<folder>/<namespace>/<item>.png").

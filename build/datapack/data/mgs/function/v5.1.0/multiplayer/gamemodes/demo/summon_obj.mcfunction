@@ -17,7 +17,7 @@ execute store result storage mgs:temp _demo_pos.x double 1 run scoreboard player
 execute store result storage mgs:temp _demo_pos.y double 1 run scoreboard players get #ry mgs.data
 execute store result storage mgs:temp _demo_pos.z double 1 run scoreboard players get #rz mgs.data
 
-# Site letter, same scheme as domination's zone labels
+# Lettered like domination zones.
 execute if score #demo_site_idx mgs.data matches 0 run data modify storage mgs:temp _demo_pos.label set value "A"
 execute if score #demo_site_idx mgs.data matches 1 run data modify storage mgs:temp _demo_pos.label set value "B"
 execute if score #demo_site_idx mgs.data matches 2 run data modify storage mgs:temp _demo_pos.label set value "C"

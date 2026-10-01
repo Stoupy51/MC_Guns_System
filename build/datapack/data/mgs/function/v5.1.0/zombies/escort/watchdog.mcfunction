@@ -14,10 +14,9 @@ execute unless score #zb_esc_z mgs.data = @s mgs.zb.stuck_z run scoreboard playe
 scoreboard players operation @s mgs.zb.stuck_x = #zb_esc_x mgs.data
 scoreboard players operation @s mgs.zb.stuck_z = #zb_esc_z mgs.data
 
-# Moved a block since last second: reset the still counter and keep escorting
 execute if score #zb_esc_moved mgs.data matches 1 run return run scoreboard players set @s mgs.zb.stuck_ticks 0
 
-# Still in the same block: the trader is stuck too -> teleport-rescue fallback
+# The trader is stuck too: teleport rescue.
 scoreboard players add @s mgs.zb.stuck_ticks 1
 execute if score @s mgs.zb.stuck_ticks matches 5.. run function mgs:v5.1.0/zombies/escort/give_up
 

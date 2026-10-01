@@ -12,7 +12,7 @@ execute store result score #inv_slot mgs.data run data get storage mgs:temp _res
 data remove storage mgs:temp _restore.item.Slot
 data modify entity @n[type=minecraft:item_display,tag=mgs.inv_restore] item set from storage mgs:temp _restore.item
 
-# Slot mapping: 0..35 = container.N (hotbar + main inventory), 100..103 = armor, -106 = offhand
+# 0..35 container.N (hotbar and main), 100..103 armor, -106 offhand.
 execute if score #inv_slot mgs.data matches 0..35 store result storage mgs:temp _restore.slot int 1 run scoreboard players get #inv_slot mgs.data
 execute if score #inv_slot mgs.data matches 0..35 run function mgs:v5.1.0/zombies/inventory/restore_slot with storage mgs:temp _restore
 execute if score #inv_slot mgs.data matches 100 run item replace entity @s armor.feet from entity @n[type=minecraft:item_display,tag=mgs.inv_restore] contents

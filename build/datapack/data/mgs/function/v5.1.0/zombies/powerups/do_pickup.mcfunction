@@ -6,40 +6,32 @@
 # @within	mgs:v5.1.0/zombies/powerups/entity_tick
 #
 
-# Free PaP is the only power-up spent on a specific item, the gun held in hotbar 1-3, so it is the only
-# one a player can be unable to use: downed players are spectators, and the knife (hotbar.0) and the
-# grenade slots (hotbar.6-7) are not weapons it can upgrade. Leave the drop on the ground for a
-# teammate who can take it rather than burning it on someone it would do nothing for.
+# Free PaP upgrades the gun in hotbar 1-3, so a player without one cannot use it: the drop stays for a teammate.
 scoreboard players set #pu_pap_ok mgs.data 0
 execute if score @s mgs.zb.pu.type matches 8 as @p[scores={mgs.zb.in_game=1},gamemode=!spectator,distance=..1.5] run function mgs:v5.1.0/zombies/powerups/check_pap_taker
 execute if score @s mgs.zb.pu.type matches 8 if score #pu_pap_ok mgs.data matches 0 run return fail
 
-# Tag the nearest eligible player as the collector for this activation
+# The nearest eligible player collects.
 tag @p[scores={mgs.zb.in_game=1},gamemode=!spectator,distance=..1.5,tag=!mgs.pu_collecting] add mgs.pu_collecting
 
-# If no alive player collected, a downed player crawled their mannequin over it: credit them.
+# Nobody alive took it: a downed player crawled their mannequin over it.
 execute unless entity @a[tag=mgs.pu_collecting] if entity @e[type=minecraft:mannequin,tag=mgs.downed_mannequin,distance=..1.5] run function mgs:v5.1.0/zombies/powerups/pickup_downed_collector
 
-# Store power-up type before killing the entity
 scoreboard players operation #pu_type_pickup mgs.data = @s mgs.zb.pu.type
 
-# Kill the text display first (we still have a valid position)
+# First, while the position is still valid.
 kill @n[type=minecraft:text_display,tag=mgs.pu_text,distance=..3]
 
-# Grab cue
 execute as @a[scores={mgs.zb.in_game=1}] at @s run playsound mgs:zombies/powerups/item/grab ambient @s ~ ~ ~ 0.4 1.0
 
-# Activate the power-up effect (collector tag is still active here)
+# The collector tag is still set here.
 function mgs:v5.1.0/zombies/powerups/dispatch_activate
 
-# Silent award: there are eleven power-up types with eleven different announces, so there is no single
-# message to suffix. The bar moving is the feedback.
+# Silent award: eleven types with eleven announces, so no single message to suffix.
 execute as @a[tag=mgs.pu_collecting] run function mgs:v5.1.0/progression/zb/award_powerup
 
-# Kill this power-up item entity
 kill @s
 scoreboard players remove #pu_active mgs.data 1
 
-# Clean up the collector tag so other pickups can proceed
 tag @a[tag=mgs.pu_collecting] remove mgs.pu_collecting
 

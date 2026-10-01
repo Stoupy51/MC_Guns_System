@@ -9,12 +9,11 @@
 execute store result storage mgs:temp _pap_ann.index int 1 run scoreboard players get #pap_li mgs.data
 data modify storage mgs:temp _pap_ann.suffix set value "s"
 
-# Tenths of seconds: new_ticks * 10 / 20
+# Tenths = ticks x 10 / 20.
 scoreboard players operation #pap_tenths mgs.data = #pap_new mgs.data
 scoreboard players operation #pap_tenths mgs.data *= #10 mgs.data
 scoreboard players operation #pap_tenths mgs.data /= #20 mgs.data
 
-# Split into whole.decimal
 scoreboard players operation #pap_whole mgs.data = #pap_tenths mgs.data
 scoreboard players operation #pap_whole mgs.data /= #10 mgs.data
 scoreboard players operation #pap_dec mgs.data = #pap_tenths mgs.data

@@ -9,6 +9,6 @@
 function mgs:v5.1.0/zombies/mystery_box/pick_random_result
 scoreboard players set #mb_reroll mgs.data 0
 function mgs:v5.1.0/zombies/mystery_box/reroll_owned
-# Treat a missing result (empty pool / all owned after rerolls) as "owned" so we refund
+# No result (empty pool, or everything owned after the re-rolls) counts as owned, so the buyer is refunded.
 execute unless data storage mgs:zombies mystery_box.result.weapon_id run scoreboard players set #mb_owned mgs.data 1
 

@@ -1,7 +1,7 @@
 
 #> mgs:v5.1.0/zombies/mystery_box/default_give/weapon
 #
-# @within	???
+# @within	string in mgs:v5.1.0/zombies/mystery_box/ensure_default_pool
 #
 
 data modify storage mgs:temp _wb_weapon set value {}

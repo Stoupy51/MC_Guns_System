@@ -1,7 +1,6 @@
 """ Melee stat table: the starting knife and the three Black Ops 2 knife upgrades.
 
-Zombies treats every entry here as a `kind 1` wallbuy (see zombies/objects/wallbuys): buying one
-replaces `hotbar.0`, so a player only ever carries a single melee weapon.
+Zombies treats every entry here as a `kind 1` wallbuy (see zombies/objects/wallbuys): buying one replaces `hotbar.0`, so a player only ever carries a single melee weapon.
 """
 # Imports
 from dataclasses import dataclass
@@ -16,11 +15,10 @@ BO_TO_MC_DAMAGE: float = 2 / 15
 class Melee:
 	""" One melee weapon, converted from its Black Ops damage so the HP curve stays comparable.
 
-	Examples:
-		>>> Melee(item_id="bowie_knife", display_name="Bowie Knife", name_color="gold", bo_damage=1150).damage
-		153
-		>>> Melee(item_id="combat_knife", display_name="Knife", name_color="white", bo_damage=150).damage
-		20
+	>>> Melee(item_id="bowie_knife", display_name="Bowie Knife", name_color="gold", bo_damage=1150).damage
+	153
+	>>> Melee(item_id="combat_knife", display_name="Knife", name_color="white", bo_damage=150).damage
+	20
 	"""
 	item_id: str
 	display_name: str
@@ -36,8 +34,7 @@ class Melee:
 	"""
 	camo_eligible: bool = False
 	""" Whether camo.py generates the `<id>_<material>` cosmetic variants for this weapon.
-	Only `combat_knife`'s variants are handed out so far (the loadout editor's Knife row); the upgrades'
-	exist for a future zombies camo pick and are already reachable from the creative loot table.
+	Only `combat_knife`'s variants are handed out so far (the loadout editor's Knife row); the upgrades' variants exist for a future zombies camo pick and are already reachable from the creative loot table.
 	"""
 
 	@property
@@ -56,3 +53,4 @@ MELEE_WEAPONS: list[Melee] = [
 """ The Sickle is a straight Bowie Knife reskin in Black Ops 2, so it shares its damage exactly.
 Galvaknuckles sit one tier up: 1600 is the value that one-hits through round 14 on the Black Ops curve.
 """
+

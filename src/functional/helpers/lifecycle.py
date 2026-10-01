@@ -95,9 +95,8 @@ execute unless data storage {ns}:{storage} game.map.start_commands run data modi
 	) -> str:
 		""" Return a mode late-join flow with hook points for mode-specific setup.
 
-		class_menu_lines: replaces the default multiplayer class/loadout selection block. Modes
-		without loadouts (zombies gives a fixed knife + starting pistol) pass their own giving
-		logic here so a late-joiner isn't prompted to pick a multiplayer class. """
+		class_menu_lines: replaces the default multiplayer class/loadout selection block.
+		Modes without loadouts (zombies gives a fixed knife + starting pistol) pass their own giving logic here so a late-joiner isn't prompted to pick a multiplayer class. """
 		version: str = Mem.ctx.project_version
 		preparing_guard: str = f' unless data storage {ns}:{storage} game{{state:"preparing"}}' if allow_preparing else ""
 		guard_line: str = (
@@ -118,7 +117,7 @@ execute unless data storage {ns}:{storage} game.map.start_commands run data modi
 			parts.append(setup_extra_lines.strip())
 		parts.append(f'# Reset stamina so the stamina system re-inits this player at full (it owns the hunger bar)\nscoreboard players set @s {ns}.stam_seen 0')
 		if class_menu_lines.strip():
-			# Mode-specific loadout (e.g. zombies gives a fixed knife + pistol, no class prompt)
+			# Mode-specific loadout (zombies gives a fixed knife and pistol, no class prompt).
 			parts.append(class_menu_lines.strip())
 		else:
 			parts.extend([
@@ -135,18 +134,15 @@ execute unless data storage {ns}:{storage} game.map.start_commands run data modi
 		return "\n\n".join(parts)
 
 	@staticmethod
-	def mode_start_map_bootstrap_lines(ns: str, mode: str, normalize_legacy: bool = False) -> str:
+	def mode_start_map_bootstrap_lines(ns: str, mode: str, *, normalize_legacy: bool) -> str:
 		""" Return the shared start bootstrap: selection check, load, copy, and preparing state. """
 		parts: list[str] = []
 		parts.append(f"""
-# Check that a map is selected
 execute if data storage {ns}:{mode} game{{map_id:""}} run return run tellraw @s [{MGS_TAG},{{"text":"No map selected! Use the setup menu to select a map.","color":"red"}}]
 
-# Load the selected map
 function {ns}:v{Mem.ctx.project_version}/{mode}/load_map_from_storage with storage {ns}:{mode} game
 execute unless score #map_load_found {ns}.data matches 1 run return run tellraw @s [{MGS_TAG},{{"text":"Map not found! Select a valid map.","color":"red"}}]
 
-# Copy loaded map data into game state
 data modify storage {ns}:{mode} game.map set from storage {ns}:temp map_load.result
 """.strip())
 		if normalize_legacy:
@@ -158,21 +154,18 @@ data modify storage {ns}:{mode} game.map set from storage {ns}:temp map_load.res
 	def regen_enable_lines(ns: str) -> str:
 		""" Lines to add at game start: disable natural regen, activate custom regen system. """
 		return f"""
-# Disable natural regeneration, enable custom regen system
 gamerule natural_health_regeneration false
 scoreboard players set #any_game_active {ns}.data 1
 
-# Reset per-player regen state (hp_prev seeded from the auto-updated health criterion; a player
-# whose criterion score is still unset just misses this seed and syncs on their first health change)
+# hp_prev comes from the `health` criterion; a player whose score is unset syncs on their first health change.
 scoreboard players set @a {ns}.last_hit 0
 scoreboard players set @a {ns}.hp_prev 0
 execute as @a run scoreboard players operation @s {ns}.hp_prev = @s {ns}.health
 
-# Reset stamina state so every player re-inits to full on their next stamina tick (also covers late-joiners)
+# Everyone, late joiners included, re-inits at full stamina on their next tick.
 scoreboard players set @a {ns}.stam_seen 0
 
-# Post effects are stored in player NBT, so a previous round that ended badly would still be
-# applied. Clearing here means nobody starts a game scoped or with a red screen.
+# Post effects live in player NBT, so a round that ended badly could still apply them.
 execute as @a run function {ns}:v{Mem.ctx.project_version}/player/fx_reset
 """.strip()
 
@@ -180,17 +173,16 @@ execute as @a run function {ns}:v{Mem.ctx.project_version}/player/fx_reset
 	def regen_disable_lines(ns: str) -> str:
 		""" Lines to add at game stop: re-enable natural regen, deactivate custom regen system. """
 		return f"""
-# Re-enable natural regeneration, disable custom regen system
 gamerule natural_health_regeneration true
 scoreboard players set #any_game_active {ns}.data 0
 
-# Tear down stamina state: stop any hunger drain and refill the bar so nobody is left winded
+# Stop any hunger drain and refill the bar, so nobody is left winded.
 effect clear @a minecraft:hunger
 effect give @a minecraft:saturation 5 20 true
 scoreboard players set @a {ns}.stam_out 0
 scoreboard players set @a {ns}.stam_seen 0
 
-# Take every shader id back off, so nothing survives into the lobby
+# Every shader id off, so nothing survives into the lobby.
 execute as @a run function {ns}:v{Mem.ctx.project_version}/player/fx_reset
 """.strip()
 

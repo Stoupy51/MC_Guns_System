@@ -27,14 +27,11 @@ class SlotPredicates:
 def slot_predicates(ns: str) -> SlotPredicates:
 	""" Build the slot predicates for a namespace.
 
-	Args:
-		ns (str): The project namespace.
 	Returns:
 		SlotPredicates: One `custom_data` predicate body per managed slot.
 
-	Examples:
-		>>> slot_predicates("mgs").knife
-		'{mgs:{knife:true,zombies:{hotbar:0}}}'
+	>>> slot_predicates("mgs").knife
+	'{mgs:{knife:true,zombies:{hotbar:0}}}'
 	"""
 	return SlotPredicates(
 		knife=       "{" + ns + ":{knife:true,zombies:{hotbar:0}}}",

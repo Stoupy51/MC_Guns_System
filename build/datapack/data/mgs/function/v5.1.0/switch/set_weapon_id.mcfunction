@@ -8,7 +8,7 @@
 
 execute store result storage mgs:gun all.stats.weapon_id int 1 run scoreboard players add #next_id mgs.data 1
 
-# Initialize fire mode to 'auto' if weapon supports it, otherwise 'semi'
+# auto when the weapon supports it, else semi.
 execute unless data storage mgs:gun all.stats.fire_mode if data storage mgs:gun all.stats.can_auto run data modify storage mgs:gun all.stats.fire_mode set value "auto"
 execute unless data storage mgs:gun all.stats.fire_mode unless data storage mgs:gun all.stats.can_auto run data modify storage mgs:gun all.stats.fire_mode set value "semi"
 

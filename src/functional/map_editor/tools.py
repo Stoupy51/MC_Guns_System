@@ -10,7 +10,6 @@ def write_editor_tools() -> None:
 	ns: str = Mem.ctx.project_id
 	version: str = Mem.ctx.project_version
 
-	# Give Editor Tools (dispatch by mode score).
 	destroy_cmd = (
 		f'item replace entity @s hotbar.8 with minecraft:bat_spawn_egg'
 		f'[minecraft:item_name={{"text":"✘ DESTROY","color":"dark_red","italic":false,"bold":true}},'
@@ -57,22 +56,19 @@ def write_editor_tools() -> None:
 	)
 
 	write_versioned_function("maps/editor/give_tools", f"""
-# Destroy egg (always in hotbar.8)
+# Always hotbar.8.
 {destroy_cmd}
 
-# Utility eggs (bottom-right of inventory)
+# Bottom right of the inventory.
 {save_exit_cmd}
 {exit_cmd}
 {save_only_cmd}
 
-# Coord stick utility
 {coord_stick_cmd}
 
-# Mode-specific eggs
 {give_dispatch}
 """)
 
-	# Per-mode give_tools
 	for mode_key, mode_info in EDITOR_MODES.items():
 		egg_cmds: list[str] = []
 		for etype, eslot in mode_info.slots.items():
@@ -84,7 +80,7 @@ def write_editor_tools() -> None:
 				f'minecraft:custom_data={{{ns}:{{editor:true,type:"{etype}"}}}},'
 				f'minecraft:entity_data={{id:"minecraft:bat",NoAI:1b,Silent:1b,Invulnerable:1b,Tags:["{ns}.new_element","{ns}.element.{etype}"]}}]'
 			)
-		# Zombies mode: add defaults config (hotbar.6) and configure element (hotbar.7) tools
+		# Zombies: defaults config (hotbar.6) and configure element (hotbar.7).
 		if mode_key == "zombies":
 			egg_cmds.append(
 				f'item replace entity @s hotbar.6 with minecraft:bat_spawn_egg'

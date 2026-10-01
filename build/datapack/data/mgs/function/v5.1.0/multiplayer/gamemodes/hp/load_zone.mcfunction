@@ -7,14 +7,12 @@
 #			mgs:v5.1.0/multiplayer/gamemodes/hp/rotate
 #
 
-# A fresh hill is uncaptured, so the next side to hold it uncontested earns the capture bonus
+# A fresh hill is uncaptured: the next side to hold it alone earns the capture bonus.
 scoreboard players set #hp_xp_captured mgs.data 0
 
-# Kill old zone marker
 kill @e[tag=mgs.hp_marker]
 kill @e[tag=mgs.hp_label]
 
-# Zone point: relative → absolute
 execute store result score #rx mgs.data run data get storage mgs:multiplayer game.hp_zones[0][0]
 execute store result score #ry mgs.data run data get storage mgs:multiplayer game.hp_zones[0][1]
 execute store result score #rz mgs.data run data get storage mgs:multiplayer game.hp_zones[0][2]
@@ -25,7 +23,7 @@ execute store result storage mgs:temp _hp_pos.x double 1 run scoreboard players 
 execute store result storage mgs:temp _hp_pos.y double 1 run scoreboard players get #ry mgs.data
 execute store result storage mgs:temp _hp_pos.z double 1 run scoreboard players get #rz mgs.data
 
-# Assign point label (fallback to HP for maps with >5 zones)
+# "HP" for maps with more than 5 zones.
 data modify storage mgs:temp _hp_pos.label set value "HP"
 execute if score #hp_zone_idx mgs.data matches 0 run data modify storage mgs:temp _hp_pos.label set value "A"
 execute if score #hp_zone_idx mgs.data matches 1 run data modify storage mgs:temp _hp_pos.label set value "B"

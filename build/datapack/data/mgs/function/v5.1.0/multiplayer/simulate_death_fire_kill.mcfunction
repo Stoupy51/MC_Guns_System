@@ -10,11 +10,10 @@
 
 $tag $(attacker) add mgs.temp_killer
 
-# Self-kill check: if victim(@s) is also tagged as killer, it's self-damage
+# The victim tagged as killer: self-damage.
 execute if entity @s[tag=mgs.temp_killer] run tag @s remove mgs.temp_killer
 execute unless entity @a[tag=mgs.temp_killer] run return run function mgs:v5.1.0/multiplayer/random_self_kill_message
 
-# Normal kill: fire signal and show message
 tag @s add mgs.temp_victim
 $execute as $(attacker) run function #mgs:signals/on_kill
 function mgs:v5.1.0/multiplayer/random_kill_message

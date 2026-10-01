@@ -27,10 +27,7 @@ execute if data entity @s item.components."minecraft:lore"[0] run data modify st
 kill @s
 """)
 
-	# Dynamic list picker helpers, with no hardcoded max level.
-	#   - _pap_pick.list: the PAP list to resolve
-	#   - #pap_next_idx: 0-based requested level index
-	#   - _pap_pick.value: resolved value, clamped to the last available entry
+	# Resolve _pap_pick.list at #pap_next_idx (0-based) into _pap_pick.value, clamped to the last entry.
 	write_versioned_function("zombies/pap/pick_list_value", f"""
 scoreboard players set #pap_pick_i {ns}.data 0
 data modify storage {ns}:temp _pap_pick.value set from storage {ns}:temp _pap_pick.list[0]
@@ -48,7 +45,7 @@ data modify storage {ns}:temp _pap_pick.value set from storage {ns}:temp _pap_pi
 function {ns}:v{version}/zombies/pap/pick_list_value_step
 """)
 
-	# Runtime max level from list lengths in pap_stats (defaults to 1 when pap_stats exists).
+	# Max level from the list lengths in pap_stats (1 when pap_stats exists).
 	compute_max_lines: list[str] = [f"scoreboard players set #pap_max {ns}.data 1"]
 	for field in STATS_FIELDS:
 		compute_max_lines.append(
@@ -65,8 +62,8 @@ function {ns}:v{version}/zombies/pap/pick_list_value_step
 	)
 	write_versioned_function("zombies/pap/compute_max_level", "\n".join(compute_max_lines))
 
-	# Apply one PAP field dynamically from stats.pap_stats.$(field) for #pap_next_idx.
-	# Macro rather than one function per stat: this is the PaP purchase path (cold), and the arg set is the fixed STATS_FIELDS list, so every variant is compiled once and then cached.
+	# A macro rather than one function per stat: the purchase path is cold and the arguments are the fixed STATS_FIELDS,
+	# so each variant compiles once and is cached.
 	write_versioned_function("zombies/pap/apply_field", f"""
 $data modify storage {ns}:temp _pap_pick.list set from storage {ns}:temp _pap_extract.stats.{PAP_STATS}.$(field)
 execute if data storage {ns}:temp _pap_pick.list[0] run function {ns}:v{version}/zombies/pap/pick_list_value
@@ -74,14 +71,13 @@ $execute if data storage {ns}:temp _pap_pick.list[0] run data modify storage {ns
 $execute unless data storage {ns}:temp _pap_pick.list[0] run data modify storage {ns}:temp _pap_extract.stats.$(field) set from storage {ns}:temp _pap_extract.stats.{PAP_STATS}.$(field)
 """)
 
-	apply_lines: list[str] = []
-	for field in STATS_FIELDS:
-		apply_lines.append(
-			f'execute if data storage {ns}:temp _pap_extract.stats.{PAP_STATS}.{field} run function {ns}:v{version}/zombies/pap/apply_field {{field:"{field}"}}'
-		)
+	apply_lines: list[str] = [
+		f'execute if data storage {ns}:temp _pap_extract.stats.{PAP_STATS}.{field} run function {ns}:v{version}/zombies/pap/apply_field {{field:"{field}"}}'
+		for field in STATS_FIELDS
+	]
 	write_versioned_function("zombies/pap/apply_runtime_overrides", "\n".join(apply_lines))
 
-	# Resolve optional pap_name dynamically (scalar or list).
+	# pap_name can be a scalar or a list.
 	name_lines: list[str] = [
 		f'data modify storage {ns}:temp _pap_pick.list set from storage {ns}:temp _pap_extract.stats.{PAP_STATS}.pap_name',
 		f'execute if data storage {ns}:temp _pap_pick.list[0] run function {ns}:v{version}/zombies/pap/pick_list_value',

@@ -15,7 +15,7 @@ from .common import HEADER, timed_effect, uniform
 
 # Constants
 FULL_TICKS: float = 1.0
-""" How long the burst stays at full strength, matching the old one-tick particle. """
+""" How long the burst stays at full strength. """
 
 FADE_END_TICKS: float = 1.6
 """ When the burst has faded out completely, 80 ms after it started. """

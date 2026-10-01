@@ -11,8 +11,7 @@ from ...base import GameModeVariant
 
 # Constants
 PICKUP_RANGE: float = 2.0
-""" Blocks from the loose bomb that pick it up. No channel and no key press — in CoD you collect it by
-walking over it. """
+""" Blocks from the loose bomb that pick it up: no channel and no key press, as in CoD you collect it by walking over it. """
 
 
 # Classes
@@ -25,15 +24,8 @@ class SndCarry:
 		""" Write `spawn_loose_bomb`, `place_loose_bomb`, `recover_bomb`, `try_pickup` and `drop_bomb`. """
 		ns, version = variant.ns, variant.version
 
-		## S&D: put the bomb on the ground below the current position, free for any attacker to collect.
-		## Used both for the round-start bomb and for the drop when a carrier is killed, so a retrieved bomb
-		## always looks and behaves exactly like the original one.
-		##
-		## The raycast down is not cosmetic. The carrier's label — the position a death drop is taken from —
-		## rides 2.2 blocks above their feet, and PICKUP_RANGE is 2.0: a bomb summoned right there sits out
-		## of reach of anyone standing under it, so losing a gunfight silently ended the attack for the round.
-		## Same downward raycast as the dropped-gun code (see core/weapon_drop.py), same fallback when
-		## nothing is below within range.
+		## Put the bomb on the ground below, free for any attacker; used for the round-start bomb and a carrier's death drop.
+		## The raycast down matters: a death drop starts at the carrier's label, 2.2 above their feet, out of PICKUP_RANGE (2.0); same raycast and fallback as core/weapon_drop.
 		variant.sub("spawn_loose_bomb", f"""
 data modify storage {ns}:input with set value {{}}
 data modify storage {ns}:input with.blocks set value "function #bs.hitbox:callback/get_block_shape_with_fluid"
@@ -44,11 +36,11 @@ data modify storage {ns}:input with.on_entry_point set value "function {ns}:v{ve
 scoreboard players set #snd_bomb_grounded {ns}.data 0
 execute rotated ~ 90 run function #bs.raycast:run with storage {ns}:input
 
-# Dropped over the void: leave it where it fell rather than lose it entirely
+# Over the void it stays where it fell.
 execute if score #snd_bomb_grounded {ns}.data matches 0 run function {ns}:v{version}/multiplayer/gamemodes/snd/place_loose_bomb
 """)
 
-		## S&D: the loose bomb's three entities, at the ground point the raycast found.
+		## The loose bomb's three entities, at the ground point.
 		variant.sub("place_loose_bomb", f"""
 scoreboard players set #snd_bomb_grounded {ns}.data 1
 summon minecraft:marker ~ ~ ~ {{Tags:["{ns}.snd_loose","{ns}.snd_loose_at","{ns}.gm_entity"]}}
@@ -56,35 +48,33 @@ summon minecraft:block_display ~ ~ ~ {{Tags:["{ns}.snd_loose","{ns}.gm_entity"],
 summon minecraft:text_display ~ ~ ~ {{Tags:["{ns}.snd_loose","{ns}.gm_entity"],billboard:"vertical",text:[{{"text":"💣 ","color":"white"}},{{"text":"BOMB","color":"gold","bold":true}}],transformation:{{translation:[0.0f,1.1f,0.0f],left_rotation:[0.0f,0.0f,0.0f,1.0f],scale:[1.5f,1.5f,1.5f],right_rotation:[0.0f,0.0f,0.0f,1.0f]}},shadow:true,see_through:true}}
 """)
 
-		## S&D: the carrier is gone from @a (disconnect) but their label survives — put the bomb back.
+		## The carrier left the server but their label remains: put the bomb back there.
 		variant.sub("recover_bomb", f"""
 execute at @e[tag={ns}.snd_carrier_label,limit=1] run function {ns}:v{version}/multiplayer/gamemodes/snd/spawn_loose_bomb
 kill @e[tag={ns}.snd_carrier_label]
-tellraw @a [{MGS_TAG},{{"text":"💣 ","color":"white"}},{{"text":"The bomb carrier left the game — bomb dropped!","color":"yellow"}}]
+tellraw @a [{MGS_TAG},{{"text":"💣 ","color":"white"}},{{"text":"The bomb carrier left the game: bomb dropped!","color":"yellow"}}]
 """)
 
-		## S&D: Pickup attempt (@s = a living player standing on the loose bomb)
+		## Run as a living player standing on the loose bomb.
 		variant.sub("try_pickup", f"""
-# Defenders cannot touch the bomb
 execute if score #snd_attackers {ns}.data matches 1 unless score @s {ns}.mp.team matches 1 run return fail
 execute if score #snd_attackers {ns}.data matches 2 unless score @s {ns}.mp.team matches 2 run return fail
 
 tag @s add {ns}.snd_carrier
 kill @e[tag={ns}.snd_loose]
 
-# The label rides along by teleport (an entity cannot be made to ride a player), and doubles as the record
-# of where the carrier is: if they die, the bomb drops at this label's position.
+# The label follows by teleport (an entity cannot ride a player) and marks where the bomb drops if the carrier dies.
 summon minecraft:text_display ~ ~ ~ {{Tags:["{ns}.snd_carrier_label","{ns}.gm_entity"],billboard:"vertical",teleport_duration:1,text:[{{"text":"💣","color":"white"}}],transformation:{{translation:[0.0f,0.0f,0.0f],left_rotation:[0.0f,0.0f,0.0f,1.0f],scale:[1.5f,1.5f,1.5f],right_rotation:[0.0f,0.0f,0.0f,1.0f]}},shadow:true,see_through:false}}
 
 {Xp.announce("mp", "bomb_pickup", f'{MGS_TAG},{{"text":"💣 ","color":"white"}},{Text.player(ns, "@s")},{{"text":" picked up the bomb!","color":"gold"}}')}
 playsound minecraft:item.armor.equip_chain player @a ~ ~ ~ 1 1.2
 """)
 
-		## S&D: the carrier died — put the bomb back on the ground where they fell so another attacker can
-		## retrieve it. Dropping it is what keeps a lost gunfight from silently ending the attack.
+		## The carrier died: the bomb drops where they fell, so the attack can go on.
 		variant.sub("drop_bomb", f"""
 tag @s remove {ns}.snd_carrier
 execute at @e[tag={ns}.snd_carrier_label,limit=1] run function {ns}:v{version}/multiplayer/gamemodes/snd/spawn_loose_bomb
 kill @e[tag={ns}.snd_carrier_label]
 tellraw @a [{MGS_TAG},{{"text":"💣 ","color":"white"}},{{"text":"The bomb carrier is down!","color":"yellow"}}]
 """)
+

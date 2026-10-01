@@ -1,9 +1,8 @@
-""" Low-health screen overlay: a red vignette that turns into a pulsing one when close to death.
+""" Low-health screen overlay: a red vignette that turns into a pulsing one close to death.
 
-A post effect has no parameters, so each id is a transition from one tier's look to another's and
-everything the overlay shows (tint, edge, heartbeat, colour split) blends between the two. Exactly
-one id is applied at a time. Healing waits for the bar to settle before fading, so a fast
-regeneration crossing both thresholds plays one smooth fade instead of two cut-off ones.
+A post effect has no parameters, so each id is a transition from one tier's look to another's, blending tint, edge, heartbeat and colour split.
+Exactly one id is applied at a time.
+Healing waits for the bar to settle, so a fast regeneration crossing both thresholds plays one smooth fade instead of two cut-off ones.
 """
 # Imports
 from dataclasses import dataclass
@@ -196,8 +195,8 @@ execute if score @s {ns}.health <= #hurt_at {ns}.data run scoreboard players set
 {resolve}
 """)
 
-	# Every player is checked, not just the ones in a game, so that leaving one takes the overlay
-	# off. A player outside a game resolves to level 0 and fades out like any heal.
+	# Every player is checked, not only those in a game, so leaving one takes the overlay off.
+	# A player outside a game resolves to level 0 and fades out like any heal.
 	gate: str = f"execute unless entity @s[gamemode=spectator] if score @s {ns}"
 	write_versioned_function("player/hurt_tick", f"""
 scoreboard players set #hurt_tier {ns}.data 0
@@ -205,6 +204,8 @@ scoreboard players set #hurt_tier {ns}.data 0
 {gate}.mi.in_game matches 1 run function {ns}:v{version}/player/hurt_resolve
 {gate}.zb.in_game matches 1 run function {ns}:v{version}/player/hurt_resolve
 execute unless score @s {ns}.hurt_fx matches -2147483648.. run scoreboard players set @s {ns}.hurt_fx 0
+# No overlay and no fade playing: every 2 s, take off any hurt id the scores missed, so a desync can never leave the screen red.
+execute if score @s {ns}.hurt_fx matches 0 if score #hurt_tier {ns}.data matches 0 unless score @s {ns}.hurt_out_until matches -2147483648.. if score #fx_sweep {ns}.data matches 0 run function {ns}:v{version}/player/hurt_sweep
 execute if score @s {ns}.hurt_fx = #hurt_tier {ns}.data run return run scoreboard players reset @s {ns}.hurt_pending
 execute if score #hurt_tier {ns}.data > @s {ns}.hurt_fx run return run function {ns}:v{version}/player/hurt_swap
 
@@ -246,6 +247,26 @@ scoreboard players operation @s {ns}.hurt_fall_until += #total_tick {ns}.data
 # Fading to nothing: once the fade has played, the id comes off entirely
 execute if score #hurt_tier {ns}.data matches 0 run scoreboard players operation @s {ns}.hurt_out_until = @s {ns}.hurt_fall_until
 execute if score #hurt_tier {ns}.data matches 0 run scoreboard players add @s {ns}.hurt_out_until 1
+""")
+
+	# Every stray id comes off first, then one fade starts from the strongest look found, as if the player healed.
+	sweep: str = "\n".join(
+		f"execute store success score #hurt_stray {ns}.data run posteffect remove @s {ns}:hurt_{start}_{end}"
+		+ (f"\nexecute if score #hurt_stray {ns}.data matches 1 unless score #hurt_was {ns}.data matches {end}.. run scoreboard players set #hurt_was {ns}.data {end}" if end else "")
+		for start, end in TRANSITIONS
+	)
+	write_versioned_function("player/hurt_sweep", f"""
+# @s = a player whose scores say no overlay is applied
+scoreboard players set #hurt_was {ns}.data 0
+{sweep}
+execute if score #hurt_was {ns}.data matches 1.. run function {ns}:v{version}/player/hurt_fade_out
+""")
+
+	write_versioned_function("player/hurt_fade_out", f"""
+# @s = a player with no hurt id applied, #hurt_was = the level whose look the fade starts from
+scoreboard players operation @s {ns}.hurt_fx = #hurt_was {ns}.data
+scoreboard players set #hurt_tier {ns}.data 0
+function {ns}:v{version}/player/hurt_swap
 """)
 
 	fade_removes: str = "\n".join(

@@ -6,7 +6,7 @@
 # @within	mgs:v5.1.0/zombies/wunderfizz/setup_iter {run:"function mgs:v5.1.0/zombies/wunderfizz/on_hover",executor:"source"} [ as @n[tag=mgs.wf_new] ]
 #
 
-# If this player's perk is ready to collect here, prompt the pick-up (with the perk name) instead of the cost
+# The player's ready perk: prompt the pick-up instead of the cost.
 execute at @n[tag=bs.interaction.target] if entity @n[type=item_display,tag=mgs.wunderfizz_orb,distance=..3,scores={mgs.zb.wf.anim=..0}] if score @s mgs.zb.wf_pid = @n[type=item_display,tag=mgs.wunderfizz_orb,distance=..3] mgs.zb.wf.buyer run return run function mgs:v5.1.0/zombies/wunderfizz/hover_result
 
 execute store result score #wf_price mgs.data run scoreboard players get @n[tag=bs.interaction.target] mgs.zb.wf.price

@@ -6,7 +6,6 @@
 # @within	mgs:v5.1.0/actionbar/show
 #
 
-# Append cooldown indicator dot: green if ready, dark_red if on cooldown
 execute if score @s mgs.cooldown <= #total_tick mgs.data run data modify storage mgs:temp actionbar.list append value {"text":" ● ","color":"green"}
 execute if score @s mgs.cooldown > #total_tick mgs.data run data modify storage mgs:temp actionbar.list append value {"text":" ● ","color":"dark_red"}
 

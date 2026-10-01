@@ -5,7 +5,7 @@ version = "0.0.1"
 requires-python = ">=3.14"
 dependencies = [
 	"smithed",
-	"stewbeet>=3.9.4",
+	"stewbeet>=3.9.5",
 ]
 
 # This project is a datapack, not a Python package: uv only has to manage its dependencies.
@@ -76,4 +76,8 @@ ignore = [
     "N803",
     "N806",
 ]
+
+# Generator strings hold whole mcfunction commands, which read worse wrapped
+[tool.ruff.lint.per-file-ignores]
+"src/**" = ["E501"]
 

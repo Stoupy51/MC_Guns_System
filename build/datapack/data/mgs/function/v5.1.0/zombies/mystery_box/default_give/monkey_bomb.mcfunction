@@ -1,7 +1,7 @@
 
 #> mgs:v5.1.0/zombies/mystery_box/default_give/monkey_bomb
 #
-# @within	???
+# @within	string in mgs:v5.1.0/zombies/mystery_box/ensure_default_pool
 #
 
 scoreboard players set #wb_price mgs.data 0

@@ -24,11 +24,9 @@ def write_editor_state() -> None:
 
 	fn: str = editor_fn(ns, version)
 
-	## ==================================================================== Per-player editor state isolation Editor state is stored in {ns}:editor.{pid} (one per player).
-	## At dispatch start, we load to {ns}:temp editor; at end, save back.
+	## Each player's editor state lives in {ns}:editor.{pid}: loaded into {ns}:temp editor at dispatch start, saved back at the end.
 	write_versioned_function("multiplayer/editor/load_state", f"""
-# Initialize this player's slot first: if the copy failed (first interaction), {ns}:temp editor
-# would otherwise keep another player's in-progress state
+# The player's slot is created first: on a failed copy (first use), {ns}:temp editor would keep another player's state.
 $execute unless data storage {ns}:editor "$(_pid)" run data modify storage {ns}:editor "$(_pid)" set value {{}}
 $data modify storage {ns}:temp editor set from storage {ns}:editor "$(_pid)"
 """)
@@ -36,12 +34,12 @@ $data modify storage {ns}:temp editor set from storage {ns}:editor "$(_pid)"
 $data modify storage {ns}:editor "$(_pid)" set from storage {ns}:temp editor
 """)
 
-	## State init, budget recompute, and the snapshot/commit pattern
+	## State init, budget recompute, and the snapshot and commit pattern.
 	write_versioned_function("multiplayer/editor/init_state", f"""
 data modify storage {ns}:temp editor set value {empty_state()}
 """)
 
-	## Derive the Pick-10 cost from the current state (mags only count when their gun is picked)
+	## Pick-10 cost of the current state; magazines only count when their gun is picked.
 	recompute_lines: list[str] = [f"scoreboard players set #lc_cost {ns}.data 0"]
 	for prefix, w_cost, s_cost, m_cost in [
 		("primary", COST_PRIMARY_WEAPON, COST_PRIMARY_SCOPE, COST_PRIMARY_MAG),
@@ -57,25 +55,24 @@ data modify storage {ns}:temp editor set value {empty_state()}
 		recompute_lines.append(
 			f'execute unless data storage {ns}:temp editor{{{field}:""}} run scoreboard players add #lc_cost {ns}.data {COST_GRENADE}'
 		)
-	# Perks: data get on a LIST cannot take a scale (throws "not a number", silently costing 0 points and letting players overspend the budget) — get the count, then multiply by the cost constant.
+	# `data get` on a list takes no scale (it fails silently, letting players overspend), so the count is multiplied by the cost.
 	recompute_lines += [
 		f"execute store result score #lc_t {ns}.data run data get storage {ns}:temp editor.perks",
 		f"scoreboard players operation #lc_t {ns}.data *= #{COST_PERK} {ns}.data",
 		f"scoreboard players operation #lc_cost {ns}.data += #lc_t {ns}.data",
 		f"scoreboard players set @s {ns}.mp.edit_points {PICK10_TOTAL}",
 		f"scoreboard players operation @s {ns}.mp.edit_points -= #lc_cost {ns}.data",
-		# Mirrored into storage here so every submenu can hand it straight to show_static_dialog
+		# Every submenu passes it to show_static_dialog.
 		f"execute store result storage {ns}:temp _dlg.pts int 1 run scoreboard players get @s {ns}.mp.edit_points",
 	]
 	write_versioned_function("multiplayer/editor/recompute_points", "\n".join(recompute_lines))
 
-	## Commit check: callers snapshot {ns}:temp editor into {ns}:temp _ed_bak before mutating, then `execute store success score #ed_ok ... run function .../commit_check`.
-	## On overflow the mutation is reverted and the player is notified.
+	## Callers snapshot {ns}:temp editor into {ns}:temp _ed_bak, mutate, then `execute store success score #ed_ok ... run function .../commit_check`.
+	## On overflow the change is reverted and the player told.
 	write_versioned_function("multiplayer/editor/commit_check", f"""
 function {fn}/recompute_points
 execute if score @s {ns}.mp.edit_points matches 0.. run return 1
 
-# Over budget: revert and deny
 data modify storage {ns}:temp editor set from storage {ns}:temp _ed_bak
 function {fn}/recompute_points
 tellraw @s [{MGS_TAG},{{"text":"Not enough points for that!","color":"red"}}]

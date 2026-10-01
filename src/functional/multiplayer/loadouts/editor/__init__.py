@@ -1,11 +1,12 @@
-""" Custom Loadout Editor — CoD-style hub.
+""" Custom loadout editor, a CoD-style hub.
 
-The editor opens on a HUB page listing every category (guns, magazines, grenades, perks) with the current selection on each button and the Pick-10 points at the top.
-Clicking a row opens a short submenu (e.g.
-Primary: gun → scope → camo) that returns to the hub when done.
-Rows whose prerequisite is missing (magazines without the gun, saving without a primary) are grayed out as "Unavailable".
+The editor opens on a hub listing every category (guns, magazines, grenades, perks) with the current selection on each button and the Pick-10 points at the top.
+A row opens a short submenu (primary: gun, scope, camo) that returns to the hub when done.
+Rows whose prerequisite is missing (magazines without their gun, saving without a primary) are grayed out as "Unavailable".
 
-Points are never deducted/refunded incrementally: editor/recompute_points derives the cost from the current state, and every mutation goes through a snapshot+commit check that reverts and denies when the budget would be exceeded. """
+Points are never deducted or refunded step by step: editor/recompute_points derives the cost from the current state.
+Every change goes through a snapshot and commit check that reverts and denies when the budget would be exceeded.
+"""
 # Imports
 from .camos import write_editor_camos
 from .dialogs import write_editor_dialog_base

@@ -1,8 +1,7 @@
 """ Cheap NBT reads: bounce the value through a light entity instead of serializing a heavy one.
 
-`data ... from entity <target>` has no fast path, it serializes the whole entity and only then walks
-the path. A player drags its inventory, ender chest and entire recipe book along, measured at 886 us
-against 110 us through a display, and a mob still drags its attributes, effects and equipment.
+`data ... from entity <target>` has no fast path, it serializes the whole entity and only then walks the path.
+A player drags its inventory, ender chest and entire recipe book along, measured at 886 us against 110 us through a display, and a mob still drags its attributes, effects and equipment.
 """
 # Imports
 from stewbeet import Mem, write_versioned_function
@@ -23,8 +22,7 @@ class Probe:
 		""" Emit the marker body that Probe.pos summons. """
 		ns: str = Mem.ctx.project_id
 
-		# A kill only takes effect at the end of the tick, so the marker is moved out of the world first,
-		# otherwise any positional selector running later in the same tick would still find it.
+		# A kill only takes effect at the end of the tick, so the marker leaves the world first, or later selectors this tick would still find it.
 		write_versioned_function("shared/probe_pos", f"""
 data modify storage {ns}:temp {Probe.POS_PATH} set from entity @s Pos
 tp @s ~ -1000000 ~
@@ -36,7 +34,7 @@ kill @s
 		""" One command leaving the target position in {ns}:temp _probe_pos, as a list of three doubles.
 
 		Args:
-			target (str): Selector to read the position of
+			target: Selector to read the position of
 		Returns:
 			str: The command to inline in a function body
 		"""
@@ -49,13 +47,12 @@ kill @s
 		Read the stack back with `from entity {Probe.ITEM_DISPLAY} item`, which carries no Slot key.
 
 		Args:
-			slot   (str): Slot name, ex: "weapon.mainhand" or "hotbar.1"
-			target (str): Selector holding the stack
+			slot: Slot name, ex: "weapon.mainhand" or "hotbar.1"
+			target: Selector holding the stack
 		Returns:
 			str: The command to inline in a function body
-		Examples:
-			>>> Probe.item("hotbar.1")
-			'item replace entity B5-0-0-0-3 contents from entity @s hotbar.1'
+		>>> Probe.item("hotbar.1")
+		'item replace entity B5-0-0-0-3 contents from entity @s hotbar.1'
 		"""
 		return f"item replace entity {Probe.ITEM_DISPLAY} contents from entity {target} {slot}"
 

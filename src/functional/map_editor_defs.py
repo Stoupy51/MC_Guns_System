@@ -28,7 +28,6 @@ PERK_PRICE_DOC: str = (
 )
 
 # Classes
-# Element Definitions.
 @dataclass(frozen=True)
 class ElementDef:
 	""" One placeable map element: how its marker looks and how it is saved. """
@@ -53,7 +52,6 @@ class ElementDef:
 	config_uses_default_function: bool = False
 	requires_offhand_block: bool = False
 
-# All element types across all modes.
 ALL_ELEMENTS: dict[str, ElementDef] = {
 	"base_coordinates":   ElementDef(name="Base Coordinates", color="light_purple", particle=[1.0, 0.0, 1.0], particle_scale=1.5, has_rotation=False, egg_model="minecraft:endermite_spawn_egg",   save_type="base",                                                 emoji="⬟"),
 	"red_spawn":          ElementDef(name="Red Spawn",        color="red",          particle=[1.0, 0.2, 0.2], particle_scale=1.0, has_rotation=True,  egg_model="minecraft:magma_cube_spawn_egg",  save_type="spawn",           save_path="spawning_points.red",     emoji="●"),
@@ -71,15 +69,14 @@ ALL_ELEMENTS: dict[str, ElementDef] = {
 	"enemy":              ElementDef(name="Enemy",            color="red",          particle=[1.0, 0.2, 0.2], particle_scale=1.0, has_rotation=False, egg_model="minecraft:pillager_spawn_egg",    save_type="enemy",           save_path="enemies",                 emoji="👤", config_uses_default_function=True),
 	# Config (utility, no marker)
 	"config":             ElementDef(name="⚙ Config",         color="white",        particle=[1.0, 1.0, 1.0], particle_scale=0.5, has_rotation=False, egg_model="minecraft:allay_spawn_egg",       save_type="config",                                               emoji="⚙"),
-	# Zombies elements (zb_object: compound data with pos/rotation/group_id + extra fields)
+	# Zombies elements (zb_object: a compound with pos, rotation, group_id and extra fields)
 	"zombie_spawn":       ElementDef(name="Zombie Spawn",     color="dark_green",   particle=[0.0, 0.5, 0.0], particle_scale=1.0, has_rotation=True,  egg_model="minecraft:zombie_spawn_egg",      save_type="zb_object",       save_path="spawning_points.zombies", emoji="🧟", defaults={"activation_box": [], "walk_to": []}),
 	"player_spawn_zb":    ElementDef(name="Player Spawn",     color="aqua",         particle=[0.0, 1.0, 1.0], particle_scale=1.0, has_rotation=True,  egg_model="minecraft:villager_spawn_egg",    save_type="zb_object",       save_path="spawning_points.players", emoji="●", defaults={}),
-	# Special spawns are the "not a regular zombie" spawn set: dog rounds use them today, mini-bosses and other scripted arrivals can reuse them later.
-	# A map without any simply never gets those rounds.
+	# Special spawns are for non-regular arrivals: dog rounds today, mini-bosses later. A map without any never gets those rounds.
 	"special_spawn":      ElementDef(name="Special Spawn",    color="dark_red",     particle=[0.6, 0.0, 0.2], particle_scale=1.0, has_rotation=True,  egg_model="minecraft:wolf_spawn_egg",        save_type="zb_object",       save_path="spawning_points.special", emoji="🐺", defaults={"activation_box": []}),
 	"wallbuy":            ElementDef(name="Wallbuy",          color="yellow",       particle=[1.0, 1.0, 0.0], particle_scale=1.0, has_rotation=True,  egg_model="minecraft:iron_golem_spawn_egg",  save_type="zb_object",       save_path="wallbuys",                emoji="🔫", defaults={"name": "", "price": 1000, "refill_price": 500, "refill_price_pap": 4500, "weapon_id": "m1911", "magazine_id": "m1911_mag"}),
 	"door":               ElementDef(name="Door",             color="gold",         particle=[1.0, 0.6, 0.0], particle_scale=1.0, has_rotation=True,  egg_model="minecraft:hoglin_spawn_egg",      save_type="zb_object",       save_path="doors",                   emoji="🚪",                                    requires_offhand_block=True, defaults={"name": "Door", "back_name": "Door", "price": 1000, "partial_price": 0, "link_id": 1, "back_group_id": -1, "block": "", "animation": 0, "sound": ""}),
-	# Trap types: 0 = fire, 1 = electric, 2 = turret
+	# Trap types: 0 fire, 1 electric, 2 turret.
 	"trap":               ElementDef(name="Trap",             color="red",          particle=[1.0, 0.2, 0.2], particle_scale=1.0, has_rotation=True,  egg_model="minecraft:cave_spider_spawn_egg", save_type="zb_object",       save_path="traps",                   emoji="🔮", defaults={"price": 1000, "type": 0, "duration": 200, "cooldown": 1200, "effect_radius": [3.0, 2.0, 3.0], "offset_pos": [0, 0, 0], "power": True}),
 	"perk_machine":       ElementDef(name="Perk Machine",     color="dark_purple",  particle=[0.5, 0.0, 0.5], particle_scale=1.0, has_rotation=True,  egg_model="minecraft:witch_spawn_egg",       save_type="zb_object",       save_path="perks",                   emoji="🧪", defaults={"name": "", "price": -1, "partial_price": 0, "perk_id": "juggernog", "power": True, "display_item": "", "item_model": ""}),
 	"wunderfizz":         ElementDef(name="Der Wunderfizz",   color="gold",         particle=[1.0, 0.7, 0.0], particle_scale=1.0, has_rotation=True,  egg_model="minecraft:bee_spawn_egg",         save_type="zb_object",       save_path="wunderfizz",              emoji="🎰", defaults={"name": "Der Wunderfizz", "price": 1500, "power": True, "all_perks": False, "can_start_on": True, "display_item": "", "item_model": ""}),
@@ -89,8 +86,7 @@ ALL_ELEMENTS: dict[str, ElementDef] = {
 	"barricade":            ElementDef(name="Barricade",          color="aqua",         particle=[0.0, 1.0, 1.0], particle_scale=1.0, has_rotation=True,  egg_model="minecraft:guardian_spawn_egg",    save_type="zb_object",       save_path="barricades",                emoji="🧱", defaults={"block_enabled": {"id": "minecraft:oak_fence_gate", "properties": {"open": "false"}}, "block_disabled": {"id": "minecraft:oak_fence_gate", "properties": {"open": "true"}}, "radius": 2}, light_fields=("block_enabled", "block_disabled")),
 }
 
-# Elements rendered as real in-game models in the editor (instead of dust particles).
-# Each has a maps/editor/displays/<etype> function mirroring the game's own display setup, rebuilt every second so rotation/config edits on the marker stay in sync.
+# Shown as real in-game models in the editor instead of dust, each through maps/editor/displays/<etype>, which mirrors the game's own display setup.
 MODEL_DISPLAY_ELEMENTS: tuple[str, ...] = ("wallbuy", "perk_machine", "wunderfizz", "pap_machine", "mystery_box_pos", "power_switch", "barricade")
 
 OPTIONAL_LIST_FIELDS: dict[str, str] = {
@@ -101,18 +97,16 @@ OPTIONAL_LIST_FIELDS: dict[str, str] = {
 Empty brackets are useless to type into, and each gets a "✗" button to clear it again.
 """
 
-# Field documentation.
-# Tooltips shown (as a hover "ⓘ") next to constant/enum config fields in the element editor, so map makers don't have to guess what the magic numbers mean.
-# Keyed by (element_type, field); a plain field-name key acts as a fallback shared across element types (e.g.
-# "power").
+# Hover tooltips ("ⓘ") next to constant and enum fields in the element editor, so map makers need not guess the magic numbers.
+# Keyed by (element_type, field); a plain field name is a fallback shared by every element type ("power").
 FIELD_DOCS: dict[tuple[str, str] | str, str] = {
-	("trap", "type"): "Trap behaviour:\n0 = Fire — lethal to zombies, burns players inside\n1 = Electric — lethal to zombies, shocks players inside\n2 = Turret — auto-fires at the nearest zombie every 5 ticks",
+	("trap", "type"): "Trap behaviour:\n0 = Fire: lethal to zombies, burns players inside\n1 = Electric: lethal to zombies, shocks players inside\n2 = Turret: auto-fires at the nearest zombie every 5 ticks",
 	("trap", "duration"): "How long the trap stays active, in ticks (20 ticks = 1 second).",
 	("trap", "cooldown"): "Cooldown before the trap can be re-triggered, in ticks (20 = 1s).",
-	("door", "animation"): "Open animation:\n0 = Destroy — block-break particles + sound\n1+ = Silent — blocks instantly replaced with air",
+	("door", "animation"): "Open animation:\n0 = Destroy: block-break particles + sound\n1+ = Silent: blocks instantly replaced with air",
 	("door", "link_id"): "Doors that share a link_id open together as a single purchase.",
-	("door", "partial_price"): "Chip-in payments: points taken per right-click (0 = pay the full price at once).\nExample: price 5000 + partial_price 500 = 10 payments.\nDoor progress is GLOBAL — any mix of players can contribute, and the last\npayment is just whatever is left. Progress is shared by every linked door.",
-	("perk_machine", "partial_price"): "Chip-in payments: points taken per right-click (0 = pay the full price at once).\nExample: price 2500 + partial_price 500 = 5 payments.\nPerk progress is LOCAL — each player pays down their own perk, nobody can\ncontribute to someone else's. Progress is lost when the perk is obtained.",
+	("door", "partial_price"): "Chip-in payments: points taken per right-click (0 = pay the full price at once).\nExample: price 5000 + partial_price 500 = 10 payments.\nDoor progress is GLOBAL: any mix of players can contribute, and the last\npayment is just whatever is left. Progress is shared by every linked door.",
+	("perk_machine", "partial_price"): "Chip-in payments: points taken per right-click (0 = pay the full price at once).\nExample: price 2500 + partial_price 500 = 5 payments.\nPerk progress is LOCAL: each player pays down their own perk, nobody can\ncontribute to someone else's. Progress is lost when the perk is obtained.",
 	("door", "back_group_id"): "Zombie spawn group_id unlocked behind this door (-1 = none).",
 	("perk_machine", "name"): "Display label shown when hovering the machine.\nLeave EMPTY to auto-resolve the perk's canonical name from perk_id\n(e.g. juggernog -> Juggernog). Only set this to override that name.",
 	("perk_machine", "perk_id"): PERK_ID_DOC,
@@ -124,14 +118,13 @@ FIELD_DOCS: dict[tuple[str, str] | str, str] = {
 	("barricade", "radius"): "Block radius the barricade toggles open/closed around its marker.",
 	("mystery_box_pos", "location_name"): "Name of the place this spot sits in, announced in chat when the box\nlands here (e.g. \"the Power Room\").\nLeave EMPTY to fall back to the generic \"a new location\" message.",
 	"activation_box": "Optional [x, y, z, dx, dy, dz] box (relative to this spawn, in blocks).\nWhen set, this spawn only produces enemies while a player stands inside the box.\nx/y/z = corner offset from the spawn, dx/dy/dz = size. Empty [] = always active.",
-	"walk_to": "Optional [x, y, z] offset (relative to this spawn, in blocks).\nWhen set, zombies from this spawn walk straight to that spot instead of\nheading for the nearest player — a pathfinding escort carries them there,\nthen hands them back to normal AI on arrival. Empty [] = normal behaviour.\nAim it just inside a window and they break in through the barricade on the way.",
-	# Shared fallbacks (any element type):
+	"walk_to": "Optional [x, y, z] offset (relative to this spawn, in blocks).\nWhen set, zombies from this spawn walk straight to that spot instead of\nheading for the nearest player. A pathfinding escort carries them there,\nthen hands them back to normal AI on arrival. Empty [] = normal behaviour.\nAim it just inside a window and they break in through the barricade on the way.",
+	# Shared fallbacks:
 	"can_start_on": "true = the machine is allowed to be the ACTIVE (usable) spot at game\nstart and after it roams. false = a valid roam destination, but never\nthe first active spot. Only one spot is active at a time; the rest show\na grayed-out disabled model. At least one spot must allow starting.",
 	"power": "true = requires the map's power to be switched on before it works\nfalse = always usable",
 	"price": "Cost in points to buy/use this element.",
 }
 
-# Mode Definitions.
 @dataclass(frozen=True)
 class EditorMode:
 	""" One editor mode: its label and which elements map to which hotbar/inventory slots. """

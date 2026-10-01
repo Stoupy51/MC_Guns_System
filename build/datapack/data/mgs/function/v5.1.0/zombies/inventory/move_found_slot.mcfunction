@@ -50,7 +50,7 @@
 #			to (string)
 #
 
-# Swap source and target via temp item_display (handles empty target too)
+# Through a temporary item_display, which also handles an empty target.
 tag @s add mgs.inv_swapping
 $execute summon item_display run function mgs:v5.1.0/zombies/inventory/swap_slots {from:"$(from)",to:"$(to)"}
 tag @s remove mgs.inv_swapping

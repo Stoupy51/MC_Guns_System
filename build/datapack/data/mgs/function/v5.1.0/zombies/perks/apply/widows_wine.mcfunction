@@ -1,7 +1,9 @@
 
 #> mgs:v5.1.0/zombies/perks/apply/widows_wine
 #
-# @within	???
+# @executed	as @p[tag=mgs.pu_collecting]
+#
+# @within	mgs:v5.1.0/zombies/perks/apply
 #
 
 scoreboard players set @s mgs.special.widows_wine 1

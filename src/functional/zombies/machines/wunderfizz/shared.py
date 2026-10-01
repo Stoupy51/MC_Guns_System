@@ -4,15 +4,13 @@
 from ..perks.definitions import PERK_DEFINITIONS
 
 # Constants
-# Roam move animation length (ticks).
 # The bear rises, the machine relocates (model swap) at the midpoint, then settles.
-# In-engine timing polish is a HUMAN eyeball pass.
 WF_MOVE_TICKS: int = 100
 WF_MOVE_RELOCATE: int = 55
 """ Tick the active spot actually changes (model swap + visibility). """
 WF_MOVE_BEAR_POOF: int = 48
 """ Tick the bear despawns. """
-# Uses on the active machine before it may roll to roam (mirrors the Mystery Box's 4-pull threshold)
+# Uses before the active machine may roam, like the Mystery Box's 4 pulls.
 WF_MOVE_THRESHOLD: int = 4
 
 PERK_IDS: list[str] = list(PERK_DEFINITIONS)

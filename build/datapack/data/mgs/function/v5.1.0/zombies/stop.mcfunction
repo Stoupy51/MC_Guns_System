@@ -8,12 +8,11 @@
 #			dialog mgs:v5.1.0/zombies/setup
 #
 
-# Various cleanup to set to lobby state
 data modify storage mgs:zombies game.state set value "lobby"
 schedule clear mgs:v5.1.0/zombies/end_prep
 schedule clear mgs:v5.1.0/zombies/start_round
 
-# Drop any admin freeze (the attribute/NoAI restore below is part of the normal cleanup)
+# The attribute and NoAI restore below is part of the normal cleanup.
 scoreboard players set #zb_freeze mgs.data 0
 tag @e[tag=mgs.zb_frozen_ai] remove mgs.zb_frozen_ai
 execute as @a[scores={mgs.zb.in_game=1}] run attribute @s minecraft:max_health base reset
@@ -25,33 +24,29 @@ gamemode adventure @a[scores={mgs.zb.in_game=1},gamemode=spectator]
 kill @e[tag=mgs.zombie_round]
 kill @e[tag=mgs.gm_entity]
 
-# Remove forceload (only if bounds were set)
 execute if score #zb_has_bounds mgs.data matches 1 run function mgs:v5.1.0/shared/remove_forceload
 
 scoreboard objectives setdisplay sidebar
 scoreboard objectives remove mgs.zb_sidebar
 gamerule advance_time true
 
-# Re-enable natural regeneration, disable custom regen system
 gamerule natural_health_regeneration true
 scoreboard players set #any_game_active mgs.data 0
 
-# Tear down stamina state: stop any hunger drain and refill the bar so nobody is left winded
+# Stop any hunger drain and refill the bar, so nobody is left winded.
 effect clear @a minecraft:hunger
 effect give @a minecraft:saturation 5 20 true
 scoreboard players set @a mgs.stam_out 0
 scoreboard players set @a mgs.stam_seen 0
 
-# Take every shader id back off, so nothing survives into the lobby
+# Every shader id off, so nothing survives into the lobby.
 execute as @a run function mgs:v5.1.0/player/fx_reset
 
-# Announce
 tellraw @a [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.zombies_game_ended","color":"red"}]
 execute as @a[scores={mgs.zb.in_game=1}] run function mgs:v5.1.0/shared/maps/call_script_at_base {script:"leave"}
 
-# Reset in-game state
 scoreboard players set @a mgs.zb.in_game 0
-# Keep the XP spend tracker in step: an unsynced reset reads as points being SPENT (see zombies/xp.py)
+# The XP spend tracker is reset too, or the reset reads as points spent (see xp).
 scoreboard players set @a mgs.zb.points 0
 scoreboard players set @a mgs.zb.xp_pts_prev 0
 scoreboard players set @a mgs.zb.xp_spent_acc 0
@@ -66,15 +61,12 @@ tag @a[tag=mgs.give_class_menu] remove mgs.give_class_menu
 
 kill @e[type=minecraft:marker,tag=mgs.death_watch]
 
-# Portals are gm_entity so the bulk cleanup already removes them; the counter they feed has to be
-# zeroed by hand or a stale value would block the next game's round completion forever.
+# gm_entity cleanup removes the portals, but the counter must be zeroed or the next game's round would never complete.
 kill @e[type=minecraft:marker,tag=mgs.dog_portal]
 scoreboard players set #zb_dog_pending mgs.data 0
 
-# Escort cleanup (escort.py); the traders themselves die with the mgs.gm_entity kill above
 scoreboard players set #zb_escort_count mgs.data 0
 
-# Remove all pull displays and presence boxes, reset all per-box state
 kill @e[tag=mgs.mb_display]
 kill @e[tag=mgs.mb_presence]
 kill @e[tag=mgs.mb_disabled]
@@ -87,12 +79,10 @@ scoreboard players set #mb_pid_counter mgs.data 0
 tag @e remove mgs.mb_fs_active
 tag @e remove mgs.mb_orig_active
 
-# Barricades cleanup
 tag @e[tag=mgs.barricade_removing] remove mgs.barricade_removing
 tag @a[tag=mgs.barricade_repairing] remove mgs.barricade_repairing
 scoreboard players reset @a mgs.zb.barricade_repairs
 
-# Power-up cleanup
 kill @e[type=minecraft:item,tag=mgs.pu_item]
 kill @e[type=minecraft:text_display,tag=mgs.pu_text]
 scoreboard players set #pu_active mgs.data 0
@@ -104,7 +94,7 @@ scoreboard players set @a mgs.special.double_points 0
 scoreboard players set @a mgs.special.infinite_ammo 0
 data modify storage mgs:data _pu_queue set value []
 
-# Fire Sale cleanup (reset the global timer + remove its bossbar + stop the song)
+# Also stops the song.
 scoreboard players set #zb_fire_sale_timer mgs.data 0
 scoreboard players set #mb_fs_cleanup_pending mgs.data 0
 bossbar remove mgs:pu_fire_sale
@@ -113,16 +103,13 @@ tag @e remove mgs.mb_fs_active
 tag @e remove mgs.mb_orig_active
 kill @e[tag=mgs.mb_temp]
 
-# Bonfire Sale cleanup (reset the global timer + remove its bossbar)
 scoreboard players set #zb_bonfire_sale_timer mgs.data 0
 bossbar remove mgs:pu_bonfire_sale
 
-# Remove all duration-based bossbars
 bossbar remove mgs:pu_insta_kill
 bossbar remove mgs:pu_double_points
 bossbar remove mgs:pu_unlimited_ammo
 
-# Reset perk effects
 execute as @a[team=mgs.zombies] run attribute @s minecraft:max_health base reset
 execute as @a[team=mgs.zombies] run attribute @s minecraft:movement_speed modifier remove mgs:stamin_up
 execute as @a[team=mgs.zombies] run attribute @s minecraft:fall_damage_multiplier base reset
@@ -141,7 +128,7 @@ scoreboard players set @a[team=mgs.zombies] mgs.special.infinite_ammo 0
 scoreboard players set @a[team=mgs.zombies] mgs.special.double_points 0
 scoreboard players set @a[team=mgs.zombies] mgs.special.quick_reload 0
 scoreboard players set @a[team=mgs.zombies] mgs.special.quick_swap 0
-scoreboard players set @a[team=mgs.zombies] mgs.special.additional_shots 0
+scoreboard players set @a[team=mgs.zombies] mgs.special.double_tap 0
 scoreboard players set @a[team=mgs.zombies] mgs.special.phd_flopper 0
 scoreboard players set @a[team=mgs.zombies] mgs.special.deadshot 0
 scoreboard players set @a[team=mgs.zombies] mgs.special.timeslip 0
@@ -155,7 +142,7 @@ scoreboard players set @a[team=mgs.zombies] mgs.special.tactical_mask 0
 scoreboard players set @a[team=mgs.zombies] mgs.special.overkill 0
 scoreboard players set @a[team=mgs.zombies] mgs.special.quick_fix 0
 
-# Reset perk scoreboards for all known score holders (including offline players).
+# Every known score holder, offline players included.
 scoreboard players reset * mgs.zb.perk.juggernog
 scoreboard players reset * mgs.zb.perk.speed_cola
 scoreboard players reset * mgs.zb.perk.double_tap
@@ -195,7 +182,6 @@ tag @a remove mgs.ww_active
 scoreboard players set @a mgs.zb.ww.id 0
 data modify storage mgs:zombies ww_inv set value {}
 
-# Reset revive state
 scoreboard players set @a mgs.zb.downed 0
 scoreboard players set @a mgs.zb.bleed 0
 scoreboard players set @a mgs.zb.revive_p 0

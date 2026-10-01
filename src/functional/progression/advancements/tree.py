@@ -1,12 +1,7 @@
 """ The advancement JSON: one tab, three branch roots, and every node under them.
 
-Threshold tiers carry their own condition, so vanilla unlocks them the instant the counter qualifies and
-the pack never runs `advancement grant`. That is what removes the companion scores, the unlock ladders
-and the admin resync a command-driven version would have needed, and what makes a retune self-healing:
-lower a threshold, reload, and everyone who already qualifies unlocks on the next tick.
-
-Event challenges are the exception and use `minecraft:impossible`, so the single grant at their site is
-the only way in.
+Tiers and event challenges use `minecraft:impossible`: the pack grants them with `advancement grant`, from the check function each counter change runs (see `hooks.py`).
+A `minecraft:tick` criterion per tier would cost one score check per unearned tier, per player, per tick.
 
 Paths are unversioned. Reward function references are not, because the JSON is rewritten on every build
 and always names a function the loaded pack has.
@@ -35,13 +30,12 @@ class Tree:
 	def icon_json(icon: str) -> JsonDict:
 		""" Return the `ItemStackTemplate` for one node's icon.
 
-		A namespaced id is a vanilla item and is used as-is. A bare id is one of the pack's own items, and
-		becomes its real base item carrying its `item_model`, so the advancement screen shows the actual
-		weapon model rather than the poisonous potato every gun is built on. `Item.from_id` is strict, so a
-		mistyped weapon id fails the build instead of rendering as a potato in game.
+		A namespaced id is a vanilla item and is used as-is.
+		A bare id is one of the pack's own items, and becomes its real base item carrying its `item_model`, so the advancement screen shows the actual weapon model rather than the poisonous potato every gun is built on.
+		`Item.from_id` is strict, so a mistyped weapon id fails the build instead of rendering as a potato in game.
 
 		Args:
-			icon (str): `minecraft:target`, or a pack item id such as `ak47`.
+			icon: `minecraft:target`, or a pack item id such as `ak47`.
 		Returns:
 			JsonDict: ex: `{"id": "minecraft:poisonous_potato", "components": {"minecraft:item_model": "mgs:ak47"}}`
 		"""
@@ -58,11 +52,11 @@ class Tree:
 		carrying the XP amount, which vanilla's announcement cannot do.
 
 		Args:
-			title       (str):  Shown in the toast and on the node.
-			description (str):  Shown in the tooltip.
-			icon        (str):  Item id.
-			frame       (str):  `task`, `goal` or `challenge`.
-			hidden      (bool): Whether the node stays invisible until earned.
+			title: Shown in the toast and on the node.
+			description: Shown in the tooltip.
+			icon: Item id.
+			frame: `task`, `goal` or `challenge`.
+			hidden: Whether the node stays invisible until earned.
 		Returns:
 			JsonDict: The display block.
 		"""
@@ -77,43 +71,11 @@ class Tree:
 		}
 
 	@staticmethod
-	def score_criteria(objective: str, threshold: int) -> JsonDict:
-		""" Return the criteria block that unlocks when a score reaches a threshold.
-
-		`minecraft:tick` fires once per tick per player and stops being evaluated the moment the
-		advancement completes, so the cost decays to zero as a player finishes the tree.
-
-		`player` is a ContextAwarePredicate, which is a LIST of loot conditions. Handing it a bare
-		condition object makes it fall through to its alternative branch, which reads the value as an
-		EntityPredicate and rejects every key as an unknown entity sub-predicate type. The list is not
-		cosmetic.
-
-		Args:
-			objective (str): Full objective name, ex: "mgs.adv.zb.kills".
-			threshold (int): Minimum value that unlocks it.
-		Returns:
-			JsonDict: One criterion named `threshold`.
-		"""
-		return {
-			"threshold": {
-				"trigger": "minecraft:tick",
-				"conditions": {
-					"player": {
-						"type": "minecraft:entity_scores",
-						"entity": "this",
-						"scores": {objective: {"min": threshold}},
-					},
-				},
-			}
-		}
-
-	@staticmethod
 	def write(path: str, advancement: JsonDict) -> None:
 		""" Register one advancement file at an unversioned path.
 
 		Args:
-			path        (str):      Path under the namespace, ex: "challenges/zb/kills_2".
-			advancement (JsonDict): The whole file.
+			path: Path under the namespace, ex: "challenges/zb/kills_2".
 		"""
 		Mem.ctx.data[Mem.ctx.project_id].advancements[path] = set_json_encoder(Advancement(advancement), max_level=-1)
 
@@ -144,11 +106,7 @@ class Tree:
 
 	@staticmethod
 	def write_branch_root(branch: Branch) -> None:
-		""" Write one branch sub-root.
-
-		Args:
-			branch (Branch): The branch.
-		"""
+		""" Write one branch sub-root. """
 		Tree.write(f"{ROOT_PATH}/{branch.key}/root", {
 			"parent": f"{Mem.ctx.project_id}:{ROOT_PATH}/root",
 			"display": {
@@ -160,11 +118,7 @@ class Tree:
 
 	@staticmethod
 	def write_chain(chain: Chain) -> None:
-		""" Write every tier of one chain, parented in order, and the sentinel that reveals it.
-
-		Args:
-			chain (Chain): The chain.
-		"""
+		""" Write every tier of one chain, parented in order, and the sentinel that reveals it. """
 		ns: str = Mem.ctx.project_id
 		version: str = Mem.ctx.project_version
 		parent: str = f"{ns}:{ROOT_PATH}/{chain.branch}/root"
@@ -176,17 +130,13 @@ class Tree:
 				"display": Tree.display(
 					tier.title, chain.description_of(index), chain.icon_of(index), chain.frame_of(index), tier.hidden,
 				),
-				"criteria": Tree.score_criteria(chain.stat.objective, tier.threshold),
+				"criteria": {"threshold": {"trigger": "minecraft:impossible"}},
 				"rewards": {"function": f"{ns}:v{version}/progression/adv/{chain.branch}/{chain.key}/reward_{index + 1}"},
 			})
 			parent = f"{ns}:{path}"
 
-		## Without this, a fresh player sees only the first two tiers of every chain. Vanilla shows an
-		## unfinished node only if it or one of its two nearest ancestors is done, so tier 3 and beyond are
-		## invisible and nobody can find out what they are chasing.
-		## A node with no `display` is never rendered, but `AdvancementVisibilityEvaluator` still ORs its
-		## done-ness into every ancestor, so hanging one completed sentinel off the last tier lights up the
-		## whole chain. It is granted by an unconditioned tick, pays nothing and says nothing.
+		## Vanilla only shows an unfinished node if it or one of its two nearest ancestors is done, so tiers 3+ would be invisible.
+		## A display-less node is never rendered but still marks its ancestors done, so a completed sentinel on the last tier reveals the whole chain.
 		Tree.write(f"{ROOT_PATH}/{chain.branch}/{chain.key}_{REVEAL_SUFFIX}", {
 			"parent": parent,
 			"criteria": {"joined": {"trigger": "minecraft:tick"}},
@@ -194,11 +144,7 @@ class Tree:
 
 	@staticmethod
 	def write_event(event: EventChallenge) -> None:
-		""" Write one event challenge, unreachable except by command.
-
-		Args:
-			event (EventChallenge): The challenge.
-		"""
+		""" Write one event challenge, unreachable except by command. """
 		ns: str = Mem.ctx.project_id
 		version: str = Mem.ctx.project_version
 		Tree.write(Catalog.event_path(event), {
@@ -216,3 +162,4 @@ class Tree:
 			Tree.write_chain(chain)
 		for event in EVENTS:
 			Tree.write_event(event)
+

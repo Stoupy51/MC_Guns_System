@@ -5,10 +5,8 @@ everyone who played is still on the roster. Missions has award functions of its 
 `missions/xp.py`), but neither of these two counts an award: one counts victories and the other reads the
 mission's kill total in one go, so the victory function is still the right and only place for them.
 
-Payouts go into the Multiplayer pool, which is the same pool `missions/xp.py` pays. Missions already runs
-on the multiplayer side (`mp.class`, `mp.team`, `mp.default`, the multiplayer loadout and class
-functions), and `progression/tick_player` shows the Multiplayer level everywhere outside a Zombies game,
-so a missions player is looking at their Multiplayer bar while they play.
+Payouts go into the Multiplayer pool, which is the same pool `missions/xp.py` pays.
+Missions already runs on the multiplayer side (`mp.class`, `mp.team`, `mp.default`, the multiplayer loadout and class functions), and `progression/tick_player` shows the Multiplayer level everywhere outside a Zombies game, so a missions player is looking at their Multiplayer bar while they play.
 """
 # Imports
 from ..model import Branch, Chain, EventChallenge, Stat, StatKind, Tier
@@ -89,3 +87,4 @@ MI_EVENTS: tuple[EventChallenge, ...] = (
 )
 """ Not expressible as a score: `mgs.mi.deaths` is zeroed for everyone at mission start, so outside the
 instant of a victory it reads 0 whether or not anybody earned it. """
+

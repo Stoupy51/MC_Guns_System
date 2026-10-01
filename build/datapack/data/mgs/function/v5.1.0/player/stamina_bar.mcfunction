@@ -9,19 +9,15 @@
 effect clear @s minecraft:saturation
 effect clear @s minecraft:hunger
 
-# The bar is read from the auto-updated 'food' criterion — no player-NBT read on this path.
-# Below target → refill pulse (+1 food this tick). Never given at/above target so the invisible
-# saturation side effect (+2/tick) can't stack past what's visible (stamina.md). The pulse may
-# leave invisible saturation behind, so flag it for the at-target burn-off below.
+# Read from the auto-updated `food` criterion, no NBT read. Below target: +1 food this tick, never at or above, so the invisible
+# saturation (+2 per tick) cannot stack past what is shown; the pulse may leave some, hence the flag.
 execute if score @s mgs.food < #stam_t mgs.data run scoreboard players set @s mgs.stam_dirty 1
 execute if score @s mgs.food < #stam_t mgs.data run return run effect give @s minecraft:saturation 1 0 true
 
-# Above target → hunger pulse slowly drains the bar, showing the player they sprint too much
+# Above target: a hunger pulse drains the bar slowly.
 execute if score @s mgs.food > #stam_t mgs.data run return run effect give @s minecraft:hunger 1 255 true
 
-# At target: only while flagged dirty, pay the saturation NBT read and burn leftovers off with
-# hunger pulses so the next drain shows immediately; once it reads 0 the flag clears and the
-# steady state costs no NBT read at all
+# At target and flagged: read saturation and burn leftovers off with hunger pulses, so the next drain shows at once; once 0 the flag clears and the steady state reads no NBT.
 execute unless score @s mgs.stam_dirty matches 1 run return 0
 execute store result score #stam_sat mgs.data run data get entity @s foodSaturationLevel
 execute if score #stam_sat mgs.data matches 1.. run return run effect give @s minecraft:hunger 1 255 true

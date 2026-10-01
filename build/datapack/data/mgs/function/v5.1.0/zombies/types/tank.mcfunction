@@ -1,12 +1,13 @@
 
 #> mgs:v5.1.0/zombies/types/tank
 #
-# @within	???
+# @executed	as @n[tag=mgs.zb_near,sort=random] & at @s
 #
-# @args		level (unknown)
+# @within	mgs:v5.1.0/zombies/summon_zombie_at {level:"$(level)"}
+#
+# @args		level (string)
 #
 
-# TODO: tank zombie — very high health, reduced movement speed
-# Falls through to normal scaling until implemented
+# TODO: very high health, slow movement.
 $function mgs:v5.1.0/zombies/types/normal {level:"$(level)"}
 

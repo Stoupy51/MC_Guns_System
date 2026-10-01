@@ -4,7 +4,7 @@ from stewbeet import write_versioned_function
 
 
 # Functions
-# Empty editor state (display fields default to readable values so hub rows always render)
+# Display fields default to readable values, so hub rows always render.
 def empty_state() -> str:
 	return (
 		'{primary:"",primary_name:"None",primary_mag:"",primary_mag_count:1,'
@@ -20,15 +20,11 @@ def empty_state() -> str:
 def editor_fn(ns: str, version: str) -> str:
 	""" Return the versioned function path every editor cross-reference is written against.
 
-	Args:
-		ns (str):      The project namespace.
-		version (str): The project version.
 	Returns:
 		str: The namespaced folder holding the editor's functions.
 
-	Examples:
-		>>> editor_fn("mgs", "1.0.0")
-		'mgs:v1.0.0/multiplayer/editor'
+	>>> editor_fn("mgs", "1.0.0")
+	'mgs:v1.0.0/multiplayer/editor'
 	"""
 	return f"{ns}:v{version}/multiplayer/editor"
 

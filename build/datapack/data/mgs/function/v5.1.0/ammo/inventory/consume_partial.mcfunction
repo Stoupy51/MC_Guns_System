@@ -8,9 +8,8 @@
 # @args		slot (string)
 #
 
-# Set the stack count to the remaining bullets (#bullets = remaining items in stack)
+# #bullets is the items left in the stack.
 $item modify entity @s $(slot) mgs:v5.1.0/set_consumable_count
 
-# Update player's ammo count
 scoreboard players operation @s mgs.remaining_bullets = #found_ammo mgs.data
 

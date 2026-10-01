@@ -7,9 +7,7 @@ from stewbeet import Mem, write_versioned_function
 def write_revive_hooks() -> None:
 	ns: str = Mem.ctx.project_id
 
-	# Hook: reset revive state on game start
 	write_versioned_function("zombies/start", f"""
-# Reset revive state
 scoreboard players set @a {ns}.zb.downed 0
 scoreboard players set @a {ns}.zb.bleed 0
 scoreboard players set @a {ns}.zb.revive_p 0
@@ -25,9 +23,7 @@ kill @e[tag={ns}.tombstone]
 data modify storage {ns}:zombies tombstone_inv set value {{}}
 """)
 
-	## Hook: reset revive state on game stop
 	write_versioned_function("zombies/stop", f"""
-# Reset revive state
 scoreboard players set @a {ns}.zb.downed 0
 scoreboard players set @a {ns}.zb.bleed 0
 scoreboard players set @a {ns}.zb.revive_p 0

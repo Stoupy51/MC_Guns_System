@@ -7,14 +7,13 @@
 #			mgs:v5.1.0/mob/shoot [ anchored eyes & positioned ^ ^ ^ ]
 #
 
-# Copy damage to temp storage to avoid modifying original for multiple pellets
+# A copy, so pellets do not modify the original.
 data modify storage mgs:temp damage set from storage mgs:gun all.stats.damage
 
-# Handle accuracy
 tp @s ~ ~ ~ ~ ~
 function mgs:v5.1.0/raycast/accuracy/apply_spread
 
-# Scores to remember to only play a sound type once
+# Each sound type plays once per shot.
 scoreboard players set #played_water mgs.data 0
 scoreboard players set #played_glass mgs.data 0
 scoreboard players set #played_cloth mgs.data 0
@@ -26,7 +25,6 @@ scoreboard players set #played_solid mgs.data 0
 scoreboard players set #played_soft mgs.data 0
 scoreboard players set #next_air_particle mgs.data 0
 
-# Prepare arguments
 data modify storage mgs:input with set value {}
 data modify storage mgs:input with.blocks set value "function #bs.hitbox:callback/get_block_shape_with_fluid"
 data modify storage mgs:input with.entities set value "!global.ignore"
@@ -39,9 +37,8 @@ data modify storage mgs:input with.on_targeted_block set value "function mgs:v5.
 data modify storage mgs:input with.on_targeted_entity set value "function mgs:v5.1.0/raycast/on_targeted_entity"
 data modify storage mgs:input with.on_exit_point set value "function mgs:v5.1.0/raycast/on_exit_point"
 
-# Launch raycast with callbacks (https://docs.mcbookshelf.dev/en/latest/modules/raycast.html#run-the-raycast)
+# https://docs.mcbookshelf.dev/en/latest/modules/raycast.html#run-the-raycast
 execute at @s run function #bs.raycast:run with storage mgs:input
 
-# Kill marker
 kill @s
 

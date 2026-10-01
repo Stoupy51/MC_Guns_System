@@ -12,5 +12,6 @@ scoreboard players operation @s mgs.zb.xp_prog += #xp_gain mgs.data
 
 # Observers of this award
 scoreboard players operation @s mgs.adv.zb.spending += #xp_gain mgs.data
+function mgs:v5.1.0/progression/adv/zb/spending/check
 function mgs:v5.1.0/progression/zb/settle
 

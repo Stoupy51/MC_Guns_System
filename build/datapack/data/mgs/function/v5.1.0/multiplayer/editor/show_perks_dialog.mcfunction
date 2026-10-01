@@ -11,7 +11,6 @@ function mgs:v5.1.0/multiplayer/editor/recompute_points
 execute store result storage mgs:temp _pts int 1 run scoreboard players get @s mgs.mp.edit_points
 execute store result storage mgs:temp _perk_count int 1 run data get storage mgs:temp editor.perks
 
-# Base dialog (no actions yet), then one button per perk (green+✔ if selected, aqua if not)
 function mgs:v5.1.0/multiplayer/editor/show_perks_dialog_base with storage mgs:temp
 execute if data storage mgs:temp editor{perks:["quick_reload"]} run data modify storage mgs:temp dialog.actions append value {label:{text:"\u2714 Sleight of Hand",color:"green",bold:true},tooltip:["",{"translate":"mgs.reload_50_faster","color":"gray"},["","\n",{"translate":"mgs.cost"},": "],[{"text":"1","color":"gold"}]," pt",[{"text":"\n","color":"dark_gray"}, {"translate":"mgs.click_to_toggle_on_off"}]],action:{type:"run_command",command:"/trigger mgs.player.config set 410"}}
 execute unless data storage mgs:temp editor{perks:["quick_reload"]} run data modify storage mgs:temp dialog.actions append value {label:{translate:"mgs.sleight_of_hand",color:"aqua"},tooltip:["",{"translate":"mgs.reload_50_faster","color":"gray"},["","\n",{"translate":"mgs.cost"},": "],[{"text":"1","color":"gold"}]," pt",[{"text":"\n","color":"dark_gray"}, {"translate":"mgs.click_to_toggle_on_off"}]],action:{type:"run_command",command:"/trigger mgs.player.config set 410"}}

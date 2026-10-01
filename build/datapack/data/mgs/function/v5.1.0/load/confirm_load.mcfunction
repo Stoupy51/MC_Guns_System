@@ -4,67 +4,52 @@
 # @within	mgs:v5.1.0/load/valid_dependencies
 #
 
-# Player config: trigger objective for /trigger command
 scoreboard objectives add mgs.player.config trigger
 
-# Per-player toggles (default 0 = disabled)
+# Off by default.
 scoreboard objectives add mgs.player.hitmarker dummy
 scoreboard objectives add mgs.player.damage_debug dummy
 
-## Define objectives
-# Used to tag players that should be selected by Multiplayer/Mission/Zombies functions (@a)
-# We use a scoreboard instead of tag so we can reset offline players
-scoreboard objectives add mgs.player dummy
-
-# Tracks the currently selected weapon ID for each player
+## Length of the selected item id, to detect a change.
 scoreboard objectives add mgs.previous_selected dummy
 
-# Tracks right clicks to enable continuous right-click detection
+# Continuous right-click detection.
 scoreboard objectives add mgs.pending_clicks dummy
 
-# Tracks if the player is holding right-click (vs single tap)
+# Held right click, as opposed to a single tap.
 scoreboard objectives add mgs.held_click dummy
 
-# Tracks current burst fire count (resets after BURST shots)
+# Shots fired in the current burst.
 scoreboard objectives add mgs.burst_count dummy
 
-# Tracks weapon drops to enable fire mode switching
+# The drop key switches fire mode.
 scoreboard objectives add mgs.dropped minecraft.custom:minecraft.drop
 
-# Cooldown in ticks before being able to shot
+# Expiry tick before the next shot.
 scoreboard objectives add mgs.cooldown dummy
 
-# Tracks weapon-switch-only cooldown (not set when shooting) for zoom shader guard
-scoreboard objectives add mgs.switch_cooldown dummy
-
-# Indicates if the player was zooming (used to remove slowness)
+# Was zooming, so the slowness can be removed.
 scoreboard objectives add mgs.zoom dummy
 
-# Tracks continuous zoom duration for delayed scope effect (10-tick delay)
-scoreboard objectives add mgs.zoom_timer dummy
-
-# Tracks the most recently selected weapon ID for weapon switching mechanics
+# Last selected weapon id, for switch detection.
 scoreboard objectives add mgs.last_selected dummy
 
-# Tracks the current amount of bullets in the selected weapon
+# Bullets in the selected weapon.
 scoreboard objectives add mgs.remaining_bullets dummy
 
-# Tracks the total reserve ammo (sum of all magazine bullets in inventory)
-# Updated on reload and when player is idle (not shooting for ~60 ticks)
+# Sum of the magazine bullets in the inventory, updated on reload and after about 60 idle ticks.
 scoreboard objectives add mgs.reserve_ammo dummy
 
-# Tracks the room acoustics level for crack sound effects
+# Room acoustics, for the crack sounds.
 scoreboard objectives add mgs.acoustics_level dummy
 
-# Tracks how much time has passed since the player last saw a muzzle flash
+# Ticks since the last muzzle flash this player saw.
 scoreboard objectives add mgs.last_muzzle_flash dummy
 
-## Global configuration scoreboards (admin/server-level)
-# RPG explosion power (0 = no block destruction, higher = more destruction)
+## Server config (#projectile_explosion_power, ...): 0 means no block destruction.
 scoreboard objectives add mgs.config dummy
 
-## Per-player special scoreboards (for zombies bonuses, testing, etc.)
-## Generated from SpecialScores.ALL, which is also what game starts wipe to get a clean slate.
+## From SpecialScores.ALL, which game starts also wipe.
 # Instant kill: duration in ticks (kills entities in one hit, except mgs.no_instant_kill tagged)
 scoreboard objectives add mgs.special.instant_kill dummy
 # Infinite ammo: duration in ticks (don't consume ammo, set ammo to max capacity)
@@ -75,8 +60,8 @@ scoreboard objectives add mgs.special.double_points dummy
 scoreboard objectives add mgs.special.quick_reload dummy
 # Quick swap: percentage faster weapon switch (20 = 20% faster, 50 = 50% faster)
 scoreboard objectives add mgs.special.quick_swap dummy
-# Additional shots: number of extra projectiles per shot (Double Tap perk)
-scoreboard objectives add mgs.special.additional_shots dummy
+# Double Tap perk: bullet damage x2
+scoreboard objectives add mgs.special.double_tap dummy
 # PhD Flopper perk: immune to explosive self-damage (fall damage handled by attribute)
 scoreboard objectives add mgs.special.phd_flopper dummy
 # Deadshot Daiquiri perk: 65% weapon spread + recoil
@@ -95,44 +80,40 @@ scoreboard objectives add mgs.special.tracker dummy
 scoreboard objectives add mgs.special.tactical_mask dummy
 scoreboard objectives add mgs.special.overkill dummy
 scoreboard objectives add mgs.special.quick_fix dummy
-# DPS tracking: accumulates damage dealt per second, snapshot stored for actionbar
+# Damage per second, accumulated then snapshotted for the actionbar.
 scoreboard objectives add mgs.dps dummy
 scoreboard objectives add mgs.previous_dps dummy
 scoreboard objectives add mgs.dps_timer dummy
 
-# Forces an immediate actionbar refresh (set by events its idle gate can't detect, e.g. fire-mode toggle)
+# Forces an actionbar refresh for changes the idle gate cannot see (fire-mode toggle).
 scoreboard objectives add mgs.ab_force dummy
 
-# Initialize slow bullet (projectile) counter
 scoreboard players add #slow_bullet_count mgs.data 0
 
-# Semtex entity pairing: unique ID objective + global counter
+# Semtex pairing: a unique id objective and a global counter.
 scoreboard objectives add mgs.grenade_launch dummy
 scoreboard objectives add mgs.stuck_id dummy
 
-# Per-grenade accumulated tumble angle (1e-4 rad units)
+# Accumulated tumble angle (1e-4 rad units).
 scoreboard objectives add mgs.grenade_spin dummy
 scoreboard players set #semtex_id mgs.data 0
 
-# Initialize global config defaults (only if not already set)
+# Defaults, only when unset.
 execute unless score #projectile_explosion_power mgs.config matches -2147483648.. run scoreboard players set #projectile_explosion_power mgs.config 0
 execute unless score #grenade_explosion_power mgs.config matches -2147483648.. run scoreboard players set #grenade_explosion_power mgs.config 0
 execute unless score #max_ammo_reload_weapons mgs.config matches -2147483648.. run scoreboard players set #max_ammo_reload_weapons mgs.config 0
 execute unless score #damage_debug mgs.config matches -2147483648.. run scoreboard players set #damage_debug mgs.config 0
 
-# Health regeneration tracking (global, shared across all game modes)
+# Health regeneration, shared by every mode.
 scoreboard objectives add mgs.last_hit dummy
 scoreboard objectives add mgs.hp_prev dummy
 
-# Read-only criteria objectives, auto-updated by the server every tick a value changes.
-# Reading these replaces per-tick `data get entity @s Health/foodLevel` (full player-NBT
-# serialization) with a plain score read. NOTE: mgs.health = ceil(health + absorption);
-# this pack has no absorption sources, so it tracks health exactly.
+# Read-only criteria the server keeps current: a score read instead of serializing the player NBT for Health or foodLevel.
+# mgs.health = ceil(health + absorption), and the pack has no absorption source.
 scoreboard objectives add mgs.health health
 scoreboard objectives add mgs.food food
 
-# Real-time clock: global stopwatch queried every tick (lag-immune wall-clock time).
-# Recreated on every load — only per-tick deltas are consumed, so the reset is harmless.
+# Global stopwatch, a lag-immune wall clock. Recreated on every load, which is harmless: only per-tick deltas are used.
 stopwatch remove mgs:clock
 stopwatch create mgs:clock
 scoreboard players set #real_prev mgs.data 0
@@ -141,7 +122,6 @@ scoreboard players set #real_prev mgs.data 0
 # Confirm load
 tellraw @a[tag=convention.debug] {"translate":"mgs.loaded_mc_guns_system_v5_1_0","color":"green"}
 scoreboard players set #mgs.loaded load.status 1
-function mgs:v5.1.0/load/set_items_storage
 
 scoreboard objectives add mgs.flash_id dummy
 scoreboard objectives add mgs.flash_slot dummy
@@ -156,23 +136,12 @@ scoreboard objectives add mgs.hurt_pending dummy
 scoreboard objectives add mgs.hurt_fall_until dummy
 scoreboard objectives add mgs.hurt_out_until dummy
 scoreboard objectives add mgs.fx_deaths deathCount
+scoreboard objectives add mgs.fx_rejoins custom:leave_game
+scoreboard players set #fx_sweep_period mgs.data 40
 
-## Lore label templates for utils/update_all_lore
-data modify storage mgs:lore_templates damage set value [{"text": "D", "color": "#c24a17", "italic": false}, {"text": "a", "color": "#c24c18"}, {"text": "m", "color": "#c24f1a"}, {"text": "a", "color": "#c2511b"}, {"text": "g", "color": "#c3541d"}, {"text": "e", "color": "#c3571e"}, {"text": " ", "color": "#c35920"}, {"text": "P", "color": "#c35c21"}, {"text": "e", "color": "#c45e23"}, {"text": "r", "color": "#c46124"}, {"text": " ", "color": "#c46426"}, {"text": "B", "color": "#c46628"}, {"text": "u", "color": "#c56929"}, {"text": "l", "color": "#c56b2b"}, {"text": "l", "color": "#c56e2c"}, {"text": "e", "color": "#c5712e"}, {"text": "t", "color": "#c6732f"}, {"text": " ", "color": "#c67631"}, {"text": " ", "color": "#c67832"}, {"text": "\u27a4", "color": "#c67b34"}, {"text": " ", "color": "#c77e36"}]
-data modify storage mgs:lore_templates ammo set value [{"text": "A", "color": "#c24a17", "italic": false}, {"text": "m", "color": "#c24c18"}, {"text": "m", "color": "#c24e19"}, {"text": "o", "color": "#c2511b"}, {"text": " ", "color": "#c2531c"}, {"text": "R", "color": "#c3561e"}, {"text": "e", "color": "#c3581f"}, {"text": "m", "color": "#c35b21"}, {"text": "a", "color": "#c35d22"}, {"text": "i", "color": "#c46024"}, {"text": "n", "color": "#c46225"}, {"text": "i", "color": "#c46527"}, {"text": "n", "color": "#c46728"}, {"text": "g", "color": "#c56a2a"}, {"text": " ", "color": "#c56c2b"}, {"text": " ", "color": "#c56f2d"}, {"text": " ", "color": "#c5712e"}, {"text": " ", "color": "#c67430"}, {"text": " ", "color": "#c67631"}, {"text": " ", "color": "#c67933"}, {"text": "\u27a4", "color": "#c67b34"}, {"text": " ", "color": "#c77e36"}]
-data modify storage mgs:lore_templates reload set value [{"text": "R", "color": "#c24a17", "italic": false}, {"text": "e", "color": "#c24c18"}, {"text": "l", "color": "#c24e19"}, {"text": "o", "color": "#c2511b"}, {"text": "a", "color": "#c2531c"}, {"text": "d", "color": "#c3551e"}, {"text": "i", "color": "#c3581f"}, {"text": "n", "color": "#c35a20"}, {"text": "g", "color": "#c35c22"}, {"text": " ", "color": "#c45f23"}, {"text": "T", "color": "#c46125"}, {"text": "i", "color": "#c46426"}, {"text": "m", "color": "#c46627"}, {"text": "e", "color": "#c46829"}, {"text": " ", "color": "#c56b2a"}, {"text": " ", "color": "#c56d2c"}, {"text": " ", "color": "#c56f2d"}, {"text": " ", "color": "#c5722e"}, {"text": " ", "color": "#c67430"}, {"text": " ", "color": "#c67631"}, {"text": " ", "color": "#c67933"}, {"text": "\u27a4", "color": "#c67b34"}, {"text": " ", "color": "#c77e36"}]
-data modify storage mgs:lore_templates fire_rate set value [{"text": "F", "color": "#c24a17", "italic": false}, {"text": "i", "color": "#c24c18"}, {"text": "r", "color": "#c24e19"}, {"text": "e", "color": "#c2501b"}, {"text": " ", "color": "#c2531c"}, {"text": "R", "color": "#c3551d"}, {"text": "a", "color": "#c3571f"}, {"text": "t", "color": "#c35920"}, {"text": "e", "color": "#c35c21"}, {"text": " ", "color": "#c35e23"}, {"text": " ", "color": "#c46024"}, {"text": " ", "color": "#c46225"}, {"text": " ", "color": "#c46527"}, {"text": " ", "color": "#c46728"}, {"text": " ", "color": "#c56929"}, {"text": " ", "color": "#c56b2b"}, {"text": " ", "color": "#c56e2c"}, {"text": " ", "color": "#c5702d"}, {"text": " ", "color": "#c5722f"}, {"text": " ", "color": "#c67430"}, {"text": " ", "color": "#c67731"}, {"text": " ", "color": "#c67933"}, {"text": "\u27a4", "color": "#c67b34"}, {"text": " ", "color": "#c77e36"}]
-data modify storage mgs:lore_templates pellets set value [{"text": "P", "color": "#c24a17", "italic": false}, {"text": "e", "color": "#c24c18"}, {"text": "l", "color": "#c24e19"}, {"text": "l", "color": "#c2511b"}, {"text": "e", "color": "#c2531c"}, {"text": "t", "color": "#c3561e"}, {"text": "s", "color": "#c3581f"}, {"text": " ", "color": "#c35b21"}, {"text": "P", "color": "#c35d22"}, {"text": "e", "color": "#c46024"}, {"text": "r", "color": "#c46225"}, {"text": " ", "color": "#c46527"}, {"text": "S", "color": "#c46728"}, {"text": "h", "color": "#c56a2a"}, {"text": "o", "color": "#c56c2b"}, {"text": "t", "color": "#c56f2d"}, {"text": " ", "color": "#c5712e"}, {"text": " ", "color": "#c67430"}, {"text": " ", "color": "#c67631"}, {"text": " ", "color": "#c67933"}, {"text": "\u27a4", "color": "#c67b34"}, {"text": " ", "color": "#c77e36"}]
-data modify storage mgs:lore_templates decay set value [{"text": "D", "color": "#c24a17", "italic": false}, {"text": "a", "color": "#c24c18"}, {"text": "m", "color": "#c24f1a"}, {"text": "a", "color": "#c2511b"}, {"text": "g", "color": "#c3541d"}, {"text": "e", "color": "#c3571e"}, {"text": " ", "color": "#c35920"}, {"text": "D", "color": "#c35c21"}, {"text": "e", "color": "#c45e23"}, {"text": "c", "color": "#c46124"}, {"text": "a", "color": "#c46426"}, {"text": "y", "color": "#c46628"}, {"text": " ", "color": "#c56929"}, {"text": " ", "color": "#c56b2b"}, {"text": " ", "color": "#c56e2c"}, {"text": " ", "color": "#c5712e"}, {"text": " ", "color": "#c6732f"}, {"text": " ", "color": "#c67631"}, {"text": " ", "color": "#c67832"}, {"text": "\u27a4", "color": "#c67b34"}, {"text": " ", "color": "#c77e36"}]
-data modify storage mgs:lore_templates switch_time set value [{"text": "S", "color": "#c24a17", "italic": false}, {"text": "w", "color": "#c24c18"}, {"text": "i", "color": "#c24e19"}, {"text": "t", "color": "#c2501b"}, {"text": "c", "color": "#c2531c"}, {"text": "h", "color": "#c3551d"}, {"text": " ", "color": "#c3571f"}, {"text": "T", "color": "#c35920"}, {"text": "i", "color": "#c35c21"}, {"text": "m", "color": "#c35e23"}, {"text": "e", "color": "#c46024"}, {"text": " ", "color": "#c46225"}, {"text": " ", "color": "#c46527"}, {"text": " ", "color": "#c46728"}, {"text": " ", "color": "#c56929"}, {"text": " ", "color": "#c56b2b"}, {"text": " ", "color": "#c56e2c"}, {"text": " ", "color": "#c5702d"}, {"text": " ", "color": "#c5722f"}, {"text": " ", "color": "#c67430"}, {"text": " ", "color": "#c67731"}, {"text": " ", "color": "#c67933"}, {"text": "\u27a4", "color": "#c67b34"}, {"text": " ", "color": "#c77e36"}]
-data modify storage mgs:lore_templates fire_rate_sps set value [{"text": "s", "color": "#c77e36", "italic": false}, {"text": "h", "color": "#c67832"}, {"text": "o", "color": "#c5722f"}, {"text": "t", "color": "#c56c2b"}, {"text": "s", "color": "#c46628"}, {"text": "/", "color": "#c46124"}, {"text": "s", "color": "#c35b21"}]
-data modify storage mgs:lore_templates fire_rate_spshot set value [{"text": "s", "color": "#c77e36", "italic": false}, {"text": "/", "color": "#c67832"}, {"text": "s", "color": "#c5722f"}, {"text": "h", "color": "#c56c2b"}, {"text": "o", "color": "#c46628"}, {"text": "t", "color": "#c46124"}]
-data modify storage mgs:lore_templates grenade_type set value [{"text": "T", "color": "#c24a17", "italic": false}, {"text": "y", "color": "#c24c18"}, {"text": "p", "color": "#c24e19"}, {"text": "e", "color": "#c2501b"}, {"text": " ", "color": "#c2531c"}, {"text": " ", "color": "#c3551d"}, {"text": " ", "color": "#c3571f"}, {"text": " ", "color": "#c35920"}, {"text": " ", "color": "#c35c21"}, {"text": " ", "color": "#c35e23"}, {"text": " ", "color": "#c46024"}, {"text": " ", "color": "#c46225"}, {"text": " ", "color": "#c46527"}, {"text": " ", "color": "#c46728"}, {"text": " ", "color": "#c56929"}, {"text": " ", "color": "#c56b2b"}, {"text": " ", "color": "#c56e2c"}, {"text": " ", "color": "#c5702d"}, {"text": " ", "color": "#c5722f"}, {"text": " ", "color": "#c67430"}, {"text": " ", "color": "#c67731"}, {"text": " ", "color": "#c67933"}, {"text": "\u27a4", "color": "#c67b34"}, {"text": " ", "color": "#c77e36"}]
-data modify storage mgs:lore_templates grenade_fuse set value [{"text": "F", "color": "#c24a17", "italic": false}, {"text": "u", "color": "#c24c18"}, {"text": "s", "color": "#c24e19"}, {"text": "e", "color": "#c2511b"}, {"text": " ", "color": "#c2531c"}, {"text": "T", "color": "#c3551e"}, {"text": "i", "color": "#c3581f"}, {"text": "m", "color": "#c35a20"}, {"text": "e", "color": "#c35c22"}, {"text": " ", "color": "#c45f23"}, {"text": " ", "color": "#c46125"}, {"text": " ", "color": "#c46426"}, {"text": " ", "color": "#c46627"}, {"text": " ", "color": "#c46829"}, {"text": " ", "color": "#c56b2a"}, {"text": " ", "color": "#c56d2c"}, {"text": " ", "color": "#c56f2d"}, {"text": " ", "color": "#c5722e"}, {"text": " ", "color": "#c67430"}, {"text": " ", "color": "#c67631"}, {"text": " ", "color": "#c67933"}, {"text": "\u27a4", "color": "#c67b34"}, {"text": " ", "color": "#c77e36"}]
-data modify storage mgs:lore_templates expl_damage set value [{"text": "E", "color": "#c24a17", "italic": false}, {"text": "x", "color": "#c24c18"}, {"text": "p", "color": "#c24f1a"}, {"text": "l", "color": "#c2521b"}, {"text": "o", "color": "#c3541d"}, {"text": "s", "color": "#c3571f"}, {"text": "i", "color": "#c35a20"}, {"text": "o", "color": "#c35d22"}, {"text": "n", "color": "#c45f24"}, {"text": " ", "color": "#c46225"}, {"text": "D", "color": "#c46527"}, {"text": "a", "color": "#c46828"}, {"text": "m", "color": "#c56a2a"}, {"text": "a", "color": "#c56d2c"}, {"text": "g", "color": "#c5702d"}, {"text": "e", "color": "#c5732f"}, {"text": " ", "color": "#c67531"}, {"text": " ", "color": "#c67832"}, {"text": "\u27a4", "color": "#c67b34"}, {"text": " ", "color": "#c77e36"}]
-data modify storage mgs:lore_templates expl_radius set value [{"text": "E", "color": "#c24a17", "italic": false}, {"text": "x", "color": "#c24c18"}, {"text": "p", "color": "#c24f1a"}, {"text": "l", "color": "#c2511b"}, {"text": "o", "color": "#c3541d"}, {"text": "s", "color": "#c3571e"}, {"text": "i", "color": "#c35920"}, {"text": "o", "color": "#c35c21"}, {"text": "n", "color": "#c45e23"}, {"text": " ", "color": "#c46124"}, {"text": "R", "color": "#c46426"}, {"text": "a", "color": "#c46628"}, {"text": "d", "color": "#c56929"}, {"text": "i", "color": "#c56b2b"}, {"text": "u", "color": "#c56e2c"}, {"text": "s", "color": "#c5712e"}, {"text": " ", "color": "#c6732f"}, {"text": " ", "color": "#c67631"}, {"text": " ", "color": "#c67832"}, {"text": "\u27a4", "color": "#c67b34"}, {"text": " ", "color": "#c77e36"}]
+execute as @a run function mgs:v5.1.0/player/fx_reset
 
-# Stamina system (Black Ops style) — per-player stamina state
+# Black Ops style stamina, per player.
 scoreboard objectives add mgs.stam dummy
 scoreboard objectives add mgs.stam_max dummy
 scoreboard objectives add mgs.stam_bonus dummy
@@ -180,17 +149,15 @@ scoreboard objectives add mgs.stam_rest dummy
 scoreboard objectives add mgs.stam_out dummy
 scoreboard objectives add mgs.stam_seen dummy
 
-# Counts swimming ticks so the drain can be applied on one tick in SWIM_DRAIN_FACTOR (see stamina_swim_drain)
+# Counts swim ticks, so the drain applies once per SWIM_DRAIN_FACTOR ticks (see stamina_swim_drain).
 scoreboard objectives add mgs.stam_swim dummy
 
-# Set while refill pulses may have left invisible saturation; only then does the at-target
-# branch pay the foodSaturationLevel NBT read to burn it off (see stamina_bar)
+# Set while refill pulses may have left invisible saturation; only then does the at-target branch read foodSaturationLevel to burn it off.
 scoreboard objectives add mgs.stam_dirty dummy
 
-# Armed mob counter (skip tick loop if 0)
+# The tick loop is skipped at 0.
 scoreboard players add #armed_mob_count mgs.data 0
 
-# Mob AI phase timer, active time, and sleep time
 scoreboard objectives add mgs.mob.timer dummy
 scoreboard objectives add mgs.mob.active_time dummy
 scoreboard objectives add mgs.mob.sleep_time dummy
@@ -217,10 +184,10 @@ team modify mgs.mi_mobs color dark_red
 team modify mgs.mi_mobs friendlyFire true
 team modify mgs.mi_mobs nametagVisibility always
 
-# Dropped-weapon lifetime (ticks remaining before a dropped gun despawns)
+# Ticks before a dropped gun despawns.
 scoreboard objectives add mgs.drop_timer dummy
 
-# Progression scoreboards (xp_total is authoritative; xp_level and xp_prog are caches derived from it)
+# xp_total is authoritative; xp_level and xp_prog are caches derived from it.
 scoreboard objectives add mgs.mp.xp_total dummy
 scoreboard objectives add mgs.mp.xp_level dummy
 scoreboard objectives add mgs.mp.xp_prog dummy
@@ -231,7 +198,7 @@ scoreboard objectives add mgs.zb.xp_prog dummy
 scoreboard objectives add mgs.zb.xp_pts_prev dummy
 scoreboard objectives add mgs.zb.xp_spent_acc dummy
 
-# Challenge counters (14 of them; the level chains borrow mgs.mp.xp_level and mgs.zb.xp_level instead)
+# 14 challenge counters; the level chains read mgs.mp.xp_level and mgs.zb.xp_level.
 scoreboard objectives add mgs.adv.mp.kills dummy
 scoreboard objectives add mgs.adv.mp.headshots dummy
 scoreboard objectives add mgs.adv.mp.objectives dummy
@@ -247,110 +214,95 @@ scoreboard objectives add mgs.adv.zb.pap dummy
 scoreboard objectives add mgs.adv.zb.box dummy
 scoreboard objectives add mgs.adv.zb.spending dummy
 
-## Zombies scoreboards
+scoreboard objectives add mgs.adv.caught dummy
+scoreboard players reset * mgs.adv.caught
+
 scoreboard objectives add mgs.zb.in_game dummy
 scoreboard objectives add mgs.zb.points dummy
 scoreboard objectives add mgs.zb.kills dummy
 scoreboard objectives add mgs.zb.downs dummy
 
-# Bought lethal grenade type (index into LETHAL_GRENADE_IDS, 0 = frag): re-gives the RIGHT type
-# when the lethal slot is emptied (round-end replenish / Max Ammo / recovery). See inventory.py.
+# Index into LETHAL_GRENADE_IDS (0 = frag), so an emptied lethal slot refills the bought type (see inventory).
 scoreboard objectives add mgs.zb.lethal_type dummy
 
-# Perk scoreboards
-# zb.passive: 0=none, 1=points_x1.2, 2=powerup_x1.5
-# zb.ability: 0=none, 1=coward, 2=guardian
-# Ability cooldown (0 = ready, 1+ = on cooldown in rounds remaining)
+# zb.passive: 0 none, 1 points x1.2, 2 power-ups x1.5. zb.ability: 0 none, 1 coward, 2 guardian.
+# zb.ability_cd: rounds of cooldown left (0 = ready).
 scoreboard objectives add mgs.zb.passive dummy
 scoreboard objectives add mgs.zb.ability dummy
 scoreboard objectives add mgs.zb.ability_cd dummy
 
-# Ticks until this player's next horde vocal; horde_ambient refreshes it from the count near THEM
+# Ticks to this player's next horde vocal.
 scoreboard objectives add mgs.zb.horde_cd dummy
 
-# Zombie vocal budgets (enemies/vocals.py): #total_tick timestamps of when each channel frees up again.
-# No reset needed anywhere — #total_tick only ever grows, so a stale value is always in the past, and an
-# unset score fails the `>` comparison, which reads as "ready".
+# #total_tick when each vocal channel frees up (see vocals). Never reset: #total_tick only grows,
+# and an unset score fails the `>` test, which reads as ready.
 scoreboard objectives add mgs.zb.vox_sprint dummy
 scoreboard objectives add mgs.zb.vox_attack dummy
 scoreboard objectives add mgs.zb.vox_death dummy
 
-# Spawn point group_id scoreboard
 scoreboard objectives add mgs.zb.spawn.gid dummy
 
-# Spawn point unique id: held by spawn markers, and by zombies as "last spawn point used"
-# (initial spawn or stuck-rescue) so a rescue never reuses the previous spawn point.
+# Held by spawn markers, and by zombies as the last spawn they used, so a rescue never reuses it.
 scoreboard objectives add mgs.zb.spawn.sid dummy
 
-# Sidebar rank scoreboard
 scoreboard objectives add mgs.zb.sb_rank dummy
 
-# Rise animation: ticks remaining for each rising zombie
 scoreboard objectives add mgs.zb.rise_tick dummy
 
-# Kill tracking (vanilla totalKillCount stat) and baseline snapshot
+# totalKillCount, and the baseline snapshot.
 scoreboard objectives add mgs.total_kills totalKillCount
 scoreboard objectives add mgs.zb.prev_kills dummy
 
-# Stuck zombie detection per-zombie scores
 scoreboard objectives add mgs.zb.stuck_x dummy
 scoreboard objectives add mgs.zb.stuck_z dummy
 scoreboard objectives add mgs.zb.stuck_ticks dummy
 scoreboard objectives add mgs.zb.stuck_dist dummy
 
-# Initialize zombies game state
 execute unless data storage mgs:zombies game run data modify storage mgs:zombies game set value {state:"lobby",map_id:"",round:0}
 
-# Game variant: "vanilla" = classic CoD zombies, "zonweeb" = passives/abilities/special zombies
+# "vanilla": classic CoD zombies; "zonweeb": passives, abilities and special zombies.
 execute unless data storage mgs:zombies game.variant run data modify storage mgs:zombies game.variant set value "zonweeb"
 
-# Initialize mystery box base pool (can be extended via function tag)
+# Extended through a function tag.
 execute unless data storage mgs:zombies mystery_box_pool run data modify storage mgs:zombies mystery_box_pool set value []
 
-# Escort TTL per escorted zombie (ticks left before the teleport-rescue fallback)
+# Ticks left before the teleport-rescue fallback.
 scoreboard objectives add mgs.zb.escort_ttl dummy
 
-# Live escort counter (gates the per-tick escorted-zombie scan)
+# Gates the per-tick escorted-zombie scan.
 scoreboard players add #zb_escort_count mgs.data 0
 
-# One-shot target mode for the NEXT escort/start, consumed (reset to 0) inside start:
-# 0 = aim at the nearest player (stuck rescue / PaP lure), 1 = aim at a thrown monkey bomb,
-# 2 = aim at the spot a walk-to spawn pinned on the zombie (data.walk_to).
+# One-shot target of the next escort/start, reset there: 0 nearest player (stuck rescue, PaP lure),
+# 1 a thrown monkey bomb, 2 the walk-to spot pinned on the zombie (data.walk_to).
 scoreboard players add #zb_escort_mode mgs.data 0
 
-# Horde alliance team: round zombies and escort traders are allied, so the trader's
-# AvoidEntityGoal(Zombie) never fires (it flees at SPRINT speed otherwise!) and zombies never
-# attack the taxi. Created at load, not game start, so a mid-game /reload can't leave it missing.
-# pushOtherTeams = no pushing WITHIN the horde (the zombie overlaps its trader without shoving
-# it off its path) while members still push players and everything else.
+# Zombies and escort traders are allied, so the trader's AvoidEntityGoal(Zombie) never fires (it would flee at sprint speed)
+# and zombies never attack it. Created at load, so a mid-game /reload cannot lose it. pushOtherTeams: members do not push
+# each other (the zombie overlaps its trader) but still push players and everything else.
 team add mgs.horde
 team modify mgs.horde collisionRule pushOtherTeams
 
-# Box id shared by a box's interaction entity and its active pull display
+# Shared by a box's interaction entity and its pull display.
 scoreboard objectives add mgs.mb.box dummy
-# Spin animation timer carried by each pull display (>0 spinning, <=0 ready window)
+# >0 spinning, <=0 ready window.
 scoreboard objectives add mgs.mb.anim dummy
-# 1 when the buyer of this pull owns Timeslip (spin runs 2x faster for their display)
+# 1 when the buyer owns Timeslip (2x spin).
 scoreboard objectives add mgs.mb.timeslip dummy
-# Whether this pull will end in a box move (teddy bear) — only the active box, never Fire Sale
+# 1 when the pull ends in a box move (active box only, never during a Fire Sale).
 scoreboard objectives add mgs.mb.willmove dummy
-# Stable per-player id, assigned lazily on first pull, so a pull display can record WHICH player
-# bought it. During a Fire Sale one player can have several pulls running at once, so the buyer
-# must be tracked per-display (mb.buyer below) — a single "which box am I buying" value on the
-# player would be overwritten by the second pull and orphan the first box's collectible.
+# Stable player id, assigned on first pull. During a Fire Sale one player can run several pulls,
+# so the buyer is stored per display (mb.buyer).
 scoreboard objectives add mgs.mb.pid dummy
-# Buyer's pid, stamped on each pull display
 scoreboard objectives add mgs.mb.buyer dummy
 
-# Pack-a-Punch machine scoreboards
 scoreboard objectives add mgs.zb.pap.id dummy
 scoreboard objectives add mgs.zb.pap.price dummy
 scoreboard objectives add mgs.zb.pap.power dummy
 scoreboard objectives add mgs.pap_anim dummy
-# 1 when the player who started this PAP owns Timeslip (animation runs 3x faster)
+# 1 when the starting player owns Timeslip (3x animation).
 scoreboard objectives add mgs.zb.pap.timeslip dummy
 
-# Per-player PAP tracking (for cleanup when weapon is lost/collected)
+# For cleanup when the weapon is lost or collected.
 scoreboard objectives add mgs.zb.pap_s dummy
 scoreboard objectives add mgs.zb.pap_mid dummy
 
@@ -376,7 +328,6 @@ data modify storage mgs:zombies scope_variants."mosin" set value [{id:"mosin",mo
 data modify storage mgs:zombies scope_variants."deagle" set value [{id:"deagle",model:"mgs:deagle",zoom:"mgs:deagle_zoom"},{id:"deagle_4",model:"mgs:deagle_4",zoom:"mgs:deagle_4_zoom",scope_level:4}]
 data modify storage mgs:zombies camo_variants._default set value ["gold","autumn","galaxy","red_polymer_stripes"]
 
-# Barricade entity scoreboards
 scoreboard objectives add mgs.zb.barricade.id dummy
 scoreboard objectives add mgs.zb.barricade.state dummy
 scoreboard objectives add mgs.zb.barricade.r_timer dummy
@@ -384,48 +335,40 @@ scoreboard objectives add mgs.zb.barricade.rp_timer dummy
 scoreboard objectives add mgs.zb.barricade.radius dummy
 scoreboard objectives add mgs.zb.barricade.removing_id dummy
 scoreboard objectives add mgs.zb.barricade.repairing_id dummy
-# Per-player barricade repair counter (reset each round, capped reward at 25)
+# Reset each round; only 25 repairs per round pay.
 scoreboard objectives add mgs.zb.barricade_repairs dummy
 
-# Per-player sound budgets: #total_tick timestamps of when each barricade sound frees up again.
-# Same scheme as enemies/vocals.py, so no reset is needed — #total_tick only grows, and an unset score
-# fails the `>` comparison, which reads as "ready".
+# #total_tick when each barricade sound frees up, as in vocals: never reset, and an unset score reads as ready.
 scoreboard objectives add mgs.zb.barricade.bang_at dummy
 scoreboard objectives add mgs.zb.barricade.rep_at dummy
 
-# Power-up entity scoreboards
 scoreboard objectives add mgs.zb.pu.type dummy
 scoreboard objectives add mgs.zb.pu.timer dummy
-# Per-zombie: tick of the last time a player's weapon hit it (gates drops to player kills)
+# Tick of the last player weapon hit, so only player kills drop.
 scoreboard objectives add mgs.zb.player_hit dummy
 
-# Door entity scoreboards
 scoreboard objectives add mgs.zb.door.link dummy
 scoreboard objectives add mgs.zb.door.price dummy
 scoreboard objectives add mgs.zb.door.bgid dummy
 scoreboard objectives add mgs.zb.door.anim dummy
 scoreboard objectives add mgs.zb.door.rot dummy
-# Chip-in purchases: chunk size (0 = disabled) and how much the group has paid so far.
-# Door progress is global, so `paid` is mirrored on every entity of the link group.
+# Chip-in: chunk size (0 = off) and what the group paid; progress is global, so `paid` is mirrored on the whole link group.
 scoreboard objectives add mgs.zb.door.partial dummy
 scoreboard objectives add mgs.zb.door.paid dummy
 
-# Wallbuy entity scoreboards
 scoreboard objectives add mgs.zb.wb.id dummy
 scoreboard objectives add mgs.zb.wb.price dummy
 scoreboard objectives add mgs.zb.wb.rfprice dummy
 scoreboard objectives add mgs.zb.wb.rfpap dummy
 
-# Perk machine entity scoreboards
 scoreboard objectives add mgs.zb.perk.id dummy
 scoreboard objectives add mgs.zb.perk.price dummy
-# Map-defined price, kept so dynamic discounts (solo Quick Revive) can be reverted
+# Kept so dynamic discounts (solo Quick Revive) can be reverted.
 scoreboard objectives add mgs.zb.perk.base_price dummy
 scoreboard objectives add mgs.zb.perk.power dummy
-# Chip-in chunk size (0 = disabled, buy in one payment)
+# 0 = buy in one payment.
 scoreboard objectives add mgs.zb.perk.partial dummy
 
-# Perk ownership scoreboards
 scoreboard objectives add mgs.zb.perk.juggernog dummy
 scoreboard objectives add mgs.zb.perk.speed_cola dummy
 scoreboard objectives add mgs.zb.perk.double_tap dummy
@@ -441,7 +384,6 @@ scoreboard objectives add mgs.zb.perk.whos_who dummy
 scoreboard objectives add mgs.zb.perk.dying_wish dummy
 scoreboard objectives add mgs.zb.perk.widows_wine dummy
 
-# Per-player chip-in progress
 scoreboard objectives add mgs.zb.perkpaid.juggernog dummy
 scoreboard objectives add mgs.zb.perkpaid.speed_cola dummy
 scoreboard objectives add mgs.zb.perkpaid.double_tap dummy
@@ -457,19 +399,18 @@ scoreboard objectives add mgs.zb.perkpaid.whos_who dummy
 scoreboard objectives add mgs.zb.perkpaid.dying_wish dummy
 scoreboard objectives add mgs.zb.perkpaid.widows_wine dummy
 
-# Electric Cherry: last-discharge gametime stamp (anti-spam cooldown)
+# Last discharge (gametime).
 scoreboard objectives add mgs.zb.ec_last dummy
-# Widow's Wine: last web-on-hurt burst gametime stamp (passive cooldown)
+# Widow's Wine: last web burst (gametime).
 scoreboard objectives add mgs.zb.ww_last dummy
-# Dying Wish: use count (escalates cooldown), cooldown countdown, and active berserk timer
+# Dying Wish: uses (escalating cooldown), cooldown, berserk timer.
 scoreboard objectives add mgs.zb.dw_uses dummy
 scoreboard objectives add mgs.zb.dw_cd dummy
 scoreboard objectives add mgs.zb.dw_timer dummy
-# Tombstone: marker state (0 pending / 1 active) + recovery countdown; the marker also carries the
-# owner's zb.downed_id so the existing downed_id_match predicate can select it.
+# Tombstone: state (0 pending, 1 active) and recovery timer; the marker also carries zb.downed_id for downed_id_match.
 scoreboard objectives add mgs.zb.ts.state dummy
 scoreboard objectives add mgs.zb.ts.timer dummy
-# Tombstone: per-perk snapshot of what the owner had when they went down (restored on recovery)
+# Tombstone: the owner's perks when they went down.
 scoreboard objectives add mgs.zb.tsp.juggernog dummy
 scoreboard objectives add mgs.zb.tsp.speed_cola dummy
 scoreboard objectives add mgs.zb.tsp.double_tap dummy
@@ -480,32 +421,29 @@ scoreboard objectives add mgs.zb.tsp.phd_flopper dummy
 scoreboard objectives add mgs.zb.tsp.deadshot dummy
 scoreboard objectives add mgs.zb.tsp.timeslip dummy
 scoreboard objectives add mgs.zb.tsp.electric_cherry dummy
-scoreboard objectives add mgs.zb.tsp.tombstone dummy
 scoreboard objectives add mgs.zb.tsp.whos_who dummy
 scoreboard objectives add mgs.zb.tsp.dying_wish dummy
 scoreboard objectives add mgs.zb.tsp.widows_wine dummy
 
-# Der Wunderfizz machine + spin state
 scoreboard objectives add mgs.zb.wf.id dummy
 scoreboard objectives add mgs.zb.wf.price dummy
 scoreboard objectives add mgs.zb.wf.power dummy
 scoreboard objectives add mgs.zb.wf.allperks dummy
-# Spin display (orb): countdown timer (>0 spinning, <=0 ready window), buyer pid, chosen perk index
+# Orb: timer (>0 spinning, <=0 ready window), buyer pid, chosen perk index.
 scoreboard objectives add mgs.zb.wf.anim dummy
 scoreboard objectives add mgs.zb.wf.buyer dummy
 scoreboard objectives add mgs.zb.wf.perk dummy
-# 1 when the buyer owns Timeslip (this orb spins 2x faster, like the Mystery Box)
+# 1 when the buyer owns Timeslip (2x spin, like the Mystery Box).
 scoreboard objectives add mgs.zb.wf.timeslip dummy
-# 1 when this pull will roam the machine (teddy bear) instead of granting a perk
+# 1 when this pull roams the machine (teddy bear) instead of granting a perk.
 scoreboard objectives add mgs.zb.wf.willmove dummy
-# Points paid for this pull, so a roam (bear) can refund the buyer
+# Refunded when the pull roams.
 scoreboard objectives add mgs.zb.wf.paid dummy
-# Stable per-player buyer id (lazy)
+# Stable buyer id, assigned on first use.
 scoreboard objectives add mgs.zb.wf_pid dummy
 
-# Who's Who: the owner's body link (zb.ww.id survives later normal downs, unlike zb.downed_id) +
-# perk snapshot for recovery. Bleed/revive progress live on the owner's normal zb.bleed /
-# zb.revive_p scores (the shared revive core reads those).
+# zb.ww.id links the owner to the body and survives later normal downs, unlike zb.downed_id.
+# Bleed and revive progress use the owner's normal zb.bleed and zb.revive_p scores.
 scoreboard objectives add mgs.zb.ww.id dummy
 scoreboard objectives add mgs.zb.wwp.juggernog dummy
 scoreboard objectives add mgs.zb.wwp.speed_cola dummy
@@ -518,29 +456,25 @@ scoreboard objectives add mgs.zb.wwp.deadshot dummy
 scoreboard objectives add mgs.zb.wwp.timeslip dummy
 scoreboard objectives add mgs.zb.wwp.electric_cherry dummy
 scoreboard objectives add mgs.zb.wwp.tombstone dummy
-scoreboard objectives add mgs.zb.wwp.whos_who dummy
 scoreboard objectives add mgs.zb.wwp.dying_wish dummy
 scoreboard objectives add mgs.zb.wwp.widows_wine dummy
 
-# Revive system scoreboards
 scoreboard objectives add mgs.zb.downed dummy
 scoreboard objectives add mgs.zb.bleed dummy
 scoreboard objectives add mgs.zb.revive_p dummy
 
-# Solo Quick Revive uses remaining
 scoreboard objectives add mgs.zb.qr_uses dummy
 
-# Unique downed ID: links player to their specific mannequin
+# Links a player to their mannequin.
 scoreboard objectives add mgs.zb.downed_id dummy
 
-# Trap entity scoreboards
 scoreboard objectives add mgs.zb.trap.id dummy
 scoreboard objectives add mgs.zb.trap.price dummy
 scoreboard objectives add mgs.zb.trap.power dummy
 scoreboard objectives add mgs.zb.trap.type dummy
 scoreboard objectives add mgs.zb.trap.dur dummy
 scoreboard objectives add mgs.zb.trap.cd_max dummy
-# 1 when the player who activated this trap owns Timeslip (its cooldown is scaled to 75%)
+# 1 when the activator owns Timeslip (cooldown at 75%).
 scoreboard objectives add mgs.zb.trap.timeslip dummy
 scoreboard objectives add mgs.zb.trap.timer dummy
 scoreboard objectives add mgs.zb.trap.cd dummy
@@ -548,47 +482,37 @@ scoreboard objectives add mgs.zb.trap.rx dummy
 scoreboard objectives add mgs.zb.trap.ry dummy
 scoreboard objectives add mgs.zb.trap.rz dummy
 
-## Multiplayer scoreboards
-# Team assignment (1 = red, 2 = blue, 0 = none/spectator)
+## 1 red, 2 blue, 0 none or spectator.
 scoreboard objectives add mgs.mp.team dummy
-# Personal stats
 scoreboard objectives add mgs.mp.kills dummy
 scoreboard objectives add mgs.mp.deaths dummy
-# Round timer (ticks remaining)
-scoreboard objectives add mgs.mp.timer dummy
-# In-game tag scoreboard (1 = in active game)
+# 1 while in an active game.
 scoreboard objectives add mgs.mp.in_game dummy
 
-# Boundary checking coords
 scoreboard objectives add mgs.mp.bx dummy
 scoreboard objectives add mgs.mp.by dummy
 scoreboard objectives add mgs.mp.bz dummy
 
-# Which of the 4 boundary-check phases a player belongs to (see multiplayer/enforce_bounds).
-# #bphase_next is the round-robin cursor; seed it so the first assignment reads a real value.
+# Which of the 4 boundary-check phases a player is in (see enforce_bounds); #bphase_next is the round-robin cursor.
 scoreboard objectives add mgs.mp.bphase dummy
 scoreboard players set #bphase_next mgs.data 0
 
-# Class change detection (for prep phase)
+# Class change detection during prep.
 scoreboard objectives add mgs.mp.prev_class dummy
 
-# Spectate timer (ticks remaining before respawn, 0 = not spectating)
+# Ticks left before respawn, 0 when not spectating.
 scoreboard objectives add mgs.mp.spectate_timer dummy
 
-# FFA ranking (1 = most kills, 2 = second, ..., 0 = unranked)
+# 1 for most kills, 0 unranked.
 scoreboard objectives add mgs.mp.ffa_rank dummy
 
-# Initialize team scores (only if not already set)
 execute unless score #red mgs.mp.team matches -2147483648.. run scoreboard players set #red mgs.mp.team 0
 execute unless score #blue mgs.mp.team matches -2147483648.. run scoreboard players set #blue mgs.mp.team 0
 
-# Initialize game state (only if not yet set)
 execute unless data storage mgs:multiplayer game run data modify storage mgs:multiplayer game set value {state:"lobby",gamemode:"tdm",score_limit:30,time_limit:12000,map_id:"hijacked"}
 
-# Gamemode scoreboards
 scoreboard objectives add mgs.mp.dom_progress dummy
 scoreboard objectives add mgs.mp.dom_owner dummy
-scoreboard objectives add mgs.mp.gm_timer dummy
 scoreboard objectives add mgs.demo_state dummy
 scoreboard objectives add mgs.demo_prog dummy
 scoreboard objectives add mgs.demo_fuse dummy
@@ -596,76 +520,61 @@ scoreboard objectives add mgs.demo_owner dummy
 
 data modify storage mgs:multiplayer classes_list set value [{id:"assault",name:"Assault",lore:"Versatile frontline",trigger_value:11,main_gun:"ak47",secondary_gun:"m1911",main_mag_count:3,secondary_mag_count:2,equip_display:"2x Frag, 1x Smoke",perks_display:"Sleight of Hand, Scavenger, Fast Hands",perks:["quick_reload","scavenger","quick_swap"],slots:[{slot:"hotbar.1",loot:"mgs:i/ak47",count:1,consumable:0b,bullets:0},{slot:"hotbar.2",loot:"mgs:i/m1911",count:1,consumable:0b,bullets:0},{slot:"hotbar.8",loot:"mgs:i/frag_grenade",count:2,consumable:0b,bullets:0},{slot:"hotbar.7",loot:"mgs:i/smoke_grenade",count:1,consumable:0b,bullets:0},{slot:"inventory.0",loot:"mgs:i/ak47_mag",count:1,consumable:0b,bullets:0},{slot:"inventory.1",loot:"mgs:i/ak47_mag",count:1,consumable:0b,bullets:0},{slot:"inventory.2",loot:"mgs:i/ak47_mag",count:1,consumable:0b,bullets:0},{slot:"inventory.3",loot:"mgs:i/m1911_mag",count:1,consumable:0b,bullets:0},{slot:"inventory.4",loot:"mgs:i/m1911_mag",count:1,consumable:0b,bullets:0}]},{id:"rifleman",name:"Rifleman",lore:"Accurate mid-range",trigger_value:12,main_gun:"m16a4",secondary_gun:"m9",main_mag_count:3,secondary_mag_count:2,equip_display:"1x Flash, 1x Smoke",perks_display:"Sleight of Hand, Tactical Mask, Tracker",perks:["quick_reload","tactical_mask","tracker"],slots:[{slot:"hotbar.1",loot:"mgs:i/m16a4",count:1,consumable:0b,bullets:0},{slot:"hotbar.2",loot:"mgs:i/m9",count:1,consumable:0b,bullets:0},{slot:"hotbar.8",loot:"mgs:i/flash_grenade",count:1,consumable:0b,bullets:0},{slot:"hotbar.7",loot:"mgs:i/smoke_grenade",count:1,consumable:0b,bullets:0},{slot:"inventory.0",loot:"mgs:i/m16a4_mag",count:1,consumable:0b,bullets:0},{slot:"inventory.1",loot:"mgs:i/m16a4_mag",count:1,consumable:0b,bullets:0},{slot:"inventory.2",loot:"mgs:i/m16a4_mag",count:1,consumable:0b,bullets:0},{slot:"inventory.3",loot:"mgs:i/m9_mag",count:1,consumable:0b,bullets:0},{slot:"inventory.4",loot:"mgs:i/m9_mag",count:1,consumable:0b,bullets:0}]},{id:"support",name:"Support",lore:"Suppressive heavy",trigger_value:13,main_gun:"m249",secondary_gun:"glock17",main_mag_count:3,secondary_mag_count:2,equip_display:"2x Smoke",perks_display:"Scavenger, Juggernaut, Flak Jacket",perks:["scavenger","juggernaut","flak_jacket"],slots:[{slot:"hotbar.1",loot:"mgs:i/m249",count:1,consumable:0b,bullets:0},{slot:"hotbar.2",loot:"mgs:i/glock17",count:1,consumable:0b,bullets:0},{slot:"hotbar.8",loot:"mgs:i/smoke_grenade",count:2,consumable:0b,bullets:0},{slot:"inventory.0",loot:"mgs:i/m249_mag",count:1,consumable:0b,bullets:0},{slot:"inventory.1",loot:"mgs:i/m249_mag",count:1,consumable:0b,bullets:0},{slot:"inventory.2",loot:"mgs:i/m249_mag",count:1,consumable:0b,bullets:0},{slot:"inventory.3",loot:"mgs:i/glock17_mag",count:1,consumable:0b,bullets:0},{slot:"inventory.4",loot:"mgs:i/glock17_mag",count:1,consumable:0b,bullets:0}]},{id:"sniper",name:"Sniper",lore:"Long-range precision",trigger_value:14,main_gun:"m24_4",secondary_gun:"deagle",main_mag_count:10,secondary_mag_count:2,equip_display:"1x Flash",perks_display:"Fast Hands, Tracker, Tactical Mask",perks:["quick_swap","tracker","tactical_mask"],slots:[{slot:"hotbar.1",loot:"mgs:i/m24_4",count:1,consumable:0b,bullets:0},{slot:"hotbar.2",loot:"mgs:i/deagle",count:1,consumable:0b,bullets:0},{slot:"hotbar.8",loot:"mgs:i/flash_grenade",count:1,consumable:0b,bullets:0},{slot:"inventory.0",loot:"mgs:i/m24_bullet",count:1,consumable:1b,bullets:10},{slot:"inventory.1",loot:"mgs:i/deagle_mag",count:1,consumable:0b,bullets:0},{slot:"inventory.2",loot:"mgs:i/deagle_mag",count:1,consumable:0b,bullets:0}]},{id:"smg",name:"SMG",lore:"Close quarters",trigger_value:15,main_gun:"mp7",secondary_gun:"glock18",main_mag_count:4,secondary_mag_count:2,equip_display:"2x Flash",perks_display:"Sleight of Hand, Fast Hands, Quick Fix",perks:["quick_reload","quick_swap","quick_fix"],slots:[{slot:"hotbar.1",loot:"mgs:i/mp7",count:1,consumable:0b,bullets:0},{slot:"hotbar.2",loot:"mgs:i/glock18",count:1,consumable:0b,bullets:0},{slot:"hotbar.8",loot:"mgs:i/flash_grenade",count:2,consumable:0b,bullets:0},{slot:"inventory.0",loot:"mgs:i/mp7_mag",count:1,consumable:0b,bullets:0},{slot:"inventory.1",loot:"mgs:i/mp7_mag",count:1,consumable:0b,bullets:0},{slot:"inventory.2",loot:"mgs:i/mp7_mag",count:1,consumable:0b,bullets:0},{slot:"inventory.3",loot:"mgs:i/mp7_mag",count:1,consumable:0b,bullets:0},{slot:"inventory.4",loot:"mgs:i/glock18_mag",count:1,consumable:0b,bullets:0},{slot:"inventory.5",loot:"mgs:i/glock18_mag",count:1,consumable:0b,bullets:0}]},{id:"shotgunner",name:"Shotgunner",lore:"Breaching / CQB",trigger_value:16,main_gun:"spas12",secondary_gun:"m9",main_mag_count:16,secondary_mag_count:2,equip_display:"2x Semtex",perks_display:"Juggernaut, Flak Jacket, Fast Hands",perks:["juggernaut","flak_jacket","quick_swap"],slots:[{slot:"hotbar.1",loot:"mgs:i/spas12",count:1,consumable:0b,bullets:0},{slot:"hotbar.2",loot:"mgs:i/m9",count:1,consumable:0b,bullets:0},{slot:"hotbar.8",loot:"mgs:i/semtex",count:2,consumable:0b,bullets:0},{slot:"inventory.0",loot:"mgs:i/spas12_shell",count:1,consumable:1b,bullets:16},{slot:"inventory.1",loot:"mgs:i/m9_mag",count:1,consumable:0b,bullets:0},{slot:"inventory.2",loot:"mgs:i/m9_mag",count:1,consumable:0b,bullets:0}]},{id:"engineer",name:"Engineer",lore:"Objective / demolitions",trigger_value:17,main_gun:"mp5",secondary_gun:"makarov",main_mag_count:3,secondary_mag_count:2,equip_display:"2x Semtex, 1x Smoke",perks_display:"Flak Jacket, Scavenger, Tactical Mask",perks:["flak_jacket","scavenger","tactical_mask"],slots:[{slot:"hotbar.1",loot:"mgs:i/mp5",count:1,consumable:0b,bullets:0},{slot:"hotbar.2",loot:"mgs:i/makarov",count:1,consumable:0b,bullets:0},{slot:"hotbar.8",loot:"mgs:i/semtex",count:2,consumable:0b,bullets:0},{slot:"hotbar.7",loot:"mgs:i/smoke_grenade",count:1,consumable:0b,bullets:0},{slot:"inventory.0",loot:"mgs:i/mp5_mag",count:1,consumable:0b,bullets:0},{slot:"inventory.1",loot:"mgs:i/mp5_mag",count:1,consumable:0b,bullets:0},{slot:"inventory.2",loot:"mgs:i/mp5_mag",count:1,consumable:0b,bullets:0},{slot:"inventory.3",loot:"mgs:i/makarov_mag",count:1,consumable:0b,bullets:0},{slot:"inventory.4",loot:"mgs:i/makarov_mag",count:1,consumable:0b,bullets:0}]},{id:"medic",name:"Medic",lore:"Team sustain",trigger_value:18,main_gun:"famas",secondary_gun:"m1911",main_mag_count:3,secondary_mag_count:2,equip_display:"2x Smoke",perks_display:"Quick Fix, Tactical Mask, Scavenger",perks:["quick_fix","tactical_mask","scavenger"],slots:[{slot:"hotbar.1",loot:"mgs:i/famas",count:1,consumable:0b,bullets:0},{slot:"hotbar.2",loot:"mgs:i/m1911",count:1,consumable:0b,bullets:0},{slot:"hotbar.8",loot:"mgs:i/smoke_grenade",count:2,consumable:0b,bullets:0},{slot:"inventory.0",loot:"mgs:i/famas_mag",count:1,consumable:0b,bullets:0},{slot:"inventory.1",loot:"mgs:i/famas_mag",count:1,consumable:0b,bullets:0},{slot:"inventory.2",loot:"mgs:i/famas_mag",count:1,consumable:0b,bullets:0},{slot:"inventory.3",loot:"mgs:i/m1911_mag",count:1,consumable:0b,bullets:0},{slot:"inventory.4",loot:"mgs:i/m1911_mag",count:1,consumable:0b,bullets:0}]},{id:"marksman",name:"Marksman",lore:"Semi-auto precision",trigger_value:19,main_gun:"svd",secondary_gun:"glock17",main_mag_count:3,secondary_mag_count:2,equip_display:"1x Flash, 1x Smoke",perks_display:"Sleight of Hand, Tracker, Tactical Mask",perks:["quick_reload","tracker","tactical_mask"],slots:[{slot:"hotbar.1",loot:"mgs:i/svd",count:1,consumable:0b,bullets:0},{slot:"hotbar.2",loot:"mgs:i/glock17",count:1,consumable:0b,bullets:0},{slot:"hotbar.8",loot:"mgs:i/flash_grenade",count:1,consumable:0b,bullets:0},{slot:"hotbar.7",loot:"mgs:i/smoke_grenade",count:1,consumable:0b,bullets:0},{slot:"inventory.0",loot:"mgs:i/svd_mag",count:1,consumable:0b,bullets:0},{slot:"inventory.1",loot:"mgs:i/svd_mag",count:1,consumable:0b,bullets:0},{slot:"inventory.2",loot:"mgs:i/svd_mag",count:1,consumable:0b,bullets:0},{slot:"inventory.3",loot:"mgs:i/glock17_mag",count:1,consumable:0b,bullets:0},{slot:"inventory.4",loot:"mgs:i/glock17_mag",count:1,consumable:0b,bullets:0}]},{id:"heavy",name:"Heavy",lore:"Armored suppressor",trigger_value:20,main_gun:"rpk",secondary_gun:"makarov",main_mag_count:3,secondary_mag_count:2,equip_display:"2x Frag",perks_display:"Juggernaut, Flak Jacket, Scavenger",perks:["juggernaut","flak_jacket","scavenger"],slots:[{slot:"hotbar.1",loot:"mgs:i/rpk",count:1,consumable:0b,bullets:0},{slot:"hotbar.2",loot:"mgs:i/makarov",count:1,consumable:0b,bullets:0},{slot:"hotbar.8",loot:"mgs:i/frag_grenade",count:2,consumable:0b,bullets:0},{slot:"inventory.0",loot:"mgs:i/rpk_mag",count:1,consumable:0b,bullets:0},{slot:"inventory.1",loot:"mgs:i/rpk_mag",count:1,consumable:0b,bullets:0},{slot:"inventory.2",loot:"mgs:i/rpk_mag",count:1,consumable:0b,bullets:0},{slot:"inventory.3",loot:"mgs:i/makarov_mag",count:1,consumable:0b,bullets:0},{slot:"inventory.4",loot:"mgs:i/makarov_mag",count:1,consumable:0b,bullets:0}]}]
 
-# Class selection scoreboard (1-10 = class id, 0 = none)
+# 1-10 standard class, negative custom loadout id, 0 none.
 scoreboard objectives add mgs.mp.class dummy
 
-# Death detection for respawn
 scoreboard objectives add mgs.mp.death_count deathCount
 
-# Class menu right-click detection (warped fungus on a stick)
 scoreboard objectives add mgs.class_menu minecraft.used:minecraft.warped_fungus_on_a_stick
 
-## Custom loadout system
-# Unique player IDs (auto-increment, used to identify loadout ownership)
-# Global next-pid counter
-# Player's default custom loadout ID (0 = none → use standard class)
-# Editor state tracker (0 = not editing)
+# mp.pid: unique player id (loadout ownership), #next_pid its counter; mp.default: default custom loadout (0 = standard class).
 scoreboard objectives add mgs.mp.pid dummy
 execute unless score #next_pid mgs.data matches 1.. run scoreboard players set #next_pid mgs.data 1
 scoreboard objectives add mgs.mp.default dummy
-scoreboard objectives add mgs.mp.edit_step dummy
-# Pick-10 points remaining during loadout editing
+# Pick-10 points left while editing.
 scoreboard objectives add mgs.mp.edit_points dummy
-# Loadout id being edited (0 = creating a new loadout; saving overwrites this id)
+# 0 creates a new loadout; otherwise saving overwrites this id.
 scoreboard objectives add mgs.mp.edit_target dummy
 
-# Constant for negation (used to store custom loadout ID as negative mp.class)
+# Custom loadouts are stored as a negative mp.class.
 scoreboard players set #minus_one mgs.data -1
 
-# Custom loadouts list (persists across reloads)
+# Survives reloads.
 execute unless data storage mgs:multiplayer custom_loadouts run data modify storage mgs:multiplayer custom_loadouts set value []
-# Per-player preference data (persists across reloads)
 execute unless data storage mgs:multiplayer player_data run data modify storage mgs:multiplayer player_data set value []
-# Auto-increment counter for loadout IDs
 execute unless data storage mgs:multiplayer next_loadout_id run data modify storage mgs:multiplayer next_loadout_id set value 1
 
-# Slot lookup tables for custom loadout editor (pre-computed at build time)
+# Computed at build time.
 data modify storage mgs:multiplayer primary_slot_table set value [{id:"ak47",gun_slot:{slot:"hotbar.1",loot:"mgs:i/ak47",count:1,consumable:0b,bullets:0},mag_id:"ak47_mag",mag_consumable:0b,mag_bullets:0},{id:"m16a4",gun_slot:{slot:"hotbar.1",loot:"mgs:i/m16a4",count:1,consumable:0b,bullets:0},mag_id:"m16a4_mag",mag_consumable:0b,mag_bullets:0},{id:"famas",gun_slot:{slot:"hotbar.1",loot:"mgs:i/famas",count:1,consumable:0b,bullets:0},mag_id:"famas_mag",mag_consumable:0b,mag_bullets:0},{id:"aug",gun_slot:{slot:"hotbar.1",loot:"mgs:i/aug",count:1,consumable:0b,bullets:0},mag_id:"aug_mag",mag_consumable:0b,mag_bullets:0},{id:"m4a1",gun_slot:{slot:"hotbar.1",loot:"mgs:i/m4a1",count:1,consumable:0b,bullets:0},mag_id:"m4a1_mag",mag_consumable:0b,mag_bullets:0},{id:"fnfal",gun_slot:{slot:"hotbar.1",loot:"mgs:i/fnfal",count:1,consumable:0b,bullets:0},mag_id:"fnfal_mag",mag_consumable:0b,mag_bullets:0},{id:"g3a3",gun_slot:{slot:"hotbar.1",loot:"mgs:i/g3a3",count:1,consumable:0b,bullets:0},mag_id:"g3a3_mag",mag_consumable:0b,mag_bullets:0},{id:"scar17",gun_slot:{slot:"hotbar.1",loot:"mgs:i/scar17",count:1,consumable:0b,bullets:0},mag_id:"scar17_mag",mag_consumable:0b,mag_bullets:0},{id:"mp5",gun_slot:{slot:"hotbar.1",loot:"mgs:i/mp5",count:1,consumable:0b,bullets:0},mag_id:"mp5_mag",mag_consumable:0b,mag_bullets:0},{id:"mp7",gun_slot:{slot:"hotbar.1",loot:"mgs:i/mp7",count:1,consumable:0b,bullets:0},mag_id:"mp7_mag",mag_consumable:0b,mag_bullets:0},{id:"mac10",gun_slot:{slot:"hotbar.1",loot:"mgs:i/mac10",count:1,consumable:0b,bullets:0},mag_id:"mac10_mag",mag_consumable:0b,mag_bullets:0},{id:"ppsh41",gun_slot:{slot:"hotbar.1",loot:"mgs:i/ppsh41",count:1,consumable:0b,bullets:0},mag_id:"ppsh41_mag",mag_consumable:0b,mag_bullets:0},{id:"sten",gun_slot:{slot:"hotbar.1",loot:"mgs:i/sten",count:1,consumable:0b,bullets:0},mag_id:"sten_mag",mag_consumable:0b,mag_bullets:0},{id:"m249",gun_slot:{slot:"hotbar.1",loot:"mgs:i/m249",count:1,consumable:0b,bullets:0},mag_id:"m249_mag",mag_consumable:0b,mag_bullets:0},{id:"rpk",gun_slot:{slot:"hotbar.1",loot:"mgs:i/rpk",count:1,consumable:0b,bullets:0},mag_id:"rpk_mag",mag_consumable:0b,mag_bullets:0},{id:"svd",gun_slot:{slot:"hotbar.1",loot:"mgs:i/svd",count:1,consumable:0b,bullets:0},mag_id:"svd_mag",mag_consumable:0b,mag_bullets:0},{id:"m82",gun_slot:{slot:"hotbar.1",loot:"mgs:i/m82",count:1,consumable:0b,bullets:0},mag_id:"m82_mag",mag_consumable:0b,mag_bullets:0},{id:"mosin",gun_slot:{slot:"hotbar.1",loot:"mgs:i/mosin",count:1,consumable:0b,bullets:0},mag_id:"mosin_bullet",mag_consumable:1b,mag_bullets:10},{id:"m24",gun_slot:{slot:"hotbar.1",loot:"mgs:i/m24",count:1,consumable:0b,bullets:0},mag_id:"m24_bullet",mag_consumable:1b,mag_bullets:10},{id:"spas12",gun_slot:{slot:"hotbar.1",loot:"mgs:i/spas12",count:1,consumable:0b,bullets:0},mag_id:"spas12_shell",mag_consumable:1b,mag_bullets:16},{id:"m500",gun_slot:{slot:"hotbar.1",loot:"mgs:i/m500",count:1,consumable:0b,bullets:0},mag_id:"m500_shell",mag_consumable:1b,mag_bullets:12},{id:"m590",gun_slot:{slot:"hotbar.1",loot:"mgs:i/m590",count:1,consumable:0b,bullets:0},mag_id:"m590_shell",mag_consumable:1b,mag_bullets:16},{id:"rpg7",gun_slot:{slot:"hotbar.1",loot:"mgs:i/rpg7",count:1,consumable:0b,bullets:0},mag_id:"rpg7_rocket",mag_consumable:1b,mag_bullets:3}]
 data modify storage mgs:multiplayer secondary_slot_table set value [{id:"m1911",gun_slot:{slot:"hotbar.2",loot:"mgs:i/m1911",count:1,consumable:0b,bullets:0},mag_id:"m1911_mag",mag_consumable:0b,mag_bullets:0},{id:"m9",gun_slot:{slot:"hotbar.2",loot:"mgs:i/m9",count:1,consumable:0b,bullets:0},mag_id:"m9_mag",mag_consumable:0b,mag_bullets:0},{id:"deagle",gun_slot:{slot:"hotbar.2",loot:"mgs:i/deagle",count:1,consumable:0b,bullets:0},mag_id:"deagle_mag",mag_consumable:0b,mag_bullets:0},{id:"makarov",gun_slot:{slot:"hotbar.2",loot:"mgs:i/makarov",count:1,consumable:0b,bullets:0},mag_id:"makarov_mag",mag_consumable:0b,mag_bullets:0},{id:"glock17",gun_slot:{slot:"hotbar.2",loot:"mgs:i/glock17",count:1,consumable:0b,bullets:0},mag_id:"glock17_mag",mag_consumable:0b,mag_bullets:0},{id:"glock18",gun_slot:{slot:"hotbar.2",loot:"mgs:i/glock18",count:1,consumable:0b,bullets:0},mag_id:"glock18_mag",mag_consumable:0b,mag_bullets:0},{id:"vz61",gun_slot:{slot:"hotbar.2",loot:"mgs:i/vz61",count:1,consumable:0b,bullets:0},mag_id:"vz61_mag",mag_consumable:0b,mag_bullets:0}]
 
-# Initialize multiplayer maps storage (empty list, only if not set)
 execute unless data storage mgs:maps multiplayer run data modify storage mgs:maps multiplayer set value []
+function #mgs:maps/register
 
-## Missions scoreboards
 scoreboard objectives add mgs.mi.in_game dummy
-scoreboard objectives add mgs.mi.timer dummy
-scoreboard objectives add mgs.mi.total_enemies dummy
 scoreboard objectives add mgs.mi.kills dummy
 scoreboard objectives add mgs.mi.deaths dummy
 scoreboard objectives add mgs.mi.kill_total totalKillCount
 scoreboard objectives add mgs.mi.kill_base dummy
 
-# Was the death simulated? Then the body never moved and spectator mode already looks at the spot
+# 1 when the death was simulated: the body never moved and spectator mode already looks at the spot.
 scoreboard objectives add mgs.mi.died_here dummy
 
-# Boundary checking coords (reuse mp prefix scores)
+# Shares the mp boundary scores.
 scoreboard objectives add mgs.mp.bx dummy
 scoreboard objectives add mgs.mp.by dummy
 scoreboard objectives add mgs.mp.bz dummy
 
-# Initialize missions game state
 execute unless data storage mgs:missions game run data modify storage mgs:missions game set value {state:"lobby",map_id:""}
 
-# Map editor scoreboards
 scoreboard objectives add mgs.mp.map_edit dummy
 scoreboard objectives add mgs.mp.map_idx dummy
 scoreboard objectives add mgs.mp.map_mode dummy
 scoreboard objectives add mgs.mp.map_disp dummy
 
-# Reuse warped fungus on stick detection (shared with class menu)
+# Shared with the class menu.
 scoreboard objectives add mgs.class_menu minecraft.used:minecraft.warped_fungus_on_a_stick
 
-# Initialize maps storage for all modes
 execute unless data storage mgs:maps multiplayer run data modify storage mgs:maps multiplayer set value []
 execute unless data storage mgs:maps zombies run data modify storage mgs:maps zombies set value []
 execute unless data storage mgs:maps missions run data modify storage mgs:maps missions set value []

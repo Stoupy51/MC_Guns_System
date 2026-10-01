@@ -23,7 +23,7 @@ def write_my_loadouts() -> None:
 	ns: str = Mem.ctx.project_id
 	version: str = Mem.ctx.project_version
 
-	## MY LOADOUTS - Browse and manage player's own custom loadouts Organized as: [⭐Favorites Only] [📋All] [✚Create] filter row, then favorites, then privates, then publics
+	## The player's own loadouts: a Favorites, All and Create filter row, then favorites, then private, then public ones.
 
 	def my_loadouts_dialog_init() -> str:
 		"""SNBT for the base My Loadouts dialog (no actions yet)."""
@@ -48,58 +48,46 @@ def write_my_loadouts() -> None:
 			f'{{label:{Text.styled_text("\u271a Create", color="green", bold="true")},tooltip:{{text:"Build a new custom loadout from scratch"}},action:{{type:"run_command",command:"/trigger {ns}.player.config set {TRIG_EDITOR_START}"}}}}',
 		]
 
-	## my_loadouts/browse - Default: 3-pass build (favorites → privates → publics) + filter row
+	## Three passes (favorites, private, public) under the filter row.
 	write_versioned_function("multiplayer/my_loadouts/browse", f"""
-# Initialize dialog
 data modify storage {ns}:temp dialog set value {my_loadouts_dialog_init()}
 
-# Add filter/sort buttons (row 1: favorites / all / create)
 data modify storage {ns}:temp dialog.actions append value {my_loadouts_filter_btns("all")[0]}
 data modify storage {ns}:temp dialog.actions append value {my_loadouts_filter_btns("all")[1]}
 data modify storage {ns}:temp dialog.actions append value {my_loadouts_filter_btns("all")[2]}
 
-# Load player favorites for ordering
+# Read for the ordering.
 function {ns}:v{version}/multiplayer/shared/load_player_favorites
 
-# Pass 1: Own loadouts that are in player's favorites
 data modify storage {ns}:temp _iter set from storage {ns}:multiplayer custom_loadouts
 execute if data storage {ns}:temp _iter[0] run function {ns}:v{version}/multiplayer/my_loadouts/build_list_favs
 
-# Pass 2: Own private loadouts NOT in favorites
 data modify storage {ns}:temp _iter set from storage {ns}:multiplayer custom_loadouts
 execute if data storage {ns}:temp _iter[0] run function {ns}:v{version}/multiplayer/my_loadouts/build_list_privates
 
-# Pass 3: Own public loadouts NOT in favorites
 data modify storage {ns}:temp _iter set from storage {ns}:multiplayer custom_loadouts
 execute if data storage {ns}:temp _iter[0] run function {ns}:v{version}/multiplayer/my_loadouts/build_list_publics
 
-# Show dialog
 function {ns}:v{version}/multiplayer/show_dialog with storage {ns}:temp
 """)
 
-	## my_loadouts/browse_fav_only - Filter: only own favorited loadouts
+	## Only the player's favorited loadouts.
 	write_versioned_function("multiplayer/my_loadouts/browse_fav_only", f"""
-# Initialize dialog
 data modify storage {ns}:temp dialog set value {my_loadouts_dialog_init()}
 data modify storage {ns}:temp dialog.title set value [{{text:"",color:"gold",bold:true}},{{text:"My Loadouts"}}," \u2014 ",{{text:"Favorites"}}]
 
-# Add filter/sort buttons (favorites tab active)
 data modify storage {ns}:temp dialog.actions append value {my_loadouts_filter_btns("fav")[0]}
 data modify storage {ns}:temp dialog.actions append value {my_loadouts_filter_btns("fav")[1]}
 data modify storage {ns}:temp dialog.actions append value {my_loadouts_filter_btns("fav")[2]}
 
-# Load player favorites
 function {ns}:v{version}/multiplayer/shared/load_player_favorites
 
-# Only show own loadouts that are in favorites
 data modify storage {ns}:temp _iter set from storage {ns}:multiplayer custom_loadouts
 execute if data storage {ns}:temp _iter[0] run function {ns}:v{version}/multiplayer/my_loadouts/build_list_favs
 
-# Show dialog
 function {ns}:v{version}/multiplayer/show_dialog with storage {ns}:temp
 """)
 
-	## my_loadouts/build_list_favs - Pass 1: own loadouts in favorites
 	write_versioned_function("multiplayer/my_loadouts/build_list_favs", f"""
 execute store result score #entry_owner {ns}.data run data get storage {ns}:temp _iter[0].owner_pid
 execute if score #entry_owner {ns}.data = @s {ns}.mp.pid run function {ns}:v{version}/multiplayer/shared/check_is_fav
@@ -109,7 +97,6 @@ data remove storage {ns}:temp _iter[0]
 execute if data storage {ns}:temp _iter[0] run function {ns}:v{version}/multiplayer/my_loadouts/build_list_favs
 """)
 
-	## my_loadouts/build_list_privates - Pass 2: own private loadouts NOT in favorites
 	write_versioned_function("multiplayer/my_loadouts/build_list_privates", f"""
 execute store result score #entry_owner {ns}.data run data get storage {ns}:temp _iter[0].owner_pid
 execute if score #entry_owner {ns}.data = @s {ns}.mp.pid run function {ns}:v{version}/multiplayer/my_loadouts/check_private_not_fav
@@ -118,14 +105,13 @@ data remove storage {ns}:temp _iter[0]
 execute if data storage {ns}:temp _iter[0] run function {ns}:v{version}/multiplayer/my_loadouts/build_list_privates
 """)
 
-	## check_private_not_fav - For own entries: only add if private AND not in favorites
+	## Only private loadouts outside the favorites.
 	write_versioned_function("multiplayer/my_loadouts/check_private_not_fav", f"""
 execute store result score #pub {ns}.data run data get storage {ns}:temp _iter[0].public
 execute if score #pub {ns}.data matches 0 run function {ns}:v{version}/multiplayer/shared/check_is_fav
 execute if score #pub {ns}.data matches 0 if score #is_fav {ns}.data matches 0 run function {ns}:v{version}/multiplayer/my_loadouts/prep_btn
 """)
 
-	## my_loadouts/build_list_publics - Pass 3: own public loadouts NOT in favorites
 	write_versioned_function("multiplayer/my_loadouts/build_list_publics", f"""
 execute store result score #entry_owner {ns}.data run data get storage {ns}:temp _iter[0].owner_pid
 execute if score #entry_owner {ns}.data = @s {ns}.mp.pid run function {ns}:v{version}/multiplayer/my_loadouts/check_public_not_fav
@@ -134,14 +120,14 @@ data remove storage {ns}:temp _iter[0]
 execute if data storage {ns}:temp _iter[0] run function {ns}:v{version}/multiplayer/my_loadouts/build_list_publics
 """)
 
-	## check_public_not_fav - For own entries: only add if public AND not in favorites
+	## Only public loadouts outside the favorites.
 	write_versioned_function("multiplayer/my_loadouts/check_public_not_fav", f"""
 execute store result score #pub {ns}.data run data get storage {ns}:temp _iter[0].public
 execute if score #pub {ns}.data matches 1 run function {ns}:v{version}/multiplayer/shared/check_is_fav
 execute if score #pub {ns}.data matches 1 if score #is_fav {ns}.data matches 0 run function {ns}:v{version}/multiplayer/my_loadouts/prep_btn
 """)
 
-	# Rich info component shared by the list-row tooltip and the manage-dialog body
+	# Shared by the list tooltip and the manage dialog body.
 	def ml_info(public_label: str) -> str:
 		return (
 			'["",{"text":"$(main_gun_display)","color":"green"},'
@@ -170,30 +156,28 @@ execute if score #pub {ns}.data matches 1 if score #is_fav {ns}.data matches 0 r
 	ml_tooltip_pub = ml_info('{"text":"Public","color":"green","italic":true},"\\n\\n",{"text":"\\u25b6 Click to manage","color":"dark_gray","italic":true}')
 	ml_tooltip_priv = ml_info('{"text":"Private","color":"red","italic":true},"\\n\\n",{"text":"\\u25b6 Click to manage","color":"dark_gray","italic":true}')
 
-	## my_loadouts/prep_btn - Each loadout becomes ONE list row that opens its manage submenu
+	## Each loadout is one row opening its manage submenu.
 	write_versioned_function("multiplayer/my_loadouts/prep_btn", f"""
-# Copy entry data for macro use
 data modify storage {ns}:temp _btn_data set from storage {ns}:temp _iter[0]
 
-# Compute the manage submenu trigger (TRIG_MANAGE_BASE + id)
+# TRIG_MANAGE_BASE + id.
 {compute_trig(ns, "manage_trig", TRIG_MANAGE_BASE)}
 
-# Normalize and compute perk display
 {normalize_btn_fields(ns)}
 
-# Route to correct color variant based on public flag (green=public, red=private)
+# Green for public, red for private.
 execute store result score #pub {ns}.data run data get storage {ns}:temp _iter[0].public
 execute if score #pub {ns}.data matches 1 run function {ns}:v{version}/multiplayer/my_loadouts/add_btn_public with storage {ns}:temp _btn_data
 execute if score #pub {ns}.data matches 0 run function {ns}:v{version}/multiplayer/my_loadouts/add_btn_private with storage {ns}:temp _btn_data
 """)
 
-	## add_btn_public / add_btn_private - one row: name + ▶ arrow, opens the manage submenu
+	## One row: the name and an arrow, opening the manage submenu.
 	write_versioned_function("multiplayer/my_loadouts/add_btn_public", f"""$data modify storage {ns}:temp dialog.actions append value {{label:["",{{"text":"$(name)",color:"green"}},{{"text":"  \\u25b6","color":"dark_gray"}}],tooltip:{ml_tooltip_pub},action:{{type:"run_command",command:"/trigger {ns}.player.config set $(manage_trig)"}}}}
 """)
 	write_versioned_function("multiplayer/my_loadouts/add_btn_private", f"""$data modify storage {ns}:temp dialog.actions append value {{label:["",{{"text":"$(name)",color:"red"}},{{"text":"  \\u25b6","color":"dark_gray"}}],tooltip:{ml_tooltip_priv},action:{{type:"run_command",command:"/trigger {ns}.player.config set $(manage_trig)"}}}}
 """)
 
-	## MY LOADOUTS - per-loadout manage submenu (Use / Edit / Visibility / Default / Delete)
+	## Per-loadout manage submenu: Use, Edit, Visibility, Default, Delete.
 	def compute_trig_id(field: str, base: int) -> str:
 		"""Compute base + #loadout_id into _btn_data.<field> (manage submenu)."""
 		return (
@@ -202,7 +186,6 @@ execute if score #pub {ns}.data matches 0 run function {ns}:v{version}/multiplay
 			f"execute store result storage {ns}:temp _btn_data.{field} int 1 run scoreboard players get #trig {ns}.data"
 		)
 
-	## manage - Find the loadout by id, then build its management dialog
 	write_versioned_function("multiplayer/my_loadouts/manage", f"""
 scoreboard players operation #loadout_id {ns}.data = @s {ns}.player.config
 scoreboard players remove #loadout_id {ns}.data {TRIG_MANAGE_BASE}
@@ -210,7 +193,7 @@ data modify storage {ns}:temp _find_iter set from storage {ns}:multiplayer custo
 execute if data storage {ns}:temp _find_iter[0] run function {ns}:v{version}/multiplayer/my_loadouts/manage_find
 """)
 
-	## manage_find - Recursive: locate loadout by id (and ownership), then prep its dialog
+	## By id and ownership.
 	write_versioned_function("multiplayer/my_loadouts/manage_find", f"""
 execute store result score #entry_id {ns}.data run data get storage {ns}:temp _find_iter[0].id
 execute store result score #entry_owner {ns}.data run data get storage {ns}:temp _find_iter[0].owner_pid
@@ -219,7 +202,6 @@ data remove storage {ns}:temp _find_iter[0]
 execute if data storage {ns}:temp _find_iter[0] run function {ns}:v{version}/multiplayer/my_loadouts/manage_find
 """)
 
-	## manage_prep - Copy the found loadout, compute action triggers, normalize, build dialog
 	write_versioned_function("multiplayer/my_loadouts/manage_prep", f"""
 data modify storage {ns}:temp _btn_data set from storage {ns}:temp _find_iter[0]
 {compute_trig_id("select_trig", TRIG_SELECT_BASE)}
@@ -233,7 +215,7 @@ execute if score #pub {ns}.data matches 1 run function {ns}:v{version}/multiplay
 execute if score #pub {ns}.data matches 0 run function {ns}:v{version}/multiplayer/my_loadouts/manage_build_private with storage {ns}:temp _btn_data
 """)
 
-	# Manage dialog body (rich info, no "click to manage" hint)
+	# Without the "click to manage" hint.
 	manage_body_pub = ml_info('{"text":"Public","color":"green","italic":true}')
 	manage_body_priv = ml_info('{"text":"Private","color":"red","italic":true}')
 

@@ -1,13 +1,10 @@
 """ How long each kind of title stays on screen.
 
-`title <player> times` is per-player STATE, not part of the message: it persists until something sets it
-again. A title that omits it therefore inherits whatever the previous one used — which is how a death notice
-ended up wearing the GAME OVER banner's four-second stay, and how a per-tick hover tooltip ended up fading in
-over half a second and smearing.
+`title <player> times` is per-player state, not part of the message: it persists until something sets it again.
+A title that omits it inherits whatever the previous one used, so a death notice would keep the GAME OVER banner's four-second stay.
 
-So every site that *displays* a title sets its timing first. Sites that only update a subtitle do not: a
-subtitle packet does not re-trigger the display, so the timing belongs to the title that opened it — see
-`RESPAWN`, whose stay is sized to outlast the countdown that writes into it.
+Every site that displays a title therefore sets its timing first.
+Sites that only update a subtitle do not, because a subtitle packet does not re-trigger the display: the timing belongs to the title that opened it (see `RESPAWN`, whose stay outlasts the countdown that writes into it).
 """
 # Imports
 from dataclasses import dataclass
@@ -18,11 +15,10 @@ from dataclasses import dataclass
 class TitleTiming:
 	""" One `title times` triple, in ticks.
 
-	Examples:
-		>>> TitleTimes.HOVER.cmd()
-		'title @s times 0 10 0'
-		>>> TitleTimes.BANNER.cmd("@a[tag=mgs.x]")
-		'title @a[tag=mgs.x] times 10 80 20'
+	>>> TitleTimes.HOVER.cmd()
+	'title @s times 0 10 0'
+	>>> TitleTimes.BANNER.cmd("@a[tag=mgs.x]")
+	'title @a[tag=mgs.x] times 10 80 20'
 	"""
 	fade_in: int
 	stay: int
@@ -33,7 +29,7 @@ class TitleTiming:
 		""" Return the `title ... times` command for this timing.
 
 		Args:
-			selector (str): Who it applies to.
+			selector: Who it applies to.
 		Returns:
 			str: One command.
 		"""
@@ -50,7 +46,7 @@ class TitleTimes:
 		"away. The 0.5s stay is what makes it vanish promptly instead of flickering between ticks."
 	))
 	HIT_DIRECTION: TitleTiming = TitleTiming(fade_in=0, stay=8, fade_out=6, note=(
-		"The arc glyph flashed around the crosshair when you are hit. Instant, then gone in ~0.7s — any "
+		"The arc glyph flashed around the crosshair when you are hit. Instant, then gone in ~0.7s: any "
 		"fade-in would land after the shot that caused it."
 	))
 	RESPAWN: TitleTiming = TitleTiming(fade_in=0, stay=70, fade_out=10, note=(
@@ -62,7 +58,7 @@ class TitleTimes:
 		"half a second of fade is half a second of not reading why."
 	))
 	EVENT: TitleTiming = TitleTiming(fade_in=5, stay=40, fade_out=15, note=(
-		"Something good or notable happened to you — revived, gear recovered, a perk saved your life. Short "
+		"Something good or notable happened to you: revived, gear recovered, a perk saved your life. Short "
 		"fade-in is affordable here because nothing is urgent about it."
 	))
 	AFTERMATH: TitleTiming = TitleTiming(fade_in=3, stay=25, fade_out=10, note=(
@@ -81,3 +77,4 @@ class TitleTimes:
 	FLASH_WEAK: TitleTiming = TitleTiming(fade_in=2, stay=10, fade_out=10, note=(
 		"A flashbang caught at the edge of its radius, or through a turned head."
 	))
+
