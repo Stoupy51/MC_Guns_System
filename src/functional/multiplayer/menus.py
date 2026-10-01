@@ -3,7 +3,7 @@
 # Imports
 from stewbeet import Mem, write_versioned_function
 
-from ..helpers.dialogs import Dialogs
+from ..helpers.dialogs import Dialogs, PickerOption
 
 
 # Functions
@@ -15,14 +15,14 @@ def generate_menus() -> None:
 	## Gamemode
 	gm_data = [("FFA", "ffa", "green"), ("TDM", "tdm", "yellow"), ("DOM", "dom", "aqua"), ("HP", "hp", "dark_purple"), ("S&D", "snd", "gold"), ("DEMO", "demo", "red")]
 	gamemode_opts = [
-		(label, f'/data modify storage {ns}:multiplayer game.gamemode set value "{gm}"', color, f"Set gamemode to {label}")
+		PickerOption(label=label, command=f'/data modify storage {ns}:multiplayer game.gamemode set value "{gm}"', color=color, hover=f"Set gamemode to {label}")
 		for label, gm, color in gm_data
 	]
 	Dialogs.register_value_picker("multiplayer/setup/gamemode", "Gamemode", "Choose the multiplayer gamemode", gamemode_opts, back_dialog="multiplayer/setup")
 
 	# Score Limit
 	score_limit_opts = [
-		(str(n), f"/data modify storage {ns}:multiplayer game.score_limit set value {n}", "green" if n == 50 else "yellow", f"Set score limit to {n}")
+		PickerOption(label=str(n), command=f"/data modify storage {ns}:multiplayer game.score_limit set value {n}", color="green" if n == 50 else "yellow", hover=f"Set score limit to {n}")
 		for n in [10, 20, 30, 50, 100, 200, 300, 500]
 	]
 	Dialogs.register_value_picker("multiplayer/setup/score_limit", "Score Limit", "Set the score needed to win", score_limit_opts, back_dialog="multiplayer/setup")
@@ -30,7 +30,7 @@ def generate_menus() -> None:
 	# Time Limit
 	tl_data = [("3min", 3600), ("5min", 6000), ("10min", 12000), ("15min", 18000), ("∞", 72000)]
 	time_limit_opts = [
-		(label, f"/data modify storage {ns}:multiplayer game.time_limit set value {ticks}", "green" if ticks == 12000 else "yellow", f"Set time limit to {label}")
+		PickerOption(label=label, command=f"/data modify storage {ns}:multiplayer game.time_limit set value {ticks}", color="green" if ticks == 12000 else "yellow", hover=f"Set time limit to {label}")
 		for label, ticks in tl_data
 	]
 	Dialogs.register_value_picker("multiplayer/setup/time_limit", "Time Limit", "Set the match time limit", time_limit_opts, back_dialog="multiplayer/setup")

@@ -19,7 +19,7 @@ def write_zombies_start() -> None:
 # Require at least one opted-in player (players are independent until added via Manage Players / + Join)
 execute unless entity @a[scores={{{ns}.zb.in_game=1}}] run return run tellraw @s [{MGS_TAG},{{"text":"No players have joined the zombies game — use Manage Players first.","color":"red"}}]
 
-{GameLifecycle.mode_start_map_bootstrap_lines(ns, "zombies", False)}
+{GameLifecycle.mode_start_map_bootstrap_lines(ns, "zombies", normalize_legacy=False)}
 
 # Reset scores (in_game is left untouched: it's the opt-in flag, set via Manage Players / + Join)
 # Keep the XP spend tracker in step: an unsynced reset reads as points being SPENT (see zombies/xp.py)

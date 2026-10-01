@@ -135,7 +135,7 @@ execute unless data storage {ns}:{storage} game.map.start_commands run data modi
 		return "\n\n".join(parts)
 
 	@staticmethod
-	def mode_start_map_bootstrap_lines(ns: str, mode: str, normalize_legacy: bool = False) -> str:
+	def mode_start_map_bootstrap_lines(ns: str, mode: str, *, normalize_legacy: bool) -> str:
 		""" Return the shared start bootstrap: selection check, load, copy, and preparing state. """
 		parts: list[str] = []
 		parts.append(f"""

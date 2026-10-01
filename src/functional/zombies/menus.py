@@ -3,7 +3,7 @@
 from stewbeet import Mem, write_versioned_function
 
 from ..helpers import MGS_TAG
-from ..helpers.dialogs import Dialogs
+from ..helpers.dialogs import Dialogs, PickerOption
 from .rewards.powerups.types import POWERUP_TYPES
 
 # Constants
@@ -29,8 +29,8 @@ def generate_zombies_menus() -> None:
 
 	## Variant picker (Vanilla = classic CoD zombies, Zonweeb = passives/abilities/special zombies)
 	variant_opts = [
-		("Vanilla", f'/data modify storage {ns}:zombies game.variant set value "vanilla"', "yellow", "Classic CoD zombies: no passives, abilities, or special zombies"),
-		("Zonweeb", f'/data modify storage {ns}:zombies game.variant set value "zonweeb"', "green", "Full experience: passives, abilities, and special zombies"),
+		PickerOption(label="Vanilla", command=f'/data modify storage {ns}:zombies game.variant set value "vanilla"', color="yellow", hover="Classic CoD zombies: no passives, abilities, or special zombies"),
+		PickerOption(label="Zonweeb", command=f'/data modify storage {ns}:zombies game.variant set value "zonweeb"', color="green", hover="Full experience: passives, abilities, and special zombies"),
 	]
 	Dialogs.register_value_picker("zombies/setup/variant", "Variant", "Choose the zombies experience", variant_opts, back_dialog="zombies/setup")
 
@@ -130,11 +130,7 @@ tellraw @a [{MGS_TAG},{{"text":"An operator reset everyone's points.","color":"r
 """)
 
 	## Power-ups reuse the real activation functions, so bossbars, sounds and timers all behave exactly as if the power-up had been picked up off the floor.
-	## Generated from POWERUP_TYPES so EVERY power-up is always present (no drift when new ones are added).
-	admin_powerups: list[tuple[str, str, str, str]] = [
-		(pu_id, f'{PU_ADMIN_EMOJI.get(pu_id, "⚡")} {v.display}', v.color, f'Force {v.display} for everyone')
-		for pu_id, v in POWERUP_TYPES.items()
-	]
+
 	## Some power-ups (Free PaP, Cash Drop, Random Perk) act "as the player who picked it up" and do nothing at all without the {ns}.pu_collecting tag a real pickup sets.
 	## Nominate a collector here: the clicking operator when they are actually playing, otherwise any in-game player, so the button still works from spectator.
 	write_versioned_function("zombies/admin/powerup", f"""
@@ -152,8 +148,8 @@ tag @a[tag={ns}.pu_collecting] remove {ns}.pu_collecting
 		"title": ["", "🛠 ", {"text": "Force Power-Up", "color": "dark_red", "bold": True}],
 		"body": [{"type": "minecraft:plain_message", "contents": {"text": "Triggers the real power-up, for everyone", "color": "gray"}}],
 		"actions": [
-			Dialogs.dialog_run_btn(label, f'/function {ns}:v{version}/zombies/admin/powerup {{type:"{pu_id}"}}', hover, color)
-			for pu_id, label, color, hover in admin_powerups
+			Dialogs.dialog_run_btn(f"{PU_ADMIN_EMOJI.get(pu_id, '⚡')} {v.display}", f'/function {ns}:v{version}/zombies/admin/powerup {{type:"{pu_id}"}}', f"Force {v.display} for everyone", v.color)
+			for pu_id, v in POWERUP_TYPES.items()
 		],
 		"columns": 2,
 		"exit_action": Dialogs.dialog_back_action("zombies/admin", tooltip="Return to the admin menu"),

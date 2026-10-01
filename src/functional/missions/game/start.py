@@ -19,7 +19,7 @@ def write_missions_start() -> None:
 # Require at least one opted-in player (players are independent until added via Manage Players / + Join)
 execute unless entity @a[scores={{{ns}.mi.in_game=1}}] run return run tellraw @s [{MGS_TAG},{{"text":"No players have joined the mission — use Manage Players first.","color":"red"}}]
 
-{GameLifecycle.mode_start_map_bootstrap_lines(ns, "missions", True)}
+{GameLifecycle.mode_start_map_bootstrap_lines(ns, "missions", normalize_legacy=True)}
 
 # Reset scores (in_game is left untouched: it's the opt-in flag, set via Manage Players / + Join)
 scoreboard players set #mi_timer {ns}.data 0

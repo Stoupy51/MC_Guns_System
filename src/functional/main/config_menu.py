@@ -1,8 +1,10 @@
 """ The /function mgs:config dialog tree: categories, value pickers and mode setup entries. """
 # Imports
+from collections.abc import Callable
+
 from stewbeet import Mem, write_function
 
-from ..helpers.dialogs import Dialogs
+from ..helpers.dialogs import Dialogs, PickerOption
 from ..helpers.text import Text
 
 
@@ -16,59 +18,44 @@ def write_config_menu() -> None:
 	# Picking a value runs the scoreboard command directly.
 	# Each value button is independent with no submit step, so opening the menu never resets untouched settings.
 	# --- Global Settings (server-wide fake-player scores) ---
-	rpg_opts = [
-		(str(i), f"/scoreboard players set #projectile_explosion_power {ns}.config {i}",
-         "green" if i == 0 else "yellow",
-         f"Set Projectile Explosion Power to {i}" + (" (disabled)" if i == 0 else ""))
-		for i in range(6)
-	]
-	gren_opts = [
-		(str(i), f"/scoreboard players set #grenade_explosion_power {ns}.config {i}",
-         "green" if i == 0 else "yellow",
-         f"Set Grenade Explosion Power to {i}" + (" (disabled)" if i == 0 else ""))
-		for i in range(6)
-	]
-	ma_opts = [
-		("OG", f"/scoreboard players set #max_ammo_reload_weapons {ns}.config 0", "yellow", "Only refill magazines in inventory (OG zombies)"),
-		("Recent", f"/scoreboard players set #max_ammo_reload_weapons {ns}.config 1", "green", "Also reload current weapon (recent zombies)"),
-	]
-	dd_opts = [
-		("OFF", f"/scoreboard players set #damage_debug {ns}.config 0", "red", "Disable global damage debug"),
-		("ON", f"/scoreboard players set #damage_debug {ns}.config 1", "green", "Enable global damage debug (tellraw @a every hit)"),
-	]
+	def power_opts(score: str, name: str) -> list[PickerOption]:
+		return [
+			PickerOption(label=str(i), command=f"/scoreboard players set {score} {ns}.config {i}", color="green" if i == 0 else "yellow", hover=f"Set {name} to {i}" + (" (disabled)" if i == 0 else ""))
+			for i in range(6)
+		]
+
+	def config_opt(label: str, score: str, value: int, color: str, hover: str) -> PickerOption:
+		return PickerOption(label=label, command=f"/scoreboard players set {score} {ns}.config {value}", color=color, hover=hover)
+
+	Dialogs.register_value_picker("config/rpg_power", "RPG Explosion Power", "Server-wide projectile explosion power", power_opts("#projectile_explosion_power", "Projectile Explosion Power"), back_dialog="config/global")
+	Dialogs.register_value_picker("config/grenade_power", "Grenade Explosion Power", "Server-wide grenade explosion power", power_opts("#grenade_explosion_power", "Grenade Explosion Power"), back_dialog="config/global")
+	Dialogs.register_value_picker("config/max_ammo", "Max Ammo Mode", "How the Max Ammo powerup refills weapons", [
+		config_opt("OG", "#max_ammo_reload_weapons", 0, "yellow", "Only refill magazines in inventory (OG zombies)"),
+		config_opt("Recent", "#max_ammo_reload_weapons", 1, "green", "Also reload current weapon (recent zombies)"),
+	], back_dialog="config/global")
+	Dialogs.register_value_picker("config/damage_debug", "Damage Debug", "Broadcast every hit's damage to chat", [
+		config_opt("OFF", "#damage_debug", 0, "red", "Disable global damage debug"),
+		config_opt("ON", "#damage_debug", 1, "green", "Enable global damage debug (tellraw @a every hit)"),
+	], back_dialog="config/global")
 
 	# --- Player Specials (self-only scores; commands run as the clicking player) ---
-	duration_opts = [("OFF", 0, "red"), ("10s", 200, "yellow"), ("30s", 600, "yellow"), ("60s", 1200, "yellow"), ("∞", 72000, "light_purple")]
-	percent_opts = [("0%", 0, "red"), ("20%", 20, "yellow"), ("50%", 50, "yellow"), ("80%", 80, "green")]
-	ik_opts = [(label, f"/scoreboard players set @s {ns}.special.instant_kill {v}", color,
-				f"Set instant kill {'off' if v == 0 else f'for {label}'}") for label, v, color in duration_opts]
-	ia_opts = [(label, f"/scoreboard players set @s {ns}.special.infinite_ammo {v}", color,
-				f"Set infinite ammo {'off' if v == 0 else f'for {label}'}") for label, v, color in duration_opts]
-	qr_opts = [(label, f"/scoreboard players set @s {ns}.special.quick_reload {v}", color,
-				f"Set quick reload to {label}") for label, v, color in percent_opts]
-	qs_opts = [(label, f"/scoreboard players set @s {ns}.special.quick_swap {v}", color,
-				f"Set quick swap to {label}") for label, v, color in percent_opts]
+	durations: dict[str, tuple[int, str]] = {"OFF": (0, "red"), "10s": (200, "yellow"), "30s": (600, "yellow"), "60s": (1200, "yellow"), "∞": (72000, "light_purple")}
+	percents: dict[str, tuple[int, str]] = {"0%": (0, "red"), "20%": (20, "yellow"), "50%": (50, "yellow"), "80%": (80, "green")}
 
-	# Register every value sub-dialog: (sub_id, title, description, options)
-	value_dialogs = [
-		("config/rpg_power", "RPG Explosion Power", "Server-wide projectile explosion power", rpg_opts),
-		("config/grenade_power", "Grenade Explosion Power", "Server-wide grenade explosion power", gren_opts),
-		("config/max_ammo", "Max Ammo Mode", "How the Max Ammo powerup refills weapons", ma_opts),
-		("config/damage_debug", "Damage Debug", "Broadcast every hit's damage to chat", dd_opts),
-		("config/instant_kill", "Instant Kill", "One-shot kills for a duration (self only)", ik_opts),
-		("config/infinite_ammo", "Infinite Ammo", "No reloads needed for a duration (self only)", ia_opts),
-		("config/quick_reload", "Quick Reload", "Reduce reload time (self only)", qr_opts),
-		("config/quick_swap", "Quick Swap", "Reduce weapon-swap time (self only)", qs_opts),
-	]
-	# Each value picker's Back button returns to its parent category (global / personal).
-	picker_back = {
-		"config/rpg_power": "config/global", "config/grenade_power": "config/global",
-		"config/max_ammo": "config/global", "config/damage_debug": "config/global",
-		"config/instant_kill": "config/personal", "config/infinite_ammo": "config/personal",
-		"config/quick_reload": "config/personal", "config/quick_swap": "config/personal",
-	}
-	for sub_id, title_text, desc, options in value_dialogs:
-		Dialogs.register_value_picker(sub_id, title_text, desc, options, back_dialog=picker_back[sub_id])
+	def special_opts(special: str, values: dict[str, tuple[int, str]], hover: Callable[[str, int], str]) -> list[PickerOption]:
+		return [
+			PickerOption(label=label, command=f"/scoreboard players set @s {ns}.special.{special} {value}", color=color, hover=hover(label, value))
+			for label, (value, color) in values.items()
+		]
+
+	Dialogs.register_value_picker("config/instant_kill", "Instant Kill", "One-shot kills for a duration (self only)", special_opts(
+		"instant_kill", durations, lambda label, v: f"Set instant kill {'off' if v == 0 else f'for {label}'}"), back_dialog="config/personal")
+	Dialogs.register_value_picker("config/infinite_ammo", "Infinite Ammo", "No reloads needed for a duration (self only)", special_opts(
+		"infinite_ammo", durations, lambda label, v: f"Set infinite ammo {'off' if v == 0 else f'for {label}'}"), back_dialog="config/personal")
+	Dialogs.register_value_picker("config/quick_reload", "Quick Reload", "Reduce reload time (self only)", special_opts(
+		"quick_reload", percents, lambda label, _: f"Set quick reload to {label}"), back_dialog="config/personal")
+	Dialogs.register_value_picker("config/quick_swap", "Quick Swap", "Reduce weapon-swap time (self only)", special_opts(
+		"quick_swap", percents, lambda label, _: f"Set quick swap to {label}"), back_dialog="config/personal")
 
 	# --- Configuration dialog, organized into categories (by scope) ---
 	# The top-level menu is a short list of categories; each opens its own sub-dialog whose Back button returns to the top-level config.

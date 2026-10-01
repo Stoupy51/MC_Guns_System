@@ -5,14 +5,12 @@ from typing import ClassVar
 from stewbeet import JsonDict
 
 from ...config.catalogs import PERKS
+from ...database.items import CONSUMABLE_MAGAZINES
 
 
 # Classes
 class MultiplayerClasses:
 	""" Preset multiplayer classes and the SNBT builders for their dialog rows. """
-
-	CONSUMABLE_MAGS: ClassVar[set[str]] = {"rpg7_rocket", "mosin_bullet", "m24_bullet", "spas12_shell", "m500_shell", "m590_shell", "element_115"}
-	""" Consumable magazine item ids, where the stack count is the bullet count via the set_consumable_count modifier. """
 
 	# Functions
 	@staticmethod
@@ -181,7 +179,7 @@ class MultiplayerClasses:
 		"""
 		mag_id: str = weapon["mag"]
 		mag_count: int = weapon.get("mag_count", 0)
-		if mag_id in MultiplayerClasses.CONSUMABLE_MAGS:
+		if mag_id in CONSUMABLE_MAGAZINES:
 			return [MultiplayerClasses.make_slot_snbt(ns, f"inventory.{first_slot}", mag_id, consumable=True, bullets=mag_count)]
 		return [MultiplayerClasses.make_slot_snbt(ns, f"inventory.{first_slot + index}", mag_id) for index in range(mag_count)]
 

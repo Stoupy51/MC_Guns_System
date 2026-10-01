@@ -1,9 +1,32 @@
 """ Advanced weapon audio: per-weapon fire sounds plus distance-based acoustics. """
 
 # Imports
+from dataclasses import dataclass
+
 from stewbeet import Mem, write_versioned_function
 
 from ....config.stats.keys import COOLDOWN, RELOAD_END, RELOAD_TIME
+
+
+# Classes
+@dataclass(frozen=True)
+class HearingLevel:
+	""" One `sound/hearing/<i>_<name>` function: the crack gets 0.05 quieter every 16 blocks, down to 0.05. """
+	name: str
+	loudest: int
+	""" Volume at point blank, in hundredths, before the x1.5 gain. """
+	first_band: int
+	""" Distance where the first volume step happens. """
+
+
+HEARING_LEVELS: tuple[HearingLevel, ...] = (
+	HearingLevel(name="distant", loudest=60, first_band=32),
+	HearingLevel(name="far", loudest=60, first_band=16),
+	HearingLevel(name="midrange", loudest=55, first_band=16),
+	HearingLevel(name="near", loudest=50, first_band=16),
+	HearingLevel(name="closest", loudest=45, first_band=16),
+	HearingLevel(name="water", loudest=15, first_band=16),
+)
 
 
 # Functions
@@ -215,19 +238,13 @@ execute if score #processed_acoustics {ns}.data matches 3 run function {ns}:v{ve
 execute if score #processed_acoustics {ns}.data matches 4 run function {ns}:v{version}/sound/hearing/4_closest with storage {ns}:gun all.sounds
 execute if score #processed_acoustics {ns}.data matches 5 run function {ns}:v{version}/sound/hearing/5_water with storage {ns}:gun all.sounds
 """)
-	sound_levels: list[tuple[str, list[tuple[int, int, float]]]] = [
-		("distant",  [(0, 32, 0.6), (32, 48, 0.55), (48, 64, 0.5), (64, 80, 0.45), (80, 96, 0.4), (96, 112, 0.35), (112, 128, 0.3), (128, 144, 0.25), (144, 160, 0.2), (160, 176, 0.15), (176, 192, 0.1), (192, 208, 0.05)]),
-		("far",      [(0, 16, 0.6), (16, 32, 0.55), (32, 48, 0.5), (48, 64, 0.45), (64, 80, 0.4), (80, 96, 0.35), (96, 112, 0.3), (112, 128, 0.25), (128, 144, 0.2), (144, 160, 0.15), (160, 176, 0.1), (176, 192, 0.05)]),
-		("midrange", [(0, 16, 0.55), (16, 32, 0.5), (32, 48, 0.45), (48, 64, 0.4), (64, 80, 0.35), (80, 96, 0.3), (96, 112, 0.25), (112, 128, 0.2), (128, 144, 0.15), (144, 160, 0.1), (160, 176, 0.05)]),
-		("near",     [(0, 16, 0.5), (16, 32, 0.45), (32, 48, 0.4), (48, 64, 0.35), (64, 80, 0.3), (80, 96, 0.25), (96, 112, 0.2), (112, 128, 0.15), (128, 144, 0.1), (144, 160, 0.05)]),
-		("closest",  [(0, 16, 0.45), (16, 32, 0.4), (32, 48, 0.35), (48, 64, 0.3), (64, 80, 0.25), (80, 96, 0.2), (96, 112, 0.15), (112, 128, 0.1), (128, 144, 0.05)]),
-		("water",    [(0, 16, 0.15), (16, 32, 0.1), (32, 48, 0.05)])
-	]
-	for i, (level, pairs) in enumerate(sound_levels):
-		for mini, maxi, volume in pairs:
+	for i, level in enumerate(HEARING_LEVELS):
+		for band in range(level.loudest // 5):
+			low: int = 0 if band == 0 else level.first_band + 16 * (band - 1)
+			volume: float = (level.loudest - 5 * band) / 100
 			write_versioned_function(
-				f"sound/hearing/{i}_{level}",
-				f"$execute if entity @s[distance={mini}..{maxi}] positioned as @s run playsound {ns}:common/$(crack)_crack_{i}_{level} player @s ^ ^ ^-6 {round(volume * 1.5, 3)}"
+				f"sound/hearing/{i}_{level.name}",
+				f"$execute if entity @s[distance={low}..{level.first_band + 16 * band}] positioned as @s run playsound {ns}:common/$(crack)_crack_{i}_{level.name} player @s ^ ^ ^-6 {round(volume * 1.5, 3)}"
 			)
 
 	# Missing sounds

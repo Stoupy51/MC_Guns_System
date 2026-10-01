@@ -2,9 +2,9 @@
 # Imports
 from stewbeet import Mem, write_load_file, write_versioned_function
 
+from .....config.catalogs import PRIMARY_WEAPONS, SECONDARY_WEAPONS
 from .....config.stats.keys import WEIGHT
-from .....database.items import WEAPON_STATS
-from ...common import ZombiesCommon
+from .....database.items import CONSUMABLE_MAGAZINES, WEAPON_STATS
 from .shared import MONKEY_BOMB_WEIGHT
 
 
@@ -34,23 +34,19 @@ scoreboard objectives add {ns}.mb.buyer dummy
 
 	# Teddy bear loot table for the move animation is shared (see zombies/roaming.py) and referenced below as mgs:zombies/roaming_bear.
 
-	# Use common helper to build weapon->magazine mappings from catalogs
-	weapon_mag_data: dict[str, tuple[str, int, bool]] = ZombiesCommon.build_weapon_magazine_data()
-	default_pool_weapons: tuple[str, ...] = tuple(weapon_mag_data.keys())
-
 	pool_entries: list[str] = []
 	pool_weights: list[int] = []
-	for weapon_id in default_pool_weapons:
-		weight: int = WEAPON_STATS.get(weapon_id, {}).get("stats", {}).get(WEIGHT, 5)
+	for weapon in (*PRIMARY_WEAPONS, *SECONDARY_WEAPONS):
+		weight: int = WEAPON_STATS.get(weapon.item_id, {}).get("stats", {}).get(WEIGHT, 5)
 		if weight == 0:
 			continue  # Weight 0 = excluded from mystery box
-		mag_id, mag_count, is_consumable = weapon_mag_data[weapon_id]
+		consumable: str = "1b" if weapon.magazine_id in CONSUMABLE_MAGAZINES else "0b"
 		pool_entries.append(
-			f'{{weapon_id:"{weapon_id}",'
+			f'{{weapon_id:"{weapon.item_id}",'
 			f'give_function:"{ns}:v{version}/zombies/mystery_box/default_give/weapon",'
-			f'magazine_id:"{mag_id}",'
-			f'mag_count:{mag_count},'
-			f'consumable:{"1b" if is_consumable else "0b"}}}'
+			f'magazine_id:"{weapon.magazine_id}",'
+			f'mag_count:{weapon.default_mag_count},'
+			f'consumable:{consumable}}}'
 		)
 		pool_weights.append(weight)
 

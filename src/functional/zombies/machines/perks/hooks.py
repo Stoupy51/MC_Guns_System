@@ -24,12 +24,9 @@ def write_perk_hooks() -> None:
 	## Lose all perks: called when a player goes down
 	lose_all_lines: list[str] = []
 	for perk_id, perk_data in PERK_DEFINITIONS.items():
-		removal = perk_data.removal_commands
-		if removal:
-			for cmd in removal:
-				lose_all_lines.append(
-					f"execute if score @s {ns}.zb.perk.{perk_id} matches 1 run {cmd.replace('{ns}', ns)}"
-				)
+		lose_all_lines.extend(
+			f"execute if score @s {ns}.zb.perk.{perk_id} matches 1 run {cmd.replace('{ns}', ns)}" for cmd in perk_data.removal_commands or ()
+		)
 		lose_all_lines.append(f"scoreboard players set @s {ns}.zb.perk.{perk_id} 0")
 	lose_all_body = "\n".join(lose_all_lines)
 	write_versioned_function("zombies/perks/lose_all", f"""

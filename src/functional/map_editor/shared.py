@@ -27,15 +27,15 @@ def snbt_suggest(val: Any) -> str:
 	"""
 	if isinstance(val, bool):
 		return "1b" if val else "0b"
-	elif isinstance(val, int):
+	if isinstance(val, int):
 		return str(val)
-	elif isinstance(val, float):
+	if isinstance(val, float):
 		return f"{val}f"
-	elif isinstance(val, str):
+	if isinstance(val, str):
 		return f'"{val}"'
-	elif isinstance(val, list):
+	if isinstance(val, list):
 		return "[" + ",".join(snbt_suggest(v) for v in cast(list[Any], val)) + "]"
-	elif isinstance(val, dict):
+	if isinstance(val, dict):
 		return "{" + ",".join(f"{k}:{snbt_suggest(v)}" for k, v in cast(dict[str, Any], val).items()) + "}"
 	return str(val)
 
