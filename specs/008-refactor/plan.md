@@ -40,6 +40,21 @@ Totals if every lot lands as estimated: resource pack about -2.82 M lines (model
 | D9 | Pull request | Open `refactor/all` as a draft PR after lot 1 so CI (jscpd) runs on every lot; no Claude mention anywhere, commits authored as Stoupy51. |
 | D10 | A real-server load test needs `piston-meta.mojang.com`, `piston-data.mojang.com`, `api.modrinth.com`, `cdn.modrinth.com`, `api.smithed.dev` in the environment's allowed hosts | Optional. Without them, lots rely on the normalised diff, mecha and the reference check; you load the pack once on your machine at the end. |
 
+### Answers
+
+| # | Answer |
+|---|---|
+| D1 | Accepted. |
+| D2 | Wire the unwired features, after the author reviews the per-function list. |
+| D3 | Juggernaut works (`multiplayer/apply_perks` sets max health to 24; the score is only a flag). Double Tap: no read of `mgs.special.additional_shots` and no damage multiplier found in the build; waiting for the author. |
+| D4 | Accepted. |
+| D5 | Accepted. The ammo actionbar keeps its special characters. |
+| D6 | Only `set_items_storage` goes; headers, source maps and the creative loot table stay. StewBeet has no option for it yet. |
+| D7 | Ignore E501. |
+| D8 | Accepted. |
+| D9 | Accepted: draft PR after lot 1. |
+| D10 | The author is looking for the environment setting. |
+
 ## Lots
 
 ### Lot 1. Safety net
