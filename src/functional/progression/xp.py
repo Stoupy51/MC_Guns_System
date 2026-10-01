@@ -1,9 +1,7 @@
 """ What an award site calls.
 
-Both modes' hook files go through here so no site names an amount. Lives in its own module rather than in
-the package `__init__` because the advancements package needs it too, and importing it from the package
-root would close a cycle: `__init__` pulls in `advancements`, which pulls in the reward writer, which
-pays through `Xp`.
+Both modes' hook files go through here so no site names an amount.
+Lives in its own module rather than in the package `__init__` because the advancements package needs it too, and importing it from the package root would close a cycle: `__init__` pulls in `advancements`, which pulls in the reward writer, which pays through `Xp`.
 """
 # Imports
 from stewbeet import Mem
@@ -58,7 +56,7 @@ class Xp:
 		"""
 		ns: str = Mem.ctx.project_id
 		tag: str = f"{ns}.{EARNER_TAG}"
-		# Splice the exclusion into whatever selector the caller already wrote
+		# The exclusion is spliced into the caller's selector.
 		others: str = f"{audience[:-1]},tag=!{tag}]" if audience.endswith("]") else f"{audience}[tag=!{tag}]"
 		return f"""tag @a remove {tag}
 tag {earner} add {tag}
@@ -86,8 +84,7 @@ tag @a remove {tag}"""
 		Returns:
 			str: Four commands, one per line.
 		"""
-		# The guard goes INTO Xp.give for the award lines rather than around them, so they stay one execute
-		# each instead of `execute <guard> run execute as <sel> run ...`.
+		# The guard goes into Xp.give rather than around it, so each award line stays one execute.
 		prefix: str = f"execute {guard} run " if guard else ""
 		return "\n".join((
 			f'{prefix}tellraw {winners} [{body},{Xp.suffix(side, win_key)}]',
@@ -100,8 +97,8 @@ tag @a remove {tag}"""
 	def suffix(side: str, key: str, color: str = "gold") -> str:
 		""" Return the text component appended to the message this award rides on.
 
-		No award ever prints a line of its own, so this is how the amount reaches the player. A scaled
-		award has no compile-time number and reads `#xp_gain` instead.
+		No award ever prints a line of its own, so this is how the amount reaches the player.
+		A scaled award has no compile-time number and reads `#xp_gain` instead.
 
 		Args:
 			side: `mp` or `zb`.

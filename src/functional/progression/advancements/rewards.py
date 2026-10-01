@@ -1,12 +1,10 @@
 """ What happens the tick a challenge unlocks: pay the XP, say so, publish the event.
 
-Vanilla runs these as the player who unlocked, once, when the advancement transitions to completed. There
-is no guard against paying twice because there is nothing that could: the pack never grants a threshold
-tier, and a completed advancement stops being evaluated.
+Vanilla runs these as the player who unlocked, once, when the advancement transitions to completed.
+Granting an advancement the player already has does nothing, so nothing can pay twice.
 
-The payout rides the `challenge` award row, which is `scaled`, so one row covers all 56 amounts and
-`Xp.suffix` reads `#xp_gain` instead of a compile-time number. That also means `#xp_gain` has to be set
-before the message is written, since a score component resolves when the command runs.
+The payout rides the `challenge` award row, which is `scaled`, so one row covers all 56 amounts and `Xp.suffix` reads `#xp_gain` instead of a compile-time number.
+`#xp_gain` is therefore set before the message is written, since a score component resolves when the command runs.
 
 Every unlock is announced to the whole server, with the XP amount shown only to the earner.
 """
@@ -28,9 +26,9 @@ subscribes instead of editing these functions, exactly like `progression/on_leve
 AWARD_KEY: str = "challenge"
 """ The row every challenge pays through, one per XP pool. """
 SAVED_GAIN: str = "#adv_gain_prev"
-""" Whatever `#xp_gain` held before a reward overwrote it with the tier's payout, put back on the way out.
-An event challenge's reward runs nested inside the `advancement grant` at its site, so the site's own
-`#xp_gain` has to survive the trip. """
+""" Whatever `#xp_gain` held before a reward overwrote it with the payout, put back on the way out.
+A reward runs nested inside the `advancement grant` that unlocked it, so the caller's `#xp_gain` has to survive the trip.
+"""
 
 
 # Classes
@@ -47,15 +45,11 @@ class Rewards:
 		def message(*parts: str) -> str:
 			return f'{{"text":"","hover_event":{hover},"extra":[{MGS_TAG},{{"text":"🏆 ","color":"white"}},{",".join(parts)}]}}'
 
-		## Everyone hears about every unlock, but only the earner sees the amount
+		## Everyone hears about every unlock; only the earner sees the amount.
 		earner_tag: str = f"{ns}.{EARNER_TAG}"
 		payload: str = '{branch:"$(branch)",chain:"$(chain)",tier:$(tier),side:"' + side + '",xp:$(xp)}'
 
-		## A threshold tier's reward runs in vanilla's tick phase, where nothing else is using #xp_gain. An
-		## event challenge's runs nested inside the `advancement grant` at its site, mid-function, where
-		## something might be: zombies/round_complete sets #xp_gain, fires the round-end tag, and only then
-		## reads it back for its own suffix. Restoring it costs two commands on a path that runs once per
-		## unlock, and means no site has to know this function exists.
+		## A reward runs inside the `advancement grant` that unlocked it, where #xp_gain may be in use (zombies/round_complete reads it back after the round-end tag).
 		return f"""
 scoreboard players operation {SAVED_GAIN} {ns}.data = #xp_gain {ns}.data
 $scoreboard players set #xp_gain {ns}.data $(xp)

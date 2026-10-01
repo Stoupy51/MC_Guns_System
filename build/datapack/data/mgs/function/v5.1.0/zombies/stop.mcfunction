@@ -30,17 +30,16 @@ scoreboard objectives setdisplay sidebar
 scoreboard objectives remove mgs.zb_sidebar
 gamerule advance_time true
 
-# Re-enable natural regeneration, disable custom regen system
 gamerule natural_health_regeneration true
 scoreboard players set #any_game_active mgs.data 0
 
-# Tear down stamina state: stop any hunger drain and refill the bar so nobody is left winded
+# Stop any hunger drain and refill the bar, so nobody is left winded.
 effect clear @a minecraft:hunger
 effect give @a minecraft:saturation 5 20 true
 scoreboard players set @a mgs.stam_out 0
 scoreboard players set @a mgs.stam_seen 0
 
-# Take every shader id back off, so nothing survives into the lobby
+# Every shader id off, so nothing survives into the lobby.
 execute as @a run function mgs:v5.1.0/player/fx_reset
 
 tellraw @a [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.zombies_game_ended","color":"red"}]

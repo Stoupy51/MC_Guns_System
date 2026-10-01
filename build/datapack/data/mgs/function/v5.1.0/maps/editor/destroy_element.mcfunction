@@ -6,8 +6,7 @@
 # @within	mgs:v5.1.0/maps/editor/handle_destroy [ at @s & as @n[tag=mgs.map_element,distance=..3] ]
 #
 
-# @s = the map_element marker to destroy
-# Announce what was removed
+# Run as the marker to destroy.
 execute if entity @s[tag=mgs.element.base_coordinates] run tellraw @a[tag=mgs.map_editor] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.base_coordinates_removed","color":"light_purple"}]
 execute if entity @s[tag=mgs.element.red_spawn] run tellraw @a[tag=mgs.map_editor] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.red_spawn_removed","color":"red"}]
 execute if entity @s[tag=mgs.element.blue_spawn] run tellraw @a[tag=mgs.map_editor] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.blue_spawn_removed","color":"blue"}]
@@ -34,9 +33,8 @@ execute if entity @s[tag=mgs.element.mystery_box_pos] run tellraw @a[tag=mgs.map
 execute if entity @s[tag=mgs.element.power_switch] run tellraw @a[tag=mgs.map_editor] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.power_switch_removed","color":"green"}]
 execute if entity @s[tag=mgs.element.barricade] run tellraw @a[tag=mgs.map_editor] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.barricade_removed","color":"aqua"}]
 
-# Show data dump if element has compound data (zb_object, enemy, spawn)
+# Elements with compound data (zb_object, enemy, spawn).
 execute if data entity @s data run tellraw @a[tag=mgs.map_editor] ["  ",{"translate":"mgs.data","color":"gray"},{"entity":"@s","nbt":"data","color":"white"}]
 
-# Kill the marker
 kill @s
 

@@ -10,7 +10,7 @@ item replace entity B5-0-0-0-3 contents from entity @s hotbar.1
 execute if score #pick_sel mgs.data matches 2 run item replace entity B5-0-0-0-3 contents from entity @s hotbar.2
 data modify storage mgs:temp _swapw set from entity B5-0-0-0-3 item
 
-# Held guns carry remaining_bullets:-1 in their item NBT (the live count is on the scoreboard), so sync it in
+# Held guns store remaining_bullets -1 (the live count is the score), so it is synced in.
 execute store result storage mgs:temp _swapw.components."minecraft:custom_data".mgs.stats.remaining_bullets int 1 run scoreboard players get @s mgs.remaining_bullets
 
 execute if score #pick_sel mgs.data matches 1 run item replace entity @s hotbar.1 from entity @n[type=minecraft:item_display,tag=mgs.dropped_gun,distance=..3] contents

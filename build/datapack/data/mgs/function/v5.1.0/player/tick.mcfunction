@@ -6,13 +6,12 @@
 # @within	mgs:v5.1.0/tick [ as @e[type=player,sort=random] & at @s ]
 #
 
-# Coord stick: detect right-click on coord stick
 execute if score @s mgs.class_menu matches 1.. if items entity @s weapon.mainhand *[custom_data~{mgs:{coord_stick:true}}] run function mgs:v5.1.0/utils/coord_stick
 
 execute unless score @s mgs.mp.pid matches 1.. run function mgs:v5.1.0/multiplayer/assign_pid
 
 
-# Health regeneration: Black Ops style — only active during a game
+# Black Ops style, only during a game.
 execute if score #any_game_active mgs.data matches 1 run function mgs:v5.1.0/player/regen_tick
 
 # Mirror scores go stale on a real respawn, since the server drops the effect list with the old player

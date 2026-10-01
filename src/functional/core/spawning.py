@@ -12,9 +12,8 @@ class CoreSpawning:
 	def write_spawn_teleport() -> None:
 		""" Write the two teleport functions, shared because their bodies name no mode of their own.
 
-		`shared/tp_to_spawn` runs as the chosen marker and moves whoever is tagged `spawn_pending` onto
-		it. Its `mode` argument only names the storage holding that mode's game state: a marker is
-		consumed once during the pre-game teleport, but a respawn mid-game must be able to reuse it.
+		`shared/tp_to_spawn` runs as the chosen marker and moves whoever is tagged `spawn_pending` onto it.
+		Its `mode` argument only names the storage holding that mode's game state: a marker is consumed once during the pre-game teleport, but a respawn mid-game must be able to reuse it.
 		"""
 		ns: str = Mem.ctx.project_id
 		version: str = Mem.ctx.project_version
@@ -22,22 +21,21 @@ class CoreSpawning:
 		write_versioned_function("shared/tp_player_at", "$tp @s $(x) $(y) $(z) $(yaw) 0")
 
 		write_versioned_function("shared/tp_to_spawn", f"""
-# Store marker position and yaw for the teleport macro
+# For the teleport macro.
 execute store result storage {ns}:temp _tp.x double 1 run data get entity @s Pos[0]
 execute store result storage {ns}:temp _tp.y double 1 run data get entity @s Pos[1]
 execute store result storage {ns}:temp _tp.z double 1 run data get entity @s Pos[2]
 data modify storage {ns}:temp _tp.yaw set from entity @s data.yaw
 
-# TP the pending player
 execute as @p[tag={ns}.spawn_pending] run function {ns}:v{version}/shared/tp_player_at with storage {ns}:temp _tp
 
-# Mark this spawn as used (prevents duplicate assignments) (only in preparing time)
+# Only during prep: the spawn is used, so no two players get it.
 $execute unless data storage {ns}:$(mode) game{{state:"active"}} run tag @s add {ns}.spawn_used
 """)
 
 	@staticmethod
 	def write_summon_spawn_at(mode: str, extra_spawn_tags: tuple[str, ...] = ()) -> None:
-		""" Write ``<mode>/summon_spawn_at`` — the macro summoning a spawn-point marker.
+		""" Write ``<mode>/summon_spawn_at``, the macro summoning a spawn-point marker.
 
 		Args:
 			mode: Path segment, e.g. "multiplayer" | "zombies" | "missions".
@@ -75,41 +73,35 @@ execute if data storage {ns}:temp _spawn_iter[0] run function {ns}:v{version}/{m
 	def write_array_spawn_iter(mode: str) -> None:
 		""" Write ``<mode>/summon_spawn_iter`` for the flat ``[x, y, z, yaw]`` map format.
 
-		Zombies has its own iterator instead: its spawns are compounds carrying a group id, an
-		activation box and a unique spawn id, none of which exist in this format.
+		Zombies has its own iterator instead: its spawns are compounds carrying a group id, an activation box and a unique spawn id, none of which exist in this format.
 		"""
 		ns: str = Mem.ctx.project_id
 		version: str = Mem.ctx.project_version
 		write_versioned_function(f"{mode}/summon_spawn_iter", f"""
-# Read relative coords
 execute store result score #sx {ns}.data run data get storage {ns}:temp _spawn_iter[0][0]
 execute store result score #sy {ns}.data run data get storage {ns}:temp _spawn_iter[0][1]
 execute store result score #sz {ns}.data run data get storage {ns}:temp _spawn_iter[0][2]
 execute store result score #syaw {ns}.data run data get storage {ns}:temp _spawn_iter[0][3] 100
 
-# Convert to absolute
 scoreboard players operation #sx {ns}.data += #gm_base_x {ns}.data
 scoreboard players operation #sy {ns}.data += #gm_base_y {ns}.data
 scoreboard players operation #sz {ns}.data += #gm_base_z {ns}.data
 
-# Store position + yaw for macro
 execute store result storage {ns}:temp _spos.x double 1 run scoreboard players get #sx {ns}.data
 execute store result storage {ns}:temp _spos.y double 1 run scoreboard players get #sy {ns}.data
 execute store result storage {ns}:temp _spos.z double 1 run scoreboard players get #sz {ns}.data
 execute store result storage {ns}:temp _spos.yaw double 0.01 run scoreboard players get #syaw {ns}.data
 data modify storage {ns}:temp _spos.tag set from storage {ns}:temp _spawn_tag
 
-# Summon
 function {ns}:v{version}/{mode}/summon_spawn_at with storage {ns}:temp _spos
 
-# Next
 data remove storage {ns}:temp _spawn_iter[0]
 execute if data storage {ns}:temp _spawn_iter[0] run function {ns}:v{version}/{mode}/summon_spawn_iter
 """)
 
 	@staticmethod
 	def write_random_spawn_selection(mode: str, spawn_tag: str, in_game_score: str, required_tags: tuple[str, ...] = ()) -> None:
-		""" Write ``<mode>/{tp_all_to_spawns,pick_spawn,respawn_tp}`` — the "any free marker" flavour.
+		""" Write ``<mode>/{tp_all_to_spawns,pick_spawn,respawn_tp}``, the "any free marker" flavour.
 
 		Multiplayer does not use this: it scores every candidate by distance to the nearest enemy and
 		needs a per-team spawn type, so its three functions stay its own.
@@ -125,7 +117,7 @@ execute if data storage {ns}:temp _spawn_iter[0] run function {ns}:v{version}/{m
 		candidates: str = f"tag={ns}.spawn_point,tag={ns}.{spawn_tag}" + "".join(f",tag={ns}.{tag}" for tag in required_tags)
 
 		write_versioned_function(f"{mode}/tp_all_to_spawns", f"""
-# Teleport every player in this game onto a spawn marker, then free the markers again
+# Every player in this game onto a spawn marker, then the markers are freed.
 execute as @a[scores={{{ns}.{in_game_score}=1}}] at @s run function {ns}:v{version}/{mode}/pick_spawn
 tag @e[tag={ns}.spawn_used] remove {ns}.spawn_used
 """)
@@ -133,17 +125,14 @@ tag @e[tag={ns}.spawn_used] remove {ns}.spawn_used
 		write_versioned_function(f"{mode}/pick_spawn", f"""
 tag @s add {ns}.spawn_pending
 
-# Tag candidate spawns (exclude used). Capture via command success whether any marker was tagged,
-# so the "all used" fallback can branch on a score instead of a global @e existence scan.
+# Unused spawns; `store success` says whether any was tagged, so the "all used" fallback tests a score instead of scanning @e.
 execute store success score #has_candidate {ns}.data run tag @e[{candidates},tag=!{ns}.spawn_used] add {ns}.spawn_candidate
 
-# If all used, re-tag them all
+# All used: every spawn is a candidate again.
 execute if score #has_candidate {ns}.data matches 0 run tag @e[{candidates}] add {ns}.spawn_candidate
 
-# Pick random candidate
 execute as @n[tag={ns}.spawn_candidate,sort=random] run function {ns}:v{version}/shared/tp_to_spawn {{mode:"{mode}"}}
 
-# Cleanup
 tag @e[tag={ns}.spawn_candidate] remove {ns}.spawn_candidate
 tag @a[tag={ns}.spawn_pending] remove {ns}.spawn_pending
 """)
@@ -157,7 +146,7 @@ execute if entity @e[tag={ns}.spawn_point,tag={ns}.{spawn_tag}] run function {ns
 			ns: str = Mem.ctx.project_id
 			version: str = Mem.ctx.project_version
 
-			## Summon OOB markers from map data (relative → absolute) Usage: function shared/summon_oob {mode:"multiplayer"}
+			## Relative to absolute. Usage: function shared/summon_oob {mode:"multiplayer"}
 			write_versioned_function("shared/summon_oob", f"""
 $function {ns}:v{version}/shared/load_base_coordinates {{mode:"$(mode)"}}
 

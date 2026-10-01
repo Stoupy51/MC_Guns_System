@@ -6,7 +6,7 @@
 # @within	mgs:v5.1.0/maps/editor/refresh_displays [ at @s ]
 #
 
-# @s = perk machine marker, at @s
+# Run as the perk machine marker, at it.
 data modify storage mgs:temp _pk_disp.tag set value "mgs.editor_display"
 data modify storage mgs:temp _pk_disp.item_id set value ""
 data modify storage mgs:temp _pk_disp.item_model set value ""

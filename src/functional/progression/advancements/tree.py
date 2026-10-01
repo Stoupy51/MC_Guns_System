@@ -1,8 +1,7 @@
 """ The advancement JSON: one tab, three branch roots, and every node under them.
 
-Tiers and event challenges use `minecraft:impossible`: the pack grants them with `advancement grant`, from
-the check function each counter change runs (see `hooks.py`). A `minecraft:tick` criterion per tier
-would cost one score check per unearned tier, per player, per tick.
+Tiers and event challenges use `minecraft:impossible`: the pack grants them with `advancement grant`, from the check function each counter change runs (see `hooks.py`).
+A `minecraft:tick` criterion per tier would cost one score check per unearned tier, per player, per tick.
 
 Paths are unversioned. Reward function references are not, because the JSON is rewritten on every build
 and always names a function the loaded pack has.
@@ -31,10 +30,9 @@ class Tree:
 	def icon_json(icon: str) -> JsonDict:
 		""" Return the `ItemStackTemplate` for one node's icon.
 
-		A namespaced id is a vanilla item and is used as-is. A bare id is one of the pack's own items, and
-		becomes its real base item carrying its `item_model`, so the advancement screen shows the actual
-		weapon model rather than the poisonous potato every gun is built on. `Item.from_id` is strict, so a
-		mistyped weapon id fails the build instead of rendering as a potato in game.
+		A namespaced id is a vanilla item and is used as-is.
+		A bare id is one of the pack's own items, and becomes its real base item carrying its `item_model`, so the advancement screen shows the actual weapon model rather than the poisonous potato every gun is built on.
+		`Item.from_id` is strict, so a mistyped weapon id fails the build instead of rendering as a potato in game.
 
 		Args:
 			icon: `minecraft:target`, or a pack item id such as `ak47`.
@@ -137,12 +135,8 @@ class Tree:
 			})
 			parent = f"{ns}:{path}"
 
-		## Without this, a fresh player sees only the first two tiers of every chain. Vanilla shows an
-		## unfinished node only if it or one of its two nearest ancestors is done, so tier 3 and beyond are
-		## invisible and nobody can find out what they are chasing.
-		## A node with no `display` is never rendered, but `AdvancementVisibilityEvaluator` still ORs its
-		## done-ness into every ancestor, so hanging one completed sentinel off the last tier lights up the
-		## whole chain. It is granted by an unconditioned tick, pays nothing and says nothing.
+		## Vanilla only shows an unfinished node if it or one of its two nearest ancestors is done, so tiers 3+ would be invisible.
+		## A display-less node is never rendered but still marks its ancestors done, so a completed sentinel on the last tier reveals the whole chain.
 		Tree.write(f"{ROOT_PATH}/{chain.branch}/{chain.key}_{REVEAL_SUFFIX}", {
 			"parent": parent,
 			"criteria": {"joined": {"trigger": "minecraft:tick"}},

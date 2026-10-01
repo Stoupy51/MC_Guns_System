@@ -1,9 +1,7 @@
 """ Player/team management menus, shared across multiplayer, zombies and missions.
 
-Admins open a "Manage Players" dialog from each mode's setup menu; it renders one row per online
-player, with that mode's assignment buttons. Players are independent of a game until assigned here
-(or via self-service "+ Join"): assignment sets the mode's *.in_game flag plus the vanilla team,
-and runs the late-join flow if a game is already live.
+Admins open a "Manage Players" dialog from each mode's setup menu; it renders one row per online player, with that mode's assignment buttons.
+Players are independent of a game until assigned here (or via self-service "+ Join"): assignment sets the mode's *.in_game flag plus the vanilla team, and runs the late-join flow if a game is already live.
 
 A player is targeted from a dialog button via their Bookshelf SUID (`bs.id`): a run_command button
 runs as the clicker, so it wraps the action in `execute as @a[scores={bs.id=<N>}] run ...`.
@@ -18,7 +16,7 @@ def write_player_menus() -> None:
 	ns: str = Mem.ctx.project_id
 	version: str = Mem.ctx.project_version
 
-	# Append @s's bs.id, real name and status colour; needs _plr_mode set beforehand
+	# Appends the bs.id, real name and status colour of @s; needs _plr_mode set first.
 	write_versioned_function("players/append_self", f"""
 data modify storage {ns}:temp _plr_entry set value {{color:"gray",name:"???"}}
 execute store result storage {ns}:temp _plr_entry.id int 1 run scoreboard players get @s bs.id
@@ -27,8 +25,7 @@ execute if data storage {ns}:temp {{_plr_mode:"multiplayer"}} if score @s {ns}.m
 execute if data storage {ns}:temp {{_plr_mode:"zombies"}} if score @s {ns}.zb.in_game matches 1 run data modify storage {ns}:temp _plr_entry.color set value "green"
 execute if data storage {ns}:temp {{_plr_mode:"missions"}} if score @s {ns}.mi.in_game matches 1 run data modify storage {ns}:temp _plr_entry.color set value "green"
 
-# Dialog labels don't resolve @-selector text components, so the real username is baked in as a literal.
-# Fill an invisible probe's head with @s's profile ("this" in the loot table), then read the name back out.
+# Dialog labels do not resolve selector components, so the name is baked in: an invisible probe's head gets @s's profile, and the name is read back.
 execute at @s run summon armor_stand ~ ~ ~ {{Tags:["{ns}_name_probe"],Invisible:1b,NoGravity:1b}}
 loot replace entity @e[type=armor_stand,tag={ns}_name_probe,limit=1] armor.head loot {ns}:get_username
 data modify storage {ns}:temp _plr_entry.name set from entity @e[type=armor_stand,tag={ns}_name_probe,limit=1] equipment.head.components."minecraft:profile".name
@@ -37,30 +34,26 @@ kill @e[type=armor_stand,tag={ns}_name_probe]
 data modify storage {ns}:temp _plr_iter append from storage {ns}:temp _plr_entry
 """)
 
-	# Pop one entry, inject the mode, append its button, recurse (mirrors shared/maps/select_iter)
+	# Pop one entry, add the mode, append its button, recurse (as shared/maps/select_iter).
 	write_versioned_function("players/list_iter", f"""
 execute unless data storage {ns}:temp _plr_iter[0] run return fail
 
-# Inject the mode into the first entry for the macro
 data modify storage {ns}:temp _plr_entry set from storage {ns}:temp _plr_iter[0]
 data modify storage {ns}:temp _plr_entry.mode set from storage {ns}:temp _plr_mode
 
-# Append one button for this player
 function {ns}:v{version}/players/list_entry with storage {ns}:temp _plr_entry
 
-# Advance
 data remove storage {ns}:temp _plr_iter[0]
 execute if data storage {ns}:temp _plr_iter[0] run function {ns}:v{version}/players/list_iter
 """)
 
-	# Macro {id, name, color, mode}: dispatch to that mode's row builder
+	# Macro {id, name, color, mode}: the mode's row builder.
 	write_versioned_function("players/list_entry", f"""
 $function {ns}:v{version}/players/row_$(mode) {{id:$(id),name:"$(name)",color:"$(color)"}}
 """)
 
-	# Row builders (macro {id, name, color}): one button per grid cell, so assigning is a single click.
-	# The name button re-opens the list, since the dialog stays open and the colours need a refresh.
-	# Buttons per row MUST equal the dialog's `columns` in list_body below.
+	# One button per grid cell, so assigning is one click; the name button reopens the list to refresh colours.
+	# Buttons per row must equal the dialog's `columns` in list_body below.
 	name_btn: str = f'{{label:{{text:"$(name)",color:"$(color)"}},tooltip:{{text:"Refresh the list"}},action:{{type:"run_command",command:"/function {ns}:v{version}/players/list_%MODE%"}}}}'
 
 	def action_btn(label: str, color: str, tooltip: str, fn: str) -> str:
@@ -91,26 +84,24 @@ $function {ns}:v{version}/players/row_$(mode) {{id:$(id),name:"$(name)",color:"$
 			for b in [name_btn.replace("%MODE%", mode), *buttons]
 		))
 
-	# Per-mode wrappers; only the mode string, title colour and Back target differ
+	# Per mode, only the mode, title colour and Back target differ.
 	list_body: str = f"""
-# Materialize the online players into a fresh list (mode is set first so append_self can color by status)
+# The mode is set first, so append_self can colour by status.
 data modify storage {ns}:temp _plr_mode set value "%MODE%"
 data modify storage {ns}:temp _plr_iter set value []
 execute as @a run function {ns}:v{version}/players/append_self
 
-# Base dialog (one row per player, stays open after a pick, Back returns to setup)
+# One row per player; stays open after a pick, Back returns to setup.
 data modify storage {ns}:temp dialog set value {{type:"minecraft:multi_action",title:["","👥 ",{{text:"Manage Players",color:"%COLOR%",bold:true}}],body:[{{type:"minecraft:plain_message",contents:{{text:"One row per player — click a name to refresh",color:"gray"}}}}],actions:[],columns:%COLUMNS%,pause:false,after_action:"none",exit_action:{{label:["","◀ ",{{text:"Back",color:"gray"}}],tooltip:{{text:"Return to setup"}},action:{{type:"run_command",command:"/function {ns}:v{version}/%BACK%"}}}}}}
 
-# Append one button per player
 execute if data storage {ns}:temp _plr_iter[0] run function {ns}:v{version}/players/list_iter
 
-# Empty fallback: multi_action requires a non-empty actions list
+# multi_action needs at least one action.
 execute unless data storage {ns}:temp dialog.actions[0] run data modify storage {ns}:temp dialog.actions append value {{label:{{text:"No players online",color:"red"}},tooltip:{{text:"Nobody to manage"}},action:{{type:"run_command",command:"/function {ns}:v{version}/%BACK%"}}}}
 
-# Show the completed dialog
 function {ns}:v{version}/multiplayer/show_dialog with storage {ns}:temp
 """
-	# columns == buttons per row in that mode's row builder above
+	# columns == buttons per row of that mode's row builder.
 	for mode, color, back, columns in [
 		("multiplayer", "gold", "multiplayer/setup", 4),
 		("zombies", "dark_green", "zombies/setup", 3),
@@ -120,8 +111,7 @@ function {ns}:v{version}/multiplayer/show_dialog with storage {ns}:temp
 			.replace("%MODE%", mode).replace("%COLOR%", color)
 			.replace("%BACK%", back).replace("%COLUMNS%", str(columns)))
 
-	# Assignment actions, run AS the target @s.
-	# A live game runs the late-join flow first, then the chosen team overrides its auto-assign.
+	# Run as the target. In a live game the late-join flow runs first, then the chosen team overrides its auto-assign.
 	write_versioned_function("players/mp_to_red", f"""
 execute if score @s {ns}.mp.in_game matches 0 if data storage {ns}:multiplayer game{{state:"active"}} run function {ns}:v{version}/multiplayer/join_game
 execute if score @s {ns}.mp.in_game matches 0 if data storage {ns}:multiplayer game{{state:"preparing"}} run function {ns}:v{version}/multiplayer/join_game

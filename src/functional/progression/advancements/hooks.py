@@ -1,18 +1,18 @@
 """ The feeds that cannot ride an award function.
 
-Eleven of the sixteen chains hang off `progression/<side>/award_<key>`, which already runs as the earning
-player. Two more borrow `xp_level` and need no feed at all. That leaves three, for three reasons:
+Eleven of the sixteen chains hang off `progression/<side>/award_<key>`, which already runs as the earning player.
+Two more borrow `xp_level` and need no feed at all.
+That leaves three, for three reasons:
 
 - **Deepest round** is a high-water mark of a number that lives in storage, not on a player.
 - **Missions** grants no XP at all, so it has no award function to ride. Its two counters come off the
   victory function, which has just finished computing `mgs.mi.kills` per player.
 
-The three event challenges are here too. They are moments rather than totals, so they are granted rather
-than watched.
+The three event challenges are here too.
+They are moments rather than totals, so they are granted rather than watched.
 
-Only the round-end listener is written here. The other two return their lines for the site to splice in,
-because `generate_progression` runs before `main_missions` and `main_multiplayer` in `link.py`: anything
-this package appended to their functions would land above the code computing the scores it reads.
+Only the round-end listener is written here.
+The other two return their lines for the site to splice in, because `generate_progression` runs before `main_missions` and `main_multiplayer` in `link.py`: anything this package appended to their functions would land above the code computing the scores it reads.
 
 Everything here runs once per round or once per mission. None of it is per tick.
 """
@@ -99,18 +99,16 @@ scoreboard players reset * {caught}
 		best_round = Catalog.chain("zb", "best_round")
 		solo = Catalog.event("zb", "solo_run")
 
-		## The stat names the score it reads as a `<holder> <objective>` pair, which is exactly what both
-		## `store result score` and `if score` want, so the fake player is written down in one place only.
+		## The stat source is a `<holder> <objective>` pair, as `store result score` and `if score` take, so the fake player is written once.
 		round_score: str = best_round.stat.source
 
-		## `store result ... if entity` counts the matches, which is how "exactly one player" is asked for.
-		## One roster scan per cleared round, nowhere near a hot path.
+		## `store result ... if entity` counts matches: one roster scan per cleared round.
 		write_versioned_function("zombies/adv/on_round_end", f"""
 execute store result score {round_score} run data get storage {ns}:zombies game.round
 execute as {roster} run {best_round.stat.line()}
 execute as {roster} run {Hooks.check_call(best_round)}
 
-# Solo run: exactly one player on the roster, deep enough to be worth saying so
+# Solo run: exactly one player, deep enough to count.
 execute store result score {ROSTER_SCORE} {ns}.data if entity {roster}
 {Hooks.grant(Catalog.event_path(solo), roster, guard=f"if score {ROSTER_SCORE} {ns}.data matches 1 if score {round_score} matches {SOLO_ROUND}..")}
 """, tags=[f"{ns}:zombies/on_round_end"])
@@ -119,8 +117,8 @@ execute store result score {ROSTER_SCORE} {ns}.data if entity {roster}
 	def mission_victory_lines() -> str:
 		""" Return the block `missions/victory` splices in after it computes `mgs.mi.kills`.
 
-		Both counters and the no-deaths challenge. A victory is the only mission ending that counts, and
-		by this point the per-player kills are final and not yet reset.
+		Both counters and the no-deaths challenge.
+		A victory is the only mission ending that counts, and by this point the per-player kills are final and not yet reset.
 
 		Returns:
 			str: Five commands, one per line.

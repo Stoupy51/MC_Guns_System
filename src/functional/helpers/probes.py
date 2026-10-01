@@ -1,8 +1,7 @@
 """ Cheap NBT reads: bounce the value through a light entity instead of serializing a heavy one.
 
-`data ... from entity <target>` has no fast path, it serializes the whole entity and only then walks
-the path. A player drags its inventory, ender chest and entire recipe book along, measured at 886 us
-against 110 us through a display, and a mob still drags its attributes, effects and equipment.
+`data ... from entity <target>` has no fast path, it serializes the whole entity and only then walks the path.
+A player drags its inventory, ender chest and entire recipe book along, measured at 886 us against 110 us through a display, and a mob still drags its attributes, effects and equipment.
 """
 # Imports
 from stewbeet import Mem, write_versioned_function
@@ -23,8 +22,7 @@ class Probe:
 		""" Emit the marker body that Probe.pos summons. """
 		ns: str = Mem.ctx.project_id
 
-		# A kill only takes effect at the end of the tick, so the marker is moved out of the world first,
-		# otherwise any positional selector running later in the same tick would still find it.
+		# A kill only takes effect at the end of the tick, so the marker leaves the world first, or later selectors this tick would still find it.
 		write_versioned_function("shared/probe_pos", f"""
 data modify storage {ns}:temp {Probe.POS_PATH} set from entity @s Pos
 tp @s ~ -1000000 ~

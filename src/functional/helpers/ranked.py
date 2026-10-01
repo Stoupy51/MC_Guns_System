@@ -26,27 +26,25 @@ class RankedStats:
 		cand: str = f"{ns}.stat_cand"
 
 		write_versioned_function(f"{name}_iter", f"""
-# Stop once every player has been announced
 execute unless entity @a[tag={cand}] run return 0
 
-# Highest score still unannounced (these objectives never go negative, so 0 is a safe floor)
+# These objectives never go negative, so 0 is a safe floor.
 scoreboard players set #stat_max {ns}.data 0
 scoreboard players operation #stat_max {ns}.data > @a[tag={cand}] {ns}.{rank_objective}
 
-# Announce exactly one player holding that score; #stat_found keeps ties from all printing at once
+# One player with that score; #stat_found keeps ties from printing at once.
 scoreboard players set #stat_found {ns}.data 0
 execute as @a[tag={cand}] if score @s {ns}.{rank_objective} = #stat_max {ns}.data if score #stat_found {ns}.data matches 0 run function {ns}:v{version}/{name}_one
 
-# Termination guarantee: a candidate with no score at all matches nothing, so no tag would be
-# removed and this function would recurse until the server died. Drop the stragglers and stop.
+# A candidate with no score matches nothing and would recurse forever, so stragglers are dropped.
 execute if score #stat_found {ns}.data matches 0 run return run tag @a remove {cand}
 
-# Recurse for the next player down. Depth is bounded by the player count.
+# Depth is bounded by the player count.
 function {ns}:v{version}/{name}_iter
 """)
 
 		write_versioned_function(f"{name}_one", f"""
-# @s = the highest-scoring player not yet announced
+# Run as the highest-scoring player not yet announced.
 scoreboard players set #stat_found {ns}.data 1
 tag @s remove {cand}
 {line}

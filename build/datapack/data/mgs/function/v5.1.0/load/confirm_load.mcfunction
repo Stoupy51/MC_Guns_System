@@ -10,50 +10,46 @@ scoreboard objectives add mgs.player.config trigger
 scoreboard objectives add mgs.player.hitmarker dummy
 scoreboard objectives add mgs.player.damage_debug dummy
 
-## Define objectives
-# Tracks the currently selected weapon ID for each player
+## Length of the selected item id, to detect a change.
 scoreboard objectives add mgs.previous_selected dummy
 
-# Tracks right clicks to enable continuous right-click detection
+# Continuous right-click detection.
 scoreboard objectives add mgs.pending_clicks dummy
 
-# Tracks if the player is holding right-click (vs single tap)
+# Held right click, as opposed to a single tap.
 scoreboard objectives add mgs.held_click dummy
 
-# Tracks current burst fire count (resets after BURST shots)
+# Shots fired in the current burst.
 scoreboard objectives add mgs.burst_count dummy
 
-# Tracks weapon drops to enable fire mode switching
+# The drop key switches fire mode.
 scoreboard objectives add mgs.dropped minecraft.custom:minecraft.drop
 
-# Cooldown in ticks before being able to shot
+# Expiry tick before the next shot.
 scoreboard objectives add mgs.cooldown dummy
 
-# Indicates if the player was zooming (used to remove slowness)
+# Was zooming, so the slowness can be removed.
 scoreboard objectives add mgs.zoom dummy
 
-# Tracks the most recently selected weapon ID for weapon switching mechanics
+# Last selected weapon id, for switch detection.
 scoreboard objectives add mgs.last_selected dummy
 
-# Tracks the current amount of bullets in the selected weapon
+# Bullets in the selected weapon.
 scoreboard objectives add mgs.remaining_bullets dummy
 
-# Tracks the total reserve ammo (sum of all magazine bullets in inventory)
-# Updated on reload and when player is idle (not shooting for ~60 ticks)
+# Sum of the magazine bullets in the inventory, updated on reload and after about 60 idle ticks.
 scoreboard objectives add mgs.reserve_ammo dummy
 
-# Tracks the room acoustics level for crack sound effects
+# Room acoustics, for the crack sounds.
 scoreboard objectives add mgs.acoustics_level dummy
 
-# Tracks how much time has passed since the player last saw a muzzle flash
+# Ticks since the last muzzle flash this player saw.
 scoreboard objectives add mgs.last_muzzle_flash dummy
 
-## Global configuration scoreboards (admin/server-level)
-# RPG explosion power (0 = no block destruction, higher = more destruction)
+## Server config (#projectile_explosion_power, ...): 0 means no block destruction.
 scoreboard objectives add mgs.config dummy
 
-## Per-player special scoreboards (for zombies bonuses, testing, etc.)
-## Generated from SpecialScores.ALL, which is also what game starts wipe to get a clean slate.
+## From SpecialScores.ALL, which game starts also wipe.
 # Instant kill: duration in ticks (kills entities in one hit, except mgs.no_instant_kill tagged)
 scoreboard objectives add mgs.special.instant_kill dummy
 # Infinite ammo: duration in ticks (don't consume ammo, set ammo to max capacity)
@@ -84,44 +80,40 @@ scoreboard objectives add mgs.special.tracker dummy
 scoreboard objectives add mgs.special.tactical_mask dummy
 scoreboard objectives add mgs.special.overkill dummy
 scoreboard objectives add mgs.special.quick_fix dummy
-# DPS tracking: accumulates damage dealt per second, snapshot stored for actionbar
+# Damage per second, accumulated then snapshotted for the actionbar.
 scoreboard objectives add mgs.dps dummy
 scoreboard objectives add mgs.previous_dps dummy
 scoreboard objectives add mgs.dps_timer dummy
 
-# Forces an immediate actionbar refresh (set by events its idle gate can't detect, e.g. fire-mode toggle)
+# Forces an actionbar refresh for changes the idle gate cannot see (fire-mode toggle).
 scoreboard objectives add mgs.ab_force dummy
 
-# Initialize slow bullet (projectile) counter
 scoreboard players add #slow_bullet_count mgs.data 0
 
-# Semtex entity pairing: unique ID objective + global counter
+# Semtex pairing: a unique id objective and a global counter.
 scoreboard objectives add mgs.grenade_launch dummy
 scoreboard objectives add mgs.stuck_id dummy
 
-# Per-grenade accumulated tumble angle (1e-4 rad units)
+# Accumulated tumble angle (1e-4 rad units).
 scoreboard objectives add mgs.grenade_spin dummy
 scoreboard players set #semtex_id mgs.data 0
 
-# Initialize global config defaults (only if not already set)
+# Defaults, only when unset.
 execute unless score #projectile_explosion_power mgs.config matches -2147483648.. run scoreboard players set #projectile_explosion_power mgs.config 0
 execute unless score #grenade_explosion_power mgs.config matches -2147483648.. run scoreboard players set #grenade_explosion_power mgs.config 0
 execute unless score #max_ammo_reload_weapons mgs.config matches -2147483648.. run scoreboard players set #max_ammo_reload_weapons mgs.config 0
 execute unless score #damage_debug mgs.config matches -2147483648.. run scoreboard players set #damage_debug mgs.config 0
 
-# Health regeneration tracking (global, shared across all game modes)
+# Health regeneration, shared by every mode.
 scoreboard objectives add mgs.last_hit dummy
 scoreboard objectives add mgs.hp_prev dummy
 
-# Read-only criteria objectives, auto-updated by the server every tick a value changes.
-# Reading these replaces per-tick `data get entity @s Health/foodLevel` (full player-NBT
-# serialization) with a plain score read. NOTE: mgs.health = ceil(health + absorption);
-# this pack has no absorption sources, so it tracks health exactly.
+# Read-only criteria the server keeps current: a score read instead of serializing the player NBT for Health or foodLevel.
+# mgs.health = ceil(health + absorption), and the pack has no absorption source.
 scoreboard objectives add mgs.health health
 scoreboard objectives add mgs.food food
 
-# Real-time clock: global stopwatch queried every tick (lag-immune wall-clock time).
-# Recreated on every load — only per-tick deltas are consumed, so the reset is harmless.
+# Global stopwatch, a lag-immune wall clock. Recreated on every load, which is harmless: only per-tick deltas are used.
 stopwatch remove mgs:clock
 stopwatch create mgs:clock
 scoreboard players set #real_prev mgs.data 0
@@ -188,10 +180,10 @@ team modify mgs.mi_mobs color dark_red
 team modify mgs.mi_mobs friendlyFire true
 team modify mgs.mi_mobs nametagVisibility always
 
-# Dropped-weapon lifetime (ticks remaining before a dropped gun despawns)
+# Ticks before a dropped gun despawns.
 scoreboard objectives add mgs.drop_timer dummy
 
-# Progression scoreboards (xp_total is authoritative; xp_level and xp_prog are caches derived from it)
+# xp_total is authoritative; xp_level and xp_prog are caches derived from it.
 scoreboard objectives add mgs.mp.xp_total dummy
 scoreboard objectives add mgs.mp.xp_level dummy
 scoreboard objectives add mgs.mp.xp_prog dummy
@@ -202,7 +194,7 @@ scoreboard objectives add mgs.zb.xp_prog dummy
 scoreboard objectives add mgs.zb.xp_pts_prev dummy
 scoreboard objectives add mgs.zb.xp_spent_acc dummy
 
-# Challenge counters (14 of them; the level chains borrow mgs.mp.xp_level and mgs.zb.xp_level instead)
+# 14 challenge counters; the level chains read mgs.mp.xp_level and mgs.zb.xp_level.
 scoreboard objectives add mgs.adv.mp.kills dummy
 scoreboard objectives add mgs.adv.mp.headshots dummy
 scoreboard objectives add mgs.adv.mp.objectives dummy
@@ -545,7 +537,6 @@ scoreboard players set #minus_one mgs.data -1
 
 # Survives reloads.
 execute unless data storage mgs:multiplayer custom_loadouts run data modify storage mgs:multiplayer custom_loadouts set value []
-# Survives reloads.
 execute unless data storage mgs:multiplayer player_data run data modify storage mgs:multiplayer player_data set value []
 execute unless data storage mgs:multiplayer next_loadout_id run data modify storage mgs:multiplayer next_loadout_id set value 1
 
@@ -572,16 +563,14 @@ scoreboard objectives add mgs.mp.bz dummy
 
 execute unless data storage mgs:missions game run data modify storage mgs:missions game set value {state:"lobby",map_id:""}
 
-# Map editor scoreboards
 scoreboard objectives add mgs.mp.map_edit dummy
 scoreboard objectives add mgs.mp.map_idx dummy
 scoreboard objectives add mgs.mp.map_mode dummy
 scoreboard objectives add mgs.mp.map_disp dummy
 
-# Reuse warped fungus on stick detection (shared with class menu)
+# Shared with the class menu.
 scoreboard objectives add mgs.class_menu minecraft.used:minecraft.warped_fungus_on_a_stick
 
-# Initialize maps storage for all modes
 execute unless data storage mgs:maps multiplayer run data modify storage mgs:maps multiplayer set value []
 execute unless data storage mgs:maps zombies run data modify storage mgs:maps zombies set value []
 execute unless data storage mgs:maps missions run data modify storage mgs:maps missions set value []

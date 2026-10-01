@@ -14,13 +14,12 @@ from stewbeet import Item, JsonDict, Mem
 from ..config.stats.keys import MODELS
 from ..config.stats.weapons.melee import MELEE_WEAPONS
 
-# HSL Color blend (GIMP "HSL Color" mode) H + S come from the blend (material) layer, L comes from the base (weapon).
-# Alpha is preserved from the base layer throughout.
-# Fully vectorised with numpy — no per-pixel Python loops.
+# HSL Color blend (GIMP "HSL Color" mode): H and S from the blend (material) layer, L from the base (weapon); alpha from the base.
+# Vectorised with numpy, no per-pixel Python loop.
 
 # Functions
 def rgb_to_hls(arr: NDArray[np.floating]) -> NDArray[np.floating]:
-	""" (N, 3) floating RGB → (N, 3) floating HLS  (colorsys channel order: H, L, S). """
+	""" (N, 3) floating RGB to (N, 3) floating HLS, in colorsys channel order (H, L, S). """
 	r, g, b = arr[:, 0], arr[:, 1], arr[:, 2]
 	maxc: NDArray[np.floating] = arr.max(axis=1)
 	minc: NDArray[np.floating] = arr.min(axis=1)
@@ -43,7 +42,7 @@ def rgb_to_hls(arr: NDArray[np.floating]) -> NDArray[np.floating]:
 	return np.stack([h_channel, l_channel, s_channel], axis=1)
 
 def hls_to_rgb(hls: NDArray[np.floating]) -> NDArray[np.floating]:
-	"""(N, 3) floating HLS → (N, 3) floating RGB."""
+	""" (N, 3) floating HLS to (N, 3) floating RGB. """
 	h_channel, l_channel, s_channel = hls[:, 0], hls[:, 1], hls[:, 2]
 	m2: NDArray[np.floating] = np.where(l_channel <= 0.5, l_channel * (1.0 + s_channel), l_channel + s_channel - l_channel * s_channel)
 	m1: NDArray[np.floating] = 2.0 * l_channel - m2
@@ -67,16 +66,11 @@ def hsl_color_blend(
 	l_blend: float = 0.0
 ) -> None:
 	""" Write a blended PNG to *out_path* using GIMP's HSL Color mode:
-      H + S → from blend (material texture)
-      L     → from base  (weapon texture), with optional gamma & contrast
-      Alpha → from base  (weapon texture), unchanged
+	hue and saturation from the blend (material texture), lightness and alpha from the base (weapon texture).
 
-	- gamma < 1.0  → brightens midtones → more metallic
-	- gamma > 1.0  → darkens midtones   → more plastic/matte
-	- contrast > 1 → increases contrast → sharper metallic highlights
-	- contrast < 1 → flattens contrast  → softer, more plastic look
-	- l_blend = 0.0 → L unchanged from base
-	- l_blend > 0.0 → blend some L from material (e.g. for a brighter, more reflective metal)
+	- gamma below 1 brightens midtones (more metallic), above 1 darkens them (more matte).
+	- contrast above 1 sharpens metallic highlights, below 1 gives a softer, more plastic look.
+	- l_blend above 0 mixes some lightness from the material, for a brighter, more reflective metal.
 	"""
 	base_img: Image.Image = Image.open(base_path).convert("RGBA")
 	blend_img: Image.Image = Image.open(blend_path).convert("RGBA").resize(base_img.size, Image.Resampling.NEAREST)
@@ -93,7 +87,7 @@ def hsl_color_blend(
 	hls_out[:, 2] = hls_blend[:, 2]   # S ← material
 	hls_out[:, 1] = (1.0 - l_blend) * hls_base[:, 1] + l_blend * hls_blend[:, 1]   # L ← blend of weapon & material
 
-	# --- Gamma + contrast applied to L channel (weapon luminance) ---
+	# Gamma and contrast on the L channel (weapon luminance).
 	l_channel: NDArray[np.floating] = hls_out[:, 1]
 	l_channel = np.power(np.clip(l_channel, 1e-6, 1.0), gamma)
 	l_channel = np.clip((l_channel - 0.5) * contrast + 0.5, 0.0, 1.0)
@@ -109,13 +103,10 @@ def overlay_blend(
 	base_path: str, blend_path: str, out_path: str,
 	gamma: float = 0.75, contrast: float = 1.4
 ) -> None:
-	"""
-	GIMP Overlay blend with optional pre-blend contrast & gamma correction.
+	""" GIMP Overlay blend with optional pre-blend contrast and gamma correction.
 
-	- gamma < 1.0  → brightens midtones → more metallic
-	- gamma > 1.0  → darkens midtones  → more plastic/matte
-	- contrast > 1 → increases contrast → sharper metallic highlights
-	- contrast < 1 → flattens contrast  → softer, more plastic look
+	- gamma below 1 brightens midtones (more metallic), above 1 darkens them (more matte).
+	- contrast above 1 sharpens metallic highlights, below 1 gives a softer, more plastic look.
 	"""
 	base_img: Image.Image = Image.open(base_path).convert("RGBA")
 	blend_img: Image.Image = Image.open(blend_path).convert("RGBA").resize(base_img.size, Image.Resampling.NEAREST)
@@ -126,11 +117,11 @@ def overlay_blend(
 	b: NDArray[np.floating]  = base_arr[:, :, :3]
 	bl: NDArray[np.floating] = blend_arr[:, :, :3]
 
-	# --- Pre-blend: gamma + contrast on base RGB (alpha untouched) ---
+	# Pre-blend: gamma and contrast on the base RGB, alpha untouched.
 	b_adjusted: NDArray[np.floating] = np.power(np.clip(b, 1e-6, 1.0), gamma)          # gamma
 	b_adjusted = np.clip((b_adjusted - 0.5) * contrast + 0.5, 0.0, 1.0)               # contrast
 
-	# --- Overlay (conditioned on adjusted base) ---
+	# Overlay, conditioned on the adjusted base.
 	overlay: NDArray[np.floating] = np.where(
 		b_adjusted <= 0.5,
 		2.0 * b_adjusted * bl,
@@ -146,8 +137,7 @@ def overlay_blend(
 # Constants
 BlendFunc = Callable[[str, str, str], None]
 
-# Maps each material name to its blend function.
-# To add a new material, just add an entry here — no other changes needed.
+# A new material only needs an entry here.
 MATERIALS: dict[str, BlendFunc] = {
 	"gold":                 lambda b, bl, o: hsl_color_blend(b, bl, o, l_blend=1.0),
 	"autumn":               overlay_blend,
@@ -197,9 +187,8 @@ OVERRIDES: dict[str, CamoOverride] = {
 	"ray_gun": CamoOverride(func=lambda b, bl, o: hsl_color_blend(b, bl, o, l_blend=0.0)),
 }
 
-# Gold normally spares a gun's metal sheets so the receiver stays black, but a melee weapon IS its
-# blade: skipping them would leave a "gold" knife with nothing gold but the grip. Driven off
-# CAMO_MELEE so toggling `camo_eligible` needs no second edit here.
+# Gold spares a gun's metal sheets so the receiver stays black, but a melee weapon is its blade: sparing them would leave a gold knife with only a gold grip.
+# Driven by CAMO_MELEE, so toggling `camo_eligible` needs no second edit here.
 OVERRIDES.update({melee_id: CamoOverride(ignore_textures=COMMON_IGNORE) for melee_id in CAMO_MELEE})
 
 @dataclass(frozen=True)
@@ -229,7 +218,7 @@ def main() -> None:
 	ns: str = Mem.ctx.project_id
 	textures_folder: str = Mem.ctx.meta.get("stewbeet", {}).get("textures_folder", "")
 
-	# For each weapon, make variants with only one material (e.g. wood, metal, gold, etc.)
+	# One variant per weapon and material.
 	weapons: list[Item] = [item for item in map(Item.from_id, Mem.definitions) if is_camo_eligible(ns, item)]
 	queue: list[BlendJob] = [
 		job
@@ -238,7 +227,6 @@ def main() -> None:
 		for job in add_camo_variant(ns, textures_folder, weapon, material)
 	]
 
-	# Blend textures in parallel with multiprocessing
 	stp.multiprocessing(blend_texture, [astuple(job) for job in stp.unique_list(queue)], use_starmap=True, desc="Blending camo textures", max_workers=1)
 
 def is_camo_eligible(ns: str, item: Item) -> bool:
@@ -264,7 +252,7 @@ def add_camo_variant(ns: str, textures_folder: str, weapon: Item, material: str)
 		return []
 	item.override_model = item.override_model.copy()
 
-	# Zoom models are `parent:` children of their base: they carry no textures of their own, so the camo is applied by pointing at the camo'd parent instead.
+	# Zoom models are `parent:` children of their base with no textures of their own, so the camo points at the camo'd parent.
 	parent: str = str(item.override_model.get("parent", ""))
 	if parent.startswith(f"{ns}:item/"):
 		item.override_model["parent"] = f"{parent}_{material}"
@@ -287,7 +275,7 @@ def retexture(ns: str, textures_folder: str, model: JsonDict, base_weapon: str, 
 
 	jobs: list[BlendJob] = []
 	for key, texture in textures.items():
-		# Some models reuse the material texture directly as their override texture, which needs no blending
+		# Some models use the material texture directly, which needs no blending.
 		texture_file: str = texture.split("/")[-1]
 		if texture_file == material or any(texture.endswith(f"/{x}") for x in ignore_textures):
 			continue

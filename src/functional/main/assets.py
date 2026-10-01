@@ -7,7 +7,7 @@ from stewbeet import Font, Mem, texture_mcmeta, write_versioned_function
 def write_assets() -> None:
 	ns: str = Mem.ctx.project_id
 
-	# Add bullet font (for actionbar)
+	# Bullet font for the actionbar.
 	textures_folder: str = Mem.ctx.meta.get("stewbeet", {}).get("textures_folder", "")
 	font: Font = Mem.ctx.assets.fonts.setdefault(f"{ns}:icons", Font({"providers": []}))
 	font.data["providers"].extend([
@@ -17,7 +17,6 @@ def write_assets() -> None:
 	for icon_name in ["bullet_outline", "bullet_full"]:
 		Mem.ctx.assets[ns].textures[f"font/{icon_name}"] = texture_mcmeta(f"{textures_folder}/{icon_name}.png")
 
-	# Random weapon function
 	write_versioned_function("utils/random_weapon", f"""
 execute store result score #random {ns}.data run random value 1..31
 $execute if score #random {ns}.data matches 1 run loot replace entity @s $(slot) loot {ns}:i/m16a4

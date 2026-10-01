@@ -7,7 +7,6 @@
 #			mgs:v5.1.0/maps/editor/displays/sync
 #
 
-# Rebuild all editor model displays from the current markers
 kill @e[tag=mgs.editor_display]
 execute as @e[type=minecraft:marker,tag=mgs.element.wallbuy] at @s run function mgs:v5.1.0/maps/editor/displays/wallbuy
 execute as @e[type=minecraft:marker,tag=mgs.element.perk_machine] at @s run function mgs:v5.1.0/maps/editor/displays/perk_machine
@@ -17,7 +16,7 @@ execute as @e[type=minecraft:marker,tag=mgs.element.mystery_box_pos] at @s run f
 execute as @e[type=minecraft:marker,tag=mgs.element.power_switch] at @s run function mgs:v5.1.0/maps/editor/displays/power_switch
 execute as @e[type=minecraft:marker,tag=mgs.element.barricade] at @s run function mgs:v5.1.0/maps/editor/displays/barricade
 
-# Snapshot what was just drawn, so displays/sync only rebuilds after a real edit
+# Snapshot of what was drawn, so displays/sync only rebuilds after a real edit.
 tag @e[type=minecraft:marker,tag=mgs.element.wallbuy] add mgs.model_display
 tag @e[type=minecraft:marker,tag=mgs.element.perk_machine] add mgs.model_display
 tag @e[type=minecraft:marker,tag=mgs.element.wunderfizz] add mgs.model_display
