@@ -131,7 +131,6 @@ scoreboard players set #real_prev mgs.data 0
 # Confirm load
 tellraw @a[tag=convention.debug] {"translate":"mgs.loaded_mc_guns_system_v5_1_0","color":"green"}
 scoreboard players set #mgs.loaded load.status 1
-function mgs:v5.1.0/load/set_items_storage
 
 scoreboard objectives add mgs.flash_id dummy
 scoreboard objectives add mgs.flash_slot dummy
