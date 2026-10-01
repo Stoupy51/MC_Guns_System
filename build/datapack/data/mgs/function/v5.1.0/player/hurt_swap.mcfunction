@@ -4,6 +4,7 @@
 # @executed	as @e[type=player,sort=random] & at @s
 #
 # @within	mgs:v5.1.0/player/hurt_tick
+#			mgs:v5.1.0/player/hurt_fade_out
 #
 
 # Start from the look the current id ends on. A hit landing mid-fade starts from the look that fade
