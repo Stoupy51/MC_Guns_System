@@ -10,8 +10,6 @@
 #			mgs:v5.1.0/zombies/inventory/refresh_info_item {slot:"hotbar.8",group:"hotbar",index:8}
 #			mgs:v5.1.0/zombies/inventory/give_ability_item {slot:"hotbar.4",group:"hotbar",index:4}
 #			mgs:v5.1.0/zombies/inventory/give_lethal_type {slot:"hotbar.7",group:"hotbar",index:7}
-#			mgs:v5.1.0/zombies/inventory/recreate_critical_items {slot:"hotbar.0",group:"hotbar",index:0}
-#			mgs:v5.1.0/zombies/inventory/recreate_critical_items {slot:"hotbar.7",group:"hotbar",index:7}
 #			mgs:v5.1.0/zombies/wallbuys/buy_knife {slot:"hotbar.0",group:"hotbar",index:0}
 #			mgs:v5.1.0/zombies/wallbuys/buy_lethal {slot:"hotbar.7",group:"hotbar",index:7}
 #			mgs:v5.1.0/zombies/wallbuys/buy_tactical {slot:"hotbar.6",group:"hotbar",index:6}

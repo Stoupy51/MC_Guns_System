@@ -60,7 +60,7 @@ def generate_menus() -> None:
 	})
 
 	# /function .../multiplayer/setup now opens the dialog
-	write_versioned_function("multiplayer/setup", f"function {Dialogs.dialog_function('multiplayer/setup')}")
+	write_versioned_function("multiplayer/setup", f"dialog show @s {Dialogs.dialog_ref('multiplayer/setup')}")
 
 	## Map selection menu: build a dialog listing all available multiplayer maps
 	write_versioned_function("multiplayer/map_select", f"""

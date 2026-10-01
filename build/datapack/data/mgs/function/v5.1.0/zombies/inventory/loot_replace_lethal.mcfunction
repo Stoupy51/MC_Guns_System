@@ -4,7 +4,6 @@
 # @executed	as @a[scores={mgs.zb.in_game=1},gamemode=!spectator]
 #
 # @within	mgs:v5.1.0/zombies/inventory/give_lethal_type
-#			mgs:v5.1.0/zombies/inventory/recreate_critical_items
 #			mgs:v5.1.0/zombies/perks/apply/widows_wine
 #			mgs:v5.1.0/zombies/perks/reapply/widows_wine
 #

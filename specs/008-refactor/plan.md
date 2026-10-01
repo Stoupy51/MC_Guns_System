@@ -49,7 +49,7 @@ Totals if every lot lands as estimated: resource pack about -2.82 M lines (model
 | D3 | Juggernaut works (`multiplayer/apply_perks` sets max health to 24; the score is only a flag). Double Tap does nothing today: fix it as a **content** lot, doubling bullet damage (not firing a second bullet, which would farm points). |
 | D4 | Accepted. |
 | D5 | Accepted. The ammo actionbar keeps its special characters. |
-| D6 | Only `set_items_storage` goes, both ways: a StewBeet PR adding an option, and a local removal in `src/link.py` until it ships. Plus a StewBeet issue: `auto.headers` writes `@within ???` for 34 functions called through macros, data, enchantments or by hand. |
+| D6 | Only `set_items_storage` goes, both ways: a StewBeet PR adding an option, and a local removal in `src/link.py` until it ships. Plus a StewBeet issue: `auto.headers` writes `@within ???` for 30 functions called through macros, data, enchantments or by hand (Stoupy51/StewBeet#61); the option is Stoupy51/StewBeet#60. |
 | D7 | Ignore E501. |
 | D8 | Accepted. |
 | D9 | Accepted: draft PR after lot 1. |

@@ -34,11 +34,6 @@ execute unless data storage {ns}:maps multiplayer[{{id:"highrise"}}] run data mo
 data modify storage {ns}:maps multiplayer append from storage {ns}:input multiplayer.map
 """)
 
-	## Store the index of loaded map for later use
-	write_versioned_function("maps/multiplayer/store_loaded_idx", f"""
-execute store result storage {ns}:temp map_load.result_idx int 1 run scoreboard players get #map_load_idx {ns}.data
-""")
-
 	# ── Hijacked map scripts.
 	# Logic functions (actual work)
 	write_versioned_function("maps/multiplayer/hijacked/start", "# Hijacked map start script")

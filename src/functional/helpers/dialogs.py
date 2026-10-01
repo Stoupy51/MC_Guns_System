@@ -8,7 +8,6 @@ from stewbeet import (
 	Mem,
 	TextComponent,
 	set_json_encoder,
-	write_versioned_function,
 )
 from stouputils.typing import JsonDict
 
@@ -41,15 +40,6 @@ class Dialogs:
 		return json.dumps(obj)
 
 	@staticmethod
-	def dialog_function(dialog_id: str) -> str:
-		""" Return the versioned function path that opens the dialog for dialog_id.
-
-		Kept so existing `/function <ns>:v<version>/dialogs/<id>` entry points (menu items, commands)
-		still work; the function is now a one-liner that shows the registered dialog resource.
-		"""
-		return f"{Mem.ctx.project_id}:v{Mem.ctx.project_version}/dialogs/{dialog_id}"
-
-	@staticmethod
 	def dialog_ref(dialog_id: str) -> str:
 		""" Return the resource id of a registered dialog, e.g. "mgs:v5.1.0/config".
 
@@ -60,25 +50,15 @@ class Dialogs:
 		return f"{Mem.ctx.project_id}:v{Mem.ctx.project_version}/{dialog_id}"
 
 	@staticmethod
-	def register_dialog(dialog_id: str, data: JsonDict, wrapper: bool = True) -> None:
+	def register_dialog(dialog_id: str, data: JsonDict) -> None:
 		""" Register a dialog as a real dialog resource under `data/<ns>/dialog/v<version>/<id>.json`.
 
-		A thin `dialogs/<dialog_id>` function is written alongside it so every existing
-		`/function .../dialogs/<id>` entry point keeps working. Note that dialog resources are loaded
-		at datapack load, so editing one needs a `/reload` to take effect — unlike the inline SNBT
-		form this replaces, which was rebuilt into the command every time.
-
 		Args:
-			dialog_id (str): Path within the namespace, e.g. "config" or "multiplayer/setup".
-			data      (dict): The dialog structure.
-			wrapper   (bool): Also write the `dialogs/<id>` opener function. Pass False when the dialog
-				is only ever shown from a function that has its own guards to run first.
+			dialog_id: Path within the namespace, e.g. "config" or "multiplayer/setup".
 		"""
 		ns: str = Mem.ctx.project_id
 		version: str = Mem.ctx.project_version
 		Mem.ctx.data[ns].dialogs[f"v{version}/{dialog_id}"] = set_json_encoder(Dialog(data))
-		if wrapper:
-			write_versioned_function(f"dialogs/{dialog_id}", f"dialog show @s {Dialogs.dialog_ref(dialog_id)}")
 
 	@staticmethod
 	def dialog_back_action(dialog_id: str, label: str = "◀ Back", tooltip: str = "Return to the previous menu") -> JsonDict:

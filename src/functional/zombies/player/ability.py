@@ -22,7 +22,7 @@ def generate_zombies_abilities() -> None:
 	TRIG_ZB_ABILITY_1: int = 8   # Coward
 	TRIG_ZB_ABILITY_2: int = 9   # Guardian
 
-	## Registered as real dialog resources; the functions below keep the variant guard that has to run before the dialog is shown, so these need no opener wrapper of their own.
+	## The functions below run the variant guard before showing these dialogs
 	Dialogs.register_dialog("zombies/passive_ability", {
 		"type": "minecraft:multi_action",
 		"title": {"text": "Zonweeb Passive", "color": "dark_green"},
@@ -36,7 +36,7 @@ def generate_zombies_abilities() -> None:
 			{"label": ["", "⏱ ", {"text": "x1.5 Powerups", "color": "aqua"}], "tooltip": {"text": "All powerup durations last 50% longer"},
 				"action": {"type": "run_command", "command": f"/trigger {ns}.player.config set {TRIG_ZB_PASSIVE_2}"}},
 		],
-	}, wrapper=False)
+	})
 
 	write_versioned_function("zombies/passive_ability_menu", f"""
 # Zonweeb variant only
@@ -58,7 +58,7 @@ dialog show @s {Dialogs.dialog_ref('zombies/passive_ability')}
 			{"label": ["", "🛡 ", {"text": "Guardian", "color": "green"}], "tooltip": {"text": "Summon an Iron Golem ally at round start (1 round cooldown)"},
 				"action": {"type": "run_command", "command": f"/trigger {ns}.player.config set {TRIG_ZB_ABILITY_2}"}},
 		],
-	}, wrapper=False)
+	})
 
 	write_versioned_function("zombies/ability_menu", f"""
 # Zonweeb variant only

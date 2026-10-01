@@ -32,7 +32,7 @@ def generate_missions_menus() -> None:
 	})
 
 	# /function .../missions/setup now opens the dialog
-	write_versioned_function("missions/setup", f"function {Dialogs.dialog_function('missions/setup')}")
+	write_versioned_function("missions/setup", f"dialog show @s {Dialogs.dialog_ref('missions/setup')}")
 
 	## Map selection menu: build a dialog listing all available mission maps
 	write_versioned_function("missions/map_select", f"""

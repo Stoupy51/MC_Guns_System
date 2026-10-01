@@ -19,7 +19,6 @@ def write_zombies_tick() -> None:
 # actually pauses the round — every zombies timer (spawns, bleed-out, power-ups, sales) lives inside it.
 execute if data storage {ns}:zombies game{{state:"active"}} unless score #zb_freeze {ns}.data matches 1 run function {ns}:v{version}/zombies/game_tick
 execute if data storage {ns}:zombies game{{state:"active"}} if score #zb_freeze {ns}.data matches 1 run function {ns}:v{version}/zombies/freeze_tick
-execute if data storage {ns}:zombies game{{state:"preparing"}} run function {ns}:v{version}/zombies/prep_tick
 """)
 
 	write_versioned_function("zombies/game_tick", f"""

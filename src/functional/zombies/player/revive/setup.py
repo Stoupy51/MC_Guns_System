@@ -24,7 +24,6 @@ def write_revive_setup() -> None:
 		"entity": "this",
 		"scores": {f"{ns}.zb.downed_id": {"min": downed_id_ref, "max": downed_id_ref}},
 	}), max_level=-1)
-	Mem.ctx.data[ns].predicates[f"v{version}/input/any"]      = set_json_encoder(Predicate({"type": "minecraft:any_of", "terms": [player_input("forward"), player_input("backward"), player_input("left"), player_input("right")]}))
 
 	## Scoreboards
 	write_load_file(f"""

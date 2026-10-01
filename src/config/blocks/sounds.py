@@ -78,14 +78,6 @@ def write_sound_tags() -> None:
 		"minecraft:verdant_froglight",
 		"minecraft:sculk"
 	])
-	write_tag(f"{ns}:v{version}/sounds/special_sound", Mem.ctx.data.block_tags, values=[
-		f"#{ns}:v{version}/sounds/glass",
-		f"#{ns}:v{version}/sounds/water",
-		f"#{ns}:v{version}/sounds/cloth",
-		f"#{ns}:v{version}/sounds/dirt",
-		f"#{ns}:v{version}/sounds/mud",
-		f"#{ns}:v{version}/sounds/wood"
-	])
 	write_tag(f"{ns}:v{version}/sounds/water", Mem.ctx.data.block_tags, values=[
 		"minecraft:water",
 		"minecraft:kelp_plant",

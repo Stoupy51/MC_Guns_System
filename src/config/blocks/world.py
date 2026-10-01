@@ -115,23 +115,6 @@ def write_world_tags() -> None:
 		"minecraft:mud_bricks"
 	])
 
-	write_tag(f"{ns}:v{version}/jump", Mem.ctx.data.block_tags, values=[
-		"minecraft:slime_block",
-		"minecraft:honey_block",
-		"minecraft:hay_block"
-	])
-
-	write_tag(f"{ns}:v{version}/fence_gate", Mem.ctx.data.block_tags, values=[
-		"minecraft:acacia_fence_gate",
-		"minecraft:birch_fence_gate",
-		"minecraft:dark_oak_fence_gate",
-		"minecraft:jungle_fence_gate",
-		"minecraft:oak_fence_gate",
-		"minecraft:spruce_fence_gate",
-		"minecraft:warped_fence_gate",
-		"minecraft:crimson_fence_gate"
-	])
-
 	write_tag(f"{ns}:v{version}/concrete_powder", Mem.ctx.data.block_tags, values=[
 		"minecraft:white_concrete_powder",
 		"minecraft:orange_concrete_powder",

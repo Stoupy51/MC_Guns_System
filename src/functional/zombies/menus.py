@@ -57,7 +57,7 @@ def generate_zombies_menus() -> None:
 	})
 
 	# /function .../zombies/setup now opens the dialog
-	write_versioned_function("zombies/setup", f"function {Dialogs.dialog_function('zombies/setup')}")
+	write_versioned_function("zombies/setup", f"dialog show @s {Dialogs.dialog_ref('zombies/setup')}")
 
 	## Admin / debug menu.
 	## Everything here reuses the normal game paths rather than poking state directly, so a debug action can't leave a game in a shape the round logic never produces.

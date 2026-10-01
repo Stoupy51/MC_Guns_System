@@ -15,19 +15,6 @@ def write_wallbuy_give() -> None:
 	gun_cd: str = ZombiesCommon.gun_cd(ns)
 	mag_cd: str = "{" + ns + ":{magazine:true}}"
 
-	# Build weapon_id -> magazine_id mapping
-	weapon_mag_data: dict[str, str] = {}
-	for weapon_id, (mag_id, _, _) in ZombiesCommon.build_weapon_magazine_data().items():
-		weapon_mag_data[weapon_id] = mag_id
-
-	# Generate lookup function for weapon -> magazine mapping
-	magazine_lookup_cmds = "\n".join([
-		f"execute if data storage {ns}:temp _wb_store{{weapon_id:\"{wid}\"}} run data modify storage {ns}:temp _wb_store.magazine_id set value \"{mag_id}\""
-		for wid, (mag_id, _, _) in ZombiesCommon.build_weapon_magazine_data().items()
-	])
-
-	write_versioned_function("zombies/wallbuys/lookup_magazine_id", magazine_lookup_cmds)
-
 	write_versioned_function("zombies/wallbuys/lookup_weapon", f"""
 $data modify storage {ns}:temp _wb_weapon set from storage {ns}:zombies wallbuy_data."$(id)"
 """)
@@ -54,13 +41,6 @@ $execute if score #wb_purchase_done {ns}.data matches 0 unless items entity @s h
 
 # Otherwise replace the currently selected gun slot (1/2/3 only)
 execute if score #wb_purchase_done {ns}.data matches 0 run function {ns}:v{version}/zombies/wallbuys/replace_selected with storage {ns}:temp _wb_weapon
-""")
-
-	write_versioned_function("zombies/wallbuys/count_guns", f"""
-scoreboard players set #wb_gun_count {ns}.data 0
-execute if items entity @s hotbar.1 *[custom_data~{gun_cd}] run scoreboard players add #wb_gun_count {ns}.data 1
-execute if items entity @s hotbar.2 *[custom_data~{gun_cd}] run scoreboard players add #wb_gun_count {ns}.data 1
-execute if items entity @s hotbar.3 *[custom_data~{gun_cd}] run scoreboard players add #wb_gun_count {ns}.data 1
 """)
 
 	write_versioned_function("zombies/wallbuys/give_to_slot", f"""
