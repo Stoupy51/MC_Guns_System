@@ -50,7 +50,7 @@ class Advancements:
 			if Catalog.side(chain.branch) != side:
 				continue
 			for key in chain.stat.sources:
-				lines.setdefault(key, []).append(chain.stat.line())
+				lines.setdefault(key, []).extend((chain.stat.line(), Hooks.check_call(chain)))
 		return {key: "\n".join(bumps) for key, bumps in lines.items()}
 
 	@staticmethod
@@ -111,6 +111,7 @@ def generate_advancements() -> None:
 	Tree.write_all()
 	Rewards.write_all()
 	Hooks.write_round_end()
+	Hooks.write_unlocks()
 
 	## Sanity: every event challenge should be reachable from somewhere. The three sites are named in the
 	## catalog, so a challenge added without a grant is a data error worth failing the build over.

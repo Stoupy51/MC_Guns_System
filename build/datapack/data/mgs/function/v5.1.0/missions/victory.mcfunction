@@ -10,7 +10,9 @@ execute as @a[scores={mgs.mi.in_game=1}] run scoreboard players operation @s mgs
 
 # Challenges: missions have no XP awards to ride, so the counters are fed here, where mi.kills is final
 execute as @a[scores={mgs.mi.in_game=1}] run scoreboard players add @s mgs.adv.mi.completed 1
+execute as @a[scores={mgs.mi.in_game=1}] run function mgs:v5.1.0/progression/adv/mi/completed/check
 execute as @a[scores={mgs.mi.in_game=1}] run scoreboard players operation @s mgs.adv.mi.kills += @s mgs.mi.kills
+execute as @a[scores={mgs.mi.in_game=1}] run function mgs:v5.1.0/progression/adv/mi/kills/check
 execute as @a[scores={mgs.mi.in_game=1,mgs.mi.deaths=0}] run advancement grant @s only mgs:challenges/mi/flawless
 
 # Calculate time in seconds
