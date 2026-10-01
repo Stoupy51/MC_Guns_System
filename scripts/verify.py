@@ -1,238 +1,302 @@
-""" Build + snapshot + diff harness for the refactor.
+""" Safety net for refactors: the generated pack must not change unless a change is meant.
 
-The generated output must not drift while the source is refactored. This script builds the
-project, snapshots the generated tree to a reference directory outside `build/`, and diffs
-later builds against that reference.
-
-Usage:
-    python scripts/verify.py baseline     # build, then (re)capture the reference snapshot
-    python scripts/verify.py check        # build, diff against the reference, lint, report
-    python scripts/verify.py check --diff # ... and print unified diffs of every changed file
-    python scripts/verify.py metrics      # print the metrics table for the current build only
-
-`check` exits non-zero when the output differs, when ruff fails, or when pyright fails, so it
-can gate a commit. An intentional diff is acknowledged by re-running `baseline`.
+`baseline` snapshots the build.
+`check` diffs a new build against that snapshot, with comments and blank lines ignored.
+`validate` parses every function with mecha and finds missing and unreachable resources.
+`server` loads the pack in a real server and reloads it.
+`lint` runs ruff, pyright and complexipy.
 """
-
+# Imports
 import argparse
-import filecmp
+import hashlib
 import json
+import re
 import shutil
 import subprocess
 import sys
+import zipfile
 from collections.abc import Iterator
-from dataclasses import asdict, dataclass
+from concurrent.futures import ProcessPoolExecutor
+from dataclasses import dataclass, field
 from pathlib import Path
 
+from stouputils.typing import JsonDict
+
+# Constants
 ROOT: Path = Path(__file__).resolve().parent.parent
 BUILD: Path = ROOT / "build"
-SNAPSHOT: Path = ROOT / ".refactor" / "baseline"
-METRICS_FILE: str = "metrics.json"
+WORK: Path = ROOT / ".refactor"
+BASELINE: Path = WORK / "baseline"
+TREES: tuple[str, ...] = ("datapack", "resource_pack")
+MINECRAFT: str = "26.3"
+ID_TOKEN: re.Pattern[str] = re.compile(r"(?<![\w.\-/:$])(#?)([a-z0-9_.\-]+):([a-z0-9_./\-]*(?:\$\([a-z_0-9]+\)[a-z0-9_./\-]*)*)")
+""" A resource id as it appears in commands and JSON, macro placeholders included. """
+CALL: re.Pattern[str] = re.compile(r"(?<![\w/])function\s+(#?)([a-z0-9_.\-]+:[a-z0-9_./\-]+)(?![a-z0-9_./\-$(])")
+""" A static function or function tag call. """
+SERVER_ERROR: re.Pattern[str] = re.compile(r"/(ERROR|WARN)\].*(function|data ?pack|Couldn't|Failed|Unknown|parse)", re.IGNORECASE)
 
-# Only these subtrees are snapshotted: the zips are rebuilt archives (large, and redundant with
-# the trees they contain), and `sha1_hashes.json` is derived from them.
-SNAPSHOT_TREES: tuple[str, ...] = ("datapack", "resource_pack")
-
-# Binary assets are compared by content but never diffed as text.
-TEXT_SUFFIXES: frozenset[str] = frozenset({".mcfunction", ".json", ".mcmeta", ".txt", ".fsh", ".vsh"})
-
-
-@dataclass(frozen=True, slots=True, kw_only=True)
-class Metrics:
-    """ The numbers the refactor is measured against. """
-
-    python_files: int
-    python_loc: int
-    mcfunction_files: int
-    mcfunction_command_lines: int
-    mcfunction_total_lines: int
-    datapack_json_files: int
-    resource_pack_json_files: int
-    datapack_bytes: int
-    resource_pack_bytes: int
-    model_source_files: int
-    model_source_bytes: int
+type Key = tuple[str, str]
+""" (registry, id), e.g. ("tags/function", "mgs:load"). """
 
 
-def _walk(root: Path) -> Iterator[Path]:
-    """ Yield every file under `root`, recursively. """
-    for path in root.rglob("*"):
-        if path.is_file():
-            yield path
+# Classes
+@dataclass
+class Resource:
+	""" A datapack file and the resources it references. """
+	registry: str
+	text: str
+	""" Commands only for a function, raw JSON otherwise. """
+	refs: set[Key] = field(default_factory=set[Key])
 
 
-def _rel_files(root: Path) -> dict[str, Path]:
-    """ Map POSIX-style relative path -> absolute path for every file under `root`. """
-    return {path.relative_to(root).as_posix(): path for path in _walk(root)}
-
-
-def collect_metrics() -> Metrics:
-    """ Measure the current source tree and the current contents of `build/`. """
-    py_files: list[Path] = [p for p in (ROOT / "src").rglob("*.py") if "__pycache__" not in p.parts]
-    py_loc: int = sum(len(p.read_text(encoding="utf-8").splitlines()) for p in py_files)
-
-    datapack: Path = BUILD / "datapack"
-    resource_pack: Path = BUILD / "resource_pack"
-    mcfunctions: list[Path] = list(datapack.rglob("*.mcfunction"))
-
-    command_lines: int = 0
-    total_lines: int = 0
-    for path in mcfunctions:
-        for line in path.read_text(encoding="utf-8").splitlines():
-            total_lines += 1
-            stripped: str = line.strip()
-            if stripped and not stripped.startswith("#"):
-                command_lines += 1
-
-    models: Path = ROOT / "src" / "database" / "models"
-    model_files: list[Path] = list(models.glob("*.json"))
-
-    return Metrics(
-        python_files=len(py_files),
-        python_loc=py_loc,
-        mcfunction_files=len(mcfunctions),
-        mcfunction_command_lines=command_lines,
-        mcfunction_total_lines=total_lines,
-        datapack_json_files=len(list(datapack.rglob("*.json"))),
-        resource_pack_json_files=len(list(resource_pack.rglob("*.json"))),
-        datapack_bytes=sum(p.stat().st_size for p in _walk(datapack)),
-        resource_pack_bytes=sum(p.stat().st_size for p in _walk(resource_pack)),
-        model_source_files=len(model_files),
-        model_source_bytes=sum(p.stat().st_size for p in model_files),
-    )
-
-
+# Functions
 def build() -> None:
-    """ Run the stewbeet build, failing loudly if it does. """
-    print("→ building (stewbeet)…", flush=True)
-    result = subprocess.run("stewbeet", cwd=ROOT, shell=True)
-    if result.returncode != 0:
-        sys.exit(f"build failed (exit {result.returncode})")
+	""" Run StewBeet, then remove the folder its livereload plugin makes from the Windows paths of beet.yml. """
+	if subprocess.run([str(ROOT / ".venv/bin/stewbeet"), "build"], cwd=ROOT).returncode != 0:
+		sys.exit("build failed")
+	shutil.rmtree(ROOT / "D:", ignore_errors=True)
 
 
-def capture_baseline() -> None:
-    """ Replace the reference snapshot with the current build output. """
-    if SNAPSHOT.exists():
-        shutil.rmtree(SNAPSHOT)
-    SNAPSHOT.mkdir(parents=True)
-    for tree in SNAPSHOT_TREES:
-        shutil.copytree(BUILD / tree, SNAPSHOT / tree)
-    metrics: Metrics = collect_metrics()
-    (SNAPSHOT / METRICS_FILE).write_text(json.dumps(asdict(metrics), indent=2), encoding="utf-8")
-    print(f"→ baseline captured at {SNAPSHOT}")
-    print_metrics(metrics)
+def files(root: Path) -> Iterator[tuple[str, Path]]:
+	for path in sorted(root.rglob("*")):
+		if path.is_file():
+			yield path.relative_to(root).as_posix(), path
 
 
-def print_metrics(metrics: Metrics, previous: Metrics | None = None) -> None:
-    """ Print the metrics table, with deltas against `previous` when given. """
-    print("\n  metric                     value        delta")
-    print("  " + "-" * 46)
-    for field, value in asdict(metrics).items():
-        delta: str = ""
-        if previous is not None:
-            diff: int = value - getattr(previous, field)
-            delta = f"{diff:+d}" if diff else "="
-        print(f"  {field:<24} {value:>10}  {delta:>10}")
-    print()
+def commands(text: str) -> list[str]:
+	""" Lines a function executes: no comments, no blank lines. """
+	return [line.strip() for line in text.splitlines() if line.strip() and not line.lstrip().startswith("#")]
 
 
-def compare_trees() -> tuple[list[str], list[str], list[str]]:
-    """ Return (added, removed, changed) relative paths between the snapshot and the build. """
-    added: list[str] = []
-    removed: list[str] = []
-    changed: list[str] = []
-    for tree in SNAPSHOT_TREES:
-        old: dict[str, Path] = _rel_files(SNAPSHOT / tree)
-        new: dict[str, Path] = _rel_files(BUILD / tree)
-        added += [f"{tree}/{k}" for k in sorted(new.keys() - old.keys())]
-        removed += [f"{tree}/{k}" for k in sorted(old.keys() - new.keys())]
-        for key in sorted(old.keys() & new.keys()):
-            if not filecmp.cmp(old[key], new[key], shallow=False):
-                changed.append(f"{tree}/{key}")
-    return added, removed, changed
+def check(show: bool) -> int:
+	""" Diff the current build against the baseline, file by file. """
+	changed = [line for tree in TREES for line in diff_tree(tree, show)]
+	print("\n".join(changed) or "no difference with the baseline")
+	return 1 if changed else 0
 
 
-def print_diffs(changed: list[str]) -> None:
-    """ Print a unified diff for every changed text file. """
-    import difflib
-
-    for rel in changed:
-        tree, _, inner = rel.partition("/")
-        old_path: Path = SNAPSHOT / tree / inner
-        new_path: Path = BUILD / tree / inner
-        if old_path.suffix not in TEXT_SUFFIXES:
-            print(f"\n--- {rel}: binary, {old_path.stat().st_size} -> {new_path.stat().st_size} bytes")
-            continue
-        diff = difflib.unified_diff(
-            old_path.read_text(encoding="utf-8").splitlines(),
-            new_path.read_text(encoding="utf-8").splitlines(),
-            fromfile=f"baseline/{rel}",
-            tofile=f"build/{rel}",
-            lineterm="",
-        )
-        print("\n".join(diff))
+def diff_tree(tree: str, show: bool) -> list[str]:
+	old = {rel: p for rel, p in files(BASELINE / tree) if not rel.endswith(".map")}
+	new = {rel: p for rel, p in files(BUILD / tree) if not rel.endswith(".map")}
+	lines = [f"+ {tree}/{rel}" for rel in sorted(new.keys() - old.keys())]
+	lines += [f"- {tree}/{rel}" for rel in sorted(old.keys() - new.keys())]
+	for rel in sorted(old.keys() & new.keys()):
+		if meaning(rel, old[rel]) == meaning(rel, new[rel]):
+			continue
+		lines.append(f"~ {tree}/{rel}")
+		if show and rel.endswith(".mcfunction"):
+			before, after = commands(old[rel].read_text(encoding="utf-8")), commands(new[rel].read_text(encoding="utf-8"))
+			lines += [f"    - {c}" for c in before if c not in after] + [f"    + {c}" for c in after if c not in before]
+	return lines
 
 
-def run_lint() -> bool:
-    """ Run ruff and pyright (strict). Return True when both are clean. """
-    ok: bool = True
-    print("→ ruff…", flush=True)
-    ruff = subprocess.run(
-        ["ruff", "check", "src", "--config", "../stouputils/pyproject.toml"], cwd=ROOT, shell=True
-    )
-    ok &= ruff.returncode == 0
-    print("→ pyright (strict)…", flush=True)
-    pyright = subprocess.run(["pyright", "-p", "scripts/pyrightconfig.json"], cwd=ROOT, shell=True)
-    ok &= pyright.returncode == 0
-    return ok
+def meaning(rel: str, path: Path) -> object:
+	""" What a file means to the game, so that formatting and comments never show as a difference. """
+	if rel.endswith(".mcfunction"):
+		return commands(path.read_text(encoding="utf-8"))
+	if rel.endswith((".json", ".mcmeta")):
+		return json.loads(path.read_text(encoding="utf-8"))
+	return hashlib.sha1(path.read_bytes()).hexdigest()
 
 
-def check(show_diff: bool) -> int:
-    """ Build, diff against the baseline, lint, and report. Return the process exit code. """
-    if not SNAPSHOT.exists():
-        sys.exit(f"no baseline at {SNAPSHOT} — run `python scripts/verify.py baseline` first")
+def validate() -> int:
+	""" Commands parse, JSON parses, nothing calls a missing function; unreachable resources are listed. """
+	errors = parse_errors()
+	resources = load_resources(BUILD / "datapack")
+	link(resources)
+	errors += missing_calls(resources)
+	data_kinds = ("function", "predicate", "loot_table", "item_modifier")
+	unreachable = sorted(k[1] for k in resources.keys() - reachable(resources) if k[0] in data_kinds)
+	print(f"{len(unreachable)} unreachable functions and data files:", *unreachable, sep="\n  ")
+	print(f"{len(errors)} errors", *errors, sep="\n  ")
+	return 1 if errors else 0
 
-    build()
-    added, removed, changed = compare_trees()
-    previous = Metrics(**json.loads((SNAPSHOT / METRICS_FILE).read_text(encoding="utf-8")))
-    print_metrics(collect_metrics(), previous)
 
-    if not (added or removed or changed):
-        print("✅ output is byte-identical to the baseline")
-    else:
-        print(f"⚠  output differs: {len(added)} added, {len(removed)} removed, {len(changed)} changed")
-        for label, group in (("+", added), ("-", removed), ("~", changed)):
-            for rel in group[:40]:
-                print(f"   {label} {rel}")
-            if len(group) > 40:
-                print(f"   {label} … and {len(group) - 40} more")
-        if show_diff:
-            print_diffs(changed)
+def parse_errors() -> list[str]:
+	with ProcessPoolExecutor() as pool:
+		errors = [e for e in pool.map(parse_function, sorted((BUILD / "datapack").rglob("*.mcfunction")), chunksize=32) if e]
+	for path in BUILD.glob("*pack/**/*.json"):
+		try:
+			json.loads(path.read_text(encoding="utf-8"))
+		except json.JSONDecodeError as exc:
+			errors.append(f"{path.relative_to(BUILD)}: {exc}")
+	return errors
 
-    lint_ok: bool = run_lint()
-    if not lint_ok:
-        print("❌ ruff and/or pyright reported problems")
-    return 0 if (lint_ok and not (added or removed or changed)) else 1
+
+def parse_function(path: Path) -> str:
+	""" Empty when mecha parses the function with the target version's command tree, else the error. """
+	from beet import Function
+	from mecha import Mecha
+	from mecha.diagnostic import DiagnosticError, DiagnosticErrorSummary
+	try:
+		Mecha(version=MINECRAFT).parse(Function(path.read_text(encoding="utf-8")))
+	except (DiagnosticError, DiagnosticErrorSummary) as exc:
+		return f"{path.relative_to(BUILD)}: {str(exc).splitlines()[0]}"
+	return ""
+
+
+def load_resources(datapack: Path) -> dict[Key, Resource]:
+	""" Every function, JSON resource and tag of the datapack. """
+	resources: dict[Key, Resource] = {}
+	for rel, path in files(datapack / "data"):
+		ns, registry, *rest = rel.split("/")
+		if registry == "tags" and rest:
+			registry, rest = f"tags/{rest[0]}", rest[1:]
+		if not rest or not rel.endswith((".mcfunction", ".json")):
+			continue
+		text = path.read_text(encoding="utf-8")
+		key = (registry, f"{ns}:{'/'.join(rest).rsplit('.', 1)[0]}")
+		resources[key] = Resource(registry, "\n".join(commands(text)) if registry == "function" else text)
+	return resources
+
+
+def link(resources: dict[Key, Resource]) -> None:
+	""" Fill each resource's references: id tokens in its text, macro patterns, tag values. """
+	by_id: dict[str, list[Key]] = {}
+	for key in resources:
+		by_id.setdefault(key[1], []).append(key)
+	for key, res in resources.items():
+		for m in ID_TOKEN.finditer(res.text):
+			res.refs |= {t for t in token_targets(m, res.text, by_id) if t[0].startswith("tags/") == bool(m.group(1))}
+		if key[0].startswith("tags/"):
+			res.refs |= tag_values(key[0], json.loads(res.text))
+		res.refs.discard(key)
+
+
+def token_targets(m: re.Match[str], text: str, by_id: dict[str, list[Key]]) -> list[Key]:
+	""" Resources an id token can name; a macro token matches every id of its shape. """
+	path = m.group(3)
+	token = f"{m.group(2)}:{path}"
+	if "$(" not in token:
+		return by_id.get(token, [])
+	# "mgs:$(fire)" is a sound or a model: only a literal folder or a function keyword pins the registry
+	is_call = re.search(r"function\s+#?$", text[max(0, m.start() - 12): m.start()]) is not None
+	if "/" not in path.split("$(")[0] and not is_call:
+		return []
+	pattern = re.compile("^" + re.sub(r"\\\$\\\([a-z_0-9]+\\\)", r"[a-z0-9_./\\-]*", re.escape(token)) + "$")
+	return [k for rid, keys in by_id.items() if pattern.match(rid) for k in keys]
+
+
+def entry_id(value: str | JsonDict) -> str:
+	""" Id of a tag entry, written either as a string or as {"id": ..., "required": false}. """
+	return value if isinstance(value, str) else str(value["id"])
+
+
+def tag_values(registry: str, tag: JsonDict) -> set[Key]:
+	values = [entry_id(v) for v in tag.get("values", [])]
+	return {(registry, v[1:]) if v.startswith("#") else (registry.removeprefix("tags/"), v) for v in values}
+
+
+def missing_calls(resources: dict[Key, Resource]) -> list[str]:
+	""" Static calls to a function or function tag of this pack's namespaces that does not exist. """
+	own = {key[1].split(":")[0] for key in resources}
+	calls = {
+		(key[1], ("tags/function" if m.group(1) else "function", m.group(2)))
+		for key, res in resources.items() if key[0] == "function" for m in CALL.finditer(res.text)
+	}
+	return sorted(f"{caller}: calls missing {t[1]}" for caller, t in calls if t[1].split(":")[0] in own and t not in resources)
+
+
+def reachable(resources: dict[Key, Resource]) -> set[Key]:
+	""" Resources reachable from the game's entry points and the pack's public API. """
+	stack = [k for k in resources if k[0] == "advancement" or k[1].startswith(("minecraft:", "common_signals:", "mgs:i/"))]
+	stack += [k for k in resources if k[0] == "function" and k[1].startswith("mgs:") and not k[1].startswith("mgs:v")]
+	seen: set[Key] = set()
+	while stack:
+		key = stack.pop()
+		if key not in seen:
+			seen.add(key)
+			stack += [r for r in resources[key].refs if r in resources]
+	return seen
+
+
+def server(java: str) -> int:
+	""" Start a fresh world with the pack and its libraries, /reload once, stop, report datapack errors. """
+	run = WORK / "server"
+	if not (run / "server.jar").exists():
+		sys.exit(f"put the {MINECRAFT} server.jar in {run} (piston-data.mojang.com)")
+	shutil.rmtree(run / "world", ignore_errors=True)
+	shutil.copytree(BUILD / "datapack", run / "world/datapacks/mgs")
+	libraries_pack(run / "world/datapacks/libs")
+	(run / "eula.txt").write_text("eula=true\n")
+	(run / "server.properties").write_text(
+		"online-mode=false\nlevel-type=minecraft\\:flat\ngenerate-structures=false\ninitial-enabled-packs=vanilla,file/libs,file/mgs\n"
+	)
+	log, sent = run_server(java, run)
+	errors = [line for line in log if SERVER_ERROR.search(line) and "Services Discovery" not in line]
+	print(f"{len(errors)} datapack errors or warnings in the server log", *errors, sep="\n")
+	return 1 if errors or sent != ["reload", "stop"] else 0
+
+
+def run_server(java: str, run: Path) -> tuple[list[str], list[str]]:
+	""" The server's console lines, and the commands sent: /reload once started, /stop once reloading. """
+	process = subprocess.Popen(
+		[java, "-jar", "server.jar", "nogui"], cwd=run, stdin=subprocess.PIPE, stdout=subprocess.PIPE, text=True
+	)
+	assert process.stdin and process.stdout
+	log: list[str] = []
+	sent: list[str] = []
+	for line in process.stdout:
+		log.append(line.rstrip())
+		command = "reload" if "Done (" in line else "stop" if "Reloading!" in line else ""
+		if command:
+			sent.append(command)
+			process.stdin.write(f"{command}\n")
+			process.stdin.flush()
+	process.wait()
+	return log, sent
+
+
+def libraries_pack(target: Path) -> None:
+	""" The libraries of the committed merged zip, without this project's files and tag entries. """
+	merged = zipfile.ZipFile(BUILD / "MCGunsSystem_datapack_with_libs.zip")
+	own = {rel for rel, _ in files(BUILD / "datapack") if rel.startswith("data/") and "/tags/" not in rel}
+	for name in merged.namelist():
+		if name.endswith("/") or name.startswith("data/mgs/") or name in own:
+			continue
+		data = merged.read(name)
+		if "/tags/" in name:
+			tag: JsonDict = json.loads(data)
+			tag["values"] = [v for v in tag["values"] if not entry_id(v).lstrip("#").startswith("mgs:")]
+			data = json.dumps(tag).encode()
+		(target / name).parent.mkdir(parents=True, exist_ok=True)
+		(target / name).write_bytes(data)
+
+
+def lint() -> int:
+	""" ruff, pyright strict (with the project interpreter) and complexipy over src and scripts. """
+	venv = ROOT / ".venv/bin"
+	return max(
+		subprocess.run([str(venv / "ruff"), "check", "src", "scripts"], cwd=ROOT).returncode,
+		subprocess.run([str(venv / "pyright"), "src", "scripts", "--pythonpath", str(venv / "python")], cwd=ROOT).returncode,
+		subprocess.run(["uvx", "complexipy", "src", "scripts", "--failed", "--max-complexity-allowed", "15"], cwd=ROOT).returncode,
+	)
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("command", choices=("baseline", "check", "metrics"))
-    parser.add_argument("--diff", action="store_true", help="print unified diffs of changed files")
-    args = parser.parse_args()
-
-    match args.command: # type: ignore
-        case "baseline":
-            build()
-            capture_baseline()
-            return 0
-        case "check":
-            return check(args.diff)
-        case "metrics":
-            print_metrics(collect_metrics())
-            return 0
-    return 0
+	parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+	parser.add_argument("command", choices=("baseline", "check", "validate", "server", "lint"))
+	parser.add_argument("--diff", action="store_true", help="check: print the commands each changed function lost and gained")
+	parser.add_argument("--no-build", action="store_true", help="use build/ as it is")
+	parser.add_argument("--java", default="java", help="server: Java 25 or newer for 26.3, as an absolute path")
+	args = parser.parse_args()
+	command: str = args.command
+	if command != "lint" and not args.no_build:
+		build()
+	if command == "baseline":
+		shutil.rmtree(BASELINE, ignore_errors=True)
+		for tree in TREES:
+			shutil.copytree(BUILD / tree, BASELINE / tree)
+		return 0
+	if command == "check":
+		return check(show=args.diff)
+	if command == "validate":
+		return validate()
+	if command == "server":
+		return server(args.java)
+	return lint()
 
 
 if __name__ == "__main__":
-    raise SystemExit(main())
+	raise SystemExit(main())
+
