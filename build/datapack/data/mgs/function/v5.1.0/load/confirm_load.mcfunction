@@ -604,6 +604,7 @@ data modify storage mgs:multiplayer secondary_slot_table set value [{id:"m1911",
 
 # Initialize multiplayer maps storage (empty list, only if not set)
 execute unless data storage mgs:maps multiplayer run data modify storage mgs:maps multiplayer set value []
+function #mgs:maps/register
 
 ## Missions scoreboards
 scoreboard objectives add mgs.mi.in_game dummy
