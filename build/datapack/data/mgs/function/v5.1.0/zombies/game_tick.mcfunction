@@ -10,7 +10,8 @@ function mgs:v5.1.0/shared/maps/call_script_at_base {script:"tick"}
 
 execute if score #zb_to_spawn mgs.data matches 1.. run function mgs:v5.1.0/zombies/spawn_tick
 
-execute as @e[type=minecraft:zombie,tag=mgs.zb_rising] at @s run function mgs:v5.1.0/zombies/zombie_rise_tick
+# Untyped: other enemies than zombies will rise too.
+execute as @e[tag=mgs.zb_rising] at @s run function mgs:v5.1.0/zombies/zombie_rise_tick
 
 # Only when the map has bounds.
 execute if score #zb_has_bounds mgs.data matches 1 as @e[tag=mgs.zombie_round] at @s run function mgs:v5.1.0/shared/check_bounds
