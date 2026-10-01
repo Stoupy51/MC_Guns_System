@@ -1,10 +1,10 @@
 {
 	"version": 3,
-	"file": "fx_after_death.mcfunction",
+	"file": "fx_after_rejoin.mcfunction",
 	"sourceRoot": "../../../../../../..",
 	"sources": [
 		"src/functional/shaders/__init__.py"
 	],
 	"names": [],
-	"mappings": "AA8GmD;;;;;;;;AACnD;AACA;AACA"
+	"mappings": "AAkHoD;;;;;;;;AACpD;AACA;AACA"
 }

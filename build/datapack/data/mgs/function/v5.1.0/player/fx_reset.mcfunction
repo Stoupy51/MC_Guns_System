@@ -1,9 +1,11 @@
 
 #> mgs:v5.1.0/player/fx_reset
 #
-# @executed	as @a
+# @executed	as @e[type=player,sort=random] & at @s
 #
-# @within	mgs:v5.1.0/zombies/start [ as @a ]
+# @within	mgs:v5.1.0/player/fx_after_death
+#			mgs:v5.1.0/player/fx_after_rejoin
+#			mgs:v5.1.0/zombies/start [ as @a ]
 #			mgs:v5.1.0/zombies/stop [ as @a ]
 #			mgs:v5.1.0/multiplayer/start [ as @a ]
 #			mgs:v5.1.0/multiplayer/stop [ as @a ]
