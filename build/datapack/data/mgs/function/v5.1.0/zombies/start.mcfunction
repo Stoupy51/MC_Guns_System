@@ -7,11 +7,10 @@
 #			dialog mgs:v5.1.0/zombies/setup
 #
 
-# Prevent starting if already active or preparing
 execute if data storage mgs:zombies game{state:"active"} run return run tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.zombies_game_already_in_progress","color":"red"}]
 execute if data storage mgs:zombies game{state:"preparing"} run return run tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.zombies_game_already_preparing","color":"red"}]
 
-# Require at least one opted-in player (players are independent until added via Manage Players / + Join)
+# Players join through Manage Players or + Join.
 execute unless entity @a[scores={mgs.zb.in_game=1}] run return run tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.no_players_have_joined_the_zombies_game_use_manage_players_first","color":"red"}]
 
 # Check that a map is selected
@@ -27,8 +26,7 @@ data modify storage mgs:zombies game.map set from storage mgs:temp map_load.resu
 # Set state to preparing
 data modify storage mgs:zombies game.state set value "preparing"
 
-# Reset scores (in_game is left untouched: it's the opt-in flag, set via Manage Players / + Join)
-# Keep the XP spend tracker in step: an unsynced reset reads as points being SPENT (see zombies/xp.py)
+# in_game is the opt-in flag, so it stays. The XP spend tracker is reset too, or the reset reads as points spent (see xp).
 scoreboard players set @a mgs.zb.points 500
 scoreboard players set @a mgs.zb.xp_pts_prev 500
 scoreboard players set @a mgs.zb.xp_spent_acc 0
@@ -39,31 +37,27 @@ scoreboard players set @a mgs.zb.ability 0
 scoreboard players set @a mgs.zb.ability_cd 0
 scoreboard players set @a mgs.zb.horde_cd 0
 
-# Config: points per kill, points per hit
 scoreboard players set #zb_points_kill mgs.config 50
 scoreboard players set #zb_points_hit mgs.config 10
 scoreboard players set #zb_points_knife_kill mgs.config 130
 scoreboard players set #zb_mystery_box_price mgs.config 950
 
-# Assign opted-in players to the zombies team
 team join mgs.zombies @a[scores={mgs.zb.in_game=1}]
 
-# Initialize kill tracking baseline (so kills before game start don't count)
+# Kills from before the game do not count.
 execute as @a run scoreboard players operation @s mgs.zb.prev_kills = @s mgs.total_kills
 
-# Reset death counters and spectate timers to prevent false triggers
+# Prevents false triggers.
 scoreboard players set @a mgs.mp.death_count 0
 scoreboard players set @a mgs.mp.spectate_timer 0
 
-# A game never starts frozen (a stale flag would silently pause the very first round)
+# A stale flag would pause the first round.
 scoreboard players set #zb_freeze mgs.data 0
 tag @e[tag=mgs.zb_frozen_ai] remove mgs.zb_frozen_ai
 
-# Clear other modes' in-game flags so their ticks/logic don't conflict with zombies
 scoreboard players set @a mgs.mp.in_game 0
 scoreboard players set @a mgs.mi.in_game 0
 
-# Disable natural regeneration, enable custom regen system
 # Disable natural regeneration, enable custom regen system
 gamerule natural_health_regeneration false
 scoreboard players set #any_game_active mgs.data 1
@@ -81,7 +75,6 @@ scoreboard players set @a mgs.stam_seen 0
 # applied. Clearing here means nobody starts a game scoped or with a red screen.
 execute as @a run function mgs:v5.1.0/player/fx_reset
 
-# Set gamerules
 gamemode spectator @a[scores={mgs.zb.in_game=1}]
 gamerule immediate_respawn true
 gamerule keep_inventory true
@@ -89,53 +82,45 @@ gamerule max_entity_cramming 96
 gamerule advance_time false
 time set 18000
 
-# Initialize round to 0 (first round will be 1)
+# The first round is 1.
 data modify storage mgs:zombies game.round set value 0
 
-# Store base coordinates for offset
 function mgs:v5.1.0/shared/load_base_coordinates {mode:"zombies"}
 
-# Check if map has boundaries defined (need at least 2 corners to form a box — a lone corner would
-# collapse to a degenerate point that eliminates everyone; matches multiplayer/missions)
+# At least 2 corners: a lone corner would collapse to a point that eliminates everyone.
 scoreboard players set #zb_has_bounds mgs.data 0
 execute if data storage mgs:zombies game.map.boundaries[0] if data storage mgs:zombies game.map.boundaries[1] run scoreboard players set #zb_has_bounds mgs.data 1
 
-# Normalize and store boundaries (only if defined)
 execute if score #zb_has_bounds mgs.data matches 1 run function mgs:v5.1.0/shared/load_bounds {mode:"zombies"}
 
-# Forceload the area (only if bounds defined)
 execute if score #zb_has_bounds mgs.data matches 1 run function mgs:v5.1.0/shared/forceload_area
 
-# Teleport all players as spectator to base coordinates for chunk preloading
+# Spectators at the base coordinates while chunks preload.
 execute store result storage mgs:temp _tp.x int 1 run scoreboard players get #gm_base_x mgs.data
 execute store result storage mgs:temp _tp.y int 1 run scoreboard players get #gm_base_y mgs.data
 execute store result storage mgs:temp _tp.z int 1 run scoreboard players get #gm_base_z mgs.data
 execute as @a[scores={mgs.zb.in_game=1}] run function mgs:v5.1.0/shared/tp_to_position with storage mgs:temp _tp
 
-# Register custom maps and mystery box items (extension points)
+# Extension points.
 function #mgs:zombies/register_maps
 function #mgs:zombies/register_mystery_box_item
 
-# Schedule preload completion after 1 second
 schedule function mgs:v5.1.0/zombies/preload_complete 20t
 
-# Announce
 tellraw @a ["",{"text":"","color":"dark_green","bold":true},"🧟 ",{"translate":"mgs.loading_zombies_map","color":"yellow"}]
 
-# Escort system (escort.py)
 scoreboard players set #zb_escort_count mgs.data 0
 scoreboard players set #zb_escort_mode mgs.data 0
 scoreboard players set #zb_lure mgs.data 0
 gamerule spawn_wandering_traders false
 gamerule spawn_mobs false
 
-# Initialize power state
 scoreboard players set #zb_power mgs.data 0
 
-# Initialize unlocked groups (group 0 = starting area, compound keys for quick lookup)
+# Group 0 is the starting area; compound keys for quick lookup.
 data modify storage mgs:zombies game.unlocked_groups set value {"0": 1b}
 
-# Reset perk scoreboards for all known score holders (including offline players).
+# Every known score holder, offline players included.
 scoreboard players reset * mgs.zb.perk.juggernog
 scoreboard players reset * mgs.zb.perk.speed_cola
 scoreboard players reset * mgs.zb.perk.double_tap
@@ -151,7 +136,7 @@ scoreboard players reset * mgs.zb.perk.whos_who
 scoreboard players reset * mgs.zb.perk.dying_wish
 scoreboard players reset * mgs.zb.perk.widows_wine
 
-# Chip-in progress never carries between games
+# Chip-in progress never carries between games.
 scoreboard players reset * mgs.zb.perkpaid.juggernog
 scoreboard players reset * mgs.zb.perkpaid.speed_cola
 scoreboard players reset * mgs.zb.perkpaid.double_tap
@@ -167,7 +152,7 @@ scoreboard players reset * mgs.zb.perkpaid.whos_who
 scoreboard players reset * mgs.zb.perkpaid.dying_wish
 scoreboard players reset * mgs.zb.perkpaid.widows_wine
 
-# Shared random-perk pool: clear the "perk present on map" flags (repopulated by perks/setup)
+# Repopulated by perks/setup.
 scoreboard players set #map_perk_juggernog mgs.data 0
 scoreboard players set #map_perk_speed_cola mgs.data 0
 scoreboard players set #map_perk_double_tap mgs.data 0
@@ -183,8 +168,7 @@ scoreboard players set #map_perk_whos_who mgs.data 0
 scoreboard players set #map_perk_dying_wish mgs.data 0
 scoreboard players set #map_perk_widows_wine mgs.data 0
 
-# Clean slate for the joining players: perk effects survive a game that ended without a proper stop,
-# and the special.* scores can just as well have come from a multiplayer class or the debug menu.
+# Perk effects survive a game that ended without a proper stop, and special.* can come from a class or the debug menu.
 execute as @a[scores={mgs.zb.in_game=1}] run attribute @s minecraft:max_health base reset
 execute as @a[scores={mgs.zb.in_game=1}] run attribute @s minecraft:movement_speed modifier remove mgs:stamin_up
 execute as @a[scores={mgs.zb.in_game=1}] run attribute @s minecraft:fall_damage_multiplier base reset
@@ -227,7 +211,6 @@ tag @a remove mgs.ww_active
 scoreboard players set @a mgs.zb.ww.id 0
 data modify storage mgs:zombies ww_inv set value {}
 
-# Reset revive state
 scoreboard players set @a mgs.zb.downed 0
 scoreboard players set @a mgs.zb.bleed 0
 scoreboard players set @a mgs.zb.revive_p 0

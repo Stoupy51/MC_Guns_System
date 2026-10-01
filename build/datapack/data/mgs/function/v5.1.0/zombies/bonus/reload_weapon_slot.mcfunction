@@ -53,27 +53,22 @@
 # @args		slot (string)
 #
 
-# Extract weapon capacity and set remaining_bullets = capacity
 tag @s add mgs.reloading_weapon
 $execute summon item_display run function mgs:v5.1.0/zombies/bonus/extract_weapon_capacity {slot:"$(slot)"}
 tag @s remove mgs.reloading_weapon
 
-# Save current ammo display (so non-active slot reloads don't corrupt the active HUD)
+# Saved so reloading a slot that is not in hand leaves the HUD of the held weapon alone.
 scoreboard players operation #rws_save mgs.data = @s mgs.remaining_bullets
 
-# Set player scoreboard to capacity (needed by modify_lore)
+# modify_lore reads this score.
 scoreboard players operation @s mgs.remaining_bullets = #bullets mgs.data
 
-# If this is the active mainhand weapon (remaining_bullets = -1 sentinel), only update lore
-# (don't write CAPACITY to item NBT - the player's scoreboard is the source of truth)
+# The held weapon (remaining_bullets -1) keeps its ammo in the score, so only its lore changes.
 $execute if items entity @s $(slot) *[custom_data~{mgs:{stats:{remaining_bullets:-1}}}] run return run function mgs:v5.1.0/ammo/modify_lore {slot:"$(slot)"}
 
-# For slots with inactive weapons: write CAPACITY to item NBT
 $item modify entity @s $(slot) mgs:v5.1.0/update_ammo
 
-# Update weapon lore
 $function mgs:v5.1.0/ammo/modify_lore {slot:"$(slot)"}
 
-# Restore the active weapon's ammo display for non-active slots
 scoreboard players operation @s mgs.remaining_bullets = #rws_save mgs.data
 

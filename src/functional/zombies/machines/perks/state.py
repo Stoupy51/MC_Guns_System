@@ -9,23 +9,21 @@ from .definitions import TOMBSTONE_PERKS
 def write_perk_effect_state() -> None:
 	ns: str = Mem.ctx.project_id
 
-	# Electric Cherry: a reload discharges a shock scaled by how empty the mag was, so dry reloads hit hard.
-	# Anti-spam: the next discharge needs a full 10s cooldown, or 5s plus a dry reload.
-	# The last-shock time is a gametime stamp, monotonic and surviving /reload.
+	# Electric Cherry: a reload discharges a shock scaled by how empty the magazine was. The next one needs 10 s,
+	# or 5 s and a dry reload; the stamp is gametime, which survives /reload.
 	write_load_file(f"""
-# Electric Cherry: last-discharge gametime stamp (anti-spam cooldown)
+# Last discharge (gametime).
 scoreboard objectives add {ns}.zb.ec_last dummy
-# Widow's Wine: last web-on-hurt burst gametime stamp (passive cooldown)
+# Widow's Wine: last web burst (gametime).
 scoreboard objectives add {ns}.zb.ww_last dummy
-# Dying Wish: use count (escalates cooldown), cooldown countdown, and active berserk timer
+# Dying Wish: uses (escalating cooldown), cooldown, berserk timer.
 scoreboard objectives add {ns}.zb.dw_uses dummy
 scoreboard objectives add {ns}.zb.dw_cd dummy
 scoreboard objectives add {ns}.zb.dw_timer dummy
-# Tombstone: marker state (0 pending / 1 active) + recovery countdown; the marker also carries the
-# owner's zb.downed_id so the existing downed_id_match predicate can select it.
+# Tombstone: state (0 pending, 1 active) and recovery timer; the marker also carries zb.downed_id for downed_id_match.
 scoreboard objectives add {ns}.zb.ts.state dummy
 scoreboard objectives add {ns}.zb.ts.timer dummy
-# Tombstone: per-perk snapshot of what the owner had when they went down (restored on recovery)
+# Tombstone: the owner's perks when they went down.
 {chr(10).join(f"scoreboard objectives add {ns}.zb.tsp.{pid} dummy" for pid in TOMBSTONE_PERKS)}
 """)
 

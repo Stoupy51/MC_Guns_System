@@ -11,15 +11,13 @@
 data remove storage mgs:temp _pap_scopes
 $data modify storage mgs:temp _pap_scopes set from storage mgs:zombies scope_variants."$(base_weapon)"
 
-# Skip if weapon has no scope variants or only one (default)
+# Nothing to pick with fewer than 2 variants.
 execute unless data storage mgs:temp _pap_scopes[1] run return 0
 
-# Pick a random scope variant using Bookshelf
 data modify storage bs:in random.choice.options set from storage mgs:temp _pap_scopes
 function #bs.random:choice
 data modify storage mgs:temp _pap_scope_pick set from storage bs:out random.choice
 
-# Apply the picked scope to the weapon extract
 data modify storage mgs:temp _pap_extract.stats.models.normal set from storage mgs:temp _pap_scope_pick.model
 data modify storage mgs:temp _pap_extract.stats.models.zoom set from storage mgs:temp _pap_scope_pick.zoom
 data modify storage mgs:temp _pap_extract.weapon set from storage mgs:temp _pap_scope_pick.id

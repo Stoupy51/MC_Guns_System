@@ -7,7 +7,7 @@
 #			mgs:v5.1.0/zombies/escort/watchdog
 #
 
-# A MONKEY escort must never fall through to the teleport rescue
+# A monkey escort never falls through to the teleport rescue.
 execute if entity @n[type=minecraft:wandering_trader,tag=mgs.zb_escort,tag=mgs.zb_escort_monkey,distance=..8] run return run function mgs:v5.1.0/zombies/escort/monkey_hold
 
 tag @s add mgs.zb_escort_failed

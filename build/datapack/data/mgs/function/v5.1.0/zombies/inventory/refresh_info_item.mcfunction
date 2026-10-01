@@ -7,13 +7,12 @@
 #			mgs:v5.1.0/zombies/inventory/give_starting_loadout
 #
 
-# Resolve scoreboard values into storage so lore lines render concrete numbers.
+# Scores go to storage so the lore shows numbers.
 execute store result storage mgs:temp info.round int 1 run scoreboard players get #zb_round mgs.data
 execute store result storage mgs:temp info.points int 1 run scoreboard players get @s mgs.zb.points
 execute store result storage mgs:temp info.kills int 1 run scoreboard players get @s mgs.zb.kills
 execute store result storage mgs:temp info.downs int 1 run scoreboard players get @s mgs.zb.downs
 
-# Build the base lore list with baked numbers, then append a line per owned perk.
 function mgs:v5.1.0/zombies/inventory/build_info_lore with storage mgs:temp info
 scoreboard players set #info_perk_count mgs.data 0
 execute if score @s mgs.zb.perk.juggernog matches 1 run scoreboard players add #info_perk_count mgs.data 1
@@ -50,6 +49,6 @@ execute if score @s mgs.zb.perk.widows_wine matches 1 run data modify storage mg
 function mgs:v5.1.0/zombies/inventory/refresh_info_item_render with storage mgs:temp info
 function mgs:v5.1.0/zombies/inventory/apply_slot_tag {slot:"hotbar.8",group:"hotbar",index:8}
 
-# Keep the perk display items (inventory.26 and down) in sync with the same cadence
+# Same cadence for the perk display items.
 function mgs:v5.1.0/zombies/inventory/refresh_perk_items
 

@@ -13,38 +13,36 @@ def write_mystery_box_spin() -> None:
 
 	deny_all_owned: str = ZombiesCommon.deny_cmd(ns, version, '{"text":"You already own all available Mystery Box weapons. Points refunded.","color":"yellow"}')
 
-	## Mystery box tick: each pull display advances independently, so multiple boxes can spin at once.
+	## Each pull display advances on its own, so several boxes can spin at once.
 	write_versioned_function("zombies/mystery_box/tick", f"""
-# Per-box spin animation (the moving bear display is excluded — the move handles it)
+# The moving bear display belongs to the move animation.
 execute as @e[tag={ns}.mb_display,tag=!{ns}.mb_bear] at @s run function {ns}:v{version}/zombies/mystery_box/spin_tick_one
 
-# Move animation tick (active box only; never during a Fire Sale)
+# Active box only, never during a Fire Sale.
 execute if score #mb_move_timer {ns}.data matches 1.. run function {ns}:v{version}/zombies/mystery_box/move_anim_tick
 """)
 
-	## Per-display spin tick (@s = a pull display, never the moving bear)
+	## Run as a pull display.
 	write_versioned_function("zombies/mystery_box/spin_tick_one", f"""
 scoreboard players remove @s {ns}.mb.anim 1
 
-# Timeslip: 2x spin speed. The extra -1 only fires inside the cycling phase (1..103), so the 104
-# float-up trigger still runs; anim is even every tick after the first, so the doubled step always
-# lands exactly on the anim==0 result and never overshoots into the reset window.
+# Timeslip: 2x spin speed, only inside the cycling phase (1..103) so the float-up at 104 still runs;
+# anim stays even, so the doubled step lands exactly on 0 and never reaches the reset window.
 execute if score @s {ns}.mb.timeslip matches 1 if score @s {ns}.mb.anim matches 1..103 run scoreboard players remove @s {ns}.mb.anim 1
 
-# Start the float-up one tick after spawn (avoids same-tick interpolation glitches)
+# One tick after spawn, which avoids same-tick interpolation glitches.
 execute if score @s {ns}.mb.anim matches 104 run data merge entity @s {{transformation:{{translation:[0f,0.8f,0f]}},start_interpolation:0,interpolation_duration:200}}
 
-# Cycling phase (anim > 0): show random items with staged slowdown cadence
+# Random items, slowing down in stages.
 execute if score @s {ns}.mb.anim matches 1.. run function {ns}:v{version}/zombies/mystery_box/cycle_step_one
 
-# Landing (anim == 0): decide + show the result
 execute if score @s {ns}.mb.anim matches 0 run function {ns}:v{version}/zombies/mystery_box/show_result_one
 
-# Pickup window expired (anim == -150): remove display and reset this box
+# The pickup window ends at -150.
 execute if score @s {ns}.mb.anim matches ..-150 run function {ns}:v{version}/zombies/mystery_box/reset_one
 """)
 
-	## Cadence using the display's own anim timer (@s = display)
+	## Run as the display, paced by its anim timer.
 	write_versioned_function("zombies/mystery_box/cycle_step_one", f"""
 scoreboard players set #mb_elapsed {ns}.data 80
 scoreboard players operation #mb_elapsed {ns}.data -= @s {ns}.mb.anim
@@ -65,7 +63,7 @@ execute if score #mb_elapsed {ns}.data matches 50.. run scoreboard players opera
 execute if score #mb_elapsed {ns}.data matches 50.. if score #mb_mod {ns}.data matches 0 run function {ns}:v{version}/zombies/mystery_box/cycle_display_one
 """)
 
-	## Cycle this display's item (@s = display)
+	## Run as the display.
 	write_versioned_function("zombies/mystery_box/cycle_display_one", f"""
 data modify storage bs:in random.weighted_choice.options set from storage {ns}:zombies mystery_box_pool
 data modify storage bs:in random.weighted_choice.weights set from storage {ns}:zombies mystery_box_weights
@@ -79,45 +77,43 @@ execute unless data storage {ns}:temp _mb_cycle_item.weapon_id run data modify e
 $loot replace entity @s contents loot {ns}:i/$(weapon_id)
 """)
 
-	## Landing: decide + show the result for this pull (@s = display, positioned at the box)
+	## Run as the display, at the box.
 	write_versioned_function("zombies/mystery_box/show_result_one", f"""
-# Box will move (active box only): teddy bear path
 execute if score @s {ns}.mb.willmove matches 1 run return run function {ns}:v{version}/zombies/mystery_box/show_bear_result
 
-# Remember this box's id and buyer, then pick + reroll the result as its buyer
+# The result is picked and re-rolled as the buyer.
 scoreboard players operation #this_box {ns}.data = @s {ns}.mb.box
 scoreboard players operation #this_buyer {ns}.data = @s {ns}.mb.buyer
 data remove storage {ns}:zombies mystery_box.result
 scoreboard players set #mb_owned {ns}.data 0
 execute as @a[scores={{{ns}.zb.in_game=1}}] if score @s {ns}.mb.pid = #this_buyer {ns}.data run function {ns}:v{version}/zombies/mystery_box/pick_for_buyer
 
-# All owned / empty pool: refund the buyer and cancel this pull
+# Everything owned or an empty pool: refund and cancel.
 execute if score #mb_owned {ns}.data matches 1 run function {ns}:v{version}/zombies/mystery_box/result_all_owned
 execute if score #mb_owned {ns}.data matches 1 run return run function {ns}:v{version}/zombies/mystery_box/reset_one
 
-# Set this display to the final weapon and bake the result onto it for collect
+# The result is baked onto the display for the collect.
 execute if data storage {ns}:zombies mystery_box.result.weapon_id run function {ns}:v{version}/zombies/mystery_box/show_result_weapon_one with storage {ns}:zombies mystery_box.result
 execute unless data storage {ns}:zombies mystery_box.result.weapon_id run data modify entity @s item set from storage {ns}:zombies mystery_box.result.display_item
 data modify entity @s item.components."minecraft:custom_data".{ns}.mb_result set from storage {ns}:zombies mystery_box.result
 
-# Descend into place over 7.5s (150 ticks)
+# Over 7.5 s (150 ticks).
 data merge entity @s {{transformation:{{translation:[0f,1.5f,0f]}}}}
 data merge entity @s {{interpolation_duration:150,transformation:{{translation:[0f,0f,0f]}},start_interpolation:0}}
 
-# Tell only the buyer it is ready
 execute as @a[scores={{{ns}.zb.in_game=1}}] if score @s {ns}.mb.pid = #this_buyer {ns}.data run tellraw @s [{MGS_TAG},{{"text":"Mystery Box result ready! ","color":"light_purple"}},{{"text":"Right-click to collect!","color":"green","bold":true}}]
 """)
 
-	## Pick + reroll the result against the buyer's owned weapons (@s = the buyer)
+	## Run as the buyer: re-roll against the weapons they own.
 	write_versioned_function("zombies/mystery_box/pick_for_buyer", f"""
 function {ns}:v{version}/zombies/mystery_box/pick_random_result
 scoreboard players set #mb_reroll {ns}.data 0
 function {ns}:v{version}/zombies/mystery_box/reroll_owned
-# Treat a missing result (empty pool / all owned after rerolls) as "owned" so we refund
+# No result (empty pool, or everything owned after the re-rolls) counts as owned, so the buyer is refunded.
 execute unless data storage {ns}:zombies mystery_box.result.weapon_id run scoreboard players set #mb_owned {ns}.data 1
 """)
 
-	## Refund the buyer of this box (#this_buyer set by show_result_one) and notify them
+	## #this_buyer comes from show_result_one.
 	write_versioned_function("zombies/mystery_box/result_all_owned", f"""
 execute as @a[scores={{{ns}.zb.in_game=1}}] if score @s {ns}.mb.pid = #this_buyer {ns}.data run scoreboard players operation @s {ns}.zb.points += #zb_mystery_box_price {ns}.config
 execute as @a[scores={{{ns}.zb.in_game=1}}] if score @s {ns}.mb.pid = #this_buyer {ns}.data run {deny_all_owned}

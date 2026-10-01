@@ -20,14 +20,14 @@ class ZombiesCommon:
 	@staticmethod
 	def write_deny_functions() -> None:
 		""" The two handlers every "you can't do that" path in zombies falls back to. """
-		# The message rides in as a whole text component so the English stays a literal here for auto.lang_file.
-		# The argument is `msg`, not `text`, or lang_file would translate the outer quoted value instead of the component inside it.
+		# The message is a whole text component so auto.lang_file translates its English; the argument is `msg`, not `text`,
+		# or the outer quoted value would be translated instead.
 		write_versioned_function("zombies/deny/message", f"""
 $tellraw @s [{MGS_TAG},$(msg)]
 {ZombiesFeedback.zb_sound('deny')}
 """)
 
-		# Same message everywhere, only the score holding the price differs
+		# Only the score holding the price differs.
 		write_versioned_function("zombies/deny/not_enough_points", f"""
 $tellraw @s [{MGS_TAG},{{"text":"You don't have enough points (","color":"red"}},{{"score":{{"name":"$(score)","objective":"$(obj)"}},"color":"yellow"}},{{"text":" needed).","color":"red"}}]
 {ZombiesFeedback.zb_sound('deny')}

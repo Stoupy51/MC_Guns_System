@@ -6,13 +6,10 @@
 # @within	mgs:v5.1.0/zombies/bonus/nuke_loop [ as @n[tag=mgs.nuked,sort=random] & at @s ]
 #
 
-# Remove nuked tag (entity will no longer be selected in loop)
 tag @s remove mgs.nuked
 
-# Remove attack damage modifier (restore normal damage)
 attribute @s minecraft:attack_damage modifier remove mgs:nuke_zero_damage
 
-# Deal lethal damage WITHOUT a player attacker, so nuke kills don't credit kill points
-# (the player didn't really kill them — the flat Nuke point bonus is handled separately).
+# No player attacker, so nuke kills do not pay kill points (the Nuke pays a flat bonus).
 damage @s 999999 mgs:bullet
 

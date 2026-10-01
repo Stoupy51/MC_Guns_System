@@ -3,7 +3,6 @@
 
 
 # Constants
-# Move animation constants
 MOVE_BEAR_TICKS: int = 30
 """ Bear visible before ascend starts. """
 MOVE_ASCEND_TICKS: int = 80
@@ -15,7 +14,7 @@ MOVE_DESCEND_TICKS: int = 70
 MOVE_TOTAL_TICKS: int = MOVE_BEAR_TICKS + MOVE_ASCEND_TICKS + MOVE_WAIT_TICKS + MOVE_DESCEND_TICKS
 """ 280. """
 
-# Monkey Bomb pool weight (weapon weights come from the catalog; the monkey is a non-catalog tactical added to the pool manually — BO-style fairly common roll)
+# The monkey is not in the weapon catalog, so its weight is set here (fairly common, BO style).
 MONKEY_BOMB_WEIGHT: int = 5
 
 MB_SCALE: float = 2.4

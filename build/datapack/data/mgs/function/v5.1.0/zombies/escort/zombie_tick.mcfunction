@@ -6,38 +6,32 @@
 # @within	mgs:v5.1.0/zombies/game_tick [ as @e[tag=mgs.zb_escorted] & at @s ]
 #
 
-# Trader gone (killed externally)? Unfreeze; normal stuck detection takes over again
+# Trader killed externally: unfreeze, normal stuck detection takes over.
 execute unless entity @n[type=minecraft:wandering_trader,tag=mgs.zb_escort,distance=..8] run return run function mgs:v5.1.0/zombies/escort/detach
 
-# Glue the zombie exactly onto the trader (same position AND rotation): always a path-valid
-# spot, and the horde's pushOtherTeams collision rule keeps the overlap from pushing the trader
+# Same position and rotation as the trader: always path-valid, and pushOtherTeams stops the overlap from pushing it.
 execute at @n[type=minecraft:wandering_trader,tag=mgs.zb_escort,distance=..8] run tp @s ~ ~ ~ ~ ~
 
-# Monkey-bomb lure (monkey_bomb.py): while the trader is flagged, this escort pulls the zombie to
-# a thrown monkey. Drop the flag once every monkey is gone (revert to a normal player escort);
-# otherwise ride toward the monkey and release on arrival, ignoring the player releases below.
+# Monkey-bomb lure: once every monkey is gone the escort reverts to a player escort;
+# otherwise ride to the monkey and ignore the player releases below.
 execute if entity @n[type=minecraft:wandering_trader,tag=mgs.zb_escort,tag=mgs.zb_escort_monkey,distance=..8] unless entity @e[tag=mgs.monkey_bomb] run tag @n[type=minecraft:wandering_trader,tag=mgs.zb_escort,distance=..8] remove mgs.zb_escort_monkey
 execute if entity @n[type=minecraft:wandering_trader,tag=mgs.zb_escort,tag=mgs.zb_escort_monkey,distance=..8] run return run function mgs:v5.1.0/zombies/escort/monkey_ride
 
-# Walk-to spawn: ride all the way to the target, skipping the player releases below. Those would
-# fire on the first tick — spawns are picked within 32 blocks of a player — and drop the zombie
-# right back where it spawned, which is exactly what the walk exists to avoid.
+# Walk-to spawn: skip the player releases, which would fire at once (spawns are within 32 blocks of a player)
+# and drop the zombie back at its spawn.
 execute if entity @n[type=minecraft:wandering_trader,tag=mgs.zb_escort,tag=mgs.zb_escort_walk,distance=..8] run return run function mgs:v5.1.0/zombies/escort/walk_ride
 
-# PaP-room lure active: release once the zombie reaches the theatre centre (no player will be
-# nearby there to trigger the player-based releases below)
+# PaP-room lure: release at the theatre centre, where no player is near to trigger the releases below.
 execute if score #zb_lure mgs.data matches 1 if entity @e[tag=mgs.lure_center,distance=..8] run return run function mgs:v5.1.0/zombies/escort/release
 
-# Point-blank → release NOW, no line-of-sight needed: the visibility check below aims at the
-# player's feet and corner/slab geometry can fail it forever while the taxi orbits the player
+# Point-blank: release without line of sight, which corner and slab geometry can fail forever.
 execute if entity @p[scores={mgs.zb.in_game=1,mgs.zb.downed=0},gamemode=!spectator,distance=..6] run return run function mgs:v5.1.0/zombies/escort/release
 
-# Hand off to vanilla AI once a player is close AND in the zombie's line of sight: a player
-# 3 blocks above through a floor is "close" but the zombie still can't path there — keep riding
+# Release once a player is close and visible: a player above a floor is close but unreachable.
 scoreboard players set #zb_esc_see mgs.data 0
 execute positioned as @p[scores={mgs.zb.in_game=1,mgs.zb.downed=0},gamemode=!spectator,distance=..10] store result score #zb_esc_see mgs.data run function #bs.view:can_see_ata {with:{}}
 execute if score #zb_esc_see mgs.data matches 1 run return run function mgs:v5.1.0/zombies/escort/release
 
-# Ride tail: TTL fallback + periodic retarget/watchdog (shared with the monkey-bomb ride below)
+# Shared with the monkey ride.
 function mgs:v5.1.0/zombies/escort/escort_tail
 

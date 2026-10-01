@@ -10,36 +10,30 @@ def write_zombies_spawns() -> None:
 	ns: str = Mem.ctx.project_id
 	version: str = Mem.ctx.project_version
 
-	# Spawn Point Markers.
-
 	write_versioned_function("zombies/summon_spawns", f"""
-# Reset the unique spawn id counter (each summoned marker gets the next id)
+# Each marker gets the next unique id.
 scoreboard players set #zb_spawn_sid {ns}.data 0
 
-# Player spawns
 {CoreSpawning.spawn_category_lines("zombies", "players", "spawn_zb_player")}
 
-# Zombie spawns
 {CoreSpawning.spawn_category_lines("zombies", "zombies", "spawn_zb")}
 
-# Special spawns (dog rounds today, mini-bosses later). Same plumbing as zombie spawns — group_id
-# gating, activation boxes, unique spawn ids — only the tag differs.
+# Special spawns (dog rounds, later mini-bosses) work like zombie spawns; only the tag differs.
 {CoreSpawning.spawn_category_lines("zombies", "special", "spawn_special")}
 
-# Read off the map data, not an entity scan, so start_round can gate dog rounds on a score
+# From the map data, not an entity scan, so start_round gates dog rounds on a score.
 execute store success score #zb_has_special {ns}.data if data storage {ns}:zombies game.map.spawning_points.special[0]
 
-# Both flags must exist before the first tick: game_tick and round completion gate on them
+# game_tick and round completion read both flags from the first tick.
 scoreboard players set #zb_dog_round {ns}.data 0
 scoreboard players set #zb_dog_pending {ns}.data 0
 
-# Tag group 0 spawns as unlocked (starting area)
+# Group 0 is the starting area.
 scoreboard players set #unlock_gid {ns}.data 0
 execute as @e[tag={ns}.spawn_point] if score @s {ns}.zb.spawn.gid = #unlock_gid {ns}.data run tag @s add {ns}.spawn_unlocked
 """)
 
 	write_versioned_function("zombies/summon_spawn_iter", f"""
-# Read position from compound format
 execute store result score #sx {ns}.data run data get storage {ns}:temp _spawn_iter[0].pos[0]
 execute store result score #sy {ns}.data run data get storage {ns}:temp _spawn_iter[0].pos[1]
 execute store result score #sz {ns}.data run data get storage {ns}:temp _spawn_iter[0].pos[2]
@@ -57,21 +51,18 @@ data modify storage {ns}:temp _spos.tag set from storage {ns}:temp _spawn_tag
 
 function {ns}:v{version}/zombies/summon_spawn_at with storage {ns}:temp _spos
 
-# Set group_id score on newly spawned marker (default 0 if not defined)
+# Defaults to group 0.
 scoreboard players set @n[tag={ns}.new_spawn] {ns}.zb.spawn.gid 0
 execute store result score @n[tag={ns}.new_spawn] {ns}.zb.spawn.gid run data get storage {ns}:temp _spawn_iter[0].group_id
 
-# Assign a unique spawn id (lets zombies remember their previous spawn point and never reuse it)
+# Zombies remember their spawn so they never reuse it.
 scoreboard players add #zb_spawn_sid {ns}.data 1
 scoreboard players operation @n[tag={ns}.new_spawn] {ns}.zb.spawn.sid = #zb_spawn_sid {ns}.data
 
-# Optional activation box (zombie spawns only): store the ABSOLUTE box on the marker so the
-# round spawner can gate this spawn on a player standing inside it. Only present when the map
-# data defines all 6 elements [x,y,z,dx,dy,dz] (relative to this spawn).
+# Zombie spawns only: the absolute box [x, y, z, dx, dy, dz] (all 6 needed), so a player standing in it gates the spawn.
 execute if data storage {ns}:temp _spawn_iter[0].activation_box[5] run function {ns}:v{version}/zombies/store_spawn_abox
 
-# Optional walk-to target (zombie spawns only): store the ABSOLUTE spot on the marker, so every
-# zombie spawned here is escorted to it instead of wandering after the nearest player.
+# Zombie spawns only: zombies spawned here are escorted to this absolute spot.
 execute if data storage {ns}:temp _spawn_iter[0].walk_to[2] run function {ns}:v{version}/zombies/store_spawn_walk_to
 
 tag @n[tag={ns}.new_spawn] remove {ns}.new_spawn
@@ -80,9 +71,7 @@ data remove storage {ns}:temp _spawn_iter[0]
 execute if data storage {ns}:temp _spawn_iter[0] run function {ns}:v{version}/zombies/summon_spawn_iter
 """)
 
-	## Store the absolute activation box {x,y,z,dx,dy,dz} on the just-summoned spawn marker.
-	# #sx/#sy/#sz hold the marker's absolute coords.
-	# activation_box[0..2] are the relative corner offset and [3..5] the box size, in blocks.
+	## #sx, #sy, #sz hold the marker position; activation_box[0..2] is the relative corner, [3..5] the size.
 	write_versioned_function("zombies/store_spawn_abox", f"""
 execute store result score #abx {ns}.data run data get storage {ns}:temp _spawn_iter[0].activation_box[0]
 execute store result score #aby {ns}.data run data get storage {ns}:temp _spawn_iter[0].activation_box[1]
@@ -99,9 +88,7 @@ execute store result storage {ns}:temp _abox.dz double 1 run data get storage {n
 data modify entity @n[tag={ns}.new_spawn] data.abox set from storage {ns}:temp _abox
 """)
 
-	## Store the absolute walk-to target {x,y,z} on the just-summoned spawn marker.
-	# #sx/#sy/#sz hold the marker's absolute coords and walk_to[0..2] the offset from it, in blocks.
-	# Kept as three ints because that is what a trader's wander_target and an arrival test both want.
+	## #sx, #sy, #sz hold the marker position, walk_to[0..2] the offset. Three ints, as wander_target and the arrival test expect.
 	write_versioned_function("zombies/store_spawn_walk_to", f"""
 execute store result score #swx {ns}.data run data get storage {ns}:temp _spawn_iter[0].walk_to[0]
 execute store result score #swy {ns}.data run data get storage {ns}:temp _spawn_iter[0].walk_to[1]
@@ -117,6 +104,5 @@ data modify entity @n[tag={ns}.new_spawn] data.walk_to set from storage {ns}:tem
 
 	CoreSpawning.write_summon_spawn_at("zombies", extra_spawn_tags=("new_spawn",))
 
-	# Smart Spawn Selection.
 	CoreSpawning.write_random_spawn_selection("zombies", "spawn_zb_player", "zb.in_game", required_tags=("spawn_unlocked",))
 

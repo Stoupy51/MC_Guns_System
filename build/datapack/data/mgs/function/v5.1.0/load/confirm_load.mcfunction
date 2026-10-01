@@ -224,110 +224,92 @@ scoreboard objectives add mgs.adv.zb.spending dummy
 scoreboard objectives add mgs.adv.caught dummy
 scoreboard players reset * mgs.adv.caught
 
-## Zombies scoreboards
 scoreboard objectives add mgs.zb.in_game dummy
 scoreboard objectives add mgs.zb.points dummy
 scoreboard objectives add mgs.zb.kills dummy
 scoreboard objectives add mgs.zb.downs dummy
 
-# Bought lethal grenade type (index into LETHAL_GRENADE_IDS, 0 = frag): re-gives the RIGHT type
-# when the lethal slot is emptied (round-end replenish / Max Ammo / recovery). See inventory.py.
+# Index into LETHAL_GRENADE_IDS (0 = frag), so an emptied lethal slot refills the bought type (see inventory).
 scoreboard objectives add mgs.zb.lethal_type dummy
 
-# Perk scoreboards
-# zb.passive: 0=none, 1=points_x1.2, 2=powerup_x1.5
-# zb.ability: 0=none, 1=coward, 2=guardian
-# Ability cooldown (0 = ready, 1+ = on cooldown in rounds remaining)
+# zb.passive: 0 none, 1 points x1.2, 2 power-ups x1.5. zb.ability: 0 none, 1 coward, 2 guardian.
+# zb.ability_cd: rounds of cooldown left (0 = ready).
 scoreboard objectives add mgs.zb.passive dummy
 scoreboard objectives add mgs.zb.ability dummy
 scoreboard objectives add mgs.zb.ability_cd dummy
 
-# Ticks until this player's next horde vocal; horde_ambient refreshes it from the count near THEM
+# Ticks to this player's next horde vocal.
 scoreboard objectives add mgs.zb.horde_cd dummy
 
-# Zombie vocal budgets (enemies/vocals.py): #total_tick timestamps of when each channel frees up again.
-# No reset needed anywhere — #total_tick only ever grows, so a stale value is always in the past, and an
-# unset score fails the `>` comparison, which reads as "ready".
+# #total_tick when each vocal channel frees up (see vocals). Never reset: #total_tick only grows,
+# and an unset score fails the `>` test, which reads as ready.
 scoreboard objectives add mgs.zb.vox_sprint dummy
 scoreboard objectives add mgs.zb.vox_attack dummy
 scoreboard objectives add mgs.zb.vox_death dummy
 
-# Spawn point group_id scoreboard
 scoreboard objectives add mgs.zb.spawn.gid dummy
 
-# Spawn point unique id: held by spawn markers, and by zombies as "last spawn point used"
-# (initial spawn or stuck-rescue) so a rescue never reuses the previous spawn point.
+# Held by spawn markers, and by zombies as the last spawn they used, so a rescue never reuses it.
 scoreboard objectives add mgs.zb.spawn.sid dummy
 
-# Sidebar rank scoreboard
 scoreboard objectives add mgs.zb.sb_rank dummy
 
-# Rise animation: ticks remaining for each rising zombie
 scoreboard objectives add mgs.zb.rise_tick dummy
 
-# Kill tracking (vanilla totalKillCount stat) and baseline snapshot
+# totalKillCount, and the baseline snapshot.
 scoreboard objectives add mgs.total_kills totalKillCount
 scoreboard objectives add mgs.zb.prev_kills dummy
 
-# Stuck zombie detection per-zombie scores
 scoreboard objectives add mgs.zb.stuck_x dummy
 scoreboard objectives add mgs.zb.stuck_z dummy
 scoreboard objectives add mgs.zb.stuck_ticks dummy
 scoreboard objectives add mgs.zb.stuck_dist dummy
 
-# Initialize zombies game state
 execute unless data storage mgs:zombies game run data modify storage mgs:zombies game set value {state:"lobby",map_id:"",round:0}
 
-# Game variant: "vanilla" = classic CoD zombies, "zonweeb" = passives/abilities/special zombies
+# "vanilla": classic CoD zombies; "zonweeb": passives, abilities and special zombies.
 execute unless data storage mgs:zombies game.variant run data modify storage mgs:zombies game.variant set value "zonweeb"
 
-# Initialize mystery box base pool (can be extended via function tag)
+# Extended through a function tag.
 execute unless data storage mgs:zombies mystery_box_pool run data modify storage mgs:zombies mystery_box_pool set value []
 
-# Escort TTL per escorted zombie (ticks left before the teleport-rescue fallback)
+# Ticks left before the teleport-rescue fallback.
 scoreboard objectives add mgs.zb.escort_ttl dummy
 
-# Live escort counter (gates the per-tick escorted-zombie scan)
+# Gates the per-tick escorted-zombie scan.
 scoreboard players add #zb_escort_count mgs.data 0
 
-# One-shot target mode for the NEXT escort/start, consumed (reset to 0) inside start:
-# 0 = aim at the nearest player (stuck rescue / PaP lure), 1 = aim at a thrown monkey bomb,
-# 2 = aim at the spot a walk-to spawn pinned on the zombie (data.walk_to).
+# One-shot target of the next escort/start, reset there: 0 nearest player (stuck rescue, PaP lure),
+# 1 a thrown monkey bomb, 2 the walk-to spot pinned on the zombie (data.walk_to).
 scoreboard players add #zb_escort_mode mgs.data 0
 
-# Horde alliance team: round zombies and escort traders are allied, so the trader's
-# AvoidEntityGoal(Zombie) never fires (it flees at SPRINT speed otherwise!) and zombies never
-# attack the taxi. Created at load, not game start, so a mid-game /reload can't leave it missing.
-# pushOtherTeams = no pushing WITHIN the horde (the zombie overlaps its trader without shoving
-# it off its path) while members still push players and everything else.
+# Zombies and escort traders are allied, so the trader's AvoidEntityGoal(Zombie) never fires (it would flee at sprint speed)
+# and zombies never attack it. Created at load, so a mid-game /reload cannot lose it. pushOtherTeams: members do not push
+# each other (the zombie overlaps its trader) but still push players and everything else.
 team add mgs.horde
 team modify mgs.horde collisionRule pushOtherTeams
 
-# Box id shared by a box's interaction entity and its active pull display
+# Shared by a box's interaction entity and its pull display.
 scoreboard objectives add mgs.mb.box dummy
-# Spin animation timer carried by each pull display (>0 spinning, <=0 ready window)
+# >0 spinning, <=0 ready window.
 scoreboard objectives add mgs.mb.anim dummy
-# 1 when the buyer of this pull owns Timeslip (spin runs 2x faster for their display)
+# 1 when the buyer owns Timeslip (2x spin).
 scoreboard objectives add mgs.mb.timeslip dummy
-# Whether this pull will end in a box move (teddy bear) — only the active box, never Fire Sale
+# 1 when the pull ends in a box move (active box only, never during a Fire Sale).
 scoreboard objectives add mgs.mb.willmove dummy
-# Stable per-player id, assigned lazily on first pull, so a pull display can record WHICH player
-# bought it. During a Fire Sale one player can have several pulls running at once, so the buyer
-# must be tracked per-display (mb.buyer below) — a single "which box am I buying" value on the
-# player would be overwritten by the second pull and orphan the first box's collectible.
+# Stable player id, assigned on first pull. During a Fire Sale one player can run several pulls,
+# so the buyer is stored per display (mb.buyer).
 scoreboard objectives add mgs.mb.pid dummy
-# Buyer's pid, stamped on each pull display
 scoreboard objectives add mgs.mb.buyer dummy
 
-# Pack-a-Punch machine scoreboards
 scoreboard objectives add mgs.zb.pap.id dummy
 scoreboard objectives add mgs.zb.pap.price dummy
 scoreboard objectives add mgs.zb.pap.power dummy
 scoreboard objectives add mgs.pap_anim dummy
-# 1 when the player who started this PAP owns Timeslip (animation runs 3x faster)
+# 1 when the starting player owns Timeslip (3x animation).
 scoreboard objectives add mgs.zb.pap.timeslip dummy
 
-# Per-player PAP tracking (for cleanup when weapon is lost/collected)
+# For cleanup when the weapon is lost or collected.
 scoreboard objectives add mgs.zb.pap_s dummy
 scoreboard objectives add mgs.zb.pap_mid dummy
 
@@ -353,7 +335,6 @@ data modify storage mgs:zombies scope_variants."mosin" set value [{id:"mosin",mo
 data modify storage mgs:zombies scope_variants."deagle" set value [{id:"deagle",model:"mgs:deagle",zoom:"mgs:deagle_zoom"},{id:"deagle_4",model:"mgs:deagle_4",zoom:"mgs:deagle_4_zoom",scope_level:4}]
 data modify storage mgs:zombies camo_variants._default set value ["gold","autumn","galaxy","red_polymer_stripes"]
 
-# Barricade entity scoreboards
 scoreboard objectives add mgs.zb.barricade.id dummy
 scoreboard objectives add mgs.zb.barricade.state dummy
 scoreboard objectives add mgs.zb.barricade.r_timer dummy
@@ -361,48 +342,40 @@ scoreboard objectives add mgs.zb.barricade.rp_timer dummy
 scoreboard objectives add mgs.zb.barricade.radius dummy
 scoreboard objectives add mgs.zb.barricade.removing_id dummy
 scoreboard objectives add mgs.zb.barricade.repairing_id dummy
-# Per-player barricade repair counter (reset each round, capped reward at 25)
+# Reset each round; only 25 repairs per round pay.
 scoreboard objectives add mgs.zb.barricade_repairs dummy
 
-# Per-player sound budgets: #total_tick timestamps of when each barricade sound frees up again.
-# Same scheme as enemies/vocals.py, so no reset is needed — #total_tick only grows, and an unset score
-# fails the `>` comparison, which reads as "ready".
+# #total_tick when each barricade sound frees up, as in vocals: never reset, and an unset score reads as ready.
 scoreboard objectives add mgs.zb.barricade.bang_at dummy
 scoreboard objectives add mgs.zb.barricade.rep_at dummy
 
-# Power-up entity scoreboards
 scoreboard objectives add mgs.zb.pu.type dummy
 scoreboard objectives add mgs.zb.pu.timer dummy
-# Per-zombie: tick of the last time a player's weapon hit it (gates drops to player kills)
+# Tick of the last player weapon hit, so only player kills drop.
 scoreboard objectives add mgs.zb.player_hit dummy
 
-# Door entity scoreboards
 scoreboard objectives add mgs.zb.door.link dummy
 scoreboard objectives add mgs.zb.door.price dummy
 scoreboard objectives add mgs.zb.door.bgid dummy
 scoreboard objectives add mgs.zb.door.anim dummy
 scoreboard objectives add mgs.zb.door.rot dummy
-# Chip-in purchases: chunk size (0 = disabled) and how much the group has paid so far.
-# Door progress is global, so `paid` is mirrored on every entity of the link group.
+# Chip-in: chunk size (0 = off) and what the group paid; progress is global, so `paid` is mirrored on the whole link group.
 scoreboard objectives add mgs.zb.door.partial dummy
 scoreboard objectives add mgs.zb.door.paid dummy
 
-# Wallbuy entity scoreboards
 scoreboard objectives add mgs.zb.wb.id dummy
 scoreboard objectives add mgs.zb.wb.price dummy
 scoreboard objectives add mgs.zb.wb.rfprice dummy
 scoreboard objectives add mgs.zb.wb.rfpap dummy
 
-# Perk machine entity scoreboards
 scoreboard objectives add mgs.zb.perk.id dummy
 scoreboard objectives add mgs.zb.perk.price dummy
-# Map-defined price, kept so dynamic discounts (solo Quick Revive) can be reverted
+# Kept so dynamic discounts (solo Quick Revive) can be reverted.
 scoreboard objectives add mgs.zb.perk.base_price dummy
 scoreboard objectives add mgs.zb.perk.power dummy
-# Chip-in chunk size (0 = disabled, buy in one payment)
+# 0 = buy in one payment.
 scoreboard objectives add mgs.zb.perk.partial dummy
 
-# Perk ownership scoreboards
 scoreboard objectives add mgs.zb.perk.juggernog dummy
 scoreboard objectives add mgs.zb.perk.speed_cola dummy
 scoreboard objectives add mgs.zb.perk.double_tap dummy
@@ -418,7 +391,6 @@ scoreboard objectives add mgs.zb.perk.whos_who dummy
 scoreboard objectives add mgs.zb.perk.dying_wish dummy
 scoreboard objectives add mgs.zb.perk.widows_wine dummy
 
-# Per-player chip-in progress
 scoreboard objectives add mgs.zb.perkpaid.juggernog dummy
 scoreboard objectives add mgs.zb.perkpaid.speed_cola dummy
 scoreboard objectives add mgs.zb.perkpaid.double_tap dummy
@@ -434,19 +406,18 @@ scoreboard objectives add mgs.zb.perkpaid.whos_who dummy
 scoreboard objectives add mgs.zb.perkpaid.dying_wish dummy
 scoreboard objectives add mgs.zb.perkpaid.widows_wine dummy
 
-# Electric Cherry: last-discharge gametime stamp (anti-spam cooldown)
+# Last discharge (gametime).
 scoreboard objectives add mgs.zb.ec_last dummy
-# Widow's Wine: last web-on-hurt burst gametime stamp (passive cooldown)
+# Widow's Wine: last web burst (gametime).
 scoreboard objectives add mgs.zb.ww_last dummy
-# Dying Wish: use count (escalates cooldown), cooldown countdown, and active berserk timer
+# Dying Wish: uses (escalating cooldown), cooldown, berserk timer.
 scoreboard objectives add mgs.zb.dw_uses dummy
 scoreboard objectives add mgs.zb.dw_cd dummy
 scoreboard objectives add mgs.zb.dw_timer dummy
-# Tombstone: marker state (0 pending / 1 active) + recovery countdown; the marker also carries the
-# owner's zb.downed_id so the existing downed_id_match predicate can select it.
+# Tombstone: state (0 pending, 1 active) and recovery timer; the marker also carries zb.downed_id for downed_id_match.
 scoreboard objectives add mgs.zb.ts.state dummy
 scoreboard objectives add mgs.zb.ts.timer dummy
-# Tombstone: per-perk snapshot of what the owner had when they went down (restored on recovery)
+# Tombstone: the owner's perks when they went down.
 scoreboard objectives add mgs.zb.tsp.juggernog dummy
 scoreboard objectives add mgs.zb.tsp.speed_cola dummy
 scoreboard objectives add mgs.zb.tsp.double_tap dummy
@@ -461,27 +432,25 @@ scoreboard objectives add mgs.zb.tsp.whos_who dummy
 scoreboard objectives add mgs.zb.tsp.dying_wish dummy
 scoreboard objectives add mgs.zb.tsp.widows_wine dummy
 
-# Der Wunderfizz machine + spin state
 scoreboard objectives add mgs.zb.wf.id dummy
 scoreboard objectives add mgs.zb.wf.price dummy
 scoreboard objectives add mgs.zb.wf.power dummy
 scoreboard objectives add mgs.zb.wf.allperks dummy
-# Spin display (orb): countdown timer (>0 spinning, <=0 ready window), buyer pid, chosen perk index
+# Orb: timer (>0 spinning, <=0 ready window), buyer pid, chosen perk index.
 scoreboard objectives add mgs.zb.wf.anim dummy
 scoreboard objectives add mgs.zb.wf.buyer dummy
 scoreboard objectives add mgs.zb.wf.perk dummy
-# 1 when the buyer owns Timeslip (this orb spins 2x faster, like the Mystery Box)
+# 1 when the buyer owns Timeslip (2x spin, like the Mystery Box).
 scoreboard objectives add mgs.zb.wf.timeslip dummy
-# 1 when this pull will roam the machine (teddy bear) instead of granting a perk
+# 1 when this pull roams the machine (teddy bear) instead of granting a perk.
 scoreboard objectives add mgs.zb.wf.willmove dummy
-# Points paid for this pull, so a roam (bear) can refund the buyer
+# Refunded when the pull roams.
 scoreboard objectives add mgs.zb.wf.paid dummy
-# Stable per-player buyer id (lazy)
+# Stable buyer id, assigned on first use.
 scoreboard objectives add mgs.zb.wf_pid dummy
 
-# Who's Who: the owner's body link (zb.ww.id survives later normal downs, unlike zb.downed_id) +
-# perk snapshot for recovery. Bleed/revive progress live on the owner's normal zb.bleed /
-# zb.revive_p scores (the shared revive core reads those).
+# zb.ww.id links the owner to the body and survives later normal downs, unlike zb.downed_id.
+# Bleed and revive progress use the owner's normal zb.bleed and zb.revive_p scores.
 scoreboard objectives add mgs.zb.ww.id dummy
 scoreboard objectives add mgs.zb.wwp.juggernog dummy
 scoreboard objectives add mgs.zb.wwp.speed_cola dummy
@@ -497,25 +466,22 @@ scoreboard objectives add mgs.zb.wwp.tombstone dummy
 scoreboard objectives add mgs.zb.wwp.dying_wish dummy
 scoreboard objectives add mgs.zb.wwp.widows_wine dummy
 
-# Revive system scoreboards
 scoreboard objectives add mgs.zb.downed dummy
 scoreboard objectives add mgs.zb.bleed dummy
 scoreboard objectives add mgs.zb.revive_p dummy
 
-# Solo Quick Revive uses remaining
 scoreboard objectives add mgs.zb.qr_uses dummy
 
-# Unique downed ID: links player to their specific mannequin
+# Links a player to their mannequin.
 scoreboard objectives add mgs.zb.downed_id dummy
 
-# Trap entity scoreboards
 scoreboard objectives add mgs.zb.trap.id dummy
 scoreboard objectives add mgs.zb.trap.price dummy
 scoreboard objectives add mgs.zb.trap.power dummy
 scoreboard objectives add mgs.zb.trap.type dummy
 scoreboard objectives add mgs.zb.trap.dur dummy
 scoreboard objectives add mgs.zb.trap.cd_max dummy
-# 1 when the player who activated this trap owns Timeslip (its cooldown is scaled to 75%)
+# 1 when the activator owns Timeslip (cooldown at 75%).
 scoreboard objectives add mgs.zb.trap.timeslip dummy
 scoreboard objectives add mgs.zb.trap.timer dummy
 scoreboard objectives add mgs.zb.trap.cd dummy

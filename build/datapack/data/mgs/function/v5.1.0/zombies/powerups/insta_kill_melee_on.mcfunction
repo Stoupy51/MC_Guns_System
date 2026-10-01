@@ -6,7 +6,7 @@
 # @within	mgs:v5.1.0/zombies/game_tick [ as @a[tag=!mgs.ik_melee,scores={mgs.special.instant_kill=1..}] ]
 #
 
-# remove-then-add keeps this idempotent even if a stale modifier survived a game crash
+# Remove then add, so a stale modifier left by a crash cannot stack.
 attribute @s minecraft:attack_damage modifier remove mgs:insta_kill
 attribute @s minecraft:attack_damage modifier add mgs:insta_kill 100000 add_value
 tag @s add mgs.ik_melee

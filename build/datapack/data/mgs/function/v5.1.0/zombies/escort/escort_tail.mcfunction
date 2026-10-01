@@ -8,15 +8,15 @@
 #			mgs:v5.1.0/zombies/escort/monkey_ride
 #
 
-# TTL countdown; the trader could not reach its target in time -> teleport-rescue fallback
+# TTL out: the trader could not reach the target, fall back to the teleport rescue.
 scoreboard players remove @s mgs.zb.escort_ttl 1
 execute if score @s mgs.zb.escort_ttl matches ..0 run return run function mgs:v5.1.0/zombies/escort/give_up
 
-# Re-aim the trader at its target every second (retarget picks player / PaP lure / monkey)
+# Every second (retarget picks player, PaP lure or monkey).
 scoreboard players operation #zb_esc_mod mgs.data = @s mgs.zb.escort_ttl
 scoreboard players operation #zb_esc_mod mgs.data %= #20 mgs.data
 execute if score #zb_esc_mod mgs.data matches 0 as @n[type=minecraft:wandering_trader,tag=mgs.zb_escort,distance=..8] at @s run function mgs:v5.1.0/zombies/escort/retarget
 
-# Watchdog every second: a trader that can't move is caught in 5s, not 45s
+# Catches a trader that cannot move in 5 s instead of 45 s.
 execute if score #zb_esc_mod mgs.data matches 0 run function mgs:v5.1.0/zombies/escort/watchdog
 

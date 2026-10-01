@@ -6,8 +6,7 @@
 # @within	mgs:v5.1.0/zombies/monkey/tick
 #
 
-# Toy jingle placeholder: cycle chime pitches each pulse so they sound like a little tune
-# (real monkey-music .ogg is a HUMAN asset, see zombies README task 8)
+# Chime pitches cycle each pulse, like a little tune (TODO: real monkey-music .ogg).
 scoreboard players operation #monkey_note mgs.data = #total_tick mgs.data
 scoreboard players operation #monkey_note mgs.data /= #20 mgs.data
 scoreboard players operation #monkey_note mgs.data %= #4 mgs.data

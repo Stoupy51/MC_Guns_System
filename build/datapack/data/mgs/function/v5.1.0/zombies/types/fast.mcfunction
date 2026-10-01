@@ -6,7 +6,6 @@
 # @args		level (unknown)
 #
 
-# TODO: fast zombie — higher base movement speed, reduced health pool
-# Falls through to normal scaling until implemented
+# TODO: higher movement speed, less health.
 $function mgs:v5.1.0/zombies/types/normal {level:"$(level)"}
 

@@ -5,10 +5,8 @@
 #			mgs:v5.1.0/zombies/perks/setup_iter
 #
 
-# Assign incrementing ID
 scoreboard players add #pk_counter mgs.data 1
 
-# Read relative position and convert to absolute
 execute store result score #pkx mgs.data run data get storage mgs:temp _pk_iter[0].pos[0]
 execute store result score #pky mgs.data run data get storage mgs:temp _pk_iter[0].pos[1]
 execute store result score #pkz mgs.data run data get storage mgs:temp _pk_iter[0].pos[2]
@@ -16,20 +14,16 @@ scoreboard players operation #pkx mgs.data += #gm_base_x mgs.data
 scoreboard players operation #pky mgs.data += #gm_base_y mgs.data
 scoreboard players operation #pkz mgs.data += #gm_base_z mgs.data
 
-# Store absolute position and rotation for macro
 execute store result storage mgs:temp _pk.x int 1 run scoreboard players get #pkx mgs.data
 execute store result storage mgs:temp _pk.y int 1 run scoreboard players get #pky mgs.data
 execute store result storage mgs:temp _pk.z int 1 run scoreboard players get #pkz mgs.data
 data modify storage mgs:temp _pk.rotation set from storage mgs:temp _pk_iter[0].rotation
 
-# Summon interaction entity
 function mgs:v5.1.0/zombies/perks/place_at with storage mgs:temp _pk
 
-# Set scoreboards on entity
 scoreboard players operation @n[tag=mgs.pk_new] mgs.zb.perk.id = #pk_counter mgs.data
 execute store result score @n[tag=mgs.pk_new] mgs.zb.perk.price run data get storage mgs:temp _pk_iter[0].price
-# price -1 = auto: resolve the recommended price for this machine's perk_id (compound match needs a
-# flat key: [0]{...} after an index is invalid NBT path syntax)
+# Copied to a flat key first: `[0]{...}` after an index is invalid NBT path syntax.
 data modify storage mgs:temp _pk_price.perk_id set from storage mgs:temp _pk_iter[0].perk_id
 execute if score @n[tag=mgs.pk_new] mgs.zb.perk.price matches -1 if data storage mgs:temp _pk_price{perk_id:"juggernog"} run scoreboard players set @n[tag=mgs.pk_new] mgs.zb.perk.price 2500
 execute if score @n[tag=mgs.pk_new] mgs.zb.perk.price matches -1 if data storage mgs:temp _pk_price{perk_id:"speed_cola"} run scoreboard players set @n[tag=mgs.pk_new] mgs.zb.perk.price 3000
@@ -45,35 +39,31 @@ execute if score @n[tag=mgs.pk_new] mgs.zb.perk.price matches -1 if data storage
 execute if score @n[tag=mgs.pk_new] mgs.zb.perk.price matches -1 if data storage mgs:temp _pk_price{perk_id:"whos_who"} run scoreboard players set @n[tag=mgs.pk_new] mgs.zb.perk.price 2000
 execute if score @n[tag=mgs.pk_new] mgs.zb.perk.price matches -1 if data storage mgs:temp _pk_price{perk_id:"dying_wish"} run scoreboard players set @n[tag=mgs.pk_new] mgs.zb.perk.price 2000
 execute if score @n[tag=mgs.pk_new] mgs.zb.perk.price matches -1 if data storage mgs:temp _pk_price{perk_id:"widows_wine"} run scoreboard players set @n[tag=mgs.pk_new] mgs.zb.perk.price 4000
-# Remember the map-defined price so solo Quick Revive can be reverted when players join
 scoreboard players operation @n[tag=mgs.pk_new] mgs.zb.perk.base_price = @n[tag=mgs.pk_new] mgs.zb.perk.price
-# Tag Quick Revive machines for dynamic solo pricing (copy [0] to a flat key: [0]{...} is invalid path syntax)
+# Quick Revive machines get dynamic solo pricing.
 data modify storage mgs:temp _pk_qr.perk_id set from storage mgs:temp _pk_iter[0].perk_id
 execute if data storage mgs:temp _pk_qr{perk_id:"quick_revive"} run tag @n[tag=mgs.pk_new] add mgs.pk_quick_revive
-# Store power requirement as 1/0 (true stored as 1b in NBT, data get returns 1)
+# true is stored as 1b, so `data get` returns 1.
 execute store result score @n[tag=mgs.pk_new] mgs.zb.perk.power run data get storage mgs:temp _pk_iter[0].power
-# Chip-in chunk (absent on maps saved before the field existed -> the failed read stores 0 = disabled)
+# Maps saved before chip-in existed have no field: the failed read stores 0 (off).
 execute store result score @n[tag=mgs.pk_new] mgs.zb.perk.partial run data get storage mgs:temp _pk_iter[0].partial_price
 
-# Store perk_id in indexed storage for later lookup
 execute store result storage mgs:temp _pk_store.id int 1 run scoreboard players get #pk_counter mgs.data
 data modify storage mgs:temp _pk_store.perk_id set from storage mgs:temp _pk_iter[0].perk_id
-# Optional custom label: kept only when the map set a non-empty name; otherwise left absent so the
-# hover/label logic falls back to the perk's canonical name (PERK_DEFINITIONS display_name).
+# A custom label is kept only when non-empty; otherwise the perk's display_name is used.
 data remove storage mgs:temp _pk_store.name
 data modify storage mgs:temp _pk_store.name set from storage mgs:temp _pk_iter[0].name
 execute if data storage mgs:temp _pk_store{name:""} run data remove storage mgs:temp _pk_store.name
 function mgs:v5.1.0/zombies/perks/store_data with storage mgs:temp _pk_store
 execute if data storage mgs:temp _pk_store.name run function mgs:v5.1.0/zombies/perks/store_data_name with storage mgs:temp _pk_store
 
-# Mark this perk as present on the map (shared random-perk pool: power-up + Der Wunderfizz)
+# Shared random-perk pool (power-up and Der Wunderfizz).
 function mgs:v5.1.0/zombies/perks/pool/mark with storage mgs:temp _pk_store
 
-# Register Bookshelf events
 execute as @n[tag=mgs.pk_new] run function #bs.interaction:on_right_click {run:"function mgs:v5.1.0/zombies/perks/on_right_click",executor:"source"}
 execute as @n[tag=mgs.pk_new] run function #bs.interaction:on_hover {run:"function mgs:v5.1.0/zombies/perks/on_hover",executor:"source"}
 
-# Spawn visual item_display at machine position (default: potion; overridable via display_item + item_model map fields)
+# Potion by default; maps can override display_item and item_model.
 data modify storage mgs:temp _pk_disp.tag set value "mgs.pk_display"
 data modify storage mgs:temp _pk_disp.item_id set value ""
 data modify storage mgs:temp _pk_disp.item_model set value ""
@@ -83,9 +73,8 @@ execute if data storage mgs:temp _pk_iter[0].item_model run data modify storage 
 execute if data storage mgs:temp _pk_disp{item_id:""} run data modify storage mgs:temp _pk_disp.item_id set value "minecraft:potion"
 execute if data storage mgs:temp _pk_disp{item_model:""} run data modify storage mgs:temp _pk_disp.item_model set value "minecraft:potion"
 
-# Per-perk default machine models (only when the map didn't set a custom model)
-# Copy perk_id to a named key first ([0]{...} compound match after an index is invalid NBT path syntax)
-# Other perks: add a child model overriding accent/accent2 (see perk_machine_juggernog.json) and a line here
+# Per-perk default machine models when the map set none. Other perks need a child model overriding accent and accent2
+# (see perk_machine_juggernog.json) and a line here.
 data modify storage mgs:temp _pk_disp.perk_id set from storage mgs:temp _pk_iter[0].perk_id
 execute if data storage mgs:temp _pk_disp{item_model:"minecraft:potion"} run function mgs:v5.1.0/zombies/perks/override_perk_model with storage mgs:temp _pk_disp
 execute if data storage mgs:temp _pk_iter[0].rotation[0] run data modify storage mgs:temp _pk_disp.yaw set from storage mgs:temp _pk_iter[0].rotation[0]
@@ -94,7 +83,6 @@ execute as @n[tag=mgs.pk_new] at @s run tp @s ~ ~2 ~
 tag @n[tag=mgs.pk_new] add mgs.perk_machine
 tag @n[tag=mgs.pk_new] remove mgs.pk_new
 
-# Iterate next
 data remove storage mgs:temp _pk_iter[0]
 execute if data storage mgs:temp _pk_iter[0] run function mgs:v5.1.0/zombies/perks/setup_iter
 

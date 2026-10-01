@@ -106,10 +106,9 @@ execute if score #any_game_active mgs.data matches 1 unless entity @s[gamemode=s
 execute if score #any_game_active mgs.data matches 1 unless entity @s[gamemode=spectator] if score @s mgs.mi.in_game matches 1 run function mgs:v5.1.0/player/stamina_tick
 execute if score #any_game_active mgs.data matches 1 unless entity @s[gamemode=spectator] if score @s mgs.zb.in_game matches 1 run function mgs:v5.1.0/player/stamina_tick
 
-# Zombies: detect respawn
 execute if data storage mgs:zombies game{state:"active"} if score @s mgs.zb.in_game matches 1.. if score @s mgs.mp.death_count matches 1.. run function mgs:v5.1.0/zombies/on_respawn
 
-# Dying Wish: tick down the escalating cooldown, and run the active berserk timer
+# Dying Wish: escalating cooldown and berserk timer.
 execute if data storage mgs:zombies game{state:"active"} if score @s mgs.zb.in_game matches 1.. if score @s mgs.zb.dw_cd matches 1.. run scoreboard players remove @s mgs.zb.dw_cd 1
 execute if data storage mgs:zombies game{state:"active"} if score @s mgs.zb.in_game matches 1.. if score @s mgs.zb.dw_timer matches 1.. run function mgs:v5.1.0/zombies/perks/dying_wish_tick
 

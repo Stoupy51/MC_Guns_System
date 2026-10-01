@@ -14,9 +14,9 @@ class PowerupType:
 	type_num: int
 	""" Integer used in scoreboards and in the spawn dispatch. """
 	tier: str
-	""" "common" | "rare" — rare has a 25% chance to appear each shuffle cycle. """
+	""" "common" or "rare"; a rare one has a 25% chance to join each shuffle cycle. """
 
-	# Timed power-ups only; a non-zero duration is what makes one timed (see TIMED_POWERUPS).
+	# A non-zero duration makes a power-up timed (TIMED_POWERUPS).
 	duration: int = 0
 	""" Active duration in ticks. """
 	scoreboard: str = ""
@@ -25,7 +25,7 @@ class PowerupType:
 	""" The {ns}:pu_<bossbar_id> bossbar name. """
 	bb_color: str = ""
 
-	# Sounds, relative to {ns}:zombies/powerups/. Without `sound` the generic level-up chime plays.
+	# Relative to {ns}:zombies/powerups/; empty plays the generic level-up chime.
 	sound: str = ""
 	additional: str = ""
 	""" A second sound played simultaneously with `sound`. """
@@ -56,16 +56,14 @@ FIRE_SALE_DURATION: int  = 600
 BONFIRE_SALE_DURATION: int = 600
 """ 30 seconds in ticks: Pack-a-Punch costs 200 points (1000/5). """
 
-# Convenience view: only power-ups with a timed duration
 TIMED_POWERUPS: dict[str, PowerupType] = {k: v for k, v in POWERUP_TYPES.items() if v.duration}
 
 # Functions
 def pu_snd(ns: str, name: str, vol: float = 0.7, pitch: float = 1.0, at_s: bool = False) -> str:
-	""" A power-up cue played for every in-game player at their OWN position.
+	""" A power-up cue played to every in-game player at their own position.
 
-	Power-ups affect everyone, so their cues must be GLOBAL rather than positional: playing at each
-	player's own feet means all of them hear it at full volume however far they were from the drop.
-	`at_s` returns a bare fragment for use after an `execute if ...` of the caller's own.
+	Power-ups affect everyone, so every player hears the cue at full volume, however far from the drop.
+	`at_s` returns a bare fragment for use after the caller's own `execute if ...`.
 	"""
 	body = f"as @a[scores={{{ns}.zb.in_game=1}}] at @s run playsound {ns}:zombies/powerups/{name} ambient @s ~ ~ ~ {vol} {pitch}"
 	return body if at_s else f"execute {body}"

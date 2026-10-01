@@ -23,61 +23,51 @@ HUD_OFFSET_Y_THOUSANDTHS: int = 2000
 
 # Functions
 def revive_body_detect() -> str:
-	""" Shared per-tick upkeep for one revivable body (normal down AND Who's Who).
+	""" Per-tick upkeep of one revivable body, for a normal down and Who's Who.
 
-	Emitted into the caller's tick function. Contract: @s = the downed-state holder (a spectating
-	downed player, or an alive Who's Who doppelganger) carrying `zb.bleed`/`zb.revive_p`, with
-	#my_downed_id already set to the body's downed_id. Decrements the bleed timer and detects
-	revivers around the id-matched mannequin into #zb_reviving. The reviver selector excludes
-	downed/spectating players but includes doppelgangers — and for a Who's Who body, the owner
-	themselves (self-revive).
+	Emitted into the caller's tick function.
+	@s holds the downed state and its `zb.bleed` and `zb.revive_p` (a downed spectator, or an alive Who's Who doppelganger), and #my_downed_id is the body's id.
+	Decrements the bleed timer and counts the revivers around the id-matched mannequin into #zb_reviving.
+	Revivers exclude downed and spectating players but include doppelgangers, and for a Who's Who body the owner (self-revive).
 	"""
 	ns: str = Mem.ctx.project_id
 	version: str = Mem.ctx.project_version
 	return f"""
-# ── Shared body upkeep (revive.py::revive_body_detect) ──
-# Decrement bleed timer (real-time via #tick_delta)
+# Body upkeep (revive_body_detect).
 scoreboard players operation @s {ns}.zb.bleed -= #tick_delta {ns}.data
 
-# Check for revivers: alive non-downed players within range of THIS body (id-matched, since with
-# several bodies 'nearest mannequin' could be someone else's)
+# Id-matched, since with several bodies the nearest mannequin can be someone else's.
 scoreboard players set #zb_reviving {ns}.data 0
 execute as @e[type=minecraft:mannequin,tag={ns}.downed_mannequin,predicate={ns}:v{version}/zombies/revive/downed_id_match] at @s run execute as @a[scores={{{ns}.zb.in_game=1,{ns}.zb.downed=0}},gamemode=!spectator,distance=..{REVIVE_RANGE}] run scoreboard players set #zb_reviving {ns}.data 1
 """.strip()
 
 def revive_body_progress(complete_function: str) -> str:
-	"""Shared revive progress for one revivable body: progress/decay on `zb.revive_p`, the reviver
-	progress bar, HUD recolor by urgency, and the (Quick Revive-aware) completion thresholds.
+	""" Revive progress of one revivable body: progress and decay of `zb.revive_p`, reviver bar, HUD colour, completion thresholds.
 
-	Same contract as revive_body_detect (which must be emitted above this block). On completion the
-	block `return run`s `complete_function`, so the caller's lines below (bleed-out checks) are
-	skipped on the revive tick.
+	Emitted below revive_body_detect, with the same contract.
+	On completion it does `return run complete_function`, so the caller's bleed-out checks below are skipped that tick.
 	"""
 	ns: str = Mem.ctx.project_id
 	version: str = Mem.ctx.project_version
 	return f"""
-# ── Shared revive progress (revive.py::revive_body_progress) ──
-# If someone is reviving (=1), increment progress; if solo QR (=2), skip (solo_qr_tick handles it);
-# if none (=0), decay at double speed. Real-time via #tick_delta.
+# Progress (revive_body_progress): +delta while someone revives (1), nothing during a solo revive (2), 2x decay otherwise (0).
 execute if score #zb_reviving {ns}.data matches 1 run scoreboard players operation @s {ns}.zb.revive_p += #tick_delta {ns}.data
 scoreboard players operation #rv_decay {ns}.data = #tick_delta {ns}.data
 scoreboard players operation #rv_decay {ns}.data *= #2 {ns}.data
 execute if score #zb_reviving {ns}.data matches 0 if score @s {ns}.zb.revive_p matches 1.. run scoreboard players operation @s {ns}.zb.revive_p -= #rv_decay {ns}.data
 
-# Show the revive progress bar to the revivers (snapshot @s's progress first: a reviver cannot
-# reliably re-select the downed player, see show_reviver_bar)
+# Snapshot for the reviver bar: a reviver cannot reliably select the downed player.
 scoreboard players operation #rv_reviver_disp {ns}.data = @s {ns}.zb.revive_p
 tag @a remove {ns}.zb_reviver
 execute if score #zb_reviving {ns}.data matches 1 as @e[type=minecraft:mannequin,tag={ns}.downed_mannequin,predicate={ns}:v{version}/zombies/revive/downed_id_match] at @s run execute as @a[scores={{{ns}.zb.in_game=1,{ns}.zb.downed=0}},gamemode=!spectator,distance=..{REVIVE_RANGE}] run function {ns}:v{version}/zombies/revive/show_reviver_bar
 
-# Update HUD text_display color based on revive state / bleed timer
 execute if score #zb_reviving {ns}.data matches 1.. run function {ns}:v{version}/zombies/revive/hud_white
 execute if score #zb_reviving {ns}.data matches 0 if score @s {ns}.zb.bleed matches 400.. run function {ns}:v{version}/zombies/revive/hud_yellow
 execute if score #zb_reviving {ns}.data matches 0 if score @s {ns}.zb.bleed matches 200..399 run function {ns}:v{version}/zombies/revive/hud_gold
 execute if score #zb_reviving {ns}.data matches 0 if score @s {ns}.zb.bleed matches ..199 run function {ns}:v{version}/zombies/revive/hud_red
 
-# Revive complete (faster threshold if a reviver AT THE BODY has Quick Revive). return run: the
-# caller's bleed-out checks below must not run on the completion tick (zb.bleed was reset to 0)
+# Faster when a reviver at the body owns Quick Revive. `return run`: zb.bleed is 0 on the completion tick,
+# so the caller's bleed-out checks must not run.
 execute if score #zb_reviving {ns}.data matches 1 run scoreboard players set #rv_qr_near {ns}.data 0
 execute if score #zb_reviving {ns}.data matches 1 as @e[type=minecraft:mannequin,tag={ns}.downed_mannequin,predicate={ns}:v{version}/zombies/revive/downed_id_match] at @s run execute if entity @a[scores={{{ns}.zb.in_game=1,{ns}.zb.downed=0}},gamemode=!spectator,distance=..{REVIVE_RANGE},tag={ns}.perk.quick_revive] run scoreboard players set #rv_qr_near {ns}.data 1
 execute if score #zb_reviving {ns}.data matches 1 if score #rv_qr_near {ns}.data matches 1 if score @s {ns}.zb.revive_p matches {QUICK_REVIVE_TICKS}.. run return run function {complete_function}

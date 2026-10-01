@@ -5,7 +5,6 @@
 #			mgs:v5.1.0/zombies/summon_spawn_iter
 #
 
-# Read position from compound format
 execute store result score #sx mgs.data run data get storage mgs:temp _spawn_iter[0].pos[0]
 execute store result score #sy mgs.data run data get storage mgs:temp _spawn_iter[0].pos[1]
 execute store result score #sz mgs.data run data get storage mgs:temp _spawn_iter[0].pos[2]
@@ -23,21 +22,18 @@ data modify storage mgs:temp _spos.tag set from storage mgs:temp _spawn_tag
 
 function mgs:v5.1.0/zombies/summon_spawn_at with storage mgs:temp _spos
 
-# Set group_id score on newly spawned marker (default 0 if not defined)
+# Defaults to group 0.
 scoreboard players set @n[tag=mgs.new_spawn] mgs.zb.spawn.gid 0
 execute store result score @n[tag=mgs.new_spawn] mgs.zb.spawn.gid run data get storage mgs:temp _spawn_iter[0].group_id
 
-# Assign a unique spawn id (lets zombies remember their previous spawn point and never reuse it)
+# Zombies remember their spawn so they never reuse it.
 scoreboard players add #zb_spawn_sid mgs.data 1
 scoreboard players operation @n[tag=mgs.new_spawn] mgs.zb.spawn.sid = #zb_spawn_sid mgs.data
 
-# Optional activation box (zombie spawns only): store the ABSOLUTE box on the marker so the
-# round spawner can gate this spawn on a player standing inside it. Only present when the map
-# data defines all 6 elements [x,y,z,dx,dy,dz] (relative to this spawn).
+# Zombie spawns only: the absolute box [x, y, z, dx, dy, dz] (all 6 needed), so a player standing in it gates the spawn.
 execute if data storage mgs:temp _spawn_iter[0].activation_box[5] run function mgs:v5.1.0/zombies/store_spawn_abox
 
-# Optional walk-to target (zombie spawns only): store the ABSOLUTE spot on the marker, so every
-# zombie spawned here is escorted to it instead of wandering after the nearest player.
+# Zombie spawns only: zombies spawned here are escorted to this absolute spot.
 execute if data storage mgs:temp _spawn_iter[0].walk_to[2] run function mgs:v5.1.0/zombies/store_spawn_walk_to
 
 tag @n[tag=mgs.new_spawn] remove mgs.new_spawn

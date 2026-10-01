@@ -11,191 +11,153 @@ def main() -> None:
 	ns: str = Mem.ctx.project_id
 	version: str = Mem.ctx.project_version
 
-	## ========================================== Max Ammo: Refill all magazines to capacity.
+	## Max Ammo: refill every magazine to capacity.
 
-	# Build slot checks for all inventory slots
 	magazine_custom_data: str = f"{{{ns}:{{magazine:true}}}}"
 	slot_checks: str = ""
 	for slot in ItemBuilder.ALL_SLOTS:
 		slot_checks += f'execute if items entity @s {slot} *[custom_data~{magazine_custom_data}] run function {ns}:v{version}/zombies/bonus/refill_magazine {{slot:"{slot}"}}\n'
 
-	# Build slot checks for reloading all weapon slots (guns, not magazines)
 	gun_custom_data: str = f"{{{ns}:{{gun:true}}}}"
 	weapon_slot_checks: str = ""
 	for slot in ItemBuilder.ALL_SLOTS:
 		weapon_slot_checks += f'execute if items entity @s {slot} *[custom_data~{gun_custom_data}] run function {ns}:v{version}/zombies/bonus/reload_weapon_slot {{slot:"{slot}"}}\n'
 
-	# Non-versioned entry point: /execute as <player> run function mgs:zombies/bonus/max_ammo
+	# Entry point: /execute as <player> run function mgs:zombies/bonus/max_ammo
 	write_function(f"{ns}:zombies/bonus/max_ammo", f"""
-# Copy gun data for current weapon (needed for ammo scoreboard sync)
+# Needed for the ammo score sync.
 function {ns}:v{version}/utils/copy_gun_data
 
-# Refill all magazines in inventory to max capacity
 {slot_checks}
-# Also reload all weapons in inventory if config allows (1 = recent zombies, 0 = OG magazines only)
+# #max_ammo_reload_weapons: 1 also reloads weapons (recent zombies), 0 only refills magazines (OG).
 execute if score #max_ammo_reload_weapons {ns}.config matches 1.. run function {ns}:v{version}/zombies/bonus/max_ammo_reload_weapons
 
-# Refill the grenade/equipment slot to full — including when the player has 0 left (empty slot)
 function {ns}:v{version}/zombies/bonus/max_ammo_grenades
 
-# Recompute reserve ammo display after refilling all magazines
 function {ns}:v{version}/ammo/compute_reserve
 """)
 
-	# Max Ammo grenade refill: top the equipment slot (hotbar.7) to full.
-	# The magazine/weapon passes above never touch grenades (they use item count, not a magazine), so without this Max Ammo left a player with 0 grenades empty-handed.
+	# Grenades use the item count, not a magazine, so the passes above never refill them.
 	write_versioned_function("zombies/bonus/max_ammo_grenades", f"""
-# Tactical slot (hotbar.6, e.g. Monkey Bombs): top back to 3 — refill only, never granted from
-# an empty slot (tacticals come exclusively from the Mystery Box or a wall-buy)
+# Tactical slot (hotbar.6, Monkey Bombs): back to 3, never granted from an empty slot (tacticals only come from the Mystery Box or a wall-buy).
 execute if items entity @s hotbar.6 *[custom_data~{{{ns}:{{gun:true}}}}] run item modify entity @s hotbar.6 {ns}:v{version}/grenade/set_count_3
 
-# Has grenades: set the stack to full (4) and stop
+# Lethal slot (hotbar.7): back to 4.
 execute if items entity @s hotbar.7 *[custom_data~{{{ns}:{{gun:true}}}}] run return run item modify entity @s hotbar.7 {ns}:v{version}/grenade/set_count_4
 
-# Empty slot (all grenades used): give 4 of the player's BOUGHT lethal type (semtex stays semtex),
-# not a hardcoded frag; give_lethal_type re-tags the slot too.
+# Empty lethal slot: 4 of the bought lethal type (semtex stays semtex); give_lethal_type re-tags the slot.
 execute unless items entity @s hotbar.7 * run function {ns}:v{version}/zombies/inventory/give_lethal_type {{count:4}}
 """)
 
-	# Reload ALL weapon slots (iterates all inventory)
 	write_versioned_function("zombies/bonus/max_ammo_reload_weapons", f"""
-# Reload every gun item in every slot
 {weapon_slot_checks}
-# Sync current weapon's ammo to player scoreboard (mainhand)
 execute if data storage {ns}:gun all.gun store result score @s {ns}.{REMAINING_BULLETS} run data get storage {ns}:gun all.stats.{CAPACITY}
 """)
 
-	# Reload a single weapon slot to max capacity
 	write_versioned_function("zombies/bonus/reload_weapon_slot", f"""
-# Extract weapon capacity and set remaining_bullets = capacity
 tag @s add {ns}.reloading_weapon
 $execute summon item_display run function {ns}:v{version}/zombies/bonus/extract_weapon_capacity {{slot:"$(slot)"}}
 tag @s remove {ns}.reloading_weapon
 
-# Save current ammo display (so non-active slot reloads don't corrupt the active HUD)
+# Saved so reloading a slot that is not in hand leaves the HUD of the held weapon alone.
 scoreboard players operation #rws_save {ns}.data = @s {ns}.{REMAINING_BULLETS}
 
-# Set player scoreboard to capacity (needed by modify_lore)
+# modify_lore reads this score.
 scoreboard players operation @s {ns}.{REMAINING_BULLETS} = #bullets {ns}.data
 
-# If this is the active mainhand weapon (remaining_bullets = -1 sentinel), only update lore
-# (don't write CAPACITY to item NBT - the player's scoreboard is the source of truth)
+# The held weapon (remaining_bullets -1) keeps its ammo in the score, so only its lore changes.
 $execute if items entity @s $(slot) *[custom_data~{{{ns}:{{stats:{{{REMAINING_BULLETS}:-1}}}}}}] run return run function {ns}:v{version}/ammo/modify_lore {{slot:"$(slot)"}}
 
-# For slots with inactive weapons: write CAPACITY to item NBT
 $item modify entity @s $(slot) {ns}:v{version}/update_ammo
 
-# Update weapon lore
 $function {ns}:v{version}/ammo/modify_lore {{slot:"$(slot)"}}
 
-# Restore the active weapon's ammo display for non-active slots
 scoreboard players operation @s {ns}.{REMAINING_BULLETS} = #rws_save {ns}.data
 """)
 
-	# Extract weapon capacity from item_display (@s = item_display)
+	# Run as a temporary item_display.
 	write_versioned_function("zombies/bonus/extract_weapon_capacity", f"""
-# Copy weapon from player to item_display
 $item replace entity @s contents from entity @p[tag={ns}.reloading_weapon] $(slot)
 
-# Read capacity and store as remaining_bullets (refill = set bullets to capacity)
 execute store result score #bullets {ns}.data run data get entity @s item.components."minecraft:custom_data".{ns}.stats.{CAPACITY}
 execute store result storage {ns}:temp {REMAINING_BULLETS} int 1 run data get entity @s item.components."minecraft:custom_data".{ns}.stats.{CAPACITY}
 
-# Also store into temp components for lore update
 data modify storage {ns}:temp components set from entity @s item.components
 
-# Clean up item_display
 kill @s
 """)
 
-	# Refill a single magazine slot
 	write_versioned_function("zombies/bonus/refill_magazine", f"""
-# Extract magazine data into storage (sets #bullets = CAPACITY)
 tag @s add {ns}.refilling_mag
 scoreboard players set #stack_size {ns}.data 1
 $execute summon item_display run function {ns}:v{version}/zombies/bonus/extract_mag_data {{slot:"$(slot)"}}
 tag @s remove {ns}.refilling_mag
 
-# Consumable magazines use stack count as ammo - just set count to capacity and done
+# Consumable magazines hold their ammo as the stack count.
 execute if score #stack_size {ns}.data matches 2.. run scoreboard players operation #bullets {ns}.data = #stack_size {ns}.data
 $execute if score #stack_size {ns}.data matches 2.. run return run item modify entity @s $(slot) {ns}:v{version}/set_consumable_count
 execute if score #stack_size {ns}.data matches 2.. run scoreboard players set #bullets {ns}.data 1
 
-# Regular magazines: update remaining_bullets NBT, restore full model, and refresh lore
 $item modify entity @s $(slot) {ns}:v{version}/update_ammo
 execute if score #stack_size {ns}.data matches 1 run function {ns}:v{version}/zombies/bonus/set_full_mag_model with storage {ns}:temp refill
 $function {ns}:v{version}/ammo/modify_mag_lore {{slot:"$(slot)"}}
 """)
 
-	# Extract magazine data from item_display (@s = item_display)
+	# Run as a temporary item_display.
 	write_versioned_function("zombies/bonus/extract_mag_data", f"""
-# Copy item from player to item_display
 $item replace entity @s contents from entity @p[tag={ns}.refilling_mag] $(slot)
 
-# Special consumable compatibility (get max_stack_size, 64 by default)
+# Consumables read their max_stack_size (64 by default).
 execute store success score #is_consumable {ns}.data if data entity @s item.components."minecraft:custom_data".{ns}{{consumable:1b}}
 execute if score #is_consumable {ns}.data matches 1 run scoreboard players set #stack_size {ns}.data 64
 execute if score #is_consumable {ns}.data matches 1 if data entity @s item.components."minecraft:max_stack_size" store result score #stack_size {ns}.data run data get entity @s item.components."minecraft:max_stack_size"
 
-# Read capacity and store as remaining_bullets (refill = set bullets to capacity)
 execute store result score #bullets {ns}.data run data get entity @s item.components."minecraft:custom_data".{ns}.stats.{CAPACITY}
 execute store result storage {ns}:temp {REMAINING_BULLETS} int 1 run data get entity @s item.components."minecraft:custom_data".{ns}.stats.{CAPACITY}
 execute store result storage {ns}:temp {CAPACITY} int 1 run data get entity @s item.components."minecraft:custom_data".{ns}.stats.{CAPACITY}
 
-# Store weapon name, slot, and current item_model for model update macro
+# For the model update macro.
 data modify storage {ns}:temp refill set value {{}}
 $data modify storage {ns}:temp refill.slot set value "$(slot)"
 data modify storage {ns}:temp refill.{BASE_WEAPON} set from entity @s item.components."minecraft:custom_data".{ns}.weapon
 data modify storage {ns}:temp refill.mag_model set from entity @s item.components."minecraft:item_model"
 
-# Clean up item_display
 kill @s
 """)
 
-	# Set magazine item model to non-empty (full) version
 	write_versioned_function("zombies/bonus/set_full_mag_model", r"""
 $item modify entity @s $(slot) {"type":"minecraft:set_components", "components":{"minecraft:item_model":"$(mag_model)"}}
 """)
 
-	## ==================================================== Nuke: Tag nukable entities and kill them 1 per tick.
+	## Nuke: kill every nukable entity, one per tick.
 
-	# Non-versioned entry point: /function mgs:zombies/bonus/nuke
-	# It needs no executor on purpose: the kill loop belongs to the round, not to whoever set it off, so a
-	# nuke grabbed by a downed player (a spectator) still wipes the map instead of only playing the sounds.
+	# Entry point: /function mgs:zombies/bonus/nuke. It needs no executor, so a nuke grabbed by a downed (spectating) player still clears the map.
 	write_function(f"{ns}:zombies/bonus/nuke", f"""
-# Mark every nukable entity: tagged for the kill loop and stripped of its attack damage right away,
-# so the ones waiting their turn in the loop can no longer hurt anybody.
+# Marked entities lose their attack damage at once, so those waiting in the loop can no longer hurt anyone.
 execute as @e[tag={ns}.nukable] run function {ns}:v{version}/zombies/bonus/nuke_mark_one
 
-# Start kill loop (1 entity per tick)
 function {ns}:v{version}/zombies/bonus/nuke_loop
 """)
 
-	# Mark one entity for the nuke (@s = nukable entity)
+	# Run as a nukable entity.
 	write_versioned_function("zombies/bonus/nuke_mark_one", f"""
 tag @s add {ns}.nuked
 attribute @s minecraft:attack_damage modifier add {ns}:nuke_zero_damage -1 add_multiplied_total
 """)
 
-	# Nuke kill loop: damage 1 entity per tick
 	write_versioned_function("zombies/bonus/nuke_loop", f"""
-# Find one nuked entity and process it
 execute as @n[tag={ns}.nuked,sort=random] at @s run function {ns}:v{version}/zombies/bonus/nuke_damage_one
 
-# Continue loop if more nuked entities exist
 execute if entity @e[tag={ns}.nuked] run schedule function {ns}:v{version}/zombies/bonus/nuke_loop 1t
 """)
 
-	# Damage one nuked entity (@s = nuked entity, positioned at entity)
+	# Run as a nuked entity, at it.
 	write_versioned_function("zombies/bonus/nuke_damage_one", f"""
-# Remove nuked tag (entity will no longer be selected in loop)
 tag @s remove {ns}.nuked
 
-# Remove attack damage modifier (restore normal damage)
 attribute @s minecraft:attack_damage modifier remove {ns}:nuke_zero_damage
 
-# Deal lethal damage WITHOUT a player attacker, so nuke kills don't credit kill points
-# (the player didn't really kill them — the flat Nuke point bonus is handled separately).
+# No player attacker, so nuke kills do not pay kill points (the Nuke pays a flat bonus).
 damage @s 999999 {ns}:bullet
 """)
 
