@@ -25,7 +25,8 @@ function {ns}:v{version}/shared/maps/call_script_at_base {{script:"tick"}}
 
 execute if score #zb_to_spawn {ns}.data matches 1.. run function {ns}:v{version}/zombies/spawn_tick
 
-execute as @e[type=minecraft:zombie,tag={ns}.zb_rising] at @s run function {ns}:v{version}/zombies/zombie_rise_tick
+# Untyped: other enemies than zombies will rise too.
+execute as @e[tag={ns}.zb_rising] at @s run function {ns}:v{version}/zombies/zombie_rise_tick
 
 # Only when the map has bounds.
 execute if score #zb_has_bounds {ns}.data matches 1 as @e[tag={ns}.zombie_round] at @s run function {ns}:v{version}/shared/check_bounds
