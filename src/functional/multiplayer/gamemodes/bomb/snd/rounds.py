@@ -141,3 +141,4 @@ execute if score #snd_round {ns}.data matches {HALFTIME_ROUND} run playsound min
 # Start next round (delay 3 seconds = 60 ticks via schedule)
 schedule function {ns}:v{version}/multiplayer/gamemodes/snd/start_round 60t
 """)
+

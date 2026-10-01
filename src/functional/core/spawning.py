@@ -40,8 +40,8 @@ $execute unless data storage {ns}:$(mode) game{{state:"active"}} run tag @s add 
 		""" Write ``<mode>/summon_spawn_at`` — the macro summoning a spawn-point marker.
 
 		Args:
-			mode             (str):   Path segment, e.g. "multiplayer" | "zombies" | "missions".
-			extra_spawn_tags (tuple): Extra tag suffixes (without the ``<ns>.`` prefix); zombies passes ``("new_spawn",)``.
+			mode: Path segment, e.g. "multiplayer" | "zombies" | "missions".
+			extra_spawn_tags: Extra tag suffixes (without the ``<ns>.`` prefix); zombies passes ``("new_spawn",)``.
 		"""
 		ns: str = Mem.ctx.project_id
 		tags: str = f'"{ns}.spawn_point","$(tag)","{ns}.gm_entity"'
@@ -56,15 +56,14 @@ $summon minecraft:marker $(x) $(y) $(z) {{Tags:[{tags}],data:{{yaw:$(yaw)}}}}
 		""" Return the lines feeding one spawn category of a map into ``<mode>/summon_spawn_iter``.
 
 		Args:
-			mode        (str): Path segment, e.g. "multiplayer" | "zombies" | "missions".
-			storage_key (str): The key under ``game.map.spawning_points`` holding this category.
-			spawn_tag   (str): Tag suffix every marker of this category is summoned with.
+			mode: Path segment, e.g. "multiplayer" | "zombies" | "missions".
+			storage_key: The key under ``game.map.spawning_points`` holding this category.
+			spawn_tag: Tag suffix every marker of this category is summoned with.
 		Returns:
 			str: Three commands, one per line.
 
-		Examples:
-			>>> CoreSpawning.spawn_category_lines("zombies", "players", "spawn_zb_player").count("\\n")
-			2
+		>>> CoreSpawning.spawn_category_lines("zombies", "players", "spawn_zb_player").count("\\n")
+		2
 		"""
 		ns: str = Mem.ctx.project_id
 		version: str = Mem.ctx.project_version
@@ -116,10 +115,10 @@ execute if data storage {ns}:temp _spawn_iter[0] run function {ns}:v{version}/{m
 		needs a per-team spawn type, so its three functions stay its own.
 
 		Args:
-			mode          (str):   Path segment, "zombies" or "missions".
-			spawn_tag     (str):   Tag suffix marking a spawn this mode may send a player to.
-			in_game_score (str):   Objective suffix that is 1 while a player is in this mode's game.
-			required_tags (tuple): Further tag suffixes a marker must carry; zombies passes ``("spawn_unlocked",)``.
+			mode: Path segment, "zombies" or "missions".
+			spawn_tag: Tag suffix marking a spawn this mode may send a player to.
+			in_game_score: Objective suffix that is 1 while a player is in this mode's game.
+			required_tags: Further tag suffixes a marker must carry; zombies passes ``("spawn_unlocked",)``.
 		"""
 		ns: str = Mem.ctx.project_id
 		version: str = Mem.ctx.project_version

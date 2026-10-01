@@ -48,3 +48,4 @@ execute if score #blue {ns}.mp.team > #red {ns}.mp.team run tag @a[scores={{{ns}
 {Advancements.match_end_lines(WINNER_TAG)}
 tag @a remove {ns}.{WINNER_TAG}
 """, tags=[f"{ns}:multiplayer/on_game_end"])
+

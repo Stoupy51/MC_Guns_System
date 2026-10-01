@@ -17,14 +17,11 @@ ZB_ELEMENTS: dict[str, ElementDef] = {etype: einfo for etype, einfo in ALL_ELEME
 def snbt_suggest(val: object) -> str:
 	""" Format a Python value as the SNBT a suggested command would carry.
 
-	Args:
-		val (object): The value to format.
 	Returns:
 		str: Its SNBT spelling, quoted and suffixed the way Minecraft expects.
 
-	Examples:
-		>>> snbt_suggest([1, True, "a"])
-		'[1,1b,"a"]'
+	>>> snbt_suggest([1, True, "a"])
+	'[1,1b,"a"]'
 	"""
 	if isinstance(val, bool):
 		return "1b" if val else "0b"
@@ -43,14 +40,11 @@ def snbt_suggest(val: object) -> str:
 def snbt_compound(d: JsonDict) -> str:
 	""" Convert a dict to an SNBT compound string.
 
-	Args:
-		d (JsonDict): The compound's fields.
 	Returns:
 		str: The compound, braces included.
 
-	Examples:
-		>>> snbt_compound({"a": 1, "b": "x"})
-		'{a:1,b:"x"}'
+	>>> snbt_compound({"a": 1, "b": "x"})
+	'{a:1,b:"x"}'
 	"""
 	return "{" + ",".join(f"{k}:{snbt_suggest(v)}" for k, v in d.items()) + "}"
 

@@ -16,8 +16,6 @@ class SharedContent:
 		which carries a -1 `entity_interaction_range`. Zombies builds this inline copy instead so its
 		starting knife keeps vanilla reach — it is the fallback weapon once ammo runs out.
 
-		Args:
-			ns (str): The project namespace.
 		Returns:
 			str: The item SNBT, ready for `item replace entity @s <slot> with <this>`.
 		"""

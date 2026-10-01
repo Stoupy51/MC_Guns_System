@@ -34,13 +34,12 @@ class Catalog:
 		""" Return the branch with that key.
 
 		Args:
-			key (str): Branch key, ex: "mi".
+			key: Branch key, ex: "mi".
 		Returns:
 			Branch: The matching branch.
 
-		Examples:
-			>>> Catalog.branch("mi").side
-			'mp'
+		>>> Catalog.branch("mi").side
+		'mp'
 		"""
 		return next(branch for branch in BRANCHES if branch.key == key)
 
@@ -49,13 +48,12 @@ class Catalog:
 		""" Return the XP pool a branch pays into.
 
 		Args:
-			branch_key (str): Branch key, ex: "mi".
+			branch_key: Branch key, ex: "mi".
 		Returns:
 			str: `mp` or `zb`.
 
-		Examples:
-			>>> Catalog.side("zb")
-			'zb'
+		>>> Catalog.side("zb")
+		'zb'
 		"""
 		return Catalog.branch(branch_key).side
 
@@ -64,14 +62,13 @@ class Catalog:
 		""" Return one chain by branch and key.
 
 		Args:
-			branch_key (str): Branch key, ex: "zb".
-			key        (str): Chain key, ex: "best_round".
+			branch_key: Branch key, ex: "zb".
+			key: Chain key, ex: "best_round".
 		Returns:
 			Chain: The matching chain.
 
-		Examples:
-			>>> Catalog.chain("zb", "best_round").stat.kind.value
-			'max_score'
+		>>> Catalog.chain("zb", "best_round").stat.kind.value
+		'max_score'
 		"""
 		return next(chain for chain in CHAINS if chain.branch == branch_key and chain.key == key)
 
@@ -80,14 +77,13 @@ class Catalog:
 		""" Return one event challenge by branch and key.
 
 		Args:
-			branch_key (str): Branch key, ex: "mi".
-			key        (str): Challenge key, ex: "flawless".
+			branch_key: Branch key, ex: "mi".
+			key: Challenge key, ex: "flawless".
 		Returns:
 			EventChallenge: The matching challenge.
 
-		Examples:
-			>>> Catalog.event("mi", "flawless").xp
-			300
+		>>> Catalog.event("mi", "flawless").xp
+		300
 		"""
 		return next(event for event in EVENTS if event.branch == branch_key and event.key == key)
 
@@ -96,7 +92,7 @@ class Catalog:
 		""" Return the award table for one XP pool.
 
 		Args:
-			side (str): `mp` or `zb`.
+			side: `mp` or `zb`.
 		Returns:
 			dict[str, XpAward]: That side's table.
 		"""
@@ -107,14 +103,12 @@ class Catalog:
 		""" Return the unversioned advancement path of one tier.
 
 		Args:
-			chain (Chain): The chain.
-			index (int):   0-based tier index.
+			index: 0-based tier index.
 		Returns:
 			str: ex: "challenges/zb/kills_2"
 
-		Examples:
-			>>> Catalog.tier_path(CHAINS[0], 1)
-			'challenges/mp/kills_2'
+		>>> Catalog.tier_path(CHAINS[0], 1)
+		'challenges/mp/kills_2'
 		"""
 		return f"{ROOT_PATH}/{chain.branch}/{chain.key}_{index + 1}"
 
@@ -122,8 +116,6 @@ class Catalog:
 	def event_path(event: EventChallenge) -> str:
 		""" Return the unversioned advancement path of one event challenge.
 
-		Args:
-			event (EventChallenge): The challenge.
 		Returns:
 			str: ex: "challenges/mi/flawless"
 		"""

@@ -9,10 +9,10 @@ def create_lore_functions(type_name: str, tag: str, remaining_source: str, capac
 	""" Create lore modification functions for weapons or magazines.
 
 	Args:
-		type_name        (str): Type name for the lore functions (e.g., "lore" or "mag_lore").
-		tag              (str): Temporary tag to identify the item being modified.
-		remaining_source (str): Source to get the remaining bullets value.
-		capacity_source  (str): Source to get the capacity value.
+		type_name: Type name for the lore functions (e.g., "lore" or "mag_lore").
+		tag: Temporary tag to identify the item being modified.
+		remaining_source: Source to get the remaining bullets value.
+		capacity_source: Source to get the capacity value.
 	"""
 	ns: str = Mem.ctx.project_id
 	version: str = Mem.ctx.project_version

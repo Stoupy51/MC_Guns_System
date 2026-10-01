@@ -268,3 +268,4 @@ ZB_EVENTS: tuple[EventChallenge, ...] = (
 )
 """ Not expressible as a score: it needs the round number and the roster size at the same instant, and
 the roster is a selector count rather than anything persistent. """
+

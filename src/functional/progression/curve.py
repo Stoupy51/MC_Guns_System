@@ -50,9 +50,8 @@ class Curve:
 		""" Return the lines putting `xp_required(@s's level)` into `dest`.
 
 		Args:
-			ns   (str): Project namespace.
-			side (str): `mp` or `zb`, naming the objective trio.
-			dest (str): Fake player to write the result to.
+			side: `mp` or `zb`, naming the objective trio.
+			dest: Fake player to write the result to.
 		Returns:
 			str: Three commands, one per line.
 		"""
@@ -68,9 +67,8 @@ scoreboard players add {dest} {ns}.data {LEVEL_BASE}"""
 		product is 1.34e9, and doing it in any other order overflows on the way there.
 
 		Args:
-			ns   (str): Project namespace.
-			src  (str): Fake player holding the level to evaluate.
-			dest (str): Fake player to write the result to.
+			src: Fake player holding the level to evaluate.
+			dest: Fake player to write the result to.
 		Returns:
 			str: Five commands, one per line.
 		"""
@@ -87,21 +85,13 @@ scoreboard players operation {dest} {ns}.data *= #xp_lvl_m1 {ns}.data"""
 	) -> None:
 		""" Write one `award_<key>` function per row, so every call site is a single command.
 
-		Award sites are scattered across gamemode functions where `@s` is often a marker rather than a
-		player, so they need an `execute as <players> run` wrapper. Giving each award its own function keeps
-		that wrapper to one line instead of four, which is what makes inserting it mid-function readable.
-
-		That same property makes these functions the one place every earned event passes through as the
-		player who earned it, which is why `extra_lines` exists: anything wanting to observe awards hands
-		its lines over here instead of editing thirty-odd award sites. This function stays ignorant of what
-		those lines are for, which is what keeps the dependency one-way.
+		Award sites often run as a marker, so the `execute as <players>` wrapper stays a single line at each site.
+		Every earned award runs through these functions as its earner, so code observing awards adds commands through `extra_lines`.
 
 		Args:
-			ns          (str):                Project namespace.
-			version     (str):                Project version.
-			side        (str):                `mp` or `zb`.
-			awards      (dict[str, XpAward]): That side's table.
-			extra_lines (dict[str, str] | None): Award key -> extra commands that row's function carries.
+			side: `mp` or `zb`.
+			awards: That side's table.
+			extra_lines: Award key -> extra commands that row's function carries.
 		"""
 		# xp_session feeds the end-of-match report, so only multiplayer keeps one.
 		targets: list[str] = ["xp_total", "xp_prog"] + (["xp_session"] if side == "mp" else [])
@@ -127,24 +117,18 @@ function {ns}:v{version}/progression/{side}/settle
 	def award_call(ns: str, version: str, side: str, key: str, selector: str = "@s", guard: str = "") -> str:
 		""" Return the single command granting one award to whoever `selector` matches.
 
-		`guard` is folded into the same `execute` as `selector` rather than being wrapped around the call,
-		which is what keeps award sites from generating `execute <guard> run execute as <sel> run ...`.
+		`guard` joins the same `execute` as `selector`, so a site never becomes `execute <guard> run execute as <sel> run ...`.
 
 		Args:
-			ns       (str): Project namespace.
-			version  (str): Project version.
-			side     (str): `mp` or `zb`.
-			key      (str): Row key in that side's table.
-			selector (str): Who earns it; `@s` needs no `as` clause.
-			guard    (str): Extra `execute` subcommands, ex: "if score #hp_red mgs.data matches 1..".
-		Returns:
-			str: One command.
+			side: `mp` or `zb`.
+			key: Row key in that side's table.
+			selector: Who earns it; `@s` needs no `as` clause.
+			guard: Extra `execute` subcommands, ex: "if score #hp_red mgs.data matches 1..".
 
-		Examples:
-			>>> Curve.award_call("mgs", "1.0", "mp", "kill")
-			'function mgs:v1.0/progression/mp/award_kill'
-			>>> Curve.award_call("mgs", "1.0", "mp", "kill", "@a", "if score #x mgs.data matches 1")
-			'execute if score #x mgs.data matches 1 as @a run function mgs:v1.0/progression/mp/award_kill'
+		>>> Curve.award_call("mgs", "1.0", "mp", "kill")
+		'function mgs:v1.0/progression/mp/award_kill'
+		>>> Curve.award_call("mgs", "1.0", "mp", "kill", "@a", "if score #x mgs.data matches 1")
+		'execute if score #x mgs.data matches 1 as @a run function mgs:v1.0/progression/mp/award_kill'
 		"""
 		call: str = f"function {ns}:v{version}/progression/{side}/award_{key}"
 		clauses: str = " ".join(part for part in (guard, "" if selector == "@s" else f"as {selector}") if part)
@@ -155,10 +139,8 @@ function {ns}:v{version}/progression/{side}/settle
 		""" Write every curve function for one side.
 
 		Args:
-			ns      (str): Project namespace.
-			version (str): Project version.
-			side    (str): `mp` or `zb`, naming both the objectives and the function folder.
-			label   (str): Human name for the level-up message, ex: "Multiplayer".
+			side: `mp` or `zb`, naming both the objectives and the function folder.
+			label: Human name for the level-up message, ex: "Multiplayer".
 		"""
 		base: str = f"{ns}:v{version}/progression/{side}"
 
@@ -267,3 +249,4 @@ execute if score @s {ns}.{side}.xp_total >= #xp_need {ns}.data run scoreboard pl
 execute if score @s {ns}.{side}.xp_total < #xp_need {ns}.data run scoreboard players operation #xp_hi {ns}.data = #xp_mid {ns}.data
 function {base}/bisect
 """)
+

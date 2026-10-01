@@ -88,3 +88,4 @@ execute at @e[tag={ns}.snd_carrier_label,limit=1] run function {ns}:v{version}/m
 kill @e[tag={ns}.snd_carrier_label]
 tellraw @a [{MGS_TAG},{{"text":"💣 ","color":"white"}},{{"text":"The bomb carrier is down!","color":"yellow"}}]
 """)
+

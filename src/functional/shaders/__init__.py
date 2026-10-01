@@ -4,9 +4,8 @@ Every effect is a per-player id the datapack applies and removes. The server can
 a shader, so each discrete state gets its own id with its parameters baked into the JSON, and each
 chain times itself from the activation edge (see [common.py](common.py)).
 
-Nothing here overrides a core shader any more, so the pack no longer depends on the particle
-pipeline, on Fabulous graphics, or on the marker-sentinel contract. Iris shaderpacks compose with
-all of it, since post effects run after the level is finished.
+Nothing here overrides a core shader, so the pack depends neither on the particle pipeline nor on
+Fabulous graphics. Iris shaderpacks compose with all of it, since post effects run after the level is finished.
 """
 # Imports
 from beet import FragmentShader

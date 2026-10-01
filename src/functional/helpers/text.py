@@ -14,32 +14,18 @@ class Text:
 	def player(ns: str, selector: str = "@s", side: str = "mp", **style: str) -> str:
 		""" A player's name with their level in front of it, as one grouped component.
 
-		Returned as a bracketed list rather than a bare comma-separated fragment so it can be dropped
-		anywhere a single component is expected. The leading `""` keeps the group from inheriting the
-		first element's styling.
-
-		The `selector` has to resolve to exactly ONE entity, because a score component reads a single
-		score — the same constraint `game/sidebar.py` already relies on for its FFA rank rows. A player
-		whose level score is still unset renders as `[]`, which is why `progression/tick_player`
-		initialises everyone within a second of joining.
+		The leading `""` keeps the group from inheriting the first element's styling.
+		`selector` must match one entity, and an unset level renders as `[]` (`progression/tick_player` sets it).
 
 		Args:
-			ns       (str): Project namespace.
-			selector (str): Single-entity selector, ex: "@s" or "@a[tag=mgs.temp_killer]".
-			side     (str): "mp" or "zb" — which of the two independent levels to show.
-			**style  (str): SNBT attributes applied to the NAME only, ex: color="yellow", bold="true".
-		Returns:
-			str: SNBT list component, ex: `["",{"text":"["...},{"score":...},{"text":"] "...},{"selector":"@s"}]`
+			selector: Single-entity selector, ex: "@s" or "@a[tag=mgs.temp_killer]".
+			side: "mp" or "zb", which of the two independent levels to show.
+			**style: SNBT attributes applied to the NAME only, ex: color="yellow", bold="true".
 
-		Examples:
-			>>> Text.player("mgs", "@s").startswith('["",{"text":"[","color":"dark_gray"}')
-			True
-			>>> '"objective":"mgs.zb.xp_level"' in Text.player("mgs", "@s", side="zb")
-			True
-			>>> '{"selector":"@s","color":"red"}' in Text.player("mgs", "@s", color="red")
-			True
-			>>> '{"selector":"@s","bold":true}' in Text.player("mgs", "@s", bold="true")
-			True
+		>>> Text.player("mgs", "@s").startswith('["",{"text":"[","color":"dark_gray"}')
+		True
+		>>> '{"selector":"@s","bold":true}' in Text.player("mgs", "@s", bold="true")
+		True
 		"""
 		# Booleans stay unquoted, matching styled_text: "bold":"true" is a string, which SNBT rejects.
 		attrs: str = "".join(
@@ -60,8 +46,8 @@ class Text:
 		and emojis are NOT tinted by the style (emojis always render with default color).
 
 		Args:
-			text    (str): The text to display (may contain leading/trailing emoji/symbols).
-			**attrs (str): SNBT attributes like color, bold, italic.
+			text: The text to display (may contain leading/trailing emoji/symbols).
+			**attrs: SNBT attributes like color, bold, italic.
 
 		Returns:
 			str: SNBT text component (single object or list with a neutral head).
@@ -93,8 +79,8 @@ class Text:
 		renders uncolored/unstyled, while the alphanumeric core keeps the given style.
 
 		Args:
-			text    (str): The text to display (may contain leading/trailing emoji/symbols).
-			**style (str | bool): Component attributes like color or bold.
+			text: The text to display (may contain leading/trailing emoji/symbols).
+			**style: Component attributes like color or bold.
 
 		Returns:
 			JsonDict | list: A single styled component, or a list with a neutral head.

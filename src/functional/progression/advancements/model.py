@@ -28,9 +28,8 @@ class StatKind(Enum):
 class Branch:
 	""" One sub-root of the single MGS tab.
 
-	Examples:
-		>>> Branch(key="mi", side="mp", title="Missions", description="", icon="minecraft:compass").side
-		'mp'
+	>>> Branch(key="mi", side="mp", title="Missions", description="", icon="minecraft:compass").side
+	'mp'
 	"""
 	key: str
 	""" Path and objective segment: `mp`, `mi` or `zb`. """
@@ -51,11 +50,10 @@ class Stat:
 	Either an objective this feature owns and feeds, or one the pack already maintains. A borrowed stat
 	is never written here: `owned=False` means no objective is declared and no counter line is emitted.
 
-	Examples:
-		>>> Stat(objective="mgs.zb.xp_level", owned=False).owned
-		False
-		>>> Stat(objective="mgs.adv.zb.kills", kind=StatKind.COUNT_SCORE, sources=("kill",), source="#zb_kills_delta mgs.data").sources
-		('kill',)
+	>>> Stat(objective="mgs.zb.xp_level", owned=False).owned
+	False
+	>>> Stat(objective="mgs.adv.zb.kills", kind=StatKind.COUNT_SCORE, sources=("kill",), source="#zb_kills_delta mgs.data").sources
+	('kill',)
 	"""
 	objective: str
 	""" Full objective name. Owned stats are `mgs.adv.<branch>.<key>`. """
@@ -78,11 +76,10 @@ class Stat:
 		Returns:
 			str: One command, or "" for a borrowed stat.
 
-		Examples:
-			>>> Stat(objective="mgs.adv.zb.revives").line()
-			'scoreboard players add @s mgs.adv.zb.revives 1'
-			>>> Stat(objective="mgs.adv.zb.best_round", kind=StatKind.MAX_SCORE, source="#adv_round mgs.data").line()
-			'scoreboard players operation @s mgs.adv.zb.best_round > #adv_round mgs.data'
+		>>> Stat(objective="mgs.adv.zb.revives").line()
+		'scoreboard players add @s mgs.adv.zb.revives 1'
+		>>> Stat(objective="mgs.adv.zb.best_round", kind=StatKind.MAX_SCORE, source="#adv_round mgs.data").line()
+		'scoreboard players operation @s mgs.adv.zb.best_round > #adv_round mgs.data'
 		"""
 		if not self.owned:
 			return ""
@@ -136,7 +133,7 @@ class Chain:
 		""" Return the icon one row should display.
 
 		Args:
-			index (int): 0-based tier index.
+			index: 0-based tier index.
 		Returns:
 			str: The row's own icon, or the chain's.
 		"""
@@ -149,14 +146,13 @@ class Chain:
 		sentence than "Kill 50,000 zombies" and every chain would otherwise write its own.
 
 		Args:
-			index (int): 0-based tier index.
+			index: 0-based tier index.
 		Returns:
 			str: The row's own description, or the chain's template filled in.
 
-		Examples:
-			>>> chain = Chain(key="k", branch="zb", stat=Stat(objective="o"), icon="i", description="Kill {count} zombies", tiers=(Tier(threshold=50000, xp=1, title="t"),))
-			>>> chain.description_of(0)
-			'Kill 50,000 zombies'
+		>>> chain = Chain(key="k", branch="zb", stat=Stat(objective="o"), icon="i", description="Kill {count} zombies", tiers=(Tier(threshold=50000, xp=1, title="t"),))
+		>>> chain.description_of(0)
+		'Kill 50,000 zombies'
 		"""
 		tier: Tier = self.tiers[index]
 		return tier.description or self.description.format(count=f"{tier.threshold:,}")
@@ -169,14 +165,13 @@ class Chain:
 		accident.
 
 		Args:
-			index (int): 0-based tier index.
+			index: 0-based tier index.
 		Returns:
 			str: `task`, `goal` or `challenge`.
 
-		Examples:
-			>>> chain = Chain(key="k", branch="zb", stat=Stat(objective="o"), icon="i", description="", tiers=tuple(Tier(threshold=n, xp=1, title="t") for n in range(10)))
-			>>> [chain.frame_of(i) for i in (0, 6, 7, 8, 9)]
-			['task', 'task', 'goal', 'goal', 'challenge']
+		>>> chain = Chain(key="k", branch="zb", stat=Stat(objective="o"), icon="i", description="", tiers=tuple(Tier(threshold=n, xp=1, title="t") for n in range(10)))
+		>>> [chain.frame_of(i) for i in (0, 6, 7, 8, 9)]
+		['task', 'task', 'goal', 'goal', 'challenge']
 		"""
 		explicit: str = self.tiers[index].frame
 		if explicit:
@@ -211,3 +206,4 @@ class EventChallenge:
 	""" Event challenges are all `challenge` in the first pass. """
 	hidden: bool = False
 	""" Reserved for later secret entries. """
+

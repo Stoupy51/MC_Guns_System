@@ -33,14 +33,11 @@ An item_display rotates about the model centre, so the translation cancels that 
 def owned_gun_macro_cd(ns: str) -> str:
 	""" Custom-data predicate matching any gun whose base weapon is the macro's $(weapon_id).
 
-	Args:
-		ns (str): The project namespace.
 	Returns:
 		str: The body of a `custom_data~` item predicate, braces included.
 
-	Examples:
-		>>> owned_gun_macro_cd("mgs")
-		'{mgs:{gun:true,stats:{base_weapon:"$(weapon_id)"}}}'
+	>>> owned_gun_macro_cd("mgs")
+	'{mgs:{gun:true,stats:{base_weapon:"$(weapon_id)"}}}'
 	"""
 	return "{" + ns + ':{gun:true,stats:{base_weapon:"$(weapon_id)"}}}'
 

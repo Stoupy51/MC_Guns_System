@@ -34,11 +34,9 @@ class Dialogs:
 		""" Create a clickable button JSON component.
 
 		Args:
-			label     (str): The text to display on the button.
-			command   (str): The command to run when the button is clicked.
-			color     (str): The color of the button text.
-			hover     (str): Optional tooltip text to show when hovering over the button.
-			action    (str): The click event action type (default: "suggest_command").
+			command: The command to run when the button is clicked.
+			hover: Optional tooltip text to show when hovering over the button.
+			action: The click event action type (default: "suggest_command").
 		"""
 		obj: TextComponent = [
 			{"text": "[", "color": color, "click_event": {"action": action, "command": command}},
@@ -99,8 +97,8 @@ class Dialogs:
 		settings. after_action "none" keeps the picker open after a pick (requires pause=false).
 
 		Args:
-			dialog_id   (str): Path within the namespace for this picker.
-			back_dialog (str): Path within the namespace of the dialog the Back button returns to.
+			dialog_id: Path within the namespace for this picker.
+			back_dialog: Path within the namespace of the dialog the Back button returns to.
 		"""
 		actions: list[JsonDict] = [{
 			"label": {"text": o.label, "color": o.color},

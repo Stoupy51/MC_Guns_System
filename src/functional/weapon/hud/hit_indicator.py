@@ -5,9 +5,8 @@ One glyph per sector, drawn white and tinted red by the title's text colour.
 Minecraft does not centre a glyph on its canvas: it centres the *string* on the sum of the glyphs'
 advances, then draws each glyph from that pen position. The advance is measured from content, not
 canvas (BitmapProvider.getActualGlyphWidth scans columns from the right for non-zero alpha), so an
-arc sitting on the left half reports half the advance and renders off-centre — which is why the
-ring used to wander between directions. Every glyph is therefore pinned to the same advance with a
-single alpha=1 pixel in a fixed column.
+arc sitting on the left half reports half the advance and renders off-centre. Every glyph is
+therefore pinned to the same advance with a single alpha=1 pixel in a fixed column.
 """
 # Imports
 import math

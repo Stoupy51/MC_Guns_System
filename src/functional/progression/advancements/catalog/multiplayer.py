@@ -164,3 +164,4 @@ MP_EVENTS: tuple[EventChallenge, ...] = (
 )
 """ Not expressible as a score: `mgs.mp.deaths` is per-match and is zeroed on join and on start, so it
 reads 0 for almost everyone almost always. """
+

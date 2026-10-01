@@ -18,11 +18,10 @@ from dataclasses import dataclass
 class TitleTiming:
 	""" One `title times` triple, in ticks.
 
-	Examples:
-		>>> TitleTimes.HOVER.cmd()
-		'title @s times 0 10 0'
-		>>> TitleTimes.BANNER.cmd("@a[tag=mgs.x]")
-		'title @a[tag=mgs.x] times 10 80 20'
+	>>> TitleTimes.HOVER.cmd()
+	'title @s times 0 10 0'
+	>>> TitleTimes.BANNER.cmd("@a[tag=mgs.x]")
+	'title @a[tag=mgs.x] times 10 80 20'
 	"""
 	fade_in: int
 	stay: int
@@ -33,7 +32,7 @@ class TitleTiming:
 		""" Return the `title ... times` command for this timing.
 
 		Args:
-			selector (str): Who it applies to.
+			selector: Who it applies to.
 		Returns:
 			str: One command.
 		"""
@@ -81,3 +80,4 @@ class TitleTimes:
 	FLASH_WEAK: TitleTiming = TitleTiming(fade_in=2, stay=10, fade_out=10, note=(
 		"A flashbang caught at the edge of its radius, or through a turned head."
 	))
+

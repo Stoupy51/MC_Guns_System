@@ -27,11 +27,10 @@ class BombVisuals:
 		""" Return the three summons making up a planted bomb, at the current position.
 
 		Args:
-			ns         (str): Project namespace.
-			marker_tag (str): Tag of the logical marker every gameplay check selects.
-			vis_tag    (str): Tag of the TNT block_display.
-			hud_tag    (str): Tag of the countdown text_display.
-			label      (str): Text the countdown starts on, before the first per-second rewrite.
+			marker_tag: Tag of the logical marker every gameplay check selects.
+			vis_tag: Tag of the TNT block_display.
+			hud_tag: Tag of the countdown text_display.
+			label: Text the countdown starts on, before the first per-second rewrite.
 		Returns:
 			str: Three summon commands, one per line.
 		"""
@@ -43,18 +42,13 @@ summon minecraft:text_display ~ ~ ~ {{Tags:["{ns}.{hud_tag}","{ns}.gm_entity"],b
 	def announce_site_lines(variant: GameModeVariant, message: str, color: str = "red", xp_key: str = "") -> str:
 		""" Return one `tellraw` per site letter, selected by the `<key>_site_<letter>` tag on `@s`.
 
-		Naming the site is how the defending side knows which one to rotate to, so it is worth a line
-		per letter rather than a generic "the bomb was planted".
-
-		With `xp_key` set, each letter is emitted twice and split on `EARNER_TAG`: whoever the caller tagged
-		before getting here reads the amount they just earned, and everyone else reads the same line without
-		it. That is why plants and defuses add no message of their own — this IS their message.
+		With `xp_key` set, each letter is emitted twice, split on `EARNER_TAG`: the earner the caller tagged reads the amount, everyone else the plain line.
+		Plants and defuses have no other message.
 
 		Args:
-			variant (GameModeVariant): The mode whose site tags are being tested.
-			message (str):             Announce text, with `{{letter}}` where the letter goes.
-			color   (str):             Colour of the announce.
-			xp_key  (str):             Row key in MP_AWARDS whose amount to suffix, or "" for no suffix.
+			variant: The mode whose site tags are being tested.
+			message: Announce text, with `{{letter}}` where the letter goes.
+			xp_key: Row key in MP_AWARDS whose amount to suffix, or "" for no suffix.
 		Returns:
 			str: One or two commands per letter in SITE_LETTERS.
 		"""
@@ -69,3 +63,4 @@ summon minecraft:text_display ~ ~ ~ {{Tags:["{ns}.{hud_tag}","{ns}.gm_entity"],b
 			for letter in SITE_LETTERS
 			for who, suffix in audiences
 		)
+

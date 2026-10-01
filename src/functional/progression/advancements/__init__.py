@@ -39,7 +39,7 @@ class Advancements:
 		which is what keeps the dependency one-way and the progression package free of an import cycle.
 
 		Args:
-			side (str): `mp` or `zb`.
+			side: `mp` or `zb`.
 		Returns:
 			dict[str, str]: Award key -> the counter lines for it, for the awards that feed a chain.
 		"""
@@ -58,10 +58,10 @@ class Advancements:
 		""" Return the single command granting one event challenge.
 
 		Args:
-			branch   (str): Branch key, ex: "mi".
-			key      (str): Challenge key, ex: "flawless".
-			selector (str): Who earns it; `@s` needs no `as` clause.
-			guard    (str): Extra `execute` subcommands folded into the same command.
+			branch: Branch key, ex: "mi".
+			key: Challenge key, ex: "flawless".
+			selector: Who earns it; `@s` needs no `as` clause.
+			guard: Extra `execute` subcommands folded into the same command.
 		Returns:
 			str: One command.
 		"""
@@ -81,7 +81,7 @@ class Advancements:
 		""" Return the line `multiplayer/xp/on_game_end` splices in once it has tagged the winners.
 
 		Args:
-			winner_tag (str): The scratch tag that site puts on whoever took the match.
+			winner_tag: The scratch tag that site puts on whoever took the match.
 		Returns:
 			str: One command.
 		"""
@@ -118,3 +118,4 @@ def generate_advancements() -> None:
 	for event in EVENTS:
 		if not event.site:
 			raise ValueError(f"challenge {event.branch}/{event.key}: no site named, so nothing can ever grant it")
+
