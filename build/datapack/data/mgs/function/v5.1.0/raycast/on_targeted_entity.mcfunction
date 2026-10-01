@@ -21,5 +21,6 @@ scoreboard players remove #hit_particles_left mgs.data 1
 data modify storage mgs:input with set value {target:"@s", amount:0.0f, attacker:"@n[tag=mgs.ticking]"}
 execute if entity @n[tag=mgs.ticking,type=player] run data modify storage mgs:input with.attacker set value "@p[tag=mgs.ticking]"
 execute store result score #damage mgs.data run data get storage mgs:temp damage 10
+execute if score @n[tag=mgs.ticking] mgs.special.double_tap matches 1.. run scoreboard players operation #damage mgs.data *= #2 mgs.data
 function mgs:v5.1.0/raycast/apply_decay
 

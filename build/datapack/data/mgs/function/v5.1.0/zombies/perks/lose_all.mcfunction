@@ -14,7 +14,7 @@ execute if score @s mgs.zb.perk.juggernog matches 1 run attribute @s minecraft:m
 scoreboard players set @s mgs.zb.perk.juggernog 0
 execute if score @s mgs.zb.perk.speed_cola matches 1 run scoreboard players set @s mgs.special.quick_reload 0
 scoreboard players set @s mgs.zb.perk.speed_cola 0
-execute if score @s mgs.zb.perk.double_tap matches 1 run scoreboard players set @s mgs.special.additional_shots 0
+execute if score @s mgs.zb.perk.double_tap matches 1 run scoreboard players set @s mgs.special.double_tap 0
 scoreboard players set @s mgs.zb.perk.double_tap 0
 execute if score @s mgs.zb.perk.quick_revive matches 1 run tag @s remove mgs.perk.quick_revive
 scoreboard players set @s mgs.zb.perk.quick_revive 0
