@@ -25,7 +25,7 @@ def write_editor_tick() -> None:
 		spread = "0.2 0.5 0.2" if einfo.save_type == "spawn" else "0.3 0.5 0.3"
 		count = 2 if etype == "base_coordinates" else 1
 		particle_lines.append(
-			f'execute at @e[tag={ns}.element.{etype}] run particle dust{{color:[{r},{g},{b}],scale:{scale}}} ~ ~1 ~ {spread} 0 {count} normal {editor_viewers}'
+			f'execute at @e[type=minecraft:marker,tag={ns}.element.{etype}] run particle dust{{color:[{r},{g},{b}],scale:{scale}}} ~ ~1 ~ {spread} 0 {count} normal {editor_viewers}'
 		)
 
 	# Markers that already draw a real model don't get the white rotation tick either

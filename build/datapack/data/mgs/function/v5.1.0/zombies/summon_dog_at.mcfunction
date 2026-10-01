@@ -1,7 +1,7 @@
 
 #> mgs:v5.1.0/zombies/summon_dog_at
 #
-# @executed	as @e[tag=mgs.dog_portal] & at @s
+# @executed	at @s
 #
 # @within	mgs:v5.1.0/zombies/dog_portal_strike
 #

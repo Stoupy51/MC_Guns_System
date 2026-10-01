@@ -1,9 +1,9 @@
 
 #> mgs:v5.1.0/projectile/tick
 #
-# @executed	as @e[tag=mgs.slow_bullet] & at @s
+# @executed	at @s
 #
-# @within	mgs:v5.1.0/tick [ as @e[tag=mgs.slow_bullet] & at @s ]
+# @within	mgs:v5.1.0/tick [ at @s ]
 #
 
 # Apply gravity (subtract from Y velocity)

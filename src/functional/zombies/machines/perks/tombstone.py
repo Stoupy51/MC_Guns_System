@@ -170,6 +170,6 @@ $data remove storage {ns}:zombies tombstone_inv."$(id)"
 
 	## Hook: tick active tombstone markers.
 	write_versioned_function("zombies/game_tick", f"""
-execute as @e[tag={ns}.tombstone,scores={{{ns}.zb.ts.state=1}}] at @s run function {ns}:v{version}/zombies/perks/tombstone_marker_tick
+execute as @e[type=minecraft:item_display,tag={ns}.tombstone,scores={{{ns}.zb.ts.state=1}}] at @s run function {ns}:v{version}/zombies/perks/tombstone_marker_tick
 """)
 

@@ -1,7 +1,7 @@
 
 #> mgs:v5.1.0/grenade/follow_entity
 #
-# @executed	as @e[tag=mgs.grenade] & at @s
+# @executed	at @s
 #
 # @within	mgs:v5.1.0/grenade/tick_stuck
 #

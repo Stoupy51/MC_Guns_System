@@ -1,7 +1,7 @@
 
 #> mgs:v5.1.0/projectile/on_collision
 #
-# @executed	as @e[tag=mgs.slow_bullet] & at @s
+# @executed	at @s
 #
 # @within	mgs:v5.1.0/projectile/tick {scale:0.001,with:{blocks:true,entities:true,ignored_blocks:"#mgs:v5.1.0/projectile_pass_through",on_collision:"function mgs:v5.1.0/projectile/on_collision"}}
 #

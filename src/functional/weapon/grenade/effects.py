@@ -61,6 +61,6 @@ execute as @e[scores={{{ns}.stuck_id=1..}}] if score @s {ns}.stuck_id = #my_stuc
 # (e.g. a grenade removed outside grenade/delete, or a double-detonate) used to drop the count to 0
 # and freeze EVERY projectile's ticking ("no more items to tick", monkey bombs included). Selecting
 # by tag each tick is cheap and self-correcting.
-execute as @e[tag={ns}.grenade] at @s run function {ns}:v{version}/grenade/tick
+execute as @e[type=minecraft:item_display,tag={ns}.grenade] at @s run function {ns}:v{version}/grenade/tick
 """)
 

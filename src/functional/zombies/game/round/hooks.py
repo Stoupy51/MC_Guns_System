@@ -19,18 +19,18 @@ function {ns}:v{version}/zombies/watchdog_tick
 # Dog spawn portals: 1.5s of sparks, then the bolt. Gated on the round kind, NOT on
 # #zb_dog_pending — a portal orphaned by a desynced counter would then never tick, never strike and
 # never die, which is the freeze the resync in game_tick pairs with this to rule out.
-execute if score #zb_dog_round {ns}.data matches 1 as @e[tag={ns}.dog_portal] at @s run function {ns}:v{version}/zombies/dog_portal_tick
+execute if score #zb_dog_round {ns}.data matches 1 as @e[type=minecraft:marker,tag={ns}.dog_portal] at @s run function {ns}:v{version}/zombies/dog_portal_tick
 
 # Safety net: a dog that missed its scaling call is a vanilla 8-HP wolf, which reads as a bug
 # (one-punch kills) rather than as a difficulty setting. types/dog is idempotent and tags what it
 # scales, so this costs one tag-filtered scan and normally matches nothing.
-execute if score #zb_dog_round {ns}.data matches 1 as @e[tag={ns}.zb_dog,tag=!{ns}.zb_scaled] run function {ns}:v{version}/zombies/types/dog
+execute if score #zb_dog_round {ns}.data matches 1 as @e[type=minecraft:wolf,tag={ns}.zb_dog,tag=!{ns}.zb_scaled] run function {ns}:v{version}/zombies/types/dog
 
 # Wolves are neutral mobs and hunt nothing without an anger target. Writing `angry_at` alone is
 # enough (the game calls setTarget() from it on reload, then sustains the timer); writing AngerTime
 # does nothing, as the always-saved `anger_end_time` outranks it. The `unless data` guard means a
 # dog already locked on costs a read and no write. #zb_tick_mod is total_tick % 20 from earlier.
-execute if score #zb_dog_round {ns}.data matches 1 if score #zb_tick_mod {ns}.data matches 0 as @e[tag={ns}.zb_dog,tag=!{ns}.zb_rising] at @s unless data entity @s angry_at run data modify entity @s angry_at set from entity @p[scores={{{ns}.zb.in_game=1}},gamemode=!spectator,gamemode=!creative] UUID
+execute if score #zb_dog_round {ns}.data matches 1 if score #zb_tick_mod {ns}.data matches 0 as @e[type=minecraft:wolf,tag={ns}.zb_dog,tag=!{ns}.zb_rising] at @s unless data entity @s angry_at run data modify entity @s angry_at set from entity @p[scores={{{ns}.zb.in_game=1}},gamemode=!spectator,gamemode=!creative] UUID
 
 # Managed horde ambience: each player runs their own cooldown, refreshed by horde_ambient from the
 # zombie count near THEM, so a player being chased hears a near-continuous horde while someone alone

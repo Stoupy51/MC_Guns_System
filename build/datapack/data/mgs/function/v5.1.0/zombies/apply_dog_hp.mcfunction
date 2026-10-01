@@ -1,7 +1,7 @@
 
 #> mgs:v5.1.0/zombies/apply_dog_hp
 #
-# @executed	as @e[tag=...]
+# @executed	as @e[type=minecraft:wolf,tag=...]
 #
 # @within	mgs:v5.1.0/zombies/types/dog with storage mgs:temp _zb_hp
 #
