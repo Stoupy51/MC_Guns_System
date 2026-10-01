@@ -5,7 +5,7 @@ version = "0.0.1"
 requires-python = ">=3.14"
 dependencies = [
 	"smithed",
-	"stewbeet>=3.9.0",
+	"stewbeet>=3.9.4",
 ]
 
 # This project is a datapack, not a Python package: uv only has to manage its dependencies.
@@ -60,6 +60,15 @@ select = [
     "C4",
     "T20",
     "RUF",
+    "RET",
+    "SIM",
+    "PIE",
+    "PERF401",
+    "PGH003",
+    "FBT003",
+    "TRY203",
+    "S110",
+    "PLR5501",
 ]
 ignore = [
     "T201",
