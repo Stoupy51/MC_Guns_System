@@ -169,9 +169,6 @@ $data modify storage {ns}:temp _pap_extract.lore[$(index)].extra append value {{
 	write_versioned_function("zombies/pap/annotate_append_dec", f"""
 $data modify storage {ns}:temp _pap_extract.lore[$(index)].extra append value {{"text":" > $(whole).$(dec)$(suffix)","color":"aqua","italic":false}}
 """)
-	write_versioned_function("zombies/pap/set_item_name", """
-$item modify entity @s $(slot) {"type":"minecraft:set_components","components":{"minecraft:item_name":{"text":"$(name)","color":"gold","italic":false}}}
-""")
 
 	write_versioned_function("zombies/pap/set_item_lore", """
 $item modify entity @s $(slot) {"type":"minecraft:set_components","components":{"minecraft:lore":$(lore)}}

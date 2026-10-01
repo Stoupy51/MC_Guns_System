@@ -53,13 +53,3 @@ data modify storage {ns}:temp refill.mag_model set from entity @s item.component
 kill @s
 """)
 
-	# Refill all magazine items in inventory that match the PAP'd weapon's base_weapon.
-	mag_refill_lines: list[str] = [f"# Refill matching {BASE_WEAPON} magazines — called with storage mgs:temp _pap_extract.stats"]
-	for slot in ItemBuilder.ALL_SLOTS:
-		if slot == "weapon.mainhand":
-			continue
-		mag_refill_lines.append(
-			f'$execute if items entity @s {slot} *[custom_data~{{{ns}:{{magazine:true,weapon:"$({BASE_WEAPON})"}}}}] run function {ns}:v{version}/zombies/bonus/refill_magazine {{slot:"{slot}"}}'
-		)
-	write_versioned_function("zombies/pap/refill_matching_magazines", "\n".join(mag_refill_lines))
-

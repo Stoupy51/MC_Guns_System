@@ -147,11 +147,6 @@ execute if data storage {ns}:zombies game{{variant:"zonweeb"}} run tellraw @a ["
 execute unless data storage {ns}:zombies game{{variant:"zonweeb"}} run tellraw @a ["",{{"text":"","color":"dark_green","bold":true}},"🧟 ",{{"text":"Preparing! Round 1 starts in 10 seconds!","color":"yellow"}}]
 """)
 
-	## Prep Tick (no class to detect, just wait)
-	write_versioned_function("zombies/prep_tick", """
-# Nothing to process during prep (perk selection is instant via chat click)
-""")
-
 	## End Prep → Start Round 1
 	write_versioned_function("zombies/end_prep", f"""
 {GameLifecycle.end_prep_transition_lines(ns, "zombies", "zb")}

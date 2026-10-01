@@ -2,7 +2,6 @@
 # Imports
 from stewbeet import Mem, write_versioned_function
 
-from ....helpers.content import SharedContent
 from ...common import ZombiesCommon
 from .shared import SlotPredicates, slot_predicates
 
@@ -15,8 +14,6 @@ def write_inventory_hooks() -> None:
 	gun_cd: str = ZombiesCommon.gun_cd(ns)
 	mag_cd = "{" + ns + ":{magazine:true}}"
 	slots: SlotPredicates = slot_predicates(ns)
-	# Zombies keeps vanilla reach: its knife is the fallback weapon once ammo runs out
-	knife_item = SharedContent.knife_item_snbt(ns)
 
 	write_versioned_function("zombies/inventory/on_change", f"""
 advancement revoke @s only {ns}:v{version}/zombies/inventory_changed
@@ -83,14 +80,4 @@ scoreboard players set #zb_drop_kill {ns}.data 0
 execute on origin if score @s {ns}.zb.in_game matches 1 run scoreboard players set #zb_drop_kill {ns}.data 1
 execute if score #zb_drop_kill {ns}.data matches 1 run kill @s
 """, tags=["common_signals:signals/on_new_item"])
-
-	write_versioned_function("zombies/inventory/recreate_critical_items", f"""
-execute unless items entity @s hotbar.0 *[custom_data~{slots.knife}] run item replace entity @s hotbar.0 with {knife_item}
-execute unless items entity @s hotbar.0 *[custom_data~{slots.knife}] run function {ns}:v{version}/zombies/inventory/apply_slot_tag {{slot:"hotbar.0",group:"hotbar",index:0}}
-
-execute unless items entity @s hotbar.7 *[custom_data~{slots.equipment_1}] run function {ns}:v{version}/zombies/inventory/loot_replace_lethal
-execute unless items entity @s hotbar.7 *[custom_data~{slots.equipment_1}] run function {ns}:v{version}/zombies/inventory/apply_slot_tag {{slot:"hotbar.7",group:"hotbar",index:7}}
-
-execute unless items entity @s hotbar.8 *[custom_data~{slots.info}] run function {ns}:v{version}/zombies/inventory/refresh_info_item
-""")
 

@@ -1,12 +1,6 @@
-""" The per-kill drop roll, the loot table behind it and the shuffle bag that picks a type. """
+""" The per-kill drop roll and the shuffle bag that picks a type. """
 # Imports
-from stewbeet import (
-	LootTable,
-	Mem,
-	set_json_encoder,
-	write_load_file,
-	write_versioned_function,
-)
+from stewbeet import Mem, write_load_file, write_versioned_function
 
 from ....helpers.probes import Probe
 from .types import POWERUP_TYPES
@@ -25,27 +19,6 @@ scoreboard objectives add {ns}.zb.pu.timer dummy
 # Per-zombie: tick of the last time a player's weapon hit it (gates drops to player kills)
 scoreboard objectives add {ns}.zb.player_hit dummy
 """)
-
-	# Loot table: equal-weight pool, each entry tags the item type
-	Mem.ctx.data[ns].loot_tables["zombies/powerup_drop"] = set_json_encoder(LootTable({
-		"pools": [{
-			"rolls": 1,
-			"entries": [
-				{
-					"type": "minecraft:item",
-					"name": v.item,
-					"weight": 1,
-					"modifier": [{
-						"type": "minecraft:set_components",
-						"components": {
-							"minecraft:custom_data": {ns: {"powerup": {"type": pu_id}}},
-						},
-					}],
-				}
-				for pu_id, v in POWERUP_TYPES.items()
-			],
-		}],
-	}))
 
 	# Drop check — called from on_zombie_dying after position is stored
 	write_versioned_function("zombies/powerups/check_drop", f"""

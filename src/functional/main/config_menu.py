@@ -117,6 +117,5 @@ def write_config_menu() -> None:
 		"exit_action": {"label": {"translate": "gui.done"}},
 	})
 
-	# /function mgs:config now opens the (inline) dialog
-	write_function(f"{ns}:config", f"function {Dialogs.dialog_function('config')}")
+	write_function(f"{ns}:config", f"dialog show @s {Dialogs.dialog_ref('config')}")
 

@@ -5,7 +5,6 @@
 #
 # @within	mgs:v5.1.0/zombies/game_tick [ as @a[scores={mgs.zb.in_game=1},gamemode=!spectator] ]
 #			mgs:v5.1.0/zombies/inventory/give_starting_loadout
-#			mgs:v5.1.0/zombies/inventory/recreate_critical_items
 #
 
 # Resolve scoreboard values into storage so lore lines render concrete numbers.
