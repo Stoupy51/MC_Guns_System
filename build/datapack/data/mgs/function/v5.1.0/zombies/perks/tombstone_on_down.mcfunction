@@ -21,7 +21,6 @@ scoreboard players operation @s mgs.zb.tsp.phd_flopper = @s mgs.zb.perk.phd_flop
 scoreboard players operation @s mgs.zb.tsp.deadshot = @s mgs.zb.perk.deadshot
 scoreboard players operation @s mgs.zb.tsp.timeslip = @s mgs.zb.perk.timeslip
 scoreboard players operation @s mgs.zb.tsp.electric_cherry = @s mgs.zb.perk.electric_cherry
-scoreboard players operation @s mgs.zb.tsp.tombstone = @s mgs.zb.perk.tombstone
 scoreboard players operation @s mgs.zb.tsp.whos_who = @s mgs.zb.perk.whos_who
 scoreboard players operation @s mgs.zb.tsp.dying_wish = @s mgs.zb.perk.dying_wish
 scoreboard players operation @s mgs.zb.tsp.widows_wine = @s mgs.zb.perk.widows_wine

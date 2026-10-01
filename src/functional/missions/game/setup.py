@@ -11,8 +11,6 @@ def write_missions_setup() -> None:
 	write_load_file(f"""
 ## Missions scoreboards
 scoreboard objectives add {ns}.mi.in_game dummy
-scoreboard objectives add {ns}.mi.timer dummy
-scoreboard objectives add {ns}.mi.total_enemies dummy
 scoreboard objectives add {ns}.mi.kills dummy
 scoreboard objectives add {ns}.mi.deaths dummy
 scoreboard objectives add {ns}.mi.kill_total totalKillCount

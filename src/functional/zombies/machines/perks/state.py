@@ -2,7 +2,7 @@
 # Imports
 from stewbeet import Mem, write_load_file
 
-from .definitions import PERK_DEFINITIONS
+from .definitions import TOMBSTONE_PERKS
 
 
 # Functions
@@ -26,6 +26,6 @@ scoreboard objectives add {ns}.zb.dw_timer dummy
 scoreboard objectives add {ns}.zb.ts.state dummy
 scoreboard objectives add {ns}.zb.ts.timer dummy
 # Tombstone: per-perk snapshot of what the owner had when they went down (restored on recovery)
-{chr(10).join(f"scoreboard objectives add {ns}.zb.tsp.{pid} dummy" for pid in PERK_DEFINITIONS)}
+{chr(10).join(f"scoreboard objectives add {ns}.zb.tsp.{pid} dummy" for pid in TOMBSTONE_PERKS)}
 """)
 

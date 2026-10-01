@@ -54,7 +54,6 @@ scoreboard players set @s mgs.zb.tsp.phd_flopper 0
 scoreboard players set @s mgs.zb.tsp.deadshot 0
 scoreboard players set @s mgs.zb.tsp.timeslip 0
 scoreboard players set @s mgs.zb.tsp.electric_cherry 0
-scoreboard players set @s mgs.zb.tsp.tombstone 0
 scoreboard players set @s mgs.zb.tsp.whos_who 0
 scoreboard players set @s mgs.zb.tsp.dying_wish 0
 scoreboard players set @s mgs.zb.tsp.widows_wine 0

@@ -169,7 +169,6 @@ execute if score @s mgs.mp.edit_target matches ..0 run data modify storage mgs:m
 execute if score @s mgs.mp.edit_target matches 1.. run function mgs:v5.1.0/multiplayer/editor/save_replace
 
 # Reset editor state
-scoreboard players set @s mgs.mp.edit_step 0
 scoreboard players set @s mgs.mp.edit_target 0
 
 # Notify player and show the updated loadout list

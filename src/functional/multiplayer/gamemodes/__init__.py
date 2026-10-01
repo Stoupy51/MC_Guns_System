@@ -20,7 +20,6 @@ def generate_gamemodes() -> None:
 # Gamemode scoreboards
 scoreboard objectives add {ns}.mp.dom_progress dummy
 scoreboard objectives add {ns}.mp.dom_owner dummy
-scoreboard objectives add {ns}.mp.gm_timer dummy
 scoreboard objectives add {ns}.demo_state dummy
 scoreboard objectives add {ns}.demo_prog dummy
 scoreboard objectives add {ns}.demo_fuse dummy

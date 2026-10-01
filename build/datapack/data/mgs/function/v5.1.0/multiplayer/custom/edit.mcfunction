@@ -11,7 +11,6 @@ scoreboard players operation #loadout_id mgs.data = @s mgs.player.config
 scoreboard players remove #loadout_id mgs.data 70000
 
 # Mark the editor active and targeting this loadout
-scoreboard players set @s mgs.mp.edit_step 1
 scoreboard players operation @s mgs.mp.edit_target = #loadout_id mgs.data
 
 # Start from an empty state, then overwrite it with the loadout's saved editor_state (if any)

@@ -24,12 +24,9 @@ execute store result score #cooldown mgs.data run data get storage mgs:gun all.s
 # Apply quick swap: reduce cooldown by quick_swap% (e.g. 20 = 20% faster)
 execute if score @s mgs.special.quick_swap matches 1.. run function mgs:v5.1.0/switch/apply_quick_swap
 
-# Convert to expiration tick and set as both cooldown and switch_cooldown
+# Convert to expiration tick
 scoreboard players operation #cooldown mgs.data += #total_tick mgs.data
 scoreboard players operation @s mgs.cooldown = #cooldown mgs.data
-
-# Mirror into switch_cooldown (used by shader zoom guard, unaffected by shooting)
-scoreboard players operation @s mgs.switch_cooldown = #cooldown mgs.data
 
 # Force weapon switch animation
 function mgs:v5.1.0/switch/force_switch_animation

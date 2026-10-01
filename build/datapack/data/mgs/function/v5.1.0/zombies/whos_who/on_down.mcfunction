@@ -19,7 +19,6 @@ scoreboard players operation @s mgs.zb.wwp.deadshot = @s mgs.zb.perk.deadshot
 scoreboard players operation @s mgs.zb.wwp.timeslip = @s mgs.zb.perk.timeslip
 scoreboard players operation @s mgs.zb.wwp.electric_cherry = @s mgs.zb.perk.electric_cherry
 scoreboard players operation @s mgs.zb.wwp.tombstone = @s mgs.zb.perk.tombstone
-scoreboard players operation @s mgs.zb.wwp.whos_who = @s mgs.zb.perk.whos_who
 scoreboard players operation @s mgs.zb.wwp.dying_wish = @s mgs.zb.perk.dying_wish
 scoreboard players operation @s mgs.zb.wwp.widows_wine = @s mgs.zb.perk.widows_wine
 

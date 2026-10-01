@@ -81,7 +81,6 @@ scoreboard players operation #loadout_id {ns}.data = @s {ns}.player.config
 scoreboard players remove #loadout_id {ns}.data {TRIG_EDIT_BASE}
 
 # Mark the editor active and targeting this loadout
-scoreboard players set @s {ns}.mp.edit_step 1
 scoreboard players operation @s {ns}.mp.edit_target = #loadout_id {ns}.data
 
 # Start from an empty state, then overwrite it with the loadout's saved editor_state (if any)
