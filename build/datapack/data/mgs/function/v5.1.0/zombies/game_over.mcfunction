@@ -19,7 +19,7 @@ execute store result score #final_round mgs.data run data get storage mgs:zombie
 function mgs:v5.1.0/zombies/xp/on_game_over
 
 # The Final Round line is split because only the roster earned the bonus.
-tellraw @a ["","\n",[{"text":"═══════ ","color":"dark_red","bold":true}, {"translate":"mgs.game_over_2"}, " ═══════"]]
+tellraw @a ["","\n",{"translate":"mgs.game_over_2","color":"dark_red","bold":true}]
 tellraw @a[scores={mgs.zb.in_game=1}] ["","  ","🧟 ",{"translate":"mgs.final_round","color":"gray"},{"score":{"name":"#final_round","objective":"mgs.data"},"color":"red","bold":true},[" ",{"text":"+","color":"gold"},{"score":{"name":"#xp_gain","objective":"mgs.data"},"color":"gold"},{"text":" XP","color":"gold"}]]
 tellraw @a[scores={mgs.zb.in_game=0}] ["","  ","🧟 ",{"translate":"mgs.final_round","color":"gray"},{"score":{"name":"#final_round","objective":"mgs.data"},"color":"red","bold":true}]
 
@@ -28,7 +28,7 @@ tag @a[scores={mgs.zb.in_game=1}] add mgs.stat_cand
 function mgs:v5.1.0/zombies/announce_stats_iter
 tag @a remove mgs.stat_cand
 
-tellraw @a ["",{"text":"═════════════════════════","color":"dark_red","bold":true},"\n"]
+tellraw @a ""
 
 function #mgs:zombies/on_game_end
 

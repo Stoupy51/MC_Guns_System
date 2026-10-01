@@ -41,8 +41,8 @@ execute if data storage {ns}:multiplayer game{{state:"lobby"}} run return fail
 execute if data storage {ns}:multiplayer game{{state:"ended"}} run return fail
 
 # The decider is announced as such but plays like any round.
-tellraw @a [{MGS_TAG},{{"text":"────── Round ","color":"gold"}},{{"score":{{"name":"#demo_round","objective":"{ns}.data"}},"color":"yellow"}},{{"text":" ──────","color":"gold"}}]
-execute if score #demo_round {ns}.data matches {TIEBREAK_ROUND}.. run tellraw @a [{MGS_TAG},{{"text":"⚡ ","color":"white"}},{{"text":"TIE-BREAK ROUND — most kills defends!","color":"gold","bold":true}}]
+tellraw @a [{MGS_TAG},{{"text":"Round ","color":"gold"}},{{"score":{{"name":"#demo_round","objective":"{ns}.data"}},"color":"yellow"}}]
+execute if score #demo_round {ns}.data matches {TIEBREAK_ROUND}.. run tellraw @a [{MGS_TAG},{{"text":"⚡ ","color":"white"}},{{"text":"TIE-BREAK ROUND: most kills defends!","color":"gold","bold":true}}]
 execute if score #demo_attackers {ns}.data matches 1 run tellraw @a [{MGS_TAG},{{"text":"Red","color":"red"}},{{"text":" attacks both sites | "}},{{"text":"Blue","color":"blue"}},{{"text":" defends"}}]
 execute if score #demo_attackers {ns}.data matches 2 run tellraw @a [{MGS_TAG},{{"text":"Blue","color":"blue"}},{{"text":" attacks both sites | "}},{{"text":"Red","color":"red"}},{{"text":" defends"}}]
 playsound minecraft:block.note_block.harp player @a ~ ~ ~ 1 1.0

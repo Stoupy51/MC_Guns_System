@@ -46,7 +46,7 @@ execute if score #zb_dog_round mgs.data matches 0 run tellraw @a ["",{"text":"",
 execute if score #zb_dog_round mgs.data matches 0 as @a[scores={mgs.zb.in_game=1}] at @s run playsound mgs:zombies/round_start_generic ambient @s ~ ~ ~ 0.3 1.0
 
 # Dog rounds have their own announcement and howl instead of the round jingle.
-execute if score #zb_dog_round mgs.data matches 1 run tellraw @a ["",{"text":"","color":"dark_red","bold":true},"🐺 ",{"translate":"mgs.round_2","color":"dark_red"},{"score":{"name":"#zb_round","objective":"mgs.data"},"color":"gold","bold":true},[{"text":" — ","color":"dark_red"}, {"translate":"mgs.the_hounds_are_loose"}]]
+execute if score #zb_dog_round mgs.data matches 1 run tellraw @a ["",{"text":"","color":"dark_red","bold":true},"🐺 ",{"translate":"mgs.round_2","color":"dark_red"},{"score":{"name":"#zb_round","objective":"mgs.data"},"color":"gold","bold":true},[{"text":": ","color":"dark_red"}, {"translate":"mgs.the_hounds_are_loose"}]]
 execute if score #zb_dog_round mgs.data matches 1 as @a[scores={mgs.zb.in_game=1}] at @s run playsound minecraft:entity.wolf.howl ambient @s ~ ~ ~ 1.0 0.6
 
 # +2, capped at 4.

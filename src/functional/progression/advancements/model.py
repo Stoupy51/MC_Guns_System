@@ -1,12 +1,11 @@
 """ What a challenge is, as data.
 
-Five dataclasses and one enum. The generator reads nothing else: the tree, the criteria, the reward
-functions, the counter lines and the objective declarations are all derived from a `Chain` or an
-`EventChallenge`.
+Five dataclasses and one enum.
+The generator reads nothing else: the tree, the criteria, the reward functions, the counter lines and the objective declarations are all derived from a `Chain` or an `EventChallenge`.
 
-A `Branch` carries both a `key` and a `side` because the tree and the XP system disagree on how many
-things there are. The screen wants three branches; progression has two pools. Missions is the one where
-they differ, and it pays into `mp`.
+A `Branch` carries both a `key` and a `side` because the tree and the XP system disagree on how many things there are.
+The screen wants three branches; progression has two pools.
+Missions is the one where they differ, and it pays into `mp`.
 """
 # Imports
 from dataclasses import dataclass
@@ -160,9 +159,8 @@ class Chain:
 	def frame_of(self, index: int) -> str:
 		""" Return the frame one row should display.
 
-		Vanilla's own visual grammar: most of a chain is plain tasks, it tightens into two goals, and the
-		last node is a challenge. Derived rather than written out, so a chain cannot end on a task by
-		accident.
+		Vanilla's own visual grammar: most of a chain is plain tasks, it tightens into two goals, and the last node is a challenge.
+		Derived rather than written out, so a chain cannot end on a task by accident.
 
 		Args:
 			index: 0-based tier index.

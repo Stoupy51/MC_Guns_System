@@ -94,15 +94,15 @@ scoreboard players operation #mi_rem_sec {ns}.data %= #60 {ns}.data
 title @a[scores={{{ns}.mi.in_game=1}}] title {{"text":"MISSION COMPLETE","color":"gold","bold":true}}
 title @a[scores={{{ns}.mi.in_game=1}}] subtitle {{"text":"All enemies eliminated!","color":"green"}}
 
-tellraw @a ["","\\n",{{"text":"═══════ MISSION COMPLETE ═══════","color":"gold","bold":true}}]
+tellraw @a ["","\\n",{{"text":"MISSION COMPLETE","color":"gold","bold":true}}]
 tellraw @a ["","  ","⏱ ",{{"text":"Time: ","color":"gray"}},{{"score":{{"name":"#mi_minutes","objective":"{ns}.data"}},"color":"yellow"}},"m ",{{"score":{{"name":"#mi_rem_sec","objective":"{ns}.data"}},"color":"yellow"}},"s"]
 tellraw @a ["","  ","💀 ",{{"text":"Enemies killed: ","color":"gray"}},{{"score":{{"name":"#mi_total_enemies","objective":"{ns}.data"}},"color":"red"}}]
 
 # Each line carries the completion XP.
-execute as @a[scores={{{ns}.mi.in_game=1}}] run tellraw @a ["","  ","🎖 ",{Text.player(ns, "@s", color="yellow")}," — Kills: ",{{"score":{{"name":"@s","objective":"{ns}.mi.kills"}},"color":"green"}}," | Deaths: ",{{"score":{{"name":"@s","objective":"{ns}.mi.deaths"}},"color":"red"}},{MissionsXp.victory_suffix()}]
+execute as @a[scores={{{ns}.mi.in_game=1}}] run tellraw @a ["","  ","🎖 ",{Text.player(ns, "@s", color="yellow")}," | Kills: ",{{"score":{{"name":"@s","objective":"{ns}.mi.kills"}},"color":"green"}}," | Deaths: ",{{"score":{{"name":"@s","objective":"{ns}.mi.deaths"}},"color":"red"}},{MissionsXp.victory_suffix()}]
 {MissionsXp.victory_lines()}
 
-tellraw @a ["",{{"text":"═══════════════════════════════","color":"gold","bold":true}},"\\n"]
+tellraw @a ""
 
 function {ns}:v{version}/missions/stop
 """)

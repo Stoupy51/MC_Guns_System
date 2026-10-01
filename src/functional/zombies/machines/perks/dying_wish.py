@@ -49,7 +49,7 @@ attribute @s minecraft:attack_damage modifier add {ns}:dying_wish 200 add_value
 
 {TitleTimes.EVENT.cmd()}
 title @s title ["⚔"]
-title @s subtitle [{{"text":"DYING WISH — Berserk!","color":"dark_red"}}]
+title @s subtitle [{{"text":"DYING WISH: Berserk!","color":"dark_red"}}]
 particle minecraft:totem_of_undying ~ ~1 ~ 0.5 1 0.5 0.3 80 force @a[distance=..32]
 playsound minecraft:item.totem.use player @a[distance=..32] ~ ~ ~ 1 0.8
 tellraw @a[scores={{{ns}.zb.in_game=1}}] [{MGS_TAG},{Text.player(ns, "@s", side="zb", color="blue")},{{"text":" refuses to die!","color":"gray"}}]

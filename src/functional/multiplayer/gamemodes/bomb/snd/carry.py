@@ -52,7 +52,7 @@ summon minecraft:text_display ~ ~ ~ {{Tags:["{ns}.snd_loose","{ns}.gm_entity"],b
 		variant.sub("recover_bomb", f"""
 execute at @e[tag={ns}.snd_carrier_label,limit=1] run function {ns}:v{version}/multiplayer/gamemodes/snd/spawn_loose_bomb
 kill @e[tag={ns}.snd_carrier_label]
-tellraw @a [{MGS_TAG},{{"text":"💣 ","color":"white"}},{{"text":"The bomb carrier left the game — bomb dropped!","color":"yellow"}}]
+tellraw @a [{MGS_TAG},{{"text":"💣 ","color":"white"}},{{"text":"The bomb carrier left the game: bomb dropped!","color":"yellow"}}]
 """)
 
 		## Run as a living player standing on the loose bomb.

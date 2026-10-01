@@ -44,7 +44,7 @@ kill @e[tag={ns}.dog_portal]
 # So recovery cannot race a schedule landing a tick later.
 schedule clear {ns}:v{version}/zombies/start_round
 
-tellraw @a [{MGS_TAG},{{"text":"Round was frozen — recovering.","color":"yellow"}}]
+tellraw @a [{MGS_TAG},{{"text":"Round was frozen, recovering.","color":"yellow"}}]
 
 # round_complete ran (it parks #zb_to_spawn at -1) but start_round never landed.
 execute if score #zb_to_spawn {ns}.data matches ..-1 run return run function {ns}:v{version}/zombies/start_round
