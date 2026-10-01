@@ -45,15 +45,15 @@ Totals if every lot lands as estimated: resource pack about -2.82 M lines (model
 | # | Answer |
 |---|---|
 | D1 | Accepted. |
-| D2 | Wire the unwired features, after the author reviews the per-function list. |
-| D3 | Juggernaut works (`multiplayer/apply_perks` sets max health to 24; the score is only a flag). Double Tap: no read of `mgs.special.additional_shots` and no damage multiplier found in the build; waiting for the author. |
+| D2 | Wire `zombies/on_round_start` into `#mgs:zombies/on_round_start` and `default_maps` into load (content commits); keep and document `recompute_all`; delete `register_map` and the runtime lore pipeline. |
+| D3 | Juggernaut works (`multiplayer/apply_perks` sets max health to 24; the score is only a flag). Double Tap does nothing today: fix it as a **content** lot, doubling bullet damage (not firing a second bullet, which would farm points). |
 | D4 | Accepted. |
 | D5 | Accepted. The ammo actionbar keeps its special characters. |
-| D6 | Only `set_items_storage` goes; headers, source maps and the creative loot table stay. StewBeet has no option for it yet. |
+| D6 | Only `set_items_storage` goes, both ways: a StewBeet PR adding an option, and a local removal in `src/link.py` until it ships. Plus a StewBeet issue: `auto.headers` writes `@within ???` for 34 functions called through macros, data, enchantments or by hand. |
 | D7 | Ignore E501. |
 | D8 | Accepted. |
 | D9 | Accepted: draft PR after lot 1. |
-| D10 | The author is looking for the environment setting. |
+| D10 | Network opened: Mojang, Modrinth, Smithed and Adoptium answer 200. Lot 1 adds a real-server load. |
 
 ## Lots
 
