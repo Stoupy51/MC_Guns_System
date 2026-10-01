@@ -8,21 +8,19 @@ def write_enemy_types() -> None:
 	ns: str = Mem.ctx.project_id
 	version: str = Mem.ctx.project_version
 
-	# Enemy types; each type function receives {level:"1"|"2"|"3"|"4"} as its macro argument.
-	# All types call the shared scale logic; stubs fall through to normal scaling.
+	# Each enemy type takes {level:"1".."4"}; stubs fall through to the normal scaling.
 
-	## Normal zombie: scale health/speed by level + start rise animation
+	## Normal zombie: scale health and speed, then start the rise.
 	write_versioned_function("zombies/types/normal", f"""
-# Add scaled tag, and few data
 tag @s add {ns}.zb_scaled
 data modify entity @s DeathTime set value -16s
 
-# Compute round-scaled HP (BO1 curve: +100 BO-HP per round until R9, then x1.1 per round) and apply it to this zombie
+# BO1 curve: +100 BO HP per round until round 9, then x1.1 per round.
 function {ns}:v{version}/zombies/calc_zombie_hp
 execute store result storage {ns}:temp _zb_hp.val int 1 run scoreboard players get #zb_hp {ns}.data
 function {ns}:v{version}/zombies/apply_zombie_hp with storage {ns}:temp _zb_hp
 
-# Explicit speed per round, capped at 0.32 from round 36+
+# Capped at 0.32 from round 36.
 execute if score #zb_round {ns}.data matches 1 run attribute @s minecraft:movement_speed base set 0.20
 execute if score #zb_round {ns}.data matches 2 run attribute @s minecraft:movement_speed base set 0.21
 execute if score #zb_round {ns}.data matches 3 run attribute @s minecraft:movement_speed base set 0.22
@@ -37,113 +35,96 @@ execute if score #zb_round {ns}.data matches 11..29 run attribute @s minecraft:m
 execute if score #zb_round {ns}.data matches 30..35 run attribute @s minecraft:movement_speed base set 0.31
 execute if score #zb_round {ns}.data matches 36.. run attribute @s minecraft:movement_speed base set 0.32
 
-# Gait picks the vocal set (enemies/vocals.py): 0.29+ is the Black Ops 2 sprint gait, which screams
-# (3-5s clips) instead of groaning. Rounds 1-9 walk or run and stay on the short groan set.
+# Speed 0.29+ is the BO2 sprint gait, which screams (3-5 s clips) instead of groaning (see vocals).
 execute if score #zb_round {ns}.data matches 10.. run tag @s add {ns}.zb_sprint
 
-# For round 15+, 10% walkers (0.20 speed)
+# From round 15, 10% are walkers (0.20).
 execute if score #zb_round {ns}.data matches 15.. store result score #zb_speed_roll {ns}.data run random value 1..10
 execute if score #zb_round {ns}.data matches 15.. if score #zb_speed_roll {ns}.data matches 1 run attribute @s minecraft:movement_speed base set 0.20
 execute if score #zb_round {ns}.data matches 15.. if score #zb_speed_roll {ns}.data matches 1 run tag @s remove {ns}.zb_sprint
 
-# Fixed melee damage: 15.0 HP = 7.5 hearts and no knockback
+# 7.5 hearts, no knockback.
 attribute @s minecraft:attack_damage base set 15.0
 attribute @s minecraft:knockback_resistance base set 1024
 
-# Start rise animation (20 ticks to rise 2 blocks)
+# 20 ticks to rise 2 blocks.
 scoreboard players set @s {ns}.zb.rise_tick 20
 """)
 
-	## Compute zombie HP for current round, using the classic Treyarch (BO1) two-phase curve:
-	## Rounds 1-9:  bo_hp = 50 + 100 * round        (R1=150, R2=250, ..., R9=950)
-	## Round 10+:   bo_hp = 950 * 1.1^(round - 9)   (R10=1045, R11=1150, ...)
-	## BO HP is then converted to Minecraft scale with a 2/15 factor (BO 150 HP = MC 20 HP, vanilla zombie)
+	## Treyarch BO1 HP curve: 50 + 100 x round up to round 9 (150 to 950), then 950 x 1.1^(round - 9),
+	## converted with 2/15 (BO 150 HP = 20 HP, a vanilla zombie).
 	write_versioned_function("zombies/calc_zombie_hp", f"""
-# Rounds 1-9: bo_hp = 50 + 100 * round
 execute if score #zb_round {ns}.data matches ..9 run scoreboard players operation #zb_hp {ns}.data = #zb_round {ns}.data
 execute if score #zb_round {ns}.data matches ..9 run scoreboard players operation #zb_hp {ns}.data *= #100 {ns}.data
 execute if score #zb_round {ns}.data matches ..9 run scoreboard players add #zb_hp {ns}.data 50
 
-# Round 10+: exponent = round - 9
 execute if score #zb_round {ns}.data matches 10.. run scoreboard players operation #zb_exp_round {ns}.data = #zb_round {ns}.data
 execute if score #zb_round {ns}.data matches 10.. run scoreboard players remove #zb_exp_round {ns}.data 9
 
-# Round 10+: bo_hp = 950 * 1.1^(round - 9)
 execute if score #zb_round {ns}.data matches 10.. run data modify storage bs:in math.pow.x set value 1.1f
 execute if score #zb_round {ns}.data matches 10.. store result storage bs:in math.pow.y float 1 run scoreboard players get #zb_exp_round {ns}.data
 execute if score #zb_round {ns}.data matches 10.. run function #bs.math:pow
 execute if score #zb_round {ns}.data matches 10.. store result score #zb_hp {ns}.data run data get storage bs:out math.pow 950
 
-# Convert BO HP to Minecraft scale: hp = bo_hp * 2 / 15 (R1: 150 -> 20 HP)
 scoreboard players operation #zb_hp {ns}.data *= #2 {ns}.data
 scoreboard players operation #zb_hp {ns}.data /= #15 {ns}.data
 
-# Cap at Minecraft-safe gameplay max (also catches int overflow on very high rounds)
+# Also catches int overflow on very high rounds.
 execute unless score #zb_hp {ns}.data matches 15..2048 run scoreboard players set #zb_hp {ns}.data 2048
 """)
 
-	## Apply computed HP to the current zombie (@s)
 	write_versioned_function("zombies/apply_zombie_hp", """
 $attribute @s minecraft:max_health base set $(val)
 execute store result entity @s Health float 1 run attribute @s minecraft:max_health get
 """)
 
-	## Same, for dogs: $(val) is the amount ABOVE a wolf's base 8, added as a modifier the taming side-effect reset can't clear (see types/dog).
-	## Health is filled from the resulting effective max.
+	## Dogs: $(val) is the amount above a wolf's base 8, as a modifier the taming reset cannot clear (see types/dog).
 	write_versioned_function("zombies/apply_dog_hp", f"""
 $attribute @s minecraft:max_health modifier add {ns}:dog_hp $(val) add_value
 execute store result entity @s Health float 1 run attribute @s minecraft:max_health get
 """)
 
-	## Dog: fast, hits hard, same HP as the round's zombie.
 	write_versioned_function("zombies/types/dog", f"""
-# Add scaled tag, and few data
 tag @s add {ns}.zb_scaled
 data modify entity @s DeathTime set value -16s
 
-# Same HP as the round's zombie — dogs get their threat from speed and damage, not durability
+# Same HP as the round's zombie: dogs threaten through speed and damage.
 function {ns}:v{version}/zombies/calc_zombie_hp
 
-# Carried as a MODIFIER, not a base value. Wolf extends TamableAnimal, whose readAdditionalSaveData
-# calls setTame(false, true) on any untamed wolf -> applyTamingSideEffects() -> MAX_HEALTH base is
-# hard-reset to 8.0. Every /data modify entity and every `store result entity` round-trips the entity
-# through save/load, so the angry_at retarget silently reset each dog's base to 8 and Health then
-# clamped to it — hence the one-hit kills. Modifiers survive that reset; base values cannot.
+# A modifier, not a base value: every save/load round-trip (any /data modify or `store result entity`) runs
+# TamableAnimal.setTame(false, true), which resets the MAX_HEALTH base of an untamed wolf to 8.
 scoreboard players remove #zb_hp {ns}.data 8
 execute store result storage {ns}:temp _zb_hp.val int 1 run scoreboard players get #zb_hp {ns}.data
 function {ns}:v{version}/zombies/apply_dog_hp with storage {ns}:temp _zb_hp
 
-# Always faster than the zombie cap (0.32) — outrunning a dog pack should not be an option
+# Always above the zombie cap (0.32): a dog pack cannot be outrun.
 execute if score #zb_round {ns}.data matches ..9 run attribute @s minecraft:movement_speed base set 0.36
 execute if score #zb_round {ns}.data matches 10..19 run attribute @s minecraft:movement_speed base set 0.40
 execute if score #zb_round {ns}.data matches 20.. run attribute @s minecraft:movement_speed base set 0.44
 
-# Slightly below zombie melee (15.0), because dogs reach you far more often
+# Below zombie melee (15.0), since dogs reach you far more often.
 attribute @s minecraft:attack_damage base set 12.0
 attribute @s minecraft:knockback_resistance base set 1024
 
-# Hellhound build: 1.5x a vanilla wolf, which also scales the hitbox so they're easier to hit
+# 1.5x a vanilla wolf, which also enlarges the hitbox.
 attribute @s minecraft:scale base set 1.5
 """)
 
-	## Armed zombie stub (TODO: carries weapon, drops ammo on death)
+	## Armed zombie stub.
 	write_versioned_function("zombies/types/armed", f"""
-# TODO: armed zombie — unique AI goal: ranged attack, drops ammo powerup on death
-# Falls through to normal scaling until implemented
+# TODO: ranged attack, drops an ammo power-up on death.
 $function {ns}:v{version}/zombies/types/normal {{level:"$(level)"}}
 """)
 
-	## Fast zombie stub (TODO: higher movement speed, less health)
+	## Fast zombie stub.
 	write_versioned_function("zombies/types/fast", f"""
-# TODO: fast zombie — higher base movement speed, reduced health pool
-# Falls through to normal scaling until implemented
+# TODO: higher movement speed, less health.
 $function {ns}:v{version}/zombies/types/normal {{level:"$(level)"}}
 """)
 
-	## Tank zombie stub (TODO: very high health, slow movement)
+	## Tank zombie stub.
 	write_versioned_function("zombies/types/tank", f"""
-# TODO: tank zombie — very high health, reduced movement speed
-# Falls through to normal scaling until implemented
+# TODO: very high health, slow movement.
 $function {ns}:v{version}/zombies/types/normal {{level:"$(level)"}}
 """)
 

@@ -6,18 +6,16 @@
 # @within	advancement mgs:v5.1.0/zombies/hurt_player
 #
 
-# Revoke advancement and stop if the player is not in the zombies game
+# Revoked first, so it can trigger again.
 advancement revoke @s only mgs:v5.1.0/zombies/hurt_player
 execute unless data storage mgs:zombies game{state:"active"} run return fail
 execute unless score @s mgs.zb.in_game matches 1.. run return fail
 
-# Launch player downward to counter the slight jump boost from knockback.
+# Counters the small upward knockback.
 function mgs:v5.1.0/zombies/hurt_player/launch_downward
 
-# Melee grunt from whatever just hit us, budgeted per player (see enemies/vocals.py). Gated with
-# `unless` rather than an early return, because the perk passives below still have to run on every hit.
+# Budgeted per player (see vocals). `unless` rather than a return: the passives below run on every hit.
 execute unless score @s mgs.zb.vox_attack > #total_tick mgs.data run function mgs:v5.1.0/zombies/vocals/attack
 
-# Widow's Wine passive: consume a web grenade and burst webbing around the hurt owner.
 execute if score @s mgs.special.widows_wine matches 1 run function mgs:v5.1.0/zombies/perks/widows_on_hurt
 

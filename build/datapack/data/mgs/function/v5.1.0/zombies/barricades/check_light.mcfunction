@@ -12,7 +12,6 @@
 #			mgs:v5.1.0/zombies/barricades/compute_brightness [ positioned ~ ~ ~-1 ]
 #
 
-# Check light level at current position and update #light if higher
 execute if score #light mgs.data matches ..0 if predicate mgs:v5.1.0/light/1 run return run scoreboard players set #light mgs.data 1
 execute if score #light mgs.data matches ..1 if predicate mgs:v5.1.0/light/2 run return run scoreboard players set #light mgs.data 2
 execute if score #light mgs.data matches ..2 if predicate mgs:v5.1.0/light/3 run return run scoreboard players set #light mgs.data 3

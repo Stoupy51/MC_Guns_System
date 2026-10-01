@@ -8,7 +8,6 @@
 
 scoreboard players set #zb_bonfire_sale_timer mgs.data 600
 
-# Bossbar
 bossbar remove mgs:pu_bonfire_sale
 bossbar add mgs:pu_bonfire_sale {"translate":"mgs.bonfire_sale","bold":true,"color":"gold"}
 bossbar set mgs:pu_bonfire_sale max 600

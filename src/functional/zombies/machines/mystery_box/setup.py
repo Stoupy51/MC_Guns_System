@@ -13,26 +13,23 @@ def write_mystery_box_setup() -> None:
 	ns: str = Mem.ctx.project_id
 	version: str = Mem.ctx.project_version
 
-	## Per-box state objectives (each box is an independent pull, so multiple can spin at once)
+	## Each box is an independent pull, so several can spin at once.
 	write_load_file(f"""
-# Box id shared by a box's interaction entity and its active pull display
+# Shared by a box's interaction entity and its pull display.
 scoreboard objectives add {ns}.mb.box dummy
-# Spin animation timer carried by each pull display (>0 spinning, <=0 ready window)
+# >0 spinning, <=0 ready window.
 scoreboard objectives add {ns}.mb.anim dummy
-# 1 when the buyer of this pull owns Timeslip (spin runs 2x faster for their display)
+# 1 when the buyer owns Timeslip (2x spin).
 scoreboard objectives add {ns}.mb.timeslip dummy
-# Whether this pull will end in a box move (teddy bear) — only the active box, never Fire Sale
+# 1 when the pull ends in a box move (active box only, never during a Fire Sale).
 scoreboard objectives add {ns}.mb.willmove dummy
-# Stable per-player id, assigned lazily on first pull, so a pull display can record WHICH player
-# bought it. During a Fire Sale one player can have several pulls running at once, so the buyer
-# must be tracked per-display (mb.buyer below) — a single "which box am I buying" value on the
-# player would be overwritten by the second pull and orphan the first box's collectible.
+# Stable player id, assigned on first pull. During a Fire Sale one player can run several pulls,
+# so the buyer is stored per display (mb.buyer).
 scoreboard objectives add {ns}.mb.pid dummy
-# Buyer's pid, stamped on each pull display
 scoreboard objectives add {ns}.mb.buyer dummy
 """)
 
-	# Teddy bear loot table for the move animation is shared (see zombies/roaming.py) and referenced below as mgs:zombies/roaming_bear.
+	# The move animation uses the shared teddy bear loot table (mgs:zombies/roaming_bear, see roaming).
 
 	pool_entries: list[str] = []
 	pool_weights: list[int] = []
@@ -50,7 +47,7 @@ scoreboard objectives add {ns}.mb.buyer dummy
 		)
 		pool_weights.append(weight)
 
-	# Monkey Bomb: zombies-exclusive tactical (no magazine, given to hotbar.6 via the shared wallbuys/give_tactical — holding any monkeys counts as "owned" so duplicates reroll)
+	# Monkey Bomb: zombies-only tactical for hotbar.6 (wallbuys/give_tactical); holding any counts as owned, so duplicates re-roll.
 	pool_entries.append(
 		f'{{weapon_id:"monkey_bomb",'
 		f'give_function:"{ns}:v{version}/zombies/mystery_box/default_give/monkey_bomb",'
@@ -62,7 +59,7 @@ scoreboard objectives add {ns}.mb.buyer dummy
 	default_pool_entries: str = ",".join(pool_entries)
 	default_pool_weights: str = ",".join(str(w) for w in pool_weights)
 
-	## Default give for every pooled gun: the chosen pool entry already carries weapon_id/magazine_id/ mag_count/consumable, so this reads them back off mystery_box.result rather than one function per weapon restating the same literals.
+	## The pool entry carries weapon_id, magazine_id, mag_count and consumable, so one give function serves every gun.
 	## Custom pools keep their own give_function.
 	write_versioned_function("zombies/mystery_box/default_give/weapon", f"""
 data modify storage {ns}:temp _wb_weapon set value {{}}
@@ -75,7 +72,7 @@ scoreboard players set #wb_price {ns}.data 0
 function {ns}:v{version}/zombies/wallbuys/process_purchase with storage {ns}:temp _wb_weapon
 """)
 
-	## Monkey Bomb give: routes to the tactical slot (hotbar.6) instead of the gun flow
+	## To the tactical slot (hotbar.6), not the gun flow.
 	write_versioned_function("zombies/mystery_box/default_give/monkey_bomb", f"""
 scoreboard players set #wb_price {ns}.data 0
 function {ns}:v{version}/zombies/wallbuys/give_tactical {{weapon_id:"monkey_bomb"}}

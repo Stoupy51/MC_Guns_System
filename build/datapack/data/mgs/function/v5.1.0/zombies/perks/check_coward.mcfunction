@@ -6,7 +6,7 @@
 # @within	mgs:v5.1.0/zombies/ability_tick [ at @s ]
 #
 
-# Check health: 10 HP = 50% of default 20 HP max
+# 10 HP is half the default 20.
 execute store result score #hp mgs.data run data get entity @s Health 1
 execute if score #hp mgs.data matches ..10 run function mgs:v5.1.0/zombies/perks/trigger_coward
 

@@ -6,13 +6,11 @@
 # @within	mgs:v5.1.0/zombies/pap/on_right_click
 #
 
-# Tag the clicking player so machine-context functions can target them precisely
+# Machine-context functions target the player through this tag.
 tag @s add mgs.pap_owner
 execute store result score #pap_mid mgs.data run scoreboard players get @n[tag=bs.interaction.target] mgs.zb.pap.id
 
-# Resolve ownership into a flag BEFORE acting: a successful collect (collect_give) resets the
-# player's zb.pap_mid to 0, so re-testing the comparison afterwards would spuriously trip the
-# deny branch ("belongs to another player") right after the weapon was returned.
+# Ownership is read into a flag first: collect_give resets zb.pap_mid, so testing it afterwards would trip the deny branch.
 scoreboard players set #pap_owns mgs.data 0
 execute if score @s mgs.zb.pap_mid = #pap_mid mgs.data run scoreboard players set #pap_owns mgs.data 1
 

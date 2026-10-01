@@ -6,7 +6,6 @@
 # @args		level (unknown)
 #
 
-# TODO: armed zombie — unique AI goal: ranged attack, drops ammo powerup on death
-# Falls through to normal scaling until implemented
+# TODO: ranged attack, drops an ammo power-up on death.
 $function mgs:v5.1.0/zombies/types/normal {level:"$(level)"}
 

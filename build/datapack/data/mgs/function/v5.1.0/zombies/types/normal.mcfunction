@@ -6,16 +6,15 @@
 #			mgs:v5.1.0/zombies/types/tank {level:"$(level)"}
 #
 
-# Add scaled tag, and few data
 tag @s add mgs.zb_scaled
 data modify entity @s DeathTime set value -16s
 
-# Compute round-scaled HP (BO1 curve: +100 BO-HP per round until R9, then x1.1 per round) and apply it to this zombie
+# BO1 curve: +100 BO HP per round until round 9, then x1.1 per round.
 function mgs:v5.1.0/zombies/calc_zombie_hp
 execute store result storage mgs:temp _zb_hp.val int 1 run scoreboard players get #zb_hp mgs.data
 function mgs:v5.1.0/zombies/apply_zombie_hp with storage mgs:temp _zb_hp
 
-# Explicit speed per round, capped at 0.32 from round 36+
+# Capped at 0.32 from round 36.
 execute if score #zb_round mgs.data matches 1 run attribute @s minecraft:movement_speed base set 0.20
 execute if score #zb_round mgs.data matches 2 run attribute @s minecraft:movement_speed base set 0.21
 execute if score #zb_round mgs.data matches 3 run attribute @s minecraft:movement_speed base set 0.22
@@ -30,19 +29,18 @@ execute if score #zb_round mgs.data matches 11..29 run attribute @s minecraft:mo
 execute if score #zb_round mgs.data matches 30..35 run attribute @s minecraft:movement_speed base set 0.31
 execute if score #zb_round mgs.data matches 36.. run attribute @s minecraft:movement_speed base set 0.32
 
-# Gait picks the vocal set (enemies/vocals.py): 0.29+ is the Black Ops 2 sprint gait, which screams
-# (3-5s clips) instead of groaning. Rounds 1-9 walk or run and stay on the short groan set.
+# Speed 0.29+ is the BO2 sprint gait, which screams (3-5 s clips) instead of groaning (see vocals).
 execute if score #zb_round mgs.data matches 10.. run tag @s add mgs.zb_sprint
 
-# For round 15+, 10% walkers (0.20 speed)
+# From round 15, 10% are walkers (0.20).
 execute if score #zb_round mgs.data matches 15.. store result score #zb_speed_roll mgs.data run random value 1..10
 execute if score #zb_round mgs.data matches 15.. if score #zb_speed_roll mgs.data matches 1 run attribute @s minecraft:movement_speed base set 0.20
 execute if score #zb_round mgs.data matches 15.. if score #zb_speed_roll mgs.data matches 1 run tag @s remove mgs.zb_sprint
 
-# Fixed melee damage: 15.0 HP = 7.5 hearts and no knockback
+# 7.5 hearts, no knockback.
 attribute @s minecraft:attack_damage base set 15.0
 attribute @s minecraft:knockback_resistance base set 1024
 
-# Start rise animation (20 ticks to rise 2 blocks)
+# 20 ticks to rise 2 blocks.
 scoreboard players set @s mgs.zb.rise_tick 20
 

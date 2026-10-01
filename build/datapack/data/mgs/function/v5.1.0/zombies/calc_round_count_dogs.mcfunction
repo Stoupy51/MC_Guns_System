@@ -11,11 +11,10 @@ execute if score #zb_to_spawn mgs.data matches 13.. run scoreboard players set #
 scoreboard players operation #zb_to_spawn mgs.data *= #zb_player_count mgs.data
 execute if score #zb_to_spawn mgs.data matches 49.. run scoreboard players set #zb_to_spawn mgs.data 48
 
-# Concurrent pack size: BO sends hounds in packs of 2-4 scaled by players, refilled as they die,
-# rather than releasing the round's whole count at once. Solo 3 -> 4 players 6.
+# Hounds come in packs scaled by players (solo 3, 4 players 6), refilled as they die (BO).
 scoreboard players operation #zb_dog_cap mgs.data = #zb_player_count mgs.data
 scoreboard players add #zb_dog_cap mgs.data 2
 
-# Arm this round's guaranteed Max Ammo
+# The guaranteed Max Ammo of this round.
 scoreboard players set #zb_dog_ammo_done mgs.data 0
 

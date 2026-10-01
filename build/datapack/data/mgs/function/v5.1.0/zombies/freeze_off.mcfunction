@@ -8,7 +8,7 @@
 
 scoreboard players set #zb_freeze mgs.data 0
 
-# Only wake the mobs freeze_on actually put to sleep
+# Only the mobs freeze_on put to sleep.
 execute as @e[tag=mgs.zb_frozen_ai] run data merge entity @s {NoAI:0b}
 tag @e[tag=mgs.zb_frozen_ai] remove mgs.zb_frozen_ai
 

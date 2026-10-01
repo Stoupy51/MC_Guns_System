@@ -31,7 +31,6 @@ from .xp import generate_zombies_xp
 
 # Functions
 def main() -> None:
-	# Run all zombies modules
 	ZombiesCommon.write_deny_functions()
 	bonus_main()
 	generate_zombies_maps()

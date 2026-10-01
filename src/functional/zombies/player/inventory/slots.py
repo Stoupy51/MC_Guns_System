@@ -39,8 +39,7 @@ def write_slot_enforcement() -> None:
 	}
 	Mem.ctx.data[ns].item_modifiers[f"v{version}/zb_slot_tag"] = set_json_encoder(ItemModifier(zb_slot_modifier), max_level=-1)
 
-	# Marks a magazine as zombies-converted by setting consumable to 2b.
-	# Value 1b = true consumable (stack count = bullets), 2b = zombies non-consumable (custom_data only).
+	# consumable 1b: stack count is the ammo; 2b: zombies-converted, ammo in custom_data.
 	Mem.ctx.data[ns].item_modifiers[f"v{version}/zb_mark_converted"] = set_json_encoder(ItemModifier({
 		"type": "minecraft:sequence",
 		"functions": [
@@ -75,24 +74,22 @@ kill @s
 """)
 
 	write_versioned_function("zombies/inventory/scale_magazine_slot", f"""
-# Read capacity from the paired weapon at hotbar.$(index) (inventory.N always pairs with hotbar.N)
+# inventory.N always pairs with hotbar.N.
 tag @s add {ns}.zb_scaling_mag
 $execute summon item_display run function {ns}:v{version}/zombies/inventory/read_capacity {{slot:"hotbar.$(index)",multiplier:6}}
 tag @s remove {ns}.zb_scaling_mag
 
-# Write capacity and starting ammo into custom_data
 execute store result storage {ns}:temp zb_item_stats.{CAPACITY} int 1 run scoreboard players get #zb_cap {ns}.data
 $execute store result storage {ns}:temp zb_item_stats.{REMAINING_BULLETS} int $(remaining_multiplier) run scoreboard players get #zb_cap {ns}.data
 $item modify entity @s $(slot) {ns}:v{version}/zb_item_stats
 
-# Mark as zombies-converted (consumable=2b): ammo.py reads remaining_bullets instead of stack count.
+# ammo reads remaining_bullets instead of the stack count.
 $item modify entity @s $(slot) {ns}:v{version}/zb_mark_converted
 
-# Force count to 1 (consumable magazines used stack count as ammo, now using custom_data)
+# Consumables counted ammo as the stack; it now lives in custom_data.
 scoreboard players set #bullets {ns}.data 1
 $item modify entity @s $(slot) {ns}:v{version}/set_consumable_count
 
-# Update magazine lore to show new ammo count
 data modify storage {ns}:temp {CAPACITY} set from storage {ns}:temp zb_item_stats.{CAPACITY}
 execute store result score #bullets {ns}.data run data get storage {ns}:temp zb_item_stats.{REMAINING_BULLETS}
 $function {ns}:v{version}/ammo/modify_mag_lore {{slot:"$(slot)"}}
@@ -101,12 +98,12 @@ $function {ns}:v{version}/ammo/modify_mag_lore {{slot:"$(slot)"}}
 	write_versioned_function("zombies/inventory/enforce_slot", f"""
 $execute if items entity @s $(slot) $(match) run return 1
 
-# Scan all inventory slots for the correct item and swap it into place
+# Find the right item in any slot and swap it into place.
 scoreboard players set #zb_inv_found {ns}.data 0
 {all_slot_scans}
 execute if score #zb_inv_found {ns}.data matches 1 run return 1
 
-# Not found in any slot: drop wrong zombies item from target slot if present, then try ground pickup
+# Not found: drop a wrong zombies item from the slot, then try a ground pickup.
 $execute if items entity @s $(slot) {zb_tagged_match} run function {ns}:v{version}/zombies/inventory/drop_wrong_slot_item {{slot:"$(slot)"}}
 
 tag @s add {ns}.inv_slot_owner
@@ -117,7 +114,7 @@ return 0
 """)
 
 	write_versioned_function("zombies/inventory/move_found_slot", f"""
-# Swap source and target via temp item_display (handles empty target too)
+# Through a temporary item_display, which also handles an empty target.
 tag @s add {ns}.inv_swapping
 $execute summon item_display run function {ns}:v{version}/zombies/inventory/swap_slots {{from:"$(from)",to:"$(to)"}}
 tag @s remove {ns}.inv_swapping
@@ -125,12 +122,9 @@ scoreboard players set #zb_inv_found {ns}.data 1
 """)
 
 	write_versioned_function("zombies/inventory/swap_slots", f"""
-# @s = temp item_display, player = @p[tag={ns}.inv_swapping]
-# Save target item to temp display
+# Run as the temporary item_display; the player is @p[tag={ns}.inv_swapping].
 $item replace entity @s contents from entity @p[tag={ns}.inv_swapping] $(to)
-# Move source to target
 $item replace entity @p[tag={ns}.inv_swapping] $(to) from entity @p[tag={ns}.inv_swapping] $(from)
-# Put old target item (from display) into source, or clear source if target was empty
 $execute if items entity @s contents * run item replace entity @p[tag={ns}.inv_swapping] $(from) from entity @s contents
 $execute unless items entity @s contents * run item replace entity @p[tag={ns}.inv_swapping] $(from) with air
 kill @s

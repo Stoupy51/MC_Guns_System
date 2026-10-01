@@ -6,12 +6,9 @@
 # @within	mgs:v5.1.0/player/tick
 #
 
-# Reset death counter
 scoreboard players set @s mgs.mp.death_count 0
 
-# Increment "down count
 scoreboard players add @s mgs.zb.downs 1
 
-# Enter downed state (revive system)
 function mgs:v5.1.0/zombies/revive/on_down
 

@@ -13,18 +13,15 @@ def write_perk_apply() -> None:
 	version: str = Mem.ctx.project_version
 
 	write_versioned_function("zombies/perks/apply", f"""
-# Set perk scoreboard for the player
 $scoreboard players set @s {ns}.zb.perk.$(perk_id) 1
 
-# Owning the perk voids any chip-in progress toward it (including perks granted for free by the
-# random-perk power-up), so a re-purchase after going down starts from zero.
+# Owning the perk (even from the random-perk power-up) clears its chip-in progress, so a rebuy after going down starts at zero.
 $scoreboard players set @s {ns}.zb.perkpaid.$(perk_id) 0
 
-# Call perk-specific effect function
 $function {ns}:v{version}/zombies/perks/apply/$(perk_id)
 """)
 
-	## Per-perk effect functions (generated from top-level metadata)
+	## Generated from PERK_DEFINITIONS.
 	for perk_data in PERK_DEFINITIONS.values():
 		lines: list[str] = [
 			command.replace("{ns}", ns).replace("{version}", version)
@@ -33,7 +30,7 @@ $function {ns}:v{version}/zombies/perks/apply/$(perk_id)
 		if perk_data.has_song:
 			lines.append(f"execute at @s run playsound {ns}:zombies/perks/{perk_data.perk_id} ambient @s ~ ~ ~ 1.0 1.0")
 
-		# Split the emoji prefix out of the colored component (emojis stay uncolored in chat)
+		# Emojis stay uncoloured in chat.
 		msg_emoji, msg_text = perk_data.message.split(" ", 1)
 		lines.append(f'tellraw @s [{MGS_TAG},"{msg_emoji} ",{{"text":"{msg_text}","color":"{perk_data.message_color}"}},{Xp.suffix("zb", "perk")}]')
 		lines.append(Xp.give("zb", "perk"))

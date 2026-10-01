@@ -6,22 +6,19 @@
 # @within	mgs:v5.1.0/zombies/barricades/repair_all [ at @s ]
 #
 
-# Set barricade to intact state
 scoreboard players set @s mgs.zb.barricade.state 0
 
-# Clear any in-progress remove / repair counters so no stale IDs linger
 scoreboard players set @s mgs.zb.barricade.repairing_id 0
 scoreboard players set @s mgs.zb.barricade.removing_id 0
 
-# Release any zombie or player currently acting on this barricade
+# Release any zombie or player acting on it.
 tag @e[tag=mgs.barricade_removing,scores={mgs.zb.barricade.removing_id=1..}] remove mgs.barricade_removing
 tag @a[tag=mgs.barricade_repairing] remove mgs.barricade_repairing
 
-# Re-enable the block (collision/visibility)
+# Collision and visibility back.
 data modify entity @s block_state set from entity @s data.block_enabled
 
-# Visual feedback. One slam per barricade, positional, so Carpenter reads as the whole map being boarded
-# up at once — that burst IS the effect. No budget here: the power-up is rare and fires a single tick.
+# One slam per barricade: Carpenter reads as the whole map boarded up at once. No budget, it is rare and lasts one tick.
 particle minecraft:happy_villager ~ ~ ~ 0.5 0.5 0.5 0.05 10 normal
 playsound mgs:zombies/barricade/slam block @a[distance=..32] ~ ~ ~ 1.0 1.0
 

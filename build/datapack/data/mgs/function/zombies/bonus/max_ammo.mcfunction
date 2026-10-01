@@ -6,10 +6,9 @@
 # @within	mgs:v5.1.0/zombies/powerups/activate/max_ammo [ as @a[scores={mgs.zb.in_game=1},gamemode=!spectator] ]
 #
 
-# Copy gun data for current weapon (needed for ammo scoreboard sync)
+# Needed for the ammo score sync.
 function mgs:v5.1.0/utils/copy_gun_data
 
-# Refill all magazines in inventory to max capacity
 execute if items entity @s hotbar.0 *[custom_data~{mgs:{magazine:true}}] run function mgs:v5.1.0/zombies/bonus/refill_magazine {slot:"hotbar.0"}
 execute if items entity @s hotbar.1 *[custom_data~{mgs:{magazine:true}}] run function mgs:v5.1.0/zombies/bonus/refill_magazine {slot:"hotbar.1"}
 execute if items entity @s hotbar.2 *[custom_data~{mgs:{magazine:true}}] run function mgs:v5.1.0/zombies/bonus/refill_magazine {slot:"hotbar.2"}
@@ -53,12 +52,10 @@ execute if items entity @s player.crafting.1 *[custom_data~{mgs:{magazine:true}}
 execute if items entity @s player.crafting.2 *[custom_data~{mgs:{magazine:true}}] run function mgs:v5.1.0/zombies/bonus/refill_magazine {slot:"player.crafting.2"}
 execute if items entity @s player.crafting.3 *[custom_data~{mgs:{magazine:true}}] run function mgs:v5.1.0/zombies/bonus/refill_magazine {slot:"player.crafting.3"}
 
-# Also reload all weapons in inventory if config allows (1 = recent zombies, 0 = OG magazines only)
+# #max_ammo_reload_weapons: 1 also reloads weapons (recent zombies), 0 only refills magazines (OG).
 execute if score #max_ammo_reload_weapons mgs.config matches 1.. run function mgs:v5.1.0/zombies/bonus/max_ammo_reload_weapons
 
-# Refill the grenade/equipment slot to full — including when the player has 0 left (empty slot)
 function mgs:v5.1.0/zombies/bonus/max_ammo_grenades
 
-# Recompute reserve ammo display after refilling all magazines
 function mgs:v5.1.0/ammo/compute_reserve
 

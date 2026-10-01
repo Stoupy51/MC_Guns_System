@@ -6,28 +6,22 @@
 # @within	mgs:v5.1.0/zombies/spawn_zombie [ as @n[tag=mgs.zb_near,sort=random] & at @s ]
 #
 
-# Determine zombie level based on round
-# Rounds 1-5: level 1, 6-10: level 2, 11-15: level 3, 16+: level 4
+# Level: rounds 1-5 give 1, 6-10 give 2, 11-15 give 3, 16+ give 4.
 execute if score #zb_round mgs.data matches ..5 run data modify storage mgs:temp _zpos.level set value "1"
 execute if score #zb_round mgs.data matches 6..10 run data modify storage mgs:temp _zpos.level set value "2"
 execute if score #zb_round mgs.data matches 11..15 run data modify storage mgs:temp _zpos.level set value "3"
 execute if score #zb_round mgs.data matches 16.. run data modify storage mgs:temp _zpos.level set value "4"
 
-# Zombie type: special types ("armed", "fast", "tank") are Zonweeb-only once implemented;
-# the Vanilla variant must always spawn "normal" zombies.
+# Special types ("armed", "fast", "tank") are for Zonweeb; Vanilla always spawns "normal".
 data modify storage mgs:temp _zpos.type set value "normal"
 
-# Spawn the zombie (~ ~ ~ is spawn marker position, inherited from at @s in spawn_zombie)
 function mgs:v5.1.0/zombies/summon_zombie_at with storage mgs:temp _zpos
 
-# Remember which spawn point (@s) this zombie used, so a stuck-rescue never reuses it
+# Remembered so a stuck-rescue never reuses this spawn.
 scoreboard players operation @n[tag=mgs.zb_new] mgs.zb.spawn.sid = @s mgs.zb.spawn.sid
 
-# Walk-to spawn (map editor "walk_to"): pass the target down to the zombie, which zombie_finish_rise
-# then walks to instead of letting it wander (see escort/start_to_target)
+# Walk-to spawn (map editor `walk_to`): zombie_finish_rise walks the zombie there instead of letting it wander.
 execute if data entity @s data.walk_to run data modify entity @n[tag=mgs.zb_new] data.walk_to set from entity @s data.walk_to
 
-# Last use of the scratch tag: everything summon_zombie_at and this function pin on the fresh
-# zombie is done, so retire it before the next spawn summons another one.
 tag @n[tag=mgs.zb_new] remove mgs.zb_new
 

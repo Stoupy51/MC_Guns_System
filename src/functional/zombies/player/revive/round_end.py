@@ -11,55 +11,44 @@ def write_round_end_revives() -> None:
 	ns: str = Mem.ctx.project_id
 	version: str = Mem.ctx.project_version
 
-	# Round end respawn: revive all spectating (bled-out) players
+	# Revive or respawn every spectating player at round end.
 	write_versioned_function("zombies/revive/round_respawn", f"""
-# Surviving the round while downed is a free pickup, wherever the body fell and whoever was near it:
-# the round is over, every zombie is dead, and the bleed timer never ran out. Losing a full loadout
-# because a Nuke cleared the last zombie instead of a teammate reaching you is not a play the player
-# could have made differently. Reviving through revive_complete is what keeps the inventory: it only
-# restores state and teleports, and never touches the hotbar. Perks stay lost, like any other revive.
-# Must run before the respawn pass below, which would otherwise wipe them back to the starting loadout.
+# A player still downed when the round ends is revived for free, keeping the loadout: the bleed timer never ran out.
+# revive_complete never touches the hotbar; perks stay lost. Must run before the respawn below, which resets the loadout.
 execute as @a[tag={ns}.downed_spectator,scores={{{ns}.zb.in_game=1}}] run function {ns}:v{version}/zombies/revive/revive_complete
 
-# Respawn every remaining spectator: they bled out during the round, and that still costs the loadout
+# The rest bled out during the round, which costs the loadout.
 execute as @a[scores={{{ns}.zb.in_game=1}},gamemode=spectator] run function {ns}:v{version}/zombies/revive/do_round_respawn
 """)
 
 	write_versioned_function("zombies/revive/do_round_respawn", f"""
-# If this player was still DOWNED (mannequin alive) when the round ended, fully tear that state
-# down first — otherwise their mannequin/HUD/camera would be orphaned and they'd stay "downed".
+# Still downed: tear that state down, or the mannequin, HUD and camera would be orphaned.
 execute if entity @s[tag={ns}.downed_spectator] run function {ns}:v{version}/zombies/revive/clear_downed_state
 
-# Restore adventure mode
 spectate @s
 gamemode adventure @s
 
-# Teleport to a player spawn near a random alive teammate
 function {ns}:v{version}/zombies/revive/respawn_near_player
 
-# Heal and reset stamina to full (the stamina system owns the hunger bar)
+# The stamina system owns the hunger bar.
 scoreboard players set @s {ns}.stam_seen 0
 effect give @s minecraft:instant_health 1 255 true
 
-# Restore max health (check for Juggernog perk)
 execute if score @s {ns}.zb.perk.juggernog matches 1.. run attribute @s minecraft:max_health base set 40
 execute unless score @s {ns}.zb.perk.juggernog matches 1.. run attribute @s minecraft:max_health base set 20
 
-# Re-give starting weapon on respawn
 function {ns}:v{version}/zombies/inventory/give_respawn_loadout
 
-# Tombstone: if this player bled out with a Tombstone marker, activate it + start the 60s recovery timer
+# Tombstone: activate the marker and its 60 s recovery timer.
 function {ns}:v{version}/zombies/perks/tombstone_on_respawn
 
-# Call map respawn script (executed as the respawning player)
+# Run as the respawning player.
 function {ns}:v{version}/shared/maps/call_script_at_base {{script:"respawn"}}
 
-# Announce
 tellraw @a[scores={{{ns}.zb.in_game=1}}] [{MGS_TAG},{Text.player(ns, "@s", side="zb", color="green")},{{"text":" has respawned!","color":"gray"}}]
 """)
 
-	## Fully tear down @s's downed mannequin/HUD/camera (matched by downed_id) and dismount.
-	## Used when a still-downed player is force-revived at round end.
+	## Tear down the downed mannequin, HUD and camera of @s (by downed_id) and dismount.
 	write_versioned_function("zombies/revive/clear_downed_state", f"""
 scoreboard players operation #my_downed_id {ns}.data = @s {ns}.zb.downed_id
 execute as @e[tag={ns}.downed_hud,predicate={ns}:v{version}/zombies/revive/downed_id_match] run kill @s
@@ -71,14 +60,13 @@ scoreboard players set @s {ns}.zb.revive_p 0
 tag @s remove {ns}.downed_spectator
 """)
 
-	## Teleport @s to the unlocked player spawn nearest to a random alive teammate (so respawned players rejoin near the action rather than at an arbitrary spawn).
+	## At the unlocked player spawn nearest a random alive teammate.
 	write_versioned_function("zombies/revive/respawn_near_player", f"""
 tag @s add {ns}.spawn_pending
-# #has_candidate stays 0 if there is no alive teammate (the `as @r` body never runs, so its
-# `store success` never writes); the success flag then replaces a global @e existence scan.
+# #has_candidate stays 0 without an alive teammate: the `as @r` body never runs, so `store success` never writes.
 scoreboard players set #has_candidate {ns}.data 0
 execute as @r[scores={{{ns}.zb.in_game=1,{ns}.zb.downed=0}},gamemode=!spectator,limit=1] at @s store success score #has_candidate {ns}.data run tag @n[tag={ns}.spawn_point,tag={ns}.spawn_zb_player,tag={ns}.spawn_unlocked] add {ns}.spawn_candidate
-# Fallback: if no alive teammate, use the unlocked player spawn nearest to @s
+# No alive teammate: the spawn nearest @s.
 execute if score #has_candidate {ns}.data matches 0 run tag @n[tag={ns}.spawn_point,tag={ns}.spawn_zb_player,tag={ns}.spawn_unlocked] add {ns}.spawn_candidate
 execute as @n[tag={ns}.spawn_candidate] run function {ns}:v{version}/shared/tp_to_spawn {{mode:"zombies"}}
 tag @e[tag={ns}.spawn_candidate] remove {ns}.spawn_candidate
